@@ -1,0 +1,29 @@
+These two tables are filled out by func_dca68:
+
+Table 1:
+  start: data_1e08d4
+  size:  0xc
+  count: 0x100
+
+struct Table1Entry
+{
+  uint32_t address;  /* 1e08d4 or 1e08c8 + c */
+  uint32_t selector; /* 1e08d8 or 1e08cc + c */
+  uint32_t size;     /* 1e08dc */
+};
+
+
+Table 2:
+  start: data_1e14d4
+  size:  0x12
+  count: 0x100
+
+struct Table2Entry
+{
+  uin32_t address;	    /* 1e14d4, copied from a Table 1 entry */
+  uin32_t size;		    /* 1e14d8 or 1e14c6 + 12, copied */
+  struct Table2Entry *next; /* 1e14dc */
+  struct Table2Entry *prev; /* 1e14e0 */
+  uint8_t unknown;	    /* 1e14e4 or 1e14d2 + 12 */
+  uint8_t table1_index;	    /* 1e14e5, where address/size is from */
+};

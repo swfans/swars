@@ -1,0 +1,119 @@
+Each object at the "allocation table" is 44 bytes long (0x2C bytes);
+The "allocation table" is the array at 0x1533A8
+
+The "allocation table" consists of the following fields:
+
+OFFSET  SIZE    NAME   DESC
+0       1C      Name   Name of allocation. If the name has * before it, it's a virtual allocation, otherwise it's a file load
+1C      4       PtrPtr Offset to some DWORD ? ? Maybe it's the offset where the allocated memory pointer should be put ?
+20      4       ?      Offset to some DWORD ? ? In case of * it's 0
+24      4       Size   Dword, looks like size (in case of W_SCREEN it's 307840 which is a little more then 640*480 (it's 640*481?)
+28      ?       ?      ?
+
+The "allocation table" contains:
+
+1. *VESA, 256 bytes
+There are two functions that use this:
+- cseg01:000EEE84 vesa_a2_get_SVGA_info_block proc near - which calls the 4F00 function to get the VgaInfoBlock (see below)
+- cseg01:000EECA0 vesa_a1_get_SVGA_mode_info            - which calls the 4F01 function to get the ModeInfoBlock (see below)
+(see http://www.monstersoft.com/tutorial1/VESA_intro.html)
+
+The a2 function is used in two places:
+- cseg01:000EEF48 vesa_a3_check_mode_supported proc near - which is pretty straight forward:
+signed int __fastcall vesa_a3(int a1)
+{
+  WORD *v3;
+
+  if ( vesa_a2_get_SVGA_info_block() == 1 )
+  {
+    v3 = VesaDestPtr->VideoModePtr; // Pointer of an array of supported modes, 0xFFFF is a terminator
+    while(*v3 != 0xFFFF)
+    {
+      if ( *v3 == a1 ) // This mode matches!
+        return 1;
+      v3 += 2; // Go to next
+    }
+  }
+  return 0; // Not found 
+}
+
+this function is used here:
+- cseg01:000ED808 vesa_a4_check_which_SVGA_modes_are_supported
+This Function marks supported SVGA mode in the mode table which is somewhere around here: 155D7A 
+
+it is uses in
+- cseg01:000E0CC0 vesa_a5_check_mode_from_swars_list proc near 
+which takes the index of the INTERNAL SWARS mode, and checks if it's supported
+
+int __fastcall vesa_a5_check_mode_from_swars_list(char a1)
+{
+  char v2; // [sp+0h] [bp-4h]@1
+
+  v2 = a1;
+  if ( !internal_mode_list_filled )
+  {
+    internal_mode_list_filled = 1;
+    vesa_a4_check_which_SVGA_modes_are_supported();
+  }
+  return *(int *)((char *)&internal_mode_list + 38 * v2);
+}
+
+
+
+Structures:
+
+VgaInfoBlock    STRUC
+      VESASignature   db   'VESA'      ; 4 signature bytes                       00
+      VESAVersion     dw   ?           ; VESA version number                     04
+      OEMStringPtr    dd   ?           ; Pointer to OEM string                   06
+      Capabilities    db   4 dup(?)    ; capabilities of the video environment   0A
+      VideoModePtr    dd   ?           ; pointer to supported Super VGA modes    0E
+      TotalMemory     dw   ?           ; Number of 64kb memory blocks on board   12
+      Reserved        db   236 dup(?)  ; Remainder of VgaInfoBlock               14
+VgaInfoBlock    ENDS
+
+ModeInfoBlock   STRUC
+
+; mandatory information
+
+        ModeAttributes      dw  ?  ; mode attributes
+        WinAAttributes      db  ?  ; window A attributes
+        WinBAttributes      db  ?  ; window B attributes
+        WinGranularity      dw  ?  ; window granularity
+        WinSize             dw  ?  ; window size
+        WinASegment         dw  ?  ; window A start segment
+        WinBSegment         dw  ?  ; window B start segment
+        WinFuncPtr          dd  ?  ; pointer to windor function
+        BytesPerScanLine    dw  ?  ; bytes per scan line
+
+; formerly optional information (now mandatory)
+
+        XResolution         dw  ?  ; horizontal resolution
+        YResolution         dw  ?  ; vertical resolution
+        XCharSize           db  ?  ; character cell width
+        YCharSize           db  ?  ; character cell height
+        NumberOfPlanes      db  ?  ; number of memory planes
+        BitsPerPixel        db  ?  ; bits per pixel
+        NumberOfBanks       db  ?  ; number of banks
+        MemoryModel         db  ?  ; memory model type
+        BankSize            db  ?  ; bank size in kb
+        NumberOfImagePages  db  ?  ; number of images
+        Reserved            db  1  ; reserved for page function
+
+; new Direct Color fields
+
+        RedMaskSize         db  ?  ; size of direct color red mask in bits
+        RedFieldPosition    db  ?  ; bit position of LSB of red mask
+        GreenMaskSize       db  ?  ; size of direct color green mask in bits
+        GreenFieldPosition  db  ?  ; bit position of LSB of green mask
+        BlueMaskSize        db  ?  ; size of direct color blue mask in bits
+        BlueFieldPosition   db  ?  ; bit position of LSB of blue mask
+        RsvdMaskSize        db  ?  ; size of direct color reserved mask in bits
+        DirectColorModeInfo db  ?  ; Direct Color mode attributes
+        Reserved            db  216 dup(?)      ; remainder of ModeInfoBlock
+ModeInfoBlock   ENDS
+
+
+
+
+

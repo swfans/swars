@@ -1,0 +1,339 @@
+#!/usr/bin/python
+# vim:sw=4
+
+from StringIO import StringIO
+from getopt import gnu_getopt, GetoptError
+import re
+import sys
+
+REGISTERS = 'adbc'
+
+class MKWrappers:
+    input_filename    = '-'
+    input_file        = None
+    output_filename   = '-'
+    output_file	      = None
+    functions         = {}
+    underscore        = False
+    prefix            = 'ac_'
+    debug             = False
+    stack_align	      = 4
+    prologue_args       = 0
+    renamed_functions = {}
+
+    def print_help (self):
+	print '''Usage: %s OPTIONS CONFIG
+
+Options:
+  -h  --help		    shows this help text
+  -g  --debug		    makes wrappers print debug output to stdout
+  -u  --underscore	    prefixes symbol names with an underscore
+  -s  --stack-align=N       aligns the stack to N bytes before function calls
+  -r  --rename-config=FILE  renames functions using the table from FILE
+  -o FILE		    outputs wrappers to FILE instead of stdout''' \
+	% (sys.argv[0])
+
+    def strip_line (self, line):
+	n = line.find ('#')
+	if n >= 0:
+	    line = line[:n]
+	return line.strip ()
+
+    def read_input (self):
+	ln = 0
+	while True:
+	    line = self.input_file.readline ()
+	    if len (line) == 0:
+		break
+	    ln += 1
+	    line = self.strip_line (line)
+	    if len (line) == 0:
+		continue
+	    parts = re.split (r'\s+', line)
+	    if len (parts) < 2 or len (parts) > 3:
+		print >> sys.stderr, 'Bad line %i: %s' % (ln, line)
+		continue
+	    if len (parts) == 2:
+		parts.append ('')
+	    self.functions[parts[0]] = (parts[1], parts[2])
+
+    def wrap_name (self, name):
+	return '%s%s' % (self.prefix, name)
+
+    def sym_name (self, name):
+	name = self.renamed_functions.get (name, name)
+	if not self.underscore:
+	    return '%s' % name
+	else:
+	    return '_%s' % name
+
+    def generate_wrappers (self):
+	self.read_input ()
+	self.wrln ()
+	self.wrln ('.text')
+	funcs = self.functions.keys ()
+	funcs.sort ()
+	for func in funcs:
+	    type, args = self.functions[func]
+	    self.generate_wrapper (func, type, args)
+
+    def generate_push_arguments (self, type, arg_count):
+	if type in 'vc':
+	    for n in xrange (arg_count):
+		self.wrln ('\t\tpush\t0x%x(%%ebp)' \
+			   % ((arg_count - n + 1) * 4))
+	else:
+	    reg_arg_count = min (4, arg_count)
+
+	    for x in xrange (reg_arg_count):
+		self.wrln ('\t\tpush\t%%e%sx' \
+			   % REGISTERS[reg_arg_count - x - 1])
+
+	    # TODO: non-register arguments
+	    assert reg_arg_count == arg_count
+
+    def generate_store_registers (self):
+	# Store registers that should be preserved by a Watcom function.
+	# The System V ABI for i386 says that cdecl functions preserve
+	# ebx, esi, edi, ebp, esp, so we only need to store the remaining
+	# registers.
+	self.wrln ('\t\tpush\t%ecx')
+	self.wrln ('\t\tpush\t%edx')
+
+    def generate_restore_registers (self):
+	self.wrln ()
+	self.wrln ('\t\tpop\t%edx')
+	self.wrln ('\t\tpop\t%ecx')
+
+    def generate_call (self, name, arg_count):
+	self.wrln ('\t\tcall\t%s' % self.sym_name (name))
+	if arg_count == 0:
+	    return
+	self.wrln ('\t\tadd\t$0x%x,%%esp' % (arg_count * 4))
+
+    def generate_prologue (self):
+	self.wrln ('\t\tpush\t%ebp')
+	self.wrln ('\t\tmov\t%esp,%ebp')
+	if self.prologue_args > 0:
+	    self.wrln ('\t\tsub\t$0x%x,%%esp' % (4 * self.prologue_args))
+	self.wrln ()
+
+    def generate_epilogue (self):
+	self.wrln ()
+	self.wrln ('\t\tleave')
+
+    def generate_format_string (self, name, args):
+	self.wrln ('.data')
+	self.wrln ('\t0:\t.string "%s (%s)\\n"' \
+		   % (name, self.arg_string (args)))
+	self.wrln ('.text')
+
+    def generate_printf_call (self, name, type, args):
+	if not self.debug:
+	    return
+	self.generate_align_push (len (args) + 1, 1)
+	if len (args) > 0:
+	    self.wrln ()
+	    self.generate_push_arguments (type, len (args))
+	self.wrln ('\t\tpush\t$0f')
+	self.generate_call ('printf', len (args) + 1)
+	self.generate_align_pop (1)
+
+    def generate_ret (self):
+	self.wrln ('\t\tret')
+
+    def generate_align_push (self, n_args, st_var_index = 0):
+	if self.stack_align <= 4:
+	    return
+	self.wrln ()
+	self.wrln ('\t\tmov\t%%esp,-0x%x(%%ebp)' % (4 * (st_var_index + 1)))
+	if n_args > 0:
+	    self.wrln ('\t\tsub\t$0x%x,%%esp' % (4 * n_args))
+	self.wrln ('\t\tand\t$-0x%x,%%esp' % self.stack_align)
+	if n_args > 0:
+	    self.wrln ('\t\tadd\t$0x%x,%%esp' % (4 * n_args))
+
+    def generate_align_pop (self, st_var_index = 0):
+	if self.stack_align <= 4:
+	    return
+	self.wrln ()
+	self.wrln ('\t\tmov\t-0x%x(%%ebp),%%esp' % (4 * (st_var_index + 1)))
+
+    def wrln (self, line = ''):
+	self.output_file.write (line)
+	self.output_file.write ('\n')
+
+    def generate_wrapper (self, name, type, args):
+	self.wrln ()
+	self.wrln ('.global %s'      % self.wrap_name (name))
+	self.wrln ('%s: /* %s %s */' % (self.wrap_name (name), type, args))
+
+	if type == 'w':
+	    if self.stack_align > 4:
+		self.generate_prologue ()
+	    self.generate_store_registers ()
+	    self.generate_align_push (len (args))
+	    if len (args) > 0:
+		self.wrln ()
+		self.generate_push_arguments (type, len (args))
+	    self.generate_printf_call (name, type, args)
+	    self.wrln ()
+	    self.generate_call (name, len (args))
+	    self.generate_align_pop ()
+	    self.generate_restore_registers ()
+	    if self.stack_align > 4:
+		self.generate_epilogue ()
+	    self.generate_ret ()
+	elif type == 'c':
+	    self.generate_prologue ()
+	    self.generate_store_registers ()
+	    self.generate_align_push (len (args))
+	    if len (args) > 0:
+		self.wrln ()
+		self.generate_push_arguments (type, len (args))
+	    self.generate_printf_call (name, type, args)
+	    self.wrln ()
+	    self.generate_call (name, len (args))
+	    self.generate_align_pop ()
+	    self.generate_restore_registers ()
+	    self.generate_epilogue ()
+	    self.generate_ret ()
+	elif type =='v':
+	    self.generate_prologue ()
+	    self.generate_store_registers ()
+	    self.generate_align_push (len (args))
+	    assert len (args) > 0
+	    self.wrln ()
+	    self.wrln ('\t\tlea\t0x%x(%%ebp),%%eax' % ((len (args) + 1) * 4))
+	    self.wrln ('\t\tpush\t%eax')
+	    self.generate_push_arguments (type, len (args) - 1)
+	    self.generate_printf_call (name, type, args)
+	    self.wrln ()
+	    self.generate_call ('v%s' % name, len (args))
+	    self.generate_align_pop ()
+	    self.generate_restore_registers ()
+	    self.generate_epilogue ()
+	    self.generate_ret ()
+	else:
+	    print >> sys.stderr, 'Unknown wrapper type `%s\'' % type
+
+	if self.debug:
+	    self.generate_format_string (name, args)
+
+    def arg_string (self, args):
+	buf = StringIO ()
+	for n, arg in enumerate (args):
+	    if n > 0:
+		buf.write (', ')
+	    if arg == 'i':
+		buf.write ('%i')
+	    elif arg == 'x':
+		buf.write ('0x%x')
+	    elif arg == 'p':
+		buf.write ('%p')
+	    elif arg == 's':
+		buf.write ('\\"%s\\"')
+	    elif arg == 'c':
+		buf.write ('\'%c\'')
+	    elif arg == 'v':
+		buf.write ('...')
+	    elif arg == 'l':
+		buf.write ('(va_list) %p')
+	return buf.getvalue ()
+	
+    def open_file (self, name, mode = 'r'):
+	if name == '-':
+	    if mode.find ('r') >= 0:
+		return sys.stdin
+	    else:
+		return sys.stdout
+	else:
+	    return open (name, mode)
+
+    def close_file (self, file, name):
+	if name == '-':
+	    return
+	file.close ()
+
+    def append_rename_config (self, name):
+	# Open file
+	config_file = self.open_file (name)
+
+	# Parse
+	ln = 0
+	while True:
+	    line = config_file.readline ()
+	    if len (line) == 0:
+		break
+	    ln += 1
+	    line = self.strip_line (line)
+	    if len (line) == 0:
+		continue
+	    parts = re.split (r'\s+', line)
+	    if len (parts) != 2:
+		print >> sys.stderr, 'Bad line %i: %s' % (ln, line)
+		continue
+	    self.renamed_functions[parts[0]] = parts[1]
+
+        # Done
+        self.close_file (config_file, name)
+
+    def main (self):
+	try:
+	    opts, args = gnu_getopt (sys.argv[1:], 'ho:gur:s:',
+				     ('help', 'debug', 'underscore',
+				      'rename-config=', 'stack-align='))
+
+	except GetoptError, message:
+	    print >> sys.stderr, 'Error:', message
+	    sys.exit (1)
+	    
+	for opt, arg in opts:
+	    if opt in ('-h', '--help'):
+		self.print_help ()
+		sys.exit (0)
+	    elif opt in ('-o',):
+		self.output_filename = arg
+	    elif opt in ('-u', '--underscore'):
+		self.underscore = True
+	    elif opt in ('-g', '--debug'):
+		self.debug = True
+	    elif opt in ('-r', '--rename-config'):
+		self.append_rename_config (arg)
+	    elif opt in ('-s', '--stack-align'):
+		try:
+		    self.stack_align = int (arg)
+		    if (self.stack_align % 4 != 0 and self.stack_align != 1) \
+		       or self.stack_align < 0:
+		      raise ValueError
+		except:
+		    print >> sys.stderr, \
+		          'Error: Invalid stack alignment "%s".' % arg
+		    sys.exit (1)
+
+	if self.stack_align > 4:
+	    self.prologue_args += 1
+	    if self.debug:
+		self.prologue_args += 1
+
+	if len (args) == 1:
+	    self.input_filename = args[0]
+	elif len (args) > 1:
+	    print >> sys.stderr, 'Error: Too many arguments'
+	    sys.exit (1)
+
+	self.input_file  = self.open_file (self.input_filename)
+	self.output_file = self.open_file (self.output_filename, 'w')
+
+	self.wrln ('/* Automatically generated by mkwrappers ' \
+		   + '-- do not edit */\n')
+
+	self.generate_wrappers ()
+
+	self.close_file (self.output_file, self.output_filename)
+	self.close_file (self.input_file, self.input_filename)
+	self.input_file  = None
+	self.output_file = None
+
+mkw = MKWrappers ()
+mkw.main ()

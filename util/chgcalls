@@ -1,0 +1,128 @@
+#!/usr/bin/python
+# vim:sw=4
+
+from StringIO import StringIO
+from getopt import gnu_getopt, GetoptError
+import re
+import sys
+
+class ChgCalls:
+    input_filename    = '-'
+    input_file        = None
+    output_filename   = '-'
+    output_file	      = None
+    wrapper_filename  = ''
+    wrapper_file      = None
+    function_regex    = None
+    underscore        = False
+    prefix            = 'ac_'
+    debug             = False
+    renamed_functions = {}
+
+    def print_help (self):
+	print 'Usage: %s CONFIGFILE < SRCFILE > DSTFILE' % (sys.argv[0])
+
+    def strip_line (self, line):
+	n = line.find ('#')
+	if n >= 0:
+	    line = line[:n]
+	return line.strip ()
+
+    def read_config (self):
+	'''Build a regexp that will match all the function names that are
+	meant to be replaced, and save it in self.function_regex, based on the
+	wrapper config.'''
+	all_regex = StringIO ()
+	all_regex.write (r'(.*)\b(_(')
+	ln = 0
+	while True:
+	    line = self.wrapper_file.readline ()
+	    if len (line) == 0:
+		break
+	    ln += 1
+	    line = self.strip_line (line)
+	    if len (line) == 0:
+		continue
+	    parts = re.split (r'\s+', line)
+	    if len (parts) < 2 or len (parts) > 3:
+		print >> sys.stderr, 'Bad line %i: %s' % (ln, line)
+		continue
+	    if all_regex.tell () > 9:
+		all_regex.write ('|')
+	    all_regex.write (parts[0])
+	all_regex.write (r'))\b(.*)')
+	self.function_regex = re.compile (all_regex.getvalue ())
+
+    def wrap_name (self, name):
+	return '%s%s' % (self.prefix, name)
+
+    def sym_name (self, name):
+	name = self.renamed_functions.get (name, name)
+	if not self.underscore:
+	    return '%s' % name
+	else:
+	    return '_%s' % name
+	
+    def open_file (self, name, mode = 'r'):
+	if name == '-':
+	    if mode.find ('r') >= 0:
+		return sys.stdin
+	    else:
+		return sys.stdout
+	else:
+	    return open (name, mode)
+
+    def close_file (self, file, name):
+	if name == '-':
+	    return
+	file.close ()
+
+    def change (self):
+        while True:
+            line = self.input_file.readline ()
+            if len (line) == 0:
+                break
+
+	    while True:
+		m = self.function_regex.match (line)
+		if m is None or re.match ('^\s*_%s:' % m.group (3), line):
+		    break
+		line = '%s%s%s%s\n' % (m.group (1), self.prefix,
+			               m.group (3), m.group (4))
+
+            self.output_file.write (line)
+    
+    def main (self):
+	try:
+	    opts, args = gnu_getopt (sys.argv[1:], 'h', ('help'))
+	except GetoptError, message:
+	    print >> sys.stderr, 'Error:', message
+	    sys.exit (1)
+	    
+	for opt, arg in opts:
+	    if opt in ('-h', '--help'):
+		self.print_help ()
+		sys.exit (0)
+
+	if len (args) == 1:
+	    self.wrapper_filename = args[0]
+	else:
+	    print >> sys.stderr, 'Error: Bad number of arguments (must be 1)'
+	    sys.exit (1)
+
+        self.wrapper_file = self.open_file (self.wrapper_filename)
+        self.read_config()
+        self.close_file (self.wrapper_file, self.wrapper_filename)
+
+	self.input_file  = self.open_file (self.input_filename)
+	self.output_file = self.open_file (self.output_filename, 'w')
+
+	self.change ()
+
+	self.close_file (self.output_file, self.output_filename)
+	self.close_file (self.input_file, self.input_filename)
+	self.input_file  = None
+	self.output_file = None
+
+chg = ChgCalls ()
+chg.main ()

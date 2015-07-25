@@ -1,0 +1,79 @@
+AS	 = as
+CC	 = gcc
+CPP	 = cpp
+PYTHON	 = python
+RC       = swars.rc
+RES      = swars.res
+ASFLAGS	 =
+CFLAGS	 = -include windows.config.h -Wall -Wextra -Wno-unused-parameter $(shell sdl-config --cflags)
+CPPFLAGS = -C -DNEED_UNDERSCORE=1
+LDFLAGS	 =
+MKWFLAGS = -u
+LIBS	 = -lmsvcrt $(shell sdl-config --libs) OpenAL32.lib d:\bin\gcc\lib\libvorbisfile.a d:\bin\gcc\lib\libvorbis.a d:\bin\gcc\lib\libogg.a -lpng -lz
+RM	 = rm
+RENAME	 = fnmap_windows.conf
+TARGET	 = swars.exe
+WINDRES  = windres.exe
+
+ENABLE_DEBUG = 0
+
+MKW = $(PYTHON) ../util/mkwrappers
+
+#ifeq ($(ENABLE_DEBUG),1)
+#  MKWFLAGS += -g
+#  CFLAGS += -g -O0 -DENABLE_DEBUG
+#endif
+
+OBJ = \
+	display.o \
+	dos.o \
+	game.o \
+	keyboard.o \
+	main.o \
+	memory.o \
+	mouse.o \
+	sound.o \
+	sound_util.o \
+        oggvorbis.o \
+	swars.o \
+	timer.o \
+	unix.o \
+	util.o \
+	windows.o \
+	wrappers_dos.o \
+	wrappers_game.o \
+	wrappers_libc.o \
+	wrappers_util.o \
+	$(RES)
+
+.s.o:
+	$(CPP) $(CPPFLAGS) $< | $(AS) $(ASFLAGS) -o $@
+
+.c.o:
+	$(CC) -c -o $@ $(CFLAGS) $<
+
+$(TARGET): $(OBJ)
+	$(CC) -o $(TARGET) $(LDFLAGS) $(OBJ) $(LIBS)
+
+wrappers_util.s: ../conf/wrappers_util.conf ../conf/$(RENAME)
+	$(MKW) $(MKWFLAGS) -o $@ -r ../conf/$(RENAME) \
+	       ../conf/wrappers_util.conf
+
+wrappers_dos.s: ../conf/wrappers_dos.conf ../conf/$(RENAME)
+	$(MKW) $(MKWFLAGS) -o $@ -r ../conf/$(RENAME) \
+	       ../conf/wrappers_dos.conf
+
+wrappers_game.s: ../conf/wrappers_game.conf ../conf/$(RENAME)
+	$(MKW) $(MKWFLAGS) -o $@ -r ../conf/$(RENAME) \
+	       ../conf/wrappers_game.conf
+
+wrappers_libc.s: ../conf/wrappers_libc.conf ../conf/$(RENAME)
+	$(MKW) $(MKWFLAGS) -o $@ -r ../conf/$(RENAME) \
+	       ../conf/wrappers_libc.conf
+
+$(RES):	$(RC)
+	$(WINDRES) -i $(RC) -I rc -o $(RES) -O coff
+
+clean:
+	$(RM) $(TARGET) *.o wrappers_*.S
+

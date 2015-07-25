@@ -1,0 +1,30 @@
+• remove qdata/sound (empty dir)
+• music/track_{1,2,3}.ogg
+• sound/sound.dat		(from language/eng/sound.dat)
+• qdata/alltext.wad		(from language/eng/alltext.wad)
+• qdata/alltext.idx		(from language/eng/alltext.idx)
+
+no config.ini:
+  • language/text.dat		(from eng/text.dat)
+  • language/intro.smk		(from eng/intro.smk)
+  • language/syn_ele.smk	(assumed, from eng/syn_ele.smk)
+  • language/chu_ele.smk	(assumed, from eng/chu_ele.smk)
+
+config.ini:
+  • remove language
+  • data/text.dat		(from language/eng/text.dat)
+  • intro/intro.smk		(from language/eng/intro.smk)
+  • data/syn_ele.smk		(from language/eng/syn_ele.smk)
+  • data/chu_ele.smk		(from language/eng/chu_ele.smk)
+
+contents:
+  CD="D:\GAME\"
+  InstallDrive="C:\"
+  Language="English"
+  Intro="Max"
+  Anims="Max"
+  Sound="Max"
+  Levels="Max"
+  Data="Max"
+  Maps="Max"
+  DOS="Max"

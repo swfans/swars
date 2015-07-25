@@ -1,0 +1,128 @@
+#!/usr/bin/python
+# vim:sw=4
+
+import sys
+import re
+from cStringIO import StringIO
+
+ESCAPE_MAP = \
+{
+    't': '\t',
+    'r': '\r',
+    'n': '\n',
+    '"': '"',
+    '\\': '\\'
+}
+
+class StringWriter:
+    def __init__ (self, match):
+	self.n      = 0
+	self.match  = match
+	self.buffer = StringIO ()
+	self.string = ''
+	self.__compute_replacement ()
+
+    def __compute_replacement (self):
+	buf   = self.buffer
+	match = self.match
+	str   = match.group (4)
+	state = None
+	pad   = ' ' * (len (match.group (2)) - len ('byte'))
+	buf.write ('%s.byte%s%s' % (match.group (1), pad, match.group (3)))
+	xbuf  = ''
+	n = 0
+	for c in str:
+	    if state is None:
+		if c == '\\':
+		    state = '\\'
+		elif c == '"':
+		    break
+		else:
+		    self.__write_char (c)
+	    elif state == '\\':
+		if c in ESCAPE_MAP:
+		    self.__write_char (ESCAPE_MAP[c])
+		    state = None
+		elif c in 'xX':
+		    state = 'x1'
+		    xbuf = ''
+		else:
+		    state = None
+	    elif state == 'x1':
+		xbuf = c
+		state = 'x2'
+	    elif state == 'x2':
+		xbuf += c
+		self.__write_char (chr (int (xbuf, 16)))
+		state = None
+	if match.group (2) in ('string', 'asciiz', 'asciz'):
+	    self.__write_char (chr (0))
+	buf.write ('\n')
+	self.string = buf.getvalue ()
+	self.buffer = None
+
+    def __write_char (self, c):
+	if self.n > 0:
+	    self.buffer.write (',')
+	self.buffer.write ('0x%02x' % ord (c))
+	self.n += 1
+
+    def get_string (self):
+	return self.string
+	
+
+fill_re = re.compile (r'^(.*)\.fill(\s+[^\s]*)(.*)$')
+string_re = re.compile (r'^(.*)\.(string|ascii)(\s+)"(.*)$')
+loop_re = re.compile (r'^(\s+)(loop(..)?)(\s+)([^\s]+)(.*)$')
+
+def replace_string (match):
+    sw = StringWriter (match)
+    return sw.get_string ()
+
+def replace_loop (match):
+    buf = StringIO ()
+    instr = match.group (2).strip ()
+    label = match.group (5)
+    if instr == 'loop':
+	buf.write ('\t\tsub    $0x1,%ecx\n')
+	buf.write ('\t\tjnz    %s\n' % label)
+    elif instr == 'loopne':
+	buf.write ('\t\tjz     0f\n')
+	buf.write ('\t\tsub    $0x1,%ecx\n')
+	buf.write ('\t\tjnz    %s\n' % label)
+	buf.write ('\t\tjmp    1f\n')
+	buf.write ('\t0:\tsub  $0x1,%ecx\n')
+	buf.write ('\t1:\n')
+    else:
+	sys.stderr.write ('Unhandled loop instruction: %s (%i)\n' % (instr,
+	    len (instr)))
+	sys.exit (1)
+    return buf.getvalue ()
+
+while True:
+    line = sys.stdin.readline ()
+    if len (line) == 0:
+	break
+    line = line.replace ('.global', '.globl')
+    line = line.replace (' %ds:(%esi),%es:(%edi)', '')
+    line = line.replace (' %es:(%edi),%ds:(%esi)', '')
+    line = line.replace ('scas %es:(%edi),%al', 'scasb')
+    line = line.replace ('scas %es:(%edi),%eax', 'scasl')
+    line = line.replace ('stos %eax,%es:(%edi)', 'stosl')
+    line = line.replace ('stos %al,%es:(%edi)', 'stosb')
+    line = line.replace ('.section .rodata', '.data')
+    line = line.replace ('data16', '')
+    m = fill_re.match (line)
+    if m is not None:
+	sys.stdout.write ('%s.fill%s,0x1,0x0%s\n' % (m.groups ()))
+	continue
+    m = string_re.match (line)
+    if m is not None:
+	#print line,
+	sys.stdout.write (replace_string (m))
+	continue
+    m = loop_re.match (line)
+    if m is not None:
+	sys.stdout.write (replace_loop (m))
+	continue
+    sys.stdout.write (line)

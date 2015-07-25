@@ -1,0 +1,25 @@
+Major items:
+• Network/multiplayer
+• Binary patcher (examine xdelta)
+• Source generator/patcher (examine xdelta)
+• Installer for Windows
+• Mac OS X support
+
+Less important items:
+• Joystick support
+• Tension music support
+• Clean up sound code
+• Fix policemen attacking you when you right-click with your weapons hidden
+  when near a policeman
+• Check the timing so that the mouse is updated 30fps, the screen at ~22fps and
+  the sound at how many it requires to play loops without crackling but also
+  smoothly modulate pitch for weapons that use it
+• Add some sort of sleep call to movie playback (atm they do busy waiting)
+• Remove unused code/data
+
+Minor items:
+• Investigate what functions are added as callbacks to be called by the timer
+  code.
+
+Far future:
+• Re-write the game in C?

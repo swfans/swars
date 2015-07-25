@@ -1,0 +1,258 @@
+#!/bin/sh
+
+show_usage()
+{
+  cat<<EOF >&2
+Usage: $0 [OPTIONS] -f SOURCE -t TARGET
+
+Available options:
+  -f PATH  copy data from PATH (e.g. /media/cdrom)
+  -t PATH  copy data to PATH (e.g. /usr/local/share/swars)
+
+  -M       do not copy music
+  -l LANG  choose language LANG
+
+  -h       print usage information
+
+Available languages: eng fre ita spa swe
+EOF
+}
+
+if [ $# -eq 1 -a "x$1" = "x--help" ]; then
+  show_usage
+  exit 0
+fi
+
+WITH_MUSIC="yes"
+OWN_TARGET="no"
+SOURCE=""
+TARGET=""
+LANG="eng"
+
+OPTS="f:t:Ml:h"
+
+while getopts "$OPTS" arg; do
+  case "$arg" in
+    f)
+      SOURCE="$OPTARG"
+      ;;
+    t)
+      TARGET="$OPTARG"
+      ;;
+    M)
+      WITH_MUSIC="no"
+      ;;
+    l)
+      LANG="$OPTARG"
+      ;;
+    h)
+      show_usage
+      exit 0
+      ;;
+    *)
+      exit 1
+  esac
+done
+
+check_music_tools()
+{
+  if [ "$WITH_MUSIC" = "no" ]; then
+    return 0
+  fi
+
+  CDPARANOIA=`which cdparanoia`
+  OGGENC=`which oggenc`
+
+  if [ -z "$CDPARANOIA" ] || [ -z "$OGGENC" ]; then
+    cat<<EOF >&2
+You don't have the tools needed to copy the music.  Please ensure that you
+have 'cdparanoia' and 'oggenc' (from vorbis-tools) in your path or run with
+-M and try again.
+EOF
+    return 1
+  fi
+
+  return 0
+}
+
+check_source()
+{
+  if [ -z "$SOURCE" ]; then
+    echo "Source not specified.  Try --help." >&2
+    exit 1
+  fi
+  if ! [ -d "$SOURCE" ]; then
+    echo "$SOURCE doesn't exist!" >&2
+    return 1
+  fi
+
+  if [ -d "$SOURCE/game" ]; then
+    SOURCE="$SOURCE/game"
+    return 0
+  fi
+
+  echo "$SOURCE does not contain the data from the game!" >&2
+  return 1
+}
+
+check_target()
+{
+  if [ -z "$TARGET" ]; then
+    echo "Target not specified.  Try --help." >&2
+    exit 1
+  fi
+
+  if [ -d "$TARGET" ]; then
+    local file_count=`ls "$TARGET" | wc -l | sed 's/[^0-9]//g'` || return 1
+
+    if [ "x$file_count" != "x0" ]; then
+      echo "The target directory is not empty!" >&2
+      return 1
+    fi
+  fi
+
+  install -v -d "$TARGET" || return 1
+  OWN_TARGET="yes"
+
+  return 0
+}
+
+copy_music()
+{
+  if [ "$WITH_MUSIC" = "no" ]; then
+    return 0
+  fi
+
+  install -v -d "$TARGET/music" || return 1
+
+  for track_number in 1 2 3; do
+    local cd_number=$(($track_number+1))
+    local track_wav="$TARGET/music/track_$track_number.wav"
+    local track_ogg="$TARGET/music/track_$track_number.ogg"
+    "$CDPARANOIA" "$cd_number" "$track_wav" || return 1
+    "$OGGENC" -b 192 "$track_wav" || return 1
+    rm -vf "$track_wav" || return 1
+    chmod 0644 "$track_ogg" || return 1
+  done
+
+  return 0
+}
+
+install_directory()
+{
+  local src="$1"
+  local dst="$2"
+
+  install -v -d "$dst" || return 1
+
+  find "$src" -mindepth 1 -maxdepth 1 -type f \
+    | while read file; do
+        local bn=`basename "$file"`
+	install -v -m 0644 "$file" "$dst/$bn" || return 1
+      done
+
+  find "$src" -mindepth 1 -maxdepth 1 -type d \
+    | while read subdir; do
+        local bn=`basename "$subdir"`
+	install_directory "$subdir" "$dst/$bn" || return 1
+      done
+
+  return 0
+}
+
+copy_data()
+{
+  for dir in data levels maps qdata sound; do
+    install_directory "$SOURCE/$dir" "$TARGET/$dir" || return 1
+  done
+
+  local ld="$SOURCE/language/$LANG"
+
+  install -v -d "$TARGET/intro" || return 1
+
+  install -v -m 0644 "$ld/text.dat" "$TARGET/data" || return 1
+  install -v -m 0644 "$ld/intro.smk" "$TARGET/intro" || return 1
+  install -v -m 0644 "$ld/syn_ele.smk" "$TARGET/data" || return 1
+  install -v -m 0644 "$ld/chu_ele.smk" "$TARGET/data" || return 1
+
+  install -v -m 0644 "$ld/sound.dat" "$TARGET/sound" || return 1
+  install -v -m 0644 "$ld/alltext.wad" "$TARGET/qdata" || return 1
+  install -v -m 0644 "$ld/alltext.idx" "$TARGET/qdata" || return 1
+
+  return 0
+}
+
+clean_data()
+{
+  rm -vrf "$TARGET/qdata/sound"
+  find "$TARGET/sound" -mindepth 1 -maxdepth 1 -type f ! -iname '*.dat' \
+    | while read file; do
+	rm -vf "$file"
+      done
+  return 0
+}
+
+check_language()
+{
+  case "$LANG" in
+    eng)
+      LANG_NAME="English"
+      ;;
+    fre)
+      LANG_NAME="French"
+      ;;
+    ita)
+      LANG_NAME="Italian"
+      ;;
+    spa)
+      LANG_NAME="Spanish"
+      ;;
+    swe)
+      LANG_NAME="Swedish"
+      ;;
+    *)
+      echo "Unsupported language: $LANG." >&2
+      return 1
+      ;;
+  esac
+  return 0
+}
+
+create_config_ini()
+{
+  cat<<EOF >"$TARGET/config.ini"
+CD="D:\\GAME\\"
+InstallDrive="C:\\"
+Language="$LANG_NAME"
+Intro="Max"
+Anims="Max"
+Sound="Max"
+Levels="Max"
+Data="Max"
+Maps="Max"
+DOS="Max"
+EOF
+  [ $? -eq 0 ] || return 1
+  return 0
+}
+
+error()
+{
+  if [ "$OWN_TARGET" = "yes" ]; then
+    echo "Removing target directory."
+    rm -rf "$TARGET"
+  fi
+  echo "Failed to install data (consult the above error messages)."
+  exit 1
+}
+
+check_source || error
+check_music_tools || error
+check_language || error
+check_target || error
+copy_music || error
+copy_data || error
+clean_data || error
+create_config_ini || error
+
+echo "Data successfully installed."
