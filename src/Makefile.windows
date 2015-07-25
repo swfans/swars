@@ -10,7 +10,7 @@ CPPFLAGS = -C -DNEED_UNDERSCORE=1
 LDFLAGS	 =
 MKWFLAGS = -u
 LIBS	 = -lmsvcrt $(shell sdl-config --libs) -lOpenAL32 -lvorbisfile -lvorbis -logg -lpng -lz
-RM		 = rm
+RM		 = rm -f
 ECHO     = @echo
 RENAME	 = fnmap_windows.conf
 TARGET	 = ../bin/swars.exe
@@ -38,6 +38,7 @@ OBJS = \
 	../obj/sound_util.o \
 	../obj/oggvorbis.o \
 	../obj/swars.o \
+	../obj/bflib_fileio.o \
 	../obj/timer.o \
 	../obj/unix.o \
 	../obj/util.o \
@@ -48,7 +49,7 @@ OBJS = \
 	../obj/wrappers_util.o \
 	$(RES)
 
-.PRECIOUS: ../src/swars.s
+.PRECIOUS: ../src/%.s
 
 all: $(TARGET)
 

@@ -153,7 +153,7 @@ handle_motion_event (const SDL_MouseMotionEvent *ev)
   transform_mouse (&mouse_x_delta, &mouse_y_delta);
 
   asm volatile
-    ("call mouse_correct_to_within_bounds;"
+    ("call adjust_point;"
      "call func_e9e58;"
      "call func_e9ba0"
      : : "a" (&mouse_x), "d" (&mouse_y));

@@ -55,7 +55,7 @@ call_e0d00 (int x, int y, int w, int h)
   asm volatile
     ("push %%ebx;"
      "mov  %2,%%ebx;"
-     "call func_e0d00;"
+     "call LbScreenSetGraphicsWindow_;"
      "pop  %%ebx"
      : : "a" (x), "d" (y), "g" (w), "c" (h));
 }
