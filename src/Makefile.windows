@@ -16,11 +16,11 @@ RENAME	 = fnmap_windows.conf
 TARGET	 = ../bin/swars.exe
 WINDRES  = windres.exe
 
-ENABLE_DEBUG = 1
+DEBUG = 1
 
 MKW = $(PYTHON) ../util/mkwrappers
 
-ifeq ($(ENABLE_DEBUG),1)
+ifeq ($(DEBUG),1)
   MKWFLAGS += -g
   CFLAGS += -g -O0 -DDEBUG
   #ASFLAGS += -g
@@ -58,6 +58,12 @@ all: $(TARGET)
 	-$(ECHO) 'Finished building: $<'
 	-$(ECHO) ' '
 
+../obj/%.o: ../obj/%.s
+	-$(ECHO) 'Building intermediate: $<'
+	$(CPP) $(CPPFLAGS) "$<" | $(AS) $(ASFLAGS) -o "$@"
+	-$(ECHO) 'Finished building: $<'
+	-$(ECHO) ' '
+
 ../obj/%.o: ../src/%.c
 	-$(ECHO) 'Building file: $<'
 	$(CC) -c $(CFLAGS) -o"$@" "$<"
@@ -67,19 +73,19 @@ all: $(TARGET)
 $(TARGET): $(OBJS)
 	$(CC) -o $(TARGET) $(LDFLAGS) $(OBJS) $(LIBS)
 
-../src/wrappers_util.s: ../conf/wrappers_util.conf ../conf/$(RENAME)
+../obj/wrappers_util.s: ../conf/wrappers_util.conf ../conf/$(RENAME)
 	$(MKW) $(MKWFLAGS) -o "$@" -r ../conf/$(RENAME) \
 	       ../conf/wrappers_util.conf
 
-../src/wrappers_dos.s: ../conf/wrappers_dos.conf ../conf/$(RENAME)
+../obj/wrappers_dos.s: ../conf/wrappers_dos.conf ../conf/$(RENAME)
 	$(MKW) $(MKWFLAGS) -o "$@" -r ../conf/$(RENAME) \
 	       ../conf/wrappers_dos.conf
 
-../src/wrappers_game.s: ../conf/wrappers_game.conf ../conf/$(RENAME)
+../obj/wrappers_game.s: ../conf/wrappers_game.conf ../conf/$(RENAME)
 	$(MKW) $(MKWFLAGS) -o "$@" -r ../conf/$(RENAME) \
 	       ../conf/wrappers_game.conf
 
-../src/wrappers_libc.s: ../conf/wrappers_libc.conf ../conf/$(RENAME)
+../obj/wrappers_libc.s: ../conf/wrappers_libc.conf ../conf/$(RENAME)
 	$(MKW) $(MKWFLAGS) -o "$@" -r ../conf/$(RENAME) \
 	       ../conf/wrappers_libc.conf
 
@@ -87,5 +93,5 @@ $(RES):	$(RC)
 	$(WINDRES) -i $(RC) -I rc -o $(RES) -O coff
 
 clean:
-	$(RM) $(TARGET) $(OBJS) ../src/wrappers_*.s
+	$(RM) $(TARGET) $(OBJS) ../obj/wrappers_*.s
 

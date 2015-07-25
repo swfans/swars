@@ -21,7 +21,7 @@
 #include <windows.h> // include for version info constants
 #include "../src/windows.config.h" // define values for version info
 
-A ICON "../icons/swars.ico"
+A ICON "swars.ico"
 
 // Create version info block, using defines from the header file
 1 VERSIONINFO
