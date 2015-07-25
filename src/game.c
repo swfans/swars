@@ -45,6 +45,7 @@ game_initialise (void)
 {
   char buffer[FILENAME_MAX];
 
+
   if (SDL_Init (SDL_INIT_JOYSTICK | SDL_INIT_VIDEO
 		| SDL_INIT_NOPARACHUTE) != 0)
     {

@@ -34,9 +34,12 @@ struct MemoryBlockNode
 
 typedef struct MemoryBlockNode MemoryBlockNode;
 
+#pragma pack(1)
 
 extern MemoryBlock     memory_blocks[TABLE_SIZE];
 extern MemoryBlockNode memory_block_nodes[TABLE_SIZE];
+
+#pragma pack()
 
 static size_t
 get_block_count (void)

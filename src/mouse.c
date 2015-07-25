@@ -4,6 +4,8 @@
 #include "display.h"
 #include "mouse.h"
 
+#pragma pack(1)
+
 extern uint32_t	mouse_installed;
 extern int32_t	mouse_x;
 extern int32_t	mouse_y;
@@ -22,6 +24,8 @@ extern bool	mouse_middle_press_locked;
 extern bool	mouse_left_release_locked;
 extern bool	mouse_middle_release_locked;
 extern bool	mouse_right_release_locked;
+
+#pragma pack()
 
 static void
 transform_mouse (int32_t *x, int32_t *y)

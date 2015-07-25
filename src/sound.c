@@ -35,10 +35,13 @@ void func_112910 (SoundPCMDriver *driver);
 SoundPCMDriver *ail_create_dig_driver (SoundDriver *driver,
 				       const SoundIOParameters *iop);
 
+#pragma pack(1)
 
 extern uint16_t		sound_volume;
 extern uint16_t		sound_tension_music_volume;
 extern uint16_t		sound_music_volume;
+
+#pragma pack()
 
 static bool		sound_initialised	= false;
 static SoundPCMDriver  *sound_driver		= NULL;
@@ -141,7 +144,7 @@ create_sources (void)
       goto err;
     }
 
-#ifdef ENABLE_DEBUG
+#ifdef DEBUG
   printf ("OpenAL: Created %zu sound sources.\n", sound_source_count);
 #endif
 

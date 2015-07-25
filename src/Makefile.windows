@@ -3,79 +3,89 @@ CC	 = gcc
 CPP	 = cpp
 PYTHON	 = python
 RC       = ../res/swars_stdres.rc
-RES      = swars.res
+RES      = ../obj/swars_stdres.res
 ASFLAGS	 =
 CFLAGS	 = -include windows.config.h -Wall -Wextra -Wno-unused-parameter $(shell sdl-config --cflags)
 CPPFLAGS = -C -DNEED_UNDERSCORE=1
 LDFLAGS	 =
 MKWFLAGS = -u
 LIBS	 = -lmsvcrt $(shell sdl-config --libs) -lOpenAL32 -lvorbisfile -lvorbis -logg -lpng -lz
-RM	 = rm
+RM		 = rm
+ECHO     = @echo
 RENAME	 = fnmap_windows.conf
-TARGET	 = swars.exe
+TARGET	 = ../bin/swars.exe
 WINDRES  = windres.exe
 
-ENABLE_DEBUG = 0
+ENABLE_DEBUG = 1
 
 MKW = $(PYTHON) ../util/mkwrappers
 
-#ifeq ($(ENABLE_DEBUG),1)
-#  MKWFLAGS += -g
-#  CFLAGS += -g -O0 -DENABLE_DEBUG
-#endif
+ifeq ($(ENABLE_DEBUG),1)
+  MKWFLAGS += -g
+  CFLAGS += -g -O0 -DDEBUG
+  #ASFLAGS += -g
+endif
 
-OBJ = \
-	display.o \
-	dos.o \
-	game.o \
-	keyboard.o \
-	main.o \
-	memory.o \
-	mouse.o \
-	sound.o \
-	sound_util.o \
-	oggvorbis.o \
-	swars.o \
-	timer.o \
-	unix.o \
-	util.o \
-	windows.o \
-	wrappers_dos.o \
-	wrappers_game.o \
-	wrappers_libc.o \
-	wrappers_util.o \
+OBJS = \
+	../obj/display.o \
+	../obj/dos.o \
+	../obj/game.o \
+	../obj/keyboard.o \
+	../obj/main.o \
+	../obj/memory.o \
+	../obj/mouse.o \
+	../obj/sound.o \
+	../obj/sound_util.o \
+	../obj/oggvorbis.o \
+	../obj/swars.o \
+	../obj/timer.o \
+	../obj/unix.o \
+	../obj/util.o \
+	../obj/windows.o \
+	../obj/wrappers_dos.o \
+	../obj/wrappers_game.o \
+	../obj/wrappers_libc.o \
+	../obj/wrappers_util.o \
 	$(RES)
+
+.PRECIOUS: ../src/swars.s
 
 all: $(TARGET)
 
-.s.o:
-	$(CPP) $(CPPFLAGS) $< | $(AS) $(ASFLAGS) -o $@
+../obj/%.o: ../src/%.s
+	-$(ECHO) 'Building file: $<'
+	$(CPP) $(CPPFLAGS) "$<" | $(AS) $(ASFLAGS) -o "$@"
+	-$(ECHO) 'Finished building: $<'
+	-$(ECHO) ' '
 
-.c.o:
-	$(CC) -c -o $@ $(CFLAGS) $<
+../obj/%.o: ../src/%.c
+	-$(ECHO) 'Building file: $<'
+	$(CC) -c $(CFLAGS) -o"$@" "$<"
+	-$(ECHO) 'Finished building: $<'
+	-$(ECHO) ' '
 
-$(TARGET): $(OBJ)
-	$(CC) -o $(TARGET) $(LDFLAGS) $(OBJ) $(LIBS)
+$(TARGET): $(OBJS)
+	$(CC) -o $(TARGET) $(LDFLAGS) $(OBJS) $(LIBS)
 
-wrappers_util.s: ../conf/wrappers_util.conf ../conf/$(RENAME)
-	$(MKW) $(MKWFLAGS) -o $@ -r ../conf/$(RENAME) \
+../src/wrappers_util.s: ../conf/wrappers_util.conf ../conf/$(RENAME)
+	$(MKW) $(MKWFLAGS) -o "$@" -r ../conf/$(RENAME) \
 	       ../conf/wrappers_util.conf
 
-wrappers_dos.s: ../conf/wrappers_dos.conf ../conf/$(RENAME)
-	$(MKW) $(MKWFLAGS) -o $@ -r ../conf/$(RENAME) \
+../src/wrappers_dos.s: ../conf/wrappers_dos.conf ../conf/$(RENAME)
+	$(MKW) $(MKWFLAGS) -o "$@" -r ../conf/$(RENAME) \
 	       ../conf/wrappers_dos.conf
 
-wrappers_game.s: ../conf/wrappers_game.conf ../conf/$(RENAME)
-	$(MKW) $(MKWFLAGS) -o $@ -r ../conf/$(RENAME) \
+../src/wrappers_game.s: ../conf/wrappers_game.conf ../conf/$(RENAME)
+	$(MKW) $(MKWFLAGS) -o "$@" -r ../conf/$(RENAME) \
 	       ../conf/wrappers_game.conf
 
-wrappers_libc.s: ../conf/wrappers_libc.conf ../conf/$(RENAME)
-	$(MKW) $(MKWFLAGS) -o $@ -r ../conf/$(RENAME) \
+../src/wrappers_libc.s: ../conf/wrappers_libc.conf ../conf/$(RENAME)
+	$(MKW) $(MKWFLAGS) -o "$@" -r ../conf/$(RENAME) \
 	       ../conf/wrappers_libc.conf
 
 $(RES):	$(RC)
 	$(WINDRES) -i $(RC) -I rc -o $(RES) -O coff
 
 clean:
-	$(RM) $(TARGET) *.o wrappers_*.S
+	$(RM) $(TARGET) $(OBJS) ../src/wrappers_*.s
 

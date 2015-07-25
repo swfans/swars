@@ -6,12 +6,16 @@
 
 #define KEYBOARD_BUFFER_SIZE 16
 
+#pragma pack(1)
+
 extern uint32_t	keyboard_buffer[KEYBOARD_BUFFER_SIZE];
 extern uint32_t	keyboard_buffer_read_index;
 extern uint32_t	keyboard_buffer_write_index;
 extern uint32_t keyboard_last_key;
 extern uint32_t keyboard_last_key_prefixed;
 extern uint8_t 	keyboard_table[256];
+
+#pragma pack()
 
 static uint8_t
 sdlkey_to_scan_code (SDLKey key)

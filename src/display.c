@@ -4,6 +4,8 @@
 #include "display.h"
 #include "util.h"
 
+#pragma pack(1)
+
 // Internal mode list
 struct Display_InternalModeEntry
 {
@@ -39,6 +41,7 @@ extern int32_t mouse_pointer_y;
 extern int32_t mouse_pointer_width;
 extern int32_t mouse_pointer_height;
 
+#pragma pack()
 
 static SDL_Surface *display_screen;
 static bool	    display_full_screen = false;
@@ -190,7 +193,7 @@ display_set_mode (uint16_t mode, uint32_t width, uint32_t height,
     }
 
 
-#ifdef ENABLE_DEBUG
+#ifdef DEBUG
   printf ("SDL_SetVideoMode(%i, %i, %i, SDL_SWSURFACE) - %s\n",
           width, height, internal_graphic_mode_list[mode].bpp,
           internal_graphic_mode_list[mode].name);
@@ -290,7 +293,7 @@ display_update (void)
       for (j = 0; j < 480; j++)
         {
           for (i = 0; i < 640; i+=2)
-            {        
+            {
               // Do not touch this formula
               int input_xy = ((j * 200) / 480) * 320 + i / 2;
               int output_xy = j * 640 + i;
@@ -298,7 +301,7 @@ display_update (void)
               poutput[output_xy]     = pinput[input_xy];
               poutput[output_xy + 1] = pinput[input_xy];
             }
-        }    
+        }
   }
 
   SDL_Flip (display_screen);
@@ -382,7 +385,7 @@ display_get_palette (SDL_Color *colours)
   memcpy (colours, display_palette, sizeof (display_palette));
 }
 
-void 
+void
 display_set_lowres_stretch (bool stretch)
 {
   display_lowres_stretch = stretch;

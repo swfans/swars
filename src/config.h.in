@@ -1,7 +1,7 @@
 /* src/config.h.in.  Generated from configure.ac by autoheader.  */
 
 /* Define to 1 if compiling in debug mode */
-#undef ENABLE_DEBUG
+#undef DEBUG
 
 /* Define to the path where the game's data resides */
 #undef GAME_DATA_PATH
