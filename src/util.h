@@ -21,8 +21,10 @@
 #endif
 
 #ifdef _WIN32
+#ifndef strcasecmp
 # define strcasecmp stricmp
 # define strncasecmp strnicmp
+#endif
 # define mkdir(path, mode) mkdir (path)
 #endif
 

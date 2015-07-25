@@ -2,14 +2,14 @@ AS	 = as
 CC	 = gcc
 CPP	 = cpp
 PYTHON	 = python
-RC       = swars.rc
+RC       = ../res/swars_stdres.rc
 RES      = swars.res
 ASFLAGS	 =
 CFLAGS	 = -include windows.config.h -Wall -Wextra -Wno-unused-parameter $(shell sdl-config --cflags)
 CPPFLAGS = -C -DNEED_UNDERSCORE=1
 LDFLAGS	 =
 MKWFLAGS = -u
-LIBS	 = -lmsvcrt $(shell sdl-config --libs) OpenAL32.lib d:\bin\gcc\lib\libvorbisfile.a d:\bin\gcc\lib\libvorbis.a d:\bin\gcc\lib\libogg.a -lpng -lz
+LIBS	 = -lmsvcrt $(shell sdl-config --libs) -lOpenAL32 -lvorbisfile -lvorbis -logg -lpng -lz
 RM	 = rm
 RENAME	 = fnmap_windows.conf
 TARGET	 = swars.exe
@@ -34,7 +34,7 @@ OBJ = \
 	mouse.o \
 	sound.o \
 	sound_util.o \
-        oggvorbis.o \
+	oggvorbis.o \
 	swars.o \
 	timer.o \
 	unix.o \
@@ -45,6 +45,8 @@ OBJ = \
 	wrappers_libc.o \
 	wrappers_util.o \
 	$(RES)
+
+all: $(TARGET)
 
 .s.o:
 	$(CPP) $(CPPFLAGS) $< | $(AS) $(ASFLAGS) -o $@
