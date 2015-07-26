@@ -39,6 +39,7 @@ OBJS = \
 	../obj/oggvorbis.o \
 	../obj/swars.o \
 	../obj/bflib_fileio.o \
+	../obj/bflib_sndlib.o \
 	../obj/timer.o \
 	../obj/unix.o \
 	../obj/util.o \

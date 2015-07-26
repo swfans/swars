@@ -1,10 +1,10 @@
 void
-func_111840 (void)
+AIL_start_ (void)
 {
   if (data_15aa4c != 0) /* 32bit */
     return;
 
-  memory_lock_pages (&func_111840, &func_112280);
+  VMM_lock_range (&AIL_start_, &AIL_end_);
 
   func_10f3d0 (&data_1ed6b0, 0x40);
   func_10f3d0 (&data_1ed80c, 0x4c);

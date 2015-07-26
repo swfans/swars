@@ -31,8 +31,8 @@ struct SourceDescriptor
 typedef struct SourceDescriptor SourceDescriptor;
 
 
-void func_112910 (SoundPCMDriver *driver);
-SoundPCMDriver *ail_create_dig_driver (SoundDriver *driver,
+void SS_serve (SoundPCMDriver *driver);
+SoundPCMDriver *SS_construct_DIG_driver (SoundDriver *driver,
 				       const SoundIOParameters *iop);
 
 #pragma pack(1)
@@ -489,7 +489,7 @@ sound_install_dig_driver_file (const char *fname,
   pcmdrv->timer = timer_register_callback ((TimerCallback) update_sound);
   timer_set_user_data (pcmdrv->timer, pcmdrv);
 
-  pcmdrv->timer = timer_register_callback ((TimerCallback) &func_112910);
+  pcmdrv->timer = timer_register_callback ((TimerCallback) &SS_serve);
   timer_set_user_data (pcmdrv->timer, pcmdrv);
 #endif
 

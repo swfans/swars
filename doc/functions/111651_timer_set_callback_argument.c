@@ -3,7 +3,7 @@ func_111651_set_callback_argument (uint32_t index, void *arg)
 {
   void *old_arg;
 
-  timer_lock_push ();
+  AIL_lock ();
 
   if (index != -1)
     {
@@ -11,7 +11,7 @@ func_111651_set_callback_argument (uint32_t index, void *arg)
       *(data_159fd8 + index) = arg;
     }
 
-  timer_lock_pop ();
+  AIL_unlock ();
 
   return old_arg;
 }

@@ -1,5 +1,5 @@
 bool
-func_118460 (void)
+EAL_init_realmode_mem (void)
 {
   if (data_1edb7a != 0) /* 16bit */
     return 1;

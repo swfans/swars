@@ -1,9 +1,9 @@
 int
-ailimpl_install_dig_ini (SoundPCMDriver **drv)
+AIL_API_install_DIG_INI (SoundPCMDriver **drv)
 {
   //sub    $0x118,%esp
-  
-  if (ail_api_read_ini (&esp_4, &data_1e5a30_filename) == 0)
+
+  if (AIL_read_INI (&esp_4, &data_1e5a30_filename) == 0)
     {
       memcpy (&data_1ed6f0, &data_161a58, 0x1d);
       return 1;

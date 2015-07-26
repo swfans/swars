@@ -1,7 +1,7 @@
 void
 func_112110 (void)
 {
-  func_111840 ();
+  AIL_start_ ();
   func_101ae0 (0x0, 0xc8);
   func_101ae0 (0x1, 0x1);
   func_101ae0 (0x2, 0x8000);
@@ -31,7 +31,7 @@ func_112110 (void)
 
   data_15a032 = (uint16_t) ds;
   (uint16_t) es = data_15032;
-  func_11181a (); /* locks some memory pages */
+  AILA_VMM_lock (); /* locks some memory pages */
 
   15a02a_lock = 0; /* 32bit */
   data_15a02e = 0; /* 32bit */
