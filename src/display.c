@@ -3,6 +3,7 @@
 
 #include "display.h"
 #include "util.h"
+#include "bflib_video.h"
 
 #pragma pack(1)
 
@@ -22,17 +23,7 @@ typedef struct Display_InternalModeEntry Display_InternalModeEntry;
 
 extern Display_InternalModeEntry internal_graphic_mode_list[];
 
-// Display buffer
-extern void *display_buffer;
-
-// Width/height stuff
-extern uint32_t display_width, display_height;
-extern uint32_t display_vesa_width, display_vesa_height;
-
 // Misc stuff
-extern uint16_t display_initial_mode, data_1e2eb4, display_mode;
-extern uint8_t data_1e2ec5;
-extern bool display_extended_mode;
 extern uint32_t display_good;
 
 // Drawing of the mouse cursor
@@ -132,24 +123,24 @@ display_set_mode (uint16_t mode, uint32_t width, uint32_t height,
   // call func_e9498
   call_display_set_mode_setup_mouse ();
 
-  // display_initial_mode which is DWORD 1E2EB6 is used in
+  // lbDisplay.OldVideoMode which is DWORD 1E2EB6 is used in
   // 000ED764 sub_ED764 to probably get back to text mode
   // I'm setting it to 0xFF for now
-  if (!display_initial_mode)
-    display_initial_mode = 0xFF;
+  if (!lbDisplay.OldVideoMode)
+    lbDisplay.OldVideoMode = 0xFF;
 
-  // We are using only display_extended_mode = false
+  // We are using only lbDisplay.VesaIsSetUp = false
 
   /*  if(internal_graphic_mode_list[mode].mode < 256)
   {
-    display_extended_mode = false;
+    lbDisplay.VesaIsSetUp = false;
   }
   else
   {
-    // display_extended_mode = true;
-    display_extended_mode = false; // Defaulting to false
+    // lbDisplay.VesaIsSetUp = true;
+    lbDisplay.VesaIsSetUp = false; // Defaulting to false
   }*/
-  display_extended_mode = false;
+  lbDisplay.VesaIsSetUp = false;
 
   // Setting mode
   if (display_screen != NULL)
@@ -211,30 +202,30 @@ display_set_mode (uint16_t mode, uint32_t width, uint32_t height,
   if (display_stretch_buffer != NULL)
     {
       // Set the temporary buffer
-      display_buffer = display_stretch_buffer;
+      lbDisplay.PhysicalScreen = display_stretch_buffer;
     }
   else
     {
       // Set the good buffer
-      display_buffer = display_screen->pixels;
+      lbDisplay.PhysicalScreen = display_screen->pixels;
     }
 
   // Setup some global variables
-  display_vesa_width  = internal_graphic_mode_list[mode].width;
-  display_vesa_height = internal_graphic_mode_list[mode].height;
-  display_width  = width;
-  display_height = height;
-  display_mode   = mode;
+  lbDisplay.PhysicalScreenWidth  = internal_graphic_mode_list[mode].width;
+  lbDisplay.PhysicalScreenHeight = internal_graphic_mode_list[mode].height;
+  lbDisplay.GraphicsScreenWidth  = width;
+  lbDisplay.GraphicsScreenHeight = height;
+  lbDisplay.ScreenMode   = mode;
 
   // No idea what is this
   // TODO: check if something breaks if this is removed
-  data_1e2eb4 = 0;
-  data_1e2ec5 = 0;
+  lbDisplay.DrawFlags = 0;
+  lbDisplay.DrawColour = 0;
 
   // Call funcitons that recalculate some buffers
   // They can be switched to C++ later, but it's not needed
-  call_e0d00 (0, 0, display_width, display_height);
-  call_ef4f0 (0, 0, display_width, display_height);
+  call_e0d00 (0, 0, lbDisplay.GraphicsScreenWidth, lbDisplay.GraphicsScreenHeight);
+  call_ef4f0 (0, 0, lbDisplay.GraphicsScreenWidth, lbDisplay.GraphicsScreenHeight);
 
   // Setup palette
   if (palette != NULL)
@@ -319,7 +310,7 @@ display_finalise (void)
   unlock_screen ();
   SDL_FreeSurface (display_screen);
   display_screen = NULL;
-  display_buffer = NULL;
+  lbDisplay.PhysicalScreen = NULL;
 }
 
 void
@@ -334,7 +325,7 @@ display_set_full_screen (bool full_screen)
 void
 display_get_size (size_t *width, size_t *height)
 {
-  if (display_buffer == NULL)
+  if (lbDisplay.PhysicalScreen == NULL)
     {
       if (width != NULL)
         *width  = 0;
@@ -346,16 +337,16 @@ display_get_size (size_t *width, size_t *height)
     }
 
   if (width != NULL)
-    *width  = display_width;
+    *width  = lbDisplay.GraphicsScreenWidth;
 
   if (height != NULL)
-    *height = display_height;
+    *height = lbDisplay.GraphicsScreenHeight;
 }
 
 void
 display_get_physical_size (size_t *width, size_t *height)
 {
-  if (display_buffer == NULL || display_screen == NULL)
+  if (lbDisplay.PhysicalScreen == NULL || display_screen == NULL)
     {
       if (width != NULL)
         *width  = 0;
@@ -376,7 +367,7 @@ display_get_physical_size (size_t *width, size_t *height)
 void *
 display_get_buffer (void)
 {
-  return display_buffer;
+  return lbDisplay.PhysicalScreen;
 }
 
 void

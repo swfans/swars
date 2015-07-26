@@ -77,13 +77,13 @@
 #define PACKAGE_TARNAME "swars"
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "0.3"
+#define PACKAGE_VERSION VER_STRING
 
 /* Define to 1 if you have the ANSI C header files. */
 #define STDC_HEADERS 1
 
 /* Version number of package */
-#define VERSION "0.3"
+#define VERSION VER_STRING
 
 /* Define to 1 if running on a UNIX-like system where __unix__ is missing */
 /* #undef __unix__ */

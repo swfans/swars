@@ -4,7 +4,7 @@ func_e9e58 (uint32_t arg0)
   if (!mouse_installed)
     return -1;
 
-  if (data_1e409c == mouse_x && data_1e40a0 == mouse_y)
+  if (data_1e409c == lbDisplay__MMouseX && data_1e40a0 == lbDisplay__MMouseY)
     {
       if (arg0 == NULL)
 	return 1;
@@ -15,9 +15,9 @@ func_e9e58 (uint32_t arg0)
 
   src_ptr = &data_1e309c;
 
-  if (!display_extended_mode) /* 8bit */
+  if (!lbDisplay__VesaIsSetUp) /* 8bit */
     {
-      bufp = display_buffer + data_1e3098;	/* cursor location in memory */
+      bufp = PhysicalScreen + data_1e3098;	/* cursor location in memory */
       cur_height = data_1e3094;			/* guess: cursor height */
 
       for (;;)
@@ -45,7 +45,7 @@ func_e9e58 (uint32_t arg0)
     {
       ebp_4 = data_1e3098 >> 16;
       func_eee04 ((int16_t) ebp_4);
-      bufp = display_buffer + (data_1e3098 & 0xffff);
+      bufp = PhysicalScreen + (data_1e3098 & 0xffff);
       cur_height = data_1e3094;	/* cursor height? */
 
       for (;;)

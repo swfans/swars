@@ -3,32 +3,18 @@
 
 #include "display.h"
 #include "mouse.h"
+#include "bflib_video.h"
 
 #pragma pack(1)
 
 extern uint32_t	mouse_installed;
-extern int32_t	mouse_x;
-extern int32_t	mouse_y;
 extern int32_t	mouse_x_delta;
 extern int32_t	mouse_y_delta;
-extern int32_t	mouse_press_x;
-extern int32_t	mouse_press_y;
-extern int32_t	mouse_release_x;
-extern int32_t	mouse_release_y;
-extern bool	mouse_left_pressed;
-extern bool	mouse_middle_pressed;
-extern bool	mouse_right_pressed;
-extern bool	mouse_left_press_locked;
-extern bool	mouse_right_press_locked;
-extern bool	mouse_middle_press_locked;
-extern bool	mouse_left_release_locked;
-extern bool	mouse_middle_release_locked;
-extern bool	mouse_right_release_locked;
 
 #pragma pack()
 
 static void
-transform_mouse (int32_t *x, int32_t *y)
+transform_mouse (long *x, long *y)
 {
   size_t phys_x, phys_y;
   size_t disp_x, disp_y;
@@ -56,15 +42,15 @@ store_button_coordinates (const SDL_MouseButtonEvent *ev)
 {
   if (ev->type == SDL_MOUSEBUTTONDOWN)
     {
-      mouse_press_x = ev->x;
-      mouse_press_y = ev->y;
-      transform_mouse (&mouse_press_x, &mouse_press_y);
+      lbDisplay.MouseX = ev->x;
+      lbDisplay.MouseY = ev->y;
+      transform_mouse (&lbDisplay.MouseX, &lbDisplay.MouseY);
     }
   else
     {
-      mouse_release_x = ev->x;
-      mouse_release_y = ev->y;
-      transform_mouse (&mouse_release_x, &mouse_release_y);
+      lbDisplay.RMouseX = ev->x;
+      lbDisplay.RMouseY = ev->y;
+      transform_mouse (&lbDisplay.RMouseX, &lbDisplay.RMouseY);
     }
 }
 
@@ -75,34 +61,34 @@ handle_button_event (const SDL_MouseButtonEvent *ev)
     {
       if (ev->button == SDL_BUTTON_LEFT)
 	{
-	  mouse_left_pressed = true;
+	  lbDisplay.MLeftButton = true;
 
-	  if (!mouse_left_press_locked)
+	  if (!lbDisplay.LeftButton)
 	    {
-	      mouse_left_press_locked = true;
-	      mouse_left_release_locked = false;
+	      lbDisplay.LeftButton = true;
+	      lbDisplay.RLeftButton = false;
 	      store_button_coordinates (ev);
 	    }
 	}
       else if (ev->button == SDL_BUTTON_MIDDLE)
 	{
-	  mouse_middle_pressed = true;
+	  lbDisplay.MMiddleButton = true;
 
-	  if (!mouse_middle_press_locked)
+	  if (!lbDisplay.MiddleButton)
 	    {
-	      mouse_middle_press_locked = true;
-	      mouse_middle_release_locked = false;
+	      lbDisplay.MiddleButton = true;
+	      lbDisplay.RMiddleButton = false;
 	      store_button_coordinates (ev);
 	    }
 	}
       else if (ev->button == SDL_BUTTON_RIGHT)
 	{
-	  mouse_right_pressed = true;
+	  lbDisplay.MRightButton = true;
 
-	  if (!mouse_right_press_locked)
+	  if (!lbDisplay.RightButton)
 	    {
-	      mouse_right_press_locked = true;
-	      mouse_right_release_locked = false;
+	      lbDisplay.RightButton = true;
+	      lbDisplay.RRightButton = false;
 	      store_button_coordinates (ev);
 	    }
 	}
@@ -111,31 +97,31 @@ handle_button_event (const SDL_MouseButtonEvent *ev)
     {
       if (ev->button == SDL_BUTTON_LEFT)
 	{
-	  mouse_left_pressed = false;
+	  lbDisplay.MLeftButton = false;
 
-	  if (!mouse_left_release_locked)
+	  if (!lbDisplay.RLeftButton)
 	    {
-	      mouse_left_release_locked = true;
+	      lbDisplay.RLeftButton = true;
 	      store_button_coordinates (ev);
 	    }
 	}
       else if (ev->button == SDL_BUTTON_MIDDLE)
 	{
-	  mouse_middle_pressed = false;
+	  lbDisplay.MMiddleButton = false;
 
-	  if (!mouse_middle_release_locked)
+	  if (!lbDisplay.RMiddleButton)
 	    {
-	      mouse_middle_release_locked = true;
+	      lbDisplay.RMiddleButton = true;
 	      store_button_coordinates (ev);
 	    }
 	}
       else if (ev->button == SDL_BUTTON_RIGHT)
 	{
-	  mouse_right_pressed = false;
+	  lbDisplay.MRightButton = false;
 
-	  if (!mouse_right_release_locked)
+	  if (!lbDisplay.RRightButton)
 	    {
-	      mouse_right_release_locked = true;
+	      lbDisplay.RRightButton = true;
 	      store_button_coordinates (ev);
 	    }
 	}
@@ -147,16 +133,16 @@ handle_motion_event (const SDL_MouseMotionEvent *ev)
 {
   mouse_x_delta = ev->xrel;
   mouse_y_delta = ev->yrel;
-  mouse_x = ev->x;
-  mouse_y = ev->y;
-  transform_mouse (&mouse_x, &mouse_y);
+  lbDisplay.MMouseX = ev->x;
+  lbDisplay.MMouseY = ev->y;
+  transform_mouse (&lbDisplay.MMouseX, &lbDisplay.MMouseY);
   transform_mouse (&mouse_x_delta, &mouse_y_delta);
 
   asm volatile
     ("call adjust_point;"
      "call func_e9e58;"
      "call func_e9ba0"
-     : : "a" (&mouse_x), "d" (&mouse_y));
+     : : "a" (&lbDisplay.MMouseX), "d" (&lbDisplay.MMouseY));
 
 }
 

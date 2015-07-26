@@ -42,12 +42,12 @@ func_e926c (uint32_t arg0,
 
   memset (&data_1e40bc, 0xfe, 4096);
 
-  data_1e2e68 = 0; /* 32bit */
+  lbDisplay__MouseSprite = 0; /* 32bit */
   data_1e50bc = 0; /* 32bit */
 
   memset (&data_1e308c, 0, 4128);
 
-  if (e94fc_set_bounds (0, 0, display_width, display_height) != 1)
+  if (e94fc_set_bounds (0, 0, lbDisplay__GraphicsScreenWidth, lbDisplay__GraphicsScreenHeight) != 1)
     {
       1e3088_mouse_installed = 0; /* 32bit */
       return -1;
@@ -60,7 +60,7 @@ func_e926c (uint32_t arg0,
     }
 
   /* set pointer position? */
-  if (e9568_set_pointer_position (display_width / 2, display_height / 2) != 1)
+  if (e9568_set_pointer_position (lbDisplay__GraphicsScreenWidth / 2, lbDisplay__GraphicsScreenHeight / 2) != 1)
     {
       1e3088_mouse_installed = 0; /* 32bit */
       return -1;
