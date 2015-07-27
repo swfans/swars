@@ -40,6 +40,7 @@ OBJS = \
 	../obj/swars.o \
 	../obj/bflib_fileio.o \
 	../obj/bflib_sndlib.o \
+	../obj/bflib_render_trig.o \
 	../obj/timer.o \
 	../obj/unix.o \
 	../obj/util.o \
