@@ -46,35 +46,27 @@
 /* Name of package */
 #define PACKAGE "swars"
 
+/* Current version number */
 #define VER_MAJOR 0
 #define VER_MINOR 3
-#define VER_RELEASE 0
-#define VER_BUILD 0
-#define VER_STRING        "0.3.0.0"
-/* Program name, copyrights and file names */
-#define PROGRAM_NAME      "Syndicate Wars port"
-#define PROGRAM_FULL_NAME "Syndicate Wars portable binary"
-#define COMPANY_NAME      "Fan community"
-#define INTERNAL_NAME     PACKAGE_NAME
-#define LEGAL_COPYRIGHT   "Open Source"
-#define LEGAL_TRADEMARKS  "SW is a trademark of Bullfrog"
-#define FILE_VERSION VER_STRING
-#define FILE_DESCRIPTION PROGRAM_NAME
-#define ORIGINAL_FILENAME INTERNAL_NAME".exe"
-#define PRODUCT_NAME PROGRAM_FULL_NAME
-#define PRODUCT_VERSION    VER_STRING
+#define VER_RELEASE 1
+#define VER_BUILD 13
+#define VER_STRING        "0.3.1.13"
+
+/* One sentence description of the package */
+#define PACKAGE_DESCRIPTION "Syndicate Wars portable binary"
 
 /* Define to the address where bug reports for this package should be sent. */
 #define PACKAGE_BUGREPORT "gynvael@vexillium.org"
 
 /* Define to the full name of this package. */
-#define PACKAGE_NAME "swars"
+#define PACKAGE_NAME PACKAGE
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "swars 0.3"
+#define PACKAGE_STRING PACKAGE" "VER_STRING
 
 /* Define to the one symbol short name of this package. */
-#define PACKAGE_TARNAME "swars"
+#define PACKAGE_TARNAME PACKAGE
 
 /* Define to the version of this package. */
 #define PACKAGE_VERSION VER_STRING

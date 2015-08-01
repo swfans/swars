@@ -79,7 +79,7 @@ main (int argc, char **argv)
 
   process_options (&argc, &argv);
 
-  printf ("Syndicate Wars Port "VERSION"\n"
+  printf ("Syndicate Wars Port "VER_STRING"\n"
 	  "The original by Bullfrog\n"
 	  "Ported by Unavowed <unavowed@vexillium.org> "
 	  "and Gynvael Coldwind <gynvael@vexillium.org>\n"
