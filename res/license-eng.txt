@@ -1,0 +1,56 @@
+------------------------------------------------------------
+Content
+------------------------------------------------------------
+1. Syndicate Wars Port license
+2. Library licenses
+A. OpenAL (by Creative Labs, Inc.) license
+
+------------------------------------------------------------
+1. Syndicate Wars Port license
+------------------------------------------------------------
+All source code except the code in src/swars.S is licensed under the GNU
+General Public License, version 3 or any later version.  src/swars.S is a
+modified disassembled version of the original game's main.exe by Bullfrog. The
+project is distributed without charge and in good faith that it will be useful
+to those who purchased the original game but cannot play it anymore because
+they do not have access to an old DOS system.  However, should the original
+copyright holders complain, we will take down the code they have the rights to.
+If that happens, please stop distribution of this bundle.
+
+------------------------------------------------------------
+2. Library licenses
+------------------------------------------------------------
+(Please check out http://www.gnu.org/ for details)
+libpng - http://www.libpng.org/pub/png/src/libpng-LICENSE.txt
+libz - http://www.zlib.net/zlib_license.html
+
+vorbis-tools - GNU GENERAL PUBLIC LICENSE Version 2
+libvorbis - http://www.xiph.org/licenses/bsd/ 
+libogg - http://www.xiph.org/licenses/bsd/
+source available at: http://www.xiph.org/
+
+rip - GNU LESSER GENERAL PUBLIC LICENSE Version 2.1
+source available at: http://swars.vexillium.org/
+
+libSDL - GNU LESSER GENERAL PUBLIC LICENSE Version 2.1 or newer
+source available at: http://www.libsdl.org/
+
+akrip - GNU LESSER GENERAL PUBLIC LICENSE Version 2.1
+source available at: http://sourceforge.net/projects/cddarip/
+
+OpenAL (by Creative Labs, Inc.) - Scroll down for license
+
+------------------------------------------------------------
+A. OpenAL (by Creative Labs, Inc.) license
+------------------------------------------------------------
+Creative Labs, Inc. is providing you with this OpenAL32.dll installer and other OpenAL files ("Software").  You may use and freely integrate with your software applications and distribute such throughout the world at no cost or further obligation to Creative.
+
+NO WARRANTY 
+    	ANY USE BY YOU OF THE SOFTWARE IS AT YOUR OWN RISK. THE SOFTWARE IS PROVIDED FOR USE "AS IS" WITHOUT WARRANTY OF ANY KIND. TO THE MAXIMUM EXTENT PERMITTED BY LAW, CREATIVE DISCLAIMS ALL WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING, WITHOUT LIMITATION, IMPLIED WARRANTIES OR CONDITIONS OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. CREATIVE IS NOT OBLIGATED TO PROVIDE ANY UPDATES OR UPGRADES TO THE SOFTWARE.
+
+ 	No other entity or person is authorized to expand or alter this warranty or any other provisions herein. Creative does not warrant that the functions contained in the Software will meet your requirements or that the operation of the Software will be uninterrupted or error-free or free from malicious code. For purposes of this paragraph, "malicious code" means any program code designed to contaminate other computer programs or computer data, consume computer resources, modify, destroy, record, or transmit data, or in some other fashion usurp the normal operation of the computer, computer system, or computer network, including viruses, Trojan horses, droppers, worms, logic bombs, and the like. 
+
+	You assume full responsibility for the selection of the Software to achieve your intended results, and for the downloading, use and results obtained from the Software.  You also assume the entire risk as it applies to the quality and performance of the Software.  
+
+	IN NO EVENT WILL CREATIVE'S LIABILITY TO YOU OR ANY OTHER PERSON EVER EXCEED THE AMOUNT PAID BY YOU TO USE THE SOFTWARE, REGARDLESS OF THE FORM OF THE CLAIM.
+
