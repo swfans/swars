@@ -92,6 +92,9 @@ Section "Syndicate Wars Game" ; Section_0
   File libpng3.dll
   File zlib1.dll
   File SDL.dll
+  File libogg-0.dll
+  File libvorbis-0.dll
+  File libvorbisfile-3.dll
   WriteUninstaller $INSTDIR\unistall.exe
   StrCmp $selected_menu_shortcut 1 0 inst_game_menu_end
   CreateDirectory "$SMPROGRAMS\Vexillium"
