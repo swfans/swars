@@ -24,7 +24,7 @@ func_41950 ()
     {
       sprintf (esp + 8, "data/tex%02d.dat", ebx);
 
-      eax = df9e4_open_file (esp, 0x2); /* does open() and stuff */
+      eax = df9e4_FileOpenInclCD (esp, 0x2); /* does open() and stuff */
       edx = ebx + 1;
 
       if (eax == -1)
@@ -37,7 +37,7 @@ func_41950 ()
   if (ebx == 0)
     return;
 
-  eax = func_dc6a0 (edx << 16); /* allocate something */
+  eax = LbMemoryAlloc_ (edx << 16); /* allocate something */
 
   if (eax == NULL)
     {

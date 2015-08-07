@@ -225,7 +225,7 @@ GLOBAL_FUNC (LbFileLength_)
         mov    %eax,-0xc(%ebp)
         mov    -0xc(%ebp),%eax
         mov    $0x2,%edx
-        call   open_file
+        call   FileOpenInclCD
         mov    %eax,-0x8(%ebp)
         mov    -0x8(%ebp),%edx
         cmp    $0xffffffff,%edx
@@ -311,7 +311,7 @@ GLOBAL_FUNC (LbFileFindNext_)
         ret
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (open_file)
+GLOBAL_FUNC (FileOpenInclCD)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx

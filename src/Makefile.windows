@@ -44,6 +44,7 @@ OBJS = \
 	../obj/bflib_sndlib.o \
 	../obj/bflib_render_trig.o \
 	../obj/bflib_fmvids.o \
+	../obj/bflib_snd_cda.o \
 	../obj/timer.o \
 	../obj/unix.o \
 	../obj/util.o \

@@ -1,5 +1,5 @@
 void *
-func_dc6a0 (size_t size)
+LbMemoryAlloc_ (size_t size)
 {
   memory_preallocate ();
 
