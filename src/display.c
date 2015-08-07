@@ -57,7 +57,7 @@ call_ef4f0 (int x, int y, int w, int h)
   asm volatile
     ("push %%ebx;"
      "mov  %2,%%ebx;"
-     "call func_ef4f0;"
+     "call LbTextSetWindow_;"
      "pop  %%ebx"
      : : "a" (x), "d" (y), "g" (w), "c" (h));
 }
