@@ -8,7 +8,7 @@
 #pragma pack(1)
 
 // Internal mode list
-struct Display_InternalModeEntry
+/*struct ScreenModeInfo
 {
   uint16_t width;      // e.g. 320
   uint16_t height;     // e.g. 200
@@ -19,9 +19,9 @@ struct Display_InternalModeEntry
   char     name[0x18]; // e.g. MODE_320_200_8
 } __attribute__((packed));
 
-typedef struct Display_InternalModeEntry Display_InternalModeEntry;
+typedef struct ScreenModeInfo TbScreenModeInfo;*/
 
-extern Display_InternalModeEntry internal_graphic_mode_list[];
+extern TbScreenModeInfo lbScreenModeInfo[];
 
 // Misc stuff
 extern uint32_t display_good;
@@ -131,7 +131,7 @@ display_set_mode (uint16_t mode, uint32_t width, uint32_t height,
 
   // We are using only lbDisplay.VesaIsSetUp = false
 
-  /*  if(internal_graphic_mode_list[mode].mode < 256)
+  /*  if(lbScreenModeInfo[mode].mode < 256)
   {
     lbDisplay.VesaIsSetUp = false;
   }
@@ -159,7 +159,7 @@ display_set_mode (uint16_t mode, uint32_t width, uint32_t height,
     {
       // Init mode
       display_screen = SDL_SetVideoMode (640, 480,
-  				         internal_graphic_mode_list[mode].bpp,
+  				         lbScreenModeInfo[mode].BitsPerPixel,
                                          flags);
 
       // Allocate buffer
@@ -179,15 +179,15 @@ display_set_mode (uint16_t mode, uint32_t width, uint32_t height,
 
       // Init mode
       display_screen = SDL_SetVideoMode (width, height,
- 				         internal_graphic_mode_list[mode].bpp,
+ 				         lbScreenModeInfo[mode].BitsPerPixel,
 				         flags);
     }
 
 
 #ifdef DEBUG
   printf ("SDL_SetVideoMode(%i, %i, %i, SDL_SWSURFACE) - %s\n",
-          width, height, internal_graphic_mode_list[mode].bpp,
-          internal_graphic_mode_list[mode].name);
+          width, height, lbScreenModeInfo[mode].BitsPerPixel,
+          lbScreenModeInfo[mode].Desc);
 #endif
 
   if (display_screen == NULL)
@@ -211,8 +211,8 @@ display_set_mode (uint16_t mode, uint32_t width, uint32_t height,
     }
 
   // Setup some global variables
-  lbDisplay.PhysicalScreenWidth  = internal_graphic_mode_list[mode].width;
-  lbDisplay.PhysicalScreenHeight = internal_graphic_mode_list[mode].height;
+  lbDisplay.PhysicalScreenWidth  = lbScreenModeInfo[mode].Width;
+  lbDisplay.PhysicalScreenHeight = lbScreenModeInfo[mode].Height;
   lbDisplay.GraphicsScreenWidth  = width;
   lbDisplay.GraphicsScreenHeight = height;
   lbDisplay.ScreenMode   = mode;

@@ -98,7 +98,7 @@ $(TARGET): $(GENSRC) $(OBJS)
 	       ../conf/wrappers_libc.conf
 
 $(RES):	$(RC)
-	$(WINDRES) -i $(RC) -I rc -o $(RES) -O coff
+	$(WINDRES) -i $(RC) -J rc -o $(RES) -O coff
 
 clean:
 	$(RM) $(TARGET) $(OBJS) ../obj/wrappers_*.s

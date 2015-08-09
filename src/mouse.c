@@ -7,9 +7,9 @@
 
 #pragma pack(1)
 
-extern uint32_t	mouse_installed;
-extern int32_t	mouse_x_delta;
-extern int32_t	mouse_y_delta;
+extern long	mouse_installed;
+extern long	mouse_x_delta;
+extern long	mouse_y_delta;
 
 #pragma pack()
 
