@@ -7,20 +7,6 @@
 
 #pragma pack(1)
 
-// Internal mode list
-/*struct ScreenModeInfo
-{
-  uint16_t width;      // e.g. 320
-  uint16_t height;     // e.g. 200
-  uint8_t  bpp;        // e.g. 8
-  uint8_t  padding;
-  uint32_t noidea1;
-  uint32_t mode;       // e.g. 13h
-  char     name[0x18]; // e.g. MODE_320_200_8
-} __attribute__((packed));
-
-typedef struct ScreenModeInfo TbScreenModeInfo;*/
-
 extern TbScreenModeInfo lbScreenModeInfo[];
 
 // Misc stuff

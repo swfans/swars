@@ -53,7 +53,7 @@ enum ScreenMode {
 };
 
 typedef unsigned short TbScreenMode;
-typedef long TbScreenCoord;
+typedef short TbScreenCoord;
 
 enum TbPaletteFadeFlag {
     Lb_PALETTE_FADE_OPEN   = 0,
@@ -108,7 +108,7 @@ struct ScreenModeInfo {
     unsigned long VideoFlags;
 
     /** Text description of the mode. */
-    char Desc[23];
+    char Desc[24];
 };
 typedef struct ScreenModeInfo TbScreenModeInfo;
 
