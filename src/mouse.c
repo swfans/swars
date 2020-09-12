@@ -7,7 +7,7 @@
 
 #pragma pack(1)
 
-extern long	mouse_installed;
+extern long	lbMouseInstalled;
 extern long	mouse_x_delta;
 extern long	mouse_y_delta;
 
@@ -140,7 +140,7 @@ handle_motion_event (const SDL_MouseMotionEvent *ev)
 
   asm volatile
     ("call adjust_point;"
-     "call func_e9e58;"
+     "call screen_remove;"
      "call func_e9ba0"
      : : "a" (&lbDisplay.MMouseX), "d" (&lbDisplay.MMouseY));
 
@@ -149,7 +149,7 @@ handle_motion_event (const SDL_MouseMotionEvent *ev)
 void
 mouse_handle_event (const SDL_Event *ev)
 {
-  if (!mouse_installed)
+  if (!lbMouseInstalled)
     return;
 
   switch (ev->type)

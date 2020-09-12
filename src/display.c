@@ -10,13 +10,13 @@
 extern TbScreenModeInfo lbScreenModeInfo[];
 
 // Misc stuff
-extern uint32_t display_good;
+extern uint32_t screen_initialised;
 
 // Drawing of the mouse cursor
-extern int32_t mouse_pointer_x;
-extern int32_t mouse_pointer_y;
-extern int32_t mouse_pointer_width;
-extern int32_t mouse_pointer_height;
+extern int32_t mbuffer__X;
+extern int32_t mbuffer__Y;
+extern int32_t mbuffer__Width;
+extern int32_t mbuffer__Height;
 
 #pragma pack()
 
@@ -48,11 +48,11 @@ call_ef4f0 (int x, int y, int w, int h)
      : : "a" (x), "d" (y), "g" (w), "c" (h));
 }
 
-// call e9498 aka display_set_mode_setup_mouse
+// call e9498 aka LbMouseSuspend_
 static void
-call_display_set_mode_setup_mouse (void)
+call_LbMouseSuspend_ (void)
 {
-  asm volatile ("call display_set_mode_setup_mouse");
+  asm volatile ("call LbMouseSuspend_");
 }
 
 static inline void
@@ -107,7 +107,7 @@ display_set_mode (uint16_t mode, uint32_t width, uint32_t height,
   uint32_t flags;
 
   // call func_e9498
-  call_display_set_mode_setup_mouse ();
+  call_LbMouseSuspend_ ();
 
   // lbDisplay.OldVideoMode which is DWORD 1E2EB6 is used in
   // 000ED764 sub_ED764 to probably get back to text mode
@@ -220,7 +220,7 @@ display_set_mode (uint16_t mode, uint32_t width, uint32_t height,
 	goto err;
     }
 
-  display_good = true;
+  screen_initialised = true;
 
   return 1;
 
@@ -238,7 +238,7 @@ err:
       display_stretch_buffer = NULL;
     }
 
-  display_good = false;
+  screen_initialised = false;
 
   return -1;
 }
@@ -249,11 +249,11 @@ display_update_mouse_pointer (void)
 {
   int x, y;
 
-  x = MAX (0, mouse_pointer_x);
-  y = MAX (0, mouse_pointer_y);
+  x = MAX (0, mbuffer__X);
+  y = MAX (0, mbuffer__Y);
 
   SDL_UpdateRect (display_screen, x, y,
-		  mouse_pointer_width, mouse_pointer_height);
+		  mbuffer__Width, mbuffer__Height);
 }
 
 void

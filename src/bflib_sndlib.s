@@ -34,9 +34,9 @@
 .global EXPORT_SYMBOL(data_15978c);
 .global EXPORT_SYMBOL(data_159790);
 .global EXPORT_SYMBOL(data_16207c);
-.global EXPORT_SYMBOL(sound_dig_ini_filename);
-.global EXPORT_SYMBOL(sound_mdi_ini_filename);
-.global EXPORT_SYMBOL(sound_driver_directory);
+.global EXPORT_SYMBOL(FullDIG_INIPath);
+.global EXPORT_SYMBOL(FullMDI_INIPath);
+.global EXPORT_SYMBOL(SoundDriverPath);
 
 /*----------------------------------------------------------------*/
 GLOBAL_FUNC (AIL_vmm_lock)
@@ -9102,7 +9102,7 @@ AIL_API_install_DIG_driver_file:	/* 113710 */
 		sub    $0x90,%esp
 		mov    0xa0(%esp),%edx
 		push   %edx
-		push   $EXPORT_SYMBOL(sound_driver_directory)
+		push   $EXPORT_SYMBOL(SoundDriverPath)
 		push   $data_161a38
 		lea    0xc(%esp),%eax
 		push   %eax
@@ -9171,7 +9171,7 @@ AIL_API_install_DIG_INI:	/* 113800 */
 		push   %esi
 		push   %edi
 		sub    $0x118,%esp
-		push   $EXPORT_SYMBOL(sound_dig_ini_filename)
+		push   $EXPORT_SYMBOL(FullDIG_INIPath)
 		lea    0x4(%esp),%eax
 		push   %eax
 		call   AIL_read_INI
@@ -13035,7 +13035,7 @@ func_1164f0:
 		sub    $0x90,%esp
 		mov    0xa0(%esp),%edx
 		push   %edx
-		push   $EXPORT_SYMBOL(sound_driver_directory)
+		push   $EXPORT_SYMBOL(SoundDriverPath)
 		push   $data_161c48
 		lea    0xc(%esp),%eax
 		push   %eax
@@ -13104,7 +13104,7 @@ ailimpl_install_mdi_ini:	/* 1165e0 */
 		push   %esi
 		push   %edi
 		sub    $0x118,%esp
-		push   $EXPORT_SYMBOL(sound_mdi_ini_filename)
+		push   $EXPORT_SYMBOL(FullMDI_INIPath)
 		lea    0x4(%esp),%eax
 		push   %eax
 		call   AIL_read_INI

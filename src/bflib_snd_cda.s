@@ -28,7 +28,7 @@
 
 .text
 
-.global EXPORT_SYMBOL(data_1e86e4);
+.global EXPORT_SYMBOL(SoundProgressMessage);
 
 /*
  * This function allocates some DOS memory.  The variables where the results
@@ -573,10 +573,10 @@ GLOBAL_FUNC (cd_play_)
 		test   %ah,%dl
 		je     jump_10823a
 		push   $data_161150
-		push   $EXPORT_SYMBOL(data_1e86e4)
+		push   $EXPORT_SYMBOL(SoundProgressMessage)
 		call   ac_sprintf
 		add    $0x8,%esp
-		mov    $EXPORT_SYMBOL(data_1e86e4),%eax
+		mov    $EXPORT_SYMBOL(SoundProgressMessage),%eax
 		call   SoundProgressLog_
 	jump_10823a:
 		mov    data_1e94ff,%ax
@@ -662,10 +662,10 @@ GLOBAL_FUNC (cd_init_)
 		test   %ax,%ax
 		jne    jump_108408
 		push   $data_16115c
-		push   $EXPORT_SYMBOL(data_1e86e4)
+		push   $EXPORT_SYMBOL(SoundProgressMessage)
 		call   ac_sprintf
 		add    $0x8,%esp
-		mov    $EXPORT_SYMBOL(data_1e86e4),%eax
+		mov    $EXPORT_SYMBOL(SoundProgressMessage),%eax
 		call   SoundProgressLog_
 		xor    %al,%al
 		jmp    jump_108658
@@ -674,10 +674,10 @@ GLOBAL_FUNC (cd_init_)
 		test   %eax,%eax
 		jne    jump_108436
 		push   $data_161178
-		push   $EXPORT_SYMBOL(data_1e86e4)
+		push   $EXPORT_SYMBOL(SoundProgressMessage)
 		call   ac_sprintf
 		add    $0x8,%esp
-		mov    $EXPORT_SYMBOL(data_1e86e4),%eax
+		mov    $EXPORT_SYMBOL(SoundProgressMessage),%eax
 		call   SoundProgressLog_
 		xor    %al,%al
 		pop    %ebp
@@ -690,7 +690,7 @@ GLOBAL_FUNC (cd_init_)
 	jump_108436:
 		call   mscdex_version
 		xor    %ebx,%ebx
-		mov    $EXPORT_SYMBOL(data_1e86e4),%edx
+		mov    $EXPORT_SYMBOL(SoundProgressMessage),%edx
 		mov    $0x3e8,%ecx
 	jump_108447:
 		xor    %eax,%eax
@@ -734,10 +734,10 @@ GLOBAL_FUNC (cd_init_)
 		test   %eax,%eax
 		jne    jump_1084dc
 		push   $data_1611ab
-		push   $EXPORT_SYMBOL(data_1e86e4)
+		push   $EXPORT_SYMBOL(SoundProgressMessage)
 		call   ac_sprintf
 		add    $0x8,%esp
-		mov    $EXPORT_SYMBOL(data_1e86e4),%eax
+		mov    $EXPORT_SYMBOL(SoundProgressMessage),%eax
 		call   SoundProgressLog_
 		xor    %al,%al
 		pop    %ebp
@@ -749,10 +749,10 @@ GLOBAL_FUNC (cd_init_)
 		ret
 	jump_1084dc:
 		push   $data_1611d1
-		push   $EXPORT_SYMBOL(data_1e86e4)
+		push   $EXPORT_SYMBOL(SoundProgressMessage)
 		call   ac_sprintf
 		add    $0x8,%esp
-		mov    $EXPORT_SYMBOL(data_1e86e4),%eax
+		mov    $EXPORT_SYMBOL(SoundProgressMessage),%eax
 		call   SoundProgressLog_
 		mov    data_1e94a1,%al
 		xor    %bh,%bh
@@ -803,10 +803,10 @@ GLOBAL_FUNC (cd_init_)
 		test   %si,%si
 		jne    jump_1085b6
 		push   $data_1611d8
-		push   $EXPORT_SYMBOL(data_1e86e4)
+		push   $EXPORT_SYMBOL(SoundProgressMessage)
 		call   ac_sprintf
 		add    $0x8,%esp
-		mov    $EXPORT_SYMBOL(data_1e86e4),%eax
+		mov    $EXPORT_SYMBOL(SoundProgressMessage),%eax
 		call   SoundProgressLog_
 		xor    %al,%al
 		pop    %ebp
@@ -995,10 +995,10 @@ GLOBAL_FUNC (SetCDAudioVolume_)
 		mov    data_1e9537,%ax
 		push   %eax
 		push   $data_16121d
-		push   $EXPORT_SYMBOL(data_1e86e4)
+		push   $EXPORT_SYMBOL(SoundProgressMessage)
 		call   ac_sprintf
 		add    $0xc,%esp
-		mov    $EXPORT_SYMBOL(data_1e86e4),%eax
+		mov    $EXPORT_SYMBOL(SoundProgressMessage),%eax
 		call   SoundProgressLog_
 	jump_108a37:
 		pop    %ebp
@@ -1091,10 +1091,10 @@ GLOBAL_FUNC (GetCDAudioVolume_)
 		mov    data_1e9537,%ax
 		push   %eax
 		push   $data_16122b
-		push   $EXPORT_SYMBOL(data_1e86e4)
+		push   $EXPORT_SYMBOL(SoundProgressMessage)
 		call   ac_sprintf
 		add    $0xc,%esp
-		mov    $EXPORT_SYMBOL(data_1e86e4),%eax
+		mov    $EXPORT_SYMBOL(SoundProgressMessage),%eax
 		call   SoundProgressLog_
 	jump_108b81:
 		mov    control_prot,%eax
