@@ -30,10 +30,12 @@
 
 .global EXPORT_SYMBOL(data_159126);
 .global EXPORT_SYMBOL(data_15912f);
+.global EXPORT_SYMBOL(data_159581);
 .global EXPORT_SYMBOL(data_1595e5);
 .global EXPORT_SYMBOL(data_159590);
 .global EXPORT_SYMBOL(data_1595e4);
 .global EXPORT_SYMBOL(data_159108);
+.global EXPORT_SYMBOL(data_1e9560);
 .global EXPORT_SYMBOL(data_1ea484);
 .global EXPORT_SYMBOL(data_1ea480);
 
@@ -491,36 +493,14 @@ func_e8c60:
 
 
 /*----------------------------------------------------------------*/
-_access:    /* 0xfaf94 */
+_creat:	/* 0xf13ca */
 /*----------------------------------------------------------------*/
-        push   %ebx
-        push   %ecx
-        mov    %edx,%ebx
-        mov    %eax,%edx
-        xor    %eax,%eax
-        mov    $0x43,%ah
-        int    $0x21
-        jb     jump_fafb1
-        test   $0x2,%bl
-        je     jump_fafb1
-        test   $0x1,%cl
-        je     jump_fafb1
-        mov    $0x0,%al
-        mov    $0x6,%ah
-        stc
-    jump_fafb1:
-        sbb    %ecx,%ecx
-        mov    %ax,%cx
-        mov    %ecx,%eax
-        mov    %eax,%ebx
-        mov    %eax,%edx
-        and    $0xffff,%ebx
-        shr    $0x10,%edx
-        mov    %ebx,%eax
-        call   ___dosret0_
-        pop    %ecx
-        pop    %ebx
-        ret
+		push   %edx
+		push   $0x62
+		push   %eax
+		call   ac_dos_open
+		add    $0xc,%esp
+		ret
 
 
 /*----------------------------------------------------------------*/
@@ -533,348 +513,6 @@ _tell:  /* 0xfafcf */
         call   ac_dos_lseek
         pop    %edx
         pop    %ebx
-        ret
-
-
-/*----------------------------------------------------------------*/
-_lseek: /* 0xfafe0 */
-/*----------------------------------------------------------------*/
-        push   %ecx
-        push   %edi
-        sub    $0x4,%esp
-        mov    %eax,%ecx
-        mov    %esp,%edi
-        mov    %bl,%al
-        mov    %ecx,%ebx
-        mov    $0x42,%ah
-        mov    %edx,%ecx
-        shr    $0x10,%ecx
-        int    $0x21
-        mov    %ax,%ss:(%edi)
-        mov    %dx,%ss:0x2(%edi)
-        rcl    %eax
-        ror    %eax
-        mov    %eax,%edx
-        test   %eax,%eax
-        jge    jump_fb01a
-        xor    %eax,%eax
-        mov    %dx,%ax
-        call   ____set_errno_dos_
-        mov    $0xffffffff,%eax
-        jmp    jump_fb01d
-    jump_fb01a:
-        mov    (%esp),%eax
-    jump_fb01d:
-        add    $0x4,%esp
-        pop    %edi
-        pop    %ecx
-        ret
-
-
-/*----------------------------------------------------------------*/
-_read:  /* 0xfb023 */
-/*----------------------------------------------------------------*/
-        push   %ecx
-        push   %esi
-        push   %edi
-        push   %ebp
-        sub    $0x10,%esp
-        push   %eax
-        mov    %edx,%ebp
-        call   ____IOMode_
-        mov    %eax,0x8(%esp)
-        test   %eax,%eax
-        jne    jump_fb04e
-        mov    $0x4,%eax
-    jump_fb03f:
-        call   ____set_errno_
-        mov    $0xffffffff,%eax
-        jmp    jump_fb116
-    jump_fb04e:
-        test   $0x1,%al
-        jne    jump_fb059
-        mov    $0x6,%eax
-        jmp    jump_fb03f
-    jump_fb059:
-        test   $0x40,%al
-        je     jump_fb085
-        mov    %ebx,%ecx
-        mov    (%esp),%ebx
-        mov    $0x3f,%ah
-        int    $0x21
-        rcl    %eax
-        ror    %eax
-        mov    %eax,%edi
-        mov    %eax,%esi
-        test   %eax,%eax
-        jge    jump_fb114
-        xor    %eax,%eax
-        mov    %di,%ax
-    jump_fb07b:
-        call   ____set_errno_dos_
-        jmp    jump_fb116
-    jump_fb085:
-        mov    %ebx,0xc(%esp)
-        xor    %esi,%esi
-    jump_fb08b:
-        mov    0xc(%esp),%ecx
-        mov    (%esp),%ebx
-        mov    %ebp,%edx
-        mov    $0x3f,%ah
-        int    $0x21
-        rcl    %eax
-        ror    %eax
-        mov    %eax,%ebx
-        mov    %eax,%edi
-        mov    %eax,0x4(%esp)
-        test   %eax,%eax
-        jge    jump_fb0af
-        xor    %eax,%eax
-        mov    %bx,%ax
-        jmp    jump_fb07b
-    jump_fb0af:
-        je     jump_fb114
-        xor    %eax,%edi
-        mov    %ebp,%eax
-        lea    (%ebx,%ebp,1),%ecx
-        xor    %edx,%edx
-        mov    %ecx,0x10(%esp)
-        jmp    jump_fb0f1
-    jump_fb0c0:
-        xor    %ebx,%ebx
-        mov    (%eax),%bl
-        cmp    $0x1a,%ebx
-        jne    jump_fb0e1
-        mov    0x4(%esp),%ebp
-        mov    %edi,%edx
-        mov    $0x1,%ebx
-        sub    %ebp,%edx
-        mov    (%esp),%eax
-        inc    %edx
-        call   ac_dos_lseek
-        jmp    jump_fb114
-    jump_fb0e1:
-        cmp    $0xd,%ebx
-        je     jump_fb0ef
-        mov    %edx,%ebx
-        inc    %esi
-        mov    (%eax),%cl
-        inc    %edx
-        mov    %cl,(%ebx,%ebp,1)
-    jump_fb0ef:
-        inc    %eax
-        inc    %edi
-    jump_fb0f1:
-        cmp    0x10(%esp),%eax
-        jb     jump_fb0c0
-        mov    0xc(%esp),%ecx
-        mov    0x9(%esp),%ah
-        sub    %edx,%ecx
-        add    %edx,%ebp
-        mov    %ecx,0xc(%esp)
-        test   $0x20,%ah
-        jne    jump_fb114
-        test   %ecx,%ecx
-        jne    jump_fb08b
-    jump_fb114:
-        mov    %esi,%eax
-    jump_fb116:
-        add    $0x14,%esp
-        pop    %ebp
-        pop    %edi
-        pop    %esi
-        pop    %ecx
-        ret
-
-
-/*----------------------------------------------------------------*/
-_write: /* 0xfb11e */
-/*----------------------------------------------------------------*/
-        push   %ecx
-        push   %esi
-        push   %edi
-        push   %ebp
-        mov    %esp,%ebp
-        sub    $0x18,%esp
-        push   %eax
-        push   %edx
-        push   %ebx
-        call   ____IOMode_
-        mov    %eax,-0x14(%ebp)
-        test   %eax,%eax
-        jne    jump_fb14a
-        mov    $0x4,%eax
-    jump_fb13b:
-        call   ____set_errno_
-        mov    $0xffffffff,%eax
-        jmp    jump_fb2ec
-    jump_fb14a:
-        test   $0x2,%al
-        jne    jump_fb155
-        mov    $0x6,%eax
-        jmp    jump_fb13b
-    jump_fb155:
-        test   $0x80,%al
-        je     jump_fb18c
-        mov    $0x2,%al
-        mov    -0x1c(%ebp),%ebx
-        xor    %edx,%edx
-        mov    $0x42,%ah
-        mov    %edx,%ecx
-        shr    $0x10,%ecx
-        int    $0x21
-        rcl    %dx
-        ror    %dx
-        shl    $0x10,%edx
-        mov    %ax,%dx
-        mov    %edx,-0xc(%ebp)
-        test   %edx,%edx
-        jge    jump_fb18c
-    jump_fb17c:
-        xor    %eax,%eax
-        mov    -0xc(%ebp),%ax
-        call   ____set_errno_dos_
-        jmp    jump_fb2ec
-    jump_fb18c:
-        testb  $0x40,-0x14(%ebp)
-        je     jump_fb1c7
-        mov    -0x24(%ebp),%ecx
-        mov    -0x20(%ebp),%edx
-        mov    -0x1c(%ebp),%ebx
-        mov    $0x40,%ah
-        int    $0x21
-        rcl    %eax
-        ror    %eax
-        mov    %eax,%esi
-        mov    %eax,-0xc(%ebp)
-        test   %eax,%eax
-        jl     jump_fb17c
-        cmp    -0x24(%ebp),%eax
-        je     jump_fb2e9
-        mov    $0xc,%eax
-        call   ____set_errno_
-        mov    %esi,-0x24(%ebp)
-        jmp    jump_fb2e9
-    jump_fb1c7:
-        call   func_10df1f
-        mov    %eax,%edx
-        cmp    $0xb0,%eax
-        jae    jump_fb1da
-        call   ____STKOVERFLOW_
-    jump_fb1da:
-        mov    $0x200,%edi
-        cmp    $0x230,%edx
-        jae    jump_fb1ec
-        mov    $0x80,%edi
-    jump_fb1ec:
-        lea    0x3(%edi),%eax
-        xor    %edx,%edx
-        and    $0xfc,%al
-        xor    %esi,%esi
-        sub    %eax,%esp
-        mov    %esp,%eax
-        mov    %edx,-0x4(%ebp)
-        mov    %eax,-0x10(%ebp)
-        mov    -0x20(%ebp),%eax
-        mov    %edx,-0x18(%ebp)
-        mov    %eax,-0x8(%ebp)
-    jump_fb208:
-        mov    -0x4(%ebp),%eax
-        cmp    -0x24(%ebp),%eax
-        jae    jump_fb2b3
-        mov    -0x8(%ebp),%edx
-        xor    %eax,%eax
-        mov    (%edx),%al
-        cmp    $0xa,%eax
-        jne    jump_fb268
-        mov    -0x10(%ebp),%eax
-        movb   $0xd,(%esi,%eax,1)
-        inc    %esi
-        cmp    %edi,%esi
-        jne    jump_fb268
-        mov    -0x1c(%ebp),%ebx
-        mov    %edi,%ecx
-        mov    %eax,%edx
-        mov    $0x40,%ah
-        int    $0x21
-        rcl    %eax
-        ror    %eax
-        mov    %eax,%esi
-        mov    %eax,-0xc(%ebp)
-        test   %eax,%eax
-        jl     jump_fb17c
-        cmp    %edi,%eax
-        je     jump_fb260
-    jump_fb24c:
-        mov    $0xc,%eax
-        call   ____set_errno_
-        mov    -0x18(%ebp),%eax
-        add    %esi,%eax
-        jmp    jump_fb2ec
-    jump_fb260:
-        mov    -0x4(%ebp),%eax
-        xor    %edi,%esi
-        mov    %eax,-0x18(%ebp)
-    jump_fb268:
-        mov    -0x10(%ebp),%eax
-        mov    -0x8(%ebp),%edx
-        mov    -0x8(%ebp),%ebx
-        mov    -0x4(%ebp),%ecx
-        inc    %ebx
-        inc    %ecx
-        mov    (%edx),%dl
-        mov    %ebx,-0x8(%ebp)
-        mov    %dl,(%esi,%eax,1)
-        inc    %esi
-        mov    %ecx,-0x4(%ebp)
-        cmp    %edi,%esi
-        jne    jump_fb208
-        mov    -0x1c(%ebp),%ebx
-        mov    %edi,%ecx
-        mov    %eax,%edx
-        mov    $0x40,%ah
-        int    $0x21
-        rcl    %eax
-        ror    %eax
-        mov    %eax,%esi
-        mov    %eax,-0xc(%ebp)
-        test   %eax,%eax
-        jl     jump_fb17c
-        cmp    %edi,%eax
-        jne    jump_fb24c
-        mov    -0x4(%ebp),%eax
-        xor    %edi,%esi
-        mov    %eax,-0x18(%ebp)
-        jmp    jump_fb208
-    jump_fb2b3:
-        test   %esi,%esi
-        je     jump_fb2e9
-        mov    -0x10(%ebp),%edx
-        mov    -0x1c(%ebp),%ebx
-        mov    %esi,%ecx
-        mov    $0x40,%ah
-        int    $0x21
-        rcl    %eax
-        ror    %eax
-        mov    %eax,%edi
-        mov    %eax,-0xc(%ebp)
-        test   %eax,%eax
-        jl     jump_fb17c
-        cmp    %esi,%eax
-        je     jump_fb2e9
-        mov    $0xc,%eax
-        call   ____set_errno_
-        mov    -0x18(%ebp),%eax
-        add    %edi,%eax
-        jmp    jump_fb2ec
-    jump_fb2e9:
-        mov    -0x24(%ebp),%eax
-    jump_fb2ec:
-        mov    %ebp,%esp
-        pop    %ebp
-        pop    %edi
-        pop    %esi
-        pop    %ecx
         ret
 
 
@@ -1100,6 +738,96 @@ ____set_doserrno_:	/* 0x108e0f */
 
 
 /*----------------------------------------------------------------*/
+GLOBAL_FUNC (____flush_)	/* 0x108fc1 */
+/*----------------------------------------------------------------*/
+		push   %ebx
+		push   %ecx
+		push   %edx
+		push   %esi
+		push   %edi
+		push   %ebp
+		mov    %eax,%ecx
+		mov    0xd(%eax),%ah
+		xor    %ebp,%ebp
+		test   $0x10,%ah
+		je     jump_10904d
+		mov    0xd(%ecx),%bh
+		and    $0xef,%bh
+		mov    0xc(%ecx),%al
+		mov    %bh,0xd(%ecx)
+		test   $0x2,%al
+		je     jump_109085
+		mov    0x8(%ecx),%ebx
+		test   %ebx,%ebx
+		je     jump_109085
+		mov    %ebx,%edi
+		mov    0x4(%ecx),%esi
+	jump_108ffb:
+		test   %esi,%esi
+		je     jump_109085
+		test   %ebp,%ebp
+		jne    jump_109085
+		mov    %esi,%ebx
+		mov    %edi,%edx
+		mov    0x10(%ecx),%eax
+		call   ____qwrite_
+		mov    %eax,%edx
+		cmp    $0xffffffff,%eax
+		jne    jump_10902b
+		mov    0xc(%ecx),%bl
+		or     $0x20,%bl
+		mov    %eax,%ebp
+		mov    %bl,0xc(%ecx)
+		jmp    jump_109047
+	jump_10902b:
+		test   %eax,%eax
+		jne    jump_109047
+		mov    $0xc,%eax
+		call   ____set_errno_
+		mov    0xc(%ecx),%ah
+		or     $0x20,%ah
+		mov    $0xffffffff,%ebp
+		mov    %ah,0xc(%ecx)
+	jump_109047:
+		add    %edx,%edi
+		sub    %edx,%esi
+		jmp    jump_108ffb
+	jump_10904d:
+		cmpl   $0x0,0x8(%ecx)
+		je     jump_109085
+		andb   $0xef,0xc(%ecx)
+		testb  $0x20,0xd(%ecx)
+		jne    jump_109085
+		mov    0x4(%ecx),%eax
+		test   %eax,%eax
+		je     jump_109075
+		mov    %eax,%edx
+		mov    $0x1,%ebx
+		neg    %edx
+		mov    0x10(%ecx),%eax
+		call   ac_dos_lseek
+	jump_109075:
+		cmp    $0xffffffff,%eax
+		jne    jump_109085
+		mov    0xc(%ecx),%bl
+		or     $0x20,%bl
+		mov    %eax,%ebp
+		mov    %bl,0xc(%ecx)
+	jump_109085:
+		mov    0x8(%ecx),%eax
+		movl   $0x0,0x4(%ecx)
+		mov    %eax,(%ecx)
+		mov    %ebp,%eax
+		pop    %ebp
+		pop    %edi
+		pop    %esi
+		pop    %edx
+		pop    %ecx
+		pop    %ebx
+		ret
+
+
+/*----------------------------------------------------------------*/
 ____set_errno_dos_:	/* 0x10ada8 */
 /*----------------------------------------------------------------*/
 		push   %ebx
@@ -1172,6 +900,66 @@ func_10af45:
 func_10af3f:
 /*----------------------------------------------------------------*/
 		mov    $EXPORT_SYMBOL(data_1ea480),%eax
+		ret
+
+
+/*----------------------------------------------------------------*/
+____qwrite_:	/* 0x118624 */
+/*----------------------------------------------------------------*/
+		push   %ecx
+		push   %esi
+		push   %edi
+		push   %ebp
+		sub    $0x4,%esp
+		mov    %eax,%esi
+		mov    %edx,%ebp
+		mov    %ebx,%edi
+		call   ____IOMode_
+		test   $0x80,%al
+		je     jump_118669
+		mov    $0x2,%al
+		mov    %esi,%ebx
+		xor    %edx,%edx
+		mov    $0x42,%ah
+		mov    %edx,%ecx
+		shr    $0x10,%ecx
+		int    $0x21
+		rcl    %dx
+		ror    %dx
+		shl    $0x10,%edx
+		mov    %ax,%dx
+		mov    %edx,(%esp)
+		test   %edx,%edx
+		jge    jump_118669
+	jump_11865c:
+		xor    %eax,%eax
+		mov    (%esp),%ax
+		call   ____set_errno_dos_
+		jmp    jump_118690
+	jump_118669:
+		mov    %edi,%ecx
+		mov    %ebp,%edx
+		mov    %esi,%ebx
+		mov    $0x40,%ah
+		int    $0x21
+		rcl    %eax
+		ror    %eax
+		mov    %eax,(%esp)
+		mov    %eax,%edx
+		test   %eax,%eax
+		jl     jump_11865c
+		cmp    %edi,%eax
+		je     jump_11868e
+		mov    $0xc,%eax
+		call   ____set_errno_
+	jump_11868e:
+		mov    %edx,%eax
+	jump_118690:
+		add    $0x4,%esp
+		pop    %ebp
+		pop    %edi
+		pop    %esi
+		pop    %ecx
 		ret
 
 

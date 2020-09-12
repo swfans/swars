@@ -4582,7 +4582,7 @@ GLOBAL_FUNC (AIL_set_sequence_volume)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (ail_func_105880) /* AIL_set_XMIDI_master_volume candidate 2 */
+GLOBAL_FUNC (AIL_sequence_status)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %esi
@@ -4678,7 +4678,7 @@ GLOBAL_FUNC (ail_func_105880) /* AIL_set_XMIDI_master_volume candidate 2 */
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (ail_func_105cc0) /* AIL_set_XMIDI_master_volume candidate 1 */
+GLOBAL_FUNC (AIL_set_XMIDI_master_volume)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %edi
@@ -20940,283 +20940,310 @@ data_1603c8:
 		.ascii  "\x00\x00\x00"
 data_1603d8:
 		.string "AIL_register_timer(0x%X)\n"
-		.short  0x0
+		.align 4
 data_1603f4:
 		.string "AIL_set_timer_user(%u,%u)\n"
-		.byte	0x0
+		.align 4
 data_160410:
 		.string "AIL_set_timer_period(%u,%u)\n"
-		.ascii  "\x00\x00\x00"
+		.align 4
 data_160430:
 		.string "AIL_set_timer_frequency(%u,%u)\n"
+		.align 4
 data_160450:
 		.string "AIL_set_timer_divisor(%u,%u)\n"
-		.short  0x0
+		.align 4
 data_160470:
 		.string "AIL_interrupt_divisor()\n"
-		.ascii  "\x00\x00\x00"
+		.align 4
 data_16048c:
 		.string "AIL_start_timer(%u)\n"
-		.ascii  "\x00\x00\x00"
+		.align 4
 data_1604a4:
 		.string "AIL_start_all_timers()\n"
+		.align 4
 data_1604bc:
 		.string "AIL_stop_timer(%u)\n"
+		.align 4
 data_1604d0:
 		.string "AIL_stop_all_timers()\n"
-		.byte	0x0
+		.align 4
 data_1604e8:
 		.string "AIL_release_timer_handle(%u)\n"
-		.short  0x0
+		.align 4
 data_160508:
 		.string "AIL_release_all_timers()\n"
-		.short  0x0
+		.align 4
 data_160524:
 		.string "AIL_get_IO_environment(0x%X)\n"
-		.short  0x0
+		.align 4
 data_160544:
 		.string "AIL_install_driver(0x%X,%u)\n"
-		.ascii  "\x00\x00\x00"
+		.align 4
 data_160564:
 		.string "AIL_uninstall_driver(0x%X)\n"
+		.align 4
 data_160580:
 		.string "AIL_install_DIG_INI(0x%X)\n"
-		.byte	0x0
+		.align 4
 data_16059c:
 		.string "AIL_install_DIG_driver_file(%s,0x%X)\n"
-		.short  0x0
+		.align 4
 data_1605c4:
 		.string "AIL_uninstall_DIG_driver(0x%X)\n"
+		.align 4
 data_1605e4:
 		.string "AIL_allocate_sample_handle(0x%X)\n"
-		.short  0x0
+		.align 4
 data_160608:
 		.string "AIL_allocate_file_sample(0x%X,0x%X,%d)\n"
+		.align 4
 data_160630:
 		.string "AIL_release_sample_handle(0x%X)\n"
-		.ascii  "\x00\x00\x00"
+		.align 4
 data_160654:
 		.string "AIL_init_sample(0x%X)\n"
-		.byte	0x0
+		.align 4
 data_16066c:
 		.string "AIL_set_sample_file(0x%X,0x%X,%d)\n"
-		.byte	0x0
+		.align 4
 data_160690:
 		.string "AIL_set_sample_address(0x%X,0x%X,%u)\n"
-		.short  0x0
+		.align 4
 data_1606b8:
 		.string "AIL_set_sample_type(0x%X,%d,%u)\n"
-		.ascii  "\x00\x00\x00"
+		.align 4
 data_1606dc:
 		.string "AIL_start_sample(0x%X)\n"
+		.align 4
 data_1606f4:
 		.string "AIL_stop_sample(0x%X)\n"
-		.byte	0x0
+		.align 4
 data_16070c:
 		.string "AIL_resume_sample(0x%X)\n"
-		.ascii  "\x00\x00\x00"
+		.align 4
 data_160728:
 		.string "AIL_end_sample(0x%X)\n"
-		.short  0x0
+		.align 4
 data_160740:
 		.string "AIL_set_sample_playback_rate(0x%X,%d)\n"
-		.byte	0x0
+		.align 4
 data_160768:
 		.string "AIL_set_sample_volume(0x%X,%d)\n"
+		.align 4
 data_160788:
 		.string "AIL_set_sample_pan(0x%X,%d)\n"
-		.ascii  "\x00\x00\x00"
+		.align 4
 data_1607a8:
 		.string "AIL_set_sample_loop_count(0x%X,%d)\n"
+		.align 4
 data_1607cc:
 		.string "AIL_sample_status(0x%X)\n"
-		.ascii  "\x00\x00\x00"
+		.align 4
 data_1607e8:
 		.string "AIL_sample_playback_rate(0x%X)\n"
+		.align 4
 data_160808:
 		.string "AIL_sample_volume(0x%X)\n"
-		.ascii  "\x00\x00\x00"
+		.align 4
 data_160824:
 		.string "AIL_sample_pan(0x%X)\n"
-		.short  0x0
+		.align 4
 data_16083c:
 		.string "AIL_sample_loop_count(0x%X)\n"
-		.ascii  "\x00\x00\x00"
+		.align 4
 data_16085c:
 		.string "AIL_set_digital_master_volume(0x%X,%d)\n"
+		.align 4
 data_160884:
 		.string "AIL_digital_master_volume(0x%X)\n"
-		.ascii  "\x00\x00\x00"
+		.align 4
 data_1608a8:
 		.string "AIL_install_DIG_driver_image(0x%X,%u,0x%X)\n"
+		.align 4
 data_1608d4:
 		.string "AIL_minimum_sample_buffer_size(0x%X,%d,%d)\n"
+		.align 4
 data_160900:
 		.string "AIL_sample_buffer_ready(0x%X)\n"
-		.byte	0x0
+		.align 4
 data_160920:
 		.string "AIL_load_sample_buffer(0x%X,%u,0x%X,%u)\n"
-		.ascii  "\x00\x00\x00"
+		.align 4
 data_16094c:
 		.string "AIL_set_sample_position(0x%X,%u)\n"
-		.short  0x0
+		.align 4
 data_160970:
 		.string "AIL_sample_position(0x%X)\n"
-		.byte	0x0
+		.align 4
 data_16098c:
 		.string "AIL_register_SOB_callback(0x%X,0x%X)\n"
-		.short  0x0
+		.align 4
 data_1609b4:
 		.string "AIL_register_EOB_callback(0x%X,0x%X)\n"
-		.short  0x0
+		.align 4
 data_1609dc:
 		.string "AIL_register_EOS_callback(0x%X,0x%X)\n"
-		.short  0x0
+		.align 4
 data_160a04:
 		.string "AIL_register_EOF_callback(0x%X,0x%X)\n"
-		.short  0x0
+		.align 4
 data_160a2c:
 		.string "AIL_set_sample_user_data(0x%X,%u,%d)\n"
-		.short  0x0
+		.align 4
 data_160a54:
 		.string "AIL_sample_user_data(0x%X,%u)\n"
-		.byte	0x0
+		.align 4
 data_160a74:
 		.string "AIL_active_sample_count(0x%X)\n"
-		.byte	0x0
+		.align 4
 data_160a94:
 		.string "AIL_install_MDI_INI(0x%X)\n"
-		.byte	0x0
+		.align 4
 data_160ab0:
 		.string "AIL_install_MDI_driver_file(%s,0x%X)\n"
-		.short  0x0
+		.align 4
 data_160ad8:
 		.string "AIL_uninstall_MDI_driver(0x%X)\n"
+		.align 4
 data_160af8:
 		.string "AIL_allocate_sequence_handle(0x%X)\n"
+		.align 4
 data_160b1c:
 		.string "AIL_release_sequence_handle(0x%X)\n"
-		.byte	0x0
+		.align 4
 data_160b40:
 		.string "AIL_init_sequence(0x%X,0x%X,%d)\n"
-		.ascii  "\x00\x00\x00"
+		.align 4
 data_160b64:
 		.string "AIL_start_sequence(0x%X)\n"
-		.short  0x0
+		.align 4
 data_160b80:
 		.string "AIL_stop_sequence(0x%X)\n"
-		.ascii  "\x00\x00\x00"
+		.align 4
 data_160b9c:
 		.string "AIL_resume_sequence(0x%X)\n"
-		.byte	0x0
+		.align 4
 data_160bb8:
 		.string "AIL_end_sequence(0x%X)\n"
+		.align 4
 data_160bd0:
 		.string "AIL_set_sequence_tempo(0x%X,%d,%d)\n"
+		.align 4
 data_160bf4:
 		.string "AIL_set_sequence_volume(0x%X,%d,%d)\n"
-		.ascii  "\x00\x00\x00"
+		.align 4
 data_160c1c:
-		.string "AIL_set_XMIDI_master_volume(0x%X,%d)\n"
-		.short  0x0
+		.string "AIL_set_sequence_loop_count(0x%X,%d)\n"
+		.align 4
 data_160c44:
-		.string "AIL_set_XMIDI_master_volume(0x%X)\n"
-		.byte	0x0
+		.string "AIL_sequence_status(0x%X)\n"
+		.align 4
 data_160c60:
 		.string "AIL_sequence_tempo(0x%X)\n"
-		.short  0x0
+		.align 4
 data_160c7c:
 		.string "AIL_sequence_volume(0x%X)\n"
-		.byte	0x0
+		.align 4
 data_160c98:
 		.string "AIL_sequence_loop_count(0x%X)\n"
-		.byte	0x0
+		.align 4
 data_160cb8:
 		.string "AIL_set_XMIDI_master_volume(0x%X,%d)\n"
-		.short  0x0
+		.align 4
 data_160ce0:
 		.string "AIL_XMIDI_master_volume(0x%X)\n"
-		.byte	0x0
+		.align 4
 data_160d00:
 		.string "AIL_install_MDI_driver_image(0x%X,%u,0x%X)\n"
+		.align 4
 data_160d2c:
 		.string "AIL_MDI_driver_type(0x%X)\n"
-		.byte	0x0
+		.align 4
 data_160d48:
 		.string "AIL_set_GTL_filename_prefix(%s)\n"
-		.ascii  "\x00\x00\x00"
+		.align 4
 data_160d6c:
 		.string "AIL_timbre_status(0x%X,%d,%d)\n"
-		.byte	0x0
+		.align 4
 data_160d8c:
 		.string "AIL_install_timbre(0x%X,%d,%d)\n"
+		.align 4
 data_160dac:
 		.string "AIL_protect_timbre(0x%X,%d,%d)\n"
+		.align 4
 data_160dcc:
 		.string "AIL_unprotect_timbre(0x%X,%d,%d)\n"
-		.short  0x0
+		.align 4
 data_160df0:
 		.string "AIL_active_sequence_count(0x%X)\n"
-		.ascii  "\x00\x00\x00"
+		.align 4
 data_160e14:
 		.string "AIL_controller_value(0x%X,%d,%d)\n"
-		.short  0x0
+		.align 4
 data_160e38:
 		.string "AIL_channel_notes(0x%X,%d)\n"
+		.align 4
 data_160e54:
 		.string "AIL_sequence_position(0x%X,0x%X,0x%X)\n"
-		.byte	0x0
+		.align 4
 data_160e7c:
 		.string "Result = %d:%d\n"
+		.align 4
 data_160e8c:
 		.string "AIL_branch_index(0x%X,%u)\n"
-		.byte	0x0
+		.align 4
 data_160ea8:
 		.string "AIL_register_prefix_callback(0x%X,0x%X)\n"
-		.ascii  "\x00\x00\x00"
+		.align 4
 data_160ed4:
 		.string "AIL_register_trigger_callback(0x%X,0x%X)\n"
-		.short  0x0
+		.align 4
 data_160f00:
 		.string "AIL_register_sequence_callback(0x%X,0x%X)\n"
-		.byte	0x0
+		.align 4
 data_160f2c:
 		.string "AIL_register_beat_callback(0x%X,0x%X)\n"
-		.byte	0x0
+		.align 4
 data_160f54:
 		.string "AIL_register_event_callback(0x%X,0x%X)\n"
+		.align 4
 data_160f7c:
 		.string "AIL_register_timbre_callback(0x%X,0x%X)\n"
-		.ascii  "\x00\x00\x00"
+		.align 4
 data_160fa8:
 		.string "AIL_set_sequence_user_data(0x%X,%u,%d)\n"
+		.align 4
 data_160fd0:
 		.string "AIL_sequence_user_data(0x%X,%u)\n"
-		.ascii  "\x00\x00\x00"
+		.align 4
 data_160ff4:
 		.string "AIL_register_ICA_array(0x%X,0x%X)\n"
-		.byte	0x0
+		.align 4
 data_161018:
 		.string "AIL_lock_channel(0x%X)\n"
+		.align 4
 data_161030:
 		.string "AIL_release_channel(0x%X,%d)\n"
-		.short  0x0
+		.align 4
 data_161050:
 		.string "AIL_map_sequence_channel(0x%X,%d,%d)\n"
-		.short  0x0
+		.align 4
 data_161078:
 		.string "AIL_true_sequence_channel(0x%X,%d)\n"
+		.align 4
 data_16109c:
 		.string "AIL_send_channel_voice_message(0x%X,0x%X,0x%X,0x%X,0x%X)\n"
-		.short  0x0
+		.align 4
 data_1610d8:
 		.string "AIL_send_sysex_message(0x%X,0x%X)\n"
-		.byte	0x0
+		.align 4
 data_1610fc:
 		.string "AIL_create_wave_synthesizer(0x%X,0x%X,0x%X,%d)\n"
+		.align 4
 data_16112c:
 		.string "AIL_destroy_wave_synthesizer(0x%X)\n"
-
+		.align 4
 
 
 data_161820:
@@ -21226,74 +21253,78 @@ data_161834:
 		.ascii  "\x72\x74\x00\x00"
 data_161838:
 		.string "DRIVER"
-		.byte	0x0
+		.align 4
 data_161840:
 		.string "DEVICE"
-		.byte	0x0
+		.align 4
 data_161848:
 		.string "IO_ADDR"
+		.align 4
 data_161850:
 		.ascii  "\x49\x52\x51\x00"
 data_161854:
 		.string "DMA_8_bit"
-		.short  0x0
+		.align 4
 data_161860:
 		.string "DMA_16_bit"
-		.byte	0x0
+		.align 4
 data_16186c:
 		.string "Corrupted .INI file\n"
-		.ascii  "\x00\x00\x00"
+		.align 4
 data_161884:
 		.string "Insufficient memory for driver descriptor\n"
-		.byte	0x0
+		.align 4
 data_1618b0:
 		.string "Insufficient low memory\n"
-		.ascii  "\x00\x00\x00"
+		.align 4
 data_1618cc:
 		.string "AIL3DIG"
+		.align 4
 data_1618d4:
 		.string "AIL3MDI"
+		.align 4
 data_1618dc:
 		.string "Invalid driver type\n"
-		.ascii  "\x00\x00\x00"
+		.align 4
 data_1618f4:
 		.string "Out of driver handles\n"
-		.byte	0x0
+		.align 4
 data_16190c:
 		.string "Out of timer handles\n"
-		.short  0x0
+		.align 4
 data_161924:
 		.string "Minimum DMA buffer size too large for VDM\n"
-		.byte	0x0
+		.align 4
 data_161950:
 		.string "Could not allocate memory for driver\n"
-		.short  0x0
+		.align 4
 data_161978:
 		.string ".DIG driver required\n"
-		.short  0x0
+		.align 4
 data_161990:
 		.string "Digital sound hardware not found\n"
-		.short  0x0
+		.align 4
 data_1619b4:
 		.string "Could not allocate DMA buffers\n"
+		.align 4
 data_1619d4:
 		.string "Could not allocate build buffer\n"
-		.ascii  "\x00\x00\x00"
+		.align 4
 data_1619f8:
 		.string "Could not allocate SAMPLE structures\n"
-		.short  0x0
+		.align 4
 data_161a20:
 		.string "Out of timer handles\n"
-		.short  0x0
+		.align 4
 data_161a38:
 		.string "%s/%s"
-		.short  0x0
+		.align 4
 data_161a40:
 		.string "Driver file not found\n"
-		.byte	0x0
+		.align 4
 data_161a58:
 		.string "Unable to open file DIG.INI\n"
-		.ascii  "\x00\x00\x00"
+		.align 4
 data_161a78:
 		.string "Out of sample handles\n"
 		.byte	0x0

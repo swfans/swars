@@ -13,7 +13,7 @@ extern uint32_t	keyboard_buffer_read_index;
 extern uint32_t	keyboard_buffer_write_index;
 extern uint32_t keyboard_last_key;
 extern uint32_t keyboard_last_key_prefixed;
-extern uint8_t 	keyboard_table[256];
+extern uint8_t 	lbKeyOn[256];
 
 #pragma pack()
 
@@ -177,7 +177,7 @@ get_key_table_index (SDLKey key)
 static bool
 is_key_pressed (SDLKey key)
 {
-  return (keyboard_table[get_key_table_index (key)] != 0);
+  return (lbKeyOn[get_key_table_index (key)] != 0);
 }
 
 static uint8_t
@@ -255,13 +255,13 @@ keyboard_handle_event (const SDL_Event *ev)
 
   if (ev->type == SDL_KEYDOWN)
     {
-      keyboard_table[key_index] = 1 | get_key_flags ();
+      lbKeyOn[key_index] = 1 | get_key_flags ();
 
       if (!keyboard_last_key_prefixed)
 	add_key_to_buffer (scan_code);
     }
   else
-    keyboard_table[key_index] = 0;
+    lbKeyOn[key_index] = 0;
 }
 
 void
