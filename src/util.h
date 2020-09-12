@@ -3,6 +3,7 @@
 
 #include <stddef.h>
 #include <stdbool.h>
+#include <sys/stat.h>
 
 #ifndef MIN
 # define MIN(a, b) ((a) < (b) ? (a) : (b))
