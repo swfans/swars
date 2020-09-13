@@ -29,11 +29,11 @@
 
 .text
 
-.global EXPORT_SYMBOL(data_150104);
-.global EXPORT_SYMBOL(data_150110);
-.global EXPORT_SYMBOL(data_152e24);
-.global EXPORT_SYMBOL(screen_height);
-.global EXPORT_SYMBOL(screen_width);
+.global EXPORT_SYMBOL(vec_screen);
+.global EXPORT_SYMBOL(vec_screen_width);
+.global EXPORT_SYMBOL(vec_colour);
+.global EXPORT_SYMBOL(vec_window_height);
+.global EXPORT_SYMBOL(vec_window_width);
 
 /*----------------------------------------------------------------*/
 GLOBAL_FUNC (poly_line_)
@@ -75,13 +75,13 @@ GLOBAL_FUNC (poly_line_)
 		add    %ax,-0x14(%ebp)
 		movw   $0x0,-0x12(%ebp)
 		mov    -0x16(%ebp),%cx
-		mov    EXPORT_SYMBOL(screen_height),%bx
+		mov    EXPORT_SYMBOL(vec_window_height),%bx
 		cmp    %bx,%cx
 		js     jump_127ee6
 	jump_127e29:
 		mov    -0x18(%ebp),%ax
 		sub    -0x14(%ebp),%ax
-		mov    EXPORT_SYMBOL(screen_height),%cx
+		mov    EXPORT_SYMBOL(vec_window_height),%cx
 		sub    -0x12(%ebp),%cx
 		imul   %cx
 		mov    -0x16(%ebp),%cx
@@ -89,7 +89,7 @@ GLOBAL_FUNC (poly_line_)
 		idiv   %cx
 		add    -0x14(%ebp),%ax
 		mov    %ax,-0x18(%ebp)
-		mov    EXPORT_SYMBOL(screen_height),%bx
+		mov    EXPORT_SYMBOL(vec_window_height),%bx
 		dec    %bx
 		mov    %bx,-0x16(%ebp)
 		jmp    jump_127ee6
@@ -109,7 +109,7 @@ GLOBAL_FUNC (poly_line_)
 		cmp    %cx,%bx
 		je     jump_1280f9
 		js     jump_127ecc
-		cmp    EXPORT_SYMBOL(screen_height),%cx
+		cmp    EXPORT_SYMBOL(vec_window_height),%cx
 		jge    jump_1281c3
 		mov    %bx,-0x16(%ebp)
 		mov    %cx,-0x12(%ebp)
@@ -117,13 +117,13 @@ GLOBAL_FUNC (poly_line_)
 		mov    -0x18(%ebp),%dx
 		mov    %dx,-0x14(%ebp)
 		mov    %ax,-0x18(%ebp)
-		cmp    EXPORT_SYMBOL(screen_height),%bx
+		cmp    EXPORT_SYMBOL(vec_window_height),%bx
 		jge    jump_127e29
 		jmp    jump_127ee6
 	jump_127ecc:
-		cmp    EXPORT_SYMBOL(screen_height),%bx
+		cmp    EXPORT_SYMBOL(vec_window_height),%bx
 		jge    jump_1281c3
-		cmp    EXPORT_SYMBOL(screen_height),%cx
+		cmp    EXPORT_SYMBOL(vec_window_height),%cx
 		jge    jump_127e29
 	jump_127ee6:
 		movl   $0x0,-0xc(%ebp)
@@ -143,7 +143,7 @@ GLOBAL_FUNC (poly_line_)
 		add    %ax,-0x12(%ebp)
 		movw   $0x0,-0x14(%ebp)
 		mov    -0x18(%ebp),%cx
-		mov    EXPORT_SYMBOL(screen_width),%bx
+		mov    EXPORT_SYMBOL(vec_window_width),%bx
 		cmp    %bx,%cx
 		js     jump_128069
 		mov    -0x16(%ebp),%ax
@@ -157,21 +157,21 @@ GLOBAL_FUNC (poly_line_)
 		mov    %bx,-0x18(%ebp)
 		jmp    jump_128069
 	jump_127f61:
-		cmp    EXPORT_SYMBOL(screen_width),%bx
+		cmp    EXPORT_SYMBOL(vec_window_width),%bx
 		js     jump_127fde
 		mov    -0x18(%ebp),%cx
-		cmp    EXPORT_SYMBOL(screen_width),%cx
+		cmp    EXPORT_SYMBOL(vec_window_width),%cx
 		jge    jump_1281c3
 		movl   $0xffffffff,-0xc(%ebp)
 		mov    -0x16(%ebp),%ax
 		sub    -0x12(%ebp),%ax
 		mov    %bx,%dx
-		sub    EXPORT_SYMBOL(screen_width),%dx
+		sub    EXPORT_SYMBOL(vec_window_width),%dx
 		imul   %dx
 		sub    %cx,%bx
 		idiv   %bx
 		add    %ax,-0x12(%ebp)
-		mov    EXPORT_SYMBOL(screen_width),%ax
+		mov    EXPORT_SYMBOL(vec_window_width),%ax
 		dec    %ax
 		mov    %ax,-0x14(%ebp)
 		or     %cx,%cx
@@ -201,19 +201,19 @@ GLOBAL_FUNC (poly_line_)
 		movw   $0x0,-0x18(%ebp)
 		jmp    jump_128069
 	jump_12800f:
-		cmp    EXPORT_SYMBOL(screen_width),%cx
+		cmp    EXPORT_SYMBOL(vec_window_width),%cx
 		js     jump_128050
 		movl   $0x1,-0xc(%ebp)
 		mov    -0x16(%ebp),%ax
 		sub    -0x12(%ebp),%ax
-		mov    EXPORT_SYMBOL(screen_width),%dx
+		mov    EXPORT_SYMBOL(vec_window_width),%dx
 		sub    %bx,%dx
 		imul   %dx
 		sub    %bx,%cx
 		idiv   %cx
 		add    -0x12(%ebp),%ax
 		mov    %ax,-0x16(%ebp)
-		mov    EXPORT_SYMBOL(screen_width),%ax
+		mov    EXPORT_SYMBOL(vec_window_width),%ax
 		dec    %ax
 		mov    %ax,-0x18(%ebp)
 		jmp    jump_128069
@@ -226,10 +226,10 @@ GLOBAL_FUNC (poly_line_)
 	jump_128069:
 		movzwl -0x14(%ebp),%edi
 		movzwl -0x12(%ebp),%eax
-		mov    EXPORT_SYMBOL(data_150110),%ebx
+		mov    EXPORT_SYMBOL(vec_screen_width),%ebx
 		imul   %ebx
 		add    %eax,%edi
-		add    EXPORT_SYMBOL(data_150104),%edi
+		add    EXPORT_SYMBOL(vec_screen),%edi
 		mov    -0x18(%ebp),%ax
 		sub    -0x14(%ebp),%ax
 		mov    -0xc(%ebp),%esi
@@ -253,7 +253,7 @@ GLOBAL_FUNC (poly_line_)
 		sub    %ax,%bx
 		sub    %ax,%cx
 		add    %cx,%cx
-		mov    EXPORT_SYMBOL(data_152e24),%al
+		mov    EXPORT_SYMBOL(vec_colour),%al
 		mov    %al,(%edi)
 	jump_1280cc:
 		add    -0xc(%ebp),%edi
@@ -286,7 +286,7 @@ GLOBAL_FUNC (poly_line_)
 		leave
 		ret
 	jump_1280f9:
-		cmp    EXPORT_SYMBOL(screen_height),%bx
+		cmp    EXPORT_SYMBOL(vec_window_height),%bx
 		jge    jump_1281c3
 		movswl -0x14(%ebp),%edi
 		movswl -0x18(%ebp),%ecx
@@ -294,7 +294,7 @@ GLOBAL_FUNC (poly_line_)
 		jge    jump_128114
 		xchg   %ecx,%edi
 	jump_128114:
-		mov    EXPORT_SYMBOL(screen_width),%eax
+		mov    EXPORT_SYMBOL(vec_window_width),%eax
 		dec    %eax
 		or     %edi,%edi
 		jns    jump_128130
@@ -326,12 +326,12 @@ GLOBAL_FUNC (poly_line_)
 		sub    %di,%cx
 	jump_12815a:
 		movzwl -0x12(%ebp),%eax
-		mov    EXPORT_SYMBOL(data_150110),%ebx
+		mov    EXPORT_SYMBOL(vec_screen_width),%ebx
 		imul   %ebx
 		add    %eax,%edi
-		add    EXPORT_SYMBOL(data_150104),%edi
+		add    EXPORT_SYMBOL(vec_screen),%edi
 		inc    %cx
-		mov    EXPORT_SYMBOL(data_152e24),%al
+		mov    EXPORT_SYMBOL(vec_colour),%al
 		rep stos %al,%es:(%edi)
 		pop    %edi
 		pop    %esi
@@ -353,15 +353,15 @@ GLOBAL_FUNC (poly_line_)
 	jump_128197:
 		sub    %ax,%cx
 	jump_12819a:
-		mov    EXPORT_SYMBOL(data_150110),%ebx
+		mov    EXPORT_SYMBOL(vec_screen_width),%ebx
 		imul   %ebx
 		add    %eax,%edi
-		add    EXPORT_SYMBOL(data_150104),%edi
+		add    EXPORT_SYMBOL(vec_screen),%edi
 		inc    %cx
-		mov    EXPORT_SYMBOL(data_152e24),%al
+		mov    EXPORT_SYMBOL(vec_colour),%al
 	jump_1281b1:
 		mov    %al,(%edi)
-		add    EXPORT_SYMBOL(data_150110),%edi
+		add    EXPORT_SYMBOL(vec_screen_width),%edi
 		loop   jump_1281b1
 		pop    %edi
 		pop    %esi

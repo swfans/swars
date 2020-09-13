@@ -156,7 +156,7 @@ game_get_user_path (void)
 }
 
 ssize_t
-game_file_length (const char *filename)
+LbFileLength (const char *filename)
 {
   struct stat st;
   char transformed[FILENAME_MAX];

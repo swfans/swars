@@ -141,7 +141,7 @@ handle_motion_event (const SDL_MouseMotionEvent *ev)
   asm volatile
     ("call adjust_point;"
      "call screen_remove;"
-     "call func_e9ba0"
+     "call screen_place"
      : : "a" (&lbDisplay.MMouseX), "d" (&lbDisplay.MMouseY));
 
 }

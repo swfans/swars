@@ -29,14 +29,14 @@
 
 .text
 
-.global EXPORT_SYMBOL(data_150100);
-.global EXPORT_SYMBOL(data_150108);
-.global EXPORT_SYMBOL(data_150110);
-.global EXPORT_SYMBOL(data_150124);
-.global EXPORT_SYMBOL(data_152e24);
-.global EXPORT_SYMBOL(data_152e25);
-.global EXPORT_SYMBOL(screen_height);
-.global EXPORT_SYMBOL(screen_width);
+.global EXPORT_SYMBOL(poly_screen);
+.global EXPORT_SYMBOL(vec_map);
+.global EXPORT_SYMBOL(vec_screen_width);
+.global EXPORT_SYMBOL(polyscans);
+.global EXPORT_SYMBOL(vec_colour);
+.global EXPORT_SYMBOL(vec_mode);
+.global EXPORT_SYMBOL(vec_window_height);
+.global EXPORT_SYMBOL(vec_window_width);
 .global EXPORT_SYMBOL(sprites);
 .global EXPORT_SYMBOL(data_166280);
 
@@ -112,27 +112,27 @@ GLOBAL_FUNC (trig_)
 		mov    %eax,0x54(%esp)
 		or     %eax,%eax
 		jns    jump_120e5f
-		mov    EXPORT_SYMBOL(data_150100),%ebx
+		mov    EXPORT_SYMBOL(poly_screen),%ebx
 		mov    %ebx,(%esp)
 		movb   $0x1,0x66(%esp)
 		jmp    jump_120e82
 	jump_120e5f:
-		cmp    EXPORT_SYMBOL(screen_height),%eax
+		cmp    EXPORT_SYMBOL(vec_window_height),%eax
 		jge    jump_122a92
 		mov    %eax,%ebx
-		imul   EXPORT_SYMBOL(data_150110),%ebx
-		add    EXPORT_SYMBOL(data_150100),%ebx
+		imul   EXPORT_SYMBOL(vec_screen_width),%ebx
+		add    EXPORT_SYMBOL(poly_screen),%ebx
 		mov    %ebx,(%esp)
 		movb   $0x0,0x66(%esp)
 	jump_120e82:
 		mov    0x4(%ecx),%ebx
-		cmp    EXPORT_SYMBOL(screen_height),%ebx
+		cmp    EXPORT_SYMBOL(vec_window_height),%ebx
 		setg   0x68(%esp)
 		sub    %eax,%ebx
 		mov    %ebx,0x10(%esp)
 		mov    %ebx,0x20(%esp)
 		mov    0x4(%edi),%ebx
-		cmp    EXPORT_SYMBOL(screen_height),%ebx
+		cmp    EXPORT_SYMBOL(vec_window_height),%ebx
 		setg   0x67(%esp)
 		sub    %eax,%ebx
 		mov    %ebx,0x14(%esp)
@@ -162,7 +162,7 @@ GLOBAL_FUNC (trig_)
 		mov    (%edi),%eax
 		shl    $0x10,%eax
 		mov    %eax,0x1c(%esp)
-		movzbl EXPORT_SYMBOL(data_152e25),%eax
+		movzbl EXPORT_SYMBOL(vec_mode),%eax
 		jmp    *vtable_120f07(,%eax,4)
 
 vtable_120f07:
@@ -304,11 +304,11 @@ func_120f73:
 		add    %edi,%esi
 		cmpb   $0x0,0x68(%esp)
 		je     jump_1210dc
-		mov    EXPORT_SYMBOL(screen_height),%edi
+		mov    EXPORT_SYMBOL(vec_window_height),%edi
 		mov    %edi,0x18(%esp)
 		mov    %edi,0x20(%esp)
 	jump_1210dc:
-		lea    EXPORT_SYMBOL(data_150124),%edi
+		lea    EXPORT_SYMBOL(polyscans),%edi
 		jmp    jump_1211b3
 	jump_1210e7:
 		mov    0x48(%esp),%edi
@@ -329,7 +329,7 @@ func_120f73:
 		add    %edi,%esi
 		cmpb   $0x0,0x68(%esp)
 		je     jump_12117e
-		mov    EXPORT_SYMBOL(screen_height),%edi
+		mov    EXPORT_SYMBOL(vec_window_height),%edi
 		mov    %edi,0x20(%esp)
 		cmpb   $0x0,0x67(%esp)
 		je     jump_121140
@@ -344,7 +344,7 @@ func_120f73:
 	jump_12114f:
 		cmpb   $0x0,0x68(%esp)
 		je     jump_12117e
-		mov    EXPORT_SYMBOL(screen_height),%edi
+		mov    EXPORT_SYMBOL(vec_window_height),%edi
 		sub    0x54(%esp),%edi
 		mov    %edi,0x20(%esp)
 		cmpb   $0x0,0x67(%esp)
@@ -356,7 +356,7 @@ func_120f73:
 		setle  0x67(%esp)
 		mov    %edi,0x18(%esp)
 	jump_12117e:
-		lea    EXPORT_SYMBOL(data_150124),%edi
+		lea    EXPORT_SYMBOL(polyscans),%edi
 	jump_121184:
 		mov    %eax,(%edi)
 		add    0x4(%esp),%eax
@@ -375,7 +375,7 @@ func_120f73:
 	jump_1211b3:
 		cmpb   $0x0,0x67(%esp)
 		je     jump_1211c8
-		movzbl EXPORT_SYMBOL(data_152e25),%eax
+		movzbl EXPORT_SYMBOL(vec_mode),%eax
 		jmp    *vtable_1229b3(,%eax,4)
 	jump_1211c8:
 		mov    %eax,(%edi)
@@ -391,7 +391,7 @@ func_120f73:
 		add    $0x14,%edi
 		decl   0x18(%esp)
 		jne    jump_1211c8
-		movzbl EXPORT_SYMBOL(data_152e25),%eax
+		movzbl EXPORT_SYMBOL(vec_mode),%eax
 		jmp    *vtable_1229b3(,%eax,4)
 
 
@@ -483,11 +483,11 @@ func_121201:
 		add    %edi,%edx
 		cmpb   $0x0,0x68(%esp)
 		je     jump_121323
-		mov    EXPORT_SYMBOL(screen_height),%edi
+		mov    EXPORT_SYMBOL(vec_window_height),%edi
 		mov    %edi,0x18(%esp)
 		mov    %edi,0x20(%esp)
 	jump_121323:
-		lea    EXPORT_SYMBOL(data_150124),%edi
+		lea    EXPORT_SYMBOL(polyscans),%edi
 		jmp    jump_1213e8
 	jump_12132e:
 		mov    0x48(%esp),%edi
@@ -505,7 +505,7 @@ func_121201:
 		add    %edi,%edx
 		cmpb   $0x0,0x68(%esp)
 		je     jump_1213ba
-		mov    EXPORT_SYMBOL(screen_height),%edi
+		mov    EXPORT_SYMBOL(vec_window_height),%edi
 		mov    %edi,0x20(%esp)
 		cmpb   $0x0,0x67(%esp)
 		je     jump_12137c
@@ -520,7 +520,7 @@ func_121201:
 	jump_12138b:
 		cmpb   $0x0,0x68(%esp)
 		je     jump_1213ba
-		mov    EXPORT_SYMBOL(screen_height),%edi
+		mov    EXPORT_SYMBOL(vec_window_height),%edi
 		sub    0x54(%esp),%edi
 		mov    %edi,0x20(%esp)
 		cmpb   $0x0,0x67(%esp)
@@ -532,7 +532,7 @@ func_121201:
 		setle  0x67(%esp)
 		mov    %edi,0x18(%esp)
 	jump_1213ba:
-		lea    EXPORT_SYMBOL(data_150124),%edi
+		lea    EXPORT_SYMBOL(polyscans),%edi
 	jump_1213c0:
 		mov    %eax,(%edi)
 		add    0x4(%esp),%eax
@@ -549,7 +549,7 @@ func_121201:
 	jump_1213e8:
 		cmpb   $0x0,0x67(%esp)
 		je     jump_1213fd
-		movzbl EXPORT_SYMBOL(data_152e25),%eax
+		movzbl EXPORT_SYMBOL(vec_mode),%eax
 		jmp    *vtable_1229b3(,%eax,4)
 	jump_1213fd:
 		mov    %eax,(%edi)
@@ -563,7 +563,7 @@ func_121201:
 		add    $0x14,%edi
 		decl   0x18(%esp)
 		jne    jump_1213fd
-		movzbl EXPORT_SYMBOL(data_152e25),%eax
+		movzbl EXPORT_SYMBOL(vec_mode),%eax
 		jmp    *vtable_1229b3(,%eax,4)
 
 
@@ -634,11 +634,11 @@ func_12142f:
 		add    %edi,%esi
 		cmpb   $0x0,0x68(%esp)
 		je     jump_12150e
-		mov    EXPORT_SYMBOL(screen_height),%edi
+		mov    EXPORT_SYMBOL(vec_window_height),%edi
 		mov    %edi,0x18(%esp)
 		mov    %edi,0x20(%esp)
 	jump_12150e:
-		lea    EXPORT_SYMBOL(data_150124),%edi
+		lea    EXPORT_SYMBOL(polyscans),%edi
 		jmp    jump_1215c1
 	jump_121519:
 		mov    0x48(%esp),%edi
@@ -653,7 +653,7 @@ func_12142f:
 		add    %edi,%esi
 		cmpb   $0x0,0x68(%esp)
 		je     jump_12159a
-		mov    EXPORT_SYMBOL(screen_height),%edi
+		mov    EXPORT_SYMBOL(vec_window_height),%edi
 		mov    %edi,0x20(%esp)
 		cmpb   $0x0,0x67(%esp)
 		je     jump_12155c
@@ -668,7 +668,7 @@ func_12142f:
 	jump_12156b:
 		cmpb   $0x0,0x68(%esp)
 		je     jump_12159a
-		mov    EXPORT_SYMBOL(screen_height),%edi
+		mov    EXPORT_SYMBOL(vec_window_height),%edi
 		sub    0x54(%esp),%edi
 		mov    %edi,0x20(%esp)
 		cmpb   $0x0,0x67(%esp)
@@ -680,7 +680,7 @@ func_12142f:
 		setle  0x67(%esp)
 		mov    %edi,0x18(%esp)
 	jump_12159a:
-		lea    EXPORT_SYMBOL(data_150124),%edi
+		lea    EXPORT_SYMBOL(polyscans),%edi
 	jump_1215a0:
 		mov    %eax,(%edi)
 		add    0x4(%esp),%eax
@@ -695,7 +695,7 @@ func_12142f:
 	jump_1215c1:
 		cmpb   $0x0,0x67(%esp)
 		je     jump_1215d6
-		movzbl EXPORT_SYMBOL(data_152e25),%eax
+		movzbl EXPORT_SYMBOL(vec_mode),%eax
 		jmp    *vtable_1229b3(,%eax,4)
 	jump_1215d6:
 		mov    %eax,(%edi)
@@ -707,7 +707,7 @@ func_12142f:
 		add    $0x14,%edi
 		decl   0x18(%esp)
 		jne    jump_1215d6
-		movzbl EXPORT_SYMBOL(data_152e25),%eax
+		movzbl EXPORT_SYMBOL(vec_mode),%eax
 		jmp    *vtable_1229b3(,%eax,4)
 
 
@@ -741,11 +741,11 @@ func_121601:
 		add    %edi,%ebx
 		cmpb   $0x0,0x68(%esp)
 		je     jump_121673
-		mov    EXPORT_SYMBOL(screen_height),%edi
+		mov    EXPORT_SYMBOL(vec_window_height),%edi
 		mov    %edi,0x18(%esp)
 		mov    %edi,0x20(%esp)
 	jump_121673:
-		lea    EXPORT_SYMBOL(data_150124),%edi
+		lea    EXPORT_SYMBOL(polyscans),%edi
 		jmp    jump_121714
 	jump_12167e:
 		mov    0x48(%esp),%edi
@@ -757,7 +757,7 @@ func_121601:
 		add    %edi,%ebx
 		cmpb   $0x0,0x68(%esp)
 		je     jump_1216f4
-		mov    EXPORT_SYMBOL(screen_height),%edi
+		mov    EXPORT_SYMBOL(vec_window_height),%edi
 		mov    %edi,0x20(%esp)
 		cmpb   $0x0,0x67(%esp)
 		je     jump_1216b6
@@ -772,7 +772,7 @@ func_121601:
 	jump_1216c5:
 		cmpb   $0x0,0x68(%esp)
 		je     jump_1216f4
-		mov    EXPORT_SYMBOL(screen_height),%edi
+		mov    EXPORT_SYMBOL(vec_window_height),%edi
 		sub    0x54(%esp),%edi
 		mov    %edi,0x20(%esp)
 		cmpb   $0x0,0x67(%esp)
@@ -784,7 +784,7 @@ func_121601:
 		setle  0x67(%esp)
 		mov    %edi,0x18(%esp)
 	jump_1216f4:
-		lea    EXPORT_SYMBOL(data_150124),%edi
+		lea    EXPORT_SYMBOL(polyscans),%edi
 	jump_1216fa:
 		mov    %eax,(%edi)
 		add    0x4(%esp),%eax
@@ -797,7 +797,7 @@ func_121601:
 	jump_121714:
 		cmpb   $0x0,0x67(%esp)
 		je     jump_121729
-		movzbl EXPORT_SYMBOL(data_152e25),%eax
+		movzbl EXPORT_SYMBOL(vec_mode),%eax
 		jmp    *vtable_1229b3(,%eax,4)
 	jump_121729:
 		mov    %eax,(%edi)
@@ -807,7 +807,7 @@ func_121601:
 		add    $0x14,%edi
 		decl   0x18(%esp)
 		jne    jump_121729
-		movzbl EXPORT_SYMBOL(data_152e25),%eax
+		movzbl EXPORT_SYMBOL(vec_mode),%eax
 		jmp    *vtable_1229b3(,%eax,4)
 	jump_12174d:
 		xchg   %esi,%edi
@@ -817,26 +817,26 @@ func_121601:
 		mov    %eax,0x54(%esp)
 		or     %eax,%eax
 		jns    jump_12176c
-		mov    EXPORT_SYMBOL(data_150100),%ebx
+		mov    EXPORT_SYMBOL(poly_screen),%ebx
 		mov    %ebx,(%esp)
 		movb   $0x1,0x66(%esp)
 		jmp    jump_12178f
 	jump_12176c:
-		cmp    EXPORT_SYMBOL(screen_height),%eax
+		cmp    EXPORT_SYMBOL(vec_window_height),%eax
 		jge    jump_122a92
 		mov    %eax,%ebx
-		imul   EXPORT_SYMBOL(data_150110),%ebx
-		add    EXPORT_SYMBOL(data_150100),%ebx
+		imul   EXPORT_SYMBOL(vec_screen_width),%ebx
+		add    EXPORT_SYMBOL(poly_screen),%ebx
 		mov    %ebx,(%esp)
 		movb   $0x0,0x66(%esp)
 	jump_12178f:
 		mov    0x4(%ecx),%ebx
-		cmp    EXPORT_SYMBOL(screen_height),%ebx
+		cmp    EXPORT_SYMBOL(vec_window_height),%ebx
 		setg   0x67(%esp)
 		sub    %eax,%ebx
 		mov    %ebx,0x10(%esp)
 		mov    0x4(%edi),%ebx
-		cmp    EXPORT_SYMBOL(screen_height),%ebx
+		cmp    EXPORT_SYMBOL(vec_window_height),%ebx
 		setg   0x68(%esp)
 		sub    %eax,%ebx
 		mov    %ebx,0x14(%esp)
@@ -867,7 +867,7 @@ func_121601:
 		mov    (%ecx),%eax
 		shl    $0x10,%eax
 		mov    %eax,0x1c(%esp)
-		movzbl EXPORT_SYMBOL(data_152e25),%eax
+		movzbl EXPORT_SYMBOL(vec_mode),%eax
 		jmp    *vtable_121814(,%eax,4)
 
 vtable_121814:
@@ -1024,11 +1024,11 @@ func_121880:
 		add    %edi,%esi
 		cmpb   $0x0,0x68(%esp)
 		je     jump_121a16
-		mov    EXPORT_SYMBOL(screen_height),%edi
+		mov    EXPORT_SYMBOL(vec_window_height),%edi
 		mov    %edi,0x18(%esp)
 		mov    %edi,0x20(%esp)
 	jump_121a16:
-		lea    EXPORT_SYMBOL(data_150124),%edi
+		lea    EXPORT_SYMBOL(polyscans),%edi
 		jmp    jump_121aed
 	jump_121a21:
 		mov    0x48(%esp),%edi
@@ -1049,7 +1049,7 @@ func_121880:
 		add    %edi,%esi
 		cmpb   $0x0,0x68(%esp)
 		je     jump_121ab8
-		mov    EXPORT_SYMBOL(screen_height),%edi
+		mov    EXPORT_SYMBOL(vec_window_height),%edi
 		mov    %edi,0x20(%esp)
 		cmpb   $0x0,0x67(%esp)
 		je     jump_121a7a
@@ -1064,7 +1064,7 @@ func_121880:
 	jump_121a89:
 		cmpb   $0x0,0x68(%esp)
 		je     jump_121ab8
-		mov    EXPORT_SYMBOL(screen_height),%edi
+		mov    EXPORT_SYMBOL(vec_window_height),%edi
 		sub    0x54(%esp),%edi
 		mov    %edi,0x20(%esp)
 		cmpb   $0x0,0x67(%esp)
@@ -1076,7 +1076,7 @@ func_121880:
 		setle  0x67(%esp)
 		mov    %edi,0x18(%esp)
 	jump_121ab8:
-		lea    EXPORT_SYMBOL(data_150124),%edi
+		lea    EXPORT_SYMBOL(polyscans),%edi
 	jump_121abe:
 		mov    %eax,(%edi)
 		add    0x4(%esp),%eax
@@ -1095,7 +1095,7 @@ func_121880:
 	jump_121aed:
 		cmpb   $0x0,0x67(%esp)
 		je     jump_121b02
-		movzbl EXPORT_SYMBOL(data_152e25),%eax
+		movzbl EXPORT_SYMBOL(vec_mode),%eax
 		jmp    *vtable_1229b3(,%eax,4)
 	jump_121b02:
 		mov    %eax,(%edi)
@@ -1111,7 +1111,7 @@ func_121880:
 		add    $0x14,%edi
 		decl   0x18(%esp)
 		jne    jump_121b02
-		movzbl EXPORT_SYMBOL(data_152e25),%eax
+		movzbl EXPORT_SYMBOL(vec_mode),%eax
 		jmp    *vtable_1229b3(,%eax,4)
 
 
@@ -1213,11 +1213,11 @@ func_121b3b:
 		add    %edi,%edx
 		cmpb   $0x0,0x68(%esp)
 		je     jump_121c7b
-		mov    EXPORT_SYMBOL(screen_height),%edi
+		mov    EXPORT_SYMBOL(vec_window_height),%edi
 		mov    %edi,0x18(%esp)
 		mov    %edi,0x20(%esp)
 	jump_121c7b:
-		lea    EXPORT_SYMBOL(data_150124),%edi
+		lea    EXPORT_SYMBOL(polyscans),%edi
 		jmp    jump_121d40
 	jump_121c86:
 		mov    0x48(%esp),%edi
@@ -1235,7 +1235,7 @@ func_121b3b:
 		add    %edi,%edx
 		cmpb   $0x0,0x68(%esp)
 		je     jump_121d12
-		mov    EXPORT_SYMBOL(screen_height),%edi
+		mov    EXPORT_SYMBOL(vec_window_height),%edi
 		mov    %edi,0x20(%esp)
 		cmpb   $0x0,0x67(%esp)
 		je     jump_121cd4
@@ -1250,7 +1250,7 @@ func_121b3b:
 	jump_121ce3:
 		cmpb   $0x0,0x68(%esp)
 		je     jump_121d12
-		mov    EXPORT_SYMBOL(screen_height),%edi
+		mov    EXPORT_SYMBOL(vec_window_height),%edi
 		sub    0x54(%esp),%edi
 		mov    %edi,0x20(%esp)
 		cmpb   $0x0,0x67(%esp)
@@ -1262,7 +1262,7 @@ func_121b3b:
 		setle  0x67(%esp)
 		mov    %edi,0x18(%esp)
 	jump_121d12:
-		lea    EXPORT_SYMBOL(data_150124),%edi
+		lea    EXPORT_SYMBOL(polyscans),%edi
 	jump_121d18:
 		mov    %eax,(%edi)
 		add    0x4(%esp),%eax
@@ -1279,7 +1279,7 @@ func_121b3b:
 	jump_121d40:
 		cmpb   $0x0,0x67(%esp)
 		je     jump_121d55
-		movzbl EXPORT_SYMBOL(data_152e25),%eax
+		movzbl EXPORT_SYMBOL(vec_mode),%eax
 		jmp    *vtable_1229b3(,%eax,4)
 	jump_121d55:
 		mov    %eax,(%edi)
@@ -1293,7 +1293,7 @@ func_121b3b:
 		add    $0x14,%edi
 		decl   0x18(%esp)
 		jne    jump_121d55
-		movzbl EXPORT_SYMBOL(data_152e25),%eax
+		movzbl EXPORT_SYMBOL(vec_mode),%eax
 		jmp    *vtable_1229b3(,%eax,4)
 
 
@@ -1369,11 +1369,11 @@ func_121d87:
 		add    %edi,%esi
 		cmpb   $0x0,0x68(%esp)
 		je     jump_121e75
-		mov    EXPORT_SYMBOL(screen_height),%edi
+		mov    EXPORT_SYMBOL(vec_window_height),%edi
 		mov    %edi,0x18(%esp)
 		mov    %edi,0x20(%esp)
 	jump_121e75:
-		lea    EXPORT_SYMBOL(data_150124),%edi
+		lea    EXPORT_SYMBOL(polyscans),%edi
 		jmp    jump_121f28
 	jump_121e80:
 		mov    0x48(%esp),%edi
@@ -1388,7 +1388,7 @@ func_121d87:
 		add    %edi,%esi
 		cmpb   $0x0,0x68(%esp)
 		je     jump_121f01
-		mov    EXPORT_SYMBOL(screen_height),%edi
+		mov    EXPORT_SYMBOL(vec_window_height),%edi
 		mov    %edi,0x20(%esp)
 		cmpb   $0x0,0x67(%esp)
 		je     jump_121ec3
@@ -1403,7 +1403,7 @@ func_121d87:
 	jump_121ed2:
 		cmpb   $0x0,0x68(%esp)
 		je     jump_121f01
-		mov    EXPORT_SYMBOL(screen_height),%edi
+		mov    EXPORT_SYMBOL(vec_window_height),%edi
 		sub    0x54(%esp),%edi
 		mov    %edi,0x20(%esp)
 		cmpb   $0x0,0x67(%esp)
@@ -1415,7 +1415,7 @@ func_121d87:
 		setle  0x67(%esp)
 		mov    %edi,0x18(%esp)
 	jump_121f01:
-		lea    EXPORT_SYMBOL(data_150124),%edi
+		lea    EXPORT_SYMBOL(polyscans),%edi
 	jump_121f07:
 		mov    %eax,(%edi)
 		add    0x4(%esp),%eax
@@ -1430,7 +1430,7 @@ func_121d87:
 	jump_121f28:
 		cmpb   $0x0,0x67(%esp)
 		je     jump_121f3d
-		movzbl EXPORT_SYMBOL(data_152e25),%eax
+		movzbl EXPORT_SYMBOL(vec_mode),%eax
 		jmp    *vtable_1229b3(,%eax,4)
 	jump_121f3d:
 		mov    %eax,(%edi)
@@ -1442,7 +1442,7 @@ func_121d87:
 		add    $0x14,%edi
 		decl   0x18(%esp)
 		jne    jump_121f3d
-		movzbl EXPORT_SYMBOL(data_152e25),%eax
+		movzbl EXPORT_SYMBOL(vec_mode),%eax
 		jmp    *vtable_1229b3(,%eax,4)
 
 
@@ -1476,11 +1476,11 @@ func_121f68:
 		add    %edi,%ebx
 		cmpb   $0x0,0x68(%esp)
 		je     jump_121fda
-		mov    EXPORT_SYMBOL(screen_height),%edi
+		mov    EXPORT_SYMBOL(vec_window_height),%edi
 		mov    %edi,0x18(%esp)
 		mov    %edi,0x20(%esp)
 	jump_121fda:
-		lea    EXPORT_SYMBOL(data_150124),%edi
+		lea    EXPORT_SYMBOL(polyscans),%edi
 		jmp    jump_12207b
 	jump_121fe5:
 		mov    0x48(%esp),%edi
@@ -1492,7 +1492,7 @@ func_121f68:
 		add    %edi,%ebx
 		cmpb   $0x0,0x68(%esp)
 		je     jump_12205b
-		mov    EXPORT_SYMBOL(screen_height),%edi
+		mov    EXPORT_SYMBOL(vec_window_height),%edi
 		mov    %edi,0x20(%esp)
 		cmpb   $0x0,0x67(%esp)
 		je     jump_12201d
@@ -1507,7 +1507,7 @@ func_121f68:
 	jump_12202c:
 		cmpb   $0x0,0x68(%esp)
 		je     jump_12205b
-		mov    EXPORT_SYMBOL(screen_height),%edi
+		mov    EXPORT_SYMBOL(vec_window_height),%edi
 		sub    0x54(%esp),%edi
 		mov    %edi,0x20(%esp)
 		cmpb   $0x0,0x67(%esp)
@@ -1519,7 +1519,7 @@ func_121f68:
 		setle  0x67(%esp)
 		mov    %edi,0x18(%esp)
 	jump_12205b:
-		lea    EXPORT_SYMBOL(data_150124),%edi
+		lea    EXPORT_SYMBOL(polyscans),%edi
 	jump_122061:
 		mov    %eax,(%edi)
 		add    0x4(%esp),%eax
@@ -1532,7 +1532,7 @@ func_121f68:
 	jump_12207b:
 		cmpb   $0x0,0x67(%esp)
 		je     jump_122090
-		movzbl EXPORT_SYMBOL(data_152e25),%eax
+		movzbl EXPORT_SYMBOL(vec_mode),%eax
 		jmp    *vtable_1229b3(,%eax,4)
 	jump_122090:
 		mov    %eax,(%edi)
@@ -1542,7 +1542,7 @@ func_121f68:
 		add    $0x14,%edi
 		decl   0x18(%esp)
 		jne    jump_122090
-		movzbl EXPORT_SYMBOL(data_152e25),%eax
+		movzbl EXPORT_SYMBOL(vec_mode),%eax
 		jmp    *vtable_1229b3(,%eax,4)
 	jump_1220b4:
 		mov    (%ecx),%eax
@@ -1555,21 +1555,21 @@ func_121f68:
 		mov    %eax,0x54(%esp)
 		or     %eax,%eax
 		jns    jump_1220dd
-		mov    EXPORT_SYMBOL(data_150100),%ebx
+		mov    EXPORT_SYMBOL(poly_screen),%ebx
 		mov    %ebx,(%esp)
 		movb   $0x1,0x66(%esp)
 		jmp    jump_122100
 	jump_1220dd:
-		cmp    EXPORT_SYMBOL(screen_height),%eax
+		cmp    EXPORT_SYMBOL(vec_window_height),%eax
 		jge    jump_122a92
 		mov    %eax,%ebx
-		imul   EXPORT_SYMBOL(data_150110),%ebx
-		add    EXPORT_SYMBOL(data_150100),%ebx
+		imul   EXPORT_SYMBOL(vec_screen_width),%ebx
+		add    EXPORT_SYMBOL(poly_screen),%ebx
 		mov    %ebx,(%esp)
 		movb   $0x0,0x66(%esp)
 	jump_122100:
 		mov    0x4(%ecx),%ebx
-		cmp    EXPORT_SYMBOL(screen_height),%ebx
+		cmp    EXPORT_SYMBOL(vec_window_height),%ebx
 		setg   0x67(%esp)
 		sub    %eax,%ebx
 		mov    %ebx,0x10(%esp)
@@ -1586,7 +1586,7 @@ func_121f68:
 		cltd
 		idiv   %ebx
 		mov    %eax,0x8(%esp)
-		movzbl EXPORT_SYMBOL(data_152e25),%eax
+		movzbl EXPORT_SYMBOL(vec_mode),%eax
 		jmp    *vtable_122142(,%eax,4)
 
 vtable_122142:
@@ -1684,19 +1684,19 @@ func_1221ae:
 		add    %edi,%esi
 		cmpb   $0x0,0x67(%esp)
 		je     jump_122298
-		mov    EXPORT_SYMBOL(screen_height),%edi
+		mov    EXPORT_SYMBOL(vec_window_height),%edi
 		mov    %edi,0x20(%esp)
 		mov    %edi,0x10(%esp)
 		jmp    jump_122298
 	jump_12227f:
 		cmpb   $0x0,0x67(%esp)
 		je     jump_122298
-		mov    EXPORT_SYMBOL(screen_height),%edi
+		mov    EXPORT_SYMBOL(vec_window_height),%edi
 		sub    0x54(%esp),%edi
 		mov    %edi,0x20(%esp)
 		mov    %edi,0x10(%esp)
 	jump_122298:
-		lea    EXPORT_SYMBOL(data_150124),%edi
+		lea    EXPORT_SYMBOL(polyscans),%edi
 	jump_12229e:
 		mov    %eax,(%edi)
 		add    0x4(%esp),%eax
@@ -1711,7 +1711,7 @@ func_1221ae:
 		add    $0x14,%edi
 		decl   0x10(%esp)
 		jne    jump_12229e
-		movzbl EXPORT_SYMBOL(data_152e25),%eax
+		movzbl EXPORT_SYMBOL(vec_mode),%eax
 		jmp    *vtable_1229b3(,%eax,4)
 
 
@@ -1769,19 +1769,19 @@ func_1222d7:
 		add    %edi,%esi
 		cmpb   $0x0,0x67(%esp)
 		je     jump_1223a2
-		mov    EXPORT_SYMBOL(screen_height),%edi
+		mov    EXPORT_SYMBOL(vec_window_height),%edi
 		mov    %edi,0x20(%esp)
 		mov    %edi,0x10(%esp)
 		jmp    jump_1223a2
 	jump_122389:
 		cmpb   $0x0,0x67(%esp)
 		je     jump_1223a2
-		mov    EXPORT_SYMBOL(screen_height),%edi
+		mov    EXPORT_SYMBOL(vec_window_height),%edi
 		sub    0x54(%esp),%edi
 		mov    %edi,0x20(%esp)
 		mov    %edi,0x10(%esp)
 	jump_1223a2:
-		lea    EXPORT_SYMBOL(data_150124),%edi
+		lea    EXPORT_SYMBOL(polyscans),%edi
 	jump_1223a8:
 		mov    %eax,(%edi)
 		add    0x4(%esp),%eax
@@ -1794,7 +1794,7 @@ func_1222d7:
 		add    $0x14,%edi
 		decl   0x10(%esp)
 		jne    jump_1223a8
-		movzbl EXPORT_SYMBOL(data_152e25),%eax
+		movzbl EXPORT_SYMBOL(vec_mode),%eax
 		jmp    *vtable_1229b3(,%eax,4)
 
 
@@ -1835,19 +1835,19 @@ func_1223da:
 		add    %edi,%esi
 		cmpb   $0x0,0x67(%esp)
 		je     jump_122470
-		mov    EXPORT_SYMBOL(screen_height),%edi
+		mov    EXPORT_SYMBOL(vec_window_height),%edi
 		mov    %edi,0x20(%esp)
 		mov    %edi,0x10(%esp)
 		jmp    jump_122470
 	jump_122457:
 		cmpb   $0x0,0x67(%esp)
 		je     jump_122470
-		mov    EXPORT_SYMBOL(screen_height),%edi
+		mov    EXPORT_SYMBOL(vec_window_height),%edi
 		sub    0x54(%esp),%edi
 		mov    %edi,0x20(%esp)
 		mov    %edi,0x10(%esp)
 	jump_122470:
-		lea    EXPORT_SYMBOL(data_150124),%edi
+		lea    EXPORT_SYMBOL(polyscans),%edi
 	jump_122476:
 		mov    %eax,(%edi)
 		add    0x4(%esp),%eax
@@ -1858,7 +1858,7 @@ func_1223da:
 		add    $0x14,%edi
 		decl   0x10(%esp)
 		jne    jump_122476
-		movzbl EXPORT_SYMBOL(data_152e25),%eax
+		movzbl EXPORT_SYMBOL(vec_mode),%eax
 		jmp    *vtable_1229b3(,%eax,4)
 
 
@@ -1884,19 +1884,19 @@ func_1224a1:
 		add    %edi,%ebx
 		cmpb   $0x0,0x67(%esp)
 		je     jump_122509
-		mov    EXPORT_SYMBOL(screen_height),%edi
+		mov    EXPORT_SYMBOL(vec_window_height),%edi
 		mov    %edi,0x20(%esp)
 		mov    %edi,0x10(%esp)
 		jmp    jump_122509
 	jump_1224f0:
 		cmpb   $0x0,0x67(%esp)
 		je     jump_122509
-		mov    EXPORT_SYMBOL(screen_height),%edi
+		mov    EXPORT_SYMBOL(vec_window_height),%edi
 		sub    0x54(%esp),%edi
 		mov    %edi,0x20(%esp)
 		mov    %edi,0x10(%esp)
 	jump_122509:
-		lea    EXPORT_SYMBOL(data_150124),%edi
+		lea    EXPORT_SYMBOL(polyscans),%edi
 	jump_12250f:
 		mov    %eax,(%edi)
 		add    0x4(%esp),%eax
@@ -1905,7 +1905,7 @@ func_1224a1:
 		add    $0x14,%edi
 		decl   0x10(%esp)
 		jne    jump_12250f
-		movzbl EXPORT_SYMBOL(data_152e25),%eax
+		movzbl EXPORT_SYMBOL(vec_mode),%eax
 		jmp    *vtable_1229b3(,%eax,4)
 	jump_122533:
 		mov    (%ecx),%eax
@@ -1918,21 +1918,21 @@ func_1224a1:
 		mov    %eax,0x54(%esp)
 		or     %eax,%eax
 		jns    jump_12255c
-		mov    EXPORT_SYMBOL(data_150100),%ebx
+		mov    EXPORT_SYMBOL(poly_screen),%ebx
 		mov    %ebx,(%esp)
 		movb   $0x1,0x66(%esp)
 		jmp    jump_12257f
 	jump_12255c:
-		cmp    EXPORT_SYMBOL(screen_height),%eax
+		cmp    EXPORT_SYMBOL(vec_window_height),%eax
 		jge    jump_122a92
 		mov    %eax,%ebx
-		imul   EXPORT_SYMBOL(data_150110),%ebx
-		add    EXPORT_SYMBOL(data_150100),%ebx
+		imul   EXPORT_SYMBOL(vec_screen_width),%ebx
+		add    EXPORT_SYMBOL(poly_screen),%ebx
 		mov    %ebx,(%esp)
 		movb   $0x0,0x66(%esp)
 	jump_12257f:
 		mov    0x4(%ecx),%ebx
-		cmp    EXPORT_SYMBOL(screen_height),%ebx
+		cmp    EXPORT_SYMBOL(vec_window_height),%ebx
 		setg   0x67(%esp)
 		sub    %eax,%ebx
 		mov    %ebx,0x10(%esp)
@@ -1949,7 +1949,7 @@ func_1224a1:
 		cltd
 		idiv   %ebx
 		mov    %eax,0x8(%esp)
-		movzbl EXPORT_SYMBOL(data_152e25),%eax
+		movzbl EXPORT_SYMBOL(vec_mode),%eax
 		jmp    *vtable_1225c1(,%eax,4)
 
 vtable_1225c1:
@@ -2048,19 +2048,19 @@ func_12262d:
 		add    %edi,%esi
 		cmpb   $0x0,0x67(%esp)
 		je     jump_12271a
-		mov    EXPORT_SYMBOL(screen_height),%edi
+		mov    EXPORT_SYMBOL(vec_window_height),%edi
 		mov    %edi,0x20(%esp)
 		mov    %edi,0x10(%esp)
 		jmp    jump_12271a
 	jump_122701:
 		cmpb   $0x0,0x67(%esp)
 		je     jump_12271a
-		mov    EXPORT_SYMBOL(screen_height),%edi
+		mov    EXPORT_SYMBOL(vec_window_height),%edi
 		sub    0x54(%esp),%edi
 		mov    %edi,0x20(%esp)
 		mov    %edi,0x10(%esp)
 	jump_12271a:
-		lea    EXPORT_SYMBOL(data_150124),%edi
+		lea    EXPORT_SYMBOL(polyscans),%edi
 	jump_122720:
 		mov    %eax,(%edi)
 		add    0x4(%esp),%eax
@@ -2075,7 +2075,7 @@ func_12262d:
 		add    $0x14,%edi
 		decl   0x10(%esp)
 		jne    jump_122720
-		movzbl EXPORT_SYMBOL(data_152e25),%eax
+		movzbl EXPORT_SYMBOL(vec_mode),%eax
 		jmp    *vtable_1229b3(,%eax,4)
 
 
@@ -2131,19 +2131,19 @@ func_122759:
 		add    %edi,%edx
 		cmpb   $0x0,0x67(%esp)
 		je     jump_12281c
-		mov    EXPORT_SYMBOL(screen_height),%edi
+		mov    EXPORT_SYMBOL(vec_window_height),%edi
 		mov    %edi,0x20(%esp)
 		mov    %edi,0x10(%esp)
 		jmp    jump_12281c
 	jump_122803:
 		cmpb   $0x0,0x67(%esp)
 		je     jump_12281c
-		mov    EXPORT_SYMBOL(screen_height),%edi
+		mov    EXPORT_SYMBOL(vec_window_height),%edi
 		sub    0x54(%esp),%edi
 		mov    %edi,0x20(%esp)
 		mov    %edi,0x10(%esp)
 	jump_12281c:
-		lea    EXPORT_SYMBOL(data_150124),%edi
+		lea    EXPORT_SYMBOL(polyscans),%edi
 	jump_122822:
 		mov    %eax,(%edi)
 		add    0x4(%esp),%eax
@@ -2156,7 +2156,7 @@ func_122759:
 		add    $0x14,%edi
 		decl   0x10(%esp)
 		jne    jump_122822
-		movzbl EXPORT_SYMBOL(data_152e25),%eax
+		movzbl EXPORT_SYMBOL(vec_mode),%eax
 		jmp    *vtable_1229b3(,%eax,4)
 
 
@@ -2198,19 +2198,19 @@ func_122854:
 		add    %edi,%esi
 		cmpb   $0x0,0x67(%esp)
 		je     jump_1228ed
-		mov    EXPORT_SYMBOL(screen_height),%edi
+		mov    EXPORT_SYMBOL(vec_window_height),%edi
 		mov    %edi,0x20(%esp)
 		mov    %edi,0x10(%esp)
 		jmp    jump_1228ed
 	jump_1228d4:
 		cmpb   $0x0,0x67(%esp)
 		je     jump_1228ed
-		mov    EXPORT_SYMBOL(screen_height),%edi
+		mov    EXPORT_SYMBOL(vec_window_height),%edi
 		sub    0x54(%esp),%edi
 		mov    %edi,0x20(%esp)
 		mov    %edi,0x10(%esp)
 	jump_1228ed:
-		lea    EXPORT_SYMBOL(data_150124),%edi
+		lea    EXPORT_SYMBOL(polyscans),%edi
 	jump_1228f3:
 		mov    %eax,(%edi)
 		add    0x4(%esp),%eax
@@ -2221,7 +2221,7 @@ func_122854:
 		add    $0x14,%edi
 		decl   0x10(%esp)
 		jne    jump_1228f3
-		movzbl EXPORT_SYMBOL(data_152e25),%eax
+		movzbl EXPORT_SYMBOL(vec_mode),%eax
 		jmp    *vtable_1229b3(,%eax,4)
 
 
@@ -2247,19 +2247,19 @@ func_12291e:
 		add    %edi,%ebx
 		cmpb   $0x0,0x67(%esp)
 		je     jump_122989
-		mov    EXPORT_SYMBOL(screen_height),%edi
+		mov    EXPORT_SYMBOL(vec_window_height),%edi
 		mov    %edi,0x20(%esp)
 		mov    %edi,0x10(%esp)
 		jmp    jump_122989
 	jump_122970:
 		cmpb   $0x0,0x67(%esp)
 		je     jump_122989
-		mov    EXPORT_SYMBOL(screen_height),%edi
+		mov    EXPORT_SYMBOL(vec_window_height),%edi
 		sub    0x54(%esp),%edi
 		mov    %edi,0x20(%esp)
 		mov    %edi,0x10(%esp)
 	jump_122989:
-		lea    EXPORT_SYMBOL(data_150124),%edi
+		lea    EXPORT_SYMBOL(polyscans),%edi
 	jump_12298f:
 		mov    %eax,(%edi)
 		add    0x4(%esp),%eax
@@ -2268,7 +2268,7 @@ func_12291e:
 		add    $0x14,%edi
 		decl   0x10(%esp)
 		jne    jump_12298f
-		movzbl EXPORT_SYMBOL(data_152e25),%eax
+		movzbl EXPORT_SYMBOL(vec_mode),%eax
 		jmp    *vtable_1229b3(,%eax,4)
 
 vtable_1229b3:
@@ -2304,9 +2304,9 @@ vtable_1229b3:
 /*----------------------------------------------------------------*/
 func_122a1f:
 /*----------------------------------------------------------------*/
-		lea    EXPORT_SYMBOL(data_150124),%esi
+		lea    EXPORT_SYMBOL(polyscans),%esi
 		mov    (%esp),%edx
-		mov    EXPORT_SYMBOL(data_152e24),%al
+		mov    EXPORT_SYMBOL(vec_colour),%al
 		mov    %al,%ah
 		mov    %ax,%bx
 		shl    $0x10,%eax
@@ -2316,21 +2316,21 @@ func_122a1f:
 	jump_122a3c:
 		mov    0x2(%esi),%bx
 		movzwl 0x6(%esi),%ecx
-		add    EXPORT_SYMBOL(data_150110),%edx
+		add    EXPORT_SYMBOL(vec_screen_width),%edx
 		or     %bx,%bx
 		jns    jump_122a66
 		or     %cx,%cx
 		jle    jump_122a89
-		cmp    EXPORT_SYMBOL(screen_width),%ecx
+		cmp    EXPORT_SYMBOL(vec_window_width),%ecx
 		jle    jump_122a62
-		mov    EXPORT_SYMBOL(screen_width),%ecx
+		mov    EXPORT_SYMBOL(vec_window_width),%ecx
 	jump_122a62:
 		mov    %edx,%edi
 		jmp    jump_122a7c
 	jump_122a66:
-		cmp    EXPORT_SYMBOL(screen_width),%ecx
+		cmp    EXPORT_SYMBOL(vec_window_width),%ecx
 		jle    jump_122a74
-		mov    EXPORT_SYMBOL(screen_width),%ecx
+		mov    EXPORT_SYMBOL(vec_window_width),%ecx
 	jump_122a74:
 		sub    %bx,%cx
 		jle    jump_122a89
@@ -2358,14 +2358,14 @@ func_122a1f:
 /*----------------------------------------------------------------*/
 func_122a97:
 /*----------------------------------------------------------------*/
-		lea    EXPORT_SYMBOL(data_150124),%esi
+		lea    EXPORT_SYMBOL(polyscans),%esi
 		xor    %ebx,%ebx
 		xor    %ecx,%ecx
 	jump_122aa1:
 		mov    0x2(%esi),%ax
 		movzwl 0x6(%esi),%ecx
 		mov    (%esp),%edi
-		add    EXPORT_SYMBOL(data_150110),%edi
+		add    EXPORT_SYMBOL(vec_screen_width),%edi
 		mov    %edi,(%esp)
 		or     %ax,%ax
 		jns    jump_122af3
@@ -2378,22 +2378,22 @@ func_122a97:
 		shr    $0x8,%eax
 		add    0x10(%esi),%bx
 		adc    0x12(%esi),%ah
-		cmp    EXPORT_SYMBOL(screen_width),%ecx
+		cmp    EXPORT_SYMBOL(vec_window_width),%ecx
 		jle    jump_122ae9
-		mov    EXPORT_SYMBOL(screen_width),%ecx
+		mov    EXPORT_SYMBOL(vec_window_width),%ecx
 	jump_122ae9:
 		movzwl %ax,%eax
-		mov    EXPORT_SYMBOL(data_152e24),%al
+		mov    EXPORT_SYMBOL(vec_colour),%al
 		jmp    jump_122b1a
 	jump_122af3:
-		cmp    EXPORT_SYMBOL(screen_width),%ecx
+		cmp    EXPORT_SYMBOL(vec_window_width),%ecx
 		jle    jump_122b01
-		mov    EXPORT_SYMBOL(screen_width),%ecx
+		mov    EXPORT_SYMBOL(vec_window_width),%ecx
 	jump_122b01:
 		sub    %ax,%cx
 		jle    jump_122c41
 		add    %eax,%edi
-		movzbl EXPORT_SYMBOL(data_152e24),%eax
+		movzbl EXPORT_SYMBOL(vec_colour),%eax
 		mov    0x10(%esi),%bx
 		mov    0x12(%esi),%ah
 	jump_122b1a:
@@ -2491,7 +2491,7 @@ func_122a97:
 /*----------------------------------------------------------------*/
 func_122c53:
 /*----------------------------------------------------------------*/
-		lea    EXPORT_SYMBOL(data_150124),%esi
+		lea    EXPORT_SYMBOL(polyscans),%esi
 		mov    0x30(%esp),%eax
 		shl    $0x10,%eax
 		mov    %eax,0x4c(%esp)
@@ -2502,7 +2502,7 @@ func_122c53:
 		mov    0x2(%esi),%ax
 		movzwl 0x6(%esi),%ecx
 		mov    (%esp),%edi
-		add    EXPORT_SYMBOL(data_150110),%edi
+		add    EXPORT_SYMBOL(vec_screen_width),%edi
 		mov    %edi,(%esp)
 		or     %ax,%ax
 		jns    jump_122cc4
@@ -2520,16 +2520,16 @@ func_122c53:
 		mov    %ax,%dx
 		shr    $0x8,%eax
 		mov    %ah,%bl
-		cmp    EXPORT_SYMBOL(screen_width),%ecx
+		cmp    EXPORT_SYMBOL(vec_window_width),%ecx
 		jle    jump_122cbf
-		mov    EXPORT_SYMBOL(screen_width),%ecx
+		mov    EXPORT_SYMBOL(vec_window_width),%ecx
 	jump_122cbf:
 		movzwl %ax,%eax
 		jmp    jump_122cec
 	jump_122cc4:
-		cmp    EXPORT_SYMBOL(screen_width),%ecx
+		cmp    EXPORT_SYMBOL(vec_window_width),%ecx
 		jle    jump_122cd2
-		mov    EXPORT_SYMBOL(screen_width),%ecx
+		mov    EXPORT_SYMBOL(vec_window_width),%ecx
 	jump_122cd2:
 		sub    %ax,%cx
 		jle    jump_122edd
@@ -2541,7 +2541,7 @@ func_122c53:
 		mov    0xa(%esi),%bl
 	jump_122cec:
 		mov    %esi,0x5c(%esp)
-		mov    EXPORT_SYMBOL(data_150108),%esi
+		mov    EXPORT_SYMBOL(vec_map),%esi
 	jump_122cf6:
 		mov    (%ebx,%esi,1),%al
 		add    0x24(%esp),%dx
@@ -2687,7 +2687,7 @@ func_122c53:
 /*----------------------------------------------------------------*/
 func_122eef:
 /*----------------------------------------------------------------*/
-		lea    EXPORT_SYMBOL(data_150124),%esi
+		lea    EXPORT_SYMBOL(polyscans),%esi
 		mov    0x30(%esp),%eax
 		shl    $0x10,%eax
 		mov    %eax,0x4c(%esp)
@@ -2698,7 +2698,7 @@ func_122eef:
 		mov    0x2(%esi),%ax
 		movzwl 0x6(%esi),%ecx
 		mov    (%esp),%edi
-		add    EXPORT_SYMBOL(data_150110),%edi
+		add    EXPORT_SYMBOL(vec_screen_width),%edi
 		mov    %edi,(%esp)
 		or     %ax,%ax
 		jns    jump_122f60
@@ -2716,16 +2716,16 @@ func_122eef:
 		mov    %ax,%dx
 		shr    $0x8,%eax
 		mov    %ah,%bl
-		cmp    EXPORT_SYMBOL(screen_width),%ecx
+		cmp    EXPORT_SYMBOL(vec_window_width),%ecx
 		jle    jump_122f5b
-		mov    EXPORT_SYMBOL(screen_width),%ecx
+		mov    EXPORT_SYMBOL(vec_window_width),%ecx
 	jump_122f5b:
 		movzwl %ax,%eax
 		jmp    jump_122f88
 	jump_122f60:
-		cmp    EXPORT_SYMBOL(screen_width),%ecx
+		cmp    EXPORT_SYMBOL(vec_window_width),%ecx
 		jle    jump_122f6e
-		mov    EXPORT_SYMBOL(screen_width),%ecx
+		mov    EXPORT_SYMBOL(vec_window_width),%ecx
 	jump_122f6e:
 		sub    %ax,%cx
 		jle    jump_1231bd
@@ -2737,7 +2737,7 @@ func_122eef:
 		mov    0xa(%esi),%bl
 	jump_122f88:
 		mov    %esi,0x5c(%esp)
-		mov    EXPORT_SYMBOL(data_150108),%esi
+		mov    EXPORT_SYMBOL(vec_map),%esi
 	jump_122f92:
 		mov    (%ebx,%esi,1),%al
 		or     %al,%al
@@ -2931,14 +2931,14 @@ func_122eef:
 /*----------------------------------------------------------------*/
 func_1231cf:
 /*----------------------------------------------------------------*/
-		lea    EXPORT_SYMBOL(data_150124),%esi
+		lea    EXPORT_SYMBOL(polyscans),%esi
 		xor    %ebx,%ebx
 		xor    %ecx,%ecx
 	jump_1231d9:
 		mov    0x2(%esi),%ax
 		movzwl 0x6(%esi),%ecx
 		mov    (%esp),%edi
-		add    EXPORT_SYMBOL(data_150110),%edi
+		add    EXPORT_SYMBOL(vec_screen_width),%edi
 		mov    %edi,(%esp)
 		or     %ax,%ax
 		jns    jump_12322b
@@ -2951,22 +2951,22 @@ func_1231cf:
 		shr    $0x8,%eax
 		add    0x10(%esi),%bx
 		adc    0x12(%esi),%ah
-		cmp    EXPORT_SYMBOL(screen_width),%ecx
+		cmp    EXPORT_SYMBOL(vec_window_width),%ecx
 		jle    jump_123221
-		mov    EXPORT_SYMBOL(screen_width),%ecx
+		mov    EXPORT_SYMBOL(vec_window_width),%ecx
 	jump_123221:
 		movzwl %ax,%eax
-		mov    EXPORT_SYMBOL(data_152e24),%al
+		mov    EXPORT_SYMBOL(vec_colour),%al
 		jmp    jump_123252
 	jump_12322b:
-		cmp    EXPORT_SYMBOL(screen_width),%ecx
+		cmp    EXPORT_SYMBOL(vec_window_width),%ecx
 		jle    jump_123239
-		mov    EXPORT_SYMBOL(screen_width),%ecx
+		mov    EXPORT_SYMBOL(vec_window_width),%ecx
 	jump_123239:
 		sub    %ax,%cx
 		jle    jump_1233e1
 		add    %eax,%edi
-		movzbl EXPORT_SYMBOL(data_152e24),%eax
+		movzbl EXPORT_SYMBOL(vec_colour),%eax
 		mov    0x10(%esi),%bx
 		mov    0x12(%esi),%ah
 	jump_123252:
@@ -3093,7 +3093,7 @@ data_1233f3:
 /*----------------------------------------------------------------*/
 func_123433:
 /*----------------------------------------------------------------*/
-		lea    EXPORT_SYMBOL(data_150124),%esi
+		lea    EXPORT_SYMBOL(polyscans),%esi
 		mov    %esi,0x5c(%esp)
 		xor    %ebx,%ebx
 		mov    0x24(%esp),%ecx
@@ -3120,7 +3120,7 @@ func_123433:
 		sar    $0x10,%eax
 		sar    $0x10,%ebp
 		mov    (%esp),%edi
-		add    EXPORT_SYMBOL(data_150110),%edi
+		add    EXPORT_SYMBOL(vec_screen_width),%edi
 		mov    %edi,(%esp)
 		or     %eax,%eax
 		jns    jump_1234db
@@ -3143,15 +3143,15 @@ func_123433:
 		mov    %cl,%dl
 		mov    %bx,%cx
 		mov    %al,%bh
-		cmp    EXPORT_SYMBOL(screen_width),%ebp
+		cmp    EXPORT_SYMBOL(vec_window_width),%ebp
 		jle    jump_1234d9
-		mov    EXPORT_SYMBOL(screen_width),%ebp
+		mov    EXPORT_SYMBOL(vec_window_width),%ebp
 	jump_1234d9:
 		jmp    jump_12350e
 	jump_1234db:
-		cmp    EXPORT_SYMBOL(screen_width),%ebp
+		cmp    EXPORT_SYMBOL(vec_window_width),%ebp
 		jle    jump_1234e9
-		mov    EXPORT_SYMBOL(screen_width),%ebp
+		mov    EXPORT_SYMBOL(vec_window_width),%ebp
 	jump_1234e9:
 		sub    %eax,%ebp
 		jle    jump_12373b
@@ -3172,7 +3172,7 @@ func_123433:
 		mov    %ebp,%eax
 		and    $0xf,%eax
 		add    data_1233f3(,%eax,4),%edi
-		mov    EXPORT_SYMBOL(data_150108),%esi
+		mov    EXPORT_SYMBOL(vec_map),%esi
 		jmp    *vtable_123530(,%eax,4)
 
 vtable_123530:
@@ -3414,7 +3414,7 @@ func_123713:
 /*----------------------------------------------------------------*/
 func_12374a:
 /*----------------------------------------------------------------*/
-		lea    EXPORT_SYMBOL(data_150124),%esi
+		lea    EXPORT_SYMBOL(polyscans),%esi
 		mov    %esi,0x5c(%esp)
 		mov    0x30(%esp),%eax
 		shl    $0x10,%eax
@@ -3431,7 +3431,7 @@ func_12374a:
 		mov    0x2(%esi),%ax
 		movzwl 0x6(%esi),%ecx
 		mov    (%esp),%edi
-		add    EXPORT_SYMBOL(data_150110),%edi
+		add    EXPORT_SYMBOL(vec_screen_width),%edi
 		mov    %edi,(%esp)
 		or     %ax,%ax
 		jns    jump_1237ea
@@ -3457,15 +3457,15 @@ func_12374a:
 		mov    %cl,%ah
 		mov    %bp,%cx
 		movzwl %ax,%eax
-		cmp    EXPORT_SYMBOL(screen_width),%cx
+		cmp    EXPORT_SYMBOL(vec_window_width),%cx
 		jle    jump_1237e8
-		mov    EXPORT_SYMBOL(screen_width),%cx
+		mov    EXPORT_SYMBOL(vec_window_width),%cx
 	jump_1237e8:
 		jmp    jump_123820
 	jump_1237ea:
-		cmp    EXPORT_SYMBOL(screen_width),%ecx
+		cmp    EXPORT_SYMBOL(vec_window_width),%ecx
 		jle    jump_1237f8
-		mov    EXPORT_SYMBOL(screen_width),%ecx
+		mov    EXPORT_SYMBOL(vec_window_width),%ecx
 	jump_1237f8:
 		sub    %ax,%cx
 		jle    jump_123b1c
@@ -3484,7 +3484,7 @@ func_12374a:
 		mov    %cx,%si
 		and    $0xf,%esi
 		add    data_1233f3(,%esi,4),%edi
-		mov    EXPORT_SYMBOL(data_150108),%ebp
+		mov    EXPORT_SYMBOL(vec_map),%ebp
 		jmp    *vtable_12383a(,%esi,4)
 
 vtable_12383a:
@@ -3790,9 +3790,9 @@ func_123ae6:
 /*----------------------------------------------------------------*/
 func_123b2b:
 /*----------------------------------------------------------------*/
-		cmpb   $0x20,EXPORT_SYMBOL(data_152e24)
+		cmpb   $0x20,EXPORT_SYMBOL(vec_colour)
 		je     func_122c53
-		lea    EXPORT_SYMBOL(data_150124),%esi
+		lea    EXPORT_SYMBOL(polyscans),%esi
 		mov    0x30(%esp),%eax
 		shl    $0x10,%eax
 		mov    %eax,0x4c(%esp)
@@ -3803,7 +3803,7 @@ func_123b2b:
 		mov    0x2(%esi),%ax
 		movzwl 0x6(%esi),%ecx
 		mov    (%esp),%edi
-		add    EXPORT_SYMBOL(data_150110),%edi
+		add    EXPORT_SYMBOL(vec_screen_width),%edi
 		mov    %edi,(%esp)
 		or     %ax,%ax
 		jns    jump_123ba9
@@ -3821,16 +3821,16 @@ func_123b2b:
 		mov    %ax,%dx
 		shr    $0x8,%eax
 		mov    %ah,%bl
-		cmp    EXPORT_SYMBOL(screen_width),%ecx
+		cmp    EXPORT_SYMBOL(vec_window_width),%ecx
 		jle    jump_123ba4
-		mov    EXPORT_SYMBOL(screen_width),%ecx
+		mov    EXPORT_SYMBOL(vec_window_width),%ecx
 	jump_123ba4:
 		movzwl %ax,%eax
 		jmp    jump_123bd1
 	jump_123ba9:
-		cmp    EXPORT_SYMBOL(screen_width),%ecx
+		cmp    EXPORT_SYMBOL(vec_window_width),%ecx
 		jle    jump_123bb7
-		mov    EXPORT_SYMBOL(screen_width),%ecx
+		mov    EXPORT_SYMBOL(vec_window_width),%ecx
 	jump_123bb7:
 		sub    %ax,%cx
 		jle    jump_123e2c
@@ -3842,8 +3842,8 @@ func_123b2b:
 		mov    0xa(%esi),%bl
 	jump_123bd1:
 		mov    %esi,0x5c(%esp)
-		mov    EXPORT_SYMBOL(data_150108),%esi
-		mov    EXPORT_SYMBOL(data_152e24),%ah
+		mov    EXPORT_SYMBOL(vec_map),%esi
+		mov    EXPORT_SYMBOL(vec_colour),%ah
 	jump_123be1:
 		mov    (%ebx,%esi,1),%al
 		add    0x24(%esp),%dx
@@ -4005,7 +4005,7 @@ func_123b2b:
 /*----------------------------------------------------------------*/
 func_123e3e:
 /*----------------------------------------------------------------*/
-		lea    EXPORT_SYMBOL(data_150124),%esi
+		lea    EXPORT_SYMBOL(polyscans),%esi
 		mov    0x30(%esp),%eax
 		shl    $0x10,%eax
 		mov    %eax,0x4c(%esp)
@@ -4016,7 +4016,7 @@ func_123e3e:
 		mov    0x2(%esi),%ax
 		movzwl 0x6(%esi),%ecx
 		mov    (%esp),%edi
-		add    EXPORT_SYMBOL(data_150110),%edi
+		add    EXPORT_SYMBOL(vec_screen_width),%edi
 		mov    %edi,(%esp)
 		or     %ax,%ax
 		jns    jump_123eaf
@@ -4034,16 +4034,16 @@ func_123e3e:
 		mov    %ax,%dx
 		shr    $0x8,%eax
 		mov    %ah,%bl
-		cmp    EXPORT_SYMBOL(screen_width),%ecx
+		cmp    EXPORT_SYMBOL(vec_window_width),%ecx
 		jle    jump_123eaa
-		mov    EXPORT_SYMBOL(screen_width),%ecx
+		mov    EXPORT_SYMBOL(vec_window_width),%ecx
 	jump_123eaa:
 		movzwl %ax,%eax
 		jmp    jump_123ed7
 	jump_123eaf:
-		cmp    EXPORT_SYMBOL(screen_width),%ecx
+		cmp    EXPORT_SYMBOL(vec_window_width),%ecx
 		jle    jump_123ebd
-		mov    EXPORT_SYMBOL(screen_width),%ecx
+		mov    EXPORT_SYMBOL(vec_window_width),%ecx
 	jump_123ebd:
 		sub    %ax,%cx
 		jle    jump_124172
@@ -4055,8 +4055,8 @@ func_123e3e:
 		mov    0xa(%esi),%bl
 	jump_123ed7:
 		mov    %esi,0x5c(%esp)
-		mov    EXPORT_SYMBOL(data_150108),%esi
-		mov    EXPORT_SYMBOL(data_152e24),%ah
+		mov    EXPORT_SYMBOL(vec_map),%esi
+		mov    EXPORT_SYMBOL(vec_colour),%ah
 	jump_123ee7:
 		mov    (%ebx,%esi,1),%al
 		add    0x24(%esp),%dx
@@ -4266,7 +4266,7 @@ func_123e3e:
 /*----------------------------------------------------------------*/
 func_124184:
 /*----------------------------------------------------------------*/
-		lea    EXPORT_SYMBOL(data_150124),%esi
+		lea    EXPORT_SYMBOL(polyscans),%esi
 		mov    0x30(%esp),%eax
 		shl    $0x10,%eax
 		mov    %eax,0x4c(%esp)
@@ -4277,7 +4277,7 @@ func_124184:
 		mov    0x2(%esi),%ax
 		movzwl 0x6(%esi),%ecx
 		mov    (%esp),%edi
-		add    EXPORT_SYMBOL(data_150110),%edi
+		add    EXPORT_SYMBOL(vec_screen_width),%edi
 		mov    %edi,(%esp)
 		or     %ax,%ax
 		jns    jump_1241f5
@@ -4295,16 +4295,16 @@ func_124184:
 		mov    %ax,%dx
 		shr    $0x8,%eax
 		mov    %ah,%bl
-		cmp    EXPORT_SYMBOL(screen_width),%ecx
+		cmp    EXPORT_SYMBOL(vec_window_width),%ecx
 		jle    jump_1241f0
-		mov    EXPORT_SYMBOL(screen_width),%ecx
+		mov    EXPORT_SYMBOL(vec_window_width),%ecx
 	jump_1241f0:
 		movzwl %ax,%eax
 		jmp    jump_12421d
 	jump_1241f5:
-		cmp    EXPORT_SYMBOL(screen_width),%ecx
+		cmp    EXPORT_SYMBOL(vec_window_width),%ecx
 		jle    jump_124203
-		mov    EXPORT_SYMBOL(screen_width),%ecx
+		mov    EXPORT_SYMBOL(vec_window_width),%ecx
 	jump_124203:
 		sub    %ax,%cx
 		jle    jump_1244e5
@@ -4316,7 +4316,7 @@ func_124184:
 		mov    0xa(%esi),%bl
 	jump_12421d:
 		mov    %esi,0x5c(%esp)
-		mov    EXPORT_SYMBOL(data_150108),%esi
+		mov    EXPORT_SYMBOL(vec_map),%esi
 	jump_124227:
 		mov    (%ebx,%esi,1),%ah
 		add    0x24(%esp),%dx
@@ -4542,7 +4542,7 @@ func_124184:
 /*----------------------------------------------------------------*/
 func_1244f7:
 /*----------------------------------------------------------------*/
-		lea    EXPORT_SYMBOL(data_150124),%esi
+		lea    EXPORT_SYMBOL(polyscans),%esi
 		mov    0x30(%esp),%eax
 		shl    $0x10,%eax
 		mov    %eax,0x4c(%esp)
@@ -4553,7 +4553,7 @@ func_1244f7:
 		mov    0x2(%esi),%ax
 		movzwl 0x6(%esi),%ecx
 		mov    (%esp),%edi
-		add    EXPORT_SYMBOL(data_150110),%edi
+		add    EXPORT_SYMBOL(vec_screen_width),%edi
 		mov    %edi,(%esp)
 		or     %ax,%ax
 		jns    jump_124568
@@ -4571,16 +4571,16 @@ func_1244f7:
 		mov    %ax,%dx
 		shr    $0x8,%eax
 		mov    %ah,%bl
-		cmp    EXPORT_SYMBOL(screen_width),%ecx
+		cmp    EXPORT_SYMBOL(vec_window_width),%ecx
 		jle    jump_124563
-		mov    EXPORT_SYMBOL(screen_width),%ecx
+		mov    EXPORT_SYMBOL(vec_window_width),%ecx
 	jump_124563:
 		movzwl %ax,%eax
 		jmp    jump_124590
 	jump_124568:
-		cmp    EXPORT_SYMBOL(screen_width),%ecx
+		cmp    EXPORT_SYMBOL(vec_window_width),%ecx
 		jle    jump_124576
-		mov    EXPORT_SYMBOL(screen_width),%ecx
+		mov    EXPORT_SYMBOL(vec_window_width),%ecx
 	jump_124576:
 		sub    %ax,%cx
 		jle    jump_12485e
@@ -4591,9 +4591,9 @@ func_1244f7:
 		mov    0x8(%esi),%dx
 		mov    0xa(%esi),%bl
 	jump_124590:
-		mov    EXPORT_SYMBOL(data_152e24),%ah
+		mov    EXPORT_SYMBOL(vec_colour),%ah
 		mov    %esi,0x5c(%esp)
-		mov    EXPORT_SYMBOL(data_150108),%esi
+		mov    EXPORT_SYMBOL(vec_map),%esi
 	jump_1245a0:
 		mov    (%ebx,%esi,1),%al
 		or     %al,%al
@@ -4819,7 +4819,7 @@ func_1244f7:
 /*----------------------------------------------------------------*/
 func_124870:
 /*----------------------------------------------------------------*/
-		lea    EXPORT_SYMBOL(data_150124),%esi
+		lea    EXPORT_SYMBOL(polyscans),%esi
 		mov    0x30(%esp),%eax
 		shl    $0x10,%eax
 		mov    %eax,0x4c(%esp)
@@ -4830,7 +4830,7 @@ func_124870:
 		mov    0x2(%esi),%ax
 		movzwl 0x6(%esi),%ecx
 		mov    (%esp),%edi
-		add    EXPORT_SYMBOL(data_150110),%edi
+		add    EXPORT_SYMBOL(vec_screen_width),%edi
 		mov    %edi,(%esp)
 		or     %ax,%ax
 		jns    jump_1248e1
@@ -4848,16 +4848,16 @@ func_124870:
 		mov    %ax,%dx
 		shr    $0x8,%eax
 		mov    %ah,%bl
-		cmp    EXPORT_SYMBOL(screen_width),%ecx
+		cmp    EXPORT_SYMBOL(vec_window_width),%ecx
 		jle    jump_1248dc
-		mov    EXPORT_SYMBOL(screen_width),%ecx
+		mov    EXPORT_SYMBOL(vec_window_width),%ecx
 	jump_1248dc:
 		movzwl %ax,%eax
 		jmp    jump_124909
 	jump_1248e1:
-		cmp    EXPORT_SYMBOL(screen_width),%ecx
+		cmp    EXPORT_SYMBOL(vec_window_width),%ecx
 		jle    jump_1248ef
-		mov    EXPORT_SYMBOL(screen_width),%ecx
+		mov    EXPORT_SYMBOL(vec_window_width),%ecx
 	jump_1248ef:
 		sub    %ax,%cx
 		jle    jump_124b63
@@ -4869,8 +4869,8 @@ func_124870:
 		mov    0xa(%esi),%bl
 	jump_124909:
 		mov    %esi,0x5c(%esp)
-		mov    EXPORT_SYMBOL(data_150108),%esi
-		mov    EXPORT_SYMBOL(data_152e24),%al
+		mov    EXPORT_SYMBOL(vec_map),%esi
+		mov    EXPORT_SYMBOL(vec_colour),%al
 	jump_124918:
 		mov    (%ebx,%esi,1),%ah
 		add    0x24(%esp),%dx
@@ -5032,7 +5032,7 @@ func_124870:
 /*----------------------------------------------------------------*/
 func_124b75:
 /*----------------------------------------------------------------*/
-		lea    EXPORT_SYMBOL(data_150124),%esi
+		lea    EXPORT_SYMBOL(polyscans),%esi
 		mov    0x30(%esp),%eax
 		shl    $0x10,%eax
 		mov    %eax,0x4c(%esp)
@@ -5043,7 +5043,7 @@ func_124b75:
 		mov    0x2(%esi),%ax
 		movzwl 0x6(%esi),%ecx
 		mov    (%esp),%edi
-		add    EXPORT_SYMBOL(data_150110),%edi
+		add    EXPORT_SYMBOL(vec_screen_width),%edi
 		mov    %edi,(%esp)
 		or     %ax,%ax
 		jns    jump_124be6
@@ -5061,16 +5061,16 @@ func_124b75:
 		mov    %ax,%dx
 		shr    $0x8,%eax
 		mov    %ah,%bl
-		cmp    EXPORT_SYMBOL(screen_width),%ecx
+		cmp    EXPORT_SYMBOL(vec_window_width),%ecx
 		jle    jump_124be1
-		mov    EXPORT_SYMBOL(screen_width),%ecx
+		mov    EXPORT_SYMBOL(vec_window_width),%ecx
 	jump_124be1:
 		movzwl %ax,%eax
 		jmp    jump_124c0e
 	jump_124be6:
-		cmp    EXPORT_SYMBOL(screen_width),%ecx
+		cmp    EXPORT_SYMBOL(vec_window_width),%ecx
 		jle    jump_124bf4
-		mov    EXPORT_SYMBOL(screen_width),%ecx
+		mov    EXPORT_SYMBOL(vec_window_width),%ecx
 	jump_124bf4:
 		sub    %ax,%cx
 		jle    jump_124e69
@@ -5082,8 +5082,8 @@ func_124b75:
 		mov    0xa(%esi),%bl
 	jump_124c0e:
 		mov    %esi,0x5c(%esp)
-		mov    EXPORT_SYMBOL(data_150108),%esi
-		mov    EXPORT_SYMBOL(data_152e24),%ah
+		mov    EXPORT_SYMBOL(vec_map),%esi
+		mov    EXPORT_SYMBOL(vec_colour),%ah
 	jump_124c1e:
 		mov    (%ebx,%esi,1),%al
 		add    0x24(%esp),%dx
@@ -5245,30 +5245,30 @@ func_124b75:
 /*----------------------------------------------------------------*/
 func_124e7b:
 /*----------------------------------------------------------------*/
-		lea    EXPORT_SYMBOL(data_150124),%esi
+		lea    EXPORT_SYMBOL(polyscans),%esi
 		mov    (%esp),%edx
 		xor    %eax,%eax
-		mov    EXPORT_SYMBOL(data_152e24),%ah
+		mov    EXPORT_SYMBOL(vec_colour),%ah
 		xor    %ebx,%ebx
 		xor    %ecx,%ecx
 	jump_124e90:
 		mov    0x2(%esi),%bx
 		movzwl 0x6(%esi),%ecx
-		add    EXPORT_SYMBOL(data_150110),%edx
+		add    EXPORT_SYMBOL(vec_screen_width),%edx
 		or     %bx,%bx
 		jns    jump_124ebe
 		or     %cx,%cx
 		jle    jump_124ffe
-		cmp    EXPORT_SYMBOL(screen_width),%ecx
+		cmp    EXPORT_SYMBOL(vec_window_width),%ecx
 		jle    jump_124eba
-		mov    EXPORT_SYMBOL(screen_width),%ecx
+		mov    EXPORT_SYMBOL(vec_window_width),%ecx
 	jump_124eba:
 		mov    %edx,%edi
 		jmp    jump_124ed8
 	jump_124ebe:
-		cmp    EXPORT_SYMBOL(screen_width),%ecx
+		cmp    EXPORT_SYMBOL(vec_window_width),%ecx
 		jle    jump_124ecc
-		mov    EXPORT_SYMBOL(screen_width),%ecx
+		mov    EXPORT_SYMBOL(vec_window_width),%ecx
 	jump_124ecc:
 		sub    %bx,%cx
 		jle    jump_124ffe
@@ -5368,29 +5368,29 @@ func_124e7b:
 /*----------------------------------------------------------------*/
 func_125010:
 /*----------------------------------------------------------------*/
-		lea    EXPORT_SYMBOL(data_150124),%esi
+		lea    EXPORT_SYMBOL(polyscans),%esi
 		mov    (%esp),%edx
-		movzbl EXPORT_SYMBOL(data_152e24),%eax
+		movzbl EXPORT_SYMBOL(vec_colour),%eax
 		xor    %ebx,%ebx
 		xor    %ecx,%ecx
 	jump_125024:
 		mov    0x2(%esi),%bx
 		movzwl 0x6(%esi),%ecx
-		add    EXPORT_SYMBOL(data_150110),%edx
+		add    EXPORT_SYMBOL(vec_screen_width),%edx
 		or     %bx,%bx
 		jns    jump_125052
 		or     %cx,%cx
 		jle    jump_125192
-		cmp    EXPORT_SYMBOL(screen_width),%ecx
+		cmp    EXPORT_SYMBOL(vec_window_width),%ecx
 		jle    jump_12504e
-		mov    EXPORT_SYMBOL(screen_width),%ecx
+		mov    EXPORT_SYMBOL(vec_window_width),%ecx
 	jump_12504e:
 		mov    %edx,%edi
 		jmp    jump_12506c
 	jump_125052:
-		cmp    EXPORT_SYMBOL(screen_width),%ecx
+		cmp    EXPORT_SYMBOL(vec_window_width),%ecx
 		jle    jump_125060
-		mov    EXPORT_SYMBOL(screen_width),%ecx
+		mov    EXPORT_SYMBOL(vec_window_width),%ecx
 	jump_125060:
 		sub    %bx,%cx
 		jle    jump_125192
@@ -5490,13 +5490,13 @@ func_125010:
 /*----------------------------------------------------------------*/
 func_1251a4:
 /*----------------------------------------------------------------*/
-		lea    EXPORT_SYMBOL(data_150124),%esi
+		lea    EXPORT_SYMBOL(polyscans),%esi
 		xor    %edx,%edx
 	jump_1251ac:
 		mov    0x2(%esi),%ax
 		movzwl 0x6(%esi),%ecx
 		mov    (%esp),%edi
-		add    EXPORT_SYMBOL(data_150110),%edi
+		add    EXPORT_SYMBOL(vec_screen_width),%edi
 		mov    %edi,(%esp)
 		or     %ax,%ax
 		jns    jump_1251fe
@@ -5509,22 +5509,22 @@ func_1251a4:
 		shr    $0x8,%eax
 		add    0x10(%esi),%bx
 		adc    0x12(%esi),%ah
-		cmp    EXPORT_SYMBOL(screen_width),%ecx
+		cmp    EXPORT_SYMBOL(vec_window_width),%ecx
 		jle    jump_1251f4
-		mov    EXPORT_SYMBOL(screen_width),%ecx
+		mov    EXPORT_SYMBOL(vec_window_width),%ecx
 	jump_1251f4:
 		movzwl %ax,%eax
-		mov    EXPORT_SYMBOL(data_152e24),%al
+		mov    EXPORT_SYMBOL(vec_colour),%al
 		jmp    jump_125225
 	jump_1251fe:
-		cmp    EXPORT_SYMBOL(screen_width),%ecx
+		cmp    EXPORT_SYMBOL(vec_window_width),%ecx
 		jle    jump_12520c
-		mov    EXPORT_SYMBOL(screen_width),%ecx
+		mov    EXPORT_SYMBOL(vec_window_width),%ecx
 	jump_12520c:
 		sub    %ax,%cx
 		jle    jump_12544b
 		add    %eax,%edi
-		movzbl EXPORT_SYMBOL(data_152e24),%eax
+		movzbl EXPORT_SYMBOL(vec_colour),%eax
 		mov    0x10(%esi),%bx
 		mov    0x12(%esi),%ah
 	jump_125225:
@@ -5670,13 +5670,13 @@ func_1251a4:
 /*----------------------------------------------------------------*/
 func_12545d:
 /*----------------------------------------------------------------*/
-		lea    EXPORT_SYMBOL(data_150124),%esi
+		lea    EXPORT_SYMBOL(polyscans),%esi
 		xor    %edx,%edx
 	jump_125465:
 		mov    0x2(%esi),%ax
 		movzwl 0x6(%esi),%ecx
 		mov    (%esp),%edi
-		add    EXPORT_SYMBOL(data_150110),%edi
+		add    EXPORT_SYMBOL(vec_screen_width),%edi
 		mov    %edi,(%esp)
 		or     %ax,%ax
 		jns    jump_1254b7
@@ -5689,22 +5689,22 @@ func_12545d:
 		shr    $0x8,%eax
 		add    0x10(%esi),%bx
 		adc    0x12(%esi),%ah
-		cmp    EXPORT_SYMBOL(screen_width),%ecx
+		cmp    EXPORT_SYMBOL(vec_window_width),%ecx
 		jle    jump_1254ad
-		mov    EXPORT_SYMBOL(screen_width),%ecx
+		mov    EXPORT_SYMBOL(vec_window_width),%ecx
 	jump_1254ad:
 		movzwl %ax,%eax
-		mov    EXPORT_SYMBOL(data_152e24),%al
+		mov    EXPORT_SYMBOL(vec_colour),%al
 		jmp    jump_1254de
 	jump_1254b7:
-		cmp    EXPORT_SYMBOL(screen_width),%ecx
+		cmp    EXPORT_SYMBOL(vec_window_width),%ecx
 		jle    jump_1254c5
-		mov    EXPORT_SYMBOL(screen_width),%ecx
+		mov    EXPORT_SYMBOL(vec_window_width),%ecx
 	jump_1254c5:
 		sub    %ax,%cx
 		jle    jump_125704
 		add    %eax,%edi
-		movzbl EXPORT_SYMBOL(data_152e24),%eax
+		movzbl EXPORT_SYMBOL(vec_colour),%eax
 		mov    0x10(%esi),%bx
 		mov    0x12(%esi),%ah
 	jump_1254de:
@@ -5850,7 +5850,7 @@ func_12545d:
 /*----------------------------------------------------------------*/
 func_125716:
 /*----------------------------------------------------------------*/
-		lea    EXPORT_SYMBOL(data_150124),%esi
+		lea    EXPORT_SYMBOL(polyscans),%esi
 		mov    0x30(%esp),%eax
 		shl    $0x10,%eax
 		mov    %eax,0x4c(%esp)
@@ -5861,7 +5861,7 @@ func_125716:
 		mov    0x2(%esi),%ax
 		movzwl 0x6(%esi),%ecx
 		mov    (%esp),%edi
-		add    EXPORT_SYMBOL(data_150110),%edi
+		add    EXPORT_SYMBOL(vec_screen_width),%edi
 		mov    %edi,(%esp)
 		or     %ax,%ax
 		jns    jump_125787
@@ -5879,16 +5879,16 @@ func_125716:
 		mov    %ax,%dx
 		shr    $0x8,%eax
 		mov    %ah,%bl
-		cmp    EXPORT_SYMBOL(screen_width),%ecx
+		cmp    EXPORT_SYMBOL(vec_window_width),%ecx
 		jle    jump_125782
-		mov    EXPORT_SYMBOL(screen_width),%ecx
+		mov    EXPORT_SYMBOL(vec_window_width),%ecx
 	jump_125782:
 		movzwl %ax,%eax
 		jmp    jump_1257af
 	jump_125787:
-		cmp    EXPORT_SYMBOL(screen_width),%ecx
+		cmp    EXPORT_SYMBOL(vec_window_width),%ecx
 		jle    jump_125795
-		mov    EXPORT_SYMBOL(screen_width),%ecx
+		mov    EXPORT_SYMBOL(vec_window_width),%ecx
 	jump_125795:
 		sub    %ax,%cx
 		jle    jump_125a33
@@ -5900,7 +5900,7 @@ func_125716:
 		mov    0xa(%esi),%bl
 	jump_1257af:
 		mov    %esi,0x5c(%esp)
-		mov    EXPORT_SYMBOL(data_150108),%esi
+		mov    EXPORT_SYMBOL(vec_map),%esi
 	jump_1257b9:
 		mov    (%ebx,%esi,1),%ah
 		add    0x24(%esp),%dx
@@ -6078,7 +6078,7 @@ func_125716:
 /*----------------------------------------------------------------*/
 func_125a45:
 /*----------------------------------------------------------------*/
-		lea    EXPORT_SYMBOL(data_150124),%esi
+		lea    EXPORT_SYMBOL(polyscans),%esi
 		mov    0x30(%esp),%eax
 		shl    $0x10,%eax
 		mov    %eax,0x4c(%esp)
@@ -6089,7 +6089,7 @@ func_125a45:
 		mov    0x2(%esi),%ax
 		movzwl 0x6(%esi),%ecx
 		mov    (%esp),%edi
-		add    EXPORT_SYMBOL(data_150110),%edi
+		add    EXPORT_SYMBOL(vec_screen_width),%edi
 		mov    %edi,(%esp)
 		or     %ax,%ax
 		jns    jump_125ab6
@@ -6107,16 +6107,16 @@ func_125a45:
 		mov    %ax,%dx
 		shr    $0x8,%eax
 		mov    %ah,%bl
-		cmp    EXPORT_SYMBOL(screen_width),%ecx
+		cmp    EXPORT_SYMBOL(vec_window_width),%ecx
 		jle    jump_125ab1
-		mov    EXPORT_SYMBOL(screen_width),%ecx
+		mov    EXPORT_SYMBOL(vec_window_width),%ecx
 	jump_125ab1:
 		movzwl %ax,%eax
 		jmp    jump_125ade
 	jump_125ab6:
-		cmp    EXPORT_SYMBOL(screen_width),%ecx
+		cmp    EXPORT_SYMBOL(vec_window_width),%ecx
 		jle    jump_125ac4
-		mov    EXPORT_SYMBOL(screen_width),%ecx
+		mov    EXPORT_SYMBOL(vec_window_width),%ecx
 	jump_125ac4:
 		sub    %ax,%cx
 		jle    jump_125d62
@@ -6128,7 +6128,7 @@ func_125a45:
 		mov    0xa(%esi),%bl
 	jump_125ade:
 		mov    %esi,0x5c(%esp)
-		mov    EXPORT_SYMBOL(data_150108),%esi
+		mov    EXPORT_SYMBOL(vec_map),%esi
 	jump_125ae8:
 		mov    (%ebx,%esi,1),%al
 		add    0x24(%esp),%dx
@@ -6306,7 +6306,7 @@ func_125a45:
 /*----------------------------------------------------------------*/
 func_125d74:
 /*----------------------------------------------------------------*/
-		lea    EXPORT_SYMBOL(data_150124),%esi
+		lea    EXPORT_SYMBOL(polyscans),%esi
 		mov    0x30(%esp),%eax
 		shl    $0x10,%eax
 		mov    %eax,0x4c(%esp)
@@ -6320,15 +6320,15 @@ func_125d74:
 		mov    0x2(%esi),%ax
 		movzwl 0x6(%esi),%ecx
 		mov    (%esp),%edi
-		add    EXPORT_SYMBOL(data_150110),%edi
+		add    EXPORT_SYMBOL(vec_screen_width),%edi
 		mov    %edi,(%esp)
 		or     %ax,%ax
 		jns    jump_125e01
 		or     %cx,%cx
 		jle    jump_1261db
-		cmp    EXPORT_SYMBOL(screen_width),%ecx
+		cmp    EXPORT_SYMBOL(vec_window_width),%ecx
 		jle    jump_125dc6
-		mov    EXPORT_SYMBOL(screen_width),%ecx
+		mov    EXPORT_SYMBOL(vec_window_width),%ecx
 	jump_125dc6:
 		mov    %ecx,0x58(%esp)
 		neg    %ax
@@ -6350,9 +6350,9 @@ func_125d74:
 		movzwl %ax,%eax
 		jmp    jump_125e33
 	jump_125e01:
-		cmp    EXPORT_SYMBOL(screen_width),%ecx
+		cmp    EXPORT_SYMBOL(vec_window_width),%ecx
 		jle    jump_125e0f
-		mov    EXPORT_SYMBOL(screen_width),%ecx
+		mov    EXPORT_SYMBOL(vec_window_width),%ecx
 	jump_125e0f:
 		sub    %ax,%cx
 		jle    jump_1261db
@@ -6367,7 +6367,7 @@ func_125d74:
 		rol    $0x10,%ecx
 	jump_125e33:
 		mov    %esi,0x5c(%esp)
-		mov    EXPORT_SYMBOL(data_150108),%esi
+		mov    EXPORT_SYMBOL(vec_map),%esi
 	jump_125e3d:
 		mov    (%ebx,%esi,1),%al
 		add    0x24(%esp),%dx
@@ -6609,7 +6609,7 @@ func_125d74:
 /*----------------------------------------------------------------*/
 func_1261ed:
 /*----------------------------------------------------------------*/
-		lea    EXPORT_SYMBOL(data_150124),%esi
+		lea    EXPORT_SYMBOL(polyscans),%esi
 		mov    0x30(%esp),%eax
 		shl    $0x10,%eax
 		mov    %eax,0x4c(%esp)
@@ -6623,15 +6623,15 @@ func_1261ed:
 		mov    0x2(%esi),%ax
 		movzwl 0x6(%esi),%ecx
 		mov    (%esp),%edi
-		add    EXPORT_SYMBOL(data_150110),%edi
+		add    EXPORT_SYMBOL(vec_screen_width),%edi
 		mov    %edi,(%esp)
 		or     %ax,%ax
 		jns    jump_12627a
 		or     %cx,%cx
 		jle    jump_126654
-		cmp    EXPORT_SYMBOL(screen_width),%ecx
+		cmp    EXPORT_SYMBOL(vec_window_width),%ecx
 		jle    jump_12623f
-		mov    EXPORT_SYMBOL(screen_width),%ecx
+		mov    EXPORT_SYMBOL(vec_window_width),%ecx
 	jump_12623f:
 		mov    %ecx,0x58(%esp)
 		neg    %ax
@@ -6653,9 +6653,9 @@ func_1261ed:
 		movzwl %ax,%eax
 		jmp    jump_1262ac
 	jump_12627a:
-		cmp    EXPORT_SYMBOL(screen_width),%ecx
+		cmp    EXPORT_SYMBOL(vec_window_width),%ecx
 		jle    jump_126288
-		mov    EXPORT_SYMBOL(screen_width),%ecx
+		mov    EXPORT_SYMBOL(vec_window_width),%ecx
 	jump_126288:
 		sub    %ax,%cx
 		jle    jump_126654
@@ -6670,7 +6670,7 @@ func_1261ed:
 		rol    $0x10,%ecx
 	jump_1262ac:
 		mov    %esi,0x5c(%esp)
-		mov    EXPORT_SYMBOL(data_150108),%esi
+		mov    EXPORT_SYMBOL(vec_map),%esi
 	jump_1262b6:
 		mov    (%ebx,%esi,1),%al
 		add    0x24(%esp),%dx
@@ -6912,7 +6912,7 @@ func_1261ed:
 /*----------------------------------------------------------------*/
 func_126666:
 /*----------------------------------------------------------------*/
-		lea    EXPORT_SYMBOL(data_150124),%esi
+		lea    EXPORT_SYMBOL(polyscans),%esi
 		mov    0x30(%esp),%eax
 		shl    $0x10,%eax
 		mov    %eax,0x4c(%esp)
@@ -6923,7 +6923,7 @@ func_126666:
 		mov    0x2(%esi),%ax
 		movzwl 0x6(%esi),%ecx
 		mov    (%esp),%edi
-		add    EXPORT_SYMBOL(data_150110),%edi
+		add    EXPORT_SYMBOL(vec_screen_width),%edi
 		mov    %edi,(%esp)
 		or     %ax,%ax
 		jns    jump_1266d7
@@ -6941,16 +6941,16 @@ func_126666:
 		mov    %ax,%dx
 		shr    $0x8,%eax
 		mov    %ah,%bl
-		cmp    EXPORT_SYMBOL(screen_width),%ecx
+		cmp    EXPORT_SYMBOL(vec_window_width),%ecx
 		jle    jump_1266d2
-		mov    EXPORT_SYMBOL(screen_width),%ecx
+		mov    EXPORT_SYMBOL(vec_window_width),%ecx
 	jump_1266d2:
 		movzwl %ax,%eax
 		jmp    jump_1266ff
 	jump_1266d7:
-		cmp    EXPORT_SYMBOL(screen_width),%ecx
+		cmp    EXPORT_SYMBOL(vec_window_width),%ecx
 		jle    jump_1266e5
-		mov    EXPORT_SYMBOL(screen_width),%ecx
+		mov    EXPORT_SYMBOL(vec_window_width),%ecx
 	jump_1266e5:
 		sub    %ax,%cx
 		jle    jump_1269c7
@@ -6962,7 +6962,7 @@ func_126666:
 		mov    0xa(%esi),%bl
 	jump_1266ff:
 		mov    %esi,0x5c(%esp)
-		mov    EXPORT_SYMBOL(data_150108),%esi
+		mov    EXPORT_SYMBOL(vec_map),%esi
 	jump_126709:
 		mov    (%ebx,%esi,1),%ah
 		or     %ah,%ah
@@ -7188,7 +7188,7 @@ func_126666:
 /*----------------------------------------------------------------*/
 func_1269d9:
 /*----------------------------------------------------------------*/
-		lea    EXPORT_SYMBOL(data_150124),%esi
+		lea    EXPORT_SYMBOL(polyscans),%esi
 		mov    0x30(%esp),%eax
 		shl    $0x10,%eax
 		mov    %eax,0x4c(%esp)
@@ -7199,7 +7199,7 @@ func_1269d9:
 		mov    0x2(%esi),%ax
 		movzwl 0x6(%esi),%ecx
 		mov    (%esp),%edi
-		add    EXPORT_SYMBOL(data_150110),%edi
+		add    EXPORT_SYMBOL(vec_screen_width),%edi
 		mov    %edi,(%esp)
 		or     %ax,%ax
 		jns    jump_126a4a
@@ -7217,16 +7217,16 @@ func_1269d9:
 		mov    %ax,%dx
 		shr    $0x8,%eax
 		mov    %ah,%bl
-		cmp    EXPORT_SYMBOL(screen_width),%ecx
+		cmp    EXPORT_SYMBOL(vec_window_width),%ecx
 		jle    jump_126a45
-		mov    EXPORT_SYMBOL(screen_width),%ecx
+		mov    EXPORT_SYMBOL(vec_window_width),%ecx
 	jump_126a45:
 		movzwl %ax,%eax
 		jmp    jump_126a72
 	jump_126a4a:
-		cmp    EXPORT_SYMBOL(screen_width),%ecx
+		cmp    EXPORT_SYMBOL(vec_window_width),%ecx
 		jle    jump_126a58
-		mov    EXPORT_SYMBOL(screen_width),%ecx
+		mov    EXPORT_SYMBOL(vec_window_width),%ecx
 	jump_126a58:
 		sub    %ax,%cx
 		jle    jump_126d3a
@@ -7238,7 +7238,7 @@ func_1269d9:
 		mov    0xa(%esi),%bl
 	jump_126a72:
 		mov    %esi,0x5c(%esp)
-		mov    EXPORT_SYMBOL(data_150108),%esi
+		mov    EXPORT_SYMBOL(vec_map),%esi
 	jump_126a7c:
 		mov    (%ebx,%esi,1),%al
 		or     %al,%al
@@ -7464,7 +7464,7 @@ func_1269d9:
 /*----------------------------------------------------------------*/
 func_126d4c:
 /*----------------------------------------------------------------*/
-		lea    EXPORT_SYMBOL(data_150124),%esi
+		lea    EXPORT_SYMBOL(polyscans),%esi
 		mov    0x30(%esp),%eax
 		shl    $0x10,%eax
 		mov    %eax,0x4c(%esp)
@@ -7478,15 +7478,15 @@ func_126d4c:
 		mov    0x2(%esi),%ax
 		movzwl 0x6(%esi),%ecx
 		mov    (%esp),%edi
-		add    EXPORT_SYMBOL(data_150110),%edi
+		add    EXPORT_SYMBOL(vec_screen_width),%edi
 		mov    %edi,(%esp)
 		or     %ax,%ax
 		jns    jump_126dd9
 		or     %cx,%cx
 		jle    jump_1271f3
-		cmp    EXPORT_SYMBOL(screen_width),%ecx
+		cmp    EXPORT_SYMBOL(vec_window_width),%ecx
 		jle    jump_126d9e
-		mov    EXPORT_SYMBOL(screen_width),%ecx
+		mov    EXPORT_SYMBOL(vec_window_width),%ecx
 	jump_126d9e:
 		mov    %ecx,0x58(%esp)
 		neg    %ax
@@ -7508,9 +7508,9 @@ func_126d4c:
 		movzwl %ax,%eax
 		jmp    jump_126e0b
 	jump_126dd9:
-		cmp    EXPORT_SYMBOL(screen_width),%ecx
+		cmp    EXPORT_SYMBOL(vec_window_width),%ecx
 		jle    jump_126de7
-		mov    EXPORT_SYMBOL(screen_width),%ecx
+		mov    EXPORT_SYMBOL(vec_window_width),%ecx
 	jump_126de7:
 		sub    %ax,%cx
 		jle    jump_1271f3
@@ -7525,7 +7525,7 @@ func_126d4c:
 		rol    $0x10,%ecx
 	jump_126e0b:
 		mov    %esi,0x5c(%esp)
-		mov    EXPORT_SYMBOL(data_150108),%esi
+		mov    EXPORT_SYMBOL(vec_map),%esi
 	jump_126e15:
 		mov    (%ebx,%esi,1),%al
 		or     %al,%al
@@ -7815,7 +7815,7 @@ func_126d4c:
 /*----------------------------------------------------------------*/
 func_127205:
 /*----------------------------------------------------------------*/
-		lea    EXPORT_SYMBOL(data_150124),%esi
+		lea    EXPORT_SYMBOL(polyscans),%esi
 		mov    0x30(%esp),%eax
 		shl    $0x10,%eax
 		mov    %eax,0x4c(%esp)
@@ -7829,15 +7829,15 @@ func_127205:
 		mov    0x2(%esi),%ax
 		movzwl 0x6(%esi),%ecx
 		mov    (%esp),%edi
-		add    EXPORT_SYMBOL(data_150110),%edi
+		add    EXPORT_SYMBOL(vec_screen_width),%edi
 		mov    %edi,(%esp)
 		or     %ax,%ax
 		jns    jump_127292
 		or     %cx,%cx
 		jle    jump_1276ac
-		cmp    EXPORT_SYMBOL(screen_width),%ecx
+		cmp    EXPORT_SYMBOL(vec_window_width),%ecx
 		jle    jump_127257
-		mov    EXPORT_SYMBOL(screen_width),%ecx
+		mov    EXPORT_SYMBOL(vec_window_width),%ecx
 	jump_127257:
 		mov    %ecx,0x58(%esp)
 		neg    %ax
@@ -7859,9 +7859,9 @@ func_127205:
 		movzwl %ax,%eax
 		jmp    jump_1272c4
 	jump_127292:
-		cmp    EXPORT_SYMBOL(screen_width),%ecx
+		cmp    EXPORT_SYMBOL(vec_window_width),%ecx
 		jle    jump_1272a0
-		mov    EXPORT_SYMBOL(screen_width),%ecx
+		mov    EXPORT_SYMBOL(vec_window_width),%ecx
 	jump_1272a0:
 		sub    %ax,%cx
 		jle    jump_1276ac
@@ -7876,7 +7876,7 @@ func_127205:
 		rol    $0x10,%ecx
 	jump_1272c4:
 		mov    %esi,0x5c(%esp)
-		mov    EXPORT_SYMBOL(data_150108),%esi
+		mov    EXPORT_SYMBOL(vec_map),%esi
 	jump_1272ce:
 		mov    (%ebx,%esi,1),%al
 		or     %al,%al
@@ -8166,7 +8166,7 @@ func_127205:
 /*----------------------------------------------------------------*/
 func_1276be:
 /*----------------------------------------------------------------*/
-		lea    EXPORT_SYMBOL(data_150124),%esi
+		lea    EXPORT_SYMBOL(polyscans),%esi
 		mov    %esi,0x5c(%esp)
 		xor    %ebx,%ebx
 		mov    0x24(%esp),%ecx
@@ -8190,7 +8190,7 @@ func_1276be:
 		sar    $0x10,%eax
 		sar    $0x10,%ebp
 		mov    (%esp),%edi
-		add    EXPORT_SYMBOL(data_150110),%edi
+		add    EXPORT_SYMBOL(vec_screen_width),%edi
 		mov    %edi,(%esp)
 		or     %eax,%eax
 		jns    jump_127762
@@ -8213,15 +8213,15 @@ func_1276be:
 		mov    %cl,%dl
 		mov    %bx,%cx
 		mov    %al,%bh
-		cmp    EXPORT_SYMBOL(screen_width),%ebp
+		cmp    EXPORT_SYMBOL(vec_window_width),%ebp
 		jle    jump_127760
-		mov    EXPORT_SYMBOL(screen_width),%ebp
+		mov    EXPORT_SYMBOL(vec_window_width),%ebp
 	jump_127760:
 		jmp    jump_127795
 	jump_127762:
-		cmp    EXPORT_SYMBOL(screen_width),%ebp
+		cmp    EXPORT_SYMBOL(vec_window_width),%ebp
 		jle    jump_127770
-		mov    EXPORT_SYMBOL(screen_width),%ebp
+		mov    EXPORT_SYMBOL(vec_window_width),%ebp
 	jump_127770:
 		sub    %eax,%ebp
 		jle    jump_127a4b
@@ -8242,7 +8242,7 @@ func_1276be:
 		mov    %ebp,%eax
 		and    $0xf,%eax
 		add    data_1233f3(,%eax,4),%edi
-		mov    EXPORT_SYMBOL(data_150108),%esi
+		mov    EXPORT_SYMBOL(vec_map),%esi
 		jmp    *vtable_1277c0(,%eax,4)
 
 vtable_1277c0:
