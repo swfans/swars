@@ -37,7 +37,7 @@
 .global EXPORT_SYMBOL(data_152e25);
 .global EXPORT_SYMBOL(screen_height);
 .global EXPORT_SYMBOL(screen_width);
-.global EXPORT_SYMBOL(data_162280);
+.global EXPORT_SYMBOL(sprites);
 .global EXPORT_SYMBOL(data_166280);
 
 
@@ -2971,97 +2971,97 @@ func_1231cf:
 		mov    0x12(%esi),%ah
 	jump_123252:
 		add    0x3c(%esp),%bx
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%dl
+		mov    EXPORT_SYMBOL(sprites)(%eax),%dl
 		adc    0x3e(%esp),%ah
 		dec    %cx
 		mov    %dl,(%edi)
 		je     jump_1233e1
 		add    0x3c(%esp),%bx
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%dl
+		mov    EXPORT_SYMBOL(sprites)(%eax),%dl
 		adc    0x3e(%esp),%ah
 		dec    %cx
 		mov    %dl,0x1(%edi)
 		je     jump_1233e1
 		add    0x3c(%esp),%bx
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%dl
+		mov    EXPORT_SYMBOL(sprites)(%eax),%dl
 		adc    0x3e(%esp),%ah
 		dec    %cx
 		mov    %dl,0x2(%edi)
 		je     jump_1233e1
 		add    0x3c(%esp),%bx
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%dl
+		mov    EXPORT_SYMBOL(sprites)(%eax),%dl
 		adc    0x3e(%esp),%ah
 		dec    %cx
 		mov    %dl,0x3(%edi)
 		je     jump_1233e1
 		add    0x3c(%esp),%bx
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%dl
+		mov    EXPORT_SYMBOL(sprites)(%eax),%dl
 		adc    0x3e(%esp),%ah
 		dec    %cx
 		mov    %dl,0x4(%edi)
 		je     jump_1233e1
 		add    0x3c(%esp),%bx
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%dl
+		mov    EXPORT_SYMBOL(sprites)(%eax),%dl
 		adc    0x3e(%esp),%ah
 		dec    %cx
 		mov    %dl,0x5(%edi)
 		je     jump_1233e1
 		add    0x3c(%esp),%bx
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%dl
+		mov    EXPORT_SYMBOL(sprites)(%eax),%dl
 		adc    0x3e(%esp),%ah
 		dec    %cx
 		mov    %dl,0x6(%edi)
 		je     jump_1233e1
 		add    0x3c(%esp),%bx
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%dl
+		mov    EXPORT_SYMBOL(sprites)(%eax),%dl
 		adc    0x3e(%esp),%ah
 		dec    %cx
 		mov    %dl,0x7(%edi)
 		je     jump_1233e1
 		add    0x3c(%esp),%bx
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%dl
+		mov    EXPORT_SYMBOL(sprites)(%eax),%dl
 		adc    0x3e(%esp),%ah
 		dec    %cx
 		mov    %dl,0x8(%edi)
 		je     jump_1233e1
 		add    0x3c(%esp),%bx
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%dl
+		mov    EXPORT_SYMBOL(sprites)(%eax),%dl
 		adc    0x3e(%esp),%ah
 		dec    %cx
 		mov    %dl,0x9(%edi)
 		je     jump_1233e1
 		add    0x3c(%esp),%bx
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%dl
+		mov    EXPORT_SYMBOL(sprites)(%eax),%dl
 		adc    0x3e(%esp),%ah
 		dec    %cx
 		mov    %dl,0xa(%edi)
 		je     jump_1233e1
 		add    0x3c(%esp),%bx
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%dl
+		mov    EXPORT_SYMBOL(sprites)(%eax),%dl
 		adc    0x3e(%esp),%ah
 		dec    %cx
 		mov    %dl,0xb(%edi)
 		je     jump_1233e1
 		add    0x3c(%esp),%bx
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%dl
+		mov    EXPORT_SYMBOL(sprites)(%eax),%dl
 		adc    0x3e(%esp),%ah
 		dec    %cx
 		mov    %dl,0xc(%edi)
 		je     jump_1233e1
 		add    0x3c(%esp),%bx
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%dl
+		mov    EXPORT_SYMBOL(sprites)(%eax),%dl
 		adc    0x3e(%esp),%ah
 		dec    %cx
 		mov    %dl,0xd(%edi)
 		je     jump_1233e1
 		add    0x3c(%esp),%bx
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%dl
+		mov    EXPORT_SYMBOL(sprites)(%eax),%dl
 		adc    0x3e(%esp),%ah
 		dec    %cx
 		mov    %dl,0xe(%edi)
 		je     jump_1233e1
 		add    0x3c(%esp),%bx
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%dl
+		mov    EXPORT_SYMBOL(sprites)(%eax),%dl
 		adc    0x3e(%esp),%ah
 		dec    %cx
 		mov    %dl,0xf(%edi)
@@ -3202,7 +3202,7 @@ func_123570:
 		add    0x4c(%esp),%ecx
 		mov    (%ebx,%esi,1),%al
 		adc    0x50(%esp),%edx
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		adc    0x64(%esp),%bh
 		mov    %al,(%edi)
 
@@ -3215,7 +3215,7 @@ func_12358b:
 		add    0x4c(%esp),%ecx
 		mov    (%ebx,%esi,1),%al
 		adc    0x50(%esp),%edx
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		adc    0x64(%esp),%bh
 		mov    %al,0x1(%edi)
 
@@ -3228,7 +3228,7 @@ func_1235a7:
 		add    0x4c(%esp),%ecx
 		mov    (%ebx,%esi,1),%al
 		adc    0x50(%esp),%edx
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		adc    0x64(%esp),%bh
 		mov    %al,0x2(%edi)
 
@@ -3241,7 +3241,7 @@ func_1235c3:
 		add    0x4c(%esp),%ecx
 		mov    (%ebx,%esi,1),%al
 		adc    0x50(%esp),%edx
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		adc    0x64(%esp),%bh
 		mov    %al,0x3(%edi)
 
@@ -3254,7 +3254,7 @@ func_1235df:
 		add    0x4c(%esp),%ecx
 		mov    (%ebx,%esi,1),%al
 		adc    0x50(%esp),%edx
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		adc    0x64(%esp),%bh
 		mov    %al,0x4(%edi)
 
@@ -3267,7 +3267,7 @@ func_1235fb:
 		add    0x4c(%esp),%ecx
 		mov    (%ebx,%esi,1),%al
 		adc    0x50(%esp),%edx
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		adc    0x64(%esp),%bh
 		mov    %al,0x5(%edi)
 
@@ -3280,7 +3280,7 @@ func_123617:
 		add    0x4c(%esp),%ecx
 		mov    (%ebx,%esi,1),%al
 		adc    0x50(%esp),%edx
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		adc    0x64(%esp),%bh
 		mov    %al,0x6(%edi)
 
@@ -3293,7 +3293,7 @@ func_123633:
 		add    0x4c(%esp),%ecx
 		mov    (%ebx,%esi,1),%al
 		adc    0x50(%esp),%edx
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		adc    0x64(%esp),%bh
 		mov    %al,0x7(%edi)
 
@@ -3306,7 +3306,7 @@ func_12364f:
 		add    0x4c(%esp),%ecx
 		mov    (%ebx,%esi,1),%al
 		adc    0x50(%esp),%edx
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		adc    0x64(%esp),%bh
 		mov    %al,0x8(%edi)
 
@@ -3319,7 +3319,7 @@ func_12366b:
 		add    0x4c(%esp),%ecx
 		mov    (%ebx,%esi,1),%al
 		adc    0x50(%esp),%edx
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		adc    0x64(%esp),%bh
 		mov    %al,0x9(%edi)
 
@@ -3332,7 +3332,7 @@ func_123687:
 		add    0x4c(%esp),%ecx
 		mov    (%ebx,%esi,1),%al
 		adc    0x50(%esp),%edx
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		adc    0x64(%esp),%bh
 		mov    %al,0xa(%edi)
 
@@ -3345,7 +3345,7 @@ func_1236a3:
 		add    0x4c(%esp),%ecx
 		mov    (%ebx,%esi,1),%al
 		adc    0x50(%esp),%edx
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		adc    0x64(%esp),%bh
 		mov    %al,0xb(%edi)
 
@@ -3358,7 +3358,7 @@ func_1236bf:
 		add    0x4c(%esp),%ecx
 		mov    (%ebx,%esi,1),%al
 		adc    0x50(%esp),%edx
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		adc    0x64(%esp),%bh
 		mov    %al,0xc(%edi)
 
@@ -3371,7 +3371,7 @@ func_1236db:
 		add    0x4c(%esp),%ecx
 		mov    (%ebx,%esi,1),%al
 		adc    0x50(%esp),%edx
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		adc    0x64(%esp),%bh
 		mov    %al,0xd(%edi)
 
@@ -3384,7 +3384,7 @@ func_1236f7:
 		add    0x4c(%esp),%ecx
 		mov    (%ebx,%esi,1),%al
 		adc    0x50(%esp),%edx
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		adc    0x64(%esp),%bh
 		mov    %al,0xe(%edi)
 
@@ -3397,7 +3397,7 @@ func_123713:
 		add    0x4c(%esp),%ecx
 		mov    (%ebx,%esi,1),%al
 		adc    0x50(%esp),%edx
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		adc    0x64(%esp),%bh
 		mov    %al,0xf(%edi)
 		add    $0x10,%edi
@@ -3512,7 +3512,7 @@ func_123880:
 		mov    (%ebx,%ebp,1),%al
 		or     %al,%al
 		je     jump_12388f
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,(%edi)
 	jump_12388f:
 		add    0x24(%esp),%dx
@@ -3529,7 +3529,7 @@ func_1238a8:
 		mov    (%ebx,%ebp,1),%al
 		or     %al,%al
 		je     jump_1238b8
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,0x1(%edi)
 	jump_1238b8:
 		add    0x24(%esp),%dx
@@ -3546,7 +3546,7 @@ func_1238d1:
 		mov    (%ebx,%ebp,1),%al
 		or     %al,%al
 		je     jump_1238e1
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,0x2(%edi)
 	jump_1238e1:
 		add    0x24(%esp),%dx
@@ -3563,7 +3563,7 @@ func_1238fa:
 		mov    (%ebx,%ebp,1),%al
 		or     %al,%al
 		je     jump_12390a
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,0x3(%edi)
 	jump_12390a:
 		add    0x24(%esp),%dx
@@ -3580,7 +3580,7 @@ func_123923:
 		mov    (%ebx,%ebp,1),%al
 		or     %al,%al
 		je     jump_123933
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,0x4(%edi)
 	jump_123933:
 		add    0x24(%esp),%dx
@@ -3597,7 +3597,7 @@ func_12394c:
 		mov    (%ebx,%ebp,1),%al
 		or     %al,%al
 		je     jump_12395c
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,0x5(%edi)
 	jump_12395c:
 		add    0x24(%esp),%dx
@@ -3614,7 +3614,7 @@ func_123975:
 		mov    (%ebx,%ebp,1),%al
 		or     %al,%al
 		je     jump_123985
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,0x6(%edi)
 	jump_123985:
 		add    0x24(%esp),%dx
@@ -3631,7 +3631,7 @@ func_12399e:
 		mov    (%ebx,%ebp,1),%al
 		or     %al,%al
 		je     jump_1239ae
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,0x7(%edi)
 	jump_1239ae:
 		add    0x24(%esp),%dx
@@ -3648,7 +3648,7 @@ func_1239c7:
 		mov    (%ebx,%ebp,1),%al
 		or     %al,%al
 		je     jump_1239d7
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,0x8(%edi)
 	jump_1239d7:
 		add    0x24(%esp),%dx
@@ -3665,7 +3665,7 @@ func_1239f0:
 		mov    (%ebx,%ebp,1),%al
 		or     %al,%al
 		je     jump_123a00
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,0x9(%edi)
 	jump_123a00:
 		add    0x24(%esp),%dx
@@ -3682,7 +3682,7 @@ func_123a19:
 		mov    (%ebx,%ebp,1),%al
 		or     %al,%al
 		je     jump_123a29
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,0xa(%edi)
 	jump_123a29:
 		add    0x24(%esp),%dx
@@ -3699,7 +3699,7 @@ func_123a42:
 		mov    (%ebx,%ebp,1),%al
 		or     %al,%al
 		je     jump_123a52
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,0xb(%edi)
 	jump_123a52:
 		add    0x24(%esp),%dx
@@ -3716,7 +3716,7 @@ func_123a6b:
 		mov    (%ebx,%ebp,1),%al
 		or     %al,%al
 		je     jump_123a7b
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,0xc(%edi)
 	jump_123a7b:
 		add    0x24(%esp),%dx
@@ -3733,7 +3733,7 @@ func_123a94:
 		mov    (%ebx,%ebp,1),%al
 		or     %al,%al
 		je     jump_123aa4
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,0xd(%edi)
 	jump_123aa4:
 		add    0x24(%esp),%dx
@@ -3750,7 +3750,7 @@ func_123abd:
 		mov    (%ebx,%ebp,1),%al
 		or     %al,%al
 		je     jump_123acd
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,0xe(%edi)
 	jump_123acd:
 		add    0x24(%esp),%dx
@@ -3767,7 +3767,7 @@ func_123ae6:
 		mov    (%ebx,%ebp,1),%al
 		or     %al,%al
 		je     jump_123af6
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,0xf(%edi)
 	jump_123af6:
 		add    0x24(%esp),%dx
@@ -3848,7 +3848,7 @@ func_123b2b:
 		mov    (%ebx,%esi,1),%al
 		add    0x24(%esp),%dx
 		adc    0x26(%esp),%bl
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		add    0x4c(%esp),%edx
 		mov    %al,(%edi)
 		adc    0x32(%esp),%bh
@@ -3857,7 +3857,7 @@ func_123b2b:
 		mov    (%ebx,%esi,1),%al
 		add    0x24(%esp),%dx
 		adc    0x26(%esp),%bl
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		add    0x4c(%esp),%edx
 		mov    %al,0x1(%edi)
 		adc    0x32(%esp),%bh
@@ -3866,7 +3866,7 @@ func_123b2b:
 		mov    (%ebx,%esi,1),%al
 		add    0x24(%esp),%dx
 		adc    0x26(%esp),%bl
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		add    0x4c(%esp),%edx
 		mov    %al,0x2(%edi)
 		adc    0x32(%esp),%bh
@@ -3875,7 +3875,7 @@ func_123b2b:
 		mov    (%ebx,%esi,1),%al
 		add    0x24(%esp),%dx
 		adc    0x26(%esp),%bl
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		add    0x4c(%esp),%edx
 		mov    %al,0x3(%edi)
 		adc    0x32(%esp),%bh
@@ -3884,7 +3884,7 @@ func_123b2b:
 		mov    (%ebx,%esi,1),%al
 		add    0x24(%esp),%dx
 		adc    0x26(%esp),%bl
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		add    0x4c(%esp),%edx
 		mov    %al,0x4(%edi)
 		adc    0x32(%esp),%bh
@@ -3893,7 +3893,7 @@ func_123b2b:
 		mov    (%ebx,%esi,1),%al
 		add    0x24(%esp),%dx
 		adc    0x26(%esp),%bl
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		add    0x4c(%esp),%edx
 		mov    %al,0x5(%edi)
 		adc    0x32(%esp),%bh
@@ -3902,7 +3902,7 @@ func_123b2b:
 		mov    (%ebx,%esi,1),%al
 		add    0x24(%esp),%dx
 		adc    0x26(%esp),%bl
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		add    0x4c(%esp),%edx
 		mov    %al,0x6(%edi)
 		adc    0x32(%esp),%bh
@@ -3911,7 +3911,7 @@ func_123b2b:
 		mov    (%ebx,%esi,1),%al
 		add    0x24(%esp),%dx
 		adc    0x26(%esp),%bl
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		add    0x4c(%esp),%edx
 		mov    %al,0x7(%edi)
 		adc    0x32(%esp),%bh
@@ -3920,7 +3920,7 @@ func_123b2b:
 		mov    (%ebx,%esi,1),%al
 		add    0x24(%esp),%dx
 		adc    0x26(%esp),%bl
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		add    0x4c(%esp),%edx
 		mov    %al,0x8(%edi)
 		adc    0x32(%esp),%bh
@@ -3929,7 +3929,7 @@ func_123b2b:
 		mov    (%ebx,%esi,1),%al
 		add    0x24(%esp),%dx
 		adc    0x26(%esp),%bl
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		add    0x4c(%esp),%edx
 		mov    %al,0x9(%edi)
 		adc    0x32(%esp),%bh
@@ -3938,7 +3938,7 @@ func_123b2b:
 		mov    (%ebx,%esi,1),%al
 		add    0x24(%esp),%dx
 		adc    0x26(%esp),%bl
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		add    0x4c(%esp),%edx
 		mov    %al,0xa(%edi)
 		adc    0x32(%esp),%bh
@@ -3947,7 +3947,7 @@ func_123b2b:
 		mov    (%ebx,%esi,1),%al
 		add    0x24(%esp),%dx
 		adc    0x26(%esp),%bl
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		add    0x4c(%esp),%edx
 		mov    %al,0xb(%edi)
 		adc    0x32(%esp),%bh
@@ -3956,7 +3956,7 @@ func_123b2b:
 		mov    (%ebx,%esi,1),%al
 		add    0x24(%esp),%dx
 		adc    0x26(%esp),%bl
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		add    0x4c(%esp),%edx
 		mov    %al,0xc(%edi)
 		adc    0x32(%esp),%bh
@@ -3965,7 +3965,7 @@ func_123b2b:
 		mov    (%ebx,%esi,1),%al
 		add    0x24(%esp),%dx
 		adc    0x26(%esp),%bl
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		add    0x4c(%esp),%edx
 		mov    %al,0xd(%edi)
 		adc    0x32(%esp),%bh
@@ -3974,7 +3974,7 @@ func_123b2b:
 		mov    (%ebx,%esi,1),%al
 		add    0x24(%esp),%dx
 		adc    0x26(%esp),%bl
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		add    0x4c(%esp),%edx
 		mov    %al,0xe(%edi)
 		adc    0x32(%esp),%bh
@@ -3983,7 +3983,7 @@ func_123b2b:
 		mov    (%ebx,%esi,1),%al
 		add    0x24(%esp),%dx
 		adc    0x26(%esp),%bl
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		add    0x4c(%esp),%edx
 		mov    %al,0xf(%edi)
 		adc    0x32(%esp),%bh
@@ -4063,7 +4063,7 @@ func_123e3e:
 		adc    0x26(%esp),%bl
 		or     %al,%al
 		je     jump_123eff
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,(%edi)
 	jump_123eff:
 		add    0x4c(%esp),%edx
@@ -4075,7 +4075,7 @@ func_123e3e:
 		adc    0x26(%esp),%bl
 		or     %al,%al
 		je     jump_123f28
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,0x1(%edi)
 	jump_123f28:
 		add    0x4c(%esp),%edx
@@ -4087,7 +4087,7 @@ func_123e3e:
 		adc    0x26(%esp),%bl
 		or     %al,%al
 		je     jump_123f51
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,0x2(%edi)
 	jump_123f51:
 		add    0x4c(%esp),%edx
@@ -4099,7 +4099,7 @@ func_123e3e:
 		adc    0x26(%esp),%bl
 		or     %al,%al
 		je     jump_123f7a
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,0x3(%edi)
 	jump_123f7a:
 		add    0x4c(%esp),%edx
@@ -4111,7 +4111,7 @@ func_123e3e:
 		adc    0x26(%esp),%bl
 		or     %al,%al
 		je     jump_123fa3
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,0x4(%edi)
 	jump_123fa3:
 		add    0x4c(%esp),%edx
@@ -4123,7 +4123,7 @@ func_123e3e:
 		adc    0x26(%esp),%bl
 		or     %al,%al
 		je     jump_123fcc
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,0x5(%edi)
 	jump_123fcc:
 		add    0x4c(%esp),%edx
@@ -4135,7 +4135,7 @@ func_123e3e:
 		adc    0x26(%esp),%bl
 		or     %al,%al
 		je     jump_123ff5
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,0x6(%edi)
 	jump_123ff5:
 		add    0x4c(%esp),%edx
@@ -4147,7 +4147,7 @@ func_123e3e:
 		adc    0x26(%esp),%bl
 		or     %al,%al
 		je     jump_12401e
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,0x7(%edi)
 	jump_12401e:
 		add    0x4c(%esp),%edx
@@ -4159,7 +4159,7 @@ func_123e3e:
 		adc    0x26(%esp),%bl
 		or     %al,%al
 		je     jump_124047
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,0x8(%edi)
 	jump_124047:
 		add    0x4c(%esp),%edx
@@ -4171,7 +4171,7 @@ func_123e3e:
 		adc    0x26(%esp),%bl
 		or     %al,%al
 		je     jump_124070
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,0x9(%edi)
 	jump_124070:
 		add    0x4c(%esp),%edx
@@ -4183,7 +4183,7 @@ func_123e3e:
 		adc    0x26(%esp),%bl
 		or     %al,%al
 		je     jump_124099
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,0xa(%edi)
 	jump_124099:
 		add    0x4c(%esp),%edx
@@ -4195,7 +4195,7 @@ func_123e3e:
 		adc    0x26(%esp),%bl
 		or     %al,%al
 		je     jump_1240c2
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,0xb(%edi)
 	jump_1240c2:
 		add    0x4c(%esp),%edx
@@ -4207,7 +4207,7 @@ func_123e3e:
 		adc    0x26(%esp),%bl
 		or     %al,%al
 		je     jump_1240eb
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,0xc(%edi)
 	jump_1240eb:
 		add    0x4c(%esp),%edx
@@ -4219,7 +4219,7 @@ func_123e3e:
 		adc    0x26(%esp),%bl
 		or     %al,%al
 		je     jump_124110
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,0xd(%edi)
 	jump_124110:
 		add    0x4c(%esp),%edx
@@ -4231,7 +4231,7 @@ func_123e3e:
 		adc    0x26(%esp),%bl
 		or     %al,%al
 		je     jump_124135
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,0xe(%edi)
 	jump_124135:
 		add    0x4c(%esp),%edx
@@ -4243,7 +4243,7 @@ func_123e3e:
 		adc    0x26(%esp),%bl
 		or     %al,%al
 		je     jump_12415a
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,0xf(%edi)
 	jump_12415a:
 		add    0x4c(%esp),%edx
@@ -4324,7 +4324,7 @@ func_124184:
 		or     %ah,%ah
 		je     jump_124241
 		mov    (%edi),%al
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,(%edi)
 	jump_124241:
 		add    0x4c(%esp),%edx
@@ -4337,7 +4337,7 @@ func_124184:
 		or     %ah,%ah
 		je     jump_12426d
 		mov    0x1(%edi),%al
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,0x1(%edi)
 	jump_12426d:
 		add    0x4c(%esp),%edx
@@ -4350,7 +4350,7 @@ func_124184:
 		or     %ah,%ah
 		je     jump_124299
 		mov    0x2(%edi),%al
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,0x2(%edi)
 	jump_124299:
 		add    0x4c(%esp),%edx
@@ -4363,7 +4363,7 @@ func_124184:
 		or     %ah,%ah
 		je     jump_1242c5
 		mov    0x3(%edi),%al
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,0x3(%edi)
 	jump_1242c5:
 		add    0x4c(%esp),%edx
@@ -4376,7 +4376,7 @@ func_124184:
 		or     %ah,%ah
 		je     jump_1242f1
 		mov    0x4(%edi),%al
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,0x4(%edi)
 	jump_1242f1:
 		add    0x4c(%esp),%edx
@@ -4389,7 +4389,7 @@ func_124184:
 		or     %ah,%ah
 		je     jump_12431d
 		mov    0x5(%edi),%al
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,0x5(%edi)
 	jump_12431d:
 		add    0x4c(%esp),%edx
@@ -4402,7 +4402,7 @@ func_124184:
 		or     %ah,%ah
 		je     jump_124349
 		mov    0x6(%edi),%al
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,0x6(%edi)
 	jump_124349:
 		add    0x4c(%esp),%edx
@@ -4415,7 +4415,7 @@ func_124184:
 		or     %ah,%ah
 		je     jump_124375
 		mov    0x7(%edi),%al
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,0x7(%edi)
 	jump_124375:
 		add    0x4c(%esp),%edx
@@ -4428,7 +4428,7 @@ func_124184:
 		or     %ah,%ah
 		je     jump_1243a1
 		mov    0x8(%edi),%al
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,0x8(%edi)
 	jump_1243a1:
 		add    0x4c(%esp),%edx
@@ -4441,7 +4441,7 @@ func_124184:
 		or     %ah,%ah
 		je     jump_1243cd
 		mov    0x9(%edi),%al
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,0x9(%edi)
 	jump_1243cd:
 		add    0x4c(%esp),%edx
@@ -4454,7 +4454,7 @@ func_124184:
 		or     %ah,%ah
 		je     jump_1243f9
 		mov    0xa(%edi),%al
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,0xa(%edi)
 	jump_1243f9:
 		add    0x4c(%esp),%edx
@@ -4467,7 +4467,7 @@ func_124184:
 		or     %ah,%ah
 		je     jump_124425
 		mov    0xb(%edi),%al
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,0xb(%edi)
 	jump_124425:
 		add    0x4c(%esp),%edx
@@ -4480,7 +4480,7 @@ func_124184:
 		or     %ah,%ah
 		je     jump_124451
 		mov    0xc(%edi),%al
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,0xc(%edi)
 	jump_124451:
 		add    0x4c(%esp),%edx
@@ -4493,7 +4493,7 @@ func_124184:
 		or     %ah,%ah
 		je     jump_12447d
 		mov    0xd(%edi),%al
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,0xd(%edi)
 	jump_12447d:
 		add    0x4c(%esp),%edx
@@ -4506,7 +4506,7 @@ func_124184:
 		or     %ah,%ah
 		je     jump_1244a5
 		mov    0xe(%edi),%al
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,0xe(%edi)
 	jump_1244a5:
 		add    0x4c(%esp),%edx
@@ -4519,7 +4519,7 @@ func_124184:
 		or     %ah,%ah
 		je     jump_1244cd
 		mov    0xf(%edi),%al
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,0xf(%edi)
 	jump_1244cd:
 		add    0x4c(%esp),%edx
@@ -4599,7 +4599,7 @@ func_1244f7:
 		or     %al,%al
 		je     jump_1245b1
 		mov    (%edi),%al
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,(%edi)
 	jump_1245b1:
 		add    0x24(%esp),%dx
@@ -4612,7 +4612,7 @@ func_1244f7:
 		or     %al,%al
 		je     jump_1245dd
 		mov    0x1(%edi),%al
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,0x1(%edi)
 	jump_1245dd:
 		add    0x24(%esp),%dx
@@ -4625,7 +4625,7 @@ func_1244f7:
 		or     %al,%al
 		je     jump_124609
 		mov    0x2(%edi),%al
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,0x2(%edi)
 	jump_124609:
 		add    0x24(%esp),%dx
@@ -4638,7 +4638,7 @@ func_1244f7:
 		or     %al,%al
 		je     jump_124635
 		mov    0x3(%edi),%al
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,0x3(%edi)
 	jump_124635:
 		add    0x24(%esp),%dx
@@ -4651,7 +4651,7 @@ func_1244f7:
 		or     %al,%al
 		je     jump_124661
 		mov    0x4(%edi),%al
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,0x4(%edi)
 	jump_124661:
 		add    0x24(%esp),%dx
@@ -4664,7 +4664,7 @@ func_1244f7:
 		or     %al,%al
 		je     jump_12468d
 		mov    0x5(%edi),%al
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,0x5(%edi)
 	jump_12468d:
 		add    0x24(%esp),%dx
@@ -4677,7 +4677,7 @@ func_1244f7:
 		or     %al,%al
 		je     jump_1246b9
 		mov    0x6(%edi),%al
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,0x6(%edi)
 	jump_1246b9:
 		add    0x24(%esp),%dx
@@ -4690,7 +4690,7 @@ func_1244f7:
 		or     %al,%al
 		je     jump_1246e5
 		mov    0x7(%edi),%al
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,0x7(%edi)
 	jump_1246e5:
 		add    0x24(%esp),%dx
@@ -4703,7 +4703,7 @@ func_1244f7:
 		or     %al,%al
 		je     jump_124711
 		mov    0x8(%edi),%al
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,0x8(%edi)
 	jump_124711:
 		add    0x24(%esp),%dx
@@ -4716,7 +4716,7 @@ func_1244f7:
 		or     %al,%al
 		je     jump_12473d
 		mov    0x9(%edi),%al
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,0x9(%edi)
 	jump_12473d:
 		add    0x24(%esp),%dx
@@ -4729,7 +4729,7 @@ func_1244f7:
 		or     %al,%al
 		je     jump_124769
 		mov    0xa(%edi),%al
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,0xa(%edi)
 	jump_124769:
 		add    0x24(%esp),%dx
@@ -4742,7 +4742,7 @@ func_1244f7:
 		or     %al,%al
 		je     jump_124795
 		mov    0xb(%edi),%al
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,0xb(%edi)
 	jump_124795:
 		add    0x24(%esp),%dx
@@ -4755,7 +4755,7 @@ func_1244f7:
 		or     %al,%al
 		je     jump_1247c1
 		mov    0xc(%edi),%al
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,0xc(%edi)
 	jump_1247c1:
 		add    0x24(%esp),%dx
@@ -4768,7 +4768,7 @@ func_1244f7:
 		or     %al,%al
 		je     jump_1247ed
 		mov    0xd(%edi),%al
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,0xd(%edi)
 	jump_1247ed:
 		add    0x24(%esp),%dx
@@ -4781,7 +4781,7 @@ func_1244f7:
 		or     %al,%al
 		je     jump_124815
 		mov    0xe(%edi),%al
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,0xe(%edi)
 	jump_124815:
 		add    0x24(%esp),%dx
@@ -4794,7 +4794,7 @@ func_1244f7:
 		or     %al,%al
 		je     jump_12483d
 		mov    0xf(%edi),%al
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,0xf(%edi)
 	jump_12483d:
 		add    0x24(%esp),%dx
@@ -5528,7 +5528,7 @@ func_1251a4:
 		mov    0x10(%esi),%bx
 		mov    0x12(%esi),%ah
 	jump_125225:
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%dh
+		mov    EXPORT_SYMBOL(sprites)(%eax),%dh
 		mov    (%edi),%dl
 		mov    EXPORT_SYMBOL(data_166280)(%edx),%dl
 		mov    %dl,(%edi)
@@ -5536,7 +5536,7 @@ func_1251a4:
 		adc    0x3e(%esp),%ah
 		dec    %cx
 		je     jump_12544b
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%dh
+		mov    EXPORT_SYMBOL(sprites)(%eax),%dh
 		mov    0x1(%edi),%dl
 		mov    EXPORT_SYMBOL(data_166280)(%edx),%dl
 		mov    %dl,0x1(%edi)
@@ -5544,7 +5544,7 @@ func_1251a4:
 		adc    0x3e(%esp),%ah
 		dec    %cx
 		je     jump_12544b
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%dh
+		mov    EXPORT_SYMBOL(sprites)(%eax),%dh
 		mov    0x2(%edi),%dl
 		mov    EXPORT_SYMBOL(data_166280)(%edx),%dl
 		mov    %dl,0x2(%edi)
@@ -5552,7 +5552,7 @@ func_1251a4:
 		adc    0x3e(%esp),%ah
 		dec    %cx
 		je     jump_12544b
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%dh
+		mov    EXPORT_SYMBOL(sprites)(%eax),%dh
 		mov    0x3(%edi),%dl
 		mov    EXPORT_SYMBOL(data_166280)(%edx),%dl
 		mov    %dl,0x3(%edi)
@@ -5560,7 +5560,7 @@ func_1251a4:
 		adc    0x3e(%esp),%ah
 		dec    %cx
 		je     jump_12544b
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%dh
+		mov    EXPORT_SYMBOL(sprites)(%eax),%dh
 		mov    0x4(%edi),%dl
 		mov    EXPORT_SYMBOL(data_166280)(%edx),%dl
 		mov    %dl,0x4(%edi)
@@ -5568,7 +5568,7 @@ func_1251a4:
 		adc    0x3e(%esp),%ah
 		dec    %cx
 		je     jump_12544b
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%dh
+		mov    EXPORT_SYMBOL(sprites)(%eax),%dh
 		mov    0x5(%edi),%dl
 		mov    EXPORT_SYMBOL(data_166280)(%edx),%dl
 		mov    %dl,0x5(%edi)
@@ -5576,7 +5576,7 @@ func_1251a4:
 		adc    0x3e(%esp),%ah
 		dec    %cx
 		je     jump_12544b
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%dh
+		mov    EXPORT_SYMBOL(sprites)(%eax),%dh
 		mov    0x6(%edi),%dl
 		mov    EXPORT_SYMBOL(data_166280)(%edx),%dl
 		mov    %dl,0x6(%edi)
@@ -5584,7 +5584,7 @@ func_1251a4:
 		adc    0x3e(%esp),%ah
 		dec    %cx
 		je     jump_12544b
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%dh
+		mov    EXPORT_SYMBOL(sprites)(%eax),%dh
 		mov    0x7(%edi),%dl
 		mov    EXPORT_SYMBOL(data_166280)(%edx),%dl
 		mov    %dl,0x7(%edi)
@@ -5592,7 +5592,7 @@ func_1251a4:
 		adc    0x3e(%esp),%ah
 		dec    %cx
 		je     jump_12544b
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%dh
+		mov    EXPORT_SYMBOL(sprites)(%eax),%dh
 		mov    0x8(%edi),%dl
 		mov    EXPORT_SYMBOL(data_166280)(%edx),%dl
 		mov    %dl,0x8(%edi)
@@ -5600,7 +5600,7 @@ func_1251a4:
 		adc    0x3e(%esp),%ah
 		dec    %cx
 		je     jump_12544b
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%dh
+		mov    EXPORT_SYMBOL(sprites)(%eax),%dh
 		mov    0x9(%edi),%dl
 		mov    EXPORT_SYMBOL(data_166280)(%edx),%dl
 		mov    %dl,0x9(%edi)
@@ -5608,7 +5608,7 @@ func_1251a4:
 		adc    0x3e(%esp),%ah
 		dec    %cx
 		je     jump_12544b
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%dh
+		mov    EXPORT_SYMBOL(sprites)(%eax),%dh
 		mov    0xa(%edi),%dl
 		mov    EXPORT_SYMBOL(data_166280)(%edx),%dl
 		mov    %dl,0xa(%edi)
@@ -5616,7 +5616,7 @@ func_1251a4:
 		adc    0x3e(%esp),%ah
 		dec    %cx
 		je     jump_12544b
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%dh
+		mov    EXPORT_SYMBOL(sprites)(%eax),%dh
 		mov    0xb(%edi),%dl
 		mov    EXPORT_SYMBOL(data_166280)(%edx),%dl
 		mov    %dl,0xb(%edi)
@@ -5624,7 +5624,7 @@ func_1251a4:
 		adc    0x3e(%esp),%ah
 		dec    %cx
 		je     jump_12544b
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%dh
+		mov    EXPORT_SYMBOL(sprites)(%eax),%dh
 		mov    0xc(%edi),%dl
 		mov    EXPORT_SYMBOL(data_166280)(%edx),%dl
 		mov    %dl,0xc(%edi)
@@ -5632,7 +5632,7 @@ func_1251a4:
 		adc    0x3e(%esp),%ah
 		dec    %cx
 		je     jump_12544b
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%dh
+		mov    EXPORT_SYMBOL(sprites)(%eax),%dh
 		mov    0xd(%edi),%dl
 		mov    EXPORT_SYMBOL(data_166280)(%edx),%dl
 		mov    %dl,0xd(%edi)
@@ -5640,7 +5640,7 @@ func_1251a4:
 		adc    0x3e(%esp),%ah
 		dec    %cx
 		je     jump_12544b
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%dh
+		mov    EXPORT_SYMBOL(sprites)(%eax),%dh
 		mov    0xe(%edi),%dl
 		mov    EXPORT_SYMBOL(data_166280)(%edx),%dl
 		mov    %dl,0xe(%edi)
@@ -5648,7 +5648,7 @@ func_1251a4:
 		adc    0x3e(%esp),%ah
 		dec    %cx
 		je     jump_12544b
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%dh
+		mov    EXPORT_SYMBOL(sprites)(%eax),%dh
 		mov    0xf(%edi),%dl
 		mov    EXPORT_SYMBOL(data_166280)(%edx),%dl
 		mov    %dl,0xf(%edi)
@@ -5708,7 +5708,7 @@ func_12545d:
 		mov    0x10(%esi),%bx
 		mov    0x12(%esi),%ah
 	jump_1254de:
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%dl
+		mov    EXPORT_SYMBOL(sprites)(%eax),%dl
 		mov    (%edi),%dh
 		mov    EXPORT_SYMBOL(data_166280)(%edx),%dl
 		mov    %dl,(%edi)
@@ -5716,7 +5716,7 @@ func_12545d:
 		adc    0x3e(%esp),%ah
 		dec    %cx
 		je     jump_125704
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%dl
+		mov    EXPORT_SYMBOL(sprites)(%eax),%dl
 		mov    0x1(%edi),%dh
 		mov    EXPORT_SYMBOL(data_166280)(%edx),%dl
 		mov    %dl,0x1(%edi)
@@ -5724,7 +5724,7 @@ func_12545d:
 		adc    0x3e(%esp),%ah
 		dec    %cx
 		je     jump_125704
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%dl
+		mov    EXPORT_SYMBOL(sprites)(%eax),%dl
 		mov    0x2(%edi),%dh
 		mov    EXPORT_SYMBOL(data_166280)(%edx),%dl
 		mov    %dl,0x2(%edi)
@@ -5732,7 +5732,7 @@ func_12545d:
 		adc    0x3e(%esp),%ah
 		dec    %cx
 		je     jump_125704
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%dl
+		mov    EXPORT_SYMBOL(sprites)(%eax),%dl
 		mov    0x3(%edi),%dh
 		mov    EXPORT_SYMBOL(data_166280)(%edx),%dl
 		mov    %dl,0x3(%edi)
@@ -5740,7 +5740,7 @@ func_12545d:
 		adc    0x3e(%esp),%ah
 		dec    %cx
 		je     jump_125704
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%dl
+		mov    EXPORT_SYMBOL(sprites)(%eax),%dl
 		mov    0x4(%edi),%dh
 		mov    EXPORT_SYMBOL(data_166280)(%edx),%dl
 		mov    %dl,0x4(%edi)
@@ -5748,7 +5748,7 @@ func_12545d:
 		adc    0x3e(%esp),%ah
 		dec    %cx
 		je     jump_125704
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%dl
+		mov    EXPORT_SYMBOL(sprites)(%eax),%dl
 		mov    0x5(%edi),%dh
 		mov    EXPORT_SYMBOL(data_166280)(%edx),%dl
 		mov    %dl,0x5(%edi)
@@ -5756,7 +5756,7 @@ func_12545d:
 		adc    0x3e(%esp),%ah
 		dec    %cx
 		je     jump_125704
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%dl
+		mov    EXPORT_SYMBOL(sprites)(%eax),%dl
 		mov    0x6(%edi),%dh
 		mov    EXPORT_SYMBOL(data_166280)(%edx),%dl
 		mov    %dl,0x6(%edi)
@@ -5764,7 +5764,7 @@ func_12545d:
 		adc    0x3e(%esp),%ah
 		dec    %cx
 		je     jump_125704
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%dl
+		mov    EXPORT_SYMBOL(sprites)(%eax),%dl
 		mov    0x7(%edi),%dh
 		mov    EXPORT_SYMBOL(data_166280)(%edx),%dl
 		mov    %dl,0x7(%edi)
@@ -5772,7 +5772,7 @@ func_12545d:
 		adc    0x3e(%esp),%ah
 		dec    %cx
 		je     jump_125704
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%dl
+		mov    EXPORT_SYMBOL(sprites)(%eax),%dl
 		mov    0x8(%edi),%dh
 		mov    EXPORT_SYMBOL(data_166280)(%edx),%dl
 		mov    %dl,0x8(%edi)
@@ -5780,7 +5780,7 @@ func_12545d:
 		adc    0x3e(%esp),%ah
 		dec    %cx
 		je     jump_125704
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%dl
+		mov    EXPORT_SYMBOL(sprites)(%eax),%dl
 		mov    0x9(%edi),%dh
 		mov    EXPORT_SYMBOL(data_166280)(%edx),%dl
 		mov    %dl,0x9(%edi)
@@ -5788,7 +5788,7 @@ func_12545d:
 		adc    0x3e(%esp),%ah
 		dec    %cx
 		je     jump_125704
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%dl
+		mov    EXPORT_SYMBOL(sprites)(%eax),%dl
 		mov    0xa(%edi),%dh
 		mov    EXPORT_SYMBOL(data_166280)(%edx),%dl
 		mov    %dl,0xa(%edi)
@@ -5796,7 +5796,7 @@ func_12545d:
 		adc    0x3e(%esp),%ah
 		dec    %cx
 		je     jump_125704
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%dl
+		mov    EXPORT_SYMBOL(sprites)(%eax),%dl
 		mov    0xb(%edi),%dh
 		mov    EXPORT_SYMBOL(data_166280)(%edx),%dl
 		mov    %dl,0xb(%edi)
@@ -5804,7 +5804,7 @@ func_12545d:
 		adc    0x3e(%esp),%ah
 		dec    %cx
 		je     jump_125704
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%dl
+		mov    EXPORT_SYMBOL(sprites)(%eax),%dl
 		mov    0xc(%edi),%dh
 		mov    EXPORT_SYMBOL(data_166280)(%edx),%dl
 		mov    %dl,0xc(%edi)
@@ -5812,7 +5812,7 @@ func_12545d:
 		adc    0x3e(%esp),%ah
 		dec    %cx
 		je     jump_125704
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%dl
+		mov    EXPORT_SYMBOL(sprites)(%eax),%dl
 		mov    0xd(%edi),%dh
 		mov    EXPORT_SYMBOL(data_166280)(%edx),%dl
 		mov    %dl,0xd(%edi)
@@ -5820,7 +5820,7 @@ func_12545d:
 		adc    0x3e(%esp),%ah
 		dec    %cx
 		je     jump_125704
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%dl
+		mov    EXPORT_SYMBOL(sprites)(%eax),%dl
 		mov    0xe(%edi),%dh
 		mov    EXPORT_SYMBOL(data_166280)(%edx),%dl
 		mov    %dl,0xe(%edi)
@@ -5828,7 +5828,7 @@ func_12545d:
 		adc    0x3e(%esp),%ah
 		dec    %cx
 		je     jump_125704
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%dl
+		mov    EXPORT_SYMBOL(sprites)(%eax),%dl
 		mov    0xf(%edi),%dh
 		mov    EXPORT_SYMBOL(data_166280)(%edx),%dl
 		mov    %dl,0xf(%edi)
@@ -6373,7 +6373,7 @@ func_125d74:
 		add    0x24(%esp),%dx
 		mov    %cl,%ah
 		adc    0x26(%esp),%bl
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%ah
+		mov    EXPORT_SYMBOL(sprites)(%eax),%ah
 		add    0x4c(%esp),%edx
 		mov    (%edi),%al
 		adc    0x32(%esp),%bh
@@ -6387,7 +6387,7 @@ func_125d74:
 		add    0x24(%esp),%dx
 		mov    %cl,%ah
 		adc    0x26(%esp),%bl
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%ah
+		mov    EXPORT_SYMBOL(sprites)(%eax),%ah
 		add    0x4c(%esp),%edx
 		mov    0x1(%edi),%al
 		adc    0x32(%esp),%bh
@@ -6401,7 +6401,7 @@ func_125d74:
 		add    0x24(%esp),%dx
 		mov    %cl,%ah
 		adc    0x26(%esp),%bl
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%ah
+		mov    EXPORT_SYMBOL(sprites)(%eax),%ah
 		add    0x4c(%esp),%edx
 		mov    0x2(%edi),%al
 		adc    0x32(%esp),%bh
@@ -6415,7 +6415,7 @@ func_125d74:
 		add    0x24(%esp),%dx
 		mov    %cl,%ah
 		adc    0x26(%esp),%bl
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%ah
+		mov    EXPORT_SYMBOL(sprites)(%eax),%ah
 		add    0x4c(%esp),%edx
 		mov    0x3(%edi),%al
 		adc    0x32(%esp),%bh
@@ -6429,7 +6429,7 @@ func_125d74:
 		add    0x24(%esp),%dx
 		mov    %cl,%ah
 		adc    0x26(%esp),%bl
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%ah
+		mov    EXPORT_SYMBOL(sprites)(%eax),%ah
 		add    0x4c(%esp),%edx
 		mov    0x4(%edi),%al
 		adc    0x32(%esp),%bh
@@ -6443,7 +6443,7 @@ func_125d74:
 		add    0x24(%esp),%dx
 		mov    %cl,%ah
 		adc    0x26(%esp),%bl
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%ah
+		mov    EXPORT_SYMBOL(sprites)(%eax),%ah
 		add    0x4c(%esp),%edx
 		mov    0x5(%edi),%al
 		adc    0x32(%esp),%bh
@@ -6457,7 +6457,7 @@ func_125d74:
 		add    0x24(%esp),%dx
 		mov    %cl,%ah
 		adc    0x26(%esp),%bl
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%ah
+		mov    EXPORT_SYMBOL(sprites)(%eax),%ah
 		add    0x4c(%esp),%edx
 		mov    0x6(%edi),%al
 		adc    0x32(%esp),%bh
@@ -6471,7 +6471,7 @@ func_125d74:
 		add    0x24(%esp),%dx
 		mov    %cl,%ah
 		adc    0x26(%esp),%bl
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%ah
+		mov    EXPORT_SYMBOL(sprites)(%eax),%ah
 		add    0x4c(%esp),%edx
 		mov    0x7(%edi),%al
 		adc    0x32(%esp),%bh
@@ -6485,7 +6485,7 @@ func_125d74:
 		add    0x24(%esp),%dx
 		mov    %cl,%ah
 		adc    0x26(%esp),%bl
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%ah
+		mov    EXPORT_SYMBOL(sprites)(%eax),%ah
 		add    0x4c(%esp),%edx
 		mov    0x8(%edi),%al
 		adc    0x32(%esp),%bh
@@ -6499,7 +6499,7 @@ func_125d74:
 		add    0x24(%esp),%dx
 		mov    %cl,%ah
 		adc    0x26(%esp),%bl
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%ah
+		mov    EXPORT_SYMBOL(sprites)(%eax),%ah
 		add    0x4c(%esp),%edx
 		mov    0x9(%edi),%al
 		adc    0x32(%esp),%bh
@@ -6513,7 +6513,7 @@ func_125d74:
 		add    0x24(%esp),%dx
 		mov    %cl,%ah
 		adc    0x26(%esp),%bl
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%ah
+		mov    EXPORT_SYMBOL(sprites)(%eax),%ah
 		add    0x4c(%esp),%edx
 		mov    0xa(%edi),%al
 		adc    0x32(%esp),%bh
@@ -6527,7 +6527,7 @@ func_125d74:
 		add    0x24(%esp),%dx
 		mov    %cl,%ah
 		adc    0x26(%esp),%bl
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%ah
+		mov    EXPORT_SYMBOL(sprites)(%eax),%ah
 		add    0x4c(%esp),%edx
 		mov    0xb(%edi),%al
 		adc    0x32(%esp),%bh
@@ -6541,7 +6541,7 @@ func_125d74:
 		add    0x24(%esp),%dx
 		mov    %cl,%ah
 		adc    0x26(%esp),%bl
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%ah
+		mov    EXPORT_SYMBOL(sprites)(%eax),%ah
 		add    0x4c(%esp),%edx
 		mov    0xc(%edi),%al
 		adc    0x32(%esp),%bh
@@ -6555,7 +6555,7 @@ func_125d74:
 		add    0x24(%esp),%dx
 		mov    %cl,%ah
 		adc    0x26(%esp),%bl
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%ah
+		mov    EXPORT_SYMBOL(sprites)(%eax),%ah
 		add    0x4c(%esp),%edx
 		mov    0xd(%edi),%al
 		adc    0x32(%esp),%bh
@@ -6569,7 +6569,7 @@ func_125d74:
 		add    0x24(%esp),%dx
 		mov    %cl,%ah
 		adc    0x26(%esp),%bl
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%ah
+		mov    EXPORT_SYMBOL(sprites)(%eax),%ah
 		add    0x4c(%esp),%edx
 		mov    0xe(%edi),%al
 		adc    0x32(%esp),%bh
@@ -6583,7 +6583,7 @@ func_125d74:
 		add    0x24(%esp),%dx
 		mov    %cl,%ah
 		adc    0x26(%esp),%bl
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%ah
+		mov    EXPORT_SYMBOL(sprites)(%eax),%ah
 		add    0x4c(%esp),%edx
 		mov    0xf(%edi),%al
 		adc    0x32(%esp),%bh
@@ -6676,7 +6676,7 @@ func_1261ed:
 		add    0x24(%esp),%dx
 		mov    %cl,%ah
 		adc    0x26(%esp),%bl
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		add    0x4c(%esp),%edx
 		mov    (%edi),%ah
 		adc    0x32(%esp),%bh
@@ -6690,7 +6690,7 @@ func_1261ed:
 		add    0x24(%esp),%dx
 		mov    %cl,%ah
 		adc    0x26(%esp),%bl
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		add    0x4c(%esp),%edx
 		mov    0x1(%edi),%ah
 		adc    0x32(%esp),%bh
@@ -6704,7 +6704,7 @@ func_1261ed:
 		add    0x24(%esp),%dx
 		mov    %cl,%ah
 		adc    0x26(%esp),%bl
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		add    0x4c(%esp),%edx
 		mov    0x2(%edi),%ah
 		adc    0x32(%esp),%bh
@@ -6718,7 +6718,7 @@ func_1261ed:
 		add    0x24(%esp),%dx
 		mov    %cl,%ah
 		adc    0x26(%esp),%bl
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		add    0x4c(%esp),%edx
 		mov    0x3(%edi),%ah
 		adc    0x32(%esp),%bh
@@ -6732,7 +6732,7 @@ func_1261ed:
 		add    0x24(%esp),%dx
 		mov    %cl,%ah
 		adc    0x26(%esp),%bl
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		add    0x4c(%esp),%edx
 		mov    0x4(%edi),%ah
 		adc    0x32(%esp),%bh
@@ -6746,7 +6746,7 @@ func_1261ed:
 		add    0x24(%esp),%dx
 		mov    %cl,%ah
 		adc    0x26(%esp),%bl
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		add    0x4c(%esp),%edx
 		mov    0x5(%edi),%ah
 		adc    0x32(%esp),%bh
@@ -6760,7 +6760,7 @@ func_1261ed:
 		add    0x24(%esp),%dx
 		mov    %cl,%ah
 		adc    0x26(%esp),%bl
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		add    0x4c(%esp),%edx
 		mov    0x6(%edi),%ah
 		adc    0x32(%esp),%bh
@@ -6774,7 +6774,7 @@ func_1261ed:
 		add    0x24(%esp),%dx
 		mov    %cl,%ah
 		adc    0x26(%esp),%bl
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		add    0x4c(%esp),%edx
 		mov    0x7(%edi),%ah
 		adc    0x32(%esp),%bh
@@ -6788,7 +6788,7 @@ func_1261ed:
 		add    0x24(%esp),%dx
 		mov    %cl,%ah
 		adc    0x26(%esp),%bl
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		add    0x4c(%esp),%edx
 		mov    0x8(%edi),%ah
 		adc    0x32(%esp),%bh
@@ -6802,7 +6802,7 @@ func_1261ed:
 		add    0x24(%esp),%dx
 		mov    %cl,%ah
 		adc    0x26(%esp),%bl
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		add    0x4c(%esp),%edx
 		mov    0x9(%edi),%ah
 		adc    0x32(%esp),%bh
@@ -6816,7 +6816,7 @@ func_1261ed:
 		add    0x24(%esp),%dx
 		mov    %cl,%ah
 		adc    0x26(%esp),%bl
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		add    0x4c(%esp),%edx
 		mov    0xa(%edi),%ah
 		adc    0x32(%esp),%bh
@@ -6830,7 +6830,7 @@ func_1261ed:
 		add    0x24(%esp),%dx
 		mov    %cl,%ah
 		adc    0x26(%esp),%bl
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		add    0x4c(%esp),%edx
 		mov    0xb(%edi),%ah
 		adc    0x32(%esp),%bh
@@ -6844,7 +6844,7 @@ func_1261ed:
 		add    0x24(%esp),%dx
 		mov    %cl,%ah
 		adc    0x26(%esp),%bl
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		add    0x4c(%esp),%edx
 		mov    0xc(%edi),%ah
 		adc    0x32(%esp),%bh
@@ -6858,7 +6858,7 @@ func_1261ed:
 		add    0x24(%esp),%dx
 		mov    %cl,%ah
 		adc    0x26(%esp),%bl
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		add    0x4c(%esp),%edx
 		mov    0xd(%edi),%ah
 		adc    0x32(%esp),%bh
@@ -6872,7 +6872,7 @@ func_1261ed:
 		add    0x24(%esp),%dx
 		mov    %cl,%ah
 		adc    0x26(%esp),%bl
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		add    0x4c(%esp),%edx
 		mov    0xe(%edi),%ah
 		adc    0x32(%esp),%bh
@@ -6886,7 +6886,7 @@ func_1261ed:
 		add    0x24(%esp),%dx
 		mov    %cl,%ah
 		adc    0x26(%esp),%bl
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		add    0x4c(%esp),%edx
 		mov    0xf(%edi),%ah
 		adc    0x32(%esp),%bh
@@ -7531,7 +7531,7 @@ func_126d4c:
 		or     %al,%al
 		je     jump_126e2e
 		mov    %cl,%ah
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%ah
+		mov    EXPORT_SYMBOL(sprites)(%eax),%ah
 		mov    (%edi),%al
 		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
 		mov    %al,(%edi)
@@ -7548,7 +7548,7 @@ func_126d4c:
 		or     %al,%al
 		je     jump_126e6c
 		mov    %cl,%ah
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%ah
+		mov    EXPORT_SYMBOL(sprites)(%eax),%ah
 		mov    0x1(%edi),%al
 		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
 		mov    %al,0x1(%edi)
@@ -7565,7 +7565,7 @@ func_126d4c:
 		or     %al,%al
 		je     jump_126eaa
 		mov    %cl,%ah
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%ah
+		mov    EXPORT_SYMBOL(sprites)(%eax),%ah
 		mov    0x2(%edi),%al
 		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
 		mov    %al,0x2(%edi)
@@ -7582,7 +7582,7 @@ func_126d4c:
 		or     %al,%al
 		je     jump_126ee8
 		mov    %cl,%ah
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%ah
+		mov    EXPORT_SYMBOL(sprites)(%eax),%ah
 		mov    0x3(%edi),%al
 		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
 		mov    %al,0x3(%edi)
@@ -7599,7 +7599,7 @@ func_126d4c:
 		or     %al,%al
 		je     jump_126f26
 		mov    %cl,%ah
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%ah
+		mov    EXPORT_SYMBOL(sprites)(%eax),%ah
 		mov    0x4(%edi),%al
 		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
 		mov    %al,0x4(%edi)
@@ -7616,7 +7616,7 @@ func_126d4c:
 		or     %al,%al
 		je     jump_126f64
 		mov    %cl,%ah
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%ah
+		mov    EXPORT_SYMBOL(sprites)(%eax),%ah
 		mov    0x5(%edi),%al
 		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
 		mov    %al,0x5(%edi)
@@ -7633,7 +7633,7 @@ func_126d4c:
 		or     %al,%al
 		je     jump_126fa2
 		mov    %cl,%ah
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%ah
+		mov    EXPORT_SYMBOL(sprites)(%eax),%ah
 		mov    0x6(%edi),%al
 		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
 		mov    %al,0x6(%edi)
@@ -7650,7 +7650,7 @@ func_126d4c:
 		or     %al,%al
 		je     jump_126fe0
 		mov    %cl,%ah
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%ah
+		mov    EXPORT_SYMBOL(sprites)(%eax),%ah
 		mov    0x7(%edi),%al
 		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
 		mov    %al,0x7(%edi)
@@ -7667,7 +7667,7 @@ func_126d4c:
 		or     %al,%al
 		je     jump_12701e
 		mov    %cl,%ah
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%ah
+		mov    EXPORT_SYMBOL(sprites)(%eax),%ah
 		mov    0x8(%edi),%al
 		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
 		mov    %al,0x8(%edi)
@@ -7684,7 +7684,7 @@ func_126d4c:
 		or     %al,%al
 		je     jump_12705c
 		mov    %cl,%ah
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%ah
+		mov    EXPORT_SYMBOL(sprites)(%eax),%ah
 		mov    0x9(%edi),%al
 		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
 		mov    %al,0x9(%edi)
@@ -7701,7 +7701,7 @@ func_126d4c:
 		or     %al,%al
 		je     jump_12709a
 		mov    %cl,%ah
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%ah
+		mov    EXPORT_SYMBOL(sprites)(%eax),%ah
 		mov    0xa(%edi),%al
 		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
 		mov    %al,0xa(%edi)
@@ -7718,7 +7718,7 @@ func_126d4c:
 		or     %al,%al
 		je     jump_1270d8
 		mov    %cl,%ah
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%ah
+		mov    EXPORT_SYMBOL(sprites)(%eax),%ah
 		mov    0xb(%edi),%al
 		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
 		mov    %al,0xb(%edi)
@@ -7735,7 +7735,7 @@ func_126d4c:
 		or     %al,%al
 		je     jump_127116
 		mov    %cl,%ah
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%ah
+		mov    EXPORT_SYMBOL(sprites)(%eax),%ah
 		mov    0xc(%edi),%al
 		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
 		mov    %al,0xc(%edi)
@@ -7752,7 +7752,7 @@ func_126d4c:
 		or     %al,%al
 		je     jump_127154
 		mov    %cl,%ah
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%ah
+		mov    EXPORT_SYMBOL(sprites)(%eax),%ah
 		mov    0xd(%edi),%al
 		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
 		mov    %al,0xd(%edi)
@@ -7769,7 +7769,7 @@ func_126d4c:
 		or     %al,%al
 		je     jump_12718e
 		mov    %cl,%ah
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%ah
+		mov    EXPORT_SYMBOL(sprites)(%eax),%ah
 		mov    0xe(%edi),%al
 		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
 		mov    %al,0xe(%edi)
@@ -7786,7 +7786,7 @@ func_126d4c:
 		or     %al,%al
 		je     jump_1271c8
 		mov    %cl,%ah
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%ah
+		mov    EXPORT_SYMBOL(sprites)(%eax),%ah
 		mov    0xf(%edi),%al
 		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
 		mov    %al,0xf(%edi)
@@ -7882,7 +7882,7 @@ func_127205:
 		or     %al,%al
 		je     jump_1272e7
 		mov    %cl,%ah
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    (%edi),%ah
 		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
 		mov    %al,(%edi)
@@ -7899,7 +7899,7 @@ func_127205:
 		or     %al,%al
 		je     jump_127325
 		mov    %cl,%ah
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    0x1(%edi),%ah
 		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
 		mov    %al,0x1(%edi)
@@ -7916,7 +7916,7 @@ func_127205:
 		or     %al,%al
 		je     jump_127363
 		mov    %cl,%ah
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    0x2(%edi),%ah
 		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
 		mov    %al,0x2(%edi)
@@ -7933,7 +7933,7 @@ func_127205:
 		or     %al,%al
 		je     jump_1273a1
 		mov    %cl,%ah
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    0x3(%edi),%ah
 		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
 		mov    %al,0x3(%edi)
@@ -7950,7 +7950,7 @@ func_127205:
 		or     %al,%al
 		je     jump_1273df
 		mov    %cl,%ah
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    0x4(%edi),%ah
 		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
 		mov    %al,0x4(%edi)
@@ -7967,7 +7967,7 @@ func_127205:
 		or     %al,%al
 		je     jump_12741d
 		mov    %cl,%ah
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    0x5(%edi),%ah
 		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
 		mov    %al,0x5(%edi)
@@ -7984,7 +7984,7 @@ func_127205:
 		or     %al,%al
 		je     jump_12745b
 		mov    %cl,%ah
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    0x6(%edi),%ah
 		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
 		mov    %al,0x6(%edi)
@@ -8001,7 +8001,7 @@ func_127205:
 		or     %al,%al
 		je     jump_127499
 		mov    %cl,%ah
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    0x7(%edi),%ah
 		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
 		mov    %al,0x7(%edi)
@@ -8018,7 +8018,7 @@ func_127205:
 		or     %al,%al
 		je     jump_1274d7
 		mov    %cl,%ah
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    0x8(%edi),%ah
 		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
 		mov    %al,0x8(%edi)
@@ -8035,7 +8035,7 @@ func_127205:
 		or     %al,%al
 		je     jump_127515
 		mov    %cl,%ah
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    0x9(%edi),%ah
 		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
 		mov    %al,0x9(%edi)
@@ -8052,7 +8052,7 @@ func_127205:
 		or     %al,%al
 		je     jump_127553
 		mov    %cl,%ah
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    0xa(%edi),%ah
 		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
 		mov    %al,0xa(%edi)
@@ -8069,7 +8069,7 @@ func_127205:
 		or     %al,%al
 		je     jump_127591
 		mov    %cl,%ah
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    0xb(%edi),%ah
 		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
 		mov    %al,0xb(%edi)
@@ -8086,7 +8086,7 @@ func_127205:
 		or     %al,%al
 		je     jump_1275cf
 		mov    %cl,%ah
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    0xc(%edi),%ah
 		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
 		mov    %al,0xc(%edi)
@@ -8103,7 +8103,7 @@ func_127205:
 		or     %al,%al
 		je     jump_12760d
 		mov    %cl,%ah
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    0xd(%edi),%ah
 		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
 		mov    %al,0xd(%edi)
@@ -8120,7 +8120,7 @@ func_127205:
 		or     %al,%al
 		je     jump_127647
 		mov    %cl,%ah
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    0xe(%edi),%ah
 		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
 		mov    %al,0xe(%edi)
@@ -8137,7 +8137,7 @@ func_127205:
 		or     %al,%al
 		je     jump_127681
 		mov    %cl,%ah
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    0xf(%edi),%ah
 		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
 		mov    %al,0xf(%edi)
@@ -8276,7 +8276,7 @@ func_127800:
 		cmp    $0xc,%al
 		jbe    jump_127a75
 	jump_12781b:
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,(%edi)
 
 
@@ -8292,7 +8292,7 @@ func_127823:
 		cmp    $0xc,%al
 		jbe    jump_127aa0
 	jump_12783e:
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,0x1(%edi)
 
 
@@ -8308,7 +8308,7 @@ func_127847:
 		cmp    $0xc,%al
 		jbe    jump_127acd
 	jump_127862:
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,0x2(%edi)
 
 
@@ -8324,7 +8324,7 @@ func_12786b:
 		cmp    $0xc,%al
 		jbe    jump_127afa
 	jump_127886:
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,0x3(%edi)
 
 
@@ -8340,7 +8340,7 @@ func_12788f:
 		cmp    $0xc,%al
 		jbe    jump_127b27
 	jump_1278aa:
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,0x4(%edi)
 
 
@@ -8356,7 +8356,7 @@ func_1278b3:
 		cmp    $0xc,%al
 		jbe    jump_127b54
 	jump_1278ce:
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,0x5(%edi)
 
 
@@ -8372,7 +8372,7 @@ func_1278d7:
 		cmp    $0xc,%al
 		jbe    jump_127b81
 	jump_1278f2:
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,0x6(%edi)
 
 
@@ -8388,7 +8388,7 @@ func_1278fb:
 		cmp    $0xc,%al
 		jbe    jump_127bae
 	jump_127916:
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,0x7(%edi)
 
 
@@ -8404,7 +8404,7 @@ func_12791f:
 		cmp    $0xc,%al
 		jbe    jump_127bdb
 	jump_12793a:
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,0x8(%edi)
 
 
@@ -8420,7 +8420,7 @@ func_127943:
 		cmp    $0xc,%al
 		jbe    jump_127c08
 	jump_12795e:
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,0x9(%edi)
 
 
@@ -8436,7 +8436,7 @@ func_127967:
 		cmp    $0xc,%al
 		jbe    jump_127c35
 	jump_127982:
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,0xa(%edi)
 
 
@@ -8452,7 +8452,7 @@ func_12798b:
 		cmp    $0xc,%al
 		jbe    jump_127c62
 	jump_1279a6:
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,0xb(%edi)
 
 
@@ -8468,7 +8468,7 @@ func_1279af:
 		cmp    $0xc,%al
 		jbe    jump_127c8f
 	jump_1279ca:
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,0xc(%edi)
 
 
@@ -8484,7 +8484,7 @@ func_1279d3:
 		cmp    $0xc,%al
 		jbe    jump_127cbc
 	jump_1279ee:
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,0xd(%edi)
 
 
@@ -8500,7 +8500,7 @@ func_1279f7:
 		cmp    $0xc,%al
 		jbe    jump_127ce9
 	jump_127a12:
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,0xe(%edi)
 
 
@@ -8516,7 +8516,7 @@ func_127a1b:
 		cmp    $0xc,%al
 		jbe    jump_127d16
 	jump_127a36:
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    %al,0xf(%edi)
 		add    $0x10,%edi
 		sub    $0x10,%ebp
@@ -8537,7 +8537,7 @@ func_127a1b:
 		cmp    $0xc,%al
 		ja     jump_12781b
 	jump_127a75:
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    (%edi),%ah
 		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
 		mov    %al,(%edi)
@@ -8550,7 +8550,7 @@ func_127a1b:
 		cmp    $0xc,%al
 		ja     jump_12783e
 	jump_127aa0:
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    0x1(%edi),%ah
 		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
 		mov    %al,0x1(%edi)
@@ -8563,7 +8563,7 @@ func_127a1b:
 		cmp    $0xc,%al
 		ja     jump_127862
 	jump_127acd:
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    0x2(%edi),%ah
 		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
 		mov    %al,0x2(%edi)
@@ -8576,7 +8576,7 @@ func_127a1b:
 		cmp    $0xc,%al
 		ja     jump_127886
 	jump_127afa:
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    0x3(%edi),%ah
 		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
 		mov    %al,0x3(%edi)
@@ -8589,7 +8589,7 @@ func_127a1b:
 		cmp    $0xc,%al
 		ja     jump_1278aa
 	jump_127b27:
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    0x4(%edi),%ah
 		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
 		mov    %al,0x4(%edi)
@@ -8602,7 +8602,7 @@ func_127a1b:
 		cmp    $0xc,%al
 		ja     jump_1278ce
 	jump_127b54:
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    0x5(%edi),%ah
 		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
 		mov    %al,0x5(%edi)
@@ -8615,7 +8615,7 @@ func_127a1b:
 		cmp    $0xc,%al
 		ja     jump_1278f2
 	jump_127b81:
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    0x6(%edi),%ah
 		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
 		mov    %al,0x6(%edi)
@@ -8628,7 +8628,7 @@ func_127a1b:
 		cmp    $0xc,%al
 		ja     jump_127916
 	jump_127bae:
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    0x7(%edi),%ah
 		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
 		mov    %al,0x7(%edi)
@@ -8641,7 +8641,7 @@ func_127a1b:
 		cmp    $0xc,%al
 		ja     jump_12793a
 	jump_127bdb:
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    0x8(%edi),%ah
 		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
 		mov    %al,0x8(%edi)
@@ -8654,7 +8654,7 @@ func_127a1b:
 		cmp    $0xc,%al
 		ja     jump_12795e
 	jump_127c08:
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    0x9(%edi),%ah
 		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
 		mov    %al,0x9(%edi)
@@ -8667,7 +8667,7 @@ func_127a1b:
 		cmp    $0xc,%al
 		ja     jump_127982
 	jump_127c35:
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    0xa(%edi),%ah
 		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
 		mov    %al,0xa(%edi)
@@ -8680,7 +8680,7 @@ func_127a1b:
 		cmp    $0xc,%al
 		ja     jump_1279a6
 	jump_127c62:
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    0xb(%edi),%ah
 		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
 		mov    %al,0xb(%edi)
@@ -8693,7 +8693,7 @@ func_127a1b:
 		cmp    $0xc,%al
 		ja     jump_1279ca
 	jump_127c8f:
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    0xc(%edi),%ah
 		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
 		mov    %al,0xc(%edi)
@@ -8706,7 +8706,7 @@ func_127a1b:
 		cmp    $0xc,%al
 		ja     jump_1279ee
 	jump_127cbc:
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    0xd(%edi),%ah
 		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
 		mov    %al,0xd(%edi)
@@ -8719,7 +8719,7 @@ func_127a1b:
 		cmp    $0xc,%al
 		ja     jump_127a12
 	jump_127ce9:
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    0xe(%edi),%ah
 		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
 		mov    %al,0xe(%edi)
@@ -8732,7 +8732,7 @@ func_127a1b:
 		cmp    $0xc,%al
 		ja     jump_127a36
 	jump_127d16:
-		mov    EXPORT_SYMBOL(data_162280)(%eax),%al
+		mov    EXPORT_SYMBOL(sprites)(%eax),%al
 		mov    0xf(%edi),%ah
 		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
 		mov    %al,0xf(%edi)

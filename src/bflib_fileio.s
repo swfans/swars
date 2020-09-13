@@ -28,13 +28,13 @@
 
 .text
 
-.global EXPORT_SYMBOL(data_159126);
-.global EXPORT_SYMBOL(data_15912f);
+.global EXPORT_SYMBOL(__Extender);
+.global EXPORT_SYMBOL(__osmajor);
 .global EXPORT_SYMBOL(data_159581);
 .global EXPORT_SYMBOL(data_1595e5);
 .global EXPORT_SYMBOL(data_159590);
 .global EXPORT_SYMBOL(data_1595e4);
-.global EXPORT_SYMBOL(data_159108);
+.global EXPORT_SYMBOL(__STACKLOW);
 .global EXPORT_SYMBOL(data_1e9560);
 .global EXPORT_SYMBOL(data_1ea484);
 .global EXPORT_SYMBOL(data_1ea480);
@@ -589,7 +589,7 @@ ___dos_findnext_:   /* 0xfb34d */
 /*----------------------------------------------------------------*/
 func_fb36c:
 /*----------------------------------------------------------------*/
-		cmpb   $0x9,EXPORT_SYMBOL(data_159126)
+		cmpb   $0x9,EXPORT_SYMBOL(__Extender)
 		jne    jump_fb38e
 		push   %eax
 		push   %ebx
@@ -614,7 +614,7 @@ func_fb36c:
 /*----------------------------------------------------------------*/
 func_fb38f:
 /*----------------------------------------------------------------*/
-        cmpb   $0x9,EXPORT_SYMBOL(data_159126)
+        cmpb   $0x9,EXPORT_SYMBOL(__Extender)
         jne    jump_fb3b1
         push   %eax
         push   %ebx
@@ -750,7 +750,7 @@ ____set_errno_dos_:	/* 0x10ada8 */
 		cmp    $0x100,%ebx
 		jae    jump_10ae02
 		xor    %eax,%eax
-		mov    EXPORT_SYMBOL(data_15912f),%al
+		mov    EXPORT_SYMBOL(__osmajor),%al
 		cmp    $0x3,%eax
 		jl     jump_10ade8
 		xor    %ebx,%ebx
@@ -795,7 +795,7 @@ ____set_errno_dos_:	/* 0x10ada8 */
 func_10df1f:
 /*----------------------------------------------------------------*/
 		mov    %esp,%eax
-		sub    EXPORT_SYMBOL(data_159108),%eax
+		sub    EXPORT_SYMBOL(__STACKLOW),%eax
 		ret
 
 /*----------------------------------------------------------------*/
