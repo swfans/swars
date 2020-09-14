@@ -11,8 +11,8 @@
 extern uint32_t	keyboard_buffer[KEYBOARD_BUFFER_SIZE];
 extern uint32_t	keyboard_buffer_read_index;
 extern uint32_t	keyboard_buffer_write_index;
-extern uint32_t keyboard_last_key;
-extern uint32_t keyboard_last_key_prefixed;
+extern uint32_t lbInkey;
+extern uint32_t lbInkey_prefixed;
 extern uint8_t 	lbKeyOn[256];
 
 #pragma pack()
@@ -248,8 +248,8 @@ keyboard_handle_event (const SDL_Event *ev)
   if (scan_code == 0)
     return;
 
-  keyboard_last_key_prefixed = is_key_prefixed (kev->keysym.sym);
-  keyboard_last_key = scan_code;
+  lbInkey_prefixed = is_key_prefixed (kev->keysym.sym);
+  lbInkey = scan_code;
 
   key_index = get_key_table_index (kev->keysym.sym);
 
@@ -257,7 +257,7 @@ keyboard_handle_event (const SDL_Event *ev)
     {
       lbKeyOn[key_index] = 1 | get_key_flags ();
 
-      if (!keyboard_last_key_prefixed)
+      if (!lbInkey_prefixed)
 	add_key_to_buffer (scan_code);
     }
   else
