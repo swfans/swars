@@ -29,8 +29,8 @@
 .text
 
 .global EXPORT_SYMBOL(disk_err);
-.global EXPORT_SYMBOL(data_159728);
-.global EXPORT_SYMBOL(data_15972c);
+.global EXPORT_SYMBOL(_timezone);
+.global EXPORT_SYMBOL(___dst_adjust);
 .global EXPORT_SYMBOL(data_15978c);
 .global EXPORT_SYMBOL(data_159790);
 .global EXPORT_SYMBOL(data_16207c);
@@ -523,7 +523,7 @@ GLOBAL_FUNC (ail_shutdown)	/* 101a40 */
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (ail_set_preference)	/* 101ae0 */
+GLOBAL_FUNC (AIL_set_preference)	/* 101ae0 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %esi
@@ -3124,7 +3124,7 @@ GLOBAL_FUNC (ail_set_sample_loop_count)	/* 103af0 */
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (ail_sample_status)	/* 103b80 */
+GLOBAL_FUNC (AIL_sample_status)	/* 103b80 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %esi
@@ -3380,7 +3380,7 @@ GLOBAL_FUNC (ail_minimum_sample_buffer_size)	/* 104390 */
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (ail_sample_buffer_ready)	/* 1044b0 */
+GLOBAL_FUNC (AIL_sample_buffer_ready)	/* 1044b0 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %esi
@@ -3476,7 +3476,7 @@ GLOBAL_FUNC (ail_sample_buffer_ready)	/* 1044b0 */
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (ail_load_sample_buffer)	/* 1045c0 */
+GLOBAL_FUNC (AIL_load_sample_buffer)	/* 1045c0 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %esi
@@ -3541,7 +3541,7 @@ GLOBAL_FUNC (ail_load_sample_buffer)	/* 1045c0 */
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (ail_func_104a40)
+GLOBAL_FUNC (AIL_register_EOS_callback)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %esi
@@ -3643,7 +3643,7 @@ GLOBAL_FUNC (ail_func_104a40)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (ail_set_sample_user_data)	/* 104c80 */
+GLOBAL_FUNC (AIL_set_sample_user_data)	/* 104c80 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %esi
@@ -7115,79 +7115,79 @@ AIL_API_startup:	/* 112110 */
 		call   AIL_start_
 		push   $0xc8
 		push   $0x0
-		call   ail_set_preference
+		call   AIL_set_preference
 		add    $0x8,%esp
 		push   $0x1
 		push   $0x1
-		call   ail_set_preference
+		call   AIL_set_preference
 		add    $0x8,%esp
 		push   $0x8000
 		push   $0x2
-		call   ail_set_preference
+		call   AIL_set_preference
 		add    $0x8,%esp
 		push   $0x64
 		push   $0x3
-		call   ail_set_preference
+		call   AIL_set_preference
 		add    $0x8,%esp
 		push   $0x10
 		push   $0x4
-		call   ail_set_preference
+		call   AIL_set_preference
 		add    $0x8,%esp
 		push   $0x64
 		push   $0x5
-		call   ail_set_preference
+		call   AIL_set_preference
 		add    $0x8,%esp
 		push   $0x28f
 		push   $0x6
-		call   ail_set_preference
+		call   AIL_set_preference
 		add    $0x8,%esp
 		push   $0x0
 		push   $0x7
-		call   ail_set_preference
+		call   AIL_set_preference
 		add    $0x8,%esp
 		push   $0x0
 		push   $0x8
-		call   ail_set_preference
+		call   AIL_set_preference
 		add    $0x8,%esp
 		push   $0x1
 		push   $0x9
-		call   ail_set_preference
+		call   AIL_set_preference
 		add    $0x8,%esp
 		push   $0x0
 		push   $0xa
-		call   ail_set_preference
+		call   AIL_set_preference
 		add    $0x8,%esp
 		push   $0x78
 		push   $0xb
-		call   ail_set_preference
+		call   AIL_set_preference
 		add    $0x8,%esp
 		push   $0x8
 		push   $0xc
-		call   ail_set_preference
+		call   AIL_set_preference
 		add    $0x8,%esp
 		push   $0x7f
 		push   $0xd
-		call   ail_set_preference
+		call   AIL_set_preference
 		add    $0x8,%esp
 		push   $0x1
 		push   $0xe
-		call   ail_set_preference
+		call   AIL_set_preference
 		add    $0x8,%esp
 		push   $0x0
 		push   $0xf
-		call   ail_set_preference
+		call   AIL_set_preference
 		add    $0x8,%esp
 		push   $0x2
 		push   $0x10
-		call   ail_set_preference
+		call   AIL_set_preference
 		add    $0x8,%esp
 		push   $0x1
 		push   $0x11
-		call   ail_set_preference
+		call   AIL_set_preference
 		add    $0x8,%esp
 		push   $0x1
 		push   $0x12
-		call   ail_set_preference
+		call   AIL_set_preference
 		add    $0x8,%esp
 		xor    %eax,%eax
 		lea    0x0(%eax),%eax
@@ -7286,7 +7286,7 @@ ___localtime_:	/* 0x112307 */
 		mov    %edx,%esi
 		call   ac_tzset
 		mov    $0x63df,%eax
-		mov    EXPORT_SYMBOL(data_159728),%ebx
+		mov    EXPORT_SYMBOL(_timezone),%ebx
 		mov    (%edi),%edi
 		mov    %edx,%ecx
 		mov    %edi,%edx
@@ -7296,8 +7296,8 @@ ___localtime_:	/* 0x112307 */
 		test   %eax,%eax
 		je     jump_112351
 		mov    $0x63df,%eax
-		mov    EXPORT_SYMBOL(data_159728),%ebx
-		mov    EXPORT_SYMBOL(data_15972c),%edx
+		mov    EXPORT_SYMBOL(_timezone),%ebx
+		mov    EXPORT_SYMBOL(___dst_adjust),%edx
 		mov    %esi,%ecx
 		sub    %edx,%ebx
 		mov    %edi,%edx
@@ -15124,7 +15124,7 @@ func_117e20:
 		jne    jump_117f47
 		mov    0x4d4(%ebp),%edx
 		push   %edx
-		call   ail_sample_status
+		call   AIL_sample_status
 		add    $0x4,%esp
 		cmp    $0x4,%eax
 		jne    jump_117f47
@@ -15149,7 +15149,7 @@ func_117e20:
 		jne    jump_117f92
 		mov    0x4d4(%ebp),%edx
 		push   %edx
-		call   ail_sample_status
+		call   AIL_sample_status
 		add    $0x4,%esp
 		cmp    $0x4,%eax
 		jne    jump_117f92
@@ -15174,7 +15174,7 @@ func_117e20:
 		jne    jump_117fe3
 		mov    0x4d4(%ebx),%eax
 		push   %eax
-		call   ail_sample_status
+		call   AIL_sample_status
 		add    $0x4,%esp
 		cmp    $0x4,%eax
 		jne    jump_117fe3
@@ -15212,7 +15212,7 @@ func_117e20:
 		jne    jump_11804d
 		mov    0x4d4(%ebp),%eax
 		push   %eax
-		call   ail_sample_status
+		call   AIL_sample_status
 		add    $0x4,%esp
 		cmp    $0x4,%eax
 		jne    jump_11804d
@@ -15245,7 +15245,7 @@ func_117e20:
 	jump_118099:
 		mov    0x4d4(%ebp),%eax
 		push   %eax
-		call   ail_sample_status
+		call   AIL_sample_status
 		add    $0x4,%esp
 		cmp    $0x2,%eax
 		je     jump_1180bb
@@ -15352,7 +15352,7 @@ func_117e20:
 		jne    jump_118226
 		mov    0x4d4(%ebx),%eax
 		push   %eax
-		call   ail_sample_status
+		call   AIL_sample_status
 		add    $0x4,%esp
 		cmp    $0x4,%eax
 		jne    jump_118226

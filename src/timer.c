@@ -28,7 +28,7 @@ timer_get_18_2_hz_ticks (void)
 }
 
 uint32_t
-timer_get_1000hz_ticks (void)
+MSSSMACKTIMERREAD (void)
 {
   return SDL_GetTicks ();
 }

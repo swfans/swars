@@ -75,7 +75,7 @@ unlock_screen (void)
 }
 
 int
-display_set_palette (const uint8_t *palette)
+LbPaletteSet (const uint8_t *palette)
 {
   SDL_Color colours[256];
   int n;
@@ -216,7 +216,7 @@ display_set_mode (uint16_t mode, uint32_t width, uint32_t height,
   // Setup palette
   if (palette != NULL)
     {
-      if (display_set_palette(palette) != 1)
+      if (LbPaletteSet(palette) != 1)
 	goto err;
     }
 
