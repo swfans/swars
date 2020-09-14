@@ -28,6 +28,23 @@
 
 .text
 
+.global EXPORT_SYMBOL(lbDisplay__WScreen);
+.global EXPORT_SYMBOL(lbDisplay__MLeftButton);
+.global EXPORT_SYMBOL(lbDisplay__ScreenMode);
+.global EXPORT_SYMBOL(lbDisplay__GraphicsScreenWidth);
+.global EXPORT_SYMBOL(lbDisplay__GraphicsScreenHeight);
+.global EXPORT_SYMBOL(data_1e2f75);
+.global EXPORT_SYMBOL(lbKeyOn_28);
+.global EXPORT_SYMBOL(lbKeyOn_57);
+.global EXPORT_SYMBOL(SmackMSSDigDriver);
+.global EXPORT_SYMBOL(_LowSoundVolPanAddr);
+.global EXPORT_SYMBOL(_LowUnk_1e86c0);
+.global EXPORT_SYMBOL(_LowSoundPurgeAddr);
+.global EXPORT_SYMBOL(_LowSoundCheckAddr);
+.global EXPORT_SYMBOL(_LowSoundPlayedAddr);
+.global EXPORT_SYMBOL(_LowSoundCloseAddr);
+
+
 /*----------------------------------------------------------------*/
 func_139100:
 /*----------------------------------------------------------------*/
@@ -6691,8 +6708,3614 @@ GLOBAL_FUNC (SmackRemapTables)
 		ret
 
 
+/*----------------------------------------------------------------*/
+GLOBAL_FUNC (set_smack_malloc)
+/*----------------------------------------------------------------*/
+		mov    %eax,_smack_malloc
+		ret
+
+
+/*----------------------------------------------------------------*/
+GLOBAL_FUNC (set_smack_free)
+/*----------------------------------------------------------------*/
+		mov    %eax,_smack_free
+		ret
+
+
+/*----------------------------------------------------------------*/
+GLOBAL_FUNC (play_smk)
+/*----------------------------------------------------------------*/
+		push   %ecx
+		xor    %cl,%cl
+		mov    %cl,EXPORT_SYMBOL(lbDisplay__MLeftButton)
+		mov    data_1e5a2c,%ecx
+		test   %ecx,%ecx
+		jne    jump_eb198
+		test   $0x84,%bl
+		je     jump_eb1a2
+	jump_eb198:
+		and    $0xfe,%bh
+		call   play_smk_via_buffer
+		pop    %ecx
+		ret
+	jump_eb1a2:
+		mov    EXPORT_SYMBOL(lbDisplay__ScreenMode),%cx
+		cmp    $0x1,%ecx
+		je     jump_eb1b1
+		and    $0xfe,%bh
+	jump_eb1b1:
+		call   play_smk_direct
+		pop    %ecx
+		ret
+
+
+/*----------------------------------------------------------------*/
+/* long play_smk_direct(char *, long , long)
+ */
+play_smk_direct:
+/*----------------------------------------------------------------*/
+		push   %ecx
+		push   %esi
+		push   %edi
+		push   %ebp
+		sub    $0x10,%esp
+		mov    %eax,%esi
+		mov    %ebx,0x4(%esp)
+		mov    0x5(%esp),%ah
+		mov    $0xffffffff,%ebp
+		test   $0x2,%ah
+		testb  $0x1,0x4(%esp)
+		jne    jump_eb1f0
+		call   GetSoundDriver_
+		test   %eax,%eax
+		je     jump_eb1f0
+		call   GetSoundDriver_
+		push   %eax
+		push   $0x0
+		call   SMACKSOUNDUSEMSS
+		jmp    jump_eb1f5
+	jump_eb1f0:
+		orb    $0x1,0x4(%esp)
+	jump_eb1f5:
+		testb  $0x1,0x4(%esp)
+		jne    jump_eb203
+		mov    $0xfe000,%eax
+		jmp    jump_eb205
+	jump_eb203:
+		xor    %eax,%eax
+	jump_eb205:
+		push   %esi
+		push   %eax
+		push   %ebp
+		call   SMACKOPEN
+		mov    %eax,%ebp
+		test   %eax,%eax
+		je     jump_eb37e
+		testb  $0x1,0x5(%esp)
+		je     jump_eb24a
+		mov    $0x140,%esi
+		mov    $0xc8,%edx
+		mov    0x4(%eax),%ebx
+		push   %eax
+		sub    %ebx,%esi
+		mov    0x8(%eax),%ecx
+		shr    %esi
+		sub    %ecx,%edx
+		push   %esi
+		shr    %edx
+		push   %edx
+		push   $0x140
+		push   $0xc8
+		push   $0xa0000
+		jmp    jump_eb279
+	jump_eb24a:
+		mov    EXPORT_SYMBOL(lbDisplay__GraphicsScreenWidth),%esi
+		sub    0x4(%eax),%esi
+		shr    %esi
+		mov    EXPORT_SYMBOL(lbDisplay__GraphicsScreenHeight),%edx
+		mov    0x8(%eax),%ecx
+		push   %eax
+		sub    %ecx,%edx
+		push   %esi
+		shr    %edx
+		push   %edx
+		mov    EXPORT_SYMBOL(lbDisplay__GraphicsScreenWidth),%esi
+		push   %esi
+		mov    EXPORT_SYMBOL(lbDisplay__GraphicsScreenHeight),%edi
+		push   %edi
+		mov    EXPORT_SYMBOL(lbDisplay__WScreen),%eax
+		push   %eax
+	jump_eb279:
+		push   $0x0
+		call   SMACKTOBUFFER
+		xor    %esi,%esi
+		lea    0x6c(%ebp),%eax
+		mov    %esi,0x8(%esp)
+		mov    %eax,(%esp)
+		jmp    jump_eb292
+	jump_eb28e:
+		incl   0x8(%esp)
+	jump_eb292:
+		testb  $0x4,0x5(%esp)
+		jne    jump_eb2a6
+		mov    0x8(%esp),%eax
+		cmp    0xc(%ebp),%eax
+		jae    jump_eb373
+	jump_eb2a6:
+		testb  $0x1,0x5(%esp)
+		je     jump_eb2e1
+		mov    (%esp),%edx
+		test   %edx,%edx
+		je     jump_eb2d9
+		mov    $0x300,%ecx
+		mov    $data_1e56dc,%edi
+		mov    %edx,%esi
+		push   %edi
+		mov    %ecx,%eax
+		shr    $0x2,%ecx
+		repnz movsl %ds:(%esi),%es:(%edi)
+		mov    %al,%cl
+		and    $0x3,%cl
+		repnz movsb %ds:(%esi),%es:(%edi)
+		pop    %edi
+		push   %edi
+		call   ac_LbPaletteSet
+		add    $0x4,%esp
+	jump_eb2d9:
+		push   %ebp
+		call   SMACKDOFRAME
+		jmp    jump_eb334
+	jump_eb2e1:
+		xor    %al,%al
+		mov    %al,0xc(%esp)
+		cmpl   $0x0,(%esp)
+		je     jump_eb310
+		mov    $0x1,%ah
+		mov    $0x300,%ecx
+		mov    (%esp),%esi
+		mov    $data_1e56dc,%edi
+		mov    %ah,0xc(%esp)
+		push   %edi
+		mov    %ecx,%eax
+		shr    $0x2,%ecx
+		repnz movsl %ds:(%esi),%es:(%edi)
+		mov    %al,%cl
+		and    $0x3,%cl
+		repnz movsb %ds:(%esi),%es:(%edi)
+		pop    %edi
+	jump_eb310:
+		push   %ebp
+		call   SMACKDOFRAME
+		cmpb   $0x0,0xc(%esp)
+		je     jump_eb32f
+		/* call   ac_game_wait_for_vsync XXX: not needed */
+		push   $data_1e56dc
+		call   ac_LbPaletteSet
+		add    $0x4,%esp
+	jump_eb32f:
+		call   LbScreenSwap_
+	jump_eb334:
+		push   %ebp
+		call   SMACKNEXTFRAME
+	jump_eb33a:
+		push   %ebp
+		call   SMACKWAIT
+		test   %eax,%eax
+		je     jump_eb28e
+		testb  $0x2,0x4(%esp)
+		jne    jump_eb33a
+		/* XXX: intro loop */
+		call   ac_game_handle_sdl_events
+		call   ac_game_wait_for_vsync
+		cmpb   $0x0,EXPORT_SYMBOL(data_1e2f75)
+		jne    jump_eb373
+		cmpb   $0x0,EXPORT_SYMBOL(lbKeyOn_28)
+		jne    jump_eb373
+		cmpb   $0x0,EXPORT_SYMBOL(lbKeyOn_57)
+		jne    jump_eb373
+		cmpb   $0x0,EXPORT_SYMBOL(lbDisplay__MLeftButton)
+		je     jump_eb33a
+	jump_eb373:
+		push   %ebp
+		call   SMACKCLOSE
+		mov    $0x1,%eax
+	jump_eb37e:
+		add    $0x10,%esp
+		pop    %ebp
+		pop    %edi
+		pop    %esi
+		pop    %ecx
+		ret
+
+
+/*----------------------------------------------------------------*/
+/* long play_smk_via_buffer(char *, long , long)
+ */
+play_smk_via_buffer:
+/*----------------------------------------------------------------*/
+		push   %ecx
+		push   %esi
+		push   %edi
+		push   %ebp
+		sub    $0x10,%esp
+		mov    %eax,%ebp
+		mov    %ebx,0xc(%esp)
+		mov    0xd(%esp),%ah
+		mov    $0xffffffff,%esi
+		test   $0x2,%ah
+		testb  $0x1,0xc(%esp)
+		jne    jump_eb3c0
+		call   GetSoundDriver_
+		test   %eax,%eax
+		je     jump_eb3c0
+		call   GetSoundDriver_
+		push   %eax
+		push   $0x0
+		call   SMACKSOUNDUSEMSS
+		jmp    jump_eb3c5
+	jump_eb3c0:
+		orb    $0x1,0xc(%esp)
+	jump_eb3c5:
+		testb  $0x1,0xc(%esp)
+		jne    jump_eb3d3
+		mov    $0xfe000,%eax
+		jmp    jump_eb3d5
+	jump_eb3d3:
+		xor    %eax,%eax
+	jump_eb3d5:
+		push   %ebp
+		push   %eax
+		push   %esi
+		call   SMACKOPEN
+		mov    %eax,%esi
+		mov    %eax,%ebp
+		test   %eax,%eax
+		je     jump_eb4e2
+		mov    0x4(%eax),%eax
+		imul   0x8(%esi),%eax
+		call   LbMemoryAlloc_
+		mov    %eax,0x4(%esp)
+		test   %eax,%eax
+		jne    jump_eb40a
+		push   %esi
+		call   SMACKCLOSE
+		xor    %eax,%eax
+		jmp    jump_eb4e2
+	jump_eb40a:
+		push   %esi
+		push   $0x0
+		push   $0x0
+		mov    0x4(%esi),%ebx
+		push   %ebx
+		mov    0x8(%esi),%ecx
+		push   %ecx
+		xor    %edi,%edi
+		push   %eax
+		mov    %edi,0x18(%esp)
+		add    $0x6c,%esi
+		push   $0x0
+		mov    $data_1e56dc,%edi
+		mov    %esi,0x24(%esp)
+		call   SMACKTOBUFFER
+		jmp    jump_eb436
+	jump_eb433:
+		incl   (%esp)
+	jump_eb436:
+		testb  $0x4,0xd(%esp)
+		jne    jump_eb449
+		mov    (%esp),%eax
+		cmp    0xc(%ebp),%eax
+		jae    jump_eb4ce
+	jump_eb449:
+		mov    0x8(%esp),%ebx
+		test   %ebx,%ebx
+		je     jump_eb468
+		mov    $0x300,%ecx
+		mov    %ebx,%esi
+		push   %edi
+		mov    %ecx,%eax
+		shr    $0x2,%ecx
+		repnz movsl %ds:(%esi),%es:(%edi)
+		mov    %al,%cl
+		and    $0x3,%cl
+		repnz movsb %ds:(%esi),%es:(%edi)
+		pop    %edi
+	jump_eb468:
+		push   %ebp
+		call   SMACKDOFRAME
+		call   ac_game_wait_for_vsync
+		push   $data_1e56dc
+		call   ac_LbPaletteSet
+		add    $0x4,%esp
+		mov    0x8(%ebp),%ebx
+		mov    0x4(%ebp),%edx
+		mov    0xc(%esp),%ecx
+		mov    0x4(%esp),%eax
+		call   copy_to_screen
+		push   %ebp
+		call   SMACKNEXTFRAME
+	jump_eb499:
+		push   %ebp
+		call   SMACKWAIT
+		test   %eax,%eax
+		je     jump_eb433
+		testb  $0x2,0xc(%esp)
+		jne    jump_eb499
+		cmpb   $0x0,EXPORT_SYMBOL(data_1e2f75)
+		jne    jump_eb4ce
+		cmpb   $0x0,EXPORT_SYMBOL(lbKeyOn_28)
+		jne    jump_eb4ce
+		cmpb   $0x0,EXPORT_SYMBOL(lbKeyOn_57)
+		jne    jump_eb4ce
+		cmpb   $0x0,EXPORT_SYMBOL(lbDisplay__MLeftButton)
+		je     jump_eb499
+	jump_eb4ce:
+		push   %ebp
+		call   SMACKCLOSE
+		mov    0x4(%esp),%eax
+		call   LbMemoryFree_
+		mov    $0x1,%eax
+	jump_eb4e2:
+		add    $0x10,%esp
+		pop    %ebp
+		pop    %edi
+		pop    %esi
+		pop    %ecx
+		ret
+
+
+/*----------------------------------------------------------------*/
+SMACKSOUNDUSEMSS:
+/*----------------------------------------------------------------*/
+		push   %esi
+		push   %edi
+		push   %ebp
+		mov    0x10(%esp),%ebx
+		cmpl   $0x0,_SmackTimerReadAddr
+		jne    jump_fbcd7
+		mov    0x14(%esp),%eax
+		mov    %eax,EXPORT_SYMBOL(SmackMSSDigDriver)
+		cmp    $0xc8,%ebx
+		ja     jump_fbc4a
+		mov    $0xc8,%ebx
+	jump_fbc4a:
+		mov    $0x1234dd,%eax
+		xor    %edx,%edx
+		div    %ebx
+		mov    $MSSLOWSOUNDOPEN,%ecx
+		mov    $MSSLOWSOUNDCLOSE,%esi
+		mov    $MSSLOWSOUNDPLAYED,%edi
+		mov    $MSSLOWSOUNDPURGE,%ebp
+		mov    %ebx,EXPORT_SYMBOL(_LowUnk_1e86c0)
+		mov    %ecx,_LowSoundOpenAddr
+		mov    %esi,EXPORT_SYMBOL(_LowSoundCloseAddr)
+		mov    %edi,EXPORT_SYMBOL(_LowSoundPlayedAddr)
+		mov    %ebp,EXPORT_SYMBOL(_LowSoundPurgeAddr)
+		mov    %ebp,_LowSoundOffAddr
+		mov    $MSSSMACKTIMERDONE,%ecx
+		mov    $ac_MSSSMACKTIMERREAD,%esi
+		mov    $MSSSMACKTIMERSETUP,%edi
+		mov    %ecx,_SmackTimerSetupAddr
+		mov    %esi,_SmackTimerReadAddr
+		mov    %edi,_SmackTimerDoneAddr
+		mov    $MSSLOWSOUNDCHECK,%ebx
+		mov    %eax,EXPORT_SYMBOL(_LowSoundVolPanAddr)
+		xor    %edx,%edx
+		mov    $0x1,%al
+		mov    %ebx,EXPORT_SYMBOL(_LowSoundCheckAddr)
+		mov    $MSSLOWSOUNDVOLPAN,%ebx
+		mov    %edx,data_1592f8
+		mov    %ebx,data_1592fc
+		pop    %ebp
+		pop    %edi
+		pop    %esi
+		ret    $0x8
+	jump_fbcd7:
+		xor    %al,%al
+		pop    %ebp
+		pop    %edi
+		pop    %esi
+		ret    $0x8
+
+
+/*----------------------------------------------------------------*/
+GLOBAL_FUNC (RADMALLOC)
+/*----------------------------------------------------------------*/
+		mov    0x4(%esp),%eax
+		test   %eax,%eax
+		je     jump_eb504
+		cmp    $0xffffffff,%eax
+		je     jump_eb502
+		call   *_smack_malloc
+		ret    $0x4
+	jump_eb502:
+		xor    %eax,%eax
+	jump_eb504:
+		ret    $0x4
+
+
+/*----------------------------------------------------------------*/
+GLOBAL_FUNC (RADFREE)
+/*----------------------------------------------------------------*/
+		mov    0x4(%esp),%eax
+		call   *_smack_free
+		ret    $0x4
+
+
+/*----------------------------------------------------------------*/
+/* void copy_to_screen(unsigned char *, unsigned long, unsigned long, unsigned long)
+ */
+copy_to_screen:
+/*----------------------------------------------------------------*/
+		push   %esi
+		push   %edi
+		push   %ebp
+		sub    $0x20,%esp
+		mov    %eax,0x1c(%esp)
+		mov    %edx,0x18(%esp)
+		mov    %ebx,0x14(%esp)
+		xor    %eax,%eax
+		mov    EXPORT_SYMBOL(lbDisplay__ScreenMode),%ax
+		cmp    $0x1,%eax
+		jne    jump_eb555
+		cmpl   $0x0,data_1e5a2c
+		jne    jump_eb555
+		mov    $0xa0000,%ebp
+		mov    $0x140,%ebx
+		mov    $0xc8,%edx
+		mov    %ebx,0x10(%esp)
+		jmp    jump_eb56a
+	jump_eb555:
+		mov    EXPORT_SYMBOL(lbDisplay__WScreen),%ebp
+		mov    EXPORT_SYMBOL(lbDisplay__GraphicsScreenWidth),%eax
+		mov    EXPORT_SYMBOL(lbDisplay__GraphicsScreenHeight),%edx
+		mov    %eax,0x10(%esp)
+	jump_eb56a:
+		test   $0x4,%cl
+		je     jump_eb582
+		mov    0x14(%esp),%eax
+		add    %eax,%eax
+		sub    %eax,%edx
+		mov    0x10(%esp),%eax
+		shr    %edx
+		imul   %eax,%edx
+		jmp    jump_eb58f
+	jump_eb582:
+		sub    0x14(%esp),%edx
+		mov    0x10(%esp),%edi
+		shr    %edx
+		imul   %edi,%edx
+	jump_eb58f:
+		add    %edx,%ebp
+		test   $0x80,%cl
+		je     jump_eb5a6
+		mov    0x18(%esp),%eax
+		mov    0x10(%esp),%edx
+		add    %eax,%eax
+		sub    %eax,%edx
+		mov    %edx,%eax
+		jmp    jump_eb5ae
+	jump_eb5a6:
+		mov    0x10(%esp),%eax
+		sub    0x18(%esp),%eax
+	jump_eb5ae:
+		shr    %eax
+		add    %eax,%ebp
+		test   $0x4,%cl
+		je     jump_eb6a0
+		mov    0x10(%esp),%eax
+		add    %eax,%eax
+		test   $0x80,%cl
+		je     jump_eb64a
+		xor    %edx,%edx
+		mov    0x14(%esp),%ebx
+		mov    %edx,0xc(%esp)
+		test   %ebx,%ebx
+		jbe    jump_eb75b
+		mov    %eax,(%esp)
+	jump_eb5df:
+		mov    0x10(%esp),%ebx
+		mov    0x18(%esp),%ecx
+		mov    0x1c(%esp),%esi
+		mov    %ebp,%edi
+		shr    $0x2,%ecx
+	jump_eb5f0:
+		mov    (%esi),%edx
+		mov    %dh,%al
+		mov    %dh,%ah
+		shl    $0x10,%eax
+		mov    %dl,%al
+		mov    %dl,%ah
+		mov    %eax,(%edi)
+		mov    %eax,(%edi,%ebx,1)
+		shr    $0x10,%edx
+		mov    %dh,%al
+		mov    %dh,%ah
+		shl    $0x10,%eax
+		mov    %dl,%al
+		mov    %dl,%ah
+		mov    %eax,0x4(%edi)
+		mov    %eax,0x4(%edi,%ebx,1)
+		add    $0x4,%esi
+		add    $0x8,%edi
+		dec    %ecx
+		jne    jump_eb5f0
+		mov    (%esp),%edx
+		mov    0x18(%esp),%eax
+		mov    0x1c(%esp),%ebx
+		mov    0xc(%esp),%ecx
+		mov    0x14(%esp),%esi
+		inc    %ecx
+		add    %eax,%ebx
+		add    %edx,%ebp
+		mov    %ebx,0x1c(%esp)
+		mov    %ecx,0xc(%esp)
+		cmp    %esi,%ecx
+		jae    jump_eb75b
+		jmp    jump_eb5df
+	jump_eb64a:
+		mov    0x14(%esp),%edi
+		xor    %edx,%edx
+		test   %edi,%edi
+		jbe    jump_eb75b
+		mov    %eax,0x4(%esp)
+	jump_eb65c:
+		mov    0x10(%esp),%ebx
+		mov    0x18(%esp),%ecx
+		mov    0x1c(%esp),%esi
+		mov    %ebp,%edi
+		shr    $0x2,%ecx
+	jump_eb66d:
+		mov    (%esi),%eax
+		mov    %eax,(%edi)
+		mov    %eax,(%edi,%ebx,1)
+		add    $0x4,%esi
+		add    $0x4,%edi
+		dec    %ecx
+		jne    jump_eb66d
+		inc    %edx
+		mov    0x4(%esp),%esi
+		mov    0x18(%esp),%eax
+		mov    0x1c(%esp),%edi
+		add    %esi,%ebp
+		add    %eax,%edi
+		mov    0x14(%esp),%eax
+		mov    %edi,0x1c(%esp)
+		cmp    %eax,%edx
+		jae    jump_eb75b
+		jmp    jump_eb65c
+	jump_eb6a0:
+		test   $0x80,%cl
+		je     jump_eb71a
+		xor    %ecx,%ecx
+		mov    0x14(%esp),%esi
+		mov    %ecx,0x8(%esp)
+		test   %esi,%esi
+		jbe    jump_eb75b
+	jump_eb6b7:
+		mov    0x18(%esp),%eax
+		mov    0x1c(%esp),%esi
+		mov    %ebp,%edi
+		push   %ebp
+		shr    $0x2,%eax
+		mov    %eax,%ebp
+	jump_eb6c7:
+		mov    (%esi),%edx
+		mov    %edx,%ecx
+		shr    $0x10,%ecx
+		mov    %dh,%al
+		mov    %ch,%bl
+		mov    %dh,%ah
+		mov    %ch,%bh
+		shl    $0x10,%eax
+		shl    $0x10,%ebx
+		mov    %dl,%al
+		mov    %cl,%bl
+		mov    %dl,%ah
+		mov    %cl,%bh
+		mov    %eax,(%edi)
+		mov    %ebx,0x4(%edi)
+		add    $0x4,%esi
+		add    $0x8,%edi
+		dec    %ebp
+		jne    jump_eb6c7
+		pop    %ebp
+		mov    0x10(%esp),%eax
+		mov    0x1c(%esp),%edx
+		mov    0x8(%esp),%ebx
+		mov    0x14(%esp),%ecx
+		add    %eax,%ebp
+		mov    0x18(%esp),%eax
+		inc    %ebx
+		add    %eax,%edx
+		mov    %ebx,0x8(%esp)
+		mov    %edx,0x1c(%esp)
+		cmp    %ecx,%ebx
+		jae    jump_eb75b
+		jmp    jump_eb6b7
+	jump_eb71a:
+		mov    0x14(%esp),%ebx
+		xor    %edx,%edx
+		test   %ebx,%ebx
+		jbe    jump_eb75b
+	jump_eb724:
+		mov    0x18(%esp),%ecx
+		mov    0x1c(%esp),%esi
+		mov    %ebp,%edi
+		push   %edi
+		mov    %ecx,%eax
+		shr    $0x2,%ecx
+		repnz movsl %ds:(%esi),%es:(%edi)
+		mov    %al,%cl
+		and    $0x3,%cl
+		repnz movsb %ds:(%esi),%es:(%edi)
+		pop    %edi
+		inc    %edx
+		mov    0x10(%esp),%ecx
+		mov    0x18(%esp),%eax
+		mov    0x1c(%esp),%esi
+		mov    0x14(%esp),%edi
+		add    %eax,%esi
+		add    %ecx,%ebp
+		mov    %esi,0x1c(%esp)
+		cmp    %edi,%edx
+		jb     jump_eb724
+	jump_eb75b:
+		xor    %eax,%eax
+		mov    EXPORT_SYMBOL(lbDisplay__ScreenMode),%ax
+		cmp    $0x1,%eax
+		jne    jump_eb772
+		mov    data_1e5a2c,%edi
+		test   %edi,%edi
+		je     jump_eb79d
+	jump_eb772:
+		cmpl   $0x0,data_1e5a2c
+		je     jump_eb796
+		mov    EXPORT_SYMBOL(lbDisplay__GraphicsScreenHeight),%edx
+		push   %edx
+		mov    EXPORT_SYMBOL(lbDisplay__GraphicsScreenWidth),%ebx
+		push   %ebx
+		mov    EXPORT_SYMBOL(lbDisplay__WScreen),%ecx
+		push   %ecx
+		call   *data_1e5a2c
+	jump_eb796:
+		call   LbScreenSwap_
+		jmp    jump_eb7b4
+	jump_eb79d:
+		je     jump_eb7b4
+		push   $0xc8
+		push   $0x140
+		push   $0xa0000
+		call   *data_1e5a2c
+	jump_eb7b4:
+		add    $0x20,%esp
+		pop    %ebp
+		pop    %edi
+		pop    %esi
+		ret
+
+
+/*----------------------------------------------------------------*/
+GLOBAL_FUNC (SMACKWRAPCOPY)
+/*----------------------------------------------------------------*/
+		push   %esi
+		push   %edi
+		push   %ebp
+		mov    0x1c(%esp),%edx
+		mov    0x14(%esp),%ebp
+		mov    0x10(%esp),%ebx
+		sub    %edx,%ebp
+		cmp    %ebx,%ebp
+		ja     jump_fc388
+		test   %ebp,%ebp
+		je     jump_fc384
+		mov    0x20(%esp),%edi
+		mov    %ebp,%ecx
+		mov    %edx,%esi
+		cld
+		mov    %cl,%bl
+		shr    $0x2,%ecx
+		rep movsl %ds:(%esi),%es:(%edi)
+		mov    %bl,%cl
+		and    $0x3,%cl
+		rep movsb %ds:(%esi),%es:(%edi)
+		mov    0x20(%esp),%ecx
+		mov    0x10(%esp),%esi
+		add    %ebp,%ecx
+		sub    %ebp,%esi
+		mov    %ecx,0x20(%esp)
+		mov    %esi,0x10(%esp)
+	jump_fc384:
+		mov    0x18(%esp),%edx
+	jump_fc388:
+		mov    0x10(%esp),%edi
+		test   %edi,%edi
+		je     jump_fc3ad
+		mov    %edi,%ecx
+		mov    %edx,%esi
+		mov    0x20(%esp),%edi
+		mov    0x10(%esp),%ebp
+		cld
+		mov    %cl,%bl
+		shr    $0x2,%ecx
+		rep movsl %ds:(%esi),%es:(%edi)
+		mov    %bl,%cl
+		and    $0x3,%cl
+		rep movsb %ds:(%esi),%es:(%edi)
+		add    %ebp,%edx
+	jump_fc3ad:
+		mov    %edx,%eax
+		pop    %ebp
+		pop    %edi
+		pop    %esi
+		ret    $0x14
+
+
+/*----------------------------------------------------------------*/
+SMACKWAIT: /* 0xfc3c0 */
+/*----------------------------------------------------------------*/
+		push   %esi
+		push   %edi
+		mov    0xc(%esp),%esi
+		test   %esi,%esi
+		jne    jump_fc3d1
+		xor    %eax,%eax
+		pop    %edi
+		pop    %esi
+		ret    $0x4
+	jump_fc3d1:
+		cmpl   $0x0,_sounds
+		je     jump_fc3e0
+		call   *EXPORT_SYMBOL(_LowSoundCheckAddr)
+	jump_fc3e0:
+		mov    0x420(%esi),%ebx
+		cmp    $0xffffffff,%ebx
+		je     jump_fc440
+		cmpl   $0x0,0x424(%esi)
+		je     jump_fc3fd
+		cmpl   $0x0,0x428(%esi)
+		je     jump_fc404
+	jump_fc3fd:
+		xor    %eax,%eax
+		pop    %edi
+		pop    %esi
+		ret    $0x4
+	jump_fc404:
+		mov    %ebx,%eax
+		mov    0x404(%esi,%eax,4),%ebx
+		push   %ebx
+		call   *EXPORT_SYMBOL(_LowSoundPlayedAddr)
+		mov    0x420(%esi),%edx
+		mov    0x404(%esi,%edx,4),%edx
+		mov    0x20(%edx),%edx
+		shr    $0x7,%edx
+		cmp    %edx,%eax
+		jb     jump_fc4c3
+		movl   $0x0,0x424(%esi)
+		xor    %eax,%eax
+		pop    %edi
+		pop    %esi
+		ret    $0x4
+	jump_fc440:
+		cmpl   $0x0,0x3f8(%esi)
+		je     jump_fc450
+		xor    %eax,%eax
+		pop    %edi
+		pop    %esi
+		ret    $0x4
+	jump_fc450:
+		call   *_SmackTimerReadAddr
+		mov    %eax,%edx
+		shl    $0x2,%eax
+		sub    %edx,%eax
+		shl    $0x3,%eax
+		add    %edx,%eax
+		mov    0x3fc(%esi),%edi
+		shl    $0x2,%eax
+		cmp    $0xffffffff,%edi
+		jne    jump_fc480
+		mov    0x400(%esi),%edx
+		add    %edx,%eax
+		mov    %eax,0x3fc(%esi)
+		jmp    jump_fc4c3
+	jump_fc480:
+		cmp    %edi,%eax
+		jb     jump_fc4c3
+		mov    0x400(%esi),%edx
+		lea    (%edi,%edx,1),%ebx
+		mov    %eax,%edx
+		mov    0x400(%esi),%edi
+		sub    %ebx,%edx
+		mov    %ebx,0x3fc(%esi)
+		cmp    %edi,%edx
+		jbe    jump_fc4a9
+		add    %edi,%eax
+		mov    %eax,0x3fc(%esi)
+	jump_fc4a9:
+		cmpl   $0x0,0x400(%esi)
+		je     jump_fc4bc
+		movl   $0x1,0x3f8(%esi)
+	jump_fc4bc:
+		xor    %eax,%eax
+		pop    %edi
+		pop    %esi
+		ret    $0x4
+	jump_fc4c3:
+		mov    %esi,%eax
+		call   backgroundload_
+		mov    $0x1,%eax
+		pop    %edi
+		pop    %esi
+		ret    $0x4
+
+vtable_fc970:
+		.long   func_fca99
+		.long   func_fcbf3
+		.long   func_fcae0
+		.long   func_fcbf3
+		.long   func_fcb42
+		.long   func_fcbf3
+		.long   func_fcb92
+	jump_fca15:
+		mov    0x108(%esp),%ecx
+		mov    0x108(%esp),%ebp
+		mov    $0xffffffff,%edx
+		mov    0x104(%esp),%ebx
+		inc    %ebp
+		mov    %edx,0x114(%esp)
+		mov    (%ecx),%cl
+		mov    %ebp,0x108(%esp)
+		lea    0x1(%ebp),%eax
+		mov    0x138(%esp),%edx
+		mov    %eax,0x108(%esp)
+		mov    (%eax),%al
+		mov    0x0(%ebp),%ch
+		mov    %al,0x120(%esp)
+		mov    0x108(%esp),%eax
+		xor    %ebp,%ebp
+		inc    %eax
+		mov    %ebp,0x118(%esp)
+		mov    %eax,0x108(%esp)
+		test   %edx,%edx
+		jbe    jump_fcca5
+	jump_fca7d:
+		cmpl   $0x6,0x110(%esp)
+		ja     func_fcbf3
+		mov    0x10c(%esp),%eax
+		jmp    *%cs:vtable_fc970(%eax)
+
+
+/*----------------------------------------------------------------*/
+func_fca99:
+/*----------------------------------------------------------------*/
+		mov    %ebx,%ebp
+		imul   %edi,%ebp
+		xor    %edx,%edx
+		xor    %eax,%eax
+		mov    %cl,%dl
+		mov    (%esi,%ebp,1),%al
+		sub    %eax,%edx
+		mov    %edx,%eax
+		mul    %eax
+		mov    %eax,0x100(%esp)
+		xor    %edx,%edx
+		xor    %eax,%eax
+		mov    %ch,%dl
+		mov    0x1(%esi,%ebp,1),%al
+		sub    %eax,%edx
+		mov    %edx,%eax
+		mul    %eax
+		mov    0x100(%esp),%edx
+		add    %eax,%edx
+		xor    %eax,%eax
+		mov    0x2(%esi,%ebp,1),%al
+		movzbl 0x120(%esp),%ebp
+		jmp    jump_fcc4b
+
+
+/*----------------------------------------------------------------*/
+func_fcae0:
+/*----------------------------------------------------------------*/
+		mov    %ebx,%ebp
+		imul   %edi,%ebp
+		xor    %eax,%eax
+		xor    %edx,%edx
+		mov    (%esi,%ebp,1),%al
+		mov    %cl,%dl
+		sar    $0x2,%eax
+		sub    %eax,%edx
+		mov    %edx,%eax
+		mul    %eax
+		mov    %eax,0x100(%esp)
+		xor    %eax,%eax
+		xor    %edx,%edx
+		mov    0x1(%esi,%ebp,1),%al
+		mov    %ch,%dl
+		sar    $0x2,%eax
+		sub    %eax,%edx
+		mov    %edx,%eax
+		mul    %eax
+		mov    0x100(%esp),%edx
+		movzbl 0x2(%esi,%ebp,1),%ebp
+		add    %eax,%edx
+		xor    %eax,%eax
+		sar    $0x2,%ebp
+		mov    0x120(%esp),%al
+		sub    %ebp,%eax
+		mov    %edx,0x100(%esp)
+		mul    %eax
+		add    0x100(%esp),%eax
+		jmp    jump_fcc61
+
+
+/*----------------------------------------------------------------*/
+func_fcb42:
+/*----------------------------------------------------------------*/
+		mov    %ebx,%ebp
+		imul   %edi,%ebp
+		xor    %edx,%edx
+		xor    %eax,%eax
+		mov    %cl,%dl
+		mov    0x2(%esi,%ebp,1),%al
+		sub    %eax,%edx
+		mov    %edx,%eax
+		mul    %eax
+		mov    %eax,0x100(%esp)
+		xor    %edx,%edx
+		xor    %eax,%eax
+		mov    %ch,%dl
+		mov    0x1(%esi,%ebp,1),%al
+		sub    %eax,%edx
+		mov    %edx,%eax
+		mul    %eax
+		mov    0x100(%esp),%edx
+		add    %eax,%edx
+		xor    %eax,%eax
+		movzbl (%esi,%ebp,1),%ebp
+		mov    0x120(%esp),%al
+		mov    %edx,0x100(%esp)
+		sub    %ebp,%eax
+		jmp    jump_fcc56
+
+
+/*----------------------------------------------------------------*/
+func_fcb92:
+/*----------------------------------------------------------------*/
+		mov    %ebx,%ebp
+		imul   %edi,%ebp
+		xor    %eax,%eax
+		xor    %edx,%edx
+		mov    0x2(%esi,%ebp,1),%al
+		mov    %cl,%dl
+		sar    $0x2,%eax
+		sub    %eax,%edx
+		mov    %edx,%eax
+		mul    %eax
+		mov    %eax,0x100(%esp)
+		xor    %eax,%eax
+		xor    %edx,%edx
+		mov    0x1(%esi,%ebp,1),%al
+		mov    %ch,%dl
+		sar    $0x2,%eax
+		sub    %eax,%edx
+		mov    %edx,%eax
+		mul    %eax
+		mov    0x100(%esp),%edx
+		add    %eax,%edx
+		xor    %eax,%eax
+		mov    (%esi,%ebp,1),%al
+		movzbl 0x120(%esp),%ebp
+		sar    $0x2,%eax
+		sub    %eax,%ebp
+		mov    %ebp,%eax
+		mov    %edx,0x100(%esp)
+		mul    %eax
+		add    0x100(%esp),%eax
+		jmp    jump_fcc61
+
+
+/*----------------------------------------------------------------*/
+func_fcbf3:
+/*----------------------------------------------------------------*/
+		mov    %ebx,%ebp
+		imul   %edi,%ebp
+		xor    %eax,%eax
+		mov    0x2(%esi,%ebp,1),%al
+		sar    $0x2,%eax
+		mov    %eax,0x100(%esp)
+		xor    %eax,%eax
+		mov    0x100(%esp),%edx
+		mov    %cl,%al
+		sub    %edx,%eax
+		mul    %eax
+		mov    %eax,0x100(%esp)
+		xor    %eax,%eax
+		xor    %edx,%edx
+		mov    0x4(%esi,%ebp,1),%al
+		mov    %ch,%dl
+		sar    $0x2,%eax
+		sub    %eax,%edx
+		mov    %edx,%eax
+		mul    %eax
+		mov    0x100(%esp),%edx
+		add    %eax,%edx
+		xor    %eax,%eax
+		mov    0x6(%esi,%ebp,1),%al
+		movzbl 0x120(%esp),%ebp
+		sar    $0x2,%eax
+	jump_fcc4b:
+		sub    %eax,%ebp
+		mov    %edx,0x100(%esp)
+		mov    %ebp,%eax
+	jump_fcc56:
+		mov    0x100(%esp),%ebp
+		mul    %eax
+		add    %ebp,%eax
+	jump_fcc61:
+		cmp    0x114(%esp),%eax
+		jae    jump_fcc7c
+		mov    %bl,0x11c(%esp)
+		mov    %eax,0x114(%esp)
+		test   %eax,%eax
+		je     jump_fcca5
+	jump_fcc7c:
+		inc    %ebx
+		cmp    $0x100,%ebx
+		jne    jump_fcc87
+		xor    %ebx,%ebx
+	jump_fcc87:
+		mov    0x118(%esp),%ebp
+		inc    %ebp
+		mov    0x138(%esp),%edx
+		mov    %ebp,0x118(%esp)
+		cmp    %edx,%ebp
+		jb     jump_fca7d
+	jump_fcca5:
+		mov    0x104(%esp),%edx
+		mov    0x11c(%esp),%al
+		mov    %al,(%esp,%edx,1)
+		lea    0x1(%edx),%eax
+		mov    %eax,0x104(%esp)
+		cmp    $0x100,%eax
+		jb     jump_fca15
+		mov    %esp,%eax
+		push   %eax
+		mov    0x144(%esp),%eax
+		mov    0x39c(%eax),%ebx
+		push   %ebx
+		call   SmackRemapTables
+		add    $0x8,%esp
+		add    $0x124,%esp
+		pop    %ebp
+		pop    %edi
+		pop    %esi
+		ret    $0x10
+
+
+/*----------------------------------------------------------------*/
+SMACKTOBUFFER:
+/*----------------------------------------------------------------*/
+		push   %esi
+		push   %edi
+		push   %ebp
+		sub    $0x10,%esp
+		mov    0x38(%esp),%esi
+		test   %esi,%esi
+		je     jump_fcf27
+		cmpl   $0x0,0x24(%esp)
+		jne    jump_fcd60
+		mov    0x3a0(%esi),%ecx
+		test   %ecx,%ecx
+		je     jump_fcf27
+		push   %ecx
+		call   RADFREE
+		mov    0x3a4(%esi),%eax
+		mov    0x45c(%esi),%ebp
+		movl   $0x0,0x3a0(%esi)
+		sub    %eax,%ebp
+		mov    %ebp,0x45c(%esi)
+		jmp    jump_fcf27
+	jump_fcd60:
+		mov    $0x3,%ebx
+		mov    0x2c(%esp),%ebp
+		mov    0x8(%esi),%eax
+		mov    0x386(%esi),%dl
+		mov    %ebx,0x8(%esp)
+		mov    %eax,0xc(%esp)
+		shr    %eax
+		test   $0x10,%dl
+		je     jump_fcd89
+		mov    %eax,0xc(%esp)
+		add    %ebp,%ebp
+		jmp    jump_fcd9b
+	jump_fcd89:
+		test   $0x20,%dl
+		je     jump_fcd9b
+		mov    $0x7,%ecx
+		mov    %eax,0xc(%esp)
+		mov    %ecx,0x8(%esp)
+	jump_fcd9b:
+		mov    0x3a0(%esi),%edi
+		test   %edi,%edi
+		je     jump_fcdc4
+		mov    (%edi),%bl
+		mov    %edi,%eax
+		cmp    $0x1,%bl
+		je     jump_fce34
+		push   %edi
+		call   RADFREE
+		mov    0x3a4(%esi),%eax
+		sub    %eax,0x45c(%esi)
+	jump_fcdc4:
+		mov    0xc(%esp),%ebx
+		push   %ebx
+		mov    0x4(%esi),%ecx
+		push   %ecx
+		call   SmackGetSizeDeltas
+		add    $0x8,%esp
+		lea    0x20(%eax),%edi
+		mov    0x49c(%esi),%ebx
+		mov    0x45c(%esi),%eax
+		mov    %edi,0x3a4(%esi)
+		add    %edi,%eax
+		mov    %edi,%edx
+		mov    %eax,0x45c(%esi)
+		cmp    %ebx,%eax
+		jbe    jump_fcdfe
+		mov    %eax,0x49c(%esi)
+	jump_fcdfe:
+		push   %edx
+		call   RADMALLOC
+		mov    %eax,0x3a0(%esi)
+		test   %eax,%eax
+		je     jump_fcf27
+		mov    %eax,%edx
+		mov    %edi,%ecx
+		mov    %edx,%edi
+		xor    %al,%al
+		cld
+		mov    %al,%ah
+		mov    %ax,%bx
+		shl    $0x10,%eax
+		mov    %bx,%ax
+		mov    %cl,%bl
+		shr    $0x2,%ecx
+		rep stos %eax,%es:(%edi)
+		mov    %bl,%cl
+		and    $0x3,%cl
+		rep stos %al,%es:(%edi)
+	jump_fce34:
+		mov    0x30(%esp),%eax
+		mov    %eax,0x38c(%esi)
+		mov    0x34(%esp),%eax
+		mov    %eax,0x388(%esi)
+		mov    0x3a0(%esi),%eax
+		movb   $0x1,(%eax)
+		testb  $0x20,0x386(%esi)
+		setne  %dl
+		add    $0x4,%eax
+		and    $0xff,%edx
+		mov    0x20(%esp),%edi
+		mov    %dl,-0x3(%eax)
+		test   %edi,%edi
+		je     jump_fce7a
+		mov    0x28(%esp),%edx
+		sub    0x30(%esp),%edx
+		dec    %edx
+		jmp    jump_fce7e
+	jump_fce7a:
+		mov    0x30(%esp),%edx
+	jump_fce7e:
+		mov    0x2c(%esp),%ebx
+		imul   %edx,%ebx
+		mov    0x34(%esp),%ecx
+		mov    0x24(%esp),%edx
+		add    %ecx,%edx
+		add    %ebx,%edx
+		mov    0x8(%esp),%ebx
+		imul   %ebp,%ebx
+		mov    %edx,(%eax)
+		mov    0x4(%esi),%edx
+		add    $0x4,%eax
+		shr    $0x2,%edx
+		mov    %edx,(%eax)
+		mov    0xc(%esp),%edx
+		add    $0x4,%eax
+		shr    $0x2,%edx
+		mov    %edx,(%eax)
+		lea    0x8(%eax),%edx
+		lea    0x4(%edx),%ecx
+		lea    0x8(%edx),%edi
+		mov    %ecx,0x4(%esp)
+		lea    0xc(%edx),%ecx
+		mov    %ecx,(%esp)
+		mov    0x20(%esp),%ecx
+		add    $0x4,%eax
+		test   %ecx,%ecx
+		je     jump_fcefe
+		lea    0x4(%ebx),%ecx
+		neg    %ecx
+		neg    %ebx
+		mov    %ecx,(%eax)
+		mov    %ebp,%eax
+		mov    %ebx,(%edx)
+		mov    0x4(%esp),%edx
+		neg    %eax
+		mov    %eax,(%edx)
+		mov    0x8(%esp),%eax
+		add    $0x2,%eax
+		imul   %ebp,%eax
+		mov    %ebp,%edx
+		sub    0x4(%esi),%edx
+		sub    %edx,%eax
+		neg    %eax
+		mov    %eax,(%edi)
+		mov    (%esp),%eax
+		jmp    jump_fcf15
+	jump_fcefe:
+		lea    -0x4(%ebx),%ecx
+		mov    %ecx,(%eax)
+		mov    0x4(%esp),%eax
+		mov    %ebx,(%edx)
+		mov    %ebp,(%eax)
+		sub    0x4(%esi),%ebp
+		add    %ebp,%ebx
+		mov    (%esp),%eax
+		mov    %ebx,(%edi)
+	jump_fcf15:
+		add    $0x4,%eax
+		add    $0x4,%eax
+		mov    0x4(%esi),%edx
+		mov    %edx,-0x4(%eax)
+		mov    0xc(%esp),%edx
+		mov    %edx,(%eax)
+	jump_fcf27:
+		add    $0x10,%esp
+		pop    %ebp
+		pop    %edi
+		pop    %esi
+		ret    $0x1c
+
+
+/*----------------------------------------------------------------*/
+SMACKNEXTFRAME:
+/*----------------------------------------------------------------*/
+		push   %esi
+		push   %edi
+		mov    0xc(%esp),%esi
+		test   %esi,%esi
+		je     jump_fd56c
+		cmpl   $0x0,_sounds
+		je     jump_fd4ed
+		call   *EXPORT_SYMBOL(_LowSoundCheckAddr)
+	jump_fd4ed:
+		mov    %esi,%eax
+		call   timeframe_
+		mov    0x370(%esi),%edx
+		mov    0x370(%esi),%ecx
+		mov    0x3b8(%esi),%ebx
+		inc    %ecx
+		mov    (%ebx,%edx,4),%edx
+		mov    0x3b0(%esi),%ebx
+		mov    %ecx,0x370(%esi)
+		add    %edx,%ebx
+		mov    0xc(%esi),%edi
+		mov    %ebx,0x3b0(%esi)
+		cmp    %edi,%ecx
+		jae    jump_fd556
+		testb  $0x2,0x385(%esi)
+		jne    jump_fd556
+		mov    0x3ac(%esi),%edx
+		mov    %edx,0x3b0(%esi)
+		mov    0x3b8(%esi),%ebx
+		mov    0x370(%esi),%edx
+		mov    %esi,%eax
+		mov    (%ebx,%edx,4),%ebx
+		mov    0x3ac(%esi),%edx
+		call   blockread_
+	jump_fd556:
+		mov    %esi,%eax
+		call   setuptheframe_
+		cmpl   $0x0,_sounds
+		je     jump_fd56c
+		call   *EXPORT_SYMBOL(_LowSoundCheckAddr)
+	jump_fd56c:
+		pop    %edi
+		pop    %esi
+		ret    $0x4
+
+
+/*----------------------------------------------------------------*/
+timeframe_: /* 0xfd680 */
+/*----------------------------------------------------------------*/
+		push   %ebx
+		push   %ecx
+		push   %edx
+		push   %esi
+		push   %edi
+		push   %ebp
+		mov    %eax,%esi
+		mov    0x460(%esi),%edx
+		mov    $0xffffffff,%eax
+		test   %edx,%edx
+		je     jump_fd721
+		call   *_SmackTimerReadAddr
+		mov    %eax,%edx
+		mov    0x460(%esi),%ebx
+		mov    0x488(%esi),%ecx
+		sub    %ebx,%edx
+		movl   $0x0,0x460(%esi)
+		cmp    %ecx,%edx
+		jbe    jump_fd6f9
+		mov    0x490(%esi),%ebx
+		cmp    0x370(%esi),%ebx
+		je     jump_fd6f1
+		mov    0x488(%esi),%ebx
+		mov    %ebx,0x48c(%esi)
+		mov    0x490(%esi),%ebx
+		mov    %ebx,0x494(%esi)
+		mov    0x370(%esi),%ebx
+		mov    %ebx,0x490(%esi)
+	jump_fd6f1:
+		mov    %edx,0x488(%esi)
+		jmp    jump_fd721
+	jump_fd6f9:
+		cmp    0x48c(%esi),%edx
+		jbe    jump_fd721
+		mov    0x490(%esi),%ebx
+		cmp    0x370(%esi),%ebx
+		je     jump_fd721
+		mov    %edx,0x48c(%esi)
+		mov    0x370(%esi),%edx
+		mov    %edx,0x494(%esi)
+	jump_fd721:
+		cmpl   $0x0,0x468(%esi)
+		je     jump_fd757
+		cmp    $0xffffffff,%eax
+		jne    jump_fd735
+		call   *_SmackTimerReadAddr
+	jump_fd735:
+		mov    %eax,%edx
+		mov    0x468(%esi),%ebp
+		mov    0x480(%esi),%ebx
+		sub    %ebp,%edx
+		movl   $0x0,0x468(%esi)
+		add    %edx,%ebx
+		mov    %ebx,0x480(%esi)
+	jump_fd757:
+		cmpl   $0x0,0x464(%esi)
+		je     jump_fd78b
+		cmp    $0xffffffff,%eax
+		jne    jump_fd76b
+		call   *_SmackTimerReadAddr
+	jump_fd76b:
+		mov    0x464(%esi),%edi
+		mov    0x484(%esi),%ebp
+		sub    %edi,%eax
+		movl   $0x0,0x464(%esi)
+		add    %eax,%ebp
+		mov    %ebp,0x484(%esi)
+	jump_fd78b:
+		pop    %ebp
+		pop    %edi
+		pop    %esi
+		pop    %edx
+		pop    %ecx
+		pop    %ebx
+		ret
+
+
+/*----------------------------------------------------------------*/
+SMACKDOFRAME: /* 0xfd7a0 */
+/*----------------------------------------------------------------*/
+		push   %esi
+		push   %ebp
+		sub    $0x4,%esp
+		mov    0x10(%esp),%esi
+		test   %esi,%esi
+		jne    jump_fd7b4
+		xor    %eax,%eax
+		jmp    jump_fd86d
+	jump_fd7b4:
+		call   *_SmackTimerReadAddr
+		mov    %eax,0x464(%esi)
+		mov    0x46c(%esi),%edx
+		mov    %eax,0x460(%esi)
+		test   %edx,%edx
+		jne    jump_fd7d6
+		mov    %eax,0x46c(%esi)
+	jump_fd7d6:
+		cmpl   $0x0,0x68(%esi)
+		je     jump_fd7e8
+		mov    0x370(%esi),%eax
+		mov    %eax,0x3b4(%esi)
+	jump_fd7e8:
+		mov    0x478(%esi),%ecx
+		inc    %ecx
+		mov    %esi,%eax
+		mov    %ecx,0x478(%esi)
+		call   soundnext_
+		testb  $0x4,0x385(%esi)
+		jne    jump_fd80e
+		cmpl   $0x0,0x400(%esi)
+		jne    jump_fd812
+	jump_fd80e:
+		xor    %al,%al
+		jmp    jump_fd819
+	jump_fd812:
+		mov    %esi,%eax
+		call   doskip_
+	jump_fd819:
+		mov    0x3a0(%esi),%ebp
+		mov    %al,(%esp)
+		test   %ebp,%ebp
+		je     jump_fd859
+		test   %al,%al
+		je     jump_fd832
+		incl   0x47c(%esi)
+		jmp    jump_fd859
+	jump_fd832:
+		mov    0x3a0(%esi),%eax
+		push   %eax
+		mov    0x39c(%esi),%edx
+		push   %edx
+		mov    0x3e0(%esi),%ebx
+		push   %ebx
+		movl   $0x1,0x3e4(%esi)
+		call   Unsmack
+		add    $0xc,%esp
+	jump_fd859:
+		cmpl   $0x0,_sounds
+		je     jump_fd868
+		call   *EXPORT_SYMBOL(_LowSoundCheckAddr)
+	jump_fd868:
+		xor    %eax,%eax
+		mov    (%esp),%al
+	jump_fd86d:
+		add    $0x4,%esp
+		pop    %ebp
+		pop    %esi
+		ret    $0x4
+
+
+/*----------------------------------------------------------------*/
+doskip_:
+/*----------------------------------------------------------------*/
+		push   %ebx
+		push   %ecx
+		push   %edx
+		push   %esi
+		push   %edi
+		mov    %eax,%esi
+		mov    0x420(%eax),%edx
+		cmp    $0xffffffff,%edx
+		je     jump_fd8e0
+		cmpl   $0x0,0x428(%eax)
+		jne    jump_fd8e0
+		cmpl   $0x0,0x424(%eax)
+		jne    jump_fd8a8
+		mov    $0x1,%al
+		jmp    jump_fd8e2
+	jump_fd8a8:
+		mov    %edx,%eax
+		mov    0x404(%esi,%eax,4),%eax
+		mov    0x44(%eax),%edi
+		test   %edi,%edi
+		jne    jump_fd8e0
+		push   %eax
+		call   *EXPORT_SYMBOL(_LowSoundPlayedAddr)
+		mov    0x420(%esi),%edx
+		mov    0x404(%esi,%edx,4),%edx
+		mov    0x24(%edx),%edx
+		shr    $0x7,%edx
+		cmp    %edx,%eax
+		jb     jump_fd8e0
+		mov    $0x1,%al
+		mov    %edi,0x424(%esi)
+		jmp    jump_fd8e2
+	jump_fd8e0:
+		xor    %al,%al
+	jump_fd8e2:
+		pop    %edi
+		pop    %esi
+		pop    %edx
+		pop    %ecx
+		pop    %ebx
+		ret
+
+
+/*----------------------------------------------------------------*/
+soundnext_:
+/*----------------------------------------------------------------*/
+		push   %ebx
+		push   %ecx
+		push   %edx
+		push   %esi
+		push   %edi
+		push   %ebp
+		sub    $0x14,%esp
+		mov    %eax,0x8(%esp)
+		cmpl   $0xffffffff,0x420(%eax)
+		je     jump_fdb32
+		cmpl   $0x0,0x428(%eax)
+		jne    jump_fdb32
+		cmpl   $0x0,0x400(%eax)
+		je     jump_fd92a
+		movl   $0x1,0x424(%eax)
+	jump_fd92a:
+		mov    0x8(%esp),%eax
+		mov    0x420(%eax),%eax
+		mov    0x8(%esp),%esi
+		shl    $0x2,%eax
+		add    %esi,%eax
+		mov    0x404(%eax),%eax
+		mov    %eax,0x4(%esp)
+		mov    0x4(%esp),%edx
+		mov    0x1c(%eax),%eax
+		mov    0x20(%edx),%edi
+		mov    0x24(%edx),%ebp
+		add    %eax,%edi
+		mov    0x1c(%edx),%eax
+		mov    %edi,0x20(%edx)
+		add    %eax,%ebp
+		mov    %ebp,0x24(%edx)
+		mov    0x384(%esi),%eax
+		mov    %eax,(%esp)
+		mov    %esp,%eax
+		call   GetFirstTrack_
+		mov    %al,0x10(%esp)
+		and    $0xff,%eax
+		shl    $0x2,%eax
+		add    %esi,%eax
+		mov    0x3c4(%eax),%esi
+		test   %esi,%esi
+		jne    jump_fd98d
+		xor    %eax,%eax
+		jmp    jump_fd99d
+	jump_fd98d:
+		testb  $0x80,0x4b(%eax)
+		je     jump_fd998
+		mov    0x4(%esi),%eax
+		jmp    jump_fd99d
+	jump_fd998:
+		mov    (%esi),%eax
+		sub    $0x4,%eax
+	jump_fd99d:
+		mov    %eax,0xc(%esp)
+		test   %eax,%eax
+		sete   %al
+		mov    %eax,%edx
+		xor    %eax,%eax
+		mov    0x10(%esp),%al
+		mov    0x8(%esp),%ebx
+		shl    $0x2,%eax
+		add    %ebx,%eax
+		mov    0x404(%eax),%eax
+		and    $0xff,%edx
+		mov    %edx,0x44(%eax)
+		test   %edx,%edx
+		jne    jump_fdb15
+		cmpl   $0x0,_sounds
+		je     jump_fd9dd
+		call   *EXPORT_SYMBOL(_LowSoundCheckAddr)
+	jump_fd9dd:
+		movzbl 0x10(%esp),%ebp
+		mov    0x8(%esp),%edi
+		shl    $0x2,%ebp
+		add    %edi,%ebp
+		mov    0x404(%ebp),%ebp
+		mov    0xc(%esp),%edx
+		mov    0x10(%ebp),%eax
+		mov    0x18(%ebp),%ebx
+		add    %edx,%eax
+		cmp    %ebx,%eax
+		jbe    jump_fda13
+		mov    %ebx,%eax
+		mov    0x10(%ebp),%ecx
+		mov    0x2c(%ebp),%edi
+		sub    %ecx,%eax
+		inc    %edi
+		mov    %eax,0xc(%esp)
+		mov    %edi,0x2c(%ebp)
+	jump_fda13:
+		xor    %eax,%eax
+		mov    0x10(%esp),%al
+		mov    0x8(%esp),%edx
+		shl    $0x2,%eax
+		add    %edx,%eax
+		testb  $0x80,0x4b(%eax)
+		je     jump_fda4e
+		mov    0xc(%ebp),%edi
+		push   %edi
+		mov    0x4(%ebp),%eax
+		push   %eax
+		mov    0x0(%ebp),%edx
+		push   %edx
+		mov    _trackbuf,%ebx
+		push   %ebx
+		mov    0x1c(%esp),%ecx
+		push   %ecx
+		add    $0x8,%esi
+		push   %esi
+		call   SmackDoPCM
+		add    $0x18,%esp
+		jmp    jump_fdaa2
+	jump_fda4e:
+		mov    0xc(%esp),%eax
+		mov    0xc(%ebp),%edi
+		mov    0x4(%ebp),%ebx
+		add    %edi,%eax
+		lea    0x4(%esi),%edx
+		cmp    %ebx,%eax
+		jbe    jump_fda8d
+		mov    %ebx,%ecx
+		mov    %edx,%esi
+		sub    %edi,%ecx
+		cld
+		mov    %cl,%bl
+		shr    $0x2,%ecx
+		rep movsl %ds:(%esi),%es:(%edi)
+		mov    %bl,%cl
+		and    $0x3,%cl
+		rep movsb %ds:(%esi),%es:(%edi)
+		mov    0x4(%ebp),%eax
+		sub    0xc(%ebp),%eax
+		mov    0xc(%esp),%ecx
+		sub    %eax,%ecx
+		shl    $0x2,%eax
+		mov    0x0(%ebp),%edi
+		lea    (%edx,%eax,1),%esi
+		jmp    jump_fda93
+	jump_fda8d:
+		mov    0xc(%esp),%ecx
+		mov    %edx,%esi
+	jump_fda93:
+		cld
+		mov    %cl,%bl
+		shr    $0x2,%ecx
+		rep movsl %ds:(%esi),%es:(%edi)
+		mov    %bl,%cl
+		and    $0x3,%cl
+		rep movsb %ds:(%esi),%es:(%edi)
+	jump_fdaa2:
+		mov    0xc(%esp),%eax
+		mov    0x28(%ebp),%esi
+		add    %eax,%esi
+		mov    0x10(%ebp),%edi
+		mov    %esi,0x28(%ebp)
+		add    %eax,%edi
+		mov    0xc(%ebp),%edx
+		mov    %edi,0x10(%ebp)
+		add    %eax,%edx
+		mov    0x4(%ebp),%ebx
+		mov    %edx,0xc(%ebp)
+		cmp    %ebx,%edx
+		jb     jump_fdad1
+		mov    %edx,%eax
+		mov    0x0(%ebp),%edx
+		sub    %ebx,%eax
+		add    %eax,%edx
+		mov    %edx,0xc(%ebp)
+	jump_fdad1:
+		mov    %esp,%eax
+		call   GetFirstTrack_
+		mov    %al,0x10(%esp)
+		cmp    $0xff,%al
+		je     jump_fdb15
+		and    $0xff,%eax
+		mov    0x8(%esp),%esi
+		shl    $0x2,%eax
+		add    %esi,%eax
+		mov    0x3c4(%eax),%esi
+		test   %esi,%esi
+		jne    jump_fdafc
+		xor    %eax,%eax
+		jmp    jump_fdb0c
+	jump_fdafc:
+		testb  $0x80,0x4b(%eax)
+		je     jump_fdb07
+		mov    0x4(%esi),%eax
+		jmp    jump_fdb0c
+	jump_fdb07:
+		mov    (%esi),%eax
+		sub    $0x4,%eax
+	jump_fdb0c:
+		mov    %eax,0xc(%esp)
+		jmp    jump_fd9dd
+	jump_fdb15:
+		mov    0x4(%esp),%eax
+		mov    0x4(%esp),%edx
+		mov    0x20(%eax),%eax
+		mov    0x28(%edx),%edi
+		shr    $0x7,%eax
+		cmp    %edi,%eax
+		jbe    jump_fdb32
+		mov    %edi,%eax
+		shl    $0x7,%eax
+		mov    %eax,0x20(%edx)
+	jump_fdb32:
+		add    $0x14,%esp
+		pop    %ebp
+		pop    %edi
+		pop    %esi
+		pop    %edx
+		pop    %ecx
+		pop    %ebx
+		ret
+
+
+/*----------------------------------------------------------------*/
+SMACKCLOSE:
+/*----------------------------------------------------------------*/
+		push   %esi
+		push   %edi
+		push   %ebp
+		mov    0x10(%esp),%ebp
+		test   %ebp,%ebp
+		je     jump_fdc6c
+		cmpl   $0xffffffff,0x420(%ebp)
+		je     jump_fdbb0
+		mov    %ebp,%esi
+		lea    0x1c(%ebp),%edi
+	jump_fdb5d:
+		mov    0x404(%esi),%ebx
+		test   %ebx,%ebx
+		je     jump_fdb9f
+		push   %ebx
+		call   *EXPORT_SYMBOL(_LowSoundCloseAddr)
+		mov    0x404(%esi),%eax
+		mov    (%eax),%edx
+		push   %edx
+		call   RADFREE
+		mov    0x404(%esi),%ebx
+		push   %ebx
+		call   RADFREE
+		mov    _sounds,%ecx
+		dec    %ecx
+		movl   $0x0,0x404(%esi)
+		mov    %ecx,_sounds
+	jump_fdb9f:
+		add    $0x4,%esi
+		cmp    %edi,%esi
+		jne    jump_fdb5d
+		movl   $0xffffffff,0x420(%ebp)
+	jump_fdbb0:
+		mov    _sounds,%esi
+		test   %esi,%esi
+		jne    jump_fdbd0
+		mov    _trackbuf,%edi
+		test   %edi,%edi
+		je     jump_fdbd0
+		push   %edi
+		call   RADFREE
+		mov    %esi,_trackbuf
+	jump_fdbd0:
+		mov    0x394(%ebp),%ebx
+		cmp    $0xffffffff,%ebx
+		je     jump_fdbed
+		testb  $0x10,0x385(%ebp)
+		jne    jump_fdbed
+		push   %ebx
+		call   ac_dos_low_level_close
+		add    $0x4,%esp
+	jump_fdbed:
+		mov    0x3a0(%ebp),%esi
+		test   %esi,%esi
+		je     jump_fdbfd
+		push   %esi
+		call   RADFREE
+	jump_fdbfd:
+		mov    0x39c(%ebp),%eax
+		test   %eax,%eax
+		je     jump_fdc0d
+		push   %eax
+		call   RADFREE
+	jump_fdc0d:
+		mov    0x3bc(%ebp),%ebx
+		test   %ebx,%ebx
+		je     jump_fdc1d
+		push   %ebx
+		call   RADFREE
+	jump_fdc1d:
+		mov    0x3ac(%ebp),%esi
+		test   %esi,%esi
+		je     jump_fdc2d
+		push   %esi
+		call   RADFREE
+	jump_fdc2d:
+		mov    0x42c(%ebp),%eax
+		test   %eax,%eax
+		je     jump_fdc3d
+		push   %eax
+		call   RADFREE
+	jump_fdc3d:
+		mov    $0x4ac,%ecx
+		mov    %ebp,%edi
+		xor    %al,%al
+		cld
+		mov    %al,%ah
+		mov    %ax,%bx
+		shl    $0x10,%eax
+		mov    %bx,%ax
+		mov    %cl,%bl
+		shr    $0x2,%ecx
+		rep stos %eax,%es:(%edi)
+		mov    %bl,%cl
+		and    $0x3,%cl
+		rep stos %al,%es:(%edi)
+		push   %ebp
+		call   RADFREE
+		call   *_SmackTimerDoneAddr
+	jump_fdc6c:
+		pop    %ebp
+		pop    %edi
+		pop    %esi
+		ret    $0x4
+
+
+/*----------------------------------------------------------------*/
+SMACKOPEN:
+/*----------------------------------------------------------------*/
+		push   %esi
+		push   %edi
+		push   %ebp
+		sub    $0x1c,%esp
+		xor    %edx,%edx
+		mov    %edx,0x18(%esp)
+		call   *_SmackTimerSetupAddr
+		call   *_SmackTimerReadAddr
+		push   $0x4ac
+		xor    %ebp,%ebp
+		mov    %eax,0x8(%esp)
+		call   RADMALLOC
+		mov    %eax,%esi
+		test   %eax,%eax
+		jne    jump_fdefb
+		call   *_SmackTimerDoneAddr
+		xor    %eax,%eax
+		jmp    jump_fe6b4
+	jump_fdefb:
+		mov    $0x4ac,%ecx
+		mov    %esi,%edi
+		xor    %al,%al
+		cld
+		mov    %al,%ah
+		mov    %ax,%bx
+		shl    $0x10,%eax
+		mov    %bx,%ax
+		mov    %cl,%bl
+		shr    $0x2,%ecx
+		rep stos %eax,%es:(%edi)
+		mov    %bl,%cl
+		and    $0x3,%cl
+		rep stos %al,%es:(%edi)
+		mov    %esi,%eax
+		addl   $0x4ac,0x45c(%eax)
+		testb  $0x10,0x31(%esp)
+		je     jump_fdf51
+		push   %ebp
+		mov    0x38(%esp),%eax
+		mov    %esi,%edx
+		push   %eax
+		mov    %eax,0x394(%edx)
+		call   ac_dos_low_level_seek_relative
+		mov    %esi,%edx
+		add    $0x8,%esp
+		mov    %eax,0x3a8(%edx)
+		jmp    jump_fdf6f
+	jump_fdf51:
+		push   %ebp
+		mov    %ds,%eax
+		and    $0xffff,%eax
+		push   %eax
+		mov    0x3c(%esp),%edi
+		push   %edi
+		call   ac_dos_low_level_open
+		mov    %esi,%edx
+		add    $0xc,%esp
+		mov    %eax,0x394(%edx)
+	jump_fdf6f:
+		cmpl   $0xffffffff,0x394(%esi)
+		je     jump_fdfc0
+		testb  $0x8,0x31(%esp)
+		je     jump_fdf8a
+		mov    data_1592e8,%eax
+		mov    %eax,0x4a0(%esi)
+	jump_fdf8a:
+		lea    0x64(%esi),%eax
+		xor    %ecx,%ecx
+		sub    %esi,%eax
+		mov    %ecx,(%esp)
+		lea    0x4(%eax),%ebx
+		mov    %esi,%edx
+		mov    %esi,%eax
+		mov    %ecx,(%esi)
+		call   blockread_
+		cmpl   $0x324b4d53,(%esi)
+		je     jump_fdfd7
+	jump_fdfaa:
+		testb  $0x10,0x31(%esp)
+		jne    jump_fdfc0
+		mov    0x394(%esi),%eax
+		push   %eax
+		call   ac_dos_low_level_close
+		add    $0x4,%esp
+	jump_fdfc0:
+		push   %esi
+		call   RADFREE
+		call   *_SmackTimerDoneAddr
+		xor    %eax,%eax
+		add    $0x1c,%esp
+		pop    %ebp
+		pop    %edi
+		pop    %esi
+		ret    $0xc
+	jump_fdfd7: /* XXX: abc */
+		testb  $0x80,0x30(%esp)
+		je     jump_fdfe6
+		mov    data_1592ec,%eax
+		mov    %eax,0x10(%esi)
+	jump_fdfe6:
+		mov    0x10(%esi),%eax
+		test   %eax,%eax
+		jge    jump_fdff1
+		neg    %eax
+		jmp    jump_fe000
+	jump_fdff1:
+		mov    %eax,%edx
+		shl    $0x2,%eax
+		sub    %edx,%eax
+		shl    $0x3,%eax
+		add    %edx,%eax
+		shl    $0x2,%eax
+	jump_fe000:
+		mov    %eax,0x400(%esi)
+		test   %eax,%eax
+		je     jump_fe01b
+		mov    $0x186a0,%eax
+		mov    0x400(%esi),%ebx
+		xor    %edx,%edx
+		div    %ebx
+		jmp    jump_fe020
+	jump_fe01b:
+		mov    $0x186a0,%eax
+	jump_fe020:
+		mov    %eax,0x10(%esp)
+		test   %eax,%eax
+		jne    jump_fe02d
+		inc    %eax
+		mov    %eax,0x10(%esp)
+	jump_fe02d: /* XXX: abc no */
+		mov    0x14(%esi),%eax
+		mov    0xc(%esi),%edx
+		and    $0x1,%eax
+		add    %eax,%edx
+		mov    %edx,(%esp)
+		lea    0x0(,%edx,4),%eax
+		add    %edx,%eax
+		mov    0x45c(%esi),%edi
+		add    $0x4,%eax
+		mov    0x49c(%esi),%ebx
+		add    %eax,%edi
+		mov    %eax,%edx
+		mov    %edi,%eax
+		mov    %edi,0x45c(%esi)
+		cmp    %ebx,%edi
+		jbe    jump_fe069
+		mov    %edi,0x49c(%esi)
+	jump_fe069: /* XXX: abc no */
+		push   %edx
+		call   RADMALLOC
+		mov    %eax,0x3bc(%esi)
+		test   %eax,%eax
+		je     jump_fdfaa
+		mov    (%esp),%edx
+		add    %eax,%edx
+		mov    %edx,0x3b8(%esi)
+		mov    (%esp),%ebx
+		mov    %esi,%eax
+		shl    $0x2,%ebx
+		call   blockread_
+		mov    (%esp),%ebx
+		mov    %esi,%eax
+		mov    0x3bc(%esi),%edx
+		call   blockread_
+		mov    (%esp),%eax
+		mov    (%esp),%edi
+		shl    $0x2,%eax
+		mov    0x3a8(%esi),%edx
+		add    %edi,%eax
+		add    %eax,%edx
+		mov    %edx,0x3a8(%esi)
+		call   func_139590
+		mov    0x38(%esi),%ebx
+		mov    0x3c(%esi),%ecx
+		add    %ebx,%eax
+		mov    0x40(%esi),%edi
+		add    %ecx,%eax
+		mov    0x44(%esi),%edx
+		add    %edi,%eax
+		mov    0x45c(%esi),%ebx
+		add    %edx,%eax
+		mov    0x49c(%esi),%ecx
+		add    %eax,%ebx
+		mov    %eax,%edx
+		mov    %ebx,%eax
+		mov    %ebx,0x45c(%esi)
+		cmp    %ecx,%ebx
+		jbe    jump_fe0f9
+		mov    %ebx,0x49c(%esi)
+	jump_fe0f9: /* XXX: abc no */
+		push   %edx
+		call   RADMALLOC
+		mov    %eax,0x39c(%esi)
+		test   %eax,%eax
+		jne    jump_fe11a
+		mov    0x3bc(%esi),%ebp
+		push   %ebp
+		call   RADFREE
+		jmp    jump_fdfaa
+	jump_fe11a:
+		mov    0x34(%esi),%edx
+		add    $0x1003,%edx
+		and    $0xfc,%dl
+		mov    %esi,%eax
+		cmp    $0x2000,%edx
+		jae    jump_fe135
+		mov    $0x2000,%edx
+	jump_fe135:
+		mov    0x45c(%eax),%ecx
+		mov    %edx,%ebx
+		add    %edx,%ecx
+		mov    0x49c(%eax),%edi
+		mov    %ecx,%edx
+		mov    %ecx,0x45c(%eax)
+		cmp    %edi,%ecx
+		jbe    jump_fe157
+		mov    %ecx,0x49c(%eax)
+	jump_fe157:
+		push   %ebx
+		call   RADMALLOC
+		mov    %eax,%edi
+		test   %eax,%eax
+		jne    jump_fe180
+	jump_fe163: /* XXX: abc - - */
+		mov    0x39c(%esi),%edi
+		push   %edi
+		call   RADFREE
+		mov    0x3bc(%esi),%ebp
+		push   %ebp
+		call   RADFREE
+		jmp    jump_fdfaa
+	jump_fe180:
+		lea    0x1000(%eax),%edx
+		mov    0x34(%esi),%ebx
+		mov    %esi,%eax
+		call   blockread_
+		mov    0x44(%esi),%eax
+		push   %eax
+		mov    0x40(%esi),%edx
+		push   %edx
+		mov    0x3c(%esi),%ebx
+		push   %ebx
+		mov    0x38(%esi),%ecx
+		push   %ecx
+		mov    0x39c(%esi),%eax
+		push   %eax
+		push   %edi
+		call   func_1395a0
+		add    $0x18,%esp
+		push   %edi
+		call   RADFREE
+		mov    0x34(%esi),%eax
+		mov    0x45c(%esi),%edx
+		add    $0x1000,%eax
+		sub    %eax,%edx
+		lea    0x64(%esi),%eax
+		mov    0x34(%esi),%ebx
+		sub    %esi,%eax
+		mov    0x3a8(%esi),%ecx
+		add    $0x4,%eax
+		mov    %edx,0x45c(%esi)
+		add    %ebx,%eax
+		mov    0xc(%esi),%edx
+		add    %eax,%ecx
+		mov    0x14(%esi),%eax
+		dec    %edx
+		and    $0x1,%eax
+		mov    %ecx,0x3a8(%esi)
+		add    %eax,%edx
+		mov    0x10(%esp),%edi
+		mov    %edx,(%esp)
+		xor    %ecx,%ecx
+		mov    0x3b8(%esi),%eax
+		cmp    %edi,%edx
+		jae    jump_fe231
+		mov    %ecx,0xc(%esp)
+		xor    %ebx,%ebx
+	jump_fe20c:
+		mov    (%eax),%edi
+		mov    %edi,%edx
+		add    %edi,%ecx
+		cmp    0x18(%esp),%edx
+		jbe    jump_fe21c
+		mov    %edx,0x18(%esp)
+	jump_fe21c:
+		mov    (%esp),%edx
+		mov    (%eax),%edi
+		add    $0x4,%eax
+		inc    %ebx
+		add    %edi,%ebp
+		cmp    %edx,%ebx
+		ja     jump_fe2bf
+		jmp    jump_fe20c
+	jump_fe231:
+		xor    %edx,%edx
+		xor    %ebx,%ebx
+		test   %edi,%edi
+		jbe    jump_fe249
+	jump_fe239:
+		mov    %eax,%edi
+		inc    %ebx
+		add    (%edi),%edx
+		mov    0x10(%esp),%edi
+		add    $0x4,%eax
+		cmp    %edi,%ebx
+		jb     jump_fe239
+	jump_fe249:
+		mov    (%esp),%ebx
+		mov    0x10(%esp),%edi
+		sub    %edi,%ebx
+		mov    0x3b8(%esi),%eax
+		mov    %ebx,0x8(%esp)
+		xor    %ebx,%ebx
+		shl    $0x2,%edi
+		add    %eax,%edi
+		mov    %edi,0x14(%esp)
+	jump_fe267:
+		cmp    %ecx,%edx
+		jbe    jump_fe275
+		test   %ebx,%ebx
+		je     jump_fe275
+		mov    %edx,%ecx
+		mov    %ebx,0xc(%esp)
+	jump_fe275:
+		sub    (%eax),%edx
+		mov    0x14(%esp),%edi
+		add    (%edi),%edx
+		mov    (%eax),%edi
+		cmp    0x18(%esp),%edi
+		jbe    jump_fe289
+		mov    %edi,0x18(%esp)
+	jump_fe289:
+		add    (%eax),%ebp
+		mov    0x14(%esp),%edi
+		add    $0x4,%edi
+		inc    %ebx
+		mov    %edi,0x14(%esp)
+		mov    0x8(%esp),%edi
+		add    $0x4,%eax
+		cmp    %edi,%ebx
+		ja     jump_fe2ba
+		jmp    jump_fe267
+	jump_fe2a4:
+		mov    0x18(%esp),%edi
+		mov    (%eax),%edx
+		cmp    %edi,%edx
+		jbe    jump_fe2b2
+		mov    %edx,0x18(%esp)
+	jump_fe2b2:
+		mov    (%eax),%edx
+		add    $0x4,%eax
+		inc    %ebx
+		add    %edx,%ebp
+	jump_fe2ba:
+		cmp    (%esp),%ebx
+		jbe    jump_fe2a4
+	jump_fe2bf:
+		mov    0xc(%esp),%eax
+		xor    %edx,%edx
+		mov    %eax,0x4a8(%esi)
+		mov    %ebp,%eax
+		div    %ebx
+		mov    %ecx,0x4a4(%esi)
+		mov    %eax,0x498(%esi)
+		testb  $0x2,0x31(%esp)
+		je     jump_fe2ed
+		mov    %ebp,0x398(%esi)
+		jmp    jump_fe3e0
+	jump_fe2ed:
+		cmpl   $0xffffffff,0x2c(%esp)
+		jne    jump_fe32d
+		cmpl   $0x0,0x400(%esi)
+		je     jump_fe305
+		mov    0x4a4(%esi),%eax
+		jmp    jump_fe30a
+	jump_fe305:
+		mov    $0x3000,%eax
+	jump_fe30a:
+		mov    %ebp,%edx
+		shr    $0x2,%edx
+		mov    %eax,0x2c(%esp)
+		cmp    %edx,%eax
+		jbe    jump_fe31b
+		mov    %edx,0x2c(%esp)
+	jump_fe31b:
+		cmpl   $0x3000,0x2c(%esp)
+		jae    jump_fe32d
+		movl   $0x3000,0x2c(%esp)
+	jump_fe32d:
+		mov    0x2c(%esp),%eax
+		add    $0xfff,%eax
+		shr    $0xc,%eax
+		shl    $0xc,%eax
+		mov    %eax,0x2c(%esp)
+		cmp    $0x2000,%eax
+		jae    jump_fe34f
+		movl   $0x2000,0x2c(%esp)
+	jump_fe34f:
+		mov    $0x5,%ebx
+		lea    0x0(,%ebp,4),%eax
+		xor    %edx,%edx
+		div    %ebx
+		mov    0x2c(%esp),%edx
+		cmp    %edx,%eax
+		ja     jump_fe374
+		orb    $0x2,0x31(%esp)
+		mov    %ebp,0x398(%esi)
+		jmp    jump_fe3e0
+	jump_fe374:
+		mov    0x18(%esp),%eax
+		mov    %edx,0x440(%esi)
+		mov    %eax,0x398(%esi)
+		test   %edx,%edx
+		je     jump_fe3e0
+		lea    0x1000(%edx),%eax
+		mov    0x45c(%esi),%ecx
+		mov    0x49c(%esi),%edi
+		add    %eax,%ecx
+		mov    %eax,%edx
+		mov    %ecx,%eax
+		mov    %ecx,0x45c(%esi)
+		cmp    %edi,%ecx
+		jbe    jump_fe3b0
+		mov    %ecx,0x49c(%esi)
+	jump_fe3b0:
+		push   %edx
+		call   RADMALLOC
+		mov    %eax,0x42c(%esi)
+		mov    %eax,0x434(%esi)
+		mov    %eax,0x438(%esi)
+		test   %eax,%eax
+		je     jump_fe163
+		mov    %eax,%edx
+		mov    0x440(%esi),%eax
+		add    %eax,%edx
+		mov    %edx,0x430(%esi)
+	jump_fe3e0:
+		mov    0x398(%esi),%eax
+		mov    0x45c(%esi),%ebx
+		add    $0x8,%eax
+		mov    0x49c(%esi),%ecx
+		add    %eax,%ebx
+		mov    %eax,%edx
+		mov    %ebx,%eax
+		mov    %ebx,0x45c(%esi)
+		cmp    %ecx,%ebx
+		jbe    jump_fe40b
+		mov    %ebx,0x49c(%esi)
+	jump_fe40b:
+		push   %edx
+		call   RADMALLOC
+		mov    %eax,0x3ac(%esi)
+		test   %eax,%eax
+		jne    jump_fe434
+		mov    0x42c(%esi),%ebp
+		test   %ebp,%ebp
+		je     jump_fe163
+		push   %ebp
+		call   RADFREE
+		jmp    jump_fe163
+	jump_fe434:
+		mov    0x3a8(%esi),%eax
+		mov    %eax,0x444(%esi)
+		testb  $0x2,0x31(%esp)
+		je     jump_fe487
+		mov    %ebp,%ebx
+		mov    %esi,%eax
+		mov    0x3ac(%esi),%edx
+		call   blockread_
+		testb  $0x10,0x31(%esp)
+		jne    jump_fe46c
+		mov    0x394(%esi),%ecx
+		push   %ecx
+		call   ac_dos_low_level_close
+		add    $0x4,%esp
+	jump_fe46c:
+		movl   $0xffffffff,0x394(%esi)
+		mov    0x3ac(%esi),%eax
+		mov    %eax,0x3b0(%esi)
+		jmp    jump_fe508
+	jump_fe487:
+		and    $0xfff,%eax
+		mov    %eax,(%esp)
+		je     jump_fe4d7
+		mov    %esp,%eax
+		mov    (%esp),%edx
+		push   %eax
+		mov    $0x1000,%eax
+		sub    %edx,%eax
+		push   %eax
+		mov    0x42c(%esi),%edx
+		mov    %ds,%eax
+		and    $0xffff,%eax
+		push   %eax
+		push   %edx
+		mov    0x394(%esi),%ebx
+		push   %ebx
+		call   ac_dos_low_level_read
+		add    $0x14,%esp
+		mov    0x42c(%esi),%eax
+		mov    (%esp),%edx
+		add    %eax,%edx
+		mov    %edx,0x438(%esi)
+		mov    (%esp),%eax
+		mov    %eax,0x43c(%esi)
+	jump_fe4d7:
+		testb  $0x2,0x385(%esi)
+		jne    jump_fe508
+		mov    0x3ac(%esi),%eax
+		mov    %eax,0x3b0(%esi)
+		mov    0x3b8(%esi),%edx
+		mov    0x370(%esi),%eax
+		mov    (%edx,%eax,4),%ebx
+		mov    %esi,%eax
+		mov    0x3ac(%esi),%edx
+		call   blockread_
+	jump_fe508: /* XXX: abc no */
+		mov    %esi,%eax
+		movl   $0xffffffff,0x3b4(%esi)
+		call   setuptheframe_
+		movl   $0xffffffff,0x420(%esi)
+		mov    0x30(%esp),%eax
+		and    $0xffc01fff,%eax
+		mov    %eax,0x384(%esi)
+		testl  $0xfe000,0x30(%esp)
+		je     jump_fe5d4
+	jump_fe540: /* XXX: abc - yes */
+		lea    0x30(%esp),%eax
+		call   GetFirstTrack_
+		and    $0xff,%eax
+		mov    $0x70,%edx
+		mov    %eax,(%esp)
+		mov    %esi,%eax
+		call   smkmalloc_
+		mov    (%esp),%edx
+		mov    %eax,0x404(%esi,%edx,4)
+		mov    (%esp),%eax
+		cmpl   $0x0,0x404(%esi,%eax,4)
+		je     jump_fe5c6
+		xor    %edx,%edx
+		mov    %esi,%eax
+		mov    (%esp),%dl
+		call   soundopen_
+		test   %al,%al
+		je     jump_fe5a1
+		mov    (%esp),%ecx
+		mov    $0x1,%eax
+		add    $0xd,%ecx
+		mov    0x384(%esi),%ebp
+		shl    %cl,%eax
+		or     %eax,%ebp
+		mov    %ebp,0x384(%esi)
+		jmp    jump_fe5c6
+	jump_fe5a1:
+		mov    (%esp),%eax
+		mov    0x404(%esi,%eax,4),%ecx
+		push   %ecx
+		call   RADFREE
+		subl   $0x70,0x45c(%esi)
+		mov    (%esp),%eax
+		movl   $0x0,0x404(%esi,%eax,4)
+	jump_fe5c6:
+		testl  $0xfe000,0x30(%esp)
+		jne    jump_fe540
+	jump_fe5d4: /* XXX: abc no(once) */
+		movl   $0xffffffff,0x3fc(%esi)
+		testb  $0x1,0x31(%esp)
+		je     jump_fe5f0
+	jump_fe5e5:
+		mov    %esi,%eax
+		call   backgroundload_
+		test   %eax,%eax
+		jne    jump_fe5e5
+	jump_fe5f0:
+		mov    0x30(%esp),%eax
+		and    $0x300000,%eax
+		cmp    $0x200000,%eax
+		jb     jump_fe60b
+		jbe    jump_fe623
+		cmp    $0x300000,%eax
+		je     jump_fe614
+		jmp    jump_fe62d
+	jump_fe60b:
+		cmp    $0x100000,%eax
+		je     jump_fe61a
+		jmp    jump_fe62d
+	jump_fe614:
+		andb   $0xf9,0x14(%esi)
+		jmp    jump_fe62d
+	jump_fe61a:
+		mov    0x14(%esi),%eax
+		and    $0xf9,%al
+		or     $0x2,%al
+		jmp    jump_fe62a
+	jump_fe623:
+		mov    0x14(%esi),%eax
+		and    $0xf9,%al
+		or     $0x4,%al
+	jump_fe62a:
+		mov    %eax,0x14(%esi)
+	jump_fe62d:
+		mov    0x14(%esi),%eax
+		and    $0x6,%eax
+		cmp    $0x2,%eax
+		jb     jump_fe651
+		jbe    jump_fe641
+		cmp    $0x4,%eax
+		je     jump_fe64a
+		jmp    jump_fe651
+	jump_fe641:
+		orb    $0x10,0x386(%esi)
+		jmp    jump_fe651
+	jump_fe64a:
+		orb    $0x20,0x386(%esi)
+	jump_fe651:
+		testb  $0x30,0x386(%esi)
+		je     jump_fe662
+		mov    0x8(%esi),%eax
+		add    %eax,%eax
+		mov    %eax,0x8(%esi)
+	jump_fe662:
+		call   *_SmackTimerReadAddr
+		mov    0x4(%esp),%edx
+		sub    %edx,%eax
+		mov    %eax,0x470(%esi)
+		mov    0x44c(%esi),%ebx
+		mov    0x448(%esi),%ecx
+		mov    0x454(%esi),%eax
+		movl   $0x0,0x454(%esi)
+		add    %eax,%ebx
+		mov    0x450(%esi),%eax
+		mov    %ebx,0x44c(%esi)
+		add    %eax,%ecx
+		mov    0x44c(%esi),%eax
+		mov    %ecx,0x448(%esi)
+		mov    %eax,0x474(%esi)
+		mov    %esi,%eax
+	jump_fe6b4:
+		add    $0x1c,%esp
+		pop    %ebp
+		pop    %edi
+		pop    %esi
+		ret    $0xc
+
+
+/*----------------------------------------------------------------*/
+GetFirstTrack_:
+/*----------------------------------------------------------------*/
+		push   %ebx
+		push   %ecx
+		push   %edx
+		push   %esi
+		mov    %eax,%ebx
+		mov    $0x2000,%edx
+		xor    %al,%al
+	jump_fe6cd:
+		mov    (%ebx),%ecx
+		test   %ecx,%edx
+		je     jump_fe6e0
+		not    %edx
+		mov    %ecx,%esi
+		and    %edx,%esi
+		mov    %esi,(%ebx)
+		pop    %esi
+		pop    %edx
+		pop    %ecx
+		pop    %ebx
+		ret
+	jump_fe6e0:
+		inc    %al
+		add    %edx,%edx
+		cmp    $0x7,%al
+		jb     jump_fe6cd
+		mov    $0xff,%al
+		pop    %esi
+		pop    %edx
+		pop    %ecx
+		pop    %ebx
+		ret
+
+
+/*----------------------------------------------------------------*/
+soundopen_:
+/*----------------------------------------------------------------*/
+		push   %ebx
+		push   %ecx
+		push   %esi
+		push   %edi
+		push   %ebp
+		sub    $0x14,%esp
+		mov    %eax,%esi
+		mov    %dl,0x10(%esp)
+		cmpl   $0x0,_LowSoundOpenAddr
+		jne    jump_fe70e
+		xor    %al,%al
+		jmp    jump_fe966
+	jump_fe70e:
+		xor    %eax,%eax
+		mov    0x10(%esp),%al
+		shl    $0x2,%eax
+		add    %esi,%eax
+		mov    0x48(%eax),%edx
+		shr    $0x18,%edx
+		test   $0x40,%dl
+		je     jump_fe72e
+		mov    0x48(%eax),%eax
+		and    $0xffffff,%eax
+		jmp    jump_fe730
+	jump_fe72e:
+		xor    %eax,%eax
+	jump_fe730:
+		mov    %eax,(%esp)
+		jne    jump_fe740
+		xor    %al,%al
+		add    $0x14,%esp
+		pop    %ebp
+		pop    %edi
+		pop    %esi
+		pop    %ecx
+		pop    %ebx
+		ret
+	jump_fe740:
+		xor    %edx,%edx
+		mov    0x10(%esp),%dl
+		shl    $0x2,%edx
+		lea    (%esi,%edx,1),%edi
+		mov    0x48(%edi),%edx
+		shr    $0x1c,%edx
+		and    $0x1,%edx
+		mov    %dl,0xc(%esp)
+		mov    0x48(%edi),%edx
+		shr    $0x1d,%edx
+		and    $0x1,%edx
+		mov    %dl,0x8(%esp)
+		xor    %edx,%edx
+		mov    0x8(%esp),%dl
+		inc    %edx
+		imul   %eax,%edx
+		xor    %eax,%eax
+		mov    0xc(%esp),%al
+		inc    %eax
+		imul   %eax,%edx
+		mov    _trackbuf,%ebx
+		mov    %edx,0x4(%esp)
+		test   %ebx,%ebx
+		jne    jump_fe7c5
+		mov    $0x2000,%edx
+		mov    0x45c(%esi),%ecx
+		add    %edx,%ecx
+		mov    0x49c(%esi),%edi
+		mov    %ecx,0x45c(%esi)
+		cmp    %edi,%ecx
+		jbe    jump_fe7ab
+		mov    %ecx,0x49c(%esi)
+	jump_fe7ab:
+		push   %edx
+		call   RADMALLOC
+		mov    %eax,_trackbuf
+		test   %eax,%eax
+		jne    jump_fe7c5
+		xor    %al,%al
+		add    $0x14,%esp
+		pop    %ebp
+		pop    %edi
+		pop    %esi
+		pop    %ecx
+		pop    %ebx
+		ret
+	jump_fe7c5:
+		movzbl 0x10(%esp),%ebp
+		mov    $0x70,%ecx
+		xor    %al,%al
+		mov    0x404(%esi,%ebp,4),%edi
+		cld
+		mov    %al,%ah
+		mov    %ax,%bx
+		shl    $0x10,%eax
+		mov    %bx,%ax
+		mov    %cl,%bl
+		shr    $0x2,%ecx
+		rep stos %eax,%es:(%edi)
+		mov    %bl,%cl
+		and    $0x3,%cl
+		rep stos %al,%es:(%edi)
+		mov    $0x186a0,%ebx
+		mov    0x400(%esi),%ecx
+		mov    0x4(%esp),%eax
+		shl    $0x7,%ecx
+		mul    %ecx
+		div    %ebx
+		mov    0x404(%esi,%ebp,4),%edx
+		mov    %eax,0x1c(%edx)
+		mov    0x4(%esp),%eax
+		mov    0x404(%esi,%ebp,4),%edx
+		shl    $0x6,%eax
+		mov    %eax,0x24(%edx)
+		mov    0x404(%esi,%ebp,4),%eax
+		mov    0x1c(%eax),%edx
+		mov    0x4(%esp),%ebx
+		shr    $0x6,%edx
+		add    %ebx,%edx
+		add    $0xfff,%edx
+		xor    %dl,%dl
+		and    $0xf0,%dh
+		mov    %edx,0x18(%eax)
+		mov    0x404(%esi,%ebp,4),%eax
+		cmpl   $0x2000,0x18(%eax)
+		jae    jump_fe85b
+		movl   $0x2000,0x18(%eax)
+	jump_fe85b:
+		xor    %eax,%eax
+		mov    0x10(%esp),%al
+		shl    $0x2,%eax
+		lea    (%esi,%eax,1),%edi
+		mov    0x404(%edi),%edx
+		mov    %esi,%eax
+		mov    0x18(%edx),%edx
+		call   smkmalloc_
+		mov    %eax,%edx
+		mov    0x404(%edi),%eax
+		mov    %edx,0x8(%eax)
+		mov    0x404(%edi),%eax
+		mov    %edx,0xc(%eax)
+		mov    0x404(%edi),%eax
+		mov    %edx,(%eax)
+		mov    0x404(%edi),%eax
+		mov    0x18(%eax),%ebp
+		add    %ebp,%edx
+		mov    %edx,0x4(%eax)
+		mov    0x404(%edi),%eax
+		cmpl   $0x0,(%eax)
+		jne    jump_fe8b7
+		xor    %al,%al
+		add    $0x14,%esp
+		pop    %ebp
+		pop    %edi
+		pop    %esi
+		pop    %ecx
+		pop    %ebx
+		ret
+	jump_fe8b7:
+		mov    0x4(%esp),%edx
+		mov    %edx,0x14(%eax)
+		mov    0x404(%edi),%eax
+		mov    (%esp),%edx
+		mov    %edx,0x40(%eax)
+		xor    %eax,%eax
+		mov    0x404(%edi),%edx
+		mov    0x8(%esp),%al
+		mov    %eax,0x48(%edx)
+		xor    %edx,%edx
+		mov    0x404(%edi),%eax
+		mov    0xc(%esp),%dl
+		mov    %edx,0x4c(%eax)
+		mov    0x404(%edi),%ebx
+		push   %ebx
+		mov    0x384(%esi),%ecx
+		push   %ecx
+		call   *_LowSoundOpenAddr
+		test   %al,%al
+		jne    jump_fe92e
+		mov    0x404(%edi),%eax
+		mov    (%eax),%edx
+		push   %edx
+		call   RADFREE
+		mov    0x404(%edi),%eax
+		mov    0x45c(%esi),%ebx
+		sub    0x18(%eax),%ebx
+		xor    %al,%al
+		mov    %ebx,0x45c(%esi)
+		add    $0x14,%esp
+		pop    %ebp
+		pop    %edi
+		pop    %esi
+		pop    %ecx
+		pop    %ebx
+		ret
+	jump_fe92e:
+		mov    0x404(%edi),%eax
+		mov    0x1c(%eax),%edx
+		mov    0x18(%edi),%ecx
+		shr    $0x7,%edx
+		sub    %edx,%ecx
+		mov    %ecx,0x30(%eax)
+		cmpl   $0xffffffff,0x420(%esi)
+		jne    jump_fe957
+		xor    %eax,%eax
+		mov    0x10(%esp),%al
+		mov    %eax,0x420(%esi)
+	jump_fe957:
+		mov    _sounds,%ebp
+		inc    %ebp
+		mov    $0x1,%al
+		mov    %ebp,_sounds
+	jump_fe966:
+		add    $0x14,%esp
+		pop    %ebp
+		pop    %edi
+		pop    %esi
+		pop    %ecx
+		pop    %ebx
+		ret
+
+
+/*----------------------------------------------------------------*/
+setuptheframe_:
+/*----------------------------------------------------------------*/
+		push   %ebx
+		push   %ecx
+		push   %edx
+		push   %esi
+		push   %edi
+		push   %ebp
+		sub    $0x318,%esp
+		mov    %eax,0x300(%esp)
+		mov    0x370(%eax),%edx
+		sub    0xc(%eax),%edx
+		movl   $0x0,0x3f8(%eax)
+		test   %edx,%edx
+		jl     jump_fea25
+		testb  $0x1,0x14(%eax)
+		je     jump_fea08
+		test   %edx,%edx
+		jne    jump_fe9f5
+		mov    0x300(%esp),%edx
+		testb  $0x2,0x385(%edx)
+		jne    jump_fea25
+		mov    0x300(%esp),%ebx
+		mov    0x3ac(%edx),%edx
+		mov    %edx,0x3b0(%ebx)
+		mov    0x370(%ebx),%edx
+		mov    0x3b8(%ebx),%ebx
+		mov    (%ebx,%edx,4),%ebx
+		mov    0x300(%esp),%edx
+		mov    0x300(%esp),%eax
+		mov    0x3ac(%edx),%edx
+		call   blockread_
+		jmp    jump_fea25
+	jump_fe9f5:
+		mov    0x300(%esp),%edx
+		movl   $0x1,0x370(%edx)
+		jmp    jump_fea19
+	jump_fea08:
+		mov    0x300(%esp),%edx
+		movl   $0x0,0x370(%edx)
+	jump_fea19:
+		mov    0x300(%esp),%eax
+		call   gotoframe_
+	jump_fea25:
+		mov    0x300(%esp),%edx
+		mov    0x300(%esp),%ebx
+		mov    0x3b0(%edx),%edx
+		mov    %edx,0x3c0(%ebx)
+		mov    0x300(%esp),%esi
+		mov    0x3bc(%ebx),%ebx
+		add    0x370(%esi),%ebx
+		mov    (%ebx),%al
+		test   $0x1,%al
+		je     jump_fea61
+		xor    %ebx,%ebx
+		mov    (%edx),%bl
+		shl    $0x2,%ebx
+		add    %ebx,%edx
+	jump_fea61:
+		test   $0x2,%al
+		je     jump_fea69
+		mov    %edx,%esi
+		jmp    jump_fea6b
+	jump_fea69:
+		xor    %esi,%esi
+	jump_fea6b:
+		mov    0x300(%esp),%ebx
+		mov    %esi,0x3c4(%ebx)
+		test   %esi,%esi
+		je     jump_fea7e
+		add    (%edx),%edx
+	jump_fea7e:
+		test   $0x4,%al
+		je     jump_fea86
+		mov    %edx,%esi
+		jmp    jump_fea88
+	jump_fea86:
+		xor    %esi,%esi
+	jump_fea88:
+		mov    0x300(%esp),%ebx
+		mov    %esi,0x3c8(%ebx)
+		test   %esi,%esi
+		je     jump_fea9b
+		add    (%edx),%edx
+	jump_fea9b:
+		test   $0x8,%al
+		je     jump_feaa3
+		mov    %edx,%esi
+		jmp    jump_feaa5
+	jump_feaa3:
+		xor    %esi,%esi
+	jump_feaa5:
+		mov    0x300(%esp),%ebx
+		mov    %esi,0x3cc(%ebx)
+		test   %esi,%esi
+		je     jump_feab8
+		add    (%edx),%edx
+	jump_feab8:
+		test   $0x10,%al
+		je     jump_feac0
+		mov    %edx,%esi
+		jmp    jump_feac2
+	jump_feac0:
+		xor    %esi,%esi
+	jump_feac2:
+		mov    0x300(%esp),%ebx
+		mov    %esi,0x3d0(%ebx)
+		test   %esi,%esi
+		je     jump_fead5
+		add    (%edx),%edx
+	jump_fead5:
+		test   $0x20,%al
+		je     jump_feadd
+		mov    %edx,%esi
+		jmp    jump_feadf
+	jump_feadd:
+		xor    %esi,%esi
+	jump_feadf:
+		mov    0x300(%esp),%ebx
+		mov    %esi,0x3d4(%ebx)
+		test   %esi,%esi
+		je     jump_feaf2
+		add    (%edx),%edx
+	jump_feaf2:
+		test   $0x40,%al
+		je     jump_feafa
+		mov    %edx,%esi
+		jmp    jump_feafc
+	jump_feafa:
+		xor    %esi,%esi
+	jump_feafc:
+		mov    0x300(%esp),%ebx
+		mov    %esi,0x3d8(%ebx)
+		test   %esi,%esi
+		je     jump_feb0f
+		add    (%edx),%edx
+	jump_feb0f:
+		test   $0x80,%al
+		je     jump_feb17
+		mov    %edx,%esi
+		jmp    jump_feb19
+	jump_feb17:
+		xor    %esi,%esi
+	jump_feb19:
+		mov    0x300(%esp),%ebx
+		mov    %esi,0x3dc(%ebx)
+		test   %esi,%esi
+		je     jump_feb2c
+		add    (%edx),%edx
+	jump_feb2c:
+		mov    0x300(%esp),%ebx
+		mov    %edx,0x3e0(%ebx)
+		test   $0x1,%al
+		je     jump_fecb0
+		mov    0x300(%esp),%ebp
+		mov    $0x300,%ecx
+		mov    %esp,%edi
+		mov    0x3b0(%ebx),%edx
+		add    $0x6c,%ebp
+		xor    %ebx,%ebx
+		mov    %ebp,%esi
+		mov    %ebx,0x30c(%esp)
+		cld
+		mov    %cl,%bl
+		shr    $0x2,%ecx
+		rep movsl %ds:(%esi),%es:(%edi)
+		mov    %bl,%cl
+		and    $0x3,%cl
+		rep movsb %ds:(%esi),%es:(%edi)
+		mov    %esp,%ebx
+		inc    %edx
+		mov    %ebx,0x304(%esp)
+	jump_feb7c:
+		mov    (%edx),%bh
+		test   $0x80,%bh
+		je     jump_febf3
+		mov    %bh,%al
+		and    $0x7f,%al
+		inc    %al
+		movzbl %al,%esi
+		lea    (%esi,%esi,2),%esi
+		mov    %esi,0x308(%esp)
+		xor    %esi,%esi
+		mov    0x30c(%esp),%si
+		mov    0x304(%esp),%edi
+		lea    (%esi,%esi,2),%esi
+		mov    0x308(%esp),%ecx
+		add    %edi,%esi
+		mov    %ebp,%edi
+		mov    %al,0x314(%esp)
+		cld
+		mov    %cl,%bl
+		shr    $0x2,%ecx
+		rep movsl %ds:(%esi),%es:(%edi)
+		mov    %bl,%cl
+		and    $0x3,%cl
+		rep movsb %ds:(%esi),%es:(%edi)
+		mov    0x308(%esp),%eax
+		movzbw 0x314(%esp),%si
+		add    %eax,%ebp
+		mov    0x30c(%esp),%eax
+		add    %esi,%eax
+		inc    %edx
+		mov    %eax,0x30c(%esp)
+		jmp    jump_fec7b
+	jump_febf3:
+		test   $0x40,%bh
+		je     jump_fec61
+		mov    %bh,%al
+		and    $0x3f,%al
+		inc    %al
+		movzbl %al,%esi
+		lea    (%esi,%esi,2),%esi
+		mov    %esi,0x308(%esp)
+		movzbl 0x1(%edx),%esi
+		mov    0x304(%esp),%ecx
+		lea    (%esi,%esi,2),%esi
+		mov    %ebp,%edi
+		add    %ecx,%esi
+		mov    0x308(%esp),%ecx
+		mov    %al,0x310(%esp)
+		cld
+		mov    %cl,%bl
+		shr    $0x2,%ecx
+		rep movsl %ds:(%esi),%es:(%edi)
+		mov    %bl,%cl
+		and    $0x3,%cl
+		rep movsb %ds:(%esi),%es:(%edi)
+		mov    0x308(%esp),%esi
+		mov    0x30c(%esp),%edi
+		add    %esi,%ebp
+		movzbw 0x310(%esp),%si
+		add    %esi,%edi
+		add    $0x2,%edx
+		mov    %edi,0x30c(%esp)
+		jmp    jump_fec7b
+	jump_fec61:
+		mov    0x30c(%esp),%ecx
+		add    $0x3,%ebp
+		mov    (%edx),%esi
+		add    $0x3,%edx
+		inc    %ecx
+		mov    %esi,-0x3(%ebp)
+		mov    %ecx,0x30c(%esp)
+	jump_fec7b:
+		cmpw   $0x100,0x30c(%esp)
+		jb     jump_feb7c
+		mov    0x300(%esp),%edx
+		mov    0x300(%esp),%ebx
+		mov    0x3b4(%edx),%edx
+		cmp    0x370(%ebx),%edx
+		je     jump_fecb0
+		movl   $0x1,0x68(%ebx)
+		jmp    jump_fecbe
+	jump_fecb0:
+		mov    0x300(%esp),%edx
+		movl   $0x0,0x68(%edx)
+	jump_fecbe:
+		add    $0x318,%esp
+		pop    %ebp
+		pop    %edi
+		pop    %esi
+		pop    %edx
+		pop    %ecx
+		pop    %ebx
+		ret
+
+
+/*----------------------------------------------------------------*/
+gotoframe_:
+/*----------------------------------------------------------------*/
+		push   %ebx
+		push   %ecx
+		push   %edx
+		push   %esi
+		push   %edi
+		push   %ebp
+		sub    $0x4,%esp
+		mov    %eax,%ebp
+		cmpl   $0x0,0x370(%eax)
+		jne    jump_fedac
+		lea    0x6c(%eax),%edi
+		mov    $0x304,%ecx
+		xor    %al,%al
+		cld
+		mov    %al,%ah
+		mov    %ax,%bx
+		shl    $0x10,%eax
+		mov    %bx,%ax
+		mov    %cl,%bl
+		shr    $0x2,%ecx
+		rep stos %eax,%es:(%edi)
+		mov    %bl,%cl
+		and    $0x3,%cl
+		rep stos %al,%es:(%edi)
+		mov    0x420(%ebp),%ebx
+		cmp    $0xffffffff,%ebx
+		je     jump_fedac
+		mov    %ebx,%eax
+		mov    0x404(%ebp,%eax,4),%eax
+		cmpl   $0x0,0x28(%eax)
+		je     jump_fedac
+		mov    $0x1,%edx
+		lea    (%ebx,%edx,1),%eax
+		cmp    $0x7,%eax
+		jae    jump_fed59
+		lea    0x0(,%eax,4),%edi
+		add    %ebp,%edi
+		lea    0x1c(%ebp),%esi
+	jump_fed47:
+		cmpl   $0x0,0x404(%edi)
+		je     jump_fed51
+		inc    %edx
+	jump_fed51:
+		add    $0x4,%edi
+		inc    %eax
+		cmp    %esi,%edi
+		jb     jump_fed47
+	jump_fed59:
+		cmp    _sounds,%edx
+		jne    jump_fedac
+		mov    %ebp,%edi
+		lea    0x1c(%ebp),%eax
+		mov    %eax,(%esp)
+	jump_fed69:
+		mov    0x404(%edi),%esi
+		test   %esi,%esi
+		je     jump_feda2
+		push   %esi
+		call   *EXPORT_SYMBOL(_LowSoundPurgeAddr)
+		movl   $0x0,0x10(%esi)
+		mov    (%esi),%eax
+		movl   $0x0,0x28(%esi)
+		mov    %eax,0xc(%esi)
+		mov    %eax,0x8(%esi)
+		mov    0x24(%esi),%edx
+		mov    0x20(%esi),%eax
+		movl   $0x0,0x20(%esi)
+		sub    %eax,%edx
+		mov    %edx,0x24(%esi)
+	jump_feda2:
+		mov    (%esp),%ecx
+		add    $0x4,%edi
+		cmp    %ecx,%edi
+		jne    jump_fed69
+	jump_fedac:
+		mov    0x370(%ebp),%ebx
+		xor    %esi,%esi
+		xor    %edx,%edx
+		test   %ebx,%ebx
+		jbe    jump_fedd2
+		mov    0x3b8(%ebp),%eax
+	jump_fedc0:
+		inc    %edx
+		mov    (%eax),%ecx
+		add    $0x4,%eax
+		mov    0x370(%ebp),%edi
+		add    %ecx,%esi
+		cmp    %edi,%edx
+		jb     jump_fedc0
+	jump_fedd2:
+		testb  $0x2,0x385(%ebp)
+		je     jump_fedf0
+		mov    0x3ac(%ebp),%eax
+		add    %esi,%eax
+		mov    %eax,0x3b0(%ebp)
+		xor    %eax,%eax
+		jmp    jump_fef2a
+	jump_fedf0:
+		mov    0x3a8(%ebp),%eax
+		mov    0x444(%ebp),%edx
+		add    %eax,%esi
+		cmp    %edx,%esi
+		jb     jump_fee62
+		mov    0x43c(%ebp),%ebx
+		lea    (%edx,%ebx,1),%eax
+		cmp    %esi,%eax
+		jb     jump_fee62
+		mov    %esi,%eax
+		sub    %edx,%eax
+		sub    %eax,%ebx
+		mov    0x434(%ebp),%ecx
+		mov    %ebx,0x43c(%ebp)
+		add    %eax,%ecx
+		mov    0x430(%ebp),%edi
+		mov    %ecx,0x434(%ebp)
+		cmp    %edi,%ecx
+		jb     jump_feee5
+		mov    %ecx,%eax
+		mov    0x42c(%ebp),%edx
+		sub    %edi,%eax
+		add    %eax,%edx
+		mov    %edx,0x434(%ebp)
+		mov    0x440(%ebp),%eax
+		mov    0x42c(%ebp),%edx
+		add    %eax,%edx
+		mov    %edx,0x430(%ebp)
+		jmp    jump_feee5
+	jump_fee62:
+		mov    0x42c(%ebp),%eax
+		movl   $0x0,0x43c(%ebp)
+		mov    %eax,0x438(%ebp)
+		push   %esi
+		mov    %eax,0x434(%ebp)
+		mov    %eax,%edx
+		mov    0x440(%ebp),%eax
+		mov    0x394(%ebp),%ecx
+		add    %eax,%edx
+		push   %ecx
+		mov    %edx,0x430(%ebp)
+		call   ac_dos_low_level_seek
+		mov    %esi,%eax
+		add    $0x8,%esp
+		and    $0xfff,%eax
+		je     jump_feee5
+		mov    $0x1000,%ebx
+		mov    0x434(%ebp),%edx
+		sub    %eax,%ebx
+		mov    %ebp,%eax
+		movl   $0x0,0x42c(%ebp)
+		call   blockread_
+		mov    0x438(%ebp),%edi
+		mov    %eax,0x43c(%ebp)
+		add    %eax,%edi
+		mov    0x434(%ebp),%eax
+		mov    %edi,0x438(%ebp)
+		mov    %eax,0x42c(%ebp)
+	jump_feee5:
+		mov    0x385(%ebp),%dl
+		mov    %esi,0x444(%ebp)
+		test   $0x2,%dl
+		je     jump_fef02
+		xor    %eax,%eax
+		add    $0x4,%esp
+		pop    %ebp
+		pop    %edi
+		pop    %esi
+		pop    %edx
+		pop    %ecx
+		pop    %ebx
+		ret
+	jump_fef02:
+		mov    0x3ac(%ebp),%eax
+		mov    %eax,0x3b0(%ebp)
+		mov    0x370(%ebp),%edx
+		mov    0x3b8(%ebp),%eax
+		mov    (%eax,%edx,4),%ebx
+		mov    %ebp,%eax
+		mov    0x3ac(%ebp),%edx
+		call   blockread_
+	jump_fef2a:
+		add    $0x4,%esp
+		pop    %ebp
+		pop    %edi
+		pop    %esi
+		pop    %edx
+		pop    %ecx
+		pop    %ebx
+		ret
+
+
+/*----------------------------------------------------------------*/
+blockread_:
+/*----------------------------------------------------------------*/
+		push   %ecx
+		push   %esi
+		push   %edi
+		push   %ebp
+		sub    $0x18,%esp
+		mov    %eax,%ebp
+		mov    %edx,0x14(%esp)
+		mov    %ebx,0xc(%esp)
+		xor    %edx,%edx
+		mov    %edx,0x10(%esp)
+		mov    %edx,(%esp)
+		call   *_SmackTimerReadAddr
+		mov    0x42c(%ebp),%ecx
+		mov    %eax,0x8(%esp)
+		test   %ecx,%ecx
+		jne    jump_fefde
+		mov    %esp,%eax
+		push   %eax
+		mov    0x10(%esp),%esi
+		push   %esi
+		mov    %ds,%eax
+		and    $0xffff,%eax
+		push   %eax
+		mov    0x20(%esp),%edi
+		push   %edi
+		mov    0x394(%ebp),%eax
+		push   %eax
+		call   ac_dos_low_level_read
+		add    $0x14,%esp
+		mov    (%esp),%eax
+		mov    %eax,0x10(%esp)
+		jmp    jump_ff1cd
+	jump_fefde:
+		cmpl   $0x0,0x43c(%ebp)
+		je     jump_ff0c6
+		mov    0x430(%ebp),%eax
+		sub    0x434(%ebp),%eax
+		mov    0xc(%esp),%ecx
+		mov    %eax,0x4(%esp)
+		cmp    %ecx,%eax
+		jbe    jump_ff007
+		mov    %ecx,0x4(%esp)
+	jump_ff007:
+		mov    0x4(%esp),%esi
+		mov    0x43c(%ebp),%eax
+		cmp    %esi,%eax
+		jae    jump_ff019
+		mov    %eax,0x4(%esp)
+	jump_ff019:
+		mov    0x4(%esp),%ecx
+		mov    0x14(%esp),%edi
+		mov    0x434(%ebp),%esi
+		cld
+		mov    %cl,%bl
+		shr    $0x2,%ecx
+		rep movsl %ds:(%esi),%es:(%edi)
+		mov    %bl,%cl
+		and    $0x3,%cl
+		rep movsb %ds:(%esi),%es:(%edi)
+		mov    0x4(%esp),%eax
+		sub    %eax,0x43c(%ebp)
+		mov    0x444(%ebp),%edx
+		mov    0x4(%esp),%eax
+		add    %eax,%edx
+		mov    %edx,0x444(%ebp)
+		mov    0x434(%ebp),%ebx
+		add    0x4(%esp),%ebx
+		mov    0x430(%ebp),%ecx
+		mov    %ebx,0x434(%ebp)
+		cmp    %ecx,%ebx
+		jb     jump_ff09c
+		mov    0x42c(%ebp),%eax
+		mov    0x440(%ebp),%esi
+		mov    %eax,0x434(%ebp)
+		add    %esi,%eax
+		mov    0x43c(%ebp),%esi
+		mov    %eax,0x430(%ebp)
+		test   %esi,%esi
+		jne    jump_ff09c
+		mov    0x434(%ebp),%eax
+		mov    %eax,0x438(%ebp)
+	jump_ff09c:
+		mov    0x4(%esp),%eax
+		mov    0x10(%esp),%edi
+		mov    0xc(%esp),%edx
+		mov    0x14(%esp),%ebx
+		add    %eax,%edi
+		sub    %eax,%edx
+		add    %eax,%ebx
+		mov    %edi,0x10(%esp)
+		mov    %edx,0xc(%esp)
+		mov    %ebx,0x14(%esp)
+		test   %edx,%edx
+		jne    jump_fefde
+	jump_ff0c6:
+		cmpl   $0x0,_sounds
+	jump_ff0cd:
+		je     jump_ff0d5
+		call   *EXPORT_SYMBOL(_LowSoundCheckAddr)
+	jump_ff0d5:
+		mov    0xc(%esp),%edi
+		cmp    $0x1000,%edi
+		jbe    jump_ff163
+		cmp    $0x4000,%edi
+		jbe    jump_ff0f4
+		mov    $0x4000,%eax
+		jmp    jump_ff0fc
+	jump_ff0f4:
+		mov    %edi,%eax
+		shr    $0xc,%eax
+		shl    $0xc,%eax
+	jump_ff0fc:
+		lea    0x4(%esp),%esi
+		push   %esi
+		mov    %eax,0x8(%esp)
+		push   %eax
+		mov    %ds,%eax
+		and    $0xffff,%eax
+		push   %eax
+		mov    0x20(%esp),%edi
+		push   %edi
+		mov    0x394(%ebp),%eax
+		push   %eax
+		call   ac_dos_low_level_read
+		add    $0x14,%esp
+		mov    0x4(%esp),%eax
+		mov    0xc(%esp),%edx
+		mov    0x10(%esp),%ecx
+		mov    (%esp),%esi
+		sub    %eax,%edx
+		lea    (%edi,%eax,1),%ebx
+		add    %eax,%ecx
+		add    %eax,%esi
+		mov    %edx,0xc(%esp)
+		mov    %esi,(%esp)
+		mov    %ebx,0x14(%esp)
+		mov    0x444(%ebp),%edi
+		mov    %ecx,0x10(%esp)
+		add    %eax,%edi
+		mov    _sounds,%eax
+		mov    %edi,0x444(%ebp)
+		test   %eax,%eax
+		jmp    jump_ff0cd
+	jump_ff163:
+		test   %edi,%edi
+		je     jump_ff1cd
+		lea    0xfff(%edi),%eax
+		shr    $0xc,%eax
+		shl    $0xc,%eax
+		mov    %eax,0x4(%esp)
+		lea    0x4(%esp),%eax
+		push   %eax
+		mov    0x8(%esp),%edx
+		mov    0x42c(%ebp),%esi
+		push   %edx
+		mov    %ds,%eax
+		and    $0xffff,%eax
+		push   %eax
+		push   %esi
+		mov    0x394(%ebp),%ebx
+		push   %ebx
+		call   ac_dos_low_level_read
+		add    $0x14,%esp
+		mov    0x4(%esp),%eax
+		add    %eax,(%esp)
+		mov    0x42c(%ebp),%eax
+		mov    %eax,0x434(%ebp)
+		mov    0x4(%esp),%ebx
+		add    %eax,%ebx
+		mov    %ebx,0x438(%ebp)
+		mov    0x4(%esp),%eax
+		mov    %eax,0x43c(%ebp)
+		jmp    jump_fefde
+	jump_ff1cd:
+		mov    (%esp),%eax
+		mov    0x448(%ebp),%edx
+		add    %eax,%edx
+		mov    0x4a0(%ebp),%ebx
+		mov    %edx,0x448(%ebp)
+		test   %ebx,%ebx
+		je     jump_ff20a
+		mov    $0x3e8,%ecx
+		mov    (%esp),%eax
+		mul    %ecx
+		div    %ebx
+		mov    0x8(%esp),%ebx
+		add    %eax,%ebx
+		mov    %ebx,(%esp)
+	jump_ff1fd:
+		call   *_SmackTimerReadAddr
+		cmp    (%esp),%eax
+		jb     jump_ff1fd
+		jmp    jump_ff210
+	jump_ff20a:
+		call   *_SmackTimerReadAddr
+	jump_ff210:
+		mov    0x8(%esp),%esi
+		mov    0x44c(%ebp),%edi
+		sub    %esi,%eax
+		add    %eax,%edi
+		mov    0x10(%esp),%eax
+		mov    %edi,0x44c(%ebp)
+		add    $0x18,%esp
+		pop    %ebp
+		pop    %edi
+		pop    %esi
+		pop    %ecx
+		ret
+
+
+/*----------------------------------------------------------------*/
+backgroundload_:
+/*----------------------------------------------------------------*/
+		push   %ebx
+		push   %ecx
+		push   %edx
+		push   %esi
+		push   %edi
+		push   %ebp
+		sub    $0x4,%esp
+		mov    %eax,%esi
+		xor    %edx,%edx
+		mov    %edx,(%esp)
+		mov    0x370(%eax),%eax
+		cmp    0xc(%esi),%eax
+		jae    jump_ff332
+		mov    0x440(%esi),%eax
+		sub    0x43c(%esi),%eax
+		cmp    $0x1000,%eax
+		jl     jump_ff332
+		call   *_SmackTimerReadAddr
+		mov    %eax,%ebp
+		mov    %esp,%eax
+		push   %eax
+		mov    0x438(%esi),%ebx
+		push   $0x1000
+		mov    %ds,%eax
+		and    $0xffff,%eax
+		push   %eax
+		push   %ebx
+		mov    0x394(%esi),%edi
+		push   %edi
+		call   ac_dos_low_level_read
+		add    $0x14,%esp
+		mov    0x43c(%esi),%edx
+		mov    (%esp),%eax
+		add    %eax,%edx
+		mov    %edx,0x43c(%esi)
+		mov    0x438(%esi),%ebx
+		add    (%esp),%ebx
+		mov    0x430(%esi),%ecx
+		mov    %ebx,%eax
+		mov    %ebx,0x438(%esi)
+		cmp    %ecx,%ebx
+		jbe    jump_ff2d2
+		mov    0x42c(%esi),%eax
+		mov    %ebx,0x430(%esi)
+		mov    %eax,0x438(%esi)
+	jump_ff2d2:
+		mov    0x43c(%esi),%eax
+		cmp    0x458(%esi),%eax
+		jbe    jump_ff2e6
+		mov    %eax,0x458(%esi)
+	jump_ff2e6:
+		mov    (%esp),%eax
+		mov    0x450(%esi),%edx
+		add    %eax,%edx
+		mov    0x4a0(%esi),%ebx
+		mov    %edx,0x450(%esi)
+		test   %ebx,%ebx
+		je     jump_ff31c
+		mov    $0x3e8,%ecx
+		mov    (%esp),%eax
+		mul    %ecx
+		div    %ebx
+		lea    (%eax,%ebp,1),%edi
+	jump_ff310:
+		call   *_SmackTimerReadAddr
+		cmp    %edi,%eax
+		jb     jump_ff310
+		jmp    jump_ff322
+	jump_ff31c:
+		call   *_SmackTimerReadAddr
+	jump_ff322:
+		mov    0x454(%esi),%ecx
+		sub    %ebp,%eax
+		add    %eax,%ecx
+		mov    %ecx,0x454(%esi)
+	jump_ff332:
+		mov    (%esp),%eax
+		add    $0x4,%esp
+		pop    %ebp
+		pop    %edi
+		pop    %esi
+		pop    %edx
+		pop    %ecx
+		pop    %ebx
+		ret
+
+
+/*----------------------------------------------------------------*/
+smkmalloc_:
+/*----------------------------------------------------------------*/
+		push   %ebx
+		push   %ecx
+		mov    0x45c(%eax),%ebx
+		add    %edx,%ebx
+		mov    0x49c(%eax),%ecx
+		mov    %ebx,0x45c(%eax)
+		cmp    %ecx,%ebx
+		jbe    jump_ff360
+		mov    %ebx,0x49c(%eax)
+	jump_ff360:
+		push   %edx
+		call   RADMALLOC
+		pop    %ecx
+		pop    %ebx
+		ret
+
+
+/*----------------------------------------------------------------*/
+DEFSMACKTIMERSETUP:	/* 10f110 */
+/*----------------------------------------------------------------*/
+		mov    $DEFSMACKTIMERREAD,%edx
+		mov    $0x46c,%eax
+		mov    $__nullsub_12,%ebx
+		mov    %edx,_SmackTimerReadAddr
+
+		/* XXX: mov    (%eax),%eax */
+		call   ac_timer_get_18_2_hz_ticks
+
+		mov    %ebx,_SmackTimerDoneAddr
+		mov    %eax,%ecx
+		mov    %eax,_timeradjust
+		neg    %ecx
+		xor    %ebx,%ebx
+		mov    %ecx,_timeradjust
+/* XXX: cut out */
+#if 0
+		mov    $0x34,%al
+		out    %al,$0x43
+		jmp    jump_10f144
+	jump_10f144:
+		mov    %bl,%al
+		out    %al,$0x40
+		jmp    jump_10f14a
+	jump_10f14a:
+		mov    %bh,%al
+		out    %al,$0x40
+#endif
+		ret
+
+
+/*----------------------------------------------------------------*/
+__nullsub_12:	/* 0x10f150 */
+/*----------------------------------------------------------------*/
+		ret
+
+
+/*----------------------------------------------------------------*/
+DEFSMACKTIMERREAD:
+/*----------------------------------------------------------------*/
+		mov    $0x46c,%eax
+		mov    data_1ed5e4,%edx
+
+		/* mov    (%eax),%eax */
+		call   ac_timer_get_18_2_hz_ticks
+
+		cmp    %edx,%eax
+		jae    jump_10f181
+		mov    _timeradjust,%ebx
+		sub    %eax,%edx
+		add    %edx,%ebx
+		mov    %ebx,_timeradjust
+	jump_10f181:
+		mov    $0x32,%ebx
+		mov    _timeradjust,%ecx
+		mov    %eax,data_1ed5e4
+		add    %ecx,%eax
+		mov    $0xaba,%ecx
+		mul    %ecx
+		div    %ebx
+		ret
+
+
 .data
 
+_smack_malloc:
+		.long   LbMemoryAlloc_
+_smack_free:
+		.long   LbMemoryFree_
 
 data_159800:
 		.long	0x0
@@ -7098,6 +10721,32 @@ data_159a00:
 		.long   func_13b3e4
 
 
+GLOBAL (_SmackTimerReadAddr)	/* 0x159780 */
+		.long	0x0
+GLOBAL (_SmackTimerSetupAddr)
+		.long   DEFSMACKTIMERSETUP
+_SmackTimerDoneAddr:
+		.long	0x0
+
+_LowSoundOpenAddr:
+		.long	0x0
+_LowSoundOffAddr:
+		.long	0x0
+
+_sounds:
+		.long	0x0
+_trackbuf:
+		.long	0x0
+
+data_1592e8:
+		.long	0x0
+data_1592ec:
+		.long	0x0
+data_1592f8:
+		.long	0x0
+data_1592fc:
+		.long	0x0
+
 data_159e00:
 		.long	0x0
 data_159e04:
@@ -7120,3 +10769,13 @@ data_159e2c:
 		.long	0x0
 data_159e30:
 		.fill   0x10
+
+data_1e56dc:
+		.fill   0x350
+data_1e5a2c:
+		.long	0x0
+_timeradjust:
+		.long	0x0
+data_1ed5e4:
+		.long	0x0
+
