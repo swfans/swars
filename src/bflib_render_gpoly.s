@@ -3886,6 +3886,7 @@ vtable_12b390:
 		.long   func_12ac0e
 
 .section .rodata
+
 data_12b3d0:
 		.fill   0x4
 		.ascii  "\xf1\xff\xff\xff\xf2\xff\xff\xff"

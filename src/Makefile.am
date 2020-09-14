@@ -32,6 +32,7 @@ swars_SOURCES = \
 	sound_util.c \
 	sound_util.h \
 	swars.S \
+	thing_debug.s \
 	timer.c \
 	timer.h \
 	unix.c \
