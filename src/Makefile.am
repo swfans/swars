@@ -5,6 +5,14 @@ EXTRA_DIST = Makefile.windows windows.config.h
 MKW = $(PYTHON) $(top_srcdir)/util/mkwrappers
 
 swars_SOURCES = \
+	ariadne.s \
+	bflib_fileio.s \
+	bflib_fmvids.s \
+	bflib_render_gpoly.s \
+	bflib_render_plin.s \
+	bflib_render_trig.s \
+	bflib_snd_cda.s \
+	bflib_sndlib.s \
 	display.c \
 	display.h \
 	dos.c \
