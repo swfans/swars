@@ -6,6 +6,7 @@ MKW = $(PYTHON) $(top_srcdir)/util/mkwrappers
 
 swars_SOURCES = \
 	ariadne.s \
+	bflib_dernc.s \
 	bflib_fileio.s \
 	bflib_fmvids.s \
 	bflib_render_gpoly.s \

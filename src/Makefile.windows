@@ -41,6 +41,7 @@ OBJS = \
 	../obj/sound_util.o \
 	../obj/oggvorbis.o \
 	../obj/swars.o \
+	../obj/bflib_dernc.o \
 	../obj/bflib_fileio.o \
 	../obj/bflib_sndlib.o \
 	../obj/bflib_render_trig.o \
