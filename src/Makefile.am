@@ -11,10 +11,12 @@ swars_SOURCES = \
 	bflib_render_gpoly.s \
 	bflib_render_plin.s \
 	bflib_render_trig.s \
+	bflib_math.s \
 	bflib_memory.s \
 	bflib_snd_cda.s \
 	bflib_sndlib.s \
 	bflib_joyst.s \
+	bflib_vidraw.s \
 	display.c \
 	display.h \
 	dos.c \
