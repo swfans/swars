@@ -1,4 +1,5 @@
-func_dca68 (void)
+int
+LbMemorySetup (void)
 {
   DOS_Registers regs;   /* %esp + 0x54 */
   DOS_Registers oregs;  /* %esp + 0x70 */

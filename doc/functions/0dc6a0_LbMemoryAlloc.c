@@ -3,12 +3,12 @@ LbMemoryAlloc_ (size_t size)
 {
   memory_preallocate ();
 
-  blockp = &memory_block_nodes[0];
+  blockp = &memory_arenas[0];
   max_size = 0xffffffff;
   rounded_size = (size + 3) & ~4;
   res_block = NULL;
 
-  for (blockp = &memory_block_nodes[0]; blockp != NULL; blockp = blockp->next)
+  for (blockp = &memory_arenas[0]; blockp != NULL; blockp = blockp->next)
     {
       if (blockp->size >= rounded_size && blockp->size < max_size
 	  && blockp->unknown == 0

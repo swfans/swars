@@ -37,7 +37,7 @@ typedef struct MemoryBlockNode MemoryBlockNode;
 #pragma pack(1)
 
 extern MemoryBlock     memory_blocks[TABLE_SIZE];
-extern MemoryBlockNode memory_block_nodes[TABLE_SIZE];
+extern MemoryBlockNode memory_arenas[TABLE_SIZE];
 
 #pragma pack()
 
@@ -65,19 +65,19 @@ initialise_block_nodes (void)
 
   for (n = 0; n < count; n++)
     {
-      memory_block_nodes[n].address	= memory_blocks[n].address;
-      memory_block_nodes[n].size	= memory_blocks[n].size;
-      memory_block_nodes[n].block_index = n;
+      memory_arenas[n].address	= memory_blocks[n].address;
+      memory_arenas[n].size	= memory_blocks[n].size;
+      memory_arenas[n].block_index = n;
 
       if (n != 0)
-	memory_block_nodes[n].prev = &memory_block_nodes[n - 1];
+	memory_arenas[n].prev = &memory_arenas[n - 1];
       else
-	memory_block_nodes[n].prev = NULL;
+	memory_arenas[n].prev = NULL;
 
       if (n + 1 != count)
-	memory_block_nodes[n].next = &memory_block_nodes[n + 1];
+	memory_arenas[n].next = &memory_arenas[n + 1];
       else
-	memory_block_nodes[n].next = NULL;
+	memory_arenas[n].next = NULL;
     }
 }
 
@@ -90,7 +90,7 @@ memory_preallocate (void)
     return true;
 
   memset (&memory_blocks, 0, sizeof (memory_blocks));
-  memset (&memory_block_nodes, 0, sizeof (memory_block_nodes));
+  memset (&memory_arenas, 0, sizeof (memory_arenas));
 
   memory_blocks[0].address = malloc (AVAILABLE_MEMORY);
   memory_blocks[0].size    = AVAILABLE_MEMORY;

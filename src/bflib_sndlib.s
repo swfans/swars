@@ -14621,7 +14621,7 @@ AILXDIG_start_:
 
 
 /*----------------------------------------------------------------*/
-func_117a60:
+_XMI_write_log_2:
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %esi
@@ -14849,7 +14849,7 @@ func_117a60:
 
 
 /*----------------------------------------------------------------*/
-func_117c30:
+WVL_search_:
 /*----------------------------------------------------------------*/
 		push   %ecx
 		push   %esi
@@ -14877,7 +14877,7 @@ func_117c30:
 
 
 /*----------------------------------------------------------------*/
-func_117c60:
+XDIG_set_volume_:
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -14920,7 +14920,7 @@ func_117c60:
 
 
 /*----------------------------------------------------------------*/
-func_117ce0:
+XDIG_set_pitch_:
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -15016,7 +15016,7 @@ func_117ce0:
 
 
 /*----------------------------------------------------------------*/
-func_117df0:
+_XDIG_TIMB_trap:
 /*----------------------------------------------------------------*/
 		push   %ebx
 		mov    0xc(%esp),%edx
@@ -15024,7 +15024,7 @@ func_117df0:
 		mov    0x1b4(%eax),%eax
 		mov    0x10(%esp),%ebx
 		mov    0x8(%eax),%eax
-		call   func_117c30
+		call   WVL_search_
 		test   %eax,%eax
 		setne  %al
 		and    $0xff,%eax
@@ -15033,7 +15033,7 @@ func_117df0:
 
 
 /*----------------------------------------------------------------*/
-func_117e20:
+_XDIG_MIDI_trap:
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %esi
@@ -15060,7 +15060,7 @@ func_117e20:
 		push   %eax
 		lea    0x14(%esi),%eax
 		push   %eax
-		call   func_117a60
+		call   _XMI_write_log_2
 		add    $0x10,%esp
 	jump_117e6e:
 		cmp    $0x90,%ebx
@@ -15130,7 +15130,7 @@ func_117e20:
 		jne    jump_117f47
 		mov    %ebx,%edx
 		mov    %esi,%eax
-		call   func_117c60
+		call   XDIG_set_volume_
 	jump_117f47:
 		inc    %ebx
 		mov    0x514(%esi),%ecx
@@ -15155,7 +15155,7 @@ func_117e20:
 		jne    jump_117f92
 		mov    %ebx,%edx
 		mov    %esi,%eax
-		call   func_117ce0
+		call   XDIG_set_pitch_
 	jump_117f92:
 		inc    %ebx
 		mov    0x514(%esi),%ecx
@@ -15193,7 +15193,7 @@ func_117e20:
 		mov    0x20(%esp),%ebx
 		mov    0x1d4(%ebp),%edx
 		mov    0x8(%esi),%eax
-		call   func_117c30
+		call   WVL_search_
 		mov    %eax,0x494(%ebp)
 		xor    %eax,%eax
 		pop    %ebp
@@ -15218,7 +15218,7 @@ func_117e20:
 		jne    jump_11804d
 		mov    %ebx,%edx
 		mov    %esi,%eax
-		call   func_117ce0
+		call   XDIG_set_pitch_
 	jump_11804d:
 		inc    %ebx
 		mov    0x514(%esi),%edx
@@ -15232,7 +15232,7 @@ func_117e20:
 		mov    0x20(%esp),%ebx
 		mov    $0x7f,%edx
 		mov    0x8(%esi),%eax
-		call   func_117c30
+		call   WVL_search_
 		mov    %eax,0x494(%ebp)
 	jump_11807d:
 		cmpl   $0x0,0x494(%esi,%edi,4)
@@ -15322,10 +15322,10 @@ func_117e20:
 		add    $0xc,%esp
 		mov    %ebx,%edx
 		mov    %esi,%eax
-		call   func_117ce0
+		call   XDIG_set_pitch_
 		mov    %ebx,%edx
 		mov    %esi,%eax
-		call   func_117c60
+		call   XDIG_set_volume_
 		mov    0x4d4(%esi,%ebx,4),%edi
 		push   %edi
 		call   AIL_start_sample
