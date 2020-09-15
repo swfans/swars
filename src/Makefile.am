@@ -13,6 +13,7 @@ swars_SOURCES = \
 	bflib_render_trig.s \
 	bflib_snd_cda.s \
 	bflib_sndlib.s \
+	bflib_joyst.s \
 	display.c \
 	display.h \
 	dos.c \

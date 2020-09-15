@@ -48,6 +48,7 @@ OBJS = \
 	../obj/bflib_render_gpoly.o \
 	../obj/bflib_fmvids.o \
 	../obj/bflib_snd_cda.o \
+	../obj/bflib_joyst.o \
 	../obj/ariadne.o \
 	../obj/thing_debug.o \
 	../obj/timer.o \
