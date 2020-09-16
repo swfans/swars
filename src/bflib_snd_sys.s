@@ -1970,7 +1970,7 @@ GLOBAL_FUNC (SetMusicMasterVolume_)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (SetSoundMasterVolume_)
+GLOBAL_FUNC (SetSoundMasterVolume_)	/* 0xEE700 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -2000,7 +2000,7 @@ GLOBAL_FUNC (SetSoundMasterVolume_)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (game_is_sound_playing)	/* 0xee750 */
+GLOBAL_FUNC (IsSamplePlaying_)	/* 0xee750 */
 /*----------------------------------------------------------------*/
 		push   %ecx
 		push   %esi
@@ -2520,6 +2520,45 @@ GLOBAL_FUNC (StopAllSamples_)	/* 0xEE910 */
 
 
 /*----------------------------------------------------------------*/
+GLOBAL_FUNC (SetVolume_func_ee980) /* 0xee980 */
+/*----------------------------------------------------------------*/
+		push   %ebx
+		push   %ecx
+		push   %esi
+		mov    %eax,%ebx
+		cmpb   $0x0,MusicInstalled
+		je     jump_ee9dc
+		cmpb   $0x0,MusicAble
+		je     jump_ee9dc
+		cmpb   $0x0,MusicActive
+		je     jump_ee9dc
+		cmpw   $0x0,SongCurrentlyPlaying
+		je     jump_ee9dc
+		movzbl %dl,%esi
+		cmp    $0x7f,%esi
+		jg     jump_ee9dc
+		mov    SongHandle,%edx
+		push   %edx
+		call   AIL_sequence_status
+		add    $0x4,%esp
+		cmp    $0x2,%eax
+		je     jump_ee9dc
+		xor    %eax,%eax
+		mov    %bx,%ax
+		push   %eax
+		push   %esi
+		mov    SongHandle,%ebx
+		push   %ebx
+		call   AIL_set_sequence_volume
+		add    $0xc,%esp
+	jump_ee9dc:
+		pop    %esi
+		pop    %ecx
+		pop    %ebx
+		ret
+
+
+/*----------------------------------------------------------------*/
 cb_get_trigger_info: /* 0xF0340 */
 /*----------------------------------------------------------------*/
 		push   %ebx
@@ -2793,7 +2832,7 @@ GLOBAL_FUNC(SoundProgressLog_)
 
 
 /*----------------------------------------------------------------*/
-InitSound_:
+GLOBAL_FUNC(InitSound_)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -3446,7 +3485,7 @@ DetermineSoundType_:
 
 
 /*----------------------------------------------------------------*/
-InitMusic_:
+GLOBAL_FUNC(InitMusic_)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -4468,46 +4507,7 @@ FreeSound_:
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (func_ee980) /* 0xee980 */
-/*----------------------------------------------------------------*/
-		push   %ebx
-		push   %ecx
-		push   %esi
-		mov    %eax,%ebx
-		cmpb   $0x0,MusicInstalled
-		je     jump_ee9dc
-		cmpb   $0x0,MusicAble
-		je     jump_ee9dc
-		cmpb   $0x0,MusicActive
-		je     jump_ee9dc
-		cmpw   $0x0,SongCurrentlyPlaying
-		je     jump_ee9dc
-		movzbl %dl,%esi
-		cmp    $0x7f,%esi
-		jg     jump_ee9dc
-		mov    SongHandle,%edx
-		push   %edx
-		call   AIL_sequence_status
-		add    $0x4,%esp
-		cmp    $0x2,%eax
-		je     jump_ee9dc
-		xor    %eax,%eax
-		mov    %bx,%ax
-		push   %eax
-		push   %esi
-		mov    SongHandle,%ebx
-		push   %ebx
-		call   AIL_set_sequence_volume
-		add    $0xc,%esp
-	jump_ee9dc:
-		pop    %esi
-		pop    %ecx
-		pop    %ebx
-		ret
-
-
-/*----------------------------------------------------------------*/
-GLOBAL_FUNC (func_f0a20)	/* 0xf0a20 */
+GLOBAL_FUNC (SetSampleVolume_)	/* 0xf0a20 */
 /*----------------------------------------------------------------*/
 		push   %ecx
 		push   %esi
@@ -4569,7 +4569,7 @@ GLOBAL_FUNC (func_f0a20)	/* 0xf0a20 */
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (func_f0ab0)
+GLOBAL_FUNC (SetSamplePan_)	/* 0xF0AB0 */
 /*----------------------------------------------------------------*/
 		push   %ecx
 		push   %esi
@@ -4624,7 +4624,7 @@ GLOBAL_FUNC (func_f0ab0)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (func_f1720)
+GLOBAL_FUNC (StopSample_)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -4675,7 +4675,7 @@ GLOBAL_FUNC (func_f1720)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (func_f1790)
+GLOBAL_FUNC (PlaySampleFromAddress_)
 /*----------------------------------------------------------------*/
 		push   %esi
 		push   %edi
