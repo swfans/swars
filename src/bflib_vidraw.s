@@ -4699,3 +4699,1027 @@ func_fadd0:
 		ret    $0x4
 
 
+/*----------------------------------------------------------------*/
+GLOBAL_FUNC (LbDrawTriangle_)
+/*----------------------------------------------------------------*/
+		push   %ebp
+		mov    %esp,%ebp
+		sub    $0x10,%esp
+		mov    %eax,-0x10(%ebp)
+		mov    %edx,-0xc(%ebp)
+		mov    %ebx,-0x8(%ebp)
+		mov    %ecx,-0x4(%ebp)
+		testb  $0x10,EXPORT_SYMBOL(lbDisplay__DrawFlags)
+		je     jump_ef4c2
+		xor    %eax,%eax
+		mov    0x10(%ebp),%al
+		mov    -0x4(%ebp),%ecx
+		mov    -0x8(%ebp),%ebx
+		mov    -0xc(%ebp),%edx
+		push   %eax
+		mov    -0x10(%ebp),%eax
+		call   LbDrawLine_
+		xor    %eax,%eax
+		mov    0x10(%ebp),%al
+		mov    0xc(%ebp),%ecx
+		mov    0x8(%ebp),%ebx
+		mov    -0x4(%ebp),%edx
+		push   %eax
+		mov    -0x8(%ebp),%eax
+		call   LbDrawLine_
+		xor    %eax,%eax
+		mov    0x10(%ebp),%al
+		mov    -0xc(%ebp),%ecx
+		mov    -0x10(%ebp),%ebx
+		mov    0xc(%ebp),%edx
+		push   %eax
+		mov    0x8(%ebp),%eax
+		call   LbDrawLine_
+		jmp    jump_ef4e1
+	jump_ef4c2:
+		xor    %eax,%eax
+		mov    0x10(%ebp),%al
+		push   %eax
+		mov    0xc(%ebp),%eax
+		push   %eax
+		mov    0x8(%ebp),%eax
+		mov    -0x4(%ebp),%ecx
+		mov    -0x8(%ebp),%ebx
+		mov    -0xc(%ebp),%edx
+		push   %eax
+		mov    -0x10(%ebp),%eax
+		call   LbDrawTriangleFilled_
+	jump_ef4e1:
+		mov    %ebp,%esp
+		pop    %ebp
+		ret    $0xc
+
+
+/*----------------------------------------------------------------*/
+GLOBAL_FUNC (LbSpriteSetScalingData)
+/*----------------------------------------------------------------*/
+		pusha
+		mov    0x24(%esp),%esi
+		mov    0x28(%esp),%edi
+		sub    $0x20,%esp
+		mov    $0x1,%ebp
+		cmp    %ebx,%esi
+		jg     jump_136a23
+		cmp    %ecx,%edi
+		jg     jump_136a23
+		xor    %ebp,%ebp
+	jump_136a23:
+		mov    %ebp,data_1f0350
+		mov    EXPORT_SYMBOL(lbDisplay__GraphicsWindowWidth),%ebp
+		mov    %ebp,0x18(%esp)
+		mov    EXPORT_SYMBOL(lbDisplay__GraphicsWindowHeight),%ebp
+		mov    %ebp,0x1c(%esp)
+		mov    %eax,(%esp)
+		mov    %edx,0x4(%esp)
+		mov    %ebx,0x8(%esp)
+		mov    %ecx,0xc(%esp)
+		mov    %esi,0x10(%esp)
+		mov    %edi,0x14(%esp)
+		or     %eax,%eax
+		js     jump_136b52
+		mov    %eax,%ebp
+		add    %esi,%ebp
+		cmp    0x18(%esp),%ebp
+		jge    jump_136b52
+		mov    (%esp),%esi
+		shl    $0x10,%esi
+		mov    0x10(%esp),%eax
+		mov    0x8(%esp),%ebx
+		shl    $0x10,%eax
+		xor    %edx,%edx
+		idiv   %ebx
+		lea    data_1f0354,%edx
+		mov    0x8(%esp),%ecx
+		mov    %eax,%ebx
+		sar    %ebx
+		add    %ebx,%esi
+		mov    %esi,%edi
+		sar    $0x10,%edi
+		cs
+		mov    %eax,%eax
+		cs
+		mov    %eax,%eax
+		cs
+		mov    %eax,%eax
+		cs
+		mov    %eax,%eax
+	jump_136aa0:
+		mov    %edi,(%edx)
+		add    %eax,%esi
+		mov    %esi,%ebx
+		sar    $0x10,%ebx
+		sub    %edi,%ebx
+		mov    %ebx,0x4(%edx)
+		add    %ebx,%edi
+		dec    %ecx
+		je     jump_136b50
+		mov    %edi,0x8(%edx)
+		add    %eax,%esi
+		mov    %esi,%ebx
+		sar    $0x10,%ebx
+		sub    %edi,%ebx
+		mov    %ebx,0xc(%edx)
+		add    %ebx,%edi
+		dec    %ecx
+		je     jump_136b50
+		mov    %edi,0x10(%edx)
+		add    %eax,%esi
+		mov    %esi,%ebx
+		sar    $0x10,%ebx
+		sub    %edi,%ebx
+		mov    %ebx,0x14(%edx)
+		add    %ebx,%edi
+		dec    %ecx
+		je     jump_136b50
+		mov    %edi,0x18(%edx)
+		add    %eax,%esi
+		mov    %esi,%ebx
+		sar    $0x10,%ebx
+		sub    %edi,%ebx
+		mov    %ebx,0x1c(%edx)
+		add    %ebx,%edi
+		dec    %ecx
+		je     jump_136b50
+		mov    %edi,0x20(%edx)
+		add    %eax,%esi
+		mov    %esi,%ebx
+		sar    $0x10,%ebx
+		sub    %edi,%ebx
+		mov    %ebx,0x24(%edx)
+		add    %ebx,%edi
+		dec    %ecx
+		je     jump_136b50
+		mov    %edi,0x28(%edx)
+		add    %eax,%esi
+		mov    %esi,%ebx
+		sar    $0x10,%ebx
+		sub    %edi,%ebx
+		mov    %ebx,0x2c(%edx)
+		add    %ebx,%edi
+		dec    %ecx
+		je     jump_136b50
+		mov    %edi,0x30(%edx)
+		add    %eax,%esi
+		mov    %esi,%ebx
+		sar    $0x10,%ebx
+		sub    %edi,%ebx
+		mov    %ebx,0x34(%edx)
+		add    %ebx,%edi
+		dec    %ecx
+		je     jump_136b50
+		mov    %edi,0x38(%edx)
+		add    %eax,%esi
+		mov    %esi,%ebx
+		sar    $0x10,%ebx
+		sub    %edi,%ebx
+		mov    %ebx,0x3c(%edx)
+		add    %ebx,%edi
+		dec    %ecx
+		je     jump_136b50
+		add    $0x40,%edx
+		jmp    jump_136aa0
+	jump_136b50:
+		jmp    jump_136bb5
+	jump_136b52:
+		mov    (%esp),%esi
+		shl    $0x10,%esi
+		mov    0x10(%esp),%eax
+		mov    0x8(%esp),%ebx
+		shl    $0x10,%eax
+		xor    %edx,%edx
+		idiv   %ebx
+		lea    data_1f0354,%edx
+		mov    0x8(%esp),%ecx
+		mov    %eax,%ebx
+		sar    %ebx
+		add    %ebx,%esi
+		mov    %esi,%edi
+		sar    $0x10,%edi
+		jns    jump_136b83
+		mov    $0x0,%edi
+	jump_136b83:
+		cmp    0x18(%esp),%edi
+		jl     jump_136b8d
+		mov    0x18(%esp),%edi
+	jump_136b8d:
+		mov    %edi,(%edx)
+		add    %eax,%esi
+		mov    %esi,%ebx
+		sar    $0x10,%ebx
+		jns    jump_136b9c
+		xor    %ebx,%ebx
+		mov    %eax,%eax
+	jump_136b9c:
+		cmp    0x18(%esp),%ebx
+		jl     jump_136ba8
+		mov    0x18(%esp),%ebx
+		mov    %eax,%eax
+	jump_136ba8:
+		sub    %edi,%ebx
+		mov    %ebx,0x4(%edx)
+		add    %ebx,%edi
+		add    $0x8,%edx
+		dec    %ecx
+		jne    jump_136b8d
+	jump_136bb5:
+		or     %edx,%edx
+		js     jump_136cb2
+		mov    %edx,%ebx
+		add    %edi,%ebx
+		cmp    0x1c(%esp),%ebx
+		jge    jump_136cb2
+		mov    0x4(%esp),%esi
+		shl    $0x10,%esi
+		mov    0x14(%esp),%eax
+		mov    0xc(%esp),%ebx
+		shl    $0x10,%eax
+		xor    %edx,%edx
+		idiv   %ebx
+		lea    data_1f0754,%edx
+		mov    0xc(%esp),%ecx
+		mov    %eax,%ebx
+		sar    %ebx
+		add    %ebx,%esi
+		mov    %esi,%edi
+		sar    $0x10,%edi
+		cs
+		mov    %eax,%eax
+		cs
+		mov    %eax,%eax
+		cs
+		mov    %eax,%eax
+		nop
+	jump_136c00:
+		mov    %edi,(%edx)
+		add    %eax,%esi
+		mov    %esi,%ebx
+		sar    $0x10,%ebx
+		sub    %edi,%ebx
+		mov    %ebx,0x4(%edx)
+		add    %ebx,%edi
+		dec    %ecx
+		je     jump_136cb0
+		mov    %edi,0x8(%edx)
+		add    %eax,%esi
+		mov    %esi,%ebx
+		sar    $0x10,%ebx
+		sub    %edi,%ebx
+		mov    %ebx,0xc(%edx)
+		add    %ebx,%edi
+		dec    %ecx
+		je     jump_136cb0
+		mov    %edi,0x10(%edx)
+		add    %eax,%esi
+		mov    %esi,%ebx
+		sar    $0x10,%ebx
+		sub    %edi,%ebx
+		mov    %ebx,0x14(%edx)
+		add    %ebx,%edi
+		dec    %ecx
+		je     jump_136cb0
+		mov    %edi,0x18(%edx)
+		add    %eax,%esi
+		mov    %esi,%ebx
+		sar    $0x10,%ebx
+		sub    %edi,%ebx
+		mov    %ebx,0x1c(%edx)
+		add    %ebx,%edi
+		dec    %ecx
+		je     jump_136cb0
+		mov    %edi,0x20(%edx)
+		add    %eax,%esi
+		mov    %esi,%ebx
+		sar    $0x10,%ebx
+		sub    %edi,%ebx
+		mov    %ebx,0x24(%edx)
+		add    %ebx,%edi
+		dec    %ecx
+		je     jump_136cb0
+		mov    %edi,0x28(%edx)
+		add    %eax,%esi
+		mov    %esi,%ebx
+		sar    $0x10,%ebx
+		sub    %edi,%ebx
+		mov    %ebx,0x2c(%edx)
+		add    %ebx,%edi
+		dec    %ecx
+		je     jump_136cb0
+		mov    %edi,0x30(%edx)
+		add    %eax,%esi
+		mov    %esi,%ebx
+		sar    $0x10,%ebx
+		sub    %edi,%ebx
+		mov    %ebx,0x34(%edx)
+		add    %ebx,%edi
+		dec    %ecx
+		je     jump_136cb0
+		mov    %edi,0x38(%edx)
+		add    %eax,%esi
+		mov    %esi,%ebx
+		sar    $0x10,%ebx
+		sub    %edi,%ebx
+		mov    %ebx,0x3c(%edx)
+		add    %ebx,%edi
+		dec    %ecx
+		je     jump_136cb0
+		add    $0x40,%edx
+		jmp    jump_136c00
+	jump_136cb0:
+		jmp    jump_136d15
+	jump_136cb2:
+		mov    0x4(%esp),%esi
+		shl    $0x10,%esi
+		mov    0x14(%esp),%eax
+		mov    0xc(%esp),%ebx
+		shl    $0x10,%eax
+		xor    %edx,%edx
+		idiv   %ebx
+		lea    data_1f0754,%edx
+		mov    0xc(%esp),%ecx
+		mov    %eax,%ebx
+		sar    %ebx
+		add    %ebx,%esi
+		mov    %esi,%edi
+		sar    $0x10,%edi
+		jns    jump_136ce4
+		mov    $0x0,%edi
+	jump_136ce4:
+		cmp    0x1c(%esp),%edi
+		jl     jump_136cee
+		mov    0x1c(%esp),%edi
+	jump_136cee:
+		mov    %edi,(%edx)
+		add    %eax,%esi
+		mov    %esi,%ebx
+		sar    $0x10,%ebx
+		jns    jump_136cfc
+		xor    %ebx,%ebx
+		nop
+	jump_136cfc:
+		cmp    0x1c(%esp),%ebx
+		jl     jump_136d08
+		mov    0x1c(%esp),%ebx
+		mov    %eax,%eax
+	jump_136d08:
+		sub    %edi,%ebx
+		mov    %ebx,0x4(%edx)
+		add    %ebx,%edi
+		add    $0x8,%edx
+		dec    %ecx
+		jne    jump_136cee
+	jump_136d15:
+		add    $0x20,%esp
+		popa
+		ret    $0x8
+
+
+/*----------------------------------------------------------------*/
+LbDrawTriangleFilled_:
+/*----------------------------------------------------------------*/
+		push   %ebp
+		mov    %esp,%ebp
+		add    $0xffffffb4,%esp
+		push   %eax
+		push   %ebx
+		push   %ecx
+		push   %edx
+		push   %esi
+		push   %edi
+		mov    %eax,-0x4(%ebp)
+		mov    %edx,-0x8(%ebp)
+		mov    %ebx,-0xc(%ebp)
+		mov    %ecx,-0x10(%ebp)
+		lea    -0x14(%ebp),%esi
+		lea    -0x18(%ebp),%edi
+		lea    -0x1c(%ebp),%ecx
+		mov    -0x4(%ebp),%eax
+		mov    %ax,(%esi)
+		mov    -0xc(%ebp),%eax
+		mov    %ax,(%edi)
+		mov    0x8(%ebp),%eax
+		mov    %ax,(%ecx)
+		mov    -0x8(%ebp),%eax
+		mov    %ax,0x2(%esi)
+		mov    -0x10(%ebp),%ebx
+		mov    %bx,0x2(%edi)
+		mov    0xc(%ebp),%edx
+		mov    %dx,0x2(%ecx)
+		mov    0x2(%esi),%ax
+		mov    0x2(%edi),%bx
+		mov    0x2(%ecx),%dx
+		cmp    %bx,%ax
+		je     jump_138959
+		jg     jump_13891b
+		cmp    %dx,%ax
+		je     jump_138944
+		js     jump_13899b
+		xchg   %esi,%ecx
+		xchg   %edi,%ecx
+		jmp    jump_1389a6
+	jump_13891b:
+		cmp    %dx,%ax
+		je     jump_138d51
+		js     jump_138b79
+		cmp    %dx,%bx
+		je     jump_138e56
+		js     jump_13893e
+		xchg   %esi,%ecx
+		xchg   %edi,%ecx
+		jmp    jump_138b7d
+	jump_13893e:
+		xchg   %esi,%edi
+		xchg   %edi,%ecx
+		jmp    jump_1389a6
+	jump_138944:
+		mov    (%esi),%ax
+		cmp    (%ecx),%ax
+		jle    jump_139010
+		xchg   %esi,%ecx
+		xchg   %edi,%ecx
+		jmp    jump_138e66
+	jump_138959:
+		cmp    %dx,%ax
+		je     jump_139010
+		js     jump_138979
+		mov    (%esi),%ax
+		cmp    (%edi),%ax
+		jle    jump_139010
+		xchg   %esi,%ecx
+		xchg   %edi,%ecx
+		jmp    jump_138d61
+	jump_138979:
+		mov    (%edi),%ax
+		cmp    (%esi),%ax
+		jle    jump_139010
+		jmp    jump_138e66
+	jump_13898a:
+		mov    (%edi),%ax
+		cmp    (%ecx),%ax
+		jle    jump_139010
+		jmp    jump_138d61
+	jump_13899b:
+		cmp    %dx,%bx
+		je     jump_13898a
+		jg     jump_138b7d
+	jump_1389a6:
+		mov    0x2(%esi),%ax
+		mov    %ax,-0x46(%ebp)
+		or     %ax,%ax
+		jns    jump_1389c2
+		mov    EXPORT_SYMBOL(lbDisplay__WScreen),%ebx
+		mov    %ebx,-0x20(%ebp)
+		movb   $0x1,-0x47(%ebp)
+		jmp    jump_1389e6
+	jump_1389c2:
+		cmp    EXPORT_SYMBOL(lbDisplay__GraphicsWindowHeight),%ax
+		jge    jump_139010
+		movzwl %ax,%ebx
+		imul   EXPORT_SYMBOL(lbDisplay__GraphicsScreenWidth),%ebx
+		add    EXPORT_SYMBOL(lbDisplay__WScreen),%ebx
+		mov    %ebx,-0x20(%ebp)
+		movb   $0x0,-0x47(%ebp)
+	jump_1389e6:
+		movzwl 0x2(%ecx),%ebx
+		cmp    EXPORT_SYMBOL(lbDisplay__GraphicsWindowHeight),%bx
+		setg   -0x49(%ebp)
+		sub    %ax,%bx
+		mov    %ebx,-0x30(%ebp)
+		mov    %ebx,-0x40(%ebp)
+		mov    0x2(%edi),%bx
+		cmp    EXPORT_SYMBOL(lbDisplay__GraphicsWindowHeight),%bx
+		setg   -0x48(%ebp)
+		sub    %ax,%bx
+		mov    %ebx,-0x34(%ebp)
+		mov    (%ecx),%ax
+		sub    (%esi),%ax
+		shl    $0x10,%eax
+		cltd
+		idivl  -0x30(%ebp)
+		mov    %eax,-0x24(%ebp)
+		mov    (%edi),%ax
+		sub    (%esi),%ax
+		shl    $0x10,%eax
+		cltd
+		idivl  -0x34(%ebp)
+		cmp    -0x24(%ebp),%eax
+		jle    jump_139010
+		mov    %eax,-0x28(%ebp)
+		movzwl 0x2(%ecx),%ebx
+		sub    0x2(%edi),%bx
+		mov    (%ecx),%ax
+		sub    (%edi),%ax
+		shl    $0x10,%eax
+		cltd
+		idiv   %ebx
+		mov    %eax,-0x2c(%ebp)
+		mov    %ebx,-0x38(%ebp)
+		mov    (%edi),%ax
+		shl    $0x10,%eax
+		mov    %eax,-0x3c(%ebp)
+		mov    (%esi),%ax
+		shl    $0x10,%eax
+		mov    %eax,%ebx
+		cmpb   $0x0,-0x47(%ebp)
+		je     jump_138b0d
+		movswl -0x46(%ebp),%edi
+		neg    %edi
+		sub    %edi,-0x40(%ebp)
+		jle    jump_139010
+		mov    %edi,-0x44(%ebp)
+		cmp    -0x34(%ebp),%di
+		js     jump_138ace
+		mov    -0x24(%ebp),%edi
+		imul   -0x34(%ebp),%edi
+		add    %edi,%eax
+		mov    -0x3c(%ebp),%ebx
+		mov    -0x44(%ebp),%edi
+		sub    -0x34(%ebp),%edi
+		sub    %di,-0x38(%ebp)
+		mov    %edi,-0x44(%ebp)
+		imul   -0x24(%ebp),%edi
+		add    %edi,%eax
+		mov    -0x44(%ebp),%edi
+		imul   -0x2c(%ebp),%edi
+		add    %edi,%ebx
+		cmpb   $0x0,-0x49(%ebp)
+		je     jump_138ac3
+		mov    EXPORT_SYMBOL(lbDisplay__GraphicsWindowHeight),%edi
+		mov    %edi,-0x38(%ebp)
+		mov    %edi,-0x40(%ebp)
+	jump_138ac3:
+		lea    data_1e957c,%edi
+		jmp    jump_138b55
+	jump_138ace:
+		mov    -0x44(%ebp),%edi
+		sub    %di,-0x34(%ebp)
+		imul   -0x24(%ebp),%edi
+		add    %edi,%eax
+		mov    -0x28(%ebp),%edi
+		imul   -0x44(%ebp),%edi
+		add    %edi,%ebx
+		cmpb   $0x0,-0x49(%ebp)
+		je     jump_138b38
+		mov    EXPORT_SYMBOL(lbDisplay__GraphicsWindowHeight),%edi
+		mov    %edi,-0x40(%ebp)
+		cmpb   $0x0,-0x48(%ebp)
+		je     jump_138aff
+		mov    %di,-0x34(%ebp)
+		jmp    jump_138b0b
+	jump_138aff:
+		sub    -0x34(%ebp),%di
+		setle  -0x48(%ebp)
+		mov    %di,-0x38(%ebp)
+	jump_138b0b:
+		jmp    jump_138b38
+	jump_138b0d:
+		cmpb   $0x0,-0x49(%ebp)
+		je     jump_138b38
+		mov    EXPORT_SYMBOL(lbDisplay__GraphicsWindowHeight),%edi
+		sub    -0x46(%ebp),%di
+		mov    %edi,-0x40(%ebp)
+		cmpb   $0x0,-0x48(%ebp)
+		je     jump_138b2c
+		mov    %di,-0x34(%ebp)
+		jmp    jump_138b38
+	jump_138b2c:
+		sub    -0x34(%ebp),%di
+		setle  -0x48(%ebp)
+		mov    %di,-0x38(%ebp)
+	jump_138b38:
+		lea    data_1e957c,%edi
+	jump_138b3e:
+		mov    %eax,(%edi)
+		add    -0x24(%ebp),%eax
+		mov    %ebx,0x4(%edi)
+		add    -0x28(%ebp),%ebx
+		add    $0x8,%edi
+		decw   -0x34(%ebp)
+		jne    jump_138b3e
+		mov    -0x3c(%ebp),%ebx
+	jump_138b55:
+		cmpb   $0x0,-0x48(%ebp)
+		je     jump_138b60
+		jmp    jump_138f5a
+	jump_138b60:
+		mov    %eax,(%edi)
+		add    -0x24(%ebp),%eax
+		mov    %ebx,0x4(%edi)
+		add    -0x2c(%ebp),%ebx
+		add    $0x8,%edi
+		decw   -0x38(%ebp)
+		jne    jump_138b60
+		jmp    jump_138f5a
+	jump_138b79:
+		xchg   %esi,%edi
+		xchg   %edi,%ecx
+	jump_138b7d:
+		mov    0x2(%esi),%ax
+		mov    %ax,-0x46(%ebp)
+		or     %ax,%ax
+		jns    jump_138b99
+		mov    EXPORT_SYMBOL(lbDisplay__WScreen),%ebx
+		mov    %ebx,-0x20(%ebp)
+		movb   $0x1,-0x47(%ebp)
+		jmp    jump_138bbd
+	jump_138b99:
+		cmp    EXPORT_SYMBOL(lbDisplay__GraphicsWindowHeight),%ax
+		jge    jump_139010
+		movzwl %ax,%ebx
+		imul   EXPORT_SYMBOL(lbDisplay__GraphicsScreenWidth),%ebx
+		add    EXPORT_SYMBOL(lbDisplay__WScreen),%ebx
+		mov    %ebx,-0x20(%ebp)
+		movb   $0x0,-0x47(%ebp)
+	jump_138bbd:
+		movzwl 0x2(%ecx),%ebx
+		cmp    EXPORT_SYMBOL(lbDisplay__GraphicsWindowHeight),%bx
+		setg   -0x48(%ebp)
+		sub    %ax,%bx
+		mov    %ebx,-0x30(%ebp)
+		mov    0x2(%edi),%bx
+		cmp    EXPORT_SYMBOL(lbDisplay__GraphicsWindowHeight),%bx
+		setg   -0x49(%ebp)
+		sub    %ax,%bx
+		mov    %ebx,-0x34(%ebp)
+		mov    %ebx,-0x40(%ebp)
+		mov    (%ecx),%ax
+		sub    (%esi),%ax
+		shl    $0x10,%eax
+		cltd
+		idivl  -0x30(%ebp)
+		mov    %eax,-0x24(%ebp)
+		mov    (%edi),%ax
+		sub    (%esi),%ax
+		shl    $0x10,%eax
+		cltd
+		idivl  -0x34(%ebp)
+		cmp    -0x24(%ebp),%eax
+		jle    jump_139010
+		mov    %eax,-0x28(%ebp)
+		movzwl 0x2(%edi),%ebx
+		sub    0x2(%ecx),%bx
+		mov    (%edi),%ax
+		sub    (%ecx),%ax
+		shl    $0x10,%eax
+		cltd
+		idiv   %ebx
+		mov    %eax,-0x2c(%ebp)
+		mov    %ebx,-0x38(%ebp)
+		mov    (%ecx),%ax
+		shl    $0x10,%eax
+		mov    %eax,-0x3c(%ebp)
+		mov    (%esi),%ax
+		shl    $0x10,%eax
+		mov    %eax,%ebx
+		cmpb   $0x0,-0x47(%ebp)
+		je     jump_138ce5
+		movswl -0x46(%ebp),%edi
+		neg    %edi
+		sub    %edi,-0x40(%ebp)
+		jle    jump_139010
+		mov    %edi,-0x44(%ebp)
+		cmp    -0x30(%ebp),%di
+		js     jump_138ca6
+		mov    -0x28(%ebp),%edi
+		imul   -0x30(%ebp),%edi
+		add    %edi,%ebx
+		mov    -0x3c(%ebp),%eax
+		mov    -0x44(%ebp),%edi
+		sub    -0x30(%ebp),%edi
+		mov    %edi,-0x44(%ebp)
+		sub    %di,-0x38(%ebp)
+		imul   -0x2c(%ebp),%edi
+		add    %edi,%eax
+		mov    -0x28(%ebp),%edi
+		imul   -0x44(%ebp),%edi
+		add    %edi,%ebx
+		cmpb   $0x0,-0x49(%ebp)
+		je     jump_138c9b
+		mov    EXPORT_SYMBOL(lbDisplay__GraphicsWindowHeight),%edi
+		mov    %di,-0x38(%ebp)
+		mov    %edi,-0x40(%ebp)
+	jump_138c9b:
+		lea    data_1e957c,%edi
+		jmp    jump_138d2d
+	jump_138ca6:
+		mov    -0x44(%ebp),%edi
+		sub    %di,-0x30(%ebp)
+		imul   -0x24(%ebp),%edi
+		add    %edi,%eax
+		mov    -0x28(%ebp),%edi
+		imul   -0x44(%ebp),%edi
+		add    %edi,%ebx
+		cmpb   $0x0,-0x49(%ebp)
+		je     jump_138d10
+		mov    EXPORT_SYMBOL(lbDisplay__GraphicsWindowHeight),%edi
+		mov    %edi,-0x40(%ebp)
+		cmpb   $0x0,-0x48(%ebp)
+		je     jump_138cd7
+		mov    %di,-0x30(%ebp)
+		jmp    jump_138ce3
+	jump_138cd7:
+		sub    -0x30(%ebp),%di
+		setle  -0x48(%ebp)
+		mov    %di,-0x38(%ebp)
+	jump_138ce3:
+		jmp    jump_138d10
+	jump_138ce5:
+		cmpb   $0x0,-0x49(%ebp)
+		je     jump_138d10
+		mov    EXPORT_SYMBOL(lbDisplay__GraphicsWindowHeight),%edi
+		sub    -0x46(%ebp),%di
+		mov    %edi,-0x40(%ebp)
+		cmpb   $0x0,-0x48(%ebp)
+		je     jump_138d04
+		mov    %di,-0x30(%ebp)
+		jmp    jump_138d10
+	jump_138d04:
+		sub    -0x30(%ebp),%di
+		setle  -0x48(%ebp)
+		mov    %di,-0x38(%ebp)
+	jump_138d10:
+		lea    data_1e957c,%edi
+	jump_138d16:
+		mov    %eax,(%edi)
+		add    -0x24(%ebp),%eax
+		mov    %ebx,0x4(%edi)
+		add    -0x28(%ebp),%ebx
+		add    $0x8,%edi
+		decw   -0x30(%ebp)
+		jne    jump_138d16
+		mov    -0x3c(%ebp),%eax
+	jump_138d2d:
+		cmpb   $0x0,-0x48(%ebp)
+		je     jump_138d38
+		jmp    jump_138f5a
+	jump_138d38:
+		mov    %eax,(%edi)
+		add    -0x2c(%ebp),%eax
+		mov    %ebx,0x4(%edi)
+		add    -0x28(%ebp),%ebx
+		add    $0x8,%edi
+		decw   -0x38(%ebp)
+		jne    jump_138d38
+		jmp    jump_138f5a
+	jump_138d51:
+		mov    (%ecx),%ax
+		cmp    (%esi),%ax
+		jle    jump_139010
+		xchg   %esi,%edi
+		xchg   %edi,%ecx
+	jump_138d61:
+		mov    0x2(%esi),%ax
+		mov    %ax,-0x46(%ebp)
+		or     %ax,%ax
+		jns    jump_138d7d
+		mov    EXPORT_SYMBOL(lbDisplay__WScreen),%ebx
+		mov    %ebx,-0x20(%ebp)
+		movb   $0x1,-0x47(%ebp)
+		jmp    jump_138da1
+	jump_138d7d:
+		cmp    EXPORT_SYMBOL(lbDisplay__GraphicsWindowHeight),%ax
+		jge    jump_139010
+		movzwl %ax,%ebx
+		imul   EXPORT_SYMBOL(lbDisplay__GraphicsScreenWidth),%ebx
+		add    EXPORT_SYMBOL(lbDisplay__WScreen),%ebx
+		mov    %ebx,-0x20(%ebp)
+		movb   $0x0,-0x47(%ebp)
+	jump_138da1:
+		movzwl 0x2(%ecx),%ebx
+		cmp    EXPORT_SYMBOL(lbDisplay__GraphicsWindowHeight),%bx
+		setg   -0x48(%ebp)
+		sub    %ax,%bx
+		mov    %ebx,-0x30(%ebp)
+		mov    %ebx,-0x40(%ebp)
+		mov    (%ecx),%ax
+		sub    (%esi),%ax
+		shl    $0x10,%eax
+		cltd
+		idiv   %ebx
+		mov    %eax,-0x24(%ebp)
+		mov    (%edi),%ax
+		sub    (%esi),%ax
+		shl    $0x10,%eax
+		cltd
+		idiv   %ebx
+		mov    %eax,-0x28(%ebp)
+		mov    (%esi),%ax
+		shl    $0x10,%eax
+		mov    %eax,%ebx
+		cmpb   $0x0,-0x47(%ebp)
+		je     jump_138e20
+		movswl -0x46(%ebp),%edi
+		neg    %edi
+		sub    %di,-0x30(%ebp)
+		sub    %di,-0x40(%ebp)
+		jle    jump_139010
+		mov    %edi,-0x44(%ebp)
+		imul   -0x24(%ebp),%edi
+		add    %edi,%eax
+		mov    -0x28(%ebp),%edi
+		imul   -0x44(%ebp),%edi
+		add    %edi,%ebx
+		cmpb   $0x0,-0x48(%ebp)
+		je     jump_138e37
+		mov    EXPORT_SYMBOL(lbDisplay__GraphicsWindowHeight),%edi
+		mov    %edi,-0x40(%ebp)
+		mov    %di,-0x30(%ebp)
+		jmp    jump_138e37
+	jump_138e20:
+		cmpb   $0x0,-0x48(%ebp)
+		je     jump_138e37
+		mov    EXPORT_SYMBOL(lbDisplay__GraphicsWindowHeight),%edi
+		sub    -0x46(%ebp),%di
+		mov    %edi,-0x40(%ebp)
+		mov    %di,-0x30(%ebp)
+	jump_138e37:
+		lea    data_1e957c,%edi
+	jump_138e3d:
+		mov    %eax,(%edi)
+		add    -0x24(%ebp),%eax
+		mov    %ebx,0x4(%edi)
+		add    -0x28(%ebp),%ebx
+		add    $0x8,%edi
+		decw   -0x30(%ebp)
+		jne    jump_138e3d
+		jmp    jump_138f5a
+	jump_138e56:
+		mov    (%ecx),%ax
+		cmp    (%edi),%ax
+		jle    jump_139010
+		xchg   %esi,%edi
+		xchg   %edi,%ecx
+	jump_138e66:
+		mov    0x2(%esi),%ax
+		mov    %ax,-0x46(%ebp)
+		or     %ax,%ax
+		jns    jump_138e82
+		mov    EXPORT_SYMBOL(lbDisplay__WScreen),%ebx
+		mov    %ebx,-0x20(%ebp)
+		movb   $0x1,-0x47(%ebp)
+		jmp    jump_138ea6
+	jump_138e82:
+		cmp    EXPORT_SYMBOL(lbDisplay__GraphicsWindowHeight),%ax
+		jge    jump_139010
+		movzwl %ax,%ebx
+		imul   EXPORT_SYMBOL(lbDisplay__GraphicsScreenWidth),%ebx
+		add    EXPORT_SYMBOL(lbDisplay__WScreen),%ebx
+		mov    %ebx,-0x20(%ebp)
+		movb   $0x0,-0x47(%ebp)
+	jump_138ea6:
+		movzwl 0x2(%ecx),%ebx
+		cmp    EXPORT_SYMBOL(lbDisplay__GraphicsWindowHeight),%bx
+		setg   -0x48(%ebp)
+		sub    %ax,%bx
+		mov    %ebx,-0x30(%ebp)
+		mov    %ebx,-0x40(%ebp)
+		mov    (%ecx),%ax
+		sub    (%esi),%ax
+		shl    $0x10,%eax
+		cltd
+		idiv   %ebx
+		mov    %eax,-0x24(%ebp)
+		mov    (%ecx),%ax
+		sub    (%edi),%ax
+		shl    $0x10,%eax
+		cltd
+		idiv   %ebx
+		mov    %eax,-0x28(%ebp)
+		mov    (%esi),%ax
+		shl    $0x10,%eax
+		mov    (%edi),%bx
+		shl    $0x10,%ebx
+		cmpb   $0x0,-0x47(%ebp)
+		je     jump_138f29
+		movswl -0x46(%ebp),%edi
+		neg    %edi
+		sub    %di,-0x30(%ebp)
+		sub    %di,-0x40(%ebp)
+		jle    jump_139010
+		mov    %edi,-0x44(%ebp)
+		imul   -0x24(%ebp),%edi
+		add    %edi,%eax
+		mov    -0x28(%ebp),%edi
+		imul   -0x44(%ebp),%edi
+		add    %edi,%ebx
+		cmpb   $0x0,-0x48(%ebp)
+		je     jump_138f40
+		mov    EXPORT_SYMBOL(lbDisplay__GraphicsWindowHeight),%edi
+		mov    %edi,-0x40(%ebp)
+		mov    %di,-0x30(%ebp)
+		jmp    jump_138f40
+	jump_138f29:
+		cmpb   $0x0,-0x48(%ebp)
+		je     jump_138f40
+		mov    EXPORT_SYMBOL(lbDisplay__GraphicsWindowHeight),%edi
+		sub    -0x46(%ebp),%di
+		mov    %edi,-0x40(%ebp)
+		mov    %di,-0x30(%ebp)
+	jump_138f40:
+		lea    data_1e957c,%edi
+	jump_138f46:
+		mov    %eax,(%edi)
+		add    -0x24(%ebp),%eax
+		mov    %ebx,0x4(%edi)
+		add    -0x28(%ebp),%ebx
+		add    $0x8,%edi
+		decw   -0x30(%ebp)
+		jne    jump_138f46
+	jump_138f5a:
+		lea    data_1e957c,%esi
+		mov    -0x20(%ebp),%edx
+		mov    EXPORT_SYMBOL(lbDisplay__GraphicsWindowY),%eax
+		dec    %eax
+		imul   EXPORT_SYMBOL(lbDisplay__GraphicsScreenWidth),%eax
+		add    EXPORT_SYMBOL(lbDisplay__GraphicsWindowX),%eax
+		add    %eax,%edx
+		xor    %eax,%eax
+		mov    0x10(%ebp),%al
+		xor    %ecx,%ecx
+	jump_138f7f:
+		xor    %ebx,%ebx
+		mov    0x2(%esi),%bx
+		mov    0x6(%esi),%cx
+		add    EXPORT_SYMBOL(lbDisplay__GraphicsScreenWidth),%edx
+		or     %bx,%bx
+		jns    jump_138fb3
+		or     %cx,%cx
+		jle    jump_139004
+		cmp    EXPORT_SYMBOL(lbDisplay__GraphicsWindowWidth),%cx
+		jle    jump_138fa9
+		mov    EXPORT_SYMBOL(lbDisplay__GraphicsWindowWidth),%cx
+	jump_138fa9:
+		mov    %edx,%edi
+		mov    EXPORT_SYMBOL(lbDisplay__GlassMap),%ebx
+		jmp    jump_138fd1
+	jump_138fb3:
+		cmp    EXPORT_SYMBOL(lbDisplay__GraphicsWindowWidth),%cx
+		jle    jump_138fc3
+		mov    EXPORT_SYMBOL(lbDisplay__GraphicsWindowWidth),%cx
+	jump_138fc3:
+		sub    %bx,%cx
+		jle    jump_139004
+		lea    (%ebx,%edx,1),%edi
+		mov    EXPORT_SYMBOL(lbDisplay__GlassMap),%ebx
+	jump_138fd1:
+		testw  $0x4,EXPORT_SYMBOL(lbDisplay__DrawFlags)
+		je     jump_138fea
+		mov    0x10(%ebp),%ah
+	jump_138fdf:
+		mov    (%edi),%al
+		mov    (%eax,%ebx,1),%al
+		stos   %al,%es:(%edi)
+		dec    %ecx
+		jne    jump_138fdf
+		jmp    jump_139004
+	jump_138fea:
+		testw  $0x8,EXPORT_SYMBOL(lbDisplay__DrawFlags)
+		je     jump_139002
+	jump_138ff5:
+		mov    (%edi),%ah
+		mov    (%eax,%ebx,1),%ah
+		mov    %ah,(%edi)
+		inc    %edi
+		dec    %ecx
+		jne    jump_138ff5
+		jmp    jump_139004
+	jump_139002:
+		rep stos %al,%es:(%edi)
+	jump_139004:
+		add    $0x8,%esi
+		decl   -0x40(%ebp)
+		jne    jump_138f7f
+	jump_139010:
+		pop    %edi
+		pop    %esi
+		pop    %edx
+		pop    %ecx
+		pop    %ebx
+		pop    %eax
+		leave
+		ret    $0xc
+
+
+.section .rodata
+
+.data
+
+data_1e957c:
+		.fill   0xf00
+
+GLOBAL (data_1f0350)
+		.long	0x0
+GLOBAL (data_1f0354)
+		.fill   0x400
+GLOBAL (data_1f0754)
+		.fill   0x400
+data_1f0b54:
+		.long	0x0
+data_1f0b58:
+		.fill   0x800
+data_1f1358:
+		.fill   0x800

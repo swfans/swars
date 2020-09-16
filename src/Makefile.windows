@@ -53,7 +53,9 @@ OBJS = \
 	../obj/bflib_memory.o \
 	../obj/bflib_sndlib.o \
 	../obj/bflib_snd_cda.o \
+	../obj/bflib_snd_mss.o \
 	../obj/bflib_vidraw.o \
+	../obj/bflib_vidraw_spr_norm.o \
 	../obj/ariadne.o \
 	../obj/thing_debug.o \
 	../obj/timer.o \
