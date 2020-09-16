@@ -43,15 +43,16 @@ OBJS = \
 	../obj/swars.o \
 	../obj/bflib_dernc.o \
 	../obj/bflib_fileio.o \
-	../obj/bflib_sndlib.o \
+	../obj/bflib_fmvids.o \
+	../obj/bflib_joyst.o \
+	../obj/bflib_keybrd.o \
 	../obj/bflib_render_trig.o \
 	../obj/bflib_render_plin.o \
 	../obj/bflib_render_gpoly.o \
-	../obj/bflib_fmvids.o \
 	../obj/bflib_math.o \
 	../obj/bflib_memory.o \
+	../obj/bflib_sndlib.o \
 	../obj/bflib_snd_cda.o \
-	../obj/bflib_joyst.o \
 	../obj/bflib_vidraw.o \
 	../obj/ariadne.o \
 	../obj/thing_debug.o \

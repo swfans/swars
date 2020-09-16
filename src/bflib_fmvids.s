@@ -33,9 +33,7 @@
 .global EXPORT_SYMBOL(lbDisplay__ScreenMode);
 .global EXPORT_SYMBOL(lbDisplay__GraphicsScreenWidth);
 .global EXPORT_SYMBOL(lbDisplay__GraphicsScreenHeight);
-.global EXPORT_SYMBOL(data_1e2f75);
-.global EXPORT_SYMBOL(lbKeyOn_28);
-.global EXPORT_SYMBOL(lbKeyOn_57);
+.global EXPORT_SYMBOL(lbKeyOn);
 .global EXPORT_SYMBOL(SmackMSSDigDriver);
 .global EXPORT_SYMBOL(_LowSoundVolPanAddr);
 .global EXPORT_SYMBOL(_LowUnk_1e86c0);
@@ -6907,11 +6905,11 @@ play_smk_direct:
 		/* XXX: intro loop */
 		call   ac_game_handle_sdl_events
 		call   ac_game_wait_for_vsync
-		cmpb   $0x0,EXPORT_SYMBOL(data_1e2f75)
+		cmpb   $0x0,EXPORT_SYMBOL(lbKeyOn)+1
 		jne    jump_eb373
-		cmpb   $0x0,EXPORT_SYMBOL(lbKeyOn_28)
+		cmpb   $0x0,EXPORT_SYMBOL(lbKeyOn)+28
 		jne    jump_eb373
-		cmpb   $0x0,EXPORT_SYMBOL(lbKeyOn_57)
+		cmpb   $0x0,EXPORT_SYMBOL(lbKeyOn)+57
 		jne    jump_eb373
 		cmpb   $0x0,EXPORT_SYMBOL(lbDisplay__MLeftButton)
 		je     jump_eb33a
@@ -7041,11 +7039,11 @@ play_smk_via_buffer:
 		je     jump_eb433
 		testb  $0x2,0xc(%esp)
 		jne    jump_eb499
-		cmpb   $0x0,EXPORT_SYMBOL(data_1e2f75)
+		cmpb   $0x0,EXPORT_SYMBOL(lbKeyOn)+1
 		jne    jump_eb4ce
-		cmpb   $0x0,EXPORT_SYMBOL(lbKeyOn_28)
+		cmpb   $0x0,EXPORT_SYMBOL(lbKeyOn)+28
 		jne    jump_eb4ce
-		cmpb   $0x0,EXPORT_SYMBOL(lbKeyOn_57)
+		cmpb   $0x0,EXPORT_SYMBOL(lbKeyOn)+57
 		jne    jump_eb4ce
 		cmpb   $0x0,EXPORT_SYMBOL(lbDisplay__MLeftButton)
 		je     jump_eb499
