@@ -5704,8 +5704,6 @@ LbDrawTriangleFilled_:
 		ret    $0xc
 
 
-.section .rodata
-
 .data
 
 data_1e957c:

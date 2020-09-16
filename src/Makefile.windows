@@ -54,6 +54,7 @@ OBJS = \
 	../obj/bflib_sndlib.o \
 	../obj/bflib_snd_cda.o \
 	../obj/bflib_snd_mss.o \
+	../obj/bflib_snd_sys.o \
 	../obj/bflib_vidraw.o \
 	../obj/bflib_vidraw_spr_norm.o \
 	../obj/ariadne.o \

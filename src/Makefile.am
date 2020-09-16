@@ -18,6 +18,7 @@ swars_SOURCES = \
 	bflib_render_trig.s \
 	bflib_snd_cda.s \
 	bflib_snd_mss.s \
+	bflib_snd_sys.s \
 	bflib_sndlib.s \
 	bflib_vidraw.s \
 	bflib_vidraw_spr_norm.s \
