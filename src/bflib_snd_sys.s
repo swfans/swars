@@ -2892,10 +2892,10 @@ GLOBAL_FUNC(InitSound_)
 		cmpb   $0x0,AILStartupAlreadyInitiated
 		jne    jump_ff4ef
 		push   $LbMemoryAlloc_
-		call   __unknown_libname_1
+		call   _MEM_use_malloc
 		add    $0x4,%esp
 		push   $LbMemoryFree_
-		call   __unknown_libname_2
+		call   _MEM_use_free
 		add    $0x4,%esp
 		call   ail_startup
 		movb   $0x1,AILStartupAlreadyInitiated
@@ -3506,10 +3506,10 @@ GLOBAL_FUNC(InitMusic_)
 		cmpb   $0x0,AILStartupAlreadyInitiated
 		jne    jump_ffcc6
 		push   $LbMemoryAlloc_
-		call   __unknown_libname_1
+		call   _MEM_use_malloc
 		add    $0x4,%esp
 		push   $LbMemoryFree_
-		call   __unknown_libname_2
+		call   _MEM_use_free
 		add    $0x4,%esp
 		call   ail_startup
 		movb   $0x1,AILStartupAlreadyInitiated
@@ -4892,7 +4892,7 @@ GLOBAL_FUNC (PlaySampleFromAddress_)
 
 
 /*----------------------------------------------------------------*/
-func_10ffb0:
+AWEGetTotalRAM_:
 /*----------------------------------------------------------------*/
 		push   %ecx
 		push   %edx
@@ -4953,7 +4953,7 @@ AWEDefMemMap_:
 		mov    %ebx,%eax
 		xor    %eax,%eax
 		mov    %dx,%ax
-		call   func_10ff60
+		call   GetDOSseg_
 		mov    awe32_sf_data_add,%gs
 		mov    %eax,%ebx
 		mov    awe32_sf_data,%eax
@@ -4963,7 +4963,7 @@ AWEDefMemMap_:
 		mov    %bx,0x4(%esp)
 		xor    %eax,%eax
 		mov    %dx,%ax
-		call   func_10ff60
+		call   GetDOSseg_
 		mov    %ax,0x6(%esp)
 		mov    %esp,%eax
 		push   %eax
@@ -5010,7 +5010,7 @@ AWEGetSFInfo_:
 		mov    %ebx,%eax
 		xor    %eax,%eax
 		mov    %dx,%ax
-		call   func_10ff60
+		call   GetDOSseg_
 		mov    awe32_sf_data_add,%gs
 		mov    %eax,%ebx
 		mov    awe32_sf_data,%eax
@@ -5020,7 +5020,7 @@ AWEGetSFInfo_:
 		mov    %bx,0x4(%esp)
 		xor    %eax,%eax
 		mov    %dx,%ax
-		call   func_10ff60
+		call   GetDOSseg_
 		mov    %ax,0x6(%esp)
 		mov    %esp,%eax
 		push   %eax
@@ -5037,7 +5037,7 @@ AWEGetSFInfo_:
 		jne    jump_11016d
 		movswl 0x6(%esp),%eax
 		movswl 0x8(%esp),%ebx
-		call   func_10ff20
+		call   CreateSelector_
 		mov    %eax,%edx
 		mov    %ebx,%eax
 		jmp    jump_110171
@@ -5080,7 +5080,7 @@ AWEStreamSample_:
 		mov    %ebx,%eax
 		xor    %eax,%eax
 		mov    %dx,%ax
-		call   func_10ff60
+		call   GetDOSseg_
 		mov    awe32_sf_data_add,%gs
 		mov    %eax,%ebx
 		mov    awe32_sf_data,%eax
@@ -5090,7 +5090,7 @@ AWEStreamSample_:
 		mov    %bx,0x4(%esp)
 		xor    %eax,%eax
 		mov    %dx,%ax
-		call   func_10ff60
+		call   GetDOSseg_
 		mov    %ax,0x6(%esp)
 		mov    %esp,%eax
 		push   %eax
@@ -5111,7 +5111,7 @@ AWEStreamSample_:
 
 
 /*----------------------------------------------------------------*/
-func_110230:
+AWELoadPreset_:
 /*----------------------------------------------------------------*/
 		push   %esi
 		push   %edi
@@ -5139,7 +5139,7 @@ func_110230:
 		mov    %ebx,%eax
 		xor    %eax,%eax
 		mov    %dx,%ax
-		call   func_10ff60
+		call   GetDOSseg_
 		mov    awe32_sf_data_add,%gs
 		mov    %eax,%ebx
 		mov    awe32_sf_data,%eax
@@ -5149,7 +5149,7 @@ func_110230:
 		mov    %bx,0x4(%esp)
 		xor    %eax,%eax
 		mov    %dx,%ax
-		call   func_10ff60
+		call   GetDOSseg_
 		mov    %ax,0x6(%esp)
 		mov    %esp,%eax
 		push   %eax
@@ -5280,7 +5280,7 @@ LoadAwe32Soundfont_:
 		je     jump_1105d0
 	jump_110439:
 		mov    MusicDriver,%eax
-		call   func_10ffb0
+		call   AWEGetTotalRAM_
 		cmp    $0xffffffff,%eax
 		je     jump_1105d0
 		lgs    awe32_buffer,%ebx
@@ -5379,7 +5379,7 @@ LoadAwe32Soundfont_:
 		mov    awe32_preset_add,%cx
 		mov    awe32_preset,%ebx
 		mov    MusicDriver,%eax
-		call   func_110230
+		call   AWELoadPreset_
 		test   %eax,%eax
 		jne    jump_1105d0
 		mov    $0x1,%cl
@@ -5435,7 +5435,9 @@ FreeAwe32Soundfont:
 
 
 /*----------------------------------------------------------------*/
-func_109170:
+/* void cbfadesample(unsigned long)
+ */
+cbfadesample:
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %esi
@@ -5447,34 +5449,34 @@ func_109170:
 		je     jump_10939c
 		cmpb   $0x0,SoundActive
 		je     jump_10939c
-		mov    data_1e956c,%cl
+		mov    switch_off_sample_fade_timer,%cl
 		test   %cl,%cl
 		je     jump_1091bb
-		mov    data_1e9568,%esi
+		mov    sample_fade_handle,%esi
 		push   %esi
 		call   AIL_release_timer_handle
 		add    $0x4,%esp
 		jmp    jump_1093cb
 	jump_1091bb:
-		mov    %cl,data_1e956d
+		mov    %cl,a_sample_is_fading
 		mov    $sample_id,%ebx
 		cmp    end_sample_id,%ebx
 		jbe    jump_109375
 	jump_1091d2:
 		xor    %eax,%eax
-		mov    data_1e956d,%al
+		mov    a_sample_is_fading,%al
 		test   %eax,%eax
 		jne    jump_1093cb
-		movb   $0x1,data_1e956c
+		movb   $0x1,switch_off_sample_fade_timer
 		xor    %ah,%ah
-		mov    %ah,data_1e956e
+		mov    %ah,amples_currently_fading
 		add    $0x4,%esp
 		pop    %ebp
 		pop    %esi
 		pop    %ebx
 		ret
 	jump_1091f7:
-		movb   $0x1,data_1e956d
+		movb   $0x1,a_sample_is_fading
 		mov    (%ebx),%esi
 		push   %esi
 		call   AIL_sample_status
@@ -5548,7 +5550,7 @@ func_109170:
 		movb   $0x0,0x15(%ebx)
 		jmp    jump_10938a
 	jump_1092ca:
-		movb   $0x1,data_1e956d
+		movb   $0x1,a_sample_is_fading
 		mov    (%ebx),%eax
 		push   %eax
 		call   AIL_sample_status
@@ -5625,9 +5627,9 @@ func_109170:
 		jbe    jump_109375
 		jmp    jump_1091d2
 	jump_10939c:
-		movb   $0x1,data_1e956c
+		movb   $0x1,switch_off_sample_fade_timer
 		xor    %bh,%bh
-		mov    %bh,data_1e956e
+		mov    %bh,amples_currently_fading
 		mov    $sample_id,%eax
 		cmp    end_sample_id,%eax
 		ja     jump_1093cb
@@ -5657,54 +5659,41 @@ vtable_1093d4:
 
 /*----------------------------------------------------------------*/
 func_1094c9:
-/*----------------------------------------------------------------*/
 		movb   $0x1,0x16(%ebx)
 		jmp    jump_1094e5
-
-
 /*----------------------------------------------------------------*/
 func_1094cf:
-/*----------------------------------------------------------------*/
 		movb   $0x2,0x16(%ebx)
 		jmp    jump_1094e5
-
-
 /*----------------------------------------------------------------*/
 func_1094d5:
-/*----------------------------------------------------------------*/
 		movb   $0x3,0x16(%ebx)
 		jmp    jump_1094e5
-
-
 /*----------------------------------------------------------------*/
 func_1094db:
-/*----------------------------------------------------------------*/
 		movb   $0x4,0x16(%ebx)
 		jmp    jump_1094e5
-
-
 /*----------------------------------------------------------------*/
 func_1094e1:
-/*----------------------------------------------------------------*/
 		movb   $0x5,0x16(%ebx)
 	jump_1094e5:
 		xor    %eax,%eax
-		mov    data_1e956e,%al
+		mov    amples_currently_fading,%al
 		test   %eax,%eax
 		jne    jump_10952c
 		xor    %bl,%bl
-		mov    %bl,data_1e956c
+		mov    %bl,switch_off_sample_fade_timer
 		mov    $0x1,%bh
-		push   $func_109170
-		mov    %bh,data_1e956e
+		push   $cbfadesample
+		mov    %bh,amples_currently_fading
 		call   AIL_register_timer
 		add    $0x4,%esp
 		push   $0x14
 		push   %eax
-		mov    %eax,data_1e9568
+		mov    %eax,sample_fade_handle
 		call   AIL_set_timer_frequency
 		add    $0x8,%esp
-		mov    data_1e9568,%esi
+		mov    sample_fade_handle,%esi
 		push   %esi
 		call   AIL_start_timer
 		add    $0x4,%esp
@@ -5722,16 +5711,16 @@ StopAllSampleFadeTimers_:
 		push   %ecx
 		push   %edx
 		mov    end_sample_id,%ebx
-		cmpb   $0x0,data_1e956e
+		cmpb   $0x0,amples_currently_fading
 		je     jump_10958e
-		movb   $0x1,data_1e956c
-		mov    data_1e9568,%edx
+		movb   $0x1,switch_off_sample_fade_timer
+		mov    sample_fade_handle,%edx
 		push   %edx
 		call   AIL_release_timer_handle
 		mov    end_sample_id,%ebx
 		add    $0x4,%esp
 		xor    %dh,%dh
-		mov    %dh,data_1e956e
+		mov    %dh,amples_currently_fading
 		mov    $sample_id,%eax
 		cmp    %eax,%ebx
 		jb     jump_10958e
@@ -5750,7 +5739,9 @@ StopAllSampleFadeTimers_:
 
 
 /*----------------------------------------------------------------*/
-func_1095a0:
+/* void cb_sample_queue_callback(_SAMPLE *sample)
+ */
+cb_sample_queue_callback:	/* 0x1095a0 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %esi
@@ -5758,7 +5749,7 @@ func_1095a0:
 		push   %ebp
 		cmpb   $0x0,sample_queue_handle_stopped
 		jne    jump_10964f
-		mov    data_1e9570,%eax
+		mov    current_sample_queue_count,%eax
 		push   %eax
 		mov    sample_queue_handle,%edx
 		push   %edx
@@ -5766,19 +5757,19 @@ func_1095a0:
 		add    $0x8,%esp
 		test   %eax,%eax
 		je     jump_10964f
-		cmpl   $0x8,data_1e9570
+		cmpl   $0x8,current_sample_queue_count
 		jae    jump_10964f
 		mov    sample_queue_handle,%ecx
 		push   %ecx
 		call   AIL_init_sample
 		add    $0x4,%esp
-		push   $func_1095a0
+		push   $cb_sample_queue_callback
 		mov    sample_queue_handle,%esi
 		push   %esi
 		call   AIL_register_EOS_callback
 		add    $0x8,%esp
 		push   $0x1
-		mov    data_1e9570,%eax
+		mov    current_sample_queue_count,%eax
 		push   %eax
 		mov    sample_queue_handle,%edi
 		push   %edi
@@ -5793,12 +5784,12 @@ func_1095a0:
 		push   %eax
 		call   AIL_set_sample_file
 		add    $0xc,%esp
-		mov    data_1e9570,%eax
+		mov    current_sample_queue_count,%eax
 		mov    sample_queue_handle,%edx
-		mov    data_1e9570,%ebx
+		mov    current_sample_queue_count,%ebx
 		inc    %ebx
 		push   %edx
-		mov    %ebx,data_1e9570
+		mov    %ebx,current_sample_queue_count
 		call   AIL_start_sample
 		add    $0x4,%esp
 	jump_10964f:
@@ -6532,15 +6523,23 @@ mixed_file_open:
 		.byte	0x0
 		.fill   0x7
 
-data_1e9568:	/* 0x1e9568 */
+/* long sample_fade_handle;
+ */
+sample_fade_handle:	/* 0x1e9568 */
 		.long	0x0
-data_1e956c:
+/* unsigned char volatile switch_off_sample_fade_timer;
+ */
+switch_off_sample_fade_timer:
 		.byte	0x0
-data_1e956d:
+a_sample_is_fading: /* 0x1e956d */
 		.byte	0x0
-data_1e956e:
+/* unsigned char volatile samples_currently_fading
+ */
+amples_currently_fading:	/* 0x2057DE */
 		.short  0x0
-data_1e9570:
+/* unsigned long volatile current_sample_queue_count;
+ */
+current_sample_queue_count:	/* 0x2057E0 */
 		.long	0x0
 /* unsigned char sample_queue_handle_initiated
  */

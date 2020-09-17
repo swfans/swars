@@ -6768,7 +6768,7 @@ AIL_API_install_driver:	/* 111d40 */
 		lea    0xf(%ebx),%eax
 		shr    $0x4,%eax
 		push   %eax
-		call   func_10f290
+		call   MEM_alloc_DOS
 		add    $0x10,%esp
 		test   %eax,%eax
 		jne    jump_111dc6
@@ -8776,7 +8776,7 @@ GLOBAL_FUNC (SS_construct_DIG_driver)	/* 113110 */
 		lea    0x34(%esp),%eax
 		push   %eax
 		push   %edi
-		call   func_10f290
+		call   MEM_alloc_DOS
 		add    $0x10,%esp
 		test   %eax,%eax
 		jne    jump_1133d7

@@ -729,7 +729,7 @@ GLOBAL_FUNC (cd_init_)
 		push   $control_real
 		push   $control_prot
 		push   $0x1
-		call   func_10f290
+		call   MEM_alloc_DOS
 		add    $0x10,%esp
 		test   %eax,%eax
 		jne    jump_1084dc
