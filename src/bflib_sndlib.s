@@ -29,8 +29,6 @@
 .text
 
 .global EXPORT_SYMBOL(disk_err);
-.global EXPORT_SYMBOL(_timezone);
-.global EXPORT_SYMBOL(___dst_adjust);
 .global EXPORT_SYMBOL(data_15978c);
 .global EXPORT_SYMBOL(data_159790);
 .global EXPORT_SYMBOL(_IsTable);
@@ -7276,52 +7274,6 @@ AIL_end_:
 
 
 /*----------------------------------------------------------------*/
-___localtime_:	/* 0x112307 */
-/*----------------------------------------------------------------*/
-		push   %ebx
-		push   %ecx
-		push   %esi
-		push   %edi
-		mov    %eax,%edi
-		mov    %edx,%esi
-		call   ac_tzset
-		mov    $0x63df,%eax
-		mov    EXPORT_SYMBOL(_timezone),%ebx
-		mov    (%edi),%edi
-		mov    %edx,%ecx
-		mov    %edi,%edx
-		call   ____brktime_
-		mov    %esi,%eax
-		call   ____isindst_
-		test   %eax,%eax
-		je     jump_112351
-		mov    $0x63df,%eax
-		mov    EXPORT_SYMBOL(_timezone),%ebx
-		mov    EXPORT_SYMBOL(___dst_adjust),%edx
-		mov    %esi,%ecx
-		sub    %edx,%ebx
-		mov    %edi,%edx
-		call   ____brktime_
-	jump_112351:
-		mov    %esi,%eax
-		pop    %edi
-		pop    %esi
-		pop    %ecx
-		pop    %ebx
-		ret
-
-
-/*----------------------------------------------------------------*/
-_localtime:	/* 0x112358 */
-/*----------------------------------------------------------------*/
-		push   %edx
-		mov    $data_1ed870,%edx
-		call   ___localtime_
-		pop    %edx
-		ret
-
-
-/*----------------------------------------------------------------*/
 __convDec_:	/* 0x112365 */
 /*----------------------------------------------------------------*/
 		push   %ecx
@@ -7346,95 +7298,6 @@ __convDec_:	/* 0x112365 */
 		pop    %edi
 		pop    %esi
 		pop    %ecx
-		ret
-
-
-/*----------------------------------------------------------------*/
-___asctime_:	/* 0x112398 */
-/*----------------------------------------------------------------*/
-		push   %ebx
-		push   %ecx
-		push   %esi
-		push   %edi
-		sub    $0x8,%esp
-		mov    %eax,%ecx
-		mov    %edx,%edi
-		mov    0x18(%eax),%eax
-		mov    data_162204(%eax),%dl
-		mov    %dl,(%edi)
-		mov    data_16220b(%eax),%dl
-		mov    %dl,0x1(%edi)
-		mov    data_162212(%eax),%al
-		movb   $0x20,0x3(%edi)
-		mov    %al,0x2(%edi)
-		mov    0x10(%ecx),%eax
-		mov    data_1621e0(%eax),%dl
-		mov    %dl,0x4(%edi)
-		mov    data_1621ec(%eax),%dl
-		mov    %dl,0x5(%edi)
-		mov    data_1621f8(%eax),%al
-		movb   $0x20,0x7(%edi)
-		mov    %edi,%ebx
-		mov    %al,0x6(%edi)
-		mov    $0x8,%edx
-		mov    0xc(%ecx),%eax
-		call   __convDec_
-		xor    %eax,%eax
-		mov    0x8(%edi),%al
-		cmp    $0x30,%eax
-		jne    jump_112403
-		movb   $0x20,0x8(%edi)
-	jump_112403:
-		mov    $0xb,%edx
-		movb   $0x20,0xa(%edi)
-		mov    %edi,%ebx
-		mov    0x8(%ecx),%eax
-		call   __convDec_
-		mov    $0xe,%edx
-		movb   $0x3a,0xd(%edi)
-		mov    %edi,%ebx
-		mov    0x4(%ecx),%eax
-		call   __convDec_
-		mov    $0x11,%edx
-		movb   $0x3a,0x10(%edi)
-		mov    %edi,%ebx
-		mov    (%ecx),%eax
-		call   __convDec_
-		movb   $0x20,0x13(%edi)
-		mov    %esp,%esi
-		mov    0x14(%ecx),%eax
-		mov    $0x64,%ecx
-		mov    %edi,%ebx
-		cltd
-		idiv   %ecx
-		mov    %eax,(%esi)
-		mov    %edx,0x4(%esi)
-		mov    (%esp),%eax
-		mov    $0x14,%edx
-		add    $0x13,%eax
-		call   __convDec_
-		mov    $0x16,%edx
-		mov    0x4(%esp),%eax
-		mov    %edi,%ebx
-		call   __convDec_
-		movb   $0xa,0x18(%edi)
-		mov    %edi,%eax
-		movb   $0x0,0x19(%edi)
-		add    $0x8,%esp
-		pop    %edi
-		pop    %esi
-		pop    %ecx
-		pop    %ebx
-		ret
-
-
-/*----------------------------------------------------------------*/
-_asctime:	/* 0x1124a3 */
-/*----------------------------------------------------------------*/
-		push   %edx
-		mov    $data_1ed894,%edx
-		call   ___asctime_
-		pop    %edx
 		ret
 
 

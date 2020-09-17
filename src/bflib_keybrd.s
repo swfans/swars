@@ -459,6 +459,321 @@ GLOBAL (lbInkeyToAscii)
 		.ascii  "\x00\x2e\x00\x00\x00\x00\x00\x00"
 		.fill   0x8
 
+GLOBAL (lbKeyNames)
+		.long	0x0
+		.long   data_15d154
+		.long   data_15d15b
+		.long   data_15d15d
+		.long   data_15d15f
+		.long   data_15d161
+		.long   data_15d163
+		.long   data_15d165
+		.long   data_15d167
+		.long   data_15d169
+		.long   data_15d16b
+		.long   data_15d16d
+		.long   data_15d16f
+		.long   data_15d171
+		.long   data_15d173
+		.long   data_15d17d
+		.long   data_15d181
+		.long   data_15d183
+		.long   data_15d185
+		.long   data_15d187
+		.long   data_15d189
+		.long   data_15d18b
+		.long   data_15d18d
+		.long   data_15d18f
+		.long   data_15d191
+		.long   data_15d193
+		.long   data_15d195
+		.long   data_15d197
+		.long   data_15d199
+		.long   data_15d1a0
+		.long   data_15d1aa
+		.long   data_15d1ac
+		.long   data_15d1ae
+		.long   data_15d1b0
+		.long   data_15d1b2
+		.long   data_15d1b4
+		.long   data_15d1b6
+		.long   data_15d1b8
+		.long   data_15d1ba
+		.long   data_15d1bc
+		.long   data_15d1be
+		.long   data_15d1c0
+		.long   data_15d1c2
+		.long   data_15d1cd
+		.long   data_15d1cf
+		.long   data_15d1d1
+		.long   data_15d1d3
+		.long   data_15d1d5
+		.long   data_15d1d7
+		.long   data_15d1d9
+		.long   data_15d1db
+		.long   data_15d1dd
+		.long   data_15d1df
+		.long   data_15d1e1
+		.long   data_15d1e3
+		.long   data_15d1ef
+		.long   data_15d1f4
+		.long   data_15d1fd
+		.long   data_15d203
+		.long   data_15d20c
+		.long   data_15d20f
+		.long   data_15d212
+		.long   data_15d215
+		.long   data_15d218
+		.long   data_15d21b
+		.long   data_15d21e
+		.long   data_15d221
+		.long   data_15d224
+		.long   data_15d227
+		.long   data_15d22b
+		.long   data_15d233
+		.long   data_15d23b
+		.long   data_15d240
+		.long   data_15d245
+		.long   data_15d24a
+		.long   data_15d24f
+		.long   data_15d254
+		.long   data_15d259
+		.long   data_15d25e
+		.long   data_15d263
+		.long   data_15d268
+		.long   data_15d26d
+		.long   data_15d272
+		.long   data_15d277
+		.fill   0x8
+		.long   data_15d27c
+		.long   data_15d27e
+		.long   data_15d282
+		.fill   0x10c
+		.long   data_15d286
+		.long   data_15d28c
+		.fill   0x5c
+		.long   data_15d297
+		.long	0x0
+		.long   data_15d29c
+		.long   data_15d2a6
+		.fill   0x38
+		.long   data_15d2b0
+		.long   data_15d2b5
+		.long   data_15d2b8
+		.long	0x0
+		.long   data_15d2bd
+		.long	0x0
+		.long   data_15d2c2
+		.long	0x0
+		.long   data_15d2c8
+		.long   data_15d2cc
+		.long   data_15d2d1
+		.long   data_15d2d6
+		.long   data_15d2dd
+
+data_15d154:
+		.string "ESCAPE"
+data_15d15b:
+		.ascii  "\x31\x00"
+data_15d15d:
+		.ascii  "\x32\x00"
+data_15d15f:
+		.ascii  "\x33\x00"
+data_15d161:
+		.ascii  "\x34\x00"
+data_15d163:
+		.ascii  "\x35\x00"
+data_15d165:
+		.ascii  "\x36\x00"
+data_15d167:
+		.ascii  "\x37\x00"
+data_15d169:
+		.ascii  "\x38\x00"
+data_15d16b:
+		.ascii  "\x39\x00"
+data_15d16d:
+		.ascii  "\x30\x00"
+data_15d16f:
+		.ascii  "\x2d\x00"
+data_15d171:
+		.ascii  "\x3d\x00"
+data_15d173:
+		.string "BACKSPACE"
+data_15d17d:
+		.ascii  "\x54\x41\x42\x00"
+data_15d181:
+		.ascii  "\x51\x00"
+data_15d183:
+		.ascii  "\x57\x00"
+data_15d185:
+		.ascii  "\x45\x00"
+data_15d187:
+		.ascii  "\x52\x00"
+data_15d189:
+		.ascii  "\x54\x00"
+data_15d18b:
+		.ascii  "\x59\x00"
+data_15d18d:
+		.ascii  "\x55\x00"
+data_15d18f:
+		.ascii  "\x49\x00"
+data_15d191:
+		.ascii  "\x4f\x00"
+data_15d193:
+		.ascii  "\x50\x00"
+data_15d195:
+		.ascii  "\x5b\x00"
+data_15d197:
+		.ascii  "\x5d\x00"
+data_15d199:
+		.string "RETURN"
+data_15d1a0:
+		.string "LEFT CTRL"
+data_15d1aa:
+		.ascii  "\x41\x00"
+data_15d1ac:
+		.ascii  "\x53\x00"
+data_15d1ae:
+		.ascii  "\x44\x00"
+data_15d1b0:
+		.ascii  "\x46\x00"
+data_15d1b2:
+		.ascii  "\x47\x00"
+data_15d1b4:
+		.ascii  "\x48\x00"
+data_15d1b6:
+		.ascii  "\x4a\x00"
+data_15d1b8:
+		.ascii  "\x4b\x00"
+data_15d1ba:
+		.ascii  "\x4c\x00"
+data_15d1bc:
+		.ascii  "\x3b\x00"
+data_15d1be:
+		.ascii  "\x27\x00"
+data_15d1c0:
+		.ascii  "\x60\x00"
+data_15d1c2:
+		.string "LEFT SHIFT"
+data_15d1cd:
+		.ascii  "\x23\x00"
+data_15d1cf:
+		.ascii  "\x5a\x00"
+data_15d1d1:
+		.ascii  "\x58\x00"
+data_15d1d3:
+		.ascii  "\x43\x00"
+data_15d1d5:
+		.ascii  "\x56\x00"
+data_15d1d7:
+		.ascii  "\x42\x00"
+data_15d1d9:
+		.ascii  "\x4e\x00"
+data_15d1db:
+		.ascii  "\x4d\x00"
+data_15d1dd:
+		.ascii  "\x2c\x00"
+data_15d1df:
+		.ascii  "\x2e\x00"
+data_15d1e1:
+		.ascii  "\x2f\x00"
+data_15d1e3:
+		.string "RIGHT SHIFT"
+data_15d1ef:
+		.string "KP *"
+data_15d1f4:
+		.string "LEFT ALT"
+data_15d1fd:
+		.string "SPACE"
+data_15d203:
+		.string "CAPSLOCK"
+data_15d20c:
+		.ascii  "\x46\x31\x00"
+data_15d20f:
+		.ascii  "\x46\x32\x00"
+data_15d212:
+		.ascii  "\x46\x33\x00"
+data_15d215:
+		.ascii  "\x46\x34\x00"
+data_15d218:
+		.ascii  "\x46\x35\x00"
+data_15d21b:
+		.ascii  "\x46\x36\x00"
+data_15d21e:
+		.ascii  "\x46\x37\x00"
+data_15d221:
+		.ascii  "\x46\x38\x00"
+data_15d224:
+		.ascii  "\x46\x39\x00"
+data_15d227:
+		.ascii  "\x46\x31\x30\x00"
+data_15d22b:
+		.string "NUMLOCK"
+data_15d233:
+		.string "SCRLOCK"
+data_15d23b:
+		.string "KP 7"
+data_15d240:
+		.string "KP 8"
+data_15d245:
+		.string "KP 9"
+data_15d24a:
+		.string "KP -"
+data_15d24f:
+		.string "KP 4"
+data_15d254:
+		.string "KP 5"
+data_15d259:
+		.string "KP 6"
+data_15d25e:
+		.string "KP +"
+data_15d263:
+		.string "KP 1"
+data_15d268:
+		.string "KP 2"
+data_15d26d:
+		.string "KP 3"
+data_15d272:
+		.string "KP 0"
+data_15d277:
+		.string "KP ."
+data_15d27c:
+		.ascii  "\x5c\x00"
+data_15d27e:
+		.ascii  "\x46\x31\x31\x00"
+data_15d282:
+		.ascii  "\x46\x31\x32\x00"
+data_15d286:
+		.string "ENTER"
+data_15d28c:
+		.string "RIGHT CTRL"
+data_15d297:
+		.string "KP /"
+data_15d29c:
+		.string "PRINT SCR"
+data_15d2a6:
+		.string "RIGHT ALT"
+data_15d2b0:
+		.string "HOME"
+data_15d2b5:
+		.ascii  "\x55\x50\x00"
+data_15d2b8:
+		.string "PGUP"
+data_15d2bd:
+		.string "LEFT"
+data_15d2c2:
+		.string "RIGHT"
+data_15d2c8:
+		.ascii  "\x45\x4e\x44\x00"
+data_15d2cc:
+		.string "DOWN"
+data_15d2d1:
+		.string "PGDN"
+data_15d2d6:
+		.string "INSERT"
+data_15d2dd:
+		.string "DELETE"
+
 .data
 
 data_1c4774:

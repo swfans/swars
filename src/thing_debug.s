@@ -2744,3 +2744,208 @@ data_15e801:
 		.byte	0x0
 data_15e802:
 		.short  0x0
+
+/* Person state text.
+ * Used by function at 0xBAC50, which was not disassembled.
+ */
+person_st_text:	/* 0x154aac */
+		.long   data_15cdc0
+		.long   data_15cdc1
+		.long   data_15cdcf
+		.long   data_15cde0
+		.long   data_15cdea
+		.long   data_15cdfc
+		.long   data_15ce04
+		.long   data_15ce17
+		.long   data_15ce26
+		.long   data_15ce33
+		.long   data_15ce4d
+		.long   data_15ce5e
+		.long   data_15ce65
+		.long   data_15ce6f
+		.long   data_15ce77
+		.long   data_15ce8b
+		.long   data_15ce9a
+		.long   data_15cea9
+		.long   data_15ceb8
+		.long   data_15cecb
+		.long   data_15cede
+		.long   data_15ceed
+		.long   data_15cf00
+		.long   data_15cf12
+		.long   data_15cf28
+		.long   data_15cf35
+		.long   data_15cf45
+		.long   data_15cf4d
+		.long   data_15cf5c
+		.long   data_15cf6c
+		.long   data_15cf7c
+		.long   data_15cf89
+		.long   data_15cf9c
+		.long   data_15cfaa
+		.long   data_15cfb6
+		.long   data_15cfc2
+		.long   data_15cfd4
+		.long   data_15cfe6
+		.long   data_15cff4
+		.long   data_15d007
+		.long   data_15d01b
+		.long   data_15d02e
+		.long   data_15d03f
+		.long   data_15d051
+		.long   data_15d063
+		.long   data_15d06f
+		.long   data_15d07e
+		.long   data_15d096
+		.long   data_15d0a6
+		.long   data_15d0b6
+		.long   data_15d0c5
+		.long   data_15d0d3
+		.long   data_15d0e7
+		.long   data_15d0f7
+		.long   data_15d108
+		.long   data_15d120
+		.long   data_15d12f
+		.long   data_15d13d
+		.long   data_15d14c
+		.long   data_15d14d
+		.long   data_15d14e
+		.long   data_15d14f
+		.long   data_15d150
+		.long   data_15d151
+		.long   data_15d152
+		.long   data_15d153
+
+data_15cdc0:
+		.string ""
+data_15cdc1:
+		.string "ST_GOTO_POINT"
+data_15cdcf:
+		.string "ST_BOMB_BUILDING"
+data_15cde0:
+		.string "ST_WANDER"
+data_15cdea:
+		.string "ST_EXPLODE_EFFECT"
+data_15cdfc:
+		.string "ST_WAIT"
+data_15ce04:
+		.string "ST_AGENT_DEFENSIVE"
+data_15ce17:
+		.string "ST_PICKUP_ITEM"
+data_15ce26:
+		.string "ST_DROP_ITEM"
+data_15ce33:
+		.string "ST_SHOOT_PERSON_WITH_BGUN"
+data_15ce4d:
+		.string "ST_SHOOT_BGUN_AT"
+data_15ce5e:
+		.string "ST_DIE"
+data_15ce65:
+		.string "ST_DIEING"
+data_15ce6f:
+		.string "ST_DEAD"
+data_15ce77:
+		.string "ST_INIT_SAVE_VICTIM"
+data_15ce8b:
+		.string "ST_SAVE_VICTIM"
+data_15ce9a:
+		.string "ST_GOTO_PERSON"
+data_15cea9:
+		.string "ST_WAIT_P_DEAD"
+data_15ceb8:
+		.string "ST_WAIT_ALL_G_DEAD"
+data_15cecb:
+		.string "ST_WAIT_MEM_G_DEAD"
+data_15cede:
+		.string "ST_WAIT_P_NEAR"
+data_15ceed:
+		.string "ST_WAIT_MEM_G_NEAR"
+data_15cf00:
+		.string "ST_WAIT_P_ARRIVES"
+data_15cf12:
+		.string "ST_WAIT_MEM_G_ARRIVES"
+data_15cf28:
+		.string "ST_WAIT_TIME"
+data_15cf35:
+		.string "ST_DEFINE_ROUTE"
+data_15cf45:
+		.string " UNUSED"
+data_15cf4d:
+		.string "ST_KILL_PERSON"
+data_15cf5c:
+		.string "ST_BLOCK_PERSON"
+data_15cf6c:
+		.string "ST_SCARE_PERSON"
+data_15cf7c:
+		.string "ST_USE_ITEM "
+data_15cf89:
+		.string "ST_STATIONARY_SHOT"
+data_15cf9c:
+		.string "ST_RECOIL_HIT"
+data_15cfaa:
+		.string "ST_V_PARKED"
+data_15cfb6:
+		.string "ST_V_DRIVEN"
+data_15cfc2:
+		.string "ST_GOTO_POINT_REL"
+data_15cfd4:
+		.string "ST_PERSON_BURNING"
+data_15cfe6:
+		.string "ST_IN_VEHICLE"
+data_15cff4:
+		.string "ST_DRIVING_VEHICLE"
+data_15d007:
+		.string "ST_V_GOTO_POINT_FLY"
+data_15d01b:
+		.string "ST_PERSUADE_PERSON"
+data_15d02e:
+		.string "ST_FOLLOW_PERSON"
+data_15d03f:
+		.string "ST_SUPPORT_PERSON"
+data_15d051:
+		.string "ST_PROTECT_PERSON"
+data_15d063:
+		.string "ST_GET_ITEM"
+data_15d06f:
+		.string "ST_USE_VEHICLE"
+data_15d07e:
+		.string "ST_USE_VEHICLE_TO_POINT"
+data_15d096:
+		.string "ST_WAIT_VEHICLE"
+data_15d0a6:
+		.string "ST_GOTO_VEHICLE"
+data_15d0b6:
+		.string "ST_CATCH_TRAIN"
+data_15d0c5:
+		.string "ST_WAIT_TRAIN"
+data_15d0d3:
+		.string "ST_DESTROY_BUILDING"
+data_15d0e7:
+		.string "ST_WANDER_DRIVE"
+data_15d0f7:
+		.string "ST_GO_PLANT_MINE"
+data_15d108:
+		.string "ST_WAIT_TO_EXIT_VEHICLE"
+data_15d120:
+		.string "ST_CATCH_FERRY"
+data_15d12f:
+		.string "ST_EXIT_FERRY"
+data_15d13d:
+		.string "ST_AVOID_GROUP"
+data_15d14c:
+		.string ""
+data_15d14d:
+		.string ""
+data_15d14e:
+		.string ""
+data_15d14f:
+		.string ""
+data_15d150:
+		.string ""
+data_15d151:
+		.string ""
+data_15d152:
+		.string ""
+data_15d153:
+		.string ""
+

@@ -1266,3 +1266,6 @@ GLOBAL (_lbVesaPage)
 _lbVesaGran:
 		.short  0x0
 
+GLOBAL (lbScreenDirectAccessActive)
+		.long	0x0
+
