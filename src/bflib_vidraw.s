@@ -2472,7 +2472,7 @@ GLOBAL_FUNC (LbDrawBox_)
 		mov    -0xc(%ebp),%edx
 		push   %eax
 		mov    -0x10(%ebp),%eax
-		call   func_f0834
+		call   LbDrawHVLine_
 		xor    %eax,%eax
 		mov    0x8(%ebp),%al
 		mov    -0xc(%ebp),%ecx
@@ -2486,7 +2486,7 @@ GLOBAL_FUNC (LbDrawBox_)
 		add    -0x4(%ebp),%edx
 		dec    %edx
 		mov    -0x10(%ebp),%eax
-		call   func_f0834
+		call   LbDrawHVLine_
 		cmpl   $0x2,-0x4(%ebp)
 		jbe    jump_e7508
 		xor    %eax,%eax
@@ -2499,7 +2499,7 @@ GLOBAL_FUNC (LbDrawBox_)
 		mov    -0xc(%ebp),%edx
 		inc    %edx
 		mov    -0x10(%ebp),%eax
-		call   func_f0834
+		call   LbDrawHVLine_
 		xor    %eax,%eax
 		mov    0x8(%ebp),%al
 		mov    -0xc(%ebp),%ecx
@@ -2514,7 +2514,7 @@ GLOBAL_FUNC (LbDrawBox_)
 		mov    -0x10(%ebp),%eax
 		add    -0x8(%ebp),%eax
 		dec    %eax
-		call   func_f0834
+		call   LbDrawHVLine_
 		jmp    jump_e7508
 	jump_e74f1:
 		xor    %eax,%eax
@@ -4348,7 +4348,7 @@ GLOBAL_FUNC (LbSpriteDrawOneColour_)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (func_f0834)
+GLOBAL_FUNC (LbDrawHVLine_)	/* 0xf0834 */
 /*----------------------------------------------------------------*/
 		push   %ebp
 		mov    %esp,%ebp

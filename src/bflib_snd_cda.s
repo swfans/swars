@@ -710,7 +710,7 @@ GLOBAL_FUNC (cd_init_)
 		mov    %edx,%eax
 		call   SoundProgressLog_
 		mov    %ecx,%eax
-		call   __j___delay_
+		call   delay_
 		xor    %eax,%eax
 		mov    %bx,%ax
 		inc    %ebx

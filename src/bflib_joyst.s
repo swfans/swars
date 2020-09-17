@@ -925,7 +925,7 @@ func_f36fd:
 		mov    $0xffff8022,%eax
 		call   func_f2eb6
 		mov    $0xc8,%eax
-		call   __j___delay_
+		call   delay_
 		movl   $0x0,data_158dd2
 		movl   $0x7,data_158dce
 	jump_f3797:

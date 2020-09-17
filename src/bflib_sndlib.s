@@ -33,7 +33,7 @@
 .global EXPORT_SYMBOL(___dst_adjust);
 .global EXPORT_SYMBOL(data_15978c);
 .global EXPORT_SYMBOL(data_159790);
-.global EXPORT_SYMBOL(data_16207c);
+.global EXPORT_SYMBOL(_IsTable);
 .global EXPORT_SYMBOL(FullDIG_INIPath);
 .global EXPORT_SYMBOL(FullMDI_INIPath);
 .global EXPORT_SYMBOL(SoundDriverPath);
@@ -6373,7 +6373,7 @@ ASC_val:
 		mov    %ah,%al
 		inc    %al
 		and    $0xff,%eax
-		testb  $0x2,EXPORT_SYMBOL(data_16207c)(%eax)
+		testb  $0x2,EXPORT_SYMBOL(_IsTable)(%eax)
 		jne    jump_111996
 		xor    %edx,%edx
 		test   %esi,%esi
@@ -6482,7 +6482,7 @@ AIL_API_read_INI:
 		mov    0x118(%esp,%ecx,1),%dl
 		inc    %dl
 		and    $0xff,%edx
-		testb  $0x2,EXPORT_SYMBOL(data_16207c)(%edx)
+		testb  $0x2,EXPORT_SYMBOL(_IsTable)(%edx)
 		je     jump_111aa0
 		dec    %ecx
 		xor    %dh,%dh
@@ -6496,7 +6496,7 @@ AIL_API_read_INI:
 		mov    0x118(%esp,%edx,1),%cl
 		inc    %cl
 		and    $0xff,%ecx
-		testb  $0x2,EXPORT_SYMBOL(data_16207c)(%ecx)
+		testb  $0x2,EXPORT_SYMBOL(_IsTable)(%ecx)
 		je     jump_111ad2
 		inc    %edx
 	jump_111abd:
@@ -6517,7 +6517,7 @@ AIL_API_read_INI:
 		mov    0x118(%esp,%edx,1),%cl
 		inc    %cl
 		and    $0xff,%ecx
-		testb  $0x2,EXPORT_SYMBOL(data_16207c)(%ecx)
+		testb  $0x2,EXPORT_SYMBOL(_IsTable)(%ecx)
 		jne    jump_111b0b
 		inc    %edx
 	jump_111af6:
@@ -6538,7 +6538,7 @@ AIL_API_read_INI:
 		mov    0x118(%esp,%edx,1),%cl
 		inc    %cl
 		and    $0xff,%ecx
-		testb  $0x2,EXPORT_SYMBOL(data_16207c)(%ecx)
+		testb  $0x2,EXPORT_SYMBOL(_IsTable)(%ecx)
 		je     jump_111b44
 		inc    %edx
 	jump_111b2f:
