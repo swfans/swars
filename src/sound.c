@@ -223,6 +223,7 @@ sound_finalise (void)
 bool
 sound_open_music_file (const char *fname)
 {
+  fprintf (stdout, "%s: Music track selected.\n", fname);
   if (!sound_initialised)
     return false;
 
