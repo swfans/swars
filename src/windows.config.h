@@ -50,8 +50,8 @@
 #define VER_MAJOR 0
 #define VER_MINOR 3
 #define VER_RELEASE 1
-#define VER_BUILD 13
-#define VER_STRING        "0.3.1.13"
+#define VER_BUILD 16
+#define VER_STRING        "0.3.1.16"
 
 /* One sentence description of the package */
 #define PACKAGE_DESCRIPTION "Syndicate Wars portable binary"
