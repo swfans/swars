@@ -87,9 +87,11 @@ Section "Syndicate Wars Game" ; Section_0
   Call InstallRegistry
   IfErrors inst_game_fail
   File swars.exe
-  File openal32.dll
-  File wrap_oal.dll
-  File libpng3.dll
+  File libgcc_s_dw2-1.dll
+  File libstdc++-6.dll
+  File libwinpthread-1.dll
+  File libopenal-1.dll
+  File libpng16-16.dll
   File zlib1.dll
   File SDL.dll
   File libogg-0.dll
