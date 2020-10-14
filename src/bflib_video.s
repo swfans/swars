@@ -1242,7 +1242,7 @@ GLOBAL (lbDisplay__RRightButton)	/* 1e2ec3 */
 		.byte	0x0
 lbDisplay__FadeStep:
 		.byte	0x0
-GLOBAL (lbDisplay__DrawColour) /* no idea, byte */
+GLOBAL (lbDisplay__DrawColour)
 		.byte	0x0
 lbDisplay__Palette:
 		.long	0x0

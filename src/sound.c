@@ -92,7 +92,7 @@ pop_free_buffer (void)
 }
 
 static void
-push_free_buffer (ALuint buf)
+push_free_buffer (ALuint buf, void *user_data)
 {
   assert (sound_free_buffer_count < SOUND_MAX_BUFFERS);
   sound_free_buffers[sound_free_buffer_count++] = buf;
@@ -111,7 +111,7 @@ create_sources (void)
       if (!check_al ("alGenBuffers"))
 	goto err;
 
-      push_free_buffer (buffers[0]);
+      push_free_buffer (buffers[0], NULL);
     }
 
   for (n = 0; n < SOUND_MAX_SOURCES; n++)
@@ -134,7 +134,7 @@ create_sources (void)
       initialise_descriptor (sound_source_count++, source);
 
       for (m = 0; m < SOUND_BUFFERS_PER_SRC; m++)
-	push_free_buffer (buffers[m]);
+	push_free_buffer (buffers[m], NULL);
     }
 
   if (sound_source_count == 0)
@@ -358,7 +358,7 @@ queue_source_buffers (SoundPCMDriver *pcmdrv, SourceDescriptor *src)
 
 err:
   if (buf != 0)
-    push_free_buffer (buf);
+    push_free_buffer (buf, NULL);
 }
 
 static void

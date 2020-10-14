@@ -29,6 +29,12 @@
 # define mkdir(path, mode) mkdir (path)
 #endif
 
+#define ERRORMSG(fmt, ...) \
+    fprintf(stderr, fmt, ##__VA_ARGS__)
+
+#define DEBUGMSG(lv, fmt, ...) \
+    fprintf(stdout, fmt, ##__VA_ARGS__)
+
 
 void strtolower (char *string);
 

@@ -51,7 +51,7 @@ sound_unqueue_buffers (ALuint source, SoundNameCallback callback,
 }
 
 static void
-delete_queued_buffer (ALuint buf)
+delete_queued_buffer (ALuint buf, void *user_data)
 {
   alDeleteBuffers (1, &buf);
   check_al ("alDeleteBuffers");
