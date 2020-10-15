@@ -9,7 +9,8 @@ swars_SOURCES = \
 	bflib_dernc.s \
 	bflib_fileio.s \
 	bflib_fmvids.s \
-	bflib_joyst.s \
+	bflib_joyst_s.s \
+    bflib_joyst.c \
 	bflib_keybrd.s \
 	bflib_math.s \
 	bflib_memory.s \

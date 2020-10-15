@@ -70,6 +70,35 @@ game_initialise (void)
 
   create_user_directory ();
 
+  if ( cmdln_param_w == 1 )
+  {
+      buffer_allocs[35].field_A = 1;
+      buffer_allocs[28].field_A = 1;
+      buffer_allocs[36].field_A = 1;
+      buffer_allocs[27].field_A = 1000;
+      buffer_allocs[26].field_A = 1124;
+      buffer_allocs[31].field_A = 2500;
+      buffer_allocs[32].field_A = 1000;
+      buffer_allocs[33].field_A = 700;
+      buffer_allocs[30].field_A = 3000;
+      if ( cmdln_param_mp || cmdln_param_bcg )
+      {
+        buffer_allocs[20].field_A = 2000;
+        buffer_allocs[21].field_A = 2000;
+        buffer_allocs[22].field_A = 2000;
+      }
+      buffer_allocs[4].field_A = 11000;
+      buffer_allocs[9].field_A = 11000;
+      buffer_allocs[5].field_A = 1500;
+      buffer_allocs[7].field_A = 1000;
+      buffer_allocs[13].field_A = 16000;
+      buffer_allocs[14].field_A = 9000;
+      mem_alloc_size = 2700000;
+      game_perspective = (buffer_allocs[5].field_A >> 8) & 0xff;
+  }
+  if ( !cmdln_param_mp )
+    cmdln_param_bcg = 1;
+
   return true;
 }
 
