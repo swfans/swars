@@ -30,14 +30,13 @@
 
 .global EXPORT_SYMBOL(__Extender);
 .global EXPORT_SYMBOL(__osmajor);
-.global EXPORT_SYMBOL(data_159581);
-.global EXPORT_SYMBOL(data_1595e5);
-.global EXPORT_SYMBOL(data_159590);
-.global EXPORT_SYMBOL(data_1595e4);
+.global EXPORT_SYMBOL(__fmode);
+.global EXPORT_SYMBOL(___NFiles);
+.global EXPORT_SYMBOL(__iomode);
 .global EXPORT_SYMBOL(__STACKLOW);
-.global EXPORT_SYMBOL(data_1e9560);
-.global EXPORT_SYMBOL(data_1ea484);
-.global EXPORT_SYMBOL(data_1ea480);
+.global EXPORT_SYMBOL(___OpenStreams);
+.global EXPORT_SYMBOL(__doserrno);
+.global EXPORT_SYMBOL(_wc_errno);
 
 /*----------------------------------------------------------------*/
 GLOBAL_FUNC (LbFileExists_)
@@ -659,7 +658,7 @@ GLOBAL_FUNC (____IOMode_)
 		push   %ecx
 		push   %edx
 		mov    %eax,%edx
-		cmp    EXPORT_SYMBOL(data_159590),%eax
+		cmp    EXPORT_SYMBOL(___NFiles),%eax
 		jb     jump_10ad1f
 		xor    %eax,%eax
 		pop    %edx
@@ -670,7 +669,7 @@ GLOBAL_FUNC (____IOMode_)
 		cmp    $0x5,%eax
 		jg     jump_10ad55
 		mov    %eax,%ebx
-		mov    EXPORT_SYMBOL(data_1595e4),%eax
+		mov    EXPORT_SYMBOL(__iomode),%eax
 		shl    $0x2,%ebx
 		add    %ebx,%eax
 		mov    0x1(%eax),%cl
@@ -683,10 +682,10 @@ GLOBAL_FUNC (____IOMode_)
 		call   ac_isatty
 		test   %eax,%eax
 		je     jump_10ad55
-		mov    EXPORT_SYMBOL(data_1595e4),%eax
+		mov    EXPORT_SYMBOL(__iomode),%eax
 		orb    $0x20,0x1(%ebx,%eax,1)
 	jump_10ad55:
-		mov    EXPORT_SYMBOL(data_1595e4),%eax
+		mov    EXPORT_SYMBOL(__iomode),%eax
 		mov    (%eax,%edx,4),%eax
 		pop    %edx
 		pop    %ecx
@@ -777,7 +776,7 @@ ____set_errno_dos_:	/* 0x10ada8 */
 	jump_10adf3:
 		xor    %ebx,%ebx
 		mov    %dl,%bl
-		mov    EXPORT_SYMBOL(data_1595e5)(%ebx),%eax
+		mov    EXPORT_SYMBOL(__iomode+1)(%ebx),%eax
 		sar    $0x18,%eax
 		jmp    jump_10ae0c
 	jump_10ae02:
@@ -801,7 +800,7 @@ func_10df1f:
 /*----------------------------------------------------------------*/
 func_10af45:
 /*----------------------------------------------------------------*/
-		mov    $EXPORT_SYMBOL(data_1ea484),%eax
+		mov    $EXPORT_SYMBOL(__doserrno),%eax
 		ret
 
 
@@ -809,7 +808,7 @@ func_10af45:
 /*----------------------------------------------------------------*/
 func_10af3f:
 /*----------------------------------------------------------------*/
-		mov    $EXPORT_SYMBOL(data_1ea480),%eax
+		mov    $EXPORT_SYMBOL(_wc_errno),%eax
 		ret
 
 
