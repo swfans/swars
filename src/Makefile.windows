@@ -54,7 +54,6 @@ OBJS = \
 	../obj/bflib_render_gpoly.o \
 	../obj/bflib_math.o \
 	../obj/bflib_memory.o \
-	../obj/bflib_memory_s.o \
 	../obj/bflib_sndlib.o \
 	../obj/bflib_snd_cda.o \
 	../obj/bflib_snd_mss.o \

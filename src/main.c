@@ -331,10 +331,7 @@ main (int argc, char **argv)
             :  :  : "eax" );
   }
   joy_grip_shutdown();
-  /* LbMemoryReset(); */
-  asm volatile ("call _LbMemoryReset_\n"
-        :  :  : "eax" );
-
+  LbMemoryReset();
   game_quit();
 
   return retval;

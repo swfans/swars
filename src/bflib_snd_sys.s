@@ -1309,9 +1309,9 @@ AllocateSoundBankMemory_:
 		jne    jump_ecdb6
 	jump_ecd96:
 		mov    SfxData,%eax
-		call   LbMemoryFree_
+		call   ac_LbMemoryFree
 		mov    Sfx,%eax
-		call   LbMemoryFree_
+		call   ac_LbMemoryFree
 		xor    %eax,%eax
 		add    $0x4,%esp
 		pop    %ebp
@@ -1863,9 +1863,9 @@ AllocateMusicBankMemory_:
 		jne    jump_ed433
 	jump_ed416:
 		mov    MusicData,%eax
-		call   LbMemoryFree_
+		call   ac_LbMemoryFree
 		mov    Music,%eax
-		call   LbMemoryFree_
+		call   ac_LbMemoryFree
 		xor    %eax,%eax
 		pop    %ebp
 		pop    %edi
@@ -2894,7 +2894,7 @@ GLOBAL_FUNC(InitSound_)
 		push   $ac_LbMemoryAlloc
 		call   _MEM_use_malloc
 		add    $0x4,%esp
-		push   $LbMemoryFree_
+		push   $ac_LbMemoryFree
 		call   _MEM_use_free
 		add    $0x4,%esp
 		call   ail_startup
@@ -3508,7 +3508,7 @@ GLOBAL_FUNC(InitMusic_)
 		push   $ac_LbMemoryAlloc
 		call   _MEM_use_malloc
 		add    $0x4,%esp
-		push   $LbMemoryFree_
+		push   $ac_LbMemoryFree
 		call   _MEM_use_free
 		add    $0x4,%esp
 		call   ail_startup
@@ -4336,7 +4336,7 @@ free_buffers:
 		test   %eax,%eax
 		je     jump_10105b
 		xor    %edx,%edx
-		call   LbMemoryFree_
+		call   ac_LbMemoryFree
 		mov    %edx,data_1e8f6c
 	jump_10105b:
 		mov    data_1e8f94,%ebx
@@ -4344,7 +4344,7 @@ free_buffers:
 		je     jump_101074
 		mov    %ebx,%eax
 		xor    %ecx,%ecx
-		call   LbMemoryFree_
+		call   ac_LbMemoryFree
 		mov    %ecx,data_1e8f94
 	jump_101074:
 		pop    %ebp
@@ -4446,14 +4446,14 @@ FreeMusic_:
 		je     jump_108cdb
 		mov    %ecx,%eax
 		xor    %esi,%esi
-		call   LbMemoryFree_
+		call   ac_LbMemoryFree
 		mov    %esi,EndMusic
 	jump_108cdb:
 		mov    MusicData,%edi
 		test   %edi,%edi
 		je     jump_108cec
 		mov    %edi,%eax
-		call   LbMemoryFree_
+		call   ac_LbMemoryFree
 	jump_108cec:
 		xor    %dh,%dh
 		mov    %dh,MusicAble
@@ -4486,14 +4486,14 @@ FreeSound_:
 		je     jump_108d48
 		mov    %edx,%eax
 		xor    %ebx,%ebx
-		call   LbMemoryFree_
+		call   ac_LbMemoryFree
 		mov    %ebx,EndSfxs
 	jump_108d48:
 		mov    SfxData,%ecx
 		test   %ecx,%ecx
 		je     jump_108d59
 		mov    %ecx,%eax
-		call   LbMemoryFree_
+		call   ac_LbMemoryFree
 	jump_108d59:
 		xor    %dh,%dh
 		mov    %dh,SoundAble

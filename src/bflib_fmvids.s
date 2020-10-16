@@ -7051,7 +7051,7 @@ play_smk_via_buffer:
 		push   %ebp
 		call   SMACKCLOSE
 		mov    0x4(%esp),%eax
-		call   LbMemoryFree_
+		call   ac_LbMemoryFree
 		mov    $0x1,%eax
 	jump_eb4e2:
 		add    $0x10,%esp
@@ -10313,7 +10313,7 @@ DEFSMACKTIMERREAD:
 _smack_malloc:
 		.long   ac_LbMemoryAlloc
 _smack_free:
-		.long   LbMemoryFree_
+		.long   ac_LbMemoryFree
 
 data_159800:
 		.long	0x0

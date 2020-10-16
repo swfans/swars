@@ -35,7 +35,7 @@ short update_memory_constraits(void);
 void * LbMemorySet(void *dst, uchar c, ulong length);
 void * LbMemoryCopy(void *in_dst, const void *in_src, ulong len);
 TbResult LbMemorySetup();
-int LbMemoryReset(void);
+TbResult LbMemoryReset(void);
 TbResult  LbMemoryCheck(void);
 unsigned char * LbMemoryAllocLow(ulong size);
 unsigned char * LbMemoryAlloc(ulong size);

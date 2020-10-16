@@ -14,7 +14,6 @@ swars_SOURCES = \
     bflib_joyst.c \
 	bflib_keybrd.s \
 	bflib_math.s \
-	bflib_memory_s.s \
 	bflib_memory.c \
 	bflib_render_gpoly.s \
 	bflib_render_plin.s \

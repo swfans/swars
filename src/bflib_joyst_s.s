@@ -148,7 +148,7 @@ GLOBAL_FUNC (joy_grip_init)
 		jmp    jump_e116e
 	jump_e1162:
 		mov    %edi,%eax
-		call   LbMemoryFree_
+		call   ac_LbMemoryFree
 		mov    $0x1,%eax
 	jump_e116e:
 		cmp    $0x1,%eax

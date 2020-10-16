@@ -68,9 +68,9 @@ typedef struct {
     ulong SmallestBlock;
 } TbMemoryAvailable;
 
-extern mem_block memory_blocks[TABLE_SIZE];
-extern mem_arena memory_arenas[TABLE_SIZE];
-extern TbMemoryAvailable lbMemoryAvailable;
+mem_block memory_blocks[TABLE_SIZE];
+mem_arena memory_arenas[TABLE_SIZE];
+TbMemoryAvailable lbMemoryAvailable;
 
 #pragma pack()
 
@@ -243,7 +243,7 @@ ulong LbStringLength(const char *str)
     return strlen(str);
 }
 
-int LbMemoryReset(void)
+TbResult LbMemoryReset(void)
 {
     mem_block *cblock;
 
