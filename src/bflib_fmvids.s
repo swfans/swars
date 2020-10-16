@@ -6971,7 +6971,7 @@ play_smk_via_buffer:
 		je     jump_eb4e2
 		mov    0x4(%eax),%eax
 		imul   0x8(%esi),%eax
-		call   LbMemoryAlloc_
+		call   ac_LbMemoryAlloc
 		mov    %eax,0x4(%esp)
 		test   %eax,%eax
 		jne    jump_eb40a
@@ -10311,7 +10311,7 @@ DEFSMACKTIMERREAD:
 .data
 
 _smack_malloc:
-		.long   LbMemoryAlloc_
+		.long   ac_LbMemoryAlloc
 _smack_free:
 		.long   LbMemoryFree_
 

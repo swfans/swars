@@ -33,7 +33,7 @@
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (LbMemoryAlloc_)
+GLOBAL_FUNC (ASM_LbMemoryAlloc_)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -76,10 +76,10 @@ GLOBAL_FUNC (LbMemoryAlloc_)
 		je     jump_dc71a
 		mov    %ecx,%edx
 		mov    %esi,%eax
-		call   split_arena
+		call   ac_split_arena
 		test   %al,%al
 		je     jump_dc71a
-		call   LbMemoryCheck_
+		call   ac_LbMemoryCheck
 		mov    %ecx,%ebx
 		mov    (%esi),%eax
 		xor    %edx,%edx
@@ -88,7 +88,7 @@ GLOBAL_FUNC (LbMemoryAlloc_)
 		jmp    jump_dc721
 	jump_dc71a:
 		mov    %ecx,%eax
-		call   LbMemoryAllocLow_
+		call   ac_LbMemoryAllocLow
 	jump_dc721:
 		pop    %edi
 		pop    %esi
@@ -99,7 +99,7 @@ GLOBAL_FUNC (LbMemoryAlloc_)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (LbMemoryAllocLow_)
+GLOBAL_FUNC (ASM_LbMemoryAllocLow_)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -142,10 +142,10 @@ GLOBAL_FUNC (LbMemoryAllocLow_)
 		je     jump_dc7a2
 		mov    %ecx,%edx
 		mov    %esi,%eax
-		call   split_arena
+		call   ac_split_arena
 		test   %al,%al
 		je     jump_dc7a2
-		call   LbMemoryCheck_
+		call   ac_LbMemoryCheck
 		mov    %ecx,%ebx
 		mov    (%esi),%eax
 		xor    %edx,%edx
@@ -164,7 +164,7 @@ GLOBAL_FUNC (LbMemoryAllocLow_)
 
 
 /*----------------------------------------------------------------*/
-LbMemoryCheck_:
+ASM_LbMemoryCheck_:
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -298,7 +298,7 @@ GLOBAL_FUNC (LbMemoryFree_)
 		pop    %ebx
 		ret
 	jump_dc911:
-		call   LbMemoryCheck_
+		call   ac_LbMemoryCheck
 		mov    $0x1,%eax
 		pop    %edx
 		pop    %ecx
@@ -593,7 +593,7 @@ LbMemorySetup_:
 /*----------------------------------------------------------------*/
 /* uint8_t split_arena(mem_arena *marena, unsigned long arg2)
  */
-split_arena:
+ASM_split_arena:
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx

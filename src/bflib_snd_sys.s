@@ -1290,7 +1290,7 @@ AllocateSoundBankMemory_:
 		je     jump_ecdee
 		lea    0x100(%esi),%ebp
 		mov    %ebp,%eax
-		call   LbMemoryAlloc_
+		call   ac_LbMemoryAlloc
 		push   %ebp
 		push   $data_15efb3
 		push   $SoundProgressMessage
@@ -1300,7 +1300,7 @@ AllocateSoundBankMemory_:
 		mov    $SoundProgressMessage,%eax
 		call   SoundProgressLog_
 		lea    0x100(%edi),%eax
-		call   LbMemoryAlloc_
+		call   ac_LbMemoryAlloc
 		mov    SfxData,%edx
 		mov    %eax,Sfx
 		test   %edx,%edx
@@ -1851,10 +1851,10 @@ AllocateMusicBankMemory_:
 		test   %edi,%edi
 		je     jump_ed458
 		lea    0x100(%esi),%eax
-		call   LbMemoryAlloc_
+		call   ac_LbMemoryAlloc
 		mov    %eax,MusicData
 		lea    0x100(%edi),%eax
-		call   LbMemoryAlloc_
+		call   ac_LbMemoryAlloc
 		mov    MusicData,%edx
 		mov    %eax,Music
 		test   %edx,%edx
@@ -2891,7 +2891,7 @@ GLOBAL_FUNC(InitSound_)
 	jump_ff4c0:
 		cmpb   $0x0,AILStartupAlreadyInitiated
 		jne    jump_ff4ef
-		push   $LbMemoryAlloc_
+		push   $ac_LbMemoryAlloc
 		call   _MEM_use_malloc
 		add    $0x4,%esp
 		push   $LbMemoryFree_
@@ -3505,7 +3505,7 @@ GLOBAL_FUNC(InitMusic_)
 		call   SoundProgressLog_
 		cmpb   $0x0,AILStartupAlreadyInitiated
 		jne    jump_ffcc6
-		push   $LbMemoryAlloc_
+		push   $ac_LbMemoryAlloc
 		call   _MEM_use_malloc
 		add    $0x4,%esp
 		push   $LbMemoryFree_
@@ -4276,12 +4276,12 @@ allocate_buffers:
 		push   %ecx
 		push   %edx
 		mov    $0x8000,%eax
-		call   LbMemoryAlloc_
+		call   ac_LbMemoryAlloc
 		mov    %eax,data_1e8f94
 		test   %eax,%eax
 		je     jump_100ff9
 		mov    $0x800,%eax
-		call   LbMemoryAlloc_
+		call   ac_LbMemoryAlloc
 		mov    %eax,data_1e8f6c
 		test   %eax,%eax
 		je     jump_100ff9

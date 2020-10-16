@@ -120,7 +120,7 @@ GLOBAL_FUNC (joy_grip_init)
 		mov    $0xffffffff,%eax
 		jmp    jump_e116e
 	jump_e1111:
-		call   LbMemoryAlloc_
+		call   ac_LbMemoryAlloc
 		mov    %eax,%edi
 		test   %eax,%eax
 		jne    jump_e1123
