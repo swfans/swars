@@ -168,7 +168,7 @@ Options:
 		self.wrln ('.global %s'	  % self.wrap_name (name))
 		self.wrln ('%s: /* %s %s */' % (self.wrap_name (name), type, args))
 
-		if type == 'w':
+		if type == 'w' or type == 'i' or type == 'p':
 			if self.stack_align > 4:
 				self.generate_prologue ()
 			self.generate_store_registers ()
@@ -202,7 +202,7 @@ Options:
 			self.generate_prologue ()
 			self.generate_store_registers ()
 			self.generate_align_push (len (args))
-			assert len (args) > 0
+			assert len (args) > 0, "wrapper is not needed for void type and no arguments"
 			self.wrln ()
 			self.wrln ('\t\tlea\t0x%x(%%ebp),%%eax' % ((len (args) + 1) * 4))
 			self.wrln ('\t\tpush\t%eax')

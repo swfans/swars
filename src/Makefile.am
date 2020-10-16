@@ -14,6 +14,7 @@ swars_SOURCES = \
 	bflib_keybrd.s \
 	bflib_math.s \
 	bflib_memory_s.s \
+	bflib_memory.c \
 	bflib_render_gpoly.s \
 	bflib_render_plin.s \
 	bflib_render_trig.s \
@@ -33,7 +34,6 @@ swars_SOURCES = \
 	keyboard.c \
 	keyboard.h \
 	main.c \
-	memory.c \
 	mouse.c \
 	mouse.h \
 	oggvorbis.c \
