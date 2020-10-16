@@ -6,14 +6,14 @@ MKW = $(PYTHON) $(top_srcdir)/util/mkwrappers
 
 swars_SOURCES = \
 	ariadne.s \
-	bflib_dernc.s \
-	bflib_fileio.s \
+	bflib_dernc_s.s \
+	bflib_fileio_s.s \
 	bflib_fmvids.s \
 	bflib_joyst_s.s \
     bflib_joyst.c \
 	bflib_keybrd.s \
 	bflib_math.s \
-	bflib_memory.s \
+	bflib_memory_s.s \
 	bflib_render_gpoly.s \
 	bflib_render_plin.s \
 	bflib_render_trig.s \
