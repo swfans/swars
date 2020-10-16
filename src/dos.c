@@ -13,6 +13,7 @@
 #include <sys/types.h>
 #include <time.h>
 
+#include "bflib_fileio.h"
 #include "dos.h"
 #include "game.h"
 #include "util.h"

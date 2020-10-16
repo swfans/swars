@@ -13,14 +13,6 @@
 # define MAX(a, b) ((a) > (b) ? (a) : (b))
 #endif
 
-#ifdef __unix__
-# define FS_SEP '/'
-# define FS_SEP_STR "/"
-#elif defined _WIN32
-# define FS_SEP '\\'
-# define FS_SEP_STR "\\"
-#endif
-
 #ifdef _WIN32
 #ifndef strcasecmp
 # define strcasecmp stricmp
@@ -28,13 +20,6 @@
 #endif
 # define mkdir(path, mode) mkdir (path)
 #endif
-
-#define ERRORMSG(fmt, ...) \
-    fprintf(stderr, fmt, ##__VA_ARGS__)
-
-#define DEBUGMSG(lv, fmt, ...) \
-    fprintf(stdout, fmt, ##__VA_ARGS__)
-
 
 void strtolower (char *string);
 

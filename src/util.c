@@ -11,6 +11,7 @@
 # include <unistd.h>
 #endif
 
+#include "bflib_fileio.h"
 #include "util.h"
 
 void

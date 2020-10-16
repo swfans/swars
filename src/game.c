@@ -5,6 +5,7 @@
 #include <sys/types.h>
 #include <png.h>
 
+#include "bflib_fileio.h"
 #include "display.h"
 #include "dos.h"
 #include "game.h"
@@ -182,25 +183,6 @@ const char *
 game_get_user_path (void)
 {
   return game_user_path;
-}
-
-ssize_t
-LbFileLength (const char *filename)
-{
-  struct stat st;
-  char transformed[FILENAME_MAX];
-  char path[FILENAME_MAX];
-
-  game_transform_path_full (filename, transformed, sizeof (transformed));
-  dos_path_to_native (transformed, path, sizeof (path));
-
-  if (stat (path, &st) != 0)
-    {
-      perror (path);
-      return -1;
-    }
-
-  return st.st_size;
 }
 
 static bool
