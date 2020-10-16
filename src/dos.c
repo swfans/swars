@@ -407,6 +407,18 @@ print_interrupt_info_and_abort (int num, DOS_Registers *regs, void *caller)
   abort ();
 }
 
+void dos_free(unsigned short n)
+{
+    DOS_Registers32 out_regs;
+    DOS_Registers32 regs;
+
+    if (n == 0)
+        return;
+    regs.eax = 257;
+    regs.edx = n;
+    dos_int386(49, (DOS_Registers *)&regs, (DOS_Registers *)&out_regs);
+}
+
 int
 dos_int386 (int num, DOS_Registers *regs, DOS_Registers *out_regs)
 {

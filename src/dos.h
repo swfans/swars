@@ -116,6 +116,8 @@ void dos_gettime (struct dostime_t *t);
 
 void dos_getdate (struct dosdate_t *d);
 
+void dos_free(unsigned short n);
+
 int dos_int386 (int num, DOS_Registers *regs, DOS_Registers *out_regs)
       __attribute__ ((noreturn));
 

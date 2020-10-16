@@ -39,7 +39,7 @@ int LbMemoryReset(void);
 TbResult  LbMemoryCheck(void);
 unsigned char * LbMemoryAllocLow(ulong size);
 unsigned char * LbMemoryAlloc(ulong size);
-int LbMemoryFree(void *mem_ptr);
+TbResult LbMemoryFree(void *mem_ptr);
 TbResult LbMemoryGrow(void **ptr, unsigned long size);
 TbResult LbMemoryShrink(void **ptr, unsigned long size);
 int LbMemoryCompare(void *ptr1, void *ptr2, unsigned long size);

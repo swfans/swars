@@ -28,6 +28,7 @@
 #include <stdarg.h>
 #include <stdlib.h>
 
+#include "dos.h"
 /******************************************************************************/
 #define AVAILABLE_MEMORY (16*1024*1024)
 #define TABLE_SIZE 256 /* hardcoded, do not change */
@@ -147,6 +148,26 @@ TbResult split_arena(mem_arena *arena, size_t size)
     return 1;
 }
 
+void delete_arena(mem_arena *arena)
+{
+    mem_arena *pararena;
+    mem_arena *chlarena;
+
+    if (arena->Parent) {
+    }
+    arena->Used = 0;
+    pararena = arena->Parent;
+    if ( arena->Section == pararena->Section && !pararena->Used )
+    {
+        chlarena = arena->Child;
+        if (chlarena != NULL)
+            chlarena->Parent = pararena;
+        arena->Parent->Child = arena->Child;
+        arena->Parent->Size += arena->Size;
+        arena->Size = 0;
+    }
+}
+
 TbResult LbMemorySetup(void)
 {
     if (lbMemorySetup)
@@ -222,27 +243,23 @@ ulong LbStringLength(const char *str)
     return strlen(str);
 }
 
-void LbMemRegister_Setup(void)
-{
-    /*memset(lbMemList, 0, 0x800);
-    lbMemAllocation = 0;
-    lbMemCount = 0;*/
-}
-
 int LbMemoryReset(void)
 {
-    if (lbMemorySetup == 0)
-        return 0;
-    lbMemorySetup = 0;
-    /* Heap handling by application is only required for some platforms
-    if (heap_handle != NULL)
+    mem_block *cblock;
+
+    cblock = memory_blocks;
+    while (cblock->Size != 0)
     {
-        if (!HeapDestroy(heap_handle))
-            return -1;
-        heap_handle = NULL;
+        if (cblock->Selector) {
+            dos_free(cblock->Selector);
+        } else {
+            free(cblock->Pointer);
+        }
+        cblock->Size = 0;
+        cblock->Pointer = 0;
+        cblock->Selector = 0;
+        ++cblock;
     }
-    LbMemRegister_Setup();
-    */
     return 1;
 }
 
@@ -317,10 +334,30 @@ unsigned char * LbMemoryAlloc(ulong size)
     return splarena->Pointer;
 }
 
-int LbMemoryFree(void *mem_ptr)
+TbResult LbMemoryFree(void *mem_ptr)
 {
-    if (mem_ptr==NULL) return -1;
-    free(mem_ptr);
+    mem_arena *curarena;
+    TbBool found;
+
+    curarena = memory_arenas;
+    found = 0;
+    while (curarena != NULL)
+    {
+        if (mem_ptr == curarena->Pointer) {
+            found = 1;
+            curarena->Used = 0;
+            break;
+        }
+        curarena = curarena->Child;
+    }
+    if (found != 1)
+        return -1;
+    for (curarena = memory_arenas; curarena != NULL; curarena = curarena->Child)
+    {
+        if (!curarena->Used)
+            delete_arena(curarena);
+    }
+    LbMemoryCheck();
     return 1;
 }
 
@@ -371,11 +408,53 @@ TbResult LbMemoryCheck(void)
  */
 TbResult LbMemoryGrow(void **ptr, unsigned long size)
 {
-    void *outptr;
-    outptr = realloc(*ptr,size);
-    if (outptr == NULL)
-        return 0;
-    *ptr = outptr;
+    unsigned long algn_size;
+    mem_arena *chlarena;
+    unsigned long join_size;
+    mem_arena *curarena;
+    TbBool found;
+
+    algn_size = (size + 0x03) & ~0x03;
+    found = 0;
+    for (curarena = memory_arenas; curarena != NULL; curarena = curarena->Child)
+    {
+        if ( curarena->Pointer == ptr )
+        {
+            if ( algn_size <= curarena->Size )
+                return algn_size == curarena->Size;
+            curarena->Used = 0;
+            if ( !curarena->Child )
+                return -1;
+            chlarena = curarena->Child;
+            if ( chlarena->Used )
+                return -1;
+            join_size = curarena->Size + chlarena->Size;
+            if ( join_size <= algn_size )
+            {
+              if ( join_size < algn_size )
+                return -1;
+              delete_arena(chlarena);
+            }
+            else
+            {
+              chlarena->Size = join_size - algn_size;
+              curarena->Size = algn_size;
+              curarena->Child->Used = 1;
+            }
+            curarena->Used = 1;
+            found = 1;
+            break;
+        }
+    }
+
+    if (!found)
+        return -1;
+    for (curarena = memory_arenas; curarena != NULL; curarena = curarena->Child)
+    {
+        if (!curarena->Used)
+            delete_arena(curarena);
+    }
+    LbMemoryCheck();
     return 1;
 }
 
@@ -390,11 +469,35 @@ TbResult LbMemoryGrow(void **ptr, unsigned long size)
  */
 TbResult LbMemoryShrink(void **ptr, unsigned long size)
 {
-    void *outptr;
-    outptr = realloc(*ptr,size);
-    if (outptr == NULL)
-        return 0;
-    *ptr = outptr;
+    unsigned long algn_size;
+    mem_arena *curarena;
+    TbBool found;
+
+    algn_size = (size + 0x03) & ~0x03;
+    found = 0;
+    for (curarena = memory_arenas; curarena != NULL; curarena = curarena->Child)
+    {
+        if (curarena->Pointer == ptr)
+        {
+            if (algn_size >= curarena->Size) {
+                if (algn_size != curarena->Size)
+                    return -1;
+                return 1;
+            }
+            curarena->Used = 0;
+            split_arena(curarena, algn_size);
+            found = 1;
+            break;
+        }
+    }
+    if (!found)
+        return -1;
+    for (curarena = memory_arenas; curarena != NULL; curarena = curarena->Child)
+    {
+        if (!curarena->Used)
+            delete_arena(curarena);
+    }
+    LbMemoryCheck();
     return 1;
 }
 
