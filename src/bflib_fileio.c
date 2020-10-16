@@ -81,38 +81,38 @@ void game_transform_path_full (const char *file_name, char *buffer, size_t size)
 int LbDriveCurrent(unsigned int *drive)
 {
 #if defined(WIN32)||defined(DOS)||defined(GO32)
-  *drive=_getdrive();
+    *drive=_getdrive();
 #else
-  //Let's assume we're on 'C' drive on Unix ;)
-  *drive=3;
+    // Let's assume we're on 'C' drive on Unix ;)
+    *drive = 3;
 #endif
-  return 1;
+    return 1;
 }
 
-//  Changes the current disk drive into given one
+/** Changes the current disk drive into given one
+ *
+ * @param drive
+ * @return
+ */
 int LbDriveChange(const unsigned int drive)
 {
-  int result;
+    int result;
 #if defined(WIN32)||defined(DOS)||defined(GO32)
-  int reterror = _chdrive(drive);
-  if ( reterror )
-  {
-    result = -1;
-  } else
-  {
-    result = 1;
-  }
+    int reterror = _chdrive(drive);
+    if (reterror) {
+        result = -1;
+    } else {
+        result = 1;
+    }
 #else
-  //Let's assume we can only be on 'C' drive on Unix
-  if ( drive!=3 )
-  {
-    result = -1;
-  } else
-  {
-    result = 1;
-  }
+    // Let's assume we can only be on 'C' drive on Unix
+    if (drive != 3) {
+        result = -1;
+    } else {
+        result = 1;
+    }
 #endif
-  return result;
+    return result;
 }
 
 /** Returns if a given drive exists.
@@ -122,28 +122,24 @@ int LbDriveChange(const unsigned int drive)
  */
 int LbDriveExists(const unsigned int drive)
 {
-  int result;
+    int result;
 #if defined(WIN32)||defined(DOS)||defined(GO32)
-  unsigned int lastdrive=_getdrive();
-  if ( _chdrive(drive) )
-  {
-    result = -1;
-  } else
-  {
-    result = 1;
-    _chdrive(lastdrive);
-  }
+    unsigned int lastdrive=_getdrive();
+    if (_chdrive(drive)) {
+        result = -1;
+    } else {
+        result = 1;
+        _chdrive(lastdrive);
+    }
 #else
-  //Let's assume we have only 'C' drive on Unix
-  if ( drive!=3 )
-  {
-    result = -1;
-  } else
-  {
-    result = 1;
-  }
+    // Let's assume we have only 'C' drive on Unix
+    if (drive != 3) {
+        result = -1;
+    } else {
+        result = 1;
+    }
 #endif
-  return result;
+    return result;
 }
 
 /** Changes the current directory on the specified drive to the specified path.
@@ -156,31 +152,31 @@ int LbDriveExists(const unsigned int drive)
  */
 int LbDirectoryChange(const char *path)
 {
-  int result;
-  if ( chdir(path) )
-    result = -1;
-  else
-    result = 1;
-  return result;
+    int result;
+    if (chdir(path))
+        result = -1;
+    else
+        result = 1;
+    return result;
 }
 
 int LbDriveFreeSpace(const unsigned int drive, struct TbDriveInfo *drvinfo)
 {
   int result;
 #if defined(WIN32)||defined(DOS)||defined(GO32)
-  struct _diskfree_t diskspace;
-  int reterror = _getdiskfree(drive, &diskspace);
-  if ( reterror )
-  {
-    result = -1;
-  } else
-  {
-    drvinfo->TotalClusters = diskspace.total_clusters;
-    drvinfo->FreeClusters = diskspace.avail_clusters;
-    drvinfo->SectorsPerCluster = diskspace.sectors_per_cluster;
-    drvinfo->BytesPerSector = diskspace.bytes_per_sector;
-    result = 1;
-  }
+    struct _diskfree_t diskspace;
+    int reterror = _getdiskfree(drive, &diskspace);
+    if ( reterror )
+    {
+        result = -1;
+    } else
+    {
+        drvinfo->TotalClusters = diskspace.total_clusters;
+        drvinfo->FreeClusters = diskspace.avail_clusters;
+        drvinfo->SectorsPerCluster = diskspace.sectors_per_cluster;
+        drvinfo->BytesPerSector = diskspace.bytes_per_sector;
+        result = 1;
+    }
 #else
     //On non-win32 systems - return anything big enough
     drvinfo->TotalClusters = 65535;
@@ -189,18 +185,18 @@ int LbDriveFreeSpace(const unsigned int drive, struct TbDriveInfo *drvinfo)
     drvinfo->BytesPerSector = 512;
     result = 1;
 #endif
-  return result;
+    return result;
 }
 
 short LbFileExists(const char *fname)
 {
-  return access(fname,F_OK) == 0;
+    return access(fname,F_OK) == 0;
 }
 
 int LbFilePosition(TbFileHandle handle)
 {
-  int result = tell(handle);
-  return result;
+    int result = tell(handle);
+    return result;
 }
 
 TbFileHandle LbFileOpen(const char *fname, const unsigned char accmode)
@@ -213,9 +209,9 @@ TbFileHandle LbFileOpen(const char *fname, const unsigned char accmode)
     LbSyncLog("LbFileOpen: file doesn't exist\n");
 #endif
     if ( mode == Lb_FILE_MODE_READ_ONLY )
-      return -1;
+        return -1;
     if ( mode == Lb_FILE_MODE_OLD )
-      mode = Lb_FILE_MODE_NEW;
+        mode = Lb_FILE_MODE_NEW;
   }
   TbFileHandle rc;
 /* DISABLED - NOT NEEDED
@@ -260,7 +256,11 @@ TbFileHandle LbFileOpen(const char *fname, const unsigned char accmode)
   return rc;
 }
 
-//Closes a file
+/** Closes a file
+ *
+ * @param handle
+ * @return
+ */
 int LbFileClose(TbFileHandle handle)
 {
   if ( close(handle) )
@@ -269,8 +269,7 @@ int LbFileClose(TbFileHandle handle)
     return 1;
 }
 
-/*
- * Checks if the file position indicator is placed at end of the file.
+/** Checks if the file position indicator is placed at end of the file.
  */
 TbBool LbFileEof(TbFileHandle handle)
 {
@@ -307,8 +306,7 @@ int LbFileSeek(TbFileHandle handle, long offset, unsigned char origin)
   return rc;
 }
 
-/**
- * Reads from previously opened disk file.
+/** Reads from previously opened disk file.
  *
  * @param handle
  * @param buffer
@@ -332,9 +330,9 @@ int LbFileRead(TbFileHandle handle, void *buffer, unsigned long len)
 */
 long LbFileWrite(TbFileHandle handle, const void *buffer, const unsigned long len)
 {
-  long result;
-  result = write(handle, buffer, len);
-  return result;
+    long result;
+    result = write(handle, buffer, len);
+    return result;
 }
 
 /**
@@ -344,22 +342,22 @@ long LbFileWrite(TbFileHandle handle, const void *buffer, const unsigned long le
 short LbFileFlush(TbFileHandle handle)
 {
 #if defined(WIN32)
-  int result;
-  // Crappy Windows has its own
-  result = FlushFileBuffers((HANDLE)handle);
-  // It returns 'invalid handle' error sometimes for no reason.. so disabling this error
-  if (result != 0)
-      return 1;
-  result = GetLastError();
-  return ((result == 0) || (result == 6));
+    int result;
+    // Crappy Windows has its own
+    result = FlushFileBuffers((HANDLE)handle);
+    // It returns 'invalid handle' error sometimes for no reason.. so disabling this error
+    if (result != 0)
+        return 1;
+    result = GetLastError();
+    return ((result == 0) || (result == 6));
 #else
 #if defined(DOS)||defined(GO32)
-  // No idea how to do this on old systems
-  return 1;
+    // No idea how to do this on old systems
+    return 1;
 #else
-  // For normal POSIX systems
-  // (should also work on Win, as its IEEE standard... but it currently isn't)
-  return (ioctl(handle,I_FLUSH,FLUSHRW) != -1);
+    // For normal POSIX systems
+    // (should also work on Win, as its IEEE standard... but it currently isn't)
+    return (ioctl(handle,I_FLUSH,FLUSHRW) != -1);
 #endif
 #endif
 
@@ -367,9 +365,9 @@ short LbFileFlush(TbFileHandle handle)
 
 long LbFileLengthHandle(TbFileHandle handle)
 {
-  long result;
-  result = filelength(handle);
-  return result;
+    long result;
+    result = filelength(handle);
+    return result;
 }
 
 /** Returns disk size of file
@@ -378,36 +376,35 @@ long LbFileLengthHandle(TbFileHandle handle)
  */
 long LbFileLength(const char *fname)
 {
-  /* We will switch to original version later, when OS-dependent paths
-   * are handled within the game. */
-  /*TbFileHandle handle;
-  handle = LbFileOpen(fname, Lb_FILE_MODE_READ_ONLY);
-  long result = handle;
-  if ( handle != -1 )
-  {
-    result = filelength(handle);
-    LbFileClose(handle);
-  }
-  return result;*/
-  struct stat st;
-  char transformed[FILENAME_MAX];
-  char path[FILENAME_MAX];
-
-  game_transform_path_full (fname, transformed, sizeof (transformed));
-  dos_path_to_native (transformed, path, sizeof (path));
-
-  if (stat (path, &st) != 0)
+    /* We will switch to original version later, when OS-dependent paths
+     * are handled within the game. */
+    /*TbFileHandle handle;
+    handle = LbFileOpen(fname, Lb_FILE_MODE_READ_ONLY);
+    long result = handle;
+    if ( handle != -1 )
     {
-      perror (path);
-      return -1;
+      result = filelength(handle);
+      LbFileClose(handle);
+    }
+    return result;*/
+    struct stat st;
+    char transformed[FILENAME_MAX];
+    char path[FILENAME_MAX];
+
+    game_transform_path_full (fname, transformed, sizeof (transformed));
+    dos_path_to_native (transformed, path, sizeof (path));
+
+    if (stat (path, &st) != 0) {
+        perror (path);
+        return -1;
     }
 
-  return st.st_size;
+    return st.st_size;
 }
 
 //Converts file search information from platform-specific into independent form
 //Yeah, right...
-/*void convert_find_info(struct TbFileFind *ffind)
+void convert_find_info(struct TbFileFind *ffind)
 {
   struct _finddata_t *fdata=&(ffind->Reserved);
   strncpy(ffind->Filename,fdata->name,144);
@@ -423,13 +420,15 @@ long LbFileLength(const char *fname)
   else
     ffind->Length = fdata->size;
   ffind->Attributes = fdata->attrib;
+/* FIXME re-enable - this was temporarely disabled to remove datetime module dependence
   LbDateTimeDecode(&fdata->time_create,&ffind->CreationDate,&ffind->CreationTime);
   LbDateTimeDecode(&fdata->time_write,&ffind->LastWriteDate,&ffind->LastWriteTime);
-}*/
+*/
+}
 
 // returns -1 if no match is found. Otherwise returns 1 and stores a handle
 // to be used in _findnext and _findclose calls inside TbFileFind struct.
-/*int LbFileFindFirst(const char *filespec, struct TbFileFind *ffind,unsigned int attributes)
+int LbFileFindFirst(const char *filespec, struct TbFileFind *ffind,unsigned int attributes)
 {
     // original Watcom code was
     //dos_findfirst_(path, attributes,&(ffind->Reserved))
@@ -472,28 +471,28 @@ int LbFileFindEnd(struct TbFileFind *ffind)
         _findclose(ffind->ReservedHandle);
     }
     return 1;
-}*/
+}
 
 //Renames a disk file
 int LbFileRename(const char *fname_old, const char *fname_new)
 {
-  int result;
-  if ( rename(fname_old,fname_new) )
-    result = -1;
-  else
-    result = 1;
-  return result;
+    int result;
+    if (rename(fname_old,fname_new))
+        result = -1;
+    else
+        result = 1;
+    return result;
 }
 
 //Removes a disk file
 int LbFileDelete(const char *filename)
 {
-  int result;
-  if ( remove(filename) )
-    result = -1;
-  else
-    result = 1;
-  return result;
+    int result;
+    if (remove(filename))
+        result = -1;
+    else
+        result = 1;
+    return result;
 }
 
 char *LbGetCurrWorkDir(char *dest, const unsigned long maxlen)
@@ -503,81 +502,82 @@ char *LbGetCurrWorkDir(char *dest, const unsigned long maxlen)
 
 int LbDirectoryCurrent(char *buf, unsigned long buflen)
 {
-//  if ( GetCurrentDirectoryA(buflen, buf) )
-  if ( getcwd(buf,buflen) != NULL )
-  {
-    if ( buf[1] == ':' )
-      strcpy(buf, buf+2);
-    int len = strlen(buf);
-    if ( len>1 )
+    if ( getcwd(buf,buflen) != NULL )
     {
-      if ( buf[len-2] == '\\' )
-        buf[len-2] = '\0';
+        if (buf[1] == ':')
+            strcpy(buf, buf+2);
+        int len = strlen(buf);
+        if ( len>1 )
+        {
+            if (buf[len-2] == '\\')
+                buf[len-2] = '\0';
+        }
+        return 1;
     }
-    return 1;
-  }
-  return -1;
+    return -1;
 }
 
 int LbFileMakeFullPath(const short append_cur_dir,
   const char *directory, const char *filename, char *buf, const unsigned long len)
 {
-  if (filename==NULL)
-    { buf[0]='\0'; return -1; }
+  if (filename == NULL) {
+      buf[0] = '\0';
+      return -1;
+  }
   unsigned long namestart;
   if ( append_cur_dir )
   {
-    if ( LbDirectoryCurrent(buf, len-2) == -1 )
-    { buf[0]='\0'; return -1; }
-    namestart = strlen(buf);
-    if ( (namestart>0) && (buf[namestart-1]!='\\') && (buf[namestart-1]!='/'))
-    {
-      buf[namestart] = '/';
-      namestart++;
-    }
+      if (LbDirectoryCurrent(buf, len-2) == -1) {
+          buf[0] = '\0';
+          return -1;
+      }
+      namestart = strlen(buf);
+      if ( (namestart>0) && (buf[namestart-1]!='\\') && (buf[namestart-1]!='/')) {
+          buf[namestart] = '/';
+          namestart++;
+      }
   } else
   {
     namestart = 0;
   }
   buf[namestart] = '\0';
 
-  if ( directory != NULL )
+  if (directory != NULL)
   {
-    int copy_len;
-    copy_len = strlen(directory);
-    if ( len-2 <= namestart+copy_len-1 )
-      return -1;
-    memcpy(buf+namestart, directory, copy_len);
-    namestart += copy_len-1;
-    if ( (namestart>0) && (buf[namestart-1]!='\\') && (buf[namestart-1]!='/'))
-    {
-      buf[namestart] = '/';
-      namestart++;
-    }
-    buf[namestart] = '\0';
+      int copy_len;
+      copy_len = strlen(directory);
+      if ( len-2 <= namestart+copy_len-1 )
+        return -1;
+      memcpy(buf+namestart, directory, copy_len);
+      namestart += copy_len-1;
+      if ((namestart > 0) && (buf[namestart-1] != '\\') && (buf[namestart-1] != '/')) {
+          buf[namestart] = '/';
+          namestart++;
+      }
+      buf[namestart] = '\0';
   }
   if ( strlen(filename)+namestart-1 < len )
   {
-    const char *ptr = filename;
-    int invlen;
-    for (invlen=-1;invlen!=0;invlen--)
-    {
-     if (*ptr++ == 0)
-       {invlen--;break;}
-    }
-    int copy_len;
-    const char *copy_src;
-    char *copy_dst;
-    copy_len = ~invlen;
-    copy_src = &ptr[-copy_len];
-    copy_dst = buf;
-    for (invlen=-1;invlen!=0;invlen--)
-    {
-     if (*copy_dst++ == 0)
-       {invlen--;break;}
-    }
-    memcpy(copy_dst-1, copy_src, copy_len);
-    return 1;
+      const char *ptr = filename;
+      int invlen;
+      for (invlen=-1;invlen!=0;invlen--)
+      {
+       if (*ptr++ == 0)
+         {invlen--;break;}
+      }
+      int copy_len;
+      const char *copy_src;
+      char *copy_dst;
+      copy_len = ~invlen;
+      copy_src = &ptr[-copy_len];
+      copy_dst = buf;
+      for (invlen=-1;invlen!=0;invlen--)
+      {
+       if (*copy_dst++ == 0)
+         {invlen--;break;}
+      }
+      memcpy(copy_dst-1, copy_src, copy_len);
+      return 1;
   }
   return -1;
 }

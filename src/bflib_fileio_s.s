@@ -371,6 +371,29 @@ GLOBAL_FUNC (FileOpenInclCD)
 		ret
 
 /*----------------------------------------------------------------*/
+/* long LbFileDelete(const char *fname)
+ */
+LbFileDelete_:
+/*----------------------------------------------------------------*/
+		push   %ebp
+		mov    %esp,%ebp
+		sub    $0x4,%esp
+		mov    %eax,-0x4(%ebp)
+		mov    -0x4(%ebp),%eax
+		call   remove_
+		test   %eax,%eax
+		je     jump_e8c56
+		mov    $0xffffffff,%eax
+		mov    %ebp,%esp
+		pop    %ebp
+		ret
+	jump_e8c56:
+		mov    $0x1,%eax
+		mov    %ebp,%esp
+		pop    %ebp
+		ret
+
+/*----------------------------------------------------------------*/
 func_e8c60:
 /*----------------------------------------------------------------*/
 		push   %esi

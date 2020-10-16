@@ -63,11 +63,11 @@ GLOBAL_FUNC (LbFileLengthRnc_)
 		mov    -0xc(%ebp),%eax
 		mov    $0x8,%ebx
 		lea    -0x1c(%ebp),%edx
-		call   LbFileRead_
+		call   ac_LbFileRead
 		cmp    $0xffffffff,%eax
 		jne    jump_ea4ae
 		mov    -0xc(%ebp),%eax
-		call   LbFileClose_
+		call   ac_LbFileClose
 		mov    $0xffffffff,%eax
 		mov    %ebp,%esp
 		pop    %ebp
@@ -76,7 +76,7 @@ GLOBAL_FUNC (LbFileLengthRnc_)
 		ret
 	jump_ea4ae:
 		mov    -0xc(%ebp),%eax
-		call   LbFileClose_
+		call   ac_LbFileClose
 		mov    $0x4,%ebx
 		lea    -0x14(%ebp),%edx
 		lea    -0x1c(%ebp),%eax
@@ -139,11 +139,11 @@ GLOBAL_FUNC (LbFileLoadAt_)
 		mov    -0x4(%ebp),%ebx
 		mov    -0x10(%ebp),%edx
 		mov    -0xc(%ebp),%eax
-		call   LbFileRead_
+		call   ac_LbFileRead
 		cmp    $0xffffffff,%eax
 		je     jump_ea59f
 		mov    -0xc(%ebp),%eax
-		call   LbFileClose_
+		call   ac_LbFileClose
 		mov    -0x10(%ebp),%edx
 		mov    -0x10(%ebp),%eax
 		call   UnpackM1_

@@ -97,7 +97,7 @@ struct TbFileFind {
           struct TbTime CreationTime;
           struct TbDate LastWriteDate;
           struct TbTime LastWriteTime;
-          unsigned long ReservedHandle;
+          intptr_t ReservedHandle;
           struct _finddata_t Reserved;
 };
 

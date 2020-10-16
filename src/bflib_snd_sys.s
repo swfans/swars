@@ -819,19 +819,19 @@ GLOBAL_FUNC (LoadSounds_)
 		lea    -0x4(%eax),%edx
 		xor    %ebx,%ebx
 		mov    %ecx,%eax
-		call   LbFileSeek_
+		call   ac_LbFileSeek
 		mov    $0x4,%ebx
 		lea    0x14(%esp),%edx
 		mov    %ecx,%eax
-		call   LbFileRead_
+		call   ac_LbFileRead
 		mov    0x14(%esp),%edx
 		mov    %ecx,%eax
 		xor    %ebx,%ebx
-		call   LbFileSeek_
+		call   ac_LbFileSeek
 		mov    $0x12,%ebx
 		mov    %esp,%edx
 		mov    %ecx,%eax
-		call   LbFileRead_
+		call   ac_LbFileRead
 		mov    SoundType,%ax
 		inc    %edi
 		cmp    $0x64b,%ax
@@ -868,7 +868,7 @@ GLOBAL_FUNC (LoadSounds_)
 		cmp    (%esp,%eax,2),%di
 		jbe    jump_ec830
 		mov    %esi,%eax
-		call   LbFileClose_
+		call   ac_LbFileClose
 		push   $data_15ee1f
 		jmp    jump_ec8e3
 	jump_ec830:
@@ -880,7 +880,7 @@ GLOBAL_FUNC (LoadSounds_)
 		add    %ecx,%edx
 		mov    %esi,%eax
 		shl    $0x4,%edx
-		call   LbFileSeek_
+		call   ac_LbFileSeek
 		xor    %edx,%edx
 		mov    %esi,%eax
 		mov    0x18(%esp),%dl
@@ -888,14 +888,14 @@ GLOBAL_FUNC (LoadSounds_)
 		test   %al,%al
 		jne    jump_ec870
 		mov    %esi,%eax
-		call   LbFileClose_
+		call   ac_LbFileClose
 		push   $data_15ee51
 		jmp    jump_ec8e3
 	jump_ec870:
 		mov    0x1c(%esp),%al
 		mov    %al,CurrentSoundBank
 		mov    %esi,%eax
-		call   LbFileClose_
+		call   ac_LbFileClose
 		push   $data_15ee84
 		push   $SoundProgressMessage
 		call   ac_sprintf
@@ -1001,13 +1001,13 @@ load_sound_bank:
 		sub    $0x94,%esp
 		mov    %eax,%ecx
 		mov    %dl,0x90(%esp)
-		call   LbFilePosition_
+		call   ac_LbFilePosition
 		mov    $0x90,%ebx
 		mov    %esp,%edx
 		movzbl 0x90(%esp),%ebp
 		mov    %ecx,%eax
 		shl    $0x4,%ebp
-		call   LbFileRead_
+		call   ac_LbFileRead
 		cmpl   $0xffffffff,0x4(%esp,%ebp,1)
 		je     jump_ecb73
 		xor    %ah,%ah
@@ -1033,11 +1033,11 @@ load_sound_bank:
 		mov    %ecx,%eax
 		mov    0x4(%esp,%ebp,1),%edx
 		mov    SfxData,%edi
-		call   LbFileSeek_
+		call   ac_LbFileSeek
 		mov    $0x8,%ebx
 		mov    SfxData,%edx
 		mov    %ecx,%eax
-		call   LbFileRead_
+		call   ac_LbFileRead
 		xor    %eax,%eax
 		mov    (%edi),%al
 		cmp    $0x52,%eax
@@ -1068,7 +1068,7 @@ load_sound_bank:
 		lea    -0x8(%eax),%ebx
 		add    $0x8,%edx
 		mov    %ecx,%eax
-		call   LbFileRead_
+		call   ac_LbFileRead
 		mov    %edi,%edx
 		mov    %edi,%eax
 		call   UnpackM1_
@@ -1082,7 +1082,7 @@ load_sound_bank:
 		mov    0xc(%esp,%ebx,1),%ebx
 		add    $0x8,%edx
 		sub    $0x8,%ebx
-		call   LbFileRead_
+		call   ac_LbFileRead
 	jump_ecaad:
 		xor    %eax,%eax
 		mov    0x90(%esp),%al
@@ -1090,11 +1090,11 @@ load_sound_bank:
 		xor    %ebx,%ebx
 		mov    (%esp,%eax,1),%edx
 		mov    %ecx,%eax
-		call   LbFileSeek_
+		call   ac_LbFileSeek
 		mov    $0x8,%ebx
 		mov    Sfx,%edx
 		mov    %ecx,%eax
-		call   LbFileRead_
+		call   ac_LbFileRead
 		xor    %eax,%eax
 		mov    (%esi),%al
 		cmp    $0x52,%eax
@@ -1125,7 +1125,7 @@ load_sound_bank:
 		lea    -0x8(%eax),%ebx
 		add    $0x8,%edx
 		mov    %ecx,%eax
-		call   LbFileRead_
+		call   ac_LbFileRead
 		mov    %esi,%edx
 		mov    %esi,%eax
 		call   UnpackM1_
@@ -1139,7 +1139,7 @@ load_sound_bank:
 		add    $0x8,%edx
 		sub    $0x8,%ebx
 		mov    %ecx,%eax
-		call   LbFileRead_
+		call   ac_LbFileRead
 	jump_ecb58:
 		mov    $0x1,%dl
 		call   format_sounds
@@ -1240,20 +1240,20 @@ AllocateSoundBankMemory_:
 		mov    $0x2,%ebx
 		mov    %ebp,%eax
 		xor    %edx,%edx
-		call   LbFileSeek_
+		call   ac_LbFileSeek
 		mov    (%esp),%edx
 		mov    %ebp,%eax
 		xor    %ebx,%ebx
 		sub    $0x4c,%edx
-		call   LbFileSeek_
+		call   ac_LbFileSeek
 		mov    $0x48,%ebx
 		mov    $sound_bank_size_info_Bnk0Fld0,%edx
 		mov    %ebp,%eax
 		xor    %edi,%edi
-		call   LbFileRead_
+		call   ac_LbFileRead
 		mov    %ebp,%eax
 		xor    %esi,%esi
-		call   LbFileClose_
+		call   ac_LbFileClose
 		cmp    $0x64b,%cx
 		jb     jump_ecd07
 		jbe    jump_ecc1a
@@ -1405,25 +1405,25 @@ GLOBAL_FUNC (LoadMusic_)
 	jump_eced9:
 		mov    $0x2,%ebx
 		xor    %edx,%edx
-		call   LbFileSeek_
+		call   ac_LbFileSeek
 		mov    %ecx,%eax
-		call   LbFilePosition_
+		call   ac_LbFilePosition
 		lea    -0x4(%eax),%edx
 		xor    %ebx,%ebx
 		mov    %ecx,%eax
-		call   LbFileSeek_
+		call   ac_LbFileSeek
 		mov    $0x4,%ebx
 		lea    0x8(%esp),%edx
 		mov    %ecx,%eax
-		call   LbFileRead_
+		call   ac_LbFileRead
 		mov    0x8(%esp),%edx
 		mov    %ecx,%eax
 		xor    %ebx,%ebx
-		call   LbFileSeek_
+		call   ac_LbFileSeek
 		mov    $0x8,%ebx
 		mov    %esp,%edx
 		mov    %ecx,%eax
-		call   LbFileRead_
+		call   ac_LbFileRead
 		mov    MusicType,%cl
 		inc    %edi
 		cmp    $0x57,%cl
@@ -1457,7 +1457,7 @@ GLOBAL_FUNC (LoadMusic_)
 		cmp    (%esp,%eax,2),%di
 		jbe    jump_ecf8d
 		mov    %esi,%eax
-		call   LbFileClose_
+		call   ac_LbFileClose
 		push   $data_15efe7
 		jmp    jump_ed01d
 	jump_ecf8d:
@@ -1467,7 +1467,7 @@ GLOBAL_FUNC (LoadMusic_)
 		mov    %di,%dx
 		mov    %esi,%eax
 		shl    $0x6,%edx
-		call   LbFileSeek_
+		call   ac_LbFileSeek
 		xor    %edx,%edx
 		mov    %esi,%eax
 		mov    0xc(%esp),%dl
@@ -1475,12 +1475,12 @@ GLOBAL_FUNC (LoadMusic_)
 		test   %al,%al
 		jne    jump_ecfc1
 		mov    %esi,%eax
-		call   LbFileClose_
+		call   ac_LbFileClose
 		push   $data_15f019
 		jmp    jump_ed01d
 	jump_ecfc1:
 		mov    %esi,%eax
-		call   LbFileClose_
+		call   ac_LbFileClose
 		push   $data_15f04c
 		push   $SoundProgressMessage
 		call   ac_sprintf
@@ -1579,11 +1579,11 @@ load_music_bank:
 		sub    $0x44,%esp
 		mov    %eax,%ecx
 		mov    %dl,0x40(%esp)
-		call   LbFilePosition_
+		call   ac_LbFilePosition
 		mov    $0x40,%ebx
 		mov    %esp,%edx
 		mov    %ecx,%eax
-		call   LbFileRead_
+		call   ac_LbFileRead
 		xor    %eax,%eax
 		mov    0x40(%esp),%al
 		shl    $0x4,%eax
@@ -1602,11 +1602,11 @@ load_music_bank:
 		mov    0x4(%esp,%eax,1),%edx
 		mov    %ecx,%eax
 		xor    %ebx,%ebx
-		call   LbFileSeek_
+		call   ac_LbFileSeek
 		mov    $0x8,%ebx
 		mov    %edi,%edx
 		mov    %ecx,%eax
-		call   LbFileRead_
+		call   ac_LbFileRead
 		xor    %eax,%eax
 		mov    (%edi),%al
 		cmp    $0x52,%eax
@@ -1637,7 +1637,7 @@ load_music_bank:
 		lea    -0x8(%eax),%ebx
 		add    $0x8,%edx
 		mov    %ecx,%eax
-		call   LbFileRead_
+		call   ac_LbFileRead
 		mov    %edi,%edx
 		mov    %edi,%eax
 		call   UnpackM1_
@@ -1651,7 +1651,7 @@ load_music_bank:
 		add    $0x8,%edx
 		sub    $0x8,%ebx
 		mov    %ecx,%eax
-		call   LbFileRead_
+		call   ac_LbFileRead
 	jump_ed1a9:
 		xor    %edx,%edx
 		mov    0x40(%esp),%dl
@@ -1659,11 +1659,11 @@ load_music_bank:
 		shl    $0x4,%edx
 		xor    %ebx,%ebx
 		mov    (%esp,%edx,1),%edx
-		call   LbFileSeek_
+		call   ac_LbFileSeek
 		mov    $0x8,%ebx
 		mov    %esi,%edx
 		mov    %ecx,%eax
-		call   LbFileRead_
+		call   ac_LbFileRead
 		xor    %eax,%eax
 		mov    (%esi),%al
 		cmp    $0x52,%eax
@@ -1694,7 +1694,7 @@ load_music_bank:
 		lea    -0x8(%eax),%ebx
 		add    $0x8,%edx
 		mov    %ecx,%eax
-		call   LbFileRead_
+		call   ac_LbFileRead
 		mov    %esi,%edx
 		mov    %esi,%eax
 		call   UnpackM1_
@@ -1708,7 +1708,7 @@ load_music_bank:
 		mov    0x8(%esp,%ebx,1),%ebx
 		add    $0x8,%edx
 		sub    $0x8,%ebx
-		call   LbFileRead_
+		call   ac_LbFileRead
 	jump_ed24a:
 		call   format_music
 		mov    $0x1,%bl
@@ -1798,25 +1798,25 @@ AllocateMusicBankMemory_:
 		mov    $0x2,%ebx
 		mov    %ecx,%eax
 		xor    %edx,%edx
-		call   LbFileSeek_
+		call   ac_LbFileSeek
 		mov    %ecx,%eax
 		mov    $0x2,%ebx
-		call   LbFilePosition_
+		call   ac_LbFilePosition
 		xor    %edx,%edx
 		mov    %eax,%ebp
 		mov    %ecx,%eax
-		call   LbFileSeek_
+		call   ac_LbFileSeek
 		lea    -0x24(%ebp),%edx
 		mov    %ecx,%eax
 		xor    %ebx,%ebx
-		call   LbFileSeek_
+		call   ac_LbFileSeek
 		mov    $0x20,%ebx
 		mov    $music_bank_size_info__Field0,%edx
 		mov    %ecx,%eax
-		call   LbFileRead_
+		call   ac_LbFileRead
 		mov    %ecx,%eax
 		xor    %edi,%edi
-		call   LbFileClose_
+		call   ac_LbFileClose
 		mov    MusicType,%cl
 		xor    %esi,%esi
 		cmp    $0x57,%cl
@@ -4206,7 +4206,7 @@ FreeStreamedSound_:
 		je     jump_1006df
 		mov    %edx,%eax
 		mov    $0xffffffff,%ebx
-		call   LbFileClose_
+		call   ac_LbFileClose
 		mov    %ebx,sample_file
 	jump_1006df:
 		call   SwitchOffStreamedSound_
@@ -4246,7 +4246,7 @@ SwitchOffStreamedSound_:
 		je     jump_100cec
 		mov    %ebx,%eax
 		mov    $0xffffffff,%ecx
-		call   LbFileClose_
+		call   ac_LbFileClose
 		mov    %ecx,sample_file
 	jump_100cec:
 		cmpl   $0x0,adpcm_file_open
@@ -5385,7 +5385,7 @@ LoadAwe32Soundfont_:
 		mov    $0x1,%cl
 		mov    sbkHandle,%eax
 		mov    %cl,Awe32SoundfontLoaded
-		call   LbFileClose_
+		call   ac_LbFileClose
 	jump_1105d0:
 		add    $0x1c,%esp
 		pop    %edi
@@ -5890,7 +5890,7 @@ close_adpcm_file_:
 		je     jump_1109ff
 		mov    %edx,%eax
 		mov    $0xffffffff,%ebx
-		call   LbFileClose_
+		call   ac_LbFileClose
 		mov    %ebx,data_159e54
 	jump_1109ff:
 		pop    %edx
