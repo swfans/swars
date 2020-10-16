@@ -41,7 +41,7 @@ GLOBAL_FUNC (LbMemoryAlloc_)
 		push   %esi
 		push   %edi
 		mov    %eax,%ecx
-		call   ac_memory_preallocate
+		call   ac_LbMemorySetup
 		mov    $memory_arenas,%edx
 		mov    $0xffffffff,%ebx
 		add    $0x3,%ecx
@@ -107,7 +107,7 @@ GLOBAL_FUNC (LbMemoryAllocLow_)
 		push   %esi
 		push   %edi
 		mov    %eax,%ecx
-		call   ac_memory_preallocate
+		call   ac_LbMemorySetup
 		mov    $memory_arenas,%edx
 		mov    $0xffffffff,%ebx
 		add    $0xf,%ecx
@@ -174,7 +174,7 @@ LbMemoryCheck_:
 		push   %ebp
 		xor    %edx,%edx
 		mov    $0xffffffff,%edi
-		mov    %edx,data_1e08c0
+		mov    %edx,lbMemoryAvailable
 		mov    %edx,data_1e08c4
 		mov    %edx,data_1e08c8
 		mov    %edx,data_1e08cc
@@ -207,28 +207,28 @@ LbMemoryCheck_:
 		jae    jump_dc82b
 		mov    %eax,data_1e08d0
 	jump_dc82b:
-		mov    data_1e08c0,%ebp
+		mov    lbMemoryAvailable,%ebp
 		mov    0x4(%edx),%eax
 		add    %eax,%ebp
-		mov    %ebp,data_1e08c0
+		mov    %ebp,lbMemoryAvailable
 		jmp    jump_dc7e5
 	jump_dc83e:
 		mov    data_1e08c8,%ebp
 		mov    0x4(%edx),%eax
-		mov    data_1e08c0,%ebx
+		mov    lbMemoryAvailable,%ebx
 		add    %eax,%ebp
 		add    %eax,%ebx
 		mov    %ebp,data_1e08c8
-		mov    %ebx,data_1e08c0
+		mov    %ebx,lbMemoryAvailable
 		jmp    jump_dc7e5
 	jump_dc85f:
-		mov    data_1e08c0,%ah
+		mov    lbMemoryAvailable,%ah
 		mov    data_1e08c4,%dl
 		mov    data_1e08cc,%bl
 		and    $0xfc,%ah
 		and    $0xfc,%dl
 		and    $0xfc,%bl
-		mov    %ah,data_1e08c0
+		mov    %ah,lbMemoryAvailable
 		mov    %dl,data_1e08c4
 		mov    %bl,data_1e08cc
 		mov    $0x1,%eax
@@ -702,7 +702,9 @@ compare:
 
 .section .rodata
 
-data_1e08c0:
+/* TbMemoryAvailable lbMemoryAvailable;
+ */
+GLOBAL (lbMemoryAvailable)	/* 0x1E08C0 */
 		.long	0x0
 data_1e08c4:
 		.long	0x0
@@ -712,9 +714,9 @@ data_1e08cc:
 		.long	0x0
 data_1e08d0:
 		.long	0x0
-/* mem_block memory_blocks[];
+/* mem_block memory_blocks[256];
  */
-GLOBAL (memory_blocks)	/* 1e08d4 */
+GLOBAL (memory_blocks)	/* 0x1E08D4 */
 		.long	0x0
 data_1e08d8:
 		.long	0x0
@@ -724,9 +726,9 @@ data_1e14c6:
 		.fill   0xc
 data_1e14d2:
 		.short  0x0
-/* mem_arena memory_arenas[];
+/* mem_arena memory_arenas[256];
  */
-GLOBAL (memory_arenas)	/* 1e14d4 */
+GLOBAL (memory_arenas)	/* 0x1E14D4 */
 		.long	0x0
 data_1e14d8:
 		.long	0x0

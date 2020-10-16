@@ -82,7 +82,7 @@ initialise_block_nodes (void)
 }
 
 bool
-memory_preallocate (void)
+LbMemorySetup (void)
 {
   static bool allocated = false;
 
