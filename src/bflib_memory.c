@@ -168,6 +168,11 @@ void delete_arena(mem_arena *arena)
     }
 }
 
+/** Sets up memory allocation system
+ *
+ * This function is simplified to original, as we do not need complex
+ * memory initialization in current operating systems.
+ */
 TbResult LbMemorySetup(void)
 {
     if (lbMemorySetup)
