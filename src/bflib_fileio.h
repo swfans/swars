@@ -63,6 +63,7 @@ int LbDriveCurrent(unsigned int *drive);
 int LbDriveChange(const unsigned int drive);
 int LbDriveExists(const unsigned int drive);
 int LbDirectoryChange(const char *path);
+TbResult LbDirectoryMake(const char *path, TbBool recursive);
 int LbDriveFreeSpace(const unsigned int drive, struct TbDriveInfo *drvinfo);
 short LbFileExists(const char *fname);
 int LbFilePosition(TbFileHandle handle);
@@ -82,8 +83,9 @@ int LbFileDelete(const char *filename);
 short LbFileFlush(TbFileHandle handle);
 char *LbGetCurrWorkDir(char *dest, const unsigned long maxlen);
 int LbDirectoryCurrent(char *buf, unsigned long buflen);
-int LbFileMakeFullPath(const short append_cur_dir,
+int LbFileMakeFullPath(const TbBool append_cur_dir,
   const char *directory, const char *filename, char *buf, const unsigned long len);
+
 
 /******************************************************************************/
 #ifdef __cplusplus

@@ -287,7 +287,7 @@ void read_conf_file(void)
     else
       sprintf(locbuf, "data/text.dat");
     text_len = LbFileLength(locbuf);
-    game_text_str = LbMemoryAlloc(text_len);
+    game_text_str = (char *)LbMemoryAlloc(text_len);
     if (game_text_str != NULL)
       LbFileLoadAt(locbuf, game_text_str);
 }

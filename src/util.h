@@ -25,7 +25,6 @@ void strtolower (char *string);
 
 const char *extract_path_segment (const char *path,
 				  char *buffer, size_t size);
-bool mkdir_recursive (const char *path, mode_t mode);
 
 void *xmalloc (size_t size);
 void *xcalloc (size_t size);

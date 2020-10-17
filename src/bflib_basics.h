@@ -27,7 +27,7 @@ extern "C" {
 #endif
 /******************************************************************************/
 // Buffer sizes
-// Disk path max length
+// Disk path max length - restrictive equivalent for FILENAME_MAX
 #define DISKPATH_SIZE    144
 #define LINEMSG_SIZE     160
 #define READ_BUFSIZE     256

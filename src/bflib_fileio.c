@@ -27,9 +27,11 @@
 #include <io.h>
 #include <fcntl.h>
 #include <sys/stat.h>
+#include <sys/types.h>
 #include <limits.h>
 #include <time.h>
 #include <share.h>
+#include <errno.h>
 
 #include "bflib_basics.h"
 #include "dos.h"
@@ -395,7 +397,7 @@ long LbFileLength(const char *fname)
     dos_path_to_native (transformed, path, sizeof (path));
 
     if (stat (path, &st) != 0) {
-        perror (path);
+        ERRORLOG("%s: Cannot get file stats: %s\n", path, strerror(errno));
         return -1;
     }
 
@@ -517,7 +519,7 @@ int LbDirectoryCurrent(char *buf, unsigned long buflen)
     return -1;
 }
 
-int LbFileMakeFullPath(const short append_cur_dir,
+int LbFileMakeFullPath(const TbBool append_cur_dir,
   const char *directory, const char *filename, char *buf, const unsigned long len)
 {
   if (filename == NULL) {
@@ -547,7 +549,7 @@ int LbFileMakeFullPath(const short append_cur_dir,
       int copy_len;
       copy_len = strlen(directory);
       if ( len-2 <= namestart+copy_len-1 )
-        return -1;
+          return -1;
       memcpy(buf+namestart, directory, copy_len);
       namestart += copy_len-1;
       if ((namestart > 0) && (buf[namestart-1] != '\\') && (buf[namestart-1] != '/')) {
@@ -560,10 +562,12 @@ int LbFileMakeFullPath(const short append_cur_dir,
   {
       const char *ptr = filename;
       int invlen;
-      for (invlen=-1;invlen!=0;invlen--)
+      for (invlen = -1; invlen != 0; invlen--)
       {
-       if (*ptr++ == 0)
-         {invlen--;break;}
+          if (*ptr++ == 0) {
+              invlen--;
+              break;
+          }
       }
       int copy_len;
       const char *copy_src;
@@ -571,10 +575,12 @@ int LbFileMakeFullPath(const short append_cur_dir,
       copy_len = ~invlen;
       copy_src = &ptr[-copy_len];
       copy_dst = buf;
-      for (invlen=-1;invlen!=0;invlen--)
+      for (invlen = -1; invlen != 0; invlen--)
       {
-       if (*copy_dst++ == 0)
-         {invlen--;break;}
+          if (*copy_dst++ == 0) {
+              invlen--;
+              break;
+          }
       }
       memcpy(copy_dst-1, copy_src, copy_len);
       return 1;
@@ -582,4 +588,82 @@ int LbFileMakeFullPath(const short append_cur_dir,
   return -1;
 }
 
+TbResult
+LbDirectoryMake(const char *path, TbBool recursive)
+{
+    char buffer[FILENAME_MAX];
+    char *p;
+    size_t len;
+    struct stat st;
+    int err;
+    mode_t __attribute__((unused)) mode = 0755;
+    int num_levels = 0;
+
+    len = snprintf(buffer, sizeof(buffer), "%s", path);
+
+    /* First, find the longest existing path */
+    do
+    {
+        err = stat(buffer, &st);
+        if (err == 0)
+        {
+            if (!S_ISDIR(st.st_mode))
+            {
+                ERRORLOG("%s: Not a directory\n", buffer);
+                return Lb_FAIL;
+            }
+        }
+        else
+        {
+            if (errno != ENOENT)
+            {
+                ERRORLOG("%s: Cannot stat dir: %s\n", buffer, strerror(errno));
+                return Lb_FAIL;
+            }
+
+            p = strrchr(buffer, FS_SEP);
+            if (p == NULL)
+                break;
+            num_levels++;
+
+            *p = 0;
+        }
+    }
+    while (err != 0);
+
+    if ((num_levels > 1) && (!recursive))
+    {
+        ERRORLOG("%s: Cannot create %d dirs - recursion disabled\n", buffer, num_levels);
+        return Lb_FAIL;
+    }
+    /*
+     * At this point, buffer contains the longest existing path.  Go forward
+     * through the rest of the path and create the missing directories.
+     */
+    p = buffer;
+
+    for (;;)
+    {
+        while (*p != '\0')
+            p++;
+
+        if (p >= buffer + len)
+            break;
+
+        *p = FS_SEP;
+
+#if defined(_WIN32)
+        err = mkdir(buffer);
+#else
+        err = mkdir(buffer, mode);
+#endif
+        if (err != 0)
+        {
+            ERRORLOG("%s: Cannot create dir: %s\n", buffer, strerror(errno));
+            return Lb_FAIL;
+        }
+    }
+
+    return Lb_SUCCESS;
+}
 /******************************************************************************/

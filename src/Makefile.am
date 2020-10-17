@@ -15,6 +15,7 @@ swars_SOURCES = \
 	bflib_keybrd.s \
 	bflib_math.s \
 	bflib_memory.c \
+	bflib_picture.c \
 	bflib_render_gpoly.s \
 	bflib_render_plin.s \
 	bflib_render_trig.s \
@@ -29,6 +30,8 @@ swars_SOURCES = \
 	display.h \
 	dos.c \
 	dos.h \
+	game_data.c \
+	game_data.h \
 	game.c \
 	game.h \
 	keyboard.c \
