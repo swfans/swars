@@ -226,7 +226,7 @@ GLOBAL_FUNC (ASM_LbFileLength_)
         mov    %eax,-0xc(%ebp)
         mov    -0xc(%ebp),%eax
         mov    $0x2,%edx
-        call   FileOpenInclCD
+        call   ASM_FileOpenInclCD
         mov    %eax,-0x8(%ebp)
         mov    -0x8(%ebp),%edx
         cmp    $0xffffffff,%edx
@@ -259,7 +259,7 @@ GLOBAL_FUNC (ASM_LbFileLength_)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (LbFileFindFirst_)
+GLOBAL_FUNC (ASM_LbFileFindFirst_)
 /*----------------------------------------------------------------*/
         push   %ebp
         mov    %esp,%ebp
@@ -288,7 +288,7 @@ GLOBAL_FUNC (LbFileFindFirst_)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (LbFileFindNext_)
+GLOBAL_FUNC (ASM_LbFileFindNext_)
 /*----------------------------------------------------------------*/
         push   %ebp
         mov    %esp,%ebp
@@ -312,7 +312,7 @@ GLOBAL_FUNC (LbFileFindNext_)
         ret
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (FileOpenInclCD)
+GLOBAL_FUNC (ASM_FileOpenInclCD)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx

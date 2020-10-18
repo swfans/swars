@@ -30,13 +30,37 @@
 #include "bflib_fileio.h"
 #include "game_data.h"
 
+/** Gives highest file number in existing files matching given mask.
+ *
+ * @param fnmask the mask to match
+ * @param no_pos_in_fnmask position within the mask where the number is
+ * @param fndir directory part of the mask (not really needed, we could use
+ *          strrchr('/') instead; but this is how it was implemented by Bullfrog)
+ * @return
+ */
+unsigned int get_highest_file_no(const char *fnmask, int no_pos_in_fnmask, const char *fndir)
+{
+  unsigned int highest_no, curr_no;
+  struct TbFileFind ffind;
+  int no_pos_in_fname = no_pos_in_fnmask - strlen(fndir);
+  highest_no = 0;
+  if ( LbFileFindFirst(fnmask, &ffind, 0x21u) != -1 )
+  {
+    do {
+      curr_no = atol(ffind.Filename + no_pos_in_fname);
+      if (curr_no > highest_no)
+        highest_no = curr_no;
+    } while ( LbFileFindNext(&ffind) != -1 );
+  }
+  return highest_no;
+}
+
 static TbResult prepare_screenshot_file_name(char *fname, const char *base,
     const char *ext)
 {
-    unsigned int i, k;
+    unsigned int i;
     char directory[DISKPATH_SIZE];
-    unsigned int number_pos_in_fname, highest_num;
-    struct TbFileFind ffind;
+    unsigned int highest_num;
     snprintf(directory, sizeof(directory), "%s" FS_SEP_STR "screenshots",
         GetDirectoryUser());
     sprintf(fname, "%s%s%-5s", directory, FS_SEP_STR, base);
@@ -50,16 +74,7 @@ static TbResult prepare_screenshot_file_name(char *fname, const char *base,
             break;
     }
     sprintf(&fname[i], "*.%s", ext);
-    number_pos_in_fname = i - strlen(directory);
-    highest_num = 0;
-    if ( LbFileFindFirst(fname, &ffind, 33) != -1 )
-    {
-      do {
-        k = atol(ffind.Filename + number_pos_in_fname);
-        if (highest_num < k)
-            highest_num = k;
-      } while ( LbFileFindNext(&ffind) != -1 );
-    }
+    highest_num = get_highest_file_no(fname, i, directory);
     sprintf(&fname[i], "%03d.%s", highest_num + 1, ext);
 
     if (LbDirectoryMake(directory, true) != Lb_FAIL)

@@ -8,7 +8,6 @@ swars_SOURCES = \
 	ariadne.s \
 	bflib_dernc_s.s \
 	bflib_fileio.c \
-	bflib_fileio_s.s \
 	bflib_fmvids.s \
 	bflib_joyst_s.s \
     bflib_joyst.c \

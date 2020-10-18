@@ -436,7 +436,7 @@ void convert_find_info(struct TbFileFind *ffind)
 
 // returns -1 if no match is found. Otherwise returns 1 and stores a handle
 // to be used in _findnext and _findclose calls inside TbFileFind struct.
-int LbFileFindFirst(const char *filespec, struct TbFileFind *ffind,unsigned int attributes)
+int LbFileFindFirst(const char *filespec, struct TbFileFind *ffind, unsigned int attributes)
 {
     // original Watcom code was
     //dos_findfirst_(path, attributes,&(ffind->Reserved))
@@ -634,7 +634,7 @@ LbDirectoryMake(const char *path, TbBool recursive)
         {
             if (!S_ISDIR(st.st_mode))
             {
-                ERRORLOG("%s: Not a directory\n", buffer);
+                BFLIB_ERRORLOG("%s: Not a directory", buffer);
                 return Lb_FAIL;
             }
         }
@@ -642,7 +642,7 @@ LbDirectoryMake(const char *path, TbBool recursive)
         {
             if (errno != ENOENT)
             {
-                ERRORLOG("%s: Cannot stat dir: %s\n", buffer, strerror(errno));
+                BFLIB_ERRORLOG("%s: Cannot stat dir: %s", buffer, strerror(errno));
                 return Lb_FAIL;
             }
 
@@ -658,7 +658,7 @@ LbDirectoryMake(const char *path, TbBool recursive)
 
     if ((num_levels > 1) && (!recursive))
     {
-        ERRORLOG("%s: Cannot create %d dirs - recursion disabled\n", buffer, num_levels);
+        BFLIB_ERRORLOG("%s: Cannot create %d dirs - recursion disabled", buffer, num_levels);
         return Lb_FAIL;
     }
     /*
@@ -684,7 +684,7 @@ LbDirectoryMake(const char *path, TbBool recursive)
 #endif
         if (err != 0)
         {
-            ERRORLOG("%s: Cannot create dir: %s\n", buffer, strerror(errno));
+            BFLIB_ERRORLOG("%s: Cannot create dir: %s", buffer, strerror(errno));
             return Lb_FAIL;
         }
     }

@@ -45,7 +45,6 @@ OBJS = \
 	../obj/bflib_dernc.o \
 	../obj/bflib_dernc_s.o \
 	../obj/bflib_fileio.o \
-	../obj/bflib_fileio_s.o \
 	../obj/bflib_fmvids.o \
 	../obj/bflib_joyst.o \
 	../obj/bflib_joyst_s.o \
