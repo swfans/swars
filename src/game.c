@@ -23,6 +23,8 @@
 
 extern uint8_t game_music_track;
 
+//extern struct TbLoadFiles unk02_load_files[15];
+
 bool
 game_initialise (void)
 {
@@ -234,3 +236,17 @@ game_update (void)
 {
     game_update_full(true);
 }
+
+void ASM_game_reset(void);
+
+void
+game_reset(void)
+{
+    ASM_game_reset();
+    /*
+    host_reset();
+    free_texturemaps();
+    LbDataFreeAll(unk02_load_files);
+    */
+}
+

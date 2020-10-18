@@ -55,6 +55,8 @@ void read_conf_file(void);
 void game_setup(void);
 void game_process(void);
 void game_reset(void);
+void host_reset(void);
+void free_texturemaps(void);
 int joy_grip_shutdown(void);
 
 #endif
