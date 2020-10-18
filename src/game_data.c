@@ -29,6 +29,7 @@ static char data_path_user[DISKPATH_SIZE] = "";
 static char data_path_hdd[DISKPATH_SIZE] = "";
 static char game_dir_savegame[] = "qdata/savegame";
 static char game_dir_screenshots[] = "qdata/screenshots";
+static char game_file_text_dat[] = "data/text.dat";
 
 /******************************************************************************/
 
@@ -151,8 +152,14 @@ SyndFileNameTransform(char *out_fname, const char *inp_fname)
         base_dir = GetDirectoryHdd();
     }
 
+    // Special file name switch for using language-specific files from CD
+    if ( (dir_place == DirPlace_Data) && game_dirs[dir_place].use_cd &&
+      (strcasecmp(inp_fname, game_file_text_dat) == 0) ) {
+        snprintf(fs_fname, DISKPATH_SIZE, "language/%s/text.dat", language_3str);
+    } else {
+        strncpy(fs_fname, inp_fname, DISKPATH_SIZE);
+    }
     // Switch the input folder separators to proper ones for current os
-    strncpy(fs_fname, inp_fname, DISKPATH_SIZE);
     replace_backslash_with_fs_separator(fs_fname);
     // Add base path only if the input one is not absolute
     if (fs_fname[0] == FS_SEP || (strlen(fs_fname) >= 2 && fs_fname[1] == ':')) {
@@ -162,7 +169,8 @@ SyndFileNameTransform(char *out_fname, const char *inp_fname)
     }
 }
 
-void setup_file_names(void)
+void
+setup_file_names(void)
 {
     lbFileNameTransform = SyndFileNameTransform;
     // This fills the path variable; for user, it also creates the folder

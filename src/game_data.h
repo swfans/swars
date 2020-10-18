@@ -43,6 +43,7 @@ typedef struct {
 
 extern PathInfo game_dirs[8];
 extern char cd_drive[52];
+extern char language_3str[4];
 
 /******************************************************************************/
 

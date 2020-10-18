@@ -18,7 +18,6 @@
 
 extern char *conf_file_cmnds[10];
 extern char *game_text_str;
-extern char language_3str[4];
 
 void ASM_read_conf_file(void);
 
@@ -197,6 +196,7 @@ void read_conf_file(void)
     char locbuf[1024];
     char prop_name[44];
     char *conf_fname = "config.ini";
+    char *text_fname = "data/text.dat";
 
     conf_fh = LbFileOpen(conf_fname, Lb_FILE_MODE_READ_ONLY);
     if (conf_fh != -1)
@@ -282,14 +282,10 @@ void read_conf_file(void)
         }
     }
     // Read file with all the language-specific texts
-    if ( game_dirs[0].use_cd )
-        sprintf(locbuf, "%slanguage/%s/text.dat", cd_drive, language_3str);
-    else
-        sprintf(locbuf, "data/text.dat");
-    text_len = LbFileLength(locbuf);
+    text_len = LbFileLength(text_fname);
     game_text_str = (char *)LbMemoryAlloc(text_len);
     if (game_text_str != NULL)
-        LbFileLoadAt(locbuf, game_text_str);
+        LbFileLoadAt(text_fname, game_text_str);
 }
 
 int
