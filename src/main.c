@@ -19,8 +19,6 @@
 extern char *conf_file_cmnds[10];
 extern char *game_text_str;
 
-void ASM_read_conf_file(void);
-
 static void
 print_help (const char *argv0)
 {

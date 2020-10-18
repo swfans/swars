@@ -34,7 +34,7 @@
 /*----------------------------------------------------------------*/
 /* long LbFileLengthRnc(char *fname)
  */
-GLOBAL_FUNC (LbFileLengthRnc_)
+GLOBAL_FUNC (ASM_LbFileLengthRnc_)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %edx
@@ -114,7 +114,7 @@ GLOBAL_FUNC (LbFileLengthRnc_)
 /*----------------------------------------------------------------*/
 /* long LbFileLoadAt(const char *fname, void *buffer)
  */
-GLOBAL_FUNC (LbFileLoadAt_)
+GLOBAL_FUNC (ASM_LbFileLoadAt_)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -124,7 +124,7 @@ GLOBAL_FUNC (LbFileLoadAt_)
 		mov    %eax,-0x14(%ebp)
 		mov    %edx,-0x10(%ebp)
 		mov    -0x14(%ebp),%eax
-		call   LbFileLengthRnc_
+		call   ac_LbFileLengthRnc
 		mov    %eax,-0x4(%ebp)
 		cmpl   $0xffffffff,-0x4(%ebp)
 		je     jump_ea59f

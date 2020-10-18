@@ -1071,7 +1071,7 @@ load_sound_bank:
 		call   ac_LbFileRead
 		mov    %edi,%edx
 		mov    %edi,%eax
-		call   UnpackM1_
+		call   ac_UnpackM1
 		jmp    jump_ecaad
 	jump_eca8a:
 		xor    %ebx,%ebx
@@ -1128,7 +1128,7 @@ load_sound_bank:
 		call   ac_LbFileRead
 		mov    %esi,%edx
 		mov    %esi,%eax
-		call   UnpackM1_
+		call   ac_UnpackM1
 		jmp    jump_ecb58
 	jump_ecb35:
 		xor    %eax,%eax
@@ -1640,7 +1640,7 @@ load_music_bank:
 		call   ac_LbFileRead
 		mov    %edi,%edx
 		mov    %edi,%eax
-		call   UnpackM1_
+		call   ac_UnpackM1
 		jmp    jump_ed1a9
 	jump_ed189:
 		xor    %eax,%eax
@@ -1697,7 +1697,7 @@ load_music_bank:
 		call   ac_LbFileRead
 		mov    %esi,%edx
 		mov    %esi,%eax
-		call   UnpackM1_
+		call   ac_UnpackM1
 		jmp    jump_ed24a
 	jump_ed22a:
 		xor    %ebx,%ebx

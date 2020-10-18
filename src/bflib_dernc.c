@@ -388,132 +388,132 @@ short crctab_ready=false;
 // Calculate a CRC, the RNC way
 long rnc_crc(void *data, unsigned long len)
 {
-  unsigned short val;
-  int i, j;
-  unsigned char *p = (unsigned char *)data;
-  //computing CRC table
-  if (!crctab_ready)
-  {
-    for (i=0; i<256; i++)
+    unsigned short val;
+    int i, j;
+    unsigned char *p = (unsigned char *)data;
+    //computing CRC table
+    if (!crctab_ready)
     {
-        val = i;
+      for (i=0; i<256; i++)
+      {
+          val = i;
 
-        for (j=0; j<8; j++)
-        {
-          if (val & 1)
-               val = (val >> 1) ^ 0xA001;
-          else
-            val = (val >> 1);
-        }
-        crctab[i] = val;
+          for (j=0; j<8; j++)
+          {
+            if (val & 1)
+                 val = (val >> 1) ^ 0xA001;
+            else
+              val = (val >> 1);
+          }
+          crctab[i] = val;
+      }
+    crctab_ready=true;
     }
-  crctab_ready=true;
-  }
 
-  val = 0;
-  while (len--)
-  {
-     val ^= *p++;
-     val = (val >> 8) ^ crctab[val & 0xFF];
-  }
-  return val;
+    val = 0;
+    while (len--)
+    {
+       val ^= *p++;
+       val = (val >> 8) ^ crctab[val & 0xFF];
+    }
+    return val;
 }
 
 long LbFileLengthRnc(const char *fname)
 {
-  TbFileHandle handle = LbFileOpen(fname, Lb_FILE_MODE_READ_ONLY);
-  if ( handle == -1 )
-      return -1;
+    TbFileHandle handle = LbFileOpen(fname, Lb_FILE_MODE_READ_ONLY);
+    if ( handle == -1 )
+        return -1;
 #if (BFDEBUG_LEVEL > 19)
     LbSyncLog("%s: file opened\n",func_name);
 #endif
-  unsigned char buffer[RNC_HEADER_LEN+1];
-  if ( LbFileRead(handle,buffer,RNC_HEADER_LEN) == -1 )
-  {
-  #if (BFDEBUG_LEVEL > 19)
-      LbSyncLog("%s: cannot read even %d bytes\n",func_name,RNC_HEADER_LEN);
-  #endif
-      LbFileClose(handle);
-      return -1;
-  }
-  long flength;
-  if (blong(buffer+0)==RNC_SIGNATURE)
-  {
-      flength = blong(buffer+4);
-  #if (BFDEBUG_LEVEL > 19)
-      LbSyncLog("%s: file size from RNC header: %ld bytes\n",func_name,RNC_HEADER_LEN,flength);
-  #endif
-  } else
-  {
-      flength = LbFileLengthHandle(handle);
-  #if (BFDEBUG_LEVEL > 19)
-      LbSyncLog("%s: file is not RNC, size: %ld bytes\n",func_name,RNC_HEADER_LEN,flength);
-  #endif
-  }
-  LbFileClose(handle);
-  return flength;
+    unsigned char buffer[RNC_HEADER_LEN+1];
+    if ( LbFileRead(handle,buffer,RNC_HEADER_LEN) == -1 )
+    {
+#if (BFDEBUG_LEVEL > 19)
+        LbSyncLog("%s: cannot read even %d bytes\n",func_name,RNC_HEADER_LEN);
+#endif
+        LbFileClose(handle);
+        return -1;
+    }
+    long flength;
+    if (blong(buffer+0)==RNC_SIGNATURE)
+    {
+        flength = blong(buffer+4);
+#if (BFDEBUG_LEVEL > 19)
+        LbSyncLog("%s: file size from RNC header: %ld bytes\n",func_name,RNC_HEADER_LEN,flength);
+#endif
+    } else
+    {
+        flength = LbFileLengthHandle(handle);
+#if (BFDEBUG_LEVEL > 19)
+        LbSyncLog("%s: file is not RNC, size: %ld bytes\n",func_name,RNC_HEADER_LEN,flength);
+#endif
+    }
+    LbFileClose(handle);
+    return flength;
 }
 
 long UnpackM1(unsigned char *buffer, ulong bufsize)
 {
-  //If file isn't compressed - return with zero
-  if (blong(buffer+0)!=RNC_SIGNATURE)
-      return 0;
-  //Originally this function was able do decompress data without additional buffer.
-  // If you know how to decompress the data this way, please correct this.
-  ulong packedsize=blong(buffer+4);
-  if (packedsize>bufsize) packedsize=bufsize;
-  void *packed=LbMemoryAlloc(packedsize);
-  LbMemoryCopy(packed,buffer,packedsize);
-  if (packed==NULL) return -1;
-  int retcode=rnc_unpack(packed,buffer,0);
-  LbMemoryFree(packed);
-  return retcode;
+    //If file isn't compressed - return with zero
+    if (blong(buffer+0)!=RNC_SIGNATURE)
+        return 0;
+    //Originally this function was able do decompress data without additional buffer.
+    // If you know how to decompress the data this way, please correct this.
+    ulong packedsize=blong(buffer+4);
+    if (packedsize>bufsize) packedsize=bufsize;
+    void *packed=LbMemoryAlloc(packedsize);
+    LbMemoryCopy(packed,buffer,packedsize);
+    if (packed==NULL) return -1;
+    int retcode=rnc_unpack(packed,buffer,0);
+    LbMemoryFree(packed);
+    return retcode;
 }
 
 long LbFileLoadAt(const char *fname, void *buffer)
 {
-  long filelength = LbFileLengthRnc(fname);
-  TbFileHandle handle=-1;
-  if (filelength!=-1)
-  {
-      handle = LbFileOpen(fname,Lb_FILE_MODE_READ_ONLY);
-  }
-  int read_status=-1;
-  if (handle!=-1)
-  {
-      read_status=LbFileRead(handle, buffer, filelength);
-      LbFileClose(handle);
-  }
-  if (read_status==-1)
-  {
-      ERRORLOG("Couldn't read \"%s\", expected size %ld, errno %d",fname,filelength, (int)errno);
-      return -1;
-  }
-  long unp_length = UnpackM1((unsigned char *)buffer, filelength);
-  long result;
-  if ( unp_length >= 0 )
-  {
-      if (unp_length!=0)
-        result = unp_length;
-      else
-        result = filelength;
-  } else
-  {
-      ERRORLOG("ERROR decompressing \"%s\"",fname);
-      result = -1;
-  }
-  return result;
+    long filelength = LbFileLengthRnc(fname);
+    TbFileHandle handle=-1;
+    if (filelength!=-1)
+    {
+        handle = LbFileOpen(fname,Lb_FILE_MODE_READ_ONLY);
+    }
+    int read_status=-1;
+    if (handle!=-1)
+    {
+        read_status=LbFileRead(handle, buffer, filelength);
+        LbFileClose(handle);
+    }
+    if (read_status==-1)
+    {
+        ERRORLOG("Couldn't read \"%s\", expected size %ld, errno %d",fname,filelength, (int)errno);
+        return -1;
+    }
+    long unp_length = UnpackM1((unsigned char *)buffer, filelength);
+    long result;
+    if ( unp_length >= 0 )
+    {
+        if (unp_length!=0)
+          result = unp_length;
+        else
+          result = filelength;
+    } else
+    {
+        ERRORLOG("ERROR decompressing \"%s\"",fname);
+        result = -1;
+    }
+    return result;
 }
 
 long LbFileSaveAt(const char *fname, const void *buffer,unsigned long len)
 {
-  TbFileHandle handle = LbFileOpen(fname, Lb_FILE_MODE_NEW);
-  if ( handle == -1 )
-    return -1;
-  int result=LbFileWrite(handle,buffer,len);
-  LbFileClose(handle);
-  return result;
+    TbFileHandle handle = LbFileOpen(fname, Lb_FILE_MODE_NEW);
+    if ( handle == -1 )
+        return -1;
+    int result=LbFileWrite(handle,buffer,len);
+    LbFileClose(handle);
+    return result;
 }
 
 /******************************************************************************/
