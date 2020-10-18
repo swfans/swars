@@ -8,6 +8,7 @@
 #include "bflib_memory.h"
 #include "display.h"
 #include "game.h"
+#include "game_data.h"
 #include "util.h"
 
 #if defined _WIN32 && defined main
@@ -15,20 +16,9 @@
 # undef main
 #endif
 
-#pragma pack(1)
-
-typedef struct {
-  char *directory;
-  uint8_t use_cd;
-} PathInfo;
-
-#pragma pack()
-
 extern char *conf_file_cmnds[10];
-extern PathInfo game_dirs[8];
 extern char *game_text_str;
 extern char language_3str[4];
-extern char cd_drive[52];
 
 void ASM_read_conf_file(void);
 
@@ -236,7 +226,7 @@ void read_conf_file(void)
                     cd_drive[i] = ch;
                 }
                 cd_drive[i] = 0;
-                DEBUGLOG("CDDRIVE >%s<\n", cd_drive);
+                DEBUGLOG(0,"Dir with CD data '%s'\n",cd_drive);
                 break;
             case 2:
                 for (i = 0; i < 3; i++) {

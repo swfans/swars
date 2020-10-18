@@ -26,7 +26,6 @@
 
 #endif
 
-
 .text
 
 .global EXPORT_SYMBOL(X);
@@ -52,7 +51,7 @@ GLOBAL_FUNC (LbFileLengthRnc_)
 		mov    %bh,-0x10(%ebp)
 		mov    -0x4(%ebp),%eax
 		mov    $0x2,%edx
-		call   FileOpenInclCD
+		call   ac_LbFileOpen
 		mov    %eax,-0xc(%ebp)
 		mov    -0xc(%ebp),%ebx
 		cmp    $0xffffffff,%ebx
@@ -131,7 +130,7 @@ GLOBAL_FUNC (LbFileLoadAt_)
 		je     jump_ea59f
 		mov    -0x14(%ebp),%eax
 		mov    $0x2,%edx
-		call   FileOpenInclCD
+		call   ac_LbFileOpen
 		mov    %eax,-0xc(%ebp)
 		mov    -0xc(%ebp),%ebx
 		cmp    $0xffffffff,%ebx

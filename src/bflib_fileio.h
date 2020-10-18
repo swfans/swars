@@ -57,6 +57,12 @@ struct TbDriveInfo {
 };
 
 #pragma pack()
+
+typedef void (*FileNameTransform)(char *out_fname, const char *inp_fname);
+
+/** Callback to be used for transforming all file names before opening.
+ */
+extern FileNameTransform lbFileNameTransform;
 /******************************************************************************/
 
 int LbDriveCurrent(unsigned int *drive);
@@ -79,12 +85,12 @@ int LbFileFindFirst(const char *filespec, struct TbFileFind *ffind,unsigned int 
 int LbFileFindNext(struct TbFileFind *ffind);
 int LbFileFindEnd(struct TbFileFind *ffind);
 int LbFileRename(const char *fname_old, const char *fname_new);
-int LbFileDelete(const char *filename);
+int LbFileDelete(const char *fname);
 short LbFileFlush(TbFileHandle handle);
 char *LbGetCurrWorkDir(char *dest, const unsigned long maxlen);
 int LbDirectoryCurrent(char *buf, unsigned long buflen);
-int LbFileMakeFullPath(const TbBool append_cur_dir,
-  const char *directory, const char *filename, char *buf, const unsigned long len);
+int LbFileMakeFullPath(const TbBool append_cur_dir, const char *directory,
+    const char *filename, char *buf, const unsigned long len);
 
 
 /******************************************************************************/

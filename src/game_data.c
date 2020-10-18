@@ -23,10 +23,11 @@
 #include "bflib_fileio.h"
 #include "unix.h"
 #include "windows.h"
+#include "dos.h"
 
 static char data_path_user[DISKPATH_SIZE] = "";
 static char data_path_hdd[DISKPATH_SIZE] = "";
-static char data_path_cd[DISKPATH_SIZE] = "";
+static char game_dir_savegame[] = "qdata" FS_SEP_STR "savegame";
 
 /******************************************************************************/
 
@@ -37,10 +38,12 @@ GetDirectoryUser(void)
     {
         if (!sys_get_user_path(data_path_user, sizeof(data_path_user)))
         {
-            snprintf(data_path_user, sizeof(data_path_user), "%s", "qdata" FS_SEP_STR "savegame");
+            snprintf(data_path_user, sizeof(data_path_user), ".");
         }
-        DEBUGLOG(0,"Dir for user files '%s'",data_path_user);
-        LbDirectoryMake(data_path_user, true);
+        DEBUGLOG(0,"Dir for user files '%s'\n", data_path_user);
+        char path_create[DISKPATH_SIZE];
+        snprintf(path_create, sizeof(path_create), "%s" FS_SEP_STR "%s", data_path_user, game_dir_savegame);
+        LbDirectoryMake(path_create, true);
     }
     return data_path_user;
 }
@@ -54,7 +57,7 @@ GetDirectoryHdd(void)
         {
             snprintf(data_path_hdd, sizeof(data_path_hdd), "%s", ".");
         }
-        DEBUGLOG(0,"Dir with HDD data '%s'",data_path_hdd);
+        DEBUGLOG(0,"Dir with HDD data '%s'\n",data_path_hdd);
     }
     return data_path_hdd;
 }
@@ -63,11 +66,69 @@ GetDirectoryHdd(void)
 const char *
 GetDirectoryCd(void)
 {
-    if (data_path_cd[0] == '\0')
-    {
-    }
-    DEBUGLOG(0,"Dir with CD data '%s'",data_path_cd);
-    return data_path_cd;
+    return cd_drive;
 }
 
+int GetDirPlaceFromPath(const char *fname)
+{
+    char *last_fs_sep;
+    int path_len;
+    int dir_place;
+
+    last_fs_sep = strrchr(fname, '/');
+    if (last_fs_sep == NULL)
+        last_fs_sep = strrchr(fname, '\\');
+    if (last_fs_sep == NULL)
+        return DirPlace_None;
+    path_len = (int)(last_fs_sep - fname);
+    for (dir_place = 0; dir_place < (int)(sizeof(game_dirs)/sizeof(game_dirs[0])); dir_place++)
+    {
+        PathInfo *pinfo;
+        pinfo = &game_dirs[dir_place];
+        if (pinfo->directory != NULL) {
+            if (strncmp(fname, pinfo->directory, path_len) == 0)
+                return dir_place;
+        }
+    }
+    return DirPlace_None;
+}
+
+void SyndFileNameTransform(char *out_fname, const char *inp_fname)
+{
+    char transformed[DISKPATH_SIZE];
+    int dir_place;
+    const char *base_dir;
+
+    // Figure out whether the base folder should be data folder, user folder or CD
+    dir_place = GetDirPlaceFromPath(inp_fname);
+    if ( (dir_place == DirPlace_QData) && (strcasecmp(inp_fname, game_dir_savegame) == 0) ) {
+        base_dir = GetDirectoryUser();
+    }
+    else if (dir_place != DirPlace_None) {
+        if (game_dirs[dir_place].use_cd) {
+            base_dir = GetDirectoryCd();
+        } else {
+            base_dir = GetDirectoryHdd();
+        }
+    } else {
+        base_dir = GetDirectoryHdd();
+    }
+
+    // Add base path only if the input one is not absolute
+    if (inp_fname[0] == '\\' || inp_fname[0] == '/'
+      || (strlen (inp_fname) >= 2 && inp_fname[1] == ':')) {
+        snprintf (transformed, DISKPATH_SIZE, "%s", inp_fname);
+    } else {
+        snprintf(transformed, DISKPATH_SIZE, "%s" FS_SEP_STR "%s", base_dir, inp_fname);
+    }
+    dos_path_to_native(transformed, out_fname, DISKPATH_SIZE);
+}
+
+void setup_file_names(void)
+{
+    lbFileNameTransform = SyndFileNameTransform;
+    // This fills the path variable; for user, it also creates the folder
+    GetDirectoryHdd();
+    GetDirectoryUser();
+}
 /******************************************************************************/

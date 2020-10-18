@@ -19,8 +19,37 @@
 #ifndef GAME_DATA_H
 #define GAME_DATA_H
 
+#include "bflib_basics.h"
+
+enum DirPlacement {
+        DirPlace_Data = 0,
+        DirPlace_QData,
+        DirPlace_Maps,
+        DirPlace_Levels,
+        DirPlace_Intro,
+        DirPlace_Sound,
+        DirPlace_Equip,
+        DirPlace_None,
+};
+
+#pragma pack(1)
+
+typedef struct {
+  char *directory;
+  TbBool use_cd;
+} PathInfo;
+
+#pragma pack()
+
+extern PathInfo game_dirs[8];
+extern char cd_drive[52];
+
+/******************************************************************************/
+
 const char *GetDirectoryUser(void);
 const char *GetDirectoryHdd(void);
 const char *GetDirectoryCd(void);
+
+void setup_file_names(void);
 
 #endif

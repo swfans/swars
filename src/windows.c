@@ -43,7 +43,7 @@ gettimeofday (struct timeval *tp, struct timezone *tzp)
 #endif
 
 bool
-sys_read_string_registry_key (HKEY top_key, const char *key_name, 
+sys_read_string_registry_key (HKEY top_key, const char *key_name,
                               const char *value_name,
                               char *buffer, size_t size)
 {
@@ -51,7 +51,7 @@ sys_read_string_registry_key (HKEY top_key, const char *key_name,
   DWORD type;
   DWORD ksize = size;
 
-  if (RegOpenKeyEx (top_key, key_name, 0, KEY_READ, &hkey) 
+  if (RegOpenKeyEx (top_key, key_name, 0, KEY_READ, &hkey)
       != ERROR_SUCCESS)
     {
       return false;
@@ -99,7 +99,11 @@ sys_get_user_path (char *buffer, size_t size)
 {
   const char *app_data;
 
-  if (!sys_get_data_path (buffer, size))
+  /* Use Windows folders only if related reg keys are set.
+   * If there are no keys, then both functions should refuse
+   * to return a folder.
+   */
+  if (!sys_get_data_path(buffer, size))
     return false;
 
   app_data = getenv ("APPDATA");

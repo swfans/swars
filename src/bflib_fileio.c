@@ -76,8 +76,8 @@ WINBASEAPI DWORD WINAPI GetLastError(void);
 /******************************************************************************/
 // Internal declarations
 void convert_find_info(struct TbFileFind *ffind);
-// Temp import from game.c
-void game_transform_path_full (const char *file_name, char *buffer, size_t size);
+// Globals
+FileNameTransform lbFileNameTransform = NULL;
 /******************************************************************************/
 
 int LbDriveCurrent(unsigned int *drive)
@@ -192,6 +192,12 @@ int LbDriveFreeSpace(const unsigned int drive, struct TbDriveInfo *drvinfo)
 
 short LbFileExists(const char *fname)
 {
+    char real_fname[DISKPATH_SIZE];
+
+    if (lbFileNameTransform != NULL) {
+        lbFileNameTransform(real_fname, fname);
+        fname = real_fname;
+    }
     return access(fname,F_OK) == 0;
 }
 
@@ -204,6 +210,8 @@ int LbFilePosition(TbFileHandle handle)
 TbFileHandle LbFileOpen(const char *fname, const unsigned char accmode)
 {
   unsigned char mode = accmode;
+  char real_fname[DISKPATH_SIZE];
+  TbFileHandle rc;
 
   if ( !LbFileExists(fname) )
   {
@@ -215,15 +223,20 @@ TbFileHandle LbFileOpen(const char *fname, const unsigned char accmode)
     if ( mode == Lb_FILE_MODE_OLD )
         mode = Lb_FILE_MODE_NEW;
   }
-  TbFileHandle rc;
-/* DISABLED - NOT NEEDED
+
+  if (lbFileNameTransform != NULL) {
+      lbFileNameTransform(real_fname, fname);
+      fname = real_fname;
+  }
+
+  /* DISABLED - NOT NEEDED
   if ( mode == Lb_FILE_MODE_NEW )
   {
 #ifdef __DEBUG
     LbSyncLog("LbFileOpen: creating file\n");
 #endif
     rc = _sopen(fname, _O_WRONLY|_O_CREAT|_O_TRUNC|_O_BINARY, _SH_DENYNO);
-    //setmode(rc,_O_TRUNC);
+    setmode(rc,_O_TRUNC);
     close(rc);
   }
 */
@@ -390,14 +403,15 @@ long LbFileLength(const char *fname)
     }
     return result;*/
     struct stat st;
-    char transformed[FILENAME_MAX];
-    char path[FILENAME_MAX];
+    char real_fname[DISKPATH_SIZE];
 
-    game_transform_path_full (fname, transformed, sizeof (transformed));
-    dos_path_to_native (transformed, path, sizeof (path));
+    if (lbFileNameTransform != NULL) {
+        lbFileNameTransform(real_fname, fname);
+        fname = real_fname;
+    }
 
-    if (stat (path, &st) != 0) {
-        ERRORLOG("%s: Cannot get file stats: %s\n", path, strerror(errno));
+    if (stat (fname, &st) != 0) {
+        ERRORLOG("%s: Cannot get file stats: %s\n", fname, strerror(errno));
         return -1;
     }
 
@@ -409,16 +423,16 @@ long LbFileLength(const char *fname)
 void convert_find_info(struct TbFileFind *ffind)
 {
   struct _finddata_t *fdata=&(ffind->Reserved);
-  strncpy(ffind->Filename,fdata->name,144);
-  ffind->Filename[143]='\0';
+  strncpy(ffind->Filename, fdata->name, sizeof(ffind->Filename));
+  ffind->Filename[sizeof(ffind->Filename)-1] = '\0';
 #if defined(WIN32)
   GetShortPathName(fdata->name,ffind->AlternateFilename,14);
 #else
   strncpy(ffind->AlternateFilename,fdata->name,14);
 #endif
   ffind->AlternateFilename[13]='\0';
-  if (fdata->size>ULONG_MAX)
-    ffind->Length=ULONG_MAX;
+  if (fdata->size > ULONG_MAX)
+    ffind->Length = ULONG_MAX;
   else
     ffind->Length = fdata->size;
   ffind->Attributes = fdata->attrib;
@@ -479,6 +493,15 @@ int LbFileFindEnd(struct TbFileFind *ffind)
 int LbFileRename(const char *fname_old, const char *fname_new)
 {
     int result;
+    char real_fname_old[DISKPATH_SIZE];
+    char real_fname_new[DISKPATH_SIZE];
+
+    if (lbFileNameTransform != NULL) {
+        lbFileNameTransform(real_fname_old, fname_old);
+        lbFileNameTransform(real_fname_new, fname_new);
+        fname_old = real_fname_old;
+        fname_new = real_fname_new;
+    }
     if (rename(fname_old,fname_new))
         result = -1;
     else
@@ -486,11 +509,21 @@ int LbFileRename(const char *fname_old, const char *fname_new)
     return result;
 }
 
-//Removes a disk file
-int LbFileDelete(const char *filename)
+/** Removes a disk file
+ *
+ * @param fname
+ * @return
+ */
+int LbFileDelete(const char *fname)
 {
+    char real_fname[DISKPATH_SIZE];
     int result;
-    if (remove(filename))
+
+    if (lbFileNameTransform != NULL) {
+        lbFileNameTransform(real_fname, fname);
+        fname = real_fname;
+    }
+    if (remove(fname))
         result = -1;
     else
         result = 1;

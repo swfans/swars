@@ -39,7 +39,7 @@
 .global EXPORT_SYMBOL(_wc_errno);
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (LbFileExists_)
+GLOBAL_FUNC (ASM_LbFileExists_)
 /*----------------------------------------------------------------*/
         push   %edx
         push   %ebp
@@ -59,7 +59,7 @@ GLOBAL_FUNC (LbFileExists_)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (LbFilePosition_)
+GLOBAL_FUNC (ASM_LbFilePosition_)
 /*----------------------------------------------------------------*/
         push   %edx
         push   %ebp
@@ -108,7 +108,7 @@ GLOBAL_FUNC (LbFileClose_)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (LbFileSeek_)
+GLOBAL_FUNC (ASM_LbFileSeek_)
 /*----------------------------------------------------------------*/
         push   %ebp
         mov    %esp,%ebp
@@ -160,7 +160,7 @@ GLOBAL_FUNC (LbFileSeek_)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (LbFileRead_)
+GLOBAL_FUNC (ASM_LbFileRead_)
 /*----------------------------------------------------------------*/
         push   %ebp
         mov    %esp,%ebp
@@ -188,7 +188,7 @@ GLOBAL_FUNC (LbFileRead_)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (LbFileWrite_)
+GLOBAL_FUNC (ASM_LbFileWrite_)
 /*----------------------------------------------------------------*/
         push   %ebp
         mov    %esp,%ebp
@@ -216,7 +216,7 @@ GLOBAL_FUNC (LbFileWrite_)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (LbFileLength_)
+GLOBAL_FUNC (ASM_LbFileLength_)
 /*----------------------------------------------------------------*/
         push   %ebx
         push   %edx
@@ -373,7 +373,7 @@ GLOBAL_FUNC (FileOpenInclCD)
 /*----------------------------------------------------------------*/
 /* long LbFileDelete(const char *fname)
  */
-LbFileDelete_:
+ASM_LbFileDelete_:
 /*----------------------------------------------------------------*/
 		push   %ebp
 		mov    %esp,%ebp
@@ -832,66 +832,6 @@ func_10af45:
 func_10af3f:
 /*----------------------------------------------------------------*/
 		mov    $EXPORT_SYMBOL(_wc_errno),%eax
-		ret
-
-
-/*----------------------------------------------------------------*/
-____qwrite_:	/* 0x118624 */
-/*----------------------------------------------------------------*/
-		push   %ecx
-		push   %esi
-		push   %edi
-		push   %ebp
-		sub    $0x4,%esp
-		mov    %eax,%esi
-		mov    %edx,%ebp
-		mov    %ebx,%edi
-		call   ____IOMode_
-		test   $0x80,%al
-		je     jump_118669
-		mov    $0x2,%al
-		mov    %esi,%ebx
-		xor    %edx,%edx
-		mov    $0x42,%ah
-		mov    %edx,%ecx
-		shr    $0x10,%ecx
-		int    $0x21
-		rcl    %dx
-		ror    %dx
-		shl    $0x10,%edx
-		mov    %ax,%dx
-		mov    %edx,(%esp)
-		test   %edx,%edx
-		jge    jump_118669
-	jump_11865c:
-		xor    %eax,%eax
-		mov    (%esp),%ax
-		call   ____set_errno_dos_
-		jmp    jump_118690
-	jump_118669:
-		mov    %edi,%ecx
-		mov    %ebp,%edx
-		mov    %esi,%ebx
-		mov    $0x40,%ah
-		int    $0x21
-		rcl    %eax
-		ror    %eax
-		mov    %eax,(%esp)
-		mov    %eax,%edx
-		test   %eax,%eax
-		jl     jump_11865c
-		cmp    %edi,%eax
-		je     jump_11868e
-		mov    $0xc,%eax
-		call   ____set_errno_
-	jump_11868e:
-		mov    %edx,%eax
-	jump_118690:
-		add    $0x4,%esp
-		pop    %ebp
-		pop    %edi
-		pop    %esi
-		pop    %ecx
 		ret
 
 

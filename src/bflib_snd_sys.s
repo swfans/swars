@@ -779,7 +779,7 @@ GLOBAL_FUNC (LoadSounds_)
 		call   StopAllSamples_
 		mov    $0x2,%edx
 		mov    $full_sound_data_path,%eax
-		call   FileOpenInclCD
+		call   ac_LbFileOpen
 		mov    %eax,%ecx
 		mov    %eax,%esi
 		cmp    $0xffffffff,%eax
@@ -1181,7 +1181,7 @@ AllocateSoundBankMemory_:
 		add    $0xc,%esp
 		mov    $0x2,%edx
 		mov    $full_sound_data_path,%eax
-		call   FileOpenInclCD
+		call   ac_LbFileOpen
 		mov    %eax,%ebp
 		cmp    $0xffffffff,%eax
 		jne    jump_ecc6f
@@ -1383,7 +1383,7 @@ GLOBAL_FUNC (LoadMusic_)
 		call   StopMusic_
 		mov    $0x2,%edx
 		mov    $full_music_data_path,%eax
-		call   FileOpenInclCD
+		call   ac_LbFileOpen
 		mov    %eax,%ecx
 		mov    %eax,%esi
 		cmp    $0xffffffff,%eax
@@ -1769,7 +1769,7 @@ AllocateMusicBankMemory_:
 		add    $0xc,%esp
 		mov    $0x2,%edx
 		mov    $full_music_data_path,%eax
-		call   FileOpenInclCD
+		call   ac_LbFileOpen
 		mov    %eax,%ecx
 		cmp    $0xffffffff,%eax
 		jne    jump_ed32c
@@ -5264,7 +5264,7 @@ LoadAwe32Soundfont_:
 		add    $0x10,%esp
 		mov    $0x2,%edx
 		mov    %esp,%eax
-		call   FileOpenInclCD
+		call   ac_LbFileOpen
 		mov    %eax,sbkHandle
 		cmp    $0xffffffff,%eax
 		je     jump_1105d0
