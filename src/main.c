@@ -190,85 +190,89 @@ process_options (int *argc, char ***argv)
 void read_conf_file(void)
 {
     char *curptr;
-    unsigned int conf_fh;
+    TbFileHandle conf_fh;
     unsigned int i, n;
     char ch;
     int text_len;
     char locbuf[1024];
     char prop_name[44];
 
-    conf_fh = FileOpenInclCD("config.ini", 2);
-    if (conf_fh != (unsigned int)-1)
+    conf_fh = LbFileOpen("config.ini", Lb_FILE_MODE_READ_ONLY);
+    if (conf_fh != -1)
     {
-        text_len = LbFileRead(conf_fh, locbuf, 1024);
+        text_len = LbFileRead(conf_fh, locbuf, sizeof(locbuf));
         LbFileClose(conf_fh);
-        curptr = locbuf;
-        locbuf[text_len] = '\0';
-        while ( *curptr != 26 && *curptr != '\0' )
+    } else {
+        ERRORLOG("Could not open installation config file, going with defaults.\n");
+        text_len = 0;
+    }
+    locbuf[text_len] = '\0';
+    /* Parse the loaded file */
+    curptr = locbuf;
+    while ( *curptr != 26 && *curptr != '\0' )
+    {
+        for (i=0; (*curptr != '=' && *curptr != '\0'); i++)
         {
-            for (i=0; (*curptr != '='); i++)
-            {
+            ch = *curptr++;
+            prop_name[i] = ch;
+        }
+        curptr += 2;
+        prop_name[i] = '\0';
+        for (n = 0; n < sizeof(conf_file_cmnds)/sizeof(conf_file_cmnds[0]); n++)
+        {
+            if (strcmp(prop_name, conf_file_cmnds[n]) != 0)
+                break;
+        }
+        switch ( n )
+        {
+        case 0:
+            for (i = 0; *curptr != '"'; i++) {
                 ch = *curptr++;
-                prop_name[i] = ch;
+                cd_drive[i] = ch;
             }
-            curptr += 2;
-            prop_name[i] = '\0';
-            for (n = 0; n < sizeof(conf_file_cmnds)/sizeof(conf_file_cmnds[0]); n++)
-            {
-                if (strcmp(prop_name, conf_file_cmnds[n]) != 0)
-                    break;
+            cd_drive[i] = 0;
+            DEBUGLOG(0,"Dir with CD data '%s'\n",cd_drive);
+            break;
+        case 2:
+            for (i = 0; i < 3; i++) {
+              ch = *curptr++;
+              language_3str[i] = tolower(ch);
             }
-            switch ( n )
-            {
-            case 0:
-                for (i = 0; *curptr != '"'; i++) {
-                    ch = *curptr++;
-                    cd_drive[i] = ch;
-                }
-                cd_drive[i] = 0;
-                DEBUGLOG(0,"Dir with CD data '%s'\n",cd_drive);
-                break;
-            case 2:
-                for (i = 0; i < 3; i++) {
-                  ch = *curptr++;
-                  language_3str[i] = tolower(ch);
-                }
-                language_3str[i] = '\0';
-                break;
-            case 3:
-                if (curptr[1] == 'a') { /* "Max" */
-                  game_dirs[0].use_cd = 0;
-                }
-                break;
-            case 4:
-                if ( curptr[1] == 'a' ) {
-                  game_dirs[5].use_cd = 0;
-                }
-                break;
-            case 5:
-                if ( curptr[1] == 'a' ) {
-                  game_dirs[7].use_cd = 0;
-                }
-                break;
-            case 6:
-                if ( curptr[1] == 'a' ) {
-                  game_dirs[2].use_cd = 0;
-                }
-                break;
-            case 7:
-                if ( curptr[1] == 'a' ) {
-                  game_dirs[3].use_cd = 0;
-                }
-                break;
-            case 8:
-                if ( curptr[1] == 'a' ) {
-                  game_dirs[6].use_cd = 0;
-                }
-                break;
+            language_3str[i] = '\0';
+            break;
+        case 3:
+            if (curptr[1] == 'a') { /* "Max" */
+              game_dirs[0].use_cd = 0;
             }
-            while ( *curptr != 10 ) {
-              curptr++;
+            break;
+        case 4:
+            if ( curptr[1] == 'a' ) {
+              game_dirs[5].use_cd = 0;
             }
+            break;
+        case 5:
+            if ( curptr[1] == 'a' ) {
+              game_dirs[7].use_cd = 0;
+            }
+            break;
+        case 6:
+            if ( curptr[1] == 'a' ) {
+              game_dirs[2].use_cd = 0;
+            }
+            break;
+        case 7:
+            if ( curptr[1] == 'a' ) {
+              game_dirs[3].use_cd = 0;
+            }
+            break;
+        case 8:
+            if ( curptr[1] == 'a' ) {
+              game_dirs[6].use_cd = 0;
+            }
+            break;
+        }
+        while (*curptr != '\n'  && *curptr != '\0') {
+          curptr++;
         }
     }
     /* Read file with all the language-specific texts */
@@ -285,44 +289,44 @@ void read_conf_file(void)
 int
 main (int argc, char **argv)
 {
-  int retval;
+    int retval;
 
-  retval = 0;
-  lbDisplay.ScreenMode = 1;
-  unkn01_mode = 0;
-  cmdln_param_w = 0;
-  flags_general_unkn01 = 0;
-  /* Gravis Grip joystick driver initialization */
-  /* joy_grip_init(); */
+    retval = 0;
+    lbDisplay.ScreenMode = Lb_SCREEN_MODE_320_200;
+    unkn01_mode = 0;
+    cmdln_param_w = 0;
+    flags_general_unkn01 = 0;
+    /* Gravis Grip joystick driver initialization */
+    /* joy_grip_init(); */
 
-  display_set_full_screen(true);
-  display_set_lowres_stretch(true);
+    display_set_full_screen(true);
+    display_set_lowres_stretch(true);
 
-  process_options(&argc, &argv);
+    process_options(&argc, &argv);
 
-  printf("Syndicate Wars Port "VER_STRING"\n"
-	  "The original by Bullfrog\n"
-	  "Ported by Unavowed <unavowed@vexillium.org> "
-	  "and Gynvael Coldwind <gynvael@vexillium.org>\n"
-	  "Web site: http://swars.vexillium.org/\n");
+    printf("Syndicate Wars Port "VER_STRING"\n"
+        "The original by Bullfrog\n"
+        "Ported by Unavowed <unavowed@vexillium.org> "
+        "and Gynvael Coldwind <gynvael@vexillium.org>\n"
+        "Web site: http://swars.vexillium.org/\n");
 
-  if (!game_initialise())
-    return 1;
+    if (!game_initialise())
+        return 1;
 
-  ASM_read_conf_file();
-  game_setup();
+    ASM_read_conf_file();
+    game_setup();
 
-  game_process();
+    game_process();
 
-  game_reset();
-  if ( in_network_game ) {
-      /* LbNetworkReset(); */
-      asm volatile ("call _LbNetworkReset_\n"
-            :  :  : "eax" );
-  }
-  joy_grip_shutdown();
-  LbMemoryReset();
-  game_quit();
+    game_reset();
+    if ( in_network_game ) {
+        /* LbNetworkReset(); */
+        asm volatile ("call _LbNetworkReset_\n"
+              :  :  : "eax" );
+    }
+    joy_grip_shutdown();
+    LbMemoryReset();
+    game_quit();
 
-  return retval;
+    return retval;
 }

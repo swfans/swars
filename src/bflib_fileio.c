@@ -215,13 +215,15 @@ TbFileHandle LbFileOpen(const char *fname, const unsigned char accmode)
 
   if ( !LbFileExists(fname) )
   {
-#ifdef __DEBUG
-    LbSyncLog("LbFileOpen: file doesn't exist\n");
-#endif
-    if ( mode == Lb_FILE_MODE_READ_ONLY )
-        return -1;
-    if ( mode == Lb_FILE_MODE_OLD )
-        mode = Lb_FILE_MODE_NEW;
+      BFLIB_DEBUGLOG(0, "%s: file doesn't exist", fname);
+      if ( mode == Lb_FILE_MODE_READ_ONLY )
+          return -1;
+      /* DISABLED - this is only used in games newer than SW.
+       * In older games, this causes successful creation of files
+       * which should fail, resulting in changed behavior of the game.
+      if ( mode == Lb_FILE_MODE_OLD )
+          mode = Lb_FILE_MODE_NEW;
+      */
   }
 
   if (lbFileNameTransform != NULL) {
@@ -232,9 +234,7 @@ TbFileHandle LbFileOpen(const char *fname, const unsigned char accmode)
   /* DISABLED - NOT NEEDED
   if ( mode == Lb_FILE_MODE_NEW )
   {
-#ifdef __DEBUG
-    LbSyncLog("LbFileOpen: creating file\n");
-#endif
+    BFLIB_DEBUGLOG(0,"%s: truncating file", fname);
     rc = _sopen(fname, _O_WRONLY|_O_CREAT|_O_TRUNC|_O_BINARY, _SH_DENYNO);
     setmode(rc,_O_TRUNC);
     close(rc);
@@ -245,29 +245,21 @@ TbFileHandle LbFileOpen(const char *fname, const unsigned char accmode)
   {
   case Lb_FILE_MODE_NEW:
     {
-#ifdef __DEBUG
-      LbSyncLog("LbFileOpen: LBO_CREAT mode\n");
-#endif
+        BFLIB_DEBUGLOG(1, "%s: LBO_CREAT mode", fname);
         rc = _sopen(fname, O_RDWR|O_CREAT|O_BINARY, SH_DENYNO, S_IREAD|S_IWRITE);
     };break;
   case Lb_FILE_MODE_OLD:
     {
-#ifdef __DEBUG
-        LbSyncLog("LbFileOpen: LBO_RDWR mode\n");
-#endif
+        BFLIB_DEBUGLOG(1,"%s: LBO_RDWR mode", fname);
         rc = _sopen(fname, O_RDWR|O_BINARY, SH_DENYNO);
     };break;
   case Lb_FILE_MODE_READ_ONLY:
     {
-#ifdef __DEBUG
-        LbSyncLog("LbFileOpen: LBO_RDONLY mode\n");
-#endif
+        BFLIB_DEBUGLOG(1,"%s: LBO_RDONLY mode", fname);
         rc = _sopen(fname, O_RDONLY|O_BINARY, SH_DENYNO);
     };break;
   }
-#ifdef __DEBUG
-  LbSyncLog("LbFileOpen: out handle = %ld, errno = %d\n",rc,errno);
-#endif
+  BFLIB_DEBUGLOG(0,"%s: out handle = %ld, errno = %d", fname, (long)rc, errno);
   return rc;
 }
 
@@ -411,7 +403,7 @@ long LbFileLength(const char *fname)
     }
 
     if (stat (fname, &st) != 0) {
-        ERRORLOG("%s: Cannot get file stats: %s\n", fname, strerror(errno));
+        BFLIB_ERRORLOG("%s: Cannot get file stats: %s\n", fname, strerror(errno));
         return -1;
     }
 
@@ -426,11 +418,11 @@ void convert_find_info(struct TbFileFind *ffind)
   strncpy(ffind->Filename, fdata->name, sizeof(ffind->Filename));
   ffind->Filename[sizeof(ffind->Filename)-1] = '\0';
 #if defined(WIN32)
-  GetShortPathName(fdata->name,ffind->AlternateFilename,14);
+  GetShortPathName(fdata->name, ffind->AlternateFilename, sizeof(ffind->AlternateFilename));
 #else
-  strncpy(ffind->AlternateFilename,fdata->name,14);
+  strncpy(ffind->AlternateFilename, fdata->name, sizeof(ffind->AlternateFilename));
 #endif
-  ffind->AlternateFilename[13]='\0';
+  ffind->AlternateFilename[sizeof(ffind->AlternateFilename)-1] = '\0';
   if (fdata->size > ULONG_MAX)
     ffind->Length = ULONG_MAX;
   else

@@ -127,6 +127,22 @@ typedef size_t TbSize;
 
 #define DEBUGLOG(lv, fmt, ...) \
     fprintf(stdout, fmt, ##__VA_ARGS__)
+
+#define BFLIB_ERRORLOG(fmt, ...) \
+    fprintf(stderr, fmt " in %s\n", ##__VA_ARGS__, __func__)
+
+#define BFLIB_DEBUGLOG(lv, fmt, ...) \
+    fprintf(stdout, fmt " in %s\n", ##__VA_ARGS__, __func__)
+
+/*
+#ifdef __DEBUG
+#define BFLIB_DEBUGLOG(lv, fmt, ...) \
+    LbSyncLog("%s: " fmt "\n", __func__, ##__VA_ARGS__);
+#else
+#define BFLIB_DEBUGLOG(lv, fmt, ...)
+#endif
+
+ */
 /******************************************************************************/
 unsigned long blong (unsigned char *p);
 unsigned long llong (unsigned char *p);
