@@ -109,7 +109,7 @@ process_options (int *argc, char ***argv)
             break;
 
         case 'H':
-            lbDisplay.ScreenMode = 13;
+            lbDisplay.ScreenMode = Lb_SCREEN_MODE_640_480_8;
             break;
 
         case 'h':
@@ -196,8 +196,9 @@ void read_conf_file(void)
     int text_len;
     char locbuf[1024];
     char prop_name[44];
+    char *conf_fname = "config.ini";
 
-    conf_fh = LbFileOpen("config.ini", Lb_FILE_MODE_READ_ONLY);
+    conf_fh = LbFileOpen(conf_fname, Lb_FILE_MODE_READ_ONLY);
     if (conf_fh != -1)
     {
         text_len = LbFileRead(conf_fh, locbuf, sizeof(locbuf));
@@ -207,10 +208,13 @@ void read_conf_file(void)
         text_len = 0;
     }
     locbuf[text_len] = '\0';
-    /* Parse the loaded file */
+    // Parse the loaded file
     curptr = locbuf;
     while ( *curptr != 26 && *curptr != '\0' )
     {
+        while (*curptr == '\n' || *curptr == '\r' || *curptr == '\t' || *curptr == ' ') {
+          curptr++;
+        }
         for (i=0; (*curptr != '=' && *curptr != '\0'); i++)
         {
             ch = *curptr++;
@@ -218,9 +222,10 @@ void read_conf_file(void)
         }
         curptr += 2;
         prop_name[i] = '\0';
+        DEBUGLOG(2,"%s: option '%s'\n", conf_fname, prop_name);
         for (n = 0; n < sizeof(conf_file_cmnds)/sizeof(conf_file_cmnds[0]); n++)
         {
-            if (strcmp(prop_name, conf_file_cmnds[n]) != 0)
+            if (strcmp(prop_name, conf_file_cmnds[n]) == 0)
                 break;
         }
         switch ( n )
@@ -231,7 +236,7 @@ void read_conf_file(void)
                 cd_drive[i] = ch;
             }
             cd_drive[i] = 0;
-            DEBUGLOG(0,"Dir with CD data '%s'\n",cd_drive);
+            DEBUGLOG(0,"%s: Dir with CD data '%s'\n", conf_fname, cd_drive);
             break;
         case 2:
             for (i = 0; i < 3; i++) {
@@ -241,49 +246,50 @@ void read_conf_file(void)
             language_3str[i] = '\0';
             break;
         case 3:
-            if (curptr[1] == 'a') { /* "Max" */
-              game_dirs[0].use_cd = 0;
+            if (curptr[1] == 'a') { // "Max"
+              game_dirs[DirPlace_Data].use_cd = 0;
             }
             break;
-        case 4:
+        case 4: // FIXME implementing original error - 'Intro' sets wrong option
             if ( curptr[1] == 'a' ) {
-              game_dirs[5].use_cd = 0;
+              game_dirs[DirPlace_Sound].use_cd = 0;
             }
             break;
-        case 5:
+        case 5: // FIXME implementing original error - 'Anims' sets wrong option
             if ( curptr[1] == 'a' ) {
               game_dirs[7].use_cd = 0;
             }
             break;
         case 6:
             if ( curptr[1] == 'a' ) {
-              game_dirs[2].use_cd = 0;
+              game_dirs[DirPlace_Maps].use_cd = 0;
             }
             break;
         case 7:
             if ( curptr[1] == 'a' ) {
-              game_dirs[3].use_cd = 0;
+              game_dirs[DirPlace_Levels].use_cd = 0;
             }
             break;
-        case 8:
+        case 8: // FIXME implementing original error - 'Sound' sets wrong option
             if ( curptr[1] == 'a' ) {
-              game_dirs[6].use_cd = 0;
+              game_dirs[DirPlace_Equip].use_cd = 0;
             }
             break;
         }
+
         while (*curptr != '\n'  && *curptr != '\0') {
           curptr++;
         }
     }
-    /* Read file with all the language-specific texts */
+    // Read file with all the language-specific texts
     if ( game_dirs[0].use_cd )
-      sprintf(locbuf, "%slanguage/%s/text.dat", cd_drive, language_3str);
+        sprintf(locbuf, "%slanguage/%s/text.dat", cd_drive, language_3str);
     else
-      sprintf(locbuf, "data/text.dat");
+        sprintf(locbuf, "data/text.dat");
     text_len = LbFileLength(locbuf);
     game_text_str = (char *)LbMemoryAlloc(text_len);
     if (game_text_str != NULL)
-      LbFileLoadAt(locbuf, game_text_str);
+        LbFileLoadAt(locbuf, game_text_str);
 }
 
 int
@@ -292,7 +298,7 @@ main (int argc, char **argv)
     int retval;
 
     retval = 0;
-    lbDisplay.ScreenMode = Lb_SCREEN_MODE_320_200;
+    lbDisplay.ScreenMode = Lb_SCREEN_MODE_320_200_8;
     unkn01_mode = 0;
     cmdln_param_w = 0;
     flags_general_unkn01 = 0;
@@ -313,7 +319,7 @@ main (int argc, char **argv)
     if (!game_initialise())
         return 1;
 
-    ASM_read_conf_file();
+    read_conf_file();
     game_setup();
 
     game_process();
