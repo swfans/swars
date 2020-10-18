@@ -441,7 +441,14 @@ int LbFileFindFirst(const char *filespec, struct TbFileFind *ffind, unsigned int
     // original Watcom code was
     //dos_findfirst_(path, attributes,&(ffind->Reserved))
     //The new code skips 'attributes' as Win32 prototypes seem not to use them
-    ffind->ReservedHandle = _findfirst(filespec,&(ffind->Reserved));
+    char real_filespec[DISKPATH_SIZE];
+
+    if (lbFileNameTransform != NULL) {
+        lbFileNameTransform(real_filespec, filespec);
+        filespec = real_filespec;
+    }
+
+    ffind->ReservedHandle = _findfirst(filespec, &(ffind->Reserved));
     int result;
     if (ffind->ReservedHandle == -1)
     {
@@ -458,7 +465,7 @@ int LbFileFindFirst(const char *filespec, struct TbFileFind *ffind, unsigned int
 int LbFileFindNext(struct TbFileFind *ffind)
 {
     int result;
-    if ( _findnext(ffind->ReservedHandle,&(ffind->Reserved)) < 0 )
+    if ( _findnext(ffind->ReservedHandle, &(ffind->Reserved)) < 0 )
     {
         _findclose(ffind->ReservedHandle);
         ffind->ReservedHandle = -1;
@@ -617,6 +624,7 @@ TbResult
 LbDirectoryMake(const char *path, TbBool recursive)
 {
     char buffer[FILENAME_MAX];
+    char fname[DISKPATH_SIZE];
     char *p;
     size_t len;
     struct stat st;
@@ -624,7 +632,18 @@ LbDirectoryMake(const char *path, TbBool recursive)
     mode_t __attribute__((unused)) mode = 0755;
     int num_levels = 0;
 
-    len = snprintf(buffer, sizeof(buffer), "%s", path);
+    // We need to transform the path here - if we did it later,
+    // then we would skip base directories in recursion.
+    // Also, the function expects file name, not path - make one
+    if (lbFileNameTransform != NULL) {
+        strncpy(fname, path, DISKPATH_SIZE-2);
+        strcat(fname, "/a");
+        lbFileNameTransform(buffer, fname);
+        len = strlen(buffer) - 2;
+        buffer[len] = '\0';
+    } else {
+        len = snprintf(buffer, sizeof(buffer), "%s", path);
+    }
 
     /* First, find the longest existing path */
     do
@@ -677,6 +696,7 @@ LbDirectoryMake(const char *path, TbBool recursive)
 
         *p = FS_SEP;
 
+        BFLIB_DEBUGLOG(1,"%s: Creating directory", buffer);
 #if defined(_WIN32)
         err = mkdir(buffer);
 #else

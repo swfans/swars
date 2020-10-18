@@ -30,6 +30,8 @@
 #include "bflib_fileio.h"
 #include "game_data.h"
 
+static char game_dir_screenshots[] = "qdata/screenshots";
+
 /** Gives highest file number in existing files matching given mask.
  *
  * @param fnmask the mask to match
@@ -42,7 +44,18 @@ unsigned int get_highest_file_no(const char *fnmask, int no_pos_in_fnmask, const
 {
   unsigned int highest_no, curr_no;
   struct TbFileFind ffind;
-  int no_pos_in_fname = no_pos_in_fnmask - strlen(fndir);
+  int no_pos_in_fname;
+  /* This is what we could do if we didn't have fndir param
+  char *last_sep;
+  last_sep = strrchr(fnmask, '/');
+  if (last_sep == NULL)
+      last_sep = strrchr(fnmask, '\\');
+  if (last_sep != NULL)
+      no_pos_in_fname = no_pos_in_fnmask - (last_sep - fnmask + 1);
+  else
+      no_pos_in_fname = no_pos_in_fnmask;
+  */
+  no_pos_in_fname = no_pos_in_fnmask - strlen(fndir) + 1;
   highest_no = 0;
   if ( LbFileFindFirst(fnmask, &ffind, 0x21u) != -1 )
   {
@@ -59,11 +72,8 @@ static TbResult prepare_screenshot_file_name(char *fname, const char *base,
     const char *ext)
 {
     unsigned int i;
-    char directory[DISKPATH_SIZE];
     unsigned int highest_num;
-    snprintf(directory, sizeof(directory), "%s" FS_SEP_STR "screenshots",
-        GetDirectoryUser());
-    sprintf(fname, "%s%s%-5s", directory, FS_SEP_STR, base);
+    sprintf(fname, "%s/%-5s", game_dir_screenshots, base);
     for (i = 1; i < DISKPATH_SIZE; i++)
     {
         int ch;
@@ -74,10 +84,10 @@ static TbResult prepare_screenshot_file_name(char *fname, const char *base,
             break;
     }
     sprintf(&fname[i], "*.%s", ext);
-    highest_num = get_highest_file_no(fname, i, directory);
+    highest_num = get_highest_file_no(fname, i, game_dir_screenshots);
     sprintf(&fname[i], "%03d.%s", highest_num + 1, ext);
 
-    if (LbDirectoryMake(directory, true) != Lb_FAIL)
+    if (LbDirectoryMake(game_dir_screenshots, true) != Lb_FAIL)
       return 0;
 
     return 1;
