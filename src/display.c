@@ -3,6 +3,7 @@
 
 #include "display.h"
 #include "util.h"
+#include "bflib_basics.h"
 #include "bflib_video.h"
 
 #pragma pack(1)
@@ -74,8 +75,8 @@ unlock_screen (void)
   SDL_UnlockSurface (display_screen);
 }
 
-int
-LbPaletteSet (const uint8_t *palette)
+TbResult
+LbPaletteSet(const unsigned char *palette)
 {
   SDL_Color colours[256];
   int n;

@@ -34,7 +34,7 @@
 .global EXPORT_SYMBOL(vec_mode);
 .global EXPORT_SYMBOL(vec_screen);
 .global EXPORT_SYMBOL(vec_map);
-.global EXPORT_SYMBOL(sprites);
+.global EXPORT_SYMBOL(_fade_table);
 
 
 /*----------------------------------------------------------------*/
@@ -1896,7 +1896,7 @@ func_129ad7:
 		add    %ebp,%ecx
 		mov    (%ebx),%al
 		adc    %esi,%edx
-		mov    EXPORT_SYMBOL(sprites)(%eax),%al
+		mov    EXPORT_SYMBOL(_fade_table)(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,(%edi)
 
@@ -1909,7 +1909,7 @@ func_129af0:
 		add    %ebp,%ecx
 		mov    (%ebx),%al
 		adc    %esi,%edx
-		mov    EXPORT_SYMBOL(sprites)(%eax),%al
+		mov    EXPORT_SYMBOL(_fade_table)(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0x1(%edi)
 
@@ -1922,7 +1922,7 @@ func_129b0a:
 		add    %ebp,%ecx
 		mov    (%ebx),%al
 		adc    %esi,%edx
-		mov    EXPORT_SYMBOL(sprites)(%eax),%al
+		mov    EXPORT_SYMBOL(_fade_table)(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0x2(%edi)
 
@@ -1935,7 +1935,7 @@ func_129b24:
 		add    %ebp,%ecx
 		mov    (%ebx),%al
 		adc    %esi,%edx
-		mov    EXPORT_SYMBOL(sprites)(%eax),%al
+		mov    EXPORT_SYMBOL(_fade_table)(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0x3(%edi)
 
@@ -1948,7 +1948,7 @@ func_129b3e:
 		add    %ebp,%ecx
 		mov    (%ebx),%al
 		adc    %esi,%edx
-		mov    EXPORT_SYMBOL(sprites)(%eax),%al
+		mov    EXPORT_SYMBOL(_fade_table)(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0x4(%edi)
 
@@ -1961,7 +1961,7 @@ func_129b58:
 		add    %ebp,%ecx
 		mov    (%ebx),%al
 		adc    %esi,%edx
-		mov    EXPORT_SYMBOL(sprites)(%eax),%al
+		mov    EXPORT_SYMBOL(_fade_table)(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0x5(%edi)
 
@@ -1974,7 +1974,7 @@ func_129b72:
 		add    %ebp,%ecx
 		mov    (%ebx),%al
 		adc    %esi,%edx
-		mov    EXPORT_SYMBOL(sprites)(%eax),%al
+		mov    EXPORT_SYMBOL(_fade_table)(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0x6(%edi)
 
@@ -1987,7 +1987,7 @@ func_129b8c:
 		add    %ebp,%ecx
 		mov    (%ebx),%al
 		adc    %esi,%edx
-		mov    EXPORT_SYMBOL(sprites)(%eax),%al
+		mov    EXPORT_SYMBOL(_fade_table)(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0x7(%edi)
 
@@ -2000,7 +2000,7 @@ func_129ba6:
 		add    %ebp,%ecx
 		mov    (%ebx),%al
 		adc    %esi,%edx
-		mov    EXPORT_SYMBOL(sprites)(%eax),%al
+		mov    EXPORT_SYMBOL(_fade_table)(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0x8(%edi)
 
@@ -2013,7 +2013,7 @@ func_129bc0:
 		add    %ebp,%ecx
 		mov    (%ebx),%al
 		adc    %esi,%edx
-		mov    EXPORT_SYMBOL(sprites)(%eax),%al
+		mov    EXPORT_SYMBOL(_fade_table)(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0x9(%edi)
 
@@ -2026,7 +2026,7 @@ func_129bda:
 		add    %ebp,%ecx
 		mov    (%ebx),%al
 		adc    %esi,%edx
-		mov    EXPORT_SYMBOL(sprites)(%eax),%al
+		mov    EXPORT_SYMBOL(_fade_table)(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0xa(%edi)
 
@@ -2039,7 +2039,7 @@ func_129bf4:
 		add    %ebp,%ecx
 		mov    (%ebx),%al
 		adc    %esi,%edx
-		mov    EXPORT_SYMBOL(sprites)(%eax),%al
+		mov    EXPORT_SYMBOL(_fade_table)(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0xb(%edi)
 
@@ -2052,7 +2052,7 @@ func_129c0e:
 		add    %ebp,%ecx
 		mov    (%ebx),%al
 		adc    %esi,%edx
-		mov    EXPORT_SYMBOL(sprites)(%eax),%al
+		mov    EXPORT_SYMBOL(_fade_table)(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0xc(%edi)
 
@@ -2065,7 +2065,7 @@ func_129c28:
 		add    %ebp,%ecx
 		mov    (%ebx),%al
 		adc    %esi,%edx
-		mov    EXPORT_SYMBOL(sprites)(%eax),%al
+		mov    EXPORT_SYMBOL(_fade_table)(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0xd(%edi)
 
@@ -2078,7 +2078,7 @@ func_129c42:
 		add    %ebp,%ecx
 		mov    (%ebx),%al
 		adc    %esi,%edx
-		mov    EXPORT_SYMBOL(sprites)(%eax),%al
+		mov    EXPORT_SYMBOL(_fade_table)(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0xe(%edi)
 
@@ -2091,7 +2091,7 @@ func_129c5c:
 		add    %ebp,%ecx
 		mov    (%ebx),%al
 		adc    %esi,%edx
-		mov    EXPORT_SYMBOL(sprites)(%eax),%al
+		mov    EXPORT_SYMBOL(_fade_table)(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0xf(%edi)
 		add    $0x10,%edi
@@ -2284,7 +2284,7 @@ func_12a028:
 		add    %ebp,%ecx
 		mov    (%ebx),%al
 		adc    %esi,%edx
-		mov    EXPORT_SYMBOL(sprites)(%eax),%al
+		mov    EXPORT_SYMBOL(_fade_table)(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,(%edi)
 
@@ -2297,7 +2297,7 @@ func_12a041:
 		add    %ebp,%ecx
 		mov    (%ebx),%al
 		adc    %esi,%edx
-		mov    EXPORT_SYMBOL(sprites)(%eax),%al
+		mov    EXPORT_SYMBOL(_fade_table)(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0x1(%edi)
 
@@ -2310,7 +2310,7 @@ func_12a05b:
 		add    %ebp,%ecx
 		mov    (%ebx),%al
 		adc    %esi,%edx
-		mov    EXPORT_SYMBOL(sprites)(%eax),%al
+		mov    EXPORT_SYMBOL(_fade_table)(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0x2(%edi)
 
@@ -2323,7 +2323,7 @@ func_12a075:
 		add    %ebp,%ecx
 		mov    (%ebx),%al
 		adc    %esi,%edx
-		mov    EXPORT_SYMBOL(sprites)(%eax),%al
+		mov    EXPORT_SYMBOL(_fade_table)(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0x3(%edi)
 
@@ -2336,7 +2336,7 @@ func_12a08f:
 		add    %ebp,%ecx
 		mov    (%ebx),%al
 		adc    %esi,%edx
-		mov    EXPORT_SYMBOL(sprites)(%eax),%al
+		mov    EXPORT_SYMBOL(_fade_table)(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0x4(%edi)
 
@@ -2349,7 +2349,7 @@ func_12a0a9:
 		add    %ebp,%ecx
 		mov    (%ebx),%al
 		adc    %esi,%edx
-		mov    EXPORT_SYMBOL(sprites)(%eax),%al
+		mov    EXPORT_SYMBOL(_fade_table)(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0x5(%edi)
 
@@ -2362,7 +2362,7 @@ func_12a0c3:
 		add    %ebp,%ecx
 		mov    (%ebx),%al
 		adc    %esi,%edx
-		mov    EXPORT_SYMBOL(sprites)(%eax),%al
+		mov    EXPORT_SYMBOL(_fade_table)(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0x6(%edi)
 
@@ -2375,7 +2375,7 @@ func_12a0dd:
 		add    %ebp,%ecx
 		mov    (%ebx),%al
 		adc    %esi,%edx
-		mov    EXPORT_SYMBOL(sprites)(%eax),%al
+		mov    EXPORT_SYMBOL(_fade_table)(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0x7(%edi)
 
@@ -2388,7 +2388,7 @@ func_12a0f7:
 		add    %ebp,%ecx
 		mov    (%ebx),%al
 		adc    %esi,%edx
-		mov    EXPORT_SYMBOL(sprites)(%eax),%al
+		mov    EXPORT_SYMBOL(_fade_table)(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0x8(%edi)
 
@@ -2401,7 +2401,7 @@ func_12a111:
 		add    %ebp,%ecx
 		mov    (%ebx),%al
 		adc    %esi,%edx
-		mov    EXPORT_SYMBOL(sprites)(%eax),%al
+		mov    EXPORT_SYMBOL(_fade_table)(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0x9(%edi)
 
@@ -2414,7 +2414,7 @@ func_12a12b:
 		add    %ebp,%ecx
 		mov    (%ebx),%al
 		adc    %esi,%edx
-		mov    EXPORT_SYMBOL(sprites)(%eax),%al
+		mov    EXPORT_SYMBOL(_fade_table)(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0xa(%edi)
 
@@ -2427,7 +2427,7 @@ func_12a145:
 		add    %ebp,%ecx
 		mov    (%ebx),%al
 		adc    %esi,%edx
-		mov    EXPORT_SYMBOL(sprites)(%eax),%al
+		mov    EXPORT_SYMBOL(_fade_table)(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0xb(%edi)
 
@@ -2440,7 +2440,7 @@ func_12a15f:
 		add    %ebp,%ecx
 		mov    (%ebx),%al
 		adc    %esi,%edx
-		mov    EXPORT_SYMBOL(sprites)(%eax),%al
+		mov    EXPORT_SYMBOL(_fade_table)(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0xc(%edi)
 
@@ -2453,7 +2453,7 @@ func_12a179:
 		add    %ebp,%ecx
 		mov    (%ebx),%al
 		adc    %esi,%edx
-		mov    EXPORT_SYMBOL(sprites)(%eax),%al
+		mov    EXPORT_SYMBOL(_fade_table)(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0xd(%edi)
 
@@ -2466,7 +2466,7 @@ func_12a193:
 		add    %ebp,%ecx
 		mov    (%ebx),%al
 		adc    %esi,%edx
-		mov    EXPORT_SYMBOL(sprites)(%eax),%al
+		mov    EXPORT_SYMBOL(_fade_table)(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0xe(%edi)
 
@@ -2479,7 +2479,7 @@ func_12a1ad:
 		add    %ebp,%ecx
 		mov    (%ebx),%al
 		adc    %esi,%edx
-		mov    EXPORT_SYMBOL(sprites)(%eax),%al
+		mov    EXPORT_SYMBOL(_fade_table)(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0xf(%edi)
 		add    $0x10,%edi

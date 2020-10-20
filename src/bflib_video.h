@@ -20,6 +20,8 @@
 #ifndef BFLIB_VIDEO_H
 #define BFLIB_VIDEO_H
 
+#include "bflib_basics.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -36,9 +38,9 @@ extern "C" {
 /** Pixel definition - represents value of one point on the graphics screen. */
 typedef unsigned char TbPixel;
 
-/** Standard video mode indexes, registered by LbScreenInitialize(). */
-// TODO (related number 01) do we need all these wired reolution? What about chaning them to
-// useful value like 1920 1080?
+/** Standard video modes, registered by LbScreenInitialize().
+ * These are standard VESA modes, indexed this way in all Bullfrog games.
+ */
 enum ScreenMode {
     Lb_SCREEN_MODE_INVALID      = 0x00,
     Lb_SCREEN_MODE_320_200_8    = 0x01,
@@ -68,17 +70,6 @@ enum ScreenMode {
     Lb_SCREEN_MODE_1600_1200_8  = 0x19,
     Lb_SCREEN_MODE_1600_1200_16 = 0x1A,
     Lb_SCREEN_MODE_1600_1200_24 = 0x1B,
-/* new way - maybe switch later
-    Lb_SCREEN_MODE_INVALID      = 0x00,
-    Lb_SCREEN_MODE_320_200      = 0x01, // Used to play movies
-    Lb_SCREEN_MODE_320_240      = 0x02,
-    Lb_SCREEN_MODE_512_384      = 0x03,
-    Lb_SCREEN_MODE_640_400      = 0x04,
-    Lb_SCREEN_MODE_640_480      = 0x05,
-    Lb_SCREEN_MODE_800_600      = 0x06,
-    Lb_SCREEN_MODE_1024_768     = 0x07,
-    Lb_SCREEN_MODE_1200_1024    = 0x08,
-    Lb_SCREEN_MODE_1600_1200    = 0x09,*/
 };
 
 typedef unsigned short TbScreenMode;
@@ -253,6 +244,8 @@ typedef struct DisplayStruct TbDisplayStruct;
 
 extern TbDisplayStruct lbDisplay;
 
+/******************************************************************************/
+TbResult LbPaletteSet(const unsigned char *palette);
 /******************************************************************************/
 #ifdef __cplusplus
 }

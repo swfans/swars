@@ -49,17 +49,19 @@ OBJS = \
 	../obj/bflib_joyst.o \
 	../obj/bflib_joyst_s.o \
 	../obj/bflib_keybrd.o \
+	../obj/bflib_math.o \
+	../obj/bflib_memory.o \
 	../obj/bflib_picture.o \
 	../obj/bflib_render_trig.o \
 	../obj/bflib_render_plin.o \
 	../obj/bflib_render_gpoly.o \
-	../obj/bflib_math.o \
-	../obj/bflib_memory.o \
+	../obj/bflib_sprite.o \
 	../obj/bflib_sndlib.o \
 	../obj/bflib_snd_cda.o \
 	../obj/bflib_snd_mss.o \
 	../obj/bflib_snd_sys.o \
 	../obj/bflib_video.o \
+	../obj/bflib_video_s.o \
 	../obj/bflib_vidraw.o \
 	../obj/bflib_vidraw_spr_norm.o \
 	../obj/ariadne.o \

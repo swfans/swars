@@ -22,7 +22,9 @@ swars_SOURCES = \
 	bflib_snd_mss.s \
 	bflib_snd_sys.s \
 	bflib_sndlib.s \
-	bflib_video.s \
+	bflib_sprite.c \
+	bflib_video_s.s \
+	bflib_video.c \
 	bflib_vidraw.s \
 	bflib_vidraw_spr_norm.s \
 	display.c \

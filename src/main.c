@@ -18,7 +18,6 @@
 #endif
 
 extern char *conf_file_cmnds[10];
-extern char *game_text_str;
 
 static void
 print_help (const char *argv0)
@@ -282,9 +281,11 @@ void read_conf_file(void)
     }
     // Read file with all the language-specific texts
     text_len = LbFileLength(text_fname);
-    game_text_str = (char *)LbMemoryAlloc(text_len);
-    if (game_text_str != NULL)
-        LbFileLoadAt(text_fname, game_text_str);
+    gui_strings_data = (char *)LbMemoryAlloc(text_len);
+    if (gui_strings_data != NULL) {
+        gui_strings_data_end = gui_strings_data + text_len;
+        LbFileLoadAt(text_fname, gui_strings_data);
+    }
 }
 
 int

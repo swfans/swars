@@ -35,7 +35,7 @@
 .global EXPORT_SYMBOL(data_1f0354);
 .global EXPORT_SYMBOL(data_1f0754);
 .global EXPORT_SYMBOL(data_1f0350);
-.global EXPORT_SYMBOL(data_166280);
+.global EXPORT_SYMBOL(_ghost_table);
 
 /*----------------------------------------------------------------*/
 /* void LbSpriteDrawUsingScalingData(int32_t posx, int32_t posy, TbSprite *sprite)
@@ -483,7 +483,7 @@ GLOBAL_FUNC (LbSpriteDrawUsingScalingData_)
 		mov    (%esi),%al
 		mov    (%edx),%ah
 		add    $0x8,%ebp
-		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
+		mov    EXPORT_SYMBOL(_ghost_table)(%eax),%al
 		inc    %edx
 		mov    %al,(%esi)
 		inc    %esi
@@ -495,7 +495,7 @@ GLOBAL_FUNC (LbSpriteDrawUsingScalingData_)
 		mov    (%esi),%al
 		mov    (%edx),%ah
 		add    $0x8,%ebp
-		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
+		mov    EXPORT_SYMBOL(_ghost_table)(%eax),%al
 		inc    %edx
 		mov    %al,(%esi)
 		inc    %esi
@@ -507,7 +507,7 @@ GLOBAL_FUNC (LbSpriteDrawUsingScalingData_)
 		mov    (%esi),%al
 		mov    (%edx),%ah
 		add    $0x8,%ebp
-		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
+		mov    EXPORT_SYMBOL(_ghost_table)(%eax),%al
 		inc    %edx
 		mov    %al,(%esi)
 		inc    %esi
@@ -519,7 +519,7 @@ GLOBAL_FUNC (LbSpriteDrawUsingScalingData_)
 		mov    (%esi),%al
 		mov    (%edx),%ah
 		add    $0x8,%ebp
-		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
+		mov    EXPORT_SYMBOL(_ghost_table)(%eax),%al
 		inc    %edx
 		mov    %al,(%esi)
 		inc    %esi
@@ -531,7 +531,7 @@ GLOBAL_FUNC (LbSpriteDrawUsingScalingData_)
 		mov    (%esi),%al
 		mov    (%edx),%ah
 		add    $0x8,%ebp
-		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
+		mov    EXPORT_SYMBOL(_ghost_table)(%eax),%al
 		inc    %edx
 		mov    %al,(%esi)
 		inc    %esi
@@ -543,7 +543,7 @@ GLOBAL_FUNC (LbSpriteDrawUsingScalingData_)
 		mov    (%esi),%al
 		mov    (%edx),%ah
 		add    $0x8,%ebp
-		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
+		mov    EXPORT_SYMBOL(_ghost_table)(%eax),%al
 		inc    %edx
 		mov    %al,(%esi)
 		inc    %esi
@@ -555,7 +555,7 @@ GLOBAL_FUNC (LbSpriteDrawUsingScalingData_)
 		mov    (%esi),%al
 		mov    (%edx),%ah
 		add    $0x8,%ebp
-		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
+		mov    EXPORT_SYMBOL(_ghost_table)(%eax),%al
 		inc    %edx
 		mov    %al,(%esi)
 		inc    %esi
@@ -567,7 +567,7 @@ GLOBAL_FUNC (LbSpriteDrawUsingScalingData_)
 		mov    (%esi),%al
 		mov    (%edx),%ah
 		add    $0x8,%ebp
-		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
+		mov    EXPORT_SYMBOL(_ghost_table)(%eax),%al
 		inc    %edx
 		mov    %al,(%esi)
 		inc    %esi
@@ -653,7 +653,7 @@ GLOBAL_FUNC (LbSpriteDrawUsingScalingData_)
 		mov    (%esi),%al
 		mov    (%edx),%ah
 		sub    $0x8,%ebp
-		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
+		mov    EXPORT_SYMBOL(_ghost_table)(%eax),%al
 		inc    %edx
 		mov    %al,(%esi)
 		dec    %esi
@@ -665,7 +665,7 @@ GLOBAL_FUNC (LbSpriteDrawUsingScalingData_)
 		mov    (%esi),%al
 		mov    (%edx),%ah
 		sub    $0x8,%ebp
-		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
+		mov    EXPORT_SYMBOL(_ghost_table)(%eax),%al
 		inc    %edx
 		mov    %al,(%esi)
 		dec    %esi
@@ -677,7 +677,7 @@ GLOBAL_FUNC (LbSpriteDrawUsingScalingData_)
 		mov    (%esi),%al
 		mov    (%edx),%ah
 		sub    $0x8,%ebp
-		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
+		mov    EXPORT_SYMBOL(_ghost_table)(%eax),%al
 		inc    %edx
 		mov    %al,(%esi)
 		dec    %esi
@@ -689,7 +689,7 @@ GLOBAL_FUNC (LbSpriteDrawUsingScalingData_)
 		mov    (%esi),%al
 		mov    (%edx),%ah
 		sub    $0x8,%ebp
-		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
+		mov    EXPORT_SYMBOL(_ghost_table)(%eax),%al
 		inc    %edx
 		mov    %al,(%esi)
 		dec    %esi
@@ -701,7 +701,7 @@ GLOBAL_FUNC (LbSpriteDrawUsingScalingData_)
 		mov    (%esi),%al
 		mov    (%edx),%ah
 		sub    $0x8,%ebp
-		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
+		mov    EXPORT_SYMBOL(_ghost_table)(%eax),%al
 		inc    %edx
 		mov    %al,(%esi)
 		dec    %esi
@@ -713,7 +713,7 @@ GLOBAL_FUNC (LbSpriteDrawUsingScalingData_)
 		mov    (%esi),%al
 		mov    (%edx),%ah
 		sub    $0x8,%ebp
-		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
+		mov    EXPORT_SYMBOL(_ghost_table)(%eax),%al
 		inc    %edx
 		mov    %al,(%esi)
 		dec    %esi
@@ -725,7 +725,7 @@ GLOBAL_FUNC (LbSpriteDrawUsingScalingData_)
 		mov    (%esi),%al
 		mov    (%edx),%ah
 		sub    $0x8,%ebp
-		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
+		mov    EXPORT_SYMBOL(_ghost_table)(%eax),%al
 		inc    %edx
 		mov    %al,(%esi)
 		dec    %esi
@@ -737,7 +737,7 @@ GLOBAL_FUNC (LbSpriteDrawUsingScalingData_)
 		mov    (%esi),%al
 		mov    (%edx),%ah
 		sub    $0x8,%ebp
-		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
+		mov    EXPORT_SYMBOL(_ghost_table)(%eax),%al
 		inc    %edx
 		mov    %al,(%esi)
 		dec    %esi
@@ -1667,49 +1667,49 @@ GLOBAL_FUNC (LbSpriteDrawUsingScalingData_)
 		mov    (%edx),%ah
 	jump_1362c0:
 		mov    (%esi),%al
-		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
+		mov    EXPORT_SYMBOL(_ghost_table)(%eax),%al
 		mov    %al,(%esi)
 		inc    %esi
 		dec    %ebx
 		je     jump_1362b0
 		mov    (%esi),%al
-		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
+		mov    EXPORT_SYMBOL(_ghost_table)(%eax),%al
 		mov    %al,(%esi)
 		inc    %esi
 		dec    %ebx
 		je     jump_1362b0
 		mov    (%esi),%al
-		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
+		mov    EXPORT_SYMBOL(_ghost_table)(%eax),%al
 		mov    %al,(%esi)
 		inc    %esi
 		dec    %ebx
 		je     jump_1362b0
 		mov    (%esi),%al
-		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
+		mov    EXPORT_SYMBOL(_ghost_table)(%eax),%al
 		mov    %al,(%esi)
 		inc    %esi
 		dec    %ebx
 		je     jump_1362b0
 		mov    (%esi),%al
-		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
+		mov    EXPORT_SYMBOL(_ghost_table)(%eax),%al
 		mov    %al,(%esi)
 		inc    %esi
 		dec    %ebx
 		je     jump_1362b0
 		mov    (%esi),%al
-		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
+		mov    EXPORT_SYMBOL(_ghost_table)(%eax),%al
 		mov    %al,(%esi)
 		inc    %esi
 		dec    %ebx
 		je     jump_1362b0
 		mov    (%esi),%al
-		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
+		mov    EXPORT_SYMBOL(_ghost_table)(%eax),%al
 		mov    %al,(%esi)
 		inc    %esi
 		dec    %ebx
 		je     jump_1362b0
 		mov    (%esi),%al
-		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
+		mov    EXPORT_SYMBOL(_ghost_table)(%eax),%al
 		mov    %al,(%esi)
 		inc    %esi
 		dec    %ebx
@@ -1802,49 +1802,49 @@ GLOBAL_FUNC (LbSpriteDrawUsingScalingData_)
 		mov    (%edx),%ah
 	jump_136430:
 		mov    (%esi),%al
-		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
+		mov    EXPORT_SYMBOL(_ghost_table)(%eax),%al
 		mov    %al,(%esi)
 		dec    %esi
 		dec    %ebx
 		je     jump_136420
 		mov    (%esi),%al
-		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
+		mov    EXPORT_SYMBOL(_ghost_table)(%eax),%al
 		mov    %al,(%esi)
 		dec    %esi
 		dec    %ebx
 		je     jump_136420
 		mov    (%esi),%al
-		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
+		mov    EXPORT_SYMBOL(_ghost_table)(%eax),%al
 		mov    %al,(%esi)
 		dec    %esi
 		dec    %ebx
 		je     jump_136420
 		mov    (%esi),%al
-		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
+		mov    EXPORT_SYMBOL(_ghost_table)(%eax),%al
 		mov    %al,(%esi)
 		dec    %esi
 		dec    %ebx
 		je     jump_136420
 		mov    (%esi),%al
-		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
+		mov    EXPORT_SYMBOL(_ghost_table)(%eax),%al
 		mov    %al,(%esi)
 		dec    %esi
 		dec    %ebx
 		je     jump_136420
 		mov    (%esi),%al
-		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
+		mov    EXPORT_SYMBOL(_ghost_table)(%eax),%al
 		mov    %al,(%esi)
 		dec    %esi
 		dec    %ebx
 		je     jump_136420
 		mov    (%esi),%al
-		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
+		mov    EXPORT_SYMBOL(_ghost_table)(%eax),%al
 		mov    %al,(%esi)
 		dec    %esi
 		dec    %ebx
 		je     jump_136420
 		mov    (%esi),%al
-		mov    EXPORT_SYMBOL(data_166280)(%eax),%al
+		mov    EXPORT_SYMBOL(_ghost_table)(%eax),%al
 		mov    %al,(%esi)
 		dec    %esi
 		dec    %ebx

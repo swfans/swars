@@ -474,10 +474,10 @@ long UnpackM1(unsigned char *buffer, ulong bufsize)
 long LbFileLoadAt(const char *fname, void *buffer)
 {
     long filelength = LbFileLengthRnc(fname);
-    TbFileHandle handle=-1;
-    if (filelength!=-1)
+    TbFileHandle handle = -1;
+    if (filelength != -1)
     {
-        handle = LbFileOpen(fname,Lb_FILE_MODE_READ_ONLY);
+        handle = LbFileOpen(fname, Lb_FILE_MODE_READ_ONLY);
     }
     int read_status=-1;
     if (handle!=-1)
@@ -487,7 +487,7 @@ long LbFileLoadAt(const char *fname, void *buffer)
     }
     if (read_status==-1)
     {
-        ERRORLOG("Couldn't read \"%s\", expected size %ld, errno %d",fname,filelength, (int)errno);
+        ERRORLOG("Couldn't read \"%s\", expected size %ld, errno %d", fname, filelength, (int)errno);
         return -1;
     }
     long unp_length = UnpackM1((unsigned char *)buffer, filelength);
@@ -500,7 +500,7 @@ long LbFileLoadAt(const char *fname, void *buffer)
           result = filelength;
     } else
     {
-        ERRORLOG("ERROR decompressing \"%s\"",fname);
+        ERRORLOG("ERROR decompressing \"%s\"", fname);
         result = -1;
     }
     return result;
