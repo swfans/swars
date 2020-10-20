@@ -55,7 +55,7 @@ unsigned int get_highest_file_no(const char *fnmask, int no_pos_in_fnmask, const
   else
       no_pos_in_fname = no_pos_in_fnmask;
   */
-  no_pos_in_fname = no_pos_in_fnmask - strlen(fndir) + 1;
+  no_pos_in_fname = no_pos_in_fnmask - (strlen(fndir) + 1);
   highest_no = 0;
   if ( LbFileFindFirst(fnmask, &ffind, 0x21u) != -1 )
   {
@@ -85,6 +85,7 @@ static TbResult prepare_screenshot_file_name(char *fname, const char *base,
     }
     sprintf(&fname[i], "*.%s", ext);
     highest_num = get_highest_file_no(fname, i, game_dir_screenshots);
+    BFLIB_DEBUGLOG(0,"%s: highest_num = %d", fname, highest_num);
     sprintf(&fname[i], "%03d.%s", highest_num + 1, ext);
 
     if (LbDirectoryMake(game_dir_screenshots, true) != Lb_FAIL)
@@ -269,7 +270,7 @@ TbResult LbIffSave(const char *fname, unsigned char *inp_buffer,
     }
     img_fh = fopen(full_fname, "wb");
     if (!img_fh) {
-        perror(full_fname);
+        BFLIB_ERRORLOG("%s: Cannot open: %s", full_fname, strerror(errno));
         return 0;
     }
     ret = LbIffWrite(img_fh, inp_buffer, pal);
@@ -336,7 +337,7 @@ LbPngWrite(FILE *img_fh, const uint8_t *inp_buffer,
   return 1;
 
 err: // handle error and cleanup heap allocation
-  ERRORLOG("Could not %s !\n", action);
+  BFLIB_ERRORLOG("Could not %s", action);
   if (png != NULL && info != NULL)
     png_destroy_write_struct(&png, &info);
   else if (png != NULL)
@@ -359,7 +360,7 @@ TbResult LbPngSave(const char *fname, unsigned char *inp_buffer,
     }
     img_fh = fopen(full_fname, "wb");
     if (!img_fh) {
-        perror(full_fname);
+        BFLIB_ERRORLOG("%s: Cannot open: %s", full_fname, strerror(errno));
         return 0;
     }
     ret = LbPngWrite(img_fh, inp_buffer, pal);

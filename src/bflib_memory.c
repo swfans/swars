@@ -296,7 +296,7 @@ unsigned char * LbMemoryAllocLow(ulong size)
         }
     }
     if (splarena == NULL || !split_arena(splarena, algn_size)) {
-        ERRORLOG("Memory allocation failed");
+        BFLIB_ERRORLOG("Memory allocation failed");
         return 0;
     }
     LbMemoryCheck();

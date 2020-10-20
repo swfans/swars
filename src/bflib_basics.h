@@ -123,13 +123,13 @@ typedef size_t TbSize;
 #pragma pack()
 /******************************************************************************/
 #define ERRORLOG(fmt, ...) \
-    fprintf(stderr, fmt, ##__VA_ARGS__)
+    fprintf(stdout, fmt " in %s\n", ##__VA_ARGS__, __func__)
 
 #define DEBUGLOG(lv, fmt, ...) \
-    fprintf(stdout, fmt, ##__VA_ARGS__)
+    fprintf(stdout, fmt " in %s\n", ##__VA_ARGS__, __func__)
 
 #define BFLIB_ERRORLOG(fmt, ...) \
-    fprintf(stderr, fmt " in %s\n", ##__VA_ARGS__, __func__)
+    fprintf(stdout, fmt " in %s\n", ##__VA_ARGS__, __func__)
 
 #define BFLIB_DEBUGLOG(lv, fmt, ...) \
     fprintf(stdout, fmt " in %s\n", ##__VA_ARGS__, __func__)

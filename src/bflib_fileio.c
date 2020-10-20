@@ -403,7 +403,7 @@ long LbFileLength(const char *fname)
     }
 
     if (stat (fname, &st) != 0) {
-        BFLIB_ERRORLOG("%s: Cannot get file stats: %s\n", fname, strerror(errno));
+        BFLIB_ERRORLOG("%s: Cannot get file stats: %s", fname, strerror(errno));
         return -1;
     }
 

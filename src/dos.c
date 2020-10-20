@@ -241,7 +241,7 @@ find_file_in_directory (const char *directory, const char *filename,
   dir = opendir (directory);
   if (dir == NULL)
     {
-      perror (directory);
+      ERRORLOG("%s: Cannot open dir: %s", directory, strerror(errno));
       return false;
     }
 

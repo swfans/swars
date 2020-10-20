@@ -36,7 +36,7 @@ game_initialise (void)
     if (SDL_Init (SDL_INIT_JOYSTICK | SDL_INIT_VIDEO
           | SDL_INIT_NOPARACHUTE) != 0)
     {
-        ERRORLOG("SDL_Init(): %s\n", SDL_GetError());
+        ERRORLOG("SDL_Init(): %s", SDL_GetError());
         return false;
     }
 

@@ -42,7 +42,7 @@ GetDirectoryUser(void)
         {
             snprintf(data_path_user, sizeof(data_path_user), ".");
         }
-        DEBUGLOG(0,"Dir for user files '%s'\n", data_path_user);
+        DEBUGLOG(0,"Dir for user files '%s'", data_path_user);
         //char path_create[DISKPATH_SIZE];
         //snprintf(path_create, sizeof(path_create), "%s/%s", data_path_user, game_dir_savegame);
         LbDirectoryMake(game_dir_savegame, true);
@@ -61,7 +61,7 @@ GetDirectoryHdd(void)
         {
             snprintf(data_path_hdd, sizeof(data_path_hdd), "%s", ".");
         }
-        DEBUGLOG(0,"Dir with HDD data '%s'\n",data_path_hdd);
+        DEBUGLOG(0,"Dir with HDD data '%s'",data_path_hdd);
     }
     return data_path_hdd;
 }

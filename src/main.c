@@ -70,6 +70,7 @@ process_options (int *argc, char ***argv)
 
     while ((val = getopt_long (*argc, *argv, "ABCDE:FgHhI:m:Np:qr:Ss:Tu:Ww", options, &index)) >= 0)
     {
+        DEBUGLOG(1,"Command line option: '%c'", val);
         switch (val)
         {
         case 'A':
@@ -127,7 +128,7 @@ process_options (int *argc, char ***argv)
             flags_general_unkn01 |= 0x08;
             selected_map_index = cmdln_param_map_index;
             flags_general_unkn02 |= 0x04;
-            DEBUGLOG(0, "map index %d\n", cmdln_param_map_index);
+            DEBUGLOG(0, "map index %d", cmdln_param_map_index);
             break;
 
         case 'N':
@@ -138,7 +139,7 @@ process_options (int *argc, char ***argv)
             cmdln_param_mp = 1;
             pktrec_mode = 2; /* playback */
             cmdln_pr_num = atoi(optarg);
-            DEBUGLOG(0, "packet file play %d\n", cmdln_pr_num);
+            DEBUGLOG(0, "packet file play %d", cmdln_pr_num);
             break;
 
         case 'q':
@@ -148,7 +149,7 @@ process_options (int *argc, char ***argv)
         case 'r':
             pktrec_mode = 1; /* record */
             cmdln_pr_num = atoi(optarg);
-            DEBUGLOG(0, "packet file record %d\n", cmdln_pr_num);
+            DEBUGLOG(0, "packet file record %d", cmdln_pr_num);
             break;
 
         case 'S':
@@ -157,7 +158,7 @@ process_options (int *argc, char ***argv)
 
         case 's':
             sprintf(session_name, "%s", optarg);
-            DEBUGLOG(0, "session name %s\n", session_name);
+            DEBUGLOG(0, "session name '%s'", session_name);
             break;
 
         case 'T':
@@ -166,7 +167,7 @@ process_options (int *argc, char ***argv)
 
         case 'u':
             sprintf(user_name, "%s", optarg);
-            DEBUGLOG(0, "user name %s\n", user_name);
+            DEBUGLOG(0, "user name '%s'", user_name);
             break;
 
         case 'W':
@@ -202,7 +203,7 @@ void read_conf_file(void)
         text_len = LbFileRead(conf_fh, locbuf, sizeof(locbuf));
         LbFileClose(conf_fh);
     } else {
-        ERRORLOG("Could not open installation config file, going with defaults.\n");
+        ERRORLOG("Could not open installation config file, going with defaults.");
         text_len = 0;
     }
     locbuf[text_len] = '\0';
@@ -220,7 +221,7 @@ void read_conf_file(void)
         }
         curptr += 2;
         prop_name[i] = '\0';
-        DEBUGLOG(2,"%s: option '%s'\n", conf_fname, prop_name);
+        DEBUGLOG(2,"%s: option '%s'", conf_fname, prop_name);
         for (n = 0; n < sizeof(conf_file_cmnds)/sizeof(conf_file_cmnds[0]); n++)
         {
             if (strcmp(prop_name, conf_file_cmnds[n]) == 0)
@@ -234,7 +235,7 @@ void read_conf_file(void)
                 cd_drive[i] = ch;
             }
             cd_drive[i] = 0;
-            DEBUGLOG(0,"%s: Dir with CD data '%s'\n", conf_fname, cd_drive);
+            DEBUGLOG(0,"%s: Dir with CD data '%s'", conf_fname, cd_drive);
             break;
         case 2:
             for (i = 0; i < 3; i++) {
