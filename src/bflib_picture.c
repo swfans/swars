@@ -42,30 +42,30 @@ static char game_dir_screenshots[] = "qdata/screenshots";
  */
 unsigned int get_highest_file_no(const char *fnmask, int no_pos_in_fnmask, const char *fndir)
 {
-  unsigned int highest_no, curr_no;
-  struct TbFileFind ffind;
-  int no_pos_in_fname;
-  /* This is what we could do if we didn't have fndir param
-  char *last_sep;
-  last_sep = strrchr(fnmask, '/');
-  if (last_sep == NULL)
-      last_sep = strrchr(fnmask, '\\');
-  if (last_sep != NULL)
-      no_pos_in_fname = no_pos_in_fnmask - (last_sep - fnmask + 1);
-  else
-      no_pos_in_fname = no_pos_in_fnmask;
-  */
-  no_pos_in_fname = no_pos_in_fnmask - (strlen(fndir) + 1);
-  highest_no = 0;
-  if ( LbFileFindFirst(fnmask, &ffind, 0x21u) != -1 )
-  {
-    do {
-      curr_no = atol(ffind.Filename + no_pos_in_fname);
-      if (curr_no > highest_no)
-        highest_no = curr_no;
-    } while ( LbFileFindNext(&ffind) != -1 );
-  }
-  return highest_no;
+    unsigned int highest_no, curr_no;
+    struct TbFileFind ffind;
+    int no_pos_in_fname;
+    /* This is what we could do if we didn't have fndir param
+    char *last_sep;
+    last_sep = strrchr(fnmask, '/');
+    if (last_sep == NULL)
+        last_sep = strrchr(fnmask, '\\');
+    if (last_sep != NULL)
+        no_pos_in_fname = no_pos_in_fnmask - (last_sep - fnmask + 1);
+    else
+        no_pos_in_fname = no_pos_in_fnmask;
+    */
+    no_pos_in_fname = no_pos_in_fnmask - (strlen(fndir) + 1);
+    highest_no = 0;
+    if ( LbFileFindFirst(fnmask, &ffind, 0x21u) != -1 )
+    {
+        do {
+            curr_no = atol(ffind.Filename + no_pos_in_fname);
+            if (curr_no > highest_no)
+                highest_no = curr_no;
+        } while ( LbFileFindNext(&ffind) != -1 );
+    }
+    return highest_no;
 }
 
 static TbResult prepare_screenshot_file_name(char *fname, const char *base,
