@@ -6891,7 +6891,7 @@ play_smk_direct:
 		call   ac_LbPaletteSet
 		add    $0x4,%esp
 	jump_eb32f:
-		call   LbScreenSwap_
+		call   ASM_LbScreenSwap
 	jump_eb334:
 		push   %ebp
 		call   SMACKNEXTFRAME
@@ -7377,7 +7377,7 @@ copy_to_screen:
 		push   %ecx
 		call   *data_1e5a2c
 	jump_eb796:
-		call   LbScreenSwap_
+		call   ASM_LbScreenSwap
 		jmp    jump_eb7b4
 	jump_eb79d:
 		je     jump_eb7b4

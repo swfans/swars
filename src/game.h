@@ -90,6 +90,36 @@ typedef struct {
   char field_1A6[4];
 } PlayerInfo;
 
+typedef struct {
+  char field_0[15];
+  char field_F;
+} PrimFaceTexture;
+
+typedef struct {
+  char field_0[17];
+  char field_11;
+} Prim4Texture;
+
+typedef struct {
+  char field_0[35];
+  char field_23;
+} PrimObject;
+
+typedef struct {
+  char field_0[39];
+  char field_27;
+} PrimObjectFace4;
+
+typedef struct {
+  char field_0[31];
+  char field_1F;
+} PrimObjectFace;
+
+typedef struct {
+  char field_0[9];
+  char field_9;
+} PrimObjectPoint;
+
 #pragma pack()
 
 extern char session_name[20];

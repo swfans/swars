@@ -296,7 +296,7 @@ LbScreenFindVideoModes_:
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (LbScreenSwap_)
+GLOBAL_FUNC (ASM_LbScreenSwap)	/* 0xED8C0 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx

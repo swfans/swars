@@ -43,6 +43,23 @@ int LbPaletteFade(uint8_t *a1, uint8_t a2, uint8_t a3)
     return ret;
 }
 
+TbResult LbScreenUnlock(void)
+{
+    return Lb_SUCCESS;
+}
+
+TbResult LbScreenLock(void)
+{
+    return Lb_SUCCESS;
+}
+
+TbResult ASM_LbScreenSwap(void);
+
+TbResult LbScreenSwap(void)
+{
+    return ASM_LbScreenSwap();
+}
+
 TbResult LbScreenSwapClear(TbPixel colour)
 {
     int ret;
@@ -171,11 +188,25 @@ extern unsigned short data_1c8406;
 extern unsigned short data_1c8408;
 extern unsigned short data_1c840a;
 extern int data_1c8428;
-extern unsigned short data_197224;
 extern const char *primvehobj_fname;
 extern unsigned char data_19ec6f;
 extern unsigned char textwalk_data[640];
 extern TbPixel _fade_table[256*64];
+
+extern PrimObjectPoint *prim_object_points;
+extern PrimObjectFace *prim_object_faces;
+extern PrimObjectFace4 *prim_object_faces4;
+extern PrimObject *prim_objects;
+extern Prim4Texture *prim4_textures;
+extern PrimFaceTexture *prim_face_textures;
+
+extern ushort prim_object_points_count;
+extern ushort prim_object_faces_count;
+extern ushort prim_object_faces4_count;
+extern ushort prim_objects_count;
+extern ushort prim4_textures_count;
+extern ushort prim_face_textures_count;
+extern ushort prim_unknprop01;
 
 void load_texturemaps(void)
 {
@@ -200,8 +231,30 @@ void read_textwalk(void)
 
 void read_primveh_obj(const char *fname, int a2)
 {
-    asm volatile ("call ASM_read_primveh_obj\n"
-        : : "a" (fname), "d" (a2));
+    long firstval;
+    TbFileHandle fh;
+
+    fh = LbFileOpen(fname, Lb_FILE_MODE_READ_ONLY);
+    if ( fh == -1 )
+        return;
+    LbFileRead(fh, &firstval, sizeof(long));
+    if ( firstval != 1 )
+    {
+      LbFileRead(fh, &prim_object_points_count, sizeof(ushort));
+      LbFileRead(fh, &prim_object_faces_count, sizeof(ushort));
+      LbFileRead(fh, &prim_object_faces4_count, sizeof(ushort));
+      LbFileRead(fh, &prim_objects_count, sizeof(ushort));
+      LbFileRead(fh, &prim4_textures_count, sizeof(ushort));
+      LbFileRead(fh, &prim_face_textures_count, sizeof(ushort));
+      LbFileRead(fh, &prim_unknprop01, sizeof(ushort));
+      LbFileRead(fh, prim_object_points, sizeof(PrimObjectPoint) * prim_object_points_count);
+      LbFileRead(fh, prim_object_faces, sizeof(PrimObjectFace) * prim_object_faces_count);
+      LbFileRead(fh, prim_object_faces4, sizeof(PrimObjectFace4) * prim_object_faces4_count);
+      LbFileRead(fh, prim_objects, sizeof(PrimObject) * prim_objects_count);
+      LbFileRead(fh, prim4_textures, sizeof(Prim4Texture) * prim4_textures_count);
+      LbFileRead(fh, prim_face_textures, sizeof(PrimFaceTexture) * prim_face_textures_count);
+    }
+    LbFileClose(fh);
 }
 
 void load_prim_quad(void)
@@ -210,7 +263,7 @@ void load_prim_quad(void)
     data_1c8408 = 64;
     data_1c840a = 64;
     data_1c8428 = 0;
-    data_197224 = 1000;
+    prim_unknprop01 = 1000;
     read_primveh_obj(primvehobj_fname, 1);
     read_textwalk();
     data_19ec6f = 1;
@@ -244,8 +297,7 @@ void game_setup_sub3(void)
 
 void game_setup_sub4(int a1)
 {
-    asm volatile ("call ASM_game_setup_sub4\n"
-        : : "a" (a1));
+    test_open(0);
 }
 
 void game_setup_sub5(void)
@@ -297,7 +349,16 @@ void load_mission_map_lvl(unsigned char num)
 
 void swap_wscreen(void)
 {
-    ASM_swap_wscreen();
+    TbBool has_wscreeen;
+    has_wscreeen = (lbDisplay.WScreen != 0);
+    if ( has_wscreeen )
+        LbScreenUnlock();
+    LbScreenSwap();
+    if ( has_wscreeen )
+    {
+      while ( LbScreenLock() != 1 )
+        ;
+    }
 }
 
 char *gui_strings_data_end;
@@ -575,7 +636,7 @@ void game_process(void)
 }
 
 void
-game_quit (void)
+game_quit(void)
 {
     sound_finalise ();
     display_finalise ();
@@ -584,7 +645,7 @@ game_quit (void)
 }
 
 void
-game_transform_path_full (const char *file_name, char *buffer, size_t size)
+game_transform_path_full(const char *file_name, char *buffer, size_t size)
 {
     if (strncasecmp (file_name, SAVEGAME_PATH,
              sizeof (SAVEGAME_PATH) - 1) == 0)
@@ -606,13 +667,13 @@ game_transform_path_full (const char *file_name, char *buffer, size_t size)
 }
 
 void
-game_transform_path (const char *file_name, char *result)
+game_transform_path(const char *file_name, char *result)
 {
     game_transform_path_full (file_name, result, FILENAME_MAX);
 }
 
 void
-game_play_music (void)
+game_play_music(void)
 {
     char file_name[FILENAME_MAX];
 
@@ -688,14 +749,14 @@ game_update_full(bool wait)
 }
 
 int
-game_wait_for_vsync (void)
+game_wait_for_vsync(void)
 {
     game_update_full(false);
     return 1;
 }
 
 void
-game_update (void)
+game_update(void)
 {
     game_update_full(true);
 }
