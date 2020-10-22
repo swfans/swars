@@ -365,7 +365,7 @@ GLOBAL_FUNC (LbScreenSwap_)
 /*----------------------------------------------------------------*/
 /* long LbScreenSwapClear(unsigned char colour)
  */
-GLOBAL_FUNC (LbScreenSwapClear_)
+GLOBAL_FUNC (ASM_LbScreenSwapClear)
 /*----------------------------------------------------------------*/
 		push   %ecx
 		push   %edx

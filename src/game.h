@@ -112,6 +112,11 @@ extern uint8_t input_char;
 extern uint16_t unkn01_mode;
 extern uint16_t selected_map_index;
 extern uint32_t flags_general_unkn01;
+extern uint32_t active_flags_general_unkn01;
+
+extern long unkn01_downcount;
+extern long unkn01_pos_x;
+extern long unkn01_pos_y;
 
 extern uint16_t cmdln_param_a;
 extern uint16_t cmdln_param_w;

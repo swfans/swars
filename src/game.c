@@ -41,6 +41,14 @@ int LbPaletteFade(uint8_t *a1, uint8_t a2, uint8_t a3)
     return ret;
 }
 
+TbResult LbScreenSwapClear(TbPixel colour)
+{
+    int ret;
+    asm volatile ("call ASM_LbScreenSwapClear\n"
+        : "=r" (ret) : "a" (colour));
+    return ret;
+}
+
 void PacketRecord_Close(void);
 
 bool
@@ -445,17 +453,38 @@ void debug_m_sprite(int idx)
     DEBUGLOG(0,"%s", str);
 }
 
+void mapwho_unkn01(int a1, int a2)
+{
+    asm volatile ("call ASM_mapwho_unkn01\n"
+        : : "a" (a1), "d" (a2));
+}
+
+void new_bang(int a1, int a2, int a3, int a4, int a5, int a6)
+{
+    asm volatile ("call ASM_new_bang\n"
+        : : "a" (a1), "d" (a2), "b" (a3), "c" (a4), "g" (a5), "g" (a6));
+}
+
+void new_bang_3(int a1, int a2, int a3, int a4)
+{
+    new_bang(a1, a2, a3, a4, 0, 0);
+}
+
 void process_sound_heap(void);
 void input(void);
 void game_process_sub01(void);
 void game_process_sub03(void);
+void load_packet(void);
+void game_process_sub02(void);
+void process_packets(void);
+void joy_input(void);
+void game_process_sub04(void);
+void process_packets(void);
 
 void game_process(void)
 {
     debug_m_sprite(193);
     DEBUGLOG(0,"WSCREEN 0x%lx", (ulong)lbDisplay.WScreen);
-    ASM_game_process();//FIXME get rid of this
-    /*
     while ( !exit_game )
     {
       process_sound_heap();
@@ -478,9 +507,10 @@ void game_process(void)
       game_process_sub03();
       game_setup_sub4(gameturn + 100);
       load_packet();
-      if ( ((dword_1A7324 & 0x8000) != 0) != ((flags_general_unkn01 & 0x8000) != 0) )
-          LbPaletteSet(v10);
-      dword_1A7324 = flags_general_unkn01;
+      if ( ((active_flags_general_unkn01 & 0x8000) != 0) !=
+        ((flags_general_unkn01 & 0x8000) != 0) )
+          LbPaletteSet(display_palette);
+      active_flags_general_unkn01 = flags_general_unkn01;
       if ( displaymode == 50 || displaymode == 1 || displaymode == 59 )
           game_process_sub02();
       if ( displaymode != 55 )
@@ -513,7 +543,6 @@ void game_process(void)
       gameturn++;
       game_process_sub09();
     }
-    */
     PacketRecord_Close();
     LbPaletteFade(NULL, 0x10u, 1);
 }
