@@ -31,6 +31,8 @@ extern uint8_t game_music_track;
 
 extern struct TbLoadFiles unk02_load_files[15];
 
+extern TbFileHandle packet_rec_fh;
+
 unsigned int LbRandomAnyShort(void);
 
 int LbPaletteFade(uint8_t *a1, uint8_t a2, uint8_t a3)
@@ -49,7 +51,12 @@ TbResult LbScreenSwapClear(TbPixel colour)
     return ret;
 }
 
-void PacketRecord_Close(void);
+void PacketRecord_Close(void)
+{
+    if (in_network_game)
+        return;
+    LbFileClose(packet_rec_fh);
+}
 
 bool
 game_initialise(void)
@@ -450,7 +457,7 @@ void debug_m_sprite(int idx)
         sprintf(str, " %d ", (int)*ptr);
         ptr++;
     }
-    DEBUGLOG(0,"%s", str);
+    DEBUGLOG(0,"%s", strdata);
 }
 
 void mapwho_unkn01(int a1, int a2)
@@ -471,7 +478,26 @@ void new_bang_3(int a1, int a2, int a3, int a4)
 }
 
 void process_sound_heap(void);
-void input(void);
+
+void input(void)
+{
+    uint16_t n;
+    n = lbShift;
+    if ( lbKeyOn[KC_LSHIFT] || lbKeyOn[KC_RSHIFT] )
+        n |= KMod_SHIFT;
+    else
+        n &= ~KMod_SHIFT;
+    if ( lbKeyOn[KC_LCONTROL] || lbKeyOn[KC_RCONTROL] )
+        n |= KMod_CONTROL;
+    else
+        n &= ~KMod_CONTROL;
+    if ( lbKeyOn[KC_RALT] || lbKeyOn[KC_LALT] )
+        n |= KMod_ALT;
+    else
+        n &= ~KMod_ALT;
+    lbShift = n;
+}
+
 void game_process_sub01(void);
 void game_process_sub03(void);
 void load_packet(void);
@@ -488,9 +514,9 @@ void game_process(void)
     while ( !exit_game )
     {
       process_sound_heap();
-      if ( lbKeyOn[66] && lbShift & 2 )
+      if ( lbKeyOn[KC_F8] && lbShift & KMod_CONTROL )
       {
-          lbKeyOn[66] = 0;
+          lbKeyOn[KC_F8] = 0;
           LbScreenSetup(lbDisplay.ScreenMode, 640, 480, display_palette);
       }
       navi2_unkn_counter -= 2;
@@ -526,6 +552,7 @@ void game_process(void)
       if ( unkn01_downcount > 0 )
       {
         unkn01_downcount--;
+        DEBUGLOG(0,"unkn01_downcount = %ld", unkn01_downcount);
         if ( unkn01_downcount == 40 ) {
             mapwho_unkn01(unkn01_pos_x, unkn01_pos_y);
         }

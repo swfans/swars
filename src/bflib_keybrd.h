@@ -178,9 +178,9 @@ enum KeyAction {
 
 enum KeyModifiers {
         KMod_NONE        = 0x00,
-        KMod_SHIFT       = 0x10,
-        KMod_CONTROL     = 0x20,
-        KMod_ALT         = 0x40,
+        KMod_SHIFT       = 0x01,
+        KMod_CONTROL     = 0x02,
+        KMod_ALT         = 0x04,
 };
 #define KMod_DONTCARE -1
 
