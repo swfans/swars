@@ -32,7 +32,7 @@
 /*----------------------------------------------------------------*/
 /* long LbScreenSetupAnyMode(char mode, unsigned int width, unsigned int height, unsigned char *palette)
  */
-LbScreenSetupAnyMode_:
+GLOBAL_FUNC (ASM_LbScreenSetupAnyMode_)	/* 0xED4F0 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -501,7 +501,7 @@ GLOBAL_FUNC (LbScreenSetup_)
 		push   %eax
 		movsbl -0x4(%ebp),%eax
 		push   %eax
-		call   ac_display_set_mode
+		call   ac_LbScreenSetupAnyMode
 		add    $0x10,%esp
 		mov    %ebp,%esp
 		pop    %ebp
@@ -1157,7 +1157,7 @@ data_15f1a8:
 .data
 
 /*
- * current graphic mode information set in display_set_mode
+ * current graphic mode information set in LbScreenSetupAnyMode
  */
 GLOBAL (lbDisplay)
 /* pointer to the frame buffer */

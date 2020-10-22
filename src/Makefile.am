@@ -11,7 +11,8 @@ swars_SOURCES = \
 	bflib_fmvids.s \
 	bflib_joyst_s.s \
     bflib_joyst.c \
-	bflib_keybrd.s \
+	bflib_keybrd_s.s \
+	bflib_keybrd.h \
 	bflib_math.s \
 	bflib_memory.c \
 	bflib_picture.c \

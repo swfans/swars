@@ -11,6 +11,7 @@
 #include "bflib_sprite.h"
 #include "bflib_video.h"
 #include "bflib_dernc.h"
+#include "bflib_keybrd.h"
 #include "game_data.h"
 #include "display.h"
 #include "dos.h"
@@ -32,8 +33,18 @@ extern struct TbLoadFiles unk02_load_files[15];
 
 unsigned int LbRandomAnyShort(void);
 
+int LbPaletteFade(uint8_t *a1, uint8_t a2, uint8_t a3)
+{
+    int ret;
+    asm volatile ("call ASM_LbPaletteFade\n"
+        : "=r" (ret) : "a" (a1), "d" (a2), "b" (a3));
+    return ret;
+}
+
+void PacketRecord_Close(void);
+
 bool
-game_initialise (void)
+game_initialise(void)
 {
     if (SDL_Init (SDL_INIT_JOYSTICK | SDL_INIT_VIDEO
           | SDL_INIT_NOPARACHUTE) != 0)
@@ -434,6 +445,11 @@ void debug_m_sprite(int idx)
     DEBUGLOG(0,"%s", str);
 }
 
+void process_sound_heap(void);
+void input(void);
+void game_process_sub01(void);
+void game_process_sub03(void);
+
 void game_process(void)
 {
     debug_m_sprite(193);
@@ -456,7 +472,7 @@ void game_process(void)
       if (cmdln_param_d)
           input_char = LbKeyboard();
       if (displaymode == 55)
-          DEBUGLOG(0,"id=0  trial alloc = %d turn %d", trial_alloc, gameturn);
+          DEBUGLOG(0,"id=%d  trial alloc = %d turn %lu", 0, trial_alloc, gameturn);
       input();
       game_process_sub01();
       game_process_sub03();
@@ -497,9 +513,9 @@ void game_process(void)
       gameturn++;
       game_process_sub09();
     }
-    PacketRecord_Close();
-    LbPaletteFade();
     */
+    PacketRecord_Close();
+    LbPaletteFade(NULL, 0x10u, 1);
 }
 
 void

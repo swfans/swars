@@ -106,6 +106,8 @@ extern uint8_t cmdln_param_n;
 extern uint8_t pktrec_mode;
 extern uint8_t cmdln_pr_num;
 extern uint8_t game_perspective;
+extern uint8_t exit_game;
+extern uint8_t input_char;
 
 extern uint16_t unkn01_mode;
 extern uint16_t selected_map_index;
@@ -117,6 +119,10 @@ extern uint16_t cmdln_param_map_index;
 extern uint32_t engine_mem_alloc_size;
 extern void *engine_mem_alloc_ptr;
 extern BuffUnknStruct02 buffer_allocs[40];
+
+extern long navi2_unkn_counter;
+extern long navi2_unkn_counter_max;
+extern uint32_t trial_alloc;
 
 extern PlayerInfo players[8];
 extern uint8_t local_player_no;

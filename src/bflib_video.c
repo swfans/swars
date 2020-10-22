@@ -57,6 +57,10 @@ TbScreenCoord LbScreenHeight(void)
     return lbDisplay.PhysicalScreenHeight;
 }
 
+int LbScreenSetup(unsigned short mode, unsigned int width, unsigned int height, TbPixel *palette)
+{
+    return LbScreenSetupAnyMode(mode, width, height, palette);
+}
 
 /** Clears the 8-bit video palette with black colour.
  * Only writes values to given palette bufer - does no screen operations.

@@ -246,6 +246,9 @@ extern TbDisplayStruct lbDisplay;
 
 /******************************************************************************/
 TbResult LbPaletteSet(const unsigned char *palette);
+int LbScreenSetup(unsigned short mode, unsigned int width, unsigned int height, TbPixel *palette);
+int LbScreenSetupAnyMode(unsigned short mode, unsigned long width,
+    unsigned long height, TbPixel *palette);
 /******************************************************************************/
 #ifdef __cplusplus
 }

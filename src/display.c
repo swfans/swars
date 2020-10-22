@@ -101,9 +101,8 @@ LbPaletteSet(const unsigned char *palette)
   return 1;
 }
 
-int
-display_set_mode (uint16_t mode, uint32_t width, uint32_t height,
-		  const uint8_t *palette)
+int LbScreenSetupAnyMode(unsigned short mode, unsigned long width,
+    unsigned long height, TbPixel *palette)
 {
   uint32_t flags;
 
@@ -172,8 +171,8 @@ display_set_mode (uint16_t mode, uint32_t width, uint32_t height,
 
 
 #ifdef DEBUG
-  printf ("SDL_SetVideoMode(%i, %i, %i, SDL_SWSURFACE) - %s\n",
-          width, height, lbScreenModeInfo[mode].BitsPerPixel,
+  printf ("SDL_SetVideoMode(%ld, %ld, %d, SDL_SWSURFACE) - %s\n",
+          width, height, (int)lbScreenModeInfo[mode].BitsPerPixel,
           lbScreenModeInfo[mode].Desc);
 #endif
 
