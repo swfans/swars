@@ -4,6 +4,9 @@
 #include <stdbool.h>
 #include <stddef.h>
 
+#include "bflib_basics.h"
+#include "globals.h"
+
 #pragma pack(1)
 
 typedef struct {
@@ -123,6 +126,17 @@ extern uint8_t local_player_no;
 extern char *gui_strings_data;
 extern char *gui_strings_data_end;
 extern char *gui_strings[STRINGS_MAX];
+
+extern struct TbSprite *m_sprites;
+extern ulong curr_tick_time;
+extern ulong prev_tick_time;
+extern GameTurn gameturn;
+extern GameTurn prev_gameturn;
+extern ulong turns_delta;
+extern ushort msecs_per_frame;
+extern ushort gamep_unknval_01;
+extern uint8_t *vec_tmap;
+extern uint8_t unknoise_tmap[2048];
 
 bool game_initialise (void);
 void game_handle_sdl_events (void);

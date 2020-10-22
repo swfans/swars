@@ -30,6 +30,8 @@ extern uint8_t game_music_track;
 
 extern struct TbLoadFiles unk02_load_files[15];
 
+unsigned int LbRandomAnyShort(void);
+
 bool
 game_initialise (void)
 {
@@ -363,6 +365,141 @@ void game_setup(void)
     {
         create_tables_file();
     }
+}
+
+void game_process_sub01(void)
+{
+    unsigned long tick_time = clock();
+    tick_time = tick_time / 100;
+    curr_tick_time = tick_time;
+    if (tick_time != prev_tick_time)
+    {
+        unsigned long tmp;
+        tmp = gameturn - prev_gameturn;
+        prev_gameturn = gameturn;
+        turns_delta = tmp;
+    }
+    if ( turns_delta != 0 ) {
+        msecs_per_frame = 800 / turns_delta;
+    } else {
+        msecs_per_frame = 50;
+    }
+    if ( in_network_game )
+        msecs_per_frame = 80;
+    if ( msecs_per_frame > 400 )
+        msecs_per_frame = 400;
+    prev_tick_time = curr_tick_time;
+}
+
+void game_process_sub08(void);
+
+void game_process_sub09(void)
+{
+    int i;
+    switch ( gamep_unknval_01 )
+    {
+    case 1:
+        game_process_sub08();
+        break;
+    case 2:
+        for (i = 0; i < 10; i++) {
+            ushort pos;
+            uint8_t *ptr;
+            pos = LbRandomAnyShort() + (gameturn >> 2);
+            ptr = &vec_tmap[pos];
+            *ptr = unknoise_tmap[*ptr];
+        }
+        break;
+    }
+}
+
+void debug_m_sprite(int idx)
+{
+    int i;
+    char strdata[100];
+    char *str;
+    struct TbSprite *spr;
+    unsigned char *ptr;
+    spr = &m_sprites[idx];
+    str = strdata;
+    sprintf(str, "m_sprites: spr %d width %d height %d ptr %lx ",
+      idx, (int)spr->SWidth, (int)spr->SHeight, (ulong)spr->Data);
+    ptr = spr->Data;
+    for (i = 0; i < 10; i++)
+    {
+        str = strdata + strlen(strdata);
+        sprintf(str, " %d ", (int)*ptr);
+        ptr++;
+    }
+    DEBUGLOG(0,"%s", str);
+}
+
+void game_process(void)
+{
+    debug_m_sprite(193);
+    DEBUGLOG(0,"WSCREEN 0x%lx", (ulong)lbDisplay.WScreen);
+    ASM_game_process();//FIXME get rid of this
+    /*
+    while ( !exit_game )
+    {
+      process_sound_heap();
+      if ( lbKeyOn[66] && lbShift & 2 )
+      {
+          lbKeyOn[66] = 0;
+          LbScreenSetup(lbDisplay.ScreenMode, 640, 480, display_palette);
+      }
+      navi2_unkn_counter -= 2;
+      if (navi2_unkn_counter < 0)
+          navi2_unkn_counter = 0;
+      if (navi2_unkn_counter > navi2_unkn_counter_max)
+          navi2_unkn_counter_max = navi2_unkn_counter;
+      if (cmdln_param_d)
+          input_char = LbKeyboard();
+      if (displaymode == 55)
+          DEBUGLOG(0,"id=0  trial alloc = %d turn %d", trial_alloc, gameturn);
+      input();
+      game_process_sub01();
+      game_process_sub03();
+      game_setup_sub4(gameturn + 100);
+      load_packet();
+      if ( ((dword_1A7324 & 0x8000) != 0) != ((flags_general_unkn01 & 0x8000) != 0) )
+          LbPaletteSet(v10);
+      dword_1A7324 = flags_general_unkn01;
+      if ( displaymode == 50 || displaymode == 1 || displaymode == 59 )
+          game_process_sub02();
+      if ( displaymode != 55 )
+          process_packets();
+      joy_input();
+      if ( displaymode == 55 ) {
+          swap_wscreen();
+      }
+      else if ( !(flags_general_unkn01 & 0x20) || ((gameturn & 0xF) == 0) ) {
+          LbScreenSwapClear(0);
+      }
+      game_process_sub04();
+      if ( unkn01_downcount > 0 )
+      {
+        unkn01_downcount--;
+        if ( unkn01_downcount == 40 ) {
+            mapwho_unkn01(unkn01_pos_x, unkn01_pos_y);
+        }
+        else if ( unkn01_downcount < 40 ) {
+            unsigned short stl_y;
+            unsigned short stl_x;
+            stl_y = unkn01_pos_y + (LbRandomAnyShort() & 0xF) - 7;
+            stl_x = unkn01_pos_x + (LbRandomAnyShort() & 0xF) - 7;
+            new_bang_3(stl_x << 16, 0, stl_y << 16, 95);
+            stl_y = unkn01_pos_y + (LbRandomAnyShort() & 0xF) - 7;
+            stl_x = unkn01_pos_x + (LbRandomAnyShort() & 0xF) - 7;
+            new_bang_3(stl_x << 16, 0, stl_y << 16, 95);
+        }
+      }
+      gameturn++;
+      game_process_sub09();
+    }
+    PacketRecord_Close();
+    LbPaletteFade();
+    */
 }
 
 void
