@@ -490,6 +490,7 @@ void setup_host(void)
           int file_no;
           file_no = get_new_packet_record_no(selected_map_index);
           get_packet_record_fname(fname, selected_map_index, file_no+1);
+          DEBUGLOG(0,"%s: Opening for packet save", fname);
           packet_rec_fh = LbFileOpen(fname, Lb_FILE_MODE_NEW);
           LbFileWrite(packet_rec_fh, &cmdln_param_map_index, 2);
       }
@@ -497,7 +498,8 @@ void setup_host(void)
     if ( pktrec_mode == 2 )
     {
         ushort pktrec_head;
-        sprintf(fname, "qdata/savegame/rec%03d.%d", selected_map_index, cmdln_pr_num);
+        get_packet_record_fname(fname, selected_map_index, cmdln_pr_num);
+        DEBUGLOG(0,"%s: Opening for packet input", fname);
         packet_rec_fh = LbFileOpen(fname, Lb_FILE_MODE_READ_ONLY);
         LbFileRead(packet_rec_fh, &pktrec_head, sizeof(pktrec_head));
     }

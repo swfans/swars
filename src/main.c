@@ -37,9 +37,11 @@ print_help (const char *argv0)
 "                -I <num>  Connect through IPX\n"
 "                -m <num>  Load map of given index (use without -g)\n"
 "                -N        ?\n"
-"                -p <num>  Play replay packets from file of given index\n"
+"                -p <num>  Play replay packets from file of given index;\n"
+"                          use '-m' to specify map on which to play\n"
 "                -q        Affects game quit conditions (but how?)\n"
-"                -r <num>  Record replay packets to file of given index\n"
+"                -r        Record replay packets to file in savegame dir;\n"
+"                          next unused filename for selected map will be used\n"
 "  --no-stretch  -S        Don't display 320x200 graphics stretched to 640x480\n"
 "                -s <str>  Set session name string\n"
 "                -T        color tables mode (no effect?)\n"
@@ -68,7 +70,7 @@ process_options (int *argc, char ***argv)
     argv0 = (*argv)[0];
     index = 0;
 
-    while ((val = getopt_long (*argc, *argv, "ABCDE:FgHhI:m:Np:qr:Ss:Tu:Ww", options, &index)) >= 0)
+    while ((val = getopt_long (*argc, *argv, "ABCDE:FgHhI:m:Np:qrSs:Tu:Ww", options, &index)) >= 0)
     {
         DEBUGLOG(1,"Command line option: '%c'", val);
         switch (val)
@@ -148,8 +150,7 @@ process_options (int *argc, char ***argv)
 
         case 'r':
             pktrec_mode = 1; /* record */
-            cmdln_pr_num = atoi(optarg);
-            DEBUGLOG(0, "packet file record %d", cmdln_pr_num);
+            DEBUGLOG(0, "packet file record enabled");
             break;
 
         case 'S':
