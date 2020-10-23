@@ -6707,14 +6707,14 @@ GLOBAL_FUNC (SmackRemapTables)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (set_smack_malloc)
+GLOBAL_FUNC (ASM_set_smack_malloc)
 /*----------------------------------------------------------------*/
 		mov    %eax,_smack_malloc
 		ret
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (set_smack_free)
+GLOBAL_FUNC (ASM_set_smack_free)
 /*----------------------------------------------------------------*/
 		mov    %eax,_smack_free
 		ret

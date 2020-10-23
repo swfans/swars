@@ -12,6 +12,8 @@
 #include "bflib_video.h"
 #include "bflib_dernc.h"
 #include "bflib_keybrd.h"
+#include "bflib_mouse.h"
+#include "bflib_picture.h"
 #include "game_data.h"
 #include "display.h"
 #include "dos.h"
@@ -26,6 +28,30 @@
 #include "timer.h"
 
 #define SAVEGAME_PATH "qdata/savegame/"
+
+#pragma pack(1)
+
+struct UnkStruct7
+{
+  char field_0;
+  char field_1;
+  char field_2;
+  char field_3;
+  char field_4;
+  char field_5;
+  char field_6;
+  char field_7;
+  char field_8;
+  char field_9;
+  char field_A;
+  char field_B;
+  char field_C;
+  char field_D;
+  char field_E;
+  char field_F;
+};
+
+#pragma pack()
 
 extern uint8_t game_music_track;
 
@@ -175,13 +201,32 @@ void ASM_game_setup_sub7(void);
 void ASM_game_setup_sub8(void);
 void ASM_setup_drawlist(void);
 void ASM_swap_wscreen(void);
+void ASM_play_intro(void);
+void ASM_init_syndwars(void);
+void ASM_setup_host_sub6(void);
+int ASM_setup_mele(void);
+int ASM_LbIKeyboardOpen(void);
 
 extern unsigned char *fade_data;
 extern char *fadedat_fname;
+extern char *pop_dat_fname_fmt;
+extern char *pop_tab_fname_fmt;
 extern unsigned short draw_unknprop_01;
+extern unsigned long unkn_val_04;
+
 extern struct TbSprite *font0_sprites;
 extern struct TbSprite *font0_sprites_end;
 extern unsigned char *font0_data;
+extern struct TbSprite *pointer_sprites;
+extern struct TbSprite *pointer_sprites_end;
+extern unsigned char *pointer_data;
+extern struct TbSprite *pop1_sprites;
+extern struct TbSprite *pop1_sprites_end;
+extern unsigned char *pop1_data;
+extern struct TbSprite *m_sprites;
+extern struct TbSprite *m_sprites_end;
+extern unsigned char *m_spr_data;
+
 extern unsigned short displaymode;
 extern unsigned char *display_palette;
 extern unsigned short data_1c8406;
@@ -207,6 +252,18 @@ extern ushort prim_objects_count;
 extern ushort prim4_textures_count;
 extern ushort prim_face_textures_count;
 extern ushort prim_unknprop01;
+extern struct UnkStruct7 *unknstrct7_ref;
+extern struct UnkStruct7 unknstrct7_arr1[];
+extern struct UnkStruct7 unknstrct7_arr2[];
+
+extern int8_t game_trenchcoat_preference;
+extern int8_t game_panel_permutation;
+
+void *ASM_smack_malloc(int msize);
+void ASM_smack_mfree(void *ptr);
+void *(*smack_malloc)(int);
+void (*smack_free)(void *);
+
 
 void load_texturemaps(void)
 {
@@ -305,9 +362,154 @@ void game_setup_sub5(void)
     ASM_game_setup_sub5();
 }
 
+void play_intro(void)
+{
+    ASM_play_intro();
+}
+
+int LbGhostTableGenerate(TbPixel *pal, int a2, char *fname)
+{
+    int ret;
+    asm volatile ("call ASM_LbGhostTableGenerate\n"
+        : "=r" (ret) : "a" (pal), "d" (a2), "b" (fname));
+    return ret;
+}
+
+int LbKeyboardOpen(void)
+{
+    return 1;
+}
+
+int LbIKeyboardOpen(void)
+{
+    ASM_LbIKeyboardOpen();
+    return 1;
+}
+
+int setup_host_sub5(BuffUnknStruct02 *a1)
+{
+    int ret;
+    asm volatile ("call ASM_setup_host_sub5\n"
+        : "=r" (ret) : "a" (a1));
+    return ret;
+}
+
+int LoadSounds(unsigned char a1)
+{
+    int ret;
+    asm volatile ("call ASM_LoadSounds\n"
+        : "=r" (ret) : "a" (a1));
+    return ret;
+}
+
+int LoadMusic(unsigned char a1)
+{
+    int ret;
+    asm volatile ("call ASM_LoadMusic\n"
+        : "=r" (ret) : "a" (a1));
+    return ret;
+}
+
+void init_syndwars(void)
+{
+    ASM_init_syndwars();
+}
+
+void setup_host_sub6(void)
+{
+    ASM_setup_host_sub6();
+}
+
+int setup_mele(void)
+{
+    return ASM_setup_mele();
+}
+
+void set_smack_malloc(void *(*cb)(int))
+{
+    smack_malloc = cb;
+}
+
+void set_smack_free(void (*cb)(void *ptr))
+{
+    smack_free = cb;
+}
+
+void BAT_unknsub_20(int a1, int a2, int a3, int a4, unsigned long a5)
+{
+    asm volatile ("call ASM_BAT_unknsub_20\n"
+        : : "a" (a1), "d" (a2), "b" (a3), "c" (a4), "g" (a5));
+}
+
 void setup_host(void)
 {
-    ASM_setup_host();
+    //ASM_setup_host(); return;
+    char fname[DISKPATH_SIZE];
+    BAT_unknsub_20(0, 0, 0, 0, unkn_val_04 + 41024);
+    set_smack_malloc(ASM_smack_malloc);
+    set_smack_free(ASM_smack_mfree);
+    DEBUGLOG(0,"&setup_host() = 0x%lx", (ulong)setup_host);
+    lbDisplay.ScreenMode = Lb_SCREEN_MODE_320_200_8;
+    LbScreenSetup(lbDisplay.ScreenMode, 320, 200, display_palette);
+    LbSpriteSetup(pointer_sprites, pointer_sprites_end, pointer_data);
+    {
+        struct TbSprite *spr;
+        spr = &pointer_sprites[1];
+        spr->SWidth = 0;
+        spr->SHeight = 0;
+    }
+    if ( cmdln_param_d )
+        LbKeyboardOpen();
+    else
+        LbIKeyboardOpen();
+    LbMouseSetup(&pointer_sprites[1], 2, 2);
+    setup_mele();
+    LbSpriteSetup(m_sprites, m_sprites_end, m_spr_data);
+    game_panel_permutation = -2;
+    {
+        int file_len;
+        sprintf(fname, pop_dat_fname_fmt, 1);
+        LbFileLoadAt(fname, pop1_data);
+        sprintf(fname, pop_tab_fname_fmt, -game_panel_permutation - 1);
+        file_len = LbFileLoadAt(fname, pop1_sprites);
+        pop1_sprites_end = &pop1_sprites[file_len/sizeof(struct TbSprite)];
+        LbSpriteSetup(pop1_sprites, pop1_sprites_end, pop1_data);
+    }
+    game_trenchcoat_preference = 0;
+    unknstrct7_ref = unknstrct7_arr1;
+    LbGhostTableGenerate(display_palette, 50, "data/synghost.tab");
+    setup_host_sub5(buffer_allocs);
+    init_syndwars();
+    LoadSounds(0);
+    LoadMusic(0);
+    setup_host_sub6();
+    if ( pktrec_mode == 1 )
+    {
+      if ( !in_network_game )
+      {
+          int file_no;
+          file_no = get_new_packet_record_no(selected_map_index);
+          get_packet_record_fname(fname, selected_map_index, file_no+1);
+          packet_rec_fh = LbFileOpen(fname, Lb_FILE_MODE_NEW);
+          LbFileWrite(packet_rec_fh, &cmdln_param_map_index, 2);
+      }
+    }
+    if ( pktrec_mode == 2 )
+    {
+        ushort pktrec_head;
+        sprintf(fname, "qdata/savegame/rec%03d.%d", selected_map_index, cmdln_pr_num);
+        packet_rec_fh = LbFileOpen(fname, Lb_FILE_MODE_READ_ONLY);
+        LbFileRead(packet_rec_fh, &pktrec_head, sizeof(pktrec_head));
+    }
+    play_intro();
+    if ( cmdln_param_bcg )
+    {
+        lbDisplay.ScreenMode = Lb_SCREEN_MODE_640_480_8;
+        LbScreenSetup(lbDisplay.ScreenMode, 640, 480, display_palette);
+    }
+    LbMouseSetup(&pointer_sprites[1], 2, 2);
+    if ( cmdln_param_bcg )
+      LbMouseChangeSprite(0);
 }
 
 void read_user_settings(void)

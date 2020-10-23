@@ -746,7 +746,7 @@ GLOBAL_FUNC (GetLastSampleInfoStructure_)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (LoadSounds_)
+GLOBAL_FUNC (ASM_LoadSounds)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -1354,7 +1354,7 @@ AllocateSoundBankMemory_:
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (LoadMusic_)
+GLOBAL_FUNC (ASM_LoadMusic)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx

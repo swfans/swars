@@ -201,6 +201,8 @@ extern char lbInkeyToAscii[];
 extern char lbInkeyToAsciiShift[];
 
 /******************************************************************************/
+int LbKeyboardOpen(void);
+int LbIKeyboardOpen(void);
 int LbKeyboardClose(void);
 int LbKeyboard(void);
 /******************************************************************************/

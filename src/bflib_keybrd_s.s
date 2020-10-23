@@ -30,7 +30,7 @@
 .text
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (LbKeyboardOpen_)
+GLOBAL_FUNC (ASM_LbKeyboardOpen)
 /*----------------------------------------------------------------*/
 		push   %ebp
 		mov    %esp,%ebp
@@ -272,7 +272,7 @@ func_8c4d8_keyboard_read_key:
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (LbIKeyboardOpen)	/* 8c510 */
+GLOBAL_FUNC (ASM_LbIKeyboardOpen)	/* 8c510 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx

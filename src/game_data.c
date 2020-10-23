@@ -21,6 +21,7 @@
 #include "globals.h"
 #include "bflib_basics.h"
 #include "bflib_fileio.h"
+#include "bflib_picture.h"
 #include "unix.h"
 #include "windows.h"
 #include "dos.h"
@@ -176,5 +177,19 @@ setup_file_names(void)
     // This fills the path variable; for user, it also creates the folder
     GetDirectoryHdd();
     GetDirectoryUser();
+}
+
+int
+get_new_packet_record_no(int map_index)
+{
+    char fname[DISKPATH_SIZE];
+    sprintf(fname, "%s/rec%03d.*", game_dir_savegame, map_index);
+    return get_highest_file_no(fname, 7, game_dir_savegame);
+}
+
+void
+get_packet_record_fname(char *fname, int map_index, int file_no)
+{
+    sprintf(fname, "%s/rec%03d.%d", game_dir_savegame, map_index, file_no);
 }
 /******************************************************************************/

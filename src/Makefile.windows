@@ -51,6 +51,7 @@ OBJS = \
 	../obj/bflib_keybrd_s.o \
 	../obj/bflib_math.o \
 	../obj/bflib_memory.o \
+	../obj/bflib_mouse.o \
 	../obj/bflib_picture.o \
 	../obj/bflib_render_trig.o \
 	../obj/bflib_render_plin.o \

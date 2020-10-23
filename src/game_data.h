@@ -53,4 +53,7 @@ const char *GetDirectoryCd(void);
 
 void setup_file_names(void);
 
+int get_new_packet_record_no(int map_index);
+void get_packet_record_fname(char *fname, int map_index, int file_no);
+
 #endif

@@ -68,7 +68,7 @@ unsigned int get_highest_file_no(const char *fnmask, int no_pos_in_fnmask, const
     return highest_no;
 }
 
-static TbResult prepare_screenshot_file_name(char *fname, const char *base,
+TbResult prepare_screenshot_file_name(char *fname, const char *base,
     const char *ext)
 {
     unsigned int i;

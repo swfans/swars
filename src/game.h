@@ -168,7 +168,6 @@ extern char *gui_strings_data;
 extern char *gui_strings_data_end;
 extern char *gui_strings[STRINGS_MAX];
 
-extern struct TbSprite *m_sprites;
 extern ulong curr_tick_time;
 extern ulong prev_tick_time;
 extern GameTurn gameturn;
