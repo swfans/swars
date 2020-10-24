@@ -256,6 +256,16 @@ extern struct UnkStruct7 *unknstrct7_ref;
 extern struct UnkStruct7 unknstrct7_arr1[];
 extern struct UnkStruct7 unknstrct7_arr2[];
 
+extern uint8_t unkn_mode_02;
+extern long gamep_unknval_10;
+extern long gamep_unknval_11;
+extern long gamep_unknval_12;
+extern long gamep_unknval_13;
+extern long gamep_unknval_14;
+extern long gamep_unknval_15;
+extern long gamep_unknval_16;
+
+
 extern int8_t game_trenchcoat_preference;
 extern int8_t game_panel_permutation;
 
@@ -713,16 +723,16 @@ void debug_m_sprite(int idx)
     unsigned char *ptr;
     spr = &m_sprites[idx];
     str = strdata;
-    sprintf(str, "m_sprites: spr %d width %d height %d ptr %lx ",
+    sprintf(str, "spr %d width %d height %d ptr 0x%lx data",
       idx, (int)spr->SWidth, (int)spr->SHeight, (ulong)spr->Data);
     ptr = spr->Data;
     for (i = 0; i < 10; i++)
     {
         str = strdata + strlen(strdata);
-        sprintf(str, " %d ", (int)*ptr);
+        sprintf(str, " %02x", (int)*ptr);
         ptr++;
     }
-    DEBUGLOG(0,"%s", strdata);
+    DEBUGLOG(0,"m_sprites: %s", strdata);
 }
 
 void mapwho_unkn01(int a1, int a2)
@@ -764,7 +774,86 @@ void input(void)
 }
 
 void game_process_sub01(void);
-void game_process_sub03(void);
+
+short PlayCDTrack(int a1)
+{
+    int ret;
+    asm volatile ("call ASM_PlayCDTrack\n"
+        : "=r" (ret) : "a" (a1));
+    return ret;
+}
+
+void gproc3_unknsub3(int a1)
+{
+    // Empty
+}
+
+void ASM_gproc3_unknsub1(void);
+void gproc3_unknsub1(void)
+{
+    ASM_gproc3_unknsub1();
+}
+
+void ASM_gproc3_unknsub2(void);
+void gproc3_unknsub2(void)
+{
+    ASM_gproc3_unknsub2();
+}
+
+void ASM_BAT_play(void);
+void BAT_play(void)
+{
+    ASM_BAT_play();
+}
+
+void ASM_show_menu_screen(void);
+void show_menu_screen(void)
+{
+    ASM_show_menu_screen();
+}
+
+void game_process_display(void)
+{
+    //ASM_game_process_display(); return;
+    switch (displaymode)
+    {
+    case 1:
+        // No action
+        break;
+    case 50:
+        PlayCDTrack(game_music_track);
+        if ( !(flags_general_unkn01 & 0x20) || !(gameturn & 0xF) )
+        {
+            gproc3_unknsub1();
+            if ( flags_general_unkn01 & 0x800 )
+              gproc3_unknsub2();
+            BAT_play();
+            if ( unkn_mode_02 )
+            {
+                long tmp;
+                gamep_unknval_16 = gamep_unknval_13;
+                gamep_unknval_13 = 0;
+                ++gamep_unknval_12;
+                gamep_unknval_10 += gamep_unknval_16;
+                gamep_unknval_15 = gamep_unknval_14;
+                tmp = gamep_unknval_14 + gamep_unknval_11;
+                gamep_unknval_14 = 0;
+                gamep_unknval_11 = tmp;
+            }
+        }
+        break;
+    case 55:
+        show_menu_screen();
+        break;
+    case 58:
+        gproc3_unknsub3(0);
+        break;
+    default:
+        ERRORLOG("displaymode %d empty\n", (int)displaymode);
+        break;
+    }
+}
+
 void load_packet(void);
 void game_process_sub02(void);
 void process_packets(void);
@@ -795,7 +884,7 @@ void game_process(void)
           DEBUGLOG(0,"id=%d  trial alloc = %d turn %lu", 0, trial_alloc, gameturn);
       input();
       game_process_sub01();
-      game_process_sub03();
+      game_process_display();
       game_setup_sub4(gameturn + 100);
       load_packet();
       if ( ((active_flags_general_unkn01 & 0x8000) != 0) !=
@@ -814,7 +903,7 @@ void game_process(void)
           LbScreenSwapClear(0);
       }
       game_process_sub04();
-      if ( unkn01_downcount > 0 )
+      if ( unkn01_downcount > 0 ) /* orbital station explosion code */
       {
         unkn01_downcount--;
         DEBUGLOG(0,"unkn01_downcount = %ld", unkn01_downcount);

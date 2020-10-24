@@ -524,7 +524,7 @@ GLOBAL_FUNC (InitRedbook_)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (PlayCDTrack_)
+GLOBAL_FUNC (ASM_PlayCDTrack)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
