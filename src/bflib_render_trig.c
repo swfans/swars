@@ -2620,7 +2620,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
     struct PolyPoint *opt_c;
     static struct TrigLocals lv;
     long start_type;
-    volatile int a, b, c, D, S;
+    volatile int a, b, c, d, D, S;
 //    JUSTLOG("Pa(%ld,%ld,%ld)",point_a->field_8,point_a->field_C,point_a->field_10);
 //    JUSTLOG("Pb(%ld,%ld,%ld)",point_b->field_8,point_b->field_C,point_b->field_10);
 //    JUSTLOG("Pc(%ld,%ld,%ld)",point_c->field_8,point_c->field_C,point_c->field_10);
@@ -2668,64 +2668,72 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
     switch (vec_mode)
     {
     case RendVec_mode00:
-        asm volatile (" \
-            leal    _polyscans,%%esi\n \
-            movl    0x6C+%[lv],%%edx\n \
-            movb    _vec_colour,%%al\n \
-            movb    %%al,%%ah\n \
-            movw    %%ax,%%bx\n \
-            shll    $0x10,%%eax\n \
-            movw    %%bx,%%ax\n \
-            xorl    %%ebx,%%ebx\n \
-            xorl    %%ecx,%%ecx\n \
-        \n \
-        render00_loc01:\n \
-            movw    2(%%esi),%%bx\n \
-            movzwl  6(%%esi),%%ecx\n \
-            addl    _LOC_vec_screen_width,%%edx\n \
-            orw     %%bx,%%bx\n \
-            jns     render00_loc03\n \
-            orw     %%cx,%%cx\n \
-            jle     render00_loc08\n \
-            cmpl    _LOC_vec_window_width,%%ecx\n \
-            jle     render00_loc02\n \
-            movl    _LOC_vec_window_width,%%ecx\n \
-        \n \
-        render00_loc02:\n \
-            movl    %%edx,%%edi\n \
-            jmp     render00_loc05\n \
-        \n \
-        render00_loc03:\n \
-            cmpl    _LOC_vec_window_width,%%ecx\n \
-            jle     render00_loc04\n \
-            movl    _LOC_vec_window_width,%%ecx\n \
-        \n \
-        render00_loc04:\n \
-            subw    %%bx,%%cx\n \
-            jle     render00_loc08\n \
-            leal    (%%ebx,%%edx),%%edi\n \
-        \n \
-        render00_loc05:\n \
-            shrl    $1,%%ecx\n \
-            jnb     render00_loc06\n \
-            stosb    \n \
-        \n \
-        render00_loc06:\n \
-            shrl    $1,%%ecx\n \
-            jnb     render00_loc07\n \
-            stosw    \n \
-        \n \
-        render00_loc07:\n \
-            rep    stosl\n \
-        \n \
-        render00_loc08:\n \
-            addl    $0x14,%%esi\n \
-            decl    0x4C+%[lv]\n \
-            jnz     render00_loc01\n \
-        "
-                 :
-                 : [lv] "o" (lv)
-                 : "memory", "cc", "%eax", "%ebx", "%edx", "%ecx", "%edi", "%esi");
+        lv.var_30 = polyscans;
+
+        b = ((vec_colour) & 0x00ff) | ((vec_colour << 8)  & 0xff00);
+        a = (b) | (b << 16);
+        b = 0; c = 0;
+
+        do {
+            struct PolyPoint *pp;
+            pp = lv.var_30;
+            lv.var_30++;
+
+            b = pp->field_2;
+            c = pp->field_6;
+            lv.var_8C += LOC_vec_screen_width;
+            d = lv.var_8C;
+
+            if (b < 0)
+            {
+                if (c <= 0)
+                    continue;
+                if (c > LOC_vec_window_width)
+                    c = LOC_vec_window_width;
+
+                asm volatile (" \
+                    shrl    $1,%%ecx\n \
+                    jnb     render00_loc06a\n \
+                    stosb    \n \
+                render00_loc06a:\n \
+                    shrl    $1,%%ecx\n \
+                    jnb     render00_loc07a\n \
+                    stosw    \n \
+                render00_loc07a:\n \
+                    rep    stosl\n \
+                "
+                :
+                : "a" (a), "b" (b), "c" (c), "d" (d), "D" (d)
+                : "memory", "cc");
+
+            } else {
+                int tmpC;
+                if (c > LOC_vec_window_width)
+                    c = LOC_vec_window_width;
+                c -= b;
+                if (c <= 0)
+                    continue;
+
+                asm volatile (" \
+                    leal    (%%ebx,%%edx),%%edi\n \
+                render00_loc05b:\n \
+                    shrl    $1,%%ecx\n \
+                    jnb     render00_loc06b\n \
+                    stosb    \n \
+                render00_loc06b:\n \
+                    shrl    $1,%%ecx\n \
+                    jnb     render00_loc07b\n \
+                    stosw    \n \
+                render00_loc07b:\n \
+                    rep    stosl\n \
+                "
+                :
+                : "a" (a), "b" (b), "c" (c), "d" (d), "D" (D)
+                : "memory", "cc");
+
+            }
+
+        } while (--lv.var_6C != 0);
         break;
     case RendVec_mode01:
         lv.var_30 = polyscans;
