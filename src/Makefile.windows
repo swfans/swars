@@ -53,6 +53,7 @@ OBJS = \
 	../obj/bflib_memory.o \
 	../obj/bflib_mouse.o \
 	../obj/bflib_picture.o \
+	../obj/bflib_render.o \
 	../obj/bflib_render_trig.o \
 	../obj/bflib_render_plin.o \
 	../obj/bflib_render_gpoly.o \

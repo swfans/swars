@@ -54,7 +54,7 @@ func_128396:
 		 * XXX: if this is commented out then the gray shield bars are
 		 * not drawn (instead only white health bars appear)
 		 */
-		call   EXPORT_SYMBOL(trig_)
+		call   ac_trig
 		add    $0x190,%esp
 		popa
 		ret

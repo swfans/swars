@@ -14,6 +14,7 @@
 #include "bflib_keybrd.h"
 #include "bflib_mouse.h"
 #include "bflib_picture.h"
+#include "bflib_render.h"
 #include "game_data.h"
 #include "display.h"
 #include "dos.h"
@@ -236,7 +237,6 @@ extern int data_1c8428;
 extern const char *primvehobj_fname;
 extern unsigned char data_19ec6f;
 extern unsigned char textwalk_data[640];
-extern TbPixel _fade_table[256*64];
 
 extern PrimObjectPoint *prim_object_points;
 extern PrimObjectFace *prim_object_faces;
@@ -772,8 +772,6 @@ void input(void)
         n &= ~KMod_ALT;
     lbShift = n;
 }
-
-void game_process_sub01(void);
 
 short PlayCDTrack(int a1)
 {

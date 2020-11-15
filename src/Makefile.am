@@ -18,9 +18,10 @@ swars_SOURCES = \
 	bflib_mouse.c \
 	bflib_mouse.h \
 	bflib_picture.c \
+	bflib_render.h \
 	bflib_render_gpoly.s \
 	bflib_render_plin.s \
-	bflib_render_trig.s \
+	bflib_render_trig.c \
 	bflib_snd_cda.s \
 	bflib_snd_mss.s \
 	bflib_snd_sys.s \
