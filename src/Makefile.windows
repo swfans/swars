@@ -55,6 +55,7 @@ OBJS = \
 	../obj/bflib_picture.o \
 	../obj/bflib_render.o \
 	../obj/bflib_render_trig.o \
+	../obj/bflib_render_trig_s.o \
 	../obj/bflib_render_plin.o \
 	../obj/bflib_render_gpoly.o \
 	../obj/bflib_sprite.o \
