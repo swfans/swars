@@ -70,7 +70,7 @@ Once you've made sure you have the above, proceed with the following steps:
 
 You should now have a working executable file.
 
-#### Specific example - Ubuntu 20.04 64-bit
+#### Build example - Ubuntu 20.04 64-bit
 
 Install the dependencies - remember that some must be 32-bit (i386):
 
@@ -108,3 +108,31 @@ CFLAGS="-m32" LDFLAGS="-m32" PKG_CONFIG_PATH="/usr/lib/i386-linux-gnu/pkgconfig"
 make V=1
 ```
 
+#### Build example - MSys2 updated 2022-01 on Windows
+
+Install the dependencies - mingw32, since we need 32-bit toolchain:
+
+```
+pacman -Si mingw-w64-i686-binutils mingw-w64-i686-pkgconf mingw-w64-i686-make mingw-w64-i686-gcc
+pacman -Si mingw-w64-i686-libpng
+pacman -Si mingw-w64-i686-SDL
+pacman -Si mingw-w64-i686-openal
+pacman -Si mingw-w64-i686-libvorbis
+pacman -Si mingw-w64-i686-libogg
+```
+
+In case you want to re-create build scripts from templates (shouldn't be needed):
+
+```
+autoreconf
+automake --add-missing
+```
+
+Now proceed with the build steps; we will do that in a separate folder.
+Note how we are modifying PATH variable to try mingw32 binaries before the default mingw64:
+
+```
+mkdir -p release; cd release
+PATH="/mingw32/bin:$PATH" CFLAGS="-m32" LDFLAGS="-m32" ../configure --enable-debug=no
+PATH="/mingw32/bin:$PATH" make V=1
+```
