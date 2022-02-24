@@ -79,17 +79,17 @@ OBJS = \
 	../obj/wrappers_util.o \
 	$(RES)
 
-.PRECIOUS: ../src/%.s
+.PRECIOUS: ../src/%.sx
 
 all: $(TARGET)
 
-../obj/%.o: ../src/%.s
+../obj/%.o: ../src/%.sx
 	-$(ECHO) 'Building file: $<'
 	$(CPP) $(CPPFLAGS) "$<" | $(AS) $(ASFLAGS) -o "$@"
 	-$(ECHO) 'Finished building: $<'
 	-$(ECHO) ' '
 
-../obj/%.o: ../obj/%.s
+../obj/%.o: ../obj/%.sx
 	-$(ECHO) 'Building intermediate: $<'
 	$(CPP) $(CPPFLAGS) "$<" | $(AS) $(ASFLAGS) -o "$@"
 	-$(ECHO) 'Finished building: $<'
@@ -104,19 +104,19 @@ all: $(TARGET)
 $(TARGET): $(GENSRC) $(OBJS)
 	$(CC) -o $(TARGET) $(LDFLAGS) $(OBJS) $(LIBS)
 
-../obj/wrappers_util.s: ../conf/wrappers_util.conf ../conf/$(RENAME)
+../obj/wrappers_util.sx: ../conf/wrappers_util.conf ../conf/$(RENAME)
 	$(MKW) $(MKWFLAGS) -o "$@" -r ../conf/$(RENAME) \
 	       ../conf/wrappers_util.conf
 
-../obj/wrappers_dos.s: ../conf/wrappers_dos.conf ../conf/$(RENAME)
+../obj/wrappers_dos.sx: ../conf/wrappers_dos.conf ../conf/$(RENAME)
 	$(MKW) $(MKWFLAGS) -o "$@" -r ../conf/$(RENAME) \
 	       ../conf/wrappers_dos.conf
 
-../obj/wrappers_game.s: ../conf/wrappers_game.conf ../conf/$(RENAME)
+../obj/wrappers_game.sx: ../conf/wrappers_game.conf ../conf/$(RENAME)
 	$(MKW) $(MKWFLAGS) -o "$@" -r ../conf/$(RENAME) \
 	       ../conf/wrappers_game.conf
 
-../obj/wrappers_libc.s: ../conf/wrappers_libc.conf ../conf/$(RENAME)
+../obj/wrappers_libc.sx: ../conf/wrappers_libc.conf ../conf/$(RENAME)
 	$(MKW) $(MKWFLAGS) -o "$@" -r ../conf/$(RENAME) \
 	       ../conf/wrappers_libc.conf
 
@@ -124,5 +124,5 @@ $(RES):	$(RC)
 	$(WINDRES) -i $(RC) -J rc -o $(RES) -O coff
 
 clean:
-	$(RM) $(TARGET) $(OBJS) ../obj/wrappers_*.s
+	$(RM) $(TARGET) $(OBJS) ../obj/wrappers_*.sx
 

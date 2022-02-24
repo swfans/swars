@@ -5,7 +5,7 @@ EXTRA_DIST = Makefile.windows windows.config.h
 MKW = $(PYTHON) $(top_srcdir)/util/mkwrappers
 
 swars_SOURCES = \
-	ariadne.S \
+	ariadne.sx \
 	bflib_basics.c \
 	bflib_basics.h \
 	bflib_dernc.c \
@@ -14,13 +14,13 @@ swars_SOURCES = \
 	bflib_fileio.h \
 	bflib_filelst.c \
 	bflib_filelst.h \
-	bflib_fmvids.S \
+	bflib_fmvids.sx \
 	bflib_joyst.c \
 	bflib_joyst.h \
-	bflib_joyst_s.S \
+	bflib_joyst_s.sx \
 	bflib_keybrd.h \
-	bflib_keybrd_s.S \
-	bflib_math.S \
+	bflib_keybrd_s.sx \
+	bflib_math.sx \
 	bflib_memory.c \
 	bflib_memory.h \
 	bflib_mouse.c \
@@ -28,21 +28,21 @@ swars_SOURCES = \
 	bflib_picture.c \
 	bflib_picture.h \
 	bflib_render.c \
-	bflib_render_gpoly.S \
+	bflib_render_gpoly.sx \
 	bflib_render.h \
-	bflib_render_plin.S \
-	bflib_render_trig_s.S \
-	bflib_snd_cda.S \
-	bflib_sndlib.S \
-	bflib_snd_mss.S \
-	bflib_snd_sys.S \
+	bflib_render_plin.sx \
+	bflib_render_trig_s.sx \
+	bflib_snd_cda.sx \
+	bflib_sndlib.sx \
+	bflib_snd_mss.sx \
+	bflib_snd_sys.sx \
 	bflib_sprite.c \
 	bflib_sprite.h \
 	bflib_video.c \
 	bflib_video.h \
-	bflib_video_s.S \
-	bflib_vidraw.S \
-	bflib_vidraw_spr_norm.S \
+	bflib_video_s.sx \
+	bflib_vidraw.sx \
+	bflib_vidraw_spr_norm.sx \
 	config.h \
 	display.c \
 	display.h \
@@ -64,8 +64,8 @@ swars_SOURCES = \
 	sound.h \
 	sound_util.c \
 	sound_util.h \
-	swars.S \
-	thing_debug.S \
+	swars.sx \
+	thing_debug.sx \
 	timer.c \
 	timer.h \
 	unix.c \
@@ -77,12 +77,12 @@ swars_SOURCES = \
 
 swars_LDADD = wrappers_dos.o wrappers_game.o wrappers_libc.o wrappers_util.o
 
-$(swars_LDADD:.o=.S): %.S: $(top_srcdir)/conf/%.conf
+$(swars_LDADD:.o=.sx): %.sx: $(top_srcdir)/conf/%.conf
 	$(AM_V_GEN)$(MKW) $(MKWFLAGS) -o $@ $<
 
-.S.o:
+.sx.o:
 	$(AM_V_CC)$(CPP) $(CPPFLAGS) $< $(ASFILTER) \
 		| $(CCAS) -x assembler -c $(CCASFLAGS) -o $@ -
 
-CLEANFILES = wrappers_*.S
+CLEANFILES = wrappers_*.sx
 DISTCLEANFILES = *~
