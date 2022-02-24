@@ -325,7 +325,7 @@ main (int argc, char **argv)
     game_reset();
     if ( in_network_game ) {
         /* LbNetworkReset(); */
-        asm volatile ("call _LbNetworkReset_\n"
+        asm volatile ("call LbNetworkReset_\n"
               :  :  : "eax" );
     }
     joy_grip_shutdown();

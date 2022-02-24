@@ -975,7 +975,7 @@ func_f36fd:
 		jle    jump_f387e
 		movw   $0x8103,data_1e5f1a
 		mov    $0x7,%eax
-		call   _putch
+		call   ac_putchar
 		movswl %cx,%eax
 		call   func_f3463
 		movl   $0x0,data_158dc2
@@ -1304,9 +1304,9 @@ GLOBAL_FUNC (func_f356b)
 		jl     jump_f367e
 		movw   $0x8103,data_1e5f1a
 		mov    $0x7,%eax
-		call   _putch
+		call   ac_putchar
 		mov    $0x7,%eax
-		call   _putch
+		call   ac_putchar
 		movswl %si,%eax
 		call   func_f3463
 		jmp    jump_f367e

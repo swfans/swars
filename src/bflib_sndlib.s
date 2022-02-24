@@ -82,7 +82,7 @@ FILE_size:
 		pop    %ebx
 		ret
 	jump_10fafe:
-		call   _filelength
+		call   ac_LbFileLengthHandle
 		mov    %eax,%ebx
 		cmp    $0xffffffff,%eax
 		jne    jump_10fb14

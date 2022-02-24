@@ -5270,7 +5270,7 @@ LoadAwe32Soundfont_:
 		mov    %eax,sbkHandle
 		cmp    $0xffffffff,%eax
 		je     jump_1105d0
-		call   _filelength
+		call   ac_LbFileLengthHandle
 		mov    %eax,%esi
 		mov    $0x200,%eax
 		call   AllocDOSmem_
