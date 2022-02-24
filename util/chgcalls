@@ -1,7 +1,7 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # vim:sw=4
 
-from StringIO import StringIO
+from io import StringIO
 from getopt import gnu_getopt, GetoptError
 import re
 import sys
@@ -20,7 +20,7 @@ class ChgCalls:
     renamed_functions = {}
 
     def print_help (self):
-	print 'Usage: %s CONFIGFILE < SRCFILE > DSTFILE' % (sys.argv[0])
+	print('Usage: %s CONFIGFILE < SRCFILE > DSTFILE' % (sys.argv[0]))
 
     def strip_line (self, line):
 	n = line.find ('#')
@@ -45,7 +45,7 @@ class ChgCalls:
 		continue
 	    parts = re.split (r'\s+', line)
 	    if len (parts) < 2 or len (parts) > 3:
-		print >> sys.stderr, 'Bad line %i: %s' % (ln, line)
+		print('Bad line %i: %s' % (ln, line), file=sys.stderr)
 		continue
 	    if all_regex.tell () > 9:
 		all_regex.write ('|')
@@ -95,8 +95,8 @@ class ChgCalls:
     def main (self):
 	try:
 	    opts, args = gnu_getopt (sys.argv[1:], 'h', ('help'))
-	except GetoptError, message:
-	    print >> sys.stderr, 'Error:', message
+	except GetoptError as message:
+	    print('Error:', message, file=sys.stderr)
 	    sys.exit (1)
 	    
 	for opt, arg in opts:
@@ -107,7 +107,7 @@ class ChgCalls:
 	if len (args) == 1:
 	    self.wrapper_filename = args[0]
 	else:
-	    print >> sys.stderr, 'Error: Bad number of arguments (must be 1)'
+	    print('Error: Bad number of arguments (must be 1)', file=sys.stderr)
 	    sys.exit (1)
 
         self.wrapper_file = self.open_file (self.wrapper_filename)

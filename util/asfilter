@@ -1,9 +1,9 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # vim:sw=4
 
 import sys
 import re
-from cStringIO import StringIO
+from io import StringIO
 
 ESCAPE_MAP = \
 {
