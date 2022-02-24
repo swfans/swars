@@ -5411,14 +5411,14 @@ if test "$use_debug" = "yes" || test "$use_debug" = "full"; then :
 
 $as_echo "#define ENABLE_DEBUG 1" >>confdefs.h
 
-  CFLAGS="-g -O0"
+  CFLAGS="$CFLAGS -g -O0"
   if test "$have_windows" = "no"; then :
 
-    CCASFLAGS="-g"
+    CCASFLAGS="$CCASFLAGS -g"
 
 else
 
-    CCASFLAGS=""
+    CCASFLAGS="$CCASFLAGS"
 
 fi
   if test "$use_debug" = "full"; then :

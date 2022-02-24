@@ -84,13 +84,27 @@ sudo apt install libvorbis-dev:i386 libvorbisfile3:i386
 sudo apt install libogg-dev:i386
 ```
 
-Now proceed with the build steps:
+In case you want to re-create build scripts from templates (shouldn't be needed):
 
 ```
 autoreconf
 automake --add-missing
-CFLAGS="-m32" LDFLAGS="-m32" PKG_CONFIG_PATH="/usr/lib/i386-linux-gnu/pkgconfig" ./configure
+```
+
+Now proceed with the build steps; we will do that in a separate folder.
+
+```
+mkdir -p release; cd release
+CFLAGS="-m32" LDFLAGS="-m32" PKG_CONFIG_PATH="/usr/lib/i386-linux-gnu/pkgconfig" ../configure --enable-debug=no
 make V=1
 make install
+```
+
+In case you also want a debug build:
+
+```
+mkdir -p debug; cd debug
+CFLAGS="-m32" LDFLAGS="-m32" PKG_CONFIG_PATH="/usr/lib/i386-linux-gnu/pkgconfig" ../configure --enable-debug=full
+make V=1
 ```
 
