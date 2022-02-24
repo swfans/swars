@@ -20,7 +20,12 @@
 #ifndef BFLIB_BASICS_H
 #define BFLIB_BASICS_H
 
+#include <stdint.h>
+#include <time.h>
+
+#if defined(WIN32)||defined(DOS)||defined(GO32)
 #include <io.h>
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -98,7 +103,11 @@ struct TbFileFind {
           struct TbDate LastWriteDate;
           struct TbTime LastWriteTime;
           intptr_t ReservedHandle;
+#if defined(WIN32)||defined(DOS)||defined(GO32)
           struct _finddata_t Reserved;
+#else
+          int Reserved;
+#endif
 };
 
 #define LOG_PREFIX_LEN 32

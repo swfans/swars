@@ -24,13 +24,13 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <io.h>
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <limits.h>
 #include <time.h>
-#include <share.h>
+#include <unistd.h>
+#include <fcntl.h>
 #include <errno.h>
 
 #include "bflib_basics.h"
@@ -38,6 +38,7 @@
 /* #include "bflib_datetm.h" */
 
 #if defined(WIN32)||defined(DOS)||defined(GO32)
+//#include <share.h>
 #include <dos.h>
 #include <direct.h>
 #endif
@@ -203,7 +204,12 @@ short LbFileExists(const char *fname)
 
 int LbFilePosition(TbFileHandle handle)
 {
-    int result = tell(handle);
+    int result;
+#if defined(WIN32)||defined(DOS)||defined(GO32)
+    result = tell(handle);
+#else
+    result = lseek(handle, 0, SEEK_CUR);
+#endif
     return result;
 }
 
@@ -246,17 +252,29 @@ TbFileHandle LbFileOpen(const char *fname, const unsigned char accmode)
   case Lb_FILE_MODE_NEW:
     {
         BFLIB_DEBUGLOG(1, "%s: LBO_CREAT mode", fname);
+#if defined(WIN32)||defined(DOS)||defined(GO32)
         rc = _sopen(fname, O_RDWR|O_CREAT|O_BINARY, SH_DENYNO, S_IREAD|S_IWRITE);
+#else
+        rc = open(fname, O_RDWR|O_CREAT);
+#endif
     };break;
   case Lb_FILE_MODE_OLD:
     {
         BFLIB_DEBUGLOG(1,"%s: LBO_RDWR mode", fname);
+#if defined(WIN32)||defined(DOS)||defined(GO32)
         rc = _sopen(fname, O_RDWR|O_BINARY, SH_DENYNO);
+#else
+        rc = open(fname, O_RDWR);
+#endif
     };break;
   case Lb_FILE_MODE_READ_ONLY:
     {
         BFLIB_DEBUGLOG(1,"%s: LBO_RDONLY mode", fname);
+#if defined(WIN32)||defined(DOS)||defined(GO32)
         rc = _sopen(fname, O_RDONLY|O_BINARY, SH_DENYNO);
+#else
+        rc = open(fname, O_RDONLY);
+#endif
     };break;
   }
   BFLIB_DEBUGLOG(0,"%s: out handle = %ld, errno = %d", fname, (long)rc, errno);
@@ -357,15 +375,13 @@ short LbFileFlush(TbFileHandle handle)
         return 1;
     result = GetLastError();
     return ((result == 0) || (result == 6));
-#else
-#if defined(DOS)||defined(GO32)
+#elif defined(DOS)||defined(GO32)
     // No idea how to do this on old systems
     return 1;
 #else
     // For normal POSIX systems
     // (should also work on Win, as its IEEE standard... but it currently isn't)
-    return (ioctl(handle,I_FLUSH,FLUSHRW) != -1);
-#endif
+    return (fsync(handle) != -1);
 #endif
 
 }
@@ -373,7 +389,13 @@ short LbFileFlush(TbFileHandle handle)
 long LbFileLengthHandle(TbFileHandle handle)
 {
     long result;
+#if defined(WIN32)||defined(DOS)||defined(GO32)
     result = filelength(handle);
+#else
+    struct stat buf;
+    fstat(handle, &buf);
+    result = buf.st_size;
+#endif
     return result;
 }
 
@@ -414,6 +436,7 @@ long LbFileLength(const char *fname)
 //Yeah, right...
 void convert_find_info(struct TbFileFind *ffind)
 {
+#if defined(WIN32)||defined(DOS)||defined(GO32)
   struct _finddata_t *fdata=&(ffind->Reserved);
   strncpy(ffind->Filename, fdata->name, sizeof(ffind->Filename));
   ffind->Filename[sizeof(ffind->Filename)-1] = '\0';
@@ -432,12 +455,16 @@ void convert_find_info(struct TbFileFind *ffind)
   LbDateTimeDecode(&fdata->time_create,&ffind->CreationDate,&ffind->CreationTime);
   LbDateTimeDecode(&fdata->time_write,&ffind->LastWriteDate,&ffind->LastWriteTime);
 */
+#else
+  assert(!"not implemented");
+#endif
 }
 
 // returns -1 if no match is found. Otherwise returns 1 and stores a handle
 // to be used in _findnext and _findclose calls inside TbFileFind struct.
 int LbFileFindFirst(const char *filespec, struct TbFileFind *ffind, unsigned int attributes)
 {
+#if defined(WIN32)||defined(DOS)||defined(GO32)
     // original Watcom code was
     //dos_findfirst_(path, attributes,&(ffind->Reserved))
     //The new code skips 'attributes' as Win32 prototypes seem not to use them
@@ -459,11 +486,15 @@ int LbFileFindFirst(const char *filespec, struct TbFileFind *ffind, unsigned int
       result = 1;
     }
     return result;
+#else
+    assert(!"not implemented");
+#endif
 }
 
 // returns -1 if no match is found, otherwise returns 1
 int LbFileFindNext(struct TbFileFind *ffind)
 {
+#if defined(WIN32)||defined(DOS)||defined(GO32)
     int result;
     if ( _findnext(ffind->ReservedHandle, &(ffind->Reserved)) < 0 )
     {
@@ -476,16 +507,23 @@ int LbFileFindNext(struct TbFileFind *ffind)
         result = 1;
     }
     return result;
+#else
+    assert(!"not implemented");
+#endif
 }
 
 //Ends file searching sequence
 int LbFileFindEnd(struct TbFileFind *ffind)
 {
+#if defined(WIN32)||defined(DOS)||defined(GO32)
     if (ffind->ReservedHandle != -1)
     {
         _findclose(ffind->ReservedHandle);
     }
     return 1;
+#else
+    assert(!"not implemented");
+#endif
 }
 
 //Renames a disk file
@@ -697,7 +735,7 @@ LbDirectoryMake(const char *path, TbBool recursive)
         *p = FS_SEP;
 
         BFLIB_DEBUGLOG(1,"%s: Creating directory", buffer);
-#if defined(_WIN32)
+#if defined(WIN32)
         err = mkdir(buffer);
 #else
         err = mkdir(buffer, mode);

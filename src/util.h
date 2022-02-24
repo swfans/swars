@@ -13,7 +13,7 @@
 # define MAX(a, b) ((a) > (b) ? (a) : (b))
 #endif
 
-#ifdef _WIN32
+#ifdef WIN32
 #ifndef strcasecmp
 # define strcasecmp stricmp
 # define strncasecmp strnicmp

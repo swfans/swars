@@ -29,7 +29,7 @@ extern "C" {
 #ifdef __unix__
 # define FS_SEP '/'
 # define FS_SEP_STR "/"
-#elif defined _WIN32
+#elif defined WIN32
 # define FS_SEP '\\'
 # define FS_SEP_STR "\\"
 #endif
