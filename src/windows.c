@@ -1,6 +1,8 @@
 #ifdef _WIN32
 
-#include <windows.h>
+#include <windef.h>
+#include <winbase.h>
+#include <winreg.h>
 #include <stdio.h>
 
 #include "windows.h"
