@@ -2,6 +2,8 @@
 #ifdef NEED_UNDERSCORE
 # define TRANSFORM_SYMBOLS
 # define EXPORT_SYMBOL(sym) _ ## sym
+#else
+# define EXPORT_SYMBOL(sym) sym
 #endif
 
 #ifndef TRANSFORM_SYMBOLS
