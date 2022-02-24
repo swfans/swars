@@ -103,23 +103,25 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
-am_swars_OBJECTS = ariadne.$(OBJEXT) bflib_fileio.$(OBJEXT) \
+am_swars_OBJECTS = ariadne.$(OBJEXT) bflib_basics.$(OBJEXT) \
+	bflib_dernc.$(OBJEXT) bflib_fileio.$(OBJEXT) \
 	bflib_filelst.$(OBJEXT) bflib_fmvids.$(OBJEXT) \
-	bflib_joyst_s.$(OBJEXT) bflib_joyst.$(OBJEXT) \
+	bflib_joyst.$(OBJEXT) bflib_joyst_s.$(OBJEXT) \
 	bflib_keybrd_s.$(OBJEXT) bflib_math.$(OBJEXT) \
 	bflib_memory.$(OBJEXT) bflib_mouse.$(OBJEXT) \
-	bflib_picture.$(OBJEXT) bflib_render_gpoly.$(OBJEXT) \
-	bflib_render_plin.$(OBJEXT) bflib_render_trig.$(OBJEXT) \
-	bflib_snd_cda.$(OBJEXT) bflib_snd_mss.$(OBJEXT) \
-	bflib_snd_sys.$(OBJEXT) bflib_sndlib.$(OBJEXT) \
-	bflib_sprite.$(OBJEXT) bflib_video_s.$(OBJEXT) \
-	bflib_video.$(OBJEXT) bflib_vidraw.$(OBJEXT) \
-	bflib_vidraw_spr_norm.$(OBJEXT) display.$(OBJEXT) \
-	dos.$(OBJEXT) game_data.$(OBJEXT) game.$(OBJEXT) \
-	keyboard.$(OBJEXT) main.$(OBJEXT) mouse.$(OBJEXT) \
-	oggvorbis.$(OBJEXT) sound.$(OBJEXT) sound_util.$(OBJEXT) \
-	swars.$(OBJEXT) thing_debug.$(OBJEXT) timer.$(OBJEXT) \
-	unix.$(OBJEXT) util.$(OBJEXT) windows.$(OBJEXT)
+	bflib_picture.$(OBJEXT) bflib_render.$(OBJEXT) \
+	bflib_render_gpoly.$(OBJEXT) bflib_render_plin.$(OBJEXT) \
+	bflib_render_trig_s.$(OBJEXT) bflib_snd_cda.$(OBJEXT) \
+	bflib_sndlib.$(OBJEXT) bflib_snd_mss.$(OBJEXT) \
+	bflib_snd_sys.$(OBJEXT) bflib_sprite.$(OBJEXT) \
+	bflib_video.$(OBJEXT) bflib_video_s.$(OBJEXT) \
+	bflib_vidraw.$(OBJEXT) bflib_vidraw_spr_norm.$(OBJEXT) \
+	display.$(OBJEXT) dos.$(OBJEXT) game.$(OBJEXT) \
+	game_data.$(OBJEXT) keyboard.$(OBJEXT) main.$(OBJEXT) \
+	mouse.$(OBJEXT) oggvorbis.$(OBJEXT) sound.$(OBJEXT) \
+	sound_util.$(OBJEXT) swars.$(OBJEXT) thing_debug.$(OBJEXT) \
+	timer.$(OBJEXT) unix.$(OBJEXT) util.$(OBJEXT) \
+	windows.$(OBJEXT)
 swars_OBJECTS = $(am_swars_OBJECTS)
 swars_DEPENDENCIES = wrappers_dos.o wrappers_game.o wrappers_libc.o \
 	wrappers_util.o
@@ -138,16 +140,27 @@ am__v_at_1 =
 DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__maybe_remake_depfiles = depfiles
-am__depfiles_remade = ./$(DEPDIR)/bflib_fileio.Po \
-	./$(DEPDIR)/bflib_filelst.Po ./$(DEPDIR)/bflib_joyst.Po \
-	./$(DEPDIR)/bflib_memory.Po ./$(DEPDIR)/bflib_mouse.Po \
-	./$(DEPDIR)/bflib_picture.Po ./$(DEPDIR)/bflib_render_trig.Po \
+am__depfiles_remade = ./$(DEPDIR)/ariadne.Po \
+	./$(DEPDIR)/bflib_basics.Po ./$(DEPDIR)/bflib_dernc.Po \
+	./$(DEPDIR)/bflib_fileio.Po ./$(DEPDIR)/bflib_filelst.Po \
+	./$(DEPDIR)/bflib_fmvids.Po ./$(DEPDIR)/bflib_joyst.Po \
+	./$(DEPDIR)/bflib_joyst_s.Po ./$(DEPDIR)/bflib_keybrd_s.Po \
+	./$(DEPDIR)/bflib_math.Po ./$(DEPDIR)/bflib_memory.Po \
+	./$(DEPDIR)/bflib_mouse.Po ./$(DEPDIR)/bflib_picture.Po \
+	./$(DEPDIR)/bflib_render.Po ./$(DEPDIR)/bflib_render_gpoly.Po \
+	./$(DEPDIR)/bflib_render_plin.Po \
+	./$(DEPDIR)/bflib_render_trig_s.Po \
+	./$(DEPDIR)/bflib_snd_cda.Po ./$(DEPDIR)/bflib_snd_mss.Po \
+	./$(DEPDIR)/bflib_snd_sys.Po ./$(DEPDIR)/bflib_sndlib.Po \
 	./$(DEPDIR)/bflib_sprite.Po ./$(DEPDIR)/bflib_video.Po \
-	./$(DEPDIR)/display.Po ./$(DEPDIR)/dos.Po ./$(DEPDIR)/game.Po \
+	./$(DEPDIR)/bflib_video_s.Po ./$(DEPDIR)/bflib_vidraw.Po \
+	./$(DEPDIR)/bflib_vidraw_spr_norm.Po ./$(DEPDIR)/display.Po \
+	./$(DEPDIR)/dos.Po ./$(DEPDIR)/game.Po \
 	./$(DEPDIR)/game_data.Po ./$(DEPDIR)/keyboard.Po \
 	./$(DEPDIR)/main.Po ./$(DEPDIR)/mouse.Po \
 	./$(DEPDIR)/oggvorbis.Po ./$(DEPDIR)/sound.Po \
-	./$(DEPDIR)/sound_util.Po ./$(DEPDIR)/timer.Po \
+	./$(DEPDIR)/sound_util.Po ./$(DEPDIR)/swars.Po \
+	./$(DEPDIR)/thing_debug.Po ./$(DEPDIR)/timer.Po \
 	./$(DEPDIR)/unix.Po ./$(DEPDIR)/util.Po ./$(DEPDIR)/windows.Po
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
@@ -162,11 +175,12 @@ AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-CCASCOMPILE = $(CCAS) $(AM_CCASFLAGS) $(CCASFLAGS)
-AM_V_CCAS = $(am__v_CCAS_@AM_V@)
-am__v_CCAS_ = $(am__v_CCAS_@AM_DEFAULT_V@)
-am__v_CCAS_0 = @echo "  CCAS    " $@;
-am__v_CCAS_1 = 
+CPPASCOMPILE = $(CCAS) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
+	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CCASFLAGS) $(CCASFLAGS)
+AM_V_CPPAS = $(am__v_CPPAS_@AM_V@)
+am__v_CPPAS_ = $(am__v_CPPAS_@AM_DEFAULT_V@)
+am__v_CPPAS_0 = @echo "  CPPAS   " $@;
+am__v_CPPAS_1 = 
 SOURCES = $(swars_SOURCES)
 DIST_SOURCES = $(swars_SOURCES)
 am__can_run_installinfo = \
@@ -312,40 +326,54 @@ top_srcdir = @top_srcdir@
 EXTRA_DIST = Makefile.windows windows.config.h
 MKW = $(PYTHON) $(top_srcdir)/util/mkwrappers
 swars_SOURCES = \
-	ariadne.s \
+	ariadne.S \
+	bflib_basics.c \
+	bflib_basics.h \
+	bflib_dernc.c \
+	bflib_dernc.h \
 	bflib_fileio.c \
+	bflib_fileio.h \
 	bflib_filelst.c \
-	bflib_fmvids.s \
-	bflib_joyst_s.s \
+	bflib_filelst.h \
+	bflib_fmvids.S \
 	bflib_joyst.c \
-	bflib_keybrd_s.s \
+	bflib_joyst.h \
+	bflib_joyst_s.S \
 	bflib_keybrd.h \
-	bflib_math.s \
+	bflib_keybrd_s.S \
+	bflib_math.S \
 	bflib_memory.c \
+	bflib_memory.h \
 	bflib_mouse.c \
 	bflib_mouse.h \
 	bflib_picture.c \
+	bflib_picture.h \
+	bflib_render.c \
+	bflib_render_gpoly.S \
 	bflib_render.h \
-	bflib_render_gpoly.s \
-	bflib_render_plin.s \
-	bflib_render_trig.c \
-	bflib_snd_cda.s \
-	bflib_snd_mss.s \
-	bflib_snd_sys.s \
-	bflib_sndlib.s \
+	bflib_render_plin.S \
+	bflib_render_trig_s.S \
+	bflib_snd_cda.S \
+	bflib_sndlib.S \
+	bflib_snd_mss.S \
+	bflib_snd_sys.S \
 	bflib_sprite.c \
-	bflib_video_s.s \
+	bflib_sprite.h \
 	bflib_video.c \
-	bflib_vidraw.s \
-	bflib_vidraw_spr_norm.s \
+	bflib_video.h \
+	bflib_video_s.S \
+	bflib_vidraw.S \
+	bflib_vidraw_spr_norm.S \
+	config.h \
 	display.c \
 	display.h \
 	dos.c \
 	dos.h \
+	game.c \
 	game_data.c \
 	game_data.h \
-	game.c \
 	game.h \
+	globals.h \
 	keyboard.c \
 	keyboard.h \
 	main.c \
@@ -357,8 +385,8 @@ swars_SOURCES = \
 	sound.h \
 	sound_util.c \
 	sound_util.h \
-	swars.s \
-	thing_debug.s \
+	swars.S \
+	thing_debug.S \
 	timer.c \
 	timer.h \
 	unix.c \
@@ -369,13 +397,13 @@ swars_SOURCES = \
 	windows.h
 
 swars_LDADD = wrappers_dos.o wrappers_game.o wrappers_libc.o wrappers_util.o
-CLEANFILES = wrappers_*.s
+CLEANFILES = wrappers_*.S
 DISTCLEANFILES = *~
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
 .SUFFIXES:
-.SUFFIXES: .c .o .obj .s
+.SUFFIXES: .c .o .obj .S
 $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
@@ -473,15 +501,32 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ariadne.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bflib_basics.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bflib_dernc.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bflib_fileio.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bflib_filelst.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bflib_fmvids.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bflib_joyst.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bflib_joyst_s.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bflib_keybrd_s.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bflib_math.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bflib_memory.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bflib_mouse.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bflib_picture.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bflib_render_trig.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bflib_render.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bflib_render_gpoly.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bflib_render_plin.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bflib_render_trig_s.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bflib_snd_cda.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bflib_snd_mss.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bflib_snd_sys.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bflib_sndlib.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bflib_sprite.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bflib_video.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bflib_video_s.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bflib_vidraw.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bflib_vidraw_spr_norm.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/display.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dos.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/game.Po@am__quote@ # am--include-marker
@@ -492,6 +537,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/oggvorbis.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sound.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sound_util.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/swars.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/thing_debug.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/timer.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/unix.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/util.Po@am__quote@ # am--include-marker
@@ -517,8 +564,12 @@ am--depfiles: $(am__depfiles_remade)
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
 
-.s.obj:
-	$(AM_V_CCAS)$(CCASCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
+.S.obj:
+@am__fastdepCCAS_TRUE@	$(AM_V_CPPAS)$(CPPASCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
+@am__fastdepCCAS_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@AMDEP_TRUE@@am__fastdepCCAS_FALSE@	$(AM_V_CPPAS)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCCAS_FALSE@	DEPDIR=$(DEPDIR) $(CCASDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCCAS_FALSE@	$(AM_V_CPPAS@am__nodep@)$(CPPASCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
 
 ID: $(am__tagged_files)
 	$(am__define_uniq_tagged_files); mkid -fID $$unique
@@ -649,15 +700,32 @@ clean: clean-am
 clean-am: clean-binPROGRAMS clean-generic mostlyclean-am
 
 distclean: distclean-am
-		-rm -f ./$(DEPDIR)/bflib_fileio.Po
+		-rm -f ./$(DEPDIR)/ariadne.Po
+	-rm -f ./$(DEPDIR)/bflib_basics.Po
+	-rm -f ./$(DEPDIR)/bflib_dernc.Po
+	-rm -f ./$(DEPDIR)/bflib_fileio.Po
 	-rm -f ./$(DEPDIR)/bflib_filelst.Po
+	-rm -f ./$(DEPDIR)/bflib_fmvids.Po
 	-rm -f ./$(DEPDIR)/bflib_joyst.Po
+	-rm -f ./$(DEPDIR)/bflib_joyst_s.Po
+	-rm -f ./$(DEPDIR)/bflib_keybrd_s.Po
+	-rm -f ./$(DEPDIR)/bflib_math.Po
 	-rm -f ./$(DEPDIR)/bflib_memory.Po
 	-rm -f ./$(DEPDIR)/bflib_mouse.Po
 	-rm -f ./$(DEPDIR)/bflib_picture.Po
-	-rm -f ./$(DEPDIR)/bflib_render_trig.Po
+	-rm -f ./$(DEPDIR)/bflib_render.Po
+	-rm -f ./$(DEPDIR)/bflib_render_gpoly.Po
+	-rm -f ./$(DEPDIR)/bflib_render_plin.Po
+	-rm -f ./$(DEPDIR)/bflib_render_trig_s.Po
+	-rm -f ./$(DEPDIR)/bflib_snd_cda.Po
+	-rm -f ./$(DEPDIR)/bflib_snd_mss.Po
+	-rm -f ./$(DEPDIR)/bflib_snd_sys.Po
+	-rm -f ./$(DEPDIR)/bflib_sndlib.Po
 	-rm -f ./$(DEPDIR)/bflib_sprite.Po
 	-rm -f ./$(DEPDIR)/bflib_video.Po
+	-rm -f ./$(DEPDIR)/bflib_video_s.Po
+	-rm -f ./$(DEPDIR)/bflib_vidraw.Po
+	-rm -f ./$(DEPDIR)/bflib_vidraw_spr_norm.Po
 	-rm -f ./$(DEPDIR)/display.Po
 	-rm -f ./$(DEPDIR)/dos.Po
 	-rm -f ./$(DEPDIR)/game.Po
@@ -668,6 +736,8 @@ distclean: distclean-am
 	-rm -f ./$(DEPDIR)/oggvorbis.Po
 	-rm -f ./$(DEPDIR)/sound.Po
 	-rm -f ./$(DEPDIR)/sound_util.Po
+	-rm -f ./$(DEPDIR)/swars.Po
+	-rm -f ./$(DEPDIR)/thing_debug.Po
 	-rm -f ./$(DEPDIR)/timer.Po
 	-rm -f ./$(DEPDIR)/unix.Po
 	-rm -f ./$(DEPDIR)/util.Po
@@ -717,15 +787,32 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
-		-rm -f ./$(DEPDIR)/bflib_fileio.Po
+		-rm -f ./$(DEPDIR)/ariadne.Po
+	-rm -f ./$(DEPDIR)/bflib_basics.Po
+	-rm -f ./$(DEPDIR)/bflib_dernc.Po
+	-rm -f ./$(DEPDIR)/bflib_fileio.Po
 	-rm -f ./$(DEPDIR)/bflib_filelst.Po
+	-rm -f ./$(DEPDIR)/bflib_fmvids.Po
 	-rm -f ./$(DEPDIR)/bflib_joyst.Po
+	-rm -f ./$(DEPDIR)/bflib_joyst_s.Po
+	-rm -f ./$(DEPDIR)/bflib_keybrd_s.Po
+	-rm -f ./$(DEPDIR)/bflib_math.Po
 	-rm -f ./$(DEPDIR)/bflib_memory.Po
 	-rm -f ./$(DEPDIR)/bflib_mouse.Po
 	-rm -f ./$(DEPDIR)/bflib_picture.Po
-	-rm -f ./$(DEPDIR)/bflib_render_trig.Po
+	-rm -f ./$(DEPDIR)/bflib_render.Po
+	-rm -f ./$(DEPDIR)/bflib_render_gpoly.Po
+	-rm -f ./$(DEPDIR)/bflib_render_plin.Po
+	-rm -f ./$(DEPDIR)/bflib_render_trig_s.Po
+	-rm -f ./$(DEPDIR)/bflib_snd_cda.Po
+	-rm -f ./$(DEPDIR)/bflib_snd_mss.Po
+	-rm -f ./$(DEPDIR)/bflib_snd_sys.Po
+	-rm -f ./$(DEPDIR)/bflib_sndlib.Po
 	-rm -f ./$(DEPDIR)/bflib_sprite.Po
 	-rm -f ./$(DEPDIR)/bflib_video.Po
+	-rm -f ./$(DEPDIR)/bflib_video_s.Po
+	-rm -f ./$(DEPDIR)/bflib_vidraw.Po
+	-rm -f ./$(DEPDIR)/bflib_vidraw_spr_norm.Po
 	-rm -f ./$(DEPDIR)/display.Po
 	-rm -f ./$(DEPDIR)/dos.Po
 	-rm -f ./$(DEPDIR)/game.Po
@@ -736,6 +823,8 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ./$(DEPDIR)/oggvorbis.Po
 	-rm -f ./$(DEPDIR)/sound.Po
 	-rm -f ./$(DEPDIR)/sound_util.Po
+	-rm -f ./$(DEPDIR)/swars.Po
+	-rm -f ./$(DEPDIR)/thing_debug.Po
 	-rm -f ./$(DEPDIR)/timer.Po
 	-rm -f ./$(DEPDIR)/unix.Po
 	-rm -f ./$(DEPDIR)/util.Po
@@ -776,10 +865,10 @@ uninstall-am: uninstall-binPROGRAMS
 .PRECIOUS: Makefile
 
 
-$(swars_LDADD:.o=.s): %.s: $(top_srcdir)/conf/%.conf
+$(swars_LDADD:.o=.S): %.S: $(top_srcdir)/conf/%.conf
 	$(AM_V_GEN)$(MKW) $(MKWFLAGS) -o $@ $<
 
-.s.o:
+.S.o:
 	$(AM_V_CC)$(CPP) $(CPPFLAGS) $< $(ASFILTER) \
 		| $(CCAS) -x assembler -c $(CCASFLAGS) -o $@ -
 
