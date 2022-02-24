@@ -22,8 +22,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <io.h>
 #include <fcntl.h>
+#include <errno.h>
 #include <sys/stat.h>
 
 #include "bflib_basics.h"

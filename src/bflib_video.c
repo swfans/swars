@@ -20,6 +20,8 @@
 /******************************************************************************/
 #include "bflib_video.h"
 
+#include <string.h>
+
 #include "bflib_basics.h"
 
 #ifdef __cplusplus

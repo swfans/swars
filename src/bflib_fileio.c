@@ -32,13 +32,15 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <errno.h>
+#include <assert.h>
 
 #include "bflib_basics.h"
 #include "dos.h"
 /* #include "bflib_datetm.h" */
 
 #if defined(WIN32)||defined(DOS)||defined(GO32)
-//#include <share.h>
+#include <io.h>
+#include <share.h>
 #include <dos.h>
 #include <direct.h>
 #endif
@@ -255,7 +257,7 @@ TbFileHandle LbFileOpen(const char *fname, const unsigned char accmode)
 #if defined(WIN32)||defined(DOS)||defined(GO32)
         rc = _sopen(fname, O_RDWR|O_CREAT|O_BINARY, SH_DENYNO, S_IREAD|S_IWRITE);
 #else
-        rc = open(fname, O_RDWR|O_CREAT);
+        rc = open(fname, O_RDWR|O_CREAT, S_IRUSR|S_IRGRP|S_IWUSR|S_IWGRP);
 #endif
     };break;
   case Lb_FILE_MODE_OLD:

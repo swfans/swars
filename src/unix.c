@@ -6,6 +6,7 @@
 
 #include "unix.h"
 #include "util.h"
+#include "bflib_fileio.h"
 
 void
 unix_restore_signal_handlers (void)

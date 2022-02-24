@@ -1,5 +1,6 @@
 #include <assert.h>
 #include <string.h>
+#include <errno.h>
 
 #include "oggvorbis.h"
 #include "bflib_basics.h"

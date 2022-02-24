@@ -23,10 +23,13 @@
 #include <string.h>
 #include <stdarg.h>
 #include <stdio.h>
+
+#if defined(WIN32)||defined(DOS)||defined(GO32)
 #include <windef.h>
 #include <winbase.h>
 #include <wingdi.h>
 #include <winuser.h>
+#endif
 
 //#include "bflib_datetm.h"
 #include "bflib_memory.h"
