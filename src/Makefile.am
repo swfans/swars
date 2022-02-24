@@ -10,7 +10,7 @@ swars_SOURCES = \
 	bflib_filelst.c \
 	bflib_fmvids.s \
 	bflib_joyst_s.s \
-    bflib_joyst.c \
+	bflib_joyst.c \
 	bflib_keybrd_s.s \
 	bflib_keybrd.h \
 	bflib_math.s \
@@ -50,7 +50,7 @@ swars_SOURCES = \
 	sound.h \
 	sound_util.c \
 	sound_util.h \
-	swars.S \
+	swars.s \
 	thing_debug.s \
 	timer.c \
 	timer.h \
@@ -63,12 +63,12 @@ swars_SOURCES = \
 
 swars_LDADD = wrappers_dos.o wrappers_game.o wrappers_libc.o wrappers_util.o
 
-$(swars_LDADD:.o=.S): %.S: $(top_srcdir)/conf/%.conf
+$(swars_LDADD:.o=.s): %.s: $(top_srcdir)/conf/%.conf
 	$(AM_V_GEN)$(MKW) $(MKWFLAGS) -o $@ $<
 
-.S.o:
+.s.o:
 	$(AM_V_CC)$(CPP) $(CPPFLAGS) $< $(ASFILTER) \
 		| $(CCAS) -x assembler -c $(CCASFLAGS) -o $@ -
 
-CLEANFILES = wrappers_*.S
+CLEANFILES = wrappers_*.s
 DISTCLEANFILES = *~

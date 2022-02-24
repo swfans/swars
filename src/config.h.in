@@ -1,7 +1,7 @@
 /* src/config.h.in.  Generated from configure.ac by autoheader.  */
 
 /* Define to 1 if compiling in debug mode */
-#undef DEBUG
+#undef ENABLE_DEBUG
 
 /* Define to the path where the game's data resides */
 #undef GAME_DATA_PATH
@@ -56,6 +56,9 @@
 
 /* Define to the one symbol short name of this package. */
 #undef PACKAGE_TARNAME
+
+/* Define to the home page for this package. */
+#undef PACKAGE_URL
 
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION

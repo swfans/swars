@@ -26,9 +26,9 @@ AS_IF([test "$exec_prefix" = "NONE"], [
 # Checks for programs.
 AC_PROG_CC
 AM_PROG_AS
-AC_CHECK_PROG([PYTHON], [python], [python])
+AC_CHECK_PROG([PYTHON], [python3], [python3])
 AS_IF([test -z "$PYTHON"], [
-  AC_ERROR([python executable not found])
+  AC_ERROR([python3 executable not found])
 ])
 PKG_PROG_PKG_CONFIG
 
