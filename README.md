@@ -89,8 +89,8 @@ Now proceed with the build steps:
 ```
 autoreconf
 automake --add-missing
-CFLAGS=-m32 LDFLAGS=-m32 PKG_CONFIG_PATH=/usr/lib/i386-linux-gnu/pkgconfig ./configure
-make
+CFLAGS="-m32" LDFLAGS="-m32" PKG_CONFIG_PATH="/usr/lib/i386-linux-gnu/pkgconfig" ./configure
+make V=1
 make install
 ```
 
