@@ -72,6 +72,8 @@ You should now have a working executable file.
 
 #### Build example - Ubuntu 20.04 64-bit
 
+Here are specific commands required to compile the executable on Ubuntu linux.
+
 Install the dependencies - remember that some must be 32-bit (i386):
 
 ```
@@ -129,10 +131,30 @@ automake --add-missing
 ```
 
 Now proceed with the build steps; we will do that in a separate folder.
-Note how we are modifying PATH variable to try mingw32 binaries before the default mingw64:
+Note how we are modifying PATH environment variable to try mingw32 binaries
+before the default mingw64:
 
 ```
 mkdir -p release; cd release
 PATH="/mingw32/bin:$PATH" CFLAGS="-m32" LDFLAGS="-m32" ../configure --enable-debug=no
 PATH="/mingw32/bin:$PATH" make V=1
 ```
+
+#### Build example - MinGW32 on Windows
+
+There is also another way to build the executable using Minimal GNU for Windows. This one
+does not require autotools or configure script, but still needs all library dependencies
+to be accessible, and the toolchain to be in PATH environment variable. The executable
+built this way will have windows icon embedded. You may need to edit `Makefile.windows`
+to match your setup.
+
+We will create a debug build in this example:
+
+```
+mkdir debug
+mingw32-make -C src -f Makefile.windows V=1 DEBUG=1
+```
+
+## Done
+
+That's all. See more documentation at [swars.vexillium.org](http://swars.vexillium.org/).

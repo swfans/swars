@@ -4,19 +4,20 @@ CPP	 = cpp
 PYTHON	 = python
 RC       = ../res/swars_stdres.rc
 ASFLAGS	 =
-CFLAGS	 = -include windows.config.h -Wall -Wextra -Wno-unused-parameter $(shell sdl-config --cflags) -IC:/msys64/mingw64/include/libpng16 -IC:/msys64/mingw64/include
+CFLAGS	 = -include windows.config.h -Wall -Wextra -Wno-unused-parameter $(shell sdl-config --cflags)
 CPPFLAGS = -C -DNEED_UNDERSCORE=1
 LDFLAGS	 =
 MKWFLAGS = -u
 #LIBS	 = -lmsvcrt $(shell sdl-config --libs) -lOpenAL32 -lvorbisfile -lvorbis -logg -lpng -lz
-LIBS =  -L/mingw32/lib -lmingw32 -lSDLmain -lSDL -mwindows -lopenal -LC:/msys64/mingw32/lib -lvorbisfile -LC:/msys64/mingw64/lib -lpng16 -lz
+LIBS	 = -lmingw32 -lSDLmain -lSDL -mwindows -lopenal -lvorbisfile -lpng16 -lz
 RM		 = rm -f
 ECHO     = @echo
 RENAME	 = fnmap_windows.conf
-TARGET	 = ../bin/swars.exe
+TARGET	 = ../$(ODIR)/swars.exe
 WINDRES  = windres.exe
+ODIR     = release
 
-DEBUG = 1
+DEBUG ?= 0
 
 MKW = $(PYTHON) ../util/mkwrappers
 
@@ -24,78 +25,79 @@ ifeq ($(DEBUG),1)
   MKWFLAGS += -g
   CFLAGS += -g -O0 -DDEBUG
   #ASFLAGS += -g
+  ODIR = debug
 endif
 
 # Names of intermediate build products
 GENSRC   =
-RES      = ../obj/swars_stdres.res
+RES      = ../$(ODIR)/swars_stdres.res
 OBJS = \
-	../obj/display.o \
-	../obj/dos.o \
-	../obj/game_data.o \
-	../obj/game.o \
-	../obj/keyboard.o \
-	../obj/main.o \
-	../obj/mouse.o \
-	../obj/sound.o \
-	../obj/sound_util.o \
-	../obj/oggvorbis.o \
-	../obj/swars.o \
-	../obj/bflib_basics.o \
-	../obj/bflib_dernc.o \
-	../obj/bflib_fileio.o \
-	../obj/bflib_filelst.o \
-	../obj/bflib_fmvids.o \
-	../obj/bflib_joyst.o \
-	../obj/bflib_joyst_s.o \
-	../obj/bflib_keybrd_s.o \
-	../obj/bflib_math.o \
-	../obj/bflib_memory.o \
-	../obj/bflib_mouse.o \
-	../obj/bflib_picture.o \
-	../obj/bflib_render.o \
-	../obj/bflib_render_trig.o \
-	../obj/bflib_render_trig_s.o \
-	../obj/bflib_render_plin.o \
-	../obj/bflib_render_gpoly.o \
-	../obj/bflib_sprite.o \
-	../obj/bflib_sndlib.o \
-	../obj/bflib_snd_cda.o \
-	../obj/bflib_snd_mss.o \
-	../obj/bflib_snd_sys.o \
-	../obj/bflib_video.o \
-	../obj/bflib_video_s.o \
-	../obj/bflib_vidraw.o \
-	../obj/bflib_vidraw_spr_norm.o \
-	../obj/ariadne.o \
-	../obj/thing_debug.o \
-	../obj/timer.o \
-	../obj/unix.o \
-	../obj/util.o \
-	../obj/windows.o \
-	../obj/wrappers_dos.o \
-	../obj/wrappers_game.o \
-	../obj/wrappers_libc.o \
-	../obj/wrappers_util.o \
+	../$(ODIR)/display.o \
+	../$(ODIR)/dos.o \
+	../$(ODIR)/game_data.o \
+	../$(ODIR)/game.o \
+	../$(ODIR)/keyboard.o \
+	../$(ODIR)/main.o \
+	../$(ODIR)/mouse.o \
+	../$(ODIR)/sound.o \
+	../$(ODIR)/sound_util.o \
+	../$(ODIR)/oggvorbis.o \
+	../$(ODIR)/swars.o \
+	../$(ODIR)/bflib_basics.o \
+	../$(ODIR)/bflib_dernc.o \
+	../$(ODIR)/bflib_fileio.o \
+	../$(ODIR)/bflib_filelst.o \
+	../$(ODIR)/bflib_fmvids.o \
+	../$(ODIR)/bflib_joyst.o \
+	../$(ODIR)/bflib_joyst_s.o \
+	../$(ODIR)/bflib_keybrd_s.o \
+	../$(ODIR)/bflib_math.o \
+	../$(ODIR)/bflib_memory.o \
+	../$(ODIR)/bflib_mouse.o \
+	../$(ODIR)/bflib_picture.o \
+	../$(ODIR)/bflib_render.o \
+	../$(ODIR)/bflib_render_trig.o \
+	../$(ODIR)/bflib_render_trig_s.o \
+	../$(ODIR)/bflib_render_plin.o \
+	../$(ODIR)/bflib_render_gpoly.o \
+	../$(ODIR)/bflib_sprite.o \
+	../$(ODIR)/bflib_sndlib.o \
+	../$(ODIR)/bflib_snd_cda.o \
+	../$(ODIR)/bflib_snd_mss.o \
+	../$(ODIR)/bflib_snd_sys.o \
+	../$(ODIR)/bflib_video.o \
+	../$(ODIR)/bflib_video_s.o \
+	../$(ODIR)/bflib_vidraw.o \
+	../$(ODIR)/bflib_vidraw_spr_norm.o \
+	../$(ODIR)/ariadne.o \
+	../$(ODIR)/thing_debug.o \
+	../$(ODIR)/timer.o \
+	../$(ODIR)/unix.o \
+	../$(ODIR)/util.o \
+	../$(ODIR)/windows.o \
+	../$(ODIR)/wrappers_dos.o \
+	../$(ODIR)/wrappers_game.o \
+	../$(ODIR)/wrappers_libc.o \
+	../$(ODIR)/wrappers_util.o \
 	$(RES)
 
 .PRECIOUS: ../src/%.sx
 
 all: $(TARGET)
 
-../obj/%.o: ../src/%.sx
+../$(ODIR)/%.o: ../src/%.sx
 	-$(ECHO) 'Building file: $<'
 	$(CPP) $(CPPFLAGS) "$<" | $(AS) $(ASFLAGS) -o "$@"
 	-$(ECHO) 'Finished building: $<'
 	-$(ECHO) ' '
 
-../obj/%.o: ../obj/%.sx
+../$(ODIR)/%.o: ../$(ODIR)/%.sx
 	-$(ECHO) 'Building intermediate: $<'
 	$(CPP) $(CPPFLAGS) "$<" | $(AS) $(ASFLAGS) -o "$@"
 	-$(ECHO) 'Finished building: $<'
 	-$(ECHO) ' '
 
-../obj/%.o: ../src/%.c
+../$(ODIR)/%.o: ../src/%.c
 	-$(ECHO) 'Building file: $<'
 	$(CC) -c $(CFLAGS) -o"$@" "$<"
 	-$(ECHO) 'Finished building: $<'
@@ -104,25 +106,14 @@ all: $(TARGET)
 $(TARGET): $(GENSRC) $(OBJS)
 	$(CC) -o $(TARGET) $(LDFLAGS) $(OBJS) $(LIBS)
 
-../obj/wrappers_util.sx: ../conf/wrappers_util.conf ../conf/$(RENAME)
-	$(MKW) $(MKWFLAGS) -o "$@" -r ../conf/$(RENAME) \
-	       ../conf/wrappers_util.conf
-
-../obj/wrappers_dos.sx: ../conf/wrappers_dos.conf ../conf/$(RENAME)
-	$(MKW) $(MKWFLAGS) -o "$@" -r ../conf/$(RENAME) \
-	       ../conf/wrappers_dos.conf
-
-../obj/wrappers_game.sx: ../conf/wrappers_game.conf ../conf/$(RENAME)
-	$(MKW) $(MKWFLAGS) -o "$@" -r ../conf/$(RENAME) \
-	       ../conf/wrappers_game.conf
-
-../obj/wrappers_libc.sx: ../conf/wrappers_libc.conf ../conf/$(RENAME)
-	$(MKW) $(MKWFLAGS) -o "$@" -r ../conf/$(RENAME) \
-	       ../conf/wrappers_libc.conf
+../$(ODIR)/%.sx: ../conf/%.conf ../conf/$(RENAME)
+	-$(ECHO) 'Generating wrapper: $<'
+	$(MKW) $(MKWFLAGS) -o "$@" -r ../conf/$(RENAME) "$<"
+	-$(ECHO) 'Finished generating: $<'
 
 $(RES):	$(RC)
 	$(WINDRES) -i $(RC) -J rc -o $(RES) -O coff
 
 clean:
-	$(RM) $(TARGET) $(OBJS) ../obj/wrappers_*.sx
+	$(RM) $(TARGET) $(OBJS) ../$(ODIR)/wrappers_*.sx
 
