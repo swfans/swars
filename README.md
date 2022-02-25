@@ -112,7 +112,11 @@ make V=1
 
 #### Build example - MSys2 updated 2022-01 on Windows
 
-Install the dependencies - mingw32, since we need 32-bit toolchain:
+Using Minimal System and the MinGW toolchain available within, it is possible
+to build the executable using the same way as for UNIX systems, with bash and autotools.
+This will generate a proper executable, though without embedded resources like the icon.
+
+First install the dependencies - mingw32, since we need 32-bit toolchain:
 
 ```
 pacman -Si mingw-w64-i686-binutils mingw-w64-i686-pkgconf mingw-w64-i686-make mingw-w64-i686-gcc
