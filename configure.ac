@@ -1,8 +1,16 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
-
 AC_PREREQ(2.60)
-AC_INIT([swars], [0.3], [unavowed@vexillium.org])
+
+m4_define([ver_major], [0])
+m4_define([ver_minor], [3])
+m4_define([ver_release], [2])
+m4_define([ver_build], [1])
+
+m4_define([swars_version],
+      [ver_major.ver_minor.ver_release.ver_build])
+
+AC_INIT([Syndicate Wars Port], [swars_version], [unavowed@vexillium.org], [swars])
 AC_CONFIG_SRCDIR([src/main.c])
 AC_CONFIG_HEADER([src/config.h])
 AC_CONFIG_MACRO_DIR([m4])
@@ -22,6 +30,11 @@ AS_IF([test "$prefix" = "NONE"], [
 AS_IF([test "$exec_prefix" = "NONE"], [
   exec_prefix="$prefix"
 ])
+
+AC_DEFINE([VER_MAJOR], [ver_major], [Major version number])
+AC_DEFINE([VER_MINOR], [ver_minor], [Minor version number])
+AC_DEFINE([VER_RELEASE], [ver_release], [Release number])
+AC_DEFINE([VER_BUILD], [ver_build], [Build number])
 
 # Checks for programs.
 AC_PROG_CC
@@ -145,7 +158,7 @@ AC_SUBST([ASFILTER])
 AC_MSG_CHECKING([whether to enable debugging options])
 AS_IF([test "$use_debug" = "yes" || test "$use_debug" = "full"], [
   AC_DEFINE([ENABLE_DEBUG], 1, [Define to 1 if compiling in debug mode])
-  CFLAGS="$CFLAGS -g -O0"
+  CFLAGS="$CFLAGS -g -O0 -DDEBUG"
   AS_IF([test "$have_windows" = "no"], [
     CCASFLAGS="$CCASFLAGS -g"
   ], [

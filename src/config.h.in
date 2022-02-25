@@ -69,6 +69,18 @@
 /* Version number of package */
 #undef VERSION
 
+/* Build number */
+#undef VER_BUILD
+
+/* Major version number */
+#undef VER_MAJOR
+
+/* Minor version number */
+#undef VER_MINOR
+
+/* Release number */
+#undef VER_RELEASE
+
 /* Define to 1 if running on a UNIX-like system where __unix__ is missing */
 #undef __unix__
 

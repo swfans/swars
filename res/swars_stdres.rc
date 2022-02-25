@@ -34,8 +34,8 @@ FILETYPE VFT_APP
 		 BLOCK "040904E4"
 		 {
 			 VALUE "CompanyName", "Fan community"
-			 VALUE "FileVersion", VER_STRING
-			 VALUE "FileDescription", PACKAGE_DESCRIPTION
+			 VALUE "FileVersion", VERSION
+			 VALUE "FileDescription", PACKAGE_STRING
 			 VALUE "InternalName", PACKAGE
 			 VALUE "LegalCopyright", "Open Source"
 			 VALUE "LegalTrademarks", "SW is a trademark of Bullfrog"
