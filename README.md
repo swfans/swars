@@ -114,7 +114,6 @@ make V=1
 
 Using Minimal System and the MinGW toolchain available within, it is possible
 to build the executable using the same way as for UNIX systems, with bash and autotools.
-This will generate a proper executable, though without embedded resources like the icon.
 
 First install the dependencies - mingw32, since we need 32-bit toolchain:
 
@@ -148,9 +147,8 @@ PATH="/mingw32/bin:$PATH" make V=1
 
 There is also another way to build the executable using Minimal GNU for Windows. This one
 does not require autotools or configure script, but still needs all library dependencies
-to be accessible, and the toolchain to be in PATH environment variable. The executable
-built this way will have windows icon embedded. You may need to edit `Makefile.windows`
-to match your setup.
+to be accessible, and the toolchain to be in PATH environment variable. You may need to
+edit `Makefile.windows` to match your setup.
 
 We will create a debug build in this example:
 
