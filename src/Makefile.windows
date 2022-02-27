@@ -112,7 +112,7 @@ $(TARGET): $(GENSRC) $(OBJS)
 	-$(ECHO) 'Finished generating: $<'
 
 $(RES):	$(RC)
-	$(WINDRES) -i $(RC) -J rc -o $(RES) -O coff
+	$(WINDRES) $(RCFLAGS) -i "$<" -J rc -o "$@" -O coff
 
 clean:
 	$(RM) $(TARGET) $(OBJS) ../$(ODIR)/wrappers_*.sx

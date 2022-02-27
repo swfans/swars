@@ -36,6 +36,9 @@ AC_DEFINE([VER_MINOR], [ver_minor], [Minor version number])
 AC_DEFINE([VER_RELEASE], [ver_release], [Release number])
 AC_DEFINE([VER_BUILD], [ver_build], [Build number])
 
+AC_CANONICAL_HOST
+AC_CANONICAL_TARGET
+
 # Checks for programs.
 AC_PROG_CC
 AM_PROG_AS
@@ -44,8 +47,7 @@ AS_IF([test -z "$PYTHON"], [
   AC_ERROR([python3 executable not found])
 ])
 PKG_PROG_PKG_CONFIG
-
-AC_CANONICAL_HOST
+AC_CHECK_PROGS(WINDRES, $WINDRES "${target_alias}-windres" "${target}-windres", "windres", :)
 
 # Checks for libraries.
 AC_MSG_CHECKING([if we are compiling for an i386 processor])
@@ -94,6 +96,9 @@ case "$host" in
     stack_alignment=16
     ;;
 esac
+
+# On Windows, we can optionaly include resources in the executable.
+AM_CONDITIONAL([HAS_WINDRES], [test -n "${WINDRES}" -a "$have_windows" = "yes"])
 
 # On Windows, filter out -g from CCASFLAGS.  There are too many symbols in
 # swars.s to include debugging information for, which also results in a lot of
@@ -207,6 +212,7 @@ CFLAGS="$CFLAGS $PNG_CFLAGS"
 LIBS="$LIBS $PNG_LIBS"
 
 AC_SUBST([MKWFLAGS])
+AC_SUBST([WINDRES])
 
 AC_CONFIG_FILES([Makefile conf/Makefile src/Makefile util/Makefile])
 AC_OUTPUT

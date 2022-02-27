@@ -75,14 +75,27 @@ swars_SOURCES = \
 	windows.c \
 	windows.h
 
-swars_LDADD = wrappers_dos.o wrappers_game.o wrappers_libc.o wrappers_util.o
+swars_WRAPPERS = wrappers_dos.o wrappers_game.o wrappers_libc.o wrappers_util.o
 
-$(swars_LDADD:.o=.sx): %.sx: $(top_srcdir)/conf/%.conf
+if HAS_WINDRES
+swars_RESRCS = swars_stdres.res
+else
+swars_RESRCS =
+endif
+
+swars_LDADD = $(swars_WRAPPERS) $(swars_RESRCS)
+
+$(swars_WRAPPERS:.o=.sx): %.sx: $(top_srcdir)/conf/%.conf
 	$(AM_V_GEN)$(MKW) $(MKWFLAGS) -o $@ $<
 
 .sx.o:
 	$(AM_V_CC)$(CPP) $(CPPFLAGS) $< $(ASFILTER) \
 		| $(CCAS) -x assembler -c $(CCASFLAGS) -o $@ -
+
+if HAS_WINDRES
+%.res: $(top_srcdir)/res/%.rc
+	$(WINDRES) $(RCFLAGS) -i $< -J rc -o $@ -O coff
+endif
 
 CLEANFILES = wrappers_*.sx
 DISTCLEANFILES = *~
