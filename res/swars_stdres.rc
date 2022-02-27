@@ -17,6 +17,7 @@
  *     (at your option) any later version.
  */
 /******************************************************************************/
+#ifdef WIN32
 
 #include <windows.h> // include for version info constants
 #include "../src/windows.config.h" // define values for version info
@@ -50,3 +51,4 @@ FILETYPE VFT_APP
 	 }
 }
 /******************************************************************************/
+#endif  /* WIN32 */

@@ -1,4 +1,4 @@
-#ifdef _WIN32
+#ifdef WIN32
 
 #include <windef.h>
 #include <winbase.h>
@@ -116,4 +116,4 @@ sys_get_user_path (char *buffer, size_t size)
   snprintf (buffer, size, "%s\\Syndicate Wars", app_data);
   return true;
 }
-#endif
+#endif  /* WIN32 */

@@ -12,7 +12,7 @@
 #include "game_data.h"
 #include "util.h"
 
-#if defined _WIN32 && defined main
+#if defined WIN32 && defined main
 // Anti SDL
 # undef main
 #endif

@@ -1,7 +1,7 @@
 #ifndef WINDOWS_H
 #define WINDOWS_H
 
-#ifdef _WIN32
+#ifdef WIN32
 #include <time.h>
 #include <sys/time.h>
 #include <stdbool.h>
@@ -19,6 +19,6 @@ int gettimeofday (struct timeval *tp, struct timezone *tzp);
 bool sys_get_user_path (char *buffer, size_t size);
 bool sys_get_data_path (char *buffer, size_t size);
 
-#endif /* _WIN32 */
+#endif /* WIN32 */
 
 #endif /* WINDOWS_H */
