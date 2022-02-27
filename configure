@@ -640,14 +640,9 @@ SDL_CONFIG
 EGREP
 GREP
 CPP
-host_os
-host_vendor
-host_cpu
-host
-build_os
-build_vendor
-build_cpu
-build
+HAS_WINDRES_FALSE
+HAS_WINDRES_TRUE
+WINDRES
 PKG_CONFIG
 PYTHON
 am__fastdepCCAS_FALSE
@@ -671,6 +666,18 @@ CPPFLAGS
 LDFLAGS
 CFLAGS
 CC
+target_os
+target_vendor
+target_cpu
+target
+host_os
+host_vendor
+host_cpu
+host
+build_os
+build_vendor
+build_cpu
+build
 AM_BACKSLASH
 AM_DEFAULT_VERBOSITY
 AM_DEFAULT_V
@@ -1381,6 +1388,7 @@ Program names:
 System types:
   --build=BUILD     configure for building on BUILD [guessed]
   --host=HOST       cross-compile to build programs to run on HOST [BUILD]
+  --target=TARGET   configure for building compilers for TARGET [HOST]
 _ACEOF
 fi
 
@@ -2950,6 +2958,117 @@ $as_echo "#define VER_RELEASE 2" >>confdefs.h
 $as_echo "#define VER_BUILD 1" >>confdefs.h
 
 
+# Make sure we can run config.sub.
+$SHELL "$ac_aux_dir/config.sub" sun4 >/dev/null 2>&1 ||
+  as_fn_error $? "cannot run $SHELL $ac_aux_dir/config.sub" "$LINENO" 5
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking build system type" >&5
+$as_echo_n "checking build system type... " >&6; }
+if ${ac_cv_build+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_build_alias=$build_alias
+test "x$ac_build_alias" = x &&
+  ac_build_alias=`$SHELL "$ac_aux_dir/config.guess"`
+test "x$ac_build_alias" = x &&
+  as_fn_error $? "cannot guess build type; you must specify one" "$LINENO" 5
+ac_cv_build=`$SHELL "$ac_aux_dir/config.sub" $ac_build_alias` ||
+  as_fn_error $? "$SHELL $ac_aux_dir/config.sub $ac_build_alias failed" "$LINENO" 5
+
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_build" >&5
+$as_echo "$ac_cv_build" >&6; }
+case $ac_cv_build in
+*-*-*) ;;
+*) as_fn_error $? "invalid value of canonical build" "$LINENO" 5;;
+esac
+build=$ac_cv_build
+ac_save_IFS=$IFS; IFS='-'
+set x $ac_cv_build
+shift
+build_cpu=$1
+build_vendor=$2
+shift; shift
+# Remember, the first character of IFS is used to create $*,
+# except with old shells:
+build_os=$*
+IFS=$ac_save_IFS
+case $build_os in *\ *) build_os=`echo "$build_os" | sed 's/ /-/g'`;; esac
+
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking host system type" >&5
+$as_echo_n "checking host system type... " >&6; }
+if ${ac_cv_host+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  if test "x$host_alias" = x; then
+  ac_cv_host=$ac_cv_build
+else
+  ac_cv_host=`$SHELL "$ac_aux_dir/config.sub" $host_alias` ||
+    as_fn_error $? "$SHELL $ac_aux_dir/config.sub $host_alias failed" "$LINENO" 5
+fi
+
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_host" >&5
+$as_echo "$ac_cv_host" >&6; }
+case $ac_cv_host in
+*-*-*) ;;
+*) as_fn_error $? "invalid value of canonical host" "$LINENO" 5;;
+esac
+host=$ac_cv_host
+ac_save_IFS=$IFS; IFS='-'
+set x $ac_cv_host
+shift
+host_cpu=$1
+host_vendor=$2
+shift; shift
+# Remember, the first character of IFS is used to create $*,
+# except with old shells:
+host_os=$*
+IFS=$ac_save_IFS
+case $host_os in *\ *) host_os=`echo "$host_os" | sed 's/ /-/g'`;; esac
+
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking target system type" >&5
+$as_echo_n "checking target system type... " >&6; }
+if ${ac_cv_target+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  if test "x$target_alias" = x; then
+  ac_cv_target=$ac_cv_host
+else
+  ac_cv_target=`$SHELL "$ac_aux_dir/config.sub" $target_alias` ||
+    as_fn_error $? "$SHELL $ac_aux_dir/config.sub $target_alias failed" "$LINENO" 5
+fi
+
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_target" >&5
+$as_echo "$ac_cv_target" >&6; }
+case $ac_cv_target in
+*-*-*) ;;
+*) as_fn_error $? "invalid value of canonical target" "$LINENO" 5;;
+esac
+target=$ac_cv_target
+ac_save_IFS=$IFS; IFS='-'
+set x $ac_cv_target
+shift
+target_cpu=$1
+target_vendor=$2
+shift; shift
+# Remember, the first character of IFS is used to create $*,
+# except with old shells:
+target_os=$*
+IFS=$ac_save_IFS
+case $target_os in *\ *) target_os=`echo "$target_os" | sed 's/ /-/g'`;; esac
+
+
+# The aliases save the names the user supplied, while $host etc.
+# will get canonicalized.
+test -n "$target_alias" &&
+  test "$program_prefix$program_suffix$program_transform_name" = \
+    NONENONEs,x,x, &&
+  program_prefix=${target_alias}-
+
 # Checks for programs.
 ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
@@ -4281,77 +4400,49 @@ $as_echo "no" >&6; }
 	fi
 
 fi
-
-# Make sure we can run config.sub.
-$SHELL "$ac_aux_dir/config.sub" sun4 >/dev/null 2>&1 ||
-  as_fn_error $? "cannot run $SHELL $ac_aux_dir/config.sub" "$LINENO" 5
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking build system type" >&5
-$as_echo_n "checking build system type... " >&6; }
-if ${ac_cv_build+:} false; then :
+for ac_prog in $WINDRES "${target_alias}-windres" "${target}-windres"
+do
+  # Extract the first word of "$ac_prog", so it can be a program name with args.
+set dummy $ac_prog; ac_word=$2
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if ${ac_cv_prog_WINDRES+:} false; then :
   $as_echo_n "(cached) " >&6
 else
-  ac_build_alias=$build_alias
-test "x$ac_build_alias" = x &&
-  ac_build_alias=`$SHELL "$ac_aux_dir/config.guess"`
-test "x$ac_build_alias" = x &&
-  as_fn_error $? "cannot guess build type; you must specify one" "$LINENO" 5
-ac_cv_build=`$SHELL "$ac_aux_dir/config.sub" $ac_build_alias` ||
-  as_fn_error $? "$SHELL $ac_aux_dir/config.sub $ac_build_alias failed" "$LINENO" 5
-
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_build" >&5
-$as_echo "$ac_cv_build" >&6; }
-case $ac_cv_build in
-*-*-*) ;;
-*) as_fn_error $? "invalid value of canonical build" "$LINENO" 5;;
-esac
-build=$ac_cv_build
-ac_save_IFS=$IFS; IFS='-'
-set x $ac_cv_build
-shift
-build_cpu=$1
-build_vendor=$2
-shift; shift
-# Remember, the first character of IFS is used to create $*,
-# except with old shells:
-build_os=$*
-IFS=$ac_save_IFS
-case $build_os in *\ *) build_os=`echo "$build_os" | sed 's/ /-/g'`;; esac
-
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking host system type" >&5
-$as_echo_n "checking host system type... " >&6; }
-if ${ac_cv_host+:} false; then :
-  $as_echo_n "(cached) " >&6
+  if test -n "$WINDRES"; then
+  ac_cv_prog_WINDRES="$WINDRES" # Let the user override the test.
 else
-  if test "x$host_alias" = x; then
-  ac_cv_host=$ac_cv_build
+as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+as_dummy=":"
+for as_dir in $as_dummy
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
+    ac_cv_prog_WINDRES="$ac_prog"
+    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+fi
+fi
+WINDRES=$ac_cv_prog_WINDRES
+if test -n "$WINDRES"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $WINDRES" >&5
+$as_echo "$WINDRES" >&6; }
 else
-  ac_cv_host=`$SHELL "$ac_aux_dir/config.sub" $host_alias` ||
-    as_fn_error $? "$SHELL $ac_aux_dir/config.sub $host_alias failed" "$LINENO" 5
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
 fi
 
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_host" >&5
-$as_echo "$ac_cv_host" >&6; }
-case $ac_cv_host in
-*-*-*) ;;
-*) as_fn_error $? "invalid value of canonical host" "$LINENO" 5;;
-esac
-host=$ac_cv_host
-ac_save_IFS=$IFS; IFS='-'
-set x $ac_cv_host
-shift
-host_cpu=$1
-host_vendor=$2
-shift; shift
-# Remember, the first character of IFS is used to create $*,
-# except with old shells:
-host_os=$*
-IFS=$ac_save_IFS
-case $host_os in *\ *) host_os=`echo "$host_os" | sed 's/ /-/g'`;; esac
 
+  test -n "$WINDRES" && break
+done
+test -n "$WINDRES" || WINDRES=""windres""
 
 
 # Checks for libraries.
@@ -4438,6 +4529,16 @@ case "$host" in
     stack_alignment=16
     ;;
 esac
+
+# On Windows, we can optionaly include resources in the executable.
+ if test -n "${WINDRES}" -a "$have_windows" = "yes"; then
+  HAS_WINDRES_TRUE=
+  HAS_WINDRES_FALSE='#'
+else
+  HAS_WINDRES_TRUE='#'
+  HAS_WINDRES_FALSE=
+fi
+
 
 # On Windows, filter out -g from CCASFLAGS.  There are too many symbols in
 # swars.s to include debugging information for, which also results in a lot of
@@ -5424,7 +5525,7 @@ if test "$use_debug" = "yes" || test "$use_debug" = "full"; then :
 
 $as_echo "#define ENABLE_DEBUG 1" >>confdefs.h
 
-  CFLAGS="$CFLAGS -g -O0"
+  CFLAGS="$CFLAGS -g -O0 -DDEBUG"
   if test "$have_windows" = "no"; then :
 
     CCASFLAGS="$CCASFLAGS -g"
@@ -5493,6 +5594,7 @@ LIBS="$LIBS $VORBISFILE_LIBS"
 
 CFLAGS="$CFLAGS $PNG_CFLAGS"
 LIBS="$LIBS $PNG_LIBS"
+
 
 
 
@@ -5633,6 +5735,10 @@ Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${am__fastdepCCAS_TRUE}" && test -z "${am__fastdepCCAS_FALSE}"; then
   as_fn_error $? "conditional \"am__fastdepCCAS\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${HAS_WINDRES_TRUE}" && test -z "${HAS_WINDRES_FALSE}"; then
+  as_fn_error $? "conditional \"HAS_WINDRES\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 

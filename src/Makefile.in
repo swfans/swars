@@ -88,6 +88,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
+target_triplet = @target@
 bin_PROGRAMS = swars$(EXEEXT)
 subdir = src
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -123,8 +124,8 @@ am_swars_OBJECTS = ariadne.$(OBJEXT) bflib_basics.$(OBJEXT) \
 	timer.$(OBJEXT) unix.$(OBJEXT) util.$(OBJEXT) \
 	windows.$(OBJEXT)
 swars_OBJECTS = $(am_swars_OBJECTS)
-swars_DEPENDENCIES = wrappers_dos.o wrappers_game.o wrappers_libc.o \
-	wrappers_util.o
+@HAS_WINDRES_TRUE@am__DEPENDENCIES_1 = swars_stdres.res
+swars_DEPENDENCIES = $(swars_WRAPPERS) $(am__DEPENDENCIES_1)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -272,6 +273,7 @@ STRIP = @STRIP@
 VERSION = @VERSION@
 VORBISFILE_CFLAGS = @VORBISFILE_CFLAGS@
 VORBISFILE_LIBS = @VORBISFILE_LIBS@
+WINDRES = @WINDRES@
 abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
@@ -319,7 +321,11 @@ sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 srcdir = @srcdir@
 sysconfdir = @sysconfdir@
+target = @target@
 target_alias = @target_alias@
+target_cpu = @target_cpu@
+target_os = @target_os@
+target_vendor = @target_vendor@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
@@ -396,7 +402,10 @@ swars_SOURCES = \
 	windows.c \
 	windows.h
 
-swars_LDADD = wrappers_dos.o wrappers_game.o wrappers_libc.o wrappers_util.o
+swars_WRAPPERS = wrappers_dos.o wrappers_game.o wrappers_libc.o wrappers_util.o
+@HAS_WINDRES_FALSE@swars_RESRCS = 
+@HAS_WINDRES_TRUE@swars_RESRCS = swars_stdres.res
+swars_LDADD = $(swars_WRAPPERS) $(swars_RESRCS)
 CLEANFILES = wrappers_*.sx
 DISTCLEANFILES = *~
 all: config.h
@@ -865,12 +874,15 @@ uninstall-am: uninstall-binPROGRAMS
 .PRECIOUS: Makefile
 
 
-$(swars_LDADD:.o=.sx): %.sx: $(top_srcdir)/conf/%.conf
+$(swars_WRAPPERS:.o=.sx): %.sx: $(top_srcdir)/conf/%.conf
 	$(AM_V_GEN)$(MKW) $(MKWFLAGS) -o $@ $<
 
 .sx.o:
 	$(AM_V_CC)$(CPP) $(CPPFLAGS) $< $(ASFILTER) \
 		| $(CCAS) -x assembler -c $(CCASFLAGS) -o $@ -
+
+@HAS_WINDRES_TRUE@%.res: $(top_srcdir)/res/%.rc
+@HAS_WINDRES_TRUE@	$(WINDRES) $(RCFLAGS) -i $< -J rc -o $@ -O coff
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
