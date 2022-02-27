@@ -205,7 +205,7 @@ you will need to pass `CFLAGS="-arch i386"`, like so:
 ./configure CFLAGS="-arch i386"
 ```
 
-If you are planning to create [Mac OS app bundle](making-a-mac-os-app-bundle),
+If you are planning to create [Mac OS app bundle](#making-a-mac-os-app-bundle),
 you will also need to pass `data-path`, so youf final command will be:
 
 
