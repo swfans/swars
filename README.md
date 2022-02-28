@@ -1,36 +1,38 @@
 # swars
 
-Syndicate Wars port, alternative binary for the classic Bullfrog game.
+**Syndicate Wars Port**, alternative binary for the classic Bullfrog game.
 
 This is continuation of the project created by Unavowed and Gynvael Coldwind.
 
 ## About
 
-Syndicate Wars Port is a port of the 1996 DOS game Syndicate Wars to modern
-operating systems. In particular, it runs on GNU, Mac OS and Windows, but it
-should also work on any system supported by the SDL library on the i386
+**Syndicate Wars Port** is a port of the 1996 DOS game
+[Syndicate Wars](https://en.wikipedia.org/wiki/Syndicate_Wars)
+to modern operating systems. In particular, it runs on GNU, Mac OS and Windows,
+but it should also work on any system supported by the SDL library on the i386
 architecture.
 
 The port was created by disassembling the original DOS executable and replacing
-the DOS-specific parts with platform-independent code, using SDL for input
-and video display, Vorbis for music and OpenAL for sound.
+the DOS-specific parts with platform-independent code, using [SDL](https://www.libsdl.org/)
+for input and video display, [Vorbis](https://xiph.org/vorbis/) for music and
+[OpenAL](https://www.openal.org/) for sound.
 
 Only the modernised executable is provided with this port. This means that game
-data are not included. To install the Syndicate Wars Port, you will need to
-have the original data from either Syndicate Wars CD, or digital distribution.
+data are not included. To install the **Syndicate Wars Port**, you will need to
+have the original data from either *Syndicate Wars CD*, or digital distribution.
 
 ## Community
 
-If you wish to discuss the Syndicate Wars Port or if you have any problems,
+If you wish to discuss the **Syndicate Wars Port** or if you have any problems,
 you may post to the Google group [syndicate-wars-port](http://groups.google.com/group/syndicate-wars-port)
  (you don't need to be a member to post).
 
 ## Installation
 
-To install Syndicate Wars Port, you will need either the original Syndicate
-Wars PC CD, or digital distribution of the game. There were several physical
+To install **Syndicate Wars Port**, you will need either the original *Syndicate
+Wars CD*, or digital distribution of the game. There were several physical
 versions released. The multi-lingual version was tested and will definitely
-work, other version were not tested.
+work, other version were not tested. Only releases for PC can be used.
 
 The steps you need to take vary depending on your operating system.
 
@@ -45,7 +47,7 @@ The steps are:
 3. after the build succeeded, do `make install` in the directory where build
    commands were executed, to copy built files into an installation folder
    (`/usr/local/share/swars` by default)
-4. insert the Syndicate Wars CD and make sure it is mounted (e.g. in `/media/cdrom`)
+4. insert the *Syndicate Wars CD* and make sure it is mounted (e.g. in `/media/cdrom`)
 5. do `util/install -f SOURCE -t TARGET -l LANG`, where
    * *SOURCE* is the game CD path, like `/media/cdrom`,
    * *TARGET* is the destination path, in this case `/usr/local/share/swars`,
@@ -80,15 +82,15 @@ You can create the bundle by following these instructions:
 
 ### Installing on Windows
 
-There are two ways to install Syndicate Wars Port on Windows - either download
+There are two ways to install **Syndicate Wars Port** on Windows - either download
 the installer, or download the source code and compile it by hand.
 It is recommended to use the installer!
 
-The installer requires the original Syndicate Wars CD to be present in the
-CD-ROM drive. It will copy the files from the original Syndicate Wars CD and
+The installer requires the original *Syndicate Wars CD* to be present in the
+CD-ROM drive. It will copy the files from the original *Syndicate Wars CD* and
 optionally encode the game music from the CD to ogg files used by this port.
 
-The Syndicate Wars CD is not required to play the game, it is used only during
+The *Syndicate Wars CD* is not required to play the game, it is used only during
 the installation process.
 
 If you've decided on the hand-compilation option, proceed with the following steps:
@@ -118,7 +120,7 @@ Note that you can oly build the port for x86 architecture, and you either need
 
 ### Building on GNU or UNIX
 
-To build Syndicate Wars Port on GNU or UNIX, you will need the following:
+To build **Syndicate Wars Port** on GNU or UNIX, you will need the following:
 
 * GNU C compiler
 * Python 3
@@ -185,7 +187,7 @@ make V=1
 
 ### Building on Mac OS X
 
-Mac OS X is at its core a UNIX system. To build the Syndicate Wars Port it is
+Mac OS X is at its core a UNIX system. To build the **Syndicate Wars Port** it is
 enough to follow the [instructions for GNU or UNIX](#building-on-gnu-or-unix).
 
 The GCC compiler for Mac OS X comes as part of XCode, which you can get from
