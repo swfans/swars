@@ -1,3 +1,6 @@
 /obj/*
 /bin/*
 /config.log
+/autom4te.cache
+/debug
+/release
