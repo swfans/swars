@@ -200,7 +200,7 @@ void ASM_read_user_settings(void);
 void ASM_setup_color_lookups(void);
 void ASM_game_setup_sub7(void);
 void ASM_game_setup_sub8(void);
-void ASM_setup_drawlist(void);
+void ASM_init_engine(void);
 void ASM_swap_wscreen(void);
 void ASM_play_intro(void);
 void ASM_init_syndwars(void);
@@ -550,9 +550,9 @@ void load_mission_file(int num)
         : : "a" (num));
 }
 
-void setup_drawlist(void)
+void init_engine(void)
 {
-    ASM_setup_drawlist();
+    ASM_init_engine();
 }
 
 void load_mission_map_lvl(unsigned char num)
@@ -648,7 +648,7 @@ void game_setup(void)
         load_prim_quad();
     }
     game_setup_sub4(0);
-    setup_drawlist();
+    init_engine();
     if ( !cmdln_param_bcg )
     {
         LbMemorySet(lbDisplay.WScreen, 0, lbDisplay.PhysicalScreenWidth * lbDisplay.PhysicalScreenHeight);
