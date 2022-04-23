@@ -111,7 +111,7 @@ GLOBAL_FUNC (MSSSMACKTIMERDONE)
 		push   $data_1592d8
 		call   AIL_vmm_lock
 		add    $0x8,%esp
-		push   $func_fbeb0
+		push   $MSS_func_unkn_01
 		call   AIL_register_timer
 		add    $0x4,%esp
 		mov    %eax,data_1e86b0
@@ -201,7 +201,7 @@ MSSSMACKTIMERREAD:
 
 
 /*----------------------------------------------------------------*/
-func_fbeb0:
+MSS_func_unkn_01:	/* 0x0FBEB0 */
 /*----------------------------------------------------------------*/
 		mov    data_1592d8,%eax
 		incl   data_1592d8
@@ -577,7 +577,7 @@ GLOBAL_FUNC (MSSLOWSOUNDCHECK)	/* 0xfc210 */
 		test   %edx,%edx
 		je     jump_fc2a6
 		mov    0x38(%esi),%eax
-		call   func_fc300
+		call   MSS_func_unkn_02
 		test   %al,%al
 		jne    jump_fc2a6
 		mov    0x38(%esi),%ebx
@@ -621,7 +621,7 @@ GLOBAL_FUNC (MSSLOWSOUNDCHECK)	/* 0xfc210 */
 
 
 /*----------------------------------------------------------------*/
-func_fc300:
+MSS_func_unkn_02:	/* 0x0FC300 */
 /*----------------------------------------------------------------*/
 		push   %edx
 		cmpl   $0x0,0x2c(%eax)

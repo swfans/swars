@@ -160,7 +160,7 @@ GLOBAL_FUNC (joy_grip_init)
 		cmpb   $0x0,data_1e2f37
 		jne    jump_e1196
 		xor    %eax,%eax
-		call   func_f36fd
+		call   SpwSimpleOpen_
 		test   %ax,%ax
 		je     jump_e1196
 		movb   $0x1,data_1e2f37
@@ -187,7 +187,7 @@ GLOBAL_FUNC (joy_grip_shutdown)
 		mov    $0x84a2,%ax
 		lcall  *data_1e5ef8
 	jump_e11c4:
-		call   func_f2974
+		call   GrUnlink
 	jump_e11c9:
 		cmpb   $0x0,data_1e2f37
 		je     jump_e11a7
@@ -526,7 +526,7 @@ joy_func_f2680:
 
 
 /*----------------------------------------------------------------*/
-func_f2974:
+GrUnlink:	/* 0x0F2974 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %edx
@@ -571,7 +571,7 @@ func_f2974:
 
 
 /*----------------------------------------------------------------*/
-func_f2e25:
+GETVECT_:	/* 0x0F2E25 */
 /*----------------------------------------------------------------*/
 		push   $0x8
 		call   ____CHK
@@ -588,7 +588,7 @@ func_f2e25:
 
 
 /*----------------------------------------------------------------*/
-func_f2e87:
+FindSpwVector_:	/* 0x0F2E87 */
 /*----------------------------------------------------------------*/
 		push   $0x8
 		call   ____CHK
@@ -596,7 +596,7 @@ func_f2e87:
 		mov    $0x20,%edx
 		jmp    jump_f2ea8
 	jump_f2e99:
-		call   func_f2e44
+		call   IsSpwVector_
 		test   %ax,%ax
 		je     jump_f2ea7
 		mov    %edx,%eax
@@ -614,7 +614,7 @@ func_f2e87:
 
 
 /*----------------------------------------------------------------*/
-func_f2eb6:
+CallDriver_:	/* 0x0F2EB6 */
 /*----------------------------------------------------------------*/
 		push   $0x14
 		call   ____CHK
@@ -703,14 +703,14 @@ func_f2eb6:
 
 
 /*----------------------------------------------------------------*/
-func_f2e44:
+IsSpwVector_:	/* 0x0F2E44 */
 /*----------------------------------------------------------------*/
 		push   $0xc
 		call   ____CHK
 		push   %ebx
 		push   %edx
 		cwtl
-		call   func_f2e25
+		call   GETVECT_
 		mov    %eax,%ebx
 		test   %eax,%eax
 		jne    jump_f2e61
@@ -742,7 +742,7 @@ func_f2e44:
 
 
 /*----------------------------------------------------------------*/
-func_f30a5:
+SpwUnknown3:	/* 0x0F30A5 */
 /*----------------------------------------------------------------*/
 		push   $0x30
 		call   ____CHK
@@ -825,21 +825,21 @@ func_f30a5:
 
 
 /*----------------------------------------------------------------*/
-func_f3199:
+SpwUnknown5:	/* 0x0F3199 */
 /*----------------------------------------------------------------*/
 		push   $0x8
 		call   ____CHK
 		push   %edx
 		mov    $data_1e5f10,%edx
 		mov    $0x1,%eax
-		call   func_f30a5
+		call   SpwUnknown3
 		incw   data_158dac
 		pop    %edx
 		ret
 
 
 /*----------------------------------------------------------------*/
-func_f335a:
+SpwOpenDriver_:	/* 0x0F335A */
 /*----------------------------------------------------------------*/
 		push   $0x2c
 		call   ____CHK
@@ -868,7 +868,7 @@ func_f335a:
 		movw   $0x8010,data_1e5f1a
 		jmp    jump_f3379
 	jump_f33b6:
-		call   func_f2e87
+		call   FindSpwVector_
 		mov    %ax,data_158d9c
 		test   %ax,%ax
 		jne    jump_f33d1
@@ -878,7 +878,7 @@ func_f335a:
 		mov    %ecx,%ebx
 		xor    %edx,%edx
 		mov    $0xffff8001,%eax
-		call   func_f2eb6
+		call   CallDriver_
 		mov    %eax,%edx
 		test   %eax,%eax
 		je     jump_f33ed
@@ -895,7 +895,7 @@ func_f335a:
 
 
 /*----------------------------------------------------------------*/
-func_f36fd:
+SpwSimpleOpen_:	/* 0x0F36FD */
 /*----------------------------------------------------------------*/
 		push   $0x158
 		call   ____CHK
@@ -905,27 +905,27 @@ func_f36fd:
 		sub    $0x148,%esp
 		mov    %eax,%ecx
 		lea    0xa4(%esp),%eax
-		call   func_f335a
+		call   SpwOpenDriver_
 		test   %ax,%ax
 		je     jump_f38a7
 		movswl %cx,%ebx
 		lea    0xa4(%esp),%edx
 		mov    %ebx,%eax
-		call   func_f3432
+		call   SpwOpenDevice_
 		test   %ax,%ax
 		je     jump_f38a7
 		mov    %ebx,%eax
-		call   func_f34a1
+		call   SpwEnableDevice_
 		test   %ax,%ax
 		je     jump_f38a7
-		call   func_f3199
+		call   SpwUnknown5
 		movl   $0x0,data_158dc2
 		movl   $0x0,data_158dbe
 	jump_f376a:
 		movswl %cx,%edx
 		mov    %esp,%ebx
 		mov    $0xffff8022,%eax
-		call   func_f2eb6
+		call   CallDriver_
 		mov    $0xc8,%eax
 		call   delay_
 		movl   $0x0,data_158dd2
@@ -977,7 +977,7 @@ func_f36fd:
 		mov    $0x7,%eax
 		call   ac_putchar
 		movswl %cx,%eax
-		call   func_f3463
+		call   SpwCloseDevice_
 		movl   $0x0,data_158dc2
 	jump_f387e:
 		incl   data_158dbe
@@ -986,7 +986,7 @@ func_f36fd:
 		movswl %cx,%edx
 		mov    %esp,%ebx
 		mov    $0xffff8023,%eax
-		call   func_f2eb6
+		call   CallDriver_
 		mov    $0x1,%eax
 		jmp    jump_f38af
 	jump_f38a7:
@@ -1000,7 +1000,7 @@ func_f36fd:
 		ret
 
 /*----------------------------------------------------------------*/
-func_f324f:
+SpwUnknown7:	/* 0x0F324F */
 /*----------------------------------------------------------------*/
 		push   $0x14
 		call   ____CHK
@@ -1031,7 +1031,7 @@ func_f324f:
 		lea    -0x1(%eax),%ecx
 		test   %ecx,%ecx
 		jne    jump_f32aa
-		call   func_f3199
+		call   SpwUnknown5
 	jump_f32aa:
 		mov    %ecx,%eax
 		mov    %ecx,%edx
@@ -1108,7 +1108,7 @@ func_f324f:
 
 
 /*----------------------------------------------------------------*/
-func_f33f9:
+SpwCloseDriver_:	/* 0x0F33F9 */
 /*----------------------------------------------------------------*/
 		push   $0x10
 		call   ____CHK
@@ -1118,7 +1118,7 @@ func_f33f9:
 		xor    %ebx,%ebx
 		xor    %edx,%edx
 		xor    %eax,%eax
-		call   func_f2eb6
+		call   CallDriver_
 		mov    %eax,(%esp)
 		test   %eax,%eax
 		je     jump_f3427
@@ -1136,7 +1136,7 @@ func_f33f9:
 
 
 /*----------------------------------------------------------------*/
-func_f3432:
+SpwOpenDevice_:	/* 0x0F3432 */
 /*----------------------------------------------------------------*/
 		push   $0x8
 		call   ____CHK
@@ -1145,7 +1145,7 @@ func_f3432:
 		mov    %edx,%ebx
 		mov    %eax,%edx
 		mov    $0xffff8003,%eax
-		call   func_f2eb6
+		call   CallDriver_
 		mov    %eax,%edx
 		test   %eax,%eax
 		je     jump_f345c
@@ -1160,7 +1160,7 @@ func_f3432:
 
 
 /*----------------------------------------------------------------*/
-func_f3463:
+SpwCloseDevice_:	/* 0x0F3463 */
 /*----------------------------------------------------------------*/
 		push   $0xc
 		call   ____CHK
@@ -1169,7 +1169,7 @@ func_f3463:
 		movswl %ax,%edx
 		xor    %ebx,%ebx
 		mov    $0x2,%eax
-		call   func_f2eb6
+		call   CallDriver_
 		mov    %eax,%edx
 		movl   $0x1,data_158d9e
 		test   %eax,%eax
@@ -1187,7 +1187,7 @@ func_f3463:
 
 
 /*----------------------------------------------------------------*/
-func_f34a1:
+SpwEnableDevice_:	/* 0x0F34A1 */
 /*----------------------------------------------------------------*/
 		push   $0xc
 		call   ____CHK
@@ -1196,7 +1196,7 @@ func_f34a1:
 		movswl %ax,%edx
 		xor    %ebx,%ebx
 		mov    $0x11,%eax
-		call   func_f2eb6
+		call   CallDriver_
 		mov    %eax,%edx
 		test   %eax,%eax
 		je     jump_f34cd
@@ -1213,7 +1213,7 @@ func_f34a1:
 
 
 /*----------------------------------------------------------------*/
-func_f34d5:
+SpwDisableDevice_:	/* 0x0F34D5 */
 /*----------------------------------------------------------------*/
 		push   $0xc
 		call   ____CHK
@@ -1222,7 +1222,7 @@ func_f34d5:
 		movswl %ax,%edx
 		xor    %ebx,%ebx
 		mov    $0x10,%eax
-		call   func_f2eb6
+		call   CallDriver_
 		mov    %eax,%edx
 		test   %eax,%eax
 		je     jump_f3501
@@ -1258,7 +1258,7 @@ GLOBAL_FUNC (func_f356b)
 		movswl %ax,%edx
 		mov    $data_1e5f84,%ebx
 		mov    $0xffff8020,%eax
-		call   func_f2eb6
+		call   CallDriver_
 		mov    %eax,data_1e5f80
 		test   %eax,%eax
 		je     jump_f35b8
@@ -1295,7 +1295,7 @@ GLOBAL_FUNC (func_f356b)
 		and    $0xff00,%edx
 		sar    $0x8,%edx
 		movzwl 0x2a(%ecx),%eax
-		call   func_f324f
+		call   SpwUnknown7
 		test   %ax,%ax
 		jne    jump_f3675
 		incw   data_158db2
@@ -1308,7 +1308,7 @@ GLOBAL_FUNC (func_f356b)
 		mov    $0x7,%eax
 		call   ac_putchar
 		movswl %si,%eax
-		call   func_f3463
+		call   SpwCloseDevice_
 		jmp    jump_f367e
 	jump_f3675:
 		movw   $0x0,data_158db2
@@ -1355,16 +1355,16 @@ jump_f38b9:
 		push   %edx
 		movswl %ax,%ebx
 		mov    %ebx,%eax
-		call   func_f34d5
+		call   SpwDisableDevice_
 		movswl %ax,%edx
 		test   %edx,%edx
 		je     jump_f38f8
 		mov    %ebx,%eax
-		call   func_f3463
+		call   SpwCloseDevice_
 		movswl %ax,%edx
 		test   %edx,%edx
 		je     jump_f38f8
-		call   func_f33f9
+		call   SpwCloseDriver_
 		movswl %ax,%edx
 		test   %edx,%edx
 		je     jump_f38f8

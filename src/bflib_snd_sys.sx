@@ -2561,7 +2561,7 @@ GLOBAL_FUNC (SetVolume_func_ee980) /* 0xee980 */
 
 
 /*----------------------------------------------------------------*/
-cb_get_trigger_info: /* 0xF0340 */
+cb_get_trigger_info:	/* 0x0F0340 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %esi
@@ -4124,7 +4124,7 @@ InitStreamedSound_:
 		cmpb   $0x0,StreamedSoundAble
 		jne    jump_1006ae
 #if 0
-		call   _flushall
+		call   flushall_
 		mov    $data_159392,%eax
 		xor    %edx,%edx
 		call   ac_setbuf
@@ -5743,7 +5743,7 @@ StopAllSampleFadeTimers_:
 /*----------------------------------------------------------------*/
 /* void cb_sample_queue_callback(_SAMPLE *sample)
  */
-cb_sample_queue_callback:	/* 0x1095a0 */
+cb_sample_queue_callback:	/* 0x1095A0 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %esi

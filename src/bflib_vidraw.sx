@@ -2526,7 +2526,7 @@ GLOBAL_FUNC (LbDrawBox_)
 		mov    -0xc(%ebp),%edx
 		push   %eax
 		mov    -0x10(%ebp),%eax
-		call   func_fadd0
+		call   LbDrawBoxClip_
 	jump_e7508:
 		mov    $0x1,%eax
 	jump_e750d:
@@ -2929,7 +2929,7 @@ GLOBAL_FUNC (LbDrawLine_)
 		mov    -0x22(%ebp),%edx
 		push   %eax
 		mov    -0x26(%ebp),%eax
-		call   func_e79d8
+		call   draw_b_line
 		mov    0x7a(%ebp),%al
 	jump_e79cd:
 		lea    0x7e(%ebp),%esp
@@ -2940,7 +2940,7 @@ GLOBAL_FUNC (LbDrawLine_)
 
 
 /*----------------------------------------------------------------*/
-func_e79d8:
+draw_b_line:	/* 0x0E79D8 */
 /*----------------------------------------------------------------*/
 		push   %edi
 		push   %ebp
@@ -4587,7 +4587,7 @@ GLOBAL_FUNC (LbDrawHVLine_)	/* 0xf0834 */
 
 
 /*----------------------------------------------------------------*/
-func_fadd0:
+LbDrawBoxClip_:	/* 0x0FADD0 */
 /*----------------------------------------------------------------*/
 		push   %ebp
 		mov    %esp,%ebp
