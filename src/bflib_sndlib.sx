@@ -190,7 +190,7 @@ AILDEBUG_start_:
 		push   %ebx
 		push   %ecx
 		push   %edx
-		cmpl   $0x0,data_159328
+		cmpl   $0x0,_AIL_locked
 		jne    jump_101775
 		push   $AILDEBUG_end_
 		push   $AILDEBUG_start_
@@ -229,7 +229,7 @@ AILDEBUG_start_:
 		mov    $0x1,%ebx
 		call   AIL_vmm_lock
 		add    $0x8,%esp
-		mov    %ebx,data_159328
+		mov    %ebx,_AIL_locked
 	jump_101775:
 		pop    %edx
 		pop    %ecx
@@ -293,7 +293,7 @@ TIME_write_:
 		push   %esi
 		push   %edi
 		push   %ebp
-		push   $data_1600f4
+		push   $a_02u_02u_02u__
 		mov    ail_debug_file,%ebx
 		push   %ebx
 		call   ac_fprintf
@@ -346,7 +346,7 @@ GLOBAL_FUNC (ail_startup)	/* 1018a0 */
 		sub    $0x4,%esp
 		call   AILDEBUG_start_
 		xor    %edx,%edx
-		mov    $data_160118,%eax /* "AIL_DEBUG" */
+		mov    $aAil_debug,%eax /* "AIL_DEBUG" */
 		mov    %edx,AIL_debug
 		mov    %edx,AIL_sys_debug
 		call   ac_getenv
@@ -356,13 +356,13 @@ GLOBAL_FUNC (ail_startup)	/* 1018a0 */
 		call   AIL_API_startup
 		jmp    jump_101a38
 	jump_1018d4:
-		mov    $data_160124,%eax /* "AIL_SYS_DEBUG" */
+		mov    $aAil_sys_debug,%eax /* "AIL_SYS_DEBUG" */
 		call   ac_getenv
 		test   %eax,%eax
 		je     jump_1018ec
 		movl   $0x1,AIL_sys_debug
 	jump_1018ec:
-		mov    $data_160134,%edx
+		mov    $aOpenFlags_WpT,%edx
 		mov    %ebx,%eax
 		call   ac_dos_fopen
 		mov    %eax,ail_debug_file
@@ -405,26 +405,26 @@ GLOBAL_FUNC (ail_startup)	/* 1018a0 */
 		jne    jump_101941
 	jump_101959:
 		pop    %edi
-		push   $data_160138
+		push   $aHorizLn
 		mov    ail_debug_file,%esi
 		xor    %ah,%ah
 		push   %esi
 		mov    %ah,data_1e8fdc
 		call   ac_fprintf
 		add    $0x8,%esp
-		push   $data_16018c
-		push   $data_160194
+		push   $aAilVarsion
+		push   $aAilFullName
 		mov    ail_debug_file,%edi
 		push   %edi
 		call   ac_fprintf
 		add    $0xc,%esp
 		push   $data_1e8fc4
-		push   $data_1601dc
+		push   $aAilStartTime
 		mov    ail_debug_file,%ebp
 		push   %ebp
 		call   ac_fprintf
 		add    $0xc,%esp
-		push   $data_1601ec
+		push   $aHorizLn2
 		mov    ail_debug_file,%eax
 		push   %eax
 		call   ac_fprintf
@@ -452,7 +452,7 @@ GLOBAL_FUNC (ail_startup)	/* 1018a0 */
 		mov    %ebp,AIL_debug
 		mov    %ebp,AIL_indent
 		call   TIME_write_
-		push   $data_160240
+		push   $aAil_startup
 		mov    %ebx,AIL_indent
 		mov    ail_debug_file,%ebx
 		push   %ebx
@@ -496,7 +496,7 @@ GLOBAL_FUNC (ail_shutdown)	/* 101a40 */
 	jump_101a82:
 		test   %eax,%eax
 		je     jump_101a9a
-		push   $data_160250
+		push   $aAil_shutdown
 		mov    ail_debug_file,%edi
 		push   %edi
 		call   ac_fprintf
@@ -557,7 +557,7 @@ GLOBAL_FUNC (AIL_set_preference)	/* 101ae0 */
 		mov    0x18(%esp),%ebp
 		push   %ebp
 		push   %ebx
-		push   $data_160260
+		push   $aAil_set_prefer
 		mov    ail_debug_file,%eax
 		push   %eax
 		call   ac_fprintf
@@ -668,7 +668,7 @@ GLOBAL_FUNC (ail_get_real_vect)	/* 101c20 */
 		test   %eax,%eax
 		je     jump_101c80
 		push   %ebx
-		push   $data_16028c
+		push   $aAil_get_real_v
 		mov    ail_debug_file,%ebp
 		push   %ebp
 		call   ac_fprintf
@@ -766,7 +766,7 @@ GLOBAL_FUNC (ail_set_real_vect)	/* 101d30 */
 		push   %edi
 		mov    0x14(%esp),%ebp
 		push   %ebp
-		push   $data_1602b8
+		push   $aAil_set_real_v
 		mov    ail_debug_file,%eax
 		push   %eax
 		call   ac_fprintf
@@ -819,7 +819,7 @@ GLOBAL_FUNC (AIL_restore_USE16_ISR)
 		je     jump_101ec0
 		mov    0x10(%esp),%edi
 		push   %edi
-		push   $data_1602f8
+		push   $aAil_restore_us
 		mov    ail_debug_file,%ebp
 		push   %ebp
 		call   ac_fprintf
@@ -893,7 +893,7 @@ GLOBAL_FUNC (AIL_call_driver)	/* 101f00 */
 		push   %eax
 		mov    0x20(%esp),%edx
 		push   %edx
-		push   $data_160314
+		push   $aAil_call_drive
 		mov    ail_debug_file,%ecx
 		push   %ecx
 		call   ac_fprintf
@@ -996,7 +996,7 @@ GLOBAL_FUNC (AIL_delay)	/* 102030 */
 		je     jump_102090
 		mov    0x10(%esp),%edi
 		push   %edi
-		push   $data_16033c
+		push   $aAil_delayD
 		mov    ail_debug_file,%ebp
 		push   %ebp
 		call   ac_fprintf
@@ -1056,7 +1056,7 @@ GLOBAL_FUNC (AIL_read_INI)	/* 1020c0 */
 		je     jump_102125
 		push   %esi
 		push   %ebx
-		push   $data_16034c
+		push   $aAil_api_read_i
 		mov    ail_debug_file,%eax
 		push   %eax
 		call   ac_fprintf
@@ -1107,7 +1107,7 @@ GLOBAL_FUNC (AIL_read_INI)	/* 1020c0 */
 	jump_1021b5:
 		lea    0x80(%ebx),%eax
 		push   %eax
-		push   $data_160368
+		push   $aAilDriverS
 		mov    ail_debug_file,%edx
 		push   %edx
 		call   ac_fprintf
@@ -1140,7 +1140,7 @@ GLOBAL_FUNC (AIL_read_INI)	/* 1020c0 */
 		jb     jump_102207
 	jump_102225:
 		push   %ebx
-		push   $data_160378
+		push   $aAilDeviceS
 		mov    ail_debug_file,%edx
 		push   %edx
 		call   ac_fprintf
@@ -1172,7 +1172,7 @@ GLOBAL_FUNC (AIL_read_INI)	/* 1020c0 */
 	jump_102285:
 		movswl 0x100(%ebx),%eax
 		push   %eax
-		push   $data_160388
+		push   $aAilIoX
 		mov    ail_debug_file,%edx
 		push   %edx
 		call   ac_fprintf
@@ -1206,7 +1206,7 @@ GLOBAL_FUNC (AIL_read_INI)	/* 1020c0 */
 	jump_1022f5:
 		movswl 0x102(%ebx),%eax
 		push   %eax
-		push   $data_160398
+		push   $aAilIrqD
 		mov    ail_debug_file,%edx
 		push   %edx
 		call   ac_fprintf
@@ -1240,7 +1240,7 @@ GLOBAL_FUNC (AIL_read_INI)	/* 1020c0 */
 	jump_102365:
 		movswl 0x104(%ebx),%eax
 		push   %eax
-		push   $data_1603a8
+		push   $aAilDma_8D
 		mov    ail_debug_file,%edx
 		push   %edx
 		call   ac_fprintf
@@ -1274,7 +1274,7 @@ GLOBAL_FUNC (AIL_read_INI)	/* 1020c0 */
 	jump_1023d5:
 		movswl 0x106(%ebx),%eax
 		push   %eax
-		push   $data_1603b8
+		push   $aAilDma_16D
 		mov    ail_debug_file,%edx
 		push   %edx
 		jmp    jump_102472
@@ -1315,7 +1315,7 @@ GLOBAL_FUNC (AIL_read_INI)	/* 1020c0 */
 		jb     jump_102447
 	jump_102466:
 		push   %esi
-		push   $data_1603c8
+		push   $aAilResultU
 		mov    ail_debug_file,%eax
 		push   %eax
 	jump_102472:
@@ -1365,7 +1365,7 @@ GLOBAL_FUNC (AIL_register_timer)	/* 102490 */
 		test   %eax,%eax
 		je     jump_1024f0
 		push   %ebx
-		push   $data_1603d8
+		push   $aAil_register_t
 		mov    ail_debug_file,%ebp
 		push   %ebp
 		call   ac_fprintf
@@ -1413,7 +1413,7 @@ GLOBAL_FUNC (AIL_register_timer)	/* 102490 */
 		jb     jump_102557
 	jump_102575:
 		push   %ebx
-		push   $data_1603c8
+		push   $aAilResultU
 		mov    ail_debug_file,%edx
 		push   %edx
 		call   ac_fprintf
@@ -1464,7 +1464,7 @@ GLOBAL_FUNC (AIL_set_timer_user)	/* 1025a0 */
 		mov    0x18(%esp),%ebp
 		push   %ebp
 		push   %ebx
-		push   $data_1603f4
+		push   $aAil_set_time_1
 		mov    ail_debug_file,%eax
 		push   %eax
 		call   ac_fprintf
@@ -1514,7 +1514,7 @@ GLOBAL_FUNC (AIL_set_timer_user)	/* 1025a0 */
 		jb     jump_102677
 	jump_102696:
 		push   %ebx
-		push   $data_1603c8
+		push   $aAilResultU
 		mov    ail_debug_file,%edi
 		push   %edi
 		call   ac_fprintf
@@ -1565,7 +1565,7 @@ GLOBAL_FUNC (AIL_set_timer_period)	/* 1026c0 */
 		push   %edi
 		mov    0x14(%esp),%ebp
 		push   %ebp
-		push   $data_160410
+		push   $aAil_set_timer_
 		mov    ail_debug_file,%eax
 		push   %eax
 		call   ac_fprintf
@@ -1620,7 +1620,7 @@ GLOBAL_FUNC (AIL_set_timer_frequency)	/* 102750 */
 		push   %edi
 		mov    0x14(%esp),%ebp
 		push   %ebp
-		push   $data_160430
+		push   $aAil_set_time_0
 		mov    ail_debug_file,%eax
 		push   %eax
 		call   ac_fprintf
@@ -1671,7 +1671,7 @@ GLOBAL_FUNC (AIL_interrupt_divisor)	/* 102870 */
 	jump_1028b3:
 		test   %eax,%eax
 		je     jump_1028cb
-		push   $data_160470
+		push   $aAil_interrupt_
 		mov    ail_debug_file,%edi
 		push   %edi
 		call   ac_fprintf
@@ -1718,7 +1718,7 @@ GLOBAL_FUNC (AIL_interrupt_divisor)	/* 102870 */
 		jb     jump_102937
 	jump_102956:
 		push   %ebx
-		push   $data_1603c8
+		push   $aAilResultU
 		mov    ail_debug_file,%eax
 		push   %eax
 		call   ac_fprintf
@@ -1766,7 +1766,7 @@ GLOBAL_FUNC (AIL_start_timer)	/* 102980 */
 		je     jump_1029e0
 		mov    0x10(%esp),%edi
 		push   %edi
-		push   $data_16048c
+		push   $aAil_start_time
 		mov    ail_debug_file,%ebp
 		push   %ebp
 		call   ac_fprintf
@@ -1817,7 +1817,7 @@ GLOBAL_FUNC (AIL_release_timer_handle)	/* 102b60 */
 		je     jump_102bc0
 		mov    0x10(%esp),%edi
 		push   %edi
-		push   $data_1604e8
+		push   $aAil_release_ti
 		mov    ail_debug_file,%ebp
 		push   %ebp
 		call   ac_fprintf
@@ -1865,7 +1865,7 @@ GLOBAL_FUNC (AIL_release_all_timers)	/* 102be0 */
 	jump_102c22:
 		test   %eax,%eax
 		je     jump_102c3a
-		push   $data_160508
+		push   $aAil_release_al
 		mov    ail_debug_file,%edi
 		push   %edi
 		call   ac_fprintf
@@ -1910,7 +1910,7 @@ GLOBAL_FUNC (AIL_get_IO_environment)	/* 102c50 */
 		test   %eax,%eax
 		je     jump_102cb0
 		push   %ebx
-		push   $data_160524
+		push   $aAil_get_io_env
 		mov    ail_debug_file,%ebp
 		push   %ebp
 		call   ac_fprintf
@@ -2009,7 +2009,7 @@ GLOBAL_FUNC (AIL_install_driver)	/* 102d60 */
 		mov    0x18(%esp),%ebp
 		push   %ebp
 		push   %ebx
-		push   $data_160544
+		push   $aAil_install_dr
 		mov    ail_debug_file,%eax
 		push   %eax
 		call   ac_fprintf
@@ -2108,7 +2108,7 @@ GLOBAL_FUNC (AIL_uninstall_driver)	/* 102e80 */
 		je     jump_102ee0
 		mov    0x10(%esp),%edi
 		push   %edi
-		push   $data_160564
+		push   $aAil_uninstal_1
 		mov    ail_debug_file,%ebp
 		push   %ebp
 		call   ac_fprintf
@@ -2159,7 +2159,7 @@ GLOBAL_FUNC (AIL_install_DIG_INI)	/* 102f00 */
 		test   %eax,%eax
 		je     jump_102f60
 		push   %ebx
-		push   $data_160580
+		push   $aAil_install_di
 		mov    ail_debug_file,%ebp
 		push   %ebp
 		call   ac_fprintf
@@ -2258,7 +2258,7 @@ GLOBAL_FUNC (AIL_install_DIG_driver_file)	/* 103010 */
 		mov    0x18(%esp),%ebp
 		push   %ebp
 		push   %ebx
-		push   $data_16059c
+		push   $aAil_install__0
 		mov    ail_debug_file,%eax
 		push   %eax
 		call   ac_fprintf
@@ -2357,7 +2357,7 @@ GLOBAL_FUNC (AIL_uninstall_DIG_driver)
 		je     jump_103190
 		mov    0x10(%esp),%edi
 		push   %edi
-		push   $data_1605c4
+		push   $aAil_uninstall_
 		mov    ail_debug_file,%ebp
 		push   %ebp
 		call   ac_fprintf
@@ -2408,7 +2408,7 @@ GLOBAL_FUNC (AIL_allocate_sample_handle)	/* 1031b0 */
 		test   %eax,%eax
 		je     jump_103210
 		push   %ebx
-		push   $data_1605e4
+		push   $aAil_allocate_s
 		mov    ail_debug_file,%ebp
 		push   %ebp
 		call   ac_fprintf
@@ -2504,7 +2504,7 @@ GLOBAL_FUNC (AIL_release_sample_handle)
 		je     jump_103440
 		mov    0x10(%esp),%edi
 		push   %edi
-		push   $data_160630
+		push   $aAil_release_sa
 		mov    ail_debug_file,%ebp
 		push   %ebp
 		call   ac_fprintf
@@ -2555,7 +2555,7 @@ GLOBAL_FUNC (AIL_init_sample)	/* 103460 */
 		je     jump_1034c0
 		mov    0x10(%esp),%edi
 		push   %edi
-		push   $data_160654
+		push   $aAil_init_sampl
 		mov    ail_debug_file,%ebp
 		push   %ebp
 		call   ac_fprintf
@@ -2611,7 +2611,7 @@ GLOBAL_FUNC (AIL_set_sample_file)	/* 1034e0 */
 		mov    0x1c(%esp),%eax
 		push   %eax
 		push   %ebx
-		push   $data_16066c
+		push   $aAil_set_sample
 		mov    ail_debug_file,%edx
 		push   %edx
 		call   ac_fprintf
@@ -2716,7 +2716,7 @@ GLOBAL_FUNC (AIL_set_sample_address)	/* 103600 */
 		push   %ebp
 		mov    0x1c(%esp),%eax
 		push   %eax
-		push   $data_160690
+		push   $aAil_set_samp_5
 		mov    ail_debug_file,%edx
 		push   %edx
 		call   ac_fprintf
@@ -2777,7 +2777,7 @@ GLOBAL_FUNC (AIL_set_sample_type)	/* 1036a0 */
 		push   %ebp
 		mov    0x1c(%esp),%eax
 		push   %eax
-		push   $data_1606b8
+		push   $aAil_set_samp_6
 		mov    ail_debug_file,%edx
 		push   %edx
 		call   ac_fprintf
@@ -2833,7 +2833,7 @@ GLOBAL_FUNC (AIL_start_sample)	/* 103740 */
 		je     jump_1037a0
 		mov    0x10(%esp),%edi
 		push   %edi
-		push   $data_1606dc
+		push   $aAil_start_samp
 		mov    ail_debug_file,%ebp
 		push   %ebp
 		call   ac_fprintf
@@ -2884,7 +2884,7 @@ GLOBAL_FUNC (AIL_end_sample)
 		je     jump_103920
 		mov    0x10(%esp),%edi
 		push   %edi
-		push   $data_160728
+		push   $aAil_end_sample
 		mov    ail_debug_file,%ebp
 		push   %ebp
 		call   ac_fprintf
@@ -2937,7 +2937,7 @@ GLOBAL_FUNC (AIL_set_sample_playback_rate)	/* 103940 */
 		push   %edi
 		mov    0x14(%esp),%ebp
 		push   %ebp
-		push   $data_160740
+		push   $aAil_set_samp_0
 		mov    ail_debug_file,%eax
 		push   %eax
 		call   ac_fprintf
@@ -2992,7 +2992,7 @@ GLOBAL_FUNC (AIL_set_sample_volume)	/* 1039d0 */
 		push   %edi
 		mov    0x14(%esp),%ebp
 		push   %ebp
-		push   $data_160768
+		push   $aAil_set_samp_1
 		mov    ail_debug_file,%eax
 		push   %eax
 		call   ac_fprintf
@@ -3047,7 +3047,7 @@ GLOBAL_FUNC (AIL_set_sample_pan)	/* 103a60 */
 		push   %edi
 		mov    0x14(%esp),%ebp
 		push   %ebp
-		push   $data_160788
+		push   $aAil_set_samp_2
 		mov    ail_debug_file,%eax
 		push   %eax
 		call   ac_fprintf
@@ -3102,7 +3102,7 @@ GLOBAL_FUNC (ail_set_sample_loop_count)	/* 103af0 */
 		push   %edi
 		mov    0x14(%esp),%ebp
 		push   %ebp
-		push   $data_1607a8
+		push   $aAil_set_samp_3
 		mov    ail_debug_file,%eax
 		push   %eax
 		call   ac_fprintf
@@ -3155,7 +3155,7 @@ GLOBAL_FUNC (AIL_sample_status)	/* 103b80 */
 		test   %eax,%eax
 		je     jump_103be0
 		push   %ebx
-		push   $data_1607cc
+		push   $aAil_sample_sta
 		mov    ail_debug_file,%ebp
 		push   %ebp
 		call   ac_fprintf
@@ -3203,7 +3203,7 @@ GLOBAL_FUNC (AIL_sample_status)	/* 103b80 */
 		jb     jump_103c47
 	jump_103c65:
 		push   %ebx
-		push   $data_1603c8
+		push   $aAilResultU
 		mov    ail_debug_file,%edx
 		push   %edx
 		call   ac_fprintf
@@ -3253,7 +3253,7 @@ GLOBAL_FUNC (ail_set_digital_master_volume)	/* 1040d0 */
 		push   %edi
 		mov    0x14(%esp),%ebp
 		push   %ebp
-		push   $data_16085c
+		push   $aAil_set_digita
 		mov    ail_debug_file,%eax
 		push   %eax
 		call   ac_fprintf
@@ -3311,7 +3311,7 @@ GLOBAL_FUNC (ail_minimum_sample_buffer_size)	/* 104390 */
 		mov    0x1c(%esp),%eax
 		push   %eax
 		push   %ebx
-		push   $data_1608d4
+		push   $aAil_minimum_sa
 		mov    ail_debug_file,%edx
 		push   %edx
 		call   ac_fprintf
@@ -3411,7 +3411,7 @@ GLOBAL_FUNC (AIL_sample_buffer_ready)	/* 1044b0 */
 		test   %eax,%eax
 		je     jump_104510
 		push   %ebx
-		push   $data_160900
+		push   $aAil_sample_buf
 		mov    ail_debug_file,%ebp
 		push   %ebp
 		call   ac_fprintf
@@ -3514,7 +3514,7 @@ GLOBAL_FUNC (AIL_load_sample_buffer)	/* 1045c0 */
 		push   %eax
 		mov    0x20(%esp),%edx
 		push   %edx
-		push   $data_160920
+		push   $aAil_load_sampl
 		mov    ail_debug_file,%ebx
 		push   %ebx
 		call   ac_fprintf
@@ -3575,7 +3575,7 @@ GLOBAL_FUNC (AIL_register_EOS_callback)
 		mov    0x18(%esp),%ebp
 		push   %ebp
 		push   %ebx
-		push   $data_1609dc
+		push   $aAil_register_e
 		mov    ail_debug_file,%eax
 		push   %eax
 		call   ac_fprintf
@@ -3679,7 +3679,7 @@ GLOBAL_FUNC (AIL_set_sample_user_data)	/* 104c80 */
 		push   %ebp
 		mov    0x1c(%esp),%eax
 		push   %eax
-		push   $data_160a2c
+		push   $aAil_set_samp_4
 		mov    ail_debug_file,%edx
 		push   %edx
 		call   ac_fprintf
@@ -3738,7 +3738,7 @@ GLOBAL_FUNC (ail_func_104d20)
 		mov    0x18(%esp),%ebp
 		push   %ebp
 		push   %ebx
-		push   $data_160a54
+		push   $aAil_sample_use
 		mov    ail_debug_file,%eax
 		push   %eax
 		call   ac_fprintf
@@ -3837,7 +3837,7 @@ GLOBAL_FUNC (ail_install_mdi_ini)	/* 104f50 */
 		test   %eax,%eax
 		je     jump_104fb0
 		push   %ebx
-		push   $data_160a94
+		push   $aAil_install_md
 		mov    ail_debug_file,%ebp
 		push   %ebp
 		call   ac_fprintf
@@ -3936,7 +3936,7 @@ GLOBAL_FUNC (ail_install_mdi_driver_file)	/* 105060 */
 		mov    0x18(%esp),%ebp
 		push   %ebp
 		push   %ebx
-		push   $data_160ab0
+		push   $aAil_install__1
 		mov    ail_debug_file,%eax
 		push   %eax
 		call   ac_fprintf
@@ -4035,7 +4035,7 @@ GLOBAL_FUNC (ail_uninstall_mdi_driver)	/* 105180 */
 		je     jump_1051e0
 		mov    0x10(%esp),%edi
 		push   %edi
-		push   $data_160ad8
+		push   $aAil_uninstal_0
 		mov    ail_debug_file,%ebp
 		push   %ebp
 		call   ac_fprintf
@@ -4086,7 +4086,7 @@ GLOBAL_FUNC (AIL_allocate_sequence_handle)	/* 105200 */
 		test   %eax,%eax
 		je     jump_105260
 		push   %ebx
-		push   $data_160af8
+		push   $aAil_allocate_0
 		mov    ail_debug_file,%ebp
 		push   %ebp
 		call   ac_fprintf
@@ -4187,7 +4187,7 @@ GLOBAL_FUNC (AIL_init_sequence)
 		mov    0x1c(%esp),%eax
 		push   %eax
 		push   %ebx
-		push   $data_160b40
+		push   $aAil_init_seque
 		mov    ail_debug_file,%edx
 		push   %edx
 		call   ac_fprintf
@@ -4287,7 +4287,7 @@ GLOBAL_FUNC (AIL_start_sequence)
 		je     jump_105510
 		mov    0x10(%esp),%edi
 		push   %edi
-		push   $data_160b64
+		push   $aAil_start_sequ
 		mov    ail_debug_file,%ebp
 		push   %ebp
 		call   ac_fprintf
@@ -4338,7 +4338,7 @@ GLOBAL_FUNC (AIL_stop_sequence)
 		je     jump_105590
 		mov    0x10(%esp),%edi
 		push   %edi
-		push   $data_160b80
+		push   $aAil_stop_seque
 		mov    ail_debug_file,%ebp
 		push   %ebp
 		call   ac_fprintf
@@ -4389,7 +4389,7 @@ GLOBAL_FUNC (AIL_resume_sequence)
 		je     jump_105610
 		mov    0x10(%esp),%edi
 		push   %edi
-		push   $data_160b9c
+		push   $aAil_resume_seq
 		mov    ail_debug_file,%ebp
 		push   %ebp
 		call   ac_fprintf
@@ -4440,7 +4440,7 @@ GLOBAL_FUNC (AIL_end_sequence)
 		je     jump_105690
 		mov    0x10(%esp),%edi
 		push   %edi
-		push   $data_160bb8
+		push   $aAil_end_sequen
 		mov    ail_debug_file,%ebp
 		push   %ebp
 		call   ac_fprintf
@@ -4496,7 +4496,7 @@ GLOBAL_FUNC (AIL_set_sequence_tempo)
 		push   %ebp
 		mov    0x1c(%esp),%eax
 		push   %eax
-		push   $data_160bd0
+		push   $aAil_set_sequen
 		mov    ail_debug_file,%edx
 		push   %edx
 		call   ac_fprintf
@@ -4557,7 +4557,7 @@ GLOBAL_FUNC (AIL_set_sequence_volume)
 		push   %ebp
 		mov    0x1c(%esp),%eax
 		push   %eax
-		push   $data_160bf4
+		push   $aAil_set_sequ_0
 		mov    ail_debug_file,%edx
 		push   %edx
 		call   ac_fprintf
@@ -4613,7 +4613,7 @@ GLOBAL_FUNC (AIL_sequence_status)
 		test   %eax,%eax
 		je     jump_1058e0
 		push   %ebx
-		push   $data_160c44
+		push   $aAil_sequence_s
 		mov    ail_debug_file,%ebp
 		push   %ebp
 		call   ac_fprintf
@@ -4661,7 +4661,7 @@ GLOBAL_FUNC (AIL_sequence_status)
 		jb     jump_105947
 	jump_105965:
 		push   %ebx
-		push   $data_1603c8
+		push   $aAilResultU
 		mov    ail_debug_file,%edx
 		push   %edx
 		call   ac_fprintf
@@ -4711,7 +4711,7 @@ GLOBAL_FUNC (AIL_set_XMIDI_master_volume)
 		push   %edi
 		mov    0x14(%esp),%ebp
 		push   %ebp
-		push   $data_160cb8
+		push   $aAil_set_xmidi_
 		mov    ail_debug_file,%eax
 		push   %eax
 		call   ac_fprintf
@@ -4764,7 +4764,7 @@ GLOBAL_FUNC (AIL_MDI_driver_type)
 		test   %eax,%eax
 		je     jump_105fe0
 		push   %ebx
-		push   $data_160d2c
+		push   $aAil_mdi_driver
 		mov    ail_debug_file,%ebp
 		push   %ebp
 		call   ac_fprintf
@@ -4860,7 +4860,7 @@ GLOBAL_FUNC (AIL_set_GTL_filename_prefix)	/* 106090 */
 		je     jump_1060f0
 		mov    0x10(%esp),%edi
 		push   %edi
-		push   $data_160d48
+		push   $aAil_set_gtl_fi
 		mov    ail_debug_file,%ebp
 		push   %ebp
 		call   ac_fprintf
@@ -4916,7 +4916,7 @@ GLOBAL_FUNC (AIL_sequence_position)
 		push   %ebx
 		mov    0x1c(%esp),%eax
 		push   %eax
-		push   $data_160e54
+		push   $aAil_sequence_p
 		mov    ail_debug_file,%edx
 		push   %edx
 		call   ac_fprintf
@@ -4970,7 +4970,7 @@ GLOBAL_FUNC (AIL_sequence_position)
 		mov    (%esi),%eax
 		inc    %eax
 		push   %eax
-		push   $data_160e7c
+		push   $aResultDD
 		mov    ail_debug_file,%edx
 		push   %edx
 		call   ac_fprintf
@@ -5018,7 +5018,7 @@ GLOBAL_FUNC (AIL_branch_index)
 		push   %edi
 		mov    0x14(%esp),%ebp
 		push   %ebp
-		push   $data_160e8c
+		push   $aAil_branch_ind
 		mov    ail_debug_file,%eax
 		push   %eax
 		call   ac_fprintf
@@ -5074,7 +5074,7 @@ GLOBAL_FUNC (AIL_register_trigger_callback)
 		mov    0x18(%esp),%ebp
 		push   %ebp
 		push   %ebx
-		push   $data_160ed4
+		push   $aAil_register_0
 		mov    ail_debug_file,%eax
 		push   %eax
 		call   ac_fprintf
@@ -5173,7 +5173,7 @@ GLOBAL_FUNC (AIL_lock_channel)
 		test   %eax,%eax
 		je     jump_107300
 		push   %ebx
-		push   $data_161018
+		push   $aAil_lock_chann
 		mov    ail_debug_file,%ebp
 		push   %ebp
 		call   ac_fprintf
@@ -5271,7 +5271,7 @@ GLOBAL_FUNC (AIL_release_channel)
 		push   %edi
 		mov    0x14(%esp),%ebp
 		push   %ebp
-		push   $data_161030
+		push   $aAil_release_ch
 		mov    ail_debug_file,%eax
 		push   %eax
 		call   ac_fprintf
@@ -5329,7 +5329,7 @@ GLOBAL_FUNC (AIL_map_sequence_channel)
 		push   %ebp
 		mov    0x1c(%esp),%eax
 		push   %eax
-		push   $data_161050
+		push   $aAil_map_sequen
 		mov    ail_debug_file,%edx
 		push   %edx
 		call   ac_fprintf
@@ -5394,7 +5394,7 @@ GLOBAL_FUNC (AIL_send_channel_voice_message)
 		push   %edx
 		mov    0x24(%esp),%ebx
 		push   %ebx
-		push   $data_16109c
+		push   $aAil_send_chann
 		mov    ail_debug_file,%ecx
 		push   %ecx
 		call   ac_fprintf
@@ -5428,14 +5428,14 @@ AILDEBUG_end_:
 		push   %ebx
 		push   %ecx
 		push   %edx
-		cmpl   $0x0,data_159328
+		cmpl   $0x0,_AIL_locked
 		je     jump_107916
 		push   $AILDEBUG_end_
 		push   $AILDEBUG_start_
 		xor    %ebx,%ebx
 		call   VMM_unlock_range
 		add    $0x8,%esp
-		mov    %ebx,data_159328
+		mov    %ebx,_AIL_locked
 	jump_107916:
 		pop    %edx
 		pop    %ecx
@@ -6383,7 +6383,7 @@ ASC_val:
 		xor    %eax,%eax
 		xor    %ebx,%ebx
 		mov    (%ecx),%al
-		mov    data_161820(%edx),%bl
+		mov    a0123456789abcdef(%edx),%bl
 		call   ac_toupper
 		cmp    %ebx,%eax
 		jne    jump_11198d
@@ -6450,7 +6450,7 @@ AIL_API_read_INI:
 		mov    $0xffffffff,%edx
 		lea    0x100(%esp),%eax
 		call   ac_memset
-		mov    $data_161834,%edx
+		mov    $ascRt_0,%edx
 		mov    %ecx,%eax
 		call   ac_dos_fopen
 		mov    %eax,0x168(%esp)
@@ -6567,7 +6567,7 @@ AIL_API_read_INI:
 		cmpb   $0x3b,(%esi)
 		je     jump_111a33
 		mov    $0x7,%ebx
-		mov    $data_161838,%edx
+		mov    $ascDriver,%edx
 		mov    %esi,%eax
 		call   ac_strnicmp
 		test   %eax,%eax
@@ -6591,7 +6591,7 @@ AIL_API_read_INI:
 		jmp    jump_111a33
 	jump_111baf:
 		mov    $0x7,%ebx
-		mov    $data_161840,%edx
+		mov    $ascDevice,%edx
 		mov    %esi,%eax
 		call   ac_strnicmp
 		test   %eax,%eax
@@ -6615,7 +6615,7 @@ AIL_API_read_INI:
 		jmp    jump_111a33
 	jump_111be7:
 		mov    $0x8,%ebx
-		mov    $data_161848,%edx
+		mov    $ascIo_addr,%edx
 		mov    %esi,%eax
 		call   ac_strnicmp
 		test   %eax,%eax
@@ -6629,7 +6629,7 @@ AIL_API_read_INI:
 		jmp    jump_111a33
 	jump_111c15:
 		mov    $0x4,%ebx
-		mov    $data_161850,%edx
+		mov    $ascIrq,%edx
 		mov    %esi,%eax
 		call   ac_strnicmp
 		test   %eax,%eax
@@ -6643,7 +6643,7 @@ AIL_API_read_INI:
 		jmp    jump_111a33
 	jump_111c43:
 		mov    $0xa,%ebx
-		mov    $data_161854,%edx
+		mov    $aDma_8_bit,%edx
 		mov    %esi,%eax
 		call   ac_strnicmp
 		test   %eax,%eax
@@ -6657,7 +6657,7 @@ AIL_API_read_INI:
 		jmp    jump_111a33
 	jump_111c71:
 		mov    $0xb,%ebx
-		mov    $data_161860,%edx
+		mov    $aDma_16_bit,%edx
 		mov    %esi,%eax
 		call   ac_strnicmp
 		test   %eax,%eax
@@ -6693,7 +6693,7 @@ AIL_API_read_INI:
 	jump_111cd4:
 		mov    $0x5,%ecx
 		mov    $data_1ed6f0,%edi
-		mov    $data_16186c,%esi
+		mov    $aCorrupted_iniF,%esi
 		rep movsl %ds:(%esi),%es:(%edi)
 		movsb  %ds:(%esi),%es:(%edi)
 		xor    %ecx,%ecx
@@ -6752,7 +6752,7 @@ AIL_API_install_driver:	/* 111d40 */
 		jne    jump_111d7c
 		mov    $0xa,%ecx
 		mov    $data_1ed6f0,%edi
-		mov    $data_161884,%esi
+		mov    $aInsufficientMe,%esi
 		rep movsl %ds:(%esi),%es:(%edi)
 		movsw  %ds:(%esi),%es:(%edi)
 		movsb  %ds:(%esi),%es:(%edi)
@@ -6776,7 +6776,7 @@ AIL_API_install_driver:	/* 111d40 */
 		push   $0x2c
 		mov    $data_1ed6f0,%edi
 		mov    %ebp,%edx
-		mov    $data_1618b0,%esi
+		mov    $aInsufficientLo,%esi
 		push   %edx
 		rep movsl %ds:(%esi),%es:(%edi)
 		movsb  %ds:(%esi),%es:(%edi)
@@ -6797,7 +6797,7 @@ AIL_API_install_driver:	/* 111d40 */
 		mov    %ebp,%eax
 		mov    %ebp,%ebx
 		mov    0x8(%eax),%eax
-		mov    $data_1618cc,%edx
+		mov    $aAil3dig,%edx
 		mov    %eax,0x10(%ebx)
 		mov    $0x7,%ebx
 		call   ac_strnicmp
@@ -6809,14 +6809,14 @@ AIL_API_install_driver:	/* 111d40 */
 	jump_111dfa:
 		mov    %ebp,%eax
 		mov    $0x7,%ebx
-		mov    $data_1618d4,%edx
+		mov    $aAil3mdi,%edx
 		mov    0x10(%eax),%eax
 		call   ac_strnicmp
 		test   %eax,%eax
 		je     jump_111e52
 		mov    $0x5,%ecx
 		mov    $data_1ed6f0,%edi
-		mov    $data_1618dc,%esi
+		mov    $aInvalidDriverT,%esi
 		mov    %ebp,%eax
 		rep movsl %ds:(%esi),%es:(%edi)
 		movsb  %ds:(%esi),%es:(%edi)
@@ -6863,7 +6863,7 @@ AIL_API_install_driver:	/* 111d40 */
 		jne    jump_111ec2
 		mov    $0x5,%ecx
 		mov    $data_1ed6f0,%edi
-		mov    $data_1618f4,%esi
+		mov    $aOutOfDriverHan,%esi
 		rep movsl %ds:(%esi),%es:(%edi)
 		movsw  %ds:(%esi),%es:(%edi)
 		movsb  %ds:(%esi),%es:(%edi)
@@ -6927,7 +6927,7 @@ AIL_API_install_driver:	/* 111d40 */
 		jne    jump_111f9d
 		mov    $0x5,%ecx
 		mov    $data_1ed6f0,%edi
-		mov    $data_16190c,%esi
+		mov    $aOutOfTimerHand,%esi
 		rep movsl %ds:(%esi),%es:(%edi)
 		movsw  %ds:(%esi),%es:(%edi)
 		mov    0x10(%ebp),%eax
@@ -8133,7 +8133,7 @@ func_112dc1:
 		jle    jump_112e52
 		mov    $0xa,%ecx
 		mov    $data_1ed6f0,%edi
-		mov    $data_161924,%esi
+		mov    $aMinimumDmaBuff,%esi
 		xor    %eax,%eax
 		rep movsl %ds:(%esi),%es:(%edi)
 		movsw  %ds:(%esi),%es:(%edi)
@@ -8428,7 +8428,7 @@ GLOBAL_FUNC (SS_construct_DIG_driver)	/* 113110 */
 		jne    jump_113147
 		mov    $0x9,%ecx
 		mov    $data_1ed6f0,%edi
-		mov    $data_161950,%esi
+		mov    $aCouldNotAllo_0,%esi
 		rep movsl %ds:(%esi),%es:(%edi)
 		movsw  %ds:(%esi),%es:(%edi)
 		jmp    jump_113703
@@ -8441,7 +8441,7 @@ GLOBAL_FUNC (SS_construct_DIG_driver)	/* 113110 */
 		je     jump_113183
 		mov    $0x5,%ecx
 		mov    $data_1ed6f0,%edi
-		mov    $data_161978,%esi
+		mov    $a_digDriverRequ,%esi
 		rep movsl %ds:(%esi),%es:(%edi)
 		movsw  %ds:(%esi),%es:(%edi)
 		push   $0x8c
@@ -8600,7 +8600,7 @@ GLOBAL_FUNC (SS_construct_DIG_driver)	/* 113110 */
 		mov    $0x8,%ecx
 		push   $0x8c
 		mov    $data_1ed6f0,%edi
-		mov    $data_161990,%esi
+		mov    $aDigitalSoundHa,%esi
 		push   %ebp
 		rep movsl %ds:(%esi),%es:(%edi)
 		movsw  %ds:(%esi),%es:(%edi)
@@ -8648,7 +8648,7 @@ GLOBAL_FUNC (SS_construct_DIG_driver)	/* 113110 */
 		mov    $0x8,%ecx
 		push   $0x8c
 		mov    $data_1ed6f0,%edi
-		mov    $data_1619b4,%esi
+		mov    $aCouldNotAllo_1,%esi
 		push   %ebp
 		rep movsl %ds:(%esi),%es:(%edi)
 		call   MEM_free_lock
@@ -8744,7 +8744,7 @@ GLOBAL_FUNC (SS_construct_DIG_driver)	/* 113110 */
 		jne    jump_11352b
 		mov    $0x8,%ecx
 		mov    $data_1ed6f0,%edi
-		mov    $data_1619d4,%esi
+		mov    $aCouldNotAllo_2,%esi
 		mov    0x50(%esp),%eax
 		rep movsl %ds:(%esi),%es:(%edi)
 		movsb  %ds:(%esi),%es:(%edi)
@@ -8795,7 +8795,7 @@ GLOBAL_FUNC (SS_construct_DIG_driver)	/* 113110 */
 		jne    jump_1135d0
 		mov    $0x9,%ecx
 		mov    $data_1ed6f0,%edi
-		mov    $data_1619f8,%esi
+		mov    $aCouldNotAllo_3,%esi
 		mov    0x50(%esp),%eax
 		rep movsl %ds:(%esi),%es:(%edi)
 		movsw  %ds:(%esi),%es:(%edi)
@@ -8865,7 +8865,7 @@ GLOBAL_FUNC (SS_construct_DIG_driver)	/* 113110 */
 		jne    jump_1136a9
 		mov    $0x5,%ecx
 		mov    $data_1ed6f0,%edi
-		mov    $data_161a20,%esi
+		mov    $aOutOfTimerHa_0,%esi
 		mov    0x50(%esp),%eax
 		rep movsl %ds:(%esi),%es:(%edi)
 		movsw  %ds:(%esi),%es:(%edi)
@@ -8968,7 +8968,7 @@ AIL_API_install_DIG_driver_file:	/* 113710 */
 		mov    0xa0(%esp),%edx
 		push   %edx
 		push   $EXPORT_SYMBOL(SoundDriverPath)
-		push   $data_161a38
+		push   $ascSS_3
 		lea    0xc(%esp),%eax
 		push   %eax
 		call   ac_sprintf
@@ -8983,7 +8983,7 @@ AIL_API_install_DIG_driver_file:	/* 113710 */
 		jne    jump_113763
 		mov    $0x5,%ecx
 		mov    $data_1ed6f0,%edi
-		mov    $data_161a40,%esi
+		mov    $aDriverFileNotF,%esi
 		rep movsl %ds:(%esi),%es:(%edi)
 		movsw  %ds:(%esi),%es:(%edi)
 		movsb  %ds:(%esi),%es:(%edi)
@@ -9045,7 +9045,7 @@ AIL_API_install_DIG_INI:	/* 113800 */
 		jne    jump_113837
 		mov    $0x7,%ecx
 		mov    $data_1ed6f0,%edi
-		mov    $data_161a58,%esi
+		mov    $aUnableToOpenFi,%esi
 		mov    $0x1,%eax
 		rep movsl %ds:(%esi),%es:(%edi)
 		movsb  %ds:(%esi),%es:(%edi)
@@ -9112,7 +9112,7 @@ AIL_API_allocate_sample_handle:	/* 1138c0 */
 		jne    jump_113910
 		mov    $0x5,%ecx
 		mov    $data_1ed6f0,%edi
-		mov    $data_161a78,%esi
+		mov    $aOutOfSampleHan,%esi
 		rep movsl %ds:(%esi),%es:(%edi)
 		movsw  %ds:(%esi),%es:(%edi)
 		movsb  %ds:(%esi),%es:(%edi)
@@ -10002,7 +10002,7 @@ AIL_process_WAV_image:
 		push   %edi
 		mov    0x14(%esp),%edi
 		mov    0x10(%esp),%esi
-		mov    $data_161a90,%ecx
+		mov    $ascFmt,%ecx
 		add    $0xc,%esi
 	jump_1142c3:
 		mov    $0x4,%ebx
@@ -10063,7 +10063,7 @@ AIL_process_WAV_image:
 		add    $0xc,%esi
 		mov    $0x4,%ecx
 	jump_114355:
-		mov    $data_161a98,%edx
+		mov    $ascData,%edx
 		mov    %ecx,%ebx
 		mov    %esi,%eax
 		call   ac_strnicmp
@@ -10121,20 +10121,20 @@ AIL_API_allocate_file_sample:
 		mov    0x10(%esp),%esi
 		mov    0x14(%esp),%ecx
 		mov    $0x8,%ebx
-		mov    $data_161aa0,%edx
+		mov    $ascCreative,%edx
 		mov    %ecx,%eax
 		call   ac_strnicmp
 		test   %eax,%eax
 		je     jump_114554
 		mov    $0x4,%ebx
-		mov    $data_161aac,%edx
+		mov    $ascWave,%edx
 		lea    0x8(%ecx),%eax
 		call   ac_strnicmp
 		test   %eax,%eax
 		je     jump_11454f
 		mov    $0x9,%ecx
 		mov    $data_1ed6f0,%edi
-		mov    $data_161afc,%esi
+		mov    $aUnrecognizedDi,%esi
 		xor    %eax,%eax
 		rep movsl %ds:(%esi),%es:(%edi)
 		movsw  %ds:(%esi),%es:(%edi)
@@ -10178,7 +10178,7 @@ AIL_API_allocate_file_sample:
 		jne    jump_1145d3
 		mov    $0x7,%ecx
 		mov    $data_1ed6f0,%edi
-		mov    $data_161b24,%esi
+		mov    $aInvalidOrMissi,%esi
 		xor    %eax,%eax
 		rep movsl %ds:(%esi),%es:(%edi)
 		movsw  %ds:(%esi),%es:(%edi)
@@ -10229,7 +10229,7 @@ AILXMIDI_start_:
 		call   VMM_lock_range
 		add    $0x8,%esp
 		push   $0x80
-		push   $data_15aadc
+		push   $aSample
 		call   AIL_vmm_lock
 		add    $0x8,%esp
 		push   $0x4
@@ -10508,14 +10508,14 @@ _XMI_find_sequence:	/* 0x114960 */
 		xor    %ecx,%ecx
 		mov    $0x4,%ebp
 	jump_114973:
-		mov    $data_161b44,%edx
+		mov    $ascForm,%edx
 		add    %ecx,%esi
 		mov    %ebp,%ebx
 		mov    %esi,%eax
 		call   ac_strncmp
 		test   %eax,%eax
 		je     jump_11499d
-		mov    $data_161b4c,%edx
+		mov    $ascCat,%edx
 		mov    %ebp,%ebx
 		mov    %esi,%eax
 		call   ac_strncmp
@@ -10528,13 +10528,13 @@ _XMI_find_sequence:	/* 0x114960 */
 		call   _XMI_swap
 		add    $0x4,%esp
 		lea    0x8(%eax),%ecx
-		mov    $data_161b54,%edx
+		mov    $ascXmid,%edx
 		lea    0x8(%esi),%eax
 		call   ac_strncmp
 		test   %eax,%eax
 		jne    jump_114973
 		mov    $0x4,%ebx
-		mov    $data_161b44,%edx
+		mov    $ascForm,%edx
 		mov    %esi,%eax
 		call   ac_strncmp
 		test   %eax,%eax
@@ -10554,7 +10554,7 @@ _XMI_find_sequence:	/* 0x114960 */
 		jae    jump_114a21
 	jump_1149e9:
 		mov    $0x4,%ebx
-		mov    $data_161b54,%edx
+		mov    $ascXmid,%edx
 		lea    0x8(%esi),%eax
 		call   ac_strncmp
 		test   %eax,%eax
@@ -12006,7 +12006,7 @@ _XMI_serve:	/* 0x1156A0 */
 		mov    $0x7,%ecx
 		mov    $data_1ed6f0,%edi
 		mov    data_1ed8f8,%ebx
-		mov    $data_161b5c,%esi
+		mov    $aInternalNoteQu,%esi
 		push   %ebx
 		rep movsl %ds:(%esi),%es:(%edi)
 		movsw  %ds:(%esi),%es:(%edi)
@@ -12337,7 +12337,7 @@ _XMI_construct_MDI_driver:	/* 0x115EA0 */
 		jne    jump_115ed9
 		mov    $0x9,%ecx
 		mov    $data_1ed6f0,%edi
-		mov    $data_161b7c,%esi
+		mov    $aCouldNotAllo_4,%esi
 		rep movsl %ds:(%esi),%es:(%edi)
 		movsw  %ds:(%esi),%es:(%edi)
 		jmp    jump_1164db
@@ -12349,7 +12349,7 @@ _XMI_construct_MDI_driver:	/* 0x115EA0 */
 		mov    $0x5,%ecx
 		push   $0x1d4
 		mov    $data_1ed6f0,%edi
-		mov    $data_161ba4,%esi
+		mov    $a_mdiDriverRequ,%esi
 		push   %ebx
 		rep movsl %ds:(%esi),%es:(%edi)
 		movsw  %ds:(%esi),%es:(%edi)
@@ -12417,7 +12417,7 @@ _XMI_construct_MDI_driver:	/* 0x115EA0 */
 		cmpb   $0x0,(%ebx)
 		je     jump_116002
 		mov    0x8(%ebp),%edi
-		mov    $data_15aadc,%esi
+		mov    $aSample,%esi
 		add    $0x80,%edi
 		push   %edi
 	jump_115fba:
@@ -12570,7 +12570,7 @@ _XMI_construct_MDI_driver:	/* 0x115EA0 */
 		mov    $0x8,%ecx
 		push   $0x1d4
 		mov    $data_1ed6f0,%edi
-		mov    $data_161bbc,%esi
+		mov    $aXmidiSoundHard,%esi
 		push   %ebp
 		rep movsl %ds:(%esi),%es:(%edi)
 		call   MEM_free_lock
@@ -12609,7 +12609,7 @@ _XMI_construct_MDI_driver:	/* 0x115EA0 */
 		mov    $0xa,%ecx
 		push   $0x0
 		mov    $data_1ed6f0,%edi
-		mov    $data_161bdc,%esi
+		mov    $aCouldNotInitia,%esi
 		push   $0x0
 		rep movsl %ds:(%esi),%es:(%edi)
 		movsb  %ds:(%esi),%es:(%edi)
@@ -12644,7 +12644,7 @@ _XMI_construct_MDI_driver:	/* 0x115EA0 */
 		mov    $0xa,%ecx
 		push   %eax
 		mov    $data_1ed6f0,%edi
-		mov    $data_161c08,%esi
+		mov    $aCouldNotAllo_5,%esi
 		push   %eax
 		rep movsl %ds:(%esi),%es:(%edi)
 		push   $0x306
@@ -12717,7 +12717,7 @@ _XMI_construct_MDI_driver:	/* 0x115EA0 */
 		mov    $0x5,%ecx
 		push   $0x0
 		mov    $data_1ed6f0,%edi
-		mov    $data_161c30,%esi
+		mov    $aOutOfTimerHa_1,%esi
 		push   $0x0
 		rep movsl %ds:(%esi),%es:(%edi)
 		movsw  %ds:(%esi),%es:(%edi)
@@ -12901,7 +12901,7 @@ _AIL_API_install_MDI_driver_file:	/* 0x1164F0 */
 		mov    0xa0(%esp),%edx
 		push   %edx
 		push   $EXPORT_SYMBOL(SoundDriverPath)
-		push   $data_161c48
+		push   $ascSS_4
 		lea    0xc(%esp),%eax
 		push   %eax
 		call   ac_sprintf
@@ -12916,7 +12916,7 @@ _AIL_API_install_MDI_driver_file:	/* 0x1164F0 */
 		jne    jump_116543
 		mov    $0x5,%ecx
 		mov    $data_1ed6f0,%edi
-		mov    $data_161c50,%esi
+		mov    $aDriverFileNo_0,%esi
 		rep movsl %ds:(%esi),%es:(%edi)
 		movsw  %ds:(%esi),%es:(%edi)
 		movsb  %ds:(%esi),%es:(%edi)
@@ -12978,7 +12978,7 @@ ailimpl_install_mdi_ini:	/* 1165e0 */
 		jne    jump_116617
 		mov    $0x7,%ecx
 		mov    $data_1ed6f0,%edi
-		mov    $data_161c68,%esi
+		mov    $aUnableToOpen_0,%esi
 		mov    $0x1,%eax
 		rep movsl %ds:(%esi),%es:(%edi)
 		movsb  %ds:(%esi),%es:(%edi)
@@ -13029,7 +13029,7 @@ _AIL_API_MDI_driver_type:	/* 0x116670 */
 		cmpl   $0x112,0x8(%ebx)
 		jb     jump_1166b7
 		add    $0xba,%ebx
-		mov    $data_161c88,%edx
+		mov    $aTandy3VoiceMus,%edx
 		mov    %ebx,%eax
 		call   ac_stricmp
 		test   %eax,%eax
@@ -13038,7 +13038,7 @@ _AIL_API_MDI_driver_type:	/* 0x116670 */
 		pop    %ebx
 		ret
 	jump_1166a0:
-		mov    $data_161c9c,%edx
+		mov    $aIbmInternalSpe,%edx
 		mov    %ebx,%eax
 		call   ac_stricmp
 		test   %eax,%eax
@@ -13057,7 +13057,7 @@ _AIL_API_MDI_driver_type:	/* 0x116670 */
 		je     jump_11670e
 		cmpb   $0x0,(%ebx)
 		je     jump_11670e
-		mov    $data_161cb8,%edx
+		mov    $asc_ad,%edx
 		mov    %ebx,%eax
 		call   ac_stricmp
 		test   %eax,%eax
@@ -13069,7 +13069,7 @@ _AIL_API_MDI_driver_type:	/* 0x116670 */
 		pop    %ebx
 		ret
 	jump_1166f7:
-		mov    $data_161cbc,%edx
+		mov    $asc_opl,%edx
 		mov    %ebx,%eax
 		call   ac_stricmp
 		test   %eax,%eax
@@ -13090,7 +13090,7 @@ _AIL_API_set_GTL_filename_prefix:	/* 0x116720 */
 		push   %esi
 		push   %edi
 		mov    0x10(%esp),%esi
-		mov    $data_15aadc,%edi
+		mov    $aSample,%edi
 		push   %edi
 	jump_11672d:
 		mov    (%esi),%al
@@ -13115,10 +13115,10 @@ _AIL_API_set_GTL_filename_prefix:	/* 0x116720 */
 		test   %edx,%edx
 		je     jump_116796
 	jump_116757:
-		mov    data_15aadc(%edx),%ah
+		mov    aSample(%edx),%ah
 		cmp    $0x5c,%ah
 		jne    jump_116782
-		mov    $data_15aadc,%edi
+		mov    $aSample,%edi
 		sub    %ecx,%ecx
 		dec    %ecx
 		xor    %eax,%eax
@@ -13129,7 +13129,7 @@ _AIL_API_set_GTL_filename_prefix:	/* 0x116720 */
 		cmp    %ecx,%edx
 		jne    jump_116796
 		xor    %cl,%cl
-		mov    %cl,data_15aadc(%edx)
+		mov    %cl,aSample(%edx)
 		pop    %edi
 		pop    %esi
 		pop    %ebx
@@ -13138,7 +13138,7 @@ _AIL_API_set_GTL_filename_prefix:	/* 0x116720 */
 		cmp    $0x2e,%ah
 		jne    jump_116793
 		xor    %bh,%bh
-		mov    %bh,data_15aadc(%edx)
+		mov    %bh,aSample(%edx)
 		pop    %edi
 		pop    %esi
 		pop    %ebx
@@ -13179,7 +13179,7 @@ _AIL_API_allocate_sequence_handle:	/* 0x1167A0 */
 		jne    jump_1167ee
 		mov    $0x6,%ecx
 		mov    $data_1ed6f0,%edi
-		mov    $data_161cc4,%esi
+		mov    $aOutOfSequenceH,%esi
 		rep movsl %ds:(%esi),%es:(%edi)
 		movsb  %ds:(%esi),%es:(%edi)
 		call   AIL_unlock
@@ -13231,7 +13231,7 @@ _AIL_API_init_sequence:	/* 0x116840 */
 		jne    jump_116892
 		mov    $0x6,%ecx
 		mov    $data_1ed6f0,%edi
-		mov    $data_161ce0,%esi
+		mov    $aInvalidXmidiSe,%esi
 		xor    %ebx,%ebx
 		rep movsl %ds:(%esi),%es:(%edi)
 		mov    %ebx,%eax
@@ -13256,7 +13256,7 @@ _AIL_API_init_sequence:	/* 0x116840 */
 		jae    jump_11691d
 	jump_1168c0:
 		mov    $0x4,%ebx
-		mov    $data_161cf8,%edx
+		mov    $ascTimb,%edx
 		mov    %esi,%eax
 		call   ac_strncmp
 		test   %eax,%eax
@@ -13264,7 +13264,7 @@ _AIL_API_init_sequence:	/* 0x116840 */
 		mov    %esi,0x8(%ebp)
 	jump_1168d8:
 		mov    $0x4,%ebx
-		mov    $data_161d00,%edx
+		mov    $ascRbrn,%edx
 		mov    %esi,%eax
 		call   ac_strncmp
 		test   %eax,%eax
@@ -13272,7 +13272,7 @@ _AIL_API_init_sequence:	/* 0x116840 */
 		mov    %esi,0xc(%ebp)
 	jump_1168f0:
 		mov    $0x4,%ebx
-		mov    $data_161d08,%edx
+		mov    $ascEvnt,%edx
 		mov    %esi,%eax
 		call   ac_strncmp
 		test   %eax,%eax
@@ -13292,7 +13292,7 @@ _AIL_API_init_sequence:	/* 0x116840 */
 		jne    jump_116940
 		mov    $0x6,%ecx
 		mov    $data_1ed6f0,%edi
-		mov    $data_161ce0,%esi
+		mov    $aInvalidXmidiSe,%esi
 		xor    %ebx,%ebx
 		rep movsl %ds:(%esi),%es:(%edi)
 		mov    %ebx,%eax
@@ -13416,7 +13416,7 @@ _AIL_API_init_sequence:	/* 0x116840 */
 		test   %eax,%eax
 		je     jump_116adb
 		mov    $data_1ed6f0,%edi
-		mov    $data_161d10,%esi
+		mov    $aNoTimbresLoade,%esi
 		mov    $0xffffffff,%ebx
 		movsl  %ds:(%esi),%es:(%edi)
 		movsl  %ds:(%esi),%es:(%edi)
@@ -13466,7 +13466,7 @@ _AIL_API_init_sequence:	/* 0x116840 */
 		movswl 0x6(%esp),%eax
 		sar    $0x8,%eax
 		push   %eax
-		push   $data_161d24
+		push   $aDriverCouldNot
 		push   $data_1ed6f0
 		mov    $0xffffffff,%ebx
 		call   ac_sprintf
@@ -14331,7 +14331,7 @@ AILXMIDI_end_:
 		call   VMM_unlock_range
 		add    $0x8,%esp
 		push   $0x80
-		push   $data_15aadc
+		push   $aSample
 		call   AIL_vmm_unlock
 		add    $0x8,%esp
 		push   $0x4
@@ -14470,14 +14470,14 @@ AILXDIG_start_:
 		push   %ebx
 		push   %ecx
 		push   %edx
-		cmpl   $0x0,data_15ab70
+		cmpl   $0x0,_locked_AILXDIG
 		jne    jump_117a59
 		push   $AILXDIG_end_
 		push   $AILXDIG_start_
 		mov    $0x1,%ebx
 		call   VMM_lock_range
 		add    $0x8,%esp
-		mov    %ebx,data_15ab70
+		mov    %ebx,_locked_AILXDIG
 	jump_117a59:
 		pop    %edx
 		pop    %ecx
@@ -15252,14 +15252,14 @@ AILXDIG_end_:
 		push   %ebx
 		push   %ecx
 		push   %edx
-		cmpl   $0x0,data_15ab70
+		cmpl   $0x0,_locked_AILXDIG
 		je     jump_118456
 		push   $AILXDIG_end_
 		push   $AILXDIG_start_
 		xor    %ebx,%ebx
 		call   VMM_unlock_range
 		add    $0x8,%esp
-		mov    %ebx,data_15ab70
+		mov    %ebx,_locked_AILXDIG
 	jump_118456:
 		pop    %edx
 		pop    %ecx
@@ -20602,7 +20602,7 @@ AILSSA_VMM_lock:
 .data
 
 
-data_159328:
+_AIL_locked:	/* 0x159328 */
 		.long	0x0
 
 GLOBAL (timer_callbacks)		/* 159e98 */
@@ -20679,21 +20679,21 @@ data_15aad4:
 		.long	0x0
 data_15aad8:
 		.long	0x0
-data_15aadc:
+aSample:	/* 0x15AADC */
 		.string "SAMPLE"
 		.fill   0x79
 data_15ab5c:
 		.long	0x0
 data_15ab60:
 		.long	0x0
-data_15ab64:
+aTimb_0:	/* 0x15AB64 */
 		.string "TIMB"
 		.ascii  "\x00\x00\x04\x01\x00"
 data_15ab6e:
 		.byte	0xff
 data_15ab6f:
 		.byte	0xff
-data_15ab70:
+_locked_AILXDIG:	/* 0x15AB70 */
 		.long	0x0
 
 
@@ -20718,576 +20718,576 @@ data_15ac0c_after:
 
 
 
-data_1600f4:
+a_02u_02u_02u__:	/* 0x1600F4 */
 		.string "[%.02u:%.02u:%.02u.%.02u] "
 		.byte	0x0
 data_160110:
 		.ascii  "\x20\x00\x00\x00"
 data_160114:
 		.ascii  "\xfa\x00\x00\x00"
-data_160118:
+aAil_debug:	/* 0x160118 */
 		.string "AIL_DEBUG"
 		.short  0x0
-data_160124:
+aAil_sys_debug:	/* 0x160124 */
 		.string "AIL_SYS_DEBUG"
 		.short  0x0
-data_160134:
+aOpenFlags_WpT:	/* 0x160134 */
 		.ascii  "\x77\x2b\x74\x00"
-data_160138:
+aHorizLn:	/* 0x160138 */
 		.string "-------------------------------------------------------------------------------\n"
 		.ascii  "\x00\x00\x00"
-data_16018c:
+aAilVarsion:	/* 0x16018C */
 		.string "3.03"
 		.ascii  "\x00\x00\x00"
-data_160194:
+aAilFullName:	/* 0x160194 */
 		.string "Audio Interface Library application usage script generated by AIL V%s\n"
 		.byte	0x0
-data_1601dc:
+aAilStartTime:	/* 0x1601DC */
 		.string "Start time: %s\n"
-data_1601ec:
+aHorizLn2:	/* 0x1601EC */
 		.string "-------------------------------------------------------------------------------\n\n"
 		.short  0x0
-data_160240:
+aAil_startup:	/* 0x160240 */
 		.string "AIL_startup()\n"
 		.byte	0x0
-data_160250:
+aAil_shutdown:	/* 0x160250 */
 		.string "AIL_shutdown()\n"
-data_160260:
+aAil_set_prefer:	/* 0x160260 */
 		.string "AIL_set_preference(%d,%d)\n"
 		.byte	0x0
 data_16027c_result_decimal:
 		.string "Result = %d\n"
 		.ascii  "\x00\x00\x00"
-data_16028c:
+aAil_get_real_v:	/* 0x16028C */
 		.string "AIL_get_real_vect(0x%X)\n"
 		.ascii  "\x00\x00\x00"
 data_1602a8_result_hex:
 		.string "Result = 0x%X\n"
 		.byte	0x0
-data_1602b8:
+aAil_set_real_v:	/* 0x1602B8 */
 		.string "AIL_set_real_vect(0x%X,0x%X)\n"
 		.short  0x0
-data_1602d8:
+aAil_set_use16_:	/* 0x1602D8 */
 		.string "AIL_restore_USE16_ISR(%d,0x%X,%u)\n"
 		.byte	0x0
-data_1602f8:
+aAil_restore_us:	/* 0x1602F8 */
 		.string "AIL_restore_USE16_ISR(%d)\n"
 		.byte	0x0
-data_160314:
+aAil_call_drive:	/* 0x160314 */
 		.string "AIL_call_driver(0x%X,0x%X,0x%X,0x%X)\n"
 		.short  0x0
-data_16033c:
+aAil_delayD:	/* 0x16033C */
 		.string "AIL_delay(%d)\n"
 		.byte	0x0
-data_16034c:
+aAil_api_read_i:	/* 0x16034C */
 		.string "AIL_API_read_INI(0x%X,%s)\n"
 		.byte	0x0
-data_160368:
+aAilDriverS:	/* 0x160368 */
 		.string "Driver = %s\n"
 		.ascii  "\x00\x00\x00"
-data_160378:
+aAilDeviceS:	/* 0x160378 */
 		.string "Device = %s\n"
 		.ascii  "\x00\x00\x00"
-data_160388:
+aAilIoX:	/* 0x160388 */
 		.string "IO     = %X\n"
 		.ascii  "\x00\x00\x00"
-data_160398:
+aAilIrqD:	/* 0x160398 */
 		.string "IRQ    = %d\n"
 		.ascii  "\x00\x00\x00"
-data_1603a8:
+aAilDma_8D:	/* 0x1603A8 */
 		.string "DMA_8  = %d\n"
 		.ascii  "\x00\x00\x00"
-data_1603b8:
+aAilDma_16D:	/* 0x1603B8 */
 		.string "DMA_16 = %d\n"
 		.ascii  "\x00\x00\x00"
-data_1603c8:
+aAilResultU:	/* 0x1603C8 */
 		.string "Result = %u\n"
 		.ascii  "\x00\x00\x00"
-data_1603d8:
+aAil_register_t:	/* 0x1603D8 */
 		.string "AIL_register_timer(0x%X)\n"
 		.align 4
-data_1603f4:
+aAil_set_time_1:	/* 0x1603F4 */
 		.string "AIL_set_timer_user(%u,%u)\n"
 		.align 4
-data_160410:
+aAil_set_timer_:	/* 0x160410 */
 		.string "AIL_set_timer_period(%u,%u)\n"
 		.align 4
-data_160430:
+aAil_set_time_0:	/* 0x160430 */
 		.string "AIL_set_timer_frequency(%u,%u)\n"
 		.align 4
-data_160450:
+aAil_set_time_2:	/* 0x160450 */
 		.string "AIL_set_timer_divisor(%u,%u)\n"
 		.align 4
-data_160470:
+aAil_interrupt_:	/* 0x160470 */
 		.string "AIL_interrupt_divisor()\n"
 		.align 4
-data_16048c:
+aAil_start_time:	/* 0x16048C */
 		.string "AIL_start_timer(%u)\n"
 		.align 4
-data_1604a4:
+aAil_start_all_:	/* 0x1604A4 */
 		.string "AIL_start_all_timers()\n"
 		.align 4
-data_1604bc:
+aAil_stop_timer:	/* 0x1604BC */
 		.string "AIL_stop_timer(%u)\n"
 		.align 4
-data_1604d0:
+aAil_stop_all_t:	/* 0x1604D0 */
 		.string "AIL_stop_all_timers()\n"
 		.align 4
-data_1604e8:
+aAil_release_ti:	/* 0x1604E8 */
 		.string "AIL_release_timer_handle(%u)\n"
 		.align 4
-data_160508:
+aAil_release_al:	/* 0x160508 */
 		.string "AIL_release_all_timers()\n"
 		.align 4
-data_160524:
+aAil_get_io_env:	/* 0x160524 */
 		.string "AIL_get_IO_environment(0x%X)\n"
 		.align 4
-data_160544:
+aAil_install_dr:	/* 0x160544 */
 		.string "AIL_install_driver(0x%X,%u)\n"
 		.align 4
-data_160564:
+aAil_uninstal_1:	/* 0x160564 */
 		.string "AIL_uninstall_driver(0x%X)\n"
 		.align 4
-data_160580:
+aAil_install_di:	/* 0x160580 */
 		.string "AIL_install_DIG_INI(0x%X)\n"
 		.align 4
-data_16059c:
+aAil_install__0:	/* 0x16059C */
 		.string "AIL_install_DIG_driver_file(%s,0x%X)\n"
 		.align 4
-data_1605c4:
+aAil_uninstall_:	/* 0x1605C4 */
 		.string "AIL_uninstall_DIG_driver(0x%X)\n"
 		.align 4
-data_1605e4:
+aAil_allocate_s:	/* 0x1605E4 */
 		.string "AIL_allocate_sample_handle(0x%X)\n"
 		.align 4
-data_160608:
+aAil_allocate_f:	/* 0x160608 */
 		.string "AIL_allocate_file_sample(0x%X,0x%X,%d)\n"
 		.align 4
-data_160630:
+aAil_release_sa:	/* 0x160630 */
 		.string "AIL_release_sample_handle(0x%X)\n"
 		.align 4
-data_160654:
+aAil_init_sampl:	/* 0x160654 */
 		.string "AIL_init_sample(0x%X)\n"
 		.align 4
-data_16066c:
+aAil_set_sample:	/* 0x16066C */
 		.string "AIL_set_sample_file(0x%X,0x%X,%d)\n"
 		.align 4
-data_160690:
+aAil_set_samp_5:	/* 0x160690 */
 		.string "AIL_set_sample_address(0x%X,0x%X,%u)\n"
 		.align 4
-data_1606b8:
+aAil_set_samp_6:	/* 0x1606B8 */
 		.string "AIL_set_sample_type(0x%X,%d,%u)\n"
 		.align 4
-data_1606dc:
+aAil_start_samp:	/* 0x1606DC */
 		.string "AIL_start_sample(0x%X)\n"
 		.align 4
-data_1606f4:
+aAil_stop_sampl:	/* 0x1606F4 */
 		.string "AIL_stop_sample(0x%X)\n"
 		.align 4
-data_16070c:
+aAil_resume_sam:	/* 0x16070C */
 		.string "AIL_resume_sample(0x%X)\n"
 		.align 4
-data_160728:
+aAil_end_sample:	/* 0x160728 */
 		.string "AIL_end_sample(0x%X)\n"
 		.align 4
-data_160740:
+aAil_set_samp_0:	/* 0x160740 */
 		.string "AIL_set_sample_playback_rate(0x%X,%d)\n"
 		.align 4
-data_160768:
+aAil_set_samp_1:	/* 0x160768 */
 		.string "AIL_set_sample_volume(0x%X,%d)\n"
 		.align 4
-data_160788:
+aAil_set_samp_2:	/* 0x160788 */
 		.string "AIL_set_sample_pan(0x%X,%d)\n"
 		.align 4
-data_1607a8:
+aAil_set_samp_3:	/* 0x1607A8 */
 		.string "AIL_set_sample_loop_count(0x%X,%d)\n"
 		.align 4
-data_1607cc:
+aAil_sample_sta:	/* 0x1607CC */
 		.string "AIL_sample_status(0x%X)\n"
 		.align 4
-data_1607e8:
+aAil_sample_pla:	/* 0x1607E8 */
 		.string "AIL_sample_playback_rate(0x%X)\n"
 		.align 4
-data_160808:
+aAil_sample_vol:	/* 0x160808 */
 		.string "AIL_sample_volume(0x%X)\n"
 		.align 4
-data_160824:
+aAil_sample_pan:	/* 0x160824 */
 		.string "AIL_sample_pan(0x%X)\n"
 		.align 4
-data_16083c:
+aAil_sample_loo:	/* 0x16083C */
 		.string "AIL_sample_loop_count(0x%X)\n"
 		.align 4
-data_16085c:
+aAil_set_digita:	/* 0x16085C */
 		.string "AIL_set_digital_master_volume(0x%X,%d)\n"
 		.align 4
-data_160884:
+aAil_digital_ma:	/* 0x160884 */
 		.string "AIL_digital_master_volume(0x%X)\n"
 		.align 4
-data_1608a8:
+aAil_install__2:	/* 0x1608A8 */
 		.string "AIL_install_DIG_driver_image(0x%X,%u,0x%X)\n"
 		.align 4
-data_1608d4:
+aAil_minimum_sa:	/* 0x1608D4 */
 		.string "AIL_minimum_sample_buffer_size(0x%X,%d,%d)\n"
 		.align 4
-data_160900:
+aAil_sample_buf:	/* 0x160900 */
 		.string "AIL_sample_buffer_ready(0x%X)\n"
 		.align 4
-data_160920:
+aAil_load_sampl:	/* 0x160920 */
 		.string "AIL_load_sample_buffer(0x%X,%u,0x%X,%u)\n"
 		.align 4
-data_16094c:
+aAil_set_samp_7:	/* 0x16094C */
 		.string "AIL_set_sample_position(0x%X,%u)\n"
 		.align 4
-data_160970:
+aAil_sample_pos:	/* 0x160970 */
 		.string "AIL_sample_position(0x%X)\n"
 		.align 4
-data_16098c:
+aAil_register_s:	/* 0x16098C */
 		.string "AIL_register_SOB_callback(0x%X,0x%X)\n"
 		.align 4
-data_1609b4:
+aAil_register_1:	/* 0x1609B4 */
 		.string "AIL_register_EOB_callback(0x%X,0x%X)\n"
 		.align 4
-data_1609dc:
+aAil_register_e:	/* 0x1609DC */
 		.string "AIL_register_EOS_callback(0x%X,0x%X)\n"
 		.align 4
-data_160a04:
+aAil_register_2:	/* 0x160A04 */
 		.string "AIL_register_EOF_callback(0x%X,0x%X)\n"
 		.align 4
-data_160a2c:
+aAil_set_samp_4:	/* 0x160A2C */
 		.string "AIL_set_sample_user_data(0x%X,%u,%d)\n"
 		.align 4
-data_160a54:
+aAil_sample_use:	/* 0x160A54 */
 		.string "AIL_sample_user_data(0x%X,%u)\n"
 		.align 4
-data_160a74:
+aAil_active_sam:	/* 0x160A74 */
 		.string "AIL_active_sample_count(0x%X)\n"
 		.align 4
-data_160a94:
+aAil_install_md:	/* 0x160A94 */
 		.string "AIL_install_MDI_INI(0x%X)\n"
 		.align 4
-data_160ab0:
+aAil_install__1:	/* 0x160AB0 */
 		.string "AIL_install_MDI_driver_file(%s,0x%X)\n"
 		.align 4
-data_160ad8:
+aAil_uninstal_0:	/* 0x160AD8 */
 		.string "AIL_uninstall_MDI_driver(0x%X)\n"
 		.align 4
-data_160af8:
+aAil_allocate_0:	/* 0x160AF8 */
 		.string "AIL_allocate_sequence_handle(0x%X)\n"
 		.align 4
-data_160b1c:
+aAil_release_se:	/* 0x160B1C */
 		.string "AIL_release_sequence_handle(0x%X)\n"
 		.align 4
-data_160b40:
+aAil_init_seque:	/* 0x160B40 */
 		.string "AIL_init_sequence(0x%X,0x%X,%d)\n"
 		.align 4
-data_160b64:
+aAil_start_sequ:	/* 0x160B64 */
 		.string "AIL_start_sequence(0x%X)\n"
 		.align 4
-data_160b80:
+aAil_stop_seque:	/* 0x160B80 */
 		.string "AIL_stop_sequence(0x%X)\n"
 		.align 4
-data_160b9c:
+aAil_resume_seq:	/* 0x160B9C */
 		.string "AIL_resume_sequence(0x%X)\n"
 		.align 4
-data_160bb8:
+aAil_end_sequen:	/* 0x160BB8 */
 		.string "AIL_end_sequence(0x%X)\n"
 		.align 4
-data_160bd0:
+aAil_set_sequen:	/* 0x160BD0 */
 		.string "AIL_set_sequence_tempo(0x%X,%d,%d)\n"
 		.align 4
-data_160bf4:
+aAil_set_sequ_0:	/* 0x160BF4 */
 		.string "AIL_set_sequence_volume(0x%X,%d,%d)\n"
 		.align 4
-data_160c1c:
+aAil_set_sequ_1:	/* 0x160C1C */
 		.string "AIL_set_sequence_loop_count(0x%X,%d)\n"
 		.align 4
-data_160c44:
+aAil_sequence_s:	/* 0x160C44 */
 		.string "AIL_sequence_status(0x%X)\n"
 		.align 4
-data_160c60:
+aAil_sequence_t:	/* 0x160C60 */
 		.string "AIL_sequence_tempo(0x%X)\n"
 		.align 4
-data_160c7c:
+aAil_sequence_v:	/* 0x160C7C */
 		.string "AIL_sequence_volume(0x%X)\n"
 		.align 4
-data_160c98:
+aAil_sequence_l:	/* 0x160C98 */
 		.string "AIL_sequence_loop_count(0x%X)\n"
 		.align 4
-data_160cb8:
+aAil_set_xmidi_:	/* 0x160CB8 */
 		.string "AIL_set_XMIDI_master_volume(0x%X,%d)\n"
 		.align 4
-data_160ce0:
+aAil_xmidi_mast:	/* 0x160CE0 */
 		.string "AIL_XMIDI_master_volume(0x%X)\n"
 		.align 4
-data_160d00:
+aAil_install__3:	/* 0x160D00 */
 		.string "AIL_install_MDI_driver_image(0x%X,%u,0x%X)\n"
 		.align 4
-data_160d2c:
+aAil_mdi_driver:	/* 0x160D2C */
 		.string "AIL_MDI_driver_type(0x%X)\n"
 		.align 4
-data_160d48:
+aAil_set_gtl_fi:	/* 0x160D48 */
 		.string "AIL_set_GTL_filename_prefix(%s)\n"
 		.align 4
-data_160d6c:
+aAil_timbre_sta:	/* 0x160D6C */
 		.string "AIL_timbre_status(0x%X,%d,%d)\n"
 		.align 4
-data_160d8c:
+aAil_install_ti:	/* 0x160D8C */
 		.string "AIL_install_timbre(0x%X,%d,%d)\n"
 		.align 4
-data_160dac:
+aAil_protect_ti:	/* 0x160DAC */
 		.string "AIL_protect_timbre(0x%X,%d,%d)\n"
 		.align 4
-data_160dcc:
+aAil_unprotect_:	/* 0x160DCC */
 		.string "AIL_unprotect_timbre(0x%X,%d,%d)\n"
 		.align 4
-data_160df0:
+aAil_active_seq:	/* 0x160DF0 */
 		.string "AIL_active_sequence_count(0x%X)\n"
 		.align 4
-data_160e14:
+aAil_controller:	/* 0x160E14 */
 		.string "AIL_controller_value(0x%X,%d,%d)\n"
 		.align 4
-data_160e38:
+aAil_channel_no:	/* 0x160E38 */
 		.string "AIL_channel_notes(0x%X,%d)\n"
 		.align 4
-data_160e54:
+aAil_sequence_p:	/* 0x160E54 */
 		.string "AIL_sequence_position(0x%X,0x%X,0x%X)\n"
 		.align 4
-data_160e7c:
+aResultDD:	/* 0x160E7C */
 		.string "Result = %d:%d\n"
 		.align 4
-data_160e8c:
+aAil_branch_ind:	/* 0x160E8C */
 		.string "AIL_branch_index(0x%X,%u)\n"
 		.align 4
-data_160ea8:
+aAil_register_p:	/* 0x160EA8 */
 		.string "AIL_register_prefix_callback(0x%X,0x%X)\n"
 		.align 4
-data_160ed4:
+aAil_register_0:	/* 0x160ED4 */
 		.string "AIL_register_trigger_callback(0x%X,0x%X)\n"
 		.align 4
-data_160f00:
+aAil_register_3:	/* 0x160F00 */
 		.string "AIL_register_sequence_callback(0x%X,0x%X)\n"
 		.align 4
-data_160f2c:
+aAil_register_b:	/* 0x160F2C */
 		.string "AIL_register_beat_callback(0x%X,0x%X)\n"
 		.align 4
-data_160f54:
+aAil_register_4:	/* 0x160F54 */
 		.string "AIL_register_event_callback(0x%X,0x%X)\n"
 		.align 4
-data_160f7c:
+aAil_register_5:	/* 0x160F7C */
 		.string "AIL_register_timbre_callback(0x%X,0x%X)\n"
 		.align 4
-data_160fa8:
+aAil_set_sequ_2:	/* 0x160FA8 */
 		.string "AIL_set_sequence_user_data(0x%X,%u,%d)\n"
 		.align 4
-data_160fd0:
+aAil_sequence_u:	/* 0x160FD0 */
 		.string "AIL_sequence_user_data(0x%X,%u)\n"
 		.align 4
-data_160ff4:
+aAil_register_i:	/* 0x160FF4 */
 		.string "AIL_register_ICA_array(0x%X,0x%X)\n"
 		.align 4
-data_161018:
+aAil_lock_chann:	/* 0x161018 */
 		.string "AIL_lock_channel(0x%X)\n"
 		.align 4
-data_161030:
+aAil_release_ch:	/* 0x161030 */
 		.string "AIL_release_channel(0x%X,%d)\n"
 		.align 4
-data_161050:
+aAil_map_sequen:	/* 0x161050 */
 		.string "AIL_map_sequence_channel(0x%X,%d,%d)\n"
 		.align 4
-data_161078:
+aAil_true_seque:	/* 0x161078 */
 		.string "AIL_true_sequence_channel(0x%X,%d)\n"
 		.align 4
-data_16109c:
+aAil_send_chann:	/* 0x16109C */
 		.string "AIL_send_channel_voice_message(0x%X,0x%X,0x%X,0x%X,0x%X)\n"
 		.align 4
-data_1610d8:
+aAil_send_sysex:	/* 0x1610D8 */
 		.string "AIL_send_sysex_message(0x%X,0x%X)\n"
 		.align 4
-data_1610fc:
+aAil_create_wav:	/* 0x1610FC */
 		.string "AIL_create_wave_synthesizer(0x%X,0x%X,0x%X,%d)\n"
 		.align 4
-data_16112c:
+aAil_destroy_wa:	/* 0x16112C */
 		.string "AIL_destroy_wave_synthesizer(0x%X)\n"
 		.align 4
 
 
-data_161820:
+a0123456789abcdef:	/* 0x161820 */
 		.string "0123456789ABCDEF"
 		.ascii  "\x00\x00\x00"
-data_161834:
+ascRt_0:	/* 0x161834 */
 		.ascii  "\x72\x74\x00\x00"
-data_161838:
+ascDriver:	/* 0x161838 */
 		.string "DRIVER"
 		.align 4
-data_161840:
+ascDevice:	/* 0x161840 */
 		.string "DEVICE"
 		.align 4
-data_161848:
+ascIo_addr:	/* 0x161848 */
 		.string "IO_ADDR"
 		.align 4
-data_161850:
+ascIrq:	/* 0x161850 */
 		.ascii  "\x49\x52\x51\x00"
-data_161854:
+aDma_8_bit:	/* 0x161854 */
 		.string "DMA_8_bit"
 		.align 4
-data_161860:
+aDma_16_bit:	/* 0x161860 */
 		.string "DMA_16_bit"
 		.align 4
-data_16186c:
+aCorrupted_iniF:	/* 0x16186C */
 		.string "Corrupted .INI file\n"
 		.align 4
-data_161884:
+aInsufficientMe:	/* 0x161884 */
 		.string "Insufficient memory for driver descriptor\n"
 		.align 4
-data_1618b0:
+aInsufficientLo:	/* 0x1618B0 */
 		.string "Insufficient low memory\n"
 		.align 4
-data_1618cc:
+aAil3dig:	/* 0x1618CC */
 		.string "AIL3DIG"
 		.align 4
-data_1618d4:
+aAil3mdi:	/* 0x1618D4 */
 		.string "AIL3MDI"
 		.align 4
-data_1618dc:
+aInvalidDriverT:	/* 0x1618DC */
 		.string "Invalid driver type\n"
 		.align 4
-data_1618f4:
+aOutOfDriverHan:	/* 0x1618F4 */
 		.string "Out of driver handles\n"
 		.align 4
-data_16190c:
+aOutOfTimerHand:	/* 0x16190C */
 		.string "Out of timer handles\n"
 		.align 4
-data_161924:
+aMinimumDmaBuff:	/* 0x161924 */
 		.string "Minimum DMA buffer size too large for VDM\n"
 		.align 4
-data_161950:
+aCouldNotAllo_0:	/* 0x161950 */
 		.string "Could not allocate memory for driver\n"
 		.align 4
-data_161978:
+a_digDriverRequ:	/* 0x161978 */
 		.string ".DIG driver required\n"
 		.align 4
-data_161990:
+aDigitalSoundHa:	/* 0x161990 */
 		.string "Digital sound hardware not found\n"
 		.align 4
-data_1619b4:
+aCouldNotAllo_1:	/* 0x1619B4 */
 		.string "Could not allocate DMA buffers\n"
 		.align 4
-data_1619d4:
+aCouldNotAllo_2:	/* 0x1619D4 */
 		.string "Could not allocate build buffer\n"
 		.align 4
-data_1619f8:
+aCouldNotAllo_3:	/* 0x1619F8 */
 		.string "Could not allocate SAMPLE structures\n"
 		.align 4
-data_161a20:
+aOutOfTimerHa_0:	/* 0x161A20 */
 		.string "Out of timer handles\n"
 		.align 4
-data_161a38:
+ascSS_3:	/* 0x161A38 */
 		.string "%s/%s"
 		.align 4
-data_161a40:
+aDriverFileNotF:	/* 0x161A40 */
 		.string "Driver file not found\n"
 		.align 4
-data_161a58:
+aUnableToOpenFi:	/* 0x161A58 */
 		.string "Unable to open file DIG.INI\n"
 		.align 4
-data_161a78:
+aOutOfSampleHan:	/* 0x161A78 */
 		.string "Out of sample handles\n"
 		.byte	0x0
-data_161a90:
+ascFmt:	/* 0x161A90 */
 		.string "fmt "
 		.ascii  "\x00\x00\x00"
-data_161a98:
+ascData:	/* 0x161A98 */
 		.string "data"
 		.ascii  "\x00\x00\x00"
-data_161aa0:
+ascCreative:	/* 0x161AA0 */
 		.string "Creative"
 		.ascii  "\x00\x00\x00"
-data_161aac:
+ascWave:	/* 0x161AAC */
 		.string "WAVE"
 		.ascii  "\x00\x00\x00"
-data_161ab4:
+aUnrecognized_0:	/* 0x161AB4 */
 		.string "Unrecognized digital audio file type\n"
 		.short  0x0
-data_161adc:
+aInvalidOrMis_0:	/* 0x161ADC */
 		.string "Invalid or missing data block\n"
 		.byte	0x0
-data_161afc:
+aUnrecognizedDi:	/* 0x161AFC */
 		.string "Unrecognized digital audio file type\n"
 		.short  0x0
-data_161b24:
+aInvalidOrMissi:	/* 0x161B24 */
 		.string "Invalid or missing data block\n"
 		.byte	0x0
-data_161b44:
+ascForm:	/* 0x161B44 */
 		.string "FORM"
 		.ascii  "\x00\x00\x00"
-data_161b4c:
+ascCat:	/* 0x161B4C */
 		.string "CAT "
 		.ascii  "\x00\x00\x00"
-data_161b54:
+ascXmid:	/* 0x161B54 */
 		.string "XMID"
 		.ascii  "\x00\x00\x00"
-data_161b5c:
+aInternalNoteQu:	/* 0x161B5C */
 		.string "Internal note queue overflow\n"
 		.short  0x0
-data_161b7c:
+aCouldNotAllo_4:	/* 0x161B7C */
 		.string "Could not allocate memory for driver\n"
 		.short  0x0
-data_161ba4:
+a_mdiDriverRequ:	/* 0x161BA4 */
 		.string ".MDI driver required\n"
 		.short  0x0
-data_161bbc:
+aXmidiSoundHard:	/* 0x161BBC */
 		.string "XMIDI sound hardware not found\n"
-data_161bdc:
+aCouldNotInitia:	/* 0x161BDC */
 		.string "Could not initialize instrument manager\n"
 		.ascii  "\x00\x00\x00"
-data_161c08:
+aCouldNotAllo_5:	/* 0x161C08 */
 		.string "Could not allocate SEQUENCE structures\n"
-data_161c30:
+aOutOfTimerHa_1:	/* 0x161C30 */
 		.string "Out of timer handles\n"
 		.short  0x0
-data_161c48:
+ascSS_4:	/* 0x161C48 */
 		.string "%s/%s"
 		.short  0x0
-data_161c50:
+aDriverFileNo_0:	/* 0x161C50 */
 		.string "Driver file not found\n"
 		.byte	0x0
-data_161c68:
+aUnableToOpen_0:	/* 0x161C68 */
 		.string "Unable to open file MDI.INI\n"
 		.ascii  "\x00\x00\x00"
-data_161c88:
+aTandy3VoiceMus:	/* 0x161C88 */
 		.string "Tandy 3-voice music"
-data_161c9c:
+aIbmInternalSpe:	/* 0x161C9C */
 		.string "IBM internal speaker music"
 		.byte	0x0
-data_161cb8:
+asc_ad:	/* 0x161CB8 */
 		.ascii  "\x2e\x41\x44\x00"
-data_161cbc:
+asc_opl:	/* 0x161CBC */
 		.string ".OPL"
 		.ascii  "\x00\x00\x00"
-data_161cc4:
+aOutOfSequenceH:	/* 0x161CC4 */
 		.string "Out of sequence handles\n"
 		.ascii  "\x00\x00\x00"
-data_161ce0:
+aInvalidXmidiSe:	/* 0x161CE0 */
 		.string "Invalid XMIDI sequence\n"
-data_161cf8:
+ascTimb:	/* 0x161CF8 */
 		.string "TIMB"
 		.ascii  "\x00\x00\x00"
-data_161d00:
+ascRbrn:	/* 0x161D00 */
 		.string "RBRN"
 		.ascii  "\x00\x00\x00"
-data_161d08:
+ascEvnt:	/* 0x161D08 */
 		.string "EVNT"
 		.ascii  "\x00\x00\x00"
-data_161d10:
+aNoTimbresLoade:	/* 0x161D10 */
 		.string "No timbres loaded\n"
 		.byte	0x0
-data_161d24:
+aDriverCouldNot:	/* 0x161D24 */
 		.string "Driver could not install timbre bank %u, patch %u\n"
 		.byte	0x0
-data_161d58:
+aDriverCouldN_0:	/* 0x161D58 */
 		.string "Driver could not install timbre bank %u, patch %u\n"
 		.byte	0x0
-data_161d8c:
+aInsufficient_0:	/* 0x161D8C */
 		.string "Insufficient memory for HWAVE descriptor\n"
 		.short  0x0
 
@@ -21385,9 +21385,9 @@ data_1ed854:
 		.long	0x0
 data_1ed858:
 		.fill   0x18
-data_1ed870:
+loctm_var1:	/* 0x1ED870 */
 		.fill   0x24
-data_1ed894:
+asciitm_var1:	/* 0x1ED894 */
 		.fill   0x1c
 data_1ed8b0:
 		.long	0x0

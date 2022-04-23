@@ -518,9 +518,9 @@ LbScreenIsModeAvailable_:
 		mov    %esp,%ebp
 		sub    $0x4,%esp
 		mov    %al,-0x4(%ebp)
-		cmpl   $0x0,data_1e2e50
+		cmpl   $0x0,setup
 		jne    jump_e0ce2
-		movl   $0x1,data_1e2e50
+		movl   $0x1,setup
 		call   LbScreenFindVideoModes_
 	jump_e0ce2:
 		movsbl -0x4(%ebp),%edx
@@ -873,7 +873,7 @@ LbVesaGetInfo_:
 		mov    $0x31,%eax
 		call   ac_dos_int386x
 		mov    $0x4,%ebx
-		mov    $data_15f1a8,%edx
+		mov    $aVesa,%edx
 		mov    _lbVesaData,%eax
 		call   ac_strncmp
 		test   %eax,%eax
@@ -1152,7 +1152,7 @@ lbScreenModeInfo28_Desc:
 		.fill   0x6
 		.align	4
 
-data_15f1a8:
+aVesa:	/* 0x15F1A8 */
 		.string "VESA"
 		.align	4
 
@@ -1250,7 +1250,7 @@ lbDisplay__Palette:
 		.long	0x0
 		.fill   0x2
 
-data_1e2e50:
+setup:	/* 0x1E2E50 */
 		.long	0x0
 
 GLOBAL (screen_initialised)		/* 1e5e98 */

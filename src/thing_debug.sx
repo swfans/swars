@@ -31,7 +31,7 @@
 
 .text
 
-.global EXPORT_SYMBOL(game_things);
+.global EXPORT_SYMBOL(things);
 .global EXPORT_SYMBOL(data_1a09e0);
 
 
@@ -186,7 +186,7 @@ format_debug_msg_switch_b8d10:
 /*----------------------------------------------------------------*/
 format_debug_msg_case_b902f:
 /*----------------------------------------------------------------*/
-		push   $data_15dd53
+		push   $aIgnoreEnemies
 		push   %esi
 		call   ac_sprintf
 		add    $0x8,%esp
@@ -209,7 +209,7 @@ format_debug_msg_case_b9046:
 		mov    (%edx),%eax
 		sar    $0x10,%eax
 		push   %eax
-		mov    $data_15dd62,%eax
+		mov    $aLoopComD,%eax
 		push   %eax
 		push   %esi
 		call   ac_sprintf
@@ -234,7 +234,7 @@ format_debug_msg_case_b9064:
 		mov    0x2(%edx),%eax
 		sar    $0x10,%eax
 		push   %eax
-		mov    $data_15dd6e,%eax
+		mov    $aGoToPointXDYDZ,%eax
 		push   %eax
 		push   %esi
 		call   ac_sprintf
@@ -253,7 +253,7 @@ format_debug_msg_case_b9091:
 		mov    (%edx),%eax
 		sar    $0x10,%eax
 		push   %eax
-		push   $data_15dd86
+		push   $aPlaySampleD
 		push   %esi
 		call   ac_sprintf
 		add    $0xc,%esp
@@ -274,7 +274,7 @@ format_debug_msg_case_b90ae:
 		mov    0x2(%edx),%eax
 		sar    $0x10,%eax
 		push   %eax
-		mov    $data_15dd95,%eax
+		mov    $aRunToPointXDZD,%eax
 		push   %eax
 		push   %esi
 		call   ac_sprintf
@@ -299,7 +299,7 @@ format_debug_msg_case_b90d4:
 		mov    (%edx),%eax
 		sar    $0x10,%eax
 		push   %eax
-		mov    $data_15ddaa,%eax
+		mov    $aGotopointFaceD,%eax
 		push   %eax
 		push   %esi
 		call   ac_sprintf
@@ -315,7 +315,7 @@ format_debug_msg_case_b90d4:
 /*----------------------------------------------------------------*/
 format_debug_msg_case_b9100:
 /*----------------------------------------------------------------*/
-		mov    $data_15ddc4,%eax
+		mov    $aKillEveryone,%eax
 		push   %eax
 		push   %esi
 		call   ac_sprintf
@@ -340,7 +340,7 @@ format_debug_msg_case_b9118:
 		mov    0x2(%edx),%eax
 		sar    $0x10,%eax
 		push   %eax
-		push   $data_15ddd2
+		push   $aWithinAreaXDYD
 		push   %esi
 		call   ac_sprintf
 		add    $0x14,%esp
@@ -355,7 +355,7 @@ format_debug_msg_case_b9118:
 /*----------------------------------------------------------------*/
 format_debug_msg_case_b9144:
 /*----------------------------------------------------------------*/
-		push   $data_15ddea
+		push   $aWithinOff
 		push   %esi
 		call   ac_sprintf
 		add    $0x8,%esp
@@ -370,7 +370,7 @@ format_debug_msg_case_b9144:
 /*----------------------------------------------------------------*/
 format_debug_msg_case_b915b:
 /*----------------------------------------------------------------*/
-		mov    $data_15ddf5,%eax
+		mov    $aExecuteComsPly,%eax
 		push   %eax
 		push   %esi
 		call   ac_sprintf
@@ -386,7 +386,7 @@ format_debug_msg_case_b915b:
 /*----------------------------------------------------------------*/
 format_debug_msg_case_b9173:
 /*----------------------------------------------------------------*/
-		mov    $data_15de09,%eax
+		mov    $aGuardOff,%eax
 		push   %eax
 		push   %esi
 		call   ac_sprintf
@@ -402,7 +402,7 @@ format_debug_msg_case_b9173:
 /*----------------------------------------------------------------*/
 format_debug_msg_case_b918b:
 /*----------------------------------------------------------------*/
-		push   $data_15de13
+		push   $aHardAsAgent
 		push   %esi
 		call   ac_sprintf
 		add    $0x8,%esp
@@ -417,7 +417,7 @@ format_debug_msg_case_b918b:
 /*----------------------------------------------------------------*/
 format_debug_msg_case_b91a2:
 /*----------------------------------------------------------------*/
-		mov    $data_15de21,%eax
+		mov    $aPingExist,%eax
 		push   %eax
 		push   %esi
 		call   ac_sprintf
@@ -433,7 +433,7 @@ format_debug_msg_case_b91a2:
 /*----------------------------------------------------------------*/
 format_debug_msg_case_b91ba:
 /*----------------------------------------------------------------*/
-		push   $data_15de2c
+		push   $aStartDangerMus
 		push   %esi
 		call   ac_sprintf
 		add    $0x8,%esp
@@ -448,7 +448,7 @@ format_debug_msg_case_b91ba:
 /*----------------------------------------------------------------*/
 format_debug_msg_case_b91d1:
 /*----------------------------------------------------------------*/
-		mov    $data_15de3f,%eax
+		mov    $aSelf_destruct,%eax
 		push   %eax
 		push   %esi
 		call   ac_sprintf
@@ -470,11 +470,11 @@ format_debug_msg_case_b91e9:
 		add    %eax,%edx
 		shl    $0x2,%edx
 		add    %eax,%edx
-		mov    EXPORT_SYMBOL(game_things),%eax
+		mov    EXPORT_SYMBOL(things),%eax
 		mov    0x4e(%eax,%edx,8),%ax
 		and    $0xffff,%eax
 		push   %eax
-		mov    $data_15de4d,%eax
+		mov    $aGoToPersonD,%eax
 		push   %eax
 		push   %esi
 		call   ac_sprintf
@@ -496,11 +496,11 @@ format_debug_msg_case_b9224:
 		add    %eax,%edx
 		shl    $0x2,%edx
 		add    %eax,%edx
-		mov    EXPORT_SYMBOL(game_things),%eax
+		mov    EXPORT_SYMBOL(things),%eax
 		mov    0x4e(%eax,%edx,8),%ax
 		and    $0xffff,%eax
 		push   %eax
-		push   $data_15de5d
+		push   $aCameraTrackD
 		push   %esi
 		call   ac_sprintf
 		add    $0xc,%esp
@@ -521,11 +521,11 @@ format_debug_msg_case_b925e:
 		add    %eax,%edx
 		shl    $0x2,%edx
 		add    %eax,%edx
-		mov    EXPORT_SYMBOL(game_things),%eax
+		mov    EXPORT_SYMBOL(things),%eax
 		mov    0x4e(%eax,%edx,8),%ax
 		and    $0xffff,%eax
 		push   %eax
-		mov    $data_15de6d,%eax
+		mov    $aKillPersonD,%eax
 		push   %eax
 		push   %esi
 		call   ac_sprintf
@@ -547,7 +547,7 @@ format_debug_msg_case_b9299:
 		mov    0xe(%edx),%eax
 		sar    $0x10,%eax
 		push   %eax
-		mov    $data_15de7c,%eax
+		mov    $aKillDMemGroupD,%eax
 		push   %eax
 		push   %esi
 		call   ac_sprintf
@@ -566,7 +566,7 @@ format_debug_msg_case_b92be:
 		mov    (%edx),%eax
 		sar    $0x10,%eax
 		push   %eax
-		push   $data_15de91
+		push   $aUntruceGroupD
 		push   %esi
 		call   ac_sprintf
 		add    $0xc,%esp
@@ -584,7 +584,7 @@ format_debug_msg_case_b92db:
 		mov    (%edx),%eax
 		sar    $0x10,%eax
 		push   %eax
-		mov    $data_15dea2,%eax
+		mov    $aKillAllGroupD,%eax
 		push   %eax
 		push   %esi
 		call   ac_sprintf
@@ -606,11 +606,11 @@ format_debug_msg_case_b92f9:
 		add    %eax,%edx
 		shl    $0x2,%edx
 		add    %eax,%edx
-		mov    EXPORT_SYMBOL(game_things),%eax
+		mov    EXPORT_SYMBOL(things),%eax
 		mov    0x4e(%eax,%edx,8),%ax
 		and    $0xffff,%eax
 		push   %eax
-		mov    $data_15deb4,%eax
+		mov    $aFollowPersonD,%eax
 		push   %eax
 		push   %esi
 		call   ac_sprintf
@@ -629,7 +629,7 @@ format_debug_msg_case_b9334:
 		mov    (%edx),%eax
 		sar    $0x10,%eax
 		push   %eax
-		mov    $data_15dec5,%eax
+		mov    $aProtectMemGD,%eax
 		push   %eax
 		push   %esi
 		call   ac_sprintf
@@ -651,11 +651,11 @@ format_debug_msg_case_b9352:
 		add    %eax,%edx
 		shl    $0x2,%edx
 		add    %eax,%edx
-		mov    EXPORT_SYMBOL(game_things),%eax
+		mov    EXPORT_SYMBOL(things),%eax
 		mov    0x4e(%eax,%edx,8),%ax
 		and    $0xffff,%eax
 		push   %eax
-		mov    $data_15ded6,%eax
+		mov    $aSupportPersonD,%eax
 		push   %eax
 		push   %esi
 		call   ac_sprintf
@@ -680,11 +680,11 @@ format_debug_msg_case_b938d:
 		add    %eax,%edx
 		shl    $0x2,%edx
 		add    %eax,%edx
-		mov    EXPORT_SYMBOL(game_things),%eax
+		mov    EXPORT_SYMBOL(things),%eax
 		mov    0x4e(%eax,%edx,8),%ax
 		and    $0xffff,%eax
 		push   %eax
-		mov    $data_15dee8,%eax
+		mov    $aProtectPersonD,%eax
 		push   %eax
 		push   %esi
 		call   ac_sprintf
@@ -706,11 +706,11 @@ format_debug_msg_case_b93ce:
 		add    %eax,%edx
 		shl    $0x2,%edx
 		add    %eax,%edx
-		mov    EXPORT_SYMBOL(game_things),%eax
+		mov    EXPORT_SYMBOL(things),%eax
 		mov    0x4e(%eax,%edx,8),%ax
 		and    $0xffff,%eax
 		push   %eax
-		mov    $data_15df01,%eax
+		mov    $aBlockPersonD,%eax
 		push   %eax
 		push   %esi
 		call   ac_sprintf
@@ -732,11 +732,11 @@ format_debug_msg_case_b9409:
 		add    %eax,%edx
 		shl    $0x2,%edx
 		add    %eax,%edx
-		mov    EXPORT_SYMBOL(game_things),%eax
+		mov    EXPORT_SYMBOL(things),%eax
 		mov    0x4e(%eax,%edx,8),%ax
 		and    $0xffff,%eax
 		push   %eax
-		mov    $data_15df11,%eax
+		mov    $aScarePersonD,%eax
 		push   %eax
 		push   %esi
 		call   ac_sprintf
@@ -758,11 +758,11 @@ format_debug_msg_case_b9444:
 		add    %eax,%edx
 		shl    $0x2,%edx
 		add    %eax,%edx
-		mov    EXPORT_SYMBOL(game_things),%eax
+		mov    EXPORT_SYMBOL(things),%eax
 		mov    0x4e(%eax,%edx,8),%ax
 		and    $0xffff,%eax
 		push   %eax
-		mov    $data_15df21,%eax
+		mov    $aPersuadePerson,%eax
 		push   %eax
 		push   %esi
 		call   ac_sprintf
@@ -781,7 +781,7 @@ format_debug_msg_case_b947f:
 		mov    (%edx),%eax
 		sar    $0x10,%eax
 		push   %eax
-		mov    $data_15df34,%eax
+		mov    $aPersuadeAllGD,%eax
 		push   %eax
 		push   %esi
 		call   ac_sprintf
@@ -803,7 +803,7 @@ format_debug_msg_case_b949d:
 		mov    0xe(%edx),%eax
 		sar    $0x10,%eax
 		push   %eax
-		mov    $data_15df46,%eax
+		mov    $aPersuadeDMemGD,%eax
 		push   %eax
 		push   %esi
 		call   ac_sprintf
@@ -825,11 +825,11 @@ format_debug_msg_case_b94c2:
 		add    %eax,%edx
 		shl    $0x2,%edx
 		add    %eax,%edx
-		mov    EXPORT_SYMBOL(game_things),%eax
+		mov    EXPORT_SYMBOL(things),%eax
 		mov    0x4e(%eax,%edx,8),%ax
 		and    $0xffff,%eax
 		push   %eax
-		mov    $data_15df5b,%eax
+		mov    $aAvoidPersonD,%eax
 		push   %eax
 		push   %esi
 		call   ac_sprintf
@@ -848,7 +848,7 @@ format_debug_msg_case_b94fd:
 		mov    (%edx),%eax
 		sar    $0x10,%eax
 		push   %eax
-		mov    $data_15df6b,%eax
+		mov    $aWandAvoidGroup,%eax
 		push   %eax
 		push   %esi
 		call   ac_sprintf
@@ -864,7 +864,7 @@ format_debug_msg_case_b94fd:
 /*----------------------------------------------------------------*/
 format_debug_msg_case_b951b:
 /*----------------------------------------------------------------*/
-		mov    $data_15df7f,%eax
+		mov    $aHide,%eax
 		push   %eax
 		push   %esi
 		call   ac_sprintf
@@ -883,7 +883,7 @@ format_debug_msg_case_b9533:
 		mov    (%edx),%eax
 		sar    $0x10,%eax
 		push   %eax
-		mov    $data_15df84,%eax
+		mov    $aDestroyBuildin,%eax
 		push   %eax
 		push   %esi
 		call   ac_sprintf
@@ -902,7 +902,7 @@ format_debug_msg_case_b9551:
 		mov    (%edx),%eax
 		sar    $0x10,%eax
 		push   %eax
-		mov    $data_15df98,%eax
+		mov    $aCatchTrainD,%eax
 		push   %eax
 		push   %esi
 		call   ac_sprintf
@@ -921,7 +921,7 @@ format_debug_msg_case_b956f:
 		mov    (%edx),%eax
 		sar    $0x10,%eax
 		push   %eax
-		mov    $data_15dfa7,%eax
+		mov    $aCatchFerryD,%eax
 		push   %eax
 		push   %esi
 		call   ac_sprintf
@@ -940,7 +940,7 @@ format_debug_msg_case_b958d:
 		mov    (%edx),%eax
 		sar    $0x10,%eax
 		push   %eax
-		mov    $data_15dfb6,%eax
+		mov    $aExitFerryD,%eax
 		push   %eax
 		push   %esi
 		call   ac_sprintf
@@ -959,7 +959,7 @@ format_debug_msg_case_b95ab:
 		mov    (%edx),%eax
 		sar    $0x10,%eax
 		push   %eax
-		mov    $data_15dfc4,%eax
+		mov    $aOpenDomeD,%eax
 		push   %eax
 		push   %esi
 		call   ac_sprintf
@@ -978,7 +978,7 @@ format_debug_msg_case_b95c9:
 		mov    (%edx),%eax
 		sar    $0x10,%eax
 		push   %eax
-		mov    $data_15dfd1,%eax
+		mov    $aCloseDomeD,%eax
 		push   %eax
 		push   %esi
 		call   ac_sprintf
@@ -997,7 +997,7 @@ format_debug_msg_case_b95e7:
 		mov    (%edx),%eax
 		sar    $0x10,%eax
 		push   %eax
-		push   $data_15dfdf
+		push   $aLockBuildD
 		push   %esi
 		call   ac_sprintf
 		add    $0xc,%esp
@@ -1015,7 +1015,7 @@ format_debug_msg_case_b9604:
 		mov    (%edx),%eax
 		sar    $0x10,%eax
 		push   %eax
-		push   $data_15dfed
+		push   $aUnlockBuildD
 		push   %esi
 		call   ac_sprintf
 		add    $0xc,%esp
@@ -1039,7 +1039,7 @@ format_debug_msg_case_b9621:
 		mov    0x3a(%eax,%edx,4),%ax
 		and    $0xffff,%eax
 		push   %eax
-		mov    $data_15dffd,%eax
+		mov    $aGetItemD,%eax
 		push   %eax
 		push   %esi
 		call   ac_sprintf
@@ -1059,7 +1059,7 @@ format_debug_msg_case_b9655:
 		sar    $0x10,%eax
 		mov    weapon_names(,%eax,4),%edx
 		push   %edx
-		push   $data_15e009
+		push   $aSelectWeaponS
 		push   %esi
 		call   ac_sprintf
 		add    $0xc,%esp
@@ -1078,7 +1078,7 @@ format_debug_msg_case_b9679:
 		sar    $0x10,%eax
 		mov    weapon_names(,%eax,4),%ecx
 		push   %ecx
-		mov    $data_15e01b,%eax
+		mov    $aUseWeaponS,%eax
 		push   %eax
 		push   %esi
 		call   ac_sprintf
@@ -1103,7 +1103,7 @@ format_debug_msg_case_b969e:
 		mov    0x3a(%eax,%edx,4),%ax
 		and    $0xffff,%eax
 		push   %eax
-		mov    $data_15e029,%eax
+		mov    $aDropSpecItemD,%eax
 		push   %eax
 		push   %esi
 		call   ac_sprintf
@@ -1123,7 +1123,7 @@ format_debug_msg_case_b96d2:
 		sar    $0x10,%eax
 		mov    weapon_names(,%eax,4),%ebx
 		push   %ebx
-		mov    $data_15e03b,%eax
+		mov    $aDropWeaponS,%eax
 		push   %eax
 		push   %esi
 		call   ac_sprintf
@@ -1145,11 +1145,11 @@ format_debug_msg_case_b96f7:
 		add    %eax,%edx
 		shl    $0x2,%edx
 		add    %eax,%edx
-		mov    EXPORT_SYMBOL(game_things),%eax
+		mov    EXPORT_SYMBOL(things),%eax
 		mov    0x4e(%eax,%edx,8),%ax
 		and    $0xffff,%eax
 		push   %eax
-		mov    $data_15e04a,%eax
+		mov    $aUseVehicleD,%eax
 		push   %eax
 		push   %esi
 		call   ac_sprintf
@@ -1165,7 +1165,7 @@ format_debug_msg_case_b96f7:
 /*----------------------------------------------------------------*/
 format_debug_msg_case_b9732:
 /*----------------------------------------------------------------*/
-		mov    $data_15e059,%eax
+		mov    $aExitVehicle,%eax
 		push   %eax
 		push   %esi
 		call   ac_sprintf
@@ -1187,11 +1187,11 @@ format_debug_msg_case_b974a:
 		add    %eax,%edx
 		shl    $0x2,%edx
 		add    %eax,%edx
-		mov    EXPORT_SYMBOL(game_things),%eax
+		mov    EXPORT_SYMBOL(things),%eax
 		mov    0x4e(%eax,%edx,8),%ax
 		and    $0xffff,%eax
 		push   %eax
-		mov    $data_15e066,%eax
+		mov    $aWaitPVDeadD,%eax
 		push   %eax
 		push   %esi
 		call   ac_sprintf
@@ -1213,11 +1213,11 @@ format_debug_msg_case_b9785:
 		add    %eax,%edx
 		shl    $0x2,%edx
 		add    %eax,%edx
-		mov    EXPORT_SYMBOL(game_things),%eax
+		mov    EXPORT_SYMBOL(things),%eax
 		mov    0x4e(%eax,%edx,8),%ax
 		and    $0xffff,%eax
 		push   %eax
-		mov    $data_15e077,%eax
+		mov    $aWaitPVINearD,%eax
 		push   %eax
 		push   %esi
 		call   ac_sprintf
@@ -1239,11 +1239,11 @@ format_debug_msg_case_b97c0:
 		add    %eax,%edx
 		shl    $0x2,%edx
 		add    %eax,%edx
-		mov    EXPORT_SYMBOL(game_things),%eax
+		mov    EXPORT_SYMBOL(things),%eax
 		mov    0x4e(%eax,%edx,8),%ax
 		and    $0xffff,%eax
 		push   %eax
-		push   $data_15e08a
+		push   $aPingPVD
 		push   %esi
 		call   ac_sprintf
 		add    $0xc,%esp
@@ -1273,11 +1273,11 @@ format_debug_msg_case_b97fa:
 		add    %eax,%edx
 		shl    $0x2,%edx
 		add    %eax,%edx
-		mov    EXPORT_SYMBOL(game_things),%eax
+		mov    EXPORT_SYMBOL(things),%eax
 		mov    0x4e(%eax,%edx,8),%ax
 		and    $0xffff,%eax
 		push   %eax
-		mov    $data_15e096,%eax
+		mov    $aWaitPVIArrives,%eax
 		push   %eax
 		push   %esi
 		call   ac_sprintf
@@ -1299,11 +1299,11 @@ format_debug_msg_case_b984a:
 		add    %eax,%edx
 		shl    $0x2,%edx
 		add    %eax,%edx
-		mov    EXPORT_SYMBOL(game_things),%eax
+		mov    EXPORT_SYMBOL(things),%eax
 		mov    0x4e(%eax,%edx,8),%ax
 		and    $0xffff,%eax
 		push   %eax
-		mov    $data_15e0b8,%eax
+		mov    $aWaitPPersuaded,%eax
 		push   %eax
 		push   %esi
 		call   ac_sprintf
@@ -1325,7 +1325,7 @@ format_debug_msg_case_b9885:
 		mov    0xe(%edx),%eax
 		sar    $0x10,%eax
 		push   %eax
-		mov    $data_15e0cc,%eax
+		mov    $aWaitDMemGDeadD,%eax
 		push   %eax
 		push   %esi
 		call   ac_sprintf
@@ -1347,7 +1347,7 @@ format_debug_msg_case_b98aa:
 		mov    0xe(%edx),%eax
 		sar    $0x10,%eax
 		push   %eax
-		mov    $data_15e0e2,%eax
+		mov    $aWaitDMemGDNear,%eax
 		push   %eax
 		push   %esi
 		call   ac_sprintf
@@ -1369,7 +1369,7 @@ format_debug_msg_case_b98cf:
 		mov    0xe(%edx),%eax
 		sar    $0x10,%eax
 		push   %eax
-		mov    $data_15e0f9,%eax
+		mov    $aWaitDMemGArriv,%eax
 		push   %eax
 		push   %esi
 		call   ac_sprintf
@@ -1391,7 +1391,7 @@ format_debug_msg_case_b98f4:
 		mov    0xe(%edx),%eax
 		sar    $0x10,%eax
 		push   %eax
-		mov    $data_15e111,%eax
+		mov    $aWaitDMemGPersu,%eax
 		push   %eax
 		push   %esi
 		call   ac_sprintf
@@ -1410,7 +1410,7 @@ format_debug_msg_case_b9919:
 		mov    (%edx),%eax
 		sar    $0x10,%eax
 		push   %eax
-		mov    $data_15e12c,%eax
+		mov    $aWaitAllGDeadD,%eax
 		push   %eax
 		push   %esi
 		call   ac_sprintf
@@ -1429,7 +1429,7 @@ format_debug_msg_case_b9937:
 		mov    (%edx),%eax
 		sar    $0x10,%eax
 		push   %eax
-		mov    $data_15e13f,%eax
+		mov    $aWaitAllGDNear,%eax
 		push   %eax
 		push   %esi
 		call   ac_sprintf
@@ -1448,7 +1448,7 @@ format_debug_msg_case_b9955:
 		mov    (%edx),%eax
 		sar    $0x10,%eax
 		push   %eax
-		mov    $data_15e153,%eax
+		mov    $aWaitAllGArrive,%eax
 		push   %eax
 		push   %esi
 		call   ac_sprintf
@@ -1467,7 +1467,7 @@ format_debug_msg_case_b9973:
 		mov    (%edx),%eax
 		sar    $0x10,%eax
 		push   %eax
-		mov    $data_15e168,%eax
+		mov    $aWaitAllGPersua,%eax
 		push   %eax
 		push   %esi
 		call   ac_sprintf
@@ -1486,7 +1486,7 @@ format_debug_msg_case_b9991:
 		mov    (%edx),%eax
 		sar    $0x10,%eax
 		push   %eax
-		mov    $data_15e180,%eax
+		mov    $aWaitMissionSta,%eax
 		push   %eax
 		push   %esi
 		call   ac_sprintf
@@ -1505,7 +1505,7 @@ format_debug_msg_case_b99af:
 		mov    (%edx),%eax
 		sar    $0x10,%eax
 		push   %eax
-		mov    $data_15e196,%eax
+		mov    $aWaitMissionSuc,%eax
 		push   %eax
 		push   %esi
 		call   ac_sprintf
@@ -1524,7 +1524,7 @@ format_debug_msg_case_b99cd:
 		mov    (%edx),%eax
 		sar    $0x10,%eax
 		push   %eax
-		mov    $data_15e1ab,%eax
+		mov    $aWaitMissionFai,%eax
 		push   %eax
 		push   %esi
 		call   ac_sprintf
@@ -1552,7 +1552,7 @@ format_debug_msg_case_b99eb:
 		mov    (%edx),%eax
 		sar    $0x10,%eax
 		push   %eax
-		mov    $data_15e1c0,%eax
+		mov    $aWaitObjectDest,%eax
 		push   %eax
 		push   %esi
 		call   ac_sprintf
@@ -1571,7 +1571,7 @@ format_debug_msg_case_b9a1e:
 		mov    0x10(%edx),%eax
 		sar    $0x10,%eax
 		push   %eax
-		mov    $data_15e1e5,%eax
+		mov    $aWaitTimeD,%eax
 		push   %eax
 		push   %esi
 		call   ac_sprintf
@@ -1587,7 +1587,7 @@ format_debug_msg_case_b9a1e:
 /*----------------------------------------------------------------*/
 format_debug_msg_case_b9a3d:
 /*----------------------------------------------------------------*/
-		push   $data_15e1f2
+		push   $aWaitObj
 		push   %esi
 		call   ac_sprintf
 		add    $0x8,%esp
@@ -1608,11 +1608,11 @@ format_debug_msg_case_b9a54:
 		add    %eax,%edx
 		shl    $0x2,%edx
 		add    %eax,%edx
-		mov    EXPORT_SYMBOL(game_things),%eax
+		mov    EXPORT_SYMBOL(things),%eax
 		mov    0x4e(%eax,%edx,8),%ax
 		and    $0xffff,%eax
 		push   %eax
-		mov    $data_15e1fd,%eax
+		mov    $aWandPVDeadD,%eax
 		push   %eax
 		push   %esi
 		call   ac_sprintf
@@ -1634,11 +1634,11 @@ format_debug_msg_case_b9a8f:
 		add    %eax,%edx
 		shl    $0x2,%edx
 		add    %eax,%edx
-		mov    EXPORT_SYMBOL(game_things),%eax
+		mov    EXPORT_SYMBOL(things),%eax
 		mov    0x4e(%eax,%edx,8),%ax
 		and    $0xffff,%eax
 		push   %eax
-		mov    $data_15e20e,%eax
+		mov    $aWandPVINearD,%eax
 		push   %eax
 		push   %esi
 		call   ac_sprintf
@@ -1669,11 +1669,11 @@ format_debug_msg_case_b9aca:
 		add    %eax,%edx
 		shl    $0x2,%edx
 		add    %eax,%edx
-		mov    EXPORT_SYMBOL(game_things),%eax
+		mov    EXPORT_SYMBOL(things),%eax
 		mov    0x4e(%eax,%edx,8),%ax
 		and    $0xffff,%eax
 		push   %eax
-		mov    $data_15e221,%eax
+		mov    $aWandPVIArrives,%eax
 		push   %eax
 		push   %esi
 		call   ac_sprintf
@@ -1695,11 +1695,11 @@ format_debug_msg_case_b9b1a:
 		add    %eax,%edx
 		shl    $0x2,%edx
 		add    %eax,%edx
-		mov    EXPORT_SYMBOL(game_things),%eax
+		mov    EXPORT_SYMBOL(things),%eax
 		mov    0x4e(%eax,%edx,8),%ax
 		and    $0xffff,%eax
 		push   %eax
-		mov    $data_15e243,%eax
+		mov    $aWandPPersuaded,%eax
 		push   %eax
 		push   %esi
 		call   ac_sprintf
@@ -1721,7 +1721,7 @@ format_debug_msg_case_b9b55:
 		mov    0xe(%edx),%eax
 		sar    $0x10,%eax
 		push   %eax
-		mov    $data_15e257,%eax
+		mov    $aWandDMemGDDead,%eax
 		push   %eax
 		push   %esi
 		call   ac_sprintf
@@ -1743,7 +1743,7 @@ format_debug_msg_case_b9b7a:
 		mov    0xe(%edx),%eax
 		sar    $0x10,%eax
 		push   %eax
-		mov    $data_15e26e,%eax
+		mov    $aWandDMemGDNear,%eax
 		push   %eax
 		push   %esi
 		call   ac_sprintf
@@ -1765,7 +1765,7 @@ format_debug_msg_case_b9b9f:
 		mov    0xe(%edx),%eax
 		sar    $0x10,%eax
 		push   %eax
-		mov    $data_15e285,%eax
+		mov    $aWandDMemGArriv,%eax
 		push   %eax
 		push   %esi
 		call   ac_sprintf
@@ -1787,7 +1787,7 @@ format_debug_msg_case_b9bc4:
 		mov    0xe(%edx),%eax
 		sar    $0x10,%eax
 		push   %eax
-		mov    $data_15e29d,%eax
+		mov    $aWandDMemGPersu,%eax
 		push   %eax
 		push   %esi
 		call   ac_sprintf
@@ -1806,7 +1806,7 @@ format_debug_msg_case_b9be9:
 		mov    (%edx),%eax
 		sar    $0x10,%eax
 		push   %eax
-		mov    $data_15e2b8,%eax
+		mov    $aWandAllGDeadD,%eax
 		push   %eax
 		push   %esi
 		call   ac_sprintf
@@ -1825,7 +1825,7 @@ format_debug_msg_case_b9c07:
 		mov    (%edx),%eax
 		sar    $0x10,%eax
 		push   %eax
-		mov    $data_15e2cb,%eax
+		mov    $aWandAllGDNear,%eax
 		push   %eax
 		push   %esi
 		call   ac_sprintf
@@ -1844,7 +1844,7 @@ format_debug_msg_case_b9c25:
 		mov    (%edx),%eax
 		sar    $0x10,%eax
 		push   %eax
-		mov    $data_15e2df,%eax
+		mov    $aWandAllGArrive,%eax
 		push   %eax
 		push   %esi
 		call   ac_sprintf
@@ -1863,7 +1863,7 @@ format_debug_msg_case_b9c43:
 		mov    (%edx),%eax
 		sar    $0x10,%eax
 		push   %eax
-		mov    $data_15e2f4,%eax
+		mov    $aWandAllGPersua,%eax
 		push   %eax
 		push   %esi
 		call   ac_sprintf
@@ -1879,7 +1879,7 @@ format_debug_msg_case_b9c43:
 /*----------------------------------------------------------------*/
 format_debug_msg_case_b9c61:
 /*----------------------------------------------------------------*/
-		push   $data_15e30c
+		push   $aWandObj
 		push   %esi
 		call   ac_sprintf
 		add    $0x8,%esp
@@ -1897,7 +1897,7 @@ format_debug_msg_case_b9c78:
 		mov    (%edx),%eax
 		sar    $0x10,%eax
 		push   %eax
-		mov    $data_15e317,%eax
+		mov    $aWandMissionSta,%eax
 		push   %eax
 		push   %esi
 		call   ac_sprintf
@@ -1916,7 +1916,7 @@ format_debug_msg_case_b9c96:
 		mov    (%edx),%eax
 		sar    $0x10,%eax
 		push   %eax
-		mov    $data_15e32d,%eax
+		mov    $aWandMissionSuc,%eax
 		push   %eax
 		push   %esi
 		call   ac_sprintf
@@ -1935,7 +1935,7 @@ format_debug_msg_case_b9cb4:
 		mov    (%edx),%eax
 		sar    $0x10,%eax
 		push   %eax
-		mov    $data_15e342,%eax
+		mov    $aWandMissionFai,%eax
 		push   %eax
 		push   %esi
 		call   ac_sprintf
@@ -1963,7 +1963,7 @@ format_debug_msg_case_b9cd2:
 		mov    (%edx),%eax
 		sar    $0x10,%eax
 		push   %eax
-		mov    $data_15e357,%eax
+		mov    $aWandObjectDest,%eax
 		push   %eax
 		push   %esi
 		call   ac_sprintf
@@ -1982,7 +1982,7 @@ format_debug_msg_case_b9d05:
 		mov    0x10(%edx),%eax
 		sar    $0x10,%eax
 		push   %eax
-		mov    $data_15e37c,%eax
+		mov    $aWandTimeD,%eax
 		push   %eax
 		push   %esi
 		call   ac_sprintf
@@ -2001,7 +2001,7 @@ format_debug_msg_case_b9d24:
 		mov    0x10(%edx),%eax
 		sar    $0x10,%eax
 		push   %eax
-		push   $data_15e389
+		push   $aUntilGDNotSeen
 		push   %esi
 		call   ac_sprintf
 		add    $0xc,%esp
@@ -2022,11 +2022,11 @@ format_debug_msg_case_b9d42:
 		add    %eax,%edx
 		shl    $0x2,%edx
 		add    %eax,%edx
-		mov    EXPORT_SYMBOL(game_things),%eax
+		mov    EXPORT_SYMBOL(things),%eax
 		mov    0x4e(%eax,%edx,8),%ax
 		and    $0xffff,%eax
 		push   %eax
-		mov    $data_15e39d,%eax
+		mov    $aUntilPVDeadD,%eax
 		push   %eax
 		push   %esi
 		call   ac_sprintf
@@ -2048,11 +2048,11 @@ format_debug_msg_case_b9d7d:
 		add    %eax,%edx
 		shl    $0x2,%edx
 		add    %eax,%edx
-		mov    EXPORT_SYMBOL(game_things),%eax
+		mov    EXPORT_SYMBOL(things),%eax
 		mov    0x4e(%eax,%edx,8),%ax
 		and    $0xffff,%eax
 		push   %eax
-		push   $data_15e3af
+		push   $aUntilPVINearD
 		push   %esi
 		call   ac_sprintf
 		add    $0xc,%esp
@@ -2082,11 +2082,11 @@ format_debug_msg_case_b9db7:
 		add    %eax,%edx
 		shl    $0x2,%edx
 		add    %eax,%edx
-		mov    EXPORT_SYMBOL(game_things),%eax
+		mov    EXPORT_SYMBOL(things),%eax
 		mov    0x4e(%eax,%edx,8),%ax
 		and    $0xffff,%eax
 		push   %eax
-		push   $data_15e3c3
+		push   $aUntilPVIArrive
 		push   %esi
 		call   ac_sprintf
 		add    $0x18,%esp
@@ -2107,11 +2107,11 @@ format_debug_msg_case_b9e06:
 		add    %eax,%edx
 		shl    $0x2,%edx
 		add    %eax,%edx
-		mov    EXPORT_SYMBOL(game_things),%eax
+		mov    EXPORT_SYMBOL(things),%eax
 		mov    0x4e(%eax,%edx,8),%ax
 		and    $0xffff,%eax
 		push   %eax
-		push   $data_15e3e6
+		push   $aUntilPPersuade
 		push   %esi
 		call   ac_sprintf
 		add    $0xc,%esp
@@ -2132,7 +2132,7 @@ format_debug_msg_case_b9e40:
 		mov    0xe(%edx),%eax
 		sar    $0x10,%eax
 		push   %eax
-		mov    $data_15e3fb,%eax
+		mov    $aUntilDMemGDead,%eax
 		push   %eax
 		push   %esi
 		call   ac_sprintf
@@ -2154,7 +2154,7 @@ format_debug_msg_case_b9e65:
 		mov    0xe(%edx),%eax
 		sar    $0x10,%eax
 		push   %eax
-		push   $data_15e412
+		push   $aUntilDMemGDNea
 		push   %esi
 		call   ac_sprintf
 		add    $0x10,%esp
@@ -2175,7 +2175,7 @@ format_debug_msg_case_b9e89:
 		mov    0xe(%edx),%eax
 		sar    $0x10,%eax
 		push   %eax
-		push   $data_15e42a
+		push   $aUntilDMemGArri
 		push   %esi
 		call   ac_sprintf
 		add    $0x10,%esp
@@ -2196,7 +2196,7 @@ format_debug_msg_case_b9ead:
 		mov    0xe(%edx),%eax
 		sar    $0x10,%eax
 		push   %eax
-		push   $data_15e443
+		push   $aUntilDMemGPers
 		push   %esi
 		call   ac_sprintf
 		add    $0x10,%esp
@@ -2214,7 +2214,7 @@ format_debug_msg_case_b9ed1:
 		mov    (%edx),%eax
 		sar    $0x10,%eax
 		push   %eax
-		mov    $data_15e45f,%eax
+		mov    $aUntilAllGDeadD,%eax
 		push   %eax
 		push   %esi
 		call   ac_sprintf
@@ -2233,7 +2233,7 @@ format_debug_msg_case_b9eef:
 		mov    (%edx),%eax
 		sar    $0x10,%eax
 		push   %eax
-		push   $data_15e473
+		push   $aUntilAllGDNear
 		push   %esi
 		call   ac_sprintf
 		add    $0xc,%esp
@@ -2251,7 +2251,7 @@ format_debug_msg_case_b9f0c:
 		mov    (%edx),%eax
 		sar    $0x10,%eax
 		push   %eax
-		push   $data_15e488
+		push   $aUntilAllGArriv
 		push   %esi
 		call   ac_sprintf
 		add    $0xc,%esp
@@ -2269,7 +2269,7 @@ format_debug_msg_case_b9f29:
 		mov    (%edx),%eax
 		sar    $0x10,%eax
 		push   %eax
-		push   $data_15e49e
+		push   $aUntilAllGPersu
 		push   %esi
 		call   ac_sprintf
 		add    $0xc,%esp
@@ -2284,7 +2284,7 @@ format_debug_msg_case_b9f29:
 /*----------------------------------------------------------------*/
 format_debug_msg_case_b9f46:
 /*----------------------------------------------------------------*/
-		push   $data_15e4b7
+		push   $aUntilObj
 		push   %esi
 		call   ac_sprintf
 		add    $0x8,%esp
@@ -2302,7 +2302,7 @@ format_debug_msg_case_b9f5d:
 		mov    (%edx),%eax
 		sar    $0x10,%eax
 		push   %eax
-		push   $data_15e4c3
+		push   $aUntilMissionSt
 		push   %esi
 		call   ac_sprintf
 		add    $0xc,%esp
@@ -2320,7 +2320,7 @@ format_debug_msg_case_b9f7a:
 		mov    (%edx),%eax
 		sar    $0x10,%eax
 		push   %eax
-		push   $data_15e4da
+		push   $aUntilMissionSu
 		push   %esi
 		call   ac_sprintf
 		add    $0xc,%esp
@@ -2338,7 +2338,7 @@ format_debug_msg_case_b9f97:
 		mov    (%edx),%eax
 		sar    $0x10,%eax
 		push   %eax
-		push   $data_15e4f0
+		push   $aUntilMissionFa
 		push   %esi
 		call   ac_sprintf
 		add    $0xc,%esp
@@ -2365,7 +2365,7 @@ format_debug_msg_case_b9fb4:
 		mov    (%edx),%eax
 		sar    $0x10,%eax
 		push   %eax
-		push   $data_15e506
+		push   $aUntilObjectDes
 		push   %esi
 		call   ac_sprintf
 		add    $0x18,%esp
@@ -2383,7 +2383,7 @@ format_debug_msg_case_b9fe6:
 		mov    0x10(%edx),%eax
 		sar    $0x10,%eax
 		push   %eax
-		push   $data_15e52c
+		push   $aUntilTimeD
 		push   %esi
 		call   ac_sprintf
 		add    $0xc,%esp
@@ -2408,546 +2408,546 @@ format_debug_msg_case_ba004:
 .section .rodata
 
 weapon_names:
-		.long   data_15e691
-		.long   data_15e692
-		.long   data_15e697
-		.long   data_15e6a0
-		.long   data_15e6a7
-		.long   data_15e6b7
-		.long   data_15e6bc
-		.long   data_15e6cd
-		.long   data_15e6dc
-		.long   data_15e6e4
-		.long   data_15e6f5
-		.long   data_15e700
-		.long   data_15e70e
-		.long   data_15e71d
-		.long   data_15e72d
-		.long   data_15e73d
-		.long   data_15e749
-		.long   data_15e755
-		.long   data_15e75b
-		.long   data_15e767
-		.long   data_15e774
-		.long   data_15e782
-		.long   data_15e792
-		.long   data_15e7a0
-		.long   data_15e7af
-		.long   data_15e7b9
-		.long   data_15e7c3
-		.long   data_15e7d0
-		.long   data_15e7d8
-		.long   data_15e7e0
-		.long   data_15e7ee
+		.long   aWepNull
+		.long   aWepUzi
+		.long   aWepMinigun
+		.long   aWepLaser
+		.long   aWepElLaser
+		.long   aWepRap
+		.long   aWepNuclGren
+		.long   aWepPersuadrtrn
+		.long   aWepFlamer
+		.long   aWepH2HTaser
+		.long   aWepCrazyGas
+		.long   aWepKOGas
+		.long   aWepEleMine
+		.long   aWepExplMine
+		.long   aWepNapalmMine
+		.long   aWepLongRange
+		.long   aWepAirStrike
+		.long   aWepBeam
+		.long   aWepRazorWire
+		.long   aWepSonicBlast
+		.long   aWepQDevastator
+		.long   aWepPersuader2
+		.long   aWepStasisFld
+		.long   aWepEnergyShld
+		.long   aWepSoulGun
+		.long   aWepTimeGun
+		.long   aWepCerebusIff
+		.long   aWepMedi1
+		.long   aWepMedi2
+		.long   aWepExplWire
+		.long   aWepCloneShld
 		.long	0x0
-		.long   data_15e7fc
-		.long   data_15e7fd
-		.long   data_15e7fe
-		.long   data_15e7ff
-		.long   data_15e800
-		.long   data_15e801
-		.long   data_15e802
+		.long   aEmptyItm0
+		.long   aEmptyItm1
+		.long   aEmptyItm2
+		.long   aEmptyItm3
+		.long   aEmptyItm4
+		.long   aEmptyItm5
+		.long   aEmptyItm6
 
 
-data_15dd2c:
+aThDIdD:	/* 0x15DD2C */
 		.string "TH %d ID %d"
-data_15dd38:
+aThDIdD_0:	/* 0x15DD38 */
 		.string "TH %d ID %d"
-data_15dd44:
+aD_53:	/* 0x15DD44 */
 		.string "%d "
-data_15dd48:
+ascU:	/* 0x15DD48 */
 		.string "U "
-data_15dd4b:
+ascIu:	/* 0x15DD4B */
 		.string "IU "
 data_15dd4f:
 		.string "!!!"
-data_15dd53:
+aIgnoreEnemies:	/* 0x15DD53 */
 		.string "IGNORE ENEMIES"
-data_15dd62:
+aLoopComD:	/* 0x15DD62 */
 		.string "LOOP COM %d"
-data_15dd6e:
+aGoToPointXDYDZ:	/* 0x15DD6E */
 		.string "GO TO POINT X%d Y%d Z%d"
-data_15dd86:
+aPlaySampleD:	/* 0x15DD86 */
 		.string "PLAY SAMPLE %d"
-data_15dd95:
+aRunToPointXDZD:	/* 0x15DD95 */
 		.string "RUN TO POINT X%d Z%d"
-data_15ddaa:
+aGotopointFaceD:	/* 0x15DDAA */
 		.string "GOTOPOINT FACE %d X%d Z%d"
-data_15ddc4:
+aKillEveryone:	/* 0x15DDC4 */
 		.string "KILL EVERYONE"
-data_15ddd2:
+aWithinAreaXDYD:	/* 0x15DDD2 */
 		.string "WITHIN AREA X%d Y%d Z%d"
-data_15ddea:
+aWithinOff:	/* 0x15DDEA */
 		.string "WITHIN OFF"
-data_15ddf5:
+aExecuteComsPly:	/* 0x15DDF5 */
 		.string "Execute Coms (plyr)"
-data_15de09:
+aGuardOff:	/* 0x15DE09 */
 		.string "GUARD OFF"
-data_15de13:
+aHardAsAgent:	/* 0x15DE13 */
 		.string "HARD AS AGENT"
-data_15de21:
+aPingExist:	/* 0x15DE21 */
 		.string "PING EXIST"
-data_15de2c:
+aStartDangerMus:	/* 0x15DE2C */
 		.string "start danger music"
-data_15de3f:
+aSelf_destruct:	/* 0x15DE3F */
 		.string "SELF_DESTRUCT"
-data_15de4d:
+aGoToPersonD:	/* 0x15DE4D */
 		.string "GO TO PERSON %d"
-data_15de5d:
+aCameraTrackD:	/* 0x15DE5D */
 		.string "CAMERA TRACK %d"
-data_15de6d:
+aKillPersonD:	/* 0x15DE6D */
 		.string "KILL PERSON %d"
-data_15de7c:
+aKillDMemGroupD:	/* 0x15DE7C */
 		.string "KILL %d MEM GROUP %d"
-data_15de91:
+aUntruceGroupD:	/* 0x15DE91 */
 		.string "UNTRUCE GROUP %d"
-data_15dea2:
+aKillAllGroupD:	/* 0x15DEA2 */
 		.string "KILL ALL GROUP %d"
-data_15deb4:
+aFollowPersonD:	/* 0x15DEB4 */
 		.string "FOLLOW PERSON %d"
-data_15dec5:
+aProtectMemGD:	/* 0x15DEC5 */
 		.string "PROTECT MEM G %d"
-data_15ded6:
+aSupportPersonD:	/* 0x15DED6 */
 		.string "SUPPORT PERSON %d"
-data_15dee8:
+aProtectPersonD:	/* 0x15DEE8 */
 		.string "PROTECT PERSON %d idx %d"
-data_15df01:
+aBlockPersonD:	/* 0x15DF01 */
 		.string "BLOCK PERSON %d"
-data_15df11:
+aScarePersonD:	/* 0x15DF11 */
 		.string "SCARE PERSON %d"
-data_15df21:
+aPersuadePerson:	/* 0x15DF21 */
 		.string "PERSUADE PERSON %d"
-data_15df34:
+aPersuadeAllGD:	/* 0x15DF34 */
 		.string "PERSUADE All G %d"
-data_15df46:
+aPersuadeDMemGD:	/* 0x15DF46 */
 		.string "PERSUADE %d Mem G %d"
-data_15df5b:
+aAvoidPersonD:	/* 0x15DF5B */
 		.string "AVOID PERSON %d"
-data_15df6b:
+aWandAvoidGroup:	/* 0x15DF6B */
 		.string "WAND AVOID GROUP %d"
-data_15df7f:
+aHide:	/* 0x15DF7F */
 		.string "HIDE"
-data_15df84:
+aDestroyBuildin:	/* 0x15DF84 */
 		.string "DESTROY BUILDING %d"
-data_15df98:
+aCatchTrainD:	/* 0x15DF98 */
 		.string "CATCH TRAIN %d"
-data_15dfa7:
+aCatchFerryD:	/* 0x15DFA7 */
 		.string "CATCH FERRY %d"
-data_15dfb6:
+aExitFerryD:	/* 0x15DFB6 */
 		.string "EXIT FERRY %d"
-data_15dfc4:
+aOpenDomeD:	/* 0x15DFC4 */
 		.string "OPEN DOME %d"
-data_15dfd1:
+aCloseDomeD:	/* 0x15DFD1 */
 		.string "CLOSE DOME %d"
-data_15dfdf:
+aLockBuildD:	/* 0x15DFDF */
 		.string "LOCK BUILD %d"
-data_15dfed:
+aUnlockBuildD:	/* 0x15DFED */
 		.string "UNLOCK BUILD %d"
-data_15dffd:
+aGetItemD:	/* 0x15DFFD */
 		.string "GET ITEM %d"
-data_15e009:
+aSelectWeaponS:	/* 0x15E009 */
 		.string "SELECT WEAPON %s "
-data_15e01b:
+aUseWeaponS:	/* 0x15E01B */
 		.string "USE WEAPON %s"
-data_15e029:
+aDropSpecItemD:	/* 0x15E029 */
 		.string "DROP SPEC ITEM %d"
-data_15e03b:
+aDropWeaponS:	/* 0x15E03B */
 		.string "DROP WEAPON %s"
-data_15e04a:
+aUseVehicleD:	/* 0x15E04A */
 		.string "USE VEHICLE %d"
-data_15e059:
+aExitVehicle:	/* 0x15E059 */
 		.string "EXIT VEHICLE"
-data_15e066:
+aWaitPVDeadD:	/* 0x15E066 */
 		.string "WAIT P/V DEAD %d"
-data_15e077:
+aWaitPVINearD:	/* 0x15E077 */
 		.string "WAIT P/V/I NEAR %d"
-data_15e08a:
+aPingPVD:	/* 0x15E08A */
 		.string "PING P/V %d"
-data_15e096:
+aWaitPVIArrives:	/* 0x15E096 */
 		.string "WAIT P/V/I ARRIVES %d X%d Y%d Z%d"
-data_15e0b8:
+aWaitPPersuaded:	/* 0x15E0B8 */
 		.string "WAIT P PERSUADED %d"
-data_15e0cc:
+aWaitDMemGDeadD:	/* 0x15E0CC */
 		.string "WAIT %d MEM G DEAD %d"
-data_15e0e2:
+aWaitDMemGDNear:	/* 0x15E0E2 */
 		.string "WAIT %d MEM G %d NEAR "
-data_15e0f9:
+aWaitDMemGArriv:	/* 0x15E0F9 */
 		.string "WAIT %d MEM G ARRIVE %d"
-data_15e111:
+aWaitDMemGPersu:	/* 0x15E111 */
 		.string "WAIT %d MEM G PERSUADED %d"
-data_15e12c:
+aWaitAllGDeadD:	/* 0x15E12C */
 		.string "WAIT ALL G DEAD %d"
-data_15e13f:
+aWaitAllGDNear:	/* 0x15E13F */
 		.string "WAIT ALL G %d NEAR "
-data_15e153:
+aWaitAllGArrive:	/* 0x15E153 */
 		.string "WAIT ALL G ARRIVE %d"
-data_15e168:
+aWaitAllGPersua:	/* 0x15E168 */
 		.string "WAIT ALL G PERSUADED %d"
-data_15e180:
+aWaitMissionSta:	/* 0x15E180 */
 		.string "WAIT MISSION START %d"
-data_15e196:
+aWaitMissionSuc:	/* 0x15E196 */
 		.string "WAIT MISSION SUCC %d"
-data_15e1ab:
+aWaitMissionFai:	/* 0x15E1AB */
 		.string "WAIT MISSION FAIL %d"
-data_15e1c0:
+aWaitObjectDest:	/* 0x15E1C0 */
 		.string "WAIT OBJECT DESTROYED %d X%d Y%d Z%d"
-data_15e1e5:
+aWaitTimeD:	/* 0x15E1E5 */
 		.string "WAIT TIME %d"
-data_15e1f2:
+aWaitObj:	/* 0x15E1F2 */
 		.string "WAIT OBJ:-"
-data_15e1fd:
+aWandPVDeadD:	/* 0x15E1FD */
 		.string "WAND P/V DEAD %d"
-data_15e20e:
+aWandPVINearD:	/* 0x15E20E */
 		.string "WAND P/V/I NEAR %d"
-data_15e221:
+aWandPVIArrives:	/* 0x15E221 */
 		.string "WAND P/V/I ARRIVES %d X%d Y%d Z%d"
-data_15e243:
+aWandPPersuaded:	/* 0x15E243 */
 		.string "WAND P PERSUADED %d"
-data_15e257:
+aWandDMemGDDead:	/* 0x15E257 */
 		.string "WAND %d MEM G %d DEAD "
-data_15e26e:
+aWandDMemGDNear:	/* 0x15E26E */
 		.string "WAND %d MEM G %d NEAR "
-data_15e285:
+aWandDMemGArriv:	/* 0x15E285 */
 		.string "WAND %d MEM G ARRIVE %d"
-data_15e29d:
+aWandDMemGPersu:	/* 0x15E29D */
 		.string "WAND %d MEM G PERSUADED %d"
-data_15e2b8:
+aWandAllGDeadD:	/* 0x15E2B8 */
 		.string "WAND ALL G DEAD %d"
-data_15e2cb:
+aWandAllGDNear:	/* 0x15E2CB */
 		.string "WAND ALL G %d NEAR "
-data_15e2df:
+aWandAllGArrive:	/* 0x15E2DF */
 		.string "WAND ALL G ARRIVE %d"
-data_15e2f4:
+aWandAllGPersua:	/* 0x15E2F4 */
 		.string "WAND ALL G PERSUADED %d"
-data_15e30c:
+aWandObj:	/* 0x15E30C */
 		.string "WAND OBJ:-"
-data_15e317:
+aWandMissionSta:	/* 0x15E317 */
 		.string "WAND MISSION START %d"
-data_15e32d:
+aWandMissionSuc:	/* 0x15E32D */
 		.string "WAND MISSION SUCC %d"
-data_15e342:
+aWandMissionFai:	/* 0x15E342 */
 		.string "WAND MISSION FAIL %d"
-data_15e357:
+aWandObjectDest:	/* 0x15E357 */
 		.string "WAND OBJECT DESTROYED %d X%d Y%d Z%d"
-data_15e37c:
+aWandTimeD:	/* 0x15E37C */
 		.string "WAND TIME %d"
-data_15e389:
+aUntilGDNotSeen:	/* 0x15E389 */
 		.string "UNTIL G %d NOT SEEN"
-data_15e39d:
+aUntilPVDeadD:	/* 0x15E39D */
 		.string "UNTIL P/V DEAD %d"
-data_15e3af:
+aUntilPVINearD:	/* 0x15E3AF */
 		.string "UNTIL P/V/I NEAR %d"
-data_15e3c3:
+aUntilPVIArrive:	/* 0x15E3C3 */
 		.string "UNTIL P/V/I ARRIVES %d X%d Y%d Z%d"
-data_15e3e6:
+aUntilPPersuade:	/* 0x15E3E6 */
 		.string "UNTIL P PERSUADED %d"
-data_15e3fb:
+aUntilDMemGDead:	/* 0x15E3FB */
 		.string "UNTIL %d MEM G DEAD %d"
-data_15e412:
+aUntilDMemGDNea:	/* 0x15E412 */
 		.string "UNTIL %d MEM G %d NEAR "
-data_15e42a:
+aUntilDMemGArri:	/* 0x15E42A */
 		.string "UNTIL %d MEM G ARRIVE %d"
-data_15e443:
+aUntilDMemGPers:	/* 0x15E443 */
 		.string "UNTIL %d MEM G PERSUADED %d"
-data_15e45f:
+aUntilAllGDeadD:	/* 0x15E45F */
 		.string "UNTIL ALL G DEAD %d"
-data_15e473:
+aUntilAllGDNear:	/* 0x15E473 */
 		.string "UNTIL ALL G %d NEAR "
-data_15e488:
+aUntilAllGArriv:	/* 0x15E488 */
 		.string "UNTIL ALL G ARRIVE %d"
-data_15e49e:
+aUntilAllGPersu:	/* 0x15E49E */
 		.string "UNTIL ALL G PERSUADED %d"
-data_15e4b7:
+aUntilObj:	/* 0x15E4B7 */
 		.string "UNTIL OBJ:-"
-data_15e4c3:
+aUntilMissionSt:	/* 0x15E4C3 */
 		.string "UNTIL MISSION START %d"
-data_15e4da:
+aUntilMissionSu:	/* 0x15E4DA */
 		.string "UNTIL MISSION SUCC %d"
-data_15e4f0:
+aUntilMissionFa:	/* 0x15E4F0 */
 		.string "UNTIL MISSION FAIL %d"
-data_15e506:
+aUntilObjectDes:	/* 0x15E506 */
 		.string "UNTIL OBJECT DESTROYED %d X%d Y%d Z%d"
-data_15e52c:
+aUntilTimeD:	/* 0x15E52C */
 		.string "UNTIL TIME %d"
 
-data_15e691:
+aWepNull:	/* 0x15E691 */
 		.byte	0x0
-data_15e692:
+aWepUzi:	/* 0x15E692 */
 		.string " Uzi"
-data_15e697:
+aWepMinigun:	/* 0x15E697 */
 		.string " Minigun"
-data_15e6a0:
+aWepLaser:	/* 0x15E6A0 */
 		.string " Laser"
-data_15e6a7:
+aWepElLaser:	/* 0x15E6A7 */
 		.string " Electric Laser"
-data_15e6b7:
+aWepRap:	/* 0x15E6B7 */
 		.string " RAP"
-data_15e6bc:
+aWepNuclGren:	/* 0x15E6BC */
 		.string " Nuclear Grenade"
-data_15e6cd:
+aWepPersuadrtrn:	/* 0x15E6CD */
 		.string " Persuadertron"
-data_15e6dc:
+aWepFlamer:	/* 0x15E6DC */
 		.string " Flamer"
-data_15e6e4:
+aWepH2HTaser:	/* 0x15E6E4 */
 		.string " Hand2Hand Taser"
-data_15e6f5:
+aWepCrazyGas:	/* 0x15E6F5 */
 		.string " Crazy Gas"
-data_15e700:
+aWepKOGas:	/* 0x15E700 */
 		.string " Knockout Gas"
-data_15e70e:
+aWepEleMine:	/* 0x15E70E */
 		.string " Electric Mine"
-data_15e71d:
+aWepExplMine:	/* 0x15E71D */
 		.string " Explosive Mine"
-data_15e72d:
+aWepNapalmMine:	/* 0x15E72D */
 		.string " ***Napalm Mine"
-data_15e73d:
+aWepLongRange:	/* 0x15E73D */
 		.string " Long Range"
-data_15e749:
+aWepAirStrike:	/* 0x15E749 */
 		.string " Air Strike"
-data_15e755:
+aWepBeam:	/* 0x15E755 */
 		.string " Beam"
-data_15e75b:
+aWepRazorWire:	/* 0x15E75B */
 		.string " Razor Wire"
-data_15e767:
+aWepSonicBlast:	/* 0x15E767 */
 		.string " Sonic Blast"
-data_15e774:
+aWepQDevastator:	/* 0x15E774 */
 		.string " Q DEVASTATOR"
-data_15e782:
+aWepPersuader2:	/* 0x15E782 */
 		.string " PERSUADERTRON2"
-data_15e792:
+aWepStasisFld:	/* 0x15E792 */
 		.string " Stasis Field"
-data_15e7a0:
+aWepEnergyShld:	/* 0x15E7A0 */
 		.string " Energy Shield"
-data_15e7af:
+aWepSoulGun:	/* 0x15E7AF */
 		.string " Soul Gun"
-data_15e7b9:
+aWepTimeGun:	/* 0x15E7B9 */
 		.string " Time Gun"
-data_15e7c3:
+aWepCerebusIff:	/* 0x15E7C3 */
 		.string " Cerebus IFF"
-data_15e7d0:
+aWepMedi1:	/* 0x15E7D0 */
 		.string " medi 1"
-data_15e7d8:
+aWepMedi2:	/* 0x15E7D8 */
 		.string " medi 2"
-data_15e7e0:
+aWepExplWire:	/* 0x15E7E0 */
 		.string " EXPLODE Wire"
-data_15e7ee:
+aWepCloneShld:	/* 0x15E7EE */
 		.string " Clone Shield"
-data_15e7fc:
+aEmptyItm0:	/* 0x15E7FC */
 		.byte	0x0
-data_15e7fd:
+aEmptyItm1:	/* 0x15E7FD */
 		.byte	0x0
-data_15e7fe:
+aEmptyItm2:	/* 0x15E7FE */
 		.byte	0x0
-data_15e7ff:
+aEmptyItm3:	/* 0x15E7FF */
 		.byte	0x0
-data_15e800:
+aEmptyItm4:	/* 0x15E800 */
 		.byte	0x0
-data_15e801:
+aEmptyItm5:	/* 0x15E801 */
 		.byte	0x0
-data_15e802:
+aEmptyItm6:	/* 0x15E802 */
 		.short  0x0
 
 /* Person state text.
  * Used by function at 0xBAC50, which was not disassembled.
  */
-person_st_text:	/* 0x154aac */
-		.long   data_15cdc0
-		.long   data_15cdc1
-		.long   data_15cdcf
-		.long   data_15cde0
-		.long   data_15cdea
-		.long   data_15cdfc
-		.long   data_15ce04
-		.long   data_15ce17
-		.long   data_15ce26
-		.long   data_15ce33
-		.long   data_15ce4d
-		.long   data_15ce5e
-		.long   data_15ce65
-		.long   data_15ce6f
-		.long   data_15ce77
-		.long   data_15ce8b
-		.long   data_15ce9a
-		.long   data_15cea9
-		.long   data_15ceb8
-		.long   data_15cecb
-		.long   data_15cede
-		.long   data_15ceed
-		.long   data_15cf00
-		.long   data_15cf12
-		.long   data_15cf28
-		.long   data_15cf35
-		.long   data_15cf45
-		.long   data_15cf4d
-		.long   data_15cf5c
-		.long   data_15cf6c
-		.long   data_15cf7c
-		.long   data_15cf89
-		.long   data_15cf9c
-		.long   data_15cfaa
-		.long   data_15cfb6
-		.long   data_15cfc2
-		.long   data_15cfd4
-		.long   data_15cfe6
-		.long   data_15cff4
-		.long   data_15d007
-		.long   data_15d01b
-		.long   data_15d02e
-		.long   data_15d03f
-		.long   data_15d051
-		.long   data_15d063
-		.long   data_15d06f
-		.long   data_15d07e
-		.long   data_15d096
-		.long   data_15d0a6
-		.long   data_15d0b6
-		.long   data_15d0c5
-		.long   data_15d0d3
-		.long   data_15d0e7
-		.long   data_15d0f7
-		.long   data_15d108
-		.long   data_15d120
-		.long   data_15d12f
-		.long   data_15d13d
-		.long   data_15d14c
-		.long   data_15d14d
-		.long   data_15d14e
-		.long   data_15d14f
-		.long   data_15d150
-		.long   data_15d151
-		.long   data_15d152
-		.long   data_15d153
+person_st_text:	/* 0x154AAC */
+		.long   aSt_null
+		.long   aSt_goto_point
+		.long   aSt_bomb_buildi
+		.long   aSt_wander
+		.long   aSt_explode_eff
+		.long   aSt_wait
+		.long   aSt_agent_defen
+		.long   aSt_pickup_item
+		.long   aSt_drop_item
+		.long   aSt_shoot_perso
+		.long   aSt_shoot_bgun_
+		.long   aSt_die
+		.long   aSt_dieing
+		.long   aSt_dead
+		.long   aSt_init_save_v
+		.long   aSt_save_victim
+		.long   aSt_goto_person
+		.long   aSt_wait_p_dead
+		.long   aSt_wait_all_g_
+		.long   aSt_wait_mem_g_
+		.long   aSt_wait_p_near
+		.long   aSt_wait_mem__0
+		.long   aSt_wait_p_arri
+		.long   aSt_wait_mem__1
+		.long   aSt_wait_time
+		.long   aSt_define_rout
+		.long   aSt_Unused
+		.long   aSt_kill_person
+		.long   aSt_block_perso
+		.long   aSt_scare_perso
+		.long   aSt_use_item
+		.long   aSt_stationary_
+		.long   aSt_recoil_hit
+		.long   aSt_v_parked
+		.long   aSt_v_driven
+		.long   aSt_goto_point_
+		.long   aSt_person_burn
+		.long   aSt_in_vehicle
+		.long   aSt_driving_veh
+		.long   aSt_v_goto_poin
+		.long   aSt_persuade_pe
+		.long   aSt_follow_pers
+		.long   aSt_support_per
+		.long   aSt_protect_per
+		.long   aSt_get_item
+		.long   aSt_use_vehicle
+		.long   aSt_use_vehic_0
+		.long   aSt_wait_vehicl
+		.long   aSt_goto_vehicl
+		.long   aSt_catch_train
+		.long   aSt_wait_train
+		.long   aSt_destroy_bui
+		.long   aSt_wander_driv
+		.long   aSt_go_plant_mi
+		.long   aSt_wait_to_exi
+		.long   aSt_catch_ferry
+		.long   aSt_exit_ferry
+		.long   aSt_avoid_group
+		.long   aSt_undef58
+		.long   aSt_undef59
+		.long   aSt_undef60
+		.long   aSt_undef61
+		.long   aSt_undef62
+		.long   aSt_undef63
+		.long   aSt_undef64
+		.long   aSt_undef65
 
-data_15cdc0:
+aSt_null:	/* 0x15CDC0 */
 		.string ""
-data_15cdc1:
+aSt_goto_point:	/* 0x15CDC1 */
 		.string "ST_GOTO_POINT"
-data_15cdcf:
+aSt_bomb_buildi:	/* 0x15CDCF */
 		.string "ST_BOMB_BUILDING"
-data_15cde0:
+aSt_wander:	/* 0x15CDE0 */
 		.string "ST_WANDER"
-data_15cdea:
+aSt_explode_eff:	/* 0x15CDEA */
 		.string "ST_EXPLODE_EFFECT"
-data_15cdfc:
+aSt_wait:	/* 0x15CDFC */
 		.string "ST_WAIT"
-data_15ce04:
+aSt_agent_defen:	/* 0x15CE04 */
 		.string "ST_AGENT_DEFENSIVE"
-data_15ce17:
+aSt_pickup_item:	/* 0x15CE17 */
 		.string "ST_PICKUP_ITEM"
-data_15ce26:
+aSt_drop_item:	/* 0x15CE26 */
 		.string "ST_DROP_ITEM"
-data_15ce33:
+aSt_shoot_perso:	/* 0x15CE33 */
 		.string "ST_SHOOT_PERSON_WITH_BGUN"
-data_15ce4d:
+aSt_shoot_bgun_:	/* 0x15CE4D */
 		.string "ST_SHOOT_BGUN_AT"
-data_15ce5e:
+aSt_die:	/* 0x15CE5E */
 		.string "ST_DIE"
-data_15ce65:
+aSt_dieing:	/* 0x15CE65 */
 		.string "ST_DIEING"
-data_15ce6f:
+aSt_dead:	/* 0x15CE6F */
 		.string "ST_DEAD"
-data_15ce77:
+aSt_init_save_v:	/* 0x15CE77 */
 		.string "ST_INIT_SAVE_VICTIM"
-data_15ce8b:
+aSt_save_victim:	/* 0x15CE8B */
 		.string "ST_SAVE_VICTIM"
-data_15ce9a:
+aSt_goto_person:	/* 0x15CE9A */
 		.string "ST_GOTO_PERSON"
-data_15cea9:
+aSt_wait_p_dead:	/* 0x15CEA9 */
 		.string "ST_WAIT_P_DEAD"
-data_15ceb8:
+aSt_wait_all_g_:	/* 0x15CEB8 */
 		.string "ST_WAIT_ALL_G_DEAD"
-data_15cecb:
+aSt_wait_mem_g_:	/* 0x15CECB */
 		.string "ST_WAIT_MEM_G_DEAD"
-data_15cede:
+aSt_wait_p_near:	/* 0x15CEDE */
 		.string "ST_WAIT_P_NEAR"
-data_15ceed:
+aSt_wait_mem__0:	/* 0x15CEED */
 		.string "ST_WAIT_MEM_G_NEAR"
-data_15cf00:
+aSt_wait_p_arri:	/* 0x15CF00 */
 		.string "ST_WAIT_P_ARRIVES"
-data_15cf12:
+aSt_wait_mem__1:	/* 0x15CF12 */
 		.string "ST_WAIT_MEM_G_ARRIVES"
-data_15cf28:
+aSt_wait_time:	/* 0x15CF28 */
 		.string "ST_WAIT_TIME"
-data_15cf35:
+aSt_define_rout:	/* 0x15CF35 */
 		.string "ST_DEFINE_ROUTE"
-data_15cf45:
+aSt_Unused:	/* 0x15CF45 */
 		.string " UNUSED"
-data_15cf4d:
+aSt_kill_person:	/* 0x15CF4D */
 		.string "ST_KILL_PERSON"
-data_15cf5c:
+aSt_block_perso:	/* 0x15CF5C */
 		.string "ST_BLOCK_PERSON"
-data_15cf6c:
+aSt_scare_perso:	/* 0x15CF6C */
 		.string "ST_SCARE_PERSON"
-data_15cf7c:
+aSt_use_item:	/* 0x15CF7C */
 		.string "ST_USE_ITEM "
-data_15cf89:
+aSt_stationary_:	/* 0x15CF89 */
 		.string "ST_STATIONARY_SHOT"
-data_15cf9c:
+aSt_recoil_hit:	/* 0x15CF9C */
 		.string "ST_RECOIL_HIT"
-data_15cfaa:
+aSt_v_parked:	/* 0x15CFAA */
 		.string "ST_V_PARKED"
-data_15cfb6:
+aSt_v_driven:	/* 0x15CFB6 */
 		.string "ST_V_DRIVEN"
-data_15cfc2:
+aSt_goto_point_:	/* 0x15CFC2 */
 		.string "ST_GOTO_POINT_REL"
-data_15cfd4:
+aSt_person_burn:	/* 0x15CFD4 */
 		.string "ST_PERSON_BURNING"
-data_15cfe6:
+aSt_in_vehicle:	/* 0x15CFE6 */
 		.string "ST_IN_VEHICLE"
-data_15cff4:
+aSt_driving_veh:	/* 0x15CFF4 */
 		.string "ST_DRIVING_VEHICLE"
-data_15d007:
+aSt_v_goto_poin:	/* 0x15D007 */
 		.string "ST_V_GOTO_POINT_FLY"
-data_15d01b:
+aSt_persuade_pe:	/* 0x15D01B */
 		.string "ST_PERSUADE_PERSON"
-data_15d02e:
+aSt_follow_pers:	/* 0x15D02E */
 		.string "ST_FOLLOW_PERSON"
-data_15d03f:
+aSt_support_per:	/* 0x15D03F */
 		.string "ST_SUPPORT_PERSON"
-data_15d051:
+aSt_protect_per:	/* 0x15D051 */
 		.string "ST_PROTECT_PERSON"
-data_15d063:
+aSt_get_item:	/* 0x15D063 */
 		.string "ST_GET_ITEM"
-data_15d06f:
+aSt_use_vehicle:	/* 0x15D06F */
 		.string "ST_USE_VEHICLE"
-data_15d07e:
+aSt_use_vehic_0:	/* 0x15D07E */
 		.string "ST_USE_VEHICLE_TO_POINT"
-data_15d096:
+aSt_wait_vehicl:	/* 0x15D096 */
 		.string "ST_WAIT_VEHICLE"
-data_15d0a6:
+aSt_goto_vehicl:	/* 0x15D0A6 */
 		.string "ST_GOTO_VEHICLE"
-data_15d0b6:
+aSt_catch_train:	/* 0x15D0B6 */
 		.string "ST_CATCH_TRAIN"
-data_15d0c5:
+aSt_wait_train:	/* 0x15D0C5 */
 		.string "ST_WAIT_TRAIN"
-data_15d0d3:
+aSt_destroy_bui:	/* 0x15D0D3 */
 		.string "ST_DESTROY_BUILDING"
-data_15d0e7:
+aSt_wander_driv:	/* 0x15D0E7 */
 		.string "ST_WANDER_DRIVE"
-data_15d0f7:
+aSt_go_plant_mi:	/* 0x15D0F7 */
 		.string "ST_GO_PLANT_MINE"
-data_15d108:
+aSt_wait_to_exi:	/* 0x15D108 */
 		.string "ST_WAIT_TO_EXIT_VEHICLE"
-data_15d120:
+aSt_catch_ferry:	/* 0x15D120 */
 		.string "ST_CATCH_FERRY"
-data_15d12f:
+aSt_exit_ferry:	/* 0x15D12F */
 		.string "ST_EXIT_FERRY"
-data_15d13d:
+aSt_avoid_group:	/* 0x15D13D */
 		.string "ST_AVOID_GROUP"
-data_15d14c:
+aSt_undef58:	/* 0x15D14C */
 		.string ""
-data_15d14d:
+aSt_undef59:	/* 0x15D14D */
 		.string ""
-data_15d14e:
+aSt_undef60:	/* 0x15D14E */
 		.string ""
-data_15d14f:
+aSt_undef61:	/* 0x15D14F */
 		.string ""
-data_15d150:
+aSt_undef62:	/* 0x15D150 */
 		.string ""
-data_15d151:
+aSt_undef63:	/* 0x15D151 */
 		.string ""
-data_15d152:
+aSt_undef64:	/* 0x15D152 */
 		.string ""
-data_15d153:
+aSt_undef65:	/* 0x15D153 */
 		.string ""
 

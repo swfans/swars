@@ -131,7 +131,7 @@ extern uint8_t cmdln_param_tf;
 extern uint8_t cmdln_param_bcg;
 extern uint8_t cmdln_param_d;
 extern uint8_t unkn01_maskarr[28];
-extern uint8_t flags_general_unkn02;
+extern uint8_t ingame__Cheats;
 extern uint8_t cmdln_param_n;
 extern uint8_t pktrec_mode;
 extern uint8_t cmdln_pr_num;
@@ -139,7 +139,7 @@ extern uint8_t game_perspective;
 extern uint8_t exit_game;
 extern uint8_t input_char;
 
-extern uint16_t unkn01_mode;
+extern uint16_t ingame__GameMode;
 extern uint16_t selected_map_index;
 extern uint32_t flags_general_unkn01;
 extern uint32_t active_flags_general_unkn01;
@@ -150,14 +150,14 @@ extern long unkn01_pos_y;
 
 extern uint16_t cmdln_param_a;
 extern uint16_t cmdln_param_w;
-extern uint16_t cmdln_param_map_index;
+extern uint16_t cmdln_param_current_map;
 extern uint32_t engine_mem_alloc_size;
 extern void *engine_mem_alloc_ptr;
 extern BuffUnknStruct02 buffer_allocs[40];
 
 extern long navi2_unkn_counter;
 extern long navi2_unkn_counter_max;
-extern uint32_t trial_alloc;
+extern uint32_t triangulation;
 
 extern PlayerInfo players[8];
 extern uint8_t local_player_no;
@@ -173,7 +173,7 @@ extern ulong prev_tick_time;
 extern GameTurn gameturn;
 extern GameTurn prev_gameturn;
 extern ulong turns_delta;
-extern ushort msecs_per_frame;
+extern ushort fifties_per_gameturn;
 extern ushort gamep_unknval_01;
 extern uint8_t *vec_tmap;
 extern uint8_t unknoise_tmap[2048];

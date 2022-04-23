@@ -47,23 +47,23 @@ GLOBAL_FUNC (joy_grip_init)
 		cmpb   $0x0,data_1e2f35
 		jne    jump_e117a
 		mov    %esp,%ebx
-		mov    $data_158b68,%edx
-		mov    $data_158b5c,%eax
+		mov    $aGrip,%edx
+		mov    $aGrip_gll,%eax
 		call   ___searchenv_
 		mov    -0x3(%esp),%eax
 		sar    $0x18,%eax
 		test   %eax,%eax
 		jne    jump_e1076
 		mov    %esp,%ebx
-		mov    $data_15ed1c,%edx
-		mov    $data_158b5c,%eax
+		mov    $ascPath,%edx
+		mov    $aGrip_gll,%eax
 		call   ___searchenv_
 	jump_e1076:
 		mov    -0x3(%esp),%eax
 		sar    $0x18,%eax
 		test   %eax,%eax
 		jne    jump_e10cb
-		mov    $data_158b70,%esi
+		mov    $aCGrip,%esi
 		mov    %esp,%edi
 		push   %edi
 	jump_e1089:
@@ -79,7 +79,7 @@ GLOBAL_FUNC (joy_grip_init)
 		jne    jump_e1089
 	jump_e10a1:
 		pop    %edi
-		mov    $data_158b5c,%esi
+		mov    $aGrip_gll,%esi
 		mov    %esp,%edi
 		push   %edi
 		sub    %ecx,%ecx
@@ -101,7 +101,7 @@ GLOBAL_FUNC (joy_grip_init)
 	jump_e10ca:
 		pop    %edi
 	jump_e10cb:
-		mov    $data_15ed21,%edx
+		mov    $ascRb,%edx
 		mov    %esp,%eax
 		call   ac_dos_fopen
 		mov    %eax,%esi
@@ -204,7 +204,7 @@ joy_func_f2680:
 		push   %ebp
 		sub    $0x4,%esp
 		mov    %eax,%ebx
-		mov    data_1e5f00,%ecx
+		mov    GRIP_Thunked,%ecx
 		test   %ecx,%ecx
 		je     jump_f269b
 		xor    %eax,%ebx
@@ -513,7 +513,7 @@ joy_func_f2680:
 	jump_f2958:
 		mov    $0x1,%esi
 		mov    $0x1,%ebx
-		mov    %esi,data_1e5f00
+		mov    %esi,GRIP_Thunked
 	jump_f2968:
 		mov    %ebx,%eax
 		add    $0x4,%esp
@@ -530,7 +530,7 @@ GrUnlink:	/* 0x0F2974 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %edx
-		cmpl   $0x0,data_1e5f00
+		cmpl   $0x0,GRIP_Thunked
 		jne    jump_f2984
 		xor    %eax,%eax
 		pop    %edx
@@ -563,7 +563,7 @@ GrUnlink:	/* 0x0F2974 */
 		pop    %ebx
 		ret
 	jump_f29c9:
-		mov    %eax,data_1e5f00
+		mov    %eax,GRIP_Thunked
 		mov    $0x1,%eax
 		pop    %edx
 		pop    %ebx
@@ -625,12 +625,12 @@ CallDriver_:	/* 0x0F2EB6 */
 		mov    %eax,%edi
 		mov    %edx,(%esp)
 		mov    %ebx,%esi
-		cmpl   $0x1,data_158d9e
+		cmpl   $0x1,_SpwUnknown1
 		jne    jump_f2edd
 		xor    %eax,%eax
 		jmp    jump_f2fc5
 	jump_f2edd:
-		cmpw   $0x0,data_158d9c
+		cmpw   $0x0,_SpwVector
 		jne    jump_f2ef1
 		mov    $0x8002,%eax
 		jmp    jump_f2fc5
@@ -641,7 +641,7 @@ CallDriver_:	/* 0x0F2EB6 */
 	jump_f2efb:
 		test   %esi,%esi
 		je     jump_f2f1f
-		movzwl data_1e5f18,%eax
+		movzwl _realModePacket,%eax
 		shl    $0x4,%eax
 		mov    %esi,%edx
 		mov    $0xa4,%ebx
@@ -659,11 +659,11 @@ CallDriver_:	/* 0x0F2EB6 */
 		mov    %eax,data_1e5f60
 		movswl (%esp),%eax
 		mov    %eax,data_1e5f58
-		mov    data_1e5f18,%ax
+		mov    _realModePacket,%ax
 		mov    %ax,data_1e5f66
 		movl   $0x0,data_1e5f54
 		movw   $0x300,data_1e5f28
-		mov    data_158d9c,%al
+		mov    _SpwVector,%al
 		mov    %al,data_1e5f2c
 		movb   $0x0,data_1e5f2d
 		movw   $0x0,data_1e5f30
@@ -678,7 +678,7 @@ CallDriver_:	/* 0x0F2EB6 */
 		call   ac_dos_int386x
 		test   %esi,%esi
 		je     jump_f2fbb
-		movzwl data_1e5f18,%eax
+		movzwl _realModePacket,%eax
 		shl    $0x4,%eax
 		mov    %esi,%edx
 		mov    $0xa4,%ebx
@@ -720,7 +720,7 @@ IsSpwVector_:	/* 0x0F2E44 */
 		pop    %ebx
 		ret
 	jump_f2e61:
-		mov    $data_15f54b,%eax
+		mov    $aSpaceballName,%eax
 		add    $0x6,%ebx
 	jump_f2e69:
 		cmpb   $0x0,(%eax)
@@ -754,7 +754,7 @@ SpwUnknown3:	/* 0x0F30A5 */
 		mov    %edx,%ecx
 		cmpl   $0x0,data_158da6
 		jne    jump_f30d3
-		mov    data_158da2,%eax
+		mov    aCSpacetec_off,%eax
 		call   ac_strlen
 		sub    $0x4,%eax
 		mov    %eax,data_158da6
@@ -803,7 +803,7 @@ SpwUnknown3:	/* 0x0F30A5 */
 		mov    %edx,%eax
 		sar    $0x1f,%edx
 		idiv   %ebx
-		mov    data_158da2,%edi
+		mov    aCSpacetec_off,%edi
 		add    %eax,%edi
 		xor    %eax,%eax
 		mov    $0x3,%esi
@@ -850,7 +850,7 @@ SpwOpenDriver_:	/* 0x0F335A */
 		mov    %eax,%ecx
 		test   %eax,%eax
 		jne    jump_f3380
-		movw   $0x8011,data_1e5f1a
+		movw   $0x8011,_SpwError
 	jump_f3379:
 		xor    %eax,%eax
 		jmp    jump_f33f2
@@ -862,17 +862,17 @@ SpwOpenDriver_:	/* 0x0F335A */
 		mov    $0x31,%eax
 		call   ac_dos_int386
 		mov    (%esp),%eax
-		mov    %ax,data_1e5f18
+		mov    %ax,_realModePacket
 		cmpl   $0x0,0x18(%esp)
 		je     jump_f33b6
-		movw   $0x8010,data_1e5f1a
+		movw   $0x8010,_SpwError
 		jmp    jump_f3379
 	jump_f33b6:
 		call   FindSpwVector_
-		mov    %ax,data_158d9c
+		mov    %ax,_SpwVector
 		test   %ax,%ax
 		jne    jump_f33d1
-		movw   $0x8001,data_1e5f1a
+		movw   $0x8001,_SpwError
 		jmp    jump_f33f2
 	jump_f33d1:
 		mov    %ecx,%ebx
@@ -882,7 +882,7 @@ SpwOpenDriver_:	/* 0x0F335A */
 		mov    %eax,%edx
 		test   %eax,%eax
 		je     jump_f33ed
-		mov    %ax,data_1e5f1a
+		mov    %ax,_SpwError
 		jmp    jump_f3379
 	jump_f33ed:
 		mov    $0x1,%eax
@@ -973,7 +973,7 @@ SpwSimpleOpen_:	/* 0x0F36FD */
 	jump_f3850:
 		cmpl   $0x7,data_158dc2
 		jle    jump_f387e
-		movw   $0x8103,data_1e5f1a
+		movw   $0x8103,_SpwError
 		mov    $0x7,%eax
 		call   ac_putchar
 		movswl %cx,%eax
@@ -990,7 +990,7 @@ SpwSimpleOpen_:	/* 0x0F36FD */
 		mov    $0x1,%eax
 		jmp    jump_f38af
 	jump_f38a7:
-		mov    %ax,data_1e5f1a
+		mov    %ax,_SpwError
 		xor    %eax,%eax
 	jump_f38af:
 		add    $0x148,%esp
@@ -1123,7 +1123,7 @@ SpwCloseDriver_:	/* 0x0F33F9 */
 		test   %eax,%eax
 		je     jump_f3427
 		mov    (%esp),%eax
-		mov    %ax,data_1e5f1a
+		mov    %ax,_SpwError
 		xor    %eax,%eax
 		jmp    jump_f342c
 	jump_f3427:
@@ -1149,7 +1149,7 @@ SpwOpenDevice_:	/* 0x0F3432 */
 		mov    %eax,%edx
 		test   %eax,%eax
 		je     jump_f345c
-		mov    %ax,data_1e5f1a
+		mov    %ax,_SpwError
 		xor    %eax,%eax
 		pop    %ebx
 		ret
@@ -1171,10 +1171,10 @@ SpwCloseDevice_:	/* 0x0F3463 */
 		mov    $0x2,%eax
 		call   CallDriver_
 		mov    %eax,%edx
-		movl   $0x1,data_158d9e
+		movl   $0x1,_SpwUnknown1
 		test   %eax,%eax
 		je     jump_f3499
-		mov    %ax,data_1e5f1a
+		mov    %ax,_SpwError
 		xor    %eax,%eax
 		pop    %edx
 		pop    %ebx
@@ -1200,7 +1200,7 @@ SpwEnableDevice_:	/* 0x0F34A1 */
 		mov    %eax,%edx
 		test   %eax,%eax
 		je     jump_f34cd
-		mov    %ax,data_1e5f1a
+		mov    %ax,_SpwError
 		xor    %eax,%eax
 		pop    %edx
 		pop    %ebx
@@ -1226,7 +1226,7 @@ SpwDisableDevice_:	/* 0x0F34D5 */
 		mov    %eax,%edx
 		test   %eax,%eax
 		je     jump_f3501
-		mov    %ax,data_1e5f1a
+		mov    %ax,_SpwError
 		xor    %eax,%eax
 		pop    %edx
 		pop    %ebx
@@ -1249,7 +1249,7 @@ GLOBAL_FUNC (func_f356b)
 		sub    $0x4,%esp
 		mov    %eax,%esi
 		mov    %edx,%ecx
-		cmpl   $0x1,data_158d9e
+		cmpl   $0x1,_SpwUnknown1
 		jne    jump_f358f
 	jump_f3588:
 		xor    %eax,%eax
@@ -1263,7 +1263,7 @@ GLOBAL_FUNC (func_f356b)
 		test   %eax,%eax
 		je     jump_f35b8
 		mov    data_1e5f80,%ax
-		mov    %ax,data_1e5f1a
+		mov    %ax,_SpwError
 		jmp    jump_f3588
 	jump_f35b8:
 		mov    data_1e5f8c,%ax
@@ -1302,7 +1302,7 @@ GLOBAL_FUNC (func_f356b)
 		movswl data_158db2,%eax
 		cmp    $0x64,%eax
 		jl     jump_f367e
-		movw   $0x8103,data_1e5f1a
+		movw   $0x8103,_SpwError
 		mov    $0x7,%eax
 		call   ac_putchar
 		mov    $0x7,%eax
@@ -1373,7 +1373,7 @@ jump_f38b9:
 		pop    %ebx
 		ret
 	jump_f38f8:
-		mov    %dx,data_1e5f1a
+		mov    %dx,_SpwError
 		xor    %eax,%eax
 		pop    %edx
 		pop    %ebx
@@ -1381,13 +1381,13 @@ jump_f38b9:
 
 .section .rodata
 
-data_158b5c:
+aGrip_gll:	/* 0x158B5C */
 		.string "GRIP.GLL"
 		.ascii  "\x00\x00\x00"
-data_158b68:
+aGrip:	/* 0x158B68 */
 		.string "GRIP"
 		.ascii  "\x00\x00\x00"
-data_158b70:
+aCGrip:	/* 0x158B70 */
 		.string "C:\\GRIP\\"
 		.ascii  "\x00\x00\x00\x50\x01\x00\x00\x40"
 		.ascii  "\x00\x00\x00\x20\x03\x00\x00\x00"
@@ -1464,12 +1464,12 @@ data_158cc0:
 		.ascii  "\xc3\x00\x00\x00\xc4\x00\x00\x00"
 		.ascii  "\xc1\x00\x00\x00\xb5\x00\x00\x00"
 		.ascii  "\xc1\x00\x00\x00"
-data_158d9c:
+_SpwVector:	/* 0x158D9C */
 		.short  0x0
-data_158d9e:
+_SpwUnknown1:	/* 0x158D9E */
 		.long	0x0
-data_158da2:
-		.long   data_15f1b0
+aCSpacetec_off:	/* 0x158DA2 */
+		.long   aSpacetecCopyrght
 data_158da6:
 		.fill   0x6
 data_158dac:
@@ -1491,14 +1491,14 @@ data_158dce:
 data_158dd2:
 		.fill   0x6
 
-data_15ed1c:
+ascPath:	/* 0x15ED1C */
 		.string "PATH"
-data_15ed21:
+ascRb:	/* 0x15ED21 */
 		.string "rb"
 
-data_15f1b0:
+aSpacetecCopyrght:	/* 0x15F1B0 */
 		.string "(C) 1994 Spacetec IMC Corporation.  All rights reserved.  The computer codes included in this file, including source code and object code, constitutes the proprietary and confidential information of Spacetec IMC Corporation and are provided pursuant to a license agreement. These computer codes are protected by international, federal and state law, including United States Copyright Law and international treaty provisions.  Except as expressly authorized by the license agreement, or as expressly permitted under applicable laws of member states of the European Union and then only to the extent so permitted, no part of these computer codes may be reproduced or transmitted in any form or by any means, electronic or mechanical, modified, decompiled, disassembled, reverse engineered, sold, transferred, rented or utilized for any unauthorized purpose without the express written permission of Spacetec IMC Corporation."
-data_15f54b:
+aSpaceballName:	/* 0x15F54B */
 		.string "SpaceWare(R) Spaceball(R)"
 
 GLOBAL (data_1e2f35)
@@ -1518,7 +1518,7 @@ GLOBAL (data_1e5ef8)
 		.long	0x0
 data_1e5efc:
 		.long	0x0
-data_1e5f00:
+GRIP_Thunked:	/* 0x1E5F00 */
 		.long	0x0
 data_1e5f04:
 		.short  0x0
@@ -1530,9 +1530,9 @@ data_1e5f10:
 		.long	0x0
 data_1e5f14:
 		.long	0x0
-data_1e5f18:
+_realModePacket:	/* 0x1E5F18 */
 		.short  0x0
-data_1e5f1a:
+_SpwError:	/* 0x1E5F1A */
 		.short  0x0
 data_1e5f1c:
 		.fill   0xc

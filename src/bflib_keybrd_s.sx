@@ -291,7 +291,7 @@ GLOBAL_FUNC (ASM_LbIKeyboardOpen)	/* 8c510 */
 		mov    $0x9,%eax
 		mov    $KInt,%ebx
 		call   ac_dos_getvect
-		mov    %eax,data_1c47c0
+		mov    %eax,OldInt1
 		mov    $0x9,%eax
 		call   ac_dos_setvect
 #endif
@@ -318,7 +318,7 @@ KInt:	/* 8c578 */
 		in     (%dx),%al
 		mov    %al,lbInkey
 		xor    %eax,%eax
-		mov    data_1c4774,%al
+		mov    oinkey,%al
 		cmp    $0xe0,%eax
 		jne    jump_8c5f6
 		movb   $0x1,lbInkey_prefixed
@@ -367,7 +367,7 @@ KInt:	/* 8c578 */
 		mov    %ebx,keyboard_buffer_write_index
 	jump_8c64c:
 		mov    lbInkey,%bl
-		mov    %bl,data_1c4774
+		mov    %bl,oinkey
 		xor    %bh,%bh
 		mov    %bh,lbInkeyFlags
 		cmpb   $0x0,lbKeyOn+42
@@ -463,322 +463,322 @@ GLOBAL (ASM_lbInkeyToAscii)
 
 GLOBAL (lbKeyNames)
 		.long	0x0
-		.long   data_15d154
-		.long   data_15d15b
-		.long   data_15d15d
-		.long   data_15d15f
-		.long   data_15d161
-		.long   data_15d163
-		.long   data_15d165
-		.long   data_15d167
-		.long   data_15d169
-		.long   data_15d16b
-		.long   data_15d16d
-		.long   data_15d16f
-		.long   data_15d171
-		.long   data_15d173
-		.long   data_15d17d
-		.long   data_15d181
-		.long   data_15d183
-		.long   data_15d185
-		.long   data_15d187
-		.long   data_15d189
-		.long   data_15d18b
-		.long   data_15d18d
-		.long   data_15d18f
-		.long   data_15d191
-		.long   data_15d193
-		.long   data_15d195
-		.long   data_15d197
-		.long   data_15d199
-		.long   data_15d1a0
-		.long   data_15d1aa
-		.long   data_15d1ac
-		.long   data_15d1ae
-		.long   data_15d1b0
-		.long   data_15d1b2
-		.long   data_15d1b4
-		.long   data_15d1b6
-		.long   data_15d1b8
-		.long   data_15d1ba
-		.long   data_15d1bc
-		.long   data_15d1be
-		.long   data_15d1c0
-		.long   data_15d1c2
-		.long   data_15d1cd
-		.long   data_15d1cf
-		.long   data_15d1d1
-		.long   data_15d1d3
-		.long   data_15d1d5
-		.long   data_15d1d7
-		.long   data_15d1d9
-		.long   data_15d1db
-		.long   data_15d1dd
-		.long   data_15d1df
-		.long   data_15d1e1
-		.long   data_15d1e3
-		.long   data_15d1ef
-		.long   data_15d1f4
-		.long   data_15d1fd
-		.long   data_15d203
-		.long   data_15d20c
-		.long   data_15d20f
-		.long   data_15d212
-		.long   data_15d215
-		.long   data_15d218
-		.long   data_15d21b
-		.long   data_15d21e
-		.long   data_15d221
-		.long   data_15d224
-		.long   data_15d227
-		.long   data_15d22b
-		.long   data_15d233
-		.long   data_15d23b
-		.long   data_15d240
-		.long   data_15d245
-		.long   data_15d24a
-		.long   data_15d24f
-		.long   data_15d254
-		.long   data_15d259
-		.long   data_15d25e
-		.long   data_15d263
-		.long   data_15d268
-		.long   data_15d26d
-		.long   data_15d272
-		.long   data_15d277
+		.long   aKbEscape
+		.long   aKb1
+		.long   aKb2
+		.long   aKb3
+		.long   aKb4
+		.long   aKb5
+		.long   aKb6
+		.long   aKb7
+		.long   aKb8
+		.long   aKb9
+		.long   aKb0
+		.long   aKbMinus
+		.long   aKbEqu
+		.long   aKbBackspace
+		.long   aKbTab
+		.long   aKbQ
+		.long   aKbW
+		.long   aKbE
+		.long   aKbR
+		.long   aKbT
+		.long   aKbY
+		.long   aKbU
+		.long   aKbI
+		.long   aKbO
+		.long   aKbP
+		.long   aKbOSq
+		.long   aKbCSq
+		.long   aKbReturn
+		.long   aKbLeftCtrl
+		.long   aKbA
+		.long   aKbS
+		.long   aKbD
+		.long   aKbF
+		.long   aKbG
+		.long   aKbH
+		.long   aKbJ
+		.long   aKbK
+		.long   aKbL
+		.long   aKbSemiclm
+		.long   aKbUClm
+		.long   aKbUClmb
+		.long   aKbLeftShift
+		.long   aKbHash
+		.long   aKbZ
+		.long   aKbX
+		.long   aKbC
+		.long   aKbV
+		.long   aKbB
+		.long   aKbN
+		.long   aKbM
+		.long   aKbComa
+		.long   aKbDot
+		.long   aKbSlash
+		.long   aKbRightShift
+		.long   aKbKpAster
+		.long   aKbLeftAlt
+		.long   aKbSpace
+		.long   aKbCapslock
+		.long   aKbF1
+		.long   aKbF2
+		.long   aKbF3
+		.long   aKbF4
+		.long   aKbF5
+		.long   aKbF6
+		.long   aKbF7
+		.long   aKbF8
+		.long   aKbF9
+		.long   aKbF10
+		.long   aKbNumlock
+		.long   aKbScrlock
+		.long   aKbKp7
+		.long   aKbKp8
+		.long   aKbKp9
+		.long   aKbKpMins
+		.long   aKbKp4
+		.long   aKbKp5
+		.long   aKbKp6
+		.long   aKbKpPlus
+		.long   aKbKp1
+		.long   aKbKp2
+		.long   aKbKp3
+		.long   aKbKp0
+		.long   aKbKpDot
 		.fill   0x8
-		.long   data_15d27c
-		.long   data_15d27e
-		.long   data_15d282
+		.long   aKbBSlash
+		.long   aKbF11
+		.long   aKbF12
 		.fill   0x10c
-		.long   data_15d286
-		.long   data_15d28c
+		.long   aKbEnter
+		.long   aKbRightCtrl
 		.fill   0x5c
-		.long   data_15d297
+		.long   aKbKpSlash
 		.long	0x0
-		.long   data_15d29c
-		.long   data_15d2a6
+		.long   aKbPrintScr
+		.long   aKbRightAlt
 		.fill   0x38
-		.long   data_15d2b0
-		.long   data_15d2b5
-		.long   data_15d2b8
+		.long   aKbHome
+		.long   aKbUp
+		.long   aKbPgup
 		.long	0x0
-		.long   data_15d2bd
+		.long   aKbLeft
 		.long	0x0
-		.long   data_15d2c2
+		.long   aKbRight
 		.long	0x0
-		.long   data_15d2c8
-		.long   data_15d2cc
-		.long   data_15d2d1
-		.long   data_15d2d6
-		.long   data_15d2dd
+		.long   aKbEnd
+		.long   aKbDown
+		.long   aKbPgdn
+		.long   aKbInsert
+		.long   aKbDelete
 
-data_15d154:
+aKbEscape:	/* 0x15D154 */
 		.string "ESCAPE"
-data_15d15b:
+aKb1:	/* 0x15D15B */
 		.ascii  "\x31\x00"
-data_15d15d:
+aKb2:	/* 0x15D15D */
 		.ascii  "\x32\x00"
-data_15d15f:
+aKb3:	/* 0x15D15F */
 		.ascii  "\x33\x00"
-data_15d161:
+aKb4:	/* 0x15D161 */
 		.ascii  "\x34\x00"
-data_15d163:
+aKb5:	/* 0x15D163 */
 		.ascii  "\x35\x00"
-data_15d165:
+aKb6:	/* 0x15D165 */
 		.ascii  "\x36\x00"
-data_15d167:
+aKb7:	/* 0x15D167 */
 		.ascii  "\x37\x00"
-data_15d169:
+aKb8:	/* 0x15D169 */
 		.ascii  "\x38\x00"
-data_15d16b:
+aKb9:	/* 0x15D16B */
 		.ascii  "\x39\x00"
-data_15d16d:
+aKb0:	/* 0x15D16D */
 		.ascii  "\x30\x00"
-data_15d16f:
+aKbMinus:	/* 0x15D16F */
 		.ascii  "\x2d\x00"
-data_15d171:
+aKbEqu:	/* 0x15D171 */
 		.ascii  "\x3d\x00"
-data_15d173:
+aKbBackspace:	/* 0x15D173 */
 		.string "BACKSPACE"
-data_15d17d:
+aKbTab:	/* 0x15D17D */
 		.ascii  "\x54\x41\x42\x00"
-data_15d181:
+aKbQ:	/* 0x15D181 */
 		.ascii  "\x51\x00"
-data_15d183:
+aKbW:	/* 0x15D183 */
 		.ascii  "\x57\x00"
-data_15d185:
+aKbE:	/* 0x15D185 */
 		.ascii  "\x45\x00"
-data_15d187:
+aKbR:	/* 0x15D187 */
 		.ascii  "\x52\x00"
-data_15d189:
+aKbT:	/* 0x15D189 */
 		.ascii  "\x54\x00"
-data_15d18b:
+aKbY:	/* 0x15D18B */
 		.ascii  "\x59\x00"
-data_15d18d:
+aKbU:	/* 0x15D18D */
 		.ascii  "\x55\x00"
-data_15d18f:
+aKbI:	/* 0x15D18F */
 		.ascii  "\x49\x00"
-data_15d191:
+aKbO:	/* 0x15D191 */
 		.ascii  "\x4f\x00"
-data_15d193:
+aKbP:	/* 0x15D193 */
 		.ascii  "\x50\x00"
-data_15d195:
+aKbOSq:	/* 0x15D195 */
 		.ascii  "\x5b\x00"
-data_15d197:
+aKbCSq:	/* 0x15D197 */
 		.ascii  "\x5d\x00"
-data_15d199:
+aKbReturn:	/* 0x15D199 */
 		.string "RETURN"
-data_15d1a0:
+aKbLeftCtrl:	/* 0x15D1A0 */
 		.string "LEFT CTRL"
-data_15d1aa:
+aKbA:	/* 0x15D1AA */
 		.ascii  "\x41\x00"
-data_15d1ac:
+aKbS:	/* 0x15D1AC */
 		.ascii  "\x53\x00"
-data_15d1ae:
+aKbD:	/* 0x15D1AE */
 		.ascii  "\x44\x00"
-data_15d1b0:
+aKbF:	/* 0x15D1B0 */
 		.ascii  "\x46\x00"
-data_15d1b2:
+aKbG:	/* 0x15D1B2 */
 		.ascii  "\x47\x00"
-data_15d1b4:
+aKbH:	/* 0x15D1B4 */
 		.ascii  "\x48\x00"
-data_15d1b6:
+aKbJ:	/* 0x15D1B6 */
 		.ascii  "\x4a\x00"
-data_15d1b8:
+aKbK:	/* 0x15D1B8 */
 		.ascii  "\x4b\x00"
-data_15d1ba:
+aKbL:	/* 0x15D1BA */
 		.ascii  "\x4c\x00"
-data_15d1bc:
+aKbSemiclm:	/* 0x15D1BC */
 		.ascii  "\x3b\x00"
-data_15d1be:
+aKbUClm:	/* 0x15D1BE */
 		.ascii  "\x27\x00"
-data_15d1c0:
+aKbUClmb:	/* 0x15D1C0 */
 		.ascii  "\x60\x00"
-data_15d1c2:
+aKbLeftShift:	/* 0x15D1C2 */
 		.string "LEFT SHIFT"
-data_15d1cd:
+aKbHash:	/* 0x15D1CD */
 		.ascii  "\x23\x00"
-data_15d1cf:
+aKbZ:	/* 0x15D1CF */
 		.ascii  "\x5a\x00"
-data_15d1d1:
+aKbX:	/* 0x15D1D1 */
 		.ascii  "\x58\x00"
-data_15d1d3:
+aKbC:	/* 0x15D1D3 */
 		.ascii  "\x43\x00"
-data_15d1d5:
+aKbV:	/* 0x15D1D5 */
 		.ascii  "\x56\x00"
-data_15d1d7:
+aKbB:	/* 0x15D1D7 */
 		.ascii  "\x42\x00"
-data_15d1d9:
+aKbN:	/* 0x15D1D9 */
 		.ascii  "\x4e\x00"
-data_15d1db:
+aKbM:	/* 0x15D1DB */
 		.ascii  "\x4d\x00"
-data_15d1dd:
+aKbComa:	/* 0x15D1DD */
 		.ascii  "\x2c\x00"
-data_15d1df:
+aKbDot:	/* 0x15D1DF */
 		.ascii  "\x2e\x00"
-data_15d1e1:
+aKbSlash:	/* 0x15D1E1 */
 		.ascii  "\x2f\x00"
-data_15d1e3:
+aKbRightShift:	/* 0x15D1E3 */
 		.string "RIGHT SHIFT"
-data_15d1ef:
+aKbKpAster:	/* 0x15D1EF */
 		.string "KP *"
-data_15d1f4:
+aKbLeftAlt:	/* 0x15D1F4 */
 		.string "LEFT ALT"
-data_15d1fd:
+aKbSpace:	/* 0x15D1FD */
 		.string "SPACE"
-data_15d203:
+aKbCapslock:	/* 0x15D203 */
 		.string "CAPSLOCK"
-data_15d20c:
+aKbF1:	/* 0x15D20C */
 		.ascii  "\x46\x31\x00"
-data_15d20f:
+aKbF2:	/* 0x15D20F */
 		.ascii  "\x46\x32\x00"
-data_15d212:
+aKbF3:	/* 0x15D212 */
 		.ascii  "\x46\x33\x00"
-data_15d215:
+aKbF4:	/* 0x15D215 */
 		.ascii  "\x46\x34\x00"
-data_15d218:
+aKbF5:	/* 0x15D218 */
 		.ascii  "\x46\x35\x00"
-data_15d21b:
+aKbF6:	/* 0x15D21B */
 		.ascii  "\x46\x36\x00"
-data_15d21e:
+aKbF7:	/* 0x15D21E */
 		.ascii  "\x46\x37\x00"
-data_15d221:
+aKbF8:	/* 0x15D221 */
 		.ascii  "\x46\x38\x00"
-data_15d224:
+aKbF9:	/* 0x15D224 */
 		.ascii  "\x46\x39\x00"
-data_15d227:
+aKbF10:	/* 0x15D227 */
 		.ascii  "\x46\x31\x30\x00"
-data_15d22b:
+aKbNumlock:	/* 0x15D22B */
 		.string "NUMLOCK"
-data_15d233:
+aKbScrlock:	/* 0x15D233 */
 		.string "SCRLOCK"
-data_15d23b:
+aKbKp7:	/* 0x15D23B */
 		.string "KP 7"
-data_15d240:
+aKbKp8:	/* 0x15D240 */
 		.string "KP 8"
-data_15d245:
+aKbKp9:	/* 0x15D245 */
 		.string "KP 9"
-data_15d24a:
+aKbKpMins:	/* 0x15D24A */
 		.string "KP -"
-data_15d24f:
+aKbKp4:	/* 0x15D24F */
 		.string "KP 4"
-data_15d254:
+aKbKp5:	/* 0x15D254 */
 		.string "KP 5"
-data_15d259:
+aKbKp6:	/* 0x15D259 */
 		.string "KP 6"
-data_15d25e:
+aKbKpPlus:	/* 0x15D25E */
 		.string "KP +"
-data_15d263:
+aKbKp1:	/* 0x15D263 */
 		.string "KP 1"
-data_15d268:
+aKbKp2:	/* 0x15D268 */
 		.string "KP 2"
-data_15d26d:
+aKbKp3:	/* 0x15D26D */
 		.string "KP 3"
-data_15d272:
+aKbKp0:	/* 0x15D272 */
 		.string "KP 0"
-data_15d277:
+aKbKpDot:	/* 0x15D277 */
 		.string "KP ."
-data_15d27c:
+aKbBSlash:	/* 0x15D27C */
 		.ascii  "\x5c\x00"
-data_15d27e:
+aKbF11:	/* 0x15D27E */
 		.ascii  "\x46\x31\x31\x00"
-data_15d282:
+aKbF12:	/* 0x15D282 */
 		.ascii  "\x46\x31\x32\x00"
-data_15d286:
+aKbEnter:	/* 0x15D286 */
 		.string "ENTER"
-data_15d28c:
+aKbRightCtrl:	/* 0x15D28C */
 		.string "RIGHT CTRL"
-data_15d297:
+aKbKpSlash:	/* 0x15D297 */
 		.string "KP /"
-data_15d29c:
+aKbPrintScr:	/* 0x15D29C */
 		.string "PRINT SCR"
-data_15d2a6:
+aKbRightAlt:	/* 0x15D2A6 */
 		.string "RIGHT ALT"
-data_15d2b0:
+aKbHome:	/* 0x15D2B0 */
 		.string "HOME"
-data_15d2b5:
+aKbUp:	/* 0x15D2B5 */
 		.ascii  "\x55\x50\x00"
-data_15d2b8:
+aKbPgup:	/* 0x15D2B8 */
 		.string "PGUP"
-data_15d2bd:
+aKbLeft:	/* 0x15D2BD */
 		.string "LEFT"
-data_15d2c2:
+aKbRight:	/* 0x15D2C2 */
 		.string "RIGHT"
-data_15d2c8:
+aKbEnd:	/* 0x15D2C8 */
 		.ascii  "\x45\x4e\x44\x00"
-data_15d2cc:
+aKbDown:	/* 0x15D2CC */
 		.string "DOWN"
-data_15d2d1:
+aKbPgdn:	/* 0x15D2D1 */
 		.string "PGDN"
-data_15d2d6:
+aKbInsert:	/* 0x15D2D6 */
 		.string "INSERT"
-data_15d2dd:
+aKbDelete:	/* 0x15D2DD */
 		.string "DELETE"
 
 .data
 
-data_1c4774:
+oinkey:	/* 0x1C4774 */
 		.long	0x0
 GLOBAL (keyboard_buffer)	/* 1c4778 */
 		.fill   0x40
@@ -786,7 +786,7 @@ GLOBAL (keyboard_buffer_write_index)	/* 1c47b8 */
 		.long	0x0
 GLOBAL (keyboard_buffer_read_index)	/* 1c47bc */
 		.long	0x0
-data_1c47c0:
+OldInt1:	/* 0x1C47C0 */
 		.long	0x0
 data_1c47c4:
 		.fill   0x14

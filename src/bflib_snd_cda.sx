@@ -46,7 +46,7 @@ EAL_init_realmode_mem:
 		push   %ebx
 		push   %ecx
 		push   %edx
-		cmpw   $0x0,data_1edb7a
+		cmpw   $0x0,EAL_realmode_segment
 		je     jump_118476
 		mov    $0x1,%eax
 		pop    %edx
@@ -57,13 +57,13 @@ EAL_init_realmode_mem:
 		mov    $0x1000,%edx
 		mov    $0x100,%ebx
 		mov    $0x31,%eax
-		mov    %ebx,data_1edb2c
-		mov    $data_1edb2c,%ebx
+		mov    %ebx,EAL_pr
+		mov    $EAL_pr,%ebx
 		mov    %edx,data_1edb30
 		mov    %ebx,%edx
 		call   ac_dos_int386
-		mov    data_1edb2c,%ax
-		mov    %ax,data_1edb7a
+		mov    EAL_pr,%ax
+		mov    %ax,EAL_realmode_segment
 		mov    data_1edb38,%ax
 		mov    data_1edb44,%ecx
 		mov    %ax,data_1edb7c
@@ -90,10 +90,10 @@ EAL_alloc_dos_mem:	/* 1184d0 */
 		push   %ebx
 		push   %edx
 		mov    $0x100,%edx
-		mov    $data_1edb2c,%ebx
+		mov    $EAL_pr,%ebx
 		mov    %ax,data_1edb30
 		mov    $0x31,%eax
-		mov    %dx,data_1edb2c
+		mov    %dx,EAL_pr
 		mov    %ebx,%edx
 		call   ac_dos_int386
 		cmpl   $0x0,data_1edb44
@@ -103,7 +103,7 @@ EAL_alloc_dos_mem:	/* 1184d0 */
 		pop    %ebx
 		ret
 	jump_118503:
-		mov    data_1edb2c,%ax
+		mov    EAL_pr,%ax
 		pop    %edx
 		pop    %ebx
 		ret
@@ -115,10 +115,10 @@ EAL_free_dos_mem:
 		push   %ebx
 		push   %edx
 		mov    $0x100,%edx
-		mov    $data_1edb2c,%ebx
+		mov    $EAL_pr,%ebx
 		mov    %ax,data_1edb38
 		mov    $0x31,%eax
-		mov    %dx,data_1edb2c
+		mov    %dx,EAL_pr
 		mov    %ebx,%edx
 		call   ac_dos_int386
 		cmpl   $0x0,data_1edb44
@@ -231,20 +231,20 @@ cd_check:
 		mov    $0x1500,%ebx
 		mov    $0x300,%ecx
 		mov    $0x2f,%esi
-		mov    $data_1edb48,%ebp
+		mov    $EAL_rmr,%ebp
 		xor    %edx,%edx
 		mov    $0x31,%eax
 		mov    %edx,data_1edb58
 		mov    %ebx,data_1edb64
-		mov    %ecx,data_1edb2c
+		mov    %ecx,EAL_pr
 		mov    %esi,data_1edb30
-		mov    $data_1edb2c,%ebx
+		mov    $EAL_pr,%ebx
 		mov    %edx,data_1edb34
 		mov    %ebx,%edx
 		mov    %ebp,data_1edb40
 		call   ac_dos_int386
 		mov    data_1edb58,%ax
-		mov    %ax,data_1e948c
+		mov    %ax,cd_total
 		mov    data_1edb60,%ax
 		mov    %ax,cd_first
 		mov    data_1edb58,%eax
@@ -303,23 +303,23 @@ cd_getaudiodiscinfo:
 		mov    %edi,data_1edb34
 		mov    $0x2f,%ebx
 		xor    %eax,%eax
-		mov    $data_1edb48,%edi
+		mov    $EAL_rmr,%edi
 		mov    %dx,%ax
 		mov    %ebx,data_1edb30
 		mov    %edi,data_1edb40
 		mov    $0x300,%edx
-		mov    $data_1edb2c,%ebx
+		mov    $EAL_pr,%ebx
 		mov    %eax,data_1edb60
 		mov    $0x1510,%eax
-		mov    %edx,data_1edb2c
+		mov    %edx,EAL_pr
 		mov    %eax,data_1edb64
 		mov    %ebx,%edx
 		mov    $0x31,%eax
-		mov    $data_1e94c8,%edi
+		mov    $IOCTLI,%edi
 		call   ac_dos_int386
 		rep movsl %ds:(%esi),%es:(%edi)
 		movsw  %ds:(%esi),%es:(%edi)
-		mov    $data_1e94a0,%edi
+		mov    $AudioDiscInfo,%edi
 		mov    %ebp,%esi
 		mov    data_1e94cb,%ax
 		movsl  %ds:(%esi),%es:(%edi)
@@ -377,24 +377,24 @@ cd_getaudiotrackinfo:
 		mov    %ax,data_1edb6a
 		mov    %edi,data_1edb58
 		mov    %edi,data_1edb34
-		mov    $data_1edb48,%edi
+		mov    $EAL_rmr,%edi
 		xor    %eax,%eax
-		mov    %edx,data_1edb2c
+		mov    %edx,EAL_pr
 		mov    %bx,%ax
 		mov    %edi,data_1edb40
 		mov    $0x2f,%ebx
 		mov    %eax,data_1edb60
 		mov    $0x1510,%eax
 		mov    %ebx,data_1edb30
-		mov    $data_1edb2c,%ebx
+		mov    $EAL_pr,%ebx
 		mov    %eax,data_1edb64
 		mov    $0x31,%eax
 		mov    %ebx,%edx
-		mov    $data_1e94c8,%edi
+		mov    $IOCTLI,%edi
 		call   ac_dos_int386
 		rep movsl %ds:(%esi),%es:(%edi)
 		movsw  %ds:(%esi),%es:(%edi)
-		mov    $data_1e94a8,%edi
+		mov    $AudioTrackInfo,%edi
 		mov    %ebp,%esi
 		mov    data_1e94cb,%ax
 		movsl  %ds:(%esi),%es:(%edi)
@@ -453,23 +453,23 @@ cd_getqchannelinfo:
 		mov    %edi,data_1edb58
 		mov    %ebx,data_1edb30
 		mov    %edi,data_1edb34
-		mov    $data_1edb48,%edi
+		mov    $EAL_rmr,%edi
 		xor    %eax,%eax
-		mov    $data_1edb2c,%ebx
+		mov    $EAL_pr,%ebx
 		mov    %dx,%ax
 		mov    %edi,data_1edb40
 		mov    $0x300,%edx
 		mov    %eax,data_1edb60
 		mov    $0x1510,%eax
-		mov    %edx,data_1edb2c
+		mov    %edx,EAL_pr
 		mov    %eax,data_1edb64
 		mov    %ebx,%edx
 		mov    $0x31,%eax
-		mov    $data_1e94c8,%edi
+		mov    $IOCTLI,%edi
 		call   ac_dos_int386
 		rep movsl %ds:(%esi),%es:(%edi)
 		movsw  %ds:(%esi),%es:(%edi)
-		mov    $data_1e94b0,%edi
+		mov    $AudioQChannelInfo,%edi
 		mov    %ebp,%esi
 		mov    data_1e94cb,%ax
 		movsl  %ds:(%esi),%es:(%edi)
@@ -497,14 +497,14 @@ mscdex_version:
 		mov    $0x150c,%ebx
 		mov    $0x300,%ecx
 		mov    $0x2f,%esi
-		mov    $data_1edb48,%ebp
+		mov    $EAL_rmr,%ebp
 		xor    %edx,%edx
 		mov    $0x31,%eax
 		mov    %edx,data_1edb58
 		mov    %ebx,data_1edb64
-		mov    %ecx,data_1edb2c
+		mov    %ecx,EAL_pr
 		mov    %esi,data_1edb30
-		mov    $data_1edb2c,%ebx
+		mov    $EAL_pr,%ebx
 		mov    %edx,data_1edb34
 		mov    %ebx,%edx
 		mov    %ebp,data_1edb40
@@ -552,18 +552,18 @@ GLOBAL_FUNC (cd_play_)
 		mov    %dx,data_1edb6a
 		mov    $0x1510,%ebp
 		mov    $0x2f,%edx
-		mov    $data_1edb48,%ecx
-		mov    $data_1edb2c,%ebx
+		mov    $EAL_rmr,%ecx
+		mov    $EAL_pr,%ebx
 		and    $0xffff,%eax
 		mov    %edi,data_1edb34
-		mov    $data_1e94fc,%edi
+		mov    $PlayReq,%edi
 		mov    %eax,data_1edb60
 		mov    %edx,data_1edb30
 		mov    %ecx,data_1edb40
 		mov    $0x300,%eax
 		mov    $0x5,%ecx
 		mov    %ebx,%edx
-		mov    %eax,data_1edb2c
+		mov    %eax,EAL_pr
 		mov    $0x31,%eax
 		mov    %ebp,data_1edb64
 		call   ac_dos_int386
@@ -574,7 +574,7 @@ GLOBAL_FUNC (cd_play_)
 		mov    %ah,CD_Audio_Playing
 		test   %ah,%dl
 		je     jump_10823a
-		push   $data_161150
+		push   $aCdError
 		push   $EXPORT_SYMBOL(SoundProgressMessage)
 		call   ac_sprintf
 		add    $0x8,%esp
@@ -619,19 +619,19 @@ GLOBAL_FUNC (cd_stop_)
 		mov    %ecx,data_1edb58
 		mov    $0x1510,%edi
 		mov    $0x300,%ebp
-		mov    $data_1edb48,%ebx
+		mov    $EAL_rmr,%ebx
 		and    $0xffff,%eax
 		mov    %ecx,data_1edb34
 		mov    %eax,data_1edb60
 		mov    %edi,data_1edb64
-		mov    %ebp,data_1edb2c
+		mov    %ebp,EAL_pr
 		mov    %ebx,data_1edb40
 		mov    $0x2f,%eax
-		mov    $data_1edb2c,%ebx
+		mov    $EAL_pr,%ebx
 		mov    %eax,data_1edb30
 		mov    %ebx,%edx
 		mov    $0x31,%eax
-		mov    $data_1e9514,%edi
+		mov    $StopReq,%edi
 		call   ac_dos_int386
 		xor    %ah,%ah
 		movsl  %ds:(%esi),%es:(%edi)
@@ -663,7 +663,7 @@ GLOBAL_FUNC (cd_init_)
 		call   cd_mem_init
 		test   %ax,%ax
 		jne    jump_108408
-		push   $data_16115c
+		push   $aCannotAlloca_1
 		push   $EXPORT_SYMBOL(SoundProgressMessage)
 		call   ac_sprintf
 		add    $0x8,%esp
@@ -675,7 +675,7 @@ GLOBAL_FUNC (cd_init_)
 		call   cd_check
 		test   %eax,%eax
 		jne    jump_108436
-		push   $data_161178
+		push   $aNoCdDriveOrMsc
 		push   $EXPORT_SYMBOL(SoundProgressMessage)
 		call   ac_sprintf
 		add    $0x8,%esp
@@ -705,7 +705,7 @@ GLOBAL_FUNC (cd_init_)
 		and    $0xffff,%eax
 		mov    cd_errors(,%eax,4),%esi
 		push   %esi
-		push   $data_16119d
+		push   $aCdErrorS
 		push   %edx
 		call   ac_sprintf
 		add    $0xc,%esp
@@ -735,7 +735,7 @@ GLOBAL_FUNC (cd_init_)
 		add    $0x10,%esp
 		test   %eax,%eax
 		jne    jump_1084dc
-		push   $data_1611ab
+		push   $aCouldNotAlloca
 		push   $EXPORT_SYMBOL(SoundProgressMessage)
 		call   ac_sprintf
 		add    $0x8,%esp
@@ -750,7 +750,7 @@ GLOBAL_FUNC (cd_init_)
 		pop    %ebx
 		ret
 	jump_1084dc:
-		push   $data_1611d1
+		push   $aCdOk
 		push   $EXPORT_SYMBOL(SoundProgressMessage)
 		call   ac_sprintf
 		add    $0x8,%esp
@@ -758,10 +758,10 @@ GLOBAL_FUNC (cd_init_)
 		call   SoundProgressLog_
 		mov    data_1e94a1,%al
 		xor    %bh,%bh
-		mov    %al,data_1e947f
+		mov    %al,cd_lowest_track
 		mov    data_1e94a2,%al
 		mov    data_1e94a1,%bl
-		mov    %al,data_1e9480
+		mov    %al,cd_highest_track
 		jmp    jump_10854f
 	jump_108516:
 		xor    %eax,%eax
@@ -804,7 +804,7 @@ GLOBAL_FUNC (cd_init_)
 	jump_10858c:
 		test   %si,%si
 		jne    jump_1085b6
-		push   $data_1611d8
+		push   $aNoDaTracksToPl
 		push   $EXPORT_SYMBOL(SoundProgressMessage)
 		call   ac_sprintf
 		add    $0x8,%esp
@@ -960,11 +960,11 @@ GLOBAL_FUNC (SetCDAudioVolume_)
 		movb   $0x0,0x1(%esi)
 		mov    $0x1510,%ebp
 		movb   $0xc,0x2(%esi)
-		mov    $data_1edb2c,%ebx
+		mov    $EAL_pr,%ebx
 		movw   $0x0,0x3(%esi)
 		mov    $0x2f,%edx
 		movb   $0x0,0xd(%esi)
-		mov    $data_1edb48,%ecx
+		mov    $EAL_rmr,%ecx
 		movw   $0x9,0x12(%esi)
 		mov    cd_ioctli_low_mem,%eax
 		movw   $0x0,0x14(%esi)
@@ -981,11 +981,11 @@ GLOBAL_FUNC (SetCDAudioVolume_)
 		xor    %eax,%eax
 		mov    $0x6,%ecx
 		mov    cd_first,%ax
-		mov    $data_1e9534,%edi
+		mov    $VolumeReq,%edi
 		mov    %eax,data_1edb60
 		mov    $0x300,%eax
 		mov    %ebx,%edx
-		mov    %eax,data_1edb2c
+		mov    %eax,EAL_pr
 		mov    $0x31,%eax
 		mov    %ebp,data_1edb64
 		call   ac_dos_int386
@@ -996,7 +996,7 @@ GLOBAL_FUNC (SetCDAudioVolume_)
 		xor    %eax,%eax
 		mov    data_1e9537,%ax
 		push   %eax
-		push   $data_16121d
+		push   $aCdErrorD
 		push   $EXPORT_SYMBOL(SoundProgressMessage)
 		call   ac_sprintf
 		add    $0xc,%esp
@@ -1058,11 +1058,11 @@ GLOBAL_FUNC (GetCDAudioVolume_)
 		movb   $0x3,0x2(%esi)
 		mov    $0x1510,%ebp
 		movw   $0x0,0x3(%esi)
-		mov    $data_1edb2c,%ebx
+		mov    $EAL_pr,%ebx
 		movb   $0x0,0xd(%esi)
 		mov    $0x2f,%edx
 		movw   $0x9,0x12(%esi)
-		mov    $data_1edb48,%ecx
+		mov    $EAL_rmr,%ecx
 		movw   $0x0,0x14(%esi)
 		mov    control_real,%eax
 		movl   $0x0,0x16(%esi)
@@ -1077,11 +1077,11 @@ GLOBAL_FUNC (GetCDAudioVolume_)
 		xor    %eax,%eax
 		mov    $0x6,%ecx
 		mov    cd_first,%ax
-		mov    $data_1e9534,%edi
+		mov    $VolumeReq,%edi
 		mov    %eax,data_1edb60
 		mov    $0x300,%eax
 		mov    %ebx,%edx
-		mov    %eax,data_1edb2c
+		mov    %eax,EAL_pr
 		mov    $0x31,%eax
 		mov    %ebp,data_1edb64
 		call   ac_dos_int386
@@ -1092,7 +1092,7 @@ GLOBAL_FUNC (GetCDAudioVolume_)
 		xor    %eax,%eax
 		mov    data_1e9537,%ax
 		push   %eax
-		push   $data_16122b
+		push   $aCdErrorD_0
 		push   $EXPORT_SYMBOL(SoundProgressMessage)
 		call   ac_sprintf
 		add    $0xc,%esp
@@ -1124,78 +1124,78 @@ GLOBAL_FUNC (GetCDAudioVolume_)
 .data
 
 cd_errors:
-		.long   data_161239
-		.long   data_161251
-		.long   data_16125e
-		.long   data_16126e
-		.long   data_16127e
-		.long   data_161288
-		.long   data_1612ab
-		.long   data_1612b6
-		.long   data_1612c4
-		.long   data_1612d5
-		.long   data_1612ea
-		.long   data_1612f6
-		.long   data_161301
-		.long   data_161311
-		.long   data_16131a
-		.long   data_161323
+		.long   aWriteProtectVi
+		.long   aUnknownUnit
+		.long   aDriveNotReady
+		.long   aUnknownCommand
+		.long   aCrcError
+		.long   aBadDriveReques
+		.long   aSeekError
+		.long   aUnknownMedia
+		.long   aSectorNotFound
+		.long   aPrinterOutOfPa
+		.long   aWriteFault
+		.long   aReadFault
+		.long   aGeneralFailure
+		.long   aReserved
+		.long   aReserved_0
+		.long   aInvalidDiskCha
 
 
-data_161239:
+aWriteProtectVi:	/* 0x161239 */
 		.string "Write-protect violation"
-data_161251:
+aUnknownUnit:	/* 0x161251 */
 		.string "Unknown unit"
-data_16125e:
+aDriveNotReady:	/* 0x16125E */
 		.string "Drive not ready"
-data_16126e:
+aUnknownCommand:	/* 0x16126E */
 		.string "Unknown command"
-data_16127e:
+aCrcError:	/* 0x16127E */
 		.string "CRC error"
-data_161288:
+aBadDriveReques:	/* 0x161288 */
 		.string "Bad drive request structure length"
-data_1612ab:
+aSeekError:	/* 0x1612AB */
 		.string "Seek error"
-data_1612b6:
+aUnknownMedia:	/* 0x1612B6 */
 		.string "Unknown media"
-data_1612c4:
+aSectorNotFound:	/* 0x1612C4 */
 		.string "Sector not found"
-data_1612d5:
+aPrinterOutOfPa:	/* 0x1612D5 */
 		.string "Printer out of paper"
-data_1612ea:
+aWriteFault:	/* 0x1612EA */
 		.string "Write fault"
-data_1612f6:
+aReadFault:	/* 0x1612F6 */
 		.string "Read fault"
-data_161301:
+aGeneralFailure:	/* 0x161301 */
 		.string "General failure"
-data_161311:
+aReserved:	/* 0x161311 */
 		.string "Reserved"
-data_16131a:
+aReserved_0:	/* 0x16131A */
 		.string "Reserved"
-data_161323:
+aInvalidDiskCha:	/* 0x161323 */
 		.string "Invalid disk change"
 		.byte	0x0
 
 
-data_161150:
+aCdError:	/* 0x161150 */
 		.string "cd error--\n"
-data_16115c:
+aCannotAlloca_1:	/* 0x16115C */
 		.string "cannot allocate low memory\n"
-data_161178:
+aNoCdDriveOrMsc:	/* 0x161178 */
 		.string "no cd drive or mscdex not installed\n"
-data_16119d:
+aCdErrorS:	/* 0x16119D */
 		.string "cd error--%s\n"
-data_1611ab:
+aCouldNotAlloca:	/* 0x1611AB */
 		.string "could not allocate low memory for cd\n"
-data_1611d1:
+aCdOk:	/* 0x1611D1 */
 		.string "cd ok\n"
-data_1611d8:
+aNoDaTracksToPl:	/* 0x1611D8 */
 		.string "no da tracks to play\n"
-data_1611ee:
+aCdHeadAt02dm02:	/* 0x1611EE */
 		.string "\rCD Head at %02dm:%02ds:%02df, enter option: $"
-data_16121d:
+aCdErrorD:	/* 0x16121D */
 		.string "cd error--%d\n"
-data_16122b:
+aCdErrorD_0:	/* 0x16122B */
 		.string "cd error--%d\n"
 
 current_da_track:
@@ -1208,9 +1208,9 @@ track_lengths:
 		.fill   0x18c
 is_da_track:
 		.fill   0x63
-data_1e947f:
+cd_lowest_track:	/* 0x1E947F */
 		.byte	0x0
-data_1e9480:
+cd_highest_track:	/* 0x1E9480 */
 		.byte	0x0
 CD_Audio_Playing:
 		.ascii  "\x00\x00\x00"
@@ -1218,15 +1218,15 @@ cd_ioctli_low_mem:
 		.long	0x0
 cd_data_low_mem:
 		.long	0x0
-data_1e948c:
+cd_total:	/* 0x1E948C */
 		.short  0x0
 cd_first:
 		.short  0x0
-data_1e9490:
+HeadLocationInfo:	/* 0x1E9490 */
 		.fill   0x8
-data_1e9498:
+DeviceStatusInfo:	/* 0x1E9498 */
 		.fill   0x8
-data_1e94a0:
+AudioDiscInfo:	/* 0x1E94A0 */
 		.byte	0x0
 data_1e94a1:
 		.byte	0x0
@@ -1234,13 +1234,13 @@ data_1e94a2:
 		.byte	0x0
 data_1e94a3:
 		.fill   0x5
-data_1e94a8:
+AudioTrackInfo:	/* 0x1E94A8 */
 		.short  0x0
 data_1e94aa:
 		.long	0x0
 data_1e94ae:
 		.short  0x0
-data_1e94b0:
+AudioQChannelInfo:	/* 0x1E94B0 */
 		.fill   0x8
 data_1e94b8:
 		.byte	0x0
@@ -1250,27 +1250,27 @@ data_1e94ba:
 		.short  0x0
 data_1e94bc:
 		.fill   0xc
-data_1e94c8:
+IOCTLI:	/* 0x1E94C8 */
 		.ascii  "\x00\x00\x00"
 data_1e94cb:
 		.fill   0x19
-data_1e94e4:
+SeekReq:	/* 0x1E94E4 */
 		.ascii  "\x00\x00\x00"
 data_1e94e7:
 		.fill   0x15
-data_1e94fc:
+PlayReq:	/* 0x1E94FC */
 		.ascii  "\x00\x00\x00"
 data_1e94ff:
 		.fill   0x15
-data_1e9514:
+StopReq:	/* 0x1E9514 */
 		.ascii  "\x00\x00\x00"
 data_1e9517:
 		.fill   0xd
-data_1e9524:
+ResumeReq:	/* 0x1E9524 */
 		.ascii  "\x00\x00\x00"
 data_1e9527:
 		.fill   0xd
-data_1e9534:
+VolumeReq:	/* 0x1E9534 */
 		.ascii  "\x00\x00\x00"
 data_1e9537:
 		.fill   0x19
@@ -1281,7 +1281,7 @@ control_selector:
 control_prot:
 		.long	0x0
 
-data_1edb2c:
+EAL_pr:	/* 0x1EDB2C */
 		.long	0x0
 data_1edb30:
 		.long	0x0
@@ -1293,7 +1293,7 @@ data_1edb40:
 		.long	0x0
 data_1edb44:
 		.long	0x0
-data_1edb48:
+EAL_rmr:	/* 0x1EDB48 */
 		.fill   0x10
 data_1edb58:
 		.long	0x0
@@ -1311,7 +1311,7 @@ data_1edb76:
 		.short  0x0
 data_1edb78:
 		.short  0x0
-data_1edb7a:
+EAL_realmode_segment:	/* 0x1EDB7A */
 		.short  0x0
 data_1edb7c:
 		.long	0x0

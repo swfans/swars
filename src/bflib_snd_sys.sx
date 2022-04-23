@@ -42,21 +42,21 @@ GLOBAL_FUNC (InitAudio_)
 		push   %edi
 		push   %ebp
 		mov    %eax,%edx
-		mov    $data_15ed40,%eax
+		mov    $aDebug_bf_audio,%eax
 		call   ac_getenv
 		test   %eax,%eax
 		je     jump_eb7dd
-		movb   $0x1,DebugAudio
+		movb   $0x1,_DebugAudio
 	jump_eb7dd:
-		push   $data_15ed4f
+		push   $aSoundDig_ini
 		push   $FullDIG_INIPath
 		call   ac_sprintf
 		add    $0x8,%esp
-		push   $data_15ed5d
+		push   $aSoundMdi_ini
 		push   $FullMDI_INIPath
 		call   ac_sprintf
 		add    $0x8,%esp
-		mov    $data_15ed6b,%esi
+		mov    $aSound_2,%esi
 		mov    $SoundAndMusicDataPath,%edi
 		push   %edi
 	jump_eb80c:
@@ -72,7 +72,7 @@ GLOBAL_FUNC (InitAudio_)
 		jne    jump_eb80c
 	jump_eb824:
 		pop    %edi
-		mov    $data_15ed71,%esi
+		mov    $aSound_3,%esi
 		mov    $SoundDriverPath,%edi
 		push   %edi
 	jump_eb830:
@@ -92,13 +92,13 @@ GLOBAL_FUNC (InitAudio_)
 		test   %ebx,%ebx
 		je     jump_eb877
 		push   %ebx
-		push   $data_15ed77
+		push   $aSDig_ini
 		push   $FullDIG_INIPath
 		call   ac_sprintf
 		add    $0xc,%esp
 		mov    (%edx),%esi
 		push   %esi
-		push   $data_15ed82
+		push   $aSMdi_ini
 		push   $FullMDI_INIPath
 		call   ac_sprintf
 		add    $0xc,%esp
@@ -191,7 +191,7 @@ GLOBAL_FUNC (InitAudio_)
 		xor    %eax,%eax
 		mov    MusicAble,%al
 		push   %eax
-		push   $data_15ed8d
+		push   $aBf1MaD
 		push   $SoundProgressMessage
 		call   ac_sprintf
 		add    $0xc,%esp
@@ -200,7 +200,7 @@ GLOBAL_FUNC (InitAudio_)
 		xor    %eax,%eax
 		mov    SoundAble,%al
 		push   %eax
-		push   $data_15ed9d
+		push   $aBf2SaD
 		push   $SoundProgressMessage
 		call   ac_sprintf
 		add    $0xc,%esp
@@ -242,7 +242,7 @@ GLOBAL_FUNC (InitAudio_)
 		xor    %eax,%eax
 		mov    MusicAble,%al
 		push   %eax
-		push   $data_15edad
+		push   $aBf54MaD
 		push   $SoundProgressMessage
 		call   ac_sprintf
 		add    $0xc,%esp
@@ -251,21 +251,21 @@ GLOBAL_FUNC (InitAudio_)
 		xor    %eax,%eax
 		mov    SoundAble,%al
 		push   %eax
-		push   $data_15edbd
+		push   $aBf55SaD
 		push   $SoundProgressMessage
 		call   ac_sprintf
 		add    $0xc,%esp
 		mov    $SoundProgressMessage,%eax
 		call   SoundProgressLog_
 		push   $awe32_s1
-		push   $data_15edcd
+		push   $aBf56MusicDrive
 		push   $SoundProgressMessage
 		call   ac_sprintf
 		add    $0xc,%esp
 		mov    $SoundProgressMessage,%eax
 		call   SoundProgressLog_
 		push   $SoundInstallChoice__Field1
-		push   $data_15ede7
+		push   $aBf57SoundDrive
 		push   $SoundProgressMessage
 		call   ac_sprintf
 		add    $0xc,%esp
@@ -519,7 +519,7 @@ GLOBAL_FUNC (InitRedbook_)
 		ret
 	jump_ebcfa:
 		call   GetCDVolume_
-		mov    %al,data_158b34
+		mov    %al,InitialCDVolume
 		pop    %edx
 		pop    %ecx
 		ret
@@ -642,7 +642,7 @@ GLOBAL_FUNC (SetCDVolume_)
 		push   %edx
 		cmpb   $0x0,CDAble
 		je     jump_ec07d
-		movsbl data_158b34,%edx
+		movsbl InitialCDVolume,%edx
 		cmp    $0xffffffff,%edx
 		je     jump_ec07d
 		xor    %edx,%edx
@@ -671,11 +671,11 @@ GLOBAL_FUNC (GetCDVolume_)
 /*----------------------------------------------------------------*/
 GLOBAL_FUNC (FreeCD_)
 /*----------------------------------------------------------------*/
-		movsbl data_158b34,%eax
+		movsbl InitialCDVolume,%eax
 		cmp    $0xffffffff,%eax
 		je     FreeCDAudio_
 		xor    %eax,%eax
-		mov    data_158b34,%al
+		mov    InitialCDVolume,%al
 		call   SetCDVolume_
 		jmp    FreeCDAudio_
 
@@ -761,7 +761,7 @@ GLOBAL_FUNC (ASM_LoadSounds)
 		xor    %eax,%eax
 		mov    0x1c(%esp),%al
 		push   %eax
-		push   $data_15ee04
+		push   $aBf42LoadSoundB
 		push   $SoundProgressMessage
 		call   ac_sprintf
 		add    $0xc,%esp
@@ -871,7 +871,7 @@ GLOBAL_FUNC (ASM_LoadSounds)
 		jbe    jump_ec830
 		mov    %esi,%eax
 		call   ac_LbFileClose
-		push   $data_15ee1f
+		push   $aBf43LoadSoundB
 		jmp    jump_ec8e3
 	jump_ec830:
 		dec    %edi
@@ -891,14 +891,14 @@ GLOBAL_FUNC (ASM_LoadSounds)
 		jne    jump_ec870
 		mov    %esi,%eax
 		call   ac_LbFileClose
-		push   $data_15ee51
+		push   $aBf44LoadSoundB
 		jmp    jump_ec8e3
 	jump_ec870:
 		mov    0x1c(%esp),%al
 		mov    %al,CurrentSoundBank
 		mov    %esi,%eax
 		call   ac_LbFileClose
-		push   $data_15ee84
+		push   $aBf45LoadSoundB
 		push   $SoundProgressMessage
 		call   ac_sprintf
 		add    $0x8,%esp
@@ -913,25 +913,25 @@ GLOBAL_FUNC (ASM_LoadSounds)
 		pop    %ebx
 		ret
 	jump_ec8a7:
-		push   $data_15eea5
+		push   $aBf46LoadSoundB
 		jmp    jump_ec8e3
 	jump_ec8ae:
 		cmpb   $0x0,SoundInstalled
 		jne    jump_ec8be
-		push   $data_15eed5
+		push   $aBf47LoadSoundB
 		jmp    jump_ec8e3
 	jump_ec8be:
 		cmpb   $0x0,SoundAble
 		jne    jump_ec8ce
-		push   $data_15ef0c
+		push   $aBf47LoadSoun_0
 		jmp    jump_ec8e3
 	jump_ec8ce:
 		cmpb   $0x0,DisableLoadSounds
 		je     jump_ec8de
-		push   $data_15ef3d
+		push   $aBf47LoadSoun_1
 		jmp    jump_ec8e3
 	jump_ec8de:
-		push   $data_15ef74
+		push   $aBf47LoadSoun_2
 	jump_ec8e3:
 		push   $SoundProgressMessage
 		call   ac_sprintf
@@ -1177,7 +1177,7 @@ AllocateSoundBankMemory_:
 		sub    $0x4,%esp
 		mov    %eax,%ecx
 		push   $SoundAndMusicDataPath
-		push   $data_15efa6
+		push   $aSSound_dat
 		push   $full_sound_data_path
 		call   ac_sprintf
 		add    $0xc,%esp
@@ -1294,7 +1294,7 @@ AllocateSoundBankMemory_:
 		mov    %ebp,%eax
 		call   ac_LbMemoryAlloc
 		push   %ebp
-		push   $data_15efb3
+		push   $aSoundDataSizeD
 		push   $SoundProgressMessage
 		mov    %eax,SfxData
 		call   ac_sprintf
@@ -1368,7 +1368,7 @@ GLOBAL_FUNC (ASM_LoadMusic)
 		xor    %eax,%eax
 		mov    %di,%ax
 		push   %eax
-		push   $data_15efcc
+		push   $aBf48LoadMusicB
 		push   $SoundProgressMessage
 		call   ac_sprintf
 		add    $0xc,%esp
@@ -1460,7 +1460,7 @@ GLOBAL_FUNC (ASM_LoadMusic)
 		jbe    jump_ecf8d
 		mov    %esi,%eax
 		call   ac_LbFileClose
-		push   $data_15efe7
+		push   $aBf49LoadMusicB
 		jmp    jump_ed01d
 	jump_ecf8d:
 		dec    %edi
@@ -1478,12 +1478,12 @@ GLOBAL_FUNC (ASM_LoadMusic)
 		jne    jump_ecfc1
 		mov    %esi,%eax
 		call   ac_LbFileClose
-		push   $data_15f019
+		push   $aBf50LoadMusicB
 		jmp    jump_ed01d
 	jump_ecfc1:
 		mov    %esi,%eax
 		call   ac_LbFileClose
-		push   $data_15f04c
+		push   $aBf51LoadMusicB
 		push   $SoundProgressMessage
 		call   ac_sprintf
 		add    $0x8,%esp
@@ -1492,22 +1492,22 @@ GLOBAL_FUNC (ASM_LoadMusic)
 		xor    %eax,%eax
 		jmp    jump_ed039
 	jump_ecfe8:
-		push   $data_15f06d
+		push   $aBf52LoadMusicB
 		jmp    jump_ed01d
 	jump_ecfef:
 		cmpb   $0x0,MusicInstalled
 		jne    jump_ecfff
-		push   $data_15f09d
+		push   $aBf53LoadMusicB
 		jmp    jump_ed01d
 	jump_ecfff:
 		cmpb   $0x0,MusicAble
 		jne    jump_ed00f
-		push   $data_15f0d4
+		push   $aBf53LoadMusi_0
 		jmp    jump_ed01d
 	jump_ed00f:
 		cmpb   $0x0,DisableLoadMusic
 		je     jump_ed034
-		push   $data_15f105
+		push   $aBf53LoadMusi_1
 	jump_ed01d:
 		push   $SoundProgressMessage
 		call   ac_sprintf
@@ -1765,7 +1765,7 @@ AllocateMusicBankMemory_:
 		push   %edi
 		push   %ebp
 		push   $SoundAndMusicDataPath
-		push   $data_15f13f
+		push   $aSMusic_dat
 		push   $full_music_data_path
 		call   ac_sprintf
 		add    $0xc,%esp
@@ -1923,7 +1923,7 @@ GLOBAL_FUNC (FreeAudio_)
 		jne    jump_ed4c7
 		call   ail_shutdown
 	jump_ed4c7:
-		cmpb   $0x0,StreamedSoundAble
+		cmpb   $0x0,_StreamedSoundAble
 		je     jump_ed4d5
 		call   FreeStreamedSound_
 	jump_ed4d5:
@@ -2824,7 +2824,7 @@ GLOBAL_FUNC (StartMusic_)
 /*----------------------------------------------------------------*/
 GLOBAL_FUNC(SoundProgressLog_)
 /*----------------------------------------------------------------*/
-		cmpb   $0x0,DebugAudio
+		cmpb   $0x0,_DebugAudio
 		je     jump_ff3e2
 		push   %eax
 		call   ac_printf
@@ -2849,7 +2849,7 @@ GLOBAL_FUNC(InitSound_)
 		mov    $0x5,%bh
 		test   %ah,%ah
 		je     jump_ffa7c
-		push   $data_15f804
+		push   $aBf3InitSound
 		push   $SoundProgressMessage
 		call   ac_sprintf
 		add    $0x8,%esp
@@ -2858,7 +2858,7 @@ GLOBAL_FUNC(InitSound_)
 		xor    %eax,%eax
 		mov    SoundType,%ax
 		push   %eax
-		push   $data_15f817
+		push   $aBf4DefaultSoun
 		push   $SoundProgressMessage
 		call   ac_sprintf
 		add    $0xc,%esp
@@ -2873,14 +2873,14 @@ GLOBAL_FUNC(InitSound_)
 		cmpb   $0x0,AILStartupAlreadyInitiated
 		je     jump_ff491
 		call   ail_shutdown
-		push   $data_15f838
+		push   $aBf5NoSamplesRe
 		push   $SoundProgressMessage
 		call   ac_sprintf
 		add    $0x8,%esp
 		mov    $SoundProgressMessage,%eax
 		call   SoundProgressLog_
 	jump_ff491:
-		push   $data_15f864
+		push   $aBf6NoSamplesRe
 		xor    %ah,%ah
 		push   $SoundProgressMessage
 		mov    %ah,SoundAble
@@ -2956,12 +2956,12 @@ GLOBAL_FUNC(InitSound_)
 		call   AIL_set_preference
 		add    $0x8,%esp
 	jump_ff592:
-		mov    $data_15f883,%eax
+		mov    $aMdsound,%eax
 		call   ac_getenv
 		mov    %eax,%edx
 		test   %eax,%eax
 		je     jump_ff6cd
-		push   $data_15f88b
+		push   $aBf8MdsoundEnvi
 		push   $SoundProgressMessage
 		call   ac_sprintf
 		add    $0x8,%esp
@@ -2977,7 +2977,7 @@ GLOBAL_FUNC(InitSound_)
 		push   %eax
 		lea    0x28(%esp),%eax
 		push   %eax
-		push   $data_15f8ae
+		push   $ascSXDDD
 		push   %edx
 		call   ac_sscanf
 		add    $0x1c,%esp
@@ -2990,7 +2990,7 @@ GLOBAL_FUNC(InitSound_)
 		mov    %eax,SoundDriver
 		test   %eax,%eax
 		jne    jump_ff65c
-		push   $data_15f8bd
+		push   $aBf9MdsoundEnvi
 		push   $SoundProgressMessage
 		call   ac_sprintf
 		add    $0x8,%esp
@@ -3000,7 +3000,7 @@ GLOBAL_FUNC(InitSound_)
 		jne    jump_ff62c
 		call   ail_shutdown
 	jump_ff62c:
-		push   $data_15f8f6
+		push   $aNone_0
 		push   $SoundInstallChoice__Field1
 		xor    %bh,%bh
 		call   ac_sprintf
@@ -3019,11 +3019,11 @@ GLOBAL_FUNC(InitSound_)
 	jump_ff65c:
 		lea    0x18(%esp),%eax
 		push   %eax
-		push   $data_15f8fb
+		push   $ascS_9
 		push   $SoundInstallChoice__Field1
 		call   ac_sprintf
 		add    $0xc,%esp
-		push   $data_15f8fe
+		push   $aBf10MdsoundEnv
 		push   $SoundProgressMessage
 		call   ac_sprintf
 		add    $0x8,%esp
@@ -3032,7 +3032,7 @@ GLOBAL_FUNC(InitSound_)
 		mov    (%esp),%eax
 		mov    %ax,SoundInstallChoice__Field2
 	jump_ff698:
-		push   $data_15fa47
+		push   $aBf18DetermineS
 		push   $SoundProgressMessage
 		call   ac_sprintf
 		add    $0x8,%esp
@@ -3053,18 +3053,18 @@ GLOBAL_FUNC(InitSound_)
 		test   %eax,%eax
 		je     jump_ff7a3
 #endif
-		push   $data_15f937
+		push   $aBf11SearchForD
 		push   $SoundProgressMessage
 		call   ac_sprintf
 		add    $0x8,%esp
 		mov    $SoundProgressMessage,%eax
-		mov    $data_15f95e,%edx
+		mov    $ascNone_1,%edx
 		call   SoundProgressLog_
 		mov    $SoundInstallChoice__Field1,%eax
 		call   ac_stricmp
 		test   %eax,%eax
 		jne    jump_ff75e
-		push   $data_15f963
+		push   $aBf12UserReques
 		push   $SoundProgressMessage
 		call   ac_sprintf
 		add    $0x8,%esp
@@ -3092,7 +3092,7 @@ GLOBAL_FUNC(InitSound_)
 		add    $0x4,%esp
 		test   %eax,%eax
 		jne    jump_ff78a
-		push   $data_15f991
+		push   $aBf13Dig_iniDri
 		push   $SoundProgressMessage
 		call   ac_sprintf
 		add    $0x8,%esp
@@ -3100,18 +3100,18 @@ GLOBAL_FUNC(InitSound_)
 		mov    $0x1,%bl
 		jmp    jump_ff7cc
 	jump_ff78a:
-		push   $data_15f9be
+		push   $ascNone_2
 		push   $SoundInstallChoice__Field1
 		call   ac_sprintf
 		add    $0x8,%esp
-		push   $data_15f9c3
+		push   $aBf14Dig_iniDri
 		jmp    jump_ff7ba
 	jump_ff7a3:
-		push   $data_15f9ea
+		push   $ascNone_3
 		push   $SoundInstallChoice__Field1
 		call   ac_sprintf
 		add    $0x8,%esp
-		push   $data_15f9ef
+		push   $aBf15SearchForD
 	jump_ff7ba:
 		push   $SoundProgressMessage
 		call   ac_sprintf
@@ -3121,7 +3121,7 @@ GLOBAL_FUNC(InitSound_)
 		call   SoundProgressLog_
 		test   %bl,%bl
 		jne    jump_ff698
-		push   $data_15fa13
+		push   $aBf16AllDigDriv
 		push   $SoundProgressMessage
 		call   ac_sprintf
 		add    $0x8,%esp
@@ -3144,7 +3144,7 @@ GLOBAL_FUNC(InitSound_)
 		pop    %ebx
 		ret
 	jump_ff81f:
-		push   $data_15fa71
+		push   $aBf19Loadsounds
 		push   $SoundProgressMessage
 		call   ac_sprintf
 		add    $0x8,%esp
@@ -3155,13 +3155,13 @@ GLOBAL_FUNC(InitSound_)
 		mov    SoundType,%ax
 		test   %eax,%eax
 		jne    jump_ff974
-		push   $data_15fa8d
+		push   $aBf20CannotAllo
 		push   $SoundProgressMessage
 		call   ac_sprintf
 		add    $0x8,%esp
 		mov    $SoundProgressMessage,%eax
 		call   SoundProgressLog_
-		push   $data_15fab9
+		push   $ascNone_4
 		push   $SoundInstallChoice__Field1
 		call   ac_sprintf
 		mov    MusicAble,%ah
@@ -3307,7 +3307,7 @@ GLOBAL_FUNC(InitSound_)
 		cmp    %eax,%ebx
 		jbe    jump_ffa28
 	jump_ffa4e:
-		push   $data_15fabe
+		push   $aBf24InitSoundC
 		mov    $0x1,%dh
 		push   $SoundProgressMessage
 		mov    %dh,SoundInstalled
@@ -3339,7 +3339,7 @@ DetermineSoundType_:
 		xor    %eax,%eax
 		mov    SoundType,%ax
 		push   %eax
-		push   $data_15fadb
+		push   $ascBf19D
 		push   %ebx
 		call   ac_sprintf
 		add    $0xc,%esp
@@ -3353,7 +3353,7 @@ DetermineSoundType_:
 		jg     jump_ffc40
 		cmp    $0xffffffff,%eax
 		jne    jump_ffaf9
-		push   $data_15fae5
+		push   $aNoSound_dat
 		push   $SoundProgressMessage
 		call   ac_sprintf
 		add    $0x8,%esp
@@ -3367,7 +3367,7 @@ DetermineSoundType_:
 	jump_ffaf9:
 		test   %eax,%eax
 		jne    jump_ffb17
-		push   $data_15faf6
+		push   $aCannotAllocate
 		push   %ebx
 		call   ac_sprintf
 		add    $0x8,%esp
@@ -3377,7 +3377,7 @@ DetermineSoundType_:
 	jump_ffb17:
 		cmp    $0xfffffffe,%eax
 		jne    jump_ffb35
-		push   $data_15fb0a
+		push   $aNotPresentInSo
 		push   %ebx
 		call   ac_sprintf
 		add    $0x8,%esp
@@ -3472,7 +3472,7 @@ DetermineSoundType_:
 		pop    %ebx
 		ret
 	jump_ffc40:
-		push   $data_15fb27
+		push   $aAllocationSucc
 		push   %ebx
 		call   ac_sprintf
 		add    $0x8,%esp
@@ -3499,7 +3499,7 @@ GLOBAL_FUNC(InitMusic_)
 		xor    %bl,%bl
 		test   %ah,%ah
 		je     jump_100489
-		push   $data_15fb44
+		push   $aBf25InitMusic
 		push   $SoundProgressMessage
 		call   ac_sprintf
 		add    $0x8,%esp
@@ -3549,7 +3549,7 @@ GLOBAL_FUNC(InitMusic_)
 		add    $0x8,%esp
 	jump_ffd24:
 		push   $SoundAndMusicDataPath
-		push   $data_15fb57
+		push   $aSSample
 		lea    0x8(%esp),%eax
 		push   %eax
 		call   ac_sprintf
@@ -3560,7 +3560,7 @@ GLOBAL_FUNC(InitMusic_)
 		add    $0x4,%esp
 		mov    %esp,%eax
 		push   %eax
-		push   $data_15fb61
+		push   $ascS_ad
 		lea    0x98(%esp),%eax
 		push   %eax
 		call   ac_sprintf
@@ -3569,7 +3569,7 @@ GLOBAL_FUNC(InitMusic_)
 		call   fm_instrument_file_exists
 		test   %eax,%eax
 		jne    jump_ffd8a
-		push   $data_15fb67
+		push   $aBf26Sample_adN
 		push   $SoundProgressMessage
 		call   ac_sprintf
 		add    $0x8,%esp
@@ -3578,7 +3578,7 @@ GLOBAL_FUNC(InitMusic_)
 	jump_ffd8a:
 		mov    %esp,%eax
 		push   %eax
-		push   $data_15fb83
+		push   $ascS_opl
 		lea    0x98(%esp),%eax
 		push   %eax
 		call   ac_sprintf
@@ -3587,19 +3587,19 @@ GLOBAL_FUNC(InitMusic_)
 		call   fm_instrument_file_exists
 		test   %eax,%eax
 		jne    jump_ffdce
-		push   $data_15fb8a
+		push   $aBf27Sample_opl
 		push   $SoundProgressMessage
 		call   ac_sprintf
 		add    $0x8,%esp
 		mov    $SoundProgressMessage,%eax
 		call   SoundProgressLog_
 	jump_ffdce:
-		mov    $data_15fba7,%eax
+		mov    $aMdmusic,%eax
 		call   ac_getenv
 		mov    %eax,%edx
 		test   %eax,%eax
 		je     jump_fff04
-		push   $data_15fbaf
+		push   $aBf29MdmusicEnv
 		push   $SoundProgressMessage
 		call   ac_sprintf
 		add    $0x8,%esp
@@ -3615,7 +3615,7 @@ GLOBAL_FUNC(InitMusic_)
 		push   %eax
 		lea    0x148(%esp),%eax
 		push   %eax
-		push   $data_15fbd2
+		push   $ascSXDDD_0
 		push   %edx
 		call   ac_sscanf
 		add    $0x1c,%esp
@@ -3628,7 +3628,7 @@ GLOBAL_FUNC(InitMusic_)
 		mov    %eax,MusicDriver
 		test   %eax,%eax
 		jne    jump_ffe92
-		push   $data_15fbe1
+		push   $aBf30MdmusicEnv
 		push   $SoundProgressMessage
 		call   ac_sprintf
 		add    $0x8,%esp
@@ -3643,7 +3643,7 @@ GLOBAL_FUNC(InitMusic_)
 		mov    %dl,MusicActive
 		jmp    jump_100489
 	jump_ffe92:
-		push   $data_15fc1a
+		push   $aBf31MdmusicEnv
 		push   $SoundProgressMessage
 		call   ac_sprintf
 		add    $0x8,%esp
@@ -3651,7 +3651,7 @@ GLOBAL_FUNC(InitMusic_)
 		call   SoundProgressLog_
 		lea    0x138(%esp),%eax
 		push   %eax
-		push   $data_15fc53
+		push   $ascS_10
 		push   $awe32_s1
 		call   ac_sprintf
 		add    $0xc,%esp
@@ -3659,37 +3659,37 @@ GLOBAL_FUNC(InitMusic_)
 		mov    MusicDriver,%edx
 		push   %edx
 		call   AIL_allocate_sequence_handle
-		mov    $data_15fd5e,%edx
+		mov    $aAdlib_mdi,%edx
 		add    $0x4,%esp
 		mov    %eax,SongHandle
 		mov    $awe32_s1,%eax
 		call   ac_stricmp
 		test   %eax,%eax
 		jne    jump_10002c
-		mov    $data_15fd68,%eax
+		mov    $ascF_0,%eax
 		push   %eax
 		mov    $MusicType,%eax
 		push   %eax
 		jmp    jump_1002e1
 	jump_fff04:
 		push   $FullMDI_INIPath
-		push   $data_1e8c84
+		push   $_MusicInstallChoice
 		call   AIL_read_INI
 		add    $0x8,%esp
 		test   %eax,%eax
 		je     jump_fffc4
-		push   $data_15fc56
+		push   $aBf32SearchForM
 		push   $SoundProgressMessage
 		call   ac_sprintf
 		add    $0x8,%esp
 		mov    $SoundProgressMessage,%eax
-		mov    $data_15fc7a,%edx
+		mov    $ascNone_5,%edx
 		call   SoundProgressLog_
 		mov    $awe32_s1,%eax
 		call   ac_stricmp
 		test   %eax,%eax
 		jne    jump_fff91
-		push   $data_15fc7f
+		push   $aBf33UserReques
 		push   $SoundProgressMessage
 		call   ac_sprintf
 		add    $0x8,%esp
@@ -3715,7 +3715,7 @@ GLOBAL_FUNC(InitMusic_)
 		add    $0x4,%esp
 		test   %eax,%eax
 		jne    jump_fffbd
-		push   $data_15fcaa
+		push   $aBf34Mdi_iniDri
 		push   $SoundProgressMessage
 		call   ac_sprintf
 		add    $0x8,%esp
@@ -3723,10 +3723,10 @@ GLOBAL_FUNC(InitMusic_)
 		mov    $0x1,%bl
 		jmp    jump_fffdb
 	jump_fffbd:
-		push   $data_15fcd7
+		push   $aBf35Mdi_iniDri
 		jmp    jump_fffc9
 	jump_fffc4:
-		push   $data_15fd04
+		push   $aBf36SearchForM
 	jump_fffc9:
 		push   $SoundProgressMessage
 		call   ac_sprintf
@@ -3736,7 +3736,7 @@ GLOBAL_FUNC(InitMusic_)
 		call   SoundProgressLog_
 		test   %bl,%bl
 		jne    jump_ffec8
-		push   $data_15fd28
+		push   $aBf37AllMusicDr
 		push   $SoundProgressMessage
 		call   ac_sprintf
 		add    $0x8,%esp
@@ -3757,85 +3757,85 @@ GLOBAL_FUNC(InitMusic_)
 		pop    %ebx
 		ret
 	jump_10002c:
-		mov    $data_15fd6a,%edx
+		mov    $aAdlibg_mdi,%edx
 		mov    $awe32_s1,%eax
 		call   ac_stricmp
 		test   %eax,%eax
 		jne    jump_100050
-		mov    $data_15fd75,%eax
+		mov    $ascF_1,%eax
 		push   %eax
 		mov    $MusicType,%eax
 		push   %eax
 		jmp    jump_1002e1
 	jump_100050:
-		mov    $data_15fd77,%edx
+		mov    $aOpl3_mdi,%edx
 		mov    $awe32_s1,%eax
 		call   ac_stricmp
 		test   %eax,%eax
 		jne    jump_100074
-		mov    $data_15fd80,%eax
+		mov    $ascF_2,%eax
 		push   %eax
 		mov    $MusicType,%eax
 		push   %eax
 		jmp    jump_1002e1
 	jump_100074:
-		mov    $data_15fd82,%edx
+		mov    $aPas_mdi,%edx
 		mov    $awe32_s1,%eax
 		call   ac_stricmp
 		test   %eax,%eax
 		jne    jump_100098
-		mov    $data_15fd8a,%eax
+		mov    $ascF_3,%eax
 		push   %eax
 		mov    $MusicType,%eax
 		push   %eax
 		jmp    jump_1002e1
 	jump_100098:
-		mov    $data_15fd8c,%edx
+		mov    $aPasplus_mdi,%edx
 		mov    $awe32_s1,%eax
 		call   ac_stricmp
 		test   %eax,%eax
 		jne    jump_1000b5
-		push   $data_15fd98
+		push   $ascF_4
 		jmp    jump_1002dc
 	jump_1000b5:
-		mov    $data_15fd9a,%edx
+		mov    $aSblaster_mdi,%edx
 		mov    $awe32_s1,%eax
 		call   ac_stricmp
 		test   %eax,%eax
 		jne    jump_1000d2
-		push   $data_15fda7
+		push   $ascF_5
 		jmp    jump_1002dc
 	jump_1000d2:
-		mov    $data_15fda9,%edx
+		mov    $aSbpro1_mdi,%edx
 		mov    $awe32_s1,%eax
 		call   ac_stricmp
 		test   %eax,%eax
 		jne    jump_1000ef
-		push   $data_15fdb4
+		push   $ascF_6
 		jmp    jump_1002dc
 	jump_1000ef:
-		mov    $data_15fdb6,%edx
+		mov    $aSbpro2_mdi,%edx
 		mov    $awe32_s1,%eax
 		call   ac_stricmp
 		test   %eax,%eax
 		jne    jump_10010c
-		push   $data_15fdc1
+		push   $ascF_7
 		jmp    jump_1002dc
 	jump_10010c:
-		mov    $data_15fdc3,%edx
+		mov    $aEsfm_mdi,%edx
 		mov    $awe32_s1,%eax
 		call   ac_stricmp
 		test   %eax,%eax
 		jne    jump_100129
-		push   $data_15fdcc
+		push   $ascF_8
 		jmp    jump_1002dc
 	jump_100129:
-		mov    $data_15fdce,%edx
+		mov    $aSbawe32_mdi,%edx
 		mov    $awe32_s1,%eax
 		call   ac_stricmp
 		test   %eax,%eax
 		jne    jump_1001ca
-		push   $data_15fdda
+		push   $ascW_0
 		push   $MusicType
 		mov    $0x1,%ch
 		call   ac_sprintf
@@ -3849,11 +3849,11 @@ GLOBAL_FUNC(InitMusic_)
 		mov    Awe32SoundfontLoaded,%al
 		test   %eax,%eax
 		jne    jump_1001a9
-		push   $data_15fddc
+		push   $ascG_4
 		push   $MusicType
 		call   ac_sprintf
 		add    $0x8,%esp
-		push   $data_15fdde
+		push   $aBf38Awe32Sound
 		push   $SoundProgressMessage
 		call   ac_sprintf
 		add    $0x8,%esp
@@ -3861,7 +3861,7 @@ GLOBAL_FUNC(InitMusic_)
 		call   SoundProgressLog_
 		jmp    jump_1002e9
 	jump_1001a9:
-		push   $data_15fe00
+		push   $aBf38Awe32Sou_0
 		push   $SoundProgressMessage
 		call   ac_sprintf
 		add    $0x8,%esp
@@ -3869,36 +3869,36 @@ GLOBAL_FUNC(InitMusic_)
 		call   SoundProgressLog_
 		jmp    jump_1002e9
 	jump_1001ca:
-		mov    $data_15fe1f,%edx
+		mov    $aMpu401_mdi,%edx
 		mov    $awe32_s1,%eax
 		call   ac_stricmp
 		test   %eax,%eax
 		jne    jump_1001e7
-		push   $data_15fe2a
+		push   $ascG
 		jmp    jump_1002dc
 	jump_1001e7:
-		mov    $data_15fe2c,%edx
+		mov    $aSndscape_mdi,%edx
 		mov    $awe32_s1,%eax
 		call   ac_stricmp
 		test   %eax,%eax
 		jne    jump_100204
-		push   $data_15fe39
+		push   $ascG_0
 		jmp    jump_1002dc
 	jump_100204:
-		mov    $data_15fe3b,%edx
+		mov    $aUltra_mdi,%edx
 		mov    $awe32_s1,%eax
 		call   ac_stricmp
 		test   %eax,%eax
 		jne    jump_100221
-		push   $data_15fe45
+		push   $ascG_1
 		jmp    jump_1002dc
 	jump_100221:
-		mov    $data_15fe47,%edx
+		mov    $aMt32mpu_mdi,%edx
 		mov    $awe32_s1,%eax
 		call   ac_stricmp
 		test   %eax,%eax
 		jne    jump_10023e
-		push   $data_15fe53
+		push   $ascR
 		jmp    jump_1002dc
 	jump_10023e:
 		mov    MusicDriver,%ebx
@@ -3907,7 +3907,7 @@ GLOBAL_FUNC(InitMusic_)
 		add    $0x4,%esp
 		test   %eax,%eax
 		jne    jump_10025b
-		push   $data_15fe55
+		push   $ascG_2
 		jmp    jump_1002dc
 	jump_10025b:
 		mov    MusicDriver,%ecx
@@ -3931,7 +3931,7 @@ GLOBAL_FUNC(InitMusic_)
 		jne    jump_1002a1
 		call   ail_shutdown
 	jump_1002a1:
-		push   $data_15fe59
+		push   $aBf39MusicDrive
 		xor    %bh,%bh
 		push   $SoundProgressMessage
 		mov    %bh,MusicAble
@@ -3958,12 +3958,12 @@ GLOBAL_FUNC(InitMusic_)
 		cmpb   $0x0,DisableLoadMusic
 		jne    jump_100440
 		push   $MusicType
-		push   $data_15fe81
+		push   $aBf40MusicSBank
 		push   $SoundProgressMessage
 		call   ac_sprintf
 		add    $0xc,%esp
 		mov    $SoundProgressMessage,%eax
-		mov    $data_15fea0,%edx
+		mov    $ascW,%edx
 		call   SoundProgressLog_
 		call   AllocateMusicBankMemory_
 		mov    %eax,music_allocated
@@ -3973,18 +3973,18 @@ GLOBAL_FUNC(InitMusic_)
 		jne    jump_100396
 		cmpl   $0xfffffffe,music_allocated
 		jne    jump_100396
-		push   $data_15fea2
+		push   $aNotPresentInMu
 		push   $SoundProgressMessage
 		call   ac_sprintf
 		add    $0x8,%esp
 		mov    $SoundProgressMessage,%eax
 		call   SoundProgressLog_
-		push   $data_15febf
+		push   $ascG_3
 		push   $MusicType
 		call   ac_sprintf
 		add    $0x8,%esp
 		push   $MusicType
-		push   $data_15fec1
+		push   $aBf40aMusicSBan
 		push   $SoundProgressMessage
 		call   ac_sprintf
 		add    $0xc,%esp
@@ -3998,17 +3998,17 @@ GLOBAL_FUNC(InitMusic_)
 		jg     jump_100439
 		cmp    $0xffffffff,%eax
 		jne    jump_1003af
-		push   $data_15fee1
+		push   $aNoMusic_dat
 		jmp    jump_1003c4
 	jump_1003af:
 		test   %eax,%eax
 		jne    jump_1003ba
-		push   $data_15fef2
+		push   $aCannotAlloca_0
 		jmp    jump_1003c4
 	jump_1003ba:
 		cmp    $0xfffffffe,%eax
 		jne    jump_1003db
-		push   $data_15ff06
+		push   $aNotPresentIn_0
 	jump_1003c4:
 		push   $SoundProgressMessage
 		call   ac_sprintf
@@ -4046,17 +4046,17 @@ GLOBAL_FUNC(InitMusic_)
 		pop    %ebx
 		ret
 	jump_100439:
-		push   $data_15ff23
+		push   $aAllocationSu_0
 		jmp    jump_100445
 	jump_100440:
-		push   $data_15ff3d
+		push   $aBf40LoadmusicD
 	jump_100445:
 		push   $SoundProgressMessage
 		call   ac_sprintf
 		add    $0x8,%esp
 		mov    $SoundProgressMessage,%eax
 		call   SoundProgressLog_
-		push   $data_15ff58
+		push   $aBf41InitMusicC
 		push   $SoundProgressMessage
 		call   ac_sprintf
 		add    $0x8,%esp
@@ -4121,7 +4121,7 @@ InitStreamedSound_:
 		je     jump_1006ae
 		cmpb   $0x0,SoundAble
 		je     jump_1006ae
-		cmpb   $0x0,StreamedSoundAble
+		cmpb   $0x0,_StreamedSoundAble
 		jne    jump_1006ae
 #if 0
 		call   flushall_
@@ -4132,7 +4132,7 @@ InitStreamedSound_:
 		call   allocate_buffers
 		test   %eax,%eax
 		jne    jump_10065a
-		mov    $data_15ff78,%esi
+		mov    $aBf100CannotAll,%esi
 		mov    $SoundProgressMessage,%edi
 		call   free_buffers
 		push   %edi
@@ -4161,10 +4161,10 @@ InitStreamedSound_:
 		push   %edx
 		call   AIL_allocate_sample_handle
 		add    $0x4,%esp
-		mov    %eax,data_1e8e4c
+		mov    %eax,sample_handle
 		test   %eax,%eax
 		jne    jump_1006a7
-		mov    $data_15ffac,%esi
+		mov    $aBf100CannotA_0,%esi
 		mov    $SoundProgressMessage,%edi
 		call   free_buffers
 		push   %edi
@@ -4189,7 +4189,7 @@ InitStreamedSound_:
 		pop    %ecx
 		ret
 	jump_1006a7:
-		movb   $0x1,StreamedSoundAble
+		movb   $0x1,_StreamedSoundAble
 	jump_1006ae:
 		pop    %edi
 		pop    %esi
@@ -4214,7 +4214,7 @@ FreeStreamedSound_:
 		call   SwitchOffStreamedSound_
 		call   free_buffers
 		xor    %ah,%ah
-		mov    %ah,StreamedSoundAble
+		mov    %ah,_StreamedSoundAble
 		pop    %edx
 		pop    %ebx
 		ret
@@ -4227,11 +4227,11 @@ SwitchOffStreamedSound_:
 		push   %ecx
 		push   %edx
 		push   %edi
-		cmpb   $0x0,StreamedSoundAble
+		cmpb   $0x0,_StreamedSoundAble
 		je     jump_100d1b
 		cmpb   $0x0,active
 		je     jump_100d1b
-		mov    data_1e8e4c,%edx
+		mov    sample_handle,%edx
 		push   %edx
 		mov    $0x4000,%ebx
 		call   AIL_end_sample
@@ -5225,12 +5225,12 @@ LoadAwe32Soundfont_:
 		je     jump_1105d0
 		cmpb   $0x0,MusicAble
 		je     jump_1105d0
-		mov    $data_1617f8,%edx
+		mov    $aSbawe32_mdi_0,%edx
 		mov    $awe32_s1,%eax
 		call   ac_stricmp
 		test   %eax,%eax
 		jne    jump_1105d0
-		mov    $data_161804,%edx
+		mov    $ascW_2,%edx
 		mov    $MusicType,%eax
 		call   ac_stricmp
 		test   %eax,%eax
@@ -5259,7 +5259,7 @@ LoadAwe32Soundfont_:
 		pop    %edi
 		push   %edi
 		push   $SoundAndMusicDataPath
-		push   $data_161806
+		push   $ascSS_sbk
 		lea    0xc(%esp),%eax
 		push   %eax
 		call   ac_sprintf
@@ -5409,7 +5409,7 @@ FreeAwe32Soundfont:
 		je     jump_110660
 		cmpb   $0x0,MusicAble
 		je     jump_110660
-		mov    $data_161810,%edx
+		mov    $aSbawe32_mdi_1,%edx
 		mov    $awe32_s1,%eax
 		call   ac_stricmp
 		test   %eax,%eax
@@ -5887,13 +5887,13 @@ close_adpcm_file_:
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %edx
-		mov    data_159e54,%edx
+		mov    adpcm_handle,%edx
 		cmp    $0xffffffff,%edx
 		je     jump_1109ff
 		mov    %edx,%eax
 		mov    $0xffffffff,%ebx
 		call   ac_LbFileClose
-		mov    %ebx,data_159e54
+		mov    %ebx,adpcm_handle
 	jump_1109ff:
 		pop    %edx
 		pop    %ebx
@@ -5908,300 +5908,300 @@ sample_queue_handle_stopped:	/* 0x15958c */
 		.byte	0x1
 		.align	4
 
-data_15ed3c:
+ascD_19:	/* 0x15ED3C */
 		.string "%d"
-data_15ed40:
+aDebug_bf_audio:	/* 0x15ED40 */
 		.string "DEBUG_BF_AUDIO"
-data_15ed4f:
+aSoundDig_ini:	/* 0x15ED4F */
 		.string "sound/DIG.INI"
-data_15ed5d:
+aSoundMdi_ini:	/* 0x15ED5D */
 		.string "sound/MDI.INI"
-data_15ed6b:
+aSound_2:	/* 0x15ED6B */
 		.string "sound"
-data_15ed71:
+aSound_3:	/* 0x15ED71 */
 		.string "sound"
-data_15ed77:
+aSDig_ini:	/* 0x15ED77 */
 		.string "%s/DIG.INI"
-data_15ed82:
+aSMdi_ini:	/* 0x15ED82 */
 		.string "%s/MDI.INI"
-data_15ed8d:
+aBf1MaD:	/* 0x15ED8D */
 		.string "BF1  - MA   %d\n"
-data_15ed9d:
+aBf2SaD:	/* 0x15ED9D */
 		.string "BF2  - SA   %d\n"
-data_15edad:
+aBf54MaD:	/* 0x15EDAD */
 		.string "BF54 - MA   %d\n"
-data_15edbd:
+aBf55SaD:	/* 0x15EDBD */
 		.string "BF55 - SA   %d\n"
-data_15edcd:
+aBf56MusicDrive:	/* 0x15EDCD */
 		.string "BF56 - music driver = %s\n"
-data_15ede7:
+aBf57SoundDrive:	/* 0x15EDE7 */
 		.string "BF57 - sound driver = %s\n"
 		.align	4
-data_15ee04:
+aBf42LoadSoundB:	/* 0x15EE04 */
 		.string "BF42 - load sound bank %d\n"
-data_15ee1f:
+aBf43LoadSoundB:	/* 0x15EE1F */
 		.string "BF43 - load sound bank - failed - bank not found\n"
-data_15ee51:
+aBf44LoadSoundB:	/* 0x15EE51 */
 		.string "BF44 - load sound bank - failed - cannot allocate\n"
-data_15ee84:
+aBf45LoadSoundB:	/* 0x15EE84 */
 		.string "BF45 - load sound bank - passed\n"
-data_15eea5:
+aBf46LoadSoundB:	/* 0x15EEA5 */
 		.string "BF46 - load sound bank - failed - no sound.dat\n"
-data_15eed5:
+aBf47LoadSoundB:	/* 0x15EED5 */
 		.string "BF47 - load sound bank - failed - Sound not installed\n"
-data_15ef0c:
+aBf47LoadSoun_0:	/* 0x15EF0C */
 		.string "BF47 - load sound bank - failed - SoundAble = 0\n"
-data_15ef3d:
+aBf47LoadSoun_1:	/* 0x15EF3D */
 		.string "BF47 - load sound bank - failed - LoadSounds disabled\n"
-data_15ef74:
+aBf47LoadSoun_2:	/* 0x15EF74 */
 		.string "BF47 - load sound bank - failed - already loaded\n"
-data_15efa6:
+aSSound_dat:	/* 0x15EFA6 */
 		.string "%s/SOUND.DAT"
-data_15efb3:
+aSoundDataSizeD:	/* 0x15EFB3 */
 		.string "  Sound Data size = %d  "
-data_15efcc:
+aBf48LoadMusicB:	/* 0x15EFCC */
 		.string "BF48 - load music bank %d\n"
-data_15efe7:
+aBf49LoadMusicB:	/* 0x15EFE7 */
 		.string "BF49 - load music bank - failed - bank not found\n"
-data_15f019:
+aBf50LoadMusicB:	/* 0x15F019 */
 		.string "BF50 - load music bank - failed - cannot allocate\n"
-data_15f04c:
+aBf51LoadMusicB:	/* 0x15F04C */
 		.string "BF51 - load music bank - passed\n"
-data_15f06d:
+aBf52LoadMusicB:	/* 0x15F06D */
 		.string "BF52 - load music bank - failed - no music.dat\n"
-data_15f09d:
+aBf53LoadMusicB:	/* 0x15F09D */
 		.string "BF53 - load music bank - failed - music not installed\n"
-data_15f0d4:
+aBf53LoadMusi_0:	/* 0x15F0D4 */
 		.string "BF53 - load music bank - failed - MusicAble = 0\n"
-data_15f105:
+aBf53LoadMusi_1:	/* 0x15F105 */
 		.string "BF53 - load music bank - failed - LoadMusic Disabled = 0\n"
-data_15f13f:
+aSMusic_dat:	/* 0x15F13F */
 		.string "%s/MUSIC.DAT"
 
-data_15f804:
+aBf3InitSound:	/* 0x15F804 */
 		.string "BF3  - Init sound\n"
-data_15f817:
+aBf4DefaultSoun:	/* 0x15F817 */
 		.string "BF4  - Default sound type -  %d\n"
-data_15f838:
+aBf5NoSamplesRe:	/* 0x15F838 */
 		.string "BF5  - No samples requested - AIL shutdown\n"
-data_15f864:
+aBf6NoSamplesRe:	/* 0x15F864 */
 		.string "BF6  - No samples requested  \n"
-data_15f883:
+aMdsound:	/* 0x15F883 */
 		.string "MDSOUND"
-data_15f88b:
+aBf8MdsoundEnvi:	/* 0x15F88B */
 		.string "BF8  - MDSOUND environment active\n"
-data_15f8ae:
+ascSXDDD:	/* 0x15F8AE */
 		.string "%s %x %d %d %d"
-data_15f8bd:
+aBf9MdsoundEnvi:	/* 0x15F8BD */
 		.string "BF9  - MDSOUND environment driver installation - failed\n"
-data_15f8f6:
+aNone_0:	/* 0x15F8F6 */
 		.string "none"
-data_15f8fb:
+ascS_9:	/* 0x15F8FB */
 		.string "%s"
-data_15f8fe:
+aBf10MdsoundEnv:	/* 0x15F8FE */
 		.string "BF10 - MDSOUND environment driver installation - passed\n"
-data_15f937:
+aBf11SearchForD:	/* 0x15F937 */
 		.string "BF11 - Search for DIG.INI - passed   \n"
-data_15f95e:
+ascNone_1:	/* 0x15F95E */
 		.string "None"
-data_15f963:
+aBf12UserReques:	/* 0x15F963 */
 		.string "BF12 - user requests no sound in SETSOUND   \n"
-data_15f991:
+aBf13Dig_iniDri:	/* 0x15F991 */
 		.string "BF13 - DIG.INI driver installation - passed\n"
-data_15f9be:
+ascNone_2:	/* 0x15F9BE */
 		.string "none"
-data_15f9c3:
+aBf14Dig_iniDri:	/* 0x15F9C3 */
 		.string "BF14 - DIG.INI driver installation - \n"
-data_15f9ea:
+ascNone_3:	/* 0x15F9EA */
 		.string "none"
-data_15f9ef:
+aBf15SearchForD:	/* 0x15F9EF */
 		.string "BF15 - Search for DIG.INI - failed\n"
-data_15fa13:
+aBf16AllDigDriv:	/* 0x15FA13 */
 		.string "BF16 - all dig driver installation attempts failed\n"
-data_15fa47:
+aBf18DetermineS:	/* 0x15FA47 */
 		.string "BF18 - determine sound type to be loaded\n"
-data_15fa71:
+aBf19Loadsounds:	/* 0x15FA71 */
 		.string "BF19 - LoadSounds disabled\n"
-data_15fa8d:
+aBf20CannotAllo:	/* 0x15FA8D */
 		.string "BF20 - cannot allocate for digital samples\n"
-data_15fab9:
+ascNone_4:	/* 0x15FAB9 */
 		.string "none"
-data_15fabe:
+aBf24InitSoundC:	/* 0x15FABE */
 		.string "BF24 - Init sound completed\n"
-data_15fadb:
+ascBf19D:	/* 0x15FADB */
 		.string "BF19 - %d"
-data_15fae5:
+aNoSound_dat:	/* 0x15FAE5 */
 		.string " - no sound.dat\n"
-data_15faf6:
+aCannotAllocate:	/* 0x15FAF6 */
 		.string " - cannot allocate\n"
-data_15fb0a:
+aNotPresentInSo:	/* 0x15FB0A */
 		.string " - not present in sound.dat\n"
-data_15fb27:
+aAllocationSucc:	/* 0x15FB27 */
 		.string " - allocation successful\n"
 		.align	4
-data_15fb44:
+aBf25InitMusic:	/* 0x15FB44 */
 		.string "BF25 - Init Music\n"
-data_15fb57:
+aSSample:	/* 0x15FB57 */
 		.string "%s/SAMPLE"
-data_15fb61:
+ascS_ad:	/* 0x15FB61 */
 		.string "%s.ad"
-data_15fb67:
+aBf26Sample_adN:	/* 0x15FB67 */
 		.string "BF26 - sample.ad not found\n"
-data_15fb83:
+ascS_opl:	/* 0x15FB83 */
 		.string "%s.opl"
-data_15fb8a:
+aBf27Sample_opl:	/* 0x15FB8A */
 		.string "BF27 - sample.opl not found\n"
-data_15fba7:
+aMdmusic:	/* 0x15FBA7 */
 		.string "MDMUSIC"
-data_15fbaf:
+aBf29MdmusicEnv:	/* 0x15FBAF */
 		.string "BF29 - MDMUSIC environment active\n"
-data_15fbd2:
+ascSXDDD_0:	/* 0x15FBD2 */
 		.string "%s %x %d %d %d"
-data_15fbe1:
+aBf30MdmusicEnv:	/* 0x15FBE1 */
 		.string "BF30 - MDMUSIC environment driver installation - failed\n"
-data_15fc1a:
+aBf31MdmusicEnv:	/* 0x15FC1A */
 		.string "BF31 - MDMUSIC environment driver installation - passed\n"
-data_15fc53:
+ascS_10:	/* 0x15FC53 */
 		.string "%s"
-data_15fc56:
+aBf32SearchForM:	/* 0x15FC56 */
 		.string "BF32 - Search for MDI.INI - passed\n"
-data_15fc7a:
+ascNone_5:	/* 0x15FC7A */
 		.string "None"
-data_15fc7f:
+aBf33UserReques:	/* 0x15FC7F */
 		.string "BF33 - user requests no music in SETSOUND\n"
-data_15fcaa:
+aBf34Mdi_iniDri:	/* 0x15FCAA */
 		.string "BF34 - MDI.INI driver installation - passed\n"
-data_15fcd7:
+aBf35Mdi_iniDri:	/* 0x15FCD7 */
 		.string "BF35 - MDI.INI driver installation - failed\n"
-data_15fd04:
+aBf36SearchForM:	/* 0x15FD04 */
 		.string "BF36 - Search for MDI.INI - failed\n"
-data_15fd28:
+aBf37AllMusicDr:	/* 0x15FD28 */
 		.string "BF37 - all music driver installation attempts failed\n"
-data_15fd5e:
+aAdlib_mdi:	/* 0x15FD5E */
 		.string "ADLIB.MDI"
-data_15fd68:
+ascF_0:	/* 0x15FD68 */
 		.string "f"
-data_15fd6a:
+aAdlibg_mdi:	/* 0x15FD6A */
 		.string "ADLIBG.MDI"
-data_15fd75:
+ascF_1:	/* 0x15FD75 */
 		.string "f"
-data_15fd77:
+aOpl3_mdi:	/* 0x15FD77 */
 		.string "OPL3.MDI"
-data_15fd80:
+ascF_2:	/* 0x15FD80 */
 		.string "f"
-data_15fd82:
+aPas_mdi:	/* 0x15FD82 */
 		.string "PAS.MDI"
-data_15fd8a:
+ascF_3:	/* 0x15FD8A */
 		.string "f"
-data_15fd8c:
+aPasplus_mdi:	/* 0x15FD8C */
 		.string "PASPLUS.MDI"
-data_15fd98:
+ascF_4:	/* 0x15FD98 */
 		.string "f"
-data_15fd9a:
+aSblaster_mdi:	/* 0x15FD9A */
 		.string "SBLASTER.MDI"
-data_15fda7:
+ascF_5:	/* 0x15FDA7 */
 		.string "f"
-data_15fda9:
+aSbpro1_mdi:	/* 0x15FDA9 */
 		.string "SBPRO1.MDI"
-data_15fdb4:
+ascF_6:	/* 0x15FDB4 */
 		.string "f"
-data_15fdb6:
+aSbpro2_mdi:	/* 0x15FDB6 */
 		.string "SBPRO2.MDI"
-data_15fdc1:
+ascF_7:	/* 0x15FDC1 */
 		.string "f"
-data_15fdc3:
+aEsfm_mdi:	/* 0x15FDC3 */
 		.string "ESFM.MDI"
-data_15fdcc:
+ascF_8:	/* 0x15FDCC */
 		.string "f"
-data_15fdce:
+aSbawe32_mdi:	/* 0x15FDCE */
 		.string "SBAWE32.MDI"
-data_15fdda:
+ascW_0:	/* 0x15FDDA */
 		.string "w"
-data_15fddc:
+ascG_4:	/* 0x15FDDC */
 		.string "g"
-data_15fdde:
+aBf38Awe32Sound:	/* 0x15FDDE */
 		.string "BF38 - awe32 soundfont not found\n"
-data_15fe00:
+aBf38Awe32Sou_0:	/* 0x15FE00 */
 		.string "BF38 - awe32 soundfont loaded\n"
-data_15fe1f:
+aMpu401_mdi:	/* 0x15FE1F */
 		.string "MPU401.MDI"
-data_15fe2a:
+ascG:	/* 0x15FE2A */
 		.string "g"
-data_15fe2c:
+aSndscape_mdi:	/* 0x15FE2C */
 		.string "SNDSCAPE.MDI"
-data_15fe39:
+ascG_0:	/* 0x15FE39 */
 		.string "g"
-data_15fe3b:
+aUltra_mdi:	/* 0x15FE3B */
 		.string "ULTRA.MDI"
-data_15fe45:
+ascG_1:	/* 0x15FE45 */
 		.string "g"
-data_15fe47:
+aMt32mpu_mdi:	/* 0x15FE47 */
 		.string "MT32MPU.MDI"
-data_15fe53:
+ascR:	/* 0x15FE53 */
 		.string "r"
-data_15fe55:
+ascG_2:	/* 0x15FE55 */
 		.string "g"
 data_15fe57:
 		.string "f"
-data_15fe59:
+aBf39MusicDrive:	/* 0x15FE59 */
 		.string "BF39 - music driver type not supported\n"
-data_15fe81:
+aBf40MusicSBank:	/* 0x15FE81 */
 		.string "BF40 - music%s bank allocation"
-data_15fea0:
+ascW:	/* 0x15FEA0 */
 		.string "w"
-data_15fea2:
+aNotPresentInMu:	/* 0x15FEA2 */
 		.string " - not present in music.dat\n"
-data_15febf:
+ascG_3:	/* 0x15FEBF */
 		.string "g"
-data_15fec1:
+aBf40aMusicSBan:	/* 0x15FEC1 */
 		.string "BF40A - music%s bank allocation"
-data_15fee1:
+aNoMusic_dat:	/* 0x15FEE1 */
 		.string " - no music.dat\n"
-data_15fef2:
+aCannotAlloca_0:	/* 0x15FEF2 */
 		.string " - cannot allocate\n"
-data_15ff06:
+aNotPresentIn_0:	/* 0x15FF06 */
 		.string " - not present in music.dat\n"
-data_15ff23:
+aAllocationSu_0:	/* 0x15FF23 */
 		.string " - allocation successful\n"
-data_15ff3d:
+aBf40LoadmusicD:	/* 0x15FF3D */
 		.string "BF40 - LoadMusic Disabled\n"
-data_15ff58:
+aBf41InitMusicC:	/* 0x15FF58 */
 		.string "BF41 - Init music completed\n"
 		.align	4
-data_15ff78:
+aBf100CannotAll:	/* 0x15FF78 */
 		.string "BF100 - Cannot allocate buffers for streamed sound\n"
-data_15ffac:
+aBf100CannotA_0:	/* 0x15FFAC */
 		.string "BF100 - Cannot allocate handle for streamed sound\n"
-data_15ffdf:
+aBf100UnknownSt:	/* 0x15FFDF */
 		.string "BF100 - Unknown streamed sample type %d\n"
-data_160008:
+aBf101CannotOpenFile:	/* 0x160008 */
 		.string "BF101 - cannot open file %s\n"
-data_160025:
+aBf101CannotOpe:	/* 0x160025 */
 		.string "BF101 - cannot open file %s\n"
-data_160042:
+aBf103Oversized:	/* 0x160042 */
 		.string "BF103 - oversized ADPCM chunks (%ld)\n"
-data_160068:
+aGotAdpcmBlock:	/* 0x160068 */
 		.string "Got adpcm block"
 
-data_1617f8:
+aSbawe32_mdi_0:	/* 0x1617F8 */
 		.string "SBAWE32.MDI"
-data_161804:
+ascW_2:	/* 0x161804 */
 		.ascii  "\x77\x00"
-data_161806:
+ascSS_sbk:	/* 0x161806 */
 		.string "%s/%s.sbk"
-data_161810:
+aSbawe32_mdi_1:	/* 0x161810 */
 		.string "SBAWE32.MDI"
 data_16181c:
 		.ascii  "\x77\x00\x00\x00"
 
 .data
 
-data_158b34:
+InitialCDVolume:	/* 0x158B34 */
 		.byte	0xff
 CDAble:
 		.ascii  "\x01\x00\x00"
 
-MaxNumberOfSamples: /* 0x159300 */
+MaxNumberOfSamples:	/* 0x159300 */
 		.long	0x0a
 GLOBAL (SoundAble)	/* 159304 */
 		.byte	0x1
@@ -6240,9 +6240,9 @@ active:
 _CurrentAwe32SoundfontPrefix:
 		.string "Bullfrog"
 		.align	4
-data_159e54:
+adpcm_handle:	/* 0x159E54 */
 		.ascii  "\xff\xff\xff\xff"
-data_159e58:
+adaption_table:	/* 0x159E58 */
 		.ascii  "\xe6\x00\x00\x00\xe6\x00\x00\x00"
 		.ascii  "\xe6\x00\x00\x00\xe6\x00\x00\x00"
 		.ascii  "\x33\x01\x00\x00\x99\x01\x00\x00"
@@ -6298,7 +6298,7 @@ CDCount_handle:
 end_time:
 		.long	0x0
 
-data_1e5ca4:
+OldInt2:	/* 0x1E5CA4 */
 		.long	0x0
 data_1e5ca8:
 		.long	0x0
@@ -6371,10 +6371,10 @@ music_bank_size_info__Field7:
 full_music_data_path:
 		.fill   0x90
 
-DebugAudio: /* 0x1E86E0 */
+_DebugAudio:	/* 0x1E86E0 */
 		.long	0x0
 
-GLOBAL (SoundProgressMessage) /* 0x1E86E4 */
+GLOBAL (SoundProgressMessage)	/* 0x1E86E4 */
 		.fill   0x100
 sample_id:
 		.fill   0x320
@@ -6459,7 +6459,7 @@ DangerMusicFadeActive:
 DangerMusicAble:
 		.fill   0x6
 
-data_1e8c84:
+_MusicInstallChoice:	/* 0x1E8C84 */
 		.fill   0x80
 awe32_s1:	/* 0x1e8d04 */
 		.fill   0x98
@@ -6481,19 +6481,19 @@ data_1e8db5:
 		.ascii  "\x00\x00\x00"
 data_1e8db8:
 		.fill   0x90
-StreamedSoundAble: /* 0x1e8e48 */
+_StreamedSoundAble:	/* 0x1E8E48 */
 		.byte	0x0
-data_1e8e49:
+_CDSpeed:	/* 0x1E8E49 */
 		.ascii  "\x00\x00\x00"
-data_1e8e4c:
+sample_handle:	/* 0x1E8E4C */
 		.fill   0x104
-data_1e8f50:
+sample_sign:	/* 0x1E8F50 */
 		.long	0x0
-data_1e8f54:
+sample_format:	/* 0x1E8F54 */
 		.long	0x0
-data_1e8f58:
+sample_rate:	/* 0x1E8F58 */
 		.long	0x0
-data_1e8f5c:
+loop_count:	/* 0x1E8F5C */
 		.long	0x0
 data_1e8f60:
 		.long	0x0
@@ -6507,17 +6507,17 @@ data_1e8f74:
 		.long	0x0
 data_1e8f78:
 		.long	0x0
-data_1e8f7c:
+stream_flags:	/* 0x1E8F7C */
 		.long	0x0
-data_1e8f80:
+block_count:	/* 0x1E8F80 */
 		.long	0x0
-data_1e8f84:
+position_offset:	/* 0x1E8F84 */
 		.long	0x0
-data_1e8f88:
+pan_position:	/* 0x1E8F88 */
 		.long	0x0
-data_1e8f8c:
+pan_rate:	/* 0x1E8F8C */
 		.long	0x0
-data_1e8f90:
+pan_target:	/* 0x1E8F90 */
 		.long	0x0
 data_1e8f94: /* 0x1e8f94 */
 		.long	0x0
@@ -6527,13 +6527,13 @@ mixed_file_open:
 
 /* long sample_fade_handle;
  */
-sample_fade_handle:	/* 0x1e9568 */
+sample_fade_handle:	/* 0x1E9568 */
 		.long	0x0
 /* unsigned char volatile switch_off_sample_fade_timer;
  */
 switch_off_sample_fade_timer:
 		.byte	0x0
-a_sample_is_fading: /* 0x1e956d */
+a_sample_is_fading:	/* 0x1E956D */
 		.byte	0x0
 /* unsigned char volatile samples_currently_fading
  */

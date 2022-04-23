@@ -5731,32 +5731,32 @@ GLOBAL_FUNC (Unsmack)
 		jne    jump_13c31d
 		testl  $0x1,data_1598ac
 		je     jump_13c2e9
-		movl   $jump_13b440,data_159850
-		movl   $jump_13b780,data_159854
-		movl   $jump_13bf84,data_159858
-		movl   $jump_13c0e0,data_15985c
+		movl   $jump_13b440,smack_func_addr001
+		movl   $jump_13b780,smack_func_addr002
+		movl   $jump_13bf84,smack_func_addr003
+		movl   $jump_13c0e0,smack_func_addr004
 		jmp    jump_13c311
 	jump_13c2e9:
-		movl   $_SmackInternal010,data_159850
-		movl   $_SmackInternal013,data_159854
-		movl   $_SmackInternal014,data_159858
-		movl   $_SmackInternal015,data_15985c
+		movl   $_SmackInternal010,smack_func_addr001
+		movl   $_SmackInternal013,smack_func_addr002
+		movl   $_SmackInternal014,smack_func_addr003
+		movl   $_SmackInternal015,smack_func_addr004
 	jump_13c311:
 		movl   $0x0,data_1598a8
 		jmp    jump_13c385
 	jump_13c31d:
 		testl  $0x1,data_1598ac
 		je     jump_13c353
-		movl   $jump_139990,data_159850
-		movl   $jump_139cf0,data_159854
-		movl   $jump_13bf84,data_159858
-		movl   $jump_13a500,data_15985c
+		movl   $jump_139990,smack_func_addr001
+		movl   $jump_139cf0,smack_func_addr002
+		movl   $jump_13bf84,smack_func_addr003
+		movl   $jump_13a500,smack_func_addr004
 		jmp    jump_13c37b
 	jump_13c353:
-		movl   $_SmackInternal007,data_159850
-		movl   $_SmackInternal008,data_159854
-		movl   $_SmackInternal014,data_159858
-		movl   $_SmackInternal009,data_15985c
+		movl   $_SmackInternal007,smack_func_addr001
+		movl   $_SmackInternal008,smack_func_addr002
+		movl   $_SmackInternal014,smack_func_addr003
+		movl   $_SmackInternal009,smack_func_addr004
 	jump_13c37b:
 		movl   $0x1,data_1598a8
 	jump_13c385:
@@ -5913,7 +5913,7 @@ GLOBAL_FUNC (Unsmack)
 		and    $0x3,%ecx
 		mov    data_1598e0(%edx),%edx
 		mov    %edx,data_159864
-		jmp    *data_159850(,%ecx,4)
+		jmp    *smack_func_addr001(,%ecx,4)
 	jump_13c5c0:
 		testl  $0x1,data_1598ac
 		je     jump_13c5cf
@@ -6728,7 +6728,7 @@ GLOBAL_FUNC (play_smk)
 		push   %ecx
 		xor    %cl,%cl
 		mov    %cl,EXPORT_SYMBOL(lbDisplay__MLeftButton)
-		mov    data_1e5a2c,%ecx
+		mov    _smack_draw_callback,%ecx
 		test   %ecx,%ecx
 		jne    jump_eb198
 		test   $0x84,%bl
@@ -7071,7 +7071,7 @@ SMACKSOUNDUSEMSS:
 		push   %edi
 		push   %ebp
 		mov    0x10(%esp),%ebx
-		cmpl   $0x0,_SmackTimerReadAddr
+		cmpl   $0x0,SmackTimerReadAddr
 		jne    jump_fbcd7
 		mov    0x14(%esp),%eax
 		mov    %eax,EXPORT_SYMBOL(SmackMSSDigDriver)
@@ -7096,7 +7096,7 @@ SMACKSOUNDUSEMSS:
 		mov    $ac_MSSSMACKTIMERREAD,%esi
 		mov    $MSSSMACKTIMERSETUP,%edi
 		mov    %ecx,_SmackTimerSetupAddr
-		mov    %esi,_SmackTimerReadAddr
+		mov    %esi,SmackTimerReadAddr
 		mov    %edi,_SmackTimerDoneAddr
 		mov    $MSSLOWSOUNDCHECK,%ebx
 		mov    %eax,EXPORT_SYMBOL(_LowSoundVolPanAddr)
@@ -7104,7 +7104,7 @@ SMACKSOUNDUSEMSS:
 		mov    $0x1,%al
 		mov    %ebx,EXPORT_SYMBOL(_LowSoundCheckAddr)
 		mov    $MSSLOWSOUNDVOLPAN,%ebx
-		mov    %edx,data_1592f8
+		mov    %edx,_LowSoundOnAddr
 		mov    %ebx,data_1592fc
 		pop    %ebp
 		pop    %edi
@@ -7158,7 +7158,7 @@ copy_to_screen:
 		mov    EXPORT_SYMBOL(lbDisplay__ScreenMode),%ax
 		cmp    $0x1,%eax
 		jne    jump_eb555
-		cmpl   $0x0,data_1e5a2c
+		cmpl   $0x0,_smack_draw_callback
 		jne    jump_eb555
 		mov    $0xa0000,%ebp
 		mov    $0x140,%ebx
@@ -7365,11 +7365,11 @@ copy_to_screen:
 		mov    EXPORT_SYMBOL(lbDisplay__ScreenMode),%ax
 		cmp    $0x1,%eax
 		jne    jump_eb772
-		mov    data_1e5a2c,%edi
+		mov    _smack_draw_callback,%edi
 		test   %edi,%edi
 		je     jump_eb79d
 	jump_eb772:
-		cmpl   $0x0,data_1e5a2c
+		cmpl   $0x0,_smack_draw_callback
 		je     jump_eb796
 		mov    EXPORT_SYMBOL(lbDisplay__GraphicsScreenHeight),%edx
 		push   %edx
@@ -7377,7 +7377,7 @@ copy_to_screen:
 		push   %ebx
 		mov    EXPORT_SYMBOL(lbDisplay__WScreen),%ecx
 		push   %ecx
-		call   *data_1e5a2c
+		call   *_smack_draw_callback
 	jump_eb796:
 		call   ASM_LbScreenSwap
 		jmp    jump_eb7b4
@@ -7386,7 +7386,7 @@ copy_to_screen:
 		push   $0xc8
 		push   $0x140
 		push   $0xa0000
-		call   *data_1e5a2c
+		call   *_smack_draw_callback
 	jump_eb7b4:
 		add    $0x20,%esp
 		pop    %ebp
@@ -7504,7 +7504,7 @@ SMACKWAIT:	/* 0x0FC3C0 */
 		pop    %esi
 		ret    $0x4
 	jump_fc450:
-		call   *_SmackTimerReadAddr
+		call   *SmackTimerReadAddr
 		mov    %eax,%edx
 		shl    $0x2,%eax
 		sub    %edx,%eax
@@ -8039,7 +8039,7 @@ timeframe_:	/* 0x0FD680 */
 		mov    $0xffffffff,%eax
 		test   %edx,%edx
 		je     jump_fd721
-		call   *_SmackTimerReadAddr
+		call   *SmackTimerReadAddr
 		mov    %eax,%edx
 		mov    0x460(%esi),%ebx
 		mov    0x488(%esi),%ecx
@@ -8073,7 +8073,7 @@ timeframe_:	/* 0x0FD680 */
 		je     jump_fd757
 		cmp    $0xffffffff,%eax
 		jne    jump_fd735
-		call   *_SmackTimerReadAddr
+		call   *SmackTimerReadAddr
 	jump_fd735:
 		mov    %eax,%edx
 		mov    0x468(%esi),%ebp
@@ -8087,7 +8087,7 @@ timeframe_:	/* 0x0FD680 */
 		je     jump_fd78b
 		cmp    $0xffffffff,%eax
 		jne    jump_fd76b
-		call   *_SmackTimerReadAddr
+		call   *SmackTimerReadAddr
 	jump_fd76b:
 		mov    0x464(%esi),%edi
 		mov    0x484(%esi),%ebp
@@ -8117,7 +8117,7 @@ SMACKDOFRAME:	/* 0x0FD7A0 */
 		xor    %eax,%eax
 		jmp    jump_fd86d
 	jump_fd7b4:
-		call   *_SmackTimerReadAddr
+		call   *SmackTimerReadAddr
 		mov    %eax,0x464(%esi)
 		mov    0x46c(%esi),%edx
 		mov    %eax,0x460(%esi)
@@ -8563,7 +8563,7 @@ SMACKOPEN:
 		xor    %edx,%edx
 		mov    %edx,0x18(%esp)
 		call   *_SmackTimerSetupAddr
-		call   *_SmackTimerReadAddr
+		call   *SmackTimerReadAddr
 		push   $0x4ac
 		xor    %ebp,%ebp
 		mov    %eax,0x8(%esp)
@@ -9177,7 +9177,7 @@ SMACKOPEN:
 		add    %eax,%eax
 		mov    %eax,0x8(%esi)
 	jump_fe662:
-		call   *_SmackTimerReadAddr
+		call   *SmackTimerReadAddr
 		mov    0x4(%esp),%edx
 		sub    %edx,%eax
 		mov    %eax,0x470(%esi)
@@ -9936,7 +9936,7 @@ blockread_:
 		xor    %edx,%edx
 		mov    %edx,0x10(%esp)
 		mov    %edx,(%esp)
-		call   *_SmackTimerReadAddr
+		call   *SmackTimerReadAddr
 		mov    0x42c(%ebp),%ecx
 		mov    %eax,0x8(%esp)
 		test   %ecx,%ecx
@@ -10114,12 +10114,12 @@ blockread_:
 		add    %eax,%ebx
 		mov    %ebx,(%esp)
 	jump_ff1fd:
-		call   *_SmackTimerReadAddr
+		call   *SmackTimerReadAddr
 		cmp    (%esp),%eax
 		jb     jump_ff1fd
 		jmp    jump_ff210
 	jump_ff20a:
-		call   *_SmackTimerReadAddr
+		call   *SmackTimerReadAddr
 	jump_ff210:
 		mov    0x8(%esp),%esi
 		mov    0x44c(%ebp),%edi
@@ -10155,7 +10155,7 @@ backgroundload_:
 		sub    0x43c(%esi),%eax
 		cmp    $0x1000,%eax
 		jl     jump_ff332
-		call   *_SmackTimerReadAddr
+		call   *SmackTimerReadAddr
 		mov    %eax,%ebp
 		mov    %esp,%eax
 		push   %eax
@@ -10202,12 +10202,12 @@ backgroundload_:
 		div    %ebx
 		lea    (%eax,%ebp,1),%edi
 	jump_ff310:
-		call   *_SmackTimerReadAddr
+		call   *SmackTimerReadAddr
 		cmp    %edi,%eax
 		jb     jump_ff310
 		jmp    jump_ff322
 	jump_ff31c:
-		call   *_SmackTimerReadAddr
+		call   *SmackTimerReadAddr
 	jump_ff322:
 		mov    0x454(%esi),%ecx
 		sub    %ebp,%eax
@@ -10251,7 +10251,7 @@ DEFSMACKTIMERSETUP:	/* 10f110 */
 		mov    $DEFSMACKTIMERREAD,%edx
 		mov    $0x46c,%eax
 		mov    $DEFSMACKTIMERDONE,%ebx
-		mov    %edx,_SmackTimerReadAddr
+		mov    %edx,SmackTimerReadAddr
 
 		/* XXX: mov    (%eax),%eax */
 		call   ac_timer_get_18_2_hz_ticks
@@ -10288,7 +10288,7 @@ DEFSMACKTIMERDONE:	/* 0x10F150 */
 DEFSMACKTIMERREAD:
 /*----------------------------------------------------------------*/
 		mov    $0x46c,%eax
-		mov    data_1ed5e4,%edx
+		mov    _lasttimerread,%edx
 
 		/* mov    (%eax),%eax */
 		call   ac_timer_get_18_2_hz_ticks
@@ -10302,7 +10302,7 @@ DEFSMACKTIMERREAD:
 	jump_10f181:
 		mov    $0x32,%ebx
 		mov    _timeradjust,%ecx
-		mov    %eax,data_1ed5e4
+		mov    %eax,_lasttimerread
 		add    %ecx,%eax
 		mov    $0xaba,%ecx
 		mul    %ecx
@@ -10357,13 +10357,13 @@ data_159848:
 		.long	0x0
 data_15984c:
 		.long	0x0
-data_159850:
+smack_func_addr001:	/* 0x159850 */
 		.long	0x0
-data_159854:
+smack_func_addr002:	/* 0x159854 */
 		.long	0x0
-data_159858:
+smack_func_addr003:	/* 0x159858 */
 		.long	0x0
-data_15985c:
+smack_func_addr004:	/* 0x15985C */
 		.long	0x0
 data_159860:
 		.long	0x0
@@ -10721,7 +10721,7 @@ data_159a00:
 		.long   _SmackInternalSwitch1_case255
 
 
-GLOBAL (_SmackTimerReadAddr)	/* 0x159780 */
+GLOBAL (SmackTimerReadAddr)	/* 0x159780 */
 		.long	0x0
 GLOBAL (_SmackTimerSetupAddr)
 		.long   DEFSMACKTIMERSETUP
@@ -10742,7 +10742,7 @@ data_1592e8:
 		.long	0x0
 data_1592ec:
 		.long	0x0
-data_1592f8:
+_LowSoundOnAddr:	/* 0x1592F8 */
 		.long	0x0
 data_1592fc:
 		.long	0x0
@@ -10772,10 +10772,10 @@ data_159e30:
 
 data_1e56dc:
 		.fill   0x350
-data_1e5a2c:
+_smack_draw_callback:	/* 0x1E5A2C */
 		.long	0x0
 _timeradjust:
 		.long	0x0
-data_1ed5e4:
+_lasttimerread:	/* 0x1ED5E4 */
 		.long	0x0
 

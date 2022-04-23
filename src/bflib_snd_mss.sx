@@ -313,7 +313,7 @@ GLOBAL_FUNC (MSSLOWSOUNDOPEN)
 		call   AIL_set_preference
 		add    $0x8,%esp
 		push   $0x0
-		push   $data_15f7dc
+		push   $aSb16_dig
 		call   AIL_install_DIG_driver_file
 		add    $0x8,%esp
 		mov    %eax,SmackMSSDigDriver
@@ -321,14 +321,14 @@ GLOBAL_FUNC (MSSLOWSOUNDOPEN)
 		test   %ebp,%ebp
 		jne    jump_fc026
 		push   %ebp
-		push   $data_15f7e8
+		push   $aSbpro_dig
 		call   AIL_install_DIG_driver_file
 		add    $0x8,%esp
 		mov    %eax,SmackMSSDigDriver
 		cmpl   $0x0,SmackMSSDigDriver
 		jne    jump_fc026
 		push   %ebp
-		push   $data_15f7f4
+		push   $aSblaster_dig
 		call   AIL_install_DIG_driver_file
 		add    $0x8,%esp
 		mov    %eax,SmackMSSDigDriver
@@ -510,7 +510,7 @@ GLOBAL_FUNC (MSSLOWSOUNDPLAYED)
 		push   %esi
 		mov    0x8(%esp),%esi
 		call   MSSLOWSOUNDCHECK
-		call   *EXPORT_SYMBOL(_SmackTimerReadAddr)
+		call   *EXPORT_SYMBOL(SmackTimerReadAddr)
 		mov    $0x3e8,%ebx
 		mov    %eax,%ecx
 		mov    0x6c(%esi),%edx
@@ -587,7 +587,7 @@ GLOBAL_FUNC (MSSLOWSOUNDCHECK)	/* 0xfc210 */
 		cmp    $0x2,%eax
 		jne    jump_fc2c1
 	jump_fc2a6:
-		call   *EXPORT_SYMBOL(_SmackTimerReadAddr)
+		call   *EXPORT_SYMBOL(SmackTimerReadAddr)
 		mov    %eax,0x6c(%esi)
 		mov    0x50(%esi),%ecx
 		mov    0x68(%esi),%eax
@@ -642,13 +642,13 @@ MSS_func_unkn_02:	/* 0x0FC300 */
 
 .section .rodata
 
-data_15f7dc:
+aSb16_dig:	/* 0x15F7DC */
 		.string "SB16.DIG"
 		.align	4
-data_15f7e8:
+aSbpro_dig:	/* 0x15F7E8 */
 		.string "SBPRO.DIG"
 		.align	4
-data_15f7f4:
+aSblaster_dig:	/* 0x15F7F4 */
 		.string "SBLASTER.DIG"
 		.align	4
 

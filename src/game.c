@@ -212,11 +212,11 @@ extern unsigned char *fade_data;
 extern char *fadedat_fname;
 extern char *pop_dat_fname_fmt;
 extern char *pop_tab_fname_fmt;
-extern unsigned short draw_unknprop_01;
-extern unsigned long unkn_val_04;
+extern unsigned short ingame__draw_unknprop_01;
+extern unsigned long unkn_buffer_04;
 
-extern struct TbSprite *font0_sprites;
-extern struct TbSprite *font0_sprites_end;
+extern struct TbSprite *small_font;
+extern struct TbSprite *small_font_end;
 extern unsigned char *font0_data;
 extern struct TbSprite *pointer_sprites;
 extern struct TbSprite *pointer_sprites_end;
@@ -228,11 +228,11 @@ extern struct TbSprite *m_sprites;
 extern struct TbSprite *m_sprites_end;
 extern unsigned char *m_spr_data;
 
-extern unsigned short displaymode;
+extern unsigned short ingame__DisplayMode;
 extern unsigned char *display_palette;
-extern unsigned short data_1c8406;
-extern unsigned short data_1c8408;
-extern unsigned short data_1c840a;
+extern unsigned short unkn2_pos_x;
+extern unsigned short unkn2_pos_y;
+extern unsigned short unkn2_pos_z;
 extern int data_1c8428;
 extern const char *primvehobj_fname;
 extern unsigned char data_19ec6f;
@@ -252,11 +252,11 @@ extern ushort prim_objects_count;
 extern ushort prim4_textures_count;
 extern ushort prim_face_textures_count;
 extern ushort prim_unknprop01;
-extern struct UnkStruct7 *unknstrct7_ref;
-extern struct UnkStruct7 unknstrct7_arr1[];
+extern struct UnkStruct7 *game_panel;
+extern struct UnkStruct7 game_panel_lo[];
 extern struct UnkStruct7 unknstrct7_arr2[];
 
-extern uint8_t unkn_mode_02;
+extern uint8_t execute_commands;
 extern long gamep_unknval_10;
 extern long gamep_unknval_11;
 extern long gamep_unknval_12;
@@ -266,8 +266,8 @@ extern long gamep_unknval_15;
 extern long gamep_unknval_16;
 
 
-extern int8_t game_trenchcoat_preference;
-extern int8_t game_panel_permutation;
+extern int8_t ingame__TrenchcoatPreference;
+extern int8_t ingame__PanelPermutation;
 
 void *ASM_smack_malloc(int msize);
 void ASM_smack_mfree(void *ptr);
@@ -326,15 +326,15 @@ void read_primveh_obj(const char *fname, int a2)
 
 void load_prim_quad(void)
 {
-    data_1c8406 = 64;
-    data_1c8408 = 64;
-    data_1c840a = 64;
+    unkn2_pos_x = 64;
+    unkn2_pos_y = 64;
+    unkn2_pos_z = 64;
     data_1c8428 = 0;
     prim_unknprop01 = 1000;
     read_primveh_obj(primvehobj_fname, 1);
     read_textwalk();
     data_19ec6f = 1;
-    displaymode = 55;
+    ingame__DisplayMode = 55;
     if ( cmdln_param_bcg == 99 )
         test_open(99);
     if ( cmdln_param_bcg == 100 )
@@ -455,7 +455,7 @@ void setup_host(void)
 {
     //ASM_setup_host(); return;
     char fname[DISKPATH_SIZE];
-    BAT_unknsub_20(0, 0, 0, 0, unkn_val_04 + 41024);
+    BAT_unknsub_20(0, 0, 0, 0, unkn_buffer_04 + 41024);
     set_smack_malloc(ASM_smack_malloc);
     set_smack_free(ASM_smack_mfree);
     DEBUGLOG(0,"&setup_host() = 0x%lx", (ulong)setup_host);
@@ -475,18 +475,18 @@ void setup_host(void)
     LbMouseSetup(&pointer_sprites[1], 2, 2);
     setup_mele();
     LbSpriteSetup(m_sprites, m_sprites_end, m_spr_data);
-    game_panel_permutation = -2;
+    ingame__PanelPermutation = -2;
     {
         int file_len;
         sprintf(fname, pop_dat_fname_fmt, 1);
         LbFileLoadAt(fname, pop1_data);
-        sprintf(fname, pop_tab_fname_fmt, -game_panel_permutation - 1);
+        sprintf(fname, pop_tab_fname_fmt, -ingame__PanelPermutation - 1);
         file_len = LbFileLoadAt(fname, pop1_sprites);
         pop1_sprites_end = &pop1_sprites[file_len/sizeof(struct TbSprite)];
         LbSpriteSetup(pop1_sprites, pop1_sprites_end, pop1_data);
     }
-    game_trenchcoat_preference = 0;
-    unknstrct7_ref = unknstrct7_arr1;
+    ingame__TrenchcoatPreference = 0;
+    game_panel = game_panel_lo;
     LbGhostTableGenerate(display_palette, 50, "data/synghost.tab");
     setup_host_sub5(buffer_allocs);
     init_syndwars();
@@ -502,7 +502,7 @@ void setup_host(void)
           get_packet_record_fname(fname, selected_map_index, file_no+1);
           DEBUGLOG(0,"%s: Opening for packet save", fname);
           packet_rec_fh = LbFileOpen(fname, Lb_FILE_MODE_NEW);
-          LbFileWrite(packet_rec_fh, &cmdln_param_map_index, 2);
+          LbFileWrite(packet_rec_fh, &cmdln_param_current_map, 2);
       }
     }
     if ( pktrec_mode == 2 )
@@ -628,7 +628,7 @@ void game_setup(void)
     init_arrays_1();
     game_setup_sub2(0);
     game_setup_sub3();
-    draw_unknprop_01 = 0;
+    ingame__draw_unknprop_01 = 0;
     game_setup_sub4(-4);
     game_setup_sub5();
     create_strings_list(gui_strings, gui_strings_data, gui_strings_data_end);
@@ -638,7 +638,7 @@ void game_setup(void)
     setup_color_lookups();
     game_setup_sub7();
     game_setup_sub4(-2);
-    LbSpriteSetup(font0_sprites, font0_sprites_end, font0_data);
+    LbSpriteSetup(small_font, small_font_end, font0_data);
     game_setup_sub8();
     load_mission_file(0);
     players[local_player_no].field_BB = 15;
@@ -657,10 +657,10 @@ void game_setup(void)
     }
     test_open(15);
     game_setup_sub4(1);
-    if ( cmdln_param_mp && cmdln_param_map_index )
+    if ( cmdln_param_mp && cmdln_param_current_map )
       load_mission_map_lvl(0);
     if ( in_network_game || cmdln_param_bcg )
-      displaymode = 55;
+      ingame__DisplayMode = 55;
     game_setup_sub4(2);
     if ( cmdln_param_tf == 2 )
     {
@@ -681,14 +681,14 @@ void game_process_sub01(void)
         turns_delta = tmp;
     }
     if ( turns_delta != 0 ) {
-        msecs_per_frame = 800 / turns_delta;
+        fifties_per_gameturn = 800 / turns_delta;
     } else {
-        msecs_per_frame = 50;
+        fifties_per_gameturn = 50;
     }
     if ( in_network_game )
-        msecs_per_frame = 80;
-    if ( msecs_per_frame > 400 )
-        msecs_per_frame = 400;
+        fifties_per_gameturn = 80;
+    if ( fifties_per_gameturn > 400 )
+        fifties_per_gameturn = 400;
     prev_tick_time = curr_tick_time;
 }
 
@@ -813,7 +813,7 @@ void show_menu_screen(void)
 void game_process_display(void)
 {
     //ASM_game_process_display(); return;
-    switch (displaymode)
+    switch (ingame__DisplayMode)
     {
     case 1:
         // No action
@@ -826,7 +826,7 @@ void game_process_display(void)
             if ( flags_general_unkn01 & 0x800 )
               gproc3_unknsub2();
             BAT_play();
-            if ( unkn_mode_02 )
+            if ( execute_commands )
             {
                 long tmp;
                 gamep_unknval_16 = gamep_unknval_13;
@@ -847,7 +847,7 @@ void game_process_display(void)
         gproc3_unknsub3(0);
         break;
     default:
-        ERRORLOG("displaymode %d empty\n", (int)displaymode);
+        ERRORLOG("DisplayMode %d empty\n", (int)ingame__DisplayMode);
         break;
     }
 }
@@ -878,8 +878,8 @@ void game_process(void)
           navi2_unkn_counter_max = navi2_unkn_counter;
       if (cmdln_param_d)
           input_char = LbKeyboard();
-      if (displaymode == 55)
-          DEBUGLOG(0,"id=%d  trial alloc = %d turn %lu", 0, trial_alloc, gameturn);
+      if (ingame__DisplayMode == 55)
+          DEBUGLOG(0,"id=%d  trial alloc = %d turn %lu", 0, triangulation, gameturn);
       input();
       game_process_sub01();
       game_process_display();
@@ -889,12 +889,12 @@ void game_process(void)
         ((flags_general_unkn01 & 0x8000) != 0) )
           LbPaletteSet(display_palette);
       active_flags_general_unkn01 = flags_general_unkn01;
-      if ( displaymode == 50 || displaymode == 1 || displaymode == 59 )
+      if ( ingame__DisplayMode == 50 || ingame__DisplayMode == 1 || ingame__DisplayMode == 59 )
           game_process_sub02();
-      if ( displaymode != 55 )
+      if ( ingame__DisplayMode != 55 )
           process_packets();
       joy_input();
-      if ( displaymode == 55 ) {
+      if ( ingame__DisplayMode == 55 ) {
           swap_wscreen();
       }
       else if ( !(flags_general_unkn01 & 0x20) || ((gameturn & 0xF) == 0) ) {

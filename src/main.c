@@ -76,7 +76,7 @@ process_options (int *argc, char ***argv)
         switch (val)
         {
         case 'A':
-            unkn01_mode = 1;
+            ingame__GameMode = 1;
             cmdln_param_a = 3200;
             break;
 
@@ -104,7 +104,7 @@ process_options (int *argc, char ***argv)
 
         case 'g':
             cmdln_param_bcg = 1;
-            unkn01_mode = 3;
+            ingame__GameMode = 3;
             flags_general_unkn01 |= 0x08;
             break;
 
@@ -126,11 +126,11 @@ process_options (int *argc, char ***argv)
 
         case 'm':
             cmdln_param_mp = 1;
-            cmdln_param_map_index = atoi(optarg);
+            cmdln_param_current_map = atoi(optarg);
             flags_general_unkn01 |= 0x08;
-            selected_map_index = cmdln_param_map_index;
-            flags_general_unkn02 |= 0x04;
-            DEBUGLOG(0, "map index %d", cmdln_param_map_index);
+            selected_map_index = cmdln_param_current_map;
+            ingame__Cheats |= 0x04;
+            DEBUGLOG(0, "map index %d", cmdln_param_current_map);
             break;
 
         case 'N':
@@ -297,7 +297,7 @@ main (int argc, char **argv)
 
     retval = 0;
     lbDisplay.ScreenMode = Lb_SCREEN_MODE_320_200_8;
-    unkn01_mode = 0;
+    ingame__GameMode = 0;
     cmdln_param_w = 0;
     flags_general_unkn01 = 0;
     /* Gravis Grip joystick driver initialization */
