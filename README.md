@@ -158,11 +158,10 @@ sudo apt install libvorbis-dev:i386 libvorbisfile3:i386
 sudo apt install libogg-dev:i386
 ```
 
-In case you want to re-create build scripts from templates (shouldn't be needed):
+First, generate build scripts from templates using autotools:
 
 ```
-autoreconf
-automake --add-missing
+autoreconf -ivf
 ```
 
 Now proceed with the build steps; we will do that in a separate folder.
@@ -275,11 +274,10 @@ pacman -Si mingw-w64-i686-libvorbis
 pacman -Si mingw-w64-i686-libogg
 ```
 
-In case you want to re-create build scripts from templates (shouldn't be needed):
+First, generate build scripts from templates using autotools:
 
 ```
-autoreconf
-automake --add-missing
+autoreconf -ivf
 ```
 
 Now proceed with the build steps; we will do that in a separate folder.

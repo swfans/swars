@@ -75,6 +75,9 @@ swars_SOURCES = \
 	windows.c \
 	windows.h
 
+swars_CPPFLAGS = \
+  -I"$(top_srcdir)/../bflibrary/include"
+
 swars_WRAPPERS = wrappers_dos.o wrappers_game.o wrappers_libc.o wrappers_util.o
 
 if HAS_WINDRES
@@ -83,7 +86,9 @@ else
 swars_RESRCS =
 endif
 
-swars_LDADD = $(swars_WRAPPERS) $(swars_RESRCS)
+swars_LDADD = \
+  $(builddir)/../bflibrary/libbullfrog.a \
+  $(swars_WRAPPERS) $(swars_RESRCS)
 
 $(swars_WRAPPERS:.o=.sx): %.sx: $(top_srcdir)/conf/%.conf
 	$(AM_V_GEN)$(MKW) $(MKWFLAGS) -o $@ $<

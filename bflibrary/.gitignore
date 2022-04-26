@@ -1,0 +1,14 @@
+include/bfconfig.h.in
+autom4te.cache
+m4
+config.guess
+config.sub
+Makefile.in
+aclocal.m4
+compile
+configure
+depcomp
+install-sh
+ltmain.sh
+missing
+*~

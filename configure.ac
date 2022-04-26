@@ -11,6 +11,9 @@ m4_define([swars_version],
       [ver_major.ver_minor.ver_release.ver_build])
 
 AC_INIT([Syndicate Wars Port], [swars_version], [unavowed@vexillium.org], [swars])
+
+AC_CONFIG_SUBDIRS([bflibrary])
+
 AC_CONFIG_SRCDIR([src/main.c])
 AC_CONFIG_HEADER([src/config.h])
 AC_CONFIG_MACRO_DIR([m4])
