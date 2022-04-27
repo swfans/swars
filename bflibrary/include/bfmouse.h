@@ -26,6 +26,8 @@
 extern "C" {
 #endif
 
+#pragma pack(1)
+
 struct TbSprite;
 
 struct mouse_buffer { // sizeof=4128
@@ -51,6 +53,8 @@ struct mouse_info { // sizeof=4112
 };
 
 typedef struct mouse_info mouse_info;
+
+#pragma pack()
 
 int LbMousePlace();
 int LbMouseRemove();

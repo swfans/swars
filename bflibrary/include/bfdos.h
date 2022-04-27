@@ -26,6 +26,8 @@ extern "C" {
 
 #include <stdint.h>
 
+#pragma pack(1)
+
 struct SREGS { // sizeof=12
     ushort es; // offset=0
     ushort cs; // offset=2
@@ -89,6 +91,8 @@ union REGS { // sizeof=28
     WORDREGS w; // offset=1
     DWORDREGS x; // offset=2
 };
+
+#pragma pack()
 
 
 #ifdef __cplusplus

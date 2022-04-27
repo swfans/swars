@@ -26,6 +26,8 @@
 extern "C" {
 #endif
 
+#pragma pack(1)
+
 struct Palette { // sizeof=3
     ubyte Red; // offset=0
     ubyte Green; // offset=1
@@ -33,6 +35,8 @@ struct Palette { // sizeof=3
 };
 
 typedef struct Palette Palette;
+
+#pragma pack()
 
 TbResult LbPaletteFade(ubyte *from_pal, ubyte arg2, ubyte fade_steps);
 int LbPaletteStopOpenFade();

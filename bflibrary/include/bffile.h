@@ -61,6 +61,8 @@ typedef DOSFINDTYPE TbFILE_FIND;
 #error Data type for findfirst()/findnext() not recognized
 #endif
 
+#pragma pack(1)
+
 struct TbFileFind {
     char Filename[144];
     char AlternateFilename[14];
@@ -75,6 +77,8 @@ struct TbFileFind {
 };
 
 typedef struct TbFileFind TbFileFind;
+
+#pragma pack()
 
 #if LB_FILENAME_TRANSFORM
 

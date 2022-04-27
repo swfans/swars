@@ -82,6 +82,8 @@ enum TbDrawFlags {
     Lb_TEXT_UNDERLNSHADOW  = 0x0800,
 };
 
+#pragma pack(1)
+
 struct DisplayStruct { // sizeof=118
     /** Pointer to physical screen buffer, if available. */
     ubyte *PhysicalScreen; // offset=0
@@ -213,6 +215,8 @@ struct ScreenModeInfo { // sizeof=38
 };
 
 typedef struct ScreenModeInfo TbScreenModeInfo;
+
+#pragma pack()
 
 TbResult LbScreenSetup(TbScreenMode mode, TbScreenCoord width, TbScreenCoord height,
     unsigned char *palette, short buffers_count, TbBool wscreen_vid);

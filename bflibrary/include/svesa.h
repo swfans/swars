@@ -26,6 +26,8 @@
 extern "C" {
 #endif
 
+#pragma pack(1)
+
 struct TbRMREGS2 { // sizeof=50
     ulong MyEDI; // offset=0
     ulong MyESI; // offset=4
@@ -47,6 +49,8 @@ struct TbRMREGS2 { // sizeof=50
 };
 
 typedef struct TbRMREGS2 TbRMREGS2;
+
+#pragma pack()
 
 int LbVesaGetGran();
 int LbVesaSetMode();

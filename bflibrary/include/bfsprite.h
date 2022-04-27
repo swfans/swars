@@ -28,6 +28,8 @@ extern "C" {
 
 #define MAX_SUPPORTED_SPRITE_DIM 256
 
+#pragma pack(1)
+
 struct TbSprite { // sizeof=6
     sbyte *Data; // offset=0
     ubyte SWidth; // offset=4
@@ -43,6 +45,8 @@ struct TbSetupSprite { // sizeof=12
 };
 
 typedef struct TbSetupSprite TbSetupSprite;
+
+#pragma pack()
 
 int LbSpriteReset();
 int LbSpriteResetAll();

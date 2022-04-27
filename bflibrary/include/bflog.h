@@ -34,6 +34,8 @@ enum Header { // type=int8_t
 
 typedef enum Header Header;
 
+#pragma pack(1)
+
 struct TbLog { // sizeof=194
     char Filename[144]; // offset=0
     char Prefix[32]; // offset=145
@@ -44,6 +46,8 @@ struct TbLog { // sizeof=194
 };
 
 typedef struct TbLog TbLog;
+
+#pragma pack()
 
 #ifdef __DEBUG
 #define LIBLOG(format,args...) LbSyncLog("%s: " format "\n", __func__ , ## args)

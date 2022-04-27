@@ -26,6 +26,8 @@
 extern "C" {
 #endif
 
+#pragma pack(1)
+
 struct TbLoadFiles { // sizeof=44
     char FName[28]; // offset=0
     void **Start; // offset=28
@@ -36,6 +38,8 @@ struct TbLoadFiles { // sizeof=44
 };
 
 typedef struct TbLoadFiles TbLoadFiles;
+
+#pragma pack()
 
 int LbDataLoadSetModifyFilenameFunction();
 int LbDataLoad();

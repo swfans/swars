@@ -26,6 +26,8 @@
 extern "C" {
 #endif
 
+#pragma pack(1)
+
 struct TbDate { // sizeof=5
     ubyte Day; // offset=0
     ubyte Month; // offset=1
@@ -43,6 +45,8 @@ struct TbTime { // sizeof=4
 };
 
 typedef struct TbTime TbTime;
+
+#pragma pack()
 
 int LbDate();
 int LbTime();

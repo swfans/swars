@@ -26,6 +26,8 @@
 extern "C" {
 #endif
 
+#pragma pack(1)
+
 struct TbAnyWindow { // sizeof=20
     long x; // offset=0
     long y; // offset=4
@@ -35,6 +37,8 @@ struct TbAnyWindow { // sizeof=20
 };
 
 typedef struct TbAnyWindow TbAnyWindow;
+
+#pragma pack()
 
 int LbTextSetWindow();
 int LbTextSetJustifyWindow();

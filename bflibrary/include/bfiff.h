@@ -26,6 +26,8 @@
 extern "C" {
 #endif
 
+#pragma pack(1)
+
 struct TbIffPalette { // sizeof=4
     long Loaded; // offset=0
     ubyte Palette[255]; // offset=4
@@ -74,6 +76,8 @@ struct ChunkHeader { // sizeof=8
 };
 
 typedef struct ChunkHeader ChunkHeader;
+
+#pragma pack()
 
 int LbIffLoad();
 int LbIffSave();
