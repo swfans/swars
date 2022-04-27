@@ -168,7 +168,7 @@ Options:
 		self.wrln ('.global %s'	  % self.wrap_name (name))
 		self.wrln ('%s: /* %s %s */' % (self.wrap_name (name), type, args))
 
-		if type == 'w' or type == 'i' or type == 'p':
+		if type == 'w' or type == 'i' or type == 'p': # w=word/short, i=int/long, p=pointer
 			if self.stack_align > 4:
 				self.generate_prologue ()
 			self.generate_store_registers ()
@@ -184,7 +184,7 @@ Options:
 			if self.stack_align > 4:
 				self.generate_epilogue ()
 			self.generate_ret ()
-		elif type == 'c':
+		elif type == 'c': # c=char/byte
 			self.generate_prologue ()
 			self.generate_store_registers ()
 			self.generate_align_push (len (args))
@@ -198,7 +198,7 @@ Options:
 			self.generate_restore_registers ()
 			self.generate_epilogue ()
 			self.generate_ret ()
-		elif type =='v':
+		elif type =='v': # v=void
 			self.generate_prologue ()
 			self.generate_store_registers ()
 			self.generate_align_push (len (args))
