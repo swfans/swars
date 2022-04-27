@@ -222,7 +222,9 @@ int LbScreenSetGraphicsWindow();
 extern TbScreenModeInfo lbScreenModeInfo[];
 extern TbDisplayStruct lbDisplay;
 
-int LbScreenSetupAnyMode();
+int LbScreenSetupAnyMode(unsigned short mode, unsigned long width,
+    unsigned long height, TbPixel *palette);
+
 int LbScreenClearGraphicsWindow();
 int LbScreenClear();
 int LbScreenReset();

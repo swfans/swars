@@ -18,7 +18,6 @@ swars_SOURCES = \
 	bflib_joyst_s.sx \
 	bflib_keybrd.h \
 	bflib_keybrd_s.sx \
-	bflib_math.sx \
 	bflib_memory.c \
 	bflib_memory.h \
 	bflib_mouse.c \
@@ -89,8 +88,8 @@ swars_RESRCS =
 endif
 
 swars_LDADD = \
-  $(builddir)/../bflibrary/libbullfrog.a \
-  $(swars_WRAPPERS) $(swars_RESRCS)
+  $(swars_WRAPPERS) $(swars_RESRCS) \
+  -L$(builddir)/../bflibrary -lbullfrog
 
 $(swars_WRAPPERS:.o=.sx): %.sx: $(top_srcdir)/conf/%.conf
 	$(AM_V_GEN)$(MKW) $(MKWFLAGS) -o $@ $<

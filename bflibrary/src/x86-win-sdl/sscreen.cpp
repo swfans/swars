@@ -19,7 +19,8 @@
 /******************************************************************************/
 #include "bfscreen.h"
 
-int LbScreenSetupAnyMode()
+int LbScreenSetupAnyMode(unsigned short mode, unsigned long width,
+    unsigned long height, TbPixel *palette)
 {
 // code at 0001:000954e0
 }
