@@ -22,6 +22,7 @@
 
 #include "bflib_basics.h"
 #include "bffile.h"
+#include "bfdrive.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -35,26 +36,9 @@ extern "C" {
 # define FS_SEP_STR "\\"
 #endif
 
-/******************************************************************************/
-#pragma pack(1)
 
-struct TbDriveInfo {
-        unsigned long TotalClusters;
-        unsigned long FreeClusters;
-        unsigned long SectorsPerCluster;
-        unsigned long BytesPerSector;
-};
-
-#pragma pack()
-
-/******************************************************************************/
-
-int LbDriveCurrent(unsigned int *drive);
-int LbDriveChange(const unsigned int drive);
-int LbDriveExists(const unsigned int drive);
 int LbDirectoryChange(const char *path);
 TbResult LbDirectoryMake(const char *path, TbBool recursive);
-int LbDriveFreeSpace(const unsigned int drive, struct TbDriveInfo *drvinfo);
 char *LbGetCurrWorkDir(char *dest, const unsigned long maxlen);
 int LbDirectoryCurrent(char *buf, unsigned long buflen);
 TbResult LbFileMakeFullPath(const TbBool append_cur_dir, const char *directory,

@@ -41,6 +41,7 @@ libbullfrog_a_SOURCES = \
 
 libbullfrog_a_SOURCES += \
   src/x86-win-sdl/sdir.c \
+  src/x86-win-sdl/sdrive.c \
   src/x86-win-sdl/sfile.c \
   src/x86-win-sdl/skeybd.cpp \
   src/x86-win-sdl/smemory.c \

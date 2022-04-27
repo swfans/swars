@@ -74,6 +74,12 @@ WINBASEAPI DWORD WINAPI GetLastError(void);
 
 #endif // defined(WIN32)
 
+// Globals
+#if LB_FILENAME_TRANSFORM
+FileNameTransform lbFileNameTransform = NULL;
+#endif
+
+
 TbBool LbFileExists(const char *fname)
 {
 #if LB_FILENAME_TRANSFORM

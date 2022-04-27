@@ -79,73 +79,7 @@ WINBASEAPI DWORD WINAPI GetLastError(void);
 /******************************************************************************/
 // Internal declarations
 void convert_find_info(struct TbFileFind *ffind);
-// Globals
-FileNameTransform lbFileNameTransform = NULL;
 /******************************************************************************/
-
-int LbDriveCurrent(unsigned int *drive)
-{
-#if defined(WIN32)||defined(DOS)||defined(GO32)
-    *drive=_getdrive();
-#else
-    // Let's assume we're on 'C' drive on Unix ;)
-    *drive = 3;
-#endif
-    return 1;
-}
-
-/** Changes the current disk drive into given one
- *
- * @param drive
- * @return
- */
-int LbDriveChange(const unsigned int drive)
-{
-    int result;
-#if defined(WIN32)||defined(DOS)||defined(GO32)
-    int reterror = _chdrive(drive);
-    if (reterror) {
-        result = -1;
-    } else {
-        result = 1;
-    }
-#else
-    // Let's assume we can only be on 'C' drive on Unix
-    if (drive != 3) {
-        result = -1;
-    } else {
-        result = 1;
-    }
-#endif
-    return result;
-}
-
-/** Returns if a given drive exists.
- *
- * @param drive
- * @return
- */
-int LbDriveExists(const unsigned int drive)
-{
-    int result;
-#if defined(WIN32)||defined(DOS)||defined(GO32)
-    unsigned int lastdrive=_getdrive();
-    if (_chdrive(drive)) {
-        result = -1;
-    } else {
-        result = 1;
-        _chdrive(lastdrive);
-    }
-#else
-    // Let's assume we have only 'C' drive on Unix
-    if (drive != 3) {
-        result = -1;
-    } else {
-        result = 1;
-    }
-#endif
-    return result;
-}
 
 /** Changes the current directory on the specified drive to the specified path.
  *  If no drive is specified in path then the current drive is assumed.
@@ -162,34 +96,6 @@ int LbDirectoryChange(const char *path)
         result = -1;
     else
         result = 1;
-    return result;
-}
-
-int LbDriveFreeSpace(const unsigned int drive, struct TbDriveInfo *drvinfo)
-{
-  int result;
-#if defined(WIN32)||defined(DOS)||defined(GO32)
-    struct _diskfree_t diskspace;
-    int reterror = _getdiskfree(drive, &diskspace);
-    if ( reterror )
-    {
-        result = -1;
-    } else
-    {
-        drvinfo->TotalClusters = diskspace.total_clusters;
-        drvinfo->FreeClusters = diskspace.avail_clusters;
-        drvinfo->SectorsPerCluster = diskspace.sectors_per_cluster;
-        drvinfo->BytesPerSector = diskspace.bytes_per_sector;
-        result = 1;
-    }
-#else
-    //On non-win32 systems - return anything big enough
-    drvinfo->TotalClusters = 65535;
-    drvinfo->FreeClusters = 65535;
-    drvinfo->SectorsPerCluster = 512;
-    drvinfo->BytesPerSector = 512;
-    result = 1;
-#endif
     return result;
 }
 
