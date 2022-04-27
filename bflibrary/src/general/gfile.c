@@ -23,17 +23,17 @@
 
 #include "bfdir.h"
 
-int LbFileLengthRnc()
+long LbFileLengthRnc_TODO(const char *fname)
 {
 // code at 0001:000964a0
 }
 
-int LbFileLoadAt()
+long LbFileLoadAt_TODO(const char *fname, void *buffer)
 {
 // code at 0001:0009656c
 }
 
-int LbFileSaveAt()
+long LbFileSaveAt_TODO(const char *fname, const void *buffer,unsigned long len)
 {
 // code at 0001:0009660c
 }

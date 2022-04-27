@@ -76,18 +76,35 @@ WINBASEAPI DWORD WINAPI GetLastError(void);
 
 TbBool LbFileExists(const char *fname)
 {
-  return access(fname,F_OK) == 0;
+#if LB_FILENAME_TRANSFORM
+    char real_fname[FILENAME_MAX];
+
+    if (lbFileNameTransform != NULL) {
+        lbFileNameTransform(real_fname, fname);
+        fname = real_fname;
+    }
+#endif
+    return access(fname,F_OK) == 0;
 }
 
-long LbFilePosition(TbFileHandle handle)
+long LbFilePosition(TbFileHandle fhandle)
 {
-  int result = tell(handle);
-  return result;
+    long result;
+#if defined(WIN32)||defined(DOS)||defined(GO32)
+    result = tell(fhandle);
+#else
+    result = lseek(fhandle, 0, SEEK_CUR);
+#endif
+    return result;
 }
 
 TbFileHandle LbFileOpen(const char *fname, const TbFileOpenMode accmode)
 {
   TbFileOpenMode mode = accmode;
+#if LB_FILENAME_TRANSFORM
+  char real_fname[FILENAME_MAX];
+#endif
+  TbFileHandle rc;
 
   if ( !LbFileExists(fname) )
   {
@@ -97,7 +114,14 @@ TbFileHandle LbFileOpen(const char *fname, const TbFileOpenMode accmode)
     if ( mode == Lb_FILE_MODE_OLD )
       mode = Lb_FILE_MODE_NEW;
   }
-  TbFileHandle rc;
+
+#if LB_FILENAME_TRANSFORM
+  if (lbFileNameTransform != NULL) {
+      lbFileNameTransform(real_fname, fname);
+      fname = real_fname;
+  }
+#endif
+
 /* DISABLED - NOT NEEDED
   if ( mode == Lb_FILE_MODE_NEW )
   {
@@ -113,50 +137,62 @@ TbFileHandle LbFileOpen(const char *fname, const TbFileOpenMode accmode)
   case Lb_FILE_MODE_NEW:
     {
         LIBLOG("LBO_CREAT mode: %s", fname);
+#if defined(WIN32)||defined(DOS)||defined(GO32)
         rc = _sopen(fname, O_RDWR|O_CREAT|O_BINARY, SH_DENYNO, S_IREAD|S_IWRITE);
+#else
+        rc = open(fname, O_RDWR|O_CREAT, S_IRUSR|S_IRGRP|S_IWUSR|S_IWGRP);
+#endif
     };break;
   case Lb_FILE_MODE_OLD:
     {
         LIBLOG("LBO_RDWR mode: %s", fname);
+#if defined(WIN32)||defined(DOS)||defined(GO32)
         rc = _sopen(fname, O_RDWR|O_BINARY, SH_DENYNO);
+#else
+        rc = open(fname, O_RDWR);
+#endif
     };break;
   case Lb_FILE_MODE_READ_ONLY:
     {
         LIBLOG("LBO_RDONLY mode: %s", fname);
+#if defined(WIN32)||defined(DOS)||defined(GO32)
         rc = _sopen(fname, O_RDONLY|O_BINARY, SH_DENYNO);
+#else
+        rc = open(fname, O_RDONLY);
+#endif
     };break;
   }
   LIBLOG("out handle = %ld, errno = %d", rc, errno);
   return rc;
 }
 
-TbResult LbFileClose(TbFileHandle handle)
+TbResult LbFileClose(TbFileHandle fhandle)
 {
-  if ( close(handle) )
+  if ( close(fhandle) )
     return -1;
   return 1;
 }
 
-TbBool LbFileEof(TbFileHandle handle)
+TbBool LbFileEof(TbFileHandle fhandle)
 {
-  if (LbFilePosition(handle) >= LbFileLengthHandle(handle))
-    return true;
-  return false;
+    if (LbFilePosition(fhandle) >= LbFileLengthHandle(fhandle))
+        return true;
+    return false;
 }
 
-TbResult LbFileSeek(TbFileHandle handle, long offset, TbFileSeekMode origin)
+TbResult LbFileSeek(TbFileHandle fhandle, long offset, TbFileSeekMode origin)
 {
   int rc;
   switch (origin)
   {
   case Lb_FILE_SEEK_BEGINNING:
-      rc = lseek(handle, offset, SEEK_SET);
+      rc = lseek(fhandle, offset, SEEK_SET);
       break;
   case Lb_FILE_SEEK_CURRENT:
-      rc = lseek(handle, offset, SEEK_CUR);
+      rc = lseek(fhandle, offset, SEEK_CUR);
       break;
   case Lb_FILE_SEEK_END:
-      rc = lseek(handle, offset, SEEK_END);
+      rc = lseek(fhandle, offset, SEEK_END);
       break;
   default:
       rc = -1;
@@ -165,58 +201,92 @@ TbResult LbFileSeek(TbFileHandle handle, long offset, TbFileSeekMode origin)
   return rc;
 }
 
-long LbFileRead(TbFileHandle handle, void *buffer, unsigned long len)
+long LbFileRead(TbFileHandle fhandle, void *buffer, unsigned long len)
 {
   int result;
   //'read' returns (-1) on error
-  result = read(handle,buffer,len);
+  result = read(fhandle,buffer,len);
   return result;
 }
 
-long LbFileWrite(TbFileHandle handle, const void *buffer, const unsigned long len)
+long LbFileWrite(TbFileHandle fhandle, const void *buffer, const unsigned long len)
 {
   long result;
-  result = write(handle, buffer, len);
+  result = write(fhandle, buffer, len);
   return result;
 }
 
-TbBool LbFileFlush(TbFileHandle handle)
+TbBool LbFileFlush(TbFileHandle fhandle)
 {
 #if defined(WIN32)
-  int result;
-  // Crappy Windows has its own
-  result = FlushFileBuffers((HANDLE)handle);
-  // It returns 'invalid handle' error sometimes for no reason.. so disabling this error
-  if (result != 0)
-      return 1;
-  result = GetLastError();
-  return ((result == 0) || (result == 6));
+    int result;
+    // Crappy Windows has its own
+    result = FlushFileBuffers((HANDLE)fhandle);
+    // It returns 'invalid handle' error sometimes for no reason.. so disabling this error
+    if (result != 0)
+        return 1;
+    result = GetLastError();
+    return ((result == 0) || (result == 6));
 #else
-  // For normal POSIX systems
-  // (should also work on Win, as its IEEE standard... but it currently isn't)
-  return (ioctl(handle,I_FLUSH,FLUSHRW) != -1);
+    // For normal POSIX systems
+    // (should also work on Win, as its IEEE standard... but it currently isn't)
+    return (fsync(fhandle) != -1);
+    //return (ioctl(fhandle,I_FLUSH,FLUSHRW) != -1); // another way to do the same thing
 #endif
 }
 
-long LbFileLengthHandle(TbFileHandle handle)
+long LbFileLengthHandle(TbFileHandle fhandle)
 {
-  long result;
-  result = filelength(handle);
-  return result;
+    long result;
+#if defined(WIN32)||defined(DOS)||defined(GO32)
+    result = filelength(fhandle);
+#else
+    struct stat buf;
+    fstat(fhandle, &buf);
+    result = buf.st_size;
+#endif
+    return result;
 }
 
 long LbFileLength(const char *fname)
 {
-  TbFileHandle handle;
-  handle = LbFileOpen(fname, Lb_FILE_MODE_READ_ONLY);
-  long result = handle;
-  if ( handle != -1 )
-  {
-    result = filelength(handle);
-    LbFileClose(handle);
-  }
-  return result;
+    long result;
+#if defined(WIN32)||defined(DOS)||defined(GO32)
+    TbFileHandle fhandle;
+
+    fhandle = LbFileOpen(fname, Lb_FILE_MODE_READ_ONLY);
+    result = fhandle;
+    if (fhandle != -1) {
+      result = filelength(fhandle);
+      LbFileClose(fhandle);
+    }
+    // error message, if any, should already be printed
+#else
+    struct stat st;
+# if LB_FILENAME_TRANSFORM
+    char real_fname[FILENAME_MAX];
+
+    if (lbFileNameTransform != NULL) {
+        lbFileNameTransform(real_fname, fname);
+        fname = real_fname;
+    }
+# endif
+
+    if (stat (fname, &st) == 0) {
+        result = st.st_size;
+    } else {
+        LIBLOG("error %d on get stats of '%s'", strerror(errno), fname);
+        result = -1;
+    }
+#endif
+
+    return result;
 }
+
+/** @internal
+ */
+TbResult LbDateTimeDecode(const time_t *datetime, struct TbDate *curr_date,
+  struct TbTime *curr_time);
 
 /** @internal
  * Converts file search information from platform-specific into independent form.
@@ -226,27 +296,35 @@ static void convert_find_info(struct TbFileFind *ffind)
 {
   struct _finddata_t *fdata=&(ffind->Reserved);
   strncpy(ffind->Filename,fdata->name,144);
-  ffind->Filename[143]='\0';
+  ffind->Filename[sizeof(ffind->Filename)-1] = '\0';
 #if defined(WIN32)
   GetShortPathName(fdata->name,ffind->AlternateFilename,14);
 #else
   strncpy(ffind->AlternateFilename,fdata->name,14);
 #endif
-  ffind->AlternateFilename[13]='\0';
-  if (fdata->size>ULONG_MAX)
-    ffind->Length=ULONG_MAX;
+  ffind->AlternateFilename[sizeof(ffind->AlternateFilename)-1] = '\0';
+  if (fdata->size > ULONG_MAX)
+    ffind->Length = ULONG_MAX;
   else
     ffind->Length = fdata->size;
   ffind->Attributes = fdata->attrib;
-  LbDateTimeDecode(&fdata->time_create,&ffind->CreationDate,&ffind->CreationTime);
-  LbDateTimeDecode(&fdata->time_write,&ffind->LastWriteDate,&ffind->LastWriteTime);
+  LbDateTimeDecode(&fdata->time_create, &ffind->CreationDate, &ffind->CreationTime);
+  LbDateTimeDecode(&fdata->time_write, &ffind->LastWriteDate, &ffind->LastWriteTime);
 }
 
-TbResult LbFileFindFirst(const char *filespec, struct TbFileFind *ffind,unsigned int attributes)
+TbResult LbFileFindFirst(const char *filespec, struct TbFileFind *ffind, unsigned int attributes)
 {
-    // We skip 'attributes' as Win32 prototypes seem not to use them
-    ffind->ReservedHandle = _findfirst(filespec,&(ffind->Reserved));
     int result;
+#if LB_FILENAME_TRANSFORM
+    char real_filespec[FILENAME_MAX];
+
+    if (lbFileNameTransform != NULL) {
+        lbFileNameTransform(real_filespec, filespec);
+        filespec = real_filespec;
+    }
+#endif
+    // We skip 'attributes' as Win32 prototypes seem not to use them
+    ffind->ReservedHandle = _findfirst(filespec, &(ffind->Reserved));
     if (ffind->ReservedHandle == -1)
     {
       result = -1;
@@ -261,7 +339,7 @@ TbResult LbFileFindFirst(const char *filespec, struct TbFileFind *ffind,unsigned
 TbResult LbFileFindNext(struct TbFileFind *ffind)
 {
     int result;
-    if ( _findnext(ffind->ReservedHandle,&(ffind->Reserved)) < 0 )
+    if ( _findnext(ffind->ReservedHandle, &(ffind->Reserved)) < 0 )
     {
         _findclose(ffind->ReservedHandle);
         ffind->ReservedHandle = -1;
@@ -285,22 +363,43 @@ TbResult LbFileFindEnd(struct TbFileFind *ffind)
 
 TbResult LbFileRename(const char *fname_old, const char *fname_new)
 {
-  int result;
-  if ( rename(fname_old,fname_new) )
-    result = -1;
-  else
-    result = 1;
-  return result;
+    int result;
+#if LB_FILENAME_TRANSFORM
+    char real_fname_old[FILENAME_MAX];
+    char real_fname_new[FILENAME_MAX];
+
+    if (lbFileNameTransform != NULL) {
+        lbFileNameTransform(real_fname_old, fname_old);
+        lbFileNameTransform(real_fname_new, fname_new);
+        fname_old = real_fname_old;
+        fname_new = real_fname_new;
+    }
+#endif
+
+    if ( rename(fname_old,fname_new) )
+        result = -1;
+    else
+        result = 1;
+    return result;
 }
 
-TbResult LbFileDelete(const char *filename)
+TbResult LbFileDelete(const char *fname)
 {
-  int result;
-  if ( remove(filename) )
-    result = -1;
-  else
-    result = 1;
-  return result;
+    int result;
+#if LB_FILENAME_TRANSFORM
+    char real_fname[FILENAME_MAX];
+
+    if (lbFileNameTransform != NULL) {
+        lbFileNameTransform(real_fname, fname);
+        fname = real_fname;
+    }
+#endif
+
+    if ( remove(fname) )
+        result = -1;
+    else
+        result = 1;
+    return result;
 }
 
 /******************************************************************************/

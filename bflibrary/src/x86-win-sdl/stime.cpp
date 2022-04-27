@@ -49,4 +49,30 @@ TbClockMSec LbTimerClock(void)
 #endif
 }
 
+extern "C" {
+TbResult LbDateTimeDecode(const time_t *datetime, struct TbDate *curr_date,
+  struct TbTime *curr_time);
+}
+
+TbResult LbDateTimeDecode(const time_t *datetime, struct TbDate *curr_date,
+  struct TbTime *curr_time)
+{
+  struct tm *ltime=localtime(datetime);
+  if (curr_date!=NULL)
+  {
+    curr_date->Day=ltime->tm_mday;
+    curr_date->Month=ltime->tm_mon+1;
+    curr_date->Year=1900+ltime->tm_year;
+    curr_date->DayOfWeek=ltime->tm_wday;
+  }
+  if (curr_time!=NULL)
+  {
+    curr_time->Hour=ltime->tm_hour;
+    curr_time->Minute=ltime->tm_min;
+    curr_time->Second=ltime->tm_sec;
+    curr_time->HSecond=0;
+  }
+  return Lb_SUCCESS;
+}
+
 /******************************************************************************/

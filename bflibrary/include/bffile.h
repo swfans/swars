@@ -28,6 +28,9 @@
 extern "C" {
 #endif
 
+//TODO change to build system param
+#define LB_FILENAME_TRANSFORM 1
+
 enum TbFileOpenMode { // type=int8_t
     Lb_FILE_MODE_NEW = 0,
     Lb_FILE_MODE_OLD,
@@ -73,13 +76,24 @@ struct TbFileFind {
 
 typedef struct TbFileFind TbFileFind;
 
+#if LB_FILENAME_TRANSFORM
+
+typedef void (*FileNameTransform)(char *out_fname, const char *inp_fname);
+
+/** Callback to be used for transforming all file names before opening.
+ */
+extern FileNameTransform lbFileNameTransform;
+
+#endif
+
+
 /** Returns if given file exists.
  */
 TbBool LbFileExists(const char *fname);
 
 /** Returns current value of the file position indicator.
  */
-long LbFilePosition(TbFileHandle handle);
+long LbFilePosition(TbFileHandle fhandle);
 
 /** Opens a file in given mode.
  */
@@ -87,68 +101,81 @@ TbFileHandle LbFileOpen(const char *fname, const TbFileOpenMode accmode);
 
 /** Closes a file.
  */
-TbResult LbFileClose(TbFileHandle handle);
+TbResult LbFileClose(TbFileHandle fhandle);
 
 /** Checks if the file position indicator is placed at end of the file.
  */
-TbBool LbFileEof(TbFileHandle handle);
+TbBool LbFileEof(TbFileHandle fhandle);
 
 /** Changes position in opened file.
  *
- * @param handle
+ * @param fhandle
  * @param offset
  * @param origin
  * @return Returns new file position, or -1 on error.
  */
-TbResult LbFileSeek(TbFileHandle handle, long offset, TbFileSeekMode origin);
+TbResult LbFileSeek(TbFileHandle fhandle, long offset, TbFileSeekMode origin);
 
 /**
  * Reads from previously opened disk file.
  *
- * @param handle
+ * @param fhandle
  * @param buffer
  * @param len
  * @return Gives amount of bytes read, or -1 on error.
  */
-long LbFileRead(TbFileHandle handle, void *buffer, unsigned long len);
+long LbFileRead(TbFileHandle fhandle, void *buffer, unsigned long len);
 
 /**
  * Writes data at the operating system level.
  * The number of bytes transmitted is given by len and the data
  * to be transmitted is located at the address specified by buffer.
+ *
  * @return Returns the number of bytes (does not include any extra carriage-return
  * characters transmitted) of data transmitted to the file.
  */
-long LbFileWrite(TbFileHandle handle, const void *buffer, const unsigned long len);
+long LbFileWrite(TbFileHandle fhandle, const void *buffer, const unsigned long len);
 
 /**
  * Flushes the file buffers, writing all data immediately.
+ *
+ * @param fhandle Opened file handle
  * @return Returns 1 on success, 0 on error.
  */
-TbBool LbFileFlush(TbFileHandle handle);
+TbBool LbFileFlush(TbFileHandle fhandle);
 
 /** Returns size of an already opened file.
  */
-long LbFileLengthHandle(TbFileHandle handle);
+long LbFileLengthHandle(TbFileHandle fhandle);
 
 /** Returns disk size of file.
+ *
+ * @param fname File name string
+ * @return
  */
 long LbFileLength(const char *fname);
 
 /** Starts listing of directory entries.
  *
+ * @param filespec
+ * @param ffind
+ * @param attributes
  * @return Gives -1 if no match is found, otherwise returns 1 and stores a handle inside
  *  TbFileFind struct which is then used for LbFileFindNext() and LbFileFindEnd() calls.
  */
-TbResult LbFileFindFirst(const char *filespec, struct TbFileFind *ffind,unsigned int attributes);
+TbResult LbFileFindFirst(const char *filespec, struct TbFileFind *ffind,
+  unsigned int attributes);
 
 /** Continues listing directory entries.
  *
+ * @param ffind
  * @return Gives -1 if no match is found, otherwise returns 1
  */
 TbResult LbFileFindNext(struct TbFileFind *ffind);
 
 /** Ends sequence of listing directory entries.
+ *
+ * @param ffind
  */
 TbResult LbFileFindEnd(struct TbFileFind *ffind);
 
@@ -157,13 +184,15 @@ TbResult LbFileFindEnd(struct TbFileFind *ffind);
 TbResult LbFileRename(const char *fname_old, const char *fname_new);
 
 /** Removes a disk file.
+ *
+ * @param fname File name string
+ * @return
  */
-TbResult LbFileDelete(const char *filename);
+TbResult LbFileDelete(const char *fname);
 
-
-int LbFileLengthRnc();
-int LbFileLoadAt();
-int LbFileSaveAt();
+long LbFileLengthRnc(const char *fname);
+long LbFileLoadAt(const char *fname, void *buffer);
+long LbFileSaveAt(const char *fname, const void *buffer,unsigned long len);
 int LbFileStringSearch();
 
 TbResult LbFileMakeFullPath(const TbBool append_cur_dir,

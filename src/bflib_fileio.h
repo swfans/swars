@@ -21,6 +21,7 @@
 #define BFLIB_FILEIO_H
 
 #include "bflib_basics.h"
+#include "bffile.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -34,23 +35,6 @@ extern "C" {
 # define FS_SEP_STR "\\"
 #endif
 
-typedef ulong TbFileHandle;
-
-enum TbFileOpenMode {
-        Lb_FILE_MODE_NEW       = 0,
-        Lb_FILE_MODE_OLD       = 1,
-        Lb_FILE_MODE_READ_ONLY = 2,
-};
-
-enum TbFileSeekMode {
-        Lb_FILE_SEEK_BEGINNING = 0,
-        Lb_FILE_SEEK_CURRENT,
-        Lb_FILE_SEEK_END,
-};
-
-typedef enum TbFileOpenMode TbFileOpenMode;
-typedef enum TbFileSeekMode TbFileSeekMode;
-
 /******************************************************************************/
 #pragma pack(1)
 
@@ -63,11 +47,6 @@ struct TbDriveInfo {
 
 #pragma pack()
 
-typedef void (*FileNameTransform)(char *out_fname, const char *inp_fname);
-
-/** Callback to be used for transforming all file names before opening.
- */
-extern FileNameTransform lbFileNameTransform;
 /******************************************************************************/
 
 int LbDriveCurrent(unsigned int *drive);
@@ -76,22 +55,6 @@ int LbDriveExists(const unsigned int drive);
 int LbDirectoryChange(const char *path);
 TbResult LbDirectoryMake(const char *path, TbBool recursive);
 int LbDriveFreeSpace(const unsigned int drive, struct TbDriveInfo *drvinfo);
-TbBool LbFileExists(const char *fname);
-int LbFilePosition(TbFileHandle handle);
-TbFileHandle LbFileOpen(const char *fname, const enum TbFileOpenMode accmode);
-TbBool LbFileEof(TbFileHandle handle);
-int LbFileClose(TbFileHandle handle);
-TbResult LbFileSeek(TbFileHandle handle, long offset, TbFileSeekMode origin);
-long LbFileRead(TbFileHandle handle, void *buffer, unsigned long len);
-long LbFileWrite(TbFileHandle handle, const void *buffer, const unsigned long len);
-long LbFileLength(const char *fname);
-long LbFileLengthHandle(TbFileHandle handle);
-int LbFileFindFirst(const char *filespec, struct TbFileFind *ffind,unsigned int attributes);
-int LbFileFindNext(struct TbFileFind *ffind);
-int LbFileFindEnd(struct TbFileFind *ffind);
-int LbFileRename(const char *fname_old, const char *fname_new);
-int LbFileDelete(const char *fname);
-TbBool LbFileFlush(TbFileHandle handle);
 char *LbGetCurrWorkDir(char *dest, const unsigned long maxlen);
 int LbDirectoryCurrent(char *buf, unsigned long buflen);
 TbResult LbFileMakeFullPath(const TbBool append_cur_dir, const char *directory,
