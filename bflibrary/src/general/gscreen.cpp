@@ -56,7 +56,7 @@ TbDisplayStruct lbDisplay;
 TbResult LbScreenSetup(TbScreenMode mode, TbScreenCoord width, TbScreenCoord height,
     unsigned char *palette, short buffers_count, TbBool wscreen_vid)
 {
-// code at 0001:00093bc0
+    return LbScreenSetupAnyMode(mode, width, height, palette);
 }
 
 int LbScreenIsModeAvailable()
