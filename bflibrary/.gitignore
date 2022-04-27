@@ -1,6 +1,5 @@
 include/bfconfig.h.in
-autom4te.cache
-m4
+/autom4te.cache
 config.guess
 config.sub
 Makefile.in
