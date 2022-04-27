@@ -9,7 +9,7 @@
  * @par Comment:
  *     None.
  * @author   Tomasz Lis
- * @date     01 Sep 2012 - 12 Jan 2015
+ * @date     10 Oct 2012 - 13 Oct 2021
  * @par  Copying and copyrights:
  *     This program is free software; you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -17,32 +17,30 @@
  *     (at your option) any later version.
  */
 /******************************************************************************/
-#ifdef WIN32
 
 #include <windows.h> // include for version info constants
-#include "../src/windows.config.h" // define values for version info
+#include "swars_ver.h" // define values for version info
 
-A ICON "swars.ico"
+A ICON MOVEABLE PURE LOADONCALL DISCARDABLE "swars.ico"
 
 // Create version info block, using defines from the header file
 1 VERSIONINFO
 FILEVERSION VER_MAJOR,VER_MINOR,VER_RELEASE,VER_BUILD
 PRODUCTVERSION VER_MAJOR,VER_MINOR,VER_RELEASE,VER_BUILD
-FILETYPE VFT_APP
 {
   BLOCK "StringFileInfo"
 	 {
 		 BLOCK "040904E4"
 		 {
-			 VALUE "CompanyName", "Fan community"
-			 VALUE "FileVersion", VERSION
-			 VALUE "FileDescription", PACKAGE_STRING
-			 VALUE "InternalName", PACKAGE
-			 VALUE "LegalCopyright", "Open Source"
-			 VALUE "LegalTrademarks", "SW is a trademark of Bullfrog"
-			 VALUE "OriginalFilename", PACKAGE".exe"
-			 VALUE "ProductName", PACKAGE_NAME
-			 VALUE "ProductVersion", PACKAGE_VERSION
+			 VALUE "CompanyName", COMPANY_NAME
+			 VALUE "FileVersion", FILE_VERSION
+			 VALUE "FileDescription", FILE_DESCRIPTION
+			 VALUE "InternalName", INTERNAL_NAME
+			 VALUE "LegalCopyright", LEGAL_COPYRIGHT
+			 VALUE "LegalTrademarks", LEGAL_TRADEMARKS
+			 VALUE "OriginalFilename", ORIGINAL_FILENAME
+			 VALUE "ProductName", PRODUCT_NAME
+			 VALUE "ProductVersion", PRODUCT_VERSION
 		 }
 	 }
   BLOCK "VarFileInfo"
@@ -51,4 +49,3 @@ FILETYPE VFT_APP
 	 }
 }
 /******************************************************************************/
-#endif  /* WIN32 */

@@ -1,7 +1,5 @@
 bin_PROGRAMS = swars
 
-EXTRA_DIST = Makefile.windows windows.config.h
-
 MKW = $(PYTHON) $(top_srcdir)/util/mkwrappers
 
 swars_SOURCES = \
@@ -80,6 +78,10 @@ swars_CPPFLAGS = \
 
 swars_WRAPPERS = wrappers_dos.o wrappers_game.o wrappers_libc.o wrappers_util.o
 
+swars_RCFLAGS = \
+  -I"$(top_srcdir)/src" -I"$(builddir)" \
+  $(RCFLAGS)
+
 if HAS_WINDRES
 swars_RESRCS = swars_stdres.res
 else
@@ -99,7 +101,7 @@ $(swars_WRAPPERS:.o=.sx): %.sx: $(top_srcdir)/conf/%.conf
 
 if HAS_WINDRES
 %.res: $(top_srcdir)/res/%.rc
-	$(WINDRES) $(RCFLAGS) -i $< -J rc -o $@ -O coff
+	$(WINDRES) $(swars_RCFLAGS) -i $< -J rc -o $@ -O coff
 endif
 
 CLEANFILES = wrappers_*.sx

@@ -1,6 +1,6 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
-AC_PREREQ(2.60)
+AC_PREREQ([2.71])
 
 m4_define([ver_major], [0])
 m4_define([ver_minor], [3])
@@ -15,11 +15,19 @@ AC_INIT([Syndicate Wars Port], [swars_version], [unavowed@vexillium.org], [swars
 AC_CONFIG_SUBDIRS([bflibrary])
 
 AC_CONFIG_SRCDIR([src/main.c])
-AC_CONFIG_HEADER([src/config.h])
+AC_CONFIG_HEADERS([src/config.h])
 AC_CONFIG_MACRO_DIR([m4])
+
+AC_CANONICAL_HOST
+AC_CANONICAL_TARGET
 
 AM_INIT_AUTOMAKE([foreign])
 ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
+
+AC_DEFINE([VER_MAJOR], [ver_major], [Major version number])
+AC_DEFINE([VER_MINOR], [ver_minor], [Minor version number])
+AC_DEFINE([VER_RELEASE], [ver_release], [Release number])
+AC_DEFINE([VER_BUILD], [ver_build], [Build number])
 
 # M4 defines __unix__ to be the empty string on UNIX-like systems.  This
 # causes AC_DEFINE to fail if it is used to define __unix__.  This seems to
@@ -34,50 +42,39 @@ AS_IF([test "$exec_prefix" = "NONE"], [
   exec_prefix="$prefix"
 ])
 
-AC_DEFINE([VER_MAJOR], [ver_major], [Major version number])
-AC_DEFINE([VER_MINOR], [ver_minor], [Minor version number])
-AC_DEFINE([VER_RELEASE], [ver_release], [Release number])
-AC_DEFINE([VER_BUILD], [ver_build], [Build number])
-
-AC_CANONICAL_HOST
-AC_CANONICAL_TARGET
-
 # Checks for programs.
 AC_PROG_CC
 AM_PROG_AS
-AC_CHECK_PROG([PYTHON], [python3], [python3])
-AS_IF([test -z "$PYTHON"], [
-  AC_ERROR([python3 executable not found])
-])
+AM_PATH_PYTHON([3.1])
 PKG_PROG_PKG_CONFIG
 AC_CHECK_PROGS(WINDRES, $WINDRES "${target_alias}-windres" "${target}-windres", "windres", :)
 
 # Checks for libraries.
 AC_MSG_CHECKING([if we are compiling for an i386 processor])
-AC_COMPILE_IFELSE([
+AC_COMPILE_IFELSE([AC_LANG_SOURCE([
   asm ("pushl \$0x0; pop %eax");
-], [
+])], [
   AC_MSG_RESULT([yes])
 ], [
   AC_MSG_RESULT([no])
-  AC_ERROR([Sorry, this Syndicate Wars port will only run on i386 processors])
+  AC_MSG_FAILURE([this Syndicate Wars port will only run on i386 processors])
 ])
 
 AC_MSG_CHECKING([if C symbols need an underscore])
-AC_LINK_IFELSE([
+AC_LINK_IFELSE([AC_LANG_SOURCE([
   void test_function (void) { }
   int main (void) { asm ("call test_function"); return 0; }
-], [need_underscore=no],[need_underscore=yes])
+])], [need_underscore=no],[need_underscore=yes])
 AC_MSG_RESULT([$need_underscore])
 
 AC_MSG_CHECKING([[if we need a __unix__ define]])
-AC_COMPILE_IFELSE([
+AC_COMPILE_IFELSE([AC_LANG_SOURCE([
   #ifndef __unix__
   # if defined __APPLE__ /* add other known platforms here */
   #   error should have __unix__ but don't
   # endif
   #endif
-], [AC_MSG_RESULT([no])],
+])], [AC_MSG_RESULT([no])],
 [
   AC_MSG_RESULT([yes])
   AC_DEFINE([__unix__], 1,
@@ -115,19 +112,19 @@ AC_CHECK_FUNCS([gettimeofday])
 AC_CHECK_HEADERS([unistd.h])
 
 AM_PATH_SDL([1.2.0], [], [
-  AC_ERROR([SDL not found])
+  AC_MSG_ERROR([SDL not found])
 ])
 
 PKG_CHECK_MODULES([VORBISFILE], [vorbisfile >= 1.2.0], [], [
-  AC_ERROR([vorbisfile >= 1.2.0 not found])
+  AC_MSG_ERROR([vorbisfile >= 1.2.0 not found])
 ])
 
 PKG_CHECK_MODULES([PNG], [libpng], [], [
-  AC_ERROR([libpng not found])
+  AC_MSG_ERROR([libpng not found])
 ])
 
 AM_PATH_OPENAL([], [
-  AC_ERROR([OpenAL not found])
+  AC_MSG_ERROR([OpenAL not found])
 ])
 
 # Arguments
@@ -143,7 +140,7 @@ AC_ARG_WITH([data-path],
 	      [path to game data @<:@DATAROOTDIR/swars@:>@]),
 	    [data_path=$withval], [data_path=])
 AS_IF([test "$data_path" = "yes"], [
-  AC_ERROR([The data path must be explicitly specified])
+  AC_MSG_ERROR([The data path must be explicitly specified])
 ])
 AS_IF([test -z "$data_path"], [
   eval data_path="$datadir/swars"
