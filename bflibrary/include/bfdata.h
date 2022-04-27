@@ -27,12 +27,12 @@ extern "C" {
 #endif
 
 struct TbLoadFiles { // sizeof=44
-    CBYTE FName[28]; // offset=0
+    char FName[28]; // offset=0
     void **Start; // offset=28
     void **SEnd; // offset=32
-    ULONG SLength; // offset=36
-    UWORD Flags; // offset=40
-    UWORD Spare; // offset=42
+    ulong SLength; // offset=36
+    ushort Flags; // offset=40
+    ushort Spare; // offset=42
 };
 
 typedef struct TbLoadFiles TbLoadFiles;

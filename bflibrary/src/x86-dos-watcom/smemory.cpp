@@ -30,18 +30,18 @@ struct TbMemoryAvailable { // sizeof=20
 };
 
 struct mem_block { // sizeof=12
-    UBYTE *Pointer; // offset=0
+    ubyte *Pointer; // offset=0
     ULONG Selector; // offset=4
     ULONG Size; // offset=8
 };
 
 struct mem_arena { // sizeof=18
-    UBYTE *Pointer; // offset=0
+    ubyte *Pointer; // offset=0
     ULONG Size; // offset=4
     mem_arena *Child; // offset=8
     mem_arena *Parent; // offset=12
-    UBYTE Used; // offset=16
-    UBYTE Section; // offset=17
+    ubyte Used; // offset=16
+    ubyte Section; // offset=17
 };
 
 struct TbMemoryAvailable lbMemoryAvailable;
@@ -280,7 +280,7 @@ TbResult LbMemorySetup(void)
     }
     for ( n = 4096; n >= 16; n -= 16 )
     {
-      memory_blocks[nblks].Pointer = (UBYTE *)nmalloc(n);
+      memory_blocks[nblks].Pointer = (ubyte *)nmalloc(n);
       if ( memory_blocks[nblks].Pointer )
       {
         memory_blocks[nblks].Size = n;

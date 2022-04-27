@@ -27,12 +27,12 @@ extern "C" {
 #include <stdint.h>
 
 struct SREGS { // sizeof=12
-    uint16_t es; // offset=0
-    uint16_t cs; // offset=2
-    uint16_t ss; // offset=4
-    uint16_t ds; // offset=6
-    uint16_t fs; // offset=8
-    uint16_t gs; // offset=10
+    ushort es; // offset=0
+    ushort cs; // offset=2
+    ushort ss; // offset=4
+    ushort ds; // offset=6
+    ushort fs; // offset=8
+    ushort gs; // offset=10
 };
 
 typedef struct SREGS SREGS;
@@ -50,36 +50,36 @@ struct DWORDREGS { // sizeof=28
 typedef struct DWORDREGS DWORDREGS;
 
 struct WORDREGS { // sizeof=28
-    uint16_t ax; // offset=0
-    uint16_t _1; // offset=2
-    uint16_t bx; // offset=4
-    uint16_t _2; // offset=6
-    uint16_t cx; // offset=8
-    uint16_t _3; // offset=10
-    uint16_t dx; // offset=12
-    uint16_t _4; // offset=14
-    uint16_t si; // offset=16
-    uint16_t _5; // offset=18
-    uint16_t di; // offset=20
-    uint16_t _6; // offset=22
+    ushort ax; // offset=0
+    ushort _1; // offset=2
+    ushort bx; // offset=4
+    ushort _2; // offset=6
+    ushort cx; // offset=8
+    ushort _3; // offset=10
+    ushort dx; // offset=12
+    ushort _4; // offset=14
+    ushort si; // offset=16
+    ushort _5; // offset=18
+    ushort di; // offset=20
+    ushort _6; // offset=22
     unsigned int cflag; // offset=24
 };
 
 typedef struct WORDREGS WORDREGS;
 
 struct BYTEREGS { // sizeof=16
-    uint8_t al; // offset=0
-    uint8_t ah; // offset=1
-    uint16_t _1; // offset=2
-    uint8_t bl; // offset=4
-    uint8_t bh; // offset=5
-    uint16_t _2; // offset=6
-    uint8_t cl; // offset=8
-    uint8_t ch; // offset=9
-    uint16_t _3; // offset=10
-    uint8_t dl; // offset=12
-    uint8_t dh; // offset=13
-    uint16_t _4; // offset=14
+    ubyte al; // offset=0
+    ubyte ah; // offset=1
+    ushort _1; // offset=2
+    ubyte bl; // offset=4
+    ubyte bh; // offset=5
+    ushort _2; // offset=6
+    ubyte cl; // offset=8
+    ubyte ch; // offset=9
+    ushort _3; // offset=10
+    ubyte dl; // offset=12
+    ubyte dh; // offset=13
+    ushort _4; // offset=14
 };
 
 typedef struct BYTEREGS BYTEREGS;

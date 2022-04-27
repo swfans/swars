@@ -20,7 +20,8 @@
 #ifndef BFLIB_BASICS_H
 #define BFLIB_BASICS_H
 
-#include <stdint.h>
+#include "bftypes.h"
+
 #include <time.h>
 
 #if defined(WIN32)||defined(DOS)||defined(GO32)
@@ -57,12 +58,6 @@ enum TbLogFlags {
         LbLog_LoopedFile   = 0x0100,
 };
 
-enum TbErrorCode {
-    Lb_FAIL                 = -1,
-    Lb_OK                   =  0,
-    Lb_SUCCESS              =  1,
-};
-
 /******************************************************************************/
 #pragma pack(1)
 
@@ -83,7 +78,6 @@ struct TbDate {
         unsigned short Year;
         unsigned char DayOfWeek;
 };
-typedef long TbClockMSec;
 typedef time_t TbTimeSec;
 
 typedef unsigned char TbChecksum;

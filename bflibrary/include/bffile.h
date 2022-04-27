@@ -48,7 +48,7 @@ enum TbFileSeekMode { // type=int8_t
 
 typedef enum TbFileSeekMode TbFileSeekMode;
 
-typedef int32_t TbFileHandle;
+typedef ulong TbFileHandle;
 
 #if defined(_finddata_t) // GCC Windows API
 typedef struct _finddata_t TbFILE_FIND;

@@ -73,7 +73,7 @@ swars_SOURCES = \
 	windows.h
 
 swars_CPPFLAGS = \
-  -I"$(top_srcdir)/../bflibrary/include"
+  -I"$(top_srcdir)/bflibrary/include"
 
 swars_WRAPPERS = wrappers_dos.o wrappers_game.o wrappers_libc.o wrappers_util.o
 

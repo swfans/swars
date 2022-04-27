@@ -27,19 +27,19 @@ extern "C" {
 #endif
 
 struct TbDate { // sizeof=5
-    UBYTE Day; // offset=0
-    UBYTE Month; // offset=1
-    UWORD Year; // offset=2
-    UBYTE DayOfWeek; // offset=4
+    ubyte Day; // offset=0
+    ubyte Month; // offset=1
+    ushort Year; // offset=2
+    ubyte DayOfWeek; // offset=4
 };
 
 typedef struct TbDate TbDate;
 
 struct TbTime { // sizeof=4
-    UBYTE Hour; // offset=0
-    UBYTE Minute; // offset=1
-    UBYTE Second; // offset=2
-    UBYTE HSecond; // offset=3
+    ubyte Hour; // offset=0
+    ubyte Minute; // offset=1
+    ubyte Second; // offset=2
+    ubyte HSecond; // offset=3
 };
 
 typedef struct TbTime TbTime;

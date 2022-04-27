@@ -27,11 +27,11 @@ extern "C" {
 #endif
 
 struct TbAnyWindow { // sizeof=20
-    SLONG x; // offset=0
-    SLONG y; // offset=4
-    ULONG width; // offset=8
-    ULONG height; // offset=12
-    UBYTE *ptr; // offset=16
+    long x; // offset=0
+    long y; // offset=4
+    ulong width; // offset=8
+    ulong height; // offset=12
+    ubyte *ptr; // offset=16
 };
 
 typedef struct TbAnyWindow TbAnyWindow;

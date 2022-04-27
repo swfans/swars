@@ -73,7 +73,6 @@ enum ScreenMode {
 };
 
 typedef unsigned short TbScreenMode;
-typedef short TbScreenCoord;
 
 enum TbPaletteFadeFlag {
     Lb_PALETTE_FADE_OPEN   = 0,

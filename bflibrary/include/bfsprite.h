@@ -29,9 +29,9 @@ extern "C" {
 #define MAX_SUPPORTED_SPRITE_DIM 256
 
 struct TbSprite { // sizeof=6
-    SBYTE *Data; // offset=0
-    UBYTE SWidth; // offset=4
-    UBYTE SHeight; // offset=5
+    sbyte *Data; // offset=0
+    ubyte SWidth; // offset=4
+    ubyte SHeight; // offset=5
 };
 
 typedef struct TbSprite TbSprite;
@@ -39,7 +39,7 @@ typedef struct TbSprite TbSprite;
 struct TbSetupSprite { // sizeof=12
     TbSprite **Start; // offset=0
     TbSprite **End; // offset=4
-    SBYTE **Data; // offset=8
+    sbyte **Data; // offset=8
 };
 
 typedef struct TbSetupSprite TbSetupSprite;

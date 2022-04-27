@@ -27,14 +27,14 @@ extern "C" {
 #endif
 
 struct Palette { // sizeof=3
-    UBYTE Red; // offset=0
-    UBYTE Green; // offset=1
-    UBYTE Blue; // offset=2
+    ubyte Red; // offset=0
+    ubyte Green; // offset=1
+    ubyte Blue; // offset=2
 };
 
 typedef struct Palette Palette;
 
-TbResult LbPaletteFade(UBYTE *from_pal, UBYTE arg2, UBYTE fade_steps);
+TbResult LbPaletteFade(ubyte *from_pal, ubyte arg2, ubyte fade_steps);
 int LbPaletteStopOpenFade();
 int LbPaletteFindColour();
 int LbPaletteDraw();

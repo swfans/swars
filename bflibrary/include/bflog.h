@@ -35,12 +35,12 @@ enum Header { // type=int8_t
 typedef enum Header Header;
 
 struct TbLog { // sizeof=194
-    CBYTE Filename[144]; // offset=0
-    CBYTE Prefix[32]; // offset=145
-    ULONG Flags; // offset=178
-    BOOL Initialised; // offset=182
-    BOOL Created; // offset=186
-    BOOL Suspended; // offset=190
+    char Filename[144]; // offset=0
+    char Prefix[32]; // offset=145
+    ulong Flags; // offset=178
+    DwBool Initialised; // offset=182
+    DwBool Created; // offset=186
+    DwBool Suspended; // offset=190
 };
 
 typedef struct TbLog TbLog;

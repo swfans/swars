@@ -32,15 +32,15 @@ extern long xsteps_array[2*SPRITE_SCALING_XSTEPS];
 extern long ysteps_array[2*SPRITE_SCALING_YSTEPS];
 extern long alpha_xsteps_array[2*SPRITE_SCALING_XSTEPS];
 extern long alpha_ysteps_array[2*SPRITE_SCALING_YSTEPS];
-extern UBYTE *render_ghost;
+extern ubyte *render_ghost;
 extern long scale_up;
 /******************************************************************************/
 void LbPixelBlockCopyForward(TbPixel * dst, const TbPixel * src, long len);
 // The functions below are from colour remap version of the routine - they're used for shadows of sprites
-TbResult LbSpriteDrawRemapUsingScalingUpDataSolidRL(UBYTE *outbuf, int scanline, int outheight, long *xstep, long *ystep, const struct TbSprite *sprite, const TbPixel *cmap);
-TbResult LbSpriteDrawRemapUsingScalingUpDataSolidLR(UBYTE *outbuf, int scanline, int outheight, long *xstep, long *ystep, const struct TbSprite *sprite, const TbPixel *cmap);
-TbResult LbSpriteDrawRemapUsingScalingDownDataSolidRL(UBYTE *outbuf, int scanline, int outheight, long *xstep, long *ystep, const struct TbSprite *sprite, const TbPixel *cmap);
-TbResult LbSpriteDrawRemapUsingScalingDownDataSolidLR(UBYTE *outbuf, int scanline, int outheight, long *xstep, long *ystep, const struct TbSprite *sprite, const TbPixel *cmap);
+TbResult LbSpriteDrawRemapUsingScalingUpDataSolidRL(ubyte *outbuf, int scanline, int outheight, long *xstep, long *ystep, const struct TbSprite *sprite, const TbPixel *cmap);
+TbResult LbSpriteDrawRemapUsingScalingUpDataSolidLR(ubyte *outbuf, int scanline, int outheight, long *xstep, long *ystep, const struct TbSprite *sprite, const TbPixel *cmap);
+TbResult LbSpriteDrawRemapUsingScalingDownDataSolidRL(ubyte *outbuf, int scanline, int outheight, long *xstep, long *ystep, const struct TbSprite *sprite, const TbPixel *cmap);
+TbResult LbSpriteDrawRemapUsingScalingDownDataSolidLR(ubyte *outbuf, int scanline, int outheight, long *xstep, long *ystep, const struct TbSprite *sprite, const TbPixel *cmap);
 /******************************************************************************/
 
 /**
@@ -55,7 +55,7 @@ TbResult LbSpriteDrawRemapUsingScalingDownDataSolidLR(UBYTE *outbuf, int scanlin
  * @param transmap The transparency mapping table to be used.
  * @return Gives 0 on success.
  */
-TbResult LbSpriteDrawUsingScalingUpDataTrans1RL(UBYTE *outbuf, int scanline, int outheight,
+TbResult LbSpriteDrawUsingScalingUpDataTrans1RL(ubyte *outbuf, int scanline, int outheight,
   long *xstep, long *ystep, const struct TbSprite *sprite, const unsigned char *transmap)
 {
     LIBLOG("Drawing");
@@ -162,7 +162,7 @@ TbResult LbSpriteDrawUsingScalingUpDataTrans1RL(UBYTE *outbuf, int scanline, int
  *     a size of 256x256 to avoid invalid memory reads.
  * @return Gives 0 on success.
  */
-TbResult LbSpriteDrawUsingScalingUpDataTrans1LR(UBYTE *outbuf, int scanline, int outheight,
+TbResult LbSpriteDrawUsingScalingUpDataTrans1LR(ubyte *outbuf, int scanline, int outheight,
   long *xstep, long *ystep, const struct TbSprite *sprite, const unsigned char *transmap)
 {
     LIBLOG("Drawing");
@@ -268,7 +268,7 @@ TbResult LbSpriteDrawUsingScalingUpDataTrans1LR(UBYTE *outbuf, int scanline, int
  * @param transmap The transparency mapping table to be used.
  * @return Gives 0 on success.
  */
-TbResult LbSpriteDrawUsingScalingUpDataTrans2RL(UBYTE *outbuf, int scanline, int outheight,
+TbResult LbSpriteDrawUsingScalingUpDataTrans2RL(ubyte *outbuf, int scanline, int outheight,
   long *xstep, long *ystep, const struct TbSprite *sprite, const unsigned char *transmap)
 {
     LIBLOG("Drawing");
@@ -374,7 +374,7 @@ TbResult LbSpriteDrawUsingScalingUpDataTrans2RL(UBYTE *outbuf, int scanline, int
  * @param transmap The transparency mapping table to be used.
  * @return Gives 0 on success.
  */
-TbResult LbSpriteDrawUsingScalingUpDataTrans2LR(UBYTE *outbuf, int scanline, int outheight,
+TbResult LbSpriteDrawUsingScalingUpDataTrans2LR(ubyte *outbuf, int scanline, int outheight,
   long *xstep, long *ystep, const struct TbSprite *sprite, const unsigned char *transmap)
 {
     LIBLOG("Drawing");
@@ -479,7 +479,7 @@ TbResult LbSpriteDrawUsingScalingUpDataTrans2LR(UBYTE *outbuf, int scanline, int
  * @param sprite The source sprite.
  * @return Gives 0 on success.
  */
-TbResult LbSpriteDrawUsingScalingUpDataSolidRL(UBYTE *outbuf, int scanline, int outheight,
+TbResult LbSpriteDrawUsingScalingUpDataSolidRL(ubyte *outbuf, int scanline, int outheight,
   long *xstep, long *ystep, const struct TbSprite *sprite)
 {
     LIBLOG("Drawing");
@@ -602,7 +602,7 @@ TbResult LbSpriteDrawUsingScalingUpDataSolidRL(UBYTE *outbuf, int scanline, int 
  * @param sprite The source sprite.
  * @return Gives 0 on success.
  */
-TbResult LbSpriteDrawUsingScalingUpDataSolidLR(UBYTE *outbuf, int scanline, int outheight,
+TbResult LbSpriteDrawUsingScalingUpDataSolidLR(ubyte *outbuf, int scanline, int outheight,
   long *xstep, long *ystep, const struct TbSprite *sprite)
 {
     LIBLOG("Drawing");
@@ -723,7 +723,7 @@ TbResult LbSpriteDrawUsingScalingUpDataSolidLR(UBYTE *outbuf, int scanline, int 
  * @param transmap The transparency mapping table to be used.
  * @return Gives 0 on success.
  */
-TbResult LbSpriteDrawUsingScalingDownDataTrans1RL(UBYTE *outbuf, int scanline, int outheight,
+TbResult LbSpriteDrawUsingScalingDownDataTrans1RL(ubyte *outbuf, int scanline, int outheight,
   long *xstep, long *ystep, const struct TbSprite *sprite, const unsigned char *transmap)
 {
     LIBLOG("Drawing");
@@ -814,7 +814,7 @@ TbResult LbSpriteDrawUsingScalingDownDataTrans1RL(UBYTE *outbuf, int scanline, i
  * @param transmap The transparency mapping table to be used.
  * @return Gives 0 on success.
  */
-TbResult LbSpriteDrawUsingScalingDownDataTrans1LR(UBYTE *outbuf, int scanline, int outheight,
+TbResult LbSpriteDrawUsingScalingDownDataTrans1LR(ubyte *outbuf, int scanline, int outheight,
   long *xstep, long *ystep, const struct TbSprite *sprite, const unsigned char *transmap)
 {
     LIBLOG("Drawing");
@@ -905,7 +905,7 @@ TbResult LbSpriteDrawUsingScalingDownDataTrans1LR(UBYTE *outbuf, int scanline, i
  * @param transmap The transparency mapping table to be used.
  * @return Gives 0 on success.
  */
-TbResult LbSpriteDrawUsingScalingDownDataTrans2RL(UBYTE *outbuf, int scanline, int outheight,
+TbResult LbSpriteDrawUsingScalingDownDataTrans2RL(ubyte *outbuf, int scanline, int outheight,
   long *xstep, long *ystep, const struct TbSprite *sprite, const unsigned char *transmap)
 {
     LIBLOG("Drawing");
@@ -996,7 +996,7 @@ TbResult LbSpriteDrawUsingScalingDownDataTrans2RL(UBYTE *outbuf, int scanline, i
  * @param transmap The transparency mapping table to be used.
  * @return Gives 0 on success.
  */
-TbResult LbSpriteDrawUsingScalingDownDataTrans2LR(UBYTE *outbuf, int scanline, int outheight,
+TbResult LbSpriteDrawUsingScalingDownDataTrans2LR(ubyte *outbuf, int scanline, int outheight,
   long *xstep, long *ystep, const struct TbSprite *sprite, const unsigned char *transmap)
 {
     LIBLOG("Drawing");
@@ -1086,7 +1086,7 @@ TbResult LbSpriteDrawUsingScalingDownDataTrans2LR(UBYTE *outbuf, int scanline, i
  * @param sprite The source sprite.
  * @return Gives 0 on success.
  */
-TbResult LbSpriteDrawUsingScalingDownDataSolidRL(UBYTE *outbuf, int scanline,
+TbResult LbSpriteDrawUsingScalingDownDataSolidRL(ubyte *outbuf, int scanline,
   int outheight, long *xstep, long *ystep, const struct TbSprite *sprite)
 {
     LIBLOG("Drawing");
@@ -1175,7 +1175,7 @@ TbResult LbSpriteDrawUsingScalingDownDataSolidRL(UBYTE *outbuf, int scanline,
  * @param sprite The source sprite.
  * @return Gives 0 on success.
  */
-TbResult LbSpriteDrawUsingScalingDownDataSolidLR(UBYTE *outbuf, int scanline,
+TbResult LbSpriteDrawUsingScalingDownDataSolidLR(ubyte *outbuf, int scanline,
   int outheight, long *xstep, long *ystep, const struct TbSprite *sprite)
 {
     LIBLOG("Drawing");
@@ -1284,7 +1284,7 @@ TbResult LbSpriteDrawUsingScalingData(long posx, long posy, const struct TbSprit
         xstep = &xsteps_array[2 * sposx];
         ystep = &ysteps_array[2 * sposy];
     }
-    UBYTE *outbuf;
+    ubyte *outbuf;
     int outheight;
     {
         int gspos_x,gspos_y;

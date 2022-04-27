@@ -27,23 +27,23 @@ extern "C" {
 #endif
 
 struct TbRMREGS2 { // sizeof=50
-    ULONG MyEDI; // offset=0
-    ULONG MyESI; // offset=4
-    ULONG MyEBP; // offset=8
-    ULONG MyReserved; // offset=12
-    ULONG MyEBX; // offset=16
-    ULONG MyEDX; // offset=20
-    ULONG MyECX; // offset=24
-    ULONG MyEAX; // offset=28
-    UWORD MyFlags; // offset=32
-    UWORD MyES; // offset=34
-    UWORD MyDS; // offset=36
-    UWORD MyFS; // offset=38
-    UWORD MyGS; // offset=40
-    UWORD MyIP; // offset=42
-    UWORD MyCS; // offset=44
-    UWORD MySP; // offset=46
-    UWORD MySS; // offset=48
+    ulong MyEDI; // offset=0
+    ulong MyESI; // offset=4
+    ulong MyEBP; // offset=8
+    ulong MyReserved; // offset=12
+    ulong MyEBX; // offset=16
+    ulong MyEDX; // offset=20
+    ulong MyECX; // offset=24
+    ulong MyEAX; // offset=28
+    ushort MyFlags; // offset=32
+    ushort MyES; // offset=34
+    ushort MyDS; // offset=36
+    ushort MyFS; // offset=38
+    ushort MyGS; // offset=40
+    ushort MyIP; // offset=42
+    ushort MyCS; // offset=44
+    ushort MySP; // offset=46
+    ushort MySS; // offset=48
 };
 
 typedef struct TbRMREGS2 TbRMREGS2;

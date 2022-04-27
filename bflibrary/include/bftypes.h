@@ -24,23 +24,34 @@
 extern "C" {
 #endif
 
+#include <stddef.h>
+
+typedef unsigned long ulong;
+typedef unsigned int uint;
+typedef unsigned short ushort;
+typedef unsigned char uchar;
+typedef unsigned char ubyte;
+typedef signed char sbyte;
+
+#if 0
+
 #include <stdint.h>
 
 typedef char BYTE;
 typedef char CBYTE;
-typedef uint8_t UBYTE;
-typedef int8_t SBYTE;
+typedef uchar UBYTE;
+typedef signed char SBYTE;
 
-typedef int16_t WORD;
-typedef uint16_t UWORD;
-typedef int16_t SWORD;
+typedef short WORD;
+typedef ushort UWORD;
+typedef signed short SWORD;
 
-typedef int32_t LONG;
-typedef int32_t SLONG;
-typedef uint32_t ULONG;
+typedef long LONG;
+typedef signed long SLONG;
+typedef ulong ULONG;
 
-typedef uint8_t BBOOL;
-typedef uint32_t BOOL;
+typedef uchar BBOOL;
+typedef ulong BOOL;
 
 typedef CBYTE *PCBYTE;
 typedef UBYTE *PUBYTE;
@@ -49,7 +60,7 @@ typedef SBYTE *PSBYTE;
 typedef UWORD *PUWORD;
 typedef SWORD *PSWORD;
 
-typedef ULONG *PULONG;
+typedef ulong *PULONG;
 typedef SLONG *PSLONG;
 
 typedef void *CALLBACK;
@@ -57,6 +68,8 @@ typedef void *CALLBACK;
 typedef uint32_t REALFAR;
 
 typedef int32_t HTIMER;
+
+#endif
 
 enum TbErrorCode {
     Lb_FAIL                 = -1,
@@ -67,10 +80,11 @@ enum TbErrorCode {
 /** Command function result, valid values are of TbErrorCode enumeration. */
 typedef int TbResult;
 typedef unsigned char TbBool;
+typedef unsigned long DwBool;
 
 typedef size_t TbMemSize;
 
-typedef long TbScreenCoord;
+typedef short TbScreenCoord;
 
 /** 8-bit pixel definition.
  * Represents value of one point on the graphics screen.
