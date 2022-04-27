@@ -61,30 +61,13 @@ enum TbLogFlags {
 /******************************************************************************/
 #pragma pack(1)
 
-typedef unsigned long ulong;
-typedef unsigned int uint;
-typedef unsigned short ushort;
-typedef unsigned char uchar;
+#include "bftime.h"
 
-struct TbTime {
-        unsigned char Hour;
-        unsigned char Minute;
-        unsigned char Second;
-        unsigned char HSecond;
-};
-struct TbDate {
-        unsigned char Day;
-        unsigned char Month;
-        unsigned short Year;
-        unsigned char DayOfWeek;
-};
 typedef time_t TbTimeSec;
 
 typedef unsigned char TbChecksum;
 typedef unsigned long TbBigChecksum;
 typedef long Offset;
-typedef int TbFileHandle;
-typedef unsigned char TbBool;
 typedef short TbScreenPos;
 
 struct TbFileFind {

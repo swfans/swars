@@ -34,7 +34,9 @@ extern "C" {
 # define FS_SEP_STR "\\"
 #endif
 
-enum TbFileMode {
+typedef ulong TbFileHandle;
+
+enum TbFileOpenMode {
         Lb_FILE_MODE_NEW       = 0,
         Lb_FILE_MODE_OLD       = 1,
         Lb_FILE_MODE_READ_ONLY = 2,
@@ -45,6 +47,9 @@ enum TbFileSeekMode {
         Lb_FILE_SEEK_CURRENT,
         Lb_FILE_SEEK_END,
 };
+
+typedef enum TbFileOpenMode TbFileOpenMode;
+typedef enum TbFileSeekMode TbFileSeekMode;
 
 /******************************************************************************/
 #pragma pack(1)
@@ -71,13 +76,13 @@ int LbDriveExists(const unsigned int drive);
 int LbDirectoryChange(const char *path);
 TbResult LbDirectoryMake(const char *path, TbBool recursive);
 int LbDriveFreeSpace(const unsigned int drive, struct TbDriveInfo *drvinfo);
-short LbFileExists(const char *fname);
+TbBool LbFileExists(const char *fname);
 int LbFilePosition(TbFileHandle handle);
-TbFileHandle LbFileOpen(const char *fname, unsigned char accmode);
+TbFileHandle LbFileOpen(const char *fname, const enum TbFileOpenMode accmode);
 TbBool LbFileEof(TbFileHandle handle);
 int LbFileClose(TbFileHandle handle);
-int LbFileSeek(TbFileHandle handle, long offset, unsigned char origin);
-int LbFileRead(TbFileHandle handle, void *buffer, unsigned long len);
+TbResult LbFileSeek(TbFileHandle handle, long offset, TbFileSeekMode origin);
+long LbFileRead(TbFileHandle handle, void *buffer, unsigned long len);
 long LbFileWrite(TbFileHandle handle, const void *buffer, const unsigned long len);
 long LbFileLength(const char *fname);
 long LbFileLengthHandle(TbFileHandle handle);
@@ -86,10 +91,10 @@ int LbFileFindNext(struct TbFileFind *ffind);
 int LbFileFindEnd(struct TbFileFind *ffind);
 int LbFileRename(const char *fname_old, const char *fname_new);
 int LbFileDelete(const char *fname);
-short LbFileFlush(TbFileHandle handle);
+TbBool LbFileFlush(TbFileHandle handle);
 char *LbGetCurrWorkDir(char *dest, const unsigned long maxlen);
 int LbDirectoryCurrent(char *buf, unsigned long buflen);
-int LbFileMakeFullPath(const TbBool append_cur_dir, const char *directory,
+TbResult LbFileMakeFullPath(const TbBool append_cur_dir, const char *directory,
     const char *filename, char *buf, const unsigned long len);
 
 

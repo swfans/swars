@@ -166,7 +166,7 @@ int LbFileLoadAt();
 int LbFileSaveAt();
 int LbFileStringSearch();
 
-TbResult LbFileMakeFullPath(const short append_cur_dir,
+TbResult LbFileMakeFullPath(const TbBool append_cur_dir,
   const char *directory, const char *filename, char *buf, const unsigned long len);
 
 int LbFileCopy();

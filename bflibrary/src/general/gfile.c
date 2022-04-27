@@ -43,10 +43,9 @@ int LbFileStringSearch()
 // code at 0001:00096658
 }
 
-TbResult LbFileMakeFullPath(const short append_cur_dir,
+TbResult LbFileMakeFullPath(const TbBool append_cur_dir,
   const char *directory, const char *filename, char *buf, const unsigned long len)
 {
-  // code at 0001:00096834
   if (filename == NULL)
     { buf[0]='\0'; return -1; }
   unsigned long namestart;

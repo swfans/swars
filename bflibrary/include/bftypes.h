@@ -33,44 +33,6 @@ typedef unsigned char uchar;
 typedef unsigned char ubyte;
 typedef signed char sbyte;
 
-#if 0
-
-#include <stdint.h>
-
-typedef char BYTE;
-typedef char CBYTE;
-typedef uchar UBYTE;
-typedef signed char SBYTE;
-
-typedef short WORD;
-typedef ushort UWORD;
-typedef signed short SWORD;
-
-typedef long LONG;
-typedef signed long SLONG;
-typedef ulong ULONG;
-
-typedef uchar BBOOL;
-typedef ulong BOOL;
-
-typedef CBYTE *PCBYTE;
-typedef UBYTE *PUBYTE;
-typedef SBYTE *PSBYTE;
-
-typedef UWORD *PUWORD;
-typedef SWORD *PSWORD;
-
-typedef ulong *PULONG;
-typedef SLONG *PSLONG;
-
-typedef void *CALLBACK;
-
-typedef uint32_t REALFAR;
-
-typedef int32_t HTIMER;
-
-#endif
-
 enum TbErrorCode {
     Lb_FAIL                 = -1,
     Lb_OK                   =  0,

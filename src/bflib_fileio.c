@@ -193,7 +193,7 @@ int LbDriveFreeSpace(const unsigned int drive, struct TbDriveInfo *drvinfo)
     return result;
 }
 
-short LbFileExists(const char *fname)
+TbBool LbFileExists(const char *fname)
 {
     char real_fname[DISKPATH_SIZE];
 
@@ -215,7 +215,7 @@ int LbFilePosition(TbFileHandle handle)
     return result;
 }
 
-TbFileHandle LbFileOpen(const char *fname, const unsigned char accmode)
+TbFileHandle LbFileOpen(const char *fname, const enum TbFileOpenMode accmode)
 {
   unsigned char mode = accmode;
   char real_fname[DISKPATH_SIZE];
@@ -312,7 +312,7 @@ TbBool LbFileEof(TbFileHandle handle)
  * @param origin
  * @return Returns new file position, or -1 on error.
  */
-int LbFileSeek(TbFileHandle handle, long offset, unsigned char origin)
+TbResult LbFileSeek(TbFileHandle handle, long offset, TbFileSeekMode origin)
 {
   int rc;
   switch (origin)
@@ -340,7 +340,7 @@ int LbFileSeek(TbFileHandle handle, long offset, unsigned char origin)
  * @param len
  * @return Gives amount of bytes read, or -1 on error.
  */
-int LbFileRead(TbFileHandle handle, void *buffer, unsigned long len)
+long LbFileRead(TbFileHandle handle, void *buffer, unsigned long len)
 {
   int result;
   //'read' returns (-1) on error
@@ -366,7 +366,7 @@ long LbFileWrite(TbFileHandle handle, const void *buffer, const unsigned long le
  * Flushes the file buffers, writing all data immediately.
  * @return Returns 1 on success, 0 on error.
 */
-short LbFileFlush(TbFileHandle handle)
+TbBool LbFileFlush(TbFileHandle handle)
 {
 #if defined(WIN32)
     int result;
@@ -591,7 +591,7 @@ int LbDirectoryCurrent(char *buf, unsigned long buflen)
     return -1;
 }
 
-int LbFileMakeFullPath(const TbBool append_cur_dir,
+TbResult LbFileMakeFullPath(const TbBool append_cur_dir,
   const char *directory, const char *filename, char *buf, const unsigned long len)
 {
   if (filename == NULL) {
