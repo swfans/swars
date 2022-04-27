@@ -42,7 +42,7 @@ If you're installing on GNU or UNIX, you will have to compile from source.
 The steps are:
 
 1. download and unpack the source tarball or clone git repo
-2. follow [building instructions](#building-on-gnu-or-unix) below to get
+2. follow [building instructions](#general-building-instructions) below to get
    a compiled executable
 3. after the build succeeded, do `make install` in the directory where build
    commands were executed, to copy built files into an installation folder
@@ -118,10 +118,11 @@ You can now launch `swars.exe` and have fun!
 Note that you can oly build the port for x86 architecture, and you either need
 32-bit OS, or 64-bit OS with 32-bit user space libraries available.
 
-### Building on GNU or UNIX
+### General building instructions
 
-To build **Syndicate Wars Port** on GNU or UNIX, you will need the following:
+To build **Syndicate Wars Port**, you will need the following:
 
+* GNU Autotools
 * GNU C compiler
 * Python 3
 * vorbis-tools (oggenc in particular)
@@ -137,8 +138,9 @@ To build **Syndicate Wars Port** on GNU or UNIX, you will need the following:
 Once you've made sure you have the above, proceed with the following steps:
 
 1. go into the directory with `swars` source release (containing `conf`, `doc`, `src` etc.)
-2. do `./configure` to make the build scripts find required toolchain and libraries
-3. do `make` to compile the executable file
+2. do `autoreconf -if` to create build scripts from templates
+3. do `./configure` to make the build scripts find required toolchain and libraries
+4. do `make` to compile the executable file
 
 You should now have a working `src/swars` executable file.
 
@@ -158,19 +160,21 @@ sudo apt install libvorbis-dev:i386 libvorbisfile3:i386
 sudo apt install libogg-dev:i386
 ```
 
-First, generate build scripts from templates using autotools:
+Now as our host is ready, we can start working on the actual `swars` sources.
+Go to that folder, and generate build scripts from templates using autotools:
 
 ```
 autoreconf -ivf
 ```
 
-Now proceed with the build steps; we will do that in a separate folder.
+Next, proceed with the build steps; we will do that in a separate folder.
 
 ```
 mkdir -p release; cd release
 CFLAGS="-m32" LDFLAGS="-m32" PKG_CONFIG_PATH="/usr/lib/i386-linux-gnu/pkgconfig" ../configure --enable-debug=no
 make V=1
 ```
+
 Providing `PKG_CONFIG_PATH` allows us to tell `pkg-config` command where to
 search for 32-bit packages (it would use a path to 64-bit ones by default).
 The `V=1` variable makes `make` print each command it executes, which makes
@@ -184,10 +188,43 @@ CFLAGS="-m32" LDFLAGS="-m32" PKG_CONFIG_PATH="/usr/lib/i386-linux-gnu/pkgconfig"
 make V=1
 ```
 
+#### Build example - MSYS2 updated 2022-01 on Windows
+
+Using Minimal System and the MinGW toolchain available within, it is possible
+to build the executable using the same way as for UNIX systems, with bash and autotools.
+
+First install the dependencies - mingw32, since we need 32-bit toolchain:
+
+```
+pacman -Si mingw-w64-i686-binutils mingw-w64-i686-pkgconf mingw-w64-i686-make mingw-w64-i686-gcc
+pacman -Si mingw-w64-i686-libpng
+pacman -Si mingw-w64-i686-SDL
+pacman -Si mingw-w64-i686-openal
+pacman -Si mingw-w64-i686-libvorbis
+pacman -Si mingw-w64-i686-libogg
+```
+
+Now as our host is ready, we can start working on the actual `swars` sources.
+Go to that folder, and generate build scripts from templates using autotools:
+
+```
+autoreconf -ivf
+```
+
+Next, proceed with the build steps; we will do that in a separate folder.
+Note how we are modifying PATH environment variable to make shell search for mingw32
+binaries before the default mingw64:
+
+```
+mkdir -p release; cd release
+PATH="/mingw32/bin:$PATH" CFLAGS="-m32" LDFLAGS="-m32" ../configure --enable-debug=no
+PATH="/mingw32/bin:$PATH" make V=1
+```
+
 ### Building on Mac OS X
 
 Mac OS X is at its core a UNIX system. To build the **Syndicate Wars Port** it is
-enough to follow the [instructions for GNU or UNIX](#building-on-gnu-or-unix).
+enough to follow the [general building instructions](#general-building-instructions).
 
 The GCC compiler for Mac OS X comes as part of XCode, which you can get from
 Apple's web site. You can also make your life a lot easier by using
@@ -214,81 +251,7 @@ you will also need to pass `data-path`, so youf final command will be:
 ./configure --with-data-path="Syndicate Wars.app/Contents/Resources" CFLAGS="-arch i386"
 ```
 
-Then, do `make` as the [GNU or UNIX](#building-on-gnu-or-unix) instructions tell.
-
-### Building on Windows
-
-To compile the source code you will need the following:
-
-* MinGW C compiler, 32-bit
-* Python 3
-* development versions of the following libraries:
-  * SDL
-  * OpenAL (we recommend OpenAL Soft, however Creative Inc. OpenAL can also be used)
-  * libvorbis
-  * libogg
-  * libpng
-  * zlib
-
-Then, proceed with the following steps:
-
-1. go into the directory with `swars` source release (containing `conf`, `doc`, `src` etc.)
-2. create a directory to store build files, name it `release`
-4. edit `src/Makefile.windows` to match your compiler and library locations
-5. do `make -C src -f Makefile.windows` to compile the executable file
-
-If you have a proper UNIX-like environment, like MSYS, on your system, you can also
-compile the game using the standard `./configure && make`, or cross-compile it for
-Windows by passing an appropriate `--host=` argument to `configure`.
-
-#### Build example - MinGW32 on Windows
-
-In this example we will use Minimal GNU for Windows, only. This means no need
-for [autotools](https://en.wikipedia.org/wiki/GNU_Autotools) or `configure` script.
-But to succeed, the `make` still needs all library dependencies to be accessible,
-and the toolchain to be in PATH environment variable.
-
-You may need to edit `src/Makefile.windows` to provide compiler with paths to headers
-(by modifying `CFLAGS=`), and linker with paths and names of libraries (`LDFLAGS=`).
-
-We will create a debug build in this example:
-
-```
-mkdir debug
-mingw32-make -C src -f Makefile.windows V=1 DEBUG=1
-```
-
-#### Build example - MSYS2 updated 2022-01 on Windows
-
-Using Minimal System and the MinGW toolchain available within, it is possible
-to build the executable using the same way as for UNIX systems, with bash and autotools.
-
-First install the dependencies - mingw32, since we need 32-bit toolchain:
-
-```
-pacman -Si mingw-w64-i686-binutils mingw-w64-i686-pkgconf mingw-w64-i686-make mingw-w64-i686-gcc
-pacman -Si mingw-w64-i686-libpng
-pacman -Si mingw-w64-i686-SDL
-pacman -Si mingw-w64-i686-openal
-pacman -Si mingw-w64-i686-libvorbis
-pacman -Si mingw-w64-i686-libogg
-```
-
-First, generate build scripts from templates using autotools:
-
-```
-autoreconf -ivf
-```
-
-Now proceed with the build steps; we will do that in a separate folder.
-Note how we are modifying PATH environment variable to try mingw32 binaries
-before the default mingw64:
-
-```
-mkdir -p release; cd release
-PATH="/mingw32/bin:$PATH" CFLAGS="-m32" LDFLAGS="-m32" ../configure --enable-debug=no
-PATH="/mingw32/bin:$PATH" make V=1
-```
+Then, do `make` as the [general building instructions](#general-building-instructions) tell.
 
 ## Done
 
