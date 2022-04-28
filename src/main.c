@@ -6,7 +6,6 @@
 #include "bflib_joyst.h"
 #include "bfmemory.h"
 #include "bffile.h"
-#include "bflib_dernc.h"
 #include "display.h"
 #include "game.h"
 #include "game_data.h"

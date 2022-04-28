@@ -22,7 +22,6 @@
 #include "bflib_basics.h"
 #include "bfmemory.h"
 #include "bffile.h"
-#include "bflib_dernc.h"
 #include "bfmemory.h"
 
 #ifdef __cplusplus

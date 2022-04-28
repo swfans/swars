@@ -8,7 +8,6 @@
 #include "bflib_filelst.h"
 #include "bflib_sprite.h"
 #include "bflib_video.h"
-#include "bflib_dernc.h"
 #include "bflib_keybrd.h"
 #include "bflib_mouse.h"
 #include "bflib_picture.h"
