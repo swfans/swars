@@ -24,15 +24,64 @@
 extern "C" {
 #endif
 
+/** Return the big-endian longword at p.
+ */
 unsigned long blong(unsigned char *p);
+
+/** Return the little-endian longword at p.
+ */
 unsigned long llong(unsigned char *p);
+
+/** Return the big-endian word at p.
+ */
 unsigned long bword(unsigned char *p);
+
+/* Return the little-endian word at p.
+ */
 unsigned long lword(unsigned char *p);
-void set_flag_byte(unsigned char *flags, unsigned char mask, short value);
-void set_flag_word(unsigned short *flags, unsigned short mask, short value);
-void set_flag_dword(unsigned long *flags, unsigned long mask, short value);
+
+/**
+ * Toggles a masked bit in the flags field to the value.
+ * This version assumes the flag field is 1 byte long.
+ * @param flags Pointer to the flags byte.
+ * @param mask Bitmask for the flag.
+ */
 void toggle_flag_byte(unsigned char *flags, unsigned char mask);
+
+/**
+ * Toggles a masked bit in the flags field to the value.
+ * This version assumes the flag field is 4 bytes long.
+ * @param flags Pointer to the flags byte.
+ * @param mask Bitmask for the flag.
+ */
 void toggle_flag_dword(unsigned long *flags, unsigned long mask);
+
+/**
+ * Sets a masked bit in the flags field to the value.
+ * This version assumes the flag field is 2 bytes long.
+ * @param flags Pointer to the flags byte.
+ * @param mask Bitmask for the flag.
+ * @param value The new logic value.
+ */
+void set_flag_word(unsigned short *flags, unsigned short mask, short value);
+
+/**
+ * Sets a masked bit in the flags field to the value.
+ * This version assumes the flag field is 1 byte long.
+ * @param flags Pointer to the flags byte.
+ * @param mask Bitmask for the flag.
+ * @param value The new logic value.
+ */
+void set_flag_byte(unsigned char *flags, unsigned char mask, short value);
+
+/**
+ * Sets a masked bit in the flags field to the value.
+ * This version assumes the flag field is 4 bytes long.
+ * @param flags Pointer to the flags byte.
+ * @param mask Bitmask for the flag.
+ * @param value The new logic value.
+ */
+void set_flag_dword(unsigned long *flags, unsigned long mask, short value);
 
 #ifdef __cplusplus
 };

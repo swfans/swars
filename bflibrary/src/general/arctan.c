@@ -38,17 +38,6 @@ unsigned short const lbArcTanFactors[] = {
    245,246,246,247,248,248,249,250,250,251,252,252,253,254,254,255,
    256 };
 
-/** Computes angle between negative Y axis and the line that crosses (0,0) and given (x,y).
- *  Uses arctan(x/y) with proper shift to get the angle.
- *  Returning 0 means direction towards negative y; 512 is towards positive x;
- *  1024 towards positive y, and 1536 towards negative x. Output range is between 0 (=0 rad)
- *  and 2048 (=2*pi rad), zero included.
- *  Value of the angle is properly rounded, up or down.
- *
- * @param x
- * @param y
- * @return
- */
 long LbArcTanAngle(long x,long y)
 {
     // code at 0001:000a329c

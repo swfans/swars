@@ -31,6 +31,17 @@ extern "C" {
 
 long LbSqrL(long x);
 
+/** Computes angle between negative Y axis and the line that crosses (0,0) and given (x,y).
+ *  Uses arctan(x/y) with proper shift to get the angle.
+ *  Returning 0 means direction towards negative y; 512 is towards positive x;
+ *  1024 towards positive y, and 1536 towards negative x. Output range is between 0 (=0 rad)
+ *  and 2048 (=2*pi rad), zero included.
+ *  Value of the angle is properly rounded, up or down.
+ *
+ * @param x
+ * @param y
+ * @return
+ */
 long LbArcTanAngle(long x,long n);
 
 extern long lbSinTable[];
