@@ -8,8 +8,6 @@ swars_SOURCES = \
 	bflib_basics.h \
 	bflib_dernc.c \
 	bflib_dernc.h \
-	bflib_fileio.c \
-	bflib_fileio.h \
 	bflib_filelst.c \
 	bflib_filelst.h \
 	bflib_fmvids.sx \
