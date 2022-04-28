@@ -18,8 +18,6 @@ swars_SOURCES = \
 	bflib_joyst_s.sx \
 	bflib_keybrd.h \
 	bflib_keybrd_s.sx \
-	bflib_memory.c \
-	bflib_memory.h \
 	bflib_mouse.c \
 	bflib_mouse.h \
 	bflib_picture.c \
