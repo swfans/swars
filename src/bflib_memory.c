@@ -33,53 +33,5 @@
 #define AVAILABLE_MEMORY (16*1024*1024)
 #define TABLE_SIZE 256 /* hardcoded, do not change */
 
-char lbEmptyString[] = "";
-/******************************************************************************/
-
-/**
- *
- * Appends characters of source to destination, plus a terminating null-character.
- * Prevents string in dst of getting bigger than maxlen characters.
- */
-void * LbStringConcat(char *dst, const char *src, const ulong dst_buflen)
-{
-    int max_num=dst_buflen-strlen(dst);
-    if (max_num<=0) return dst;
-    strncat(dst, src, max_num);
-    dst[dst_buflen-1]='\0';
-    return dst;
-}
-
-void * LbStringCopy(char *dst, const char *src, const ulong dst_buflen)
-{
-    if (dst_buflen < 1)
-        return dst;
-    strncpy(dst, src, dst_buflen);
-    dst[dst_buflen-1]='\0';
-    return dst;
-}
-
-void * LbStringToLowerCopy(char *dst, const char *src, const ulong dst_buflen)
-{
-    ulong i;
-    char chr;
-    if (dst_buflen < 1)
-        return dst;
-    for (i=0; i < dst_buflen; i++)
-    {
-        chr = tolower(src[i]);
-        dst[i] = chr;
-        if (chr == '\0')
-            break;
-    }
-    dst[dst_buflen-1]='\0';
-    return dst;
-}
-
-ulong LbStringLength(const char *str)
-{
-    if (str == NULL) return 0;
-    return strlen(str);
-}
 
 /******************************************************************************/

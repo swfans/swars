@@ -29,13 +29,7 @@ extern "C" {
 /******************************************************************************/
 typedef unsigned char * MemAllocFunc(ulong);
 /******************************************************************************/
-extern char lbEmptyString[];
-/******************************************************************************/
-short update_memory_constraits(void);
-void * LbStringCopy(char *dst, const char *src, const ulong dst_buflen);
-void * LbStringConcat(char *dst, const char *src, const ulong dst_buflen);
-ulong LbStringLength(const char *str);
-void * LbStringToLowerCopy(char *dst, const char *src, const ulong dst_buflen);
+
 /******************************************************************************/
 #ifdef __cplusplus
 }

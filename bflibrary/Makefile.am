@@ -24,6 +24,7 @@ libbullfrog_a_SOURCES = \
   src/general/gspr_col.cpp \
   src/general/gspr_map.cpp \
   src/general/gspr_std.cpp \
+  src/general/gstrut.c \
   src/general/gtext.cpp \
   src/general/gtrig.cpp \
   src/general/gutility.cpp \
