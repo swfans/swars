@@ -40,6 +40,10 @@ TbResult LbDirectoryChange(const char *path);
  */
 TbResult LbDirectoryCreate(const char *path);
 
+/** Creates directories in provided path, recursively.
+ */
+TbResult LbDirectoryMake(const char *path, TbBool recursive);
+
 /** Acquires current working directory.
  *
  * @return Returns the directory, without drive letter and without '/' at end.

@@ -28,21 +28,7 @@
 extern "C" {
 #endif
 /******************************************************************************/
-#ifdef __unix__
-# define FS_SEP '/'
-# define FS_SEP_STR "/"
-#elif defined WIN32
-# define FS_SEP '\\'
-# define FS_SEP_STR "\\"
-#endif
 
-
-int LbDirectoryChange(const char *path);
-TbResult LbDirectoryMake(const char *path, TbBool recursive);
-char *LbGetCurrWorkDir(char *dest, const unsigned long maxlen);
-int LbDirectoryCurrent(char *buf, unsigned long buflen);
-TbResult LbFileMakeFullPath(const TbBool append_cur_dir, const char *directory,
-    const char *filename, char *buf, const unsigned long len);
 
 
 /******************************************************************************/

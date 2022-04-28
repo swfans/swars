@@ -4,8 +4,8 @@
 
 #include "bflib_video.h"
 #include "bflib_joyst.h"
-#include "bflib_fileio.h"
 #include "bfmemory.h"
+#include "bffile.h"
 #include "bflib_dernc.h"
 #include "display.h"
 #include "game.h"

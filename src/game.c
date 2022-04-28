@@ -4,7 +4,6 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
-#include "bflib_fileio.h"
 #include "bflib_video.h"
 #include "bflib_filelst.h"
 #include "bflib_sprite.h"
@@ -16,6 +15,7 @@
 #include "bflib_render.h"
 #include "bfmemory.h"
 #include "bfmemut.h"
+#include "bffile.h"
 #include "game_data.h"
 #include "display.h"
 #include "dos.h"

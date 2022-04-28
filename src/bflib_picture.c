@@ -28,7 +28,8 @@
 #include "bflib_basics.h"
 #include "bfmemory.h"
 #include "bflib_video.h"
-#include "bflib_fileio.h"
+#include "bffile.h"
+#include "bfdir.h"
 #include "game_data.h"
 
 static char game_dir_screenshots[] = "qdata/screenshots";

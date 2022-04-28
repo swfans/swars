@@ -4,6 +4,7 @@
 #include <winbase.h>
 #include <winreg.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "windows.h"
 

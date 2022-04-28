@@ -31,6 +31,18 @@ extern "C" {
 //TODO change to build system param
 #define LB_FILENAME_TRANSFORM 1
 
+
+/* File system separator. Use when concatenating path; when checking existing
+ * path, it is better to try both separators rather than use these defines.
+ */
+#if defined WIN32
+# define FS_SEP '\\'
+# define FS_SEP_STR "\\"
+#else
+# define FS_SEP '/'
+# define FS_SEP_STR "/"
+#endif
+
 enum TbFileOpenMode { // type=int8_t
     Lb_FILE_MODE_NEW = 0,
     Lb_FILE_MODE_OLD,

@@ -11,8 +11,8 @@
 # include <unistd.h>
 #endif
 
-#include "bflib_fileio.h"
 #include "util.h"
+#include "bffile.h"
 
 void
 strtolower (char *string)

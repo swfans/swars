@@ -20,7 +20,8 @@
 
 #include "globals.h"
 #include "bflib_basics.h"
-#include "bflib_fileio.h"
+#include "bffile.h"
+#include "bfdir.h"
 #include "bflib_picture.h"
 #include "unix.h"
 #include "windows.h"

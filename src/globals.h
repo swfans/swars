@@ -53,12 +53,6 @@ extern "C" {
 
 // Basic Definitions
 
-#if defined(unix) && !defined (GO32)
-#define SEPARATOR "/"
-#else
-#define SEPARATOR "\\"
-#endif
-
 #ifndef __cplusplus
 #ifndef max
 #define max(a,b) ((a)>(b)?(a):(b))
