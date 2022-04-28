@@ -20,18 +20,4 @@
 /******************************************************************************/
 #include "bflib_memory.h"
 
-#include <assert.h>
-#include <stdbool.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdarg.h>
-#include <stdlib.h>
-
-#include "dos.h"
-/******************************************************************************/
-#define AVAILABLE_MEMORY (16*1024*1024)
-#define TABLE_SIZE 256 /* hardcoded, do not change */
-
-
 /******************************************************************************/

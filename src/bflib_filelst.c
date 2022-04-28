@@ -20,7 +20,7 @@
 #include "bflib_filelst.h"
 
 #include "bflib_basics.h"
-#include "bflib_memory.h"
+#include "bfmemory.h"
 #include "bflib_fileio.h"
 #include "bflib_dernc.h"
 #include "bfmemory.h"

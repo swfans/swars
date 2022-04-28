@@ -20,7 +20,7 @@
 /******************************************************************************/
 #include "bfsprite.h"
 
-int lbSpriteReMapPtr;
+ubyte * lbSpriteReMapPtr;
 
 int LbSpriteReset()
 {

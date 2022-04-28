@@ -23,6 +23,7 @@
 #include "bftypes.h"
 
 #include <time.h>
+#include <stdio.h>
 
 #if defined(WIN32)||defined(DOS)||defined(GO32)
 #include <io.h>

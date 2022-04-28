@@ -31,6 +31,11 @@ extern "C" {
 // rather than relying on standard C memory allocation interface.
 #define LB_MEMORY_ARENAS 1
 
+/** Type for storing memory allocation routine
+ */
+typedef void * MemAllocFunc(TbMemSize);
+
+
 /** Allocates low (below 1MB) memory block.
  *
  * Can allocate the block anywhere when running on linear memory model.

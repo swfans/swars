@@ -28,7 +28,7 @@
 
 #include "bflib_basics.h"
 #include "bflib_fileio.h"
-#include "bflib_memory.h"
+#include "bfmemut.h"
 #include "globals.h"
 #include "bfmemory.h"
 

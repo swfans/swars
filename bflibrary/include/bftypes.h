@@ -26,6 +26,16 @@ extern "C" {
 
 #include <stddef.h>
 
+#ifndef false
+# define false 0
+#endif
+#ifndef true
+# define true 1
+#endif
+#ifndef NULL
+# define NULL 0
+#endif
+
 typedef unsigned long ulong;
 typedef unsigned int uint;
 typedef unsigned short ushort;

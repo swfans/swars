@@ -31,8 +31,6 @@
 #include <winuser.h>
 #endif
 
-//#include "bflib_datetm.h"
-#include "bflib_memory.h"
 #include "bflib_fileio.h"
 
 #ifdef __cplusplus

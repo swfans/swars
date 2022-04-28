@@ -53,7 +53,7 @@ int LbSpriteResetAll();
 int LbSpriteSetup();
 int LbSpriteSetupAll();
 int LbSpriteDrawScaled();
-extern int lbSpriteReMapPtr;
+extern ubyte * lbSpriteReMapPtr;
 
 int LbSpriteDrawOneColour();
 int LbSpriteDraw();

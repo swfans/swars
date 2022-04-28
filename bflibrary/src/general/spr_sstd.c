@@ -23,6 +23,7 @@
 #include "bfscreen.h"
 #include "bfutility.h"
 #include "bflog.h"
+#include <stdlib.h>
 
 #define SPRITE_SCALING_XSTEPS max(MAX_SUPPORTED_SPRITE_DIM,MAX_SUPPORTED_SCREEN_WIDTH)
 #define SPRITE_SCALING_YSTEPS max(MAX_SUPPORTED_SPRITE_DIM,MAX_SUPPORTED_SCREEN_HEIGHT)
