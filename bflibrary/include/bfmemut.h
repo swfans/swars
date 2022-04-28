@@ -2,15 +2,14 @@
 // Bullfrog Engine Emulation Library - for use to remake classic games like
 // Syndicate Wars, Magic Carpet, Genewars or Dungeon Keeper.
 /******************************************************************************/
-/** @file bfstrut.h
- *     Header file for sstrut.c.
+/** @file bfmemut.h
+ *     Header file for gmemut.cpp.
  * @par Purpose:
- *     String utility routines wrapper.
+ *     Memory related utility functions.
  * @par Comment:
- *     Wraps standard c string routines with additional checks. Implements
- *     a few new ones as well.
+ *     Provides custom wrappers to memory routines, helpful for debug.
  * @author   Tomasz Lis
- * @date     12 Nov 2008 - 25 Apr 2022
+ * @date     12 Nov 2008 - 05 Nov 2021
  * @par  Copying and copyrights:
  *     This program is free software; you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -18,8 +17,8 @@
  *     (at your option) any later version.
  */
 /******************************************************************************/
-#ifndef BFLIBRARY_BFSTRUT_H_
-#define BFLIBRARY_BFSTRUT_H_
+#ifndef BFLIBRARY_BFMEMUT_H_
+#define BFLIBRARY_BFMEMUT_H_
 
 #include "bftypes.h"
 
@@ -27,23 +26,28 @@
 extern "C" {
 #endif
 
-extern char lbEmptyString[];
-
-
-void * LbStringCopy(char *dst, const char *src, const ulong dst_buflen);
-
-/** Appends characters of source to destination, plus a terminating null-character.
- * Prevents string in dst of getting bigger than dst_buflen characters.
+/** Fills memory range with given byte value.
  */
-void * LbStringConcat(char *dst, const char *src, const ulong dst_buflen);
+void * LbMemorySet(void *dst, unsigned char c, TbMemSize size);
 
-ulong LbStringLength(const char *str);
+/** Copies memory range over given destination.
+ */
+void * LbMemoryCopy(void *in_dst, const void *in_src, TbMemSize size);
 
-void * LbStringToLowerCopy(char *dst, const char *src, const ulong dst_buflen);
+/** Copies memory range over given destination, allows overlapping.
+ */
+void * LbMemoryMove(void *in_dst, const void *in_src, TbMemSize size);
+
+/** Compare two memory blocks.
+ *
+ * @param ptr1 The first pointer.
+ * @param size Amount of bytes to compare.
+ */
+int LbMemoryCompare(void *ptr1, void *ptr2, TbMemSize size);
 
 #ifdef __cplusplus
 };
 #endif
 
-#endif // BFLIBRARY_BFSTRUT_H_
+#endif // BFLIBRARY_BFMEMUT_H_
 /******************************************************************************/

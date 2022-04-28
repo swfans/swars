@@ -18,6 +18,7 @@ libbullfrog_a_SOURCES = \
   src/general/gkeybd.cpp \
   src/general/gline.cpp \
   src/general/glog.cpp \
+  src/general/gmemut.c \
   src/general/gpalette.cpp \
   src/general/gscreen.cpp \
   src/general/gsprite.cpp \

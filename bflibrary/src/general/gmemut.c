@@ -2,12 +2,12 @@
 // Bullfrog Engine Emulation Library - for use to remake classic games like
 // Syndicate Wars, Magic Carpet, Genewars or Dungeon Keeper.
 /******************************************************************************/
-/** @file gutility.cpp
- *     Implementation of related functions.
+/** @file gmemut.c
+ *     Memory related utility functions.
  * @par Purpose:
- *     Unknown.
+ *     Provides custom wrappers to memory routines, helpful for debug.
  * @par Comment:
- *     None.
+ *     Wrappers to standard C memory handling.
  * @author   Tomasz Lis
  * @date     12 Nov 2008 - 05 Nov 2021
  * @par  Copying and copyrights:
@@ -17,8 +17,26 @@
  *     (at your option) any later version.
  */
 /******************************************************************************/
-#include "bfutility.h"
+#include "bfmemut.h"
+#include <string.h>
 
+void * LbMemoryCopy(void *in_dst, const void *in_src, TbMemSize size)
+{
+    return memcpy(in_dst, in_src, size);
+}
 
+void * LbMemoryMove(void *in_dst, const void *in_src, TbMemSize size)
+{
+    return memmove(in_dst, in_src, size);
+}
 
+void * LbMemorySet(void *dst, unsigned char c, TbMemSize size)
+{
+    return memset(dst, c, size);
+}
+
+int LbMemoryCompare(void *ptr1, void *ptr2, TbMemSize size)
+{
+    return memcmp(ptr1, ptr2, size);
+}
 /******************************************************************************/

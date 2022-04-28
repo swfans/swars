@@ -534,9 +534,4 @@ TbResult LbMemoryShrink(void **ptr, TbMemSize size)
     return Lb_SUCCESS;
 }
 
-int LbMemoryCompare(void *ptr1, void *ptr2, TbMemSize size)
-{
-    return memcmp(ptr1, ptr2, size);
-}
-
 /******************************************************************************/

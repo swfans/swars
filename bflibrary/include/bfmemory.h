@@ -83,13 +83,6 @@ TbResult LbMemoryGrow(void **ptr, TbMemSize size);
  */
 TbResult LbMemoryShrink(void **ptr, TbMemSize size);
 
-/** Compare two memory blocks.
- *
- * @param ptr1 The first pointer.
- * @param size Amount of bytes to compare.
- */
-int LbMemoryCompare(void *ptr1, void *ptr2, TbMemSize size);
-
 #ifdef __cplusplus
 };
 #endif
