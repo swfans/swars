@@ -35,8 +35,18 @@ extern "C" {
 #endif
 #endif
 
-int LbMemoryCopy();
-int LbMemorySet();
+/** Fills memory range with given byte value.
+ */
+void * LbMemorySet(void *dst, unsigned char c, TbMemSize size);
+
+/** Copies memory range over given destination.
+ */
+void * LbMemoryCopy(void *in_dst, const void *in_src, TbMemSize size);
+
+/** Copies memory range over given destination, allows overlapping.
+ */
+void * LbMemoryMove(void *in_dst, const void *in_src, TbMemSize size);
+
 
 #ifdef __cplusplus
 };

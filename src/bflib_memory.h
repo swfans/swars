@@ -32,17 +32,6 @@ typedef unsigned char * MemAllocFunc(ulong);
 extern char lbEmptyString[];
 /******************************************************************************/
 short update_memory_constraits(void);
-void * LbMemorySet(void *dst, uchar c, ulong length);
-void * LbMemoryCopy(void *in_dst, const void *in_src, ulong len);
-TbResult LbMemorySetup();
-TbResult LbMemoryReset(void);
-TbResult  LbMemoryCheck(void);
-unsigned char * LbMemoryAllocLow(ulong size);
-unsigned char * LbMemoryAlloc(ulong size);
-TbResult LbMemoryFree(void *mem_ptr);
-TbResult LbMemoryGrow(void **ptr, unsigned long size);
-TbResult LbMemoryShrink(void **ptr, unsigned long size);
-int LbMemoryCompare(void *ptr1, void *ptr2, unsigned long size);
 void * LbStringCopy(char *dst, const char *src, const ulong dst_buflen);
 void * LbStringConcat(char *dst, const char *src, const ulong dst_buflen);
 ulong LbStringLength(const char *str);

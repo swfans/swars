@@ -7,6 +7,7 @@
 #include "bflib_fileio.h"
 #include "bflib_memory.h"
 #include "bflib_dernc.h"
+#include "bfmemory.h"
 #include "display.h"
 #include "game.h"
 #include "game_data.h"

@@ -18,15 +18,21 @@
  */
 /******************************************************************************/
 #include "bfutility.h"
+#include <string.h>
 
-int LbMemoryCopy()
+void * LbMemoryCopy(void *in_dst, const void *in_src, TbMemSize size)
 {
-// code at 0001:000bbe40
+    return memcpy(in_dst, in_src, size);
 }
 
-int LbMemorySet()
+void * LbMemoryMove(void *in_dst, const void *in_src, TbMemSize size)
 {
-// code at 0001:000bbe74
+    return memmove(in_dst, in_src, size);
+}
+
+void * LbMemorySet(void *dst, unsigned char c, TbMemSize size)
+{
+    return memset(dst, c, size);
 }
 
 

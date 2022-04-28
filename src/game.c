@@ -15,6 +15,7 @@
 #include "bflib_mouse.h"
 #include "bflib_picture.h"
 #include "bflib_render.h"
+#include "bfmemory.h"
 #include "game_data.h"
 #include "display.h"
 #include "dos.h"
