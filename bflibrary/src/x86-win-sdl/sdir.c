@@ -144,26 +144,26 @@ TbResult LbDirectoryMake(const char *path, TbBool recursive)
 TbResult LbDirectoryCurrent(char *buf, unsigned long buflen)
 {
     if ( getcwd(buf,buflen) == NULL )
-      return -1;
+        return Lb_FAIL;
     if ( buf[1] == ':' )
-      // Unsafe to use strcpy() on overlapping buffers, but we can memmove().
-      memmove(buf, buf+2, strlen(buf+2) + 1);
+        // Unsafe to use strcpy() on overlapping buffers, but we can memmove().
+        memmove(buf, buf+2, strlen(buf+2) + 1);
     int len = strlen(buf);
     if ( len > 1 )
     {
-      if ( (buf[len-1] == '\\') || (buf[len-1] == '/') )
-        buf[len-1] = '\0';
+        if ( (buf[len-1] == '\\') || (buf[len-1] == '/') )
+          buf[len-1] = '\0';
     }
     return Lb_SUCCESS;
 }
 
 TbBool LbDirectoryExists(const char *dirname)
 {
-  struct stat stbuf;
+    struct stat stbuf;
 
-  if ( access(dirname, 0) || stat(dirname, &stbuf) == -1 )
-    return false;
-  return S_ISDIR(stbuf.st_mode);
+    if ( access(dirname, 0) || stat(dirname, &stbuf) == -1 )
+        return false;
+    return S_ISDIR(stbuf.st_mode);
 }
 
 TbResult LbDirectoryRemove(const char *path)

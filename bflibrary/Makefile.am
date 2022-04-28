@@ -9,6 +9,7 @@ libbullfrog_a_SOURCES = \
   src/general/gbuffer.cpp \
   src/general/gcircle.cpp \
   src/general/gdata.cpp \
+  src/general/gendian.c \
   src/general/gerrorlg.cpp \
   src/general/gexe_key.cpp \
   src/general/gfile.c \

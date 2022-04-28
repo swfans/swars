@@ -40,14 +40,14 @@ TbResult LbDriveChange(const ulong drive)
 #if defined(WIN32)||defined(DOS)||defined(GO32)
     int reterror = _chdrive(drive);
     if (reterror) {
-        result = -1;
+        result = Lb_FAIL;
     } else {
         result = 1;
     }
 #else
     // Let's assume we can only be on 'C' drive on Unix
     if (drive != 3) {
-        result = -1;
+        result = Lb_FAIL;
     } else {
         result = 1;
     }
@@ -61,7 +61,7 @@ TbResult LbDriveExists(const ulong drive)
 #if defined(WIN32)||defined(DOS)||defined(GO32)
     unsigned int lastdrive = _getdrive();
     if (_chdrive(drive)) {
-        result = -1;
+        result = Lb_FAIL;
     } else {
         result = 1;
         _chdrive(lastdrive);
@@ -69,7 +69,7 @@ TbResult LbDriveExists(const ulong drive)
 #else
     // Let's assume we have only 'C' drive on Unix
     if (drive != 3) {
-        result = -1;
+        result = Lb_FAIL;
     } else {
         result = 1;
     }
@@ -85,7 +85,7 @@ TbResult LbDriveFreeSpace(const ulong drive, TbDriveInfo *drvinfo)
     int reterror = _getdiskfree(drive, &diskspace);
     if ( reterror )
     {
-        result = -1;
+        result = Lb_FAIL;
     } else
     {
         drvinfo->TotalClusters = diskspace.total_clusters;

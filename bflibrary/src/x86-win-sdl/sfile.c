@@ -175,7 +175,7 @@ TbFileHandle LbFileOpen(const char *fname, const TbFileOpenMode accmode)
 TbResult LbFileClose(TbFileHandle fhandle)
 {
   if ( close(fhandle) )
-    return -1;
+    return Lb_FAIL;
   return 1;
 }
 
@@ -201,7 +201,7 @@ TbResult LbFileSeek(TbFileHandle fhandle, long offset, TbFileSeekMode origin)
       rc = lseek(fhandle, offset, SEEK_END);
       break;
   default:
-      rc = -1;
+      rc = Lb_FAIL;
       break;
   }
   return rc;
@@ -349,7 +349,7 @@ TbResult LbFileFindNext(struct TbFileFind *ffind)
     {
         _findclose(ffind->ReservedHandle);
         ffind->ReservedHandle = -1;
-        result = -1;
+        result = Lb_FAIL;
     } else
     {
         convert_find_info(ffind);
@@ -383,7 +383,7 @@ TbResult LbFileRename(const char *fname_old, const char *fname_new)
 #endif
 
     if ( rename(fname_old,fname_new) )
-        result = -1;
+        result = Lb_FAIL;
     else
         result = 1;
     return result;
@@ -402,7 +402,7 @@ TbResult LbFileDelete(const char *fname)
 #endif
 
     if ( remove(fname) )
-        result = -1;
+        result = Lb_FAIL;
     else
         result = 1;
     return result;

@@ -21,21 +21,83 @@
 /******************************************************************************/
 #include "bffile.h"
 
+#include "bflog.h"
 #include "bfdir.h"
+#include "rnc_1fm.h"
 
-long LbFileLengthRnc_TODO(const char *fname)
+long LbFileLengthRnc(const char *fname)
 {
-// code at 0001:000964a0
+    TbFileHandle handle = LbFileOpen(fname, Lb_FILE_MODE_READ_ONLY);
+    if ( handle == -1 )
+        return -1;
+    LIBLOG("%s: file opened",fname);
+    unsigned char buffer[RNC_HEADER_LEN+1];
+    if ( LbFileRead(handle,buffer,RNC_HEADER_LEN) == -1 )
+    {
+        LIBLOG("%s: cannot read even %d bytes",fname,RNC_HEADER_LEN);
+        LbFileClose(handle);
+        return -1;
+    }
+    long flength;
+    if (blong(buffer+0)==RNC_SIGNATURE)
+    {
+        flength = blong(buffer+4);
+        LIBLOG("%s: file size from RNC header: %ld bytes",fname,RNC_HEADER_LEN,flength);
+    } else
+    {
+        flength = LbFileLengthHandle(handle);
+        LIBLOG("%s: file is not RNC, size: %ld bytes",fname,RNC_HEADER_LEN,flength);
+    }
+    LbFileClose(handle);
+    return flength;
 }
 
-long LbFileLoadAt_TODO(const char *fname, void *buffer)
+long LbFileLoadAt(const char *fname, void *buffer)
 {
-// code at 0001:0009656c
+    long filelength = LbFileLengthRnc(fname);
+    TbFileHandle handle = -1;
+    if (filelength != -1)
+    {
+        handle = LbFileOpen(fname, Lb_FILE_MODE_READ_ONLY);
+    }
+    int read_status = -1;
+    if (handle != -1)
+    {
+        read_status = LbFileRead(handle, buffer, filelength);
+        LbFileClose(handle);
+    }
+    if (read_status == -1)
+    {
+        LIBLOG("Could not read \"%s\", expected size %ld, errno %d", fname, filelength, (int)errno);
+        return -1;
+    }
+    long unp_length = UnpackM1((unsigned char *)buffer, filelength);
+    long result;
+    if ( unp_length >= 0 )
+    {
+        if (unp_length != 0)
+          result = unp_length;
+        else
+          result = filelength;
+    } else
+    {
+        LIBLOG("ERROR decompressing \"%s\"", fname);
+        result = -1;
+    }
+    return result;
 }
 
-long LbFileSaveAt_TODO(const char *fname, const void *buffer,unsigned long len)
+long LbFileSaveAt(const char *fname, const void *buffer, unsigned long len)
 {
-// code at 0001:0009660c
+    TbFileHandle handle;
+    int result;
+
+    handle = LbFileOpen(fname, Lb_FILE_MODE_NEW);
+    if ( handle == -1 )
+        return -1;
+    result = LbFileWrite(handle,buffer,len);
+    LbFileClose(handle);
+    return result;
 }
 
 int LbFileStringSearch()
@@ -46,13 +108,17 @@ int LbFileStringSearch()
 TbResult LbFileMakeFullPath(const TbBool append_cur_dir,
   const char *directory, const char *filename, char *buf, const unsigned long len)
 {
-  if (filename == NULL)
-    { buf[0]='\0'; return -1; }
+  if (filename == NULL) {
+      buf[0]='\0';
+      return Lb_FAIL;
+  }
   unsigned long namestart;
   if ( append_cur_dir )
   {
-    if ( LbDirectoryCurrent(buf, len-2) == -1 )
-    { buf[0] = '\0'; return -1; }
+    if ( LbDirectoryCurrent(buf, len-2) == -1 ) {
+        buf[0] = '\0';
+        return Lb_FAIL;
+    }
     namestart = strlen(buf);
     if ( (namestart > 0) && (buf[namestart-1] != '\\') && (buf[namestart-1] != '/'))
     {
@@ -70,7 +136,7 @@ TbResult LbFileMakeFullPath(const TbBool append_cur_dir,
     int copy_len;
     copy_len = strlen(directory);
     if ( len-2 <= namestart+copy_len-1 )
-      return -1;
+      return Lb_FAIL;
     memcpy(buf+namestart, directory, copy_len);
     namestart += copy_len-1;
     if ( (namestart > 0) && (buf[namestart-1] != '\\') && (buf[namestart-1] != '/'))
@@ -86,8 +152,10 @@ TbResult LbFileMakeFullPath(const TbBool append_cur_dir,
     int invlen;
     for (invlen=-1; invlen != 0; invlen--)
     {
-     if (*ptr++ == 0)
-       { invlen--; break; }
+        if (*ptr++ == 0) {
+            invlen--;
+            break;
+        }
     }
     int copy_len;
     const char *copy_src;
@@ -97,13 +165,15 @@ TbResult LbFileMakeFullPath(const TbBool append_cur_dir,
     copy_dst = buf;
     for (invlen=-1; invlen != 0; invlen--)
     {
-     if (*copy_dst++ == 0)
-       { invlen--; break; }
+        if (*copy_dst++ == 0) {
+            invlen--;
+            break;
+        }
     }
     memcpy(copy_dst-1, copy_src, copy_len);
     return 1;
   }
-  return -1;
+  return Lb_FAIL;
 }
 
 int LbFileCopy()
