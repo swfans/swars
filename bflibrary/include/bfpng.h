@@ -2,8 +2,8 @@
 // Bullfrog Engine Emulation Library - for use to remake classic games like
 // Syndicate Wars, Magic Carpet, Genewars or Dungeon Keeper.
 /******************************************************************************/
-/** @file giff.cpp
- *     Implementation of related functions.
+/** @file bfiff.h
+ *     Header file for gpng.c.
  * @par Purpose:
  *     Unknown.
  * @par Comment:
@@ -17,17 +17,29 @@
  *     (at your option) any later version.
  */
 /******************************************************************************/
-#include "bfiff.h"
+#ifndef BFLIBRARY_GPNG_H_
+#define BFLIBRARY_GPNG_H_
 
-int LbIffLoad()
-{
-// code at 0001:000b2e10
-}
+#include "bftypes.h"
 
-int LbIffSave()
-{
-// code at 0001:000b2e64
-}
+#ifdef __cplusplus
+extern "C" {
+#endif
 
+/** Save PNG Portable Network Graphics Bitmap
+ *
+ * @param fname
+ * @param inp_buffer
+ * @param pal
+ * @param force_fname
+ * @return
+ */
+TbResult LbPngSave(const char *fname, unsigned char *inp_buffer,
+    unsigned char *pal, TbBool force_fname);
 
+#ifdef __cplusplus
+};
+#endif
+
+#endif // BFLIBRARY_GPNG_H_
 /******************************************************************************/

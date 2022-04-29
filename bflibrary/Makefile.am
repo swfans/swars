@@ -13,14 +13,16 @@ libbullfrog_a_SOURCES = \
   src/general/gerrorlg.cpp \
   src/general/gexe_key.cpp \
   src/general/gfile.c \
+  src/general/gfnuniq.c \
   src/general/ggenf.cpp \
   src/general/ggengh.cpp \
-  src/general/giff.cpp \
+  src/general/giff.c \
   src/general/gkeybd.cpp \
   src/general/gline.cpp \
   src/general/glog.cpp \
   src/general/gmemut.c \
   src/general/gpalette.cpp \
+  src/general/gpng.c \
   src/general/gscreen.cpp \
   src/general/gsprite.cpp \
   src/general/gspr_col.cpp \
