@@ -11,6 +11,7 @@
 #include "bflib_keybrd.h"
 #include "bflib_mouse.h"
 #include "bflib_render.h"
+#include "bfpalette.h"
 #include "bfmemory.h"
 #include "bfmemut.h"
 #include "bffile.h"

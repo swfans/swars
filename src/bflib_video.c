@@ -59,10 +59,6 @@ TbScreenCoord LbScreenHeight(void)
     return lbDisplay.PhysicalScreenHeight;
 }
 
-int LbScreenSetup(unsigned short mode, unsigned int width, unsigned int height, TbPixel *palette)
-{
-    return LbScreenSetupAnyMode(mode, width, height, palette);
-}
 
 /** Clears the 8-bit video palette with black colour.
  * Only writes values to given palette bufer - does no screen operations.
@@ -72,7 +68,7 @@ int LbScreenSetup(unsigned short mode, unsigned int width, unsigned int height, 
  */
 TbResult LbPaletteDataFillBlack(unsigned char *palette)
 {
-    memset(palette, 0, PALETTE_SIZE);
+    memset(palette, 0, PALETTE_8b_SIZE);
     return Lb_SUCCESS;
 }
 
@@ -83,7 +79,7 @@ TbResult LbPaletteDataFillBlack(unsigned char *palette)
  */
 TbResult LbPaletteDataFillWhite(unsigned char *palette)
 {
-    memset(palette, 0x3F, PALETTE_SIZE);
+    memset(palette, 0x3F, PALETTE_8b_SIZE);
     return Lb_SUCCESS;
 }
 
@@ -144,7 +140,7 @@ TbResult LbPaletteGet(unsigned char *palette)
       return Lb_FAIL;
     if (lbDisplay.Palette == NULL)
         return Lb_FAIL;
-    memcpy(palette,lbDisplay.Palette,PALETTE_SIZE);
+    memcpy(palette,lbDisplay.Palette,PALETTE_8b_SIZE);
     return Lb_SUCCESS;
 }
 */
