@@ -23,6 +23,7 @@
 
 #include "bflog.h"
 #include "bfdir.h"
+#include "bfendian.h"
 #include "rnc_1fm.h"
 
 long LbFileLengthRnc(const char *fname)
@@ -39,7 +40,7 @@ long LbFileLengthRnc(const char *fname)
         return -1;
     }
     long flength;
-    if (blong(buffer+0)==RNC_SIGNATURE)
+    if (blong(buffer+0) == RNC_SIGNATURE)
     {
         flength = blong(buffer+4);
         LIBLOG("%s: file size from RNC header: %ld bytes",fname,RNC_HEADER_LEN,flength);

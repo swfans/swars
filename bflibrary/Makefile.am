@@ -8,7 +8,7 @@ libbullfrog_a_SOURCES = \
   src/general/gbox.cpp \
   src/general/gbuffer.cpp \
   src/general/gcircle.cpp \
-  src/general/gdata.cpp \
+  src/general/gdata.c \
   src/general/gendian.c \
   src/general/gerrorlg.cpp \
   src/general/gexe_key.cpp \
@@ -24,7 +24,7 @@ libbullfrog_a_SOURCES = \
   src/general/gpalette.cpp \
   src/general/gpng.c \
   src/general/gscreen.cpp \
-  src/general/gsprite.cpp \
+  src/general/gsprite.c \
   src/general/gspr_col.cpp \
   src/general/gspr_map.cpp \
   src/general/gspr_std.cpp \

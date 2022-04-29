@@ -22,6 +22,7 @@
 #include "bftypes.h"
 #include "bfendian.h"
 #include "bfmemory.h"
+#include "bfmemut.h"
 
 typedef struct {
     unsigned long bitbuf;           /* holds between 16 and 32 bits */

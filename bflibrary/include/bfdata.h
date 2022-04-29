@@ -3,7 +3,7 @@
 // Syndicate Wars, Magic Carpet, Genewars or Dungeon Keeper.
 /******************************************************************************/
 /** @file bfdata.h
- *     Header file for gdata.cpp.
+ *     Header file for gdata.c.
  * @par Purpose:
  *     Unknown.
  * @par Comment:
@@ -17,8 +17,8 @@
  *     (at your option) any later version.
  */
 /******************************************************************************/
-#ifndef BFLIBRARY_GDATA_H_
-#define BFLIBRARY_GDATA_H_
+#ifndef BFLIBRARY_BFDATA_H_
+#define BFLIBRARY_BFDATA_H_
 
 #include "bftypes.h"
 
@@ -27,6 +27,10 @@ extern "C" {
 #endif
 
 #pragma pack(1)
+
+typedef struct TbLoadFiles TbLoadFiles;
+
+typedef char *ModifyDataLoadFnameFunc(TbLoadFiles *);
 
 struct TbLoadFiles { // sizeof=44
     char FName[28]; // offset=0
@@ -37,19 +41,29 @@ struct TbLoadFiles { // sizeof=44
     ushort Spare; // offset=42
 };
 
-typedef struct TbLoadFiles TbLoadFiles;
-
 #pragma pack()
 
-int LbDataLoadSetModifyFilenameFunction();
-int LbDataLoad();
-int LbDataLoadAll();
-int LbDataFree();
-int LbDataFreeAll();
+char *defaultModifyDataLoadFilename(TbLoadFiles *ldfiles);
+ModifyDataLoadFnameFunc *LbDataLoadSetModifyFilenameFunction(ModifyDataLoadFnameFunc *newfunc);
+
+
+short LbDataFree(TbLoadFiles *load_file);
+short LbDataFreeAll(TbLoadFiles load_files[]);
+
+short LbDataLoad(TbLoadFiles *load_file);
+
+/*
+ * Loads a list of files. Allocates memory and loads new data.
+ * @return Returns amount of entries failed, or 0 on success.
+ */
+short LbDataLoadAll(TbLoadFiles load_files[]);
+
+int LbDataFindNameIndex(TbLoadFiles load_files[], char *fname);
+int LbDataFindStartIndex(TbLoadFiles load_files[], unsigned char **start);
 
 #ifdef __cplusplus
 };
 #endif
 
-#endif // BFLIBRARY_GDATA_H_
+#endif // BFLIBRARY_BFDATA_H_
 /******************************************************************************/
