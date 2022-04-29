@@ -5,12 +5,11 @@
 #include <sys/types.h>
 
 #include "bflib_video.h"
-#include "bflib_filelst.h"
+#include "bfdata.h"
 #include "bflib_sprite.h"
 #include "bflib_video.h"
 #include "bflib_keybrd.h"
 #include "bflib_mouse.h"
-#include "bflib_picture.h"
 #include "bflib_render.h"
 #include "bfmemory.h"
 #include "bfmemut.h"

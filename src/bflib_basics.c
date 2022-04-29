@@ -35,44 +35,6 @@
 extern "C" {
 #endif
 /******************************************************************************/
-TbBool emulate_integer_overflow(unsigned short nbits)
-{
-    return false;
-}
-
-
-/**
- * Returns a signed value, which is equal to val if it fits in nbits.
- * Otherwise, returns max value that can fit in nbits.
- * @param val the value to be saturated.
- * @param nbits Max bits size, including sign bit.
- */
-long saturate_set_signed(long long val,unsigned short nbits)
-{
-  long long max = (1 << (nbits-1)) - 1;
-  if (val >= max)
-    return max;
-  if (val <= -max)
-    return -max;
-  return val;
-}
-
-/**
- * Returns an unsigned value, which is equal to val if it fits in nbits.
- * Otherwise, returns max value that can fit in nbits.
- * @param val the value to be saturated.
- * @param nbits Max bits size, including sign bit.
- */
-unsigned long saturate_set_unsigned(unsigned long long val,unsigned short nbits)
-{
-    unsigned long long max = (1 << (nbits)) - 1;
-    if (emulate_integer_overflow(nbits))
-        return (val & max);
-    if (val >= max)
-        return max;
-    return val;
-}
-
 /******************************************************************************/
 #ifdef __cplusplus
 }

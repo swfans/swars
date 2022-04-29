@@ -115,9 +115,6 @@ typedef size_t TbSize;
 
  */
 /******************************************************************************/
-long saturate_set_signed(long long val,unsigned short nbits);
-unsigned long saturate_set_unsigned(unsigned long long val,unsigned short nbits);
-/******************************************************************************/
 #ifdef __cplusplus
 }
 #endif

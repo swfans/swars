@@ -6,8 +6,6 @@ swars_SOURCES = \
 	ariadne.sx \
 	bflib_basics.c \
 	bflib_basics.h \
-	bflib_filelst.c \
-	bflib_filelst.h \
 	bflib_fmvids.sx \
 	bflib_joyst.c \
 	bflib_joyst.h \
@@ -16,8 +14,6 @@ swars_SOURCES = \
 	bflib_keybrd_s.sx \
 	bflib_mouse.c \
 	bflib_mouse.h \
-	bflib_picture.c \
-	bflib_picture.h \
 	bflib_render.c \
 	bflib_render_gpoly.sx \
 	bflib_render.h \
