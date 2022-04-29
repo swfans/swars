@@ -19,12 +19,12 @@
 /******************************************************************************/
 #include "bfpalette.h"
 
-int LbPaletteGet()
+int LbPaletteGet_TODO()
 {
 // code at 0001:000989f0
 }
 
-int LbPaletteSet()
+TbResult LbPaletteSet_TODO(const unsigned char *palette)
 {
 // code at 0001:00098a54
 }

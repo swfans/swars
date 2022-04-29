@@ -19,7 +19,8 @@
 /******************************************************************************/
 #include "bfscreen.h"
 
-struct ScreenModeInfo lbScreenModeInfo[] = {
+//TODO remove from ASM, then rename
+struct ScreenModeInfo lbScreenModeInfo_UNUSED[] = {
     {   0,   0, 0,0,   0x0,"MODE_INVALID"},
     { 320, 200, 8,0,  0x13,"MODE_320_200_8"},
     { 320, 200,16,0,   0x0,"MODE_320_200_16"},
@@ -51,10 +52,11 @@ struct ScreenModeInfo lbScreenModeInfo[] = {
     {   0,   0, 0,0,   0x0,"MODE_INVALID"},
 };
 
-TbDisplayStruct lbDisplay;
+//TODO remove from ASM, then rename
+TbDisplayStruct lbDisplay_UNUSED;
 
 TbResult LbScreenSetup(TbScreenMode mode, TbScreenCoord width, TbScreenCoord height,
-    unsigned char *palette, short buffers_count, TbBool wscreen_vid)
+    unsigned char *palette)
 {
     return LbScreenSetupAnyMode(mode, width, height, palette);
 }

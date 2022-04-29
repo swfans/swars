@@ -17,8 +17,8 @@
  *     (at your option) any later version.
  */
 /******************************************************************************/
-#ifndef BFLIBRARY_GSCREEN_H_
-#define BFLIBRARY_GSCREEN_H_
+#ifndef BFLIBRARY_BFSCREEN_H_
+#define BFLIBRARY_BFSCREEN_H_
 
 #include "bftypes.h"
 
@@ -32,6 +32,9 @@ extern "C" {
 #define MAX_SUPPORTED_SCREEN_WIDTH  3840
 #define MAX_SUPPORTED_SCREEN_HEIGHT 2160
 
+/** Standard video modes, registered by LbScreenInitialize().
+ * These are standard VESA modes, indexed this way in all Bullfrog games.
+ */
 enum ScreenMode { // type=int8_t
     Lb_SCREEN_MODE_INVALID = 0,
     Lb_SCREEN_MODE_320_200_8,
@@ -83,6 +86,8 @@ enum TbDrawFlags {
 };
 
 #pragma pack(1)
+
+typedef struct DisplayStruct TbDisplayStruct;
 
 struct DisplayStruct { // sizeof=118
     /** Pointer to physical screen buffer, if available. */
@@ -192,7 +197,7 @@ struct DisplayStruct { // sizeof=118
     ubyte *Palette; // offset=114
 };
 
-typedef struct DisplayStruct TbDisplayStruct;
+typedef struct ScreenModeInfo TbScreenModeInfo;
 
 struct ScreenModeInfo { // sizeof=38
     /** Hardware driver screen width. */
@@ -214,17 +219,16 @@ struct ScreenModeInfo { // sizeof=38
     char Desc[24]; // offset=14
 };
 
-typedef struct ScreenModeInfo TbScreenModeInfo;
-
 #pragma pack()
 
+extern TbScreenModeInfo lbScreenModeInfo[];
+extern TbDisplayStruct lbDisplay;
+
 TbResult LbScreenSetup(TbScreenMode mode, TbScreenCoord width, TbScreenCoord height,
-    unsigned char *palette, short buffers_count, TbBool wscreen_vid);
+    unsigned char *palette);
 
 int LbScreenIsModeAvailable();
 int LbScreenSetGraphicsWindow();
-extern TbScreenModeInfo lbScreenModeInfo[];
-extern TbDisplayStruct lbDisplay;
 
 int LbScreenSetupAnyMode(unsigned short mode, unsigned long width,
     unsigned long height, TbPixel *palette);
@@ -240,7 +244,7 @@ extern int lbScreenDirectAccessActive;
 int LbScreenFindVideoModes();
 int LbScreenSwap();
 int LbScreenSwapBoxClear();
-int LbScreenSwapClear();
+TbResult LbScreenSwapClear(TbPixel colour);
 int LbScreenSwapBox();
 int LbScreenDrawHVLineDirect();
 int LbScreenWaitVbi();
@@ -249,5 +253,5 @@ int LbScreenWaitVbi();
 };
 #endif
 
-#endif // BFLIBRARY_GSCREEN_H_
+#endif // BFLIBRARY_BFSCREEN_H_
 /******************************************************************************/

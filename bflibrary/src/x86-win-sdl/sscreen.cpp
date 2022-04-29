@@ -19,7 +19,7 @@
 /******************************************************************************/
 #include "bfscreen.h"
 
-int LbScreenSetupAnyMode(unsigned short mode, unsigned long width,
+int LbScreenSetupAnyMode_TODO(unsigned short mode, unsigned long width,
     unsigned long height, TbPixel *palette)
 {
 // code at 0001:000954e0
@@ -77,7 +77,7 @@ int LbScreenSwapBoxClear()
 // code at 0001:00095964
 }
 
-int LbScreenSwapClear()
+int LbScreenSwapClear_TODO()
 {
 // code at 0001:00095b34
 }

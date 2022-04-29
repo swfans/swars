@@ -44,7 +44,8 @@ int LbPaletteFindColour();
 int LbPaletteDraw();
 
 int LbPaletteGet();
-int LbPaletteSet();
+
+TbResult LbPaletteSet(const unsigned char *palette);
 
 #ifdef __cplusplus
 };
