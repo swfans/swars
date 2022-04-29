@@ -77,12 +77,22 @@ struct TiledSprite {
 
 #pragma pack()
 
-short LbSpriteSetup(struct TbSprite *start, const struct TbSprite *end, const unsigned char * data);
-int LbSpriteSetupAll(struct TbSetupSprite t_setup[]);
+/** Set up data pointers in an array of sprites within given bounds.
+ */
+TbResult LbSpriteSetup(TbSprite *start, const TbSprite *end, const unsigned char * data);
 
-int LbSpriteReset();
-int LbSpriteResetAll();
+/** Set up data pointers in all arrays of sprites from given setup list.
+ */
+TbResult LbSpriteSetupAll(TbSetupSprite t_setup[]);
+
+/** Clear data pointers in all arrays of sprites from given setup list.
+ */
+TbResult LbSpriteClearAll(TbSetupSprite t_setup[]);
+
+TbResult LbSpriteReset();
+TbResult LbSpriteResetAll();
 int LbSpriteDrawScaled();
+
 extern ubyte * lbSpriteReMapPtr;
 
 int LbSpriteDrawOneColour();

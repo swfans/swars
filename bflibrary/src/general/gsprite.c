@@ -24,7 +24,7 @@
 
 ubyte * lbSpriteReMapPtr;
 
-short LbSpriteSetup(struct TbSprite *start, const struct TbSprite *end, const unsigned char * data)
+TbResult LbSpriteSetup(TbSprite *start, const TbSprite *end, const unsigned char * data)
 {
     struct TbSprite *sprt;
     int n;
@@ -39,45 +39,45 @@ short LbSpriteSetup(struct TbSprite *start, const struct TbSprite *end, const un
       }
       sprt++;
     }
-    LIBLOG("initied %d of %d sprites",n, (sprt-start));
-    return 1;
+    LIBLOG("initied %d of %d sprites", n, (sprt-start));
+    return Lb_SUCCESS;
 }
 
-int LbSpriteSetupAll(struct TbSetupSprite t_setup[])
+TbResult LbSpriteSetupAll(TbSetupSprite t_setup[])
 {
     struct TbSetupSprite *stp_sprite;
     int idx;
     idx=0;
-    stp_sprite=&t_setup[idx];
+    stp_sprite = &t_setup[idx];
     while (stp_sprite->Data != NULL)
     {
       if ((stp_sprite->Start != NULL) && (stp_sprite->End != NULL))
         LbSpriteSetup(*(stp_sprite->Start), *(stp_sprite->End), (unsigned char *)*(stp_sprite->Data));
       idx++;
-      stp_sprite=&t_setup[idx];
+      stp_sprite = &t_setup[idx];
     }
     LIBLOG("Initiated %d SetupSprite lists", idx);
-    return 1;
+    return Lb_SUCCESS;
 }
 
-int LbSpriteClearAll(struct TbSetupSprite t_setup[])
+TbResult LbSpriteClearAll(TbSetupSprite t_setup[])
 {
-  struct TbSetupSprite *stp_sprite;
-  int idx;
-  idx=0;
-  stp_sprite=&t_setup[idx];
-  while (stp_sprite->Data != NULL)
-  {
-    if ((stp_sprite->Start != NULL) && (stp_sprite->End != NULL))
-    {
-      *(stp_sprite->Start) = NULL;
-      *(stp_sprite->End) = NULL;
-      *(stp_sprite->Data) = 0;
-    }
-    idx++;
+    struct TbSetupSprite *stp_sprite;
+    int idx;
+    idx = 0;
     stp_sprite=&t_setup[idx];
-  }
-  LIBLOG("Cleaned %d SetupSprite lists", idx);
-  return 1;
+    while (stp_sprite->Data != NULL)
+    {
+        if ((stp_sprite->Start != NULL) && (stp_sprite->End != NULL))
+        {
+            *(stp_sprite->Start) = NULL;
+            *(stp_sprite->End) = NULL;
+            *(stp_sprite->Data) = 0;
+        }
+        idx++;
+        stp_sprite=&t_setup[idx];
+    }
+    LIBLOG("Cleaned %d SetupSprite lists", idx);
+    return Lb_SUCCESS;
 }
 /******************************************************************************/
