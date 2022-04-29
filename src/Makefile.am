@@ -23,8 +23,6 @@ swars_SOURCES = \
 	bflib_sndlib.sx \
 	bflib_snd_mss.sx \
 	bflib_snd_sys.sx \
-	bflib_sprite.c \
-	bflib_sprite.h \
 	bflib_video.c \
 	bflib_video.h \
 	bflib_video_s.sx \
