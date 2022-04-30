@@ -30,8 +30,6 @@
 unsigned char *LOC_poly_screen;
 unsigned char *LOC_vec_map;
 unsigned char *render_fade_tables = NULL;
-unsigned char *render_ghost = NULL;
-//unsigned char *render_alpha = NULL;
 unsigned char *LOC_vec_screen;
 unsigned long LOC_vec_screen_width;
 unsigned long LOC_vec_window_width;
