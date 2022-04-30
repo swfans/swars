@@ -20,6 +20,7 @@
 /******************************************************************************/
 #include "bfsprite.h"
 
+#include <string.h>
 #include "insprite.h"
 #include "bfscreen.h"
 #include "bflog.h"

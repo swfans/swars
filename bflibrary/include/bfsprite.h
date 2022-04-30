@@ -100,7 +100,22 @@ TbResult LbSpriteDraw(long x, long y, const TbSprite *spr);
 TbResult LbSpriteDrawRemap(long x, long y, const TbSprite *spr, const ubyte *cmap);
 
 int LbSpriteDrawUsingScalingData();
-int LbSpriteSetScalingData();
+
+/**
+ * Sets scaling data for drawing scaled sprites.
+ * @param x Position of the sprite in output buffer, X coord.
+ * @param y Position of the sprite in output buffer, Y coord.
+ * @param swidth Source sprite original width.
+ * @param sheight Source sprite original height.
+ * @param dwidth Width which the sprite should have on destination buffer.
+ * @param dheight Height which the sprite should have on destination buffer.
+ */
+void LbSpriteSetScalingData(long x, long y, long swidth, long sheight,
+    long dwidth, long dheight);
+
+void SetAlphaScalingData(long x, long y, long swidth, long sheight,
+    long dwidth, long dheight);
+
 
 #ifdef __cplusplus
 };
