@@ -30,58 +30,6 @@ extern "C" {
 /******************************************************************************/
 
 /******************************************************************************/
-TbScreenCoord LbGraphicsScreenWidth(void)
-{
-    return lbDisplay.GraphicsScreenWidth;
-}
-
-TbScreenCoord LbGraphicsScreenHeight(void)
-{
-    return lbDisplay.GraphicsScreenHeight;
-}
-
-/** Resolution in width of the current video mode.
- *  Note that it's not always "physical" size,
- *  and it definitely can't be used as pitch/scanline
- *  (size of data for one line) in the graphics buffer.
- *
- *  But it is the width that will be visible on screen.
- *
- * @return
- */
-TbScreenCoord LbScreenWidth(void)
-{
-    return lbDisplay.PhysicalScreenWidth;
-}
-
-TbScreenCoord LbScreenHeight(void)
-{
-    return lbDisplay.PhysicalScreenHeight;
-}
-
-
-/** Clears the 8-bit video palette with black colour.
- * Only writes values to given palette bufer - does no screen operations.
- *
- * @param palette Pointer to the palette colors data.
- * @return Lb_SUCCESS, or error code.
- */
-TbResult LbPaletteDataFillBlack(unsigned char *palette)
-{
-    memset(palette, 0, PALETTE_8b_SIZE);
-    return Lb_SUCCESS;
-}
-
-/** Clears the 8-bit video palette with white colour.
- *
- * @param palette Pointer to the palette colors data.
- * @return Lb_SUCCESS, or error code.
- */
-TbResult LbPaletteDataFillWhite(unsigned char *palette)
-{
-    memset(palette, 0x3F, PALETTE_8b_SIZE);
-    return Lb_SUCCESS;
-}
 
 /** Sets the 8-bit video palette.
  *
