@@ -391,8 +391,9 @@ static inline TbResult LbSpriteDrawFCOneColour(const char *sp,short sprWd,short 
 
 TbResult LbSpriteDrawOneColour(long x, long y, const TbSprite *spr, const TbPixel colour)
 {
-    struct TbSpriteDrawData spd;
+    TbSpriteDrawData spd;
     TbResult ret;
+
     LIBLOG("At (%ld,%ld)",x,y);
     ret = LbSpriteDrawPrepare(&spd, x, y, spr);
     if (ret != Lb_SUCCESS)

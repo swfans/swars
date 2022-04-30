@@ -97,6 +97,7 @@ extern ubyte * lbSpriteReMapPtr;
 
 TbResult LbSpriteDrawOneColour(long x, long y, const TbSprite *spr, const TbPixel colour);
 TbResult LbSpriteDraw(long x, long y, const TbSprite *spr);
+TbResult LbSpriteDrawRemap(long x, long y, const TbSprite *spr, const ubyte *cmap);
 
 int LbSpriteDrawUsingScalingData();
 int LbSpriteSetScalingData();

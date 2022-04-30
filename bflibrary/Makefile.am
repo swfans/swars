@@ -25,8 +25,8 @@ libbullfrog_a_SOURCES = \
   src/general/gpng.c \
   src/general/gscreen.cpp \
   src/general/gsprite.c \
-  src/general/gspr_col.cpp \
-  src/general/gspr_map.cpp \
+  src/general/gspr_col.c \
+  src/general/gspr_map.c \
   src/general/gspr_std.c \
   src/general/gstrut.c \
   src/general/gtext.cpp \

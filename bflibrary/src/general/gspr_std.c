@@ -303,104 +303,6 @@ static inline void LbDrawBufferSolid(unsigned char **buf_out, const char *buf_in
 }
 
 /** @internal
- *  Draw part of sprite line.
- *
- * @param buf_out
- * @param buf_inp
- * @param buf_len
- * @param mirror
- */
-static inline void LbDrawBufferTrRemap(unsigned char **buf_out, const char *buf_inp,
-        const int buf_len, const unsigned char *cmap, const TbBool mirror)
-{
-  int i;
-  unsigned int val;
-  if ( mirror )
-  {
-    if ((lbDisplay.DrawFlags & Lb_SPRITE_TRANSPAR4) != 0)
-    {
-        for (i=0; i<buf_len; i++ )
-        {
-            val = cmap[*(const unsigned char *)buf_inp];
-            **buf_out = lbDisplay.GlassMap[(val<<8) + **buf_out];
-            buf_inp++;
-            (*buf_out)--;
-        }
-    } else
-    {
-        for (i=0; i<buf_len; i++ )
-        {
-            val = cmap[*(const unsigned char *)buf_inp];
-            **buf_out = lbDisplay.GlassMap[((**buf_out)<<8) + val];
-            buf_inp++;
-            (*buf_out)--;
-        }
-    }
-  } else
-  {
-    if ( lbDisplay.DrawFlags & Lb_SPRITE_TRANSPAR4 )
-    {
-        for (i=0; i<buf_len; i++ )
-        {
-            val = cmap[*(const unsigned char *)buf_inp];
-            **buf_out = lbDisplay.GlassMap[(val<<8) + **buf_out];
-            buf_inp++;
-            (*buf_out)++;
-        }
-    } else
-    {
-        for (i=0; i<buf_len; i++ )
-        {
-            val = cmap[*(const unsigned char *)buf_inp];
-            **buf_out = lbDisplay.GlassMap[((**buf_out)<<8) + val];
-            buf_inp++;
-            (*buf_out)++;
-        }
-    }
-  }
-}
-
-/** @internal
- *  Draw part of sprite line.
- *
- * @param buf_out
- * @param buf_inp
- * @param buf_len
- * @param mirror
- */
-static inline void LbDrawBufferSlRemap(unsigned char **buf_out, const char *buf_inp,
-        const int buf_len, const unsigned char *cmap, const TbBool mirror)
-{
-    int i;
-    for (i=0; i < buf_len; i++)
-    {
-        **buf_out = cmap[*(const unsigned char *)buf_inp];
-        buf_inp++;
-        (*buf_out)--;
-    }
-}
-
-/** @internal
- *  Draw part of sprite line.
- *
- * @param buf_out
- * @param buf_inp
- * @param buf_len
- * @param mirror
- */
-static inline void LbDrawBufferFCRemap(unsigned char **buf_out, const char *buf_inp,
-        const int buf_len, const unsigned char *cmap)
-{
-    int i;
-    for (i=0; i < buf_len; i++)
-    {
-        **buf_out = cmap[*(const unsigned char *)buf_inp];
-        buf_inp++;
-        (*buf_out)++;
-    }
-}
-
-/** @internal
  *  Draw one line of a transparent sprite.
  *
  * @param sp
@@ -704,6 +606,7 @@ TbResult LbSpriteDraw(long x, long y, const TbSprite *spr)
 {
     TbSpriteDrawData spd;
     TbResult ret;
+
     LIBLOG("At (%ld,%ld)",x,y);
     ret = LbSpriteDrawPrepare(&spd, x, y, spr);
     if (ret != Lb_SUCCESS)
