@@ -19,47 +19,47 @@
 /******************************************************************************/
 #include "bfbuffer.h"
 
-int LbBufferSet()
+int LbBufferSet_UNUSED()
 {
 // code at 0001:000c9c80
 }
 
-int LbBufferRelease()
+int LbBufferRelease_UNUSED()
 {
 // code at 0001:000c9ccc
 }
 
-int LbBufferLock()
+int LbBufferLock_UNUSED()
 {
 // code at 0001:000c9d10
 }
 
-int LbBufferUnlock()
+int LbBufferUnlock_UNUSED()
 {
 // code at 0001:000c9d64
 }
 
-int LbBufferFileSetup()
+int LbBufferFileSetup_UNUSED()
 {
 // code at 0001:000c9d8c
 }
 
-int LbBufferFileReset()
+int LbBufferFileReset_UNUSED()
 {
 // code at 0001:000c9e2c
 }
 
-int LbBufferFileRead()
+int LbBufferFileRead_UNUSED()
 {
 // code at 0001:000c9e74
 }
 
-int LbBufferFileReadByte()
+int LbBufferFileReadByte_UNUSED()
 {
 // code at 0001:000c9f30
 }
 
-int LbBufferFileSkip()
+int LbBufferFileSkip_UNUSED()
 {
 // code at 0001:000c9f7c
 }

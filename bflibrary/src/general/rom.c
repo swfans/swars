@@ -19,21 +19,21 @@
 /******************************************************************************/
 #include "rom.h"
 
-int prop_text()
+int prop_text_UNUSED()
 {
 // code at 0001:000e5efc
 }
 
-int make_fade_table()
+int make_fade_table_UNUSED()
 {
 // code at 0001:000e60a2
 }
 
-int tabwidth;
+int tabwidth_UNUSED;
 
-int font;
+int font_UNUSED;
 
-int qaz()
+int qaz_UNUSED()
 {
 // code at 0001:000e5f73
 }

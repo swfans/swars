@@ -19,48 +19,48 @@
 /******************************************************************************/
 #include "bftext.h"
 
-int LbTextSetWindow()
+int LbTextSetWindow_UNUSED()
 {
 // code at 0001:000baff0
 }
 
-int LbTextSetJustifyWindow()
+int LbTextSetJustifyWindow_UNUSED()
 {
 // code at 0001:000bb02c
 }
 
-int LbTextSetClipWindow()
+int LbTextSetClipWindow_UNUSED()
 {
 // code at 0001:000bb07c
 }
 
-int LbTextStringWidth()
+int LbTextStringWidth_UNUSED()
 {
 // code at 0001:000bb1a4
 }
 
-int LbTextWordWidth()
+int LbTextWordWidth_UNUSED()
 {
 // code at 0001:000bb27c
 }
 
-int LbTextStringHeight()
+int LbTextStringHeight_UNUSED()
 {
 // code at 0001:000bb300
 }
 
-int LbTextDraw()
+int LbTextDraw_UNUSED()
 {
 // code at 0001:000bb374
 }
 
-int lbSpacesPerTab;
+int lbSpacesPerTab_UNUSED;
 
-int lbTextJustifyWindow;
+int lbTextJustifyWindow_UNUSED;
 
-int lbTextClipWindow;
+int lbTextClipWindow_UNUSED;
 
-int lbFontPtr;
+int lbFontPtr_UNUSED;
 
 
 /******************************************************************************/

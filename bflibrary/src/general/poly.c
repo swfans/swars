@@ -19,55 +19,55 @@
 /******************************************************************************/
 #include "poly.h"
 
-int polyscans;
+int polyscans_UNUSED;
 
-int ft_jt()
+int ft_jt_UNUSED()
 {
 // code at 0001:000e02f1
 }
 
-int fb_jt()
+int fb_jt_UNUSED()
 {
 // code at 0001:000dfe72
 }
 
-int gt_jt()
+int gt_jt_UNUSED()
 {
 // code at 0001:000e1260
 }
 
-int ll_jt()
+int ll_jt_UNUSED()
 {
 // code at 0001:000dec37
 }
 
-int rl_jt()
+int rl_jt_UNUSED()
 {
 // code at 0001:000df544
 }
 
-int poly_line()
+int poly_line_UNUSED()
 {
 // code at 0001:000e5adf
 }
 
-int vec_mode;
+int vec_mode_UNUSED;
 
-int vec_colour;
+int vec_colour_UNUSED;
 
-int trig()
+int trig_UNUSED()
 {
 // code at 0001:000dead0
 }
 
 int poly_screen;
 
-int mgt_jt()
+int mgt_jt_UNUSED()
 {
 // code at 0001:000e156a
 }
 
-int add_to_edi()
+int add_to_edi_UNUSED()
 {
 // code at 0001:000e1123
 }
@@ -76,29 +76,29 @@ int vec_window_height;
 
 int vec_screen_width;
 
-int setup_vecs()
+int setup_vecs_UNUSED()
 {
 // code at 0001:000e5a73
 }
 
-int vec_pal;
+int vec_pal_UNUSED;
 
-int dither_map;
+int dither_map_UNUSED;
 
-int dither_end;
+int dither_end_UNUSED;
 
-int vec_window_width;
+int vec_window_width_UNUSED;
 
-int vec_screen;
+int vec_screen_UNUSED;
 
-int vec_map;
+int vec_map_UNUSED;
 
-int t12_jt()
+int t12_jt_UNUSED()
 {
 // code at 0001:000e54f0
 }
 
-int render_table()
+int render_table_UNUSED()
 {
 // code at 0001:000e06e3
 }

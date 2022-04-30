@@ -26,9 +26,6 @@
 extern "C" {
 #endif
 
-#define PALETTE_8b_COLORS 256
-#define PALETTE_8b_SIZE (3*PALETTE_8b_COLORS)
-
 #define MAX_SUPPORTED_SCREEN_WIDTH  3840
 #define MAX_SUPPORTED_SCREEN_HEIGHT 2160
 
@@ -111,13 +108,13 @@ struct DisplayStruct { // sizeof=118
     /** Resolution in width of the current video mode.
      *  Note that it's not always "physical" size.
      *  It is the part of screen buffer which is being drawn
-     *  on physical screen (WScreen X pixel number). */
+     *  on physical screen (WScreen X visible pixel number). */
     long PhysicalScreenWidth; // offset=24
 
     /** Resolution in height of the current video mode.
      *  Note that it's not always "physical" size.
      *  It is the part of screen buffer which is being drawn
-     *  on physical screen (WScreen Y pixel number). */
+     *  on physical screen (WScreen Y visible pixel number). */
     long PhysicalScreenHeight; // offset=28
 
     /** Width of the screen buffer (WScreen X pitch).
@@ -226,6 +223,36 @@ extern TbDisplayStruct lbDisplay;
 
 TbResult LbScreenSetup(TbScreenMode mode, TbScreenCoord width, TbScreenCoord height,
     unsigned char *palette);
+
+/** Graphics screen buffer (WScreen) width.
+ * Gives whole buffer dimension, not only the visible part.
+ * Acts as pitch (buffer line width) of both graphics screen
+ * and graphics window buffer.
+ */
+TbScreenCoord LbGraphicsScreenWidth(void);
+
+/** Graphics screen buffer (WScreen) height.
+ * Gives whole buffer dimension, not only the visible part.
+ */
+TbScreenCoord LbGraphicsScreenHeight(void);
+
+/** Horizontal resolution (width) of the current video mode.
+ *  Note that it's not always "physical" size,
+ *  and it definitely can't be used as pitch/scanline
+ *  (size of data for one line) in the graphics buffer.
+ *
+ *  But it is the width that will be visible on screen.
+ *
+ * @return
+ */
+TbScreenCoord LbScreenWidth(void);
+
+/** Vertical resolution (height) of the current video mode.
+ *  It is the height that will be visible on screen.
+ *
+ * @return
+ */
+TbScreenCoord LbScreenHeight(void);
 
 int LbScreenIsModeAvailable();
 int LbScreenSetGraphicsWindow();

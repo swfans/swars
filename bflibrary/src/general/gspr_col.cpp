@@ -20,7 +20,7 @@
 /******************************************************************************/
 #include "bfsprite.h"
 
-int LbSpriteDrawOneColour()
+int LbSpriteDrawOneColour_UNUSED()
 {
 // code at 0001:000af330
 }

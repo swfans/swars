@@ -19,12 +19,12 @@
 /******************************************************************************/
 #include "bfscrcopy.h"
 
-int LbScreenCopyBox()
+int LbScreenCopyBox_UNUSED()
 {
 // code at 0001:000991b3
 }
 
-int LbScreenCopy()
+int LbScreenCopy_UNUSED()
 {
 // code at 0001:0009917c
 }

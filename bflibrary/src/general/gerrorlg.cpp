@@ -19,17 +19,17 @@
 /******************************************************************************/
 #include "bflog.h"
 
-int LbErrorLogSetup()
+int LbErrorLogSetup_UNUSED()
 {
 // code at 0001:000bc2e0
 }
 
-int LbErrorLogReset()
+int LbErrorLogReset_UNUSED()
 {
 // code at 0001:000bc394
 }
 
-int LbErrorLog()
+int LbErrorLog_UNUSED()
 {
 // code at 0001:000bc3cc
 }

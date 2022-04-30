@@ -19,17 +19,17 @@
 /******************************************************************************/
 #include "bfcircle.h"
 
-int LbDrawCircle()
+int LbDrawCircle_UNUSED()
 {
 // code at 0001:000a17e0
 }
 
-int LbDrawCircleOutline()
+int LbDrawCircleOutline_UNUSED()
 {
 // code at 0001:000a182c
 }
 
-int LbDrawCircleFilled()
+int LbDrawCircleFilled_UNUSED()
 {
 // code at 0001:000a307c
 }

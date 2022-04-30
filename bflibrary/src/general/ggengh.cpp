@@ -19,12 +19,12 @@
 /******************************************************************************/
 #include "bfgentab.h"
 
-int LbGhostTableGenerate()
+int LbGhostTableGenerate_UNUSED()
 {
 // code at 0001:000a5e20
 }
 
-int ghost_table;
+int ghost_table_UNUSED;
 
 
 /******************************************************************************/

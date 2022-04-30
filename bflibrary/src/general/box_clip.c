@@ -19,12 +19,12 @@
 /******************************************************************************/
 #include "bfbox.h"
 
-int LbDrawBoxNoClip()
+int LbDrawBoxNoClip_UNUSED()
 {
 // code at 0001:000bd098
 }
 
-int LbDrawBoxClip()
+int LbDrawBoxClip_UNUSED()
 {
 // code at 0001:000bcf7c
 }

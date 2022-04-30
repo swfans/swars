@@ -19,12 +19,12 @@
 /******************************************************************************/
 #include "bfpixel.h"
 
-int LbDrawPixelClip()
+int LbDrawPixelClip_UNUSED()
 {
 // code at 0001:000a123d
 }
 
-int LbDrawPixel()
+int LbDrawPixel_UNUSED()
 {
 // code at 0001:000a1208
 }

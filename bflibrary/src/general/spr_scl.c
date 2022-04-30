@@ -20,7 +20,7 @@
 /******************************************************************************/
 #include "bfsprite.h"
 
-int LbSpriteSetScalingData()
+int LbSpriteSetScalingData_UNUSED()
 {
 // code at 0001:000e79c8
 }

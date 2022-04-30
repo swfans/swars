@@ -24,20 +24,31 @@ TbResult LbPaletteFade(ubyte *from_pal, ubyte arg2, ubyte fade_steps)
 // code at 0001:00098ac0
 }
 
-int LbPaletteStopOpenFade()
+int LbPaletteStopOpenFade_UNUSED()
 {
 // code at 0001:00098cb8
 }
 
-int LbPaletteFindColour()
+int LbPaletteFindColour_UNUSED()
 {
 // code at 0001:00098ccc
 }
 
-int LbPaletteDraw()
+int LbPaletteDraw_UNUSED()
 {
 // code at 0001:00099098
 }
 
+TbResult LbPaletteDataFillBlack(ubyte *palette)
+{
+    memset(palette, 0, PALETTE_8b_SIZE);
+    return Lb_SUCCESS;
+}
+
+TbResult LbPaletteDataFillWhite(ubyte *palette)
+{
+    memset(palette, 0x3F, PALETTE_8b_SIZE);
+    return Lb_SUCCESS;
+}
 
 /******************************************************************************/

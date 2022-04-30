@@ -19,12 +19,12 @@
 /******************************************************************************/
 #include "bfline.h"
 
-int LbDrawLine()
+int LbDrawLine_UNUSED()
 {
 // code at 0001:000a0aa0
 }
 
-void draw_b_line( long a1, long a2, long a3, long a4, char unsigned a5)
+void draw_b_line_UNUSED( long a1, long a2, long a3, long a4, char unsigned a5)
 {
 // code at 0001:000a0ee8
 }

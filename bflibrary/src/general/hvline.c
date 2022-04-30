@@ -19,7 +19,7 @@
 /******************************************************************************/
 #include "bfline.h"
 
-int LbDrawHVLine()
+int LbDrawHVLine_UNUSED()
 {
 // code at 0001:000b116c
 }

@@ -19,12 +19,12 @@
 /******************************************************************************/
 #include "bfgentab.h"
 
-int LbFadeTableGenerate()
+int LbFadeTableGenerate_UNUSED()
 {
 // code at 0001:00093d60
 }
 
-int fade_table;
+int fade_table_UNUSED;
 
 
 /******************************************************************************/

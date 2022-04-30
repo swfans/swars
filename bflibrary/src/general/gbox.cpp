@@ -19,12 +19,12 @@
 /******************************************************************************/
 #include "bfbox.h"
 
-int LbDrawBox()
+int LbDrawBox_UNUSED()
 {
 // code at 0001:000a39d0
 }
 
-int LbDrawBoxCoords()
+int LbDrawBoxCoords_UNUSED()
 {
 // code at 0001:000a3ab4
 }

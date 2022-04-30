@@ -24,7 +24,7 @@ int LbPaletteGet_TODO()
 // code at 0001:000989f0
 }
 
-TbResult LbPaletteSet_TODO(const unsigned char *palette)
+TbResult LbPaletteSet_TODO(const ubyte *palette)
 {
 // code at 0001:00098a54
 }

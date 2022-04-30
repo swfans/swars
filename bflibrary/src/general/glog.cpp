@@ -19,37 +19,37 @@
 /******************************************************************************/
 #include "bflog.h"
 
-int LbLogSetup()
+int LbLogSetup_UNUSED()
 {
 // code at 0001:000d1bf0
 }
 
-int LbLog()
+int LbLog_UNUSED()
 {
 // code at 0001:000d1cdc
 }
 
-int LbLogClose()
+int LbLogClose_UNUSED()
 {
 // code at 0001:000d1f84
 }
 
-int LbLogSetPrefix()
+int LbLogSetPrefix_UNUSED()
 {
 // code at 0001:000d2004
 }
 
-int LbLogDelete()
+int LbLogDelete_UNUSED()
 {
 // code at 0001:000d2098
 }
 
-int LbLogSuspend()
+int LbLogSuspend_UNUSED()
 {
 // code at 0001:000d20e4
 }
 
-int LbLogRestart()
+int LbLogRestart_UNUSED()
 {
 // code at 0001:000d2118
 }

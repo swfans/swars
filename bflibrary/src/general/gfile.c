@@ -101,7 +101,7 @@ long LbFileSaveAt(const char *fname, const void *buffer, unsigned long len)
     return result;
 }
 
-int LbFileStringSearch()
+int LbFileStringSearch_UNUSED()
 {
 // code at 0001:00096658
 }
@@ -177,7 +177,7 @@ TbResult LbFileMakeFullPath(const TbBool append_cur_dir,
   return Lb_FAIL;
 }
 
-int LbFileCopy()
+int LbFileCopy_UNUSED()
 {
 // code at 0001:0009696c
 }

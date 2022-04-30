@@ -5,7 +5,7 @@
 /** @file bfpalette.h
  *     Header file for gpalette.cpp, spalette.cpp.
  * @par Purpose:
- *     Unknown.
+ *     Video support library for indexed colour graphics.
  * @par Comment:
  *     None.
  * @author   Tomasz Lis
@@ -28,6 +28,9 @@ extern "C" {
 
 #pragma pack(1)
 
+#define PALETTE_8b_COLORS 256
+#define PALETTE_8b_SIZE (3*PALETTE_8b_COLORS)
+
 struct Palette { // sizeof=3
     ubyte Red; // offset=0
     ubyte Green; // offset=1
@@ -45,7 +48,22 @@ int LbPaletteDraw();
 
 int LbPaletteGet();
 
-TbResult LbPaletteSet(const unsigned char *palette);
+TbResult LbPaletteSet(const ubyte *palette);
+
+/** Clears the 8-bit video palette with black colour.
+ * Only writes values to given palette bufer - does no screen operations.
+ *
+ * @param palette Pointer to the palette colors data.
+ * @return Lb_SUCCESS, or error code.
+ */
+TbResult LbPaletteDataFillBlack(ubyte *palette);
+
+/** Clears the 8-bit video palette with white colour.
+ *
+ * @param palette Pointer to the palette colors data.
+ * @return Lb_SUCCESS, or error code.
+ */
+TbResult LbPaletteDataFillWhite(ubyte *palette);
 
 #ifdef __cplusplus
 };

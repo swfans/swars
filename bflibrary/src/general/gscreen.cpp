@@ -55,18 +55,38 @@ struct ScreenModeInfo lbScreenModeInfo_UNUSED[] = {
 //TODO remove from ASM, then rename
 TbDisplayStruct lbDisplay_UNUSED;
 
+TbScreenCoord LbGraphicsScreenWidth(void)
+{
+    return lbDisplay.GraphicsScreenWidth;
+}
+
+TbScreenCoord LbGraphicsScreenHeight(void)
+{
+    return lbDisplay.GraphicsScreenHeight;
+}
+
+TbScreenCoord LbScreenWidth(void)
+{
+    return lbDisplay.PhysicalScreenWidth;
+}
+
+TbScreenCoord LbScreenHeight(void)
+{
+    return lbDisplay.PhysicalScreenHeight;
+}
+
 TbResult LbScreenSetup(TbScreenMode mode, TbScreenCoord width, TbScreenCoord height,
     unsigned char *palette)
 {
     return LbScreenSetupAnyMode(mode, width, height, palette);
 }
 
-int LbScreenIsModeAvailable()
+int LbScreenIsModeAvailable_UNUSED()
 {
 // code at 0001:00093bf0
 }
 
-int LbScreenSetGraphicsWindow()
+int LbScreenSetGraphicsWindow_UNUSED()
 {
 // code at 0001:00093c30
 }
