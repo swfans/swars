@@ -43,7 +43,7 @@
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (LbSpriteDrawRemap_)
+GLOBAL_FUNC (LbSpriteDrawRemap_TODEL)
 /*----------------------------------------------------------------*/
 		push   %esi
 		push   %edi
