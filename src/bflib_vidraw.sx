@@ -2063,7 +2063,7 @@ draw_b_line:	/* 0x0E79D8 */
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (LbSpriteDrawOneColour_)
+GLOBAL_FUNC (LbSpriteDrawOneColour_TODEL)
 /*----------------------------------------------------------------*/
 		push   %esi
 		push   %edi
