@@ -3,9 +3,9 @@
 // Syndicate Wars, Magic Carpet, Genewars or Dungeon Keeper.
 /******************************************************************************/
 /** @file gspr_std.cpp
- *     Implementation of related functions.
+ *     Implementation of drawing sprites on screen in one color.
  * @par Purpose:
- *     Unknown.
+ *     Draw sprites using given color for all non-transparent pixels.
  * @par Comment:
  *     Part of 8-bit graphics canvas drawing library.
  *     Used for drawing sprites on screen.
@@ -20,35 +20,11 @@
 /******************************************************************************/
 #include "bfsprite.h"
 
+#include "insprite.h"
 #include "bfscreen.h"
 #include "bflog.h"
 
-typedef struct TbSpriteDrawData TbSpriteDrawData;
-
-/** @internal
- *  Storage for temp sprite data while drawing it.
- */
-struct TbSpriteDrawData {
-    char *sp;
-    short Wd;
-    short Ht;
-    unsigned char *r;
-    int nextRowDelta;
-    short startShift;
-    TbBool mirror;
-};
-
-/** @internal
- *  Prepare sprite drawing.
- *  Fills TbSpriteDrawData struct with values accepted by drawing routines.
- *
- * @param spd The TbSpriteDrawData struct to be filled.
- * @param x Drawing position x coordinate.
- * @param y Drawing position y coordinate.
- * @param spr Sprite to be drawn.
- * @return Gives Lb_SUCCESS if the data was prepared.
- */
-static inline TbResult LbSpriteDrawPrepare(TbSpriteDrawData *spd, long x, long y, const TbSprite *spr)
+TbResult LbSpriteDrawPrepare(TbSpriteDrawData *spd, long x, long y, const TbSprite *spr)
 {
     if (spr == NULL)
     {
@@ -166,15 +142,7 @@ static inline TbResult LbSpriteDrawPrepare(TbSpriteDrawData *spd, long x, long y
     return Lb_SUCCESS;
 }
 
-/** @internal
- *  Skip some of sprite data before drawing is started.
- *
- * @param sp Sprite data buffer pointer.
- * @param r Output buffer pointer.
- * @param x1 Width to be drawn.
- * @param left Width of the area to skip.
- */
-static inline short LbSpriteDrawLineSkipLeft(const char **sp, short *x1, short left)
+short LbSpriteDrawLineSkipLeft(const char **sp, short *x1, short left)
 {
     char schr;
     // Cut the left side of the sprite, if needed
@@ -223,13 +191,7 @@ static inline short LbSpriteDrawLineSkipLeft(const char **sp, short *x1, short l
     return 0;
 }
 
-/** @internal
- *  Skip to next line after drawing a requested area.
- *
- * @param sp Sprite data buffer pointer.
- * @param x1 Width difference after draw.
- */
-static inline void LbSpriteDrawLineSkipToEol(const char **sp, short *x1)
+void LbSpriteDrawLineSkipToEol(const char **sp, short *x1)
 {
     char schr;
     if ((*x1) <= 0)
@@ -335,84 +297,6 @@ static inline void LbDrawBufferSolid(unsigned char **buf_out, const char *buf_in
         {
             **buf_out = *(const unsigned char *)buf_inp;
             buf_inp++;
-            (*buf_out)++;
-        }
-    }
-}
-
-/** @internal
- *  Draw part of sprite line with single colour.
- *
- * @param buf_out
- * @param colour
- * @param buf_len
- * @param mirror
- */
-static inline void LbDrawBufferOneColour(unsigned char **buf_out, const TbPixel colour,
-        const int buf_len, const TbBool mirror)
-{
-    int i;
-    if ( mirror )
-    {
-        if ( lbDisplay.DrawFlags & Lb_SPRITE_TRANSPAR4 )
-        {
-            for (i=0; i<buf_len; i++ )
-            {
-                **buf_out = lbDisplay.GlassMap[(colour<<8) + **buf_out];
-                (*buf_out)--;
-            }
-        } else
-        {
-            for (i=0; i<buf_len; i++ )
-            {
-                **buf_out = lbDisplay.GlassMap[((**buf_out)<<8) + colour];
-                (*buf_out)--;
-            }
-        }
-    } else
-    {
-        if ( lbDisplay.DrawFlags & Lb_SPRITE_TRANSPAR4 )
-        {
-            for (i=0; i<buf_len; i++ )
-            {
-                **buf_out = lbDisplay.GlassMap[(colour<<8) + **buf_out];
-                (*buf_out)++;
-            }
-        } else
-        {
-            for (i=0; i<buf_len; i++ )
-            {
-                **buf_out = lbDisplay.GlassMap[((**buf_out)<<8) + colour];
-                (*buf_out)++;
-            }
-        }
-    }
-}
-
-/** @internal
- *  Draw part of sprite line with single colour.
- *
- * @param buf_out
- * @param colour
- * @param buf_len
- * @param mirror
- */
-static inline void LbDrawBufferOneColorSolid(unsigned char **buf_out, const TbPixel colour,
-        const int buf_len, const TbBool mirror)
-{
-    int i;
-    if ( mirror )
-    {
-        for (i=0; i < buf_len; i++)
-        {
-            **buf_out = colour;
-            (*buf_out)--;
-        }
-    } else
-    {
-        for (i=0; i < buf_len; i++)
-        {
-            **buf_out = colour;
             (*buf_out)++;
         }
     }
