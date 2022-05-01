@@ -31,7 +31,7 @@
 
 .text
 
-.global EXPORT_SYMBOL(lbDisplay__WScreen);
+.global EXPORT_SYMBOL(lbDisplay);
 .global EXPORT_SYMBOL(lbDisplay__DrawFlags);
 .global EXPORT_SYMBOL(lbDisplay__GraphicsScreenWidth);
 .global EXPORT_SYMBOL(lbDisplay__GraphicsWindowX);
@@ -1129,7 +1129,7 @@ LbDrawBoxClip_:	/* 0x0FADD0 */
 		jle    jump_faee2
 		add    %eax,%edi
 		add    EXPORT_SYMBOL(lbDisplay__GraphicsWindowX),%edi
-		add    EXPORT_SYMBOL(lbDisplay__WScreen),%edi
+		add    EXPORT_SYMBOL(lbDisplay)+4,%edi # lbDisplay.WScreen
 		mov    -0x10(%ebp),%edx
 		mov    EXPORT_SYMBOL(lbDisplay__GraphicsScreenWidth),%ebx
 		sub    -0xc(%ebp),%ebx
@@ -1662,7 +1662,7 @@ LbDrawTriangleFilled_:
 		mov    %ax,-0x46(%ebp)
 		or     %ax,%ax
 		jns    jump_1389c2
-		mov    EXPORT_SYMBOL(lbDisplay__WScreen),%ebx
+		mov    EXPORT_SYMBOL(lbDisplay)+4,%ebx # lbDisplay.WScreen
 		mov    %ebx,-0x20(%ebp)
 		movb   $0x1,-0x47(%ebp)
 		jmp    jump_1389e6
@@ -1671,7 +1671,7 @@ LbDrawTriangleFilled_:
 		jge    jump_139010
 		movzwl %ax,%ebx
 		imul   EXPORT_SYMBOL(lbDisplay__GraphicsScreenWidth),%ebx
-		add    EXPORT_SYMBOL(lbDisplay__WScreen),%ebx
+		add    EXPORT_SYMBOL(lbDisplay)+4,%ebx # lbDisplay.WScreen
 		mov    %ebx,-0x20(%ebp)
 		movb   $0x0,-0x47(%ebp)
 	jump_1389e6:
@@ -1813,7 +1813,7 @@ LbDrawTriangleFilled_:
 		mov    %ax,-0x46(%ebp)
 		or     %ax,%ax
 		jns    jump_138b99
-		mov    EXPORT_SYMBOL(lbDisplay__WScreen),%ebx
+		mov    EXPORT_SYMBOL(lbDisplay)+4,%ebx # lbDisplay.WScreen
 		mov    %ebx,-0x20(%ebp)
 		movb   $0x1,-0x47(%ebp)
 		jmp    jump_138bbd
@@ -1822,7 +1822,7 @@ LbDrawTriangleFilled_:
 		jge    jump_139010
 		movzwl %ax,%ebx
 		imul   EXPORT_SYMBOL(lbDisplay__GraphicsScreenWidth),%ebx
-		add    EXPORT_SYMBOL(lbDisplay__WScreen),%ebx
+		add    EXPORT_SYMBOL(lbDisplay)+4,%ebx # lbDisplay.WScreen
 		mov    %ebx,-0x20(%ebp)
 		movb   $0x0,-0x47(%ebp)
 	jump_138bbd:
@@ -1967,7 +1967,7 @@ LbDrawTriangleFilled_:
 		mov    %ax,-0x46(%ebp)
 		or     %ax,%ax
 		jns    jump_138d7d
-		mov    EXPORT_SYMBOL(lbDisplay__WScreen),%ebx
+		mov    EXPORT_SYMBOL(lbDisplay)+4,%ebx # lbDisplay.WScreen
 		mov    %ebx,-0x20(%ebp)
 		movb   $0x1,-0x47(%ebp)
 		jmp    jump_138da1
@@ -1976,7 +1976,7 @@ LbDrawTriangleFilled_:
 		jge    jump_139010
 		movzwl %ax,%ebx
 		imul   EXPORT_SYMBOL(lbDisplay__GraphicsScreenWidth),%ebx
-		add    EXPORT_SYMBOL(lbDisplay__WScreen),%ebx
+		add    EXPORT_SYMBOL(lbDisplay)+4,%ebx # lbDisplay.WScreen
 		mov    %ebx,-0x20(%ebp)
 		movb   $0x0,-0x47(%ebp)
 	jump_138da1:
@@ -2049,7 +2049,7 @@ LbDrawTriangleFilled_:
 		mov    %ax,-0x46(%ebp)
 		or     %ax,%ax
 		jns    jump_138e82
-		mov    EXPORT_SYMBOL(lbDisplay__WScreen),%ebx
+		mov    EXPORT_SYMBOL(lbDisplay)+4,%ebx # lbDisplay.WScreen
 		mov    %ebx,-0x20(%ebp)
 		movb   $0x1,-0x47(%ebp)
 		jmp    jump_138ea6
@@ -2058,7 +2058,7 @@ LbDrawTriangleFilled_:
 		jge    jump_139010
 		movzwl %ax,%ebx
 		imul   EXPORT_SYMBOL(lbDisplay__GraphicsScreenWidth),%ebx
-		add    EXPORT_SYMBOL(lbDisplay__WScreen),%ebx
+		add    EXPORT_SYMBOL(lbDisplay)+4,%ebx # lbDisplay.WScreen
 		mov    %ebx,-0x20(%ebp)
 		movb   $0x0,-0x47(%ebp)
 	jump_138ea6:

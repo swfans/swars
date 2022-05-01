@@ -30,7 +30,7 @@
 
 .text
 
-.global EXPORT_SYMBOL(lbDisplay__WScreen);
+.global EXPORT_SYMBOL(lbDisplay);
 .global EXPORT_SYMBOL(lbDisplay__MLeftButton);
 .global EXPORT_SYMBOL(lbDisplay__ScreenMode);
 .global EXPORT_SYMBOL(lbDisplay__GraphicsScreenWidth);
@@ -6823,7 +6823,7 @@ play_smk_direct:
 		push   %esi
 		mov    EXPORT_SYMBOL(lbDisplay__GraphicsScreenHeight),%edi
 		push   %edi
-		mov    EXPORT_SYMBOL(lbDisplay__WScreen),%eax
+		mov    EXPORT_SYMBOL(lbDisplay)+4,%eax # lbDisplay.WScreen
 		push   %eax
 	jump_eb279:
 		push   $0x0
@@ -7166,7 +7166,7 @@ copy_to_screen:
 		mov    %ebx,0x10(%esp)
 		jmp    jump_eb56a
 	jump_eb555:
-		mov    EXPORT_SYMBOL(lbDisplay__WScreen),%ebp
+		mov    EXPORT_SYMBOL(lbDisplay)+4,%ebp # lbDisplay.WScreen
 		mov    EXPORT_SYMBOL(lbDisplay__GraphicsScreenWidth),%eax
 		mov    EXPORT_SYMBOL(lbDisplay__GraphicsScreenHeight),%edx
 		mov    %eax,0x10(%esp)
@@ -7375,7 +7375,7 @@ copy_to_screen:
 		push   %edx
 		mov    EXPORT_SYMBOL(lbDisplay__GraphicsScreenWidth),%ebx
 		push   %ebx
-		mov    EXPORT_SYMBOL(lbDisplay__WScreen),%ecx
+		mov    EXPORT_SYMBOL(lbDisplay)+4,%ecx # lbDisplay.WScreen
 		push   %ecx
 		call   *_smack_draw_callback
 	jump_eb796:

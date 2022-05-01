@@ -313,7 +313,7 @@ GLOBAL_FUNC (ASM_LbScreenSwap)	/* 0xED8C0 */
 		jne    jump_ed8f9
 		mov    lbDisplay__GraphicsScreenWidth,%ecx
 		imul   lbDisplay__GraphicsScreenHeight,%ecx
-		mov    lbDisplay__WScreen,%esi
+		mov    lbDisplay+4,%esi # lbDisplay.WScreen
 		mov    lbDisplay__PhysicalScreen,%edi
 		sar    $0x2,%ecx
 		rep movsl %ds:(%esi),%es:(%edi)
@@ -323,7 +323,7 @@ GLOBAL_FUNC (ASM_LbScreenSwap)	/* 0xED8C0 */
 		mov    lbDisplay__GraphicsScreenHeight,%ebx
 		imul   %ebx,%eax
 		mov    %eax,-0x10(%ebp)
-		mov    lbDisplay__WScreen,%eax
+		mov    lbDisplay+4,%eax # lbDisplay.WScreen
 		mov    %eax,-0x8(%ebp)
 		xor    %edx,%edx
 		mov    %edx,-0x4(%ebp)
@@ -393,7 +393,7 @@ GLOBAL_FUNC (ASM_LbScreenSwapClear)
 		mov    0x18(%ebp),%al
 		mov    lbDisplay__GraphicsScreenWidth,%ecx
 		imul   lbDisplay__GraphicsScreenHeight,%ecx
-		mov    lbDisplay__WScreen,%esi
+		mov    lbDisplay+4,%esi # lbDisplay.WScreen
 		shl    $0x18,%eax
 		mov    lbDisplay__PhysicalScreen,%edi
 		add    %eax,%edx
@@ -408,7 +408,7 @@ GLOBAL_FUNC (ASM_LbScreenSwapClear)
 		mov    lbDisplay__GraphicsScreenHeight,%ecx
 		imul   %ecx,%eax
 		mov    %eax,-0x10(%ebp)
-		mov    lbDisplay__WScreen,%eax
+		mov    lbDisplay+4,%eax # lbDisplay.WScreen
 		mov    %eax,-0x8(%ebp)
 		xor    %edx,%edx
 		mov    %edx,-0x4(%ebp)
@@ -637,7 +637,7 @@ GLOBAL_FUNC (LbScreenSetGraphicsWindow_)	/* e0d00 */
 		mov    %eax,lbDisplay__GraphicsWindowHeight
 		mov    lbDisplay__GraphicsScreenWidth,%eax
 		imul   -0x1c(%ebp),%eax
-		mov    lbDisplay__WScreen,%edx
+		mov    lbDisplay+4,%edx # lbDisplay.WScreen
 		add    %edx,%eax
 		mov    -0x20(%ebp),%edx
 		add    %eax,%edx
@@ -1161,7 +1161,7 @@ aVesa:	/* 0x15F1A8 */
 /*
  * current graphic mode information set in LbScreenSetupAnyMode
  */
-GLOBAL (lbDisplay)
+GLOBAL (lbDisplay)	/* 0x1e2e54 */
 /* pointer to the frame buffer */
 GLOBAL (lbDisplay__PhysicalScreen)
 		.long	0x0
