@@ -106,70 +106,67 @@ long LbFilePosition(TbFileHandle fhandle)
 
 TbFileHandle LbFileOpen(const char *fname, const TbFileOpenMode accmode)
 {
-  TbFileOpenMode mode = accmode;
+    TbFileOpenMode mode = accmode;
 #if LB_FILENAME_TRANSFORM
-  char real_fname[FILENAME_MAX];
+    char real_fname[FILENAME_MAX];
 #endif
-  TbFileHandle rc;
+    TbFileHandle rc;
 
-  if ( !LbFileExists(fname) )
-  {
-    LIBLOG("file does not exist: %s", fname);
-    if ( mode == Lb_FILE_MODE_READ_ONLY )
-      return -1;
-    if ( mode == Lb_FILE_MODE_OLD )
-      mode = Lb_FILE_MODE_NEW;
-  }
+    if ( !LbFileExists(fname) )
+    {
+        LIBLOG("file does not exist: %s", fname);
+        if ( mode == Lb_FILE_MODE_READ_ONLY )
+            return -1;
+        if ( mode == Lb_FILE_MODE_OLD )
+            mode = Lb_FILE_MODE_NEW;
+    }
 
 #if LB_FILENAME_TRANSFORM
-  if (lbFileNameTransform != NULL) {
-      lbFileNameTransform(real_fname, fname);
-      fname = real_fname;
-  }
+    if (lbFileNameTransform != NULL) {
+        lbFileNameTransform(real_fname, fname);
+        fname = real_fname;
+    }
 #endif
 
 /* DISABLED - NOT NEEDED
-  if ( mode == Lb_FILE_MODE_NEW )
-  {
-    LIBLOG("creating file: %s", fname);
-    rc = _sopen(fname, _O_WRONLY|_O_CREAT|_O_TRUNC|_O_BINARY, _SH_DENYNO);
-    setmode(rc,_O_TRUNC);
-    close(rc);
-  }
-*/
-  rc = -1;
-  switch (mode)
-  {
-  case Lb_FILE_MODE_NEW:
+    if ( mode == Lb_FILE_MODE_NEW )
     {
+        LIBLOG("creating file: %s", fname);
+        rc = _sopen(fname, _O_WRONLY|_O_CREAT|_O_TRUNC|_O_BINARY, _SH_DENYNO);
+        setmode(rc,_O_TRUNC);
+        close(rc);
+    }
+*/
+    rc = -1;
+    switch (mode)
+    {
+    case Lb_FILE_MODE_NEW:
         LIBLOG("LBO_CREAT mode: %s", fname);
 #if defined(WIN32)||defined(DOS)||defined(GO32)
         rc = _sopen(fname, O_RDWR|O_CREAT|O_BINARY, SH_DENYNO, S_IREAD|S_IWRITE);
 #else
         rc = open(fname, O_RDWR|O_CREAT, S_IRUSR|S_IRGRP|S_IWUSR|S_IWGRP);
 #endif
-    };break;
-  case Lb_FILE_MODE_OLD:
-    {
+        break;
+    case Lb_FILE_MODE_OLD:
         LIBLOG("LBO_RDWR mode: %s", fname);
 #if defined(WIN32)||defined(DOS)||defined(GO32)
         rc = _sopen(fname, O_RDWR|O_BINARY, SH_DENYNO);
 #else
         rc = open(fname, O_RDWR);
 #endif
-    };break;
+        break;
   case Lb_FILE_MODE_READ_ONLY:
-    {
         LIBLOG("LBO_RDONLY mode: %s", fname);
 #if defined(WIN32)||defined(DOS)||defined(GO32)
         rc = _sopen(fname, O_RDONLY|O_BINARY, SH_DENYNO);
 #else
         rc = open(fname, O_RDONLY);
 #endif
-    };break;
+        break;
   }
   LIBLOG("out handle = %ld, errno = %d", rc, errno);
-  return rc;
+  return rc; // sopen returns -1 on fail, which is equal to our Lb_FAIL
 }
 
 TbResult LbFileClose(TbFileHandle fhandle)
