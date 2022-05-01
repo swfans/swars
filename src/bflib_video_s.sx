@@ -95,7 +95,7 @@ GLOBAL_FUNC (ASM_LbScreenSetupAnyMode_)	/* 0xED4F0 */
 		mov    $0x10,%eax
 		call   ac_dos_int386
 	jump_ed5c4:
-		movl   $0xa0000,lbDisplay__PhysicalScreen
+		movl   $0xa0000,lbDisplay+0 # lbDisplay.PhysicalScreen
 		movsbl 0x18(%ebp),%edx
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
@@ -103,7 +103,7 @@ GLOBAL_FUNC (ASM_LbScreenSetupAnyMode_)	/* 0xED4F0 */
 		sub    %edx,%eax
 		mov    lbScreenModeInfo0_Width(,%eax,2),%ax
 		and    $0xffff,%eax
-		mov    %eax,lbDisplay__PhysicalScreenWidth
+		mov    %eax,lbDisplay+24 # lbDisplay.PhysicalScreenWidth
 		movsbl 0x18(%ebp),%edx
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
@@ -111,7 +111,7 @@ GLOBAL_FUNC (ASM_LbScreenSetupAnyMode_)	/* 0xED4F0 */
 		sub    %edx,%eax
 		mov    lbScreenModeInfo0_Height(,%eax,2),%ax
 		and    $0xffff,%eax
-		mov    %eax,lbDisplay__PhysicalScreenHeight
+		mov    %eax,lbDisplay+28 # lbDisplay.PhysicalScreenHeight
 		mov    0x1c(%ebp),%eax
 		mov    %eax,lbDisplay__GraphicsScreenWidth
 		mov    0x20(%ebp),%eax
@@ -314,7 +314,7 @@ GLOBAL_FUNC (ASM_LbScreenSwap)	/* 0xED8C0 */
 		mov    lbDisplay__GraphicsScreenWidth,%ecx
 		imul   lbDisplay__GraphicsScreenHeight,%ecx
 		mov    lbDisplay+4,%esi # lbDisplay.WScreen
-		mov    lbDisplay__PhysicalScreen,%edi
+		mov    lbDisplay+0,%edi # lbDisplay.PhysicalScreen
 		sar    $0x2,%ecx
 		rep movsl %ds:(%esi),%es:(%edi)
 		jmp    jump_ed95f
@@ -341,7 +341,7 @@ GLOBAL_FUNC (ASM_LbScreenSwap)	/* 0xED8C0 */
 		mov    -0xc(%ebp),%ecx
 		sar    $0x2,%ecx
 		mov    -0x8(%ebp),%esi
-		mov    lbDisplay__PhysicalScreen,%edi
+		mov    lbDisplay+0,%edi # lbDisplay.PhysicalScreen
 		rep movsl %ds:(%esi),%es:(%edi)
 		addl   $0x10000,-0x8(%ebp)
 	jump_ed94b:
@@ -395,7 +395,7 @@ GLOBAL_FUNC (ASM_LbScreenSwapClear)
 		imul   lbDisplay__GraphicsScreenHeight,%ecx
 		mov    lbDisplay+4,%esi # lbDisplay.WScreen
 		shl    $0x18,%eax
-		mov    lbDisplay__PhysicalScreen,%edi
+		mov    lbDisplay+0,%edi # lbDisplay.PhysicalScreen
 		add    %eax,%edx
 		sar    $0x2,%ecx
 	jump_edb9b:
@@ -438,7 +438,7 @@ GLOBAL_FUNC (ASM_LbScreenSwapClear)
 		mov    -0xc(%ebp),%ecx
 		sar    $0x2,%ecx
 		mov    -0x8(%ebp),%esi
-		mov    lbDisplay__PhysicalScreen,%edi
+		mov    lbDisplay+0,%edi # lbDisplay.PhysicalScreen
 	jump_edc0c:
 		movsl  %ds:(%esi),%es:(%edi)
 		mov    %edx,-0x4(%esi)
@@ -641,7 +641,7 @@ GLOBAL_FUNC (LbScreenSetGraphicsWindow_)	/* e0d00 */
 		add    %edx,%eax
 		mov    -0x20(%ebp),%edx
 		add    %eax,%edx
-		mov    %edx,lbDisplay__GraphicsWindowPtr
+		mov    %edx,lbDisplay+16 # lbDisplay.GraphicsWindowPtr
 		mov    $0x1,%eax
 		mov    %ebp,%esp
 		pop    %ebp

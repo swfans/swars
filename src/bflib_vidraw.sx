@@ -613,7 +613,7 @@ draw_b_line:	/* 0x0E79D8 */
 		sub    %eax,%edx
 		mov    %edx,-0x2c(%ebp)
 	jump_e7a95:
-		mov    EXPORT_SYMBOL(lbDisplay__GraphicsWindowPtr),%eax
+		mov    EXPORT_SYMBOL(lbDisplay)+16,%eax # lbDisplay.GraphicsWindowPtr
 		mov    -0x4(%ebp),%edx
 		xor    %ebx,%ebx
 		mov    (%edx,%eax,1),%bl
@@ -621,7 +621,7 @@ draw_b_line:	/* 0x0E79D8 */
 		mov    0xc(%ebp),%dl
 		shl    $0x8,%edx
 		add    %ebx,%edx
-		mov    EXPORT_SYMBOL(lbDisplay__GlassMap),%ebx
+		mov    EXPORT_SYMBOL(lbDisplay)+8,%ebx # lbDisplay.GlassMap
 		add    %ebx,%edx
 		mov    -0x4(%ebp),%ebx
 		add    %eax,%ebx
@@ -652,7 +652,7 @@ draw_b_line:	/* 0x0E79D8 */
 		sub    %eax,%edx
 		mov    %edx,-0x2c(%ebp)
 	jump_e7afe:
-		mov    EXPORT_SYMBOL(lbDisplay__GraphicsWindowPtr),%eax
+		mov    EXPORT_SYMBOL(lbDisplay)+16,%eax # lbDisplay.GraphicsWindowPtr
 		mov    -0x4(%ebp),%edx
 		xor    %ebx,%ebx
 		mov    (%edx,%eax,1),%bl
@@ -660,7 +660,7 @@ draw_b_line:	/* 0x0E79D8 */
 		mov    0xc(%ebp),%dl
 		shl    $0x8,%edx
 		add    %ebx,%edx
-		mov    EXPORT_SYMBOL(lbDisplay__GlassMap),%ebx
+		mov    EXPORT_SYMBOL(lbDisplay)+8,%ebx # lbDisplay.GlassMap
 		add    %ebx,%edx
 		mov    -0x4(%ebp),%ebx
 		add    %eax,%ebx
@@ -698,7 +698,7 @@ draw_b_line:	/* 0x0E79D8 */
 		sub    %eax,%edx
 		mov    %edx,-0x2c(%ebp)
 	jump_e7b80:
-		mov    EXPORT_SYMBOL(lbDisplay__GraphicsWindowPtr),%eax
+		mov    EXPORT_SYMBOL(lbDisplay)+16,%eax # lbDisplay.GraphicsWindowPtr
 		mov    -0x4(%ebp),%edx
 		mov    (%edx,%eax,1),%dl
 		mov    %edx,%ebx
@@ -707,7 +707,7 @@ draw_b_line:	/* 0x0E79D8 */
 		shl    $0x8,%ebx
 		mov    0xc(%ebp),%dl
 		add    %ebx,%edx
-		mov    EXPORT_SYMBOL(lbDisplay__GlassMap),%ebx
+		mov    EXPORT_SYMBOL(lbDisplay)+8,%ebx # lbDisplay.GlassMap
 		add    %ebx,%edx
 		mov    -0x4(%ebp),%ebx
 		add    %eax,%ebx
@@ -737,7 +737,7 @@ draw_b_line:	/* 0x0E79D8 */
 		sub    %eax,%edx
 		mov    %edx,-0x2c(%ebp)
 	jump_e7bed:
-		mov    EXPORT_SYMBOL(lbDisplay__GraphicsWindowPtr),%eax
+		mov    EXPORT_SYMBOL(lbDisplay)+16,%eax # lbDisplay.GraphicsWindowPtr
 		mov    -0x4(%ebp),%edx
 		mov    (%edx,%eax,1),%dl
 		and    $0xff,%edx
@@ -745,7 +745,7 @@ draw_b_line:	/* 0x0E79D8 */
 		shl    $0x8,%edx
 		mov    0xc(%ebp),%bl
 		add    %ebx,%edx
-		mov    EXPORT_SYMBOL(lbDisplay__GlassMap),%ebx
+		mov    EXPORT_SYMBOL(lbDisplay)+8,%ebx # lbDisplay.GlassMap
 		add    %ebx,%edx
 		mov    -0x4(%ebp),%ebx
 		add    %eax,%ebx
@@ -779,7 +779,7 @@ draw_b_line:	/* 0x0E79D8 */
 		sub    %eax,%edx
 		mov    %edx,-0x2c(%ebp)
 	jump_e7c62:
-		mov    EXPORT_SYMBOL(lbDisplay__GraphicsWindowPtr),%eax
+		mov    EXPORT_SYMBOL(lbDisplay)+16,%eax # lbDisplay.GraphicsWindowPtr
 		mov    -0x4(%ebp),%edx
 		add    %eax,%edx
 		mov    0xc(%ebp),%al
@@ -809,7 +809,7 @@ draw_b_line:	/* 0x0E79D8 */
 		sub    %eax,%edx
 		mov    %edx,-0x2c(%ebp)
 	jump_e7cb2:
-		mov    EXPORT_SYMBOL(lbDisplay__GraphicsWindowPtr),%edx
+		mov    EXPORT_SYMBOL(lbDisplay)+16,%edx # lbDisplay.GraphicsWindowPtr
 		add    -0x4(%ebp),%edx
 		mov    0xc(%ebp),%al
 		mov    %al,(%edx)
@@ -997,7 +997,7 @@ GLOBAL_FUNC (LbDrawHVLine_)	/* 0xf0834 */
 		mov    -0x8(%ebp),%edi
 		imul   EXPORT_SYMBOL(lbDisplay__GraphicsScreenWidth),%edi
 		add    -0x4(%ebp),%edi
-		add    EXPORT_SYMBOL(lbDisplay__GraphicsWindowPtr),%edi
+		add    EXPORT_SYMBOL(lbDisplay)+16,%edi # lbDisplay.GraphicsWindowPtr
 		mov    -0xc(%ebp),%ecx
 		sub    -0x4(%ebp),%ecx
 		jne    jump_f09bb
@@ -1006,7 +1006,7 @@ GLOBAL_FUNC (LbDrawHVLine_)	/* 0xf0834 */
 		inc    %ecx
 		testw  $0x4,EXPORT_SYMBOL(lbDisplay__DrawFlags)
 		je     jump_f0985
-		mov    EXPORT_SYMBOL(lbDisplay__GlassMap),%esi
+		mov    EXPORT_SYMBOL(lbDisplay)+8,%esi # lbDisplay.GlassMap
 		movzbl 0x8(%ebp),%eax
 		shl    $0x8,%eax
 	jump_f0971:
@@ -1019,7 +1019,7 @@ GLOBAL_FUNC (LbDrawHVLine_)	/* 0xf0834 */
 	jump_f0985:
 		testw  $0x8,EXPORT_SYMBOL(lbDisplay__DrawFlags)
 		je     jump_f09ab
-		mov    EXPORT_SYMBOL(lbDisplay__GlassMap),%esi
+		mov    EXPORT_SYMBOL(lbDisplay)+8,%esi # lbDisplay.GlassMap
 		movzbl 0x8(%ebp),%eax
 	jump_f099a:
 		mov    (%edi),%ah
@@ -1039,7 +1039,7 @@ GLOBAL_FUNC (LbDrawHVLine_)	/* 0xf0834 */
 		inc    %ecx
 		testw  $0x4,EXPORT_SYMBOL(lbDisplay__DrawFlags)
 		je     jump_f09e2
-		mov    EXPORT_SYMBOL(lbDisplay__GlassMap),%esi
+		mov    EXPORT_SYMBOL(lbDisplay)+8,%esi # lbDisplay.GlassMap
 		movzbl 0x8(%ebp),%eax
 		shl    $0x8,%eax
 	jump_f09d4:
@@ -1052,7 +1052,7 @@ GLOBAL_FUNC (LbDrawHVLine_)	/* 0xf0834 */
 	jump_f09e2:
 		testw  $0x8,EXPORT_SYMBOL(lbDisplay__DrawFlags)
 		je     jump_f0a05
-		mov    EXPORT_SYMBOL(lbDisplay__GlassMap),%esi
+		mov    EXPORT_SYMBOL(lbDisplay)+8,%esi # lbDisplay.GlassMap
 		movzbl 0x8(%ebp),%eax
 	jump_f09f7:
 		mov    (%edi),%ah
@@ -1135,7 +1135,7 @@ LbDrawBoxClip_:	/* 0x0FADD0 */
 		sub    -0xc(%ebp),%ebx
 		testw  $0x4,EXPORT_SYMBOL(lbDisplay__DrawFlags)
 		je     jump_faea8
-		mov    EXPORT_SYMBOL(lbDisplay__GlassMap),%esi
+		mov    EXPORT_SYMBOL(lbDisplay)+8,%esi # lbDisplay.GlassMap
 		movzbl 0x8(%ebp),%eax
 		shl    $0x8,%eax
 	jump_fae95:
@@ -1153,7 +1153,7 @@ LbDrawBoxClip_:	/* 0x0FADD0 */
 	jump_faea8:
 		testw  $0x8,EXPORT_SYMBOL(lbDisplay__DrawFlags)
 		je     jump_faed3
-		mov    EXPORT_SYMBOL(lbDisplay__GlassMap),%esi
+		mov    EXPORT_SYMBOL(lbDisplay)+8,%esi # lbDisplay.GlassMap
 		movzbl 0x8(%ebp),%eax
 	jump_faebd:
 		mov    -0xc(%ebp),%ecx
@@ -2145,7 +2145,7 @@ LbDrawTriangleFilled_:
 		mov    EXPORT_SYMBOL(lbDisplay__GraphicsWindowWidth),%cx
 	jump_138fa9:
 		mov    %edx,%edi
-		mov    EXPORT_SYMBOL(lbDisplay__GlassMap),%ebx
+		mov    EXPORT_SYMBOL(lbDisplay)+8,%ebx # lbDisplay.GlassMap
 		jmp    jump_138fd1
 	jump_138fb3:
 		cmp    EXPORT_SYMBOL(lbDisplay__GraphicsWindowWidth),%cx
@@ -2155,7 +2155,7 @@ LbDrawTriangleFilled_:
 		sub    %bx,%cx
 		jle    jump_139004
 		lea    (%ebx,%edx,1),%edi
-		mov    EXPORT_SYMBOL(lbDisplay__GlassMap),%ebx
+		mov    EXPORT_SYMBOL(lbDisplay)+8,%ebx # lbDisplay.GlassMap
 	jump_138fd1:
 		testw  $0x4,EXPORT_SYMBOL(lbDisplay__DrawFlags)
 		je     jump_138fea

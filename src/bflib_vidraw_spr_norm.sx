@@ -88,7 +88,7 @@ GLOBAL_FUNC (LbSpriteDrawUsingScalingData_)
 	jump_13521f:
 		mov    EXPORT_SYMBOL(lbDisplay__GraphicsScreenWidth),%eax
 		imul   %eax,%esi
-		add    EXPORT_SYMBOL(lbDisplay__GraphicsWindowPtr),%esi
+		add    EXPORT_SYMBOL(lbDisplay)+16,%esi # lbDisplay.GraphicsWindowPtr
 		add    0x0(%ebp),%esi
 		mov    EXPORT_SYMBOL(lbDisplay__DrawFlags),%ax
 		and    $0x1,%ax
