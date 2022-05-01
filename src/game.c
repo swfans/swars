@@ -289,7 +289,7 @@ void read_textwalk(void)
 {
     TbFileHandle handle;
     handle = LbFileOpen("data/textwalk.dat", Lb_FILE_MODE_READ_ONLY);
-    if ( handle != -1 )
+    if ( handle != INVALID_FILE )
     {
         LbFileRead(handle, textwalk_data, 640);
         LbFileClose(handle);
@@ -302,7 +302,7 @@ void read_primveh_obj(const char *fname, int a2)
     TbFileHandle fh;
 
     fh = LbFileOpen(fname, Lb_FILE_MODE_READ_ONLY);
-    if ( fh == -1 )
+    if ( fh == INVALID_FILE )
         return;
     LbFileRead(fh, &firstval, sizeof(long));
     if ( firstval != 1 )

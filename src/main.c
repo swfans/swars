@@ -198,7 +198,7 @@ void read_conf_file(void)
     char *text_fname = "data/text.dat";
 
     conf_fh = LbFileOpen(conf_fname, Lb_FILE_MODE_READ_ONLY);
-    if (conf_fh != -1)
+    if (conf_fh != INVALID_FILE)
     {
         text_len = LbFileRead(conf_fh, locbuf, sizeof(locbuf));
         LbFileClose(conf_fh);
