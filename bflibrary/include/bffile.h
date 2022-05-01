@@ -63,6 +63,8 @@ enum TbFileSeekMode { // type=int8_t
 
 typedef enum TbFileSeekMode TbFileSeekMode;
 
+#define INVALID_FILE (TbFileHandle)-1
+
 typedef ulong TbFileHandle;
 
 #if defined(_finddata_t) // GCC Windows API
@@ -179,7 +181,7 @@ long LbFileLength(const char *fname);
  * @return Gives -1 if no match is found, otherwise returns 1 and stores a handle inside
  *  TbFileFind struct which is then used for LbFileFindNext() and LbFileFindEnd() calls.
  */
-TbResult LbFileFindFirst(const char *filespec, struct TbFileFind *ffind,
+TbResult LbFileFindFirst(const char *filespec, TbFileFind *ffind,
   unsigned int attributes);
 
 /** Continues listing directory entries.
@@ -187,13 +189,13 @@ TbResult LbFileFindFirst(const char *filespec, struct TbFileFind *ffind,
  * @param ffind
  * @return Gives -1 if no match is found, otherwise returns 1
  */
-TbResult LbFileFindNext(struct TbFileFind *ffind);
+TbResult LbFileFindNext(TbFileFind *ffind);
 
 /** Ends sequence of listing directory entries.
  *
  * @param ffind
  */
-TbResult LbFileFindEnd(struct TbFileFind *ffind);
+TbResult LbFileFindEnd(TbFileFind *ffind);
 
 /** Renames a disk file.
  */
