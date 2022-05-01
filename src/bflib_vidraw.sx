@@ -1243,7 +1243,7 @@ GLOBAL_FUNC (LbDrawTriangle_)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (LbSpriteSetScalingData)
+GLOBAL_FUNC (SetAlphaScalingData)
 /*----------------------------------------------------------------*/
 		pusha
 		mov    0x24(%esp),%esi
