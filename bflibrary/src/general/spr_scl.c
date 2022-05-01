@@ -302,8 +302,7 @@ void LbSpriteClearAlphaScalingHeight(void)
     LbSpriteClearScalingHeightArray(alpha_ysteps_array, SPRITE_SCALING_YSTEPS);
 }
 
-//TODO enable when whole printing of scaled sprites is remade (req. due to global data)
-void LbSpriteSetScalingData_UNUSED(long x, long y, long swidth, long sheight,
+void LbSpriteSetScalingData(long x, long y, long swidth, long sheight,
     long dwidth, long dheight)
 {
     long gwidth = lbDisplay.GraphicsWindowWidth;
@@ -339,7 +338,8 @@ void LbSpriteSetScalingData_UNUSED(long x, long y, long swidth, long sheight,
     }
 }
 
-void SetAlphaScalingData(long x, long y, long swidth, long sheight,
+//TODO enable when whole printing of scaled sprites is remade (req. due to global data)
+void SetAlphaScalingData_UNUSED(long x, long y, long swidth, long sheight,
     long dwidth, long dheight)
 {
     long gwidth = lbDisplay.GraphicsWindowWidth;
