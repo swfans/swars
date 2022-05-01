@@ -34,9 +34,9 @@
 .global EXPORT_SYMBOL(lbDisplay__DrawFlags);
 .global EXPORT_SYMBOL(lbDisplay__GraphicsScreenWidth);
 .global EXPORT_SYMBOL(lbDisplay__GraphicsWindowPtr);
-.global EXPORT_SYMBOL(data_1f0354);
-.global EXPORT_SYMBOL(data_1f0754);
-.global EXPORT_SYMBOL(data_1f0350);
+.global EXPORT_SYMBOL(alpha_xsteps_array);
+.global EXPORT_SYMBOL(alpha_ysteps_array);
+.global EXPORT_SYMBOL(alpha_scale_up);
 .global EXPORT_SYMBOL(ghost_table);
 
 /*----------------------------------------------------------------*/
@@ -72,9 +72,9 @@ GLOBAL_FUNC (LbSpriteDrawUsingScalingData_)
 	jump_1351e4:
 		mov    %esi,0x2c(%esp)
 		mov    %edi,0x30(%esp)
-		lea    EXPORT_SYMBOL(data_1f0354)(,%eax,8),%ebp
+		lea    EXPORT_SYMBOL(alpha_xsteps_array)(,%eax,8),%ebp
 		mov    %ebp,0x4(%esp)
-		lea    EXPORT_SYMBOL(data_1f0754)(,%edx,8),%edi
+		lea    EXPORT_SYMBOL(alpha_ysteps_array)(,%edx,8),%edi
 		mov    EXPORT_SYMBOL(data_1e2ecc),%eax
 		mov    %eax,0x20(%esp)
 		mov    0x28(%esp),%ecx
@@ -96,7 +96,7 @@ GLOBAL_FUNC (LbSpriteDrawUsingScalingData_)
 		add    0x4(%ebp),%esi
 		dec    %esi
 	jump_135240:
-		mov    EXPORT_SYMBOL(data_1f0350),%eax
+		mov    EXPORT_SYMBOL(alpha_scale_up),%eax
 		or     %eax,%eax
 		jne    jump_135cd8
 		mov    EXPORT_SYMBOL(lbDisplay__DrawFlags),%ax

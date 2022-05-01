@@ -41,6 +41,10 @@
 .global EXPORT_SYMBOL(lbDisplay__GlassMap);
 .global EXPORT_SYMBOL(lbDisplay__GraphicsWindowPtr);
 
+.global EXPORT_SYMBOL(alpha_xsteps_array);
+.global EXPORT_SYMBOL(alpha_ysteps_array);
+.global EXPORT_SYMBOL(alpha_scale_up);
+
 
 /*----------------------------------------------------------------*/
 GLOBAL_FUNC (LbDrawBox_)
@@ -1256,7 +1260,7 @@ GLOBAL_FUNC (SetAlphaScalingData)
 		jg     jump_136a23
 		xor    %ebp,%ebp
 	jump_136a23:
-		mov    %ebp,data_1f0350
+		mov    %ebp,EXPORT_SYMBOL(alpha_scale_up)
 		mov    EXPORT_SYMBOL(lbDisplay__GraphicsWindowWidth),%ebp
 		mov    %ebp,0x18(%esp)
 		mov    EXPORT_SYMBOL(lbDisplay__GraphicsWindowHeight),%ebp
@@ -1280,7 +1284,7 @@ GLOBAL_FUNC (SetAlphaScalingData)
 		shl    $0x10,%eax
 		xor    %edx,%edx
 		idiv   %ebx
-		lea    data_1f0354,%edx
+		lea    EXPORT_SYMBOL(alpha_xsteps_array),%edx
 		mov    0x8(%esp),%ecx
 		mov    %eax,%ebx
 		sar    %ebx
@@ -1380,7 +1384,7 @@ GLOBAL_FUNC (SetAlphaScalingData)
 		shl    $0x10,%eax
 		xor    %edx,%edx
 		idiv   %ebx
-		lea    data_1f0354,%edx
+		lea    EXPORT_SYMBOL(alpha_xsteps_array),%edx
 		mov    0x8(%esp),%ecx
 		mov    %eax,%ebx
 		sar    %ebx
@@ -1427,7 +1431,7 @@ GLOBAL_FUNC (SetAlphaScalingData)
 		shl    $0x10,%eax
 		xor    %edx,%edx
 		idiv   %ebx
-		lea    data_1f0754,%edx
+		lea    EXPORT_SYMBOL(alpha_ysteps_array),%edx
 		mov    0xc(%esp),%ecx
 		mov    %eax,%ebx
 		sar    %ebx
@@ -1526,7 +1530,7 @@ GLOBAL_FUNC (SetAlphaScalingData)
 		shl    $0x10,%eax
 		xor    %edx,%edx
 		idiv   %ebx
-		lea    data_1f0754,%edx
+		lea    EXPORT_SYMBOL(alpha_ysteps_array),%edx
 		mov    0xc(%esp),%ecx
 		mov    %eax,%ebx
 		sar    %ebx
@@ -2196,15 +2200,3 @@ LbDrawTriangleFilled_:
 data_1e957c:
 		.fill   0xf00
 
-GLOBAL (data_1f0350)
-		.long	0x0
-GLOBAL (data_1f0354)
-		.fill   0x400
-GLOBAL (data_1f0754)
-		.fill   0x400
-data_1f0b54:
-		.long	0x0
-data_1f0b58:
-		.fill   0x800
-data_1f1358:
-		.fill   0x800
