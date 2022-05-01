@@ -20,11 +20,10 @@
 /******************************************************************************/
 #include "bfsprite.h"
 
+#include <stdlib.h>
 #include "insspr.h"
 #include "bfscreen.h"
-#include "bfutility.h"
 #include "bflog.h"
-#include <stdlib.h>
 
 /******************************************************************************/
 void LbPixelBlockCopyForward(TbPixel * dst, const TbPixel * src, long len);
@@ -50,11 +49,11 @@ TbResult LbSpriteDrawRemapUsingScalingDownDataSolidLR(ubyte *outbuf, int scanlin
 TbResult LbSpriteDrawUsingScalingUpDataTrans1RL(ubyte *outbuf, int scanline, int outheight,
   long *xstep, long *ystep, const struct TbSprite *sprite, const unsigned char *transmap)
 {
-    LIBLOG("Drawing");
     int ystep_delta;
     unsigned char *sprdata;
     long *ycurstep;
 
+    LIBLOG("Drawing");
     ystep_delta = 2;
     if (scanline < 0) {
         ystep_delta = -2;
@@ -157,11 +156,11 @@ TbResult LbSpriteDrawUsingScalingUpDataTrans1RL(ubyte *outbuf, int scanline, int
 TbResult LbSpriteDrawUsingScalingUpDataTrans1LR(ubyte *outbuf, int scanline, int outheight,
   long *xstep, long *ystep, const struct TbSprite *sprite, const unsigned char *transmap)
 {
-    LIBLOG("Drawing");
     int ystep_delta;
     unsigned char *sprdata;
     long *ycurstep;
 
+    LIBLOG("Drawing");
     ystep_delta = 2;
     if (scanline < 0) {
         ystep_delta = -2;
@@ -263,11 +262,11 @@ TbResult LbSpriteDrawUsingScalingUpDataTrans1LR(ubyte *outbuf, int scanline, int
 TbResult LbSpriteDrawUsingScalingUpDataTrans2RL(ubyte *outbuf, int scanline, int outheight,
   long *xstep, long *ystep, const struct TbSprite *sprite, const unsigned char *transmap)
 {
-    LIBLOG("Drawing");
     int ystep_delta;
     unsigned char *sprdata;
     long *ycurstep;
 
+    LIBLOG("Drawing");
     ystep_delta = 2;
     if (scanline < 0) {
         ystep_delta = -2;
@@ -369,11 +368,11 @@ TbResult LbSpriteDrawUsingScalingUpDataTrans2RL(ubyte *outbuf, int scanline, int
 TbResult LbSpriteDrawUsingScalingUpDataTrans2LR(ubyte *outbuf, int scanline, int outheight,
   long *xstep, long *ystep, const struct TbSprite *sprite, const unsigned char *transmap)
 {
-    LIBLOG("Drawing");
     int ystep_delta;
     unsigned char *sprdata;
     long *ycurstep;
 
+    LIBLOG("Drawing");
     ystep_delta = 2;
     if (scanline < 0) {
         ystep_delta = -2;
@@ -474,11 +473,11 @@ TbResult LbSpriteDrawUsingScalingUpDataTrans2LR(ubyte *outbuf, int scanline, int
 TbResult LbSpriteDrawUsingScalingUpDataSolidRL(ubyte *outbuf, int scanline, int outheight,
   long *xstep, long *ystep, const struct TbSprite *sprite)
 {
-    LIBLOG("Drawing");
     int ystep_delta;
     unsigned char *sprdata;
     long *ycurstep;
 
+    LIBLOG("Drawing");
     ystep_delta = 2;
     if (scanline < 0) {
         ystep_delta = -2;
@@ -597,11 +596,11 @@ TbResult LbSpriteDrawUsingScalingUpDataSolidRL(ubyte *outbuf, int scanline, int 
 TbResult LbSpriteDrawUsingScalingUpDataSolidLR(ubyte *outbuf, int scanline, int outheight,
   long *xstep, long *ystep, const struct TbSprite *sprite)
 {
-    LIBLOG("Drawing");
     int ystep_delta;
     unsigned char *sprdata;
     long *ycurstep;
 
+    LIBLOG("Drawing");
     ystep_delta = 2;
     if (scanline < 0) {
         ystep_delta = -2;
@@ -718,11 +717,11 @@ TbResult LbSpriteDrawUsingScalingUpDataSolidLR(ubyte *outbuf, int scanline, int 
 TbResult LbSpriteDrawUsingScalingDownDataTrans1RL(ubyte *outbuf, int scanline, int outheight,
   long *xstep, long *ystep, const struct TbSprite *sprite, const unsigned char *transmap)
 {
-    LIBLOG("Drawing");
     int ystep_delta;
     unsigned char *sprdata;
     long *ycurstep;
 
+    LIBLOG("Drawing");
     ystep_delta = 2;
     if (scanline < 0) {
         ystep_delta = -2;
@@ -809,11 +808,11 @@ TbResult LbSpriteDrawUsingScalingDownDataTrans1RL(ubyte *outbuf, int scanline, i
 TbResult LbSpriteDrawUsingScalingDownDataTrans1LR(ubyte *outbuf, int scanline, int outheight,
   long *xstep, long *ystep, const struct TbSprite *sprite, const unsigned char *transmap)
 {
-    LIBLOG("Drawing");
     int ystep_delta;
     unsigned char *sprdata;
     long *ycurstep;
 
+    LIBLOG("Drawing");
     ystep_delta = 2;
     if (scanline < 0) {
         ystep_delta = -2;
@@ -900,11 +899,11 @@ TbResult LbSpriteDrawUsingScalingDownDataTrans1LR(ubyte *outbuf, int scanline, i
 TbResult LbSpriteDrawUsingScalingDownDataTrans2RL(ubyte *outbuf, int scanline, int outheight,
   long *xstep, long *ystep, const struct TbSprite *sprite, const unsigned char *transmap)
 {
-    LIBLOG("Drawing");
     int ystep_delta;
     unsigned char *sprdata;
     long *ycurstep;
 
+    LIBLOG("Drawing");
     ystep_delta = 2;
     if (scanline < 0) {
         ystep_delta = -2;
@@ -991,11 +990,11 @@ TbResult LbSpriteDrawUsingScalingDownDataTrans2RL(ubyte *outbuf, int scanline, i
 TbResult LbSpriteDrawUsingScalingDownDataTrans2LR(ubyte *outbuf, int scanline, int outheight,
   long *xstep, long *ystep, const struct TbSprite *sprite, const unsigned char *transmap)
 {
-    LIBLOG("Drawing");
     int ystep_delta;
     unsigned char *sprdata;
     long *ycurstep;
 
+    LIBLOG("Drawing");
     ystep_delta = 2;
     if (scanline < 0) {
         ystep_delta = -2;
@@ -1081,11 +1080,11 @@ TbResult LbSpriteDrawUsingScalingDownDataTrans2LR(ubyte *outbuf, int scanline, i
 TbResult LbSpriteDrawUsingScalingDownDataSolidRL(ubyte *outbuf, int scanline,
   int outheight, long *xstep, long *ystep, const struct TbSprite *sprite)
 {
-    LIBLOG("Drawing");
     int ystep_delta;
     unsigned char *sprdata;
     long *ycurstep;
 
+    LIBLOG("Drawing");
     ystep_delta = 2;
     if (scanline < 0) {
         ystep_delta = -2;
@@ -1170,11 +1169,11 @@ TbResult LbSpriteDrawUsingScalingDownDataSolidRL(ubyte *outbuf, int scanline,
 TbResult LbSpriteDrawUsingScalingDownDataSolidLR(ubyte *outbuf, int scanline,
   int outheight, long *xstep, long *ystep, const struct TbSprite *sprite)
 {
-    LIBLOG("Drawing");
     int ystep_delta;
     unsigned char *sprdata;
     long *ycurstep;
 
+    LIBLOG("Drawing");
     ystep_delta = 2;
     if (scanline < 0) {
         ystep_delta = -2;
@@ -1257,10 +1256,11 @@ TbResult LbSpriteDrawUsingScalingDownDataSolidLR(ubyte *outbuf, int scanline,
  */
 TbResult LbSpriteDrawUsingScalingData(long posx, long posy, const struct TbSprite *sprite)
 {
-    LIBLOG("Drawing at (%ld,%ld)",posx,posy);
     long *xstep;
     long *ystep;
     int scanline;
+
+    LIBLOG("Drawing at (%ld,%ld)",posx,posy);
     {
         long sposx, sposy;
         sposx = posx;
@@ -1389,7 +1389,8 @@ TbResult LbSpriteDrawUsingScalingData(long posx, long posy, const struct TbSprit
     }
 }
 
-TbResult LbSpriteDrawScaled(long xpos, long ypos, const struct TbSprite *sprite, long dest_width, long dest_height)
+TbResult LbSpriteDrawScaled(long xpos, long ypos, const TbSprite *sprite,
+    long dest_width, long dest_height)
 {
     LIBLOG("At (%ld,%ld) size (%ld,%ld)",xpos,ypos,dest_width,dest_height);
     if ((dest_width <= 0) || (dest_height <= 0))

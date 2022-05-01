@@ -40,11 +40,11 @@
  */
 TbResult LbSpriteDrawRemapUsingScalingUpDataTrans1RL(uchar *outbuf, int scanline, int outheight, long *xstep, long *ystep, const struct TbSprite *sprite, const TbPixel *cmap, const TbPixel *transmap)
 {
-    LIBLOG("Drawing");
     int ystep_delta;
     unsigned char *sprdata;
     long *ycurstep;
 
+    LIBLOG("Drawing");
     ystep_delta = 2;
     if (scanline < 0) {
         ystep_delta = -2;
@@ -146,11 +146,11 @@ TbResult LbSpriteDrawRemapUsingScalingUpDataTrans1RL(uchar *outbuf, int scanline
  */
 TbResult LbSpriteDrawRemapUsingScalingUpDataTrans1LR(uchar *outbuf, int scanline, int outheight, long *xstep, long *ystep, const struct TbSprite *sprite, const TbPixel *cmap, const TbPixel *transmap)
 {
-    LIBLOG("Drawing");
     int ystep_delta;
     unsigned char *sprdata;
     long *ycurstep;
 
+    LIBLOG("Drawing");
     ystep_delta = 2;
     if (scanline < 0) {
         ystep_delta = -2;
@@ -252,11 +252,11 @@ TbResult LbSpriteDrawRemapUsingScalingUpDataTrans1LR(uchar *outbuf, int scanline
  */
 TbResult LbSpriteDrawRemapUsingScalingUpDataTrans2RL(uchar *outbuf, int scanline, int outheight, long *xstep, long *ystep, const struct TbSprite *sprite, const TbPixel *cmap, const TbPixel *transmap)
 {
-    LIBLOG("Drawing");
     int ystep_delta;
     unsigned char *sprdata;
     long *ycurstep;
 
+    LIBLOG("Drawing");
     ystep_delta = 2;
     if (scanline < 0) {
         ystep_delta = -2;
@@ -358,11 +358,11 @@ TbResult LbSpriteDrawRemapUsingScalingUpDataTrans2RL(uchar *outbuf, int scanline
  */
 TbResult LbSpriteDrawRemapUsingScalingUpDataTrans2LR(uchar *outbuf, int scanline, int outheight, long *xstep, long *ystep, const struct TbSprite *sprite, const TbPixel *cmap, const TbPixel *transmap)
 {
-    LIBLOG("Drawing");
     int ystep_delta;
     unsigned char *sprdata;
     long *ycurstep;
 
+    LIBLOG("Drawing");
     ystep_delta = 2;
     if (scanline < 0) {
         ystep_delta = -2;
@@ -463,11 +463,11 @@ TbResult LbSpriteDrawRemapUsingScalingUpDataTrans2LR(uchar *outbuf, int scanline
  */
 TbResult LbSpriteDrawRemapUsingScalingUpDataSolidRL(uchar *outbuf, int scanline, int outheight, long *xstep, long *ystep, const struct TbSprite *sprite, const TbPixel *cmap)
 {
-    LIBLOG("Drawing");
     int ystep_delta;
     unsigned char *sprdata;
     long *ycurstep;
 
+    LIBLOG("Drawing");
     ystep_delta = 2;
     if (scanline < 0) {
         ystep_delta = -2;
@@ -585,11 +585,11 @@ TbResult LbSpriteDrawRemapUsingScalingUpDataSolidRL(uchar *outbuf, int scanline,
  */
 TbResult LbSpriteDrawRemapUsingScalingUpDataSolidLR(uchar *outbuf, int scanline, int outheight, long *xstep, long *ystep, const struct TbSprite *sprite, const TbPixel *cmap)
 {
-    LIBLOG("Drawing");
     int ystep_delta;
     unsigned char *sprdata;
     long *ycurstep;
 
+    LIBLOG("Drawing");
     ystep_delta = 2;
     if (scanline < 0) {
         ystep_delta = -2;
@@ -706,11 +706,11 @@ TbResult LbSpriteDrawRemapUsingScalingUpDataSolidLR(uchar *outbuf, int scanline,
  */
 TbResult LbSpriteDrawRemapUsingScalingDownDataTrans1RL(uchar *outbuf, int scanline, int outheight, long *xstep, long *ystep, const struct TbSprite *sprite, const TbPixel *cmap, const TbPixel *transmap)
 {
-    LIBLOG("Drawing");
     int ystep_delta;
     unsigned char *sprdata;
     long *ycurstep;
 
+    LIBLOG("Drawing");
     ystep_delta = 2;
     if (scanline < 0) {
         ystep_delta = -2;
@@ -797,11 +797,11 @@ TbResult LbSpriteDrawRemapUsingScalingDownDataTrans1RL(uchar *outbuf, int scanli
  */
 TbResult LbSpriteDrawRemapUsingScalingDownDataTrans1LR(uchar *outbuf, int scanline, int outheight, long *xstep, long *ystep, const struct TbSprite *sprite, const TbPixel *cmap, const TbPixel *transmap)
 {
-    LIBLOG("Drawing");
     int ystep_delta;
     unsigned char *sprdata;
     long *ycurstep;
 
+    LIBLOG("Drawing");
     ystep_delta = 2;
     if (scanline < 0) {
         ystep_delta = -2;
@@ -888,11 +888,11 @@ TbResult LbSpriteDrawRemapUsingScalingDownDataTrans1LR(uchar *outbuf, int scanli
  */
 TbResult LbSpriteDrawRemapUsingScalingDownDataTrans2RL(uchar *outbuf, int scanline, int outheight, long *xstep, long *ystep, const struct TbSprite *sprite, const TbPixel *cmap, const TbPixel *transmap)
 {
-    LIBLOG("Drawing");
     int ystep_delta;
     unsigned char *sprdata;
     long *ycurstep;
 
+    LIBLOG("Drawing");
     ystep_delta = 2;
     if (scanline < 0) {
         ystep_delta = -2;
@@ -979,11 +979,11 @@ TbResult LbSpriteDrawRemapUsingScalingDownDataTrans2RL(uchar *outbuf, int scanli
  */
 TbResult LbSpriteDrawRemapUsingScalingDownDataTrans2LR(uchar *outbuf, int scanline, int outheight, long *xstep, long *ystep, const struct TbSprite *sprite, const TbPixel *cmap, const TbPixel *transmap)
 {
-    LIBLOG("Drawing");
     int ystep_delta;
     unsigned char *sprdata;
     long *ycurstep;
 
+    LIBLOG("Drawing");
     ystep_delta = 2;
     if (scanline < 0) {
         ystep_delta = -2;
@@ -1069,11 +1069,11 @@ TbResult LbSpriteDrawRemapUsingScalingDownDataTrans2LR(uchar *outbuf, int scanli
  */
 TbResult LbSpriteDrawRemapUsingScalingDownDataSolidRL(uchar *outbuf, int scanline, int outheight, long *xstep, long *ystep, const struct TbSprite *sprite, const TbPixel *cmap)
 {
-    LIBLOG("Drawing");
     int ystep_delta;
     unsigned char *sprdata;
     long *ycurstep;
 
+    LIBLOG("Drawing");
     ystep_delta = 2;
     if (scanline < 0) {
         ystep_delta = -2;
@@ -1158,11 +1158,11 @@ TbResult LbSpriteDrawRemapUsingScalingDownDataSolidRL(uchar *outbuf, int scanlin
  */
 TbResult LbSpriteDrawRemapUsingScalingDownDataSolidLR(uchar *outbuf, int scanline, int outheight, long *xstep, long *ystep, const struct TbSprite *sprite, const TbPixel *cmap)
 {
-    LIBLOG("Drawing");
     int ystep_delta;
     unsigned char *sprdata;
     long *ycurstep;
 
+    LIBLOG("Drawing");
     ystep_delta = 2;
     if (scanline < 0) {
         ystep_delta = -2;
@@ -1246,10 +1246,11 @@ TbResult LbSpriteDrawRemapUsingScalingDownDataSolidLR(uchar *outbuf, int scanlin
  */
 TbResult LbSpriteDrawRemapUsingScalingData(long posx, long posy, const struct TbSprite *sprite, const TbPixel *cmap)
 {
-    LIBLOG("Drawing at (%ld,%ld)",posx,posy);
     long *xstep;
     long *ystep;
     int scanline;
+
+    LIBLOG("Drawing at (%ld,%ld)",posx,posy);
     {
         long sposx, sposy;
         sposx = posx;
