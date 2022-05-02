@@ -31,8 +31,6 @@
 .text
 
 .global EXPORT_SYMBOL(lbDisplay);
-.global EXPORT_SYMBOL(lbDisplay__MLeftButton);
-.global EXPORT_SYMBOL(lbDisplay__ScreenMode);
 .global EXPORT_SYMBOL(lbKeyOn);
 .global EXPORT_SYMBOL(SmackMSSDigDriver);
 .global EXPORT_SYMBOL(_LowSoundVolPanAddr);
@@ -6725,7 +6723,7 @@ GLOBAL_FUNC (play_smk)
 /*----------------------------------------------------------------*/
 		push   %ecx
 		xor    %cl,%cl
-		mov    %cl,EXPORT_SYMBOL(lbDisplay__MLeftButton)
+		mov    %cl,EXPORT_SYMBOL(lbDisplay)+106 # lbDisplay.MLeftButton
 		mov    _smack_draw_callback,%ecx
 		test   %ecx,%ecx
 		jne    jump_eb198
@@ -6737,7 +6735,7 @@ GLOBAL_FUNC (play_smk)
 		pop    %ecx
 		ret
 	jump_eb1a2:
-		mov    EXPORT_SYMBOL(lbDisplay__ScreenMode),%cx
+		mov    EXPORT_SYMBOL(lbDisplay)+100,%cx # lbDisplay.ScreenMode
 		cmp    $0x1,%ecx
 		je     jump_eb1b1
 		and    $0xfe,%bh
@@ -6911,7 +6909,7 @@ play_smk_direct:
 		jne    jump_eb373
 		cmpb   $0x0,EXPORT_SYMBOL(lbKeyOn)+57
 		jne    jump_eb373
-		cmpb   $0x0,EXPORT_SYMBOL(lbDisplay__MLeftButton)
+		cmpb   $0x0,EXPORT_SYMBOL(lbDisplay)+106 # lbDisplay.MLeftButton
 		je     jump_eb33a
 	jump_eb373:
 		push   %ebp
@@ -7045,7 +7043,7 @@ play_smk_via_buffer:
 		jne    jump_eb4ce
 		cmpb   $0x0,EXPORT_SYMBOL(lbKeyOn)+57
 		jne    jump_eb4ce
-		cmpb   $0x0,EXPORT_SYMBOL(lbDisplay__MLeftButton)
+		cmpb   $0x0,EXPORT_SYMBOL(lbDisplay)+106 # lbDisplay.MLeftButton
 		je     jump_eb499
 	jump_eb4ce:
 		push   %ebp
@@ -7153,7 +7151,7 @@ copy_to_screen:
 		mov    %edx,0x18(%esp)
 		mov    %ebx,0x14(%esp)
 		xor    %eax,%eax
-		mov    EXPORT_SYMBOL(lbDisplay__ScreenMode),%ax
+		mov    EXPORT_SYMBOL(lbDisplay)+100,%ax # lbDisplay.ScreenMode
 		cmp    $0x1,%eax
 		jne    jump_eb555
 		cmpl   $0x0,_smack_draw_callback
@@ -7360,7 +7358,7 @@ copy_to_screen:
 		jb     jump_eb724
 	jump_eb75b:
 		xor    %eax,%eax
-		mov    EXPORT_SYMBOL(lbDisplay__ScreenMode),%ax
+		mov    EXPORT_SYMBOL(lbDisplay)+100,%ax # lbDisplay.ScreenMode
 		cmp    $0x1,%eax
 		jne    jump_eb772
 		mov    _smack_draw_callback,%edi

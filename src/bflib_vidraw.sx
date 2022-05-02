@@ -32,8 +32,6 @@
 .text
 
 .global EXPORT_SYMBOL(lbDisplay);
-.global EXPORT_SYMBOL(lbDisplay__GlassMap);
-.global EXPORT_SYMBOL(lbDisplay__GraphicsWindowPtr);
 
 .global EXPORT_SYMBOL(alpha_xsteps_array);
 .global EXPORT_SYMBOL(alpha_ysteps_array);
