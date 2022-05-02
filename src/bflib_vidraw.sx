@@ -33,11 +33,6 @@
 
 .global EXPORT_SYMBOL(lbDisplay);
 .global EXPORT_SYMBOL(lbDisplay__DrawFlags);
-.global EXPORT_SYMBOL(lbDisplay__GraphicsScreenWidth);
-.global EXPORT_SYMBOL(lbDisplay__GraphicsWindowX);
-.global EXPORT_SYMBOL(lbDisplay__GraphicsWindowY);
-.global EXPORT_SYMBOL(lbDisplay__GraphicsWindowWidth);
-.global EXPORT_SYMBOL(lbDisplay__GraphicsWindowHeight);
 .global EXPORT_SYMBOL(lbDisplay__GlassMap);
 .global EXPORT_SYMBOL(lbDisplay__GraphicsWindowPtr);
 
@@ -150,7 +145,7 @@ GLOBAL_FUNC (LbDrawLine_)
 		mov    %edx,-0x22(%ebp)
 		mov    %ebx,-0x1e(%ebp)
 		mov    %ecx,-0x1a(%ebp)
-		mov    EXPORT_SYMBOL(lbDisplay__GraphicsWindowWidth),%ebx
+		mov    EXPORT_SYMBOL(lbDisplay)+48,%ebx # lbDisplay.GraphicsWindowWidth
 		dec    %ebx
 		cmpl   $0x0,-0x26(%ebp)
 		jge    jump_e7663
@@ -184,7 +179,7 @@ GLOBAL_FUNC (LbDrawLine_)
 		sub    %eax,-0x22(%ebp)
 		movb   $0x1,0x7a(%ebp)
 		mov    -0x1e(%ebp),%eax
-		mov    EXPORT_SYMBOL(lbDisplay__GraphicsWindowWidth),%edx
+		mov    EXPORT_SYMBOL(lbDisplay)+48,%edx # lbDisplay.GraphicsWindowWidth
 		cmp    %edx,%eax
 		jl     jump_e77ab
 		mov    -0x1e(%ebp),%eax
@@ -206,7 +201,7 @@ GLOBAL_FUNC (LbDrawLine_)
 		mov    -0xa(%ebp),%ebx
 		idiv   %ebx
 		mov    %eax,-0x2(%ebp)
-		mov    EXPORT_SYMBOL(lbDisplay__GraphicsWindowWidth),%eax
+		mov    EXPORT_SYMBOL(lbDisplay)+48,%eax # lbDisplay.GraphicsWindowWidth
 		dec    %eax
 		mov    %eax,-0x1e(%ebp)
 		mov    -0x2(%ebp),%eax
@@ -214,7 +209,7 @@ GLOBAL_FUNC (LbDrawLine_)
 		jmp    jump_e77ab
 	jump_e7663:
 		mov    -0x26(%ebp),%eax
-		mov    EXPORT_SYMBOL(lbDisplay__GraphicsWindowWidth),%esi
+		mov    EXPORT_SYMBOL(lbDisplay)+48,%esi # lbDisplay.GraphicsWindowWidth
 		cmp    %esi,%eax
 		jl     jump_e771a
 		mov    -0x1e(%ebp),%eax
@@ -246,7 +241,7 @@ GLOBAL_FUNC (LbDrawLine_)
 		mov    0x2(%ebp),%esi
 		idiv   %esi
 		mov    %eax,0xa(%ebp)
-		mov    EXPORT_SYMBOL(lbDisplay__GraphicsWindowWidth),%eax
+		mov    EXPORT_SYMBOL(lbDisplay)+48,%eax # lbDisplay.GraphicsWindowWidth
 		dec    %eax
 		mov    %eax,-0x26(%ebp)
 		mov    0xa(%ebp),%eax
@@ -327,7 +322,7 @@ GLOBAL_FUNC (LbDrawLine_)
 		mov    0x26(%ebp),%esi
 		idiv   %esi
 		mov    %eax,0x2e(%ebp)
-		mov    EXPORT_SYMBOL(lbDisplay__GraphicsWindowWidth),%eax
+		mov    EXPORT_SYMBOL(lbDisplay)+48,%eax # lbDisplay.GraphicsWindowWidth
 		dec    %eax
 		mov    %eax,-0x1e(%ebp)
 		mov    0x2e(%ebp),%eax
@@ -335,7 +330,7 @@ GLOBAL_FUNC (LbDrawLine_)
 		sub    %eax,-0x1a(%ebp)
 		movb   $0x1,0x7a(%ebp)
 	jump_e77ab:
-		mov    EXPORT_SYMBOL(lbDisplay__GraphicsWindowHeight),%ebx
+		mov    EXPORT_SYMBOL(lbDisplay)+52,%ebx # lbDisplay.GraphicsWindowHeight
 		dec    %ebx
 		cmpl   $0x0,-0x22(%ebp)
 		jge    jump_e7868
@@ -373,7 +368,7 @@ GLOBAL_FUNC (LbDrawLine_)
 		sub    %eax,-0x26(%ebp)
 		movb   $0x1,0x7a(%ebp)
 		mov    -0x1a(%ebp),%eax
-		mov    EXPORT_SYMBOL(lbDisplay__GraphicsWindowHeight),%edx
+		mov    EXPORT_SYMBOL(lbDisplay)+52,%edx # lbDisplay.GraphicsWindowHeight
 		cmp    %edx,%eax
 		jl     jump_e79b0
 		mov    -0x1a(%ebp),%eax
@@ -395,7 +390,7 @@ GLOBAL_FUNC (LbDrawLine_)
 		mov    0x3e(%ebp),%ebx
 		idiv   %ebx
 		mov    %eax,0x46(%ebp)
-		mov    EXPORT_SYMBOL(lbDisplay__GraphicsWindowHeight),%eax
+		mov    EXPORT_SYMBOL(lbDisplay)+52,%eax # lbDisplay.GraphicsWindowHeight
 		dec    %eax
 		mov    %eax,-0x1a(%ebp)
 		mov    0x46(%ebp),%eax
@@ -403,7 +398,7 @@ GLOBAL_FUNC (LbDrawLine_)
 		jmp    jump_e79b0
 	jump_e7868:
 		mov    -0x22(%ebp),%eax
-		mov    EXPORT_SYMBOL(lbDisplay__GraphicsWindowHeight),%esi
+		mov    EXPORT_SYMBOL(lbDisplay)+52,%esi # lbDisplay.GraphicsWindowHeight
 		cmp    %esi,%eax
 		jl     jump_e791f
 		mov    -0x1a(%ebp),%eax
@@ -435,7 +430,7 @@ GLOBAL_FUNC (LbDrawLine_)
 		mov    0x4a(%ebp),%esi
 		idiv   %esi
 		mov    %eax,0x52(%ebp)
-		mov    EXPORT_SYMBOL(lbDisplay__GraphicsWindowHeight),%eax
+		mov    EXPORT_SYMBOL(lbDisplay)+52,%eax # lbDisplay.GraphicsWindowHeight
 		dec    %eax
 		mov    %eax,-0x22(%ebp)
 		mov    0x52(%ebp),%eax
@@ -516,7 +511,7 @@ GLOBAL_FUNC (LbDrawLine_)
 		mov    0x6e(%ebp),%esi
 		idiv   %esi
 		mov    %eax,0x76(%ebp)
-		mov    EXPORT_SYMBOL(lbDisplay__GraphicsWindowHeight),%eax
+		mov    EXPORT_SYMBOL(lbDisplay)+52,%eax # lbDisplay.GraphicsWindowHeight
 		dec    %eax
 		mov    %eax,-0x1a(%ebp)
 		mov    0x76(%ebp),%eax
@@ -588,12 +583,12 @@ draw_b_line:	/* 0x0E79D8 */
 		mov    $0xffffffff,%eax
 	jump_e7a42:
 		mov    %eax,-0x14(%ebp)
-		mov    EXPORT_SYMBOL(lbDisplay__GraphicsScreenWidth),%eax
+		mov    EXPORT_SYMBOL(lbDisplay)+32,%eax # lbDisplay.GraphicsScreenWidth
 		mov    -0x14(%ebp),%edi
 		imul   %edi,%eax
 		mov    %eax,-0x8(%ebp)
 		mov    -0x38(%ebp),%eax
-		imul   EXPORT_SYMBOL(lbDisplay__GraphicsScreenWidth),%eax
+		imul   EXPORT_SYMBOL(lbDisplay)+32,%eax # lbDisplay.GraphicsScreenWidth
 		mov    -0x3c(%ebp),%edx
 		add    %eax,%edx
 		mov    %edx,-0x4(%ebp)
@@ -854,9 +849,9 @@ GLOBAL_FUNC (LbDrawHVLine_)	/* 0xf0834 */
 		mov    %edx,-0x8(%ebp)
 		mov    %ebx,-0xc(%ebp)
 		mov    %ecx,-0x10(%ebp)
-		mov    EXPORT_SYMBOL(lbDisplay__GraphicsWindowWidth),%eax
+		mov    EXPORT_SYMBOL(lbDisplay)+48,%eax # lbDisplay.GraphicsWindowWidth
 		dec    %eax
-		mov    EXPORT_SYMBOL(lbDisplay__GraphicsWindowHeight),%ebx
+		mov    EXPORT_SYMBOL(lbDisplay)+52,%ebx # lbDisplay.GraphicsWindowHeight
 		dec    %ebx
 		mov    -0x4(%ebp),%edi
 		mov    -0xc(%ebp),%esi
@@ -995,7 +990,7 @@ GLOBAL_FUNC (LbDrawHVLine_)	/* 0xf0834 */
 		mov    %edi,-0x10(%ebp)
 	jump_f0937:
 		mov    -0x8(%ebp),%edi
-		imul   EXPORT_SYMBOL(lbDisplay__GraphicsScreenWidth),%edi
+		imul   EXPORT_SYMBOL(lbDisplay)+32,%edi # lbDisplay.GraphicsScreenWidth
 		add    -0x4(%ebp),%edi
 		add    EXPORT_SYMBOL(lbDisplay)+16,%edi # lbDisplay.GraphicsWindowPtr
 		mov    -0xc(%ebp),%ecx
@@ -1013,7 +1008,7 @@ GLOBAL_FUNC (LbDrawHVLine_)	/* 0xf0834 */
 		mov    (%edi),%al
 		mov    (%eax,%esi,1),%bl
 		mov    %bl,(%edi)
-		add    EXPORT_SYMBOL(lbDisplay__GraphicsScreenWidth),%edi
+		add    EXPORT_SYMBOL(lbDisplay)+32,%edi # lbDisplay.GraphicsScreenWidth
 		loop   jump_f0971
 		jmp    jump_f0a0b
 	jump_f0985:
@@ -1025,14 +1020,14 @@ GLOBAL_FUNC (LbDrawHVLine_)	/* 0xf0834 */
 		mov    (%edi),%ah
 		mov    (%eax,%esi,1),%bl
 		mov    %bl,(%edi)
-		add    EXPORT_SYMBOL(lbDisplay__GraphicsScreenWidth),%edi
+		add    EXPORT_SYMBOL(lbDisplay)+32,%edi # lbDisplay.GraphicsScreenWidth
 		loop   jump_f099a
 		jmp    jump_f0a0b
 	jump_f09ab:
 		movzbl 0x8(%ebp),%eax
 	jump_f09af:
 		mov    %al,(%edi)
-		add    EXPORT_SYMBOL(lbDisplay__GraphicsScreenWidth),%edi
+		add    EXPORT_SYMBOL(lbDisplay)+32,%edi # lbDisplay.GraphicsScreenWidth
 		loop   jump_f09af
 		jmp    jump_f0a0b
 	jump_f09bb:
@@ -1092,7 +1087,7 @@ LbDrawBoxClip_:	/* 0x0FADD0 */
 		mov    %ebx,-0xc(%ebp)
 		mov    %ecx,-0x10(%ebp)
 		mov    -0x8(%ebp),%edi
-		cmp    EXPORT_SYMBOL(lbDisplay__GraphicsWindowHeight),%edi
+		cmp    EXPORT_SYMBOL(lbDisplay)+52,%edi # lbDisplay.GraphicsWindowHeight
 		jge    jump_faee2
 		cmp    $0x0,%edi
 		jge    jump_fae01
@@ -1101,17 +1096,17 @@ LbDrawBoxClip_:	/* 0x0FADD0 */
 	jump_fae01:
 		mov    %edi,%edx
 		add    -0x10(%ebp),%edx
-		cmp    EXPORT_SYMBOL(lbDisplay__GraphicsWindowHeight),%edx
+		cmp    EXPORT_SYMBOL(lbDisplay)+52,%edx # lbDisplay.GraphicsWindowHeight
 		jle    jump_fae17
-		sub    EXPORT_SYMBOL(lbDisplay__GraphicsWindowHeight),%edx
+		sub    EXPORT_SYMBOL(lbDisplay)+52,%edx # lbDisplay.GraphicsWindowHeight
 		sub    %edx,-0x10(%ebp)
 	jump_fae17:
 		cmpl   $0x0,-0x10(%ebp)
 		jle    jump_faee2
-		add    EXPORT_SYMBOL(lbDisplay__GraphicsWindowY),%edi
-		imul   EXPORT_SYMBOL(lbDisplay__GraphicsScreenWidth),%edi
+		add    EXPORT_SYMBOL(lbDisplay)+44,%edi # lbDisplay.GraphicsWindowY
+		imul   EXPORT_SYMBOL(lbDisplay)+32,%edi # lbDisplay.GraphicsScreenWidth
 		mov    -0x4(%ebp),%eax
-		cmp    EXPORT_SYMBOL(lbDisplay__GraphicsWindowWidth),%eax
+		cmp    EXPORT_SYMBOL(lbDisplay)+48,%eax # lbDisplay.GraphicsWindowWidth
 		jge    jump_faee2
 		cmp    $0x0,%eax
 		jge    jump_fae47
@@ -1120,18 +1115,18 @@ LbDrawBoxClip_:	/* 0x0FADD0 */
 	jump_fae47:
 		mov    %eax,%edx
 		add    -0xc(%ebp),%edx
-		cmp    EXPORT_SYMBOL(lbDisplay__GraphicsWindowWidth),%edx
+		cmp    EXPORT_SYMBOL(lbDisplay)+48,%edx # lbDisplay.GraphicsWindowWidth
 		jle    jump_fae5d
-		sub    EXPORT_SYMBOL(lbDisplay__GraphicsWindowWidth),%edx
+		sub    EXPORT_SYMBOL(lbDisplay)+48,%edx # lbDisplay.GraphicsWindowWidth
 		sub    %edx,-0xc(%ebp)
 	jump_fae5d:
 		cmpl   $0x0,-0xc(%ebp)
 		jle    jump_faee2
 		add    %eax,%edi
-		add    EXPORT_SYMBOL(lbDisplay__GraphicsWindowX),%edi
+		add    EXPORT_SYMBOL(lbDisplay)+40,%edi # lbDisplay.GraphicsWindowX
 		add    EXPORT_SYMBOL(lbDisplay)+4,%edi # lbDisplay.WScreen
 		mov    -0x10(%ebp),%edx
-		mov    EXPORT_SYMBOL(lbDisplay__GraphicsScreenWidth),%ebx
+		mov    EXPORT_SYMBOL(lbDisplay)+32,%ebx # lbDisplay.GraphicsScreenWidth
 		sub    -0xc(%ebp),%ebx
 		testw  $0x4,EXPORT_SYMBOL(lbDisplay__DrawFlags)
 		je     jump_faea8
@@ -1261,9 +1256,9 @@ GLOBAL_FUNC (SetAlphaScalingData)
 		xor    %ebp,%ebp
 	jump_136a23:
 		mov    %ebp,EXPORT_SYMBOL(alpha_scale_up)
-		mov    EXPORT_SYMBOL(lbDisplay__GraphicsWindowWidth),%ebp
+		mov    EXPORT_SYMBOL(lbDisplay)+48,%ebp # lbDisplay.GraphicsWindowWidth
 		mov    %ebp,0x18(%esp)
-		mov    EXPORT_SYMBOL(lbDisplay__GraphicsWindowHeight),%ebp
+		mov    EXPORT_SYMBOL(lbDisplay)+52,%ebp # lbDisplay.GraphicsWindowHeight
 		mov    %ebp,0x1c(%esp)
 		mov    %eax,(%esp)
 		mov    %edx,0x4(%esp)
@@ -1667,22 +1662,22 @@ LbDrawTriangleFilled_:
 		movb   $0x1,-0x47(%ebp)
 		jmp    jump_1389e6
 	jump_1389c2:
-		cmp    EXPORT_SYMBOL(lbDisplay__GraphicsWindowHeight),%ax
+		cmp    EXPORT_SYMBOL(lbDisplay)+52,%ax # lbDisplay.GraphicsWindowHeight
 		jge    jump_139010
 		movzwl %ax,%ebx
-		imul   EXPORT_SYMBOL(lbDisplay__GraphicsScreenWidth),%ebx
+		imul   EXPORT_SYMBOL(lbDisplay)+32,%ebx # lbDisplay.GraphicsScreenWidth
 		add    EXPORT_SYMBOL(lbDisplay)+4,%ebx # lbDisplay.WScreen
 		mov    %ebx,-0x20(%ebp)
 		movb   $0x0,-0x47(%ebp)
 	jump_1389e6:
 		movzwl 0x2(%ecx),%ebx
-		cmp    EXPORT_SYMBOL(lbDisplay__GraphicsWindowHeight),%bx
+		cmp    EXPORT_SYMBOL(lbDisplay)+52,%bx # lbDisplay.GraphicsWindowHeight
 		setg   -0x49(%ebp)
 		sub    %ax,%bx
 		mov    %ebx,-0x30(%ebp)
 		mov    %ebx,-0x40(%ebp)
 		mov    0x2(%edi),%bx
-		cmp    EXPORT_SYMBOL(lbDisplay__GraphicsWindowHeight),%bx
+		cmp    EXPORT_SYMBOL(lbDisplay)+52,%bx # lbDisplay.GraphicsWindowHeight
 		setg   -0x48(%ebp)
 		sub    %ax,%bx
 		mov    %ebx,-0x34(%ebp)
@@ -1739,7 +1734,7 @@ LbDrawTriangleFilled_:
 		add    %edi,%ebx
 		cmpb   $0x0,-0x49(%ebp)
 		je     jump_138ac3
-		mov    EXPORT_SYMBOL(lbDisplay__GraphicsWindowHeight),%edi
+		mov    EXPORT_SYMBOL(lbDisplay)+52,%edi # lbDisplay.GraphicsWindowHeight
 		mov    %edi,-0x38(%ebp)
 		mov    %edi,-0x40(%ebp)
 	jump_138ac3:
@@ -1755,7 +1750,7 @@ LbDrawTriangleFilled_:
 		add    %edi,%ebx
 		cmpb   $0x0,-0x49(%ebp)
 		je     jump_138b38
-		mov    EXPORT_SYMBOL(lbDisplay__GraphicsWindowHeight),%edi
+		mov    EXPORT_SYMBOL(lbDisplay)+52,%edi # lbDisplay.GraphicsWindowHeight
 		mov    %edi,-0x40(%ebp)
 		cmpb   $0x0,-0x48(%ebp)
 		je     jump_138aff
@@ -1770,7 +1765,7 @@ LbDrawTriangleFilled_:
 	jump_138b0d:
 		cmpb   $0x0,-0x49(%ebp)
 		je     jump_138b38
-		mov    EXPORT_SYMBOL(lbDisplay__GraphicsWindowHeight),%edi
+		mov    EXPORT_SYMBOL(lbDisplay)+52,%edi # lbDisplay.GraphicsWindowHeight
 		sub    -0x46(%ebp),%di
 		mov    %edi,-0x40(%ebp)
 		cmpb   $0x0,-0x48(%ebp)
@@ -1818,21 +1813,21 @@ LbDrawTriangleFilled_:
 		movb   $0x1,-0x47(%ebp)
 		jmp    jump_138bbd
 	jump_138b99:
-		cmp    EXPORT_SYMBOL(lbDisplay__GraphicsWindowHeight),%ax
+		cmp    EXPORT_SYMBOL(lbDisplay)+52,%ax # lbDisplay.GraphicsWindowHeight
 		jge    jump_139010
 		movzwl %ax,%ebx
-		imul   EXPORT_SYMBOL(lbDisplay__GraphicsScreenWidth),%ebx
+		imul   EXPORT_SYMBOL(lbDisplay)+32,%ebx # lbDisplay.GraphicsScreenWidth
 		add    EXPORT_SYMBOL(lbDisplay)+4,%ebx # lbDisplay.WScreen
 		mov    %ebx,-0x20(%ebp)
 		movb   $0x0,-0x47(%ebp)
 	jump_138bbd:
 		movzwl 0x2(%ecx),%ebx
-		cmp    EXPORT_SYMBOL(lbDisplay__GraphicsWindowHeight),%bx
+		cmp    EXPORT_SYMBOL(lbDisplay)+52,%bx # lbDisplay.GraphicsWindowHeight
 		setg   -0x48(%ebp)
 		sub    %ax,%bx
 		mov    %ebx,-0x30(%ebp)
 		mov    0x2(%edi),%bx
-		cmp    EXPORT_SYMBOL(lbDisplay__GraphicsWindowHeight),%bx
+		cmp    EXPORT_SYMBOL(lbDisplay)+52,%bx # lbDisplay.GraphicsWindowHeight
 		setg   -0x49(%ebp)
 		sub    %ax,%bx
 		mov    %ebx,-0x34(%ebp)
@@ -1890,7 +1885,7 @@ LbDrawTriangleFilled_:
 		add    %edi,%ebx
 		cmpb   $0x0,-0x49(%ebp)
 		je     jump_138c9b
-		mov    EXPORT_SYMBOL(lbDisplay__GraphicsWindowHeight),%edi
+		mov    EXPORT_SYMBOL(lbDisplay)+52,%edi # lbDisplay.GraphicsWindowHeight
 		mov    %di,-0x38(%ebp)
 		mov    %edi,-0x40(%ebp)
 	jump_138c9b:
@@ -1906,7 +1901,7 @@ LbDrawTriangleFilled_:
 		add    %edi,%ebx
 		cmpb   $0x0,-0x49(%ebp)
 		je     jump_138d10
-		mov    EXPORT_SYMBOL(lbDisplay__GraphicsWindowHeight),%edi
+		mov    EXPORT_SYMBOL(lbDisplay)+52,%edi # lbDisplay.GraphicsWindowHeight
 		mov    %edi,-0x40(%ebp)
 		cmpb   $0x0,-0x48(%ebp)
 		je     jump_138cd7
@@ -1921,7 +1916,7 @@ LbDrawTriangleFilled_:
 	jump_138ce5:
 		cmpb   $0x0,-0x49(%ebp)
 		je     jump_138d10
-		mov    EXPORT_SYMBOL(lbDisplay__GraphicsWindowHeight),%edi
+		mov    EXPORT_SYMBOL(lbDisplay)+52,%edi # lbDisplay.GraphicsWindowHeight
 		sub    -0x46(%ebp),%di
 		mov    %edi,-0x40(%ebp)
 		cmpb   $0x0,-0x48(%ebp)
@@ -1972,16 +1967,16 @@ LbDrawTriangleFilled_:
 		movb   $0x1,-0x47(%ebp)
 		jmp    jump_138da1
 	jump_138d7d:
-		cmp    EXPORT_SYMBOL(lbDisplay__GraphicsWindowHeight),%ax
+		cmp    EXPORT_SYMBOL(lbDisplay)+52,%ax # lbDisplay.GraphicsWindowHeight
 		jge    jump_139010
 		movzwl %ax,%ebx
-		imul   EXPORT_SYMBOL(lbDisplay__GraphicsScreenWidth),%ebx
+		imul   EXPORT_SYMBOL(lbDisplay)+32,%ebx # lbDisplay.GraphicsScreenWidth
 		add    EXPORT_SYMBOL(lbDisplay)+4,%ebx # lbDisplay.WScreen
 		mov    %ebx,-0x20(%ebp)
 		movb   $0x0,-0x47(%ebp)
 	jump_138da1:
 		movzwl 0x2(%ecx),%ebx
-		cmp    EXPORT_SYMBOL(lbDisplay__GraphicsWindowHeight),%bx
+		cmp    EXPORT_SYMBOL(lbDisplay)+52,%bx # lbDisplay.GraphicsWindowHeight
 		setg   -0x48(%ebp)
 		sub    %ax,%bx
 		mov    %ebx,-0x30(%ebp)
@@ -2016,14 +2011,14 @@ LbDrawTriangleFilled_:
 		add    %edi,%ebx
 		cmpb   $0x0,-0x48(%ebp)
 		je     jump_138e37
-		mov    EXPORT_SYMBOL(lbDisplay__GraphicsWindowHeight),%edi
+		mov    EXPORT_SYMBOL(lbDisplay)+52,%edi # lbDisplay.GraphicsWindowHeight
 		mov    %edi,-0x40(%ebp)
 		mov    %di,-0x30(%ebp)
 		jmp    jump_138e37
 	jump_138e20:
 		cmpb   $0x0,-0x48(%ebp)
 		je     jump_138e37
-		mov    EXPORT_SYMBOL(lbDisplay__GraphicsWindowHeight),%edi
+		mov    EXPORT_SYMBOL(lbDisplay)+52,%edi # lbDisplay.GraphicsWindowHeight
 		sub    -0x46(%ebp),%di
 		mov    %edi,-0x40(%ebp)
 		mov    %di,-0x30(%ebp)
@@ -2054,16 +2049,16 @@ LbDrawTriangleFilled_:
 		movb   $0x1,-0x47(%ebp)
 		jmp    jump_138ea6
 	jump_138e82:
-		cmp    EXPORT_SYMBOL(lbDisplay__GraphicsWindowHeight),%ax
+		cmp    EXPORT_SYMBOL(lbDisplay)+52,%ax # lbDisplay.GraphicsWindowHeight
 		jge    jump_139010
 		movzwl %ax,%ebx
-		imul   EXPORT_SYMBOL(lbDisplay__GraphicsScreenWidth),%ebx
+		imul   EXPORT_SYMBOL(lbDisplay)+32,%ebx # lbDisplay.GraphicsScreenWidth
 		add    EXPORT_SYMBOL(lbDisplay)+4,%ebx # lbDisplay.WScreen
 		mov    %ebx,-0x20(%ebp)
 		movb   $0x0,-0x47(%ebp)
 	jump_138ea6:
 		movzwl 0x2(%ecx),%ebx
-		cmp    EXPORT_SYMBOL(lbDisplay__GraphicsWindowHeight),%bx
+		cmp    EXPORT_SYMBOL(lbDisplay)+52,%bx # lbDisplay.GraphicsWindowHeight
 		setg   -0x48(%ebp)
 		sub    %ax,%bx
 		mov    %ebx,-0x30(%ebp)
@@ -2099,14 +2094,14 @@ LbDrawTriangleFilled_:
 		add    %edi,%ebx
 		cmpb   $0x0,-0x48(%ebp)
 		je     jump_138f40
-		mov    EXPORT_SYMBOL(lbDisplay__GraphicsWindowHeight),%edi
+		mov    EXPORT_SYMBOL(lbDisplay)+52,%edi # lbDisplay.GraphicsWindowHeight
 		mov    %edi,-0x40(%ebp)
 		mov    %di,-0x30(%ebp)
 		jmp    jump_138f40
 	jump_138f29:
 		cmpb   $0x0,-0x48(%ebp)
 		je     jump_138f40
-		mov    EXPORT_SYMBOL(lbDisplay__GraphicsWindowHeight),%edi
+		mov    EXPORT_SYMBOL(lbDisplay)+52,%edi # lbDisplay.GraphicsWindowHeight
 		sub    -0x46(%ebp),%di
 		mov    %edi,-0x40(%ebp)
 		mov    %di,-0x30(%ebp)
@@ -2123,10 +2118,10 @@ LbDrawTriangleFilled_:
 	jump_138f5a:
 		lea    data_1e957c,%esi
 		mov    -0x20(%ebp),%edx
-		mov    EXPORT_SYMBOL(lbDisplay__GraphicsWindowY),%eax
+		mov    EXPORT_SYMBOL(lbDisplay)+44,%eax # lbDisplay.GraphicsWindowY
 		dec    %eax
-		imul   EXPORT_SYMBOL(lbDisplay__GraphicsScreenWidth),%eax
-		add    EXPORT_SYMBOL(lbDisplay__GraphicsWindowX),%eax
+		imul   EXPORT_SYMBOL(lbDisplay)+32,%eax # lbDisplay.GraphicsScreenWidth
+		add    EXPORT_SYMBOL(lbDisplay)+40,%eax # lbDisplay.GraphicsWindowX
 		add    %eax,%edx
 		xor    %eax,%eax
 		mov    0x10(%ebp),%al
@@ -2135,22 +2130,22 @@ LbDrawTriangleFilled_:
 		xor    %ebx,%ebx
 		mov    0x2(%esi),%bx
 		mov    0x6(%esi),%cx
-		add    EXPORT_SYMBOL(lbDisplay__GraphicsScreenWidth),%edx
+		add    EXPORT_SYMBOL(lbDisplay)+32,%edx # lbDisplay.GraphicsScreenWidth
 		or     %bx,%bx
 		jns    jump_138fb3
 		or     %cx,%cx
 		jle    jump_139004
-		cmp    EXPORT_SYMBOL(lbDisplay__GraphicsWindowWidth),%cx
+		cmp    EXPORT_SYMBOL(lbDisplay)+48,%cx # lbDisplay.GraphicsWindowWidth
 		jle    jump_138fa9
-		mov    EXPORT_SYMBOL(lbDisplay__GraphicsWindowWidth),%cx
+		mov    EXPORT_SYMBOL(lbDisplay)+48,%cx # lbDisplay.GraphicsWindowWidth
 	jump_138fa9:
 		mov    %edx,%edi
 		mov    EXPORT_SYMBOL(lbDisplay)+8,%ebx # lbDisplay.GlassMap
 		jmp    jump_138fd1
 	jump_138fb3:
-		cmp    EXPORT_SYMBOL(lbDisplay__GraphicsWindowWidth),%cx
+		cmp    EXPORT_SYMBOL(lbDisplay)+48,%cx # lbDisplay.GraphicsWindowWidth
 		jle    jump_138fc3
-		mov    EXPORT_SYMBOL(lbDisplay__GraphicsWindowWidth),%cx
+		mov    EXPORT_SYMBOL(lbDisplay)+48,%cx # lbDisplay.GraphicsWindowWidth
 	jump_138fc3:
 		sub    %bx,%cx
 		jle    jump_139004

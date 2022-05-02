@@ -32,7 +32,6 @@
 .text
 
 .global EXPORT_SYMBOL(lbDisplay__DrawFlags);
-.global EXPORT_SYMBOL(lbDisplay__GraphicsScreenWidth);
 .global EXPORT_SYMBOL(lbDisplay__GraphicsWindowPtr);
 .global EXPORT_SYMBOL(alpha_xsteps_array);
 .global EXPORT_SYMBOL(alpha_ysteps_array);
@@ -54,7 +53,7 @@ GLOBAL_FUNC (LbSpriteDrawUsingScalingData_)
 		mov    %ecx,0x24(%esp)
 		mov    0x5(%ebx),%cl
 		mov    %ecx,0x28(%esp)
-		mov    EXPORT_SYMBOL(lbDisplay__GraphicsScreenWidth),%esi
+		mov    EXPORT_SYMBOL(lbDisplay)+32,%esi # lbDisplay.GraphicsScreenWidth
 		mov    $0x8,%edi
 		mov    EXPORT_SYMBOL(lbDisplay__DrawFlags),%cx
 		and    $0x1,%cx
@@ -86,7 +85,7 @@ GLOBAL_FUNC (LbSpriteDrawUsingScalingData_)
 		add    0x4(%edi),%esi
 		dec    %esi
 	jump_13521f:
-		mov    EXPORT_SYMBOL(lbDisplay__GraphicsScreenWidth),%eax
+		mov    EXPORT_SYMBOL(lbDisplay)+32,%eax # lbDisplay.GraphicsScreenWidth
 		imul   %eax,%esi
 		add    EXPORT_SYMBOL(lbDisplay)+16,%esi # lbDisplay.GraphicsWindowPtr
 		add    0x0(%ebp),%esi

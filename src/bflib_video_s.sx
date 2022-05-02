@@ -113,9 +113,9 @@ GLOBAL_FUNC (ASM_LbScreenSetupAnyMode_)	/* 0xED4F0 */
 		and    $0xffff,%eax
 		mov    %eax,lbDisplay+28 # lbDisplay.PhysicalScreenHeight
 		mov    0x1c(%ebp),%eax
-		mov    %eax,lbDisplay__GraphicsScreenWidth
+		mov    %eax,lbDisplay+32 # lbDisplay.GraphicsScreenWidth
 		mov    0x20(%ebp),%eax
-		mov    %eax,lbDisplay__GraphicsScreenHeight
+		mov    %eax,lbDisplay+36 # lbDisplay.GraphicsScreenHeight
 		movsbw 0x18(%ebp),%ax
 		mov    %ax,lbDisplay__ScreenMode
 		xor    %ebx,%ebx
@@ -311,16 +311,16 @@ GLOBAL_FUNC (ASM_LbScreenSwap)	/* 0xED8C0 */
 		call   LbMousePlace_
 		cmpb   $0x0,lbDisplay__VesaIsSetUp
 		jne    jump_ed8f9
-		mov    lbDisplay__GraphicsScreenWidth,%ecx
-		imul   lbDisplay__GraphicsScreenHeight,%ecx
+		mov    lbDisplay+32,%ecx # lbDisplay.GraphicsScreenWidth
+		imul   lbDisplay+36,%ecx # lbDisplay.GraphicsScreenHeight
 		mov    lbDisplay+4,%esi # lbDisplay.WScreen
 		mov    lbDisplay+0,%edi # lbDisplay.PhysicalScreen
 		sar    $0x2,%ecx
 		rep movsl %ds:(%esi),%es:(%edi)
 		jmp    jump_ed95f
 	jump_ed8f9:
-		mov    lbDisplay__GraphicsScreenWidth,%eax
-		mov    lbDisplay__GraphicsScreenHeight,%ebx
+		mov    lbDisplay+32,%eax # lbDisplay.GraphicsScreenWidth
+		mov    lbDisplay+36,%ebx # lbDisplay.GraphicsScreenHeight
 		imul   %ebx,%eax
 		mov    %eax,-0x10(%ebp)
 		mov    lbDisplay+4,%eax # lbDisplay.WScreen
@@ -391,8 +391,8 @@ GLOBAL_FUNC (ASM_LbScreenSwapClear)
 		add    %eax,%edx
 		xor    %eax,%eax
 		mov    0x18(%ebp),%al
-		mov    lbDisplay__GraphicsScreenWidth,%ecx
-		imul   lbDisplay__GraphicsScreenHeight,%ecx
+		mov    lbDisplay+32,%ecx # lbDisplay.GraphicsScreenWidth
+		imul   lbDisplay+36,%ecx # lbDisplay.GraphicsScreenHeight
 		mov    lbDisplay+4,%esi # lbDisplay.WScreen
 		shl    $0x18,%eax
 		mov    lbDisplay+0,%edi # lbDisplay.PhysicalScreen
@@ -404,8 +404,8 @@ GLOBAL_FUNC (ASM_LbScreenSwapClear)
 		loop   jump_edb9b
 		jmp    jump_edc33
 	jump_edba6:
-		mov    lbDisplay__GraphicsScreenWidth,%eax
-		mov    lbDisplay__GraphicsScreenHeight,%ecx
+		mov    lbDisplay+32,%eax # lbDisplay.GraphicsScreenWidth
+		mov    lbDisplay+36,%ecx # lbDisplay.GraphicsScreenHeight
 		imul   %ecx,%eax
 		mov    %eax,-0x10(%ebp)
 		mov    lbDisplay+4,%eax # lbDisplay.WScreen
@@ -600,42 +600,42 @@ GLOBAL_FUNC (LbScreenSetGraphicsWindow_)	/* e0d00 */
 		mov    %edx,-0x4(%ebp)
 	jump_e0d96:
 		mov    -0x10(%ebp),%eax
-		mov    lbDisplay__GraphicsScreenWidth,%ebx
+		mov    lbDisplay+32,%ebx # lbDisplay.GraphicsScreenWidth
 		cmp    %ebx,%eax
 		jle    jump_e0da6
 		mov    %ebx,-0x10(%ebp)
 	jump_e0da6:
 		mov    -0x8(%ebp),%eax
-		mov    lbDisplay__GraphicsScreenWidth,%ecx
+		mov    lbDisplay+32,%ecx # lbDisplay.GraphicsScreenWidth
 		cmp    %ecx,%eax
 		jle    jump_e0db6
 		mov    %ecx,-0x8(%ebp)
 	jump_e0db6:
 		mov    -0xc(%ebp),%eax
-		mov    lbDisplay__GraphicsScreenHeight,%esi
+		mov    lbDisplay+36,%esi # lbDisplay.GraphicsScreenHeight
 		cmp    %esi,%eax
 		jle    jump_e0dc6
 		mov    %esi,-0xc(%ebp)
 	jump_e0dc6:
 		mov    -0x4(%ebp),%eax
-		mov    lbDisplay__GraphicsScreenHeight,%edi
+		mov    lbDisplay+36,%edi # lbDisplay.GraphicsScreenHeight
 		cmp    %edi,%eax
 		jle    jump_e0dd6
 		mov    %edi,-0x4(%ebp)
 	jump_e0dd6:
 		mov    -0x10(%ebp),%eax
-		mov    %eax,lbDisplay__GraphicsWindowX
+		mov    %eax,lbDisplay+40 # lbDisplay.GraphicsWindowX
 		mov    -0xc(%ebp),%eax
-		mov    %eax,lbDisplay__GraphicsWindowY
+		mov    %eax,lbDisplay+44 # lbDisplay.GraphicsWindowY
 		mov    -0x8(%ebp),%eax
 		mov    -0x10(%ebp),%edx
 		sub    %edx,%eax
-		mov    %eax,lbDisplay__GraphicsWindowWidth
+		mov    %eax,lbDisplay+48 # lbDisplay.GraphicsWindowWidth
 		mov    -0x4(%ebp),%eax
 		mov    -0xc(%ebp),%ebx
 		sub    %ebx,%eax
-		mov    %eax,lbDisplay__GraphicsWindowHeight
-		mov    lbDisplay__GraphicsScreenWidth,%eax
+		mov    %eax,lbDisplay+52 # lbDisplay.GraphicsWindowHeight
+		mov    lbDisplay+32,%eax # lbDisplay.GraphicsScreenWidth
 		imul   -0x1c(%ebp),%eax
 		mov    lbDisplay+4,%edx # lbDisplay.WScreen
 		add    %edx,%eax
@@ -1162,34 +1162,19 @@ aVesa:	/* 0x15F1A8 */
  * current graphic mode information set in LbScreenSetupAnyMode
  */
 GLOBAL (lbDisplay)	/* 0x1e2e54 */
-/* pointer to the frame buffer */
-GLOBAL (lbDisplay__PhysicalScreen)
 		.long	0x0
-GLOBAL (lbDisplay__WScreen)			/* 1e2e58 */
 		.long	0x0
-GLOBAL (lbDisplay__GlassMap)
 		.long	0x0
-lbDisplay__FadeTable:
 		.long	0x0
-GLOBAL (lbDisplay__GraphicsWindowPtr)
 		.long	0x0
-GLOBAL (lbDisplay__MouseSprite)
 		.long	0x0
-GLOBAL (lbDisplay__PhysicalScreenWidth)		/* 1e2e6c */
 		.long	0x0
-GLOBAL (lbDisplay__PhysicalScreenHeight)		/* 1e2e70 */
 		.long	0x0
-GLOBAL (lbDisplay__GraphicsScreenWidth)			/* 1e2e74 */
 		.long	0x0
-GLOBAL (lbDisplay__GraphicsScreenHeight)			/* 1e2e78 */
 		.long	0x0
-GLOBAL (lbDisplay__GraphicsWindowX)
 		.long	0x0
-GLOBAL (lbDisplay__GraphicsWindowY)
 		.long	0x0
-GLOBAL (lbDisplay__GraphicsWindowWidth)
 		.long	0x0
-GLOBAL (lbDisplay__GraphicsWindowHeight)
 		.long	0x0
 GLOBAL (lbDisplay__MouseWindowX)			/* 1e2e8c */
 		.long	0x0

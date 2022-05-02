@@ -33,8 +33,6 @@
 .global EXPORT_SYMBOL(lbDisplay);
 .global EXPORT_SYMBOL(lbDisplay__MLeftButton);
 .global EXPORT_SYMBOL(lbDisplay__ScreenMode);
-.global EXPORT_SYMBOL(lbDisplay__GraphicsScreenWidth);
-.global EXPORT_SYMBOL(lbDisplay__GraphicsScreenHeight);
 .global EXPORT_SYMBOL(lbKeyOn);
 .global EXPORT_SYMBOL(SmackMSSDigDriver);
 .global EXPORT_SYMBOL(_LowSoundVolPanAddr);
@@ -6809,19 +6807,19 @@ play_smk_direct:
 		push   $0xa0000
 		jmp    jump_eb279
 	jump_eb24a:
-		mov    EXPORT_SYMBOL(lbDisplay__GraphicsScreenWidth),%esi
+		mov    EXPORT_SYMBOL(lbDisplay)+32,%esi # lbDisplay.GraphicsScreenWidth
 		sub    0x4(%eax),%esi
 		shr    %esi
-		mov    EXPORT_SYMBOL(lbDisplay__GraphicsScreenHeight),%edx
+		mov    EXPORT_SYMBOL(lbDisplay)+36,%edx # lbDisplay.GraphicsScreenHeight
 		mov    0x8(%eax),%ecx
 		push   %eax
 		sub    %ecx,%edx
 		push   %esi
 		shr    %edx
 		push   %edx
-		mov    EXPORT_SYMBOL(lbDisplay__GraphicsScreenWidth),%esi
+		mov    EXPORT_SYMBOL(lbDisplay)+32,%esi # lbDisplay.GraphicsScreenWidth
 		push   %esi
-		mov    EXPORT_SYMBOL(lbDisplay__GraphicsScreenHeight),%edi
+		mov    EXPORT_SYMBOL(lbDisplay)+36,%edi # lbDisplay.GraphicsScreenHeight
 		push   %edi
 		mov    EXPORT_SYMBOL(lbDisplay)+4,%eax # lbDisplay.WScreen
 		push   %eax
@@ -7167,8 +7165,8 @@ copy_to_screen:
 		jmp    jump_eb56a
 	jump_eb555:
 		mov    EXPORT_SYMBOL(lbDisplay)+4,%ebp # lbDisplay.WScreen
-		mov    EXPORT_SYMBOL(lbDisplay__GraphicsScreenWidth),%eax
-		mov    EXPORT_SYMBOL(lbDisplay__GraphicsScreenHeight),%edx
+		mov    EXPORT_SYMBOL(lbDisplay)+32,%eax # lbDisplay.GraphicsScreenWidth
+		mov    EXPORT_SYMBOL(lbDisplay)+36,%edx # lbDisplay.GraphicsScreenHeight
 		mov    %eax,0x10(%esp)
 	jump_eb56a:
 		test   $0x4,%cl
@@ -7371,9 +7369,9 @@ copy_to_screen:
 	jump_eb772:
 		cmpl   $0x0,_smack_draw_callback
 		je     jump_eb796
-		mov    EXPORT_SYMBOL(lbDisplay__GraphicsScreenHeight),%edx
+		mov    EXPORT_SYMBOL(lbDisplay)+36,%edx # lbDisplay.GraphicsScreenHeight
 		push   %edx
-		mov    EXPORT_SYMBOL(lbDisplay__GraphicsScreenWidth),%ebx
+		mov    EXPORT_SYMBOL(lbDisplay)+32,%ebx # lbDisplay.GraphicsScreenWidth
 		push   %ebx
 		mov    EXPORT_SYMBOL(lbDisplay)+4,%ecx # lbDisplay.WScreen
 		push   %ecx
