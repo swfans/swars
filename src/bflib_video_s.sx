@@ -52,7 +52,7 @@ GLOBAL_FUNC (ASM_LbScreenSetupAnyMode_)	/* 0xED4F0 */
 		jmp    jump_ed6e3
 	jump_ed516:
 		call   LbMouseSuspend_
-		cmpw   $0x0,lbDisplay+98 # lbDisplay.OldVideoMode
+		cmpw   $0x0,EXPORT_SYMBOL(lbDisplay)+98 # lbDisplay.OldVideoMode
 		jne    jump_ed547
 		movl   $0xf00,-0x38(%ebp)
 		lea    -0x1c(%ebp),%ebx
@@ -61,7 +61,7 @@ GLOBAL_FUNC (ASM_LbScreenSetupAnyMode_)	/* 0xED4F0 */
 		call   ac_dos_int386
 		xor    %ah,%ah
 		mov    -0x1c(%ebp),%al
-		mov    %ax,lbDisplay+98 # lbDisplay.OldVideoMode
+		mov    %ax,EXPORT_SYMBOL(lbDisplay)+98 # lbDisplay.OldVideoMode
 	jump_ed547:
 		movsbl 0x18(%ebp),%edx
 		lea    0x0(,%edx,4),%eax
@@ -70,7 +70,7 @@ GLOBAL_FUNC (ASM_LbScreenSetupAnyMode_)	/* 0xED4F0 */
 		sub    %edx,%eax
 		cmpl   $0x100,lbScreenModeInfo0_VideoFlags(,%eax,2)
 		jl     jump_ed590
-		movb   $0x1,lbDisplay+102 # lbDisplay.VesaIsSetUp
+		movb   $0x1,EXPORT_SYMBOL(lbDisplay)+102 # lbDisplay.VesaIsSetUp
 		movsbl 0x18(%ebp),%edx
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
@@ -82,7 +82,7 @@ GLOBAL_FUNC (ASM_LbScreenSetupAnyMode_)	/* 0xED4F0 */
 		jmp    jump_ed5c4
 	jump_ed590:
 		xor    %dl,%dl
-		mov    %dl,lbDisplay+102 # lbDisplay.VesaIsSetUp
+		mov    %dl,EXPORT_SYMBOL(lbDisplay)+102 # lbDisplay.VesaIsSetUp
 		movsbl 0x18(%ebp),%edx
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
@@ -95,7 +95,7 @@ GLOBAL_FUNC (ASM_LbScreenSetupAnyMode_)	/* 0xED4F0 */
 		mov    $0x10,%eax
 		call   ac_dos_int386
 	jump_ed5c4:
-		movl   $0xa0000,lbDisplay+0 # lbDisplay.PhysicalScreen
+		movl   $0xa0000,EXPORT_SYMBOL(lbDisplay)+0 # lbDisplay.PhysicalScreen
 		movsbl 0x18(%ebp),%edx
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
@@ -103,7 +103,7 @@ GLOBAL_FUNC (ASM_LbScreenSetupAnyMode_)	/* 0xED4F0 */
 		sub    %edx,%eax
 		mov    lbScreenModeInfo0_Width(,%eax,2),%ax
 		and    $0xffff,%eax
-		mov    %eax,lbDisplay+24 # lbDisplay.PhysicalScreenWidth
+		mov    %eax,EXPORT_SYMBOL(lbDisplay)+24 # lbDisplay.PhysicalScreenWidth
 		movsbl 0x18(%ebp),%edx
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
@@ -111,17 +111,17 @@ GLOBAL_FUNC (ASM_LbScreenSetupAnyMode_)	/* 0xED4F0 */
 		sub    %edx,%eax
 		mov    lbScreenModeInfo0_Height(,%eax,2),%ax
 		and    $0xffff,%eax
-		mov    %eax,lbDisplay+28 # lbDisplay.PhysicalScreenHeight
+		mov    %eax,EXPORT_SYMBOL(lbDisplay)+28 # lbDisplay.PhysicalScreenHeight
 		mov    0x1c(%ebp),%eax
-		mov    %eax,lbDisplay+32 # lbDisplay.GraphicsScreenWidth
+		mov    %eax,EXPORT_SYMBOL(lbDisplay)+32 # lbDisplay.GraphicsScreenWidth
 		mov    0x20(%ebp),%eax
-		mov    %eax,lbDisplay+36 # lbDisplay.GraphicsScreenHeight
+		mov    %eax,EXPORT_SYMBOL(lbDisplay)+36 # lbDisplay.GraphicsScreenHeight
 		movsbw 0x18(%ebp),%ax
-		mov    %ax,lbDisplay+100 # lbDisplay.ScreenMode
+		mov    %ax,EXPORT_SYMBOL(lbDisplay)+100 # lbDisplay.ScreenMode
 		xor    %ebx,%ebx
 		xor    %dh,%dh
-		mov    %bx,lbDisplay+96 # lbDisplay.DrawFlags
-		mov    %dh,lbDisplay+113
+		mov    %bx,EXPORT_SYMBOL(lbDisplay)+96 # lbDisplay.DrawFlags
+		mov    %dh,EXPORT_SYMBOL(lbDisplay)+113
 		movsbl 0x18(%ebp),%edx
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
@@ -192,7 +192,7 @@ GLOBAL_FUNC (LbScreenReset_)
 		call   LbMouseSuspend_
 #if 0
 		xor    %eax,%eax
-		mov    lbDisplay+98,%ax # lbDisplay.OldVideoMode
+		mov    EXPORT_SYMBOL(lbDisplay)+98,%ax # lbDisplay.OldVideoMode
 		mov    %eax,-0x1c(%ebp)
 		lea    -0x38(%ebp),%ebx
 		lea    -0x1c(%ebp),%edx
@@ -309,21 +309,21 @@ GLOBAL_FUNC (ASM_LbScreenSwap)	/* 0xED8C0 */
 		mov    %esp,%ebp
 		sub    $0x10,%esp
 		call   LbMousePlace_
-		cmpb   $0x0,lbDisplay+102 # lbDisplay.VesaIsSetUp
+		cmpb   $0x0,EXPORT_SYMBOL(lbDisplay)+102 # lbDisplay.VesaIsSetUp
 		jne    jump_ed8f9
-		mov    lbDisplay+32,%ecx # lbDisplay.GraphicsScreenWidth
-		imul   lbDisplay+36,%ecx # lbDisplay.GraphicsScreenHeight
-		mov    lbDisplay+4,%esi # lbDisplay.WScreen
-		mov    lbDisplay+0,%edi # lbDisplay.PhysicalScreen
+		mov    EXPORT_SYMBOL(lbDisplay)+32,%ecx # lbDisplay.GraphicsScreenWidth
+		imul   EXPORT_SYMBOL(lbDisplay)+36,%ecx # lbDisplay.GraphicsScreenHeight
+		mov    EXPORT_SYMBOL(lbDisplay)+4,%esi # lbDisplay.WScreen
+		mov    EXPORT_SYMBOL(lbDisplay)+0,%edi # lbDisplay.PhysicalScreen
 		sar    $0x2,%ecx
 		rep movsl %ds:(%esi),%es:(%edi)
 		jmp    jump_ed95f
 	jump_ed8f9:
-		mov    lbDisplay+32,%eax # lbDisplay.GraphicsScreenWidth
-		mov    lbDisplay+36,%ebx # lbDisplay.GraphicsScreenHeight
+		mov    EXPORT_SYMBOL(lbDisplay)+32,%eax # lbDisplay.GraphicsScreenWidth
+		mov    EXPORT_SYMBOL(lbDisplay)+36,%ebx # lbDisplay.GraphicsScreenHeight
 		imul   %ebx,%eax
 		mov    %eax,-0x10(%ebp)
-		mov    lbDisplay+4,%eax # lbDisplay.WScreen
+		mov    EXPORT_SYMBOL(lbDisplay)+4,%eax # lbDisplay.WScreen
 		mov    %eax,-0x8(%ebp)
 		xor    %edx,%edx
 		mov    %edx,-0x4(%ebp)
@@ -341,7 +341,7 @@ GLOBAL_FUNC (ASM_LbScreenSwap)	/* 0xED8C0 */
 		mov    -0xc(%ebp),%ecx
 		sar    $0x2,%ecx
 		mov    -0x8(%ebp),%esi
-		mov    lbDisplay+0,%edi # lbDisplay.PhysicalScreen
+		mov    EXPORT_SYMBOL(lbDisplay)+0,%edi # lbDisplay.PhysicalScreen
 		rep movsl %ds:(%esi),%es:(%edi)
 		addl   $0x10000,-0x8(%ebp)
 	jump_ed94b:
@@ -377,7 +377,7 @@ GLOBAL_FUNC (ASM_LbScreenSwapClear)
 		mov    %esp,%ebp
 		sub    $0x10,%esp
 		call   LbMousePlace_
-		cmpb   $0x0,lbDisplay+102 # lbDisplay.VesaIsSetUp
+		cmpb   $0x0,EXPORT_SYMBOL(lbDisplay)+102 # lbDisplay.VesaIsSetUp
 		jne    jump_edba6
 		xor    %eax,%eax
 		mov    0x18(%ebp),%al
@@ -391,11 +391,11 @@ GLOBAL_FUNC (ASM_LbScreenSwapClear)
 		add    %eax,%edx
 		xor    %eax,%eax
 		mov    0x18(%ebp),%al
-		mov    lbDisplay+32,%ecx # lbDisplay.GraphicsScreenWidth
-		imul   lbDisplay+36,%ecx # lbDisplay.GraphicsScreenHeight
-		mov    lbDisplay+4,%esi # lbDisplay.WScreen
+		mov    EXPORT_SYMBOL(lbDisplay)+32,%ecx # lbDisplay.GraphicsScreenWidth
+		imul   EXPORT_SYMBOL(lbDisplay)+36,%ecx # lbDisplay.GraphicsScreenHeight
+		mov    EXPORT_SYMBOL(lbDisplay)+4,%esi # lbDisplay.WScreen
 		shl    $0x18,%eax
-		mov    lbDisplay+0,%edi # lbDisplay.PhysicalScreen
+		mov    EXPORT_SYMBOL(lbDisplay)+0,%edi # lbDisplay.PhysicalScreen
 		add    %eax,%edx
 		sar    $0x2,%ecx
 	jump_edb9b:
@@ -404,11 +404,11 @@ GLOBAL_FUNC (ASM_LbScreenSwapClear)
 		loop   jump_edb9b
 		jmp    jump_edc33
 	jump_edba6:
-		mov    lbDisplay+32,%eax # lbDisplay.GraphicsScreenWidth
-		mov    lbDisplay+36,%ecx # lbDisplay.GraphicsScreenHeight
+		mov    EXPORT_SYMBOL(lbDisplay)+32,%eax # lbDisplay.GraphicsScreenWidth
+		mov    EXPORT_SYMBOL(lbDisplay)+36,%ecx # lbDisplay.GraphicsScreenHeight
 		imul   %ecx,%eax
 		mov    %eax,-0x10(%ebp)
-		mov    lbDisplay+4,%eax # lbDisplay.WScreen
+		mov    EXPORT_SYMBOL(lbDisplay)+4,%eax # lbDisplay.WScreen
 		mov    %eax,-0x8(%ebp)
 		xor    %edx,%edx
 		mov    %edx,-0x4(%ebp)
@@ -438,7 +438,7 @@ GLOBAL_FUNC (ASM_LbScreenSwapClear)
 		mov    -0xc(%ebp),%ecx
 		sar    $0x2,%ecx
 		mov    -0x8(%ebp),%esi
-		mov    lbDisplay+0,%edi # lbDisplay.PhysicalScreen
+		mov    EXPORT_SYMBOL(lbDisplay)+0,%edi # lbDisplay.PhysicalScreen
 	jump_edc0c:
 		movsl  %ds:(%esi),%es:(%edi)
 		mov    %edx,-0x4(%esi)
@@ -600,48 +600,48 @@ GLOBAL_FUNC (LbScreenSetGraphicsWindow_)	/* e0d00 */
 		mov    %edx,-0x4(%ebp)
 	jump_e0d96:
 		mov    -0x10(%ebp),%eax
-		mov    lbDisplay+32,%ebx # lbDisplay.GraphicsScreenWidth
+		mov    EXPORT_SYMBOL(lbDisplay)+32,%ebx # lbDisplay.GraphicsScreenWidth
 		cmp    %ebx,%eax
 		jle    jump_e0da6
 		mov    %ebx,-0x10(%ebp)
 	jump_e0da6:
 		mov    -0x8(%ebp),%eax
-		mov    lbDisplay+32,%ecx # lbDisplay.GraphicsScreenWidth
+		mov    EXPORT_SYMBOL(lbDisplay)+32,%ecx # lbDisplay.GraphicsScreenWidth
 		cmp    %ecx,%eax
 		jle    jump_e0db6
 		mov    %ecx,-0x8(%ebp)
 	jump_e0db6:
 		mov    -0xc(%ebp),%eax
-		mov    lbDisplay+36,%esi # lbDisplay.GraphicsScreenHeight
+		mov    EXPORT_SYMBOL(lbDisplay)+36,%esi # lbDisplay.GraphicsScreenHeight
 		cmp    %esi,%eax
 		jle    jump_e0dc6
 		mov    %esi,-0xc(%ebp)
 	jump_e0dc6:
 		mov    -0x4(%ebp),%eax
-		mov    lbDisplay+36,%edi # lbDisplay.GraphicsScreenHeight
+		mov    EXPORT_SYMBOL(lbDisplay)+36,%edi # lbDisplay.GraphicsScreenHeight
 		cmp    %edi,%eax
 		jle    jump_e0dd6
 		mov    %edi,-0x4(%ebp)
 	jump_e0dd6:
 		mov    -0x10(%ebp),%eax
-		mov    %eax,lbDisplay+40 # lbDisplay.GraphicsWindowX
+		mov    %eax,EXPORT_SYMBOL(lbDisplay)+40 # lbDisplay.GraphicsWindowX
 		mov    -0xc(%ebp),%eax
-		mov    %eax,lbDisplay+44 # lbDisplay.GraphicsWindowY
+		mov    %eax,EXPORT_SYMBOL(lbDisplay)+44 # lbDisplay.GraphicsWindowY
 		mov    -0x8(%ebp),%eax
 		mov    -0x10(%ebp),%edx
 		sub    %edx,%eax
-		mov    %eax,lbDisplay+48 # lbDisplay.GraphicsWindowWidth
+		mov    %eax,EXPORT_SYMBOL(lbDisplay)+48 # lbDisplay.GraphicsWindowWidth
 		mov    -0x4(%ebp),%eax
 		mov    -0xc(%ebp),%ebx
 		sub    %ebx,%eax
-		mov    %eax,lbDisplay+52 # lbDisplay.GraphicsWindowHeight
-		mov    lbDisplay+32,%eax # lbDisplay.GraphicsScreenWidth
+		mov    %eax,EXPORT_SYMBOL(lbDisplay)+52 # lbDisplay.GraphicsWindowHeight
+		mov    EXPORT_SYMBOL(lbDisplay)+32,%eax # lbDisplay.GraphicsScreenWidth
 		imul   -0x1c(%ebp),%eax
-		mov    lbDisplay+4,%edx # lbDisplay.WScreen
+		mov    EXPORT_SYMBOL(lbDisplay)+4,%edx # lbDisplay.WScreen
 		add    %edx,%eax
 		mov    -0x20(%ebp),%edx
 		add    %eax,%edx
-		mov    %edx,lbDisplay+16 # lbDisplay.GraphicsWindowPtr
+		mov    %edx,EXPORT_SYMBOL(lbDisplay)+16 # lbDisplay.GraphicsWindowPtr
 		mov    $0x1,%eax
 		mov    %ebp,%esp
 		pop    %ebp
@@ -1157,52 +1157,6 @@ aVesa:	/* 0x15F1A8 */
 		.align	4
 
 .data
-
-/*
- * current graphic mode information set in LbScreenSetupAnyMode
- */
-GLOBAL (lbDisplay)	/* 0x1e2e54 */
-		.long	0x0
-		.long	0x0
-		.long	0x0
-		.long	0x0
-		.long	0x0
-		.long	0x0
-		.long	0x0
-		.long	0x0
-		.long	0x0
-		.long	0x0
-		.long	0x0
-		.long	0x0
-		.long	0x0
-		.long	0x0
-		.long	0x0
-		.long	0x0
-		.long	0x0
-		.long	0x0
-		.long	0x0
-		.long	0x0
-		.long	0x0
-		.long	0x0
-		.long	0x0
-		.long	0x0
-		.short	0x0
-		.short	0x0
-		.short	0x0
-		.byte	0x0
-		.byte	0x0
-		.byte	0x0
-		.byte	0x0
-		.byte	0x0
-		.byte	0x0
-		.byte	0x0
-		.byte	0x0
-		.byte	0x0
-		.byte	0x0
-		.byte	0x0
-		.byte	0x0
-		.long	0x0
-		.fill   0x2
 
 setup:	/* 0x1E2E50 */
 		.long	0x0
