@@ -167,6 +167,9 @@ struct DisplayStruct { // sizeof=118
     /** Mouse position during button release, Y coordinate. */
     long RMouseY; // offset=92
     ushort DrawFlags; // offset=96
+
+    /** Graphic mode at the start of the app.
+     * At exit, the app goes back to this mode. */
     ushort OldVideoMode; // offset=98
 
     /** Actual Screen Mode of the lbDrawTexture, can be same
