@@ -42,6 +42,7 @@ libbullfrog_a_SOURCES = \
   src/general/spr_scol.c \
   src/general/spr_smap.c \
   src/general/spr_sstd.c \
+  src/general/spr_ssta.c \
   src/general/sqroot.c
 
 libbullfrog_a_SOURCES += \

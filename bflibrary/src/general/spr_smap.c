@@ -38,7 +38,9 @@
  * @param transmap The transparency mapping table to be used.
  * @return Gives 0 on success.
  */
-TbResult LbSpriteDrawRemapUsingScalingUpDataTrans1RL(uchar *outbuf, int scanline, int outheight, long *xstep, long *ystep, const struct TbSprite *sprite, const TbPixel *cmap, const TbPixel *transmap)
+TbResult LbSpriteDrawRemapUsingScalingUpDataTrans1RL(uchar *outbuf, int scanline,
+  int outheight, long *xstep, long *ystep, const TbSprite *sprite,
+  const TbPixel *cmap, const TbPixel *transmap)
 {
     int ystep_delta;
     unsigned char *sprdata;
@@ -144,7 +146,9 @@ TbResult LbSpriteDrawRemapUsingScalingUpDataTrans1RL(uchar *outbuf, int scanline
  * @param transmap The transparency mapping table to be used. Should have a size of 256x256 to avoid invalid memory reads.
  * @return Gives 0 on success.
  */
-TbResult LbSpriteDrawRemapUsingScalingUpDataTrans1LR(uchar *outbuf, int scanline, int outheight, long *xstep, long *ystep, const struct TbSprite *sprite, const TbPixel *cmap, const TbPixel *transmap)
+TbResult LbSpriteDrawRemapUsingScalingUpDataTrans1LR(uchar *outbuf, int scanline,
+  int outheight, long *xstep, long *ystep, const TbSprite *sprite,
+  const TbPixel *cmap, const TbPixel *transmap)
 {
     int ystep_delta;
     unsigned char *sprdata;
@@ -250,7 +254,9 @@ TbResult LbSpriteDrawRemapUsingScalingUpDataTrans1LR(uchar *outbuf, int scanline
  * @param transmap The transparency mapping table to be used.
  * @return Gives 0 on success.
  */
-TbResult LbSpriteDrawRemapUsingScalingUpDataTrans2RL(uchar *outbuf, int scanline, int outheight, long *xstep, long *ystep, const struct TbSprite *sprite, const TbPixel *cmap, const TbPixel *transmap)
+TbResult LbSpriteDrawRemapUsingScalingUpDataTrans2RL(uchar *outbuf, int scanline,
+  int outheight, long *xstep, long *ystep, const TbSprite *sprite,
+  const TbPixel *cmap, const TbPixel *transmap)
 {
     int ystep_delta;
     unsigned char *sprdata;
@@ -356,7 +362,9 @@ TbResult LbSpriteDrawRemapUsingScalingUpDataTrans2RL(uchar *outbuf, int scanline
  * @param transmap The transparency mapping table to be used.
  * @return Gives 0 on success.
  */
-TbResult LbSpriteDrawRemapUsingScalingUpDataTrans2LR(uchar *outbuf, int scanline, int outheight, long *xstep, long *ystep, const struct TbSprite *sprite, const TbPixel *cmap, const TbPixel *transmap)
+TbResult LbSpriteDrawRemapUsingScalingUpDataTrans2LR(uchar *outbuf, int scanline,
+  int outheight, long *xstep, long *ystep, const TbSprite *sprite,
+  const TbPixel *cmap, const TbPixel *transmap)
 {
     int ystep_delta;
     unsigned char *sprdata;
@@ -461,7 +469,8 @@ TbResult LbSpriteDrawRemapUsingScalingUpDataTrans2LR(uchar *outbuf, int scanline
  * @param cmap The colour remap table to be used.
  * @return Gives 0 on success.
  */
-TbResult LbSpriteDrawRemapUsingScalingUpDataSolidRL(uchar *outbuf, int scanline, int outheight, long *xstep, long *ystep, const struct TbSprite *sprite, const TbPixel *cmap)
+TbResult LbSpriteDrawRemapUsingScalingUpDataSolidRL(uchar *outbuf, int scanline,
+  int outheight, long *xstep, long *ystep, const TbSprite *sprite, const TbPixel *cmap)
 {
     int ystep_delta;
     unsigned char *sprdata;
@@ -583,7 +592,8 @@ TbResult LbSpriteDrawRemapUsingScalingUpDataSolidRL(uchar *outbuf, int scanline,
  * @param cmap The colour remap table to be used.
  * @return Gives 0 on success.
  */
-TbResult LbSpriteDrawRemapUsingScalingUpDataSolidLR(uchar *outbuf, int scanline, int outheight, long *xstep, long *ystep, const struct TbSprite *sprite, const TbPixel *cmap)
+TbResult LbSpriteDrawRemapUsingScalingUpDataSolidLR(uchar *outbuf, int scanline,
+  int outheight, long *xstep, long *ystep, const TbSprite *sprite, const TbPixel *cmap)
 {
     int ystep_delta;
     unsigned char *sprdata;
@@ -704,7 +714,9 @@ TbResult LbSpriteDrawRemapUsingScalingUpDataSolidLR(uchar *outbuf, int scanline,
  * @param transmap The transparency mapping table to be used.
  * @return Gives 0 on success.
  */
-TbResult LbSpriteDrawRemapUsingScalingDownDataTrans1RL(uchar *outbuf, int scanline, int outheight, long *xstep, long *ystep, const struct TbSprite *sprite, const TbPixel *cmap, const TbPixel *transmap)
+TbResult LbSpriteDrawRemapUsingScalingDownDataTrans1RL(uchar *outbuf, int scanline,
+  int outheight, long *xstep, long *ystep, const TbSprite *sprite,
+  const TbPixel *cmap, const TbPixel *transmap)
 {
     int ystep_delta;
     unsigned char *sprdata;
@@ -795,7 +807,9 @@ TbResult LbSpriteDrawRemapUsingScalingDownDataTrans1RL(uchar *outbuf, int scanli
  * @param transmap The transparency mapping table to be used.
  * @return Gives 0 on success.
  */
-TbResult LbSpriteDrawRemapUsingScalingDownDataTrans1LR(uchar *outbuf, int scanline, int outheight, long *xstep, long *ystep, const struct TbSprite *sprite, const TbPixel *cmap, const TbPixel *transmap)
+TbResult LbSpriteDrawRemapUsingScalingDownDataTrans1LR(uchar *outbuf, int scanline,
+  int outheight, long *xstep, long *ystep, const TbSprite *sprite,
+  const TbPixel *cmap, const TbPixel *transmap)
 {
     int ystep_delta;
     unsigned char *sprdata;
@@ -886,7 +900,9 @@ TbResult LbSpriteDrawRemapUsingScalingDownDataTrans1LR(uchar *outbuf, int scanli
  * @param transmap The transparency mapping table to be used.
  * @return Gives 0 on success.
  */
-TbResult LbSpriteDrawRemapUsingScalingDownDataTrans2RL(uchar *outbuf, int scanline, int outheight, long *xstep, long *ystep, const struct TbSprite *sprite, const TbPixel *cmap, const TbPixel *transmap)
+TbResult LbSpriteDrawRemapUsingScalingDownDataTrans2RL(uchar *outbuf, int scanline,
+  int outheight, long *xstep, long *ystep, const TbSprite *sprite,
+  const TbPixel *cmap, const TbPixel *transmap)
 {
     int ystep_delta;
     unsigned char *sprdata;
@@ -977,7 +993,9 @@ TbResult LbSpriteDrawRemapUsingScalingDownDataTrans2RL(uchar *outbuf, int scanli
  * @param transmap The transparency mapping table to be used.
  * @return Gives 0 on success.
  */
-TbResult LbSpriteDrawRemapUsingScalingDownDataTrans2LR(uchar *outbuf, int scanline, int outheight, long *xstep, long *ystep, const struct TbSprite *sprite, const TbPixel *cmap, const TbPixel *transmap)
+TbResult LbSpriteDrawRemapUsingScalingDownDataTrans2LR(uchar *outbuf, int scanline,
+  int outheight, long *xstep, long *ystep, const TbSprite *sprite,
+  const TbPixel *cmap, const TbPixel *transmap)
 {
     int ystep_delta;
     unsigned char *sprdata;
@@ -1067,7 +1085,8 @@ TbResult LbSpriteDrawRemapUsingScalingDownDataTrans2LR(uchar *outbuf, int scanli
  * @param cmap The colour remap table to be used.
  * @return Gives 0 on success.
  */
-TbResult LbSpriteDrawRemapUsingScalingDownDataSolidRL(uchar *outbuf, int scanline, int outheight, long *xstep, long *ystep, const struct TbSprite *sprite, const TbPixel *cmap)
+TbResult LbSpriteDrawRemapUsingScalingDownDataSolidRL(uchar *outbuf, int scanline,
+  int outheight, long *xstep, long *ystep, const TbSprite *sprite, const TbPixel *cmap)
 {
     int ystep_delta;
     unsigned char *sprdata;
@@ -1156,7 +1175,8 @@ TbResult LbSpriteDrawRemapUsingScalingDownDataSolidRL(uchar *outbuf, int scanlin
  * @param cmap The colour remap table to be used.
  * @return Gives 0 on success.
  */
-TbResult LbSpriteDrawRemapUsingScalingDownDataSolidLR(uchar *outbuf, int scanline, int outheight, long *xstep, long *ystep, const struct TbSprite *sprite, const TbPixel *cmap)
+TbResult LbSpriteDrawRemapUsingScalingDownDataSolidLR(uchar *outbuf, int scanline,
+  int outheight, long *xstep, long *ystep, const TbSprite *sprite, const TbPixel *cmap)
 {
     int ystep_delta;
     unsigned char *sprdata;
@@ -1244,7 +1264,7 @@ TbResult LbSpriteDrawRemapUsingScalingDownDataSolidLR(uchar *outbuf, int scanlin
  * @return Gives 0 on success.
  * @see LbSpriteSetScalingData()
  */
-TbResult LbSpriteDrawRemapUsingScalingData(long posx, long posy, const struct TbSprite *sprite, const TbPixel *cmap)
+TbResult LbSpriteDrawRemapUsingScalingData(long posx, long posy, const TbSprite *sprite, const TbPixel *cmap)
 {
     long *xstep;
     long *ystep;

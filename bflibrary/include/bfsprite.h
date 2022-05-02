@@ -99,7 +99,7 @@ TbResult LbSpriteDrawOneColour(long x, long y, const TbSprite *spr, const TbPixe
 TbResult LbSpriteDraw(long x, long y, const TbSprite *spr);
 TbResult LbSpriteDrawRemap(long x, long y, const TbSprite *spr, const ubyte *cmap);
 
-int LbSpriteDrawUsingScalingData();
+TbResult LbSpriteDrawUsingScalingData(long posx, long posy, const TbSprite *sprite);
 
 /**
  * Sets scaling data for drawing scaled sprites.
@@ -112,6 +112,8 @@ int LbSpriteDrawUsingScalingData();
  */
 void LbSpriteSetScalingData(long x, long y, long swidth, long sheight,
     long dwidth, long dheight);
+
+TbResult DrawAlphaSpriteUsingScalingData(long posx, long posy, const TbSprite *sprite);
 
 void SetAlphaScalingData(long x, long y, long swidth, long sheight,
     long dwidth, long dheight);
