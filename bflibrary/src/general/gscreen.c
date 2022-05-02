@@ -52,8 +52,7 @@ struct ScreenModeInfo lbScreenModeInfo_UNUSED[] = {
     {   0,   0, 0,0,   0x0,"MODE_INVALID"},
 };
 
-//TODO remove from ASM, then rename
-TbDisplayStruct lbDisplay_UNUSED;
+TbDisplayStruct lbDisplay;
 
 TbScreenCoord LbGraphicsScreenWidth(void)
 {

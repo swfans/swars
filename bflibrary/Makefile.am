@@ -23,7 +23,7 @@ libbullfrog_a_SOURCES = \
   src/general/gmemut.c \
   src/general/gpalette.c \
   src/general/gpng.c \
-  src/general/gscreen.cpp \
+  src/general/gscreen.c \
   src/general/gsprite.c \
   src/general/gspr_col.c \
   src/general/gspr_map.c \
