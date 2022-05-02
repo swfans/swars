@@ -31,7 +31,7 @@
 
 .text
 
-.global EXPORT_SYMBOL(lbDisplay__DrawFlags);
+.global EXPORT_SYMBOL(lbDisplay);
 .global EXPORT_SYMBOL(lbDisplay__GraphicsWindowPtr);
 .global EXPORT_SYMBOL(alpha_xsteps_array);
 .global EXPORT_SYMBOL(alpha_ysteps_array);
@@ -55,13 +55,13 @@ GLOBAL_FUNC (LbSpriteDrawUsingScalingData_)
 		mov    %ecx,0x28(%esp)
 		mov    EXPORT_SYMBOL(lbDisplay)+32,%esi # lbDisplay.GraphicsScreenWidth
 		mov    $0x8,%edi
-		mov    EXPORT_SYMBOL(lbDisplay__DrawFlags),%cx
+		mov    EXPORT_SYMBOL(lbDisplay)+96,%cx # lbDisplay__DrawFlags
 		and    $0x1,%cx
 		je     jump_1351ce
 		add    0x24(%esp),%eax
 		dec    %eax
 	jump_1351ce:
-		mov    EXPORT_SYMBOL(lbDisplay__DrawFlags),%cx
+		mov    EXPORT_SYMBOL(lbDisplay)+96,%cx # lbDisplay__DrawFlags
 		and    $0x2,%cx
 		je     jump_1351e4
 		add    0x28(%esp),%edx
@@ -79,7 +79,7 @@ GLOBAL_FUNC (LbSpriteDrawUsingScalingData_)
 		mov    0x28(%esp),%ecx
 		mov    (%ebx),%edx
 		mov    (%edi),%esi
-		mov    EXPORT_SYMBOL(lbDisplay__DrawFlags),%ax
+		mov    EXPORT_SYMBOL(lbDisplay)+96,%ax # lbDisplay__DrawFlags
 		and    $0x2,%ax
 		je     jump_13521f
 		add    0x4(%edi),%esi
@@ -89,7 +89,7 @@ GLOBAL_FUNC (LbSpriteDrawUsingScalingData_)
 		imul   %eax,%esi
 		add    EXPORT_SYMBOL(lbDisplay)+16,%esi # lbDisplay.GraphicsWindowPtr
 		add    0x0(%ebp),%esi
-		mov    EXPORT_SYMBOL(lbDisplay__DrawFlags),%ax
+		mov    EXPORT_SYMBOL(lbDisplay)+96,%ax # lbDisplay__DrawFlags
 		and    $0x1,%ax
 		je     jump_135240
 		add    0x4(%ebp),%esi
@@ -98,13 +98,13 @@ GLOBAL_FUNC (LbSpriteDrawUsingScalingData_)
 		mov    EXPORT_SYMBOL(alpha_scale_up),%eax
 		or     %eax,%eax
 		jne    jump_135cd8
-		mov    EXPORT_SYMBOL(lbDisplay__DrawFlags),%ax
+		mov    EXPORT_SYMBOL(lbDisplay)+96,%ax # lbDisplay__DrawFlags
 		and    $0x8,%ax
 		jne    jump_135968
-		mov    EXPORT_SYMBOL(lbDisplay__DrawFlags),%ax
+		mov    EXPORT_SYMBOL(lbDisplay)+96,%ax # lbDisplay__DrawFlags
 		and    $0x4,%ax
 		jne    jump_135598
-		mov    EXPORT_SYMBOL(lbDisplay__DrawFlags),%ax
+		mov    EXPORT_SYMBOL(lbDisplay)+96,%ax # lbDisplay__DrawFlags
 		and    $0x1,%ax
 		jne    jump_135408
 		jmp    jump_1352cb
@@ -419,7 +419,7 @@ GLOBAL_FUNC (LbSpriteDrawUsingScalingData_)
 		popa
 		ret
 	jump_135598:
-		mov    EXPORT_SYMBOL(lbDisplay__DrawFlags),%ax
+		mov    EXPORT_SYMBOL(lbDisplay)+96,%ax # lbDisplay__DrawFlags
 		and    $0x1,%ax
 		jne    jump_135788
 		jmp    jump_1355fb
@@ -766,7 +766,7 @@ GLOBAL_FUNC (LbSpriteDrawUsingScalingData_)
 		popa
 		ret
 	jump_135968:
-		mov    EXPORT_SYMBOL(lbDisplay__DrawFlags),%ax
+		mov    EXPORT_SYMBOL(lbDisplay)+96,%ax # lbDisplay__DrawFlags
 		and    $0x1,%ax
 		jne    jump_135b28
 		jmp    jump_1359cb
@@ -1099,13 +1099,13 @@ GLOBAL_FUNC (LbSpriteDrawUsingScalingData_)
 		popa
 		ret
 	jump_135cd8:
-		mov    EXPORT_SYMBOL(lbDisplay__DrawFlags),%ax
+		mov    EXPORT_SYMBOL(lbDisplay)+96,%ax # lbDisplay__DrawFlags
 		and    $0x8,%ax
 		jne    jump_1364f8
-		mov    EXPORT_SYMBOL(lbDisplay__DrawFlags),%ax
+		mov    EXPORT_SYMBOL(lbDisplay)+96,%ax # lbDisplay__DrawFlags
 		and    $0x4,%ax
 		jne    jump_136208
-		mov    EXPORT_SYMBOL(lbDisplay__DrawFlags),%ax
+		mov    EXPORT_SYMBOL(lbDisplay)+96,%ax # lbDisplay__DrawFlags
 		and    $0x1,%ax
 		jne    jump_135f88
 		jmp    jump_135d5f
@@ -1597,7 +1597,7 @@ GLOBAL_FUNC (LbSpriteDrawUsingScalingData_)
 		popa
 		ret
 	jump_136208:
-		mov    EXPORT_SYMBOL(lbDisplay__DrawFlags),%ax
+		mov    EXPORT_SYMBOL(lbDisplay)+96,%ax # lbDisplay__DrawFlags
 		and    $0x1,%ax
 		jne    jump_136388
 		jmp    jump_13626f
@@ -1874,7 +1874,7 @@ GLOBAL_FUNC (LbSpriteDrawUsingScalingData_)
 		popa
 		ret
 	jump_1364f8:
-		mov    EXPORT_SYMBOL(lbDisplay__DrawFlags),%ax
+		mov    EXPORT_SYMBOL(lbDisplay)+96,%ax # lbDisplay__DrawFlags
 		and    $0x1,%ax
 		jne    jump_136788
 		jmp    jump_13655f

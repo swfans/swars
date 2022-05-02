@@ -32,7 +32,6 @@
 .text
 
 .global EXPORT_SYMBOL(lbDisplay);
-.global EXPORT_SYMBOL(lbDisplay__DrawFlags);
 .global EXPORT_SYMBOL(lbDisplay__GlassMap);
 .global EXPORT_SYMBOL(lbDisplay__GraphicsWindowPtr);
 
@@ -51,7 +50,7 @@ GLOBAL_FUNC (LbDrawBox_)
 		mov    %edx,-0xc(%ebp)
 		mov    %ebx,-0x8(%ebp)
 		mov    %ecx,-0x4(%ebp)
-		testb  $0x10,EXPORT_SYMBOL(lbDisplay__DrawFlags)
+		testb  $0x10,EXPORT_SYMBOL(lbDisplay)+96 # lbDisplay__DrawFlags
 		je     jump_e74f1
 		mov    -0x8(%ebp),%edx
 		cmp    $0x1,%edx
@@ -596,7 +595,7 @@ draw_b_line:	/* 0x0E79D8 */
 		mov    %eax,-0x28(%ebp)
 		mov    -0x38(%ebp),%eax
 		mov    %eax,-0x24(%ebp)
-		testb  $0x4,EXPORT_SYMBOL(lbDisplay__DrawFlags)
+		testb  $0x4,EXPORT_SYMBOL(lbDisplay)+96 # lbDisplay__DrawFlags
 		je     jump_e7b5a
 		mov    -0x20(%ebp),%eax
 		mov    -0x1c(%ebp),%ebx
@@ -680,7 +679,7 @@ draw_b_line:	/* 0x0E79D8 */
 		add    %eax,-0x2c(%ebp)
 		jmp    jump_e7afe
 	jump_e7b5a:
-		mov    EXPORT_SYMBOL(lbDisplay__DrawFlags),%dl
+		mov    EXPORT_SYMBOL(lbDisplay)+96,%dl # lbDisplay__DrawFlags
 		test   $0x8,%dl
 		je     jump_e7c4b
 		mov    -0x20(%ebp),%eax
@@ -999,7 +998,7 @@ GLOBAL_FUNC (LbDrawHVLine_)	/* 0xf0834 */
 		mov    -0x10(%ebp),%ecx
 		sub    -0x8(%ebp),%ecx
 		inc    %ecx
-		testw  $0x4,EXPORT_SYMBOL(lbDisplay__DrawFlags)
+		testw  $0x4,EXPORT_SYMBOL(lbDisplay)+96 # lbDisplay__DrawFlags
 		je     jump_f0985
 		mov    EXPORT_SYMBOL(lbDisplay)+8,%esi # lbDisplay.GlassMap
 		movzbl 0x8(%ebp),%eax
@@ -1012,7 +1011,7 @@ GLOBAL_FUNC (LbDrawHVLine_)	/* 0xf0834 */
 		loop   jump_f0971
 		jmp    jump_f0a0b
 	jump_f0985:
-		testw  $0x8,EXPORT_SYMBOL(lbDisplay__DrawFlags)
+		testw  $0x8,EXPORT_SYMBOL(lbDisplay)+96 # lbDisplay__DrawFlags
 		je     jump_f09ab
 		mov    EXPORT_SYMBOL(lbDisplay)+8,%esi # lbDisplay.GlassMap
 		movzbl 0x8(%ebp),%eax
@@ -1032,7 +1031,7 @@ GLOBAL_FUNC (LbDrawHVLine_)	/* 0xf0834 */
 		jmp    jump_f0a0b
 	jump_f09bb:
 		inc    %ecx
-		testw  $0x4,EXPORT_SYMBOL(lbDisplay__DrawFlags)
+		testw  $0x4,EXPORT_SYMBOL(lbDisplay)+96 # lbDisplay__DrawFlags
 		je     jump_f09e2
 		mov    EXPORT_SYMBOL(lbDisplay)+8,%esi # lbDisplay.GlassMap
 		movzbl 0x8(%ebp),%eax
@@ -1045,7 +1044,7 @@ GLOBAL_FUNC (LbDrawHVLine_)	/* 0xf0834 */
 		loop   jump_f09d4
 		jmp    jump_f0a0b
 	jump_f09e2:
-		testw  $0x8,EXPORT_SYMBOL(lbDisplay__DrawFlags)
+		testw  $0x8,EXPORT_SYMBOL(lbDisplay)+96 # lbDisplay__DrawFlags
 		je     jump_f0a05
 		mov    EXPORT_SYMBOL(lbDisplay)+8,%esi # lbDisplay.GlassMap
 		movzbl 0x8(%ebp),%eax
@@ -1128,7 +1127,7 @@ LbDrawBoxClip_:	/* 0x0FADD0 */
 		mov    -0x10(%ebp),%edx
 		mov    EXPORT_SYMBOL(lbDisplay)+32,%ebx # lbDisplay.GraphicsScreenWidth
 		sub    -0xc(%ebp),%ebx
-		testw  $0x4,EXPORT_SYMBOL(lbDisplay__DrawFlags)
+		testw  $0x4,EXPORT_SYMBOL(lbDisplay)+96 # lbDisplay__DrawFlags
 		je     jump_faea8
 		mov    EXPORT_SYMBOL(lbDisplay)+8,%esi # lbDisplay.GlassMap
 		movzbl 0x8(%ebp),%eax
@@ -1146,7 +1145,7 @@ LbDrawBoxClip_:	/* 0x0FADD0 */
 		jne    jump_fae95
 		jmp    jump_faee2
 	jump_faea8:
-		testw  $0x8,EXPORT_SYMBOL(lbDisplay__DrawFlags)
+		testw  $0x8,EXPORT_SYMBOL(lbDisplay)+96 # lbDisplay__DrawFlags
 		je     jump_faed3
 		mov    EXPORT_SYMBOL(lbDisplay)+8,%esi # lbDisplay.GlassMap
 		movzbl 0x8(%ebp),%eax
@@ -1195,7 +1194,7 @@ GLOBAL_FUNC (LbDrawTriangle_)
 		mov    %edx,-0xc(%ebp)
 		mov    %ebx,-0x8(%ebp)
 		mov    %ecx,-0x4(%ebp)
-		testb  $0x10,EXPORT_SYMBOL(lbDisplay__DrawFlags)
+		testb  $0x10,EXPORT_SYMBOL(lbDisplay)+96 # lbDisplay__DrawFlags
 		je     jump_ef4c2
 		xor    %eax,%eax
 		mov    0x10(%ebp),%al
@@ -2152,7 +2151,7 @@ LbDrawTriangleFilled_:
 		lea    (%ebx,%edx,1),%edi
 		mov    EXPORT_SYMBOL(lbDisplay)+8,%ebx # lbDisplay.GlassMap
 	jump_138fd1:
-		testw  $0x4,EXPORT_SYMBOL(lbDisplay__DrawFlags)
+		testw  $0x4,EXPORT_SYMBOL(lbDisplay)+96 # lbDisplay__DrawFlags
 		je     jump_138fea
 		mov    0x10(%ebp),%ah
 	jump_138fdf:
@@ -2163,7 +2162,7 @@ LbDrawTriangleFilled_:
 		jne    jump_138fdf
 		jmp    jump_139004
 	jump_138fea:
-		testw  $0x8,EXPORT_SYMBOL(lbDisplay__DrawFlags)
+		testw  $0x8,EXPORT_SYMBOL(lbDisplay)+96 # lbDisplay__DrawFlags
 		je     jump_139002
 	jump_138ff5:
 		mov    (%edi),%ah

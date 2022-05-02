@@ -120,7 +120,7 @@ GLOBAL_FUNC (ASM_LbScreenSetupAnyMode_)	/* 0xED4F0 */
 		mov    %ax,lbDisplay__ScreenMode
 		xor    %ebx,%ebx
 		xor    %dh,%dh
-		mov    %bx,lbDisplay__DrawFlags
+		mov    %bx,lbDisplay+96 # lbDisplay.DrawFlags
 		mov    %dh,lbDisplay__DrawColour
 		movsbl 0x18(%ebp),%edx
 		lea    0x0(,%edx,4),%eax
@@ -1176,30 +1176,17 @@ GLOBAL (lbDisplay)	/* 0x1e2e54 */
 		.long	0x0
 		.long	0x0
 		.long	0x0
-GLOBAL (lbDisplay__MouseWindowX)			/* 1e2e8c */
 		.long	0x0
-GLOBAL (lbDisplay__MouseWindowY)			/* 1e2e90 */
 		.long	0x0
-GLOBAL (lbDisplay__MouseWindowWidth)		/* 1e2e94 */
 		.long	0x0
-GLOBAL (lbDisplay__MouseWindowHeight)		/* 1e2e98 */
 		.long	0x0
-GLOBAL (lbDisplay__MouseX)			/* 1e2e9c */
 		.long	0x0
-GLOBAL (lbDisplay__MouseY)			/* 1e2ea0 */
 		.long	0x0
-GLOBAL (lbDisplay__MMouseX)			/* 1e2ea4 */
 		.long	0x0
-GLOBAL (lbDisplay__MMouseY)			/* 1e2ea8 */
 		.long	0x0
-GLOBAL (lbDisplay__RMouseX)		/* 1e2eac */
 		.long	0x0
-GLOBAL (lbDisplay__RMouseY)		/* 1e2eb0 */
 		.long	0x0
-GLOBAL (lbDisplay__DrawFlags) /* no idea, but it's a word, even if here it says otherwise */
-		.byte	0x0
-GLOBAL (lbDisplay__DrawFlagsB1)
-		.byte	0x0
+		.short	0x0
 /* graphic mode at the start of the app (at exit the app goes back to this mode) */
 lbDisplay__OldVideoMode:		/* 1e2eb6 */
 		.short	0x0
