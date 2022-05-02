@@ -40,7 +40,7 @@
 /*----------------------------------------------------------------*/
 /* void LbSpriteDrawUsingScalingData(int32_t posx, int32_t posy, TbSprite *sprite)
  */
-GLOBAL_FUNC (LbSpriteDrawUsingScalingData_)
+GLOBAL_FUNC (DrawAlphaSpriteUsingScalingData_)
 /*----------------------------------------------------------------*/
 		pusha
 		sub    $0x280,%esp
