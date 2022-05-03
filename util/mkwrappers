@@ -50,12 +50,12 @@ Options:
 			if len (line) == 0:
 				continue
 			parts = re.split (r'\s+', line)
-			if len (parts) < 2 or len (parts) > 3:
+			if len (parts) < 3 or len (parts) > 4:
 				print('Bad line %i: %s' % (ln, line), file=sys.stderr)
 				continue
-			if len (parts) == 2:
+			if len (parts) == 3:
 				parts.append ('')
-			self.functions[parts[0]] = (parts[1], parts[2])
+			self.functions[parts[0]] = (parts[1], parts[2], parts[3])
 
 	def wrap_name (self, name):
 		return '%s%s' % (self.prefix, name)
@@ -74,26 +74,33 @@ Options:
 		funcs = list(self.functions.keys ())
 		funcs.sort ()
 		for func in funcs:
-			type, args = self.functions[func]
-			self.generate_wrapper (func, type, args)
+			convention, type, args = self.functions[func]
+			self.generate_wrapper (func, convention, type, args)
 
-	def generate_push_arguments (self, type, arg_count):
-		if type in 'vc':
+	def generate_push_arguments (self, convention, arg_count):
+		if convention in 'VC':
 			for n in range (arg_count):
 				self.wrln ('\t\tpush\t0x%x(%%ebp)' \
 						   % ((arg_count - n + 1) * 4))
 		else:
 			reg_arg_count = min (4, arg_count)
 
-			for x in range (reg_arg_count):
+			for n in range (reg_arg_count):
 				self.wrln ('\t\tpush\t%%e%sx' \
-						   % REGISTERS[reg_arg_count - x - 1])
+						   % REGISTERS[reg_arg_count - n - 1])
 
-			# TODO: non-register arguments
+			# We can overwrite ecx and edx, because these regs will be restored
+			for n in range (reg_arg_count,arg_count):
+				pass# TODO: non-register arguments
+
 			assert reg_arg_count == arg_count
 
 	def generate_store_registers (self):
 		# Store registers that should be preserved by a Watcom function.
+		# Watcom fastcall convention clobbers all registers used for
+		# parameters, which is up to 4: eax,edx,ebx,ecx. For simplicity,
+		# let's assume that everything beyond eax is always in need of
+		# restoring.
 		# The System V ABI for i386 says that cdecl functions preserve
 		# ebx, esi, edi, ebp, esp, so we only need to store the remaining
 		# registers.
@@ -128,13 +135,13 @@ Options:
 				   % (name, self.arg_string (args)))
 		self.wrln ('.text')
 
-	def generate_printf_call (self, name, type, args):
+	def generate_printf_call (self, name, convention, args):
 		if not self.debug:
 			return
 		self.generate_align_push (len (args) + 1, 1)
 		if len (args) > 0:
 			self.wrln ()
-			self.generate_push_arguments (type, len (args))
+			self.generate_push_arguments (convention, len (args))
 		self.wrln ('\t\tpush\t$0f')
 		self.generate_call ('printf', len (args) + 1)
 		self.generate_align_pop (1)
@@ -163,20 +170,21 @@ Options:
 		self.output_file.write (line)
 		self.output_file.write ('\n')
 
-	def generate_wrapper (self, name, type, args):
+	def generate_wrapper (self, name, convention, type, args):
 		self.wrln ()
 		self.wrln ('.global %s'	  % self.wrap_name (name))
-		self.wrln ('%s: /* %s %s */' % (self.wrap_name (name), type, args))
+		self.wrln ('%s: /* %s %s %s */' % (self.wrap_name (name), convention, type, args))
 
-		if type == 'w' or type == 'i' or type == 'p': # w=word/short, i=int/long, p=pointer
+		# How the code is generated depends on calling convention used
+		if convention == 'W': # W=watcom; fastcall (compiler-defined) calling convention with 4 args in regs, the rest on stack
 			if self.stack_align > 4:
 				self.generate_prologue ()
 			self.generate_store_registers ()
 			self.generate_align_push (len (args))
 			if len (args) > 0:
 				self.wrln ()
-				self.generate_push_arguments (type, len (args))
-			self.generate_printf_call (name, type, args)
+				self.generate_push_arguments (convention, len (args))
+			self.generate_printf_call (name, convention, args)
 			self.wrln ()
 			self.generate_call (name, len (args))
 			self.generate_align_pop ()
@@ -184,30 +192,30 @@ Options:
 			if self.stack_align > 4:
 				self.generate_epilogue ()
 			self.generate_ret ()
-		elif type == 'c': # c=char/byte
+		elif convention == 'C': # C=cdecl; standard c calling convention with all arguments on stack
 			self.generate_prologue ()
 			self.generate_store_registers ()
 			self.generate_align_push (len (args))
 			if len (args) > 0:
 				self.wrln ()
-				self.generate_push_arguments (type, len (args))
-			self.generate_printf_call (name, type, args)
+				self.generate_push_arguments (convention, len (args))
+			self.generate_printf_call (name, convention, args)
 			self.wrln ()
 			self.generate_call (name, len (args))
 			self.generate_align_pop ()
 			self.generate_restore_registers ()
 			self.generate_epilogue ()
 			self.generate_ret ()
-		elif type =='v': # v=void
+		elif convention == 'V': # V=vararg; used for variadic arg functions which internally call v* version
 			self.generate_prologue ()
 			self.generate_store_registers ()
 			self.generate_align_push (len (args))
-			assert len (args) > 0, "wrapper is not needed for void type and no arguments"
+			assert len (args) > 0, "it makes no sense to have variadic convention with no arguments"
 			self.wrln ()
 			self.wrln ('\t\tlea\t0x%x(%%ebp),%%eax' % ((len (args) + 1) * 4))
 			self.wrln ('\t\tpush\t%eax')
-			self.generate_push_arguments (type, len (args) - 1)
-			self.generate_printf_call (name, type, args)
+			self.generate_push_arguments (convention, len (args) - 1)
+			self.generate_printf_call (name, convention, args)
 			self.wrln ()
 			self.generate_call ('v%s' % name, len (args))
 			self.generate_align_pop ()
@@ -215,7 +223,7 @@ Options:
 			self.generate_epilogue ()
 			self.generate_ret ()
 		else:
-			print('Unknown wrapper type `%s\'' % type, file=sys.stderr)
+			print('Unknown wrapper call convention `%s\'' % convention, file=sys.stderr)
 
 		if self.debug:
 			self.generate_format_string (name, args)
