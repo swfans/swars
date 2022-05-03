@@ -85,15 +85,14 @@ Options:
 		else:
 			reg_arg_count = min (4, arg_count)
 
-			for n in range (reg_arg_count):
+			# Handle arguments from stack first
+			for n in range (arg_count, reg_arg_count, -1):
+				self.wrln ('\t\tpush\t0x%x(%%ebp)' \
+						   % ((n - reg_arg_count + 1) * 4))
+			# The rest of arguments is in registers
+			for n in range (reg_arg_count, 0, -1):
 				self.wrln ('\t\tpush\t%%e%sx' \
-						   % REGISTERS[reg_arg_count - n - 1])
-
-			# We can overwrite ecx and edx, because these regs will be restored
-			for n in range (reg_arg_count,arg_count):
-				pass# TODO: non-register arguments
-
-			assert reg_arg_count == arg_count
+						   % REGISTERS[n - 1])
 
 	def generate_store_registers (self):
 		# Store registers that should be preserved by a Watcom function.
@@ -146,8 +145,12 @@ Options:
 		self.generate_call ('printf', len (args) + 1)
 		self.generate_align_pop (1)
 
-	def generate_ret (self):
-		self.wrln ('\t\tret')
+	def generate_ret (self, convention, arg_count):
+		if convention == 'W' and arg_count > 4:
+			self.wrln ('\t\tret\t$0x%x' \
+					   % ((arg_count - 4) * 4))
+		else:
+			self.wrln ('\t\tret')
 
 	def generate_align_push (self, n_args, st_var_index = 0):
 		if self.stack_align <= 4:
@@ -177,7 +180,9 @@ Options:
 
 		# How the code is generated depends on calling convention used
 		if convention == 'W': # W=watcom; fastcall (compiler-defined) calling convention with 4 args in regs, the rest on stack
-			if self.stack_align > 4:
+			# Cases when we will modify esp, and/or we need its original value in ebp
+			needs_ebp = (self.stack_align > 4) or (len (args) > 4)
+			if needs_ebp:
 				self.generate_prologue ()
 			self.generate_store_registers ()
 			self.generate_align_push (len (args))
@@ -189,9 +194,9 @@ Options:
 			self.generate_call (name, len (args))
 			self.generate_align_pop ()
 			self.generate_restore_registers ()
-			if self.stack_align > 4:
+			if needs_ebp:
 				self.generate_epilogue ()
-			self.generate_ret ()
+			self.generate_ret (convention, len (args))
 		elif convention == 'C': # C=cdecl; standard c calling convention with all arguments on stack
 			self.generate_prologue ()
 			self.generate_store_registers ()
@@ -205,7 +210,7 @@ Options:
 			self.generate_align_pop ()
 			self.generate_restore_registers ()
 			self.generate_epilogue ()
-			self.generate_ret ()
+			self.generate_ret (convention, len (args))
 		elif convention == 'V': # V=vararg; used for variadic arg functions which internally call v* version
 			self.generate_prologue ()
 			self.generate_store_registers ()
@@ -221,7 +226,7 @@ Options:
 			self.generate_align_pop ()
 			self.generate_restore_registers ()
 			self.generate_epilogue ()
-			self.generate_ret ()
+			self.generate_ret (convention, len (args))
 		else:
 			print('Unknown wrapper call convention `%s\'' % convention, file=sys.stderr)
 
