@@ -36,6 +36,8 @@ long alpha_scale_up;
 // TODO move these to rendering/trig data module
 ubyte *render_ghost = NULL;
 ubyte *render_alpha = NULL;
+//TODO currently, render_ghost is unused; but to make it ready to use, we need to set:
+//render_ghost = lbSpriteReMapPtr;
 
 
 /**
@@ -338,8 +340,7 @@ void LbSpriteSetScalingData(long x, long y, long swidth, long sheight,
     }
 }
 
-//TODO enable when whole printing of scaled sprites is remade (req. due to global data)
-void SetAlphaScalingData_UNUSED(long x, long y, long swidth, long sheight,
+void SetAlphaScalingData(long x, long y, long swidth, long sheight,
     long dwidth, long dheight)
 {
     long gwidth = lbDisplay.GraphicsWindowWidth;
