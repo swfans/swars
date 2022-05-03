@@ -40,7 +40,7 @@
 /*----------------------------------------------------------------*/
 /* void LbSpriteDrawUsingScalingData(int32_t posx, int32_t posy, TbSprite *sprite)
  */
-GLOBAL_FUNC (DrawAlphaSpriteUsingScalingData_)
+GLOBAL_FUNC (ASM_DrawAlphaSpriteUsingScalingData)
 /*----------------------------------------------------------------*/
 		pusha
 		sub    $0x280,%esp
@@ -73,7 +73,7 @@ GLOBAL_FUNC (DrawAlphaSpriteUsingScalingData_)
 		lea    EXPORT_SYMBOL(alpha_xsteps_array)(,%eax,8),%ebp
 		mov    %ebp,0x4(%esp)
 		lea    EXPORT_SYMBOL(alpha_ysteps_array)(,%edx,8),%edi
-		mov    EXPORT_SYMBOL(data_1e2ecc),%eax
+		mov    EXPORT_SYMBOL(lbSpriteReMapPtr),%eax
 		mov    %eax,0x20(%esp)
 		mov    0x28(%esp),%ecx
 		mov    (%ebx),%edx
