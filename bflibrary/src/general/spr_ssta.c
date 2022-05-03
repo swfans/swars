@@ -52,7 +52,7 @@ TbResult LbSpriteDrawUsingScalingDownDataTrans1LR(ubyte *outbuf, int scanline, i
  * @see LbSpriteDrawUsingScalingData()
  */
 //TODO enable when whole printing of scaled sprites is remade (req. due to global data)
-TbResult DrawAlphaSpriteUsingScalingData(long posx, long posy, const TbSprite *sprite)
+TbResult DrawAlphaSpriteUsingScalingData_UNUSED(long posx, long posy, const TbSprite *sprite)
 {
     long *xstep;
     long *ystep;
