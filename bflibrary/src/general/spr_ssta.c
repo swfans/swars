@@ -21,6 +21,7 @@
 #include "bfsprite.h"
 
 #include <stdlib.h>
+#include <assert.h>
 #include "insspr.h"
 #include "bfscreen.h"
 #include "bflog.h"
@@ -50,13 +51,15 @@ TbResult LbSpriteDrawUsingScalingDownDataTrans1LR(ubyte *outbuf, int scanline, i
  * @see SetAlphaScalingData()
  * @see LbSpriteDrawUsingScalingData()
  */
+//TODO enable when whole printing of scaled sprites is remade (req. due to global data)
 TbResult DrawAlphaSpriteUsingScalingData(long posx, long posy, const TbSprite *sprite)
 {
-    LIBLOG("Drawing at (%ld,%ld)",posx,posy);
-    assert(render_alpha != NULL);
     long *xstep;
     long *ystep;
     int scanline;
+
+    LIBLOG("Drawing at (%ld,%ld)",posx,posy);
+    assert(render_alpha != NULL);
     {
         long sposx, sposy;
         sposx = posx;
@@ -89,22 +92,26 @@ TbResult DrawAlphaSpriteUsingScalingData(long posx, long posy, const TbSprite *s
     {
         if ((lbDisplay.DrawFlags & Lb_SPRITE_FLIP_HORIZ) != 0)
         {
-            return LbSpriteDrawUsingScalingUpDataTrans1RL(outbuf, scanline, outheight, xstep, ystep, sprite, render_alpha);
+            return LbSpriteDrawUsingScalingUpDataTrans1RL(outbuf, scanline, outheight,
+              xstep, ystep, sprite, render_alpha);
         }
         else
         {
-            return LbSpriteDrawUsingScalingUpDataTrans1LR(outbuf, scanline, outheight, xstep, ystep, sprite, render_alpha);
+            return LbSpriteDrawUsingScalingUpDataTrans1LR(outbuf, scanline, outheight,
+              xstep, ystep, sprite, render_alpha);
         }
     }
     else
     {
         if ((lbDisplay.DrawFlags & Lb_SPRITE_FLIP_HORIZ) != 0)
         {
-            return LbSpriteDrawUsingScalingDownDataTrans1RL(outbuf, scanline, outheight, xstep, ystep, sprite, render_alpha);
+            return LbSpriteDrawUsingScalingDownDataTrans1RL(outbuf, scanline, outheight,
+              xstep, ystep, sprite, render_alpha);
         }
         else
         {
-            return LbSpriteDrawUsingScalingDownDataTrans1LR(outbuf, scanline, outheight, xstep, ystep, sprite, render_alpha);
+            return LbSpriteDrawUsingScalingDownDataTrans1LR(outbuf, scanline, outheight,
+              xstep, ystep, sprite, render_alpha);
         }
     }
 }

@@ -21,6 +21,7 @@
 #include "bfsprite.h"
 
 #include <stdlib.h>
+#include <assert.h>
 #include "insspr.h"
 #include "bfscreen.h"
 #include "bflog.h"
@@ -1264,6 +1265,7 @@ TbResult LbSpriteDrawUsingScalingData(long posx, long posy, const TbSprite *spri
     long *ystep;
     int scanline;
 
+    assert(render_ghost != NULL);
     LIBLOG("Drawing at (%ld,%ld)",posx,posy);
     {
         long sposx, sposy;
@@ -1299,11 +1301,13 @@ TbResult LbSpriteDrawUsingScalingData(long posx, long posy, const TbSprite *spri
         {
           if ((lbDisplay.DrawFlags & Lb_SPRITE_FLIP_HORIZ) != 0)
           {
-              return LbSpriteDrawRemapUsingScalingUpDataSolidRL(outbuf, scanline, outheight, xstep, ystep, sprite, lbSpriteReMapPtr);
+              return LbSpriteDrawRemapUsingScalingUpDataSolidRL(outbuf, scanline,
+               outheight, xstep, ystep, sprite, lbSpriteReMapPtr);
           }
           else
           {
-              return LbSpriteDrawRemapUsingScalingUpDataSolidLR(outbuf, scanline, outheight, xstep, ystep, sprite, lbSpriteReMapPtr);
+              return LbSpriteDrawRemapUsingScalingUpDataSolidLR(outbuf, scanline,
+               outheight, xstep, ystep, sprite, lbSpriteReMapPtr);
           }
         }
         else
@@ -1311,11 +1315,13 @@ TbResult LbSpriteDrawUsingScalingData(long posx, long posy, const TbSprite *spri
         {
           if ((lbDisplay.DrawFlags & Lb_SPRITE_FLIP_HORIZ) != 0)
           {
-              return LbSpriteDrawUsingScalingUpDataTrans1RL(outbuf, scanline, outheight, xstep, ystep, sprite, render_ghost);
+              return LbSpriteDrawUsingScalingUpDataTrans1RL(outbuf, scanline,
+               outheight, xstep, ystep, sprite, render_ghost);
           }
           else
           {
-              return LbSpriteDrawUsingScalingUpDataTrans1LR(outbuf, scanline, outheight, xstep, ystep, sprite, render_ghost);
+              return LbSpriteDrawUsingScalingUpDataTrans1LR(outbuf, scanline,
+               outheight, xstep, ystep, sprite, render_ghost);
           }
         }
         else
@@ -1323,22 +1329,26 @@ TbResult LbSpriteDrawUsingScalingData(long posx, long posy, const TbSprite *spri
         {
           if ((lbDisplay.DrawFlags & Lb_SPRITE_FLIP_HORIZ) != 0)
           {
-              return LbSpriteDrawUsingScalingUpDataTrans2RL(outbuf, scanline, outheight, xstep, ystep, sprite, render_ghost);
+              return LbSpriteDrawUsingScalingUpDataTrans2RL(outbuf, scanline,
+               outheight, xstep, ystep, sprite, render_ghost);
           }
           else
           {
-              return LbSpriteDrawUsingScalingUpDataTrans2LR(outbuf, scanline, outheight, xstep, ystep, sprite, render_ghost);
+              return LbSpriteDrawUsingScalingUpDataTrans2LR(outbuf, scanline,
+               outheight, xstep, ystep, sprite, render_ghost);
           }
         }
         else
         {
           if ((lbDisplay.DrawFlags & Lb_SPRITE_FLIP_HORIZ) != 0)
           {
-              return LbSpriteDrawUsingScalingUpDataSolidRL(outbuf, scanline, outheight, xstep, ystep, sprite);
+              return LbSpriteDrawUsingScalingUpDataSolidRL(outbuf, scanline,
+               outheight, xstep, ystep, sprite);
           }
           else
           {
-              return LbSpriteDrawUsingScalingUpDataSolidLR(outbuf, scanline, outheight, xstep, ystep, sprite);
+              return LbSpriteDrawUsingScalingUpDataSolidLR(outbuf, scanline,
+               outheight, xstep, ystep, sprite);
           }
         }
     }
@@ -1348,11 +1358,13 @@ TbResult LbSpriteDrawUsingScalingData(long posx, long posy, const TbSprite *spri
         {
           if ((lbDisplay.DrawFlags & Lb_SPRITE_FLIP_HORIZ) != 0)
           {
-              return LbSpriteDrawRemapUsingScalingDownDataSolidRL(outbuf, scanline, outheight, xstep, ystep, sprite, lbSpriteReMapPtr);
+              return LbSpriteDrawRemapUsingScalingDownDataSolidRL(outbuf, scanline,
+               outheight, xstep, ystep, sprite, lbSpriteReMapPtr);
           }
           else
           {
-              return LbSpriteDrawRemapUsingScalingDownDataSolidLR(outbuf, scanline, outheight, xstep, ystep, sprite, lbSpriteReMapPtr);
+              return LbSpriteDrawRemapUsingScalingDownDataSolidLR(outbuf, scanline,
+               outheight, xstep, ystep, sprite, lbSpriteReMapPtr);
           }
         }
         else
@@ -1360,11 +1372,13 @@ TbResult LbSpriteDrawUsingScalingData(long posx, long posy, const TbSprite *spri
         {
           if ((lbDisplay.DrawFlags & Lb_SPRITE_FLIP_HORIZ) != 0)
           {
-              return LbSpriteDrawUsingScalingDownDataTrans1RL(outbuf, scanline, outheight, xstep, ystep, sprite, render_ghost);
+              return LbSpriteDrawUsingScalingDownDataTrans1RL(outbuf, scanline,
+               outheight, xstep, ystep, sprite, render_ghost);
           }
           else
           {
-              return LbSpriteDrawUsingScalingDownDataTrans1LR(outbuf, scanline, outheight, xstep, ystep, sprite, render_ghost);
+              return LbSpriteDrawUsingScalingDownDataTrans1LR(outbuf, scanline,
+               outheight, xstep, ystep, sprite, render_ghost);
           }
         }
         else
@@ -1372,22 +1386,26 @@ TbResult LbSpriteDrawUsingScalingData(long posx, long posy, const TbSprite *spri
         {
           if ((lbDisplay.DrawFlags & Lb_SPRITE_FLIP_HORIZ) != 0)
           {
-              return LbSpriteDrawUsingScalingDownDataTrans2RL(outbuf, scanline, outheight, xstep, ystep, sprite, render_ghost);
+              return LbSpriteDrawUsingScalingDownDataTrans2RL(outbuf, scanline,
+               outheight, xstep, ystep, sprite, render_ghost);
           }
           else
           {
-              return LbSpriteDrawUsingScalingDownDataTrans2LR(outbuf, scanline, outheight, xstep, ystep, sprite, render_ghost);
+              return LbSpriteDrawUsingScalingDownDataTrans2LR(outbuf, scanline,
+               outheight, xstep, ystep, sprite, render_ghost);
           }
         }
         else
         {
           if ((lbDisplay.DrawFlags & Lb_SPRITE_FLIP_HORIZ) != 0)
           {
-              return LbSpriteDrawUsingScalingDownDataSolidRL(outbuf, scanline, outheight, xstep, ystep, sprite);
+              return LbSpriteDrawUsingScalingDownDataSolidRL(outbuf, scanline,
+               outheight, xstep, ystep, sprite);
           }
           else
           {
-              return LbSpriteDrawUsingScalingDownDataSolidLR(outbuf, scanline, outheight, xstep, ystep, sprite);
+              return LbSpriteDrawUsingScalingDownDataSolidLR(outbuf, scanline,
+               outheight, xstep, ystep, sprite);
           }
         }
     }

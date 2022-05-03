@@ -1305,11 +1305,13 @@ TbResult LbSpriteDrawRemapUsingScalingData(long posx, long posy, const TbSprite 
         {
           if ((lbDisplay.DrawFlags & Lb_SPRITE_FLIP_HORIZ) != 0)
           {
-              return LbSpriteDrawRemapUsingScalingUpDataTrans1RL(outbuf, scanline, outheight, xstep, ystep, sprite, cmap, render_ghost);
+              return LbSpriteDrawRemapUsingScalingUpDataTrans1RL(outbuf, scanline,
+               outheight, xstep, ystep, sprite, cmap, render_ghost);
           }
           else
           {
-              return LbSpriteDrawRemapUsingScalingUpDataTrans1LR(outbuf, scanline, outheight, xstep, ystep, sprite, cmap, render_ghost);
+              return LbSpriteDrawRemapUsingScalingUpDataTrans1LR(outbuf, scanline,
+               outheight, xstep, ystep, sprite, cmap, render_ghost);
           }
         }
         else
@@ -1317,22 +1319,26 @@ TbResult LbSpriteDrawRemapUsingScalingData(long posx, long posy, const TbSprite 
         {
           if ((lbDisplay.DrawFlags & Lb_SPRITE_FLIP_HORIZ) != 0)
           {
-              return LbSpriteDrawRemapUsingScalingUpDataTrans2RL(outbuf, scanline, outheight, xstep, ystep, sprite, cmap, render_ghost);
+              return LbSpriteDrawRemapUsingScalingUpDataTrans2RL(outbuf, scanline,
+               outheight, xstep, ystep, sprite, cmap, render_ghost);
           }
           else
           {
-              return LbSpriteDrawRemapUsingScalingUpDataTrans2LR(outbuf, scanline, outheight, xstep, ystep, sprite, cmap, render_ghost);
+              return LbSpriteDrawRemapUsingScalingUpDataTrans2LR(outbuf, scanline,
+               outheight, xstep, ystep, sprite, cmap, render_ghost);
           }
         }
         else
         {
           if ((lbDisplay.DrawFlags & Lb_SPRITE_FLIP_HORIZ) != 0)
           {
-              return LbSpriteDrawRemapUsingScalingUpDataSolidRL(outbuf, scanline, outheight, xstep, ystep, sprite, cmap);
+              return LbSpriteDrawRemapUsingScalingUpDataSolidRL(outbuf, scanline,
+               outheight, xstep, ystep, sprite, cmap);
           }
           else
           {
-              return LbSpriteDrawRemapUsingScalingUpDataSolidLR(outbuf, scanline, outheight, xstep, ystep, sprite, cmap);
+              return LbSpriteDrawRemapUsingScalingUpDataSolidLR(outbuf, scanline,
+               outheight, xstep, ystep, sprite, cmap);
           }
         }
     }
@@ -1342,11 +1348,13 @@ TbResult LbSpriteDrawRemapUsingScalingData(long posx, long posy, const TbSprite 
         {
           if ((lbDisplay.DrawFlags & Lb_SPRITE_FLIP_HORIZ) != 0)
           {
-              return LbSpriteDrawRemapUsingScalingDownDataTrans1RL(outbuf, scanline, outheight, xstep, ystep, sprite, cmap, render_ghost);
+              return LbSpriteDrawRemapUsingScalingDownDataTrans1RL(outbuf, scanline,
+               outheight, xstep, ystep, sprite, cmap, render_ghost);
           }
           else
           {
-              return LbSpriteDrawRemapUsingScalingDownDataTrans1LR(outbuf, scanline, outheight, xstep, ystep, sprite, cmap, render_ghost);
+              return LbSpriteDrawRemapUsingScalingDownDataTrans1LR(outbuf, scanline,
+               outheight, xstep, ystep, sprite, cmap, render_ghost);
           }
         }
         else
@@ -1354,22 +1362,26 @@ TbResult LbSpriteDrawRemapUsingScalingData(long posx, long posy, const TbSprite 
         {
           if ((lbDisplay.DrawFlags & Lb_SPRITE_FLIP_HORIZ) != 0)
           {
-              return LbSpriteDrawRemapUsingScalingDownDataTrans2RL(outbuf, scanline, outheight, xstep, ystep, sprite, cmap, render_ghost);
+              return LbSpriteDrawRemapUsingScalingDownDataTrans2RL(outbuf, scanline,
+               outheight, xstep, ystep, sprite, cmap, render_ghost);
           }
           else
           {
-              return LbSpriteDrawRemapUsingScalingDownDataTrans2LR(outbuf, scanline, outheight, xstep, ystep, sprite, cmap, render_ghost);
+              return LbSpriteDrawRemapUsingScalingDownDataTrans2LR(outbuf, scanline,
+               outheight, xstep, ystep, sprite, cmap, render_ghost);
           }
         }
         else
         {
           if ((lbDisplay.DrawFlags & Lb_SPRITE_FLIP_HORIZ) != 0)
           {
-              return LbSpriteDrawRemapUsingScalingDownDataSolidRL(outbuf, scanline, outheight, xstep, ystep, sprite, cmap);
+              return LbSpriteDrawRemapUsingScalingDownDataSolidRL(outbuf, scanline,
+               outheight, xstep, ystep, sprite, cmap);
           }
           else
           {
-              return LbSpriteDrawRemapUsingScalingDownDataSolidLR(outbuf, scanline, outheight, xstep, ystep, sprite, cmap);
+              return LbSpriteDrawRemapUsingScalingDownDataSolidLR(outbuf, scanline,
+               outheight, xstep, ystep, sprite, cmap);
           }
         }
     }
