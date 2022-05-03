@@ -42,7 +42,7 @@ TbResult LbSpriteDrawUsingScalingDownDataTrans1LR(ubyte *outbuf, int scanline, i
  * Requires SetAlphaScalingData() to be called before.
  * Unlike LbSpriteDrawUsingScalingData(), this one ignores some of the DrawFlags, and
  * assumes transparency even if related flag is not set. So it is basically kind of
- * hacked version of that function.
+ * hacked version of that function. No idea why, but it's used in Dungeon Keeper.
  *
  * @param posx The X coord within current graphics window.
  * @param posy The Y coord within current graphics window.
@@ -58,7 +58,6 @@ TbResult DrawAlphaSpriteUsingScalingData(long posx, long posy, const TbSprite *s
     int scanline;
 
     LIBLOG("Drawing at (%ld,%ld)",posx,posy);
-    //TODO this function seem more complex in keeperfx, more similar to LbSpriteDrawUsingScalingData()
     //TODO set this in higher level function instead, when possible
     render_alpha = lbSpriteReMapPtr;
     assert(render_alpha != NULL);

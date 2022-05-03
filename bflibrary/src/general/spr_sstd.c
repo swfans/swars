@@ -1265,7 +1265,6 @@ TbResult LbSpriteDrawUsingScalingData(long posx, long posy, const TbSprite *spri
     long *ystep;
     int scanline;
 
-    assert(render_ghost != NULL);
     LIBLOG("Drawing at (%ld,%ld)",posx,posy);
     {
         long sposx, sposy;
@@ -1313,6 +1312,7 @@ TbResult LbSpriteDrawUsingScalingData(long posx, long posy, const TbSprite *spri
         else
         if ((lbDisplay.DrawFlags & Lb_SPRITE_TRANSPAR4) != 0)
         {
+          assert(render_ghost != NULL);
           if ((lbDisplay.DrawFlags & Lb_SPRITE_FLIP_HORIZ) != 0)
           {
               return LbSpriteDrawUsingScalingUpDataTrans1RL(outbuf, scanline,
@@ -1327,6 +1327,7 @@ TbResult LbSpriteDrawUsingScalingData(long posx, long posy, const TbSprite *spri
         else
         if ((lbDisplay.DrawFlags & Lb_SPRITE_TRANSPAR8) != 0)
         {
+          assert(render_ghost != NULL);
           if ((lbDisplay.DrawFlags & Lb_SPRITE_FLIP_HORIZ) != 0)
           {
               return LbSpriteDrawUsingScalingUpDataTrans2RL(outbuf, scanline,
@@ -1370,6 +1371,7 @@ TbResult LbSpriteDrawUsingScalingData(long posx, long posy, const TbSprite *spri
         else
         if ((lbDisplay.DrawFlags & Lb_SPRITE_TRANSPAR4) != 0)
         {
+          assert(render_ghost != NULL);
           if ((lbDisplay.DrawFlags & Lb_SPRITE_FLIP_HORIZ) != 0)
           {
               return LbSpriteDrawUsingScalingDownDataTrans1RL(outbuf, scanline,
@@ -1384,6 +1386,7 @@ TbResult LbSpriteDrawUsingScalingData(long posx, long posy, const TbSprite *spri
         else
         if ((lbDisplay.DrawFlags & Lb_SPRITE_TRANSPAR8) != 0)
         {
+          assert(render_ghost != NULL);
           if ((lbDisplay.DrawFlags & Lb_SPRITE_FLIP_HORIZ) != 0)
           {
               return LbSpriteDrawUsingScalingDownDataTrans2RL(outbuf, scanline,
