@@ -447,7 +447,9 @@ void set_smack_free(void (*cb)(void *ptr))
 
 void BAT_unknsub_20(int a1, int a2, int a3, int a4, unsigned long a5)
 {
-    asm volatile ("call ASM_BAT_unknsub_20\n"
+    asm volatile (
+      "push %4\n"
+      "call ASM_BAT_unknsub_20\n"
         : : "a" (a1), "d" (a2), "b" (a3), "c" (a4), "g" (a5));
 }
 
