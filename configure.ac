@@ -163,7 +163,8 @@ AC_SUBST([ASFILTER])
 AC_MSG_CHECKING([whether to enable debugging options])
 AS_IF([test "$use_debug" = "yes" || test "$use_debug" = "full"], [
   AC_DEFINE([ENABLE_DEBUG], 1, [Define to 1 if compiling in debug mode])
-  CFLAGS="$CFLAGS -g -O0 -DDEBUG"
+  CPPFLAGS="$CPPFLAGS -DDEBUG"
+  CFLAGS="$CFLAGS -g -O0"
   AS_IF([test "$have_windows" = "no"], [
     CCASFLAGS="$CCASFLAGS -g"
   ], [
