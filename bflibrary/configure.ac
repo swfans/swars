@@ -1,6 +1,6 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
-AC_PREREQ([2.71])
+AC_PREREQ([2.69])
 
 m4_define([bflibrary_version], [0.1.0.0])
 
