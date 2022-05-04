@@ -41,8 +41,8 @@ extern long alpha_ysteps_array[2*SPRITE_SCALING_YSTEPS];
 extern long scale_up;
 extern long alpha_scale_up;
 
-extern ubyte *render_ghost;
-extern ubyte *render_alpha;
+extern TbPixel *render_ghost;
+extern TbPixel *render_alpha;
 
 
 void LbPixelBlockCopyForward(TbPixel * dst, const TbPixel * src, long len);

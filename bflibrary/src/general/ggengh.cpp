@@ -24,7 +24,7 @@ int LbGhostTableGenerate_UNUSED()
 // code at 0001:000a5e20
 }
 
-int ghost_table_UNUSED;
+unsigned char ghost_table_UNUSED[0x10000];
 
 
 /******************************************************************************/

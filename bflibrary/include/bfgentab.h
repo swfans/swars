@@ -28,7 +28,8 @@ int LbFadeTableGenerate();
 extern int fade_table;
 
 int LbGhostTableGenerate();
-extern int ghost_table;
+
+extern unsigned char ghost_table[];
 
 #ifdef __cplusplus
 };
