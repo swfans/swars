@@ -67,6 +67,21 @@ enum TbFileSeekMode { // type=int8_t
     Lb_FILE_SEEK_END,
 };
 
+enum TbFileAttribFlags { // type=int8_t
+    /* Normal file. */
+    Lb_FILE_ATTR_NORMAL = 0x00,
+    /* Read only file. */
+    Lb_FILE_ATTR_RDONLY = 0x01,
+    /* Hidden file. */
+    Lb_FILE_ATTR_HIDDEN = 0x02,
+    /* System file. */
+    Lb_FILE_ATTR_SYSTEM = 0x03,
+    /* Subdirectory. */
+    Lb_FILE_ATTR_SUBDIR = 0x10,
+    /* Archived file. */
+    Lb_FILE_ATTR_ARCH   = 0x20,
+};
+
 typedef enum TbFileSeekMode TbFileSeekMode;
 
 #define INVALID_FILE (TbFileHandle)-1
@@ -78,6 +93,7 @@ typedef struct _finddata_t TbFILE_FIND;
 #elif defined(DOSFINDTYPE) // Watcom C API
 typedef DOSFINDTYPE TbFILE_FIND;
 #else // POSIX emulation of the findfirst/findnext API
+#define FILE_FIND_SIMULATED
 struct _finddata_t {
     struct stat st;
     char name[FILENAME_MAX];

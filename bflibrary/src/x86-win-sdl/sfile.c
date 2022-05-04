@@ -26,13 +26,18 @@
 #include <fcntl.h>
 #include <stdbool.h>
 #include <limits.h>
-#include <share.h>
 #include <stdio.h>
+#include <string.h>
 #include "bflog.h"
 
 #if defined(WIN32)||defined(DOS)||defined(GO32)
+#include <share.h>
 #include <dos.h>
 #include <direct.h>
+#endif
+
+#if defined(FILE_FIND_SIMULATED)
+#include <stdint.h>
 #endif
 
 #if defined(WIN32)
@@ -297,23 +302,49 @@ TbResult LbDateTimeDecode(const time_t *datetime, struct TbDate *curr_date,
  */
 static void convert_find_info(struct TbFileFind *ffind)
 {
-  struct _finddata_t *fdata=&(ffind->Reserved);
-  strncpy(ffind->Filename,fdata->name,144);
-  ffind->Filename[sizeof(ffind->Filename)-1] = '\0';
+    struct _finddata_t *fdata = &(ffind->Reserved);
+
+    strncpy(ffind->Filename,fdata->name,144);
+    ffind->Filename[sizeof(ffind->Filename)-1] = '\0';
 #if defined(WIN32)
-  GetShortPathName(fdata->name,ffind->AlternateFilename,14);
+    GetShortPathName(fdata->name,ffind->AlternateFilename,14);
 #else
-  strncpy(ffind->AlternateFilename,fdata->name,14);
+    strncpy(ffind->AlternateFilename,fdata->name,14);
 #endif
-  ffind->AlternateFilename[sizeof(ffind->AlternateFilename)-1] = '\0';
-  if (fdata->size > ULONG_MAX)
-    ffind->Length = ULONG_MAX;
-  else
-    ffind->Length = fdata->size;
-  ffind->Attributes = fdata->attrib;
-  LbDateTimeDecode(&fdata->time_create, &ffind->CreationDate, &ffind->CreationTime);
-  LbDateTimeDecode(&fdata->time_write, &ffind->LastWriteDate, &ffind->LastWriteTime);
+    ffind->AlternateFilename[sizeof(ffind->AlternateFilename)-1] = '\0';
+#if defined(FILE_FIND_SIMULATED)
+    if (fdata->st.st_size > ULONG_MAX)
+        ffind->Length = ULONG_MAX;
+    else
+        ffind->Length = fdata->st.st_size;
+    ffind->Attributes = S_ISDIR(fdata->st.st_mode) ? Lb_FILE_ATTR_SUBDIR : Lb_FILE_ATTR_NORMAL;
+    LbDateTimeDecode(&fdata->st.st_ctime, &ffind->CreationDate, &ffind->CreationTime);
+    LbDateTimeDecode(&fdata->st.st_mtime, &ffind->LastWriteDate, &ffind->LastWriteTime);
+#else
+    if (fdata->size > ULONG_MAX)
+        ffind->Length = ULONG_MAX;
+    else
+        ffind->Length = fdata->size;
+    ffind->Attributes = fdata->attrib; /* our Lb_FILE_ATTR_* flags are compatible with Windows definitions */
+    LbDateTimeDecode(&fdata->time_create, &ffind->CreationDate, &ffind->CreationTime);
+    LbDateTimeDecode(&fdata->time_write, &ffind->LastWriteDate, &ffind->LastWriteTime);
+#endif
 }
+
+#if defined(FILE_FIND_SIMULATED)
+
+intptr_t _findfirst(const char* filespec, struct _finddata_t* fileinfo) {
+    // TODO implement
+}
+
+int _findnext(intptr_t fhandle, struct _finddata_t* fileinfo) {
+    // TODO implement
+}
+
+int _findclose(intptr_t fhandle) {
+    // TODO implement
+}
+#endif
 
 TbResult LbFileFindFirst(const char *filespec, struct TbFileFind *ffind, unsigned int attributes)
 {
