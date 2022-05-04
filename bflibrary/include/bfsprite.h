@@ -115,6 +115,8 @@ void LbSpriteSetScalingData(long x, long y, long swidth, long sheight,
 
 TbResult DrawAlphaSpriteUsingScalingData(long posx, long posy, const TbSprite *sprite);
 
+TbResult DrawSpriteWthShadowUsingScalingData(long posx, long posy, const TbSprite *sprite);
+
 void SetAlphaScalingData(long x, long y, long swidth, long sheight,
     long dwidth, long dheight);
 
