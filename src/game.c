@@ -745,7 +745,10 @@ void mapwho_unkn01(int a1, int a2)
 
 void new_bang(int a1, int a2, int a3, int a4, int a5, int a6)
 {
-    asm volatile ("call ASM_new_bang\n"
+    asm volatile (
+      "push %5\n"
+      "push %4\n"
+      "call ASM_new_bang\n"
         : : "a" (a1), "d" (a2), "b" (a3), "c" (a4), "g" (a5), "g" (a6));
 }
 
