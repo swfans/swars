@@ -21,6 +21,7 @@
 /******************************************************************************/
 #include "bffile.h"
 
+#include <string.h>
 #include "bflog.h"
 #include "bfdir.h"
 #include "bfendian.h"

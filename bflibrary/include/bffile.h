@@ -22,7 +22,13 @@
 
 #include "bftypes.h"
 #include "bftime.h"
-#include "dir.h"
+
+#if defined(WIN32)||defined(DOS)||defined(GO32)
+#include <dir.h>
+#else
+#include <stdio.h>
+#include <sys/stat.h>
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -71,8 +77,12 @@ typedef ulong TbFileHandle;
 typedef struct _finddata_t TbFILE_FIND;
 #elif defined(DOSFINDTYPE) // Watcom C API
 typedef DOSFINDTYPE TbFILE_FIND;
-#else
-#error Data type for findfirst()/findnext() not recognized
+#else // POSIX emulation of the findfirst/findnext API
+struct _finddata_t {
+    struct stat st;
+    char name[FILENAME_MAX];
+};
+typedef struct _finddata_t TbFILE_FIND;
 #endif
 
 #pragma pack(1)

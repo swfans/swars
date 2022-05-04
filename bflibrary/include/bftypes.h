@@ -25,6 +25,7 @@ extern "C" {
 #endif
 
 #include <stddef.h>
+#include <time.h>
 
 #ifndef false
 # define false 0
