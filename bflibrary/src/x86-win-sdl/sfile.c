@@ -36,10 +36,6 @@
 #include <direct.h>
 #endif
 
-#if defined(FILE_FIND_SIMULATED)
-#include <stdint.h>
-#endif
-
 #if defined(WIN32)
 
 // Selected declarations frow Win32 API - we don't want to use whole API
@@ -68,8 +64,6 @@ typedef PVOID HANDLE;
 #define DECLARE_HANDLE(n) typedef HANDLE n
 typedef HANDLE *PHANDLE,*LPHANDLE;
 
-WINBASEAPI DWORD WINAPI GetShortPathNameA(LPCSTR,LPSTR,DWORD);
-#define GetShortPathName GetShortPathNameA
 WINBASEAPI BOOL WINAPI FlushFileBuffers(HANDLE);
 WINBASEAPI DWORD WINAPI GetLastError(void);
 
@@ -289,110 +283,6 @@ long LbFileLength(const char *fname)
 #endif
 
     return result;
-}
-
-/** @internal
- */
-TbResult LbDateTimeDecode(const time_t *datetime, struct TbDate *curr_date,
-  struct TbTime *curr_time);
-
-/** @internal
- * Converts file search information from platform-specific into independent form.
- * Yeah, right...
- */
-static void convert_find_info(struct TbFileFind *ffind)
-{
-    struct _finddata_t *fdata = &(ffind->Reserved);
-
-    strncpy(ffind->Filename,fdata->name,144);
-    ffind->Filename[sizeof(ffind->Filename)-1] = '\0';
-#if defined(WIN32)
-    GetShortPathName(fdata->name,ffind->AlternateFilename,14);
-#else
-    strncpy(ffind->AlternateFilename,fdata->name,14);
-#endif
-    ffind->AlternateFilename[sizeof(ffind->AlternateFilename)-1] = '\0';
-#if defined(FILE_FIND_SIMULATED)
-    if (fdata->st.st_size > ULONG_MAX)
-        ffind->Length = ULONG_MAX;
-    else
-        ffind->Length = fdata->st.st_size;
-    ffind->Attributes = S_ISDIR(fdata->st.st_mode) ? Lb_FILE_ATTR_SUBDIR : Lb_FILE_ATTR_NORMAL;
-    LbDateTimeDecode(&fdata->st.st_ctime, &ffind->CreationDate, &ffind->CreationTime);
-    LbDateTimeDecode(&fdata->st.st_mtime, &ffind->LastWriteDate, &ffind->LastWriteTime);
-#else
-    if (fdata->size > ULONG_MAX)
-        ffind->Length = ULONG_MAX;
-    else
-        ffind->Length = fdata->size;
-    ffind->Attributes = fdata->attrib; /* our Lb_FILE_ATTR_* flags are compatible with Windows definitions */
-    LbDateTimeDecode(&fdata->time_create, &ffind->CreationDate, &ffind->CreationTime);
-    LbDateTimeDecode(&fdata->time_write, &ffind->LastWriteDate, &ffind->LastWriteTime);
-#endif
-}
-
-#if defined(FILE_FIND_SIMULATED)
-
-intptr_t _findfirst(const char* filespec, struct _finddata_t* fileinfo) {
-    // TODO implement
-}
-
-int _findnext(intptr_t fhandle, struct _finddata_t* fileinfo) {
-    // TODO implement
-}
-
-int _findclose(intptr_t fhandle) {
-    // TODO implement
-}
-#endif
-
-TbResult LbFileFindFirst(const char *filespec, struct TbFileFind *ffind, unsigned int attributes)
-{
-    int result;
-#if LB_FILENAME_TRANSFORM
-    char real_filespec[FILENAME_MAX];
-
-    if (lbFileNameTransform != NULL) {
-        lbFileNameTransform(real_filespec, filespec);
-        filespec = real_filespec;
-    }
-#endif
-    // We skip 'attributes' as Win32 prototypes seem not to use them
-    ffind->ReservedHandle = _findfirst(filespec, &(ffind->Reserved));
-    if (ffind->ReservedHandle == -1)
-    {
-      result = -1;
-    } else
-    {
-      convert_find_info(ffind);
-      result = 1;
-    }
-    return result;
-}
-
-TbResult LbFileFindNext(struct TbFileFind *ffind)
-{
-    int result;
-    if ( _findnext(ffind->ReservedHandle, &(ffind->Reserved)) < 0 )
-    {
-        _findclose(ffind->ReservedHandle);
-        ffind->ReservedHandle = -1;
-        result = Lb_FAIL;
-    } else
-    {
-        convert_find_info(ffind);
-        result = 1;
-    }
-    return result;
-}
-
-TbResult LbFileFindEnd(struct TbFileFind *ffind)
-{
-    if (ffind->ReservedHandle != -1)
-    {
-        _findclose(ffind->ReservedHandle);
-    }
-    return 1;
 }
 
 TbResult LbFileRename(const char *fname_old, const char *fname_new)

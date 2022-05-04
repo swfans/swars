@@ -93,7 +93,7 @@ typedef struct _finddata_t TbFILE_FIND;
 #elif defined(DOSFINDTYPE) // Watcom C API
 typedef DOSFINDTYPE TbFILE_FIND;
 #else // POSIX emulation of the findfirst/findnext API
-#define FILE_FIND_SIMULATED
+#define LB_FILE_FIND_SIMULATED
 struct _finddata_t {
     struct stat st;
     char name[FILENAME_MAX];
