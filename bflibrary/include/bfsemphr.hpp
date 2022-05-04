@@ -26,10 +26,13 @@ class LbSemaphore {
 public:
     LbSemaphore(void);
     virtual ~LbSemaphore(void);
+#if defined(WIN32)
     union {
     void *pHandle;
     int iHandle;
     };
+#else
+#endif
 };
 
 /******************************************************************************/
@@ -40,10 +43,13 @@ public:
     virtual ~LbSemaLock(void);
     int Lock(bool wait_forever);
     void Release(void);
+#if defined(WIN32)
     union {
     void *pHandle;
     int iHandle;
     };
+#else
+#endif
     bool locked:1;
     bool invalid:1;
 };

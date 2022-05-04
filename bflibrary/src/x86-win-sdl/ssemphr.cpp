@@ -66,7 +66,9 @@ WINBASEAPI BOOL WINAPI ReleaseSemaphore(HANDLE,LONG,LPLONG);
 WINBASEAPI DWORD WINAPI WaitForSingleObject(HANDLE,DWORD);
 WINBASEAPI BOOL WINAPI CloseHandle(HANDLE);
 
-#endif // defined(WIN32)
+#else
+#include <semaphore.h>
+#endif // defined(WIN32) else
 /******************************************************************************/
 #ifdef __cplusplus
 }
@@ -75,53 +77,73 @@ WINBASEAPI BOOL WINAPI CloseHandle(HANDLE);
 
 LbSemaphore::LbSemaphore(void)
 {
-  this->pHandle = CreateSemaphoreA(NULL, 1, 1, NULL);
+#if defined(WIN32)
+    this->pHandle = CreateSemaphoreA(NULL, 1, 1, NULL);
+#else
+    //TODO implement
+#endif
 }
 
 LbSemaphore::~LbSemaphore(void)
 {
-  CloseHandle(this->pHandle);
+#if defined(WIN32)
+    CloseHandle(this->pHandle);
+#else
+    //TODO implement
+#endif
 }
 
 /******************************************************************************/
 
 LbSemaLock::LbSemaLock(class LbSemaphore *sem, bool isLocked)
 {
-  this->pHandle = sem->pHandle;
-  this->locked = isLocked;
-  this->invalid = 0;
+#if defined(WIN32)
+    this->pHandle = sem->pHandle;
+#else
+    //TODO implement
+#endif
+    this->locked = isLocked;
+    this->invalid = 0;
 }
 
 LbSemaLock::~LbSemaLock(void)
 {
-  Release();
+    Release();
 }
 
 void LbSemaLock::Release(void)
 {
-  if ( this->locked )
-  {
-    if ( !this->invalid )
+    if ( this->locked )
     {
-      ReleaseSemaphore(this->pHandle, 1, 0);
-      this->locked = 0;
+        if ( !this->invalid )
+        {
+#if defined(WIN32)
+            ReleaseSemaphore(this->pHandle, 1, 0);
+#else
+    //TODO implement
+#endif
+            this->locked = 0;
+        }
     }
-  }
 }
 
 int LbSemaLock::Lock(bool wait_forever)
 {
-  DWORD wait_retcode;
-  if (wait_forever)
-  {
-    wait_retcode = WaitForSingleObject(this->pHandle, INFINITE);
-    this->locked = wait_retcode < 1;
-  } else
-  {
-    wait_retcode = WaitForSingleObject(this->pHandle, 5);
-    this->locked = wait_retcode < 1;
-  }
-  return this->locked;
+#if defined(WIN32)
+    DWORD wait_retcode;
+    if (wait_forever)
+    {
+        wait_retcode = WaitForSingleObject(this->pHandle, INFINITE);
+        this->locked = wait_retcode < 1;
+    } else
+    {
+        wait_retcode = WaitForSingleObject(this->pHandle, 5);
+        this->locked = wait_retcode < 1;
+    }
+#else
+    //TODO implement
+#endif
+    return this->locked;
 }
 
 /******************************************************************************/
