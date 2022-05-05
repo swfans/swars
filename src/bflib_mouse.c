@@ -25,7 +25,6 @@
 
 #include "bflib_basics.h"
 #include "globals.h"
-#include "bflib_video.h"
 #include "bfsprite.h"
 
 #ifdef __cplusplus

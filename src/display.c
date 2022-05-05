@@ -2,9 +2,9 @@
 #include <stdio.h>
 
 #include "display.h"
+#include "bfscreen.h"
 #include "util.h"
 #include "bflib_basics.h"
-#include "bflib_video.h"
 
 #pragma pack(1)
 

@@ -4,10 +4,9 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
-#include "bflib_video.h"
 #include "bfdata.h"
 #include "bfsprite.h"
-#include "bflib_video.h"
+#include "bfscreen.h"
 #include "bflib_keybrd.h"
 #include "bflib_mouse.h"
 #include "bflib_render.h"

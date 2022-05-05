@@ -22,7 +22,6 @@
 
 #include "bflib_basics.h"
 #include "globals.h"
-#include "bflib_video.h"
 
 #ifdef __cplusplus
 extern "C" {

@@ -4,7 +4,6 @@ MKW = $(PYTHON) $(top_srcdir)/util/mkwrappers
 
 swars_SOURCES = \
 	ariadne.sx \
-	bflib_basics.c \
 	bflib_basics.h \
 	bflib_fmvids.sx \
 	bflib_joyst.c \
@@ -23,11 +22,8 @@ swars_SOURCES = \
 	bflib_sndlib.sx \
 	bflib_snd_mss.sx \
 	bflib_snd_sys.sx \
-	bflib_video.c \
-	bflib_video.h \
 	bflib_video_s.sx \
 	bflib_vidraw.sx \
-	bflib_vidraw_spr_norm.sx \
 	config.h \
 	display.c \
 	display.h \

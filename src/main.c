@@ -2,10 +2,10 @@
 #include <getopt.h>
 #include <stdlib.h>
 
-#include "bflib_video.h"
 #include "bflib_joyst.h"
 #include "bfmemory.h"
 #include "bffile.h"
+#include "bfscreen.h"
 #include "display.h"
 #include "game.h"
 #include "game_data.h"

@@ -1,9 +1,9 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#include "display.h"
 #include "mouse.h"
-#include "bflib_video.h"
+#include "bfscreen.h"
+#include "display.h"
 
 #pragma pack(1)
 
