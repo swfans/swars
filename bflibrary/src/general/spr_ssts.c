@@ -42,7 +42,7 @@ void LbSpriteDrawRemapUsingScalingSub1(ubyte *outbuf, int scanline,
   int v263;
   ubyte *v264;
   int v265;
-  int v266;
+  ubyte *v266;
   char v267;
   char v268;
   ubyte v269;
@@ -74,7 +74,7 @@ void LbSpriteDrawRemapUsingScalingSub1(ubyte *outbuf, int scanline,
   int v295;
   int v296;
   int v297;
-  int v298;
+  ubyte *v298;
   int v299;
   long *v304;
   ubyte *v316;
@@ -111,7 +111,7 @@ void LbSpriteDrawRemapUsingScalingSub1(ubyte *outbuf, int scanline,
                 v287 = -(char)v287;
                 v298 = &outbuf[-v261[0] - v261[1]];
                 v261 -= 2 * v287;
-                outbuf = (ubyte *)(v261[0] + v261[1] + v298);
+                outbuf = (v261[0] + v261[1] + v298);
               }
               else
               {
@@ -183,19 +183,19 @@ LABEL_559:
                     v361 = v266;
                     if ( v265 )
                     {
-                      if ( !(v266 & 3) )
+                      if ( !((ulong)v266 & 3) )
                         goto LABEL_560;
                       v267 = *v264++;
-                      *(ubyte *)v266++ = v267;
+                      *v266++ = v267;
                       if ( --v265 )
                       {
-                        if ( !(v266 & 3) )
+                        if ( !((ulong)v266 & 3) )
                           goto LABEL_560;
                         v268 = *v264++;
-                        *(ubyte *)v266++ = v268;
+                        *v266++ = v268;
                         if ( --v265 )
                         {
-                          if ( !(v266 & 3) || (v269 = *v264, ++v264, *(ubyte *)v266 = v269, ++v266, --v265, v265) )
+                          if ( !((ulong)v266 & 3) || (v269 = *v264, ++v264, *v266 = v269, ++v266, --v265, v265) )
                           {
 LABEL_560:
                             v365 = v265;
@@ -257,12 +257,12 @@ LABEL_560:
                             }
                             if ( v365 & 3 )
                             {
-                              *(ubyte *)v266 = *v264;
+                              *v266 = *v264;
                               if ( (v365 & 3) != 1 )
                               {
-                                *(ubyte *)(v266 + 1) = v264[1];
+                                *(v266 + 1) = v264[1];
                                 if ( (v365 & 3) != 2 )
-                                  *(ubyte *)(v266 + 2) = v264[2];
+                                  *(v266 + 2) = v264[2];
                               }
                             }
                           }
@@ -347,7 +347,7 @@ void LbSpriteDrawRemapUsingScalingSub2(ubyte *outbuf, int scanline,
   int v220;
   char *v221;
   int v222;
-  int v223;
+  ubyte *v223;
   char v224;
   char v225;
   char v226;
@@ -379,7 +379,7 @@ void LbSpriteDrawRemapUsingScalingSub2(ubyte *outbuf, int scanline,
   int v252;
   int v253;
   int v254;
-  int v255;
+  ubyte *v255;
   int v256;
   long *v303;
   ubyte *v315;
@@ -415,7 +415,7 @@ void LbSpriteDrawRemapUsingScalingSub2(ubyte *outbuf, int scanline,
                 v244 = -(char)v244;
                 v255 = &outbuf[-v219[0]];
                 v219 += 2 * v244;
-                outbuf = (ubyte *)(v219[0] + v255);
+                outbuf = (v219[0] + v255);
               }
               else
               {
@@ -483,19 +483,19 @@ LABEL_561:
                     v360 = v223;
                     if ( v222 )
                     {
-                      if ( !(v223 & 3) )
+                      if ( !((ulong)v223 & 3) )
                         goto LABEL_562;
                       v224 = *v221++;
-                      *(ubyte *)v223++ = v224;
+                      *v223++ = v224;
                       if ( --v222 )
                       {
-                        if ( !(v223 & 3) )
+                        if ( !((ulong)v223 & 3) )
                           goto LABEL_562;
                         v225 = *v221++;
-                        *(ubyte *)v223++ = v225;
+                        *v223++ = v225;
                         if ( --v222 )
                         {
-                          if ( !(v223 & 3) || (v226 = *v221, ++v221, *(ubyte *)v223 = v226, ++v223, --v222, v222) )
+                          if ( !((ulong)v223 & 3) || (v226 = *v221, ++v221, *v223 = v226, ++v223, --v222, v222) )
                           {
 LABEL_562:
                             v364 = v222;
@@ -557,12 +557,12 @@ LABEL_562:
                             }
                             if ( v364 & 3 )
                             {
-                              *(ubyte *)v223 = *v221;
+                              *v223 = *v221;
                               if ( (v364 & 3) != 1 )
                               {
-                                *(ubyte *)(v223 + 1) = v221[1];
+                                *(v223 + 1) = v221[1];
                                 if ( (v364 & 3) != 2 )
-                                  *(ubyte *)(v223 + 2) = v221[2];
+                                  *(v223 + 2) = v221[2];
                               }
                             }
                           }
@@ -1318,7 +1318,6 @@ void LbSpriteDrawRemapUsingScalingSub6(ubyte *outbuf, int scanline,
   ubyte *v28;
   ubyte *v29;
   ubyte *v30;
-  char *v31;
   int v32;
   ubyte v33;
   ubyte v34;
@@ -2433,7 +2432,7 @@ void LbSpriteDrawRemapUsingScalingSub11(ubyte *outbuf, int scanline,
   ubyte *v28;
   ubyte *v29;
   ubyte *v30;
-  char *v31;
+  long *v31;
   ubyte v32;
   ubyte v33;
   ubyte v34;
@@ -2465,9 +2464,9 @@ LABEL_65:
           if ( (v32 & 0x80u) != 0 )
           {
             v32 = -(char)v32;
-            v41 = &outbuf[-*(ulong *)v31 - *((ulong *)v31 + 1)];
-            v31 -= 8 * v32;
-            outbuf = (ubyte *)(*(ulong *)v31 + *((ulong *)v31 + 1) + v41);
+            v41 = &outbuf[-v31[0] - v31[1]];
+            v31 -= 2 * v32;
+            outbuf = (ubyte *)(v31[0] + v31[1] + v41);
           }
           else
           {
@@ -2475,56 +2474,56 @@ LABEL_65:
             {
               while ( 1 )
               {
-                if ( *((ulong *)v31 + 1) )
+                if ( v31[1] )
                 {
                   v33 = *v8++;
-                  v31 -= 8;
+                  v31 -= 2;
                   *outbuf-- = v33;
                   if ( !--v32 )
                     goto LABEL_65;
-                  if ( *((ulong *)v31 + 1) )
+                  if ( v31[1] )
                   {
                     v34 = *v8++;
-                    v31 -= 8;
+                    v31 -= 2;
                     *outbuf-- = v34;
                     if ( !--v32 )
                       goto LABEL_65;
-                    if ( *((ulong *)v31 + 1) )
+                    if ( v31[1] )
                     {
                       v35 = *v8++;
-                      v31 -= 8;
+                      v31 -= 2;
                       *outbuf-- = v35;
                       if ( !--v32 )
                         goto LABEL_65;
-                      if ( *((ulong *)v31 + 1) )
+                      if ( v31[1] )
                       {
                         v36 = *v8++;
-                        v31 -= 8;
+                        v31 -= 2;
                         *outbuf-- = v36;
                         if ( !--v32 )
                           goto LABEL_65;
-                        if ( *((ulong *)v31 + 1) )
+                        if ( v31[1] )
                         {
                           v37 = *v8++;
-                          v31 -= 8;
+                          v31 -= 2;
                           *outbuf-- = v37;
                           if ( !--v32 )
                             goto LABEL_65;
-                          if ( *((ulong *)v31 + 1) )
+                          if ( v31[1] )
                           {
                             v38 = *v8++;
-                            v31 -= 8;
+                            v31 -= 2;
                             *outbuf-- = v38;
                             if ( !--v32 )
                               goto LABEL_65;
-                            if ( *((ulong *)v31 + 1) )
+                            if ( v31[1] )
                             {
                               v39 = *v8++;
-                              v31 -= 8;
+                              v31 -= 2;
                               *outbuf-- = v39;
                               if ( !--v32 )
                                 goto LABEL_65;
-                              if ( *((ulong *)v31 + 1) )
+                              if ( v31[1] )
                                 break;
                             }
                           }
@@ -2534,12 +2533,12 @@ LABEL_65:
                   }
                 }
                 ++v8;
-                v31 -= 8;
+                v31 -= 2;
                 if ( !--v32 )
                   goto LABEL_65;
               }
               v40 = *v8++;
-              v31 -= 8;
+              v31 -= 2;
               *outbuf-- = v40;
               --v32;
             }
