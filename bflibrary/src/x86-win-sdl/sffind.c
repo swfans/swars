@@ -31,7 +31,9 @@
 #include "bflog.h"
 
 #if defined(LB_FILE_FIND_SIMULATED)
+#include <dirent.h>
 #include <stdint.h>
+#include <errno.h>
 #endif
 
 #if defined(WIN32)
@@ -122,6 +124,64 @@ typedef struct fhandle_t {
     char* spec;
 } fhandle_t;
 
+/*
+ * Windows implementation of _findfirst either returns EINVAL,
+ * ENOENT or ENOMEM. This function makes sure that the above
+ * implementation doesn't return anything else when an error
+ * condition is encountered.
+ */
+static void findfirst_set_errno() {
+    if (errno != ENOENT &&
+        errno != ENOMEM &&
+        errno != EINVAL) {
+        errno = EINVAL;
+    }
+}
+
+int _match_spec(const char* spec, const char* text) {
+    /*
+     * If the whole specification string was consumed and
+     * the input text is also exhausted: it's a match.
+     */
+    if (spec[0] == '\0' && text[0] == '\0') {
+        return 1;
+    }
+
+    /* A star matches 0 or more characters. */
+    if (spec[0] == '*') {
+        /*
+         * Skip the star and try to find a match after it
+         * by successively incrementing the text pointer.
+         */
+        do {
+            if (_match_spec(spec + 1, text)) {
+                return 1;
+            }
+        } while (*text++ != '\0');
+    }
+
+    /*
+     * An interrogation mark matches any character. Other
+     * characters match themself. Also, if the input text
+     * is exhausted but the specification isn't, there is
+     * no match.
+     */
+    if (text[0] != '\0' && (spec[0] == '?' || spec[0] == text[0])) {
+        return _match_spec(spec + 1, text + 1);
+    }
+
+    return 0;
+}
+
+int match_spec(const char* spec, const char* text) {
+    /* On Windows, *.* matches everything. */
+    if (strcmp(spec, "*.*") == 0) {
+        return 1;
+    }
+
+    return _match_spec(spec, text);
+}
+
 /* Perfom a scan in the directory identified by dirpath. */
 static intptr_t findfirst_in_directory(const char* dirpath,
         const char* spec, struct _finddata_t* fileinfo) {
@@ -202,20 +262,6 @@ static intptr_t findfirst_dotdot(const char* filespec,
      * about this custom handle.
      */
     return DOTDOT_HANDLE;
-}
-
-/*
- * Windows implementation of _findfirst either returns EINVAL,
- * ENOENT or ENOMEM. This function makes sure that the above
- * implementation doesn't return anything else when an error
- * condition is encountered.
- */
-static void findfirst_set_errno() {
-    if (errno != ENOENT &&
-        errno != ENOMEM &&
-        errno != EINVAL) {
-        errno = EINVAL;
-    }
 }
 
 intptr_t _findfirst(const char* filespec, struct _finddata_t* fileinfo) {
@@ -306,7 +352,7 @@ int _findnext(intptr_t fhandle, struct _finddata_t* fileinfo) {
             return -1;
         }
 
-        if (handle->dironly && !S_ISDIR(st.st_mode)) {
+        if (handle->dironly && !S_ISDIR(fileinfo->st.st_mode)) {
             continue;
         }
 
