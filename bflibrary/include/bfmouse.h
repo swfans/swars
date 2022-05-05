@@ -49,7 +49,7 @@ struct mouse_info { // sizeof=4112
     long YMoveRatio; // offset=4
     long XSpriteOffset; // offset=8
     long YSpriteOffset; // offset=12
-    ubyte Sprite[4096]; // offset=16
+    ubyte Sprite[64*64]; // offset=16
 };
 
 typedef struct mouse_info mouse_info;
@@ -59,9 +59,9 @@ typedef struct mouse_info mouse_info;
 int LbMousePlace();
 int LbMouseRemove();
 int LbMouseChangeSpriteOffset(unsigned long hsX, unsigned long hsY);
-int LbMouseChangeSprite(struct TbSprite *spr);
+TbResult LbMouseChangeSprite(const struct TbSprite *pointer_spr);
 int LbMouseChangeMoveRatio();
-int LbMouseSetup();
+TbResult LbMouseSetup(const struct TbSprite *pointer_spr, int ratio_x, int ratio_y);
 int LbMouseReset();
 int LbMouseSuspend();
 int LbMouseSetWindow();

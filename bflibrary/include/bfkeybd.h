@@ -172,9 +172,14 @@ typedef unsigned char TbKeyCode;
 
 enum KeyModifiers {
         KMod_NONE        = 0x00,
+/* TODO Use these flag values for better compatibility, when possible
         KMod_SHIFT       = 0x10,
         KMod_CONTROL     = 0x20,
         KMod_ALT         = 0x40,
+*/
+        KMod_SHIFT       = 0x01,
+        KMod_CONTROL     = 0x02,
+        KMod_ALT         = 0x04,
 };
 #define KMod_DONTCARE -1
 
@@ -184,7 +189,7 @@ extern char lbInkeyToAscii[];
 extern char lbInkeyToAsciiShift[];
 
 extern unsigned char lbExtendedKeyPress;
-extern unsigned char lbKeyOn[];
+extern unsigned char lbKeyOn[256];
 
 extern unsigned char lbInkey;
 extern unsigned char lbInkeyFlags;
