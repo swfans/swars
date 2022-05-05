@@ -2,6 +2,7 @@
 #include <stdint.h>
 
 #include "keyboard.h"
+#include "bfkeybd.h"
 #include "bflib_keybrd.h"
 #include "game.h"
 
@@ -331,7 +332,7 @@ keyboard_clear_buffer (void)
   keyboard_buffer_write_index = 0;
 }
 
-int LbKeyboardClose(void)
+TbResult LbKeyboardClose(void)
 {
   return 1;
 }
@@ -343,7 +344,7 @@ int LbDosKeyboard(void)
     return ASM_LbDosKeyboard();
 }
 
-int LbKeyboard(void)
+char LbKeyboard(void)
 {
   LbDosKeyboard();
   if (lbInkey >= 128)

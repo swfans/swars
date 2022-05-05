@@ -26,63 +26,8 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-/******************************************************************************/
-#pragma pack(1)
 
-struct TbSprite;
-struct TbPoint;
 
-enum TbMouseAction {
-    MActn_NONE = 0,
-    MActn_MOUSEMOVE,
-    MActn_LBUTTONDOWN,
-    MActn_LBUTTONUP,
-    MActn_RBUTTONDOWN,
-    MActn_RBUTTONUP,
-    MActn_MBUTTONDOWN,
-    MActn_MBUTTONUP,
-    MActn_WHEELMOVEUP,
-    MActn_WHEELMOVEDOWN,
-};
-
-struct mouse_buffer {
-        long Valid;//bool
-        long Width;
-        long Height;
-        unsigned long Offset;
-        unsigned char Buffer[0x1000];
-        long X;
-        long Y;
-        long XOffset;
-        long YOffset;
-};
-
-struct mouse_info {
-        long XMoveRatio;
-        long YMoveRatio;
-        long XSpriteOffset;
-        long YSpriteOffset;
-        //Note: debug info says it has 0x100 items, but this is suspicious..
-        unsigned char Sprite[0x1000];
-};
-
-#pragma pack()
-/******************************************************************************/
-/*TbResult LbMouseChangeSpriteAndHotspot(struct TbSprite *pointer_spr, long hot_x, long hot_y);*/
-TbResult LbMouseSetup(struct TbSprite *pointer_spr, int ratio_x, int ratio_y);
-/*TbResult LbMouseSetPointerHotspot(long hot_x, long hot_y);
-TbResult LbMouseSetPosition(long x, long y);*/
-TbResult LbMouseChangeSprite(struct TbSprite *pointer_spr);
-/*TbResult LbMouseSuspend(void);
-void GetPointerHotspot(long *hot_x, long *hot_y);
-TbResult LbMouseIsInstalled(void);
-TbResult LbMouseSetWindow(long x, long y, long width, long height);
-TbResult LbMouseChangeMoveRatio(long ratio_x, long ratio_y);
-
-void mouseControl(unsigned int action, struct TbPoint *pos);
-TbResult LbMouseOnBeginSwap(void);
-TbResult LbMouseOnEndSwap(void);*/
-/******************************************************************************/
 #ifdef __cplusplus
 }
 #endif
