@@ -257,7 +257,7 @@ keyboard_handle_event (const SDL_Event *ev)
       lbKeyOn[key_index] = 1 | get_key_flags ();
 
       if (!lbInkey_prefixed)
-	add_key_to_buffer (scan_code);
+          add_key_to_buffer (scan_code);
     }
   else
     lbKeyOn[key_index] = 0;

@@ -78,46 +78,46 @@ KInt:	/* 8c578 */
 		mov    $0x60,%edx
 		sub    %eax,%eax
 		in     (%dx),%al
-		mov    %al,lbInkey
+		mov    %al,EXPORT_SYMBOL(lbInkey)
 		xor    %eax,%eax
 		mov    oinkey,%al
 		cmp    $0xe0,%eax
 		jne    jump_8c5f6
 		movb   $0x1,lbInkey_prefixed
 		xor    %eax,%eax
-		mov    lbInkey,%al
+		mov    EXPORT_SYMBOL(lbInkey),%al
 		cmp    $0x2a,%eax
 		je     jump_8c5c3
 		xor    %eax,%eax
-		mov    lbInkey,%al
+		mov    EXPORT_SYMBOL(lbInkey),%al
 		cmp    $0xaa,%eax
 		jne    jump_8c5d4
 	jump_8c5c3:
-		movb   $0x80,lbInkey
+		movb   $0x80,EXPORT_SYMBOL(lbInkey)
 		mov    $0x80,%eax
 		jmp    jump_8c64c
 	jump_8c5d4:
-		mov    lbInkey,%al
+		mov    EXPORT_SYMBOL(lbInkey),%al
 		or     $0x80,%al
 		and    $0xff,%eax
 		xor    %ebx,%ebx
-		mov    lbInkey,%bl
+		mov    EXPORT_SYMBOL(lbInkey),%bl
 		cmp    $0x7f,%ebx
 		setle  %bl
-		mov    %bl,lbKeyOn(%eax)
+		mov    %bl,EXPORT_SYMBOL(lbKeyOn)(%eax)
 		jmp    jump_8c64c
 	jump_8c5f6:
 		xor    %ah,%ah
 		mov    %ah,lbInkey_prefixed
-		mov    lbInkey,%al
+		mov    EXPORT_SYMBOL(lbInkey),%al
 		and    $0x7f,%al
 		and    $0xff,%eax
 		xor    %ebx,%ebx
-		mov    lbInkey,%bl
+		mov    EXPORT_SYMBOL(lbInkey),%bl
 		cmp    $0x7f,%ebx
 		setle  %bl
-		mov    %bl,lbKeyOn(%eax)
-		cmpb   $0x0,lbKeyOn(%eax)
+		mov    %bl,EXPORT_SYMBOL(lbKeyOn)(%eax)
+		cmpb   $0x0,EXPORT_SYMBOL(lbKeyOn)(%eax)
 		je     jump_8c64c
 		mov    keyboard_buffer_write_index,%ebx
 		mov    %eax,keyboard_buffer(,%ebx,4)
@@ -128,35 +128,35 @@ KInt:	/* 8c578 */
 		je     jump_8c64c
 		mov    %ebx,keyboard_buffer_write_index
 	jump_8c64c:
-		mov    lbInkey,%bl
+		mov    EXPORT_SYMBOL(lbInkey),%bl
 		mov    %bl,oinkey
 		xor    %bh,%bh
-		mov    %bh,lbInkeyFlags
-		cmpb   $0x0,lbKeyOn+42
+		mov    %bh,EXPORT_SYMBOL(lbInkeyFlags)
+		cmpb   $0x0,EXPORT_SYMBOL(lbKeyOn)+42
 		jne    jump_8c672
-		cmpb   $0x0,lbKeyOn+54
+		cmpb   $0x0,EXPORT_SYMBOL(lbKeyOn)+54
 		je     jump_8c679
 	jump_8c672:
-		orb    $0x10,lbInkeyFlags
+		orb    $0x10,EXPORT_SYMBOL(lbInkeyFlags)
 	jump_8c679:
-		cmpb   $0x0,lbKeyOn+29
+		cmpb   $0x0,EXPORT_SYMBOL(lbKeyOn)+29
 		jne    jump_8c68b
-		cmpb   $0x0,lbKeyOn+157
+		cmpb   $0x0,EXPORT_SYMBOL(lbKeyOn)+157
 		je     jump_8c692
 	jump_8c68b:
-		orb    $0x20,lbInkeyFlags
+		orb    $0x20,EXPORT_SYMBOL(lbInkeyFlags)
 	jump_8c692:
-		cmpb   $0x0,lbKeyOn+56
+		cmpb   $0x0,EXPORT_SYMBOL(lbKeyOn)+56
 		jne    jump_8c6a4
-		cmpb   $0x0,lbKeyOn+184
+		cmpb   $0x0,EXPORT_SYMBOL(lbKeyOn)+184
 		je     jump_8c6ab
 	jump_8c6a4:
-		orb    $0x40,lbInkeyFlags
+		orb    $0x40,EXPORT_SYMBOL(lbInkeyFlags)
 	jump_8c6ab:
-		cmpb   $0x0,lbKeyOn(%eax)
+		cmpb   $0x0,EXPORT_SYMBOL(lbKeyOn)(%eax)
 		je     jump_8c6c0
-		mov    lbInkeyFlags,%bl
-		or     %bl,lbKeyOn(%eax)
+		mov    EXPORT_SYMBOL(lbInkeyFlags),%bl
+		or     %bl,EXPORT_SYMBOL(lbKeyOn)(%eax)
 	jump_8c6c0:
 		mov    $0x61,%edx
 		sub    %eax,%eax
@@ -168,15 +168,15 @@ KInt:	/* 8c578 */
 		mov    %bl,%al
 		out    %al,(%dx)
 		xor    %eax,%eax
-		mov    lbInkey,%al
+		mov    EXPORT_SYMBOL(lbInkey),%al
 		cmp    $0x80,%eax
 		jge    jump_8c6fc
-		cmpb   $0x0,lbIInkey
+		cmpb   $0x0,EXPORT_SYMBOL(lbIInkey)
 		jne    jump_8c6fc
-		mov    lbInkey,%al
-		mov    %al,lbIInkey
-		mov    lbInkeyFlags,%al
-		mov    %al,lbIInkeyFlags
+		mov    EXPORT_SYMBOL(lbInkey),%al
+		mov    %al,EXPORT_SYMBOL(lbIInkey)
+		mov    EXPORT_SYMBOL(lbInkeyFlags),%al
+		mov    %al,EXPORT_SYMBOL(lbIInkeyFlags)
 	jump_8c6fc:
 		mov    $0x20,%al
 		mov    $0x20,%edx
@@ -188,40 +188,6 @@ KInt:	/* 8c578 */
 		popa
 		iret
 
-
-.section .rodata
-
-GLOBAL (ASM_lbInkeyToAscii)
-		.ascii  "\x00\x00"
-		.ascii  "1234567890-=\x08\t"
-		.ascii  "qwertyuiop[]\x00\x00"
-		.ascii  "asdfghjkl;'`\x00"
-		.ascii  "#zxcvbnm,./\x00\x2a"
-		.ascii  "\x00\x20\x00\x00\x00\x00\x00\x00"
-		.ascii  "\x00\x00\x00\x00\x00\x00\x00\x00"
-		.ascii  "\x00\x00\x2d\x00\x00\x00\x2b\x00"
-		.ascii  "\x00\x00\x00\x00\x00\x00\x5c\x00"
-		.ascii  "\x00\x00\x00\x00\x00\x00\x00\x00"
-		.ascii  "\x2f\x00\x00"
-		.ascii  "()/*\x00"
-		.ascii  "\x00\x00\x00\x00\x00\x00\x00\x00"
-		.ascii  "\x00\x2e\x00\x00\x00\x00\x00\x00"
-		.ascii  "\x00\x00\x00\x00\x00\x00\x00\x00"
-		.ascii  "\x00\x00\x21\x22\x9c"
-		.ascii  "$%^&*()_+\x08\t"
-		.ascii  "QWERTYUIOP{}\x00\x00"
-		.ascii  "ASDFGHJKL:@~\x00"
-		.ascii  "~ZXCVBNM<>?\x00\x2a"
-		.ascii  "\x00\x20\x00\x00\x00\x00\x00\x00"
-		.ascii  "\x00\x00\x00\x00\x00\x00\x00\x00"
-		.ascii  "\x00\x00\x2d\x00\x00\x00\x2b\x00"
-		.ascii  "\x00\x00\x00\x00\x00\x00\x7c\x00"
-		.fill   0x8
-		.ascii  "\x2f\x00\x00"
-		.ascii "()/*\x00"
-		.fill   0x8
-		.ascii  "\x00\x2e\x00\x00\x00\x00\x00\x00"
-		.fill   0x8
 
 .data
 
@@ -236,21 +202,6 @@ GLOBAL (keyboard_buffer_read_index)	/* 1c47bc */
 
 GLOBAL (lbInkey_prefixed)	/* 1e2f70 */
 		.long	0x0
-
-GLOBAL (lbKeyOn)			/* 1e2f74 */
-		.fill   0x100
-
-GLOBAL (lbInkey)	/* 9x1E3074 */
-		.byte	0x0
-
-lbInkeyFlags:
-		.byte	0x0
-lbIInkey:	/* 0x1E3076 */
-		.byte	0x0
-lbIInkeyFlags:
-		.byte	0x0
-GLOBAL (lbShift)	/* 0x1E3078 */
-		.short  0x0
 
 data_1e5ca0:
 		.long	0x0
