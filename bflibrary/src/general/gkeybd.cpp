@@ -41,6 +41,25 @@ char lbInkeyToAsciiShift[] = {
   '\x00',   '.','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00',
 };
 
+const ubyte lbAsciiToInkey[] = {
+  KC_UNASSIGNED,KC_UNASSIGNED,KC_UNASSIGNED,KC_UNASSIGNED,KC_UNASSIGNED,KC_UNASSIGNED,KC_UNASSIGNED,KC_UNASSIGNED,
+  KC_UNASSIGNED,KC_UNASSIGNED,KC_UNASSIGNED,KC_UNASSIGNED,KC_UNASSIGNED,KC_UNASSIGNED,KC_UNASSIGNED,KC_UNASSIGNED,
+  KC_UNASSIGNED,KC_UNASSIGNED,KC_UNASSIGNED,KC_UNASSIGNED,KC_UNASSIGNED,KC_UNASSIGNED,KC_UNASSIGNED,KC_UNASSIGNED,
+  KC_UNASSIGNED,KC_UNASSIGNED,KC_UNASSIGNED,KC_UNASSIGNED,KC_UNASSIGNED,KC_UNASSIGNED,KC_UNASSIGNED,KC_UNASSIGNED,
+       KC_SPACE,         KC_1,         KC_2, KC_BACKSLASH,         KC_4,         KC_5,         KC_7,KC_APOSTROPHE,
+           KC_9,         KC_0,         KC_8,       KC_ADD,     KC_COMMA,     KC_MINUS,    KC_PERIOD,     KC_SLASH,
+           KC_0,         KC_1,         KC_2,         KC_3,         KC_4,         KC_5,         KC_6,         KC_7,
+           KC_8,         KC_9, KC_SEMICOLON, KC_SEMICOLON,     KC_COMMA,    KC_EQUALS,    KC_PERIOD,     KC_SLASH,
+  KC_APOSTROPHE,         KC_A,         KC_B,         KC_C,         KC_D,         KC_E,         KC_F,         KC_G,
+           KC_H,         KC_I,         KC_J,         KC_K,         KC_L,         KC_M,         KC_N,         KC_O,
+           KC_P,         KC_Q,         KC_R,         KC_S,         KC_T,         KC_U,         KC_V,         KC_W,
+           KC_X,         KC_Y,         KC_Z,  KC_LBRACKET,   KC_OEM_102,  KC_RBRACKET,         KC_6,     KC_MINUS,
+       KC_GRAVE,         KC_A,         KC_B,         KC_C,         KC_D,         KC_E,         KC_F,         KC_G,
+           KC_H,         KC_I,         KC_J,         KC_K,         KC_L,         KC_M,         KC_N,         KC_O,
+           KC_P,         KC_Q,         KC_R,         KC_S,         KC_T,         KC_U,         KC_V,         KC_W,
+           KC_X,         KC_Y,         KC_Z,  KC_LBRACKET,   KC_OEM_102,  KC_RBRACKET, KC_BACKSLASH,KC_UNASSIGNED,
+};
+
 unsigned char lbExtendedKeyPress;
 
 unsigned char lbKeyOn_UNUSED[256];

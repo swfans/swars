@@ -187,6 +187,7 @@ typedef signed char TbKeyMods;
 
 extern char lbInkeyToAscii[];
 extern char lbInkeyToAsciiShift[];
+extern const ubyte lbAsciiToInkey[];
 
 extern unsigned char lbExtendedKeyPress;
 extern unsigned char lbKeyOn[256];
