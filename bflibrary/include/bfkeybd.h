@@ -196,6 +196,9 @@ extern unsigned char lbKeyOn[256];
 extern unsigned char lbInkey;
 extern unsigned char lbInkeyFlags;
 
+/** Key modifier flags for lbInkey. */
+extern unsigned char lbShift;
+
 extern unsigned char lbIInkey;
 extern unsigned char lbIInkeyFlags;
 

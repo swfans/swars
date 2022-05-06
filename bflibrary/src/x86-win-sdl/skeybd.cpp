@@ -176,7 +176,7 @@ static void KeyboardMappingPrepare(void)
     keymap_sdl_to_bf.insert(pair<int, TbKeyCode>(SDLK_UNDO, KC_UNASSIGNED));
 }
 
-static unsigned int KeyboardKeysMapping(const SDL_KeyboardEvent * key)
+static TbKeyCode KeyboardKeysMapping(const SDL_KeyboardEvent * key)
 {
     /*
     key->keysym.scancode;         < hardware specific scancode
@@ -240,7 +240,8 @@ char LbKeyboard(void)
     return 0;
 }
 
-/** Check for undetected/incorrectly maintained modifiers.
+/** @internal
+ *  Check for undetected/incorrectly maintained modifiers.
  */
 static inline TbResult KEventModsCheck(TbKeyMods modifiers)
 {

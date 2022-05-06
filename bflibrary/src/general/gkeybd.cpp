@@ -92,11 +92,13 @@ const char *lbKeyNames[] = {
 
 unsigned char lbExtendedKeyPress;
 
-unsigned char lbKeyOn_UNUSED[256];
+unsigned char lbKeyOn[256];
 
-TbKeyCode lbInkey_UNUSED;
+TbKeyCode lbInkey;
 
 unsigned char lbInkeyFlags;
+
+unsigned char lbShift;
 
 unsigned char lbIInkey;
 
