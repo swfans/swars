@@ -37,7 +37,7 @@ enum KeyAction {
 /******************************************************************************/
 extern uint32_t lbInkey_prefixed;
 extern uint16_t lbShift;
-extern const char AsciiToInkey[];
+
 
 /******************************************************************************/
 #ifdef __cplusplus
