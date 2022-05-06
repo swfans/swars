@@ -41,17 +41,17 @@ char lbInkeyToAsciiShift[] = {
   '\x00',   '.','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00',
 };
 
-unsigned char lbExtendedKeyPress_UNUSED;
+unsigned char lbExtendedKeyPress;
 
 unsigned char lbKeyOn_UNUSED[256];
 
 TbKeyCode lbInkey_UNUSED;
 
-unsigned char lbInkeyFlags_UNUSED;
+unsigned char lbInkeyFlags;
 
-unsigned char lbIInkey_UNUSED;
+unsigned char lbIInkey;
 
-unsigned char lbIInkeyFlags_UNUSED;
+unsigned char lbIInkeyFlags;
 
 int lbKeyboardLang;
 
