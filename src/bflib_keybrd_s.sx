@@ -32,48 +32,6 @@
 .text
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (ASM_LbKeyboardOpen)
-/*----------------------------------------------------------------*/
-		push   %ebp
-		mov    %esp,%ebp
-		mov    $0x1,%eax
-		pop    %ebp
-		ret
-
-
-/*----------------------------------------------------------------*/
-GLOBAL_FUNC (ASM_LbKeyboardClose_)
-/*----------------------------------------------------------------*/
-		push   %ebp
-		mov    %esp,%ebp
-		mov    $0x1,%eax
-		pop    %ebp
-		ret
-
-
-/*----------------------------------------------------------------*/
-GLOBAL_FUNC (ASM_LbKeyboard_)
-/*----------------------------------------------------------------*/
-		push   %ebp
-		mov    %esp,%ebp
-		call   ASM_LbDosKeyboard
-		xor    %eax,%eax
-		mov    lbInkey,%al
-		cmp    $0x80,%eax
-		jge    jump_ec412
-		xor    %eax,%eax
-		mov    lbInkey,%al
-		mov    EXPORT_SYMBOL(lbInkeyToAscii)(%eax),%al
-		and    $0xff,%eax
-		pop    %ebp
-		ret
-	jump_ec412:
-		xor    %eax,%eax
-		pop    %ebp
-		ret
-
-
-/*----------------------------------------------------------------*/
 GLOBAL_FUNC (ASM_LbDosKeyboard)
 /*----------------------------------------------------------------*/
 		push   %ebx
@@ -270,35 +228,6 @@ func_8c4d8_keyboard_read_key:
 		incl   keyboard_buffer_read_index
 		andl   $0xf,keyboard_buffer_read_index
 		pop    %edx
-		ret
-
-
-/*----------------------------------------------------------------*/
-GLOBAL_FUNC (ASM_LbIKeyboardOpen)	/* 8c510 */
-/*----------------------------------------------------------------*/
-		push   %ebx
-		push   %ecx
-		push   %edx
-		mov    $0x100,%ebx
-		mov    $lbKeyOn,%eax
-		xor    %edx,%edx
-		call   ac_memset
-		mov    %dx,data_1c47c4
-
-		/* XXX: early return */
-#if 0
-		mov    %cs,%ecx
-		mov    $0x9,%eax
-		mov    $KInt,%ebx
-		call   ac_dos_getvect
-		mov    %eax,OldInt1
-		mov    $0x9,%eax
-		call   ac_dos_setvect
-#endif
-		mov    $0x1,%eax
-		pop    %edx
-		pop    %ecx
-		pop    %ebx
 		ret
 
 
@@ -786,10 +715,6 @@ GLOBAL (keyboard_buffer_write_index)	/* 1c47b8 */
 		.long	0x0
 GLOBAL (keyboard_buffer_read_index)	/* 1c47bc */
 		.long	0x0
-OldInt1:	/* 0x1C47C0 */
-		.long	0x0
-data_1c47c4:
-		.fill   0x14
 
 GLOBAL (lbInkey_prefixed)	/* 1e2f70 */
 		.long	0x0

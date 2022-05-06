@@ -44,6 +44,7 @@ AS_IF([test "$exec_prefix" = "NONE"], [
 
 # Checks for programs.
 AC_PROG_CC
+AC_PROG_CXX
 AM_PROG_AS
 AM_PATH_PYTHON([3.1])
 PKG_PROG_PKG_CONFIG

@@ -71,6 +71,9 @@ else
 swars_RESRCS =
 endif
 
+# Pretending to contain c++ source so that Automake select c++ linker
+nodist_EXTRA_swars_SOURCES = dummy.cxx
+
 swars_LDADD = \
   $(swars_WRAPPERS) $(swars_RESRCS) \
   -L$(builddir)/../bflibrary -lbullfrog

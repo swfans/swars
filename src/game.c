@@ -207,7 +207,6 @@ void ASM_play_intro(void);
 void ASM_init_syndwars(void);
 void ASM_setup_host_sub6(void);
 int ASM_setup_mele(void);
-int ASM_LbIKeyboardOpen(void);
 
 extern unsigned char *fade_data;
 extern char *fadedat_fname;
@@ -384,17 +383,6 @@ int LbGhostTableGenerate(TbPixel *pal, int a2, char *fname)
     asm volatile ("call ASM_LbGhostTableGenerate\n"
         : "=r" (ret) : "a" (pal), "d" (a2), "b" (fname));
     return ret;
-}
-
-int LbKeyboardOpen(void)
-{
-    return 1;
-}
-
-int LbIKeyboardOpen(void)
-{
-    ASM_LbIKeyboardOpen();
-    return 1;
 }
 
 int setup_host_sub5(BuffUnknStruct02 *a1)
