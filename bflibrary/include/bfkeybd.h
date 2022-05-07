@@ -193,6 +193,8 @@ enum KeyAction {
 
 typedef ubyte TbKeyAction;
 
+typedef TbResult (*KeyboardEventHandler)(TbKeyAction action, TbKeyCode code);
+
 extern char lbInkeyToAscii[];
 extern char lbInkeyToAsciiShift[];
 extern const ubyte lbAsciiToInkey[];
@@ -212,6 +214,7 @@ extern unsigned char lbIInkey;
 extern unsigned char lbIInkeyFlags;
 
 void LbKeyboardSetLanguage(int lngnum);
+void LbKeyboardCustomHandler(KeyboardEventHandler handler);
 TbBool LbKeyCodeValid(TbKeyCode key);
 
 

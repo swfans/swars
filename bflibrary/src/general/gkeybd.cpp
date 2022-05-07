@@ -106,6 +106,8 @@ unsigned char lbIInkeyFlags;
 
 ulong lbInkey_prefixed;
 
+KeyboardEventHandler lbKEventCustomHandler = NULL;
+
 int lbKeyboardLang;
 
 void LbKeyboardSetLanguage(int lngnum)
@@ -122,4 +124,8 @@ TbBool LbKeyCodeValid(TbKeyCode key)
     return true;
 }
 
+void LbKeyboardCustomHandler(KeyboardEventHandler handler)
+{
+    lbKEventCustomHandler = handler;
+}
 /******************************************************************************/
