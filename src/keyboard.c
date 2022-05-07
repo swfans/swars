@@ -10,11 +10,50 @@
 
 #pragma pack(1)
 
-extern uint32_t	keyboard_buffer[KEYBOARD_BUFFER_SIZE];
-extern uint32_t	keyboard_buffer_read_index;
-extern uint32_t	keyboard_buffer_write_index;
+extern ulong buffered_keys[KEYBOARD_BUFFER_SIZE];
+extern ulong buffered_keys_read_index;
+extern ulong buffered_keys_write_index;
 
 #pragma pack()
+
+static void add_key_to_buffer(uint8_t key)
+{
+    ulong new_write_index;
+
+    buffered_keys[buffered_keys_write_index] = key;
+
+    new_write_index = (buffered_keys_write_index + 1) % KEYBOARD_BUFFER_SIZE;
+
+    if (new_write_index != buffered_keys_read_index)
+        buffered_keys_write_index = new_write_index;
+}
+
+ulong next_buffered_key(void)
+{
+    ulong key;
+
+    if (buffered_keys_read_index == buffered_keys_write_index)
+        return 0;
+
+    key = buffered_keys[buffered_keys_read_index];
+    buffered_keys_read_index
+      = (buffered_keys_read_index + 1) % KEYBOARD_BUFFER_SIZE;
+
+  return key;
+}
+
+void reset_buffered_keys(void)
+{
+    buffered_keys_read_index  = 0;
+    buffered_keys_write_index = 0;
+}
+
+
+
+
+
+
+
 
 static uint8_t
 sdlkey_to_scan_code (SDLKey key)
@@ -196,19 +235,6 @@ get_key_flags (void)
   return flags;
 }
 
-static void
-add_key_to_buffer (uint8_t key)
-{
-  uint32_t new_write_index;
-
-  keyboard_buffer[keyboard_buffer_write_index] = key;
-
-  new_write_index = (keyboard_buffer_write_index + 1) % KEYBOARD_BUFFER_SIZE;
-
-  if (new_write_index != keyboard_buffer_read_index)
-    keyboard_buffer_write_index = new_write_index;
-}
-
 static bool
 handle_custom_key_press (const SDL_KeyboardEvent *ev)
 {
@@ -261,33 +287,5 @@ keyboard_handle_event (const SDL_Event *ev)
     }
   else
     lbKeyOn[key_index] = 0;
-}
-
-void
-keyboard_initialise (void)
-{
-  SDL_EnableKeyRepeat (SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
-}
-
-uint32_t
-keyboard_read_key (void)
-{
-  uint32_t key;
-
-  if (keyboard_buffer_read_index == keyboard_buffer_write_index)
-    return 0;
-
-  key = keyboard_buffer[keyboard_buffer_read_index];
-  keyboard_buffer_read_index
-    = (keyboard_buffer_read_index + 1) % KEYBOARD_BUFFER_SIZE;
-
-  return key;
-}
-
-void
-keyboard_clear_buffer (void)
-{
-  keyboard_buffer_read_index  = 0;
-  keyboard_buffer_write_index = 0;
 }
 

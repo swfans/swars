@@ -118,7 +118,6 @@ game_initialise(void)
     unix_restore_signal_handlers();
 #endif
 
-    keyboard_initialise();
     mouse_initialise();
     display_initialise();
     sound_initialise();
