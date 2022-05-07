@@ -39,6 +39,9 @@ TbResult LbKeyboardClose(void)
 
 static std::map<int, TbKeyCode> keymap_sdl_to_bf;
 
+/** @internal
+ *  Creates mapping for translating SDL key codes into bflibrary key codes.
+ */
 static void KeyboardMappingPrepare(void)
 {
     keymap_sdl_to_bf.insert(pair<int, TbKeyCode>(SDLK_a, KC_A));
@@ -178,6 +181,9 @@ static void KeyboardMappingPrepare(void)
     keymap_sdl_to_bf.insert(pair<int, TbKeyCode>(SDLK_UNDO, KC_UNASSIGNED));
 }
 
+/** @internal
+ *  Maps keyboard event to bflibrary key code.
+ */
 static TbKeyCode KeyboardKeysMapping(const SDL_KeyboardEvent * key)
 {
     /*
@@ -346,7 +352,6 @@ static inline TbResult KEventIInkeyUpdate(TbKeyAction action, TbKeyCode code)
 
 extern "C" {
 TbResult KEvent(const SDL_Event *ev);
-void keyboard_handle_event (const SDL_Event *ev);
 };
 
 /** @internal
@@ -365,6 +370,7 @@ TbResult KEvent(const SDL_Event *ev)
         code = KeyboardKeysMapping(&ev->key);
         if (code != KC_UNASSIGNED) {
             lbKeyOn[code] = 1;
+            lbInkey_prefixed = KeyboardKeyPrefixed(code);
             lbInkey = code;
             modifiers = KeyboardModsMapping(&ev->key);
             KEventModsCheck(action, modifiers);
@@ -393,37 +399,6 @@ TbResult KEvent(const SDL_Event *ev)
         return Lb_FAIL;
     }
     return Lb_OK;
-}
-
-void keyboard_handle_event (const SDL_Event *ev)
-{
-  TbKeyAction action;
-  const SDL_KeyboardEvent *kev;
-  uint8_t key_index;
-  int code;
-
-  if (ev->type != SDL_KEYUP && ev->type != SDL_KEYDOWN)
-    return;
-
-  kev = (const SDL_KeyboardEvent *) ev;
-
-  code = KeyboardKeysMapping(&ev->key);
-
-  if (code == 0)
-    return;
-
-  lbInkey_prefixed = KeyboardKeyPrefixed(code);
-  lbInkey = code;
-
-  if (ev->type == SDL_KEYDOWN)
-    {
-      action = KActn_KEYDOWN;
-      lbKeyOn[code] = 1;
-      KEventModsUpdate(action, code);
-      lbKEventCustomHandler(KActn_KEYDOWN, code);
-    }
-  else
-    lbKeyOn[code] = 0;
 }
 
 TbResult LbIKeyboardOpen(void)
