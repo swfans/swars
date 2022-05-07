@@ -157,7 +157,7 @@ game_initialise(void)
     return true;
 }
 
-void keyboard_handle_event (const SDL_Event *ev);
+TbResult KEvent(const SDL_Event *ev);
 
 void
 game_handle_sdl_events (void)
@@ -181,7 +181,7 @@ game_handle_sdl_events (void)
 
         case SDL_KEYUP:
         case SDL_KEYDOWN:
-            keyboard_handle_event(&ev);
+            KEvent(&ev);
             break;
 
         case SDL_QUIT:
