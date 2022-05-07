@@ -243,7 +243,7 @@ char LbKeyboard(void)
 /** @internal
  *  Check for undetected/incorrectly maintained modifiers.
  */
-static inline TbResult KEventModsCheck(TbKeyMods modifiers)
+static inline TbResult KEventModsCheck(TbKeyAction action, TbKeyMods modifiers)
 {
     if (modifiers == KMod_DONTCARE)
         return Lb_OK;
@@ -278,9 +278,10 @@ static inline TbResult KEventModsCheck(TbKeyMods modifiers)
     return Lb_SUCCESS;
 }
 
-/** Update modifiers flags based on previously set lbKeyOn[] array.
+/** @internal
+ * Update modifiers flags based on previously set lbKeyOn[] array.
  */
-static inline TbResult KEventModsUpdate(TbKeyCode code)
+static inline TbResult KEventModsUpdate(TbKeyAction action, TbKeyCode code)
 {
     lbInkeyFlags = 0;
     if (lbKeyOn[KC_LSHIFT] || lbKeyOn[KC_RSHIFT])
@@ -291,6 +292,14 @@ static inline TbResult KEventModsUpdate(TbKeyCode code)
         lbInkeyFlags |= KMod_ALT;
     if (lbKeyOn[code] != 0)
         lbKeyOn[code] |= lbInkeyFlags;
+    return Lb_OK;
+}
+
+/** @internal
+ * Update IInkey values based on previously set lbInkey.
+ */
+static inline TbResult KEventIInkeyUpdate(TbKeyAction action, TbKeyCode code)
+{
     if (lbInkey < 0x80)
     {
         if (lbIInkey == 0)
@@ -299,7 +308,7 @@ static inline TbResult KEventModsUpdate(TbKeyCode code)
             lbIInkeyFlags = lbInkeyFlags;
         }
     }
-    return Lb_SUCCESS;
+    return Lb_OK;
 }
 
 /** @internal
@@ -310,28 +319,33 @@ TbResult KEvent(const SDL_Event *ev)
 {
     TbKeyCode code;
     TbKeyMods modifiers;
+    TbKeyAction action;
     switch (ev->type)
     {
     case SDL_KEYDOWN:
+        action = KActn_KEYDOWN;
         code = KeyboardKeysMapping(&ev->key);
         if (code != KC_UNASSIGNED) {
             lbKeyOn[code] = 1;
             lbInkey = code;
             modifiers = KeyboardModsMapping(&ev->key);
-            KEventModsCheck(modifiers);
-            KEventModsUpdate(code);
+            KEventModsCheck(action, modifiers);
+            KEventModsUpdate(action, code);
+            KEventIInkeyUpdate(action, code);
             return Lb_SUCCESS;
         }
         return Lb_FAIL;
 
     case SDL_KEYUP:
+        action = KActn_KEYUP;
         code = KeyboardKeysMapping(&ev->key);
         if (code != KC_UNASSIGNED) {
             lbKeyOn[code] = 0;
             lbExtendedKeyPress = 0;
             modifiers = KeyboardModsMapping(&ev->key);
-            KEventModsCheck(modifiers);
-            KEventModsUpdate(code);
+            KEventModsCheck(action, modifiers);
+            KEventModsUpdate(action, code);
+            KEventIInkeyUpdate(action, code);
             return Lb_SUCCESS;
         }
         return Lb_FAIL;

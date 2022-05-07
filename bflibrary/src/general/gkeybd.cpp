@@ -104,6 +104,8 @@ unsigned char lbIInkey;
 
 unsigned char lbIInkeyFlags;
 
+ulong lbInkey_prefixed;
+
 int lbKeyboardLang;
 
 void LbKeyboardSetLanguage(int lngnum)

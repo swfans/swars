@@ -185,6 +185,14 @@ enum KeyModifiers {
 
 typedef signed char TbKeyMods;
 
+enum KeyAction {
+        KActn_NONE = 0,
+        KActn_KEYDOWN,
+        KActn_KEYUP,
+};
+
+typedef ubyte TbKeyAction;
+
 extern char lbInkeyToAscii[];
 extern char lbInkeyToAsciiShift[];
 extern const ubyte lbAsciiToInkey[];
@@ -195,6 +203,7 @@ extern unsigned char lbKeyOn[256];
 
 extern unsigned char lbInkey;
 extern unsigned char lbInkeyFlags;
+extern ulong lbInkey_prefixed;
 
 /** Key modifier flags for lbInkey. */
 extern unsigned char lbShift;
