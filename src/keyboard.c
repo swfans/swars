@@ -10,9 +10,9 @@
 
 #pragma pack(1)
 
-extern ulong buffered_keys[KEYBOARD_BUFFER_SIZE];
-extern ulong buffered_keys_read_index;
-extern ulong buffered_keys_write_index;
+ulong buffered_keys[KEYBOARD_BUFFER_SIZE];
+ulong buffered_keys_read_index;
+ulong buffered_keys_write_index;
 
 #pragma pack()
 

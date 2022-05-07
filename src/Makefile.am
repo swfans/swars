@@ -10,7 +10,6 @@ swars_SOURCES = \
 	bflib_joyst.h \
 	bflib_joyst_s.sx \
 	bflib_keybrd.h \
-	bflib_keybrd_s.sx \
 	bflib_mouse.c \
 	bflib_mouse.h \
 	bflib_render.c \
