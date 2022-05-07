@@ -1,5 +1,5 @@
 /******************************************************************************/
-// Free implementation of Bullfrog's GeneWars strategy game.
+// Free implementation of Bullfrog's Syndicate Wars strategy game.
 /******************************************************************************/
 /** @file swars_ver.h
  *     Project name, version, copyrights and global definitions.

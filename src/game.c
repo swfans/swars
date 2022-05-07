@@ -157,6 +157,8 @@ game_initialise(void)
     return true;
 }
 
+void keyboard_handle_event (const SDL_Event *ev);
+
 void
 game_handle_sdl_events (void)
 {
@@ -462,6 +464,7 @@ void setup_host(void)
         LbKeyboardOpen();
     else
         LbIKeyboardOpen();
+    init_buffered_keys();
     LbMouseSetup(&pointer_sprites[1], 2, 2);
     setup_mele();
     LbSpriteSetup(m_sprites, m_sprites_end, m_spr_data);
