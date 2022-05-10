@@ -1,0 +1,45 @@
+name: Build
+
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+
+jobs:
+  linux:
+    runs-on: ubuntu-20.04
+    name: Linux
+    container:
+      image: ubuntu:20.04
+    env:
+      DEBIAN_FRONTEND: noninteractive
+      TZ: Etc/UTC
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install dependencies
+        run: |
+          # add i386 dependencies
+          dpkg --add-architecture i386
+
+          apt update
+          apt install -y \
+            gcc-multilib g++-multilib lib32z1 python3 \
+            vorbis-tools cdparanoia \
+            libsdl1.2-dev:i386 libopenal-dev:i386 libvorbis-dev:i386 \
+            libvorbisfile3:i386 libogg-dev:i386
+
+          apt install -y \
+            build-essential autoconf libtool make
+      - name: Autoreconf
+        run: autoreconf -ivf
+      - name: Build
+        env:
+          CFLAGS: "-m32"
+          CXXFLAGS: "-m32"
+          LDFLAGS: "-m32"
+          PKG_CONFIG_PATH: "/usr/lib/i386-linux-gnu/pkgconfig"
+        run: |
+          mkdir -p release; cd release
+          ../configure --enable-debug=no
+          make V=1
