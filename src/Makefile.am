@@ -9,9 +9,7 @@ swars_SOURCES = \
 	bflib_joyst.c \
 	bflib_joyst.h \
 	bflib_joyst_s.sx \
-	bflib_keybrd.h \
 	bflib_mouse.c \
-	bflib_mouse.h \
 	bflib_render.c \
 	bflib_render_gpoly.sx \
 	bflib_render.h \

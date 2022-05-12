@@ -3,11 +3,11 @@
 
 #include "mouse.h"
 #include "bfscreen.h"
+#include "bfmouse.h"
 #include "display.h"
 
 #pragma pack(1)
 
-extern long	lbMouseInstalled;
 extern long	mouse_x_delta;
 extern long	mouse_y_delta;
 
