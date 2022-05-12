@@ -27,27 +27,27 @@ TbBool volatile lbMouseInstalled = false;
 #endif
 TbBool volatile lbMouseOffline = false;
 
-int LbMousePlace()
+int LbMousePlace_UNUSED()
 {
 // code at 0001:000a6810
 }
 
-int LbMouseRemove()
+int LbMouseRemove_UNUSED()
 {
 // code at 0001:000a6968
 }
 
-int LbMouseChangeSpriteOffset(unsigned long hsX, unsigned long hsY)
+int LbMouseChangeSpriteOffset_UNUSED(unsigned long hsX, unsigned long hsY)
 {
 // code at 0001:000a6a44
 }
 
-int LbMouseChangeSprite(struct TbSprite *spr)
+int LbMouseChangeSprite_UNUSED(struct TbSprite *spr)
 {
 // code at 0001:000a6a7c
 }
 
-int LbMouseChangeMoveRatio()
+int LbMouseChangeMoveRatio_UNUSED()
 {
 // code at 0001:000a6c04
 }
@@ -57,27 +57,27 @@ TbResult LbMouseSetup_UNUSED(const struct TbSprite *pointer_spr, int ratio_x, in
 // code at 0001:000a6c7c
 }
 
-int LbMouseReset()
+int LbMouseReset_UNUSED()
 {
 // code at 0001:000a6e24
 }
 
-int LbMouseSuspend()
+int LbMouseSuspend_UNUSED()
 {
 // code at 0001:000a6ea8
 }
 
-int LbMouseSetWindow()
+int LbMouseSetWindow_UNUSED()
 {
 // code at 0001:000a6f0c
 }
 
-int LbMouseSetPosition()
+int LbMouseSetPosition_UNUSED()
 {
 // code at 0001:000a6f78
 }
 
-int LbMouseUpdatePosition()
+int LbMouseUpdatePosition_UNUSED()
 {
 // code at 0001:000a7004
 }

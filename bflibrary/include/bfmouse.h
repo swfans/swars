@@ -56,16 +56,16 @@ typedef struct mouse_info mouse_info;
 
 #pragma pack()
 
-int LbMousePlace();
-int LbMouseRemove();
-int LbMouseChangeSpriteOffset(unsigned long hsX, unsigned long hsY);
+TbResult LbMousePlace(void);
+TbResult LbMouseRemove(void);
+TbResult LbMouseChangeSpriteOffset(unsigned long hsX, unsigned long hsY);
 TbResult LbMouseChangeSprite(const struct TbSprite *pointer_spr);
-int LbMouseChangeMoveRatio();
+TbResult LbMouseChangeMoveRatio(long ratio_x, long ratio_y);
 TbResult LbMouseSetup(const struct TbSprite *pointer_spr, int ratio_x, int ratio_y);
-int LbMouseReset();
-int LbMouseSuspend();
-int LbMouseSetWindow();
-int LbMouseSetPosition();
+TbResult LbMouseReset(void);
+TbResult LbMouseSuspend(void);
+TbResult LbMouseSetWindow(long x, long y, long width, long height);
+TbResult LbMouseSetPosition(long x, long y);
 int LbMouseUpdatePosition();
 
 extern volatile TbBool lbMouseInstalled;
