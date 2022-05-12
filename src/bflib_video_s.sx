@@ -51,7 +51,7 @@ GLOBAL_FUNC (ASM_LbScreenSetupAnyMode_)	/* 0xED4F0 */
 		mov    $0xffffffff,%eax
 		jmp    jump_ed6e3
 	jump_ed516:
-		call   LbMouseSuspend_
+		call   ac_LbMouseSuspend
 		cmpw   $0x0,EXPORT_SYMBOL(lbDisplay)+98 # lbDisplay.OldVideoMode
 		jne    jump_ed547
 		movl   $0xf00,-0x38(%ebp)
@@ -189,7 +189,7 @@ GLOBAL_FUNC (LbScreenReset_)
 		mov    $0xffffffff,%eax
 		jmp    jump_ed7a9
 	jump_ed77c:
-		call   LbMouseSuspend_
+		call   ac_LbMouseSuspend
 #if 0
 		xor    %eax,%eax
 		mov    EXPORT_SYMBOL(lbDisplay)+98,%ax # lbDisplay.OldVideoMode
@@ -308,7 +308,7 @@ GLOBAL_FUNC (ASM_LbScreenSwap)	/* 0xED8C0 */
 		push   %ebp
 		mov    %esp,%ebp
 		sub    $0x10,%esp
-		call   LbMousePlace_
+		call   ac_LbMousePlace
 		cmpb   $0x0,EXPORT_SYMBOL(lbDisplay)+102 # lbDisplay.VesaIsSetUp
 		jne    jump_ed8f9
 		mov    EXPORT_SYMBOL(lbDisplay)+32,%ecx # lbDisplay.GraphicsScreenWidth
@@ -352,7 +352,7 @@ GLOBAL_FUNC (ASM_LbScreenSwap)	/* 0xED8C0 */
 		mov    -0x10(%ebp),%eax
 		jmp    jump_ed91e
 	jump_ed95f:
-		call   LbMouseRemove_
+		call   ac_LbMouseRemove
 		mov    $0x1,%eax
 		mov    %ebp,%esp
 		pop    %ebp
@@ -376,7 +376,7 @@ GLOBAL_FUNC (ASM_LbScreenSwapClear)
 		push   %ebp
 		mov    %esp,%ebp
 		sub    $0x10,%esp
-		call   LbMousePlace_
+		call   ac_LbMousePlace
 		cmpb   $0x0,EXPORT_SYMBOL(lbDisplay)+102 # lbDisplay.VesaIsSetUp
 		jne    jump_edba6
 		xor    %eax,%eax
@@ -454,7 +454,7 @@ GLOBAL_FUNC (ASM_LbScreenSwapClear)
 		mov    -0x10(%ebp),%eax
 		jmp    jump_edbcb
 	jump_edc33:
-		call   LbMouseRemove_
+		call   ac_LbMouseRemove
 		mov    $0x1,%eax
 		mov    %ebp,%esp
 		pop    %ebp

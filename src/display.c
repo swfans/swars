@@ -3,6 +3,7 @@
 
 #include "display.h"
 #include "bfscreen.h"
+#include "bfmouse.h"
 #include "util.h"
 #include "bflib_basics.h"
 
@@ -47,13 +48,6 @@ call_ef4f0 (int x, int y, int w, int h)
      "call LbTextSetWindow_;"
      "pop  %%ebx"
      : : "a" (x), "d" (y), "g" (w), "c" (h));
-}
-
-// call e9498 aka LbMouseSuspend_
-static void
-call_LbMouseSuspend_ (void)
-{
-  asm volatile ("call LbMouseSuspend_");
 }
 
 static inline void
@@ -107,7 +101,7 @@ int LbScreenSetupAnyMode(unsigned short mode, unsigned long width,
   uint32_t flags;
 
   // call func_e9498
-  call_LbMouseSuspend_ ();
+  LbMouseSuspend();
 
   // lbDisplay.OldVideoMode which is DWORD 1E2EB6 is used in
   // 000ED764 sub_ED764 to probably get back to text mode

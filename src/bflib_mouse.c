@@ -46,6 +46,70 @@ TbResult LbMouseChangeSpriteAndHotspot(struct TbSprite *pointer_spr, long hot_x,
   return Lb_SUCCESS;
 }*/
 
+TbResult LbMouseSuspend(void)
+{
+    TbResult ret;
+    asm volatile ("call ASM_LbMouseSuspend\n"
+        : "=r" (ret) : );
+    return ret;
+}
+
+TbResult LbMouseChangeMoveRatio(long ratio_x, long ratio_y)
+{
+    TbResult ret;
+    asm volatile ("call ASM_LbMouseChangeMoveRatio\n"
+        : "=r" (ret) : "a" (ratio_x), "d" (ratio_y));
+    return ret;
+}
+
+TbResult LbMouseChangeSpriteOffset(unsigned long hsX, unsigned long hsY)
+{
+    TbResult ret;
+    asm volatile ("call ASM_LbMouseChangeSpriteOffset\n"
+        : "=r" (ret) : "a" (hsX), "d" (hsY));
+    return ret;
+}
+
+TbResult LbMousePlace(void)
+{
+    TbResult ret;
+    asm volatile ("call ASM_LbMousePlace\n"
+        : "=r" (ret) : );
+    return ret;
+}
+
+TbResult LbMouseRemove(void)
+{
+    TbResult ret;
+    asm volatile ("call ASM_LbMouseRemove\n"
+        : "=r" (ret) : );
+    return ret;
+}
+
+TbResult LbMouseReset(void)
+{
+    TbResult ret;
+    asm volatile ("call ASM_LbMouseReset\n"
+        : "=r" (ret) : );
+    return ret;
+}
+
+TbResult LbMouseSetWindow(long x, long y, long width, long height)
+{
+    TbResult ret;
+    asm volatile ("call ASM_LbMouseSetWindow\n"
+        : "=r" (ret) : "a" (x), "d" (y), "b" (width), "c" (height));
+    return ret;
+}
+
+TbResult LbMouseSetPosition(long x, long y)
+{
+    TbResult ret;
+    asm volatile ("call ASM_LbMouseSetPosition\n"
+        : "=r" (ret) : "a" (x), "d" (y));
+    return ret;
+}
+
 TbResult LbMouseSetup(const struct TbSprite *pointer_spr, int ratio_x, int ratio_y)
 {
     long x,y;
