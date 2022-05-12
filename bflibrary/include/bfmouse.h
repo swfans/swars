@@ -17,8 +17,8 @@
  *     (at your option) any later version.
  */
 /******************************************************************************/
-#ifndef BFLIBRARY_SMOUSE_H_
-#define BFLIBRARY_SMOUSE_H_
+#ifndef BFLIBRARY_BFMOUSE_H_
+#define BFLIBRARY_BFMOUSE_H_
 
 #include "bftypes.h"
 
@@ -69,10 +69,11 @@ int LbMouseSetPosition();
 int LbMouseUpdatePosition();
 
 extern volatile TbBool lbMouseInstalled;
+extern volatile TbBool lbMouseOffline;
 
 #ifdef __cplusplus
 };
 #endif
 
-#endif // BFLIBRARY_SMOUSE_H_
+#endif // BFLIBRARY_BFMOUSE_H_
 /******************************************************************************/

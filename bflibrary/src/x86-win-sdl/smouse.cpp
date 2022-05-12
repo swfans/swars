@@ -22,7 +22,9 @@
 #include <stdbool.h>
 #include "bfscreen.h"
 
+#if 0
 TbBool volatile lbMouseInstalled = false;
+#endif
 TbBool volatile lbMouseOffline = false;
 
 int LbMousePlace()
@@ -50,7 +52,7 @@ int LbMouseChangeMoveRatio()
 // code at 0001:000a6c04
 }
 
-int LbMouseSetup()
+TbResult LbMouseSetup_UNUSED(const struct TbSprite *pointer_spr, int ratio_x, int ratio_y)
 {
 // code at 0001:000a6c7c
 }
