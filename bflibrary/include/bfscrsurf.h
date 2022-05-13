@@ -28,6 +28,15 @@ extern "C" {
 
 struct TbRect;
 
+enum TbSSurfaceBlitFlags {
+    SSBlt_NONE = 0x00,
+    SSBlt_FLAG1 = 0x01,
+    SSBlt_FLAG2 = 0x02,
+    SSBlt_FLAG4 = 0x04,
+    SSBlt_FLAG8 = 0x08,
+    SSBlt_FLAG10 = 0x10,
+};
+
 typedef void * OSSurfaceHandle;
 
 struct SSurface {

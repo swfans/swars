@@ -34,11 +34,13 @@ libbullfrog_a_SOURCES = \
   src/general/gtrig.cpp \
   src/general/gutility.cpp \
   src/general/hvline.c \
+  src/general/mspointer.cpp \
   src/general/pixel.c \
   src/general/poly.c \
   src/general/rnc_1fm.c \
   src/general/rom.c \
   src/general/scr_copy.c \
+  src/general/spr_mcur.c \
   src/general/spr_scl.c \
   src/general/spr_scol.c \
   src/general/spr_smap.c \

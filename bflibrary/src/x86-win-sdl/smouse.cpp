@@ -23,9 +23,10 @@
 #include "bfscreen.h"
 
 #if 0
-TbBool volatile lbMouseInstalled = false;
+volatile TbBool lbMouseInstalled = false;
 #endif
-TbBool volatile lbMouseOffline = false;
+volatile TbBool lbMouseOffline = false;
+volatile TbBool lbInteruptMouse = false;
 
 int LbMousePlace_UNUSED()
 {

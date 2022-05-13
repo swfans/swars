@@ -224,6 +224,12 @@ struct ScreenModeInfo { // sizeof=38
 extern TbScreenModeInfo lbScreenModeInfo[];
 extern TbDisplayStruct lbDisplay;
 
+/** GUI scaling factor, to be used for drawing sprites smaller or larger.
+ * For VGA resolution (width=640), the value is 16. It is smaller for lower resolutinons,
+ * and larger for higher resolutions.
+ */
+extern ushort lbUnitsPerPixel;
+
 TbResult LbScreenSetup(TbScreenMode mode, TbScreenCoord width, TbScreenCoord height,
     unsigned char *palette);
 

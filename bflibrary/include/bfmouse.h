@@ -26,35 +26,7 @@
 extern "C" {
 #endif
 
-#pragma pack(1)
-
 struct TbSprite;
-
-struct mouse_buffer { // sizeof=4128
-    DwBool Valid; // offset=0
-    long Width; // offset=4
-    long Height; // offset=8
-    ulong Offset; // offset=12
-    ubyte Buffer[4096]; // offset=16
-    long X; // offset=4112
-    long Y; // offset=4116
-    long XOffset; // offset=4120
-    long YOffset; // offset=4124
-};
-
-typedef struct mouse_buffer mouse_buffer;
-
-struct mouse_info { // sizeof=4112
-    long XMoveRatio; // offset=0
-    long YMoveRatio; // offset=4
-    long XSpriteOffset; // offset=8
-    long YSpriteOffset; // offset=12
-    ubyte Sprite[64*64]; // offset=16
-};
-
-typedef struct mouse_info mouse_info;
-
-#pragma pack()
 
 TbResult LbMousePlace(void);
 TbResult LbMouseRemove(void);
@@ -70,6 +42,7 @@ int LbMouseUpdatePosition();
 
 extern volatile TbBool lbMouseInstalled;
 extern volatile TbBool lbMouseOffline;
+extern volatile TbBool lbInteruptMouse;
 
 #ifdef __cplusplus
 };

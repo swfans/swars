@@ -54,6 +54,8 @@ struct ScreenModeInfo lbScreenModeInfo_UNUSED[] = {
 
 TbDisplayStruct lbDisplay;
 
+ushort lbUnitsPerPixel = 16;
+
 TbScreenCoord LbGraphicsScreenWidth(void)
 {
     return lbDisplay.GraphicsScreenWidth;

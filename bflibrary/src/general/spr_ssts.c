@@ -85,7 +85,7 @@ void LbSpriteDrawRemapUsingScalingSub1(ubyte *outbuf, int scanline,
   ubyte *v349;
   int v353;
   int v357;
-  int v361;
+  ubyte *v361;
   char v365;
 
   h = sprite->SHeight;
@@ -389,7 +389,7 @@ void LbSpriteDrawRemapUsingScalingSub2(ubyte *outbuf, int scanline,
   ubyte *v348;
   int v352;
   int v356;
-  int v360;
+  ubyte *v360;
   char v364;
 
   h = sprite->SHeight;
@@ -653,7 +653,7 @@ void LbSpriteDrawRemapUsingScalingSub3(ubyte *outbuf, int scanline,
   int v211;
   int v212;
   int v213;
-  int v214;
+  ubyte *v214;
   ubyte *v314;
   ubyte *v330;
   int v334;
@@ -681,7 +681,7 @@ void LbSpriteDrawRemapUsingScalingSub3(ubyte *outbuf, int scanline,
                   v205 = -(char)v205;
                   v214 = &outbuf[-v204[0] - v204[1]];
                   v204 -= 2 * v205;
-                  outbuf = (ubyte *)(v204[0] + v204[1] + v214);
+                  outbuf = &v214[v204[0] + v204[1]];
                 }
                 else
                 {

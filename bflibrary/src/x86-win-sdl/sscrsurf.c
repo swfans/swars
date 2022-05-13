@@ -92,14 +92,14 @@ TbResult LbScreenSurfaceBlit(struct SSurface *surf, ulong x, ulong y,
 
     // Set blit parameters
 
-    if ((blflags & 0x02) != 0) {
+    if ((blflags & SSBlt_FLAG2) != 0) {
       //TODO: see how/if to handle this, I interpret this as "blit directly to primary rather than back"
       //secSurf = surface3;
       //I think it can simply be deleted as not even the mouse pointer code is using it and there's no way
       //to access front buffer in SDL
     }
 
-    if ((blflags & 0x04) != 0) {
+    if ((blflags & SSBlt_FLAG4) != 0) {
         // enable color key
         SDL_SetColorKey(to_SDLSurf(surf->surf_data), SDL_SRCCOLORKEY, 255);
     }
@@ -108,7 +108,7 @@ TbResult LbScreenSurfaceBlit(struct SSurface *surf, ulong x, ulong y,
         SDL_SetColorKey(to_SDLSurf(surf->surf_data), 0, 255);
     }
 
-    if ((blflags & 0x10) != 0) {
+    if ((blflags & SSBlt_FLAG10) != 0) {
         //TODO: see if this can/should be handled
         //probably it can just be deleted
         //dwTrans |= DDBLTFAST_WAIT;
@@ -125,7 +125,7 @@ TbResult LbScreenSurfaceBlit(struct SSurface *surf, ulong x, ulong y,
 
     int blresult;
     // the blit
-    if ((blflags & 0x08) != 0) {
+    if ((blflags & SSBlt_FLAG8) != 0) {
         // surface to screen
         blresult = SDL_BlitSurface(to_SDLSurf(surf->surf_data),
           &srcRect, to_SDLSurf(lbDrawSurface), &destRect);
