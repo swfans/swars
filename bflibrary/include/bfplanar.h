@@ -2,14 +2,14 @@
 // Bullfrog Engine Emulation Library - for use to remake classic games like
 // Syndicate Wars, Magic Carpet, Genewars or Dungeon Keeper.
 /******************************************************************************/
-/** @file bfsemphr.hpp
- *     Header file for ssemphr.cpp.
+/** @file bfplanar.h
+ *     Header file for gplanar.c.
  * @par Purpose:
- *     Semaphores wrapper.
+ *     Basic planar integer geometry.
  * @par Comment:
  *     Just a header file - #defines, typedefs, function prototypes etc.
  * @author   Tomasz Lis
- * @date     21 May 2009 - 20 Jul 2009
+ * @date     24 Jan 2009 - 08 Mar 2009
  * @par  Copying and copyrights:
  *     This program is free software; you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -17,42 +17,33 @@
  *     (at your option) any later version.
  */
 /******************************************************************************/
-#ifndef BFLIBRARY_BFSEMPHR_H_
-#define BFLIBRARY_BFSEMPHR_H_
+#ifndef BFLIBRARY_BFPLANAR_H_
+#define BFLIBRARY_BFPLANAR_H_
 
-/******************************************************************************/
+#include "bftypes.h"
 
-class LbSemaphore {
-public:
-    LbSemaphore(void);
-    virtual ~LbSemaphore(void);
-#if defined(WIN32)
-    union {
-    void *pHandle;
-    int iHandle;
-    };
-#else
+#ifdef __cplusplus
+extern "C" {
 #endif
+
+struct TbRect {
+  long left;
+  long top;
+  long right;
+  long bottom;
+};
+
+struct TbPoint {
+  long x;
+  long y;
 };
 
 /******************************************************************************/
 
-class LbSemaLock {
-public:
-    LbSemaLock(class LbSemaphore *sem, bool isLocked);
-    virtual ~LbSemaLock(void);
-    int Lock(bool wait_forever);
-    void Release(void);
-#if defined(WIN32)
-    union {
-    void *pHandle;
-    int iHandle;
-    };
-#else
-#endif
-    bool locked:1;
-    bool invalid:1;
-};
+void LbSetRect(struct TbRect *rect, long xLeft, long yTop, long xRight, long yBottom);
 
-#endif // BFLIBRARY_BFSEMPHR_H_
+#ifdef __cplusplus
+}
+#endif
+#endif // BFLIBRARY_BFPLANAR_H_
 /******************************************************************************/

@@ -1,0 +1,60 @@
+/******************************************************************************/
+// Bullfrog Engine Emulation Library - for use to remake classic games like
+// Syndicate Wars, Magic Carpet, Genewars or Dungeon Keeper.
+/******************************************************************************/
+/** @file bfscrsurf.h
+ *     Header file for sscrsurf.c.
+ * @par Purpose:
+ *     Graphics surfaces support.
+ * @par Comment:
+ *     Just a header file - #defines, typedefs, function prototypes etc.
+ * @author   Tomasz Lis
+ * @date     10 Feb 2010 - 30 Sep 2010
+ * @par  Copying and copyrights:
+ *     This program is free software; you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation; either version 2 of the License, or
+ *     (at your option) any later version.
+ */
+/******************************************************************************/
+#ifndef BFLIBRARY_SSCRSURF_H_
+#define BFLIBRARY_SSCRSURF_H_
+
+#include "bftypes.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+struct TbRect;
+
+typedef void * OSSurfaceHandle;
+
+struct SSurface {
+    OSSurfaceHandle surf_data;
+    ulong locks_count;
+    long pitch;
+};
+
+/******************************************************************************/
+
+/** Internal screen surface structure. */
+extern OSSurfaceHandle lbScreenSurface;
+
+/** Internal drawing surface structure.
+ *  Sometimes may be same as screen surface. */
+extern OSSurfaceHandle lbDrawSurface;
+
+void LbScreenSurfaceInit(struct SSurface *surf);
+TbResult LbScreenSurfaceCreate(struct SSurface *surf, ulong w, ulong h);
+TbResult LbScreenSurfaceRelease(struct SSurface *surf);
+TbResult LbScreenSurfaceBlit(struct SSurface *surf, ulong x, ulong y,
+    struct TbRect *rect, ulong blflags);
+void *LbScreenSurfaceLock(struct SSurface *surf);
+TbResult LbScreenSurfaceUnlock(struct SSurface *surf);
+
+#ifdef __cplusplus
+}
+#endif
+#endif // BFLIBRARY_SSCRSURF_H_
+/******************************************************************************/

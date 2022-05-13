@@ -22,6 +22,7 @@ libbullfrog_a_SOURCES = \
   src/general/glog.cpp \
   src/general/gmemut.c \
   src/general/gpalette.c \
+  src/general/gplanar.c \
   src/general/gpng.c \
   src/general/gscreen.c \
   src/general/gsprite.c \
@@ -56,6 +57,7 @@ libbullfrog_a_SOURCES += \
   src/x86-win-sdl/smouse.cpp \
   src/x86-win-sdl/spalette.cpp \
   src/x86-win-sdl/sscreen.cpp \
+  src/x86-win-sdl/sscrsurf.c \
   src/x86-win-sdl/ssemphr.cpp \
   src/x86-win-sdl/stime.cpp \
   src/x86-win-sdl/svesa.cpp \
