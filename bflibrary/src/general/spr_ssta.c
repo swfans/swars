@@ -37,20 +37,6 @@ TbResult LbSpriteDrawUsingScalingDownDataTrans1LR(ubyte *outbuf, int scanline, i
   long *xstep, long *ystep, const TbSprite *sprite, const unsigned char *transmap);
 
 
-/**
- * Draws an alpha-blended scaled sprite on current graphics window at given position.
- * Requires SetAlphaScalingData() to be called before.
- * Unlike LbSpriteDrawUsingScalingData(), this one ignores some of the DrawFlags, and
- * assumes transparency even if related flag is not set. So it is basically kind of
- * hacked version of that function. No idea why, but it's used in Dungeon Keeper.
- *
- * @param posx The X coord within current graphics window.
- * @param posy The Y coord within current graphics window.
- * @param sprite The source sprite.
- * @return Gives 0 on success.
- * @see SetAlphaScalingData()
- * @see LbSpriteDrawUsingScalingData()
- */
 TbResult DrawAlphaSpriteUsingScalingData(long posx, long posy, const TbSprite *sprite)
 {
     long *xstep;

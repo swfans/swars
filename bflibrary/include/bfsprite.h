@@ -99,6 +99,16 @@ TbResult LbSpriteDrawOneColour(long x, long y, const TbSprite *spr, const TbPixe
 TbResult LbSpriteDraw(long x, long y, const TbSprite *spr);
 TbResult LbSpriteDrawRemap(long x, long y, const TbSprite *spr, const ubyte *cmap);
 
+/**
+ * Draws a scaled sprite on current graphics window at given position.
+ * Requires LbSpriteSetScalingData() to be called before.
+ *
+ * @param posx The X coord within current graphics window.
+ * @param posy The Y coord within current graphics window.
+ * @param sprite The source sprite.
+ * @return Gives 0 on success.
+ * @see LbSpriteSetScalingData()
+ */
 TbResult LbSpriteDrawUsingScalingData(long posx, long posy, const TbSprite *sprite);
 
 /**
@@ -113,8 +123,34 @@ TbResult LbSpriteDrawUsingScalingData(long posx, long posy, const TbSprite *spri
 void LbSpriteSetScalingData(long x, long y, long swidth, long sheight,
     long dwidth, long dheight);
 
+/**
+ * Draws an alpha-blended scaled sprite on current graphics window at given position.
+ * Requires SetAlphaScalingData() to be called before.
+ * Unlike LbSpriteDrawUsingScalingData(), this one ignores some of the DrawFlags, and
+ * assumes transparency even if related flag is not set. So it is basically kind of
+ * hacked version of that function. No idea why, but it's used in Dungeon Keeper.
+ *
+ * @param posx The X coord within current graphics window.
+ * @param posy The Y coord within current graphics window.
+ * @param sprite The source sprite.
+ * @return Gives 0 on success.
+ * @see SetAlphaScalingData()
+ * @see LbSpriteDrawUsingScalingData()
+ */
 TbResult DrawAlphaSpriteUsingScalingData(long posx, long posy, const TbSprite *sprite);
 
+/**
+ * Draws a scaled sprite on current graphics window at given position, ignoring shadows.
+ * Requires SetAlphaScalingData() to be called before.
+ * This is a modification of LbSpriteDrawUsingScalingData() which changes meaning
+ * of Lb_TEXT_UNDERLNSHADOW and Lb_SPRITE_TRANSPAR8. No idea why, but it's used in Syndicate Wars.
+ *
+ * @param posx The X coord within current graphics window.
+ * @param posy The Y coord within current graphics window.
+ * @param sprite The source sprite.
+ * @return Gives 0 on success.
+ * @see LbSpriteSetScalingData()
+ */
 TbResult DrawSpriteWthShadowUsingScalingData(long posx, long posy, const TbSprite *sprite);
 
 void SetAlphaScalingData(long x, long y, long swidth, long sheight,

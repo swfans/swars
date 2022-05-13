@@ -2757,18 +2757,6 @@ LABEL_27:
     while ( h );
 }
 
-/**
- * Draws a scaled sprite on current graphics window at given position, ignoring shadows.
- * Requires SetAlphaScalingData() to be called before.
- * This is a modification of LbSpriteDrawUsingScalingData() which changes meaning
- * of Lb_TEXT_UNDERLNSHADOW and Lb_SPRITE_TRANSPAR8. No idea why, but it's used in Syndicate Wars.
- *
- * @param posx The X coord within current graphics window.
- * @param posy The Y coord within current graphics window.
- * @param sprite The source sprite.
- * @return Gives 0 on success.
- * @see LbSpriteSetScalingData()
- */
 TbResult DrawSpriteWthShadowUsingScalingData(long posx, long posy, const TbSprite *sprite)
 {
   int scanline;

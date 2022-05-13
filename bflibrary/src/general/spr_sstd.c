@@ -1249,16 +1249,6 @@ TbResult LbSpriteDrawUsingScalingDownDataSolidLR(ubyte *outbuf, int scanline,
     return 0;
 }
 
-/**
- * Draws a scaled sprite on current graphics window at given position.
- * Requires LbSpriteSetScalingData() to be called before.
- *
- * @param posx The X coord within current graphics window.
- * @param posy The Y coord within current graphics window.
- * @param sprite The source sprite.
- * @return Gives 0 on success.
- * @see LbSpriteSetScalingData()
- */
 TbResult LbSpriteDrawUsingScalingData(long posx, long posy, const TbSprite *sprite)
 {
     long *xstep;

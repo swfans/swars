@@ -22,6 +22,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <stdbool.h>
+#include <string.h>
 #include <stdio.h>
 #include <errno.h>
 #include "bffile.h"

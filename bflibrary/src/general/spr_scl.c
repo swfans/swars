@@ -40,15 +40,6 @@ TbPixel *render_alpha = NULL;
 //render_ghost = lbSpriteReMapPtr;
 
 
-/**
- * Sets X scaling array for drawing scaled sprites.
- * The X scaling array contains position and length of each pixel of the sprite on destination buffer.
- * @param xsteps_arr The destination X scaling array.
- * @param x Position of the sprite in output buffer, X coord.
- * @param swidth Source sprite original width.
- * @param dwidth Width which the sprite should have on destination buffer.
- * @param gwidth Graphics buffer visible window line width.
- */
 void LbSpriteSetScalingWidthClippedArray(long * xsteps_arr, long x, long swidth, long dwidth, long gwidth)
 {
     long *pwidth;
@@ -170,15 +161,6 @@ void LbSpriteClearAlphaScalingWidth(void)
     LbSpriteClearScalingWidthArray(alpha_xsteps_array, SPRITE_SCALING_XSTEPS);
 }
 
-/**
- * Sets Y scaling array for drawing scaled sprites.
- * The Y scaling array contains position and length of each line of pixels of the sprite on destination buffer.
- * @param ysteps_arr The destination X scaling array.
- * @param y Position of the sprite in output buffer, Y coord.
- * @param sheight Source sprite original height.
- * @param dheight Height which the sprite should have on destination buffer.
- * @param gheight Graphics buffer visible window lines count.
- */
 void LbSpriteSetScalingHeightClippedArray(long * ysteps_arr, long y, long sheight, long dheight, long gheight)
 {
     long *pheight;
