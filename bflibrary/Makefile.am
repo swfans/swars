@@ -34,6 +34,7 @@ libbullfrog_a_SOURCES = \
   src/general/gtrig.cpp \
   src/general/gutility.cpp \
   src/general/hvline.c \
+  src/general/mshandler.cpp \
   src/general/mspointer.cpp \
   src/general/pixel.c \
   src/general/poly.c \
