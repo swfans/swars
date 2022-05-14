@@ -28,7 +28,8 @@
 
 extern "C" {
 extern volatile TbBool lbPointerAdvancedDraw;
-long PointerDraw(long x, long y, struct TbSprite *spr, TbPixel *outbuf, unsigned long scanline);
+long PointerDraw(long x, long y, const struct TbSprite *spr, TbPixel *outbuf,
+  unsigned long scanline);
 }
 
 // Methods
@@ -100,21 +101,33 @@ void LbI_PointerHandler::ClipHotspot(void)
     }
 }
 
-void LbI_PointerHandler::Initialise(struct TbSprite *spr, struct TbPoint *npos, struct TbPoint *noffset)
+void LbI_PointerHandler::Initialise(const struct TbSprite *spr,
+  struct TbPoint *npos, struct TbPoint *noffset)
 {
     void *surfbuf;
     TbPixel *buf;
+    TbResult ret;
     long i;
     int dstwidth, dstheight;
     unsigned long flags;
+
     Release();
     LbSemaLock semlock(&sema_rel,0);
     semlock.Lock(true);
     sprite = spr;
     dstwidth = (sprite->SWidth * lbUnitsPerPixel + 16) / 16;
     dstheight = (sprite->SHeight * lbUnitsPerPixel + 16) / 16;
-    LbScreenSurfaceCreate(&surf1, dstwidth, dstheight);
-    LbScreenSurfaceCreate(&surf2, dstwidth, dstheight);
+    ret = LbScreenSurfaceCreate(&surf1, dstwidth, dstheight);
+    if (ret != Lb_SUCCESS) {
+        sprite = NULL;
+        return;
+    }
+    ret = LbScreenSurfaceCreate(&surf2, dstwidth, dstheight);
+    if (ret != Lb_SUCCESS) {
+        LbScreenSurfaceRelease(&surf1);
+        sprite = NULL;
+        return;
+    }
     surfbuf = LbScreenSurfaceLock(&surf1);
     if (surfbuf == NULL)
     {

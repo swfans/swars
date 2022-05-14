@@ -30,15 +30,32 @@ struct TbSprite;
 
 TbResult LbMousePlace(void);
 TbResult LbMouseRemove(void);
-TbResult LbMouseChangeSpriteOffset(unsigned long hsX, unsigned long hsY);
+
+/**
+ * Set offset within pointer sprite where the mouse actually points at.
+ *  Also called LbMouseSetPointerHotspot().
+ */
+TbResult LbMouseChangeSpriteOffset(ulong hot_x, ulong hot_y);
+
 TbResult LbMouseChangeSprite(const struct TbSprite *pointer_spr);
+
+/**
+ * Changes mouse movement ratio.
+ * Note that this function can be run even before mouse setup. Still, the factor
+ *  will be reset during the installation - so use it after LbMouseSetup().
+ *
+ * @param ratio_x Movement ratio in X direction; 256 means unchanged ratio from OS.
+ * @param ratio_y Movement ratio in Y direction; 256 means unchanged ratio from OS.
+ * @return Lb_SUCCESS if the ratio values were of correct range and have been set.
+ */
 TbResult LbMouseChangeMoveRatio(long ratio_x, long ratio_y);
+
 TbResult LbMouseSetup(const struct TbSprite *pointer_spr, int ratio_x, int ratio_y);
 TbResult LbMouseReset(void);
 TbResult LbMouseSuspend(void);
 TbResult LbMouseSetWindow(long x, long y, long width, long height);
 TbResult LbMouseSetPosition(long x, long y);
-int LbMouseUpdatePosition();
+TbResult LbMouseUpdatePosition(void);
 
 extern volatile TbBool lbMouseInstalled;
 extern volatile TbBool lbMouseOffline;

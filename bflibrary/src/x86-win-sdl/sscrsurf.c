@@ -39,11 +39,13 @@ void LbScreenSurfaceInit(struct SSurface *surf)
 
 TbResult LbScreenSurfaceCreate(struct SSurface *surf, ulong w, ulong h)
 {
-    const SDL_PixelFormat * format = NULL;
+    const SDL_PixelFormat * format;
 
-    if (lbDrawSurface != NULL) {
-        format = to_SDLSurf(lbDrawSurface)->format;
+    if (lbDrawSurface == NULL) {
+        LIBLOG("DrawSurface pixel format must be known to create further surfaces.");
+        return Lb_FAIL;
     }
+    format = to_SDLSurf(lbDrawSurface)->format;
 
     surf->surf_data = (OSSurfaceHandle)SDL_CreateRGBSurface(SDL_SRCCOLORKEY,
       w, h, format->BitsPerPixel,
@@ -79,6 +81,11 @@ TbResult LbScreenSurfaceBlit(struct SSurface *surf, ulong x, ulong y,
     // Convert TbRect to SDL rectangles
     SDL_Rect srcRect;
     SDL_Rect destRect;
+
+    if (lbDrawSurface == NULL) {
+        LIBLOG("DrawSurface pixel format must be known to blit other surfaces.");
+        return Lb_FAIL;
+    }
 
     srcRect.x = rect->left;
     srcRect.y = rect->top;
