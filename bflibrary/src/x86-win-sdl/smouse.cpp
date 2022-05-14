@@ -17,10 +17,12 @@
  *     (at your option) any later version.
  */
 /******************************************************************************/
+#include <stdbool.h>
 #include "bfmouse.h"
 
-#include <stdbool.h>
+#include "mshandler.hpp"
 #include "bfscreen.h"
+#include "bflog.h"
 
 #if 0
 volatile TbBool lbMouseInstalled = false;
@@ -28,59 +30,175 @@ volatile TbBool lbMouseInstalled = false;
 volatile TbBool lbMouseOffline = false;
 volatile TbBool lbInteruptMouse = false;
 
-int LbMousePlace_UNUSED()
+TbResult LbMousePlace_UNUSED(void)
 {
-// code at 0001:000a6810
+    if (!lbMouseInstalled)
+        return Lb_FAIL;
+
+    /* TODO
+    if (!pointerHandler.PointerDraw())
+        return Lb_FAIL;
+    */
+
+    return Lb_SUCCESS;
 }
 
-int LbMouseRemove_UNUSED()
+TbResult LbMouseRemove_UNUSED(void)
 {
-// code at 0001:000a6968
+    if (!lbMouseInstalled)
+        return Lb_FAIL;
+
+    /* TODO
+    if (!pointerHandler.PointerUndraw())
+        return Lb_FAIL;
+    */
+
+    return Lb_SUCCESS;
 }
 
-int LbMouseChangeSpriteOffset_UNUSED(unsigned long hsX, unsigned long hsY)
+
+TbResult LbMouseChangeSpriteOffset_UNUSED(ulong hot_x, ulong hot_y)
 {
-// code at 0001:000a6a44
+    if (!lbMouseInstalled)
+        return Lb_FAIL;
+
+    if (!pointerHandler.SetPointerOffset(hot_x, hot_y))
+        return Lb_FAIL;
+
+    return Lb_SUCCESS;
 }
 
-int LbMouseChangeSprite_UNUSED(struct TbSprite *spr)
+
+TbResult LbMouseChangeSprite_UNUSED(const struct TbSprite *pointer_spr)
 {
-// code at 0001:000a6a7c
+    if (!lbMouseInstalled)
+        return Lb_FAIL;
+
+    if (pointer_spr == NULL)
+        LIBLOG("Setting to %s", "NONE");
+    else
+        LIBLOG("Setting to %dx%d, data at %p",(int)pointer_spr->SWidth,(int)pointer_spr->SHeight,pointer_spr);
+
+    if (!pointerHandler.SetMousePointer(pointer_spr))
+        return Lb_FAIL;
+
+    return Lb_SUCCESS;
 }
 
-int LbMouseChangeMoveRatio_UNUSED()
+TbResult LbMouseChangeMoveRatio_UNUSED(long ratio_x, long ratio_y)
 {
-// code at 0001:000a6c04
+    if ((ratio_x < -8192) || (ratio_x > 8192) || (ratio_x == 0))
+        return Lb_FAIL;
+    if ((ratio_y < -8192) || (ratio_y > 8192) || (ratio_y == 0))
+        return Lb_FAIL;
+
+    LIBLOG("New ratio %ldx%ld", ratio_x, ratio_y);
+
+    /*TODO disabled - verify
+    // Currently we don't have two ratio factors, so let's store an average
+    lbDisplay.MouseMoveRatio = (ratio_x + ratio_y)/2;
+    */
+
+    return Lb_SUCCESS;
 }
 
 TbResult LbMouseSetup_UNUSED(const struct TbSprite *pointer_spr, int ratio_x, int ratio_y)
 {
-// code at 0001:000a6c7c
+    long x,y;
+
+    if (lbMouseInstalled)
+        LbMouseSuspend();
+
+    pointerHandler.Install();
+
+#if 0
+    minfo.XSpriteOffset = 0;
+    minfo.YSpriteOffset = 0;
+    minfo.XMoveRatio = 1;
+    minfo.YMoveRatio = 1;
+    memset(minfo.Sprite, 254, 0x1000u);
+    lbDisplay.MouseSprite = 0;
+    redraw_active_lock = 0;
+    memset(&mbuffer, 0, 0x1020u);
+#endif
+
+    lbMouseOffline = true;
+    lbMouseInstalled = true;
+
+    if ( LbMouseSetWindow(0, 0, lbDisplay.GraphicsScreenWidth, lbDisplay.GraphicsScreenHeight) != Lb_SUCCESS )
+    {
+        lbMouseInstalled = false;
+        return Lb_FAIL;
+    }
+    y = lbDisplay.MouseWindowY + lbDisplay.MouseWindowHeight / 2;
+    x = lbDisplay.MouseWindowX + lbDisplay.MouseWindowWidth / 2;
+    if ( LbMouseChangeMoveRatio(ratio_x, ratio_y) != Lb_SUCCESS )
+    {
+        lbMouseInstalled = false;
+        return Lb_FAIL;
+    }
+    if ( LbMouseSetPosition(x, y) != Lb_SUCCESS )
+    {
+        lbMouseInstalled = false;
+        return Lb_FAIL;
+    }
+    if ( LbMouseChangeSprite(pointer_spr) != Lb_SUCCESS )
+    {
+        lbMouseInstalled = false;
+        return Lb_FAIL;
+    }
+    lbMouseOffline = false;
+    return Lb_SUCCESS;
 }
 
-int LbMouseReset_UNUSED()
+TbResult LbMouseReset_UNUSED(void)
 {
-// code at 0001:000a6e24
+    return LbMouseSuspend();
 }
 
-int LbMouseSuspend_UNUSED()
+TbResult LbMouseSuspend_UNUSED(void)
 {
-// code at 0001:000a6ea8
+    if (!lbMouseInstalled)
+        return Lb_FAIL;
+
+    if (!pointerHandler.Release())
+        return Lb_FAIL;
+
+    return Lb_SUCCESS;
 }
 
-int LbMouseSetWindow_UNUSED()
+TbResult LbMouseSetWindow_UNUSED(long x, long y, long width, long height)
 {
-// code at 0001:000a6f0c
+    if (!lbMouseInstalled)
+        return Lb_FAIL;
+
+    if (!pointerHandler.SetMouseWindow(x, y, width, height))
+        return Lb_FAIL;
+
+    return Lb_SUCCESS;
 }
 
-int LbMouseSetPosition_UNUSED()
+TbResult LbMouseSetPosition_UNUSED(long x, long y)
 {
-// code at 0001:000a6f78
+    if (!lbMouseInstalled)
+        return Lb_FAIL;
+
+    if (!pointerHandler.SetMousePosition(x, y))
+        return Lb_FAIL;
+
+    return Lb_SUCCESS;
 }
 
-int LbMouseUpdatePosition_UNUSED()
+TbResult LbMouseUpdatePosition_UNUSED(void)
 {
-// code at 0001:000a7004
+    /*TODO disabled - verify
+    if ( mouse_pos_change_saved )
+    {
+        lbDisplay.MMouseX += mouse_dx;
+        lbDisplay.MMouseY += mouse_dy;
+        adjust_point(&lbDisplay.MMouseX, &lbDisplay.MMouseY);
+        mouse_pos_change_saved = 0;
+    }*/
+    return Lb_SUCCESS;
 }
-
 /******************************************************************************/
