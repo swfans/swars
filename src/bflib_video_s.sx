@@ -138,7 +138,7 @@ GLOBAL_FUNC (ASM_LbScreenSetupAnyMode_)	/* 0xED4F0 */
 		mov    lbScreenModeInfo0_Width(,%eax,2),%bx
 		xor    %edx,%edx
 		xor    %eax,%eax
-		call   LbScreenSetGraphicsWindow_
+		call   ac_LbScreenSetGraphicsWindow
 		movsbl 0x18(%ebp),%edx
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
@@ -155,7 +155,7 @@ GLOBAL_FUNC (ASM_LbScreenSetupAnyMode_)	/* 0xED4F0 */
 		mov    lbScreenModeInfo0_Width(,%eax,2),%bx
 		xor    %edx,%edx
 		xor    %eax,%eax
-		call   LbTextSetWindow_
+		call   ac_LbTextSetWindow
 		cmpl   $0x0,0x24(%ebp)
 		je     jump_ed6d6
 		mov    0x24(%ebp),%eax
@@ -536,7 +536,7 @@ LbScreenIsModeAvailable_:
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (LbScreenSetGraphicsWindow_)	/* e0d00 */
+GLOBAL_FUNC (ASM_LbScreenSetGraphicsWindow)	/* 0xe0d00 */
 /*----------------------------------------------------------------*/
 		push   %esi
 		push   %edi

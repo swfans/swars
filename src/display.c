@@ -30,26 +30,24 @@ static bool         display_lowres_stretch = false;
 static unsigned char *display_stretch_buffer = NULL;
 static SDL_Color    display_palette[256];
 
-static void
-call_e0d00 (int x, int y, int w, int h)
+TbResult LbScreenSetGraphicsWindow(ulong x, ulong y, ulong width, ulong height)
 {
   asm volatile
     ("push %%ebx;"
      "mov  %2,%%ebx;"
-     "call LbScreenSetGraphicsWindow_;"
+     "call ASM_LbScreenSetGraphicsWindow;"
      "pop  %%ebx"
-     : : "a" (x), "d" (y), "g" (w), "c" (h));
+     : : "a" (x), "d" (y), "g" (width), "c" (height));
 }
 
-static void
-call_ef4f0 (int x, int y, int w, int h)
+TbResult LbTextSetWindow(ulong x, ulong y, ulong width, ulong height)
 {
   asm volatile
     ("push %%ebx;"
      "mov  %2,%%ebx;"
-     "call LbTextSetWindow_;"
+     "call ASM_LbTextSetWindow;"
      "pop  %%ebx"
-     : : "a" (x), "d" (y), "g" (w), "c" (h));
+     : : "a" (x), "d" (y), "g" (width), "c" (height));
 }
 
 static inline void
@@ -206,8 +204,8 @@ int LbScreenSetupAnyMode(unsigned short mode, unsigned long width,
 
   // Call funcitons that recalculate some buffers
   // They can be switched to C++ later, but it's not needed
-  call_e0d00 (0, 0, lbDisplay.GraphicsScreenWidth, lbDisplay.GraphicsScreenHeight);
-  call_ef4f0 (0, 0, lbDisplay.GraphicsScreenWidth, lbDisplay.GraphicsScreenHeight);
+  LbScreenSetGraphicsWindow(0, 0, lbDisplay.GraphicsScreenWidth, lbDisplay.GraphicsScreenHeight);
+  LbTextSetWindow(0, 0, lbDisplay.GraphicsScreenWidth, lbDisplay.GraphicsScreenHeight);
 
   // Setup palette
   if (palette != NULL)

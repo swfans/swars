@@ -28,30 +28,33 @@
 #include "bfsprite.h"
 #include "bfscreen.h"
 
+extern ulong redraw_active_lock;
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 /******************************************************************************/
-/*
-TbResult LbMouseChangeSpriteAndHotspot(struct TbSprite *pointer_spr, long hot_x, long hot_y)
-{
-    if (pointerSprite == NULL)
-        BFLIB_DEBUGLOG(0,"Setting to %s","NONE");
-    else
-        BFLIB_DEBUGLOG(0,"Setting to %dx%d, data at %p",(int)pointer_spr->SWidth,(int)pointer_spr->SHeight,pointer_spr->Data);
-  if (!lbMouseInstalled)
-    return Lb_FAIL;
-  if (!pointerHandler.SetMousePointerAndOffset(pointerSprite, hot_x, hot_y))
-    return Lb_FAIL;
-  return Lb_SUCCESS;
-}*/
 
 TbResult LbMouseSuspend(void)
 {
     TbResult ret;
+    if ( !lbMouseInstalled )
+        return -1;
+#if 1
     asm volatile ("call ASM_LbMouseSuspend\n"
         : "=r" (ret) : );
     return ret;
+#endif
+    redraw_active_lock = 1;
+#if 0
+    if ( !lbScreenDirectAccessActive )
+        screen_remove(1);
+    memset(&mbuffer, 0, 0x1020u);
+#endif
+    lbDisplay.MouseSprite = 0;
+    lbMouseInstalled = 0;
+    redraw_active_lock = 0;
+    return Lb_SUCCESS;
 }
 
 TbResult LbMouseChangeMoveRatio(long ratio_x, long ratio_y)
