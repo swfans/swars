@@ -264,7 +264,7 @@ TbScreenCoord LbScreenWidth(void);
 TbScreenCoord LbScreenHeight(void);
 
 int LbScreenIsModeAvailable();
-int LbScreenSetGraphicsWindow();
+TbResult LbScreenSetGraphicsWindow(ulong x, ulong y, ulong width, ulong height);
 
 int LbScreenSetupAnyMode(unsigned short mode, unsigned long width,
     unsigned long height, TbPixel *palette);

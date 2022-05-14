@@ -19,7 +19,7 @@
 /******************************************************************************/
 #include "bftext.h"
 
-int LbTextSetWindow_UNUSED()
+TbResult LbTextSetWindow_UNUSED(ulong x, ulong y, ulong width, ulong height)
 {
 // code at 0001:000baff0
 }

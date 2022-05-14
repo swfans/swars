@@ -87,7 +87,7 @@ int LbScreenIsModeAvailable_UNUSED()
 // code at 0001:00093bf0
 }
 
-int LbScreenSetGraphicsWindow_UNUSED()
+TbResult LbScreenSetGraphicsWindow_UNUSED(ulong x, ulong y, ulong width, ulong height)
 {
 // code at 0001:00093c30
 }

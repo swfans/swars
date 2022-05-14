@@ -40,7 +40,8 @@ typedef struct TbAnyWindow TbAnyWindow;
 
 #pragma pack()
 
-int LbTextSetWindow();
+TbResult LbTextSetWindow(ulong x, ulong y, ulong width, ulong height);
+
 int LbTextSetJustifyWindow();
 int LbTextSetClipWindow();
 int LbTextStringWidth();
