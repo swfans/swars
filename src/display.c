@@ -3,11 +3,14 @@
 
 #include "display.h"
 #include "bfscreen.h"
+#include "bfscrsurf.h"
 #include "bfmouse.h"
 #include "util.h"
 #include "bflib_basics.h"
 
 #pragma pack(1)
+
+#define to_SDLSurf(h) ((SDL_Surface  *)h)
 
 extern TbScreenModeInfo lbScreenModeInfo[];
 
@@ -22,7 +25,6 @@ extern int32_t mbuffer__Height;
 
 #pragma pack()
 
-static SDL_Surface *display_screen;
 static bool	    display_full_screen = false;
 static bool         display_lowres_stretch = false;
 static unsigned char *display_stretch_buffer = NULL;
@@ -53,20 +55,20 @@ call_ef4f0 (int x, int y, int w, int h)
 static inline void
 lock_screen (void)
 {
-  if (!SDL_MUSTLOCK (display_screen))
+  if (!SDL_MUSTLOCK (to_SDLSurf(lbDrawSurface)))
     return;
 
-  if (SDL_LockSurface (display_screen) != 0)
+  if (SDL_LockSurface (to_SDLSurf(lbDrawSurface)) != 0)
     fprintf (stderr, "SDL_LockSurface: %s\n", SDL_GetError ());
 }
 
 static inline void
 unlock_screen (void)
 {
-  if (!SDL_MUSTLOCK (display_screen))
+  if (!SDL_MUSTLOCK (to_SDLSurf(lbDrawSurface)))
     return;
 
-  SDL_UnlockSurface (display_screen);
+  SDL_UnlockSurface (to_SDLSurf(lbDrawSurface));
 }
 
 TbResult
@@ -83,7 +85,7 @@ LbPaletteSet(const unsigned char *palette)
       colours[n].unused = 0;
     }
 
-  if (SDL_SetPalette (display_screen,
+  if (SDL_SetPalette (to_SDLSurf(lbDrawSurface),
 		      SDL_LOGPAL | SDL_PHYSPAL, colours, 0, 256) != 1)
     {
       fprintf (stderr, "SDL_SetPalette: %s\n", SDL_GetError ());
@@ -123,10 +125,10 @@ int LbScreenSetupAnyMode(unsigned short mode, unsigned long width,
   lbDisplay.VesaIsSetUp = false;
 
   // Setting mode
-  if (display_screen != NULL)
+  if (to_SDLSurf(lbDrawSurface) != NULL)
     {
       unlock_screen ();
-      SDL_FreeSurface (display_screen);
+      SDL_FreeSurface (to_SDLSurf(lbDrawSurface));
     }
 
   flags = SDL_SWSURFACE;
@@ -138,9 +140,9 @@ int LbScreenSetupAnyMode(unsigned short mode, unsigned long width,
   if (width == 320 && height == 200 && display_lowres_stretch)
     {
       // Init mode
-      display_screen = SDL_SetVideoMode (640, 480,
-  				         lbScreenModeInfo[mode].BitsPerPixel,
-                                         flags);
+      lbScreenSurface = lbDrawSurface =
+          SDL_SetVideoMode (640, 480,
+  		    lbScreenModeInfo[mode].BitsPerPixel, flags);
 
       // Allocate buffer
       if (display_stretch_buffer == NULL)
@@ -158,9 +160,9 @@ int LbScreenSetupAnyMode(unsigned short mode, unsigned long width,
         }
 
       // Init mode
-      display_screen = SDL_SetVideoMode (width, height,
- 				         lbScreenModeInfo[mode].BitsPerPixel,
-				         flags);
+      lbScreenSurface = lbDrawSurface =
+          SDL_SetVideoMode (width, height,
+ 		    lbScreenModeInfo[mode].BitsPerPixel, flags);
     }
 
 
@@ -170,7 +172,7 @@ int LbScreenSetupAnyMode(unsigned short mode, unsigned long width,
           lbScreenModeInfo[mode].Desc);
 #endif
 
-  if (display_screen == NULL)
+  if (lbDrawSurface == NULL)
     {
       fprintf (stderr, "SDL_SetVideoMode: %s\n", SDL_GetError ());
       goto err;
@@ -187,7 +189,7 @@ int LbScreenSetupAnyMode(unsigned short mode, unsigned long width,
   else
     {
       // Set the good buffer
-      lbDisplay.PhysicalScreen = display_screen->pixels;
+      lbDisplay.PhysicalScreen = to_SDLSurf(lbDrawSurface)->pixels;
     }
 
   // Setup some global variables
@@ -219,11 +221,11 @@ int LbScreenSetupAnyMode(unsigned short mode, unsigned long width,
   return 1;
 
 err:
-  if (display_screen != NULL)
+  if (lbDrawSurface != NULL)
     {
       unlock_screen ();
-      SDL_FreeSurface (display_screen);
-      display_screen = NULL;
+      SDL_FreeSurface (to_SDLSurf(lbDrawSurface));
+      lbDrawSurface = NULL;
     }
 
   if (display_stretch_buffer)
@@ -246,7 +248,7 @@ display_update_mouse_pointer (void)
   x = MAX (0, mbuffer__X);
   y = MAX (0, mbuffer__Y);
 
-  SDL_UpdateRect (display_screen, x, y,
+  SDL_UpdateRect (to_SDLSurf(lbDrawSurface), x, y,
 		  mbuffer__Width, mbuffer__Height);
 }
 
@@ -258,7 +260,7 @@ display_update (void)
     {
       // Stretch lowres
       int i, j;
-      unsigned char *poutput = (unsigned char*) display_screen->pixels;
+      unsigned char *poutput = (unsigned char*) to_SDLSurf(lbDrawSurface)->pixels;
       unsigned char *pinput  = display_stretch_buffer;
 
       for (j = 0; j < 480; j++)
@@ -275,7 +277,7 @@ display_update (void)
         }
   }
 
-  SDL_Flip (display_screen);
+  SDL_Flip (to_SDLSurf(lbDrawSurface));
 }
 
 void
@@ -288,15 +290,15 @@ void
 display_finalise (void)
 {
   unlock_screen ();
-  SDL_FreeSurface (display_screen);
-  display_screen = NULL;
+  SDL_FreeSurface (to_SDLSurf(lbDrawSurface));
+  lbDrawSurface = NULL;
   lbDisplay.PhysicalScreen = NULL;
 }
 
 void
 display_set_full_screen (bool full_screen)
 {
-  if (display_screen != NULL)
+  if (lbDrawSurface != NULL)
     return;
 
   display_full_screen = full_screen;
@@ -326,7 +328,7 @@ display_get_size (size_t *width, size_t *height)
 void
 display_get_physical_size (size_t *width, size_t *height)
 {
-  if (lbDisplay.PhysicalScreen == NULL || display_screen == NULL)
+  if (lbDisplay.PhysicalScreen == NULL || lbDrawSurface == NULL)
     {
       if (width != NULL)
         *width  = 0;
@@ -338,10 +340,10 @@ display_get_physical_size (size_t *width, size_t *height)
     }
 
   if (width != NULL)
-    *width  = display_screen->w;
+    *width  = to_SDLSurf(lbDrawSurface)->w;
 
   if (height != NULL)
-    *height = display_screen->h;
+    *height = to_SDLSurf(lbDrawSurface)->h;
 }
 
 void *
