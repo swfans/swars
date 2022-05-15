@@ -195,6 +195,9 @@ struct DisplayStruct { // sizeof=118
     /** Currently active colour palette.
      *  LbPaletteGet() should be used to retrieve a copy of the palette. */
     ubyte *Palette; // offset=114
+#if defined(ENABLE_MOUSE_MOVE_RATIO)
+    short MouseMoveRatio;
+#endif
 };
 
 typedef struct ScreenModeInfo TbScreenModeInfo;

@@ -26,12 +26,6 @@
 #include "bfplanar.h"
 #include "bflog.h"
 
-#if 0
-volatile TbBool lbMouseInstalled = false;
-#endif
-volatile TbBool lbMouseOffline = false;
-volatile TbBool lbInteruptMouse = false;
-
 TbResult LbMousePlace_UNUSED(void)
 {
     if (!lbMouseInstalled)
@@ -204,9 +198,51 @@ TbResult LbMouseUpdatePosition_UNUSED(void)
     return Lb_SUCCESS;
 }
 
-extern "C" {
-TbMouseAction MouseButtonActionsMapping(int eventType, const SDL_MouseButtonEvent * button);
-};
+void MouseToScreen(struct TbPoint *pos)
+{
+  // Static variables for storing last mouse coordinated; needed
+  // because lbDisplay.MMouseX/MMouseY coords are scaled
+  static long mx = 0;
+  static long my = 0;
+  struct TbRect clip;
+  struct TbPoint orig;
+  if ( lbMouseAutoReset )
+  {
+      if (!pointerHandler.GetMouseWindow(&clip))
+          return;
+      orig.x = pos->x;
+      orig.y = pos->y;
+#if defined(ENABLE_MOUSE_MOVE_RATIO)
+      pos->x = ((pos->x - mx) * (long)lbDisplay.MouseMoveRatio)/256;
+      pos->y = ((pos->y - my) * (long)lbDisplay.MouseMoveRatio)/256;
+#else
+      pos->x = (pos->x - mx);
+      pos->y = (pos->y - my);
+#endif
+      mx = orig.x;
+      my = orig.y;
+      if ((mx < clip.left + 50) || (mx > clip.right - 50)
+       || (my < clip.top + 50) || (my > clip.bottom - 50))
+      {
+          mx = (clip.right-clip.left)/2 + clip.left;
+          my = (clip.bottom-clip.top)/2 + clip.top;
+          SDL_WarpMouse(mx, my);
+      }
+  } else
+  {
+      orig.x = pos->x;
+      orig.y = pos->y;
+#if defined(ENABLE_MOUSE_MOVE_RATIO)
+      pos->x = ((pos->x - mx) * (long)lbDisplay.MouseMoveRatio)/256;
+      pos->y = ((pos->y - my) * (long)lbDisplay.MouseMoveRatio)/256;
+#else
+      pos->x = (pos->x - mx);
+      pos->y = (pos->y - my);
+#endif
+      mx = orig.x;
+      my = orig.y;
+  }
+}
 
 /**
  * Converts an SDL mouse button event and button state to platform-independent action.
@@ -214,7 +250,7 @@ TbMouseAction MouseButtonActionsMapping(int eventType, const SDL_MouseButtonEven
  * @param button SDL button definition.
  * @return
  */
-TbMouseAction MouseButtonActionsMapping(int eventType, const SDL_MouseButtonEvent * button)
+static TbMouseAction MouseButtonActionsMapping(int eventType, const SDL_MouseButtonEvent * button)
 {
     if (eventType == SDL_MOUSEBUTTONDOWN) {
         switch (button->button)  {
@@ -246,7 +282,7 @@ TbResult MEvent(const SDL_Event *ev);
  * Triggers mouse control function for given SDL mouse event.
  * @return SUCCESS if the event was processed, FAIL if key isn't supported, OK if no mouse event.
  */
-TbResult MEvent_UNUSED(const SDL_Event *ev)
+TbResult MEvent(const SDL_Event *ev)
 {
     TbMouseAction action;
     struct TbPoint pos;

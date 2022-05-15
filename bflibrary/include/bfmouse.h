@@ -44,11 +44,13 @@ enum MouseAction {
 
 typedef ubyte TbMouseAction;
 
+typedef void *TbMouseToScreen(struct TbPoint *);
 
 extern volatile TbBool lbMouseInstalled;
 extern volatile TbBool lbMouseOffline;
 extern volatile TbBool lbInteruptMouse;
-
+extern volatile TbBool lbMouseAutoReset;
+extern volatile TbMouseToScreen *lbMouseToScreen;
 
 TbResult LbMousePlace(void);
 TbResult LbMouseRemove(void);
@@ -78,6 +80,16 @@ TbResult LbMouseSuspend(void);
 TbResult LbMouseSetWindow(long x, long y, long width, long height);
 TbResult LbMouseSetPosition(long x, long y);
 TbResult LbMouseUpdatePosition(void);
+
+/** Default callback for converting raw mouse coords into screen coords.
+ *
+ *  Computes shift in mouse position, and uses it with internal move ration
+ *  to determine relative shift expected on screen. Then replaces the given
+ *  pos with one pointed by that shift.
+ *
+ * @param pos The source 2D point, and where result is placed.
+ */
+void MouseToScreen(struct TbPoint *pos);
 
 /** Platform-independent mouse control handler.
  *

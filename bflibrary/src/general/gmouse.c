@@ -22,6 +22,14 @@
 #include "bfscreen.h"
 #include "bfplanar.h"
 
+#if 0
+volatile TbBool lbMouseInstalled = false;
+#endif
+volatile TbBool lbMouseOffline = false;
+volatile TbBool lbInteruptMouse = false;
+volatile TbBool lbMouseAutoReset = true;
+volatile TbMouseToScreen *lbMouseToScreen = MouseToScreen;
+
 TbResult mouseControl_UNUSED(TbMouseAction action, struct TbPoint *pos)
 {
     struct TbPoint dstPos;
@@ -34,14 +42,14 @@ TbResult mouseControl_UNUSED(TbMouseAction action, struct TbPoint *pos)
     switch (action)
     {
     case MActn_MOUSEMOVE:
-        MouseToScreen(&dstPos);
+        lbMouseToScreen(&dstPos);
         LbMouseOnMove(dstPos);
         break;
     case MActn_LBUTTONDOWN:
         lbDisplay.MLeftButton = 1;
         if ( !lbDisplay.LeftButton )
         {
-            MouseToScreen(&dstPos);
+            lbMouseToScreen(&dstPos);
             LbMouseOnMove(dstPos);
             lbDisplay.MouseX = lbDisplay.MMouseX;
             lbDisplay.MouseY = lbDisplay.MMouseY;
@@ -53,7 +61,7 @@ TbResult mouseControl_UNUSED(TbMouseAction action, struct TbPoint *pos)
         lbDisplay.MLeftButton = 0;
         if ( !lbDisplay.RLeftButton )
         {
-            MouseToScreen(&dstPos);
+            lbMouseToScreen(&dstPos);
             LbMouseOnMove(dstPos);
             lbDisplay.RMouseX = lbDisplay.MMouseX;
             lbDisplay.RMouseY = lbDisplay.MMouseY;
@@ -64,7 +72,7 @@ TbResult mouseControl_UNUSED(TbMouseAction action, struct TbPoint *pos)
         lbDisplay.MRightButton = 1;
         if ( !lbDisplay.RightButton )
         {
-            MouseToScreen(&dstPos);
+            lbMouseToScreen(&dstPos);
             LbMouseOnMove(dstPos);
             lbDisplay.MouseX = lbDisplay.MMouseX;
             lbDisplay.MouseY = lbDisplay.MMouseY;
@@ -76,7 +84,7 @@ TbResult mouseControl_UNUSED(TbMouseAction action, struct TbPoint *pos)
         lbDisplay.MRightButton = 0;
         if ( !lbDisplay.RRightButton )
         {
-            MouseToScreen(&dstPos);
+            lbMouseToScreen(&dstPos);
             LbMouseOnMove(dstPos);
             lbDisplay.RMouseX = lbDisplay.MMouseX;
             lbDisplay.RMouseY = lbDisplay.MMouseY;
@@ -87,7 +95,7 @@ TbResult mouseControl_UNUSED(TbMouseAction action, struct TbPoint *pos)
         lbDisplay.MMiddleButton = 1;
         if ( !lbDisplay.MiddleButton )
         {
-            MouseToScreen(&dstPos);
+            lbMouseToScreen(&dstPos);
             LbMouseOnMove(dstPos);
             lbDisplay.MouseX = lbDisplay.MMouseX;
             lbDisplay.MouseY = lbDisplay.MMouseY;
@@ -99,7 +107,7 @@ TbResult mouseControl_UNUSED(TbMouseAction action, struct TbPoint *pos)
         lbDisplay.MMiddleButton = 0;
         if ( !lbDisplay.RMiddleButton )
         {
-            MouseToScreen(&dstPos);
+            lbMouseToScreen(&dstPos);
             LbMouseOnMove(dstPos);
             lbDisplay.RMouseX = lbDisplay.MMouseX;
             lbDisplay.RMouseY = lbDisplay.MMouseY;
