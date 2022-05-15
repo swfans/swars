@@ -27,6 +27,28 @@ extern "C" {
 #endif
 
 struct TbSprite;
+struct TbPoint;
+
+enum MouseAction {
+    MActn_NONE = 0,
+    MActn_MOUSEMOVE,
+    MActn_LBUTTONDOWN,
+    MActn_LBUTTONUP,
+    MActn_RBUTTONDOWN,
+    MActn_RBUTTONUP,
+    MActn_MBUTTONDOWN,
+    MActn_MBUTTONUP,
+    MActn_WHEELMOVEUP,
+    MActn_WHEELMOVEDOWN,
+};
+
+typedef ubyte TbMouseAction;
+
+
+extern volatile TbBool lbMouseInstalled;
+extern volatile TbBool lbMouseOffline;
+extern volatile TbBool lbInteruptMouse;
+
 
 TbResult LbMousePlace(void);
 TbResult LbMouseRemove(void);
@@ -57,9 +79,12 @@ TbResult LbMouseSetWindow(long x, long y, long width, long height);
 TbResult LbMouseSetPosition(long x, long y);
 TbResult LbMouseUpdatePosition(void);
 
-extern volatile TbBool lbMouseInstalled;
-extern volatile TbBool lbMouseOffline;
-extern volatile TbBool lbInteruptMouse;
+/** Platform-independent mouse control handler.
+ *
+ *  Can be used to react on mouse changes, when called within
+ *  platform-dependent handler.
+ */
+TbResult mouseControl(TbMouseAction action, struct TbPoint *pos);
 
 #ifdef __cplusplus
 };

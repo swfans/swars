@@ -21,6 +21,7 @@ libbullfrog_a_SOURCES = \
   src/general/gline.cpp \
   src/general/glog.cpp \
   src/general/gmemut.c \
+  src/general/gmouse.c \
   src/general/gpalette.c \
   src/general/gplanar.c \
   src/general/gpng.c \

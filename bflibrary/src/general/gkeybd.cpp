@@ -124,8 +124,138 @@ TbBool LbKeyCodeValid(TbKeyCode key)
     return true;
 }
 
+/** @internal
+ * Checks if a key is prefixed.
+ * Prefixed keys have bit 0x80 set in the code; but we can
+ * also check specific key codes, to allow more control.
+ */
+static TbBool KeyboardKeyPrefixed(TbKeyCode code)
+{
+  switch (code)
+    {
+    case KC_RALT:
+    case KC_RCONTROL:
+    case KC_NUMPADENTER:
+    case KC_DIVIDE:
+    case KC_HOME:
+    case KC_UP:
+    case KC_PGUP:
+    case KC_LEFT:
+    case KC_RIGHT:
+    case KC_END:
+    case KC_DOWN:
+    case KC_PGDOWN:
+    case KC_INSERT:
+    case KC_DELETE:
+      return true;
+
+    default:
+      return false;
+    }
+}
+
+/** @internal
+ *  Check for undetected/incorrectly maintained modifiers.
+ */
+static inline TbResult KEventModsCheck(TbKeyAction action, TbKeyMods modifiers)
+{
+    if (modifiers == KMod_DONTCARE)
+        return Lb_OK;
+    // If modifiers were supplied, make sure they are correctly set in lbKeyOn[]
+    if (modifiers & KMod_SHIFT)
+    {
+        if (!lbKeyOn[KC_RSHIFT] && !lbKeyOn[KC_LSHIFT])
+            lbKeyOn[KC_LSHIFT] = 1;
+    } else
+    {
+        lbKeyOn[KC_LSHIFT] = 0;
+        lbKeyOn[KC_RSHIFT] = 0;
+    }
+    if (modifiers & KMod_CONTROL)
+    {
+        if (!lbKeyOn[KC_RCONTROL] && !lbKeyOn[KC_LCONTROL])
+            lbKeyOn[KC_LCONTROL] = 1;
+    } else
+    {
+        lbKeyOn[KC_LCONTROL] = 0;
+        lbKeyOn[KC_RCONTROL] = 0;
+    }
+    if (modifiers & KMod_ALT)
+    {
+        if (!lbKeyOn[KC_RALT] && !lbKeyOn[KC_LALT])
+            lbKeyOn[KC_LALT] = 1;
+    } else
+    {
+        lbKeyOn[KC_LALT] = 0;
+        lbKeyOn[KC_RALT] = 0;
+    }
+    return Lb_SUCCESS;
+}
+
+/** @internal
+ * Update modifiers flags based on previously set lbKeyOn[] array.
+ */
+static inline TbResult KEventModsUpdate(TbKeyAction action, TbKeyCode code)
+{
+    lbInkeyFlags = 0;
+    if (lbKeyOn[KC_LSHIFT] || lbKeyOn[KC_RSHIFT])
+        lbInkeyFlags |= KMod_SHIFT;
+    if (lbKeyOn[KC_LCONTROL] || lbKeyOn[KC_RCONTROL])
+        lbInkeyFlags |= KMod_CONTROL;
+    if (lbKeyOn[KC_LALT] || lbKeyOn[KC_RALT])
+        lbInkeyFlags |= KMod_ALT;
+    if (lbKeyOn[code] != 0)
+        lbKeyOn[code] |= lbInkeyFlags;
+    return Lb_OK;
+}
+
+/** @internal
+ * Update IInkey values based on previously set lbInkey.
+ */
+static inline TbResult KEventIInkeyUpdate(TbKeyAction action, TbKeyCode code)
+{
+    if (lbInkey < 0x80)
+    {
+        if (lbIInkey == 0)
+        {
+            lbIInkey = lbInkey;
+            lbIInkeyFlags = lbInkeyFlags;
+        }
+    }
+    return Lb_OK;
+}
+
 void LbKeyboardCustomHandler(KeyboardEventHandler handler)
 {
     lbKEventCustomHandler = handler;
+}
+
+TbResult keyboardControl(TbKeyAction action, TbKeyCode code, TbKeyMods modifiers)
+{
+    switch (action)
+    {
+    case KActn_KEYDOWN:
+        lbKeyOn[code] = 1;
+        lbInkey_prefixed = KeyboardKeyPrefixed(code);
+        lbInkey = code;
+        KEventModsCheck(action, modifiers);
+        KEventModsUpdate(action, code);
+        KEventIInkeyUpdate(action, code);
+        if (lbKEventCustomHandler != NULL)
+            lbKEventCustomHandler(action, code);
+        break;
+    case KActn_KEYUP:
+        lbKeyOn[code] = 0;
+        lbExtendedKeyPress = 0;
+        KEventModsCheck(action, modifiers);
+        KEventModsUpdate(action, code);
+        KEventIInkeyUpdate(action, code);
+        if (lbKEventCustomHandler != NULL)
+            lbKEventCustomHandler(action, code);
+        break;
+    default:
+        return Lb_OK;
+    }
+    return Lb_SUCCESS;
 }
 /******************************************************************************/

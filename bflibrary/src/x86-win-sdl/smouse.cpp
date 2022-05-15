@@ -18,10 +18,12 @@
  */
 /******************************************************************************/
 #include <stdbool.h>
+#include <SDL/SDL.h>
 #include "bfmouse.h"
 
 #include "mshandler.hpp"
 #include "bfscreen.h"
+#include "bfplanar.h"
 #include "bflog.h"
 
 #if 0
@@ -201,4 +203,73 @@ TbResult LbMouseUpdatePosition_UNUSED(void)
     }*/
     return Lb_SUCCESS;
 }
+
+extern "C" {
+TbMouseAction MouseButtonActionsMapping(int eventType, const SDL_MouseButtonEvent * button);
+};
+
+/**
+ * Converts an SDL mouse button event and button state to platform-independent action.
+ * @param eventType SDL event type.
+ * @param button SDL button definition.
+ * @return
+ */
+TbMouseAction MouseButtonActionsMapping(int eventType, const SDL_MouseButtonEvent * button)
+{
+    if (eventType == SDL_MOUSEBUTTONDOWN) {
+        switch (button->button)  {
+        case SDL_BUTTON_LEFT: return MActn_LBUTTONDOWN;
+        case SDL_BUTTON_MIDDLE: return MActn_MBUTTONDOWN;
+        case SDL_BUTTON_RIGHT: return MActn_RBUTTONDOWN;
+        case SDL_BUTTON_WHEELUP: return MActn_WHEELMOVEUP;
+        case SDL_BUTTON_WHEELDOWN: return MActn_WHEELMOVEDOWN;
+        }
+    }
+    else if (eventType == SDL_MOUSEBUTTONUP) {
+        switch (button->button) {
+        case SDL_BUTTON_LEFT: return MActn_LBUTTONUP;
+        case SDL_BUTTON_MIDDLE: return MActn_MBUTTONUP;
+        case SDL_BUTTON_RIGHT: return MActn_RBUTTONUP;
+        case SDL_BUTTON_WHEELUP: return MActn_NONE;
+        case SDL_BUTTON_WHEELDOWN: return MActn_NONE;
+        }
+    }
+    LIBLOG("Unidentified event, type %d button %d", (int)eventType, (int)button->button);
+    return MActn_NONE;
+}
+
+extern "C" {
+TbResult MEvent(const SDL_Event *ev);
+};
+
+/** @internal
+ * Triggers mouse control function for given SDL mouse event.
+ * @return SUCCESS if the event was processed, FAIL if key isn't supported, OK if no mouse event.
+ */
+TbResult MEvent_UNUSED(const SDL_Event *ev)
+{
+    TbMouseAction action;
+    struct TbPoint pos;
+    TbResult ret;
+
+    switch (ev->type)
+    {
+    case SDL_MOUSEMOTION:
+        action = MActn_MOUSEMOVE;
+        pos.x = ev->motion.x;
+        pos.y = ev->motion.y;
+        ret = mouseControl(action, &pos);
+        return ret;
+
+    case SDL_MOUSEBUTTONUP:
+    case SDL_MOUSEBUTTONDOWN:
+        action = MouseButtonActionsMapping(ev->type, &ev->button);
+        pos.x = ev->button.x;
+        pos.y = ev->button.y;
+        ret = mouseControl(action, &pos);
+        return ret;
+    }
+    return Lb_OK;
+}
+
 /******************************************************************************/

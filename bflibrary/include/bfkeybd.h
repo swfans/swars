@@ -218,12 +218,42 @@ void LbKeyboardCustomHandler(KeyboardEventHandler handler);
 TbBool LbKeyCodeValid(TbKeyCode key);
 
 
+/** Initialise query based keyboard support.
+ *
+ *  This initializes the keyboard support in which query function needs
+ *  to be called periodically (typically once every game loop) in order
+ *  to receive updates to keyboard state.
+ */
 TbResult LbKeyboardOpen(void);
+
+/** Shutdown query based keyboard support.
+ */
 TbResult LbKeyboardClose(void);
 
+/** Keyboard state query function.
+ */
 char LbKeyboard(void);
+
+/** Initialise interrupt/even based keyboard support.
+ *
+ *  This initializes the keyboard support in which a callback is triggered
+ *  by the OS when a change happened to the keyboard state.
+ */
 TbResult LbIKeyboardOpen(void);
+
+/** Shutdown interrupt/even based keyboard support.
+ */
 TbResult LbIKeyboardClose(void);
+
+/* KInt()/KEvent() function used to read keyboard events is defined
+ * internally, in platform-dependent manner. */
+
+/** Platform-independent keyboard control handler.
+ *
+ *  Can be used to react on keyboard changes for both interrupts/events
+ *  and querying state.
+ */
+TbResult keyboardControl(TbKeyAction action, TbKeyCode code, TbKeyMods modifiers);
 
 #ifdef __cplusplus
 };

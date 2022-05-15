@@ -1,0 +1,129 @@
+/******************************************************************************/
+// Bullfrog Engine Emulation Library - for use to remake classic games like
+// Syndicate Wars, Magic Carpet, Genewars or Dungeon Keeper.
+/******************************************************************************/
+/** @file gmouse.c
+ *     Platform-independent part of mouse handling routines.
+ * @par Purpose:
+ *     Unknown.
+ * @par Comment:
+ *     None.
+ * @author   Tomasz Lis
+ * @date     12 Nov 2008 - 05 Nov 2021
+ * @par  Copying and copyrights:
+ *     This program is free software; you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation; either version 2 of the License, or
+ *     (at your option) any later version.
+ */
+/******************************************************************************/
+#include "bfmouse.h"
+
+#include "bfscreen.h"
+#include "bfplanar.h"
+
+TbResult mouseControl_UNUSED(TbMouseAction action, struct TbPoint *pos)
+{
+    struct TbPoint dstPos;
+
+    if (!lbMouseInstalled)
+        return Lb_OK;
+    dstPos.x = pos->x;
+    dstPos.y = pos->y;
+
+    switch (action)
+    {
+    case MActn_MOUSEMOVE:
+        MouseToScreen(&dstPos);
+        LbMouseOnMove(dstPos);
+        break;
+    case MActn_LBUTTONDOWN:
+        lbDisplay.MLeftButton = 1;
+        if ( !lbDisplay.LeftButton )
+        {
+            MouseToScreen(&dstPos);
+            LbMouseOnMove(dstPos);
+            lbDisplay.MouseX = lbDisplay.MMouseX;
+            lbDisplay.MouseY = lbDisplay.MMouseY;
+            lbDisplay.RLeftButton = 0;
+            lbDisplay.LeftButton = 1;
+        }
+        break;
+    case MActn_LBUTTONUP:
+        lbDisplay.MLeftButton = 0;
+        if ( !lbDisplay.RLeftButton )
+        {
+            MouseToScreen(&dstPos);
+            LbMouseOnMove(dstPos);
+            lbDisplay.RMouseX = lbDisplay.MMouseX;
+            lbDisplay.RMouseY = lbDisplay.MMouseY;
+            lbDisplay.RLeftButton = 1;
+        }
+        break;
+    case MActn_RBUTTONDOWN:
+        lbDisplay.MRightButton = 1;
+        if ( !lbDisplay.RightButton )
+        {
+            MouseToScreen(&dstPos);
+            LbMouseOnMove(dstPos);
+            lbDisplay.MouseX = lbDisplay.MMouseX;
+            lbDisplay.MouseY = lbDisplay.MMouseY;
+            lbDisplay.RRightButton = 0;
+            lbDisplay.RightButton = 1;
+        }
+        break;
+    case MActn_RBUTTONUP:
+        lbDisplay.MRightButton = 0;
+        if ( !lbDisplay.RRightButton )
+        {
+            MouseToScreen(&dstPos);
+            LbMouseOnMove(dstPos);
+            lbDisplay.RMouseX = lbDisplay.MMouseX;
+            lbDisplay.RMouseY = lbDisplay.MMouseY;
+            lbDisplay.RRightButton = 1;
+        }
+        break;
+    case MActn_MBUTTONDOWN:
+        lbDisplay.MMiddleButton = 1;
+        if ( !lbDisplay.MiddleButton )
+        {
+            MouseToScreen(&dstPos);
+            LbMouseOnMove(dstPos);
+            lbDisplay.MouseX = lbDisplay.MMouseX;
+            lbDisplay.MouseY = lbDisplay.MMouseY;
+            lbDisplay.MiddleButton = 1;
+            lbDisplay.RMiddleButton = 0;
+        }
+        break;
+    case MActn_MBUTTONUP:
+        lbDisplay.MMiddleButton = 0;
+        if ( !lbDisplay.RMiddleButton )
+        {
+            MouseToScreen(&dstPos);
+            LbMouseOnMove(dstPos);
+            lbDisplay.RMouseX = lbDisplay.MMouseX;
+            lbDisplay.RMouseY = lbDisplay.MMouseY;
+            lbDisplay.RMiddleButton = 1;
+        }
+        break;
+    case MActn_WHEELMOVEUP:
+#if 0
+        lbDisplay.WhellPosition--;
+        lbDisplay.WhellMoveUp++;
+        lbDisplay.WhellMoveDown = 0;
+#endif
+        break;
+    case MActn_WHEELMOVEDOWN:
+#if 0
+        lbDisplay.WhellPosition++;
+        lbDisplay.WhellMoveUp = 0;
+        lbDisplay.WhellMoveDown++;
+#endif
+        break;
+    default:
+        return Lb_OK;
+    }
+    return Lb_SUCCESS;
+}
+
+/******************************************************************************/
