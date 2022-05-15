@@ -2,8 +2,9 @@
 #define MOUSE_H
 
 #include <SDL.h>
+#include "bftypes.h"
 
 void mouse_initialise (void);
-void mouse_handle_event (const SDL_Event *ev);
+TbResult MEvent(const SDL_Event *ev);
 
 #endif

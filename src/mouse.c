@@ -7,12 +7,6 @@
 #include "bfmouse.h"
 #include "display.h"
 
-#pragma pack(1)
-
-extern long	mouse_x_delta;
-extern long	mouse_y_delta;
-
-#pragma pack()
 
 static void
 transform_mouse (long *x, long *y)
@@ -38,7 +32,7 @@ transform_mouse (long *x, long *y)
   *y = ((*y) * (ssize_t) (disp_y + 1)) / (ssize_t) phys_y;
 }
 
-void
+TbResult
 mouseControl(TbMouseAction action, struct TbPoint *pos)
 {
     if (action == MActn_MOUSEMOVE)
@@ -129,37 +123,7 @@ mouseControl(TbMouseAction action, struct TbPoint *pos)
           transform_mouse (&lbDisplay.RMouseX, &lbDisplay.RMouseY);
 	    }
 	}
-}
-
-void MEvent(const SDL_Event *ev)
-{
-  if (!lbMouseInstalled)
-    return;
-
-    TbMouseAction action;
-    struct TbPoint pos;
-    TbResult ret;
-
-    switch (ev->type)
-    {
-    case SDL_MOUSEMOTION:
-        action = MActn_MOUSEMOVE;
-        pos.x = ev->motion.x;
-        pos.y = ev->motion.y;
-        mouseControl(action, &pos);
-        ret = Lb_SUCCESS;
-        return ret;
-
-    case SDL_MOUSEBUTTONUP:
-    case SDL_MOUSEBUTTONDOWN:
-        action = MouseButtonActionsMapping(ev->type, &ev->button);
-        pos.x = ev->button.x;
-        pos.y = ev->button.y;
-        mouseControl(action, &pos);
-        ret = Lb_SUCCESS;
-        return ret;
-    }
-    return;
+    return Lb_OK;
 }
 
 void
