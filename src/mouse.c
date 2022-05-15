@@ -3,6 +3,7 @@
 
 #include "mouse.h"
 #include "bfscreen.h"
+#include "bfplanar.h"
 #include "bfmouse.h"
 #include "display.h"
 
@@ -37,29 +38,22 @@ transform_mouse (long *x, long *y)
   *y = ((*y) * (ssize_t) (disp_y + 1)) / (ssize_t) phys_y;
 }
 
-static void
-store_button_coordinates (const SDL_MouseButtonEvent *ev)
+void
+mouseControl(TbMouseAction action, struct TbPoint *pos)
 {
-  if (ev->type == SDL_MOUSEBUTTONDOWN)
-    {
-      lbDisplay.MouseX = ev->x;
-      lbDisplay.MouseY = ev->y;
-      transform_mouse (&lbDisplay.MouseX, &lbDisplay.MouseY);
-    }
-  else
-    {
-      lbDisplay.RMouseX = ev->x;
-      lbDisplay.RMouseY = ev->y;
-      transform_mouse (&lbDisplay.RMouseX, &lbDisplay.RMouseY);
-    }
-}
+    if (action == MActn_MOUSEMOVE)
+	{
+      lbDisplay.MMouseX = pos->x;
+      lbDisplay.MMouseY = pos->y;
+      transform_mouse (&lbDisplay.MMouseX, &lbDisplay.MMouseY);
 
-static void
-handle_button_event (const SDL_MouseButtonEvent *ev)
-{
-  if (ev->type == SDL_MOUSEBUTTONDOWN)
-    {
-      if (ev->button == SDL_BUTTON_LEFT)
+      asm volatile
+        ("call adjust_point;"
+         "call screen_remove;"
+         "call screen_place"
+         : : "a" (&lbDisplay.MMouseX), "d" (&lbDisplay.MMouseY));
+	} else
+      if (action == MActn_LBUTTONDOWN)
 	{
 	  lbDisplay.MLeftButton = true;
 
@@ -67,10 +61,12 @@ handle_button_event (const SDL_MouseButtonEvent *ev)
 	    {
 	      lbDisplay.LeftButton = true;
 	      lbDisplay.RLeftButton = false;
-	      store_button_coordinates (ev);
+          lbDisplay.MouseX = pos->x;
+          lbDisplay.MouseY = pos->y;
+          transform_mouse (&lbDisplay.MouseX, &lbDisplay.MouseY);
 	    }
 	}
-      else if (ev->button == SDL_BUTTON_MIDDLE)
+      else if (action == MActn_MBUTTONDOWN)
 	{
 	  lbDisplay.MMiddleButton = true;
 
@@ -78,10 +74,12 @@ handle_button_event (const SDL_MouseButtonEvent *ev)
 	    {
 	      lbDisplay.MiddleButton = true;
 	      lbDisplay.RMiddleButton = false;
-	      store_button_coordinates (ev);
+          lbDisplay.MouseX = pos->x;
+          lbDisplay.MouseY = pos->y;
+          transform_mouse (&lbDisplay.MouseX, &lbDisplay.MouseY);
 	    }
 	}
-      else if (ev->button == SDL_BUTTON_RIGHT)
+      else if (action == MActn_RBUTTONDOWN)
 	{
 	  lbDisplay.MRightButton = true;
 
@@ -89,80 +87,79 @@ handle_button_event (const SDL_MouseButtonEvent *ev)
 	    {
 	      lbDisplay.RightButton = true;
 	      lbDisplay.RRightButton = false;
-	      store_button_coordinates (ev);
+          lbDisplay.MouseX = pos->x;
+          lbDisplay.MouseY = pos->y;
+          transform_mouse (&lbDisplay.MouseX, &lbDisplay.MouseY);
 	    }
-	}
-    }
-  else
-    {
-      if (ev->button == SDL_BUTTON_LEFT)
+	} else
+
+      if (action == MActn_LBUTTONUP)
 	{
 	  lbDisplay.MLeftButton = false;
 
 	  if (!lbDisplay.RLeftButton)
 	    {
 	      lbDisplay.RLeftButton = true;
-	      store_button_coordinates (ev);
+          lbDisplay.RMouseX = pos->x;
+          lbDisplay.RMouseY = pos->y;
+          transform_mouse (&lbDisplay.RMouseX, &lbDisplay.RMouseY);
 	    }
 	}
-      else if (ev->button == SDL_BUTTON_MIDDLE)
+      else if (action == MActn_MBUTTONUP)
 	{
 	  lbDisplay.MMiddleButton = false;
 
 	  if (!lbDisplay.RMiddleButton)
 	    {
 	      lbDisplay.RMiddleButton = true;
-	      store_button_coordinates (ev);
+          lbDisplay.RMouseX = pos->x;
+          lbDisplay.RMouseY = pos->y;
+          transform_mouse (&lbDisplay.RMouseX, &lbDisplay.RMouseY);
 	    }
 	}
-      else if (ev->button == SDL_BUTTON_RIGHT)
+      else if (action == MActn_RBUTTONUP)
 	{
 	  lbDisplay.MRightButton = false;
 
 	  if (!lbDisplay.RRightButton)
 	    {
 	      lbDisplay.RRightButton = true;
-	      store_button_coordinates (ev);
+          lbDisplay.RMouseX = pos->x;
+          lbDisplay.RMouseY = pos->y;
+          transform_mouse (&lbDisplay.RMouseX, &lbDisplay.RMouseY);
 	    }
 	}
-    }
 }
 
-static void
-handle_motion_event (const SDL_MouseMotionEvent *ev)
-{
-  mouse_x_delta = ev->xrel;
-  mouse_y_delta = ev->yrel;
-  lbDisplay.MMouseX = ev->x;
-  lbDisplay.MMouseY = ev->y;
-  transform_mouse (&lbDisplay.MMouseX, &lbDisplay.MMouseY);
-  transform_mouse (&mouse_x_delta, &mouse_y_delta);
-
-  asm volatile
-    ("call adjust_point;"
-     "call screen_remove;"
-     "call screen_place"
-     : : "a" (&lbDisplay.MMouseX), "d" (&lbDisplay.MMouseY));
-
-}
-
-void
-mouse_handle_event (const SDL_Event *ev)
+void MEvent(const SDL_Event *ev)
 {
   if (!lbMouseInstalled)
     return;
 
-  switch (ev->type)
+    TbMouseAction action;
+    struct TbPoint pos;
+    TbResult ret;
+
+    switch (ev->type)
     {
     case SDL_MOUSEMOTION:
-      handle_motion_event (&ev->motion);
-      break;
+        action = MActn_MOUSEMOVE;
+        pos.x = ev->motion.x;
+        pos.y = ev->motion.y;
+        mouseControl(action, &pos);
+        ret = Lb_SUCCESS;
+        return ret;
 
     case SDL_MOUSEBUTTONUP:
     case SDL_MOUSEBUTTONDOWN:
-      handle_button_event (&ev->button);
-      break;
+        action = MouseButtonActionsMapping(ev->type, &ev->button);
+        pos.x = ev->button.x;
+        pos.y = ev->button.y;
+        mouseControl(action, &pos);
+        ret = Lb_SUCCESS;
+        return ret;
     }
+    return;
 }
 
 void

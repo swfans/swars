@@ -174,7 +174,7 @@ game_handle_sdl_events (void)
         case SDL_MOUSEMOTION:
         case SDL_MOUSEBUTTONUP:
         case SDL_MOUSEBUTTONDOWN:
-            mouse_handle_event(&ev);
+            MEvent(&ev);
             break;
 
         case SDL_KEYUP:
