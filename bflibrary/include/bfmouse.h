@@ -44,7 +44,7 @@ enum MouseAction {
 
 typedef ubyte TbMouseAction;
 
-typedef void *TbMouseToScreen(struct TbPoint *);
+typedef void TbMouseToScreen(struct TbPoint *);
 
 extern volatile TbBool lbMouseInstalled;
 extern volatile TbBool lbMouseOffline;
