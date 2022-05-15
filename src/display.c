@@ -32,22 +32,20 @@ static SDL_Color    display_palette[256];
 
 TbResult LbScreenSetGraphicsWindow(ulong x, ulong y, ulong width, ulong height)
 {
+  TbResult ret;
   asm volatile
-    ("push %%ebx;"
-     "mov  %2,%%ebx;"
-     "call ASM_LbScreenSetGraphicsWindow;"
-     "pop  %%ebx"
-     : : "a" (x), "d" (y), "g" (width), "c" (height));
+    ("call ASM_LbScreenSetGraphicsWindow"
+     : "=r" (ret) : "a" (x), "d" (y), "b" (width), "c" (height));
+  return ret;
 }
 
 TbResult LbTextSetWindow(ulong x, ulong y, ulong width, ulong height)
 {
+  TbResult ret;
   asm volatile
-    ("push %%ebx;"
-     "mov  %2,%%ebx;"
-     "call ASM_LbTextSetWindow;"
-     "pop  %%ebx"
-     : : "a" (x), "d" (y), "g" (width), "c" (height));
+    ("call ASM_LbTextSetWindow"
+     : "=r" (ret) : "a" (x), "d" (y), "b" (width), "c" (height));
+  return ret;
 }
 
 static inline void
