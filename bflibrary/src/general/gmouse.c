@@ -22,13 +22,16 @@
 #include "bfscreen.h"
 #include "bfplanar.h"
 
+TbResult LbMouseOnMove(struct TbPoint pos);
+
 #if 0
 volatile TbBool lbMouseInstalled = false;
 #endif
 volatile TbBool lbMouseOffline = false;
 volatile TbBool lbInteruptMouse = false;
 volatile TbBool lbMouseAutoReset = true;
-volatile TbMouseToScreen *lbMouseToScreen = MouseToScreen;
+volatile TbMouseToScreen lbMouseToScreen = &MouseToScreen;
+
 
 TbResult mouseControl_UNUSED(TbMouseAction action, struct TbPoint *pos)
 {

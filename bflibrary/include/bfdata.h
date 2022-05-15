@@ -30,7 +30,7 @@ extern "C" {
 
 typedef struct TbLoadFiles TbLoadFiles;
 
-typedef char *ModifyDataLoadFnameFunc(TbLoadFiles *);
+typedef char *(*ModifyDataLoadFnameFunc)(TbLoadFiles *);
 
 struct TbLoadFiles { // sizeof=44
     char FName[28]; // offset=0
@@ -44,7 +44,7 @@ struct TbLoadFiles { // sizeof=44
 #pragma pack()
 
 char *defaultModifyDataLoadFilename(TbLoadFiles *ldfiles);
-ModifyDataLoadFnameFunc *LbDataLoadSetModifyFilenameFunction(ModifyDataLoadFnameFunc *newfunc);
+ModifyDataLoadFnameFunc LbDataLoadSetModifyFilenameFunction(ModifyDataLoadFnameFunc newfunc);
 
 
 short LbDataFree(TbLoadFiles *load_file);

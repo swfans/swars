@@ -24,7 +24,7 @@
 #include "bflog.h"
 
 
-ModifyDataLoadFnameFunc *modify_data_load_filename_function = &defaultModifyDataLoadFilename;
+ModifyDataLoadFnameFunc modify_data_load_filename_function = &defaultModifyDataLoadFilename;
 
 
 short LbDataFree(struct TbLoadFiles *load_file)
@@ -64,11 +64,11 @@ short LbDataFreeAll(struct TbLoadFiles load_files[])
 short LbDataLoad(struct TbLoadFiles *load_file)
 {
     LbMemorySetup();
-    MemAllocFunc *alloc_func;
+    MemAllocFunc alloc_func;
     if (load_file->Flags & 0x0001)
-      alloc_func = LbMemoryAllocLow;
+      alloc_func = &LbMemoryAllocLow;
     else
-      alloc_func = LbMemoryAlloc;
+      alloc_func = &LbMemoryAlloc;
     LbDataFree(load_file);
     char *fname = modify_data_load_filename_function(load_file);
     if (fname[0] == '*')
@@ -129,7 +129,7 @@ short LbDataLoadAll(struct TbLoadFiles load_files[])
     return ferror;
 }
 
-ModifyDataLoadFnameFunc *LbDataLoadSetModifyFilenameFunction(ModifyDataLoadFnameFunc *newfunc)
+ModifyDataLoadFnameFunc LbDataLoadSetModifyFilenameFunction(ModifyDataLoadFnameFunc newfunc)
 {
     modify_data_load_filename_function = newfunc;
     return newfunc;

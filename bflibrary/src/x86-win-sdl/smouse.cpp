@@ -198,6 +198,21 @@ TbResult LbMouseUpdatePosition_UNUSED(void)
     return Lb_SUCCESS;
 }
 
+extern "C" {
+TbResult LbMouseOnMove(struct TbPoint pos);
+}
+
+TbResult LbMouseOnMove(struct TbPoint pos)
+{
+    if ((!lbMouseInstalled) || (lbMouseOffline))
+        return Lb_FAIL;
+
+    if (!pointerHandler.SetMousePosition(pos.x, pos.y))
+        return Lb_FAIL;
+
+    return Lb_SUCCESS;
+}
+
 void MouseToScreen(struct TbPoint *pos)
 {
   // Static variables for storing last mouse coordinated; needed
@@ -213,11 +228,8 @@ void MouseToScreen(struct TbPoint *pos)
       orig.x = pos->x;
       orig.y = pos->y;
 #if defined(ENABLE_MOUSE_MOVE_RATIO)
-      pos->x = ((pos->x - mx) * (long)lbDisplay.MouseMoveRatio)/256;
-      pos->y = ((pos->y - my) * (long)lbDisplay.MouseMoveRatio)/256;
-#else
-      pos->x = (pos->x - mx);
-      pos->y = (pos->y - my);
+      pos->x = mx + ((pos->x - mx) * (long)lbDisplay.MouseMoveRatio)/256;
+      pos->y = mx + ((pos->y - my) * (long)lbDisplay.MouseMoveRatio)/256;
 #endif
       mx = orig.x;
       my = orig.y;
@@ -233,11 +245,8 @@ void MouseToScreen(struct TbPoint *pos)
       orig.x = pos->x;
       orig.y = pos->y;
 #if defined(ENABLE_MOUSE_MOVE_RATIO)
-      pos->x = ((pos->x - mx) * (long)lbDisplay.MouseMoveRatio)/256;
-      pos->y = ((pos->y - my) * (long)lbDisplay.MouseMoveRatio)/256;
-#else
-      pos->x = (pos->x - mx);
-      pos->y = (pos->y - my);
+      pos->x = mx + ((pos->x - mx) * (long)lbDisplay.MouseMoveRatio)/256;
+      pos->y = mx + ((pos->y - my) * (long)lbDisplay.MouseMoveRatio)/256;
 #endif
       mx = orig.x;
       my = orig.y;

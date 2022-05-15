@@ -44,13 +44,20 @@ enum MouseAction {
 
 typedef ubyte TbMouseAction;
 
-typedef void TbMouseToScreen(struct TbPoint *);
+typedef void (*TbMouseToScreen)(struct TbPoint *);
 
 extern volatile TbBool lbMouseInstalled;
 extern volatile TbBool lbMouseOffline;
 extern volatile TbBool lbInteruptMouse;
+
+/** Auto-resets mouse position to the center of the screen.
+ * If the OS mouse travels in any direction, it will reset;
+ * advertised mouse position will be computed using shift from
+ * that central point of the screen. This allows unbounded mouse
+ * movement in-game (useful for FPP view).
+ */
 extern volatile TbBool lbMouseAutoReset;
-extern volatile TbMouseToScreen *lbMouseToScreen;
+extern volatile TbMouseToScreen lbMouseToScreen;
 
 TbResult LbMousePlace(void);
 TbResult LbMouseRemove(void);

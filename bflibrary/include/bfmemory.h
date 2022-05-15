@@ -33,7 +33,7 @@ extern "C" {
 
 /** Type for storing memory allocation routine
  */
-typedef void * MemAllocFunc(TbMemSize);
+typedef void * (*MemAllocFunc)(TbMemSize);
 
 
 /** Allocates low (below 1MB) memory block.
