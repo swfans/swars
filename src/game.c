@@ -463,7 +463,10 @@ void setup_host(void)
     else
         LbIKeyboardOpen();
     init_buffered_keys();
+    lbMouseToScreen = transform_mouse;
+    lbMouseAutoReset = false;
     LbMouseSetup(&pointer_sprites[1], 2, 2);
+
     setup_mele();
     LbSpriteSetup(m_sprites, m_sprites_end, m_spr_data);
     ingame__PanelPermutation = -2;

@@ -8,8 +8,7 @@
 #include "display.h"
 
 
-static void
-transform_mouse (long *x, long *y)
+void transform_mouse (struct TbPoint *pos)
 {
   size_t phys_x, phys_y;
   size_t disp_x, disp_y;
@@ -28,8 +27,8 @@ transform_mouse (long *x, long *y)
    * On other systems, where you can reach y=479, this can result in y=200 after
    * the transformation, but the game has no problem with that.
    */
-  *x = ((*x) * (ssize_t) (disp_x + 1)) / (ssize_t) phys_x;
-  *y = ((*y) * (ssize_t) (disp_y + 1)) / (ssize_t) phys_y;
+  pos->x = ((pos->x) * (ssize_t) (disp_x + 1)) / (ssize_t) phys_x;
+  pos->y = ((pos->y) * (ssize_t) (disp_y + 1)) / (ssize_t) phys_y;
 }
 
 TbResult
@@ -37,9 +36,9 @@ mouseControl(TbMouseAction action, struct TbPoint *pos)
 {
     if (action == MActn_MOUSEMOVE)
 	{
+      transform_mouse (pos);
       lbDisplay.MMouseX = pos->x;
       lbDisplay.MMouseY = pos->y;
-      transform_mouse (&lbDisplay.MMouseX, &lbDisplay.MMouseY);
 
       asm volatile
         ("call adjust_point;"
@@ -53,11 +52,11 @@ mouseControl(TbMouseAction action, struct TbPoint *pos)
 
 	  if (!lbDisplay.LeftButton)
 	    {
+      transform_mouse (pos);
 	      lbDisplay.LeftButton = true;
 	      lbDisplay.RLeftButton = false;
           lbDisplay.MouseX = pos->x;
           lbDisplay.MouseY = pos->y;
-          transform_mouse (&lbDisplay.MouseX, &lbDisplay.MouseY);
 	    }
 	}
       else if (action == MActn_MBUTTONDOWN)
@@ -66,11 +65,11 @@ mouseControl(TbMouseAction action, struct TbPoint *pos)
 
 	  if (!lbDisplay.MiddleButton)
 	    {
+      transform_mouse (pos);
 	      lbDisplay.MiddleButton = true;
 	      lbDisplay.RMiddleButton = false;
           lbDisplay.MouseX = pos->x;
           lbDisplay.MouseY = pos->y;
-          transform_mouse (&lbDisplay.MouseX, &lbDisplay.MouseY);
 	    }
 	}
       else if (action == MActn_RBUTTONDOWN)
@@ -79,11 +78,11 @@ mouseControl(TbMouseAction action, struct TbPoint *pos)
 
 	  if (!lbDisplay.RightButton)
 	    {
+      transform_mouse (pos);
 	      lbDisplay.RightButton = true;
 	      lbDisplay.RRightButton = false;
           lbDisplay.MouseX = pos->x;
           lbDisplay.MouseY = pos->y;
-          transform_mouse (&lbDisplay.MouseX, &lbDisplay.MouseY);
 	    }
 	} else
 
@@ -93,10 +92,10 @@ mouseControl(TbMouseAction action, struct TbPoint *pos)
 
 	  if (!lbDisplay.RLeftButton)
 	    {
+          transform_mouse (pos);
 	      lbDisplay.RLeftButton = true;
           lbDisplay.RMouseX = pos->x;
           lbDisplay.RMouseY = pos->y;
-          transform_mouse (&lbDisplay.RMouseX, &lbDisplay.RMouseY);
 	    }
 	}
       else if (action == MActn_MBUTTONUP)
@@ -105,10 +104,10 @@ mouseControl(TbMouseAction action, struct TbPoint *pos)
 
 	  if (!lbDisplay.RMiddleButton)
 	    {
+          transform_mouse (pos);
 	      lbDisplay.RMiddleButton = true;
           lbDisplay.RMouseX = pos->x;
           lbDisplay.RMouseY = pos->y;
-          transform_mouse (&lbDisplay.RMouseX, &lbDisplay.RMouseY);
 	    }
 	}
       else if (action == MActn_RBUTTONUP)
@@ -117,10 +116,10 @@ mouseControl(TbMouseAction action, struct TbPoint *pos)
 
 	  if (!lbDisplay.RRightButton)
 	    {
+          transform_mouse (pos);
 	      lbDisplay.RRightButton = true;
           lbDisplay.RMouseX = pos->x;
           lbDisplay.RMouseY = pos->y;
-          transform_mouse (&lbDisplay.RMouseX, &lbDisplay.RMouseY);
 	    }
 	}
     return Lb_OK;
