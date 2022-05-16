@@ -73,9 +73,4 @@ int LbMouseSetPosition()
 // code at 0001:000a6f78
 }
 
-int LbMouseUpdatePosition()
-{
-// code at 0001:000a7004
-}
-
 /******************************************************************************/

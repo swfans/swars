@@ -86,7 +86,6 @@ TbResult LbMouseReset(void);
 TbResult LbMouseSuspend(void);
 TbResult LbMouseSetWindow(long x, long y, long width, long height);
 TbResult LbMouseSetPosition(long x, long y);
-TbResult LbMouseUpdatePosition(void);
 
 /** Default callback for converting raw mouse coords into screen coords.
  *

@@ -185,19 +185,6 @@ TbResult LbMouseSetPosition_UNUSED(long x, long y)
     return Lb_SUCCESS;
 }
 
-TbResult LbMouseUpdatePosition_UNUSED(void)
-{
-    /*TODO disabled - verify
-    if ( mouse_pos_change_saved )
-    {
-        lbDisplay.MMouseX += mouse_dx;
-        lbDisplay.MMouseY += mouse_dy;
-        adjust_point(&lbDisplay.MMouseX, &lbDisplay.MMouseY);
-        mouse_pos_change_saved = 0;
-    }*/
-    return Lb_SUCCESS;
-}
-
 extern "C" {
 TbResult LbMouseOnMove(struct TbPoint pos);
 }
