@@ -65,7 +65,7 @@ TbResult LbMouseChangeSpriteOffset(ulong hot_x, ulong hot_y)
 }
 
 
-TbResult LbMouseChangeSprite_UNUSED(const struct TbSprite *pointer_spr)
+TbResult LbMouseChangeSprite(const struct TbSprite *pointer_spr)
 {
     if (!lbMouseInstalled)
         return Lb_FAIL;
