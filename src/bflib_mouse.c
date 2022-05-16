@@ -35,7 +35,7 @@ extern "C" {
 #endif
 /******************************************************************************/
 
-TbResult LbMouseChangeMoveRatio(long ratio_x, long ratio_y)
+TbResult LbMouseChangeMoveRatio_TODEL(long ratio_x, long ratio_y)
 {
     TbResult ret;
     asm volatile ("call ASM_LbMouseChangeMoveRatio\n"
@@ -43,7 +43,7 @@ TbResult LbMouseChangeMoveRatio(long ratio_x, long ratio_y)
     return ret;
 }
 
-TbResult LbMouseChangeSpriteOffset(unsigned long hsX, unsigned long hsY)
+TbResult LbMouseChangeSpriteOffset_TODEL(unsigned long hsX, unsigned long hsY)
 {
     TbResult ret;
     asm volatile ("call ASM_LbMouseChangeSpriteOffset\n"
@@ -64,22 +64,6 @@ TbResult LbMouseRemove(void)
     TbResult ret;
     asm volatile ("call ASM_LbMouseRemove\n"
         : "=r" (ret) : );
-    return ret;
-}
-
-TbResult LbMouseSetWindow_TODEL(long x, long y, long width, long height)
-{
-    TbResult ret;
-    asm volatile ("call ASM_LbMouseSetWindow\n"
-        : "=r" (ret) : "a" (x), "d" (y), "b" (width), "c" (height));
-    return ret;
-}
-
-TbResult LbMouseSetPosition(long x, long y)
-{
-    TbResult ret;
-    asm volatile ("call ASM_LbMouseSetPosition\n"
-        : "=r" (ret) : "a" (x), "d" (y));
     return ret;
 }
 
