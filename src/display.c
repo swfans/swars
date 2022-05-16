@@ -18,36 +18,12 @@ extern TbScreenModeInfo lbScreenModeInfo[];
 // Misc stuff
 extern uint32_t screen_initialised;
 
-// Drawing of the mouse cursor
-extern int32_t mbuffer__X;
-extern int32_t mbuffer__Y;
-extern int32_t mbuffer__Width;
-extern int32_t mbuffer__Height;
-
 #pragma pack()
 
 static bool	    display_full_screen = false;
 static bool         display_lowres_stretch = false;
 static unsigned char *display_stretch_buffer = NULL;
 static SDL_Color    display_palette[256];
-
-TbResult LbScreenSetGraphicsWindow_TODEL(ulong x, ulong y, ulong width, ulong height)
-{
-  TbResult ret;
-  asm volatile
-    ("call ASM_LbScreenSetGraphicsWindow"
-     : "=r" (ret) : "a" (x), "d" (y), "b" (width), "c" (height));
-  return ret;
-}
-
-TbResult LbTextSetWindow_TODEL(ulong x, ulong y, ulong width, ulong height)
-{
-  TbResult ret;
-  asm volatile
-    ("call ASM_LbTextSetWindow"
-     : "=r" (ret) : "a" (x), "d" (y), "b" (width), "c" (height));
-  return ret;
-}
 
 static inline void
 lock_screen (void)
@@ -233,19 +209,6 @@ err:
   screen_initialised = false;
 
   return -1;
-}
-
-/* FIXME: doesn't work with stretching */
-void
-display_update_mouse_pointer (void)
-{
-  int x, y;
-
-  x = MAX (0, mbuffer__X);
-  y = MAX (0, mbuffer__Y);
-
-  SDL_UpdateRect (to_SDLSurf(lbDrawSurface), x, y,
-		  mbuffer__Width, mbuffer__Height);
 }
 
 void

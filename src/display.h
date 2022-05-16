@@ -15,7 +15,6 @@ void display_get_physical_size (size_t *width, size_t *height);
 void display_get_size (size_t *width, size_t *height);
 void *display_get_buffer (void);
 void display_get_palette (SDL_Color *colours);
-void display_update_mouse_pointer (void);
 void display_lock (void);
 void display_unlock (void);
 
