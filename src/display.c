@@ -98,7 +98,6 @@ int LbScreenSetupAnyMode(unsigned short mode, unsigned long width,
 {
   uint32_t flags;
 
-  // call func_e9498
   LbMouseSuspend();
 
   // lbDisplay.OldVideoMode which is DWORD 1E2EB6 is used in
