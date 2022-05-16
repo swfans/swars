@@ -4,6 +4,7 @@
 #include "display.h"
 #include "bfscreen.h"
 #include "bfscrsurf.h"
+#include "bftext.h"
 #include "bfmouse.h"
 #include "util.h"
 #include "bflib_basics.h"
@@ -30,7 +31,7 @@ static bool         display_lowres_stretch = false;
 static unsigned char *display_stretch_buffer = NULL;
 static SDL_Color    display_palette[256];
 
-TbResult LbScreenSetGraphicsWindow(ulong x, ulong y, ulong width, ulong height)
+TbResult LbScreenSetGraphicsWindow_TODEL(ulong x, ulong y, ulong width, ulong height)
 {
   TbResult ret;
   asm volatile
@@ -39,7 +40,7 @@ TbResult LbScreenSetGraphicsWindow(ulong x, ulong y, ulong width, ulong height)
   return ret;
 }
 
-TbResult LbTextSetWindow(ulong x, ulong y, ulong width, ulong height)
+TbResult LbTextSetWindow_TODEL(ulong x, ulong y, ulong width, ulong height)
 {
   TbResult ret;
   asm volatile
