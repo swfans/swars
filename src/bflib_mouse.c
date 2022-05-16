@@ -35,28 +35,6 @@ extern "C" {
 #endif
 /******************************************************************************/
 
-TbResult LbMouseSuspend_TODEL(void)
-{
-    TbResult ret;
-    if ( !lbMouseInstalled )
-        return -1;
-#if 1
-    asm volatile ("call ASM_LbMouseSuspend\n"
-        : "=r" (ret) : );
-    return ret;
-#endif
-    redraw_active_lock = 1;
-#if 0
-    if ( !lbScreenDirectAccessActive )
-        screen_remove(1);
-    memset(&mbuffer, 0, 0x1020u);
-#endif
-    lbDisplay.MouseSprite = 0;
-    lbMouseInstalled = 0;
-    redraw_active_lock = 0;
-    return Lb_SUCCESS;
-}
-
 TbResult LbMouseChangeMoveRatio(long ratio_x, long ratio_y)
 {
     TbResult ret;
@@ -89,15 +67,7 @@ TbResult LbMouseRemove(void)
     return ret;
 }
 
-TbResult LbMouseReset_TODEL(void)
-{
-    TbResult ret;
-    asm volatile ("call ASM_LbMouseReset\n"
-        : "=r" (ret) : );
-    return ret;
-}
-
-TbResult LbMouseSetWindow(long x, long y, long width, long height)
+TbResult LbMouseSetWindow_TODEL(long x, long y, long width, long height)
 {
     TbResult ret;
     asm volatile ("call ASM_LbMouseSetWindow\n"
