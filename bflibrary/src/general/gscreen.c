@@ -87,9 +87,52 @@ int LbScreenIsModeAvailable_UNUSED()
 // code at 0001:00093bf0
 }
 
-TbResult LbScreenSetGraphicsWindow_UNUSED(ulong x, ulong y, ulong width, ulong height)
+TbResult LbScreenSetGraphicsWindow(ulong x, ulong y, ulong width, ulong height)
 {
-// code at 0001:00093c30
+    long x2,y2;
+    long i;
+    x2 = x + width;
+    y2 = y + height;
+    if (x2 < x)
+    {
+        i = (x^x2);
+        x = x^i;
+        x2 = x^i^i;
+    }
+    if (y2 < y)
+    {
+        i = (y^y2);
+        y = y^i;
+        y2 = y^i^i;
+    }
+    if (x < 0)
+        x = 0;
+    if (x2 < 0)
+        x2 = 0;
+    if (y < 0)
+        y = 0;
+    if (y2 < 0)
+        y2 = 0;
+    if (x > lbDisplay.GraphicsScreenWidth)
+        x = lbDisplay.GraphicsScreenWidth;
+    if (x2 > lbDisplay.GraphicsScreenWidth)
+        x2 = lbDisplay.GraphicsScreenWidth;
+    if (y > lbDisplay.GraphicsScreenHeight)
+        y = lbDisplay.GraphicsScreenHeight;
+    if (y2 > lbDisplay.GraphicsScreenHeight)
+        y2 = lbDisplay.GraphicsScreenHeight;
+    lbDisplay.GraphicsWindowX = x;
+    lbDisplay.GraphicsWindowY = y;
+    lbDisplay.GraphicsWindowWidth = x2 - x;
+    lbDisplay.GraphicsWindowHeight = y2 - y;
+    if (lbDisplay.WScreen != NULL)
+    {
+        lbDisplay.GraphicsWindowPtr = lbDisplay.WScreen + lbDisplay.GraphicsScreenWidth*y + x;
+    } else
+    {
+        lbDisplay.GraphicsWindowPtr = NULL;
+    }
+    return Lb_SUCCESS;
 }
 
 /******************************************************************************/

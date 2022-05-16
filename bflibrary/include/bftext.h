@@ -42,15 +42,16 @@ typedef struct TbAnyWindow TbAnyWindow;
 
 TbResult LbTextSetWindow(ulong x, ulong y, ulong width, ulong height);
 
-int LbTextSetJustifyWindow();
-int LbTextSetClipWindow();
+TbResult LbTextSetJustifyWindow(ulong x, ulong y, ulong width);
+TbResult LbTextSetClipWindow(ulong x, ulong y, ulong width, ulong height);
+
 int LbTextStringWidth();
 int LbTextWordWidth();
 int LbTextStringHeight();
 int LbTextDraw();
 extern int lbSpacesPerTab;
-extern int lbTextJustifyWindow;
-extern int lbTextClipWindow;
+extern struct TbAnyWindow lbTextJustifyWindow;
+extern struct TbAnyWindow lbTextClipWindow;
 extern int lbFontPtr;
 
 #ifdef __cplusplus

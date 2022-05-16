@@ -31,7 +31,7 @@ libbullfrog_a_SOURCES = \
   src/general/gspr_map.c \
   src/general/gspr_std.c \
   src/general/gstrut.c \
-  src/general/gtext.cpp \
+  src/general/gtext.c \
   src/general/gtrig.cpp \
   src/general/gutility.cpp \
   src/general/hvline.c \
