@@ -53,7 +53,7 @@ TbResult LbMouseRemove_UNUSED(void)
 }
 
 
-TbResult LbMouseChangeSpriteOffset_UNUSED(ulong hot_x, ulong hot_y)
+TbResult LbMouseChangeSpriteOffset(ulong hot_x, ulong hot_y)
 {
     if (!lbMouseInstalled)
         return Lb_FAIL;
@@ -81,7 +81,7 @@ TbResult LbMouseChangeSprite_UNUSED(const struct TbSprite *pointer_spr)
     return Lb_SUCCESS;
 }
 
-TbResult LbMouseChangeMoveRatio_UNUSED(long ratio_x, long ratio_y)
+TbResult LbMouseChangeMoveRatio(long ratio_x, long ratio_y)
 {
     if ((ratio_x < -8192) || (ratio_x > 8192) || (ratio_x == 0))
         return Lb_FAIL;
@@ -174,7 +174,7 @@ TbResult LbMouseSetWindow(long x, long y, long width, long height)
     return Lb_SUCCESS;
 }
 
-TbResult LbMouseSetPosition_UNUSED(long x, long y)
+TbResult LbMouseSetPosition(long x, long y)
 {
     if (!lbMouseInstalled)
         return Lb_FAIL;
