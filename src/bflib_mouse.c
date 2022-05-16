@@ -35,54 +35,16 @@ extern "C" {
 #endif
 /******************************************************************************/
 
-TbResult LbMouseChangeMoveRatio_TODEL(long ratio_x, long ratio_y)
-{
-    TbResult ret;
-    asm volatile ("call ASM_LbMouseChangeMoveRatio\n"
-        : "=r" (ret) : "a" (ratio_x), "d" (ratio_y));
-    return ret;
-}
+TbResult LbMouseChangeSprite_UNUSED(const struct TbSprite *pointer_spr);
 
-TbResult LbMouseChangeSpriteOffset_TODEL(unsigned long hsX, unsigned long hsY)
-{
-    TbResult ret;
-    asm volatile ("call ASM_LbMouseChangeSpriteOffset\n"
-        : "=r" (ret) : "a" (hsX), "d" (hsY));
-    return ret;
-}
-
-TbResult LbMousePlace(void)
-{
-    TbResult ret;
-    asm volatile ("call ASM_LbMousePlace\n"
-        : "=r" (ret) : );
-    return ret;
-}
-
-TbResult LbMouseRemove(void)
-{
-    TbResult ret;
-    asm volatile ("call ASM_LbMouseRemove\n"
-        : "=r" (ret) : );
-    return ret;
-}
 
 TbResult LbMouseChangeSprite(const struct TbSprite *pointer_spr)
 {
-    if (pointer_spr == NULL)
-        BFLIB_DEBUGLOG(0,"Setting to %s","NONE");
-    else
-        BFLIB_DEBUGLOG(0,"Setting to %dx%d, data at %p",(int)pointer_spr->SWidth,(int)pointer_spr->SHeight,pointer_spr->Data);
     TbResult ret;
+    LbMouseChangeSprite_UNUSED(pointer_spr);
     asm volatile ("call ASM_LbMouseChangeSprite\n"
         : "=r" (ret) : "a" (pointer_spr));
     return ret;
-    /*
-  if (!lbMouseInstalled)
-    return Lb_FAIL;
-  if (!pointerHandler.SetMousePointer(pointerSprite))
-    return Lb_FAIL;
-  return Lb_SUCCESS;*/
 }
 
 /******************************************************************************/
