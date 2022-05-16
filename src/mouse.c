@@ -13,6 +13,8 @@ void transform_mouse (struct TbPoint *pos)
   size_t phys_x, phys_y;
   size_t disp_x, disp_y;
 
+  MouseToScreen(pos);
+
   if (!display_is_stretching_enabled ())
     return;
 
@@ -34,11 +36,18 @@ void transform_mouse (struct TbPoint *pos)
 TbResult
 mouseControl(TbMouseAction action, struct TbPoint *pos)
 {
+    struct TbPoint dstPos;
+
+    if (!lbMouseInstalled)
+        return Lb_OK;
+    dstPos.x = pos->x;
+    dstPos.y = pos->y;
+
     if (action == MActn_MOUSEMOVE)
 	{
-      transform_mouse (pos);
-      lbDisplay.MMouseX = pos->x;
-      lbDisplay.MMouseY = pos->y;
+      lbMouseToScreen(&dstPos);
+      lbDisplay.MMouseX = dstPos.x;
+      lbDisplay.MMouseY = dstPos.y;
 
       asm volatile
         ("call adjust_point;"
@@ -52,11 +61,11 @@ mouseControl(TbMouseAction action, struct TbPoint *pos)
 
 	  if (!lbDisplay.LeftButton)
 	    {
-      transform_mouse (pos);
+          lbMouseToScreen(&dstPos);
 	      lbDisplay.LeftButton = true;
 	      lbDisplay.RLeftButton = false;
-          lbDisplay.MouseX = pos->x;
-          lbDisplay.MouseY = pos->y;
+          lbDisplay.MouseX = dstPos.x;
+          lbDisplay.MouseY = dstPos.y;
 	    }
 	}
       else if (action == MActn_MBUTTONDOWN)
@@ -65,11 +74,11 @@ mouseControl(TbMouseAction action, struct TbPoint *pos)
 
 	  if (!lbDisplay.MiddleButton)
 	    {
-      transform_mouse (pos);
+          lbMouseToScreen(&dstPos);
 	      lbDisplay.MiddleButton = true;
 	      lbDisplay.RMiddleButton = false;
-          lbDisplay.MouseX = pos->x;
-          lbDisplay.MouseY = pos->y;
+          lbDisplay.MouseX = dstPos.x;
+          lbDisplay.MouseY = dstPos.y;
 	    }
 	}
       else if (action == MActn_RBUTTONDOWN)
@@ -78,11 +87,11 @@ mouseControl(TbMouseAction action, struct TbPoint *pos)
 
 	  if (!lbDisplay.RightButton)
 	    {
-      transform_mouse (pos);
+          lbMouseToScreen(&dstPos);
 	      lbDisplay.RightButton = true;
 	      lbDisplay.RRightButton = false;
-          lbDisplay.MouseX = pos->x;
-          lbDisplay.MouseY = pos->y;
+          lbDisplay.MouseX = dstPos.x;
+          lbDisplay.MouseY = dstPos.y;
 	    }
 	} else
 
@@ -92,10 +101,10 @@ mouseControl(TbMouseAction action, struct TbPoint *pos)
 
 	  if (!lbDisplay.RLeftButton)
 	    {
-          transform_mouse (pos);
+          lbMouseToScreen(&dstPos);
 	      lbDisplay.RLeftButton = true;
-          lbDisplay.RMouseX = pos->x;
-          lbDisplay.RMouseY = pos->y;
+          lbDisplay.RMouseX = dstPos.x;
+          lbDisplay.RMouseY = dstPos.y;
 	    }
 	}
       else if (action == MActn_MBUTTONUP)
@@ -104,10 +113,10 @@ mouseControl(TbMouseAction action, struct TbPoint *pos)
 
 	  if (!lbDisplay.RMiddleButton)
 	    {
-          transform_mouse (pos);
+          lbMouseToScreen(&dstPos);
 	      lbDisplay.RMiddleButton = true;
-          lbDisplay.RMouseX = pos->x;
-          lbDisplay.RMouseY = pos->y;
+          lbDisplay.RMouseX = dstPos.x;
+          lbDisplay.RMouseY = dstPos.y;
 	    }
 	}
       else if (action == MActn_RBUTTONUP)
@@ -116,10 +125,10 @@ mouseControl(TbMouseAction action, struct TbPoint *pos)
 
 	  if (!lbDisplay.RRightButton)
 	    {
-          transform_mouse (pos);
+          lbMouseToScreen(&dstPos);
 	      lbDisplay.RRightButton = true;
-          lbDisplay.RMouseX = pos->x;
-          lbDisplay.RMouseY = pos->y;
+          lbDisplay.RMouseX = dstPos.x;
+          lbDisplay.RMouseY = dstPos.y;
 	    }
 	}
     return Lb_OK;
