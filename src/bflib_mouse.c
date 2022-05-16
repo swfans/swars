@@ -35,7 +35,7 @@ extern "C" {
 #endif
 /******************************************************************************/
 
-TbResult LbMouseSuspend(void)
+TbResult LbMouseSuspend_TODEL(void)
 {
     TbResult ret;
     if ( !lbMouseInstalled )
@@ -89,7 +89,7 @@ TbResult LbMouseRemove(void)
     return ret;
 }
 
-TbResult LbMouseReset(void)
+TbResult LbMouseReset_TODEL(void)
 {
     TbResult ret;
     asm volatile ("call ASM_LbMouseReset\n"
@@ -112,82 +112,6 @@ TbResult LbMouseSetPosition(long x, long y)
         : "=r" (ret) : "a" (x), "d" (y));
     return ret;
 }
-
-TbResult LbMouseSetup(const struct TbSprite *pointer_spr, int ratio_x, int ratio_y)
-{
-    long x,y;
-
-    if (lbMouseInstalled)
-        LbMouseSuspend();
-
-#if 1
-    TbResult ret;
-    asm volatile ("call ASM_LbMouseSetup\n"
-        : "=r" (ret) : "a" (pointer_spr), "d" (ratio_x), "b" (ratio_y));
-    return ret;
-#endif
-
-#if 0
-    pointerHandler.Install();
-#endif
-
-#if 0
-    minfo.XSpriteOffset = 0;
-    minfo.YSpriteOffset = 0;
-    minfo.XMoveRatio = 1;
-    minfo.YMoveRatio = 1;
-    memset(minfo.Sprite, 254, 0x1000u);
-    lbDisplay.MouseSprite = 0;
-    redraw_active_lock = 0;
-    memset(&mbuffer, 0, 0x1020u);
-#endif
-
-    lbMouseOffline = true;
-    lbMouseInstalled = true;
-
-    if ( LbMouseSetWindow(0, 0, lbDisplay.GraphicsScreenWidth, lbDisplay.GraphicsScreenHeight) != Lb_SUCCESS )
-    {
-        lbMouseInstalled = false;
-        return Lb_FAIL;
-    }
-    y = lbDisplay.MouseWindowY + lbDisplay.MouseWindowHeight / 2;
-    x = lbDisplay.MouseWindowX + lbDisplay.MouseWindowWidth / 2;
-    if ( LbMouseChangeMoveRatio(ratio_x, ratio_y) != Lb_SUCCESS )
-    {
-        lbMouseInstalled = false;
-        return Lb_FAIL;
-    }
-    if ( LbMouseSetPosition(x, y) != Lb_SUCCESS )
-    {
-        lbMouseInstalled = false;
-        return Lb_FAIL;
-    }
-    if ( LbMouseChangeSprite(pointer_spr) != Lb_SUCCESS )
-    {
-        lbMouseInstalled = false;
-        return Lb_FAIL;
-    }
-    lbMouseOffline = false;
-    return Lb_SUCCESS;
-}
-
-/*TbResult LbMouseSetPointerHotspot(long hot_x, long hot_y)
-{
-  if (!lbMouseInstalled)
-    return Lb_FAIL;
-  if (!pointerHandler.SetPointerOffset(hot_x, hot_y))
-    return Lb_FAIL;
-  return Lb_SUCCESS;
-}
-
-TbResult LbMouseSetPosition(long x, long y)
-{
-  if (!lbMouseInstalled)
-    return Lb_FAIL;
-  if (!pointerHandler.SetMousePosition(x, y))
-    return Lb_FAIL;
-  return Lb_SUCCESS;
-}*/
 
 TbResult LbMouseChangeSprite(const struct TbSprite *pointer_spr)
 {

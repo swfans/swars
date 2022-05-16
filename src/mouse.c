@@ -15,7 +15,7 @@ void transform_mouse (struct TbPoint *pos)
 
   MouseToScreen(pos);
 
-  if (!display_is_stretching_enabled ())
+  if (!display_is_stretching_enabled())
     return;
 
   display_get_physical_size (&phys_x, &phys_y);
@@ -33,110 +33,8 @@ void transform_mouse (struct TbPoint *pos)
   pos->y = ((pos->y) * (ssize_t) (disp_y + 1)) / (ssize_t) phys_y;
 }
 
-TbResult
-mouseControl(TbMouseAction action, struct TbPoint *pos)
+void mouse_initialise(void)
 {
-    struct TbPoint dstPos;
-
-    if (!lbMouseInstalled)
-        return Lb_OK;
-    dstPos.x = pos->x;
-    dstPos.y = pos->y;
-
-    if (action == MActn_MOUSEMOVE)
-	{
-      lbMouseToScreen(&dstPos);
-      lbDisplay.MMouseX = dstPos.x;
-      lbDisplay.MMouseY = dstPos.y;
-
-      asm volatile
-        ("call adjust_point;"
-         "call screen_remove;"
-         "call screen_place"
-         : : "a" (&lbDisplay.MMouseX), "d" (&lbDisplay.MMouseY));
-	} else
-      if (action == MActn_LBUTTONDOWN)
-	{
-	  lbDisplay.MLeftButton = true;
-
-	  if (!lbDisplay.LeftButton)
-	    {
-          lbMouseToScreen(&dstPos);
-	      lbDisplay.LeftButton = true;
-	      lbDisplay.RLeftButton = false;
-          lbDisplay.MouseX = dstPos.x;
-          lbDisplay.MouseY = dstPos.y;
-	    }
-	}
-      else if (action == MActn_MBUTTONDOWN)
-	{
-	  lbDisplay.MMiddleButton = true;
-
-	  if (!lbDisplay.MiddleButton)
-	    {
-          lbMouseToScreen(&dstPos);
-	      lbDisplay.MiddleButton = true;
-	      lbDisplay.RMiddleButton = false;
-          lbDisplay.MouseX = dstPos.x;
-          lbDisplay.MouseY = dstPos.y;
-	    }
-	}
-      else if (action == MActn_RBUTTONDOWN)
-	{
-	  lbDisplay.MRightButton = true;
-
-	  if (!lbDisplay.RightButton)
-	    {
-          lbMouseToScreen(&dstPos);
-	      lbDisplay.RightButton = true;
-	      lbDisplay.RRightButton = false;
-          lbDisplay.MouseX = dstPos.x;
-          lbDisplay.MouseY = dstPos.y;
-	    }
-	} else
-
-      if (action == MActn_LBUTTONUP)
-	{
-	  lbDisplay.MLeftButton = false;
-
-	  if (!lbDisplay.RLeftButton)
-	    {
-          lbMouseToScreen(&dstPos);
-	      lbDisplay.RLeftButton = true;
-          lbDisplay.RMouseX = dstPos.x;
-          lbDisplay.RMouseY = dstPos.y;
-	    }
-	}
-      else if (action == MActn_MBUTTONUP)
-	{
-	  lbDisplay.MMiddleButton = false;
-
-	  if (!lbDisplay.RMiddleButton)
-	    {
-          lbMouseToScreen(&dstPos);
-	      lbDisplay.RMiddleButton = true;
-          lbDisplay.RMouseX = dstPos.x;
-          lbDisplay.RMouseY = dstPos.y;
-	    }
-	}
-      else if (action == MActn_RBUTTONUP)
-	{
-	  lbDisplay.MRightButton = false;
-
-	  if (!lbDisplay.RRightButton)
-	    {
-          lbMouseToScreen(&dstPos);
-	      lbDisplay.RRightButton = true;
-          lbDisplay.RMouseX = dstPos.x;
-          lbDisplay.RMouseY = dstPos.y;
-	    }
-	}
-    return Lb_OK;
-}
-
-void
-mouse_initialise (void)
-{
-  SDL_ShowCursor (SDL_DISABLE);
+    SDL_ShowCursor(SDL_DISABLE);
 }
 
