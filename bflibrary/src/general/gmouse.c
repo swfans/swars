@@ -33,7 +33,7 @@ volatile TbBool lbMouseAutoReset = true;
 volatile TbMouseToScreen lbMouseToScreen = &MouseToScreen;
 
 
-TbResult mouseControl_UNUSED(TbMouseAction action, struct TbPoint *pos)
+TbResult mouseControl(TbMouseAction action, struct TbPoint *pos)
 {
     struct TbPoint dstPos;
 

@@ -98,7 +98,7 @@ TbResult LbMouseChangeMoveRatio_UNUSED(long ratio_x, long ratio_y)
     return Lb_SUCCESS;
 }
 
-TbResult LbMouseSetup_UNUSED(const struct TbSprite *pointer_spr, int ratio_x, int ratio_y)
+TbResult LbMouseSetup(const struct TbSprite *pointer_spr, int ratio_x, int ratio_y)
 {
     long x,y;
 
@@ -147,12 +147,12 @@ TbResult LbMouseSetup_UNUSED(const struct TbSprite *pointer_spr, int ratio_x, in
     return Lb_SUCCESS;
 }
 
-TbResult LbMouseReset_UNUSED(void)
+TbResult LbMouseReset(void)
 {
     return LbMouseSuspend();
 }
 
-TbResult LbMouseSuspend_UNUSED(void)
+TbResult LbMouseSuspend(void)
 {
     if (!lbMouseInstalled)
         return Lb_FAIL;
