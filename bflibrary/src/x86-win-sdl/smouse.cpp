@@ -26,28 +26,28 @@
 #include "bfplanar.h"
 #include "bflog.h"
 
-TbResult LbMousePlace_UNUSED(void)
+extern "C" {
+TbResult LbMouseChangeSprite_UNUSED(const struct TbSprite *pointer_spr);
+}
+
+TbResult LbMousePlace(void)
 {
     if (!lbMouseInstalled)
         return Lb_FAIL;
 
-    /* TODO
-    if (!pointerHandler.PointerDraw())
+    if (!pointerHandler.PointerEndPartialUpdate())
         return Lb_FAIL;
-    */
 
     return Lb_SUCCESS;
 }
 
-TbResult LbMouseRemove_UNUSED(void)
+TbResult LbMouseRemove(void)
 {
     if (!lbMouseInstalled)
         return Lb_FAIL;
 
-    /* TODO
-    if (!pointerHandler.PointerUndraw())
+    if (!pointerHandler.PointerBeginPartialUpdate())
         return Lb_FAIL;
-    */
 
     return Lb_SUCCESS;
 }
@@ -73,7 +73,8 @@ TbResult LbMouseChangeSprite_UNUSED(const struct TbSprite *pointer_spr)
     if (pointer_spr == NULL)
         LIBLOG("Setting to %s", "NONE");
     else
-        LIBLOG("Setting to %dx%d, data at %p",(int)pointer_spr->SWidth,(int)pointer_spr->SHeight,pointer_spr);
+        LIBLOG("Setting to %dx%d, data at %p", (int)pointer_spr->SWidth,
+          (int)pointer_spr->SHeight, pointer_spr);
 
     if (!pointerHandler.SetMousePointer(pointer_spr))
         return Lb_FAIL;

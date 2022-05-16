@@ -45,6 +45,8 @@ class MouseStateHandler {
     bool GetMouseWindow(struct TbRect *windowRect);
     bool PointerBeginSwap(void);
     bool PointerEndSwap(void);
+    bool PointerBeginPartialUpdate(void);
+    bool PointerEndPartialUpdate(void);
  protected:
     bool SetPointer(const struct TbSprite *spr, struct TbPoint *pt);
     // Properties

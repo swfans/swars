@@ -297,4 +297,37 @@ bool MouseStateHandler::PointerEndSwap(void)
     semlock.Release();
     return true;
 }
+
+bool MouseStateHandler::PointerBeginPartialUpdate(void)
+{
+    LbSemaLock semlock(&semaphore,0);
+    if (!semlock.Lock(true))
+      return false;
+    if ((!lbMouseInstalled) || (lbMouseOffline))
+      return true;
+    if ((mssprite != NULL) && (this->installed))
+    {
+      swap = 1;
+      pointer.OnBeginPartialUpdate();
+    }
+    return true;
+}
+
+bool MouseStateHandler::PointerEndPartialUpdate(void)
+{
+    LbSemaLock semlock(&semaphore,1);
+    if (!lbMouseInstalled)
+      return true;
+    if ((mssprite != NULL) && (this->installed))
+    {
+      if (swap)
+      {
+        swap = false;
+        pointer.OnEndPartialUpdate();
+      }
+    }
+    semlock.Release();
+    return true;
+}
+
 /******************************************************************************/
