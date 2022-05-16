@@ -196,7 +196,8 @@ struct DisplayStruct { // sizeof=118
      *  LbPaletteGet() should be used to retrieve a copy of the palette. */
     ubyte *Palette; // offset=114
 #if defined(ENABLE_MOUSE_MOVE_RATIO)
-    short MouseMoveRatio;
+    short MouseMoveRatioX;
+    short MouseMoveRatioY;
 #endif
 };
 

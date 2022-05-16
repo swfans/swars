@@ -90,10 +90,10 @@ TbResult LbMouseChangeMoveRatio_UNUSED(long ratio_x, long ratio_y)
 
     LIBLOG("New ratio %ldx%ld", ratio_x, ratio_y);
 
-    /*TODO disabled - verify
-    // Currently we don't have two ratio factors, so let's store an average
-    lbDisplay.MouseMoveRatio = (ratio_x + ratio_y)/2;
-    */
+#if defined(ENABLE_MOUSE_MOVE_RATIO)
+    lbDisplay.MouseMoveRatioX = ratio_x;
+    lbDisplay.MouseMoveRatioY = ratio_y;
+#endif
 
     return Lb_SUCCESS;
 }
@@ -163,7 +163,7 @@ TbResult LbMouseSuspend(void)
     return Lb_SUCCESS;
 }
 
-TbResult LbMouseSetWindow_UNUSED(long x, long y, long width, long height)
+TbResult LbMouseSetWindow(long x, long y, long width, long height)
 {
     if (!lbMouseInstalled)
         return Lb_FAIL;
@@ -215,8 +215,8 @@ void MouseToScreen(struct TbPoint *pos)
       orig.x = pos->x;
       orig.y = pos->y;
 #if defined(ENABLE_MOUSE_MOVE_RATIO)
-      pos->x = mx + ((pos->x - mx) * (long)lbDisplay.MouseMoveRatio)/256;
-      pos->y = mx + ((pos->y - my) * (long)lbDisplay.MouseMoveRatio)/256;
+      pos->x = mx + ((pos->x - mx) * (long)lbDisplay.MouseMoveRatioX)/256;
+      pos->y = mx + ((pos->y - my) * (long)lbDisplay.MouseMoveRatioY)/256;
 #endif
       mx = orig.x;
       my = orig.y;
@@ -232,8 +232,8 @@ void MouseToScreen(struct TbPoint *pos)
       orig.x = pos->x;
       orig.y = pos->y;
 #if defined(ENABLE_MOUSE_MOVE_RATIO)
-      pos->x = mx + ((pos->x - mx) * (long)lbDisplay.MouseMoveRatio)/256;
-      pos->y = mx + ((pos->y - my) * (long)lbDisplay.MouseMoveRatio)/256;
+      pos->x = mx + ((pos->x - mx) * (long)lbDisplay.MouseMoveRatioX)/256;
+      pos->y = mx + ((pos->y - my) * (long)lbDisplay.MouseMoveRatioY)/256;
 #endif
       mx = orig.x;
       my = orig.y;
