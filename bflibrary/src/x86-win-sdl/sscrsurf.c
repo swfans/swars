@@ -17,9 +17,9 @@
  *     (at your option) any later version.
  */
 /******************************************************************************/
+#include <SDL/SDL.h>
 #include "bfscrsurf.h"
 
-#include <SDL/SDL.h>
 #include "bfplanar.h"
 #include "bflog.h"
 

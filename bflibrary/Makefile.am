@@ -59,7 +59,7 @@ libbullfrog_a_SOURCES += \
   src/x86-win-sdl/skeybd.cpp \
   src/x86-win-sdl/smemory.c \
   src/x86-win-sdl/smouse.cpp \
-  src/x86-win-sdl/spalette.cpp \
+  src/x86-win-sdl/spalette.c \
   src/x86-win-sdl/sscreen.cpp \
   src/x86-win-sdl/sscrsurf.c \
   src/x86-win-sdl/ssemphr.cpp \

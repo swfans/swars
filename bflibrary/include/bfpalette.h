@@ -46,11 +46,21 @@ int LbPaletteStopOpenFade();
 int LbPaletteFindColour();
 int LbPaletteDraw();
 
-int LbPaletteGet();
+/** Retrieves the indexed colour video palette.
+ *
+ * @param palette Pointer to target palette colors buffer.
+ * @return Lb_SUCCESS, or error code.
+ */
+TbResult LbPaletteGet(ubyte *palette);
 
+/** Sets the indexed colour video palette.
+ *
+ * @param palette Pointer to the palette colors data.
+ * @return Lb_SUCCESS, or error code.
+ */
 TbResult LbPaletteSet(const ubyte *palette);
 
-/** Clears the 8-bit video palette with black colour.
+/** Clears the indexed colour video palette with black colour.
  * Only writes values to given palette bufer - does no screen operations.
  *
  * @param palette Pointer to the palette colors data.
@@ -58,7 +68,7 @@ TbResult LbPaletteSet(const ubyte *palette);
  */
 TbResult LbPaletteDataFillBlack(ubyte *palette);
 
-/** Clears the 8-bit video palette with white colour.
+/** Clears the indexed colour video palette with white colour.
  *
  * @param palette Pointer to the palette colors data.
  * @return Lb_SUCCESS, or error code.
