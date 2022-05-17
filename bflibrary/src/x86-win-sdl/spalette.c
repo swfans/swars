@@ -30,8 +30,6 @@
 //TODO delete
 #define lbScreenInitialised 1
 
-extern SDL_Color display_palette_tmp[256]; //TODO delete
-
 /** Colour palette buffer, to be used inside lbDisplay. */
 ubyte lbPalette[PALETTE_8b_SIZE];
 /** Driver-specific colour palette buffer. */
@@ -86,7 +84,6 @@ TbResult LbPaletteSet(const ubyte *palette)
         ret = Lb_FAIL;
     }
     lbDisplay.Palette = lbPalette;
-    memcpy (display_palette_tmp, lbPaletteColors, sizeof (display_palette_tmp));//TODO delete
 
     return ret;
 }

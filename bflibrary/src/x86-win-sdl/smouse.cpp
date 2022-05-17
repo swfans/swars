@@ -53,6 +53,20 @@ TbResult LbMouseRemove(void)
 }
 
 
+TbResult LbMouseOnBeginSwap(void)
+{
+    if (!pointerHandler.PointerBeginSwap())
+        return Lb_FAIL;
+    return Lb_SUCCESS;
+}
+
+TbResult LbMouseOnEndSwap(void)
+{
+    if (!pointerHandler.PointerEndSwap())
+        return Lb_FAIL;
+    return Lb_SUCCESS;
+}
+
 TbResult LbMouseChangeSpriteOffset(ulong hot_x, ulong hot_y)
 {
     if (!lbMouseInstalled)

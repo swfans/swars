@@ -17,7 +17,20 @@
  *     (at your option) any later version.
  */
 /******************************************************************************/
+#include <SDL/SDL.h>
 #include "bfscreen.h"
+
+#include "bfscrsurf.h"
+#include "bfmouse.h"
+#include "bflog.h"
+
+#define to_SDLSurf(h) ((SDL_Surface  *)h)
+
+//TODO delete
+#define lbScreenInitialised 1
+#define lbHasSecondSurface 0
+
+//int lbScreenDirectAccessActive;
 
 int LbScreenSetupAnyMode_TODO(unsigned short mode, unsigned long width,
     unsigned long height, TbPixel *palette)
@@ -25,54 +38,104 @@ int LbScreenSetupAnyMode_TODO(unsigned short mode, unsigned long width,
 // code at 0001:000954e0
 }
 
-int LbScreenClearGraphicsWindow()
+int LbScreenClearGraphicsWindow_TODO()
 {
 // code at 0001:000956dc
 }
 
-int LbScreenClear()
+int LbScreenClear_TODO()
 {
 // code at 0001:00095728
 }
 
-int LbScreenReset()
+int LbScreenReset_TODO()
 {
 // code at 0001:00095754
 }
 
-int LbScreenLock()
+TbResult LbScreenLock_TODO(void)
 {
-// code at 0001:000957a0
+    LIBLOG("Starting");
+    if (!lbScreenInitialised)
+        return Lb_FAIL;
+
+    if (SDL_MUSTLOCK(to_SDLSurf(lbDrawSurface))) {
+        if (SDL_LockSurface(to_SDLSurf(lbDrawSurface)) < 0) {
+            LIBLOG("error: SDL Lock Surface: %s", SDL_GetError());
+            lbDisplay.GraphicsWindowPtr = NULL;
+            lbDisplay.WScreen = NULL;
+            return Lb_FAIL;
+        }
+    }
+
+    lbDisplay.WScreen = (unsigned char *) to_SDLSurf(lbDrawSurface)->pixels;
+    lbDisplay.GraphicsScreenWidth = to_SDLSurf(lbDrawSurface)->pitch;
+    lbDisplay.GraphicsWindowPtr = &lbDisplay.WScreen[lbDisplay.GraphicsWindowX +
+        lbDisplay.GraphicsScreenWidth * lbDisplay.GraphicsWindowY];
+
+    return Lb_SUCCESS;
 }
 
-int LbScreenUnlock()
+TbResult LbScreenUnlock_TODO(void)
 {
-// code at 0001:000957ac
+    LIBLOG("Starting");
+    if (!lbScreenInitialised)
+        return Lb_FAIL;
+
+    lbDisplay.WScreen = NULL;
+    lbDisplay.GraphicsWindowPtr = NULL;
+
+    if (SDL_MUSTLOCK(to_SDLSurf(lbDrawSurface)))
+        SDL_UnlockSurface(to_SDLSurf(lbDrawSurface));
+
+    return Lb_SUCCESS;
 }
 
-int LbScreenSetDoubleBuffering()
+int LbScreenSetDoubleBuffering_TODO()
 {
 // code at 0001:000957b8
 }
 
-int LbScreenSetWScreenInVideo()
+int LbScreenSetWScreenInVideo_TODO()
 {
 // code at 0001:000957d8
 }
 
-int lbScreenDirectAccessActive;
-
-int LbScreenFindVideoModes()
+int LbScreenFindVideoModes_TODO()
 {
 // code at 0001:000957f8
 }
 
-int LbScreenSwap()
+TbResult LbScreenSwap_TODO(void)
 {
-// code at 0001:000958b0
+    TbResult ret;
+    int blresult;
+    LIBLOG("Starting");
+    ret = LbMouseOnBeginSwap();
+    // Put the data from Draw Surface onto Screen Surface
+    if ((ret == Lb_SUCCESS) && (lbHasSecondSurface)) {
+        blresult = SDL_BlitSurface(to_SDLSurf(lbDrawSurface), NULL,
+          to_SDLSurf(lbScreenSurface), NULL);
+        if (blresult < 0) {
+            LIBLOG("Blit failed: %s", SDL_GetError());
+            ret = Lb_FAIL;
+        }
+    }
+    // Flip the image displayed on Screen Surface
+    if (ret == Lb_SUCCESS) {
+        // calls SDL_UpdateRect for entire screen if not double buffered
+        blresult = SDL_Flip(to_SDLSurf(lbScreenSurface));
+        if (blresult < 0) {
+            // In some cases this situation seems to be quite common
+            LIBLOG("Flip failed: %s", SDL_GetError());
+            ret = Lb_FAIL;
+        }
+    }
+    LbMouseOnEndSwap();
+    return ret;
 }
 
-int LbScreenSwapBoxClear()
+int LbScreenSwapBoxClear_TODO()
 {
 // code at 0001:00095964
 }
@@ -82,17 +145,17 @@ int LbScreenSwapClear_TODO()
 // code at 0001:00095b34
 }
 
-int LbScreenSwapBox()
+int LbScreenSwapBox_TODO()
 {
 // code at 0001:00095c38
 }
 
-int LbScreenDrawHVLineDirect()
+int LbScreenDrawHVLineDirect_TODO()
 {
 // code at 0001:00095dc4
 }
 
-int LbScreenWaitVbi()
+int LbScreenWaitVbi_TODO()
 {
 // code at 0001:000961b0
 }

@@ -276,8 +276,20 @@ int LbScreenSetupAnyMode(unsigned short mode, unsigned long width,
 int LbScreenClearGraphicsWindow();
 int LbScreenClear();
 int LbScreenReset();
-int LbScreenLock();
-int LbScreenUnlock();
+
+/** Locks the graphics screen.
+ *  This function gives access to the WScreen pointer, which contains buffer
+ *  of size GraphicsScreenWidth x GraphicsScreenHeight.
+ *  It also allows accessing GraphicsWindowPtr buffer, of size
+ *  GraphicsWindowWidth x GraphicsWindowHeight, but with pitch (scanline length)
+ *   same as graphics screen (which is GraphicsScreenWidth).
+ *
+ * @return Lb_SUCCESS if the lock was successful.
+ * @see LbScreenUnlock()
+ */
+TbResult LbScreenLock(void);
+TbResult LbScreenUnlock(void);
+
 int LbScreenSetDoubleBuffering();
 int LbScreenSetWScreenInVideo();
 extern int lbScreenDirectAccessActive;

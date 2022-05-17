@@ -62,6 +62,14 @@ extern volatile TbMouseToScreen lbMouseToScreen;
 TbResult LbMousePlace(void);
 TbResult LbMouseRemove(void);
 
+/** Update mouse state as screen swap begins.
+ */
+TbResult LbMouseOnBeginSwap(void);
+
+/** Return mouse state to normal as screen swap ends.
+ */
+TbResult LbMouseOnEndSwap(void);
+
 /**
  * Set offset within pointer sprite where the mouse actually points at.
  *  Also called LbMouseSetPointerHotspot().
