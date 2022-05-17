@@ -83,12 +83,15 @@ TbResult ASM_LbScreenSwap(void);
 
 TbResult LbScreenSwap(void)
 {
-    return ASM_LbScreenSwap();
+    TbResult ret;
+    asm volatile ("call ASM_LbScreenSwap\n"
+        : "=r" (ret) : );
+    return ret;
 }
 
 TbResult LbScreenSwapClear(TbPixel colour)
 {
-    int ret;
+    TbResult ret;
     asm volatile ("call ASM_LbScreenSwapClear\n"
         : "=r" (ret) : "a" (colour));
     return ret;
@@ -564,7 +567,7 @@ void swap_wscreen(void)
     LbScreenSwap();
     if ( has_wscreeen )
     {
-      while ( LbScreenLock() != 1 )
+      while ( LbScreenLock() != Lb_SUCCESS )
         ;
     }
 }

@@ -24,7 +24,6 @@ extern uint32_t screen_initialised;
 static bool	    display_full_screen = false;
 static bool         display_lowres_stretch = false;
 static unsigned char *display_stretch_buffer = NULL;
-SDL_Color    display_palette_tmp[256];
 
 static inline void
 lock_screen (void)
@@ -284,12 +283,6 @@ void *
 display_get_buffer (void)
 {
   return lbDisplay.PhysicalScreen;
-}
-
-void
-display_get_palette (SDL_Color *colours)
-{
-  memcpy (colours, display_palette_tmp, sizeof (display_palette_tmp));
 }
 
 void
