@@ -4,6 +4,7 @@
 #include "display.h"
 #include "bfscreen.h"
 #include "bfscrsurf.h"
+#include "bfpalette.h"
 #include "bftext.h"
 #include "bfmouse.h"
 #include "util.h"
@@ -23,7 +24,7 @@ extern uint32_t screen_initialised;
 static bool	    display_full_screen = false;
 static bool         display_lowres_stretch = false;
 static unsigned char *display_stretch_buffer = NULL;
-static SDL_Color    display_palette[256];
+SDL_Color    display_palette_tmp[256];
 
 static inline void
 lock_screen (void)
@@ -42,32 +43,6 @@ unlock_screen (void)
     return;
 
   SDL_UnlockSurface (to_SDLSurf(lbDrawSurface));
-}
-
-TbResult
-LbPaletteSet(const unsigned char *palette)
-{
-  SDL_Color colours[256];
-  int n;
-
-  for (n = 0; n < 256; n++)
-    {
-      colours[n].r = palette[3 * n + 0] * 4;
-      colours[n].g = palette[3 * n + 1] * 4;
-      colours[n].b = palette[3 * n + 2] * 4;
-      colours[n].unused = 0;
-    }
-
-  if (SDL_SetPalette (to_SDLSurf(lbDrawSurface),
-		      SDL_LOGPAL | SDL_PHYSPAL, colours, 0, 256) != 1)
-    {
-      fprintf (stderr, "SDL_SetPalette: %s\n", SDL_GetError ());
-      return -1;
-    }
-
-  memcpy (display_palette, colours, sizeof (display_palette));
-
-  return 1;
 }
 
 int LbScreenSetupAnyMode(unsigned short mode, unsigned long width,
@@ -314,7 +289,7 @@ display_get_buffer (void)
 void
 display_get_palette (SDL_Color *colours)
 {
-  memcpy (colours, display_palette, sizeof (display_palette));
+  memcpy (colours, display_palette_tmp, sizeof (display_palette_tmp));
 }
 
 void
