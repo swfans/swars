@@ -23,6 +23,7 @@
 
 #include "bfscrsurf.h"
 #include "bfmouse.h"
+#include "bfexe_key.h"
 #include "bflog.h"
 
 #define to_SDLSurf(h) ((SDL_Surface  *)h)
@@ -33,39 +34,144 @@ TbBool lbHasSecondSurface = false;
 
 static inline void *LbI_XMemCopy(void *dest, void *source, ulong len)
 {
-        ulong remain;
-        ubyte *s;
-        ubyte *d;
-        s = (ubyte *)source;
-        d = (ubyte *)dest;
-        for (remain = len >> 2; remain != 0; remain--)
-        {
-            *(ulong *)d = *(ulong *)s;
-            d += 4;
-            s += 4;
-        }
+    ulong remain;
+    ubyte *s;
+    ubyte *d;
+    s = (ubyte *)source;
+    d = (ubyte *)dest;
+    for (remain = len >> 2; remain != 0; remain--)
+    {
+        *(ulong *)d = *(ulong *)s;
+        d += 4;
+        s += 4;
+    }
+    return dest;
 }
 
 static inline void *LbI_XMemCopyAndSet(void *dest, void *source, ulong val, ulong len)
 {
-        ulong remain;
-        ubyte *s;
-        ubyte *d;
-        s = (ubyte *)source;
-        d = (ubyte *)dest;
-        for (remain = len >> 2; remain != 0; remain--)
-        {
-            *(ulong *)d = *(ulong *)s;
-            *(ulong *)s = val;
-            d += 4;
-            s += 4;
-        }
+    ulong remain;
+    ubyte *s;
+    ubyte *d;
+    s = (ubyte *)source;
+    d = (ubyte *)dest;
+    for (remain = len >> 2; remain != 0; remain--)
+    {
+        *(ulong *)d = *(ulong *)s;
+        *(ulong *)s = val;
+        d += 4;
+        s += 4;
+    }
+    return dest;
 }
 
-int LbScreenSetupAnyMode_TODO(unsigned short mode, unsigned long width,
-    unsigned long height, TbPixel *palette)
+TbResult LbScreenSetupAnyMode_TODO(TbScreenMode mode, ulong width,
+    ulong height, ubyte *palette)
 {
-// code at 0001:000954e0
+    SDL_Surface * prevScreenSurf;
+    long hot_x,hot_y;
+    const struct TbSprite *msspr;
+    TbScreenModeInfo *mdinfo;
+    unsigned long sdlFlags;
+
+    msspr = NULL;
+    LbExeReferenceNumber();
+#if 0
+    if (lbDisplay.MouseSprite != NULL)
+    {
+        msspr = lbDisplay.MouseSprite;
+        GetPointerHotspot(&hot_x, &hot_y);
+    }
+    prevScreenSurf = lbScreenSurface;
+    LbMouseChangeSprite(NULL);
+    if (lbHasSecondSurface) {
+        SDL_FreeSurface(lbDrawSurface);
+    }
+    lbDrawSurface = NULL;
+    lbScreenInitialised = false;
+
+    if (prevScreenSurf != NULL) {
+    }
+
+    mdinfo = LbScreenGetModeInfo(mode);
+    if ( !LbScreenIsModeAvailable(mode) )
+    {
+        LIBLOG("%s resolution %dx%d (mode %d) not available",
+            (mdinfo->VideoFlags&Lb_VF_WINDOWED)?"Windowed":"Full screen",
+            (int)mdinfo->Width,(int)mdinfo->Height,(int)mode);
+        return Lb_FAIL;
+    }
+
+    // SDL video mode flags
+    sdlFlags = 0;
+    sdlFlags |= SDL_SWSURFACE;
+    if (mdinfo->BitsPerPixel == lbEngineBPP) {
+        sdlFlags |= SDL_HWPALETTE;
+    }
+    if (lbDoubleBufferingRequested) {
+        sdlFlags |= SDL_DOUBLEBUF;
+    }
+    if ((mdinfo->VideoFlags & Lb_VF_WINDOWED) == 0) {
+        sdlFlags |= SDL_FULLSCREEN;
+    }
+
+    // Set SDL video mode (also creates window).
+    lbScreenSurface = lbDrawSurface = SDL_SetVideoMode(mdinfo->Width, mdinfo->Height, mdinfo->BitsPerPixel, sdlFlags);
+
+    if (lbScreenSurface == NULL) {
+        LIBLOG("Failed to initialize mode %d: %s",(int)mode,SDL_GetError());
+        return Lb_FAIL;
+    }
+
+    SDL_WM_SetCaption(lbDrawAreaTitle, lbDrawAreaTitle);
+    LbScreenUpdateIcon();
+
+    // Create secondary surface if necessary, that is if BPP != lbEngineBPP.
+    if (mdinfo->BitsPerPixel != lbEngineBPP)
+    {
+        lbDrawSurface = SDL_CreateRGBSurface(SDL_SWSURFACE, mdinfo->Width, mdinfo->Height, lbEngineBPP, 0, 0, 0, 0);
+        if (lbDrawSurface == NULL) {
+            LIBLOG("Can't create secondary surface: %s",SDL_GetError());
+            LbScreenReset();
+            return Lb_FAIL;
+        }
+        lbHasSecondSurface = true;
+    }
+
+    lbDisplay.DrawFlags = 0;
+    lbDisplay.DrawColour = 0;
+    lbDisplayEx.ShadowColour = 0;
+    lbDisplay.PhysicalScreenWidth = mdinfo->Width;
+    lbDisplay.PhysicalScreenHeight = mdinfo->Height;
+    lbDisplay.ScreenMode = mode;
+    lbDisplay.PhysicalScreen = NULL;
+    // The graphics screen size should be really taken after screen is locked, but it seem just getting in now will work too
+    lbDisplay.GraphicsScreenWidth = lbDrawSurface->pitch;
+    lbDisplay.GraphicsScreenHeight = mdinfo->Height;
+    lbDisplay.WScreen = NULL;
+    lbDisplay.GraphicsWindowPtr = NULL;
+
+    LIBLOG("Mode %dx%dx%d setup succeeded",(int)lbScreenSurface->w,(int)lbScreenSurface->h,(int)lbScreenSurface->format->BitsPerPixel);
+    if (palette != NULL)
+    {
+        LbPaletteSet(palette);
+    }
+    LbScreenSetGraphicsWindow(0, 0, mdinfo->Width, mdinfo->Height);
+    LbTextSetWindow(0, 0, mdinfo->Width, mdinfo->Height);
+    LIBLOG("Done filling display properties struct");
+    if ( LbMouseIsInstalled() )
+    {
+        LbMouseSetWindow(0, 0, lbDisplay.PhysicalScreenWidth, lbDisplay.PhysicalScreenHeight);
+        LbMouseSetPosition(lbDisplay.PhysicalScreenWidth / 2, lbDisplay.PhysicalScreenHeight / 2);
+        if (msspr != NULL)
+          LbMouseChangeSpriteAndHotspot(msspr, hot_x, hot_y);
+    }
+    LbInputRestate();
+    lbScreenInitialised = true;
+    LbScreenActivationUpdate();
+#endif
+    LIBLOG("Finished");
+    return Lb_SUCCESS;
 }
 
 int LbScreenClearGraphicsWindow_TODO()

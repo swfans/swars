@@ -21,36 +21,39 @@
 
 static inline void *LbI_XMemCopy(void *dest, void *source, ulong len)
 {
-        ulong remain;
-        ubyte *s;
-        ubyte *d;
-        s = (ubyte *)source;
-        d = (ubyte *)dest;
-        for (remain = len >> 2; remain != 0; remain--)
-        {
-            *(ulong *)d = *(ulong *)s;
-            d += 4;
-            s += 4;
-        }
+    ulong remain;
+    ubyte *s;
+    ubyte *d;
+    s = (ubyte *)source;
+    d = (ubyte *)dest;
+    for (remain = len >> 2; remain != 0; remain--)
+    {
+        *(ulong *)d = *(ulong *)s;
+        d += 4;
+        s += 4;
+    }
+    return dest;
 }
 
 static inline void *LbI_XMemCopyAndSet(void *dest, void *source, ulong val, ulong len)
 {
-        ulong remain;
-        ubyte *s;
-        ubyte *d;
-        s = (ubyte *)source;
-        d = (ubyte *)dest;
-        for (remain = len >> 2; remain != 0; remain--)
-        {
-            *(ulong *)d = *(ulong *)s;
-            *(ulong *)s = val;
-            d += 4;
-            s += 4;
-        }
+    ulong remain;
+    ubyte *s;
+    ubyte *d;
+    s = (ubyte *)source;
+    d = (ubyte *)dest;
+    for (remain = len >> 2; remain != 0; remain--)
+    {
+        *(ulong *)d = *(ulong *)s;
+        *(ulong *)s = val;
+        d += 4;
+        s += 4;
+    }
+    return dest;
 }
 
-int LbScreenSetupAnyMode()
+TbResult LbScreenSetupAnyMode_TODO(TbScreenMode mode, ulong width,
+    ulong height, ubyte *palette)
 {
 // code at 0001:000954e0
 }
