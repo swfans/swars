@@ -79,14 +79,40 @@ TbResult LbScreenLock(void)
     return Lb_SUCCESS;
 }
 
-TbResult ASM_LbScreenSwap(void);
-
 TbResult LbScreenSwap(void)
 {
-    TbResult ret;
+    /*TbResult ret;
     asm volatile ("call ASM_LbScreenSwap\n"
         : "=r" (ret) : );
-    return ret;
+    return ret;*/
+    LbMousePlace();
+    if (lbDisplay.VesaIsSetUp)
+    {
+        int block_id, shift, remain;
+        ubyte *srcbuf;
+        remain = lbDisplay.GraphicsScreenHeight * lbDisplay.GraphicsScreenWidth;
+        srcbuf = lbDisplay.WScreen;
+        block_id = 0;
+        while ( remain )
+        {
+          if ( remain >= 0x10000 )
+            shift = 0x10000;
+          else
+            shift = remain;
+          remain -= shift;
+          LbVesaSetPage(block_id);
+          block_id++;
+          memcpy(lbDisplay.PhysicalScreen, srcbuf, shift);
+          srcbuf += 0x10000;
+        }
+    } else
+    {
+        int remain;
+        remain = lbDisplay.GraphicsScreenHeight * lbDisplay.GraphicsScreenWidth;
+        memcpy(lbDisplay.PhysicalScreen, lbDisplay.WScreen, remain);
+    }
+    LbMouseRemove();
+    return Lb_SUCCESS;
 }
 
 TbResult LbScreenSwapClear(TbPixel colour)
@@ -204,7 +230,6 @@ void ASM_setup_color_lookups(void);
 void ASM_game_setup_sub7(void);
 void ASM_game_setup_sub8(void);
 void ASM_init_engine(void);
-void ASM_swap_wscreen(void);
 void ASM_play_intro(void);
 void ASM_init_syndwars(void);
 void ASM_setup_host_sub6(void);
