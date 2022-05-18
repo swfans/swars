@@ -65,10 +65,19 @@ int LbScreenClear()
 // code at 0001:00095728
 }
 
-int LbScreenReset()
+TbResult LbScreenReset(void)
 {
-// code at 0001:00095754
+    if (!lbScreenInitialised)
+      return Lb_FAIL;
+
+    LbMouseSuspend();
+    // here we should call proper interrupt to get back into lbDisplay.OldVideoMode
+    // Mark as not initialized
+    lbScreenInitialised = false;
+
+    return Lb_SUCCESS;
 }
+
 
 int LbScreenLock()
 {

@@ -78,9 +78,28 @@ int LbScreenClear_TODO()
 // code at 0001:00095728
 }
 
-int LbScreenReset_TODO()
+TbResult LbScreenReset(void)
 {
-// code at 0001:00095754
+    if (!lbScreenInitialised)
+      return Lb_FAIL;
+
+    LbMouseSuspend();
+    if (lbDisplay.WScreen != NULL) {
+        LIBLOG("Screen got reset while locked");
+        LbScreenUnlock();
+    }
+    if (lbHasSecondSurface) {
+        SDL_FreeSurface(to_SDLSurf(lbDrawSurface));
+    }
+    // do not free screen surface, it is freed automatically
+    // on SDL_Quit or next call to set video mode
+    lbHasSecondSurface = false;
+    lbDrawSurface = NULL;
+    lbScreenSurface = NULL;
+    // Mark as not initialized
+    lbScreenInitialised = false;
+
+    return Lb_SUCCESS;
 }
 
 TbResult LbScreenLock_TODO(void)
