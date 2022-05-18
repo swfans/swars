@@ -29,9 +29,14 @@ int LbVesaSetMode()
 // code at 0001:000b2838
 }
 
-int LbVesaSetPage()
+TbResult LbVesaSetPage(ushort pageNo)
 {
-// code at 0001:000b2894
+  if (lbVesaPage != pageNo)
+  {
+    // VESA page switch interrupt should be called here
+    lbVesaPage = pageNo;
+  }
+    return Lb_SUCCESS;
 }
 
 int LbVesaGetInfo()

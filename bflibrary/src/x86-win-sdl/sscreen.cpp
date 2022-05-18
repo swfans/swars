@@ -17,6 +17,7 @@
  *     (at your option) any later version.
  */
 /******************************************************************************/
+#include <assert.h>
 #include <SDL/SDL.h>
 #include "bfscreen.h"
 
@@ -31,6 +32,37 @@
 #define lbHasSecondSurface 0
 
 //int lbScreenDirectAccessActive;
+
+static inline void *LbI_XMemCopy(void *dest, void *source, ulong len)
+{
+        ulong remain;
+        ubyte *s;
+        ubyte *d;
+        s = (ubyte *)source;
+        d = (ubyte *)dest;
+        for (remain = len >> 2; remain != 0; remain--)
+        {
+            *(ulong *)d = *(ulong *)s;
+            d += 4;
+            s += 4;
+        }
+}
+
+static inline void *LbI_XMemCopyAndSet(void *dest, void *source, ulong val, ulong len)
+{
+        ulong remain;
+        ubyte *s;
+        ubyte *d;
+        s = (ubyte *)source;
+        d = (ubyte *)dest;
+        for (remain = len >> 2; remain != 0; remain--)
+        {
+            *(ulong *)d = *(ulong *)s;
+            *(ulong *)s = val;
+            d += 4;
+            s += 4;
+        }
+}
 
 int LbScreenSetupAnyMode_TODO(unsigned short mode, unsigned long width,
     unsigned long height, TbPixel *palette)
@@ -106,9 +138,21 @@ int LbScreenFindVideoModes_TODO()
 // code at 0001:000957f8
 }
 
-TbResult LbScreenSwap_TODO(void)
+TbResult LbScreenSwap(void)
 {
     TbResult ret;
+
+    assert(!lbDisplay.VesaIsSetUp); // video mem paging not supported with SDL
+
+    LbMousePlace();
+    {
+        ulong blremain;
+        blremain = lbDisplay.GraphicsScreenHeight * lbDisplay.GraphicsScreenWidth;
+        LbI_XMemCopy(lbDisplay.PhysicalScreen, lbDisplay.WScreen, blremain);
+        ret = Lb_SUCCESS;
+    }
+    LbMouseRemove();
+/*
     int blresult;
     LIBLOG("Starting");
     ret = LbMouseOnBeginSwap();
@@ -132,6 +176,7 @@ TbResult LbScreenSwap_TODO(void)
         }
     }
     LbMouseOnEndSwap();
+*/
     return ret;
 }
 
@@ -140,9 +185,20 @@ int LbScreenSwapBoxClear_TODO()
 // code at 0001:00095964
 }
 
-int LbScreenSwapClear_TODO()
+TbResult LbScreenSwapClear(TbPixel colour)
 {
-// code at 0001:00095b34
+    assert(!lbDisplay.VesaIsSetUp); // video mem paging not supported with SDL
+
+    LbMousePlace();
+    {
+        int blsize;
+        ubyte *blsrcbuf;
+        blsrcbuf = lbDisplay.WScreen;
+        blsize = lbDisplay.GraphicsScreenHeight * lbDisplay.GraphicsScreenWidth;
+        LbI_XMemCopyAndSet(lbDisplay.PhysicalScreen, blsrcbuf, 0x01010101 * colour, blsize);
+    }
+    LbMouseRemove();
+    return Lb_SUCCESS;
 }
 
 int LbScreenSwapBox_TODO()

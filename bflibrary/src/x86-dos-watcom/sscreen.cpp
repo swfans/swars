@@ -19,6 +19,37 @@
 /******************************************************************************/
 #include "bfscreen.h"
 
+static inline void *LbI_XMemCopy(void *dest, void *source, ulong len)
+{
+        ulong remain;
+        ubyte *s;
+        ubyte *d;
+        s = (ubyte *)source;
+        d = (ubyte *)dest;
+        for (remain = len >> 2; remain != 0; remain--)
+        {
+            *(ulong *)d = *(ulong *)s;
+            d += 4;
+            s += 4;
+        }
+}
+
+static inline void *LbI_XMemCopyAndSet(void *dest, void *source, ulong val, ulong len)
+{
+        ulong remain;
+        ubyte *s;
+        ubyte *d;
+        s = (ubyte *)source;
+        d = (ubyte *)dest;
+        for (remain = len >> 2; remain != 0; remain--)
+        {
+            *(ulong *)d = *(ulong *)s;
+            *(ulong *)s = val;
+            d += 4;
+            s += 4;
+        }
+}
+
 int LbScreenSetupAnyMode()
 {
 // code at 0001:000954e0
@@ -66,9 +97,36 @@ int LbScreenFindVideoModes()
 // code at 0001:000957f8
 }
 
-int LbScreenSwap()
+TbResult LbScreenSwap(void)
 {
-// code at 0001:000958b0
+    LbMousePlace();
+    if (lbDisplay.VesaIsSetUp)
+    {
+        ulong block_id, blshift, blremain;
+        ubyte *srcbuf;
+        blremain = lbDisplay.GraphicsScreenHeight * lbDisplay.GraphicsScreenWidth;
+        srcbuf = lbDisplay.WScreen;
+        block_id = 0;
+        while ( remain )
+        {
+          if ( remain >= 0x10000 )
+            blshift = 0x10000;
+          else
+            blshift = remain;
+          blremain -= blshift;
+          LbVesaSetPage(block_id);
+          LbI_XMemCopy(lbDisplay.PhysicalScreen, srcbuf, blshift);
+          srcbuf += 0x10000;
+          block_id++;
+        }
+    } else
+    {
+        ulong blremain;
+        blremain = lbDisplay.GraphicsScreenHeight * lbDisplay.GraphicsScreenWidth;
+        LbI_XMemCopy(lbDisplay.PhysicalScreen, lbDisplay.WScreen, blremain);
+    }
+    LbMouseRemove();
+    return Lb_SUCCESS;
 }
 
 int LbScreenSwapBoxClear()
@@ -76,9 +134,37 @@ int LbScreenSwapBoxClear()
 // code at 0001:00095964
 }
 
-int LbScreenSwapClear()
+TbResult LbScreenSwapClear(TbPixel colour)
 {
-// code at 0001:00095b34
+    LbMousePlace();
+    if (lbDisplay.VesaIsSetUp)
+    {
+        ulong block_id, pagelen, blremain;
+        ubyte *blsrcbuf;
+        blremain = lbDisplay.GraphicsScreenHeight * lbDisplay.GraphicsScreenWidth;
+        blsrcbuf = lbDisplay.WScreen;
+        for (block_id=0; blremain != 0; block_id++)
+        {
+            if (blremain >= 0x10000)
+                pagelen = 0x10000;
+            else
+                pagelen = blremain;
+            LbVesaSetPage(block_id);
+            LbI_XMemCopyAndSet(lbDisplay.PhysicalScreen, blsrcbuf, 0x01010101 * colour, pagelen);
+            blremain -= pagelen;
+            blsrcbuf += 0x10000;
+        }
+    }
+    else
+    {
+        int blsize;
+        ubyte *blsrcbuf;
+        blsrcbuf = lbDisplay.WScreen;
+        blsize = lbDisplay.GraphicsScreenHeight * lbDisplay.GraphicsScreenWidth;
+        LbI_XMemCopyAndSet(lbDisplay.PhysicalScreen, blsrcbuf, 0x01010101 * colour, blsize);
+    }
+    LbMouseRemove();
+    return Lb_SUCCESS;
 }
 
 int LbScreenSwapBox()

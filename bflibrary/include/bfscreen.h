@@ -294,7 +294,7 @@ int LbScreenSetDoubleBuffering();
 int LbScreenSetWScreenInVideo();
 extern int lbScreenDirectAccessActive;
 int LbScreenFindVideoModes();
-int LbScreenSwap();
+TbResult LbScreenSwap(void);
 int LbScreenSwapBoxClear();
 TbResult LbScreenSwapClear(TbPixel colour);
 int LbScreenSwapBox();

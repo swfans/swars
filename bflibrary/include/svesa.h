@@ -54,7 +54,7 @@ typedef struct TbRMREGS2 TbRMREGS2;
 
 int LbVesaGetGran();
 int LbVesaSetMode();
-int LbVesaSetPage();
+TbResult LbVesaSetPage(ushort pageNo);
 int LbVesaGetInfo();
 int LbVesaIsModeAvailable();
 extern int lbVesaBytesPerLine;
