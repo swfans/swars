@@ -177,40 +177,6 @@ GLOBAL_FUNC (ASM_LbScreenSetupAnyMode_)	/* 0xED4F0 */
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (ASM_LbScreenReset_)
-/*----------------------------------------------------------------*/
-		push   %ebx
-		push   %edx
-		push   %ebp
-		mov    %esp,%ebp
-		sub    $0x38,%esp
-		cmpl   $0x0,lbScreenInitialised
-		jne    jump_ed77c
-		mov    $0xffffffff,%eax
-		jmp    jump_ed7a9
-	jump_ed77c:
-		call   ac_LbMouseSuspend
-#if 0
-		xor    %eax,%eax
-		mov    EXPORT_SYMBOL(lbDisplay)+98,%ax # lbDisplay.OldVideoMode
-		mov    %eax,-0x1c(%ebp)
-		lea    -0x38(%ebp),%ebx
-		lea    -0x1c(%ebp),%edx
-		mov    $0x10,%eax
-		call   ac_dos_int386
-#endif
-		xor    %ebx,%ebx
-		mov    $0x1,%eax
-		mov    %ebx,lbScreenInitialised
-	jump_ed7a9:
-		mov    %ebp,%esp
-		pop    %ebp
-		pop    %edx
-		pop    %ebx
-		ret
-
-
-/*----------------------------------------------------------------*/
 LbScreenFindVideoModes_:
 /*----------------------------------------------------------------*/
 		push   %ebx

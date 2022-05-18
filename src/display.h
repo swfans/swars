@@ -6,7 +6,6 @@
 #include <stddef.h>
 
 void display_initialise (void);
-void display_finalise (void);
 void display_update (void);
 void display_set_full_screen (bool full_screen);
 void display_set_lowres_stretch (bool stretch);

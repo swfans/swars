@@ -219,15 +219,6 @@ display_initialise (void)
 }
 
 void
-display_finalise (void)
-{
-  //unlock_screen (); -- handled in LbScreenReset()
-  //SDL_FreeSurface (to_SDLSurf(lbDrawSurface));
-  lbDrawSurface = NULL;
-  lbDisplay.PhysicalScreen = NULL;
-}
-
-void
 display_set_full_screen (bool full_screen)
 {
   if (lbDrawSurface != NULL)
