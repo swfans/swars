@@ -227,6 +227,10 @@ struct ScreenModeInfo { // sizeof=38
 
 extern TbScreenModeInfo lbScreenModeInfo[];
 extern TbDisplayStruct lbDisplay;
+extern DwBool lbScreenInitialised;
+
+/** True if we have two surfaces. */
+extern TbBool lbHasSecondSurface;
 
 /** GUI scaling factor, to be used for drawing sprites smaller or larger.
  * For VGA resolution (width=640), the value is 16. It is smaller for lower resolutinons,

@@ -27,9 +27,7 @@
 
 #define to_SDLSurf(h) ((SDL_Surface  *)h)
 
-//TODO delete
-#define lbScreenInitialised 1
-#define lbHasSecondSurface 0
+TbBool lbHasSecondSurface = false;
 
 //int lbScreenDirectAccessActive;
 

@@ -18,6 +18,7 @@
  */
 /******************************************************************************/
 #include <stdio.h>
+#include <assert.h>
 #include <SDL/SDL.h>
 #include "bfpalette.h"
 
@@ -26,9 +27,6 @@
 #include "bflog.h"
 
 #define to_SDLSurf(h) ((SDL_Surface  *)h)
-
-//TODO delete
-#define lbScreenInitialised 1
 
 /** Colour palette buffer, to be used inside lbDisplay. */
 ubyte lbPalette[PALETTE_8b_SIZE];
