@@ -16,9 +16,6 @@
 
 extern TbScreenModeInfo lbScreenModeInfo[];
 
-// Misc stuff
-extern uint32_t screen_initialised;
-
 #pragma pack()
 
 static bool	    display_full_screen = false;
@@ -155,14 +152,14 @@ int LbScreenSetupAnyMode(unsigned short mode, unsigned long width,
   LbScreenSetGraphicsWindow(0, 0, lbDisplay.GraphicsScreenWidth, lbDisplay.GraphicsScreenHeight);
   LbTextSetWindow(0, 0, lbDisplay.GraphicsScreenWidth, lbDisplay.GraphicsScreenHeight);
 
+  lbScreenInitialised = true;
+
   // Setup palette
   if (palette != NULL)
     {
-      if (LbPaletteSet(palette) != 1)
-	goto err;
+        if (LbPaletteSet(palette) != 1)
+            goto err;
     }
-
-  screen_initialised = true;
 
   return 1;
 
@@ -180,7 +177,7 @@ err:
       display_stretch_buffer = NULL;
     }
 
-  screen_initialised = false;
+  lbScreenInitialised = false;
 
   return -1;
 }

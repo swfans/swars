@@ -164,7 +164,7 @@ GLOBAL_FUNC (ASM_LbScreenSetupAnyMode_)	/* 0xED4F0 */
 		add    $0x4,%esp
 	jump_ed6d6:
 		mov    $0x1,%edi
-		mov    %edi,screen_initialised
+		mov    %edi,lbScreenInitialised
 		mov    %edi,%eax
 	jump_ed6e3:
 		mov    %ebp,%esp
@@ -184,7 +184,7 @@ GLOBAL_FUNC (LbScreenReset_)
 		push   %ebp
 		mov    %esp,%ebp
 		sub    $0x38,%esp
-		cmpl   $0x0,screen_initialised
+		cmpl   $0x0,lbScreenInitialised
 		jne    jump_ed77c
 		mov    $0xffffffff,%eax
 		jmp    jump_ed7a9
@@ -201,7 +201,7 @@ GLOBAL_FUNC (LbScreenReset_)
 #endif
 		xor    %ebx,%ebx
 		mov    $0x1,%eax
-		mov    %ebx,screen_initialised
+		mov    %ebx,lbScreenInitialised
 	jump_ed7a9:
 		mov    %ebp,%esp
 		pop    %ebp
@@ -1022,7 +1022,7 @@ aVesa:	/* 0x15F1A8 */
 setup:	/* 0x1E2E50 */
 		.long	0x0
 
-GLOBAL (screen_initialised)		/* 1e5e98 */
+GLOBAL (lbScreenInitialised)		/* 0x1e5e98 */
 		.long	0x0
 _lbVesaBytesPerLine:
 		.short  0x0
