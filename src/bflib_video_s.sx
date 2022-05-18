@@ -177,7 +177,7 @@ GLOBAL_FUNC (ASM_LbScreenSetupAnyMode_)	/* 0xED4F0 */
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (LbScreenReset_)
+GLOBAL_FUNC (ASM_LbScreenReset_)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %edx

@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <stdio.h>
+#include <assert.h>
 
 #include "display.h"
 #include "bfscreen.h"
@@ -185,6 +186,7 @@ err:
 void
 display_update (void)
 {
+  assert(lbDrawSurface != NULL);
   // Stretched lowres in action?
   if (display_stretch_buffer != NULL)
     {
@@ -219,8 +221,8 @@ display_initialise (void)
 void
 display_finalise (void)
 {
-  unlock_screen ();
-  SDL_FreeSurface (to_SDLSurf(lbDrawSurface));
+  //unlock_screen (); -- handled in LbScreenReset()
+  //SDL_FreeSurface (to_SDLSurf(lbDrawSurface));
   lbDrawSurface = NULL;
   lbDisplay.PhysicalScreen = NULL;
 }
