@@ -79,50 +79,6 @@ TbResult LbScreenLock(void)
     return Lb_SUCCESS;
 }
 
-TbResult LbScreenSwap(void)
-{
-    /*TbResult ret;
-    asm volatile ("call ASM_LbScreenSwap\n"
-        : "=r" (ret) : );
-    return ret;*/
-    LbMousePlace();
-    if (lbDisplay.VesaIsSetUp)
-    {
-        int block_id, shift, remain;
-        ubyte *srcbuf;
-        remain = lbDisplay.GraphicsScreenHeight * lbDisplay.GraphicsScreenWidth;
-        srcbuf = lbDisplay.WScreen;
-        block_id = 0;
-        while ( remain )
-        {
-          if ( remain >= 0x10000 )
-            shift = 0x10000;
-          else
-            shift = remain;
-          remain -= shift;
-          LbVesaSetPage(block_id);
-          block_id++;
-          memcpy(lbDisplay.PhysicalScreen, srcbuf, shift);
-          srcbuf += 0x10000;
-        }
-    } else
-    {
-        int remain;
-        remain = lbDisplay.GraphicsScreenHeight * lbDisplay.GraphicsScreenWidth;
-        memcpy(lbDisplay.PhysicalScreen, lbDisplay.WScreen, remain);
-    }
-    LbMouseRemove();
-    return Lb_SUCCESS;
-}
-
-TbResult LbScreenSwapClear(TbPixel colour)
-{
-    TbResult ret;
-    asm volatile ("call ASM_LbScreenSwapClear\n"
-        : "=r" (ret) : "a" (colour));
-    return ret;
-}
-
 void PacketRecord_Close(void)
 {
     if (in_network_game)

@@ -313,7 +313,7 @@ GLOBAL_FUNC (ASM_LbScreenSwap)	/* 0xED8C0 */
 		mov    -0x4(%ebp),%eax
 		incl   -0x4(%ebp)
 		cwtl
-		call   LbVesaSetPage_
+		call   ac_LbVesaSetPage
 		mov    -0xc(%ebp),%ecx
 		sar    $0x2,%ecx
 		mov    -0x8(%ebp),%esi
@@ -396,7 +396,7 @@ GLOBAL_FUNC (ASM_LbScreenSwapClear)
 		mov    -0x4(%ebp),%eax
 		incl   -0x4(%ebp)
 		cwtl
-		call   LbVesaSetPage_
+		call   ac_LbVesaSetPage
 		xor    %eax,%eax
 		mov    0x18(%ebp),%al
 		shl    $0x8,%eax
@@ -636,7 +636,7 @@ LbVesaSetMode_:
 /*----------------------------------------------------------------*/
 /* long LbVesaSetPage(long dxp)
  */
-GLOBAL_FUNC (LbVesaSetPage_)
+GLOBAL_FUNC (ASM_LbVesaSetPage_)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
