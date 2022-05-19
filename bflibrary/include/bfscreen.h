@@ -82,6 +82,14 @@ enum TbDrawFlags {
     Lb_TEXT_UNDERLNSHADOW  = 0x0800,
 };
 
+enum TbVideoModeFlags {
+    Lb_VF_DEFAULT     = 0x0000, // dummy flag
+    Lb_VF_RGBCOLOR    = 0x0001,
+    Lb_VF_TRUCOLOR    = 0x0002,
+    Lb_VF_PALETTE     = 0x0004,
+    Lb_VF_WINDOWED    = 0x0010,
+};
+
 #pragma pack(1)
 
 typedef struct DisplayStruct TbDisplayStruct;
@@ -199,6 +207,10 @@ struct DisplayStruct { // sizeof=118
     short MouseMoveRatioX;
     short MouseMoveRatioY;
 #endif
+#if defined(ENABLE_SHADOW_COLOUR)
+    /** Colour index used for drawing shadow. */
+    uchar ShadowColour;
+#endif
 };
 
 typedef struct ScreenModeInfo TbScreenModeInfo;
@@ -226,6 +238,7 @@ struct ScreenModeInfo { // sizeof=38
 #pragma pack()
 
 extern TbScreenModeInfo lbScreenModeInfo[];
+
 extern TbDisplayStruct lbDisplay;
 extern DwBool lbScreenInitialised;
 
@@ -237,6 +250,21 @@ extern TbBool lbHasSecondSurface;
  * and larger for higher resolutions.
  */
 extern ushort lbUnitsPerPixel;
+
+/** Returns info struct for requested screen mode.
+ *
+ * @return The info struct for given screen mode, or empty
+ *     struct for invalid mode if no such mode exists.
+ */
+TbScreenModeInfo *LbScreenGetModeInfo(TbScreenMode mode);
+
+/** Register a new video mode with given properties.
+ *
+ * @return The index under which the new Screen mode was registered.
+ */
+TbScreenMode LbRegisterVideoMode(const char *desc,
+    TbScreenCoord width, TbScreenCoord height,
+    ushort bpp, ulong flags);
 
 TbResult LbScreenSetup(TbScreenMode mode, TbScreenCoord width, TbScreenCoord height,
     unsigned char *palette);
@@ -271,7 +299,8 @@ TbScreenCoord LbScreenWidth(void);
  */
 TbScreenCoord LbScreenHeight(void);
 
-int LbScreenIsModeAvailable();
+TbBool LbScreenIsModeAvailable(TbScreenMode mode);
+
 TbResult LbScreenSetGraphicsWindow(ulong x, ulong y, ulong width, ulong height);
 
 TbResult LbScreenSetupAnyMode_TODO(TbScreenMode mode, ulong width,

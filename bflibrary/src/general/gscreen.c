@@ -52,9 +52,35 @@ struct ScreenModeInfo lbScreenModeInfo_UNUSED[] = {
     {   0,   0, 0,0,   0x0,"MODE_INVALID"},
 };
 
+/** Count of used entries in registered video modes list. */
+long lbScreenModeInfoNum = 28;
+
 TbDisplayStruct lbDisplay;
 
 ushort lbUnitsPerPixel = 16;
+
+TbScreenModeInfo *LbScreenGetModeInfo(TbScreenMode mode)
+{
+    if (mode < lbScreenModeInfoNum)
+        return &lbScreenModeInfo[mode];
+    return &lbScreenModeInfo[0];
+}
+
+TbBool LbScreenIsModeAvailable(TbScreenMode mode)
+{
+    TbScreenModeInfo *mdinfo;
+#if 0
+    static TbBool setup = false;
+    if (!setup)
+    {
+        if (LbScreenFindVideoModes() != Lb_SUCCESS)
+          return false;
+        setup = true;
+    }
+#endif
+    mdinfo = LbScreenGetModeInfo(mode);
+    return mdinfo->Available;
+}
 
 TbScreenCoord LbGraphicsScreenWidth(void)
 {
@@ -80,11 +106,6 @@ TbResult LbScreenSetup(TbScreenMode mode, TbScreenCoord width, TbScreenCoord hei
     unsigned char *palette)
 {
     return LbScreenSetupAnyMode(mode, width, height, palette);
-}
-
-int LbScreenIsModeAvailable_UNUSED()
-{
-// code at 0001:00093bf0
 }
 
 TbResult LbScreenSetGraphicsWindow(ulong x, ulong y, ulong width, ulong height)
