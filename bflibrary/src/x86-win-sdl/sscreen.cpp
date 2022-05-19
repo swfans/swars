@@ -66,8 +66,8 @@ static inline void *LbI_XMemCopyAndSet(void *dest, void *source, ulong val, ulon
     return dest;
 }
 
-TbResult LbScreenSetupAnyMode_TODO(TbScreenMode mode, ulong width,
-    ulong height, ubyte *palette)
+TbResult LbScreenSetupAnyMode_TODO(TbScreenMode mode, TbScreenCoord width,
+    TbScreenCoord height, ubyte *palette)
 {
     SDL_Surface * prevScreenSurf;
     long hot_x,hot_y;
@@ -99,7 +99,7 @@ TbResult LbScreenSetupAnyMode_TODO(TbScreenMode mode, ulong width,
     if ( !LbScreenIsModeAvailable(mode) )
     {
         LIBLOG("%s resolution %dx%d (mode %d) not available",
-            (mdinfo->VideoFlags&Lb_VF_WINDOWED) ? "Windowed" : "Full screen",
+            (mdinfo->VideoMode & Lb_VF_WINDOWED) ? "Windowed" : "Full screen",
             (int)mdinfo->Width, (int)mdinfo->Height, (int)mode);
         return Lb_FAIL;
     }
@@ -114,18 +114,21 @@ TbResult LbScreenSetupAnyMode_TODO(TbScreenMode mode, ulong width,
     if (lbDoubleBufferingRequested) {
         sdlFlags |= SDL_DOUBLEBUF;
     }
-    if ((mdinfo->VideoFlags & Lb_VF_WINDOWED) == 0) {
+#endif
+    if ((mdinfo->VideoMode & Lb_VF_WINDOWED) == 0) {
         sdlFlags |= SDL_FULLSCREEN;
     }
 
     // Set SDL video mode (also creates window).
-    lbScreenSurface = lbDrawSurface = SDL_SetVideoMode(mdinfo->Width, mdinfo->Height, mdinfo->BitsPerPixel, sdlFlags);
+    lbScreenSurface = lbDrawSurface = SDL_SetVideoMode(mdinfo->Width, mdinfo->Height,
+      mdinfo->BitsPerPixel, sdlFlags);
 
     if (lbScreenSurface == NULL) {
-        LIBLOG("Failed to initialize mode %d: %s",(int)mode,SDL_GetError());
+        LIBLOG("Failed to initialize mode %d: %s", (int)mode, SDL_GetError());
         return Lb_FAIL;
     }
 
+#if 0
     SDL_WM_SetCaption(lbDrawAreaTitle, lbDrawAreaTitle);
     LbScreenUpdateIcon();
 

@@ -303,12 +303,19 @@ TbBool LbScreenIsModeAvailable(TbScreenMode mode);
 
 TbResult LbScreenSetGraphicsWindow(ulong x, ulong y, ulong width, ulong height);
 
-TbResult LbScreenSetupAnyMode_TODO(TbScreenMode mode, ulong width,
-    ulong height, ubyte *palette);
+TbResult LbScreenSetupAnyMode_TODO(TbScreenMode mode, TbScreenCoord width,
+    TbScreenCoord height, ubyte *palette);
 
 int LbScreenClearGraphicsWindow();
 int LbScreenClear();
-int LbScreenReset();
+
+/** Finalize the work with graphical screen.
+ *
+ *  This reverses the screen initialization from LbScreenSetupAnyMode().
+ *  It frees screen-related buffers, and reverts graphics to previous
+ *  screen mode, if neccessary.
+ */
+TbResult LbScreenReset(void);
 
 /** Locks the graphics screen.
  *  This function gives access to the WScreen pointer, which contains buffer
