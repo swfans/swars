@@ -19,7 +19,6 @@ extern TbScreenModeInfo lbScreenModeInfo[];
 
 #pragma pack()
 
-static bool	    display_full_screen = false;
 static bool         display_lowres_stretch = false;
 static unsigned char *display_stretch_buffer = NULL;
 
@@ -45,7 +44,8 @@ unlock_screen (void)
 int LbScreenSetupAnyMode(unsigned short mode, unsigned long width,
     unsigned long height, TbPixel *palette)
 {
-  uint32_t flags;
+    uint32_t flags;
+    TbScreenModeInfo *mdinfo;
 
   LbMouseSuspend();
 
@@ -77,8 +77,9 @@ int LbScreenSetupAnyMode(unsigned short mode, unsigned long width,
 
   flags = SDL_SWSURFACE;
 
-  if (display_full_screen)
-    flags |= SDL_FULLSCREEN;
+    mdinfo = LbScreenGetModeInfo(mode);
+    if ((mdinfo->VideoMode & Lb_VF_WINDOWED) == 0)
+        flags |= SDL_FULLSCREEN;
 
   // Stretch lowres ?
   if (width == 320 && height == 200 && display_lowres_stretch)
@@ -221,10 +222,22 @@ display_initialise (void)
 void
 display_set_full_screen (bool full_screen)
 {
-  if (lbDrawSurface != NULL)
-    return;
+    TbScreenModeInfo *mdinfo;
 
-  display_full_screen = full_screen;
+    if (lbDrawSurface != NULL)
+        return;
+
+    if (full_screen) {
+        mdinfo = LbScreenGetModeInfo(1);
+        mdinfo->VideoMode &= ~Lb_VF_WINDOWED;
+        mdinfo = LbScreenGetModeInfo(13);
+        mdinfo->VideoMode &= ~Lb_VF_WINDOWED;
+    } else {
+        mdinfo = LbScreenGetModeInfo(1);
+        mdinfo->VideoMode |= Lb_VF_WINDOWED;
+        mdinfo = LbScreenGetModeInfo(13);
+        mdinfo->VideoMode |= Lb_VF_WINDOWED;
+    }
 }
 
 void
