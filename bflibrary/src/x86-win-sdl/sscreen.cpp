@@ -19,6 +19,7 @@
 /******************************************************************************/
 #include <assert.h>
 #include <SDL/SDL.h>
+#include <SDL/SDL_syswm.h>
 #include "bfscreen.h"
 
 #include "bfscrsurf.h"
@@ -29,9 +30,21 @@
 
 #define to_SDLSurf(h) ((SDL_Surface  *)h)
 
+extern char lbDrawAreaTitle[128];
+extern short lbIconIndex;
+extern ResourceMappingFunc userResourceMapping;
+
+/** @internal
+ * Informs if separate screen and draw surfaces were created
+ * during LbScreenSetup().
+ */
 TbBool lbHasSecondSurface = false;
 
 //int lbScreenDirectAccessActive;
+
+/** Bytes per pixel expected by the engine.
+ * On any try of entering different video BPP, this mode will be emulated. */
+volatile unsigned short lbEngineBPP = 8;
 
 static inline void *LbI_XMemCopy(void *dest, void *source, ulong len)
 {
@@ -66,11 +79,67 @@ static inline void *LbI_XMemCopyAndSet(void *dest, void *source, ulong val, ulon
     return dest;
 }
 
+#if defined(WIN32)
+
+TbResult LbScreenUpdateIcon(void)
+{
+    HICON hIcon;
+    HINSTANCE lbhInstance;
+    SDL_SysWMinfo wmInfo;
+    const char * rname;
+
+    SDL_VERSION(&wmInfo.version);
+    if (SDL_GetWMInfo(&wmInfo) < 0) {
+        LIBLOG("Cannot set icon: Get SDL window info failed: %s", SDL_GetError());
+        return Lb_FAIL;
+    }
+
+    rname = userResourceMapping(lbIconIndex);
+    if (rname != NULL) {
+        lbhInstance = GetModuleHandle(NULL);
+        hIcon = LoadIcon(lbhInstance, rname);
+    } else {
+        LIBLOG("Cannot set icon: Resource mapped to NULL");
+        return Lb_FAIL;
+    }
+    SendMessage(wmInfo.window, WM_SETICON, ICON_BIG,  (LPARAM)hIcon);
+    SendMessage(wmInfo.window, WM_SETICON, ICON_SMALL,(LPARAM)hIcon);
+
+    return Lb_SUCCESS;
+}
+
+#else
+
+TbResult LbScreenUpdateIcon(void)
+{
+    Uint32          colorkey;
+    SDL_Surface     *image;
+    const char * rname;
+
+    rname = userResourceMapping(lbIconIndex);
+    if (rname != NULL) {
+        image = SDL_LoadBMP(rname);
+    } else {
+        image = NULL;
+    }
+    if (image == NULL) {
+        LIBLOG("Cannot set icon: Image load failed: %s", SDL_GetError());
+        return Lb_FAIL;
+    }
+    colorkey = SDL_MapRGB(image->format, 255, 0, 255);
+    SDL_SetColorKey(image, SDL_SRCCOLORKEY, colorkey);
+    SDL_WM_SetIcon(image, NULL);
+
+    return Lb_SUCCESS;
+}
+
+#endif
+
 TbResult LbScreenSetupAnyMode_TODO(TbScreenMode mode, TbScreenCoord width,
     TbScreenCoord height, ubyte *palette)
 {
     SDL_Surface * prevScreenSurf;
-    long hot_x,hot_y;
+    long hot_x, hot_y;
     const struct TbSprite *msspr;
     TbScreenModeInfo *mdinfo;
     unsigned long sdlFlags;
@@ -80,9 +149,7 @@ TbResult LbScreenSetupAnyMode_TODO(TbScreenMode mode, TbScreenCoord width,
     if (lbDisplay.MouseSprite != NULL)
     {
         msspr = lbDisplay.MouseSprite;
-#if 0
-        GetPointerHotspot(&hot_x, &hot_y);
-#endif
+        LbMouseGetSpriteOffset(&hot_x, &hot_y);
     }
     prevScreenSurf = to_SDLSurf(lbScreenSurface);
     LbMouseChangeSprite(NULL);
@@ -95,6 +162,10 @@ TbResult LbScreenSetupAnyMode_TODO(TbScreenMode mode, TbScreenCoord width,
     if (prevScreenSurf != NULL) {
     }
 
+    // No need for old video mode in window-based environments
+    if (lbDisplay.OldVideoMode == 0)
+        lbDisplay.OldVideoMode = 0xFF;
+
     mdinfo = LbScreenGetModeInfo(mode);
     if ( !LbScreenIsModeAvailable(mode) )
     {
@@ -104,13 +175,16 @@ TbResult LbScreenSetupAnyMode_TODO(TbScreenMode mode, TbScreenCoord width,
         return Lb_FAIL;
     }
 
+    // No need for video buffer paging when using SDL
+    lbDisplay.VesaIsSetUp = false;
+
     // SDL video mode flags
     sdlFlags = 0;
     sdlFlags |= SDL_SWSURFACE;
-#if 0
     if (mdinfo->BitsPerPixel == lbEngineBPP) {
         sdlFlags |= SDL_HWPALETTE;
     }
+#if 0
     if (lbDoubleBufferingRequested) {
         sdlFlags |= SDL_DOUBLEBUF;
     }
@@ -128,7 +202,6 @@ TbResult LbScreenSetupAnyMode_TODO(TbScreenMode mode, TbScreenCoord width,
         return Lb_FAIL;
     }
 
-#if 0
     SDL_WM_SetCaption(lbDrawAreaTitle, lbDrawAreaTitle);
     LbScreenUpdateIcon();
 
@@ -143,7 +216,6 @@ TbResult LbScreenSetupAnyMode_TODO(TbScreenMode mode, TbScreenCoord width,
         }
         lbHasSecondSurface = true;
     }
-#endif
 
     lbDisplay.DrawFlags = 0;
     lbDisplay.DrawColour = 0;

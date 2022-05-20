@@ -17,6 +17,7 @@
  *     (at your option) any later version.
  */
 /******************************************************************************/
+#include <string.h>
 #include "bfscreen.h"
 
 //TODO remove from ASM, then rename
@@ -55,6 +56,16 @@ struct ScreenModeInfo lbScreenModeInfo_UNUSED[] = {
 /** Count of used entries in registered video modes list. */
 long lbScreenModeInfoNum = 28;
 
+/** Application title for target OS. */
+char lbDrawAreaTitle[128] = "Bullfrog Shell";
+
+short lbIconIndex = 0;
+
+const char * EmptyResourceMapping(short index);
+
+/** Callback for mapping resource index into string icon identifier. */
+ResourceMappingFunc userResourceMapping = EmptyResourceMapping;
+
 TbDisplayStruct lbDisplay;
 
 ushort lbUnitsPerPixel = 16;
@@ -80,6 +91,29 @@ TbBool LbScreenIsModeAvailable(TbScreenMode mode)
 #endif
     mdinfo = LbScreenGetModeInfo(mode);
     return mdinfo->Available;
+}
+
+TbResult LbSetTitle(const char *title)
+{
+    strncpy(lbDrawAreaTitle, title, sizeof(lbDrawAreaTitle)-1);
+    return Lb_SUCCESS;
+}
+
+const char * EmptyResourceMapping(short index)
+{
+    return NULL;
+}
+
+TbResult LbSetUserResourceMapping(ResourceMappingFunc func)
+{
+    userResourceMapping = func;
+    return Lb_SUCCESS;
+}
+
+TbResult LbSetIcon(short nicon)
+{
+    lbIconIndex = nicon;
+    return Lb_SUCCESS;
 }
 
 TbScreenCoord LbGraphicsScreenWidth(void)

@@ -76,6 +76,12 @@ TbResult LbMouseOnEndSwap(void);
  */
 TbResult LbMouseChangeSpriteOffset(ulong hot_x, ulong hot_y);
 
+/**
+ * Get offset within pointer sprite where the mouse actually points at.
+ *  Also called GetPointerHotspot().
+ */
+TbResult LbMouseGetSpriteOffset(long *hot_x, long *hot_y);
+
 TbResult LbMouseChangeSprite(const struct TbSprite *pointer_spr);
 
 /**

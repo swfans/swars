@@ -235,6 +235,8 @@ struct ScreenModeInfo { // sizeof=38
     char Desc[24]; // offset=14
 };
 
+typedef const char *(*ResourceMappingFunc)(short);
+
 #pragma pack()
 
 extern TbScreenModeInfo lbScreenModeInfo[];
@@ -265,6 +267,26 @@ TbScreenModeInfo *LbScreenGetModeInfo(TbScreenMode mode);
 TbScreenMode LbRegisterVideoMode(const char *desc,
     TbScreenCoord width, TbScreenCoord height,
     ushort bpp, ulong flags);
+
+/** Set title of the application to be used in target OS.
+ */
+TbResult LbSetTitle(const char *title);
+
+/** Set icon index of the program.
+ *
+ * This is the resource index which will be requested in userResourceMapping() call.
+ */
+TbResult LbSetIcon(short nicon);
+
+TbResult LbSetUserResourceMapping(ResourceMappingFunc func);
+
+/** Updates icon of the application.
+ *  This function maps previously set icon index into OS-specific
+ *  resource, and applies it to current process.
+ *
+ * @return If icon was updated, Lb_SUCCESS is returned.
+ */
+TbResult LbScreenUpdateIcon(void);
 
 TbResult LbScreenSetup(TbScreenMode mode, TbScreenCoord width, TbScreenCoord height,
     unsigned char *palette);
