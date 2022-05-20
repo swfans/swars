@@ -19,8 +19,39 @@ extern TbScreenModeInfo lbScreenModeInfo[];
 
 #pragma pack()
 
+extern char lbDrawAreaTitle[128];
+
 static bool         display_lowres_stretch = false;
 static unsigned char *display_stretch_buffer = NULL;
+
+#if defined(WIN32)
+
+const char * SWResourceMapping(short index)
+{
+    switch (index)
+    {
+    case 1:
+        return "A";
+        //return MAKEINTRESOURCE(110); -- may work for other resource compilers
+    default:
+        return NULL;
+    }
+}
+
+#else
+
+const char * SWResourceMapping(short index)
+{
+    switch (index)
+    {
+    case 1:
+        return "swars_icon.png";
+    default:
+        return NULL;
+    }
+}
+
+#endif
 
 static inline void
 lock_screen (void)
@@ -80,6 +111,9 @@ int LbScreenSetupAnyMode(unsigned short mode, unsigned long width,
     mdinfo = LbScreenGetModeInfo(mode);
     if ((mdinfo->VideoMode & Lb_VF_WINDOWED) == 0)
         flags |= SDL_FULLSCREEN;
+
+    SDL_WM_SetCaption(lbDrawAreaTitle, lbDrawAreaTitle);
+    LbScreenUpdateIcon();
 
   // Stretch lowres ?
   if (width == 320 && height == 200 && display_lowres_stretch)
@@ -211,12 +245,6 @@ display_update (void)
   }
 
   SDL_Flip (to_SDLSurf(lbDrawSurface));
-}
-
-void
-display_initialise (void)
-{
-  SDL_WM_SetCaption ("Syndicate Wars", NULL);
 }
 
 void

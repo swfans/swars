@@ -101,8 +101,11 @@ game_initialise(void)
     unix_restore_signal_handlers();
 #endif
 
+    LbSetUserResourceMapping(SWResourceMapping);
+    LbSetTitle(PACKAGE_NAME);
+    LbSetIcon(1);
+
     mouse_initialise();
-    display_initialise();
     sound_initialise();
 
     // Make sure file names are properly converted before opening
