@@ -78,7 +78,19 @@ int LbScreenSetupAnyMode(unsigned short mode, unsigned long width,
     uint32_t flags;
     TbScreenModeInfo *mdinfo;
 
-  LbMouseSuspend();
+    // OLD: should we really suspend/resume the mouse here?
+    long hot_x, hot_y;
+    const struct TbSprite *msspr;
+
+    msspr = NULL;
+    if (lbDisplay.MouseSprite != NULL)
+    {
+        msspr = lbDisplay.MouseSprite;
+        LbMouseGetSpriteOffset(&hot_x, &hot_y);
+    }
+    //LbMouseChangeSprite(NULL);
+
+  LbMouseSuspend(); // NEW
 
   // lbDisplay.OldVideoMode which is DWORD 1E2EB6 is used in
   // 000ED764 sub_ED764 to probably get back to text mode
@@ -112,8 +124,6 @@ int LbScreenSetupAnyMode(unsigned short mode, unsigned long width,
     if ((mdinfo->VideoMode & Lb_VF_WINDOWED) == 0)
         flags |= SDL_FULLSCREEN;
 
-    SDL_WM_SetCaption(lbDrawAreaTitle, lbDrawAreaTitle);
-    LbScreenUpdateIcon();
 
   // Stretch lowres ?
   if (width == 320 && height == 200 && display_lowres_stretch)
@@ -140,10 +150,9 @@ int LbScreenSetupAnyMode(unsigned short mode, unsigned long width,
 
       // Init mode
       lbScreenSurface = lbDrawSurface =
-          SDL_SetVideoMode (width, height,
- 		    lbScreenModeInfo[mode].BitsPerPixel, flags);
+          SDL_SetVideoMode(mdinfo->Width, mdinfo->Height,
+ 		    mdinfo->BitsPerPixel, flags);
     }
-
 
 #ifdef DEBUG
   printf ("SDL_SetVideoMode(%ld, %ld, %d, SDL_SWSURFACE) - %s\n",
@@ -157,9 +166,56 @@ int LbScreenSetupAnyMode(unsigned short mode, unsigned long width,
       goto err;
     }
 
-  lock_screen ();
+    SDL_WM_SetCaption(lbDrawAreaTitle, lbDrawAreaTitle);
+    LbScreenUpdateIcon();
 
-  // set vga buffer address
+    // Create secondary surface if necessary, that is if BPP != lbEngineBPP.
+    if (mdinfo->BitsPerPixel != 8)
+    {
+        lbDrawSurface = SDL_CreateRGBSurface(SDL_SWSURFACE, mdinfo->Width, mdinfo->Height, 8, 0, 0, 0, 0);
+        if (lbDrawSurface == NULL) {
+            printf("Can't create secondary surface: %s",SDL_GetError());
+            LbScreenReset();
+            return Lb_FAIL;
+        }
+        lbHasSecondSurface = true;
+    }
+
+    lbDisplay.DrawFlags = 0;
+    lbDisplay.DrawColour = 0;
+    lbDisplay.PhysicalScreenWidth = mdinfo->Width;
+    lbDisplay.PhysicalScreenHeight = mdinfo->Height;
+    lbDisplay.ScreenMode = mode;
+
+    lbDisplay.PhysicalScreen = NULL;
+    //lbDisplay.WScreen = NULL;
+    lbDisplay.GraphicsWindowPtr = NULL;
+
+  // Is that better? chack in disassembly
+  lbDisplay.GraphicsScreenWidth  = width;
+  lbDisplay.GraphicsScreenHeight = height;
+
+    lbScreenInitialised = true;
+    printf("Mode %dx%dx%d setup succeeded", (int)to_SDLSurf(lbScreenSurface)->w, (int)to_SDLSurf(lbScreenSurface)->h,
+      (int)to_SDLSurf(lbScreenSurface)->format->BitsPerPixel);
+
+  // Setup palette
+  if (palette != NULL)
+    {
+        if (LbPaletteSet(palette) != 1)
+            goto err;
+    }
+
+  // Call funcitons that recalculate some buffers
+  // They can be switched to C++ later, but it's not needed
+  LbScreenSetGraphicsWindow(0, 0, lbDisplay.GraphicsScreenWidth, lbDisplay.GraphicsScreenHeight);
+  LbTextSetWindow(0, 0, lbDisplay.GraphicsScreenWidth, lbDisplay.GraphicsScreenHeight);
+
+  lbScreenInitialised = true;
+
+  lock_screen (); // NEW
+
+  // set vga buffer address NEW
   if (display_stretch_buffer != NULL)
     {
       // Set the temporary buffer
@@ -169,32 +225,6 @@ int LbScreenSetupAnyMode(unsigned short mode, unsigned long width,
     {
       // Set the good buffer
       lbDisplay.PhysicalScreen = to_SDLSurf(lbDrawSurface)->pixels;
-    }
-
-  // Setup some global variables
-  lbDisplay.PhysicalScreenWidth  = lbScreenModeInfo[mode].Width;
-  lbDisplay.PhysicalScreenHeight = lbScreenModeInfo[mode].Height;
-  lbDisplay.GraphicsScreenWidth  = width;
-  lbDisplay.GraphicsScreenHeight = height;
-  lbDisplay.ScreenMode   = mode;
-
-  // No idea what is this
-  // TODO: check if something breaks if this is removed
-  lbDisplay.DrawFlags = 0;
-  lbDisplay.DrawColour = 0;
-
-  // Call funcitons that recalculate some buffers
-  // They can be switched to C++ later, but it's not needed
-  LbScreenSetGraphicsWindow(0, 0, lbDisplay.GraphicsScreenWidth, lbDisplay.GraphicsScreenHeight);
-  LbTextSetWindow(0, 0, lbDisplay.GraphicsScreenWidth, lbDisplay.GraphicsScreenHeight);
-
-  lbScreenInitialised = true;
-
-  // Setup palette
-  if (palette != NULL)
-    {
-        if (LbPaletteSet(palette) != 1)
-            goto err;
     }
 
   return 1;
