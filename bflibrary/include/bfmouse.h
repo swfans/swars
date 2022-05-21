@@ -95,6 +95,11 @@ TbResult LbMouseChangeSprite(const struct TbSprite *pointer_spr);
  */
 TbResult LbMouseChangeMoveRatio(long ratio_x, long ratio_y);
 
+/**
+ * Returns whether mouse setup was successfully executed or not.
+ */
+TbBool LbMouseIsInstalled(void);
+
 TbResult LbMouseSetup(const struct TbSprite *pointer_spr, int ratio_x, int ratio_y);
 TbResult LbMouseReset(void);
 TbResult LbMouseSuspend(void);

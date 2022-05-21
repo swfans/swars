@@ -25,6 +25,7 @@
 #include "bfscrsurf.h"
 #include "bfpalette.h"
 #include "bfmouse.h"
+#include "bftext.h"
 #include "bfexe_key.h"
 #include "bflog.h"
 
@@ -210,7 +211,7 @@ TbResult LbScreenSetupAnyMode_TODO(TbScreenMode mode, TbScreenCoord width,
     {
         lbDrawSurface = SDL_CreateRGBSurface(SDL_SWSURFACE, mdinfo->Width, mdinfo->Height, lbEngineBPP, 0, 0, 0, 0);
         if (lbDrawSurface == NULL) {
-            LIBLOG("Can't create secondary surface: %s",SDL_GetError());
+            LIBLOG("Secondary surface creation error: %s", SDL_GetError());
             LbScreenReset();
             return Lb_FAIL;
         }
@@ -233,23 +234,31 @@ TbResult LbScreenSetupAnyMode_TODO(TbScreenMode mode, TbScreenCoord width,
     lbDisplay.GraphicsWindowPtr = NULL;
 
     lbScreenInitialised = true;
-    LIBLOG("Mode %dx%dx%d setup succeeded", (int)lbScreenSurface->w, (int)lbScreenSurface->h,
-      (int)lbScreenSurface->format->BitsPerPixel);
+    LIBLOG("Mode %dx%dx%d setup succeeded", (int)to_SDLSurf(lbScreenSurface)->w, (int)to_SDLSurf(lbScreenSurface)->h,
+      (int)to_SDLSurf(lbScreenSurface)->format->BitsPerPixel);
     if (palette != NULL)
     {
-        LbPaletteSet(palette);
+        TbResult ret;
+        ret = LbPaletteSet(palette);
+        if (ret != Lb_SUCCESS) {
+            LIBLOG("Palette setting failed");
+            LbScreenReset();
+            return Lb_FAIL;
+        }
     }
     LbScreenSetGraphicsWindow(0, 0, mdinfo->Width, mdinfo->Height);
-#if 0
     LbTextSetWindow(0, 0, mdinfo->Width, mdinfo->Height);
     LIBLOG("Done filling display properties struct");
     if ( LbMouseIsInstalled() )
     {
+#if 0
         LbMouseSetWindow(0, 0, lbDisplay.PhysicalScreenWidth, lbDisplay.PhysicalScreenHeight);
         LbMouseSetPosition(lbDisplay.PhysicalScreenWidth / 2, lbDisplay.PhysicalScreenHeight / 2);
         if (msspr != NULL)
           LbMouseChangeSpriteAndHotspot(msspr, hot_x, hot_y);
+#endif
     }
+#if 0
     LbInputRestate();
     LbScreenActivationUpdate();
 #endif

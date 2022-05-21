@@ -125,6 +125,17 @@ TbResult LbMouseChangeMoveRatio(long ratio_x, long ratio_y)
     return Lb_SUCCESS;
 }
 
+TbBool LbMouseIsInstalled(void)
+{
+    if (!lbMouseInstalled)
+        return false;
+
+    if (!pointerHandler.IsInstalled())
+        return false;
+
+    return true;
+}
+
 TbResult LbMouseSetup(const struct TbSprite *pointer_spr, int ratio_x, int ratio_y)
 {
     long x,y;
