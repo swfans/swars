@@ -204,7 +204,8 @@ TbResult LbScreenSetupAnyMode(TbScreenMode mode, TbScreenCoord width,
     SDL_WM_SetCaption(lbDrawAreaTitle, lbDrawAreaTitle);
     LbScreenUpdateIcon();
 
-    // Create secondary surface if necessary, that is if BPP != lbEngineBPP.
+    // Create secondary surface if necessary,
+    // that is if BPP or dimensions do not match.
     if ((mdinfo->BitsPerPixel != lbEngineBPP) ||
         (mdinfo->Width != width) || (mdinfo->Height != height))
     {
@@ -230,7 +231,7 @@ TbResult LbScreenSetupAnyMode(TbScreenMode mode, TbScreenCoord width,
     // The graphics screen size should be really taken after screen is locked
     lbDisplay.GraphicsScreenWidth  = width;
     lbDisplay.GraphicsScreenHeight = height;
-    lbDisplay.WScreen = NULL;
+    //lbDisplay.WScreen = NULL; // TODO re-enable when WScreen is used properly
     lbDisplay.GraphicsWindowPtr = NULL;
 
     lbScreenInitialised = true;
