@@ -136,7 +136,7 @@ TbResult LbScreenUpdateIcon(void)
 
 #endif
 
-TbResult LbScreenSetupAnyMode_TODO(TbScreenMode mode, TbScreenCoord width,
+TbResult LbScreenSetupAnyMode(TbScreenMode mode, TbScreenCoord width,
     TbScreenCoord height, ubyte *palette)
 {
     SDL_Surface * prevScreenSurf;
@@ -147,8 +147,7 @@ TbResult LbScreenSetupAnyMode_TODO(TbScreenMode mode, TbScreenCoord width,
 
     msspr = NULL;
     LbExeReferenceNumber();
-    if (lbDisplay.MouseSprite != NULL)
-    {
+    if (lbDisplay.MouseSprite != NULL) {
         msspr = lbDisplay.MouseSprite;
         LbMouseGetSpriteOffset(&hot_x, &hot_y);
     }
@@ -168,8 +167,7 @@ TbResult LbScreenSetupAnyMode_TODO(TbScreenMode mode, TbScreenCoord width,
         lbDisplay.OldVideoMode = 0xFF;
 
     mdinfo = LbScreenGetModeInfo(mode);
-    if ( !LbScreenIsModeAvailable(mode) )
-    {
+    if (!LbScreenIsModeAvailable(mode)) {
         LIBLOG("%s resolution %dx%d (mode %d) not available",
             (mdinfo->VideoMode & Lb_VF_WINDOWED) ? "Windowed" : "Full screen",
             (int)mdinfo->Width, (int)mdinfo->Height, (int)mode);
@@ -207,9 +205,11 @@ TbResult LbScreenSetupAnyMode_TODO(TbScreenMode mode, TbScreenCoord width,
     LbScreenUpdateIcon();
 
     // Create secondary surface if necessary, that is if BPP != lbEngineBPP.
-    if (mdinfo->BitsPerPixel != lbEngineBPP)
+    if ((mdinfo->BitsPerPixel != lbEngineBPP) ||
+        (mdinfo->Width != width) || (mdinfo->Height != height))
     {
-        lbDrawSurface = SDL_CreateRGBSurface(SDL_SWSURFACE, mdinfo->Width, mdinfo->Height, lbEngineBPP, 0, 0, 0, 0);
+        lbDrawSurface = SDL_CreateRGBSurface(SDL_SWSURFACE,
+          width, height, lbEngineBPP, 0, 0, 0, 0);
         if (lbDrawSurface == NULL) {
             LIBLOG("Secondary surface creation error: %s", SDL_GetError());
             LbScreenReset();
@@ -227,9 +227,9 @@ TbResult LbScreenSetupAnyMode_TODO(TbScreenMode mode, TbScreenCoord width,
     lbDisplay.PhysicalScreenHeight = mdinfo->Height;
     lbDisplay.ScreenMode = mode;
     lbDisplay.PhysicalScreen = NULL;
-    // The graphics screen size should be really taken after screen is locked, but it seem just getting in now will work too
-    lbDisplay.GraphicsScreenWidth = to_SDLSurf(lbDrawSurface)->pitch;
-    lbDisplay.GraphicsScreenHeight = mdinfo->Height;
+    // The graphics screen size should be really taken after screen is locked
+    lbDisplay.GraphicsScreenWidth  = width;
+    lbDisplay.GraphicsScreenHeight = height;
     lbDisplay.WScreen = NULL;
     lbDisplay.GraphicsWindowPtr = NULL;
 
@@ -251,12 +251,11 @@ TbResult LbScreenSetupAnyMode_TODO(TbScreenMode mode, TbScreenCoord width,
     LIBLOG("Done filling display properties struct");
     if ( LbMouseIsInstalled() )
     {
-#if 0
         LbMouseSetWindow(0, 0, lbDisplay.PhysicalScreenWidth, lbDisplay.PhysicalScreenHeight);
         LbMouseSetPosition(lbDisplay.PhysicalScreenWidth / 2, lbDisplay.PhysicalScreenHeight / 2);
+        LbMouseChangeSpriteOffset(hot_x, hot_y);
         if (msspr != NULL)
-          LbMouseChangeSpriteAndHotspot(msspr, hot_x, hot_y);
-#endif
+          LbMouseChangeSprite(msspr);
     }
 #if 0
     LbInputRestate();

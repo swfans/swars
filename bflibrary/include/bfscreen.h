@@ -325,7 +325,7 @@ TbBool LbScreenIsModeAvailable(TbScreenMode mode);
 
 TbResult LbScreenSetGraphicsWindow(ulong x, ulong y, ulong width, ulong height);
 
-TbResult LbScreenSetupAnyMode_TODO(TbScreenMode mode, TbScreenCoord width,
+TbResult LbScreenSetupAnyMode(TbScreenMode mode, TbScreenCoord width,
     TbScreenCoord height, ubyte *palette);
 
 int LbScreenClearGraphicsWindow();

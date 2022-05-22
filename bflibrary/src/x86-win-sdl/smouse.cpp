@@ -26,10 +26,6 @@
 #include "bfplanar.h"
 #include "bflog.h"
 
-extern "C" {
-TbResult LbMouseChangeSprite_UNUSED(const struct TbSprite *pointer_spr);
-}
-
 TbResult LbMousePlace(void)
 {
     if (!lbMouseInstalled)

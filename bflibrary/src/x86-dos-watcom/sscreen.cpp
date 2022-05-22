@@ -52,7 +52,7 @@ static inline void *LbI_XMemCopyAndSet(void *dest, void *source, ulong val, ulon
     return dest;
 }
 
-TbResult LbScreenSetupAnyMode_TODO(TbScreenMode mode, TbScreenCoord width,
+TbResult LbScreenSetupAnyMode(TbScreenMode mode, TbScreenCoord width,
     TbScreenCoord height, ubyte *palette)
 {
 // code at 0001:000954e0

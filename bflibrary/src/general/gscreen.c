@@ -79,8 +79,8 @@ TbScreenModeInfo *LbScreenGetModeInfo(TbScreenMode mode)
 
 TbBool LbScreenIsModeAvailable(TbScreenMode mode)
 {
-    TbScreenModeInfo *mdinfo;
 #if 0
+    TbScreenModeInfo *mdinfo;
     static TbBool setup = false;
     if (!setup)
     {
@@ -88,9 +88,10 @@ TbBool LbScreenIsModeAvailable(TbScreenMode mode)
           return false;
         setup = true;
     }
-#endif
     mdinfo = LbScreenGetModeInfo(mode);
     return mdinfo->Available;
+#endif
+    return true; // Until we make checking availablility, everything is available
 }
 
 TbResult LbSetTitle(const char *title)
@@ -136,7 +137,7 @@ TbScreenCoord LbScreenHeight(void)
     return lbDisplay.PhysicalScreenHeight;
 }
 
-TbResult LbScreenSetup(TbScreenMode mode, TbScreenCoord width, TbScreenCoord height,
+TbResult LbScreenSetup_TODO(TbScreenMode mode, TbScreenCoord width, TbScreenCoord height,
     unsigned char *palette)
 {
     return LbScreenSetupAnyMode(mode, width, height, palette);
