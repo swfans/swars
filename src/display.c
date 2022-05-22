@@ -72,7 +72,7 @@ unlock_screen (void)
   SDL_UnlockSurface (to_SDLSurf(lbDrawSurface));
 }
 
-int LbScreenSetupAnyMode(unsigned short mode, unsigned long width,
+int LbScreenSetupAnyModeTweaked(unsigned short mode, unsigned long width,
     unsigned long height, TbPixel *palette)
 {
     uint32_t flags;
@@ -246,6 +246,12 @@ err:
   lbScreenInitialised = false;
 
   return -1;
+}
+
+TbResult LbScreenSetup(TbScreenMode mode, TbScreenCoord width, TbScreenCoord height,
+    unsigned char *palette)
+{
+    return LbScreenSetupAnyModeTweaked(mode, width, height, palette);
 }
 
 void
