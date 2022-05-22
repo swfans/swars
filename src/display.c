@@ -56,25 +56,29 @@ const char * SWResourceMapping(short index)
 static inline void
 lock_screen (void)
 {
-  if (!SDL_MUSTLOCK (to_SDLSurf(lbDrawSurface)))
+  if (!SDL_MUSTLOCK (to_SDLSurf(lbScreenSurface)))
     return;
 
-  if (SDL_LockSurface (to_SDLSurf(lbDrawSurface)) != 0)
+  if (SDL_LockSurface (to_SDLSurf(lbScreenSurface)) != 0)
     fprintf (stderr, "SDL_LockSurface: %s\n", SDL_GetError ());
 }
 
 static inline void
 unlock_screen (void)
 {
-  if (!SDL_MUSTLOCK (to_SDLSurf(lbDrawSurface)))
+  if (!SDL_MUSTLOCK (to_SDLSurf(lbScreenSurface)))
     return;
 
-  SDL_UnlockSurface (to_SDLSurf(lbDrawSurface));
+  SDL_UnlockSurface (to_SDLSurf(lbScreenSurface));
 }
 
 int LbScreenSetupAnyModeTweaked(unsigned short mode, unsigned long width,
     unsigned long height, TbPixel *palette)
 {
+    ubyte *wscreen_bak;
+
+    wscreen_bak = lbDisplay.WScreen;
+
     uint32_t flags;
     TbScreenModeInfo *mdinfo;
 
@@ -88,9 +92,13 @@ int LbScreenSetupAnyModeTweaked(unsigned short mode, unsigned long width,
         msspr = lbDisplay.MouseSprite;
         LbMouseGetSpriteOffset(&hot_x, &hot_y);
     }
-    //LbMouseChangeSprite(NULL);
+    LbMouseChangeSprite(NULL);
 
-  LbMouseSuspend(); // NEW
+    if (lbScreenSurface != NULL)
+        unlock_screen ();
+
+    if (lbHasSecondSurface)
+        SDL_UnlockSurface (to_SDLSurf(lbDrawSurface));
 
   // lbDisplay.OldVideoMode which is DWORD 1E2EB6 is used in
   // 000ED764 sub_ED764 to probably get back to text mode
@@ -112,11 +120,8 @@ int LbScreenSetupAnyModeTweaked(unsigned short mode, unsigned long width,
   lbDisplay.VesaIsSetUp = false;
 
   // Setting mode
-  if (to_SDLSurf(lbDrawSurface) != NULL)
-    {
-      unlock_screen ();
-      SDL_FreeSurface (to_SDLSurf(lbDrawSurface));
-    }
+    if (lbHasSecondSurface)
+        SDL_FreeSurface (to_SDLSurf(lbDrawSurface));
 
   flags = SDL_SWSURFACE;
 
@@ -125,34 +130,16 @@ int LbScreenSetupAnyModeTweaked(unsigned short mode, unsigned long width,
         flags |= SDL_FULLSCREEN;
 
 
-  // Stretch lowres ?
-  if (width == 320 && height == 200 && display_lowres_stretch)
-    {
-      // Init mode
-      lbScreenSurface = lbDrawSurface =
-          SDL_SetVideoMode (640, 480,
-  		    lbScreenModeInfo[mode].BitsPerPixel, flags);
+    // Stretch lowres ?
+    if (width == 320 && height == 200 && display_lowres_stretch)
+      mdinfo = LbScreenGetModeInfo(13);
 
-      // Allocate buffer
-      if (display_stretch_buffer == NULL)
-        {
-          display_stretch_buffer = xmalloc(320 * 240);
-        }
-    }
-  else
-    {
-      // Remove buffer if any
-      if (display_stretch_buffer != NULL)
-        {
-          xfree (display_stretch_buffer);
-          display_stretch_buffer = NULL;
-        }
-
-      // Init mode
-      lbScreenSurface = lbDrawSurface =
+    // Init mode
+    lbScreenSurface = lbDrawSurface =
           SDL_SetVideoMode(mdinfo->Width, mdinfo->Height,
  		    mdinfo->BitsPerPixel, flags);
-    }
+
+    mdinfo = LbScreenGetModeInfo(mode);
 
 #ifdef DEBUG
   printf ("SDL_SetVideoMode(%ld, %ld, %d, SDL_SWSURFACE) - %s\n",
@@ -160,7 +147,7 @@ int LbScreenSetupAnyModeTweaked(unsigned short mode, unsigned long width,
           lbScreenModeInfo[mode].Desc);
 #endif
 
-  if (lbDrawSurface == NULL)
+  if (lbScreenSurface == NULL)
     {
       fprintf (stderr, "SDL_SetVideoMode: %s\n", SDL_GetError ());
       goto err;
@@ -170,15 +157,35 @@ int LbScreenSetupAnyModeTweaked(unsigned short mode, unsigned long width,
     LbScreenUpdateIcon();
 
     // Create secondary surface if necessary, that is if BPP != lbEngineBPP.
-    if (mdinfo->BitsPerPixel != 8)
+    if (width == 320 && height == 200 && display_lowres_stretch)
     {
-        lbDrawSurface = SDL_CreateRGBSurface(SDL_SWSURFACE, mdinfo->Width, mdinfo->Height, 8, 0, 0, 0, 0);
+#if 0
+        lbDrawSurface = SDL_CreateRGBSurface(SDL_SWSURFACE, width, height, 8, 0, 0, 0, 0);
         if (lbDrawSurface == NULL) {
             printf("Can't create secondary surface: %s",SDL_GetError());
             LbScreenReset();
             return Lb_FAIL;
         }
         lbHasSecondSurface = true;
+
+         SDL_LockSurface(to_SDLSurf(lbDrawSurface));
+         display_stretch_buffer = to_SDLSurf(lbDrawSurface)->pixels;
+#endif
+      // Allocate buffer
+      if (display_stretch_buffer == NULL)
+        {
+          display_stretch_buffer = xmalloc(320 * 240);
+        }
+    }
+    else
+    {
+      // Remove buffer if any
+      if (display_stretch_buffer != NULL)
+        {
+          xfree (display_stretch_buffer);
+          display_stretch_buffer = NULL;
+        }
+
     }
 
     lbDisplay.DrawFlags = 0;
@@ -213,18 +220,19 @@ int LbScreenSetupAnyModeTweaked(unsigned short mode, unsigned long width,
 
   lbScreenInitialised = true;
 
-  lock_screen (); // NEW
+    lbDisplay.WScreen = wscreen_bak;
+    lock_screen ();
 
-  // set vga buffer address NEW
-  if (display_stretch_buffer != NULL)
+    // set vga buffer address
+    if (display_stretch_buffer != NULL)
     {
       // Set the temporary buffer
       lbDisplay.PhysicalScreen = display_stretch_buffer;
     }
-  else
+    else
     {
       // Set the good buffer
-      lbDisplay.PhysicalScreen = to_SDLSurf(lbDrawSurface)->pixels;
+      lbDisplay.PhysicalScreen = to_SDLSurf(lbScreenSurface)->pixels;
     }
 
   return 1;
@@ -257,13 +265,13 @@ TbResult LbScreenSetup(TbScreenMode mode, TbScreenCoord width, TbScreenCoord hei
 void
 display_update (void)
 {
-  assert(lbDrawSurface != NULL);
+  assert(lbScreenSurface != NULL);
   // Stretched lowres in action?
   if (display_stretch_buffer != NULL)
     {
       // Stretch lowres
       int i, j;
-      unsigned char *poutput = (unsigned char*) to_SDLSurf(lbDrawSurface)->pixels;
+      unsigned char *poutput = (unsigned char*) to_SDLSurf(lbScreenSurface)->pixels;
       unsigned char *pinput  = display_stretch_buffer;
 
       for (j = 0; j < 480; j++)
@@ -280,7 +288,7 @@ display_update (void)
         }
   }
 
-  SDL_Flip (to_SDLSurf(lbDrawSurface));
+  SDL_Flip (to_SDLSurf(lbScreenSurface));
 }
 
 void
@@ -288,7 +296,7 @@ display_set_full_screen (bool full_screen)
 {
     TbScreenModeInfo *mdinfo;
 
-    if (lbDrawSurface != NULL)
+    if (lbScreenSurface != NULL)
         return;
 
     if (full_screen) {
@@ -328,7 +336,7 @@ display_get_size (size_t *width, size_t *height)
 void
 display_get_physical_size (size_t *width, size_t *height)
 {
-  if (lbDisplay.PhysicalScreen == NULL || lbDrawSurface == NULL)
+  if (lbDisplay.PhysicalScreen == NULL || lbScreenSurface == NULL)
     {
       if (width != NULL)
         *width  = 0;
@@ -340,10 +348,10 @@ display_get_physical_size (size_t *width, size_t *height)
     }
 
   if (width != NULL)
-    *width  = to_SDLSurf(lbDrawSurface)->w;
+    *width  = to_SDLSurf(lbScreenSurface)->w;
 
   if (height != NULL)
-    *height = to_SDLSurf(lbDrawSurface)->h;
+    *height = to_SDLSurf(lbScreenSurface)->h;
 }
 
 void *
