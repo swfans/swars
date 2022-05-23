@@ -45,7 +45,7 @@ TbBool lbHasSecondSurface = false;
 
 /** Bytes per pixel expected by the engine.
  * On any try of entering different video BPP, this mode will be emulated. */
-volatile unsigned short lbEngineBPP = 8;
+ushort lbEngineBPP = 8;
 
 static inline void *LbI_XMemCopy(void *dest, void *source, ulong len)
 {

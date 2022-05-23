@@ -95,10 +95,20 @@ enum TbVideoModeFlags {
 typedef struct DisplayStruct TbDisplayStruct;
 
 struct DisplayStruct { // sizeof=118
-    /** Pointer to physical screen buffer, if available. */
+    /** Pointer to physical screen buffer, if available.
+     * Not all platforms allow access to physical screen, so this pointer
+     * could be always NULL or have access restrictions. It is also not
+     * guaranteed to be the real physical screen buffer; it can be just
+     * a standard application buffer, the one handed to OS for further
+     * compositing and display.
+     */
     ubyte *PhysicalScreen; // offset=0
 
-    /** Pointer to graphics screen buffer, if locked. */
+    /** Pointer to graphics screen working buffer.
+     * As a working buffer, this can be read and modified to draw the next frame.
+     * This pointer can be accessed only when the screen is locked. It is not
+     * guaranteed that the pointer will remain unchanged after each locking.
+     */
     ubyte *WScreen; // offset=4
 
     /** Pointer to glass map, used for indexed color video transparency. */
@@ -253,6 +263,11 @@ extern TbBool lbHasSecondSurface;
  */
 extern ushort lbUnitsPerPixel;
 
+/** Amount of bits per pixel for which the engine is compiled.
+ * Basically, it is always 8.
+ */
+extern ushort lbEngineBPP;
+
 /** Returns info struct for requested screen mode.
  *
  * @return The info struct for given screen mode, or empty
@@ -356,7 +371,21 @@ int LbScreenSetDoubleBuffering();
 int LbScreenSetWScreenInVideo();
 extern int lbScreenDirectAccessActive;
 int LbScreenFindVideoModes();
+
+/** Places working screen buffer to the physical screen.
+ *
+ * This call causes working screen buffer (WScreen) content to be placed
+ * on physical screen. The exact mechanism to achieve that depends on a platform,
+ * the WScreen can be just copied to PhysicalScreen, or blitted using graphics
+ * hardware, or buffer pointers can be swapped making different one visible.
+ *
+ * Regardless of the method used, the current content of WScreen lands on the
+ * display, and WScreen can be further used to draw the next frame.
+ * Screen needs to be unlocked before performing this operation, and re-locked
+ * before WScreen pointer is accessed again.
+ */
 TbResult LbScreenSwap(void);
+
 int LbScreenSwapBoxClear();
 TbResult LbScreenSwapClear(TbPixel colour);
 int LbScreenSwapBox();

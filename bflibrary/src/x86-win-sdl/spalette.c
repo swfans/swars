@@ -52,8 +52,10 @@ TbResult LbPaletteSet(const ubyte *palette)
     unsigned char * bufColors;
     SDL_Color * destColors;
     const unsigned char * srcColors;
+    TbScreenModeInfo *mdinfo;
     unsigned long i;
     TbResult ret;
+
     LIBLOG("Starting");
     if ((!lbScreenInitialised) || (lbDrawSurface == NULL))
       return Lb_FAIL;
@@ -75,13 +77,24 @@ TbResult LbPaletteSet(const ubyte *palette)
         srcColors += 3;
         bufColors += 3;
     }
-    //if (SDL_SetPalette(to_SDLSurf(lbDrawSurface), SDL_LOGPAL | SDL_PHYSPAL,
-    if (SDL_SetColors(to_SDLSurf(lbDrawSurface),
-        lbPaletteColors, 0, PALETTE_8b_COLORS) != 1) {
-        LIBLOG("SDL SetPalette failed: %s", SDL_GetError());
-        ret = Lb_FAIL;
+    mdinfo = LbScreenGetModeInfo(lbDisplay.ScreenMode);
+    if (mdinfo->BitsPerPixel <= 8) {
+        //if (SDL_SetPalette(to_SDLSurf(lbDrawSurface), SDL_LOGPAL | SDL_PHYSPAL,
+        if (SDL_SetColors(to_SDLSurf(lbScreenSurface),
+            lbPaletteColors, 0, PALETTE_8b_COLORS) != 1) {
+            LIBLOG("SDL SetPalette to ScreenSurface failed: %s", SDL_GetError());
+            ret = Lb_FAIL;
+        }
     }
     lbDisplay.Palette = lbPalette;
+    // Set to screen buffer as well, if it is required
+    if ((lbHasSecondSurface) && (lbEngineBPP <= 8)) {
+        if (SDL_SetColors(to_SDLSurf(lbDrawSurface),
+            lbPaletteColors, 0, PALETTE_8b_COLORS) != 1) {
+            LIBLOG("SDL SetPalette to DrawSurface failed: %s", SDL_GetError());
+            ret = Lb_FAIL;
+        }
+    }
 
     return ret;
 }
