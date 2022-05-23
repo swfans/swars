@@ -439,7 +439,7 @@ void setup_host(void)
     lbDisplay.ScreenMode = Lb_SCREEN_MODE_320_200_8;
     LbScreenSetup(lbDisplay.ScreenMode, 320, 200, display_palette);
     LbSpriteSetup(pointer_sprites, pointer_sprites_end, pointer_data);
-    {
+    { // Make mouse pointer sprite 1 an empty (zero size) sprite
         struct TbSprite *spr;
         spr = &pointer_sprites[1];
         spr->SWidth = 0;

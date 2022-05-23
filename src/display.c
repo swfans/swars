@@ -6,6 +6,7 @@
 #include "bfscreen.h"
 #include "bfscrsurf.h"
 #include "bfpalette.h"
+#include "bfsprite.h"
 #include "bftext.h"
 #include "bfmouse.h"
 #include "util.h"
@@ -20,6 +21,11 @@ extern TbScreenModeInfo lbScreenModeInfo[];
 #pragma pack()
 
 extern char lbDrawAreaTitle[128];
+extern ushort data_1aa330;
+extern ushort data_1aa332;
+extern ubyte *vec_tmap;
+extern unsigned char *display_palette;
+extern struct TbSprite *pointer_sprites;
 
 static bool         display_lowres_stretch = false;
 static unsigned char *display_stretch_buffer = NULL;
@@ -382,4 +388,65 @@ void
 display_unlock (void)
 {
   unlock_screen ();
+}
+
+void setup_vecs(ubyte *screenbuf, ubyte *vec_tmap, ulong width3, ulong width4, long height)
+{
+    asm volatile (
+      "push %4\n"
+      "call ASM_setup_vecs_\n"
+        : : "a" (screenbuf), "d" (vec_tmap), "b" (width3), "c" (width4), "g" (height));
+}
+
+
+void setup_screen_mode(TbScreenMode mode)
+{
+#if 0
+    asm volatile (
+      "call ASM_setup_screen_mode\n"
+        : : "a" (mode));
+#else
+    TbBool was_locked;
+
+    printf("setup_screen_mode %d", (int)mode);
+    switch (mode)
+    {
+    case 1:
+        data_1aa330 = 320;
+        data_1aa332 = 200;
+        break;
+    case 13:
+        data_1aa330 = 640;
+        data_1aa332 = 480;
+        break;
+    case 16:
+        data_1aa330 = 800;
+        data_1aa332 = 600;
+        break;
+    default:
+        mode = 1;
+        data_1aa330 = 320;
+        data_1aa332 = 200;
+        break;
+    }
+    was_locked = lbDisplay.WScreen != NULL;
+    if (lbDisplay.WScreen)
+        LbScreenUnlock();
+    if (LbScreenSetupAnyModeTweaked(mode, data_1aa330, data_1aa332, display_palette) != 1)
+        exit(1);
+    if (was_locked)
+    {
+        while (LbScreenLock() != 1)
+            ;
+    }
+
+    if (mode == 1)
+        lbDisplay.ScreenMode = 1;
+    if (mode == 13)
+        lbDisplay.ScreenMode = 13;
+
+    LbMouseSetup(&pointer_sprites[1], 2, 2);
+    setup_vecs(lbDisplay.WScreen, vec_tmap, lbDisplay.PhysicalScreenWidth,
+        lbDisplay.PhysicalScreenWidth, lbDisplay.PhysicalScreenHeight);
+#endif
 }
