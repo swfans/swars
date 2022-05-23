@@ -23,6 +23,7 @@
 
 #include "mshandler.hpp"
 #include "bfscreen.h"
+#include "bfsprite.h"
 #include "bfplanar.h"
 #include "bflog.h"
 
@@ -138,6 +139,8 @@ TbResult LbMouseSetup(const struct TbSprite *pointer_spr, int ratio_x, int ratio
 
     if (lbMouseInstalled)
         LbMouseSuspend();
+    // Make sure the pointer sprite gets updated, even if address stays unchanged
+    lbDisplay.MouseSprite = NULL;
 
     pointerHandler.Install();
 
@@ -147,7 +150,6 @@ TbResult LbMouseSetup(const struct TbSprite *pointer_spr, int ratio_x, int ratio
     minfo.XMoveRatio = 1;
     minfo.YMoveRatio = 1;
     memset(minfo.Sprite, 254, 0x1000u);
-    lbDisplay.MouseSprite = 0;
     redraw_active_lock = 0;
     memset(&mbuffer, 0, 0x1020u);
 #endif
