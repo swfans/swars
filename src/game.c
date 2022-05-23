@@ -542,20 +542,6 @@ void load_mission_map_lvl(unsigned char num)
         : : "a" (num));
 }
 
-void swap_wscreen(void)
-{
-    TbBool has_wscreeen;
-    has_wscreeen = (lbDisplay.WScreen != 0);
-    if ( has_wscreeen )
-        LbScreenUnlock();
-    LbScreenSwap();
-    if ( has_wscreeen )
-    {
-      while ( LbScreenLock() != Lb_SUCCESS )
-        ;
-    }
-}
-
 char *gui_strings_data_end;
 
 TbBool create_strings_list(char **strings, char *strings_data, char *strings_data_end)

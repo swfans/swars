@@ -62,20 +62,33 @@ const char * SWResourceMapping(short index)
 static inline void
 lock_screen (void)
 {
-  if (!SDL_MUSTLOCK (to_SDLSurf(lbScreenSurface)))
-    return;
+    if (SDL_MUSTLOCK (to_SDLSurf(lbScreenSurface))) {
+        if (SDL_LockSurface (to_SDLSurf(lbScreenSurface)) != 0) {
+            fprintf (stderr, "SDL_LockSurface: %s\n", SDL_GetError ());
+            exit(1);
+        }
+    }
+    // set vga buffer address
+    if (display_stretch_buffer != NULL)
+    {
+      // Set the temporary buffer
+      lbDisplay.PhysicalScreen = display_stretch_buffer;
+    }
+    else
+    {
+      // Set the good buffer
+      lbDisplay.PhysicalScreen = to_SDLSurf(lbScreenSurface)->pixels;
+    }
 
-  if (SDL_LockSurface (to_SDLSurf(lbScreenSurface)) != 0)
-    fprintf (stderr, "SDL_LockSurface: %s\n", SDL_GetError ());
 }
 
 static inline void
 unlock_screen (void)
 {
-  if (!SDL_MUSTLOCK (to_SDLSurf(lbScreenSurface)))
-    return;
-
-  SDL_UnlockSurface (to_SDLSurf(lbScreenSurface));
+    if (SDL_MUSTLOCK (to_SDLSurf(lbScreenSurface))) {
+        SDL_UnlockSurface (to_SDLSurf(lbScreenSurface));
+    }
+    lbDisplay.PhysicalScreen = NULL;
 }
 
 int LbScreenSetupAnyModeTweaked(unsigned short mode, unsigned long width,
@@ -229,18 +242,6 @@ int LbScreenSetupAnyModeTweaked(unsigned short mode, unsigned long width,
     lbDisplay.WScreen = wscreen_bak;
     lock_screen ();
 
-    // set vga buffer address
-    if (display_stretch_buffer != NULL)
-    {
-      // Set the temporary buffer
-      lbDisplay.PhysicalScreen = display_stretch_buffer;
-    }
-    else
-    {
-      // Set the good buffer
-      lbDisplay.PhysicalScreen = to_SDLSurf(lbScreenSurface)->pixels;
-    }
-
   return 1;
 
 err:
@@ -266,6 +267,20 @@ TbResult LbScreenSetup(TbScreenMode mode, TbScreenCoord width, TbScreenCoord hei
     unsigned char *palette)
 {
     return LbScreenSetupAnyModeTweaked(mode, width, height, palette);
+}
+
+void swap_wscreen(void)
+{
+    TbBool has_wscreeen;
+    has_wscreeen = (lbDisplay.WScreen != 0);
+    if ( has_wscreeen )
+        LbScreenUnlock();
+    LbScreenSwap();
+    if ( has_wscreeen )
+    {
+      while ( LbScreenLock() != Lb_SUCCESS )
+        ;
+    }
 }
 
 void
@@ -321,7 +336,7 @@ display_set_full_screen (bool full_screen)
 void
 display_get_size (size_t *width, size_t *height)
 {
-  if (lbDisplay.PhysicalScreen == NULL)
+  if (lbScreenSurface == NULL)
     {
       if (width != NULL)
         *width  = 0;
@@ -342,7 +357,7 @@ display_get_size (size_t *width, size_t *height)
 void
 display_get_physical_size (size_t *width, size_t *height)
 {
-  if (lbDisplay.PhysicalScreen == NULL || lbScreenSurface == NULL)
+  if (lbScreenSurface == NULL)
     {
       if (width != NULL)
         *width  = 0;
@@ -358,12 +373,6 @@ display_get_physical_size (size_t *width, size_t *height)
 
   if (height != NULL)
     *height = to_SDLSurf(lbScreenSurface)->h;
-}
-
-void *
-display_get_buffer (void)
-{
-  return lbDisplay.PhysicalScreen;
 }
 
 void
