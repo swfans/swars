@@ -178,7 +178,7 @@ int LbScreenSetupAnyModeTweaked(unsigned short mode, unsigned long width,
     // Create secondary surface if necessary, that is if BPP != lbEngineBPP.
     if (width == 320 && height == 200 && display_lowres_stretch)
     {
-#if 0
+#if 1
         lbDrawSurface = SDL_CreateRGBSurface(SDL_SWSURFACE, width, height, 8, 0, 0, 0, 0);
         if (lbDrawSurface == NULL) {
             printf("Can't create secondary surface: %s",SDL_GetError());
@@ -189,22 +189,26 @@ int LbScreenSetupAnyModeTweaked(unsigned short mode, unsigned long width,
 
          SDL_LockSurface(to_SDLSurf(lbDrawSurface));
          display_stretch_buffer = to_SDLSurf(lbDrawSurface)->pixels;
-#endif
+#else
       // Allocate buffer
       if (display_stretch_buffer == NULL)
         {
           display_stretch_buffer = xmalloc(320 * 240);
         }
+#endif
     }
     else
     {
       // Remove buffer if any
+#if 1
+        display_stretch_buffer = NULL;
+#else
       if (display_stretch_buffer != NULL)
         {
           xfree (display_stretch_buffer);
           display_stretch_buffer = NULL;
         }
-
+#endif
     }
 
     lbDisplay.DrawFlags = 0;
@@ -252,11 +256,15 @@ err:
       lbDrawSurface = NULL;
     }
 
-  if (display_stretch_buffer)
+#if 1
+    display_stretch_buffer = NULL;
+#else
+    if (display_stretch_buffer)
     {
       xfree (display_stretch_buffer);
       display_stretch_buffer = NULL;
     }
+#endif
 
   lbScreenInitialised = false;
 
