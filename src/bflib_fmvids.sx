@@ -6884,7 +6884,7 @@ play_smk_direct:
 		call   SMACKDOFRAME
 		cmpb   $0x0,0xc(%esp)
 		je     jump_eb32f
-		/* call   ac_game_wait_for_vsync XXX: not needed */
+		/* call   ac_LbScreenWaitVbi XXX: not needed */
 		push   $data_1e56dc
 		call   ac_LbPaletteSet
 		add    $0x4,%esp
@@ -6902,7 +6902,7 @@ play_smk_direct:
 		jne    jump_eb33a
 		/* XXX: intro loop */
 		call   ac_game_handle_sdl_events
-		call   ac_game_wait_for_vsync
+		call   ac_LbScreenWaitVbi
 		cmpb   $0x0,EXPORT_SYMBOL(lbKeyOn)+1
 		jne    jump_eb373
 		cmpb   $0x0,EXPORT_SYMBOL(lbKeyOn)+28
@@ -7019,7 +7019,7 @@ play_smk_via_buffer:
 	jump_eb468:
 		push   %ebp
 		call   SMACKDOFRAME
-		call   ac_game_wait_for_vsync
+		call   ac_LbScreenWaitVbi
 		push   $data_1e56dc
 		call   ac_LbPaletteSet
 		add    $0x4,%esp
@@ -7027,7 +7027,7 @@ play_smk_via_buffer:
 		mov    0x4(%ebp),%edx
 		mov    0xc(%esp),%ecx
 		mov    0x4(%esp),%eax
-		call   copy_to_screen
+		call   copy_to_screen_smk
 		push   %ebp
 		call   SMACKNEXTFRAME
 	jump_eb499:
@@ -7139,9 +7139,9 @@ GLOBAL_FUNC (RADFREE)
 
 
 /*----------------------------------------------------------------*/
-/* void copy_to_screen(unsigned char *, unsigned long, unsigned long, unsigned long)
+/* void copy_to_screen_smk(unsigned char *, unsigned long, unsigned long, unsigned long)
  */
-copy_to_screen:
+copy_to_screen_smk:
 /*----------------------------------------------------------------*/
 		push   %esi
 		push   %edi

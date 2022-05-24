@@ -1009,7 +1009,7 @@ game_update_full(bool wait)
 }
 
 int
-game_wait_for_vsync(void)
+LbScreenWaitVbi(void)
 {
     game_update_full(false);
     return 1;

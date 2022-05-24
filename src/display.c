@@ -113,7 +113,7 @@ int LbScreenSetupAnyModeTweaked(unsigned short mode, unsigned long width,
     }
     LbMouseChangeSprite(NULL);
 
-    if (lbScreenSurface != NULL)
+    if (lbDrawSurface != NULL)
         unlock_screen ();
 
     if (lbHasSecondSurface)
@@ -139,8 +139,10 @@ int LbScreenSetupAnyModeTweaked(unsigned short mode, unsigned long width,
   lbDisplay.VesaIsSetUp = false;
 
   // Setting mode
-    if (lbHasSecondSurface)
+    if (lbHasSecondSurface) {
         SDL_FreeSurface (to_SDLSurf(lbDrawSurface));
+        lbHasSecondSurface = false;
+    }
 
   flags = SDL_SWSURFACE;
 
