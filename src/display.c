@@ -61,6 +61,7 @@ const char * SWResourceMapping(short index)
 static inline void
 lock_screen (void)
 {
+#if 0
     if (SDL_MUSTLOCK (to_SDLSurf(lbScreenSurface))) {
         if (SDL_LockSurface (to_SDLSurf(lbScreenSurface)) != 0) {
             fprintf (stderr, "SDL_LockSurface: %s\n", SDL_GetError ());
@@ -69,15 +70,18 @@ lock_screen (void)
     }
     // set vga buffer address
     lbDisplay.PhysicalScreen = to_SDLSurf(lbDrawSurface)->pixels;
+#endif
 }
 
 static inline void
 unlock_screen (void)
 {
+#if 0
     if (SDL_MUSTLOCK (to_SDLSurf(lbScreenSurface))) {
         SDL_UnlockSurface (to_SDLSurf(lbScreenSurface));
     }
     lbDisplay.PhysicalScreen = NULL;
+#endif
 }
 
 int LbScreenSetupAnyModeTweaked(unsigned short mode, unsigned long width,
@@ -253,18 +257,24 @@ void swap_wscreen(void)
 void
 display_update (void)
 {
-  assert(lbScreenSurface != NULL);
-  // Stretched lowres in action?
-  if (lbHasSecondSurface)
+    assert(lbScreenSurface != NULL);
+    // Stretched lowres in action?
+    if (lbHasSecondSurface)
     {
-      // Stretch lowres
-      int i, j;
-      unsigned char *poutput = (unsigned char*) to_SDLSurf(lbScreenSurface)->pixels;
-      unsigned char *pinput  = to_SDLSurf(lbDrawSurface)->pixels;
+        if (SDL_MUSTLOCK (to_SDLSurf(lbScreenSurface))) {
+            if (SDL_LockSurface (to_SDLSurf(lbScreenSurface)) != 0) {
+                fprintf (stderr, "SDL_LockSurface: %s\n", SDL_GetError());
+                exit(1);
+            }
+        }
+        // Stretch lowres
+        int i, j;
+        unsigned char *poutput = (unsigned char*) to_SDLSurf(lbScreenSurface)->pixels;
+        unsigned char *pinput  = to_SDLSurf(lbDrawSurface)->pixels;
 
-      for (j = 0; j < 480; j++)
+        for (j = 0; j < 480; j++)
         {
-          for (i = 0; i < 640; i+=2)
+            for (i = 0; i < 640; i+=2)
             {
               // Do not touch this formula
               int input_xy = ((j * 200) / 480) * 320 + i / 2;
@@ -274,9 +284,13 @@ display_update (void)
               poutput[output_xy + 1] = pinput[input_xy];
             }
         }
-  }
 
-  SDL_Flip (to_SDLSurf(lbScreenSurface));
+        if (SDL_MUSTLOCK (to_SDLSurf(lbScreenSurface))) {
+            SDL_UnlockSurface (to_SDLSurf(lbScreenSurface));
+        }
+    }
+
+    SDL_Flip (to_SDLSurf(lbScreenSurface));
 }
 
 void
