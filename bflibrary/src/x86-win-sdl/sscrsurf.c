@@ -163,7 +163,7 @@ void *LbScreenSurfaceLock(struct SSurface *surf)
     }
 
     if (SDL_LockSurface(to_SDLSurf(surf->surf_data)) < 0) {
-        LIBLOG("Failed to lock surface");
+        LIBLOG("Failed to lock surface: %s", SDL_GetError());
         return NULL;
     }
 

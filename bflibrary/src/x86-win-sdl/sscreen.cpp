@@ -300,15 +300,16 @@ TbResult LbScreenReset(void)
     return Lb_SUCCESS;
 }
 
-TbResult LbScreenLock_TODO(void)
+TbResult LbScreenLock(void)
 {
     LIBLOG("Starting");
     if (!lbScreenInitialised)
         return Lb_FAIL;
 
+#if 0
     if (SDL_MUSTLOCK(to_SDLSurf(lbDrawSurface))) {
         if (SDL_LockSurface(to_SDLSurf(lbDrawSurface)) < 0) {
-            LIBLOG("error: SDL Lock Surface: %s", SDL_GetError());
+            LIBLOG("error: SDL Lock Draw Surface: %s", SDL_GetError());
             lbDisplay.GraphicsWindowPtr = NULL;
             lbDisplay.WScreen = NULL;
             return Lb_FAIL;
@@ -319,23 +320,51 @@ TbResult LbScreenLock_TODO(void)
     lbDisplay.GraphicsScreenWidth = to_SDLSurf(lbDrawSurface)->pitch;
     lbDisplay.GraphicsWindowPtr = &lbDisplay.WScreen[lbDisplay.GraphicsWindowX +
         lbDisplay.GraphicsScreenWidth * lbDisplay.GraphicsWindowY];
+#endif
 
     return Lb_SUCCESS;
 }
 
-TbResult LbScreenUnlock_TODO(void)
+TbResult LbScreenUnlock(void)
 {
     LIBLOG("Starting");
     if (!lbScreenInitialised)
         return Lb_FAIL;
 
+#if 0
     lbDisplay.WScreen = NULL;
     lbDisplay.GraphicsWindowPtr = NULL;
 
     if (SDL_MUSTLOCK(to_SDLSurf(lbDrawSurface)))
         SDL_UnlockSurface(to_SDLSurf(lbDrawSurface));
+#endif
 
     return Lb_SUCCESS;
+}
+
+/** Locks physical screen surface and allows access to its pixels.
+ */
+static TbResult LbIPhysicalScreenLock(void)
+{
+    if (lbHasSecondSurface && SDL_MUSTLOCK(to_SDLSurf(lbScreenSurface))) {
+        if (SDL_LockSurface (to_SDLSurf(lbScreenSurface)) != 0) {
+            LIBLOG("error: SDL Lock Screen Surface: %s", SDL_GetError());
+            return Lb_FAIL;
+        }
+    }
+    // set vga buffer address
+    lbDisplay.PhysicalScreen = (ubyte *)to_SDLSurf(lbScreenSurface)->pixels;
+
+}
+
+/** Unlocks physical screen surface ending access to its pixels.
+ */
+static TbResult LbIPhysicalScreenUnlock(void)
+{
+    lbDisplay.PhysicalScreen = NULL;
+    if (lbHasSecondSurface && SDL_MUSTLOCK(to_SDLSurf(lbScreenSurface))) {
+        SDL_UnlockSurface(to_SDLSurf(lbScreenSurface));
+    }
 }
 
 int LbScreenSetDoubleBuffering_TODO()
