@@ -388,14 +388,18 @@ TbResult LbScreenSwap(void)
 
     assert(!lbDisplay.VesaIsSetUp); // video mem paging not supported with SDL
 
+    LbIPhysicalScreenLock();
     LbMousePlace();
     {
         ulong blremain;
         blremain = lbDisplay.GraphicsScreenHeight * lbDisplay.GraphicsScreenWidth;
-        LbI_XMemCopy(lbDisplay.PhysicalScreen, lbDisplay.WScreen, blremain);
+        //TODO copy to lbDisplay.PhysicalScreen when possible
+        // currently lbDrawSurface is copied to lbScreenSurface during display_update()
+        LbI_XMemCopy(to_SDLSurf(lbDrawSurface)->pixels, lbDisplay.WScreen, blremain);
         ret = Lb_SUCCESS;
     }
     LbMouseRemove();
+    LbIPhysicalScreenUnlock();
 /*
     int blresult;
     LIBLOG("Starting");
@@ -433,15 +437,19 @@ TbResult LbScreenSwapClear(TbPixel colour)
 {
     assert(!lbDisplay.VesaIsSetUp); // video mem paging not supported with SDL
 
+    LbIPhysicalScreenLock();
     LbMousePlace();
     {
         int blsize;
         ubyte *blsrcbuf;
         blsrcbuf = lbDisplay.WScreen;
         blsize = lbDisplay.GraphicsScreenHeight * lbDisplay.GraphicsScreenWidth;
-        LbI_XMemCopyAndSet(lbDisplay.PhysicalScreen, blsrcbuf, 0x01010101 * colour, blsize);
+        //TODO copy to lbDisplay.PhysicalScreen when possible
+        // currently lbDrawSurface is copied to lbScreenSurface during display_update()
+        LbI_XMemCopyAndSet(to_SDLSurf(lbDrawSurface)->pixels, blsrcbuf, 0x01010101 * colour, blsize);
     }
     LbMouseRemove();
+    LbIPhysicalScreenUnlock();
     return Lb_SUCCESS;
 }
 
