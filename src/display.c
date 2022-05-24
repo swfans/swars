@@ -28,7 +28,6 @@ extern unsigned char *display_palette;
 extern struct TbSprite *pointer_sprites;
 
 static bool         display_lowres_stretch = false;
-static unsigned char *display_stretch_buffer = NULL;
 
 #if defined(WIN32)
 
@@ -69,17 +68,7 @@ lock_screen (void)
         }
     }
     // set vga buffer address
-    if (display_stretch_buffer != NULL)
-    {
-      // Set the temporary buffer
-      lbDisplay.PhysicalScreen = display_stretch_buffer;
-    }
-    else
-    {
-      // Set the good buffer
-      lbDisplay.PhysicalScreen = to_SDLSurf(lbScreenSurface)->pixels;
-    }
-
+    lbDisplay.PhysicalScreen = to_SDLSurf(lbDrawSurface)->pixels;
 }
 
 static inline void
@@ -180,7 +169,6 @@ int LbScreenSetupAnyModeTweaked(unsigned short mode, unsigned long width,
     // Create secondary surface if necessary, that is if BPP != lbEngineBPP.
     if (width == 320 && height == 200 && display_lowres_stretch)
     {
-#if 1
         lbDrawSurface = SDL_CreateRGBSurface(SDL_SWSURFACE, width, height, 8, 0, 0, 0, 0);
         if (lbDrawSurface == NULL) {
             printf("Cannot create secondary surface: %s\n", SDL_GetError());
@@ -190,27 +178,6 @@ int LbScreenSetupAnyModeTweaked(unsigned short mode, unsigned long width,
         lbHasSecondSurface = true;
 
          SDL_LockSurface(to_SDLSurf(lbDrawSurface));
-         display_stretch_buffer = to_SDLSurf(lbDrawSurface)->pixels;
-#else
-      // Allocate buffer
-      if (display_stretch_buffer == NULL)
-        {
-          display_stretch_buffer = xmalloc(320 * 240);
-        }
-#endif
-    }
-    else
-    {
-      // Remove buffer if any
-#if 1
-        display_stretch_buffer = NULL;
-#else
-      if (display_stretch_buffer != NULL)
-        {
-          xfree (display_stretch_buffer);
-          display_stretch_buffer = NULL;
-        }
-#endif
     }
 
     lbDisplay.DrawFlags = 0;
@@ -258,16 +225,6 @@ err:
       lbDrawSurface = NULL;
     }
 
-#if 1
-    display_stretch_buffer = NULL;
-#else
-    if (display_stretch_buffer)
-    {
-      xfree (display_stretch_buffer);
-      display_stretch_buffer = NULL;
-    }
-#endif
-
   lbScreenInitialised = false;
 
   return -1;
@@ -298,12 +255,12 @@ display_update (void)
 {
   assert(lbScreenSurface != NULL);
   // Stretched lowres in action?
-  if (display_stretch_buffer != NULL)
+  if (lbHasSecondSurface)
     {
       // Stretch lowres
       int i, j;
       unsigned char *poutput = (unsigned char*) to_SDLSurf(lbScreenSurface)->pixels;
-      unsigned char *pinput  = display_stretch_buffer;
+      unsigned char *pinput  = to_SDLSurf(lbDrawSurface)->pixels;
 
       for (j = 0; j < 480; j++)
         {
@@ -420,11 +377,6 @@ void setup_vecs(ubyte *screenbuf, ubyte *vec_tmap, ulong width3, ulong width4, l
 
 void setup_screen_mode(TbScreenMode mode)
 {
-#if 0
-    asm volatile (
-      "call ASM_setup_screen_mode\n"
-        : : "a" (mode));
-#else
     TbBool was_locked;
 
     printf("setup_screen_mode %d\n", (int)mode);
@@ -467,5 +419,4 @@ void setup_screen_mode(TbScreenMode mode)
     LbMouseSetup(&pointer_sprites[1], 2, 2);
     setup_vecs(lbDisplay.WScreen, vec_tmap, lbDisplay.PhysicalScreenWidth,
         lbDisplay.PhysicalScreenWidth, lbDisplay.PhysicalScreenHeight);
-#endif
 }
