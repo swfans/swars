@@ -69,16 +69,6 @@ int LbPaletteFade(uint8_t *a1, uint8_t a2, uint8_t a3)
     return ret;
 }
 
-TbResult LbScreenUnlock(void)
-{
-    return Lb_SUCCESS;
-}
-
-TbResult LbScreenLock(void)
-{
-    return Lb_SUCCESS;
-}
-
 void PacketRecord_Close(void)
 {
     if (in_network_game)

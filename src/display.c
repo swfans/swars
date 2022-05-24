@@ -183,7 +183,7 @@ int LbScreenSetupAnyModeTweaked(unsigned short mode, unsigned long width,
 #if 1
         lbDrawSurface = SDL_CreateRGBSurface(SDL_SWSURFACE, width, height, 8, 0, 0, 0, 0);
         if (lbDrawSurface == NULL) {
-            printf("Can't create secondary surface: %s",SDL_GetError());
+            printf("Cannot create secondary surface: %s\n", SDL_GetError());
             LbScreenReset();
             return Lb_FAIL;
         }
@@ -394,7 +394,7 @@ display_set_lowres_stretch (bool stretch)
 bool
 display_is_stretching_enabled (void)
 {
-  return (bool) (display_stretch_buffer != NULL);
+  return lbHasSecondSurface;
 }
 
 void
@@ -427,7 +427,7 @@ void setup_screen_mode(TbScreenMode mode)
 #else
     TbBool was_locked;
 
-    printf("setup_screen_mode %d", (int)mode);
+    printf("setup_screen_mode %d\n", (int)mode);
     switch (mode)
     {
     case 1:
@@ -449,7 +449,7 @@ void setup_screen_mode(TbScreenMode mode)
         break;
     }
     was_locked = lbDisplay.WScreen != NULL;
-    if (lbDisplay.WScreen)
+    if (was_locked)
         LbScreenUnlock();
     if (LbScreenSetupAnyModeTweaked(mode, data_1aa330, data_1aa332, display_palette) != 1)
         exit(1);
