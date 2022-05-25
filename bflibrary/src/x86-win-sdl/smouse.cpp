@@ -27,6 +27,12 @@
 #include "bfplanar.h"
 #include "bflog.h"
 
+extern "C" {
+
+extern long lbPhysicalResolutionMul;
+
+};
+
 TbResult LbMousePlace(void)
 {
     if (!lbMouseInstalled)
@@ -238,14 +244,14 @@ TbResult LbMouseOnMove(struct TbPoint pos)
 
 void MouseToScreen(struct TbPoint *pos)
 {
-  // Static variables for storing last mouse coordinated; needed
-  // because lbDisplay.MMouseX/MMouseY coords are scaled
-  static long mx = 0;
-  static long my = 0;
-  struct TbRect clip;
-  struct TbPoint orig;
-  if ( lbMouseAutoReset )
-  {
+    // Static variables for storing last mouse coordinated; needed
+    // because lbDisplay.MMouseX/MMouseY coords are scaled
+    static long mx = 0;
+    static long my = 0;
+    struct TbRect clip;
+    struct TbPoint orig;
+    if ( lbMouseAutoReset )
+    {
       if (!pointerHandler.GetMouseWindow(&clip))
           return;
       orig.x = pos->x;
@@ -263,8 +269,8 @@ void MouseToScreen(struct TbPoint *pos)
           my = (clip.bottom-clip.top)/2 + clip.top;
           SDL_WarpMouse(mx, my);
       }
-  } else
-  {
+    } else
+    {
       orig.x = pos->x;
       orig.y = pos->y;
 #if defined(ENABLE_MOUSE_MOVE_RATIO)
@@ -273,7 +279,14 @@ void MouseToScreen(struct TbPoint *pos)
 #endif
       mx = orig.x;
       my = orig.y;
-  }
+    }
+
+    if ((lbPhysicalResolutionMul > 1) && lbHasSecondSurface)
+    {
+        pos->x = pos->x / lbPhysicalResolutionMul;
+        pos->y = pos->y / lbPhysicalResolutionMul;
+    }
+
 }
 
 /**

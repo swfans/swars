@@ -467,11 +467,6 @@ TbResult LbScreenSwap(void)
     return ret;
 }
 
-int LbScreenSwapBoxClear_TODO()
-{
-// code at 0001:00095964
-}
-
 TbResult LbScreenSwapClear(TbPixel colour)
 {
     assert(!lbDisplay.VesaIsSetUp); // video mem paging not supported with SDL
@@ -495,6 +490,11 @@ TbResult LbScreenSwapClear(TbPixel colour)
 int LbScreenSwapBox_TODO()
 {
 // code at 0001:00095c38
+}
+
+int LbScreenSwapBoxClear_TODO()
+{
+// code at 0001:00095964
 }
 
 int LbScreenDrawHVLineDirect_TODO()
