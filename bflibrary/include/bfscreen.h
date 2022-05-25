@@ -283,6 +283,23 @@ TbScreenMode LbRegisterVideoMode(const char *desc,
     TbScreenCoord width, TbScreenCoord height,
     ushort bpp, ulong flags);
 
+/** Set minimal value of dimensions in physical resolution.
+ *
+ *  On a try to setup lower resolution, the library will use pixel doubling
+ *  to reach the minimal size for both dimensions. This mechanism should
+ *  be used to rescale games which do not have resolution change implemented
+ *  within them - when games are remade well enough to allow resolution
+ *  control from config files, it is better to leave this feature inactive.
+ *
+ *  The screen doubling is hidden within lbDisplay struct and mouse position,
+ *  that is, related width/height/position values behave like there was no
+ *  doubling and the screen size was smaller. This means the doubling does
+ *  not require any code changes on application side, besides this call.
+ *
+ *  If the values is 1, phyical screen doubling is always disabled.
+ */
+TbResult LbScreenSetMinPhysicalScreenResolution(long dim);
+
 /** Set title of the application to be used in target OS.
  */
 TbResult LbSetTitle(const char *title);

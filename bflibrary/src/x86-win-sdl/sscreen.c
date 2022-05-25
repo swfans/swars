@@ -26,6 +26,7 @@
 #include "bfpalette.h"
 #include "bfmouse.h"
 #include "bftext.h"
+#include "bfutility.h"
 #include "bfexe_key.h"
 #include "bflog.h"
 
@@ -34,6 +35,23 @@
 extern char lbDrawAreaTitle[128];
 extern short lbIconIndex;
 extern ResourceMappingFunc userResourceMapping;
+
+/** @internal
+ *  Minimal value of dimensions in physical resolution.
+ *
+ *  On a try to setup lower resolution, the library will use pixel doubling
+ *  to reach the minimal size for both dimensions.
+ *
+ *  If the values is 1, phyical screen doubling is always disabled.
+ */
+long lbMinPhysicalScreenResolutionDim = 1;
+
+/** @internal
+ * Physical resolution multiplier.
+ * Pixel doubling factor used to achieve minimal resolution.
+ * If set to 1, no doubling is applied.
+ */
+long lbPhysicalResolutionMul = 1;
 
 /** @internal
  * Informs if separate screen and draw surfaces were created
@@ -136,11 +154,18 @@ TbResult LbScreenUpdateIcon(void)
 
 #endif
 
+TbResult LbScreenSetMinPhysicalScreenResolution(long dim)
+{
+    lbMinPhysicalScreenResolutionDim = dim;
+    return Lb_SUCCESS;
+}
+
 TbResult LbScreenSetupAnyMode(TbScreenMode mode, TbScreenCoord width,
     TbScreenCoord height, ubyte *palette)
 {
     SDL_Surface * prevScreenSurf;
     long hot_x, hot_y;
+    long mdWidth, mdHeight;
     const struct TbSprite *msspr;
     TbScreenModeInfo *mdinfo;
     unsigned long sdlFlags;
@@ -155,6 +180,7 @@ TbResult LbScreenSetupAnyMode(TbScreenMode mode, TbScreenCoord width,
     LbMouseChangeSprite(NULL);
     if (lbHasSecondSurface) {
         SDL_FreeSurface(to_SDLSurf(lbDrawSurface));
+        lbHasSecondSurface = false;
     }
     lbDrawSurface = NULL;
     lbScreenInitialised = false;
@@ -173,6 +199,18 @@ TbResult LbScreenSetupAnyMode(TbScreenMode mode, TbScreenCoord width,
             (int)mdinfo->Width, (int)mdinfo->Height, (int)mode);
         return Lb_FAIL;
     }
+
+    {
+        long minDim = min(mdinfo->Width,mdinfo->Height);
+        if ((minDim != 0) && (minDim < lbMinPhysicalScreenResolutionDim)) {
+            lbPhysicalResolutionMul = (lbMinPhysicalScreenResolutionDim + minDim - 1) / minDim;
+        } else {
+            lbPhysicalResolutionMul = 1;
+        }
+        mdWidth = mdinfo->Width * lbPhysicalResolutionMul;
+        mdHeight = mdinfo->Height * lbPhysicalResolutionMul;
+    }
+
 
     // No need for video buffer paging when using SDL
     lbDisplay.VesaIsSetUp = false;
@@ -193,7 +231,7 @@ TbResult LbScreenSetupAnyMode(TbScreenMode mode, TbScreenCoord width,
     }
 
     // Set SDL video mode (also creates window).
-    lbScreenSurface = lbDrawSurface = SDL_SetVideoMode(mdinfo->Width, mdinfo->Height,
+    lbScreenSurface = lbDrawSurface = SDL_SetVideoMode(mdWidth, mdHeight,
       mdinfo->BitsPerPixel, sdlFlags);
 
     if (lbScreenSurface == NULL) {
@@ -207,7 +245,7 @@ TbResult LbScreenSetupAnyMode(TbScreenMode mode, TbScreenCoord width,
     // Create secondary surface if necessary,
     // that is if BPP or dimensions do not match.
     if ((mdinfo->BitsPerPixel != lbEngineBPP) ||
-        (mdinfo->Width != width) || (mdinfo->Height != height))
+        (mdWidth != width) || (mdHeight != height))
     {
         lbDrawSurface = SDL_CreateRGBSurface(SDL_SWSURFACE,
           width, height, lbEngineBPP, 0, 0, 0, 0);
@@ -235,7 +273,8 @@ TbResult LbScreenSetupAnyMode(TbScreenMode mode, TbScreenCoord width,
     lbDisplay.GraphicsWindowPtr = NULL;
 
     lbScreenInitialised = true;
-    LIBLOG("Mode %dx%dx%d setup succeeded", (int)to_SDLSurf(lbScreenSurface)->w, (int)to_SDLSurf(lbScreenSurface)->h,
+    LIBLOG("Mode %dx%dx%d setup succeeded", (int)to_SDLSurf(lbScreenSurface)->w,
+      (int)to_SDLSurf(lbScreenSurface)->h,
       (int)to_SDLSurf(lbScreenSurface)->format->BitsPerPixel);
     if (palette != NULL)
     {
