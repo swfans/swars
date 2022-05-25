@@ -63,14 +63,12 @@ static inline void
 lock_screen (void)
 {
 #if 0
-    if (SDL_MUSTLOCK (to_SDLSurf(lbScreenSurface))) {
-        if (SDL_LockSurface (to_SDLSurf(lbScreenSurface)) != 0) {
+    if (SDL_MUSTLOCK (to_SDLSurf(lbDrawSurface))) {
+        if (SDL_LockSurface (to_SDLSurf(lbDrawSurface)) != 0) {
             fprintf (stderr, "SDL_LockSurface: %s\n", SDL_GetError ());
             exit(1);
         }
     }
-    // set vga buffer address
-    lbDisplay.PhysicalScreen = to_SDLSurf(lbDrawSurface)->pixels;
 #endif
 }
 
@@ -78,10 +76,9 @@ static inline void
 unlock_screen (void)
 {
 #if 0
-    if (SDL_MUSTLOCK (to_SDLSurf(lbScreenSurface))) {
-        SDL_UnlockSurface (to_SDLSurf(lbScreenSurface));
+    if (SDL_MUSTLOCK (to_SDLSurf(lbDrawSurface))) {
+        SDL_UnlockSurface (to_SDLSurf(lbDrawSurface));
     }
-    lbDisplay.PhysicalScreen = NULL;
 #endif
 }
 
@@ -89,142 +86,14 @@ int LbScreenSetupAnyModeTweaked(unsigned short mode, unsigned long width,
     unsigned long height, TbPixel *palette)
 {
     ubyte *wscreen_bak;
+    TbResult ret;
 
     wscreen_bak = lbDisplay.WScreen;
 
     if (lbHasSecondSurface)
         SDL_UnlockSurface(to_SDLSurf(lbDrawSurface));
 
-#if 1
-    if (LbScreenSetupAnyMode(mode, width, height, palette) != 1)
-        goto err;
-#else
-
-    uint32_t flags;
-    TbScreenModeInfo *mdinfo;
-
-    // OLD: should we really suspend/resume the mouse here?
-    long hot_x, hot_y;
-    long mdWidth, mdHeight;
-    const struct TbSprite *msspr;
-
-    msspr = NULL;
-    if (lbDisplay.MouseSprite != NULL)
-    {
-        msspr = lbDisplay.MouseSprite;
-        LbMouseGetSpriteOffset(&hot_x, &hot_y);
-    }
-    LbMouseChangeSprite(NULL);
-
-    if (lbDrawSurface != NULL)
-        unlock_screen ();
-
-  // lbDisplay.OldVideoMode which is DWORD 1E2EB6 is used in
-  // 000ED764 sub_ED764 to probably get back to text mode
-  // I'm setting it to 0xFF for now
-  if (!lbDisplay.OldVideoMode)
-    lbDisplay.OldVideoMode = 0xFF;
-
-  // We are using only lbDisplay.VesaIsSetUp = false
-
-  /*  if(lbScreenModeInfo[mode].mode < 256)
-  {
-    lbDisplay.VesaIsSetUp = false;
-  }
-  else
-  {
-    // lbDisplay.VesaIsSetUp = true;
-    lbDisplay.VesaIsSetUp = false; // Defaulting to false
-  }*/
-  lbDisplay.VesaIsSetUp = false;
-
-  // Setting mode
-    if (lbHasSecondSurface) {
-        SDL_FreeSurface (to_SDLSurf(lbDrawSurface));
-        lbHasSecondSurface = false;
-    }
-
-  flags = SDL_SWSURFACE;
-
-    mdinfo = LbScreenGetModeInfo(mode);
-    if ((mdinfo->VideoMode & Lb_VF_WINDOWED) == 0)
-        flags |= SDL_FULLSCREEN;
-
-
-    { // Stretch lowres
-        long minDim = min(mdinfo->Width,mdinfo->Height);
-        if ((minDim != 0) && (minDim < lbMinPhysicalScreenResolutionDim)) {
-            lbPhysicalResolutionMul = (lbMinPhysicalScreenResolutionDim + minDim - 1) / minDim;
-        } else {
-            lbPhysicalResolutionMul = 1;
-        }
-        mdWidth = mdinfo->Width * lbPhysicalResolutionMul;
-        mdHeight = mdinfo->Height * lbPhysicalResolutionMul;
-    }
-
-    // Init mode
-    lbScreenSurface = lbDrawSurface = SDL_SetVideoMode(mdWidth, mdHeight,
- 		    mdinfo->BitsPerPixel, flags);
-
-#ifdef DEBUG
-  printf ("SDL_SetVideoMode(%ld, %ld, %d, SDL_SWSURFACE) - %s\n",
-          width, height, (int)lbScreenModeInfo[mode].BitsPerPixel,
-          lbScreenModeInfo[mode].Desc);
-#endif
-
-  if (lbScreenSurface == NULL)
-    {
-      fprintf (stderr, "SDL_SetVideoMode: %s\n", SDL_GetError ());
-      goto err;
-    }
-
-    SDL_WM_SetCaption(lbDrawAreaTitle, lbDrawAreaTitle);
-    LbScreenUpdateIcon();
-
-    // Create secondary surface if necessary, that is if BPP != lbEngineBPP.
-    if (lbPhysicalResolutionMul > 1)
-    {
-        lbDrawSurface = SDL_CreateRGBSurface(SDL_SWSURFACE, width, height, 8, 0, 0, 0, 0);
-        if (lbDrawSurface == NULL) {
-            printf("Cannot create secondary surface: %s\n", SDL_GetError());
-            LbScreenReset();
-            return Lb_FAIL;
-        }
-        lbHasSecondSurface = true;
-    }
-
-    lbDisplay.DrawFlags = 0;
-    lbDisplay.DrawColour = 0;
-    lbDisplay.PhysicalScreenWidth = mdinfo->Width;
-    lbDisplay.PhysicalScreenHeight = mdinfo->Height;
-    lbDisplay.ScreenMode = mode;
-
-    lbDisplay.PhysicalScreen = NULL;
-    //lbDisplay.WScreen = NULL;
-    lbDisplay.GraphicsWindowPtr = NULL;
-
-  // Is that better? chack in disassembly
-  lbDisplay.GraphicsScreenWidth  = width;
-  lbDisplay.GraphicsScreenHeight = height;
-
-    lbScreenInitialised = true;
-    printf("Mode %dx%dx%d setup succeeded", (int)to_SDLSurf(lbScreenSurface)->w, (int)to_SDLSurf(lbScreenSurface)->h,
-      (int)to_SDLSurf(lbScreenSurface)->format->BitsPerPixel);
-
-  // Setup palette
-  if (palette != NULL)
-    {
-        if (LbPaletteSet(palette) != 1)
-            goto err;
-    }
-
-  // Call funcitons that recalculate some buffers
-  // They can be switched to C++ later, but it's not needed
-  LbScreenSetGraphicsWindow(0, 0, lbDisplay.GraphicsScreenWidth, lbDisplay.GraphicsScreenHeight);
-  LbTextSetWindow(0, 0, lbDisplay.GraphicsScreenWidth, lbDisplay.GraphicsScreenHeight);
-
-  lbScreenInitialised = true;
-#endif
+    ret = LbScreenSetupAnyMode(mode, width, height, palette);
 
 #if 0
     if (lbHasSecondSurface)
@@ -232,23 +101,8 @@ int LbScreenSetupAnyModeTweaked(unsigned short mode, unsigned long width,
 #endif
 
     lbDisplay.WScreen = wscreen_bak;
-    lock_screen ();
 
-  return 1;
-
-err:
-#if 0
-  if (lbDrawSurface != NULL)
-    {
-      unlock_screen ();
-      SDL_FreeSurface (to_SDLSurf(lbDrawSurface));
-      lbDrawSurface = NULL;
-    }
-
-  lbScreenInitialised = false;
-#endif
-
-  return -1;
+  return ret;
 }
 
 TbResult LbScreenSetup(TbScreenMode mode, TbScreenCoord width, TbScreenCoord height,
