@@ -7,6 +7,10 @@
 #include "bflib_basics.h"
 #include "globals.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #pragma pack(1)
 
 typedef struct {
@@ -193,5 +197,9 @@ void game_reset(void);
 void host_reset(void);
 void free_texturemaps(void);
 int joy_grip_shutdown(void);
+
+#ifdef __cplusplus
+};
+#endif
 
 #endif

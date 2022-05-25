@@ -9,6 +9,7 @@
 #include "bfsprite.h"
 #include "bftext.h"
 #include "bfmouse.h"
+#include "bfutility.h"
 #include "util.h"
 #include "bflib_basics.h"
 
@@ -26,6 +27,8 @@ extern ushort data_1aa332;
 extern ubyte *vec_tmap;
 extern unsigned char *display_palette;
 extern struct TbSprite *pointer_sprites;
+extern long lbMinPhysicalScreenResolutionDim;
+extern long lbPhysicalResolutionMul;
 
 static bool         display_lowres_stretch = false;
 
@@ -90,12 +93,14 @@ int LbScreenSetupAnyModeTweaked(unsigned short mode, unsigned long width,
     ubyte *wscreen_bak;
 
     wscreen_bak = lbDisplay.WScreen;
+    LbScreenSetMinPhysicalScreenResolution(400);
 
     uint32_t flags;
     TbScreenModeInfo *mdinfo;
 
     // OLD: should we really suspend/resume the mouse here?
     long hot_x, hot_y;
+    long mdWidth, mdHeight;
     const struct TbSprite *msspr;
 
     msspr = NULL;
@@ -144,16 +149,20 @@ int LbScreenSetupAnyModeTweaked(unsigned short mode, unsigned long width,
         flags |= SDL_FULLSCREEN;
 
 
-    // Stretch lowres ?
-    if (width == 320 && height == 200 && display_lowres_stretch)
-      mdinfo = LbScreenGetModeInfo(13);
+    { // Stretch lowres
+        long minDim = min(mdinfo->Width,mdinfo->Height);
+        if ((minDim != 0) && (minDim < lbMinPhysicalScreenResolutionDim)) {
+            lbPhysicalResolutionMul = (lbMinPhysicalScreenResolutionDim + minDim - 1) / minDim;
+        } else {
+            lbPhysicalResolutionMul = 1;
+        }
+        mdWidth = mdinfo->Width * lbPhysicalResolutionMul;
+        mdHeight = mdinfo->Height * lbPhysicalResolutionMul;
+    }
 
     // Init mode
-    lbScreenSurface = lbDrawSurface =
-          SDL_SetVideoMode(mdinfo->Width, mdinfo->Height,
+    lbScreenSurface = lbDrawSurface = SDL_SetVideoMode(mdWidth, mdHeight,
  		    mdinfo->BitsPerPixel, flags);
-
-    mdinfo = LbScreenGetModeInfo(mode);
 
 #ifdef DEBUG
   printf ("SDL_SetVideoMode(%ld, %ld, %d, SDL_SWSURFACE) - %s\n",
@@ -171,7 +180,7 @@ int LbScreenSetupAnyModeTweaked(unsigned short mode, unsigned long width,
     LbScreenUpdateIcon();
 
     // Create secondary surface if necessary, that is if BPP != lbEngineBPP.
-    if (width == 320 && height == 200 && display_lowres_stretch)
+    if (lbPhysicalResolutionMul > 1)
     {
         lbDrawSurface = SDL_CreateRGBSurface(SDL_SWSURFACE, width, height, 8, 0, 0, 0, 0);
         if (lbDrawSurface == NULL) {
@@ -259,7 +268,7 @@ display_update (void)
 {
     assert(lbScreenSurface != NULL);
     // Stretched lowres in action?
-    if (lbHasSecondSurface)
+    if ((lbPhysicalResolutionMul > 1) && lbHasSecondSurface)
     {
         if (SDL_MUSTLOCK (to_SDLSurf(lbScreenSurface))) {
             if (SDL_LockSurface (to_SDLSurf(lbScreenSurface)) != 0) {
@@ -268,20 +277,29 @@ display_update (void)
             }
         }
         // Stretch lowres
-        int i, j;
+        long i, j;
+        long mdWidth, mdHeight;
         unsigned char *poutput = (unsigned char*) to_SDLSurf(lbScreenSurface)->pixels;
         unsigned char *pinput  = to_SDLSurf(lbDrawSurface)->pixels;
 
-        for (j = 0; j < 480; j++)
-        {
-            for (i = 0; i < 640; i+=2)
-            {
-              // Do not touch this formula
-              int input_xy = ((j * 200) / 480) * 320 + i / 2;
-              int output_xy = j * 640 + i;
+        mdWidth = lbDisplay.PhysicalScreenWidth;
+        mdHeight = lbDisplay.PhysicalScreenHeight;
 
-              poutput[output_xy]     = pinput[input_xy];
-              poutput[output_xy + 1] = pinput[input_xy];
+        for (j = 0; j < mdHeight; j++)
+        {
+            for (i = 0; i < mdWidth; i++)
+            {
+                long di, dj;
+                int input_xy = j * mdWidth + i;
+
+                for (dj = 0; dj < lbPhysicalResolutionMul; dj++)
+                {
+                    int output_xy = (j*lbPhysicalResolutionMul+dj) * mdWidth*lbPhysicalResolutionMul + i*lbPhysicalResolutionMul;
+
+                    for (di = 0; di < lbPhysicalResolutionMul; di++) {
+                        poutput[output_xy++] = pinput[input_xy];
+                    }
+                }
             }
         }
 
