@@ -92,6 +92,14 @@ int LbScreenSetupAnyModeTweaked(unsigned short mode, unsigned long width,
 
     wscreen_bak = lbDisplay.WScreen;
 
+    if (lbHasSecondSurface)
+        SDL_UnlockSurface(to_SDLSurf(lbDrawSurface));
+
+#if 1
+    if (LbScreenSetupAnyMode(mode, width, height, palette) != 1)
+        goto err;
+#else
+
     uint32_t flags;
     TbScreenModeInfo *mdinfo;
 
@@ -110,9 +118,6 @@ int LbScreenSetupAnyModeTweaked(unsigned short mode, unsigned long width,
 
     if (lbDrawSurface != NULL)
         unlock_screen ();
-
-    if (lbHasSecondSurface)
-        SDL_UnlockSurface (to_SDLSurf(lbDrawSurface));
 
   // lbDisplay.OldVideoMode which is DWORD 1E2EB6 is used in
   // 000ED764 sub_ED764 to probably get back to text mode
@@ -186,8 +191,6 @@ int LbScreenSetupAnyModeTweaked(unsigned short mode, unsigned long width,
             return Lb_FAIL;
         }
         lbHasSecondSurface = true;
-
-         SDL_LockSurface(to_SDLSurf(lbDrawSurface));
     }
 
     lbDisplay.DrawFlags = 0;
@@ -221,6 +224,12 @@ int LbScreenSetupAnyModeTweaked(unsigned short mode, unsigned long width,
   LbTextSetWindow(0, 0, lbDisplay.GraphicsScreenWidth, lbDisplay.GraphicsScreenHeight);
 
   lbScreenInitialised = true;
+#endif
+
+#if 0
+    if (lbHasSecondSurface)
+         SDL_LockSurface(to_SDLSurf(lbDrawSurface));
+#endif
 
     lbDisplay.WScreen = wscreen_bak;
     lock_screen ();
@@ -228,6 +237,7 @@ int LbScreenSetupAnyModeTweaked(unsigned short mode, unsigned long width,
   return 1;
 
 err:
+#if 0
   if (lbDrawSurface != NULL)
     {
       unlock_screen ();
@@ -236,6 +246,7 @@ err:
     }
 
   lbScreenInitialised = false;
+#endif
 
   return -1;
 }
