@@ -440,7 +440,6 @@ void setup_host(void)
     else
         LbIKeyboardOpen();
     init_buffered_keys();
-    lbMouseToScreen = transform_mouse;
     lbMouseAutoReset = false;
     LbMouseSetup(&pointer_sprites[1], 2, 2);
 

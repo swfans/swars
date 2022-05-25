@@ -8,6 +8,5 @@ struct TbPoint;
 
 void mouse_initialise (void);
 TbResult MEvent(const SDL_Event *ev);
-void transform_mouse (struct TbPoint *pos);
 
 #endif

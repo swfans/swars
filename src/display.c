@@ -30,8 +30,6 @@ extern struct TbSprite *pointer_sprites;
 extern long lbMinPhysicalScreenResolutionDim;
 extern long lbPhysicalResolutionMul;
 
-static bool         display_lowres_stretch = false;
-
 #if defined(WIN32)
 
 const char * SWResourceMapping(short index)
@@ -93,7 +91,6 @@ int LbScreenSetupAnyModeTweaked(unsigned short mode, unsigned long width,
     ubyte *wscreen_bak;
 
     wscreen_bak = lbDisplay.WScreen;
-    LbScreenSetMinPhysicalScreenResolution(400);
 
     uint32_t flags;
     TbScreenModeInfo *mdinfo;
@@ -279,8 +276,8 @@ display_update (void)
         // Stretch lowres
         long i, j;
         long mdWidth, mdHeight;
-        unsigned char *poutput = (unsigned char*) to_SDLSurf(lbScreenSurface)->pixels;
-        unsigned char *pinput  = to_SDLSurf(lbDrawSurface)->pixels;
+        ubyte *poutput = (ubyte *)to_SDLSurf(lbScreenSurface)->pixels;
+        ubyte *pinput  = (ubyte *)to_SDLSurf(lbDrawSurface)->pixels;
 
         mdWidth = lbDisplay.PhysicalScreenWidth;
         mdHeight = lbDisplay.PhysicalScreenHeight;
@@ -294,7 +291,9 @@ display_update (void)
 
                 for (dj = 0; dj < lbPhysicalResolutionMul; dj++)
                 {
-                    int output_xy = (j*lbPhysicalResolutionMul+dj) * mdWidth*lbPhysicalResolutionMul + i*lbPhysicalResolutionMul;
+                    int output_xy = (j*lbPhysicalResolutionMul+dj) *
+                      mdWidth*lbPhysicalResolutionMul +
+                      i*lbPhysicalResolutionMul;
 
                     for (di = 0; di < lbPhysicalResolutionMul; di++) {
                         poutput[output_xy++] = pinput[input_xy];
@@ -333,57 +332,12 @@ display_set_full_screen (bool full_screen)
 }
 
 void
-display_get_size (size_t *width, size_t *height)
-{
-  if (lbScreenSurface == NULL)
-    {
-      if (width != NULL)
-        *width  = 0;
-
-      if (height != NULL)
-        *height = 0;
-
-      return;
-    }
-
-  if (width != NULL)
-    *width  = lbDisplay.GraphicsScreenWidth;
-
-  if (height != NULL)
-    *height = lbDisplay.GraphicsScreenHeight;
-}
-
-void
-display_get_physical_size (size_t *width, size_t *height)
-{
-  if (lbScreenSurface == NULL)
-    {
-      if (width != NULL)
-        *width  = 0;
-
-      if (height != NULL)
-        *height = 0;
-
-      return;
-    }
-
-  if (width != NULL)
-    *width  = to_SDLSurf(lbScreenSurface)->w;
-
-  if (height != NULL)
-    *height = to_SDLSurf(lbScreenSurface)->h;
-}
-
-void
 display_set_lowres_stretch (bool stretch)
 {
-  display_lowres_stretch = stretch;
-}
-
-bool
-display_is_stretching_enabled (void)
-{
-  return lbHasSecondSurface;
+  if (stretch)
+      LbScreenSetMinPhysicalScreenResolution(400);
+  else
+      LbScreenSetMinPhysicalScreenResolution(1);
 }
 
 void
