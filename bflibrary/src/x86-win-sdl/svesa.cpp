@@ -19,12 +19,12 @@
 /******************************************************************************/
 #include "svesa.h"
 
-int LbVesaGetGran()
+int LbVesaGetGran_UNUSED()
 {
 // code at 0001:000b2730
 }
 
-int LbVesaSetMode()
+int LbVesaSetMode_UNUSED()
 {
 // code at 0001:000b2838
 }
@@ -34,27 +34,27 @@ TbResult LbVesaSetPage(ushort pageNo)
     return Lb_FAIL;
 }
 
-int LbVesaGetInfo()
+int LbVesaGetInfo_UNUSED()
 {
 // code at 0001:000b2914
 }
 
-int LbVesaIsModeAvailable()
+int LbVesaIsModeAvailable_UNUSED()
 {
 // code at 0001:000b29d8
 }
 
-int lbVesaBytesPerLine;
+int lbVesaBytesPerLine_UNUSED;
 
-int lbVesaHRes;
+int lbVesaHRes_UNUSED;
 
-int lbVesaVRes;
+int lbVesaVRes_UNUSED;
 
-int lbVesaData;
+ubyte *lbVesaData;
 
-int lbVesaPage;
+int lbVesaPage_UNUSED;
 
-int lbVesaGran;
+int lbVesaGran_UNUSED;
 
 
 /******************************************************************************/

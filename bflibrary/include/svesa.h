@@ -60,7 +60,7 @@ int LbVesaIsModeAvailable();
 extern int lbVesaBytesPerLine;
 extern int lbVesaHRes;
 extern int lbVesaVRes;
-extern int lbVesaData;
+extern ubyte *lbVesaData;
 extern int lbVesaPage;
 extern int lbVesaGran;
 
