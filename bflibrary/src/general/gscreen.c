@@ -20,8 +20,7 @@
 #include <string.h>
 #include "bfscreen.h"
 
-//TODO remove from ASM, then rename
-struct ScreenModeInfo lbScreenModeInfo_UNUSED[] = {
+struct ScreenModeInfo lbScreenModeInfo[] = {
     {   0,   0, 0,0,   0x0,"MODE_INVALID"},
     { 320, 200, 8,0,  0x13,"MODE_320_200_8"},
     { 320, 200,16,0,   0x0,"MODE_320_200_16"},
@@ -59,6 +58,8 @@ long lbScreenModeInfoNum = 28;
 /** Application title for target OS. */
 char lbDrawAreaTitle[128] = "Bullfrog Shell";
 
+DwBool lbScreenInitialised;
+
 short lbIconIndex = 0;
 
 const char * EmptyResourceMapping(short index);
@@ -79,7 +80,6 @@ TbScreenModeInfo *LbScreenGetModeInfo(TbScreenMode mode)
 
 TbBool LbScreenIsModeAvailable(TbScreenMode mode)
 {
-#if 0
     TbScreenModeInfo *mdinfo;
     static TbBool setup = false;
     if (!setup)
@@ -90,8 +90,6 @@ TbBool LbScreenIsModeAvailable(TbScreenMode mode)
     }
     mdinfo = LbScreenGetModeInfo(mode);
     return mdinfo->Available;
-#endif
-    return true; // Until we make checking availablility, everything is available
 }
 
 TbResult LbSetTitle(const char *title)
