@@ -74,7 +74,7 @@ TbResult LbMouseOnEndSwap(void);
  * Set offset within pointer sprite where the mouse actually points at.
  *  Also called LbMouseSetPointerHotspot().
  */
-TbResult LbMouseChangeSpriteOffset(ulong hot_x, ulong hot_y);
+TbResult LbMouseChangeSpriteOffset(long hot_x, long hot_y);
 
 /**
  * Get offset within pointer sprite where the mouse actually points at.

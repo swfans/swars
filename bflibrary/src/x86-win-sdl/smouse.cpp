@@ -70,7 +70,7 @@ TbResult LbMouseOnEndSwap(void)
     return Lb_SUCCESS;
 }
 
-TbResult LbMouseChangeSpriteOffset(ulong hot_x, ulong hot_y)
+TbResult LbMouseChangeSpriteOffset(long hot_x, long hot_y)
 {
     if (!lbMouseInstalled)
         return Lb_FAIL;
