@@ -137,8 +137,8 @@ TbScreenCoord LbScreenHeight(void)
     return lbDisplay.PhysicalScreenHeight;
 }
 
-TbResult LbScreenSetup_TODO(TbScreenMode mode, TbScreenCoord width, TbScreenCoord height,
-    unsigned char *palette)
+TbResult LbScreenSetup(TbScreenMode mode, TbScreenCoord width, TbScreenCoord height,
+    ubyte *palette)
 {
     return LbScreenSetupAnyMode(mode, width, height, palette);
 }

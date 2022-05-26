@@ -321,7 +321,7 @@ TbResult LbSetUserResourceMapping(ResourceMappingFunc func);
 TbResult LbScreenUpdateIcon(void);
 
 TbResult LbScreenSetup(TbScreenMode mode, TbScreenCoord width, TbScreenCoord height,
-    unsigned char *palette);
+    ubyte *palette);
 
 /** Graphics screen buffer (WScreen) width.
  * Gives whole buffer dimension, not only the visible part.
