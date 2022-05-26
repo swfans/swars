@@ -82,35 +82,6 @@ unlock_screen (void)
 #endif
 }
 
-int LbScreenSetupAnyModeTweaked(unsigned short mode, unsigned long width,
-    unsigned long height, TbPixel *palette)
-{
-    ubyte *wscreen_bak;
-    TbResult ret;
-
-    wscreen_bak = lbDisplay.WScreen;
-
-    if (lbHasSecondSurface)
-        SDL_UnlockSurface(to_SDLSurf(lbDrawSurface));
-
-    ret = LbScreenSetupAnyMode(mode, width, height, palette);
-
-#if 0
-    if (lbHasSecondSurface)
-         SDL_LockSurface(to_SDLSurf(lbDrawSurface));
-#endif
-
-    lbDisplay.WScreen = wscreen_bak;
-
-  return ret;
-}
-
-TbResult LbScreenSetup(TbScreenMode mode, TbScreenCoord width, TbScreenCoord height,
-    unsigned char *palette)
-{
-    return LbScreenSetupAnyModeTweaked(mode, width, height, palette);
-}
-
 void swap_wscreen(void)
 {
     TbBool has_wscreeen;
@@ -254,7 +225,7 @@ void setup_screen_mode(TbScreenMode mode)
     was_locked = lbDisplay.WScreen != NULL;
     if (was_locked)
         LbScreenUnlock();
-    if (LbScreenSetupAnyModeTweaked(mode, data_1aa330, data_1aa332, display_palette) != 1)
+    if (LbScreenSetupAnyMode(mode, data_1aa330, data_1aa332, display_palette) != 1)
         exit(1);
     if (was_locked)
     {

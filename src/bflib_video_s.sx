@@ -133,7 +133,7 @@ GLOBAL_FUNC (ASM_LbScreenSetup_)
 		push   %eax
 		movsbl -0x4(%ebp),%eax
 		push   %eax
-		call   ac_LbScreenSetupAnyModeTweaked
+		call   ac_LbScreenSetupAnyMode
 		add    $0x10,%esp
 		mov    %ebp,%esp
 		pop    %ebp
