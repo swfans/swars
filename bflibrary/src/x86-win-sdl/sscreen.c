@@ -416,9 +416,18 @@ int LbScreenSetWScreenInVideo_TODO()
 // code at 0001:000957d8
 }
 
-int LbScreenFindVideoModes_TODO()
+TbResult LbScreenFindVideoModes(void)
 {
-// code at 0001:000957f8
+    TbScreenModeInfo *mdinfo;
+    int i;
+
+    for (i = 1; lbScreenModeInfo[i].Width; i++)
+    {
+        mdinfo = &lbScreenModeInfo[i];
+        /* No restrictions on modes at this time */
+        mdinfo->Available = 1;
+    }
+    return Lb_SUCCESS;
 }
 
 TbResult LbScreenSwap(void)

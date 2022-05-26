@@ -88,6 +88,7 @@ enum TbVideoModeFlags {
     Lb_VF_TRUCOLOR    = 0x0002,
     Lb_VF_PALETTE     = 0x0004,
     Lb_VF_WINDOWED    = 0x0010,
+    Lb_VF_VESA        = 0x0100,
 };
 
 #pragma pack(1)
@@ -387,7 +388,10 @@ TbResult LbScreenUnlock(void);
 int LbScreenSetDoubleBuffering();
 int LbScreenSetWScreenInVideo();
 extern int lbScreenDirectAccessActive;
-int LbScreenFindVideoModes();
+
+/** Updates video modes info, setting availability of each mode.
+ */
+TbResult LbScreenFindVideoModes(void);
 
 /** Places working screen buffer to the physical screen.
  *

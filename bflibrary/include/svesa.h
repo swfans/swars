@@ -21,6 +21,7 @@
 #define BFLIBRARY_SVESA_H_
 
 #include "bftypes.h"
+#include "bfscreen.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -56,7 +57,11 @@ int LbVesaGetGran();
 int LbVesaSetMode();
 TbResult LbVesaSetPage(ushort pageNo);
 int LbVesaGetInfo();
-int LbVesaIsModeAvailable();
+
+/** Checks if a VESA mode with given flags is available.
+ */
+TbBool LbVesaIsModeAvailable(long mode);
+
 extern int lbVesaBytesPerLine;
 extern int lbVesaHRes;
 extern int lbVesaVRes;

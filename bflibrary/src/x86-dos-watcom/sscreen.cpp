@@ -104,9 +104,23 @@ int LbScreenSetWScreenInVideo()
 
 int lbScreenDirectAccessActive;
 
-int LbScreenFindVideoModes()
+TbResult LbScreenFindVideoModes(void)
 {
-// code at 0001:000957f8
+    TbScreenModeInfo *mdinfo;
+    int i;
+
+    LbVesaGetInfo();
+    for (i = 1; lbScreenModeInfo[i].Width; i++)
+    {
+        mdinfo = &lbScreenModeInfo[i];
+        if ((mdinfo->VideoMode & Lb_VF_VESA) != 0)
+            mdinfo->Available = LbVesaIsModeAvailable(mdinfo->VideoMode);
+    }
+    {
+        mdinfo = &lbScreenModeInfo[1];
+        mdinfo->Available = 1;
+    }
+    return Lb_SUCCESS;
 }
 
 TbResult LbScreenSwap(void)

@@ -39,9 +39,10 @@ int LbVesaGetInfo_UNUSED()
 // code at 0001:000b2914
 }
 
-int LbVesaIsModeAvailable_UNUSED()
+TbBool LbVesaIsModeAvailable(long mode)
 {
-// code at 0001:000b29d8
+    /* low level access to VESA modes not available with SDL */
+    return false;
 }
 
 int lbVesaBytesPerLine_UNUSED;
