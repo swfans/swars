@@ -17,8 +17,6 @@
 
 #define to_SDLSurf(h) ((SDL_Surface  *)h)
 
-extern TbScreenModeInfo lbScreenModeInfo[];
-
 #pragma pack()
 
 extern char lbDrawAreaTitle[128];
@@ -27,7 +25,6 @@ extern ushort data_1aa332;
 extern ubyte *vec_tmap;
 extern unsigned char *display_palette;
 extern struct TbSprite *pointer_sprites;
-extern long lbMinPhysicalScreenResolutionDim;
 extern long lbPhysicalResolutionMul;
 
 #if defined(WIN32)
