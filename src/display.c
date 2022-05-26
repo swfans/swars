@@ -59,29 +59,6 @@ const char * SWResourceMapping(short index)
 
 #endif
 
-static inline void
-lock_screen (void)
-{
-#if 0
-    if (SDL_MUSTLOCK (to_SDLSurf(lbDrawSurface))) {
-        if (SDL_LockSurface (to_SDLSurf(lbDrawSurface)) != 0) {
-            fprintf (stderr, "SDL_LockSurface: %s\n", SDL_GetError ());
-            exit(1);
-        }
-    }
-#endif
-}
-
-static inline void
-unlock_screen (void)
-{
-#if 0
-    if (SDL_MUSTLOCK (to_SDLSurf(lbDrawSurface))) {
-        SDL_UnlockSurface (to_SDLSurf(lbDrawSurface));
-    }
-#endif
-}
-
 void swap_wscreen(void)
 {
     TbBool has_wscreeen;
@@ -179,13 +156,11 @@ display_set_lowres_stretch (bool stretch)
 void
 display_lock (void)
 {
-  lock_screen ();
 }
 
 void
 display_unlock (void)
 {
-  unlock_screen ();
 }
 
 void setup_vecs(ubyte *screenbuf, ubyte *vec_tmap, ulong width3, ulong width4, long height)
