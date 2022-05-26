@@ -345,7 +345,6 @@ TbResult LbScreenLock(void)
     if (!lbScreenInitialised)
         return Lb_FAIL;
 
-#if 0
     if (SDL_MUSTLOCK(to_SDLSurf(lbDrawSurface))) {
         if (SDL_LockSurface(to_SDLSurf(lbDrawSurface)) < 0) {
             LIBLOG("error: SDL Lock Draw Surface: %s", SDL_GetError());
@@ -354,6 +353,7 @@ TbResult LbScreenLock(void)
             return Lb_FAIL;
         }
     }
+#if 0
 
     lbDisplay.WScreen = (unsigned char *) to_SDLSurf(lbDrawSurface)->pixels;
     lbDisplay.GraphicsScreenWidth = to_SDLSurf(lbDrawSurface)->pitch;
@@ -373,10 +373,10 @@ TbResult LbScreenUnlock(void)
 #if 0
     lbDisplay.WScreen = NULL;
     lbDisplay.GraphicsWindowPtr = NULL;
+#endif
 
     if (SDL_MUSTLOCK(to_SDLSurf(lbDrawSurface)))
         SDL_UnlockSurface(to_SDLSurf(lbDrawSurface));
-#endif
 
     return Lb_SUCCESS;
 }

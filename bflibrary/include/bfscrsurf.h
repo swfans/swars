@@ -57,9 +57,23 @@ extern OSSurfaceHandle lbDrawSurface;
 void LbScreenSurfaceInit(struct SSurface *surf);
 TbResult LbScreenSurfaceCreate(struct SSurface *surf, ulong w, ulong h);
 TbResult LbScreenSurfaceRelease(struct SSurface *surf);
+
+/** Blits given surface on rectangular area of the working screen.
+ *
+ *  Performs validation and clipping before copying image data.
+ *  The blit function should not be called on a locked surface.
+ */
 TbResult LbScreenSurfaceBlit(struct SSurface *surf, ulong x, ulong y,
     struct TbRect *rect, ulong blflags);
+
+/** Locks the surface, allowing direct access to its pixel data buffer.
+ */
 void *LbScreenSurfaceLock(struct SSurface *surf);
+
+/** Unlocks the surface, invalidating pixel data buffer.
+ *  After this operation, the pointer acquired through locking should no longer
+ *  be accessed.
+ */
 TbResult LbScreenSurfaceUnlock(struct SSurface *surf);
 
 #ifdef __cplusplus
