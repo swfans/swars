@@ -179,7 +179,7 @@ LbVesaGetGran_:
 		lea    -0x7c(%ebp),%eax
 		xor    %edx,%edx
 		call   ac_memset
-		mov    _lbVesaData,%eax
+		mov    EXPORT_SYMBOL(lbVesaData),%eax
 		shr    $0x4,%eax
 		mov    %ax,-0x5a(%ebp)
 		mov    %ax,-0x58(%ebp)
@@ -211,7 +211,7 @@ LbVesaGetGran_:
 		lea    -0x2c(%ebp),%edx
 		mov    $0x31,%eax
 		call   ac_dos_int386x
-		mov    _lbVesaData,%eax
+		mov    EXPORT_SYMBOL(lbVesaData),%eax
 		xor    %edx,%edx
 		mov    0x5(%eax),%dl
 		mov    %edx,%ebx
@@ -356,7 +356,7 @@ LbVesaGetInfo_:
 		lea    -0x78(%ebp),%eax
 		xor    %edx,%edx
 		call   ac_memset
-		mov    _lbVesaData,%eax
+		mov    EXPORT_SYMBOL(lbVesaData),%eax
 		shr    $0x4,%eax
 		mov    %ax,-0x56(%ebp)
 		mov    %ax,-0x54(%ebp)
@@ -389,7 +389,7 @@ LbVesaGetInfo_:
 		call   ac_dos_int386x
 		mov    $0x4,%ebx
 		mov    $aVesa,%edx
-		mov    _lbVesaData,%eax
+		mov    EXPORT_SYMBOL(lbVesaData),%eax
 		call   ac_strncmp
 		test   %eax,%eax
 		jne    jump_eef3a
@@ -418,7 +418,7 @@ LbVesaIsModeAvailable_:
 		call   LbVesaGetInfo_
 		cmp    $0x1,%eax
 		jne    jump_eefc3
-		mov    _lbVesaData,%eax
+		mov    EXPORT_SYMBOL(lbVesaData),%eax
 		add    $0xe,%eax
 		mov    %eax,-0xc(%ebp)
 		xor    %eax,%eax
@@ -684,7 +684,7 @@ _lbVesaHRes:
 		.short  0x0
 _lbVesaVRes:
 		.long	0x0
-_lbVesaData:
+ASM_lbVesaData:
 		.long	0x0
 GLOBAL (_lbVesaPage)
 		.short  0x0

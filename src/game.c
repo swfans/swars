@@ -14,6 +14,7 @@
 #include "bfmemory.h"
 #include "bfmemut.h"
 #include "bffile.h"
+#include "svesa.h"
 #include "game_data.h"
 #include "display.h"
 #include "dos.h"
@@ -51,11 +52,100 @@ struct UnkStruct7
   char field_F;
 };
 
+struct Element;
+struct Frame;
+
 #pragma pack()
 
 extern uint8_t game_music_track;
 
-extern struct TbLoadFiles unk02_load_files[15];
+extern unsigned char *fade_data;
+extern char *fadedat_fname;
+extern char *pop_dat_fname_fmt;
+extern char *pop_tab_fname_fmt;
+extern unsigned short ingame__draw_unknprop_01;
+extern unsigned long unkn_buffer_04;
+
+extern struct TbSprite *small_font;
+extern struct TbSprite *small_font_end;
+extern ubyte *small_font_data;
+extern struct TbSprite *pointer_sprites;
+extern struct TbSprite *pointer_sprites_end;
+extern ubyte *pointer_data;
+extern struct TbSprite *pop1_sprites;
+extern struct TbSprite *pop1_sprites_end;
+extern ubyte *pop1_data;
+extern struct TbSprite *m_sprites;
+extern struct TbSprite *m_sprites_end;
+extern ubyte *m_spr_data;
+extern ubyte *m_spr_data_end;
+
+extern struct Element *melement_ani;
+extern struct Element *mele_ani_end;
+extern ushort *nstart_ani;
+extern ushort *nstart_ani_end;
+extern struct Frame *frame;
+extern struct Frame *frame_end;
+
+extern unsigned short ingame__DisplayMode;
+extern unsigned char *display_palette;
+extern unsigned short unkn2_pos_x;
+extern unsigned short unkn2_pos_y;
+extern unsigned short unkn2_pos_z;
+extern int data_1c8428;
+extern const char *primvehobj_fname;
+extern unsigned char data_19ec6f;
+extern unsigned char textwalk_data[640];
+
+extern PrimObjectPoint *prim_object_points;
+extern PrimObjectFace *prim_object_faces;
+extern PrimObjectFace4 *prim_object_faces4;
+extern PrimObject *prim_objects;
+extern Prim4Texture *prim4_textures;
+extern PrimFaceTexture *prim_face_textures;
+
+extern ushort prim_object_points_count;
+extern ushort prim_object_faces_count;
+extern ushort prim_object_faces4_count;
+extern ushort prim_objects_count;
+extern ushort prim4_textures_count;
+extern ushort prim_face_textures_count;
+extern ushort prim_unknprop01;
+extern struct UnkStruct7 *game_panel;
+extern struct UnkStruct7 game_panel_lo[];
+extern struct UnkStruct7 unknstrct7_arr2[];
+
+extern uint8_t execute_commands;
+extern long gamep_unknval_10;
+extern long gamep_unknval_11;
+extern long gamep_unknval_12;
+extern long gamep_unknval_13;
+extern long gamep_unknval_14;
+extern long gamep_unknval_15;
+extern long gamep_unknval_16;
+
+
+extern int8_t ingame__TrenchcoatPreference;
+extern int8_t ingame__PanelPermutation;
+
+struct TbLoadFiles unk02_load_files[] =
+{
+  { "*VESA",			(void **)&lbVesaData,		(void **)NULL,			256,	1,	0 },
+  { "*W_SCREEN",		(void **)&lbDisplay.WScreen,(void **)NULL,			307840, 0, 0 },
+  { "data/pop2-1.dat",	(void **)&pop1_data,		(void **)NULL,			0, 0, 0 },
+  { "data/pop2-1.tab",	(void **)&pop1_sprites,		(void **)&pop1_sprites_end, 0, 0, 0 },
+  { "data/mspr-0.dat",	(void **)&m_spr_data,		(void **)&m_spr_data_end,0, 0, 0 },
+  { "data/mspr-0.tab",	(void **)&m_sprites,		(void **)&m_sprites_end,0, 0, 0 },
+  { "data/mele-0.ani",	(void **)&melement_ani,		(void **)&mele_ani_end,	0, 0, 0 },
+  { "data/nsta-0.ani",	(void **)&nstart_ani,		(void **)&nstart_ani_end,0, 0, 0 },
+  { "data/nfra-0.ani",	(void **)&frame,			(void **)&frame_end,	0, 0, 0 },
+  { "data/font0-0.dat",	(void **)&small_font_data,	(void **)NULL,			0, 0, 0 },
+  { "data/font0-0.tab",	(void **)&small_font,		(void **)&small_font_end, 0, 0, 0 },
+  { "data/pointers.dat",(void **)&pointer_data,		(void **)NULL,			0, 0, 0 },
+  { "data/pointers.tab",(void **)&pointer_sprites,	(void **)&pointer_sprites_end, 0, 0, 0 },
+  { "qdata/pal.pal",	(void **)&display_palette,	(void **)NULL,			0, 0, 0 },
+  { "",					(void **)NULL, 				(void **)NULL,			0, 0, 0 }
+};
 
 extern TbFileHandle packet_rec_fh;
 
@@ -183,67 +273,6 @@ void ASM_play_intro(void);
 void ASM_init_syndwars(void);
 void ASM_setup_host_sub6(void);
 int ASM_setup_mele(void);
-
-extern unsigned char *fade_data;
-extern char *fadedat_fname;
-extern char *pop_dat_fname_fmt;
-extern char *pop_tab_fname_fmt;
-extern unsigned short ingame__draw_unknprop_01;
-extern unsigned long unkn_buffer_04;
-
-extern struct TbSprite *small_font;
-extern struct TbSprite *small_font_end;
-extern unsigned char *font0_data;
-extern struct TbSprite *pointer_sprites;
-extern struct TbSprite *pointer_sprites_end;
-extern unsigned char *pointer_data;
-extern struct TbSprite *pop1_sprites;
-extern struct TbSprite *pop1_sprites_end;
-extern unsigned char *pop1_data;
-extern struct TbSprite *m_sprites;
-extern struct TbSprite *m_sprites_end;
-extern unsigned char *m_spr_data;
-
-extern unsigned short ingame__DisplayMode;
-extern unsigned char *display_palette;
-extern unsigned short unkn2_pos_x;
-extern unsigned short unkn2_pos_y;
-extern unsigned short unkn2_pos_z;
-extern int data_1c8428;
-extern const char *primvehobj_fname;
-extern unsigned char data_19ec6f;
-extern unsigned char textwalk_data[640];
-
-extern PrimObjectPoint *prim_object_points;
-extern PrimObjectFace *prim_object_faces;
-extern PrimObjectFace4 *prim_object_faces4;
-extern PrimObject *prim_objects;
-extern Prim4Texture *prim4_textures;
-extern PrimFaceTexture *prim_face_textures;
-
-extern ushort prim_object_points_count;
-extern ushort prim_object_faces_count;
-extern ushort prim_object_faces4_count;
-extern ushort prim_objects_count;
-extern ushort prim4_textures_count;
-extern ushort prim_face_textures_count;
-extern ushort prim_unknprop01;
-extern struct UnkStruct7 *game_panel;
-extern struct UnkStruct7 game_panel_lo[];
-extern struct UnkStruct7 unknstrct7_arr2[];
-
-extern uint8_t execute_commands;
-extern long gamep_unknval_10;
-extern long gamep_unknval_11;
-extern long gamep_unknval_12;
-extern long gamep_unknval_13;
-extern long gamep_unknval_14;
-extern long gamep_unknval_15;
-extern long gamep_unknval_16;
-
-
-extern int8_t ingame__TrenchcoatPreference;
-extern int8_t ingame__PanelPermutation;
 
 void *ASM_smack_malloc(int msize);
 void ASM_smack_mfree(void *ptr);
@@ -594,7 +623,7 @@ void game_setup(void)
     setup_color_lookups();
     game_setup_sub7();
     game_setup_sub4(-2);
-    LbSpriteSetup(small_font, small_font_end, font0_data);
+    LbSpriteSetup(small_font, small_font_end, small_font_data);
     game_setup_sub8();
     load_mission_file(0);
     players[local_player_no].field_BB = 15;
