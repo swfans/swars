@@ -491,7 +491,7 @@ void setup_host(void)
     }
     LbMouseSetup(&pointer_sprites[1], 2, 2);
     if ( cmdln_param_bcg )
-      LbMouseChangeSprite(0);
+      LbMouseChangeSprite(NULL);
 }
 
 void read_user_settings(void)

@@ -4,8 +4,8 @@ AC_PREREQ([2.69])
 
 m4_define([ver_major], [0])
 m4_define([ver_minor], [3])
-m4_define([ver_release], [2])
-m4_define([ver_build], [1])
+m4_define([ver_release], [3])
+m4_define([ver_build], [0])
 
 m4_define([swars_version],
       [ver_major.ver_minor.ver_release.ver_build])
