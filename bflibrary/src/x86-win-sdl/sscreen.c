@@ -36,6 +36,7 @@
 extern char lbDrawAreaTitle[128];
 extern short lbIconIndex;
 extern ResourceMappingFunc userResourceMapping;
+extern volatile TbBool lbPointerAdvancedDraw;
 
 /** @internal
  *  Minimal value of dimensions in physical resolution.
@@ -450,15 +451,12 @@ TbResult LbScreenFindVideoModes(void)
  */
 int LbI_SDL_BlitScaled(SDL_Surface *src, SDL_Surface *dst, int resolutionMul)
 {
-    if (SDL_MUSTLOCK (to_SDLSurf(lbScreenSurface))) {
-        if (SDL_LockSurface (to_SDLSurf(lbScreenSurface)) != 0) {
-            fprintf (stderr, "SDL_LockSurface: %s\n", SDL_GetError());
-            exit(1);
-        }
-    }
-
     long i, j;
     long mdWidth, mdHeight;
+
+    LbScreenLock();
+    LbIPhysicalScreenLock();
+
     ubyte *poutput = (ubyte *)dst->pixels;
     ubyte *pinput  = (ubyte *)src->pixels;
 
@@ -485,9 +483,8 @@ int LbI_SDL_BlitScaled(SDL_Surface *src, SDL_Surface *dst, int resolutionMul)
         }
     }
 
-    if (SDL_MUSTLOCK (to_SDLSurf(lbScreenSurface))) {
-        SDL_UnlockSurface (to_SDLSurf(lbScreenSurface));
-    }
+    LbIPhysicalScreenUnlock();
+    LbScreenUnlock();
     return 0;
 }
 
@@ -499,20 +496,27 @@ TbResult LbScreenSwap(void)
     LIBLOG("Starting");
     assert(!lbDisplay.VesaIsSetUp); // video mem paging not supported with SDL
 
-    //ret = LbMouseOnBeginSwap();
-    LbMousePlace();
-    LbIPhysicalScreenLock();
-#if !defined(BFLIB_WSCREEN_CONTROL)
+    // Non-advanced cursor is drawn on WScreen pixels, so should be drawn here
+    if (!lbPointerAdvancedDraw)
+        LbMouseOnBeginSwap();
+
+#if defined(BFLIB_WSCREEN_CONTROL)
+    ret = Lb_SUCCESS;
+#else
+    ret = LbScreenLock();
     // If WScreen is application-controlled buffer, copy it to SDL surface
-    {
+    if (ret == Lb_SUCCESS) {
         ulong blsize;
         blsize = lbDisplay.GraphicsScreenHeight * lbDisplay.GraphicsScreenWidth;
         LbI_XMemCopy(to_SDLSurf(lbDrawSurface)->pixels, lbDisplay.WScreen, blsize);
         ret = Lb_SUCCESS;
     }
+    LbScreenUnlock();
 #endif
-    LbIPhysicalScreenUnlock();
-    LbMouseRemove();
+
+    // Advanced cursor is blitted on lbDrawSurface, so should be drawn here
+    if (lbPointerAdvancedDraw)
+        LbMouseOnBeginSwap();
 
     // Put the data from Draw Surface onto Screen Surface
     if ((ret == Lb_SUCCESS) && (lbHasSecondSurface))
@@ -539,7 +543,7 @@ TbResult LbScreenSwap(void)
             ret = Lb_FAIL;
         }
     }
-    //LbMouseOnEndSwap();
+    LbMouseOnEndSwap();
     return ret;
 }
 
@@ -551,17 +555,16 @@ TbResult LbScreenSwapClear(TbPixel colour)
     LIBLOG("Starting");
     assert(!lbDisplay.VesaIsSetUp); // video mem paging not supported with SDL
 
-    //ret = LbMouseOnBeginSwap();
-    LbMousePlace();
-    LbIPhysicalScreenLock();
-    ret = Lb_SUCCESS;
+    // Non-advanced cursor is drawn on WScreen pixels, so should be drawn here
+    if (!lbPointerAdvancedDraw)
+        LbMouseOnBeginSwap();
+
 #if defined(BFLIB_WSCREEN_CONTROL)
-    LbScreenLock();
-    // TODO use blit if we have wscreen control
-    LbScreenUnlock();
+    ret = Lb_SUCCESS;
 #else
+    ret = LbScreenLock();
     // If WScreen is application-controlled buffer, copy it to SDL surface
-    {
+    if (ret == Lb_SUCCESS) {
         ulong blsize;
         ubyte *blsrcbuf;
         blsrcbuf = lbDisplay.WScreen;
@@ -570,9 +573,13 @@ TbResult LbScreenSwapClear(TbPixel colour)
           blsrcbuf, 0x01010101 * colour, blsize);
         ret = Lb_SUCCESS;
     }
+    LbScreenUnlock();
 #endif
-    LbIPhysicalScreenUnlock();
-    LbMouseRemove();
+
+    // Advanced cursor is blitted on lbDrawSurface, so should be drawn here
+    if (lbPointerAdvancedDraw)
+        LbMouseOnBeginSwap();
+
     // Put the data from Draw Surface onto Screen Surface
     if ((ret == Lb_SUCCESS) && (lbHasSecondSurface))
     {
@@ -598,7 +605,10 @@ TbResult LbScreenSwapClear(TbPixel colour)
             ret = Lb_FAIL;
         }
     }
-    //LbMouseOnEndSwap();
+    LbMouseOnEndSwap();
+#if defined(BFLIB_WSCREEN_CONTROL)
+    SDL_FillRect(lbDrawSurface, NULL, colour);
+#endif
     return ret;
 }
 

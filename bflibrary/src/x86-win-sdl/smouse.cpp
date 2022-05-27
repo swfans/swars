@@ -38,7 +38,7 @@ TbResult LbMousePlace(void)
     if (!lbMouseInstalled)
         return Lb_FAIL;
 
-    if (!pointerHandler.PointerEndPartialUpdate())
+    if (!pointerHandler.PointerBeginPartialUpdate())
         return Lb_FAIL;
 
     return Lb_SUCCESS;
@@ -49,7 +49,7 @@ TbResult LbMouseRemove(void)
     if (!lbMouseInstalled)
         return Lb_FAIL;
 
-    if (!pointerHandler.PointerBeginPartialUpdate())
+    if (!pointerHandler.PointerEndPartialUpdate())
         return Lb_FAIL;
 
     return Lb_SUCCESS;

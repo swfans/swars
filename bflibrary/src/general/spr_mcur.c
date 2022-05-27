@@ -28,8 +28,12 @@ struct SSurface;
 #define CURSOR_SCALING_XSTEPS MAX_SUPPORTED_SCREEN_WIDTH/10
 #define CURSOR_SCALING_YSTEPS MAX_SUPPORTED_SCREEN_HEIGHT/10
 
-// Global variables
-volatile TbBool lbPointerAdvancedDraw;
+//TODO add scaling support for non-advanced pointer
+/** Cursor with advanced draw can be undrawn, restoring the image underneath.
+ * But besides that, it is actually simpler, as it currently does not support scaling.
+ */
+volatile TbBool lbPointerAdvancedDraw = true;
+
 long cursor_xsteps_array[2*CURSOR_SCALING_XSTEPS];
 long cursor_ysteps_array[2*CURSOR_SCALING_YSTEPS];
 
