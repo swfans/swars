@@ -71,56 +71,6 @@ void swap_wscreen(void)
 }
 
 void
-display_update (void)
-{
-    assert(lbScreenSurface != NULL);
-    // Stretched lowres in action?
-    if ((lbPhysicalResolutionMul > 1) && lbHasSecondSurface)
-    {
-        if (SDL_MUSTLOCK (to_SDLSurf(lbScreenSurface))) {
-            if (SDL_LockSurface (to_SDLSurf(lbScreenSurface)) != 0) {
-                fprintf (stderr, "SDL_LockSurface: %s\n", SDL_GetError());
-                exit(1);
-            }
-        }
-        // Stretch lowres
-        long i, j;
-        long mdWidth, mdHeight;
-        ubyte *poutput = (ubyte *)to_SDLSurf(lbScreenSurface)->pixels;
-        ubyte *pinput  = (ubyte *)to_SDLSurf(lbDrawSurface)->pixels;
-
-        mdWidth = lbDisplay.PhysicalScreenWidth;
-        mdHeight = lbDisplay.PhysicalScreenHeight;
-
-        for (j = 0; j < mdHeight; j++)
-        {
-            for (i = 0; i < mdWidth; i++)
-            {
-                long di, dj;
-                int input_xy = j * mdWidth + i;
-
-                for (dj = 0; dj < lbPhysicalResolutionMul; dj++)
-                {
-                    int output_xy = (j*lbPhysicalResolutionMul+dj) *
-                      mdWidth*lbPhysicalResolutionMul +
-                      i*lbPhysicalResolutionMul;
-
-                    for (di = 0; di < lbPhysicalResolutionMul; di++) {
-                        poutput[output_xy++] = pinput[input_xy];
-                    }
-                }
-            }
-        }
-
-        if (SDL_MUSTLOCK (to_SDLSurf(lbScreenSurface))) {
-            SDL_UnlockSurface (to_SDLSurf(lbScreenSurface));
-        }
-    }
-
-    SDL_Flip (to_SDLSurf(lbScreenSurface));
-}
-
-void
 display_set_full_screen (bool full_screen)
 {
     TbScreenModeInfo *mdinfo;

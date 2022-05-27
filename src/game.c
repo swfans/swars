@@ -981,7 +981,6 @@ game_update_full(bool wait)
     display_unlock();
 
     sound_update();
-    display_update();
     game_handle_sdl_events();
 
     start_ticks = SDL_GetTicks();
