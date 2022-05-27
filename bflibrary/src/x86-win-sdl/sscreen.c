@@ -445,6 +445,57 @@ TbResult LbScreenFindVideoModes(void)
     return Lb_SUCCESS;
 }
 
+/** @internal
+ * Provides simplified SDL_BlitScaled() functionality for SDL1.
+ */
+int LbI_SDL_BlitScaled(SDL_Surface *src, SDL_Surface *dst, int resolutionMul)
+{
+    assert(lbScreenSurface != NULL);
+    // Stretched lowres in action?
+    if ((resolutionMul > 1) && lbHasSecondSurface)
+    {
+        if (SDL_MUSTLOCK (to_SDLSurf(lbScreenSurface))) {
+            if (SDL_LockSurface (to_SDLSurf(lbScreenSurface)) != 0) {
+                fprintf (stderr, "SDL_LockSurface: %s\n", SDL_GetError());
+                exit(1);
+            }
+        }
+        // Stretch lowres
+        long i, j;
+        long mdWidth, mdHeight;
+        ubyte *poutput = (ubyte *)dst->pixels;
+        ubyte *pinput  = (ubyte *)src->pixels;
+
+        mdWidth = lbDisplay.PhysicalScreenWidth;
+        mdHeight = lbDisplay.PhysicalScreenHeight;
+
+        for (j = 0; j < mdHeight; j++)
+        {
+            for (i = 0; i < mdWidth; i++)
+            {
+                long di, dj;
+                int input_xy = j * mdWidth + i;
+
+                for (dj = 0; dj < resolutionMul; dj++)
+                {
+                    int output_xy = (j*resolutionMul+dj) *
+                      mdWidth*resolutionMul +
+                      i*resolutionMul;
+
+                    for (di = 0; di < resolutionMul; di++) {
+                        poutput[output_xy++] = pinput[input_xy];
+                    }
+                }
+            }
+        }
+
+        if (SDL_MUSTLOCK (to_SDLSurf(lbScreenSurface))) {
+            SDL_UnlockSurface (to_SDLSurf(lbScreenSurface));
+        }
+    }
+    return 0;
+}
+
 TbResult LbScreenSwap(void)
 {
     TbResult ret;
@@ -494,6 +545,11 @@ TbResult LbScreenSwap(void)
     }
     LbMouseOnEndSwap();
 */
+    if ((lbPhysicalResolutionMul > 1) && lbHasSecondSurface)
+    {
+        LbI_SDL_BlitScaled(to_SDLSurf(lbDrawSurface), to_SDLSurf(lbScreenSurface), lbPhysicalResolutionMul);
+    }
+    SDL_Flip (to_SDLSurf(lbScreenSurface));
     return ret;
 }
 
@@ -520,6 +576,11 @@ TbResult LbScreenSwapClear(TbPixel colour)
 #endif
     LbMouseRemove();
     LbIPhysicalScreenUnlock();
+    if ((lbPhysicalResolutionMul > 1) && lbHasSecondSurface)
+    {
+        LbI_SDL_BlitScaled(to_SDLSurf(lbDrawSurface), to_SDLSurf(lbScreenSurface), lbPhysicalResolutionMul);
+    }
+    SDL_Flip (to_SDLSurf(lbScreenSurface));
     return Lb_SUCCESS;
 }
 
