@@ -36,5 +36,17 @@ AC_FUNC_MALLOC
 AC_FUNC_REALLOC
 AC_CHECK_FUNCS([getcwd memmove memset mkdir rmdir])
 
+# Arguments
+
+AC_ARG_ENABLE([bflib-wscreen-control],
+    AS_HELP_STRING([--disable-bflib-wscreen-control],
+        [disallow the bflibrary to change value of lbDisplay.WScreen]),
+    [bflib_wscreen_control=$enableval], [bflib_wscreen_control=no])
+
+AS_IF([test "$bflib_wscreen_control" = "yes"], [
+    AC_DEFINE([BFLIB_WSCREEN_CONTROL], 1,
+        [Define to 1 if the bflibrary should change value of lbDisplay.WScreen])
+])
+
 AC_CONFIG_FILES([Makefile])
 AC_OUTPUT

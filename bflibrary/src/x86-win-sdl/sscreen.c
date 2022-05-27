@@ -20,6 +20,7 @@
 #include <assert.h>
 #include <SDL/SDL.h>
 #include <SDL/SDL_syswm.h>
+#include "bfconfig.h"
 #include "bfscreen.h"
 
 #include "bfscrsurf.h"
@@ -269,8 +270,11 @@ TbResult LbScreenSetupAnyMode(TbScreenMode mode, TbScreenCoord width,
     // The graphics screen size should be really taken after screen is locked
     lbDisplay.GraphicsScreenWidth  = width;
     lbDisplay.GraphicsScreenHeight = height;
-    //lbDisplay.WScreen = NULL; // TODO re-enable when WScreen is used properly
+
+#if defined(BFLIB_WSCREEN_CONTROL)
+    lbDisplay.WScreen = NULL;
     lbDisplay.GraphicsWindowPtr = NULL;
+#endif
 
     lbScreenInitialised = true;
     LIBLOG("Mode %dx%dx%d setup succeeded", (int)to_SDLSurf(lbScreenSurface)->w,
@@ -341,7 +345,11 @@ TbResult LbScreenReset(void)
 
 TbBool LbScreenIsLocked(void)
 {
+#if defined(BFLIB_WSCREEN_CONTROL)
+    return (lbDisplay.WScreen != NULL);
+#else
     return (lbDisplay.WScreen != NULL) && (to_SDLSurf(lbDrawSurface)->pixels != NULL);
+#endif
 }
 
 TbResult LbScreenLock(void)
@@ -353,14 +361,16 @@ TbResult LbScreenLock(void)
     if (SDL_MUSTLOCK(to_SDLSurf(lbDrawSurface))) {
         if (SDL_LockSurface(to_SDLSurf(lbDrawSurface)) < 0) {
             LIBLOG("error: SDL Lock Draw Surface: %s", SDL_GetError());
+#if defined(BFLIB_WSCREEN_CONTROL)
             lbDisplay.GraphicsWindowPtr = NULL;
             lbDisplay.WScreen = NULL;
+#endif
             return Lb_FAIL;
         }
     }
-#if 0
 
-    lbDisplay.WScreen = (unsigned char *) to_SDLSurf(lbDrawSurface)->pixels;
+#if defined(BFLIB_WSCREEN_CONTROL)
+    lbDisplay.WScreen = (ubyte *) to_SDLSurf(lbDrawSurface)->pixels;
     lbDisplay.GraphicsScreenWidth = to_SDLSurf(lbDrawSurface)->pitch;
     lbDisplay.GraphicsWindowPtr = &lbDisplay.WScreen[lbDisplay.GraphicsWindowX +
         lbDisplay.GraphicsScreenWidth * lbDisplay.GraphicsWindowY];
@@ -375,7 +385,7 @@ TbResult LbScreenUnlock(void)
     if (!lbScreenInitialised)
         return Lb_FAIL;
 
-#if 0
+#if defined(BFLIB_WSCREEN_CONTROL)
     lbDisplay.WScreen = NULL;
     lbDisplay.GraphicsWindowPtr = NULL;
 #endif
@@ -443,6 +453,11 @@ TbResult LbScreenSwap(void)
 
     LbIPhysicalScreenLock();
     LbMousePlace();
+#if defined(BFLIB_WSCREEN_CONTROL)
+    LbScreenLock();
+    // TODO use blit if we have wscreen control
+    LbScreenUnlock();
+#else
     {
         ulong blremain;
         blremain = lbDisplay.GraphicsScreenHeight * lbDisplay.GraphicsScreenWidth;
@@ -451,6 +466,7 @@ TbResult LbScreenSwap(void)
         LbI_XMemCopy(to_SDLSurf(lbDrawSurface)->pixels, lbDisplay.WScreen, blremain);
         ret = Lb_SUCCESS;
     }
+#endif
     LbMouseRemove();
     LbIPhysicalScreenUnlock();
 /*
@@ -487,6 +503,11 @@ TbResult LbScreenSwapClear(TbPixel colour)
 
     LbIPhysicalScreenLock();
     LbMousePlace();
+#if defined(BFLIB_WSCREEN_CONTROL)
+    LbScreenLock();
+    // TODO use blit if we have wscreen control
+    LbScreenUnlock();
+#else
     {
         int blsize;
         ubyte *blsrcbuf;
@@ -496,6 +517,7 @@ TbResult LbScreenSwapClear(TbPixel colour)
         // currently lbDrawSurface is copied to lbScreenSurface during display_update()
         LbI_XMemCopyAndSet(to_SDLSurf(lbDrawSurface)->pixels, blsrcbuf, 0x01010101 * colour, blsize);
     }
+#endif
     LbMouseRemove();
     LbIPhysicalScreenUnlock();
     return Lb_SUCCESS;
