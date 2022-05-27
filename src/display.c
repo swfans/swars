@@ -153,11 +153,13 @@ display_set_lowres_stretch (bool stretch)
 void
 display_lock (void)
 {
+  LbScreenLock();
 }
 
 void
 display_unlock (void)
 {
+  LbScreenUnlock();
 }
 
 void setup_vecs(ubyte *screenbuf, ubyte *vec_tmap, ulong width3, ulong width4, long height)
