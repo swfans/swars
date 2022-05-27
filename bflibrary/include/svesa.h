@@ -27,47 +27,16 @@
 extern "C" {
 #endif
 
-#pragma pack(1)
+extern ubyte *lbVesaData;
 
-struct TbRMREGS2 { // sizeof=50
-    ulong MyEDI; // offset=0
-    ulong MyESI; // offset=4
-    ulong MyEBP; // offset=8
-    ulong MyReserved; // offset=12
-    ulong MyEBX; // offset=16
-    ulong MyEDX; // offset=20
-    ulong MyECX; // offset=24
-    ulong MyEAX; // offset=28
-    ushort MyFlags; // offset=32
-    ushort MyES; // offset=34
-    ushort MyDS; // offset=36
-    ushort MyFS; // offset=38
-    ushort MyGS; // offset=40
-    ushort MyIP; // offset=42
-    ushort MyCS; // offset=44
-    ushort MySP; // offset=46
-    ushort MySS; // offset=48
-};
-
-typedef struct TbRMREGS2 TbRMREGS2;
-
-#pragma pack()
-
-int LbVesaGetGran();
-int LbVesaSetMode();
+TbResult LbVesaGetGran(long mode);
+TbResult LbVesaSetMode(long mode);
 TbResult LbVesaSetPage(ushort pageNo);
-int LbVesaGetInfo();
+TbResult LbVesaGetInfo(void);
 
 /** Checks if a VESA mode with given flags is available.
  */
 TbBool LbVesaIsModeAvailable(long mode);
-
-extern int lbVesaBytesPerLine;
-extern int lbVesaHRes;
-extern int lbVesaVRes;
-extern ubyte *lbVesaData;
-extern int lbVesaPage;
-extern int lbVesaGran;
 
 #ifdef __cplusplus
 };

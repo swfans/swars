@@ -19,14 +19,16 @@
 /******************************************************************************/
 #include "svesa.h"
 
-int LbVesaGetGran_UNUSED()
+ubyte *lbVesaData;
+
+TbResult LbVesaGetGran(long mode)
 {
-// code at 0001:000b2730
+    return Lb_FAIL;
 }
 
-int LbVesaSetMode_UNUSED()
+TbResult LbVesaSetMode(long mode)
 {
-// code at 0001:000b2838
+    return Lb_FAIL;
 }
 
 TbResult LbVesaSetPage(ushort pageNo)
@@ -34,9 +36,9 @@ TbResult LbVesaSetPage(ushort pageNo)
     return Lb_FAIL;
 }
 
-int LbVesaGetInfo_UNUSED()
+TbResult LbVesaGetInfo(void)
 {
-// code at 0001:000b2914
+    return Lb_FAIL;
 }
 
 TbBool LbVesaIsModeAvailable(long mode)
@@ -44,18 +46,5 @@ TbBool LbVesaIsModeAvailable(long mode)
     /* low level access to VESA modes not available with SDL */
     return false;
 }
-
-int lbVesaBytesPerLine_UNUSED;
-
-int lbVesaHRes_UNUSED;
-
-int lbVesaVRes_UNUSED;
-
-ubyte *lbVesaData;
-
-int lbVesaPage_UNUSED;
-
-int lbVesaGran_UNUSED;
-
 
 /******************************************************************************/

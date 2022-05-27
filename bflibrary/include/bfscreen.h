@@ -412,7 +412,12 @@ int LbScreenSwapBoxClear();
 TbResult LbScreenSwapClear(TbPixel colour);
 int LbScreenSwapBox();
 int LbScreenDrawHVLineDirect();
-int LbScreenWaitVbi();
+
+/** Wait for vertical blank interrupt.
+ *
+ * Used to achieve vblank sychronization. May do nothing on some platforms.
+ */
+TbResult LbScreenWaitVbi(void);
 
 #ifdef __cplusplus
 };

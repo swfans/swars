@@ -203,9 +203,14 @@ int LbScreenDrawHVLineDirect()
 // code at 0001:00095dc4
 }
 
-int LbScreenWaitVbi()
+TbResult LbScreenWaitVbi(void)
 {
-// code at 0001:000961b0
+    ubyte flg;
+
+    do
+        flg = __inbyte(0x3DAu);
+    while ( !(flg & 0x08) );
+    return Lb_SUCCESS;
 }
 
 

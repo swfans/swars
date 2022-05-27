@@ -538,10 +538,10 @@ int LbScreenDrawHVLineDirect_TODO()
 // code at 0001:00095dc4
 }
 
-int LbScreenWaitVbi_TODO()
+TbResult LbScreenWaitVbi_TODO(void)
 {
-// code at 0001:000961b0
+    // No need to wait for vblank when using SDL
+    return Lb_SUCCESS;
 }
-
 
 /******************************************************************************/
