@@ -58,12 +58,12 @@ const char * SWResourceMapping(short index)
 
 void swap_wscreen(void)
 {
-    TbBool has_wscreeen;
-    has_wscreeen = (lbDisplay.WScreen != 0);
-    if ( has_wscreeen )
+    TbBool was_locked;
+    was_locked = LbScreenIsLocked();
+    if ( was_locked )
         LbScreenUnlock();
     LbScreenSwap();
-    if ( has_wscreeen )
+    if ( was_locked )
     {
       while ( LbScreenLock() != Lb_SUCCESS )
         ;
@@ -194,14 +194,13 @@ void setup_screen_mode(TbScreenMode mode)
         data_1aa332 = 200;
         break;
     }
-    was_locked = lbDisplay.WScreen != NULL;
+    was_locked = LbScreenIsLocked();
     if (was_locked)
         LbScreenUnlock();
     if (LbScreenSetupAnyMode(mode, data_1aa330, data_1aa332, display_palette) != 1)
         exit(1);
-    if (was_locked)
-    {
-        while (LbScreenLock() != 1)
+    if (was_locked) {
+        while (LbScreenLock() != Lb_SUCCESS)
             ;
     }
 
@@ -213,4 +212,19 @@ void setup_screen_mode(TbScreenMode mode)
     LbMouseSetup(&pointer_sprites[1], 2, 2);
     setup_vecs(lbDisplay.WScreen, vec_tmap, lbDisplay.PhysicalScreenWidth,
         lbDisplay.PhysicalScreenWidth, lbDisplay.PhysicalScreenHeight);
+}
+
+void show_black_screen(void)
+{
+    TbBool was_locked;
+
+    was_locked = LbScreenIsLocked();
+    if (!was_locked) {
+        while (LbScreenLock() != Lb_SUCCESS)
+            ;
+    }
+    memset(lbDisplay.WScreen, 0, lbDisplay.PhysicalScreenHeight * lbDisplay.PhysicalScreenWidth);
+    if (!was_locked)
+        LbScreenUnlock();
+    swap_wscreen();
 }

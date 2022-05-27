@@ -12,5 +12,6 @@ void display_lock (void);
 void display_unlock (void);
 const char * SWResourceMapping(short index);
 void swap_wscreen(void);
+void show_black_screen(void);
 
 #endif

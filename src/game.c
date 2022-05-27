@@ -774,10 +774,10 @@ void gproc3_unknsub3(int a1)
     // Empty
 }
 
-void ASM_gproc3_unknsub1(void);
-void gproc3_unknsub1(void)
+void ASM_show_game_engine(void);
+void show_game_engine(void)
 {
-    ASM_gproc3_unknsub1();
+    ASM_show_game_engine();
 }
 
 void ASM_gproc3_unknsub2(void);
@@ -798,9 +798,9 @@ void show_menu_screen(void)
     ASM_show_menu_screen();
 }
 
-void game_process_display(void)
+void draw_game(void)
 {
-    //ASM_game_process_display(); return;
+    //ASM_draw_game(); return;
     switch (ingame__DisplayMode)
     {
     case 1:
@@ -810,7 +810,7 @@ void game_process_display(void)
         PlayCDTrack(game_music_track);
         if ( !(flags_general_unkn01 & 0x20) || !(gameturn & 0xF) )
         {
-            gproc3_unknsub1();
+            show_game_engine();
             if ( flags_general_unkn01 & 0x800 )
               gproc3_unknsub2();
             BAT_play();
@@ -868,9 +868,13 @@ void game_process(void)
           input_char = LbKeyboard();
       if (ingame__DisplayMode == 55)
           DEBUGLOG(0,"id=%d  trial alloc = %d turn %lu", 0, triangulation, gameturn);
+      if (!LbScreenIsLocked()) {
+          while (LbScreenLock() != Lb_SUCCESS)
+              ;
+      }
       input();
       game_process_sub01();
-      game_process_display();
+      draw_game();
       game_setup_sub4(gameturn + 100);
       load_packet();
       if ( ((active_flags_general_unkn01 & 0x8000) != 0) !=
