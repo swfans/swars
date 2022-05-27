@@ -128,7 +128,7 @@ LT_OPTION_DEFINE([LT_INIT], [win32-dll],
 [enable_win32_dll=yes
 
 case $host in
-*-*-cygwin* | *-*-mingw* | *-*-pw32* | *-*-cegcc*)
+*-*-cygwin* | *-*-msys* | *-*-mingw* | *-*-pw32* | *-*-cegcc*)
   AC_CHECK_TOOL(AS, as, false)
   AC_CHECK_TOOL(DLLTOOL, dlltool, false)
   AC_CHECK_TOOL(OBJDUMP, objdump, false)
@@ -170,11 +170,7 @@ AC_ARG_ENABLE([shared],
     [p=${PACKAGE-default}
     case $enableval in
     yes) enable_shared=yes ;;
-    no)
-      enable_shared=no
-      AC_DEFINE([LT_MINGW_STATIC_TESTSUITE_HACK], [1],
-         [Define if running the test suite so that test #27 works on MinGW.])
-      ;;
+    no) enable_shared=no ;;
     *)
       enable_shared=no
       # Look at the argument we got.  We use all the common list separators.
