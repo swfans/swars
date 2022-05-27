@@ -450,48 +450,43 @@ TbResult LbScreenFindVideoModes(void)
  */
 int LbI_SDL_BlitScaled(SDL_Surface *src, SDL_Surface *dst, int resolutionMul)
 {
-    assert(lbScreenSurface != NULL);
-    // Stretched lowres in action?
-    if ((resolutionMul > 1) && lbHasSecondSurface)
-    {
-        if (SDL_MUSTLOCK (to_SDLSurf(lbScreenSurface))) {
-            if (SDL_LockSurface (to_SDLSurf(lbScreenSurface)) != 0) {
-                fprintf (stderr, "SDL_LockSurface: %s\n", SDL_GetError());
-                exit(1);
-            }
+    if (SDL_MUSTLOCK (to_SDLSurf(lbScreenSurface))) {
+        if (SDL_LockSurface (to_SDLSurf(lbScreenSurface)) != 0) {
+            fprintf (stderr, "SDL_LockSurface: %s\n", SDL_GetError());
+            exit(1);
         }
-        // Stretch lowres
-        long i, j;
-        long mdWidth, mdHeight;
-        ubyte *poutput = (ubyte *)dst->pixels;
-        ubyte *pinput  = (ubyte *)src->pixels;
+    }
 
-        mdWidth = lbDisplay.PhysicalScreenWidth;
-        mdHeight = lbDisplay.PhysicalScreenHeight;
+    long i, j;
+    long mdWidth, mdHeight;
+    ubyte *poutput = (ubyte *)dst->pixels;
+    ubyte *pinput  = (ubyte *)src->pixels;
 
-        for (j = 0; j < mdHeight; j++)
+    mdWidth = lbDisplay.PhysicalScreenWidth;
+    mdHeight = lbDisplay.PhysicalScreenHeight;
+
+    for (j = 0; j < mdHeight; j++)
+    {
+        for (i = 0; i < mdWidth; i++)
         {
-            for (i = 0; i < mdWidth; i++)
+            long di, dj;
+            int input_xy = j * mdWidth + i;
+
+            for (dj = 0; dj < resolutionMul; dj++)
             {
-                long di, dj;
-                int input_xy = j * mdWidth + i;
+                int output_xy = (j*resolutionMul+dj) *
+                  mdWidth*resolutionMul +
+                  i*resolutionMul;
 
-                for (dj = 0; dj < resolutionMul; dj++)
-                {
-                    int output_xy = (j*resolutionMul+dj) *
-                      mdWidth*resolutionMul +
-                      i*resolutionMul;
-
-                    for (di = 0; di < resolutionMul; di++) {
-                        poutput[output_xy++] = pinput[input_xy];
-                    }
+                for (di = 0; di < resolutionMul; di++) {
+                    poutput[output_xy++] = pinput[input_xy];
                 }
             }
         }
+    }
 
-        if (SDL_MUSTLOCK (to_SDLSurf(lbScreenSurface))) {
-            SDL_UnlockSurface (to_SDLSurf(lbScreenSurface));
-        }
+    if (SDL_MUSTLOCK (to_SDLSurf(lbScreenSurface))) {
+        SDL_UnlockSurface (to_SDLSurf(lbScreenSurface));
     }
     return 0;
 }
@@ -499,31 +494,26 @@ int LbI_SDL_BlitScaled(SDL_Surface *src, SDL_Surface *dst, int resolutionMul)
 TbResult LbScreenSwap(void)
 {
     TbResult ret;
+    int blresult;
 
+    LIBLOG("Starting");
     assert(!lbDisplay.VesaIsSetUp); // video mem paging not supported with SDL
 
-    LbIPhysicalScreenLock();
     LbMousePlace();
-#if defined(BFLIB_WSCREEN_CONTROL)
-    LbScreenLock();
-    // TODO use blit if we have wscreen control
-    LbScreenUnlock();
-#else
+    LbIPhysicalScreenLock();
+#if !defined(BFLIB_WSCREEN_CONTROL)
+    // If WScreen is application-controlled buffer, copy it to SDL surface
     {
-        ulong blremain;
-        blremain = lbDisplay.GraphicsScreenHeight * lbDisplay.GraphicsScreenWidth;
-        //TODO copy to lbDisplay.PhysicalScreen when possible
-        // currently lbDrawSurface is copied to lbScreenSurface during display_update()
-        LbI_XMemCopy(to_SDLSurf(lbDrawSurface)->pixels, lbDisplay.WScreen, blremain);
+        ulong blsize;
+        blsize = lbDisplay.GraphicsScreenHeight * lbDisplay.GraphicsScreenWidth;
+        LbI_XMemCopy(to_SDLSurf(lbDrawSurface)->pixels, lbDisplay.WScreen, blsize);
         ret = Lb_SUCCESS;
     }
 #endif
-    LbMouseRemove();
     LbIPhysicalScreenUnlock();
+    LbMouseRemove();
 /*
-    int blresult;
-    LIBLOG("Starting");
-    ret = LbMouseOnBeginSwap();
+    //ret = LbMouseOnBeginSwap();
     // Put the data from Draw Surface onto Screen Surface
     if ((ret == Lb_SUCCESS) && (lbHasSecondSurface)) {
         blresult = SDL_BlitSurface(to_SDLSurf(lbDrawSurface), NULL,
@@ -532,6 +522,11 @@ TbResult LbScreenSwap(void)
             LIBLOG("Blit failed: %s", SDL_GetError());
             ret = Lb_FAIL;
         }
+    }
+*/
+    if ((lbPhysicalResolutionMul > 1) && lbHasSecondSurface)
+    {
+        LbI_SDL_BlitScaled(to_SDLSurf(lbDrawSurface), to_SDLSurf(lbScreenSurface), lbPhysicalResolutionMul);
     }
     // Flip the image displayed on Screen Surface
     if (ret == Lb_SUCCESS) {
@@ -543,45 +538,55 @@ TbResult LbScreenSwap(void)
             ret = Lb_FAIL;
         }
     }
-    LbMouseOnEndSwap();
-*/
-    if ((lbPhysicalResolutionMul > 1) && lbHasSecondSurface)
-    {
-        LbI_SDL_BlitScaled(to_SDLSurf(lbDrawSurface), to_SDLSurf(lbScreenSurface), lbPhysicalResolutionMul);
-    }
-    SDL_Flip (to_SDLSurf(lbScreenSurface));
+    //LbMouseOnEndSwap();
     return ret;
 }
 
 TbResult LbScreenSwapClear(TbPixel colour)
 {
+    TbResult ret;
+    int blresult;
+
+    LIBLOG("Starting");
     assert(!lbDisplay.VesaIsSetUp); // video mem paging not supported with SDL
 
-    LbIPhysicalScreenLock();
     LbMousePlace();
+    LbIPhysicalScreenLock();
+    ret = Lb_SUCCESS;
 #if defined(BFLIB_WSCREEN_CONTROL)
     LbScreenLock();
     // TODO use blit if we have wscreen control
     LbScreenUnlock();
 #else
     {
-        int blsize;
+        ulong blsize;
         ubyte *blsrcbuf;
         blsrcbuf = lbDisplay.WScreen;
         blsize = lbDisplay.GraphicsScreenHeight * lbDisplay.GraphicsScreenWidth;
         //TODO copy to lbDisplay.PhysicalScreen when possible
         // currently lbDrawSurface is copied to lbScreenSurface during display_update()
         LbI_XMemCopyAndSet(to_SDLSurf(lbDrawSurface)->pixels, blsrcbuf, 0x01010101 * colour, blsize);
+        ret = Lb_SUCCESS;
     }
 #endif
-    LbMouseRemove();
     LbIPhysicalScreenUnlock();
+    LbMouseRemove();
     if ((lbPhysicalResolutionMul > 1) && lbHasSecondSurface)
     {
         LbI_SDL_BlitScaled(to_SDLSurf(lbDrawSurface), to_SDLSurf(lbScreenSurface), lbPhysicalResolutionMul);
     }
-    SDL_Flip (to_SDLSurf(lbScreenSurface));
-    return Lb_SUCCESS;
+    // Flip the image displayed on Screen Surface
+    if (ret == Lb_SUCCESS) {
+        // calls SDL_UpdateRect for entire screen if not double buffered
+        blresult = SDL_Flip(to_SDLSurf(lbScreenSurface));
+        if (blresult < 0) {
+            // In some cases this situation seems to be quite common
+            LIBLOG("Flip failed: %s", SDL_GetError());
+            ret = Lb_FAIL;
+        }
+    }
+    //LbMouseOnEndSwap();
+    return ret;
 }
 
 int LbScreenSwapBox_TODO()
@@ -602,6 +607,8 @@ int LbScreenDrawHVLineDirect_TODO()
 TbResult LbScreenWaitVbi_TODO(void)
 {
     // No need to wait for vblank when using SDL
+    // If we really, really wanted to achieve synchronization, we could use
+    // SDL_UpdateWindowSurface() - that prevents tearing.
     return Lb_SUCCESS;
 }
 

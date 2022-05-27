@@ -63,10 +63,16 @@ TbResult LbMousePlace(void);
 TbResult LbMouseRemove(void);
 
 /** Update mouse state as screen swap begins.
+ *
+ * Places the mouse cursor on screen. Requires graphics screen surface
+ * to be unlocked.
  */
 TbResult LbMouseOnBeginSwap(void);
 
 /** Return mouse state to normal as screen swap ends.
+ *
+ * Removes the mouse cursor from screen. Requires graphics screen surface
+ * to be unlocked.
  */
 TbResult LbMouseOnEndSwap(void);
 
