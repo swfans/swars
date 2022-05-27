@@ -339,6 +339,11 @@ TbResult LbScreenReset(void)
     return Lb_SUCCESS;
 }
 
+TbBool LbScreenIsLocked(void)
+{
+    return (lbDisplay.WScreen != NULL) && (to_SDLSurf(lbDrawSurface)->pixels != NULL);
+}
+
 TbResult LbScreenLock(void)
 {
     LIBLOG("Starting");

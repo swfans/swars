@@ -384,6 +384,7 @@ TbResult LbScreenReset(void);
  */
 TbResult LbScreenLock(void);
 TbResult LbScreenUnlock(void);
+TbBool LbScreenIsLocked(void);
 
 int LbScreenSetDoubleBuffering();
 int LbScreenSetWScreenInVideo();
