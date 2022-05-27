@@ -1019,8 +1019,6 @@ game_update_full(bool wait)
                     sound_update();
                     display_unlock();
 
-                    //display_update_mouse_pointer(); -- no longer in use
-
                     total_sleep_time -= SDL_GetTicks() - ticks;
                 }
             }

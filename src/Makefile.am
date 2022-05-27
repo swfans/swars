@@ -18,7 +18,6 @@ swars_SOURCES = \
 	bflib_sndlib.sx \
 	bflib_snd_mss.sx \
 	bflib_snd_sys.sx \
-	bflib_video_s.sx \
 	bflib_vidraw.sx \
 	config.h \
 	display.c \
