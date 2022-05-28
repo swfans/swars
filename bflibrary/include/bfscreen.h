@@ -26,8 +26,8 @@
 extern "C" {
 #endif
 
-#define MAX_SUPPORTED_SCREEN_WIDTH  3840
-#define MAX_SUPPORTED_SCREEN_HEIGHT 2160
+#define MAX_SUPPORTED_SCREEN_WIDTH  2560
+#define MAX_SUPPORTED_SCREEN_HEIGHT 1440
 
 /** Standard video modes, registered by LbScreenInitialize().
  * These are standard VESA modes, indexed this way in all Bullfrog games.
