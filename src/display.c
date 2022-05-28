@@ -19,13 +19,11 @@
 
 #pragma pack()
 
-extern char lbDrawAreaTitle[128];
 extern ushort data_1aa330;
 extern ushort data_1aa332;
 extern ubyte *vec_tmap;
 extern unsigned char *display_palette;
 extern struct TbSprite *pointer_sprites;
-extern long lbPhysicalResolutionMul;
 
 #if defined(WIN32)
 
@@ -155,11 +153,6 @@ void setup_screen_mode(TbScreenMode mode)
         while (LbScreenLock() != Lb_SUCCESS)
             ;
     }
-
-    if (mode == 1)
-        lbDisplay.ScreenMode = 1;
-    if (mode == 13)
-        lbDisplay.ScreenMode = 13;
 
     LbMouseSetup(&pointer_sprites[1], 2, 2);
     setup_vecs(lbDisplay.WScreen, vec_tmap, lbDisplay.PhysicalScreenWidth,
