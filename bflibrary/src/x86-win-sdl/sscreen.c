@@ -496,13 +496,15 @@ TbResult LbScreenSwap(void)
     LIBLOG("Starting");
     assert(!lbDisplay.VesaIsSetUp); // video mem paging not supported with SDL
 
+#if defined(BFLIB_WSCREEN_CONTROL)
+    // Blit the cursor on Draw Surface; simple if we have WScreen control
+    LbMouseOnBeginSwap();
+    ret = Lb_SUCCESS;
+#else
     // Non-advanced cursor is drawn on WScreen pixels, so should be drawn here
     if (!lbPointerAdvancedDraw)
         LbMouseOnBeginSwap();
 
-#if defined(BFLIB_WSCREEN_CONTROL)
-    ret = Lb_SUCCESS;
-#else
     ret = LbScreenLock();
     // If WScreen is application-controlled buffer, copy it to SDL surface
     if (ret == Lb_SUCCESS) {
@@ -512,11 +514,11 @@ TbResult LbScreenSwap(void)
         ret = Lb_SUCCESS;
     }
     LbScreenUnlock();
-#endif
 
     // Advanced cursor is blitted on lbDrawSurface, so should be drawn here
     if (lbPointerAdvancedDraw)
         LbMouseOnBeginSwap();
+#endif
 
     // Put the data from Draw Surface onto Screen Surface
     if ((ret == Lb_SUCCESS) && (lbHasSecondSurface))
@@ -555,13 +557,15 @@ TbResult LbScreenSwapClear(TbPixel colour)
     LIBLOG("Starting");
     assert(!lbDisplay.VesaIsSetUp); // video mem paging not supported with SDL
 
+#if defined(BFLIB_WSCREEN_CONTROL)
+    // Blit the cursor on Draw Surface; simple if we have WScreen control
+    LbMouseOnBeginSwap();
+    ret = Lb_SUCCESS;
+#else
     // Non-advanced cursor is drawn on WScreen pixels, so should be drawn here
     if (!lbPointerAdvancedDraw)
         LbMouseOnBeginSwap();
 
-#if defined(BFLIB_WSCREEN_CONTROL)
-    ret = Lb_SUCCESS;
-#else
     ret = LbScreenLock();
     // If WScreen is application-controlled buffer, copy it to SDL surface
     if (ret == Lb_SUCCESS) {
@@ -574,11 +578,11 @@ TbResult LbScreenSwapClear(TbPixel colour)
         ret = Lb_SUCCESS;
     }
     LbScreenUnlock();
-#endif
 
     // Advanced cursor is blitted on lbDrawSurface, so should be drawn here
     if (lbPointerAdvancedDraw)
         LbMouseOnBeginSwap();
+#endif
 
     // Put the data from Draw Surface onto Screen Surface
     if ((ret == Lb_SUCCESS) && (lbHasSecondSurface))
