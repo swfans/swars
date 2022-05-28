@@ -104,7 +104,7 @@ process_options (int *argc, char ***argv)
         case 'g':
             cmdln_param_bcg = 1;
             ingame__GameMode = 3;
-            flags_general_unkn01 |= 0x08;
+            ingame__Flags |= 0x08;
             break;
 
         case 'H':
@@ -124,9 +124,9 @@ process_options (int *argc, char ***argv)
             break;
 
         case 'm':
-            cmdln_param_mp = 1;
+            is_single_game = 1;
             cmdln_param_current_map = atoi(optarg);
-            flags_general_unkn01 |= 0x08;
+            ingame__Flags |= 0x08;
             selected_map_index = cmdln_param_current_map;
             ingame__Cheats |= 0x04;
             DEBUGLOG(0, "map index %d", cmdln_param_current_map);
@@ -137,14 +137,14 @@ process_options (int *argc, char ***argv)
             break;
 
         case 'p':
-            cmdln_param_mp = 1;
+            is_single_game = 1;
             pktrec_mode = 2; /* playback */
             cmdln_pr_num = atoi(optarg);
             DEBUGLOG(0, "packet file play %d", cmdln_pr_num);
             break;
 
         case 'q':
-            flags_general_unkn01 |= 0x080000;
+            ingame__Flags |= 0x080000;
             break;
 
         case 'r':
@@ -298,7 +298,7 @@ main (int argc, char **argv)
     lbDisplay.ScreenMode = Lb_SCREEN_MODE_320_200_8;
     ingame__GameMode = 0;
     cmdln_param_w = 0;
-    flags_general_unkn01 = 0;
+    ingame__Flags = 0;
     /* Gravis Grip joystick driver initialization */
     /* joy_grip_init(); */
 

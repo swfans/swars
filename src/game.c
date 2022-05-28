@@ -204,7 +204,7 @@ game_initialise(void)
         buffer_allocs[32].field_A = 1000;
         buffer_allocs[33].field_A = 700;
         buffer_allocs[30].field_A = 3000;
-        if ( cmdln_param_mp || cmdln_param_bcg )
+        if ( is_single_game || cmdln_param_bcg )
         {
             buffer_allocs[20].field_A = 2000;
             buffer_allocs[21].field_A = 2000;
@@ -219,7 +219,7 @@ game_initialise(void)
         engine_mem_alloc_size = 2700000;
         game_perspective = (buffer_allocs[5].field_A >> 8) & 0xff;
     }
-    if ( !cmdln_param_mp )
+    if ( !is_single_game )
         cmdln_param_bcg = 1;
 
     return true;
@@ -630,7 +630,7 @@ void game_setup(void)
     load_mission_file(0);
     players[local_player_no].field_BB = 15;
     game_setup_sub4(-1);
-    if ( cmdln_param_mp || cmdln_param_bcg )
+    if ( is_single_game || cmdln_param_bcg )
     {
         load_prim_quad();
     }
@@ -644,7 +644,7 @@ void game_setup(void)
     }
     test_open(15);
     game_setup_sub4(1);
-    if ( cmdln_param_mp && cmdln_param_current_map )
+    if ( is_single_game && cmdln_param_current_map )
       load_mission_map_lvl(0);
     if ( in_network_game || cmdln_param_bcg )
       ingame__DisplayMode = 55;
@@ -810,10 +810,10 @@ void draw_game(void)
         break;
     case 50:
         PlayCDTrack(game_music_track);
-        if ( !(flags_general_unkn01 & 0x20) || !(gameturn & 0xF) )
+        if ( !(ingame__Flags & 0x20) || !(gameturn & 0xF) )
         {
             show_game_engine();
-            if ( flags_general_unkn01 & 0x800 )
+            if ( ingame__Flags & 0x800 )
               gproc3_unknsub2();
             BAT_play();
             if ( execute_commands )
@@ -880,9 +880,9 @@ void game_process(void)
       game_setup_sub4(gameturn + 100);
       load_packet();
       if ( ((active_flags_general_unkn01 & 0x8000) != 0) !=
-        ((flags_general_unkn01 & 0x8000) != 0) )
+        ((ingame__Flags & 0x8000) != 0) )
           LbPaletteSet(display_palette);
-      active_flags_general_unkn01 = flags_general_unkn01;
+      active_flags_general_unkn01 = ingame__Flags;
       if ( ingame__DisplayMode == 50 || ingame__DisplayMode == 1 || ingame__DisplayMode == 59 )
           game_process_sub02();
       if ( ingame__DisplayMode != 55 )
@@ -891,7 +891,7 @@ void game_process(void)
       if ( ingame__DisplayMode == 55 ) {
           swap_wscreen();
       }
-      else if ( !(flags_general_unkn01 & 0x20) || ((gameturn & 0xF) == 0) ) {
+      else if ( !(ingame__Flags & 0x20) || ((gameturn & 0xF) == 0) ) {
           LbScreenSwapClear(0);
       }
       game_process_sub04();

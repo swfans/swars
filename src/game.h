@@ -13,6 +13,38 @@ extern "C" {
 
 #pragma pack(1)
 
+enum GameFlags {
+    GamF_Unkn1       = 0x0001,
+    GamF_Unkn2       = 0x0002,
+    GamF_Unkn4       = 0x0004,
+    GamF_Unkn8       = 0x0008,
+    GamF_Unkn10      = 0x0010,
+    GamF_Unkn20      = 0x0020,
+    GamF_Unkn40      = 0x0040,
+    GamF_Unkn80      = 0x0080,
+    GamF_Unkn100     = 0x0100,
+    GamF_Unkn200     = 0x0200,
+    GamF_Unkn400     = 0x0400,
+    GamF_Unkn800     = 0x0800,
+    GamF_Unkn1000    = 0x1000,
+    GamF_Unkn2000    = 0x2000,
+    GamF_Unkn4000    = 0x4000,
+    GamF_Unkn8000    = 0x8000,
+    GamF_Unkn10000   = 0x010000,
+    GamF_Unkn20000   = 0x020000,
+    GamF_Unkn40000   = 0x040000,
+    GamF_Unkn80000   = 0x080000,
+    GamF_Unkn100000  = 0x00100000,
+    GamF_Unkn200000  = 0x00200000,
+    GamF_Unkn400000  = 0x00400000,
+    GamF_Unkn800000  = 0x00800000,
+    GamF_Unkn1000000  = 0x1000000,
+    GamF_Unkn2000000  = 0x2000000,
+    GamF_Unkn4000000  = 0x4000000,
+    GamF_Unkn8000000  = 0x8000000,
+    GamF_Unkn10000000 = 0x10000000,
+};
+
 typedef struct {
     char *Name;
     void *BufferPtr;
@@ -130,7 +162,7 @@ extern char session_name[20];
 extern char user_name[50];
 
 extern uint8_t in_network_game;
-extern uint8_t cmdln_param_mp;
+extern uint8_t is_single_game;
 extern uint8_t cmdln_param_tf;
 extern uint8_t cmdln_param_bcg;
 extern uint8_t cmdln_param_d;
@@ -145,7 +177,7 @@ extern uint8_t input_char;
 
 extern uint16_t ingame__GameMode;
 extern uint16_t selected_map_index;
-extern uint32_t flags_general_unkn01;
+extern uint32_t ingame__Flags;
 extern uint32_t active_flags_general_unkn01;
 
 extern long unkn01_downcount;
@@ -162,6 +194,8 @@ extern BuffUnknStruct02 buffer_allocs[40];
 extern long navi2_unkn_counter;
 extern long navi2_unkn_counter_max;
 extern uint32_t triangulation;
+
+extern uint32_t smack_malloc_used_tot;
 
 extern PlayerInfo players[8];
 extern uint8_t local_player_no;
