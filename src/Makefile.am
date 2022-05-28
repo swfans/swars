@@ -5,7 +5,9 @@ MKW = $(PYTHON) $(top_srcdir)/util/mkwrappers
 swars_SOURCES = \
 	ariadne.sx \
 	bflib_basics.h \
-	bflib_fmvids.sx \
+	bflib_fmvids.c \
+	bflib_fmvids.h \
+	bflib_fmvids_s.sx \
 	bflib_joyst.c \
 	bflib_joyst.h \
 	bflib_joyst_s.sx \
