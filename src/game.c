@@ -379,6 +379,12 @@ void game_setup_sub5(void)
     ASM_game_setup_sub5();
 }
 
+void flic_unkn03(ubyte a1)
+{
+    asm volatile ("call ASM_flic_unkn03\n"
+        : : "a" (a1));
+}
+
 void play_intro(void)
 {
     ASM_play_intro();
