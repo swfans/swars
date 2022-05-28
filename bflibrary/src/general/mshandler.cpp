@@ -51,6 +51,8 @@ MouseStateHandler::~MouseStateHandler(void)
 bool MouseStateHandler::Install(void)
 {
     this->installed = true;
+    mspos.x = lbDisplay.MMouseX;
+    mspos.y = lbDisplay.MMouseY;
     return true;
 }
 
