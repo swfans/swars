@@ -71,21 +71,22 @@ void swap_wscreen(void)
 void
 display_set_full_screen (bool full_screen)
 {
-    TbScreenModeInfo *mdinfo;
+    int i;
 
     if (lbScreenSurface != NULL)
         return;
 
-    if (full_screen) {
-        mdinfo = LbScreenGetModeInfo(1);
-        mdinfo->VideoMode &= ~Lb_VF_WINDOWED;
-        mdinfo = LbScreenGetModeInfo(13);
-        mdinfo->VideoMode &= ~Lb_VF_WINDOWED;
-    } else {
-        mdinfo = LbScreenGetModeInfo(1);
-        mdinfo->VideoMode |= Lb_VF_WINDOWED;
-        mdinfo = LbScreenGetModeInfo(13);
-        mdinfo->VideoMode |= Lb_VF_WINDOWED;
+    for (i = 1; i < 99; i++)
+    {
+        TbScreenModeInfo *mdinfo;
+
+        mdinfo = LbScreenGetModeInfo(i);
+        if (mdinfo->Width == 0) break;
+        if (full_screen) {
+            mdinfo->VideoMode &= ~Lb_VF_WINDOWED;
+        } else {
+            mdinfo->VideoMode |= Lb_VF_WINDOWED;
+        }
     }
 }
 
