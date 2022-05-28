@@ -27,6 +27,8 @@
 extern "C" {
 #endif
 
+#define LB_VESA_DATA_SIZE 0x100
+
 extern ubyte *lbVesaData;
 
 TbResult LbVesaGetGran(long mode);
