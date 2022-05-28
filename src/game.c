@@ -130,9 +130,9 @@ extern int8_t ingame__PanelPermutation;
 
 struct TbLoadFiles unk02_load_files[] =
 {
-  { "*VESA",			(void **)&lbVesaData,		(void **)NULL,			256,	1,	0 },
-#if 1 // not defined(BFLIB_WSCREEN_CONTROL)
-  { "*W_SCREEN",		(void **)&lbDisplay.WScreen,(void **)NULL,			640*481, 0, 0 },
+  { "*VESA",			(void **)&lbVesaData,		(void **)NULL,LB_VESA_DATA_SIZE, 1, 0 },
+#if 1 // !defined(BFLIB_WSCREEN_CONTROL)
+  { "*W_SCREEN",		(void **)&lbDisplay.WScreen,(void **)NULL,MAX_SUPPORTED_SCREEN_WIDTH*(MAX_SUPPORTED_SCREEN_HEIGHT+1), 0, 0 },
 #endif
   { "data/pop2-1.dat",	(void **)&pop1_data,		(void **)NULL,			0, 0, 0 },
   { "data/pop2-1.tab",	(void **)&pop1_sprites,		(void **)&pop1_sprites_end, 0, 0, 0 },
