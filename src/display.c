@@ -123,28 +123,16 @@ void setup_vecs(ubyte *screenbuf, ubyte *vec_tmap, ulong width3, ulong width4, l
 void setup_screen_mode(TbScreenMode mode)
 {
     TbBool was_locked;
+    TbScreenModeInfo *mdinfo;
 
     printf("setup_screen_mode %d\n", (int)mode);
-    switch (mode)
-    {
-    case 1:
-        data_1aa330 = 320;
-        data_1aa332 = 200;
-        break;
-    case 13:
-        data_1aa330 = 640;
-        data_1aa332 = 480;
-        break;
-    case 16:
-        data_1aa330 = 800;
-        data_1aa332 = 600;
-        break;
-    default:
+    mdinfo = LbScreenGetModeInfo(mode);
+    if (mdinfo->Width == 0) {
         mode = 1;
-        data_1aa330 = 320;
-        data_1aa332 = 200;
-        break;
+        mdinfo = LbScreenGetModeInfo(mode);
     }
+    data_1aa330 = mdinfo->Width;
+    data_1aa332 = mdinfo->Height;
     was_locked = LbScreenIsLocked();
     if (was_locked)
         LbScreenUnlock();
