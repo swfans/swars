@@ -26,4 +26,23 @@
 
 /******************************************************************************/
 
+TbResult play_smk(const char *fname, ulong smkflags, ushort plyflags)
+{
+    TbResult ret;
+#if 1
+    asm volatile ("call ASM_play_smk\n"
+        : "=r" (ret) : "a" (fname), "d" (smkflags), "b" (plyflags));
+    return ret;
+#else
+    lbDisplay.LeftButton = 0;
+    if ( (smack_draw_callback != NULL) || ((plyflags & SMK_PixelDoubleWidth) != 0)
+        || ((plyflags & SMK_InterlaceLine) != 0) || ((plyflags & SMK_PixelDoubleLine) != 0)
+        || (LbScreenIsDoubleBufferred()) )
+      ret = play_smk_via_buffer(fname, smkflags, plyflags);
+    else
+      ret = play_smk_direct(fname, smkflags, plyflags);
+#endif
+    return ret;
+}
+
 /******************************************************************************/

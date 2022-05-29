@@ -6719,7 +6719,7 @@ GLOBAL_FUNC (ASM_set_smack_free)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (play_smk)
+GLOBAL_FUNC (ASM_play_smk)
 /*----------------------------------------------------------------*/
 		push   %ecx
 		xor    %cl,%cl

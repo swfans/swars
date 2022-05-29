@@ -20,6 +20,8 @@
 #ifndef BFLIB_FMVIDS_H
 #define BFLIB_FMVIDS_H
 
+#include "bftypes.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -27,6 +29,7 @@ extern "C" {
 
 /******************************************************************************/
 
+TbResult play_smk(const char *fname, ulong smkflags, ushort plyflags);
 
 /******************************************************************************/
 #ifdef __cplusplus

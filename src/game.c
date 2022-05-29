@@ -9,12 +9,13 @@
 #include "bfscreen.h"
 #include "bfkeybd.h"
 #include "bfmouse.h"
-#include "bflib_render.h"
 #include "bfpalette.h"
 #include "bfmemory.h"
 #include "bfmemut.h"
 #include "bffile.h"
 #include "svesa.h"
+#include "bflib_render.h"
+#include "bflib_fmvids.h"
 #include "game_data.h"
 #include "display.h"
 #include "dos.h"
@@ -387,7 +388,26 @@ void flic_unkn03(ubyte a1)
 
 void play_intro(void)
 {
-    ASM_play_intro();
+    char fname[FILENAME_MAX];
+    //ASM_play_intro(); return;
+
+    lbDisplay.LeftButton = 0;
+    lbKeyOn[KC_ESCAPE] = 0;
+    if ( (cmdln_param_bcg || is_single_game) && !(ingame__Flags & GamF_Unkn80000) )
+    {
+        setup_screen_mode(Lb_SCREEN_MODE_320_200_8);
+        LbMouseChangeSprite(NULL);
+        if (game_dirs[DirPlace_Sound].use_cd == 1)
+            sprintf(fname, "%slanguage/%s/intro.smk", cd_drive, language_3str);
+        else
+            sprintf(fname, "intro/intro.smk");
+        play_smk(fname, 13, 0);
+        LbMouseChangeSprite(&pointer_sprites[1]);
+        smack_malloc_used_tot = 0;
+    }
+    if (cmdln_param_bcg)
+        setup_screen_mode(Lb_SCREEN_MODE_640_480_8);
+    flic_unkn03(1u);
 }
 
 int LbGhostTableGenerate(TbPixel *pal, int a2, char *fname)
