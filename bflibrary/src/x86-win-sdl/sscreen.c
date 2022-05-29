@@ -347,9 +347,10 @@ TbResult LbScreenReset(void)
 TbBool LbScreenIsLocked(void)
 {
 #if defined(BFLIB_WSCREEN_CONTROL)
-    return (lbDisplay.WScreen != NULL);
+    return (lbDisplay.WScreen != NULL) && (lbDrawSurface != NULL);
 #else
-    return (lbDisplay.WScreen != NULL) && (to_SDLSurf(lbDrawSurface)->pixels != NULL);
+    return (lbDisplay.WScreen != NULL) && (lbDrawSurface != NULL)
+      && (to_SDLSurf(lbDrawSurface)->pixels != NULL);
 #endif
 }
 
