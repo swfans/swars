@@ -19,43 +19,44 @@
 /******************************************************************************/
 #include "bflib_fmvids.h"
 
-#include <string.h>
-#include <stdarg.h>
-#include <stdlib.h>
-#include <stdint.h>
-
+#include "bfscreen.h"
 /******************************************************************************/
-TbResult play_smk_direct(const char *fname, ulong smkflags, ushort plyflags, SmackDrawCallback callback)
+//SmackDrawCallback smack_draw_callback = NULL;
+
+TbResult play_smk_direct(const char *fname, ulong smkflags, ushort plyflags, ushort mode)
 {
     TbResult ret;
     asm volatile ("call ASM_play_smk_direct\n"
-        : "=r" (ret) : "a" (fname), "d" (smkflags), "b" (plyflags), "c" (callback));
+        : "=r" (ret) : "a" (fname), "d" (smkflags), "b" (plyflags), "c" (mode));
     return ret;
 }
 
-TbResult play_smk_via_buffer(const char *fname, ulong smkflags, ushort plyflags, ushort mode)
+TbResult play_smk_via_buffer(const char *fname, ulong smkflags, ushort plyflags, SmackDrawCallback callback)
 {
     TbResult ret;
     asm volatile ("call ASM_play_smk_via_buffer\n"
-        : "=r" (ret) : "a" (fname), "d" (smkflags), "b" (plyflags), "c" (mode));
+        : "=r" (ret) : "a" (fname), "d" (smkflags), "b" (plyflags), "c" (callback));
     return ret;
 }
 
 TbResult play_smk(const char *fname, ulong smkflags, ushort plyflags)
 {
     TbResult ret;
-#if 1
+#if 0
     asm volatile ("call ASM_play_smk\n"
         : "=r" (ret) : "a" (fname), "d" (smkflags), "b" (plyflags));
-    return ret;
 #else
-    lbDisplay.LeftButton = 0;
+    lbDisplay.MLeftButton = 0;
     if ( (smack_draw_callback != NULL) || ((plyflags & SMK_PixelDoubleWidth) != 0)
-        || ((plyflags & SMK_InterlaceLine) != 0) || ((plyflags & SMK_PixelDoubleLine) != 0)
-        || (LbScreenIsDoubleBufferred()) )
-      ret = play_smk_via_buffer(fname, smkflags, plyflags);
-    else
-      ret = play_smk_direct(fname, smkflags, plyflags);
+        /*|| ((plyflags & SMK_InterlaceLine) != 0)*/ || ((plyflags & SMK_PixelDoubleLine) != 0)
+        /*|| (LbScreenIsDoubleBufferred())*/ ) {
+        plyflags &= ~SMK_UnknFlag100;
+        ret = play_smk_via_buffer(fname, smkflags, plyflags, smack_draw_callback);
+    } else {
+        if (lbDisplay.ScreenMode != Lb_SCREEN_MODE_320_200_8)
+          plyflags &= ~SMK_UnknFlag100;
+        ret = play_smk_direct(fname, smkflags, plyflags, lbDisplay.ScreenMode);
+    }
 #endif
     return ret;
 }

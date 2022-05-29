@@ -6724,7 +6724,7 @@ GLOBAL_FUNC (ASM_play_smk)
 		push   %ecx
 		xor    %cl,%cl
 		mov    %cl,EXPORT_SYMBOL(lbDisplay)+106 # lbDisplay.MLeftButton
-		mov    _smack_draw_callback,%ecx
+		mov    smack_draw_callback,%ecx
 		test   %ecx,%ecx
 		jne    jump_eb198
 		test   $0x84,%bl
@@ -7154,7 +7154,7 @@ copy_to_screen_smk:
 		mov    EXPORT_SYMBOL(lbDisplay)+100,%ax # lbDisplay.ScreenMode
 		cmp    $0x1,%eax
 		jne    jump_eb555
-		cmpl   $0x0,_smack_draw_callback
+		cmpl   $0x0,smack_draw_callback
 		jne    jump_eb555
 		mov    $0xa0000,%ebp
 		mov    $0x140,%ebx
@@ -7361,11 +7361,11 @@ copy_to_screen_smk:
 		mov    EXPORT_SYMBOL(lbDisplay)+100,%ax # lbDisplay.ScreenMode
 		cmp    $0x1,%eax
 		jne    jump_eb772
-		mov    _smack_draw_callback,%edi
+		mov    smack_draw_callback,%edi
 		test   %edi,%edi
 		je     jump_eb79d
 	jump_eb772:
-		cmpl   $0x0,_smack_draw_callback
+		cmpl   $0x0,smack_draw_callback
 		je     jump_eb796
 		mov    EXPORT_SYMBOL(lbDisplay)+36,%edx # lbDisplay.GraphicsScreenHeight
 		push   %edx
@@ -7373,7 +7373,7 @@ copy_to_screen_smk:
 		push   %ebx
 		mov    EXPORT_SYMBOL(lbDisplay)+4,%ecx # lbDisplay.WScreen
 		push   %ecx
-		call   *_smack_draw_callback
+		call   *smack_draw_callback
 	jump_eb796:
 		call   ac_LbScreenSwap
 		jmp    jump_eb7b4
@@ -7382,7 +7382,7 @@ copy_to_screen_smk:
 		push   $0xc8
 		push   $0x140
 		push   $0xa0000
-		call   *_smack_draw_callback
+		call   *smack_draw_callback
 	jump_eb7b4:
 		add    $0x20,%esp
 		pop    %ebp
@@ -10768,7 +10768,7 @@ data_159e30:
 
 data_1e56dc:
 		.fill   0x350
-_smack_draw_callback:	/* 0x1E5A2C */
+GLOBAL (smack_draw_callback)	/* 0x1E5A2C */
 		.long	0x0
 _timeradjust:
 		.long	0x0
