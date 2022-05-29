@@ -25,6 +25,21 @@
 #include <stdint.h>
 
 /******************************************************************************/
+TbResult play_smk_direct(const char *fname, ulong smkflags, ushort plyflags, SmackDrawCallback callback)
+{
+    TbResult ret;
+    asm volatile ("call ASM_play_smk_direct\n"
+        : "=r" (ret) : "a" (fname), "d" (smkflags), "b" (plyflags), "c" (callback));
+    return ret;
+}
+
+TbResult play_smk_via_buffer(const char *fname, ulong smkflags, ushort plyflags, ushort mode)
+{
+    TbResult ret;
+    asm volatile ("call ASM_play_smk_via_buffer\n"
+        : "=r" (ret) : "a" (fname), "d" (smkflags), "b" (plyflags), "c" (mode));
+    return ret;
+}
 
 TbResult play_smk(const char *fname, ulong smkflags, ushort plyflags)
 {

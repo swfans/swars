@@ -26,11 +26,22 @@
 extern "C" {
 #endif
 /******************************************************************************/
+enum SmackerPlayFlags {
+    SMK_NoStopOnUserInput  = 0x02,
+    SMK_PixelDoubleLine    = 0x04,
+    SMK_InterlaceLine      = 0x08,
+    SMK_WriteStatusFile    = 0x40,
+    SMK_PixelDoubleWidth   = 0x80,
+};
+
+typedef void (*SmackDrawCallback)(ubyte *frame_data, long width, long height);
 
 /******************************************************************************/
 
 TbResult play_smk(const char *fname, ulong smkflags, ushort plyflags);
 
+TbResult play_smk_direct(const char *fname, ulong smkflags, ushort plyflags, SmackDrawCallback callback);
+TbResult play_smk_via_buffer(const char *fname, ulong smkflags, ushort plyflags, ushort mode);
 /******************************************************************************/
 #ifdef __cplusplus
 }

@@ -6731,7 +6731,7 @@ GLOBAL_FUNC (ASM_play_smk)
 		je     jump_eb1a2
 	jump_eb198:
 		and    $0xfe,%bh
-		call   play_smk_via_buffer
+		call   ac_play_smk_via_buffer
 		pop    %ecx
 		ret
 	jump_eb1a2:
@@ -6740,7 +6740,7 @@ GLOBAL_FUNC (ASM_play_smk)
 		je     jump_eb1b1
 		and    $0xfe,%bh
 	jump_eb1b1:
-		call   play_smk_direct
+		call   ac_play_smk_direct
 		pop    %ecx
 		ret
 
@@ -6748,7 +6748,7 @@ GLOBAL_FUNC (ASM_play_smk)
 /*----------------------------------------------------------------*/
 /* long play_smk_direct(char *, long , long)
  */
-play_smk_direct:
+GLOBAL_FUNC (ASM_play_smk_direct)
 /*----------------------------------------------------------------*/
 		push   %ecx
 		push   %esi
@@ -6927,7 +6927,7 @@ play_smk_direct:
 /*----------------------------------------------------------------*/
 /* long play_smk_via_buffer(char *, long , long)
  */
-play_smk_via_buffer:
+GLOBAL_FUNC (ASM_play_smk_via_buffer)
 /*----------------------------------------------------------------*/
 		push   %ecx
 		push   %esi
