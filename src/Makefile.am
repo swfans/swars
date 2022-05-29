@@ -16,10 +16,16 @@ swars_SOURCES = \
 	bflib_render.h \
 	bflib_render_plin.sx \
 	bflib_render_trig_s.sx \
-	bflib_snd_cda.sx \
-	bflib_sndlib.sx \
-	bflib_snd_mss.sx \
-	bflib_snd_sys.sx \
+	bflib_sndlib_s.sx \
+	bflib_snd_cda.c \
+	bflib_snd_cda.h \
+	bflib_snd_cda_s.sx \
+	bflib_snd_mss.c \
+	bflib_snd_mss.h \
+	bflib_snd_mss_s.sx \
+	bflib_snd_sys.c \
+	bflib_snd_sys.h \
+	bflib_snd_sys_s.sx \
 	bflib_vidraw.sx \
 	config.h \
 	display.c \

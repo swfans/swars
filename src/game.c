@@ -410,6 +410,12 @@ void play_intro(void)
     flic_unkn03(1u);
 }
 
+void init_outro(void)
+{
+    asm volatile ("call ASM_init_outro\n"
+        : : );
+}
+
 int LbGhostTableGenerate(TbPixel *pal, int a2, char *fname)
 {
     int ret;
