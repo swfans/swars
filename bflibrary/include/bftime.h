@@ -53,6 +53,10 @@ int LbTime();
 
 TbClockMSec LbTimerClock(void);
 
+/** Sleep until LbTimerClock() returns given value.
+ */
+TbBool LbSleepUntil(TbClockMSec endtime);
+
 #ifdef __cplusplus
 };
 #endif

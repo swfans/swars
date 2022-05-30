@@ -19,6 +19,13 @@
 /******************************************************************************/
 #include "bftime.h"
 #include <time.h>
+#include <unistd.h>
+
+#if defined(WIN32)
+#  include <synchapi.h>
+#endif
+
+#define LARGE_DELAY_TIME 20
 
 int LbDate()
 {
@@ -46,6 +53,29 @@ TbClockMSec LbTimerClock(void)
         return ((TbClockMSec)clock() * (8000 / CLOCKS_PER_SEC)) >> 3;
     else
         return (TbClockMSec)clock() * (1000 / CLOCKS_PER_SEC);
+}
+
+inline void LbDoMultitasking(void)
+{
+#if defined(WIN32)
+    Sleep(LARGE_DELAY_TIME>>1); // This switches to other tasks
+#else
+    sleep(LARGE_DELAY_TIME);
+#endif
+}
+
+TbBool LbSleepUntil(TbClockMSec endtime)
+{
+  TbClockMSec currclk;
+  currclk = LbTimerClock();
+  while ((currclk+LARGE_DELAY_TIME) < endtime)
+  {
+    LbDoMultitasking();
+    currclk = LbTimerClock();
+  }
+  while (currclk < endtime)
+    currclk = LbTimerClock();
+  return true;
 }
 
 extern "C" {
