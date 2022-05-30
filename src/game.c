@@ -516,6 +516,7 @@ void init_outro(void)
         : : );
     return;
 #else
+    TbClockMSec last_loop_time;
     const char *fname;
     const char *text;
     int fh;
@@ -597,8 +598,9 @@ void init_outro(void)
     }
     func_cc638(text, fname);
 
-    //TODO use sleep!
-    for (i = 100000000; i != 0; i--)
+    // Sleep for up to 10 seconds
+    last_loop_time = LbTimerClock();
+    for (i = 10*GAME_FPS; i != 0; i--)
     {
         if ( lbKeyOn[KC_SPACE] )
           break;
@@ -606,6 +608,9 @@ void init_outro(void)
           break;
         if ( lbKeyOn[KC_RETURN] )
           break;
+        TbClockMSec sleep_end = last_loop_time + 1000/GAME_FPS;
+        LbSleepUntil(sleep_end);
+        last_loop_time = LbTimerClock();
     }
     lbKeyOn[KC_SPACE] = 0;
     lbKeyOn[KC_ESCAPE] = 0;
