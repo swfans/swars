@@ -56,7 +56,7 @@ class LbI_PointerHandler {
     struct TbRect rect_1038;
     long draw_pos_x;
     long draw_pos_y;
-    bool field_1050;
+    bool initialised;
     bool field_1054;
     const struct TbSprite *sprite;
     LbSemaphore sema_rel;

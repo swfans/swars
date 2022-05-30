@@ -326,7 +326,7 @@ TbResult LbScreenReset(void)
       return Lb_FAIL;
 
     LbMouseSuspend();
-    if (lbDisplay.WScreen != NULL) {
+    if (LbScreenIsLocked()) {
         LIBLOG("Screen got reset while locked");
         LbScreenUnlock();
     }
@@ -340,6 +340,7 @@ TbResult LbScreenReset(void)
     lbScreenSurface = NULL;
     // Mark as not initialized
     lbScreenInitialised = false;
+    LIBLOG("Screen reset finished");
 
     return Lb_SUCCESS;
 }
@@ -347,9 +348,11 @@ TbResult LbScreenReset(void)
 TbBool LbScreenIsLocked(void)
 {
 #if defined(BFLIB_WSCREEN_CONTROL)
-    return (lbDisplay.WScreen != NULL) && (lbDrawSurface != NULL);
+    return (lbDisplay.WScreen != NULL) && (lbScreenInitialised)
+      && (lbDrawSurface != NULL);
 #else
-    return (lbDisplay.WScreen != NULL) && (lbDrawSurface != NULL)
+    return (lbDisplay.WScreen != NULL) && (lbScreenInitialised)
+      && (lbDrawSurface != NULL)
       && (to_SDLSurf(lbDrawSurface)->pixels != NULL);
 #endif
 }

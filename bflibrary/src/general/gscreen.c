@@ -58,7 +58,7 @@ long lbScreenModeInfoNum = 28;
 /** Application title for target OS. */
 char lbDrawAreaTitle[128] = "Bullfrog Shell";
 
-DwBool lbScreenInitialised;
+DwBool lbScreenInitialised = false;
 
 short lbIconIndex = 0;
 

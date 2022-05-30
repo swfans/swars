@@ -38,7 +38,7 @@ LbI_PointerHandler::LbI_PointerHandler(void)
 {
     LbScreenSurfaceInit(&surf1);
     LbScreenSurfaceInit(&surf2);
-    this->field_1050 = false;
+    this->initialised = false;
     this->field_1054 = false;
     this->sprite = NULL;
     this->position = NULL;
@@ -57,7 +57,7 @@ void LbI_PointerHandler::SetHotspot(long x, long y)
     long prev_x,prev_y;
     LbSemaLock semlock(&sema_rel,0);
     semlock.Lock(true);
-    if (this->field_1050)
+    if (this->initialised)
     {
         // Set new coords, and backup previous ones
         prev_x = spr_offset->x;
@@ -78,7 +78,7 @@ void LbI_PointerHandler::SetHotspot(long x, long y)
 
 void LbI_PointerHandler::ClipHotspot(void)
 {
-    if (!this->field_1050)
+    if (!this->initialised)
         return;
     if ((sprite != NULL) && (spr_offset != NULL))
     {
@@ -147,7 +147,7 @@ void LbI_PointerHandler::Initialise(const struct TbSprite *spr,
     this->position = npos;
     this->spr_offset = noffset;
     ClipHotspot();
-    this->field_1050 = true;
+    this->initialised = true;
     NewMousePos();
     this->field_1054 = false;
     flags = SSBlt_FLAG10 | SSBlt_FLAG2;
@@ -186,15 +186,15 @@ void LbI_PointerHandler::Release(void)
 {
     LbSemaLock semlock(&sema_rel,0);
     semlock.Lock(true);
-    if ( this->field_1050 )
+    if ( this->initialised )
     {
         if ( lbInteruptMouse )
             Undraw(true);
-        this->field_1050 = false;
+        this->initialised = false;
         this->field_1054 = false;
-        position = NULL;
-        sprite = NULL;
-        spr_offset = NULL;
+        this->position = NULL;
+        this->sprite = NULL;
+        this->spr_offset = NULL;
         LbScreenSurfaceRelease(&surf1);
         LbScreenSurfaceRelease(&surf2);
     }
@@ -232,6 +232,8 @@ bool LbI_PointerHandler::OnMove(void)
 {
     LbSemaLock semlock(&sema_rel,0);
     if (!semlock.Lock(true))
+        return false;
+    if (!this->initialised)
         return false;
     if (lbPointerAdvancedDraw && lbInteruptMouse)
     {
