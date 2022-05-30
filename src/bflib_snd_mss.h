@@ -27,7 +27,7 @@ extern "C" {
 #endif
 /******************************************************************************/
 #define DXDEC extern
-#define AILCALL __cdecl
+#define AILCALL
 
 typedef long HTIMER;                             // Handle to timer
 
