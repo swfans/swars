@@ -778,7 +778,7 @@ GLOBAL_FUNC (ASM_LoadSounds)
 		je     jump_ec8ae
 		cmpb   $0x0,DisableLoadSounds
 		jne    jump_ec8ae
-		call   StopAllSamples_
+		call   ac_StopAllSamples
 		mov    $0x2,%edx
 		mov    $full_sound_data_path,%eax
 		call   ac_LbFileOpen
@@ -2485,7 +2485,7 @@ GLOBAL_FUNC (SetSamplePitch_)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (StopAllSamples_)	/* 0xEE910 */
+GLOBAL_FUNC (ASM_StopAllSamples)	/* 0xEE910 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -4478,7 +4478,7 @@ FreeSound_:
 		push   %edx
 		cmpb   $0x0,SoundInstalled
 		je     jump_108d6d
-		call   StopAllSamples_
+		call   ac_StopAllSamples
 		cmpb   $0x0,MusicInstalled
 		jne    jump_108d2f
 		call   ail_shutdown
