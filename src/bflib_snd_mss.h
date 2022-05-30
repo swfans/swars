@@ -26,9 +26,13 @@
 extern "C" {
 #endif
 /******************************************************************************/
+#define DXDEC extern
+#define AILCALL __cdecl
+
+typedef long HTIMER;                             // Handle to timer
 
 /******************************************************************************/
-
+DXDEC  void    AILCALL  AIL_release_timer_handle      (HTIMER      timer);
 /******************************************************************************/
 #ifdef __cplusplus
 }

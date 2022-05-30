@@ -18,7 +18,42 @@
  */
 /******************************************************************************/
 #include "bflib_snd_cda.h"
-/******************************************************************************/
 
+#include "bflib_snd_mss.h"
+/******************************************************************************/
+extern ushort cd_first;
+extern TbBool CDAble;
+extern TbBool CDTimerActive;
+extern long CDCount_handle;
+extern ushort CurrentCDTrack;
+
+ushort GetCDFirst(void)
+{
+  return cd_first;
+}
+
+ushort cd_stop(ushort a1)
+{
+    ushort ret;
+    asm volatile ("call ASM_cd_stop\n"
+        : "=r" (ret) : "a" (a1));
+    return ret;
+}
+
+void StopCD(void)
+{
+    ushort i;
+
+    if (!CDAble)
+        return;
+    if ( CDTimerActive )
+    {
+        CDTimerActive = 0;
+        AIL_release_timer_handle(CDCount_handle);
+    }
+    CurrentCDTrack = 0;
+    i = GetCDFirst();
+    cd_stop(i);
+}
 
 /******************************************************************************/

@@ -590,7 +590,7 @@ GLOBAL_FUNC (cd_play_)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (cd_stop_)
+GLOBAL_FUNC (ASM_cd_stop)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -895,7 +895,7 @@ GLOBAL_FUNC (FreeCDAudio_)
 		je     jump_1088a9
 		xor    %eax,%eax
 		mov    cd_first,%ax
-		call   cd_stop_
+		call   ac_cd_stop
 	jump_1088a9:
 		mov    control_selector,%edx
 		push   %edx
@@ -1220,7 +1220,7 @@ cd_data_low_mem:
 		.long	0x0
 cd_total:	/* 0x1E948C */
 		.short  0x0
-cd_first:
+GLOBAL (cd_first)
 		.short  0x0
 HeadLocationInfo:	/* 0x1E9490 */
 		.fill   0x8

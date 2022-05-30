@@ -216,6 +216,8 @@ extern ushort gamep_unknval_01;
 extern uint8_t *vec_tmap;
 extern uint8_t unknoise_tmap[2048];
 
+extern ubyte background_type;
+
 bool game_initialise (void);
 void game_handle_sdl_events (void);
 void game_update (void);

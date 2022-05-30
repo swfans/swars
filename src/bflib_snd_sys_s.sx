@@ -567,7 +567,7 @@ GLOBAL_FUNC (ASM_PlayCDTrack)
 		xor    %dl,%dl
 		mov    %dl,CDTimerActive
 	jump_ebd87:
-		call   StopCD_
+		call   ac_StopCD
 		mov    $0x4b,%ecx
 		mov    %ebx,%eax
 		xor    %edx,%edx
@@ -610,7 +610,7 @@ GLOBAL_FUNC (ASM_PlayCDTrack)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (StopCD_)
+GLOBAL_FUNC (ASM_StopCD)
 /*----------------------------------------------------------------*/
 		push   %ecx
 		push   %edx
@@ -629,7 +629,7 @@ GLOBAL_FUNC (StopCD_)
 		mov    %dx,CurrentCDTrack
 		call   GetCDFirst_
 		and    $0xffff,%eax
-		call   cd_stop_
+		call   ac_cd_stop
 	jump_ebfa3:
 		pop    %edx
 		pop    %ecx
@@ -6198,7 +6198,7 @@ data_16181c:
 
 InitialCDVolume:	/* 0x158B34 */
 		.byte	0xff
-CDAble:
+GLOBAL (CDAble)
 		.ascii  "\x01\x00\x00"
 
 MaxNumberOfSamples:	/* 0x159300 */
@@ -6252,13 +6252,13 @@ adaption_table:	/* 0x159E58 */
 		.ascii  "\x33\x01\x00\x00\xe6\x00\x00\x00"
 		.ascii  "\xe6\x00\x00\x00\xe6\x00\x00\x00"
 
-GLOBAL (FullDIG_INIPath)		/* 1e5a30 */
+GLOBAL (FullDIG_INIPath)		/* 0x1e5a30 */
 		.fill   0x90
-GLOBAL (FullMDI_INIPath)		/* 1e5ac0 */
+GLOBAL (FullMDI_INIPath)		/* 0x1e5ac0 */
 		.fill   0x90
 SoundAndMusicDataPath:
 		.fill   0x90
-GLOBAL (SoundDriverPath)		/* 1e5be0 */
+GLOBAL (SoundDriverPath)		/* 0x1e5be0 */
 		.fill   0x90
 current_SB16_left_master_volume:
 		.short  0x0
@@ -6280,20 +6280,20 @@ old_SB16_left_bass_volume:
 		.short  0x0
 old_SB16_right_bass_volume:
 		.short  0x0
-sb16_mixer_set:
+GLOBAL (sb16_mixer_set)
 		.byte	0x0
 		.fill   0x3
-CurrentCDTrack:
+GLOBAL (CurrentCDTrack)
 		.short  0x0
 		.fill   0x2
-TrackLength:
+GLOBAL (TrackLength)
 		.long	0x0
-CDCountdown:
+GLOBAL (CDCountdown)
 		.long	0x0
-CDTimerActive:
+GLOBAL (CDTimerActive)
 		.byte	0x0
 		.fill   0x3
-CDCount_handle:
+GLOBAL (CDCount_handle)
 		.long	0x0
 end_time:
 		.long	0x0

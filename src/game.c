@@ -16,6 +16,8 @@
 #include "svesa.h"
 #include "bflib_render.h"
 #include "bflib_fmvids.h"
+#include "bflib_snd_sys.h"
+#include "bflib_snd_cda.h"
 #include "game_data.h"
 #include "display.h"
 #include "dos.h"
@@ -408,6 +410,14 @@ void play_intro(void)
     if (cmdln_param_bcg)
         setup_screen_mode(Lb_SCREEN_MODE_640_480_8);
     flic_unkn03(1u);
+}
+
+size_t setup_heaps(int a1)
+{
+    size_t ret;
+    asm volatile ("call ASM_setup_heaps\n"
+        : "=r" (ret) : "a" (a1));
+    return ret;
 }
 
 void init_outro(void)
@@ -1072,6 +1082,12 @@ void
 game_update(void)
 {
     game_update_full(true);
+}
+
+void host_reset(void)
+{
+    asm volatile ("call ASM_host_reset\n"
+        :  :  : "eax" );
 }
 
 void
