@@ -503,9 +503,15 @@ void func_2e440(void)
         :  :  : "eax" );
 }
 
+void func_cc0d4(char **str)
+{
+    asm volatile ("call ASM_func_cc0d4\n"
+        : : "a" (str));
+}
+
 void init_outro(void)
 {
-#if 1
+#if 0
     asm volatile ("call ASM_init_outro\n"
         : : );
     return;
@@ -652,10 +658,9 @@ void init_outro(void)
         if (outro_unkn01)
         {
             outro_unkn02++;
-            sub_CC0D4((ubyte **)&people_credits_groups[2 * outro_unkn03]);
-            if (dword_1DDB68 + 50 < outro_unkn02)
+            func_cc0d4((char **)&people_credits_groups[2 * outro_unkn03]);
+            if (data_1ddb68 + 50 < outro_unkn02)
             {
-              v0 = 0;
               outro_unkn02 = 0;
               if (++outro_unkn03 == people_groups_count)
                   outro_unkn03 = 0;

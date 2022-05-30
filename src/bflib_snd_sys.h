@@ -29,6 +29,7 @@ extern "C" {
 
 /******************************************************************************/
 void StopAllSamples(void);
+TbBool IsSamplePlaying(long tng_offs, ushort smp_id, long a3);
 /******************************************************************************/
 #ifdef __cplusplus
 }

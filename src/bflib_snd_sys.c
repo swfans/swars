@@ -25,4 +25,12 @@ void StopAllSamples(void)
         :  :  : "eax" );
 }
 
+TbBool IsSamplePlaying(long tng_offs, ushort smp_id, long a3)
+{
+    TbBool ret;
+    asm volatile ("call ASM_IsSamplePlaying\n"
+        : "=r" (ret) : "a" (tng_offs), "d" (smp_id), "b" (a3));
+    return ret;
+}
+
 /******************************************************************************/

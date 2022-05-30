@@ -2002,7 +2002,7 @@ GLOBAL_FUNC (SetSoundMasterVolume_)	/* 0xEE700 */
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (IsSamplePlaying_)	/* 0xee750 */
+GLOBAL_FUNC (ASM_IsSamplePlaying)	/* 0xee750 */
 /*----------------------------------------------------------------*/
 		push   %ecx
 		push   %esi
