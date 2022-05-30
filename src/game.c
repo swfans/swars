@@ -479,6 +479,30 @@ void change_brightness(ushort val)
         : : "a" (val));
 }
 
+void traffic_unkn_func_01(void)
+{
+    asm volatile ("call ASM_traffic_unkn_func_01\n"
+        :  :  : "eax" );
+}
+
+void process_engine_unk1(void)
+{
+    asm volatile ("call ASM_process_engine_unk1\n"
+        :  :  : "eax" );
+}
+
+void process_sound_heap(void)
+{
+    asm volatile ("call ASM_process_sound_heap\n"
+        :  :  : "eax" );
+}
+
+void func_2e440(void)
+{
+    asm volatile ("call ASM_func_2e440\n"
+        :  :  : "eax" );
+}
+
 void init_outro(void)
 {
 #if 1
@@ -596,8 +620,50 @@ void init_outro(void)
     palette_brightness = 0;
     change_brightness(-64);
 
-    //TODO rest of the function missing here
+    for (i = 0; i < 128; i++)
+    {
+        if (i & 1)
+          change_brightness(1);
+        traffic_unkn_func_01();
+        process_engine_unk1();
+        process_sound_heap();
+        func_2e440();
+        swap_wscreen();
+        memset(lbDisplay.WScreen, 0, lbDisplay.PhysicalScreenHeight * lbDisplay.PhysicalScreenWidth);
+    }
 
+    while (1)
+    {
+        if ( lbKeyOn[KC_SPACE] )
+          break;
+        if ( lbKeyOn[KC_ESCAPE] )
+          break;
+        if ( lbKeyOn[KC_RETURN] )
+          break;
+        gameturn++;
+        traffic_unkn_func_01();
+        process_engine_unk1();
+        if ( !(LbRandomAnyShort() & 0xF) && (data_155704 == -1 || !IsSamplePlaying(0, data_155704, 0)) )
+        {
+            play_sample_using_heap(0, 7 + (LbRandomAnyShort() % 5), 127, 64, 100, 0, 3u);
+        }
+        process_sound_heap();
+        func_2e440();
+        if (outro_unkn01)
+        {
+            outro_unkn02++;
+            sub_CC0D4((ubyte **)&people_credits_groups[2 * outro_unkn03]);
+            if (dword_1DDB68 + 50 < outro_unkn02)
+            {
+              v0 = 0;
+              outro_unkn02 = 0;
+              if (++outro_unkn03 == people_groups_count)
+                  outro_unkn03 = 0;
+            }
+          }
+          swap_wscreen();
+          memset(lbDisplay.WScreen, 0, lbDisplay.PhysicalScreenHeight * lbDisplay.PhysicalScreenWidth);
+    }
     StopAllSamples();
     reset_heaps();
     setup_heaps(2);
@@ -956,8 +1022,6 @@ void new_bang_3(int a1, int a2, int a3, int a4)
 {
     new_bang(a1, a2, a3, a4, 0, 0);
 }
-
-void process_sound_heap(void);
 
 void input(void)
 {

@@ -225,6 +225,8 @@ extern long data_1dd91c;
 extern ushort overall_scale;
 extern ubyte unkn_flags_01;
 extern ushort palette_brightness;
+extern long outro_unkn02;
+extern long outro_unkn03;
 
 bool game_initialise (void);
 void game_handle_sdl_events (void);
