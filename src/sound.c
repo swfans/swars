@@ -539,3 +539,15 @@ sound_get_io_environment (SoundDriver *drv)
   static SoundIOParameters iop = {0x220, 7, 1, 1, {0, 0, 0, 0}};
   return &iop;
 }
+
+struct SampleInfo *play_sample_using_heap(ulong a1, short smptbl_id, ulong a3, ulong a4, ulong a5, char a6, ubyte type)
+{
+    struct SampleInfo *ret;
+    asm volatile (
+      "push %7\n"
+      "push %6\n"
+      "push %5\n"
+      "call ASM_play_sample_using_heap\n"
+        : "=r" (ret) : "a" (a1), "d" (smptbl_id), "b" (a3), "c" (a4), "g" (a5), "g" (a6), "g" (type));
+    return ret;
+}

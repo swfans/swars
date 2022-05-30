@@ -129,4 +129,6 @@ void sound_play_music (void);
 void sound_stop_music (void);
 void sound_pause_music (void);
 
+struct SampleInfo *play_sample_using_heap(ulong a1, short smptbl_id, ulong a3, ulong a4, ulong a5, char a6, ubyte type);
+
 #endif
