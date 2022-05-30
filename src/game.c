@@ -415,6 +415,10 @@ void play_intro(void)
     flic_unkn03(1u);
 }
 
+void reset_heaps(void)
+{
+}
+
 size_t setup_heaps(int a1)
 {
     size_t ret;
@@ -467,6 +471,12 @@ void change_current_map(ushort mapno)
     init_things();
     load_mad_console(mapno);
     fill_floor_textures();
+}
+
+void change_brightness(ushort val)
+{
+    asm volatile ("call ASM_change_brightness\n"
+        : : "a" (val));
 }
 
 void init_outro(void)
@@ -575,9 +585,21 @@ void init_outro(void)
     memset(lbDisplay.WScreen, 0, 320*200);
     swap_wscreen();
     StopAllSamples();
+    reset_heaps();
+    setup_heaps(100);
+    play_sample_using_heap(0, 1, 127, 64, 100, -1, 3u);
+
+    data_197150 = 1;
+    data_1dd91c = 0;
+    unkn_flags_01 = 1;
+    overall_scale = 40;
+    palette_brightness = 0;
+    change_brightness(-64);
 
     //TODO rest of the function missing here
 
+    StopAllSamples();
+    reset_heaps();
     setup_heaps(2);
 #endif
 }

@@ -220,6 +220,11 @@ extern ubyte background_type;
 extern long data_155704;
 extern char *outro_text_s;
 extern char *outro_text_z;
+extern long data_197150;
+extern long data_1dd91c;
+extern ushort overall_scale;
+extern ubyte unkn_flags_01;
+extern ushort palette_brightness;
 
 bool game_initialise (void);
 void game_handle_sdl_events (void);

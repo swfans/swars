@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#include "bftypes.h"
 #include "timer.h"
 
 enum SoundDriverType
