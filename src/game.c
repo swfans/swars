@@ -154,6 +154,10 @@ struct TbLoadFiles unk02_load_files[] =
 
 extern TbFileHandle packet_rec_fh;
 
+char unk_credits_text_s[] = "";
+char unk_credits_text_z[] = "";
+char unk_credits_text_p[] = "";
+
 unsigned int LbRandomAnyShort(void);
 
 int LbPaletteFade(uint8_t *a1, uint8_t a2, uint8_t a3)
@@ -271,7 +275,6 @@ void ASM_game_setup_sub5(void);
 void ASM_setup_host(void);
 void ASM_read_user_settings(void);
 void ASM_setup_color_lookups(void);
-void ASM_game_setup_sub7(void);
 void ASM_game_setup_sub8(void);
 void ASM_init_engine(void);
 void ASM_play_intro(void);
@@ -420,10 +423,163 @@ size_t setup_heaps(int a1)
     return ret;
 }
 
+char func_cc638(const char *text, const char *fname)
+{
+    char ret;
+    asm volatile ("call ASM_func_cc638\n"
+        : "=r" (ret) : "a" (text), "d" (fname));
+    return ret;
+}
+
+void screen_dark_curtain_down(void)
+{
+    asm volatile ("call ASM_screen_dark_curtain_down\n"
+        :  :  : "eax" );
+}
+
+void init_things(void)
+{
+    asm volatile ("call ASM_init_things\n"
+        :  :  : "eax" );
+}
+
+void load_outro_sprites(void)
+{
+    asm volatile ("call ASM_load_outro_sprites\n"
+        :  :  : "eax" );
+}
+
+void fill_floor_textures(void)
+{
+    asm volatile ("call ASM_fill_floor_textures\n"
+        :  :  : "eax" );
+}
+
+void load_mad_console(ushort mapno)
+{
+    asm volatile ("call ASM_load_mad_console\n"
+        : : "a" (mapno));
+}
+
+void change_current_map(ushort mapno)
+{
+    cmdln_param_current_map = mapno;
+    init_things();
+    load_mad_console(mapno);
+    fill_floor_textures();
+}
+
 void init_outro(void)
 {
+#if 1
     asm volatile ("call ASM_init_outro\n"
         : : );
+    return;
+#else
+    const char *fname;
+    const char *text;
+    int fh;
+    int i;
+
+    gamep_unknval_01 = 0;
+    StopAllSamples();
+    StopCD();
+    show_black_screen();
+    swap_wscreen();
+    setup_screen_mode(1);
+    LbMouseChangeSprite(0);
+    lbKeyOn[KC_SPACE] = 0;
+    lbKeyOn[KC_RETURN] = 0;
+    lbKeyOn[KC_ESCAPE] = 0;
+    if (background_type == 1)
+        fname = "data/outro-z.smk";
+    else
+        fname = "data/outro-s.smk";
+    play_smk(fname, 13, 0);
+    data_155704 = -1;
+    memset(lbDisplay.WScreen, 0, 320*200);
+
+    switch (background_type)
+    {
+    case 0:
+    default:
+        fname = "data/outro-s.raw";
+        break;
+    case 1:
+        fname = "data/outro-z.raw";
+        break;
+    case 2:
+        fname = "data/outro-p.raw";
+        break;
+    }
+    fh = LbFileOpen(fname, Lb_FILE_MODE_READ_ONLY);
+    if (fh != -1)
+    {
+        for (i = 24; i != 174; i++)
+        {
+            ubyte *buf;
+            buf = &lbDisplay.WScreen[i*320 + 10];
+            LbFileRead(fh, buf, 300);
+        }
+    }
+    LbFileClose(fh);
+
+    LbFileLoadAt("qdata/pal.pal", display_palette);
+    LbScreenWaitVbi();
+
+    {
+        char str[FILENAME_MAX];
+        sprintf(str, "qdata/pal%d.dat", 0);
+        LbFileLoadAt(str, display_palette);
+        LbPaletteSet(display_palette);
+    }
+    swap_wscreen();
+    screen_dark_curtain_down();
+    init_things();
+    change_current_map(51);
+    load_outro_sprites();
+
+    switch (background_type)
+    {
+    case 0:
+    default:
+        text = unk_credits_text_s;
+        fname = outro_text_s;
+        break;
+    case 1:
+        text = unk_credits_text_z;
+        fname = outro_text_z;
+        break;
+    case 2:
+        text = unk_credits_text_p;
+        fname = outro_text_z;
+        break;
+    }
+    func_cc638(text, fname);
+
+    //TODO use sleep!
+    for (i = 100000000; i != 0; i--)
+    {
+        if ( lbKeyOn[KC_SPACE] )
+          break;
+        if ( lbKeyOn[KC_ESCAPE] )
+          break;
+        if ( lbKeyOn[KC_RETURN] )
+          break;
+    }
+    lbKeyOn[KC_SPACE] = 0;
+    lbKeyOn[KC_ESCAPE] = 0;
+    lbKeyOn[KC_RETURN] = 0;
+
+    LbPaletteFade(0, 0xC8u, 1);
+    memset(lbDisplay.WScreen, 0, 320*200);
+    swap_wscreen();
+    StopAllSamples();
+
+    //TODO rest of the function missing here
+
+    setup_heaps(2);
+#endif
 }
 
 int LbGhostTableGenerate(TbPixel *pal, int a2, char *fname)
@@ -577,11 +733,6 @@ void setup_color_lookups(void)
     ASM_setup_color_lookups();
 }
 
-void game_setup_sub7(void)
-{
-    ASM_game_setup_sub7();
-}
-
 void game_setup_sub8(void)
 {
     ASM_game_setup_sub8();
@@ -665,7 +816,7 @@ void game_setup(void)
     read_user_settings();
     game_setup_sub4(-3);
     setup_color_lookups();
-    game_setup_sub7();
+    init_things();
     game_setup_sub4(-2);
     LbSpriteSetup(small_font, small_font_end, small_font_data);
     game_setup_sub8();

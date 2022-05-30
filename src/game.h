@@ -217,6 +217,9 @@ extern uint8_t *vec_tmap;
 extern uint8_t unknoise_tmap[2048];
 
 extern ubyte background_type;
+extern long data_155704;
+extern char *outro_text_s;
+extern char *outro_text_z;
 
 bool game_initialise (void);
 void game_handle_sdl_events (void);
