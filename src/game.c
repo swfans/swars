@@ -707,6 +707,14 @@ int LoadMusic(unsigned char a1)
     return ret;
 }
 
+int alt_at_point(ushort x, ushort z)
+{
+    int ret;
+    asm volatile ("call ASM_alt_at_point\n"
+        : "=r" (ret) : "a" (x), "d" (z));
+    return ret;
+}
+
 void game_graphics_inputs(void)
 {
     asm volatile ("call ASM_game_graphics_inputs\n"

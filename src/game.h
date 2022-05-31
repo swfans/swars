@@ -229,9 +229,13 @@ extern long outro_unkn03;
 extern long people_groups_count;
 extern long data_1ddb68;
 extern char *people_credits_groups[];
+extern ubyte playable_agents;
 
 extern ubyte mouser;
 extern struct Thing *things;
+
+extern ushort mouse_map_x;
+extern ushort mouse_map_z;
 
 bool game_initialise (void);
 void game_handle_sdl_events (void);

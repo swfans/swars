@@ -294,6 +294,7 @@ struct Thing
 /******************************************************************************/
 void init_things(void);
 TbResult delete_node(struct Thing *p_thing);
+void add_node_thing(ushort new_thing);
 
 /******************************************************************************/
 #ifdef __cplusplus

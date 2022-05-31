@@ -33,4 +33,10 @@ TbResult delete_node(struct Thing *p_thing)
     return ret;
 }
 
+void add_node_thing(ushort new_thing)
+{
+    asm volatile ("call ASM_add_node_thing\n"
+        : : "a" (new_thing));
+}
+
 /******************************************************************************/
