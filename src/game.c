@@ -447,6 +447,14 @@ void init_things(void)
         :  :  : "eax" );
 }
 
+TbResult delete_node(struct Thing *p_thing)
+{
+    TbResult ret;
+    asm volatile ("call ASM_delete_node\n"
+        : "=r" (ret) : "a" (p_thing));
+    return ret;
+}
+
 void load_outro_sprites(void)
 {
     asm volatile ("call ASM_load_outro_sprites\n"

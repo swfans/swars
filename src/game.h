@@ -48,6 +48,8 @@ enum GameFlags {
     GamF_Unkn10000000 = 0x10000000,
 };
 
+struct Thing;
+
 typedef struct {
     char *Name;
     void *BufferPtr;
