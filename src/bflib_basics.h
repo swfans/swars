@@ -64,12 +64,9 @@ enum TbLogFlags {
 
 #include "bftime.h"
 
-typedef time_t TbTimeSec;
-
 typedef unsigned char TbChecksum;
 typedef unsigned long TbBigChecksum;
 typedef long Offset;
-typedef short TbScreenPos;
 
 
 #define LOG_PREFIX_LEN 32
@@ -87,8 +84,6 @@ struct TbLog {
 struct TbNetworkCallbackData;
 /** Command function result, alias for TbResult. */
 typedef int TbError;
-/** Command function result, valid values are of TbErrorCode enumeration. */
-typedef int TbResult;
 typedef size_t TbSize;
 
 #pragma pack()

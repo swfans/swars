@@ -49,6 +49,8 @@ swars_SOURCES = \
 	sound_util.c \
 	sound_util.h \
 	swars.sx \
+	thing.c \
+	thing.h \
 	thing_debug.sx \
 	timer.c \
 	timer.h \

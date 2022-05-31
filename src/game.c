@@ -28,6 +28,7 @@
 #include "unix.h"
 #include "util.h"
 #include "windows.h"
+#include "thing.h"
 
 #include "timer.h"
 
@@ -439,20 +440,6 @@ void screen_dark_curtain_down(void)
 {
     asm volatile ("call ASM_screen_dark_curtain_down\n"
         :  :  : "eax" );
-}
-
-void init_things(void)
-{
-    asm volatile ("call ASM_init_things\n"
-        :  :  : "eax" );
-}
-
-TbResult delete_node(struct Thing *p_thing)
-{
-    TbResult ret;
-    asm volatile ("call ASM_delete_node\n"
-        : "=r" (ret) : "a" (p_thing));
-    return ret;
 }
 
 void load_outro_sprites(void)
