@@ -228,6 +228,9 @@ extern long people_groups_count;
 extern long data_1ddb68;
 extern char *people_credits_groups[];
 
+extern ubyte mouser;
+extern struct Thing *things;
+
 bool game_initialise (void);
 void game_handle_sdl_events (void);
 void game_update (void);
