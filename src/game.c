@@ -527,7 +527,7 @@ void init_outro(void)
     StopCD();
     show_black_screen();
     swap_wscreen();
-    setup_screen_mode(1);
+    setup_screen_mode(Lb_SCREEN_MODE_320_200_8);
     LbMouseChangeSprite(0);
     lbKeyOn[KC_SPACE] = 0;
     lbKeyOn[KC_RETURN] = 0;
@@ -710,6 +710,13 @@ int LoadMusic(unsigned char a1)
     asm volatile ("call ASM_LoadMusic\n"
         : "=r" (ret) : "a" (a1));
     return ret;
+}
+
+void game_graphics_inputs(void)
+{
+    asm volatile ("call ASM_game_graphics_inputs\n"
+        : : );
+    return;
 }
 
 void init_syndwars(void)

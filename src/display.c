@@ -125,7 +125,7 @@ void setup_screen_mode(TbScreenMode mode)
     TbBool was_locked;
     TbScreenModeInfo *mdinfo;
 
-    printf("setup_screen_mode %d\n", (int)mode);
+    printf("%s %d\n", __func__, (int)mode);
     mdinfo = LbScreenGetModeInfo(mode);
     if (mdinfo->Width == 0) {
         mode = 1;
