@@ -72,22 +72,15 @@ typedef struct {
   int field_78;
   int field_7C[2];
   int field_84;
-  int field_88;
-  int field_8C;
-  int field_90;
-  int field_94;
-  int field_98;
-  int field_9C;
-  int field_A0;
-  int field_A4;
-  char field_A8[3];
-  char field_AB;
-  char field_AC;
-  char field_AD[3];
-  char field_B0;
-  char field_B1[3];
-  char field_B4[7];
-  char field_BB;
+    long DirectControl[4]; /* offs=0x88 */
+    long ControlPad;
+    long MyAgent[4];
+    ubyte PrevWeapon[4];  /* offs=0xAC */
+    ubyte PanelState[4];
+    ubyte PanelItem[4];
+    ushort Dummy98; /* offs=0xB8 */
+    ubyte Dummy97;
+    ubyte MissionAgents;
   char field_BC[2];
   char field_BE[8];
   char field_C6;

@@ -926,7 +926,7 @@ void game_setup(void)
     LbSpriteSetup(small_font, small_font_end, small_font_data);
     game_setup_sub8();
     load_mission_file(0);
-    players[local_player_no].field_BB = 15;
+    players[local_player_no].MissionAgents = 0x0f;
     game_setup_sub4(-1);
     if ( is_single_game || cmdln_param_bcg )
     {
