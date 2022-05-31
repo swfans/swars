@@ -52,11 +52,14 @@ enum TbErrorCode {
 
 /** Command function result, valid values are of TbErrorCode enumeration. */
 typedef int TbResult;
+/** Small, single byte boolean. */
 typedef unsigned char TbBool;
+/** Large boolean. */
 typedef unsigned long DwBool;
 
 typedef size_t TbMemSize;
 
+/** Coordinate on screen. */
 typedef short TbScreenCoord;
 
 /** 8-bit pixel definition.
