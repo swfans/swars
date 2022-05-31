@@ -33,8 +33,8 @@
 .global EXPORT_SYMBOL(lbDisplay);
 .global EXPORT_SYMBOL(lbKeyOn);
 .global EXPORT_SYMBOL(SmackMSSDigDriver);
-.global EXPORT_SYMBOL(_LowSoundVolPanAddr);
-.global EXPORT_SYMBOL(_LowUnk_1e86c0);
+.global EXPORT_SYMBOL(_MSSTimerPeriod);
+.global EXPORT_SYMBOL(_MSSSpeed);
 .global EXPORT_SYMBOL(_LowSoundPurgeAddr);
 .global EXPORT_SYMBOL(_LowSoundCheckAddr);
 .global EXPORT_SYMBOL(_LowSoundPlayedAddr);
@@ -7082,26 +7082,26 @@ SMACKSOUNDUSEMSS:
 		mov    $MSSLOWSOUNDCLOSE,%esi
 		mov    $MSSLOWSOUNDPLAYED,%edi
 		mov    $MSSLOWSOUNDPURGE,%ebp
-		mov    %ebx,EXPORT_SYMBOL(_LowUnk_1e86c0)
+		mov    %ebx,EXPORT_SYMBOL(_MSSSpeed)
 		mov    %ecx,_LowSoundOpenAddr
 		mov    %esi,EXPORT_SYMBOL(_LowSoundCloseAddr)
 		mov    %edi,EXPORT_SYMBOL(_LowSoundPlayedAddr)
 		mov    %ebp,EXPORT_SYMBOL(_LowSoundPurgeAddr)
 		mov    %ebp,_LowSoundOffAddr
-		mov    $MSSSMACKTIMERDONE,%ecx
+		mov    $MSSSMACKTIMERSETUP,%ecx
 		mov    $ac_MSSSMACKTIMERREAD,%esi
-		mov    $MSSSMACKTIMERSETUP,%edi
+		mov    $MSSSMACKTIMERDONE,%edi
 		mov    %ecx,_SmackTimerSetupAddr
 		mov    %esi,SmackTimerReadAddr
 		mov    %edi,_SmackTimerDoneAddr
 		mov    $MSSLOWSOUNDCHECK,%ebx
-		mov    %eax,EXPORT_SYMBOL(_LowSoundVolPanAddr)
+		mov    %eax,EXPORT_SYMBOL(_MSSTimerPeriod)
 		xor    %edx,%edx
 		mov    $0x1,%al
 		mov    %ebx,EXPORT_SYMBOL(_LowSoundCheckAddr)
 		mov    $MSSLOWSOUNDVOLPAN,%ebx
 		mov    %edx,_LowSoundOnAddr
-		mov    %ebx,data_1592fc
+		mov    %ebx,_LowSoundVolPanAddr
 		pop    %ebp
 		pop    %edi
 		pop    %esi
@@ -8615,7 +8615,7 @@ SMACKOPEN:
 		je     jump_fdfc0
 		testb  $0x8,0x31(%esp)
 		je     jump_fdf8a
-		mov    data_1592e8,%eax
+		mov    _simspeed,%eax
 		mov    %eax,0x4a0(%esi)
 	jump_fdf8a:
 		lea    0x64(%esi),%eax
@@ -8649,7 +8649,7 @@ SMACKOPEN:
 	jump_fdfd7: /* XXX: abc */
 		testb  $0x80,0x30(%esp)
 		je     jump_fdfe6
-		mov    data_1592ec,%eax
+		mov    _forcerate,%eax
 		mov    %eax,0x10(%esi)
 	jump_fdfe6:
 		mov    0x10(%esi),%eax
@@ -10734,13 +10734,13 @@ _sounds:
 _trackbuf:
 		.long	0x0
 
-data_1592e8:
+_simspeed:
 		.long	0x0
-data_1592ec:
+_forcerate:
 		.long	0x0
 _LowSoundOnAddr:	/* 0x1592F8 */
 		.long	0x0
-data_1592fc:
+_LowSoundVolPanAddr:	/* 0x1592FC */
 		.long	0x0
 
 data_159e00:

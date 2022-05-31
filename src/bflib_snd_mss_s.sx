@@ -71,22 +71,22 @@ GLOBAL_FUNC (MSSLOWSOUNDVOLPAN)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (MSSSMACKTIMERSETUP)
+GLOBAL_FUNC (MSSSMACKTIMERDONE)
 /*----------------------------------------------------------------*/
-		mov    data_1592dc,%edx
+		mov    _sndinit,%edx
 		dec    %edx
-		mov    %edx,data_1592dc
+		mov    %edx,_sndinit
 		jne    jump_fbd8f
-		mov    data_1e86b0,%ecx
+		mov    _msstimer,%ecx
 		push   %ecx
 		call   AIL_release_timer_handle
 		add    $0x4,%esp
-		push   $MSSSMACKTIMERDONE
+		push   $MSSSMACKTIMERSETUP
 		push   $ac_MSSSMACKTIMERREAD
 		call   VMM_unlock_range
 		add    $0x8,%esp
 		push   $0x4
-		push   $data_1592d8
+		push   $mss_i_count
 		call   AIL_vmm_unlock
 		add    $0x8,%esp
 	jump_fbd8f:
@@ -94,34 +94,34 @@ GLOBAL_FUNC (MSSSMACKTIMERSETUP)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (MSSSMACKTIMERDONE)
+GLOBAL_FUNC (MSSSMACKTIMERSETUP)
 /*----------------------------------------------------------------*/
 		push   %esi
 		push   %edi
-		mov    data_1592dc,%edx
+		mov    _sndinit,%edx
 		inc    %edx
-		mov    %edx,data_1592dc
+		mov    %edx,_sndinit
 		cmp    $0x1,%edx
 		jne    jump_fbe2e
-		push   $MSSSMACKTIMERDONE
+		push   $MSSSMACKTIMERSETUP
 		push   $ac_MSSSMACKTIMERREAD
 		call   VMM_lock_range
 		add    $0x8,%esp
 		push   $0x4
-		push   $data_1592d8
+		push   $mss_i_count
 		call   AIL_vmm_lock
 		add    $0x8,%esp
-		push   $MSS_func_unkn_01
+		push   $_mss_int
 		call   AIL_register_timer
 		add    $0x4,%esp
-		mov    %eax,data_1e86b0
-		mov    _LowUnk_1e86c0,%ecx
+		mov    %eax,_msstimer
+		mov    _MSSSpeed,%ecx
 		push   %ecx
-		mov    data_1e86b0,%esi
+		mov    _msstimer,%esi
 		push   %esi
 		call   AIL_set_timer_frequency
 		add    $0x8,%esp
-		mov    data_1e86b0,%edi
+		mov    _msstimer,%edi
 		push   %edi
 		call   AIL_start_timer
 		add    $0x4,%esp
@@ -139,11 +139,11 @@ GLOBAL_FUNC (MSSSMACKTIMERDONE)
 	jump_fbe15:
 		mov    %bh,%al
 		out    %al,$0x40
-		mov    data_1592d8,%eax
-		cmp    data_1592d8,%eax
+		mov    mss_i_count,%eax
+		cmp    mss_i_count,%eax
 		jne    jump_fbe2e
 	jump_fbe26:
-		cmp    data_1592d8,%eax
+		cmp    mss_i_count,%eax
 		je     jump_fbe26
 #endif
 	jump_fbe2e:
@@ -158,7 +158,7 @@ MSSSMACKTIMERREAD:
 		push   %esi
 		push   %edi
 	jump_fbe42:
-		mov    data_1592d8,%edx
+		mov    mss_i_count,%edx
 		xor    %al,%al
 		out    %al,$0x43
 		jmp    jump_fbe4e
@@ -169,21 +169,21 @@ MSSSMACKTIMERREAD:
 		xchg   %al,%ah
 		and    $0xffff,%eax
 		mov    %eax,%esi
-		cmp    data_1592d8,%edx
+		cmp    mss_i_count,%edx
 		jne    jump_fbe42
 		mov    $0x3e8,%ecx
-		mov    _LowUnk_1e86c0,%ebx
+		mov    _MSSSpeed,%ebx
 		mov    %edx,%eax
 		mul    %ecx
 		div    %ebx
 		mov    $0x1234dd,%ebx
 		mov    %eax,%edi
-		mov    _LowSoundVolPanAddr,%eax
+		mov    _MSSTimerPeriod,%eax
 		mov    $0x3e8,%ecx
 		sub    %esi,%eax
 		mul    %ecx
 		div    %ebx
-		mov    data_1e86b4,%ecx
+		mov    _lasttimer,%ecx
 		lea    (%edi,%eax,1),%edx
 		cmp    %ecx,%edx
 		jae    jump_fbea1
@@ -193,7 +193,7 @@ MSSSMACKTIMERREAD:
 		pop    %esi
 		ret
 	jump_fbea1:
-		mov    %edx,data_1e86b4
+		mov    %edx,_lasttimer
 		mov    %edx,%eax
 		pop    %edi
 		pop    %esi
@@ -201,10 +201,10 @@ MSSSMACKTIMERREAD:
 
 
 /*----------------------------------------------------------------*/
-MSS_func_unkn_01:	/* 0x0FBEB0 */
+_mss_int:	/* 0x0FBEB0 */
 /*----------------------------------------------------------------*/
-		mov    data_1592d8,%eax
-		incl   data_1592d8
+		mov    mss_i_count,%eax
+		incl   mss_i_count
 		ret
 
 
@@ -577,7 +577,7 @@ GLOBAL_FUNC (MSSLOWSOUNDCHECK)	/* 0xfc210 */
 		test   %edx,%edx
 		je     jump_fc2a6
 		mov    0x38(%esi),%eax
-		call   MSS_func_unkn_02
+		call   bothdone_
 		test   %al,%al
 		jne    jump_fc2a6
 		mov    0x38(%esi),%ebx
@@ -621,7 +621,7 @@ GLOBAL_FUNC (MSSLOWSOUNDCHECK)	/* 0xfc210 */
 
 
 /*----------------------------------------------------------------*/
-MSS_func_unkn_02:	/* 0x0FC300 */
+bothdone_:	/* 0x0FC300 */
 /*----------------------------------------------------------------*/
 		push   %edx
 		cmpl   $0x0,0x2c(%eax)
@@ -660,20 +660,20 @@ GLOBAL (SmackMSSDigDriver)
 		.long	0x0
 MSSLiteInit:
 		.long	0x0
-data_1592d8:
+mss_i_count:
 		.long	0x0
-data_1592dc: /* 0x1592dc */
+_sndinit:	/* 0x1592dc */
 		.long	0x0
 
-data_1e86b0: /* 0x1e86b0 */
+_msstimer:	/* 0x1e86b0 */
 		.long	0x0
-data_1e86b4:
+_lasttimer:
 		.fill   0x8
 /* Smacker fn ptrs
  */
-GLOBAL (_LowSoundVolPanAddr)
+GLOBAL (_MSSTimerPeriod)
 		.long	0x0
-GLOBAL (_LowUnk_1e86c0)
+GLOBAL (_MSSSpeed)
 		.fill   0x10
 GLOBAL (_LowSoundPurgeAddr)
 		.long	0x0
