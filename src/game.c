@@ -782,6 +782,36 @@ void teleport_current_agent(PlayerInfo *p_locplayer)
     add_node_thing(dctrl_thing);
 }
 
+void person_resurrect(struct Thing *p_person)
+{
+    ulong person_anim;
+    p_person->Flag &= ~0x0002;
+    p_person->Flag &= ~0x02000000;
+    p_person->State = 5;
+    p_person->U.UPerson.AnimMode = 1;
+    person_anim = people_frames[p_person->SubType][p_person->U.UPerson.AnimMode];
+    p_person->StartFrame = person_anim - 1;
+    p_person->Frame = nstart_ani[person_anim + p_person->U.UPerson.Angle];
+}
+
+void person_give_all_weapons(struct Thing *p_person)
+{
+    p_person->U.UPerson.WeaponsCarried = 0x3FFBDFFF;
+    do_weapon_quantities1(p_person);
+}
+
+void person_give_best_mods(struct Thing *p_person)
+{
+    p_person->U.UPerson.UMod.Mods &= ~0x0007;
+    p_person->U.UPerson.UMod.Mods |= 0x0003;
+    p_person->U.UPerson.UMod.Mods &= ~0x0038;
+    p_person->U.UPerson.UMod.Mods |= 0x0018;
+    p_person->U.UPerson.UMod.Mods &= ~0x0E00;
+    p_person->U.UPerson.UMod.Mods |= 0x0600;
+    p_person->U.UPerson.UMod.Mods &= ~0x01C0;
+    p_person->U.UPerson.UMod.Mods |= 0x00C0;
+}
+
 void beefup_all_agents(PlayerInfo *p_locplayer)
 {
     int i;
@@ -790,28 +820,11 @@ void beefup_all_agents(PlayerInfo *p_locplayer)
         struct Thing *p_agent;
         p_agent = p_locplayer->MyAgent[i];
         if (p_agent->Flag & 0x0002)
+            person_resurrect(p_agent);
+        person_give_all_weapons(p_agent);
+        if (lbShift & KMod_SHIFT)
         {
-            ulong person_anim;
-            p_agent->Flag &= ~0x0002;
-            p_agent->Flag &= ~0x02000000;
-            p_agent->State = 5;
-            p_agent->U.UPerson.AnimMode = 1;
-            person_anim = people_frames[p_agent->SubType][p_agent->U.UPerson.AnimMode];
-            p_agent->StartFrame = person_anim - 1;
-            p_agent->Frame = nstart_ani[person_anim + p_agent->U.UPerson.Angle];
-        }
-        p_agent->U.UPerson.WeaponsCarried = 0x3FFBDFFF;
-        do_weapon_quantities1(p_agent);
-        if (lbShift & 0x01)
-        {
-            p_agent->U.UPerson.UMod.Mods &= ~0x0007;
-            p_agent->U.UPerson.UMod.Mods |= 0x0003;
-            p_agent->U.UPerson.UMod.Mods &= ~0x0038;
-            p_agent->U.UPerson.UMod.Mods |= 0x0018;
-            p_agent->U.UPerson.UMod.Mods &= ~0x0E00;
-            p_agent->U.UPerson.UMod.Mods |= 0x0600;
-            p_agent->U.UPerson.UMod.Mods &= ~0x01C0;
-            p_agent->U.UPerson.UMod.Mods |= 0x00C0;
+            person_give_best_mods(p_agent);
 
             p_agent->Health = 32000;
             p_agent->U.UPerson.MaxHealth = 32000;
@@ -837,7 +850,7 @@ void game_graphics_inputs(void)
     if (in_network_game && p_locplayer->PanelState[mouser] != 17)
         return;
 
-    if (lbKeyOn[KC_F] && !lbShift)
+    if (lbKeyOn[KC_F] && (lbShift == KMod_NONE))
     {
         lbKeyOn[KC_F] = 0;
         if (game_perspective == 5)
@@ -846,7 +859,7 @@ void game_graphics_inputs(void)
             game_perspective = 5;
     }
 
-    if ((ingame__Cheats & 0x04) && lbKeyOn[KC_T] && (lbShift & 0x04))
+    if ((ingame__Cheats & 0x04) && lbKeyOn[KC_T] && (lbShift & KMod_ALT))
     {
         lbKeyOn[KC_T] = 0;
         teleport_current_agent(p_locplayer);
@@ -854,7 +867,7 @@ void game_graphics_inputs(void)
 
     if ((ingame__Cheats & 0x04) && !in_network_game)
     {
-        if (lbKeyOn[KC_Q] && (lbShift == 0x01 || lbShift == 0x00))
+        if (lbKeyOn[KC_Q] && (lbShift == KMod_SHIFT || lbShift == KMod_NONE))
         {
             lbKeyOn[KC_Q] = 0;
             beefup_all_agents(p_locplayer);
@@ -1302,7 +1315,7 @@ void game_process(void)
     while ( !exit_game )
     {
       process_sound_heap();
-      if ( lbKeyOn[KC_F8] && lbShift & KMod_CONTROL )
+      if ( lbKeyOn[KC_F8] && (lbShift & KMod_CONTROL))
       {
           lbKeyOn[KC_F8] = 0;
           LbScreenSetup(lbDisplay.ScreenMode, 640, 480, display_palette);
