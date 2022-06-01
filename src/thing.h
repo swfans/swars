@@ -296,6 +296,7 @@ void init_things(void);
 TbResult delete_node(struct Thing *p_thing);
 void add_node_thing(ushort new_thing);
 
+void do_weapon_quantities1(struct Thing *p_person);
 /******************************************************************************/
 #ifdef __cplusplus
 }

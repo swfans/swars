@@ -28,6 +28,7 @@
 #include "unix.h"
 #include "util.h"
 #include "windows.h"
+#include "research.h"
 #include "thing.h"
 
 #include "timer.h"
@@ -783,12 +784,47 @@ void teleport_current_agent(PlayerInfo *p_locplayer)
 
 void beefup_all_agents(PlayerInfo *p_locplayer)
 {
-    //TODO
+    int i;
+    for (i = 0; i < playable_agents; i++)
+    {
+        struct Thing *p_agent;
+        p_agent = p_locplayer->MyAgent[i];
+        if (p_agent->Flag & 0x0002)
+        {
+            ulong person_anim;
+            p_agent->Flag &= ~0x0002;
+            p_agent->Flag &= ~0x02000000;
+            p_agent->State = 5;
+            p_agent->U.UPerson.AnimMode = 1;
+            person_anim = people_frames[p_agent->SubType][p_agent->U.UPerson.AnimMode];
+            p_agent->StartFrame = person_anim - 1;
+            p_agent->Frame = nstart_ani[person_anim + p_agent->U.UPerson.Angle];
+        }
+        p_agent->U.UPerson.WeaponsCarried = 0x3FFBDFFF;
+        do_weapon_quantities1(p_agent);
+        if (lbShift & 0x01)
+        {
+            p_agent->U.UPerson.UMod.Mods &= ~0x0007;
+            p_agent->U.UPerson.UMod.Mods |= 0x0003;
+            p_agent->U.UPerson.UMod.Mods &= ~0x0038;
+            p_agent->U.UPerson.UMod.Mods |= 0x0018;
+            p_agent->U.UPerson.UMod.Mods &= ~0x0E00;
+            p_agent->U.UPerson.UMod.Mods |= 0x0600;
+            p_agent->U.UPerson.UMod.Mods &= ~0x01C0;
+            p_agent->U.UPerson.UMod.Mods |= 0x00C0;
+
+            p_agent->Health = 32000;
+            p_agent->U.UPerson.MaxHealth = 32000;
+            p_agent->U.UPerson.Energy = 32000;
+            p_agent->U.UPerson.MaxEnergy = 32000;
+        }
+    }
+    research.WeaponsCompleted = 0x3FFFFFFF;
 }
 
 void game_graphics_inputs(void)
 {
-#if 1
+#if 0
     asm volatile ("call ASM_game_graphics_inputs\n"
         : : );
     return;

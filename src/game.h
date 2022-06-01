@@ -233,6 +233,7 @@ extern long data_1ddb68;
 extern char *people_credits_groups[];
 extern ubyte playable_agents;
 extern ubyte game_high_resolution;
+extern ushort people_frames[22][16];
 
 extern ubyte mouser;
 extern struct Thing *things;
