@@ -393,6 +393,12 @@ void flic_unkn03(ubyte a1)
         : : "a" (a1));
 }
 
+void play_smacker(int vid_type)
+{
+    asm volatile ("call ASM_play_smacker\n"
+        : : "a" (vid_type));
+}
+
 void play_intro(void)
 {
     char fname[FILENAME_MAX];
