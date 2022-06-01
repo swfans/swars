@@ -13,6 +13,7 @@
 #include "bfmemory.h"
 #include "bfmemut.h"
 #include "bffile.h"
+#include "bfgentab.h"
 #include "svesa.h"
 #include "bflib_render.h"
 #include "bflib_fmvids.h"
@@ -687,14 +688,6 @@ void init_outro(void)
 #endif
 }
 
-int LbGhostTableGenerate(TbPixel *pal, int a2, char *fname)
-{
-    int ret;
-    asm volatile ("call ASM_LbGhostTableGenerate\n"
-        : "=r" (ret) : "a" (pal), "d" (a2), "b" (fname));
-    return ret;
-}
-
 int setup_host_sub5(BuffUnknStruct02 *a1)
 {
     int ret;
@@ -1264,6 +1257,28 @@ void BAT_play(void)
     ASM_BAT_play();
 }
 
+TbResult init_read_all_sprite_files(void)
+{
+    TbResult ret;
+    asm volatile ("call ASM_init_read_all_sprite_files\n"
+        : "=r" (ret) : );
+    return ret;
+}
+
+TbPixel LbPaletteFindColour(ubyte *pal, ubyte rval, ubyte gval, ubyte bval)
+{
+    TbResult ret;
+    asm volatile ("call ASM_LbPaletteFindColour\n"
+        : "=r" (ret) : "a" (pal), "d" (rval), "b" (gval), "c" (bval));
+    return ret;
+}
+
+void init_screen_boxes(void)
+{
+    asm volatile ("call ASM_init_screen_boxes\n"
+        :  :  : "eax" );
+}
+
 void players_init_control_mode(void)
 {
     int player;
@@ -1316,7 +1331,6 @@ void show_menu_screen_st0(void)
     memload = (ubyte *)scratch_malloc_mem + 66048;
     purple_draw_list = (struct PurpleDrawItem *)((ubyte *)scratch_malloc_mem + 82432);
 
-#if 0
     init_read_all_sprite_files();
     ingame__Credits = 50000;
 
@@ -1324,6 +1338,7 @@ void show_menu_screen_st0(void)
     LbFileLoadAt("data/bgtables.dat", &fade_table);
     LbGhostTableGenerate(display_palette, 66, "data/startgho.dat");
     init_screen_boxes();
+#if 0
     update_menus();
     players[local_player_no].MissionAgents = 0x0f;
     load_city_data(0);
