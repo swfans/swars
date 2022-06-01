@@ -31,7 +31,7 @@ int LbPaletteStopOpenFade_UNUSED()
 // code at 0001:00098cb8
 }
 
-int LbPaletteFindColour_UNUSED()
+TbPixel LbPaletteFindColour_UNUSED(ubyte *pal, ubyte rval, ubyte gval, ubyte bval)
 {
 // code at 0001:00098ccc
 }

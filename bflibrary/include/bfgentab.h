@@ -20,16 +20,18 @@
 #ifndef BFLIBRARY_GGENTAB_H_
 #define BFLIBRARY_GGENTAB_H_
 
+#include "bftypes.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+extern TbPixel fade_table[256*64];
+extern TbPixel ghost_table[256*256];
+
 int LbFadeTableGenerate();
-extern int fade_table;
 
-int LbGhostTableGenerate();
-
-extern unsigned char ghost_table[];
+TbResult LbGhostTableGenerate(ubyte *pal, int intens, const char *fname);
 
 #ifdef __cplusplus
 };

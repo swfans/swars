@@ -32,9 +32,9 @@ extern "C" {
 #define PALETTE_8b_SIZE (3*PALETTE_8b_COLORS)
 
 struct Palette { // sizeof=3
-    ubyte Red; // offset=0
-    ubyte Green; // offset=1
-    ubyte Blue; // offset=2
+    ubyte Red;
+    ubyte Green;
+    ubyte Blue;
 };
 
 typedef struct Palette Palette;
@@ -43,7 +43,11 @@ typedef struct Palette Palette;
 
 TbResult LbPaletteFade(ubyte *from_pal, ubyte arg2, ubyte fade_steps);
 int LbPaletteStopOpenFade();
-int LbPaletteFindColour();
+
+/** Finds a colour index in given palette best matching given RBG values.
+ */
+TbPixel LbPaletteFindColour(ubyte *pal, ubyte rval, ubyte gval, ubyte bval);
+
 int LbPaletteDraw();
 
 /** Retrieves the indexed colour video palette.
