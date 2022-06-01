@@ -62,70 +62,6 @@ typedef struct {
 } BuffUnknStruct02;
 
 typedef struct {
-  short field_0[1];
-  char field_2;
-  char field_3;
-  short field_4;
-  short field_6[12];
-  short field_1E[17];
-  short field_40[17];
-  short field_62;
-  char field_64[4];
-  int field_68[4];
-  int field_78;
-  int field_7C[2];
-  int field_84;
-    ulong DirectControl[4]; /* offs=0x88 */
-    ulong ControlPad;
-    struct Thing *MyAgent[4];
-    ubyte PrevWeapon[4];  /* offs=0xAC */
-    ubyte PanelState[4];
-    ubyte PanelItem[4];
-    ushort Dummy98; /* offs=0xB8 */
-    ubyte Dummy97;
-    ubyte MissionAgents;
-  char field_BC[2];
-  char field_BE[8];
-  char field_C6;
-  char field_C7;
-  char field_C8;
-  char field_C9;
-  char field_CA[2];
-  int field_CC;
-  int field_D0;
-  int field_D4;
-  int field_D8;
-  int field_DC;
-  short field_E0;
-  short field_E2;
-  short field_E4;
-  int field_E6[2];
-  int field_EE;
-  int field_F2;
-  int field_F6;
-  char field_FA[4];
-  int field_FE;
-  int field_102;
-  char field_106[3];
-  char field_109;
-  char field_10A[3];
-  char field_10D;
-  char field_10E[3];
-  char field_111;
-  char field_112[3];
-  char field_115;
-  char field_116[4];
-  char field_11A;
-  char field_11B[125];
-  short field_198;
-  short field_19A;
-  char field_19C[4];
-  short field_1A0;
-  char field_1A2[4];
-  char field_1A6[4];
-} PlayerInfo;
-
-typedef struct {
   char field_0[15];
   char field_F;
 } PrimFaceTexture;
@@ -155,6 +91,11 @@ typedef struct {
   char field_9;
 } PrimObjectPoint;
 
+struct StartScreenPoint {
+	short X;
+	short Y;
+};
+
 #pragma pack()
 
 extern char session_name[20];
@@ -166,8 +107,15 @@ extern uint8_t cmdln_param_tf;
 extern uint8_t cmdln_param_bcg;
 extern uint8_t cmdln_param_d;
 extern uint8_t unkn01_maskarr[28];
-extern uint8_t ingame__Cheats;
+
+extern ubyte ingame__Cheats;
+extern ulong ingame__Credits;
+extern ushort ingame__GameMode;
+extern ulong ingame__Flags;
 extern struct Scanner ingame__Scanner;
+
+extern ubyte login_control__State;
+
 extern uint8_t cmdln_param_n;
 extern uint8_t pktrec_mode;
 extern uint8_t cmdln_pr_num;
@@ -175,9 +123,7 @@ extern uint8_t game_perspective;
 extern uint8_t exit_game;
 extern uint8_t input_char;
 
-extern uint16_t ingame__GameMode;
 extern uint16_t selected_map_index;
-extern uint32_t ingame__Flags;
 extern uint32_t active_flags_general_unkn01;
 
 extern long unkn01_downcount;
@@ -196,9 +142,6 @@ extern long navi2_unkn_counter_max;
 extern uint32_t triangulation;
 
 extern uint32_t smack_malloc_used_tot;
-
-extern PlayerInfo players[8];
-extern uint8_t local_player_no;
 
 #define STRINGS_MAX 652
 
@@ -234,6 +177,7 @@ extern char *people_credits_groups[];
 extern ubyte playable_agents;
 extern ubyte game_high_resolution;
 extern ushort people_frames[22][16];
+extern char *mission_briefing_text;
 
 extern ubyte mouser;
 extern struct Thing *things;
@@ -242,6 +186,10 @@ extern ushort mouse_map_x;
 extern ushort mouse_map_z;
 extern ushort render_area_a;
 extern ushort render_area_b;
+extern void *scratch_malloc_mem;
+extern struct StartScreenPoint *hotspot_buffer;
+
+extern char net_unkn2_text[];
 
 bool game_initialise (void);
 void game_handle_sdl_events (void);

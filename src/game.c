@@ -30,6 +30,7 @@
 #include "windows.h"
 #include "research.h"
 #include "thing.h"
+#include "player.h"
 
 #include "timer.h"
 
@@ -175,6 +176,10 @@ void PacketRecord_Close(void)
     if (in_network_game)
         return;
     LbFileClose(packet_rec_fh);
+}
+
+void debug_trace_place(int place)
+{
 }
 
 bool
@@ -1257,6 +1262,105 @@ void ASM_BAT_play(void);
 void BAT_play(void)
 {
     ASM_BAT_play();
+}
+
+void players_init_control_mode(void)
+{
+    int player;
+    for (player = 0; player < 8; player++) {
+      players[player].UserInput[0].ControlMode = 1;
+    }
+}
+
+void srm_scanner_reset(void)
+{
+    int i;
+
+    ingame__Scanner.X1 = 8;
+    ingame__Scanner.Y2 = 270;
+    ingame__Scanner.MX = 127;
+    ingame__Scanner.MZ = 127;
+    ingame__Scanner.Angle = 0;
+    ingame__Scanner.X2 = 325;
+    ingame__Scanner.Zoom = 256;
+    ingame__Scanner.Y1 = 73;
+
+    for (i = 0; i + ingame__Scanner.Y1 <= ingame__Scanner.Y2; i++)
+    {
+        ingame__Scanner.Width[i] = 318;
+    }
+    for (i = 0; i != 16; i++)
+    {
+        ingame__Scanner.BigBlip[i+1].Period = 0; // TODO shifted BigBlip definitition? We do want to clear period though.
+    }
+    SCANNER_width = ingame__Scanner.Width;
+    SCANNER_init();
+}
+
+void show_menu_screen_st0(void)
+{
+    debug_trace_place(16);
+
+    lbInkeyToAscii[KC_OEM_102] = '\\';
+    lbInkeyToAsciiShift[KC_OEM_102] = '|';
+
+    players_init_control_mode();
+
+    login_control__State = 6;
+    sprintf(net_unkn2_text, "01234567890");
+
+    hotspot_buffer = scratch_malloc_mem;
+    mission_briefing_text = (char *)scratch_malloc_mem + 512;
+#if 0
+    mem_unkn03 = (ubyte *)scratch_malloc_mem + 16896;
+    weapon_text = (ubyte *)scratch_malloc_mem + 33280;
+    memload = (ubyte *)scratch_malloc_mem + 66048;
+    purple_draw_list = (struct PurpleDrawItem *)((ubyte *)scratch_malloc_mem + 82432);
+
+    init_read_all_sprite_files();
+    ingame__Credits = 50000;
+
+    debug_trace_place(17);
+    LbFileLoadAt("data/bgtables.dat", &fade_table);
+    LbGhostTableGenerate(display_palette, 66, "data/startgho.dat");
+    init_screen_boxes();
+    update_menus();
+    players[local_player_no].MissionAgents = 0x0f;
+    load_city_data(0);
+    load_city_txt();
+
+    debug_trace_place(18);
+    if ( in_network_game )
+      screentype = SCRT_PAUSE;
+    else
+      screentype = SCRT_MAINMENU;
+    byte_1C498D = 1;
+
+    debug_trace_place(19);
+    LbFileLoadAt("data/s-proj.pal", display_palette);
+    show_black_screen();
+    show_black_screen();
+    LbPaletteSet(display_palette);
+    reload_background();
+
+    global_date.Day = 2;
+    global_date.Year = 74;
+    global_date.Month = 6;
+
+    srm_scanner_reset();
+
+    save_game_buffer = unkn_buffer_05;
+
+    LbNetworkSetSessionCreateFunction(my_net_session_callback);
+    LbNetworkSetSessionJoinFunction(my_net_session_callback);
+    LbNetworkSetSessionUnk2CFunction(my_net_session_callback);
+    LbNetworkSetSessionInitFunction(my_net_session_callback);
+    LbNetworkSetSessionDialFunction(my_net_session_callback);
+    LbNetworkSetSessionAnswerFunction(my_net_session_callback);
+    LbNetworkSetSessionHangUpFunction(my_net_session_callback);
+    if ( LbNetworkReadConfig("modem.cfg") != -1 )
+      byte_1C4A70 = 1;
+#endif
 }
 
 void ASM_show_menu_screen(void);

@@ -44,7 +44,9 @@ swars_SOURCES = \
 	mouse.h \
 	oggvorbis.c \
 	oggvorbis.h \
+	player.h \
 	research.h \
+	scanner.c \
 	scanner.h \
 	sound.c \
 	sound.h \
