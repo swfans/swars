@@ -1279,6 +1279,31 @@ void init_screen_boxes(void)
         :  :  : "eax" );
 }
 
+void update_menus(void)
+{
+    asm volatile ("call ASM_update_menus\n"
+        :  :  : "eax" );
+}
+
+void load_city_txt(void)
+{
+    asm volatile ("call ASM_load_city_txt\n"
+        :  :  : "eax" );
+}
+
+void load_city_data(ubyte type)
+{
+    TbFileHandle handle;
+
+    handle = LbFileOpen("data/cities.dat", Lb_FILE_MODE_READ_ONLY);
+    if (handle != (TbFileHandle)-1)
+    {
+        LbFileRead(handle, &num_cities, 1);
+        LbFileRead(handle, cities, sizeof(struct City) * num_cities);
+        LbFileClose(handle);
+    }
+}
+
 void players_init_control_mode(void)
 {
     int player;
@@ -1338,13 +1363,13 @@ void show_menu_screen_st0(void)
     LbFileLoadAt("data/bgtables.dat", &fade_table);
     LbGhostTableGenerate(display_palette, 66, "data/startgho.dat");
     init_screen_boxes();
-#if 0
     update_menus();
     players[local_player_no].MissionAgents = 0x0f;
     load_city_data(0);
     load_city_txt();
 
     debug_trace_place(18);
+#if 0
     if ( in_network_game )
       screentype = SCRT_PAUSE;
     else

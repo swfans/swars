@@ -183,6 +183,17 @@ struct PurpleDrawItem { // sizeof=26
 	ushort Flags;
 };
 
+struct City { // sizeof=40
+  short X;
+  short Y;
+  ubyte MapID;
+  ubyte Level;
+  ubyte Flags;
+  char Info;
+  ushort TextIndex[6];
+  long Dummy2[5];
+};
+
 #pragma pack()
 
 extern char session_name[20];
@@ -271,6 +282,9 @@ extern struct PurpleDrawItem *purple_draw_list;
 
 extern ubyte mouser;
 extern struct Thing *things;
+
+extern ubyte num_cities;
+extern struct City cities[];
 
 extern ushort mouse_map_x;
 extern ushort mouse_map_z;
