@@ -96,6 +96,93 @@ struct StartScreenPoint {
 	short Y;
 };
 
+struct SRect {
+	short x;
+	short y;
+	short w;
+	short h;
+};
+
+struct DITrig { // sizeof=48
+	ulong *vlcbuf[2];
+	long vlcid;
+	ushort *imgbuf;
+	struct SRect rect[2];
+	long rectid; // offs=0x20
+	struct SRect slice;
+	long isdone; // offs=0x2C
+};
+
+struct DITriangle {
+	short X1;
+	short Y1;
+	short X2;
+	short Y2;
+	short X3;
+	short Y3;
+	ubyte Colour;
+};
+
+struct DIBox {
+	short X;
+	short Y;
+	short Width;
+	short Height;
+	ubyte Colour;
+};
+
+struct DILine {
+	short X1;
+	short Y1;
+	short X2;
+	short Y2;
+	ubyte Colour;
+};
+
+struct DISprite { // sizeof=12
+	short X;
+	short Y;
+	struct Sprite *Sprite;
+	ubyte Colour;
+};
+
+struct DIText { // sizeof=23
+	short WindowX;
+	short WindowY;
+	short Width;
+	short Height;
+	short X;
+	short Y; // offs=0x0A
+	char *Text;
+	struct Sprite *Font;
+	ushort Line;
+	ubyte Colour; // offs=0x16
+};
+
+struct DIFlic {
+	void (*Function)();
+};
+
+struct DIHotspot {
+	short X;
+	short Y;
+};
+
+struct PurpleDrawItem { // sizeof=26
+	union {
+		//struct DITrig Trig; // unused? too large to be here
+		struct DITriangle Triangle;
+		struct DIBox Box;
+		struct DILine Line;
+		struct DISprite Sprite;
+		struct DIText Text;
+		struct DIFlic Flic;
+		struct DIHotspot Hotspot;
+	} U;
+	ubyte Type;
+	ushort Flags;
+};
+
 #pragma pack()
 
 extern char session_name[20];
@@ -157,7 +244,7 @@ extern ulong turns_delta;
 extern ushort fifties_per_gameturn;
 extern ushort gamep_unknval_01;
 extern uint8_t *vec_tmap;
-extern uint8_t unknoise_tmap[2048];
+extern ubyte *memload;
 
 extern ubyte background_type;
 extern long data_155704;
@@ -178,6 +265,9 @@ extern ubyte playable_agents;
 extern ubyte game_high_resolution;
 extern ushort people_frames[22][16];
 extern char *mission_briefing_text;
+extern char *mem_unkn03;
+extern char *weapon_text;
+extern struct PurpleDrawItem *purple_draw_list;
 
 extern ubyte mouser;
 extern struct Thing *things;

@@ -1311,12 +1311,12 @@ void show_menu_screen_st0(void)
 
     hotspot_buffer = scratch_malloc_mem;
     mission_briefing_text = (char *)scratch_malloc_mem + 512;
-#if 0
-    mem_unkn03 = (ubyte *)scratch_malloc_mem + 16896;
-    weapon_text = (ubyte *)scratch_malloc_mem + 33280;
+    mem_unkn03 = (char *)scratch_malloc_mem + 16896;
+    weapon_text = (char *)scratch_malloc_mem + 33280;
     memload = (ubyte *)scratch_malloc_mem + 66048;
     purple_draw_list = (struct PurpleDrawItem *)((ubyte *)scratch_malloc_mem + 82432);
 
+#if 0
     init_read_all_sprite_files();
     ingame__Credits = 50000;
 
