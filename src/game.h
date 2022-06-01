@@ -49,6 +49,32 @@ enum GameFlags {
     GamF_Unkn10000000 = 0x10000000,
 };
 
+enum ScreenType {
+  SCRT_NONE = 0x0,
+  SCRT_MISSION,
+  SCRT_2,
+  SCRT_3,
+  SCRT_CRYO,
+  SCRT_EQUIP,
+  SCRT_MAINMENU,
+  SCRT_NETGAME,
+  SCRT_RESEARCH,
+  SCRT_9,
+  SCRT_PAUSE,
+  SCRT_B,
+  SCRT_ALERTBOX,
+  SCRT_D,
+  SCRT_E,
+  SCRT_F,
+  SCRT_10,
+  SCRT_11,
+  SCRT_12,
+  SCRT_13,
+  SCRT_14,
+  SCRT_15, // 0x15
+  SCRT_99 = 99,
+};
+
 struct Thing;
 
 typedef struct {
@@ -258,7 +284,10 @@ extern uint8_t *vec_tmap;
 extern ubyte *memload;
 
 extern ubyte background_type;
+extern ubyte old_screentype;
+extern ubyte screentype;
 extern long data_155704;
+extern ubyte data_1c498d;
 extern char *outro_text_s;
 extern char *outro_text_z;
 extern long data_197150;

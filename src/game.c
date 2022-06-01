@@ -1304,6 +1304,12 @@ void load_city_data(ubyte type)
     }
 }
 
+void reload_background(void)
+{
+    asm volatile ("call ASM_reload_background\n"
+        :  :  : "eax" );
+}
+
 void players_init_control_mode(void)
 {
     int player;
@@ -1331,7 +1337,7 @@ void srm_scanner_reset(void)
     }
     for (i = 0; i != 16; i++)
     {
-        ingame__Scanner.BigBlip[i+1].Period = 0; // TODO shifted BigBlip definitition? We do want to clear period though.
+        ingame__Scanner.BigBlip[i].Period = 0;
     }
     SCANNER_width = ingame__Scanner.Width;
     SCANNER_init();
@@ -1369,12 +1375,11 @@ void show_menu_screen_st0(void)
     load_city_txt();
 
     debug_trace_place(18);
-#if 0
     if ( in_network_game )
       screentype = SCRT_PAUSE;
     else
       screentype = SCRT_MAINMENU;
-    byte_1C498D = 1;
+    data_1c498d = 1;
 
     debug_trace_place(19);
     LbFileLoadAt("data/s-proj.pal", display_palette);
@@ -1383,6 +1388,7 @@ void show_menu_screen_st0(void)
     LbPaletteSet(display_palette);
     reload_background();
 
+#if 0
     global_date.Day = 2;
     global_date.Year = 74;
     global_date.Month = 6;
