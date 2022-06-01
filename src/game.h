@@ -6,6 +6,7 @@
 
 #include "bflib_basics.h"
 #include "globals.h"
+#include "scanner.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -74,9 +75,9 @@ typedef struct {
   int field_78;
   int field_7C[2];
   int field_84;
-    long DirectControl[4]; /* offs=0x88 */
-    long ControlPad;
-    long MyAgent[4];
+    ulong DirectControl[4]; /* offs=0x88 */
+    ulong ControlPad;
+    struct Thing *MyAgent[4];
     ubyte PrevWeapon[4];  /* offs=0xAC */
     ubyte PanelState[4];
     ubyte PanelItem[4];
@@ -166,6 +167,7 @@ extern uint8_t cmdln_param_bcg;
 extern uint8_t cmdln_param_d;
 extern uint8_t unkn01_maskarr[28];
 extern uint8_t ingame__Cheats;
+extern struct Scanner ingame__Scanner;
 extern uint8_t cmdln_param_n;
 extern uint8_t pktrec_mode;
 extern uint8_t cmdln_pr_num;
@@ -230,12 +232,15 @@ extern long people_groups_count;
 extern long data_1ddb68;
 extern char *people_credits_groups[];
 extern ubyte playable_agents;
+extern ubyte game_high_resolution;
 
 extern ubyte mouser;
 extern struct Thing *things;
 
 extern ushort mouse_map_x;
 extern ushort mouse_map_z;
+extern ushort render_area_a;
+extern ushort render_area_b;
 
 bool game_initialise (void);
 void game_handle_sdl_events (void);

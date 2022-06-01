@@ -715,11 +715,122 @@ int alt_at_point(ushort x, ushort z)
     return ret;
 }
 
+void load_pop_sprites_lo(void)
+{
+    asm volatile ("call ASM_load_pop_sprites_lo\n"
+        :  :  : "eax" );
+}
+
+void load_pop_sprites_hi(void)
+{
+    asm volatile ("call ASM_load_pop_sprites_hi\n"
+        :  :  : "eax" );
+}
+
+void video_mode_switch_to_next(void)
+{
+    int i;
+    if (lbDisplay.ScreenMode == Lb_SCREEN_MODE_320_200_8)
+    {
+        StopCD();
+        setup_screen_mode(Lb_SCREEN_MODE_640_480_8);
+        overall_scale = 400;
+        load_pop_sprites_hi();
+        render_area_a = 30;
+        render_area_b = 30;
+        ingame__Scanner.X1 = 1;
+        game_high_resolution = 1;
+        ingame__Scanner.Y1 = 341;
+        ingame__Scanner.Y2 = 460;
+        ingame__Scanner.X2 = 130;
+
+        for (i = 0; i + ingame__Scanner.Y1 <= ingame__Scanner.Y2; i++)
+        {
+          ingame__Scanner.Width[i] = min(105 + i, 129);
+        }
+    }
+    else
+    {
+        StopCD();
+        setup_screen_mode(Lb_SCREEN_MODE_320_200_8);
+        load_pop_sprites_lo();
+        overall_scale = 150;
+        render_area_a = 24;
+        render_area_b = 24;
+        ingame__Scanner.X1 = 1;
+        ingame__Scanner.Y1 = 127;
+        game_high_resolution = 0;
+        ingame__Scanner.X2 = 65;
+        ingame__Scanner.Y2 = 189;
+
+        for (i = 0; i + ingame__Scanner.Y1 <= ingame__Scanner.Y2; i++)
+        {
+          ingame__Scanner.Width[i] = min(40 + i, 64);
+        }
+    }
+}
+
+void teleport_current_agent(PlayerInfo *p_locplayer)
+{
+    int dctrl_thing;
+    dctrl_thing = p_locplayer->DirectControl[mouser];
+    delete_node(&things[dctrl_thing]);
+    things[dctrl_thing].X = mouse_map_x << 8;
+    things[dctrl_thing].Z = mouse_map_z << 8;
+    things[dctrl_thing].Y = alt_at_point(mouse_map_x, mouse_map_z);
+    add_node_thing(dctrl_thing);
+}
+
+void beefup_all_agents(PlayerInfo *p_locplayer)
+{
+    //TODO
+}
+
 void game_graphics_inputs(void)
 {
+#if 1
     asm volatile ("call ASM_game_graphics_inputs\n"
         : : );
     return;
+#else
+    PlayerInfo *p_locplayer;
+
+    p_locplayer = &players[local_player_no];
+    if (ingame__DisplayMode != 50 && ingame__DisplayMode != 59)
+        return;
+    if (in_network_game && p_locplayer->PanelState[mouser] != 17)
+        return;
+
+    if (lbKeyOn[KC_F] && !lbShift)
+    {
+        lbKeyOn[KC_F] = 0;
+        if (game_perspective == 5)
+            game_perspective = 0;
+        else
+            game_perspective = 5;
+    }
+
+    if ((ingame__Cheats & 0x04) && lbKeyOn[KC_T] && (lbShift & 0x04))
+    {
+        lbKeyOn[KC_T] = 0;
+        teleport_current_agent(p_locplayer);
+    }
+
+    if ((ingame__Cheats & 0x04) && !in_network_game)
+    {
+        if (lbKeyOn[KC_Q] && (lbShift == 0x01 || lbShift == 0x00))
+        {
+            lbKeyOn[KC_Q] = 0;
+            beefup_all_agents(p_locplayer);
+        }
+    }
+
+    if (lbKeyOn[KC_F8])
+    {
+        lbKeyOn[KC_F8] = 0;
+        video_mode_switch_to_next();
+    }
+#endif
 }
 
 void init_syndwars(void)
