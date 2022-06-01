@@ -93,7 +93,7 @@ struct GtBlock { // sizeof = 48
 extern TbPixel vec_colour;
 extern unsigned char vec_mode;
 extern unsigned char *render_fade_tables;
-extern TbPixel _fade_table[256*64];
+extern TbPixel fade_table[256*64];
 extern TbPixel _ghost_table[32992];
 extern struct PolyPoint polyscans[2*POLY_SCANS_COUNT];
 // Rename pending for these entries

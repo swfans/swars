@@ -1069,11 +1069,11 @@ void create_tables_file(void)
     curbuf = fade_data;
     for (i = 0; i < 256; i++) {
         for (k = 0; k < 64; k++) {
-          _fade_table[256 * k + i] = *(curbuf + 320 * k + i);
+          fade_table[256 * k + i] = *(curbuf + 320 * k + i);
         }
     }
     fade_data = curbuf;
-    LbFileSaveAt("data/tables.dat", _fade_table, 14900);
+    LbFileSaveAt("data/tables.dat", fade_table, 84224);
 }
 
 void game_setup(void)
@@ -1167,7 +1167,7 @@ void game_process_sub09(void)
             uint8_t *ptr;
             pos = LbRandomAnyShort() + (gameturn >> 2);
             ptr = &vec_tmap[pos];
-            *ptr = unknoise_tmap[*ptr];
+            *ptr = fade_table[0x2800 + *ptr];
         }
         break;
     }
