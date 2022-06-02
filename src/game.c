@@ -1319,21 +1319,6 @@ void players_init_control_mode(void)
     }
 }
 
-void net_system_init0(void)
-{
-#if 0
-    LbNetworkSetSessionCreateFunction(my_net_session_callback);
-    LbNetworkSetSessionJoinFunction(my_net_session_callback);
-    LbNetworkSetSessionUnk2CFunction(my_net_session_callback);
-    LbNetworkSetSessionInitFunction(my_net_session_callback);
-    LbNetworkSetSessionDialFunction(my_net_session_callback);
-    LbNetworkSetSessionAnswerFunction(my_net_session_callback);
-    LbNetworkSetSessionHangUpFunction(my_net_session_callback);
-#endif
-    if (LbNetworkReadConfig("modem.cfg") != Lb_FAIL)
-        data_1c4a70 = 1;
-}
-
 void srm_scanner_reset(void)
 {
     int i;

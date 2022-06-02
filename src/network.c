@@ -17,6 +17,9 @@
  */
 /******************************************************************************/
 #include "network.h"
+
+#include "bfkeybd.h"
+#include "display.h"
 /******************************************************************************/
 
 TbResult LbNetworkReadConfig(const char *fname)
@@ -85,4 +88,26 @@ TbResult LbModemReadConfig(const char *fname)
         : "=r" (ret) : "a" (fname));
     return ret;
 }
+
+int my_net_session_callback()
+{
+  swap_wscreen();
+  if (lbKeyOn[KC_ESCAPE])
+    return -7;
+  return 0;
+}
+
+void net_system_init0(void)
+{
+    LbNetworkSetSessionCreateFunction(my_net_session_callback);
+    LbNetworkSetSessionJoinFunction(my_net_session_callback);
+    LbNetworkSetSessionUnk2CFunction(my_net_session_callback);
+    LbNetworkSetSessionInitFunction(my_net_session_callback);
+    LbNetworkSetSessionDialFunction(my_net_session_callback);
+    LbNetworkSetSessionAnswerFunction(my_net_session_callback);
+    LbNetworkSetSessionHangUpFunction(my_net_session_callback);
+    if (LbNetworkReadConfig("modem.cfg") != Lb_FAIL)
+        data_1c4a70 = 1;
+}
+
 /******************************************************************************/

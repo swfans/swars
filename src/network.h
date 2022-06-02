@@ -67,6 +67,9 @@ TbResult LbNetworkSetSessionHangUpFunction(void *func);
 TbResult LbNetworkSetTimeoutSec(ulong tmsec);
 
 TbResult LbModemReadConfig(const char *fname);
+
+int my_net_session_callback();
+void net_system_init0(void);
 /******************************************************************************/
 #ifdef __cplusplus
 }
