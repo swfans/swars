@@ -35,7 +35,7 @@ struct ResearchInfo
     ubyte ModDaysDone[32];
     long WeaponFunding;
     long ModFunding;
-    char Scientists;
+    sbyte Scientists;
     char NumBases;
     char CurrentWeapon;
     char CurrentMod;

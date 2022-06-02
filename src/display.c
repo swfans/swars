@@ -162,3 +162,10 @@ void show_black_screen(void)
         LbScreenUnlock();
     swap_wscreen();
 }
+
+void my_set_text_window(ushort x1, ushort y1, ushort w, ushort h)
+{
+    asm volatile (
+      "call ASM_my_set_text_window\n"
+        : : "a" (x1), "d" (y1), "b" (w), "c" (h));
+}

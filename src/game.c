@@ -1453,6 +1453,53 @@ void delete_mail(ushort mailnum, ubyte type)
         : : "a" (mailnum), "d" (type));
 }
 
+void research_unkn_func_002(void)
+{
+    asm volatile ("call ASM_research_unkn_func_002\n"
+        :  :  : "eax" );
+}
+
+int research_unkn_func_005(char a1)
+{
+    int ret;
+    asm volatile ("call ASM_research_unkn_func_005\n"
+        : "=r" (ret) : "a" (a1));
+    return ret;
+}
+
+void forward_research_progress(int num_days)
+{
+    new_mods_researched = 0;
+    new_weapons_researched = 0;
+    int i;
+    for (i = 0; i < num_days; i++)
+    {
+        int prev;
+
+        prev = research.CurrentWeapon;
+        scientists_lost = research_unkn_func_005(0);
+        if (research.CurrentWeapon != prev)
+            new_weapons_researched |= 1 << prev;
+
+        prev = research.CurrentMod;
+        scientists_lost += research_unkn_func_005(1);
+        if (research.CurrentMod != prev)
+            new_mods_researched |= 1 << prev;
+    }
+    research.Scientists -= scientists_lost;
+    if (research.Scientists < 0)
+        research.Scientists = 0;
+    research_unkn_func_002();
+}
+
+int save_game_write(void)
+{
+    int ret;
+    asm volatile ("call ASM_save_game_write\n"
+        : "=r" (ret));
+    return ret;
+}
+
 void show_menu_screen_st2(void)
 {
     if ( in_network_game )
@@ -1486,7 +1533,7 @@ void show_menu_screen_st2(void)
         net_players[i] = '\0';
       }
       draw_flic_purple_list(purple_unkn1_data_to_screen);
-      data_1c4a34 = 0;
+      scientists_lost = 0;
       update_mission_time(0);
       in_network_game = 0;
       screentype = SCRT_B;
@@ -1519,32 +1566,12 @@ void show_menu_screen_st2(void)
       }
       else
       {
-#if 0
-        v8 = 0;
-        dword_1C4A30 = 0;
-        dword_1C4A2C = 0;
-        while ( v8 < mission_status[open_brief].CityDays )
-        {
-          data_1c4a34 = research_unkn_func_005(0);
-          v10 = v9 >> 24;
-          if ( *(int *)((char *)&research.ModFunding + 3) >> 24 != v10 )
-            dword_1C4A2C |= 1 << v10;
-          data_1c4a34 += research_unkn_func_005(1);
-          v13 = v12 >> 24;
-          if ( *(_DWORD *)&research.Scientists >> 24 != v13 )
-            dword_1C4A30 |= 1 << v13;
-          v8 = v11 + 1;
-        }
-        research.Scientists -= data_1c4a34;
-        if ( *(int *)((char *)&research.ModFunding + 1) >> 24 < 0 )
-          research.Scientists = 0;
-        research_unkn_func_002();
-        if ( ingame__Flags & 0x10 )
-          save_game();
-#endif
-        screentype = SCRT_9;
-        heading_box.Text = gui_strings[374];
-        redraw_screen_flag = 1;
+            forward_research_progress(mission_status[open_brief].CityDays);
+            if (ingame__Flags & 0x10)
+                save_game_write();
+            screentype = SCRT_9;
+            heading_box.Text = gui_strings[374];
+            redraw_screen_flag = 1;
       }
     }
 
@@ -1576,7 +1603,36 @@ void show_menu_screen_st2(void)
 void ASM_show_menu_screen(void);
 void show_menu_screen(void)
 {
+#if 1
     ASM_show_menu_screen();
+#else
+    switch (data_1c498d)
+    {
+    case 2:
+        show_menu_screen_st2();
+        play_sample_using_heap(0, 122, 127, 64, 100, -1, 3u);
+        break;
+    case 0:
+        show_menu_screen_st0();
+        play_sample_using_heap(0, 122, 127, 64, 100, -1, 3u);
+        break;
+    default:
+        break;
+    }
+    if (lbDisplay.ScreenMode != Lb_SCREEN_MODE_640_480_8)
+    {
+        game_high_resolution = 0;
+        LbMouseReset();
+        memset(lbDisplay.WScreen, 0, lbDisplay.PhysicalScreenHeight * lbDisplay.PhysicalScreenWidth);
+        LbScreenSetup(Lb_SCREEN_MODE_640_480_8, 640, 480, display_palette);
+        LbMouseSetup(&pointer_sprites[1], 1, 1);
+        setup_vecs(lbDisplay.WScreen, vec_tmap, lbDisplay.PhysicalScreenWidth,
+            lbDisplay.PhysicalScreenWidth, lbDisplay.PhysicalScreenHeight);
+        reload_background();
+        my_set_text_window(0, 0, 640, 480);
+    }
+    //TODO implement the rest
+#endif
 }
 
 void draw_game(void)
