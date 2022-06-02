@@ -291,6 +291,19 @@ struct ScreenTextBox {
   ubyte field_43;
 };
 
+struct UnknStruct04Sub1 {
+    char field_0[6];
+    char text[15];
+    char field_15;
+};
+
+struct UnknStruct04 {
+    char field_0[40];
+    struct UnknStruct04Sub1 field_28[8];
+    char field_D8;
+    char field_D9;
+};
+
 #pragma pack()
 
 extern char session_name[20];
@@ -307,9 +320,14 @@ extern ubyte ingame__Cheats;
 extern ulong ingame__Credits;
 extern ushort ingame__GameMode;
 extern ulong ingame__Flags;
+extern ulong ingame__CashAtStart;
+extern ulong ingame__Expenditure;
 extern struct Scanner ingame__Scanner;
 
 extern ubyte login_control__State;
+extern ulong login_control__Money;
+extern sbyte login_control__City;
+extern ubyte login_control__TechLevel;
 
 extern uint8_t cmdln_param_n;
 extern uint8_t pktrec_mode;
@@ -385,6 +403,15 @@ extern ubyte *data_1c6de4;
 extern ubyte *data_1c6de8;
 extern ubyte data_1c4a34;
 extern ubyte redraw_screen_flag;
+extern sbyte data_15516c;
+extern sbyte data_15516d;
+extern ubyte data_1c6d48;
+extern ubyte unkn_flags_08;
+extern ulong starting_cash_amounts[4];
+extern sbyte unkn_city_no;
+extern sbyte selected_weapon;
+extern sbyte selected_mod;
+extern struct UnknStruct04 unkstruct04_arr[20];
 
 extern ubyte mouser;
 extern struct Thing *things;
@@ -403,6 +430,8 @@ extern struct StartScreenPoint *hotspot_buffer;
 extern char net_unkn2_text[];
 extern struct ScreenButton options_gfx_buttons[16];
 extern struct ScreenTextBox heading_box;
+extern struct ScreenButton net_INITIATE_button;
+extern struct ScreenButton net_groups_LOGON_button;
 extern ubyte new_mail;
 extern char net_players[25*5];
 

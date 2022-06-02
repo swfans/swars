@@ -1011,9 +1011,9 @@ void game_setup_sub8(void)
     ASM_game_setup_sub8();
 }
 
-void load_mission_file(int num)
+void load_missions(int num)
 {
-    asm volatile ("call ASM_load_mission_file\n"
+    asm volatile ("call ASM_load_missions\n"
         : : "a" (num));
 }
 
@@ -1093,7 +1093,7 @@ void game_setup(void)
     game_setup_sub4(-2);
     LbSpriteSetup(small_font, small_font_end, small_font_data);
     game_setup_sub8();
-    load_mission_file(0);
+    load_missions(0);
     players[local_player_no].MissionAgents = 0x0f;
     game_setup_sub4(-1);
     if ( is_single_game || cmdln_param_bcg )
@@ -1418,6 +1418,18 @@ void init_weapon_text(void)
         :  :  : "eax" );
 }
 
+void srm_reset_research(void)
+{
+    asm volatile ("call ASM_srm_reset_research\n"
+        :  :  : "eax" );
+}
+
+void init_agents(void)
+{
+    asm volatile ("call ASM_init_agents\n"
+        :  :  : "eax" );
+}
+
 void draw_flic_purple_list(void (*fn)())
 {
     asm volatile ("call ASM_draw_flic_purple_list\n"
@@ -1439,7 +1451,6 @@ void show_menu_screen_st2(void)
 {
     if ( in_network_game )
     {
-#if 0
       local_player_no = 0;
       login_control__State = 6;
       net_INITIATE_button.Text = gui_strings[385];
@@ -1448,9 +1459,9 @@ void show_menu_screen_st2(void)
       ingame__CashAtStart = 50000;
       ingame__Expenditure = 0;
       net_groups_LOGON_button.Text = gui_strings[386];
-      byte_15516D = -1;
-      byte_15516C = -1;
-      byte_181182 = 4;
+      data_15516d = -1;
+      data_15516c = -1;
+      login_control__TechLevel = 4;
       unkn_city_no = -1;
       login_control__City = -1;
       unkn_flags_08 = 60;
@@ -1459,10 +1470,10 @@ void show_menu_screen_st2(void)
       srm_reset_research();
       load_missions(0);
       memset(unkstruct04_arr, 0, 4360u);
-      byte_1C6D48 = 0;
+      data_1c6d48 = 0;
       selected_mod = -1;
       selected_weapon = -1;
-#endif
+
       int i;
       for (i = 0; i != 125; i += 25)
       {
