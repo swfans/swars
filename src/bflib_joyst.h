@@ -75,7 +75,7 @@ struct DevInput {
 
 #pragma pack()
 /******************************************************************************/
-
+extern struct DevInput joy;
 
 int joy_grip_unknsub_08(int val);
 

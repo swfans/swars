@@ -551,3 +551,10 @@ struct SampleInfo *play_sample_using_heap(ulong a1, short smptbl_id, ulong a3, u
         : "=r" (ret) : "a" (a1), "d" (smptbl_id), "b" (a3), "c" (a4), "g" (a5), "g" (a6), "g" (type));
     return ret;
 }
+
+void stop_sample_using_heap(struct _SEQUENCE *source, ulong sample_number)
+{
+    asm volatile (
+      "call ASM_stop_sample_using_heap\n"
+        : : "a" (source), "d" (sample_number));
+}

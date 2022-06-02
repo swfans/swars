@@ -71,6 +71,7 @@ TbResult LbModemReadConfig(const char *fname);
 int my_net_session_callback();
 void net_system_init0(void);
 void net_system_init2(void);
+void net_system_reset(void);
 /******************************************************************************/
 #ifdef __cplusplus
 }

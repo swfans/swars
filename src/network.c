@@ -123,4 +123,15 @@ void net_system_init2(void)
         data_1c4a70 = 1;
 }
 
+void net_system_reset(void)
+{
+    LbNetworkSetSessionCreateFunction(NULL);
+    LbNetworkSetSessionJoinFunction(NULL);
+    LbNetworkSetSessionExchangeFunction(NULL);
+    LbNetworkSetSessionInitFunction(NULL);
+    LbNetworkSetSessionDialFunction(NULL);
+    LbNetworkSetSessionAnswerFunction(NULL);
+    LbNetworkSetSessionHangUpFunction(NULL);
+}
+
 /******************************************************************************/

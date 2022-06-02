@@ -19,6 +19,7 @@
 #include "bflib_fmvids.h"
 #include "bflib_snd_sys.h"
 #include "bflib_snd_cda.h"
+#include "bflib_joyst.h"
 #include "game_data.h"
 #include "display.h"
 #include "dos.h"
@@ -1344,6 +1345,100 @@ void srm_scanner_reset(void)
     SCANNER_init();
 }
 
+void show_main_screen(void)
+{
+    if ((game_projector_speed && (main_quit_button.Flags & 0x01)) ||
+      (lbKeyOn[KC_SPACE] && !edit_flag))
+    {
+        lbKeyOn[KC_SPACE] = 0;
+        main_quit_button.Flags |= 0x0002;
+        main_load_button.Flags |= 0x0002;
+        main_login_button.Flags |= 0x0002;
+        main_map_editor_button.Flags |= 0x0002;
+    }
+    main_quit_button.DrawFn(&main_quit_button);
+    main_load_button.DrawFn(&main_load_button);
+    main_login_button.DrawFn(&main_login_button);
+}
+
+void show_pause_screen(void)
+{
+    if ((game_projector_speed && (pause_unkn12_box.Flags & 0x01)) ||
+      (lbKeyOn[KC_SPACE] && !edit_flag))
+    {
+        lbKeyOn[KC_SPACE] = 0;
+        pause_unkn11_box.Flags |= 0x0002;
+        pause_unkn12_box.Flags |= 0x0002;
+        pause_abort_button.Flags |= 0x0002;
+        pause_continue_button.Flags |= 0x0002;
+    }
+    pause_unkn12_box.DrawFn(&pause_unkn12_box);
+    pause_unkn11_box.DrawFn(&pause_unkn11_box);
+    pause_continue_button.DrawFn(&pause_continue_button);
+    pause_abort_button.DrawFn(&pause_abort_button);
+}
+
+void show_scrt3_screen(void)
+{
+    if ((game_projector_speed && (heading_box.Flags & 0x01)) ||
+      (lbKeyOn[KC_SPACE] && !edit_flag))
+    {
+        lbKeyOn[KC_SPACE] = 0;
+        unkn29_box.Flags |= 0x0002;
+        heading_box.Flags |= 0x0002;
+        unkn38_box.Flags |= 0x0002;
+    }
+    int ret = 1;
+    if (ret)
+        ret = heading_box.DrawFn(&heading_box);
+    if (ret)
+        ret = unkn29_box.DrawFn(&unkn29_box);
+    if (ret)
+        ret = unkn38_box.DrawFn(&unkn38_box);
+}
+
+void show_alert_box(void)
+{
+    asm volatile ("call ASM_show_alert_box\n"
+        :  :  : "eax" );
+}
+
+void show_type11_screen(void)
+{
+    asm volatile ("call ASM_show_type11_screen\n"
+        :  :  : "eax" );
+}
+
+void show_research_screen(void)
+{
+    asm volatile ("call ASM_show_research_screen\n"
+        :  :  : "eax" );
+}
+
+void show_netgame_screen(void)
+{
+    asm volatile ("call ASM_show_netgame_screen\n"
+        :  :  : "eax" );
+}
+
+void show_equipment_screen(void)
+{
+    asm volatile ("call ASM_show_equipment_screen\n"
+        :  :  : "eax" );
+}
+
+void show_cryo_chamber_screen(void)
+{
+    asm volatile ("call ASM_show_cryo_chamber_screen\n"
+        :  :  : "eax" );
+}
+
+void show_mission_screen(void)
+{
+    asm volatile ("call ASM_show_mission_screen\n"
+        :  :  : "eax" );
+}
+
 void show_menu_screen_st0(void)
 {
     debug_trace_place(16);
@@ -1442,9 +1537,20 @@ void update_mission_time(char a1)
         : : "a" (a1));
 }
 
+void show_date_time(void)
+{
+    asm volatile ("call ASM_show_date_time\n"
+        :  :  : "eax" );
+}
+
 void purple_unkn1_data_to_screen(void)
 {
     memcpy(data_1c6de4, data_1c6de8, 0x5FA0u);
+}
+
+void smack_malloc_free_all(void)
+{
+    smack_malloc_used_tot = 0;
 }
 
 void delete_mail(ushort mailnum, ubyte type)
@@ -1453,9 +1559,23 @@ void delete_mail(ushort mailnum, ubyte type)
         : : "a" (mailnum), "d" (type));
 }
 
+ubyte load_mail_text(const char *filename)
+{
+    ubyte ret;
+    asm volatile ("call ASM_load_mail_text\n"
+        : "=r" (ret) : "a" (filename));
+    return ret;
+}
+
 void research_unkn_func_002(void)
 {
     asm volatile ("call ASM_research_unkn_func_002\n"
+        :  :  : "eax" );
+}
+
+void unkn_research_func_006(void)
+{
+    asm volatile ("call ASM_unkn_research_func_006\n"
         :  :  : "eax" );
 }
 
@@ -1631,6 +1751,126 @@ void show_menu_screen(void)
         reload_background();
         my_set_text_window(0, 0, 640, 480);
     }
+
+    if (screentype == SCRT_MAINMENU)
+    {
+        replay_intro_timer++;
+        if (replay_intro_timer > 1100)
+        {
+            char fname[FILENAME_MAX];
+
+            LbScreenSetup(Lb_SCREEN_MODE_320_200_8, 320, 200, display_palette);
+            LbMouseSetup(0, 2, 2);
+            show_black_screen();
+            stop_sample_using_heap(0, 0x7Au);
+            stop_sample_using_heap(0, 0x7Au);
+            if ( game_dirs[DirPlace_Sound].use_cd == 1 )
+                sprintf(fname, "%slanguage/%s/intro.smk", cd_drive, language_3str);
+            else
+                sprintf(fname, "intro/intro.smk");
+            play_smk(fname, 13, 0);
+            smack_malloc_free_all();
+            play_sample_using_heap(0, 122, 127, 64, 100, -1, 3u);
+            show_black_screen();
+            play_sample_using_heap(0, 122, 127, 64, 100, -1, 3u);
+            replay_intro_timer = 0;
+            data_1c498d = 0;
+            return;
+          }
+    }
+
+    if (screentype != SCRT_MAINMENU) {
+        replay_intro_timer = 0;
+    }
+    text_buf_pos = 307200;
+
+    if ( !joy.Buttons[0] || net_unkn_pos_02 )
+    {
+        if ( data_1c4991 )
+            data_1c4991 = 0;
+    }
+    else if ( !data_1c4991 )
+    {
+        int i;
+        data_1c4991 = 1;
+        lbDisplay.LeftButton = 1;
+        if (lbDisplay.ScreenMode == Lb_SCREEN_MODE_320_200_8)
+            i = 2 * lbDisplay.MMouseX;
+        else
+            i = lbDisplay.MMouseX;
+        lbDisplay.MouseX = i;
+        if (lbDisplay.ScreenMode == Lb_SCREEN_MODE_320_200_8)
+            i = 2 * lbDisplay.MMouseY;
+        else
+            i = lbDisplay.MMouseY;
+        lbDisplay.MouseY = i;
+    }
+
+    data_1c498f = lbDisplay.LeftButton;
+    data_1c4990 = lbDisplay.RightButton;
+    show_date_time();
+    if ((screentype != SCRT_MAINMENU) && (screentype != SCRT_PAUSE) && !restore_savegame)
+          unkn_research_func_006();
+    if ((screentype == SCRT_9 || screentype == SCRT_B) && change_screen == 7)
+    {
+        char fname[FILENAME_MAX];
+
+        screentype = SCRT_MISSION;
+        heading_box.Text = gui_strings[372];
+        data_1c4aa2 = 0;
+        unkn36_box.Lines = 0;
+
+        if (open_brief != 0)
+        {
+            if (open_brief < 0) {
+                sprintf(fname, "%s/mail%03d.txt", "textdata", email_store[-open_brief - 1].Mission);
+            } else if (open_brief > 0) {
+                sprintf(fname, "%s/miss%03d.txt", "textdata", mission_list[brief_store[open_brief - 1].Mission].SourceID);
+            }
+            load_mail_text(fname);
+        }
+        redraw_screen_flag = 1;
+        edit_flag = 0;
+        change_screen = 0;
+    }
+
+    switch (screentype)
+    {
+    case SCRT_MISSION:
+        show_mission_screen();
+        break;
+    case SCRT_3:
+        show_scrt3_screen();
+        break;
+    case SCRT_CRYO:
+        show_cryo_chamber_screen();
+        break;
+    case SCRT_EQUIP:
+        show_equipment_screen();
+        break;
+    case SCRT_MAINMENU:
+        show_main_screen();
+        break;
+    case SCRT_NETGAME:
+        show_netgame_screen();
+        break;
+    case SCRT_RESEARCH:
+        show_research_screen();
+        break;
+    case SCRT_9:
+        show_type11_screen();
+        break;
+    case SCRT_PAUSE:
+        show_pause_screen();
+        break;
+    case SCRT_B:
+        show_type11_screen();
+        break;
+    case SCRT_ALERTBOX:
+        show_alert_box();
+        break;
+    }
+
     //TODO implement the rest
 #endif
 }

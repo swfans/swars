@@ -231,27 +231,45 @@ struct SynTime {
 struct ScreenButton;
 
 struct ScreenButton {
-  short X;
-  short Y;
-  ushort Width;
-  ushort Height;
-  const char *Text;
-  struct TbSprite *Font;
-  ubyte (*DrawFn)(struct ScreenButton *btn);
-  ubyte (*DrawTextFn)();
-  ubyte (*CallBackFn)(ubyte click);
-  ubyte *Radio;
-  ushort TextTopLine;
-  ushort TextFadePos;
-  ushort Flags;
-  ubyte DrawSpeed;
-  ubyte Timer;
-  ubyte TextSpeed;
-  ubyte Border;
-  ubyte Colour;
-  ubyte BGColour;
-  ubyte AccelKey;
-  ubyte RadioValue;
+    short X;
+    short Y;
+    ushort Width;
+    ushort Height;
+    const char *Text;
+    struct TbSprite *Font;
+    ubyte (*DrawFn)(struct ScreenButton *btn);
+    ubyte (*DrawTextFn)();
+    ubyte (*CallBackFn)(ubyte click);
+    ubyte *Radio;
+    ushort TextTopLine;
+    ushort TextFadePos;
+    ushort Flags;
+    ubyte DrawSpeed;
+    ubyte Timer;
+    ubyte TextSpeed;
+    ubyte Border;
+    ubyte Colour;
+    ubyte BGColour;
+    ubyte AccelKey;
+    ubyte RadioValue;
+};
+
+struct ScreenBox;
+
+struct ScreenBox
+{
+    short X;
+    short Y;
+    ushort Width;
+    ushort Height;
+    ubyte DrawSpeed;
+    ubyte Timer;
+    ushort Flags;
+    ubyte (*DrawFn)(struct ScreenBox *box);
+    ubyte (*SpecialDrawFn)(struct ScreenBox *box);
+    ushort Timer2;
+    char field_16;
+    char field_17;
 };
 
 struct ScreenInfoBox;
@@ -337,6 +355,44 @@ struct NewMailItem { // sizeof=5
 	ubyte RecvYear;
 	ubyte Mission;
 	ubyte Flag;
+};
+
+struct Mission { // sizeof=76
+    char *TextName;
+    ushort TextId;
+    ushort StartHead;
+    ushort SpecialEffectID;
+    ushort SuccessHead;
+    ushort FailHead;
+    ushort SourceID;
+    ushort SuccessID;
+    ushort FailID;
+    ubyte SpecialTrigger[3];
+    ubyte SuccessTrigger[3];
+    ubyte FailTrigger[3];
+    ubyte BankTest;
+    ushort SpecialEffectFailID;
+    ushort SpecialEffectSuccessID;
+    ushort StringIndex;
+    ubyte StartMap[3];
+    ubyte StartLevel[3];
+    ubyte SuccessMap[3];
+    ubyte SuccessLevel[3];
+    ubyte FailMap[3];
+    ubyte FailLevel[3];
+    ubyte MapNo;
+    ubyte LevelNo;
+    ubyte BankTestFail;
+    sbyte Complete;
+    ubyte MissionCond[5];
+    ubyte ReLevelNo;
+    ushort CashReward;
+    ubyte PANStart;
+    ubyte PANEnd;
+    ushort WaitToFade;
+    ubyte field_46[5];
+    ubyte field_4B;
+	//ushort PreProcess; -- somewhere in the unknown fields above
 };
 
 #pragma pack()
@@ -452,6 +508,16 @@ extern sbyte selected_weapon;
 extern sbyte selected_mod;
 extern struct UnknStruct04 unkstruct04_arr[20];
 extern ubyte data_1c4aa3;
+extern ubyte net_unkn_pos_02;
+extern ubyte data_1c498f;
+extern ubyte data_1c4990;
+extern ubyte data_1c4991;
+extern ubyte data_1c4aa2;
+extern ulong text_buf_pos;
+extern ubyte edit_flag;
+extern ubyte change_screen;
+extern ubyte restore_savegame;
+extern ubyte game_projector_speed;
 
 extern ubyte mouser;
 extern struct Thing *things;
@@ -461,9 +527,11 @@ extern struct City cities[];
 extern sbyte city_id;
 extern struct SynTime global_date;
 extern struct MissionStatus mission_status[120];
-extern ushort old_mission_brief;
-extern ushort open_brief;
-extern ushort next_ref;
+extern struct Mission mission_list[120];
+extern short old_mission_brief;
+extern short open_brief;
+extern short next_ref;
+extern ushort replay_intro_timer;
 extern struct EmailItem email_store[20];
 extern struct EmailItem brief_store[10];
 
@@ -479,6 +547,17 @@ extern struct ScreenButton options_gfx_buttons[16];
 extern struct ScreenTextBox heading_box;
 extern struct ScreenButton net_INITIATE_button;
 extern struct ScreenButton net_groups_LOGON_button;
+extern struct ScreenButton main_quit_button;
+extern struct ScreenButton main_login_button;
+extern struct ScreenButton pause_continue_button;
+extern struct ScreenButton pause_abort_button;
+extern struct ScreenButton main_map_editor_button;
+extern struct ScreenButton main_load_button;
+extern struct ScreenBox pause_unkn11_box;
+extern struct ScreenBox pause_unkn12_box;
+extern struct ScreenBox unkn29_box;
+extern struct ScreenTextBox unkn36_box;
+extern struct ScreenTextBox unkn38_box;
 extern ubyte new_mail;
 extern char net_players[25*5];
 
