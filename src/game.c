@@ -1447,6 +1447,12 @@ void purple_unkn1_data_to_screen(void)
     memcpy(data_1c6de4, data_1c6de8, 0x5FA0u);
 }
 
+void delete_mail(ushort mailnum, ubyte type)
+{
+    asm volatile ("call ASM_delete_mail\n"
+        : : "a" (mailnum), "d" (type));
+}
+
 void show_menu_screen_st2(void)
 {
     if ( in_network_game )
@@ -1490,35 +1496,34 @@ void show_menu_screen_st2(void)
     else
     {
       update_mission_time(0);
-#if 0
       city_id = -1;
-      byte_1C4AA3 = brief_store[(*(_DWORD *)&old_mission_brief >> 16) - 1].RefNum;
-      if ( ingame__MissionStatus && *(_DWORD *)&ingame__dword_180C4F >> 16 != 2 )
+      data_1c4aa3 = brief_store[open_brief - 1].RefNum;
+      if ((ingame__MissionStatus != 0) && (ingame__MissionStatus != 2))
       {
-        v65 = mission_status;
-        qmemcpy(mission_status, &mission_status[*(_DWORD *)&old_mission_brief >> 16], 0x28u);
-        delete_mail(open_brief - 1, 1u);
-        open_brief = 0;
-        old_mission_brief = 0;
-        cities[*(_DWORD *)&research_selected_wep >> 24].Info[0] = 0;
+            memcpy(&mission_status[0], &mission_status[open_brief], 0x28u);
+            delete_mail(open_brief - 1, 1u);
+            open_brief = 0;
+            old_mission_brief = 0;
+            cities[unkn_city_no].Info = 0;
       }
       else
       {
-        old_mission_brief = open_brief;
+            old_mission_brief = open_brief;
       }
       if ( ingame__byte_1807DF )
       {
-        screentype = SCRT_MAINMENU;
-        if ( ingame__Flags & 0x10 )
-          LbFileDelete((int)savegame_mortal_fname);
-        ingame__byte_1807DF = 0;
+            screentype = SCRT_MAINMENU;
+            if (ingame__Flags & 0x10)
+                LbFileDelete("qdata/savegame/synwarsm.sav");
+            ingame__byte_1807DF = 0;
       }
       else
       {
+#if 0
         v8 = 0;
         dword_1C4A30 = 0;
         dword_1C4A2C = 0;
-        while ( v8 < mission_status[*(_DWORD *)&old_mission_brief >> 16].CityDays )
+        while ( v8 < mission_status[open_brief].CityDays )
         {
           data_1c4a34 = research_unkn_func_005(0);
           v10 = v9 >> 24;
@@ -1536,11 +1541,11 @@ void show_menu_screen_st2(void)
         research_unkn_func_002();
         if ( ingame__Flags & 0x10 )
           save_game();
+#endif
         screentype = SCRT_9;
         heading_box.Text = gui_strings[374];
         redraw_screen_flag = 1;
       }
-#endif
     }
 
     LbFileLoadAt("data/bgtables.dat", &fade_table);

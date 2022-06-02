@@ -304,6 +304,41 @@ struct UnknStruct04 {
     char field_D9;
 };
 
+struct MissionStatus { // sizeof=40
+    ulong CityDays;
+    ulong CityHours;
+    ulong Days;
+    ulong Hours;
+    ushort CivsKilled;
+    ushort CivsPersuaded;
+    ushort SecurityKilled;
+    ushort SecurityPersuaded;
+    ushort EnemiesKilled;
+    ushort EnemiesPersuaded;
+    ulong CashAtStart;
+    ulong Expenditure;
+    ubyte HitAccuracy;
+    ubyte ObjectivesComplete;
+    ubyte AgentsLost;
+    ubyte AgentsGained;
+};
+
+struct EmailItem { // sizeof=5
+	ubyte RefNum;
+	ubyte RecvDay;
+	ubyte RecvMonth;
+	ubyte RecvYear;
+	ubyte Mission;
+};
+
+struct NewMailItem { // sizeof=5
+	ubyte RecvDay;
+	ubyte RecvMonth;
+	ubyte RecvYear;
+	ubyte Mission;
+	ubyte Flag;
+};
+
 #pragma pack()
 
 extern char session_name[20];
@@ -322,6 +357,8 @@ extern ushort ingame__GameMode;
 extern ulong ingame__Flags;
 extern ulong ingame__CashAtStart;
 extern ulong ingame__Expenditure;
+extern ubyte ingame__byte_1807DF;
+extern ushort ingame__MissionStatus;
 extern struct Scanner ingame__Scanner;
 
 extern ubyte login_control__State;
@@ -412,13 +449,21 @@ extern sbyte unkn_city_no;
 extern sbyte selected_weapon;
 extern sbyte selected_mod;
 extern struct UnknStruct04 unkstruct04_arr[20];
+extern ubyte data_1c4aa3;
 
 extern ubyte mouser;
 extern struct Thing *things;
 
 extern ubyte num_cities;
 extern struct City cities[];
+extern sbyte city_id;
 extern struct SynTime global_date;
+extern struct MissionStatus mission_status[120];
+extern ushort old_mission_brief;
+extern ushort open_brief;
+extern ushort next_ref;
+extern struct EmailItem email_store[20];
+extern struct EmailItem brief_store[10];
 
 extern ushort mouse_map_x;
 extern ushort mouse_map_z;
