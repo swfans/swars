@@ -25,6 +25,7 @@
 #include "game.h"
 #include "keyboard.h"
 #include "mouse.h"
+#include "network.h"
 #include "sound.h"
 #include "unix.h"
 #include "util.h"
@@ -1318,6 +1319,21 @@ void players_init_control_mode(void)
     }
 }
 
+void net_system_init0(void)
+{
+#if 0
+    LbNetworkSetSessionCreateFunction(my_net_session_callback);
+    LbNetworkSetSessionJoinFunction(my_net_session_callback);
+    LbNetworkSetSessionUnk2CFunction(my_net_session_callback);
+    LbNetworkSetSessionInitFunction(my_net_session_callback);
+    LbNetworkSetSessionDialFunction(my_net_session_callback);
+    LbNetworkSetSessionAnswerFunction(my_net_session_callback);
+    LbNetworkSetSessionHangUpFunction(my_net_session_callback);
+#endif
+    if (LbNetworkReadConfig("modem.cfg") != Lb_FAIL)
+        data_1c4a70 = 1;
+}
+
 void srm_scanner_reset(void)
 {
     int i;
@@ -1376,9 +1392,9 @@ void show_menu_screen_st0(void)
 
     debug_trace_place(18);
     if ( in_network_game )
-      screentype = SCRT_PAUSE;
+        screentype = SCRT_PAUSE;
     else
-      screentype = SCRT_MAINMENU;
+        screentype = SCRT_MAINMENU;
     data_1c498d = 1;
 
     debug_trace_place(19);
@@ -1388,7 +1404,6 @@ void show_menu_screen_st0(void)
     LbPaletteSet(display_palette);
     reload_background();
 
-#if 0
     global_date.Day = 2;
     global_date.Year = 74;
     global_date.Month = 6;
@@ -1397,16 +1412,7 @@ void show_menu_screen_st0(void)
 
     save_game_buffer = unkn_buffer_05;
 
-    LbNetworkSetSessionCreateFunction(my_net_session_callback);
-    LbNetworkSetSessionJoinFunction(my_net_session_callback);
-    LbNetworkSetSessionUnk2CFunction(my_net_session_callback);
-    LbNetworkSetSessionInitFunction(my_net_session_callback);
-    LbNetworkSetSessionDialFunction(my_net_session_callback);
-    LbNetworkSetSessionAnswerFunction(my_net_session_callback);
-    LbNetworkSetSessionHangUpFunction(my_net_session_callback);
-    if ( LbNetworkReadConfig("modem.cfg") != -1 )
-      byte_1C4A70 = 1;
-#endif
+    net_system_init0();
 }
 
 void ASM_show_menu_screen(void);

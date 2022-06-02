@@ -42,6 +42,8 @@ swars_SOURCES = \
 	main.c \
 	mouse.c \
 	mouse.h \
+	network.c \
+	network.h \
 	oggvorbis.c \
 	oggvorbis.h \
 	player.h \

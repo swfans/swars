@@ -210,14 +210,22 @@ struct PurpleDrawItem { // sizeof=26
 };
 
 struct City { // sizeof=40
-  short X;
-  short Y;
-  ubyte MapID;
-  ubyte Level;
-  ubyte Flags;
-  char Info;
-  ushort TextIndex[6];
-  long Dummy2[5];
+    short X;
+    short Y;
+    ubyte MapID;
+    ubyte Level;
+    ubyte Flags;
+    char Info;
+    ushort TextIndex[6];
+    long Dummy2[5];
+};
+
+struct SynTime {
+    ubyte Minute;
+    ubyte Hour;
+    ubyte Day;
+    ubyte Month;
+    ubyte Year;
 };
 
 #pragma pack()
@@ -308,12 +316,15 @@ extern char *mission_briefing_text;
 extern char *mem_unkn03;
 extern char *weapon_text;
 extern struct PurpleDrawItem *purple_draw_list;
+extern ubyte *save_game_buffer;
+extern ubyte *unkn_buffer_05;
 
 extern ubyte mouser;
 extern struct Thing *things;
 
 extern ubyte num_cities;
 extern struct City cities[];
+extern struct SynTime global_date;
 
 extern ushort mouse_map_x;
 extern ushort mouse_map_z;
