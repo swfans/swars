@@ -1400,6 +1400,163 @@ void show_menu_screen_st0(void)
     net_system_init0();
 }
 
+void update_options_screen_state(void)
+{
+    char *text;
+    if (ingame__PanelPermutation < 0)
+      text = gui_strings[abs(ingame__PanelPermutation) + 579];
+    else
+      text = gui_strings[ingame__PanelPermutation + 580];
+    options_gfx_buttons[14].Text = text;
+    text = gui_strings[ingame__TrenchcoatPreference + 583];
+    options_gfx_buttons[15].Text = text;
+}
+
+void init_weapon_text(void)
+{
+    asm volatile ("call ASM_init_weapon_text\n"
+        :  :  : "eax" );
+}
+
+void draw_flic_purple_list(void (*fn)())
+{
+    asm volatile ("call ASM_draw_flic_purple_list\n"
+        : : "a" (fn));
+}
+
+void update_mission_time(char a1)
+{
+    asm volatile ("call ASM_update_mission_time\n"
+        : : "a" (a1));
+}
+
+void purple_unkn1_data_to_screen(void)
+{
+    memcpy(data_1c6de4, data_1c6de8, 0x5FA0u);
+}
+
+void show_menu_screen_st2(void)
+{
+    if ( in_network_game )
+    {
+#if 0
+      local_player_no = 0;
+      login_control__State = 6;
+      net_INITIATE_button.Text = gui_strings[385];
+      net_INITIATE_button.Flags = 1;
+      ingame__Credits = 50000;
+      ingame__CashAtStart = 50000;
+      ingame__Expenditure = 0;
+      net_groups_LOGON_button.Text = gui_strings[386];
+      byte_15516D = -1;
+      byte_15516C = -1;
+      byte_181182 = 4;
+      unkn_city_no = -1;
+      login_control__City = -1;
+      unkn_flags_08 = 60;
+      login_control__Money = starting_cash_amounts[0];
+      init_agents();
+      srm_reset_research();
+      load_missions(0);
+      memset(unkstruct04_arr, 0, 4360u);
+      byte_1C6D48 = 0;
+      selected_mod = -1;
+      selected_weapon = -1;
+#endif
+      int i;
+      for (i = 0; i != 125; i += 25)
+      {
+        net_players[i] = '\0';
+      }
+      draw_flic_purple_list(purple_unkn1_data_to_screen);
+      data_1c4a34 = 0;
+      update_mission_time(0);
+      in_network_game = 0;
+      screentype = SCRT_B;
+      redraw_screen_flag = 1;
+      heading_box.Text = gui_strings[374];
+    }
+    else
+    {
+      update_mission_time(0);
+#if 0
+      city_id = -1;
+      byte_1C4AA3 = brief_store[(*(_DWORD *)&old_mission_brief >> 16) - 1].RefNum;
+      if ( ingame__MissionStatus && *(_DWORD *)&ingame__dword_180C4F >> 16 != 2 )
+      {
+        v65 = mission_status;
+        qmemcpy(mission_status, &mission_status[*(_DWORD *)&old_mission_brief >> 16], 0x28u);
+        delete_mail(open_brief - 1, 1u);
+        open_brief = 0;
+        old_mission_brief = 0;
+        cities[*(_DWORD *)&research_selected_wep >> 24].Info[0] = 0;
+      }
+      else
+      {
+        old_mission_brief = open_brief;
+      }
+      if ( ingame__byte_1807DF )
+      {
+        screentype = SCRT_MAINMENU;
+        if ( ingame__Flags & 0x10 )
+          LbFileDelete((int)savegame_mortal_fname);
+        ingame__byte_1807DF = 0;
+      }
+      else
+      {
+        v8 = 0;
+        dword_1C4A30 = 0;
+        dword_1C4A2C = 0;
+        while ( v8 < mission_status[*(_DWORD *)&old_mission_brief >> 16].CityDays )
+        {
+          data_1c4a34 = research_unkn_func_005(0);
+          v10 = v9 >> 24;
+          if ( *(int *)((char *)&research.ModFunding + 3) >> 24 != v10 )
+            dword_1C4A2C |= 1 << v10;
+          data_1c4a34 += research_unkn_func_005(1);
+          v13 = v12 >> 24;
+          if ( *(_DWORD *)&research.Scientists >> 24 != v13 )
+            dword_1C4A30 |= 1 << v13;
+          v8 = v11 + 1;
+        }
+        research.Scientists -= data_1c4a34;
+        if ( *(int *)((char *)&research.ModFunding + 1) >> 24 < 0 )
+          research.Scientists = 0;
+        research_unkn_func_002();
+        if ( ingame__Flags & 0x10 )
+          save_game();
+        screentype = SCRT_9;
+        heading_box.Text = gui_strings[374];
+        redraw_screen_flag = 1;
+      }
+#endif
+    }
+
+    LbFileLoadAt("data/bgtables.dat", &fade_table);
+    LbGhostTableGenerate(display_palette, 66, "data/startgho.dat");
+    init_read_all_sprite_files();
+    init_weapon_text();
+    load_city_txt();
+    data_1c498d = 1;
+    LbMouseChangeSpriteOffset(0, 0);
+    LbFileLoadAt("data/s-proj.pal", display_palette);
+
+    update_options_screen_state();
+
+    show_black_screen();
+    show_black_screen();
+    LbPaletteSet(display_palette);
+    reload_background();
+
+    srm_scanner_reset();
+
+    if ( new_mail )
+    {
+        play_sample_using_heap(0, 119 + (LbRandomAnyShort() % 3), 127, 64, 100, 0, 3u);
+    }
+    net_system_init2();
+}
+
 void ASM_show_menu_screen(void);
 void show_menu_screen(void)
 {

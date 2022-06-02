@@ -228,6 +228,69 @@ struct SynTime {
     ubyte Year;
 };
 
+struct ScreenButton;
+
+struct ScreenButton {
+  short X;
+  short Y;
+  ushort Width;
+  ushort Height;
+  const char *Text;
+  struct TbSprite *Font;
+  ubyte (*DrawFn)(struct ScreenButton *btn);
+  ubyte (*DrawTextFn)();
+  ubyte (*CallBackFn)(ubyte click);
+  ubyte *Radio;
+  ushort TextTopLine;
+  ushort TextFadePos;
+  ushort Flags;
+  ubyte DrawSpeed;
+  ubyte Timer;
+  ubyte TextSpeed;
+  ubyte Border;
+  ubyte Colour;
+  ubyte BGColour;
+  ubyte AccelKey;
+  ubyte RadioValue;
+};
+
+struct ScreenInfoBox;
+
+struct ScreenTextBox;
+
+struct ScreenTextBox {
+  short X;
+  short Y;
+  ushort Width;
+  ushort Height;
+  ubyte DrawSpeed;
+  ubyte Timer;
+  ubyte TextSpeed;
+  ubyte LineSpacing;
+  short ScrollBarPos;
+  ushort ScrollBarSize;
+  short ScrollWindowHeight;
+  short ScrollWindowOffset;
+  ushort GrabPos;
+  ushort Lines;
+  const char *Text;
+  struct TbSprite *Font;
+  ubyte (*DrawFn)(struct ScreenTextBox *box);
+  ubyte (*DrawTextFn)(struct ScreenTextBox *box);
+  struct ScreenButton *Buttons[2];
+  struct ScreenInfoBox *Infos[2];
+  ushort TextTopLine;
+  ushort field_36;
+  ushort field_38;
+  short TextFadePos;
+  ushort Flags;
+  ushort field_3E;
+  ubyte BGColour;
+  ubyte LineHeight;
+  ubyte field_42;
+  ubyte field_43;
+};
+
 #pragma pack()
 
 extern char session_name[20];
@@ -318,6 +381,10 @@ extern char *weapon_text;
 extern struct PurpleDrawItem *purple_draw_list;
 extern ubyte *save_game_buffer;
 extern ubyte *unkn_buffer_05;
+extern ubyte *data_1c6de4;
+extern ubyte *data_1c6de8;
+extern ubyte data_1c4a34;
+extern ubyte redraw_screen_flag;
 
 extern ubyte mouser;
 extern struct Thing *things;
@@ -334,6 +401,10 @@ extern void *scratch_malloc_mem;
 extern struct StartScreenPoint *hotspot_buffer;
 
 extern char net_unkn2_text[];
+extern struct ScreenButton options_gfx_buttons[16];
+extern struct ScreenTextBox heading_box;
+extern ubyte new_mail;
+extern char net_players[25*5];
 
 bool game_initialise (void);
 void game_handle_sdl_events (void);
