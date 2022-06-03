@@ -49,11 +49,33 @@ struct TbNetworkService { // sizeof=10
     struct NetworkServiceFunction F;
 };
 
+struct NetworkPlayer { // sizeof=26
+    ubyte npfield_0;
+    long npfield_1;
+    sbyte npfield_5;
+    sbyte npfield_6;
+    sbyte npfield_7;
+    sbyte SelectedCity;
+    sbyte npfield_9[2];
+    sbyte npfield_b;
+    sbyte npfield_c;
+    ushort npfield_d;
+    ushort npfield_e;
+    sbyte DoubleMode;
+    sbyte npfield_12;
+    sbyte npfield_13;
+    sbyte npfield_14;
+    long npfield_15;
+    sbyte npfield_19;
+};
+
 #pragma pack()
 /******************************************************************************/
 extern ubyte data_1c4a70;
+extern ubyte net_players_num;
 extern struct TbNetworkService NetworkServicePtr;
 extern ulong NetTimeoutTicks;
+extern struct NetworkPlayer network_players[8];
 
 TbResult LbNetworkReadConfig(const char *fname);
 TbResult LbNetworkSetSessionCreateFunction(void *func);
@@ -65,6 +87,10 @@ TbResult LbNetworkSetSessionDialFunction(void *func);
 TbResult LbNetworkSetSessionAnswerFunction(void *func);
 TbResult LbNetworkSetSessionHangUpFunction(void *func);
 TbResult LbNetworkSetTimeoutSec(ulong tmsec);
+
+TbResult LbNetworkSessionNumberPlayers(void);
+TbResult LbNetworkSetupIPXAddress(ulong addr);
+TbResult LbNetworkPlayerNumber(void);
 
 TbResult LbModemReadConfig(const char *fname);
 

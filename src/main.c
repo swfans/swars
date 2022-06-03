@@ -9,6 +9,7 @@
 #include "display.h"
 #include "game.h"
 #include "game_data.h"
+#include "network.h"
 #include "util.h"
 
 #if defined WIN32 && defined main
@@ -118,9 +119,7 @@ process_options (int *argc, char ***argv)
 
         case 'I':
             tmpint = atoi(optarg);
-            /* LbNetworkSetupIPXAddress(tmpint); */
-            asm volatile ("call LbNetworkSetupIPXAddress_\n"
-                  :  : "a" (tmpint) );
+            LbNetworkSetupIPXAddress(tmpint);
             break;
 
         case 'm':

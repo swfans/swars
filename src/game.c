@@ -1507,6 +1507,15 @@ void update_options_screen_state(void)
     options_gfx_buttons[15].Text = text;
 }
 
+void init_net_players(void)
+{
+    int i;
+    for (i = 0; i != 125; i += 25)
+    {
+        net_players[i] = '\0';
+    }
+}
+
 void init_weapon_text(void)
 {
     asm volatile ("call ASM_init_weapon_text\n"
@@ -1587,6 +1596,12 @@ int research_unkn_func_005(char a1)
     return ret;
 }
 
+void net_unkn_func_33(void)
+{
+    asm volatile ("call ASM_net_unkn_func_33\n"
+        :  :  : "eax" );
+}
+
 void forward_research_progress(int num_days)
 {
     new_mods_researched = 0;
@@ -1610,6 +1625,12 @@ void forward_research_progress(int num_days)
     if (research.Scientists < 0)
         research.Scientists = 0;
     research_unkn_func_002();
+}
+
+void draw_purple_screen(void)
+{
+    asm volatile ("call ASM_draw_purple_screen\n"
+        :  :  : "eax" );
 }
 
 int save_game_write(void)
@@ -1646,12 +1667,7 @@ void show_menu_screen_st2(void)
       data_1c6d48 = 0;
       selected_mod = -1;
       selected_weapon = -1;
-
-      int i;
-      for (i = 0; i != 125; i += 25)
-      {
-        net_players[i] = '\0';
-      }
+      init_net_players();
       draw_flic_purple_list(purple_unkn1_data_to_screen);
       scientists_lost = 0;
       update_mission_time(0);
@@ -1870,6 +1886,38 @@ void show_menu_screen(void)
         show_alert_box();
         break;
     }
+
+    if (login_control__State == 5)
+    {
+        net_unkn_func_33();
+    }
+    else if (login_control__State == 8)
+    {
+        data_1c4b78 = 1;
+        in_network_game = 1;
+        redraw_screen_flag = 1;
+        local_player_no = LbNetworkPlayerNumber();
+        net_players_num = LbNetworkSessionNumberPlayers();
+        net_INITIATE_button.Text = gui_strings[385];
+        net_groups_LOGON_button.Text = gui_strings[386];
+        network_players[local_player_no].npfield_0 = 14;
+        net_unkn_func_33();
+        network_players[local_player_no].npfield_0 = 15;
+        net_unkn_func_33();
+        init_net_players();
+    }
+    if ( data_1c498f && lbDisplay.LeftButton )
+    {
+        data_1c498f = 0;
+        lbDisplay.LeftButton = 0;
+    }
+    if ( data_1c4990 && lbDisplay.RightButton )
+    {
+        data_1c4990 = 0;
+        lbDisplay.RightButton = 0;
+    }
+    memcpy(lbDisplay.WScreen, back_buffer, 640*480);
+    draw_purple_screen();
 
     //TODO implement the rest
 #endif

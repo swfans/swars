@@ -513,6 +513,7 @@ extern ubyte data_1c498f;
 extern ubyte data_1c4990;
 extern ubyte data_1c4991;
 extern ubyte data_1c4aa2;
+extern ubyte data_1c4b78;
 extern ulong text_buf_pos;
 extern ubyte edit_flag;
 extern ubyte change_screen;

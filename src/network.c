@@ -81,6 +81,47 @@ TbResult LbNetworkSetTimeoutSec(ulong tmsec)
     return Lb_SUCCESS;
 }
 
+TbResult LbNetworkSessionNumberPlayers(void)
+{
+#if 1
+    TbResult ret;
+    asm volatile ("call ASM_LbNetworkSessionNumberPlayers\n"
+        : "=r" (ret) : );
+    return ret;
+#else
+  if (NetworkServicePtr.Type < 1)
+      return Lb_FAIL;
+  if (NetworkServicePtr.Type <= 1)
+      return (ubyte)IPXPlayerHeader.field_10D;
+  if (NetworkServicePtr.Type > 5)
+      return Lb_FAIL;
+  return *((ubyte *)NetworkServicePtr.Id + 4268);
+#endif
+}
+
+TbResult LbNetworkSetupIPXAddress(ulong addr)
+{
+#if 1
+    TbResult ret;
+    asm volatile ("call ASM_LbNetworkSetupIPXAddress\n"
+        : "=r" (ret) : "a" (addr) );
+    return ret;
+#else
+    if ( !addr )
+        return Lb_FAIL;
+    IPXHandler = addr;
+    return Lb_SUCCESS;
+#endif
+}
+
+TbResult LbNetworkPlayerNumber(void)
+{
+    TbResult ret;
+    asm volatile ("call ASM_LbNetworkPlayerNumber\n"
+        : "=r" (ret) : );
+    return ret;
+}
+
 TbResult LbModemReadConfig(const char *fname)
 {
     TbResult ret;
