@@ -2149,37 +2149,24 @@ void show_menu_screen(void)
         unkn36_box.Flags = 769;
         mission_text_box.Flags = 769;
         unkn38_box.Flags = 16385;
-
-        for (i = 0; i != 276; )
-        {
-          i += 46;
-          *(__int16 *)((char *)&unkn37_box.TextFadePos + i) = 17;
+        int i;
+        for (i = 0; i < 6; i++) {
+            sysmnu_buttons[i].Flags = 0x0011;
         }
-        for (i = 0; i != 210; )
-        {
-          i += 42;
-          *(_WORD *)(&equip_cost_box.TextSpeed + i) = 1;
+        for (i = 0; i < 5; i++) {
+            unk11_menu[i].Flags = 0x0001;
         }
-        for (i = 0; i != 96; )
-        {
-          i += 24;
-          *(__int16 *)((char *)&unkn34_box.Flags + i) = 1;
+        for (i = 0; i < 4; i++) {
+            unkn04_boxes[i].Flags = 0x0001;
         }
-        for (i = 0; i != 322; )
-        {
-          i += 46;
-          *(_WORD *)((char *)&unkn33_box.DrawFn + i + 2) = 257;
+        for (i = 0; i < 7; i++) {
+            options_audio_buttons[i].Flags = 0x0101;
         }
-
-        for (i = 0; i != 14 )
-        {
-          ++i;
-          *(_WORD *)&options_mmedia_buttons[i + 1].DrawSpeed = 257;
+        for (i = 0; i < 14; i++) {
+          options_gfx_buttons[i].Flags = 0x0101;
         }
-        while ( i != 16 )
-        {
-          ++i;
-          *(_WORD *)&options_mmedia_buttons[i + 1].DrawSpeed = 1;
+        for (; i < 16; i++) {
+          options_gfx_buttons[i].Flags = 0x0001;
         }
 
         storage_LOAD_button.Flags |= 0x0001;

@@ -444,6 +444,20 @@ struct WeaponDef {
   ubyte field_18;
 };
 
+struct ScreenMenuBox { // sizeof=42
+  ubyte field_0;
+  char field_1[8];
+  char field_9[8];
+  ubyte field_11[2];
+  char field_13[8];
+  char field_1B[8];
+  char field_23[2];
+  ubyte field_25;
+  ubyte field_26;
+  ushort Flags;
+  sbyte field_29;
+};
+
 #pragma pack()
 
 extern char session_name[20];
@@ -605,7 +619,11 @@ extern struct StartScreenPoint *hotspot_buffer;
 
 extern char net_unkn2_text[];
 extern char equip_name_text[];
+extern struct ScreenMenuBox unk11_menu[5];
+extern struct ScreenBox unkn04_boxes[3];
 extern struct ScreenButton options_gfx_buttons[16];
+extern struct ScreenButton options_audio_buttons[7];
+extern struct ScreenButton sysmnu_buttons[6];
 extern struct ScreenTextBox heading_box;
 extern struct ScreenButton net_INITIATE_button;
 extern struct ScreenButton net_groups_LOGON_button;
