@@ -274,6 +274,27 @@ struct ScreenBox
 
 struct ScreenInfoBox;
 
+struct ScreenInfoBox { // sizeof=43
+    short X;
+    short Y;
+    ushort Width;
+    ushort Height;
+    char *Text1;
+    char *Text2;
+	struct TbSprite *Font1;
+	struct TbSprite *Font2;
+	ubyte (*DrawFn)();
+	ubyte (*DrawTextFn)();
+    short TextFadePos1;
+    short TextFadePos2;
+    ushort Flags;
+    ubyte DrawSpeed;
+    ubyte Timer;
+    ubyte TextSpeed;
+    ubyte Colour;
+    ubyte BGColour;
+};
+
 struct ScreenTextBox;
 
 struct ScreenTextBox {
@@ -393,6 +414,34 @@ struct Mission { // sizeof=76
     ubyte field_46[5];
     ubyte field_4B;
 	//ushort PreProcess; -- somewhere in the unknown fields above
+};
+
+struct ModDef {
+	ushort PowerOutput;
+	ushort Resilience;
+	ushort Funding;
+	ushort Flags;
+    char field_8[10];
+    short Sprite;
+	ushort Cost;
+	uchar PercentPerDay;
+	uchar Pad1;
+};
+
+struct WeaponDef {
+  ushort RangeBlocks;
+  ushort HitDamage;
+  ushort ReFireDelay;
+  ushort Weight;
+  short EnergyUsed;
+  ushort Accuracy;
+  ushort TargetType;
+  ushort TargetMode;
+  ushort Flags;
+  ushort Sprite;
+  ushort Category;
+  ushort Cost;
+  ubyte field_18;
 };
 
 #pragma pack()
@@ -519,6 +568,14 @@ extern ubyte edit_flag;
 extern ubyte change_screen;
 extern ubyte restore_savegame;
 extern ubyte game_projector_speed;
+extern ubyte current_drawing_mod;
+extern ubyte mod_draw_states[4];
+extern char equip_cost_text[20];
+extern ubyte new_current_drawing_mod;
+extern ubyte refresh_equip_list;
+extern ubyte flic_mods[5];
+extern struct ModDef mod_defs[17];
+extern struct WeaponDef weapon_defs[33];
 
 extern ubyte mouser;
 extern struct Thing *things;
@@ -544,6 +601,7 @@ extern void *scratch_malloc_mem;
 extern struct StartScreenPoint *hotspot_buffer;
 
 extern char net_unkn2_text[];
+extern char equip_name_text[];
 extern struct ScreenButton options_gfx_buttons[16];
 extern struct ScreenTextBox heading_box;
 extern struct ScreenButton net_INITIATE_button;
@@ -559,6 +617,10 @@ extern struct ScreenBox pause_unkn12_box;
 extern struct ScreenBox unkn29_box;
 extern struct ScreenTextBox unkn36_box;
 extern struct ScreenTextBox unkn38_box;
+extern struct ScreenInfoBox equip_cost_box;
+extern struct ScreenButton buy_equip_button;
+extern struct ScreenTextBox equip_name_box;
+extern struct ScreenTextBox research_unkn21_box;
 extern ubyte new_mail;
 extern char net_players[25*5];
 

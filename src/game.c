@@ -1516,6 +1516,39 @@ void init_net_players(void)
     }
 }
 
+void delete_mail(ushort mailnum, ubyte type)
+{
+    asm volatile ("call ASM_delete_mail\n"
+        : : "a" (mailnum), "d" (type));
+}
+
+ubyte load_mail_text(const char *filename)
+{
+    ubyte ret;
+    asm volatile ("call ASM_load_mail_text\n"
+        : "=r" (ret) : "a" (filename));
+    return ret;
+}
+
+void brief_load_mission_info(void)
+{
+    char fname[FILENAME_MAX];
+
+    heading_box.Text = gui_strings[372];
+    data_1c4aa2 = 0;
+    unkn36_box.Lines = 0;
+
+    if (open_brief != 0)
+    {
+        if (open_brief < 0) {
+            sprintf(fname, "%s/mail%03d.txt", "textdata", email_store[-open_brief - 1].Mission);
+        } else if (open_brief > 0) {
+            sprintf(fname, "%s/miss%03d.txt", "textdata", mission_list[brief_store[open_brief - 1].Mission].SourceID);
+        }
+        load_mail_text(fname);
+    }
+}
+
 void init_weapon_text(void)
 {
     asm volatile ("call ASM_init_weapon_text\n"
@@ -1562,18 +1595,18 @@ void smack_malloc_free_all(void)
     smack_malloc_used_tot = 0;
 }
 
-void delete_mail(ushort mailnum, ubyte type)
-{
-    asm volatile ("call ASM_delete_mail\n"
-        : : "a" (mailnum), "d" (type));
-}
-
-ubyte load_mail_text(const char *filename)
+ubyte do_buy_equip(ubyte click)
 {
     ubyte ret;
-    asm volatile ("call ASM_load_mail_text\n"
-        : "=r" (ret) : "a" (filename));
+    asm volatile ("call ASM_do_buy_equip\n"
+        : "=r" (ret) : "a" (click));
     return ret;
+}
+
+void init_weapon_anim(ubyte weapon)
+{
+    asm volatile ("call ASM_init_weapon_anim\n"
+        : : "a" (weapon));
 }
 
 void research_unkn_func_002(void)
@@ -1829,22 +1862,8 @@ void show_menu_screen(void)
           unkn_research_func_006();
     if ((screentype == SCRT_9 || screentype == SCRT_B) && change_screen == 7)
     {
-        char fname[FILENAME_MAX];
-
         screentype = SCRT_MISSION;
-        heading_box.Text = gui_strings[372];
-        data_1c4aa2 = 0;
-        unkn36_box.Lines = 0;
-
-        if (open_brief != 0)
-        {
-            if (open_brief < 0) {
-                sprintf(fname, "%s/mail%03d.txt", "textdata", email_store[-open_brief - 1].Mission);
-            } else if (open_brief > 0) {
-                sprintf(fname, "%s/miss%03d.txt", "textdata", mission_list[brief_store[open_brief - 1].Mission].SourceID);
-            }
-            load_mail_text(fname);
-        }
+        brief_load_mission_info();
         redraw_screen_flag = 1;
         edit_flag = 0;
         change_screen = 0;
@@ -1918,6 +1937,150 @@ void show_menu_screen(void)
     }
     memcpy(lbDisplay.WScreen, back_buffer, 640*480);
     draw_purple_screen();
+
+    if ( screentype != SCRT_MAINMENU && screentype != SCRT_PAUSE && !restore_savegame )
+    {
+        if ( lbKeyOn[KC_F1] && screentype != SCRT_ALERTBOX && !net_unkn_pos_01b)
+        {
+            lbKeyOn[KC_F1] = 0;
+            change_screen = 1;
+        }
+        if ( lbKeyOn[KC_F2] && screentype != SCRT_ALERTBOX && !net_unkn_pos_01b)
+        {
+            lbKeyOn[KC_F2] = 0;
+            change_screen = 3;
+        }
+        if ( lbKeyOn[KC_F3] && screentype != SCRT_ALERTBOX && !net_unkn_pos_01b)
+        {
+            lbKeyOn[KC_F3] = 0;
+            change_screen = 4;
+        }
+        if ( lbKeyOn[KC_F4] && screentype != SCRT_ALERTBOX && !net_unkn_pos_01b)
+        {
+            lbKeyOn[KC_F4] = 0;
+            change_screen = 5;
+        }
+        if ( lbKeyOn[KC_F5] && screentype != SCRT_ALERTBOX && !net_unkn_pos_01b)
+        {
+            lbKeyOn[KC_F5] = 0;
+            if (research.NumBases > 0)
+                change_screen = 6;
+        }
+        if ( lbKeyOn[KC_F6] && screentype != SCRT_ALERTBOX && !net_unkn_pos_01b)
+        {
+            lbKeyOn[KC_F6] = 0;
+            if (open_brief != 0)
+                change_screen = 7;
+        }
+    }
+    if (change_screen == 1)
+    {
+        screentype = SCRT_NETGAME;
+        redraw_screen_flag = 1;
+        heading_box.Text = "";
+        edit_flag = 0;
+        change_screen = 0;
+    }
+    if (change_screen == 2)
+    {
+        screentype = SCRT_2;
+        redraw_screen_flag = 1;
+        heading_box.Text = gui_strings[367];
+        edit_flag = 0;
+        change_screen = 0;
+    }
+    if (change_screen == 3)
+    {
+        heading_box.Text = gui_strings[368];
+        redraw_screen_flag = 1;
+        edit_flag = 0;
+        change_screen = 0;
+        screentype = SCRT_3;
+        if (city_id != -1)
+          unkn_city_no = city_id;
+    }
+    if (change_screen == 4)
+    {
+        screentype = SCRT_CRYO;
+        heading_box.Text = gui_strings[369];
+        equip_cost_box.X = 430;
+        equip_cost_box.Width = 198;
+        equip_cost_box.Y = 383;
+        equip_name_box.Text = equip_name_text;
+        if ( selected_mod < 0 )
+            equip_name_text[0] = '\0';
+        else
+            init_weapon_anim(selected_mod + 32);
+        buy_equip_button.Text = gui_strings[436];
+        buy_equip_button.CallBackFn = do_buy_equip;
+
+        sprintf(equip_cost_text, "%d", 10 * (int)mod_defs[selected_mod + 1].Cost);
+        redraw_screen_flag = 1;
+        int i;
+        for (i = 0; i < 4; i++)
+        {
+            mod_draw_states[i] = 0;
+            if (0 != flic_mods[i])
+                mod_draw_states[i] = 8;
+        }
+        current_drawing_mod = 0;
+        new_current_drawing_mod = 0;
+        edit_flag = 0;
+        change_screen = 0;
+    }
+    if (change_screen == 5)
+    {
+        screentype = SCRT_EQUIP;
+        heading_box.Text = gui_strings[370];
+        equip_cost_box.X = buy_equip_button.Width + buy_equip_button.X + 4;
+        refresh_equip_list = 1;
+        equip_cost_box.Width = 208 - buy_equip_button.Width - 14;
+        equip_cost_box.Y = 404;
+        if ( selected_weapon < 0 )
+        {
+            equip_name_box.Text = 0;
+        }
+        else
+        {
+            init_weapon_anim(selected_weapon);
+            if ((research.WeaponsCompleted & (1 << selected_weapon)) || (login_control__State != 6))
+            {
+              if ( background_type == 1 )
+                  equip_name_box.Text = gui_strings[selected_weapon + 30];
+              else
+                  equip_name_box.Text = gui_strings[selected_weapon];
+            }
+            else
+            {
+                equip_name_box.Text = gui_strings[65];
+            }
+        }
+        if (buy_equip_button.CallBackFn == do_buy_equip)
+            sprintf(equip_cost_text, "%d", 100 * weapon_defs[selected_weapon + 1].Category);
+        else
+            sprintf(equip_cost_text, "%d", 100 * weapon_defs[selected_weapon + 1].Category >> 1);
+        redraw_screen_flag = 1;
+        edit_flag = 0;
+        change_screen = 0;
+    }
+    if (change_screen == 6)
+    {
+        screentype = SCRT_RESEARCH;
+        heading_box.Text = gui_strings[371];
+        research_unkn21_box.Lines = 0;
+        edit_flag = 0;
+        change_screen = 0;
+        redraw_screen_flag = 1;
+    }
+    if (change_screen == 7)
+    {
+        city_id = -1;
+        screentype = SCRT_MISSION;
+        brief_load_mission_info();
+        redraw_screen_flag = 1;
+        edit_flag = 0;
+        change_screen = 0;
+    }
 
     //TODO implement the rest
 #endif
