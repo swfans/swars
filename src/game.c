@@ -1549,6 +1549,12 @@ void brief_load_mission_info(void)
     }
 }
 
+void activate_cities(ubyte brief)
+{
+    asm volatile ("call ASM_activate_cities\n"
+        : : "a" (brief));
+}
+
 void init_weapon_text(void)
 {
     asm volatile ("call ASM_init_weapon_text\n"
@@ -2090,6 +2096,126 @@ void show_menu_screen(void)
         screentype = SCRT_ALERTBOX;
         alert_OK_button.Flags |= 0x0001;
         redraw_screen_flag = 1;
+    }
+
+    if ( redraw_screen_flag && !edit_flag )
+    {
+        mo_weapon = -1;
+        redraw_screen_flag = edit_flag;
+        reload_background_flag = 1;
+        if (screentype == SCRT_3)
+        {
+            open_brief = old_mission_brief;
+            activate_cities(0);
+        }
+        else if ( screentype == SCRT_MISSION )
+        {
+            activate_cities(open_brief);
+        }
+
+        brief_NETSCAN_COST_box.Flags = 1;
+        unkn32_box.Flags = 1;
+        heading_box.Flags = 1;
+        unkn35_box.Flags = 1;
+        unkn13_SYSTEM_button.Flags = 1;
+        unkn39_box.Flags = 1;
+        unkn29_box.Flags = 1;
+        unkn31_box.Flags = 1;
+        research_unkn20_box.Flags = 1;
+        research_progress_button.Flags = 1;
+        unkn30_box.Flags = 1;
+        net_unkn26.Flags = 1;
+        net_unkn27.Flags = 1;
+        net_unkn23.Flags = 1;
+        net_unkn24.Flags = 1;
+        net_unkn25.Flags = 1;
+        net_unkn22.Flags = 1;
+        net_unkn21.Flags = 1;
+        net_unkn19_box.Flags = 1;
+        weapon_slots.Flags = 1;
+        equip_name_box.Flags = 1;
+        slots_box.Flags = 1;
+        blokey_box.Flags = 1;
+        pause_unkn12_box.Flags = 1;
+        pause_unkn11_box.Flags = 1;
+        equip_cost_box.Flags = 1;
+        unkn34_box.Flags = 1;
+        unkn37_box.Flags = 769;
+        mod_list_box.Flags = 769;
+        agent_list_box.Flags = 769;
+        equip_list_box.Flags = 769;
+        equip_display_box.Flags = 769;
+        research_unkn21_box.Flags = 769;
+        unkn36_box.Flags = 769;
+        mission_text_box.Flags = 769;
+        unkn38_box.Flags = 16385;
+
+        for (i = 0; i != 276; )
+        {
+          i += 46;
+          *(__int16 *)((char *)&unkn37_box.TextFadePos + i) = 17;
+        }
+        for (i = 0; i != 210; )
+        {
+          i += 42;
+          *(_WORD *)(&equip_cost_box.TextSpeed + i) = 1;
+        }
+        for (i = 0; i != 96; )
+        {
+          i += 24;
+          *(__int16 *)((char *)&unkn34_box.Flags + i) = 1;
+        }
+        for (i = 0; i != 322; )
+        {
+          i += 46;
+          *(_WORD *)((char *)&unkn33_box.DrawFn + i + 2) = 257;
+        }
+
+        for (i = 0; i != 14 )
+        {
+          ++i;
+          *(_WORD *)&options_mmedia_buttons[i + 1].DrawSpeed = 257;
+        }
+        while ( i != 16 )
+        {
+          ++i;
+          *(_WORD *)&options_mmedia_buttons[i + 1].DrawSpeed = 1;
+        }
+
+        storage_LOAD_button.Flags |= 0x0001;
+        storage_SAVE_button.Flags |= 0x0001;
+        main_quit_button.Flags |= 0x0001;
+        pause_continue_button.Flags |= 0x0001;
+        storage_NEW_MORTAL_button.Flags |= 0x0001;
+        main_login_button.Flags |= 0x0001;
+        pause_abort_button.Flags |= 0x0001;
+        main_load_button.Flags |= 0x0001;
+        main_map_editor_button.Flags |= 0x0001;
+        buy_equip_button.Flags |= 0x0001;
+        research_submit_button.Flags |= 0x0001;
+        research_list_buttons[1].Flags |= 0x0001;
+        unkn11_CANCEL_button.Flags |= 0x0001;
+        research_list_buttons[0].Flags |= 0x0001;
+        unkn12_WEAPONS_MODS_button.Flags |= 0x0001;
+        net_SET2_button.Flags |= 0x0001;
+        net_SET_button.Flags |= 0x0001;
+        net_INITIATE_button.Flags |= 0x0001;
+        unkn8_EJECT_button.Flags |= 0x0001;
+        unkn10_SAVE_button.Flags |= 0x0001;
+        net_groups_LOGON_button.Flags |= 0x0001;
+        unkn10_CALIBRATE_button.Flags |= 0x0001;
+        unkn10_CONTROLS_button.Flags |= 0x0001;
+        brief_NETSCAN_button.Flags |= 0x0001;
+        unkn2_ACCEPT_button.Flags |= 0x0001;
+        unkn2_CANCEL_button.Flags |= 0x0001;
+        net_protocol_option_button.Flags |= 0x0001;
+        all_agents_button.Flags |= 0x0001;
+        net_protocol_select_button.Flags |= 0x0001;
+        net_unkn40_button.Flags |= 0x0001;
+        if ( screentype == SCRT_CRYO )
+            equip_cost_box.Flags |= 0x0008;
+        if ( !game_projector_speed && screentype != SCRT_99 )
+            play_sample_using_heap(0, 113, 127, 64, 100, 0, 3u);
     }
 
     //TODO implement the rest
