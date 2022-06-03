@@ -2081,6 +2081,16 @@ void show_menu_screen(void)
         edit_flag = 0;
         change_screen = 0;
     }
+    if (show_alert)
+    {
+        alert_box.Flags = 1;
+        edit_flag = 0;
+        old_screentype = screentype;
+        show_alert = 0;
+        screentype = SCRT_ALERTBOX;
+        alert_OK_button.Flags |= 0x0001;
+        redraw_screen_flag = 1;
+    }
 
     //TODO implement the rest
 #endif

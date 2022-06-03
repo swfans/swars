@@ -592,6 +592,7 @@ extern short next_ref;
 extern ushort replay_intro_timer;
 extern struct EmailItem email_store[20];
 extern struct EmailItem brief_store[10];
+extern ubyte show_alert;
 
 extern ushort mouse_map_x;
 extern ushort mouse_map_z;
@@ -621,6 +622,8 @@ extern struct ScreenInfoBox equip_cost_box;
 extern struct ScreenButton buy_equip_button;
 extern struct ScreenTextBox equip_name_box;
 extern struct ScreenTextBox research_unkn21_box;
+extern struct ScreenBox alert_box;
+extern struct ScreenButton alert_OK_button;
 extern ubyte new_mail;
 extern char net_players[25*5];
 
