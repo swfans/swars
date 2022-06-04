@@ -474,6 +474,14 @@ struct ScreenMenuBox { // sizeof=42
   sbyte field_29;
 };
 
+struct LevelDef {
+  ubyte PlayableGroups[8];
+  ubyte field_8[33];
+  ubyte field_29;
+  ubyte field_2A;
+  ubyte field_2B;
+};
+
 #pragma pack()
 
 extern char session_name[20];
@@ -502,6 +510,7 @@ extern uint16_t ingame__CurrentMission;
 extern ubyte ingame__InNetGame_UNSURE;
 extern ubyte ingame__DetailLevel;
 extern ushort ingame__dword_180C4F;
+extern ubyte ingame__byte_180CA5;
 extern struct Scanner ingame__Scanner;
 
 extern ubyte login_control__State;
@@ -622,6 +631,7 @@ extern ushort data_1811ae;
 
 extern struct ModDef mod_defs[17];
 extern struct WeaponDef weapon_defs[33];
+extern struct LevelDef level_def;
 
 extern ubyte mouser;
 extern struct Thing *things;
@@ -636,6 +646,7 @@ extern short old_mission_brief;
 extern short open_brief;
 extern short next_brief;
 extern short next_ref;
+extern ushort next_mission;
 extern ushort replay_intro_timer;
 extern struct EmailItem email_store[20];
 extern struct EmailItem brief_store[10];

@@ -1856,6 +1856,19 @@ void init_random_seed(void)
     srand(seed);
 }
 
+ushort find_mission_with_mapid(short mapID, short mission_limit)
+{
+    ushort i;
+    for (i = 1; i < mission_limit; i++)
+    {
+        if (mission_list[i].MapNo == mapID) {
+            return i;
+        }
+    }
+    return 0;
+}
+
+
 void update_open_brief(void)
 {
     int i;
@@ -1885,10 +1898,68 @@ void update_open_brief(void)
     }
 }
 
+/** Macro for returning given array of elements in random order.
+ *
+ * Provided input and output arrays, type of element and count of elements,
+ * this routine will randomize the order of elements.
+ */
+#define array_elements_in_random_order(out_nubers, in_nubers, elem_type, count) \
+{ \
+    ushort pos, remain, next; \
+    elem_type nums[count]; \
+    memcpy(nums, in_nubers, sizeof(elem_type)*count); \
+    remain = count; \
+    for (pos = 0; pos < count; pos++) \
+    { \
+        elem_type nbak; \
+        next = LbRandomAnyShort() % remain; \
+        remain--; \
+        out_nubers[pos] = nums[next]; \
+        nbak = nums[remain]; \
+        nums[remain] = nums[next]; \
+        nums[next] = nbak; \
+    } \
+}
+
+void randomize_playable_groups_order(void)
+{
+    static long incrementing_nubers[] = {0, 1, 2, 3, 4, 5, 6, 7,};
+    array_elements_in_random_order(level_def.PlayableGroups, incrementing_nubers, long, 8);
+/* REMOVE PENDING
+          static long incrementing_nubers[] = {0, 1, 2, 3, 4, 5, 6, 7,};
+          ushort pos, remain, next;
+          long nums[8];
+          memcpy(nums, incrementing_nubers, sizeof(incrementing_nubers));
+          remain = 8;
+          for (pos = 0; pos < 8; pos++)
+          {
+            long nbak;
+            next = LbRandomAnyShort() % remain;
+            remain--;
+            level_def.PlayableGroups[pos] = nums[next];
+            nbak = nums[remain];
+            nums[remain] = nums[next];
+            nums[next] = nbak;
+          }
+*/
+}
+
 void frame_unkn_func_06(void)
 {
     asm volatile ("call ASM_frame_unkn_func_06\n"
         :  :  : "eax" );
+}
+
+void load_netscan_data(ubyte city_id, ubyte a2)
+{
+    asm volatile ("call ASM_load_netscan_data\n"
+        : : "a" (city_id), "d" (a2));
+}
+
+void load_all_text(ubyte a1)
+{
+    asm volatile ("call ASM_load_all_text\n"
+        : : "a" (a1));
 }
 
 void show_menu_screen_st78(void)
@@ -1922,7 +1993,27 @@ void show_menu_screen_st78(void)
             update_open_brief();
         }
 
-    //TODO implement the rest
+        ingame__DisplayMode = DpM_UNKN_32;
+        debug_trace_place(6);
+        if ( in_network_game )
+        {
+          ingame__byte_180CA5 = 1;
+          ushort mission;
+          mission = find_mission_with_mapid(cities[login_control__City].MapID, next_mission);
+          if (mission > 0) {
+              ingame__byte_180CA5 = mission;
+              ingame__CurrentMission = mission;
+          }
+
+          change_current_map(mission_list[ingame__byte_180CA5].MapNo);
+          load_mad_0_console(-(int)mission_list[ingame__byte_180CA5].LevelNo, ingame__byte_180CA5);
+          randomize_playable_groups_order();
+        }
+        else
+        {
+            load_all_text(brief_store[open_brief - 1].Mission);
+            change_current_map(cities[unkn_city_no].MapID);
+        }
 
         debug_trace_place(7);
         // The file name is formatted in original code, but doesn't seem to be used
@@ -1932,8 +2023,8 @@ void show_menu_screen_st78(void)
         execute_commands = 1;
         if ( !in_network_game )
         {
-          if ( cities[unkn_city_no].Level )
-            load_mad_0_console(-cities[unkn_city_no].Level, unkn_city_no);
+            if (cities[unkn_city_no].Level != 0)
+                load_mad_0_console(-cities[unkn_city_no].Level, unkn_city_no);
         }
         debug_trace_place(8);
     }
