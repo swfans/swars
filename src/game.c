@@ -104,7 +104,6 @@ extern unsigned short unkn2_pos_y;
 extern unsigned short unkn2_pos_z;
 extern int data_1c8428;
 extern const char *primvehobj_fname;
-extern unsigned char data_19ec6f;
 extern unsigned char textwalk_data[640];
 
 extern PrimObjectPoint *prim_object_points;
@@ -474,6 +473,12 @@ void load_mad_console(ushort mapno)
 {
     asm volatile ("call ASM_load_mad_console\n"
         : : "a" (mapno));
+}
+
+void load_mad_0_console(ushort map, short level)
+{
+    asm volatile ("call ASM_load_mad_0_console\n"
+        : : "a" (map), "d" (level));
 }
 
 TbBool is_unkn_current_player(void)
@@ -1851,6 +1856,41 @@ void init_random_seed(void)
     srand(seed);
 }
 
+void update_open_brief(void)
+{
+    int i;
+    open_brief = 0;
+    for (i = 0; i < next_brief; i++)
+    {
+      int k = brief_store[i].Mission;
+      if (cities[unkn_city_no].MapID == mission_list[k].MapNo)
+      {
+          open_brief = i + 1;
+      }
+      else
+      {
+          while ( 1 )
+          {
+            k = mission_list[k].SpecialTrigger[0];
+            if (k == 0)
+                break;
+            if (cities[unkn_city_no].MapID == mission_list[k].MapNo) {
+                open_brief = i + 1;
+                break;
+            }
+          }
+      }
+      if (open_brief != 0)
+          break;
+    }
+}
+
+void frame_unkn_func_06(void)
+{
+    asm volatile ("call ASM_frame_unkn_func_06\n"
+        :  :  : "eax" );
+}
+
 void show_menu_screen_st78(void)
 {
     init_random_seed();
@@ -1876,7 +1916,55 @@ void show_menu_screen_st78(void)
     while ( IsSamplePlaying(0, 118, 0) )
       ;
 
+    if ( data_1c4b78 )
+    {
+        if (!in_network_game) {
+            update_open_brief();
+        }
+
     //TODO implement the rest
+
+        debug_trace_place(7);
+        // The file name is formatted in original code, but doesn't seem to be used
+        //sprintf(fname, "maps/map%03d.scn", cities[unkn_city_no].MapID);
+        ingame__dword_180C4F = 0;
+        data_19ec6f = 1;
+        execute_commands = 1;
+        if ( !in_network_game )
+        {
+          if ( cities[unkn_city_no].Level )
+            load_mad_0_console(-cities[unkn_city_no].Level, unkn_city_no);
+        }
+        debug_trace_place(8);
+    }
+    else
+    {
+        LbMouseChangeSprite(&pointer_sprites[1]);
+        ingame__DisplayMode = DpM_UNKN_1;
+    }
+
+    debug_trace_place(9);
+    data_1c498d = 2;
+    reload_background_flag = 1;
+    debug_trace_place(10);
+    memset(lbDisplay.WScreen, 0, 640*480);
+    frame_unkn_func_06();
+    memset(lbDisplay.WScreen, 0, 640*480);
+    show_black_screen();
+    swap_wscreen();
+    LbFileLoadAt("qdata/pal.pal", display_palette);
+    LbPaletteSet(display_palette);
+    debug_trace_place(11);
+    if (game_high_resolution)
+    {
+        overall_scale = 400;
+        render_area_a = 30;
+        render_area_b = 30;
+    }
+    else
+    {
+        setup_screen_mode(Lb_SCREEN_MODE_320_200_8);
+    }
 
     debug_trace_place(12);
     LbFileLoadAt("data/tables.dat", &fade_table);

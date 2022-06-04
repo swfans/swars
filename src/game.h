@@ -75,6 +75,22 @@ enum ScreenType {
   SCRT_99 = 99,
 };
 
+enum DisplayMode {
+  DpM_NONE = 0x0,
+  DpM_UNKN_1 = 0x1,
+  DpM_2 = 0x2,
+  DpM_31 = 0x31,
+  DpM_UNKN_32 = 0x32,
+  DpM_UNKN_33 = 0x33,
+  DpM_34 = 0x34,
+  DpM_36 = 0x36,
+  DpM_UNKN_37 = 0x37,
+  DpM_38 = 0x38,
+  DpM_39 = 0x39,
+  DpM_UNKN_3A = 0x3A,
+  DpM_UNKN_3B = 0x3B,
+};
+
 struct Thing;
 
 typedef struct {
@@ -485,6 +501,7 @@ extern ushort ingame__MissionStatus;
 extern uint16_t ingame__CurrentMission;
 extern ubyte ingame__InNetGame_UNSURE;
 extern ubyte ingame__DetailLevel;
+extern ushort ingame__dword_180C4F;
 extern struct Scanner ingame__Scanner;
 
 extern ubyte login_control__State;
@@ -534,6 +551,7 @@ extern ushort gamep_unknval_01;
 extern uint8_t *vec_tmap;
 extern ubyte *memload;
 extern ubyte net_host_player_no;
+extern ubyte data_19ec6f;
 
 extern ubyte background_type;
 extern ubyte old_screentype;
@@ -616,6 +634,7 @@ extern struct MissionStatus mission_status[120];
 extern struct Mission mission_list[120];
 extern short old_mission_brief;
 extern short open_brief;
+extern short next_brief;
 extern short next_ref;
 extern ushort replay_intro_timer;
 extern struct EmailItem email_store[20];
