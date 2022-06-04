@@ -375,9 +375,9 @@ void init_arrays_1(void)
     ASM_init_arrays_1();
 }
 
-void game_setup_sub2(int a1)
+void bang_set_detail(int a1)
 {
-    asm volatile ("call ASM_game_setup_sub2\n"
+    asm volatile ("call ASM_bang_set_detail\n"
         : : "a" (a1));
 }
 
@@ -1089,7 +1089,7 @@ void game_setup(void)
     LbDataLoadAll(unk02_load_files);
     game_setup_sub1();
     init_arrays_1();
-    game_setup_sub2(0);
+    bang_set_detail(0);
     game_setup_sub3();
     ingame__draw_unknprop_01 = 0;
     game_setup_sub4(-4);
@@ -1175,6 +1175,34 @@ void game_process_sub09(void)
         }
         break;
     }
+}
+
+void load_multicolor_sprites(void)
+{
+    ulong sz;
+    char fname[100];
+
+    sprintf(fname, "data/mspr-%d.dat", ingame__TrenchcoatPreference);
+    LbFileLoadAt(fname, m_spr_data);
+    sprintf(fname, "data/mspr-%d.tab", ingame__TrenchcoatPreference);
+    sz = LbFileLoadAt(fname, m_sprites);
+    m_sprites_end = (struct TbSprite *)((ubyte *)m_sprites + sz);
+    LbSpriteSetup(m_sprites, m_sprites_end, m_spr_data);
+    //unknown_unused(); -- nop function, not sure what was its purpose
+}
+
+void init_player(void)
+{
+    asm volatile ("call ASM_init_player\n"
+        :  :  : "eax" );
+}
+
+int func_6edb8(ubyte a1)
+{
+    int ret;
+    asm volatile ("call ASM_func_6edb8\n"
+        : "=r" (ret) : "a" (a1));
+    return ret;
 }
 
 void debug_m_sprite(int idx)
@@ -1689,6 +1717,20 @@ int save_game_write(void)
     return ret;
 }
 
+void clear_mission_status(ulong id)
+{
+    mission_status[id].CivsKilled = 0;
+    mission_status[id].EnemiesKilled = 0;
+    mission_status[id].CivsPersuaded = 0;
+    mission_status[id].SecurityPersuaded = 0;
+    mission_status[id].EnemiesPersuaded = 0;
+    mission_status[id].AgentsGained = 0;
+    mission_status[id].AgentsLost = 0;
+    mission_status[id].SecurityKilled = 0;
+    mission_status[id].CityDays = 0;
+    mission_status[id].CityHours = 0;
+}
+
 void show_menu_screen_st2(void)
 {
     if ( in_network_game )
@@ -1829,7 +1871,70 @@ void show_menu_screen_st78(void)
         swap_wscreen();
     }
     while (!stop);
+
+    loading_INITIATING_box.Flags = 1;
+    while ( IsSamplePlaying(0, 118, 0) )
+      ;
+
     //TODO implement the rest
+
+    debug_trace_place(12);
+    LbFileLoadAt("data/tables.dat", &fade_table);
+    LbGhostTableLoad(display_palette, 50, "data/synghost.tab");
+    debug_trace_place(13);
+    if ( data_1c4b78 )
+    {
+        load_multicolor_sprites();
+        if (game_high_resolution)
+            load_pop_sprites_hi();
+        else
+            load_pop_sprites_lo();
+        init_player();
+        flic_unkn03(1);
+        func_6edb8(1);
+        if ( in_network_game )
+        {
+            if (data_1811ae != 1)
+                ingame__InNetGame_UNSURE = 3;
+            ingame__DetailLevel = 0;
+            bang_set_detail(1);
+            update_mission_time(1);
+            // why clear only 0x140 bytes?? the array is much larger
+            memset(mission_status, 0, sizeof(struct MissionStatus) * 8);
+            gameturn = 0;
+        }
+        else
+        {
+            int i;
+            for (i = 0; i < 8; i++) {
+                unkn2_names[i][0] = 0;
+            }
+            strncpy(unkn2_names[0], login_name, 16);
+
+            clear_mission_status(open_brief);
+            update_mission_time(1);
+            cities[unkn_city_no].Info = 0;
+            debug_trace_place(14);
+            //TODO SpecialTrigger doesn't seem to be correct name for next mission
+            for (i = brief_store[open_brief - 1].Mission; i != 0;
+              i = mission_list[i].SpecialTrigger[0])
+            {
+              if (mission_list[i].MapNo == cities[unkn_city_no].MapID)
+                  break;
+            }
+            ingame__CurrentMission = i;
+            mission_result = 0;
+            debug_trace_place(15);
+        }
+        lbDisplay.MLeftButton = 0;
+        lbDisplay.LeftButton = 0;
+    }
+
+    map_editor = 0;
+    data_1c4b78 = 0;
+    reload_background_flag = 0;
+    net_system_reset();
+    stop_sample_using_heap(0, 122);
 }
 
 void ASM_show_menu_screen(void);

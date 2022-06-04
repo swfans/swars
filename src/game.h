@@ -462,6 +462,8 @@ struct ScreenMenuBox { // sizeof=42
 
 extern char session_name[20];
 extern char user_name[50];
+extern char unkn2_names[8][16];
+extern char login_name[16];
 
 extern ubyte in_network_game;
 extern ubyte is_single_game;
@@ -481,6 +483,8 @@ extern ulong ingame__Expenditure;
 extern ubyte ingame__byte_1807DF;
 extern ushort ingame__MissionStatus;
 extern uint16_t ingame__CurrentMission;
+extern ubyte ingame__InNetGame_UNSURE;
+extern ubyte ingame__DetailLevel;
 extern struct Scanner ingame__Scanner;
 
 extern ubyte login_control__State;
@@ -557,6 +561,7 @@ extern char *mission_briefing_text;
 extern short mission_open[50];
 extern short mission_state[50];
 extern char *mem_unkn03;
+extern sbyte mission_result;
 extern char *weapon_text;
 extern struct PurpleDrawItem *purple_draw_list;
 extern ubyte *save_game_buffer;
@@ -595,6 +600,7 @@ extern ubyte new_current_drawing_mod;
 extern ubyte refresh_equip_list;
 extern ubyte flic_mods[5];
 extern ubyte reload_background_flag;
+extern ushort data_1811ae;
 
 extern struct ModDef mod_defs[17];
 extern struct WeaponDef weapon_defs[33];
