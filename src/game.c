@@ -1967,6 +1967,17 @@ void randomize_playable_groups_order(void)
 */
 }
 
+void wait_for_sound_sample_finish(ushort sample_id)
+{
+    TbClockMSec last_loop_time = LbTimerClock();
+    while (IsSamplePlaying(0, sample_id, NULL)) {
+        game_update();
+        TbClockMSec sleep_end = last_loop_time + 1000/GAME_FPS;
+        LbSleepUntil(sleep_end);
+        last_loop_time = LbTimerClock();
+    }
+}
+
 void frame_unkn_func_06(void)
 {
     asm volatile ("call ASM_frame_unkn_func_06\n"
@@ -2009,10 +2020,7 @@ void show_menu_screen_st78(void)
     while (!stop);
 
     loading_INITIATING_box.Flags = 1;
-    while (IsSamplePlaying(0, 118, NULL)) {
-        TbClockMSec sleep_end = LbTimerClock() + 1000/GAME_FPS;
-        LbSleepUntil(sleep_end);
-    }
+    wait_for_sound_sample_finish(118);
 
     if ( data_1c4b78 )
     {
@@ -2153,11 +2161,11 @@ void show_menu_screen(void)
     {
     case 2:
         show_menu_screen_st2();
-        play_sample_using_heap(0, 122, 127, 64, 100, -1, 3u);
+        play_sample_using_heap(0, 122, 127, 64, 100, -1, 3);
         break;
     case 0:
         show_menu_screen_st0();
-        play_sample_using_heap(0, 122, 127, 64, 100, -1, 3u);
+        play_sample_using_heap(0, 122, 127, 64, 100, -1, 3);
         break;
     default:
         break;
@@ -2185,8 +2193,8 @@ void show_menu_screen(void)
             LbScreenSetup(Lb_SCREEN_MODE_320_200_8, 320, 200, display_palette);
             LbMouseSetup(0, 2, 2);
             show_black_screen();
-            stop_sample_using_heap(0, 0x7Au);
-            stop_sample_using_heap(0, 0x7Au);
+            stop_sample_using_heap(0, 122);
+            stop_sample_using_heap(0, 122);
             if ( game_dirs[DirPlace_Sound].use_cd == 1 )
                 sprintf(fname, "%slanguage/%s/intro.smk", cd_drive, language_3str);
             else
@@ -2597,10 +2605,7 @@ void show_menu_screen(void)
 
     if (exit_game)
     {
-        while (IsSamplePlaying(0, 111, NULL)) {
-            TbClockMSec sleep_end = LbTimerClock() + 1000/GAME_FPS;
-            LbSleepUntil(sleep_end);
-        }
+        wait_for_sound_sample_finish(111);
         stop_sample_using_heap(0, 122);
     }
 #endif
