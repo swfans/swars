@@ -126,7 +126,7 @@ process_options (int *argc, char ***argv)
             is_single_game = 1;
             cmdln_param_current_map = atoi(optarg);
             ingame__Flags |= 0x08;
-            selected_map_index = cmdln_param_current_map;
+            ingame__CurrentMission = cmdln_param_current_map;
             ingame__Cheats |= 0x04;
             DEBUGLOG(0, "map index %d", cmdln_param_current_map);
             break;

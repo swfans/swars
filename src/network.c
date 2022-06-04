@@ -122,6 +122,14 @@ TbResult LbNetworkPlayerNumber(void)
     return ret;
 }
 
+TbResult LbNetworkExchange(void *a1, int a2)
+{
+    TbResult ret;
+    asm volatile ("call ASM_LbNetworkExchange\n"
+        : "=r" (ret) : "a" (a1), "d" (a2));
+    return ret;
+}
+
 TbResult LbModemReadConfig(const char *fname)
 {
     TbResult ret;

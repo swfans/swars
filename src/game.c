@@ -14,6 +14,7 @@
 #include "bfmemut.h"
 #include "bffile.h"
 #include "bfgentab.h"
+#include "bfiff.h"
 #include "svesa.h"
 #include "bflib_render.h"
 #include "bflib_fmvids.h"
@@ -473,6 +474,14 @@ void load_mad_console(ushort mapno)
 {
     asm volatile ("call ASM_load_mad_console\n"
         : : "a" (mapno));
+}
+
+TbBool is_unkn_current_player(void)
+{
+    TbBool ret;
+    asm volatile ("call ASM_is_unkn_current_player\n"
+        : "=r" (ret) : );
+    return ret;
 }
 
 void change_current_map(ushort mapno)
@@ -971,8 +980,8 @@ void setup_host(void)
       if ( !in_network_game )
       {
           int file_no;
-          file_no = get_new_packet_record_no(selected_map_index);
-          get_packet_record_fname(fname, selected_map_index, file_no+1);
+          file_no = get_new_packet_record_no(ingame__CurrentMission);
+          get_packet_record_fname(fname, ingame__CurrentMission, file_no+1);
           DEBUGLOG(0,"%s: Opening for packet save", fname);
           packet_rec_fh = LbFileOpen(fname, Lb_FILE_MODE_NEW);
           LbFileWrite(packet_rec_fh, &cmdln_param_current_map, 2);
@@ -981,7 +990,7 @@ void setup_host(void)
     if ( pktrec_mode == 2 )
     {
         ushort pktrec_head;
-        get_packet_record_fname(fname, selected_map_index, cmdln_pr_num);
+        get_packet_record_fname(fname, ingame__CurrentMission, cmdln_pr_num);
         DEBUGLOG(0,"%s: Opening for packet input", fname);
         packet_rec_fh = LbFileOpen(fname, Lb_FILE_MODE_READ_ONLY);
         LbFileRead(packet_rec_fh, &pktrec_head, sizeof(pktrec_head));
@@ -1775,6 +1784,54 @@ void show_menu_screen_st2(void)
     net_system_init2();
 }
 
+void init_random_seed(void)
+{
+    if (in_network_game)
+    {
+        mission_open[1] = ingame__CurrentMission;
+        mission_state[1] = 0;
+        mission_open[2] = 0;
+        mission_state[2] = 0;
+        if (is_unkn_current_player())
+        {
+            seed = time(0);
+            network_players[net_host_player_no].npfield_1 = seed;
+            LbNetworkExchange(network_players, 26);
+        } else {
+            LbNetworkExchange(network_players, 26);
+            seed = network_players[net_host_player_no].npfield_1;
+        }
+    }
+    else
+    {
+        seed = time(0);
+    }
+    srand(seed);
+}
+
+void show_menu_screen_st78(void)
+{
+    init_random_seed();
+    LbMouseChangeSprite(0);
+    reload_background();
+    play_sample_using_heap(0, 118, 127, 64, 100, 0, 3);
+    DwBool stop;
+    do
+    {
+        memcpy(lbDisplay.WScreen, back_buffer, 640*480);
+        text_buf_pos = 640*480;
+        if ((0 != game_projector_speed && (loading_INITIATING_box.Flags & 0x0001))
+          || (0 != lbKeyOn[KC_SPACE] && 0 == edit_flag))
+            loading_INITIATING_box.Flags |= 0x0002;
+        loading_INITIATING_box.DrawFn(&loading_INITIATING_box);
+        stop = loading_INITIATING_box.Flags & 0x1000;
+        draw_purple_screen();
+        swap_wscreen();
+    }
+    while (!stop);
+    //TODO implement the rest
+}
+
 void ASM_show_menu_screen(void);
 void show_menu_screen(void)
 {
@@ -2205,7 +2262,34 @@ void show_menu_screen(void)
             play_sample_using_heap(0, 113, 127, 64, 100, 0, 3u);
     }
 
-    //TODO implement the rest
+    if ( gameturn & 1 )
+    {
+      if (++data_1c498e > 7)
+          data_1c498e = 0;
+      LbMouseChangeSprite(&unk3_sprites[data_1c498e + 1]);
+    }
+
+    if (lbKeyOn[KC_F12]) {
+        lbKeyOn[KC_F12] = 0;
+        LbIffSave("synII", lbDisplay.WScreen, display_palette, 0);
+    }
+
+    if ( data_1c4b78 || map_editor )
+    {
+        show_menu_screen_st78();
+    }
+    else if ( reload_background_flag )
+    {
+        reload_background();
+        reload_background_flag = 0;
+    }
+
+    if (exit_game)
+    {
+        while (IsSamplePlaying(0, 111, 0))
+            ;
+        stop_sample_using_heap(0, 122);
+    }
 #endif
 }
 

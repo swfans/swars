@@ -463,12 +463,14 @@ struct ScreenMenuBox { // sizeof=42
 extern char session_name[20];
 extern char user_name[50];
 
-extern uint8_t in_network_game;
-extern uint8_t is_single_game;
-extern uint8_t cmdln_param_tf;
-extern uint8_t cmdln_param_bcg;
-extern uint8_t cmdln_param_d;
-extern uint8_t unkn01_maskarr[28];
+extern ubyte in_network_game;
+extern ubyte is_single_game;
+extern ubyte cmdln_param_tf;
+extern ubyte cmdln_param_bcg;
+extern ubyte cmdln_param_d;
+extern ubyte unkn01_maskarr[28];
+extern long map_editor;
+extern ulong seed;
 
 extern ubyte ingame__Cheats;
 extern ulong ingame__Credits;
@@ -478,6 +480,7 @@ extern ulong ingame__CashAtStart;
 extern ulong ingame__Expenditure;
 extern ubyte ingame__byte_1807DF;
 extern ushort ingame__MissionStatus;
+extern uint16_t ingame__CurrentMission;
 extern struct Scanner ingame__Scanner;
 
 extern ubyte login_control__State;
@@ -492,7 +495,6 @@ extern uint8_t game_perspective;
 extern uint8_t exit_game;
 extern uint8_t input_char;
 
-extern uint16_t selected_map_index;
 extern uint32_t active_flags_general_unkn01;
 
 extern long unkn01_downcount;
@@ -527,12 +529,14 @@ extern ushort fifties_per_gameturn;
 extern ushort gamep_unknval_01;
 extern uint8_t *vec_tmap;
 extern ubyte *memload;
+extern ubyte net_host_player_no;
 
 extern ubyte background_type;
 extern ubyte old_screentype;
 extern ubyte screentype;
 extern long data_155704;
 extern ubyte data_1c498d;
+extern ubyte data_1c498e;
 extern char *outro_text_s;
 extern char *outro_text_z;
 extern long data_197150;
@@ -550,6 +554,8 @@ extern ubyte playable_agents;
 extern ubyte game_high_resolution;
 extern ushort people_frames[22][16];
 extern char *mission_briefing_text;
+extern short mission_open[50];
+extern short mission_state[50];
 extern char *mem_unkn03;
 extern char *weapon_text;
 extern struct PurpleDrawItem *purple_draw_list;
@@ -588,6 +594,8 @@ extern char equip_cost_text[20];
 extern ubyte new_current_drawing_mod;
 extern ubyte refresh_equip_list;
 extern ubyte flic_mods[5];
+extern ubyte reload_background_flag;
+
 extern struct ModDef mod_defs[17];
 extern struct WeaponDef weapon_defs[33];
 
@@ -692,6 +700,7 @@ extern struct ScreenButton all_agents_button;
 extern struct ScreenButton net_protocol_select_button;
 extern struct ScreenButton unkn10_SAVE_button;
 extern struct ScreenButton net_unkn40_button;
+extern struct ScreenTextBox loading_INITIATING_box;
 extern ubyte new_mail;
 extern char net_players[25*5];
 
