@@ -26,10 +26,11 @@
 extern "C" {
 #endif
 /******************************************************************************/
+typedef void * TbSampleHandle;
 
 /******************************************************************************/
 void StopAllSamples(void);
-TbBool IsSamplePlaying(long tng_offs, ushort smp_id, long a3);
+TbBool IsSamplePlaying(long tng_offs, ushort smp_id, TbSampleHandle handle);
 /******************************************************************************/
 #ifdef __cplusplus
 }

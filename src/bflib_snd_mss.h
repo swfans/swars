@@ -29,10 +29,17 @@ extern "C" {
 #define DXDEC extern
 #define AILCALL
 
+#define U32 unsigned long
+
+struct _SAMPLE;
+
 typedef long HTIMER;                             // Handle to timer
+typedef struct _SAMPLE *HSAMPLE;
 
 /******************************************************************************/
 DXDEC  void    AILCALL  AIL_release_timer_handle      (HTIMER      timer);
+DXDEC  U32          AILCALL AIL_sample_status         (HSAMPLE S);
+
 /******************************************************************************/
 #ifdef __cplusplus
 }

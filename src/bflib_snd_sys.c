@@ -25,11 +25,11 @@ void StopAllSamples(void)
         :  :  : "eax" );
 }
 
-TbBool IsSamplePlaying(long tng_offs, ushort smp_id, long a3)
+TbBool IsSamplePlaying(long tng_offs, ushort smp_id, TbSampleHandle handle)
 {
     TbBool ret;
     asm volatile ("call ASM_IsSamplePlaying\n"
-        : "=r" (ret) : "a" (tng_offs), "d" (smp_id), "b" (a3));
+        : "=r" (ret) : "a" (tng_offs), "d" (smp_id), "b" (handle));
     return ret;
 }
 

@@ -678,7 +678,7 @@ void init_outro(void)
         gameturn++;
         traffic_unkn_func_01();
         process_engine_unk1();
-        if ( !(LbRandomAnyShort() & 0xF) && (data_155704 == -1 || !IsSamplePlaying(0, data_155704, 0)) )
+        if ( !(LbRandomAnyShort() & 0xF) && (data_155704 == -1 || !IsSamplePlaying(0, data_155704, NULL)) )
         {
             play_sample_using_heap(0, 7 + (LbRandomAnyShort() % 5), 127, 64, 100, 0, 3u);
         }
@@ -1398,9 +1398,15 @@ void show_main_screen(void)
         main_login_button.Flags |= 0x0002;
         main_map_editor_button.Flags |= 0x0002;
     }
-    main_quit_button.DrawFn(&main_quit_button);
-    main_load_button.DrawFn(&main_load_button);
-    main_login_button.DrawFn(&main_login_button);
+    //main_quit_button.DrawFn(&main_quit_button); -- incompatible calling convention
+    asm volatile ("call *%1\n"
+        : : "a" (&main_quit_button), "g" (main_quit_button.DrawFn));
+    //main_load_button.DrawFn(&main_load_button); -- incompatible calling convention
+    asm volatile ("call *%1\n"
+        : : "a" (&main_load_button), "g" (main_load_button.DrawFn));
+    //main_login_button.DrawFn(&main_login_button); -- incompatible calling convention
+    asm volatile ("call *%1\n"
+        : : "a" (&main_login_button), "g" (main_login_button.DrawFn));
 }
 
 void show_pause_screen(void)
@@ -1414,10 +1420,18 @@ void show_pause_screen(void)
         pause_abort_button.Flags |= 0x0002;
         pause_continue_button.Flags |= 0x0002;
     }
-    pause_unkn12_box.DrawFn(&pause_unkn12_box);
-    pause_unkn11_box.DrawFn(&pause_unkn11_box);
-    pause_continue_button.DrawFn(&pause_continue_button);
-    pause_abort_button.DrawFn(&pause_abort_button);
+    //pause_unkn12_box.DrawFn(&pause_unkn12_box); -- incompatible calling convention
+    asm volatile ("call *%1\n"
+        : : "a" (&pause_unkn12_box), "g" (pause_unkn12_box.DrawFn));
+    //pause_unkn11_box.DrawFn(&pause_unkn11_box); -- incompatible calling convention
+    asm volatile ("call *%1\n"
+        : : "a" (&pause_unkn11_box), "g" (pause_unkn11_box.DrawFn));
+    //pause_continue_button.DrawFn(&pause_continue_button); -- incompatible calling convention
+    asm volatile ("call *%1\n"
+        : : "a" (&pause_continue_button), "g" (pause_continue_button.DrawFn));
+    //pause_abort_button.DrawFn(&pause_abort_button); -- incompatible calling convention
+    asm volatile ("call *%1\n"
+        : : "a" (&pause_abort_button), "g" (pause_abort_button.DrawFn));
 }
 
 void show_scrt3_screen(void)
@@ -1431,12 +1445,21 @@ void show_scrt3_screen(void)
         unkn38_box.Flags |= 0x0002;
     }
     int ret = 1;
-    if (ret)
-        ret = heading_box.DrawFn(&heading_box);
-    if (ret)
-        ret = unkn29_box.DrawFn(&unkn29_box);
-    if (ret)
-        ret = unkn38_box.DrawFn(&unkn38_box);
+    if (ret) {
+        //ret = heading_box.DrawFn(&heading_box); -- incompatible calling convention
+        asm volatile ("call *%2\n"
+            : "=r" (ret) : "a" (&heading_box), "g" (heading_box.DrawFn));
+    }
+    if (ret) {
+        //ret = unkn29_box.DrawFn(&unkn29_box); -- incompatible calling convention
+        asm volatile ("call *%2\n"
+            : "=r" (ret) : "a" (&unkn29_box), "g" (unkn29_box.DrawFn));
+    }
+    if (ret) {
+        //ret = unkn38_box.DrawFn(&unkn38_box); -- incompatible calling convention
+        asm volatile ("call *%2\n"
+            : "=r" (ret) : "a" (&unkn38_box), "g" (unkn38_box.DrawFn));
+    }
 }
 
 void show_alert_box(void)
@@ -1976,7 +1999,9 @@ void show_menu_screen_st78(void)
         if ((0 != game_projector_speed && (loading_INITIATING_box.Flags & 0x0001))
           || (0 != lbKeyOn[KC_SPACE] && 0 == edit_flag))
             loading_INITIATING_box.Flags |= 0x0002;
-        loading_INITIATING_box.DrawFn(&loading_INITIATING_box);
+        //loading_INITIATING_box.DrawFn(&loading_INITIATING_box); -- incompatible calling convention
+        asm volatile ("call *%1\n"
+            : : "a" (&loading_INITIATING_box), "g" (loading_INITIATING_box.DrawFn));
         stop = loading_INITIATING_box.Flags & 0x1000;
         draw_purple_screen();
         swap_wscreen();
@@ -1984,8 +2009,10 @@ void show_menu_screen_st78(void)
     while (!stop);
 
     loading_INITIATING_box.Flags = 1;
-    while ( IsSamplePlaying(0, 118, 0) )
-      ;
+    while (IsSamplePlaying(0, 118, NULL)) {
+        TbClockMSec sleep_end = LbTimerClock() + 1000/GAME_FPS;
+        LbSleepUntil(sleep_end);
+    }
 
     if ( data_1c4b78 )
     {
@@ -2178,7 +2205,7 @@ void show_menu_screen(void)
     if (screentype != SCRT_MAINMENU) {
         replay_intro_timer = 0;
     }
-    text_buf_pos = 307200;
+    text_buf_pos = 640*480;
 
     if ( !joy.Buttons[0] || net_unkn_pos_02 )
     {
@@ -2272,12 +2299,12 @@ void show_menu_screen(void)
         net_unkn_func_33();
         init_net_players();
     }
-    if ( data_1c498f && lbDisplay.LeftButton )
+    if (data_1c498f && lbDisplay.LeftButton)
     {
         data_1c498f = 0;
         lbDisplay.LeftButton = 0;
     }
-    if ( data_1c4990 && lbDisplay.RightButton )
+    if (data_1c4990 && lbDisplay.RightButton)
     {
         data_1c4990 = 0;
         lbDisplay.RightButton = 0;
@@ -2439,7 +2466,7 @@ void show_menu_screen(void)
         redraw_screen_flag = 1;
     }
 
-    if ( redraw_screen_flag && !edit_flag )
+    if (redraw_screen_flag && !edit_flag)
     {
         mo_weapon = -1;
         redraw_screen_flag = edit_flag;
@@ -2449,7 +2476,7 @@ void show_menu_screen(void)
             open_brief = old_mission_brief;
             activate_cities(0);
         }
-        else if ( screentype == SCRT_MISSION )
+        else if (screentype == SCRT_MISSION)
         {
             activate_cities(open_brief);
         }
@@ -2540,13 +2567,13 @@ void show_menu_screen(void)
         all_agents_button.Flags |= 0x0001;
         net_protocol_select_button.Flags |= 0x0001;
         net_unkn40_button.Flags |= 0x0001;
-        if ( screentype == SCRT_CRYO )
+        if (screentype == SCRT_CRYO)
             equip_cost_box.Flags |= 0x0008;
-        if ( !game_projector_speed && screentype != SCRT_99 )
+        if (!game_projector_speed && screentype != SCRT_99)
             play_sample_using_heap(0, 113, 127, 64, 100, 0, 3u);
     }
 
-    if ( gameturn & 1 )
+    if (gameturn & 1)
     {
       if (++data_1c498e > 7)
           data_1c498e = 0;
@@ -2562,7 +2589,7 @@ void show_menu_screen(void)
     {
         show_menu_screen_st78();
     }
-    else if ( reload_background_flag )
+    else if (reload_background_flag)
     {
         reload_background();
         reload_background_flag = 0;
@@ -2570,8 +2597,10 @@ void show_menu_screen(void)
 
     if (exit_game)
     {
-        while (IsSamplePlaying(0, 111, 0))
-            ;
+        while (IsSamplePlaying(0, 111, NULL)) {
+            TbClockMSec sleep_end = LbTimerClock() + 1000/GAME_FPS;
+            LbSleepUntil(sleep_end);
+        }
         stop_sample_using_heap(0, 122);
     }
 #endif
