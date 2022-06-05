@@ -53,7 +53,7 @@ enum ScreenType {
   SCRT_NONE = 0x0,
   SCRT_MISSION,
   SCRT_2,
-  SCRT_3,
+  SCRT_WORLDMAP,
   SCRT_CRYO,
   SCRT_EQUIP,
   SCRT_MAINMENU,
@@ -333,7 +333,8 @@ struct ScreenTextBox {
   ubyte (*DrawFn)(struct ScreenTextBox *box);
   ubyte (*DrawTextFn)(struct ScreenTextBox *box);
   struct ScreenButton *Buttons[2];
-  struct ScreenInfoBox *Infos[2];
+  short Infos[2];
+  //struct ScreenInfoBox *Infos[2];
   ushort TextTopLine;
   ushort field_36;
   ushort field_38;
@@ -346,13 +347,13 @@ struct ScreenTextBox {
   ubyte field_43;
 };
 
-struct UnknStruct04Sub1 {
+struct UnknStruct04Sub1 { // sizeof=22
     char field_0[6];
     char text[15];
     char field_15;
 };
 
-struct UnknStruct04 {
+struct UnknStruct04 { // sizeof=218
     char field_0[40];
     struct UnknStruct04Sub1 field_28[8];
     char field_D8;

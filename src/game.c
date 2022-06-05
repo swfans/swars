@@ -183,6 +183,9 @@ void PacketRecord_Close(void)
 
 void debug_trace_place(int place)
 {
+#if 0
+    DEBUGLOG(0,"reached place %d", place);
+#endif
 }
 
 bool
@@ -278,15 +281,7 @@ game_handle_sdl_events (void)
 void ASM_game_setup(void);
 void ASM_load_texturemaps(void);
 void ASM_load_prim_quad(void);
-void ASM_game_setup_sub1(void);
-void ASM_init_arrays_1(void);
-void ASM_game_setup_sub3(void);
-void ASM_game_setup_sub5(void);
 void ASM_setup_host(void);
-void ASM_read_user_settings(void);
-void ASM_setup_color_lookups(void);
-void ASM_game_setup_sub8(void);
-void ASM_init_engine(void);
 void ASM_play_intro(void);
 void ASM_init_syndwars(void);
 void ASM_setup_host_sub6(void);
@@ -366,12 +361,14 @@ void load_prim_quad(void)
 
 void game_setup_sub1(void)
 {
-    ASM_game_setup_sub1();
+    asm volatile ("call ASM_game_setup_sub1\n"
+        :  :  : "eax" );
 }
 
 void init_arrays_1(void)
 {
-    ASM_init_arrays_1();
+    asm volatile ("call ASM_init_arrays_1\n"
+        :  :  : "eax" );
 }
 
 void bang_set_detail(int a1)
@@ -382,7 +379,8 @@ void bang_set_detail(int a1)
 
 void game_setup_sub3(void)
 {
-    ASM_game_setup_sub3();
+    asm volatile ("call ASM_game_setup_sub3\n"
+        :  :  : "eax" );
 }
 
 void game_setup_sub4(int a1)
@@ -392,7 +390,13 @@ void game_setup_sub4(int a1)
 
 void game_setup_sub5(void)
 {
-    ASM_game_setup_sub5();
+    asm volatile ("call ASM_game_setup_sub5\n"
+        :  :  : "eax" );
+}
+
+void smack_malloc_free_all(void)
+{
+    smack_malloc_used_tot = 0;
 }
 
 void flic_unkn03(ubyte a1)
@@ -429,6 +433,26 @@ void play_intro(void)
     if (cmdln_param_bcg)
         setup_screen_mode(Lb_SCREEN_MODE_640_480_8);
     flic_unkn03(1u);
+}
+
+void replay_intro(void)
+{
+    char fname[FILENAME_MAX];
+
+    LbScreenSetup(Lb_SCREEN_MODE_320_200_8, 320, 200, display_palette);
+    LbMouseSetup(0, 2, 2);
+    show_black_screen();
+    stop_sample_using_heap(0, 122);
+    stop_sample_using_heap(0, 122);
+    if ( game_dirs[DirPlace_Sound].use_cd == 1 )
+        sprintf(fname, "%slanguage/%s/intro.smk", cd_drive, language_3str);
+    else
+        sprintf(fname, "intro/intro.smk");
+    play_smk(fname, 13, 0);
+    smack_malloc_free_all();
+    play_sample_using_heap(0, 122, 127, 64, 100, -1, 3);
+    show_black_screen();
+    play_sample_using_heap(0, 122, 127, 64, 100, -1, 3);
 }
 
 void reset_heaps(void)
@@ -1013,17 +1037,20 @@ void setup_host(void)
 
 void read_user_settings(void)
 {
-    ASM_read_user_settings();
+    asm volatile ("call ASM_read_user_settings\n"
+        :  :  : "eax" );
 }
 
 void setup_color_lookups(void)
 {
-    ASM_setup_color_lookups();
+    asm volatile ("call ASM_setup_color_lookups\n"
+        :  :  : "eax" );
 }
 
 void game_setup_sub8(void)
 {
-    ASM_game_setup_sub8();
+    asm volatile ("call ASM_game_setup_sub8\n"
+        :  :  : "eax" );
 }
 
 void load_missions(int num)
@@ -1034,10 +1061,11 @@ void load_missions(int num)
 
 void init_engine(void)
 {
-    ASM_init_engine();
+    asm volatile ("call ASM_init_engine\n"
+        :  :  : "eax" );
 }
 
-void load_mission_map_lvl(unsigned char num)
+void load_mission_map_lvl(ubyte num)
 {
     asm volatile ("call ASM_load_mission_map_lvl\n"
         : : "a" (num));
@@ -1434,7 +1462,7 @@ void show_pause_screen(void)
         : : "a" (&pause_abort_button), "g" (pause_abort_button.DrawFn));
 }
 
-void show_scrt3_screen(void)
+void show_worldmap_screen(void)
 {
     if ((game_projector_speed && (heading_box.Flags & 0x01)) ||
       (lbKeyOn[KC_SPACE] && !edit_flag))
@@ -1661,11 +1689,6 @@ void purple_unkn1_data_to_screen(void)
     memcpy(data_1c6de4, data_1c6de8, 0x5FA0u);
 }
 
-void smack_malloc_free_all(void)
-{
-    smack_malloc_used_tot = 0;
-}
-
 ubyte do_buy_equip(ubyte click)
 {
     ubyte ret;
@@ -1781,7 +1804,7 @@ void show_menu_screen_st2(void)
       init_agents();
       srm_reset_research();
       load_missions(0);
-      memset(unkstruct04_arr, 0, 4360u);
+      memset(unkstruct04_arr, 0, 20 * sizeof(struct UnknStruct04)); //clear 4360 bytes
       data_1c6d48 = 0;
       selected_mod = -1;
       selected_weapon = -1;
@@ -1801,7 +1824,8 @@ void show_menu_screen_st2(void)
       data_1c4aa3 = brief_store[open_brief - 1].RefNum;
       if ((ingame__MissionStatus != 0) && (ingame__MissionStatus != 2))
       {
-            memcpy(&mission_status[0], &mission_status[open_brief], 0x28u);
+            memcpy(&mission_status[0], &mission_status[open_brief],
+              sizeof(struct MissionStatus));
             delete_mail(open_brief - 1, 1u);
             open_brief = 0;
             old_mission_brief = 0;
@@ -1891,7 +1915,6 @@ ushort find_mission_with_mapid(short mapID, short mission_limit)
     return 0;
 }
 
-
 void update_open_brief(void)
 {
     int i;
@@ -1948,23 +1971,6 @@ void randomize_playable_groups_order(void)
 {
     static long incrementing_nubers[] = {0, 1, 2, 3, 4, 5, 6, 7,};
     array_elements_in_random_order(level_def.PlayableGroups, incrementing_nubers, long, 8);
-/* REMOVE PENDING
-          static long incrementing_nubers[] = {0, 1, 2, 3, 4, 5, 6, 7,};
-          ushort pos, remain, next;
-          long nums[8];
-          memcpy(nums, incrementing_nubers, sizeof(incrementing_nubers));
-          remain = 8;
-          for (pos = 0; pos < 8; pos++)
-          {
-            long nbak;
-            next = LbRandomAnyShort() % remain;
-            remain--;
-            level_def.PlayableGroups[pos] = nums[next];
-            nbak = nums[remain];
-            nums[remain] = nums[next];
-            nums[next] = nbak;
-          }
-*/
 }
 
 void wait_for_sound_sample_finish(ushort sample_id)
@@ -1996,13 +2002,14 @@ void load_all_text(ubyte a1)
         : : "a" (a1));
 }
 
-void show_menu_screen_st78(void)
+void show_mission_loading_screen(void)
 {
-    init_random_seed();
     LbMouseChangeSprite(0);
     reload_background();
     play_sample_using_heap(0, 118, 127, 64, 100, 0, 3);
+
     DwBool stop;
+    TbClockMSec last_loop_time = LbTimerClock();
     do
     {
         memcpy(lbDisplay.WScreen, back_buffer, 640*480);
@@ -2016,11 +2023,22 @@ void show_menu_screen_st78(void)
         stop = loading_INITIATING_box.Flags & 0x1000;
         draw_purple_screen();
         swap_wscreen();
+
+        game_update();
+        TbClockMSec sleep_end = last_loop_time + 1000/GAME_FPS;
+        LbSleepUntil(sleep_end);
+        last_loop_time = LbTimerClock();
     }
     while (!stop);
 
-    loading_INITIATING_box.Flags = 1;
+    loading_INITIATING_box.Flags = 0x0001;
     wait_for_sound_sample_finish(118);
+}
+
+void show_load_and_prep_mission(void)
+{
+    init_random_seed();
+    show_mission_loading_screen();
 
     if ( data_1c4b78 )
     {
@@ -2188,22 +2206,7 @@ void show_menu_screen(void)
         replay_intro_timer++;
         if (replay_intro_timer > 1100)
         {
-            char fname[FILENAME_MAX];
-
-            LbScreenSetup(Lb_SCREEN_MODE_320_200_8, 320, 200, display_palette);
-            LbMouseSetup(0, 2, 2);
-            show_black_screen();
-            stop_sample_using_heap(0, 122);
-            stop_sample_using_heap(0, 122);
-            if ( game_dirs[DirPlace_Sound].use_cd == 1 )
-                sprintf(fname, "%slanguage/%s/intro.smk", cd_drive, language_3str);
-            else
-                sprintf(fname, "intro/intro.smk");
-            play_smk(fname, 13, 0);
-            smack_malloc_free_all();
-            play_sample_using_heap(0, 122, 127, 64, 100, -1, 3u);
-            show_black_screen();
-            play_sample_using_heap(0, 122, 127, 64, 100, -1, 3u);
+            replay_intro();
             replay_intro_timer = 0;
             data_1c498d = 0;
             return;
@@ -2256,8 +2259,8 @@ void show_menu_screen(void)
     case SCRT_MISSION:
         show_mission_screen();
         break;
-    case SCRT_3:
-        show_scrt3_screen();
+    case SCRT_WORLDMAP:
+        show_worldmap_screen();
         break;
     case SCRT_CRYO:
         show_cryo_chamber_screen();
@@ -2377,7 +2380,7 @@ void show_menu_screen(void)
         redraw_screen_flag = 1;
         edit_flag = 0;
         change_screen = 0;
-        screentype = SCRT_3;
+        screentype = SCRT_WORLDMAP;
         if (city_id != -1)
           unkn_city_no = city_id;
     }
@@ -2477,9 +2480,9 @@ void show_menu_screen(void)
     if (redraw_screen_flag && !edit_flag)
     {
         mo_weapon = -1;
-        redraw_screen_flag = edit_flag;
+        redraw_screen_flag = 0;
         reload_background_flag = 1;
-        if (screentype == SCRT_3)
+        if (screentype == SCRT_WORLDMAP)
         {
             open_brief = old_mission_brief;
             activate_cities(0);
@@ -2489,42 +2492,42 @@ void show_menu_screen(void)
             activate_cities(open_brief);
         }
 
-        brief_NETSCAN_COST_box.Flags = 1;
-        unkn32_box.Flags = 1;
-        heading_box.Flags = 1;
-        unkn35_box.Flags = 1;
-        unkn13_SYSTEM_button.Flags = 1;
-        unkn39_box.Flags = 1;
-        unkn29_box.Flags = 1;
-        unkn31_box.Flags = 1;
-        research_unkn20_box.Flags = 1;
-        research_progress_button.Flags = 1;
-        unkn30_box.Flags = 1;
-        net_unkn26.Flags = 1;
-        net_unkn27.Flags = 1;
-        net_unkn23.Flags = 1;
-        net_unkn24.Flags = 1;
-        net_unkn25.Flags = 1;
-        net_unkn22.Flags = 1;
-        net_unkn21.Flags = 1;
-        net_unkn19_box.Flags = 1;
-        weapon_slots.Flags = 1;
-        equip_name_box.Flags = 1;
-        slots_box.Flags = 1;
-        blokey_box.Flags = 1;
-        pause_unkn12_box.Flags = 1;
-        pause_unkn11_box.Flags = 1;
-        equip_cost_box.Flags = 1;
-        unkn34_box.Flags = 1;
-        unkn37_box.Flags = 769;
-        mod_list_box.Flags = 769;
-        agent_list_box.Flags = 769;
-        equip_list_box.Flags = 769;
-        equip_display_box.Flags = 769;
-        research_unkn21_box.Flags = 769;
-        unkn36_box.Flags = 769;
-        mission_text_box.Flags = 769;
-        unkn38_box.Flags = 16385;
+        brief_NETSCAN_COST_box.Flags = 0x0001;
+        unkn32_box.Flags = 0x0001;
+        heading_box.Flags = 0x0001;
+        unkn35_box.Flags = 0x0001;
+        unkn13_SYSTEM_button.Flags = 0x0001;
+        unkn39_box.Flags = 0x0001;
+        unkn29_box.Flags = 0x0001;
+        unkn31_box.Flags = 0x0001;
+        research_unkn20_box.Flags = 0x0001;
+        research_progress_button.Flags = 0x0001;
+        unkn30_box.Flags = 0x0001;
+        net_unkn26.Flags = 0x0001;
+        net_unkn27.Flags = 0x0001;
+        net_unkn23.Flags = 0x0001;
+        net_unkn24.Flags = 0x0001;
+        net_unkn25.Flags = 0x0001;
+        net_unkn22.Flags = 0x0001;
+        net_unkn21.Flags = 0x0001;
+        net_unkn19_box.Flags = 0x0001;
+        weapon_slots.Flags = 0x0001;
+        equip_name_box.Flags = 0x0001;
+        slots_box.Flags = 0x0001;
+        blokey_box.Flags = 0x0001;
+        pause_unkn12_box.Flags = 0x0001;
+        pause_unkn11_box.Flags = 0x0001;
+        equip_cost_box.Flags = 0x0001;
+        unkn34_box.Flags = 0x0001;
+        unkn37_box.Flags = 0x0001 | 0x0100 | 0x0200;
+        mod_list_box.Flags = 0x0001 | 0x0100 | 0x0200;
+        agent_list_box.Flags = 0x0001 | 0x0100 | 0x0200;
+        equip_list_box.Flags = 0x0001 | 0x0100 | 0x0200;
+        equip_display_box.Flags = 0x0001 | 0x0100 | 0x0200;
+        research_unkn21_box.Flags = 0x0001 | 0x0100 | 0x0200;
+        unkn36_box.Flags = 0x0001 | 0x0100 | 0x0200;
+        mission_text_box.Flags = 0x0001 | 0x0100 | 0x0200;
+        unkn38_box.Flags = 0x0001 | 0x4000;
         int i;
         for (i = 0; i < 6; i++) {
             sysmnu_buttons[i].Flags = 0x0011;
@@ -2595,7 +2598,7 @@ void show_menu_screen(void)
 
     if ( data_1c4b78 || map_editor )
     {
-        show_menu_screen_st78();
+        show_load_and_prep_mission();
     }
     else if (reload_background_flag)
     {
