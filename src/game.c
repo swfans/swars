@@ -2172,7 +2172,7 @@ void show_load_and_prep_mission(void)
 void ASM_show_menu_screen(void);
 void show_menu_screen(void)
 {
-#if 1
+#if 0
     ASM_show_menu_screen();
 #else
     switch (data_1c498d)
