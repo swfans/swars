@@ -79,7 +79,7 @@ typedef struct ChunkHeader ChunkHeader;
 
 #pragma pack()
 
-int LbIffLoad()
+int LbIffLoad_UNUSED()
 {
 // code at 0001:000b2e10
 }

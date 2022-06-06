@@ -414,6 +414,7 @@ static TbResult LbIPhysicalScreenLock(void)
     // set vga buffer address
     lbDisplay.PhysicalScreen = (ubyte *)to_SDLSurf(lbScreenSurface)->pixels;
 
+    return Lb_SUCCESS;
 }
 
 /** Unlocks physical screen surface ending access to its pixels.
@@ -424,6 +425,7 @@ static TbResult LbIPhysicalScreenUnlock(void)
     if (lbHasSecondSurface && SDL_MUSTLOCK(to_SDLSurf(lbScreenSurface))) {
         SDL_UnlockSurface(to_SDLSurf(lbScreenSurface));
     }
+    return Lb_SUCCESS;
 }
 
 int LbScreenSetDoubleBuffering_TODO()

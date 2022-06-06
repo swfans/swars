@@ -21,7 +21,7 @@
 
 #include <string.h>
 
-TbResult LbPaletteFade(ubyte *from_pal, ubyte arg2, ubyte fade_steps)
+TbResult LbPaletteFade_UNUSED(ubyte *from_pal, ubyte arg2, ubyte fade_steps)
 {
 // code at 0001:00098ac0
 }
