@@ -278,15 +278,6 @@ game_handle_sdl_events (void)
     }
 }
 
-void ASM_game_setup(void);
-void ASM_load_texturemaps(void);
-void ASM_load_prim_quad(void);
-void ASM_setup_host(void);
-void ASM_play_intro(void);
-void ASM_init_syndwars(void);
-void ASM_setup_host_sub6(void);
-int ASM_setup_mele(void);
-
 void *ASM_smack_malloc(int msize);
 void ASM_smack_mfree(void *ptr);
 void *(*smack_malloc)(int);
@@ -295,7 +286,8 @@ void (*smack_free)(void *);
 
 void load_texturemaps(void)
 {
-    ASM_load_texturemaps();
+    asm volatile ("call ASM_load_texturemaps\n"
+        :  :  : "eax" );
 }
 
 void test_open(int num)
@@ -413,8 +405,11 @@ void play_smacker(int vid_type)
 
 void play_intro(void)
 {
+#if 0
+    asm volatile ("call ASM_play_intro\n"
+        :  :  : "eax" );
+#endif
     char fname[FILENAME_MAX];
-    //ASM_play_intro(); return;
 
     lbDisplay.LeftButton = 0;
     lbKeyOn[KC_ESCAPE] = 0;
@@ -928,17 +923,22 @@ void game_graphics_inputs(void)
 
 void init_syndwars(void)
 {
-    ASM_init_syndwars();
+    asm volatile ("call ASM_init_syndwars\n"
+        :  :  : "eax" );
 }
 
 void setup_host_sub6(void)
 {
-    ASM_setup_host_sub6();
+    asm volatile ("call ASM_setup_host_sub6\n"
+        :  :  : "eax" );
 }
 
 int setup_mele(void)
 {
-    return ASM_setup_mele();
+    int ret;
+    asm volatile ("call ASM_setup_mele\n"
+        : "=r" (ret) : );
+    return ret;
 }
 
 void set_smack_malloc(void *(*cb)(int))
@@ -1115,8 +1115,10 @@ void create_tables_file(void)
 
 void game_setup(void)
 {
-    //ASM_game_setup();return;
-
+#if 0
+    asm volatile ("call ASM_game_setup\n"
+        :  :  : "eax" );
+#endif
     engine_mem_alloc_ptr = LbMemoryAlloc(engine_mem_alloc_size);
     load_texturemaps();
     LbDataLoadAll(unk02_load_files);
