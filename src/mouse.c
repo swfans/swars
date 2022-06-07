@@ -17,7 +17,6 @@ struct PointerHotspot {
 };
 
 struct PointerHotspot pointer_hotspot[] = {
-  {-116, 0, 0,},
   {  0,  0, 0,},
   {  0,  0, 0,},
   { -7, -7, 0,},
@@ -25,7 +24,12 @@ struct PointerHotspot pointer_hotspot[] = {
   { -5, -6, 0,},
   { -2, -2, 0,},
   { -7,-13, 0,},
+  { -9, -1, 0,}, // mission ptr over platform
+  {  0,  0, 0,}, // mission ptr normal
+  { -7, -7, 0,},
+  { -7, -7, 0,},
 };
+
 
 #pragma pack()
 
