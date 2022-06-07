@@ -75,8 +75,12 @@ TbResult LbMouseChangeSpriteOffset(long hot_x, long hot_y)
     if (!lbMouseInstalled)
         return Lb_FAIL;
 
-    if (!pointerHandler.SetPointerOffset(hot_x, hot_y))
+    if (!pointerHandler.SetPointerOffset(-hot_x, -hot_y))
         return Lb_FAIL;
+    long x,y;
+    LbMouseGetSpriteOffset(&x, &y);
+    printf("ms hs (%ld %ld) fixed (%ld %ld)\n", hot_x, hot_y, x, y); fflush(stdout);
+
 
     return Lb_SUCCESS;
 }
@@ -88,8 +92,8 @@ TbResult LbMouseGetSpriteOffset(long *hot_x, long *hot_y)
     hotspot = pointerHandler.GetPointerOffset();
     if (hotspot == NULL)
         return Lb_FAIL;
-    *hot_x = hotspot->x;
-    *hot_y = hotspot->y;
+    *hot_x = -hotspot->x;
+    *hot_y = -hotspot->y;
 
     return Lb_SUCCESS;
 }

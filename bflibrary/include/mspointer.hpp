@@ -31,9 +31,28 @@ class LbI_PointerHandler {
  public:
     LbI_PointerHandler(void);
     ~LbI_PointerHandler(void);
+
+    /** Sets place within the pointer sprite with is actually pointed.
+     *
+     * Stores coords of the pointing spot within the sprite.
+     * Allows only values up to one pixel around dimensions of current sprite.
+     * This means you should set the sprite first, then the hotspot.
+     * Coordinates (0,0) are one pixel before top left corner of the sprite;
+     * increasing values go through dimensions of the sprite, to one pixel after.
+     * If the cursor is placed during this call, it will be properly redrawn.
+     */
     void SetHotspot(long x, long y);
+
+    /** Initialize the pointer state with given structures.
+     *
+     * Stores pointers received in parameters as internal state
+     * in regard to current pointer, mouse position, and pointer hotspot.
+     * None of the structs are copied - the pointers are set directly as
+     * internal state.
+     */
     void Initialise(const struct TbSprite *spr, struct TbPoint *,
       struct TbPoint *);
+
     void Release(void);
     void NewMousePos(void);
     bool OnMove(void);
@@ -53,7 +72,7 @@ class LbI_PointerHandler {
     struct SSurface surf2;
     struct TbPoint *position;
     struct TbPoint *spr_offset;
-    struct TbRect rect_1038;
+    struct TbRect spr_clip_rect;
     long draw_pos_x;
     long draw_pos_y;
     bool initialised;

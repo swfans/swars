@@ -74,10 +74,10 @@ bool MouseStateHandler::Release(void)
     this->installed = false;
     mssprite = NULL;
     pointer.Release();
-    mspos.x = 0;
-    mspos.y = 0;
-    hotspot.x = 0;
-    hotspot.y = 0;
+    this->mspos.x = 0;
+    this->mspos.y = 0;
+    this->hotspot.x = 0;
+    this->hotspot.y = 0;
     return true;
 }
 
@@ -193,16 +193,16 @@ bool MouseStateHandler::SetPointer(const struct TbSprite *spr, struct TbPoint *p
     if (!this->installed)
       return false;
     mssprite = spr;
-    hotspot.y = 0;
-    hotspot.x = 0;
+    this->hotspot.y = 0;
+    this->hotspot.x = 0;
     if ((spr != NULL) && (spr->SWidth != 0) && (spr->SHeight != 0))
     {
       if (point != NULL)
       {
-        hotspot.x = point->x;
-        hotspot.y = point->y;
+        this->hotspot.x = point->x;
+        this->hotspot.y = point->y;
       }
-      pointer.Initialise(spr, &mspos, &hotspot);
+      pointer.Initialise(spr, &this->mspos, &this->hotspot);
       if ((mssprite != NULL) && (this->installed))
       {
         pointer.OnMove();
@@ -258,6 +258,8 @@ bool MouseStateHandler::SetPointerOffset(long x, long y)
     LbSemaLock semlock(&semaphore,0);
     if (!semlock.Lock(true))
       return false;
+    // `pointer` object has reference to our `hotspot` attribute,
+    // so we are asking pointer object to update it
     if (this->installed)
       pointer.SetHotspot(x, y);
     return true;

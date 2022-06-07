@@ -86,17 +86,17 @@ void LbI_PointerHandler::ClipHotspot(void)
         {
           spr_offset->x = 0;
         } else
-        if (sprite->SWidth <= spr_offset->x)
+        if (spr_offset->x > sprite->SWidth + 1)
         {
-          spr_offset->x = sprite->SWidth - 1;
+          spr_offset->x = sprite->SWidth + 1;
         }
         if (spr_offset->y < 0)
         {
           spr_offset->y = 0;
         } else
-        if (spr_offset->y >= sprite->SHeight)
+        if (spr_offset->y > sprite->SHeight + 1)
         {
-          spr_offset->y = sprite->SHeight - 1;
+          spr_offset->y = sprite->SHeight + 1;
         }
     }
 }
@@ -151,7 +151,7 @@ void LbI_PointerHandler::Initialise(const struct TbSprite *spr,
     NewMousePos();
     this->field_1054 = false;
     flags = SSBlt_FLAG10 | SSBlt_FLAG2;
-    LbScreenSurfaceBlit(&surf2, this->draw_pos_x, this->draw_pos_y, &rect_1038, flags);
+    LbScreenSurfaceBlit(&surf2, this->draw_pos_x, this->draw_pos_y, &spr_clip_rect, flags);
 }
 
 void LbI_PointerHandler::Draw(bool a1)
@@ -160,7 +160,7 @@ void LbI_PointerHandler::Draw(bool a1)
     flags = SSBlt_FLAG10 | SSBlt_FLAG8 | SSBlt_FLAG4;
     if ( a1 )
       flags |= SSBlt_FLAG2;
-    LbScreenSurfaceBlit(&this->surf1, this->draw_pos_x, this->draw_pos_y, &rect_1038, flags);
+    LbScreenSurfaceBlit(&this->surf1, this->draw_pos_x, this->draw_pos_y, &spr_clip_rect, flags);
 }
 
 void LbI_PointerHandler::Backup(bool a1)
@@ -170,7 +170,7 @@ void LbI_PointerHandler::Backup(bool a1)
     if ( a1 )
       flags |= SSBlt_FLAG2;
     this->field_1054 = false;
-    LbScreenSurfaceBlit(&this->surf2, this->draw_pos_x, this->draw_pos_y, &rect_1038, flags);
+    LbScreenSurfaceBlit(&this->surf2, this->draw_pos_x, this->draw_pos_y, &spr_clip_rect, flags);
 }
 
 void LbI_PointerHandler::Undraw(bool a1)
@@ -179,7 +179,7 @@ void LbI_PointerHandler::Undraw(bool a1)
     flags = SSBlt_FLAG10 | SSBlt_FLAG8;
     if ( a1 )
       flags |= SSBlt_FLAG2;
-    LbScreenSurfaceBlit(&this->surf2, this->draw_pos_x, this->draw_pos_y, &rect_1038, flags);
+    LbScreenSurfaceBlit(&this->surf2, this->draw_pos_x, this->draw_pos_y, &spr_clip_rect, flags);
 }
 
 void LbI_PointerHandler::Release(void)
@@ -202,29 +202,42 @@ void LbI_PointerHandler::Release(void)
 
 void LbI_PointerHandler::NewMousePos(void)
 {
-    this->draw_pos_x = position->x - spr_offset->x * lbUnitsPerPixel / 16;
-    this->draw_pos_y = position->y - spr_offset->y * lbUnitsPerPixel / 16;
+    // Coords 0 and SWidth+1 are special, as these points do not scale per pixel.
+    // They are always precisely one pixel before and after the sprite.
+    if (spr_offset->x <= 0)
+        this->draw_pos_x = position->x + 1 - spr_offset->x * lbUnitsPerPixel / 16;
+    else if (spr_offset->x >= sprite->SWidth)
+        this->draw_pos_x = position->x - (spr_offset->x - 1) * lbUnitsPerPixel / 16 - 1;
+    else
+        this->draw_pos_x = position->x + 1 - (spr_offset->x - 1) * lbUnitsPerPixel / 16;
+    if (spr_offset->y <= 0)
+        this->draw_pos_y = position->y + 1 - spr_offset->y * lbUnitsPerPixel / 16;
+    else if (spr_offset->x >= sprite->SHeight)
+        this->draw_pos_y = position->y - (spr_offset->y - 1) * lbUnitsPerPixel / 16 - 1;
+    else
+        this->draw_pos_y = position->y + 1 - (spr_offset->y - 1) * lbUnitsPerPixel / 16;
+
     int dstwidth, dstheight;
     dstwidth = sprite->SWidth * lbUnitsPerPixel / 16;
     dstheight = sprite->SHeight * lbUnitsPerPixel / 16;
-    LbSetRect(&rect_1038, 0, 0, dstwidth, dstheight);
+    LbSetRect(&spr_clip_rect, 0, 0, dstwidth, dstheight);
     if (this->draw_pos_x < 0)
     {
-        rect_1038.left -= this->draw_pos_x;
+        spr_clip_rect.left -= this->draw_pos_x;
         this->draw_pos_x = 0;
     } else
     if (this->draw_pos_x + dstwidth > lbDisplay.PhysicalScreenWidth)
     {
-        rect_1038.right += lbDisplay.PhysicalScreenWidth - dstwidth-this->draw_pos_x;
+        spr_clip_rect.right += lbDisplay.PhysicalScreenWidth - dstwidth-this->draw_pos_x;
     }
     if (this->draw_pos_y < 0)
     {
-        rect_1038.top -= this->draw_pos_y;
+        spr_clip_rect.top -= this->draw_pos_y;
         this->draw_pos_y = 0;
     } else
     if (this->draw_pos_y+dstheight > lbDisplay.PhysicalScreenHeight)
     {
-        rect_1038.bottom += lbDisplay.PhysicalScreenHeight - dstheight - this->draw_pos_y;
+        spr_clip_rect.bottom += lbDisplay.PhysicalScreenHeight - dstheight - this->draw_pos_y;
     }
 }
 
