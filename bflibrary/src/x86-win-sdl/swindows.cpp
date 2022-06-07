@@ -19,7 +19,7 @@
 /******************************************************************************/
 #include "bfwindows.h"
 
-int LbWindowsControl()
+int LbWindowsControl_UNUSED()
 {
 // code at 0001:000b1350
 }

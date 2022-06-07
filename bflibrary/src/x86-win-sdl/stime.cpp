@@ -27,12 +27,12 @@
 
 #define LARGE_DELAY_TIME 20
 
-int LbDate()
+int LbDate_UNUSED()
 {
 // code at 0001:000b0f50
 }
 
-int LbTime()
+int LbTime_UNUSED()
 {
 // code at 0001:000b0f90
 }
