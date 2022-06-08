@@ -17,6 +17,7 @@
  *     (at your option) any later version.
  */
 /******************************************************************************/
+#include <string.h>
 #include <stdarg.h>
 #include "bflog.h"
 

@@ -17,29 +17,46 @@
  *     (at your option) any later version.
  */
 /******************************************************************************/
-#include "bftime.h"
 #include <time.h>
-#include <unistd.h>
+#include "bftime.h"
 
-#if defined(WIN32)
-#  include <synchapi.h>
-#endif
+#include "bfwindows.h"
 
-#define LARGE_DELAY_TIME 20
+TbResult LbDateTimeDecode(const time_t *datetime, struct TbDate *curr_date,
+  struct TbTime *curr_time);
 
-int LbDate_UNUSED()
+TbResult LbTime(struct TbTime *curr_time)
 {
-// code at 0001:000b0f50
+    time_t dtime;
+
+    time(&dtime);
+    return LbDateTimeDecode(&dtime, NULL, curr_time);
 }
 
-int LbTime_UNUSED()
+TbTimeSec LbTimeSec(void)
 {
-// code at 0001:000b0f90
+    time_t dtime;
+
+    time(&dtime);
+    return dtime;
 }
 
-/**
- * Returns the number of milliseconds elapsed since the program was launched.
- */
+TbResult LbDate(struct TbDate *curr_date)
+{
+    time_t dtime;
+
+    time(&dtime);
+    return LbDateTimeDecode(&dtime, curr_date, NULL);
+}
+
+TbResult LbDateTime(struct TbDate *curr_date, struct TbTime *curr_time)
+{
+    time_t dtime;
+
+    time(&dtime);
+    return LbDateTimeDecode(&dtime,curr_date,curr_time);
+}
+
 TbClockMSec LbTimerClock(void)
 {
     // Unfortuately, CLOCKS_PER_SEC cannot be safely used in preprocessor directives
@@ -55,53 +72,41 @@ TbClockMSec LbTimerClock(void)
         return (TbClockMSec)clock() * (1000 / CLOCKS_PER_SEC);
 }
 
-inline void LbDoMultitasking(void)
-{
-#if defined(WIN32)
-    Sleep(LARGE_DELAY_TIME>>1); // This switches to other tasks
-#else
-    sleep(LARGE_DELAY_TIME);
-#endif
-}
-
 TbBool LbSleepUntil(TbClockMSec endtime)
 {
-  TbClockMSec currclk;
-  currclk = LbTimerClock();
-  while ((currclk+LARGE_DELAY_TIME) < endtime)
-  {
-    LbDoMultitasking();
+    TbClockMSec currclk;
     currclk = LbTimerClock();
-  }
-  while (currclk < endtime)
-    currclk = LbTimerClock();
-  return true;
-}
-
-extern "C" {
-TbResult LbDateTimeDecode(const time_t *datetime, struct TbDate *curr_date,
-  struct TbTime *curr_time);
+    while ((currclk+LB_LARGE_DELAY_TIME) < endtime)
+    {
+        LbDoMultitasking();
+        currclk = LbTimerClock();
+    }
+    while (currclk < endtime)
+        currclk = LbTimerClock();
+    return true;
 }
 
 TbResult LbDateTimeDecode(const time_t *datetime, struct TbDate *curr_date,
   struct TbTime *curr_time)
 {
-  struct tm *ltime=localtime(datetime);
-  if (curr_date!=NULL)
-  {
-    curr_date->Day=ltime->tm_mday;
-    curr_date->Month=ltime->tm_mon+1;
-    curr_date->Year=1900+ltime->tm_year;
-    curr_date->DayOfWeek=ltime->tm_wday;
-  }
-  if (curr_time!=NULL)
-  {
-    curr_time->Hour=ltime->tm_hour;
-    curr_time->Minute=ltime->tm_min;
-    curr_time->Second=ltime->tm_sec;
-    curr_time->HSecond=0;
-  }
-  return Lb_SUCCESS;
+    struct tm *ltime;
+
+    ltime = localtime(datetime);
+    if (curr_date != NULL)
+    {
+        curr_date->Day = ltime->tm_mday;
+        curr_date->Month = ltime->tm_mon + 1;
+        curr_date->Year = 1900 + ltime->tm_year;
+        curr_date->DayOfWeek = ltime->tm_wday;
+    }
+    if (curr_time != NULL)
+    {
+        curr_time->Hour = ltime->tm_hour;
+        curr_time->Minute = ltime->tm_min;
+        curr_time->Second = ltime->tm_sec;
+        curr_time->HSecond = 0;
+    }
+    return Lb_SUCCESS;
 }
 
 /******************************************************************************/

@@ -63,7 +63,7 @@ libbullfrog_a_SOURCES += \
   src/x86-win-sdl/sscreen.c \
   src/x86-win-sdl/sscrsurf.c \
   src/x86-win-sdl/ssemphr.cpp \
-  src/x86-win-sdl/stime.cpp \
+  src/x86-win-sdl/stime.c \
   src/x86-win-sdl/svesa.cpp \
   src/x86-win-sdl/swindows.cpp
 

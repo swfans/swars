@@ -17,8 +17,8 @@
  *     (at your option) any later version.
  */
 /******************************************************************************/
-#ifndef BFLIBRARY_STIME_H_
-#define BFLIBRARY_STIME_H_
+#ifndef BFLIBRARY_BFTIME_H_
+#define BFLIBRARY_BFTIME_H_
 
 #include "bftypes.h"
 
@@ -48,9 +48,36 @@ typedef struct TbTime TbTime;
 
 #pragma pack()
 
-int LbDate();
-int LbTime();
+/** Fills structure with current time.
+ *
+ * @param curr_time The structure to be filled.
+ * @return
+ */
+TbResult LbTime(struct TbTime *curr_time);
 
+/** Returns current calendar time in seconds.
+ *
+ * @return System time in seconds.
+ */
+TbTimeSec LbTimeSec(void);
+
+/** Fills structure with current date.
+ *
+ * @param curr_date The structure to be filled.
+ * @return
+ */
+TbResult LbDate(struct TbDate *curr_date);
+
+/** Fills structures with current date and time.
+ *
+ * @param curr_date The date structure to be filled.
+ * @param curr_time The time structure to be filled.
+ * @return
+ */
+TbResult LbDateTime(struct TbDate *curr_date, struct TbTime *curr_time);
+
+/** Returns the number of milliseconds elapsed since the program was launched.
+ */
 TbClockMSec LbTimerClock(void);
 
 /** Sleep until LbTimerClock() returns given value.
@@ -61,5 +88,5 @@ TbBool LbSleepUntil(TbClockMSec endtime);
 };
 #endif
 
-#endif // BFLIBRARY_STIME_H_
+#endif // BFLIBRARY_BFTIME_H_
 /******************************************************************************/

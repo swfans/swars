@@ -17,7 +17,21 @@
  *     (at your option) any later version.
  */
 /******************************************************************************/
+#include <unistd.h>
 #include "bfwindows.h"
+
+#if defined(WIN32)
+#  include <synchapi.h>
+#endif
+
+void LbDoMultitasking(void)
+{
+#if defined(WIN32)
+    Sleep(LB_LARGE_DELAY_TIME>>1); // This switches to other tasks
+#else
+    sleep(LB_LARGE_DELAY_TIME);
+#endif
+}
 
 int LbWindowsControl_UNUSED()
 {

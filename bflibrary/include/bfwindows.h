@@ -26,6 +26,10 @@
 extern "C" {
 #endif
 
+#define LB_LARGE_DELAY_TIME 20
+
+void LbDoMultitasking(void);
+
 int LbWindowsControl();
 
 #ifdef __cplusplus
