@@ -26,7 +26,7 @@
 #include <stdio.h>
 #include <errno.h>
 #include "bffile.h"
-#include "bflog.h"
+#include "privbflog.h"
 
 TbResult LbDirectoryChange(const char *path)
 {
@@ -45,7 +45,7 @@ TbResult LbDirectoryCreate(const char *path)
     err = mkdir(path, mode);
 #endif
     if (err != 0) {
-        LIBLOG("error %s while creating dir '%s'", strerror(errno), path);
+        LOGERR("while creating dir \"%s\": %s", path, strerror(errno));
         return Lb_FAIL;
     }
     return Lb_SUCCESS;
@@ -85,7 +85,7 @@ TbResult LbDirectoryMake(const char *path, TbBool recursive)
         {
             if (!S_ISDIR(st.st_mode))
             {
-                LIBLOG("%s: not a directory", buffer);
+                LOGERR("%s: not a directory", buffer);
                 return Lb_FAIL;
             }
         }
@@ -93,7 +93,7 @@ TbResult LbDirectoryMake(const char *path, TbBool recursive)
         {
             if (errno != ENOENT)
             {
-                LIBLOG("error %s while getting stat on dir '%s'", strerror(errno), buffer);
+                LOGERR("while getting stat on dir \"%s\": %s", buffer, strerror(errno));
                 return Lb_FAIL;
             }
 
@@ -109,7 +109,7 @@ TbResult LbDirectoryMake(const char *path, TbBool recursive)
 
     if ((num_levels > 1) && (!recursive))
     {
-        LIBLOG("cannot create %d dirs (recursion disabled), path %s", num_levels, buffer);
+        LOGERR("cannot create %d dirs (recursion disabled), path %s", num_levels, buffer);
         return Lb_FAIL;
     }
     // At this point, buffer contains the longest existing path.  Go forward
@@ -126,7 +126,7 @@ TbResult LbDirectoryMake(const char *path, TbBool recursive)
 
         *p = FS_SEP;
 
-        LIBLOG("creating directory '%s'", buffer);
+        LOGSYNC("creating directory '%s'", buffer);
 #if defined(WIN32)
         err = mkdir(buffer);
 #else
@@ -134,7 +134,7 @@ TbResult LbDirectoryMake(const char *path, TbBool recursive)
 #endif
         if (err != 0)
         {
-            LIBLOG("error %s while creating dir '%s'", strerror(errno), path);
+            LOGERR("while creating dir \"%s\": %s", path, strerror(errno));
             return Lb_FAIL;
         }
     }

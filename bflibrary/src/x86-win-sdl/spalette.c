@@ -24,7 +24,7 @@
 
 #include "bfscreen.h"
 #include "bfscrsurf.h"
-#include "bflog.h"
+#include "privbflog.h"
 
 #define to_SDLSurf(h) ((SDL_Surface  *)h)
 
@@ -35,7 +35,7 @@ SDL_Color lbPaletteColors[PALETTE_8b_COLORS];
 
 TbResult LbPaletteGet(ubyte *palette)
 {
-    LIBLOG("Starting");
+    LOGDBG("starting");
     if ((!lbScreenInitialised) || (lbDrawSurface == NULL))
       return Lb_FAIL;
 
@@ -56,7 +56,7 @@ TbResult LbPaletteSet(const ubyte *palette)
     unsigned long i;
     TbResult ret;
 
-    LIBLOG("Starting");
+    LOGDBG("starting");
     if ((!lbScreenInitialised) || (lbDrawSurface == NULL))
       return Lb_FAIL;
 
@@ -82,7 +82,7 @@ TbResult LbPaletteSet(const ubyte *palette)
         //if (SDL_SetPalette(to_SDLSurf(lbDrawSurface), SDL_LOGPAL | SDL_PHYSPAL,
         if (SDL_SetColors(to_SDLSurf(lbScreenSurface),
             lbPaletteColors, 0, PALETTE_8b_COLORS) != 1) {
-            LIBLOG("SDL SetPalette to ScreenSurface failed: %s", SDL_GetError());
+            LOGERR("SetPalette to ScreenSurface failed: %s", SDL_GetError());
             ret = Lb_FAIL;
         }
     }
@@ -91,7 +91,7 @@ TbResult LbPaletteSet(const ubyte *palette)
     if ((lbHasSecondSurface) && (lbEngineBPP <= 8)) {
         if (SDL_SetColors(to_SDLSurf(lbDrawSurface),
             lbPaletteColors, 0, PALETTE_8b_COLORS) != 1) {
-            LIBLOG("SDL SetPalette to DrawSurface failed: %s", SDL_GetError());
+            LOGERR("SetPalette to DrawSurface failed: %s", SDL_GetError());
             ret = Lb_FAIL;
         }
     }

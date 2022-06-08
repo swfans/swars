@@ -23,7 +23,7 @@
 #include <stdlib.h>
 #include "insspr.h"
 #include "bfscreen.h"
-#include "bflog.h"
+#include "privbflog.h"
 
 /**
  * Draws a scaled up sprite on given buffer, with transparency mapping and source colours remapped, from right to left.
@@ -46,7 +46,7 @@ TbResult LbSpriteDrawRemapUsingScalingUpDataTrans1RL(uchar *outbuf, int scanline
     unsigned char *sprdata;
     long *ycurstep;
 
-    LIBLOG("Drawing");
+    LOGDBG("drawing");
     ystep_delta = 2;
     if (scanline < 0) {
         ystep_delta = -2;
@@ -154,7 +154,7 @@ TbResult LbSpriteDrawRemapUsingScalingUpDataTrans1LR(uchar *outbuf, int scanline
     unsigned char *sprdata;
     long *ycurstep;
 
-    LIBLOG("Drawing");
+    LOGDBG("drawing");
     ystep_delta = 2;
     if (scanline < 0) {
         ystep_delta = -2;
@@ -262,7 +262,7 @@ TbResult LbSpriteDrawRemapUsingScalingUpDataTrans2RL(uchar *outbuf, int scanline
     unsigned char *sprdata;
     long *ycurstep;
 
-    LIBLOG("Drawing");
+    LOGDBG("drawing");
     ystep_delta = 2;
     if (scanline < 0) {
         ystep_delta = -2;
@@ -370,7 +370,7 @@ TbResult LbSpriteDrawRemapUsingScalingUpDataTrans2LR(uchar *outbuf, int scanline
     unsigned char *sprdata;
     long *ycurstep;
 
-    LIBLOG("Drawing");
+    LOGDBG("drawing");
     ystep_delta = 2;
     if (scanline < 0) {
         ystep_delta = -2;
@@ -476,7 +476,7 @@ TbResult LbSpriteDrawRemapUsingScalingUpDataSolidRL(uchar *outbuf, int scanline,
     unsigned char *sprdata;
     long *ycurstep;
 
-    LIBLOG("Drawing");
+    LOGDBG("drawing");
     ystep_delta = 2;
     if (scanline < 0) {
         ystep_delta = -2;
@@ -599,7 +599,7 @@ TbResult LbSpriteDrawRemapUsingScalingUpDataSolidLR(uchar *outbuf, int scanline,
     unsigned char *sprdata;
     long *ycurstep;
 
-    LIBLOG("Drawing");
+    LOGDBG("drawing");
     ystep_delta = 2;
     if (scanline < 0) {
         ystep_delta = -2;
@@ -722,7 +722,7 @@ TbResult LbSpriteDrawRemapUsingScalingDownDataTrans1RL(uchar *outbuf, int scanli
     unsigned char *sprdata;
     long *ycurstep;
 
-    LIBLOG("Drawing");
+    LOGDBG("drawing");
     ystep_delta = 2;
     if (scanline < 0) {
         ystep_delta = -2;
@@ -815,7 +815,7 @@ TbResult LbSpriteDrawRemapUsingScalingDownDataTrans1LR(uchar *outbuf, int scanli
     unsigned char *sprdata;
     long *ycurstep;
 
-    LIBLOG("Drawing");
+    LOGDBG("drawing");
     ystep_delta = 2;
     if (scanline < 0) {
         ystep_delta = -2;
@@ -908,7 +908,7 @@ TbResult LbSpriteDrawRemapUsingScalingDownDataTrans2RL(uchar *outbuf, int scanli
     unsigned char *sprdata;
     long *ycurstep;
 
-    LIBLOG("Drawing");
+    LOGDBG("drawing");
     ystep_delta = 2;
     if (scanline < 0) {
         ystep_delta = -2;
@@ -1001,7 +1001,7 @@ TbResult LbSpriteDrawRemapUsingScalingDownDataTrans2LR(uchar *outbuf, int scanli
     unsigned char *sprdata;
     long *ycurstep;
 
-    LIBLOG("Drawing");
+    LOGDBG("drawing");
     ystep_delta = 2;
     if (scanline < 0) {
         ystep_delta = -2;
@@ -1092,7 +1092,7 @@ TbResult LbSpriteDrawRemapUsingScalingDownDataSolidRL(uchar *outbuf, int scanlin
     unsigned char *sprdata;
     long *ycurstep;
 
-    LIBLOG("Drawing");
+    LOGDBG("drawing");
     ystep_delta = 2;
     if (scanline < 0) {
         ystep_delta = -2;
@@ -1182,7 +1182,7 @@ TbResult LbSpriteDrawRemapUsingScalingDownDataSolidLR(uchar *outbuf, int scanlin
     unsigned char *sprdata;
     long *ycurstep;
 
-    LIBLOG("Drawing");
+    LOGDBG("drawing");
     ystep_delta = 2;
     if (scanline < 0) {
         ystep_delta = -2;
@@ -1270,7 +1270,7 @@ TbResult LbSpriteDrawRemapUsingScalingData(long posx, long posy, const TbSprite 
     long *ystep;
     int scanline;
 
-    LIBLOG("Drawing at (%ld,%ld)",posx,posy);
+    LOGDBG("at (%ld,%ld): drawing", posx, posy);
     {
         long sposx, sposy;
         sposx = posx;
@@ -1390,7 +1390,7 @@ TbResult LbSpriteDrawRemapUsingScalingData(long posx, long posy, const TbSprite 
 TbResult LbSpriteDrawScaledRemap(long xpos, long ypos, const TbSprite *sprite,
     long dest_width, long dest_height, const uchar *cmap)
 {
-    LIBLOG("At (%ld,%ld) size (%ld,%ld)", xpos, ypos, dest_width, dest_height);
+    LOGDBG("at (%ld,%ld) size (%ld,%ld)", xpos, ypos, dest_width, dest_height);
     if ((dest_width <= 0) || (dest_height <= 0))
       return 1;
     if ((lbDisplay.DrawFlags & Lb_TEXT_UNDERLNSHADOW) != 0)

@@ -21,7 +21,7 @@
 #include "bfscrsurf.h"
 
 #include "bfplanar.h"
-#include "bflog.h"
+#include "privbflog.h"
 
 /******************************************************************************/
 #define to_SDLSurf(h) ((SDL_Surface  *)h)
@@ -42,7 +42,7 @@ TbResult LbScreenSurfaceCreate(struct SSurface *surf, ulong w, ulong h)
     const SDL_PixelFormat * format;
 
     if (lbDrawSurface == NULL) {
-        LIBLOG("DrawSurface pixel format must be known to create further surfaces.");
+        LOGERR("DrawSurface pixel format must be known to create further surfaces.");
         return Lb_FAIL;
     }
     format = to_SDLSurf(lbDrawSurface)->format;
@@ -52,7 +52,7 @@ TbResult LbScreenSurfaceCreate(struct SSurface *surf, ulong w, ulong h)
       format->Rmask, format->Gmask, format->Bmask, format->Amask);
 
     if (surf->surf_data == NULL) {
-        LIBLOG("Failed to create surface.");
+        LOGERR("Failed to create surface.");
         return Lb_FAIL;
     }
     surf->locks_count = 0;
@@ -83,7 +83,7 @@ TbResult LbScreenSurfaceBlit(struct SSurface *surf, ulong x, ulong y,
     SDL_Rect destRect;
 
     if (lbDrawSurface == NULL) {
-        LIBLOG("DrawSurface pixel format must be known to blit other surfaces.");
+        LOGERR("DrawSurface pixel format must be known to blit other surfaces.");
         return Lb_FAIL;
     }
 
@@ -150,7 +150,7 @@ TbResult LbScreenSurfaceBlit(struct SSurface *surf, ulong x, ulong y,
 
     if (blresult == -1) {
         // Blitting mouse cursor will occasionally fail, so there's no point in logging this
-        LIBLOG("Blit failed: %s", SDL_GetError());
+        LOGERR("Blit failed: %s", SDL_GetError());
         return Lb_FAIL;
     }
     return Lb_SUCCESS;
@@ -163,7 +163,7 @@ void *LbScreenSurfaceLock(struct SSurface *surf)
     }
 
     if (SDL_LockSurface(to_SDLSurf(surf->surf_data)) < 0) {
-        LIBLOG("Failed to lock surface: %s", SDL_GetError());
+        LOGERR("Failed to lock surface: %s", SDL_GetError());
         return NULL;
     }
 

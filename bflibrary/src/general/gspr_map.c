@@ -22,7 +22,7 @@
 
 #include "insprite.h"
 #include "bfscreen.h"
-#include "bflog.h"
+#include "privbflog.h"
 
 /** @internal
  *  Draw part of sprite line.
@@ -420,7 +420,7 @@ TbResult LbSpriteDrawRemap(long x, long y, const TbSprite *spr, const ubyte *cma
     TbSpriteDrawData spd;
     TbResult ret;
 
-    LIBLOG("At (%ld,%ld)",x,y);
+    LOGDBG("at (%ld,%ld)",x,y);
     ret = LbSpriteDrawPrepare(&spd, x, y, spr);
     if (ret != Lb_SUCCESS)
         return ret;

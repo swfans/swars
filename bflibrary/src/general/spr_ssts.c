@@ -26,7 +26,7 @@
 #include "insspr.h"
 #include "bfscreen.h"
 #include "bfgentab.h"
-#include "bflog.h"
+#include "privbflog.h"
 
 void LbSpriteDrawRemapUsingScalingSub1(ubyte *outbuf, int scanline,
   int outheight, long *xstep, long *ystep, const TbSprite *sprite, const TbPixel *cmap, long v339)
@@ -2625,7 +2625,7 @@ TbResult DrawSpriteWthShadowUsingScalingData(long posx, long posy, const TbSprit
     //TODO set this in higher level function instead, when possible
     render_alpha = lbSpriteReMapPtr;
     assert(render_alpha != NULL);
-    LIBLOG("Drawing at (%ld,%ld)",posx,posy);
+    LOGDBG("at (%ld,%ld): drawing", posx, posy);
 
   {
     scanline = lbDisplay.GraphicsScreenWidth;

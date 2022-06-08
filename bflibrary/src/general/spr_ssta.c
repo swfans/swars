@@ -24,7 +24,7 @@
 #include <assert.h>
 #include "insspr.h"
 #include "bfscreen.h"
-#include "bflog.h"
+#include "privbflog.h"
 
 // The functions below are from standard version of the routine - reused here
 TbResult LbSpriteDrawUsingScalingUpDataTrans1RL(ubyte *outbuf, int scanline, int outheight,
@@ -43,7 +43,7 @@ TbResult DrawAlphaSpriteUsingScalingData(long posx, long posy, const TbSprite *s
     long *ystep;
     int scanline;
 
-    LIBLOG("Drawing at (%ld,%ld)",posx,posy);
+    LOGDBG("at (%ld,%ld): drawing", posx, posy);
     //TODO set this in higher level function instead, when possible
     render_alpha = lbSpriteReMapPtr;
     assert(render_alpha != NULL);

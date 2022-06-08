@@ -23,23 +23,23 @@
 #include <string.h>
 #include "insprite.h"
 #include "bfscreen.h"
-#include "bflog.h"
+#include "privbflog.h"
 
 TbResult LbSpriteDrawPrepare(TbSpriteDrawData *spd, long x, long y, const TbSprite *spr)
 {
     if (spr == NULL)
     {
-        LIBLOG("NULL sprite");
+        LOGWARN("at (%ld,%ld): NULL sprite", x, y);
         return Lb_FAIL;
     }
     if ((spr->SWidth < 1) || (spr->SHeight < 1))
     {
-        LIBLOG("Zero size sprite (%d,%d)",spr->SWidth,spr->SHeight);
+        LOGDBG("at (%ld,%ld): zero size sprite (%d,%d)", x, y, spr->SWidth, spr->SHeight);
         return Lb_OK;
     }
     if ((lbDisplay.GraphicsWindowWidth == 0) || (lbDisplay.GraphicsWindowHeight == 0))
     {
-        LIBLOG("Invalid graphics window dimensions");
+        LOGERR("at (%ld,%ld): invalid graphics window dimensions", x, y);
         return Lb_FAIL;
     }
     x += lbDisplay.GraphicsWindowX;
@@ -105,7 +105,7 @@ TbResult LbSpriteDrawPrepare(TbSpriteDrawData *spd, long x, long y, const TbSpri
     spd->Ht = btm - top;
     spd->Wd = right - left;
     spd->sp = (char *)spr->Data;
-    LIBLOG("Sprite coords X=%d...%d Y=%d...%d data=%08x",left,right,top,btm,spd->sp);
+    LOGDBG("sprite coords X=%d...%d Y=%d...%d data=%08x", left, right, top, btm, spd->sp);
     long htIndex;
     if ( top )
     {
@@ -126,7 +126,7 @@ TbResult LbSpriteDrawPrepare(TbSpriteDrawData *spd, long x, long y, const TbSpri
             }
         }
     }
-    LIBLOG("Drawing sprite of size (%d,%d)",(int)spd->Ht,(int)spd->Wd);
+    LOGDBG("at (%ld,%ld): drawing sprite of size (%d,%d)", x, y, (int)spd->Ht, (int)spd->Wd);
     if ((lbDisplay.DrawFlags & Lb_SPRITE_FLIP_HORIZ) != 0)
     {
         spd->r += spd->Wd - 1;
@@ -608,7 +608,7 @@ TbResult LbSpriteDraw(long x, long y, const TbSprite *spr)
     TbSpriteDrawData spd;
     TbResult ret;
 
-    LIBLOG("At (%ld,%ld)",x,y);
+    LOGDBG("at (%ld,%ld)", x, y);
     ret = LbSpriteDrawPrepare(&spd, x, y, spr);
     if (ret != Lb_SUCCESS)
         return ret;

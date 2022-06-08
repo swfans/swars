@@ -25,7 +25,7 @@
 #include "bfscreen.h"
 #include "bfsprite.h"
 #include "bfplanar.h"
-#include "bflog.h"
+#include "privbflog.h"
 
 extern "C" {
 
@@ -74,7 +74,7 @@ TbResult LbMouseChangeSpriteOffset(long hot_x, long hot_y)
 {
     if (!lbMouseInstalled)
         return Lb_FAIL;
-    LIBLOG("Setting hs (%ld,%ld)", hot_x, hot_y);
+    LOGDBG("setting hs (%ld,%ld)", hot_x, hot_y);
 
     if (!pointerHandler.SetPointerOffset(-hot_x, -hot_y))
         return Lb_FAIL;
@@ -101,9 +101,9 @@ TbResult LbMouseChangeSprite(const struct TbSprite *pointer_spr)
         return Lb_FAIL;
 
     if (pointer_spr == NULL)
-        LIBLOG("Setting to %s", "NONE");
+        LOGDBG("setting to %s", "NONE");
     else
-        LIBLOG("Setting to %dx%d, data at %p", (int)pointer_spr->SWidth,
+        LOGDBG("setting to %dx%d, data at %p", (int)pointer_spr->SWidth,
           (int)pointer_spr->SHeight, pointer_spr);
 
     if (!pointerHandler.SetMousePointer(pointer_spr))
@@ -119,7 +119,7 @@ TbResult LbMouseChangeMoveRatio(long ratio_x, long ratio_y)
     if ((ratio_y < -8192) || (ratio_y > 8192) || (ratio_y == 0))
         return Lb_FAIL;
 
-    LIBLOG("New ratio %ldx%ld", ratio_x, ratio_y);
+    LOGSYNC("new ratio %ldx%ld", ratio_x, ratio_y);
 
 #if defined(ENABLE_MOUSE_MOVE_RATIO)
     lbDisplay.MouseMoveRatioX = ratio_x;
@@ -316,7 +316,7 @@ static TbMouseAction MouseButtonActionsMapping(int eventType, const SDL_MouseBut
         case SDL_BUTTON_WHEELDOWN: return MActn_NONE;
         }
     }
-    LIBLOG("Unidentified event, type %d button %d", (int)eventType, (int)button->button);
+    LOGWARN("unidentified event, type %d button %d", eventType, (int)button->button);
     return MActn_NONE;
 }
 

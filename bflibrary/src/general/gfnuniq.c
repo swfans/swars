@@ -23,8 +23,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include "bffile.h"
-#include "bflog.h"
 #include "bfdir.h"
+#include "privbflog.h"
 
 static char dir_images[FILENAME_MAX] = "qdata/screenshots";
 
@@ -73,7 +73,7 @@ TbResult prepare_unique_file_name(char *out_fname, const char *dir_base,
     }
     sprintf(&out_fname[i], "*.%s", ext);
     highest_num = get_highest_file_no(out_fname, i, dir_base);
-    LIBLOG("%s: highest_num = %d", out_fname, highest_num);
+    LOGDBG("%s: highest_num = %d", out_fname, highest_num);
     sprintf(&out_fname[i], "%03d.%s", highest_num + 1, ext);
 
     if (LbDirectoryMake(dir_base, true) != Lb_FAIL)

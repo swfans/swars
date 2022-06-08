@@ -23,7 +23,7 @@
 #include <string.h>
 #include "insprite.h"
 #include "bfscreen.h"
-#include "bflog.h"
+#include "privbflog.h"
 
 
 /** @internal
@@ -394,7 +394,7 @@ TbResult LbSpriteDrawOneColour(long x, long y, const TbSprite *spr, const TbPixe
     TbSpriteDrawData spd;
     TbResult ret;
 
-    LIBLOG("At (%ld,%ld)",x,y);
+    LOGDBG("at (%ld,%ld)",x,y);
     ret = LbSpriteDrawPrepare(&spd, x, y, spr);
     if (ret != Lb_SUCCESS)
         return ret;

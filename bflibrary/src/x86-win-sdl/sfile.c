@@ -28,7 +28,8 @@
 #include <limits.h>
 #include <stdio.h>
 #include <string.h>
-#include "bflog.h"
+#include <errno.h>
+#include "privbflog.h"
 
 #if defined(WIN32)||defined(DOS)||defined(GO32)
 #include <share.h>
@@ -113,7 +114,7 @@ TbFileHandle LbFileOpen(const char *fname, const TbFileOpenMode accmode)
 
     if ( !LbFileExists(fname) )
     {
-        LIBLOG("file does not exist: %s", fname);
+        LOGERR("file does not exist: \"%s\"", fname);
         if ( mode == Lb_FILE_MODE_READ_ONLY )
             return -1;
         if ( mode == Lb_FILE_MODE_OLD )
@@ -130,7 +131,7 @@ TbFileHandle LbFileOpen(const char *fname, const TbFileOpenMode accmode)
 /* DISABLED - NOT NEEDED
     if ( mode == Lb_FILE_MODE_NEW )
     {
-        LIBLOG("creating file: %s", fname);
+        LOGSYNC("creating file: %s", fname);
         rc = _sopen(fname, _O_WRONLY|_O_CREAT|_O_TRUNC|_O_BINARY, _SH_DENYNO);
         setmode(rc,_O_TRUNC);
         close(rc);
@@ -140,7 +141,7 @@ TbFileHandle LbFileOpen(const char *fname, const TbFileOpenMode accmode)
     switch (mode)
     {
     case Lb_FILE_MODE_NEW:
-        LIBLOG("LBO_CREAT mode: %s", fname);
+        LOGDBG("LBO_CREAT mode: \"%s\"", fname);
 #if defined(WIN32)||defined(DOS)||defined(GO32)
         rc = _sopen(fname, O_RDWR|O_CREAT|O_BINARY, SH_DENYNO, S_IREAD|S_IWRITE);
 #else
@@ -148,7 +149,7 @@ TbFileHandle LbFileOpen(const char *fname, const TbFileOpenMode accmode)
 #endif
         break;
     case Lb_FILE_MODE_OLD:
-        LIBLOG("LBO_RDWR mode: %s", fname);
+        LOGDBG("LBO_RDWR mode: \"%s\"", fname);
 #if defined(WIN32)||defined(DOS)||defined(GO32)
         rc = _sopen(fname, O_RDWR|O_BINARY, SH_DENYNO);
 #else
@@ -156,7 +157,7 @@ TbFileHandle LbFileOpen(const char *fname, const TbFileOpenMode accmode)
 #endif
         break;
   case Lb_FILE_MODE_READ_ONLY:
-        LIBLOG("LBO_RDONLY mode: %s", fname);
+        LOGDBG("LBO_RDONLY mode: \"%s\"", fname);
 #if defined(WIN32)||defined(DOS)||defined(GO32)
         rc = _sopen(fname, O_RDONLY|O_BINARY, SH_DENYNO);
 #else
@@ -164,7 +165,7 @@ TbFileHandle LbFileOpen(const char *fname, const TbFileOpenMode accmode)
 #endif
         break;
   }
-  LIBLOG("out handle = %ld, errno = %d", rc, errno);
+  LOGSYNC("out handle = %ld, errno = %d", rc, errno);
   return rc; // sopen returns -1 on fail, which is equal to our Lb_FAIL
 }
 
@@ -277,7 +278,7 @@ long LbFileLength(const char *fname)
     if (stat (fname, &st) == 0) {
         result = st.st_size;
     } else {
-        LIBLOG("error %d on get stats of '%s'", strerror(errno), fname);
+        LOGERR("while getting stats on \"%s\": %s", fname, strerror(errno));
         result = -1;
     }
 #endif

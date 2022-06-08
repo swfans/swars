@@ -19,7 +19,7 @@ libbullfrog_a_SOURCES = \
   src/general/giff.c \
   src/general/gkeybd.cpp \
   src/general/gline.cpp \
-  src/general/glog.cpp \
+  src/general/glog.c \
   src/general/gmemut.c \
   src/general/gmouse.c \
   src/general/gpalette.c \
@@ -57,6 +57,7 @@ libbullfrog_a_SOURCES += \
   src/x86-win-sdl/sffind.c \
   src/x86-win-sdl/sfile.c \
   src/x86-win-sdl/skeybd.cpp \
+  src/x86-win-sdl/slog.c \
   src/x86-win-sdl/smemory.c \
   src/x86-win-sdl/smouse.cpp \
   src/x86-win-sdl/spalette.c \

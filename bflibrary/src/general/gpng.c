@@ -21,13 +21,15 @@
 
 #include <stdio.h>
 #include <stdint.h>
+#include <string.h>
+#include <errno.h>
 #include <png.h>
 
 #include "bftypes.h"
 #include "bffnuniq.h"
 #include "bfmemory.h"
 #include "bfscreen.h"
-#include "bflog.h"
+#include "privbflog.h"
 
 
 TbResult
@@ -89,7 +91,7 @@ LbPngWrite(FILE *img_fh, const uint8_t *inp_buffer,
   return 1;
 
 err: // handle error and cleanup heap allocation
-  LIBLOG("Could not %s", action);
+  LOGERR("could not %s", action);
   if (png != NULL && info != NULL)
     png_destroy_write_struct(&png, &info);
   else if (png != NULL)
@@ -112,7 +114,7 @@ TbResult LbPngSave(const char *fname, unsigned char *inp_buffer,
     }
     img_fh = fopen(full_fname, "wb");
     if (!img_fh) {
-        LIBLOG("%s: Cannot open: %s", full_fname, strerror(errno));
+        LOGERR("%s: cannot open: %s", full_fname, strerror(errno));
         return 0;
     }
     ret = LbPngWrite(img_fh, inp_buffer, pal);

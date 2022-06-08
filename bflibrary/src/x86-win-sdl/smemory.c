@@ -25,7 +25,7 @@
 #include <stdbool.h>
 #include <assert.h>
 #include "bftypes.h"
-#include "bflog.h"
+#include "privbflog.h"
 
 #if defined(WIN32)
 
@@ -241,7 +241,7 @@ void * LbMemoryAllocLow(TbMemSize size)
         }
     }
     if (splarena == NULL || !split_arena(splarena, algn_size)) {
-        LIBLOG("failed memory allocation of %lu bytes", (ulong)size);
+        LOGERR("failed memory allocation of %lu bytes", (ulong)size);
         ptr = NULL;
     } else {
         ptr = splarena->Pointer;

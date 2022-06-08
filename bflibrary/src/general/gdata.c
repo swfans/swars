@@ -21,7 +21,7 @@
 
 #include "bfmemory.h"
 #include "bffile.h"
-#include "bflog.h"
+#include "privbflog.h"
 
 
 ModifyDataLoadFnameFunc modify_data_load_filename_function = &defaultModifyDataLoadFilename;
@@ -40,10 +40,10 @@ short LbDataFree(struct TbLoadFiles *load_file)
     data = load_file->Start;
     if (data != NULL) {
         if ((*data) != NULL) {
-            LIBLOG("freeing \"%s\"...",load_file->FName);
+            LOGSYNC("%s: freeing ...", load_file->FName);
             LbMemoryFree(*data);
             (*data) = NULL;
-            LIBLOG("done");
+            LOGSYNC("done");
         }
     }
     return 1;
@@ -73,14 +73,14 @@ short LbDataLoad(struct TbLoadFiles *load_file)
     char *fname = modify_data_load_filename_function(load_file);
     if (fname[0] == '*')
     {
-        LIBLOG("%s: * in fname", fname);
+        LOGSYNC("%s: * in fname", fname);
         *(load_file->Start) = alloc_func(load_file->SLength);
         if ( (*(load_file->Start)) == NULL )
             return -100;
     } else
     {
         long slength = LbFileLengthRnc(fname);
-        LIBLOG("%s: filelength %ld", fname, slength);
+        LOGDBG("%s: filelength %ld", fname, slength);
         load_file->SLength = slength;
         if (slength <= 0)
             return -101;
@@ -116,11 +116,11 @@ short LbDataLoadAll(struct TbLoadFiles load_files[])
     {
         ret_val = LbDataLoad(t_lfile);
         if ( ret_val == -100 ) {
-            LIBLOG("%s: Can't allocate memory", t_lfile->FName);
+            LOGERR("%s: cannot allocate memory", t_lfile->FName);
           ferror++;
         }
         else if ( ret_val == -101 ) {
-            LIBLOG("%s: Can't load file", t_lfile->FName);
+            LOGERR("%s: cannot load file", t_lfile->FName);
           ferror++;
         }
         i++;

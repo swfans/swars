@@ -29,7 +29,7 @@
 #include "bftext.h"
 #include "bfutility.h"
 #include "bfexe_key.h"
-#include "bflog.h"
+#include "privbflog.h"
 
 #define to_SDLSurf(h) ((SDL_Surface  *)h)
 
@@ -111,7 +111,7 @@ TbResult LbScreenUpdateIcon(void)
 
     SDL_VERSION(&wmInfo.version);
     if (SDL_GetWMInfo(&wmInfo) < 0) {
-        LIBLOG("Cannot set icon: Get SDL window info failed: %s", SDL_GetError());
+        LOGWARN("cannot set icon: get SDL window info failed: %s", SDL_GetError());
         return Lb_FAIL;
     }
 
@@ -120,7 +120,7 @@ TbResult LbScreenUpdateIcon(void)
         lbhInstance = GetModuleHandle(NULL);
         hIcon = LoadIcon(lbhInstance, rname);
     } else {
-        LIBLOG("Cannot set icon: Resource mapped to NULL");
+        LOGWARN("cannot set icon: resource mapped to NULL");
         return Lb_FAIL;
     }
     SendMessage(wmInfo.window, WM_SETICON, ICON_BIG,  (LPARAM)hIcon);
@@ -144,7 +144,7 @@ TbResult LbScreenUpdateIcon(void)
         image = NULL;
     }
     if (image == NULL) {
-        LIBLOG("Cannot set icon: Image load failed: %s", SDL_GetError());
+        LOGWARN("cannot set icon: image load failed: %s", SDL_GetError());
         return Lb_FAIL;
     }
     colorkey = SDL_MapRGB(image->format, 255, 0, 255);
@@ -196,8 +196,8 @@ TbResult LbScreenSetupAnyMode(TbScreenMode mode, TbScreenCoord width,
 
     mdinfo = LbScreenGetModeInfo(mode);
     if (!LbScreenIsModeAvailable(mode)) {
-        LIBLOG("%s resolution %dx%d (mode %d) not available",
-            (mdinfo->VideoMode & Lb_VF_WINDOWED) ? "Windowed" : "Full screen",
+        LOGERR("%s resolution %dx%d (mode %d) not available",
+            (mdinfo->VideoMode & Lb_VF_WINDOWED) ? "windowed" : "full screen",
             (int)mdinfo->Width, (int)mdinfo->Height, (int)mode);
         return Lb_FAIL;
     }
@@ -237,7 +237,7 @@ TbResult LbScreenSetupAnyMode(TbScreenMode mode, TbScreenCoord width,
       mdinfo->BitsPerPixel, sdlFlags);
 
     if (lbScreenSurface == NULL) {
-        LIBLOG("Failed to initialize mode %d: %s", (int)mode, SDL_GetError());
+        LOGERR("failed to initialize mode %d: %s", (int)mode, SDL_GetError());
         return Lb_FAIL;
     }
 
@@ -252,7 +252,7 @@ TbResult LbScreenSetupAnyMode(TbScreenMode mode, TbScreenCoord width,
         lbDrawSurface = SDL_CreateRGBSurface(SDL_SWSURFACE,
           width, height, lbEngineBPP, 0, 0, 0, 0);
         if (lbDrawSurface == NULL) {
-            LIBLOG("Secondary surface creation error: %s", SDL_GetError());
+            LOGERR("secondary surface creation error: %s", SDL_GetError());
             LbScreenReset();
             return Lb_FAIL;
         }
@@ -278,7 +278,7 @@ TbResult LbScreenSetupAnyMode(TbScreenMode mode, TbScreenCoord width,
 #endif
 
     lbScreenInitialised = true;
-    LIBLOG("Mode %dx%dx%d setup succeeded", (int)to_SDLSurf(lbScreenSurface)->w,
+    LOGSYNC("mode %dx%dx%d setup succeeded", (int)to_SDLSurf(lbScreenSurface)->w,
       (int)to_SDLSurf(lbScreenSurface)->h,
       (int)to_SDLSurf(lbScreenSurface)->format->BitsPerPixel);
     if (palette != NULL)
@@ -286,14 +286,14 @@ TbResult LbScreenSetupAnyMode(TbScreenMode mode, TbScreenCoord width,
         TbResult ret;
         ret = LbPaletteSet(palette);
         if (ret != Lb_SUCCESS) {
-            LIBLOG("Palette setting failed");
+            LOGERR("palette setting failed");
             LbScreenReset();
             return Lb_FAIL;
         }
     }
     LbScreenSetGraphicsWindow(0, 0, mdinfo->Width, mdinfo->Height);
     LbTextSetWindow(0, 0, mdinfo->Width, mdinfo->Height);
-    LIBLOG("Done filling display properties struct");
+    LOGDBG("done filling display properties struct");
     if ( LbMouseIsInstalled() )
     {
         LbMouseSetWindow(0, 0, lbDisplay.PhysicalScreenWidth, lbDisplay.PhysicalScreenHeight);
@@ -306,7 +306,7 @@ TbResult LbScreenSetupAnyMode(TbScreenMode mode, TbScreenCoord width,
     LbInputRestate();
     LbScreenActivationUpdate();
 #endif
-    LIBLOG("Finished");
+    LOGDBG("finished");
     return Lb_SUCCESS;
 }
 
@@ -327,7 +327,7 @@ TbResult LbScreenReset(void)
 
     LbMouseSuspend();
     if (LbScreenIsLocked()) {
-        LIBLOG("Screen got reset while locked");
+        LOGWARN("screen got reset while locked");
         LbScreenUnlock();
     }
     if (lbHasSecondSurface) {
@@ -340,7 +340,7 @@ TbResult LbScreenReset(void)
     lbScreenSurface = NULL;
     // Mark as not initialized
     lbScreenInitialised = false;
-    LIBLOG("Screen reset finished");
+    LOGSYNC("screen reset finished");
 
     return Lb_SUCCESS;
 }
@@ -359,13 +359,13 @@ TbBool LbScreenIsLocked(void)
 
 TbResult LbScreenLock(void)
 {
-    LIBLOG("Starting");
+    LOGDBG("starting");
     if (!lbScreenInitialised)
         return Lb_FAIL;
 
     if (SDL_MUSTLOCK(to_SDLSurf(lbDrawSurface))) {
         if (SDL_LockSurface(to_SDLSurf(lbDrawSurface)) < 0) {
-            LIBLOG("error: SDL Lock Draw Surface: %s", SDL_GetError());
+            LOGERR("cannot lock draw Surface: %s", SDL_GetError());
 #if defined(BFLIB_WSCREEN_CONTROL)
             lbDisplay.GraphicsWindowPtr = NULL;
             lbDisplay.WScreen = NULL;
@@ -386,7 +386,7 @@ TbResult LbScreenLock(void)
 
 TbResult LbScreenUnlock(void)
 {
-    LIBLOG("Starting");
+    LOGDBG("starting");
     if (!lbScreenInitialised)
         return Lb_FAIL;
 
@@ -407,7 +407,7 @@ static TbResult LbIPhysicalScreenLock(void)
 {
     if (lbHasSecondSurface && SDL_MUSTLOCK(to_SDLSurf(lbScreenSurface))) {
         if (SDL_LockSurface (to_SDLSurf(lbScreenSurface)) != 0) {
-            LIBLOG("error: SDL Lock Screen Surface: %s", SDL_GetError());
+            LOGERR("cannot lock screen surface: %s", SDL_GetError());
             return Lb_FAIL;
         }
     }
@@ -499,7 +499,7 @@ TbResult LbScreenSwap(void)
     TbResult ret;
     int blresult;
 
-    LIBLOG("Starting");
+    LOGDBG("starting");
     assert(!lbDisplay.VesaIsSetUp); // video mem paging not supported with SDL
 
 #if defined(BFLIB_WSCREEN_CONTROL)
@@ -537,7 +537,7 @@ TbResult LbScreenSwap(void)
               to_SDLSurf(lbScreenSurface), NULL);
         }
         if (blresult < 0) {
-            LIBLOG("Blit failed: %s", SDL_GetError());
+            LOGERR("blit failed: %s", SDL_GetError());
             ret = Lb_FAIL;
         }
     }
@@ -547,7 +547,7 @@ TbResult LbScreenSwap(void)
         blresult = SDL_Flip(to_SDLSurf(lbScreenSurface));
         if (blresult < 0) {
             // In some cases this situation seems to be quite common
-            LIBLOG("Flip failed: %s", SDL_GetError());
+            LOGERR("flip failed: %s", SDL_GetError());
             ret = Lb_FAIL;
         }
     }
@@ -560,7 +560,7 @@ TbResult LbScreenSwapClear(TbPixel colour)
     TbResult ret;
     int blresult;
 
-    LIBLOG("Starting");
+    LOGDBG("starting");
     assert(!lbDisplay.VesaIsSetUp); // video mem paging not supported with SDL
 
 #if defined(BFLIB_WSCREEN_CONTROL)
@@ -601,7 +601,7 @@ TbResult LbScreenSwapClear(TbPixel colour)
               to_SDLSurf(lbScreenSurface), NULL);
         }
         if (blresult < 0) {
-            LIBLOG("Blit failed: %s", SDL_GetError());
+            LOGERR("blit failed: %s", SDL_GetError());
             ret = Lb_FAIL;
         }
     }
@@ -611,7 +611,7 @@ TbResult LbScreenSwapClear(TbPixel colour)
         blresult = SDL_Flip(to_SDLSurf(lbScreenSurface));
         if (blresult < 0) {
             // In some cases this situation seems to be quite common
-            LIBLOG("Flip failed: %s", SDL_GetError());
+            LOGERR("flip failed: %s", SDL_GetError());
             ret = Lb_FAIL;
         }
     }

@@ -22,21 +22,22 @@
 #include "bffile.h"
 
 #include <string.h>
-#include "bflog.h"
+#include <errno.h>
 #include "bfdir.h"
 #include "bfendian.h"
 #include "rnc_1fm.h"
+#include "privbflog.h"
 
 long LbFileLengthRnc(const char *fname)
 {
     TbFileHandle handle = LbFileOpen(fname, Lb_FILE_MODE_READ_ONLY);
     if ( handle == -1 )
         return -1;
-    LIBLOG("%s: file opened",fname);
+    LOGDBG("%s: file opened", fname);
     unsigned char buffer[RNC_HEADER_LEN+1];
     if ( LbFileRead(handle,buffer,RNC_HEADER_LEN) == -1 )
     {
-        LIBLOG("%s: cannot read even %d bytes",fname,RNC_HEADER_LEN);
+        LOGWARN("%s: cannot read even %d bytes", fname, RNC_HEADER_LEN);
         LbFileClose(handle);
         return -1;
     }
@@ -44,11 +45,11 @@ long LbFileLengthRnc(const char *fname)
     if (blong(buffer+0) == RNC_SIGNATURE)
     {
         flength = blong(buffer+4);
-        LIBLOG("%s: file size from RNC header: %ld bytes",fname,RNC_HEADER_LEN,flength);
+        LOGDBG("%s: file size from RNC header: %ld bytes", fname, RNC_HEADER_LEN, flength);
     } else
     {
         flength = LbFileLengthHandle(handle);
-        LIBLOG("%s: file is not RNC, size: %ld bytes",fname,RNC_HEADER_LEN,flength);
+        LOGDBG("%s: file is not RNC, size: %ld bytes", fname, RNC_HEADER_LEN, flength);
     }
     LbFileClose(handle);
     return flength;
@@ -70,7 +71,7 @@ long LbFileLoadAt(const char *fname, void *buffer)
     }
     if (read_status == -1)
     {
-        LIBLOG("Could not read \"%s\", expected size %ld, errno %d", fname, filelength, (int)errno);
+        LOGERR("%s: could not read (expected size %ld): %s", fname, filelength, strerror(errno));
         return -1;
     }
     long unp_length = UnpackM1((unsigned char *)buffer, filelength);
@@ -83,7 +84,7 @@ long LbFileLoadAt(const char *fname, void *buffer)
           result = filelength;
     } else
     {
-        LIBLOG("ERROR decompressing \"%s\"", fname);
+        LOGERR("%s: could not decompress: %s", fname, rnc_error(unp_length));
         result = -1;
     }
     return result;

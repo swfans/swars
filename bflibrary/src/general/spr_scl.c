@@ -22,7 +22,7 @@
 
 #include "insspr.h"
 #include "bfscreen.h"
-#include "bflog.h"
+#include "privbflog.h"
 
 long xsteps_array[2*SPRITE_SCALING_XSTEPS];
 long ysteps_array[2*SPRITE_SCALING_YSTEPS];
@@ -83,7 +83,7 @@ void LbSpriteSetScalingWidthClippedArray(long * xsteps_arr, long x, long swidth,
 
 void LbSpriteSetScalingWidthClipped(long x, long swidth, long dwidth, long gwidth)
 {
-    LIBLOG("Starting %d -> %d at %d",(int)swidth,(int)dwidth,(int)x);
+    LOGDBG("starting %d -> %d at %d",(int)swidth,(int)dwidth,(int)x);
     if (swidth > SPRITE_SCALING_XSTEPS)
         swidth = SPRITE_SCALING_XSTEPS;
     LbSpriteSetScalingWidthClippedArray(xsteps_array, x, swidth, dwidth, gwidth);
@@ -91,7 +91,7 @@ void LbSpriteSetScalingWidthClipped(long x, long swidth, long dwidth, long gwidt
 
 void LbSpriteSetAlphaScalingWidthClipped(long x, long swidth, long dwidth, long gwidth)
 {
-    LIBLOG("Starting %d -> %d at %d",(int)swidth,(int)dwidth,(int)x);
+    LOGDBG("starting %d -> %d at %d",(int)swidth,(int)dwidth,(int)x);
     if (swidth > SPRITE_SCALING_XSTEPS)
         swidth = SPRITE_SCALING_XSTEPS;
     LbSpriteSetScalingWidthClippedArray(alpha_xsteps_array, x, swidth, dwidth, gwidth);
@@ -124,7 +124,7 @@ void LbSpriteSetScalingWidthSimpleArray(long * xsteps_arr, long x, long swidth, 
 
 void LbSpriteSetScalingWidthSimple(long x, long swidth, long dwidth)
 {
-    LIBLOG("Starting %d -> %d at %d",(int)swidth,(int)dwidth,(int)x);
+    LOGDBG("starting %d -> %d at %d",(int)swidth,(int)dwidth,(int)x);
     if (swidth > SPRITE_SCALING_XSTEPS)
         swidth = SPRITE_SCALING_XSTEPS;
     LbSpriteSetScalingWidthSimpleArray(xsteps_array, x, swidth, dwidth);
@@ -132,7 +132,7 @@ void LbSpriteSetScalingWidthSimple(long x, long swidth, long dwidth)
 
 void LbSpriteSetAlphaScalingWidthSimple(long x, long swidth, long dwidth)
 {
-    LIBLOG("Starting %d -> %d at %d",(int)swidth,(int)dwidth,(int)x);
+    LOGDBG("starting %d -> %d at %d",(int)swidth,(int)dwidth,(int)x);
     if (swidth > SPRITE_SCALING_XSTEPS)
         swidth = SPRITE_SCALING_XSTEPS;
     LbSpriteSetScalingWidthSimpleArray(alpha_xsteps_array, x, swidth, dwidth);
@@ -208,7 +208,7 @@ void LbSpriteSetScalingHeightClippedArray(long * ysteps_arr, long y, long sheigh
 
 void LbSpriteSetScalingHeightClipped(long y, long sheight, long dheight, long gheight)
 {
-    LIBLOG("Starting %d -> %d at %d",(int)sheight,(int)dheight,(int)y);
+    LOGSYNC("starting %d -> %d at %d",(int)sheight,(int)dheight,(int)y);
     if (sheight > SPRITE_SCALING_YSTEPS)
         sheight = SPRITE_SCALING_YSTEPS;
     LbSpriteSetScalingHeightClippedArray(ysteps_array, y, sheight, dheight, gheight);
@@ -216,7 +216,7 @@ void LbSpriteSetScalingHeightClipped(long y, long sheight, long dheight, long gh
 
 void LbSpriteSetAlphaScalingHeightClipped(long y, long sheight, long dheight, long gheight)
 {
-    LIBLOG("Starting %d -> %d at %d",(int)sheight,(int)dheight,(int)y);
+    LOGDBG("starting %d -> %d at %d",(int)sheight,(int)dheight,(int)y);
     if (sheight > SPRITE_SCALING_YSTEPS)
         sheight = SPRITE_SCALING_YSTEPS;
     LbSpriteSetScalingHeightClippedArray(alpha_ysteps_array, y, sheight, dheight, gheight);
@@ -249,7 +249,7 @@ void LbSpriteSetScalingHeightSimpleArray(long * ysteps_arr, long y, long sheight
 
 void LbSpriteSetScalingHeightSimple(long y, long sheight, long dheight)
 {
-    LIBLOG("Starting %d -> %d at %d",(int)sheight,(int)dheight,(int)y);
+    LOGDBG("starting %d -> %d at %d",(int)sheight,(int)dheight,(int)y);
     if (sheight > SPRITE_SCALING_YSTEPS)
         sheight = SPRITE_SCALING_YSTEPS;
     LbSpriteSetScalingHeightSimpleArray(ysteps_array, y, sheight, dheight);
@@ -257,7 +257,7 @@ void LbSpriteSetScalingHeightSimple(long y, long sheight, long dheight)
 
 void LbSpriteSetAlphaScalingHeightSimple(long y, long sheight, long dheight)
 {
-    LIBLOG("Starting %d -> %d at %d",(int)sheight,(int)dheight,(int)y);
+    LOGDBG("starting %d -> %d at %d",(int)sheight,(int)dheight,(int)y);
     if (sheight > SPRITE_SCALING_YSTEPS)
         sheight = SPRITE_SCALING_YSTEPS;
     LbSpriteSetScalingHeightSimpleArray(alpha_ysteps_array, y, sheight, dheight);
@@ -297,7 +297,7 @@ void LbSpriteSetScalingData(long x, long y, long swidth, long sheight,
     // Checking whether to select simple scaling creation,
     // or more comprehensive one - with clipping
     if ((swidth <= 0) || (dwidth <= 0)) {
-        LIBLOG("Tried scaling width %ld -> %ld", swidth, dwidth);
+        LOGWARN("tried scaling width %ld -> %ld", swidth, dwidth);
         LbSpriteClearScalingWidth();
     } else
     // Normally it would be enough to check if ((dwidth+y) >= gwidth),
@@ -309,7 +309,7 @@ void LbSpriteSetScalingData(long x, long y, long swidth, long sheight,
         LbSpriteSetScalingWidthSimple(x, swidth, dwidth);
     }
     if ((sheight <= 0) || (dheight <= 0)) {
-        LIBLOG("Tried scaling height %ld -> %ld", sheight, dheight);
+        LOGWARN("tried scaling height %ld -> %ld", sheight, dheight);
         LbSpriteClearScalingHeight();
     } else
     // Normally it would be enough to check if ((dheight+y) >= gheight),
@@ -331,7 +331,7 @@ void SetAlphaScalingData(long x, long y, long swidth, long sheight,
     if ((dwidth <= swidth) && (dheight <= sheight))
         alpha_scale_up = false;
     if ((swidth <= 0) || (dwidth <= 0)) {
-        LIBLOG("Tried scaling width %ld -> %ld", swidth, dwidth);
+        LOGWARN("tried scaling width %ld -> %ld", swidth, dwidth);
         LbSpriteClearAlphaScalingWidth();
     } else
     if ((x < 0) || ((dwidth+x) >= gwidth))
@@ -341,7 +341,7 @@ void SetAlphaScalingData(long x, long y, long swidth, long sheight,
         LbSpriteSetAlphaScalingWidthSimple(x, swidth, dwidth);
     }
     if ((sheight <= 0) || (dheight <= 0)) {
-        LIBLOG("Tried scaling height %ld -> %ld", sheight, dheight);
+        LOGWARN("tried scaling height %ld -> %ld", sheight, dheight);
         LbSpriteClearAlphaScalingHeight();
     } else
     if ((y < 0) || ((dheight+y) >= gheight))
@@ -355,7 +355,7 @@ void SetAlphaScalingData(long x, long y, long swidth, long sheight,
 void LbPixelBlockCopyForward(TbPixel * dst, const TbPixel * src, long len)
 {
     TbPixel px;
-    unsigned long pxquad;
+    ulong pxquad;
     if ( !((int)dst & 3) || ((px = *src, ++src, *dst = px, ++dst, --len, len)
      && (!((int)dst & 3) || ((px = *src, ++src, *dst = px, ++dst, --len, len)
      && (!((int)dst & 3) ||  (px = *src, ++src, *dst = px, ++dst, --len, len))))) )
@@ -363,10 +363,10 @@ void LbPixelBlockCopyForward(TbPixel * dst, const TbPixel * src, long len)
         long l;
         for ( l = len>>2; l > 0; l--)
         {
-            pxquad = *(unsigned long *)src;
-            src += sizeof(unsigned long);
-            *(unsigned long *)dst = pxquad;
-            dst += sizeof(unsigned long);
+            pxquad = *(ulong *)src;
+            src += sizeof(ulong);
+            *(ulong *)dst = pxquad;
+            dst += sizeof(ulong);
         }
         if (len & 3)
         {

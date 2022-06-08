@@ -23,7 +23,7 @@
 #include "bfscreen.h"
 #include "bfsprite.h"
 #include "bfmouse.h"
-#include "bflog.h"
+#include "privbflog.h"
 /******************************************************************************/
 // Global variables
 class MouseStateHandler pointerHandler;
@@ -226,7 +226,7 @@ bool MouseStateHandler::SetMousePointerAndOffset(const struct TbSprite *mouseSpr
     if (mouseSprite != NULL)
       if ( (mouseSprite->SWidth > 64) || (mouseSprite->SHeight > 64) )
       {
-        LIBLOG("Mouse pointer too large");
+        LOGERR("Mouse pointer too large");
         return false;
       }
     lbDisplay.MouseSprite = mouseSprite;
@@ -245,7 +245,7 @@ bool MouseStateHandler::SetMousePointer(const struct TbSprite *mouseSprite)
     if (mouseSprite != NULL)
       if ( (mouseSprite->SWidth > 64) || (mouseSprite->SHeight > 64) )
       {
-        LIBLOG("Mouse pointer too large");
+        LOGERR("Mouse pointer too large");
         return false;
       }
     lbDisplay.MouseSprite = mouseSprite;

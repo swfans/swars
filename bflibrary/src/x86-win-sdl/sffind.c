@@ -29,7 +29,7 @@
 #include <limits.h>
 #include <stdio.h>
 #include <string.h>
-#include "bflog.h"
+#include "privbflog.h"
 
 #if defined(LB_FILE_FIND_SIMULATED)
 #include <dirent.h>

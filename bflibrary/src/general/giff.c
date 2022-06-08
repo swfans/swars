@@ -21,10 +21,11 @@
 
 #include <stdio.h>
 #include <errno.h>
+#include <string.h>
 #include "bftypes.h"
 #include "bffnuniq.h"
 #include "bfscreen.h"
-#include "bflog.h"
+#include "privbflog.h"
 
 #pragma pack(1)
 
@@ -252,7 +253,7 @@ TbResult LbIffSave(const char *fname, unsigned char *inp_buffer,
     }
     img_fh = fopen(full_fname, "wb");
     if (!img_fh) {
-        LIBLOG("%s: Cannot open: %s", full_fname, strerror(errno));
+        LOGERR("%s: cannot open: %s", full_fname, strerror(errno));
         return 0;
     }
     ret = LbIffWrite(img_fh, inp_buffer, pal);

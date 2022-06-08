@@ -20,7 +20,7 @@
 /******************************************************************************/
 #include "bfsprite.h"
 
-#include "bflog.h"
+#include "privbflog.h"
 
 ubyte * lbSpriteReMapPtr;
 
@@ -39,7 +39,7 @@ TbResult LbSpriteSetup(TbSprite *start, const TbSprite *end, const unsigned char
       }
       sprt++;
     }
-    LIBLOG("initied %d of %d sprites", n, (sprt-start));
+    LOGDBG("initiated %d of %d sprites", n, (sprt-start));
     return Lb_SUCCESS;
 }
 
@@ -56,7 +56,7 @@ TbResult LbSpriteSetupAll(TbSetupSprite t_setup[])
       idx++;
       stp_sprite = &t_setup[idx];
     }
-    LIBLOG("Initiated %d SetupSprite lists", idx);
+    LOGSYNC("initiated %d SetupSprite lists", idx);
     return Lb_SUCCESS;
 }
 
@@ -77,7 +77,7 @@ TbResult LbSpriteClearAll(TbSetupSprite t_setup[])
         idx++;
         stp_sprite=&t_setup[idx];
     }
-    LIBLOG("Cleaned %d SetupSprite lists", idx);
+    LOGSYNC("cleaned %d SetupSprite lists", idx);
     return Lb_SUCCESS;
 }
 /******************************************************************************/
