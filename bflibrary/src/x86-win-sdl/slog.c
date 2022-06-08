@@ -27,11 +27,11 @@
 #include "bftime.h"
 /******************************************************************************/
 
-    enum Header {
-        NONE   = 0,
-        CREATE = 1,
-        APPEND = 2,
-    };
+enum LogHeaderAction {
+    NONE   = 0,
+    CREATE = 1,
+    APPEND = 2,
+};
 
 /******************************************************************************/
 
@@ -120,8 +120,13 @@ void LbI_LogHeader(struct TbLog *log, FILE *file, ubyte header)
         fprintf(file, "\n");
     if (header == CREATE)
     {
-        fprintf(file, PACKAGE" ver "VERSION" (%s release)\n",
-          (__DEBUG) ? "debug" : "standard");
+        const char *rel_kind;
+#  ifdef __DEBUG
+        rel_kind = "debug";
+#  else
+        rel_kind = "standard";
+#  endif
+        fprintf(file, PACKAGE" ver "VERSION" (%s release)\n", rel_kind);
         actn = "CREATED";
     } else
     {
@@ -129,8 +134,6 @@ void LbI_LogHeader(struct TbLog *log, FILE *file, ubyte header)
     }
     fprintf(file, "LOG %s", actn);
     at_used = 0;
-//TODO enable when logging is ready
-#if 0
     if ((log->Flags & LbLog_TimeInHeader) != 0)
     {
         struct TbTime curr_time;
@@ -150,7 +153,6 @@ void LbI_LogHeader(struct TbLog *log, FILE *file, ubyte header)
             sep = "  @ ";
         fprintf(file," %s%02d-%02d-%d", sep, curr_date.Day, curr_date.Month, curr_date.Year);
     }
-#endif
     fprintf(file, "\n\n");
 }
 
@@ -193,8 +195,6 @@ TbResult LbLog(struct TbLog *log, const char *fmt_str, va_list arg)
     {
         LbI_LogHeader(log, file, header);
     }
-//TODO enable when logging is ready
-#if 0
     if ((log->Flags & LbLog_DateInLines) != 0)
     {
         struct TbDate curr_date;
@@ -208,7 +208,6 @@ TbResult LbLog(struct TbLog *log, const char *fmt_str, va_list arg)
         fprintf(file, "%02d:%02d:%02d ",
             curr_time.Hour, curr_time.Minute, curr_time.Second);
     }
-#endif
     if (log->Prefix[0] != '\0')
         fprintf(file, log->Prefix);
     vfprintf(file, fmt_str, arg);
