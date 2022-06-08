@@ -17,6 +17,7 @@
  *     (at your option) any later version.
  */
 /******************************************************************************/
+#include <strings.h>
 #include "bfdata.h"
 
 #include "bfmemory.h"
