@@ -3,7 +3,7 @@
 #include <errno.h>
 
 #include "oggvorbis.h"
-#include "bflib_basics.h"
+#include "swlog.h"
 #include "sound_util.h"
 #include "util.h"
 
@@ -103,14 +103,14 @@ ogg_vorbis_stream_open (OggVorbisStream *stream, const char *fname)
   f = fopen (fname, "rb");
   if (f == NULL)
     {
-      ERRORLOG("%s: Cannot fopen: %s", fname, strerror(errno));
+      LOGERR("%s: Cannot fopen: %s", fname, strerror(errno));
       return false;
     }
 
   if (ov_open_callbacks (f, &stream->file,
 			 NULL, 0, OV_CALLBACKS_DEFAULT) != 0)
     {
-      ERRORLOG("%s: Invalid Ogg/Vorbis stream.", fname);
+      LOGERR("%s: Invalid Ogg/Vorbis stream.", fname);
       goto err;
     }
 
@@ -119,7 +119,7 @@ ogg_vorbis_stream_open (OggVorbisStream *stream, const char *fname)
   info = ov_info (&stream->file, -1);
   if (info == NULL)
     {
-      ERRORLOG("%s: Failed to read stream information.", fname);
+      LOGERR("%s: Failed to read stream information.", fname);
       goto err;
     }
 
@@ -213,7 +213,7 @@ ogg_vorbis_stream_update (OggVorbisStream *stream)
 			   true, NULL);
 	  if (count < 0)
 	    {
-	      ERRORLOG("Error: Failed to read ogg/vorbis data.");
+	      LOGERR("Error: Failed to read ogg/vorbis data.");
 	      stream->playing = false;
 	      return false;
 	    }

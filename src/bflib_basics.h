@@ -46,69 +46,6 @@ extern "C" {
 // Smaller buffer, also widely used
 #define TEXT_BUFFER_LENGTH 2048
 
-enum TbErrorLogFlags {
-        Lb_ERROR_LOG_APPEND = 0,
-        Lb_ERROR_LOG_NEW    = 1,
-};
-
-enum TbLogFlags {
-        LbLog_DateInHeader = 0x0010,
-        LbLog_TimeInHeader = 0x0020,
-        LbLog_DateInLines  = 0x0040,
-        LbLog_TimeInLines  = 0x0080,
-        LbLog_LoopedFile   = 0x0100,
-};
-
-/******************************************************************************/
-#pragma pack(1)
-
-#include "bftime.h"
-
-typedef unsigned char TbChecksum;
-typedef unsigned long TbBigChecksum;
-typedef long Offset;
-
-
-#define LOG_PREFIX_LEN 32
-
-struct TbLog {
-        char filename[DISKPATH_SIZE];
-        char prefix[LOG_PREFIX_LEN];
-        ulong flags;
-        TbBool Initialised;
-        TbBool Created;
-        TbBool Suspended;
-        long position;
-};
-
-struct TbNetworkCallbackData;
-/** Command function result, alias for TbResult. */
-typedef int TbError;
-typedef size_t TbSize;
-
-#pragma pack()
-/******************************************************************************/
-#define ERRORLOG(fmt, ...) \
-    fprintf(stdout, fmt " in %s\n", ##__VA_ARGS__, __func__)
-
-#define DEBUGLOG(lv, fmt, ...) \
-    fprintf(stdout, fmt " in %s\n", ##__VA_ARGS__, __func__)
-
-#define BFLIB_ERRORLOG(fmt, ...) \
-    fprintf(stdout, fmt " in %s\n", ##__VA_ARGS__, __func__)
-
-#define BFLIB_DEBUGLOG(lv, fmt, ...) \
-    fprintf(stdout, fmt " in %s\n", ##__VA_ARGS__, __func__)
-
-/*
-#ifdef __DEBUG
-#define BFLIB_DEBUGLOG(lv, fmt, ...) \
-    LbSyncLog("%s: " fmt "\n", __func__, ##__VA_ARGS__);
-#else
-#define BFLIB_DEBUGLOG(lv, fmt, ...)
-#endif
-
- */
 /******************************************************************************/
 #ifdef __cplusplus
 }

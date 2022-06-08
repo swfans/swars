@@ -14,6 +14,7 @@
 #include <time.h>
 
 #include "bffile.h"
+#include "swlog.h"
 #include "dos.h"
 #include "game.h"
 #include "util.h"
@@ -241,7 +242,7 @@ find_file_in_directory (const char *directory, const char *filename,
   dir = opendir (directory);
   if (dir == NULL)
     {
-      ERRORLOG("%s: Cannot open dir: %s", directory, strerror(errno));
+      LOGERR("%s: Cannot open dir: %s", directory, strerror(errno));
       return false;
     }
 

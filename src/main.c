@@ -6,6 +6,8 @@
 #include "bfmemory.h"
 #include "bffile.h"
 #include "bfscreen.h"
+#include "bflog.h"
+#include "swlog.h"
 #include "display.h"
 #include "game.h"
 #include "game_data.h"
@@ -72,7 +74,7 @@ process_options (int *argc, char ***argv)
 
     while ((val = getopt_long (*argc, *argv, "ABCDE:FgHhI:m:Np:qrSs:Tu:Ww", options, &index)) >= 0)
     {
-        DEBUGLOG(1,"Command line option: '%c'", val);
+        LOGDBG("Command line option: '%c'", val);
         switch (val)
         {
         case 'A':
@@ -128,7 +130,7 @@ process_options (int *argc, char ***argv)
             ingame__Flags |= 0x08;
             ingame__CurrentMission = cmdln_param_current_map;
             ingame__Cheats |= 0x04;
-            DEBUGLOG(0, "map index %d", cmdln_param_current_map);
+            LOGDBG("map index %d", cmdln_param_current_map);
             break;
 
         case 'N':
@@ -139,7 +141,7 @@ process_options (int *argc, char ***argv)
             is_single_game = 1;
             pktrec_mode = 2; /* playback */
             cmdln_pr_num = atoi(optarg);
-            DEBUGLOG(0, "packet file play %d", cmdln_pr_num);
+            LOGDBG("packet file play %d", cmdln_pr_num);
             break;
 
         case 'q':
@@ -148,7 +150,7 @@ process_options (int *argc, char ***argv)
 
         case 'r':
             pktrec_mode = 1; /* record */
-            DEBUGLOG(0, "packet file record enabled");
+            LOGDBG("packet file record enabled");
             break;
 
         case 'S':
@@ -157,7 +159,7 @@ process_options (int *argc, char ***argv)
 
         case 's':
             sprintf(session_name, "%s", optarg);
-            DEBUGLOG(0, "session name '%s'", session_name);
+            LOGDBG("session name '%s'", session_name);
             break;
 
         case 'T':
@@ -166,7 +168,7 @@ process_options (int *argc, char ***argv)
 
         case 'u':
             sprintf(user_name, "%s", optarg);
-            DEBUGLOG(0, "user name '%s'", user_name);
+            LOGDBG("user name '%s'", user_name);
             break;
 
         case 'W':
@@ -178,7 +180,7 @@ process_options (int *argc, char ***argv)
             break;
 
         default:
-            ERRORLOG("Command line parser error");
+            LOGERR("Command line parser error");
             exit (1);
         }
     }
@@ -202,7 +204,7 @@ void read_conf_file(void)
         text_len = LbFileRead(conf_fh, locbuf, sizeof(locbuf));
         LbFileClose(conf_fh);
     } else {
-        ERRORLOG("Could not open installation config file, going with defaults.");
+        LOGERR("Could not open installation config file, going with defaults.");
         text_len = 0;
     }
     locbuf[text_len] = '\0';
@@ -220,7 +222,7 @@ void read_conf_file(void)
         }
         curptr += 2;
         prop_name[i] = '\0';
-        DEBUGLOG(2,"%s: option '%s'", conf_fname, prop_name);
+        LOGDBG("%s: option '%s'", conf_fname, prop_name);
         for (n = 0; n < sizeof(conf_file_cmnds)/sizeof(conf_file_cmnds[0]); n++)
         {
             if (strcmp(prop_name, conf_file_cmnds[n]) == 0)
@@ -234,7 +236,7 @@ void read_conf_file(void)
                 cd_drive[i] = ch;
             }
             cd_drive[i] = 0;
-            DEBUGLOG(0,"%s: Dir with CD data '%s'", conf_fname, cd_drive);
+            LOGDBG("%s: Dir with CD data '%s'", conf_fname, cd_drive);
             break;
         case 2:
             for (i = 0; i < 3; i++) {
@@ -298,6 +300,8 @@ main (int argc, char **argv)
     ingame__GameMode = 0;
     cmdln_param_w = 0;
     ingame__Flags = 0;
+    if (LbErrorLogSetup(NULL, NULL, Lb_ERROR_LOG_NEW) != Lb_SUCCESS)
+            printf("Execution log setup failed\n");
     /* Gravis Grip joystick driver initialization */
     /* joy_grip_init(); */
 
@@ -327,6 +331,7 @@ main (int argc, char **argv)
               :  :  : "eax" );
     }
     joy_grip_shutdown();
+    LbErrorLogReset();
     LbMemoryReset();
     game_quit();
 

@@ -16,6 +16,7 @@
 #include "bfgentab.h"
 #include "bfiff.h"
 #include "svesa.h"
+#include "swlog.h"
 #include "bflib_render.h"
 #include "bflib_fmvids.h"
 #include "bflib_snd_sys.h"
@@ -183,9 +184,7 @@ void PacketRecord_Close(void)
 
 void debug_trace_place(int place)
 {
-#if 0
-    DEBUGLOG(0,"reached place %d", place);
-#endif
+    LOGDBG("reached place %d", place);
 }
 
 bool
@@ -194,7 +193,7 @@ game_initialise(void)
     if (SDL_Init (SDL_INIT_JOYSTICK | SDL_INIT_VIDEO
           | SDL_INIT_NOPARACHUTE) != 0)
     {
-        ERRORLOG("SDL_Init(): %s", SDL_GetError());
+        LOGERR("SDL_Init(): %s", SDL_GetError());
         return false;
     }
 
@@ -966,7 +965,7 @@ void setup_host(void)
     BAT_unknsub_20(0, 0, 0, 0, unkn_buffer_04 + 41024);
     set_smack_malloc(ASM_smack_malloc);
     set_smack_free(ASM_smack_mfree);
-    DEBUGLOG(0,"&setup_host() = 0x%lx", (ulong)setup_host);
+    LOGDBG("&setup_host() = 0x%lx", (ulong)setup_host);
     lbDisplay.ScreenMode = Lb_SCREEN_MODE_320_200_8;
     LbScreenSetup(lbDisplay.ScreenMode, 320, 200, display_palette);
     LbSpriteSetup(pointer_sprites, pointer_sprites_end, pointer_data);
@@ -1011,7 +1010,7 @@ void setup_host(void)
           int file_no;
           file_no = get_new_packet_record_no(ingame__CurrentMission);
           get_packet_record_fname(fname, ingame__CurrentMission, file_no+1);
-          DEBUGLOG(0,"%s: Opening for packet save", fname);
+          LOGDBG("%s: Opening for packet save", fname);
           packet_rec_fh = LbFileOpen(fname, Lb_FILE_MODE_NEW);
           LbFileWrite(packet_rec_fh, &cmdln_param_current_map, 2);
       }
@@ -1020,7 +1019,7 @@ void setup_host(void)
     {
         ushort pktrec_head;
         get_packet_record_fname(fname, ingame__CurrentMission, cmdln_pr_num);
-        DEBUGLOG(0,"%s: Opening for packet input", fname);
+        LOGDBG("%s: Opening for packet input", fname);
         packet_rec_fh = LbFileOpen(fname, Lb_FILE_MODE_READ_ONLY);
         LbFileRead(packet_rec_fh, &pktrec_head, sizeof(pktrec_head));
     }
@@ -1258,7 +1257,7 @@ void debug_m_sprite(int idx)
         sprintf(str, " %02x", (int)*ptr);
         ptr++;
     }
-    DEBUGLOG(0,"m_sprites: %s", strdata);
+    LOGDBG("m_sprites: %s", strdata);
 }
 
 void mapwho_unkn01(int a1, int a2)
@@ -2653,7 +2652,7 @@ void draw_game(void)
         gproc3_unknsub3(0);
         break;
     default:
-        ERRORLOG("DisplayMode %d empty\n", (int)ingame__DisplayMode);
+        LOGERR("DisplayMode %d empty\n", (int)ingame__DisplayMode);
         break;
     }
 }
@@ -2668,7 +2667,7 @@ void process_packets(void);
 void game_process(void)
 {
     debug_m_sprite(193);
-    DEBUGLOG(0,"WSCREEN 0x%lx", (ulong)lbDisplay.WScreen);
+    LOGDBG("WSCREEN 0x%lx", (ulong)lbDisplay.WScreen);
     while ( !exit_game )
     {
       process_sound_heap();
@@ -2685,7 +2684,7 @@ void game_process(void)
       if (cmdln_param_d)
           input_char = LbKeyboard();
       if (ingame__DisplayMode == 55)
-          DEBUGLOG(0,"id=%d  trial alloc = %d turn %lu", 0, triangulation, gameturn);
+          LOGDBG("id=%d  trial alloc = %d turn %lu", 0, triangulation, gameturn);
       if (!LbScreenIsLocked()) {
           while (LbScreenLock() != Lb_SUCCESS)
               ;
@@ -2714,7 +2713,7 @@ void game_process(void)
       if ( unkn01_downcount > 0 ) /* orbital station explosion code */
       {
         unkn01_downcount--;
-        DEBUGLOG(0,"unkn01_downcount = %ld", unkn01_downcount);
+        LOGDBG("unkn01_downcount = %ld", unkn01_downcount);
         if ( unkn01_downcount == 40 ) {
             mapwho_unkn01(unkn01_pos_x, unkn01_pos_y);
         }
