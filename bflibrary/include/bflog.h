@@ -17,8 +17,8 @@
  *     (at your option) any later version.
  */
 /******************************************************************************/
-#ifndef BFLIBRARY_GLOG_H_
-#define BFLIBRARY_GLOG_H_
+#ifndef BFLIBRARY_BFLOG_H_
+#define BFLIBRARY_BFLOG_H_
 
 #include <stdio.h>
 #include "bftypes.h"
@@ -26,6 +26,11 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+enum TbErrorLogFlags {
+        Lb_ERROR_LOG_APPEND = 0,
+        Lb_ERROR_LOG_NEW    = 1,
+};
 
 enum TbLogFlags {
     LbLog_Overwrite    = 0x0001,
@@ -111,5 +116,5 @@ TbResult LbErrorLogReset(void);
 };
 #endif
 
-#endif // BFLIBRARY_GLOG_H_
+#endif // BFLIBRARY_BFLOG_H_
 /******************************************************************************/

@@ -90,7 +90,7 @@ long LbFileLoadAt(const char *fname, void *buffer)
     return result;
 }
 
-long LbFileSaveAt(const char *fname, const void *buffer, unsigned long len)
+long LbFileSaveAt(const char *fname, const void *buffer, ulong len)
 {
     TbFileHandle handle;
     int result;
@@ -109,16 +109,16 @@ int LbFileStringSearch_UNUSED()
 }
 
 TbResult LbFileMakeFullPath(const TbBool append_cur_dir,
-  const char *directory, const char *filename, char *buf, const unsigned long len)
+  const char *directory, const char *filename, char *buf, const ulong len)
 {
   if (filename == NULL) {
       buf[0]='\0';
       return Lb_FAIL;
   }
   unsigned long namestart;
-  if ( append_cur_dir )
+  if (append_cur_dir)
   {
-    if ( LbDirectoryCurrent(buf, len-2) == -1 ) {
+    if (LbDirectoryCurrent(buf, len-2) == -1) {
         buf[0] = '\0';
         return Lb_FAIL;
     }
@@ -174,7 +174,7 @@ TbResult LbFileMakeFullPath(const TbBool append_cur_dir,
         }
     }
     memcpy(copy_dst-1, copy_src, copy_len);
-    return 1;
+    return Lb_SUCCESS;
   }
   return Lb_FAIL;
 }

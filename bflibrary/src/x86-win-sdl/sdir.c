@@ -109,7 +109,8 @@ TbResult LbDirectoryMake(const char *path, TbBool recursive)
 
     if ((num_levels > 1) && (!recursive))
     {
-        LOGERR("cannot create %d dirs (recursion disabled), path %s", num_levels, buffer);
+        LOGERR("cannot create %d dirs (recursion disabled), path %s",
+          num_levels, buffer);
         return Lb_FAIL;
     }
     // At this point, buffer contains the longest existing path.  Go forward

@@ -98,20 +98,24 @@ TbResult LbErrorLogSetup(const char *directory, const char *filename, ubyte flag
       != Lb_SUCCESS) {
         return Lb_FAIL;
     }
-    flags = flag ? LbLog_Overwrite : LbLog_Append;
+    flags = (flag == Lb_ERROR_LOG_NEW) ? LbLog_Overwrite : LbLog_Append;
     flags |= LbLog_TimeInHeader | LbLog_DateInHeader | LbLog_Create;
-    if (LbLogSetup(&error_log, log_filename, flags) == Lb_SUCCESS) {
+    if (LbLogSetup(&error_log, log_filename, flags) != Lb_SUCCESS) {
         return Lb_FAIL;
     }
-    error_log_initialised = 1;
+    error_log_initialised = true;
     return Lb_SUCCESS;
 }
 
 TbResult LbErrorLogReset(void)
 {
+    TbResult result;
+
     if (!error_log_initialised)
         return Lb_FAIL;
-    return LbLogClose(&error_log);
+    result = LbLogClose(&error_log);
+    error_log_initialised = false;
+    return result;
 }
 
 /******************************************************************************/

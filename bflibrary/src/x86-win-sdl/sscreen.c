@@ -311,12 +311,12 @@ TbResult LbScreenSetupAnyMode(TbScreenMode mode, TbScreenCoord width,
     return Lb_SUCCESS;
 }
 
-int LbScreenClearGraphicsWindow_TODO()
+int LbScreenClearGraphicsWindow_UNUSED()
 {
 // code at 0001:000956dc
 }
 
-int LbScreenClear_TODO()
+int LbScreenClear_UNUSED()
 {
 // code at 0001:00095728
 }
@@ -429,12 +429,12 @@ static TbResult LbIPhysicalScreenUnlock(void)
     return Lb_SUCCESS;
 }
 
-int LbScreenSetDoubleBuffering_TODO()
+int LbScreenSetDoubleBuffering_UNUSED()
 {
 // code at 0001:000957b8
 }
 
-int LbScreenSetWScreenInVideo_TODO()
+int LbScreenSetWScreenInVideo_UNUSED()
 {
 // code at 0001:000957d8
 }
@@ -623,22 +623,22 @@ TbResult LbScreenSwapClear(TbPixel colour)
     return ret;
 }
 
-int LbScreenSwapBox_TODO()
+int LbScreenSwapBox_UNUSED()
 {
 // code at 0001:00095c38
 }
 
-int LbScreenSwapBoxClear_TODO()
+int LbScreenSwapBoxClear_UNUSED()
 {
 // code at 0001:00095964
 }
 
-int LbScreenDrawHVLineDirect_TODO()
+int LbScreenDrawHVLineDirect_UNUSED()
 {
 // code at 0001:00095dc4
 }
 
-TbResult LbScreenWaitVbi_TODO(void)
+TbResult LbScreenWaitVbi_UNUSED(void)
 {
     // No need to wait for vblank when using SDL
     // If we really, really wanted to achieve synchronization, we could use

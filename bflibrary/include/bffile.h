@@ -236,11 +236,15 @@ TbResult LbFileDelete(const char *fname);
 
 long LbFileLengthRnc(const char *fname);
 long LbFileLoadAt(const char *fname, void *buffer);
-long LbFileSaveAt(const char *fname, const void *buffer,unsigned long len);
+long LbFileSaveAt(const char *fname, const void *buffer, ulong len);
 int LbFileStringSearch();
 
+/** Creates a proper disk path from file name, directory, and current directory
+ *
+ * Merge given directory and filename, and optionally precedes that with CWD.
+ */
 TbResult LbFileMakeFullPath(const TbBool append_cur_dir,
-  const char *directory, const char *filename, char *buf, const unsigned long len);
+  const char *directory, const char *filename, char *buf, const ulong len);
 
 int LbFileCopy();
 
