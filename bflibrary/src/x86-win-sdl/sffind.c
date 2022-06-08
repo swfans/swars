@@ -34,6 +34,7 @@
 #if defined(LB_FILE_FIND_SIMULATED)
 #include <dirent.h>
 #include <stdint.h>
+#include <libgen.h>
 #include <errno.h>
 #endif
 
@@ -124,6 +125,10 @@ typedef struct fhandle_t {
     short dironly;
     char* spec;
 } fhandle_t;
+
+intptr_t _findfirst(const char* filespec, struct _finddata_t* fileinfo);
+int _findnext(intptr_t fhandle, struct _finddata_t* fileinfo);
+int _findclose(intptr_t fhandle);
 
 /*
  * Windows implementation of _findfirst either returns EINVAL,
