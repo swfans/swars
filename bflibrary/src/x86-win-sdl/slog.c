@@ -18,62 +18,145 @@
  */
 /******************************************************************************/
 #include <stdarg.h>
+#include "bfconfig.h"
 #include "bflog.h"
 
 #include "bfmemut.h"
 #include "bfstrut.h"
+#include "bffile.h"
 #include "bftime.h"
 /******************************************************************************/
-extern TbBool error_log_initialised;
-extern struct TbLog error_log;
-/******************************************************************************/
 
-TbResult LbErrorLogSetup(const char *directory, const char *filename, ubyte flag)
-{
-//TODO enable when logging is ready
-#if 0
-    const char *fixed_fname;
-    char log_filename[FILENAME_MAX];
-    ulong flags;
-
-    if (error_log_initialised)
-        return Lb_FAIL;
-    if ((filename != NULL) && (filename[0] != '\0'))
-        fixed_fname = filename;
-    else
-        fixed_fname = "error.log";
-    if (LbFileMakeFullPath(true, directory, fixed_fname, log_filename, FILENAME_MAX)
-      != Lb_SUCCESS) {
-        return Lb_FAIL;
-    }
-    flags = (flag==0)+1;
-    flags |= LbLog_TimeInHeader | LbLog_DateInHeader | 0x04;
-    if (LbLogSetup(&error_log, log_filename, flags) == Lb_SUCCESS) {
-        return Lb_FAIL;
-    }
-#endif
-    error_log_initialised = 1;
-    return Lb_SUCCESS;
-}
-
-TbResult LbErrorLogReset(void)
-{
-    if (!error_log_initialised)
-        return Lb_FAIL;
-    return LbLogClose(&error_log);
-}
-
-TbResult LbLog(struct TbLog *log, const char *fmt_str, va_list arg)
-{
     enum Header {
         NONE   = 0,
         CREATE = 1,
         APPEND = 2,
     };
+
+/******************************************************************************/
+
+TbResult LbLogSetPrefix(struct TbLog *log, const char *prefix)
+{
+    if (!log->Initialised)
+        return Lb_FAIL;
+    if (prefix) {
+        LbStringCopy(log->Prefix, prefix, LOG_PREFIX_LEN);
+    } else {
+        LbMemorySet(log->Prefix, 0, LOG_PREFIX_LEN);
+    }
+    return Lb_SUCCESS;
+}
+
+TbResult LbLogSetPrefixFmt(struct TbLog *log, const char *format, ...)
+{
+    va_list val;
+
+    if (!log->Initialised)
+        return Lb_FAIL;
+    if (format) {
+        va_start(val, format);
+        vsprintf(log->Prefix, format, val);
+        va_end(val);
+    } else {
+        LbMemorySet(log->Prefix, 0, LOG_PREFIX_LEN);
+    }
+    return Lb_SUCCESS;
+}
+
+TbResult LbLogSetup(struct TbLog *log, const char *filename, ulong flags)
+{
+    log->Initialised = false;
+    LbMemorySet(log->Filename, 0, FILENAME_MAX);
+    LbMemorySet(log->Prefix, 0, LOG_PREFIX_LEN);
+    log->Initialised = false;
+    log->Created = false;
+    log->Suspended = false;
+    if (LbStringLength(filename) > FILENAME_MAX)
+        return Lb_FAIL;
+    LbStringCopy(log->Filename, filename, FILENAME_MAX);
+    log->Flags = flags;
+    log->Initialised = true;
+    log->Position = 0;
+    return Lb_SUCCESS;
+}
+
+TbResult LbLogClose(struct TbLog *log)
+{
+    if (!log->Initialised)
+        return Lb_FAIL;
+    LbMemorySet(log->Filename, 0, FILENAME_MAX);
+    LbMemorySet(log->Prefix, 0, LOG_PREFIX_LEN);
+    log->Flags = 0;
+    log->Initialised = false;
+    log->Created = false;
+    log->Suspended = false;
+    log->Position = 0;
+    return Lb_SUCCESS;
+}
+
+int LbLogSuspend_UNUSED()
+{
+// code at 0001:000d20e4
+}
+
+int LbLogRestart_UNUSED()
+{
+// code at 0001:000d2118
+}
+
+int LbLogDelete_UNUSED()
+{
+// code at 0001:000d2098
+}
+
+void LbI_LogHeader(struct TbLog *log, FILE *file, ubyte header)
+{
+    const char *actn;
+    short at_used;
+    TbBool need_initial_newline;
+
+    need_initial_newline = (header == APPEND);
+    if ( need_initial_newline )
+        fprintf(file, "\n");
+    if (header == CREATE)
+    {
+        fprintf(file, PACKAGE" ver "VERSION" (%s release)\n",
+          (__DEBUG) ? "debug" : "standard");
+        actn = "CREATED";
+    } else
+    {
+        actn = "APPENDED";
+    }
+    fprintf(file, "LOG %s", actn);
+    at_used = 0;
 //TODO enable when logging is ready
 #if 0
+    if ((log->Flags & LbLog_TimeInHeader) != 0)
+    {
+        struct TbTime curr_time;
+        LbTime(&curr_time);
+        fprintf(file, "  @ %02d:%02d:%02d",
+            curr_time.Hour,curr_time.Minute,curr_time.Second);
+        at_used = 1;
+    }
+    if ((log->Flags & LbLog_DateInHeader) != 0)
+    {
+        struct TbDate curr_date;
+        LbDate(&curr_date);
+        const char *sep;
+        if ( at_used )
+            sep = " ";
+        else
+            sep = "  @ ";
+        fprintf(file," %s%02d-%02d-%d", sep, curr_date.Day, curr_date.Month, curr_date.Year);
+    }
+#endif
+    fprintf(file, "\n\n");
+}
+
+TbResult LbLog(struct TbLog *log, const char *fmt_str, va_list arg)
+{
     FILE *file;
-    TbBool need_initial_newline;
     ubyte header;
     const char *accmode;
 
@@ -82,7 +165,6 @@ TbResult LbLog(struct TbLog *log, const char *fmt_str, va_list arg)
     if (log->Suspended)
         return Lb_SUCCESS;
     header = NONE;
-    need_initial_newline = false;
     if (!log->Created)
     {
         if (((log->Flags & LbLog_Create) != 0) && !LbFileExists(log->Filename))
@@ -95,7 +177,6 @@ TbResult LbLog(struct TbLog *log, const char *fmt_str, va_list arg)
         }
         else if (((log->Flags & LbLog_Append) != 0) && ((log->Flags & LbLog_ContinueLast) != 0))
         {
-            need_initial_newline = true;
             header = APPEND;
         }
     }
@@ -110,43 +191,10 @@ TbResult LbLog(struct TbLog *log, const char *fmt_str, va_list arg)
     log->Created = true;
     if (header != NONE)
     {
-        const char *actn;
-        short at_used;
-
-        if ( need_initial_newline )
-            fprintf(file, "\n");
-        if (header == CREATE)
-        {
-            fprintf(file, PACKAGE" ver "VERSION" (%s release)\n",
-              (__DEBUG) ? "debug" : "standard");
-            actn = "CREATED";
-        } else
-        {
-            actn = "APPENDED";
-        }
-        fprintf(file, "LOG %s", actn);
-        at_used = 0;
-        if ((log->Flags & LbLog_TimeInHeader) != 0)
-        {
-            struct TbTime curr_time;
-            LbTime(&curr_time);
-            fprintf(file, "  @ %02d:%02d:%02d",
-                curr_time.Hour,curr_time.Minute,curr_time.Second);
-            at_used = 1;
-        }
-        if ((log->Flags & LbLog_DateInHeader) != 0)
-        {
-            struct TbDate curr_date;
-            LbDate(&curr_date);
-            const char *sep;
-            if ( at_used )
-                sep = " ";
-            else
-                sep = "  @ ";
-            fprintf(file," %s%02d-%02d-%d", sep, curr_date.Day, curr_date.Month, curr_date.Year);
-        }
-        fprintf(file, "\n\n");
+        LbI_LogHeader(log, file, header);
     }
+//TODO enable when logging is ready
+#if 0
     if ((log->Flags & LbLog_DateInLines) != 0)
     {
         struct TbDate curr_date;
@@ -160,18 +208,13 @@ TbResult LbLog(struct TbLog *log, const char *fmt_str, va_list arg)
         fprintf(file, "%02d:%02d:%02d ",
             curr_time.Hour, curr_time.Minute, curr_time.Second);
     }
+#endif
     if (log->Prefix[0] != '\0')
         fprintf(file, log->Prefix);
     vfprintf(file, fmt_str, arg);
     log->Position = ftell(file);
     fclose(file);
-#endif
     return Lb_SUCCESS;
-}
-
-int LbLogDelete_UNUSED()
-{
-// code at 0001:000d2098
 }
 
 /******************************************************************************/

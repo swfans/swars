@@ -10,7 +10,7 @@ libbullfrog_a_SOURCES = \
   src/general/gcircle.cpp \
   src/general/gdata.c \
   src/general/gendian.c \
-  src/general/gerrorlg.cpp \
+  src/general/gerrorlg.c \
   src/general/gexe_key.cpp \
   src/general/gfile.c \
   src/general/gfnuniq.c \
@@ -19,7 +19,6 @@ libbullfrog_a_SOURCES = \
   src/general/giff.c \
   src/general/gkeybd.cpp \
   src/general/gline.cpp \
-  src/general/glog.c \
   src/general/gmemut.c \
   src/general/gmouse.c \
   src/general/gpalette.c \
