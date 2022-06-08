@@ -211,6 +211,7 @@ TbResult LbScreenSetupAnyMode(TbScreenMode mode, TbScreenCoord width,
         }
         mdWidth = mdinfo->Width * lbPhysicalResolutionMul;
         mdHeight = mdinfo->Height * lbPhysicalResolutionMul;
+        LOGDBG("physical resolution multiplier %ld", lbPhysicalResolutionMul);
     }
 
 

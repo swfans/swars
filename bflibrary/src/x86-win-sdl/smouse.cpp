@@ -29,6 +29,8 @@
 
 extern "C" {
 
+#define AUTORESET_MIN_SHIFT 50
+
 extern long lbPhysicalResolutionMul;
 
 };
@@ -251,7 +253,7 @@ void MouseToScreen(struct TbPoint *pos)
     static long my = 0;
     struct TbRect clip;
     struct TbPoint orig;
-    if ( lbMouseAutoReset )
+    if (lbMouseAutoReset)
     {
       if (!pointerHandler.GetMouseWindow(&clip))
           return;
@@ -263,11 +265,13 @@ void MouseToScreen(struct TbPoint *pos)
 #endif
       mx = orig.x;
       my = orig.y;
-      if ((mx < clip.left + 50) || (mx > clip.right - 50)
-       || (my < clip.top + 50) || (my > clip.bottom - 50))
+      if ((mx < clip.left + AUTORESET_MIN_SHIFT)
+       || (mx > clip.right - AUTORESET_MIN_SHIFT)
+       || (my < clip.top + AUTORESET_MIN_SHIFT)
+       || (my > clip.bottom - AUTORESET_MIN_SHIFT))
       {
-          mx = (clip.right-clip.left)/2 + clip.left;
-          my = (clip.bottom-clip.top)/2 + clip.top;
+          mx = (clip.right - clip.left) / 2 + clip.left;
+          my = (clip.bottom - clip.top) / 2 + clip.top;
           SDL_WarpMouse(mx, my);
       }
     } else
@@ -287,7 +291,7 @@ void MouseToScreen(struct TbPoint *pos)
         pos->x = pos->x / lbPhysicalResolutionMul;
         pos->y = pos->y / lbPhysicalResolutionMul;
     }
-
+    LOGNO("before (%ld,%ld) after (%ld,%ld)", orig.x, orig.y, pos->x, pos->y);
 }
 
 /**

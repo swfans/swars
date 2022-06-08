@@ -27,7 +27,10 @@
 extern "C" {
 #endif
 
+/** Macro for logging messages of error severity within this module. */
 #define LOGERR(format,args...) LbErrorLog("Bflib: %s: " format "\n", __func__ , ## args)
+
+/** Macro for logging messages of warning severity within this module. */
 #define LOGWARN(format,args...) LbWarnLog("Bflib: %s: " format "\n", __func__ , ## args)
 
 #ifdef __DEBUG
@@ -38,6 +41,8 @@ extern "C" {
 #define LOGDBG(format,args...)
 #endif
 
+/** Macro for messages which are only for developers and disabled in normal builds. */
+#define LOGNO(format,args...)
 
 #ifdef __cplusplus
 };
