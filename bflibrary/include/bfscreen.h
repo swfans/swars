@@ -396,6 +396,7 @@ int LbScreenSetWScreenInVideo();
 extern int lbScreenDirectAccessActive;
 
 /** Updates video modes info, setting availability of each mode.
+ * @return Lb_SUCCESS if there is at least one mode available.
  */
 TbResult LbScreenFindVideoModes(void);
 

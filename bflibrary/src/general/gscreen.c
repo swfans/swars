@@ -71,11 +71,32 @@ TbDisplayStruct lbDisplay;
 
 ushort lbUnitsPerPixel = 16;
 
+TbBool LbHwCheckIsModeAvailable(TbScreenMode mode);
+
 TbScreenModeInfo *LbScreenGetModeInfo(TbScreenMode mode)
 {
     if (mode < lbScreenModeInfoNum)
         return &lbScreenModeInfo[mode];
     return &lbScreenModeInfo[0];
+}
+
+TbResult LbScreenFindVideoModes(void)
+{
+    int i, avail_num;
+    avail_num = 0;
+    lbScreenModeInfo[0].Available = false;
+    for (i = 1; i < lbScreenModeInfoNum; i++)
+    {
+        if (LbHwCheckIsModeAvailable(i)) {
+            lbScreenModeInfo[i].Available = true;
+            avail_num++;
+        } else {
+            lbScreenModeInfo[i].Available = false;
+        }
+    }
+    if (avail_num > 0)
+        return Lb_SUCCESS;
+    return Lb_FAIL;
 }
 
 TbBool LbScreenIsModeAvailable(TbScreenMode mode)

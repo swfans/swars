@@ -439,18 +439,46 @@ int LbScreenSetWScreenInVideo_UNUSED()
 // code at 0001:000957d8
 }
 
-TbResult LbScreenFindVideoModes(void)
+/** @internal
+ * Implements checking whether a specific video mode is available.
+ */
+TbBool LbHwCheckIsModeAvailable(TbScreenMode mode)
 {
     TbScreenModeInfo *mdinfo;
-    int i;
+    ulong sdlFlags;
+    long minDim;
+    int closestBPP;
 
-    for (i = 1; lbScreenModeInfo[i].Width; i++)
-    {
-        mdinfo = &lbScreenModeInfo[i];
-        /* No restrictions on modes at this time */
-        mdinfo->Available = 1;
+    mdinfo = LbScreenGetModeInfo(mode);
+    sdlFlags = 0;
+    if (mdinfo->BitsPerPixel == lbEngineBPP) {
+        sdlFlags |= SDL_HWPALETTE;
     }
-    return Lb_SUCCESS;
+#if 0
+    if (lbDoubleBufferingRequested) {
+        sdlFlags |= SDL_DOUBLEBUF;
+    }
+#endif
+    if ((mdinfo->VideoMode & Lb_VF_WINDOWED) == 0) {
+        sdlFlags |= SDL_FULLSCREEN;
+    }
+
+    minDim = min(mdinfo->Width,mdinfo->Height);
+    if ((minDim != 0) && (minDim < lbMinPhysicalScreenResolutionDim)) {
+        lbPhysicalResolutionMul =
+          (lbMinPhysicalScreenResolutionDim + minDim - 1) / minDim;
+        //TODO search for a matching mode instead
+        return true;
+    } else {
+        lbPhysicalResolutionMul = 1;
+    }
+
+    closestBPP = SDL_VideoModeOK(mdinfo->Width, mdinfo->Height,
+      mdinfo->BitsPerPixel, sdlFlags);
+
+    // Even if different colour depth is returned, as long as the value is
+    // non-zero, SDL can simulate any bpp with additional internal surface
+    return (closestBPP != 0);
 }
 
 /** @internal
