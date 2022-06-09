@@ -361,6 +361,18 @@ TbScreenCoord LbScreenHeight(void);
 
 TbBool LbScreenIsModeAvailable(TbScreenMode mode);
 
+/** Get number of a new video mode modes.
+ *
+ * Try to find and return mode number for mode with given properties;
+ * if not found, register the new mode and return its number.
+ */
+TbScreenMode LbRegisterVideoMode(const char *desc, TbScreenCoord width,
+  TbScreenCoord height, ushort bpp, ulong flags);
+
+/** Get number of a video mode with given string name.
+ */
+TbScreenMode LbRecogniseVideoModeString(const char *desc);
+
 TbResult LbScreenSetGraphicsWindow(ulong x, ulong y, ulong width, ulong height);
 
 TbResult LbScreenSetupAnyMode(TbScreenMode mode, TbScreenCoord width,

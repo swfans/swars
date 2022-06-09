@@ -20,6 +20,8 @@
 #include <string.h>
 #include "bfscreen.h"
 
+#include "privbflog.h"
+
 struct ScreenModeInfo lbScreenModeInfo[] = {
     {   0,   0, 0,0,   0x0,"MODE_INVALID"},
     { 320, 200, 8,0,  0x13,"MODE_320_200_8"},
@@ -111,6 +113,58 @@ TbBool LbScreenIsModeAvailable(TbScreenMode mode)
     }
     mdinfo = LbScreenGetModeInfo(mode);
     return mdinfo->Available;
+}
+
+TbScreenMode LbRecogniseVideoModeString(const char *desc)
+{
+    int mode;
+    for (mode = 0; mode < lbScreenModeInfoNum; mode++)
+    {
+      if (strcasecmp(lbScreenModeInfo[mode].Desc, desc) == 0)
+        return (TbScreenMode)mode;
+    }
+    return Lb_SCREEN_MODE_INVALID;
+}
+
+TbScreenMode LbRegisterVideoMode(const char *desc, TbScreenCoord width,
+  TbScreenCoord height, ushort bpp, ulong flags)
+{
+    TbScreenModeInfo *mdinfo;
+    TbScreenMode mode;
+
+    mode = LbRecogniseVideoModeString(desc);
+    if (mode != Lb_SCREEN_MODE_INVALID)
+    {
+        mdinfo = &lbScreenModeInfo[mode];
+        if ((mdinfo->Width == width) && (mdinfo->Height == height) &&
+          (mdinfo->BitsPerPixel == bpp))
+        {
+            // Mode is already registered
+            return mode;
+        }
+        // Mode with same name but different params is registered
+        LOGERR("Mode with same name but different params is registered, cannot register %dx%dx%d",
+          (int)width, (int)height, (int)bpp);
+        return Lb_SCREEN_MODE_INVALID;
+    }
+    if (lbScreenModeInfoNum >= sizeof(lbScreenModeInfo)/sizeof(lbScreenModeInfo[0]))
+    {
+        // No free mode slots
+        return Lb_SCREEN_MODE_INVALID;
+    }
+    // Insert new mode to array
+    mode = lbScreenModeInfoNum;
+    lbScreenModeInfoNum++;
+    mdinfo = &lbScreenModeInfo[mode];
+    // Fill the mode content
+    memset(mdinfo, 0, sizeof(TbScreenModeInfo));
+    mdinfo->Width = width;
+    mdinfo->Height = height;
+    mdinfo->BitsPerPixel = bpp;
+    mdinfo->Available = false;
+    mdinfo->VideoMode = flags;
+    strncpy(mdinfo->Desc, desc, sizeof(mdinfo->Desc));
+    return mode;
 }
 
 TbResult LbSetTitle(const char *title)
