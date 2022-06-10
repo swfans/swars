@@ -31,7 +31,12 @@ extern "C" {
 /**
  * Informs if the library general preinitialization was called.
  */
-extern TbBool lbLibInitialised;
+extern volatile TbBool lbLibInitialised;
+
+/**
+ * Informs if the application window is active (focused on screen).
+ */
+extern volatile TbBool lbAppActive;
 
 /** Initialise the work with bullfrog library before use.
  *
@@ -46,7 +51,7 @@ TbResult LbBaseReset(void);
 
 void LbDoMultitasking(void);
 
-int LbWindowsControl();
+TbBool LbWindowsControl(void);
 
 #ifdef __cplusplus
 };

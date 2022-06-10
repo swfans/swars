@@ -122,6 +122,9 @@ TbResult LbMouseSetPosition(long x, long y);
  */
 void MouseToScreen(struct TbPoint *pos);
 
+/* MInt()/MEvent() function used to read mouse events is defined
+ * internally, in platform-dependent manner. */
+
 /** Platform-independent mouse control handler.
  *
  *  Can be used to react on mouse changes, when called within
