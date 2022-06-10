@@ -35,11 +35,6 @@ struct PointerHotspot pointer_hotspot[] = {
 
 extern struct TbSprite *pointer_sprites;
 
-void mouse_initialise(void)
-{
-    SDL_ShowCursor(SDL_DISABLE);
-}
-
 void do_change_mouse(ushort mouse)
 {
   LbMouseChangeSprite(&pointer_sprites[mouse]);

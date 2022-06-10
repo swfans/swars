@@ -191,11 +191,11 @@ void debug_trace_place(int place)
 bool
 game_initialise(void)
 {
-    LbBaseInitialise();
-    if (SDL_Init (SDL_INIT_JOYSTICK | SDL_INIT_VIDEO
-          | SDL_INIT_NOPARACHUTE) != 0)
+    TbResult ret;
+    ret = LbBaseInitialise();
+    if (ret != Lb_SUCCESS)
     {
-        LOGERR("SDL_Init(): %s", SDL_GetError());
+        LOGERR("Bullfrog Library initialization failed");
         return false;
     }
 
@@ -208,7 +208,6 @@ game_initialise(void)
     LbSetTitle(PACKAGE_NAME);
     LbSetIcon(1);
 
-    mouse_initialise();
     sound_initialise();
 
     // Make sure file names are properly converted before opening
@@ -2742,7 +2741,6 @@ game_quit(void)
 {
     sound_finalise ();
     LbBaseReset();
-    SDL_Quit();
     exit (0);
 }
 
