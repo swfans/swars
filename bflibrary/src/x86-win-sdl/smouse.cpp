@@ -168,6 +168,8 @@ TbResult LbMouseSetup(const struct TbSprite *pointer_spr, int ratio_x, int ratio
 
     if ( LbMouseSetWindow(0, 0, lbDisplay.GraphicsScreenWidth, lbDisplay.GraphicsScreenHeight) != Lb_SUCCESS )
     {
+        LOGERR("could not set mouse window, size (%d,%d)",
+          (int)lbDisplay.GraphicsScreenWidth, (int)lbDisplay.GraphicsScreenHeight);
         lbMouseInstalled = false;
         return Lb_FAIL;
     }
@@ -175,16 +177,19 @@ TbResult LbMouseSetup(const struct TbSprite *pointer_spr, int ratio_x, int ratio
     x = lbDisplay.MouseWindowX + lbDisplay.MouseWindowWidth / 2;
     if ( LbMouseChangeMoveRatio(ratio_x, ratio_y) != Lb_SUCCESS )
     {
+        LOGERR("could not change move ratio to (%d,%d)", ratio_x, ratio_y);
         lbMouseInstalled = false;
         return Lb_FAIL;
     }
     if ( LbMouseSetPosition(x, y) != Lb_SUCCESS )
     {
+        LOGERR("could not set position to (%d,%d)", x, y);
         lbMouseInstalled = false;
         return Lb_FAIL;
     }
     if ( LbMouseChangeSprite(pointer_spr) != Lb_SUCCESS )
     {
+        LOGERR("could not change sprite");
         lbMouseInstalled = false;
         return Lb_FAIL;
     }
