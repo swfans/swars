@@ -20,6 +20,8 @@
 #endif
 
 extern char *conf_file_cmnds[10];
+TbBool cmdln_fullscreen = true;
+TbBool cmdln_lores_stretch = true;
 
 static void
 print_help (const char *argv0)
@@ -154,7 +156,7 @@ process_options (int *argc, char ***argv)
             break;
 
         case 'S':
-            display_set_lowres_stretch (false);
+            cmdln_lores_stretch = false;
             break;
 
         case 's':
@@ -172,7 +174,7 @@ process_options (int *argc, char ***argv)
             break;
 
         case 'W':
-            display_set_full_screen (false);
+            cmdln_fullscreen = false;
             break;
 
         case 'w':
@@ -305,9 +307,6 @@ main (int argc, char **argv)
     /* Gravis Grip joystick driver initialization */
     /* joy_grip_init(); */
 
-    display_set_full_screen(true);
-    display_set_lowres_stretch(true);
-
     process_options(&argc, &argv);
 
     printf("Syndicate Wars Port "VERSION"\n"
@@ -318,6 +317,9 @@ main (int argc, char **argv)
 
     if (!game_initialise())
         return 1;
+
+    display_set_full_screen(cmdln_fullscreen);
+    display_set_lowres_stretch(cmdln_lores_stretch);
 
     read_conf_file();
     game_setup();
