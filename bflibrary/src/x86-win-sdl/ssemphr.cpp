@@ -142,6 +142,7 @@ int LbSemaLock::Lock(bool wait_forever)
     }
 #else
     //TODO implement
+    this->locked = 1;
 #endif
     return this->locked;
 }
