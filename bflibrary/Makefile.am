@@ -64,8 +64,8 @@ libbullfrog_a_SOURCES += \
   src/x86-win-sdl/sscrsurf.c \
   src/x86-win-sdl/ssemphr.cpp \
   src/x86-win-sdl/stime.c \
-  src/x86-win-sdl/svesa.cpp \
-  src/x86-win-sdl/swindows.cpp
+  src/x86-win-sdl/svesa.c \
+  src/x86-win-sdl/swindows.c
 
 libbullfrog_a_CPPFLAGS = \
   -I$(top_srcdir)/include -I$(builddir)/include

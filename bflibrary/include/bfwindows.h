@@ -28,6 +28,22 @@ extern "C" {
 
 #define LB_LARGE_DELAY_TIME 20
 
+/**
+ * Informs if the library general preinitialization was called.
+ */
+extern TbBool lbLibInitialised;
+
+/** Initialise the work with bullfrog library before use.
+ *
+ * The routine resets any config variables related to screen, and
+ * prepares everything for use of LbScreenSetupAnyMode().
+ * It performs any screen-related initialization which don't have to
+ * be repeated on every mode change.
+ */
+TbResult LbBaseInitialise(void);
+
+TbResult LbBaseReset(void);
+
 void LbDoMultitasking(void);
 
 int LbWindowsControl();

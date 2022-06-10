@@ -29,7 +29,9 @@ extern "C" {
 #define MAX_SUPPORTED_SCREEN_WIDTH  2560
 #define MAX_SUPPORTED_SCREEN_HEIGHT 1440
 
-/** Standard video modes, registered by LbScreenInitialize().
+#define LB_MAX_SCREEN_MODES_COUNT 40
+
+/** Standard video modes, registered by LbBaseInitialise().
  * These are standard VESA modes, indexed this way in all Bullfrog games.
  */
 enum ScreenMode { // type=int8_t
@@ -83,12 +85,13 @@ enum TbDrawFlags {
 };
 
 enum TbVideoModeFlags {
-    Lb_VF_DEFAULT     = 0x0000, // dummy flag
-    Lb_VF_RGBCOLOR    = 0x0001,
-    Lb_VF_TRUCOLOR    = 0x0002,
-    Lb_VF_PALETTE     = 0x0004,
-    Lb_VF_WINDOWED    = 0x0010,
-    Lb_VF_VESA        = 0x0100,
+    Lb_VF_DEFAULT     = 0x0000, /**< dummy flag, marks no flag toggled */
+    Lb_VF_MODE_MASK   = 0x00ff, /**< mask for hardware-specific video mode number */
+    Lb_VF_VESA        = 0x0100, /**< marks the mode as VESA, with paged access */
+    Lb_VF_RGBCOLOUR   = 0x0200, /**< colours have separate RGB channels (True Colour) */
+    Lb_VF_HICOLOUR    = 0x0400, /**< colours have RGB channels not aligned to bytes */
+    Lb_VF_PALETTE     = 0x0800, /**< pixel value is just an index in a palette */
+    Lb_VF_WINDOWED    = 0x1000, /**< the mode runs in a window rather than full screen */
 };
 
 #pragma pack(1)
@@ -238,14 +241,16 @@ struct ScreenModeInfo { // sizeof=38
     /** Hardware driver screen height. */
     ushort Height; // offset=2
 
-    /** Hardware driver color depth. Not in use since we fixed this to 32, remove when possible.*/
+    /** OS driver color depth. */
     ushort BitsPerPixel; // offset=4
 
     /** Is the mode currently available for use. */
     DwBool Available; // offset=6
 
-    /** Video mode flags. Can be Lb_VF_DEFAULT, Lb_VF_PALETTE, Lb_VF_TRUCOLOR, Lb_VF_RGBCOLOR.*/
-    long VideoMode; // offset=10
+    /** Video mode flags. Can be combination of Lb_VF_* flags.
+     * Lowest byte can be used for OS-specific data.
+     */
+    ulong VideoMode; // offset=10
 
     /** Text description of the mode. */
     char Desc[24]; // offset=14
@@ -255,7 +260,15 @@ typedef const char *(*ResourceMappingFunc)(short);
 
 #pragma pack()
 
-extern TbScreenModeInfo lbScreenModeInfo[];
+/**
+ * List of registered video modes.
+ * Any direct use on application side should be replaced with
+ * LbScreenGetModeInfo().
+ */
+extern TbScreenModeInfo lbScreenModeInfo[LB_MAX_SCREEN_MODES_COUNT];
+
+/** Count of used entries in registered video modes list. */
+extern long lbScreenModeInfoNum;
 
 extern TbDisplayStruct lbDisplay;
 extern DwBool lbScreenInitialised;

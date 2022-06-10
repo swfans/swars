@@ -19,10 +19,46 @@
 /******************************************************************************/
 #include <unistd.h>
 #include "bfwindows.h"
+#include "bfscreen.h"
+#include "bfscrsurf.h"
+#include "bfmouse.h"
 
 #if defined(WIN32)
 #  include <synchapi.h>
 #endif
+
+void LbRegisterStandardVideoModes(void);
+
+TbBool lbLibInitialised = false;
+
+TbResult LbBaseInitialise(void)
+{
+    char buf[32];
+    // Clear global variables
+    lbScreenInitialised = false;
+    lbScreenSurface = NULL;
+    lbDrawSurface = NULL;
+    //lbAppActive = true;
+    LbMouseChangeMoveRatio(256, 256);
+    // Register default video modes
+    if (lbScreenModeInfoNum == 0) {
+        LbRegisterStandardVideoModes();
+    }
+    // SDL environment variables
+/*    if (lbVideoDriver[0] != '\0') {
+        sprintf(buf,"SDL_VIDEODRIVER=%s",lbVideoDriver);
+        putenv(buf);
+    }
+    // Initialize SDL library
+    if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_NOPARACHUTE|SDL_INIT_AUDIO) < 0) {
+        ERRORLOG("SDL init: %s",SDL_GetError());
+        return Lb_FAIL;
+    }
+    // Setup the atexit() call to un-initialize
+    atexit(SDL_Quit);*/
+    lbLibInitialised = true;
+    return Lb_SUCCESS;
+}
 
 void LbDoMultitasking(void)
 {
@@ -38,5 +74,10 @@ int LbWindowsControl_UNUSED()
 // code at 0001:000b1350
 }
 
+TbResult LbBaseReset(void)
+{
+    lbLibInitialised = false;
+    return Lb_SUCCESS;
+}
 
 /******************************************************************************/

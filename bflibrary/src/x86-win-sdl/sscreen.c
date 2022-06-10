@@ -27,6 +27,7 @@
 #include "bfpalette.h"
 #include "bfmouse.h"
 #include "bftext.h"
+#include "bfwindows.h"
 #include "bfutility.h"
 #include "bfexe_key.h"
 #include "privbflog.h"
@@ -162,6 +163,46 @@ TbResult LbScreenSetMinPhysicalScreenResolution(long dim)
     return Lb_SUCCESS;
 }
 
+/** @internal
+ * Registers standard VESA video modes.
+ *
+ * The modes have to registered to an empty list of modes, to make index of each mode
+ * match the mode index in VESA standard.
+ * Non-standard modes may be register later, getting mode numbers higher than standard modes.
+ */
+void LbRegisterStandardVideoModes(void)
+{
+    lbScreenModeInfoNum = 0;
+    LbRegisterVideoMode("INVALID",       0,    0,  0, Lb_VF_DEFAULT);
+    LbRegisterVideoMode("320x200x8",   320,  200,  8, Lb_VF_PALETTE | 19);
+    LbRegisterVideoMode("320x200x16",  320,  200, 16, Lb_VF_HICOLOUR);
+    LbRegisterVideoMode("320x200x24",  320,  200, 24, Lb_VF_RGBCOLOUR);
+    LbRegisterVideoMode("320x240x8",   320,  240,  8, Lb_VF_PALETTE);
+    LbRegisterVideoMode("320x240x16",  320,  240, 16, Lb_VF_HICOLOUR);
+    LbRegisterVideoMode("320x240x24",  320,  240, 24, Lb_VF_RGBCOLOUR);
+    LbRegisterVideoMode("512x384x8",   512,  384,  8, Lb_VF_PALETTE);
+    LbRegisterVideoMode("512x384x16",  512,  384, 16, Lb_VF_HICOLOUR);
+    LbRegisterVideoMode("512x384x24",  512,  384, 24, Lb_VF_RGBCOLOUR | Lb_VF_VESA | 0);
+    LbRegisterVideoMode("640x400x8",   640,  400,  8, Lb_VF_PALETTE);
+    LbRegisterVideoMode("640x400x16",  640,  400, 16, Lb_VF_HICOLOUR);
+    LbRegisterVideoMode("640x400x24",  640,  400, 24, Lb_VF_RGBCOLOUR | Lb_VF_VESA | 1);
+    LbRegisterVideoMode("640x480x8",   640,  480,  8, Lb_VF_PALETTE);
+    LbRegisterVideoMode("640x480x16",  640,  480, 16, Lb_VF_HICOLOUR);
+    LbRegisterVideoMode("640x480x24",  640,  480, 24, Lb_VF_RGBCOLOUR | Lb_VF_VESA | 3);
+    LbRegisterVideoMode("800x600x8",   800,  600,  8, Lb_VF_PALETTE);
+    LbRegisterVideoMode("800x600x16",  800,  600, 16, Lb_VF_HICOLOUR);
+    LbRegisterVideoMode("800x600x24",  800,  600, 24, Lb_VF_RGBCOLOUR | Lb_VF_VESA | 5);
+    LbRegisterVideoMode("1024x768x8", 1024,  768,  8, Lb_VF_PALETTE);
+    LbRegisterVideoMode("1024x768x16",1024,  768, 16, Lb_VF_HICOLOUR);
+    LbRegisterVideoMode("1024x768x24",1024,  768, 24, Lb_VF_RGBCOLOUR | Lb_VF_VESA | 7);
+    LbRegisterVideoMode("1280x1024x8", 1280,1024,  8, Lb_VF_PALETTE);
+    LbRegisterVideoMode("1280x1024x16",1280,1024, 16, Lb_VF_HICOLOUR);
+    LbRegisterVideoMode("1280x1024x24",1280,1024, 24, Lb_VF_RGBCOLOUR);
+    LbRegisterVideoMode("1600x1200x8", 1600,1200,  8, Lb_VF_PALETTE);
+    LbRegisterVideoMode("1600x1200x16",1600,1200, 16, Lb_VF_HICOLOUR);
+    LbRegisterVideoMode("1600x1200x24",1600,1200, 24, Lb_VF_RGBCOLOUR);
+}
+
 TbResult LbScreenSetupAnyMode(TbScreenMode mode, TbScreenCoord width,
     TbScreenCoord height, ubyte *palette)
 {
@@ -174,6 +215,13 @@ TbResult LbScreenSetupAnyMode(TbScreenMode mode, TbScreenCoord width,
 
     msspr = NULL;
     LbExeReferenceNumber();
+    if (!lbLibInitialised) {
+        TbResult result;
+        result = LbBaseInitialise();
+        if (result != Lb_SUCCESS)
+            return result;
+    }
+
     if (lbDisplay.MouseSprite != NULL) {
         msspr = lbDisplay.MouseSprite;
         LbMouseGetSpriteOffset(&hot_x, &hot_y);
