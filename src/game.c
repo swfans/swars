@@ -14,6 +14,7 @@
 #include "bfmemut.h"
 #include "bffile.h"
 #include "bfgentab.h"
+#include "bfwindows.h"
 #include "bfiff.h"
 #include "svesa.h"
 #include "swlog.h"
@@ -190,6 +191,7 @@ void debug_trace_place(int place)
 bool
 game_initialise(void)
 {
+    LbBaseInitialise();
     if (SDL_Init (SDL_INIT_JOYSTICK | SDL_INIT_VIDEO
           | SDL_INIT_NOPARACHUTE) != 0)
     {
@@ -2739,7 +2741,8 @@ void
 game_quit(void)
 {
     sound_finalise ();
-    SDL_Quit ();
+    LbBaseReset();
+    SDL_Quit();
     exit (0);
 }
 
