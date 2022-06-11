@@ -13,12 +13,6 @@
 #include "util.h"
 #include "bflib_basics.h"
 
-#pragma pack(1)
-
-#define to_SDLSurf(h) ((SDL_Surface  *)h)
-
-#pragma pack()
-
 extern ushort data_1aa330;
 extern ushort data_1aa332;
 extern ubyte *vec_tmap;
