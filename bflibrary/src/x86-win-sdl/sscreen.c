@@ -106,6 +106,36 @@ static inline void *LbI_XMemCopyAndSet(void *dest, void *source, ulong val, ulon
     return dest;
 }
 
+static inline void *LbI_XMemRectCopy(void *dest, void *source, ulong lineLen,
+  ulong width, ulong height)
+{
+    ulong remainH, remainW;
+    ubyte *s;
+    ubyte *d;
+    s = (ubyte *)source;
+    d = (ubyte *)dest;
+
+    for (remainH = height; remainH != 0; remainH--)
+    {
+        for (remainW = width >> 2; remainW != 0; remainW--)
+        {
+            *(ulong *)d = *(ulong *)s;
+            d += 4;
+            s += 4;
+        }
+        for (remainW = width & 0x3; remainW != 0; remainW--)
+        {
+            *d = *s;
+            d ++;
+            s ++;
+        }
+        s += lineLen - width;
+        d += lineLen - width;
+    }
+    return dest;
+}
+
+
 #if defined(WIN32)
 
 TbResult LbScreenUpdateIcon(void)
@@ -712,14 +742,89 @@ TbResult LbScreenSwapClear(TbPixel colour)
     return ret;
 }
 
-int LbScreenSwapBox_UNUSED()
+TbResult LbScreenSwapBox(ubyte *sourceBuf, long sourceX, long sourceY,
+  long destX, long destY, ulong width, ulong height)
 {
-// code at 0001:00095c38
+    TbResult ret;
+    int blresult;
+
+    LOGDBG("starting");
+    assert(!lbDisplay.VesaIsSetUp); // video mem paging not supported with SDL
+
+    // First, copy the input buffer rect to our WScreen
+    ret = LbScreenLock();
+    // If WScreen is application-controlled buffer, copy it to SDL surface
+    if (ret == Lb_SUCCESS) {
+        ulong sourcePos = sourceY * lbDisplay.GraphicsScreenWidth + sourceX;
+        ulong destPos = destY * lbDisplay.GraphicsScreenWidth + destX;
+
+        LbI_XMemRectCopy(lbDisplay.WScreen + sourcePos, sourceBuf + destPos,
+          lbDisplay.GraphicsScreenWidth, width, height);
+        ret = Lb_SUCCESS;
+    }
+    LbScreenUnlock();
+
+#if defined(BFLIB_WSCREEN_CONTROL)
+    // Blit the cursor on Draw Surface; simple if we have WScreen control
+    LbMouseOnBeginSwap();
+    ret = Lb_SUCCESS;
+#else
+    // Non-advanced cursor is drawn on WScreen pixels, so should be drawn here
+    if (!lbPointerAdvancedDraw)
+        LbMouseOnBeginSwap();
+
+    ret = LbScreenLock();
+    // If WScreen is application-controlled buffer, copy it to SDL surface
+    if (ret == Lb_SUCCESS) {
+        ulong blsize;
+        blsize = lbDisplay.GraphicsScreenHeight * lbDisplay.GraphicsScreenWidth;
+        LbI_XMemCopy(to_SDLSurf(lbDrawSurface)->pixels, lbDisplay.WScreen, blsize);
+        ret = Lb_SUCCESS;
+    }
+    LbScreenUnlock();
+
+    // Advanced cursor is blitted on lbDrawSurface, so should be drawn here
+    if (lbPointerAdvancedDraw)
+        LbMouseOnBeginSwap();
+#endif
+
+    // Put the data from Draw Surface onto Screen Surface
+    if ((ret == Lb_SUCCESS) && (lbHasSecondSurface))
+    {
+        SDL_Rect clipRect = {destX, destY, width, height};
+        SDL_SetClipRect(to_SDLSurf(lbScreenSurface), &clipRect);
+        if (lbPhysicalResolutionMul > 1) {
+            blresult = LbI_SDL_BlitScaled(to_SDLSurf(lbDrawSurface),
+              to_SDLSurf(lbScreenSurface), lbPhysicalResolutionMul);
+        } else {
+            blresult = SDL_BlitSurface(to_SDLSurf(lbDrawSurface), NULL,
+              to_SDLSurf(lbScreenSurface), NULL);
+        }
+        SDL_SetClipRect(to_SDLSurf(lbScreenSurface), NULL);
+        if (blresult < 0) {
+            LOGERR("blit failed: %s", SDL_GetError());
+            ret = Lb_FAIL;
+        }
+    }
+    // Flip the image displayed on Screen Surface
+    if (ret == Lb_SUCCESS) {
+        // calls SDL_UpdateRect for entire screen if not double buffered
+        blresult = SDL_Flip(to_SDLSurf(lbScreenSurface));
+        if (blresult < 0) {
+            // In some cases this situation seems to be quite common
+            LOGERR("flip failed: %s", SDL_GetError());
+            ret = Lb_FAIL;
+        }
+    }
+    LbMouseOnEndSwap();
+    return ret;
 }
 
-int LbScreenSwapBoxClear_UNUSED()
+TbResult LbScreenSwapBoxClear(ubyte *sourceBuf, long sourceX, long sourceY,
+  long destX, long destY, ulong width, ulong height, ubyte colour)
 {
-// code at 0001:00095964
+    assert(!"not implemented, as is never used");
+    return Lb_FAIL;
 }
 
 int LbScreenDrawHVLineDirect_UNUSED()

@@ -193,9 +193,49 @@ TbResult LbScreenSwapClear(TbPixel colour)
     return Lb_SUCCESS;
 }
 
-int LbScreenSwapBox()
+TbResult LbScreenSwapBox(ubyte *sourceBuf, long sourceX, long sourceY,
+  long destX, long destY, ulong width, ulong height)
 {
-// code at 0001:00095c38
+    ushort h;
+    ushort page1, page2;
+    ubyte *destBuf;
+    ulong outPos1, outPos2, pageAddr;
+
+    LbMousePlace();
+    outPos1 = lbDisplay.PhysicalScreenWidth * destY + destX;
+    outPos2 = lbDisplay.PhysicalScreenWidth * destY + width + destX;
+    inLnStart = sourceX + lbDisplay.GraphicsScreenWidth * sourceY;
+    pageAddr = outPos1 & 0xFFFF0000;
+    page1 = pageAddr >> 16;
+    if (lbDisplay.VesaIsSetUp)
+        LbVesaSetPage(page1);
+
+    for (h = 0; h < height; h++)
+    {
+        pageAddr = outPos1 & 0xFFFF0000;
+        page2 = pageAddr >> 16;
+        if (page2 != page1)
+            LbVesaSetPage(page2);
+        pageAddr = outPos2 & 0xFFFF0000;
+        page1 = pageAddr >> 16;
+        if (page2 == page1)
+        {
+            destBuf = (ubyte *)0xA0000 + (outPos1 & 0xFFFF);
+            qmemcpy(destBuf, &sourceBuf[inLnStart], width);
+        } else
+        {
+            destBuf = (ubyte *)0xA0000;
+            widthPart = 0x10000 - (outPos1 & 0xFFFF);
+            qmemcpy(destBuf + (outPos1 & 0xFFFF), &sourceBuf[inLnStart], widthPart);
+            LbVesaSetPage(page1);
+            qmemcpy(destBuf, &sourceBuf[inLnStart + widthPart], width - widthPart);
+        }
+        outPos1 += lbDisplay.GraphicsScreenWidth;
+        outPos2 += lbDisplay.PhysicalScreenWidth;
+        inLnStart += lbDisplay.GraphicsScreenWidth;
+    }
+    LbMouseRemove();
+    return Lb_SUCCESS;
 }
 
 int LbScreenDrawHVLineDirect()

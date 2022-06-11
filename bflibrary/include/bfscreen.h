@@ -462,9 +462,23 @@ TbResult LbScreenFindVideoModes(void);
  */
 TbResult LbScreenSwap(void);
 
-int LbScreenSwapBoxClear();
 TbResult LbScreenSwapClear(TbPixel colour);
-int LbScreenSwapBox();
+
+/** Updates a rectangle of working screen and places it to the physical screen.
+ *
+ * Allows to blit a rectangle from application-controlled buffer to WScreen,
+ * and then display the updated image on physical screen.
+ * A bit wierd functionality, rarely (never?) used in games. Originally it
+ * skipped the WScreen and drawn directly on physical; but that would mean
+ * mouse cursor was not part of the update, so this implementation does
+ * update WScreen first.
+ */
+TbResult LbScreenSwapBox(ubyte *sourceBuf, long sourceX, long sourceY,
+  long destX, long destY, ulong width, ulong height);
+
+TbResult LbScreenSwapBoxClear(ubyte *sourceBuf, long sourceX, long sourceY,
+  long destX, long destY, ulong width, ulong height, ubyte colour);
+
 int LbScreenDrawHVLineDirect();
 
 /** Wait for vertical blank interrupt.
