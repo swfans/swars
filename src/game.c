@@ -2716,9 +2716,9 @@ void game_process(void)
 void
 game_quit(void)
 {
-    sound_finalise ();
+    sound_finalise();
     LbBaseReset();
-    exit (0);
+    exit(0);
 }
 
 void

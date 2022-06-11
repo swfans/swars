@@ -295,9 +295,6 @@ void read_conf_file(void)
 int
 main (int argc, char **argv)
 {
-    int retval;
-
-    retval = 0;
     lbDisplay.ScreenMode = Lb_SCREEN_MODE_320_200_8;
     ingame__GameMode = 0;
     cmdln_param_w = 0;
@@ -334,6 +331,6 @@ main (int argc, char **argv)
     LbErrorLogReset();
     LbMemoryReset();
     game_quit();
-
-    return retval;
+    // the above function never returns
+    return 0;
 }
