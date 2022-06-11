@@ -24,10 +24,11 @@
 
 ubyte * lbSpriteReMapPtr;
 
-TbResult LbSpriteSetup(TbSprite *start, const TbSprite *end, const unsigned char * data)
+TbResult LbSpriteSetup(TbSprite *start, const TbSprite *end, const unsigned char *data)
 {
     struct TbSprite *sprt;
     int n;
+
     n = 0;
     sprt = start;
     while (sprt < end)
@@ -57,6 +58,26 @@ TbResult LbSpriteSetupAll(TbSetupSprite t_setup[])
       stp_sprite = &t_setup[idx];
     }
     LOGSYNC("initiated %d SetupSprite lists", idx);
+    return Lb_SUCCESS;
+}
+
+TbResult LbSpriteReset(TbSprite *start, const TbSprite *end, const unsigned char *data)
+{
+    struct TbSprite *sprt;
+    int n;
+
+    n = 0;
+    sprt = start;
+    while (sprt < end)
+    {
+      if ((unsigned long)sprt->Data >= (unsigned long)data)
+      {
+        sprt->Data -= (unsigned long)data;
+        n++;
+      }
+      sprt++;
+    }
+    LOGDBG("reset %d of %d sprites", n, (sprt-start));
     return Lb_SUCCESS;
 }
 

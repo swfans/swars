@@ -89,7 +89,13 @@ TbResult LbSpriteSetupAll(TbSetupSprite t_setup[]);
  */
 TbResult LbSpriteClearAll(TbSetupSprite t_setup[]);
 
-TbResult LbSpriteReset();
+/** Revert data pointers in an array of sprites to initial values.
+ *
+ * This basically reverts LbSpriteSetup() operation, making data fields store offsets
+ * instead of addresses.
+ */
+TbResult LbSpriteReset(TbSprite *start, const TbSprite *end, const unsigned char *data);
+
 TbResult LbSpriteResetAll();
 int LbSpriteDrawScaled();
 
