@@ -31,6 +31,7 @@ typedef void * TbSampleHandle;
 /******************************************************************************/
 void StopAllSamples(void);
 TbBool IsSamplePlaying(long tng_offs, ushort smp_id, TbSampleHandle handle);
+void FreeAudio(void);
 /******************************************************************************/
 #ifdef __cplusplus
 }

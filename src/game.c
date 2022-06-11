@@ -2835,10 +2835,28 @@ game_update(void)
     game_update_full(true);
 }
 
+void engine_reset(void)
+{
+  LbMemoryFree(engine_mem_alloc_ptr);
+}
+
 void host_reset(void)
 {
+#if 0
     asm volatile ("call ASM_host_reset\n"
         :  :  : "eax" );
+#else
+    StopCD();
+    setup_heaps(1);
+    FreeAudio();
+    engine_reset();
+    LbSpriteReset(m_sprites, m_sprites_end, m_spr_data);
+    LbSpriteReset(pointer_sprites, pointer_sprites_end, pointer_data);
+    LbMouseReset();
+    LbKeyboardClose();
+    LbScreenReset();
+    LbNetworkReset();
+#endif
 }
 
 void

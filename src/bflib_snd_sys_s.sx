@@ -1908,7 +1908,7 @@ AllocateMusicBankMemory_:
 /*----------------------------------------------------------------*/
 /* void FreeAudio(void)
  */
-GLOBAL_FUNC (FreeAudio_)
+GLOBAL_FUNC (ASM_FreeAudio)
 /*----------------------------------------------------------------*/
 		push   %ecx
 		push   %edx

@@ -33,4 +33,10 @@ TbBool IsSamplePlaying(long tng_offs, ushort smp_id, TbSampleHandle handle)
     return ret;
 }
 
+void FreeAudio(void)
+{
+    asm volatile ("call ASM_FreeAudio\n"
+        :  :  : "eax" );
+}
+
 /******************************************************************************/

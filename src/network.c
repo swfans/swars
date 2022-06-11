@@ -130,6 +130,36 @@ TbResult LbNetworkExchange(void *a1, int a2)
     return ret;
 }
 
+TbResult LbNetworkReset(void)
+{
+    TbResult ret;
+#if 1
+    asm volatile ("call ASM_LbNetworkReset\n"
+        : "=r" (ret) : );
+    return ret;
+#else
+    ret = Lb_FAIL;
+    switch (NetworkServicePtr.Type)
+    {
+    case 1:
+        ret = ipx_shutdown(*(ushort *)(IPXHandler + 8));
+        break;
+    case 2:
+    case 3:
+    case 4:
+    case 5:
+        ret = LbCommDeInit(NetworkServicePtr.Id);
+        break;
+    case 6:
+        ret = netsvc6_shutdown();
+        break;
+    }
+    NetworkServicePtr.Type = 0;
+    return ret;
+#endif
+}
+
+
 TbResult LbModemReadConfig(const char *fname)
 {
     TbResult ret;
@@ -140,10 +170,10 @@ TbResult LbModemReadConfig(const char *fname)
 
 int my_net_session_callback()
 {
-  swap_wscreen();
-  if (lbKeyOn[KC_ESCAPE])
-    return -7;
-  return 0;
+    swap_wscreen();
+    if (lbKeyOn[KC_ESCAPE])
+        return -7;
+    return 0;
 }
 
 void net_system_init0(void)

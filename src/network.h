@@ -93,6 +93,7 @@ TbResult LbNetworkSessionNumberPlayers(void);
 TbResult LbNetworkSetupIPXAddress(ulong addr);
 TbResult LbNetworkPlayerNumber(void);
 TbResult LbNetworkExchange(void *a1, int a2);
+TbResult LbNetworkReset(void);
 
 TbResult LbModemReadConfig(const char *fname);
 
