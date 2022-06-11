@@ -62,6 +62,11 @@ long lbPhysicalResolutionMul = 1;
  */
 TbBool lbHasSecondSurface = false;
 
+/** @internal
+ *  True if we request the double buffering to be on in next mode switch.
+ */
+TbBool lbDoubleBufferingRequested = false;
+
 //int lbScreenDirectAccessActive;
 
 /** Bytes per pixel expected by the engine.
@@ -268,15 +273,16 @@ TbResult LbScreenSetupAnyMode(TbScreenMode mode, TbScreenCoord width,
 
     // SDL video mode flags
     sdlFlags = 0;
-    sdlFlags |= SDL_SWSURFACE;
     if (mdinfo->BitsPerPixel == lbEngineBPP) {
         sdlFlags |= SDL_HWPALETTE;
     }
-#if 0
     if (lbDoubleBufferingRequested) {
+        // Only hardware surfaces can use double buffering
+        sdlFlags |= SDL_HWSURFACE;
         sdlFlags |= SDL_DOUBLEBUF;
+    } else {
+        sdlFlags |= SDL_SWSURFACE;
     }
-#endif
     if ((mdinfo->VideoMode & Lb_VF_WINDOWED) == 0) {
         sdlFlags |= SDL_FULLSCREEN;
     }
@@ -477,9 +483,15 @@ static TbResult LbIPhysicalScreenUnlock(void)
     return Lb_SUCCESS;
 }
 
-int LbScreenSetDoubleBuffering_UNUSED()
+TbResult LbScreenSetDoubleBuffering(TbBool state)
 {
-// code at 0001:000957b8
+    lbDoubleBufferingRequested = state;
+    return Lb_SUCCESS;
+}
+
+TbBool LbScreenIsDoubleBufferred(void)
+{
+    return ((to_SDLSurf(lbScreenSurface)->flags & SDL_DOUBLEBUF) != 0);
 }
 
 int LbScreenSetWScreenInVideo_UNUSED()
@@ -502,11 +514,12 @@ TbBool LbHwCheckIsModeAvailable(TbScreenMode mode)
     if (mdinfo->BitsPerPixel == lbEngineBPP) {
         sdlFlags |= SDL_HWPALETTE;
     }
-#if 0
     if (lbDoubleBufferingRequested) {
+        sdlFlags |= SDL_HWSURFACE;
         sdlFlags |= SDL_DOUBLEBUF;
+    } else {
+        sdlFlags |= SDL_SWSURFACE;
     }
-#endif
     if ((mdinfo->VideoMode & Lb_VF_WINDOWED) == 0) {
         sdlFlags |= SDL_FULLSCREEN;
     }

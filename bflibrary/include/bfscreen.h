@@ -403,6 +403,7 @@ int LbScreenClear();
 TbResult LbScreenReset(void);
 
 /** Locks the graphics screen.
+ *
  *  This function gives access to the WScreen pointer, which contains buffer
  *  of size GraphicsScreenWidth x GraphicsScreenHeight.
  *  It also allows accessing GraphicsWindowPtr buffer, of size
@@ -416,7 +417,29 @@ TbResult LbScreenLock(void);
 TbResult LbScreenUnlock(void);
 TbBool LbScreenIsLocked(void);
 
-int LbScreenSetDoubleBuffering();
+/** Allows to change recommended state of double buffering functionality.
+ *
+ *  Double buffering is a technique where two graphics surfaces are used,
+ *  and every screen redraw (flip) switches the primary and secondary surface.
+ *  This may produce smoother motion on some platforms, but it forces
+ *  the screen to be redrawn completely after each switch - if only
+ *  changed areas were to be updated, they would have to be updated on both
+ *  surfaces.
+ *
+ * @param state Recommended state of Double Buffering in next video mode switch.
+ * @return Lb_SUCCESS if the request has been noted and stored.
+ */
+TbResult LbScreenSetDoubleBuffering(TbBool state);
+
+/** Retrieves actual state of the Double Buffering function.
+ *  Note that if the function was requested, it still doesn't necessarily
+ *  mean it was activated.
+ *
+ * @return True if the function is currently active, false otherwise.
+ */
+TbBool LbScreenIsDoubleBufferred(void);
+
+
 int LbScreenSetWScreenInVideo();
 extern int lbScreenDirectAccessActive;
 
