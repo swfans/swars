@@ -161,8 +161,13 @@ static void LbI_ProcessEvent(const SDL_Event *ev)
 TbBool LbWindowsControl(void)
 {
     SDL_Event ev;
-    //process events until event queue is empty
-    while (SDL_PollEvent(&ev)) {
+    int n;
+    // process events until event queue is empty, nut also
+    // limit the events to avoid a freeze
+    for (n = 256; n != 0; n--)
+    {
+        if (SDL_PollEvent(&ev) == 0)
+            break;
         LbI_ProcessEvent(&ev);
     }
     return !lbUserQuit;
