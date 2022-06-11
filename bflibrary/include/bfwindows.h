@@ -17,8 +17,8 @@
  *     (at your option) any later version.
  */
 /******************************************************************************/
-#ifndef BFLIBRARY_SWINDOWS_H_
-#define BFLIBRARY_SWINDOWS_H_
+#ifndef BFLIBRARY_BFWINDOWS_H_
+#define BFLIBRARY_BFWINDOWS_H_
 
 #include "bftypes.h"
 
@@ -47,15 +47,31 @@ extern volatile TbBool lbAppActive;
  */
 TbResult LbBaseInitialise(void);
 
+/** Uninitialise the work with bullfrog library.
+ *
+ * The routine resets any config variables related to screen, and
+ * prepares everything for use of LbScreenSetupAnyMode().
+ * It performs any screen-related initialization which don't have to
+ * be repeated on every mode change.
+ */
 TbResult LbBaseReset(void);
 
+/** Allows to do useful things while waiting for time to pass.
+ *  It's basically a short sleep period.
+ */
 void LbDoMultitasking(void);
 
+/** Process any non-interrupt events from the OS or hardware.
+ *
+ *  To be used at least once in each game turn to read inputs and write
+ *  outputs which are not supported as interrupts.
+ *  On modern OSes, everything is managed by events rather than interrupts.
+ */
 TbBool LbWindowsControl(void);
 
 #ifdef __cplusplus
 };
 #endif
 
-#endif // BFLIBRARY_SWINDOWS_H_
+#endif // BFLIBRARY_BFWINDOWS_H_
 /******************************************************************************/

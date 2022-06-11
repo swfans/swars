@@ -17,8 +17,8 @@
  *     (at your option) any later version.
  */
 /******************************************************************************/
-#ifndef BFLIBRARY_PIXEL_H_
-#define BFLIBRARY_PIXEL_H_
+#ifndef BFLIBRARY_BFPIXEL_H_
+#define BFLIBRARY_BFPIXEL_H_
 
 #include "bftypes.h"
 
@@ -33,5 +33,5 @@ int LbDrawPixel();
 };
 #endif
 
-#endif // BFLIBRARY_PIXEL_H_
+#endif // BFLIBRARY_BFPIXEL_H_
 /******************************************************************************/

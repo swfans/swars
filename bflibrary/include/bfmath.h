@@ -17,8 +17,8 @@
  *     (at your option) any later version.
  */
 /******************************************************************************/
-#ifndef BFLIBRARY_GMATH_H_
-#define BFLIBRARY_GMATH_H_
+#ifndef BFLIBRARY_BFMATH_H_
+#define BFLIBRARY_BFMATH_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -50,5 +50,5 @@ extern long lbSinTable[];
 };
 #endif
 
-#endif // BFLIBRARY_GMATH_H_
+#endif // BFLIBRARY_BFMATH_H_
 /******************************************************************************/

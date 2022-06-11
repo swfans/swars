@@ -17,8 +17,8 @@
  *     (at your option) any later version.
  */
 /******************************************************************************/
-#ifndef BFLIBRARY_GIFF_H_
-#define BFLIBRARY_GIFF_H_
+#ifndef BFLIBRARY_BFIFF_H_
+#define BFLIBRARY_BFIFF_H_
 
 #include "bftypes.h"
 
@@ -43,5 +43,5 @@ TbResult LbIffSave(const char *fname, unsigned char *inp_buffer,
 };
 #endif
 
-#endif // BFLIBRARY_GIFF_H_
+#endif // BFLIBRARY_BFIFF_H_
 /******************************************************************************/

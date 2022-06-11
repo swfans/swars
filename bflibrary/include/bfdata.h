@@ -52,8 +52,9 @@ short LbDataFreeAll(TbLoadFiles load_files[]);
 
 short LbDataLoad(TbLoadFiles *load_file);
 
-/*
+/**
  * Loads a list of files. Allocates memory and loads new data.
+ *
  * @return Returns amount of entries failed, or 0 on success.
  */
 short LbDataLoadAll(TbLoadFiles load_files[]);

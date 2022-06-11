@@ -17,8 +17,8 @@
  *     (at your option) any later version.
  */
 /******************************************************************************/
-#ifndef BFLIBRARY_GTEXT_H_
-#define BFLIBRARY_GTEXT_H_
+#ifndef BFLIBRARY_BFTEXT_H_
+#define BFLIBRARY_BFTEXT_H_
 
 #include "bftypes.h"
 
@@ -58,5 +58,5 @@ extern int lbFontPtr;
 };
 #endif
 
-#endif // BFLIBRARY_GTEXT_H_
+#endif // BFLIBRARY_BFTEXT_H_
 /******************************************************************************/

@@ -68,17 +68,17 @@ enum TbFileSeekMode { // type=int8_t
 };
 
 enum TbFileAttribFlags { // type=int8_t
-    /* Normal file. */
+    /** Normal file. */
     Lb_FILE_ATTR_NORMAL = 0x00,
-    /* Read only file. */
+    /** Read only file. */
     Lb_FILE_ATTR_RDONLY = 0x01,
-    /* Hidden file. */
+    /** Hidden file. */
     Lb_FILE_ATTR_HIDDEN = 0x02,
-    /* System file. */
+    /** System file. */
     Lb_FILE_ATTR_SYSTEM = 0x03,
-    /* Subdirectory. */
+    /** Subdirectory. */
     Lb_FILE_ATTR_SUBDIR = 0x10,
-    /* Archived file. */
+    /** Archived file. */
     Lb_FILE_ATTR_ARCH   = 0x20,
 };
 

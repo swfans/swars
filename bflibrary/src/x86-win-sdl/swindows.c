@@ -31,6 +31,9 @@
 #  include <synchapi.h>
 #endif
 
+/** use atexit() to un-initialize SDL */
+#define LBI_SDL_QUIT_USE_ATEXIT
+
 volatile TbBool lbLibInitialised = false;
 volatile TbBool lbUserQuit = false;
 volatile TbBool lbAppActive;
@@ -68,7 +71,9 @@ TbResult LbBaseInitialise(void)
     }
     SDL_ShowCursor(SDL_DISABLE);
     // Setup the atexit() call to un-initialize
+#if defined(LBI_SDL_QUIT_USE_ATEXIT)
     atexit(SDL_Quit);
+#endif
     lbLibInitialised = true;
     return Lb_SUCCESS;
 }
@@ -91,7 +96,7 @@ TbResult WEvent(const SDL_Event *ev)
     case SDL_ACTIVEEVENT:
         if (ev->active.state & SDL_APPACTIVE) {
             lbAppActive = (ev->active.gain != 0);
-            //SYNCDBG(10, "Active = %d",(int)lbAppActive);
+            LOGNO("Active = %d",(int)lbAppActive);
             LbInputRestate();
         }
         if ((lbAppActive) && (lbDisplay.Palette != NULL)) {
@@ -176,7 +181,9 @@ TbBool LbWindowsControl(void)
 TbResult LbBaseReset(void)
 {
     lbLibInitialised = false;
+#if !defined(LBI_SDL_QUIT_USE_ATEXIT)
     SDL_Quit();
+#endif
     return Lb_SUCCESS;
 }
 

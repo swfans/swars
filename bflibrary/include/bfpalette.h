@@ -17,8 +17,8 @@
  *     (at your option) any later version.
  */
 /******************************************************************************/
-#ifndef BFLIBRARY_GPALETTE_H_
-#define BFLIBRARY_GPALETTE_H_
+#ifndef BFLIBRARY_BFPALETTE_H_
+#define BFLIBRARY_BFPALETTE_H_
 
 #include "bftypes.h"
 
@@ -83,5 +83,5 @@ TbResult LbPaletteDataFillWhite(ubyte *palette);
 };
 #endif
 
-#endif // BFLIBRARY_GPALETTE_H_
+#endif // BFLIBRARY_BFPALETTE_H_
 /******************************************************************************/

@@ -17,8 +17,8 @@
  *     (at your option) any later version.
  */
 /******************************************************************************/
-#ifndef BFLIBRARY_GUTILITY_H_
-#define BFLIBRARY_GUTILITY_H_
+#ifndef BFLIBRARY_BFUTILITY_H_
+#define BFLIBRARY_BFUTILITY_H_
 
 #include "bftypes.h"
 
@@ -41,5 +41,5 @@ extern "C" {
 };
 #endif
 
-#endif // BFLIBRARY_GUTILITY_H_
+#endif // BFLIBRARY_BFUTILITY_H_
 /******************************************************************************/

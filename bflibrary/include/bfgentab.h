@@ -17,8 +17,8 @@
  *     (at your option) any later version.
  */
 /******************************************************************************/
-#ifndef BFLIBRARY_GGENTAB_H_
-#define BFLIBRARY_GGENTAB_H_
+#ifndef BFLIBRARY_BFGENTAB_H_
+#define BFLIBRARY_BFGENTAB_H_
 
 #include "bftypes.h"
 
@@ -55,5 +55,5 @@ TbResult LbGhostTableLoad(ubyte *pal, short intens, const char *fname);
 };
 #endif
 
-#endif // BFLIBRARY_GGENTAB_H_
+#endif // BFLIBRARY_BFGENTAB_H_
 /******************************************************************************/

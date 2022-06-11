@@ -17,8 +17,8 @@
  *     (at your option) any later version.
  */
 /******************************************************************************/
-#ifndef BFLIBRARY_GLINE_H_
-#define BFLIBRARY_GLINE_H_
+#ifndef BFLIBRARY_BFLINE_H_
+#define BFLIBRARY_BFLINE_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -32,5 +32,5 @@ int LbDrawHVLine();
 };
 #endif
 
-#endif // BFLIBRARY_GLINE_H_
+#endif // BFLIBRARY_BFLINE_H_
 /******************************************************************************/
