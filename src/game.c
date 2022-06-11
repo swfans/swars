@@ -245,36 +245,13 @@ game_initialise(void)
     return true;
 }
 
-TbResult KEvent(const SDL_Event *ev);
-
 void
 game_handle_sdl_events (void)
 {
-    const size_t max_events = 256;
-    size_t event;
-    SDL_Event ev;
-
-    for (event = 0; event < max_events; event++)
-    {
-        if (SDL_PollEvent(&ev) == 0)
-            break;
-
-        switch (ev.type)
-        {
-        case SDL_MOUSEMOTION:
-        case SDL_MOUSEBUTTONUP:
-        case SDL_MOUSEBUTTONDOWN:
-            MEvent(&ev);
-            break;
-
-        case SDL_KEYUP:
-        case SDL_KEYDOWN:
-            KEvent(&ev);
-            break;
-
-        case SDL_QUIT:
-            game_quit();
-        }
+    TbBool contn;
+    contn = LbWindowsControl();
+    if (!contn) {
+        game_quit();
     }
 }
 
