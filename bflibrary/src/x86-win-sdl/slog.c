@@ -94,19 +94,30 @@ TbResult LbLogClose(struct TbLog *log)
     return Lb_SUCCESS;
 }
 
-int LbLogSuspend_UNUSED()
+TbResult LbLogSuspend(struct TbLog *log)
 {
-// code at 0001:000d20e4
+    if (!log->Initialised)
+        return Lb_FAIL;
+    log->Suspended = true;
+    return Lb_SUCCESS;
 }
 
-int LbLogRestart_UNUSED()
+TbResult LbLogRestart(struct TbLog *log)
 {
-// code at 0001:000d2118
+    if (!log->Initialised)
+        return Lb_FAIL;
+    log->Suspended = false;
+    return Lb_SUCCESS;
 }
 
-int LbLogDelete_UNUSED()
+TbResult LbLogDelete(struct TbLog *log)
 {
-// code at 0001:000d2098
+    if (!log->Initialised)
+        return Lb_FAIL;
+    if (LbFileDelete(log->Filename) != Lb_SUCCESS)
+        return Lb_FAIL;
+    log->Created = false;
+    return Lb_SUCCESS;
 }
 
 void LbI_LogHeader(struct TbLog *log, FILE *file, ubyte header)

@@ -98,9 +98,9 @@ TbResult LbLogSetPrefixFmt(struct TbLog *log, const char *format, ...);
 TbResult LbLogSetup(struct TbLog *log, const char *filename, ulong flags);
 TbResult LbLogClose(struct TbLog *log);
 
-int LbLogDelete();
-int LbLogSuspend();
-int LbLogRestart();
+TbResult LbLogSuspend(struct TbLog *log);
+TbResult LbLogRestart(struct TbLog *log);
+TbResult LbLogDelete(struct TbLog *log);
 
 /**
  * Set up logging subsystem and begin writing program execution log at given location.
