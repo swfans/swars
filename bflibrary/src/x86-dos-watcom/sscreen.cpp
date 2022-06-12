@@ -19,6 +19,29 @@
 /******************************************************************************/
 #include "bfscreen.h"
 
+#define CLIP_START_END_COORDS(cor1, cor2, corlimit) \
+    if (cor1 > cor2) \
+    { \
+        if (cor1 < 0) \
+            return Lb_FAIL; \
+        if (cor2 > corlimit) \
+            return Lb_FAIL; \
+        if (cor2 < 0) \
+            cor2 = 0; \
+        if (cor1 > corlimit) \
+            cor1 = corlimit; \
+    } else \
+    { \
+        if (cor2 < 1) \
+            return Lb_FAIL; \
+        if (corlimit - 1 < cor1) \
+            return Lb_FAIL; \
+        if (cor1 < 0) \
+            cor1 = 0; \
+        if (cor2 > corlimit) \
+            cor2 = corlimit; \
+    }
+
 static inline void *LbI_XMemCopy(void *dest, void *source, ulong len)
 {
     ulong remain;
@@ -238,9 +261,141 @@ TbResult LbScreenSwapBox(ubyte *sourceBuf, long sourceX, long sourceY,
     return Lb_SUCCESS;
 }
 
-int LbScreenDrawHVLineDirect()
+static TbResult LbI_ScreenDrawHLineDirect(long X1, long Y1, long X2, long Y2)
 {
-// code at 0001:00095dc4
+    ubyte *ptr;
+    ubyte *ptrEnd;
+    long xBeg, xEnd;
+    long width, shiftX, shiftY;
+
+    if (X1 <= X2) {
+        width = X2 - X1;
+        shiftY = lbDisplay.GraphicsWindowWidth * Y1;
+        shiftX = X1;
+    } else {
+        width = X1 - X2;
+        shiftY = lbDisplay.GraphicsWindowWidth * Y1;
+        shiftX = X2;
+    }
+    xBeg = shiftY + shiftX;
+    xEnd = width + shiftY + shiftX;
+    if (lbDisplay.VesaIsSetUp)
+    {
+        ulong page1, page2;
+
+        page1 = xBeg >> 16;
+        page2 = xEnd >> 16;
+        if (page1 == page2)
+        {
+            LbVesaSetPage(page1);
+            ptrEnd = &lbDisplay.PhysicalScreen[xEnd - (page2 << 16)];
+            ptr = &lbDisplay.PhysicalScreen[xBeg - (page1 << 16)];
+        }
+        else
+        {
+            LbVesaSetPage(page1);
+            ptrEnd = &lbDisplay.PhysicalScreen[0x10000];
+            ptr = &lbDisplay.PhysicalScreen[xBeg - (page1 << 16)];
+            do {
+                *ptr += 128;
+                ptr++;
+            } while (ptr < ptrEnd);
+            LbVesaSetPage(page2);
+            ptr = &lbDisplay.PhysicalScreen[0];
+            ptrEnd = &lbDisplay.PhysicalScreen[xEnd - (page2 << 16)];
+        }
+        do {
+            *ptr += 128;
+            ptr++;
+        } while (ptr < ptrEnd);
+    } else
+    {
+        ptrEnd = &lbDisplay.PhysicalScreen[xEnd];
+        ptr = &lbDisplay.PhysicalScreen[xBeg];
+        do {
+            *ptr += 128;
+            ptr++;
+        } while (ptr < ptrEnd);
+    }
+}
+
+static TbResult LbI_ScreenDrawVLineDirect(long X1, long Y1, long X2, long Y2)
+{
+    ubyte *ptr;
+    ubyte *ptrEnd;
+    long yBeg, yEnd;
+    long height, shiftX, shiftY;
+    long delta;
+
+    if (Y1 <= Y2) {
+        height = Y2 - Y1;
+        shiftY = lbDisplay.GraphicsWindowWidth * Y1;
+    } else {
+        height = Y1 - Y2;
+        shiftY = lbDisplay.GraphicsWindowWidth * Y2;
+    }
+    yBeg = shiftY + X1;
+    yEnd = height * lbDisplay.GraphicsScreenWidth + yBeg;
+    if (lbDisplay.VesaIsSetUp)
+    {
+        ulong page1, page2, i;
+        ulong begFirstPg, endLastPg, endMidPg;
+        ubyte *ptrPrev;
+
+        page1 = yBeg >> 16;
+        page2 = yEnd >> 16;
+        ptrPrev = NULL;
+        begFirstPg = &lbDisplay.PhysicalScreen[yBeg - (page1 << 16)];
+        endLastPg = &lbDisplay.PhysicalScreen[yEnd - (page2 << 16)];
+        endMidPg = &lbDisplay.PhysicalScreen[0x10000];
+        if (page1 == page2)
+            endMidPg = &lbDisplay.PhysicalScreen[yEnd - (page2 << 16)];
+        for (i = page1; i <= page2; i++)
+        {
+            LbVesaSetPage(i);
+            if (i == page1) {
+                ptrEnd = endMidPg;
+                ptr = begFirstPg;
+            } else if (i != page2) {
+                ptrEnd = endMidPg;
+                ptr = ptrPrev - 0x10000;
+            } else {
+                ptrEnd = endLastPg;
+                ptr = ptrPrev - 0x10000;
+            }
+            delta = lbDisplay.GraphicsScreenWidth;
+            do {
+                *ptr += 128;
+                ptr += delta;
+            } while (ptr < ptrEnd);
+            ptrPrev = ptr;
+        }
+    } else
+    {
+        ptrEnd = &lbDisplay.PhysicalScreen[yEnd];
+        ptr = &lbDisplay.PhysicalScreen[yBeg];
+        delta = lbDisplay.GraphicsScreenWidth;
+        do {
+            *ptr += 128;
+            ptr += delta;
+        } while (ptr < ptrEnd);
+    }
+}
+
+TbResult LbScreenDrawHVLineDirect(long X1, long Y1, long X2, long Y2)
+{
+    CLIP_START_END_COORDS(X1, X2, lbDisplay.GraphicsWindowWidth);
+    CLIP_START_END_COORDS(Y1, Y2, lbDisplay.GraphicsWindowHeight);
+    lbScreenDirectAccessActive = 1;
+    if (X1 != X2)
+    {
+        LbI_ScreenDrawHLineDirect(X1, Y1, X2, Y2);
+    } else
+    {
+        LbI_ScreenDrawVLineDirect(X1, Y1, X2, Y2);
+    }
+    lbScreenDirectAccessActive = 0;
+    return Lb_SUCCESS;
 }
 
 TbResult LbScreenWaitVbi(void)

@@ -287,6 +287,10 @@ extern ushort lbUnitsPerPixel;
  */
 extern ushort lbEngineBPP;
 
+/** True when in a code block where PhysicalScreen is being accessed.
+ */
+extern volatile TbBool lbScreenDirectAccessActive;
+
 /** Returns info struct for requested screen mode.
  *
  * @return The info struct for given screen mode, or empty
@@ -441,7 +445,6 @@ TbBool LbScreenIsDoubleBufferred(void);
 
 
 int LbScreenSetWScreenInVideo();
-extern int lbScreenDirectAccessActive;
 
 /** Updates video modes info, setting availability of each mode.
  * @return Lb_SUCCESS if there is at least one mode available.
@@ -479,7 +482,13 @@ TbResult LbScreenSwapBox(ubyte *sourceBuf, long sourceX, long sourceY,
 TbResult LbScreenSwapBoxClear(ubyte *sourceBuf, long sourceX, long sourceY,
   long destX, long destY, ulong width, ulong height, ubyte colour);
 
-int LbScreenDrawHVLineDirect();
+/** Draws either horizonal or vertical line directly on physical screen.
+ * The line colour is previous colour of each pixel shifted by 128.
+ *
+ * Allows draw a line without changing WScreen.
+ * A bit wierd functionality, rarely (never?) used in games.
+ */
+TbResult LbScreenDrawHVLineDirect(long X1, long Y1, long X2, long Y2);
 
 /** Wait for vertical blank interrupt.
  *

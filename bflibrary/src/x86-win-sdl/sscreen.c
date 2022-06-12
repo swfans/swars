@@ -34,10 +34,36 @@
 
 #define to_SDLSurf(h) ((SDL_Surface  *)h)
 
+#define CLIP_START_END_COORDS(cor1, cor2, corlimit) \
+    if (cor1 > cor2) \
+    { \
+        if (cor1 < 0) \
+            return Lb_FAIL; \
+        if (cor2 > corlimit) \
+            return Lb_FAIL; \
+        if (cor2 < 0) \
+            cor2 = 0; \
+        if (cor1 > corlimit) \
+            cor1 = corlimit; \
+    } else \
+    { \
+        if (cor2 < 1) \
+            return Lb_FAIL; \
+        if (corlimit - 1 < cor1) \
+            return Lb_FAIL; \
+        if (cor1 < 0) \
+            cor1 = 0; \
+        if (cor2 > corlimit) \
+            cor2 = corlimit; \
+    }
+
+
 extern char lbDrawAreaTitle[128];
 extern short lbIconIndex;
 extern ResourceMappingFunc userResourceMapping;
 extern volatile TbBool lbPointerAdvancedDraw;
+
+volatile TbBool lbScreenDirectAccessActive = false;
 
 /** @internal
  *  Minimal value of dimensions in physical resolution.
@@ -66,8 +92,6 @@ TbBool lbHasSecondSurface = false;
  *  True if we request the double buffering to be on in next mode switch.
  */
 TbBool lbDoubleBufferingRequested = false;
-
-//int lbScreenDirectAccessActive;
 
 /** Bytes per pixel expected by the engine.
  * On any try of entering different video BPP, this mode will be emulated. */
@@ -498,6 +522,7 @@ static TbResult LbIPhysicalScreenLock(void)
     }
     // set vga buffer address
     lbDisplay.PhysicalScreen = (ubyte *)to_SDLSurf(lbScreenSurface)->pixels;
+    lbScreenDirectAccessActive = true;
 
     return Lb_SUCCESS;
 }
@@ -506,6 +531,7 @@ static TbResult LbIPhysicalScreenLock(void)
  */
 static TbResult LbIPhysicalScreenUnlock(void)
 {
+    lbScreenDirectAccessActive = false;
     lbDisplay.PhysicalScreen = NULL;
     if (lbHasSecondSurface && SDL_MUSTLOCK(to_SDLSurf(lbScreenSurface))) {
         SDL_UnlockSurface(to_SDLSurf(lbScreenSurface));
@@ -827,9 +853,84 @@ TbResult LbScreenSwapBoxClear(ubyte *sourceBuf, long sourceX, long sourceY,
     return Lb_FAIL;
 }
 
-int LbScreenDrawHVLineDirect_UNUSED()
+static TbResult LbI_ScreenDrawHLineDirect(long X1, long Y1, long X2, long Y2)
 {
-// code at 0001:00095dc4
+    ubyte *ptr;
+    ubyte *ptrEnd;
+    long xBeg, xEnd;
+    long width, shiftX, shiftY;
+
+    LOGDBG("starting");
+    assert(!lbDisplay.VesaIsSetUp); // video mem paging not supported with SDL
+
+    if (X1 <= X2) {
+        width = X2 - X1;
+        shiftY = lbDisplay.GraphicsWindowWidth * Y1;
+        shiftX = X1;
+    } else {
+        width = X1 - X2;
+        shiftY = lbDisplay.GraphicsWindowWidth * Y1;
+        shiftX = X2;
+    }
+    xBeg = shiftY + shiftX;
+    xEnd = width + shiftY + shiftX;
+
+    {
+        ptrEnd = &lbDisplay.PhysicalScreen[xEnd];
+        ptr = &lbDisplay.PhysicalScreen[xBeg];
+        do {
+            *ptr += 128;
+            ptr++;
+        } while (ptr < ptrEnd);
+    }
+}
+
+static TbResult LbI_ScreenDrawVLineDirect(long X1, long Y1, long X2, long Y2)
+{
+    ubyte *ptr;
+    ubyte *ptrEnd;
+    long yBeg, yEnd;
+    long height, shiftX, shiftY;
+    long delta;
+
+    LOGDBG("starting");
+    assert(!lbDisplay.VesaIsSetUp); // video mem paging not supported with SDL
+
+    if (Y1 <= Y2) {
+        height = Y2 - Y1;
+        shiftY = lbDisplay.GraphicsWindowWidth * Y1;
+    } else {
+        height = Y1 - Y2;
+        shiftY = lbDisplay.GraphicsWindowWidth * Y2;
+    }
+    yBeg = shiftY + X1;
+    yEnd = height * lbDisplay.GraphicsScreenWidth + yBeg;
+
+    {
+        ptrEnd = &lbDisplay.PhysicalScreen[yEnd];
+        ptr = &lbDisplay.PhysicalScreen[yBeg];
+        delta = lbDisplay.GraphicsScreenWidth;
+        do {
+            *ptr += 128;
+            ptr += delta;
+        } while (ptr < ptrEnd);
+    }
+}
+
+TbResult LbScreenDrawHVLineDirect(long X1, long Y1, long X2, long Y2)
+{
+    CLIP_START_END_COORDS(X1, X2, lbDisplay.GraphicsWindowWidth);
+    CLIP_START_END_COORDS(Y1, Y2, lbDisplay.GraphicsWindowHeight);
+    LbIPhysicalScreenLock();
+    if (X1 != X2)
+    {
+        LbI_ScreenDrawHLineDirect(X1, Y1, X2, Y2);
+    } else
+    {
+        LbI_ScreenDrawVLineDirect(X1, Y1, X2, Y2);
+    }
+    LbIPhysicalScreenUnlock();
+    return Lb_SUCCESS;
 }
 
 TbResult LbScreenWaitVbi_UNUSED(void)
