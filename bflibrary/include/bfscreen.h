@@ -457,7 +457,13 @@ TbResult LbScreenSetDoubleBuffering(TbBool state);
 TbBool LbScreenIsDoubleBufferred(void);
 
 
-int LbScreenSetWScreenInVideo();
+/** Sets new value of a flag field, and returns previous one.
+ *  Doesn't make much sense, as the value is not used for anything.
+ *  But still, this is a part of bflibrary API. So here we are.
+ *
+ * @return Value of the flag which was given to previous call.
+ */
+ulong LbScreenSetWScreenInVideo(ulong flag);
 
 /** Updates video modes info, setting availability of each mode.
  * @return Lb_SUCCESS if there is at least one mode available.

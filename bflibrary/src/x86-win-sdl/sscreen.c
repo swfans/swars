@@ -568,9 +568,14 @@ TbBool LbScreenIsDoubleBufferred(void)
     return ((to_SDLSurf(lbScreenSurface)->flags & SDL_DOUBLEBUF) != 0);
 }
 
-int LbScreenSetWScreenInVideo_UNUSED()
+ulong LbScreenSetWScreenInVideo(ulong flag)
 {
-// code at 0001:000957d8
+    static ulong cur_flag = 0;
+    ulong prev_flag;
+
+    prev_flag = cur_flag;
+    cur_flag = flag;
+    return prev_flag;
 }
 
 /** @internal

@@ -138,9 +138,14 @@ int LbScreenSetDoubleBuffering()
 // code at 0001:000957b8
 }
 
-int LbScreenSetWScreenInVideo()
+ulong LbScreenSetWScreenInVideo(ulong flag)
 {
-// code at 0001:000957d8
+    static ulong cur_flag = 0;
+    ulong prev_flag;
+
+    prev_flag = cur_flag;
+    cur_flag = flag;
+    return prev_flag;
 }
 
 int lbScreenDirectAccessActive;
