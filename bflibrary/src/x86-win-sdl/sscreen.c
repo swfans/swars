@@ -25,6 +25,7 @@
 
 #include "bfscrsurf.h"
 #include "bfpalette.h"
+#include "bfmemut.h"
 #include "bfmouse.h"
 #include "bftext.h"
 #include "bfwindows.h"
@@ -97,7 +98,7 @@ TbBool lbDoubleBufferingRequested = false;
  * On any try of entering different video BPP, this mode will be emulated. */
 ushort lbEngineBPP = 8;
 
-static inline void *LbI_XMemCopy(void *dest, void *source, ulong len)
+void *LbI_XMemCopy(void *dest, void *source, ulong len)
 {
     ulong remain;
     ubyte *s;
@@ -113,7 +114,7 @@ static inline void *LbI_XMemCopy(void *dest, void *source, ulong len)
     return dest;
 }
 
-static inline void *LbI_XMemCopyAndSet(void *dest, void *source, ulong val, ulong len)
+void *LbI_XMemCopyAndSet(void *dest, void *source, ulong val, ulong len)
 {
     ulong remain;
     ubyte *s;
@@ -130,7 +131,7 @@ static inline void *LbI_XMemCopyAndSet(void *dest, void *source, ulong val, ulon
     return dest;
 }
 
-static inline void *LbI_XMemRectCopy(void *dest, void *source, ulong lineLen,
+void *LbI_XMemRectCopy(void *dest, void *source, ulong lineLen,
   ulong width, ulong height)
 {
     ulong remainH, remainW;
@@ -876,7 +877,7 @@ TbResult LbScreenSwapBoxClear(ubyte *sourceBuf, long sourceX, long sourceY,
     return Lb_FAIL;
 }
 
-static TbResult LbI_ScreenDrawHLineDirect(long X1, long Y1, long X2, long Y2)
+static void LbI_ScreenDrawHLineDirect(long X1, long Y1, long X2, long Y2)
 {
     ubyte *ptr;
     ubyte *ptrEnd;
@@ -908,12 +909,12 @@ static TbResult LbI_ScreenDrawHLineDirect(long X1, long Y1, long X2, long Y2)
     }
 }
 
-static TbResult LbI_ScreenDrawVLineDirect(long X1, long Y1, long X2, long Y2)
+static void LbI_ScreenDrawVLineDirect(long X1, long Y1, long X2, long Y2)
 {
     ubyte *ptr;
     ubyte *ptrEnd;
     long yBeg, yEnd;
-    long height, shiftX, shiftY;
+    long height, shiftY;
     long delta;
 
     LOGDBG("starting");

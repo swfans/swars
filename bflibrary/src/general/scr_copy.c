@@ -18,16 +18,47 @@
  */
 /******************************************************************************/
 #include "bfscrcopy.h"
+#include "bfscreen.h"
 
-int LbScreenCopyBox_UNUSED()
+void *LbI_XMemCopy(void *dest, void *source, ulong len);
+
+void *LbI_XMemRectCopy(void *dest, void *source, ulong lineLen,
+  ulong width, ulong height);
+
+void LbScreenCopyBox(TbPixel *sourceBuf, TbPixel *destBuf,
+  long sourceX, long sourceY, long destX, long destY,
+  ulong width, ulong height)
 {
-// code at 0001:000991b3
+    ubyte *s;
+    ubyte *d;
+
+    s = &sourceBuf[sourceX + sourceY * lbDisplay.GraphicsScreenWidth];
+    d = &destBuf[destX + destY * lbDisplay.GraphicsScreenWidth];
+
+    // The function is able to copy non-aligned width without issues;
+    // we are aligning it for original API compatibility
+    LbI_XMemRectCopy(d, s, lbDisplay.GraphicsScreenWidth,
+      width & ~0x3, height);
 }
 
-int LbScreenCopy_UNUSED()
+void LbScreenCopy(TbPixel *sourceBuf, TbPixel *destBuf, ulong height)
 {
-// code at 0001:0009917c
-}
+    ubyte *s;
+    ubyte *d;
+    long dwwidth, shift;
+    long h;
 
+    s = sourceBuf;
+    d = destBuf;
+    shift = lbDisplay.GraphicsScreenWidth - lbDisplay.GraphicsWindowWidth;
+    dwwidth = lbDisplay.GraphicsWindowWidth >> 2;
+    // Note that source and destination buffers have different line lengths
+    for (h = height; h > 0; h--)
+    {
+        LbI_XMemCopy(d, s, 4 * dwwidth);
+        s += 4 * dwwidth;
+        d += 4 * dwwidth + shift;
+    }
+}
 
 /******************************************************************************/

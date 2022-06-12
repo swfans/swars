@@ -26,8 +26,24 @@
 extern "C" {
 #endif
 
-int LbScreenCopyBox();
-int LbScreenCopy();
+/** Copies a rectangle between buffers of size equal to GraphicsScreen.
+ *
+ * Given two buffers with sizes equal to GraphicsScreen, and a rectangle,
+ * definition, it blits that rectangle between these buffers.
+ * If a single buffer is used for both source and dest, the rectanlges
+ * should not overlap.
+ */
+void LbScreenCopyBox(TbPixel *sourceBuf, TbPixel *destBuf,
+  long sourceX, long sourceY, long destX, long destY,
+  ulong width, ulong height);
+
+/** Copies buffer of size equal to GraphicsWindow to one of GraphicsScreen.
+ *
+ * Given source buffer with width equal to GraphicsWindow, and destination
+ * buffer with width equal to GraphicsScreen, and the height,
+ * it copies given amount of lines of one buffer to the other.
+ */
+void LbScreenCopy(TbPixel *sourceBuf, TbPixel *destBuf, ulong height);
 
 #ifdef __cplusplus
 };
