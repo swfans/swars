@@ -395,7 +395,14 @@ TbResult LbScreenSetGraphicsWindow(ulong x, ulong y, ulong width, ulong height);
 TbResult LbScreenSetupAnyMode(TbScreenMode mode, TbScreenCoord width,
     TbScreenCoord height, ubyte *palette);
 
-int LbScreenClearGraphicsWindow();
+/** Fill current graphics window with given colour.
+ *
+ * This function fills the area pointed by GraphicsWindowPtr and bounded
+ * by GraphicsWindow sizes.
+ * It requires the pointer to graphics window to be accessible.
+ */
+TbResult LbScreenClearGraphicsWindow(TbPixel colour);
+
 int LbScreenClear();
 
 /** Finalize the work with graphical screen.

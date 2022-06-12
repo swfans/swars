@@ -419,9 +419,20 @@ TbResult LbScreenSetupAnyMode(TbScreenMode mode, TbScreenCoord width,
     return Lb_SUCCESS;
 }
 
-int LbScreenClearGraphicsWindow_UNUSED()
+TbResult LbScreenClearGraphicsWindow(TbPixel colour)
 {
-// code at 0001:000956dc
+    TbPixel *ptr;
+    long h;
+
+    ptr = lbDisplay.GraphicsWindowPtr;
+    if (ptr == NULL)
+        return Lb_FAIL;
+    for (h = lbDisplay.GraphicsWindowHeight; h >= 0; h--)
+    {
+        LbMemorySet(ptr, colour, lbDisplay.GraphicsWindowWidth);
+        ptr += lbDisplay.GraphicsScreenWidth;
+    }
+    return Lb_SUCCESS;
 }
 
 int LbScreenClear_UNUSED()
