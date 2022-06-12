@@ -403,7 +403,13 @@ TbResult LbScreenSetupAnyMode(TbScreenMode mode, TbScreenCoord width,
  */
 TbResult LbScreenClearGraphicsWindow(TbPixel colour);
 
-int LbScreenClear();
+/** Clear work screen, filling it with given colour.
+ *
+ *  Fills whole WScreen with given colour.
+ *  Requires WScreen pointer to be accessible (screen needs to be locked
+ *  during this call).
+ */
+TbResult LbScreenClear(TbPixel colour);
 
 /** Finalize the work with graphical screen.
  *

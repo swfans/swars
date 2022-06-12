@@ -435,9 +435,16 @@ TbResult LbScreenClearGraphicsWindow(TbPixel colour)
     return Lb_SUCCESS;
 }
 
-int LbScreenClear_UNUSED()
+TbResult LbScreenClear(TbPixel colour)
 {
-// code at 0001:00095728
+    TbPixel *ptr;
+
+    ptr = lbDisplay.WScreen;
+    if (ptr == NULL)
+        return Lb_FAIL;
+    LbMemorySet(ptr, colour, lbDisplay.GraphicsScreenHeight *
+      lbDisplay.GraphicsScreenWidth);
+    return Lb_SUCCESS;
 }
 
 TbResult LbScreenReset(void)
