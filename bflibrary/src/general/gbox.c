@@ -18,6 +18,7 @@
  */
 /******************************************************************************/
 #include "bfbox.h"
+#include "bfscreen.h"
 
 TbResult LbDrawBox(long X1, long Y1, long X2, long Y2, TbPixel colour)
 {

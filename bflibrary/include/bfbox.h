@@ -3,7 +3,7 @@
 // Syndicate Wars, Magic Carpet, Genewars or Dungeon Keeper.
 /******************************************************************************/
 /** @file bfbox.h
- *     Header file for gbox.cpp, box_clip.asm.
+ *     Header file for gbox.c, box_clip.c.
  * @par Purpose:
  *     Unknown.
  * @par Comment:
