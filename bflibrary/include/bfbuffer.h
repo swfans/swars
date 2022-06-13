@@ -20,13 +20,34 @@
 #ifndef BFLIBRARY_GBUFFER_H_
 #define BFLIBRARY_GBUFFER_H_
 
+#include "bftypes.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-int LbBufferSet();
-int LbBufferRelease();
-int LbBufferLock();
+/** Initializes a lockable buffer singleton.
+ *
+ *  Provides pointer and size to a lockable buffer feature. Only one such buffer
+ *  can be set - its internal state is static. The memory pointed can then
+ *  be accessed and utilized using LbBuffer*() functions.
+ *  Requires the buffer to be unlocked.
+ *  The default buffer has size of 4 kbytes; this function shall be used only if
+ *  the buffer size needed is larger.
+ */
+TbResult LbBufferSet(void *ptr, ulong size);
+
+/** Releases/resets a lockable buffer singleton.
+ *
+ *  Replaces the data in internal state with one for default buffer.
+ * Requires the buffer to be unlocked.
+ */
+TbResult LbBufferRelease(void);
+
+/** Locks the buffer, and returns pointer and size required to its access.
+ */
+TbResult LbBufferLock(void **ptr, ulong *size);
+
 int LbBufferUnlock();
 int LbBufferFileSetup();
 int LbBufferFileReset();

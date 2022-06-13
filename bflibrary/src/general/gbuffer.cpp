@@ -19,19 +19,48 @@
 /******************************************************************************/
 #include "bfbuffer.h"
 
-int LbBufferSet_UNUSED()
+#define DEFAULT_BUFFER_SIZE 0x1000
+
+ubyte default_buffer[DEFAULT_BUFFER_SIZE];
+void *buffer_ptr = &default_buffer;
+ulong buffer_size = DEFAULT_BUFFER_SIZE;
+TbBool buffer_locked = false;
+
+TbResult LbBufferSet(void *ptr, ulong size)
 {
-// code at 0001:000c9c80
+    if (buffer_locked)
+        return Lb_FAIL;
+    if (buffer_ptr != &default_buffer)
+        return Lb_FAIL;
+    if (size < DEFAULT_BUFFER_SIZE)
+        return Lb_FAIL;
+
+    buffer_ptr = ptr;
+    buffer_size = size;
+    return Lb_SUCCESS;
 }
 
-int LbBufferRelease_UNUSED()
+TbResult LbBufferRelease(void)
 {
-// code at 0001:000c9ccc
+    if (buffer_locked)
+        return Lb_FAIL;
+    if (buffer_ptr == &default_buffer)
+        return Lb_FAIL;
+
+    buffer_ptr = &default_buffer;
+    buffer_size = DEFAULT_BUFFER_SIZE;
+    return Lb_SUCCESS;
 }
 
-int LbBufferLock_UNUSED()
+TbResult LbBufferLock(void **ptr, ulong *size)
 {
-// code at 0001:000c9d10
+    *ptr = NULL;
+    if (buffer_locked)
+        return Lb_FAIL;
+    *ptr = buffer_ptr;
+    *size = buffer_size;
+    buffer_locked = true;
+    return Lb_SUCCESS;
 }
 
 int LbBufferUnlock_UNUSED()
