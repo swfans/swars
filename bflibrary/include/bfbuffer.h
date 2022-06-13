@@ -21,6 +21,7 @@
 #define BFLIBRARY_GBUFFER_H_
 
 #include "bftypes.h"
+#include "bffile.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -48,12 +49,30 @@ TbResult LbBufferRelease(void);
  */
 TbResult LbBufferLock(void **ptr, ulong *size);
 
-int LbBufferUnlock();
-int LbBufferFileSetup();
-int LbBufferFileReset();
-int LbBufferFileRead();
-int LbBufferFileReadByte();
-int LbBufferFileSkip();
+/** Unlocks the previously locked buffer.
+ */
+TbResult LbBufferUnlock(void);
+
+/** Sets the buffer up for file reading.
+ */
+TbResult LbBufferFileSetup(TbFileHandle handle);
+
+/** Removes file reading state from the buffer.
+ */
+TbResult LbBufferFileReset(void);
+
+/** Reads from associated file through the buffer.
+ */
+TbResult LbBufferFileRead(void *buf, int size);
+
+/** Reads one byte from associated file through the buffer.
+ * @return Gives unsigned byte value, or Lb_FAIL in case of error.
+ */
+short LbBufferFileReadByte(void);
+
+/** Skip reading given amount of byte in associated file and buffer.
+ */
+TbResult LbBufferFileSkip(ulong len);
 
 #ifdef __cplusplus
 };

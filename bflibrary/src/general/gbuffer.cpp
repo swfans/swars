@@ -17,20 +17,29 @@
  *     (at your option) any later version.
  */
 /******************************************************************************/
+#include <cstring>
 #include "bfbuffer.h"
+#include "bffile.h"
 
 #define DEFAULT_BUFFER_SIZE 0x1000
 
 ubyte default_buffer[DEFAULT_BUFFER_SIZE];
-void *buffer_ptr = &default_buffer;
+void *buffer_ptr = default_buffer;
 ulong buffer_size = DEFAULT_BUFFER_SIZE;
 TbBool buffer_locked = false;
+
+TbFileHandle bf_file_handle = INVALID_FILE;
+ubyte *bf_buffer = NULL;
+ubyte *bf_buffer_ptr = NULL;
+ubyte *bf_end_buffer_ptr = NULL;
+ulong bf_buffer_size = 0;
+TbBool bf_finished = false;
 
 TbResult LbBufferSet(void *ptr, ulong size)
 {
     if (buffer_locked)
         return Lb_FAIL;
-    if (buffer_ptr != &default_buffer)
+    if (buffer_ptr != default_buffer)
         return Lb_FAIL;
     if (size < DEFAULT_BUFFER_SIZE)
         return Lb_FAIL;
@@ -44,10 +53,10 @@ TbResult LbBufferRelease(void)
 {
     if (buffer_locked)
         return Lb_FAIL;
-    if (buffer_ptr == &default_buffer)
+    if (buffer_ptr == default_buffer)
         return Lb_FAIL;
 
-    buffer_ptr = &default_buffer;
+    buffer_ptr = default_buffer;
     buffer_size = DEFAULT_BUFFER_SIZE;
     return Lb_SUCCESS;
 }
@@ -57,41 +66,157 @@ TbResult LbBufferLock(void **ptr, ulong *size)
     *ptr = NULL;
     if (buffer_locked)
         return Lb_FAIL;
+
     *ptr = buffer_ptr;
     *size = buffer_size;
     buffer_locked = true;
     return Lb_SUCCESS;
 }
 
-int LbBufferUnlock_UNUSED()
+TbResult LbBufferUnlock(void)
 {
-// code at 0001:000c9d64
+    if (!buffer_locked)
+        return Lb_FAIL;
+
+    buffer_locked = 0;
+    return Lb_SUCCESS;
 }
 
-int LbBufferFileSetup_UNUSED()
+static TbResult fill_buffer(void)
 {
-// code at 0001:000c9d8c
+    long len;
+
+    if (bf_buffer_ptr == bf_end_buffer_ptr) {
+        bf_finished = true;
+        return Lb_FAIL;
+    }
+    bf_buffer_ptr = bf_buffer;
+    bf_end_buffer_ptr = bf_buffer;
+    len = LbFileRead(bf_file_handle, bf_buffer, bf_buffer_size);
+    if (len == -1 || len == 0) {
+        bf_finished = 1;
+        return Lb_FAIL;
+    }
+    bf_end_buffer_ptr += len;
+    return Lb_SUCCESS;
 }
 
-int LbBufferFileReset_UNUSED()
+TbResult LbBufferFileSetup(TbFileHandle handle)
 {
-// code at 0001:000c9e2c
+    if (bf_buffer)
+        return Lb_FAIL;
+    if (LbBufferLock((void **)&bf_buffer, &bf_buffer_size) != 1)
+        return Lb_FAIL;
+
+    bf_file_handle = handle;
+    bf_end_buffer_ptr = &bf_buffer_ptr[bf_buffer_size];
+    bf_buffer_ptr += bf_buffer_size;
+    if (fill_buffer() != Lb_SUCCESS)
+    {
+        bf_buffer = 0;
+        bf_buffer_ptr = NULL;
+        bf_end_buffer_ptr = NULL;
+        bf_buffer_size = 0;
+        bf_file_handle = INVALID_FILE;
+        bf_finished = 0;
+    }
+    return Lb_SUCCESS;
 }
 
-int LbBufferFileRead_UNUSED()
+TbResult LbBufferFileReset(void)
 {
-// code at 0001:000c9e74
+    if (!bf_buffer)
+        return Lb_FAIL;
+
+    bf_buffer = 0;
+    bf_buffer_ptr = NULL;
+    bf_end_buffer_ptr = NULL;
+    bf_buffer_size = 0;
+    bf_file_handle = INVALID_FILE;
+    bf_finished = 0;
+    return LbBufferUnlock();
 }
 
-int LbBufferFileReadByte_UNUSED()
+TbResult LbBufferFileRead(void *buf, int size)
 {
-// code at 0001:000c9f30
+    ulong chunk_len, remain;
+    ubyte *p;
+
+    if (!bf_buffer)
+        return Lb_FAIL;
+    if (bf_finished)
+        return Lb_FAIL;
+
+    p = (ubyte *)buf;
+    remain = size;
+    while (remain)
+    {
+        chunk_len = bf_end_buffer_ptr - bf_buffer_ptr;
+        if (chunk_len >= remain)
+            chunk_len = remain;
+
+        memcpy(p, bf_buffer_ptr, chunk_len);
+        bf_buffer_ptr += chunk_len;
+        remain -= chunk_len;
+        if (remain)
+        {
+            if (fill_buffer() != Lb_SUCCESS)
+                return Lb_FAIL;
+            p += chunk_len;
+        }
+    }
+    return Lb_SUCCESS;
 }
 
-int LbBufferFileSkip_UNUSED()
+short LbBufferFileReadByte(void)
 {
-// code at 0001:000c9f7c
+    ubyte *p;
+
+    if (!bf_buffer)
+        return Lb_FAIL;
+    if (bf_finished)
+        return Lb_FAIL;
+
+    if (bf_buffer_ptr == bf_end_buffer_ptr)
+    {
+        if (fill_buffer() != Lb_SUCCESS)
+            return Lb_FAIL;
+    }
+
+    p = bf_buffer_ptr++;
+    return *p;
 }
 
+TbResult LbBufferFileSkip(ulong len)
+{
+    ulong chunk_len, remain;
+
+    if (!bf_buffer)
+        return Lb_FAIL;
+    if (bf_finished)
+        return Lb_FAIL;
+
+    remain = len;
+    chunk_len = bf_end_buffer_ptr - bf_buffer_ptr;
+    if (remain > chunk_len)
+    {
+        ulong needed;
+        TbResult ret;
+
+        needed = remain - chunk_len;
+        ret = LbFileSeek(bf_file_handle, (len - needed) / bf_buffer_size,
+            Lb_FILE_SEEK_CURRENT);
+        if (ret == Lb_FAIL) {
+            bf_finished = 1;
+            return ret;
+        }
+        remain = needed % bf_buffer_size;
+        // If we have skipped to EOF, this is still a successful skip
+        if (fill_buffer() != Lb_SUCCESS)
+            return Lb_SUCCESS;
+    }
+    bf_buffer_ptr += remain;
+    return Lb_SUCCESS;
+}
 
 /******************************************************************************/
