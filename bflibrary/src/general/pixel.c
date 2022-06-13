@@ -23,13 +23,35 @@
 
 TbResult LbDrawPixelClip(long x, long y, TbPixel colour)
 {
-    assert(!"not implemented");
-// code at 0001:000a123d
+    ubyte *ptr;
+
+    if ((x < 0) || (x >= lbDisplay.GraphicsWindowWidth))
+        return Lb_FAIL;
+    if ((y < 0) || (y >= lbDisplay.GraphicsWindowHeight))
+        return Lb_FAIL;
+
+    ptr = &lbDisplay.GraphicsWindowPtr[lbDisplay.GraphicsScreenWidth * y + x];
+    if (lbDisplay.DrawFlags & Lb_SPRITE_TRANSPAR4)
+    {
+        *ptr = lbDisplay.GlassMap[(colour << 8) + *ptr];
+    }
+    else if (lbDisplay.DrawFlags & Lb_SPRITE_TRANSPAR8)
+    {
+        *ptr = lbDisplay.GlassMap[(*ptr << 8) + colour];
+    }
+    else
+    {
+        *ptr = colour;
+    }
+    return Lb_SUCCESS;
 }
 
 TbResult LbDrawPixel(long x, long y, TbPixel colour)
 {
-    lbDisplay.GraphicsWindowPtr[x + lbDisplay.GraphicsScreenWidth * y] = colour;
+    ubyte *ptr;
+    ptr = &lbDisplay.GraphicsWindowPtr[x + lbDisplay.GraphicsScreenWidth * y];
+    *ptr = colour;
+    return Lb_SUCCESS;
 }
 
 
