@@ -17,8 +17,10 @@
  *     (at your option) any later version.
  */
 /******************************************************************************/
-#ifndef BFLIBRARY_GBOX_H_
-#define BFLIBRARY_GBOX_H_
+#ifndef BFLIBRARY_BFBOX_H_
+#define BFLIBRARY_BFBOX_H_
+
+#include "bftypes.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -27,12 +29,27 @@ extern "C" {
 int LbDrawBox();
 int LbDrawBoxCoords();
 
-int LbDrawBoxNoClip();
-int LbDrawBoxClip();
+/** Draw box on graphics window with given coords, dimensions and colour.
+ *
+ * Graphics window needs to be set and locked. Coordinaates have to be correct,
+ * because they are not verified to bounds.
+ * This function honors DrawFlags.
+ */
+TbResult LbDrawBoxNoClip(long destX, long destY, ulong width, ulong height,
+  TbPixel colour);
+
+/** Draw clipped box on graphics window with given coords, dimensions and colour.
+ *
+ * Graphics window needs to be set and locked. Coordinates are clipped if they
+ * exceed the current graphics window.
+ * This function honors DrawFlags.
+ */
+TbResult LbDrawBoxClip(long destX, long destY, ulong width, ulong height,
+  TbPixel colour);
 
 #ifdef __cplusplus
 };
 #endif
 
-#endif // BFLIBRARY_GBOX_H_
+#endif // BFLIBRARY_BFBOX_H_
 /******************************************************************************/
