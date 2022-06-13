@@ -23,6 +23,8 @@
 #include "bfpalette.h"
 #include "bfscreen.h"
 
+unsigned char ghost_table_UNUSED[256*256];
+
 TbResult LbGhostTableGenerate(ubyte *pal, short intens, const char *fname)
 {
     if (LbFileLoadAt(fname, ghost_table) == Lb_FAIL)
@@ -79,8 +81,5 @@ TbResult LbGhostTableLoad(ubyte *pal, short intens, const char *fname)
     }
     return ret;
 }
-
-unsigned char ghost_table_UNUSED[256*256];
-
 
 /******************************************************************************/

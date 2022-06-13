@@ -19,15 +19,44 @@
 /******************************************************************************/
 #include "bfbox.h"
 
-int LbDrawBox_UNUSED()
+TbResult LbDrawBox(long X1, long Y1, long X2, long Y2, TbPixel colour)
 {
-// code at 0001:000a39d0
+    if (lbDisplay.DrawFlags & Lb_SPRITE_OUTLINE)
+    {
+        if (X2 < 1 || Y2 < 1)
+            return Lb_FAIL;
+        LbDrawHVLine(X1, Y1, X2 + X1 - 1, Y1, colour);
+        LbDrawHVLine(X1, Y2 + Y1 - 1, X2 + X1 - 1, Y2 + Y1 - 1, colour);
+        if (Y2 > 2)
+        {
+            LbDrawHVLine(X1, Y1 + 1, X1, Y2 + Y1 - 2, colour);
+            LbDrawHVLine(X2 + X1 - 1, Y1 + 1, X2 + X1 - 1, Y2 + Y1 - 2, colour);
+        }
+    } else
+    {
+        LbDrawBoxClip(X1, Y1, X2, Y2, colour);
+    }
+    return Lb_SUCCESS;
 }
 
-int LbDrawBoxCoords_UNUSED()
+TbResult LbDrawBoxCoords(long X1, long Y1, long X2, long Y2, TbPixel colour)
 {
-// code at 0001:000a3ab4
-}
+    long XX, YY;
 
+    XX = X2;
+    YY = Y2;
+    if (X1 > X2)
+    {
+        XX = X2 ^ X1 ^ X2;
+        X1 = XX ^ X2 ^ X1;
+    }
+    if (Y1 > Y2)
+    {
+        YY = Y2 ^ Y1 ^ Y2;
+        Y1 = YY ^ Y2 ^ Y1;
+    }
+    LbDrawBox(X1, Y1, XX - X1 + 1, YY - Y1 + 1, colour);
+    return Lb_SUCCESS;
+}
 
 /******************************************************************************/

@@ -26,14 +26,26 @@
 extern "C" {
 #endif
 
-int LbDrawBox();
-int LbDrawBoxCoords();
+/** Draw clipped box on graphics window with given coords and colour.
+ *
+ * Graphics window needs to be set and locked. Coordinates are clipped if they
+ * exceed the current graphics window.
+ * This function honors DrawFlags.
+ */
+TbResult LbDrawBox(long X1, long Y1, long X2, long Y2, TbPixel colour);
+
+/** Draw clipped box on graphics window with given coords and colour.
+ *
+ * High level function, after some coords manipulation internally calls
+ * LbDrawBox() to perform the drawing.
+ */
+TbResult LbDrawBoxCoords(long X1, long Y1, long X2, long Y2, TbPixel colour);
 
 /** Draw box on graphics window with given coords, dimensions and colour.
  *
- * Graphics window needs to be set and locked. Coordinaates have to be correct,
+ * Graphics window needs to be set and locked. Coordinates have to be correct,
  * because they are not verified to bounds.
- * This function honors DrawFlags.
+ * This function honors some DrawFlags.
  */
 TbResult LbDrawBoxNoClip(long destX, long destY, ulong width, ulong height,
   TbPixel colour);
@@ -42,7 +54,7 @@ TbResult LbDrawBoxNoClip(long destX, long destY, ulong width, ulong height,
  *
  * Graphics window needs to be set and locked. Coordinates are clipped if they
  * exceed the current graphics window.
- * This function honors DrawFlags.
+ * This function honors some DrawFlags.
  */
 TbResult LbDrawBoxClip(long destX, long destY, ulong width, ulong height,
   TbPixel colour);
