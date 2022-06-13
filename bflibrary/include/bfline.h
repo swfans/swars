@@ -20,13 +20,16 @@
 #ifndef BFLIBRARY_BFLINE_H_
 #define BFLIBRARY_BFLINE_H_
 
+#include "bftypes.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 int LbDrawLine();
 void draw_b_line( long, long, long, long, char unsigned );
-int LbDrawHVLine();
+
+TbResult LbDrawHVLine(long X1, long Y1, long X2, long Y2, TbPixel colour);
 
 #ifdef __cplusplus
 };
