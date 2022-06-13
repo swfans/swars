@@ -3,7 +3,7 @@
 // Syndicate Wars, Magic Carpet, Genewars or Dungeon Keeper.
 /******************************************************************************/
 /** @file bfcircle.h
- *     Header file for gcircle.cpp.
+ *     Header file for gcircle.c.
  * @par Purpose:
  *     Unknown.
  * @par Comment:
@@ -17,20 +17,23 @@
  *     (at your option) any later version.
  */
 /******************************************************************************/
-#ifndef BFLIBRARY_GCIRCLE_H_
-#define BFLIBRARY_GCIRCLE_H_
+#ifndef BFLIBRARY_BFCIRCLE_H_
+#define BFLIBRARY_BFCIRCLE_H_
+
+#include "bftypes.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-int LbDrawCircle();
-int LbDrawCircleOutline();
-int LbDrawCircleFilled();
+TbResult LbDrawCircle(long x, long y, ulong radius, TbPixel colour);
+
+TbResult LbDrawCircleOutline(long x, long y, ulong radius, TbPixel colour);
+TbResult LbDrawCircleFilled(long x, long y, ulong radius, TbPixel colour);
 
 #ifdef __cplusplus
 };
 #endif
 
-#endif // BFLIBRARY_GCIRCLE_H_
+#endif // BFLIBRARY_BFCIRCLE_H_
 /******************************************************************************/

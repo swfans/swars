@@ -26,8 +26,8 @@
 extern "C" {
 #endif
 
-int LbDrawPixelClip();
-int LbDrawPixel();
+TbResult LbDrawPixelClip(long x, long y, TbPixel colour);
+TbResult LbDrawPixel(long x, long y, TbPixel colour);
 
 #ifdef __cplusplus
 };

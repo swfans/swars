@@ -17,16 +17,19 @@
  *     (at your option) any later version.
  */
 /******************************************************************************/
+#include <assert.h>
 #include "bfpixel.h"
+#include "bfscreen.h"
 
-int LbDrawPixelClip_UNUSED()
+TbResult LbDrawPixelClip(long x, long y, TbPixel colour)
 {
+    assert(!"not implemented");
 // code at 0001:000a123d
 }
 
-int LbDrawPixel_UNUSED()
+TbResult LbDrawPixel(long x, long y, TbPixel colour)
 {
-// code at 0001:000a1208
+    lbDisplay.GraphicsWindowPtr[x + lbDisplay.GraphicsScreenWidth * y] = colour;
 }
 
 

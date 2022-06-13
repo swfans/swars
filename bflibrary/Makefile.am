@@ -7,7 +7,7 @@ libbullfrog_a_SOURCES = \
   src/general/box_clip.c \
   src/general/gbox.c \
   src/general/gbuffer.cpp \
-  src/general/gcircle.cpp \
+  src/general/gcircle.c \
   src/general/gdata.c \
   src/general/gendian.c \
   src/general/gerrorlg.c \
