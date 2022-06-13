@@ -1963,6 +1963,18 @@ void wait_for_sound_sample_finish(ushort sample_id)
     }
 }
 
+void game_play_music(void)
+{
+    char file_name[FILENAME_MAX];
+
+    snprintf (file_name, sizeof (file_name),
+          "%s" FS_SEP_STR "music" FS_SEP_STR "track_%i.ogg",
+          GetDirectoryHdd(), game_music_track - 1);
+
+    sound_open_music_file(file_name);
+    sound_play_music();
+}
+
 void frame_unkn_func_06(void)
 {
     asm volatile ("call ASM_frame_unkn_func_06\n"
@@ -2012,6 +2024,8 @@ void show_mission_loading_screen(void)
 
     loading_INITIATING_box.Flags = 0x0001;
     wait_for_sound_sample_finish(118);
+    // TODO the below is added as part of the vexillium port; to be removed when proper music enabling works
+    game_play_music();
 }
 
 void show_load_and_prep_mission(void)
@@ -2747,19 +2761,6 @@ void
 game_transform_path(const char *file_name, char *result)
 {
     game_transform_path_full (file_name, result, FILENAME_MAX);
-}
-
-void
-game_play_music(void)
-{
-    char file_name[FILENAME_MAX];
-
-    snprintf (file_name, sizeof (file_name),
-          "%s" FS_SEP_STR "music" FS_SEP_STR "track_%i.ogg",
-          GetDirectoryHdd(), game_music_track - 1);
-
-    sound_open_music_file (file_name);
-    sound_play_music ();
 }
 
 static void
