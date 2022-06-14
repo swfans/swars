@@ -25,19 +25,340 @@
 
 TbResult LbDrawCircleOutline(long x, long y, ulong radius, TbPixel colour)
 {
-#if 1
-    assert(!"not implemented");
-#else
-// code at 0001:000a182c
-#endif
-    return Lb_SUCCESS;
+  ubyte *p;
+  long radM, radP, where1;
+
+  if (lbDisplay.DrawFlags & Lb_SPRITE_TRANSPAR4)
+  {
+    if (radius <= 1)
+    {
+        if ((x >= 0) && (x < lbDisplay.GraphicsWindowWidth) &&
+          (y >= 0) && (y < lbDisplay.GraphicsWindowHeight)) {
+            p = &lbDisplay.GraphicsWindowPtr[(y) * lbDisplay.GraphicsScreenWidth + x];
+            *p = lbDisplay.GlassMap[(colour << 8) + *p];
+        }
+        return Lb_SUCCESS;
+    }
+    radP = 0;
+    radM = radius;
+    where1 = 3 - 2 * radius;
+    while (radP < radM)
+    {
+        if ((x - radP >= 0) && (x - radP < lbDisplay.GraphicsWindowWidth) &&
+          (y - radM >= 0) && (y - radM < lbDisplay.GraphicsWindowHeight)) {
+            p = &lbDisplay.GraphicsWindowPtr[(y - radM) * lbDisplay.GraphicsScreenWidth + x - radP];
+            *p = lbDisplay.GlassMap[(colour << 8) + *p];
+        }
+        if ((radP + x >= 0) && (radP + x < lbDisplay.GraphicsWindowWidth) &&
+          (y - radM >= 0) && (y - radM < lbDisplay.GraphicsWindowHeight)) {
+            p = &lbDisplay.GraphicsWindowPtr[(y - radM) * lbDisplay.GraphicsScreenWidth + radP + x];
+            *p = lbDisplay.GlassMap[(colour << 8) + *p];
+        }
+        if ((x - radP >= 0) && (x - radP < lbDisplay.GraphicsWindowWidth) &&
+          (radM + y >= 0) && (radM + y < lbDisplay.GraphicsWindowHeight)) {
+            p = &lbDisplay.GraphicsWindowPtr[(radM + y) * lbDisplay.GraphicsScreenWidth + x - radP];
+            *p = lbDisplay.GlassMap[(colour << 8) + *p];
+        }
+        if ((radP + x >= 0) && (radP + x < lbDisplay.GraphicsWindowWidth) &&
+          (radM + y >= 0) && (radM + y < lbDisplay.GraphicsWindowHeight)) {
+            p = &lbDisplay.GraphicsWindowPtr[(radM + y) * lbDisplay.GraphicsScreenWidth + radP + x];
+            *p = lbDisplay.GlassMap[(colour << 8) + *p];
+        }
+        if ((x - radM >= 0) && (x - radM < lbDisplay.GraphicsWindowWidth) &&
+          (y - radP >= 0) && (y - radP < lbDisplay.GraphicsWindowHeight)) {
+            p = &lbDisplay.GraphicsWindowPtr[(y - radP) * lbDisplay.GraphicsScreenWidth + x - radM];
+            *p = lbDisplay.GlassMap[(colour << 8) + *p];
+        }
+        if ((radM + x >= 0) && (radM + x < lbDisplay.GraphicsWindowWidth) &&
+          (y - radP >= 0) && (y - radP < lbDisplay.GraphicsWindowHeight)) {
+            p = &lbDisplay.GraphicsWindowPtr[(y - radP) * lbDisplay.GraphicsScreenWidth + radM + x];
+            *p = lbDisplay.GlassMap[(colour << 8) + *p];
+        }
+        if ((x - radM >= 0) && (x - radM < lbDisplay.GraphicsWindowWidth) &&
+          (radP + y >= 0) && (radP + y < lbDisplay.GraphicsWindowHeight)) {
+            p = &lbDisplay.GraphicsWindowPtr[(radP + y) * lbDisplay.GraphicsScreenWidth + x - radM];
+            *p = lbDisplay.GlassMap[(colour << 8) + *p];
+        }
+        if ((radM + x >= 0) && (radM + x < lbDisplay.GraphicsWindowWidth) &&
+          (radP + y >= 0) && (radP + y < lbDisplay.GraphicsWindowHeight)) {
+            p = &lbDisplay.GraphicsWindowPtr[(radP + y) * lbDisplay.GraphicsScreenWidth + radM + x];
+            *p = lbDisplay.GlassMap[(colour << 8) + *p];
+        }
+        if (where1 >= 0) {
+            where1 += 4 * (radP - radM) + 10;
+            radM--;
+        } else {
+            where1 += 4 * radP + 6;
+        }
+        radP++;
+    }
+    if (radP == radM)
+    {
+        if ((x - radP >= 0) && (x - radP < lbDisplay.GraphicsWindowWidth) &&
+          (y - radM >= 0) && (y - radM < lbDisplay.GraphicsWindowHeight)) {
+            p = &lbDisplay.GraphicsWindowPtr[(y - radM) * lbDisplay.GraphicsScreenWidth + x - radP];
+            *p = lbDisplay.GlassMap[(colour << 8) + *p];
+        }
+        if ((radP + x >= 0) && (radP + x < lbDisplay.GraphicsWindowWidth) &&
+          (y - radM >= 0) && (y - radM < lbDisplay.GraphicsWindowHeight)) {
+            p = &lbDisplay.GraphicsWindowPtr[(y - radM) * lbDisplay.GraphicsScreenWidth + radP + x];
+            *p = lbDisplay.GlassMap[(colour << 8) + *p];
+        }
+        if ((x - radP >= 0) && (x - radP < lbDisplay.GraphicsWindowWidth) &&
+          (radM + y >= 0) && (radM + y < lbDisplay.GraphicsWindowHeight)) {
+            p = &lbDisplay.GraphicsWindowPtr[(radM + y) * lbDisplay.GraphicsScreenWidth + x - radP];
+            *p = lbDisplay.GlassMap[(colour << 8) + *p];
+        }
+        if ((radP + x >= 0) && (radP + x < lbDisplay.GraphicsWindowWidth) &&
+          (radM + y >= 0) && (radM + y < lbDisplay.GraphicsWindowHeight)) {
+            p = &lbDisplay.GraphicsWindowPtr[(radM + y) * lbDisplay.GraphicsScreenWidth + radP + x];
+            *p = lbDisplay.GlassMap[(colour << 8) + *p];
+        }
+        if ((x - radM >= 0) && (x - radM < lbDisplay.GraphicsWindowWidth) &&
+          (y - radP >= 0) && (y - radP < lbDisplay.GraphicsWindowHeight)) {
+            p = &lbDisplay.GraphicsWindowPtr[(y - radP) * lbDisplay.GraphicsScreenWidth + x - radM];
+            *p = lbDisplay.GlassMap[(colour << 8) + *p];
+        }
+        if ((radM + x >= 0) && (radM + x < lbDisplay.GraphicsWindowWidth) &&
+          (y - radP >= 0) && (y - radP < lbDisplay.GraphicsWindowHeight)) {
+            p = &lbDisplay.GraphicsWindowPtr[(y - radP) * lbDisplay.GraphicsScreenWidth + radM + x];
+            *p = lbDisplay.GlassMap[(colour << 8) + *p];
+        }
+        if ((x - radM >= 0) && (x - radM < lbDisplay.GraphicsWindowWidth) &&
+          (radP + y >= 0) && (radP + y < lbDisplay.GraphicsWindowHeight)) {
+            p = &lbDisplay.GraphicsWindowPtr[(radP + y) * lbDisplay.GraphicsScreenWidth + x - radM];
+            *p = lbDisplay.GlassMap[(colour << 8) + *p];
+        }
+        if ((radM + x >= 0) && (radM + x < lbDisplay.GraphicsWindowWidth) &&
+          (radP + y >= 0) && (radP + y < lbDisplay.GraphicsWindowHeight)) {
+            p = &lbDisplay.GraphicsWindowPtr[(radP + y) * lbDisplay.GraphicsScreenWidth + radM + x];
+            *p = lbDisplay.GlassMap[(colour << 8) + *p];
+        }
+    }
+  }
+  else if (lbDisplay.DrawFlags & Lb_SPRITE_TRANSPAR8)
+  {
+    if (radius <= 1)
+    {
+        if ((x >= 0) && (x < lbDisplay.GraphicsWindowWidth) &&
+          (y >= 0) && (y < lbDisplay.GraphicsWindowHeight)) {
+            p = &lbDisplay.GraphicsWindowPtr[(y) * lbDisplay.GraphicsScreenWidth + x];
+            *p = lbDisplay.GlassMap[(*p << 8) + colour];
+        }
+        return Lb_SUCCESS;
+    }
+    radP = 0;
+    radM = radius;
+    where1 = 3 - 2 * radius;
+    while (radP < radM)
+    {
+        if ((x - radP >= 0) && (x - radP < lbDisplay.GraphicsWindowWidth) &&
+          (y - radM >= 0) && (y - radM < lbDisplay.GraphicsWindowHeight)) {
+            p = &lbDisplay.GraphicsWindowPtr[(y - radM) * lbDisplay.GraphicsScreenWidth + x - radP];
+            *p = lbDisplay.GlassMap[(*p << 8) + colour];
+        }
+        if ((radP + x >= 0) && (radP + x < lbDisplay.GraphicsWindowWidth) &&
+          (y - radM >= 0) && (y - radM < lbDisplay.GraphicsWindowHeight)) {
+            p = &lbDisplay.GraphicsWindowPtr[(y - radM) * lbDisplay.GraphicsScreenWidth + radP + x];
+            *p = lbDisplay.GlassMap[(*p << 8) + colour];
+        }
+        if ((x - radP >= 0) && (x - radP < lbDisplay.GraphicsWindowWidth) &&
+          (radM + y >= 0) && (radM + y < lbDisplay.GraphicsWindowHeight))
+        {
+            p = &lbDisplay.GraphicsWindowPtr[(radM + y) * lbDisplay.GraphicsScreenWidth + x - radP];
+            *p = lbDisplay.GlassMap[(*p << 8) + colour];
+        }
+        if ((radP + x >= 0) && (radP + x < lbDisplay.GraphicsWindowWidth) &&
+          (radM + y >= 0) && (radM + y < lbDisplay.GraphicsWindowHeight)) {
+            p = &lbDisplay.GraphicsWindowPtr[(radM + y) * lbDisplay.GraphicsScreenWidth + radP + x];
+            *p = lbDisplay.GlassMap[(*p << 8) + colour];
+        }
+        if ((x - radM >= 0) && (x - radM < lbDisplay.GraphicsWindowWidth) &&
+          (y - radP >= 0) && y - (radP < lbDisplay.GraphicsWindowHeight)) {
+            p = &lbDisplay.GraphicsWindowPtr[(y - radP) * lbDisplay.GraphicsScreenWidth + x - radM];
+            *p = lbDisplay.GlassMap[(*p << 8) + colour];
+        }
+        if ((radM + x >= 0) && (radM + x < lbDisplay.GraphicsWindowWidth) &&
+          (y - radP >= 0) && (y - radP < lbDisplay.GraphicsWindowHeight)) {
+            p = &lbDisplay.GraphicsWindowPtr[(y - radP) * lbDisplay.GraphicsScreenWidth + radM + x];
+            *p = lbDisplay.GlassMap[(*p << 8) + colour];
+        }
+        if ((x - radM >= 0) && (x - radM < lbDisplay.GraphicsWindowWidth) &&
+          (radP + y >= 0) && (radP + y < lbDisplay.GraphicsWindowHeight))
+        {
+            p = &lbDisplay.GraphicsWindowPtr[(radP + y) * lbDisplay.GraphicsScreenWidth + x - radM];
+            *p = lbDisplay.GlassMap[(*p << 8) + colour];
+        }
+        if ((radM + x >= 0) && (radM + x < lbDisplay.GraphicsWindowWidth) &&
+          (radP + y >= 0) && (radP + y < lbDisplay.GraphicsWindowHeight))
+        {
+            p = &lbDisplay.GraphicsWindowPtr[(radP + y) * lbDisplay.GraphicsScreenWidth + radM + x];
+            *p = lbDisplay.GlassMap[(*p << 8) + colour];
+        }
+        if ( where1 >= 0 )
+            where1 += 4 * (radP - radM--) + 10;
+        else
+            where1 += 4 * radP + 6;
+        ++radP;
+    }
+    if (radP == radM)
+    {
+        if ((x - radP >= 0) && (x - radP < lbDisplay.GraphicsWindowWidth) &&
+          (y - radM >= 0) && (y - radM < lbDisplay.GraphicsWindowHeight)) {
+            p = &lbDisplay.GraphicsWindowPtr[(y - radM) * lbDisplay.GraphicsScreenWidth + x - radP];
+            *p = lbDisplay.GlassMap[(*p << 8) + colour];
+        }
+        if ((radP + x >= 0) && (radP + x < lbDisplay.GraphicsWindowWidth) &&
+          (y - radM >= 0) && (y - radM < lbDisplay.GraphicsWindowHeight)) {
+            p = &lbDisplay.GraphicsWindowPtr[(y - radM) * lbDisplay.GraphicsScreenWidth + radP + x];
+            *p = lbDisplay.GlassMap[(*p << 8) + colour];
+        }
+        if ((x - radP >= 0) && (x - radP < lbDisplay.GraphicsWindowWidth) &&
+          (radM + y >= 0) && (radM + y < lbDisplay.GraphicsWindowHeight)) {
+            p = &lbDisplay.GraphicsWindowPtr[(radM + y) * lbDisplay.GraphicsScreenWidth + x - radP];
+            *p = lbDisplay.GlassMap[(*p << 8) + colour];
+        }
+        if ((radP + x >= 0) && (radP + x < lbDisplay.GraphicsWindowWidth) &&
+          (radM + y >= 0) && (radM + y < lbDisplay.GraphicsWindowHeight)) {
+            p = &lbDisplay.GraphicsWindowPtr[(radM + y) * lbDisplay.GraphicsScreenWidth + radP + x];
+            *p = lbDisplay.GlassMap[(*p << 8) + colour];
+        }
+        if ((x - radM >= 0) && (x - radM < lbDisplay.GraphicsWindowWidth) &&
+          (y - radP >= 0) && (y - radP < lbDisplay.GraphicsWindowHeight)) {
+            p = &lbDisplay.GraphicsWindowPtr[(y - radP) * lbDisplay.GraphicsScreenWidth + x - radM];
+            *p = lbDisplay.GlassMap[(*p << 8) + colour];
+        }
+        if ((radM + x >= 0)  && (radM + x < lbDisplay.GraphicsWindowWidth) &&
+          (y - radP >= 0) && (y - radP < lbDisplay.GraphicsWindowHeight))
+        {
+            p = &lbDisplay.GraphicsWindowPtr[(y - radP) * lbDisplay.GraphicsScreenWidth + radM + x];
+            *p = lbDisplay.GlassMap[(*p << 8) + colour];
+        }
+        if ((x - radM >= 0) && (x - radM < lbDisplay.GraphicsWindowWidth) &&
+          (radP + y >= 0) && (radP + y < lbDisplay.GraphicsWindowHeight))
+        {
+            p = &lbDisplay.GraphicsWindowPtr[(radP + y) * lbDisplay.GraphicsScreenWidth + x - radM];
+            *p = lbDisplay.GlassMap[(*p << 8) + colour];
+        }
+        if ((radM + x >= 0) && (radM + x < lbDisplay.GraphicsWindowWidth) &&
+          (radP + y >= 0) && (radP + y < lbDisplay.GraphicsWindowHeight))
+        {
+            p = &lbDisplay.GraphicsWindowPtr[(radP + y) * lbDisplay.GraphicsScreenWidth + radM + x];
+            *p = lbDisplay.GlassMap[(*p << 8) + colour];
+        }
+    }
+  }
+  else
+  {
+    if (radius <= 1)
+    {
+        if ((x >= 0) && (x < lbDisplay.GraphicsWindowWidth) &&
+          (y >= 0) && (y < lbDisplay.GraphicsWindowHeight)) {
+            p = &lbDisplay.GraphicsWindowPtr[(y) * lbDisplay.GraphicsScreenWidth + x];
+            *p = colour;
+        }
+        return Lb_SUCCESS;
+    }
+    radP = 0;
+    radM = radius;
+    where1 = 3 - 2 * radius;
+    while (radP < radM)
+    {
+        if ((x - radP >= 0) && (x - radP < lbDisplay.GraphicsWindowWidth) &&
+          (y - radM >= 0) && (y - radM < lbDisplay.GraphicsWindowHeight)) {
+            p = &lbDisplay.GraphicsWindowPtr[(y - radM) * lbDisplay.GraphicsScreenWidth + x - radP];
+            *p = colour;
+        }
+        if ((radP + x >= 0) && (radP + x < lbDisplay.GraphicsWindowWidth) &&
+          (y - radM >= 0) && (y - radM < lbDisplay.GraphicsWindowHeight)) {
+            p = &lbDisplay.GraphicsWindowPtr[(y - radM) * lbDisplay.GraphicsScreenWidth + radP + x];
+            *p = colour;
+        }
+        if ((x - radP >= 0) && (x - radP < lbDisplay.GraphicsWindowWidth) &&
+          (radM + y >= 0) && radM + y < lbDisplay.GraphicsWindowHeight ) {
+            p = &lbDisplay.GraphicsWindowPtr[(radM + y) * lbDisplay.GraphicsScreenWidth + x - radP];
+            *p = colour;
+        }
+        if ((radP + x >= 0) && (radP + x < lbDisplay.GraphicsWindowWidth) &&
+          (radM + y >= 0) && (radM + y < lbDisplay.GraphicsWindowHeight)) {
+            p = &lbDisplay.GraphicsWindowPtr[(radM + y) * lbDisplay.GraphicsScreenWidth + radP + x];
+            *p = colour;
+        }
+        if ((x - radM >= 0) && (x - radM < lbDisplay.GraphicsWindowWidth) &&
+          (y - radP >= 0) && (y - radP < lbDisplay.GraphicsWindowHeight)) {
+            p = &lbDisplay.GraphicsWindowPtr[(y - radP) * lbDisplay.GraphicsScreenWidth + x - radM];
+            *p = colour;
+        }
+        if ((radM + x >= 0) && (radM + x < lbDisplay.GraphicsWindowWidth) &&
+          (y - radP >= 0) && (y - radP < lbDisplay.GraphicsWindowHeight)) {
+            p = &lbDisplay.GraphicsWindowPtr[(y - radP) * lbDisplay.GraphicsScreenWidth + radM + x];
+            *p = colour;
+        }
+        if ((x - radM >= 0) && (x - radM < lbDisplay.GraphicsWindowWidth) &&
+          (radP + y >= 0) && (radP + y < lbDisplay.GraphicsWindowHeight)) {
+            p = &lbDisplay.GraphicsWindowPtr[(radP + y) * lbDisplay.GraphicsScreenWidth + x - radM];
+            *p = colour;
+        }
+        if ((radM + x >= 0) && (radM + x < lbDisplay.GraphicsWindowWidth) &&
+          (radP + y >= 0) && (radP + y < lbDisplay.GraphicsWindowHeight)) {
+            p = &lbDisplay.GraphicsWindowPtr[(radP + y) * lbDisplay.GraphicsScreenWidth + radM + x];
+            *p = colour;
+        }
+        if (where1 >= 0)
+            where1 += 4 * (radP - radM--) + 10;
+        else
+            where1 += 4 * radP + 6;
+        ++radP;
+    }
+    if (radP == radM)
+    {
+        if ((x - radP >= 0) && (x - radP < lbDisplay.GraphicsWindowWidth) &&
+          (y - radM >= 0) && (y - radM < lbDisplay.GraphicsWindowHeight)) {
+            p = &lbDisplay.GraphicsWindowPtr[(y - radM) * lbDisplay.GraphicsScreenWidth + x - radP];
+            *p = colour;
+        }
+        if ((radP + x >= 0) && (radP + x < lbDisplay.GraphicsWindowWidth) &&
+          (y - radM >= 0) && (y - radM < lbDisplay.GraphicsWindowHeight)) {
+            p = &lbDisplay.GraphicsWindowPtr[(y - radM) * lbDisplay.GraphicsScreenWidth + radP + x];
+            *p = colour;
+        }
+        if ((x - radP >= 0) && (x - radP < lbDisplay.GraphicsWindowWidth) &&
+          (radM + y >= 0) && (radM + y < lbDisplay.GraphicsWindowHeight)) {
+            p = &lbDisplay.GraphicsWindowPtr[(radM + y) * lbDisplay.GraphicsScreenWidth + x - radP];
+            *p = colour;
+        }
+        if ((radP + x >= 0) && (radP + x < lbDisplay.GraphicsWindowWidth) &&
+          (radM + y >= 0) && (radM + y < lbDisplay.GraphicsWindowHeight)) {
+            p = &lbDisplay.GraphicsWindowPtr[(radM + y) * lbDisplay.GraphicsScreenWidth + radP + x];
+            *p = colour;
+        }
+        if ((x - radM >= 0) && (x - radM < lbDisplay.GraphicsWindowWidth) &&
+          (y - radP >= 0) && (y - radP < lbDisplay.GraphicsWindowHeight)) {
+            p = &lbDisplay.GraphicsWindowPtr[(y - radP) * lbDisplay.GraphicsScreenWidth + x - radM];
+            *p = colour;
+        }
+        if ((radM + x >= 0) && (radM + x < lbDisplay.GraphicsWindowWidth) &&
+          (y - radP >= 0) && (y - radP < lbDisplay.GraphicsWindowHeight)) {
+            p = &lbDisplay.GraphicsWindowPtr[(y - radP) * lbDisplay.GraphicsScreenWidth + radM + x];
+            *p = colour;
+        }
+        if ((x - radM >= 0) && (x - radM < lbDisplay.GraphicsWindowWidth) &&
+          (radP + y >= 0) && (radP + y < lbDisplay.GraphicsWindowHeight)) {
+            p = &lbDisplay.GraphicsWindowPtr[(radP + y) * lbDisplay.GraphicsScreenWidth + x - radM];
+            *p = colour;
+        }
+        if ((radM + x >= 0) && (radM + x < lbDisplay.GraphicsWindowWidth) &&
+          (radP + y >= 0) && (radP + y < lbDisplay.GraphicsWindowHeight)) {
+            p = &lbDisplay.GraphicsWindowPtr[(radP + y) * lbDisplay.GraphicsScreenWidth + radM + x];
+            *p = colour;
+        }
+    }
+  }
+  return Lb_SUCCESS;
 }
 
 TbResult LbDrawCircleFilled(long x, long y, ulong radius, TbPixel colour)
 {
-#if 1
-    assert(!"not implemented");
-#else
     long where1, r1, r2;
 
     if (radius < 1)
@@ -82,7 +403,6 @@ TbResult LbDrawCircleFilled(long x, long y, ulong radius, TbPixel colour)
         LbDrawHVLine(x - r2, y - r1, r2 + x, y - r1, colour);
         LbDrawHVLine(x - r2, r1 + y, r2 + x, r1 + y, colour);
     }
-#endif
     return Lb_SUCCESS;
 }
 
