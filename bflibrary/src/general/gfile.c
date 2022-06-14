@@ -179,10 +179,50 @@ TbResult LbFileMakeFullPath(const TbBool append_cur_dir,
   return Lb_FAIL;
 }
 
-int LbFileCopy_UNUSED()
+TbResult LbFileCopy(const char *filename1, const char *filename2)
 {
-// code at 0001:0009696c
-}
+    ulong len, block, remain;
+    TbFileHandle handle1, handle2;
+    ubyte buf[0x400];
 
+    len = LbFileLength(filename1);
+    remain = len;
+    if (len == (ulong)Lb_FAIL) {
+        return Lb_FAIL;
+    }
+    handle1 = LbFileOpen(filename1, Lb_FILE_MODE_READ_ONLY);
+    if (handle1 == INVALID_FILE) {
+        return Lb_FAIL;
+    }
+    handle2 = LbFileOpen(filename2, Lb_FILE_MODE_NEW);
+    if (handle2 == INVALID_FILE) {
+        LbFileClose(handle1);
+        return Lb_FAIL;
+    }
+    while (remain)
+    {
+        if (remain <= sizeof(buf))
+            block = remain;
+        else
+            block = sizeof(buf);
+        len = LbFileRead(handle1, buf, block);
+        if (len != block)
+        {
+            LbFileClose(handle1);
+            LbFileClose(handle2);
+            return Lb_FAIL;
+        }
+        if (LbFileWrite(handle2, buf, block) != block)
+        {
+            LbFileClose(handle1);
+            LbFileClose(handle2);
+            return Lb_FAIL;
+        }
+        remain -= block;
+    }
+    LbFileClose(handle1);
+    LbFileClose(handle2);
+    return Lb_SUCCESS;
+}
 
 /******************************************************************************/
