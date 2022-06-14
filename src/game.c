@@ -1316,6 +1316,7 @@ TbResult init_read_all_sprite_files(void)
     return ret;
 }
 
+#if 0
 TbPixel LbPaletteFindColour(ubyte *pal, ubyte rval, ubyte gval, ubyte bval)
 {
     TbResult ret;
@@ -1323,6 +1324,7 @@ TbPixel LbPaletteFindColour(ubyte *pal, ubyte rval, ubyte gval, ubyte bval)
         : "=r" (ret) : "a" (pal), "d" (rval), "b" (gval), "c" (bval));
     return ret;
 }
+#endif
 
 void init_screen_boxes(void)
 {
