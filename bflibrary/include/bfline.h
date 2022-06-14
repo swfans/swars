@@ -26,8 +26,12 @@
 extern "C" {
 #endif
 
-int LbDrawLine();
-void draw_b_line( long, long, long, long, char unsigned );
+/** Draws a line on current graphics window.
+ *
+ * Truncates the coordinates if they go off the window. Requires the screen
+ * to be locked.
+ */
+TbResult LbDrawLine(long X1, long Y1, long X2, long Y2, TbPixel colour);
 
 TbResult LbDrawHVLine(long X1, long Y1, long X2, long Y2, TbPixel colour);
 

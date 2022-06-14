@@ -18,7 +18,7 @@ libbullfrog_a_SOURCES = \
   src/general/ggengh.cpp \
   src/general/giff.c \
   src/general/gkeybd.cpp \
-  src/general/gline.cpp \
+  src/general/gline.c \
   src/general/gmemut.c \
   src/general/gmouse.c \
   src/general/gpalette.c \
