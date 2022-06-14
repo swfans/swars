@@ -237,7 +237,9 @@ TbResult LbFileDelete(const char *fname);
 long LbFileLengthRnc(const char *fname);
 long LbFileLoadAt(const char *fname, void *buffer);
 long LbFileSaveAt(const char *fname, const void *buffer, ulong len);
-int LbFileStringSearch();
+
+long LbFileStringSearch(TbFileHandle handle, const char *sstr, ubyte *buf,
+  ulong buflen, ushort flags);
 
 /** Creates a proper disk path from file name, directory, and current directory
  *

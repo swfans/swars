@@ -103,9 +103,82 @@ long LbFileSaveAt(const char *fname, const void *buffer, ulong len)
     return result;
 }
 
-int LbFileStringSearch_UNUSED()
+/** @internal
+ *  Compares stings and returns if they are equal.
+ */
+static TbBool compare(const char *str1, const char *str2, ulong len, ushort flags)
 {
-// code at 0001:00096658
+  if (flags & 0x01)
+      return strncasecmp(str1, str2, len) == 0;
+  else
+      return strncmp(str1, str2, len) == 0;
+}
+
+long LbFileStringSearch(TbFileHandle handle, const char *sstr, ubyte *buf, ulong buflen, ushort flags)
+{
+    TbResult ret;
+    long prevpos, sslen;
+    char locbuf[132];
+    ulong cmpflag;
+    long rdlen;
+    long n;
+    long bufstart;
+    long found;
+
+
+    if (buflen < 0x100)
+        return -3;
+    sslen = strlen(sstr);
+    if (sslen > 128)
+        return -4;
+    prevpos = LbFilePosition(handle);
+    if (prevpos == (long)Lb_FAIL)
+        return -1;
+    if (flags & 0x02) {
+        locbuf[0] = '\x0a';
+        strncpy(&locbuf[1], sstr, sslen);
+        sslen++;
+    } else {
+        strncpy(locbuf, sstr, sslen);
+    }
+    locbuf[sslen] = '\x00';
+
+    cmpflag = (flags & 0x01) != 0;
+    n = LbFileRead(handle, buf, buflen);
+    if (n == (long)Lb_FAIL)
+        return -1;
+    rdlen = n;
+    bufstart = 0;
+    found = -2;
+    while (found == -2 && rdlen >= sslen)
+    {
+      int i;
+      for (i = 0; i <= (rdlen - sslen); i++)
+      {
+          if (compare((char *)&buf[i], locbuf, sslen, cmpflag))
+          {
+              found = bufstart + prevpos + i;
+              if (locbuf[0] == '\x0a')
+                  found++;
+              break;
+          }
+      }
+      if (found == -2)
+      {
+          memcpy(buf, &buf[i], rdlen - i);
+          bufstart += i;
+          rdlen -= i;
+          n = LbFileRead(handle, &buf[rdlen], buflen - rdlen);
+          if (n == (long)Lb_FAIL)
+              return -1;
+          rdlen += n;
+      }
+    }
+
+    ret = LbFileSeek(handle, prevpos, Lb_FILE_SEEK_BEGINNING);
+    if (ret == Lb_FAIL)
+        return -1;
+    return found;
 }
 
 TbResult LbFileMakeFullPath(const TbBool append_cur_dir,
