@@ -44,9 +44,9 @@ typedef struct Palette Palette;
 TbResult LbPaletteFade(ubyte *from_pal, ubyte arg2, ubyte fade_steps);
 int LbPaletteStopOpenFade();
 
-/** Finds a colour index in given palette best matching given RBG values.
+/** Finds a colour index in given palette best matching given RGB values.
  */
-TbPixel LbPaletteFindColour(ubyte *pal, ubyte rval, ubyte gval, ubyte bval);
+TbPixel LbPaletteFindColour(const ubyte *pal, ubyte r, ubyte g, ubyte b);
 
 int LbPaletteDraw();
 
