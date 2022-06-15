@@ -49,7 +49,7 @@ int LbTextStringWidth();
 int LbTextWordWidth();
 int LbTextStringHeight();
 
-TbResult LbTextDraw(long X, long Y, const char *text);
+TbResult LbTextDraw(long X, long Y, const char *Text);
 
 extern int lbSpacesPerTab;
 extern struct TbAnyWindow lbTextJustifyWindow;

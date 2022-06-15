@@ -101,7 +101,7 @@ int LbTextStringHeight_UNUSED()
 // code at 0001:000bb300
 }
 
-TbResult LbTextDraw_UNUSED(long X, long Y, const char *text)
+TbResult LbTextDraw_UNUSED(long X, long Y, const char *Text)
 {
 }
 
