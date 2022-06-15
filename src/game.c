@@ -176,6 +176,14 @@ int LbPaletteFade(uint8_t *a1, uint8_t a2, uint8_t a3)
     return ret;
 }
 
+TbResult LbTextDraw(long X, long Y, const char *Text)
+{
+    int ret;
+    asm volatile ("call ASM_LbTextDraw\n"
+        : "=r" (ret) : "a" (X), "d" (Y), "b" (Text));
+    return ret;
+}
+
 void PacketRecord_Close(void)
 {
     if (in_network_game)
