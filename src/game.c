@@ -352,14 +352,29 @@ void game_setup_sub3(void)
         :  :  : "eax" );
 }
 
-void game_setup_sub4(int a1)
+/** Remains of some Bf debug stuff.
+ */
+void debug_trace_setup(int place)
 {
-    test_open(0);
+    LOGDBG("reached place %d", place);
 }
 
-void game_setup_sub5(void)
+/** Remains of some Bf debug stuff.
+ */
+void debug_trace_turn_bound(ulong turn)
 {
-    asm volatile ("call ASM_game_setup_sub5\n"
+    LOGDBG("turn %lu", turn);
+}
+
+/** NOOP func which compiler merged from several functions.
+ */
+void merged_noop_unkn1(int a1)
+{
+}
+
+void game_setup_stuff(void)
+{
+    asm volatile ("call ASM_game_setup_stuff\n"
         :  :  : "eax" );
 }
 
@@ -1106,25 +1121,25 @@ void game_setup(void)
     bang_set_detail(0);
     game_setup_sub3();
     ingame__draw_unknprop_01 = 0;
-    game_setup_sub4(-4);
-    game_setup_sub5();
+    debug_trace_setup(-4);
+    game_setup_stuff();
     create_strings_list(gui_strings, gui_strings_data, gui_strings_data_end);
     setup_host();
     read_user_settings();
-    game_setup_sub4(-3);
+    debug_trace_setup(-3);
     setup_color_lookups();
     init_things();
-    game_setup_sub4(-2);
+    debug_trace_setup(-2);
     LbSpriteSetup(small_font, small_font_end, small_font_data);
     game_setup_sub8();
     load_missions(0);
     players[local_player_no].MissionAgents = 0x0f;
-    game_setup_sub4(-1);
+    debug_trace_setup(-1);
     if ( is_single_game || cmdln_param_bcg )
     {
         load_prim_quad();
     }
-    game_setup_sub4(0);
+    debug_trace_setup(0);
     init_engine();
     if ( !cmdln_param_bcg )
     {
@@ -1133,12 +1148,12 @@ void game_setup(void)
         LbPaletteSet(display_palette);
     }
     test_open(15);
-    game_setup_sub4(1);
+    debug_trace_setup(1);
     if ( is_single_game && cmdln_param_current_map )
       load_mission_map_lvl(0);
     if ( in_network_game || cmdln_param_bcg )
       ingame__DisplayMode = 55;
-    game_setup_sub4(2);
+    debug_trace_setup(2);
     if (cmdln_colour_tables == 2)
     {
         create_tables_file();
@@ -2688,7 +2703,7 @@ void game_process(void)
       input();
       game_process_sub01();
       draw_game();
-      game_setup_sub4(gameturn + 100);
+      debug_trace_turn_bound(gameturn + 100);
       load_packet();
       if ( ((active_flags_general_unkn01 & 0x8000) != 0) !=
         ((ingame__Flags & 0x8000) != 0) )
