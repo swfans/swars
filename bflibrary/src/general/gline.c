@@ -17,6 +17,7 @@
  *     (at your option) any later version.
  */
 /******************************************************************************/
+#include <stdlib.h>
 #include "bfline.h"
 #include "bfscreen.h"
 
@@ -24,13 +25,13 @@ static void draw_b_line(long x1, long y1, long x2, long y2, TbPixel colour)
 {
   long apx = 2 * abs(x2 - x1);
   long spx;
-  if ( x2-x1 <= 0 )
+  if (x2 - x1 <= 0)
     spx = -1;
   else
     spx = 1;
   long apy = 2 * abs(y2 - y1);
   long spy;
-  if ( y2-y1 <= 0 )
+  if (y2 - y1 <= 0 )
     spy = -1;
   else
     spy = 1;
@@ -88,8 +89,8 @@ static void draw_b_line(long x1, long y1, long x2, long y2, TbPixel colour)
           unsigned short glass_idx = (lbDisplay.GraphicsWindowPtr[offset]<<8)
                 + ((unsigned char)colour);
           lbDisplay.GraphicsWindowPtr[offset] = lbDisplay.GlassMap[glass_idx];
-          if (y==y2) break;
-          if (d>=0)
+          if (y == y2) break;
+          if (d >= 0)
           {
             offset += spx;
             d -= apy;
@@ -106,8 +107,8 @@ static void draw_b_line(long x1, long y1, long x2, long y2, TbPixel colour)
           unsigned short glass_idx = (lbDisplay.GraphicsWindowPtr[offset]<<8)
                 + ((unsigned char)colour);
           lbDisplay.GraphicsWindowPtr[offset] = lbDisplay.GlassMap[glass_idx];
-          if (x==x2) break;
-          if (d>=0)
+          if (x == x2) break;
+          if (d >= 0)
           {
             offset += doffy;
             d -= apx;
@@ -170,7 +171,7 @@ TbResult LbDrawLine(long X1, long Y1, long X2, long Y2, TbPixel colour)
           {
             if ( X2 > width_max )
             {
-              Y2 -= (X2-width_max)*(Y2-Y1) / (X2-X1);
+              Y2 -= (X2-width_max) * (Y2-Y1) / (X2-X1);
               X2 = width_max;
               result = Lb_SUCCESS;
             }
@@ -196,12 +197,12 @@ TbResult LbDrawLine(long X1, long Y1, long X2, long Y2, TbPixel colour)
     else
     {
         if ( X2 < 0 ) return 1;
-        Y1 -= X1 * (Y1-Y2) / (X1-X2);
+        Y1 -= X1 * (Y1 - Y2) / (X1 - X2);
         X1 = 0;
         result = Lb_SUCCESS;
         if ( X2 > width_max )
         {
-          Y2 -= (X2-width_max) * (Y2-Y1) / (X2-X1);
+          Y2 -= (X2 - width_max) * (Y2 - Y1) / (X2 - X1);
           X2 = lbDisplay.GraphicsWindowWidth - 1;
         }
     }
@@ -210,12 +211,12 @@ TbResult LbDrawLine(long X1, long Y1, long X2, long Y2, TbPixel colour)
     if ( Y1 < 0 )
     {
         if ( Y2 < 0 ) return 1;
-        X1 -= Y1 * (X1-X2) / (Y1-Y2);
+        X1 -= Y1 * (X1 - X2) / (Y1 - Y2);
         Y1 = 0;
         result = Lb_SUCCESS;
         if ( Y2 > height_max )
         {
-          X2 -= (Y2-height_max) * (X2-X1) / (Y2-Y1);
+          X2 -= (Y2 - height_max) * (X2 - X1) / (Y2 - Y1);
           Y2 = height_max;
         }
     } else
@@ -225,13 +226,13 @@ TbResult LbDrawLine(long X1, long Y1, long X2, long Y2, TbPixel colour)
         {
           if ( Y2 > height_max )
           {
-            X2 -= (Y2-height_max) * (X2-X1) / (Y2-Y1);
+            X2 -= (Y2 - height_max) * (X2 - X1) / (Y2 - Y1);
             Y2 = height_max;
             result = Lb_SUCCESS;
           }
         } else
         {
-          X2 -= Y2 * (X2-X1) / (Y2 - Y1);
+          X2 -= Y2 * (X2 - X1) / (Y2 - Y1);
           Y2 = 0;
           result = Lb_SUCCESS;
         }
@@ -239,12 +240,12 @@ TbResult LbDrawLine(long X1, long Y1, long X2, long Y2, TbPixel colour)
     {
         if ( Y2 > height_max )
           return 1;
-        X1 -= (Y1-height_max) * (X1-X2) / (Y1-Y2);
+        X1 -= (Y1 - height_max) * (X1 - X2) / (Y1 - Y2);
         Y1 = height_max;
         result = Lb_SUCCESS;
         if ( Y2 < 0 )
         {
-          X2 -= Y2 * (X2-X1) / (Y2-Y1);
+          X2 -= Y2 * (X2 - X1) / (Y2 - Y1);
           Y2 = 0;
         }
     }
