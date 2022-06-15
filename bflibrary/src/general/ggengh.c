@@ -2,7 +2,7 @@
 // Bullfrog Engine Emulation Library - for use to remake classic games like
 // Syndicate Wars, Magic Carpet, Genewars or Dungeon Keeper.
 /******************************************************************************/
-/** @file ggengh.cpp
+/** @file ggengh.c
  *     Functions for creating and handling colour tables.
  * @par Purpose:
  *     Allows high performance fading for indexed colour images.

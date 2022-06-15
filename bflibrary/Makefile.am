@@ -14,10 +14,10 @@ libbullfrog_a_SOURCES = \
   src/general/gexe_key.cpp \
   src/general/gfile.c \
   src/general/gfnuniq.c \
-  src/general/ggenf.cpp \
-  src/general/ggengh.cpp \
+  src/general/ggenf.c \
+  src/general/ggengh.c \
   src/general/giff.c \
-  src/general/gkeybd.cpp \
+  src/general/gkeybd.c \
   src/general/gline.c \
   src/general/gmemut.c \
   src/general/gmouse.c \
@@ -31,7 +31,7 @@ libbullfrog_a_SOURCES = \
   src/general/gspr_std.c \
   src/general/gstrut.c \
   src/general/gtext.c \
-  src/general/gtrig.cpp \
+  src/general/gtrig.c \
   src/general/gutility.cpp \
   src/general/hvline.c \
   src/general/mshandler.cpp \
