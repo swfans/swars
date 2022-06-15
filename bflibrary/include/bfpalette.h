@@ -48,7 +48,10 @@ int LbPaletteStopOpenFade();
  */
 TbPixel LbPaletteFindColour(const ubyte *pal, ubyte r, ubyte g, ubyte b);
 
-int LbPaletteDraw();
+/** Draw the current palette on screen, in form ot 16x16 table.
+ */
+TbResult LbPaletteDraw(long X, long Y,
+  ulong Width, ulong Height, ushort Flags);
 
 /** Retrieves the indexed colour video palette.
  *

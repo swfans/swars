@@ -48,7 +48,9 @@ TbResult LbTextSetClipWindow(ulong x, ulong y, ulong width, ulong height);
 int LbTextStringWidth();
 int LbTextWordWidth();
 int LbTextStringHeight();
-int LbTextDraw();
+
+TbResult LbTextDraw(long X, long Y, const char *text);
+
 extern int lbSpacesPerTab;
 extern struct TbAnyWindow lbTextJustifyWindow;
 extern struct TbAnyWindow lbTextClipWindow;

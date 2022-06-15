@@ -19,7 +19,12 @@
 /******************************************************************************/
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 #include "bfpalette.h"
+
+#include "bfscreen.h"
+#include "bfbox.h"
+#include "bftext.h"
 
 TbResult LbPaletteFade_UNUSED(ubyte *from_pal, ubyte arg2, ubyte fade_steps)
 {
@@ -134,9 +139,41 @@ TbPixel LbPaletteFindColour(const ubyte *pal, ubyte r, ubyte g, ubyte b)
     return *o;
 }
 
-int LbPaletteDraw_UNUSED()
+TbResult LbPaletteDraw(long X, long Y,
+  ulong Width, ulong Height, ushort Flags)
 {
-// code at 0001:00099098
+    char buf[16];
+    long nrow, ncol;
+    long curX, curY;
+    ulong bkp_DrawFlags;
+    TbPixel bkp_DrawColour;
+    TbPixel colour;
+
+    bkp_DrawFlags = lbDisplay.DrawFlags;
+    bkp_DrawColour = lbDisplay.DrawColour;
+    lbDisplay.DrawFlags = 0x0040;
+
+    colour = 0;
+    curY = Y;
+    for (nrow = 0; nrow < 16; nrow++)
+    {
+        curX = X;
+        for (ncol = 0; ncol < 16; ncol++)
+        {
+          LbDrawBox(curX, curY, Width, Height, colour);
+          if (Flags & 0x01) {
+              sprintf(buf, "%d", colour);
+              lbDisplay.DrawColour = 0xFF - colour;
+              LbTextDraw(curX, curY, buf);
+          }
+          ++colour;
+          curX += Width;
+        }
+        curY += Height;
+    }
+    lbDisplay.DrawFlags = bkp_DrawFlags;
+    lbDisplay.DrawColour = bkp_DrawColour;
+    return Lb_SUCCESS;
 }
 
 TbResult LbPaletteDataFillBlack(ubyte *palette)
