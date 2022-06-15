@@ -1536,7 +1536,7 @@ void show_menu_screen_st0(void)
     ingame__Credits = 50000;
 
     debug_trace_place(17);
-    LbFileLoadAt("data/bgtables.dat", &fade_table);
+    LbFadeTableLoad(display_palette, "data/bgtables.dat");
     LbGhostTableGenerate(display_palette, 66, "data/startgho.dat");
     init_screen_boxes();
     update_menus();
@@ -1834,7 +1834,7 @@ void show_menu_screen_st2(void)
       }
     }
 
-    LbFileLoadAt("data/bgtables.dat", &fade_table);
+    LbFadeTableLoad(display_palette, "data/bgtables.dat");
     LbGhostTableGenerate(display_palette, 66, "data/startgho.dat");
     init_read_all_sprite_files();
     init_weapon_text();
