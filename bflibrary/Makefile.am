@@ -14,6 +14,7 @@ libbullfrog_a_SOURCES = \
   src/general/gexe_key.cpp \
   src/general/gfile.c \
   src/general/gfnuniq.c \
+  src/general/gfont.c \
   src/general/ggenf.c \
   src/general/ggengh.c \
   src/general/giff.c \

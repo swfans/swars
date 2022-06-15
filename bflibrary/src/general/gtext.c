@@ -3,9 +3,9 @@
 // Syndicate Wars, Magic Carpet, Genewars or Dungeon Keeper.
 /******************************************************************************/
 /** @file gtext.c
- *     Implementation of related functions.
+ *     Functions for drawing text on graphical screen.
  * @par Purpose:
- *     Unknown.
+ *     Allows drawing text using various positioning and font sprites.
  * @par Comment:
  *     None.
  * @author   Tomasz Lis
@@ -19,11 +19,12 @@
 /******************************************************************************/
 #include "bftext.h"
 #include "bfscreen.h"
+#include "bffont.h"
 
 struct TbAnyWindow lbTextJustifyWindow_UNUSED;
 struct TbAnyWindow lbTextClipWindow_UNUSED;
 int lbSpacesPerTab_UNUSED;
-int lbFontPtr_UNUSED;
+struct TbSprite *lbFontPtr_UNUSED;
 
 TbResult LbTextSetJustifyWindow(ulong x, ulong y, ulong width)
 {
@@ -91,9 +92,26 @@ int LbTextStringWidth_UNUSED()
 // code at 0001:000bb1a4
 }
 
-int LbTextWordWidth_UNUSED()
+long LbSprFontWordWidth(const struct TbSprite *font, const char *text)
 {
-// code at 0001:000bb27c
+    long len;
+    const char *c;
+    if ((font == NULL) || (text == NULL))
+        return 0;
+    c = text;
+    len = 0;
+    while ((*c != ' ') && (*c != '\t') && (*c != '\0') && (*c != '\r') && (*c != '\n'))
+    {
+      if ((ubyte)(*c) > 32)
+        len += LbSprFontCharWidth(font, (ubyte)*c);
+      c++;
+    }
+    return len;
+}
+
+long LbTextWordWidth(const char *text)
+{
+    return LbSprFontWordWidth(lbFontPtr, text);
 }
 
 int LbTextStringHeight_UNUSED()

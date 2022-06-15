@@ -3,9 +3,9 @@
 // Syndicate Wars, Magic Carpet, Genewars or Dungeon Keeper.
 /******************************************************************************/
 /** @file bftext.h
- *     Header file for gtext.cpp.
+ *     Header file for gtext.c.
  * @par Purpose:
- *     Unknown.
+ *     Allows drawing text using various positioning and font sprites.
  * @par Comment:
  *     None.
  * @author   Tomasz Lis
@@ -28,6 +28,8 @@ extern "C" {
 
 #pragma pack(1)
 
+struct TbSprite;
+
 struct TbAnyWindow { // sizeof=20
     long x; // offset=0
     long y; // offset=4
@@ -40,21 +42,41 @@ typedef struct TbAnyWindow TbAnyWindow;
 
 #pragma pack()
 
+extern int lbSpacesPerTab;
+extern struct TbAnyWindow lbTextJustifyWindow;
+extern struct TbAnyWindow lbTextClipWindow;
+extern struct TbSprite *lbFontPtr;
+
 TbResult LbTextSetWindow(ulong x, ulong y, ulong width, ulong height);
 
 TbResult LbTextSetJustifyWindow(ulong x, ulong y, ulong width);
 TbResult LbTextSetClipWindow(ulong x, ulong y, ulong width, ulong height);
 
 int LbTextStringWidth();
-int LbTextWordWidth();
 int LbTextStringHeight();
 
 TbResult LbTextDraw(long X, long Y, const char *Text);
 
-extern int lbSpacesPerTab;
-extern struct TbAnyWindow lbTextJustifyWindow;
-extern struct TbAnyWindow lbTextClipWindow;
-extern int lbFontPtr;
+
+/**
+ * Computes width of one word in given string, starting at given pointer.
+ * The word may end with NULL character, space, tab or line end / return carret.
+ *
+ * @param font The font to be used, in form of array of sprites.
+ * @param text The text from which first word will be taken.
+ * @return Length of the string, or 0 of either text or font is empty.
+ */
+long LbSprFontWordWidth(const struct TbSprite *font, const char *text);
+
+/**
+ * Computes width of one word in given string, starting at given pointer.
+ * The word may end with NULL character, space, tab or line end / return carret.
+ * The currently set font is used for the computations.
+ *
+ * @param text The text from which first word will be taken.
+ * @return Length of the string, or 0 of either text or font is empty.
+ */
+long LbTextWordWidth(const char *text);
 
 #ifdef __cplusplus
 };
