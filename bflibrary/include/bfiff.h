@@ -26,13 +26,39 @@
 extern "C" {
 #endif
 
-int LbIffLoad();
+#pragma pack(1)
 
-/** Save "ILBM" IFF Interleaved Bitmap
+struct TbIffPalette { // sizeof=4
+    long Loaded; // offset=0
+    ubyte Palette[256]; // offset=4
+};
+
+typedef struct TbIffPalette TbIffPalette;
+
+struct TbIff { // sizeof=18
+    ushort Width; // offset=0
+    ushort Height; // offset=2
+    ulong FileSize; // offset=4
+    TbIffPalette *Palette; // offset=8
+    ushort XOffset; // offset=12
+    ushort YOffset; // offset=14
+    ubyte XAspect; // offset=16
+    ubyte YAspect; // offset=17
+};
+
+typedef struct TbIff TbIff;
+
+#pragma pack()
+
+/** Load "ILBM" IFF Interleaved Bitmap.
+ */
+TbResult LbIffLoad(const char *fname, ubyte *buf, struct TbIff *iff);
+
+/** Save "ILBM" IFF Interleaved Bitmap.
  *
  * @param fname
- * @param a2
- * @param a3
+ * @param inp_buffer
+ * @param pal
  * @param force_fname
  * @return
  */

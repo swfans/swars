@@ -17,42 +17,24 @@
  *     (at your option) any later version.
  */
 /******************************************************************************/
-#include "bfiff.h"
-
+#include <assert.h>
 #include <stdio.h>
 #include <errno.h>
 #include <string.h>
+#include "bfiff.h"
+
 #include "bftypes.h"
 #include "bffnuniq.h"
 #include "bfscreen.h"
+#include "bfbuffer.h"
 #include "privbflog.h"
 
 #pragma pack(1)
 
-struct TbIffPalette { // sizeof=4
-    long Loaded; // offset=0
-    ubyte Palette[255]; // offset=4
-};
-
-typedef struct TbIffPalette TbIffPalette;
-
-struct TbIff { // sizeof=18
-    ushort Width; // offset=0
-    ushort Height; // offset=2
-    ulong FileSize; // offset=4
-    TbIffPalette *Palette; // offset=8
-    ushort XOffset; // offset=12
-    ushort YOffset; // offset=14
-    ubyte XAspect; // offset=16
-    ubyte YAspect; // offset=17
-};
-
-typedef struct TbIff TbIff;
-
 struct iff_header { // sizeof=40
-    ubyte Id[3]; // offset=0
+    ubyte Id[4]; // offset=0
     ulong FileLength; // offset=4
-    ubyte FileType[7]; // offset=8
+    ubyte FileType[8]; // offset=8
     ulong HeaderLength; // offset=16
     ushort Width; // offset=20
     ushort Height; // offset=22
@@ -72,7 +54,7 @@ struct iff_header { // sizeof=40
 typedef struct iff_header iff_header;
 
 struct ChunkHeader { // sizeof=8
-    ubyte Id[3]; // offset=0
+    ubyte Id[4]; // offset=0
     ulong ChunkLength; // offset=4
 };
 
@@ -80,9 +62,122 @@ typedef struct ChunkHeader ChunkHeader;
 
 #pragma pack()
 
-int LbIffLoad_UNUSED()
+ulong swap_long_bytes(ulong v)
 {
-// code at 0001:000b2e10
+    return ((v & 0xFF00) << 8) | ((v & 0xFF0000) >> 8) | ((v & 0xFF000000) >> 24) | ((v & 0xFF) << 24);
+}
+
+ushort swap_word_bytes(ushort v)
+{
+    return ((v & 0x00FF) << 8) | ((v & 0xFF00) >> 8);
+}
+
+static TbResult read_body(struct iff_header *iffhead, struct ChunkHeader *chead, ubyte *buf)
+{
+    assert(!"Not implemented");
+    return Lb_FAIL;
+}
+
+static TbResult read_cmap(struct ChunkHeader *chead, ubyte *pal)
+{
+    assert(!"Not implemented");
+    return Lb_FAIL;
+}
+
+static TbResult read_iff(struct TbIff *iff, ubyte *buf)
+{
+    ulong fourcc;
+    struct iff_header iffhead;
+    struct ChunkHeader chead;
+
+    if (iff->Palette != NULL)
+        iff->Palette->Loaded = 0;
+    if (LbBufferFileRead(&iffhead, 40) != Lb_SUCCESS)
+        return Lb_FAIL;
+
+    fourcc = iffhead.Id[3]
+         + (iffhead.Id[2] << 8)
+         + (iffhead.Id[1] << 16)
+         + (iffhead.Id[0] << 24);
+    if (fourcc != 0x464F524D) // 'FORM'
+        return Lb_FAIL;
+
+    fourcc = iffhead.FileType[3]
+         + (iffhead.FileType[2] << 8)
+         + (iffhead.FileType[1] << 16)
+         + (iffhead.FileType[0] << 24);
+    if (fourcc != 0x50424D20 && // 'PBM '
+        fourcc != 0x494C424D) // 'ILBM'
+        return Lb_FAIL;
+
+    fourcc = iffhead.FileType[7]
+         + (iffhead.FileType[6] << 8)
+         + (iffhead.FileType[5] << 16)
+         + (iffhead.FileType[4] << 24);
+    if (fourcc != 0x424D4844) // 'BMHD'
+        return Lb_FAIL;
+
+    iffhead.FileLength = swap_long_bytes(iffhead.FileLength);
+    iff->FileSize = iffhead.FileLength;
+    iffhead.Width = swap_word_bytes(iffhead.Width);
+    iff->Width = iffhead.Width;
+    iffhead.Height = swap_word_bytes(iffhead.Height);
+    iff->Height = iffhead.Height;
+    iffhead.XOffset = swap_word_bytes(iffhead.XOffset);
+    iff->XOffset = iffhead.XOffset;
+    iffhead.YOffset = swap_word_bytes(iffhead.YOffset);
+    iff->YOffset = iffhead.YOffset;
+    iff->XAspect = iffhead.XAspectRatio;
+    iff->YAspect = iffhead.YAspectRatio;
+    iffhead.HeaderLength = swap_long_bytes(iffhead.HeaderLength);
+    iffhead.Transparent = swap_word_bytes(iffhead.Transparent);
+    iffhead.PageWidth = swap_word_bytes(iffhead.PageWidth);
+    iffhead.PageHeight = swap_word_bytes(iffhead.PageHeight);
+    if (LbBufferFileRead(&chead, 8) != Lb_SUCCESS)
+        return Lb_FAIL;
+    do
+    {
+        chead.ChunkLength = swap_long_bytes(chead.ChunkLength);
+        if (chead.ChunkLength & 1)
+            chead.ChunkLength++;
+        fourcc = (chead.Id[3]) + (chead.Id[2] << 8) + (chead.Id[1] << 16) + (chead.Id[0] << 24);
+        if (fourcc == 0x424F4459) // 'BODY'
+        {
+            if (read_body(&iffhead, &chead, buf) == Lb_FAIL)
+                return Lb_FAIL;
+        }
+        else if (fourcc == 0x434D4150 && iff->Palette != NULL) // 'CMAP'
+        {
+            if (read_cmap(&chead, iff->Palette->Palette) == Lb_FAIL)
+                return Lb_FAIL;
+            iff->Palette->Loaded = 1;
+        }
+        else
+        {
+            LbBufferFileSkip(chead.ChunkLength);
+            continue;
+        }
+    }
+    while (LbBufferFileRead(&chead, 8) == Lb_SUCCESS);
+    return Lb_SUCCESS;
+}
+
+TbResult LbIffLoad(const char *fname, ubyte *buf, struct TbIff *iff)
+{
+    TbFileHandle handle;
+    TbResult ret;
+
+    handle = LbFileOpen(fname, Lb_FILE_MODE_READ_ONLY);
+    if (handle == INVALID_FILE) {
+        return Lb_FAIL;
+    }
+    if (LbBufferFileSetup(handle) == Lb_SUCCESS)
+    {
+        ret = read_iff(iff, buf);
+        LbBufferFileReset();
+    }
+    LbFileClose(handle);
+    return ret;
 }
 
 TbResult LbIffWrite(FILE *img_fh, unsigned char *inp_buffer,
@@ -236,7 +331,7 @@ TbResult LbIffWrite(FILE *img_fh, unsigned char *inp_buffer,
         pxcol = *inp++;
         fputc(pxcol, img_fh);
     }
-    return 1;
+    return Lb_SUCCESS;
 }
 
 TbResult LbIffSave(const char *fname, unsigned char *inp_buffer,
