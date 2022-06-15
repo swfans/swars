@@ -29,6 +29,20 @@ extern "C" {
 struct TbSprite;
 
 /**
+ * Computes width of a single character in current font.
+ * For characters that do not have a sprite (like tab), returns 0.
+ * The currently set font is used for the computations.
+ */
+long LbTextCharWidth(const ulong chr);
+
+/**
+ * Computes height of a single character in current font.
+ * For characters that do not have a sprite (like tab), returns 0.
+ * The currently set font is used for the computations.
+ */
+long LbTextCharHeight(const ulong chr);
+
+/**
  * Computes width of a single character in given font.
  * For characters that do not have a sprite (like tab), returns 0.
  */
@@ -44,7 +58,36 @@ long LbSprFontCharHeight(const struct TbSprite *font, const ulong chr);
  * Returns sprite of a single character in given font.
  * For characters that do not have a sprite, returns NULL.
  */
-const struct TbSprite *LbFontCharSprite(const struct TbSprite *font, const ulong chr);
+const struct TbSprite *LbFontCharSprite(const struct TbSprite *font,
+  const ulong chr);
+
+/**
+ * Returns X coordinate for a text character on screen.
+ * Takes into account the current text window and justification settings.
+ */
+long LbGetJustifiedCharPosX(long startx, long all_chars_width,
+  long spr_width, long mul_width, ushort fdflags);
+
+/**
+ * Returns Y coordinate for a text character on screen.
+ * Takes into account the current text window and justification settings.
+ */
+long LbGetJustifiedCharPosY(long starty, long all_lines_height,
+  long spr_height, ushort fdflags);
+
+/**
+ * Returns width for an empty space between words in text on screen.
+ * Takes into account the current text window and justification settings.
+ */
+long LbGetJustifiedCharWidth(long all_chars_width,
+  long spr_width, long words_count, int units_per_px, ushort fdflags);
+
+/**
+ * Returns height for an empty space between lines in text on screen.
+ * Takes into account the current text window and justification settings.
+ */
+long LbGetJustifiedCharHeight(long all_lines_height,
+  long spr_height, long lines_count, ushort fdflags);
 
 #ifdef __cplusplus
 };
