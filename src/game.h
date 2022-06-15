@@ -492,7 +492,7 @@ extern char login_name[16];
 
 extern ubyte in_network_game;
 extern ubyte is_single_game;
-extern ubyte cmdln_param_tf;
+extern ubyte cmdln_colour_tables;
 extern ubyte cmdln_param_bcg;
 extern ubyte cmdln_param_d;
 extern ubyte unkn01_maskarr[28];

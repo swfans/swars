@@ -103,7 +103,7 @@ process_options (int *argc, char ***argv)
             break;
 
         case 'F':
-            cmdln_param_tf = 2;
+            cmdln_colour_tables = 2;
             break;
 
         case 'g':
@@ -165,7 +165,7 @@ process_options (int *argc, char ***argv)
             break;
 
         case 'T':
-            cmdln_param_tf = 1;
+            cmdln_colour_tables = 1;
             break;
 
         case 'u':

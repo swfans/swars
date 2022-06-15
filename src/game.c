@@ -1077,17 +1077,19 @@ TbBool create_strings_list(char **strings, char *strings_data, char *strings_dat
 
 void create_tables_file(void)
 {
+    // This makes little sense.
+    //TODO Use bflbrary functions to create the tables instead
     int i, k;
     unsigned char *curbuf;
     LbFileLoadAt(fadedat_fname, fade_data);
     curbuf = fade_data;
     for (i = 0; i < 256; i++) {
         for (k = 0; k < 64; k++) {
-          fade_table[256 * k + i] = *(curbuf + 320 * k + i);
+          fade_table[256 * k + i] = *(curbuf + (256+64) * k + i);
         }
     }
     fade_data = curbuf;
-    LbFileSaveAt("data/tables.dat", fade_table, 84224);
+    LbFileSaveAt("data/tables.dat", fade_table, 329*256);
 }
 
 void game_setup(void)
@@ -1137,7 +1139,7 @@ void game_setup(void)
     if ( in_network_game || cmdln_param_bcg )
       ingame__DisplayMode = 55;
     game_setup_sub4(2);
-    if ( cmdln_param_tf == 2 )
+    if (cmdln_colour_tables == 2)
     {
         create_tables_file();
     }
