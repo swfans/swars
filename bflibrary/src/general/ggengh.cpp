@@ -23,51 +23,42 @@
 #include "bfpalette.h"
 #include "bfscreen.h"
 
-unsigned char ghost_table_UNUSED[256*256];
+TbPixel ghost_table_UNUSED[256*256];
 
-TbResult LbGhostTableGenerate(ubyte *pal, short intens, const char *fname)
-{
-    if (LbFileLoadAt(fname, ghost_table) == Lb_FAIL)
-    {
-        int i, k;
-        ubyte *colr_i;
-        ubyte *colr_k;
-        ubyte *tbl_o;
-
-        tbl_o = ghost_table;
-        colr_i = pal;
-        for (i = 0; i < 256; i++)
-        {
-            int ri, gi, bi;
-            ri = colr_i[0];
-            gi = colr_i[1];
-            bi = colr_i[2];
-
-            colr_k = pal;
-            for (k = 0; k < 256; k++)
-            {
-                int rk, gk, bk;
-                rk = intens * (colr_k[0] - ri) / 100;
-                gk = intens * (colr_k[1] - gi) / 100;
-                bk = intens * (colr_k[2] - bi) / 100;
-                *tbl_o = LbPaletteFindColour(pal, rk + ri, gk + gi, bk + bi);
-                colr_k += 3;
-                tbl_o++;
-            }
-            colr_i += 3;
-        }
-    }
-    lbDisplay.GlassMap = ghost_table;
-    return Lb_SUCCESS;
-}
-
-TbResult LbGhostTableLoad(ubyte *pal, short intens, const char *fname)
+static void ghost_table_generate(const ubyte *pal, short intens, ubyte *table)
 {
     int i, k;
-    TbResult ret;
+    const ubyte *colr_i;
+    const ubyte *colr_k;
+    ubyte *tbl_o;
 
-    ret = LbFileLoadAt(fname, ghost_table);
-    lbDisplay.GlassMap = ghost_table;
+    tbl_o = ghost_table;
+    colr_i = pal;
+    for (i = 0; i < 256; i++)
+    {
+        int ri, gi, bi;
+        ri = colr_i[0];
+        gi = colr_i[1];
+        bi = colr_i[2];
+
+        colr_k = pal;
+        for (k = 0; k < 256; k++)
+        {
+            int rk, gk, bk;
+            rk = intens * (colr_k[0] - ri) / 100;
+            gk = intens * (colr_k[1] - gi) / 100;
+            bk = intens * (colr_k[2] - bi) / 100;
+            *tbl_o = LbPaletteFindColour(pal, rk + ri, gk + gi, bk + bi);
+            colr_k += 3;
+            tbl_o++;
+        }
+        colr_i += 3;
+    }
+}
+
+static void ghost_table_symmetrize(const ubyte *pal, short intens, ubyte *table)
+{
+    int i, k;
 
     for (i = 0; i < 256; i++)
     {
@@ -76,9 +67,33 @@ TbResult LbGhostTableLoad(ubyte *pal, short intens, const char *fname)
           ushort a, b;
           a = (i << 8) + k;
           b = (k << 8) + i;
-          ghost_table[a] = ghost_table[b];
+          table[a] = table[b];
       }
     }
+}
+
+TbResult LbGhostTableGenerate(const ubyte *pal, short intens, const char *fname)
+{
+    if (LbFileLoadAt(fname, ghost_table) == Lb_FAIL)
+    {
+        ghost_table_generate(pal, intens, ghost_table);
+
+        if (LbFileSaveAt(fname, ghost_table, 256*256) == Lb_FAIL) {
+            return Lb_FAIL;
+        }
+    }
+    lbDisplay.GlassMap = ghost_table;
+    return Lb_SUCCESS;
+}
+
+TbResult LbGhostTableLoad(const ubyte *pal, short intens, const char *fname)
+{
+    TbResult ret;
+
+    ret = LbFileLoadAt(fname, ghost_table);
+    lbDisplay.GlassMap = ghost_table;
+
+    ghost_table_symmetrize(pal, intens, ghost_table);
     return ret;
 }
 

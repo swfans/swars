@@ -19,12 +19,57 @@
 /******************************************************************************/
 #include "bfgentab.h"
 
-int LbFadeTableGenerate_UNUSED()
+#include "bffile.h"
+#include "bfpalette.h"
+#include "bfscreen.h"
+
+TbPixel fade_table_UNUSED[256*64];
+
+static void fade_table_generate(const ubyte *pal, ubyte *table)
 {
-// code at 0001:00093d60
+    const ubyte *p;
+    ubyte *t;
+    long i, k;
+
+    t = table;
+    for (i = 0; i < 64; i++)
+    {
+        p = pal;
+        for (k = 256; k > 0; k--)
+        {
+            int rk, gk, bk;
+
+            rk = (i * p[0]) >> 5;
+            gk = (i * p[1]) >> 5;
+            bk = (i * p[2]) >> 5;
+            *t = LbPaletteFindColour(pal, rk, gk, bk);
+            t++;
+            p += 3;
+        }
+    }
 }
 
-int fade_table_UNUSED;
+TbResult LbFadeTableGenerate(const ubyte *palette, const char *table_fname)
+{
+    if (LbFileLoadAt(table_fname, fade_table) == Lb_FAIL)
+    {
+        fade_table_generate(palette, fade_table);
 
+        if (LbFileSaveAt(table_fname, fade_table, 64*256) == Lb_FAIL) {
+            return Lb_FAIL;
+        }
+    }
+    lbDisplay.FadeTable = fade_table;
+    return Lb_SUCCESS;
+}
+
+TbResult LbFadeTableLoad(const ubyte *palette, const char *table_fname)
+{
+    TbResult ret;
+
+    ret = LbFileLoadAt(table_fname, fade_table);
+    lbDisplay.FadeTable = fade_table;
+    return ret;
+}
 
 /******************************************************************************/
