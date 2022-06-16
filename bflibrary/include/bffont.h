@@ -28,6 +28,14 @@ extern "C" {
 
 struct TbSprite;
 
+/** Computes standard height of a line of text, in currently set font.
+ */
+long LbTextLineHeight(void);
+
+/** Computes height of a line of text, in currently set font.
+ */
+long LbTextHeight(const char *text);
+
 /**
  * Computes width of a single character in current font.
  * For characters that do not have a sprite (like tab), returns 0.
@@ -60,6 +68,18 @@ long LbSprFontCharHeight(const struct TbSprite *font, const ulong chr);
  */
 const struct TbSprite *LbFontCharSprite(const struct TbSprite *font,
   const ulong chr);
+
+/**
+ * Draws an underline below the character.
+ * @param pos_x
+ * @param pos_y
+ * @param width
+ * @param height
+ * @param draw_colr
+ * @param shadow_colr
+ */
+void LbDrawCharUnderline(long pos_x, long pos_y, long width, long height,
+  TbPixel draw_colr, TbPixel shadow_colr);
 
 /**
  * Returns X coordinate for a text character on screen.

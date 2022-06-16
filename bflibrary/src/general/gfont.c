@@ -21,7 +21,10 @@
 #include "bfsprite.h"
 #include "bfscreen.h"
 #include "bftext.h"
+#include "bfline.h"
 #include "bfanywnd.h"
+
+#define DOUBLE_UNDERLINE_BOUND 16
 
 long LbGetJustifiedCharPosX(long startx, long all_chars_width,
   long spr_width, long mul_width, ushort fdflags)
@@ -79,6 +82,44 @@ long LbGetJustifiedCharHeight(long all_lines_height, long spr_height,
 {
     // No vertical justification supported - so the decision is simple
     return spr_height;
+}
+
+void LbDrawCharUnderline(long pos_x, long pos_y, long width, long height,
+  TbPixel draw_colr, TbPixel shadow_colr)
+{
+    long w,h;
+    h = height;
+    w = width;
+    // Draw shadow
+    if ((lbDisplay.DrawFlags & Lb_TEXT_UNDERLNSHADOW) != 0) {
+        long shadow_x;
+        shadow_x = pos_x+1;
+        if (height > 2*DOUBLE_UNDERLINE_BOUND)
+            shadow_x++;
+        LbDrawHVLine(shadow_x, pos_y+h, shadow_x+w, pos_y+h, shadow_colr);
+        h--;
+        if (height > DOUBLE_UNDERLINE_BOUND) {
+            LbDrawHVLine(shadow_x, pos_y+h, shadow_x+w, pos_y+h, shadow_colr);
+            h--;
+        }
+    }
+    // Draw underline
+    LbDrawHVLine(pos_x, pos_y+h, pos_x+w, pos_y+h, draw_colr);
+    h--;
+    if (height > DOUBLE_UNDERLINE_BOUND) {
+        LbDrawHVLine(pos_x, pos_y+h, pos_x+w, pos_y+h, draw_colr);
+        h--;
+    }
+}
+
+long LbTextLineHeight(void)
+{
+    return LbSprFontCharHeight(lbFontPtr, ' ');
+}
+
+long LbTextHeight(const char *text)
+{
+    return LbSprFontCharHeight(lbFontPtr, ' ');
 }
 
 long LbTextCharWidth(const ulong chr)
