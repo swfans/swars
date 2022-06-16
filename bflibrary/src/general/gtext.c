@@ -77,8 +77,9 @@ TbBool LbTextDrawResized(int posx, int posy, int units_per_px, const char *text)
     const char *ebuf;
     const char *prev_ebuf;
     long chr;
-    long x,y,len;
-    long w,h;
+    long x, y, len;
+    long w, h;
+
     if ((lbFontPtr == NULL) || (text == NULL))
         return true;
     LbScreenStoreGraphicsWindow(&grwnd);
@@ -95,19 +96,19 @@ TbBool LbTextDrawResized(int posx, int posy, int units_per_px, const char *text)
     for (ebuf=text; *ebuf != '\0'; ebuf++)
     {
         prev_ebuf=ebuf-1;
-        chr = (unsigned char)*ebuf;
+        chr = (ubyte)*ebuf;
         if (is_wide_charcode(chr))
         {
             ebuf++;
             if (*ebuf == '\0') break;
-            chr = (chr<<8) + (unsigned char)*ebuf;
+            chr = (chr<<8) + (ubyte)*ebuf;
         }
 
         if (chr > 32)
         {
             w = LbTextCharWidth(chr) * units_per_px / 16;
             if ((posx+w-justifyx <= lbTextJustifyWindow.width) || (count > 0) ||
-              !LbAlignMethodSet(lbDisplay.DrawFlags))
+              !LbIAlignMethodSet(lbDisplay.DrawFlags))
             {
                 posx += w;
                 continue;
@@ -146,7 +147,7 @@ TbBool LbTextDrawResized(int posx, int posy, int units_per_px, const char *text)
             len = LbGetJustifiedCharWidth(posx, w, count, units_per_px, lbDisplay.DrawFlags);
             put_down_sprites(sbuf, ebuf, x, y, len, units_per_px);
             // End the line only if align method is set
-            if (LbAlignMethodSet(lbDisplay.DrawFlags))
+            if (LbIAlignMethodSet(lbDisplay.DrawFlags))
             {
               posx = startx;
               sbuf = ebuf + 1; // sbuf points at start of char, while ebuf points at end of char
@@ -184,7 +185,7 @@ TbBool LbTextDrawResized(int posx, int posy, int units_per_px, const char *text)
             y = LbGetJustifiedCharPosY(starty, h, h, lbDisplay.DrawFlags);
             len = LbGetJustifiedCharWidth(posx, w, count, units_per_px, lbDisplay.DrawFlags);
             put_down_sprites(sbuf, ebuf, x, y, len, units_per_px);
-            if (LbAlignMethodSet(lbDisplay.DrawFlags))
+            if (LbIAlignMethodSet(lbDisplay.DrawFlags))
             {
               posx = startx;
               sbuf = ebuf + 1;

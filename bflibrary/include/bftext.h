@@ -28,6 +28,8 @@ extern "C" {
 
 #pragma pack(1)
 
+#define TEXT_DRAW_MAX_LEN 4096
+
 struct TbSprite;
 
 #pragma pack()

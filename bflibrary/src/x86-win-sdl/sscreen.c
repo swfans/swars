@@ -29,6 +29,7 @@
 #include "bfmouse.h"
 #include "bftext.h"
 #include "bfwindows.h"
+#include "bfanywnd.h"
 #include "bfutility.h"
 #include "bfexe_key.h"
 #include "privbflog.h"
