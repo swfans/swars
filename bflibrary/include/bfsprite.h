@@ -97,7 +97,6 @@ TbResult LbSpriteClearAll(TbSetupSprite t_setup[]);
 TbResult LbSpriteReset(TbSprite *start, const TbSprite *end, const unsigned char *data);
 
 TbResult LbSpriteResetAll();
-int LbSpriteDrawScaled();
 
 extern ubyte * lbSpriteReMapPtr;
 
@@ -162,6 +161,53 @@ TbResult DrawSpriteWthShadowUsingScalingData(long posx, long posy, const TbSprit
 void SetAlphaScalingData(long x, long y, long swidth, long sheight,
     long dwidth, long dheight);
 
+TbResult LbSpriteDrawScaled(long xpos, long ypos, const TbSprite *sprite,
+    long dest_width, long dest_height);
+
+#define LbSpriteDrawResized(xpos, ypos, un_per_px, sprite) \
+  LbSpriteDrawScaled(xpos, ypos, sprite, \
+    ((sprite)->SWidth * un_per_px + 8) / 16, \
+    ((sprite)->SHeight * un_per_px + 8) / 16)
+
+/**
+ * Draws a scaled sprite with one colour on current graphics window at given position.
+ * Sets scaling data, and then uses it to draw the sprite.
+ *
+ * @param xpos The X coord within current graphics window.
+ * @param ypos The Y coord within current graphics window.
+ * @param sprite The source sprite.
+ * @param dest_width Width which the sprite should have on destination buffer.
+ * @param dest_height Height which the sprite should have on destination buffer.
+ * @param colour The colour to be used for drawing.
+ * @return 
+ */
+TbResult LbSpriteDrawScaledOneColour(long xpos, long ypos, const TbSprite *sprite,
+  long dest_width, long dest_height, const TbPixel colour);
+
+#define LbSpriteDrawResizedOneColour(xpos, ypos, un_per_px, sprite, colour) \
+  LbSpriteDrawScaledOneColour(xpos, ypos, sprite, \
+    ((sprite)->SWidth * un_per_px + 8) / 16, \
+    ((sprite)->SHeight * un_per_px + 8) / 16, colour)
+
+/**
+ * Draws a scaled sprite with remapped colours on current graphics window at given position.
+ * Sets scaling data, and then uses it to draw the sprite.
+ *
+ * @param xpos The X coord within current graphics window.
+ * @param ypos The Y coord within current graphics window.
+ * @param sprite The source sprite.
+ * @param dest_width Width which the sprite should have on destination buffer.
+ * @param dest_height Height which the sprite should have on destination buffer.
+ * @param cmap Colour mapping array.
+ * @return 
+ */
+TbResult LbSpriteDrawScaledRemap(long xpos, long ypos, const TbSprite *sprite,
+    long dest_width, long dest_height, const ubyte *cmap);
+
+#define LbSpriteDrawResizedRemap(xpos, ypos, un_per_px, sprite, cmap) \
+  LbSpriteDrawScaledRemap(xpos, ypos, sprite, \
+    ((sprite)->SWidth * un_per_px + 8) / 16, \
+    ((sprite)->SHeight * un_per_px + 8) / 16, cmap)
 
 #ifdef __cplusplus
 };
