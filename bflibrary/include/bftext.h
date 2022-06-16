@@ -20,6 +20,7 @@
 #ifndef BFLIBRARY_BFTEXT_H_
 #define BFLIBRARY_BFTEXT_H_
 
+#include <stdarg.h>
 #include "bftypes.h"
 
 #ifdef __cplusplus

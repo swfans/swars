@@ -18,7 +18,6 @@
  */
 /******************************************************************************/
 #include <stdio.h>
-#include <stdarg.h>
 #include "bftext.h"
 #include "bfsprite.h"
 #include "bfscreen.h"
