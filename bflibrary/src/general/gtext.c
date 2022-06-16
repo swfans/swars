@@ -17,13 +17,219 @@
  *     (at your option) any later version.
  */
 /******************************************************************************/
+#include <stdio.h>
+#include <stdarg.h>
 #include "bftext.h"
+#include "bfsprite.h"
 #include "bfscreen.h"
 #include "bffont.h"
+#include "bfmemory.h"
 #include "bfanywnd.h"
+
+#if defined(ENABLE_SHADOW_COLOUR)
+#  define SHADOW_COLOUR lbDisplay.ShadowColour
+#else
+#  define SHADOW_COLOUR 0x00
+#endif
 
 int lbSpacesPerTab_UNUSED;
 struct TbSprite *lbFontPtr_UNUSED;
+
+/** @internal
+ * Returns if the given char starts a wide charcode.
+ * @param chr the 8-bit char to check
+ */
+TbBool is_wide_charcode(ulong chr)
+{
+    return false;
+}
+
+TbBool LbIApplyControlCharToDrawSettings(const char **c)
+{
+    ubyte chr;
+
+    chr = (ubyte)(**c);
+    switch (chr)
+    {
+      case 1:
+        lbDisplay.DrawFlags ^= Lb_SPRITE_TRANSPAR4;
+        break;
+      case 2:
+        lbDisplay.DrawFlags ^= Lb_SPRITE_TRANSPAR8;
+        break;
+      case 3:
+        lbDisplay.DrawFlags ^= Lb_SPRITE_OUTLINE;
+        break;
+      case 4:
+        lbDisplay.DrawFlags ^= Lb_SPRITE_FLIP_HORIZ;
+        break;
+      case 5:
+        lbDisplay.DrawFlags ^= Lb_SPRITE_FLIP_VERTIC;
+        break;
+      case 11:
+        lbDisplay.DrawFlags ^= Lb_TEXT_UNDERLINE;
+        break;
+      case 12:
+        lbDisplay.DrawFlags ^= Lb_TEXT_ONE_COLOR;
+        break;
+      case 14:
+        (*c)++;
+        lbDisplay.DrawColour = (ubyte)(**c);
+        break;
+      default:
+        return false;
+    }
+    return true;
+}
+
+/** @internal
+ * Puts simple text sprites on screen.
+ * @param sbuf
+ * @param ebuf
+ * @param x
+ * @param y
+ * @param len
+ */
+void put_down_simpletext_sprites(const char *sbuf, const char *ebuf, long x, long y, long len)
+{
+  const char *c;
+  const struct TbSprite *spr;
+  ubyte chr;
+  long w,h;
+  for (c=sbuf; c < ebuf; c++)
+  {
+    chr = (ubyte)(*c);
+    if (chr > 32)
+    {
+      spr = LbFontCharSprite(lbFontPtr,chr);
+      if (spr != NULL)
+      {
+        if ((lbDisplay.DrawFlags & Lb_TEXT_ONE_COLOR) != 0)
+          LbSpriteDrawOneColour(x, y, spr, lbDisplay.DrawColour);
+        else
+          LbSpriteDraw(x, y, spr);
+        w = spr->SWidth;
+        if ((lbDisplay.DrawFlags & Lb_TEXT_UNDERLINE) != 0)
+        {
+            h = LbTextLineHeight();
+            LbDrawCharUnderline(x, y, w, h, lbDisplay.DrawColour, SHADOW_COLOUR);
+        }
+        x += w;
+      }
+    } else
+    if (chr == ' ')
+    {
+        w = len;
+        if ((lbDisplay.DrawFlags & Lb_TEXT_UNDERLINE) != 0)
+        {
+            h = LbTextLineHeight();
+            LbDrawCharUnderline(x, y, w, h, lbDisplay.DrawColour, SHADOW_COLOUR);
+        }
+        x += w;
+    } else
+    if (chr == '\t')
+    {
+        w = len*(long)lbSpacesPerTab;
+        if ((lbDisplay.DrawFlags & Lb_TEXT_UNDERLINE) != 0)
+        {
+            h = LbTextLineHeight();
+            LbDrawCharUnderline(x, y, w, h, lbDisplay.DrawColour, SHADOW_COLOUR);
+        }
+        x += w;
+    } else
+    {
+        LbIApplyControlCharToDrawSettings(&c);
+    }
+  }
+}
+
+/** @internal
+ * Puts scaled simple text sprites on screen.
+ * @param sbuf
+ * @param ebuf
+ * @param x
+ * @param y
+ * @param len
+ */
+void put_down_simpletext_sprites_resized(const char *sbuf, const char *ebuf,
+  long x, long y, long space_len, int units_per_px)
+{
+  const char *c;
+  const struct TbSprite *spr;
+  ubyte chr;
+  long w,h;
+  for (c=sbuf; c < ebuf; c++)
+  {
+    chr = (ubyte)(*c);
+    if (chr > 32)
+    {
+      spr = LbFontCharSprite(lbFontPtr,chr);
+      if (spr != NULL)
+      {
+        if ((lbDisplay.DrawFlags & Lb_TEXT_ONE_COLOR) != 0) {
+            LbSpriteDrawResizedOneColour(x, y, units_per_px, spr, lbDisplay.DrawColour);
+        } else {
+            LbSpriteDrawResized(x, y, units_per_px, spr);
+        }
+        w = spr->SWidth * units_per_px / 16;
+        if ((lbDisplay.DrawFlags & Lb_TEXT_UNDERLINE) != 0)
+        {
+            h = LbTextLineHeight() * units_per_px / 16;
+            LbDrawCharUnderline(x, y, w, h, lbDisplay.DrawColour, SHADOW_COLOUR);
+        }
+        x += w;
+      }
+    } else
+    if (chr == ' ')
+    {
+        w = space_len;
+        if ((lbDisplay.DrawFlags & Lb_TEXT_UNDERLINE) != 0)
+        {
+            h = LbTextLineHeight() * units_per_px / 16;
+            LbDrawCharUnderline(x, y, w, h, lbDisplay.DrawColour, SHADOW_COLOUR);
+        }
+        x += w;
+    } else
+    if (chr == '\t')
+    {
+        w = space_len*(long)lbSpacesPerTab;
+        if ((lbDisplay.DrawFlags & Lb_TEXT_UNDERLINE) != 0)
+        {
+            h = LbTextLineHeight() * units_per_px / 16;
+            LbDrawCharUnderline(x, y, w, h, lbDisplay.DrawColour, SHADOW_COLOUR);
+        }
+        x += w;
+    } else
+    {
+        LbIApplyControlCharToDrawSettings(&c);
+    }
+  }
+}
+
+void put_down_sprites(const char *sbuf, const char *ebuf,
+  long x, long y, long len, int units_per_px)
+{
+    if (units_per_px == 16)
+    {
+        put_down_simpletext_sprites(sbuf, ebuf, x, y, len);
+    } else
+    {
+        put_down_simpletext_sprites_resized(sbuf, ebuf, x, y, len, units_per_px);
+    }
+}
+
+/** @internal
+ * Returns if given draw flags have text alignment method set.
+ */
+TbBool LbIAlignMethodSet(ushort fdflags)
+{
+    const unsigned short align_flags =
+      Lb_TEXT_HALIGN_LEFT | Lb_TEXT_HALIGN_RIGHT |
+      Lb_TEXT_HALIGN_CENTER | Lb_TEXT_HALIGN_JUSTIFY;
+    if ((fdflags & align_flags) != 0)
+        return true;
+    return false;
+}
 
 int LbTextStringWidth_UNUSED()
 {
@@ -57,17 +263,8 @@ int LbTextStringHeight_UNUSED()
 // code at 0001:000bb300
 }
 
-/**
- * Draws a string in the current text window in given scale.
- * @param posx Position of the text, X coord.
- * @param posy Position of the text, Y coord.
- * @param units_per_px Scale in pixels; 16 is 100%.
- * @param text The text to be drawn.
- * @return
- */
 TbBool LbTextDrawResized(int posx, int posy, int units_per_px, const char *text)
 {
-#if 0
     struct TbAnyWindow grwnd;
     // Counter for amount of blank characters in a line
     long count;
@@ -239,11 +436,41 @@ TbBool LbTextDrawResized(int posx, int posy, int units_per_px, const char *text)
     put_down_sprites(sbuf, ebuf, x, y, len, units_per_px);
     LbScreenLoadGraphicsWindow(&grwnd);
     return true;
-#endif
 }
 
-TbResult LbTextDraw_UNUSED(long X, long Y, const char *Text)
+TbBool LbTextDraw(int posx, int posy, const char *text)
 {
+    // Using resized version - it will end up with version optimized for no resize anyway
+    return LbTextDrawResized(posx, posy, 16, text);
 }
+
+TbBool LbTextDrawResizedVA(int posx, int posy, int units_per_px, const char *fmt, va_list arg)
+{
+    char * text = (char *)LbMemoryAlloc(TEXT_DRAW_MAX_LEN);
+    if (text == NULL) return false;
+    vsnprintf(text, TEXT_DRAW_MAX_LEN, fmt, arg);
+    TbBool result = LbTextDrawResized(posx, posy, units_per_px, text);
+    LbMemoryFree(text);
+    return result;
+}
+
+TbBool LbTextDrawFmt(int posx, int posy, const char *fmt, ...)
+{
+    va_list val;
+    va_start(val, fmt);
+    TbBool result = LbTextDrawResizedVA(posx, posy, 16, fmt, val);
+    va_end(val);
+    return result;
+}
+
+TbBool LbTextDrawResizedFmt(int posx, int posy, int units_per_px, const char *fmt, ...)
+{
+    va_list val;
+    va_start(val, fmt);
+    TbBool result = LbTextDrawResizedVA(posx, posy, units_per_px, fmt, val);
+    va_end(val);
+    return result;
+}
+
 
 /******************************************************************************/
