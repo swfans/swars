@@ -5,6 +5,7 @@ lib_LIBRARIES = libbullfrog.a
 libbullfrog_a_SOURCES = \
   src/general/arctan.c \
   src/general/box_clip.c \
+  src/general/ganywnd.c \
   src/general/gbox.c \
   src/general/gbuffer.cpp \
   src/general/gcircle.c \

@@ -30,27 +30,10 @@ extern "C" {
 
 struct TbSprite;
 
-struct TbAnyWindow { // sizeof=20
-    long x; // offset=0
-    long y; // offset=4
-    ulong width; // offset=8
-    ulong height; // offset=12
-    ubyte *ptr; // offset=16
-};
-
-typedef struct TbAnyWindow TbAnyWindow;
-
 #pragma pack()
 
 extern int lbSpacesPerTab;
-extern struct TbAnyWindow lbTextJustifyWindow;
-extern struct TbAnyWindow lbTextClipWindow;
 extern struct TbSprite *lbFontPtr;
-
-TbResult LbTextSetWindow(ulong x, ulong y, ulong width, ulong height);
-
-TbResult LbTextSetJustifyWindow(ulong x, ulong y, ulong width);
-TbResult LbTextSetClipWindow(ulong x, ulong y, ulong width, ulong height);
 
 int LbTextStringWidth();
 int LbTextStringHeight();

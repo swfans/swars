@@ -21,6 +21,7 @@
 #include "bfsprite.h"
 #include "bfscreen.h"
 #include "bftext.h"
+#include "bfanywnd.h"
 
 long LbGetJustifiedCharPosX(long startx, long all_chars_width,
   long spr_width, long mul_width, ushort fdflags)
