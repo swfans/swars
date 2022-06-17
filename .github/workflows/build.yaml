@@ -47,10 +47,22 @@ jobs:
           mkdir -p release; cd release
           ../configure
 
-      - name: Make
+      - name: Build executable
         run: |
           cd release
           make V=1
+
+      - name: Copy for package
+        run: |
+          cd release
+          make V=1 DESTDIR=$PWD/pkg install
+          echo "PKG_NAME=swars-ubuntu-patch" >> $GITHUB_ENV
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ env.PKG_NAME }}
+          path: release/pkg/**
 
   windows-msys2:
     name: "Windows MSYS2"
@@ -89,7 +101,19 @@ jobs:
           mkdir -p release; cd release
           ../configure
 
-      - name: Make
+      - name: Build executable
         run: |
           cd release
           make V=1
+
+      - name: Copy for package
+        run: |
+          cd release
+          make V=1 DESTDIR=$PWD/pkg install
+          echo "PKG_NAME=swars-win32-patch" >> $GITHUB_ENV
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ env.PKG_NAME }}
+          path: release/pkg/**
