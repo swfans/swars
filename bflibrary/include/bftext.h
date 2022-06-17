@@ -35,7 +35,7 @@ struct TbSprite;
 
 #pragma pack()
 
-extern int lbSpacesPerTab;
+extern ubyte lbSpacesPerTab;
 extern struct TbSprite *lbFontPtr;
 
 int LbTextStringWidth();

@@ -31,7 +31,7 @@
 #  define SHADOW_COLOUR 0x00
 #endif
 
-int lbSpacesPerTab_UNUSED;
+ubyte lbSpacesPerTab;
 struct TbSprite *lbFontPtr_UNUSED;
 
 /** @internal
