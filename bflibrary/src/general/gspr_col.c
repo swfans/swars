@@ -394,7 +394,7 @@ TbResult LbSpriteDrawOneColour(long x, long y, const TbSprite *spr, const TbPixe
     TbSpriteDrawData spd;
     TbResult ret;
 
-    LOGDBG("at (%ld,%ld)",x,y);
+    LOGNO("at (%ld,%ld)",x,y);
     ret = LbSpriteDrawPrepare(&spd, x, y, spr);
     if (ret != Lb_SUCCESS)
         return ret;

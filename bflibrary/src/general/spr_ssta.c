@@ -43,7 +43,7 @@ TbResult DrawAlphaSpriteUsingScalingData(long posx, long posy, const TbSprite *s
     long *ystep;
     int scanline;
 
-    LOGDBG("at (%ld,%ld): drawing", posx, posy);
+    LOGNO("at (%ld,%ld): drawing", posx, posy);
     //TODO set this in higher level function instead, when possible
     render_alpha = lbSpriteReMapPtr;
     assert(render_alpha != NULL);

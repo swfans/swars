@@ -2625,7 +2625,7 @@ TbResult DrawSpriteWthShadowUsingScalingData(long posx, long posy, const TbSprit
     //TODO set this in higher level function instead, when possible
     render_alpha = lbSpriteReMapPtr;
     assert(render_alpha != NULL);
-    LOGDBG("at (%ld,%ld): drawing", posx, posy);
+    LOGNO("at (%ld,%ld): drawing", posx, posy);
 
   {
     scanline = lbDisplay.GraphicsScreenWidth;

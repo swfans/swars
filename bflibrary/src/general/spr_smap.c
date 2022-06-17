@@ -1390,7 +1390,7 @@ TbResult LbSpriteDrawRemapUsingScalingData(long posx, long posy, const TbSprite 
 TbResult LbSpriteDrawScaledRemap(long xpos, long ypos, const TbSprite *sprite,
     long dest_width, long dest_height, const ubyte *cmap)
 {
-    LOGDBG("at (%ld,%ld) size (%ld,%ld)", xpos, ypos, dest_width, dest_height);
+    LOGNO("at (%ld,%ld) size (%ld,%ld)", xpos, ypos, dest_width, dest_height);
     if ((dest_width <= 0) || (dest_height <= 0))
       return 1;
     if ((lbDisplay.DrawFlags & Lb_TEXT_UNDERLNSHADOW) != 0)

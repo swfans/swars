@@ -105,7 +105,7 @@ TbResult LbSpriteDrawPrepare(TbSpriteDrawData *spd, long x, long y, const TbSpri
     spd->Ht = btm - top;
     spd->Wd = right - left;
     spd->sp = (char *)spr->Data;
-    LOGDBG("sprite coords X=%d...%d Y=%d...%d data=%08x", left, right, top, btm, spd->sp);
+    LOGNO("sprite coords X=%d...%d Y=%d...%d data=%08x", left, right, top, btm, spd->sp);
     long htIndex;
     if ( top )
     {
@@ -126,7 +126,7 @@ TbResult LbSpriteDrawPrepare(TbSpriteDrawData *spd, long x, long y, const TbSpri
             }
         }
     }
-    LOGDBG("at (%ld,%ld): drawing sprite of size (%d,%d)", x, y, (int)spd->Ht, (int)spd->Wd);
+    LOGNO("at (%ld,%ld): drawing sprite of size (%d,%d)", x, y, (int)spd->Ht, (int)spd->Wd);
     if ((lbDisplay.DrawFlags & Lb_SPRITE_FLIP_HORIZ) != 0)
     {
         spd->r += spd->Wd - 1;
@@ -608,7 +608,7 @@ TbResult LbSpriteDraw(long x, long y, const TbSprite *spr)
     TbSpriteDrawData spd;
     TbResult ret;
 
-    LOGDBG("at (%ld,%ld)", x, y);
+    LOGNO("at (%ld,%ld)", x, y);
     ret = LbSpriteDrawPrepare(&spd, x, y, spr);
     if (ret != Lb_SUCCESS)
         return ret;
