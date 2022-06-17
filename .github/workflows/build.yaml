@@ -7,16 +7,18 @@ on:
       - master
 
 jobs:
-  linux:
+  ubuntu-gcc:
     runs-on: ubuntu-20.04
-    name: Linux
+    name: "Linux Ubuntu"
     container:
       image: ubuntu:20.04
     env:
       DEBIAN_FRONTEND: noninteractive
       TZ: Etc/UTC
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v3
+
       - name: Install dependencies
         run: |
           # add i386 dependencies
@@ -31,9 +33,11 @@ jobs:
 
           apt install -y \
             build-essential autoconf libtool make
+
       - name: Autoreconf
         run: autoreconf -ivf
-      - name: Build
+
+      - name: Configure
         env:
           CFLAGS: "-m32"
           CXXFLAGS: "-m32"
@@ -41,5 +45,51 @@ jobs:
           PKG_CONFIG_PATH: "/usr/lib/i386-linux-gnu/pkgconfig"
         run: |
           mkdir -p release; cd release
-          ../configure --enable-debug=no
+          ../configure
+
+      - name: Make
+        run: |
+          cd release
+          make V=1
+
+  windows-msys2:
+    name: "Windows MSYS2"
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: msys2 {0}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install MSYS2
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW32
+          update: true
+          install: >-
+              git
+              mingw-w64-i686-toolchain
+              mingw-w64-i686-autotools
+              mingw-w64-i686-libpng
+              mingw-w64-i686-SDL
+              mingw-w64-i686-openal
+              mingw-w64-i686-libvorbis
+              mingw-w64-i686-libogg
+
+      - name: Autoreconf
+        run: autoreconf -ivf
+
+      - name: Configure
+        env:
+          CFLAGS: "-m32"
+          CXXFLAGS: "-m32"
+          LDFLAGS: "-m32"
+        run: |
+          mkdir -p release; cd release
+          ../configure
+
+      - name: Make
+        run: |
+          cd release
           make V=1
