@@ -1090,21 +1090,32 @@ TbBool create_strings_list(char **strings, char *strings_data, char *strings_dat
   return (text_idx < STRINGS_MAX);
 }
 
-void create_tables_file(void)
+void create_tables_file_from_fade(void)
 {
-    // This makes little sense.
-    //TODO Use bflbrary functions to create the tables instead
+    long len;
     int i, k;
     unsigned char *curbuf;
-    LbFileLoadAt(fadedat_fname, fade_data);
+    // Note that the input file is not normally available with the game
+    len = LbFileLoadAt("data/fade.dat", fade_data);
+    if (len == Lb_FAIL) {
+        LOGERR("Cannot find input file for tables update");
+        return;
+    }
     curbuf = fade_data;
     for (i = 0; i < 256; i++) {
         for (k = 0; k < 64; k++) {
-          fade_table[256 * k + i] = *(curbuf + (256+64) * k + i);
+          pixmap.fade_table[256 * k + i] = *(curbuf + (256+64) * k + i);
         }
     }
     fade_data = curbuf;
-    LbFileSaveAt("data/tables.dat", fade_table, 329*256);
+    LbFileSaveAt("data/tables.dat", &pixmap, sizeof(pixmap));
+}
+
+/** Universal way to generate the colour tables.
+ */
+void create_tables_file_from_palette(void)
+{
+    LbColourTablesGenerate(display_palette, "data/tables.dat");
 }
 
 void game_setup(void)
@@ -1154,9 +1165,14 @@ void game_setup(void)
     if ( in_network_game || cmdln_param_bcg )
       ingame__DisplayMode = 55;
     debug_trace_setup(2);
-    if (cmdln_colour_tables == 2)
+    switch (cmdln_colour_tables)
     {
-        create_tables_file();
+    case 1:
+        create_tables_file_from_palette();
+        break;
+    case 2:
+        create_tables_file_from_fade();
+        break;
     }
 }
 
@@ -1200,7 +1216,7 @@ void game_process_sub09(void)
             uint8_t *ptr;
             pos = LbRandomAnyShort() + (gameturn >> 2);
             ptr = &vec_tmap[pos];
-            *ptr = fade_table[0x2800 + *ptr];
+            *ptr = pixmap.fade_table[40*PALETTE_8b_COLORS + *ptr];
         }
         break;
     }
@@ -1553,7 +1569,7 @@ void show_menu_screen_st0(void)
     ingame__Credits = 50000;
 
     debug_trace_place(17);
-    LbFadeTableLoad(display_palette, "data/bgtables.dat");
+    LbColourTablesLoad(display_palette, "data/bgtables.dat");
     LbGhostTableGenerate(display_palette, 66, "data/startgho.dat");
     init_screen_boxes();
     update_menus();
@@ -1851,7 +1867,7 @@ void show_menu_screen_st2(void)
       }
     }
 
-    LbFadeTableLoad(display_palette, "data/bgtables.dat");
+    LbColourTablesLoad(display_palette, "data/bgtables.dat");
     LbGhostTableGenerate(display_palette, 66, "data/startgho.dat");
     init_read_all_sprite_files();
     init_weapon_text();
@@ -2123,7 +2139,7 @@ void show_load_and_prep_mission(void)
     }
 
     debug_trace_place(12);
-    LbFileLoadAt("data/tables.dat", &fade_table);
+    LbColourTablesLoad(display_palette, "data/tables.dat");
     LbGhostTableLoad(display_palette, 50, "data/synghost.tab");
     debug_trace_place(13);
     if ( data_1c4b78 )
