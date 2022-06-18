@@ -38,11 +38,27 @@ struct TbSprite;
 extern ubyte lbSpacesPerTab;
 extern struct TbSprite *lbFontPtr;
 
-int LbTextStringWidth();
-int LbTextStringHeight();
+/**
+ * Computes length of given text if drawn on screen.
+ * The currently set font is used for the computations.
+ *
+ * @param text The text to be probed.
+ * @return Width of the text image, in pixels.
+ */
+long LbTextStringWidth(const char *text);
+
+/**
+ * Computes height of given text if drawn on screen.
+ * The currently set font is used for the computations.
+ *
+ * @param text The text to be probed.
+ * @return Height of the text image, in pixels.
+ */
+long LbTextStringHeight(const char *text);
 
 /**
  * Draws a string in the current text window.
+ *
  * @param posx Position of the text, X coord.
  * @param posy Position of the text, Y coord.
  * @param text The text to be drawn.
@@ -52,6 +68,7 @@ TbBool LbTextDraw(int posx, int posy, const char *text);
 
 /**
  * Draws a formatted string in the current text window.
+ *
  * @param posx Position of the text, X coord.
  * @param posy Position of the text, Y coord.
  * @param fmt The text format to be drawn.
@@ -61,6 +78,7 @@ TbBool LbTextDrawFmt(int posx, int posy, const char *fmt, ...);
 
 /**
  * Draws a string in the current text window in given scale.
+ *
  * @param posx Position of the text, X coord.
  * @param posy Position of the text, Y coord.
  * @param units_per_px Scale in pixels; 16 is 100%.
@@ -71,6 +89,7 @@ TbBool LbTextDrawResized(int posx, int posy, int units_per_px, const char *text)
 
 /**
  * Draws a formatted string in the current text window.
+ *
  * @param posx Position of the text, X coord.
  * @param posy Position of the text, Y coord.
  * @param fmt The text format to be drawn.
@@ -80,6 +99,7 @@ TbBool LbTextDrawResizedFmt(int posx, int posy, int units_per_px, const char *fm
 
 /**
  * Draws a formatted string in the current text window.
+ *
  * @param posx Position of the text, X coord.
  * @param posy Position of the text, Y coord.
  * @param fmt The text format to be drawn.
@@ -107,6 +127,16 @@ long LbSprFontWordWidth(const struct TbSprite *font, const char *text);
  * @return Length of the string, or 0 of either text or font is empty.
  */
 long LbTextWordWidth(const char *text);
+
+/**
+ * Computes length of part of a text if drawn on screen.
+ * The currently set font is used for the computations.
+ *
+ * @param text The text to be probed.
+ * @param part Amount of characters to be probed.
+ * @return Width of the text image, in pixels.
+ */
+long LbTextStringPartWidth(const char *text, long part);
 
 #ifdef __cplusplus
 };

@@ -18,12 +18,14 @@
  */
 /******************************************************************************/
 #include <stdio.h>
+#include <limits.h>
 #include "bftext.h"
 #include "bfsprite.h"
 #include "bfscreen.h"
 #include "bffont.h"
 #include "bfmemory.h"
 #include "bfanywnd.h"
+#include "privbflog.h"
 
 #if defined(ENABLE_SHADOW_COLOUR)
 #  define SHADOW_COLOUR lbDisplay.ShadowColour
@@ -230,10 +232,59 @@ TbBool LbIAlignMethodSet(ushort fdflags)
     return false;
 }
 
-int LbTextStringWidth_UNUSED()
+long LbTextStringPartWidth(const char *text, long part)
 {
-// code at 0001:000bb1a4
+    const char *ebuf;
+    long chr;
+    int len;
+    int max_len;
+
+    if (lbFontPtr == NULL)
+        return 0;
+    max_len = 0;
+    len = 0;
+    for (ebuf = text; *ebuf != '\0'; ebuf++)
+    {
+        if (part <= 0) break;
+        part--;
+        chr = (ubyte)*ebuf;
+        if (is_wide_charcode(chr))
+        {
+            ebuf++;
+            if (*ebuf == '\0') break;
+            chr = (chr << 8) + (ubyte)*ebuf;
+        }
+        if (chr > 31)
+        {
+            len += LbTextCharWidth(chr);
+        } else
+        if (chr == '\r')
+        {
+            if (len > max_len)
+                max_len = len;
+            len = 0;
+        } else
+        if (chr == '\t')
+        {
+            len += lbSpacesPerTab * LbTextCharWidth(' ');
+        } else
+        if ((chr == 6) || (chr == 7) || (chr == 8) || (chr == 9) || (chr == 14))
+        {
+            ebuf++;
+            if (*ebuf == '\0')
+                break;
+        }
+    }
+    if (len > max_len)
+        max_len = len;
+    return max_len;
 }
+
+long LbTextStringWidth(const char *text)
+{
+    return LbTextStringPartWidth(text, LONG_MAX);
+}
+
 
 long LbSprFontWordWidth(const struct TbSprite *font, const char *text)
 {
@@ -257,9 +308,22 @@ long LbTextWordWidth(const char *text)
     return LbSprFontWordWidth(lbFontPtr, text);
 }
 
-int LbTextStringHeight_UNUSED()
+long LbTextStringHeight(const char *text)
 {
-// code at 0001:000bb300
+    long i, h, lines;
+    lines = 1;
+    if ((lbFontPtr == NULL) || (text == NULL))
+        return 0;
+    for (i = 0; i < TEXT_DRAW_MAX_LEN; i++)
+    {
+        if (text[i] == '\0') break;
+        if (text[i] == '\r') lines++;
+    }
+    if (i >= TEXT_DRAW_MAX_LEN) {
+        LOGWARN("Reached character limit while counting width");
+    }
+    h = LbTextLineHeight();
+    return h * lines;
 }
 
 TbBool LbTextDrawResized(int posx, int posy, int units_per_px, const char *text)
