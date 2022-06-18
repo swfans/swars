@@ -44,15 +44,15 @@ TbPixel LbPaletteFindColour(const ubyte *pal, ubyte r, ubyte g, ubyte b)
     // Compute minimal square difference in color; return exact match if found
     min_delta = 999999;
     c = pal;
-    for (i = 0; i < 256; i++)
+    for (i = 0; i < PALETTE_8b_COLORS; i++)
     {
         int dr,dg,db;
-        dr = (r - c[0]) * (r - c[0]);
-        dg = (g - c[1]) * (g - c[1]);
-        db = (b - c[2]) * (b - c[2]);
+        dr = (r - (int)c[0]) * (r - (int)c[0]);
+        dg = (g - (int)c[1]) * (g - (int)c[1]);
+        db = (b - (int)c[2]) * (b - (int)c[2]);
         if (min_delta > dr+dg+db)
         {
-            min_delta = dr+dg+db;
+            min_delta = dr + dg + db;
             if (min_delta == 0) {
                 return i;
             }
@@ -60,19 +60,19 @@ TbPixel LbPaletteFindColour(const ubyte *pal, ubyte r, ubyte g, ubyte b)
         c += 3;
     }
     // Gather all the colors with minimal square difference
-    unsigned char tmcol[256];
+    unsigned char tmcol[PALETTE_8b_COLORS];
     unsigned char *o;
     int n;
     n = 0;
     o = tmcol;
     c = pal;
-    for (i = 0; i < 256; i++)
+    for (i = 0; i < PALETTE_8b_COLORS; i++)
     {
         int dr,dg,db;
-        dr = (r - c[0]) * (r - c[0]);
-        dg = (g - c[1]) * (g - c[1]);
-        db = (b - c[2]) * (b - c[2]);
-        if (min_delta == dr+dg+db)
+        dr = (r - (int)c[0]) * (r - (int)c[0]);
+        dg = (g - (int)c[1]) * (g - (int)c[1]);
+        db = (b - (int)c[2]) * (b - (int)c[2]);
+        if (min_delta == dr + dg + db)
         {
             n += 1;
             *o = i;
@@ -80,7 +80,7 @@ TbPixel LbPaletteFindColour(const ubyte *pal, ubyte r, ubyte g, ubyte b)
         }
         c += 3;
     }
-    // If there's only one left on list - return it
+    // If there is only one left on list - return it
     if (n == 1) {
         return tmcol[0];
     }
@@ -90,11 +90,11 @@ TbPixel LbPaletteFindColour(const ubyte *pal, ubyte r, ubyte g, ubyte b)
     {
         int dr,dg,db;
         c = &pal[3 * tmcol[i]];
-        dr = abs(r - c[0]);
-        dg = abs(g - c[1]);
-        db = abs(b - c[2]);
-        if (min_delta > dr+dg+db) {
-            min_delta = dr+dg+db;
+        dr = abs(r - (int)c[0]);
+        dg = abs(g - (int)c[1]);
+        db = abs(b - (int)c[2]);
+        if (min_delta > dr + dg + db) {
+            min_delta = dr + dg + db;
         }
     }
     // Gather all the colors with minimal linear difference
@@ -116,7 +116,7 @@ TbPixel LbPaletteFindColour(const ubyte *pal, ubyte r, ubyte g, ubyte b)
             o++;
         }
     }
-    // If there's only one left on list - return it
+    // If there is only one left on list - return it
     if (m == 1) {
         return tmcol[0];
     }

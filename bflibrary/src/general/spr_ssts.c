@@ -694,42 +694,42 @@ void LbSpriteDrawRemapUsingScalingSub3(ubyte *outbuf, int scanline,
                       do
                       {
                         v11 = (v11 & 0xff00) + *outbuf;
-                        *outbuf-- = ghost_table[v11];
+                        *outbuf-- = pixmap.ghost_table[v11];
                         v207 = v206 - 1;
                         if ( !v207 )
                           break;
                         v11 = (v11 & 0xff00) + *outbuf;
-                        *outbuf-- = ghost_table[v11];
+                        *outbuf-- = pixmap.ghost_table[v11];
                         v208 = v207 - 1;
                         if ( !v208 )
                           break;
                         v11 = (v11 & 0xff00) + *outbuf;
-                        *outbuf-- = ghost_table[v11];
+                        *outbuf-- = pixmap.ghost_table[v11];
                         v209 = v208 - 1;
                         if ( !v209 )
                           break;
                         v11 = (v11 & 0xff00) + *outbuf;
-                        *outbuf-- = ghost_table[v11];
+                        *outbuf-- = pixmap.ghost_table[v11];
                         v210 = v209 - 1;
                         if ( !v210 )
                           break;
                         v11 = (v11 & 0xff00) + *outbuf;
-                        *outbuf-- = ghost_table[v11];
+                        *outbuf-- = pixmap.ghost_table[v11];
                         v211 = v210 - 1;
                         if ( !v211 )
                           break;
                         v11 = (v11 & 0xff00) + *outbuf;
-                        *outbuf-- = ghost_table[v11];
+                        *outbuf-- = pixmap.ghost_table[v11];
                         v212 = v211 - 1;
                         if ( !v212 )
                           break;
                         v11 = (v11 & 0xff00) + *outbuf;
-                        *outbuf-- = ghost_table[v11];
+                        *outbuf-- = pixmap.ghost_table[v11];
                         v213 = v212 - 1;
                         if ( !v213 )
                           break;
                         v11 = (v11 & 0xff00) + *outbuf;
-                        *outbuf-- = ghost_table[v11];
+                        *outbuf-- = pixmap.ghost_table[v11];
                         v206 = v213 - 1;
                       }
                       while ( v206 );
@@ -849,42 +849,42 @@ void LbSpriteDrawRemapUsingScalingSub4(ubyte *outbuf, int scanline,
                       do
                       {
                         v11 = (v11 & 0xff00) + *outbuf;
-                        *outbuf++ = ghost_table[v11];
+                        *outbuf++ = pixmap.ghost_table[v11];
                         v192 = v191 - 1;
                         if ( !v192 )
                           break;
                         v11 = (v11 & 0xff00) + *outbuf;
-                        *outbuf++ = ghost_table[v11];
+                        *outbuf++ = pixmap.ghost_table[v11];
                         v193 = v192 - 1;
                         if ( !v193 )
                           break;
                         v11 = (v11 & 0xff00) + *outbuf;
-                        *outbuf++ = ghost_table[v11];
+                        *outbuf++ = pixmap.ghost_table[v11];
                         v194 = v193 - 1;
                         if ( !v194 )
                           break;
                         v11 = (v11 & 0xff00) + *outbuf;
-                        *outbuf++ = ghost_table[v11];
+                        *outbuf++ = pixmap.ghost_table[v11];
                         v195 = v194 - 1;
                         if ( !v195 )
                           break;
                         v11 = (v11 & 0xff00) + *outbuf;
-                        *outbuf++ = ghost_table[v11];
+                        *outbuf++ = pixmap.ghost_table[v11];
                         v196 = v195 - 1;
                         if ( !v196 )
                           break;
                         v11 = (v11 & 0xff00) + *outbuf;
-                        *outbuf++ = ghost_table[v11];
+                        *outbuf++ = pixmap.ghost_table[v11];
                         v197 = v196 - 1;
                         if ( !v197 )
                           break;
                         v11 = (v11 & 0xff00) + *outbuf;
-                        *outbuf++ = ghost_table[v11];
+                        *outbuf++ = pixmap.ghost_table[v11];
                         v198 = v197 - 1;
                         if ( !v198 )
                           break;
                         v11 = (v11 & 0xff00) + *outbuf;
-                        *outbuf++ = ghost_table[v11];
+                        *outbuf++ = pixmap.ghost_table[v11];
                         v191 = v198 - 1;
                       }
                       while ( v191 );
@@ -1971,7 +1971,7 @@ LABEL_142:
                     v63 = (((*v8) << 8) & 0xff00) + (*outbuf & 0x00ff);
                     v61 -= 8;
                     ++v8;
-                    *outbuf-- = ghost_table[v63];
+                    *outbuf-- = pixmap.ghost_table[v63];
                     if ( !--v62 )
                       goto LABEL_142;
                     v64 = *((ulong *)v61 + 1);
@@ -1980,7 +1980,7 @@ LABEL_142:
                       v64 = (((*v8) << 8) & 0xff00) + (*outbuf & 0x00ff);
                       v61 -= 8;
                       ++v8;
-                      *outbuf-- = ghost_table[v64];
+                      *outbuf-- = pixmap.ghost_table[v64];
                       if ( !--v62 )
                         goto LABEL_142;
                       v65 = *((ulong *)v61 + 1);
@@ -1989,7 +1989,7 @@ LABEL_142:
                         v65 = (((*v8) << 8) & 0xff00) + (*outbuf & 0x00ff);
                         v61 -= 8;
                         ++v8;
-                        *outbuf-- = ghost_table[v65];
+                        *outbuf-- = pixmap.ghost_table[v65];
                         if ( !--v62 )
                           goto LABEL_142;
                         v66 = *((ulong *)v61 + 1);
@@ -1998,7 +1998,7 @@ LABEL_142:
                           v66 = (((*v8) << 8) & 0xff00) + (*outbuf & 0x00ff);
                           v61 -= 8;
                           ++v8;
-                          *outbuf-- = ghost_table[v66];
+                          *outbuf-- = pixmap.ghost_table[v66];
                           if ( !--v62 )
                             goto LABEL_142;
                           v67 = *((ulong *)v61 + 1);
@@ -2007,7 +2007,7 @@ LABEL_142:
                             v67 = (((*v8) << 8) & 0xff00) + (*outbuf & 0x00ff);
                             v61 -= 8;
                             ++v8;
-                            *outbuf-- = ghost_table[v67];
+                            *outbuf-- = pixmap.ghost_table[v67];
                             if ( !--v62 )
                               goto LABEL_142;
                             v68 = *((ulong *)v61 + 1);
@@ -2016,7 +2016,7 @@ LABEL_142:
                               v68 = (((*v8) << 8) & 0xff00) + (*outbuf & 0x00ff);
                               v61 -= 8;
                               ++v8;
-                              *outbuf-- = ghost_table[v68];
+                              *outbuf-- = pixmap.ghost_table[v68];
                               if ( !--v62 )
                                 goto LABEL_142;
                               v69 = *((ulong *)v61 + 1);
@@ -2025,7 +2025,7 @@ LABEL_142:
                                 v69 = (((*v8) << 8) & 0xff00) + (*outbuf & 0x00ff);
                                 v61 -= 8;
                                 ++v8;
-                                *outbuf-- = ghost_table[v69];
+                                *outbuf-- = pixmap.ghost_table[v69];
                                 if ( !--v62 )
                                   goto LABEL_142;
                                 v70 = *((ulong *)v61 + 1);
@@ -2046,7 +2046,7 @@ LABEL_142:
                 v70 = (((*v8) << 8) & 0xff00) + (*outbuf & 0x00ff);
                 v61 -= 8;
                 ++v8;
-                *outbuf-- = ghost_table[v70];
+                *outbuf-- = pixmap.ghost_table[v70];
                 --v62;
               }
               while ( v62 );
@@ -2155,7 +2155,7 @@ LABEL_104:
                     v48 = (((*v8) << 8) & 0xff00) + (*outbuf & 0x00ff);
                     v46 += 2;
                     ++v8;
-                    *outbuf++ = ghost_table[v48];
+                    *outbuf++ = pixmap.ghost_table[v48];
                     if ( !--v47 )
                       goto LABEL_104;
                     v49 = v46[1];
@@ -2164,7 +2164,7 @@ LABEL_104:
                      v49 = (((*v8) << 8) & 0xff00) + (*outbuf & 0x00ff);
                       v46 += 2;
                       ++v8;
-                      *outbuf++ = ghost_table[v49];
+                      *outbuf++ = pixmap.ghost_table[v49];
                       if ( !--v47 )
                         goto LABEL_104;
                       v50 = v46[1];
@@ -2173,7 +2173,7 @@ LABEL_104:
                        v50 = (((*v8) << 8) & 0xff00) + (*outbuf & 0x00ff);
                         v46 += 2;
                         ++v8;
-                        *outbuf++ = ghost_table[v50];
+                        *outbuf++ = pixmap.ghost_table[v50];
                         if ( !--v47 )
                           goto LABEL_104;
                         v51 = v46[1];
@@ -2182,7 +2182,7 @@ LABEL_104:
                          v51 = (((*v8) << 8) & 0xff00) + (*outbuf & 0x00ff);
                           v46 += 2;
                           ++v8;
-                          *outbuf++ = ghost_table[v51];
+                          *outbuf++ = pixmap.ghost_table[v51];
                           if ( !--v47 )
                             goto LABEL_104;
                           v52 = v46[1];
@@ -2191,7 +2191,7 @@ LABEL_104:
                             v52 = (((*v8) << 8) & 0xff00) + (*outbuf & 0x00ff);
                             v46 += 2;
                             ++v8;
-                            *outbuf++ = ghost_table[v52];
+                            *outbuf++ = pixmap.ghost_table[v52];
                             if ( !--v47 )
                               goto LABEL_104;
                             v53 = v46[1];
@@ -2200,7 +2200,7 @@ LABEL_104:
                               v53 = (((*v8) << 8) & 0xff00) + (*outbuf & 0x00ff);
                               v46 += 2;
                               ++v8;
-                              *outbuf++ = ghost_table[v53];
+                              *outbuf++ = pixmap.ghost_table[v53];
                               if ( !--v47 )
                                 goto LABEL_104;
                               v54 = v46[1];
@@ -2209,7 +2209,7 @@ LABEL_104:
                                 v54 = (((*v8) << 8) & 0xff00) + (*outbuf & 0x00ff);
                                 v46 += 2;
                                 ++v8;
-                                *outbuf++ = ghost_table[v54];
+                                *outbuf++ = pixmap.ghost_table[v54];
                                 if ( !--v47 )
                                   goto LABEL_104;
                                 v55 = v46[1];
@@ -2230,7 +2230,7 @@ LABEL_104:
                 v55 = (((*v8) << 8) & 0xff00) + (*outbuf & 0x00ff);
                 v46 += 2;
                 ++v8;
-                *outbuf++ = ghost_table[v55];
+                *outbuf++ = pixmap.ghost_table[v55];
                 --v47;
               }
               while ( v47 );

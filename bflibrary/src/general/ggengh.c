@@ -24,8 +24,6 @@
 #include "bfscreen.h"
 #include "privbflog.h"
 
-TbPixel ghost_table_UNUSED[256*256];
-
 static void ghost_table_generate(const ubyte *pal, short intens, ubyte *table)
 {
     int i, k;
@@ -33,7 +31,7 @@ static void ghost_table_generate(const ubyte *pal, short intens, ubyte *table)
     const ubyte *colr_k;
     ubyte *tbl_o;
 
-    tbl_o = ghost_table;
+    tbl_o = pixmap.ghost_table;
     colr_i = pal;
     for (i = 0; i < PALETTE_8b_COLORS; i++)
     {
@@ -75,18 +73,30 @@ static void ghost_table_symmetrize(const ubyte *pal, short intens, ubyte *table)
 
 TbResult LbGhostTableGenerate(const ubyte *pal, short intens, const char *fname)
 {
-    if (LbFileLoadAt(fname, ghost_table) != PALETTE_8b_COLORS * PALETTE_8b_COLORS)
-    {
-        LOGSYNC("Generating colour ghosting, as saved file is invalid");
-        ghost_table_generate(pal, intens, ghost_table);
+    TbBool generate = false;
 
-        if (LbFileSaveAt(fname, ghost_table,
+    if (fname == NULL) {
+        LOGSYNC("Generating colour ghosting requested");
+        generate = true;
+    }
+    else if (LbFileLoadAt(fname, pixmap.ghost_table) !=
+      PALETTE_8b_COLORS * PALETTE_8b_COLORS) {
+        LOGSYNC("Generating colour ghosting, as saved file is invalid");
+        generate = true;
+    }
+
+    if (generate) {
+        ghost_table_generate(pal, intens, pixmap.ghost_table);
+    }
+
+    if (generate && (fname != NULL)) {
+        if (LbFileSaveAt(fname, pixmap.ghost_table,
           PALETTE_8b_COLORS * PALETTE_8b_COLORS) == Lb_FAIL) {
             LOGERR("%s: Re-save colour ghosting file failed", fname);
             return Lb_FAIL;
         }
     }
-    lbDisplay.GlassMap = ghost_table;
+    lbDisplay.GlassMap = pixmap.ghost_table;
     return Lb_SUCCESS;
 }
 
@@ -94,12 +104,12 @@ TbResult LbGhostTableLoad(const ubyte *pal, short intens, const char *fname)
 {
     long len;
 
-    len = LbFileLoadAt(fname, ghost_table);
-    lbDisplay.GlassMap = ghost_table;
+    len = LbFileLoadAt(fname, pixmap.ghost_table);
+    lbDisplay.GlassMap = pixmap.ghost_table;
 
     // At 50% intensity, the palette should be diagonally symmetrical.
     if (intens == 50) {
-        ghost_table_symmetrize(pal, intens, ghost_table);
+        ghost_table_symmetrize(pal, intens, pixmap.ghost_table);
     }
     if (len != PALETTE_8b_COLORS * PALETTE_8b_COLORS) {
         if (len == Lb_FAIL) {

@@ -24,8 +24,6 @@
 #include "bfscreen.h"
 #include "privbflog.h"
 
-TbPixel fade_table_UNUSED[256*64];
-
 /** @internal
  * Generate table for fading between given palette and given RGB colour.
  * The resulting array contains multiple palettes, which gradually
@@ -59,9 +57,9 @@ static void LbFadeTableToRGBGenerate(const ubyte *pal,
         {
             int rk, gk, bk;
 
-            rk = (i * p[0]) >> 5;
-            gk = (i * p[1]) >> 5;
-            bk = (i * p[2]) >> 5;
+            rk = (i * (int)p[0]) >> 5;
+            gk = (i * (int)p[1]) >> 5;
+            bk = (i * (int)p[2]) >> 5;
             *t = LbPaletteFindColour(pal, rk + rd, gk + gd, bk + bd);
             t++;
             p += 3;
@@ -69,36 +67,82 @@ static void LbFadeTableToRGBGenerate(const ubyte *pal,
     }
 }
 
-TbResult LbFadeTableGenerate(const ubyte *palette, const char *table_fname)
+TbResult LbFadeTableGenerate(const ubyte *palette, const char *fname)
 {
-    if (LbFileLoadAt(table_fname, fade_table) !=
-      PALETTE_FADE_LEVELS * PALETTE_8b_COLORS)
-    {
-        LOGSYNC("Generating colour fading, as saved file is invalid");
-        LbFadeTableToRGBGenerate(palette, 0, 0, 0, fade_table);
+    TbBool generate = false;
 
-        if (LbFileSaveAt(table_fname, fade_table,
+    if (fname == NULL) {
+        LOGSYNC("Generating colour fading requested");
+        generate = true;
+    }
+    else if (LbFileLoadAt(fname, pixmap.fade_table) !=
+      PALETTE_FADE_LEVELS * PALETTE_8b_COLORS) {
+        LOGSYNC("Generating colour fading, as saved file is invalid");
+        generate = true;
+    }
+
+    if (generate) {
+        LbFadeTableToRGBGenerate(palette, 0, 0, 0, pixmap.fade_table);
+    }
+
+    if (generate && (fname != NULL)) {
+        if (LbFileSaveAt(fname, pixmap.fade_table,
           PALETTE_FADE_LEVELS*PALETTE_8b_COLORS) == Lb_FAIL) {
-            LOGERR("%s: Re-save colour fading file failed", table_fname);
+            LOGERR("%s: Re-save colour fading file failed", fname);
             return Lb_FAIL;
         }
     }
-    lbDisplay.FadeTable = fade_table;
+    lbDisplay.FadeTable = pixmap.fade_table;
     return Lb_SUCCESS;
 }
 
-TbResult LbFadeTableLoad(const ubyte *palette, const char *table_fname)
+TbResult LbFadeTableLoad(const ubyte *palette, const char *fname)
 {
     long len;
 
-    len = LbFileLoadAt(table_fname, fade_table);
-    lbDisplay.FadeTable = fade_table;
+    len = LbFileLoadAt(fname, pixmap.fade_table);
+    lbDisplay.FadeTable = pixmap.fade_table;
 
     if (len != PALETTE_FADE_LEVELS * PALETTE_8b_COLORS) {
         if (len == Lb_FAIL) {
-            LOGERR("%s: Fade table loading failed", table_fname);
+            LOGERR("%s: Fade table loading failed", fname);
         } else {
-            LOGWARN("%s: Loaded fade table has unexpected size (%ld)", table_fname, len);
+            LOGWARN("%s: Loaded fade table has unexpected size (%ld)", fname, len);
+        }
+        return Lb_FAIL;
+    }
+    return Lb_SUCCESS;
+}
+
+TbResult LbColourTablesGenerate(const ubyte *palette, const char *fname)
+{
+    TbResult retf, retg;
+
+    retf = LbFadeTableGenerate(palette, NULL);
+    retg = LbGhostTableGenerate(palette, 50, NULL);
+
+    if ((retf == Lb_SUCCESS) && (retg == Lb_SUCCESS)) {
+        if (LbFileSaveAt(fname, &pixmap, sizeof(pixmap)) == Lb_FAIL) {
+            LOGERR("%s: Re-save colour fading file failed", fname);
+            return Lb_FAIL;
+        }
+    }
+    return Lb_SUCCESS;
+}
+
+TbResult LbColourTablesLoad(const ubyte *palette, const char *fname)
+{
+    long len;
+
+    len = LbFileLoadAt(fname, &pixmap);
+    lbDisplay.FadeTable = pixmap.fade_table;
+    lbDisplay.GlassMap = pixmap.ghost_table;
+
+    if (len != sizeof(pixmap)) {
+        if (len == Lb_FAIL) {
+            LOGERR("%s: Colour tables loading failed", fname);
+        } else {
+            LOGWARN("%s: Loaded colour tables have unexpected size (%ld)", fname, len);
         }
         return Lb_FAIL;
     }
