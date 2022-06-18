@@ -30,6 +30,8 @@ extern "C" {
 
 #define PALETTE_8b_COLORS 256
 #define PALETTE_8b_SIZE (3*PALETTE_8b_COLORS)
+#define PALETTE_FADE_LEVELS 64
+
 
 struct Palette { // sizeof=3
     ubyte Red;

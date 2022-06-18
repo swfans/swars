@@ -57,10 +57,16 @@ TbResult LbGhostTableGenerate(const ubyte *pal, short intens, const char *fname)
 
 /** Load colour ghosting table, making sure it is symmetrical.
  *
- * Loads colour table from disk, and then replaces diagonal half of the
- * array filling one triangle with corresponding colours ogf the other.
+ * Loads colour table from disk. If requested intensity is 50%, it then
+ * replaces diagonal half of the array, filling one triangle with corresponding
+ * colours from the other.
  * This maks the array return the came colour independently of source
  * colours order.
+ *
+ * @param pal The palette which colour definitions are used.
+ * @param intens Source palette intensity, in percent.
+ *        Value 100 means first colour only, 0 means second colour only.
+ * @param fname File name from which the table is loaded.
  */
 TbResult LbGhostTableLoad(const ubyte *pal, short intens, const char *fname);
 
