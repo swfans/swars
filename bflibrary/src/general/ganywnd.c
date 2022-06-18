@@ -20,8 +20,8 @@
 #include "bfanywnd.h"
 #include "bfscreen.h"
 
-struct TbAnyWindow lbTextJustifyWindow_UNUSED;
-struct TbAnyWindow lbTextClipWindow_UNUSED;
+struct TbAnyWindow lbTextJustifyWindow;
+struct TbAnyWindow lbTextClipWindow;
 
 TbResult LbScreenStoreGraphicsWindow(struct TbAnyWindow *wnd)
 {
