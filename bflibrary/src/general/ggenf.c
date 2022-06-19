@@ -22,6 +22,7 @@
 #include "bffile.h"
 #include "bfpalette.h"
 #include "bfscreen.h"
+#include "bfmemut.h"
 #include "privbflog.h"
 
 /** @internal
@@ -33,14 +34,26 @@
  * @param r Faded colour red component value.
  * @param g Faded colour green component value.
  * @param b Faded colour blue component value.
+ * @param unaffected A 0-terminated list of colour indexes which are not to be
+ *   affected by the fade - left the same over all levels.
  * @param table The output table pointer. Needs to have size
  *        PALETTE_FADE_LEVELS * PALETTE_8b_COLORS.
  */
 static void LbFadeTableToRGBGenerate(const ubyte *pal,
-  ubyte r, ubyte g, ubyte b, TbPixel *table)
+  ubyte r, ubyte g, ubyte b, const TbPixel *unaffected, TbPixel *table)
 {
     TbPixel *t;
     long i, k;
+    ulong unaffected_bits[(PALETTE_8b_COLORS+7)/8];
+
+    // Convert unaffected list to bit mask
+    LbMemorySet(unaffected_bits, 0, sizeof(unaffected_bits));
+    for (i = 0; i < PALETTE_8b_COLORS; i++)
+    {
+        if (unaffected[i] == 0) break;
+        k = unaffected[i];
+        unaffected_bits[k>>3] |= (0x1 << (k&7));
+    }
 
     t = table;
     for (i = 0; i < PALETTE_FADE_LEVELS; i++)
@@ -53,21 +66,24 @@ static void LbFadeTableToRGBGenerate(const ubyte *pal,
         bd = ((64 - i) * b) >> 5;
 
         p = pal;
-        for (k = PALETTE_8b_COLORS; k > 0; k--)
+        for (k = 0; k < PALETTE_8b_COLORS; k++)
         {
             int rk, gk, bk;
-
-            rk = (i * (int)p[0]) >> 5;
-            gk = (i * (int)p[1]) >> 5;
-            bk = (i * (int)p[2]) >> 5;
-            *t = LbPaletteFindColour(pal, rk + rd, gk + gd, bk + bd);
+            if (unaffected_bits[k>>3] & (0x1 << (k&7))) {
+                *t = k;
+            } else {
+                rk = (i * (int)p[0]) >> 5;
+                gk = (i * (int)p[1]) >> 5;
+                bk = (i * (int)p[2]) >> 5;
+                *t = LbPaletteFindColour(pal, rk + rd, gk + gd, bk + bd);
+            }
             t++;
             p += 3;
         }
     }
 }
 
-TbResult LbFadeTableGenerate(const ubyte *palette, const char *fname)
+TbResult LbFadeTableGenerate(const ubyte *palette, const TbPixel *unaffected, const char *fname)
 {
     TbBool generate = false;
 
@@ -82,7 +98,7 @@ TbResult LbFadeTableGenerate(const ubyte *palette, const char *fname)
     }
 
     if (generate) {
-        LbFadeTableToRGBGenerate(palette, 0, 0, 0, pixmap.fade_table);
+        LbFadeTableToRGBGenerate(palette, 0, 0, 0, unaffected, pixmap.fade_table);
     }
 
     if (generate && (fname != NULL)) {
@@ -114,11 +130,12 @@ TbResult LbFadeTableLoad(const ubyte *palette, const char *fname)
     return Lb_SUCCESS;
 }
 
-TbResult LbColourTablesGenerate(const ubyte *palette, const char *fname)
+TbResult LbColourTablesGenerate(const ubyte *palette, const TbPixel *unaffected,
+  const char *fname)
 {
     TbResult retf, retg;
 
-    retf = LbFadeTableGenerate(palette, NULL);
+    retf = LbFadeTableGenerate(palette, unaffected, NULL);
     retg = LbGhostTableGenerate(palette, 50, NULL);
 
     if ((retf == Lb_SUCCESS) && (retg == Lb_SUCCESS)) {
