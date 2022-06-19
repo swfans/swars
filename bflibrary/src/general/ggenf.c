@@ -55,15 +55,16 @@ static void LbFadeTableToRGBGenerate(const ubyte *pal,
         unaffected_bits[k>>3] |= (0x1 << (k&7));
     }
 
+    // Going from double brightness to zero brightness
     t = table;
     for (i = 0; i < PALETTE_FADE_LEVELS; i++)
     {
         const ubyte *p;
         ubyte rd, gd, bd;
 
-        rd = ((64 - i) * r) >> 5;
-        gd = ((64 - i) * g) >> 5;
-        bd = ((64 - i) * b) >> 5;
+        rd = ((PALETTE_FADE_LEVELS - i) * r) / (PALETTE_FADE_LEVELS/2);
+        gd = ((PALETTE_FADE_LEVELS - i) * g) / (PALETTE_FADE_LEVELS/2);
+        bd = ((PALETTE_FADE_LEVELS - i) * b) / (PALETTE_FADE_LEVELS/2);
 
         p = pal;
         for (k = 0; k < PALETTE_8b_COLORS; k++)
@@ -72,9 +73,9 @@ static void LbFadeTableToRGBGenerate(const ubyte *pal,
             if (unaffected_bits[k>>3] & (0x1 << (k&7))) {
                 *t = k;
             } else {
-                rk = (i * (int)p[0]) >> 5;
-                gk = (i * (int)p[1]) >> 5;
-                bk = (i * (int)p[2]) >> 5;
+                rk = (i * (int)p[0]) / (PALETTE_FADE_LEVELS/2);
+                gk = (i * (int)p[1]) / (PALETTE_FADE_LEVELS/2);
+                bk = (i * (int)p[2]) / (PALETTE_FADE_LEVELS/2);
                 *t = LbPaletteFindColour(pal, rk + rd, gk + gd, bk + bd);
             }
             t++;
@@ -83,7 +84,8 @@ static void LbFadeTableToRGBGenerate(const ubyte *pal,
     }
 }
 
-TbResult LbFadeTableGenerate(const ubyte *palette, const TbPixel *unaffected, const char *fname)
+TbResult LbFadeTableGenerate(const ubyte *palette, const TbPixel *unaffected,
+  const char *fname)
 {
     TbBool generate = false;
 
