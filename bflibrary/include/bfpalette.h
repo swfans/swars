@@ -47,8 +47,19 @@ TbResult LbPaletteFade(ubyte *from_pal, ubyte arg2, ubyte fade_steps);
 int LbPaletteStopOpenFade();
 
 /** Finds a colour index in given palette best matching given RGB values.
+ * Uses linear colour distance algorithm.
  */
 TbPixel LbPaletteFindColour(const ubyte *pal, ubyte r, ubyte g, ubyte b);
+
+/** Finds a colour index in given palette best matching given RGB values.
+ * Uses linear RGB colour distance algorithm.
+ */
+TbPixel LbPaletteFindColourLinear(const ubyte *pal, ubyte r, ubyte g, ubyte b);
+
+/** Finds a colour index in given palette best matching given RGB values.
+ * Uses waged linear RGB colour distance algorithm, with non-squared wages.
+ */
+TbPixel LbPaletteFindColourHalfWaged(const ubyte *pal, ubyte r, ubyte g, ubyte b);
 
 /** Draw the current palette on screen, in form ot 16x16 table.
  */

@@ -20,14 +20,19 @@
 #ifndef BFLIBRARY_ROM_H_
 #define BFLIBRARY_ROM_H_
 
+#include "bftypes.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-int prop_text();
-int make_fade_table();
 extern int tabwidth;
 extern int font;
+
+int prop_text();
+
+void make_fade_table(const ubyte *pal, ubyte *out, ubyte cr, ubyte cg, ubyte cb, ubyte ir, ubyte ig, ubyte ib);
+
 int qaz();
 
 #ifdef __cplusplus

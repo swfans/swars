@@ -18,15 +18,33 @@
  */
 /******************************************************************************/
 #include "rom.h"
+#include "bftypes.h"
+#include "bfpalette.h"
 
 int prop_text_UNUSED()
 {
 // code at 0001:000e5efc
 }
 
-int make_fade_table_UNUSED()
+void make_fade_table(const ubyte *pal, ubyte *out, ubyte cr, ubyte cg, ubyte cb, ubyte ir, ubyte ig, ubyte ib)
 {
-// code at 0001:000e60a2
+    const ubyte *p;
+    ubyte *t;
+    short k;
+
+    p = pal;
+    t = out;
+    for (k = 256; k > 0; k--)
+    {
+        ubyte r, g, b;
+
+        r = ((ushort)(ir * (short)(cr - p[0])) >> 8) + p[0];
+        g = ((ushort)(ig * (short)(cg - p[1])) >> 8) + p[1];
+        b = ((ushort)(ib * (short)(cb - p[2])) >> 8) + p[2];
+        *t = LbPaletteFindColourHalfWaged(pal, r, g, b);
+        t++;
+        p += 3;
+    }
 }
 
 int tabwidth_UNUSED;
