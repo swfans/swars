@@ -34,13 +34,16 @@
  * @param r Faded colour red component value.
  * @param g Faded colour green component value.
  * @param b Faded colour blue component value.
+ * @param intens Intensity multiplier for palette colours. Value of 128 is normal,
+ *   below means darkened palette colours, above means lighter colours. Value of
+ *   256 would lead to normal intensity colours at middle of the array.
  * @param unaffected A 0-terminated list of colour indexes which are not to be
  *   affected by the fade - left the same over all levels.
  * @param table The output table pointer. Needs to have size
  *        PALETTE_FADE_LEVELS * PALETTE_8b_COLORS.
  */
-static void LbFadeTableToRGBGenerate(const ubyte *pal,
-  ubyte r, ubyte g, ubyte b, const TbPixel *unaffected, TbPixel *table)
+static void LbFadeTableToRGBGenerate(const ubyte *pal, ubyte r, ubyte g, ubyte b,
+  short intens, const TbPixel *unaffected, TbPixel *table)
 {
     TbPixel *t;
     long i, k;
@@ -62,9 +65,9 @@ static void LbFadeTableToRGBGenerate(const ubyte *pal,
         const ubyte *p;
         ubyte rd, gd, bd;
 
-        rd = ((PALETTE_FADE_LEVELS - i) * r) / (PALETTE_FADE_LEVELS/2);
-        gd = ((PALETTE_FADE_LEVELS - i) * g) / (PALETTE_FADE_LEVELS/2);
-        bd = ((PALETTE_FADE_LEVELS - i) * b) / (PALETTE_FADE_LEVELS/2);
+        rd = ((PALETTE_FADE_LEVELS - i) * r) / PALETTE_FADE_LEVELS;
+        gd = ((PALETTE_FADE_LEVELS - i) * g) / PALETTE_FADE_LEVELS;
+        bd = ((PALETTE_FADE_LEVELS - i) * b) / PALETTE_FADE_LEVELS;
 
         p = pal;
         for (k = 0; k < PALETTE_8b_COLORS; k++)
@@ -73,9 +76,9 @@ static void LbFadeTableToRGBGenerate(const ubyte *pal,
             if (unaffected_bits[k>>3] & (0x1 << (k&7))) {
                 *t = k;
             } else {
-                rk = (i * (int)p[0]) / (PALETTE_FADE_LEVELS/2);
-                gk = (i * (int)p[1]) / (PALETTE_FADE_LEVELS/2);
-                bk = (i * (int)p[2]) / (PALETTE_FADE_LEVELS/2);
+                rk = ((i * (int)p[0]) * intens) / (PALETTE_FADE_LEVELS * 128);
+                gk = ((i * (int)p[1]) * intens) / (PALETTE_FADE_LEVELS * 128);
+                bk = ((i * (int)p[2]) * intens) / (PALETTE_FADE_LEVELS * 128);
                 *t = LbPaletteFindColour(pal, rk + rd, gk + gd, bk + bd);
             }
             t++;
@@ -100,7 +103,7 @@ TbResult LbFadeTableGenerate(const ubyte *palette, const TbPixel *unaffected,
     }
 
     if (generate) {
-        LbFadeTableToRGBGenerate(palette, 0, 0, 0, unaffected, pixmap.fade_table);
+        LbFadeTableToRGBGenerate(palette, 0, 0, 0, 256, unaffected, pixmap.fade_table);
     }
 
     if (generate && (fname != NULL)) {
