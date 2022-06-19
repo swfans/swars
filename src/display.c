@@ -19,6 +19,14 @@ extern ubyte *vec_tmap;
 extern unsigned char *display_palette;
 extern struct TbSprite *pointer_sprites;
 
+TbPixel fade_unaffected_colours[] = {
+  1,2,3,
+  128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,
+  224,225,226,227,228,229,230,231,
+  240,241,242,243,244,245,246,
+  254,255,
+  0};
+
 #if defined(WIN32)
 
 const char * SWResourceMapping(short index)

@@ -8,6 +8,7 @@
 
 extern ubyte *back_buffer;
 extern struct TbSprite *unk3_sprites;
+extern TbPixel fade_unaffected_colours[];
 
 void display_set_full_screen (bool full_screen);
 void display_set_lowres_stretch (bool stretch);

@@ -1115,7 +1115,8 @@ void create_tables_file_from_fade(void)
  */
 void create_tables_file_from_palette(void)
 {
-    LbColourTablesGenerate(display_palette, "data/tables.dat");
+    LbColourTablesGenerate(display_palette, fade_unaffected_colours,
+      "data/tables.dat");
 }
 
 void game_setup(void)
