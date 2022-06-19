@@ -36,6 +36,53 @@ int LbPaletteStopOpenFade_UNUSED()
 // code at 0001:00098cb8
 }
 
+/** @internal
+ *  Get colour intensity by adding the factors with wages.
+ * This is often used to convert RGB colour to perceptually similar greyscale value.
+ * The RGB wages are 0.30 0.59 0.11.
+ */
+static inline ubyte LbColourIntensity(ubyte r, ubyte g, ubyte b)
+{
+    return (r*77 + g*151 + b*28) >> 8;
+}
+
+/** @internal
+ *  Get colour distance using the simplest box method.
+ */
+static inline long LbColourDistanceBox(ubyte r1, ubyte g1, ubyte b1, ubyte r2, ubyte g2, ubyte b2)
+{
+    long dr, dg, db;
+    dr = abs(r2 - (long)r1);
+    dg = abs(g2 - (long)g1);
+    db = abs(b2 - (long)b1);
+    return dr + dg + db;
+}
+
+/** Get colour distance by computing squares of coordinates.
+ */
+static inline long LbColourDistanceLinearSq(ubyte r1, ubyte g1, ubyte b1, ubyte r2, ubyte g2, ubyte b2)
+{
+    long dr, dg, db;
+    dr = (r2 - (long)r1) * (r2 - (long)r1);
+    dg = (g2 - (long)g1) * (g2 - (long)g1);
+    db = (b2 - (long)b1) * (b2 - (long)b1);
+    return dr + dg + db;
+}
+
+/** @internal
+ * Get colour distance by computing waged squares of coordinates.
+ * While way less accurate than CIELAB deltaE, this provides more of perception-based difference.
+ */
+static inline long LbColourDistanceWagedSq(ubyte r1, ubyte g1, ubyte b1, ubyte r2, ubyte g2, ubyte b2)
+{
+    long dr, dg, db;
+    // RGB factors are 0.30 0.59 0.11; here we convert them to squared 8-bit multiplier
+    dr = (r2 - (long)r1) * (r2 - (long)r1) * 23;
+    dg = (g2 - (long)g1) * (g2 - (long)g1) * 89;
+    db = (b2 - (long)b1) * (b2 - (long)b1) * 3;
+    return (dr + dg + db) >> 2;
+}
+
 TbPixel LbPaletteFindColour(const ubyte *pal, ubyte r, ubyte g, ubyte b)
 {
     int min_delta;
@@ -46,13 +93,11 @@ TbPixel LbPaletteFindColour(const ubyte *pal, ubyte r, ubyte g, ubyte b)
     c = pal;
     for (i = 0; i < PALETTE_8b_COLORS; i++)
     {
-        int dr,dg,db;
-        dr = (r - (int)c[0]) * (r - (int)c[0]);
-        dg = (g - (int)c[1]) * (g - (int)c[1]);
-        db = (b - (int)c[2]) * (b - (int)c[2]);
-        if (min_delta > dr+dg+db)
+        long curr_delta;
+        curr_delta = LbColourDistanceLinearSq(c[0], c[1], c[2], r, g, b);
+        if (min_delta > curr_delta)
         {
-            min_delta = dr + dg + db;
+            min_delta = curr_delta;
             if (min_delta == 0) {
                 return i;
             }
@@ -68,11 +113,9 @@ TbPixel LbPaletteFindColour(const ubyte *pal, ubyte r, ubyte g, ubyte b)
     c = pal;
     for (i = 0; i < PALETTE_8b_COLORS; i++)
     {
-        int dr,dg,db;
-        dr = (r - (int)c[0]) * (r - (int)c[0]);
-        dg = (g - (int)c[1]) * (g - (int)c[1]);
-        db = (b - (int)c[2]) * (b - (int)c[2]);
-        if (min_delta == dr + dg + db)
+        long curr_delta;
+        curr_delta = LbColourDistanceLinearSq(c[0], c[1], c[2], r, g, b);
+        if (min_delta == curr_delta)
         {
             n += 1;
             *o = i;
@@ -88,13 +131,11 @@ TbPixel LbPaletteFindColour(const ubyte *pal, ubyte r, ubyte g, ubyte b)
     min_delta = 999999;
     for (i = 0; i < n; i++)
     {
-        int dr,dg,db;
+        long curr_delta;
         c = &pal[3 * tmcol[i]];
-        dr = abs(r - (int)c[0]);
-        dg = abs(g - (int)c[1]);
-        db = abs(b - (int)c[2]);
-        if (min_delta > dr + dg + db) {
-            min_delta = dr + dg + db;
+        curr_delta = LbColourDistanceBox(c[0], c[1], c[2], r, g, b);
+        if (min_delta > curr_delta) {
+            min_delta = curr_delta;
         }
     }
     // Gather all the colors with minimal linear difference
@@ -104,12 +145,10 @@ TbPixel LbPaletteFindColour(const ubyte *pal, ubyte r, ubyte g, ubyte b)
     o = tmcol;
     for (i = 0; i < n; i++)
     {
-        int dr,dg,db;
+        long curr_delta;
         c = &pal[3 * tmcol[i]];
-        dr = abs(r - c[0]);
-        dg = abs(g - c[1]);
-        db = abs(b - c[2]);
-        if (min_delta == dr+dg+db)
+        curr_delta = LbColourDistanceBox(c[0], c[1], c[2], r, g, b);
+        if (min_delta == curr_delta)
         {
             m += 1;
             *o = tmcol[i];
@@ -120,19 +159,17 @@ TbPixel LbPaletteFindColour(const ubyte *pal, ubyte r, ubyte g, ubyte b)
     if (m == 1) {
         return tmcol[0];
     }
-    // It's hard to select best color out of the left ones - use darker one with wages
+    // It is hard to select best color out of the ones left - use darker one
     min_delta = 999999;
     o = &tmcol[0];
     for (i = 0; i < m; i++)
     {
-        int dr,dg,db;
+        int intensity;
         c = &pal[3 * tmcol[i]];
-        dr = (c[0] * c[0]);
-        dg = (c[1] * c[1]);
-        db = (c[2] * c[2]);
-        if (min_delta > db+2*(dg+dr))
+        intensity = LbColourIntensity(c[0], c[1], c[2]);
+        if (min_delta > intensity)
         {
-          min_delta = db+2*(dg+dr);
+          min_delta = intensity;
           o = &tmcol[i];
         }
     }
