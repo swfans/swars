@@ -28,10 +28,10 @@
 
 typedef long (*ColourDistanceFunc)(ubyte r1, ubyte g1, ubyte b1, ubyte r2, ubyte g2, ubyte b2);
 
-extern long fade_count;
-extern ubyte fade_from_pal[PALETTE_8b_SIZE];
-extern ubyte fade_to_pal[PALETTE_8b_SIZE];
-extern TbBool fade_started;
+long fade_count;
+ubyte fade_from_pal[PALETTE_8b_SIZE];
+ubyte fade_to_pal[PALETTE_8b_SIZE];
+TbBool fade_started = false;
 
 TbResult LbPaletteFade(ubyte *from_pal, ubyte fade_to, ubyte fade_steps)
 {
