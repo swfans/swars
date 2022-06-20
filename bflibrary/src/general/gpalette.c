@@ -28,10 +28,69 @@
 
 typedef long (*ColourDistanceFunc)(ubyte r1, ubyte g1, ubyte b1, ubyte r2, ubyte g2, ubyte b2);
 
+extern long fade_count;
+extern ubyte fade_from_pal[PALETTE_8b_SIZE];
+extern ubyte fade_to_pal[PALETTE_8b_SIZE];
+extern TbBool fade_started;
 
-TbResult LbPaletteFade_UNUSED(ubyte *from_pal, ubyte arg2, ubyte fade_steps)
+TbResult LbPaletteFade(ubyte *from_pal, ubyte fade_to, ubyte fade_steps)
 {
-// code at 0001:00098ac0
+    ubyte palette[PALETTE_8b_SIZE];
+    ubyte *ptr;
+    short i;
+
+    ptr = from_pal;
+
+    if (fade_steps == 1)
+    {
+        LbPaletteGet(fade_from_pal);
+        if (ptr == NULL)
+        {
+            ptr = fade_to_pal;
+            memset(fade_to_pal, 0, PALETTE_8b_SIZE);
+        }
+
+        for (fade_count = 0; fade_count <= fade_to; fade_count++)
+        {
+            for (i = 0; i < PALETTE_8b_SIZE; i++)
+            {
+                short diff;
+                diff = ptr[i] - (short)fade_from_pal[i];
+                palette[i] = fade_from_pal[i] + (fade_count * diff / fade_to);
+            }
+            LbScreenWaitVbi();
+            LbPaletteSet(palette);
+        }
+        fade_started = 0;
+    }
+    else
+    {
+        if (fade_started)
+        {
+            if (fade_to == ++fade_count)
+                fade_started = 0;
+        }
+        else
+        {
+            fade_count = 0;
+            fade_started = 1;
+            LbPaletteGet(fade_from_pal);
+            if (ptr == NULL)
+                memset(fade_to_pal, 0, PALETTE_8b_SIZE);
+        }
+        if (ptr == NULL)
+            ptr = fade_to_pal;
+
+        for (i = 0; i < PALETTE_8b_SIZE; i++)
+        {
+            short diff;
+            diff = ptr[i] - (short)fade_from_pal[i];
+            palette[i] = fade_from_pal[i] + (fade_count * diff / fade_to);
+        }
+        LbScreenWaitVbi();
+        LbPaletteSet(palette);
+    }
+    return fade_count;
 }
 
 int LbPaletteStopOpenFade_UNUSED()

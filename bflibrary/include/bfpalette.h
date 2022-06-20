@@ -43,7 +43,7 @@ typedef struct Palette Palette;
 
 #pragma pack()
 
-TbResult LbPaletteFade(ubyte *from_pal, ubyte arg2, ubyte fade_steps);
+TbResult LbPaletteFade(ubyte *from_pal, ubyte fade_to, ubyte fade_steps);
 int LbPaletteStopOpenFade();
 
 /** Finds a colour index in given palette best matching given RGB values.
