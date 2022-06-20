@@ -26,18 +26,8 @@
 extern "C" {
 #endif
 
-extern int polyscans;
-int ft_jt();
-int fb_jt();
-int gt_jt();
-int ll_jt();
-int rl_jt();
-int poly_line();
-extern int vec_mode;
-extern int vec_colour;
-int trig();
-int mgt_jt();
-int add_to_edi();
+extern ubyte vec_mode;
+extern ubyte vec_colour;
 
 extern ubyte *poly_screen;
 
@@ -56,8 +46,21 @@ extern ubyte *dither_end;
 void setup_vecs(ubyte *screenbuf, ubyte *nvec_map,
   ulong line_len, ulong width, ulong height);
 
+#if 0
+extern int polyscans;
+
 int t12_jt();
 int render_table();
+int ft_jt();
+int fb_jt();
+int gt_jt();
+int ll_jt();
+int rl_jt();
+int poly_line();
+int trig();
+int mgt_jt();
+int add_to_edi();
+#endif
 
 #ifdef __cplusplus
 };
