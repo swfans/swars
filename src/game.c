@@ -168,16 +168,6 @@ char unk_credits_text_p[] = "";
 
 unsigned int LbRandomAnyShort(void);
 
-#if 0
-int LbPaletteFade(uint8_t *a1, uint8_t a2, uint8_t a3)
-{
-    int ret;
-    asm volatile ("call ASM_LbPaletteFade\n"
-        : "=r" (ret) : "a" (a1), "d" (a2), "b" (a3));
-    return ret;
-}
-#endif
-
 void PacketRecord_Close(void)
 {
     if (in_network_game)
