@@ -220,7 +220,7 @@ TbResult LbLog(struct TbLog *log, const char *fmt_str, va_list arg)
             curr_time.Hour, curr_time.Minute, curr_time.Second);
     }
     if (log->Prefix[0] != '\0')
-        fprintf(file, log->Prefix);
+        fprintf(file, "%s", log->Prefix);
     vfprintf(file, fmt_str, arg);
     log->Position = ftell(file);
     fclose(file);
