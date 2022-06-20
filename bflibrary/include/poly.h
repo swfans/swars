@@ -20,6 +20,8 @@
 #ifndef POLY_H_
 #define POLY_H_
 
+#include "bftypes.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -34,18 +36,26 @@ int poly_line();
 extern int vec_mode;
 extern int vec_colour;
 int trig();
-extern int poly_screen;
 int mgt_jt();
 int add_to_edi();
-extern int vec_window_height;
-extern int vec_screen_width;
-int setup_vecs();
-extern int vec_pal;
-extern int dither_map;
-extern int dither_end;
-extern int vec_window_width;
-extern int vec_screen;
-extern int vec_map;
+
+extern ubyte *poly_screen;
+
+extern long vec_window_width;
+extern long vec_window_height;
+
+extern long vec_screen_width;
+extern ubyte *vec_screen;
+
+extern ubyte *vec_map;
+extern ubyte *vec_pal;
+
+extern ubyte *dither_map;
+extern ubyte *dither_end;
+
+void setup_vecs(ubyte *screenbuf, ubyte *nvec_map,
+  ulong line_len, ulong width, ulong height);
+
 int t12_jt();
 int render_table();
 

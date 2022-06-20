@@ -2,7 +2,7 @@
 // Bullfrog Engine Emulation Library - for use to remake classic games like
 // Syndicate Wars, Magic Carpet, Genewars or Dungeon Keeper.
 /******************************************************************************/
-/** @file poly.asm
+/** @file poly.c
  *     Implementation of related functions.
  * @par Purpose:
  *     Unknown.
@@ -20,6 +20,22 @@
 #include "poly.h"
 
 int polyscans_UNUSED;
+
+ubyte *poly_screen_UNUSED;
+
+long vec_window_width_UNUSED;
+long vec_window_height_UNUSED;
+
+long vec_screen_width_UNUSED;
+
+ubyte *vec_screen_UNUSED;
+
+ubyte *vec_map_UNUSED;
+
+ubyte *vec_pal_UNUSED;
+
+ubyte *dither_map_UNUSED;
+ubyte *dither_end_UNUSED;
 
 int ft_jt_UNUSED()
 {
@@ -60,8 +76,6 @@ int trig_UNUSED()
 // code at 0001:000dead0
 }
 
-int poly_screen;
-
 int mgt_jt_UNUSED()
 {
 // code at 0001:000e156a
@@ -72,26 +86,27 @@ int add_to_edi_UNUSED()
 // code at 0001:000e1123
 }
 
-int vec_window_height;
-
-int vec_screen_width;
-
-int setup_vecs_UNUSED()
+void setup_vecs(ubyte *screenbuf, ubyte *nvec_map,
+  ulong line_len, ulong width, ulong height)
 {
-// code at 0001:000e5a73
+    if (line_len > 0)
+        vec_screen_width = line_len;
+    if (screenbuf != NULL)
+    {
+        vec_screen = screenbuf;
+        poly_screen = screenbuf - vec_screen_width;
+    }
+    if (nvec_map != NULL)
+    {
+        vec_map = nvec_map;
+        dither_map = nvec_map;
+        dither_end = nvec_map + 16;
+    }
+    if (height > 0)
+        vec_window_height = height;
+    if (width > 0)
+        vec_window_width = width;
 }
-
-int vec_pal_UNUSED;
-
-int dither_map_UNUSED;
-
-int dither_end_UNUSED;
-
-int vec_window_width_UNUSED;
-
-int vec_screen_UNUSED;
-
-int vec_map_UNUSED;
 
 int t12_jt_UNUSED()
 {
