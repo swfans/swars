@@ -118,6 +118,7 @@ void LbDoMultitasking(void)
 #else
     sleep(LB_LARGE_DELAY_TIME);
 #endif
+    LbWindowsControl();
 }
 
 static void LbI_ProcessEvent(const SDL_Event *ev)

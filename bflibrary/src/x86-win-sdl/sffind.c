@@ -393,7 +393,8 @@ int _findclose(intptr_t fhandle) {
 }
 #endif
 
-TbResult LbFileFindFirst(const char *filespec, struct TbFileFind *ffind, unsigned int attributes)
+TbResult LbFileFindFirst(const char *filespec, struct TbFileFind *ffind,
+  ulong attributes)
 {
     int result;
 #if LB_FILENAME_TRANSFORM

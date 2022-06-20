@@ -208,7 +208,7 @@ long LbFileLength(const char *fname);
  *  TbFileFind struct which is then used for LbFileFindNext() and LbFileFindEnd() calls.
  */
 TbResult LbFileFindFirst(const char *filespec, TbFileFind *ffind,
-  unsigned int attributes);
+  ulong attributes);
 
 /** Continues listing directory entries.
  *

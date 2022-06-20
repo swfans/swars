@@ -61,7 +61,7 @@ TbResult LbPaletteFade(ubyte *from_pal, ubyte fade_to, ubyte fade_steps)
             LbScreenWaitVbi();
             LbPaletteSet(palette);
         }
-        fade_started = 0;
+        fade_started = false;
     }
     else
     {
@@ -73,7 +73,7 @@ TbResult LbPaletteFade(ubyte *from_pal, ubyte fade_to, ubyte fade_steps)
         else
         {
             fade_count = 0;
-            fade_started = 1;
+            fade_started = true;
             LbPaletteGet(fade_from_pal);
             if (ptr == NULL)
                 memset(fade_to_pal, 0, PALETTE_8b_SIZE);
@@ -93,9 +93,10 @@ TbResult LbPaletteFade(ubyte *from_pal, ubyte fade_to, ubyte fade_steps)
     return fade_count;
 }
 
-int LbPaletteStopOpenFade_UNUSED()
+TbResult LbPaletteStopOpenFade(void)
 {
-// code at 0001:00098cb8
+    fade_started = false;
+    return Lb_SUCCESS;
 }
 
 /** @internal

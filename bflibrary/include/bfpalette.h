@@ -43,8 +43,21 @@ typedef struct Palette Palette;
 
 #pragma pack()
 
+/** Perform palette fading.
+ * Does either one step, or several steps of the fading process.
+ *
+ * @param from_pal Initial palette for fading. If NULL, current screen
+ *        palette is used.
+ * @param fade_to Target step of the fade.
+ * @param fade_steps Total amount of fading steps. If set to 1, the
+ *        fading can be done in one call, and the function will return
+ *        only when the fading has completed.
+ */
 TbResult LbPaletteFade(ubyte *from_pal, ubyte fade_to, ubyte fade_steps);
-int LbPaletteStopOpenFade();
+
+/** Stops any fading currently in progress.
+ */
+TbResult LbPaletteStopOpenFade(void);
 
 /** Finds a colour index in given palette best matching given RGB values.
  * Uses linear colour distance algorithm.
