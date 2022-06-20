@@ -102,13 +102,6 @@ extern unsigned char *LOC_vec_screen;
 extern unsigned long LOC_vec_screen_width;
 extern unsigned long LOC_vec_window_width;
 extern unsigned long LOC_vec_window_height;
-// Versions from assembly
-extern unsigned char *poly_screen;
-extern unsigned char *vec_map;
-extern unsigned char *vec_screen;
-extern unsigned long vec_screen_width;
-extern unsigned long vec_window_width;
-extern unsigned long vec_window_height;
 /******************************************************************************/
 void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint *point_c);
 /******************************************************************************/

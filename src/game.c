@@ -2704,8 +2704,9 @@ void game_process(void)
           navi2_unkn_counter_max = navi2_unkn_counter;
       if (cmdln_param_d)
           input_char = LbKeyboard();
-      if (ingame__DisplayMode == 55)
+      if (ingame__DisplayMode == 55) {
           LOGDBG("id=%d  trial alloc = %d turn %lu", 0, triangulation, gameturn);
+      }
       if (!LbScreenIsLocked()) {
           while (LbScreenLock() != Lb_SUCCESS)
               ;
