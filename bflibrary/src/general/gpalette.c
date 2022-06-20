@@ -99,8 +99,9 @@ static long LbColourDistanceHalfWagedSq(ubyte r1, ubyte g1, ubyte b1, ubyte r2, 
     return (dr + dg + db) >> 5;
 }
 
-static inline TbPixel LbPaletteFindColourUsingDistanceFunc(const ubyte *pal, ubyte r, ubyte g, ubyte b,
-  ColourDistanceFunc primaryDistance, ColourDistanceFunc secondaryDistance)
+static inline TbPixel LbPaletteFindColourUsingDistanceFunc(const ubyte *pal,
+  ubyte r, ubyte g, ubyte b, ColourDistanceFunc primaryDistance,
+  ColourDistanceFunc secondaryDistance)
 {
     int min_delta;
     const unsigned char *c;
@@ -195,17 +196,20 @@ static inline TbPixel LbPaletteFindColourUsingDistanceFunc(const ubyte *pal, uby
 
 TbPixel LbPaletteFindColourLinear(const ubyte *pal, ubyte r, ubyte g, ubyte b)
 {
-    return LbPaletteFindColourUsingDistanceFunc(pal, r, g, b, LbColourDistanceLinearSq, LbColourDistanceBox);
+    return LbPaletteFindColourUsingDistanceFunc(pal, r, g, b,
+      LbColourDistanceLinearSq, LbColourDistanceBox);
 }
 
 TbPixel LbPaletteFindColourHalfWaged(const ubyte *pal, ubyte r, ubyte g, ubyte b)
 {
-    return LbPaletteFindColourUsingDistanceFunc(pal, r, g, b, LbColourDistanceHalfWagedSq, LbColourDistanceBox);
+    return LbPaletteFindColourUsingDistanceFunc(pal, r, g, b,
+      LbColourDistanceHalfWagedSq, LbColourDistanceBox);
 }
 
 TbPixel LbPaletteFindColour(const ubyte *pal, ubyte r, ubyte g, ubyte b)
 {
-    return LbPaletteFindColourUsingDistanceFunc(pal, r, g, b, LbColourDistanceLinearSq, LbColourDistanceBox);
+    return LbPaletteFindColourUsingDistanceFunc(pal, r, g, b,
+      LbColourDistanceLinearSq, LbColourDistanceBox);
 }
 
 TbResult LbPaletteDraw(long X, long Y,

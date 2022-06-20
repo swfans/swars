@@ -26,10 +26,16 @@
 extern "C" {
 #endif
 
+/** Width of tab character in pixels while drawing simple 5x6 font.
+ */
 extern long tabwidth;
 
+/** Draw text on screen using simple built-in 5x6 font.
+ */
 void prop_text(char *text, TbPixel *out, long scanline, TbPixel colour);
 
+/** Generate table for fading to and from given colour.
+ */
 void make_fade_table(const ubyte *pal, ubyte *out, ubyte cr, ubyte cg, ubyte cb,
   ubyte ir, ubyte ig, ubyte ib);
 
