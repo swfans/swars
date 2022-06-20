@@ -10,6 +10,7 @@
 #include "bftext.h"
 #include "bfmouse.h"
 #include "bfutility.h"
+#include "poly.h"
 #include "util.h"
 #include "bflib_basics.h"
 
@@ -113,6 +114,7 @@ display_unlock (void)
   LbScreenUnlock();
 }
 
+#if 0
 void setup_vecs(ubyte *screenbuf, ubyte *vec_tmap, ulong width3, ulong width4, long height)
 {
     asm volatile (
@@ -120,7 +122,7 @@ void setup_vecs(ubyte *screenbuf, ubyte *vec_tmap, ulong width3, ulong width4, l
       "call ASM_setup_vecs_\n"
         : : "a" (screenbuf), "d" (vec_tmap), "b" (width3), "c" (width4), "g" (height));
 }
-
+#endif
 
 void setup_screen_mode(TbScreenMode mode)
 {
