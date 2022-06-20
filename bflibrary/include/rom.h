@@ -26,14 +26,12 @@
 extern "C" {
 #endif
 
-extern int tabwidth;
-extern int font;
+extern long tabwidth;
 
-int prop_text();
+void prop_text(char *text, TbPixel *out, long scanline, TbPixel colour);
 
-void make_fade_table(const ubyte *pal, ubyte *out, ubyte cr, ubyte cg, ubyte cb, ubyte ir, ubyte ig, ubyte ib);
-
-int qaz();
+void make_fade_table(const ubyte *pal, ubyte *out, ubyte cr, ubyte cg, ubyte cb,
+  ubyte ir, ubyte ig, ubyte ib);
 
 #ifdef __cplusplus
 };
