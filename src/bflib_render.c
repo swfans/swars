@@ -23,15 +23,17 @@
 #include "bflib_basics.h"
 
 /******************************************************************************/
-//TbPixel vec_colour = 112;
-//unsigned char vec_mode;
-unsigned char *LOC_poly_screen;
-unsigned char *LOC_vec_map;
-unsigned char *render_fade_tables = NULL;
-unsigned char *LOC_vec_screen;
-unsigned long LOC_vec_screen_width;
-unsigned long LOC_vec_window_width;
-unsigned long LOC_vec_window_height;
+ubyte *LOC_poly_screen;
+
+long LOC_vec_window_width;
+long LOC_vec_window_height;
+
+long LOC_vec_screen_width;
+ubyte *LOC_vec_screen;
+
+ubyte *LOC_vec_map;
+
+ubyte *render_fade_tables = NULL;
 /******************************************************************************/
 
 /******************************************************************************/

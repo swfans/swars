@@ -18,6 +18,9 @@
  */
 /******************************************************************************/
 #include "bflib_render.h"
+#include "bfgentab.h"
+#include "poly.h"
+#include "swlog.h"
 
 #include "globals.h"
 #include "bflib_basics.h"
@@ -122,13 +125,13 @@ int trig_reorder_input_points(struct PolyPoint **opt_a, struct PolyPoint **opt_b
     struct PolyPoint *ordpt_tmp1;
     struct PolyPoint *ordpt_tmp2;
     start_type = RendStart_NO;
-    if (ordpt_a->field_4 == ordpt_b->field_4)
+    if (ordpt_a->Y == ordpt_b->Y)
     {
-        if (ordpt_a->field_4 == ordpt_c->field_4)
+        if (ordpt_a->Y == ordpt_c->Y)
             return RendStart_NO;
-        if (ordpt_a->field_4 >= ordpt_c->field_4)
+        if (ordpt_a->Y >= ordpt_c->Y)
         {
-            if (ordpt_a->field_0 <= ordpt_b->field_0)
+            if (ordpt_a->X <= ordpt_b->X)
                 return RendStart_NO;
             ordpt_tmp1 = ordpt_a;
             ordpt_a = ordpt_c;
@@ -138,16 +141,16 @@ int trig_reorder_input_points(struct PolyPoint **opt_a, struct PolyPoint **opt_b
             start_type = RendStart_FB;
         } else
         {
-            if (ordpt_b->field_0 <= ordpt_a->field_0)
+            if (ordpt_b->X <= ordpt_a->X)
                 return RendStart_NO;
             start_type = RendStart_FT;
         }
     } else
-    if (ordpt_a->field_4 <= ordpt_b->field_4)
+    if (ordpt_a->Y <= ordpt_b->Y)
     {
-        if (ordpt_a->field_4 == ordpt_c->field_4)
+        if (ordpt_a->Y == ordpt_c->Y)
         {
-            if (ordpt_a->field_0 <= ordpt_c->field_0)
+            if (ordpt_a->X <= ordpt_c->X)
                 return RendStart_NO;
             ordpt_tmp1 = ordpt_a;
             ordpt_a = ordpt_c;
@@ -156,7 +159,7 @@ int trig_reorder_input_points(struct PolyPoint **opt_a, struct PolyPoint **opt_b
             ordpt_c = ordpt_tmp2;
             start_type = RendStart_FT;
         } else
-        if (ordpt_a->field_4 >= ordpt_c->field_4)
+        if (ordpt_a->Y >= ordpt_c->Y)
         {
             ordpt_tmp1 = ordpt_a;
             ordpt_a = ordpt_c;
@@ -166,13 +169,13 @@ int trig_reorder_input_points(struct PolyPoint **opt_a, struct PolyPoint **opt_b
             start_type = RendStart_LL;
         } else
         {
-            if (ordpt_b->field_4 == ordpt_c->field_4)
+            if (ordpt_b->Y == ordpt_c->Y)
             {
-                if (ordpt_b->field_0 <= ordpt_c->field_0)
+                if (ordpt_b->X <= ordpt_c->X)
                     return RendStart_NO;
                 start_type = RendStart_FB;
             } else
-            if (ordpt_b->field_4 <= ordpt_c->field_4)
+            if (ordpt_b->Y <= ordpt_c->Y)
             {
                 start_type = RendStart_LL;
             } else
@@ -182,9 +185,9 @@ int trig_reorder_input_points(struct PolyPoint **opt_a, struct PolyPoint **opt_b
         }
     } else
     {
-        if (ordpt_a->field_4 == ordpt_c->field_4)
+        if (ordpt_a->Y == ordpt_c->Y)
         {
-            if (ordpt_a->field_0 >= ordpt_c->field_0)
+            if (ordpt_a->X >= ordpt_c->X)
                 return RendStart_NO;
             ordpt_tmp1 = ordpt_a;
             ordpt_a = ordpt_b;
@@ -192,7 +195,7 @@ int trig_reorder_input_points(struct PolyPoint **opt_a, struct PolyPoint **opt_b
             ordpt_c = ordpt_tmp1;
               start_type = RendStart_FB;
         } else
-        if (ordpt_a->field_4 < ordpt_c->field_4)
+        if (ordpt_a->Y < ordpt_c->Y)
         {
             ordpt_tmp1 = ordpt_a;
             ordpt_a = ordpt_b;
@@ -201,9 +204,9 @@ int trig_reorder_input_points(struct PolyPoint **opt_a, struct PolyPoint **opt_b
               start_type = RendStart_RL;
         } else
         {
-            if (ordpt_b->field_4 == ordpt_c->field_4)
+            if (ordpt_b->Y == ordpt_c->Y)
             {
-                if (ordpt_b->field_0 >= ordpt_c->field_0)
+                if (ordpt_b->X >= ordpt_c->X)
                     return RendStart_NO;
                 ordpt_tmp1 = ordpt_a;
                 ordpt_a = ordpt_b;
@@ -211,7 +214,7 @@ int trig_reorder_input_points(struct PolyPoint **opt_a, struct PolyPoint **opt_b
                 ordpt_c = ordpt_tmp1;
                 start_type = RendStart_FT;
             } else
-            if (ordpt_b->field_4 < ordpt_c->field_4)
+            if (ordpt_b->Y < ordpt_c->Y)
             {
                 ordpt_tmp1 = ordpt_a;
                 ordpt_a = ordpt_b;
@@ -241,7 +244,7 @@ int trig_ll_start(struct TrigLocals *lv, const struct PolyPoint *opt_a, const st
     long do_render;
     long dummy;
 
-    llv.var_38 = opt_a->field_4;
+    llv.var_38 = opt_a->Y;
     if (llv.var_38 < 0)
     {
         llv.var_8C = LOC_poly_screen;
@@ -2610,6 +2613,12 @@ int trig_ft_start(struct TrigLocals *lv, const struct PolyPoint *opt_a, const st
  */
 void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint *point_c)
 {
+#if 1
+    asm volatile ("call ASM_trig\n"
+        :  : "a" (point_a), "d" (point_b), "b" (point_c));
+    return;
+#endif
+
     static int add_to_edi[] = {0,-15,-14,-13,-12,-11,-10,-9,-8,-7,-6,-5,-4,-3,-2,-1,};
     struct PolyPoint *opt_a;
     struct PolyPoint *opt_b;
@@ -2617,17 +2626,16 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
     static struct TrigLocals lv;
     long start_type;
     volatile int a, b, c, d, D, S;
-//    JUSTLOG("Pa(%ld,%ld,%ld)",point_a->field_8,point_a->field_C,point_a->field_10);
-//    JUSTLOG("Pb(%ld,%ld,%ld)",point_b->field_8,point_b->field_C,point_b->field_10);
-//    JUSTLOG("Pc(%ld,%ld,%ld)",point_c->field_8,point_c->field_C,point_c->field_10);
-    //_DK_trig(point_a, point_b, point_c); return;
+    LOGNO("Pa(%ld,%ld,%ld)",point_a->U,point_a->V,point_a->S);
+    LOGNO("Pb(%ld,%ld,%ld)",point_b->U,point_b->V,point_b->S);
+    LOGNO("Pc(%ld,%ld,%ld)",point_c->U,point_c->V,point_c->S);
     LOC_poly_screen = poly_screen;
     LOC_vec_map = vec_map;
     LOC_vec_screen_width = vec_screen_width;
     LOC_vec_window_width = vec_window_width;
     LOC_vec_window_height = vec_window_height;
-    render_fade_tables = _fade_table;
-    render_ghost = _ghost_table;
+    render_fade_tables = pixmap.fade_table;
+    render_ghost = pixmap.ghost_table;
     opt_a = point_a;
     opt_b = point_b;
     opt_c = point_c;
@@ -2658,7 +2666,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         return;
     }
 
-    //JUSTLOG("render mode %d",(int)vec_mode);
+    LOGNO("render mode %d",(int)vec_mode);
     // ================ RENDERING CODE =============================
 
     switch (vec_mode)
@@ -2675,8 +2683,8 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             pp = lv.var_30;
             lv.var_30++;
 
-            b = pp->field_2;
-            c = pp->field_6;
+            b = pp->X >> 16;
+            c = pp->Y >> 16;
             lv.var_8C += LOC_vec_screen_width;
             d = lv.var_8C;
 
@@ -2703,7 +2711,6 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
                 : "memory", "cc");
 
             } else {
-                int tmpC;
                 if (c > LOC_vec_window_width)
                     c = LOC_vec_window_width;
                 c -= b;
@@ -2740,8 +2747,8 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             pp = lv.var_30;
             lv.var_30++;
 
-            a = pp->field_2;
-            c = pp->field_6;
+            a = pp->X >> 16;
+            c = pp->Y >> 16;
             lv.var_8C += LOC_vec_screen_width;
             dst = lv.var_8C;
             if (a < 0)
@@ -2752,8 +2759,8 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
                     continue;
                 tmp1 = (-a) & 0xffff;
                 tmpA = (lv.var_50 * tmp1) << 8;
-                tmpB = (pp->field_10 + lv.var_50 * tmp1);
-                tmpC = (pp->field_10 >> 16) + (tmpB >> 16);
+                tmpB = (pp->S + lv.var_50 * tmp1);
+                tmpC = (pp->S >> 16) + (tmpB >> 16);
                 a = (((tmpA & 0xff00) + ((tmpC << 8) & 0xff00)) & 0xff00) | (vec_colour & 0x00ff);
                 b = (tmpB & 0xffff);
                 if (c > LOC_vec_window_width)
@@ -2766,8 +2773,8 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
                 if (c <= 0)
                     continue;
                 dst += a;
-                tmpC = (pp->field_10) >> 8;
-                b = (pp->field_10 & 0xffff);
+                tmpC = (pp->S) >> 8;
+                b = (pp->S & 0xffff);
                 a = (tmpC & 0xff00) | ((vec_colour) & 0x00ff);
             }
             do {
@@ -3800,8 +3807,8 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
 
             pp = lv.var_30;
             lv.var_30++;
-            a = pp->field_2;
-            c = pp->field_6;
+            a = pp->X >> 16;
+            c = pp->Y >> 16;
             D = lv.var_8C;
             if (a < 0)
             {
@@ -3810,9 +3817,9 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
                 if (c <= 0)
                     continue;
                 tmp1 = (-a) & 0xffff;
-                tmpB = (pp->field_C  + lv.var_5C * tmp1) >> 8;
-                tmpA = (pp->field_8  + lv.var_68 * tmp1) >> 8;
-                tmpC = (pp->field_10 + lv.var_50 * tmp1) >> 8;
+                tmpB = (pp->V  + lv.var_5C * tmp1) >> 8;
+                tmpA = (pp->U  + lv.var_68 * tmp1) >> 8;
+                tmpC = (pp->S + lv.var_50 * tmp1) >> 8;
                 b = (tmpB & 0xff00) | ((tmpA >> 8) & 0x00ff);
                 a = (tmpC & 0xff00) | ((tmpA     ) & 0x00ff);
                 if (c > LOC_vec_window_width)
@@ -3825,9 +3832,9 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
                 if (c <= 0)
                     continue;
                 D += a;
-                tmpB = (pp->field_8) >> 8;
-                tmpD = (pp->field_C) >> 8;
-                tmpC = (pp->field_10) >> 8;
+                tmpB = (pp->U) >> 8;
+                tmpD = (pp->V) >> 8;
+                tmpC = (pp->S) >> 8;
                 b = (tmpD & 0xff00) | ((tmpB >> 8) & 0x00ff);
                 a = (tmpC & 0xff00) | ((a        ) & 0x00ff);
             }
@@ -10678,6 +10685,6 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
                  : "memory", "cc", "%eax", "%ebx", "%edx", "%ecx", "%edi", "%esi");
         break;
     }
-    //JUSTLOG("end");
+    LOGNO("end");
 }
 /******************************************************************************/
