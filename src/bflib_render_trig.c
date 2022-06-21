@@ -109,10 +109,18 @@ struct TrigLocals {
     unsigned long var_80; // 0x60
     unsigned long delta_b; // 0x64
     unsigned long delta_a; // 0x68
-    unsigned char *var_8C; // 0x6C
+    ubyte *var_8C; // 0x6C
 };
 
 #pragma pack()
+
+#define STRINGIFY(x) #x
+#ifdef NEED_UNDERSCORE
+# define EXPORT_SYMBOL(sym) STRINGIFY(_ ## sym)
+#else
+# define EXPORT_SYMBOL(sym) STRINGIFY(sym)
+#endif
+
 /******************************************************************************/
 
 int trig_reorder_input_points(struct PolyPoint **opt_a, struct PolyPoint **opt_b, struct PolyPoint **opt_c)
@@ -262,13 +270,13 @@ int trig_ll_start(struct TrigLocals *lv, const struct PolyPoint *opt_a, const st
     asm volatile (" \
         movl    0x18+%4,%%eax\n \
         movl    4(%%ecx),%%ebx\n \
-        cmpl    _LOC_vec_window_height,%%ebx\n \
+        cmpl    "EXPORT_SYMBOL(LOC_vec_window_height)",%%ebx\n \
         setnle    4+%4\n \
         subl    %%eax,%%ebx\n \
         movl    %%ebx,0x5C+%4\n \
         movl    %%ebx,0x4C+%4\n \
         movl    4(%%edi),%%ebx\n \
-        cmpl    _LOC_vec_window_height,%%ebx\n \
+        cmpl    "EXPORT_SYMBOL(LOC_vec_window_height)",%%ebx\n \
         setnle    5+%4\n \
         subl    %%eax,%%ebx\n \
         movl    %%ebx,0x58+%4\n \
@@ -298,7 +306,7 @@ int trig_ll_start(struct TrigLocals *lv, const struct PolyPoint *opt_a, const st
         movl    (%%edi),%%eax\n \
         shll    $0x10,%%eax\n \
         movl    %%eax,0x50+%4\n \
-        movzbl  _vec_mode,%%eax\n \
+        movzbl  "EXPORT_SYMBOL(vec_mode)",%%eax\n \
         jmpl    *ll_jt(,%%eax,4)\n \
     # ---------------------------------------------------------------------------\n \
     ll_jt:\n \
@@ -439,12 +447,12 @@ int trig_ll_start(struct TrigLocals *lv, const struct PolyPoint *opt_a, const st
         addl    %%edi,%%esi\n \
         cmpb   $0,4+%4\n \
         jz     ll_loc04\n \
-        movl    _LOC_vec_window_height,%%edi\n \
+        movl    "EXPORT_SYMBOL(LOC_vec_window_height)",%%edi\n \
         movl    %%edi,0x54+%4\n \
         movl    %%edi,0x4C+%4\n \
     \n \
     ll_loc04:            # 32C\n \
-        leal    _polyscans,%%edi\n \
+        leal    "EXPORT_SYMBOL(polyscans)",%%edi\n \
         jmp     ll_loc10\n \
     # ---------------------------------------------------------------------------\n \
     \n \
@@ -467,7 +475,7 @@ int trig_ll_start(struct TrigLocals *lv, const struct PolyPoint *opt_a, const st
         addl    %%edi,%%esi\n \
         cmpb   $0,4+%4\n \
         jz     ll_loc08\n \
-        movl    _LOC_vec_window_height,%%edi\n \
+        movl    "EXPORT_SYMBOL(LOC_vec_window_height)",%%edi\n \
         movl    %%edi,0x4C+%4\n \
         cmpb   $0,5+%4\n \
         jz     ll_loc06\n \
@@ -487,7 +495,7 @@ int trig_ll_start(struct TrigLocals *lv, const struct PolyPoint *opt_a, const st
     ll_loc23:            # 290\n \
         cmpb   $0,4+%4\n \
         jz     ll_loc08\n \
-        movl    _LOC_vec_window_height,%%edi\n \
+        movl    "EXPORT_SYMBOL(LOC_vec_window_height)",%%edi\n \
         subl    0x18+%4,%%edi\n \
         movl    %%edi,0x4C+%4\n \
         cmpb   $0,5+%4\n \
@@ -502,7 +510,7 @@ int trig_ll_start(struct TrigLocals *lv, const struct PolyPoint *opt_a, const st
         movl    %%edi,0x54+%4\n \
     \n \
     ll_loc08:\n \
-        leal    _polyscans,%%edi\n \
+        leal    "EXPORT_SYMBOL(polyscans)",%%edi\n \
     \n \
     ll_loc09:            # 40D\n \
         movl    %%eax,(%%edi)\n \
@@ -632,12 +640,12 @@ int trig_ll_start(struct TrigLocals *lv, const struct PolyPoint *opt_a, const st
         addl    %%edi,%%edx\n \
         cmpb   $0,4+%4\n \
         jz     ll_loc13\n \
-        movl    _LOC_vec_window_height,%%edi\n \
+        movl    "EXPORT_SYMBOL(LOC_vec_window_height)",%%edi\n \
         movl    %%edi,0x54+%4\n \
         movl    %%edi,0x4C+%4\n \
     \n \
     ll_loc13:            # 573\n \
-        leal    _polyscans,%%edi\n \
+        leal    "EXPORT_SYMBOL(polyscans)",%%edi\n \
         jmp     ll_loc21\n \
     # ---------------------------------------------------------------------------\n \
     \n \
@@ -657,7 +665,7 @@ int trig_ll_start(struct TrigLocals *lv, const struct PolyPoint *opt_a, const st
         addl    %%edi,%%edx\n \
         cmpb   $0,4+%4\n \
         jz     ll_loc19\n \
-        movl    _LOC_vec_window_height,%%edi\n \
+        movl    "EXPORT_SYMBOL(LOC_vec_window_height)",%%edi\n \
         movl    %%edi,0x4C+%4\n \
         cmpb   $0,5+%4\n \
         jz     ll_loc15\n \
@@ -677,7 +685,7 @@ int trig_ll_start(struct TrigLocals *lv, const struct PolyPoint *opt_a, const st
     ll_loc17:\n \
         cmpb   $0,4+%4\n \
         jz     ll_loc19\n \
-        movl    _LOC_vec_window_height,%%edi\n \
+        movl    "EXPORT_SYMBOL(LOC_vec_window_height)",%%edi\n \
         subl    0x18+%4,%%edi\n \
         movl    %%edi,0x4C+%4\n \
         cmpb   $0,5+%4\n \
@@ -692,7 +700,7 @@ int trig_ll_start(struct TrigLocals *lv, const struct PolyPoint *opt_a, const st
         movl    %%edi,0x54+%4\n \
     \n \
     ll_loc19:\n \
-        leal    _polyscans,%%edi\n \
+        leal    "EXPORT_SYMBOL(polyscans)",%%edi\n \
         # restrict 0x58+%4 to 576 - size of polyscans[]\n \
         cmpl   $0x240,0x58+%4\n \
         jl     ll_loc20_test2\n \
@@ -806,12 +814,12 @@ int trig_ll_start(struct TrigLocals *lv, const struct PolyPoint *opt_a, const st
         addl    %%edi,%%esi\n \
         cmpb    $0,4+%4\n \
         jz      ll_loc37\n \
-        movl    _LOC_vec_window_height,%%edi\n \
+        movl    "EXPORT_SYMBOL(LOC_vec_window_height)",%%edi\n \
         movl    %%edi,0x54+%4\n \
         movl    %%edi,0x4C+%4\n \
     \n \
     ll_loc37:\n \
-        leal    _polyscans,%%edi\n \
+        leal    "EXPORT_SYMBOL(polyscans)",%%edi\n \
         cmpb    $0,5+%4\n \
         jz      ll_loc30\n \
         movl    $1,%%eax\n \
@@ -831,7 +839,7 @@ int trig_ll_start(struct TrigLocals *lv, const struct PolyPoint *opt_a, const st
         addl    %%edi,%%esi\n \
         cmpb   $0,4+%4\n \
         jz     ll_loc28\n \
-        movl    _LOC_vec_window_height,%%edi\n \
+        movl    "EXPORT_SYMBOL(LOC_vec_window_height)",%%edi\n \
         movl    %%edi,0x4C+%4\n \
         cmpb   $0,5+%4\n \
         jz     ll_loc38\n \
@@ -851,7 +859,7 @@ int trig_ll_start(struct TrigLocals *lv, const struct PolyPoint *opt_a, const st
     ll_loc26:\n \
         cmpb   $0,4+%4\n \
         jz     ll_loc28\n \
-        movl    _LOC_vec_window_height,%%edi\n \
+        movl    "EXPORT_SYMBOL(LOC_vec_window_height)",%%edi\n \
         subl    0x18+%4,%%edi\n \
         movl    %%edi,0x4C+%4\n \
         cmpb   $0,5+%4\n \
@@ -866,7 +874,7 @@ int trig_ll_start(struct TrigLocals *lv, const struct PolyPoint *opt_a, const st
         movl    %%edi,0x54+%4\n \
     \n \
     ll_loc28:\n \
-        leal    _polyscans,%%edi\n \
+        leal    "EXPORT_SYMBOL(polyscans)",%%edi\n \
     \n \
     ll_loc29:\n \
         movl    %%eax,(%%edi)\n \
@@ -927,12 +935,12 @@ int trig_ll_start(struct TrigLocals *lv, const struct PolyPoint *opt_a, const st
         addl    %%edi,%%ebx\n \
         cmpb   $0,4+%4\n \
         jz     ll_loc41\n \
-        movl    _LOC_vec_window_height,%%edi\n \
+        movl    "EXPORT_SYMBOL(LOC_vec_window_height)",%%edi\n \
         movl    %%edi,0x54+%4\n \
         movl    %%edi,0x4C+%4\n \
     \n \
     ll_loc41:\n \
-        leal    _polyscans,%%edi\n \
+        leal    "EXPORT_SYMBOL(polyscans)",%%edi\n \
         cmpb   $0,5+%4\n \
         jz     ll_loc35\n \
         movl    $1,%%eax\n \
@@ -949,7 +957,7 @@ int trig_ll_start(struct TrigLocals *lv, const struct PolyPoint *opt_a, const st
         addl    %%edi,%%ebx\n \
         cmpb   $0,4+%4\n \
         jz     ll_loc33\n \
-        movl    _LOC_vec_window_height,%%edi\n \
+        movl    "EXPORT_SYMBOL(LOC_vec_window_height)",%%edi\n \
         movl    %%edi,0x4C+%4\n \
         cmpb   $0,5+%4\n \
         jz     ll_loc42\n \
@@ -969,7 +977,7 @@ int trig_ll_start(struct TrigLocals *lv, const struct PolyPoint *opt_a, const st
     ll_loc31:\n \
         cmpb   $0,4+%4\n \
         jz     ll_loc33\n \
-        movl    _LOC_vec_window_height,%%edi\n \
+        movl    "EXPORT_SYMBOL(LOC_vec_window_height)",%%edi\n \
         subl    0x18+%4,%%edi\n \
         movl    %%edi,0x4C+%4\n \
         cmpb   $0,5+%4\n \
@@ -984,7 +992,7 @@ int trig_ll_start(struct TrigLocals *lv, const struct PolyPoint *opt_a, const st
         movl    %%edi,0x54+%4\n \
     \n \
     ll_loc33:\n \
-        leal    _polyscans,%%edi\n \
+        leal    "EXPORT_SYMBOL(polyscans)",%%edi\n \
     \n \
     ll_loc34:\n \
         movl    %%eax,(%%edi)\n \
@@ -1032,29 +1040,29 @@ int trig_rl_start(struct TrigLocals *lv, const struct PolyPoint *opt_a, const st
         movl    %%eax,0x18+%4\n \
         orl    %%eax,%%eax\n \
         jns     rl_loc02\n \
-        movl    _LOC_poly_screen,%%ebx\n \
+        movl    "EXPORT_SYMBOL(LOC_poly_screen)",%%ebx\n \
         movl    %%ebx,0x6C+%4\n \
         movb   $1,6+%4\n \
         jmp     rl_loc01\n \
     # ---------------------------------------------------------------------------\n \
     \n \
     rl_loc02:            # 9BA\n \
-        cmpl    _LOC_vec_window_height,%%eax\n \
+        cmpl    "EXPORT_SYMBOL(LOC_vec_window_height)",%%eax\n \
         jge     rl_skipped\n \
         movl    %%eax,%%ebx\n \
-        imull    _LOC_vec_screen_width,%%ebx\n \
-        addl    _LOC_poly_screen,%%ebx\n \
+        imull    "EXPORT_SYMBOL(LOC_vec_screen_width)",%%ebx\n \
+        addl    "EXPORT_SYMBOL(LOC_poly_screen)",%%ebx\n \
         movl    %%ebx,0x6C+%4\n \
         movb   $0,6+%4\n \
     \n \
     rl_loc01:            # 9CA\n \
         movl    4(%%ecx),%%ebx\n \
-        cmpl    _LOC_vec_window_height,%%ebx\n \
+        cmpl    "EXPORT_SYMBOL(LOC_vec_window_height)",%%ebx\n \
         setnle    5+%4\n \
         subl    %%eax,%%ebx\n \
         movl    %%ebx,0x5C+%4\n \
         movl    4(%%edi),%%ebx\n \
-        cmpl    _LOC_vec_window_height,%%ebx\n \
+        cmpl    "EXPORT_SYMBOL(LOC_vec_window_height)",%%ebx\n \
         setnle    4+%4\n \
         subl    %%eax,%%ebx\n \
         movl    %%ebx,0x58+%4\n \
@@ -1085,7 +1093,7 @@ int trig_rl_start(struct TrigLocals *lv, const struct PolyPoint *opt_a, const st
         movl    (%%ecx),%%eax\n \
         shll    $0x10,%%eax\n \
         movl    %%eax,0x50+%4\n \
-        movzbl  _vec_mode,%%eax\n \
+        movzbl  "EXPORT_SYMBOL(vec_mode)",%%eax\n \
         jmpl    *rl_jt(,%%eax,4)\n \
     # ---------------------------------------------------------------------------\n \
     rl_jt:            # DATA XREF: trig_+A6D\n \
@@ -1241,12 +1249,12 @@ int trig_rl_start(struct TrigLocals *lv, const struct PolyPoint *opt_a, const st
         addl    %%edi,%%esi\n \
         cmpb   $0,4+%4\n \
         jz     rl_loc37\n \
-        movl    _LOC_vec_window_height,%%edi\n \
+        movl    "EXPORT_SYMBOL(LOC_vec_window_height)",%%edi\n \
         movl    %%edi,0x54+%4\n \
         movl    %%edi,0x4C+%4\n \
     \n \
     rl_loc37:            # C66\n \
-        leal    _polyscans,%%edi\n \
+        leal    "EXPORT_SYMBOL(polyscans)",%%edi\n \
         jmp     rl_loc38\n \
     # ---------------------------------------------------------------------------\n \
     \n \
@@ -1269,7 +1277,7 @@ int trig_rl_start(struct TrigLocals *lv, const struct PolyPoint *opt_a, const st
         addl    %%edi,%%esi\n \
         cmpb   $0,4+%4\n \
         jz     rl_loc06\n \
-        movl    _LOC_vec_window_height,%%edi\n \
+        movl    "EXPORT_SYMBOL(LOC_vec_window_height)",%%edi\n \
         movl    %%edi,0x4C+%4\n \
         cmpb   $0,5+%4\n \
         jz     rl_loc35\n \
@@ -1289,7 +1297,7 @@ int trig_rl_start(struct TrigLocals *lv, const struct PolyPoint *opt_a, const st
     rl_loc04:            # BCA\n \
         cmpb   $0,4+%4\n \
         jz     rl_loc06\n \
-        movl    _LOC_vec_window_height,%%edi\n \
+        movl    "EXPORT_SYMBOL(LOC_vec_window_height)",%%edi\n \
         subl    0x18+%4,%%edi\n \
         movl    %%edi,0x4C+%4\n \
         cmpb   $0,5+%4\n \
@@ -1304,7 +1312,7 @@ int trig_rl_start(struct TrigLocals *lv, const struct PolyPoint *opt_a, const st
         movl    %%edi,0x54+%4\n \
     \n \
     rl_loc06:\n \
-        leal    _polyscans,%%edi\n \
+        leal    "EXPORT_SYMBOL(polyscans)",%%edi\n \
     \n \
     rl_loc08:            # D47\n \
         movl    %%eax,(%%edi)\n \
@@ -1444,12 +1452,12 @@ int trig_rl_start(struct TrigLocals *lv, const struct PolyPoint *opt_a, const st
         addl    %%edi,%%edx\n \
         cmpb   $0,4+%4\n \
         jz     rl_loc11\n \
-        movl    _LOC_vec_window_height,%%edi\n \
+        movl    "EXPORT_SYMBOL(LOC_vec_window_height)",%%edi\n \
         movl    %%edi,0x54+%4\n \
         movl    %%edi,0x4C+%4\n \
     \n \
     rl_loc11:            # ECB\n \
-        leal    _polyscans,%%edi\n \
+        leal    "EXPORT_SYMBOL(polyscans)",%%edi\n \
         jmp     rl_loc13\n \
     # ---------------------------------------------------------------------------\n \
     \n \
@@ -1469,7 +1477,7 @@ int trig_rl_start(struct TrigLocals *lv, const struct PolyPoint *opt_a, const st
         addl    %%edi,%%edx\n \
         cmpb   $0,4+%4\n \
         jz     rl_loc41\n \
-        movl    _LOC_vec_window_height,%%edi\n \
+        movl    "EXPORT_SYMBOL(LOC_vec_window_height)",%%edi\n \
         movl    %%edi,0x4C+%4\n \
         cmpb   $0,5+%4\n \
         jz     rl_loc45\n \
@@ -1489,7 +1497,7 @@ int trig_rl_start(struct TrigLocals *lv, const struct PolyPoint *opt_a, const st
     rl_loc39:            # E49\n \
         cmpb   $0,4+%4\n \
         jz     rl_loc41\n \
-        movl    _LOC_vec_window_height,%%edi\n \
+        movl    "EXPORT_SYMBOL(LOC_vec_window_height)",%%edi\n \
         subl    0x18+%4,%%edi\n \
         movl    %%edi,0x4C+%4\n \
         cmpb   $0,5+%4\n \
@@ -1504,7 +1512,7 @@ int trig_rl_start(struct TrigLocals *lv, const struct PolyPoint *opt_a, const st
         movl    %%edi,0x54+%4\n \
     \n \
     rl_loc41:            # F1B\n \
-        leal    _polyscans,%%edi\n \
+        leal    "EXPORT_SYMBOL(polyscans)",%%edi\n \
         # restrict 0x5C+%4 to 576 - size of polyscans[]\n \
         cmpl   $0x240,0x5C+%4\n \
         jl     rl_loc42_test2\n \
@@ -1624,12 +1632,12 @@ int trig_rl_start(struct TrigLocals *lv, const struct PolyPoint *opt_a, const st
         addl    %%edi,%%esi\n \
         cmpb   $0,4+%4\n \
         jz     rl_loc43\n \
-        movl    _LOC_vec_window_height,%%edi\n \
+        movl    "EXPORT_SYMBOL(LOC_vec_window_height)",%%edi\n \
         movl    %%edi,0x54+%4\n \
         movl    %%edi,0x4C+%4\n \
     \n \
     rl_loc43:            # 10C5\n \
-        leal    _polyscans,%%edi\n \
+        leal    "EXPORT_SYMBOL(polyscans)",%%edi\n \
         jmp     rl_loc44\n \
     # ---------------------------------------------------------------------------\n \
     \n \
@@ -1646,7 +1654,7 @@ int trig_rl_start(struct TrigLocals *lv, const struct PolyPoint *opt_a, const st
         addl    %%edi,%%esi\n \
         cmpb   $0,4+%4\n \
         jz     rl_loc18\n \
-        movl    _LOC_vec_window_height,%%edi\n \
+        movl    "EXPORT_SYMBOL(LOC_vec_window_height)",%%edi\n \
         movl    %%edi,0x4C+%4\n \
         cmpb   $0,5+%4\n \
         jz     rl_loc20\n \
@@ -1666,7 +1674,7 @@ int trig_rl_start(struct TrigLocals *lv, const struct PolyPoint *opt_a, const st
     rl_loc21:            # 1059\n \
         cmpb   $0,4+%4\n \
         jz     rl_loc18\n \
-        movl    _LOC_vec_window_height,%%edi\n \
+        movl    "EXPORT_SYMBOL(LOC_vec_window_height)",%%edi\n \
         subl    0x18+%4,%%edi\n \
         movl    %%edi,0x4C+%4\n \
         cmpb   $0,5+%4\n \
@@ -1681,7 +1689,7 @@ int trig_rl_start(struct TrigLocals *lv, const struct PolyPoint *opt_a, const st
         movl    %%edi,0x54+%4\n \
     \n \
     rl_loc18:            # 110A\n \
-        leal    _polyscans,%%edi\n \
+        leal    "EXPORT_SYMBOL(polyscans)",%%edi\n \
     \n \
     rl_loc22:            # 1182\n \
         movl    %%eax,(%%edi)\n \
@@ -1744,12 +1752,12 @@ int trig_rl_start(struct TrigLocals *lv, const struct PolyPoint *opt_a, const st
         addl    %%edi,%%ebx\n \
         cmpb   $0,4+%4\n \
         jz     rl_loc24\n \
-        movl    _LOC_vec_window_height,%%edi\n \
+        movl    "EXPORT_SYMBOL(LOC_vec_window_height)",%%edi\n \
         movl    %%edi,0x54+%4\n \
         movl    %%edi,0x4C+%4\n \
     \n \
     rl_loc24:            # 122A\n \
-        leal    _polyscans,%%edi\n \
+        leal    "EXPORT_SYMBOL(polyscans)",%%edi\n \
         jmp     rl_loc29\n \
     # ---------------------------------------------------------------------------\n \
     \n \
@@ -1763,7 +1771,7 @@ int trig_rl_start(struct TrigLocals *lv, const struct PolyPoint *opt_a, const st
         addl    %%edi,%%ebx\n \
         cmpb   $0,4+%4\n \
         jz     rl_loc33\n \
-        movl    _LOC_vec_window_height,%%edi\n \
+        movl    "EXPORT_SYMBOL(LOC_vec_window_height)",%%edi\n \
         movl    %%edi,0x4C+%4\n \
         cmpb   $0,5+%4\n \
         jz     rl_loc26\n \
@@ -1783,7 +1791,7 @@ int trig_rl_start(struct TrigLocals *lv, const struct PolyPoint *opt_a, const st
     rl_loc31:            # 11D4\n \
         cmpb   $0,4+%4\n \
         jz     rl_loc33\n \
-        movl    _LOC_vec_window_height,%%edi\n \
+        movl    "EXPORT_SYMBOL(LOC_vec_window_height)",%%edi\n \
         subl    0x18+%4,%%edi\n \
         movl    %%edi,0x4C+%4\n \
         cmpb   $0,5+%4\n \
@@ -1798,7 +1806,7 @@ int trig_rl_start(struct TrigLocals *lv, const struct PolyPoint *opt_a, const st
         movl    %%edi,0x54+%4\n \
     \n \
     rl_loc33:            # 1264\n \
-        leal    _polyscans,%%edi\n \
+        leal    "EXPORT_SYMBOL(polyscans)",%%edi\n \
     \n \
     rl_loc28:            # 12D5\n \
         movl    %%eax,(%%edi)\n \
@@ -1848,24 +1856,24 @@ int trig_fb_start(struct TrigLocals *lv, const struct PolyPoint *opt_a, const st
         movl    %%eax,0x18+%4\n \
         orl    %%eax,%%eax\n \
         jns     fb_loc02\n \
-        movl    _LOC_poly_screen,%%ebx\n \
+        movl    "EXPORT_SYMBOL(LOC_poly_screen)",%%ebx\n \
         movl    %%ebx,0x6C+%4\n \
         movb   $1,6+%4\n \
         jmp     fb_loc01\n \
     # ---------------------------------------------------------------------------\n \
     \n \
     fb_loc02:            # 132B\n \
-        cmpl    _LOC_vec_window_height,%%eax\n \
+        cmpl    "EXPORT_SYMBOL(LOC_vec_window_height)",%%eax\n \
         jge     fb_skipped\n \
         movl    %%eax,%%ebx\n \
-        imull    _LOC_vec_screen_width,%%ebx\n \
-        addl    _LOC_poly_screen,%%ebx\n \
+        imull    "EXPORT_SYMBOL(LOC_vec_screen_width)",%%ebx\n \
+        addl    "EXPORT_SYMBOL(LOC_poly_screen)",%%ebx\n \
         movl    %%ebx,0x6C+%4\n \
         movb   $0,6+%4\n \
     \n \
     fb_loc01:            # 133B\n \
         movl    4(%%ecx),%%ebx\n \
-        cmpl    _LOC_vec_window_height,%%ebx\n \
+        cmpl    "EXPORT_SYMBOL(LOC_vec_window_height)",%%ebx\n \
         setnle    5+%4\n \
         subl    %%eax,%%ebx\n \
         movl    %%ebx,0x5C+%4\n \
@@ -1882,7 +1890,7 @@ int trig_fb_start(struct TrigLocals *lv, const struct PolyPoint *opt_a, const st
         cltd    \n \
         idivl    %%ebx\n \
         movl    %%eax,0x64+%4\n \
-        movzbl  _vec_mode,%%eax\n \
+        movzbl  "EXPORT_SYMBOL(vec_mode)",%%eax\n \
         jmpl    *fb_jt(,%%eax,4)\n \
     # ---------------------------------------------------------------------------\n \
     fb_jt:            # DATA XREF: trig_+139B\n \
@@ -1978,7 +1986,7 @@ int trig_fb_start(struct TrigLocals *lv, const struct PolyPoint *opt_a, const st
         addl    %%edi,%%esi\n \
         cmpb   $0,5+%4\n \
         jz     fb_loc04\n \
-        movl    _LOC_vec_window_height,%%edi\n \
+        movl    "EXPORT_SYMBOL(LOC_vec_window_height)",%%edi\n \
         movl    %%edi,0x4C+%4\n \
         movl    %%edi,0x5C+%4\n \
         jmp     fb_loc04\n \
@@ -1987,13 +1995,13 @@ int trig_fb_start(struct TrigLocals *lv, const struct PolyPoint *opt_a, const st
     fb_loc03:\n \
         cmpb   $0,5+%4\n \
         jz     fb_loc04\n \
-        movl    _LOC_vec_window_height,%%edi\n \
+        movl    "EXPORT_SYMBOL(LOC_vec_window_height)",%%edi\n \
         subl    0x18+%4,%%edi\n \
         movl    %%edi,0x4C+%4\n \
         movl    %%edi,0x5C+%4\n \
     \n \
     fb_loc04:\n \
-        leal    _polyscans,%%edi\n \
+        leal    "EXPORT_SYMBOL(polyscans)",%%edi\n \
     \n \
     fb_loc05:\n \
         movl    %%eax,(%%edi)\n \
@@ -2065,7 +2073,7 @@ int trig_fb_start(struct TrigLocals *lv, const struct PolyPoint *opt_a, const st
         addl    %%edi,%%esi\n \
         cmpb   $0,5+%4\n \
         jz     fb_loc07\n \
-        movl    _LOC_vec_window_height,%%edi\n \
+        movl    "EXPORT_SYMBOL(LOC_vec_window_height)",%%edi\n \
         movl    %%edi,0x4C+%4\n \
         movl    %%edi,0x5C+%4\n \
         jmp     fb_loc07\n \
@@ -2074,13 +2082,13 @@ int trig_fb_start(struct TrigLocals *lv, const struct PolyPoint *opt_a, const st
     fb_loc06:\n \
         cmpb   $0,5+%4\n \
         jz     fb_loc07\n \
-        movl    _LOC_vec_window_height,%%edi\n \
+        movl    "EXPORT_SYMBOL(LOC_vec_window_height)",%%edi\n \
         subl    0x18+%4,%%edi\n \
         movl    %%edi,0x4C+%4\n \
         movl    %%edi,0x5C+%4\n \
     \n \
     fb_loc07:\n \
-        leal    _polyscans,%%edi\n \
+        leal    "EXPORT_SYMBOL(polyscans)",%%edi\n \
     \n \
     fb_loc08:            # 162A\n \
         movl    %%eax,(%%edi)\n \
@@ -2133,7 +2141,7 @@ int trig_fb_start(struct TrigLocals *lv, const struct PolyPoint *opt_a, const st
         addl    %%edi,%%esi\n \
         cmpb   $0,5+%4\n \
         jz     fb_loc10\n \
-        movl    _LOC_vec_window_height,%%edi\n \
+        movl    "EXPORT_SYMBOL(LOC_vec_window_height)",%%edi\n \
         movl    %%edi,0x4C+%4\n \
         movl    %%edi,0x5C+%4\n \
         jmp     fb_loc10\n \
@@ -2142,13 +2150,13 @@ int trig_fb_start(struct TrigLocals *lv, const struct PolyPoint *opt_a, const st
     fb_loc09:            # 1669\n \
         cmpb   $0,5+%4\n \
         jz     fb_loc10\n \
-        movl    _LOC_vec_window_height,%%edi\n \
+        movl    "EXPORT_SYMBOL(LOC_vec_window_height)",%%edi\n \
         subl    0x18+%4,%%edi\n \
         movl    %%edi,0x4C+%4\n \
         movl    %%edi,0x5C+%4\n \
     \n \
     fb_loc10:\n \
-        leal    _polyscans,%%edi\n \
+        leal    "EXPORT_SYMBOL(polyscans)",%%edi\n \
     \n \
     fb_loc11:            # 16F1\n \
         movl    %%eax,(%%edi)\n \
@@ -2183,7 +2191,7 @@ int trig_fb_start(struct TrigLocals *lv, const struct PolyPoint *opt_a, const st
         addl    %%edi,%%ebx\n \
         cmpb   $0,5+%4\n \
         jz     fb_loc12\n \
-        movl    _LOC_vec_window_height,%%edi\n \
+        movl    "EXPORT_SYMBOL(LOC_vec_window_height)",%%edi\n \
         movl    %%edi,0x4C+%4\n \
         movl    %%edi,0x5C+%4\n \
         jmp     fb_loc12\n \
@@ -2192,13 +2200,13 @@ int trig_fb_start(struct TrigLocals *lv, const struct PolyPoint *opt_a, const st
     fb_loc13:            # 170D\n \
         cmpb   $0,5+%4\n \
         jz     fb_loc12\n \
-        movl    _LOC_vec_window_height,%%edi\n \
+        movl    "EXPORT_SYMBOL(LOC_vec_window_height)",%%edi\n \
         subl    0x18+%4,%%edi\n \
         movl    %%edi,0x4C+%4\n \
         movl    %%edi,0x5C+%4\n \
     \n \
     fb_loc12:            # 173E trig_+174E ...\n \
-        leal    _polyscans,%%edi\n \
+        leal    "EXPORT_SYMBOL(polyscans)",%%edi\n \
     \n \
     fb_loc14:            # 1783\n \
         movl    %%eax,(%%edi)\n \
@@ -2232,23 +2240,23 @@ int trig_ft_start(struct TrigLocals *lv, const struct PolyPoint *opt_a, const st
         movl    %%eax,0x18+%4\n \
         orl    %%eax,%%eax\n \
         jns     ft_loc02\n \
-        movl    _LOC_poly_screen,%%ebx\n \
+        movl    "EXPORT_SYMBOL(LOC_poly_screen)",%%ebx\n \
         movl    %%ebx,0x6C+%4\n \
         movb   $1,6+%4\n \
         jmp     ft_loc01\n \
     \n \
     ft_loc02:            # 17AA\n \
-        cmpl    _LOC_vec_window_height,%%eax\n \
+        cmpl    "EXPORT_SYMBOL(LOC_vec_window_height)",%%eax\n \
         jge     ft_skipped\n \
         movl    %%eax,%%ebx\n \
-        imull    _LOC_vec_screen_width,%%ebx\n \
-        addl    _LOC_poly_screen,%%ebx\n \
+        imull    "EXPORT_SYMBOL(LOC_vec_screen_width)",%%ebx\n \
+        addl    "EXPORT_SYMBOL(LOC_poly_screen)",%%ebx\n \
         movl    %%ebx,0x6C+%4\n \
         movb   $0,6+%4\n \
     \n \
     ft_loc01:            # 17BA\n \
         movl    4(%%ecx),%%ebx\n \
-        cmpl    _LOC_vec_window_height,%%ebx\n \
+        cmpl    "EXPORT_SYMBOL(LOC_vec_window_height)",%%ebx\n \
         setnle    5+%4\n \
         subl    %%eax,%%ebx\n \
         movl    %%ebx,0x5C+%4\n \
@@ -2265,7 +2273,7 @@ int trig_ft_start(struct TrigLocals *lv, const struct PolyPoint *opt_a, const st
         cltd    \n \
         idivl    %%ebx\n \
         movl    %%eax,0x64+%4\n \
-        movzbl  _vec_mode,%%eax\n \
+        movzbl  "EXPORT_SYMBOL(vec_mode)",%%eax\n \
         jmpl    *ft_jt(,%%eax,4)\n \
     # ---------------------------------------------------------------------------\n \
     ft_jt:            # DATA XREF: trig_+181A\n \
@@ -2362,7 +2370,7 @@ int trig_ft_start(struct TrigLocals *lv, const struct PolyPoint *opt_a, const st
         addl    %%edi,%%esi\n \
         cmpb   $0,5+%4\n \
         jz     ft_loc04\n \
-        movl    _LOC_vec_window_height,%%edi\n \
+        movl    "EXPORT_SYMBOL(LOC_vec_window_height)",%%edi\n \
         movl    %%edi,0x4C+%4\n \
         movl    %%edi,0x5C+%4\n \
         jmp     ft_loc04\n \
@@ -2371,13 +2379,13 @@ int trig_ft_start(struct TrigLocals *lv, const struct PolyPoint *opt_a, const st
     ft_loc03:            # 18FD\n \
         cmpb   $0,5+%4\n \
         jz     ft_loc04\n \
-        movl    _LOC_vec_window_height,%%edi\n \
+        movl    "EXPORT_SYMBOL(LOC_vec_window_height)",%%edi\n \
         subl    0x18+%4,%%edi\n \
         movl    %%edi,0x4C+%4\n \
         movl    %%edi,0x5C+%4\n \
     \n \
     ft_loc04:            # 194F trig_+195F ...\n \
-        leal    _polyscans,%%edi\n \
+        leal    "EXPORT_SYMBOL(polyscans)",%%edi\n \
     \n \
     ft_loc05:            # 19A9\n \
         movl    %%eax,(%%edi)\n \
@@ -2447,7 +2455,7 @@ int trig_ft_start(struct TrigLocals *lv, const struct PolyPoint *opt_a, const st
         addl    %%edi,%%edx\n \
         cmpb   $0,5+%4\n \
         jz     ft_loc07\n \
-        movl    _LOC_vec_window_height,%%edi\n \
+        movl    "EXPORT_SYMBOL(LOC_vec_window_height)",%%edi\n \
         movl    %%edi,0x4C+%4\n \
         movl    %%edi,0x5C+%4\n \
         jmp     ft_loc07\n \
@@ -2456,13 +2464,13 @@ int trig_ft_start(struct TrigLocals *lv, const struct PolyPoint *opt_a, const st
     ft_loc06:\n \
         cmpb   $0,5+%4\n \
         jz     ft_loc07\n \
-        movl    _LOC_vec_window_height,%%edi\n \
+        movl    "EXPORT_SYMBOL(LOC_vec_window_height)",%%edi\n \
         subl    0x18+%4,%%edi\n \
         movl    %%edi,0x4C+%4\n \
         movl    %%edi,0x5C+%4\n \
     \n \
     ft_loc07:\n \
-        leal    _polyscans,%%edi\n \
+        leal    "EXPORT_SYMBOL(polyscans)",%%edi\n \
     \n \
     ft_loc08:            # 1AA4\n \
         movl    %%eax,(%%edi)\n \
@@ -2516,7 +2524,7 @@ int trig_ft_start(struct TrigLocals *lv, const struct PolyPoint *opt_a, const st
         addl    %%edi,%%esi\n \
         cmpb   $0,5+%4\n \
         jz     ft_loc10\n \
-        movl    _LOC_vec_window_height,%%edi\n \
+        movl    "EXPORT_SYMBOL(LOC_vec_window_height)",%%edi\n \
         movl    %%edi,0x4C+%4\n \
         movl    %%edi,0x5C+%4\n \
         jmp     ft_loc10\n \
@@ -2525,13 +2533,13 @@ int trig_ft_start(struct TrigLocals *lv, const struct PolyPoint *opt_a, const st
     ft_loc09:\n \
         cmpb   $0,5+%4\n \
         jz     ft_loc10\n \
-        movl    _LOC_vec_window_height,%%edi\n \
+        movl    "EXPORT_SYMBOL(LOC_vec_window_height)",%%edi\n \
         subl    0x18+%4,%%edi\n \
         movl    %%edi,0x4C+%4\n \
         movl    %%edi,0x5C+%4\n \
     \n \
     ft_loc10:\n \
-        leal    _polyscans,%%edi\n \
+        leal    "EXPORT_SYMBOL(polyscans)",%%edi\n \
     \n \
     ft_loc11:            # 1B6E\n \
         movl    %%eax,(%%edi)\n \
@@ -2567,7 +2575,7 @@ int trig_ft_start(struct TrigLocals *lv, const struct PolyPoint *opt_a, const st
         addl    %%edi,%%ebx\n \
         cmpb   $0,5+%4\n \
         jz     ft_loc13\n \
-        movl    _LOC_vec_window_height,%%edi\n \
+        movl    "EXPORT_SYMBOL(LOC_vec_window_height)",%%edi\n \
         movl    %%edi,0x4C+%4\n \
         movl    %%edi,0x5C+%4\n \
         jmp     ft_loc13\n \
@@ -2576,13 +2584,13 @@ int trig_ft_start(struct TrigLocals *lv, const struct PolyPoint *opt_a, const st
     ft_loc12:\n \
         cmpb   $0,5+%4\n \
         jz     ft_loc13\n \
-        movl    _LOC_vec_window_height,%%edi\n \
+        movl    "EXPORT_SYMBOL(LOC_vec_window_height)",%%edi\n \
         subl    0x18+%4,%%edi\n \
         movl    %%edi,0x4C+%4\n \
         movl    %%edi,0x5C+%4\n \
     \n \
     ft_loc13:\n \
-        leal    _polyscans,%%edi\n \
+        leal    "EXPORT_SYMBOL(polyscans)",%%edi\n \
     \n \
     ft_loc14:            # 1C03\n \
         movl    %%eax,(%%edi)\n \
@@ -2625,7 +2633,9 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
     struct PolyPoint *opt_c;
     static struct TrigLocals lv;
     long start_type;
-    volatile int a, b, c, d, D, S;
+    volatile int a, b, c, S;
+    ubyte *d;
+    ubyte *D = NULL;
     LOGNO("Pa(%ld,%ld,%ld)",point_a->U,point_a->V,point_a->S);
     LOGNO("Pb(%ld,%ld,%ld)",point_b->U,point_b->V,point_b->S);
     LOGNO("Pc(%ld,%ld,%ld)",point_c->U,point_c->V,point_c->S);
@@ -2789,7 +2799,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
     case RendVec_mode02:
         asm volatile (" \
         render_md02:\n \
-            leal    _polyscans,%%esi\n \
+            leal    "EXPORT_SYMBOL(polyscans)",%%esi\n \
             movl    0x3C+%[lv],%%eax\n \
             shll    $0x10,%%eax\n \
             movl    %%eax,0x20+%[lv]\n \
@@ -2801,7 +2811,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movw    2(%%esi),%%ax\n \
             movzwl   6(%%esi),%%ecx\n \
             movl    0x6C+%[lv],%%edi\n \
-            addl    _LOC_vec_screen_width,%%edi\n \
+            addl    "EXPORT_SYMBOL(LOC_vec_screen_width)",%%edi\n \
             movl    %%edi,0x6C+%[lv]\n \
             orw    %%ax,%%ax\n \
             jns     render02_loc03\n \
@@ -2819,18 +2829,18 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movw    %%ax,%%dx\n \
             shrl    $8,%%eax\n \
             movb    %%ah,%%bl\n \
-            cmpl    _LOC_vec_window_width,%%ecx\n \
+            cmpl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
             jle     render02_loc02\n \
-            movl    _LOC_vec_window_width,%%ecx\n \
+            movl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
         \n \
         render02_loc02:\n \
             movzwl    %%ax,%%eax\n \
             jmp     render02_loc05\n \
         \n \
         render02_loc03:\n \
-            cmpl    _LOC_vec_window_width,%%ecx\n \
+            cmpl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
             jle     render02_loc04\n \
-            movl    _LOC_vec_window_width,%%ecx\n \
+            movl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
         \n \
         render02_loc04:            # 1F2A\n \
             subw    %%ax,%%cx\n \
@@ -2844,7 +2854,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         \n \
         render02_loc05:            # 1F22\n \
             movl    %%esi,0x10+%[lv]\n \
-            movl    _LOC_vec_map,%%esi\n \
+            movl    "EXPORT_SYMBOL(LOC_vec_map)",%%esi\n \
         \n \
         render02_loc06:            # 2134\n \
             movb    (%%ebx,%%esi),%%al\n \
@@ -2992,7 +3002,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         break;
     case RendVec_mode03:
         asm volatile (" \
-            leal    _polyscans,%%esi\n \
+            leal    "EXPORT_SYMBOL(polyscans)",%%esi\n \
             movl    0x3C+%[lv],%%eax\n \
             shll    $0x10,%%eax\n \
             movl    %%eax,0x20+%[lv]\n \
@@ -3004,7 +3014,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movw    2(%%esi),%%ax\n \
             movzwl   6(%%esi),%%ecx\n \
             movl    0x6C+%[lv],%%edi\n \
-            addl    _LOC_vec_screen_width,%%edi\n \
+            addl    "EXPORT_SYMBOL(LOC_vec_screen_width)",%%edi\n \
             movl    %%edi,0x6C+%[lv]\n \
             orw    %%ax,%%ax\n \
             jns     render03_loc03\n \
@@ -3022,9 +3032,9 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movw    %%ax,%%dx\n \
             shrl    $8,%%eax\n \
             movb    %%ah,%%bl\n \
-            cmpl    _LOC_vec_window_width,%%ecx\n \
+            cmpl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
             jle     render03_loc02\n \
-            movl    _LOC_vec_window_width,%%ecx\n \
+            movl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
         \n \
         render03_loc02:\n \
             movzwl    %%ax,%%eax\n \
@@ -3032,9 +3042,9 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         # ---------------------------------------------------------------------------\n \
         \n \
         render03_loc03:\n \
-            cmpl    _LOC_vec_window_width,%%ecx\n \
+            cmpl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
             jle     render03_loc04\n \
-            movl    _LOC_vec_window_width,%%ecx\n \
+            movl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
         \n \
         render03_loc04:\n \
             subw    %%ax,%%cx\n \
@@ -3048,7 +3058,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         \n \
         render03_loc05:\n \
             movl    %%esi,0x10+%[lv]\n \
-            movl    _LOC_vec_map,%%esi\n \
+            movl    "EXPORT_SYMBOL(LOC_vec_map)",%%esi\n \
         \n \
         render03_loc06:\n \
             movb    (%%ebx,%%esi),%%al\n \
@@ -3261,7 +3271,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         break;
     case RendVec_mode04:
         asm volatile (" \
-            leal    _polyscans,%%esi\n \
+            leal    "EXPORT_SYMBOL(polyscans)",%%esi\n \
             xorl    %%ebx,%%ebx\n \
             xorl    %%ecx,%%ecx\n \
         \n \
@@ -3269,7 +3279,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movw    2(%%esi),%%ax\n \
             movzwl   6(%%esi),%%ecx\n \
             movl    0x6C+%[lv],%%edi\n \
-            addl    _LOC_vec_screen_width,%%edi\n \
+            addl    "EXPORT_SYMBOL(LOC_vec_screen_width)",%%edi\n \
             movl    %%edi,0x6C+%[lv]\n \
             orw    %%ax,%%ax\n \
             jns     render_md04_loc05\n \
@@ -3282,9 +3292,9 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             shrl    $8,%%eax\n \
             addw    0x10(%%esi),%%bx\n \
             adcb    0x12(%%esi),%%ah\n \
-            cmpl    _LOC_vec_window_width,%%ecx\n \
+            cmpl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
             jle     render_md04_loc04\n \
-            movl    _LOC_vec_window_width,%%ecx\n \
+            movl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
         \n \
         render_md04_loc04:            # 2479\n \
             movzwl    %%ax,%%eax\n \
@@ -3292,9 +3302,9 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jmp     render_md04_loc03\n \
         \n \
         render_md04_loc05:\n \
-            cmpl    _LOC_vec_window_width,%%ecx\n \
+            cmpl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
             jle     render_md04_loc06\n \
-            movl    _LOC_vec_window_width,%%ecx\n \
+            movl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
         \n \
         render_md04_loc06:\n \
             subw    %%ax,%%cx\n \
@@ -3464,7 +3474,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
     case RendVec_mode05:
         asm volatile (" \
             pushl   %%ebp\n \
-            leal    _polyscans,%%esi\n \
+            leal    "EXPORT_SYMBOL(polyscans)",%%esi\n \
             movl    %%esi,0x10+%[lv]\n \
             xorl    %%ebx,%%ebx\n \
             pushl   %%ebp\n \
@@ -3491,7 +3501,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             sarl    $0x10,%%eax\n \
             sarl    $0x10,%%ebp\n \
             movl    0x6C+%[lv],%%edi\n \
-            addl    _LOC_vec_screen_width,%%edi\n \
+            addl    "EXPORT_SYMBOL(LOC_vec_screen_width)",%%edi\n \
             movl    %%edi,0x6C+%[lv]\n \
             orl    %%eax,%%eax\n \
             jns     render05_loc03\n \
@@ -3514,18 +3524,18 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    %%cl,%%dl\n \
             movw    %%bx,%%cx\n \
             movb    %%al,%%bh\n \
-            cmpl    _LOC_vec_window_width,%%ebp\n \
+            cmpl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ebp\n \
             jle     render05_loc02\n \
-            movl    _LOC_vec_window_width,%%ebp\n \
+            movl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ebp\n \
         \n \
         render05_loc02:            # 272D\n \
             jmp     render05_loc05\n \
         # ---------------------------------------------------------------------------\n \
         \n \
         render05_loc03:            # 26EB\n \
-            cmpl    _LOC_vec_window_width,%%ebp\n \
+            cmpl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ebp\n \
             jle     render05_loc04\n \
-            movl    _LOC_vec_window_width,%%ebp\n \
+            movl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ebp\n \
         \n \
         render05_loc04:            # 273D\n \
             subl    %%eax,%%ebp\n \
@@ -3548,7 +3558,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movl    %%ebp,%%eax\n \
             andl    $0x0F,%%eax\n \
             addl    add_to_edi(,%%eax,4),%%edi\n \
-            movl    _LOC_vec_map,%%esi\n \
+            movl    "EXPORT_SYMBOL(LOC_vec_map)",%%esi\n \
             jmpl    *gt_jt(,%%eax,4)\n \
         # ---------------------------------------------------------------------------\n \
         add_to_edi:\n \
@@ -3842,7 +3852,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             D += add_to_edi[S];
         asm volatile (" \
             pushl   %%ebp\n \
-            movl    _LOC_vec_map,%%ebp\n \
+            movl    "EXPORT_SYMBOL(LOC_vec_map)",%%ebp\n \
             jmpl    *mgt_jt(,%%esi,4)\n \
         # ---------------------------------------------------------------------------\n \
         mgt_jt:\n \
@@ -4168,7 +4178,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             cmpb   $0x20,_vec_colour\n \
             # This is bad - the jump below leads outside this asm block...\n \
             jz     render_md02\n \
-            leal    _polyscans,%%esi\n \
+            leal    "EXPORT_SYMBOL(polyscans)",%%esi\n \
             movl    0x3C+%[lv],%%eax\n \
             shll    $0x10,%%eax\n \
             movl    %%eax,0x20+%[lv]\n \
@@ -4180,7 +4190,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movw    2(%%esi),%%ax\n \
             movzwl   6(%%esi),%%ecx\n \
             movl    0x6C+%[lv],%%edi\n \
-            addl    _LOC_vec_screen_width,%%edi\n \
+            addl    "EXPORT_SYMBOL(LOC_vec_screen_width)",%%edi\n \
             movl    %%edi,0x6C+%[lv]\n \
             orw    %%ax,%%ax\n \
             jns     loc_78A8E9\n \
@@ -4198,9 +4208,9 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movw    %%ax,%%dx\n \
             shrl    $8,%%eax\n \
             movb    %%ah,%%bl\n \
-            cmpl    _LOC_vec_window_width,%%ecx\n \
+            cmpl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
             jle     loc_78A8E4\n \
-            movl    _LOC_vec_window_width,%%ecx\n \
+            movl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
         \n \
         loc_78A8E4:\n \
             movzwl    %%ax,%%eax\n \
@@ -4208,9 +4218,9 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         # ---------------------------------------------------------------------------\n \
         \n \
         loc_78A8E9:\n \
-            cmpl    _LOC_vec_window_width,%%ecx\n \
+            cmpl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
             jle     loc_78A8F7\n \
-            movl    _LOC_vec_window_width,%%ecx\n \
+            movl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
         \n \
         loc_78A8F7:            # 2E0F\n \
             subw    %%ax,%%cx\n \
@@ -4224,7 +4234,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         \n \
         loc_78A911:            # 2E07\n \
             movl    %%esi,0x10+%[lv]\n \
-            movl    _LOC_vec_map,%%esi\n \
+            movl    "EXPORT_SYMBOL(LOC_vec_map)",%%esi\n \
             movb    _vec_colour,%%ah\n \
         \n \
         loc_78A921:            # 3083\n \
@@ -4438,7 +4448,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         break;
     case RendVec_mode08:
         asm volatile (" \
-            leal    _polyscans,%%esi\n \
+            leal    "EXPORT_SYMBOL(polyscans)",%%esi\n \
             movl    0x3C+%[lv],%%eax\n \
             shll    $0x10,%%eax\n \
             movl    %%eax,0x20+%[lv]\n \
@@ -4450,7 +4460,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movw    2(%%esi),%%ax\n \
             movzwl   6(%%esi),%%ecx\n \
             movl    0x6C+%[lv],%%edi\n \
-            addl    _LOC_vec_screen_width,%%edi\n \
+            addl    "EXPORT_SYMBOL(LOC_vec_screen_width)",%%edi\n \
             movl    %%edi,0x6C+%[lv]\n \
             orw    %%ax,%%ax\n \
             jns     loc_78ABEF\n \
@@ -4468,9 +4478,9 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movw    %%ax,%%dx\n \
             shrl    $8,%%eax\n \
             movb    %%ah,%%bl\n \
-            cmpl    _LOC_vec_window_width,%%ecx\n \
+            cmpl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
             jle     loc_78ABEA\n \
-            movl    _LOC_vec_window_width,%%ecx\n \
+            movl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
         \n \
         loc_78ABEA:            # 3102\n \
             movzwl    %%ax,%%eax\n \
@@ -4478,9 +4488,9 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         # ---------------------------------------------------------------------------\n \
         \n \
         loc_78ABEF:            # 30CC\n \
-            cmpl    _LOC_vec_window_width,%%ecx\n \
+            cmpl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
             jle     loc_78ABFD\n \
-            movl    _LOC_vec_window_width,%%ecx\n \
+            movl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
         \n \
         loc_78ABFD:            # 3115\n \
             subw    %%ax,%%cx\n \
@@ -4494,7 +4504,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         \n \
         loc_78AC17:            # 310D\n \
             movl    %%esi,0x10+%[lv]\n \
-            movl    _LOC_vec_map,%%esi\n \
+            movl    "EXPORT_SYMBOL(LOC_vec_map)",%%esi\n \
             movb    _vec_colour,%%ah\n \
         \n \
         loc_78AC27:            # 33C9\n \
@@ -4772,7 +4782,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         break;
     case RendVec_mode09:
         asm volatile (" \
-            leal    _polyscans,%%esi\n \
+            leal    "EXPORT_SYMBOL(polyscans)",%%esi\n \
             movl    0x3C+%[lv],%%eax\n \
             shll    $0x10,%%eax\n \
             movl    %%eax,0x20+%[lv]\n \
@@ -4784,7 +4794,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movw    2(%%esi),%%ax\n \
             movzwl   6(%%esi),%%ecx\n \
             movl    0x6C+%[lv],%%edi\n \
-            addl    _LOC_vec_screen_width,%%edi\n \
+            addl    "EXPORT_SYMBOL(LOC_vec_screen_width)",%%edi\n \
             movl    %%edi,0x6C+%[lv]\n \
             orw    %%ax,%%ax\n \
             jns     loc_78AF35\n \
@@ -4802,9 +4812,9 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movw    %%ax,%%dx\n \
             shrl    $8,%%eax\n \
             movb    %%ah,%%bl\n \
-            cmpl    _LOC_vec_window_width,%%ecx\n \
+            cmpl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
             jle     loc_78AF30\n \
-            movl    _LOC_vec_window_width,%%ecx\n \
+            movl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
         \n \
         loc_78AF30:            # 3448\n \
             movzwl    %%ax,%%eax\n \
@@ -4812,9 +4822,9 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         # ---------------------------------------------------------------------------\n \
         \n \
         loc_78AF35:            # 3412\n \
-            cmpl    _LOC_vec_window_width,%%ecx\n \
+            cmpl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
             jle     loc_78AF43\n \
-            movl    _LOC_vec_window_width,%%ecx\n \
+            movl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
         \n \
         loc_78AF43:            # 345B\n \
             subw    %%ax,%%cx\n \
@@ -4828,7 +4838,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         \n \
         loc_78AF5D:            # 3453\n \
             movl    %%esi,0x10+%[lv]\n \
-            movl    _LOC_vec_map,%%esi\n \
+            movl    "EXPORT_SYMBOL(LOC_vec_map)",%%esi\n \
         \n \
         loc_78AF67:            # 373C\n \
             movb    (%%ebx,%%esi),%%ah\n \
@@ -5121,7 +5131,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         break;
     case RendVec_mode10:
         asm volatile (" \
-            leal    _polyscans,%%esi\n \
+            leal    "EXPORT_SYMBOL(polyscans)",%%esi\n \
             movl    0x3C+%[lv],%%eax\n \
             shll    $0x10,%%eax\n \
             movl    %%eax,0x20+%[lv]\n \
@@ -5133,7 +5143,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movw    2(%%esi),%%ax\n \
             movzwl   6(%%esi),%%ecx\n \
             movl    0x6C+%[lv],%%edi\n \
-            addl    _LOC_vec_screen_width,%%edi\n \
+            addl    "EXPORT_SYMBOL(LOC_vec_screen_width)",%%edi\n \
             movl    %%edi,0x6C+%[lv]\n \
             orw    %%ax,%%ax\n \
             jns     loc_78B2A8\n \
@@ -5151,9 +5161,9 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movw    %%ax,%%dx\n \
             shrl    $8,%%eax\n \
             movb    %%ah,%%bl\n \
-            cmpl    _LOC_vec_window_width,%%ecx\n \
+            cmpl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
             jle     loc_78B2A3\n \
-            movl    _LOC_vec_window_width,%%ecx\n \
+            movl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
         \n \
         loc_78B2A3:\n \
             movzwl    %%ax,%%eax\n \
@@ -5161,9 +5171,9 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         # ---------------------------------------------------------------------------\n \
         \n \
         loc_78B2A8:\n \
-            cmpl    _LOC_vec_window_width,%%ecx\n \
+            cmpl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
             jle     loc_78B2B6\n \
-            movl    _LOC_vec_window_width,%%ecx\n \
+            movl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
         \n \
         loc_78B2B6:\n \
             subw    %%ax,%%cx\n \
@@ -5178,7 +5188,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         loc_78B2D0:            # 37C6\n \
             movb    _vec_colour,%%ah\n \
             movl    %%esi,0x10+%[lv]\n \
-            movl    _LOC_vec_map,%%esi\n \
+            movl    "EXPORT_SYMBOL(LOC_vec_map)",%%esi\n \
         \n \
         loc_78B2E0:            # 3AB5\n \
             movb    (%%ebx,%%esi),%%al\n \
@@ -5472,7 +5482,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         break;
     case RendVec_mode12:
         asm volatile (" \
-            leal    _polyscans,%%esi\n \
+            leal    "EXPORT_SYMBOL(polyscans)",%%esi\n \
             movl    0x3C+%[lv],%%eax\n \
             shll    $0x10,%%eax\n \
             movl    %%eax,0x20+%[lv]\n \
@@ -5484,7 +5494,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movw    2(%%esi),%%ax\n \
             movzwl   6(%%esi),%%ecx\n \
             movl    0x6C+%[lv],%%edi\n \
-            addl    _LOC_vec_screen_width,%%edi\n \
+            addl    "EXPORT_SYMBOL(LOC_vec_screen_width)",%%edi\n \
             movl    %%edi,0x6C+%[lv]\n \
             orw    %%ax,%%ax\n \
             jns     loc_78B621\n \
@@ -5502,9 +5512,9 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movw    %%ax,%%dx\n \
             shrl    $8,%%eax\n \
             movb    %%ah,%%bl\n \
-            cmpl    _LOC_vec_window_width,%%ecx\n \
+            cmpl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
             jle     loc_78B61C\n \
-            movl    _LOC_vec_window_width,%%ecx\n \
+            movl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
         \n \
         loc_78B61C:            # 3B34\n \
             movzwl    %%ax,%%eax\n \
@@ -5512,9 +5522,9 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         # ---------------------------------------------------------------------------\n \
         \n \
         loc_78B621:            # 3AFE\n \
-            cmpl    _LOC_vec_window_width,%%ecx\n \
+            cmpl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
             jle     loc_78B62F\n \
-            movl    _LOC_vec_window_width,%%ecx\n \
+            movl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
         \n \
         loc_78B62F:            # 3B47\n \
             subw    %%ax,%%cx\n \
@@ -5528,7 +5538,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         \n \
         loc_78B649:            # 3B3F\n \
             movl    %%esi,0x10+%[lv]\n \
-            movl    _LOC_vec_map,%%esi\n \
+            movl    "EXPORT_SYMBOL(LOC_vec_map)",%%esi\n \
             movb    _vec_colour,%%al\n \
         \n \
         loc_78B658:            # 3DBA\n \
@@ -5742,7 +5752,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         break;
     case RendVec_mode13:
         asm volatile (" \
-            leal    _polyscans,%%esi\n \
+            leal    "EXPORT_SYMBOL(polyscans)",%%esi\n \
             movl    0x3C+%[lv],%%eax\n \
             shll    $0x10,%%eax\n \
             movl    %%eax,0x20+%[lv]\n \
@@ -5754,7 +5764,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movw    2(%%esi),%%ax\n \
             movzwl   6(%%esi),%%ecx\n \
             movl    0x6C+%[lv],%%edi\n \
-            addl    _LOC_vec_screen_width,%%edi\n \
+            addl    "EXPORT_SYMBOL(LOC_vec_screen_width)",%%edi\n \
             movl    %%edi,0x6C+%[lv]\n \
             orw    %%ax,%%ax\n \
             jns     loc_78B926\n \
@@ -5772,9 +5782,9 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movw    %%ax,%%dx\n \
             shrl    $8,%%eax\n \
             movb    %%ah,%%bl\n \
-            cmpl    _LOC_vec_window_width,%%ecx\n \
+            cmpl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
             jle     loc_78B921\n \
-            movl    _LOC_vec_window_width,%%ecx\n \
+            movl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
         \n \
         loc_78B921:            # 3E39\n \
             movzwl    %%ax,%%eax\n \
@@ -5782,9 +5792,9 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         # ---------------------------------------------------------------------------\n \
         \n \
         loc_78B926:            # 3E03\n \
-            cmpl    _LOC_vec_window_width,%%ecx\n \
+            cmpl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
             jle     loc_78B934\n \
-            movl    _LOC_vec_window_width,%%ecx\n \
+            movl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
         \n \
         loc_78B934:            # 3E4C\n \
             subw    %%ax,%%cx\n \
@@ -5798,7 +5808,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         \n \
         loc_78B94E:            # 3E44\n \
             movl    %%esi,0x10+%[lv]\n \
-            movl    _LOC_vec_map,%%esi\n \
+            movl    "EXPORT_SYMBOL(LOC_vec_map)",%%esi\n \
             movb    _vec_colour,%%ah\n \
         \n \
         loc_78B95E:            # 40C0\n \
@@ -6012,7 +6022,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         break;
     case RendVec_mode14:
         asm volatile (" \
-            leal    _polyscans,%%esi\n \
+            leal    "EXPORT_SYMBOL(polyscans)",%%esi\n \
             movl   0x6C+%[lv],%%edx\n \
             xorl    %%eax,%%eax\n \
             movb    _vec_colour,%%ah\n \
@@ -6022,14 +6032,14 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         render14_loop:            # 4265\n \
             movw    2(%%esi),%%bx\n \
             movzwl   6(%%esi),%%ecx\n \
-            addl   _LOC_vec_screen_width,%%edx\n \
+            addl   "EXPORT_SYMBOL(LOC_vec_screen_width)",%%edx\n \
             orw    %%bx,%%bx\n \
             jns     loc_78BBFE\n \
             orw    %%cx,%%cx\n \
             jle     loc_78BD3E\n \
-            cmpl    _LOC_vec_window_width,%%ecx\n \
+            cmpl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
             jle     loc_78BBFA\n \
-            movl    _LOC_vec_window_width,%%ecx\n \
+            movl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
         \n \
         loc_78BBFA:            # 4112\n \
             movl    %%edx,%%edi\n \
@@ -6037,9 +6047,9 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         # ---------------------------------------------------------------------------\n \
         \n \
         loc_78BBFE:            # 4101\n \
-            cmpl    _LOC_vec_window_width,%%ecx\n \
+            cmpl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
             jle     loc_78BC0C\n \
-            movl    _LOC_vec_window_width,%%ecx\n \
+            movl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
         \n \
         loc_78BC0C:            # 4124\n \
             subw    %%bx,%%cx\n \
@@ -6190,7 +6200,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         break;
     case RendVec_mode15:
         asm volatile (" \
-            leal    _polyscans,%%esi\n \
+            leal    "EXPORT_SYMBOL(polyscans)",%%esi\n \
             movl   0x6C+%[lv],%%edx\n \
             movzbl   _vec_colour,%%eax\n \
             xorl    %%ebx,%%ebx\n \
@@ -6199,14 +6209,14 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         render15_loop:            # 43F9\n \
             movw    2(%%esi),%%bx\n \
             movzwl   6(%%esi),%%ecx\n \
-            addl   _LOC_vec_screen_width,%%edx\n \
+            addl   "EXPORT_SYMBOL(LOC_vec_screen_width)",%%edx\n \
             orw    %%bx,%%bx\n \
             jns     loc_78BD92\n \
             orw    %%cx,%%cx\n \
             jle     render15_continue\n \
-            cmpl    _LOC_vec_window_width,%%ecx\n \
+            cmpl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
             jle     loc_78BD8E\n \
-            movl    _LOC_vec_window_width,%%ecx\n \
+            movl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
         \n \
         loc_78BD8E:            # 42A6\n \
             movl    %%edx,%%edi\n \
@@ -6214,9 +6224,9 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         # ---------------------------------------------------------------------------\n \
         \n \
         loc_78BD92:            # 4295\n \
-            cmpl    _LOC_vec_window_width,%%ecx\n \
+            cmpl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
             jle     loc_78BDA0\n \
-            movl    _LOC_vec_window_width,%%ecx\n \
+            movl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
         \n \
         loc_78BDA0:            # 42B8\n \
             subw    %%bx,%%cx\n \
@@ -6367,14 +6377,14 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         break;
     case RendVec_mode16:
         asm volatile (" \
-            leal    _polyscans,%%esi\n \
+            leal    "EXPORT_SYMBOL(polyscans)",%%esi\n \
             xor    %%edx,%%edx\n \
         \n \
         render16_loop:            # 46B2\n \
             movw    2(%%esi),%%ax\n \
             movzwl   6(%%esi),%%ecx\n \
             movl    0x6C+%[lv],%%edi\n \
-            addl    _LOC_vec_screen_width,%%edi\n \
+            addl    "EXPORT_SYMBOL(LOC_vec_screen_width)",%%edi\n \
             movl    %%edi,0x6C+%[lv]\n \
             orw    %%ax,%%ax\n \
             jns     loc_78BF3E\n \
@@ -6387,9 +6397,9 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             shrl    $8,%%eax\n \
             addw    0x10(%%esi),%%bx\n \
             adcb    0x12(%%esi),%%ah\n \
-            cmpl    _LOC_vec_window_width,%%ecx\n \
+            cmpl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
             jle     loc_78BF34\n \
-            movl    _LOC_vec_window_width,%%ecx\n \
+            movl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
         \n \
         loc_78BF34:            # 444C\n \
             movzwl    %%ax,%%eax\n \
@@ -6398,9 +6408,9 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         # ---------------------------------------------------------------------------\n \
         \n \
         loc_78BF3E:            # 4423\n \
-            cmpl    _LOC_vec_window_width,%%ecx\n \
+            cmpl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
             jle     loc_78BF4C\n \
-            movl    _LOC_vec_window_width,%%ecx\n \
+            movl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
         \n \
         loc_78BF4C:            # 4464\n \
             subw    %%ax,%%cx\n \
@@ -6650,14 +6660,14 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         break;
     case RendVec_mode17:
         asm volatile (" \
-            leal    _polyscans,%%esi\n \
+            leal    "EXPORT_SYMBOL(polyscans)",%%esi\n \
             xor    %%edx,%%edx\n \
         \n \
         render17_loop:            # 496B\n \
             movw    2(%%esi),%%ax\n \
             movzwl   6(%%esi),%%ecx\n \
             movl    0x6C+%[lv],%%edi\n \
-            addl    _LOC_vec_screen_width,%%edi\n \
+            addl    "EXPORT_SYMBOL(LOC_vec_screen_width)",%%edi\n \
             movl    %%edi,0x6C+%[lv]\n \
             orw    %%ax,%%ax\n \
             jns     loc_78C1F7\n \
@@ -6670,9 +6680,9 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             shrl    $8,%%eax\n \
             addw    0x10(%%esi),%%bx\n \
             adcb    0x12(%%esi),%%ah\n \
-            cmpl    _LOC_vec_window_width,%%ecx\n \
+            cmpl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
             jle     loc_78C1ED\n \
-            movl    _LOC_vec_window_width,%%ecx\n \
+            movl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
         \n \
         loc_78C1ED:            # 4705\n \
             movzwl    %%ax,%%eax\n \
@@ -6681,9 +6691,9 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         # ---------------------------------------------------------------------------\n \
         \n \
         loc_78C1F7:            # 46DC\n \
-            cmpl    _LOC_vec_window_width,%%ecx\n \
+            cmpl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
             jle     loc_78C205\n \
-            movl    _LOC_vec_window_width,%%ecx\n \
+            movl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
         \n \
         loc_78C205:            # 471D\n \
             subw    %%ax,%%cx\n \
@@ -6933,7 +6943,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         break;
     case RendVec_mode18:
         asm volatile (" \
-            leal    _polyscans,%%esi\n \
+            leal    "EXPORT_SYMBOL(polyscans)",%%esi\n \
             movl    0x3C+%[lv],%%eax\n \
             shll    $0x10,%%eax\n \
             movl    %%eax,0x20+%[lv]\n \
@@ -6945,7 +6955,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movw    2(%%esi),%%ax\n \
             movzwl   6(%%esi),%%ecx\n \
             movl    0x6C+%[lv],%%edi\n \
-            addl    _LOC_vec_screen_width,%%edi\n \
+            addl    "EXPORT_SYMBOL(LOC_vec_screen_width)",%%edi\n \
             movl    %%edi,0x6C+%[lv]\n \
             orw    %%ax,%%ax\n \
             jns     loc_78C4C7\n \
@@ -6963,9 +6973,9 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movw    %%ax,%%dx\n \
             shrl    $8,%%eax\n \
             movb    %%ah,%%bl\n \
-            cmpl    _LOC_vec_window_width,%%ecx\n \
+            cmpl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
             jle     loc_78C4C2\n \
-            movl    _LOC_vec_window_width,%%ecx\n \
+            movl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
         \n \
         loc_78C4C2:            # 49DA\n \
             movzwl    %%ax,%%eax\n \
@@ -6973,9 +6983,9 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         # ---------------------------------------------------------------------------\n \
         \n \
         loc_78C4C7:            # 49A4\n \
-            cmpl    _LOC_vec_window_width,%%ecx\n \
+            cmpl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
             jle     loc_78C4D5\n \
-            movl    _LOC_vec_window_width,%%ecx\n \
+            movl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
         \n \
         loc_78C4D5:            # 49ED\n \
             subw    %%ax,%%cx\n \
@@ -6989,7 +6999,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         \n \
         loc_78C4EF:            # 49E5\n \
             movl    %%esi,0x10+%[lv]\n \
-            movl    _LOC_vec_map,%%esi\n \
+            movl    "EXPORT_SYMBOL(LOC_vec_map)",%%esi\n \
         \n \
         loc_78C4F9:            # 4C8A\n \
             movb    (%%ebx,%%esi),%%ah\n \
@@ -7218,7 +7228,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         break;
     case RendVec_mode19:
         asm volatile (" \
-            leal    _polyscans,%%esi\n \
+            leal    "EXPORT_SYMBOL(polyscans)",%%esi\n \
             movl    0x3C+%[lv],%%eax\n \
             shll    $0x10,%%eax\n \
             movl    %%eax,0x20+%[lv]\n \
@@ -7230,7 +7240,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movw    2(%%esi),%%ax\n \
             movzwl   6(%%esi),%%ecx\n \
             movl    0x6C+%[lv],%%edi\n \
-            addl    _LOC_vec_screen_width,%%edi\n \
+            addl    "EXPORT_SYMBOL(LOC_vec_screen_width)",%%edi\n \
             movl    %%edi,0x6C+%[lv]\n \
             orw    %%ax,%%ax\n \
             jns     loc_78C7F6\n \
@@ -7248,9 +7258,9 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movw    %%ax,%%dx\n \
             shrl    $8,%%eax\n \
             movb    %%ah,%%bl\n \
-            cmpl    _LOC_vec_window_width,%%ecx\n \
+            cmpl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
             jle     loc_78C7F1\n \
-            movl    _LOC_vec_window_width,%%ecx\n \
+            movl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
         \n \
         loc_78C7F1:            # 4D09\n \
             movzwl    %%ax,%%eax\n \
@@ -7258,9 +7268,9 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         # ---------------------------------------------------------------------------\n \
         \n \
         loc_78C7F6:            # 4CD3\n \
-            cmpl    _LOC_vec_window_width,%%ecx\n \
+            cmpl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
             jle     loc_78C804\n \
-            movl    _LOC_vec_window_width,%%ecx\n \
+            movl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
         \n \
         loc_78C804:            # 4D1C\n \
             subw    %%ax,%%cx\n \
@@ -7274,7 +7284,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         \n \
         loc_78C81E:            # 4D14\n \
             movl    %%esi,0x10+%[lv]\n \
-            movl    _LOC_vec_map,%%esi\n \
+            movl    "EXPORT_SYMBOL(LOC_vec_map)",%%esi\n \
         \n \
         loc_78C828:            # 4FB9\n \
             movb    (%%ebx,%%esi),%%al\n \
@@ -7503,7 +7513,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         break;
     case RendVec_mode20:
         asm volatile (" \
-            leal    _polyscans,%%esi\n \
+            leal    "EXPORT_SYMBOL(polyscans)",%%esi\n \
             movl    0x3C+%[lv],%%eax\n \
             shll    $0x10,%%eax\n \
             movl    %%eax,0x20+%[lv]\n \
@@ -7518,15 +7528,15 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movw    2(%%esi),%%ax\n \
             movzwl   6(%%esi),%%ecx\n \
             movl    0x6C+%[lv],%%edi\n \
-            addl    _LOC_vec_screen_width,%%edi\n \
+            addl    "EXPORT_SYMBOL(LOC_vec_screen_width)",%%edi\n \
             movl    %%edi,0x6C+%[lv]\n \
             orw    %%ax,%%ax\n \
             jns     loc_78CB41\n \
             orw    %%cx,%%cx\n \
             jle     render20_continue\n \
-            cmpl    _LOC_vec_window_width,%%ecx\n \
+            cmpl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
             jle     loc_78CB06\n \
-            movl    _LOC_vec_window_width,%%ecx\n \
+            movl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
         \n \
         loc_78CB06:            # 501E\n \
             movl    %%ecx,0x14+%[lv]\n \
@@ -7551,9 +7561,9 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         # ---------------------------------------------------------------------------\n \
         \n \
         loc_78CB41:            # 500D\n \
-            cmpl    _LOC_vec_window_width,%%ecx\n \
+            cmpl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
             jle     loc_78CB4F\n \
-            movl    _LOC_vec_window_width,%%ecx\n \
+            movl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
         \n \
         loc_78CB4F:            # 5067\n \
             subw    %%ax,%%cx\n \
@@ -7570,7 +7580,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         \n \
         loc_78CB73:            # 505F\n \
             movl    %%esi,0x10+%[lv]\n \
-            movl    _LOC_vec_map,%%esi\n \
+            movl    "EXPORT_SYMBOL(LOC_vec_map)",%%esi\n \
         \n \
         loc_78CB7D:            # 5432\n \
             movb    (%%ebx,%%esi),%%al\n \
@@ -7911,7 +7921,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         break;
     case RendVec_mode21:
         asm volatile (" \
-            leal    _polyscans,%%esi\n \
+            leal    "EXPORT_SYMBOL(polyscans)",%%esi\n \
             movl    0x3C+%[lv],%%eax\n \
             shll    $0x10,%%eax\n \
             movl    %%eax,0x20+%[lv]\n \
@@ -7926,15 +7936,15 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movw    2(%%esi),%%ax\n \
             movzwl   6(%%esi),%%ecx\n \
             movl    0x6C+%[lv],%%edi\n \
-            addl    _LOC_vec_screen_width,%%edi\n \
+            addl    "EXPORT_SYMBOL(LOC_vec_screen_width)",%%edi\n \
             movl    %%edi,0x6C+%[lv]\n \
             orw    %%ax,%%ax\n \
             jns     loc_78CFBA\n \
             orw    %%cx,%%cx\n \
             jle     render21_continue\n \
-            cmpl    _LOC_vec_window_width,%%ecx\n \
+            cmpl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
             jle     loc_78CF7F\n \
-            movl    _LOC_vec_window_width,%%ecx\n \
+            movl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
         \n \
         loc_78CF7F:            # 5497\n \
             movl    %%ecx,0x14+%[lv]\n \
@@ -7959,9 +7969,9 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         # ---------------------------------------------------------------------------\n \
         \n \
         loc_78CFBA:\n \
-            cmpl    _LOC_vec_window_width,%%ecx\n \
+            cmpl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
             jle     loc_78CFC8\n \
-            movl    _LOC_vec_window_width,%%ecx\n \
+            movl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
         \n \
         loc_78CFC8:\n \
             subw    %%ax,%%cx\n \
@@ -7978,7 +7988,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         \n \
         loc_78CFEC:            # 54D8\n \
             movl    %%esi,0x10+%[lv]\n \
-            movl    _LOC_vec_map,%%esi\n \
+            movl    "EXPORT_SYMBOL(LOC_vec_map)",%%esi\n \
         \n \
         loc_78CFF6:            # 58AB\n \
             movb    (%%ebx,%%esi),%%al\n \
@@ -8319,7 +8329,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         break;
     case RendVec_mode22:
         asm volatile (" \
-            leal    _polyscans,%%esi\n \
+            leal    "EXPORT_SYMBOL(polyscans)",%%esi\n \
             movl    0x3C+%[lv],%%eax\n \
             shll    $0x10,%%eax\n \
             movl    %%eax,0x20+%[lv]\n \
@@ -8331,7 +8341,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movw    2(%%esi),%%ax\n \
             movzwl   6(%%esi),%%ecx\n \
             movl    0x6C+%[lv],%%edi\n \
-            addl    _LOC_vec_screen_width,%%edi\n \
+            addl    "EXPORT_SYMBOL(LOC_vec_screen_width)",%%edi\n \
             movl    %%edi,0x6C+%[lv]\n \
             orw    %%ax,%%ax\n \
             jns     loc_78D417\n \
@@ -8349,9 +8359,9 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movw    %%ax,%%dx\n \
             shrl    $8,%%eax\n \
             movb    %%ah,%%bl\n \
-            cmpl    _LOC_vec_window_width,%%ecx\n \
+            cmpl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
             jle     loc_78D412\n \
-            movl    _LOC_vec_window_width,%%ecx\n \
+            movl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
         \n \
         loc_78D412:            # 592A\n \
             movzwl    %%ax,%%eax\n \
@@ -8359,9 +8369,9 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         # ---------------------------------------------------------------------------\n \
         \n \
         loc_78D417:            # 58F4\n \
-            cmpl    _LOC_vec_window_width,%%ecx\n \
+            cmpl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
             jle     loc_78D425\n \
-            movl    _LOC_vec_window_width,%%ecx\n \
+            movl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
         \n \
         loc_78D425:            # 593D\n \
             subw    %%ax,%%cx\n \
@@ -8375,7 +8385,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         \n \
         loc_78D43F:            # 5935\n \
             movl    %%esi,0x10+%[lv]\n \
-            movl    _LOC_vec_map,%%esi\n \
+            movl    "EXPORT_SYMBOL(LOC_vec_map)",%%esi\n \
         \n \
         loc_78D449:            # 5C1E\n \
             movb    (%%ebx,%%esi),%%ah\n \
@@ -8668,7 +8678,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         break;
     case RendVec_mode23:
         asm volatile (" \
-            leal    _polyscans,%%esi\n \
+            leal    "EXPORT_SYMBOL(polyscans)",%%esi\n \
             movl    0x3C+%[lv],%%eax\n \
             shll    $0x10,%%eax\n \
             movl    %%eax,0x20+%[lv]\n \
@@ -8680,7 +8690,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movw    2(%%esi),%%ax\n \
             movzwl   6(%%esi),%%ecx\n \
             movl    0x6C+%[lv],%%edi\n \
-            addl    _LOC_vec_screen_width,%%edi\n \
+            addl    "EXPORT_SYMBOL(LOC_vec_screen_width)",%%edi\n \
             movl    %%edi,0x6C+%[lv]\n \
             orw    %%ax,%%ax\n \
             jns     loc_78D78A\n \
@@ -8698,9 +8708,9 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movw    %%ax,%%dx\n \
             shrl    $8,%%eax\n \
             movb    %%ah,%%bl\n \
-            cmpl    _LOC_vec_window_width,%%ecx\n \
+            cmpl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
             jle     loc_78D785\n \
-            movl    _LOC_vec_window_width,%%ecx\n \
+            movl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
         \n \
         loc_78D785:            # 5C9D\n \
             movzwl    %%ax,%%eax\n \
@@ -8708,9 +8718,9 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         # ---------------------------------------------------------------------------\n \
         \n \
         loc_78D78A:            # 5C67\n \
-            cmpl    _LOC_vec_window_width,%%ecx\n \
+            cmpl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
             jle     loc_78D798\n \
-            movl    _LOC_vec_window_width,%%ecx\n \
+            movl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
         \n \
         loc_78D798:            # 5CB0\n \
             subw    %%ax,%%cx\n \
@@ -8724,7 +8734,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         \n \
         loc_78D7B2:            # 5CA8\n \
             movl    %%esi,0x10+%[lv]\n \
-            movl    _LOC_vec_map,%%esi\n \
+            movl    "EXPORT_SYMBOL(LOC_vec_map)",%%esi\n \
         \n \
         loc_78D7BC:            # 5F91\n \
             movb    (%%ebx,%%esi),%%al\n \
@@ -9017,7 +9027,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         break;
     case RendVec_mode24:
         asm volatile (" \
-            leal    _polyscans,%%esi\n \
+            leal    "EXPORT_SYMBOL(polyscans)",%%esi\n \
             movl    0x3C+%[lv],%%eax\n \
             shll    $0x10,%%eax\n \
             movl    %%eax,0x20+%[lv]\n \
@@ -9032,15 +9042,15 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movw    2(%%esi),%%ax\n \
             movzwl   6(%%esi),%%ecx\n \
             movl    0x6C+%[lv],%%edi\n \
-            addl    _LOC_vec_screen_width,%%edi\n \
+            addl    "EXPORT_SYMBOL(LOC_vec_screen_width)",%%edi\n \
             movl    %%edi,0x6C+%[lv]\n \
             orw    %%ax,%%ax\n \
             jns     loc_78DB19\n \
             orw    %%cx,%%cx\n \
             jle     render24_continue\n \
-            cmpl    _LOC_vec_window_width,%%ecx\n \
+            cmpl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
             jle     loc_78DADE\n \
-            movl    _LOC_vec_window_width,%%ecx\n \
+            movl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
         \n \
         loc_78DADE:            # 5FF6\n \
             movl    %%ecx,0x14+%[lv]\n \
@@ -9065,9 +9075,9 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         # ---------------------------------------------------------------------------\n \
         \n \
         loc_78DB19:            # 5FE5\n \
-            cmpl    _LOC_vec_window_width,%%ecx\n \
+            cmpl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
             jle     loc_78DB27\n \
-            movl    _LOC_vec_window_width,%%ecx\n \
+            movl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
         \n \
         loc_78DB27:            # 603F\n \
             subw    %%ax,%%cx\n \
@@ -9084,7 +9094,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         \n \
         loc_78DB4B:            # 6037\n \
             movl    %%esi,0x10+%[lv]\n \
-            movl    _LOC_vec_map,%%esi\n \
+            movl    "EXPORT_SYMBOL(LOC_vec_map)",%%esi\n \
         \n \
         loc_78DB55:            # 644A\n \
             movb    (%%ebx,%%esi),%%al\n \
@@ -9489,7 +9499,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         break;
     case RendVec_mode25:
         asm volatile (" \
-            leal    _polyscans,%%esi\n \
+            leal    "EXPORT_SYMBOL(polyscans)",%%esi\n \
             movl    0x3C+%[lv],%%eax\n \
             shll    $0x10,%%eax\n \
             movl    %%eax,0x20+%[lv]\n \
@@ -9504,15 +9514,15 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movw    2(%%esi),%%ax\n \
             movzwl   6(%%esi),%%ecx\n \
             movl    0x6C+%[lv],%%edi\n \
-            addl    _LOC_vec_screen_width,%%edi\n \
+            addl    "EXPORT_SYMBOL(LOC_vec_screen_width)",%%edi\n \
             movl    %%edi,0x6C+%[lv]\n \
             orw    %%ax,%%ax\n \
             jns     loc_78DFD2\n \
             orw    %%cx,%%cx\n \
             jle     render25_continue\n \
-            cmpl    _LOC_vec_window_width,%%ecx\n \
+            cmpl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
             jle     loc_78DF97\n \
-            movl    _LOC_vec_window_width,%%ecx\n \
+            movl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
         \n \
         loc_78DF97:            # 64AF\n \
             movl    %%ecx,0x14+%[lv]\n \
@@ -9537,9 +9547,9 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         # ---------------------------------------------------------------------------\n \
         \n \
         loc_78DFD2:            # 649E\n \
-            cmpl    _LOC_vec_window_width,%%ecx\n \
+            cmpl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
             jle     loc_78DFE0\n \
-            movl    _LOC_vec_window_width,%%ecx\n \
+            movl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
         \n \
         loc_78DFE0:            # 64F8\n \
             subw    %%ax,%%cx\n \
@@ -9556,7 +9566,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         \n \
         loc_78E004:            # 64F0\n \
             movl    %%esi,0x10+%[lv]\n \
-            movl    _LOC_vec_map,%%esi\n \
+            movl    "EXPORT_SYMBOL(LOC_vec_map)",%%esi\n \
         \n \
         loc_78E00E:            # 6903\n \
             movb    (%%ebx,%%esi),%%al\n \
@@ -9963,7 +9973,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         asm volatile (" \
         pushl   %%ebp\n \
         \
-            leal    _polyscans,%%esi\n \
+            leal    "EXPORT_SYMBOL(polyscans)",%%esi\n \
             movl    %%esi,0x10+%[lv]\n \
             xorl    %%ebx,%%ebx\n \
             pushl   %%ebp\n \
@@ -9990,7 +10000,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             sarl    $0x10,%%eax\n \
             sarl    $0x10,%%ebp\n \
             movl    0x6C+%[lv],%%edi\n \
-            addl    _LOC_vec_screen_width,%%edi\n \
+            addl    "EXPORT_SYMBOL(LOC_vec_screen_width)",%%edi\n \
             movl    %%edi,0x6C+%[lv]\n \
             orl    %%eax,%%eax\n \
             jns     rend_md26_loc03\n \
@@ -10013,18 +10023,18 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    %%cl,%%dl\n \
             movw    %%bx,%%cx\n \
             movb    %%al,%%bh\n \
-            cmpl    _LOC_vec_window_width,%%ebp\n \
+            cmpl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ebp\n \
             jle     rend_md26_loc02\n \
-            movl    _LOC_vec_window_width,%%ebp\n \
+            movl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ebp\n \
         \n \
         rend_md26_loc02:            # 69B8\n \
             jmp     rend_md26_t12\n \
         # ---------------------------------------------------------------------------\n \
         \n \
         rend_md26_loc03:            # 6976\n \
-            cmpl    _LOC_vec_window_width,%%ebp\n \
+            cmpl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ebp\n \
             jle     rend_md26_loc04\n \
-            movl    _LOC_vec_window_width,%%ebp\n \
+            movl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ebp\n \
         \n \
         rend_md26_loc04:            # 69C8\n \
             subl    %%eax,%%ebp\n \
@@ -10047,7 +10057,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movl    %%ebp,%%eax\n \
             andl    $0x0F,%%eax\n \
             addl    add_to_edi(,%%eax,4),%%edi\n \
-            movl    _LOC_vec_map,%%esi\n \
+            movl    "EXPORT_SYMBOL(LOC_vec_map)",%%esi\n \
             jmpl    *t12_jt(,%%eax,4)\n \
         # ---------------------------------------------------------------------------\n \
         t12_jt:            # DATA XREF: trig_+6A0F\n \
