@@ -38,7 +38,7 @@ ubyte *dither_end;
 
 struct PolyPoint polyscans[POLY_SCANS_COUNT];
 
-ubyte vec_colour;
+TbPixel vec_colour = 112;
 ubyte vec_mode;
 
 const long add_to_edi[] = {

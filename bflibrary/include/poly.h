@@ -42,7 +42,7 @@ struct PolyPoint { // sizeof=20
 
 extern struct PolyPoint polyscans[POLY_SCANS_COUNT];
 
-extern ubyte vec_colour;
+extern TbPixel vec_colour;
 extern ubyte vec_mode;
 
 extern ubyte *poly_screen;
