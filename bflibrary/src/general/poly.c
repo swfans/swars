@@ -18,24 +18,32 @@
  */
 /******************************************************************************/
 #include "poly.h"
+#include "bfgentab.h"
+#include "bfpalette.h"
 
-int polyscans_UNUSED;
+ubyte *poly_screen;
 
-ubyte *poly_screen_UNUSED;
+ubyte *vec_screen;
 
-long vec_window_width_UNUSED;
-long vec_window_height_UNUSED;
+ubyte *vec_map;
+ubyte *vec_pal;
 
-long vec_screen_width_UNUSED;
+long vec_screen_width;
 
-ubyte *vec_screen_UNUSED;
+long vec_window_width;
+long vec_window_height;
 
-ubyte *vec_map_UNUSED;
+ubyte *dither_map;
+ubyte *dither_end;
 
-ubyte *vec_pal_UNUSED;
+struct PolyPoint polyscans[POLY_SCANS_COUNT];
 
-ubyte *dither_map_UNUSED;
-ubyte *dither_end_UNUSED;
+ubyte vec_colour;
+ubyte vec_mode;
+
+const long add_to_edi[] = {
+  0,-15,-14,-13,-12,-11,-10, -9, -8, -7, -6, -5, -4, -3, -2, -1,
+};
 
 int ft_jt_UNUSED()
 {
@@ -67,23 +75,14 @@ int poly_line_UNUSED()
 // code at 0001:000e5adf
 }
 
-int vec_mode_UNUSED;
-
-int vec_colour_UNUSED;
-
-int trig_UNUSED()
+void trig_UNUSED(struct PolyPoint *point_a, struct PolyPoint *point_b,
+  struct PolyPoint *point_c)
 {
-// code at 0001:000dead0
 }
 
 int mgt_jt_UNUSED()
 {
 // code at 0001:000e156a
-}
-
-int add_to_edi_UNUSED()
-{
-// code at 0001:000e1123
 }
 
 void setup_vecs(ubyte *screenbuf, ubyte *nvec_map,

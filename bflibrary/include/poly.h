@@ -26,8 +26,24 @@
 extern "C" {
 #endif
 
-extern ubyte vec_mode;
+#define POLY_SCANS_COUNT 576
+
+#pragma pack(1)
+
+struct PolyPoint { // sizeof=20
+    long X; // offset=0
+    long Y; // offset=4
+    long U; // offset=8
+    long V; // offset=12
+    long S; // offset=16
+};
+
+#pragma pack()
+
+extern struct PolyPoint polyscans[POLY_SCANS_COUNT];
+
 extern ubyte vec_colour;
+extern ubyte vec_mode;
 
 extern ubyte *poly_screen;
 
@@ -46,20 +62,13 @@ extern ubyte *dither_end;
 void setup_vecs(ubyte *screenbuf, ubyte *nvec_map,
   ulong line_len, ulong width, ulong height);
 
-#if 0
-extern int polyscans;
+void trig(struct PolyPoint *point_a, struct PolyPoint *point_b,
+  struct PolyPoint *point_c);
 
-int t12_jt();
+#if 0
+
 int render_table();
-int ft_jt();
-int fb_jt();
-int gt_jt();
-int ll_jt();
-int rl_jt();
 int poly_line();
-int trig();
-int mgt_jt();
-int add_to_edi();
 #endif
 
 #ifdef __cplusplus
