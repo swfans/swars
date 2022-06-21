@@ -1353,6 +1353,14 @@ TbPixel LbPaletteFindColour(ubyte *pal, ubyte rval, ubyte gval, ubyte bval)
 }
 #endif
 
+void trig(struct PolyPoint *point_a, struct PolyPoint *point_b,
+  struct PolyPoint *point_c)
+{
+    TbResult ret;
+    asm volatile ("call ASM_trig\n"
+        :  : "a" (point_a), "d" (point_b), "b" (point_c));
+}
+
 void init_screen_boxes(void)
 {
     asm volatile ("call ASM_init_screen_boxes\n"

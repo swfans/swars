@@ -45,7 +45,7 @@
 
 /*----------------------------------------------------------------*/
 /* Behold - core of the Bullfrog engine, triangle rendering function */
-GLOBAL_FUNC (original_trig_)
+GLOBAL_FUNC (ASM_trig)
 /*----------------------------------------------------------------*/
 		pusha
 		sub    $0x6c,%esp
