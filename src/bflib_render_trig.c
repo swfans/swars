@@ -109,7 +109,7 @@ struct TrigLocals {
     unsigned long var_80; // 0x60
     unsigned long delta_b; // 0x64
     unsigned long delta_a; // 0x68
-    ubyte *var_8C; // 0x6C
+    ubyte *scrline_ptr; // 0x6C
 };
 
 #pragma pack()
@@ -255,12 +255,12 @@ int trig_ll_start(struct TrigLocals *lv, const struct PolyPoint *opt_a, const st
     llv.var_38 = opt_a->Y;
     if (llv.var_38 < 0)
     {
-        llv.var_8C = LOC_poly_screen;
+        llv.scrline_ptr = LOC_poly_screen;
         llv.byte_26a = 1;
     } else
     if (llv.var_38 < LOC_vec_window_height)
     {
-        llv.var_8C = LOC_poly_screen + LOC_vec_screen_width * llv.var_38;
+        llv.scrline_ptr = LOC_poly_screen + LOC_vec_screen_width * llv.var_38;
         llv.byte_26a = 0;
     } else
     {
@@ -2695,8 +2695,8 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
 
             b = pp->X >> 16;
             c = pp->Y >> 16;
-            lv.var_8C += LOC_vec_screen_width;
-            d = lv.var_8C;
+            lv.scrline_ptr += LOC_vec_screen_width;
+            d = lv.scrline_ptr;
 
             if (b < 0)
             {
@@ -2759,8 +2759,8 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
 
             a = pp->X >> 16;
             c = pp->Y >> 16;
-            lv.var_8C += LOC_vec_screen_width;
-            dst = lv.var_8C;
+            lv.scrline_ptr += LOC_vec_screen_width;
+            dst = lv.scrline_ptr;
             if (a < 0)
             {
                 int tmp1;
@@ -3298,7 +3298,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         \n \
         render_md04_loc04:            # 2479\n \
             movzwl    %%ax,%%eax\n \
-            movb    _vec_colour,%%al\n \
+            movb    "EXPORT_SYMBOL(vec_colour)",%%al\n \
             jmp     render_md04_loc03\n \
         \n \
         render_md04_loc05:\n \
@@ -3310,14 +3310,14 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             subw    %%ax,%%cx\n \
             jle     render_md04_loc02\n \
             addl    %%eax,%%edi\n \
-            movzbl   _vec_colour,%%eax\n \
+            movzbl   "EXPORT_SYMBOL(vec_colour)",%%eax\n \
             movw    0x10(%%esi),%%bx\n \
             movb    0x12(%%esi),%%ah\n \
         \n \
         render_md04_loc03:\n \
             addw    0x30+%[lv],%%bx\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%dl\n \
             popl    %%ebx\n \
             adcb    0x32+%[lv],%%ah\n \
@@ -3326,7 +3326,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     render_md04_loc02\n \
             addw    0x30+%[lv],%%bx\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%dl\n \
             popl    %%ebx\n \
             adcb    0x32+%[lv],%%ah\n \
@@ -3335,7 +3335,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     render_md04_loc02\n \
             addw    0x30+%[lv],%%bx\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%dl\n \
             popl    %%ebx\n \
             adcb    0x32+%[lv],%%ah\n \
@@ -3344,7 +3344,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     render_md04_loc02\n \
             addw    0x30+%[lv],%%bx\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%dl\n \
             popl    %%ebx\n \
             adcb    0x32+%[lv],%%ah\n \
@@ -3353,7 +3353,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     render_md04_loc02\n \
             addw    0x30+%[lv],%%bx\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%dl\n \
             popl    %%ebx\n \
             adcb    0x32+%[lv],%%ah\n \
@@ -3362,7 +3362,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     render_md04_loc02\n \
             addw    0x30+%[lv],%%bx\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%dl\n \
             popl    %%ebx\n \
             adcb    0x32+%[lv],%%ah\n \
@@ -3371,7 +3371,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     render_md04_loc02\n \
             addw    0x30+%[lv],%%bx\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%dl\n \
             popl    %%ebx\n \
             adcb    0x32+%[lv],%%ah\n \
@@ -3380,7 +3380,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     render_md04_loc02\n \
             addw    0x30+%[lv],%%bx\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%dl\n \
             popl    %%ebx\n \
             adcb    0x32+%[lv],%%ah\n \
@@ -3389,7 +3389,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     render_md04_loc02\n \
             addw    0x30+%[lv],%%bx\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%dl\n \
             popl    %%ebx\n \
             adcb    0x32+%[lv],%%ah\n \
@@ -3398,7 +3398,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     render_md04_loc02\n \
             addw    0x30+%[lv],%%bx\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%dl\n \
             popl    %%ebx\n \
             adcb    0x32+%[lv],%%ah\n \
@@ -3407,7 +3407,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     render_md04_loc02\n \
             addw    0x30+%[lv],%%bx\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%dl\n \
             popl    %%ebx\n \
             adcb    0x32+%[lv],%%ah\n \
@@ -3416,7 +3416,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     render_md04_loc02\n \
             addw    0x30+%[lv],%%bx\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%dl\n \
             popl    %%ebx\n \
             adcb    0x32+%[lv],%%ah\n \
@@ -3425,7 +3425,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     render_md04_loc02\n \
             addw    0x30+%[lv],%%bx\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%dl\n \
             popl    %%ebx\n \
             adcb    0x32+%[lv],%%ah\n \
@@ -3434,7 +3434,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     render_md04_loc02\n \
             addw    0x30+%[lv],%%bx\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%dl\n \
             popl    %%ebx\n \
             adcb    0x32+%[lv],%%ah\n \
@@ -3443,7 +3443,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     render_md04_loc02\n \
             addw    0x30+%[lv],%%bx\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%dl\n \
             popl    %%ebx\n \
             adcb    0x32+%[lv],%%ah\n \
@@ -3452,7 +3452,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     render_md04_loc02\n \
             addw    0x30+%[lv],%%bx\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%dl\n \
             popl    %%ebx\n \
             adcb    0x32+%[lv],%%ah\n \
@@ -3593,7 +3593,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    (%%ebx,%%esi),%%al\n \
             adcl    0x1C+%[lv],%%edx\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             adcb    8+%[lv],%%bh\n \
@@ -3606,7 +3606,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    (%%ebx,%%esi),%%al\n \
             adcl    0x1C+%[lv],%%edx\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             adcb    8+%[lv],%%bh\n \
@@ -3619,7 +3619,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    (%%ebx,%%esi),%%al\n \
             adcl    0x1C+%[lv],%%edx\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             adcb    8+%[lv],%%bh\n \
@@ -3632,7 +3632,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    (%%ebx,%%esi),%%al\n \
             adcl    0x1C+%[lv],%%edx\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             adcb    8+%[lv],%%bh\n \
@@ -3645,7 +3645,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    (%%ebx,%%esi),%%al\n \
             adcl   0x1C+%[lv],%%edx\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             adcb    8+%[lv],%%bh\n \
@@ -3658,7 +3658,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    (%%ebx,%%esi),%%al\n \
             adcl    0x1C+%[lv],%%edx\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             adcb    8+%[lv],%%bh\n \
@@ -3671,7 +3671,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    (%%ebx,%%esi),%%al\n \
             adcl   0x1C+%[lv],%%edx\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             adcb    8+%[lv],%%bh\n \
@@ -3684,7 +3684,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    (%%ebx,%%esi),%%al\n \
             adcl   0x1C+%[lv],%%edx\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             adcb    8+%[lv],%%bh\n \
@@ -3697,7 +3697,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    (%%ebx,%%esi),%%al\n \
             adcl   0x1C+%[lv],%%edx\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             adcb    8+%[lv],%%bh\n \
@@ -3710,7 +3710,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    (%%ebx,%%esi),%%al\n \
             adcl   0x1C+%[lv],%%edx\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             adcb    8+%[lv],%%bh\n \
@@ -3723,7 +3723,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    (%%ebx,%%esi),%%al\n \
             adcl   0x1C+%[lv],%%edx\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             adcb    8+%[lv],%%bh\n \
@@ -3736,7 +3736,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    (%%ebx,%%esi),%%al\n \
             adcl   0x1C+%[lv],%%edx\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             adcb    8+%[lv],%%bh\n \
@@ -3749,7 +3749,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    (%%ebx,%%esi),%%al\n \
             adcl   0x1C+%[lv],%%edx\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             adcb    8+%[lv],%%bh\n \
@@ -3762,7 +3762,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    (%%ebx,%%esi),%%al\n \
             adcl   0x1C+%[lv],%%edx\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             adcb    8+%[lv],%%bh\n \
@@ -3775,7 +3775,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    (%%ebx,%%esi),%%al\n \
             adcl   0x1C+%[lv],%%edx\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             adcb    8+%[lv],%%bh\n \
@@ -3788,7 +3788,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    (%%ebx,%%esi),%%al\n \
             adcl   0x1C+%[lv],%%edx\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             adcb    8+%[lv],%%bh\n \
@@ -3813,13 +3813,13 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         a = 0; b = 0; c = 0;
         do {
             struct PolyPoint  *pp;
-            lv.var_8C += LOC_vec_screen_width;
+            lv.scrline_ptr += LOC_vec_screen_width;
 
             pp = lv.var_30;
             lv.var_30++;
             a = pp->X >> 16;
             c = pp->Y >> 16;
-            D = lv.var_8C;
+            D = lv.scrline_ptr;
             if (a < 0)
             {
                 int tmp1;
@@ -3878,7 +3878,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             orb    %%al,%%al\n \
             jz     loc_78A5CF\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,(%%edi)\n \
@@ -3896,7 +3896,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             orb    %%al,%%al\n \
             jz     loc_78A5F8\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,1(%%edi)\n \
@@ -3914,7 +3914,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             orb     %%al,%%al\n \
             jz      loc_78A621\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,2(%%edi)\n \
@@ -3932,7 +3932,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             orb     %%al,%%al\n \
             jz      loc_78A64A\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,3(%%edi)\n \
@@ -3950,7 +3950,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             orb    %%al,%%al\n \
             jz     loc_78A673\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,4(%%edi)\n \
@@ -3968,7 +3968,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             orb     %%al,%%al\n \
             jz      loc_78A69C\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,5(%%edi)\n \
@@ -3986,7 +3986,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             orb     %%al,%%al\n \
             jz      loc_78A6C5\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,6(%%edi)\n \
@@ -4004,7 +4004,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             orb     %%al,%%al\n \
             jz      loc_78A6EE\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,7(%%edi)\n \
@@ -4022,7 +4022,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             orb     %%al,%%al\n \
             jz      loc_78A717\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,8(%%edi)\n \
@@ -4040,7 +4040,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             orb    %%al,%%al\n \
             jz     loc_78A740\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,9(%%edi)\n \
@@ -4058,7 +4058,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             orb    %%al,%%al\n \
             jz     loc_78A769\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,0x0A(%%edi)\n \
@@ -4076,7 +4076,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             orb    %%al,%%al\n \
             jz     loc_78A792\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,0x0B(%%edi)\n \
@@ -4094,7 +4094,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             orb    %%al,%%al\n \
             jz     loc_78A7BB\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,0x0C(%%edi)\n \
@@ -4112,7 +4112,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             orb    %%al,%%al\n \
             jz     loc_78A7E4\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,0x0D(%%edi)\n \
@@ -4130,7 +4130,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             orb    %%al,%%al\n \
             jz     loc_78A80D\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,0x0E(%%edi)\n \
@@ -4148,7 +4148,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             orb    %%al,%%al\n \
             jz     loc_78A836\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,0x0F(%%edi)\n \
@@ -4175,7 +4175,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
     case RendVec_mode07:
     case RendVec_mode11:
         asm volatile (" \
-            cmpb   $0x20,_vec_colour\n \
+            cmpb   $0x20,"EXPORT_SYMBOL(vec_colour)"\n \
             # This is bad - the jump below leads outside this asm block...\n \
             jz     render_md02\n \
             leal    "EXPORT_SYMBOL(polyscans)",%%esi\n \
@@ -4235,14 +4235,14 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         loc_78A911:            # 2E07\n \
             movl    %%esi,0x10+%[lv]\n \
             movl    "EXPORT_SYMBOL(LOC_vec_map)",%%esi\n \
-            movb    _vec_colour,%%ah\n \
+            movb    "EXPORT_SYMBOL(vec_colour)",%%ah\n \
         \n \
         loc_78A921:            # 3083\n \
             movb    (%%ebx,%%esi),%%al\n \
             addw    0x48+%[lv],%%dx\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -4254,7 +4254,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             addw    0x48+%[lv],%%dx\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -4266,7 +4266,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             addw    0x48+%[lv],%%dx\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -4278,7 +4278,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             addw    0x48+%[lv],%%dx\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -4290,7 +4290,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             addw    0x48+%[lv],%%dx\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -4302,7 +4302,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             addw    0x48+%[lv],%%dx\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -4314,7 +4314,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             addw    0x48+%[lv],%%dx\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -4326,7 +4326,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             addw    0x48+%[lv],%%dx\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -4338,7 +4338,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             addw    0x48+%[lv],%%dx\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -4350,7 +4350,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             addw    0x48+%[lv],%%dx\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -4362,7 +4362,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             addw    0x48+%[lv],%%dx\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -4374,7 +4374,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             addw    0x48+%[lv],%%dx\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -4386,7 +4386,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             addw    0x48+%[lv],%%dx\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -4398,7 +4398,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             addw    0x48+%[lv],%%dx\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -4410,7 +4410,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             addw    0x48+%[lv],%%dx\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -4422,7 +4422,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             addw    0x48+%[lv],%%dx\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -4505,7 +4505,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         loc_78AC17:            # 310D\n \
             movl    %%esi,0x10+%[lv]\n \
             movl    "EXPORT_SYMBOL(LOC_vec_map)",%%esi\n \
-            movb    _vec_colour,%%ah\n \
+            movb    "EXPORT_SYMBOL(vec_colour)",%%ah\n \
         \n \
         loc_78AC27:            # 33C9\n \
             movb    (%%ebx,%%esi),%%al\n \
@@ -4514,7 +4514,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             orb    %%al,%%al\n \
             jz     loc_78AC3F\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    %%al,(%%edi)\n \
@@ -4530,7 +4530,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             orb    %%al,%%al\n \
             jz     loc_78AC68\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    %%al,1(%%edi)\n \
@@ -4546,7 +4546,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             orb    %%al,%%al\n \
             jz     loc_78AC91\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    %%al,2(%%edi)\n \
@@ -4562,7 +4562,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             orb    %%al,%%al\n \
             jz     loc_78ACBA\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    %%al,3(%%edi)\n \
@@ -4578,7 +4578,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             orb    %%al,%%al\n \
             jz     loc_78ACE3\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    %%al,4(%%edi)\n \
@@ -4594,7 +4594,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             orb    %%al,%%al\n \
             jz     loc_78AD0C\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    %%al,5(%%edi)\n \
@@ -4610,7 +4610,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             orb    %%al,%%al\n \
             jz     loc_78AD35\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    %%al,6(%%edi)\n \
@@ -4626,7 +4626,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             orb    %%al,%%al\n \
             jz     loc_78AD5E\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    %%al,7(%%edi)\n \
@@ -4642,7 +4642,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             orb    %%al,%%al\n \
             jz     loc_78AD87\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    %%al,8(%%edi)\n \
@@ -4658,7 +4658,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             orb    %%al,%%al\n \
             jz     loc_78ADB0\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    %%al,9(%%edi)\n \
@@ -4674,7 +4674,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             orb    %%al,%%al\n \
             jz     loc_78ADD9\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    %%al,0x0A(%%edi)\n \
@@ -4690,7 +4690,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             orb    %%al,%%al\n \
             jz     loc_78AE02\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    %%al,0x0B(%%edi)\n \
@@ -4706,7 +4706,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             orb    %%al,%%al\n \
             jz     loc_78AE2B\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    %%al,0x0C(%%edi)\n \
@@ -4722,7 +4722,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             orb    %%al,%%al\n \
             jz     loc_78AE50\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    %%al,0x0D(%%edi)\n \
@@ -4738,7 +4738,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             orb    %%al,%%al\n \
             jz     loc_78AE75\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    %%al,0x0E(%%edi)\n \
@@ -4754,7 +4754,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             orb    %%al,%%al\n \
             jz     loc_78AE9A\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    %%al,0x0F(%%edi)\n \
@@ -4848,7 +4848,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78AF81\n \
             movb    (%%edi),%%al\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    %%al,(%%edi)\n \
@@ -4865,7 +4865,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78AFAD\n \
             movb    1(%%edi),%%al\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    %%al,1(%%edi)\n \
@@ -4882,7 +4882,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78AFD9\n \
             movb    2(%%edi),%%al\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    %%al,2(%%edi)\n \
@@ -4899,7 +4899,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78B005\n \
             movb    3(%%edi),%%al\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    %%al,3(%%edi)\n \
@@ -4916,7 +4916,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78B031\n \
             movb    4(%%edi),%%al\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    %%al,4(%%edi)\n \
@@ -4933,7 +4933,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78B05D\n \
             movb    5(%%edi),%%al\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    %%al,5(%%edi)\n \
@@ -4950,7 +4950,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78B089\n \
             movb    6(%%edi),%%al\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    %%al,6(%%edi)\n \
@@ -4967,7 +4967,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78B0B5\n \
             movb    7(%%edi),%%al\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    %%al,7(%%edi)\n \
@@ -4984,7 +4984,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78B0E1\n \
             movb    8(%%edi),%%al\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    %%al,8(%%edi)\n \
@@ -5001,7 +5001,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78B10D\n \
             movb    9(%%edi),%%al\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    %%al,9(%%edi)\n \
@@ -5018,7 +5018,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78B139\n \
             movb    0x0A(%%edi),%%al\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    %%al,0x0A(%%edi)\n \
@@ -5035,7 +5035,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78B165\n \
             movb    0x0B(%%edi),%%al\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    %%al,0x0B(%%edi)\n \
@@ -5052,7 +5052,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78B191\n \
             movb    0x0C(%%edi),%%al\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    %%al,0x0C(%%edi)\n \
@@ -5069,7 +5069,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78B1BD\n \
             movb    0x0D(%%edi),%%al\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    %%al,0x0D(%%edi)\n \
@@ -5086,7 +5086,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78B1E5\n \
             movb    0x0E(%%edi),%%al\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    %%al,0x0E(%%edi)\n \
@@ -5103,7 +5103,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78B20D\n \
             movb    0x0F(%%edi),%%al\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    %%al,0x0F(%%edi)\n \
@@ -5186,7 +5186,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    0x0A(%%esi),%%bl\n \
         \n \
         loc_78B2D0:            # 37C6\n \
-            movb    _vec_colour,%%ah\n \
+            movb    "EXPORT_SYMBOL(vec_colour)",%%ah\n \
             movl    %%esi,0x10+%[lv]\n \
             movl    "EXPORT_SYMBOL(LOC_vec_map)",%%esi\n \
         \n \
@@ -5197,7 +5197,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         # Why EDI may be incorrect??\n \
             movb    (%%edi),%%al\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,(%%edi)\n \
@@ -5214,7 +5214,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78B31D\n \
             movb    1(%%edi),%%al\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    %%al,1(%%edi)\n \
@@ -5231,7 +5231,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78B349\n \
             movb    2(%%edi),%%al\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    %%al,2(%%edi)\n \
@@ -5248,7 +5248,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78B375\n \
             movb    3(%%edi),%%al\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    %%al,3(%%edi)\n \
@@ -5265,7 +5265,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78B3A1\n \
             movb    4(%%edi),%%al\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    %%al,4(%%edi)\n \
@@ -5282,7 +5282,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78B3CD\n \
             movb    5(%%edi),%%al\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    %%al,5(%%edi)\n \
@@ -5299,7 +5299,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78B3F9\n \
             movb    6(%%edi),%%al\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    %%al,6(%%edi)\n \
@@ -5316,7 +5316,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78B425\n \
             movb    7(%%edi),%%al\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    %%al,7(%%edi)\n \
@@ -5333,7 +5333,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78B451\n \
             movb    8(%%edi),%%al\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    %%al,8(%%edi)\n \
@@ -5350,7 +5350,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78B47D\n \
             movb    9(%%edi),%%al\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    %%al,9(%%edi)\n \
@@ -5367,7 +5367,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78B4A9\n \
             movb    0x0A(%%edi),%%al\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    %%al,0x0A(%%edi)\n \
@@ -5384,7 +5384,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78B4D5\n \
             movb    0x0B(%%edi),%%al\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    %%al,0x0B(%%edi)\n \
@@ -5401,7 +5401,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78B501\n \
             movb    0x0C(%%edi),%%al\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    %%al,0x0C(%%edi)\n \
@@ -5418,7 +5418,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78B52D\n \
             movb    0x0D(%%edi),%%al\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    %%al,0x0D(%%edi)\n \
@@ -5435,7 +5435,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78B555\n \
             movb    0x0E(%%edi),%%al\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    %%al,0x0E(%%edi)\n \
@@ -5452,7 +5452,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78B57D\n \
             movb    0x0F(%%edi),%%al\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    %%al,0x0F(%%edi)\n \
@@ -5539,14 +5539,14 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         loc_78B649:            # 3B3F\n \
             movl    %%esi,0x10+%[lv]\n \
             movl    "EXPORT_SYMBOL(LOC_vec_map)",%%esi\n \
-            movb    _vec_colour,%%al\n \
+            movb    "EXPORT_SYMBOL(vec_colour)",%%al\n \
         \n \
         loc_78B658:            # 3DBA\n \
             movb    (%%ebx,%%esi),%%ah\n \
             addw    0x48+%[lv],%%dx\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%ah\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -5558,7 +5558,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             addw    0x48+%[lv],%%dx\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%ah\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -5570,7 +5570,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             addw    0x48+%[lv],%%dx\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%ah\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -5582,7 +5582,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             addw    0x48+%[lv],%%dx\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%ah\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -5594,7 +5594,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             addw    0x48+%[lv],%%dx\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%ah\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -5606,7 +5606,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             addw    0x48+%[lv],%%dx\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%ah\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -5618,7 +5618,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             addw    0x48+%[lv],%%dx\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%ah\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -5630,7 +5630,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             addw    0x48+%[lv],%%dx\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%ah\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -5642,7 +5642,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             addw    0x48+%[lv],%%dx\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%ah\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -5654,7 +5654,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             addw    0x48+%[lv],%%dx\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%ah\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -5666,7 +5666,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             addw    0x48+%[lv],%%dx\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%ah\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -5678,7 +5678,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             addw    0x48+%[lv],%%dx\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%ah\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -5690,7 +5690,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             addw    0x48+%[lv],%%dx\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%ah\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -5702,7 +5702,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             addw    0x48+%[lv],%%dx\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%ah\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -5714,7 +5714,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             addw    0x48+%[lv],%%dx\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%ah\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -5726,7 +5726,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             addw    0x48+%[lv],%%dx\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%ah\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -5809,14 +5809,14 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         loc_78B94E:            # 3E44\n \
             movl    %%esi,0x10+%[lv]\n \
             movl    "EXPORT_SYMBOL(LOC_vec_map)",%%esi\n \
-            movb    _vec_colour,%%ah\n \
+            movb    "EXPORT_SYMBOL(vec_colour)",%%ah\n \
         \n \
         loc_78B95E:            # 40C0\n \
             movb    (%%ebx,%%esi),%%al\n \
             addw    0x48+%[lv],%%dx\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -5828,7 +5828,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             addw    0x48+%[lv],%%dx\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -5840,7 +5840,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             addw    0x48+%[lv],%%dx\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -5852,7 +5852,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             addw    0x48+%[lv],%%dx\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -5864,7 +5864,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             addw    0x48+%[lv],%%dx\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -5876,7 +5876,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             addw    0x48+%[lv],%%dx\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -5888,7 +5888,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             addw    0x48+%[lv],%%dx\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -5900,7 +5900,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             addw    0x48+%[lv],%%dx\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -5912,7 +5912,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             addw    0x48+%[lv],%%dx\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -5924,7 +5924,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             addw    0x48+%[lv],%%dx\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -5936,7 +5936,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             addw    0x48+%[lv],%%dx\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -5948,7 +5948,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             addw    0x48+%[lv],%%dx\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -5960,7 +5960,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             addw    0x48+%[lv],%%dx\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -5972,7 +5972,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             addw    0x48+%[lv],%%dx\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -5984,7 +5984,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             addw    0x48+%[lv],%%dx\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -5996,7 +5996,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             addw    0x48+%[lv],%%dx\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -6025,7 +6025,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             leal    "EXPORT_SYMBOL(polyscans)",%%esi\n \
             movl   0x6C+%[lv],%%edx\n \
             xorl    %%eax,%%eax\n \
-            movb    _vec_colour,%%ah\n \
+            movb    "EXPORT_SYMBOL(vec_colour)",%%ah\n \
             xorl    %%ebx,%%ebx\n \
             xorl    %%ecx,%%ecx\n \
         \n \
@@ -6059,7 +6059,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         loc_78BC18:\n \
             movb    (%%edi),%%al\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,(%%edi)\n \
@@ -6067,7 +6067,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78BD3E\n \
             movb    1(%%edi),%%al\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,1(%%edi)\n \
@@ -6075,7 +6075,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78BD3E\n \
             movb    2(%%edi),%%al\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,2(%%edi)\n \
@@ -6083,7 +6083,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78BD3E\n \
             movb    3(%%edi),%%al\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,3(%%edi)\n \
@@ -6091,7 +6091,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78BD3E\n \
             movb    4(%%edi),%%al\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,4(%%edi)\n \
@@ -6099,7 +6099,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78BD3E\n \
             movb    5(%%edi),%%al\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,5(%%edi)\n \
@@ -6107,7 +6107,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78BD3E\n \
             movb    6(%%edi),%%al\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,6(%%edi)\n \
@@ -6115,7 +6115,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78BD3E\n \
             movb    7(%%edi),%%al\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,7(%%edi)\n \
@@ -6123,7 +6123,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78BD3E\n \
             movb    8(%%edi),%%al\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,8(%%edi)\n \
@@ -6131,7 +6131,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78BD3E\n \
             movb    9(%%edi),%%al\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,9(%%edi)\n \
@@ -6139,7 +6139,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78BD3E\n \
             movb    0x0A(%%edi),%%al\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,0x0A(%%edi)\n \
@@ -6147,7 +6147,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78BD3E\n \
             movb    0x0B(%%edi),%%al\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,0x0B(%%edi)\n \
@@ -6155,7 +6155,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78BD3E\n \
             movb    0x0C(%%edi),%%al\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,0x0C(%%edi)\n \
@@ -6163,7 +6163,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78BD3E\n \
             movb    0x0D(%%edi),%%al\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,0x0D(%%edi)\n \
@@ -6171,7 +6171,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78BD3E\n \
             movb    0x0E(%%edi),%%al\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,0x0E(%%edi)\n \
@@ -6179,7 +6179,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78BD3E\n \
             movb    0x0F(%%edi),%%al\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,0x0F(%%edi)\n \
@@ -6202,7 +6202,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         asm volatile (" \
             leal    "EXPORT_SYMBOL(polyscans)",%%esi\n \
             movl   0x6C+%[lv],%%edx\n \
-            movzbl   _vec_colour,%%eax\n \
+            movzbl   "EXPORT_SYMBOL(vec_colour)",%%eax\n \
             xorl    %%ebx,%%ebx\n \
             xorl    %%ecx,%%ecx\n \
         \n \
@@ -6236,7 +6236,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         loc_78BDAC:            # 42B0 trig_+43ED\n \
             movb    (%%edi),%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%ah\n \
             popl    %%ebx\n \
             movb    %%ah,(%%edi)\n \
@@ -6244,7 +6244,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     render15_continue\n \
             movb    1(%%edi),%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%ah\n \
             popl    %%ebx\n \
             movb    %%ah,1(%%edi)\n \
@@ -6252,7 +6252,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     render15_continue\n \
             movb    2(%%edi),%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%ah\n \
             popl    %%ebx\n \
             movb    %%ah,2(%%edi)\n \
@@ -6260,7 +6260,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     render15_continue\n \
             movb    3(%%edi),%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%ah\n \
             popl    %%ebx\n \
             movb    %%ah,3(%%edi)\n \
@@ -6268,7 +6268,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     render15_continue\n \
             movb    4(%%edi),%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%ah\n \
             popl    %%ebx\n \
             movb    %%ah,4(%%edi)\n \
@@ -6276,7 +6276,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     render15_continue\n \
             movb    5(%%edi),%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%ah\n \
             popl    %%ebx\n \
             movb    %%ah,5(%%edi)\n \
@@ -6284,7 +6284,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     render15_continue\n \
             movb    6(%%edi),%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%ah\n \
             popl    %%ebx\n \
             movb    %%ah,6(%%edi)\n \
@@ -6292,7 +6292,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     render15_continue\n \
             movb    7(%%edi),%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%ah\n \
             popl    %%ebx\n \
             movb    %%ah,7(%%edi)\n \
@@ -6300,7 +6300,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     render15_continue\n \
             movb    8(%%edi),%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%ah\n \
             popl    %%ebx\n \
             movb    %%ah,8(%%edi)\n \
@@ -6308,7 +6308,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     render15_continue\n \
             movb    9(%%edi),%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%ah\n \
             popl    %%ebx\n \
             movb    %%ah,9(%%edi)\n \
@@ -6316,7 +6316,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     render15_continue\n \
             movb    0x0A(%%edi),%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%ah\n \
             popl    %%ebx\n \
             movb    %%ah,0x0A(%%edi)\n \
@@ -6324,7 +6324,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     render15_continue\n \
             movb    0x0B(%%edi),%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%ah\n \
             popl    %%ebx\n \
             movb    %%ah,0x0B(%%edi)\n \
@@ -6332,7 +6332,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     render15_continue\n \
             movb    0x0C(%%edi),%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%ah\n \
             popl    %%ebx\n \
             movb    %%ah,0x0C(%%edi)\n \
@@ -6340,7 +6340,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     render15_continue\n \
             movb    0x0D(%%edi),%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%ah\n \
             popl    %%ebx\n \
             movb    %%ah,0x0D(%%edi)\n \
@@ -6348,7 +6348,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     render15_continue\n \
             movb    0x0E(%%edi),%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%ah\n \
             popl    %%ebx\n \
             movb    %%ah,0x0E(%%edi)\n \
@@ -6356,7 +6356,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     render15_continue\n \
             movb    0x0F(%%edi),%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%ah\n \
             popl    %%ebx\n \
             movb    %%ah,0x0F(%%edi)\n \
@@ -6403,7 +6403,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         \n \
         loc_78BF34:            # 444C\n \
             movzwl    %%ax,%%eax\n \
-            movb    _vec_colour,%%al\n \
+            movb    "EXPORT_SYMBOL(vec_colour)",%%al\n \
             jmp     loc_78BF65\n \
         # ---------------------------------------------------------------------------\n \
         \n \
@@ -6416,18 +6416,18 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             subw    %%ax,%%cx\n \
             jle     render16_continue\n \
             addl    %%eax,%%edi\n \
-            movzbl   _vec_colour,%%eax\n \
+            movzbl   "EXPORT_SYMBOL(vec_colour)",%%eax\n \
             movw    0x10(%%esi),%%bx\n \
             movb    0x12(%%esi),%%ah\n \
         \n \
         loc_78BF65:            # 445C trig_+46A6\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%dh\n \
             popl    %%ebx\n \
             movb    (%%edi),%%dl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%edx,%%ebx),%%dl\n \
             popl    %%ebx\n \
             movb    %%dl,(%%edi)\n \
@@ -6436,12 +6436,12 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             decw    %%cx\n \
             jz     render16_continue\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%dh\n \
             popl    %%ebx\n \
             movb    1(%%edi),%%dl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%edx,%%ebx),%%dl\n \
             popl    %%ebx\n \
             movb    %%dl,1(%%edi)\n \
@@ -6450,12 +6450,12 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             decw    %%cx\n \
             jz     render16_continue\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%dh\n \
             popl    %%ebx\n \
             movb    2(%%edi),%%dl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%edx,%%ebx),%%dl\n \
             popl    %%ebx\n \
             movb    %%dl,2(%%edi)\n \
@@ -6464,12 +6464,12 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             decw    %%cx\n \
             jz     render16_continue\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%dh\n \
             popl    %%ebx\n \
             movb    3(%%edi),%%dl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%edx,%%ebx),%%dl\n \
             popl    %%ebx\n \
             movb    %%dl,3(%%edi)\n \
@@ -6478,12 +6478,12 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             decw    %%cx\n \
             jz     render16_continue\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%dh\n \
             popl    %%ebx\n \
             movb    4(%%edi),%%dl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%edx,%%ebx),%%dl\n \
             popl    %%ebx\n \
             movb    %%dl,4(%%edi)\n \
@@ -6492,12 +6492,12 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             decw    %%cx\n \
             jz     render16_continue\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%dh\n \
             popl    %%ebx\n \
             movb    5(%%edi),%%dl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%edx,%%ebx),%%dl\n \
             popl    %%ebx\n \
             movb    %%dl,5(%%edi)\n \
@@ -6506,12 +6506,12 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             decw    %%cx\n \
             jz     render16_continue\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%dh\n \
             popl    %%ebx\n \
             movb    6(%%edi),%%dl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%edx,%%ebx),%%dl\n \
             popl    %%ebx\n \
             movb    %%dl,6(%%edi)\n \
@@ -6520,12 +6520,12 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             decw    %%cx\n \
             jz     render16_continue\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%dh\n \
             popl    %%ebx\n \
             movb    7(%%edi),%%dl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%edx,%%ebx),%%dl\n \
             popl    %%ebx\n \
             movb    %%dl,7(%%edi)\n \
@@ -6534,12 +6534,12 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             decw    %%cx\n \
             jz     render16_continue\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%dh\n \
             popl    %%ebx\n \
             movb    8(%%edi),%%dl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%edx,%%ebx),%%dl\n \
             popl    %%ebx\n \
             movb    %%dl,8(%%edi)\n \
@@ -6548,12 +6548,12 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             decw    %%cx\n \
             jz     render16_continue\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%dh\n \
             popl    %%ebx\n \
             movb    9(%%edi),%%dl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%edx,%%ebx),%%dl\n \
             popl    %%ebx\n \
             movb    %%dl,9(%%edi)\n \
@@ -6562,12 +6562,12 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             decw    %%cx\n \
             jz     render16_continue\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%dh\n \
             popl    %%ebx\n \
             movb    0x0A(%%edi),%%dl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%edx,%%ebx),%%dl\n \
             popl    %%ebx\n \
             movb    %%dl,0x0A(%%edi)\n \
@@ -6576,12 +6576,12 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             decw    %%cx\n \
             jz     render16_continue\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%dh\n \
             popl    %%ebx\n \
             movb    0x0B(%%edi),%%dl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%edx,%%ebx),%%dl\n \
             popl    %%ebx\n \
             movb    %%dl,0x0B(%%edi)\n \
@@ -6590,12 +6590,12 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             decw    %%cx\n \
             jz     render16_continue\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%dh\n \
             popl    %%ebx\n \
             movb    0x0C(%%edi),%%dl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%edx,%%ebx),%%dl\n \
             popl    %%ebx\n \
             movb    %%dl,0x0C(%%edi)\n \
@@ -6604,12 +6604,12 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             decw    %%cx\n \
             jz     render16_continue\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%dh\n \
             popl    %%ebx\n \
             movb    0x0D(%%edi),%%dl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%edx,%%ebx),%%dl\n \
             popl    %%ebx\n \
             movb    %%dl,0x0D(%%edi)\n \
@@ -6618,12 +6618,12 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             decw    %%cx\n \
             jz     render16_continue\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%dh\n \
             popl    %%ebx\n \
             movb    0x0E(%%edi),%%dl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%edx,%%ebx),%%dl\n \
             popl    %%ebx\n \
             movb    %%dl,0x0E(%%edi)\n \
@@ -6632,12 +6632,12 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             decw    %%cx\n \
             jz     render16_continue\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%dh\n \
             popl    %%ebx\n \
             movb    0x0F(%%edi),%%dl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%edx,%%ebx),%%dl\n \
             popl    %%ebx\n \
             movb    %%dl,0x0F(%%edi)\n \
@@ -6661,21 +6661,21 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
     case RendVec_mode17:
         asm volatile (" \
             leal    "EXPORT_SYMBOL(polyscans)",%%esi\n \
-            xor    %%edx,%%edx\n \
+            xor     %%edx,%%edx\n \
         \n \
         render17_loop:            # 496B\n \
             movw    2(%%esi),%%ax\n \
-            movzwl   6(%%esi),%%ecx\n \
+            movzwl  6(%%esi),%%ecx\n \
             movl    0x6C+%[lv],%%edi\n \
             addl    "EXPORT_SYMBOL(LOC_vec_screen_width)",%%edi\n \
             movl    %%edi,0x6C+%[lv]\n \
-            orw    %%ax,%%ax\n \
+            orw     %%ax,%%ax\n \
             jns     loc_78C1F7\n \
-            orw    %%cx,%%cx\n \
+            orw     %%cx,%%cx\n \
             jle     render17_continue\n \
             negw    %%ax\n \
-            movzwl    %%ax,%%eax\n \
-            imull    0x30+%[lv],%%eax\n \
+            movzwl  %%ax,%%eax\n \
+            imull   0x30+%[lv],%%eax\n \
             movw    %%ax,%%bx\n \
             shrl    $8,%%eax\n \
             addw    0x10(%%esi),%%bx\n \
@@ -6685,8 +6685,8 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movl    "EXPORT_SYMBOL(LOC_vec_window_width)",%%ecx\n \
         \n \
         loc_78C1ED:            # 4705\n \
-            movzwl    %%ax,%%eax\n \
-            movb    _vec_colour,%%al\n \
+            movzwl  %%ax,%%eax\n \
+            movb    "EXPORT_SYMBOL(vec_colour)",%%al\n \
             jmp     loc_78C21E\n \
         # ---------------------------------------------------------------------------\n \
         \n \
@@ -6699,242 +6699,242 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             subw    %%ax,%%cx\n \
             jle     render17_continue\n \
             addl    %%eax,%%edi\n \
-            movzbl  _vec_colour,%%eax\n \
+            movzbl  "EXPORT_SYMBOL(vec_colour)",%%eax\n \
             movw    0x10(%%esi),%%bx\n \
             movb    0x12(%%esi),%%ah\n \
         \n \
         loc_78C21E:            # 4715 trig_+495F\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%dl\n \
             popl    %%ebx\n \
             movb    (%%edi),%%dh\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%edx,%%ebx),%%dl\n \
             popl    %%ebx\n \
             movb    %%dl,(%%edi)\n \
             addw    0x30+%[lv],%%bx\n \
             adcb    0x32+%[lv],%%ah\n \
             decw    %%cx\n \
-            jz     render17_continue\n \
+            jz      render17_continue\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%dl\n \
             popl    %%ebx\n \
             movb    1(%%edi),%%dh\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%edx,%%ebx),%%dl\n \
             popl    %%ebx\n \
             movb    %%dl,1(%%edi)\n \
             addw    0x30+%[lv],%%bx\n \
             adcb    0x32+%[lv],%%ah\n \
             decw    %%cx\n \
-            jz     render17_continue\n \
+            jz      render17_continue\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%dl\n \
             popl    %%ebx\n \
             movb    2(%%edi),%%dh\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%edx,%%ebx),%%dl\n \
             popl    %%ebx\n \
             movb    %%dl,2(%%edi)\n \
             addw    0x30+%[lv],%%bx\n \
             adcb    0x32+%[lv],%%ah\n \
             decw    %%cx\n \
-            jz     render17_continue\n \
+            jz      render17_continue\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%dl\n \
             popl    %%ebx\n \
             movb    3(%%edi),%%dh\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%edx,%%ebx),%%dl\n \
             popl    %%ebx\n \
             movb    %%dl,3(%%edi)\n \
             addw    0x30+%[lv],%%bx\n \
             adcb    0x32+%[lv],%%ah\n \
             decw    %%cx\n \
-            jz     render17_continue\n \
+            jz      render17_continue\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%dl\n \
             popl    %%ebx\n \
             movb    4(%%edi),%%dh\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%edx,%%ebx),%%dl\n \
             popl    %%ebx\n \
             movb    %%dl,4(%%edi)\n \
             addw    0x30+%[lv],%%bx\n \
             adcb    0x32+%[lv],%%ah\n \
             decw    %%cx\n \
-            jz     render17_continue\n \
+            jz      render17_continue\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%dl\n \
             popl    %%ebx\n \
             movb    5(%%edi),%%dh\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%edx,%%ebx),%%dl\n \
             popl    %%ebx\n \
             movb    %%dl,5(%%edi)\n \
             addw    0x30+%[lv],%%bx\n \
             adcb    0x32+%[lv],%%ah\n \
             decw    %%cx\n \
-            jz     render17_continue\n \
+            jz      render17_continue\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%dl\n \
             popl    %%ebx\n \
             movb    6(%%edi),%%dh\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%edx,%%ebx),%%dl\n \
             popl    %%ebx\n \
             movb    %%dl,6(%%edi)\n \
             addw    0x30+%[lv],%%bx\n \
             adcb    0x32+%[lv],%%ah\n \
             decw    %%cx\n \
-            jz     render17_continue\n \
+            jz      render17_continue\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%dl\n \
             popl    %%ebx\n \
             movb    7(%%edi),%%dh\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%edx,%%ebx),%%dl\n \
             popl    %%ebx\n \
             movb    %%dl,7(%%edi)\n \
             addw    0x30+%[lv],%%bx\n \
             adcb    0x32+%[lv],%%ah\n \
             decw    %%cx\n \
-            jz     render17_continue\n \
+            jz      render17_continue\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%dl\n \
             popl    %%ebx\n \
             movb    8(%%edi),%%dh\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%edx,%%ebx),%%dl\n \
             popl    %%ebx\n \
             movb    %%dl,8(%%edi)\n \
             addw    0x30+%[lv],%%bx\n \
             adcb    0x32+%[lv],%%ah\n \
             decw    %%cx\n \
-            jz     render17_continue\n \
+            jz      render17_continue\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%dl\n \
             popl    %%ebx\n \
             movb    9(%%edi),%%dh\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%edx,%%ebx),%%dl\n \
             popl    %%ebx\n \
             movb    %%dl,9(%%edi)\n \
             addw    0x30+%[lv],%%bx\n \
             adcb    0x32+%[lv],%%ah\n \
             decw    %%cx\n \
-            jz     render17_continue\n \
+            jz      render17_continue\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%dl\n \
             popl    %%ebx\n \
             movb    0x0A(%%edi),%%dh\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%edx,%%ebx),%%dl\n \
             popl    %%ebx\n \
             movb    %%dl,0x0A(%%edi)\n \
             addw    0x30+%[lv],%%bx\n \
             adcb    0x32+%[lv],%%ah\n \
             decw    %%cx\n \
-            jz     render17_continue\n \
+            jz      render17_continue\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%dl\n \
             popl    %%ebx\n \
             movb    0x0B(%%edi),%%dh\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%edx,%%ebx),%%dl\n \
             popl    %%ebx\n \
             movb    %%dl,0x0B(%%edi)\n \
             addw    0x30+%[lv],%%bx\n \
             adcb    0x32+%[lv],%%ah\n \
             decw    %%cx\n \
-            jz     render17_continue\n \
+            jz      render17_continue\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%dl\n \
             popl    %%ebx\n \
             movb    0x0C(%%edi),%%dh\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%edx,%%ebx),%%dl\n \
             popl    %%ebx\n \
             movb    %%dl,0x0C(%%edi)\n \
             addw    0x30+%[lv],%%bx\n \
             adcb    0x32+%[lv],%%ah\n \
             decw    %%cx\n \
-            jz     render17_continue\n \
+            jz      render17_continue\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%dl\n \
             popl    %%ebx\n \
             movb    0x0D(%%edi),%%dh\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%edx,%%ebx),%%dl\n \
             popl    %%ebx\n \
             movb    %%dl,0x0D(%%edi)\n \
             addw    0x30+%[lv],%%bx\n \
             adcb    0x32+%[lv],%%ah\n \
             decw    %%cx\n \
-            jz     render17_continue\n \
+            jz      render17_continue\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%dl\n \
             popl    %%ebx\n \
             movb    0x0E(%%edi),%%dh\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%edx,%%ebx),%%dl\n \
             popl    %%ebx\n \
             movb    %%dl,0x0E(%%edi)\n \
             addw    0x30+%[lv],%%bx\n \
             adcb    0x32+%[lv],%%ah\n \
             decw    %%cx\n \
-            jz     render17_continue\n \
+            jz      render17_continue\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%dl\n \
             popl    %%ebx\n \
             movb    0x0F(%%edi),%%dh\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%edx,%%ebx),%%dl\n \
             popl    %%ebx\n \
             movb    %%dl,0x0F(%%edi)\n \
             addw    0x30+%[lv],%%bx\n \
             adcb    0x32+%[lv],%%ah\n \
             decw    %%cx\n \
-            jz     render17_continue\n \
+            jz      render17_continue\n \
             addl    $0x10,%%edi\n \
             jmp     loc_78C21E\n \
         # ---------------------------------------------------------------------------\n \
         \n \
         render17_continue:\n \
             addl    $0x14,%%esi\n \
-            decl   0x4C+%[lv]\n \
+            decl    0x4C+%[lv]\n \
             jnz     render17_loop\n \
             "
                 :
@@ -7007,7 +7007,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    (%%edi),%%al\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -7020,7 +7020,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    1(%%edi),%%al\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -7033,7 +7033,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    2(%%edi),%%al\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -7046,7 +7046,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    3(%%edi),%%al\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -7059,7 +7059,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    4(%%edi),%%al\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -7072,7 +7072,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    5(%%edi),%%al\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -7085,7 +7085,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    6(%%edi),%%al\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -7098,7 +7098,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    7(%%edi),%%al\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -7111,7 +7111,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    8(%%edi),%%al\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -7124,7 +7124,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    9(%%edi),%%al\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -7137,7 +7137,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    0x0A(%%edi),%%al\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -7150,7 +7150,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    0x0B(%%edi),%%al\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -7163,7 +7163,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    0x0C(%%edi),%%al\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -7176,7 +7176,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    0x0D(%%edi),%%al\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -7189,7 +7189,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    0x0E(%%edi),%%al\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -7202,7 +7202,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    0x0F(%%edi),%%al\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -7292,7 +7292,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    (%%edi),%%ah\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -7305,7 +7305,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    1(%%edi),%%ah\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -7318,7 +7318,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    2(%%edi),%%ah\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -7331,7 +7331,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    3(%%edi),%%ah\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -7344,7 +7344,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    4(%%edi),%%ah\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -7357,7 +7357,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    5(%%edi),%%ah\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -7370,7 +7370,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    6(%%edi),%%ah\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -7383,7 +7383,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    7(%%edi),%%ah\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -7396,7 +7396,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    8(%%edi),%%ah\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -7409,7 +7409,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    9(%%edi),%%ah\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -7422,7 +7422,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    0x0A(%%edi),%%ah\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -7435,7 +7435,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    0x0B(%%edi),%%ah\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -7448,7 +7448,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    0x0C(%%edi),%%ah\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -7461,7 +7461,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    0x0D(%%edi),%%ah\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -7474,7 +7474,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    0x0E(%%edi),%%ah\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -7487,7 +7487,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    0x0F(%%edi),%%ah\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
@@ -7588,14 +7588,14 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    %%cl,%%ah\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%ah\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
             movb    (%%edi),%%al\n \
             adcb    0x3e+%[lv],%%bh\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl    0x1C+%[lv],%%ecx\n \
@@ -7608,14 +7608,14 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    %%cl,%%ah\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%ah\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
             movb    1(%%edi),%%al\n \
             adcb    0x3e+%[lv],%%bh\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl    0x1C+%[lv],%%ecx\n \
@@ -7628,14 +7628,14 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    %%cl,%%ah\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%ah\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
             movb    2(%%edi),%%al\n \
             adcb    0x3e+%[lv],%%bh\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl    0x1C+%[lv],%%ecx\n \
@@ -7648,14 +7648,14 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    %%cl,%%ah\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%ah\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
             movb    3(%%edi),%%al\n \
             adcb    0x3e+%[lv],%%bh\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl    0x1C+%[lv],%%ecx\n \
@@ -7668,14 +7668,14 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    %%cl,%%ah\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%ah\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
             movb    4(%%edi),%%al\n \
             adcb    0x3e+%[lv],%%bh\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl    0x1C+%[lv],%%ecx\n \
@@ -7688,14 +7688,14 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    %%cl,%%ah\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%ah\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
             movb    5(%%edi),%%al\n \
             adcb    0x3e+%[lv],%%bh\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl    0x1C+%[lv],%%ecx\n \
@@ -7708,14 +7708,14 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    %%cl,%%ah\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%ah\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
             movb    6(%%edi),%%al\n \
             adcb    0x3e+%[lv],%%bh\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl    0x1C+%[lv],%%ecx\n \
@@ -7728,14 +7728,14 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    %%cl,%%ah\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%ah\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
             movb    7(%%edi),%%al\n \
             adcb    0x3e+%[lv],%%bh\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl    0x1C+%[lv],%%ecx\n \
@@ -7748,14 +7748,14 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    %%cl,%%ah\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%ah\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
             movb    8(%%edi),%%al\n \
             adcb    0x3e+%[lv],%%bh\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl    0x1C+%[lv],%%ecx\n \
@@ -7768,14 +7768,14 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    %%cl,%%ah\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%ah\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
             movb    9(%%edi),%%al\n \
             adcb    0x3e+%[lv],%%bh\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl    0x1C+%[lv],%%ecx\n \
@@ -7788,14 +7788,14 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    %%cl,%%ah\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%ah\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
             movb    0x0A(%%edi),%%al\n \
             adcb    0x3e+%[lv],%%bh\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl    0x1C+%[lv],%%ecx\n \
@@ -7808,14 +7808,14 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    %%cl,%%ah\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%ah\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
             movb    0x0B(%%edi),%%al\n \
             adcb    0x3e+%[lv],%%bh\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl    0x1C+%[lv],%%ecx\n \
@@ -7828,14 +7828,14 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    %%cl,%%ah\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%ah\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
             movb    0x0C(%%edi),%%al\n \
             adcb    0x3e+%[lv],%%bh\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl    0x1C+%[lv],%%ecx\n \
@@ -7848,14 +7848,14 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    %%cl,%%ah\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%ah\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
             movb    0x0D(%%edi),%%al\n \
             adcb    0x3e+%[lv],%%bh\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl    0x1C+%[lv],%%ecx\n \
@@ -7868,14 +7868,14 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    %%cl,%%ah\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%ah\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
             movb    0x0E(%%edi),%%al\n \
             adcb    0x3e+%[lv],%%bh\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl    0x1C+%[lv],%%ecx\n \
@@ -7888,14 +7888,14 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    %%cl,%%ah\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%ah\n \
             popl    %%ebx\n \
             addl   0x20+%[lv],%%edx\n \
             movb    0x0F(%%edi),%%al\n \
             adcb    0x3e+%[lv],%%bh\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl    0x1C+%[lv],%%ecx\n \
@@ -7996,14 +7996,14 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    %%cl,%%ah\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             addl   0x20+%[lv],%%edx\n \
             movb    (%%edi),%%ah\n \
             adcb    0x3e+%[lv],%%bh\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl    0x1C+%[lv],%%ecx\n \
@@ -8016,14 +8016,14 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    %%cl,%%ah\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             addl   0x20+%[lv],%%edx\n \
             movb    1(%%edi),%%ah\n \
             adcb    0x3e+%[lv],%%bh\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl    0x1C+%[lv],%%ecx\n \
@@ -8036,14 +8036,14 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    %%cl,%%ah\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             addl   0x20+%[lv],%%edx\n \
             movb    2(%%edi),%%ah\n \
             adcb    0x3e+%[lv],%%bh\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl    0x1C+%[lv],%%ecx\n \
@@ -8056,14 +8056,14 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    %%cl,%%ah\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             addl   0x20+%[lv],%%edx\n \
             movb    3(%%edi),%%ah\n \
             adcb    0x3e+%[lv],%%bh\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl    0x1C+%[lv],%%ecx\n \
@@ -8076,14 +8076,14 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    %%cl,%%ah\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             addl   0x20+%[lv],%%edx\n \
             movb    4(%%edi),%%ah\n \
             adcb    0x3e+%[lv],%%bh\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl    0x1C+%[lv],%%ecx\n \
@@ -8096,14 +8096,14 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    %%cl,%%ah\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             addl   0x20+%[lv],%%edx\n \
             movb    5(%%edi),%%ah\n \
             adcb    0x3e+%[lv],%%bh\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl    0x1C+%[lv],%%ecx\n \
@@ -8116,14 +8116,14 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    %%cl,%%ah\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             addl   0x20+%[lv],%%edx\n \
             movb    6(%%edi),%%ah\n \
             adcb    0x3e+%[lv],%%bh\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl    0x1C+%[lv],%%ecx\n \
@@ -8136,14 +8136,14 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    %%cl,%%ah\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             addl   0x20+%[lv],%%edx\n \
             movb    7(%%edi),%%ah\n \
             adcb    0x3e+%[lv],%%bh\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl    0x1C+%[lv],%%ecx\n \
@@ -8156,14 +8156,14 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    %%cl,%%ah\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             addl   0x20+%[lv],%%edx\n \
             movb    8(%%edi),%%ah\n \
             adcb    0x3e+%[lv],%%bh\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl    0x1C+%[lv],%%ecx\n \
@@ -8176,14 +8176,14 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    %%cl,%%ah\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             addl   0x20+%[lv],%%edx\n \
             movb    9(%%edi),%%ah\n \
             adcb    0x3e+%[lv],%%bh\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl    0x1C+%[lv],%%ecx\n \
@@ -8196,14 +8196,14 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    %%cl,%%ah\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             addl   0x20+%[lv],%%edx\n \
             movb    0x0A(%%edi),%%ah\n \
             adcb    0x3e+%[lv],%%bh\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl    0x1C+%[lv],%%ecx\n \
@@ -8216,14 +8216,14 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    %%cl,%%ah\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             addl   0x20+%[lv],%%edx\n \
             movb    0x0B(%%edi),%%ah\n \
             adcb    0x3e+%[lv],%%bh\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl    0x1C+%[lv],%%ecx\n \
@@ -8236,14 +8236,14 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    %%cl,%%ah\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             addl   0x20+%[lv],%%edx\n \
             movb    0x0C(%%edi),%%ah\n \
             adcb    0x3e+%[lv],%%bh\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl    0x1C+%[lv],%%ecx\n \
@@ -8256,14 +8256,14 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    %%cl,%%ah\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             addl   0x20+%[lv],%%edx\n \
             movb    0x0D(%%edi),%%ah\n \
             adcb    0x3e+%[lv],%%bh\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl    0x1C+%[lv],%%ecx\n \
@@ -8276,14 +8276,14 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    %%cl,%%ah\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             addl   0x20+%[lv],%%edx\n \
             movb    0x0E(%%edi),%%ah\n \
             adcb    0x3e+%[lv],%%bh\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl    0x1C+%[lv],%%ecx\n \
@@ -8296,14 +8296,14 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             movb    %%cl,%%ah\n \
             adcb    0x4a+%[lv],%%bl\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             addl   0x20+%[lv],%%edx\n \
             movb    0x0F(%%edi),%%ah\n \
             adcb    0x3e+%[lv],%%bh\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             addl    0x1C+%[lv],%%ecx\n \
@@ -8393,7 +8393,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78D45A\n \
             movb    (%%edi),%%al\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,(%%edi)\n \
@@ -8410,7 +8410,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78D486\n \
             movb    1(%%edi),%%al\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,1(%%edi)\n \
@@ -8427,7 +8427,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78D4B2\n \
             movb    2(%%edi),%%al\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,2(%%edi)\n \
@@ -8444,7 +8444,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78D4DE\n \
             movb    3(%%edi),%%al\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,3(%%edi)\n \
@@ -8461,7 +8461,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78D50A\n \
             movb    4(%%edi),%%al\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,4(%%edi)\n \
@@ -8478,7 +8478,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78D536\n \
             movb    5(%%edi),%%al\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,5(%%edi)\n \
@@ -8495,7 +8495,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78D562\n \
             movb    6(%%edi),%%al\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,6(%%edi)\n \
@@ -8512,7 +8512,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78D58E\n \
             movb    7(%%edi),%%al\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,7(%%edi)\n \
@@ -8529,7 +8529,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78D5BA\n \
             movb    8(%%edi),%%al\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,8(%%edi)\n \
@@ -8546,7 +8546,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78D5E6\n \
             movb    9(%%edi),%%al\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,9(%%edi)\n \
@@ -8563,7 +8563,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78D612\n \
             movb    0x0A(%%edi),%%al\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,0x0A(%%edi)\n \
@@ -8580,7 +8580,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78D63E\n \
             movb    0x0B(%%edi),%%al\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,0x0B(%%edi)\n \
@@ -8597,7 +8597,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78D66A\n \
             movb    0x0C(%%edi),%%al\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,0x0C(%%edi)\n \
@@ -8614,7 +8614,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78D696\n \
             movb    0x0D(%%edi),%%al\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,0x0D(%%edi)\n \
@@ -8631,7 +8631,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78D6BE\n \
             movb    0x0E(%%edi),%%al\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,0x0E(%%edi)\n \
@@ -8648,7 +8648,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78D6E6\n \
             movb    0x0F(%%edi),%%al\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,0x0F(%%edi)\n \
@@ -8742,7 +8742,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78D7CD\n \
             movb    (%%edi),%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,(%%edi)\n \
@@ -8759,7 +8759,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78D7F9\n \
             movb    1(%%edi),%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,1(%%edi)\n \
@@ -8776,7 +8776,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78D825\n \
             movb    2(%%edi),%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,2(%%edi)\n \
@@ -8793,7 +8793,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78D851\n \
             movb    3(%%edi),%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,3(%%edi)\n \
@@ -8810,7 +8810,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78D87D\n \
             movb    4(%%edi),%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,4(%%edi)\n \
@@ -8827,7 +8827,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78D8A9\n \
             movb    5(%%edi),%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,5(%%edi)\n \
@@ -8844,7 +8844,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78D8D5\n \
             movb    6(%%edi),%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,6(%%edi)\n \
@@ -8861,7 +8861,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78D901\n \
             movb    7(%%edi),%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,7(%%edi)\n \
@@ -8878,7 +8878,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78D92D\n \
             movb    8(%%edi),%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,8(%%edi)\n \
@@ -8895,7 +8895,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78D959\n \
             movb    9(%%edi),%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,9(%%edi)\n \
@@ -8912,7 +8912,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78D985\n \
             movb    0x0A(%%edi),%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,0x0A(%%edi)\n \
@@ -8929,7 +8929,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78D9B1\n \
             movb    0x0B(%%edi),%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,0x0B(%%edi)\n \
@@ -8946,7 +8946,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78D9DD\n \
             movb    0x0C(%%edi),%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,0x0C(%%edi)\n \
@@ -8963,7 +8963,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78DA09\n \
             movb    0x0D(%%edi),%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,0x0D(%%edi)\n \
@@ -8980,7 +8980,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78DA31\n \
             movb    0x0E(%%edi),%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,0x0E(%%edi)\n \
@@ -8997,7 +8997,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78DA59\n \
             movb    0x0F(%%edi),%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,0x0F(%%edi)\n \
@@ -9102,12 +9102,12 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78DB6E\n \
             movb    %%cl,%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%ah\n \
             popl    %%ebx\n \
             movb    (%%edi),%%al\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,(%%edi)\n \
@@ -9126,12 +9126,12 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78DBAC\n \
             movb    %%cl,%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%ah\n \
             popl    %%ebx\n \
             movb    1(%%edi),%%al\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,1(%%edi)\n \
@@ -9150,12 +9150,12 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78DBEA\n \
             movb    %%cl,%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%ah\n \
             popl    %%ebx\n \
             movb    2(%%edi),%%al\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,2(%%edi)\n \
@@ -9174,12 +9174,12 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78DC28\n \
             movb    %%cl,%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%ah\n \
             popl    %%ebx\n \
             movb    3(%%edi),%%al\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,3(%%edi)\n \
@@ -9198,12 +9198,12 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78DC66\n \
             movb    %%cl,%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%ah\n \
             popl    %%ebx\n \
             movb    4(%%edi),%%al\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,4(%%edi)\n \
@@ -9222,12 +9222,12 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78DCA4\n \
             movb    %%cl,%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%ah\n \
             popl    %%ebx\n \
             movb    5(%%edi),%%al\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,5(%%edi)\n \
@@ -9246,12 +9246,12 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78DCE2\n \
             movb    %%cl,%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%ah\n \
             popl    %%ebx\n \
             movb    6(%%edi),%%al\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,6(%%edi)\n \
@@ -9270,12 +9270,12 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78DD20\n \
             movb    %%cl,%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%ah\n \
             popl    %%ebx\n \
             movb    7(%%edi),%%al\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,7(%%edi)\n \
@@ -9294,12 +9294,12 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78DD5E\n \
             movb    %%cl,%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%ah\n \
             popl    %%ebx\n \
             movb    8(%%edi),%%al\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,8(%%edi)\n \
@@ -9318,12 +9318,12 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78DD9C\n \
             movb    %%cl,%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%ah\n \
             popl    %%ebx\n \
             movb    9(%%edi),%%al\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,9(%%edi)\n \
@@ -9342,12 +9342,12 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78DDDA\n \
             movb    %%cl,%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%ah\n \
             popl    %%ebx\n \
             movb    0x0A(%%edi),%%al\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,0x0A(%%edi)\n \
@@ -9366,12 +9366,12 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78DE18\n \
             movb    %%cl,%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%ah\n \
             popl    %%ebx\n \
             movb    0x0B(%%edi),%%al\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,0x0B(%%edi)\n \
@@ -9390,12 +9390,12 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78DE56\n \
             movb    %%cl,%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%ah\n \
             popl    %%ebx\n \
             movb    0x0C(%%edi),%%al\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,0x0C(%%edi)\n \
@@ -9414,12 +9414,12 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78DE94\n \
             movb    %%cl,%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%ah\n \
             popl    %%ebx\n \
             movb    0x0D(%%edi),%%al\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,0x0D(%%edi)\n \
@@ -9438,12 +9438,12 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78DECE\n \
             movb    %%cl,%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%ah\n \
             popl    %%ebx\n \
             movb    0x0E(%%edi),%%al\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,0x0E(%%edi)\n \
@@ -9462,12 +9462,12 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78DF08\n \
             movb    %%cl,%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_fade_tables,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%ebx\n \
             movb    (%%ebx,%%eax),%%ah\n \
             popl    %%ebx\n \
             movb    0x0F(%%edi),%%al\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,0x0F(%%edi)\n \
@@ -9574,12 +9574,12 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78E027\n \
             movb    %%cl,%%ah\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    (%%edi),%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,(%%edi)\n \
@@ -9598,12 +9598,12 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78E065\n \
             movb    %%cl,%%ah\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    1(%%edi),%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,1(%%edi)\n \
@@ -9622,12 +9622,12 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78E0A3\n \
             movb    %%cl,%%ah\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    2(%%edi),%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,2(%%edi)\n \
@@ -9646,12 +9646,12 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78E0E1\n \
             movb    %%cl,%%ah\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    3(%%edi),%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,3(%%edi)\n \
@@ -9670,12 +9670,12 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78E11F\n \
             movb    %%cl,%%ah\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    4(%%edi),%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,4(%%edi)\n \
@@ -9694,12 +9694,12 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78E15D\n \
             movb    %%cl,%%ah\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    5(%%edi),%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,5(%%edi)\n \
@@ -9718,12 +9718,12 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78E19B\n \
             movb    %%cl,%%ah\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    6(%%edi),%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,6(%%edi)\n \
@@ -9742,12 +9742,12 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78E1D9\n \
             movb    %%cl,%%ah\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    7(%%edi),%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,7(%%edi)\n \
@@ -9766,12 +9766,12 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78E217\n \
             movb    %%cl,%%ah\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    8(%%edi),%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,8(%%edi)\n \
@@ -9790,12 +9790,12 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78E255\n \
             movb    %%cl,%%ah\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    9(%%edi),%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,9(%%edi)\n \
@@ -9814,12 +9814,12 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78E293\n \
             movb    %%cl,%%ah\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    0x0A(%%edi),%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,0x0A(%%edi)\n \
@@ -9838,12 +9838,12 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78E2D1\n \
             movb    %%cl,%%ah\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    0x0B(%%edi),%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,0x0B(%%edi)\n \
@@ -9862,12 +9862,12 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78E30F\n \
             movb    %%cl,%%ah\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    0x0C(%%edi),%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,0x0C(%%edi)\n \
@@ -9886,12 +9886,12 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78E34D\n \
             movb    %%cl,%%ah\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    0x0D(%%edi),%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,0x0D(%%edi)\n \
@@ -9910,12 +9910,12 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78E387\n \
             movb    %%cl,%%ah\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    0x0E(%%edi),%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,0x0E(%%edi)\n \
@@ -9934,12 +9934,12 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jz     loc_78E3C1\n \
             movb    %%cl,%%ah\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    0x0F(%%edi),%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,0x0F(%%edi)\n \
@@ -10091,7 +10091,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         \n \
         loc_78E55B:            # 6CCF\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    %%al,(%%edi)\n \
@@ -10108,7 +10108,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         \n \
         loc_78E57E:            # 6CFA\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    %%al,1(%%edi)\n \
@@ -10125,7 +10125,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         \n \
         loc_78E5A2:            # 6D27\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    %%al,2(%%edi)\n \
@@ -10142,7 +10142,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         \n \
         loc_78E5C6:            # 6D54\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    %%al,3(%%edi)\n \
@@ -10159,7 +10159,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         \n \
         loc_78E5EA:            # 6D81\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    %%al,4(%%edi)\n \
@@ -10176,7 +10176,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         \n \
         loc_78E60E:            # 6DAE\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    %%al,5(%%edi)\n \
@@ -10193,7 +10193,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         \n \
         loc_78E632:            # 6DDB\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    %%al,6(%%edi)\n \
@@ -10210,7 +10210,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         \n \
         loc_78E656:            # 6E08\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    %%al,7(%%edi)\n \
@@ -10227,7 +10227,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         \n \
         loc_78E67A:            # 6E35\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    %%al,8(%%edi)\n \
@@ -10244,7 +10244,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         \n \
         loc_78E69E:            # 6E62\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    %%al,9(%%edi)\n \
@@ -10261,7 +10261,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         \n \
         loc_78E6C2:            # 6E8F\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    %%al,0x0A(%%edi)\n \
@@ -10278,7 +10278,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         \n \
         loc_78E6E6:            # 6EBC\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    %%al,0x0B(%%edi)\n \
@@ -10295,7 +10295,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         \n \
         loc_78E70A:            # 6EE9\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    %%al,0x0C(%%edi)\n \
@@ -10312,7 +10312,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         \n \
         loc_78E72E:            # 6F16\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    %%al,0x0D(%%edi)\n \
@@ -10329,7 +10329,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         \n \
         loc_78E752:            # 6F43\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    %%al,0x0E(%%edi)\n \
@@ -10346,7 +10346,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         \n \
         loc_78E776:            # 6F70\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    %%al,0x0F(%%edi)\n \
@@ -10372,12 +10372,12 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         \n \
         loc_78E7B5:            # 6A75\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    (%%edi),%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,(%%edi)\n \
@@ -10392,12 +10392,12 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         \n \
         loc_78E7E0:            # 6A98\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    1(%%edi),%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,1(%%edi)\n \
@@ -10412,12 +10412,12 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         \n \
         loc_78E80D:            # 6ABC\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    2(%%edi),%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,2(%%edi)\n \
@@ -10432,12 +10432,12 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         \n \
         loc_78E83A:            # 6AE0\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    3(%%edi),%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,3(%%edi)\n \
@@ -10452,12 +10452,12 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         \n \
         loc_78E867:            # 6B04\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    4(%%edi),%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,4(%%edi)\n \
@@ -10472,12 +10472,12 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         \n \
         loc_78E894:            # 6B28\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    5(%%edi),%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,5(%%edi)\n \
@@ -10492,12 +10492,12 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         \n \
         loc_78E8C1:            # 6B4C\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    6(%%edi),%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,6(%%edi)\n \
@@ -10512,12 +10512,12 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         \n \
         loc_78E8EE:            # 6B70\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    7(%%edi),%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,7(%%edi)\n \
@@ -10532,12 +10532,12 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         \n \
         loc_78E91B:            # 6B94\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    8(%%edi),%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,8(%%edi)\n \
@@ -10552,12 +10552,12 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         \n \
         loc_78E948:            # 6BB8\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    9(%%edi),%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,9(%%edi)\n \
@@ -10572,12 +10572,12 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         \n \
         loc_78E975:            # 6BDC\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    0x0A(%%edi),%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,0x0A(%%edi)\n \
@@ -10592,12 +10592,12 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         \n \
         loc_78E9A2:            # 6C00\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    0x0B(%%edi),%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,0x0B(%%edi)\n \
@@ -10612,12 +10612,12 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         \n \
         loc_78E9CF:            # 6C24\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    0x0C(%%edi),%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,0x0C(%%edi)\n \
@@ -10632,12 +10632,12 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         \n \
         loc_78E9FC:            # 6C48\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    0x0D(%%edi),%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,0x0D(%%edi)\n \
@@ -10652,12 +10652,12 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         \n \
         loc_78EA29:            # 6C6C\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    0x0E(%%edi),%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,0x0E(%%edi)\n \
@@ -10672,12 +10672,12 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         \n \
         loc_78EA56:\n \
             pushl   %%edx\n \
-            movl    _render_fade_tables,%%edx\n \
+            movl    "EXPORT_SYMBOL(render_fade_tables)",%%edx\n \
             movb    (%%eax,%%edx),%%al\n \
             popl    %%edx\n \
             movb    0x0F(%%edi),%%ah\n \
             pushl   %%ebx\n \
-            movl    _render_ghost,%%ebx\n \
+            movl    "EXPORT_SYMBOL(render_ghost)",%%ebx\n \
             movb    (%%ebx,%%eax),%%al\n \
             popl    %%ebx\n \
             movb    %%al,0x0F(%%edi)\n \
