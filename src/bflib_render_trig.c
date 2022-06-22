@@ -96,6 +96,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
     static struct TrigLocals lv;
 
     asm volatile (" \
+            pusha\n \
             mov    %%eax,%%esi\n \
             mov    %%edx,%%edi\n \
             mov    %%ebx,%%ecx\n \
@@ -8726,10 +8727,11 @@ t12_md01:\n \
             decl   0x20+%[lv]\n \
             jne    jump_1276f4\n \
         jump_return:\n \
+            popa\n \
     "
                  : [lv] "+o" (lv)
                  : "a" (point_a), "d" (point_b), "b" (point_c), "o0" (lv)
-                 : "memory", "cc", "%ecx", "%edi", "%esi");// "%eax", "%edx", "%ebx",
+                 : "memory", "cc");// unaffected due to pusha/popa: "%eax", "%edx", "%ebx", "%ecx", "%edi", "%esi"
     LOGNO("end");
 }
 /******************************************************************************/
