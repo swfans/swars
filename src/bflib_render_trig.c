@@ -422,7 +422,7 @@ ll_md05:\n \
             cmpb   $0x0,0x67(%%esp)\n \
             je     jump_1211c8\n \
             movzbl "EXPORT_SYMBOL(vec_mode)",%%eax\n \
-            jmp    *vtable_1229b3(,%%eax,4)\n \
+            jmp    *render_table(,%%eax,4)\n \
         jump_1211c8:\n \
             mov    %%eax,(%%edi)\n \
             add    0x4(%%esp),%%eax\n \
@@ -438,7 +438,7 @@ ll_md05:\n \
             decl   0x18(%%esp)\n \
             jne    jump_1211c8\n \
             movzbl "EXPORT_SYMBOL(vec_mode)",%%eax\n \
-            jmp    *vtable_1229b3(,%%eax,4)\n \
+            jmp    *render_table(,%%eax,4)\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
@@ -596,7 +596,7 @@ ll_md02:\n \
             cmpb   $0x0,0x67(%%esp)\n \
             je     jump_1213fd\n \
             movzbl "EXPORT_SYMBOL(vec_mode)",%%eax\n \
-            jmp    *vtable_1229b3(,%%eax,4)\n \
+            jmp    *render_table(,%%eax,4)\n \
         jump_1213fd:\n \
             mov    %%eax,(%%edi)\n \
             add    0x4(%%esp),%%eax\n \
@@ -610,7 +610,7 @@ ll_md02:\n \
             decl   0x18(%%esp)\n \
             jne    jump_1213fd\n \
             movzbl "EXPORT_SYMBOL(vec_mode)",%%eax\n \
-            jmp    *vtable_1229b3(,%%eax,4)\n \
+            jmp    *render_table(,%%eax,4)\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
@@ -742,7 +742,7 @@ ll_md01:\n \
             cmpb   $0x0,0x67(%%esp)\n \
             je     jump_1215d6\n \
             movzbl "EXPORT_SYMBOL(vec_mode)",%%eax\n \
-            jmp    *vtable_1229b3(,%%eax,4)\n \
+            jmp    *render_table(,%%eax,4)\n \
         jump_1215d6:\n \
             mov    %%eax,(%%edi)\n \
             add    0x4(%%esp),%%eax\n \
@@ -754,7 +754,7 @@ ll_md01:\n \
             decl   0x18(%%esp)\n \
             jne    jump_1215d6\n \
             movzbl "EXPORT_SYMBOL(vec_mode)",%%eax\n \
-            jmp    *vtable_1229b3(,%%eax,4)\n \
+            jmp    *render_table(,%%eax,4)\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
@@ -844,7 +844,7 @@ ll_md00:\n \
             cmpb   $0x0,0x67(%%esp)\n \
             je     jump_121729\n \
             movzbl "EXPORT_SYMBOL(vec_mode)",%%eax\n \
-            jmp    *vtable_1229b3(,%%eax,4)\n \
+            jmp    *render_table(,%%eax,4)\n \
         jump_121729:\n \
             mov    %%eax,(%%edi)\n \
             add    0x4(%%esp),%%eax\n \
@@ -854,7 +854,7 @@ ll_md00:\n \
             decl   0x18(%%esp)\n \
             jne    jump_121729\n \
             movzbl "EXPORT_SYMBOL(vec_mode)",%%eax\n \
-            jmp    *vtable_1229b3(,%%eax,4)\n \
+            jmp    *render_table(,%%eax,4)\n \
         jump_12174d:\n \
             xchg   %%esi,%%edi\n \
             xchg   %%edi,%%ecx\n \
@@ -1142,7 +1142,7 @@ rl_md05:\n \
             cmpb   $0x0,0x67(%%esp)\n \
             je     jump_121b02\n \
             movzbl "EXPORT_SYMBOL(vec_mode)",%%eax\n \
-            jmp    *vtable_1229b3(,%%eax,4)\n \
+            jmp    *render_table(,%%eax,4)\n \
         jump_121b02:\n \
             mov    %%eax,(%%edi)\n \
             add    0xc(%%esp),%%eax\n \
@@ -1158,7 +1158,7 @@ rl_md05:\n \
             decl   0x18(%%esp)\n \
             jne    jump_121b02\n \
             movzbl "EXPORT_SYMBOL(vec_mode)",%%eax\n \
-            jmp    *vtable_1229b3(,%%eax,4)\n \
+            jmp    *render_table(,%%eax,4)\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
@@ -1326,7 +1326,7 @@ rl_md02:\n \
             cmpb   $0x0,0x67(%%esp)\n \
             je     jump_121d55\n \
             movzbl "EXPORT_SYMBOL(vec_mode)",%%eax\n \
-            jmp    *vtable_1229b3(,%%eax,4)\n \
+            jmp    *render_table(,%%eax,4)\n \
         jump_121d55:\n \
             mov    %%eax,(%%edi)\n \
             add    0xc(%%esp),%%eax\n \
@@ -1340,7 +1340,7 @@ rl_md02:\n \
             decl   0x18(%%esp)\n \
             jne    jump_121d55\n \
             movzbl "EXPORT_SYMBOL(vec_mode)",%%eax\n \
-            jmp    *vtable_1229b3(,%%eax,4)\n \
+            jmp    *render_table(,%%eax,4)\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
@@ -1477,7 +1477,7 @@ rl_md01:\n \
             cmpb   $0x0,0x67(%%esp)\n \
             je     jump_121f3d\n \
             movzbl "EXPORT_SYMBOL(vec_mode)",%%eax\n \
-            jmp    *vtable_1229b3(,%%eax,4)\n \
+            jmp    *render_table(,%%eax,4)\n \
         jump_121f3d:\n \
             mov    %%eax,(%%edi)\n \
             add    0xc(%%esp),%%eax\n \
@@ -1489,7 +1489,7 @@ rl_md01:\n \
             decl   0x18(%%esp)\n \
             jne    jump_121f3d\n \
             movzbl "EXPORT_SYMBOL(vec_mode)",%%eax\n \
-            jmp    *vtable_1229b3(,%%eax,4)\n \
+            jmp    *render_table(,%%eax,4)\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
@@ -1579,7 +1579,7 @@ rl_md00:\n \
             cmpb   $0x0,0x67(%%esp)\n \
             je     jump_122090\n \
             movzbl "EXPORT_SYMBOL(vec_mode)",%%eax\n \
-            jmp    *vtable_1229b3(,%%eax,4)\n \
+            jmp    *render_table(,%%eax,4)\n \
         jump_122090:\n \
             mov    %%eax,(%%edi)\n \
             add    0xc(%%esp),%%eax\n \
@@ -1589,7 +1589,7 @@ rl_md00:\n \
             decl   0x18(%%esp)\n \
             jne    jump_122090\n \
             movzbl "EXPORT_SYMBOL(vec_mode)",%%eax\n \
-            jmp    *vtable_1229b3(,%%eax,4)\n \
+            jmp    *render_table(,%%eax,4)\n \
         jump_1220b4:\n \
             mov    (%%ecx),%%eax\n \
             cmp    (%%esi),%%eax\n \
@@ -1633,40 +1633,40 @@ rl_md00:\n \
             idiv   %%ebx\n \
             mov    %%eax,0x8(%%esp)\n \
             movzbl "EXPORT_SYMBOL(vec_mode)",%%eax\n \
-            jmp    *vtable_122142(,%%eax,4)\n \
+            jmp    *fb_jt(,%%eax,4)\n \
 \n \
-vtable_122142: /* swars-final @ 0x122142 */\n \
-            .long   func_1224a1\n \
-            .long   func_1223da\n \
-            .long   func_1222d7\n \
-            .long   func_1222d7\n \
-            .long   func_1223da\n \
-            .long   func_1221ae\n \
-            .long   func_1221ae\n \
-            .long   func_1222d7\n \
-            .long   func_1222d7\n \
-            .long   func_1222d7\n \
-            .long   func_1222d7\n \
-            .long   func_1222d7\n \
-            .long   func_1222d7\n \
-            .long   func_1222d7\n \
-            .long   func_1224a1\n \
-            .long   func_1224a1\n \
-            .long   func_1223da\n \
-            .long   func_1223da\n \
-            .long   func_1222d7\n \
-            .long   func_1222d7\n \
-            .long   func_1221ae\n \
-            .long   func_1221ae\n \
-            .long   func_1222d7\n \
-            .long   func_1222d7\n \
-            .long   func_1221ae\n \
-            .long   func_1221ae\n \
-            .long   func_1221ae\n \
+fb_jt: /* swars-final @ 0x122142, genewars-beta @ 0xEFE72 */\n \
+            .long   fb_md00\n \
+            .long   fb_md01\n \
+            .long   fb_md02\n \
+            .long   fb_md02\n \
+            .long   fb_md01\n \
+            .long   fb_md03\n \
+            .long   fb_md03\n \
+            .long   fb_md02\n \
+            .long   fb_md02\n \
+            .long   fb_md02\n \
+            .long   fb_md02\n \
+            .long   fb_md02\n \
+            .long   fb_md02\n \
+            .long   fb_md02\n \
+            .long   fb_md00\n \
+            .long   fb_md00\n \
+            .long   fb_md01\n \
+            .long   fb_md01\n \
+            .long   fb_md02\n \
+            .long   fb_md02\n \
+            .long   fb_md03\n \
+            .long   fb_md03\n \
+            .long   fb_md02\n \
+            .long   fb_md02\n \
+            .long   fb_md03\n \
+            .long   fb_md03\n \
+            .long   fb_md03\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_1221ae:\n \
+fb_md03:\n \
 /*----------------------------------------------------------------*/\n \
             mov    (%%edi),%%ebx\n \
             sub    (%%ecx),%%ebx\n \
@@ -1758,11 +1758,11 @@ func_1221ae:\n \
             decl   0x10(%%esp)\n \
             jne    jump_12229e\n \
             movzbl "EXPORT_SYMBOL(vec_mode)",%%eax\n \
-            jmp    *vtable_1229b3(,%%eax,4)\n \
+            jmp    *render_table(,%%eax,4)\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_1222d7:\n \
+fb_md02:\n \
 /*----------------------------------------------------------------*/\n \
             mov    (%%edi),%%ebx\n \
             sub    (%%ecx),%%ebx\n \
@@ -1841,11 +1841,11 @@ func_1222d7:\n \
             decl   0x10(%%esp)\n \
             jne    jump_1223a8\n \
             movzbl "EXPORT_SYMBOL(vec_mode)",%%eax\n \
-            jmp    *vtable_1229b3(,%%eax,4)\n \
+            jmp    *render_table(,%%eax,4)\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_1223da:\n \
+fb_md01:\n \
 /*----------------------------------------------------------------*/\n \
             mov    (%%edi),%%ebx\n \
             sub    (%%ecx),%%ebx\n \
@@ -1905,12 +1905,12 @@ func_1223da:\n \
             decl   0x10(%%esp)\n \
             jne    jump_122476\n \
             movzbl "EXPORT_SYMBOL(vec_mode)",%%eax\n \
-            jmp    *vtable_1229b3(,%%eax,4)\n \
+            jmp    *render_table(,%%eax,4)\n \
 \n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_1224a1:\n \
+fb_md00:\n \
 /*----------------------------------------------------------------*/\n \
             mov    (%%esi),%%eax\n \
             shl    $0x10,%%eax\n \
@@ -1952,7 +1952,7 @@ func_1224a1:\n \
             decl   0x10(%%esp)\n \
             jne    jump_12250f\n \
             movzbl "EXPORT_SYMBOL(vec_mode)",%%eax\n \
-            jmp    *vtable_1229b3(,%%eax,4)\n \
+            jmp    *render_table(,%%eax,4)\n \
         jump_122533:\n \
             mov    (%%ecx),%%eax\n \
             cmp    (%%edi),%%eax\n \
@@ -1996,40 +1996,40 @@ func_1224a1:\n \
             idiv   %%ebx\n \
             mov    %%eax,0x8(%%esp)\n \
             movzbl "EXPORT_SYMBOL(vec_mode)",%%eax\n \
-            jmp    *vtable_1225c1(,%%eax,4)\n \
+            jmp    *ft_jt(,%%eax,4)\n \
 \n \
-vtable_1225c1:\n \
-            .long   func_12291e\n \
-            .long   func_122854\n \
-            .long   func_122759\n \
-            .long   func_122759\n \
-            .long   func_122854\n \
-            .long   func_12262d\n \
-            .long   func_12262d\n \
-            .long   func_122759\n \
-            .long   func_122759\n \
-            .long   func_122759\n \
-            .long   func_122759\n \
-            .long   func_122759\n \
-            .long   func_122759\n \
-            .long   func_122759\n \
-            .long   func_12291e\n \
-            .long   func_12291e\n \
-            .long   func_122854\n \
-            .long   func_122854\n \
-            .long   func_122759\n \
-            .long   func_122759\n \
-            .long   func_12262d\n \
-            .long   func_12262d\n \
-            .long   func_122759\n \
-            .long   func_122759\n \
-            .long   func_12262d\n \
-            .long   func_12262d\n \
-            .long   func_12262d\n \
+ft_jt: /* swars-final @ 0x1225c1, genewars-beta @ 0xF02F1 */\n \
+            .long   ft_md00\n \
+            .long   ft_md01\n \
+            .long   ft_md02\n \
+            .long   ft_md02\n \
+            .long   ft_md01\n \
+            .long   ft_md05\n \
+            .long   ft_md05\n \
+            .long   ft_md02\n \
+            .long   ft_md02\n \
+            .long   ft_md02\n \
+            .long   ft_md02\n \
+            .long   ft_md02\n \
+            .long   ft_md02\n \
+            .long   ft_md02\n \
+            .long   ft_md00\n \
+            .long   ft_md00\n \
+            .long   ft_md01\n \
+            .long   ft_md01\n \
+            .long   ft_md02\n \
+            .long   ft_md02\n \
+            .long   ft_md05\n \
+            .long   ft_md05\n \
+            .long   ft_md02\n \
+            .long   ft_md02\n \
+            .long   ft_md05\n \
+            .long   ft_md05\n \
+            .long   ft_md05\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_12262d:\n \
+ft_md05:\n \
 /*----------------------------------------------------------------*/\n \
             mov    (%%edi),%%ebx\n \
             sub    (%%esi),%%ebx\n \
@@ -2122,11 +2122,11 @@ func_12262d:\n \
             decl   0x10(%%esp)\n \
             jne    jump_122720\n \
             movzbl "EXPORT_SYMBOL(vec_mode)",%%eax\n \
-            jmp    *vtable_1229b3(,%%eax,4)\n \
+            jmp    *render_table(,%%eax,4)\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_122759:\n \
+ft_md02:\n \
 /*----------------------------------------------------------------*/\n \
             mov    (%%edi),%%ebx\n \
             sub    (%%esi),%%ebx\n \
@@ -2203,11 +2203,11 @@ func_122759:\n \
             decl   0x10(%%esp)\n \
             jne    jump_122822\n \
             movzbl "EXPORT_SYMBOL(vec_mode)",%%eax\n \
-            jmp    *vtable_1229b3(,%%eax,4)\n \
+            jmp    *render_table(,%%eax,4)\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_122854:\n \
+ft_md01:\n \
 /*----------------------------------------------------------------*/\n \
             mov    (%%edi),%%ebx\n \
             sub    (%%esi),%%ebx\n \
@@ -2268,11 +2268,11 @@ func_122854:\n \
             decl   0x10(%%esp)\n \
             jne    jump_1228f3\n \
             movzbl "EXPORT_SYMBOL(vec_mode)",%%eax\n \
-            jmp    *vtable_1229b3(,%%eax,4)\n \
+            jmp    *render_table(,%%eax,4)\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_12291e:\n \
+ft_md00:\n \
 /*----------------------------------------------------------------*/\n \
             mov    (%%esi),%%eax\n \
             shl    $0x10,%%eax\n \
@@ -2315,40 +2315,40 @@ func_12291e:\n \
             decl   0x10(%%esp)\n \
             jne    jump_12298f\n \
             movzbl "EXPORT_SYMBOL(vec_mode)",%%eax\n \
-            jmp    *vtable_1229b3(,%%eax,4)\n \
+            jmp    *render_table(,%%eax,4)\n \
 \n \
-vtable_1229b3:\n \
-            .long   func_122a1f\n \
-            .long   func_122a97\n \
-            .long   func_122c53\n \
-            .long   func_122eef\n \
-            .long   func_1231cf\n \
-            .long   func_123433\n \
-            .long   func_12374a\n \
-            .long   func_123b2b\n \
-            .long   func_123e3e\n \
-            .long   func_124184\n \
-            .long   func_1244f7\n \
-            .long   func_123b2b\n \
-            .long   func_124870\n \
-            .long   func_124b75\n \
-            .long   func_124e7b\n \
-            .long   func_125010\n \
-            .long   func_1251a4\n \
-            .long   func_12545d\n \
-            .long   func_125716\n \
-            .long   func_125a45\n \
-            .long   func_125d74\n \
-            .long   func_1261ed\n \
-            .long   func_126666\n \
-            .long   func_1269d9\n \
-            .long   func_126d4c\n \
-            .long   func_127205\n \
-            .long   func_1276be\n \
+render_table: /* swars-final @ 0x1229b3, genewars-beta @ 0xF06E3 */\n \
+            .long   render_md00\n \
+            .long   render_md01\n \
+            .long   render_md02\n \
+            .long   render_md03\n \
+            .long   render_md04\n \
+            .long   render_md05\n \
+            .long   render_md06\n \
+            .long   render_md07\n \
+            .long   render_md08\n \
+            .long   render_md09\n \
+            .long   render_md10\n \
+            .long   render_md07\n \
+            .long   render_md12\n \
+            .long   render_md13\n \
+            .long   render_md14\n \
+            .long   render_md15\n \
+            .long   render_md16\n \
+            .long   render_md17\n \
+            .long   render_md18\n \
+            .long   render_md19\n \
+            .long   render_md20\n \
+            .long   render_md21\n \
+            .long   render_md22\n \
+            .long   render_md23\n \
+            .long   render_md24\n \
+            .long   render_md25\n \
+            .long   render_md26\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_122a1f:\n \
+render_md00:\n \
 /*----------------------------------------------------------------*/\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
             mov    (%%esp),%%edx\n \
@@ -2401,7 +2401,7 @@ func_122a1f:\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_122a97:\n \
+render_md01:\n \
 /*----------------------------------------------------------------*/\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
             xor    %%ebx,%%ebx\n \
@@ -2533,7 +2533,7 @@ func_122a97:\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_122c53:\n \
+render_md02:\n \
 /*----------------------------------------------------------------*/\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
             mov    0x30(%%esp),%%eax\n \
@@ -2728,7 +2728,7 @@ func_122c53:\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_122eef:\n \
+render_md03:\n \
 /*----------------------------------------------------------------*/\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
             mov    0x30(%%esp),%%eax\n \
@@ -2971,7 +2971,7 @@ func_122eef:\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_1231cf:\n \
+render_md04:\n \
 /*----------------------------------------------------------------*/\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
             xor    %%ebx,%%ebx\n \
@@ -3119,7 +3119,7 @@ func_1231cf:\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_123433:\n \
+render_md05:\n \
 /*----------------------------------------------------------------*/\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
             mov    %%esi,0x5c(%%esp)\n \
@@ -3201,29 +3201,29 @@ func_123433:\n \
             and    $0xf,%%eax\n \
             add    "EXPORT_SYMBOL(add_to_edi)"(,%%eax,4),%%edi\n \
             mov    "EXPORT_SYMBOL(vec_map)",%%esi\n \
-            jmp    *vtable_123530(,%%eax,4)\n \
+            jmp    *gt_jt(,%%eax,4)\n \
 \n \
-vtable_123530:\n \
-            .long   func_123570\n \
-            .long   func_123713\n \
-            .long   func_1236f7\n \
-            .long   func_1236db\n \
-            .long   func_1236bf\n \
-            .long   func_1236a3\n \
-            .long   func_123687\n \
-            .long   func_12366b\n \
-            .long   func_12364f\n \
-            .long   func_123633\n \
-            .long   func_123617\n \
-            .long   func_1235fb\n \
-            .long   func_1235df\n \
-            .long   func_1235c3\n \
-            .long   func_1235a7\n \
-            .long   func_12358b\n \
+gt_jt: /* swars-final @ 0x123530 */\n \
+            .long   gt_md00\n \
+            .long   gt_md01\n \
+            .long   gt_md02\n \
+            .long   gt_md03\n \
+            .long   gt_md04\n \
+            .long   gt_md05\n \
+            .long   gt_md06\n \
+            .long   gt_md07\n \
+            .long   gt_md08\n \
+            .long   gt_md09\n \
+            .long   gt_md10\n \
+            .long   gt_md11\n \
+            .long   gt_md12\n \
+            .long   gt_md13\n \
+            .long   gt_md14\n \
+            .long   gt_md15\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_123570:\n \
+gt_md00:\n \
 /*----------------------------------------------------------------*/\n \
             mov    %%ch,%%ah\n \
             mov    %%dl,%%bl\n \
@@ -3236,7 +3236,7 @@ func_123570:\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_12358b:\n \
+gt_md15:\n \
 /*----------------------------------------------------------------*/\n \
             mov    %%ch,%%ah\n \
             mov    %%dl,%%bl\n \
@@ -3249,7 +3249,7 @@ func_12358b:\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_1235a7:\n \
+gt_md14:\n \
 /*----------------------------------------------------------------*/\n \
             mov    %%ch,%%ah\n \
             mov    %%dl,%%bl\n \
@@ -3262,7 +3262,7 @@ func_1235a7:\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_1235c3:\n \
+gt_md13:\n \
 /*----------------------------------------------------------------*/\n \
             mov    %%ch,%%ah\n \
             mov    %%dl,%%bl\n \
@@ -3275,7 +3275,7 @@ func_1235c3:\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_1235df:\n \
+gt_md12:\n \
 /*----------------------------------------------------------------*/\n \
             mov    %%ch,%%ah\n \
             mov    %%dl,%%bl\n \
@@ -3288,7 +3288,7 @@ func_1235df:\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_1235fb:\n \
+gt_md11:\n \
 /*----------------------------------------------------------------*/\n \
             mov    %%ch,%%ah\n \
             mov    %%dl,%%bl\n \
@@ -3301,7 +3301,7 @@ func_1235fb:\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_123617:\n \
+gt_md10:\n \
 /*----------------------------------------------------------------*/\n \
             mov    %%ch,%%ah\n \
             mov    %%dl,%%bl\n \
@@ -3314,7 +3314,7 @@ func_123617:\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_123633:\n \
+gt_md09:\n \
 /*----------------------------------------------------------------*/\n \
             mov    %%ch,%%ah\n \
             mov    %%dl,%%bl\n \
@@ -3327,7 +3327,7 @@ func_123633:\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_12364f:\n \
+gt_md08:\n \
 /*----------------------------------------------------------------*/\n \
             mov    %%ch,%%ah\n \
             mov    %%dl,%%bl\n \
@@ -3340,7 +3340,7 @@ func_12364f:\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_12366b:\n \
+gt_md07:\n \
 /*----------------------------------------------------------------*/\n \
             mov    %%ch,%%ah\n \
             mov    %%dl,%%bl\n \
@@ -3353,7 +3353,7 @@ func_12366b:\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_123687:\n \
+gt_md06:\n \
 /*----------------------------------------------------------------*/\n \
             mov    %%ch,%%ah\n \
             mov    %%dl,%%bl\n \
@@ -3366,7 +3366,7 @@ func_123687:\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_1236a3:\n \
+gt_md05:\n \
 /*----------------------------------------------------------------*/\n \
             mov    %%ch,%%ah\n \
             mov    %%dl,%%bl\n \
@@ -3379,7 +3379,7 @@ func_1236a3:\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_1236bf:\n \
+gt_md04:\n \
 /*----------------------------------------------------------------*/\n \
             mov    %%ch,%%ah\n \
             mov    %%dl,%%bl\n \
@@ -3392,7 +3392,7 @@ func_1236bf:\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_1236db:\n \
+gt_md03:\n \
 /*----------------------------------------------------------------*/\n \
             mov    %%ch,%%ah\n \
             mov    %%dl,%%bl\n \
@@ -3405,7 +3405,7 @@ func_1236db:\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_1236f7:\n \
+gt_md02:\n \
 /*----------------------------------------------------------------*/\n \
             mov    %%ch,%%ah\n \
             mov    %%dl,%%bl\n \
@@ -3418,7 +3418,7 @@ func_1236f7:\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_123713:\n \
+gt_md01:\n \
 /*----------------------------------------------------------------*/\n \
             mov    %%ch,%%ah\n \
             mov    %%dl,%%bl\n \
@@ -3430,7 +3430,7 @@ func_123713:\n \
             mov    %%al,0xf(%%edi)\n \
             add    $0x10,%%edi\n \
             sub    $0x10,%%ebp\n \
-            jg     func_123570\n \
+            jg     gt_md00\n \
         jump_12373b:\n \
             decl   0x20(%%esp)\n \
             jne    jump_12346d\n \
@@ -3439,7 +3439,7 @@ func_123713:\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_12374a:\n \
+render_md06:\n \
 /*----------------------------------------------------------------*/\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
             mov    %%esi,0x5c(%%esp)\n \
@@ -3512,29 +3512,29 @@ func_12374a:\n \
             and    $0xf,%%esi\n \
             add    "EXPORT_SYMBOL(add_to_edi)"(,%%esi,4),%%edi\n \
             mov    "EXPORT_SYMBOL(vec_map)",%%ebp\n \
-            jmp    *vtable_12383a(,%%esi,4)\n \
+            jmp    *mgt_jt(,%%esi,4)\n \
 \n \
-vtable_12383a:\n \
-            .long   func_123880\n \
-            .long   func_123ae6\n \
-            .long   func_123abd\n \
-            .long   func_123a94\n \
-            .long   func_123a6b\n \
-            .long   func_123a42\n \
-            .long   func_123a19\n \
-            .long   func_1239f0\n \
-            .long   func_1239c7\n \
-            .long   func_12399e\n \
-            .long   func_123975\n \
-            .long   func_12394c\n \
-            .long   func_123923\n \
-            .long   func_1238fa\n \
-            .long   func_1238d1\n \
-            .long   func_1238a8\n \
+mgt_jt: /* swars-final @ 0x12383a, genewars-beta @ 0xF156A */\n \
+            .long   mgt_md00\n \
+            .long   mgt_md01\n \
+            .long   mgt_md02\n \
+            .long   mgt_md03\n \
+            .long   mgt_md04\n \
+            .long   mgt_md05\n \
+            .long   mgt_md06\n \
+            .long   mgt_md07\n \
+            .long   mgt_md08\n \
+            .long   mgt_md09\n \
+            .long   mgt_md10\n \
+            .long   mgt_md11\n \
+            .long   mgt_md12\n \
+            .long   mgt_md13\n \
+            .long   mgt_md14\n \
+            .long   mgt_md15\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_123880:\n \
+mgt_md00:\n \
 /*----------------------------------------------------------------*/\n \
             mov    (%%ebx,%%ebp,1),%%al\n \
             or     %%al,%%al\n \
@@ -3551,7 +3551,7 @@ func_123880:\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_1238a8:\n \
+mgt_md15:\n \
 /*----------------------------------------------------------------*/\n \
             mov    (%%ebx,%%ebp,1),%%al\n \
             or     %%al,%%al\n \
@@ -3568,7 +3568,7 @@ func_1238a8:\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_1238d1:\n \
+mgt_md14:\n \
 /*----------------------------------------------------------------*/\n \
             mov    (%%ebx,%%ebp,1),%%al\n \
             or     %%al,%%al\n \
@@ -3585,7 +3585,7 @@ func_1238d1:\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_1238fa:\n \
+mgt_md13:\n \
 /*----------------------------------------------------------------*/\n \
             mov    (%%ebx,%%ebp,1),%%al\n \
             or     %%al,%%al\n \
@@ -3602,7 +3602,7 @@ func_1238fa:\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_123923:\n \
+mgt_md12:\n \
 /*----------------------------------------------------------------*/\n \
             mov    (%%ebx,%%ebp,1),%%al\n \
             or     %%al,%%al\n \
@@ -3619,7 +3619,7 @@ func_123923:\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_12394c:\n \
+mgt_md11:\n \
 /*----------------------------------------------------------------*/\n \
             mov    (%%ebx,%%ebp,1),%%al\n \
             or     %%al,%%al\n \
@@ -3636,7 +3636,7 @@ func_12394c:\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_123975:\n \
+mgt_md10:\n \
 /*----------------------------------------------------------------*/\n \
             mov    (%%ebx,%%ebp,1),%%al\n \
             or     %%al,%%al\n \
@@ -3653,7 +3653,7 @@ func_123975:\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_12399e:\n \
+mgt_md09:\n \
 /*----------------------------------------------------------------*/\n \
             mov    (%%ebx,%%ebp,1),%%al\n \
             or     %%al,%%al\n \
@@ -3670,7 +3670,7 @@ func_12399e:\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_1239c7:\n \
+mgt_md08:\n \
 /*----------------------------------------------------------------*/\n \
             mov    (%%ebx,%%ebp,1),%%al\n \
             or     %%al,%%al\n \
@@ -3687,7 +3687,7 @@ func_1239c7:\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_1239f0:\n \
+mgt_md07:\n \
 /*----------------------------------------------------------------*/\n \
             mov    (%%ebx,%%ebp,1),%%al\n \
             or     %%al,%%al\n \
@@ -3704,7 +3704,7 @@ func_1239f0:\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_123a19:\n \
+mgt_md06:\n \
 /*----------------------------------------------------------------*/\n \
             mov    (%%ebx,%%ebp,1),%%al\n \
             or     %%al,%%al\n \
@@ -3721,7 +3721,7 @@ func_123a19:\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_123a42:\n \
+mgt_md05:\n \
 /*----------------------------------------------------------------*/\n \
             mov    (%%ebx,%%ebp,1),%%al\n \
             or     %%al,%%al\n \
@@ -3738,7 +3738,7 @@ func_123a42:\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_123a6b:\n \
+mgt_md04:\n \
 /*----------------------------------------------------------------*/\n \
             mov    (%%ebx,%%ebp,1),%%al\n \
             or     %%al,%%al\n \
@@ -3755,7 +3755,7 @@ func_123a6b:\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_123a94:\n \
+mgt_md03:\n \
 /*----------------------------------------------------------------*/\n \
             mov    (%%ebx,%%ebp,1),%%al\n \
             or     %%al,%%al\n \
@@ -3772,7 +3772,7 @@ func_123a94:\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_123abd:\n \
+mgt_md02:\n \
 /*----------------------------------------------------------------*/\n \
             mov    (%%ebx,%%ebp,1),%%al\n \
             or     %%al,%%al\n \
@@ -3789,7 +3789,7 @@ func_123abd:\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_123ae6:\n \
+mgt_md01:\n \
 /*----------------------------------------------------------------*/\n \
             mov    (%%ebx,%%ebp,1),%%al\n \
             or     %%al,%%al\n \
@@ -3805,7 +3805,7 @@ func_123ae6:\n \
             adc    0x3e(%%esp),%%ah\n \
             add    $0x10,%%edi\n \
             sub    $0x10,%%cx\n \
-            jg     func_123880\n \
+            jg     mgt_md00\n \
         jump_123b1c:\n \
             decl   0x20(%%esp)\n \
             jne    jump_123770\n \
@@ -3814,10 +3814,10 @@ func_123ae6:\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_123b2b:\n \
+render_md07:\n \
 /*----------------------------------------------------------------*/\n \
             cmpb   $0x20,"EXPORT_SYMBOL(vec_colour)"\n \
-            je     func_122c53\n \
+            je     render_md02\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
             mov    0x30(%%esp),%%eax\n \
             shl    $0x10,%%eax\n \
@@ -4028,7 +4028,7 @@ func_123b2b:\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_123e3e:\n \
+render_md08:\n \
 /*----------------------------------------------------------------*/\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
             mov    0x30(%%esp),%%eax\n \
@@ -4288,7 +4288,7 @@ func_123e3e:\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_124184:\n \
+render_md09:\n \
 /*----------------------------------------------------------------*/\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
             mov    0x30(%%esp),%%eax\n \
@@ -4563,7 +4563,7 @@ func_124184:\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_1244f7:\n \
+render_md10:\n \
 /*----------------------------------------------------------------*/\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
             mov    0x30(%%esp),%%eax\n \
@@ -4839,7 +4839,7 @@ func_1244f7:\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_124870:\n \
+render_md12:\n \
 /*----------------------------------------------------------------*/\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
             mov    0x30(%%esp),%%eax\n \
@@ -5051,7 +5051,7 @@ func_124870:\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_124b75:\n \
+render_md13:\n \
 /*----------------------------------------------------------------*/\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
             mov    0x30(%%esp),%%eax\n \
@@ -5263,7 +5263,7 @@ func_124b75:\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_124e7b:\n \
+render_md14:\n \
 /*----------------------------------------------------------------*/\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
             mov    (%%esp),%%edx\n \
@@ -5385,7 +5385,7 @@ func_124e7b:\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_125010:\n \
+render_md15:\n \
 /*----------------------------------------------------------------*/\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
             mov    (%%esp),%%edx\n \
@@ -5506,7 +5506,7 @@ func_125010:\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_1251a4:\n \
+render_md16:\n \
 /*----------------------------------------------------------------*/\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
             xor    %%edx,%%edx\n \
@@ -5685,7 +5685,7 @@ func_1251a4:\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_12545d:\n \
+render_md17:\n \
 /*----------------------------------------------------------------*/\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
             xor    %%edx,%%edx\n \
@@ -5864,7 +5864,7 @@ func_12545d:\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_125716:\n \
+render_md18:\n \
 /*----------------------------------------------------------------*/\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
             mov    0x30(%%esp),%%eax\n \
@@ -6091,7 +6091,7 @@ func_125716:\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_125a45:\n \
+render_md19:\n \
 /*----------------------------------------------------------------*/\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
             mov    0x30(%%esp),%%eax\n \
@@ -6318,7 +6318,7 @@ func_125a45:\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_125d74:\n \
+render_md20:\n \
 /*----------------------------------------------------------------*/\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
             mov    0x30(%%esp),%%eax\n \
@@ -6620,7 +6620,7 @@ func_125d74:\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_1261ed:\n \
+render_md21:\n \
 /*----------------------------------------------------------------*/\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
             mov    0x30(%%esp),%%eax\n \
@@ -6922,7 +6922,7 @@ func_1261ed:\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_126666:\n \
+render_md22:\n \
 /*----------------------------------------------------------------*/\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
             mov    0x30(%%esp),%%eax\n \
@@ -7197,7 +7197,7 @@ func_126666:\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_1269d9:\n \
+render_md23:\n \
 /*----------------------------------------------------------------*/\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
             mov    0x30(%%esp),%%eax\n \
@@ -7472,7 +7472,7 @@ func_1269d9:\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_126d4c:\n \
+render_md24:\n \
 /*----------------------------------------------------------------*/\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
             mov    0x30(%%esp),%%eax\n \
@@ -7822,7 +7822,7 @@ func_126d4c:\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_127205:\n \
+render_md25:\n \
 /*----------------------------------------------------------------*/\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
             mov    0x30(%%esp),%%eax\n \
@@ -8172,7 +8172,7 @@ func_127205:\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_1276be:\n \
+render_md26:\n \
 /*----------------------------------------------------------------*/\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
             mov    %%esi,0x5c(%%esp)\n \
@@ -8251,29 +8251,29 @@ func_1276be:\n \
             and    $0xf,%%eax\n \
             add    "EXPORT_SYMBOL(add_to_edi)"(,%%eax,4),%%edi\n \
             mov    "EXPORT_SYMBOL(vec_map)",%%esi\n \
-            jmp    *vtable_1277c0(,%%eax,4)\n \
+            jmp    *t12_jt(,%%eax,4)\n \
 \n \
-vtable_1277c0:\n \
-            .long   func_127800\n \
-            .long   func_127a1b\n \
-            .long   func_1279f7\n \
-            .long   func_1279d3\n \
-            .long   func_1279af\n \
-            .long   func_12798b\n \
-            .long   func_127967\n \
-            .long   func_127943\n \
-            .long   func_12791f\n \
-            .long   func_1278fb\n \
-            .long   func_1278d7\n \
-            .long   func_1278b3\n \
-            .long   func_12788f\n \
-            .long   func_12786b\n \
-            .long   func_127847\n \
-            .long   func_127823\n \
+t12_jt: /* swars-final @ 0x1277c0, genewars-beta @ 0xF54F0 */\n \
+            .long   t12_md00\n \
+            .long   t12_md01\n \
+            .long   t12_md02\n \
+            .long   t12_md03\n \
+            .long   t12_md04\n \
+            .long   t12_md05\n \
+            .long   t12_md06\n \
+            .long   t12_md07\n \
+            .long   t12_md08\n \
+            .long   t12_md09\n \
+            .long   t12_md10\n \
+            .long   t12_md11\n \
+            .long   t12_md12\n \
+            .long   t12_md13\n \
+            .long   t12_md14\n \
+            .long   t12_md15\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_127800:\n \
+t12_md00:\n \
 /*----------------------------------------------------------------*/\n \
             mov    %%ch,%%ah\n \
             mov    %%dl,%%bl\n \
@@ -8289,7 +8289,7 @@ func_127800:\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_127823:\n \
+t12_md15:\n \
 /*----------------------------------------------------------------*/\n \
             mov    %%ch,%%ah\n \
             mov    %%dl,%%bl\n \
@@ -8305,7 +8305,7 @@ func_127823:\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_127847:\n \
+t12_md14:\n \
 /*----------------------------------------------------------------*/\n \
             mov    %%ch,%%ah\n \
             mov    %%dl,%%bl\n \
@@ -8321,7 +8321,7 @@ func_127847:\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_12786b:\n \
+t12_md13:\n \
 /*----------------------------------------------------------------*/\n \
             mov    %%ch,%%ah\n \
             mov    %%dl,%%bl\n \
@@ -8337,7 +8337,7 @@ func_12786b:\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_12788f:\n \
+t12_md12:\n \
 /*----------------------------------------------------------------*/\n \
             mov    %%ch,%%ah\n \
             mov    %%dl,%%bl\n \
@@ -8353,7 +8353,7 @@ func_12788f:\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_1278b3:\n \
+t12_md11:\n \
 /*----------------------------------------------------------------*/\n \
             mov    %%ch,%%ah\n \
             mov    %%dl,%%bl\n \
@@ -8369,7 +8369,7 @@ func_1278b3:\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_1278d7:\n \
+t12_md10:\n \
 /*----------------------------------------------------------------*/\n \
             mov    %%ch,%%ah\n \
             mov    %%dl,%%bl\n \
@@ -8385,7 +8385,7 @@ func_1278d7:\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_1278fb:\n \
+t12_md09:\n \
 /*----------------------------------------------------------------*/\n \
             mov    %%ch,%%ah\n \
             mov    %%dl,%%bl\n \
@@ -8401,7 +8401,7 @@ func_1278fb:\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_12791f:\n \
+t12_md08:\n \
 /*----------------------------------------------------------------*/\n \
             mov    %%ch,%%ah\n \
             mov    %%dl,%%bl\n \
@@ -8417,7 +8417,7 @@ func_12791f:\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_127943:\n \
+t12_md07:\n \
 /*----------------------------------------------------------------*/\n \
             mov    %%ch,%%ah\n \
             mov    %%dl,%%bl\n \
@@ -8433,7 +8433,7 @@ func_127943:\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_127967:\n \
+t12_md06:\n \
 /*----------------------------------------------------------------*/\n \
             mov    %%ch,%%ah\n \
             mov    %%dl,%%bl\n \
@@ -8449,7 +8449,7 @@ func_127967:\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_12798b:\n \
+t12_md05:\n \
 /*----------------------------------------------------------------*/\n \
             mov    %%ch,%%ah\n \
             mov    %%dl,%%bl\n \
@@ -8465,7 +8465,7 @@ func_12798b:\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_1279af:\n \
+t12_md04:\n \
 /*----------------------------------------------------------------*/\n \
             mov    %%ch,%%ah\n \
             mov    %%dl,%%bl\n \
@@ -8481,7 +8481,7 @@ func_1279af:\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_1279d3:\n \
+t12_md03:\n \
 /*----------------------------------------------------------------*/\n \
             mov    %%ch,%%ah\n \
             mov    %%dl,%%bl\n \
@@ -8497,7 +8497,7 @@ func_1279d3:\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_1279f7:\n \
+t12_md02:\n \
 /*----------------------------------------------------------------*/\n \
             mov    %%ch,%%ah\n \
             mov    %%dl,%%bl\n \
@@ -8513,7 +8513,7 @@ func_1279f7:\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
-func_127a1b:\n \
+t12_md01:\n \
 /*----------------------------------------------------------------*/\n \
             mov    %%ch,%%ah\n \
             mov    %%dl,%%bl\n \
@@ -8528,7 +8528,7 @@ func_127a1b:\n \
             mov    %%al,0xf(%%edi)\n \
             add    $0x10,%%edi\n \
             sub    $0x10,%%ebp\n \
-            jg     func_127800\n \
+            jg     t12_md00\n \
         jump_127a4b:\n \
             decl   0x20(%%esp)\n \
             jne    jump_1276f4\n \
