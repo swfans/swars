@@ -425,8 +425,7 @@ ll_md05:\n \
         jump_1211b3:\n \
             cmpb   $0x0,0x67+%[lv]\n \
             je     jump_1211c8\n \
-            movzbl "EXPORT_SYMBOL(vec_mode)",%%eax\n \
-            jmp    *render_table(,%%eax,4)\n \
+            jmp    ready_for_render\n \
         jump_1211c8:\n \
             mov    %%eax,(%%edi)\n \
             add    0x4+%[lv],%%eax\n \
@@ -441,8 +440,7 @@ ll_md05:\n \
             add    $0x14,%%edi\n \
             decl   0x18+%[lv]\n \
             jne    jump_1211c8\n \
-            movzbl "EXPORT_SYMBOL(vec_mode)",%%eax\n \
-            jmp    *render_table(,%%eax,4)\n \
+            jmp    ready_for_render\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
@@ -599,8 +597,7 @@ ll_md02:\n \
         jump_1213e8:\n \
             cmpb   $0x0,0x67+%[lv]\n \
             je     jump_1213fd\n \
-            movzbl "EXPORT_SYMBOL(vec_mode)",%%eax\n \
-            jmp    *render_table(,%%eax,4)\n \
+            jmp    ready_for_render\n \
         jump_1213fd:\n \
             mov    %%eax,(%%edi)\n \
             add    0x4+%[lv],%%eax\n \
@@ -613,8 +610,7 @@ ll_md02:\n \
             add    $0x14,%%edi\n \
             decl   0x18+%[lv]\n \
             jne    jump_1213fd\n \
-            movzbl "EXPORT_SYMBOL(vec_mode)",%%eax\n \
-            jmp    *render_table(,%%eax,4)\n \
+            jmp    ready_for_render\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
@@ -745,8 +741,7 @@ ll_md01:\n \
         jump_1215c1:\n \
             cmpb   $0x0,0x67+%[lv]\n \
             je     jump_1215d6\n \
-            movzbl "EXPORT_SYMBOL(vec_mode)",%%eax\n \
-            jmp    *render_table(,%%eax,4)\n \
+            jmp    ready_for_render\n \
         jump_1215d6:\n \
             mov    %%eax,(%%edi)\n \
             add    0x4+%[lv],%%eax\n \
@@ -757,8 +752,7 @@ ll_md01:\n \
             add    $0x14,%%edi\n \
             decl   0x18+%[lv]\n \
             jne    jump_1215d6\n \
-            movzbl "EXPORT_SYMBOL(vec_mode)",%%eax\n \
-            jmp    *render_table(,%%eax,4)\n \
+            jmp    ready_for_render\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
@@ -847,8 +841,7 @@ ll_md00:\n \
         jump_121714:\n \
             cmpb   $0x0,0x67+%[lv]\n \
             je     jump_121729\n \
-            movzbl "EXPORT_SYMBOL(vec_mode)",%%eax\n \
-            jmp    *render_table(,%%eax,4)\n \
+            jmp    ready_for_render\n \
         jump_121729:\n \
             mov    %%eax,(%%edi)\n \
             add    0x4+%[lv],%%eax\n \
@@ -857,8 +850,7 @@ ll_md00:\n \
             add    $0x14,%%edi\n \
             decl   0x18+%[lv]\n \
             jne    jump_121729\n \
-            movzbl "EXPORT_SYMBOL(vec_mode)",%%eax\n \
-            jmp    *render_table(,%%eax,4)\n \
+            jmp    ready_for_render\n \
         jump_12174d:\n \
             xchg   %%esi,%%edi\n \
             xchg   %%edi,%%ecx\n \
@@ -1145,8 +1137,7 @@ rl_md05:\n \
         jump_121aed:\n \
             cmpb   $0x0,0x67+%[lv]\n \
             je     jump_121b02\n \
-            movzbl "EXPORT_SYMBOL(vec_mode)",%%eax\n \
-            jmp    *render_table(,%%eax,4)\n \
+            jmp    ready_for_render\n \
         jump_121b02:\n \
             mov    %%eax,(%%edi)\n \
             add    0xc+%[lv],%%eax\n \
@@ -1161,8 +1152,7 @@ rl_md05:\n \
             add    $0x14,%%edi\n \
             decl   0x18+%[lv]\n \
             jne    jump_121b02\n \
-            movzbl "EXPORT_SYMBOL(vec_mode)",%%eax\n \
-            jmp    *render_table(,%%eax,4)\n \
+            jmp    ready_for_render\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
@@ -1329,8 +1319,7 @@ rl_md02:\n \
         jump_121d40:\n \
             cmpb   $0x0,0x67+%[lv]\n \
             je     jump_121d55\n \
-            movzbl "EXPORT_SYMBOL(vec_mode)",%%eax\n \
-            jmp    *render_table(,%%eax,4)\n \
+            jmp    ready_for_render\n \
         jump_121d55:\n \
             mov    %%eax,(%%edi)\n \
             add    0xc+%[lv],%%eax\n \
@@ -1343,8 +1332,7 @@ rl_md02:\n \
             add    $0x14,%%edi\n \
             decl   0x18+%[lv]\n \
             jne    jump_121d55\n \
-            movzbl "EXPORT_SYMBOL(vec_mode)",%%eax\n \
-            jmp    *render_table(,%%eax,4)\n \
+            jmp    ready_for_render\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
@@ -1480,8 +1468,7 @@ rl_md01:\n \
         jump_121f28:\n \
             cmpb   $0x0,0x67+%[lv]\n \
             je     jump_121f3d\n \
-            movzbl "EXPORT_SYMBOL(vec_mode)",%%eax\n \
-            jmp    *render_table(,%%eax,4)\n \
+            jmp    ready_for_render\n \
         jump_121f3d:\n \
             mov    %%eax,(%%edi)\n \
             add    0xc+%[lv],%%eax\n \
@@ -1492,8 +1479,7 @@ rl_md01:\n \
             add    $0x14,%%edi\n \
             decl   0x18+%[lv]\n \
             jne    jump_121f3d\n \
-            movzbl "EXPORT_SYMBOL(vec_mode)",%%eax\n \
-            jmp    *render_table(,%%eax,4)\n \
+            jmp    ready_for_render\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
@@ -1582,8 +1568,7 @@ rl_md00:\n \
         jump_12207b:\n \
             cmpb   $0x0,0x67+%[lv]\n \
             je     jump_122090\n \
-            movzbl "EXPORT_SYMBOL(vec_mode)",%%eax\n \
-            jmp    *render_table(,%%eax,4)\n \
+            jmp    ready_for_render\n \
         jump_122090:\n \
             mov    %%eax,(%%edi)\n \
             add    0xc+%[lv],%%eax\n \
@@ -1592,8 +1577,7 @@ rl_md00:\n \
             add    $0x14,%%edi\n \
             decl   0x18+%[lv]\n \
             jne    jump_122090\n \
-            movzbl "EXPORT_SYMBOL(vec_mode)",%%eax\n \
-            jmp    *render_table(,%%eax,4)\n \
+            jmp    ready_for_render\n \
         jump_1220b4:\n \
             mov    (%%ecx),%%eax\n \
             cmp    (%%esi),%%eax\n \
@@ -1761,8 +1745,7 @@ fb_md03:\n \
             add    $0x14,%%edi\n \
             decl   0x10+%[lv]\n \
             jne    jump_12229e\n \
-            movzbl "EXPORT_SYMBOL(vec_mode)",%%eax\n \
-            jmp    *render_table(,%%eax,4)\n \
+            jmp    ready_for_render\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
@@ -1844,8 +1827,7 @@ fb_md02:\n \
             add    $0x14,%%edi\n \
             decl   0x10+%[lv]\n \
             jne    jump_1223a8\n \
-            movzbl "EXPORT_SYMBOL(vec_mode)",%%eax\n \
-            jmp    *render_table(,%%eax,4)\n \
+            jmp    ready_for_render\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
@@ -1908,8 +1890,7 @@ fb_md01:\n \
             add    $0x14,%%edi\n \
             decl   0x10+%[lv]\n \
             jne    jump_122476\n \
-            movzbl "EXPORT_SYMBOL(vec_mode)",%%eax\n \
-            jmp    *render_table(,%%eax,4)\n \
+            jmp    ready_for_render\n \
 \n \
 \n \
 \n \
@@ -1955,8 +1936,7 @@ fb_md00:\n \
             add    $0x14,%%edi\n \
             decl   0x10+%[lv]\n \
             jne    jump_12250f\n \
-            movzbl "EXPORT_SYMBOL(vec_mode)",%%eax\n \
-            jmp    *render_table(,%%eax,4)\n \
+            jmp    ready_for_render\n \
         jump_122533:\n \
             mov    (%%ecx),%%eax\n \
             cmp    (%%edi),%%eax\n \
@@ -2125,8 +2105,7 @@ ft_md05:\n \
             add    $0x14,%%edi\n \
             decl   0x10+%[lv]\n \
             jne    jump_122720\n \
-            movzbl "EXPORT_SYMBOL(vec_mode)",%%eax\n \
-            jmp    *render_table(,%%eax,4)\n \
+            jmp    ready_for_render\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
@@ -2206,8 +2185,7 @@ ft_md02:\n \
             add    $0x14,%%edi\n \
             decl   0x10+%[lv]\n \
             jne    jump_122822\n \
-            movzbl "EXPORT_SYMBOL(vec_mode)",%%eax\n \
-            jmp    *render_table(,%%eax,4)\n \
+            jmp    ready_for_render\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
@@ -2271,8 +2249,7 @@ ft_md01:\n \
             add    $0x14,%%edi\n \
             decl   0x10+%[lv]\n \
             jne    jump_1228f3\n \
-            movzbl "EXPORT_SYMBOL(vec_mode)",%%eax\n \
-            jmp    *render_table(,%%eax,4)\n \
+            jmp    ready_for_render\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
@@ -2318,6 +2295,18 @@ ft_md00:\n \
             add    $0x14,%%edi\n \
             decl   0x10+%[lv]\n \
             jne    jump_12298f\n \
+\n \
+ready_for_render:\n \
+            popa\n \
+    "
+                 : [lv] "+o" (lv)
+                 : "a" (point_a), "d" (point_b), "b" (point_c), "o0" (lv)
+                 : "memory", "cc");// unaffected due to pusha/popa: "%eax", "%edx", "%ebx", "%ecx", "%edi", "%esi"
+
+    LOGNO("render mode %d",(int)vec_mode);
+
+    asm volatile (" \
+            pusha\n \
             movzbl "EXPORT_SYMBOL(vec_mode)",%%eax\n \
             jmp    *render_table(,%%eax,4)\n \
 \n \
@@ -8730,7 +8719,7 @@ t12_md01:\n \
             popa\n \
     "
                  : [lv] "+o" (lv)
-                 : "a" (point_a), "d" (point_b), "b" (point_c), "o0" (lv)
+                 : "o0" (lv)
                  : "memory", "cc");// unaffected due to pusha/popa: "%eax", "%edx", "%ebx", "%ecx", "%edi", "%esi"
     LOGNO("end");
 }
