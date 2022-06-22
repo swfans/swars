@@ -41,6 +41,7 @@
 .global EXPORT_SYMBOL(vec_window_width);
 .global EXPORT_SYMBOL(fade_table);
 .global EXPORT_SYMBOL(ghost_table);
+.global EXPORT_SYMBOL(add_to_edi);
 
 
 /*----------------------------------------------------------------*/
@@ -165,9 +166,9 @@ GLOBAL_FUNC (ASM_trig)
 		shl    $0x10,%eax
 		mov    %eax,0x1c(%esp)
 		movzbl EXPORT_SYMBOL(vec_mode),%eax
-		jmp    *vtable_120f07(,%eax,4)
+		jmp    *ll_jt(,%eax,4)
 
-vtable_120f07:
+ll_jt:
 		.long   func_121601
 		.long   func_12142f
 		.long   func_121201
@@ -870,9 +871,9 @@ func_121601:
 		shl    $0x10,%eax
 		mov    %eax,0x1c(%esp)
 		movzbl EXPORT_SYMBOL(vec_mode),%eax
-		jmp    *vtable_121814(,%eax,4)
+		jmp    *rl_jt(,%eax,4)
 
-vtable_121814:
+rl_jt:
 		.long   func_121f68
 		.long   func_121d87
 		.long   func_121b3b
@@ -3078,8 +3079,9 @@ func_1231cf:
 		popa
 		ret
 
+#if 0
 .section .rodata
-data_1233f3:
+add_to_edi:
                 .fill   0x4
                 .ascii  "\xf1\xff\xff\xff\xf2\xff\xff\xff"
                 .ascii  "\xf3\xff\xff\xff\xf4\xff\xff\xff"
@@ -3090,7 +3092,7 @@ data_1233f3:
                 .ascii  "\xfd\xff\xff\xff\xfe\xff\xff\xff"
                 .ascii  "\xff\xff\xff\xff"
 .text
-
+#endif
 
 /*----------------------------------------------------------------*/
 func_123433:
@@ -3173,7 +3175,7 @@ func_123433:
 		and    $0xffff,%ebx
 		mov    %ebp,%eax
 		and    $0xf,%eax
-		add    data_1233f3(,%eax,4),%edi
+		add    EXPORT_SYMBOL(add_to_edi)(,%eax,4),%edi
 		mov    EXPORT_SYMBOL(vec_map),%esi
 		jmp    *vtable_123530(,%eax,4)
 
@@ -3485,7 +3487,7 @@ func_12374a:
 	jump_123820:
 		mov    %cx,%si
 		and    $0xf,%esi
-		add    data_1233f3(,%esi,4),%edi
+		add    EXPORT_SYMBOL(add_to_edi)(,%esi,4),%edi
 		mov    EXPORT_SYMBOL(vec_map),%ebp
 		jmp    *vtable_12383a(,%esi,4)
 
@@ -8243,7 +8245,7 @@ func_1276be:
 		and    $0xffff,%ebx
 		mov    %ebp,%eax
 		and    $0xf,%eax
-		add    data_1233f3(,%eax,4),%edi
+		add    EXPORT_SYMBOL(add_to_edi)(,%eax,4),%edi
 		mov    EXPORT_SYMBOL(vec_map),%esi
 		jmp    *vtable_1277c0(,%eax,4)
 
