@@ -65,6 +65,7 @@ enum RenderingVectorMode {
 
 struct TrigLocals {
     unsigned char v[0x6C];
+    ubyte start_type; //offs=0x6c
 };
 
 #pragma pack()
@@ -94,6 +95,10 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
     return;
 #endif
     static struct TrigLocals lv;
+
+    LOGNO("Pa(%ld,%ld,%ld)", point_a->X, point_a->Y, point_a->S);
+    LOGNO("Pb(%ld,%ld,%ld)", point_b->X, point_b->Y, point_b->S);
+    LOGNO("Pc(%ld,%ld,%ld)", point_c->X, point_c->Y, point_c->S);
 
     asm volatile (" \
             pusha\n \
@@ -2298,15 +2303,21 @@ ft_md00:\n \
             jmp    ready_for_render\n \
 \n \
 ready_for_bailout:\n \
-            jmp    jump_rend_md00_a92\n \
+            popa\n \
+            movb   $0x0,0x6c+%[lv]\n \
+            jmp    ready_for_render_fin\n \
 \n \
 ready_for_render:\n \
             popa\n \
+            movb   $0x9,0x6c+%[lv]\n \
 ready_for_render_fin:\n \
     "
                  : [lv] "+o" (lv)
                  : "a" (point_a), "d" (point_b), "b" (point_c), "o0" (lv)
                  : "memory", "cc");// unaffected due to pusha/popa: "%eax", "%edx", "%ebx", "%ecx", "%edi", "%esi"
+
+    if (lv.start_type == 0)
+        return;
 
     LOGNO("render mode %d",(int)vec_mode);
 
