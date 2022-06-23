@@ -109,69 +109,69 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             mov    0x4(%%edi),%%ebx\n \
             mov    0x4(%%ecx),%%edx\n \
             cmp    %%ebx,%%eax\n \
-            je     jump_120dff\n \
-            jg     jump_120dc5\n \
+            je     jump_tprep_Aff\n \
+            jg     jump_tprep_Ac5\n \
             cmp    %%edx,%%eax\n \
-            je     jump_120dec\n \
-            jl     jump_120e3a\n \
+            je     jump_tprep_Aec\n \
+            jl     jump_tprep_B3a\n \
             xchg   %%esi,%%ecx\n \
             xchg   %%edi,%%ecx\n \
-            jmp    jump_120e44\n \
-        jump_120dc5:\n \
+            jmp    jump_tprep_B44\n \
+        jump_tprep_Ac5:\n \
             cmp    %%edx,%%eax\n \
-            je     jump_1220b4\n \
-            jl     jump_12174d\n \
+            je     jump_pr_rl_Sb4\n \
+            jl     jump_pr_ll_K4d\n \
             cmp    %%edx,%%ebx\n \
             je     jump_122533\n \
-            jl     jump_120de6\n \
+            jl     jump_tprep_Ae6\n \
             xchg   %%esi,%%ecx\n \
             xchg   %%edi,%%ecx\n \
-            jmp    jump_121751\n \
-        jump_120de6:\n \
+            jmp    jump_pr_ll_K51\n \
+        jump_tprep_Ae6:\n \
             xchg   %%esi,%%edi\n \
             xchg   %%edi,%%ecx\n \
-            jmp    jump_120e44\n \
-        jump_120dec:\n \
+            jmp    jump_tprep_B44\n \
+        jump_tprep_Aec:\n \
             mov    (%%esi),%%eax\n \
             cmp    (%%ecx),%%eax\n \
             jle    ready_for_bailout\n \
             xchg   %%esi,%%ecx\n \
             xchg   %%edi,%%ecx\n \
             jmp    jump_122541\n \
-        jump_120dff:\n \
+        jump_tprep_Aff:\n \
             cmp    %%edx,%%eax\n \
             je     ready_for_bailout\n \
-            jl     jump_120e1c\n \
+            jl     jump_tprep_B1c\n \
             mov    (%%esi),%%eax\n \
             cmp    (%%edi),%%eax\n \
             jle    ready_for_bailout\n \
             xchg   %%esi,%%ecx\n \
             xchg   %%edi,%%ecx\n \
-            jmp    jump_1220c2\n \
-        jump_120e1c:\n \
+            jmp    jump_pr_rl_Sc2\n \
+        jump_tprep_B1c:\n \
             mov    (%%edi),%%eax\n \
             cmp    (%%esi),%%eax\n \
             jle    ready_for_bailout\n \
             jmp    jump_122541\n \
-        jump_120e2b:\n \
+        jump_tprep_B2b:\n \
             mov    (%%edi),%%eax\n \
             cmp    (%%ecx),%%eax\n \
             jle    ready_for_bailout\n \
-            jmp    jump_1220c2\n \
-        jump_120e3a:\n \
+            jmp    jump_pr_rl_Sc2\n \
+        jump_tprep_B3a:\n \
             cmp    %%edx,%%ebx\n \
-            je     jump_120e2b\n \
-            jg     jump_121751\n \
-        jump_120e44:\n \
+            je     jump_tprep_B2b\n \
+            jg     jump_pr_ll_K51\n \
+        jump_tprep_B44:\n \
             mov    0x4(%%esi),%%eax\n \
             mov    %%eax,0x54+%[lv]\n \
             or     %%eax,%%eax\n \
-            jns    jump_120e5f\n \
+            jns    jump_tprep_B5f\n \
             mov    "EXPORT_SYMBOL(poly_screen)",%%ebx\n \
             mov    %%ebx,0x0+%[lv]\n \
             movb   $0x1,0x66+%[lv]\n \
-            jmp    jump_120e82\n \
-        jump_120e5f:\n \
+            jmp    jump_tprep_B82\n \
+        jump_tprep_B5f:\n \
             cmp    "EXPORT_SYMBOL(vec_window_height)",%%eax\n \
             jge    ready_for_bailout\n \
             mov    %%eax,%%ebx\n \
@@ -179,7 +179,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             add    "EXPORT_SYMBOL(poly_screen)",%%ebx\n \
             mov    %%ebx,0x0+%[lv]\n \
             movb   $0x0,0x66+%[lv]\n \
-        jump_120e82:\n \
+        jump_tprep_B82:\n \
             mov    0x4(%%ecx),%%ebx\n \
             cmp    "EXPORT_SYMBOL(vec_window_height)",%%ebx\n \
             setg   0x68+%[lv]\n \
@@ -266,7 +266,7 @@ ll_md05:\n \
             sub    (%%esi),%%ebx\n \
             add    %%eax,%%ebx\n \
             jl     ready_for_bailout\n \
-            je     jump_120fee\n \
+            je     jump_pr_ll_Cee\n \
             inc    %%ebx\n \
             mov    0x8(%%esi),%%eax\n \
             sub    0x8(%%ecx),%%eax\n \
@@ -295,7 +295,7 @@ ll_md05:\n \
             cltd\n \
             idiv   %%ebx\n \
             mov    %%eax,0x3c+%[lv]\n \
-        jump_120fee:\n \
+        jump_pr_ll_Cee:\n \
             mov    0x8(%%ecx),%%eax\n \
             sub    0x8(%%esi),%%eax\n \
             cltd\n \
@@ -318,14 +318,14 @@ ll_md05:\n \
             mov    0xc(%%esi),%%edx\n \
             mov    0x10(%%esi),%%esi\n \
             cmpb   $0x0,0x66+%[lv]\n \
-            je     jump_12114f\n \
+            je     jump_pr_ll_E4f\n \
             mov    0x54+%[lv],%%edi\n \
             neg    %%edi\n \
             sub    %%edi,0x20+%[lv]\n \
             jle    ready_for_bailout\n \
             mov    %%edi,0x48+%[lv]\n \
             cmp    0x14+%[lv],%%edi\n \
-            js     jump_1210e7\n \
+            js     jump_pr_ll_De7\n \
             mov    0x4+%[lv],%%edi\n \
             imul   0x14+%[lv],%%edi\n \
             add    %%edi,%%eax\n \
@@ -358,14 +358,14 @@ ll_md05:\n \
             imul   0x48+%[lv],%%edi\n \
             add    %%edi,%%esi\n \
             cmpb   $0x0,0x68+%[lv]\n \
-            je     jump_1210dc\n \
+            je     jump_pr_ll_Ddc\n \
             mov    "EXPORT_SYMBOL(vec_window_height)",%%edi\n \
             mov    %%edi,0x18+%[lv]\n \
             mov    %%edi,0x20+%[lv]\n \
-        jump_1210dc:\n \
+        jump_pr_ll_Ddc:\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%edi\n \
-            jmp    jump_1211b3\n \
-        jump_1210e7:\n \
+            jmp    jump_pr_ll_Eb3\n \
+        jump_pr_ll_De7:\n \
             mov    0x48+%[lv],%%edi\n \
             sub    %%edi,0x14+%[lv]\n \
             imul   0x4+%[lv],%%edi\n \
@@ -383,36 +383,36 @@ ll_md05:\n \
             imul   0x48+%[lv],%%edi\n \
             add    %%edi,%%esi\n \
             cmpb   $0x0,0x68+%[lv]\n \
-            je     jump_12117e\n \
+            je     jump_pr_ll_E7e\n \
             mov    "EXPORT_SYMBOL(vec_window_height)",%%edi\n \
             mov    %%edi,0x20+%[lv]\n \
             cmpb   $0x0,0x67+%[lv]\n \
-            je     jump_121140\n \
+            je     jump_pr_ll_E40\n \
             mov    %%edi,0x14+%[lv]\n \
-            jmp    jump_12114d\n \
-        jump_121140:\n \
+            jmp    jump_pr_ll_E4d\n \
+        jump_pr_ll_E40:\n \
             sub    0x14+%[lv],%%edi\n \
             setle  0x67+%[lv]\n \
             mov    %%edi,0x18+%[lv]\n \
-        jump_12114d:\n \
-            jmp    jump_12117e\n \
-        jump_12114f:\n \
+        jump_pr_ll_E4d:\n \
+            jmp    jump_pr_ll_E7e\n \
+        jump_pr_ll_E4f:\n \
             cmpb   $0x0,0x68+%[lv]\n \
-            je     jump_12117e\n \
+            je     jump_pr_ll_E7e\n \
             mov    "EXPORT_SYMBOL(vec_window_height)",%%edi\n \
             sub    0x54+%[lv],%%edi\n \
             mov    %%edi,0x20+%[lv]\n \
             cmpb   $0x0,0x67+%[lv]\n \
-            je     jump_121171\n \
+            je     jump_pr_ll_E71\n \
             mov    %%edi,0x14+%[lv]\n \
-            jmp    jump_12117e\n \
-        jump_121171:\n \
+            jmp    jump_pr_ll_E7e\n \
+        jump_pr_ll_E71:\n \
             sub    0x14+%[lv],%%edi\n \
             setle  0x67+%[lv]\n \
             mov    %%edi,0x18+%[lv]\n \
-        jump_12117e:\n \
+        jump_pr_ll_E7e:\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%edi\n \
-        jump_121184:\n \
+        jump_pr_ll_E84:\n \
             mov    %%eax,(%%edi)\n \
             add    0x4+%[lv],%%eax\n \
             mov    %%ebx,0x4(%%edi)\n \
@@ -425,13 +425,13 @@ ll_md05:\n \
             add    0x40+%[lv],%%esi\n \
             add    $0x14,%%edi\n \
             decl   0x14+%[lv]\n \
-            jne    jump_121184\n \
+            jne    jump_pr_ll_E84\n \
             mov    0x1c+%[lv],%%ebx\n \
-        jump_1211b3:\n \
+        jump_pr_ll_Eb3:\n \
             cmpb   $0x0,0x67+%[lv]\n \
-            je     jump_1211c8\n \
+            je     jump_pr_ll_Ec8\n \
             jmp    ready_for_render\n \
-        jump_1211c8:\n \
+        jump_pr_ll_Ec8:\n \
             mov    %%eax,(%%edi)\n \
             add    0x4+%[lv],%%eax\n \
             mov    %%ebx,0x4(%%edi)\n \
@@ -444,7 +444,7 @@ ll_md05:\n \
             add    0x40+%[lv],%%esi\n \
             add    $0x14,%%edi\n \
             decl   0x18+%[lv]\n \
-            jne    jump_1211c8\n \
+            jne    jump_pr_ll_Ec8\n \
             jmp    ready_for_render\n \
 \n \
 \n \
@@ -464,7 +464,7 @@ ll_md02:\n \
             sub    (%%esi),%%ebx\n \
             add    %%eax,%%ebx\n \
             jl     ready_for_bailout\n \
-            je     jump_121261\n \
+            je     jump_pr_ll_F61\n \
             inc    %%ebx\n \
             mov    0x8(%%esi),%%eax\n \
             sub    0x8(%%ecx),%%eax\n \
@@ -484,7 +484,7 @@ ll_md02:\n \
             cltd\n \
             idiv   %%ebx\n \
             mov    %%eax,0x30+%[lv]\n \
-        jump_121261:\n \
+        jump_pr_ll_F61:\n \
             mov    0x8(%%ecx),%%eax\n \
             sub    0x8(%%esi),%%eax\n \
             cltd\n \
@@ -501,14 +501,14 @@ ll_md02:\n \
             mov    0x8(%%esi),%%ecx\n \
             mov    0xc(%%esi),%%edx\n \
             cmpb   $0x0,0x66+%[lv]\n \
-            je     jump_12138b\n \
+            je     jump_pr_ll_G8b\n \
             mov    0x54+%[lv],%%edi\n \
             neg    %%edi\n \
             sub    %%edi,0x20+%[lv]\n \
             jle    ready_for_bailout\n \
             mov    %%edi,0x48+%[lv]\n \
             cmp    0x14+%[lv],%%edi\n \
-            js     jump_12132e\n \
+            js     jump_pr_ll_G2e\n \
             mov    0x4+%[lv],%%edi\n \
             imul   0x14+%[lv],%%edi\n \
             add    %%edi,%%eax\n \
@@ -535,14 +535,14 @@ ll_md02:\n \
             imul   0x48+%[lv],%%edi\n \
             add    %%edi,%%edx\n \
             cmpb   $0x0,0x68+%[lv]\n \
-            je     jump_121323\n \
+            je     jump_pr_ll_G23\n \
             mov    "EXPORT_SYMBOL(vec_window_height)",%%edi\n \
             mov    %%edi,0x18+%[lv]\n \
             mov    %%edi,0x20+%[lv]\n \
-        jump_121323:\n \
+        jump_pr_ll_G23:\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%edi\n \
-            jmp    jump_1213e8\n \
-        jump_12132e:\n \
+            jmp    jump_pr_ll_Ge8\n \
+        jump_pr_ll_G2e:\n \
             mov    0x48+%[lv],%%edi\n \
             sub    %%edi,0x14+%[lv]\n \
             imul   0x4+%[lv],%%edi\n \
@@ -557,36 +557,36 @@ ll_md02:\n \
             imul   0x48+%[lv],%%edi\n \
             add    %%edi,%%edx\n \
             cmpb   $0x0,0x68+%[lv]\n \
-            je     jump_1213ba\n \
+            je     jump_pr_ll_Gba\n \
             mov    "EXPORT_SYMBOL(vec_window_height)",%%edi\n \
             mov    %%edi,0x20+%[lv]\n \
             cmpb   $0x0,0x67+%[lv]\n \
-            je     jump_12137c\n \
+            je     jump_pr_ll_G7c\n \
             mov    %%edi,0x14+%[lv]\n \
-            jmp    jump_121389\n \
-        jump_12137c:\n \
+            jmp    jump_pr_ll_G89\n \
+        jump_pr_ll_G7c:\n \
             sub    0x14+%[lv],%%edi\n \
             setle  0x67+%[lv]\n \
             mov    %%edi,0x18+%[lv]\n \
-        jump_121389:\n \
-            jmp    jump_1213ba\n \
-        jump_12138b:\n \
+        jump_pr_ll_G89:\n \
+            jmp    jump_pr_ll_Gba\n \
+        jump_pr_ll_G8b:\n \
             cmpb   $0x0,0x68+%[lv]\n \
-            je     jump_1213ba\n \
+            je     jump_pr_ll_Gba\n \
             mov    "EXPORT_SYMBOL(vec_window_height)",%%edi\n \
             sub    0x54+%[lv],%%edi\n \
             mov    %%edi,0x20+%[lv]\n \
             cmpb   $0x0,0x67+%[lv]\n \
-            je     jump_1213ad\n \
+            je     jump_pr_ll_Gad\n \
             mov    %%edi,0x14+%[lv]\n \
-            jmp    jump_1213ba\n \
-        jump_1213ad:\n \
+            jmp    jump_pr_ll_Gba\n \
+        jump_pr_ll_Gad:\n \
             sub    0x14+%[lv],%%edi\n \
             setle  0x67+%[lv]\n \
             mov    %%edi,0x18+%[lv]\n \
-        jump_1213ba:\n \
+        jump_pr_ll_Gba:\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%edi\n \
-        jump_1213c0:\n \
+        jump_pr_ll_Gc0:\n \
             mov    %%eax,(%%edi)\n \
             add    0x4+%[lv],%%eax\n \
             mov    %%ebx,0x4(%%edi)\n \
@@ -597,13 +597,13 @@ ll_md02:\n \
             add    0x34+%[lv],%%edx\n \
             add    $0x14,%%edi\n \
             decl   0x14+%[lv]\n \
-            jne    jump_1213c0\n \
+            jne    jump_pr_ll_Gc0\n \
             mov    0x1c+%[lv],%%ebx\n \
-        jump_1213e8:\n \
+        jump_pr_ll_Ge8:\n \
             cmpb   $0x0,0x67+%[lv]\n \
-            je     jump_1213fd\n \
+            je     jump_pr_ll_Gfd\n \
             jmp    ready_for_render\n \
-        jump_1213fd:\n \
+        jump_pr_ll_Gfd:\n \
             mov    %%eax,(%%edi)\n \
             add    0x4+%[lv],%%eax\n \
             mov    %%ebx,0x4(%%edi)\n \
@@ -614,7 +614,7 @@ ll_md02:\n \
             add    0x34+%[lv],%%edx\n \
             add    $0x14,%%edi\n \
             decl   0x18+%[lv]\n \
-            jne    jump_1213fd\n \
+            jne    jump_pr_ll_Gfd\n \
             jmp    ready_for_render\n \
 \n \
 \n \
@@ -634,7 +634,7 @@ ll_md01:\n \
             sub    (%%esi),%%ebx\n \
             add    %%eax,%%ebx\n \
             jl     ready_for_bailout\n \
-            je     jump_121474\n \
+            je     jump_pr_ll_H74\n \
             inc    %%ebx\n \
             mov    0x10(%%esi),%%eax\n \
             sub    0x10(%%ecx),%%eax\n \
@@ -645,7 +645,7 @@ ll_md01:\n \
             cltd\n \
             idiv   %%ebx\n \
             mov    %%eax,0x3c+%[lv]\n \
-        jump_121474:\n \
+        jump_pr_ll_H74:\n \
             mov    0x10(%%ecx),%%eax\n \
             sub    0x10(%%esi),%%eax\n \
             cltd\n \
@@ -656,14 +656,14 @@ ll_md01:\n \
             mov    %%eax,%%ebx\n \
             mov    0x10(%%esi),%%esi\n \
             cmpb   $0x0,0x66+%[lv]\n \
-            je     jump_12156b\n \
+            je     jump_pr_ll_I6b\n \
             mov    0x54+%[lv],%%edi\n \
             neg    %%edi\n \
             sub    %%edi,0x20+%[lv]\n \
             jle    ready_for_bailout\n \
             mov    %%edi,0x48+%[lv]\n \
             cmp    0x14+%[lv],%%edi\n \
-            js     jump_121519\n \
+            js     jump_pr_ll_I19\n \
             mov    0x4+%[lv],%%edi\n \
             imul   0x14+%[lv],%%edi\n \
             add    %%edi,%%eax\n \
@@ -684,14 +684,14 @@ ll_md01:\n \
             imul   0x48+%[lv],%%edi\n \
             add    %%edi,%%esi\n \
             cmpb   $0x0,0x68+%[lv]\n \
-            je     jump_12150e\n \
+            je     jump_pr_ll_I0e\n \
             mov    "EXPORT_SYMBOL(vec_window_height)",%%edi\n \
             mov    %%edi,0x18+%[lv]\n \
             mov    %%edi,0x20+%[lv]\n \
-        jump_12150e:\n \
+        jump_pr_ll_I0e:\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%edi\n \
-            jmp    jump_1215c1\n \
-        jump_121519:\n \
+            jmp    jump_pr_ll_Ic1\n \
+        jump_pr_ll_I19:\n \
             mov    0x48+%[lv],%%edi\n \
             sub    %%edi,0x14+%[lv]\n \
             imul   0x4+%[lv],%%edi\n \
@@ -703,36 +703,36 @@ ll_md01:\n \
             imul   0x48+%[lv],%%edi\n \
             add    %%edi,%%esi\n \
             cmpb   $0x0,0x68+%[lv]\n \
-            je     jump_12159a\n \
+            je     jump_pr_ll_I9a\n \
             mov    "EXPORT_SYMBOL(vec_window_height)",%%edi\n \
             mov    %%edi,0x20+%[lv]\n \
             cmpb   $0x0,0x67+%[lv]\n \
-            je     jump_12155c\n \
+            je     jump_pr_ll_I5c\n \
             mov    %%edi,0x14+%[lv]\n \
-            jmp    jump_121569\n \
-        jump_12155c:\n \
+            jmp    jump_pr_ll_I69\n \
+        jump_pr_ll_I5c:\n \
             sub    0x14+%[lv],%%edi\n \
             setle  0x67+%[lv]\n \
             mov    %%edi,0x18+%[lv]\n \
-        jump_121569:\n \
-            jmp    jump_12159a\n \
-        jump_12156b:\n \
+        jump_pr_ll_I69:\n \
+            jmp    jump_pr_ll_I9a\n \
+        jump_pr_ll_I6b:\n \
             cmpb   $0x0,0x68+%[lv]\n \
-            je     jump_12159a\n \
+            je     jump_pr_ll_I9a\n \
             mov    "EXPORT_SYMBOL(vec_window_height)",%%edi\n \
             sub    0x54+%[lv],%%edi\n \
             mov    %%edi,0x20+%[lv]\n \
             cmpb   $0x0,0x67+%[lv]\n \
-            je     jump_12158d\n \
+            je     jump_pr_ll_I8d\n \
             mov    %%edi,0x14+%[lv]\n \
-            jmp    jump_12159a\n \
-        jump_12158d:\n \
+            jmp    jump_pr_ll_I9a\n \
+        jump_pr_ll_I8d:\n \
             sub    0x14+%[lv],%%edi\n \
             setle  0x67+%[lv]\n \
             mov    %%edi,0x18+%[lv]\n \
-        jump_12159a:\n \
+        jump_pr_ll_I9a:\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%edi\n \
-        jump_1215a0:\n \
+        jump_pr_ll_Ia0:\n \
             mov    %%eax,(%%edi)\n \
             add    0x4+%[lv],%%eax\n \
             mov    %%ebx,0x4(%%edi)\n \
@@ -741,13 +741,13 @@ ll_md01:\n \
             add    0x40+%[lv],%%esi\n \
             add    $0x14,%%edi\n \
             decl   0x14+%[lv]\n \
-            jne    jump_1215a0\n \
+            jne    jump_pr_ll_Ia0\n \
             mov    0x1c+%[lv],%%ebx\n \
-        jump_1215c1:\n \
+        jump_pr_ll_Ic1:\n \
             cmpb   $0x0,0x67+%[lv]\n \
-            je     jump_1215d6\n \
+            je     jump_pr_ll_Id6\n \
             jmp    ready_for_render\n \
-        jump_1215d6:\n \
+        jump_pr_ll_Id6:\n \
             mov    %%eax,(%%edi)\n \
             add    0x4+%[lv],%%eax\n \
             mov    %%ebx,0x4(%%edi)\n \
@@ -756,7 +756,7 @@ ll_md01:\n \
             add    0x40+%[lv],%%esi\n \
             add    $0x14,%%edi\n \
             decl   0x18+%[lv]\n \
-            jne    jump_1215d6\n \
+            jne    jump_pr_ll_Id6\n \
             jmp    ready_for_render\n \
 \n \
 \n \
@@ -767,14 +767,14 @@ ll_md00:\n \
             shl    $0x10,%%eax\n \
             mov    %%eax,%%ebx\n \
             cmpb   $0x0,0x66+%[lv]\n \
-            je     jump_1216c5\n \
+            je     jump_pr_ll_Jc5\n \
             mov    0x54+%[lv],%%edi\n \
             neg    %%edi\n \
             sub    %%edi,0x20+%[lv]\n \
             jle    ready_for_bailout\n \
             mov    %%edi,0x48+%[lv]\n \
             cmp    0x14+%[lv],%%edi\n \
-            js     jump_12167e\n \
+            js     jump_pr_ll_J7e\n \
             mov    0x4+%[lv],%%edi\n \
             imul   0x14+%[lv],%%edi\n \
             add    %%edi,%%eax\n \
@@ -789,14 +789,14 @@ ll_md00:\n \
             imul   0xc+%[lv],%%edi\n \
             add    %%edi,%%ebx\n \
             cmpb   $0x0,0x68+%[lv]\n \
-            je     jump_121673\n \
+            je     jump_pr_ll_J73\n \
             mov    "EXPORT_SYMBOL(vec_window_height)",%%edi\n \
             mov    %%edi,0x18+%[lv]\n \
             mov    %%edi,0x20+%[lv]\n \
-        jump_121673:\n \
+        jump_pr_ll_J73:\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%edi\n \
-            jmp    jump_121714\n \
-        jump_12167e:\n \
+            jmp    jump_pr_ll_K14\n \
+        jump_pr_ll_J7e:\n \
             mov    0x48+%[lv],%%edi\n \
             sub    %%edi,0x14+%[lv]\n \
             imul   0x4+%[lv],%%edi\n \
@@ -805,70 +805,70 @@ ll_md00:\n \
             imul   0x48+%[lv],%%edi\n \
             add    %%edi,%%ebx\n \
             cmpb   $0x0,0x68+%[lv]\n \
-            je     jump_1216f4\n \
+            je     jump_pr_ll_Jf4\n \
             mov    "EXPORT_SYMBOL(vec_window_height)",%%edi\n \
             mov    %%edi,0x20+%[lv]\n \
             cmpb   $0x0,0x67+%[lv]\n \
-            je     jump_1216b6\n \
+            je     jump_pr_ll_Jb6\n \
             mov    %%edi,0x14+%[lv]\n \
-            jmp    jump_1216c3\n \
-        jump_1216b6:\n \
+            jmp    jump_pr_ll_Jc3\n \
+        jump_pr_ll_Jb6:\n \
             sub    0x14+%[lv],%%edi\n \
             setle  0x67+%[lv]\n \
             mov    %%edi,0x18+%[lv]\n \
-        jump_1216c3:\n \
-            jmp    jump_1216f4\n \
-        jump_1216c5:\n \
+        jump_pr_ll_Jc3:\n \
+            jmp    jump_pr_ll_Jf4\n \
+        jump_pr_ll_Jc5:\n \
             cmpb   $0x0,0x68+%[lv]\n \
-            je     jump_1216f4\n \
+            je     jump_pr_ll_Jf4\n \
             mov    "EXPORT_SYMBOL(vec_window_height)",%%edi\n \
             sub    0x54+%[lv],%%edi\n \
             mov    %%edi,0x20+%[lv]\n \
             cmpb   $0x0,0x67+%[lv]\n \
-            je     jump_1216e7\n \
+            je     jump_pr_ll_Je7\n \
             mov    %%edi,0x14+%[lv]\n \
-            jmp    jump_1216f4\n \
-        jump_1216e7:\n \
+            jmp    jump_pr_ll_Jf4\n \
+        jump_pr_ll_Je7:\n \
             sub    0x14+%[lv],%%edi\n \
             setle  0x67+%[lv]\n \
             mov    %%edi,0x18+%[lv]\n \
-        jump_1216f4:\n \
+        jump_pr_ll_Jf4:\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%edi\n \
-        jump_1216fa:\n \
+        jump_pr_ll_Jfa:\n \
             mov    %%eax,(%%edi)\n \
             add    0x4+%[lv],%%eax\n \
             mov    %%ebx,0x4(%%edi)\n \
             add    0x8+%[lv],%%ebx\n \
             add    $0x14,%%edi\n \
             decl   0x14+%[lv]\n \
-            jne    jump_1216fa\n \
+            jne    jump_pr_ll_Jfa\n \
             mov    0x1c+%[lv],%%ebx\n \
-        jump_121714:\n \
+        jump_pr_ll_K14:\n \
             cmpb   $0x0,0x67+%[lv]\n \
-            je     jump_121729\n \
+            je     jump_pr_ll_K29\n \
             jmp    ready_for_render\n \
-        jump_121729:\n \
+        jump_pr_ll_K29:\n \
             mov    %%eax,(%%edi)\n \
             add    0x4+%[lv],%%eax\n \
             mov    %%ebx,0x4(%%edi)\n \
             add    0xc+%[lv],%%ebx\n \
             add    $0x14,%%edi\n \
             decl   0x18+%[lv]\n \
-            jne    jump_121729\n \
+            jne    jump_pr_ll_K29\n \
             jmp    ready_for_render\n \
-        jump_12174d:\n \
+        jump_pr_ll_K4d:\n \
             xchg   %%esi,%%edi\n \
             xchg   %%edi,%%ecx\n \
-        jump_121751:\n \
+        jump_pr_ll_K51:\n \
             mov    0x4(%%esi),%%eax\n \
             mov    %%eax,0x54+%[lv]\n \
             or     %%eax,%%eax\n \
-            jns    jump_12176c\n \
+            jns    jump_pr_ll_K6c\n \
             mov    "EXPORT_SYMBOL(poly_screen)",%%ebx\n \
             mov    %%ebx,0x0+%[lv]\n \
             movb   $0x1,0x66+%[lv]\n \
-            jmp    jump_12178f\n \
-        jump_12176c:\n \
+            jmp    jump_pr_ll_K8f\n \
+        jump_pr_ll_K6c:\n \
             cmp    "EXPORT_SYMBOL(vec_window_height)",%%eax\n \
             jge    ready_for_bailout\n \
             mov    %%eax,%%ebx\n \
@@ -876,7 +876,7 @@ ll_md00:\n \
             add    "EXPORT_SYMBOL(poly_screen)",%%ebx\n \
             mov    %%ebx,0x0+%[lv]\n \
             movb   $0x0,0x66+%[lv]\n \
-        jump_12178f:\n \
+        jump_pr_ll_K8f:\n \
             mov    0x4(%%ecx),%%ebx\n \
             cmp    "EXPORT_SYMBOL(vec_window_height)",%%ebx\n \
             setg   0x67+%[lv]\n \
@@ -963,7 +963,7 @@ rl_md05:\n \
             sub    (%%ecx),%%ebx\n \
             add    %%eax,%%ebx\n \
             jl     ready_for_bailout\n \
-            je     jump_1218f7\n \
+            je     jump_pr_rl_Lf7\n \
             inc    %%ebx\n \
             mov    0x8(%%edi),%%eax\n \
             sub    0x8(%%esi),%%eax\n \
@@ -991,7 +991,7 @@ rl_md05:\n \
             sub    0x10(%%ecx),%%eax\n \
             cltd\n \
             idiv   %%ebx\n \
-        jump_1218f7:\n \
+        jump_pr_rl_Lf7:\n \
             mov    %%eax,0x3c+%[lv]\n \
             mov    0x8(%%ecx),%%eax\n \
             sub    0x8(%%esi),%%eax\n \
@@ -1030,14 +1030,14 @@ rl_md05:\n \
             mov    0xc(%%esi),%%edx\n \
             mov    0x10(%%esi),%%esi\n \
             cmpb   $0x0,0x66+%[lv]\n \
-            je     jump_121a89\n \
+            je     jump_pr_rl_M89\n \
             mov    0x54+%[lv],%%edi\n \
             neg    %%edi\n \
             sub    %%edi,0x20+%[lv]\n \
             jle    ready_for_bailout\n \
             mov    %%edi,0x48+%[lv]\n \
             cmp    0x10+%[lv],%%edi\n \
-            js     jump_121a21\n \
+            js     jump_pr_rl_M21\n \
             mov    0x8+%[lv],%%edi\n \
             imul   0x10+%[lv],%%edi\n \
             add    %%edi,%%ebx\n \
@@ -1070,14 +1070,14 @@ rl_md05:\n \
             imul   0x48+%[lv],%%edi\n \
             add    %%edi,%%esi\n \
             cmpb   $0x0,0x68+%[lv]\n \
-            je     jump_121a16\n \
+            je     jump_pr_rl_M16\n \
             mov    "EXPORT_SYMBOL(vec_window_height)",%%edi\n \
             mov    %%edi,0x18+%[lv]\n \
             mov    %%edi,0x20+%[lv]\n \
-        jump_121a16:\n \
+        jump_pr_rl_M16:\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%edi\n \
-            jmp    jump_121aed\n \
-        jump_121a21:\n \
+            jmp    jump_pr_rl_Med\n \
+        jump_pr_rl_M21:\n \
             mov    0x48+%[lv],%%edi\n \
             sub    %%edi,0x10+%[lv]\n \
             imul   0x4+%[lv],%%edi\n \
@@ -1095,36 +1095,36 @@ rl_md05:\n \
             imul   0x48+%[lv],%%edi\n \
             add    %%edi,%%esi\n \
             cmpb   $0x0,0x68+%[lv]\n \
-            je     jump_121ab8\n \
+            je     jump_pr_rl_Mb8\n \
             mov    "EXPORT_SYMBOL(vec_window_height)",%%edi\n \
             mov    %%edi,0x20+%[lv]\n \
             cmpb   $0x0,0x67+%[lv]\n \
-            je     jump_121a7a\n \
+            je     jump_pr_rl_M7a\n \
             mov    %%edi,0x10+%[lv]\n \
-            jmp    jump_121a87\n \
-        jump_121a7a:\n \
+            jmp    jump_pr_rl_M87\n \
+        jump_pr_rl_M7a:\n \
             sub    0x10+%[lv],%%edi\n \
             setle  0x67+%[lv]\n \
             mov    %%edi,0x18+%[lv]\n \
-        jump_121a87:\n \
-            jmp    jump_121ab8\n \
-        jump_121a89:\n \
+        jump_pr_rl_M87:\n \
+            jmp    jump_pr_rl_Mb8\n \
+        jump_pr_rl_M89:\n \
             cmpb   $0x0,0x68+%[lv]\n \
-            je     jump_121ab8\n \
+            je     jump_pr_rl_Mb8\n \
             mov    "EXPORT_SYMBOL(vec_window_height)",%%edi\n \
             sub    0x54+%[lv],%%edi\n \
             mov    %%edi,0x20+%[lv]\n \
             cmpb   $0x0,0x67+%[lv]\n \
-            je     jump_121aab\n \
+            je     jump_pr_rl_Mab\n \
             mov    %%edi,0x10+%[lv]\n \
-            jmp    jump_121ab8\n \
-        jump_121aab:\n \
+            jmp    jump_pr_rl_Mb8\n \
+        jump_pr_rl_Mab:\n \
             sub    0x10+%[lv],%%edi\n \
             setle  0x67+%[lv]\n \
             mov    %%edi,0x18+%[lv]\n \
-        jump_121ab8:\n \
+        jump_pr_rl_Mb8:\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%edi\n \
-        jump_121abe:\n \
+        jump_pr_rl_Mbe:\n \
             mov    %%eax,(%%edi)\n \
             add    0x4+%[lv],%%eax\n \
             mov    %%ebx,0x4(%%edi)\n \
@@ -1137,13 +1137,13 @@ rl_md05:\n \
             add    0x40+%[lv],%%esi\n \
             add    $0x14,%%edi\n \
             decl   0x10+%[lv]\n \
-            jne    jump_121abe\n \
+            jne    jump_pr_rl_Mbe\n \
             mov    0x1c+%[lv],%%eax\n \
-        jump_121aed:\n \
+        jump_pr_rl_Med:\n \
             cmpb   $0x0,0x67+%[lv]\n \
-            je     jump_121b02\n \
+            je     jump_pr_rl_N02\n \
             jmp    ready_for_render\n \
-        jump_121b02:\n \
+        jump_pr_rl_N02:\n \
             mov    %%eax,(%%edi)\n \
             add    0xc+%[lv],%%eax\n \
             mov    %%ebx,0x4(%%edi)\n \
@@ -1156,7 +1156,7 @@ rl_md05:\n \
             add    0x44+%[lv],%%esi\n \
             add    $0x14,%%edi\n \
             decl   0x18+%[lv]\n \
-            jne    jump_121b02\n \
+            jne    jump_pr_rl_N02\n \
             jmp    ready_for_render\n \
 \n \
 \n \
@@ -1176,7 +1176,7 @@ rl_md02:\n \
             sub    (%%ecx),%%ebx\n \
             add    %%eax,%%ebx\n \
             jl     ready_for_bailout\n \
-            je     jump_121b9b\n \
+            je     jump_pr_rl_N9b\n \
             inc    %%ebx\n \
             mov    0x8(%%edi),%%eax\n \
             sub    0x8(%%esi),%%eax\n \
@@ -1196,7 +1196,7 @@ rl_md02:\n \
             cltd\n \
             idiv   %%ebx\n \
             mov    %%eax,0x30+%[lv]\n \
-        jump_121b9b:\n \
+        jump_pr_rl_N9b:\n \
             mov    0x8(%%ecx),%%eax\n \
             sub    0x8(%%esi),%%eax\n \
             cltd\n \
@@ -1223,14 +1223,14 @@ rl_md02:\n \
             mov    0x8(%%esi),%%ecx\n \
             mov    0xc(%%esi),%%edx\n \
             cmpb   $0x0,0x66+%[lv]\n \
-            je     jump_121ce3\n \
+            je     jump_pr_rl_Oe3\n \
             mov    0x54+%[lv],%%edi\n \
             neg    %%edi\n \
             sub    %%edi,0x20+%[lv]\n \
             jle    ready_for_bailout\n \
             mov    %%edi,0x48+%[lv]\n \
             cmp    0x10+%[lv],%%edi\n \
-            js     jump_121c86\n \
+            js     jump_pr_rl_O86\n \
             mov    0x8+%[lv],%%edi\n \
             imul   0x10+%[lv],%%edi\n \
             add    %%edi,%%ebx\n \
@@ -1257,14 +1257,14 @@ rl_md02:\n \
             imul   0x48+%[lv],%%edi\n \
             add    %%edi,%%edx\n \
             cmpb   $0x0,0x68+%[lv]\n \
-            je     jump_121c7b\n \
+            je     jump_pr_rl_O7b\n \
             mov    "EXPORT_SYMBOL(vec_window_height)",%%edi\n \
             mov    %%edi,0x18+%[lv]\n \
             mov    %%edi,0x20+%[lv]\n \
-        jump_121c7b:\n \
+        jump_pr_rl_O7b:\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%edi\n \
-            jmp    jump_121d40\n \
-        jump_121c86:\n \
+            jmp    jump_pr_rl_P40\n \
+        jump_pr_rl_O86:\n \
             mov    0x48+%[lv],%%edi\n \
             sub    %%edi,0x10+%[lv]\n \
             imul   0x4+%[lv],%%edi\n \
@@ -1279,36 +1279,36 @@ rl_md02:\n \
             imul   0x48+%[lv],%%edi\n \
             add    %%edi,%%edx\n \
             cmpb   $0x0,0x68+%[lv]\n \
-            je     jump_121d12\n \
+            je     jump_pr_rl_P12\n \
             mov    "EXPORT_SYMBOL(vec_window_height)",%%edi\n \
             mov    %%edi,0x20+%[lv]\n \
             cmpb   $0x0,0x67+%[lv]\n \
-            je     jump_121cd4\n \
+            je     jump_pr_rl_Od4\n \
             mov    %%edi,0x10+%[lv]\n \
-            jmp    jump_121ce1\n \
-        jump_121cd4:\n \
+            jmp    jump_pr_rl_Oe1\n \
+        jump_pr_rl_Od4:\n \
             sub    0x10+%[lv],%%edi\n \
             setle  0x67+%[lv]\n \
             mov    %%edi,0x18+%[lv]\n \
-        jump_121ce1:\n \
-            jmp    jump_121d12\n \
-        jump_121ce3:\n \
+        jump_pr_rl_Oe1:\n \
+            jmp    jump_pr_rl_P12\n \
+        jump_pr_rl_Oe3:\n \
             cmpb   $0x0,0x68+%[lv]\n \
-            je     jump_121d12\n \
+            je     jump_pr_rl_P12\n \
             mov    "EXPORT_SYMBOL(vec_window_height)",%%edi\n \
             sub    0x54+%[lv],%%edi\n \
             mov    %%edi,0x20+%[lv]\n \
             cmpb   $0x0,0x67+%[lv]\n \
-            je     jump_121d05\n \
+            je     jump_pr_rl_P05\n \
             mov    %%edi,0x10+%[lv]\n \
-            jmp    jump_121d12\n \
-        jump_121d05:\n \
+            jmp    jump_pr_rl_P12\n \
+        jump_pr_rl_P05:\n \
             sub    0x10+%[lv],%%edi\n \
             setle  0x67+%[lv]\n \
             mov    %%edi,0x18+%[lv]\n \
-        jump_121d12:\n \
+        jump_pr_rl_P12:\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%edi\n \
-        jump_121d18:\n \
+        jump_pr_rl_P18:\n \
             mov    %%eax,(%%edi)\n \
             add    0x4+%[lv],%%eax\n \
             mov    %%ebx,0x4(%%edi)\n \
@@ -1319,13 +1319,13 @@ rl_md02:\n \
             add    0x34+%[lv],%%edx\n \
             add    $0x14,%%edi\n \
             decl   0x10+%[lv]\n \
-            jne    jump_121d18\n \
+            jne    jump_pr_rl_P18\n \
             mov    0x1c+%[lv],%%eax\n \
-        jump_121d40:\n \
+        jump_pr_rl_P40:\n \
             cmpb   $0x0,0x67+%[lv]\n \
-            je     jump_121d55\n \
+            je     jump_pr_rl_P55\n \
             jmp    ready_for_render\n \
-        jump_121d55:\n \
+        jump_pr_rl_P55:\n \
             mov    %%eax,(%%edi)\n \
             add    0xc+%[lv],%%eax\n \
             mov    %%ebx,0x4(%%edi)\n \
@@ -1336,7 +1336,7 @@ rl_md02:\n \
             add    0x38+%[lv],%%edx\n \
             add    $0x14,%%edi\n \
             decl   0x18+%[lv]\n \
-            jne    jump_121d55\n \
+            jne    jump_pr_rl_P55\n \
             jmp    ready_for_render\n \
 \n \
 \n \
@@ -1356,7 +1356,7 @@ rl_md01:\n \
             sub    (%%ecx),%%ebx\n \
             add    %%eax,%%ebx\n \
             jl     ready_for_bailout\n \
-            je     jump_121dcc\n \
+            je     jump_pr_rl_Pcc\n \
             inc    %%ebx\n \
             mov    0x10(%%edi),%%eax\n \
             sub    0x10(%%esi),%%eax\n \
@@ -1367,7 +1367,7 @@ rl_md01:\n \
             cltd\n \
             idiv   %%ebx\n \
             mov    %%eax,0x3c+%[lv]\n \
-        jump_121dcc:\n \
+        jump_pr_rl_Pcc:\n \
             mov    0x10(%%ecx),%%eax\n \
             sub    0x10(%%esi),%%eax\n \
             cltd\n \
@@ -1383,14 +1383,14 @@ rl_md01:\n \
             mov    %%eax,%%ebx\n \
             mov    0x10(%%esi),%%esi\n \
             cmpb   $0x0,0x66+%[lv]\n \
-            je     jump_121ed2\n \
+            je     jump_pr_rl_Qd2\n \
             mov    0x54+%[lv],%%edi\n \
             neg    %%edi\n \
             sub    %%edi,0x20+%[lv]\n \
             jle    ready_for_bailout\n \
             mov    %%edi,0x48+%[lv]\n \
             cmp    0x10+%[lv],%%edi\n \
-            js     jump_121e80\n \
+            js     jump_pr_rl_Q80\n \
             mov    0x8+%[lv],%%edi\n \
             imul   0x10+%[lv],%%edi\n \
             add    %%edi,%%ebx\n \
@@ -1411,14 +1411,14 @@ rl_md01:\n \
             imul   0x48+%[lv],%%edi\n \
             add    %%edi,%%esi\n \
             cmpb   $0x0,0x68+%[lv]\n \
-            je     jump_121e75\n \
+            je     jump_pr_rl_Q75\n \
             mov    "EXPORT_SYMBOL(vec_window_height)",%%edi\n \
             mov    %%edi,0x18+%[lv]\n \
             mov    %%edi,0x20+%[lv]\n \
-        jump_121e75:\n \
+        jump_pr_rl_Q75:\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%edi\n \
-            jmp    jump_121f28\n \
-        jump_121e80:\n \
+            jmp    jump_pr_rl_R28\n \
+        jump_pr_rl_Q80:\n \
             mov    0x48+%[lv],%%edi\n \
             sub    %%edi,0x10+%[lv]\n \
             imul   0x4+%[lv],%%edi\n \
@@ -1430,36 +1430,36 @@ rl_md01:\n \
             imul   0x48+%[lv],%%edi\n \
             add    %%edi,%%esi\n \
             cmpb   $0x0,0x68+%[lv]\n \
-            je     jump_121f01\n \
+            je     jump_pr_rl_R01\n \
             mov    "EXPORT_SYMBOL(vec_window_height)",%%edi\n \
             mov    %%edi,0x20+%[lv]\n \
             cmpb   $0x0,0x67+%[lv]\n \
-            je     jump_121ec3\n \
+            je     jump_pr_rl_Qc3\n \
             mov    %%edi,0x10+%[lv]\n \
-            jmp    jump_121ed0\n \
-        jump_121ec3:\n \
+            jmp    jump_pr_rl_Qd0\n \
+        jump_pr_rl_Qc3:\n \
             sub    0x10+%[lv],%%edi\n \
             setle  0x67+%[lv]\n \
             mov    %%edi,0x18+%[lv]\n \
-        jump_121ed0:\n \
-            jmp    jump_121f01\n \
-        jump_121ed2:\n \
+        jump_pr_rl_Qd0:\n \
+            jmp    jump_pr_rl_R01\n \
+        jump_pr_rl_Qd2:\n \
             cmpb   $0x0,0x68+%[lv]\n \
-            je     jump_121f01\n \
+            je     jump_pr_rl_R01\n \
             mov    "EXPORT_SYMBOL(vec_window_height)",%%edi\n \
             sub    0x54+%[lv],%%edi\n \
             mov    %%edi,0x20+%[lv]\n \
             cmpb   $0x0,0x67+%[lv]\n \
-            je     jump_121ef4\n \
+            je     jump_pr_rl_Qf4\n \
             mov    %%edi,0x10+%[lv]\n \
-            jmp    jump_121f01\n \
-        jump_121ef4:\n \
+            jmp    jump_pr_rl_R01\n \
+        jump_pr_rl_Qf4:\n \
             sub    0x10+%[lv],%%edi\n \
             setle  0x67+%[lv]\n \
             mov    %%edi,0x18+%[lv]\n \
-        jump_121f01:\n \
+        jump_pr_rl_R01:\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%edi\n \
-        jump_121f07:\n \
+        jump_pr_rl_R07:\n \
             mov    %%eax,(%%edi)\n \
             add    0x4+%[lv],%%eax\n \
             mov    %%ebx,0x4(%%edi)\n \
@@ -1468,13 +1468,13 @@ rl_md01:\n \
             add    0x40+%[lv],%%esi\n \
             add    $0x14,%%edi\n \
             decl   0x10+%[lv]\n \
-            jne    jump_121f07\n \
+            jne    jump_pr_rl_R07\n \
             mov    0x1c+%[lv],%%eax\n \
-        jump_121f28:\n \
+        jump_pr_rl_R28:\n \
             cmpb   $0x0,0x67+%[lv]\n \
-            je     jump_121f3d\n \
+            je     jump_pr_rl_R3d\n \
             jmp    ready_for_render\n \
-        jump_121f3d:\n \
+        jump_pr_rl_R3d:\n \
             mov    %%eax,(%%edi)\n \
             add    0xc+%[lv],%%eax\n \
             mov    %%ebx,0x4(%%edi)\n \
@@ -1483,7 +1483,7 @@ rl_md01:\n \
             add    0x44+%[lv],%%esi\n \
             add    $0x14,%%edi\n \
             decl   0x18+%[lv]\n \
-            jne    jump_121f3d\n \
+            jne    jump_pr_rl_R3d\n \
             jmp    ready_for_render\n \
 \n \
 \n \
@@ -1494,14 +1494,14 @@ rl_md00:\n \
             shl    $0x10,%%eax\n \
             mov    %%eax,%%ebx\n \
             cmpb   $0x0,0x66+%[lv]\n \
-            je     jump_12202c\n \
+            je     jump_pr_rl_S2c\n \
             mov    0x54+%[lv],%%edi\n \
             neg    %%edi\n \
             sub    %%edi,0x20+%[lv]\n \
             jle    ready_for_bailout\n \
             mov    %%edi,0x48+%[lv]\n \
             cmp    0x10+%[lv],%%edi\n \
-            js     jump_121fe5\n \
+            js     jump_pr_rl_Re5\n \
             mov    0x8+%[lv],%%edi\n \
             imul   0x10+%[lv],%%edi\n \
             add    %%edi,%%ebx\n \
@@ -1516,14 +1516,14 @@ rl_md00:\n \
             imul   0x48+%[lv],%%edi\n \
             add    %%edi,%%ebx\n \
             cmpb   $0x0,0x68+%[lv]\n \
-            je     jump_121fda\n \
+            je     jump_pr_rl_Rda\n \
             mov    "EXPORT_SYMBOL(vec_window_height)",%%edi\n \
             mov    %%edi,0x18+%[lv]\n \
             mov    %%edi,0x20+%[lv]\n \
-        jump_121fda:\n \
+        jump_pr_rl_Rda:\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%edi\n \
-            jmp    jump_12207b\n \
-        jump_121fe5:\n \
+            jmp    jump_pr_rl_S7b\n \
+        jump_pr_rl_Re5:\n \
             mov    0x48+%[lv],%%edi\n \
             sub    %%edi,0x10+%[lv]\n \
             imul   0x4+%[lv],%%edi\n \
@@ -1532,73 +1532,73 @@ rl_md00:\n \
             imul   0x48+%[lv],%%edi\n \
             add    %%edi,%%ebx\n \
             cmpb   $0x0,0x68+%[lv]\n \
-            je     jump_12205b\n \
+            je     jump_pr_rl_S5b\n \
             mov    "EXPORT_SYMBOL(vec_window_height)",%%edi\n \
             mov    %%edi,0x20+%[lv]\n \
             cmpb   $0x0,0x67+%[lv]\n \
-            je     jump_12201d\n \
+            je     jump_pr_rl_S1d\n \
             mov    %%edi,0x10+%[lv]\n \
-            jmp    jump_12202a\n \
-        jump_12201d:\n \
+            jmp    jump_pr_rl_S2a\n \
+        jump_pr_rl_S1d:\n \
             sub    0x10+%[lv],%%edi\n \
             setle  0x67+%[lv]\n \
             mov    %%edi,0x18+%[lv]\n \
-        jump_12202a:\n \
-            jmp    jump_12205b\n \
-        jump_12202c:\n \
+        jump_pr_rl_S2a:\n \
+            jmp    jump_pr_rl_S5b\n \
+        jump_pr_rl_S2c:\n \
             cmpb   $0x0,0x68+%[lv]\n \
-            je     jump_12205b\n \
+            je     jump_pr_rl_S5b\n \
             mov    "EXPORT_SYMBOL(vec_window_height)",%%edi\n \
             sub    0x54+%[lv],%%edi\n \
             mov    %%edi,0x20+%[lv]\n \
             cmpb   $0x0,0x67+%[lv]\n \
-            je     jump_12204e\n \
+            je     jump_pr_rl_S4e\n \
             mov    %%edi,0x10+%[lv]\n \
-            jmp    jump_12205b\n \
-        jump_12204e:\n \
+            jmp    jump_pr_rl_S5b\n \
+        jump_pr_rl_S4e:\n \
             sub    0x10+%[lv],%%edi\n \
             setle  0x67+%[lv]\n \
             mov    %%edi,0x18+%[lv]\n \
-        jump_12205b:\n \
+        jump_pr_rl_S5b:\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%edi\n \
-        jump_122061:\n \
+        jump_pr_rl_S61:\n \
             mov    %%eax,(%%edi)\n \
             add    0x4+%[lv],%%eax\n \
             mov    %%ebx,0x4(%%edi)\n \
             add    0x8+%[lv],%%ebx\n \
             add    $0x14,%%edi\n \
             decl   0x10+%[lv]\n \
-            jne    jump_122061\n \
+            jne    jump_pr_rl_S61\n \
             mov    0x1c+%[lv],%%eax\n \
-        jump_12207b:\n \
+        jump_pr_rl_S7b:\n \
             cmpb   $0x0,0x67+%[lv]\n \
-            je     jump_122090\n \
+            je     jump_pr_rl_S90\n \
             jmp    ready_for_render\n \
-        jump_122090:\n \
+        jump_pr_rl_S90:\n \
             mov    %%eax,(%%edi)\n \
             add    0xc+%[lv],%%eax\n \
             mov    %%ebx,0x4(%%edi)\n \
             add    0x8+%[lv],%%ebx\n \
             add    $0x14,%%edi\n \
             decl   0x18+%[lv]\n \
-            jne    jump_122090\n \
+            jne    jump_pr_rl_S90\n \
             jmp    ready_for_render\n \
-        jump_1220b4:\n \
+        jump_pr_rl_Sb4:\n \
             mov    (%%ecx),%%eax\n \
             cmp    (%%esi),%%eax\n \
             jle    ready_for_bailout\n \
             xchg   %%esi,%%edi\n \
             xchg   %%edi,%%ecx\n \
-        jump_1220c2:\n \
+        jump_pr_rl_Sc2:\n \
             mov    0x4(%%esi),%%eax\n \
             mov    %%eax,0x54+%[lv]\n \
             or     %%eax,%%eax\n \
-            jns    jump_1220dd\n \
+            jns    jump_pr_rl_Sdd\n \
             mov    "EXPORT_SYMBOL(poly_screen)",%%ebx\n \
             mov    %%ebx,0x0+%[lv]\n \
             movb   $0x1,0x66+%[lv]\n \
-            jmp    jump_122100\n \
-        jump_1220dd:\n \
+            jmp    jump_pr_rl_T00\n \
+        jump_pr_rl_Sdd:\n \
             cmp    "EXPORT_SYMBOL(vec_window_height)",%%eax\n \
             jge    ready_for_bailout\n \
             mov    %%eax,%%ebx\n \
@@ -1606,7 +1606,7 @@ rl_md00:\n \
             add    "EXPORT_SYMBOL(poly_screen)",%%ebx\n \
             mov    %%ebx,0x0+%[lv]\n \
             movb   $0x0,0x66+%[lv]\n \
-        jump_122100:\n \
+        jump_pr_rl_T00:\n \
             mov    0x4(%%ecx),%%ebx\n \
             cmp    "EXPORT_SYMBOL(vec_window_height)",%%ebx\n \
             setg   0x67+%[lv]\n \
@@ -7255,16 +7255,16 @@ mgt_md01:\n \
             xor    %%eax,%%eax\n \
             xor    %%ebx,%%ebx\n \
             xor    %%ecx,%%ecx\n \
-        jump_1269f0:\n \
+        jump_rend_md23_Af0:\n \
             mov    0x2(%%esi),%%ax\n \
             movzwl 0x6(%%esi),%%ecx\n \
             mov    0x0+%[lv],%%edi\n \
             add    "EXPORT_SYMBOL(vec_screen_width)",%%edi\n \
             mov    %%edi,0x0+%[lv]\n \
             or     %%ax,%%ax\n \
-            jns    jump_126a4a\n \
+            jns    jump_rend_md23_B4a\n \
             or     %%cx,%%cx\n \
-            jle    jump_126d3a\n \
+            jle    jump_rend_md23_E3a\n \
             neg    %%ax\n \
             movzwl %%ax,%%eax\n \
             mov    %%eax,%%edx\n \
@@ -7278,244 +7278,244 @@ mgt_md01:\n \
             shr    $0x8,%%eax\n \
             mov    %%ah,%%bl\n \
             cmp    "EXPORT_SYMBOL(vec_window_width)",%%ecx\n \
-            jle    jump_126a45\n \
+            jle    jump_rend_md23_B45\n \
             mov    "EXPORT_SYMBOL(vec_window_width)",%%ecx\n \
-        jump_126a45:\n \
+        jump_rend_md23_B45:\n \
             movzwl %%ax,%%eax\n \
-            jmp    jump_126a72\n \
-        jump_126a4a:\n \
+            jmp    jump_rend_md23_B72\n \
+        jump_rend_md23_B4a:\n \
             cmp    "EXPORT_SYMBOL(vec_window_width)",%%ecx\n \
-            jle    jump_126a58\n \
+            jle    jump_rend_md23_B58\n \
             mov    "EXPORT_SYMBOL(vec_window_width)",%%ecx\n \
-        jump_126a58:\n \
+        jump_rend_md23_B58:\n \
             sub    %%ax,%%cx\n \
-            jle    jump_126d3a\n \
+            jle    jump_rend_md23_E3a\n \
             add    %%eax,%%edi\n \
             mov    0xc(%%esi),%%edx\n \
             rol    $0x10,%%edx\n \
             mov    %%dl,%%bh\n \
             mov    0x8(%%esi),%%dx\n \
             mov    0xa(%%esi),%%bl\n \
-        jump_126a72:\n \
+        jump_rend_md23_B72:\n \
             mov    %%esi,0x5c+%[lv]\n \
             mov    "EXPORT_SYMBOL(vec_map)",%%esi\n \
-        jump_126a7c:\n \
+        jump_rend_md23_B7c:\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             or     %%al,%%al\n \
-            je     jump_126a8d\n \
+            je     jump_rend_md23_B8d\n \
             mov    (%%edi),%%ah\n \
             mov    "EXPORT_SYMBOL(ghost_table)"(%%eax),%%al\n \
             mov    %%al,(%%edi)\n \
-        jump_126a8d:\n \
+        jump_rend_md23_B8d:\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
             add    0x4c+%[lv],%%edx\n \
             adc    0x32+%[lv],%%bh\n \
             dec    %%cx\n \
-            je     jump_126d36\n \
+            je     jump_rend_md23_E36\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             or     %%al,%%al\n \
-            je     jump_126ab9\n \
+            je     jump_rend_md23_Bb9\n \
             mov    0x1(%%edi),%%ah\n \
             mov    "EXPORT_SYMBOL(ghost_table)"(%%eax),%%al\n \
             mov    %%al,0x1(%%edi)\n \
-        jump_126ab9:\n \
+        jump_rend_md23_Bb9:\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
             add    0x4c+%[lv],%%edx\n \
             adc    0x32+%[lv],%%bh\n \
             dec    %%cx\n \
-            je     jump_126d36\n \
+            je     jump_rend_md23_E36\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             or     %%al,%%al\n \
-            je     jump_126ae5\n \
+            je     jump_rend_md23_Be5\n \
             mov    0x2(%%edi),%%ah\n \
             mov    "EXPORT_SYMBOL(ghost_table)"(%%eax),%%al\n \
             mov    %%al,0x2(%%edi)\n \
-        jump_126ae5:\n \
+        jump_rend_md23_Be5:\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
             add    0x4c+%[lv],%%edx\n \
             adc    0x32+%[lv],%%bh\n \
             dec    %%cx\n \
-            je     jump_126d36\n \
+            je     jump_rend_md23_E36\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             or     %%al,%%al\n \
-            je     jump_126b11\n \
+            je     jump_rend_md23_C11\n \
             mov    0x3(%%edi),%%ah\n \
             mov    "EXPORT_SYMBOL(ghost_table)"(%%eax),%%al\n \
             mov    %%al,0x3(%%edi)\n \
-        jump_126b11:\n \
+        jump_rend_md23_C11:\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
             add    0x4c+%[lv],%%edx\n \
             adc    0x32+%[lv],%%bh\n \
             dec    %%cx\n \
-            je     jump_126d36\n \
+            je     jump_rend_md23_E36\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             or     %%al,%%al\n \
-            je     jump_126b3d\n \
+            je     jump_rend_md23_C3d\n \
             mov    0x4(%%edi),%%ah\n \
             mov    "EXPORT_SYMBOL(ghost_table)"(%%eax),%%al\n \
             mov    %%al,0x4(%%edi)\n \
-        jump_126b3d:\n \
+        jump_rend_md23_C3d:\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
             add    0x4c+%[lv],%%edx\n \
             adc    0x32+%[lv],%%bh\n \
             dec    %%cx\n \
-            je     jump_126d36\n \
+            je     jump_rend_md23_E36\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             or     %%al,%%al\n \
-            je     jump_126b69\n \
+            je     jump_rend_md23_C69\n \
             mov    0x5(%%edi),%%ah\n \
             mov    "EXPORT_SYMBOL(ghost_table)"(%%eax),%%al\n \
             mov    %%al,0x5(%%edi)\n \
-        jump_126b69:\n \
+        jump_rend_md23_C69:\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
             add    0x4c+%[lv],%%edx\n \
             adc    0x32+%[lv],%%bh\n \
             dec    %%cx\n \
-            je     jump_126d36\n \
+            je     jump_rend_md23_E36\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             or     %%al,%%al\n \
-            je     jump_126b95\n \
+            je     jump_rend_md23_C95\n \
             mov    0x6(%%edi),%%ah\n \
             mov    "EXPORT_SYMBOL(ghost_table)"(%%eax),%%al\n \
             mov    %%al,0x6(%%edi)\n \
-        jump_126b95:\n \
+        jump_rend_md23_C95:\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
             add    0x4c+%[lv],%%edx\n \
             adc    0x32+%[lv],%%bh\n \
             dec    %%cx\n \
-            je     jump_126d36\n \
+            je     jump_rend_md23_E36\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             or     %%al,%%al\n \
-            je     jump_126bc1\n \
+            je     jump_rend_md23_Cc1\n \
             mov    0x7(%%edi),%%ah\n \
             mov    "EXPORT_SYMBOL(ghost_table)"(%%eax),%%al\n \
             mov    %%al,0x7(%%edi)\n \
-        jump_126bc1:\n \
+        jump_rend_md23_Cc1:\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
             add    0x4c+%[lv],%%edx\n \
             adc    0x32+%[lv],%%bh\n \
             dec    %%cx\n \
-            je     jump_126d36\n \
+            je     jump_rend_md23_E36\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             or     %%al,%%al\n \
-            je     jump_126bed\n \
+            je     jump_rend_md23_Ced\n \
             mov    0x8(%%edi),%%ah\n \
             mov    "EXPORT_SYMBOL(ghost_table)"(%%eax),%%al\n \
             mov    %%al,0x8(%%edi)\n \
-        jump_126bed:\n \
+        jump_rend_md23_Ced:\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
             add    0x4c+%[lv],%%edx\n \
             adc    0x32+%[lv],%%bh\n \
             dec    %%cx\n \
-            je     jump_126d36\n \
+            je     jump_rend_md23_E36\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             or     %%al,%%al\n \
-            je     jump_126c19\n \
+            je     jump_rend_md23_D19\n \
             mov    0x9(%%edi),%%ah\n \
             mov    "EXPORT_SYMBOL(ghost_table)"(%%eax),%%al\n \
             mov    %%al,0x9(%%edi)\n \
-        jump_126c19:\n \
+        jump_rend_md23_D19:\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
             add    0x4c+%[lv],%%edx\n \
             adc    0x32+%[lv],%%bh\n \
             dec    %%cx\n \
-            je     jump_126d36\n \
+            je     jump_rend_md23_E36\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             or     %%al,%%al\n \
-            je     jump_126c45\n \
+            je     jump_rend_md23_D45\n \
             mov    0xa(%%edi),%%ah\n \
             mov    "EXPORT_SYMBOL(ghost_table)"(%%eax),%%al\n \
             mov    %%al,0xa(%%edi)\n \
-        jump_126c45:\n \
+        jump_rend_md23_D45:\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
             add    0x4c+%[lv],%%edx\n \
             adc    0x32+%[lv],%%bh\n \
             dec    %%cx\n \
-            je     jump_126d36\n \
+            je     jump_rend_md23_E36\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             or     %%al,%%al\n \
-            je     jump_126c71\n \
+            je     jump_rend_md23_D71\n \
             mov    0xb(%%edi),%%ah\n \
             mov    "EXPORT_SYMBOL(ghost_table)"(%%eax),%%al\n \
             mov    %%al,0xb(%%edi)\n \
-        jump_126c71:\n \
+        jump_rend_md23_D71:\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
             add    0x4c+%[lv],%%edx\n \
             adc    0x32+%[lv],%%bh\n \
             dec    %%cx\n \
-            je     jump_126d36\n \
+            je     jump_rend_md23_E36\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             or     %%al,%%al\n \
-            je     jump_126c9d\n \
+            je     jump_rend_md23_D9d\n \
             mov    0xc(%%edi),%%ah\n \
             mov    "EXPORT_SYMBOL(ghost_table)"(%%eax),%%al\n \
             mov    %%al,0xc(%%edi)\n \
-        jump_126c9d:\n \
+        jump_rend_md23_D9d:\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
             add    0x4c+%[lv],%%edx\n \
             adc    0x32+%[lv],%%bh\n \
             dec    %%cx\n \
-            je     jump_126d36\n \
+            je     jump_rend_md23_E36\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             or     %%al,%%al\n \
-            je     jump_126cc9\n \
+            je     jump_rend_md23_Dc9\n \
             mov    0xd(%%edi),%%ah\n \
             mov    "EXPORT_SYMBOL(ghost_table)"(%%eax),%%al\n \
             mov    %%al,0xd(%%edi)\n \
-        jump_126cc9:\n \
+        jump_rend_md23_Dc9:\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
             add    0x4c+%[lv],%%edx\n \
             adc    0x32+%[lv],%%bh\n \
             dec    %%cx\n \
-            je     jump_126d36\n \
+            je     jump_rend_md23_E36\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             or     %%al,%%al\n \
-            je     jump_126cf1\n \
+            je     jump_rend_md23_Df1\n \
             mov    0xe(%%edi),%%ah\n \
             mov    "EXPORT_SYMBOL(ghost_table)"(%%eax),%%al\n \
             mov    %%al,0xe(%%edi)\n \
-        jump_126cf1:\n \
+        jump_rend_md23_Df1:\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
             add    0x4c+%[lv],%%edx\n \
             adc    0x32+%[lv],%%bh\n \
             dec    %%cx\n \
-            je     jump_126d36\n \
+            je     jump_rend_md23_E36\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             or     %%al,%%al\n \
-            je     jump_126d19\n \
+            je     jump_rend_md23_E19\n \
             mov    0xf(%%edi),%%ah\n \
             mov    "EXPORT_SYMBOL(ghost_table)"(%%eax),%%al\n \
             mov    %%al,0xf(%%edi)\n \
-        jump_126d19:\n \
+        jump_rend_md23_E19:\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
             add    0x4c+%[lv],%%edx\n \
             adc    0x32+%[lv],%%bh\n \
             dec    %%cx\n \
-            je     jump_126d36\n \
+            je     jump_rend_md23_E36\n \
             add    $0x10,%%edi\n \
-            jmp    jump_126a7c\n \
-        jump_126d36:\n \
+            jmp    jump_rend_md23_B7c\n \
+        jump_rend_md23_E36:\n \
             mov    0x5c+%[lv],%%esi\n \
-        jump_126d3a:\n \
+        jump_rend_md23_E3a:\n \
             add    $0x14,%%esi\n \
             decl   0x20+%[lv]\n \
-            jne    jump_1269f0\n \
+            jne    jump_rend_md23_Af0\n \
             popal\n \
         "
                  : [lv] "+o" (lv)
@@ -7536,20 +7536,20 @@ mgt_md01:\n \
             xor    %%eax,%%eax\n \
             xor    %%ebx,%%ebx\n \
             xor    %%ecx,%%ecx\n \
-        jump_126d6e:\n \
+        jump_rend_md24_A6e:\n \
             mov    0x2(%%esi),%%ax\n \
             movzwl 0x6(%%esi),%%ecx\n \
             mov    0x0+%[lv],%%edi\n \
             add    "EXPORT_SYMBOL(vec_screen_width)",%%edi\n \
             mov    %%edi,0x0+%[lv]\n \
             or     %%ax,%%ax\n \
-            jns    jump_126dd9\n \
+            jns    jump_rend_md24_Ad9\n \
             or     %%cx,%%cx\n \
-            jle    jump_1271f3\n \
+            jle    jump_rend_md24_Df3\n \
             cmp    "EXPORT_SYMBOL(vec_window_width)",%%ecx\n \
-            jle    jump_126d9e\n \
+            jle    jump_rend_md24_A9e\n \
             mov    "EXPORT_SYMBOL(vec_window_width)",%%ecx\n \
-        jump_126d9e:\n \
+        jump_rend_md24_A9e:\n \
             mov    %%ecx,0x58+%[lv]\n \
             neg    %%ax\n \
             movzwl %%ax,%%eax\n \
@@ -7568,14 +7568,14 @@ mgt_md01:\n \
             add    0x10(%%esi),%%ecx\n \
             rol    $0x10,%%ecx\n \
             movzwl %%ax,%%eax\n \
-            jmp    jump_126e0b\n \
-        jump_126dd9:\n \
+            jmp    jump_rend_md24_B0b\n \
+        jump_rend_md24_Ad9:\n \
             cmp    "EXPORT_SYMBOL(vec_window_width)",%%ecx\n \
-            jle    jump_126de7\n \
+            jle    jump_rend_md24_Ae7\n \
             mov    "EXPORT_SYMBOL(vec_window_width)",%%ecx\n \
-        jump_126de7:\n \
+        jump_rend_md24_Ae7:\n \
             sub    %%ax,%%cx\n \
-            jle    jump_1271f3\n \
+            jle    jump_rend_md24_Df3\n \
             add    %%eax,%%edi\n \
             mov    0xc(%%esi),%%edx\n \
             rol    $0x10,%%edx\n \
@@ -7585,19 +7585,19 @@ mgt_md01:\n \
             mov    %%ecx,0x58+%[lv]\n \
             mov    0x10(%%esi),%%ecx\n \
             rol    $0x10,%%ecx\n \
-        jump_126e0b:\n \
+        jump_rend_md24_B0b:\n \
             mov    %%esi,0x5c+%[lv]\n \
             mov    "EXPORT_SYMBOL(vec_map)",%%esi\n \
-        jump_126e15:\n \
+        jump_rend_md24_B15:\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             or     %%al,%%al\n \
-            je     jump_126e2e\n \
+            je     jump_rend_md24_B2e\n \
             mov    %%cl,%%ah\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%ah\n \
             mov    (%%edi),%%al\n \
             mov    "EXPORT_SYMBOL(ghost_table)"(%%eax),%%al\n \
             mov    %%al,(%%edi)\n \
-        jump_126e2e:\n \
+        jump_rend_md24_B2e:\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
             add    0x4c+%[lv],%%edx\n \
@@ -7605,16 +7605,16 @@ mgt_md01:\n \
             add    0x50+%[lv],%%ecx\n \
             adc    0x3e+%[lv],%%cl\n \
             decl   0x58+%[lv]\n \
-            je     jump_1271ef\n \
+            je     jump_rend_md24_Def\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             or     %%al,%%al\n \
-            je     jump_126e6c\n \
+            je     jump_rend_md24_B6c\n \
             mov    %%cl,%%ah\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%ah\n \
             mov    0x1(%%edi),%%al\n \
             mov    "EXPORT_SYMBOL(ghost_table)"(%%eax),%%al\n \
             mov    %%al,0x1(%%edi)\n \
-        jump_126e6c:\n \
+        jump_rend_md24_B6c:\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
             add    0x4c+%[lv],%%edx\n \
@@ -7622,16 +7622,16 @@ mgt_md01:\n \
             add    0x50+%[lv],%%ecx\n \
             adc    0x3e+%[lv],%%cl\n \
             decl   0x58+%[lv]\n \
-            je     jump_1271ef\n \
+            je     jump_rend_md24_Def\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             or     %%al,%%al\n \
-            je     jump_126eaa\n \
+            je     jump_rend_md24_Baa\n \
             mov    %%cl,%%ah\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%ah\n \
             mov    0x2(%%edi),%%al\n \
             mov    "EXPORT_SYMBOL(ghost_table)"(%%eax),%%al\n \
             mov    %%al,0x2(%%edi)\n \
-        jump_126eaa:\n \
+        jump_rend_md24_Baa:\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
             add    0x4c+%[lv],%%edx\n \
@@ -7639,16 +7639,16 @@ mgt_md01:\n \
             add    0x50+%[lv],%%ecx\n \
             adc    0x3e+%[lv],%%cl\n \
             decl   0x58+%[lv]\n \
-            je     jump_1271ef\n \
+            je     jump_rend_md24_Def\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             or     %%al,%%al\n \
-            je     jump_126ee8\n \
+            je     jump_rend_md24_Be8\n \
             mov    %%cl,%%ah\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%ah\n \
             mov    0x3(%%edi),%%al\n \
             mov    "EXPORT_SYMBOL(ghost_table)"(%%eax),%%al\n \
             mov    %%al,0x3(%%edi)\n \
-        jump_126ee8:\n \
+        jump_rend_md24_Be8:\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
             add    0x4c+%[lv],%%edx\n \
@@ -7656,16 +7656,16 @@ mgt_md01:\n \
             add    0x50+%[lv],%%ecx\n \
             adc    0x3e+%[lv],%%cl\n \
             decl   0x58+%[lv]\n \
-            je     jump_1271ef\n \
+            je     jump_rend_md24_Def\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             or     %%al,%%al\n \
-            je     jump_126f26\n \
+            je     jump_rend_md24_f26\n \
             mov    %%cl,%%ah\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%ah\n \
             mov    0x4(%%edi),%%al\n \
             mov    "EXPORT_SYMBOL(ghost_table)"(%%eax),%%al\n \
             mov    %%al,0x4(%%edi)\n \
-        jump_126f26:\n \
+        jump_rend_md24_f26:\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
             add    0x4c+%[lv],%%edx\n \
@@ -7673,16 +7673,16 @@ mgt_md01:\n \
             add    0x50+%[lv],%%ecx\n \
             adc    0x3e+%[lv],%%cl\n \
             decl   0x58+%[lv]\n \
-            je     jump_1271ef\n \
+            je     jump_rend_md24_Def\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             or     %%al,%%al\n \
-            je     jump_126f64\n \
+            je     jump_rend_md24_f64\n \
             mov    %%cl,%%ah\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%ah\n \
             mov    0x5(%%edi),%%al\n \
             mov    "EXPORT_SYMBOL(ghost_table)"(%%eax),%%al\n \
             mov    %%al,0x5(%%edi)\n \
-        jump_126f64:\n \
+        jump_rend_md24_f64:\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
             add    0x4c+%[lv],%%edx\n \
@@ -7690,16 +7690,16 @@ mgt_md01:\n \
             add    0x50+%[lv],%%ecx\n \
             adc    0x3e+%[lv],%%cl\n \
             decl   0x58+%[lv]\n \
-            je     jump_1271ef\n \
+            je     jump_rend_md24_Def\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             or     %%al,%%al\n \
-            je     jump_126fa2\n \
+            je     jump_rend_md24_fa2\n \
             mov    %%cl,%%ah\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%ah\n \
             mov    0x6(%%edi),%%al\n \
             mov    "EXPORT_SYMBOL(ghost_table)"(%%eax),%%al\n \
             mov    %%al,0x6(%%edi)\n \
-        jump_126fa2:\n \
+        jump_rend_md24_fa2:\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
             add    0x4c+%[lv],%%edx\n \
@@ -7707,16 +7707,16 @@ mgt_md01:\n \
             add    0x50+%[lv],%%ecx\n \
             adc    0x3e+%[lv],%%cl\n \
             decl   0x58+%[lv]\n \
-            je     jump_1271ef\n \
+            je     jump_rend_md24_Def\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             or     %%al,%%al\n \
-            je     jump_126fe0\n \
+            je     jump_rend_md24_fe0\n \
             mov    %%cl,%%ah\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%ah\n \
             mov    0x7(%%edi),%%al\n \
             mov    "EXPORT_SYMBOL(ghost_table)"(%%eax),%%al\n \
             mov    %%al,0x7(%%edi)\n \
-        jump_126fe0:\n \
+        jump_rend_md24_fe0:\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
             add    0x4c+%[lv],%%edx\n \
@@ -7724,16 +7724,16 @@ mgt_md01:\n \
             add    0x50+%[lv],%%ecx\n \
             adc    0x3e+%[lv],%%cl\n \
             decl   0x58+%[lv]\n \
-            je     jump_1271ef\n \
+            je     jump_rend_md24_Def\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             or     %%al,%%al\n \
-            je     jump_12701e\n \
+            je     jump_rend_md24_C1e\n \
             mov    %%cl,%%ah\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%ah\n \
             mov    0x8(%%edi),%%al\n \
             mov    "EXPORT_SYMBOL(ghost_table)"(%%eax),%%al\n \
             mov    %%al,0x8(%%edi)\n \
-        jump_12701e:\n \
+        jump_rend_md24_C1e:\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
             add    0x4c+%[lv],%%edx\n \
@@ -7741,16 +7741,16 @@ mgt_md01:\n \
             add    0x50+%[lv],%%ecx\n \
             adc    0x3e+%[lv],%%cl\n \
             decl   0x58+%[lv]\n \
-            je     jump_1271ef\n \
+            je     jump_rend_md24_Def\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             or     %%al,%%al\n \
-            je     jump_12705c\n \
+            je     jump_rend_md24_C5c\n \
             mov    %%cl,%%ah\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%ah\n \
             mov    0x9(%%edi),%%al\n \
             mov    "EXPORT_SYMBOL(ghost_table)"(%%eax),%%al\n \
             mov    %%al,0x9(%%edi)\n \
-        jump_12705c:\n \
+        jump_rend_md24_C5c:\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
             add    0x4c+%[lv],%%edx\n \
@@ -7758,16 +7758,16 @@ mgt_md01:\n \
             add    0x50+%[lv],%%ecx\n \
             adc    0x3e+%[lv],%%cl\n \
             decl   0x58+%[lv]\n \
-            je     jump_1271ef\n \
+            je     jump_rend_md24_Def\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             or     %%al,%%al\n \
-            je     jump_12709a\n \
+            je     jump_rend_md24_C9a\n \
             mov    %%cl,%%ah\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%ah\n \
             mov    0xa(%%edi),%%al\n \
             mov    "EXPORT_SYMBOL(ghost_table)"(%%eax),%%al\n \
             mov    %%al,0xa(%%edi)\n \
-        jump_12709a:\n \
+        jump_rend_md24_C9a:\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
             add    0x4c+%[lv],%%edx\n \
@@ -7775,16 +7775,16 @@ mgt_md01:\n \
             add    0x50+%[lv],%%ecx\n \
             adc    0x3e+%[lv],%%cl\n \
             decl   0x58+%[lv]\n \
-            je     jump_1271ef\n \
+            je     jump_rend_md24_Def\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             or     %%al,%%al\n \
-            je     jump_1270d8\n \
+            je     jump_rend_md24_Cd8\n \
             mov    %%cl,%%ah\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%ah\n \
             mov    0xb(%%edi),%%al\n \
             mov    "EXPORT_SYMBOL(ghost_table)"(%%eax),%%al\n \
             mov    %%al,0xb(%%edi)\n \
-        jump_1270d8:\n \
+        jump_rend_md24_Cd8:\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
             add    0x4c+%[lv],%%edx\n \
@@ -7792,16 +7792,16 @@ mgt_md01:\n \
             add    0x50+%[lv],%%ecx\n \
             adc    0x3e+%[lv],%%cl\n \
             decl   0x58+%[lv]\n \
-            je     jump_1271ef\n \
+            je     jump_rend_md24_Def\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             or     %%al,%%al\n \
-            je     jump_127116\n \
+            je     jump_rend_md24_D16\n \
             mov    %%cl,%%ah\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%ah\n \
             mov    0xc(%%edi),%%al\n \
             mov    "EXPORT_SYMBOL(ghost_table)"(%%eax),%%al\n \
             mov    %%al,0xc(%%edi)\n \
-        jump_127116:\n \
+        jump_rend_md24_D16:\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
             add    0x4c+%[lv],%%edx\n \
@@ -7809,16 +7809,16 @@ mgt_md01:\n \
             add    0x50+%[lv],%%ecx\n \
             adc    0x3e+%[lv],%%cl\n \
             decl   0x58+%[lv]\n \
-            je     jump_1271ef\n \
+            je     jump_rend_md24_Def\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             or     %%al,%%al\n \
-            je     jump_127154\n \
+            je     jump_rend_md24_D54\n \
             mov    %%cl,%%ah\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%ah\n \
             mov    0xd(%%edi),%%al\n \
             mov    "EXPORT_SYMBOL(ghost_table)"(%%eax),%%al\n \
             mov    %%al,0xd(%%edi)\n \
-        jump_127154:\n \
+        jump_rend_md24_D54:\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
             add    0x4c+%[lv],%%edx\n \
@@ -7826,16 +7826,16 @@ mgt_md01:\n \
             add    0x50+%[lv],%%ecx\n \
             adc    0x3e+%[lv],%%cl\n \
             decl   0x58+%[lv]\n \
-            je     jump_1271ef\n \
+            je     jump_rend_md24_Def\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             or     %%al,%%al\n \
-            je     jump_12718e\n \
+            je     jump_rend_md24_D8e\n \
             mov    %%cl,%%ah\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%ah\n \
             mov    0xe(%%edi),%%al\n \
             mov    "EXPORT_SYMBOL(ghost_table)"(%%eax),%%al\n \
             mov    %%al,0xe(%%edi)\n \
-        jump_12718e:\n \
+        jump_rend_md24_D8e:\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
             add    0x4c+%[lv],%%edx\n \
@@ -7843,16 +7843,16 @@ mgt_md01:\n \
             add    0x50+%[lv],%%ecx\n \
             adc    0x3e+%[lv],%%cl\n \
             decl   0x58+%[lv]\n \
-            je     jump_1271ef\n \
+            je     jump_rend_md24_Def\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             or     %%al,%%al\n \
-            je     jump_1271c8\n \
+            je     jump_rend_md24_Dc8\n \
             mov    %%cl,%%ah\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%ah\n \
             mov    0xf(%%edi),%%al\n \
             mov    "EXPORT_SYMBOL(ghost_table)"(%%eax),%%al\n \
             mov    %%al,0xf(%%edi)\n \
-        jump_1271c8:\n \
+        jump_rend_md24_Dc8:\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
             add    0x4c+%[lv],%%edx\n \
@@ -7860,15 +7860,15 @@ mgt_md01:\n \
             add    0x50+%[lv],%%ecx\n \
             adc    0x3e+%[lv],%%cl\n \
             decl   0x58+%[lv]\n \
-            je     jump_1271ef\n \
+            je     jump_rend_md24_Def\n \
             add    $0x10,%%edi\n \
-            jmp    jump_126e15\n \
-        jump_1271ef:\n \
+            jmp    jump_rend_md24_B15\n \
+        jump_rend_md24_Def:\n \
             mov    0x5c+%[lv],%%esi\n \
-        jump_1271f3:\n \
+        jump_rend_md24_Df3:\n \
             add    $0x14,%%esi\n \
             decl   0x20+%[lv]\n \
-            jne    jump_126d6e\n \
+            jne    jump_rend_md24_A6e\n \
             popal\n \
         "
                  : [lv] "+o" (lv)
@@ -7889,20 +7889,20 @@ mgt_md01:\n \
             xor    %%eax,%%eax\n \
             xor    %%ebx,%%ebx\n \
             xor    %%ecx,%%ecx\n \
-        jump_127227:\n \
+        jump_rend_md25_227:\n \
             mov    0x2(%%esi),%%ax\n \
             movzwl 0x6(%%esi),%%ecx\n \
             mov    0x0+%[lv],%%edi\n \
             add    "EXPORT_SYMBOL(vec_screen_width)",%%edi\n \
             mov    %%edi,0x0+%[lv]\n \
             or     %%ax,%%ax\n \
-            jns    jump_127292\n \
+            jns    jump_rend_md25_292\n \
             or     %%cx,%%cx\n \
-            jle    jump_1276ac\n \
+            jle    jump_rend_md25_6ac\n \
             cmp    "EXPORT_SYMBOL(vec_window_width)",%%ecx\n \
-            jle    jump_127257\n \
+            jle    jump_rend_md25_257\n \
             mov    "EXPORT_SYMBOL(vec_window_width)",%%ecx\n \
-        jump_127257:\n \
+        jump_rend_md25_257:\n \
             mov    %%ecx,0x58+%[lv]\n \
             neg    %%ax\n \
             movzwl %%ax,%%eax\n \
@@ -7921,14 +7921,14 @@ mgt_md01:\n \
             add    0x10(%%esi),%%ecx\n \
             rol    $0x10,%%ecx\n \
             movzwl %%ax,%%eax\n \
-            jmp    jump_1272c4\n \
-        jump_127292:\n \
+            jmp    jump_rend_md25_2c4\n \
+        jump_rend_md25_292:\n \
             cmp    "EXPORT_SYMBOL(vec_window_width)",%%ecx\n \
-            jle    jump_1272a0\n \
+            jle    jump_rend_md25_2a0\n \
             mov    "EXPORT_SYMBOL(vec_window_width)",%%ecx\n \
-        jump_1272a0:\n \
+        jump_rend_md25_2a0:\n \
             sub    %%ax,%%cx\n \
-            jle    jump_1276ac\n \
+            jle    jump_rend_md25_6ac\n \
             add    %%eax,%%edi\n \
             mov    0xc(%%esi),%%edx\n \
             rol    $0x10,%%edx\n \
@@ -7938,19 +7938,19 @@ mgt_md01:\n \
             mov    %%ecx,0x58+%[lv]\n \
             mov    0x10(%%esi),%%ecx\n \
             rol    $0x10,%%ecx\n \
-        jump_1272c4:\n \
+        jump_rend_md25_2c4:\n \
             mov    %%esi,0x5c+%[lv]\n \
             mov    "EXPORT_SYMBOL(vec_map)",%%esi\n \
-        jump_1272ce:\n \
+        jump_rend_md25_2ce:\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             or     %%al,%%al\n \
-            je     jump_1272e7\n \
+            je     jump_rend_md25_2e7\n \
             mov    %%cl,%%ah\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%al\n \
             mov    (%%edi),%%ah\n \
             mov    "EXPORT_SYMBOL(ghost_table)"(%%eax),%%al\n \
             mov    %%al,(%%edi)\n \
-        jump_1272e7:\n \
+        jump_rend_md25_2e7:\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
             add    0x4c+%[lv],%%edx\n \
@@ -7958,16 +7958,16 @@ mgt_md01:\n \
             add    0x50+%[lv],%%ecx\n \
             adc    0x3e+%[lv],%%cl\n \
             decl   0x58+%[lv]\n \
-            je     jump_1276a8\n \
+            je     jump_rend_md25_6a8\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             or     %%al,%%al\n \
-            je     jump_127325\n \
+            je     jump_rend_md25_325\n \
             mov    %%cl,%%ah\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%al\n \
             mov    0x1(%%edi),%%ah\n \
             mov    "EXPORT_SYMBOL(ghost_table)"(%%eax),%%al\n \
             mov    %%al,0x1(%%edi)\n \
-        jump_127325:\n \
+        jump_rend_md25_325:\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
             add    0x4c+%[lv],%%edx\n \
@@ -7975,16 +7975,16 @@ mgt_md01:\n \
             add    0x50+%[lv],%%ecx\n \
             adc    0x3e+%[lv],%%cl\n \
             decl   0x58+%[lv]\n \
-            je     jump_1276a8\n \
+            je     jump_rend_md25_6a8\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             or     %%al,%%al\n \
-            je     jump_127363\n \
+            je     jump_rend_md25_363\n \
             mov    %%cl,%%ah\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%al\n \
             mov    0x2(%%edi),%%ah\n \
             mov    "EXPORT_SYMBOL(ghost_table)"(%%eax),%%al\n \
             mov    %%al,0x2(%%edi)\n \
-        jump_127363:\n \
+        jump_rend_md25_363:\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
             add    0x4c+%[lv],%%edx\n \
@@ -7992,16 +7992,16 @@ mgt_md01:\n \
             add    0x50+%[lv],%%ecx\n \
             adc    0x3e+%[lv],%%cl\n \
             decl   0x58+%[lv]\n \
-            je     jump_1276a8\n \
+            je     jump_rend_md25_6a8\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             or     %%al,%%al\n \
-            je     jump_1273a1\n \
+            je     jump_rend_md25_3a1\n \
             mov    %%cl,%%ah\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%al\n \
             mov    0x3(%%edi),%%ah\n \
             mov    "EXPORT_SYMBOL(ghost_table)"(%%eax),%%al\n \
             mov    %%al,0x3(%%edi)\n \
-        jump_1273a1:\n \
+        jump_rend_md25_3a1:\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
             add    0x4c+%[lv],%%edx\n \
@@ -8009,16 +8009,16 @@ mgt_md01:\n \
             add    0x50+%[lv],%%ecx\n \
             adc    0x3e+%[lv],%%cl\n \
             decl   0x58+%[lv]\n \
-            je     jump_1276a8\n \
+            je     jump_rend_md25_6a8\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             or     %%al,%%al\n \
-            je     jump_1273df\n \
+            je     jump_rend_md25_3df\n \
             mov    %%cl,%%ah\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%al\n \
             mov    0x4(%%edi),%%ah\n \
             mov    "EXPORT_SYMBOL(ghost_table)"(%%eax),%%al\n \
             mov    %%al,0x4(%%edi)\n \
-        jump_1273df:\n \
+        jump_rend_md25_3df:\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
             add    0x4c+%[lv],%%edx\n \
@@ -8026,16 +8026,16 @@ mgt_md01:\n \
             add    0x50+%[lv],%%ecx\n \
             adc    0x3e+%[lv],%%cl\n \
             decl   0x58+%[lv]\n \
-            je     jump_1276a8\n \
+            je     jump_rend_md25_6a8\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             or     %%al,%%al\n \
-            je     jump_12741d\n \
+            je     jump_rend_md25_41d\n \
             mov    %%cl,%%ah\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%al\n \
             mov    0x5(%%edi),%%ah\n \
             mov    "EXPORT_SYMBOL(ghost_table)"(%%eax),%%al\n \
             mov    %%al,0x5(%%edi)\n \
-        jump_12741d:\n \
+        jump_rend_md25_41d:\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
             add    0x4c+%[lv],%%edx\n \
@@ -8043,16 +8043,16 @@ mgt_md01:\n \
             add    0x50+%[lv],%%ecx\n \
             adc    0x3e+%[lv],%%cl\n \
             decl   0x58+%[lv]\n \
-            je     jump_1276a8\n \
+            je     jump_rend_md25_6a8\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             or     %%al,%%al\n \
-            je     jump_12745b\n \
+            je     jump_rend_md25_45b\n \
             mov    %%cl,%%ah\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%al\n \
             mov    0x6(%%edi),%%ah\n \
             mov    "EXPORT_SYMBOL(ghost_table)"(%%eax),%%al\n \
             mov    %%al,0x6(%%edi)\n \
-        jump_12745b:\n \
+        jump_rend_md25_45b:\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
             add    0x4c+%[lv],%%edx\n \
@@ -8060,16 +8060,16 @@ mgt_md01:\n \
             add    0x50+%[lv],%%ecx\n \
             adc    0x3e+%[lv],%%cl\n \
             decl   0x58+%[lv]\n \
-            je     jump_1276a8\n \
+            je     jump_rend_md25_6a8\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             or     %%al,%%al\n \
-            je     jump_127499\n \
+            je     jump_rend_md25_499\n \
             mov    %%cl,%%ah\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%al\n \
             mov    0x7(%%edi),%%ah\n \
             mov    "EXPORT_SYMBOL(ghost_table)"(%%eax),%%al\n \
             mov    %%al,0x7(%%edi)\n \
-        jump_127499:\n \
+        jump_rend_md25_499:\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
             add    0x4c+%[lv],%%edx\n \
@@ -8077,16 +8077,16 @@ mgt_md01:\n \
             add    0x50+%[lv],%%ecx\n \
             adc    0x3e+%[lv],%%cl\n \
             decl   0x58+%[lv]\n \
-            je     jump_1276a8\n \
+            je     jump_rend_md25_6a8\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             or     %%al,%%al\n \
-            je     jump_1274d7\n \
+            je     jump_rend_md25_4d7\n \
             mov    %%cl,%%ah\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%al\n \
             mov    0x8(%%edi),%%ah\n \
             mov    "EXPORT_SYMBOL(ghost_table)"(%%eax),%%al\n \
             mov    %%al,0x8(%%edi)\n \
-        jump_1274d7:\n \
+        jump_rend_md25_4d7:\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
             add    0x4c+%[lv],%%edx\n \
@@ -8094,16 +8094,16 @@ mgt_md01:\n \
             add    0x50+%[lv],%%ecx\n \
             adc    0x3e+%[lv],%%cl\n \
             decl   0x58+%[lv]\n \
-            je     jump_1276a8\n \
+            je     jump_rend_md25_6a8\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             or     %%al,%%al\n \
-            je     jump_127515\n \
+            je     jump_rend_md25_515\n \
             mov    %%cl,%%ah\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%al\n \
             mov    0x9(%%edi),%%ah\n \
             mov    "EXPORT_SYMBOL(ghost_table)"(%%eax),%%al\n \
             mov    %%al,0x9(%%edi)\n \
-        jump_127515:\n \
+        jump_rend_md25_515:\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
             add    0x4c+%[lv],%%edx\n \
@@ -8111,16 +8111,16 @@ mgt_md01:\n \
             add    0x50+%[lv],%%ecx\n \
             adc    0x3e+%[lv],%%cl\n \
             decl   0x58+%[lv]\n \
-            je     jump_1276a8\n \
+            je     jump_rend_md25_6a8\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             or     %%al,%%al\n \
-            je     jump_127553\n \
+            je     jump_rend_md25_553\n \
             mov    %%cl,%%ah\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%al\n \
             mov    0xa(%%edi),%%ah\n \
             mov    "EXPORT_SYMBOL(ghost_table)"(%%eax),%%al\n \
             mov    %%al,0xa(%%edi)\n \
-        jump_127553:\n \
+        jump_rend_md25_553:\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
             add    0x4c+%[lv],%%edx\n \
@@ -8128,16 +8128,16 @@ mgt_md01:\n \
             add    0x50+%[lv],%%ecx\n \
             adc    0x3e+%[lv],%%cl\n \
             decl   0x58+%[lv]\n \
-            je     jump_1276a8\n \
+            je     jump_rend_md25_6a8\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             or     %%al,%%al\n \
-            je     jump_127591\n \
+            je     jump_rend_md25_591\n \
             mov    %%cl,%%ah\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%al\n \
             mov    0xb(%%edi),%%ah\n \
             mov    "EXPORT_SYMBOL(ghost_table)"(%%eax),%%al\n \
             mov    %%al,0xb(%%edi)\n \
-        jump_127591:\n \
+        jump_rend_md25_591:\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
             add    0x4c+%[lv],%%edx\n \
@@ -8145,16 +8145,16 @@ mgt_md01:\n \
             add    0x50+%[lv],%%ecx\n \
             adc    0x3e+%[lv],%%cl\n \
             decl   0x58+%[lv]\n \
-            je     jump_1276a8\n \
+            je     jump_rend_md25_6a8\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             or     %%al,%%al\n \
-            je     jump_1275cf\n \
+            je     jump_rend_md25_5cf\n \
             mov    %%cl,%%ah\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%al\n \
             mov    0xc(%%edi),%%ah\n \
             mov    "EXPORT_SYMBOL(ghost_table)"(%%eax),%%al\n \
             mov    %%al,0xc(%%edi)\n \
-        jump_1275cf:\n \
+        jump_rend_md25_5cf:\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
             add    0x4c+%[lv],%%edx\n \
@@ -8162,16 +8162,16 @@ mgt_md01:\n \
             add    0x50+%[lv],%%ecx\n \
             adc    0x3e+%[lv],%%cl\n \
             decl   0x58+%[lv]\n \
-            je     jump_1276a8\n \
+            je     jump_rend_md25_6a8\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             or     %%al,%%al\n \
-            je     jump_12760d\n \
+            je     jump_rend_md25_60d\n \
             mov    %%cl,%%ah\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%al\n \
             mov    0xd(%%edi),%%ah\n \
             mov    "EXPORT_SYMBOL(ghost_table)"(%%eax),%%al\n \
             mov    %%al,0xd(%%edi)\n \
-        jump_12760d:\n \
+        jump_rend_md25_60d:\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
             add    0x4c+%[lv],%%edx\n \
@@ -8179,16 +8179,16 @@ mgt_md01:\n \
             add    0x50+%[lv],%%ecx\n \
             adc    0x3e+%[lv],%%cl\n \
             decl   0x58+%[lv]\n \
-            je     jump_1276a8\n \
+            je     jump_rend_md25_6a8\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             or     %%al,%%al\n \
-            je     jump_127647\n \
+            je     jump_rend_md25_647\n \
             mov    %%cl,%%ah\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%al\n \
             mov    0xe(%%edi),%%ah\n \
             mov    "EXPORT_SYMBOL(ghost_table)"(%%eax),%%al\n \
             mov    %%al,0xe(%%edi)\n \
-        jump_127647:\n \
+        jump_rend_md25_647:\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
             add    0x4c+%[lv],%%edx\n \
@@ -8196,16 +8196,16 @@ mgt_md01:\n \
             add    0x50+%[lv],%%ecx\n \
             adc    0x3e+%[lv],%%cl\n \
             decl   0x58+%[lv]\n \
-            je     jump_1276a8\n \
+            je     jump_rend_md25_6a8\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             or     %%al,%%al\n \
-            je     jump_127681\n \
+            je     jump_rend_md25_681\n \
             mov    %%cl,%%ah\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%al\n \
             mov    0xf(%%edi),%%ah\n \
             mov    "EXPORT_SYMBOL(ghost_table)"(%%eax),%%al\n \
             mov    %%al,0xf(%%edi)\n \
-        jump_127681:\n \
+        jump_rend_md25_681:\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
             add    0x4c+%[lv],%%edx\n \
@@ -8213,15 +8213,15 @@ mgt_md01:\n \
             add    0x50+%[lv],%%ecx\n \
             adc    0x3e+%[lv],%%cl\n \
             decl   0x58+%[lv]\n \
-            je     jump_1276a8\n \
+            je     jump_rend_md25_6a8\n \
             add    $0x10,%%edi\n \
-            jmp    jump_1272ce\n \
-        jump_1276a8:\n \
+            jmp    jump_rend_md25_2ce\n \
+        jump_rend_md25_6a8:\n \
             mov    0x5c+%[lv],%%esi\n \
-        jump_1276ac:\n \
+        jump_rend_md25_6ac:\n \
             add    $0x14,%%esi\n \
             decl   0x20+%[lv]\n \
-            jne    jump_127227\n \
+            jne    jump_rend_md25_227\n \
             popal\n \
         "
                  : [lv] "+o" (lv)
@@ -8249,7 +8249,7 @@ mgt_md01:\n \
             mov    %%ecx,0x4c+%[lv]\n \
             mov    %%edx,0x50+%[lv]\n \
             mov    %%bl,0x64+%[lv]\n \
-        jump_1276f4:\n \
+        jump_t12_Af4:\n \
             mov    0x5c+%[lv],%%esi\n \
             addl   $0x14,0x5c+%[lv]\n \
             mov    (%%esi),%%eax\n \
@@ -8260,9 +8260,9 @@ mgt_md01:\n \
             add    "EXPORT_SYMBOL(vec_screen_width)",%%edi\n \
             mov    %%edi,0x0+%[lv]\n \
             or     %%eax,%%eax\n \
-            jns    jump_127762\n \
+            jns    jump_t12_B62\n \
             or     %%ebp,%%ebp\n \
-            jle    jump_127a4b\n \
+            jle    jump_t12_E4b\n \
             neg    %%eax\n \
             mov    0x24+%[lv],%%ecx\n \
             imul   %%eax,%%ecx\n \
@@ -8281,17 +8281,17 @@ mgt_md01:\n \
             mov    %%bx,%%cx\n \
             mov    %%al,%%bh\n \
             cmp    "EXPORT_SYMBOL(vec_window_width)",%%ebp\n \
-            jle    jump_127760\n \
+            jle    jump_t12_B60\n \
             mov    "EXPORT_SYMBOL(vec_window_width)",%%ebp\n \
-        jump_127760:\n \
-            jmp    jump_127795\n \
-        jump_127762:\n \
+        jump_t12_B60:\n \
+            jmp    jump_t12_B95\n \
+        jump_t12_B62:\n \
             cmp    "EXPORT_SYMBOL(vec_window_width)",%%ebp\n \
-            jle    jump_127770\n \
+            jle    jump_t12_B70\n \
             mov    "EXPORT_SYMBOL(vec_window_width)",%%ebp\n \
-        jump_127770:\n \
+        jump_t12_B70:\n \
             sub    %%eax,%%ebp\n \
-            jle    jump_127a4b\n \
+            jle    jump_t12_E4b\n \
             add    %%eax,%%edi\n \
             mov    0x8(%%esi),%%ecx\n \
             mov    0xc(%%esi),%%edx\n \
@@ -8303,7 +8303,7 @@ mgt_md01:\n \
             mov    %%cl,%%dl\n \
             mov    %%bx,%%cx\n \
             mov    %%al,%%bh\n \
-        jump_127795:\n \
+        jump_t12_B95:\n \
             xor    %%dh,%%dh\n \
             and    $0xffff,%%ebx\n \
             mov    %%ebp,%%eax\n \
@@ -8341,8 +8341,8 @@ t12_md00:\n \
             adc    0x50+%[lv],%%edx\n \
             adc    0x64+%[lv],%%bh\n \
             cmp    $0xc,%%al\n \
-            jbe    jump_127a75\n \
-        jump_12781b:\n \
+            jbe    jump_t12_E75\n \
+        jump_t12_C1b:\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%al\n \
             mov    %%al,(%%edi)\n \
 \n \
@@ -8357,8 +8357,8 @@ t12_md15:\n \
             adc    0x50+%[lv],%%edx\n \
             adc    0x64+%[lv],%%bh\n \
             cmp    $0xc,%%al\n \
-            jbe    jump_127aa0\n \
-        jump_12783e:\n \
+            jbe    jump_t12_Ea0\n \
+        jump_t12_C3e:\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%al\n \
             mov    %%al,0x1(%%edi)\n \
 \n \
@@ -8373,8 +8373,8 @@ t12_md14:\n \
             adc    0x50+%[lv],%%edx\n \
             adc    0x64+%[lv],%%bh\n \
             cmp    $0xc,%%al\n \
-            jbe    jump_127acd\n \
-        jump_127862:\n \
+            jbe    jump_t12_Ecd\n \
+        jump_t12_C62:\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%al\n \
             mov    %%al,0x2(%%edi)\n \
 \n \
@@ -8389,8 +8389,8 @@ t12_md13:\n \
             adc    0x50+%[lv],%%edx\n \
             adc    0x64+%[lv],%%bh\n \
             cmp    $0xc,%%al\n \
-            jbe    jump_127afa\n \
-        jump_127886:\n \
+            jbe    jump_t12_Efa\n \
+        jump_t12_C86:\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%al\n \
             mov    %%al,0x3(%%edi)\n \
 \n \
@@ -8405,8 +8405,8 @@ t12_md12:\n \
             adc    0x50+%[lv],%%edx\n \
             adc    0x64+%[lv],%%bh\n \
             cmp    $0xc,%%al\n \
-            jbe    jump_127b27\n \
-        jump_1278aa:\n \
+            jbe    jump_t12_F27\n \
+        jump_t12_Caa:\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%al\n \
             mov    %%al,0x4(%%edi)\n \
 \n \
@@ -8421,8 +8421,8 @@ t12_md11:\n \
             adc    0x50+%[lv],%%edx\n \
             adc    0x64+%[lv],%%bh\n \
             cmp    $0xc,%%al\n \
-            jbe    jump_127b54\n \
-        jump_1278ce:\n \
+            jbe    jump_t12_F54\n \
+        jump_t12_Cce:\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%al\n \
             mov    %%al,0x5(%%edi)\n \
 \n \
@@ -8437,8 +8437,8 @@ t12_md10:\n \
             adc    0x50+%[lv],%%edx\n \
             adc    0x64+%[lv],%%bh\n \
             cmp    $0xc,%%al\n \
-            jbe    jump_127b81\n \
-        jump_1278f2:\n \
+            jbe    jump_t12_F81\n \
+        jump_t12_Cf2:\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%al\n \
             mov    %%al,0x6(%%edi)\n \
 \n \
@@ -8453,8 +8453,8 @@ t12_md09:\n \
             adc    0x50+%[lv],%%edx\n \
             adc    0x64+%[lv],%%bh\n \
             cmp    $0xc,%%al\n \
-            jbe    jump_127bae\n \
-        jump_127916:\n \
+            jbe    jump_t12_Fae\n \
+        jump_t12_D16:\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%al\n \
             mov    %%al,0x7(%%edi)\n \
 \n \
@@ -8469,8 +8469,8 @@ t12_md08:\n \
             adc    0x50+%[lv],%%edx\n \
             adc    0x64+%[lv],%%bh\n \
             cmp    $0xc,%%al\n \
-            jbe    jump_127bdb\n \
-        jump_12793a:\n \
+            jbe    jump_t12_Fdb\n \
+        jump_t12_D3a:\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%al\n \
             mov    %%al,0x8(%%edi)\n \
 \n \
@@ -8485,8 +8485,8 @@ t12_md07:\n \
             adc    0x50+%[lv],%%edx\n \
             adc    0x64+%[lv],%%bh\n \
             cmp    $0xc,%%al\n \
-            jbe    jump_127c08\n \
-        jump_12795e:\n \
+            jbe    jump_t12_G08\n \
+        jump_t12_D5e:\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%al\n \
             mov    %%al,0x9(%%edi)\n \
 \n \
@@ -8501,8 +8501,8 @@ t12_md06:\n \
             adc    0x50+%[lv],%%edx\n \
             adc    0x64+%[lv],%%bh\n \
             cmp    $0xc,%%al\n \
-            jbe    jump_127c35\n \
-        jump_127982:\n \
+            jbe    jump_t12_G35\n \
+        jump_t12_D82:\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%al\n \
             mov    %%al,0xa(%%edi)\n \
 \n \
@@ -8517,8 +8517,8 @@ t12_md05:\n \
             adc    0x50+%[lv],%%edx\n \
             adc    0x64+%[lv],%%bh\n \
             cmp    $0xc,%%al\n \
-            jbe    jump_127c62\n \
-        jump_1279a6:\n \
+            jbe    jump_t12_G62\n \
+        jump_t12_Da6:\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%al\n \
             mov    %%al,0xb(%%edi)\n \
 \n \
@@ -8533,8 +8533,8 @@ t12_md04:\n \
             adc    0x50+%[lv],%%edx\n \
             adc    0x64+%[lv],%%bh\n \
             cmp    $0xc,%%al\n \
-            jbe    jump_127c8f\n \
-        jump_1279ca:\n \
+            jbe    jump_t12_G8f\n \
+        jump_t12_Dca:\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%al\n \
             mov    %%al,0xc(%%edi)\n \
 \n \
@@ -8549,8 +8549,8 @@ t12_md03:\n \
             adc    0x50+%[lv],%%edx\n \
             adc    0x64+%[lv],%%bh\n \
             cmp    $0xc,%%al\n \
-            jbe    jump_127cbc\n \
-        jump_1279ee:\n \
+            jbe    jump_t12_Gbc\n \
+        jump_t12_Dee:\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%al\n \
             mov    %%al,0xd(%%edi)\n \
 \n \
@@ -8565,8 +8565,8 @@ t12_md02:\n \
             adc    0x50+%[lv],%%edx\n \
             adc    0x64+%[lv],%%bh\n \
             cmp    $0xc,%%al\n \
-            jbe    jump_127ce9\n \
-        jump_127a12:\n \
+            jbe    jump_t12_Ge9\n \
+        jump_t12_E12:\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%al\n \
             mov    %%al,0xe(%%edi)\n \
 \n \
@@ -8581,18 +8581,18 @@ t12_md01:\n \
             adc    0x50+%[lv],%%edx\n \
             adc    0x64+%[lv],%%bh\n \
             cmp    $0xc,%%al\n \
-            jbe    jump_127d16\n \
-        jump_127a36:\n \
+            jbe    jump_t12_H16\n \
+        jump_t12_E36:\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%al\n \
             mov    %%al,0xf(%%edi)\n \
             add    $0x10,%%edi\n \
             sub    $0x10,%%ebp\n \
             jg     t12_md00\n \
-        jump_127a4b:\n \
+        jump_t12_E4b:\n \
             decl   0x20+%[lv]\n \
-            jne    jump_1276f4\n \
-            jmp    jump_return\n \
-        jump_127a5a:\n \
+            jne    jump_t12_Af4\n \
+            jmp    jump_t12_end\n \
+        jump_t12_E5a:\n \
             mov    %%ch,%%ah\n \
             mov    %%dl,%%bl\n \
             add    0x4c+%[lv],%%ecx\n \
@@ -8600,8 +8600,8 @@ t12_md01:\n \
             adc    0x50+%[lv],%%edx\n \
             adc    0x64+%[lv],%%bh\n \
             cmp    $0xc,%%al\n \
-            ja     jump_12781b\n \
-        jump_127a75:\n \
+            ja     jump_t12_C1b\n \
+        jump_t12_E75:\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%al\n \
             mov    (%%edi),%%ah\n \
             mov    "EXPORT_SYMBOL(ghost_table)"(%%eax),%%al\n \
@@ -8613,8 +8613,8 @@ t12_md01:\n \
             adc    0x50+%[lv],%%edx\n \
             adc    0x64+%[lv],%%bh\n \
             cmp    $0xc,%%al\n \
-            ja     jump_12783e\n \
-        jump_127aa0:\n \
+            ja     jump_t12_C3e\n \
+        jump_t12_Ea0:\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%al\n \
             mov    0x1(%%edi),%%ah\n \
             mov    "EXPORT_SYMBOL(ghost_table)"(%%eax),%%al\n \
@@ -8626,8 +8626,8 @@ t12_md01:\n \
             adc    0x50+%[lv],%%edx\n \
             adc    0x64+%[lv],%%bh\n \
             cmp    $0xc,%%al\n \
-            ja     jump_127862\n \
-        jump_127acd:\n \
+            ja     jump_t12_C62\n \
+        jump_t12_Ecd:\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%al\n \
             mov    0x2(%%edi),%%ah\n \
             mov    "EXPORT_SYMBOL(ghost_table)"(%%eax),%%al\n \
@@ -8639,8 +8639,8 @@ t12_md01:\n \
             adc    0x50+%[lv],%%edx\n \
             adc    0x64+%[lv],%%bh\n \
             cmp    $0xc,%%al\n \
-            ja     jump_127886\n \
-        jump_127afa:\n \
+            ja     jump_t12_C86\n \
+        jump_t12_Efa:\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%al\n \
             mov    0x3(%%edi),%%ah\n \
             mov    "EXPORT_SYMBOL(ghost_table)"(%%eax),%%al\n \
@@ -8652,8 +8652,8 @@ t12_md01:\n \
             adc    0x50+%[lv],%%edx\n \
             adc    0x64+%[lv],%%bh\n \
             cmp    $0xc,%%al\n \
-            ja     jump_1278aa\n \
-        jump_127b27:\n \
+            ja     jump_t12_Caa\n \
+        jump_t12_F27:\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%al\n \
             mov    0x4(%%edi),%%ah\n \
             mov    "EXPORT_SYMBOL(ghost_table)"(%%eax),%%al\n \
@@ -8665,8 +8665,8 @@ t12_md01:\n \
             adc    0x50+%[lv],%%edx\n \
             adc    0x64+%[lv],%%bh\n \
             cmp    $0xc,%%al\n \
-            ja     jump_1278ce\n \
-        jump_127b54:\n \
+            ja     jump_t12_Cce\n \
+        jump_t12_F54:\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%al\n \
             mov    0x5(%%edi),%%ah\n \
             mov    "EXPORT_SYMBOL(ghost_table)"(%%eax),%%al\n \
@@ -8678,8 +8678,8 @@ t12_md01:\n \
             adc    0x50+%[lv],%%edx\n \
             adc    0x64+%[lv],%%bh\n \
             cmp    $0xc,%%al\n \
-            ja     jump_1278f2\n \
-        jump_127b81:\n \
+            ja     jump_t12_Cf2\n \
+        jump_t12_F81:\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%al\n \
             mov    0x6(%%edi),%%ah\n \
             mov    "EXPORT_SYMBOL(ghost_table)"(%%eax),%%al\n \
@@ -8691,8 +8691,8 @@ t12_md01:\n \
             adc    0x50+%[lv],%%edx\n \
             adc    0x64+%[lv],%%bh\n \
             cmp    $0xc,%%al\n \
-            ja     jump_127916\n \
-        jump_127bae:\n \
+            ja     jump_t12_D16\n \
+        jump_t12_Fae:\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%al\n \
             mov    0x7(%%edi),%%ah\n \
             mov    "EXPORT_SYMBOL(ghost_table)"(%%eax),%%al\n \
@@ -8704,8 +8704,8 @@ t12_md01:\n \
             adc    0x50+%[lv],%%edx\n \
             adc    0x64+%[lv],%%bh\n \
             cmp    $0xc,%%al\n \
-            ja     jump_12793a\n \
-        jump_127bdb:\n \
+            ja     jump_t12_D3a\n \
+        jump_t12_Fdb:\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%al\n \
             mov    0x8(%%edi),%%ah\n \
             mov    "EXPORT_SYMBOL(ghost_table)"(%%eax),%%al\n \
@@ -8717,8 +8717,8 @@ t12_md01:\n \
             adc    0x50+%[lv],%%edx\n \
             adc    0x64+%[lv],%%bh\n \
             cmp    $0xc,%%al\n \
-            ja     jump_12795e\n \
-        jump_127c08:\n \
+            ja     jump_t12_D5e\n \
+        jump_t12_G08:\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%al\n \
             mov    0x9(%%edi),%%ah\n \
             mov    "EXPORT_SYMBOL(ghost_table)"(%%eax),%%al\n \
@@ -8730,8 +8730,8 @@ t12_md01:\n \
             adc    0x50+%[lv],%%edx\n \
             adc    0x64+%[lv],%%bh\n \
             cmp    $0xc,%%al\n \
-            ja     jump_127982\n \
-        jump_127c35:\n \
+            ja     jump_t12_D82\n \
+        jump_t12_G35:\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%al\n \
             mov    0xa(%%edi),%%ah\n \
             mov    "EXPORT_SYMBOL(ghost_table)"(%%eax),%%al\n \
@@ -8743,8 +8743,8 @@ t12_md01:\n \
             adc    0x50+%[lv],%%edx\n \
             adc    0x64+%[lv],%%bh\n \
             cmp    $0xc,%%al\n \
-            ja     jump_1279a6\n \
-        jump_127c62:\n \
+            ja     jump_t12_Da6\n \
+        jump_t12_G62:\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%al\n \
             mov    0xb(%%edi),%%ah\n \
             mov    "EXPORT_SYMBOL(ghost_table)"(%%eax),%%al\n \
@@ -8756,8 +8756,8 @@ t12_md01:\n \
             adc    0x50+%[lv],%%edx\n \
             adc    0x64+%[lv],%%bh\n \
             cmp    $0xc,%%al\n \
-            ja     jump_1279ca\n \
-        jump_127c8f:\n \
+            ja     jump_t12_Dca\n \
+        jump_t12_G8f:\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%al\n \
             mov    0xc(%%edi),%%ah\n \
             mov    "EXPORT_SYMBOL(ghost_table)"(%%eax),%%al\n \
@@ -8769,8 +8769,8 @@ t12_md01:\n \
             adc    0x50+%[lv],%%edx\n \
             adc    0x64+%[lv],%%bh\n \
             cmp    $0xc,%%al\n \
-            ja     jump_1279ee\n \
-        jump_127cbc:\n \
+            ja     jump_t12_Dee\n \
+        jump_t12_Gbc:\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%al\n \
             mov    0xd(%%edi),%%ah\n \
             mov    "EXPORT_SYMBOL(ghost_table)"(%%eax),%%al\n \
@@ -8782,8 +8782,8 @@ t12_md01:\n \
             adc    0x50+%[lv],%%edx\n \
             adc    0x64+%[lv],%%bh\n \
             cmp    $0xc,%%al\n \
-            ja     jump_127a12\n \
-        jump_127ce9:\n \
+            ja     jump_t12_E12\n \
+        jump_t12_Ge9:\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%al\n \
             mov    0xe(%%edi),%%ah\n \
             mov    "EXPORT_SYMBOL(ghost_table)"(%%eax),%%al\n \
@@ -8795,18 +8795,18 @@ t12_md01:\n \
             adc    0x50+%[lv],%%edx\n \
             adc    0x64+%[lv],%%bh\n \
             cmp    $0xc,%%al\n \
-            ja     jump_127a36\n \
-        jump_127d16:\n \
+            ja     jump_t12_E36\n \
+        jump_t12_H16:\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%al\n \
             mov    0xf(%%edi),%%ah\n \
             mov    "EXPORT_SYMBOL(ghost_table)"(%%eax),%%al\n \
             mov    %%al,0xf(%%edi)\n \
             add    $0x10,%%edi\n \
             sub    $0x10,%%ebp\n \
-            jg     jump_127a5a\n \
+            jg     jump_t12_E5a\n \
             decl   0x20+%[lv]\n \
-            jne    jump_1276f4\n \
-        jump_return:\n \
+            jne    jump_t12_Af4\n \
+        jump_t12_end:\n \
             popal\n \
         "
                  : [lv] "+o" (lv)
