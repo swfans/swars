@@ -128,13 +128,16 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         :  : "a" (point_a), "d" (point_b), "b" (point_c));
     return;
 #endif
+    struct PolyPoint *opt_a;
+    struct PolyPoint *opt_b;
+    struct PolyPoint *opt_c;
+    int ret;
 
     LOGNO("Pa(%ld,%ld,%ld)", point_a->X, point_a->Y, point_a->S);
     LOGNO("Pb(%ld,%ld,%ld)", point_b->X, point_b->Y, point_b->S);
     LOGNO("Pc(%ld,%ld,%ld)", point_c->X, point_c->Y, point_c->S);
 
     asm volatile (" \
-            pushal\n \
             mov    %%eax,%%esi\n \
             mov    %%edx,%%edi\n \
             mov    %%ebx,%%ecx\n \
@@ -149,7 +152,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jl     jump_tprep_B3a\n \
             xchg   %%esi,%%ecx\n \
             xchg   %%edi,%%ecx\n \
-            jmp    jump_pr_ll_B44\n \
+            jmp    trig_ll_mark\n \
         jump_tprep_Ac5:\n \
             cmp    %%edx,%%eax\n \
             je     jump_tprep_Sb2\n \
@@ -159,65 +162,88 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jl     jump_tprep_Ae6\n \
             xchg   %%esi,%%ecx\n \
             xchg   %%edi,%%ecx\n \
-            jmp    jump_pr_rl_K51\n \
+            jmp    trig_rl_mark\n \
         jump_tprep_Q33:\n \
             mov    (%%ecx),%%eax\n \
             cmp    (%%edi),%%eax\n \
-            jle    ready_for_bailout\n \
+            jle    trig_tprep_bailout\n \
             xchg   %%esi,%%edi\n \
             xchg   %%edi,%%ecx\n \
-            jmp    jump_pr_ft_A41\n \
+            jmp    trig_ft_mark\n \
         jump_tprep_Sb2:\n \
             mov    (%%ecx),%%eax\n \
             cmp    (%%esi),%%eax\n \
-            jle    ready_for_bailout\n \
+            jle    trig_tprep_bailout\n \
             xchg   %%esi,%%edi\n \
             xchg   %%edi,%%ecx\n \
-            jmp    jump_pr_fb_Sc2\n \
+            jmp    trig_fb_mark\n \
         jump_tprep_K4d:\n \
             xchg   %%esi,%%edi\n \
             xchg   %%edi,%%ecx\n \
-            jmp    jump_pr_rl_K51\n \
+            jmp    trig_rl_mark\n \
         jump_tprep_Ae6:\n \
             xchg   %%esi,%%edi\n \
             xchg   %%edi,%%ecx\n \
-            jmp    jump_pr_ll_B44\n \
+            jmp    trig_ll_mark\n \
         jump_tprep_Aec:\n \
             mov    (%%esi),%%eax\n \
             cmp    (%%ecx),%%eax\n \
-            jle    ready_for_bailout\n \
+            jle    trig_tprep_bailout\n \
             xchg   %%esi,%%ecx\n \
             xchg   %%edi,%%ecx\n \
-            jmp    jump_pr_ft_A41\n \
+            jmp    trig_ft_mark\n \
         jump_tprep_Aff:\n \
             cmp    %%edx,%%eax\n \
-            je     ready_for_bailout\n \
+            je     trig_tprep_bailout\n \
             jl     jump_tprep_B1c\n \
             mov    (%%esi),%%eax\n \
             cmp    (%%edi),%%eax\n \
-            jle    ready_for_bailout\n \
+            jle    trig_tprep_bailout\n \
             xchg   %%esi,%%ecx\n \
             xchg   %%edi,%%ecx\n \
-            jmp    jump_pr_fb_Sc2\n \
+            jmp    trig_fb_mark\n \
         jump_tprep_B1c:\n \
             mov    (%%edi),%%eax\n \
             cmp    (%%esi),%%eax\n \
-            jle    ready_for_bailout\n \
-            jmp    jump_pr_ft_A41\n \
+            jle    trig_tprep_bailout\n \
+            jmp    trig_ft_mark\n \
         jump_tprep_B2b:\n \
             mov    (%%edi),%%eax\n \
             cmp    (%%ecx),%%eax\n \
-            jle    ready_for_bailout\n \
-            jmp    jump_pr_fb_Sc2\n \
+            jle    trig_tprep_bailout\n \
+            jmp    trig_fb_mark\n \
         jump_tprep_B3a:\n \
             cmp    %%edx,%%ebx\n \
             je     jump_tprep_B2b\n \
-            jg     jump_pr_rl_K51\n \
-            jmp    jump_pr_ll_B44\n \
-\n \
+            jg     trig_rl_mark\n \
+            jmp    trig_ll_mark\n \
 \n \
 trig_ll_mark:\n \
             movb   $0x1,0x6c+%[lv]\n \
+            jmp    jump_tprep_end\n \
+trig_rl_mark:\n \
+            movb   $0x2,0x6c+%[lv]\n \
+            jmp    jump_tprep_end\n \
+trig_fb_mark:\n \
+            movb   $0x3,0x6c+%[lv]\n \
+            jmp    jump_tprep_end\n \
+trig_ft_mark:\n \
+            movb   $0x4,0x6c+%[lv]\n \
+            jmp    jump_tprep_end\n \
+trig_tprep_bailout:\n \
+            movb   $0x0,0x6c+%[lv]\n \
+jump_tprep_end:\n \
+    "
+                 : "=S" (opt_a), "=D" (opt_b), "=c" (opt_c), [lv] "=o" (lv)
+                 : "a" (point_a), "d" (point_b), "b" (point_c)
+                 : "memory", "cc");
+
+
+    switch (lv.start_type)
+    {
+    case RendStart_LL:
+    asm volatile (" \
+            pushal\n \
         jump_pr_ll_B44:\n \
             mov    0x4(%%esi),%%eax\n \
             mov    %%eax,0x54+%[lv]\n \
@@ -229,7 +255,7 @@ trig_ll_mark:\n \
             jmp    jump_pr_ll_B82\n \
         jump_pr_ll_B5f:\n \
             cmp    "EXPORT_SYMBOL(vec_window_height)",%%eax\n \
-            jge    ready_for_bailout\n \
+            jge    jump_pr_ll_bailout\n \
             mov    %%eax,%%ebx\n \
             imul   "EXPORT_SYMBOL(vec_screen_width)",%%ebx\n \
             add    "EXPORT_SYMBOL(poly_screen)",%%ebx\n \
@@ -259,7 +285,7 @@ trig_ll_mark:\n \
             cltd\n \
             idivl  0x14+%[lv]\n \
             cmp    0x4+%[lv],%%eax\n \
-            jle    ready_for_bailout\n \
+            jle    jump_pr_ll_bailout\n \
             mov    %%eax,0x8+%[lv]\n \
             mov    0x4(%%ecx),%%ebx\n \
             sub    0x4(%%edi),%%ebx\n \
@@ -321,7 +347,7 @@ ll_md05:\n \
             mov    (%%edi),%%ebx\n \
             sub    (%%esi),%%ebx\n \
             add    %%eax,%%ebx\n \
-            jl     ready_for_bailout\n \
+            jl     jump_pr_ll_bailout\n \
             je     jump_pr_ll_Cee\n \
             inc    %%ebx\n \
             mov    0x8(%%esi),%%eax\n \
@@ -378,7 +404,7 @@ ll_md05:\n \
             mov    0x54+%[lv],%%edi\n \
             neg    %%edi\n \
             sub    %%edi,0x20+%[lv]\n \
-            jle    ready_for_bailout\n \
+            jle    jump_pr_ll_bailout\n \
             mov    %%edi,0x48+%[lv]\n \
             cmp    0x14+%[lv],%%edi\n \
             js     jump_pr_ll_De7\n \
@@ -486,7 +512,7 @@ ll_md05:\n \
         jump_pr_ll_Eb3:\n \
             cmpb   $0x0,0x67+%[lv]\n \
             je     jump_pr_ll_Ec8\n \
-            jmp    ready_for_render\n \
+            jmp    jump_pr_ll_render\n \
         jump_pr_ll_Ec8:\n \
             mov    %%eax,(%%edi)\n \
             add    0x4+%[lv],%%eax\n \
@@ -501,7 +527,7 @@ ll_md05:\n \
             add    $0x14,%%edi\n \
             decl   0x18+%[lv]\n \
             jne    jump_pr_ll_Ec8\n \
-            jmp    ready_for_render\n \
+            jmp    jump_pr_ll_render\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
@@ -519,7 +545,7 @@ ll_md02:\n \
             mov    (%%edi),%%ebx\n \
             sub    (%%esi),%%ebx\n \
             add    %%eax,%%ebx\n \
-            jl     ready_for_bailout\n \
+            jl     jump_pr_ll_bailout\n \
             je     jump_pr_ll_F61\n \
             inc    %%ebx\n \
             mov    0x8(%%esi),%%eax\n \
@@ -561,7 +587,7 @@ ll_md02:\n \
             mov    0x54+%[lv],%%edi\n \
             neg    %%edi\n \
             sub    %%edi,0x20+%[lv]\n \
-            jle    ready_for_bailout\n \
+            jle    jump_pr_ll_bailout\n \
             mov    %%edi,0x48+%[lv]\n \
             cmp    0x14+%[lv],%%edi\n \
             js     jump_pr_ll_G2e\n \
@@ -658,7 +684,7 @@ ll_md02:\n \
         jump_pr_ll_Ge8:\n \
             cmpb   $0x0,0x67+%[lv]\n \
             je     jump_pr_ll_Gfd\n \
-            jmp    ready_for_render\n \
+            jmp    jump_pr_ll_render\n \
         jump_pr_ll_Gfd:\n \
             mov    %%eax,(%%edi)\n \
             add    0x4+%[lv],%%eax\n \
@@ -671,7 +697,7 @@ ll_md02:\n \
             add    $0x14,%%edi\n \
             decl   0x18+%[lv]\n \
             jne    jump_pr_ll_Gfd\n \
-            jmp    ready_for_render\n \
+            jmp    jump_pr_ll_render\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
@@ -689,7 +715,7 @@ ll_md01:\n \
             mov    (%%edi),%%ebx\n \
             sub    (%%esi),%%ebx\n \
             add    %%eax,%%ebx\n \
-            jl     ready_for_bailout\n \
+            jl     jump_pr_ll_bailout\n \
             je     jump_pr_ll_H74\n \
             inc    %%ebx\n \
             mov    0x10(%%esi),%%eax\n \
@@ -716,7 +742,7 @@ ll_md01:\n \
             mov    0x54+%[lv],%%edi\n \
             neg    %%edi\n \
             sub    %%edi,0x20+%[lv]\n \
-            jle    ready_for_bailout\n \
+            jle    jump_pr_ll_bailout\n \
             mov    %%edi,0x48+%[lv]\n \
             cmp    0x14+%[lv],%%edi\n \
             js     jump_pr_ll_I19\n \
@@ -802,7 +828,7 @@ ll_md01:\n \
         jump_pr_ll_Ic1:\n \
             cmpb   $0x0,0x67+%[lv]\n \
             je     jump_pr_ll_Id6\n \
-            jmp    ready_for_render\n \
+            jmp    jump_pr_ll_render\n \
         jump_pr_ll_Id6:\n \
             mov    %%eax,(%%edi)\n \
             add    0x4+%[lv],%%eax\n \
@@ -813,7 +839,7 @@ ll_md01:\n \
             add    $0x14,%%edi\n \
             decl   0x18+%[lv]\n \
             jne    jump_pr_ll_Id6\n \
-            jmp    ready_for_render\n \
+            jmp    jump_pr_ll_render\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
@@ -827,7 +853,7 @@ ll_md00:\n \
             mov    0x54+%[lv],%%edi\n \
             neg    %%edi\n \
             sub    %%edi,0x20+%[lv]\n \
-            jle    ready_for_bailout\n \
+            jle    jump_pr_ll_bailout\n \
             mov    %%edi,0x48+%[lv]\n \
             cmp    0x14+%[lv],%%edi\n \
             js     jump_pr_ll_J7e\n \
@@ -902,7 +928,7 @@ ll_md00:\n \
         jump_pr_ll_K14:\n \
             cmpb   $0x0,0x67+%[lv]\n \
             je     jump_pr_ll_K29\n \
-            jmp    ready_for_render\n \
+            jmp    jump_pr_ll_render\n \
         jump_pr_ll_K29:\n \
             mov    %%eax,(%%edi)\n \
             add    0x4+%[lv],%%eax\n \
@@ -911,11 +937,27 @@ ll_md00:\n \
             add    $0x14,%%edi\n \
             decl   0x18+%[lv]\n \
             jne    jump_pr_ll_K29\n \
-            jmp    ready_for_render\n \
+            jmp    jump_pr_ll_render\n \
 \n \
-\n \
-trig_rl_mark:\n \
-            movb   $0x2,0x6c+%[lv]\n \
+jump_pr_ll_bailout:\n \
+            popal\n \
+            movl   $0x0,%%eax\n \
+            jmp    jump_pr_ll_end\n \
+jump_pr_ll_render:\n \
+            popal\n \
+            movl   $0x1,%%eax\n \
+jump_pr_ll_end:\n \
+    "
+                 : [lv] "=o" (lv), "=a" (ret)
+                 : "S" (opt_a), "D" (opt_b), "c" (opt_c)
+                 : "memory", "cc");
+        if (!ret/*trig_ll_start(&lv, opt_a, opt_b, opt_c)*/) {
+            return;
+        }
+        break;
+    case RendStart_RL:
+    asm volatile (" \
+            pushal\n \
         jump_pr_rl_K51:\n \
             mov    0x4(%%esi),%%eax\n \
             mov    %%eax,0x54+%[lv]\n \
@@ -927,7 +969,7 @@ trig_rl_mark:\n \
             jmp    jump_pr_rl_K8f\n \
         jump_pr_rl_K6c:\n \
             cmp    "EXPORT_SYMBOL(vec_window_height)",%%eax\n \
-            jge    ready_for_bailout\n \
+            jge    jump_pr_rl_bailout\n \
             mov    %%eax,%%ebx\n \
             imul   "EXPORT_SYMBOL(vec_screen_width)",%%ebx\n \
             add    "EXPORT_SYMBOL(poly_screen)",%%ebx\n \
@@ -957,7 +999,7 @@ trig_rl_mark:\n \
             cltd\n \
             idivl  0x14+%[lv]\n \
             cmp    0x4+%[lv],%%eax\n \
-            jle    ready_for_bailout\n \
+            jle    jump_pr_rl_bailout\n \
             mov    %%eax,0x8+%[lv]\n \
             mov    0x4(%%edi),%%ebx\n \
             sub    0x4(%%ecx),%%ebx\n \
@@ -1019,7 +1061,7 @@ rl_md05:\n \
             mov    (%%esi),%%ebx\n \
             sub    (%%ecx),%%ebx\n \
             add    %%eax,%%ebx\n \
-            jl     ready_for_bailout\n \
+            jl     jump_pr_rl_bailout\n \
             je     jump_pr_rl_Lf7\n \
             inc    %%ebx\n \
             mov    0x8(%%edi),%%eax\n \
@@ -1091,7 +1133,7 @@ rl_md05:\n \
             mov    0x54+%[lv],%%edi\n \
             neg    %%edi\n \
             sub    %%edi,0x20+%[lv]\n \
-            jle    ready_for_bailout\n \
+            jle    jump_pr_rl_bailout\n \
             mov    %%edi,0x48+%[lv]\n \
             cmp    0x10+%[lv],%%edi\n \
             js     jump_pr_rl_M21\n \
@@ -1199,7 +1241,7 @@ rl_md05:\n \
         jump_pr_rl_Med:\n \
             cmpb   $0x0,0x67+%[lv]\n \
             je     jump_pr_rl_N02\n \
-            jmp    ready_for_render\n \
+            jmp    jump_pr_rl_render\n \
         jump_pr_rl_N02:\n \
             mov    %%eax,(%%edi)\n \
             add    0xc+%[lv],%%eax\n \
@@ -1214,7 +1256,7 @@ rl_md05:\n \
             add    $0x14,%%edi\n \
             decl   0x18+%[lv]\n \
             jne    jump_pr_rl_N02\n \
-            jmp    ready_for_render\n \
+            jmp    jump_pr_rl_render\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
@@ -1232,7 +1274,7 @@ rl_md02:\n \
             mov    (%%esi),%%ebx\n \
             sub    (%%ecx),%%ebx\n \
             add    %%eax,%%ebx\n \
-            jl     ready_for_bailout\n \
+            jl     jump_pr_rl_bailout\n \
             je     jump_pr_rl_N9b\n \
             inc    %%ebx\n \
             mov    0x8(%%edi),%%eax\n \
@@ -1284,7 +1326,7 @@ rl_md02:\n \
             mov    0x54+%[lv],%%edi\n \
             neg    %%edi\n \
             sub    %%edi,0x20+%[lv]\n \
-            jle    ready_for_bailout\n \
+            jle    jump_pr_rl_bailout\n \
             mov    %%edi,0x48+%[lv]\n \
             cmp    0x10+%[lv],%%edi\n \
             js     jump_pr_rl_O86\n \
@@ -1381,7 +1423,7 @@ rl_md02:\n \
         jump_pr_rl_P40:\n \
             cmpb   $0x0,0x67+%[lv]\n \
             je     jump_pr_rl_P55\n \
-            jmp    ready_for_render\n \
+            jmp    jump_pr_rl_render\n \
         jump_pr_rl_P55:\n \
             mov    %%eax,(%%edi)\n \
             add    0xc+%[lv],%%eax\n \
@@ -1394,7 +1436,7 @@ rl_md02:\n \
             add    $0x14,%%edi\n \
             decl   0x18+%[lv]\n \
             jne    jump_pr_rl_P55\n \
-            jmp    ready_for_render\n \
+            jmp    jump_pr_rl_render\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
@@ -1412,7 +1454,7 @@ rl_md01:\n \
             mov    (%%esi),%%ebx\n \
             sub    (%%ecx),%%ebx\n \
             add    %%eax,%%ebx\n \
-            jl     ready_for_bailout\n \
+            jl     jump_pr_rl_bailout\n \
             je     jump_pr_rl_Pcc\n \
             inc    %%ebx\n \
             mov    0x10(%%edi),%%eax\n \
@@ -1444,7 +1486,7 @@ rl_md01:\n \
             mov    0x54+%[lv],%%edi\n \
             neg    %%edi\n \
             sub    %%edi,0x20+%[lv]\n \
-            jle    ready_for_bailout\n \
+            jle    jump_pr_rl_bailout\n \
             mov    %%edi,0x48+%[lv]\n \
             cmp    0x10+%[lv],%%edi\n \
             js     jump_pr_rl_Q80\n \
@@ -1530,7 +1572,7 @@ rl_md01:\n \
         jump_pr_rl_R28:\n \
             cmpb   $0x0,0x67+%[lv]\n \
             je     jump_pr_rl_R3d\n \
-            jmp    ready_for_render\n \
+            jmp    jump_pr_rl_render\n \
         jump_pr_rl_R3d:\n \
             mov    %%eax,(%%edi)\n \
             add    0xc+%[lv],%%eax\n \
@@ -1541,7 +1583,7 @@ rl_md01:\n \
             add    $0x14,%%edi\n \
             decl   0x18+%[lv]\n \
             jne    jump_pr_rl_R3d\n \
-            jmp    ready_for_render\n \
+            jmp    jump_pr_rl_render\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
@@ -1555,7 +1597,7 @@ rl_md00:\n \
             mov    0x54+%[lv],%%edi\n \
             neg    %%edi\n \
             sub    %%edi,0x20+%[lv]\n \
-            jle    ready_for_bailout\n \
+            jle    jump_pr_rl_bailout\n \
             mov    %%edi,0x48+%[lv]\n \
             cmp    0x10+%[lv],%%edi\n \
             js     jump_pr_rl_Re5\n \
@@ -1630,7 +1672,7 @@ rl_md00:\n \
         jump_pr_rl_S7b:\n \
             cmpb   $0x0,0x67+%[lv]\n \
             je     jump_pr_rl_S90\n \
-            jmp    ready_for_render\n \
+            jmp    jump_pr_rl_render\n \
         jump_pr_rl_S90:\n \
             mov    %%eax,(%%edi)\n \
             add    0xc+%[lv],%%eax\n \
@@ -1639,11 +1681,27 @@ rl_md00:\n \
             add    $0x14,%%edi\n \
             decl   0x18+%[lv]\n \
             jne    jump_pr_rl_S90\n \
-            jmp    ready_for_render\n \
+            jmp    jump_pr_rl_render\n \
 \n \
-\n \
-trig_fb_mark:\n \
-            movb   $0x3,0x6c+%[lv]\n \
+jump_pr_rl_bailout:\n \
+            popal\n \
+            movl   $0x0,%%eax\n \
+            jmp    jump_pr_rl_end\n \
+jump_pr_rl_render:\n \
+            popal\n \
+            movl   $0x1,%%eax\n \
+jump_pr_rl_end:\n \
+    "
+                 : [lv] "=o" (lv), "=a" (ret)
+                 : "S" (opt_a), "D" (opt_b), "c" (opt_c)
+                 : "memory", "cc");
+        if (!ret/*trig_rl_start(&lv, opt_a, opt_b, opt_c)*/) {
+            return;
+        }
+        break;
+    case RendStart_FB:
+    asm volatile (" \
+            pushal\n \
         jump_pr_fb_Sc2:\n \
             mov    0x4(%%esi),%%eax\n \
             mov    %%eax,0x54+%[lv]\n \
@@ -1655,7 +1713,7 @@ trig_fb_mark:\n \
             jmp    jump_pr_fb_T00\n \
         jump_pr_fb_Sdd:\n \
             cmp    "EXPORT_SYMBOL(vec_window_height)",%%eax\n \
-            jge    ready_for_bailout\n \
+            jge    jump_pr_fb_bailout\n \
             mov    %%eax,%%ebx\n \
             imul   "EXPORT_SYMBOL(vec_screen_width)",%%ebx\n \
             add    "EXPORT_SYMBOL(poly_screen)",%%ebx\n \
@@ -1760,7 +1818,7 @@ fb_md03:\n \
             neg    %%edi\n \
             sub    %%edi,0x10+%[lv]\n \
             sub    %%edi,0x20+%[lv]\n \
-            jle    ready_for_bailout\n \
+            jle    jump_pr_fb_bailout\n \
             mov    %%edi,0x48+%[lv]\n \
             imul   0x4+%[lv],%%edi\n \
             add    %%edi,%%eax\n \
@@ -1805,7 +1863,7 @@ fb_md03:\n \
             add    $0x14,%%edi\n \
             decl   0x10+%[lv]\n \
             jne    jump_12229e\n \
-            jmp    ready_for_render\n \
+            jmp    jump_pr_fb_render\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
@@ -1844,7 +1902,7 @@ fb_md02:\n \
             neg    %%edi\n \
             sub    %%edi,0x10+%[lv]\n \
             sub    %%edi,0x20+%[lv]\n \
-            jle    ready_for_bailout\n \
+            jle    jump_pr_fb_bailout\n \
             mov    %%edi,0x48+%[lv]\n \
             imul   0x4+%[lv],%%edi\n \
             add    %%edi,%%eax\n \
@@ -1887,7 +1945,7 @@ fb_md02:\n \
             add    $0x14,%%edi\n \
             decl   0x10+%[lv]\n \
             jne    jump_1223a8\n \
-            jmp    ready_for_render\n \
+            jmp    jump_pr_fb_render\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
@@ -1915,7 +1973,7 @@ fb_md01:\n \
             neg    %%edi\n \
             sub    %%edi,0x10+%[lv]\n \
             sub    %%edi,0x20+%[lv]\n \
-            jle    ready_for_bailout\n \
+            jle    jump_pr_fb_bailout\n \
             mov    %%edi,0x48+%[lv]\n \
             imul   0x4+%[lv],%%edi\n \
             add    %%edi,%%eax\n \
@@ -1950,7 +2008,7 @@ fb_md01:\n \
             add    $0x14,%%edi\n \
             decl   0x10+%[lv]\n \
             jne    jump_122476\n \
-            jmp    ready_for_render\n \
+            jmp    jump_pr_fb_render\n \
 \n \
 \n \
 \n \
@@ -1966,7 +2024,7 @@ fb_md00:\n \
             neg    %%edi\n \
             sub    %%edi,0x10+%[lv]\n \
             sub    %%edi,0x20+%[lv]\n \
-            jle    ready_for_bailout\n \
+            jle    jump_pr_fb_bailout\n \
             mov    %%edi,0x48+%[lv]\n \
             imul   0x4+%[lv],%%edi\n \
             add    %%edi,%%eax\n \
@@ -1996,11 +2054,27 @@ fb_md00:\n \
             add    $0x14,%%edi\n \
             decl   0x10+%[lv]\n \
             jne    jump_12250f\n \
-            jmp    ready_for_render\n \
+            jmp    jump_pr_fb_render\n \
 \n \
-\n \
-trig_ft_mark:\n \
-            movb   $0x4,0x6c+%[lv]\n \
+jump_pr_fb_bailout:\n \
+            popal\n \
+            movl   $0x0,%%eax\n \
+            jmp    jump_pr_fb_end\n \
+jump_pr_fb_render:\n \
+            popal\n \
+            movl   $0x1,%%eax\n \
+jump_pr_fb_end:\n \
+    "
+                 : [lv] "=o" (lv), "=a" (ret)
+                 : "S" (opt_a), "D" (opt_b), "c" (opt_c)
+                 : "memory", "cc");
+        if (!ret/*trig_fb_start(&lv, opt_a, opt_b, opt_c)*/) {
+            return;
+        }
+        break;
+    case RendStart_FT:
+    asm volatile (" \
+            pushal\n \
         jump_pr_ft_A41:\n \
             mov    0x4(%%esi),%%eax\n \
             mov    %%eax,0x54+%[lv]\n \
@@ -2012,7 +2086,7 @@ trig_ft_mark:\n \
             jmp    jump_pr_ft_A7f\n \
         jump_pr_ft_A5c:\n \
             cmp    "EXPORT_SYMBOL(vec_window_height)",%%eax\n \
-            jge    ready_for_bailout\n \
+            jge    jump_pr_ft_bailout\n \
             mov    %%eax,%%ebx\n \
             imul   "EXPORT_SYMBOL(vec_screen_width)",%%ebx\n \
             add    "EXPORT_SYMBOL(poly_screen)",%%ebx\n \
@@ -2118,7 +2192,7 @@ ft_md05:\n \
             neg    %%edi\n \
             sub    %%edi,0x10+%[lv]\n \
             sub    %%edi,0x20+%[lv]\n \
-            jle    ready_for_bailout\n \
+            jle    jump_pr_ft_bailout\n \
             mov    %%edi,0x48+%[lv]\n \
             imul   0x4+%[lv],%%edi\n \
             add    %%edi,%%eax\n \
@@ -2163,7 +2237,7 @@ ft_md05:\n \
             add    $0x14,%%edi\n \
             decl   0x10+%[lv]\n \
             jne    jump_122720\n \
-            jmp    ready_for_render\n \
+            jmp    jump_pr_ft_render\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
@@ -2203,7 +2277,7 @@ ft_md02:\n \
             neg    %%edi\n \
             sub    %%edi,0x10+%[lv]\n \
             sub    %%edi,0x20+%[lv]\n \
-            jle    ready_for_bailout\n \
+            jle    jump_pr_ft_bailout\n \
             mov    %%edi,0x48+%[lv]\n \
             imul   0x4+%[lv],%%edi\n \
             add    %%edi,%%eax\n \
@@ -2243,7 +2317,7 @@ ft_md02:\n \
             add    $0x14,%%edi\n \
             decl   0x10+%[lv]\n \
             jne    jump_122822\n \
-            jmp    ready_for_render\n \
+            jmp    jump_pr_ft_render\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
@@ -2272,7 +2346,7 @@ ft_md01:\n \
             neg    %%edi\n \
             sub    %%edi,0x10+%[lv]\n \
             sub    %%edi,0x20+%[lv]\n \
-            jle    ready_for_bailout\n \
+            jle    jump_pr_ft_bailout\n \
             mov    %%edi,0x48+%[lv]\n \
             imul   0x4+%[lv],%%edi\n \
             add    %%edi,%%eax\n \
@@ -2307,7 +2381,7 @@ ft_md01:\n \
             add    $0x14,%%edi\n \
             decl   0x10+%[lv]\n \
             jne    jump_1228f3\n \
-            jmp    ready_for_render\n \
+            jmp    jump_pr_ft_render\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
@@ -2323,7 +2397,7 @@ ft_md00:\n \
             neg    %%edi\n \
             sub    %%edi,0x10+%[lv]\n \
             sub    %%edi,0x20+%[lv]\n \
-            jle    ready_for_bailout\n \
+            jle    jump_pr_ft_bailout\n \
             mov    %%edi,0x48+%[lv]\n \
             imul   0x4+%[lv],%%edi\n \
             add    %%edi,%%eax\n \
@@ -2353,46 +2427,24 @@ ft_md00:\n \
             add    $0x14,%%edi\n \
             decl   0x10+%[lv]\n \
             jne    jump_12298f\n \
-            jmp    ready_for_render\n \
+            jmp    jump_pr_ft_render\n \
 \n \
-ready_for_bailout:\n \
+jump_pr_ft_bailout:\n \
             popal\n \
-            movb   $0x0,0x6c+%[lv]\n \
-            jmp    ready_for_render_fin\n \
-\n \
-ready_for_render:\n \
+            movl   $0x0,%%eax\n \
+            jmp    jump_pr_ft_end\n \
+jump_pr_ft_render:\n \
             popal\n \
-            movb   $0x9,0x6c+%[lv]\n \
-ready_for_render_fin:\n \
+            movl   $0x1,%%eax\n \
+jump_pr_ft_end:\n \
     "
-                 : [lv] "+o" (lv)
-                 : "a" (point_a), "d" (point_b), "b" (point_c), "o0" (lv)
-                 : "memory", "cc");// unaffected due to pusha/popa: "%eax", "%edx", "%ebx", "%ecx", "%edi", "%esi"
-
-    switch (lv.start_type)
-    {
-#if 0
-    case RendStart_LL:
-        if (!trig_ll_start(&lv, opt_a, opt_b, opt_c)) {
+                 : [lv] "=o" (lv), "=a" (ret)
+                 : "S" (opt_a), "D" (opt_b), "c" (opt_c)
+                 : "memory", "cc");
+        if (!ret/*trig_ft_start(&lv, opt_a, opt_b, opt_c)*/) {
             return;
         }
         break;
-    case RendStart_RL:
-        if (!trig_rl_start(&lv, opt_a, opt_b, opt_c)) {
-            return;
-        }
-        break;
-    case RendStart_FB:
-        if (!trig_fb_start(&lv, opt_a, opt_b, opt_c)) {
-            return;
-        }
-        break;
-    case RendStart_FT:
-        if (!trig_ft_start(&lv, opt_a, opt_b, opt_c)) {
-            return;
-        }
-        break;
-#endif
     case RendStart_NO:
         return;
     }
