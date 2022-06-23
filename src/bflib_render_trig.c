@@ -81,8 +81,13 @@ extern const long add_to_edi[];
 
 /******************************************************************************/
 
+// TODO Switch to local var when remade - this is global because assembly alters EBP
 struct TrigLocals lv;
 
+int trig_ll_start(struct TrigLocals *lv, const struct PolyPoint *opt_a, const struct PolyPoint *opt_b, const struct PolyPoint *opt_c);
+int trig_rl_start(struct TrigLocals *lv, const struct PolyPoint *opt_a, const struct PolyPoint *opt_b, const struct PolyPoint *opt_c);
+int trig_fb_start(struct TrigLocals *lv, const struct PolyPoint *opt_a, const struct PolyPoint *opt_b, const struct PolyPoint *opt_c);
+int trig_ft_start(struct TrigLocals *lv, const struct PolyPoint *opt_a, const struct PolyPoint *opt_b, const struct PolyPoint *opt_c);
 void trig_render_md00(struct TrigLocals *lv);
 void trig_render_md01(struct TrigLocals *lv);
 void trig_render_md02(struct TrigLocals *lv);
@@ -112,9 +117,9 @@ void trig_render_md26(struct TrigLocals *lv);
 
 /** Triangle rendering function.
  *
- * @param point_a
- * @param point_b
- * @param point_c
+ * @param point_a Coordinates and texture mapping of first point.
+ * @param point_b Coordinates and texture mapping of second point.
+ * @param point_c Coordinates and texture mapping of third point.
  */
 void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint *point_c)
 {
@@ -144,28 +149,46 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jl     jump_tprep_B3a\n \
             xchg   %%esi,%%ecx\n \
             xchg   %%edi,%%ecx\n \
-            jmp    jump_tprep_B44\n \
+            jmp    jump_pr_ll_B44\n \
         jump_tprep_Ac5:\n \
             cmp    %%edx,%%eax\n \
-            je     jump_pr_rl_Sb4\n \
-            jl     jump_pr_ll_K4d\n \
+            je     jump_tprep_Sb2\n \
+            jl     jump_tprep_K4d\n \
             cmp    %%edx,%%ebx\n \
-            je     jump_122533\n \
+            je     jump_tprep_Q33\n \
             jl     jump_tprep_Ae6\n \
             xchg   %%esi,%%ecx\n \
             xchg   %%edi,%%ecx\n \
-            jmp    jump_pr_ll_K51\n \
+            jmp    jump_pr_rl_K51\n \
+        jump_tprep_Q33:\n \
+            mov    (%%ecx),%%eax\n \
+            cmp    (%%edi),%%eax\n \
+            jle    ready_for_bailout\n \
+            xchg   %%esi,%%edi\n \
+            xchg   %%edi,%%ecx\n \
+            jmp    jump_pr_ft_A41\n \
+        jump_tprep_Sb2:\n \
+            mov    (%%ecx),%%eax\n \
+            cmp    (%%esi),%%eax\n \
+            jle    ready_for_bailout\n \
+            xchg   %%esi,%%edi\n \
+            xchg   %%edi,%%ecx\n \
+            jmp    jump_pr_fb_Sc2\n \
+        jump_tprep_K4d:\n \
+            xchg   %%esi,%%edi\n \
+            xchg   %%edi,%%ecx\n \
+            jmp    jump_pr_rl_K51\n \
         jump_tprep_Ae6:\n \
             xchg   %%esi,%%edi\n \
             xchg   %%edi,%%ecx\n \
-            jmp    jump_tprep_B44\n \
+            jmp    jump_pr_ll_B44\n \
         jump_tprep_Aec:\n \
             mov    (%%esi),%%eax\n \
             cmp    (%%ecx),%%eax\n \
             jle    ready_for_bailout\n \
             xchg   %%esi,%%ecx\n \
             xchg   %%edi,%%ecx\n \
-            jmp    jump_122541\n \
+            jmp    jump_pr_ft_A41\n \
         jump_tprep_Aff:\n \
             cmp    %%edx,%%eax\n \
             je     ready_for_bailout\n \
@@ -175,31 +198,36 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jle    ready_for_bailout\n \
             xchg   %%esi,%%ecx\n \
             xchg   %%edi,%%ecx\n \
-            jmp    jump_pr_rl_Sc2\n \
+            jmp    jump_pr_fb_Sc2\n \
         jump_tprep_B1c:\n \
             mov    (%%edi),%%eax\n \
             cmp    (%%esi),%%eax\n \
             jle    ready_for_bailout\n \
-            jmp    jump_122541\n \
+            jmp    jump_pr_ft_A41\n \
         jump_tprep_B2b:\n \
             mov    (%%edi),%%eax\n \
             cmp    (%%ecx),%%eax\n \
             jle    ready_for_bailout\n \
-            jmp    jump_pr_rl_Sc2\n \
+            jmp    jump_pr_fb_Sc2\n \
         jump_tprep_B3a:\n \
             cmp    %%edx,%%ebx\n \
             je     jump_tprep_B2b\n \
-            jg     jump_pr_ll_K51\n \
-        jump_tprep_B44:\n \
+            jg     jump_pr_rl_K51\n \
+            jmp    jump_pr_ll_B44\n \
+\n \
+\n \
+trig_ll_mark:\n \
+            movb   $0x1,0x6c+%[lv]\n \
+        jump_pr_ll_B44:\n \
             mov    0x4(%%esi),%%eax\n \
             mov    %%eax,0x54+%[lv]\n \
             or     %%eax,%%eax\n \
-            jns    jump_tprep_B5f\n \
+            jns    jump_pr_ll_B5f\n \
             mov    "EXPORT_SYMBOL(poly_screen)",%%ebx\n \
             mov    %%ebx,0x0+%[lv]\n \
             movb   $0x1,0x66+%[lv]\n \
-            jmp    jump_tprep_B82\n \
-        jump_tprep_B5f:\n \
+            jmp    jump_pr_ll_B82\n \
+        jump_pr_ll_B5f:\n \
             cmp    "EXPORT_SYMBOL(vec_window_height)",%%eax\n \
             jge    ready_for_bailout\n \
             mov    %%eax,%%ebx\n \
@@ -207,7 +235,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             add    "EXPORT_SYMBOL(poly_screen)",%%ebx\n \
             mov    %%ebx,0x0+%[lv]\n \
             movb   $0x0,0x66+%[lv]\n \
-        jump_tprep_B82:\n \
+        jump_pr_ll_B82:\n \
             mov    0x4(%%ecx),%%ebx\n \
             cmp    "EXPORT_SYMBOL(vec_window_height)",%%ebx\n \
             setg   0x68+%[lv]\n \
@@ -884,19 +912,20 @@ ll_md00:\n \
             decl   0x18+%[lv]\n \
             jne    jump_pr_ll_K29\n \
             jmp    ready_for_render\n \
-        jump_pr_ll_K4d:\n \
-            xchg   %%esi,%%edi\n \
-            xchg   %%edi,%%ecx\n \
-        jump_pr_ll_K51:\n \
+\n \
+\n \
+trig_rl_mark:\n \
+            movb   $0x2,0x6c+%[lv]\n \
+        jump_pr_rl_K51:\n \
             mov    0x4(%%esi),%%eax\n \
             mov    %%eax,0x54+%[lv]\n \
             or     %%eax,%%eax\n \
-            jns    jump_pr_ll_K6c\n \
+            jns    jump_pr_rl_K6c\n \
             mov    "EXPORT_SYMBOL(poly_screen)",%%ebx\n \
             mov    %%ebx,0x0+%[lv]\n \
             movb   $0x1,0x66+%[lv]\n \
-            jmp    jump_pr_ll_K8f\n \
-        jump_pr_ll_K6c:\n \
+            jmp    jump_pr_rl_K8f\n \
+        jump_pr_rl_K6c:\n \
             cmp    "EXPORT_SYMBOL(vec_window_height)",%%eax\n \
             jge    ready_for_bailout\n \
             mov    %%eax,%%ebx\n \
@@ -904,7 +933,7 @@ ll_md00:\n \
             add    "EXPORT_SYMBOL(poly_screen)",%%ebx\n \
             mov    %%ebx,0x0+%[lv]\n \
             movb   $0x0,0x66+%[lv]\n \
-        jump_pr_ll_K8f:\n \
+        jump_pr_rl_K8f:\n \
             mov    0x4(%%ecx),%%ebx\n \
             cmp    "EXPORT_SYMBOL(vec_window_height)",%%ebx\n \
             setg   0x67+%[lv]\n \
@@ -1611,22 +1640,20 @@ rl_md00:\n \
             decl   0x18+%[lv]\n \
             jne    jump_pr_rl_S90\n \
             jmp    ready_for_render\n \
-        jump_pr_rl_Sb4:\n \
-            mov    (%%ecx),%%eax\n \
-            cmp    (%%esi),%%eax\n \
-            jle    ready_for_bailout\n \
-            xchg   %%esi,%%edi\n \
-            xchg   %%edi,%%ecx\n \
-        jump_pr_rl_Sc2:\n \
+\n \
+\n \
+trig_fb_mark:\n \
+            movb   $0x3,0x6c+%[lv]\n \
+        jump_pr_fb_Sc2:\n \
             mov    0x4(%%esi),%%eax\n \
             mov    %%eax,0x54+%[lv]\n \
             or     %%eax,%%eax\n \
-            jns    jump_pr_rl_Sdd\n \
+            jns    jump_pr_fb_Sdd\n \
             mov    "EXPORT_SYMBOL(poly_screen)",%%ebx\n \
             mov    %%ebx,0x0+%[lv]\n \
             movb   $0x1,0x66+%[lv]\n \
-            jmp    jump_pr_rl_T00\n \
-        jump_pr_rl_Sdd:\n \
+            jmp    jump_pr_fb_T00\n \
+        jump_pr_fb_Sdd:\n \
             cmp    "EXPORT_SYMBOL(vec_window_height)",%%eax\n \
             jge    ready_for_bailout\n \
             mov    %%eax,%%ebx\n \
@@ -1634,7 +1661,7 @@ rl_md00:\n \
             add    "EXPORT_SYMBOL(poly_screen)",%%ebx\n \
             mov    %%ebx,0x0+%[lv]\n \
             movb   $0x0,0x66+%[lv]\n \
-        jump_pr_rl_T00:\n \
+        jump_pr_fb_T00:\n \
             mov    0x4(%%ecx),%%ebx\n \
             cmp    "EXPORT_SYMBOL(vec_window_height)",%%ebx\n \
             setg   0x67+%[lv]\n \
@@ -1970,22 +1997,20 @@ fb_md00:\n \
             decl   0x10+%[lv]\n \
             jne    jump_12250f\n \
             jmp    ready_for_render\n \
-        jump_122533:\n \
-            mov    (%%ecx),%%eax\n \
-            cmp    (%%edi),%%eax\n \
-            jle    ready_for_bailout\n \
-            xchg   %%esi,%%edi\n \
-            xchg   %%edi,%%ecx\n \
-        jump_122541:\n \
+\n \
+\n \
+trig_ft_mark:\n \
+            movb   $0x4,0x6c+%[lv]\n \
+        jump_pr_ft_A41:\n \
             mov    0x4(%%esi),%%eax\n \
             mov    %%eax,0x54+%[lv]\n \
             or     %%eax,%%eax\n \
-            jns    jump_12255c\n \
+            jns    jump_pr_ft_A5c\n \
             mov    "EXPORT_SYMBOL(poly_screen)",%%ebx\n \
             mov    %%ebx,0x0+%[lv]\n \
             movb   $0x1,0x66+%[lv]\n \
-            jmp    jump_12257f\n \
-        jump_12255c:\n \
+            jmp    jump_pr_ft_A7f\n \
+        jump_pr_ft_A5c:\n \
             cmp    "EXPORT_SYMBOL(vec_window_height)",%%eax\n \
             jge    ready_for_bailout\n \
             mov    %%eax,%%ebx\n \
@@ -1993,7 +2018,7 @@ fb_md00:\n \
             add    "EXPORT_SYMBOL(poly_screen)",%%ebx\n \
             mov    %%ebx,0x0+%[lv]\n \
             movb   $0x0,0x66+%[lv]\n \
-        jump_12257f:\n \
+        jump_pr_ft_A7f:\n \
             mov    0x4(%%ecx),%%ebx\n \
             cmp    "EXPORT_SYMBOL(vec_window_height)",%%ebx\n \
             setg   0x67+%[lv]\n \
@@ -2344,8 +2369,33 @@ ready_for_render_fin:\n \
                  : "a" (point_a), "d" (point_b), "b" (point_c), "o0" (lv)
                  : "memory", "cc");// unaffected due to pusha/popa: "%eax", "%edx", "%ebx", "%ecx", "%edi", "%esi"
 
-    if (lv.start_type == 0)
+    switch (lv.start_type)
+    {
+#if 0
+    case RendStart_LL:
+        if (!trig_ll_start(&lv, opt_a, opt_b, opt_c)) {
+            return;
+        }
+        break;
+    case RendStart_RL:
+        if (!trig_rl_start(&lv, opt_a, opt_b, opt_c)) {
+            return;
+        }
+        break;
+    case RendStart_FB:
+        if (!trig_fb_start(&lv, opt_a, opt_b, opt_c)) {
+            return;
+        }
+        break;
+    case RendStart_FT:
+        if (!trig_ft_start(&lv, opt_a, opt_b, opt_c)) {
+            return;
+        }
+        break;
+#endif
+    case RendStart_NO:
         return;
+    }
 
     LOGNO("render mode %d",(int)vec_mode);
 
@@ -2461,6 +2511,26 @@ ready_for_render_fin:\n \
     }
 
     LOGNO("end");
+}
+
+int trig_ll_start(struct TrigLocals *lvu, const struct PolyPoint *opt_a, const struct PolyPoint *opt_b, const struct PolyPoint *opt_c)
+{
+    //TODO
+}
+
+int trig_rl_start(struct TrigLocals *lvu, const struct PolyPoint *opt_a, const struct PolyPoint *opt_b, const struct PolyPoint *opt_c)
+{
+    //TODO
+}
+
+int trig_fb_start(struct TrigLocals *lvu, const struct PolyPoint *opt_a, const struct PolyPoint *opt_b, const struct PolyPoint *opt_c)
+{
+    //TODO
+}
+
+int trig_ft_start(struct TrigLocals *lvu, const struct PolyPoint *opt_a, const struct PolyPoint *opt_b, const struct PolyPoint *opt_c)
+{
+    //TODO
 }
 
 void trig_render_md00(struct TrigLocals *lvu)
