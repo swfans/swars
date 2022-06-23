@@ -129,29 +129,29 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         jump_120dec:\n \
             mov    (%%esi),%%eax\n \
             cmp    (%%ecx),%%eax\n \
-            jle    jump_122a92\n \
+            jle    ready_for_bailout\n \
             xchg   %%esi,%%ecx\n \
             xchg   %%edi,%%ecx\n \
             jmp    jump_122541\n \
         jump_120dff:\n \
             cmp    %%edx,%%eax\n \
-            je     jump_122a92\n \
+            je     ready_for_bailout\n \
             jl     jump_120e1c\n \
             mov    (%%esi),%%eax\n \
             cmp    (%%edi),%%eax\n \
-            jle    jump_122a92\n \
+            jle    ready_for_bailout\n \
             xchg   %%esi,%%ecx\n \
             xchg   %%edi,%%ecx\n \
             jmp    jump_1220c2\n \
         jump_120e1c:\n \
             mov    (%%edi),%%eax\n \
             cmp    (%%esi),%%eax\n \
-            jle    jump_122a92\n \
+            jle    ready_for_bailout\n \
             jmp    jump_122541\n \
         jump_120e2b:\n \
             mov    (%%edi),%%eax\n \
             cmp    (%%ecx),%%eax\n \
-            jle    jump_122a92\n \
+            jle    ready_for_bailout\n \
             jmp    jump_1220c2\n \
         jump_120e3a:\n \
             cmp    %%edx,%%ebx\n \
@@ -168,7 +168,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jmp    jump_120e82\n \
         jump_120e5f:\n \
             cmp    "EXPORT_SYMBOL(vec_window_height)",%%eax\n \
-            jge    jump_122a92\n \
+            jge    ready_for_bailout\n \
             mov    %%eax,%%ebx\n \
             imul   "EXPORT_SYMBOL(vec_screen_width)",%%ebx\n \
             add    "EXPORT_SYMBOL(poly_screen)",%%ebx\n \
@@ -198,7 +198,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             cltd\n \
             idivl  0x14+%[lv]\n \
             cmp    0x4+%[lv],%%eax\n \
-            jle    jump_122a92\n \
+            jle    ready_for_bailout\n \
             mov    %%eax,0x8+%[lv]\n \
             mov    0x4(%%ecx),%%ebx\n \
             sub    0x4(%%edi),%%ebx\n \
@@ -260,7 +260,7 @@ ll_md05:\n \
             mov    (%%edi),%%ebx\n \
             sub    (%%esi),%%ebx\n \
             add    %%eax,%%ebx\n \
-            jl     jump_122a92\n \
+            jl     ready_for_bailout\n \
             je     jump_120fee\n \
             inc    %%ebx\n \
             mov    0x8(%%esi),%%eax\n \
@@ -317,7 +317,7 @@ ll_md05:\n \
             mov    0x54+%[lv],%%edi\n \
             neg    %%edi\n \
             sub    %%edi,0x20+%[lv]\n \
-            jle    jump_122a92\n \
+            jle    ready_for_bailout\n \
             mov    %%edi,0x48+%[lv]\n \
             cmp    0x14+%[lv],%%edi\n \
             js     jump_1210e7\n \
@@ -458,7 +458,7 @@ ll_md02:\n \
             mov    (%%edi),%%ebx\n \
             sub    (%%esi),%%ebx\n \
             add    %%eax,%%ebx\n \
-            jl     jump_122a92\n \
+            jl     ready_for_bailout\n \
             je     jump_121261\n \
             inc    %%ebx\n \
             mov    0x8(%%esi),%%eax\n \
@@ -500,7 +500,7 @@ ll_md02:\n \
             mov    0x54+%[lv],%%edi\n \
             neg    %%edi\n \
             sub    %%edi,0x20+%[lv]\n \
-            jle    jump_122a92\n \
+            jle    ready_for_bailout\n \
             mov    %%edi,0x48+%[lv]\n \
             cmp    0x14+%[lv],%%edi\n \
             js     jump_12132e\n \
@@ -628,7 +628,7 @@ ll_md01:\n \
             mov    (%%edi),%%ebx\n \
             sub    (%%esi),%%ebx\n \
             add    %%eax,%%ebx\n \
-            jl     jump_122a92\n \
+            jl     ready_for_bailout\n \
             je     jump_121474\n \
             inc    %%ebx\n \
             mov    0x10(%%esi),%%eax\n \
@@ -655,7 +655,7 @@ ll_md01:\n \
             mov    0x54+%[lv],%%edi\n \
             neg    %%edi\n \
             sub    %%edi,0x20+%[lv]\n \
-            jle    jump_122a92\n \
+            jle    ready_for_bailout\n \
             mov    %%edi,0x48+%[lv]\n \
             cmp    0x14+%[lv],%%edi\n \
             js     jump_121519\n \
@@ -766,7 +766,7 @@ ll_md00:\n \
             mov    0x54+%[lv],%%edi\n \
             neg    %%edi\n \
             sub    %%edi,0x20+%[lv]\n \
-            jle    jump_122a92\n \
+            jle    ready_for_bailout\n \
             mov    %%edi,0x48+%[lv]\n \
             cmp    0x14+%[lv],%%edi\n \
             js     jump_12167e\n \
@@ -865,7 +865,7 @@ ll_md00:\n \
             jmp    jump_12178f\n \
         jump_12176c:\n \
             cmp    "EXPORT_SYMBOL(vec_window_height)",%%eax\n \
-            jge    jump_122a92\n \
+            jge    ready_for_bailout\n \
             mov    %%eax,%%ebx\n \
             imul   "EXPORT_SYMBOL(vec_screen_width)",%%ebx\n \
             add    "EXPORT_SYMBOL(poly_screen)",%%ebx\n \
@@ -895,7 +895,7 @@ ll_md00:\n \
             cltd\n \
             idivl  0x14+%[lv]\n \
             cmp    0x4+%[lv],%%eax\n \
-            jle    jump_122a92\n \
+            jle    ready_for_bailout\n \
             mov    %%eax,0x8+%[lv]\n \
             mov    0x4(%%edi),%%ebx\n \
             sub    0x4(%%ecx),%%ebx\n \
@@ -957,7 +957,7 @@ rl_md05:\n \
             mov    (%%esi),%%ebx\n \
             sub    (%%ecx),%%ebx\n \
             add    %%eax,%%ebx\n \
-            jl     jump_122a92\n \
+            jl     ready_for_bailout\n \
             je     jump_1218f7\n \
             inc    %%ebx\n \
             mov    0x8(%%edi),%%eax\n \
@@ -1029,7 +1029,7 @@ rl_md05:\n \
             mov    0x54+%[lv],%%edi\n \
             neg    %%edi\n \
             sub    %%edi,0x20+%[lv]\n \
-            jle    jump_122a92\n \
+            jle    ready_for_bailout\n \
             mov    %%edi,0x48+%[lv]\n \
             cmp    0x10+%[lv],%%edi\n \
             js     jump_121a21\n \
@@ -1170,7 +1170,7 @@ rl_md02:\n \
             mov    (%%esi),%%ebx\n \
             sub    (%%ecx),%%ebx\n \
             add    %%eax,%%ebx\n \
-            jl     jump_122a92\n \
+            jl     ready_for_bailout\n \
             je     jump_121b9b\n \
             inc    %%ebx\n \
             mov    0x8(%%edi),%%eax\n \
@@ -1222,7 +1222,7 @@ rl_md02:\n \
             mov    0x54+%[lv],%%edi\n \
             neg    %%edi\n \
             sub    %%edi,0x20+%[lv]\n \
-            jle    jump_122a92\n \
+            jle    ready_for_bailout\n \
             mov    %%edi,0x48+%[lv]\n \
             cmp    0x10+%[lv],%%edi\n \
             js     jump_121c86\n \
@@ -1350,7 +1350,7 @@ rl_md01:\n \
             mov    (%%esi),%%ebx\n \
             sub    (%%ecx),%%ebx\n \
             add    %%eax,%%ebx\n \
-            jl     jump_122a92\n \
+            jl     ready_for_bailout\n \
             je     jump_121dcc\n \
             inc    %%ebx\n \
             mov    0x10(%%edi),%%eax\n \
@@ -1382,7 +1382,7 @@ rl_md01:\n \
             mov    0x54+%[lv],%%edi\n \
             neg    %%edi\n \
             sub    %%edi,0x20+%[lv]\n \
-            jle    jump_122a92\n \
+            jle    ready_for_bailout\n \
             mov    %%edi,0x48+%[lv]\n \
             cmp    0x10+%[lv],%%edi\n \
             js     jump_121e80\n \
@@ -1493,7 +1493,7 @@ rl_md00:\n \
             mov    0x54+%[lv],%%edi\n \
             neg    %%edi\n \
             sub    %%edi,0x20+%[lv]\n \
-            jle    jump_122a92\n \
+            jle    ready_for_bailout\n \
             mov    %%edi,0x48+%[lv]\n \
             cmp    0x10+%[lv],%%edi\n \
             js     jump_121fe5\n \
@@ -1581,7 +1581,7 @@ rl_md00:\n \
         jump_1220b4:\n \
             mov    (%%ecx),%%eax\n \
             cmp    (%%esi),%%eax\n \
-            jle    jump_122a92\n \
+            jle    ready_for_bailout\n \
             xchg   %%esi,%%edi\n \
             xchg   %%edi,%%ecx\n \
         jump_1220c2:\n \
@@ -1595,7 +1595,7 @@ rl_md00:\n \
             jmp    jump_122100\n \
         jump_1220dd:\n \
             cmp    "EXPORT_SYMBOL(vec_window_height)",%%eax\n \
-            jge    jump_122a92\n \
+            jge    ready_for_bailout\n \
             mov    %%eax,%%ebx\n \
             imul   "EXPORT_SYMBOL(vec_screen_width)",%%ebx\n \
             add    "EXPORT_SYMBOL(poly_screen)",%%ebx\n \
@@ -1700,7 +1700,7 @@ fb_md03:\n \
             neg    %%edi\n \
             sub    %%edi,0x10+%[lv]\n \
             sub    %%edi,0x20+%[lv]\n \
-            jle    jump_122a92\n \
+            jle    ready_for_bailout\n \
             mov    %%edi,0x48+%[lv]\n \
             imul   0x4+%[lv],%%edi\n \
             add    %%edi,%%eax\n \
@@ -1784,7 +1784,7 @@ fb_md02:\n \
             neg    %%edi\n \
             sub    %%edi,0x10+%[lv]\n \
             sub    %%edi,0x20+%[lv]\n \
-            jle    jump_122a92\n \
+            jle    ready_for_bailout\n \
             mov    %%edi,0x48+%[lv]\n \
             imul   0x4+%[lv],%%edi\n \
             add    %%edi,%%eax\n \
@@ -1855,7 +1855,7 @@ fb_md01:\n \
             neg    %%edi\n \
             sub    %%edi,0x10+%[lv]\n \
             sub    %%edi,0x20+%[lv]\n \
-            jle    jump_122a92\n \
+            jle    ready_for_bailout\n \
             mov    %%edi,0x48+%[lv]\n \
             imul   0x4+%[lv],%%edi\n \
             add    %%edi,%%eax\n \
@@ -1906,7 +1906,7 @@ fb_md00:\n \
             neg    %%edi\n \
             sub    %%edi,0x10+%[lv]\n \
             sub    %%edi,0x20+%[lv]\n \
-            jle    jump_122a92\n \
+            jle    ready_for_bailout\n \
             mov    %%edi,0x48+%[lv]\n \
             imul   0x4+%[lv],%%edi\n \
             add    %%edi,%%eax\n \
@@ -1940,7 +1940,7 @@ fb_md00:\n \
         jump_122533:\n \
             mov    (%%ecx),%%eax\n \
             cmp    (%%edi),%%eax\n \
-            jle    jump_122a92\n \
+            jle    ready_for_bailout\n \
             xchg   %%esi,%%edi\n \
             xchg   %%edi,%%ecx\n \
         jump_122541:\n \
@@ -1954,7 +1954,7 @@ fb_md00:\n \
             jmp    jump_12257f\n \
         jump_12255c:\n \
             cmp    "EXPORT_SYMBOL(vec_window_height)",%%eax\n \
-            jge    jump_122a92\n \
+            jge    ready_for_bailout\n \
             mov    %%eax,%%ebx\n \
             imul   "EXPORT_SYMBOL(vec_screen_width)",%%ebx\n \
             add    "EXPORT_SYMBOL(poly_screen)",%%ebx\n \
@@ -2060,7 +2060,7 @@ ft_md05:\n \
             neg    %%edi\n \
             sub    %%edi,0x10+%[lv]\n \
             sub    %%edi,0x20+%[lv]\n \
-            jle    jump_122a92\n \
+            jle    ready_for_bailout\n \
             mov    %%edi,0x48+%[lv]\n \
             imul   0x4+%[lv],%%edi\n \
             add    %%edi,%%eax\n \
@@ -2145,7 +2145,7 @@ ft_md02:\n \
             neg    %%edi\n \
             sub    %%edi,0x10+%[lv]\n \
             sub    %%edi,0x20+%[lv]\n \
-            jle    jump_122a92\n \
+            jle    ready_for_bailout\n \
             mov    %%edi,0x48+%[lv]\n \
             imul   0x4+%[lv],%%edi\n \
             add    %%edi,%%eax\n \
@@ -2214,7 +2214,7 @@ ft_md01:\n \
             neg    %%edi\n \
             sub    %%edi,0x10+%[lv]\n \
             sub    %%edi,0x20+%[lv]\n \
-            jle    jump_122a92\n \
+            jle    ready_for_bailout\n \
             mov    %%edi,0x48+%[lv]\n \
             imul   0x4+%[lv],%%edi\n \
             add    %%edi,%%eax\n \
@@ -2265,7 +2265,7 @@ ft_md00:\n \
             neg    %%edi\n \
             sub    %%edi,0x10+%[lv]\n \
             sub    %%edi,0x20+%[lv]\n \
-            jle    jump_122a92\n \
+            jle    ready_for_bailout\n \
             mov    %%edi,0x48+%[lv]\n \
             imul   0x4+%[lv],%%edi\n \
             add    %%edi,%%eax\n \
@@ -2295,9 +2295,14 @@ ft_md00:\n \
             add    $0x14,%%edi\n \
             decl   0x10+%[lv]\n \
             jne    jump_12298f\n \
+            jmp    ready_for_render\n \
+\n \
+ready_for_bailout:\n \
+            jmp    jump_rend_md00_a92\n \
 \n \
 ready_for_render:\n \
             popa\n \
+ready_for_render_fin:\n \
     "
                  : [lv] "+o" (lv)
                  : "a" (point_a), "d" (point_b), "b" (point_c), "o0" (lv)
@@ -2319,43 +2324,43 @@ ready_for_render:\n \
             mov    %%bx,%%ax\n \
             xor    %%ebx,%%ebx\n \
             xor    %%ecx,%%ecx\n \
-        jump_122a3c:\n \
+        jump_rend_md00_a3c:\n \
             mov    0x2(%%esi),%%bx\n \
             movzwl 0x6(%%esi),%%ecx\n \
             add    "EXPORT_SYMBOL(vec_screen_width)",%%edx\n \
             or     %%bx,%%bx\n \
-            jns    jump_122a66\n \
+            jns    jump_rend_md00_a66\n \
             or     %%cx,%%cx\n \
-            jle    jump_122a89\n \
+            jle    jump_rend_md00_a89\n \
             cmp    "EXPORT_SYMBOL(vec_window_width)",%%ecx\n \
-            jle    jump_122a62\n \
+            jle    jump_rend_md00_a62\n \
             mov    "EXPORT_SYMBOL(vec_window_width)",%%ecx\n \
-        jump_122a62:\n \
+        jump_rend_md00_a62:\n \
             mov    %%edx,%%edi\n \
-            jmp    jump_122a7c\n \
-        jump_122a66:\n \
+            jmp    jump_rend_md00_a7c\n \
+        jump_rend_md00_a66:\n \
             cmp    "EXPORT_SYMBOL(vec_window_width)",%%ecx\n \
-            jle    jump_122a74\n \
+            jle    jump_rend_md00_a74\n \
             mov    "EXPORT_SYMBOL(vec_window_width)",%%ecx\n \
-        jump_122a74:\n \
+        jump_rend_md00_a74:\n \
             sub    %%bx,%%cx\n \
-            jle    jump_122a89\n \
+            jle    jump_rend_md00_a89\n \
             lea    (%%ebx,%%edx,1),%%edi\n \
-        jump_122a7c:\n \
+        jump_rend_md00_a7c:\n \
             shr    %%ecx\n \
-            jae    jump_122a81\n \
+            jae    jump_rend_md00_a81\n \
             stos   %%al,%%es:(%%edi)\n \
-        jump_122a81:\n \
+        jump_rend_md00_a81:\n \
             shr    %%ecx\n \
-            jae    jump_122a87\n \
+            jae    jump_rend_md00_a87\n \
             stos   %%ax,%%es:(%%edi)\n \
-        jump_122a87:\n \
+        jump_rend_md00_a87:\n \
             rep stos %%eax,%%es:(%%edi)\n \
-        jump_122a89:\n \
+        jump_rend_md00_a89:\n \
             add    $0x14,%%esi\n \
             decl   0x20+%[lv]\n \
-            jne    jump_122a3c\n \
-        jump_122a92:\n \
+            jne    jump_rend_md00_a3c\n \
+        jump_rend_md00_a92:\n \
             popa\n \
         "
                  : [lv] "+o" (lv)
@@ -2370,16 +2375,16 @@ ready_for_render:\n \
             xor    %%eax,%%eax\n \
             xor    %%ebx,%%ebx\n \
             xor    %%ecx,%%ecx\n \
-        jump_122aa1:\n \
+        jump_rend_md01_aa1:\n \
             mov    0x2(%%esi),%%ax\n \
             movzwl 0x6(%%esi),%%ecx\n \
             mov    0x0+%[lv],%%edi\n \
             add    "EXPORT_SYMBOL(vec_screen_width)",%%edi\n \
             mov    %%edi,0x0+%[lv]\n \
             or     %%ax,%%ax\n \
-            jns    jump_122af3\n \
+            jns    jump_rend_md01_af3\n \
             or     %%cx,%%cx\n \
-            jle    jump_122c41\n \
+            jle    jump_rend_md01_c41\n \
             neg    %%ax\n \
             movzwl %%ax,%%eax\n \
             imul   0x3c+%[lv],%%eax\n \
@@ -2388,110 +2393,110 @@ ready_for_render:\n \
             add    0x10(%%esi),%%bx\n \
             adc    0x12(%%esi),%%ah\n \
             cmp    "EXPORT_SYMBOL(vec_window_width)",%%ecx\n \
-            jle    jump_122ae9\n \
+            jle    jump_rend_md01_ae9\n \
             mov    "EXPORT_SYMBOL(vec_window_width)",%%ecx\n \
-        jump_122ae9:\n \
+        jump_rend_md01_ae9:\n \
             movzwl %%ax,%%eax\n \
             mov    "EXPORT_SYMBOL(vec_colour)",%%al\n \
-            jmp    jump_122b1a\n \
-        jump_122af3:\n \
+            jmp    jump_rend_md01_b1a\n \
+        jump_rend_md01_af3:\n \
             cmp    "EXPORT_SYMBOL(vec_window_width)",%%ecx\n \
-            jle    jump_122b01\n \
+            jle    jump_rend_md01_b01\n \
             mov    "EXPORT_SYMBOL(vec_window_width)",%%ecx\n \
-        jump_122b01:\n \
+        jump_rend_md01_b01:\n \
             sub    %%ax,%%cx\n \
-            jle    jump_122c41\n \
+            jle    jump_rend_md01_c41\n \
             add    %%eax,%%edi\n \
             movzbl "EXPORT_SYMBOL(vec_colour)",%%eax\n \
             mov    0x10(%%esi),%%bx\n \
             mov    0x12(%%esi),%%ah\n \
-        jump_122b1a:\n \
+        jump_rend_md01_b1a:\n \
             mov    %%ah,(%%edi)\n \
             add    0x3c+%[lv],%%bx\n \
             adc    0x3e+%[lv],%%ah\n \
             dec    %%cx\n \
-            je     jump_122c41\n \
+            je     jump_rend_md01_c41\n \
             mov    %%ah,0x1(%%edi)\n \
             add    0x3c+%[lv],%%bx\n \
             adc    0x3e+%[lv],%%ah\n \
             dec    %%cx\n \
-            je     jump_122c41\n \
+            je     jump_rend_md01_c41\n \
             mov    %%ah,0x2(%%edi)\n \
             add    0x3c+%[lv],%%bx\n \
             adc    0x3e+%[lv],%%ah\n \
             dec    %%cx\n \
-            je     jump_122c41\n \
+            je     jump_rend_md01_c41\n \
             mov    %%ah,0x3(%%edi)\n \
             add    0x3c+%[lv],%%bx\n \
             adc    0x3e+%[lv],%%ah\n \
             dec    %%cx\n \
-            je     jump_122c41\n \
+            je     jump_rend_md01_c41\n \
             mov    %%ah,0x4(%%edi)\n \
             add    0x3c+%[lv],%%bx\n \
             adc    0x3e+%[lv],%%ah\n \
             dec    %%cx\n \
-            je     jump_122c41\n \
+            je     jump_rend_md01_c41\n \
             mov    %%ah,0x5(%%edi)\n \
             add    0x3c+%[lv],%%bx\n \
             adc    0x3e+%[lv],%%ah\n \
             dec    %%cx\n \
-            je     jump_122c41\n \
+            je     jump_rend_md01_c41\n \
             mov    %%ah,0x6(%%edi)\n \
             add    0x3c+%[lv],%%bx\n \
             adc    0x3e+%[lv],%%ah\n \
             dec    %%cx\n \
-            je     jump_122c41\n \
+            je     jump_rend_md01_c41\n \
             mov    %%ah,0x7(%%edi)\n \
             add    0x3c+%[lv],%%bx\n \
             adc    0x3e+%[lv],%%ah\n \
             dec    %%cx\n \
-            je     jump_122c41\n \
+            je     jump_rend_md01_c41\n \
             mov    %%ah,0x8(%%edi)\n \
             add    0x3c+%[lv],%%bx\n \
             adc    0x3e+%[lv],%%ah\n \
             dec    %%cx\n \
-            je     jump_122c41\n \
+            je     jump_rend_md01_c41\n \
             mov    %%ah,0x9(%%edi)\n \
             add    0x3c+%[lv],%%bx\n \
             adc    0x3e+%[lv],%%ah\n \
             dec    %%cx\n \
-            je     jump_122c41\n \
+            je     jump_rend_md01_c41\n \
             mov    %%ah,0xa(%%edi)\n \
             add    0x3c+%[lv],%%bx\n \
             adc    0x3e+%[lv],%%ah\n \
             dec    %%cx\n \
-            je     jump_122c41\n \
+            je     jump_rend_md01_c41\n \
             mov    %%ah,0xb(%%edi)\n \
             add    0x3c+%[lv],%%bx\n \
             adc    0x3e+%[lv],%%ah\n \
             dec    %%cx\n \
-            je     jump_122c41\n \
+            je     jump_rend_md01_c41\n \
             mov    %%ah,0xc(%%edi)\n \
             add    0x3c+%[lv],%%bx\n \
             adc    0x3e+%[lv],%%ah\n \
             dec    %%cx\n \
-            je     jump_122c41\n \
+            je     jump_rend_md01_c41\n \
             mov    %%ah,0xd(%%edi)\n \
             add    0x3c+%[lv],%%bx\n \
             adc    0x3e+%[lv],%%ah\n \
             dec    %%cx\n \
-            je     jump_122c41\n \
+            je     jump_rend_md01_c41\n \
             mov    %%ah,0xe(%%edi)\n \
             add    0x3c+%[lv],%%bx\n \
             adc    0x3e+%[lv],%%ah\n \
             dec    %%cx\n \
-            je     jump_122c41\n \
+            je     jump_rend_md01_c41\n \
             mov    %%ah,0xf(%%edi)\n \
             add    0x3c+%[lv],%%bx\n \
             adc    0x3e+%[lv],%%ah\n \
             dec    %%cx\n \
-            je     jump_122c41\n \
+            je     jump_rend_md01_c41\n \
             add    $0x10,%%edi\n \
-            jmp    jump_122b1a\n \
-        jump_122c41:\n \
+            jmp    jump_rend_md01_b1a\n \
+        jump_rend_md01_c41:\n \
             add    $0x14,%%esi\n \
             decl   0x20+%[lv]\n \
-            jne    jump_122aa1\n \
+            jne    jump_rend_md01_aa1\n \
             popa\n \
         "
                  : [lv] "+o" (lv)
@@ -2510,16 +2515,16 @@ ready_for_render:\n \
             xor    %%eax,%%eax\n \
             xor    %%ebx,%%ebx\n \
             xor    %%ecx,%%ecx\n \
-        jump_122c6a:\n \
+        jump_rend_md02_c6a:\n \
             mov    0x2(%%esi),%%ax\n \
             movzwl 0x6(%%esi),%%ecx\n \
             mov    0x0+%[lv],%%edi\n \
             add    "EXPORT_SYMBOL(vec_screen_width)",%%edi\n \
             mov    %%edi,0x0+%[lv]\n \
             or     %%ax,%%ax\n \
-            jns    jump_122cc4\n \
+            jns    jump_rend_md02_cc4\n \
             or     %%cx,%%cx\n \
-            jle    jump_122edd\n \
+            jle    jump_rend_md02_edd\n \
             neg    %%ax\n \
             movzwl %%ax,%%eax\n \
             mov    %%eax,%%edx\n \
@@ -2533,28 +2538,28 @@ ready_for_render:\n \
             shr    $0x8,%%eax\n \
             mov    %%ah,%%bl\n \
             cmp    "EXPORT_SYMBOL(vec_window_width)",%%ecx\n \
-            jle    jump_122cbf\n \
+            jle    jump_rend_md02_cbf\n \
             mov    "EXPORT_SYMBOL(vec_window_width)",%%ecx\n \
-        jump_122cbf:\n \
+        jump_rend_md02_cbf:\n \
             movzwl %%ax,%%eax\n \
-            jmp    jump_122cec\n \
-        jump_122cc4:\n \
+            jmp    jump_rend_md02_cec\n \
+        jump_rend_md02_cc4:\n \
             cmp    "EXPORT_SYMBOL(vec_window_width)",%%ecx\n \
-            jle    jump_122cd2\n \
+            jle    jump_rend_md02_cd2\n \
             mov    "EXPORT_SYMBOL(vec_window_width)",%%ecx\n \
-        jump_122cd2:\n \
+        jump_rend_md02_cd2:\n \
             sub    %%ax,%%cx\n \
-            jle    jump_122edd\n \
+            jle    jump_rend_md02_edd\n \
             add    %%eax,%%edi\n \
             mov    0xc(%%esi),%%edx\n \
             rol    $0x10,%%edx\n \
             mov    %%dl,%%bh\n \
             mov    0x8(%%esi),%%dx\n \
             mov    0xa(%%esi),%%bl\n \
-        jump_122cec:\n \
+        jump_rend_md02_cec:\n \
             mov    %%esi,0x5c+%[lv]\n \
             mov    "EXPORT_SYMBOL(vec_map)",%%esi\n \
-        jump_122cf6:\n \
+        jump_rend_md02_cf6:\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
@@ -2562,7 +2567,7 @@ ready_for_render:\n \
             add    0x4c+%[lv],%%edx\n \
             adc    0x32+%[lv],%%bh\n \
             dec    %%cx\n \
-            je     jump_122ed9\n \
+            je     jump_rend_md02_ed9\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
@@ -2570,7 +2575,7 @@ ready_for_render:\n \
             add    0x4c+%[lv],%%edx\n \
             adc    0x32+%[lv],%%bh\n \
             dec    %%cx\n \
-            je     jump_122ed9\n \
+            je     jump_rend_md02_ed9\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
@@ -2578,7 +2583,7 @@ ready_for_render:\n \
             add    0x4c+%[lv],%%edx\n \
             adc    0x32+%[lv],%%bh\n \
             dec    %%cx\n \
-            je     jump_122ed9\n \
+            je     jump_rend_md02_ed9\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
@@ -2586,7 +2591,7 @@ ready_for_render:\n \
             add    0x4c+%[lv],%%edx\n \
             adc    0x32+%[lv],%%bh\n \
             dec    %%cx\n \
-            je     jump_122ed9\n \
+            je     jump_rend_md02_ed9\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
@@ -2594,7 +2599,7 @@ ready_for_render:\n \
             add    0x4c+%[lv],%%edx\n \
             adc    0x32+%[lv],%%bh\n \
             dec    %%cx\n \
-            je     jump_122ed9\n \
+            je     jump_rend_md02_ed9\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
@@ -2602,7 +2607,7 @@ ready_for_render:\n \
             add    0x4c+%[lv],%%edx\n \
             adc    0x32+%[lv],%%bh\n \
             dec    %%cx\n \
-            je     jump_122ed9\n \
+            je     jump_rend_md02_ed9\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
@@ -2610,7 +2615,7 @@ ready_for_render:\n \
             add    0x4c+%[lv],%%edx\n \
             adc    0x32+%[lv],%%bh\n \
             dec    %%cx\n \
-            je     jump_122ed9\n \
+            je     jump_rend_md02_ed9\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
@@ -2618,7 +2623,7 @@ ready_for_render:\n \
             add    0x4c+%[lv],%%edx\n \
             adc    0x32+%[lv],%%bh\n \
             dec    %%cx\n \
-            je     jump_122ed9\n \
+            je     jump_rend_md02_ed9\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
@@ -2626,7 +2631,7 @@ ready_for_render:\n \
             add    0x4c+%[lv],%%edx\n \
             adc    0x32+%[lv],%%bh\n \
             dec    %%cx\n \
-            je     jump_122ed9\n \
+            je     jump_rend_md02_ed9\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
@@ -2634,7 +2639,7 @@ ready_for_render:\n \
             add    0x4c+%[lv],%%edx\n \
             adc    0x32+%[lv],%%bh\n \
             dec    %%cx\n \
-            je     jump_122ed9\n \
+            je     jump_rend_md02_ed9\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
@@ -2642,7 +2647,7 @@ ready_for_render:\n \
             add    0x4c+%[lv],%%edx\n \
             adc    0x32+%[lv],%%bh\n \
             dec    %%cx\n \
-            je     jump_122ed9\n \
+            je     jump_rend_md02_ed9\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
@@ -2650,7 +2655,7 @@ ready_for_render:\n \
             add    0x4c+%[lv],%%edx\n \
             adc    0x32+%[lv],%%bh\n \
             dec    %%cx\n \
-            je     jump_122ed9\n \
+            je     jump_rend_md02_ed9\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
@@ -2658,7 +2663,7 @@ ready_for_render:\n \
             add    0x4c+%[lv],%%edx\n \
             adc    0x32+%[lv],%%bh\n \
             dec    %%cx\n \
-            je     jump_122ed9\n \
+            je     jump_rend_md02_ed9\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
@@ -2666,7 +2671,7 @@ ready_for_render:\n \
             add    0x4c+%[lv],%%edx\n \
             adc    0x32+%[lv],%%bh\n \
             dec    %%cx\n \
-            je     jump_122ed9\n \
+            je     jump_rend_md02_ed9\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
@@ -2674,7 +2679,7 @@ ready_for_render:\n \
             add    0x4c+%[lv],%%edx\n \
             adc    0x32+%[lv],%%bh\n \
             dec    %%cx\n \
-            je     jump_122ed9\n \
+            je     jump_rend_md02_ed9\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
@@ -2682,15 +2687,15 @@ ready_for_render:\n \
             add    0x4c+%[lv],%%edx\n \
             adc    0x32+%[lv],%%bh\n \
             dec    %%cx\n \
-            je     jump_122ed9\n \
+            je     jump_rend_md02_ed9\n \
             add    $0x10,%%edi\n \
-            jmp    jump_122cf6\n \
-        jump_122ed9:\n \
+            jmp    jump_rend_md02_cf6\n \
+        jump_rend_md02_ed9:\n \
             mov    0x5c+%[lv],%%esi\n \
-        jump_122edd:\n \
+        jump_rend_md02_edd:\n \
             add    $0x14,%%esi\n \
             decl   0x20+%[lv]\n \
-            jne    jump_122c6a\n \
+            jne    jump_rend_md02_c6a\n \
             popa\n \
         "
                  : [lv] "+o" (lv)
@@ -2708,16 +2713,16 @@ ready_for_render:\n \
             xor    %%eax,%%eax\n \
             xor    %%ebx,%%ebx\n \
             xor    %%ecx,%%ecx\n \
-        jump_122f06:\n \
+        jump_rend_md03_f06:\n \
             mov    0x2(%%esi),%%ax\n \
             movzwl 0x6(%%esi),%%ecx\n \
             mov    0x0+%[lv],%%edi\n \
             add    "EXPORT_SYMBOL(vec_screen_width)",%%edi\n \
             mov    %%edi,0x0+%[lv]\n \
             or     %%ax,%%ax\n \
-            jns    jump_122f60\n \
+            jns    jump_rend_md03_f60\n \
             or     %%cx,%%cx\n \
-            jle    jump_1231bd\n \
+            jle    jump_rend_md03_1bd\n \
             neg    %%ax\n \
             movzwl %%ax,%%eax\n \
             mov    %%eax,%%edx\n \
@@ -2731,212 +2736,212 @@ ready_for_render:\n \
             shr    $0x8,%%eax\n \
             mov    %%ah,%%bl\n \
             cmp    "EXPORT_SYMBOL(vec_window_width)",%%ecx\n \
-            jle    jump_122f5b\n \
+            jle    jump_rend_md03_f5b\n \
             mov    "EXPORT_SYMBOL(vec_window_width)",%%ecx\n \
-        jump_122f5b:\n \
+        jump_rend_md03_f5b:\n \
             movzwl %%ax,%%eax\n \
-            jmp    jump_122f88\n \
-        jump_122f60:\n \
+            jmp    jump_rend_md03_f88\n \
+        jump_rend_md03_f60:\n \
             cmp    "EXPORT_SYMBOL(vec_window_width)",%%ecx\n \
-            jle    jump_122f6e\n \
+            jle    jump_rend_md03_f6e\n \
             mov    "EXPORT_SYMBOL(vec_window_width)",%%ecx\n \
-        jump_122f6e:\n \
+        jump_rend_md03_f6e:\n \
             sub    %%ax,%%cx\n \
-            jle    jump_1231bd\n \
+            jle    jump_rend_md03_1bd\n \
             add    %%eax,%%edi\n \
             mov    0xc(%%esi),%%edx\n \
             rol    $0x10,%%edx\n \
             mov    %%dl,%%bh\n \
             mov    0x8(%%esi),%%dx\n \
             mov    0xa(%%esi),%%bl\n \
-        jump_122f88:\n \
+        jump_rend_md03_f88:\n \
             mov    %%esi,0x5c+%[lv]\n \
             mov    "EXPORT_SYMBOL(vec_map)",%%esi\n \
-        jump_122f92:\n \
+        jump_rend_md03_f92:\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             or     %%al,%%al\n \
-            je     jump_122f9b\n \
+            je     jump_rend_md03_f9b\n \
             mov    %%al,(%%edi)\n \
-        jump_122f9b:\n \
+        jump_rend_md03_f9b:\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
             add    0x4c+%[lv],%%edx\n \
             adc    0x32+%[lv],%%bh\n \
             dec    %%cx\n \
-            je     jump_1231b9\n \
+            je     jump_rend_md03_1b9\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             or     %%al,%%al\n \
-            je     jump_122fbe\n \
+            je     jump_rend_md03_fbe\n \
             mov    %%al,0x1(%%edi)\n \
-        jump_122fbe:\n \
+        jump_rend_md03_fbe:\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
             add    0x4c+%[lv],%%edx\n \
             adc    0x32+%[lv],%%bh\n \
             dec    %%cx\n \
-            je     jump_1231b9\n \
+            je     jump_rend_md03_1b9\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             or     %%al,%%al\n \
-            je     jump_122fe1\n \
+            je     jump_rend_md03_fe1\n \
             mov    %%al,0x2(%%edi)\n \
-        jump_122fe1:\n \
+        jump_rend_md03_fe1:\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
             add    0x4c+%[lv],%%edx\n \
             adc    0x32+%[lv],%%bh\n \
             dec    %%cx\n \
-            je     jump_1231b9\n \
+            je     jump_rend_md03_1b9\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             or     %%al,%%al\n \
-            je     jump_123004\n \
+            je     jump_rend_md03_004\n \
             mov    %%al,0x3(%%edi)\n \
-        jump_123004:\n \
+        jump_rend_md03_004:\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
             add    0x4c+%[lv],%%edx\n \
             adc    0x32+%[lv],%%bh\n \
             dec    %%cx\n \
-            je     jump_1231b9\n \
+            je     jump_rend_md03_1b9\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             or     %%al,%%al\n \
-            je     jump_123027\n \
+            je     jump_rend_md03_027\n \
             mov    %%al,0x4(%%edi)\n \
-        jump_123027:\n \
+        jump_rend_md03_027:\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
             add    0x4c+%[lv],%%edx\n \
             adc    0x32+%[lv],%%bh\n \
             dec    %%cx\n \
-            je     jump_1231b9\n \
+            je     jump_rend_md03_1b9\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             or     %%al,%%al\n \
-            je     jump_12304a\n \
+            je     jump_rend_md03_04a\n \
             mov    %%al,0x5(%%edi)\n \
-        jump_12304a:\n \
+        jump_rend_md03_04a:\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
             add    0x4c+%[lv],%%edx\n \
             adc    0x32+%[lv],%%bh\n \
             dec    %%cx\n \
-            je     jump_1231b9\n \
+            je     jump_rend_md03_1b9\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             or     %%al,%%al\n \
-            je     jump_12306d\n \
+            je     jump_rend_md03_06d\n \
             mov    %%al,0x6(%%edi)\n \
-        jump_12306d:\n \
+        jump_rend_md03_06d:\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
             add    0x4c+%[lv],%%edx\n \
             adc    0x32+%[lv],%%bh\n \
             dec    %%cx\n \
-            je     jump_1231b9\n \
+            je     jump_rend_md03_1b9\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             or     %%al,%%al\n \
-            je     jump_123090\n \
+            je     jump_rend_md03_090\n \
             mov    %%al,0x7(%%edi)\n \
-        jump_123090:\n \
+        jump_rend_md03_090:\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
             add    0x4c+%[lv],%%edx\n \
             adc    0x32+%[lv],%%bh\n \
             dec    %%cx\n \
-            je     jump_1231b9\n \
+            je     jump_rend_md03_1b9\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             or     %%al,%%al\n \
-            je     jump_1230b3\n \
+            je     jump_rend_md03_0b3\n \
             mov    %%al,0x8(%%edi)\n \
-        jump_1230b3:\n \
+        jump_rend_md03_0b3:\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
             add    0x4c+%[lv],%%edx\n \
             adc    0x32+%[lv],%%bh\n \
             dec    %%cx\n \
-            je     jump_1231b9\n \
+            je     jump_rend_md03_1b9\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             or     %%al,%%al\n \
-            je     jump_1230d6\n \
+            je     jump_rend_md03_0d6\n \
             mov    %%al,0x9(%%edi)\n \
-        jump_1230d6:\n \
+        jump_rend_md03_0d6:\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
             add    0x4c+%[lv],%%edx\n \
             adc    0x32+%[lv],%%bh\n \
             dec    %%cx\n \
-            je     jump_1231b9\n \
+            je     jump_rend_md03_1b9\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             or     %%al,%%al\n \
-            je     jump_1230f9\n \
+            je     jump_rend_md03_0f9\n \
             mov    %%al,0xa(%%edi)\n \
-        jump_1230f9:\n \
+        jump_rend_md03_0f9:\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
             add    0x4c+%[lv],%%edx\n \
             adc    0x32+%[lv],%%bh\n \
             dec    %%cx\n \
-            je     jump_1231b9\n \
+            je     jump_rend_md03_1b9\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             or     %%al,%%al\n \
-            je     jump_12311c\n \
+            je     jump_rend_md03_11c\n \
             mov    %%al,0xb(%%edi)\n \
-        jump_12311c:\n \
+        jump_rend_md03_11c:\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
             add    0x4c+%[lv],%%edx\n \
             adc    0x32+%[lv],%%bh\n \
             dec    %%cx\n \
-            je     jump_1231b9\n \
+            je     jump_rend_md03_1b9\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             or     %%al,%%al\n \
-            je     jump_12313f\n \
+            je     jump_rend_md03_13f\n \
             mov    %%al,0xc(%%edi)\n \
-        jump_12313f:\n \
+        jump_rend_md03_13f:\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
             add    0x4c+%[lv],%%edx\n \
             adc    0x32+%[lv],%%bh\n \
             dec    %%cx\n \
-            je     jump_1231b9\n \
+            je     jump_rend_md03_1b9\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             or     %%al,%%al\n \
-            je     jump_12315e\n \
+            je     jump_rend_md03_15e\n \
             mov    %%al,0xd(%%edi)\n \
-        jump_12315e:\n \
+        jump_rend_md03_15e:\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
             add    0x4c+%[lv],%%edx\n \
             adc    0x32+%[lv],%%bh\n \
             dec    %%cx\n \
-            je     jump_1231b9\n \
+            je     jump_rend_md03_1b9\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             or     %%al,%%al\n \
-            je     jump_12317d\n \
+            je     jump_rend_md03_17d\n \
             mov    %%al,0xe(%%edi)\n \
-        jump_12317d:\n \
+        jump_rend_md03_17d:\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
             add    0x4c+%[lv],%%edx\n \
             adc    0x32+%[lv],%%bh\n \
             dec    %%cx\n \
-            je     jump_1231b9\n \
+            je     jump_rend_md03_1b9\n \
             mov    (%%ebx,%%esi,1),%%al\n \
             or     %%al,%%al\n \
-            je     jump_12319c\n \
+            je     jump_rend_md03_19c\n \
             mov    %%al,0xf(%%edi)\n \
-        jump_12319c:\n \
+        jump_rend_md03_19c:\n \
             add    0x24+%[lv],%%dx\n \
             adc    0x26+%[lv],%%bl\n \
             add    0x4c+%[lv],%%edx\n \
             adc    0x32+%[lv],%%bh\n \
             dec    %%cx\n \
-            je     jump_1231b9\n \
+            je     jump_rend_md03_1b9\n \
             add    $0x10,%%edi\n \
-            jmp    jump_122f92\n \
-        jump_1231b9:\n \
+            jmp    jump_rend_md03_f92\n \
+        jump_rend_md03_1b9:\n \
             mov    0x5c+%[lv],%%esi\n \
-        jump_1231bd:\n \
+        jump_rend_md03_1bd:\n \
             add    $0x14,%%esi\n \
             decl   0x20+%[lv]\n \
-            jne    jump_122f06\n \
+            jne    jump_rend_md03_f06\n \
             popa\n \
         "
                  : [lv] "+o" (lv)
@@ -2951,16 +2956,16 @@ ready_for_render:\n \
             xor    %%eax,%%eax\n \
             xor    %%ebx,%%ebx\n \
             xor    %%ecx,%%ecx\n \
-        jump_1231d9:\n \
+        jump_rend_md04_1d9:\n \
             mov    0x2(%%esi),%%ax\n \
             movzwl 0x6(%%esi),%%ecx\n \
             mov    0x0+%[lv],%%edi\n \
             add    "EXPORT_SYMBOL(vec_screen_width)",%%edi\n \
             mov    %%edi,0x0+%[lv]\n \
             or     %%ax,%%ax\n \
-            jns    jump_12322b\n \
+            jns    jump_rend_md04_22b\n \
             or     %%cx,%%cx\n \
-            jle    jump_1233e1\n \
+            jle    jump_rend_md04_3e1\n \
             neg    %%ax\n \
             movzwl %%ax,%%eax\n \
             imul   0x3c+%[lv],%%eax\n \
@@ -2969,126 +2974,126 @@ ready_for_render:\n \
             add    0x10(%%esi),%%bx\n \
             adc    0x12(%%esi),%%ah\n \
             cmp    "EXPORT_SYMBOL(vec_window_width)",%%ecx\n \
-            jle    jump_123221\n \
+            jle    jump_rend_md04_221\n \
             mov    "EXPORT_SYMBOL(vec_window_width)",%%ecx\n \
-        jump_123221:\n \
+        jump_rend_md04_221:\n \
             movzwl %%ax,%%eax\n \
             mov    "EXPORT_SYMBOL(vec_colour)",%%al\n \
-            jmp    jump_123252\n \
-        jump_12322b:\n \
+            jmp    jump_rend_md04_252\n \
+        jump_rend_md04_22b:\n \
             cmp    "EXPORT_SYMBOL(vec_window_width)",%%ecx\n \
-            jle    jump_123239\n \
+            jle    jump_rend_md04_239\n \
             mov    "EXPORT_SYMBOL(vec_window_width)",%%ecx\n \
-        jump_123239:\n \
+        jump_rend_md04_239:\n \
             sub    %%ax,%%cx\n \
-            jle    jump_1233e1\n \
+            jle    jump_rend_md04_3e1\n \
             add    %%eax,%%edi\n \
             movzbl "EXPORT_SYMBOL(vec_colour)",%%eax\n \
             mov    0x10(%%esi),%%bx\n \
             mov    0x12(%%esi),%%ah\n \
-        jump_123252:\n \
+        jump_rend_md04_252:\n \
             add    0x3c+%[lv],%%bx\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%dl\n \
             adc    0x3e+%[lv],%%ah\n \
             dec    %%cx\n \
             mov    %%dl,(%%edi)\n \
-            je     jump_1233e1\n \
+            je     jump_rend_md04_3e1\n \
             add    0x3c+%[lv],%%bx\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%dl\n \
             adc    0x3e+%[lv],%%ah\n \
             dec    %%cx\n \
             mov    %%dl,0x1(%%edi)\n \
-            je     jump_1233e1\n \
+            je     jump_rend_md04_3e1\n \
             add    0x3c+%[lv],%%bx\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%dl\n \
             adc    0x3e+%[lv],%%ah\n \
             dec    %%cx\n \
             mov    %%dl,0x2(%%edi)\n \
-            je     jump_1233e1\n \
+            je     jump_rend_md04_3e1\n \
             add    0x3c+%[lv],%%bx\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%dl\n \
             adc    0x3e+%[lv],%%ah\n \
             dec    %%cx\n \
             mov    %%dl,0x3(%%edi)\n \
-            je     jump_1233e1\n \
+            je     jump_rend_md04_3e1\n \
             add    0x3c+%[lv],%%bx\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%dl\n \
             adc    0x3e+%[lv],%%ah\n \
             dec    %%cx\n \
             mov    %%dl,0x4(%%edi)\n \
-            je     jump_1233e1\n \
+            je     jump_rend_md04_3e1\n \
             add    0x3c+%[lv],%%bx\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%dl\n \
             adc    0x3e+%[lv],%%ah\n \
             dec    %%cx\n \
             mov    %%dl,0x5(%%edi)\n \
-            je     jump_1233e1\n \
+            je     jump_rend_md04_3e1\n \
             add    0x3c+%[lv],%%bx\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%dl\n \
             adc    0x3e+%[lv],%%ah\n \
             dec    %%cx\n \
             mov    %%dl,0x6(%%edi)\n \
-            je     jump_1233e1\n \
+            je     jump_rend_md04_3e1\n \
             add    0x3c+%[lv],%%bx\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%dl\n \
             adc    0x3e+%[lv],%%ah\n \
             dec    %%cx\n \
             mov    %%dl,0x7(%%edi)\n \
-            je     jump_1233e1\n \
+            je     jump_rend_md04_3e1\n \
             add    0x3c+%[lv],%%bx\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%dl\n \
             adc    0x3e+%[lv],%%ah\n \
             dec    %%cx\n \
             mov    %%dl,0x8(%%edi)\n \
-            je     jump_1233e1\n \
+            je     jump_rend_md04_3e1\n \
             add    0x3c+%[lv],%%bx\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%dl\n \
             adc    0x3e+%[lv],%%ah\n \
             dec    %%cx\n \
             mov    %%dl,0x9(%%edi)\n \
-            je     jump_1233e1\n \
+            je     jump_rend_md04_3e1\n \
             add    0x3c+%[lv],%%bx\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%dl\n \
             adc    0x3e+%[lv],%%ah\n \
             dec    %%cx\n \
             mov    %%dl,0xa(%%edi)\n \
-            je     jump_1233e1\n \
+            je     jump_rend_md04_3e1\n \
             add    0x3c+%[lv],%%bx\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%dl\n \
             adc    0x3e+%[lv],%%ah\n \
             dec    %%cx\n \
             mov    %%dl,0xb(%%edi)\n \
-            je     jump_1233e1\n \
+            je     jump_rend_md04_3e1\n \
             add    0x3c+%[lv],%%bx\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%dl\n \
             adc    0x3e+%[lv],%%ah\n \
             dec    %%cx\n \
             mov    %%dl,0xc(%%edi)\n \
-            je     jump_1233e1\n \
+            je     jump_rend_md04_3e1\n \
             add    0x3c+%[lv],%%bx\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%dl\n \
             adc    0x3e+%[lv],%%ah\n \
             dec    %%cx\n \
             mov    %%dl,0xd(%%edi)\n \
-            je     jump_1233e1\n \
+            je     jump_rend_md04_3e1\n \
             add    0x3c+%[lv],%%bx\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%dl\n \
             adc    0x3e+%[lv],%%ah\n \
             dec    %%cx\n \
             mov    %%dl,0xe(%%edi)\n \
-            je     jump_1233e1\n \
+            je     jump_rend_md04_3e1\n \
             add    0x3c+%[lv],%%bx\n \
             mov    "EXPORT_SYMBOL(fade_table)"(%%eax),%%dl\n \
             adc    0x3e+%[lv],%%ah\n \
             dec    %%cx\n \
             mov    %%dl,0xf(%%edi)\n \
-            je     jump_1233e1\n \
+            je     jump_rend_md04_3e1\n \
             add    $0x10,%%edi\n \
-            jmp    jump_123252\n \
-        jump_1233e1:\n \
+            jmp    jump_rend_md04_252\n \
+        jump_rend_md04_3e1:\n \
             add    $0x14,%%esi\n \
             decl   0x20+%[lv]\n \
-            jne    jump_1231d9\n \
+            jne    jump_rend_md04_1d9\n \
             popa\n \
         "
                  : [lv] "+o" (lv)
@@ -3107,9 +3112,9 @@ ready_for_render:\n \
             mov    0x30+%[lv],%%edx\n \
             mov    0x3c+%[lv],%%ebp\n \
             cmp    $0x0,%%ebp\n \
-            jae    jump_123451\n \
+            jae    jump_rend_md05_451\n \
             dec    %%ecx\n \
-        jump_123451:\n \
+        jump_rend_md05_451:\n \
             rol    $0x10,%%ecx\n \
             rol    $0x10,%%edx\n \
             shr    $0x8,%%ebp\n \
@@ -3119,7 +3124,7 @@ ready_for_render:\n \
             mov    %%ecx,0x4c+%[lv]\n \
             mov    %%edx,0x50+%[lv]\n \
             mov    %%bl,0x64+%[lv]\n \
-        jump_12346d:\n \
+        jump_rend_md05_46d:\n \
             mov    0x5c+%[lv],%%esi\n \
             addl   $0x14,0x5c+%[lv]\n \
             mov    (%%esi),%%eax\n \
@@ -3130,9 +3135,9 @@ ready_for_render:\n \
             add    "EXPORT_SYMBOL(vec_screen_width)",%%edi\n \
             mov    %%edi,0x0+%[lv]\n \
             or     %%eax,%%eax\n \
-            jns    jump_1234db\n \
+            jns    jump_rend_md05_4db\n \
             or     %%ebp,%%ebp\n \
-            jle    jump_12373b\n \
+            jle    jump_rend_gt_73b\n \
             neg    %%eax\n \
             mov    0x24+%[lv],%%ecx\n \
             imul   %%eax,%%ecx\n \
@@ -3151,17 +3156,17 @@ ready_for_render:\n \
             mov    %%bx,%%cx\n \
             mov    %%al,%%bh\n \
             cmp    "EXPORT_SYMBOL(vec_window_width)",%%ebp\n \
-            jle    jump_1234d9\n \
+            jle    jump_rend_md05_4d9\n \
             mov    "EXPORT_SYMBOL(vec_window_width)",%%ebp\n \
-        jump_1234d9:\n \
-            jmp    jump_12350e\n \
-        jump_1234db:\n \
+        jump_rend_md05_4d9:\n \
+            jmp    jump_rend_md05_50e\n \
+        jump_rend_md05_4db:\n \
             cmp    "EXPORT_SYMBOL(vec_window_width)",%%ebp\n \
-            jle    jump_1234e9\n \
+            jle    jump_rend_md05_4e9\n \
             mov    "EXPORT_SYMBOL(vec_window_width)",%%ebp\n \
-        jump_1234e9:\n \
+        jump_rend_md05_4e9:\n \
             sub    %%eax,%%ebp\n \
-            jle    jump_12373b\n \
+            jle    jump_rend_gt_73b\n \
             add    %%eax,%%edi\n \
             mov    0x8(%%esi),%%ecx\n \
             mov    0xc(%%esi),%%edx\n \
@@ -3173,7 +3178,7 @@ ready_for_render:\n \
             mov    %%cl,%%dl\n \
             mov    %%bx,%%cx\n \
             mov    %%al,%%bh\n \
-        jump_12350e:\n \
+        jump_rend_md05_50e:\n \
             xor    %%dh,%%dh\n \
             and    $0xffff,%%ebx\n \
             mov    %%ebp,%%eax\n \
@@ -3410,9 +3415,9 @@ gt_md01:\n \
             add    $0x10,%%edi\n \
             sub    $0x10,%%ebp\n \
             jg     gt_md00\n \
-        jump_12373b:\n \
+        jump_rend_gt_73b:\n \
             decl   0x20+%[lv]\n \
-            jne    jump_12346d\n \
+            jne    jump_rend_md05_46d\n \
             popa\n \
         "
                  : [lv] "+o" (lv)
