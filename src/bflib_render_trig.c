@@ -81,6 +81,35 @@ extern const long add_to_edi[];
 
 /******************************************************************************/
 
+struct TrigLocals lv;
+
+void trig_render_md00(struct TrigLocals *lv);
+void trig_render_md01(struct TrigLocals *lv);
+void trig_render_md02(struct TrigLocals *lv);
+void trig_render_md03(struct TrigLocals *lv);
+void trig_render_md04(struct TrigLocals *lv);
+void trig_render_md05(struct TrigLocals *lv);
+void trig_render_md06(struct TrigLocals *lv);
+void trig_render_md07(struct TrigLocals *lv);
+void trig_render_md08(struct TrigLocals *lv);
+void trig_render_md09(struct TrigLocals *lv);
+void trig_render_md10(struct TrigLocals *lv);
+void trig_render_md12(struct TrigLocals *lv);
+void trig_render_md13(struct TrigLocals *lv);
+void trig_render_md14(struct TrigLocals *lv);
+void trig_render_md15(struct TrigLocals *lv);
+void trig_render_md16(struct TrigLocals *lv);
+void trig_render_md17(struct TrigLocals *lv);
+void trig_render_md18(struct TrigLocals *lv);
+void trig_render_md19(struct TrigLocals *lv);
+void trig_render_md20(struct TrigLocals *lv);
+void trig_render_md21(struct TrigLocals *lv);
+void trig_render_md22(struct TrigLocals *lv);
+void trig_render_md23(struct TrigLocals *lv);
+void trig_render_md24(struct TrigLocals *lv);
+void trig_render_md25(struct TrigLocals *lv);
+void trig_render_md26(struct TrigLocals *lv);
+
 /** Triangle rendering function.
  *
  * @param point_a
@@ -94,7 +123,6 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
         :  : "a" (point_a), "d" (point_b), "b" (point_c));
     return;
 #endif
-    static struct TrigLocals lv;
 
     LOGNO("Pa(%ld,%ld,%ld)", point_a->X, point_a->Y, point_a->S);
     LOGNO("Pb(%ld,%ld,%ld)", point_b->X, point_b->Y, point_b->S);
@@ -2323,7 +2351,120 @@ ready_for_render_fin:\n \
 
     switch (vec_mode)
     {
-    case RendVec_mode00:
+     case RendVec_mode00:
+        trig_render_md00(&lv);
+        break;
+
+    case RendVec_mode01:
+        trig_render_md01(&lv);
+        break;
+
+    case RendVec_mode02:
+        trig_render_md02(&lv);
+        break;
+
+    case RendVec_mode03:
+        trig_render_md03(&lv);
+        break;
+
+    case RendVec_mode04:
+        trig_render_md04(&lv);
+        break;
+
+    case RendVec_mode05:
+        trig_render_md05(&lv);
+        break;
+
+    case RendVec_mode06:
+        trig_render_md06(&lv);
+        break;
+
+    case RendVec_mode07:
+    case RendVec_mode11:
+        if (vec_colour == 0x20)
+            trig_render_md02(&lv);
+        else
+            trig_render_md07(&lv);
+        break;
+
+    case RendVec_mode08:
+        trig_render_md08(&lv);
+        break;
+
+    case RendVec_mode09:
+        trig_render_md09(&lv);
+        break;
+
+    case RendVec_mode10:
+        trig_render_md10(&lv);
+        break;
+
+    case RendVec_mode12:
+        trig_render_md12(&lv);
+        break;
+
+    case RendVec_mode13:
+        trig_render_md13(&lv);
+        break;
+
+    case RendVec_mode14:
+        trig_render_md14(&lv);
+        break;
+
+    case RendVec_mode15:
+        trig_render_md15(&lv);
+        break;
+
+    case RendVec_mode16:
+        trig_render_md16(&lv);
+        break;
+
+    case RendVec_mode17:
+        trig_render_md17(&lv);
+        break;
+
+    case RendVec_mode18:
+        trig_render_md18(&lv);
+        break;
+
+    case RendVec_mode19:
+        trig_render_md19(&lv);
+        break;
+
+    case RendVec_mode20:
+        trig_render_md20(&lv);
+        break;
+
+    case RendVec_mode21:
+        trig_render_md21(&lv);
+        break;
+
+    case RendVec_mode22:
+        trig_render_md22(&lv);
+        break;
+
+    case RendVec_mode23:
+        trig_render_md23(&lv);
+        break;
+
+    case RendVec_mode24:
+        trig_render_md24(&lv);
+        break;
+
+    case RendVec_mode25:
+        trig_render_md25(&lv);
+        break;
+
+    case RendVec_mode26:
+        trig_render_md26(&lv);
+        break;
+    }
+
+    LOGNO("end");
+}
+
+void trig_render_md00(struct TrigLocals *lvu)
+{
         asm volatile (" \
             pushal\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
@@ -2377,9 +2518,10 @@ ready_for_render_fin:\n \
                  : [lv] "+o" (lv)
                  : "o0" (lv)
                  : "memory", "cc");
-        break;
+}
 
-    case RendVec_mode01:
+void trig_render_md01(struct TrigLocals *lvu)
+{
         asm volatile (" \
             pushal\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
@@ -2513,10 +2655,10 @@ ready_for_render_fin:\n \
                  : [lv] "+o" (lv)
                  : "o0" (lv)
                  : "memory", "cc");
-        break;
+}
 
-    case RendVec_mode02:
-        render_md02:
+void trig_render_md02(struct TrigLocals *lvu)
+{
         asm volatile (" \
             pushal\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
@@ -2712,9 +2854,10 @@ ready_for_render_fin:\n \
                  : [lv] "+o" (lv)
                  : "o0" (lv)
                  : "memory", "cc");
-        break;
+}
 
-    case RendVec_mode03:
+void trig_render_md03(struct TrigLocals *lvu)
+{
         asm volatile (" \
             pushal\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
@@ -2958,9 +3101,10 @@ ready_for_render_fin:\n \
                  : [lv] "+o" (lv)
                  : "o0" (lv)
                  : "memory", "cc");
-        break;
+}
 
-    case RendVec_mode04:
+void trig_render_md04(struct TrigLocals *lvu)
+{
         asm volatile (" \
             pushal\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
@@ -3110,9 +3254,10 @@ ready_for_render_fin:\n \
                  : [lv] "+o" (lv)
                  : "o0" (lv)
                  : "memory", "cc");
-        break;
+}
 
-    case RendVec_mode05:
+void trig_render_md05(struct TrigLocals *lvu)
+{
         asm volatile (" \
             pushal\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
@@ -3434,9 +3579,10 @@ gt_md01:\n \
                  : [lv] "+o" (lv)
                  : "o0" (lv)
                  : "memory", "cc");
-        break;
+}
 
-    case RendVec_mode06:
+void trig_render_md06(struct TrigLocals *lvu)
+{
         asm volatile (" \
             pushal\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
@@ -3812,12 +3958,10 @@ mgt_md01:\n \
                  : [lv] "+o" (lv)
                  : "o0" (lv)
                  : "memory", "cc");
-        break;
+}
 
-    case RendVec_mode07:
-    case RendVec_mode11:
-        if (vec_colour == 0x20)
-            goto render_md02;
+void trig_render_md07(struct TrigLocals *lvu)
+{
         asm volatile (" \
             pushal\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
@@ -4030,9 +4174,10 @@ mgt_md01:\n \
                  : [lv] "+o" (lv)
                  : "o0" (lv)
                  : "memory", "cc");
-        break;
+}
 
-    case RendVec_mode08:
+void trig_render_md08(struct TrigLocals *lvu)
+{
         asm volatile (" \
             pushal\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
@@ -4293,9 +4438,10 @@ mgt_md01:\n \
                  : [lv] "+o" (lv)
                  : "o0" (lv)
                  : "memory", "cc");
-        break;
+}
 
-    case RendVec_mode09:
+void trig_render_md09(struct TrigLocals *lvu)
+{
         asm volatile (" \
             pushal\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
@@ -4571,9 +4717,10 @@ mgt_md01:\n \
                  : [lv] "+o" (lv)
                  : "o0" (lv)
                  : "memory", "cc");
-        break;
+}
 
-    case RendVec_mode10:
+void trig_render_md10(struct TrigLocals *lvu)
+{
         asm volatile (" \
             pushal\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
@@ -4850,9 +4997,10 @@ mgt_md01:\n \
                  : [lv] "+o" (lv)
                  : "o0" (lv)
                  : "memory", "cc");
-        break;
+}
 
-    case RendVec_mode12:
+void trig_render_md12(struct TrigLocals *lvu)
+{
         asm volatile (" \
             pushal\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
@@ -5065,9 +5213,10 @@ mgt_md01:\n \
                  : [lv] "+o" (lv)
                  : "o0" (lv)
                  : "memory", "cc");
-        break;
+}
 
-    case RendVec_mode13:
+void trig_render_md13(struct TrigLocals *lvu)
+{
         asm volatile (" \
             pushal\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
@@ -5280,9 +5429,10 @@ mgt_md01:\n \
                  : [lv] "+o" (lv)
                  : "o0" (lv)
                  : "memory", "cc");
-        break;
+}
 
-    case RendVec_mode14:
+void trig_render_md14(struct TrigLocals *lvu)
+{
         asm volatile (" \
             pushal\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
@@ -5405,9 +5555,10 @@ mgt_md01:\n \
                  : [lv] "+o" (lv)
                  : "o0" (lv)
                  : "memory", "cc");
-        break;
+}
 
-    case RendVec_mode15:
+void trig_render_md15(struct TrigLocals *lvu)
+{
         asm volatile (" \
             pushal\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
@@ -5529,9 +5680,10 @@ mgt_md01:\n \
                  : [lv] "+o" (lv)
                  : "o0" (lv)
                  : "memory", "cc");
-        break;
+}
 
-    case RendVec_mode16:
+void trig_render_md16(struct TrigLocals *lvu)
+{
         asm volatile (" \
             pushal\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
@@ -5712,9 +5864,10 @@ mgt_md01:\n \
                  : [lv] "+o" (lv)
                  : "o0" (lv)
                  : "memory", "cc");
-        break;
+}
 
-    case RendVec_mode17:
+void trig_render_md17(struct TrigLocals *lvu)
+{
         asm volatile (" \
             pushal\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
@@ -5895,9 +6048,10 @@ mgt_md01:\n \
                  : [lv] "+o" (lv)
                  : "o0" (lv)
                  : "memory", "cc");
-        break;
+}
 
-    case RendVec_mode18:
+void trig_render_md18(struct TrigLocals *lvu)
+{
         asm volatile (" \
             pushal\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
@@ -6125,9 +6279,10 @@ mgt_md01:\n \
                  : [lv] "+o" (lv)
                  : "o0" (lv)
                  : "memory", "cc");
-        break;
+}
 
-    case RendVec_mode19:
+void trig_render_md19(struct TrigLocals *lvu)
+{
         asm volatile (" \
             pushal\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
@@ -6355,9 +6510,10 @@ mgt_md01:\n \
                  : [lv] "+o" (lv)
                  : "o0" (lv)
                  : "memory", "cc");
-        break;
+}
 
-    case RendVec_mode20:
+void trig_render_md20(struct TrigLocals *lvu)
+{
         asm volatile (" \
             pushal\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
@@ -6660,9 +6816,10 @@ mgt_md01:\n \
                  : [lv] "+o" (lv)
                  : "o0" (lv)
                  : "memory", "cc");
-        break;
+}
 
-    case RendVec_mode21:
+void trig_render_md21(struct TrigLocals *lvu)
+{
         asm volatile (" \
             pushal\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
@@ -6965,9 +7122,10 @@ mgt_md01:\n \
                  : [lv] "+o" (lv)
                  : "o0" (lv)
                  : "memory", "cc");
-        break;
+}
 
-    case RendVec_mode22:
+void trig_render_md22(struct TrigLocals *lvu)
+{
         asm volatile (" \
             pushal\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
@@ -7243,9 +7401,10 @@ mgt_md01:\n \
                  : [lv] "+o" (lv)
                  : "o0" (lv)
                  : "memory", "cc");
-        break;
+}
 
-    case RendVec_mode23:
+void trig_render_md23(struct TrigLocals *lvu)
+{
         asm volatile (" \
             pushal\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
@@ -7521,9 +7680,10 @@ mgt_md01:\n \
                  : [lv] "+o" (lv)
                  : "o0" (lv)
                  : "memory", "cc");
-        break;
+}
 
-    case RendVec_mode24:
+void trig_render_md24(struct TrigLocals *lvu)
+{
         asm volatile (" \
             pushal\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
@@ -7874,9 +8034,10 @@ mgt_md01:\n \
                  : [lv] "+o" (lv)
                  : "o0" (lv)
                  : "memory", "cc");
-        break;
+}
 
-    case RendVec_mode25:
+void trig_render_md25(struct TrigLocals *lvu)
+{
         asm volatile (" \
             pushal\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
@@ -8227,9 +8388,10 @@ mgt_md01:\n \
                  : [lv] "+o" (lv)
                  : "o0" (lv)
                  : "memory", "cc");
-        break;
+}
 
-    case RendVec_mode26:
+void trig_render_md26(struct TrigLocals *lvu)
+{
         asm volatile (" \
             pushal\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
@@ -8812,9 +8974,5 @@ t12_md01:\n \
                  : [lv] "+o" (lv)
                  : "o0" (lv)
                  : "memory", "cc");
-        break;
-    }
-
-    LOGNO("end");
 }
 /******************************************************************************/
