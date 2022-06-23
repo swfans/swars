@@ -101,7 +101,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
     LOGNO("Pc(%ld,%ld,%ld)", point_c->X, point_c->Y, point_c->S);
 
     asm volatile (" \
-            pusha\n \
+            pushal\n \
             mov    %%eax,%%esi\n \
             mov    %%edx,%%edi\n \
             mov    %%ebx,%%ecx\n \
@@ -2303,12 +2303,12 @@ ft_md00:\n \
             jmp    ready_for_render\n \
 \n \
 ready_for_bailout:\n \
-            popa\n \
+            popal\n \
             movb   $0x0,0x6c+%[lv]\n \
             jmp    ready_for_render_fin\n \
 \n \
 ready_for_render:\n \
-            popa\n \
+            popal\n \
             movb   $0x9,0x6c+%[lv]\n \
 ready_for_render_fin:\n \
     "
@@ -2325,7 +2325,7 @@ ready_for_render_fin:\n \
     {
     case RendVec_mode00:
         asm volatile (" \
-            pusha\n \
+            pushal\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
             mov    0x0+%[lv],%%edx\n \
             mov    "EXPORT_SYMBOL(vec_colour)",%%al\n \
@@ -2372,7 +2372,7 @@ ready_for_render_fin:\n \
             decl   0x20+%[lv]\n \
             jne    jump_rend_md00_a3c\n \
         jump_rend_md00_a92:\n \
-            popa\n \
+            popal\n \
         "
                  : [lv] "+o" (lv)
                  : "o0" (lv)
@@ -2381,7 +2381,7 @@ ready_for_render_fin:\n \
 
     case RendVec_mode01:
         asm volatile (" \
-            pusha\n \
+            pushal\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
             xor    %%eax,%%eax\n \
             xor    %%ebx,%%ebx\n \
@@ -2508,7 +2508,7 @@ ready_for_render_fin:\n \
             add    $0x14,%%esi\n \
             decl   0x20+%[lv]\n \
             jne    jump_rend_md01_aa1\n \
-            popa\n \
+            popal\n \
         "
                  : [lv] "+o" (lv)
                  : "o0" (lv)
@@ -2518,7 +2518,7 @@ ready_for_render_fin:\n \
     case RendVec_mode02:
         render_md02:
         asm volatile (" \
-            pusha\n \
+            pushal\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
             mov    0x30+%[lv],%%eax\n \
             shl    $0x10,%%eax\n \
@@ -2707,7 +2707,7 @@ ready_for_render_fin:\n \
             add    $0x14,%%esi\n \
             decl   0x20+%[lv]\n \
             jne    jump_rend_md02_c6a\n \
-            popa\n \
+            popal\n \
         "
                  : [lv] "+o" (lv)
                  : "o0" (lv)
@@ -2716,7 +2716,7 @@ ready_for_render_fin:\n \
 
     case RendVec_mode03:
         asm volatile (" \
-            pusha\n \
+            pushal\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
             mov    0x30+%[lv],%%eax\n \
             shl    $0x10,%%eax\n \
@@ -2953,7 +2953,7 @@ ready_for_render_fin:\n \
             add    $0x14,%%esi\n \
             decl   0x20+%[lv]\n \
             jne    jump_rend_md03_f06\n \
-            popa\n \
+            popal\n \
         "
                  : [lv] "+o" (lv)
                  : "o0" (lv)
@@ -2962,7 +2962,7 @@ ready_for_render_fin:\n \
 
     case RendVec_mode04:
         asm volatile (" \
-            pusha\n \
+            pushal\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
             xor    %%eax,%%eax\n \
             xor    %%ebx,%%ebx\n \
@@ -3105,7 +3105,7 @@ ready_for_render_fin:\n \
             add    $0x14,%%esi\n \
             decl   0x20+%[lv]\n \
             jne    jump_rend_md04_1d9\n \
-            popa\n \
+            popal\n \
         "
                  : [lv] "+o" (lv)
                  : "o0" (lv)
@@ -3114,7 +3114,7 @@ ready_for_render_fin:\n \
 
     case RendVec_mode05:
         asm volatile (" \
-            pusha\n \
+            pushal\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
             mov    %%esi,0x5c+%[lv]\n \
             xor    %%eax,%%eax\n \
@@ -3429,7 +3429,7 @@ gt_md01:\n \
         jump_rend_gt_73b:\n \
             decl   0x20+%[lv]\n \
             jne    jump_rend_md05_46d\n \
-            popa\n \
+            popal\n \
         "
                  : [lv] "+o" (lv)
                  : "o0" (lv)
@@ -3438,7 +3438,7 @@ gt_md01:\n \
 
     case RendVec_mode06:
         asm volatile (" \
-            pusha\n \
+            pushal\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
             mov    %%esi,0x5c+%[lv]\n \
             mov    0x30+%[lv],%%eax\n \
@@ -3807,7 +3807,7 @@ mgt_md01:\n \
         jump_123b1c:\n \
             decl   0x20+%[lv]\n \
             jne    jump_123770\n \
-            popa\n \
+            popal\n \
         "
                  : [lv] "+o" (lv)
                  : "o0" (lv)
@@ -3819,7 +3819,7 @@ mgt_md01:\n \
         if (vec_colour == 0x20)
             goto render_md02;
         asm volatile (" \
-            pusha\n \
+            pushal\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
             mov    0x30+%[lv],%%eax\n \
             shl    $0x10,%%eax\n \
@@ -4025,7 +4025,7 @@ mgt_md01:\n \
             add    $0x14,%%esi\n \
             decl   0x20+%[lv]\n \
             jne    jump_123b4f\n \
-            popa\n \
+            popal\n \
         "
                  : [lv] "+o" (lv)
                  : "o0" (lv)
@@ -4034,7 +4034,7 @@ mgt_md01:\n \
 
     case RendVec_mode08:
         asm volatile (" \
-            pusha\n \
+            pushal\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
             mov    0x30+%[lv],%%eax\n \
             shl    $0x10,%%eax\n \
@@ -4288,7 +4288,7 @@ mgt_md01:\n \
             add    $0x14,%%esi\n \
             decl   0x20+%[lv]\n \
             jne    jump_123e55\n \
-            popa\n \
+            popal\n \
         "
                  : [lv] "+o" (lv)
                  : "o0" (lv)
@@ -4297,7 +4297,7 @@ mgt_md01:\n \
 
     case RendVec_mode09:
         asm volatile (" \
-            pusha\n \
+            pushal\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
             mov    0x30+%[lv],%%eax\n \
             shl    $0x10,%%eax\n \
@@ -4566,7 +4566,7 @@ mgt_md01:\n \
             add    $0x14,%%esi\n \
             decl   0x20+%[lv]\n \
             jne    jump_12419b\n \
-            popa\n \
+            popal\n \
         "
                  : [lv] "+o" (lv)
                  : "o0" (lv)
@@ -4575,7 +4575,7 @@ mgt_md01:\n \
 
     case RendVec_mode10:
         asm volatile (" \
-            pusha\n \
+            pushal\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
             mov    0x30+%[lv],%%eax\n \
             shl    $0x10,%%eax\n \
@@ -4845,7 +4845,7 @@ mgt_md01:\n \
             add    $0x14,%%esi\n \
             decl   0x20+%[lv]\n \
             jne    jump_12450e\n \
-            popa\n \
+            popal\n \
         "
                  : [lv] "+o" (lv)
                  : "o0" (lv)
@@ -4854,7 +4854,7 @@ mgt_md01:\n \
 
     case RendVec_mode12:
         asm volatile (" \
-            pusha\n \
+            pushal\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
             mov    0x30+%[lv],%%eax\n \
             shl    $0x10,%%eax\n \
@@ -5060,7 +5060,7 @@ mgt_md01:\n \
             add    $0x14,%%esi\n \
             decl   0x20+%[lv]\n \
             jne    jump_124887\n \
-            popa\n \
+            popal\n \
         "
                  : [lv] "+o" (lv)
                  : "o0" (lv)
@@ -5069,7 +5069,7 @@ mgt_md01:\n \
 
     case RendVec_mode13:
         asm volatile (" \
-            pusha\n \
+            pushal\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
             mov    0x30+%[lv],%%eax\n \
             shl    $0x10,%%eax\n \
@@ -5275,7 +5275,7 @@ mgt_md01:\n \
             add    $0x14,%%esi\n \
             decl   0x20+%[lv]\n \
             jne    jump_124b8c\n \
-            popa\n \
+            popal\n \
         "
                  : [lv] "+o" (lv)
                  : "o0" (lv)
@@ -5284,7 +5284,7 @@ mgt_md01:\n \
 
     case RendVec_mode14:
         asm volatile (" \
-            pusha\n \
+            pushal\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
             mov    0x0+%[lv],%%edx\n \
             xor    %%eax,%%eax\n \
@@ -5400,7 +5400,7 @@ mgt_md01:\n \
             add    $0x14,%%esi\n \
             decl   0x20+%[lv]\n \
             jne    jump_124e90\n \
-            popa\n \
+            popal\n \
         "
                  : [lv] "+o" (lv)
                  : "o0" (lv)
@@ -5409,7 +5409,7 @@ mgt_md01:\n \
 
     case RendVec_mode15:
         asm volatile (" \
-            pusha\n \
+            pushal\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
             mov    0x0+%[lv],%%edx\n \
             movzbl "EXPORT_SYMBOL(vec_colour)",%%eax\n \
@@ -5524,7 +5524,7 @@ mgt_md01:\n \
             add    $0x14,%%esi\n \
             decl   0x20+%[lv]\n \
             jne    jump_125024\n \
-            popa\n \
+            popal\n \
         "
                  : [lv] "+o" (lv)
                  : "o0" (lv)
@@ -5533,7 +5533,7 @@ mgt_md01:\n \
 
     case RendVec_mode16:
         asm volatile (" \
-            pusha\n \
+            pushal\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
             xor    %%eax,%%eax\n \
             xor    %%edx,%%edx\n \
@@ -5707,7 +5707,7 @@ mgt_md01:\n \
             add    $0x14,%%esi\n \
             decl   0x20+%[lv]\n \
             jne    jump_1251ac\n \
-            popa\n \
+            popal\n \
         "
                  : [lv] "+o" (lv)
                  : "o0" (lv)
@@ -5716,7 +5716,7 @@ mgt_md01:\n \
 
     case RendVec_mode17:
         asm volatile (" \
-            pusha\n \
+            pushal\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
             xor    %%eax,%%eax\n \
             xor    %%edx,%%edx\n \
@@ -5890,7 +5890,7 @@ mgt_md01:\n \
             add    $0x14,%%esi\n \
             decl   0x20+%[lv]\n \
             jne    jump_125465\n \
-            popa\n \
+            popal\n \
         "
                  : [lv] "+o" (lv)
                  : "o0" (lv)
@@ -5899,7 +5899,7 @@ mgt_md01:\n \
 
     case RendVec_mode18:
         asm volatile (" \
-            pusha\n \
+            pushal\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
             mov    0x30+%[lv],%%eax\n \
             shl    $0x10,%%eax\n \
@@ -6120,7 +6120,7 @@ mgt_md01:\n \
             add    $0x14,%%esi\n \
             decl   0x20+%[lv]\n \
             jne    jump_12572d\n \
-            popa\n \
+            popal\n \
         "
                  : [lv] "+o" (lv)
                  : "o0" (lv)
@@ -6129,7 +6129,7 @@ mgt_md01:\n \
 
     case RendVec_mode19:
         asm volatile (" \
-            pusha\n \
+            pushal\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
             mov    0x30+%[lv],%%eax\n \
             shl    $0x10,%%eax\n \
@@ -6350,7 +6350,7 @@ mgt_md01:\n \
             add    $0x14,%%esi\n \
             decl   0x20+%[lv]\n \
             jne    jump_125a5c\n \
-            popa\n \
+            popal\n \
         "
                  : [lv] "+o" (lv)
                  : "o0" (lv)
@@ -6359,7 +6359,7 @@ mgt_md01:\n \
 
     case RendVec_mode20:
         asm volatile (" \
-            pusha\n \
+            pushal\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
             mov    0x30+%[lv],%%eax\n \
             shl    $0x10,%%eax\n \
@@ -6655,7 +6655,7 @@ mgt_md01:\n \
             add    $0x14,%%esi\n \
             decl   0x20+%[lv]\n \
             jne    jump_125d96\n \
-            popa\n \
+            popal\n \
         "
                  : [lv] "+o" (lv)
                  : "o0" (lv)
@@ -6664,7 +6664,7 @@ mgt_md01:\n \
 
     case RendVec_mode21:
         asm volatile (" \
-            pusha\n \
+            pushal\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
             mov    0x30+%[lv],%%eax\n \
             shl    $0x10,%%eax\n \
@@ -6960,7 +6960,7 @@ mgt_md01:\n \
             add    $0x14,%%esi\n \
             decl   0x20+%[lv]\n \
             jne    jump_12620f\n \
-            popa\n \
+            popal\n \
         "
                  : [lv] "+o" (lv)
                  : "o0" (lv)
@@ -6969,7 +6969,7 @@ mgt_md01:\n \
 
     case RendVec_mode22:
         asm volatile (" \
-            pusha\n \
+            pushal\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
             mov    0x30+%[lv],%%eax\n \
             shl    $0x10,%%eax\n \
@@ -7238,7 +7238,7 @@ mgt_md01:\n \
             add    $0x14,%%esi\n \
             decl   0x20+%[lv]\n \
             jne    jump_12667d\n \
-            popa\n \
+            popal\n \
         "
                  : [lv] "+o" (lv)
                  : "o0" (lv)
@@ -7247,7 +7247,7 @@ mgt_md01:\n \
 
     case RendVec_mode23:
         asm volatile (" \
-            pusha\n \
+            pushal\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
             mov    0x30+%[lv],%%eax\n \
             shl    $0x10,%%eax\n \
@@ -7516,7 +7516,7 @@ mgt_md01:\n \
             add    $0x14,%%esi\n \
             decl   0x20+%[lv]\n \
             jne    jump_1269f0\n \
-            popa\n \
+            popal\n \
         "
                  : [lv] "+o" (lv)
                  : "o0" (lv)
@@ -7525,7 +7525,7 @@ mgt_md01:\n \
 
     case RendVec_mode24:
         asm volatile (" \
-            pusha\n \
+            pushal\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
             mov    0x30+%[lv],%%eax\n \
             shl    $0x10,%%eax\n \
@@ -7869,7 +7869,7 @@ mgt_md01:\n \
             add    $0x14,%%esi\n \
             decl   0x20+%[lv]\n \
             jne    jump_126d6e\n \
-            popa\n \
+            popal\n \
         "
                  : [lv] "+o" (lv)
                  : "o0" (lv)
@@ -7878,7 +7878,7 @@ mgt_md01:\n \
 
     case RendVec_mode25:
         asm volatile (" \
-            pusha\n \
+            pushal\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
             mov    0x30+%[lv],%%eax\n \
             shl    $0x10,%%eax\n \
@@ -8222,7 +8222,7 @@ mgt_md01:\n \
             add    $0x14,%%esi\n \
             decl   0x20+%[lv]\n \
             jne    jump_127227\n \
-            popa\n \
+            popal\n \
         "
                  : [lv] "+o" (lv)
                  : "o0" (lv)
@@ -8231,7 +8231,7 @@ mgt_md01:\n \
 
     case RendVec_mode26:
         asm volatile (" \
-            pusha\n \
+            pushal\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
             mov    %%esi,0x5c+%[lv]\n \
             xor    %%eax,%%eax\n \
@@ -8807,7 +8807,7 @@ t12_md01:\n \
             decl   0x20+%[lv]\n \
             jne    jump_1276f4\n \
         jump_return:\n \
-            popa\n \
+            popal\n \
         "
                  : [lv] "+o" (lv)
                  : "o0" (lv)
