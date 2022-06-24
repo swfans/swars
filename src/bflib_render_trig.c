@@ -1380,7 +1380,6 @@ int trig_rl_start(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
         return 0;
 
     asm volatile (" \
-            pushal\n \
             movzbl "EXPORT_SYMBOL(vec_mode)",%%eax\n \
             jmp    *rl_jt(,%%eax,4)\n \
 \n \
@@ -1417,6 +1416,7 @@ rl_jt: /* swars-final @ 0x121814 */\n \
 /*----------------------------------------------------------------*/\n \
 rl_md05:\n \
 /*----------------------------------------------------------------*/\n \
+            pushal\n \
             mov    0x10+%[lv],%%eax\n \
             shl    $0x10,%%eax\n \
             cltd\n \
@@ -1429,7 +1429,7 @@ rl_md05:\n \
             mov    (%%esi),%%ebx\n \
             sub    (%%ecx),%%ebx\n \
             add    %%eax,%%ebx\n \
-            jl     jump_pr_rl_bailout\n \
+            jl     jump_pr_rl_md05_bailout\n \
             je     jump_pr_rl_Lf7\n \
             inc    %%ebx\n \
             mov    0x8(%%edi),%%eax\n \
@@ -1501,7 +1501,7 @@ rl_md05:\n \
             mov    0x54+%[lv],%%edi\n \
             neg    %%edi\n \
             sub    %%edi,0x20+%[lv]\n \
-            jle    jump_pr_rl_bailout\n \
+            jle    jump_pr_rl_md05_bailout\n \
             mov    %%edi,0x48+%[lv]\n \
             cmp    0x10+%[lv],%%edi\n \
             js     jump_pr_rl_M21\n \
@@ -1609,7 +1609,7 @@ rl_md05:\n \
         jump_pr_rl_Med:\n \
             cmpb   $0x0,0x67+%[lv]\n \
             je     jump_pr_rl_N02\n \
-            jmp    jump_pr_rl_render\n \
+            jmp    jump_pr_rl_md05_render\n \
         jump_pr_rl_N02:\n \
             mov    %%eax,(%%edi)\n \
             add    0xc+%[lv],%%eax\n \
@@ -1624,12 +1624,22 @@ rl_md05:\n \
             add    $0x14,%%edi\n \
             decl   0x18+%[lv]\n \
             jne    jump_pr_rl_N02\n \
-            jmp    jump_pr_rl_render\n \
+            jmp    jump_pr_rl_md05_render\n \
+\n \
+jump_pr_rl_md05_bailout:\n \
+            popal\n \
+            movl   $0x0,%%eax\n \
+            jmp    jump_pr_rl_end\n \
+jump_pr_rl_md05_render:\n \
+            popal\n \
+            movl   $0x1,%%eax\n \
+            jmp    jump_pr_rl_end\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
 rl_md02:\n \
 /*----------------------------------------------------------------*/\n \
+            pushal\n \
             mov    0x10+%[lv],%%eax\n \
             shl    $0x10,%%eax\n \
             cltd\n \
@@ -1642,7 +1652,7 @@ rl_md02:\n \
             mov    (%%esi),%%ebx\n \
             sub    (%%ecx),%%ebx\n \
             add    %%eax,%%ebx\n \
-            jl     jump_pr_rl_bailout\n \
+            jl     jump_pr_rl_md02_bailout\n \
             je     jump_pr_rl_N9b\n \
             inc    %%ebx\n \
             mov    0x8(%%edi),%%eax\n \
@@ -1694,7 +1704,7 @@ rl_md02:\n \
             mov    0x54+%[lv],%%edi\n \
             neg    %%edi\n \
             sub    %%edi,0x20+%[lv]\n \
-            jle    jump_pr_rl_bailout\n \
+            jle    jump_pr_rl_md02_bailout\n \
             mov    %%edi,0x48+%[lv]\n \
             cmp    0x10+%[lv],%%edi\n \
             js     jump_pr_rl_O86\n \
@@ -1791,7 +1801,7 @@ rl_md02:\n \
         jump_pr_rl_P40:\n \
             cmpb   $0x0,0x67+%[lv]\n \
             je     jump_pr_rl_P55\n \
-            jmp    jump_pr_rl_render\n \
+            jmp    jump_pr_rl_md02_render\n \
         jump_pr_rl_P55:\n \
             mov    %%eax,(%%edi)\n \
             add    0xc+%[lv],%%eax\n \
@@ -1804,12 +1814,22 @@ rl_md02:\n \
             add    $0x14,%%edi\n \
             decl   0x18+%[lv]\n \
             jne    jump_pr_rl_P55\n \
-            jmp    jump_pr_rl_render\n \
+            jmp    jump_pr_rl_md02_render\n \
+\n \
+jump_pr_rl_md02_bailout:\n \
+            popal\n \
+            movl   $0x0,%%eax\n \
+            jmp    jump_pr_rl_end\n \
+jump_pr_rl_md02_render:\n \
+            popal\n \
+            movl   $0x1,%%eax\n \
+            jmp    jump_pr_rl_end\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
 rl_md01:\n \
 /*----------------------------------------------------------------*/\n \
+            pushal\n \
             mov    0x10+%[lv],%%eax\n \
             shl    $0x10,%%eax\n \
             cltd\n \
@@ -1822,7 +1842,7 @@ rl_md01:\n \
             mov    (%%esi),%%ebx\n \
             sub    (%%ecx),%%ebx\n \
             add    %%eax,%%ebx\n \
-            jl     jump_pr_rl_bailout\n \
+            jl     jump_pr_rl_md01_bailout\n \
             je     jump_pr_rl_Pcc\n \
             inc    %%ebx\n \
             mov    0x10(%%edi),%%eax\n \
@@ -1854,7 +1874,7 @@ rl_md01:\n \
             mov    0x54+%[lv],%%edi\n \
             neg    %%edi\n \
             sub    %%edi,0x20+%[lv]\n \
-            jle    jump_pr_rl_bailout\n \
+            jle    jump_pr_rl_md01_bailout\n \
             mov    %%edi,0x48+%[lv]\n \
             cmp    0x10+%[lv],%%edi\n \
             js     jump_pr_rl_Q80\n \
@@ -1940,7 +1960,7 @@ rl_md01:\n \
         jump_pr_rl_R28:\n \
             cmpb   $0x0,0x67+%[lv]\n \
             je     jump_pr_rl_R3d\n \
-            jmp    jump_pr_rl_render\n \
+            jmp    jump_pr_rl_md01_render\n \
         jump_pr_rl_R3d:\n \
             mov    %%eax,(%%edi)\n \
             add    0xc+%[lv],%%eax\n \
@@ -1951,12 +1971,22 @@ rl_md01:\n \
             add    $0x14,%%edi\n \
             decl   0x18+%[lv]\n \
             jne    jump_pr_rl_R3d\n \
-            jmp    jump_pr_rl_render\n \
+            jmp    jump_pr_rl_md01_render\n \
+\n \
+jump_pr_rl_md01_bailout:\n \
+            popal\n \
+            movl   $0x0,%%eax\n \
+            jmp    jump_pr_rl_end\n \
+jump_pr_rl_md01_render:\n \
+            popal\n \
+            movl   $0x1,%%eax\n \
+            jmp    jump_pr_rl_end\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
 rl_md00:\n \
 /*----------------------------------------------------------------*/\n \
+            pushal\n \
             mov    (%%esi),%%eax\n \
             shl    $0x10,%%eax\n \
             mov    %%eax,%%ebx\n \
@@ -1965,7 +1995,7 @@ rl_md00:\n \
             mov    0x54+%[lv],%%edi\n \
             neg    %%edi\n \
             sub    %%edi,0x20+%[lv]\n \
-            jle    jump_pr_rl_bailout\n \
+            jle    jump_pr_rl_md00_bailout\n \
             mov    %%edi,0x48+%[lv]\n \
             cmp    0x10+%[lv],%%edi\n \
             js     jump_pr_rl_Re5\n \
@@ -2040,7 +2070,7 @@ rl_md00:\n \
         jump_pr_rl_S7b:\n \
             cmpb   $0x0,0x67+%[lv]\n \
             je     jump_pr_rl_S90\n \
-            jmp    jump_pr_rl_render\n \
+            jmp    jump_pr_rl_md00_render\n \
         jump_pr_rl_S90:\n \
             mov    %%eax,(%%edi)\n \
             add    0xc+%[lv],%%eax\n \
@@ -2049,15 +2079,17 @@ rl_md00:\n \
             add    $0x14,%%edi\n \
             decl   0x18+%[lv]\n \
             jne    jump_pr_rl_S90\n \
-            jmp    jump_pr_rl_render\n \
+            jmp    jump_pr_rl_md00_render\n \
 \n \
-jump_pr_rl_bailout:\n \
+jump_pr_rl_md00_bailout:\n \
             popal\n \
             movl   $0x0,%%eax\n \
             jmp    jump_pr_rl_end\n \
-jump_pr_rl_render:\n \
+jump_pr_rl_md00_render:\n \
             popal\n \
             movl   $0x1,%%eax\n \
+            jmp    jump_pr_rl_end\n \
+\n \
 jump_pr_rl_end:\n \
     "
                  : [lv] "+o" (lv), "=a" (ret)
@@ -2121,7 +2153,6 @@ int trig_fb_start(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
         return 0;
 
     asm volatile (" \
-            pushal\n \
             movzbl "EXPORT_SYMBOL(vec_mode)",%%eax\n \
             jmp    *fb_jt(,%%eax,4)\n \
 \n \
@@ -2158,6 +2189,7 @@ fb_jt: /* swars-final @ 0x122142, genewars-beta @ 0xEFE72 */\n \
 /*----------------------------------------------------------------*/\n \
 fb_md03:\n \
 /*----------------------------------------------------------------*/\n \
+            pushal\n \
             mov    (%%edi),%%ebx\n \
             sub    (%%ecx),%%ebx\n \
             mov    0x8(%%edi),%%eax\n \
@@ -2202,7 +2234,7 @@ fb_md03:\n \
             neg    %%edi\n \
             sub    %%edi,0x10+%[lv]\n \
             sub    %%edi,0x20+%[lv]\n \
-            jle    jump_pr_fb_bailout\n \
+            jle    jump_pr_fb_md03_bailout\n \
             mov    %%edi,0x48+%[lv]\n \
             imul   0x4+%[lv],%%edi\n \
             add    %%edi,%%eax\n \
@@ -2247,12 +2279,22 @@ fb_md03:\n \
             add    $0x14,%%edi\n \
             decl   0x10+%[lv]\n \
             jne    jump_12229e\n \
-            jmp    jump_pr_fb_render\n \
+            jmp    jump_pr_fb_md03_render\n \
+\n \
+jump_pr_fb_md03_bailout:\n \
+            popal\n \
+            movl   $0x0,%%eax\n \
+            jmp    jump_pr_fb_end\n \
+jump_pr_fb_md03_render:\n \
+            popal\n \
+            movl   $0x1,%%eax\n \
+            jmp    jump_pr_fb_end\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
 fb_md02:\n \
 /*----------------------------------------------------------------*/\n \
+            pushal\n \
             mov    (%%edi),%%ebx\n \
             sub    (%%ecx),%%ebx\n \
             mov    0x8(%%edi),%%eax\n \
@@ -2286,7 +2328,7 @@ fb_md02:\n \
             neg    %%edi\n \
             sub    %%edi,0x10+%[lv]\n \
             sub    %%edi,0x20+%[lv]\n \
-            jle    jump_pr_fb_bailout\n \
+            jle    jump_pr_fb_md02_bailout\n \
             mov    %%edi,0x48+%[lv]\n \
             imul   0x4+%[lv],%%edi\n \
             add    %%edi,%%eax\n \
@@ -2329,12 +2371,22 @@ fb_md02:\n \
             add    $0x14,%%edi\n \
             decl   0x10+%[lv]\n \
             jne    jump_1223a8\n \
-            jmp    jump_pr_fb_render\n \
+            jmp    jump_pr_fb_md02_render\n \
+\n \
+jump_pr_fb_md02_bailout:\n \
+            popal\n \
+            movl   $0x0,%%eax\n \
+            jmp    jump_pr_fb_end\n \
+jump_pr_fb_md02_render:\n \
+            popal\n \
+            movl   $0x1,%%eax\n \
+            jmp    jump_pr_fb_end\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
 fb_md01:\n \
 /*----------------------------------------------------------------*/\n \
+            pushal\n \
             mov    (%%edi),%%ebx\n \
             sub    (%%ecx),%%ebx\n \
             mov    0x10(%%edi),%%eax\n \
@@ -2357,7 +2409,7 @@ fb_md01:\n \
             neg    %%edi\n \
             sub    %%edi,0x10+%[lv]\n \
             sub    %%edi,0x20+%[lv]\n \
-            jle    jump_pr_fb_bailout\n \
+            jle    jump_pr_fb_md01_bailout\n \
             mov    %%edi,0x48+%[lv]\n \
             imul   0x4+%[lv],%%edi\n \
             add    %%edi,%%eax\n \
@@ -2392,13 +2444,22 @@ fb_md01:\n \
             add    $0x14,%%edi\n \
             decl   0x10+%[lv]\n \
             jne    jump_122476\n \
-            jmp    jump_pr_fb_render\n \
+            jmp    jump_pr_fb_md01_render\n \
 \n \
+jump_pr_fb_md01_bailout:\n \
+            popal\n \
+            movl   $0x0,%%eax\n \
+            jmp    jump_pr_fb_end\n \
+jump_pr_fb_md01_render:\n \
+            popal\n \
+            movl   $0x1,%%eax\n \
+            jmp    jump_pr_fb_end\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
 fb_md00:\n \
 /*----------------------------------------------------------------*/\n \
+            pushal\n \
             mov    (%%esi),%%eax\n \
             shl    $0x10,%%eax\n \
             mov    %%eax,%%ebx\n \
@@ -2408,7 +2469,7 @@ fb_md00:\n \
             neg    %%edi\n \
             sub    %%edi,0x10+%[lv]\n \
             sub    %%edi,0x20+%[lv]\n \
-            jle    jump_pr_fb_bailout\n \
+            jle    jump_pr_fb_md00_bailout\n \
             mov    %%edi,0x48+%[lv]\n \
             imul   0x4+%[lv],%%edi\n \
             add    %%edi,%%eax\n \
@@ -2438,15 +2499,17 @@ fb_md00:\n \
             add    $0x14,%%edi\n \
             decl   0x10+%[lv]\n \
             jne    jump_12250f\n \
-            jmp    jump_pr_fb_render\n \
+            jmp    jump_pr_fb_md00_render\n \
 \n \
-jump_pr_fb_bailout:\n \
+jump_pr_fb_md00_bailout:\n \
             popal\n \
             movl   $0x0,%%eax\n \
             jmp    jump_pr_fb_end\n \
-jump_pr_fb_render:\n \
+jump_pr_fb_md00_render:\n \
             popal\n \
             movl   $0x1,%%eax\n \
+            jmp    jump_pr_fb_end\n \
+\n \
 jump_pr_fb_end:\n \
     "
                  : [lv] "+o" (lv), "=a" (ret)
@@ -2510,7 +2573,6 @@ int trig_ft_start(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
         return 0;
 
     asm volatile (" \
-            pushal\n \
             movzbl "EXPORT_SYMBOL(vec_mode)",%%eax\n \
             jmp    *ft_jt(,%%eax,4)\n \
 \n \
@@ -2547,6 +2609,7 @@ ft_jt: /* swars-final @ 0x1225c1, genewars-beta @ 0xF02F1 */\n \
 /*----------------------------------------------------------------*/\n \
 ft_md05:\n \
 /*----------------------------------------------------------------*/\n \
+            pushal\n \
             mov    (%%edi),%%ebx\n \
             sub    (%%esi),%%ebx\n \
             mov    0x8(%%edi),%%eax\n \
@@ -2592,7 +2655,7 @@ ft_md05:\n \
             neg    %%edi\n \
             sub    %%edi,0x10+%[lv]\n \
             sub    %%edi,0x20+%[lv]\n \
-            jle    jump_pr_ft_bailout\n \
+            jle    jump_pr_ft_md05_bailout\n \
             mov    %%edi,0x48+%[lv]\n \
             imul   0x4+%[lv],%%edi\n \
             add    %%edi,%%eax\n \
@@ -2637,12 +2700,22 @@ ft_md05:\n \
             add    $0x14,%%edi\n \
             decl   0x10+%[lv]\n \
             jne    jump_122720\n \
-            jmp    jump_pr_ft_render\n \
+            jmp    jump_pr_ft_md05_render\n \
+\n \
+jump_pr_ft_md05_bailout:\n \
+            popal\n \
+            movl   $0x0,%%eax\n \
+            jmp    jump_pr_ft_end\n \
+jump_pr_ft_md05_render:\n \
+            popal\n \
+            movl   $0x1,%%eax\n \
+            jmp    jump_pr_ft_end\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
 ft_md02:\n \
 /*----------------------------------------------------------------*/\n \
+            pushal\n \
             mov    (%%edi),%%ebx\n \
             sub    (%%esi),%%ebx\n \
             mov    0x8(%%edi),%%eax\n \
@@ -2677,7 +2750,7 @@ ft_md02:\n \
             neg    %%edi\n \
             sub    %%edi,0x10+%[lv]\n \
             sub    %%edi,0x20+%[lv]\n \
-            jle    jump_pr_ft_bailout\n \
+            jle    jump_pr_ft_md02_bailout\n \
             mov    %%edi,0x48+%[lv]\n \
             imul   0x4+%[lv],%%edi\n \
             add    %%edi,%%eax\n \
@@ -2717,12 +2790,22 @@ ft_md02:\n \
             add    $0x14,%%edi\n \
             decl   0x10+%[lv]\n \
             jne    jump_122822\n \
-            jmp    jump_pr_ft_render\n \
+            jmp    jump_pr_ft_md02_render\n \
+\n \
+jump_pr_ft_md02_bailout:\n \
+            popal\n \
+            movl   $0x0,%%eax\n \
+            jmp    jump_pr_ft_end\n \
+jump_pr_ft_md02_render:\n \
+            popal\n \
+            movl   $0x1,%%eax\n \
+            jmp    jump_pr_ft_end\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
 ft_md01:\n \
 /*----------------------------------------------------------------*/\n \
+            pushal\n \
             mov    (%%edi),%%ebx\n \
             sub    (%%esi),%%ebx\n \
             mov    0x10(%%edi),%%eax\n \
@@ -2746,7 +2829,7 @@ ft_md01:\n \
             neg    %%edi\n \
             sub    %%edi,0x10+%[lv]\n \
             sub    %%edi,0x20+%[lv]\n \
-            jle    jump_pr_ft_bailout\n \
+            jle    jump_pr_ft_md01_bailout\n \
             mov    %%edi,0x48+%[lv]\n \
             imul   0x4+%[lv],%%edi\n \
             add    %%edi,%%eax\n \
@@ -2781,12 +2864,22 @@ ft_md01:\n \
             add    $0x14,%%edi\n \
             decl   0x10+%[lv]\n \
             jne    jump_1228f3\n \
-            jmp    jump_pr_ft_render\n \
+            jmp    jump_pr_ft_md01_render\n \
+\n \
+jump_pr_ft_md01_bailout:\n \
+            popal\n \
+            movl   $0x0,%%eax\n \
+            jmp    jump_pr_ft_end\n \
+jump_pr_ft_md01_render:\n \
+            popal\n \
+            movl   $0x1,%%eax\n \
+            jmp    jump_pr_ft_end\n \
 \n \
 \n \
 /*----------------------------------------------------------------*/\n \
 ft_md00:\n \
 /*----------------------------------------------------------------*/\n \
+            pushal\n \
             mov    (%%esi),%%eax\n \
             shl    $0x10,%%eax\n \
             mov    (%%edi),%%ebx\n \
@@ -2797,7 +2890,7 @@ ft_md00:\n \
             neg    %%edi\n \
             sub    %%edi,0x10+%[lv]\n \
             sub    %%edi,0x20+%[lv]\n \
-            jle    jump_pr_ft_bailout\n \
+            jle    jump_pr_ft_md00_bailout\n \
             mov    %%edi,0x48+%[lv]\n \
             imul   0x4+%[lv],%%edi\n \
             add    %%edi,%%eax\n \
@@ -2827,15 +2920,17 @@ ft_md00:\n \
             add    $0x14,%%edi\n \
             decl   0x10+%[lv]\n \
             jne    jump_12298f\n \
-            jmp    jump_pr_ft_render\n \
+            jmp    jump_pr_ft_md00_render\n \
 \n \
-jump_pr_ft_bailout:\n \
+jump_pr_ft_md00_bailout:\n \
             popal\n \
             movl   $0x0,%%eax\n \
             jmp    jump_pr_ft_end\n \
-jump_pr_ft_render:\n \
+jump_pr_ft_md00_render:\n \
             popal\n \
             movl   $0x1,%%eax\n \
+            jmp    jump_pr_ft_end\n \
+\n \
 jump_pr_ft_end:\n \
     "
                  : [lv] "+o" (lv), "=a" (ret)
