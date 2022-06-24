@@ -1312,7 +1312,6 @@ int trig_rl_start(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
 {
     int ret;
     asm volatile (" \
-            pushal\n \
         jump_pr_rl_K51:\n \
             mov    0x4(%%esi),%%eax\n \
             mov    %%eax,0x54+%[lv]\n \
@@ -1322,9 +1321,12 @@ int trig_rl_start(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
             mov    %%ebx,0x0+%[lv]\n \
             movb   $0x1,0x66+%[lv]\n \
             jmp    jump_pr_rl_K8f\n \
+        jump_pr_rl_pre_bailout:\n \
+            movl   $0x0,%%eax\n \
+            jmp    jump_pr_rl_pre_end\n \
         jump_pr_rl_K6c:\n \
             cmp    "EXPORT_SYMBOL(vec_window_height)",%%eax\n \
-            jge    jump_pr_rl_bailout\n \
+            jge    jump_pr_rl_pre_bailout\n \
             mov    %%eax,%%ebx\n \
             imul   "EXPORT_SYMBOL(vec_screen_width)",%%ebx\n \
             add    "EXPORT_SYMBOL(poly_screen)",%%ebx\n \
@@ -1354,7 +1356,7 @@ int trig_rl_start(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
             cltd\n \
             idivl  0x14+%[lv]\n \
             cmp    0x4+%[lv],%%eax\n \
-            jle    jump_pr_rl_bailout\n \
+            jle    jump_pr_rl_pre_bailout\n \
             mov    %%eax,0x8+%[lv]\n \
             mov    0x4(%%edi),%%ebx\n \
             sub    0x4(%%ecx),%%ebx\n \
@@ -1368,6 +1370,18 @@ int trig_rl_start(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
             mov    (%%ecx),%%eax\n \
             shl    $0x10,%%eax\n \
             mov    %%eax,0x1c+%[lv]\n \
+            movl   $0x1,%%eax\n \
+        jump_pr_rl_pre_end:\n \
+    "
+                 : [lv] "=o" (lv), "=a" (ret)
+                 : "S" (opt_a), "D" (opt_b), "c" (opt_c)
+                 : "memory", "cc", "%ebx");
+
+    if (!ret)
+        return 0;
+
+    asm volatile (" \
+            pushal\n \
             movzbl "EXPORT_SYMBOL(vec_mode)",%%eax\n \
             jmp    *rl_jt(,%%eax,4)\n \
 \n \
@@ -2047,8 +2061,8 @@ jump_pr_rl_render:\n \
             movl   $0x1,%%eax\n \
 jump_pr_rl_end:\n \
     "
-                 : [lv] "=o" (lv), "=a" (ret)
-                 : "S" (opt_a), "D" (opt_b), "c" (opt_c)
+                 : [lv] "+o" (lv), "=a" (ret)
+                 : "S" (opt_a), "D" (opt_b), "c" (opt_c), "o0" (lv)
                  : "memory", "cc");
     return ret;
 }
@@ -2058,7 +2072,6 @@ int trig_fb_start(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
 {
     int ret;
     asm volatile (" \
-            pushal\n \
         jump_pr_fb_Sc2:\n \
             mov    0x4(%%esi),%%eax\n \
             mov    %%eax,0x54+%[lv]\n \
@@ -2068,9 +2081,12 @@ int trig_fb_start(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
             mov    %%ebx,0x0+%[lv]\n \
             movb   $0x1,0x66+%[lv]\n \
             jmp    jump_pr_fb_T00\n \
+        jump_pr_fb_pre_bailout:\n \
+            movl   $0x0,%%eax\n \
+            jmp    jump_pr_fb_pre_end\n \
         jump_pr_fb_Sdd:\n \
             cmp    "EXPORT_SYMBOL(vec_window_height)",%%eax\n \
-            jge    jump_pr_fb_bailout\n \
+            jge    jump_pr_fb_pre_bailout\n \
             mov    %%eax,%%ebx\n \
             imul   "EXPORT_SYMBOL(vec_screen_width)",%%ebx\n \
             add    "EXPORT_SYMBOL(poly_screen)",%%ebx\n \
@@ -2095,6 +2111,18 @@ int trig_fb_start(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
             cltd\n \
             idiv   %%ebx\n \
             mov    %%eax,0x8+%[lv]\n \
+            movl   $0x1,%%eax\n \
+        jump_pr_fb_pre_end:\n \
+    "
+                 : [lv] "=o" (lv), "=a" (ret)
+                 : "S" (opt_a), "D" (opt_b), "c" (opt_c)
+                 : "memory", "cc", "%ebx");
+
+    if (!ret)
+        return 0;
+
+    asm volatile (" \
+            pushal\n \
             movzbl "EXPORT_SYMBOL(vec_mode)",%%eax\n \
             jmp    *fb_jt(,%%eax,4)\n \
 \n \
@@ -2422,8 +2450,8 @@ jump_pr_fb_render:\n \
             movl   $0x1,%%eax\n \
 jump_pr_fb_end:\n \
     "
-                 : [lv] "=o" (lv), "=a" (ret)
-                 : "S" (opt_a), "D" (opt_b), "c" (opt_c)
+                 : [lv] "+o" (lv), "=a" (ret)
+                 : "S" (opt_a), "D" (opt_b), "c" (opt_c), "o0" (lv)
                  : "memory", "cc");
     return ret;
 }
@@ -2433,7 +2461,6 @@ int trig_ft_start(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
 {
     int ret;
     asm volatile (" \
-            pushal\n \
         jump_pr_ft_A41:\n \
             mov    0x4(%%esi),%%eax\n \
             mov    %%eax,0x54+%[lv]\n \
@@ -2443,9 +2470,12 @@ int trig_ft_start(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
             mov    %%ebx,0x0+%[lv]\n \
             movb   $0x1,0x66+%[lv]\n \
             jmp    jump_pr_ft_A7f\n \
+        jump_pr_ft_pre_bailout:\n \
+            movl   $0x0,%%eax\n \
+            jmp    jump_pr_ft_pre_end\n \
         jump_pr_ft_A5c:\n \
             cmp    "EXPORT_SYMBOL(vec_window_height)",%%eax\n \
-            jge    jump_pr_ft_bailout\n \
+            jge    jump_pr_ft_pre_bailout\n \
             mov    %%eax,%%ebx\n \
             imul   "EXPORT_SYMBOL(vec_screen_width)",%%ebx\n \
             add    "EXPORT_SYMBOL(poly_screen)",%%ebx\n \
@@ -2470,6 +2500,18 @@ int trig_ft_start(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
             cltd\n \
             idiv   %%ebx\n \
             mov    %%eax,0x8+%[lv]\n \
+            movl   $0x1,%%eax\n \
+        jump_pr_ft_pre_end:\n \
+    "
+                 : [lv] "=o" (lv), "=a" (ret)
+                 : "S" (opt_a), "D" (opt_b), "c" (opt_c)
+                 : "memory", "cc", "%ebx");
+
+    if (!ret)
+        return 0;
+
+    asm volatile (" \
+            pushal\n \
             movzbl "EXPORT_SYMBOL(vec_mode)",%%eax\n \
             jmp    *ft_jt(,%%eax,4)\n \
 \n \
@@ -2797,8 +2839,8 @@ jump_pr_ft_render:\n \
             movl   $0x1,%%eax\n \
 jump_pr_ft_end:\n \
     "
-                 : [lv] "=o" (lv), "=a" (ret)
-                 : "S" (opt_a), "D" (opt_b), "c" (opt_c)
+                 : [lv] "+o" (lv), "=a" (ret)
+                 : "S" (opt_a), "D" (opt_b), "c" (opt_c), "o0" (lv)
                  : "memory", "cc");
     return ret;
 }
