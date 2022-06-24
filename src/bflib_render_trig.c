@@ -502,84 +502,10 @@ jump_tprep_end:\n \
     return start_type;
 }
 
-int trig_ll_start(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
+int trig_ll_md00(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
   const struct PolyPoint *opt_b, const struct PolyPoint *opt_c)
 {
     int ret;
-    asm volatile (" \
-        jump_pr_ll_B44:\n \
-            mov    0x4(%%esi),%%eax\n \
-            mov    %%eax,0x54+%[lv]\n \
-            or     %%eax,%%eax\n \
-            jns    jump_pr_ll_B5f\n \
-            mov    "EXPORT_SYMBOL(poly_screen)",%%ebx\n \
-            mov    %%ebx,0x0+%[lv]\n \
-            movb   $0x1,0x66+%[lv]\n \
-            jmp    jump_pr_ll_B82\n \
-        jump_pr_ll_pre_bailout:\n \
-            movl   $0x0,%%eax\n \
-            jmp    jump_pr_ll_pre_end\n \
-        jump_pr_ll_B5f:\n \
-            cmp    "EXPORT_SYMBOL(vec_window_height)",%%eax\n \
-            jge    jump_pr_ll_pre_bailout\n \
-            mov    %%eax,%%ebx\n \
-            imul   "EXPORT_SYMBOL(vec_screen_width)",%%ebx\n \
-            add    "EXPORT_SYMBOL(poly_screen)",%%ebx\n \
-            mov    %%ebx,0x0+%[lv]\n \
-            movb   $0x0,0x66+%[lv]\n \
-        jump_pr_ll_B82:\n \
-            mov    0x4(%%ecx),%%ebx\n \
-            cmp    "EXPORT_SYMBOL(vec_window_height)",%%ebx\n \
-            setg   0x68+%[lv]\n \
-            sub    %%eax,%%ebx\n \
-            mov    %%ebx,0x10+%[lv]\n \
-            mov    %%ebx,0x20+%[lv]\n \
-            mov    0x4(%%edi),%%ebx\n \
-            cmp    "EXPORT_SYMBOL(vec_window_height)",%%ebx\n \
-            setg   0x67+%[lv]\n \
-            sub    %%eax,%%ebx\n \
-            mov    %%ebx,0x14+%[lv]\n \
-            mov    (%%ecx),%%eax\n \
-            sub    (%%esi),%%eax\n \
-            shl    $0x10,%%eax\n \
-            cltd\n \
-            idivl  0x10+%[lv]\n \
-            mov    %%eax,0x4+%[lv]\n \
-            mov    (%%edi),%%eax\n \
-            sub    (%%esi),%%eax\n \
-            shl    $0x10,%%eax\n \
-            cltd\n \
-            idivl  0x14+%[lv]\n \
-            cmp    0x4+%[lv],%%eax\n \
-            jle    jump_pr_ll_pre_bailout\n \
-            mov    %%eax,0x8+%[lv]\n \
-            mov    0x4(%%ecx),%%ebx\n \
-            sub    0x4(%%edi),%%ebx\n \
-            mov    (%%ecx),%%eax\n \
-            sub    (%%edi),%%eax\n \
-            shl    $0x10,%%eax\n \
-            cltd\n \
-            idiv   %%ebx\n \
-            mov    %%eax,0xc+%[lv]\n \
-            mov    %%ebx,0x18+%[lv]\n \
-            mov    (%%edi),%%eax\n \
-            shl    $0x10,%%eax\n \
-            mov    %%eax,0x1c+%[lv]\n \
-            movl   $0x1,%%eax\n \
-        jump_pr_ll_pre_end:\n \
-    "
-                 : [lv] "=o" (lv), "=a" (ret)
-                 : "S" (opt_a), "D" (opt_b), "c" (opt_c)
-                 : "memory", "cc", "%ebx");
-
-    if (!ret)
-        return 0;
-
-    switch (vec_mode) /* swars-final @ 0x120F07 */
-    {
-    case RendVec_mode00:
-    case RendVec_mode14:
-    case RendVec_mode15:
     asm volatile (" \
             pushal\n \
             mov    (%%esi),%%eax\n \
@@ -690,12 +616,13 @@ jump_pr_ll_md00_end:\n \
                  : [lv] "+o" (lv), "=a" (ret)
                  : "S" (opt_a), "D" (opt_b), "c" (opt_c), "o0" (lv)
                  : "memory", "cc");
-        break;
+    return ret;
+}
 
-    case RendVec_mode01:
-    case RendVec_mode04:
-    case RendVec_mode16:
-    case RendVec_mode17:
+int trig_ll_md01(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
+  const struct PolyPoint *opt_b, const struct PolyPoint *opt_c)
+{
+    int ret;
     asm volatile (" \
             pushal\n \
             mov    0x14+%[lv],%%eax\n \
@@ -850,21 +777,13 @@ jump_pr_ll_md01_end:\n \
                  : [lv] "+o" (lv), "=a" (ret)
                  : "S" (opt_a), "D" (opt_b), "c" (opt_c), "o0" (lv)
                  : "memory", "cc");
-        break;
+    return ret;
+}
 
-    case RendVec_mode02:
-    case RendVec_mode03:
-    case RendVec_mode07:
-    case RendVec_mode08:
-    case RendVec_mode09:
-    case RendVec_mode10:
-    case RendVec_mode11:
-    case RendVec_mode12:
-    case RendVec_mode13:
-    case RendVec_mode18:
-    case RendVec_mode19:
-    case RendVec_mode22:
-    case RendVec_mode23:
+int trig_ll_md02(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
+  const struct PolyPoint *opt_b, const struct PolyPoint *opt_c)
+{
+    int ret;
     asm volatile (" \
             pushal\n \
             mov    0x14+%[lv],%%eax\n \
@@ -1047,15 +966,13 @@ jump_pr_ll_md02_end:\n \
                  : [lv] "+o" (lv), "=a" (ret)
                  : "S" (opt_a), "D" (opt_b), "c" (opt_c), "o0" (lv)
                  : "memory", "cc");
-        break;
+    return ret;
+}
 
-    case RendVec_mode05:
-    case RendVec_mode06:
-    case RendVec_mode20:
-    case RendVec_mode21:
-    case RendVec_mode24:
-    case RendVec_mode25:
-    case RendVec_mode26:
+int trig_ll_md05(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
+  const struct PolyPoint *opt_b, const struct PolyPoint *opt_c)
+{
+    int ret;
     asm volatile (" \
             pushal\n \
             mov    0x14+%[lv],%%eax\n \
@@ -1266,6 +1183,121 @@ jump_pr_ll_md05_end:\n \
                  : [lv] "+o" (lv), "=a" (ret)
                  : "S" (opt_a), "D" (opt_b), "c" (opt_c), "o0" (lv)
                  : "memory", "cc");
+    return ret;
+}
+
+int trig_ll_start(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
+  const struct PolyPoint *opt_b, const struct PolyPoint *opt_c)
+{
+    int ret;
+    asm volatile (" \
+        jump_pr_ll_B44:\n \
+            mov    0x4(%%esi),%%eax\n \
+            mov    %%eax,0x54+%[lv]\n \
+            or     %%eax,%%eax\n \
+            jns    jump_pr_ll_B5f\n \
+            mov    "EXPORT_SYMBOL(poly_screen)",%%ebx\n \
+            mov    %%ebx,0x0+%[lv]\n \
+            movb   $0x1,0x66+%[lv]\n \
+            jmp    jump_pr_ll_B82\n \
+        jump_pr_ll_pre_bailout:\n \
+            movl   $0x0,%%eax\n \
+            jmp    jump_pr_ll_pre_end\n \
+        jump_pr_ll_B5f:\n \
+            cmp    "EXPORT_SYMBOL(vec_window_height)",%%eax\n \
+            jge    jump_pr_ll_pre_bailout\n \
+            mov    %%eax,%%ebx\n \
+            imul   "EXPORT_SYMBOL(vec_screen_width)",%%ebx\n \
+            add    "EXPORT_SYMBOL(poly_screen)",%%ebx\n \
+            mov    %%ebx,0x0+%[lv]\n \
+            movb   $0x0,0x66+%[lv]\n \
+        jump_pr_ll_B82:\n \
+            mov    0x4(%%ecx),%%ebx\n \
+            cmp    "EXPORT_SYMBOL(vec_window_height)",%%ebx\n \
+            setg   0x68+%[lv]\n \
+            sub    %%eax,%%ebx\n \
+            mov    %%ebx,0x10+%[lv]\n \
+            mov    %%ebx,0x20+%[lv]\n \
+            mov    0x4(%%edi),%%ebx\n \
+            cmp    "EXPORT_SYMBOL(vec_window_height)",%%ebx\n \
+            setg   0x67+%[lv]\n \
+            sub    %%eax,%%ebx\n \
+            mov    %%ebx,0x14+%[lv]\n \
+            mov    (%%ecx),%%eax\n \
+            sub    (%%esi),%%eax\n \
+            shl    $0x10,%%eax\n \
+            cltd\n \
+            idivl  0x10+%[lv]\n \
+            mov    %%eax,0x4+%[lv]\n \
+            mov    (%%edi),%%eax\n \
+            sub    (%%esi),%%eax\n \
+            shl    $0x10,%%eax\n \
+            cltd\n \
+            idivl  0x14+%[lv]\n \
+            cmp    0x4+%[lv],%%eax\n \
+            jle    jump_pr_ll_pre_bailout\n \
+            mov    %%eax,0x8+%[lv]\n \
+            mov    0x4(%%ecx),%%ebx\n \
+            sub    0x4(%%edi),%%ebx\n \
+            mov    (%%ecx),%%eax\n \
+            sub    (%%edi),%%eax\n \
+            shl    $0x10,%%eax\n \
+            cltd\n \
+            idiv   %%ebx\n \
+            mov    %%eax,0xc+%[lv]\n \
+            mov    %%ebx,0x18+%[lv]\n \
+            mov    (%%edi),%%eax\n \
+            shl    $0x10,%%eax\n \
+            mov    %%eax,0x1c+%[lv]\n \
+            movl   $0x1,%%eax\n \
+        jump_pr_ll_pre_end:\n \
+    "
+                 : [lv] "=o" (lv), "=a" (ret)
+                 : "S" (opt_a), "D" (opt_b), "c" (opt_c)
+                 : "memory", "cc", "%ebx");
+
+    if (!ret)
+        return 0;
+
+    switch (vec_mode) /* swars-final @ 0x120F07 */
+    {
+    case RendVec_mode00:
+    case RendVec_mode14:
+    case RendVec_mode15:
+        ret = trig_ll_md00(lvu, opt_a, opt_b, opt_c);
+        break;
+
+    case RendVec_mode01:
+    case RendVec_mode04:
+    case RendVec_mode16:
+    case RendVec_mode17:
+        ret = trig_ll_md01(lvu, opt_a, opt_b, opt_c);
+        break;
+
+    case RendVec_mode02:
+    case RendVec_mode03:
+    case RendVec_mode07:
+    case RendVec_mode08:
+    case RendVec_mode09:
+    case RendVec_mode10:
+    case RendVec_mode11:
+    case RendVec_mode12:
+    case RendVec_mode13:
+    case RendVec_mode18:
+    case RendVec_mode19:
+    case RendVec_mode22:
+    case RendVec_mode23:
+        ret = trig_ll_md02(lvu, opt_a, opt_b, opt_c);
+        break;
+
+    case RendVec_mode05:
+    case RendVec_mode06:
+    case RendVec_mode20:
+    case RendVec_mode21:
+    case RendVec_mode24:
+    case RendVec_mode25:
+    case RendVec_mode26:
+        ret = trig_ll_md05(lvu, opt_a, opt_b, opt_c);
         break;
     }
 
@@ -1344,6 +1376,41 @@ int trig_rl_start(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
 
     if (!ret)
         return 0;
+
+    switch (vec_mode)
+    {
+    case RendVec_mode00:
+    case RendVec_mode14:
+    case RendVec_mode15:
+        break;
+    case RendVec_mode01:
+    case RendVec_mode04:
+    case RendVec_mode16:
+    case RendVec_mode17:
+        break;
+    case RendVec_mode02:
+    case RendVec_mode03:
+    case RendVec_mode07:
+    case RendVec_mode08:
+    case RendVec_mode09:
+    case RendVec_mode10:
+    case RendVec_mode11:
+    case RendVec_mode12:
+    case RendVec_mode13:
+    case RendVec_mode18:
+    case RendVec_mode19:
+    case RendVec_mode22:
+    case RendVec_mode23:
+        break;
+    case RendVec_mode05:
+    case RendVec_mode06:
+    case RendVec_mode20:
+    case RendVec_mode21:
+    case RendVec_mode24:
+    case RendVec_mode25:
+    case RendVec_mode26:
+        break;
+    }
 
     asm volatile (" \
             movzbl "EXPORT_SYMBOL(vec_mode)",%%eax\n \
@@ -2118,6 +2185,41 @@ int trig_fb_start(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
     if (!ret)
         return 0;
 
+    switch (vec_mode)
+    {
+    case RendVec_mode00:
+    case RendVec_mode14:
+    case RendVec_mode15:
+        break;
+    case RendVec_mode01:
+    case RendVec_mode04:
+    case RendVec_mode16:
+    case RendVec_mode17:
+        break;
+    case RendVec_mode02:
+    case RendVec_mode03:
+    case RendVec_mode07:
+    case RendVec_mode08:
+    case RendVec_mode09:
+    case RendVec_mode10:
+    case RendVec_mode11:
+    case RendVec_mode12:
+    case RendVec_mode13:
+    case RendVec_mode18:
+    case RendVec_mode19:
+    case RendVec_mode22:
+    case RendVec_mode23:
+        break;
+    case RendVec_mode05:
+    case RendVec_mode06:
+    case RendVec_mode20:
+    case RendVec_mode21:
+    case RendVec_mode24:
+    case RendVec_mode25:
+    case RendVec_mode26:
+        break;
+    }
+
     asm volatile (" \
             movzbl "EXPORT_SYMBOL(vec_mode)",%%eax\n \
             jmp    *fb_jt(,%%eax,4)\n \
@@ -2537,6 +2639,41 @@ int trig_ft_start(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
 
     if (!ret)
         return 0;
+
+    switch (vec_mode)
+    {
+    case RendVec_mode00:
+    case RendVec_mode14:
+    case RendVec_mode15:
+        break;
+    case RendVec_mode01:
+    case RendVec_mode04:
+    case RendVec_mode16:
+    case RendVec_mode17:
+        break;
+    case RendVec_mode02:
+    case RendVec_mode03:
+    case RendVec_mode07:
+    case RendVec_mode08:
+    case RendVec_mode09:
+    case RendVec_mode10:
+    case RendVec_mode11:
+    case RendVec_mode12:
+    case RendVec_mode13:
+    case RendVec_mode18:
+    case RendVec_mode19:
+    case RendVec_mode22:
+    case RendVec_mode23:
+        break;
+    case RendVec_mode05:
+    case RendVec_mode06:
+    case RendVec_mode20:
+    case RendVec_mode21:
+    case RendVec_mode24:
+    case RendVec_mode25:
+    case RendVec_mode26:
+        break;
+    }
 
     asm volatile (" \
             movzbl "EXPORT_SYMBOL(vec_mode)",%%eax\n \
