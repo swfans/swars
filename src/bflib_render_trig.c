@@ -65,7 +65,6 @@ enum RenderingVectorMode {
 
 struct TrigLocals {
     unsigned char v[0x6C];
-    ubyte start_type; //offs=0x6c
 };
 
 #pragma pack()
@@ -407,18 +406,18 @@ jump_tprep_end:\n \
     if (ordpt_a->Y == ordpt_b->Y)
     {
         if (ordpt_a->Y == ordpt_c->Y)
-            return 0;
+            return RendStart_NO;
         if (ordpt_a->Y >= ordpt_c->Y) {
             if (ordpt_a->X <= ordpt_b->X)
-                return 0;
+                return RendStart_NO;
             ordpt_a = *opt_c;
             ordpt_b = *opt_a;
             ordpt_c = *opt_b;
-            start_type = 3;
+            start_type = RendStart_FB;
         } else {
             if (ordpt_b->X <= ordpt_a->X)
-                return 0;
-            start_type = 4;
+                return RendStart_NO;
+            start_type = RendStart_FT;
         }
     }
     else if (ordpt_a->Y > ordpt_b->Y)
@@ -426,41 +425,41 @@ jump_tprep_end:\n \
         if (ordpt_a->Y == ordpt_c->Y)
         {
             if (ordpt_c->X <= ordpt_a->X)
-                return 0;
+                return RendStart_NO;
             ordpt_a = *opt_b;
             ordpt_b = *opt_c;
             ordpt_c = *opt_a;
-            start_type = 3;
+            start_type = RendStart_FB;
         }
         else if (ordpt_a->Y < ordpt_c->Y)
         {
             ordpt_a = *opt_b;
             ordpt_b = *opt_c;
             ordpt_c = *opt_a;
-            start_type = 2;
+            start_type = RendStart_RL;
         }
         else if (ordpt_b->Y == ordpt_c->Y)
         {
             if (ordpt_c->X <= ordpt_b->X)
-                return 0;
+                return RendStart_NO;
             ordpt_a = *opt_b;
             ordpt_b = *opt_c;
             ordpt_c = *opt_a;
-            start_type = 4;
+            start_type = RendStart_FT;
         }
         else if (ordpt_b->Y < ordpt_c->Y)
         {
             ordpt_a = *opt_b;
             ordpt_b = *opt_c;
             ordpt_c = *opt_a;
-            start_type = 1;
+            start_type = RendStart_LL;
         }
         else
         {
             ordpt_a = *opt_c;
             ordpt_b = *opt_a;
             ordpt_c = *opt_b;
-            start_type = 2;
+            start_type = RendStart_RL;
         }
     }
     else // if (ordpt_a->Y < ordpt_b->Y)
@@ -468,32 +467,32 @@ jump_tprep_end:\n \
         if (ordpt_a->Y == ordpt_c->Y)
         {
             if (ordpt_a->X <= ordpt_c->X)
-                return 0;
+                return RendStart_NO;
             ordpt_a = *opt_c;
             ordpt_b = *opt_a;
             ordpt_c = *opt_b;
-            start_type = 4;
+            start_type = RendStart_FT;
         }
         else if (ordpt_a->Y >= ordpt_c->Y)
         {
             ordpt_a = *opt_c;
             ordpt_b = *opt_a;
             ordpt_c = *opt_b;
-            start_type = 1;
+            start_type = RendStart_LL;
         }
         else if (ordpt_b->Y == ordpt_c->Y)
         {
             if (ordpt_b->X <= ordpt_c->X)
-                return 0;
-            start_type = 3;
+                return RendStart_NO;
+            start_type = RendStart_FB;
         }
         else if (ordpt_b->Y <= ordpt_c->Y)
         {
-            start_type = 1;
+            start_type = RendStart_LL;
         }
         else
         {
-            start_type = 2;
+            start_type = RendStart_RL;
         }
     }
 #endif
