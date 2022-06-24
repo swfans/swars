@@ -287,11 +287,12 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
 
 ubyte trig_reorder_input_points(struct PolyPoint **opt_a, struct PolyPoint **opt_b, struct PolyPoint **opt_c)
 {
-    struct PolyPoint *oopt_a;
-    struct PolyPoint *oopt_b;
-    struct PolyPoint *oopt_c;
+    struct PolyPoint *ordpt_a;
+    struct PolyPoint *ordpt_b;
+    struct PolyPoint *ordpt_c;
     ubyte start_type;
 
+#if 0
     asm volatile (" \
             mov    %%eax,%%esi\n \
             mov    %%edx,%%edi\n \
@@ -389,12 +390,109 @@ trig_tprep_bailout:\n \
             movb   $0x0,%[start_type]\n \
 jump_tprep_end:\n \
     "
-                 : "=S" (oopt_a), "=D" (oopt_b), "=c" (oopt_c), [start_type] "=m" (start_type)
+                 : "=S" (ordpt_a), "=D" (ordpt_b), "=c" (ordpt_c), [start_type] "=m" (start_type)
                  : "a" (*opt_a), "d" (*opt_b), "b" (*opt_c)
                  : "memory", "cc");
-    *opt_a = oopt_a;
-    *opt_b = oopt_b;
-    *opt_c = oopt_c;
+#else
+    ordpt_a = *opt_a;
+    ordpt_b = *opt_b;
+    ordpt_c = *opt_c;
+    if (ordpt_a->Y == ordpt_b->Y)
+    {
+        if (ordpt_a->Y == ordpt_c->Y)
+            return 0;
+        if (ordpt_a->Y >= ordpt_c->Y) {
+            if (ordpt_a->X <= ordpt_b->X)
+                return 0;
+            ordpt_a = *opt_c;
+            ordpt_b = *opt_a;
+            ordpt_c = *opt_b;
+            start_type = 3;
+        } else {
+            if (ordpt_b->X <= ordpt_a->X)
+                return 0;
+            start_type = 4;
+        }
+    }
+    else if (ordpt_a->Y > ordpt_b->Y)
+    {
+        if (ordpt_a->Y == ordpt_c->Y)
+        {
+            if (ordpt_c->X <= ordpt_a->X)
+                return 0;
+            ordpt_a = *opt_b;
+            ordpt_b = *opt_c;
+            ordpt_c = *opt_a;
+            start_type = 3;
+        }
+        else if (ordpt_a->Y < ordpt_c->Y)
+        {
+            ordpt_a = *opt_b;
+            ordpt_b = *opt_c;
+            ordpt_c = *opt_a;
+            start_type = 2;
+        }
+        else if (ordpt_b->Y == ordpt_c->Y)
+        {
+            if (ordpt_c->X <= ordpt_b->X)
+                return 0;
+            ordpt_a = *opt_b;
+            ordpt_b = *opt_c;
+            ordpt_c = *opt_a;
+            start_type = 4;
+        }
+        else if (ordpt_b->Y < ordpt_c->Y)
+        {
+            ordpt_a = *opt_b;
+            ordpt_b = *opt_c;
+            ordpt_c = *opt_a;
+            start_type = 1;
+        }
+        else
+        {
+            ordpt_a = *opt_c;
+            ordpt_b = *opt_a;
+            ordpt_c = *opt_b;
+            start_type = 2;
+        }
+    }
+    else // if (ordpt_a->Y < ordpt_b->Y)
+    {
+        if (ordpt_a->Y == ordpt_c->Y)
+        {
+            if (ordpt_a->X <= ordpt_c->X)
+                return 0;
+            ordpt_a = *opt_c;
+            ordpt_b = *opt_a;
+            ordpt_c = *opt_b;
+            start_type = 4;
+        }
+        else if (ordpt_a->Y >= ordpt_c->Y)
+        {
+            ordpt_a = *opt_c;
+            ordpt_b = *opt_a;
+            ordpt_c = *opt_b;
+            start_type = 1;
+        }
+        else if (ordpt_b->Y == ordpt_c->Y)
+        {
+            if (ordpt_b->X <= ordpt_c->X)
+                return 0;
+            start_type = 3;
+        }
+        else if (ordpt_b->Y <= ordpt_c->Y)
+        {
+            start_type = 1;
+        }
+        else
+        {
+            start_type = 2;
+        }
+    }
+#endif
+    *opt_a = ordpt_a;
+    *opt_b = ordpt_b;
+    *opt_c = ordpt_c;
     return start_type;
 }
 
