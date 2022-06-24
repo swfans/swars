@@ -84,6 +84,7 @@ extern const long add_to_edi[];
 // TODO Switch to local var when remade - this is global because assembly alters EBP
 struct TrigLocals lv;
 
+ubyte trig_reorder_input_points(struct PolyPoint **opt_a, struct PolyPoint **opt_b, struct PolyPoint **opt_c);
 int trig_ll_start(struct TrigLocals *lv, const struct PolyPoint *opt_a, const struct PolyPoint *opt_b, const struct PolyPoint *opt_c);
 int trig_rl_start(struct TrigLocals *lv, const struct PolyPoint *opt_a, const struct PolyPoint *opt_b, const struct PolyPoint *opt_c);
 int trig_fb_start(struct TrigLocals *lv, const struct PolyPoint *opt_a, const struct PolyPoint *opt_b, const struct PolyPoint *opt_c);
@@ -131,11 +132,165 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
     struct PolyPoint *opt_a;
     struct PolyPoint *opt_b;
     struct PolyPoint *opt_c;
-    int ret;
+    ubyte start_type;
 
     LOGNO("Pa(%ld,%ld,%ld)", point_a->X, point_a->Y, point_a->S);
     LOGNO("Pb(%ld,%ld,%ld)", point_b->X, point_b->Y, point_b->S);
     LOGNO("Pc(%ld,%ld,%ld)", point_c->X, point_c->Y, point_c->S);
+
+    opt_a = point_a;
+    opt_b = point_b;
+    opt_c = point_c;
+    start_type = trig_reorder_input_points(&opt_a, &opt_b, &opt_c);
+
+    switch (start_type)
+    {
+    case RendStart_LL:
+        if (!trig_ll_start(&lv, opt_a, opt_b, opt_c)) {
+            return;
+        }
+        break;
+    case RendStart_RL:
+        if (!trig_rl_start(&lv, opt_a, opt_b, opt_c)) {
+            return;
+        }
+        break;
+    case RendStart_FB:
+        if (!trig_fb_start(&lv, opt_a, opt_b, opt_c)) {
+            return;
+        }
+        break;
+    case RendStart_FT:
+        if (!trig_ft_start(&lv, opt_a, opt_b, opt_c)) {
+            return;
+        }
+        break;
+    case RendStart_NO:
+        return;
+    }
+
+    LOGNO("render mode %d",(int)vec_mode);
+
+    switch (vec_mode)
+    {
+     case RendVec_mode00:
+        trig_render_md00(&lv);
+        break;
+
+    case RendVec_mode01:
+        trig_render_md01(&lv);
+        break;
+
+    case RendVec_mode02:
+        trig_render_md02(&lv);
+        break;
+
+    case RendVec_mode03:
+        trig_render_md03(&lv);
+        break;
+
+    case RendVec_mode04:
+        trig_render_md04(&lv);
+        break;
+
+    case RendVec_mode05:
+        trig_render_md05(&lv);
+        break;
+
+    case RendVec_mode06:
+        trig_render_md06(&lv);
+        break;
+
+    case RendVec_mode07:
+    case RendVec_mode11:
+        if (vec_colour == 0x20)
+            trig_render_md02(&lv);
+        else
+            trig_render_md07(&lv);
+        break;
+
+    case RendVec_mode08:
+        trig_render_md08(&lv);
+        break;
+
+    case RendVec_mode09:
+        trig_render_md09(&lv);
+        break;
+
+    case RendVec_mode10:
+        trig_render_md10(&lv);
+        break;
+
+    case RendVec_mode12:
+        trig_render_md12(&lv);
+        break;
+
+    case RendVec_mode13:
+        trig_render_md13(&lv);
+        break;
+
+    case RendVec_mode14:
+        trig_render_md14(&lv);
+        break;
+
+    case RendVec_mode15:
+        trig_render_md15(&lv);
+        break;
+
+    case RendVec_mode16:
+        trig_render_md16(&lv);
+        break;
+
+    case RendVec_mode17:
+        trig_render_md17(&lv);
+        break;
+
+    case RendVec_mode18:
+        trig_render_md18(&lv);
+        break;
+
+    case RendVec_mode19:
+        trig_render_md19(&lv);
+        break;
+
+    case RendVec_mode20:
+        trig_render_md20(&lv);
+        break;
+
+    case RendVec_mode21:
+        trig_render_md21(&lv);
+        break;
+
+    case RendVec_mode22:
+        trig_render_md22(&lv);
+        break;
+
+    case RendVec_mode23:
+        trig_render_md23(&lv);
+        break;
+
+    case RendVec_mode24:
+        trig_render_md24(&lv);
+        break;
+
+    case RendVec_mode25:
+        trig_render_md25(&lv);
+        break;
+
+    case RendVec_mode26:
+        trig_render_md26(&lv);
+        break;
+    }
+
+    LOGNO("end");
+}
+
+ubyte trig_reorder_input_points(struct PolyPoint **opt_a, struct PolyPoint **opt_b, struct PolyPoint **opt_c)
+{
+    struct PolyPoint *oopt_a;
+    struct PolyPoint *oopt_b;
+    struct PolyPoint *oopt_c;
+    ubyte start_type;
 
     asm volatile (" \
             mov    %%eax,%%esi\n \
@@ -219,29 +374,33 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint
             jmp    trig_ll_mark\n \
 \n \
 trig_ll_mark:\n \
-            movb   $0x1,0x6c+%[lv]\n \
+            movb   $0x1,%[start_type]\n \
             jmp    jump_tprep_end\n \
 trig_rl_mark:\n \
-            movb   $0x2,0x6c+%[lv]\n \
+            movb   $0x2,%[start_type]\n \
             jmp    jump_tprep_end\n \
 trig_fb_mark:\n \
-            movb   $0x3,0x6c+%[lv]\n \
+            movb   $0x3,%[start_type]\n \
             jmp    jump_tprep_end\n \
 trig_ft_mark:\n \
-            movb   $0x4,0x6c+%[lv]\n \
+            movb   $0x4,%[start_type]\n \
             jmp    jump_tprep_end\n \
 trig_tprep_bailout:\n \
-            movb   $0x0,0x6c+%[lv]\n \
+            movb   $0x0,%[start_type]\n \
 jump_tprep_end:\n \
     "
-                 : "=S" (opt_a), "=D" (opt_b), "=c" (opt_c), [lv] "=o" (lv)
-                 : "a" (point_a), "d" (point_b), "b" (point_c)
+                 : "=S" (oopt_a), "=D" (oopt_b), "=c" (oopt_c), [start_type] "=m" (start_type)
+                 : "a" (*opt_a), "d" (*opt_b), "b" (*opt_c)
                  : "memory", "cc");
+    *opt_a = oopt_a;
+    *opt_b = oopt_b;
+    *opt_c = oopt_c;
+    return start_type;
+}
 
-
-    switch (lv.start_type)
-    {
-    case RendStart_LL:
+int trig_ll_start(struct TrigLocals *lvu, const struct PolyPoint *opt_a, const struct PolyPoint *opt_b, const struct PolyPoint *opt_c)
+{
+    int ret;
     asm volatile (" \
             pushal\n \
         jump_pr_ll_B44:\n \
@@ -951,11 +1110,12 @@ jump_pr_ll_end:\n \
                  : [lv] "=o" (lv), "=a" (ret)
                  : "S" (opt_a), "D" (opt_b), "c" (opt_c)
                  : "memory", "cc");
-        if (!ret/*trig_ll_start(&lv, opt_a, opt_b, opt_c)*/) {
-            return;
-        }
-        break;
-    case RendStart_RL:
+    return ret;
+}
+
+int trig_rl_start(struct TrigLocals *lvu, const struct PolyPoint *opt_a, const struct PolyPoint *opt_b, const struct PolyPoint *opt_c)
+{
+    int ret;
     asm volatile (" \
             pushal\n \
         jump_pr_rl_K51:\n \
@@ -1695,11 +1855,12 @@ jump_pr_rl_end:\n \
                  : [lv] "=o" (lv), "=a" (ret)
                  : "S" (opt_a), "D" (opt_b), "c" (opt_c)
                  : "memory", "cc");
-        if (!ret/*trig_rl_start(&lv, opt_a, opt_b, opt_c)*/) {
-            return;
-        }
-        break;
-    case RendStart_FB:
+    return ret;
+}
+
+int trig_fb_start(struct TrigLocals *lvu, const struct PolyPoint *opt_a, const struct PolyPoint *opt_b, const struct PolyPoint *opt_c)
+{
+    int ret;
     asm volatile (" \
             pushal\n \
         jump_pr_fb_Sc2:\n \
@@ -2068,11 +2229,12 @@ jump_pr_fb_end:\n \
                  : [lv] "=o" (lv), "=a" (ret)
                  : "S" (opt_a), "D" (opt_b), "c" (opt_c)
                  : "memory", "cc");
-        if (!ret/*trig_fb_start(&lv, opt_a, opt_b, opt_c)*/) {
-            return;
-        }
-        break;
-    case RendStart_FT:
+    return ret;
+}
+
+int trig_ft_start(struct TrigLocals *lvu, const struct PolyPoint *opt_a, const struct PolyPoint *opt_b, const struct PolyPoint *opt_c)
+{
+    int ret;
     asm volatile (" \
             pushal\n \
         jump_pr_ft_A41:\n \
@@ -2441,148 +2603,7 @@ jump_pr_ft_end:\n \
                  : [lv] "=o" (lv), "=a" (ret)
                  : "S" (opt_a), "D" (opt_b), "c" (opt_c)
                  : "memory", "cc");
-        if (!ret/*trig_ft_start(&lv, opt_a, opt_b, opt_c)*/) {
-            return;
-        }
-        break;
-    case RendStart_NO:
-        return;
-    }
-
-    LOGNO("render mode %d",(int)vec_mode);
-
-    switch (vec_mode)
-    {
-     case RendVec_mode00:
-        trig_render_md00(&lv);
-        break;
-
-    case RendVec_mode01:
-        trig_render_md01(&lv);
-        break;
-
-    case RendVec_mode02:
-        trig_render_md02(&lv);
-        break;
-
-    case RendVec_mode03:
-        trig_render_md03(&lv);
-        break;
-
-    case RendVec_mode04:
-        trig_render_md04(&lv);
-        break;
-
-    case RendVec_mode05:
-        trig_render_md05(&lv);
-        break;
-
-    case RendVec_mode06:
-        trig_render_md06(&lv);
-        break;
-
-    case RendVec_mode07:
-    case RendVec_mode11:
-        if (vec_colour == 0x20)
-            trig_render_md02(&lv);
-        else
-            trig_render_md07(&lv);
-        break;
-
-    case RendVec_mode08:
-        trig_render_md08(&lv);
-        break;
-
-    case RendVec_mode09:
-        trig_render_md09(&lv);
-        break;
-
-    case RendVec_mode10:
-        trig_render_md10(&lv);
-        break;
-
-    case RendVec_mode12:
-        trig_render_md12(&lv);
-        break;
-
-    case RendVec_mode13:
-        trig_render_md13(&lv);
-        break;
-
-    case RendVec_mode14:
-        trig_render_md14(&lv);
-        break;
-
-    case RendVec_mode15:
-        trig_render_md15(&lv);
-        break;
-
-    case RendVec_mode16:
-        trig_render_md16(&lv);
-        break;
-
-    case RendVec_mode17:
-        trig_render_md17(&lv);
-        break;
-
-    case RendVec_mode18:
-        trig_render_md18(&lv);
-        break;
-
-    case RendVec_mode19:
-        trig_render_md19(&lv);
-        break;
-
-    case RendVec_mode20:
-        trig_render_md20(&lv);
-        break;
-
-    case RendVec_mode21:
-        trig_render_md21(&lv);
-        break;
-
-    case RendVec_mode22:
-        trig_render_md22(&lv);
-        break;
-
-    case RendVec_mode23:
-        trig_render_md23(&lv);
-        break;
-
-    case RendVec_mode24:
-        trig_render_md24(&lv);
-        break;
-
-    case RendVec_mode25:
-        trig_render_md25(&lv);
-        break;
-
-    case RendVec_mode26:
-        trig_render_md26(&lv);
-        break;
-    }
-
-    LOGNO("end");
-}
-
-int trig_ll_start(struct TrigLocals *lvu, const struct PolyPoint *opt_a, const struct PolyPoint *opt_b, const struct PolyPoint *opt_c)
-{
-    //TODO
-}
-
-int trig_rl_start(struct TrigLocals *lvu, const struct PolyPoint *opt_a, const struct PolyPoint *opt_b, const struct PolyPoint *opt_c)
-{
-    //TODO
-}
-
-int trig_fb_start(struct TrigLocals *lvu, const struct PolyPoint *opt_a, const struct PolyPoint *opt_b, const struct PolyPoint *opt_c)
-{
-    //TODO
-}
-
-int trig_ft_start(struct TrigLocals *lvu, const struct PolyPoint *opt_a, const struct PolyPoint *opt_b, const struct PolyPoint *opt_c)
-{
-    //TODO
+    return ret;
 }
 
 void trig_render_md00(struct TrigLocals *lvu)
