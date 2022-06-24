@@ -575,19 +575,281 @@ int trig_ll_start(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
     if (!ret)
         return 0;
 
-    switch (vec_mode)
+    switch (vec_mode) /* swars-final @ 0x120F07 */
     {
     case RendVec_mode00:
     case RendVec_mode14:
     case RendVec_mode15:
-        //TODO
+    asm volatile (" \
+            pushal\n \
+            mov    (%%esi),%%eax\n \
+            shl    $0x10,%%eax\n \
+            mov    %%eax,%%ebx\n \
+            cmpb   $0x0,0x66+%[lv]\n \
+            je     jump_pr_ll_md00_Jc5\n \
+            mov    0x54+%[lv],%%edi\n \
+            neg    %%edi\n \
+            sub    %%edi,0x20+%[lv]\n \
+            jle    jump_pr_ll_md00_bailout\n \
+            mov    %%edi,0x48+%[lv]\n \
+            cmp    0x14+%[lv],%%edi\n \
+            js     jump_pr_ll_md00_J7e\n \
+            mov    0x4+%[lv],%%edi\n \
+            imul   0x14+%[lv],%%edi\n \
+            add    %%edi,%%eax\n \
+            mov    0x1c+%[lv],%%ebx\n \
+            mov    0x48+%[lv],%%edi\n \
+            sub    0x14+%[lv],%%edi\n \
+            sub    %%edi,0x18+%[lv]\n \
+            mov    %%edi,0x48+%[lv]\n \
+            imul   0x4+%[lv],%%edi\n \
+            add    %%edi,%%eax\n \
+            mov    0x48+%[lv],%%edi\n \
+            imul   0xc+%[lv],%%edi\n \
+            add    %%edi,%%ebx\n \
+            cmpb   $0x0,0x68+%[lv]\n \
+            je     jump_pr_ll_md00_J73\n \
+            mov    "EXPORT_SYMBOL(vec_window_height)",%%edi\n \
+            mov    %%edi,0x18+%[lv]\n \
+            mov    %%edi,0x20+%[lv]\n \
+        jump_pr_ll_md00_J73:\n \
+            lea    "EXPORT_SYMBOL(polyscans)",%%edi\n \
+            jmp    jump_pr_ll_md00_K14\n \
+        jump_pr_ll_md00_J7e:\n \
+            mov    0x48+%[lv],%%edi\n \
+            sub    %%edi,0x14+%[lv]\n \
+            imul   0x4+%[lv],%%edi\n \
+            add    %%edi,%%eax\n \
+            mov    0x8+%[lv],%%edi\n \
+            imul   0x48+%[lv],%%edi\n \
+            add    %%edi,%%ebx\n \
+            cmpb   $0x0,0x68+%[lv]\n \
+            je     jump_pr_ll_md00_Jf4\n \
+            mov    "EXPORT_SYMBOL(vec_window_height)",%%edi\n \
+            mov    %%edi,0x20+%[lv]\n \
+            cmpb   $0x0,0x67+%[lv]\n \
+            je     jump_pr_ll_md00_Jb6\n \
+            mov    %%edi,0x14+%[lv]\n \
+            jmp    jump_pr_ll_md00_Jc3\n \
+        jump_pr_ll_md00_Jb6:\n \
+            sub    0x14+%[lv],%%edi\n \
+            setle  0x67+%[lv]\n \
+            mov    %%edi,0x18+%[lv]\n \
+        jump_pr_ll_md00_Jc3:\n \
+            jmp    jump_pr_ll_md00_Jf4\n \
+        jump_pr_ll_md00_Jc5:\n \
+            cmpb   $0x0,0x68+%[lv]\n \
+            je     jump_pr_ll_md00_Jf4\n \
+            mov    "EXPORT_SYMBOL(vec_window_height)",%%edi\n \
+            sub    0x54+%[lv],%%edi\n \
+            mov    %%edi,0x20+%[lv]\n \
+            cmpb   $0x0,0x67+%[lv]\n \
+            je     jump_pr_ll_md00_Je7\n \
+            mov    %%edi,0x14+%[lv]\n \
+            jmp    jump_pr_ll_md00_Jf4\n \
+        jump_pr_ll_md00_Je7:\n \
+            sub    0x14+%[lv],%%edi\n \
+            setle  0x67+%[lv]\n \
+            mov    %%edi,0x18+%[lv]\n \
+        jump_pr_ll_md00_Jf4:\n \
+            lea    "EXPORT_SYMBOL(polyscans)",%%edi\n \
+        jump_pr_ll_md00_Jfa:\n \
+            mov    %%eax,(%%edi)\n \
+            add    0x4+%[lv],%%eax\n \
+            mov    %%ebx,0x4(%%edi)\n \
+            add    0x8+%[lv],%%ebx\n \
+            add    $0x14,%%edi\n \
+            decl   0x14+%[lv]\n \
+            jne    jump_pr_ll_md00_Jfa\n \
+            mov    0x1c+%[lv],%%ebx\n \
+        jump_pr_ll_md00_K14:\n \
+            cmpb   $0x0,0x67+%[lv]\n \
+            je     jump_pr_ll_md00_K29\n \
+            jmp    jump_pr_ll_md00_render\n \
+        jump_pr_ll_md00_K29:\n \
+            mov    %%eax,(%%edi)\n \
+            add    0x4+%[lv],%%eax\n \
+            mov    %%ebx,0x4(%%edi)\n \
+            add    0xc+%[lv],%%ebx\n \
+            add    $0x14,%%edi\n \
+            decl   0x18+%[lv]\n \
+            jne    jump_pr_ll_md00_K29\n \
+            jmp    jump_pr_ll_md00_render\n \
+\n \
+jump_pr_ll_md00_bailout:\n \
+            popal\n \
+            movl   $0x0,%%eax\n \
+            jmp    jump_pr_ll_md00_end\n \
+jump_pr_ll_md00_render:\n \
+            popal\n \
+            movl   $0x1,%%eax\n \
+            jmp    jump_pr_ll_md00_end\n \
+\n \
+jump_pr_ll_md00_end:\n \
+    "
+                 : [lv] "+o" (lv), "=a" (ret)
+                 : "S" (opt_a), "D" (opt_b), "c" (opt_c), "o0" (lv)
+                 : "memory", "cc");
         break;
 
     case RendVec_mode01:
     case RendVec_mode04:
     case RendVec_mode16:
     case RendVec_mode17:
-        //TODO
+    asm volatile (" \
+            pushal\n \
+            mov    0x14+%[lv],%%eax\n \
+            shl    $0x10,%%eax\n \
+            cltd\n \
+            idivl  0x10+%[lv]\n \
+            mov    %%eax,0x5c+%[lv]\n \
+            mov    (%%esi),%%eax\n \
+            sub    (%%ecx),%%eax\n \
+            imull  0x5c+%[lv]\n \
+            sar    $0x10,%%eax\n \
+            mov    (%%edi),%%ebx\n \
+            sub    (%%esi),%%ebx\n \
+            add    %%eax,%%ebx\n \
+            jl     jump_pr_ll_md01_bailout\n \
+            je     jump_pr_ll_md01_H74\n \
+            inc    %%ebx\n \
+            mov    0x10(%%esi),%%eax\n \
+            sub    0x10(%%ecx),%%eax\n \
+            imull  0x5c+%[lv]\n \
+            shrd   $0x10,%%edx,%%eax\n \
+            add    0x10(%%edi),%%eax\n \
+            sub    0x10(%%esi),%%eax\n \
+            cltd\n \
+            idiv   %%ebx\n \
+            mov    %%eax,0x3c+%[lv]\n \
+        jump_pr_ll_md01_H74:\n \
+            mov    0x10(%%ecx),%%eax\n \
+            sub    0x10(%%esi),%%eax\n \
+            cltd\n \
+            idivl  0x10+%[lv]\n \
+            mov    %%eax,0x40+%[lv]\n \
+            mov    (%%esi),%%eax\n \
+            shl    $0x10,%%eax\n \
+            mov    %%eax,%%ebx\n \
+            mov    0x10(%%esi),%%esi\n \
+            cmpb   $0x0,0x66+%[lv]\n \
+            je     jump_pr_ll_md01_I6b\n \
+            mov    0x54+%[lv],%%edi\n \
+            neg    %%edi\n \
+            sub    %%edi,0x20+%[lv]\n \
+            jle    jump_pr_ll_md01_bailout\n \
+            mov    %%edi,0x48+%[lv]\n \
+            cmp    0x14+%[lv],%%edi\n \
+            js     jump_pr_ll_md01_I19\n \
+            mov    0x4+%[lv],%%edi\n \
+            imul   0x14+%[lv],%%edi\n \
+            add    %%edi,%%eax\n \
+            mov    0x40+%[lv],%%edi\n \
+            imul   0x14+%[lv],%%edi\n \
+            add    %%edi,%%esi\n \
+            mov    0x1c+%[lv],%%ebx\n \
+            mov    0x48+%[lv],%%edi\n \
+            sub    0x14+%[lv],%%edi\n \
+            sub    %%edi,0x18+%[lv]\n \
+            mov    %%edi,0x48+%[lv]\n \
+            imul   0x4+%[lv],%%edi\n \
+            add    %%edi,%%eax\n \
+            mov    0x48+%[lv],%%edi\n \
+            imul   0xc+%[lv],%%edi\n \
+            add    %%edi,%%ebx\n \
+            mov    0x40+%[lv],%%edi\n \
+            imul   0x48+%[lv],%%edi\n \
+            add    %%edi,%%esi\n \
+            cmpb   $0x0,0x68+%[lv]\n \
+            je     jump_pr_ll_md01_I0e\n \
+            mov    "EXPORT_SYMBOL(vec_window_height)",%%edi\n \
+            mov    %%edi,0x18+%[lv]\n \
+            mov    %%edi,0x20+%[lv]\n \
+        jump_pr_ll_md01_I0e:\n \
+            lea    "EXPORT_SYMBOL(polyscans)",%%edi\n \
+            jmp    jump_pr_ll_md01_Ic1\n \
+        jump_pr_ll_md01_I19:\n \
+            mov    0x48+%[lv],%%edi\n \
+            sub    %%edi,0x14+%[lv]\n \
+            imul   0x4+%[lv],%%edi\n \
+            add    %%edi,%%eax\n \
+            mov    0x8+%[lv],%%edi\n \
+            imul   0x48+%[lv],%%edi\n \
+            add    %%edi,%%ebx\n \
+            mov    0x40+%[lv],%%edi\n \
+            imul   0x48+%[lv],%%edi\n \
+            add    %%edi,%%esi\n \
+            cmpb   $0x0,0x68+%[lv]\n \
+            je     jump_pr_ll_md01_I9a\n \
+            mov    "EXPORT_SYMBOL(vec_window_height)",%%edi\n \
+            mov    %%edi,0x20+%[lv]\n \
+            cmpb   $0x0,0x67+%[lv]\n \
+            je     jump_pr_ll_md01_I5c\n \
+            mov    %%edi,0x14+%[lv]\n \
+            jmp    jump_pr_ll_md01_I69\n \
+        jump_pr_ll_md01_I5c:\n \
+            sub    0x14+%[lv],%%edi\n \
+            setle  0x67+%[lv]\n \
+            mov    %%edi,0x18+%[lv]\n \
+        jump_pr_ll_md01_I69:\n \
+            jmp    jump_pr_ll_md01_I9a\n \
+        jump_pr_ll_md01_I6b:\n \
+            cmpb   $0x0,0x68+%[lv]\n \
+            je     jump_pr_ll_md01_I9a\n \
+            mov    "EXPORT_SYMBOL(vec_window_height)",%%edi\n \
+            sub    0x54+%[lv],%%edi\n \
+            mov    %%edi,0x20+%[lv]\n \
+            cmpb   $0x0,0x67+%[lv]\n \
+            je     jump_pr_ll_md01_I8d\n \
+            mov    %%edi,0x14+%[lv]\n \
+            jmp    jump_pr_ll_md01_I9a\n \
+        jump_pr_ll_md01_I8d:\n \
+            sub    0x14+%[lv],%%edi\n \
+            setle  0x67+%[lv]\n \
+            mov    %%edi,0x18+%[lv]\n \
+        jump_pr_ll_md01_I9a:\n \
+            lea    "EXPORT_SYMBOL(polyscans)",%%edi\n \
+        jump_pr_ll_md01_Ia0:\n \
+            mov    %%eax,(%%edi)\n \
+            add    0x4+%[lv],%%eax\n \
+            mov    %%ebx,0x4(%%edi)\n \
+            add    0x8+%[lv],%%ebx\n \
+            mov    %%esi,0x10(%%edi)\n \
+            add    0x40+%[lv],%%esi\n \
+            add    $0x14,%%edi\n \
+            decl   0x14+%[lv]\n \
+            jne    jump_pr_ll_md01_Ia0\n \
+            mov    0x1c+%[lv],%%ebx\n \
+        jump_pr_ll_md01_Ic1:\n \
+            cmpb   $0x0,0x67+%[lv]\n \
+            je     jump_pr_ll_md01_Id6\n \
+            jmp    jump_pr_ll_md01_render\n \
+        jump_pr_ll_md01_Id6:\n \
+            mov    %%eax,(%%edi)\n \
+            add    0x4+%[lv],%%eax\n \
+            mov    %%ebx,0x4(%%edi)\n \
+            add    0xc+%[lv],%%ebx\n \
+            mov    %%esi,0x10(%%edi)\n \
+            add    0x40+%[lv],%%esi\n \
+            add    $0x14,%%edi\n \
+            decl   0x18+%[lv]\n \
+            jne    jump_pr_ll_md01_Id6\n \
+            jmp    jump_pr_ll_md01_render\n \
+\n \
+jump_pr_ll_md01_bailout:\n \
+            popal\n \
+            movl   $0x0,%%eax\n \
+            jmp    jump_pr_ll_md01_end\n \
+jump_pr_ll_md01_render:\n \
+            popal\n \
+            movl   $0x1,%%eax\n \
+            jmp    jump_pr_ll_md01_end\n \
+\n \
+jump_pr_ll_md01_end:\n \
+    "
+                 : [lv] "+o" (lv), "=a" (ret)
+                 : "S" (opt_a), "D" (opt_b), "c" (opt_c), "o0" (lv)
+                 : "memory", "cc");
         break;
 
     case RendVec_mode02:
@@ -603,7 +865,188 @@ int trig_ll_start(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
     case RendVec_mode19:
     case RendVec_mode22:
     case RendVec_mode23:
-        //TODO
+    asm volatile (" \
+            pushal\n \
+            mov    0x14+%[lv],%%eax\n \
+            shl    $0x10,%%eax\n \
+            cltd\n \
+            idivl  0x10+%[lv]\n \
+            mov    %%eax,0x5c+%[lv]\n \
+            mov    (%%esi),%%eax\n \
+            sub    (%%ecx),%%eax\n \
+            imull  0x5c+%[lv]\n \
+            sar    $0x10,%%eax\n \
+            mov    (%%edi),%%ebx\n \
+            sub    (%%esi),%%ebx\n \
+            add    %%eax,%%ebx\n \
+            jl     jump_pr_ll_md02_bailout\n \
+            je     jump_pr_ll_md02_F61\n \
+            inc    %%ebx\n \
+            mov    0x8(%%esi),%%eax\n \
+            sub    0x8(%%ecx),%%eax\n \
+            imull  0x5c+%[lv]\n \
+            shrd   $0x10,%%edx,%%eax\n \
+            add    0x8(%%edi),%%eax\n \
+            sub    0x8(%%esi),%%eax\n \
+            cltd\n \
+            idiv   %%ebx\n \
+            mov    %%eax,0x24+%[lv]\n \
+            mov    0xc(%%esi),%%eax\n \
+            sub    0xc(%%ecx),%%eax\n \
+            imull  0x5c+%[lv]\n \
+            shrd   $0x10,%%edx,%%eax\n \
+            add    0xc(%%edi),%%eax\n \
+            sub    0xc(%%esi),%%eax\n \
+            cltd\n \
+            idiv   %%ebx\n \
+            mov    %%eax,0x30+%[lv]\n \
+        jump_pr_ll_md02_F61:\n \
+            mov    0x8(%%ecx),%%eax\n \
+            sub    0x8(%%esi),%%eax\n \
+            cltd\n \
+            idivl  0x10+%[lv]\n \
+            mov    %%eax,0x28+%[lv]\n \
+            mov    0xc(%%ecx),%%eax\n \
+            sub    0xc(%%esi),%%eax\n \
+            cltd\n \
+            idivl  0x10+%[lv]\n \
+            mov    %%eax,0x34+%[lv]\n \
+            mov    (%%esi),%%eax\n \
+            shl    $0x10,%%eax\n \
+            mov    %%eax,%%ebx\n \
+            mov    0x8(%%esi),%%ecx\n \
+            mov    0xc(%%esi),%%edx\n \
+            cmpb   $0x0,0x66+%[lv]\n \
+            je     jump_pr_ll_md02_G8b\n \
+            mov    0x54+%[lv],%%edi\n \
+            neg    %%edi\n \
+            sub    %%edi,0x20+%[lv]\n \
+            jle    jump_pr_ll_md02_bailout\n \
+            mov    %%edi,0x48+%[lv]\n \
+            cmp    0x14+%[lv],%%edi\n \
+            js     jump_pr_ll_md02_G2e\n \
+            mov    0x4+%[lv],%%edi\n \
+            imul   0x14+%[lv],%%edi\n \
+            add    %%edi,%%eax\n \
+            mov    0x28+%[lv],%%edi\n \
+            imul   0x14+%[lv],%%edi\n \
+            add    %%edi,%%ecx\n \
+            mov    0x34+%[lv],%%edi\n \
+            imul   0x14+%[lv],%%edi\n \
+            add    %%edi,%%edx\n \
+            mov    0x1c+%[lv],%%ebx\n \
+            mov    0x48+%[lv],%%edi\n \
+            sub    0x14+%[lv],%%edi\n \
+            sub    %%edi,0x18+%[lv]\n \
+            mov    %%edi,0x48+%[lv]\n \
+            imul   0x4+%[lv],%%edi\n \
+            add    %%edi,%%eax\n \
+            mov    0x48+%[lv],%%edi\n \
+            imul   0xc+%[lv],%%edi\n \
+            add    %%edi,%%ebx\n \
+            mov    0x28+%[lv],%%edi\n \
+            imul   0x48+%[lv],%%edi\n \
+            add    %%edi,%%ecx\n \
+            mov    0x34+%[lv],%%edi\n \
+            imul   0x48+%[lv],%%edi\n \
+            add    %%edi,%%edx\n \
+            cmpb   $0x0,0x68+%[lv]\n \
+            je     jump_pr_ll_md02_G23\n \
+            mov    "EXPORT_SYMBOL(vec_window_height)",%%edi\n \
+            mov    %%edi,0x18+%[lv]\n \
+            mov    %%edi,0x20+%[lv]\n \
+        jump_pr_ll_md02_G23:\n \
+            lea    "EXPORT_SYMBOL(polyscans)",%%edi\n \
+            jmp    jump_pr_ll_md02_Ge8\n \
+        jump_pr_ll_md02_G2e:\n \
+            mov    0x48+%[lv],%%edi\n \
+            sub    %%edi,0x14+%[lv]\n \
+            imul   0x4+%[lv],%%edi\n \
+            add    %%edi,%%eax\n \
+            mov    0x8+%[lv],%%edi\n \
+            imul   0x48+%[lv],%%edi\n \
+            add    %%edi,%%ebx\n \
+            mov    0x28+%[lv],%%edi\n \
+            imul   0x48+%[lv],%%edi\n \
+            add    %%edi,%%ecx\n \
+            mov    0x34+%[lv],%%edi\n \
+            imul   0x48+%[lv],%%edi\n \
+            add    %%edi,%%edx\n \
+            cmpb   $0x0,0x68+%[lv]\n \
+            je     jump_pr_ll_md02_Gba\n \
+            mov    "EXPORT_SYMBOL(vec_window_height)",%%edi\n \
+            mov    %%edi,0x20+%[lv]\n \
+            cmpb   $0x0,0x67+%[lv]\n \
+            je     jump_pr_ll_md02_G7c\n \
+            mov    %%edi,0x14+%[lv]\n \
+            jmp    jump_pr_ll_md02_G89\n \
+        jump_pr_ll_md02_G7c:\n \
+            sub    0x14+%[lv],%%edi\n \
+            setle  0x67+%[lv]\n \
+            mov    %%edi,0x18+%[lv]\n \
+        jump_pr_ll_md02_G89:\n \
+            jmp    jump_pr_ll_md02_Gba\n \
+        jump_pr_ll_md02_G8b:\n \
+            cmpb   $0x0,0x68+%[lv]\n \
+            je     jump_pr_ll_md02_Gba\n \
+            mov    "EXPORT_SYMBOL(vec_window_height)",%%edi\n \
+            sub    0x54+%[lv],%%edi\n \
+            mov    %%edi,0x20+%[lv]\n \
+            cmpb   $0x0,0x67+%[lv]\n \
+            je     jump_pr_ll_md02_Gad\n \
+            mov    %%edi,0x14+%[lv]\n \
+            jmp    jump_pr_ll_md02_Gba\n \
+        jump_pr_ll_md02_Gad:\n \
+            sub    0x14+%[lv],%%edi\n \
+            setle  0x67+%[lv]\n \
+            mov    %%edi,0x18+%[lv]\n \
+        jump_pr_ll_md02_Gba:\n \
+            lea    "EXPORT_SYMBOL(polyscans)",%%edi\n \
+        jump_pr_ll_md02_Gc0:\n \
+            mov    %%eax,(%%edi)\n \
+            add    0x4+%[lv],%%eax\n \
+            mov    %%ebx,0x4(%%edi)\n \
+            add    0x8+%[lv],%%ebx\n \
+            mov    %%ecx,0x8(%%edi)\n \
+            add    0x28+%[lv],%%ecx\n \
+            mov    %%edx,0xc(%%edi)\n \
+            add    0x34+%[lv],%%edx\n \
+            add    $0x14,%%edi\n \
+            decl   0x14+%[lv]\n \
+            jne    jump_pr_ll_md02_Gc0\n \
+            mov    0x1c+%[lv],%%ebx\n \
+        jump_pr_ll_md02_Ge8:\n \
+            cmpb   $0x0,0x67+%[lv]\n \
+            je     jump_pr_ll_md02_Gfd\n \
+            jmp    jump_pr_ll_md02_render\n \
+        jump_pr_ll_md02_Gfd:\n \
+            mov    %%eax,(%%edi)\n \
+            add    0x4+%[lv],%%eax\n \
+            mov    %%ebx,0x4(%%edi)\n \
+            add    0xc+%[lv],%%ebx\n \
+            mov    %%ecx,0x8(%%edi)\n \
+            add    0x28+%[lv],%%ecx\n \
+            mov    %%edx,0xc(%%edi)\n \
+            add    0x34+%[lv],%%edx\n \
+            add    $0x14,%%edi\n \
+            decl   0x18+%[lv]\n \
+            jne    jump_pr_ll_md02_Gfd\n \
+            jmp    jump_pr_ll_md02_render\n \
+\n \
+jump_pr_ll_md02_bailout:\n \
+            popal\n \
+            movl   $0x0,%%eax\n \
+            jmp    jump_pr_ll_md02_end\n \
+jump_pr_ll_md02_render:\n \
+            popal\n \
+            movl   $0x1,%%eax\n \
+            jmp    jump_pr_ll_md02_end\n \
+\n \
+jump_pr_ll_md02_end:\n \
+    "
+                 : [lv] "+o" (lv), "=a" (ret)
+                 : "S" (opt_a), "D" (opt_b), "c" (opt_c), "o0" (lv)
+                 : "memory", "cc");
         break;
 
     case RendVec_mode05:
@@ -613,47 +1056,7 @@ int trig_ll_start(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
     case RendVec_mode24:
     case RendVec_mode25:
     case RendVec_mode26:
-        //TODO
-        break;
-    }
-
     asm volatile (" \
-            movzbl "EXPORT_SYMBOL(vec_mode)",%%eax\n \
-            jmp    *ll_jt(,%%eax,4)\n \
-\n \
-ll_jt: /* swars-final @ 0x120F07 */\n \
-            .long   ll_md00\n \
-            .long   ll_md01\n \
-            .long   ll_md02\n \
-            .long   ll_md02\n \
-            .long   ll_md01\n \
-            .long   ll_md05\n \
-            .long   ll_md05\n \
-            .long   ll_md02\n \
-            .long   ll_md02\n \
-            .long   ll_md02\n \
-            .long   ll_md02\n \
-            .long   ll_md02\n \
-            .long   ll_md02\n \
-            .long   ll_md02\n \
-            .long   ll_md00\n \
-            .long   ll_md00\n \
-            .long   ll_md01\n \
-            .long   ll_md01\n \
-            .long   ll_md02\n \
-            .long   ll_md02\n \
-            .long   ll_md05\n \
-            .long   ll_md05\n \
-            .long   ll_md02\n \
-            .long   ll_md02\n \
-            .long   ll_md05\n \
-            .long   ll_md05\n \
-            .long   ll_md05\n \
-\n \
-\n \
-/*----------------------------------------------------------------*/\n \
-ll_md05:\n \
-/*----------------------------------------------------------------*/\n \
             pushal\n \
             mov    0x14+%[lv],%%eax\n \
             shl    $0x10,%%eax\n \
@@ -852,457 +1255,20 @@ ll_md05:\n \
 jump_pr_ll_md05_bailout:\n \
             popal\n \
             movl   $0x0,%%eax\n \
-            jmp    jump_pr_ll_end\n \
+            jmp    jump_pr_ll_md05_end\n \
 jump_pr_ll_md05_render:\n \
             popal\n \
             movl   $0x1,%%eax\n \
-            jmp    jump_pr_ll_end\n \
+            jmp    jump_pr_ll_md05_end\n \
 \n \
-\n \
-/*----------------------------------------------------------------*/\n \
-ll_md02:\n \
-/*----------------------------------------------------------------*/\n \
-            pushal\n \
-            mov    0x14+%[lv],%%eax\n \
-            shl    $0x10,%%eax\n \
-            cltd\n \
-            idivl  0x10+%[lv]\n \
-            mov    %%eax,0x5c+%[lv]\n \
-            mov    (%%esi),%%eax\n \
-            sub    (%%ecx),%%eax\n \
-            imull  0x5c+%[lv]\n \
-            sar    $0x10,%%eax\n \
-            mov    (%%edi),%%ebx\n \
-            sub    (%%esi),%%ebx\n \
-            add    %%eax,%%ebx\n \
-            jl     jump_pr_ll_md02_bailout\n \
-            je     jump_pr_ll_md02_F61\n \
-            inc    %%ebx\n \
-            mov    0x8(%%esi),%%eax\n \
-            sub    0x8(%%ecx),%%eax\n \
-            imull  0x5c+%[lv]\n \
-            shrd   $0x10,%%edx,%%eax\n \
-            add    0x8(%%edi),%%eax\n \
-            sub    0x8(%%esi),%%eax\n \
-            cltd\n \
-            idiv   %%ebx\n \
-            mov    %%eax,0x24+%[lv]\n \
-            mov    0xc(%%esi),%%eax\n \
-            sub    0xc(%%ecx),%%eax\n \
-            imull  0x5c+%[lv]\n \
-            shrd   $0x10,%%edx,%%eax\n \
-            add    0xc(%%edi),%%eax\n \
-            sub    0xc(%%esi),%%eax\n \
-            cltd\n \
-            idiv   %%ebx\n \
-            mov    %%eax,0x30+%[lv]\n \
-        jump_pr_ll_md02_F61:\n \
-            mov    0x8(%%ecx),%%eax\n \
-            sub    0x8(%%esi),%%eax\n \
-            cltd\n \
-            idivl  0x10+%[lv]\n \
-            mov    %%eax,0x28+%[lv]\n \
-            mov    0xc(%%ecx),%%eax\n \
-            sub    0xc(%%esi),%%eax\n \
-            cltd\n \
-            idivl  0x10+%[lv]\n \
-            mov    %%eax,0x34+%[lv]\n \
-            mov    (%%esi),%%eax\n \
-            shl    $0x10,%%eax\n \
-            mov    %%eax,%%ebx\n \
-            mov    0x8(%%esi),%%ecx\n \
-            mov    0xc(%%esi),%%edx\n \
-            cmpb   $0x0,0x66+%[lv]\n \
-            je     jump_pr_ll_md02_G8b\n \
-            mov    0x54+%[lv],%%edi\n \
-            neg    %%edi\n \
-            sub    %%edi,0x20+%[lv]\n \
-            jle    jump_pr_ll_md02_bailout\n \
-            mov    %%edi,0x48+%[lv]\n \
-            cmp    0x14+%[lv],%%edi\n \
-            js     jump_pr_ll_md02_G2e\n \
-            mov    0x4+%[lv],%%edi\n \
-            imul   0x14+%[lv],%%edi\n \
-            add    %%edi,%%eax\n \
-            mov    0x28+%[lv],%%edi\n \
-            imul   0x14+%[lv],%%edi\n \
-            add    %%edi,%%ecx\n \
-            mov    0x34+%[lv],%%edi\n \
-            imul   0x14+%[lv],%%edi\n \
-            add    %%edi,%%edx\n \
-            mov    0x1c+%[lv],%%ebx\n \
-            mov    0x48+%[lv],%%edi\n \
-            sub    0x14+%[lv],%%edi\n \
-            sub    %%edi,0x18+%[lv]\n \
-            mov    %%edi,0x48+%[lv]\n \
-            imul   0x4+%[lv],%%edi\n \
-            add    %%edi,%%eax\n \
-            mov    0x48+%[lv],%%edi\n \
-            imul   0xc+%[lv],%%edi\n \
-            add    %%edi,%%ebx\n \
-            mov    0x28+%[lv],%%edi\n \
-            imul   0x48+%[lv],%%edi\n \
-            add    %%edi,%%ecx\n \
-            mov    0x34+%[lv],%%edi\n \
-            imul   0x48+%[lv],%%edi\n \
-            add    %%edi,%%edx\n \
-            cmpb   $0x0,0x68+%[lv]\n \
-            je     jump_pr_ll_md02_G23\n \
-            mov    "EXPORT_SYMBOL(vec_window_height)",%%edi\n \
-            mov    %%edi,0x18+%[lv]\n \
-            mov    %%edi,0x20+%[lv]\n \
-        jump_pr_ll_md02_G23:\n \
-            lea    "EXPORT_SYMBOL(polyscans)",%%edi\n \
-            jmp    jump_pr_ll_md02_Ge8\n \
-        jump_pr_ll_md02_G2e:\n \
-            mov    0x48+%[lv],%%edi\n \
-            sub    %%edi,0x14+%[lv]\n \
-            imul   0x4+%[lv],%%edi\n \
-            add    %%edi,%%eax\n \
-            mov    0x8+%[lv],%%edi\n \
-            imul   0x48+%[lv],%%edi\n \
-            add    %%edi,%%ebx\n \
-            mov    0x28+%[lv],%%edi\n \
-            imul   0x48+%[lv],%%edi\n \
-            add    %%edi,%%ecx\n \
-            mov    0x34+%[lv],%%edi\n \
-            imul   0x48+%[lv],%%edi\n \
-            add    %%edi,%%edx\n \
-            cmpb   $0x0,0x68+%[lv]\n \
-            je     jump_pr_ll_md02_Gba\n \
-            mov    "EXPORT_SYMBOL(vec_window_height)",%%edi\n \
-            mov    %%edi,0x20+%[lv]\n \
-            cmpb   $0x0,0x67+%[lv]\n \
-            je     jump_pr_ll_md02_G7c\n \
-            mov    %%edi,0x14+%[lv]\n \
-            jmp    jump_pr_ll_md02_G89\n \
-        jump_pr_ll_md02_G7c:\n \
-            sub    0x14+%[lv],%%edi\n \
-            setle  0x67+%[lv]\n \
-            mov    %%edi,0x18+%[lv]\n \
-        jump_pr_ll_md02_G89:\n \
-            jmp    jump_pr_ll_md02_Gba\n \
-        jump_pr_ll_md02_G8b:\n \
-            cmpb   $0x0,0x68+%[lv]\n \
-            je     jump_pr_ll_md02_Gba\n \
-            mov    "EXPORT_SYMBOL(vec_window_height)",%%edi\n \
-            sub    0x54+%[lv],%%edi\n \
-            mov    %%edi,0x20+%[lv]\n \
-            cmpb   $0x0,0x67+%[lv]\n \
-            je     jump_pr_ll_md02_Gad\n \
-            mov    %%edi,0x14+%[lv]\n \
-            jmp    jump_pr_ll_md02_Gba\n \
-        jump_pr_ll_md02_Gad:\n \
-            sub    0x14+%[lv],%%edi\n \
-            setle  0x67+%[lv]\n \
-            mov    %%edi,0x18+%[lv]\n \
-        jump_pr_ll_md02_Gba:\n \
-            lea    "EXPORT_SYMBOL(polyscans)",%%edi\n \
-        jump_pr_ll_md02_Gc0:\n \
-            mov    %%eax,(%%edi)\n \
-            add    0x4+%[lv],%%eax\n \
-            mov    %%ebx,0x4(%%edi)\n \
-            add    0x8+%[lv],%%ebx\n \
-            mov    %%ecx,0x8(%%edi)\n \
-            add    0x28+%[lv],%%ecx\n \
-            mov    %%edx,0xc(%%edi)\n \
-            add    0x34+%[lv],%%edx\n \
-            add    $0x14,%%edi\n \
-            decl   0x14+%[lv]\n \
-            jne    jump_pr_ll_md02_Gc0\n \
-            mov    0x1c+%[lv],%%ebx\n \
-        jump_pr_ll_md02_Ge8:\n \
-            cmpb   $0x0,0x67+%[lv]\n \
-            je     jump_pr_ll_md02_Gfd\n \
-            jmp    jump_pr_ll_md02_render\n \
-        jump_pr_ll_md02_Gfd:\n \
-            mov    %%eax,(%%edi)\n \
-            add    0x4+%[lv],%%eax\n \
-            mov    %%ebx,0x4(%%edi)\n \
-            add    0xc+%[lv],%%ebx\n \
-            mov    %%ecx,0x8(%%edi)\n \
-            add    0x28+%[lv],%%ecx\n \
-            mov    %%edx,0xc(%%edi)\n \
-            add    0x34+%[lv],%%edx\n \
-            add    $0x14,%%edi\n \
-            decl   0x18+%[lv]\n \
-            jne    jump_pr_ll_md02_Gfd\n \
-            jmp    jump_pr_ll_md02_render\n \
-\n \
-jump_pr_ll_md02_bailout:\n \
-            popal\n \
-            movl   $0x0,%%eax\n \
-            jmp    jump_pr_ll_end\n \
-jump_pr_ll_md02_render:\n \
-            popal\n \
-            movl   $0x1,%%eax\n \
-            jmp    jump_pr_ll_end\n \
-\n \
-\n \
-/*----------------------------------------------------------------*/\n \
-ll_md01:\n \
-/*----------------------------------------------------------------*/\n \
-            pushal\n \
-            mov    0x14+%[lv],%%eax\n \
-            shl    $0x10,%%eax\n \
-            cltd\n \
-            idivl  0x10+%[lv]\n \
-            mov    %%eax,0x5c+%[lv]\n \
-            mov    (%%esi),%%eax\n \
-            sub    (%%ecx),%%eax\n \
-            imull  0x5c+%[lv]\n \
-            sar    $0x10,%%eax\n \
-            mov    (%%edi),%%ebx\n \
-            sub    (%%esi),%%ebx\n \
-            add    %%eax,%%ebx\n \
-            jl     jump_pr_ll_md01_bailout\n \
-            je     jump_pr_ll_md01_H74\n \
-            inc    %%ebx\n \
-            mov    0x10(%%esi),%%eax\n \
-            sub    0x10(%%ecx),%%eax\n \
-            imull  0x5c+%[lv]\n \
-            shrd   $0x10,%%edx,%%eax\n \
-            add    0x10(%%edi),%%eax\n \
-            sub    0x10(%%esi),%%eax\n \
-            cltd\n \
-            idiv   %%ebx\n \
-            mov    %%eax,0x3c+%[lv]\n \
-        jump_pr_ll_md01_H74:\n \
-            mov    0x10(%%ecx),%%eax\n \
-            sub    0x10(%%esi),%%eax\n \
-            cltd\n \
-            idivl  0x10+%[lv]\n \
-            mov    %%eax,0x40+%[lv]\n \
-            mov    (%%esi),%%eax\n \
-            shl    $0x10,%%eax\n \
-            mov    %%eax,%%ebx\n \
-            mov    0x10(%%esi),%%esi\n \
-            cmpb   $0x0,0x66+%[lv]\n \
-            je     jump_pr_ll_md01_I6b\n \
-            mov    0x54+%[lv],%%edi\n \
-            neg    %%edi\n \
-            sub    %%edi,0x20+%[lv]\n \
-            jle    jump_pr_ll_md01_bailout\n \
-            mov    %%edi,0x48+%[lv]\n \
-            cmp    0x14+%[lv],%%edi\n \
-            js     jump_pr_ll_md01_I19\n \
-            mov    0x4+%[lv],%%edi\n \
-            imul   0x14+%[lv],%%edi\n \
-            add    %%edi,%%eax\n \
-            mov    0x40+%[lv],%%edi\n \
-            imul   0x14+%[lv],%%edi\n \
-            add    %%edi,%%esi\n \
-            mov    0x1c+%[lv],%%ebx\n \
-            mov    0x48+%[lv],%%edi\n \
-            sub    0x14+%[lv],%%edi\n \
-            sub    %%edi,0x18+%[lv]\n \
-            mov    %%edi,0x48+%[lv]\n \
-            imul   0x4+%[lv],%%edi\n \
-            add    %%edi,%%eax\n \
-            mov    0x48+%[lv],%%edi\n \
-            imul   0xc+%[lv],%%edi\n \
-            add    %%edi,%%ebx\n \
-            mov    0x40+%[lv],%%edi\n \
-            imul   0x48+%[lv],%%edi\n \
-            add    %%edi,%%esi\n \
-            cmpb   $0x0,0x68+%[lv]\n \
-            je     jump_pr_ll_md01_I0e\n \
-            mov    "EXPORT_SYMBOL(vec_window_height)",%%edi\n \
-            mov    %%edi,0x18+%[lv]\n \
-            mov    %%edi,0x20+%[lv]\n \
-        jump_pr_ll_md01_I0e:\n \
-            lea    "EXPORT_SYMBOL(polyscans)",%%edi\n \
-            jmp    jump_pr_ll_md01_Ic1\n \
-        jump_pr_ll_md01_I19:\n \
-            mov    0x48+%[lv],%%edi\n \
-            sub    %%edi,0x14+%[lv]\n \
-            imul   0x4+%[lv],%%edi\n \
-            add    %%edi,%%eax\n \
-            mov    0x8+%[lv],%%edi\n \
-            imul   0x48+%[lv],%%edi\n \
-            add    %%edi,%%ebx\n \
-            mov    0x40+%[lv],%%edi\n \
-            imul   0x48+%[lv],%%edi\n \
-            add    %%edi,%%esi\n \
-            cmpb   $0x0,0x68+%[lv]\n \
-            je     jump_pr_ll_md01_I9a\n \
-            mov    "EXPORT_SYMBOL(vec_window_height)",%%edi\n \
-            mov    %%edi,0x20+%[lv]\n \
-            cmpb   $0x0,0x67+%[lv]\n \
-            je     jump_pr_ll_md01_I5c\n \
-            mov    %%edi,0x14+%[lv]\n \
-            jmp    jump_pr_ll_md01_I69\n \
-        jump_pr_ll_md01_I5c:\n \
-            sub    0x14+%[lv],%%edi\n \
-            setle  0x67+%[lv]\n \
-            mov    %%edi,0x18+%[lv]\n \
-        jump_pr_ll_md01_I69:\n \
-            jmp    jump_pr_ll_md01_I9a\n \
-        jump_pr_ll_md01_I6b:\n \
-            cmpb   $0x0,0x68+%[lv]\n \
-            je     jump_pr_ll_md01_I9a\n \
-            mov    "EXPORT_SYMBOL(vec_window_height)",%%edi\n \
-            sub    0x54+%[lv],%%edi\n \
-            mov    %%edi,0x20+%[lv]\n \
-            cmpb   $0x0,0x67+%[lv]\n \
-            je     jump_pr_ll_md01_I8d\n \
-            mov    %%edi,0x14+%[lv]\n \
-            jmp    jump_pr_ll_md01_I9a\n \
-        jump_pr_ll_md01_I8d:\n \
-            sub    0x14+%[lv],%%edi\n \
-            setle  0x67+%[lv]\n \
-            mov    %%edi,0x18+%[lv]\n \
-        jump_pr_ll_md01_I9a:\n \
-            lea    "EXPORT_SYMBOL(polyscans)",%%edi\n \
-        jump_pr_ll_md01_Ia0:\n \
-            mov    %%eax,(%%edi)\n \
-            add    0x4+%[lv],%%eax\n \
-            mov    %%ebx,0x4(%%edi)\n \
-            add    0x8+%[lv],%%ebx\n \
-            mov    %%esi,0x10(%%edi)\n \
-            add    0x40+%[lv],%%esi\n \
-            add    $0x14,%%edi\n \
-            decl   0x14+%[lv]\n \
-            jne    jump_pr_ll_md01_Ia0\n \
-            mov    0x1c+%[lv],%%ebx\n \
-        jump_pr_ll_md01_Ic1:\n \
-            cmpb   $0x0,0x67+%[lv]\n \
-            je     jump_pr_ll_md01_Id6\n \
-            jmp    jump_pr_ll_md01_render\n \
-        jump_pr_ll_md01_Id6:\n \
-            mov    %%eax,(%%edi)\n \
-            add    0x4+%[lv],%%eax\n \
-            mov    %%ebx,0x4(%%edi)\n \
-            add    0xc+%[lv],%%ebx\n \
-            mov    %%esi,0x10(%%edi)\n \
-            add    0x40+%[lv],%%esi\n \
-            add    $0x14,%%edi\n \
-            decl   0x18+%[lv]\n \
-            jne    jump_pr_ll_md01_Id6\n \
-            jmp    jump_pr_ll_md01_render\n \
-\n \
-jump_pr_ll_md01_bailout:\n \
-            popal\n \
-            movl   $0x0,%%eax\n \
-            jmp    jump_pr_ll_end\n \
-jump_pr_ll_md01_render:\n \
-            popal\n \
-            movl   $0x1,%%eax\n \
-            jmp    jump_pr_ll_end\n \
-\n \
-\n \
-/*----------------------------------------------------------------*/\n \
-ll_md00:\n \
-/*----------------------------------------------------------------*/\n \
-            pushal\n \
-            mov    (%%esi),%%eax\n \
-            shl    $0x10,%%eax\n \
-            mov    %%eax,%%ebx\n \
-            cmpb   $0x0,0x66+%[lv]\n \
-            je     jump_pr_ll_md00_Jc5\n \
-            mov    0x54+%[lv],%%edi\n \
-            neg    %%edi\n \
-            sub    %%edi,0x20+%[lv]\n \
-            jle    jump_pr_ll_md00_bailout\n \
-            mov    %%edi,0x48+%[lv]\n \
-            cmp    0x14+%[lv],%%edi\n \
-            js     jump_pr_ll_md00_J7e\n \
-            mov    0x4+%[lv],%%edi\n \
-            imul   0x14+%[lv],%%edi\n \
-            add    %%edi,%%eax\n \
-            mov    0x1c+%[lv],%%ebx\n \
-            mov    0x48+%[lv],%%edi\n \
-            sub    0x14+%[lv],%%edi\n \
-            sub    %%edi,0x18+%[lv]\n \
-            mov    %%edi,0x48+%[lv]\n \
-            imul   0x4+%[lv],%%edi\n \
-            add    %%edi,%%eax\n \
-            mov    0x48+%[lv],%%edi\n \
-            imul   0xc+%[lv],%%edi\n \
-            add    %%edi,%%ebx\n \
-            cmpb   $0x0,0x68+%[lv]\n \
-            je     jump_pr_ll_md00_J73\n \
-            mov    "EXPORT_SYMBOL(vec_window_height)",%%edi\n \
-            mov    %%edi,0x18+%[lv]\n \
-            mov    %%edi,0x20+%[lv]\n \
-        jump_pr_ll_md00_J73:\n \
-            lea    "EXPORT_SYMBOL(polyscans)",%%edi\n \
-            jmp    jump_pr_ll_md00_K14\n \
-        jump_pr_ll_md00_J7e:\n \
-            mov    0x48+%[lv],%%edi\n \
-            sub    %%edi,0x14+%[lv]\n \
-            imul   0x4+%[lv],%%edi\n \
-            add    %%edi,%%eax\n \
-            mov    0x8+%[lv],%%edi\n \
-            imul   0x48+%[lv],%%edi\n \
-            add    %%edi,%%ebx\n \
-            cmpb   $0x0,0x68+%[lv]\n \
-            je     jump_pr_ll_md00_Jf4\n \
-            mov    "EXPORT_SYMBOL(vec_window_height)",%%edi\n \
-            mov    %%edi,0x20+%[lv]\n \
-            cmpb   $0x0,0x67+%[lv]\n \
-            je     jump_pr_ll_md00_Jb6\n \
-            mov    %%edi,0x14+%[lv]\n \
-            jmp    jump_pr_ll_md00_Jc3\n \
-        jump_pr_ll_md00_Jb6:\n \
-            sub    0x14+%[lv],%%edi\n \
-            setle  0x67+%[lv]\n \
-            mov    %%edi,0x18+%[lv]\n \
-        jump_pr_ll_md00_Jc3:\n \
-            jmp    jump_pr_ll_md00_Jf4\n \
-        jump_pr_ll_md00_Jc5:\n \
-            cmpb   $0x0,0x68+%[lv]\n \
-            je     jump_pr_ll_md00_Jf4\n \
-            mov    "EXPORT_SYMBOL(vec_window_height)",%%edi\n \
-            sub    0x54+%[lv],%%edi\n \
-            mov    %%edi,0x20+%[lv]\n \
-            cmpb   $0x0,0x67+%[lv]\n \
-            je     jump_pr_ll_md00_Je7\n \
-            mov    %%edi,0x14+%[lv]\n \
-            jmp    jump_pr_ll_md00_Jf4\n \
-        jump_pr_ll_md00_Je7:\n \
-            sub    0x14+%[lv],%%edi\n \
-            setle  0x67+%[lv]\n \
-            mov    %%edi,0x18+%[lv]\n \
-        jump_pr_ll_md00_Jf4:\n \
-            lea    "EXPORT_SYMBOL(polyscans)",%%edi\n \
-        jump_pr_ll_md00_Jfa:\n \
-            mov    %%eax,(%%edi)\n \
-            add    0x4+%[lv],%%eax\n \
-            mov    %%ebx,0x4(%%edi)\n \
-            add    0x8+%[lv],%%ebx\n \
-            add    $0x14,%%edi\n \
-            decl   0x14+%[lv]\n \
-            jne    jump_pr_ll_md00_Jfa\n \
-            mov    0x1c+%[lv],%%ebx\n \
-        jump_pr_ll_md00_K14:\n \
-            cmpb   $0x0,0x67+%[lv]\n \
-            je     jump_pr_ll_md00_K29\n \
-            jmp    jump_pr_ll_md00_render\n \
-        jump_pr_ll_md00_K29:\n \
-            mov    %%eax,(%%edi)\n \
-            add    0x4+%[lv],%%eax\n \
-            mov    %%ebx,0x4(%%edi)\n \
-            add    0xc+%[lv],%%ebx\n \
-            add    $0x14,%%edi\n \
-            decl   0x18+%[lv]\n \
-            jne    jump_pr_ll_md00_K29\n \
-            jmp    jump_pr_ll_md00_render\n \
-\n \
-jump_pr_ll_md00_bailout:\n \
-            popal\n \
-            movl   $0x0,%%eax\n \
-            jmp    jump_pr_ll_end\n \
-jump_pr_ll_md00_render:\n \
-            popal\n \
-            movl   $0x1,%%eax\n \
-            jmp    jump_pr_ll_end\n \
-\n \
-jump_pr_ll_end:\n \
+jump_pr_ll_md05_end:\n \
     "
                  : [lv] "+o" (lv), "=a" (ret)
                  : "S" (opt_a), "D" (opt_b), "c" (opt_c), "o0" (lv)
                  : "memory", "cc");
+        break;
+    }
+
     return ret;
 }
 
