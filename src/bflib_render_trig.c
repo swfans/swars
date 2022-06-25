@@ -64,7 +64,32 @@ enum RenderingVectorMode {
 };
 
 struct TrigLocals {
-    unsigned char v[0x6C];
+  union {
+
+  unsigned char bt[0x6C];
+
+  struct { // trig_ll_*(), trig_rl_*()
+    ubyte *var_24; // 0x00
+    long var_28; // 0x04
+    long var_2C; // 0x08
+    long var_30; // 0x0C
+    long var_34; // 0x10
+    long var_38; // -0x14
+    ulong var_3C; // 0x18
+    ulong var_40; // 0x1C
+    long var_44; // 0x20
+    ulong var_48[12]; // 0x24 (unkn)
+    long var_78; // 0x54
+    ulong var_7C[3]; // 0x58 (unkn)
+    ubyte var_88; // 0x64 (unkn)
+    ubyte var_89; // 0x65 (unkn)
+    ubyte var_8A; // 0x66 (unkn)
+    ubyte var_8B; // 0x67
+    ubyte var_8C; // 0x68
+    ubyte var_8D[3]; // (unkn)
+  } ll;
+
+  };
 };
 
 #pragma pack()
@@ -1190,6 +1215,7 @@ int trig_ll_start(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
   const struct PolyPoint *opt_b, const struct PolyPoint *opt_c)
 {
     int ret;
+#if 0
     asm volatile (" \
         jump_pr_ll_B44:\n \
             mov    0x4(%%esi),%%eax\n \
@@ -1258,7 +1284,43 @@ int trig_ll_start(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
 
     if (!ret)
         return 0;
+#else
+    long dX, dY;
 
+    lv.ll.var_78 = opt_a->Y;
+    if (opt_a->Y < 0) {
+      lv.ll.var_24 = poly_screen;
+      lv.ll.var_8A = 1;
+    } else if (opt_a->Y < vec_window_height) {
+      lv.ll.var_24 = poly_screen + vec_screen_width * opt_a->Y;
+      lv.ll.var_8A = 0;
+    } else {
+        return 0;
+    }
+
+    lv.ll.var_8C = opt_c->Y > vec_window_height;
+    dY = opt_c->Y - opt_a->Y;
+    lv.ll.var_34 = dY;
+    lv.ll.var_44 = dY;
+
+    lv.ll.var_8B = opt_b->Y > vec_window_height;
+    dY = opt_b->Y - opt_a->Y;
+    lv.ll.var_38 = dY;
+    dX = opt_c->X - opt_a->X;
+    lv.ll.var_28 = (dX << 16) / lv.ll.var_34;
+    dX = opt_b->X - opt_a->X;
+    if ((dX << 16) / dY <= lv.ll.var_28)
+        return 0;
+    lv.ll.var_2C = (dX << 16) / dY;
+
+    dY = opt_c->Y - opt_b->Y;
+    dX = opt_c->X - opt_b->X;
+    lv.ll.var_30 = (dX << 16) / dY;
+    lv.ll.var_3C = dY;
+    lv.ll.var_40 = opt_b->X << 16;
+#endif
+
+    ret = 0;
     switch (vec_mode) /* swars-final @ 0x120F07 */
     {
     case RendVec_mode00:
@@ -2022,6 +2084,7 @@ int trig_rl_start(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
   const struct PolyPoint *opt_b, const struct PolyPoint *opt_c)
 {
     int ret;
+#if 0
     asm volatile (" \
         jump_pr_rl_K51:\n \
             mov    0x4(%%esi),%%eax\n \
@@ -2090,7 +2153,43 @@ int trig_rl_start(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
 
     if (!ret)
         return 0;
+#else
+    long dX, dY;
 
+    lv.ll.var_78 = opt_a->Y;
+    if (opt_a->Y < 0) {
+      lv.ll.var_24 = poly_screen;
+      lv.ll.var_8A = 1;
+    } else if (opt_a->Y < vec_window_height) {
+      lv.ll.var_24 = poly_screen + vec_screen_width * opt_a->Y;
+      lv.ll.var_8A = 0;
+    } else  {
+        return 0;
+    }
+
+    lv.ll.var_8B = opt_c->Y > vec_window_height;
+    dY = opt_c->Y - opt_a->Y;
+    lv.ll.var_34 = dY;
+
+    lv.ll.var_8C = opt_b->Y > vec_window_height;
+    dY = opt_b->Y - opt_a->Y;
+    lv.ll.var_38 = dY;
+    lv.ll.var_44 = dY;
+    dX = opt_c->X - opt_a->X;
+    lv.ll.var_28 = (dX << 16) / lv.ll.var_34;
+    dX = opt_b->X - opt_a->X;
+    if ((dX << 16) / dY <= lv.ll.var_28)
+        return 0;
+    lv.ll.var_2C = (dX << 16) / dY;
+
+    dY = opt_b->Y - opt_c->Y;
+    dX = opt_b->X - opt_c->X;
+    lv.ll.var_30 = (dX << 16) / dY;
+    lv.ll.var_3C = dY;
+    lv.ll.var_40 = opt_c->X << 16;
+#endif
+
+    ret = 0;
     switch (vec_mode) /* swars-final @ 0x121814 */
     {
     case RendVec_mode00:
