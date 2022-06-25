@@ -78,7 +78,9 @@ struct TrigLocals {
     ulong var_3C; // 0x18
     ulong var_40; // 0x1C
     long var_44; // 0x20
-    ulong var_48[12]; // 0x24 (unkn)
+    ulong var_48[9]; // 0x24 (unkn)
+    long var_6C; // 0x48
+    ulong var_70[2]; // 0x4C (unkn)
     long var_78; // 0x54
     ulong var_7C[3]; // 0x58 (unkn)
     ubyte var_88; // 0x64 (unkn)
@@ -93,6 +95,10 @@ struct TrigLocals {
 };
 
 #pragma pack()
+
+// Allow enabling non-remade versions of trig(), to check for regressions
+#define USE_ASM_TRIG_UNITARY 0
+#define USE_ASM_TRIG_DIVIDED 0
 
 #define STRINGIFY(x) #x
 #ifdef NEED_UNDERSCORE
@@ -145,6 +151,14 @@ void trig_render_md24(struct TrigLocals *lv);
 void trig_render_md25(struct TrigLocals *lv);
 void trig_render_md26(struct TrigLocals *lv);
 
+/**
+ * overflow flag of subtraction (x-y) of long
+ */
+ubyte __OFSUBL__(long x, long y)
+{
+    return ((x < 0) ^ (y < 0)) & ((x < 0) ^ (x-y < 0));
+}
+
 /** Triangle rendering function.
  *
  * @param point_a Coordinates and texture mapping of first point.
@@ -154,7 +168,7 @@ void trig_render_md26(struct TrigLocals *lv);
 void trig(struct PolyPoint *point_a, struct PolyPoint *point_b,
   struct PolyPoint *point_c)
 {
-#if 0
+#if USE_ASM_TRIG_UNITARY
     asm volatile ("call ASM_trig\n"
         :  : "a" (point_a), "d" (point_b), "b" (point_c));
     return;
@@ -323,7 +337,7 @@ ubyte trig_reorder_input_points(struct PolyPoint **opt_a,
     struct PolyPoint *ordpt_c;
     ubyte start_type;
 
-#if 0
+#if USE_ASM_TRIG_DIVIDED
     asm volatile (" \
             mov    %%eax,%%esi\n \
             mov    %%edx,%%edi\n \
@@ -530,6 +544,7 @@ jump_tprep_end:\n \
 int trig_ll_md00(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
   const struct PolyPoint *opt_b, const struct PolyPoint *opt_c)
 {
+#if USE_ASM_TRIG_DIVIDED
     int ret;
     asm volatile (" \
             pushal\n \
@@ -642,6 +657,95 @@ jump_pr_ll_md00_end:\n \
                  : "S" (opt_a), "D" (opt_b), "c" (opt_c), "o0" (lv)
                  : "memory", "cc");
     return ret;
+#else
+    long pX, pYa, pYb;
+    struct PolyPoint *pp;
+    long dH, eH;
+
+    pX = opt_a->X << 16;
+    pYa = opt_a->X << 16;
+    if (lv.ll.var_8A)
+    {
+        TbBool eH_overflow;
+        // overflow flag of addition (lv.ll.var_44+lv.ll.var_78)
+        eH_overflow = __OFSUBL__(lv.ll.var_44, -lv.ll.var_78);
+        eH = lv.ll.var_44 + lv.ll.var_78;
+        if (((eH < 0) ^ eH_overflow) | (eH == 0))
+            return 0;
+        lv.ll.var_44 = eH;
+        lv.ll.var_6C = -lv.ll.var_78;
+        if (-lv.ll.var_78 - lv.ll.var_38 >= 0)
+        {
+            lv.ll.var_3C -= lv.ll.var_6C - lv.ll.var_38;
+            lv.ll.var_6C -= lv.ll.var_38;
+            pX += lv.ll.var_28 * lv.ll.var_6C + lv.ll.var_38 * lv.ll.var_28;
+            pYb = lv.ll.var_30 * lv.ll.var_6C + lv.ll.var_40;
+            if (lv.ll.var_8C)
+            {
+                lv.ll.var_3C = vec_window_height;
+                lv.ll.var_44 = vec_window_height;
+            }
+            lv.ll.var_38 = 0;
+        }
+        else
+        {
+            lv.ll.var_38 -= lv.ll.var_6C;
+            pX += lv.ll.var_28 * lv.ll.var_6C;
+            pYa += lv.ll.var_6C * lv.ll.var_2C;
+            if (lv.ll.var_8C)
+            {
+                lv.ll.var_44 = vec_window_height;
+                if (lv.ll.var_8B) {
+                    lv.ll.var_38 = vec_window_height;
+                } else {
+                    lv.ll.var_8B = vec_window_height <= lv.ll.var_38;
+                    lv.ll.var_3C = vec_window_height - lv.ll.var_38;
+                }
+            }
+            pYb = lv.ll.var_40;
+        }
+    }
+    else
+    {
+        if (lv.ll.var_8C)
+        {
+            dH = vec_window_height - lv.ll.var_78;
+            lv.ll.var_44 = vec_window_height - lv.ll.var_78;
+            if (lv.ll.var_8B) {
+                lv.ll.var_38 = vec_window_height - lv.ll.var_78;
+            } else {
+                TbBool eH_overflow;
+                // overflow flag of subtraction (dH - lv.ll.var_38)
+                eH_overflow = __OFSUBL__(dH, lv.ll.var_38);
+                eH = dH - lv.ll.var_38;
+                lv.ll.var_8B = ((eH < 0) ^ eH_overflow) | (eH == 0);
+                lv.ll.var_3C = eH;
+            }
+        }
+        pYb = lv.ll.var_40;
+    }
+    pp = polyscans;
+    for (; lv.ll.var_38; lv.ll.var_38--)
+    {
+        pp->X = pX;
+        pX += lv.ll.var_28;
+        pp->Y = pYa;
+        pYa += lv.ll.var_2C;
+        ++pp;
+    }
+    if (!lv.ll.var_8B)
+    {
+        for (; lv.ll.var_3C; lv.ll.var_3C--)
+        {
+            pp->X = pX;
+            pX += lv.ll.var_28;
+            pp->Y = pYb;
+            pYb += lv.ll.var_30;
+            ++pp;
+        }
+    }
+    return 1;
+#endif
 }
 
 int trig_ll_md01(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
@@ -1215,7 +1319,7 @@ int trig_ll_start(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
   const struct PolyPoint *opt_b, const struct PolyPoint *opt_c)
 {
     int ret;
-#if 0
+#if USE_ASM_TRIG_DIVIDED
     asm volatile (" \
         jump_pr_ll_B44:\n \
             mov    0x4(%%esi),%%eax\n \
@@ -2084,7 +2188,7 @@ int trig_rl_start(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
   const struct PolyPoint *opt_b, const struct PolyPoint *opt_c)
 {
     int ret;
-#if 0
+#if USE_ASM_TRIG_DIVIDED
     asm volatile (" \
         jump_pr_rl_K51:\n \
             mov    0x4(%%esi),%%eax\n \
@@ -2597,7 +2701,7 @@ int trig_fb_start(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
   const struct PolyPoint *opt_b, const struct PolyPoint *opt_c)
 {
     int ret;
-#if 0
+#if USE_ASM_TRIG_DIVIDED
     asm volatile (" \
         jump_pr_fb_Sc2:\n \
             mov    0x4(%%esi),%%eax\n \
@@ -3079,7 +3183,7 @@ int trig_ft_start(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
   const struct PolyPoint *opt_b, const struct PolyPoint *opt_c)
 {
     int ret;
-#if 0
+#if USE_ASM_TRIG_DIVIDED
     asm volatile (" \
         jump_pr_ft_A41:\n \
             mov    0x4(%%esi),%%eax\n \
