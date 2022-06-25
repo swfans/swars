@@ -3079,6 +3079,7 @@ int trig_ft_start(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
   const struct PolyPoint *opt_b, const struct PolyPoint *opt_c)
 {
     int ret;
+#if 0
     asm volatile (" \
         jump_pr_ft_A41:\n \
             mov    0x4(%%esi),%%eax\n \
@@ -3128,7 +3129,30 @@ int trig_ft_start(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
 
     if (!ret)
         return 0;
+#else
+    long dX, dY;
 
+    lv.ll.var_78 = opt_a->Y;
+    if (opt_a->Y < 0) {
+      lv.ll.var_24 = poly_screen;
+      lv.ll.var_8A = 1;
+    } else if (opt_a->Y < vec_window_height) {
+      lv.ll.var_24 = poly_screen + vec_screen_width * opt_a->Y;
+      lv.ll.var_8A = 0;
+    } else {
+        return 0;
+    }
+    lv.ll.var_8B = opt_c->Y > vec_window_height;
+    dY = opt_c->Y - opt_a->Y;
+    lv.ll.var_34 = dY;
+    lv.ll.var_44 = dY;
+    dX = opt_c->X - opt_a->X;
+    lv.ll.var_28 = (dX << 16) / dY;
+    dX = opt_c->X - opt_b->X;
+    lv.ll.var_2C = (dX << 16) / dY;
+#endif
+
+    ret = 0;
     switch (vec_mode) /* swars-final @ 0x1225c1, genewars-beta @ 0xF02F1 */
     {
     case RendVec_mode00:
