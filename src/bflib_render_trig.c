@@ -68,7 +68,7 @@ struct TrigLocals {
 
   unsigned char bt[0x6C];
 
-  struct { // trig_ll_*(), trig_rl_*()
+  struct { // trig_*_start()
     ubyte *var_24; // 0x00
     long var_28; // 0x04
     long var_2C; // 0x08
@@ -83,7 +83,7 @@ struct TrigLocals {
     ulong var_7C[3]; // 0x58 (unkn)
     ubyte var_88; // 0x64 (unkn)
     ubyte var_89; // 0x65 (unkn)
-    ubyte var_8A; // 0x66 (unkn)
+    ubyte var_8A; // 0x66
     ubyte var_8B; // 0x67
     ubyte var_8C; // 0x68
     ubyte var_8D[3]; // (unkn)
@@ -2597,6 +2597,7 @@ int trig_fb_start(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
   const struct PolyPoint *opt_b, const struct PolyPoint *opt_c)
 {
     int ret;
+#if 0
     asm volatile (" \
         jump_pr_fb_Sc2:\n \
             mov    0x4(%%esi),%%eax\n \
@@ -2645,8 +2646,31 @@ int trig_fb_start(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
                  : "memory", "cc", "%ebx");
 
     if (!ret)
-        return 0;
+          return 0;
+#else
+    long dX, dY;
 
+    lv.ll.var_78 = opt_a->Y;
+    if (opt_a->Y < 0) {
+        lv.ll.var_24 = poly_screen;
+        lv.ll.var_8A = 1;
+    } else if (opt_a->Y < vec_window_height) {
+        lv.ll.var_24 = poly_screen + vec_screen_width * opt_a->Y;
+        lv.ll.var_8A = 0;
+    } else {
+        return 0;
+    }
+    lv.ll.var_8B = opt_c->Y > vec_window_height;
+    dY = opt_c->Y - opt_a->Y;
+    lv.ll.var_34 = dY;
+    lv.ll.var_44 = dY;
+    dX = opt_c->X - opt_a->X;
+    lv.ll.var_28 = (dX << 16) / dY;
+    dX = opt_b->X - opt_a->X;
+    lv.ll.var_2C = (dX << 16) / dY;
+#endif
+
+    ret = 0;
     switch (vec_mode) /* swars-final @ 0x122142, genewars-beta @ 0xEFE72 */
     {
     case RendVec_mode00:
