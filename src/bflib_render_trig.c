@@ -1370,6 +1370,7 @@ jump_pr_ll_md02_end:\n \
 int trig_ll_md05(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
   const struct PolyPoint *opt_b, const struct PolyPoint *opt_c)
 {
+#if USE_ASM_TRIG_DIVIDED
     int ret;
     asm volatile (" \
             pushal\n \
@@ -1582,6 +1583,146 @@ jump_pr_ll_md05_end:\n \
                  : "S" (opt_a), "D" (opt_b), "c" (opt_c), "o0" (lv)
                  : "memory", "cc");
     return ret;
+#else
+    long pX, pYa, pYb;
+    long pU, pV, pS;
+    struct PolyPoint *pp;
+
+    lv.ll.var_80 = (lv.ll.var_38 << 16) / lv.ll.var_34;
+    {
+        long dX, wX;
+        long eX;
+        TbBool eX_overflow;
+
+        dX = opt_a->X - opt_c->X;
+        wX = lv.ll.var_80 * dX >> 16;
+        dX = opt_b->X - opt_a->X;
+        eX_overflow = __OFSUBL__(wX, -dX);
+        eX = wX + dX;
+        if ((eX < 0) ^ eX_overflow)
+            return 0;
+        if (eX != 0)
+        {
+            long long dS, wS;
+            dS = opt_a->U - opt_c->U;
+            wS = (lv.ll.var_80 * dS) >> 16;
+            lv.ll.var_48 = (opt_b->U + wS - opt_a->U) / (eX + 1);
+            dS = opt_a->V - opt_c->V;
+            wS = (lv.ll.var_80 * dS) >> 16;
+            lv.ll.var_54 = (signed int)(opt_b->V + wS - opt_a->V) / (eX + 1);
+            dS = opt_a->S - opt_c->S;
+            wS = (lv.ll.var_80 * dS) >> 16;
+            lv.ll.var_60 = (signed int)(opt_b->S + wS - opt_a->S) / (eX + 1);
+        }
+    }
+    lv.ll.var_4C = (opt_c->U - opt_a->U) / lv.ll.var_34;
+    lv.ll.var_58 = (opt_c->V - opt_a->V) / lv.ll.var_34;
+    lv.ll.var_64 = (opt_c->S - opt_a->S) / lv.ll.var_34;
+    pX = opt_a->X << 16;
+    pYa = opt_a->X << 16;
+    pU = opt_a->U;
+    pV = opt_a->V;
+    pS = opt_a->S;
+    if (lv.ll.var_8A)
+    {
+        long eH;
+        TbBool eH_overflow;
+
+        eH_overflow = __OFSUBL__(lv.ll.var_44, -lv.ll.var_78);
+        eH = lv.ll.var_44 + lv.ll.var_78;
+        if (((eH < 0) ^ eH_overflow) | (eH == 0))
+            return 0;
+        lv.ll.var_44 = eH;
+        lv.ll.var_6C = -lv.ll.var_78;
+        if (lv.ll.var_6C - lv.ll.var_38 >= 0)
+        {
+            lv.ll.var_3C -= lv.ll.var_6C - lv.ll.var_38;
+            lv.ll.var_6C -= lv.ll.var_38;
+            pX += lv.ll.var_28 * lv.ll.var_6C + lv.ll.var_38 * lv.ll.var_28;
+            pYb = lv.ll.var_30 * lv.ll.var_6C + lv.ll.var_40;
+            pU += lv.ll.var_6C * lv.ll.var_4C + lv.ll.var_38 * lv.ll.var_4C;
+            pV += lv.ll.var_6C * lv.ll.var_58 + lv.ll.var_38 * lv.ll.var_58;
+            pS += lv.ll.var_6C * lv.ll.var_64 + lv.ll.var_38 * lv.ll.var_64;
+            if (lv.ll.var_8C) {
+              lv.ll.var_3C = vec_window_height;
+              lv.ll.var_44 = vec_window_height;
+            }
+        }
+        else
+        {
+            lv.ll.var_38 -= lv.ll.var_6C;
+            pX += lv.ll.var_28 * lv.ll.var_6C;
+            pYa += lv.ll.var_6C * lv.ll.var_2C;
+            pU += lv.ll.var_6C * lv.ll.var_4C;
+            pV += lv.ll.var_6C * lv.ll.var_58;
+            pS += lv.ll.var_6C * lv.ll.var_64;
+            if (lv.ll.var_8C)
+            {
+                lv.ll.var_44 = vec_window_height;
+                if (lv.ll.var_8B) {
+                    lv.ll.var_38 = vec_window_height;
+                } else {
+                    lv.ll.var_8B = vec_window_height <= lv.ll.var_38;
+                    lv.ll.var_3C = vec_window_height - lv.ll.var_38;
+                }
+            }
+            pYb = lv.ll.var_40;
+        }
+    }
+    else
+    {
+        if (lv.ll.var_8C)
+        {
+            long dH, eH;
+            TbBool eH_overflow;
+
+            dH = vec_window_height - lv.ll.var_78;
+            lv.ll.var_44 = vec_window_height - lv.ll.var_78;
+            if (lv.ll.var_8B) {
+                lv.ll.var_38 = vec_window_height - lv.ll.var_78;
+            } else {
+                eH_overflow = __OFSUBL__(dH, lv.ll.var_38);
+                eH = dH - lv.ll.var_38;
+                lv.ll.var_8B = ((eH < 0) ^ eH_overflow) | (eH == 0);
+                lv.ll.var_3C = eH;
+            }
+        }
+        pYb = lv.ll.var_40;
+    }
+    pp = polyscans;
+    for (; lv.ll.var_38; lv.ll.var_38--)
+    {
+        pp->X = pX;
+        pX += lv.ll.var_28;
+        pp->Y = pYa;
+        pYa += lv.ll.var_2C;
+        pp->U = pU;
+        pU += lv.ll.var_4C;
+        pp->V = pV;
+        pV += lv.ll.var_58;
+        pp->S = pS;
+        pS += lv.ll.var_64;
+        ++pp;
+    }
+    if ( !lv.ll.var_8B )
+    {
+        for (; lv.ll.var_3C; lv.ll.var_3C--)
+        {
+          pp->X = pX;
+          pX += lv.ll.var_28;
+          pp->Y = pYb;
+          pYb += lv.ll.var_30;
+          pp->U = pU;
+          pU += lv.ll.var_4C;
+          pp->V = pV;
+          pV += lv.ll.var_58;
+          pp->S = pS;
+          pS += lv.ll.var_64;
+          ++pp;
+        }
+    }
+    return 1;
+#endif
 }
 
 int trig_ll_start(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
