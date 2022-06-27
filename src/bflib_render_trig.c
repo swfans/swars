@@ -79,24 +79,24 @@ struct TrigLocals {
     long var_30; // 0x0C
     long var_34; // 0x10
     long var_38; // 0x14
-    ulong var_3C; // 0x18
-    ulong var_40; // 0x1C
+    long var_3C; // 0x18
+    long var_40; // 0x1C
     long var_44; // 0x20
     long var_48; // 0x24
     long var_4C; // 0x28
-    ulong var_50; // 0x2C (unkn)
+    long var_50; // 0x2C (unkn)
     long var_54; // 0x30
     long var_58; // 0x34
-    ulong var_5C; // 0x38 (unkn)
+    long var_5C; // 0x38 (unkn)
     long var_60; // 0x3C
     long var_64; // 0x40
-    ulong var_68; // 0x44 (unkn)
+    long var_68; // 0x44
     long var_6C; // 0x48
-    ulong var_70[2]; // 0x4C (unkn)
+    long var_70[2]; // 0x4C (unkn)
     long var_78; // 0x54
-    ulong var_7C; // 0x58 (unkn)
+    long var_7C; // 0x58 (unkn)
     long var_80; // 0x5C
-    ulong var_84; // 0x60 (unkn)
+    long var_84; // 0x60 (unkn)
     ubyte var_88; // 0x64 (unkn)
     ubyte var_89; // 0x65 (unkn)
     ubyte var_8A; // 0x66
@@ -2090,6 +2090,7 @@ jump_pr_rl_md00_end:\n \
 int trig_rl_md01(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
   const struct PolyPoint *opt_b, const struct PolyPoint *opt_c)
 {
+#if USE_ASM_TRIG_DIVIDED
     int ret;
     asm volatile (" \
             pushal\n \
@@ -2251,6 +2252,127 @@ jump_pr_rl_md01_end:\n \
                  : "S" (opt_a), "D" (opt_b), "c" (opt_c), "o0" (lv)
                  : "memory", "cc");
     return ret;
+#else
+    long pXa, pXb, pY;
+    long pS;
+    struct PolyPoint *pp;
+
+    lv.ll.var_80 = (lv.ll.var_34 << 16) / lv.ll.var_38;
+    {
+        long dXa, wXb;
+        long eX;
+        TbBool eX_overflow;
+
+        wXb = lv.ll.var_80 * (opt_b->X - opt_a->X) >> 16;
+        dXa = opt_a->X - opt_c->X;
+        eX_overflow = __OFSUBL__(wXb, -dXa);
+        eX = wXb + dXa;
+        if ((eX < 0) ^ eX_overflow)
+            return 0;
+        if (eX != 0) {
+            long long dS, wS;
+            dS = opt_b->S - opt_a->S;
+            wS = (lv.ll.var_80 * dS) >> 16;
+            lv.ll.var_60 = (opt_a->S + wS - opt_c->S) / (eX + 1);
+        }
+    }
+    lv.ll.var_64 = (opt_c->S - opt_a->S) / lv.ll.var_34;
+    lv.ll.var_68 = (opt_b->S - opt_c->S) / lv.ll.var_3C;
+    pXa = opt_a->X << 16;
+    pY = opt_a->X << 16;
+    pS = opt_a->S;
+    if (lv.ll.var_8A)
+    {
+        long eH;
+        TbBool eH_overflow;
+
+        eH_overflow = __OFSUBL__(lv.ll.var_44, -lv.ll.var_78);
+        eH = lv.ll.var_44 + lv.ll.var_78;
+        if (((eH < 0) ^ eH_overflow) | (eH == 0))
+            return 0;
+        lv.ll.var_44 = eH;
+        lv.ll.var_6C = -lv.ll.var_78;
+        if (lv.ll.var_6C - lv.ll.var_34 >= 0)
+        {
+            lv.ll.var_6C -= lv.ll.var_34;
+            lv.ll.var_3C -= lv.ll.var_6C;
+            pXb = lv.ll.var_30 * lv.ll.var_6C + lv.ll.var_40;
+            pY += lv.ll.var_6C * lv.ll.var_2C + lv.ll.var_34 * lv.ll.var_2C;
+            pS += lv.ll.var_6C * lv.ll.var_68 + lv.ll.var_34 * lv.ll.var_64;
+            if (lv.ll.var_8C) {
+                lv.ll.var_3C = vec_window_height;
+                lv.ll.var_44 = vec_window_height;
+            }
+            lv.ll.var_34 = 0;
+        }
+        else
+        {
+            lv.ll.var_34 -= lv.ll.var_6C;
+            pXa += lv.ll.var_28 * lv.ll.var_6C;
+            pY += lv.ll.var_6C * lv.ll.var_2C;
+            pS += lv.ll.var_6C * lv.ll.var_64;
+            if ( lv.ll.var_8C )
+            {
+                lv.ll.var_44 = vec_window_height;
+                if ( lv.ll.var_8B )
+                {
+                  lv.ll.var_34 = vec_window_height;
+                }
+                else
+                {
+                  lv.ll.var_8B = vec_window_height <= lv.ll.var_34;
+                  lv.ll.var_3C = vec_window_height - lv.ll.var_34;
+                }
+            }
+            pXb = lv.ll.var_40;
+        }
+    }
+    else
+    {
+        if (lv.ll.var_8C)
+        {
+            long dH, eH;
+            TbBool eH_overflow;
+
+            dH = vec_window_height - lv.ll.var_78;
+            lv.ll.var_44 = vec_window_height - lv.ll.var_78;
+            if (lv.ll.var_8B) {
+                lv.ll.var_34 = vec_window_height - lv.ll.var_78;
+            } else {
+                eH_overflow = __OFSUBL__(dH, lv.ll.var_34);
+                eH = dH - lv.ll.var_34;
+                lv.ll.var_8B = ((eH < 0) ^ eH_overflow) | (eH == 0);
+                lv.ll.var_3C = eH;
+            }
+        }
+        pXb = lv.ll.var_40;
+    }
+    pp = polyscans;
+    for (; lv.ll.var_34; lv.ll.var_34--)
+    {
+        pp->X = pXa;
+        pXa += lv.ll.var_28;
+        pp->Y = pY;
+        pY += lv.ll.var_2C;
+        pp->S = pS;
+        pS += lv.ll.var_64;
+        ++pp;
+    }
+    if (!lv.ll.var_8B)
+    {
+        for (; lv.ll.var_3C; lv.ll.var_3C--)
+        {
+            pp->X = pXb;
+            pXb += lv.ll.var_30;
+            pp->Y = pY;
+            pY += lv.ll.var_2C;
+            pp->S = pS;
+            pS += lv.ll.var_68;
+            ++pp;
+        }
+    }
+    return 1;
+#endif
 }
 
 int trig_rl_md02(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
