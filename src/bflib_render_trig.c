@@ -3345,6 +3345,7 @@ jump_pr_fb_md00_end:\n \
 int trig_fb_md01(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
   const struct PolyPoint *opt_b, const struct PolyPoint *opt_c)
 {
+#if USE_ASM_TRIG_DIVIDED
     int ret;
     asm volatile (" \
             pushal\n \
@@ -3422,11 +3423,66 @@ jump_pr_fb_md01_end:\n \
                  : "S" (opt_a), "D" (opt_b), "c" (opt_c), "o0" (lv)
                  : "memory", "cc");
     return ret;
+#else
+    int pX, pY;
+    int pS;
+    struct PolyPoint *pp;
+
+    {
+        long dX;
+        dX = opt_b->X - opt_c->X;
+        lv.ll.var_60 = (opt_b->S - opt_c->S) / dX;
+        lv.ll.var_64 = (opt_c->S - opt_a->S) / lv.ll.var_44;
+    }
+    pX = opt_a->X << 16;
+    pY = opt_a->X << 16;
+    pS = opt_a->S;
+    if (lv.ll.var_8A)
+    {
+        long eH;
+        TbBool eH_overflow;
+
+        lv.ll.var_34 += lv.ll.var_78;
+        eH_overflow = __OFSUBL__(lv.ll.var_44, -lv.ll.var_78);
+        eH = lv.ll.var_44 + lv.ll.var_78;
+        if (((eH < 0) ^ eH_overflow) | (eH == 0))
+            return 0;
+        lv.ll.var_44 = eH;
+        lv.ll.var_6C = -lv.ll.var_78;
+        pX += lv.ll.var_28 * (-lv.ll.var_78);
+        pY += (-lv.ll.var_78) * lv.ll.var_2C;
+        pS += (-lv.ll.var_78) * lv.ll.var_64;
+        if (lv.ll.var_8B) {
+            lv.ll.var_44 = vec_window_height;
+            lv.ll.var_34 = vec_window_height;
+        }
+    }
+    else
+    {
+        if (lv.ll.var_8B) {
+            lv.ll.var_44 = vec_window_height - lv.ll.var_78;
+            lv.ll.var_34 = vec_window_height - lv.ll.var_78;
+        }
+    }
+    pp = polyscans;
+    for (; lv.ll.var_34; lv.ll.var_34--)
+    {
+        pp->X = pX;
+        pX += lv.ll.var_28;
+        pp->Y = pY;
+        pY += lv.ll.var_2C;
+        pp->S = pS;
+        pS += lv.ll.var_64;
+        ++pp;
+    }
+    return 1;
+#endif
 }
 
 int trig_fb_md02(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
   const struct PolyPoint *opt_b, const struct PolyPoint *opt_c)
 {
+#if USE_ASM_TRIG_DIVIDED
     int ret;
     asm volatile (" \
             pushal\n \
@@ -3523,6 +3579,66 @@ jump_pr_fb_md02_end:\n \
                  : "S" (opt_a), "D" (opt_b), "c" (opt_c), "o0" (lv)
                  : "memory", "cc");
     return ret;
+#else
+    int pX, pY;
+    int pU, pV;
+    struct PolyPoint *pp;
+
+    {
+        long dX;
+        dX = opt_b->X - opt_c->X;
+        lv.ll.var_48 = (opt_b->U - opt_c->U) / dX;
+        lv.ll.var_54 = (opt_b->V - opt_c->V) / dX;
+        lv.ll.var_4C = (opt_c->U - opt_a->U) / lv.ll.var_44;
+        lv.ll.var_58 = (opt_c->V - opt_a->V) / lv.ll.var_44;
+    }
+    pX = opt_a->X << 16;
+    pY = opt_a->X << 16;
+    pU = opt_a->U;
+    pV = opt_a->V;
+    if (lv.ll.var_8A)
+    {
+        long eH;
+        TbBool eH_overflow;
+
+        lv.ll.var_34 += lv.ll.var_78;
+        eH_overflow = __OFSUBL__(lv.ll.var_44, -lv.ll.var_78);
+        eH = lv.ll.var_44 + lv.ll.var_78;
+        if (((eH < 0) ^ eH_overflow) | (eH == 0))
+            return 0;
+        lv.ll.var_44 = eH;
+        lv.ll.var_6C = -lv.ll.var_78;
+        pX += lv.ll.var_28 * (-lv.ll.var_78);
+        pY += (-lv.ll.var_78) * lv.ll.var_2C;
+        pU += (-lv.ll.var_78) * lv.ll.var_4C;
+        pV += (-lv.ll.var_78) * lv.ll.var_58;
+        if (lv.ll.var_8B) {
+            lv.ll.var_44 = vec_window_height;
+            lv.ll.var_34 = vec_window_height;
+        }
+    }
+    else
+    {
+        if (lv.ll.var_8B) {
+            lv.ll.var_44 = vec_window_height - lv.ll.var_78;
+            lv.ll.var_34 = vec_window_height - lv.ll.var_78;
+        }
+    }
+    pp = polyscans;
+    for (; lv.ll.var_34; lv.ll.var_34--)
+    {
+        pp->X = pX;
+        pX += lv.ll.var_28;
+        pp->Y = pY;
+        pY += lv.ll.var_2C;
+        pp->U = pU;
+        pU += lv.ll.var_4C;
+        pp->V = pV;
+        pV += lv.ll.var_58;
+        ++pp;
+    }
+    return 1;
+#endif
 }
 
 int trig_fb_md05(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
