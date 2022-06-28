@@ -18,6 +18,8 @@
  */
 /******************************************************************************/
 #include "poly.h"
+#include "poly_trigp.h"
+#include "poly_trigr.h"
 #include "bfgentab.h"
 #include "bfpalette.h"
 

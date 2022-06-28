@@ -40,6 +40,8 @@ libbullfrog_a_SOURCES = \
   src/general/mspointer.cpp \
   src/general/pixel.c \
   src/general/poly.c \
+  src/general/poly_trigp.c \
+  src/general/poly_trigr.c \
   src/general/rnc_1fm.c \
   src/general/rom.c \
   src/general/scr_copy.c \
