@@ -20,48 +20,12 @@
 #include "bflib_render.h"
 #include "bfgentab.h"
 #include "poly.h"
+#include "poly_trigp.h"
+#include "poly_trigr.h"
 #include "swlog.h"
 
 /******************************************************************************/
 #pragma pack(1)
-
-enum RenderingStartType {
-    RendStart_NO = 0,
-    RendStart_LL,
-    RendStart_RL,
-    RendStart_FB,
-    RendStart_FT,
-};
-
-enum RenderingVectorMode {
-    RendVec_mode00 = 0,
-    RendVec_mode01,
-    RendVec_mode02,
-    RendVec_mode03,
-    RendVec_mode04,
-    RendVec_mode05,
-    RendVec_mode06,
-    RendVec_mode07,
-    RendVec_mode08,
-    RendVec_mode09,
-    RendVec_mode10,
-    RendVec_mode11,
-    RendVec_mode12,
-    RendVec_mode13,
-    RendVec_mode14,
-    RendVec_mode15,
-    RendVec_mode16,
-    RendVec_mode17,
-    RendVec_mode18,
-    RendVec_mode19,
-    RendVec_mode20,
-    RendVec_mode21,
-    RendVec_mode22,
-    RendVec_mode23,
-    RendVec_mode24,
-    RendVec_mode25,
-    RendVec_mode26,
-};
 
 /* State transferred from trig_??_start() functions to trig_render_md??().
  * Only a part of it is probably required - to be simplified or removed
@@ -84,10 +48,10 @@ struct TrigLocals {
     long var_44; // 0x20
     long var_48; // 0x24
     long var_4C; // 0x28
-    long var_50; // 0x2C (unkn)
+    long var_50; // 0x2C
     long var_54; // 0x30
     long var_58; // 0x34
-    long var_5C; // 0x38 (unkn)
+    long var_5C; // 0x38
     long var_60; // 0x3C
     long var_64; // 0x40
     long var_68; // 0x44
@@ -104,6 +68,39 @@ struct TrigLocals {
     ubyte var_8C; // 0x68
     ubyte var_8D[3]; // (unkn)
   } ll;
+
+  struct { // trig_render_md*()
+    ubyte *var_24; // 0x00
+    long var_28; // 0x04
+    long var_2C; // 0x08
+    long var_30; // 0x0C
+    long var_34; // 0x10
+    long var_38; // 0x14
+    long var_3C; // 0x18
+    long var_40; // 0x1C
+    long var_44; // 0x20
+    long var_48; // 0x24
+    long var_4C; // 0x28
+    long var_50; // 0x2C
+    long var_54; // 0x30
+    long var_58; // 0x34
+    long var_5C; // 0x38
+    long var_60; // 0x3C
+    long var_64; // 0x40
+    long var_68; // 0x44
+    long var_6C; // 0x48
+    long var_70[2]; // 0x4C (unkn)
+    long var_78; // 0x54
+    long var_7C; // 0x58 (unkn)
+    long var_80; // 0x5C
+    long var_84; // 0x60 (unkn)
+    ubyte var_88; // 0x64 (unkn)
+    ubyte var_89; // 0x65 (unkn)
+    ubyte var_8A; // 0x66
+    ubyte var_8B; // 0x67
+    ubyte var_8C; // 0x68
+    ubyte var_8D[3]; // (unkn)
+  } rd;
 
   };
 };
@@ -128,219 +125,12 @@ extern const long add_to_edi[];
 // TODO Switch to local var when remade - this is global because assembly alters EBP
 struct TrigLocals lv;
 
-ubyte trig_reorder_input_points(struct PolyPoint **opt_a,
-  struct PolyPoint **opt_b, struct PolyPoint **opt_c);
-int trig_ll_start(struct TrigLocals *lv, const struct PolyPoint *opt_a,
-  const struct PolyPoint *opt_b, const struct PolyPoint *opt_c);
-int trig_rl_start(struct TrigLocals *lv, const struct PolyPoint *opt_a,
-  const struct PolyPoint *opt_b, const struct PolyPoint *opt_c);
-int trig_fb_start(struct TrigLocals *lv, const struct PolyPoint *opt_a,
-  const struct PolyPoint *opt_b, const struct PolyPoint *opt_c);
-int trig_ft_start(struct TrigLocals *lv, const struct PolyPoint *opt_a,
-  const struct PolyPoint *opt_b, const struct PolyPoint *opt_c);
-void trig_render_md00(struct TrigLocals *lv);
-void trig_render_md01(struct TrigLocals *lv);
-void trig_render_md02(struct TrigLocals *lv);
-void trig_render_md03(struct TrigLocals *lv);
-void trig_render_md04(struct TrigLocals *lv);
-void trig_render_md05(struct TrigLocals *lv);
-void trig_render_md06(struct TrigLocals *lv);
-void trig_render_md07(struct TrigLocals *lv);
-void trig_render_md08(struct TrigLocals *lv);
-void trig_render_md09(struct TrigLocals *lv);
-void trig_render_md10(struct TrigLocals *lv);
-void trig_render_md12(struct TrigLocals *lv);
-void trig_render_md13(struct TrigLocals *lv);
-void trig_render_md14(struct TrigLocals *lv);
-void trig_render_md15(struct TrigLocals *lv);
-void trig_render_md16(struct TrigLocals *lv);
-void trig_render_md17(struct TrigLocals *lv);
-void trig_render_md18(struct TrigLocals *lv);
-void trig_render_md19(struct TrigLocals *lv);
-void trig_render_md20(struct TrigLocals *lv);
-void trig_render_md21(struct TrigLocals *lv);
-void trig_render_md22(struct TrigLocals *lv);
-void trig_render_md23(struct TrigLocals *lv);
-void trig_render_md24(struct TrigLocals *lv);
-void trig_render_md25(struct TrigLocals *lv);
-void trig_render_md26(struct TrigLocals *lv);
-
 /**
  * whether the subtraction (x-y) of two long ints would overflow
  */
 ubyte __OFSUBL__(long x, long y)
 {
     return ((x < 0) ^ (y < 0)) & ((x < 0) ^ (x-y < 0));
-}
-
-/** Triangle rendering function.
- *
- * @param point_a Coordinates and texture mapping of first point.
- * @param point_b Coordinates and texture mapping of second point.
- * @param point_c Coordinates and texture mapping of third point.
- */
-void trig(struct PolyPoint *point_a, struct PolyPoint *point_b,
-  struct PolyPoint *point_c)
-{
-#if USE_ASM_TRIG_UNITARY
-    asm volatile ("call ASM_trig\n"
-        :  : "a" (point_a), "d" (point_b), "b" (point_c));
-    return;
-#endif
-    struct PolyPoint *opt_a;
-    struct PolyPoint *opt_b;
-    struct PolyPoint *opt_c;
-    ubyte start_type;
-
-    LOGNO("Pa(%ld,%ld,%ld)", point_a->X, point_a->Y, point_a->S);
-    LOGNO("Pb(%ld,%ld,%ld)", point_b->X, point_b->Y, point_b->S);
-    LOGNO("Pc(%ld,%ld,%ld)", point_c->X, point_c->Y, point_c->S);
-
-    opt_a = point_a;
-    opt_b = point_b;
-    opt_c = point_c;
-    start_type = trig_reorder_input_points(&opt_a, &opt_b, &opt_c);
-
-    switch (start_type)
-    {
-    case RendStart_LL:
-        if (!trig_ll_start(&lv, opt_a, opt_b, opt_c)) {
-            return;
-        }
-        break;
-    case RendStart_RL:
-        if (!trig_rl_start(&lv, opt_a, opt_b, opt_c)) {
-            return;
-        }
-        break;
-    case RendStart_FB:
-        if (!trig_fb_start(&lv, opt_a, opt_b, opt_c)) {
-            return;
-        }
-        break;
-    case RendStart_FT:
-        if (!trig_ft_start(&lv, opt_a, opt_b, opt_c)) {
-            return;
-        }
-        break;
-    case RendStart_NO:
-        return;
-    }
-
-    LOGNO("render mode %d",(int)vec_mode);
-
-    switch (vec_mode)
-    {
-    case RendVec_mode00:
-        trig_render_md00(&lv);
-        break;
-
-    case RendVec_mode01:
-        trig_render_md01(&lv);
-        break;
-
-    case RendVec_mode02:
-        trig_render_md02(&lv);
-        break;
-
-    case RendVec_mode03:
-        trig_render_md03(&lv);
-        break;
-
-    case RendVec_mode04:
-        trig_render_md04(&lv);
-        break;
-
-    case RendVec_mode05:
-        trig_render_md05(&lv);
-        break;
-
-    case RendVec_mode06:
-        trig_render_md06(&lv);
-        break;
-
-    case RendVec_mode07:
-    case RendVec_mode11:
-        if (vec_colour == 0x20)
-            trig_render_md02(&lv);
-        else
-            trig_render_md07(&lv);
-        break;
-
-    case RendVec_mode08:
-        trig_render_md08(&lv);
-        break;
-
-    case RendVec_mode09:
-        trig_render_md09(&lv);
-        break;
-
-    case RendVec_mode10:
-        trig_render_md10(&lv);
-        break;
-
-    case RendVec_mode12:
-        trig_render_md12(&lv);
-        break;
-
-    case RendVec_mode13:
-        trig_render_md13(&lv);
-        break;
-
-    case RendVec_mode14:
-        trig_render_md14(&lv);
-        break;
-
-    case RendVec_mode15:
-        trig_render_md15(&lv);
-        break;
-
-    case RendVec_mode16:
-        trig_render_md16(&lv);
-        break;
-
-    case RendVec_mode17:
-        trig_render_md17(&lv);
-        break;
-
-    case RendVec_mode18:
-        trig_render_md18(&lv);
-        break;
-
-    case RendVec_mode19:
-        trig_render_md19(&lv);
-        break;
-
-    case RendVec_mode20:
-        trig_render_md20(&lv);
-        break;
-
-    case RendVec_mode21:
-        trig_render_md21(&lv);
-        break;
-
-    case RendVec_mode22:
-        trig_render_md22(&lv);
-        break;
-
-    case RendVec_mode23:
-        trig_render_md23(&lv);
-        break;
-
-    case RendVec_mode24:
-        trig_render_md24(&lv);
-        break;
-
-    case RendVec_mode25:
-        trig_render_md25(&lv);
-        break;
-
-    case RendVec_mode26:
-        trig_render_md26(&lv);
-        break;
-    }
-
-    LOGNO("end");
 }
 
 ubyte trig_reorder_input_points(struct PolyPoint **opt_a,
@@ -4650,8 +4440,18 @@ int trig_ft_start(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
     return ret;
 }
 
+/**
+ * whether the subtraction (x-y) of two short ints would overflow
+ */
+ubyte __OFSUBS__(short x, short y)
+{
+    return ((x < 0) ^ (y < 0)) & ((x < 0) ^ (x-y < 0));
+}
+
+
 void trig_render_md00(struct TrigLocals *lvu)
 {
+#if USE_ASM_TRIG_DIVIDED
         asm volatile (" \
             pushal\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
@@ -4705,6 +4505,43 @@ void trig_render_md00(struct TrigLocals *lvu)
                  : [lv] "+o" (lv)
                  : "o0" (lv)
                  : "memory", "cc");
+#else
+    struct PolyPoint *pp;
+    ubyte *o_ln;
+    ubyte col;
+    short pX, pY;
+    ubyte *o;
+
+    pp = polyscans;
+    o_ln = lv.rd.var_24;
+    col = vec_colour;
+    for (; lv.rd.var_44; lv.rd.var_44--, pp++)
+    {
+        pX = pp->X >> 16;
+        pY = pp->Y >> 16;
+        o_ln += vec_screen_width;
+        if (pX < 0)
+        {
+            if (pY <= 0)
+                continue;
+            if (pY > vec_window_width)
+                pY = vec_window_width;
+            o = &o_ln[0];
+        }
+        else
+        {
+            TbBool pY_overflow;
+            if (pY > vec_window_width)
+                pY = vec_window_width;
+            pY_overflow = __OFSUBS__(pY, pX);
+            pY = pY - pX;
+            if (((pY < 0) ^ pY_overflow) | (pY == 0))
+                continue;
+            o = &o_ln[pX];
+        }
+        memset(o, col, pY);
+    }
+#endif
 }
 
 void trig_render_md01(struct TrigLocals *lvu)
