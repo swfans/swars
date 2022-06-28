@@ -26,6 +26,33 @@
 extern "C" {
 #endif
 
+#pragma pack(1)
+
+enum RenderingStartType {
+    RendStart_NO = 0,
+    RendStart_LL,
+    RendStart_RL,
+    RendStart_FB,
+    RendStart_FT,
+};
+
+struct TrigLocals;
+
+#pragma pack()
+
+extern struct TrigLocals lv;
+
+ubyte trig_reorder_input_points(struct PolyPoint **opt_a,
+  struct PolyPoint **opt_b, struct PolyPoint **opt_c);
+int trig_ll_start(struct TrigLocals *lv, const struct PolyPoint *opt_a,
+  const struct PolyPoint *opt_b, const struct PolyPoint *opt_c);
+int trig_rl_start(struct TrigLocals *lv, const struct PolyPoint *opt_a,
+  const struct PolyPoint *opt_b, const struct PolyPoint *opt_c);
+int trig_fb_start(struct TrigLocals *lv, const struct PolyPoint *opt_a,
+  const struct PolyPoint *opt_b, const struct PolyPoint *opt_c);
+int trig_ft_start(struct TrigLocals *lv, const struct PolyPoint *opt_a,
+  const struct PolyPoint *opt_b, const struct PolyPoint *opt_c);
+
 
 #ifdef __cplusplus
 };

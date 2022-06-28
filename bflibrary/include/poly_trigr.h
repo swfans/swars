@@ -26,6 +26,38 @@
 extern "C" {
 #endif
 
+#pragma pack(1)
+
+struct TrigLocals;
+
+#pragma pack()
+
+void trig_render_md00(struct TrigLocals *lv);
+void trig_render_md01(struct TrigLocals *lv);
+void trig_render_md02(struct TrigLocals *lv);
+void trig_render_md03(struct TrigLocals *lv);
+void trig_render_md04(struct TrigLocals *lv);
+void trig_render_md05(struct TrigLocals *lv);
+void trig_render_md06(struct TrigLocals *lv);
+void trig_render_md07(struct TrigLocals *lv);
+void trig_render_md08(struct TrigLocals *lv);
+void trig_render_md09(struct TrigLocals *lv);
+void trig_render_md10(struct TrigLocals *lv);
+void trig_render_md12(struct TrigLocals *lv);
+void trig_render_md13(struct TrigLocals *lv);
+void trig_render_md14(struct TrigLocals *lv);
+void trig_render_md15(struct TrigLocals *lv);
+void trig_render_md16(struct TrigLocals *lv);
+void trig_render_md17(struct TrigLocals *lv);
+void trig_render_md18(struct TrigLocals *lv);
+void trig_render_md19(struct TrigLocals *lv);
+void trig_render_md20(struct TrigLocals *lv);
+void trig_render_md21(struct TrigLocals *lv);
+void trig_render_md22(struct TrigLocals *lv);
+void trig_render_md23(struct TrigLocals *lv);
+void trig_render_md24(struct TrigLocals *lv);
+void trig_render_md25(struct TrigLocals *lv);
+void trig_render_md26(struct TrigLocals *lv);
 
 #ifdef __cplusplus
 };

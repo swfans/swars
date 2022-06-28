@@ -30,6 +30,36 @@ extern "C" {
 
 #pragma pack(1)
 
+enum RenderingVectorMode {
+    RendVec_mode00 = 0,
+    RendVec_mode01,
+    RendVec_mode02,
+    RendVec_mode03,
+    RendVec_mode04,
+    RendVec_mode05,
+    RendVec_mode06,
+    RendVec_mode07,
+    RendVec_mode08,
+    RendVec_mode09,
+    RendVec_mode10,
+    RendVec_mode11,
+    RendVec_mode12,
+    RendVec_mode13,
+    RendVec_mode14,
+    RendVec_mode15,
+    RendVec_mode16,
+    RendVec_mode17,
+    RendVec_mode18,
+    RendVec_mode19,
+    RendVec_mode20,
+    RendVec_mode21,
+    RendVec_mode22,
+    RendVec_mode23,
+    RendVec_mode24,
+    RendVec_mode25,
+    RendVec_mode26,
+};
+
 struct PolyPoint { // sizeof=20
     long X; // offset=0
     long Y; // offset=4
