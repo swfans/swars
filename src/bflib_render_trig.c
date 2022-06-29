@@ -56,6 +56,27 @@ static inline ubyte __CFADDS__(short x, short y)
     return (ushort)(x) > (ushort)(x+y);
 }
 
+/**
+ * rotate left unsigned long
+ */
+static inline ulong __ROL4__(ulong value, int count)
+{
+    const uint nbits = 4 * 8;
+
+    if (count > 0) {
+        count %= nbits;
+        ulong high = value >> (nbits - count);
+        value <<= count;
+        value |= high;
+    } else {
+        count = -count % nbits;
+        ulong low = value << (nbits - count);
+        value >>= count;
+        value |= low;
+    }
+    return value;
+}
+
 void trig_render_md00(struct TrigLocals *lvu)
 {
 #if USE_ASM_TRIG_DIVIDED
@@ -353,6 +374,7 @@ void trig_render_md01(struct TrigLocals *lvu)
 
 void trig_render_md02(struct TrigLocals *lvu)
 {
+#if USE_ASM_TRIG_DIVIDED
         asm volatile (" \
             pushal\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
@@ -548,6 +570,76 @@ void trig_render_md02(struct TrigLocals *lvu)
                  : [lv] "+o" (lv)
                  : "o0" (lv)
                  : "memory", "cc");
+#else
+    struct PolyPoint *pp;
+    ubyte *m;
+    ubyte *o;
+    ushort colS;
+
+    pp = polyscans;
+    lv.var_70 = lv.var_54 << 16;
+    for (; lv.var_44; lv.var_44--, pp++)
+    {
+        short pX, pY;
+        short pU;
+
+        pX = pp->X >> 16;
+        pY = pp->Y >> 16;
+        o = &lv.var_24[vec_screen_width];
+        lv.var_24 += vec_screen_width;
+        if (pX < 0)
+        {
+            short colL, colH;
+            long mX;
+
+            if (pY <= 0)
+                continue;
+            mX = lv.var_54 * (-pX);
+            colH = __ROL4__(pp->V + mX, 16);
+            mX = lv.var_48 * (-pX);
+            pU = pp->U + mX;
+            colL = pU >> 16;
+            colS = ((colH & 0xFF) << 8) + (colL & 0xFF);
+            if (pY > vec_window_width)
+                pY = vec_window_width;
+            pX = pU >> 8;
+        }
+        else
+        {
+            short colL, colH;
+            TbBool pY_overflow;
+
+            if (pY > vec_window_width)
+                pY = vec_window_width;
+            pY_overflow = __OFSUBS__(pY, pX);
+            pY = pY - pX;
+            if (((pY < 0) ^ pY_overflow) | (pY == 0))
+                continue;
+            o += pX;
+            colH = __ROL4__(pp->V, 16);
+            pU = pp->U;
+            colL = pU >> 16;
+            colS = ((colH & 0xFF) << 8) + (colL & 0xFF);
+        }
+        m = vec_map;
+        for (; pY > 0; pY--, o++)
+        {
+            short colL, colH;
+            TbBool pU_carry;
+
+            *o = m[colS];
+
+            pU_carry = __CFADDS__(lv.var_48, pU);
+            pU = lv.var_48 + pU;
+            colL = (lv.var_48 >> 16) + pU_carry + colS;
+            pU_carry = __CFADDS__(lv.var_70, pU);
+            pU = lv.var_70 + pU;
+            colH = (lv.var_54 >> 16) + pU_carry + (colS >> 8);
+
+            colS = ((colH & 0xFF) << 8) + (colL & 0xFF);
+        }
+    }
+#endif
 }
 
 void trig_render_md03(struct TrigLocals *lvu)
