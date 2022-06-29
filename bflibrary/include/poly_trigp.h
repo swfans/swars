@@ -36,7 +36,43 @@ enum RenderingStartType {
     RendStart_FT,
 };
 
-struct TrigLocals;
+/* State transferred from trig_??_start() functions to trig_render_md??().
+ * Only a part of it is probably required - to be simplified or removed
+ * when everything is remade in C.
+ */
+struct TrigLocals {
+    ubyte *var_24; // 0x00
+    long var_28; // 0x04
+    long var_2C; // 0x08
+    long var_30; // 0x0C
+    long var_34; // 0x10
+    long var_38; // 0x14
+    long var_3C; // 0x18
+    long var_40; // 0x1C
+    long var_44; // 0x20
+    long var_48; // 0x24
+    long var_4C; // 0x28
+    long var_50; // 0x2C
+    long var_54; // 0x30
+    long var_58; // 0x34
+    long var_5C; // 0x38
+    long var_60; // 0x3C
+    long var_64; // 0x40
+    long var_68; // 0x44
+    long var_6C; // 0x48
+    long var_70; // 0x4C trig_render_md??()
+    long var_74; // 0x50 (unkn)
+    long var_78; // 0x54
+    long var_7C; // 0x58 (unkn)
+    long var_80; // 0x5C
+    long var_84; // 0x60 (unkn)
+    ubyte var_88; // 0x64 (unkn)
+    ubyte var_89; // 0x65 (unkn)
+    ubyte var_8A; // 0x66
+    ubyte var_8B; // 0x67
+    ubyte var_8C; // 0x68
+    ubyte var_8D[3]; // (unkn)
+};
 
 #pragma pack()
 
