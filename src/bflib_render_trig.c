@@ -4448,6 +4448,13 @@ ubyte __OFSUBS__(short x, short y)
     return ((x < 0) ^ (y < 0)) & ((x < 0) ^ (x-y < 0));
 }
 
+/**
+ * whether the addition (x+y) of two short ints would use carry
+ */
+ubyte __CFADDS__(short x, short y)
+{
+    return (ushort)(x) > (ushort)(x+y);
+}
 
 void trig_render_md00(struct TrigLocals *lvu)
 {
@@ -4546,6 +4553,7 @@ void trig_render_md00(struct TrigLocals *lvu)
 
 void trig_render_md01(struct TrigLocals *lvu)
 {
+#if USE_ASM_TRIG_DIVIDED
         asm volatile (" \
             pushal\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
@@ -4679,6 +4687,65 @@ void trig_render_md01(struct TrigLocals *lvu)
                  : [lv] "+o" (lv)
                  : "o0" (lv)
                  : "memory", "cc");
+#else
+    short pX, pY;
+    short pS;
+    TbBool pS_carry;
+    struct PolyPoint *pp;
+    ubyte *o;
+    ushort colS;
+
+    pp = polyscans;
+    for (; lv.rd.var_44; lv.rd.var_44--, pp++)
+    {
+        pX = pp->X >> 16;
+        pY = pp->Y >> 16;
+        o = &lv.rd.var_24[vec_screen_width];
+        lv.rd.var_24 += vec_screen_width;
+        if (pX  < 0)
+        {
+            long zz;
+            short colH, colL;
+
+            if (pY <= 0)
+                continue;
+            zz = lv.rd.var_60 * (ushort)(-pX);
+            pS_carry = __CFADDS__(pp->S, zz);
+            pS = pp->S + zz;
+            colL = (zz >> 8);
+            colH = (pp->S >> 16) + pS_carry;
+            colS = (colH << 8) + colL;
+            if (pY > vec_window_width)
+                pY = vec_window_width;
+        }
+        else
+        {
+            TbBool pY_overflow;
+            short colH;
+
+            if (pY > vec_window_width)
+              pY = vec_window_width;
+            pY_overflow = __OFSUBS__(pY, pX);
+            pY = pY - pX;
+            if (((pY < 0) ^ pY_overflow) | (pY == 0))
+                continue;
+            o += pX;
+            colH = (pp->S >> 16) & 0xFF;
+            colS = (colH << 8) + vec_colour;
+            pS = pp->S;
+        }
+        for (;pY > 0; pY--, o++)
+        {
+            short colH;
+
+            *o = colS >> 8;
+            pS_carry = __CFADDS__(lv.rd.var_60, pS);
+            pS = lv.rd.var_60 + pS;
+            colH = (lv.rd.var_60 >> 16) + pS_carry + (colS >> 8);
+            colS = (colH << 8) + (colS & 0xFF);
+        }
+    }
+#endif
 }
 
 void trig_render_md02(struct TrigLocals *lvu)
