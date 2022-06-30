@@ -348,9 +348,10 @@ void trig_render_md01(struct TrigLocals *lvu)
             pS = pp->S + mX;
             colL = (mX >> 8);
             colH = (pp->S >> 16) + pS_carry;
-            colS = (colH << 8) + colL;
             if (pY > vec_window_width)
                 pY = vec_window_width;
+
+            colS = ((colH & 0xFF) << 8) + (colL & 0xFF);
         }
         else
         {
@@ -364,9 +365,10 @@ void trig_render_md01(struct TrigLocals *lvu)
             if (((pY < 0) ^ pY_overflow) | (pY == 0))
                 continue;
             o += pX;
-            colH = (pp->S >> 16) & 0xFF;
-            colS = (colH << 8) + vec_colour;
+            colH = pp->S >> 16;
             pS = pp->S;
+
+            colS = ((colH & 0xFF) << 8) + vec_colour;
         }
         for (;pY > 0; pY--, o++)
         {
@@ -611,7 +613,7 @@ void trig_render_md02(struct TrigLocals *lvu)
             colH = __ROL4__(pp->V + mX, 16);
             mX = lv.var_48 * (-pX);
             pU = pp->U + mX;
-            colL = pU >> 16;
+            colL = (pp->U + mX) >> 16;
             colS = ((colH & 0xFF) << 8) + (colL & 0xFF);
             if (pY > vec_window_width)
                 pY = vec_window_width;
@@ -631,7 +633,7 @@ void trig_render_md02(struct TrigLocals *lvu)
             o += pX;
             colH = __ROL4__(pp->V, 16);
             pU = pp->U;
-            colL = pU >> 16;
+            colL = pp->U >> 16;
             colS = ((colH & 0xFF) << 8) + (colL & 0xFF);
         }
         m = vec_map;
@@ -975,8 +977,15 @@ void trig_render_md03(struct TrigLocals *lvu)
 #endif
 }
 
+/**
+ * Verified in swars - uses:
+ * - zealot car antennas
+ * - tank lower chassis
+ * - Large red and white rocket building - red stipes
+ */
 void trig_render_md04(struct TrigLocals *lvu)
 {
+#if USE_ASM_TRIG_DIVIDED
         asm volatile (" \
             pushal\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
@@ -1126,6 +1135,74 @@ void trig_render_md04(struct TrigLocals *lvu)
                  : [lv] "+o" (lv)
                  : "o0" (lv)
                  : "memory", "cc");
+#else
+    struct PolyPoint *pp;
+    ubyte *f;
+    ubyte *o;
+    ushort colS;
+
+    pp = polyscans;
+    for (; lv.var_44; lv.var_44--, pp++)
+    {
+        short pX, pY;
+        short pU;
+
+        pX = pp->X >> 16;
+        pY = pp->Y >> 16;
+        o = &lv.var_24[vec_screen_width];
+        lv.var_24 += vec_screen_width;
+        if (pX < 0)
+        {
+            ushort colL, colH;
+            TbBool pU_carry;
+            long mX;
+
+            if (pY <= 0)
+                continue;
+            mX = lv.var_60 * (-pX);
+            pU_carry = __CFADDS__(pp->S, mX);
+            pU = pp->S + mX;
+            colH = (pp->S >> 16) + pU_carry + (mX >> 16);
+            if (pY > vec_window_width)
+                pY = vec_window_width;
+            colL = vec_colour;
+
+            colS = ((colH & 0xFF) << 8) + (colL & 0xFF);
+        }
+        else
+        {
+            ushort colL, colH;
+            TbBool pY_overflow;
+
+            if (pY > vec_window_width)
+                pY = vec_window_width;
+            pY_overflow = __OFSUBS__(pY, pX);
+            pY = pY - pX;
+            if (((pY < 0) ^ pY_overflow) | (pY == 0))
+                continue;
+            o += pX;
+            colL = vec_colour;
+            pU = pp->S;
+            colH = pp->S >> 16;
+
+            colS = ((colH & 0xFF) << 8) + (colL & 0xFF);
+        }
+        f = pixmap.fade_table;
+        for (;pY > 0; pY--, o++)
+        {
+            ushort colL, colH;
+            TbBool pU_carry;
+
+            pU_carry = __CFADDS__(lv.var_60, pU);
+            pU = lv.var_60 + pU;
+            colL = colS;
+            colH = (lv.var_60 >> 16) + pU_carry + (colS >> 8);
+            *o = f[colS];
+
+            colS = ((colH & 0xFF) << 8) + (colL & 0xFF);
+        }
+    }
+#endif
 }
 
 void trig_render_md05(struct TrigLocals *lvu)
