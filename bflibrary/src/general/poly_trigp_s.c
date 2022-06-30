@@ -7,7 +7,7 @@
  * @par Purpose:
  *     Textured 2D triangle rendring, clipping and preparation.
  * @par Comment:
- *     None.
+ *     Old assembly implementation, to be used for finding regressions.
  * @author   Tomasz Lis
  * @date     12 Nov 2008 - 05 Nov 2021
  * @par  Copying and copyrights:

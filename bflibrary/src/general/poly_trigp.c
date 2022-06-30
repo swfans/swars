@@ -142,7 +142,7 @@ ubyte trig_reorder_input_points(struct PolyPoint **opt_a,
     return start_type;
 }
 
-int trig_ll_md00(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
+static inline int trig_ll_md00(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
   const struct PolyPoint *opt_b, const struct PolyPoint *opt_c)
 {
     long pX, pYa, pYb;
@@ -237,7 +237,7 @@ int trig_ll_md00(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
     return 1;
 }
 
-int trig_ll_md01(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
+static inline int trig_ll_md01(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
   const struct PolyPoint *opt_b, const struct PolyPoint *opt_c)
 {
     struct PolyPoint *pp;
@@ -360,7 +360,7 @@ int trig_ll_md01(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
     return 1;
 }
 
-int trig_ll_md02(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
+static inline int trig_ll_md02(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
   const struct PolyPoint *opt_b, const struct PolyPoint *opt_c)
 {
     long pX, pYa, pYb;
@@ -493,7 +493,7 @@ int trig_ll_md02(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
     return 1;
 }
 
-int trig_ll_md05(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
+static inline int trig_ll_md05(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
   const struct PolyPoint *opt_b, const struct PolyPoint *opt_c)
 {
     long pX, pYa, pYb;
@@ -720,7 +720,7 @@ int trig_ll_start(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
     return ret;
 }
 
-int trig_rl_md00(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
+static inline int trig_rl_md00(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
   const struct PolyPoint *opt_b, const struct PolyPoint *opt_c)
 {
     int ret;
@@ -813,7 +813,7 @@ int trig_rl_md00(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
     return 1;
 }
 
-int trig_rl_md01(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
+static inline int trig_rl_md01(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
   const struct PolyPoint *opt_b, const struct PolyPoint *opt_c)
 {
     int ret;
@@ -938,7 +938,7 @@ int trig_rl_md01(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
     return 1;
 }
 
-int trig_rl_md02(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
+static inline int trig_rl_md02(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
   const struct PolyPoint *opt_b, const struct PolyPoint *opt_c)
 {
     int ret;
@@ -1073,7 +1073,7 @@ int trig_rl_md02(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
     return 1;
 }
 
-int trig_rl_md05(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
+static inline int trig_rl_md05(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
   const struct PolyPoint *opt_b, const struct PolyPoint *opt_c)
 {
     long pXa, pXb, pY;
@@ -1300,7 +1300,7 @@ int trig_rl_start(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
     return ret;
 }
 
-int trig_fb_md00(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
+static inline int trig_fb_md00(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
   const struct PolyPoint *opt_b, const struct PolyPoint *opt_c)
 {
     long pX, pY;
@@ -1346,7 +1346,7 @@ int trig_fb_md00(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
     return 1;
 }
 
-int trig_fb_md01(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
+static inline int trig_fb_md01(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
   const struct PolyPoint *opt_b, const struct PolyPoint *opt_c)
 {
     int pX, pY;
@@ -1403,7 +1403,7 @@ int trig_fb_md01(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
     return 1;
 }
 
-int trig_fb_md02(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
+static inline int trig_fb_md02(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
   const struct PolyPoint *opt_b, const struct PolyPoint *opt_c)
 {
     long pX, pY;
@@ -1466,7 +1466,7 @@ int trig_fb_md02(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
     return 1;
 }
 
-int trig_fb_md05(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
+static inline int trig_fb_md05(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
   const struct PolyPoint *opt_b, const struct PolyPoint *opt_c)
 {
     long pX, pY;
@@ -1603,7 +1603,7 @@ int trig_fb_start(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
     return ret;
 }
 
-int trig_ft_md00(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
+static inline int trig_ft_md00(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
   const struct PolyPoint *opt_b, const struct PolyPoint *opt_c)
 {
     long pX, pY;
@@ -1649,7 +1649,7 @@ int trig_ft_md00(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
     return 1;
 }
 
-int trig_ft_md01(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
+static inline int trig_ft_md01(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
   const struct PolyPoint *opt_b, const struct PolyPoint *opt_c)
 {
     long pX, pY;
@@ -1706,7 +1706,7 @@ int trig_ft_md01(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
     return 1;
 }
 
-int trig_ft_md02(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
+static inline int trig_ft_md02(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
   const struct PolyPoint *opt_b, const struct PolyPoint *opt_c)
 {
     long pX, pY;
@@ -1768,7 +1768,7 @@ int trig_ft_md02(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
     return 1;
 }
 
-int trig_ft_md05(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
+static inline int trig_ft_md05(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
   const struct PolyPoint *opt_b, const struct PolyPoint *opt_c)
 {
     long pX, pY;
