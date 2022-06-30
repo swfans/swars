@@ -38,7 +38,20 @@
 extern const long add_to_edi[];
 
 /******************************************************************************/
+extern GameTurn gameturn;
 
+/* trig() wrapper for debug (comparing remade trig() with original assembly */
+void trig_dbg(struct PolyPoint *point_a, struct PolyPoint *point_b,
+  struct PolyPoint *point_c)
+{
+    if (gameturn & 0x04) {
+        asm volatile ("call ASM_trig\n"
+            :  : "a" (point_a), "d" (point_b), "b" (point_c));
+    } else {
+        trig(point_a, point_b, point_c);
+    }
+}
+/******************************************************************************/
 
 /**
  * whether the subtraction (x-y) of two short ints would overflow
