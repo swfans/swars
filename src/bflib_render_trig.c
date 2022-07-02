@@ -1207,6 +1207,7 @@ void trig_render_md04(struct TrigLocals *lvu)
 
 void trig_render_md05(struct TrigLocals *lvu)
 {
+#if USE_ASM_TRIG_DIVIDED
         asm volatile (" \
             pushal\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
@@ -1528,6 +1529,101 @@ gt_md01:\n \
                  : [lv] "+o" (lv)
                  : "o0" (lv)
                  : "memory", "cc");
+#else
+    struct PolyPoint *pp;
+    ubyte *m;
+    ubyte *f;
+    ubyte *o;
+    ubyte *o_ln;
+    ushort colS;
+    ushort incA, incB, incC;
+    ulong factorA, factorB;
+
+    pp = polyscans;
+    incA = (lv.var_60 >> 8) & 0xFFFF;
+    incB = (__ROL4__(lv.var_54, 16) & 0xFF00) | (__ROL4__(lv.var_48, 16) & 0xFF);
+    incC = __ROL4__(lv.var_54, 16);
+
+    for (; lv.var_44; lv.var_44--, pp++)
+    {
+        short pX, pY;
+        ushort colM;
+
+        pX = pp->X >> 16;
+        pY = pp->Y >> 16;
+        o_ln = &lv.var_24[vec_screen_width];
+        lv.var_24 += vec_screen_width;
+        if (pX < 0)
+        {
+            ushort colL, colH;
+            long mX;
+
+            if (pY <= 0)
+                continue;
+            mX = lv.var_48 * (-pX);
+            factorA = __ROL4__(pp->U + mX, 16);
+            mX = lv.var_54 * (-pX);
+            factorB = (__ROL4__(pp->V + mX, 16) & 0xFFFFFF00) | (factorA & 0xFF);
+            mX = lv.var_60 * (-pX);
+            colL = (pp->S + mX) >> 8;
+            factorA = colL;
+            mX = lv.var_54 * (-pX);
+            colH = __ROL4__(pp->V + mX, 16);
+            colM = ((colH & 0xFF) << 8) + (colL & 0xFF);
+            if (pY > vec_window_width)
+                pY = vec_window_width;
+        }
+        else
+        {
+            ushort colL, colH;
+            TbBool pY_overflow;
+
+            if (pY > vec_window_width)
+                pY = vec_window_width;
+            pY_overflow = __OFSUBS__(pY, pX);
+            pY = pY - pX;
+            if (((pY < 0) ^ pY_overflow) | (pY == 0))
+                continue;
+            o_ln += pX;
+            factorA = __ROL4__(pp->U, 16);
+            factorB = (__ROL4__(pp->V, 16) & 0xFFFFFF00) | (factorA & 0xFF);
+            colL = pp->S >> 8;
+            factorA = colL;
+            colH = __ROL4__(pp->V, 16);
+            colM = ((colH & 0xFF) << 8) + (colL & 0xFF);
+        }
+
+        factorB &= 0xFF;
+        o = o_ln;
+        m = vec_map;
+        f = pixmap.fade_table;
+        for (; pY > 0; pY--, o++)
+        {
+            ushort colL, colH;
+            ulong factorC;
+            TbBool factorA_carry;
+            TbBool factorB_carry;
+            TbBool factorC_carry;
+
+            colM = (colM & 0xFF00) + (factorB & 0xFF);
+            colS = (((factorA >> 8) & 0xFF) << 8) + m[colM];
+            *o = f[colS];
+
+            factorA_carry = __CFADDS__(factorA, incA);
+            factorA = factorA + incA;
+
+            factorC_carry = __CFADDS__(factorA_carry, factorB);
+            factorC = factorA_carry + factorB;
+
+            factorB_carry = __CFADDS__(incB, factorC);
+            factorB = incB + factorC;
+
+            colH = incC + (factorB_carry|factorC_carry) + (colM >> 8);
+            colL = colM;
+            colM = ((colH & 0xFF) << 8) + (colL & 0xFF);
+        }
+    }
+#endif
 }
 
 void trig_render_md06(struct TrigLocals *lvu)
