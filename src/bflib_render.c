@@ -5,9 +5,9 @@
 /** @file bflib_render.c
  *     Rendering the 3D view elements functions.
  * @par Purpose:
- *     Functions for rendering 3D elements.
+ *     Some functions to be moved to bflibrary.
  * @par Comment:
- *     Go away from here, you bad optimizer! Do not compile this with optimizations.
+ *     To be moved to bflibrary tests.
  * @author   Tomasz Lis
  * @date     20 Mar 2009 - 30 Mar 2009
  * @par  Copying and copyrights:
@@ -19,21 +19,12 @@
 /******************************************************************************/
 #include "bflib_render.h"
 
-#include "globals.h"
-#include "bflib_basics.h"
 
 /******************************************************************************/
-ubyte *LOC_poly_screen;
-
-long LOC_vec_window_width;
-long LOC_vec_window_height;
-
-long LOC_vec_screen_width;
-ubyte *LOC_vec_screen;
-
-ubyte *LOC_vec_map;
-
-ubyte *render_fade_tables = NULL;
 /******************************************************************************/
 
+TbBool test_gpoly(void)
+{
+    return true;
+}
 /******************************************************************************/

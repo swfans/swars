@@ -24,6 +24,8 @@
 #include "poly_trigr.h"
 #include "swlog.h"
 
+#include "globals.h"
+
 /******************************************************************************/
 // Allow enabling non-remade versions of trig(), to check for regressions
 #define USE_ASM_TRIG_DIVIDED 0

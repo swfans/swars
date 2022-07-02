@@ -53,20 +53,6 @@ extern "C" {
 
 // Basic Definitions
 
-#ifndef __cplusplus
-#ifndef max
-#define max(a,b) ((a)>(b)?(a):(b))
-#endif
-#ifndef min
-#define min(a,b) ((a)<(b)?(a):(b))
-#endif
-#endif
-
-// Return values for verification functions
-#define VERIF_ERROR   0
-#define VERIF_OK      1
-#define VERIF_WARN    2
-
 // Return values for all other functions
 #define ERR_NONE           0
 // Note: error codes -1..-79 are reserved standard C library errors with sign reverted.

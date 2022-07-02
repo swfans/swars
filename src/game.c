@@ -16,6 +16,7 @@
 #include "bfgentab.h"
 #include "bfwindows.h"
 #include "bfiff.h"
+#include "bfutility.h"
 #include "poly.h"
 #include "svesa.h"
 #include "swlog.h"
