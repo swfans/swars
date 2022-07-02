@@ -48,5 +48,15 @@ AS_IF([test "$bflib_wscreen_control" = "yes"], [
         [Define to 1 if the bflibrary should change value of lbDisplay.WScreen])
 ])
 
+AC_ARG_ENABLE([bflib-tests],
+    AS_HELP_STRING([--disable-bflib-tests],
+        [do not build test binaries for the bflibrary]),
+    [bflib_tests=$enableval], [bflib_tests=no])
+
+AS_IF([test "$bflib_wscreen_control" = "yes"], [
+    AC_DEFINE([BFLIB_TESTS], 1,
+        [Define to 1 if tests are built with bflibrary])
+])
+
 AC_CONFIG_FILES([Makefile])
 AC_OUTPUT
