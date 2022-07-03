@@ -2,12 +2,13 @@
 #include <getopt.h>
 #include <stdlib.h>
 
-#include "bflib_joyst.h"
 #include "bfmemory.h"
 #include "bffile.h"
 #include "bfscreen.h"
 #include "bflog.h"
 #include "swlog.h"
+#include "bflib_joyst.h"
+#include "bflib_render.h"
 #include "display.h"
 #include "game.h"
 #include "game_data.h"
@@ -49,10 +50,20 @@ print_help (const char *argv0)
 "  --no-stretch  -S        Don't display 320x200 graphics stretched to 640x480\n"
 "                -s <str>  Set session name string\n"
 "                -T        color tables mode (no effect?)\n"
+"  --self-tests  -t        execute build self tests\n"
 "                -u <str>  Set user name string\n"
 "  --windowed    -W        Run in windowed mode\n"
 "                -w        adjust memory allocations for less RAM(?)\n",
   argv0);
+}
+
+// To be moved to its own file when there are more tests
+static void tests_execute(void)
+{
+    // TODO bflib tests should be in a separate binary
+    if (!test_trig())
+        exit(51);
+    exit(0);
 }
 
 static void
@@ -67,6 +78,7 @@ process_options (int *argc, char ***argv)
     {
       {"windowed",    0, NULL, 'W'},
       {"no-stretch",  0, NULL, 'S'},
+      {"self-test",   0, NULL, 't'},
       {"help",        0, NULL, 'h'},
       {NULL,          0, NULL,  0 },
     };
@@ -74,7 +86,7 @@ process_options (int *argc, char ***argv)
     argv0 = (*argv)[0];
     index = 0;
 
-    while ((val = getopt_long (*argc, *argv, "ABCDE:FgHhI:m:Np:qrSs:Tu:Ww", options, &index)) >= 0)
+    while ((val = getopt_long (*argc, *argv, "ABCDE:FgHhI:m:Np:qrSs:Ttu:Ww", options, &index)) >= 0)
     {
         LOGDBG("Command line option: '%c'", val);
         switch (val)
@@ -166,6 +178,10 @@ process_options (int *argc, char ***argv)
 
         case 'T':
             cmdln_colour_tables = 1;
+            break;
+
+        case 't':
+            tests_execute();
             break;
 
         case 'u':

@@ -17,14 +17,411 @@
  *     (at your option) any later version.
  */
 /******************************************************************************/
+#include <stdlib.h>
+#include <string.h>
 #include "bflib_render.h"
 
+#include "bfscreen.h"
+#include "bfwindows.h"
+#include "bfpalette.h"
+#include "bfutility.h"
+#include "bfmemory.h"
+#include "bfplanar.h"
+#include "bfanywnd.h"
+#include "bfmouse.h"
+#include "bfpng.h"
+#include "bfscrsurf.h"
+#include "swlog.h"
+
 
 /******************************************************************************/
 /******************************************************************************/
 
-TbBool test_gpoly(void)
+void LbRegisterStandardVideoModes(void);
+
+/** Initialize for tests which do not use real video or input.
+ */
+TbResult MockBaseInitialise(void)
 {
+    // Clear global variables
+    lbScreenInitialised = false;
+    lbAppActive = true;
+    LbMouseChangeMoveRatio(256, 256);
+    // Register default video modes
+    if (lbScreenModeInfoNum == 0) {
+        LbRegisterStandardVideoModes();
+    }
+    lbLibInitialised = true;
+    return Lb_SUCCESS;
+}
+
+struct TbPoint mock_hotspot;
+
+TbBool MockMouseIsInstalled(void)
+{
+    if (!lbMouseInstalled)
+        return false;
+    return true;
+}
+
+TbResult MockMouseChangeSprite(const struct TbSprite *pointer_spr)
+{
+    if (!lbMouseInstalled)
+        return Lb_FAIL;
+    lbDisplay.MouseSprite = pointer_spr;
+    return Lb_SUCCESS;
+}
+
+TbResult MockMouseChangeSpriteOffset(long hot_x, long hot_y)
+{
+    if (!lbMouseInstalled)
+        return Lb_FAIL;
+    mock_hotspot.x = -hot_x;
+    mock_hotspot.y = -hot_y;
+    return Lb_SUCCESS;
+}
+
+TbResult MockMouseGetSpriteOffset(long *hot_x, long *hot_y)
+{
+    *hot_x = -mock_hotspot.x;
+    *hot_y = -mock_hotspot.y;
+    return Lb_SUCCESS;
+}
+
+extern ubyte lbPalette[PALETTE_8b_SIZE];
+
+TbResult MockPaletteSet(const ubyte *palette)
+{
+    if (!lbScreenInitialised)
+      return Lb_FAIL;
+
+    memcpy(lbPalette, palette, PALETTE_8b_SIZE);
+    lbDisplay.Palette = lbPalette;
+    return Lb_SUCCESS;
+}
+
+extern long lbPhysicalResolutionMul;
+extern long lbMinPhysicalScreenResolutionDim;
+
+TbResult MockScreenFindVideoModes(void)
+{
+    int i;
+    for (i = 0; i < lbScreenModeInfoNum; i++)
+        lbScreenModeInfo[i].Available = true;
+    return Lb_SUCCESS;
+}
+
+TbBool MockScreenIsModeAvailable(TbScreenMode mode)
+{
+    TbScreenModeInfo *mdinfo;
+    static TbBool setup = false;
+    if (!setup) {
+        MockScreenFindVideoModes();
+        setup = true;
+    }
+    mdinfo = LbScreenGetModeInfo(mode);
+    return mdinfo->Available;
+}
+
+TbResult MockScreenSetupAnyMode(TbScreenMode mode, TbScreenCoord width,
+    TbScreenCoord height, ubyte *palette)
+{
+    long hot_x, hot_y;
+    long mdWidth, mdHeight;
+    const struct TbSprite *msspr;
+    TbScreenModeInfo *mdinfo;
+
+    msspr = NULL;
+    if (!lbLibInitialised) {
+        LOGERR("set screen mode on ununitialized bflibrary");
+        return Lb_FAIL;
+    }
+
+    if (lbDisplay.MouseSprite != NULL) {
+        msspr = lbDisplay.MouseSprite;
+        MockMouseGetSpriteOffset(&hot_x, &hot_y);
+    }
+    MockMouseChangeSprite(NULL);
+
+    free((void *)lbScreenSurface);
+    if (lbHasSecondSurface) {
+        free((void *)lbDrawSurface);
+        lbHasSecondSurface = false;
+    }
+    lbScreenInitialised = false;
+
+    if (lbDisplay.OldVideoMode == 0)
+        lbDisplay.OldVideoMode = 0xFF;
+
+    mdinfo = LbScreenGetModeInfo(mode);
+    if (!MockScreenIsModeAvailable(mode)) {
+        LOGERR("%s resolution %dx%d (mode %d) not available",
+            (mdinfo->VideoMode & Lb_VF_WINDOWED) ? "windowed" : "full screen",
+            (int)mdinfo->Width, (int)mdinfo->Height, (int)mode);
+        return Lb_FAIL;
+    }
+
+    {
+        long minDim = min(mdinfo->Width,mdinfo->Height);
+        if ((minDim != 0) && (minDim < lbMinPhysicalScreenResolutionDim)) {
+            lbPhysicalResolutionMul = (lbMinPhysicalScreenResolutionDim + minDim - 1) / minDim;
+        } else {
+            lbPhysicalResolutionMul = 1;
+        }
+        mdWidth = mdinfo->Width * lbPhysicalResolutionMul;
+        mdHeight = mdinfo->Height * lbPhysicalResolutionMul;
+        LOGDBG("physical resolution multiplier %ld", lbPhysicalResolutionMul);
+    }
+    lbDisplay.VesaIsSetUp = false;
+
+    lbScreenSurface = lbDrawSurface = (OSSurfaceHandle)malloc(mdWidth * mdHeight * (mdinfo->BitsPerPixel+7) / 8);
+
+    if ((mdinfo->BitsPerPixel != lbEngineBPP) ||
+        (mdWidth != width) || (mdHeight != height))
+    {
+        lbDrawSurface = (OSSurfaceHandle)malloc(width * height * (lbEngineBPP+7) / 8);
+        lbHasSecondSurface = true;
+    }
+
+    lbDisplay.DrawFlags = 0;
+    lbDisplay.DrawColour = 0;
+#if defined(ENABLE_SHADOW_COLOUR)
+    lbDisplay.ShadowColour = 0;
+#endif
+    lbDisplay.PhysicalScreenWidth = mdinfo->Width;
+    lbDisplay.PhysicalScreenHeight = mdinfo->Height;
+    lbDisplay.ScreenMode = mode;
+    lbDisplay.PhysicalScreen = NULL;
+    lbDisplay.GraphicsScreenWidth  = width;
+    lbDisplay.GraphicsScreenHeight = height;
+
+    lbDisplay.WScreen = NULL;
+    lbDisplay.GraphicsWindowPtr = NULL;
+
+    lbScreenInitialised = true;
+    if (palette != NULL)
+    {
+        if (MockPaletteSet(palette) != Lb_SUCCESS) {
+            LOGERR("palette setting failed");
+            return Lb_FAIL;
+        }
+    }
+    LbScreenSetGraphicsWindow(0, 0, mdinfo->Width, mdinfo->Height);
+    LbTextSetWindow(0, 0, mdinfo->Width, mdinfo->Height);
+    if ( MockMouseIsInstalled() )
+    {
+        MockMouseChangeSpriteOffset(hot_x, hot_y);
+        if (msspr != NULL)
+          MockMouseChangeSprite(msspr);
+    }
+    return Lb_SUCCESS;
+}
+
+TbResult MockScreenReset(void)
+{
+    if (!lbScreenInitialised)
+      return Lb_FAIL;
+
+    free((void *)lbScreenSurface);
+    if (lbHasSecondSurface) {
+        free((void *)lbDrawSurface);
+        lbHasSecondSurface = false;
+    }
+    lbDrawSurface = NULL;
+    lbScreenSurface = NULL;
+    lbScreenInitialised = false;
+    return Lb_SUCCESS;
+}
+
+TbBool MockScreenIsLocked(void)
+{
+    return (lbDisplay.WScreen != NULL) && (lbScreenInitialised)
+      && (lbDrawSurface != NULL);
+}
+
+TbResult MockScreenLock(void)
+{
+    if (!lbScreenInitialised)
+        return Lb_FAIL;
+
+    lbDisplay.WScreen = (ubyte *) lbDrawSurface;
+    lbDisplay.GraphicsWindowPtr = &lbDisplay.WScreen[lbDisplay.GraphicsWindowX +
+        lbDisplay.GraphicsScreenWidth * lbDisplay.GraphicsWindowY];
+
+    return Lb_SUCCESS;
+}
+
+TbResult MockScreenUnlock(void)
+{
+    if (!lbScreenInitialised)
+        return Lb_FAIL;
+
+    lbDisplay.WScreen = NULL;
+    lbDisplay.GraphicsWindowPtr = NULL;
+    return Lb_SUCCESS;
+}
+
+/** Make simple and fairly universal palette.
+ */
+void make_general_palette(ubyte *pal)
+{
+    short i, k;
+    ubyte *p;
+
+    p = pal;
+    k = 0;
+    // Grey
+    for (i = 0; i < 64; i++) {
+        p[0] = i;
+        p[1] = i;
+        p[2] = i;
+        p += 3;
+        k++;
+    }
+    // Red
+    for (i = 0; i < 24; i++) {
+        p[0] = 55*i/23 + 8;
+        p[1] = 0;
+        p[2] = 0;
+        p += 3;
+        k++;
+    }
+    // Light Red
+    for (i = 0; i < 8; i++) {
+        p[0] = 55*i/7 + 8;
+        p[1] = p[0] / 2;
+        p[2] = p[0] / 2;
+        p += 3;
+        k++;
+    }
+    // Green
+    for (i = 0; i < 24; i++) {
+        p[0] = 0;
+        p[1] = 55*i/23 + 8;
+        p[2] = 0;
+        p += 3;
+        k++;
+    }
+    // Light Green
+    for (i = 0; i < 8; i++) {
+        p[1] = 55*i/7 + 8;
+        p[0] = p[1] / 2;
+        p[2] = p[1] / 2;
+        p += 3;
+        k++;
+    }
+    // Blue
+    for (i = 0; i < 24; i++) {
+        p[0] = 0;
+        p[1] = 0;
+        p[2] = 55*i/23 + 8;
+        p += 3;
+        k++;
+    }
+    // Light Blue
+    for (i = 0; i < 8; i++) {
+        p[2] = 55*i/7 + 8;
+        p[0] = p[2] / 2;
+        p[1] = p[2] / 2;
+        p += 3;
+        k++;
+    }
+    // Yellow
+    for (i = 0; i < 24; i++) {
+        p[0] = 55*i/23 + 8;
+        p[1] = 55*i/23 + 8;
+        p[2] = 0;
+        p += 3;
+        k++;
+    }
+    // Light Yellow
+    for (i = 0; i < 8; i++) {
+        p[0] = 55*i/7 + 8;
+        p[1] = 55*i/7 + 8;
+        p[2] = p[0] / 2;
+        p += 3;
+        k++;
+    }
+    // Magenta
+    for (i = 0; i < 24; i++) {
+        p[0] = 55*i/23 + 8;
+        p[1] = 0;
+        p[2] = 55*i/23 + 8;
+        p += 3;
+        k++;
+    }
+    // Light Magenta
+    for (i = 0; i < 8; i++) {
+        p[0] = 55*i/7 + 8;
+        p[1] = p[0] / 2;
+        p[2] = 55*i/7 + 8;
+        p += 3;
+        k++;
+    }
+    // Cyan
+    for (i = 0; i < 24; i++) {
+        p[0] = 0;
+        p[1] = 55*i/23 + 8;
+        p[2] = 55*i/23 + 8;
+        p += 3;
+        k++;
+    }
+    // Light Cyan
+    for (i = 0; i < 8; i++) {
+        p[1] = 55*i/7 + 8;
+        p[0] = p[1] / 2;
+        p[2] = 55*i/7 + 8;
+        p += 3;
+        k++;
+    }
+}
+
+TbBool test_memory(void)
+{
+    void *p;
+
+    if (MockBaseInitialise() != Lb_SUCCESS) {
+        LOGERR("bullfrog Library initialization failed");
+        return false;
+    }
+    LbMemorySetup();
+
+    p = LbMemoryAlloc(2048);
+    LbMemoryFree(p);
+
+    LbMemoryReset();
+    LOGSYNC("passed");
+    return true;
+}
+
+TbBool test_trig(void)
+{
+    ubyte pal[PALETTE_8b_SIZE];
+
+#if 0
+    if (LbErrorLogSetup(NULL, "tst_trig.log", Lb_ERROR_LOG_NEW) != Lb_SUCCESS) {
+        LOGERR("execution log setup failed");
+        return false;
+    }
+#endif
+    if (MockBaseInitialise() != Lb_SUCCESS) {
+        LOGERR("bullfrog Library initialization failed");
+        return false;
+    }
+    LbMemorySetup();
+    make_general_palette(pal);
+    if (MockScreenSetupAnyMode(Lb_SCREEN_MODE_640_480_8, 640, 480, pal) != Lb_SUCCESS) {
+        LOGERR("bullfrog Library initialization failed");
+        return false;
+    }
+    MockScreenLock();
+
+    LbPngSave("tst_trig.png", lbDisplay.WScreen, pal, true);
+    
+    MockScreenUnlock();
+    MockScreenReset();
+    LbMemoryReset();
+    LOGSYNC("passed");
     return true;
 }
 /******************************************************************************/
