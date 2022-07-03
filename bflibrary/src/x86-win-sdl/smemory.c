@@ -113,6 +113,9 @@ mem_arena memory_arenas[TABLE_SIZE];
 
 #if LB_MEMORY_ARENAS
 
+/** @internal
+ * Provide the amount of memory blocks currently in use.
+ */
 static size_t get_block_count(void)
 {
     size_t n;
@@ -126,6 +129,10 @@ static size_t get_block_count(void)
     return TABLE_SIZE;
 }
 
+/** @internal
+ * Fill memory arenas based on memory blocks.
+ * Make each subsequent arena a child of previous one.
+ */
 static void initialise_block_nodes(void)
 {
     size_t n;
@@ -151,7 +158,10 @@ static void initialise_block_nodes(void)
       }
 }
 
-TbResult split_arena(mem_arena *arena, size_t size)
+/** @internal
+ * Split given arena, creating its child of given size.
+ */
+TbBool split_arena(mem_arena *arena, size_t size)
 {
     mem_arena *curarena;
     ubyte sect;
@@ -160,7 +170,7 @@ TbResult split_arena(mem_arena *arena, size_t size)
 
     if (size == arena->Size) {
         arena->Used = 1;
-        return 1;
+        return true;
     }
 
     for (n = 0; n < TABLE_SIZE; n++)
@@ -170,7 +180,7 @@ TbResult split_arena(mem_arena *arena, size_t size)
           break;
     }
     if (n == TABLE_SIZE) {
-        return 0;
+        return false;
     }
     curarena->Size = arena->Size - size;
     curarena->Pointer = (char *)arena->Pointer + size;
@@ -184,26 +194,41 @@ TbResult split_arena(mem_arena *arena, size_t size)
     if (charena != NULL)
         charena->Parent = curarena;
     arena->Child = curarena;
-    return 1;
+    return true;
 }
 
+/** @internal
+ * Merge arena with its parent.
+ */
+static void merge_arena_parent(mem_arena *arena)
+{
+    mem_arena *chlarena;
+
+    chlarena = arena->Child;
+    if (chlarena != NULL)
+        chlarena->Parent = arena->Parent;
+    arena->Parent->Child = arena->Child;
+    arena->Parent->Size += arena->Size;
+    arena->Size = 0;
+}
+
+/** @internal
+ * Delete the given arena, adding its size to the parent.
+ */
 void delete_arena(mem_arena *arena)
 {
     mem_arena *pararena;
-    mem_arena *chlarena;
 
-    if (arena->Parent) {
-    }
+    // Cannot delete the initial arena
+    if (arena->Parent == NULL)
+        return;
     arena->Used = 0;
+    // If the arenas represent the same mem section, and parent is unused,
+    // then merge with it
     pararena = arena->Parent;
-    if ( arena->Section == pararena->Section && !pararena->Used )
+    if (arena->Section == pararena->Section && !pararena->Used)
     {
-        chlarena = arena->Child;
-        if (chlarena != NULL)
-            chlarena->Parent = pararena;
-        arena->Parent->Child = arena->Child;
-        arena->Parent->Size += arena->Size;
-        arena->Size = 0;
+        merge_arena_parent(arena);
     }
 }
 
