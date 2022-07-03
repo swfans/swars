@@ -76,6 +76,8 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b,
     opt_c = point_c;
     start_type = trig_reorder_input_points(&opt_a, &opt_b, &opt_c);
 
+    LOGNO("start type %d",(int)start_type);
+
     switch (start_type)
     {
     case RendStart_LL:

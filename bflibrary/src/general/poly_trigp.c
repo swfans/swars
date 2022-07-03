@@ -19,6 +19,7 @@
 /******************************************************************************/
 #include "poly_trigp.h"
 #include "poly.h"
+#include "privbflog.h"
 
 
 // TODO Switch to local var when remade - this is global because assembly alters EBP
@@ -158,8 +159,10 @@ static inline int trig_ll_md00(struct TrigLocals *lvu, const struct PolyPoint *o
         // whether the addition (lv.var_44 + lv.var_78) would overflow
         eH_overflow = __OFSUBL__(lv.var_44, -lv.var_78);
         eH = lv.var_44 + lv.var_78;
-        if (((eH < 0) ^ eH_overflow) | (eH == 0))
+        if (((eH < 0) ^ eH_overflow) | (eH == 0)) {
+            LOGNO("skip due to sum %ld %ld", (long)lv.var_44, (long)lv.var_78);
             return 0;
+        }
         lv.var_44 = eH;
         lv.var_6C = -lv.var_78;
         if (lv.var_6C - lv.var_38 >= 0)
@@ -256,8 +259,10 @@ static inline int trig_ll_md01(struct TrigLocals *lvu, const struct PolyPoint *o
         // whether the addition (wX + dX) would overflow
         eX_overflow = __OFSUBL__(wX, -dX);
         eX = wX + dX;
-        if ((eX < 0) ^ eX_overflow)
+        if ((eX < 0) ^ eX_overflow) {
+            LOGNO("skip due to sum %ld %ld", (long)wX, (long)dX);
             return 0;
+        }
         if (eX != 0) {
             long long dS, wS;
             dS = opt_a->S - opt_c->S;
@@ -276,8 +281,10 @@ static inline int trig_ll_md01(struct TrigLocals *lvu, const struct PolyPoint *o
 
         eH_overflow = __OFSUBL__(lv.var_44, -lv.var_78);
         eH = lv.var_44 + lv.var_78;
-        if (((eH < 0) ^ eH_overflow) | (eH == 0))
+        if (((eH < 0) ^ eH_overflow) | (eH == 0)) {
+            LOGNO("skip due to sum %ld %ld", (long)lv.var_44, (long)lv.var_78);
             return 0;
+        }
         lv.var_44 = eH;
         lv.var_6C = -lv.var_78;
         if (lv.var_6C - lv.var_38 >= 0)
@@ -378,8 +385,10 @@ static inline int trig_ll_md02(struct TrigLocals *lvu, const struct PolyPoint *o
         dX = opt_b->X - opt_a->X;
         eX_overflow = __OFSUBL__(wX, -dX);
         eX = wX + dX;
-        if ((eX < 0) ^ eX_overflow)
+        if ((eX < 0) ^ eX_overflow) {
+            LOGNO("skip due to sum %ld %ld", (long)wX, (long)dX);
             return 0;
+        }
         if (eX != 0) {
             long long dS, wS;
             dS = opt_a->U - opt_c->U;
@@ -403,8 +412,10 @@ static inline int trig_ll_md02(struct TrigLocals *lvu, const struct PolyPoint *o
 
         eH_overflow = __OFSUBL__(lv.var_44, -lv.var_78);
         eH = lv.var_44 + lv.var_78;
-        if (((eH < 0) ^ eH_overflow) | (eH == 0))
+        if (((eH < 0) ^ eH_overflow) | (eH == 0)) {
+            LOGNO("skip due to sum %ld %ld", (long)lv.var_44, (long)lv.var_78);
             return 0;
+        }
         lv.var_44 = eH;
         lv.var_6C = -lv.var_78;
         if (lv.var_6C - lv.var_38 >= 0 )
@@ -511,8 +522,10 @@ static inline int trig_ll_md05(struct TrigLocals *lvu, const struct PolyPoint *o
         dX = opt_b->X - opt_a->X;
         eX_overflow = __OFSUBL__(wX, -dX);
         eX = wX + dX;
-        if ((eX < 0) ^ eX_overflow)
+        if ((eX < 0) ^ eX_overflow) {
+            LOGNO("skip due to sum %ld %ld", (long)wX, (long)dX);
             return 0;
+        }
         if (eX != 0)
         {
             long long dS, wS;
@@ -542,8 +555,10 @@ static inline int trig_ll_md05(struct TrigLocals *lvu, const struct PolyPoint *o
 
         eH_overflow = __OFSUBL__(lv.var_44, -lv.var_78);
         eH = lv.var_44 + lv.var_78;
-        if (((eH < 0) ^ eH_overflow) | (eH == 0))
+        if (((eH < 0) ^ eH_overflow) | (eH == 0)) {
+            LOGNO("skip due to sum %ld %ld", (long)lv.var_44, (long)lv.var_78);
             return 0;
+        }
         lv.var_44 = eH;
         lv.var_6C = -lv.var_78;
         if (lv.var_6C - lv.var_38 >= 0)
@@ -650,6 +665,7 @@ int trig_ll_start(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
       lv.var_24 = poly_screen + vec_screen_width * opt_a->Y;
       lv.var_8A = 0;
     } else {
+        LOGNO("height %ld exceeded by opt_a Y %ld", (long)vec_window_height, (long)opt_a->Y);
         return 0;
     }
 
@@ -664,8 +680,10 @@ int trig_ll_start(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
     dX = opt_c->X - opt_a->X;
     lv.var_28 = (dX << 16) / lv.var_34;
     dX = opt_b->X - opt_a->X;
-    if ((dX << 16) / dY <= lv.var_28)
+    if ((dX << 16) / dY <= lv.var_28) {
+        LOGNO("value (%ld << 16) / %ld below min %ld", (long)dX, (long)dY, (long)lv.var_28);
         return 0;
+    }
     lv.var_2C = (dX << 16) / dY;
 
     dY = opt_c->Y - opt_b->Y;
@@ -736,8 +754,10 @@ static inline int trig_rl_md00(struct TrigLocals *lvu, const struct PolyPoint *o
 
         eH_overflow = __OFSUBL__(lv.var_44, -lv.var_78);
         eH = lv.var_44 + lv.var_78;
-        if (((eH < 0) ^ eH_overflow) | (eH == 0))
+        if (((eH < 0) ^ eH_overflow) | (eH == 0)) {
+            LOGNO("skip due to sum %ld %ld", (long)lv.var_44, (long)lv.var_78);
             return 0;
+        }
         lv.var_44 = eH;
         lv.var_6C = -lv.var_78;
         if (lv.var_6C - lv.var_34 >= 0)
@@ -831,8 +851,10 @@ static inline int trig_rl_md01(struct TrigLocals *lvu, const struct PolyPoint *o
         dXa = opt_a->X - opt_c->X;
         eX_overflow = __OFSUBL__(wXb, -dXa);
         eX = wXb + dXa;
-        if ((eX < 0) ^ eX_overflow)
+        if ((eX < 0) ^ eX_overflow) {
+            LOGNO("skip due to sum %ld %ld", (long)wXb, (long)dXa);
             return 0;
+        }
         if (eX != 0) {
             long long dS, wS;
             dS = opt_b->S - opt_a->S;
@@ -852,8 +874,10 @@ static inline int trig_rl_md01(struct TrigLocals *lvu, const struct PolyPoint *o
 
         eH_overflow = __OFSUBL__(lv.var_44, -lv.var_78);
         eH = lv.var_44 + lv.var_78;
-        if (((eH < 0) ^ eH_overflow) | (eH == 0))
+        if (((eH < 0) ^ eH_overflow) | (eH == 0)) {
+            LOGNO("skip due to sum %ld %ld", (long)lv.var_44, (long)lv.var_78);
             return 0;
+        }
         lv.var_44 = eH;
         lv.var_6C = -lv.var_78;
         if (lv.var_6C - lv.var_34 >= 0)
@@ -956,8 +980,10 @@ static inline int trig_rl_md02(struct TrigLocals *lvu, const struct PolyPoint *o
         dXa = opt_a->X - opt_c->X;
         eX_overflow = __OFSUBL__(wXb, -dXa);
         eX = wXb + dXa;
-        if ((eX < 0) ^ eX_overflow)
+        if ((eX < 0) ^ eX_overflow) {
+            LOGNO("skip due to sum %ld %ld", (long)wXb, (long)dXa);
             return 0;
+        }
         if (eX != 0) {
             long long dS, wS;
 
@@ -984,8 +1010,10 @@ static inline int trig_rl_md02(struct TrigLocals *lvu, const struct PolyPoint *o
 
         eH_overflow = __OFSUBL__(lv.var_44, -lv.var_78);
         eH = lv.var_44 + lv.var_78;
-        if (((eH < 0) ^ eH_overflow) | (eH == 0))
+        if (((eH < 0) ^ eH_overflow) | (eH == 0)) {
+            LOGNO("skip due to sum %ld %ld", (long)lv.var_44, (long)lv.var_78);
             return 0;
+        }
         lv.var_44 = eH;
         lv.var_6C = -lv.var_78;
         if (lv.var_6C - lv.var_34 >= 0)
@@ -1090,8 +1118,10 @@ static inline int trig_rl_md05(struct TrigLocals *lvu, const struct PolyPoint *o
         dXa = opt_a->X - opt_c->X;
         eX_overflow = __OFSUBL__(wXb, -dXa);
         eX = wXb + dXa;
-        if ((eX < 0) ^ eX_overflow)
+        if ((eX < 0) ^ eX_overflow) {
+            LOGNO("skip due to sum %ld %ld", (long)wXb, (long)dXa);
             return 0;
+        }
         lv.var_60 = wXb;
         if (eX != 0) {
             long long dS, wS;
@@ -1125,8 +1155,10 @@ static inline int trig_rl_md05(struct TrigLocals *lvu, const struct PolyPoint *o
 
         eH_overflow = __OFSUBL__(lv.var_44, -lv.var_78);
         eH = lv.var_44 + lv.var_78;
-        if (((eH < 0) ^ eH_overflow) | (eH == 0))
+        if (((eH < 0) ^ eH_overflow) | (eH == 0)) {
+            LOGNO("skip due to sum %ld %ld", (long)lv.var_44, (long)lv.var_78);
             return 0;
+        }
         lv.var_44 = eH;
         lv.var_6C = -lv.var_78;
         if (lv.var_6C - lv.var_34 >= 0)
@@ -1233,6 +1265,7 @@ int trig_rl_start(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
       lv.var_24 = poly_screen + vec_screen_width * opt_a->Y;
       lv.var_8A = 0;
     } else  {
+        LOGNO("height %ld exceeded by opt_a Y %ld", (long)vec_window_height, (long)opt_a->Y);
         return 0;
     }
 
@@ -1247,8 +1280,10 @@ int trig_rl_start(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
     dX = opt_c->X - opt_a->X;
     lv.var_28 = (dX << 16) / lv.var_34;
     dX = opt_b->X - opt_a->X;
-    if ((dX << 16) / dY <= lv.var_28)
+    if ((dX << 16) / dY <= lv.var_28) {
+        LOGNO("value (%ld << 16) / %ld below min %ld", (long)dX, (long)dY, (long)lv.var_28);
         return 0;
+    }
     lv.var_2C = (dX << 16) / dY;
 
     dY = opt_b->Y - opt_c->Y;
@@ -1316,9 +1351,11 @@ static inline int trig_fb_md00(struct TrigLocals *lvu, const struct PolyPoint *o
         lv.var_34 += lv.var_78;
         eH_overflow = __OFSUBL__(lv.var_44, -lv.var_78);
         eH = lv.var_44 + lv.var_78;
-        lv.var_44 += lv.var_78;
-        if (((eH < 0) ^ eH_overflow) | (eH == 0))
+        if (((eH < 0) ^ eH_overflow) | (eH == 0)) {
+            LOGNO("skip due to sum %ld %ld", (long)lv.var_44, (long)lv.var_78);
             return 0;
+        }
+        lv.var_44 = eH;
         lv.var_6C = -lv.var_78;
         pX += lv.var_28 * (-lv.var_78);
         pY += (-lv.var_78) * lv.var_2C;
@@ -1370,8 +1407,10 @@ static inline int trig_fb_md01(struct TrigLocals *lvu, const struct PolyPoint *o
         lv.var_34 += lv.var_78;
         eH_overflow = __OFSUBL__(lv.var_44, -lv.var_78);
         eH = lv.var_44 + lv.var_78;
-        if (((eH < 0) ^ eH_overflow) | (eH == 0))
+        if (((eH < 0) ^ eH_overflow) | (eH == 0)) {
+            LOGNO("skip due to sum %ld %ld", (long)lv.var_44, (long)lv.var_78);
             return 0;
+        }
         lv.var_44 = eH;
         lv.var_6C = -lv.var_78;
         pX += lv.var_28 * (-lv.var_78);
@@ -1430,8 +1469,10 @@ static inline int trig_fb_md02(struct TrigLocals *lvu, const struct PolyPoint *o
         lv.var_34 += lv.var_78;
         eH_overflow = __OFSUBL__(lv.var_44, -lv.var_78);
         eH = lv.var_44 + lv.var_78;
-        if (((eH < 0) ^ eH_overflow) | (eH == 0))
+        if (((eH < 0) ^ eH_overflow) | (eH == 0)) {
+            LOGNO("skip due to sum %ld %ld", (long)lv.var_44, (long)lv.var_78);
             return 0;
+        }
         lv.var_44 = eH;
         lv.var_6C = -lv.var_78;
         pX += lv.var_28 * (-lv.var_78);
@@ -1496,8 +1537,10 @@ static inline int trig_fb_md05(struct TrigLocals *lvu, const struct PolyPoint *o
         lv.var_34 += lv.var_78;
         eH_overflow = __OFSUBL__(lv.var_44, -lv.var_78);
         eH = lv.var_44 + lv.var_78;
-        if (((eH < 0) ^ eH_overflow) | (eH == 0))
+        if (((eH < 0) ^ eH_overflow) | (eH == 0)) {
+            LOGNO("skip due to sum %ld %ld", (long)lv.var_44, (long)lv.var_78);
             return 0;
+        }
         lv.var_44 = eH;
         lv.var_6C = -lv.var_78;
         pX += lv.var_28 * (-lv.var_78);
@@ -1549,6 +1592,7 @@ int trig_fb_start(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
         lv.var_24 = poly_screen + vec_screen_width * opt_a->Y;
         lv.var_8A = 0;
     } else {
+        LOGNO("height %ld exceeded by opt_a Y %ld", (long)vec_window_height, (long)opt_a->Y);
         return 0;
     }
     lv.var_8B = opt_c->Y > vec_window_height;
@@ -1619,9 +1663,11 @@ static inline int trig_ft_md00(struct TrigLocals *lvu, const struct PolyPoint *o
         lv.var_34 += lv.var_78;
         eH_overflow = __OFSUBL__(lv.var_44, -lv.var_78);
         eH = lv.var_44 + lv.var_78;
-        lv.var_44 += lv.var_78;
-        if (((eH < 0) ^ eH_overflow) | (eH == 0))
+        if (((eH < 0) ^ eH_overflow) | (eH == 0)) {
+            LOGNO("skip due to sum %ld %ld", (long)lv.var_44, (long)lv.var_78);
             return 0;
+        }
+        lv.var_44 = eH;
         lv.var_6C = -lv.var_78;
         pX += lv.var_28 * (-lv.var_78);
         pY += (-lv.var_78) * lv.var_2C;
@@ -1673,8 +1719,10 @@ static inline int trig_ft_md01(struct TrigLocals *lvu, const struct PolyPoint *o
         lv.var_34 += lv.var_78;
         eH_overflow = __OFSUBL__(lv.var_44, -lv.var_78);
         eH = lv.var_44 + lv.var_78;
-        if (((eH < 0) ^ eH_overflow) | (eH == 0))
+        if (((eH < 0) ^ eH_overflow) | (eH == 0)) {
+            LOGNO("skip due to sum %ld %ld", (long)lv.var_44, (long)lv.var_78);
             return 0;
+        }
         lv.var_44 = eH;
         lv.var_6C = -lv.var_78;
         pX += lv.var_28 * (-lv.var_78);
@@ -1732,8 +1780,10 @@ static inline int trig_ft_md02(struct TrigLocals *lvu, const struct PolyPoint *o
         lv.var_34 += lv.var_78;
         eH_overflow = __OFSUBL__(lv.var_44, -lv.var_78);
         eH = lv.var_44 + lv.var_78;
-        if (((eH < 0) ^ eH_overflow) | (eH == 0))
+        if (((eH < 0) ^ eH_overflow) | (eH == 0)) {
+            LOGNO("skip due to sum %ld %ld", (long)lv.var_44, (long)lv.var_78);
             return 0;
+        }
         lv.var_44 = eH;
         lv.var_6C = -lv.var_78;
         pX += lv.var_28 * (-lv.var_78);
@@ -1798,8 +1848,10 @@ static inline int trig_ft_md05(struct TrigLocals *lvu, const struct PolyPoint *o
         lv.var_34 += lv.var_78;
         eH_overflow = __OFSUBL__(lv.var_44, -lv.var_78);
         eH = lv.var_44 + lv.var_78;
-        if (((eH < 0) ^ eH_overflow) | (eH == 0))
+        if (((eH < 0) ^ eH_overflow) | (eH == 0)) {
+            LOGNO("skip due to sum %ld %ld", (long)lv.var_44, (long)lv.var_78);
             return 0;
+        }
         lv.var_44 = eH;
         lv.var_6C = -lv.var_78;
         pX += lv.var_28 * (-lv.var_78);
@@ -1851,6 +1903,7 @@ int trig_ft_start(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
       lv.var_24 = poly_screen + vec_screen_width * opt_a->Y;
       lv.var_8A = 0;
     } else {
+        LOGNO("height %ld exceeded by opt_a Y %ld", (long)vec_window_height, (long)opt_a->Y);
         return 0;
     }
     lv.var_8B = opt_c->Y > vec_window_height;
