@@ -168,7 +168,7 @@ char unk_credits_text_s[] = "";
 char unk_credits_text_z[] = "";
 char unk_credits_text_p[] = "";
 
-unsigned int LbRandomAnyShort(void);
+ulong LbRandomAnyShort(void);
 
 void PacketRecord_Close(void)
 {

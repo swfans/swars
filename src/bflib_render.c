@@ -41,6 +41,7 @@
 /******************************************************************************/
 
 void LbRegisterStandardVideoModes(void);
+ulong LbRandomAnyShort(void);
 
 /** Initialize for tests which do not use real video or input.
  */
@@ -443,6 +444,7 @@ TbBool test_trig(void)
     ubyte pal[PALETTE_8b_SIZE];
     TbPixel unaffected_colours[] = {0,};
     ubyte *texmap;
+    int i;
 
 #if 0
     if (LbErrorLogSetup(NULL, "tst_trig.log", Lb_ERROR_LOG_NEW) != Lb_SUCCESS) {
@@ -502,24 +504,94 @@ TbBool test_trig(void)
     raw_to_wscreen(320+8, 32, 256, 256, texmap);
 #endif
 
+    for (i = 0; i < 27*40; i++)
     {
         struct PolyPoint point_a, point_b, point_c;
+        ushort rnd;
 
-        vec_mode = RendVec_mode00;//RendVec_mode17
-        vec_colour = LbPaletteFindColour(pal, 128 >> 2, 128 >> 2, 0 >> 2);
-        point_a.S = 0x200000;
-        point_b.S = 0x8000;
-        point_c.S = 0x200000;
-        point_a.X = 319;
-        point_a.Y = 269;
-        point_b.X = 340;
-        point_b.Y = 329;
-        point_c.X = 325;
-        point_c.Y = 329;
+        rnd = LbRandomAnyShort();
+        vec_mode = i % 27;
+        // Random colour
+        vec_colour = LbPaletteFindColour(pal, (rnd >> 0) & 0x3f, (rnd >> 5) & 0x3f, (rnd >> 10) & 0x3f);
+        // Random texture coords, but show one of 32x32 textures from start
+        point_a.U = ((rnd >> 0) & 0x7) * 32;
+        point_a.V = ((rnd >> 3) & 0x7) * 32;
+        switch ((rnd >> 6) & 3)
+        {
+        case 0:
+            point_b.U = point_a.U + 31;
+            point_b.V = point_a.V + 31;
+            point_c.U = point_a.U + 31;
+            point_c.V = point_a.V;
+            break;
+        case 1:
+            point_b.U = point_a.U + 31;
+            point_b.V = point_a.V + 31;
+            point_c.U = point_a.U;
+            point_c.V = point_a.V + 31;
+            break;
+        case 2:
+            point_b.U = point_a.U;
+            point_b.V = point_a.V + 31;
+            point_c.U = point_a.U + 31;
+            point_c.V = point_a.V + 31;
+            break;
+        case 3:
+            point_b.U = point_a.U + 31;
+            point_b.V = point_a.V;
+            point_c.U = point_a.U + 31;
+            point_c.V = point_a.V + 31;
+            break;
+        }
+        // Random lightness
+        point_a.S = ((rnd >> 9) & 0x7F) << 15;
+        point_b.S = ((rnd >> 6) & 0x7F) << 15;
+        point_c.S = ((rnd >> 3) & 0x7F) << 15;
+        // Random positions - few big, more small
+        if (i < 27*2)
+        {
+            rnd = LbRandomAnyShort();
+            point_a.X = ((rnd >> 0) & 1023) - (1023 - 640) / 2;
+            point_a.Y = ((rnd >> 6) &  511) - (511 - 480) / 2;
+            rnd = LbRandomAnyShort();
+            point_b.X = ((rnd >> 0) & 1023) - (1023 - 640) / 2;
+            point_b.Y = ((rnd >> 6) &  511) - (511 - 480) / 2;
+            rnd = LbRandomAnyShort();
+            point_c.X = ((rnd >> 0) & 1023) - (1023 - 640) / 2;
+            point_c.Y = ((rnd >> 6) &  511) - (511 - 480) / 2;
+            if ((point_a.X < 0) && (point_b.X < 0) && (point_c.X < 0))
+                point_a.X = 640 - point_a.X;
+            if ((point_a.X > 640) && (point_b.X > 640) && (point_c.X > 640))
+                point_a.X = -point_a.X + 640;
+            if ((point_a.Y < 0) && (point_b.Y < 0) && (point_c.Y < 0))
+                point_a.Y = 480 - point_a.Y;
+            if ((point_a.Y > 480) && (point_b.Y > 480) && (point_c.Y > 480))
+                point_a.Y = -point_a.Y + 480;
+        } else
+        {
+            rnd = LbRandomAnyShort();
+            point_a.X = ((rnd >> 0) & 1023) - (1023 - 640) / 2;
+            point_a.Y = ((rnd >> 6) &  511) - (511 - 480) / 2;
+            rnd = LbRandomAnyShort();
+            point_b.X = point_a.X + ((rnd >> 0) &  63) - 31;
+            point_b.Y = point_a.Y + ((rnd >> 6) &  63) - 31;
+            rnd = LbRandomAnyShort();
+            point_c.X = point_a.X + ((rnd >> 0) &  63) - 31;
+            point_c.Y = point_a.Y + ((rnd >> 6) &  63) - 31;
+            if ((point_a.X < 0) && (point_b.X < 0) && (point_c.X < 0))
+                point_a.X = ((-point_a.X) & 0x3f);
+            if ((point_a.X > 640) && (point_b.X > 640) && (point_c.X > 640))
+                point_a.X = 640 - (point_a.X & 0x3f);
+            if ((point_a.Y < 0) && (point_b.Y < 0) && (point_c.Y < 0))
+                point_a.Y = ((-point_a.Y) & 0x3f);
+            if ((point_a.Y > 480) && (point_b.Y > 480) && (point_c.Y > 480))
+                point_a.Y = 480 - (point_a.Y & 0x3f);
+        }
+
         if ((point_c.Y - point_b.Y) * (point_b.X - point_a.X) - (point_b.Y - point_a.Y) * (point_c.X - point_b.X) > 0)
-            trig(&point_a, &point_b, &point_c);
+            trig_dbg(&point_a, &point_b, &point_c);
         else
-            trig(&point_a, &point_c, &point_b);
+            trig_dbg(&point_a, &point_c, &point_b);
     }
 
     LbMemoryFree(texmap);
