@@ -56,14 +56,31 @@ TbResult LbIffLoad(const char *fname, ubyte *buf, struct TbIff *iff);
 
 /** Save "ILBM" IFF Interleaved Bitmap.
  *
+ * Note that unlike the old API, this function requires width and height to
+ * be supplied. To assume screen sized buffer like the old API did, call
+ * LbIffSaveScreen() instead.
+ *
+ * @param fname File name or main component of file name.
+ * @param inp_buffer Input buffer pointer.
+ * @param width Input buffer width and interline.
+ * @param height Input buffer height.
+ * @param pal Image colour palette data pointer.
+ * @param force_fname
+ * @return
+ */
+TbResult LbIffSave(const char *fname, const TbPixel *inp_buffer,
+  ulong width, ulong height, const ubyte *pal, TbBool force_fname);
+
+/** Save "ILBM" IFF Interleaved Bitmap from screen sized buffer.
+ *
  * @param fname
  * @param inp_buffer
  * @param pal
  * @param force_fname
  * @return
  */
-TbResult LbIffSave(const char *fname, unsigned char *inp_buffer,
-    unsigned char *pal, TbBool force_fname);
+TbResult LbIffSaveScreen(const char *fname, const TbPixel *inp_buffer,
+  const ubyte *pal, TbBool force_fname);
 
 #ifdef __cplusplus
 };

@@ -26,16 +26,29 @@
 extern "C" {
 #endif
 
-/** Save PNG Portable Network Graphics Bitmap
+/** Save PNG Portable Network Graphics Bitmap.
  *
- * @param fname
- * @param inp_buffer
- * @param pal
+ * @param fname File name or main component of file name.
+ * @param inp_buffer Input buffer pointer.
+ * @param width Input buffer width and interline.
+ * @param height Input buffer height.
+ * @param pal Image colour palette data pointer.
  * @param force_fname
  * @return
  */
-TbResult LbPngSave(const char *fname, unsigned char *inp_buffer,
-    unsigned char *pal, TbBool force_fname);
+TbResult LbPngSave(const char *fname, const TbPixel *inp_buffer,
+  ulong width, ulong height, const ubyte *pal, TbBool force_fname);
+
+/** Save PNG Portable Network Graphics Bitmap from screen sized buffer.
+ *
+ * @param fname File name or main component of file name.
+ * @param inp_buffer Input buffer pointer.
+ * @param pal Image colour palette data pointer.
+ * @param force_fname
+ * @return
+ */
+TbResult LbPngSaveScreen(const char *fname, const TbPixel *inp_buffer,
+  const ubyte *pal, TbBool force_fname);
 
 #ifdef __cplusplus
 };

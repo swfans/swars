@@ -180,30 +180,34 @@ TbResult LbIffLoad(const char *fname, ubyte *buf, struct TbIff *iff)
     return ret;
 }
 
-TbResult LbIffWrite(FILE *img_fh, unsigned char *inp_buffer,
-    unsigned char *pal)
+TbResult LbIffWrite(FILE *img_fh, const TbPixel *inp_buffer,
+    ulong width, ulong height, const ubyte *pal)
 {
     ubyte pxcol;
-    unsigned short img_w;
-    unsigned short img_h;
-    unsigned int i, k;
-    ubyte *palptr;
+    ushort img_w;
+    ushort img_h;
+    ulong i, k;
+    const ubyte *palptr;
     ubyte transClr;
-    unsigned long lenChunk;
-    unsigned long pxpos;
-    unsigned char *inp;
+    ulong lenChunk;
+    ulong pxpos;
+    const TbPixel *inp;
 
     palptr = pal;
+#if 0
+    // Not sure why this was done, but not a good idea to modify the
+    // palette we get as input
     pal[0] = 0;
     pal[1] = 0;
     pal[2] = 0;
+#endif
     transClr = 0;
 
-    img_w = lbDisplay.PhysicalScreenWidth;
-    img_h = lbDisplay.PhysicalScreenHeight;
+    img_w = width;
+    img_h = height;
     unsigned long lenCmapChunk, lenTinyChunk, lenBodyChunk;
-    unsigned int algn_w = (lbDisplay.PhysicalScreenWidth + 3) & ~0x3;
-    unsigned int algn_h = (lbDisplay.PhysicalScreenHeight + 3) & ~0x3;
+    unsigned int algn_w = (img_w + 3) & ~0x3;
+    unsigned int algn_h = (img_h + 3) & ~0x3;
     unsigned int tiny_w = algn_w >> 2;
     unsigned int tiny_h = algn_h >> 2;
     lenCmapChunk = 3 * 256;
@@ -303,15 +307,15 @@ TbResult LbIffWrite(FILE *img_fh, unsigned char *inp_buffer,
     fputc((tiny_h >> 0) & 0xFF, img_fh);
     // Miniature - data
     inp = inp_buffer;
-    for (i = 0; i != (ulong)lbDisplay.PhysicalScreenHeight / 4; i++)
+    for (i = 0; i != img_w / 4; i++)
     {
-        for (k = 0; k != (ulong)lbDisplay.PhysicalScreenWidth / 4; k++)
+        for (k = 0; k != img_h / 4; k++)
         {
             pxcol = *inp;
             inp += 4;
             fputc(pxcol, img_fh);
         }
-        inp += 3 * lbDisplay.PhysicalScreenWidth;
+        inp += 3 * img_w;
     }
     // Image data - chunkID
     fputc('B', img_fh);
@@ -334,8 +338,8 @@ TbResult LbIffWrite(FILE *img_fh, unsigned char *inp_buffer,
     return Lb_SUCCESS;
 }
 
-TbResult LbIffSave(const char *fname, unsigned char *inp_buffer,
-    unsigned char *pal, TbBool force_fname)
+TbResult LbIffSave(const char *fname, const TbPixel *inp_buffer,
+  ulong width, ulong height, const ubyte *pal, TbBool force_fname)
 {
     char full_fname[FILENAME_MAX];
     FILE *img_fh;
@@ -351,9 +355,16 @@ TbResult LbIffSave(const char *fname, unsigned char *inp_buffer,
         LOGERR("%s: cannot open: %s", full_fname, strerror(errno));
         return 0;
     }
-    ret = LbIffWrite(img_fh, inp_buffer, pal);
+    ret = LbIffWrite(img_fh, inp_buffer, width, height, pal);
     fclose(img_fh);
     return ret;
+}
+
+TbResult LbIffSaveScreen(const char *fname, const TbPixel *inp_buffer,
+  const ubyte *pal, TbBool force_fname)
+{
+    return LbIffSave(fname, inp_buffer, lbDisplay.PhysicalScreenWidth,
+      lbDisplay.PhysicalScreenHeight, pal, force_fname);
 }
 
 /******************************************************************************/
