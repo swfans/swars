@@ -595,7 +595,7 @@ TbBool test_trig(void)
     }
 
     LbMemoryFree(texmap);
-    LbPngSave("tst_trig.png", lbDisplay.WScreen, pal, true);
+    LbPngSaveScreen("tst_trig.png", lbDisplay.WScreen, pal, true);
     
     MockScreenUnlock();
     MockScreenReset();

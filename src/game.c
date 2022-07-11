@@ -2616,7 +2616,7 @@ void show_menu_screen(void)
 
     if (lbKeyOn[KC_F12]) {
         lbKeyOn[KC_F12] = 0;
-        LbIffSave("synII", lbDisplay.WScreen, display_palette, 0);
+        LbIffSaveScreen("synII", lbDisplay.WScreen, display_palette, 0);
     }
 
     if ( data_1c4b78 || map_editor )
