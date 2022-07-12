@@ -5,7 +5,7 @@
 /** @file bfpng.h
  *     Header file for gpng.c.
  * @par Purpose:
- *     Unknown.
+ *     Routines for support of PNG image file format.
  * @par Comment:
  *     None.
  * @author   Tomasz Lis
@@ -25,6 +25,18 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+/** Load PNG Portable Network Graphics Bitmap.
+ *
+ * @param fname File name to read from.
+ * @param out_buffer Output image data buffer pointer.
+ * @param width Output image width and interline.
+ * @param height Output image height.
+ * @param pal Pointer to image colour palette output buffer.
+ * @return Lb_* error code.
+ */
+TbResult LbPngLoad(const char *fname, TbPixel *out_buffer,
+  ulong *width, ulong *height, ubyte *pal);
 
 /** Save PNG Portable Network Graphics Bitmap.
  *

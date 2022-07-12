@@ -117,7 +117,7 @@ TbFileHandle LbFileOpen(const char *fname, const TbFileOpenMode accmode)
     {
         LOGERR("file does not exist: \"%s\"", fname);
         if ( mode == Lb_FILE_MODE_READ_ONLY )
-            return -1;
+            return INVALID_FILE;
         if ( mode == Lb_FILE_MODE_OLD )
             mode = Lb_FILE_MODE_NEW;
     }
@@ -138,7 +138,7 @@ TbFileHandle LbFileOpen(const char *fname, const TbFileOpenMode accmode)
         close(rc);
     }
 */
-    rc = -1;
+    rc = INVALID_FILE;
     switch (mode)
     {
     case Lb_FILE_MODE_NEW:
@@ -167,7 +167,7 @@ TbFileHandle LbFileOpen(const char *fname, const TbFileOpenMode accmode)
         break;
   }
   LOGSYNC("out handle = %ld, errno = %d", rc, errno);
-  return rc; // sopen returns -1 on fail, which is equal to our Lb_FAIL
+  return rc; // sopen returns -1 on fail, which is equal to our INVALID_FILE
 }
 
 TbResult LbFileClose(TbFileHandle fhandle)
@@ -234,8 +234,11 @@ TbBool LbFileFlush(TbFileHandle fhandle)
 #else
     // For normal POSIX systems
     // (should also work on Win, as its IEEE standard... but it currently isn't)
+# if 1
     return (fsync(fhandle) != -1);
-    //return (ioctl(fhandle,I_FLUSH,FLUSHRW) != -1); // another way to do the same thing
+# else
+    return (ioctl(fhandle,I_FLUSH,FLUSHRW) != -1); // another way to do the same thing
+# endif
 #endif
 }
 
@@ -276,11 +279,11 @@ long LbFileLength(const char *fname)
     }
 # endif
 
-    if (stat (fname, &st) == 0) {
-        result = st.st_size;
-    } else {
+    if (stat (fname, &st) != 0) {
         LOGERR("while getting stats on \"%s\": %s", fname, strerror(errno));
         result = -1;
+    } else {
+        result = st.st_size;
     }
 #endif
 
@@ -289,7 +292,6 @@ long LbFileLength(const char *fname)
 
 TbResult LbFileRename(const char *fname_old, const char *fname_new)
 {
-    int result;
 #if LB_FILENAME_TRANSFORM
     char real_fname_old[FILENAME_MAX];
     char real_fname_new[FILENAME_MAX];
@@ -302,16 +304,15 @@ TbResult LbFileRename(const char *fname_old, const char *fname_new)
     }
 #endif
 
-    if ( rename(fname_old,fname_new) )
-        result = Lb_FAIL;
-    else
-        result = 1;
-    return result;
+    if (rename(fname_old,fname_new) != 0) {
+        LOGERR("while renaming \"%s\": %s", fname_old, strerror(errno));
+        return Lb_FAIL;
+    }
+    return Lb_SUCCESS;
 }
 
 TbResult LbFileDelete(const char *fname)
 {
-    int result;
 #if LB_FILENAME_TRANSFORM
     char real_fname[FILENAME_MAX];
 
@@ -321,11 +322,11 @@ TbResult LbFileDelete(const char *fname)
     }
 #endif
 
-    if ( remove(fname) )
-        result = Lb_FAIL;
-    else
-        result = 1;
-    return result;
+    if (remove(fname) != 0) {
+        LOGERR("while removing \"%s\": %s", fname, strerror(errno));
+        return Lb_FAIL;
+    }
+    return Lb_SUCCESS;
 }
 
 /******************************************************************************/

@@ -54,8 +54,22 @@ extern OSSurfaceHandle lbScreenSurface;
  *  Sometimes may be same as screen surface. */
 extern OSSurfaceHandle lbDrawSurface;
 
+/** Initialize screen sufrace truct before first use.
+ */
 void LbScreenSurfaceInit(struct SSurface *surf);
+
+/** Create a screen surface of given dimensions.
+ *
+ * Screen surface is a graphics surface which should represent part of the screen.
+ * It is created in the same format as current working screen, and its dimensions
+ * should not exceed the size of that screen. It can only be created after working
+ * screen has been initialized.
+ *
+ * Screen surfaces are a way for optimized compositing when the application screen
+ * consists of several independently generated parts.
+ */
 TbResult LbScreenSurfaceCreate(struct SSurface *surf, ulong w, ulong h);
+
 TbResult LbScreenSurfaceRelease(struct SSurface *surf);
 
 /** Blits given surface on rectangular area of the working screen.

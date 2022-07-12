@@ -55,20 +55,21 @@ static void palette_from_png(ubyte *pal, const png_color *pngpal, ushort num)
 TbResult LbPngRead(FILE *img_fh, ubyte *out_buffer,
   ulong *width, ulong *height, ubyte *pal)
 {
-    png_byte  header[8]; // 8 is the maximum size that can be checked
     png_structp png = NULL;
     png_infop info = NULL;
     png_byte **rows = NULL;
     png_byte color_type;
     png_byte bit_depth;
     size_t w, h, i;
-    char *action;
+    const char *action;
 
     action = "verify PNG magic identifier";
-    fread(header, 1, 8, img_fh);
-    if (png_sig_cmp(header, 0, 8))
-        goto err;
-
+    {
+        png_byte  header[8]; // 8 is the maximum size that can be checked
+        fread(header, 1, 8, img_fh);
+        if (png_sig_cmp(header, 0, 8))
+            goto err;
+    }
     // initialize stuff
     action = "create read struct";
     png = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
@@ -115,7 +116,7 @@ TbResult LbPngRead(FILE *img_fh, ubyte *out_buffer,
     if (setjmp(png_jmpbuf(png)))
         goto err;
 
-    // libPNG geves us access to individual rows of the image
+    // libPNG gives us access to individual rows of the image
     rows = (png_byte**)LbMemoryAlloc(sizeof(png_byte*) * h);
     // we need to provide pointers to the start of each row
     for (i = 0; i < h; i++)
@@ -140,18 +141,21 @@ err: // handle error and cleanup heap allocation
     return Lb_FAIL;
 }
 
-TbResult LbPngLoad(const char *fname, ubyte *out_buffer,
-  ubyte *pal)
+TbResult LbPngLoad(const char *fname, TbPixel *out_buffer,
+  ulong *width, ulong *height, ubyte *pal)
 {
-    TbFileHandle handle;
+    FILE *img_fh;
     TbResult ret;
 
-    handle = LbFileOpen(fname, Lb_FILE_MODE_READ_ONLY);
-    if (handle == INVALID_FILE) {
+    img_fh = fopen(fname, "rb");
+    if (!img_fh) {
+        LOGERR("%s: cannot open: %s", fname, strerror(errno));
         return Lb_FAIL;
     }
 
-    LbFileClose(handle);
+    ret = LbPngRead(img_fh, out_buffer, width, height, pal);
+
+    fclose(img_fh);
     return ret;
 }
 
@@ -163,7 +167,7 @@ TbResult LbPngWrite(FILE *img_fh, const ubyte *inp_buffer,
     png_color palette[256];
     png_byte **rows;
     size_t w, h, i;
-    char *action;
+    const char *action;
 
     // get parameters
     w = width;
@@ -175,14 +179,18 @@ TbResult LbPngWrite(FILE *img_fh, const ubyte *inp_buffer,
         rows[i] = (png_byte *) inp_buffer + i * w;
 
     // initialise
-    action = "create png_create_write_struct";
+    action = "create write struct";
     png = png_create_write_struct(PNG_LIBPNG_VER_STRING, 0, 0, 0);
     if (png == NULL)
         goto err;
 
-    action = "create png_create_info_struct";
+    action = "create info struct";
     info = png_create_info_struct(png);
     if (info == NULL)
+        goto err;
+
+    action = "perform init_io";
+    if (setjmp(png_jmpbuf(png)))
         goto err;
 
     png_init_io(png, img_fh);
@@ -195,6 +203,10 @@ TbResult LbPngWrite(FILE *img_fh, const ubyte *inp_buffer,
     palette_to_png(palette, pal, 256);
     png_set_PLTE(png, info, palette, 256);
     png_write_info(png, info);
+
+    action = "write image data";
+    if (setjmp(png_jmpbuf(png)))
+        goto err;
 
     // write bytes
     png_write_image(png, rows);

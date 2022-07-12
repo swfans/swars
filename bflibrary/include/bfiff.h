@@ -5,7 +5,7 @@
 /** @file bfiff.h
  *     Header file for giff.c.
  * @par Purpose:
- *     Unknown.
+ *     Routines for support of IFF image file format.
  * @par Comment:
  *     None.
  * @author   Tomasz Lis
@@ -51,6 +51,11 @@ typedef struct TbIff TbIff;
 #pragma pack()
 
 /** Load "ILBM" IFF Interleaved Bitmap.
+ *
+ * @param fname File name to read from.
+ * @param buf Output image data buffer pointer.
+ * @param iff Pointer image information structure.
+ * @return Lb_* error code.
  */
 TbResult LbIffLoad(const char *fname, ubyte *buf, struct TbIff *iff);
 
