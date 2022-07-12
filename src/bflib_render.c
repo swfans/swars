@@ -442,8 +442,10 @@ void raw_to_wscreen(short X, short Y, ushort Width, ushort Height, ubyte *Raw)
 TbBool test_trig(void)
 {
     ubyte pal[PALETTE_8b_SIZE];
+    ubyte ref_pal[PALETTE_8b_SIZE];
     TbPixel unaffected_colours[] = {0,};
     ubyte *texmap;
+    TbPixel *ref_buffer;
     int i;
 
 #if 0
@@ -596,6 +598,22 @@ TbBool test_trig(void)
 
     LbMemoryFree(texmap);
     LbPngSaveScreen("tst_trig.png", lbDisplay.WScreen, pal, true);
+
+    ref_buffer = malloc(640 * 480 * (lbEngineBPP+7) / 8);
+    if (ref_buffer == NULL) {
+        LOGERR("reference screen buffer alloc failed");
+        return false;
+    }
+    {
+        ulong ref_width, ref_height;
+        LbPngLoad("referenc/tst_trig1_rf.png", ref_buffer, &ref_width, &ref_height, ref_pal);
+        if ((ref_width != 640) || (ref_height != 480)) {
+            LOGERR("unexpected reference image size");
+            return false;
+        }
+    }
+    // TODO compare image with reference
+    free(ref_buffer);
     
     MockScreenUnlock();
     MockScreenReset();

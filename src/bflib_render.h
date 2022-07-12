@@ -21,6 +21,7 @@
 #define BFLIB_REND_H
 
 #include "bftypes.h"
+#include "poly.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -28,6 +29,9 @@ extern "C" {
 /******************************************************************************/
 
 /******************************************************************************/
+void trig_dbg(struct PolyPoint *point_a, struct PolyPoint *point_b,
+  struct PolyPoint *point_c);
+
 TbBool test_trig(void);
 /******************************************************************************/
 #ifdef __cplusplus
