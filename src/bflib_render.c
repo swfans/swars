@@ -33,6 +33,7 @@
 #include "bfpng.h"
 #include "bfscrsurf.h"
 #include "bfgentab.h"
+#include "bfpalcrss.h"
 #include "poly.h"
 #include "swlog.h"
 
@@ -178,7 +179,8 @@ TbResult MockScreenSetupAnyMode(TbScreenMode mode, TbScreenCoord width,
     }
     lbDisplay.VesaIsSetUp = false;
 
-    lbScreenSurface = lbDrawSurface = (OSSurfaceHandle)malloc(mdWidth * mdHeight * (mdinfo->BitsPerPixel+7) / 8);
+    lbScreenSurface = lbDrawSurface = (OSSurfaceHandle)malloc(mdWidth *
+      mdHeight * (mdinfo->BitsPerPixel+7) / 8);
 
     if ((mdinfo->BitsPerPixel != lbEngineBPP) ||
         (mdWidth != width) || (mdHeight != height))
@@ -380,7 +382,8 @@ void make_general_palette(ubyte *pal)
     }
 }
 
-void generate_xor_textute(ubyte *Tex, ushort Width, ushort Height, ushort FillW, ushort FillH, ubyte *Pal, short FactorsX[], short FactorsY[])
+void generate_xor_textute(ubyte *Tex, ushort Width, ushort Height, ushort FillW,
+  ushort FillH, ubyte *Pal, short FactorsX[], short FactorsY[])
 {
     short x, y;
     ubyte *t;
@@ -590,14 +593,15 @@ TbBool test_trig(void)
                 point_a.Y = 480 - (point_a.Y & 0x3f);
         }
 
-        if ((point_c.Y - point_b.Y) * (point_b.X - point_a.X) - (point_b.Y - point_a.Y) * (point_c.X - point_b.X) > 0)
+        if ((point_c.Y - point_b.Y) * (point_b.X - point_a.X) -
+            (point_b.Y - point_a.Y) * (point_c.X - point_b.X) > 0)
             trig_dbg(&point_a, &point_b, &point_c);
         else
             trig_dbg(&point_a, &point_c, &point_b);
     }
 
     LbMemoryFree(texmap);
-    LbPngSaveScreen("tst_trig.png", lbDisplay.WScreen, pal, true);
+    LbPngSaveScreen("tst_trig1.png", lbDisplay.WScreen, pal, true);
 
     ref_buffer = malloc(640 * 480 * (lbEngineBPP+7) / 8);
     if (ref_buffer == NULL) {
@@ -612,7 +616,16 @@ TbBool test_trig(void)
             return false;
         }
     }
-    // TODO compare image with reference
+    // compare image with reference
+    {
+        long maxdiff;
+        maxdiff = LbImageBuffersMaxDifference(lbDisplay.WScreen, pal, ref_buffer,
+          ref_pal, 640 * 480);
+       if (maxdiff > 16) {
+            LOGERR("high pixel difference to reference (%ld)", maxdiff);
+            return false;
+        }
+    }
     free(ref_buffer);
     
     MockScreenUnlock();
