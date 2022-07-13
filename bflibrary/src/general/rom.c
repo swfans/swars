@@ -918,7 +918,7 @@ void prop_text(char *text, TbPixel *out, long scanline, TbPixel colour)
 
     linesize = 6 * scanline;
     colr = (colour << 8) + colour;
-    pch = text;
+    pch = (ubyte *)text;
     obeg = out;
     o = obeg;
 

@@ -2,7 +2,7 @@
 // Bullfrog Engine Emulation Library - for use to remake classic games like
 // Syndicate Wars, Magic Carpet, Genewars or Dungeon Keeper.
 /******************************************************************************/
-/** @file gpalette.cpp
+/** @file gpalette.c
  *     Implementation of related functions.
  * @par Purpose:
  *     Unknown.
@@ -112,7 +112,8 @@ static ubyte LbColourIntensity(ubyte r, ubyte g, ubyte b)
 /** @internal
  *  Get colour distance using the simplest box method.
  */
-static long LbColourDistanceBox(ubyte r1, ubyte g1, ubyte b1, ubyte r2, ubyte g2, ubyte b2)
+long LbColourDistanceBox(ubyte r1, ubyte g1, ubyte b1,
+  ubyte r2, ubyte g2, ubyte b2)
 {
     long dr, dg, db;
     dr = abs(r2 - (long)r1);
@@ -121,9 +122,8 @@ static long LbColourDistanceBox(ubyte r1, ubyte g1, ubyte b1, ubyte r2, ubyte g2
     return dr + dg + db;
 }
 
-/** Get colour distance by computing squares of coordinates.
- */
-static long LbColourDistanceLinearSq(ubyte r1, ubyte g1, ubyte b1, ubyte r2, ubyte g2, ubyte b2)
+long LbColourDistanceLinearSq(ubyte r1, ubyte g1, ubyte b1,
+  ubyte r2, ubyte g2, ubyte b2)
 {
     long dr, dg, db;
     dr = (r2 - (long)r1) * (r2 - (long)r1);
@@ -134,12 +134,15 @@ static long LbColourDistanceLinearSq(ubyte r1, ubyte g1, ubyte b1, ubyte r2, uby
 
 /** @internal
  * Get colour distance by computing waged squares of coordinates.
- * While way less accurate than CIELAB deltaE, this provides more of perception-based difference.
+ * While way less accurate than CIELAB deltaE, this provides more of
+ * perception-based difference.
  */
-static long LbColourDistanceWagedSq(ubyte r1, ubyte g1, ubyte b1, ubyte r2, ubyte g2, ubyte b2)
+long LbColourDistanceWagedSq(ubyte r1, ubyte g1, ubyte b1,
+  ubyte r2, ubyte g2, ubyte b2)
 {
     long dr, dg, db;
-    // RGB factors are 0.30 0.59 0.11; here we convert them to squared 8-bit multiplier
+    // RGB factors are 0.30 0.59 0.11;
+    // here we convert them to squared 8-bit multiplier
     dr = (r2 - (long)r1) * (r2 - (long)r1) * 23;
     dg = (g2 - (long)g1) * (g2 - (long)g1) * 89;
     db = (b2 - (long)b1) * (b2 - (long)b1) * 3;
@@ -147,12 +150,15 @@ static long LbColourDistanceWagedSq(ubyte r1, ubyte g1, ubyte b1, ubyte r2, ubyt
 }
 
 /** @internal
- * Get colour distance by computing waged squares of coordinates, with non-squared wages.
+ * Get colour distance by computing waged squares of coordinates,
+ * with non-squared wages.
  */
-static long LbColourDistanceHalfWagedSq(ubyte r1, ubyte g1, ubyte b1, ubyte r2, ubyte g2, ubyte b2)
+long LbColourDistanceHalfWagedSq(ubyte r1, ubyte g1, ubyte b1,
+  ubyte r2, ubyte g2, ubyte b2)
 {
     long dr, dg, db;
-    // RGB factors are 0.30 0.59 0.11; here we convert them to squared 8-bit multiplier
+    // RGB factors are 0.30 0.59 0.11;
+    // here we convert them to squared 8-bit multiplier
     dr = (r2 - (long)r1) * (r2 - (long)r1) * 77;
     dg = (g2 - (long)g1) * (g2 - (long)g1) * 151;
     db = (b2 - (long)b1) * (b2 - (long)b1) * 28;
@@ -166,7 +172,8 @@ static inline TbPixel LbPaletteFindColourUsingDistanceFunc(const ubyte *pal,
     int min_delta;
     const unsigned char *c;
     int i;
-    // Compute minimal square difference in color; return exact match if found
+    // Compute minimal square difference in color;
+    // return exact match if found
     min_delta = 999999;
     c = pal;
     for (i = 0; i < PALETTE_8b_COLORS; i++)

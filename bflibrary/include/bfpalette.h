@@ -108,6 +108,11 @@ TbResult LbPaletteDataFillBlack(ubyte *palette);
  */
 TbResult LbPaletteDataFillWhite(ubyte *palette);
 
+/** Get colour distance by computing squares of coordinates.
+ */
+long LbColourDistanceLinearSq(ubyte r1, ubyte g1, ubyte b1,
+  ubyte r2, ubyte g2, ubyte b2);
+
 #ifdef __cplusplus
 };
 #endif

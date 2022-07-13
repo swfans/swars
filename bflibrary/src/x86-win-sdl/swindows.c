@@ -46,7 +46,9 @@ extern SDL_Color lbPaletteColors[];
 
 TbResult LbBaseInitialise(void)
 {
+#if 0
     char buf[32];
+#endif
     // Clear global variables
     lbScreenInitialised = false;
     lbScreenSurface = NULL;
@@ -58,11 +60,13 @@ TbResult LbBaseInitialise(void)
         LbRegisterStandardVideoModes();
     }
     // SDL environment variables
-/* TODO - enable or remove; wo we really want to control this instead of allowing users to use env vars?
+#if 0
+    //TODO - enable or remove; do we really want to control this instead of allowing users to use env vars?
     if (lbVideoDriver[0] != '\0') {
         sprintf(buf,"SDL_VIDEODRIVER=%s",lbVideoDriver);
         putenv(buf);
-    }*/
+    }
+#endif
     // Initialize SDL library
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_NOPARACHUTE |
       SDL_INIT_JOYSTICK) < 0) {
@@ -85,7 +89,8 @@ TbResult LbInputRestate(void)
 
 /** @internal
  * Triggers control function for given SDL window event.
- * @return SUCCESS if the event was processed, FAIL if it isn't supported, OK if no window event.
+ * @return SUCCESS if the event was processed, FAIL if it isn't supported,
+ *         OK if no window event.
  */
 TbResult WEvent(const SDL_Event *ev)
 {
