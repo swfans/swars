@@ -619,10 +619,12 @@ TbBool test_trig(void)
     // compare image with reference
     {
         long maxdiff;
+        ulong maxpos;
         maxdiff = LbImageBuffersMaxDifference(lbDisplay.WScreen, pal, ref_buffer,
-          ref_pal, 640 * 480);
-       if (maxdiff > 16) {
-            LOGERR("high pixel difference to reference (%ld)", maxdiff);
+          ref_pal, 640 * 480, &maxpos);
+       if (maxdiff > 48) {
+            LOGERR("high pixel difference to reference (%ld) at (%lu,%lu)",
+              maxdiff, maxpos%640, maxpos/640);
             return false;
         }
     }
