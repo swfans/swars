@@ -22,6 +22,7 @@
 #include "bfmemory.h"
 #include "bfmemut.h"
 #include "bfmath.h"
+#include "privbflog.h"
 
 TbResult LbCrossPaletteLutGen(ubyte *cross_lut, const ubyte *src_palette,
   const ubyte *dst_palette)

@@ -102,7 +102,7 @@ TbResult LbPngRead(FILE *img_fh, ubyte *out_buffer,
         int num;
 
         png_get_PLTE(png, info, &palette, &num);
-        palette_to_png(palette, pal, num);
+        palette_from_png(pal, palette, num);
     } else {
         // Other file formats are not supported
         goto err;
