@@ -57,11 +57,12 @@ TbResult LbBufferHistogram(ulong *hist, const TbPixel *buf, ulong buf_len)
 }
 
 short LbImageBuffersMaxDifference(const TbPixel *buf1, const ubyte *pal1,
-  const TbPixel *buf2, const ubyte *pal2, ulong buf_len)
+  const TbPixel *buf2, const ubyte *pal2, ulong buf_len, ulong *pos)
 {
     ulong i;
     TbBool *already_map;
-    long mxdiff = 0;
+    long maxdiff = 0;
+    ulong maxpos = 0;
 
     already_map = LbMemoryAlloc(256 * 256 * sizeof(TbBool));
     LbMemorySet(already_map, 0, 256 * 256 * sizeof(TbBool));
@@ -79,12 +80,16 @@ short LbImageBuffersMaxDifference(const TbPixel *buf1, const ubyte *pal1,
         p1 = &pal1[3 * buf1[i]];
         p2 = &pal2[3 * buf2[i]];
         curdiff = LbColourDistanceLinearSq(p1[0], p1[1], p1[2], p2[0], p2[1], p2[2]);
-        if (curdiff > mxdiff)
-            mxdiff = curdiff;
+        if (curdiff > maxdiff) {
+            maxdiff = curdiff;
+            maxpos = i;
+        }
     }
 
     LbMemoryFree(already_map);
-    return LbSqrL(mxdiff);
+    if (pos != NULL)
+        *pos = maxpos;
+    return LbSqrL(maxdiff);
 }
 
 /******************************************************************************/
