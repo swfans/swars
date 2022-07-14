@@ -29,6 +29,7 @@
 /******************************************************************************/
 // Allow enabling non-remade versions of trig(), to check for regressions
 #define USE_ASM_TRIG_DIVIDED 0
+#define USE_ASM_TRIG_DIVIDED_TEST 1
 
 #define STRINGIFY(x) #x
 #ifdef NEED_UNDERSCORE
@@ -189,7 +190,7 @@ void trig_render_md00(struct TrigLocals *lvu)
 
 void trig_render_md01(struct TrigLocals *lvu)
 {
-#if USE_ASM_TRIG_DIVIDED
+#if USE_ASM_TRIG_DIVIDED_TEST
         asm volatile (" \
             pushal\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
@@ -391,7 +392,7 @@ void trig_render_md01(struct TrigLocals *lvu)
 
 void trig_render_md02(struct TrigLocals *lvu)
 {
-#if USE_ASM_TRIG_DIVIDED
+#if USE_ASM_TRIG_DIVIDED_TEST
         asm volatile (" \
             pushal\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
@@ -661,7 +662,7 @@ void trig_render_md02(struct TrigLocals *lvu)
 
 void trig_render_md03(struct TrigLocals *lvu)
 {
-#if USE_ASM_TRIG_DIVIDED
+#if USE_ASM_TRIG_DIVIDED_TEST
         asm volatile (" \
             pushal\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
@@ -987,7 +988,7 @@ void trig_render_md03(struct TrigLocals *lvu)
  */
 void trig_render_md04(struct TrigLocals *lvu)
 {
-#if USE_ASM_TRIG_DIVIDED
+#if USE_ASM_TRIG_DIVIDED_TEST
         asm volatile (" \
             pushal\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
@@ -1209,7 +1210,7 @@ void trig_render_md04(struct TrigLocals *lvu)
 
 void trig_render_md05(struct TrigLocals *lvu)
 {
-#if USE_ASM_TRIG_DIVIDED
+#if USE_ASM_TRIG_DIVIDED_TEST
         asm volatile (" \
             pushal\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
