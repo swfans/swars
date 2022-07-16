@@ -190,7 +190,7 @@ void trig_render_md00(struct TrigLocals *lvu)
 
 void trig_render_md01(struct TrigLocals *lvu)
 {
-#if USE_ASM_TRIG_DIVIDED_TEST
+#if USE_ASM_TRIG_DIVIDED
         asm volatile (" \
             pushal\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
@@ -325,36 +325,38 @@ void trig_render_md01(struct TrigLocals *lvu)
                  : "o0" (lv)
                  : "memory", "cc");
 #else
-    short pX, pY;
     short pS;
     TbBool pS_carry;
     struct PolyPoint *pp;
-    ubyte *o;
     ushort colS;
 
     pp = polyscans;
     for (; lv.var_44; lv.var_44--, pp++)
     {
+        short pX, pY;
+        ubyte *o;
+
         pX = pp->X >> 16;
         pY = pp->Y >> 16;
         o = &lv.var_24[vec_screen_width];
         lv.var_24 += vec_screen_width;
+
         if (pX  < 0)
         {
             long mX;
-            short colH, colL;
+            short colH;
 
             if (pY <= 0)
                 continue;
             mX = lv.var_60 * (ushort)(-pX);
             pS_carry = __CFADDS__(pp->S, mX);
             pS = pp->S + mX;
-            colL = (mX >> 8);
-            colH = (pp->S >> 16) + pS_carry;
+            // Delcate code - if we add before shifting, the result is different
+            colH = (mX >> 16) + (pp->S >> 16) + pS_carry;
             if (pY > vec_window_width)
                 pY = vec_window_width;
 
-            colS = ((colH & 0xFF) << 8) + (colL & 0xFF);
+            colS = ((colH & 0xFF) << 8) + vec_colour;
         }
         else
         {
@@ -373,6 +375,7 @@ void trig_render_md01(struct TrigLocals *lvu)
 
             colS = ((colH & 0xFF) << 8) + vec_colour;
         }
+
         for (;pY > 0; pY--, o++)
         {
             short colH, colL;
