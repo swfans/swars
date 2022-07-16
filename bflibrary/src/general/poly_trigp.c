@@ -543,6 +543,7 @@ static inline int trig_ll_md05(struct TrigLocals *lvu, const struct PolyPoint *o
     lv.var_4C = (opt_c->U - opt_a->U) / lv.var_34;
     lv.var_58 = (opt_c->V - opt_a->V) / lv.var_34;
     lv.var_64 = (opt_c->S - opt_a->S) / lv.var_34;
+
     pX = opt_a->X << 16;
     pYa = opt_a->X << 16;
     pU = opt_a->U;
@@ -574,6 +575,7 @@ static inline int trig_ll_md05(struct TrigLocals *lvu, const struct PolyPoint *o
               lv.var_3C = vec_window_height;
               lv.var_44 = vec_window_height;
             }
+            lv.var_38 = 0;
         }
         else
         {
