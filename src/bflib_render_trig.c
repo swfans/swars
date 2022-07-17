@@ -627,10 +627,11 @@ void trig_render_md02(struct TrigLocals *lvu)
             mX = lv.var_48 * (-pX);
             pU = pp->U + mX;
             colL = (pp->U + mX) >> 16;
-            colS = ((colH & 0xFF) << 8) + (colL & 0xFF);
             if (pY > vec_window_width)
                 pY = vec_window_width;
             pX = pU >> 8;
+
+            colS = ((colH & 0xFF) << 8) + (colL & 0xFF);
         }
         else
         {
@@ -648,6 +649,7 @@ void trig_render_md02(struct TrigLocals *lvu)
             colH = pU;
             pU = (pU & 0xFFFF0000) | (pp->U & 0xFFFF);
             colL = pp->U >> 16;
+
             colS = ((colH & 0xFF) << 8) + (colL & 0xFF);
         }
 
@@ -675,7 +677,7 @@ void trig_render_md02(struct TrigLocals *lvu)
 
 void trig_render_md03(struct TrigLocals *lvu)
 {
-#if USE_ASM_TRIG_DIVIDED_TEST
+#if USE_ASM_TRIG_DIVIDED
         asm volatile (" \
             pushal\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
@@ -930,7 +932,7 @@ void trig_render_md03(struct TrigLocals *lvu)
     for (; lv.var_44; lv.var_44--, pp++)
     {
         short pX, pY;
-        short pU;
+        long pU;
 
         pX = pp->X >> 16;
         pY = pp->Y >> 16;
@@ -966,12 +968,14 @@ void trig_render_md03(struct TrigLocals *lvu)
             if (((pY < 0) ^ pY_overflow) | (pY == 0))
                 continue;
             o += pX;
-            colH = __ROL4__(pp->V, 16);
-            pU = pp->U;
-            colL = (pp->U >> 16);
+            pU = __ROL4__(pp->V, 16);
+            colH = pU;
+            pU = (pU & 0xFFFF0000) | (pp->U & 0xFFFF);
+            colL = pp->U >> 16;
 
             colS = ((colH & 0xFF) << 8) + (colL & 0xFF);
         }
+
         m = vec_map;
         for (; pY > 0; pY--, o++)
         {
@@ -983,7 +987,8 @@ void trig_render_md03(struct TrigLocals *lvu)
             pU_carry = __CFADDS__(lv.var_48, pU);
             pU = lv.var_48 + pU;
             colL = (lv.var_48 >> 16) + pU_carry + colS;
-            pU_carry = __CFADDS__(lv.var_70, pU);
+            // Why are we adding value for which only high 16 bits are important?
+            pU_carry = __CFADDL__(lv.var_70, pU);
             pU = lv.var_70 + pU;
             colH = (lv.var_54 >> 16) + pU_carry + (colS >> 8);
 
