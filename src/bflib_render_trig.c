@@ -1006,7 +1006,7 @@ void trig_render_md03(struct TrigLocals *lvu)
  */
 void trig_render_md04(struct TrigLocals *lvu)
 {
-#if USE_ASM_TRIG_DIVIDED_TEST
+#if USE_ASM_TRIG_DIVIDED
         asm volatile (" \
             pushal\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
@@ -1228,7 +1228,7 @@ void trig_render_md04(struct TrigLocals *lvu)
 
 void trig_render_md05(struct TrigLocals *lvu)
 {
-#if USE_ASM_TRIG_DIVIDED_TEST
+#if USE_ASM_TRIG_DIVIDED
         asm volatile (" \
             pushal\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
@@ -1556,26 +1556,33 @@ gt_md01:\n \
     ubyte *f;
     ubyte *o;
     ubyte *o_ln;
-    ushort colS;
-    ushort incA, incB, incC;
-    ulong factorA, factorB;
+    long rfactA, rfactB;
 
     pp = polyscans;
-    incA = (lv.var_60 >> 8) & 0xFFFF;
-    incB = (__ROL4__(lv.var_54, 16) & 0xFF00) | (__ROL4__(lv.var_48, 16) & 0xFF);
-    incC = __ROL4__(lv.var_54, 16);
-
+    {
+        ulong factorA, factorB, factorC;
+        factorC = lv.var_48;
+        if (lv.var_60 < 0) factorC--;
+        factorC = __ROL4__(factorC, 16);
+        factorA = __ROL4__(lv.var_54, 16);
+        factorB = ((ulong)lv.var_60) >> 8;
+        lv.var_88 = (factorA & 0xFF);
+        lv.var_74 = (factorA & 0xFFFFFF00) | (factorC & 0xFF);
+        lv.var_70 = (factorC & 0xFFFF0000) | (factorB & 0xFFFF);
+    }
     for (; lv.var_44; lv.var_44--, pp++)
     {
-        short pX, pY;
+        long pX, pY;
         ushort colM;
 
         pX = pp->X >> 16;
         pY = pp->Y >> 16;
         o_ln = &lv.var_24[vec_screen_width];
         lv.var_24 += vec_screen_width;
+
         if (pX < 0)
         {
+            ulong factorA, factorB;
             ushort colL, colH;
             long mX;
 
@@ -1584,18 +1591,20 @@ gt_md01:\n \
             mX = lv.var_48 * (-pX);
             factorA = __ROL4__(pp->U + mX, 16);
             mX = lv.var_54 * (-pX);
-            factorB = (__ROL4__(pp->V + mX, 16) & 0xFFFFFF00) | (factorA & 0xFF);
+            factorB = __ROL4__(pp->V + mX, 16);
             mX = lv.var_60 * (-pX);
             colL = (pp->S + mX) >> 8;
-            factorA = colL;
-            mX = lv.var_54 * (-pX);
-            colH = __ROL4__(pp->V + mX, 16);
-            colM = ((colH & 0xFF) << 8) + (colL & 0xFF);
+            colH = factorB;
+            rfactB = (factorA & 0xFF);
+            rfactA = (factorA & 0xFFFF0000) | (colL & 0xFFFF);
             if (pY > vec_window_width)
                 pY = vec_window_width;
+
+            colM = ((colH & 0xFF) << 8) + (colL & 0xFF);
         }
         else
         {
+            ulong factorA, factorB;
             ushort colL, colH;
             TbBool pY_overflow;
 
@@ -1607,41 +1616,40 @@ gt_md01:\n \
                 continue;
             o_ln += pX;
             factorA = __ROL4__(pp->U, 16);
-            factorB = (__ROL4__(pp->V, 16) & 0xFFFFFF00) | (factorA & 0xFF);
+            factorB = __ROL4__(pp->V, 16);
             colL = pp->S >> 8;
-            factorA = colL;
-            colH = __ROL4__(pp->V, 16);
+            colH = factorB;
+            // Should the high part really be preserved?
+            rfactB = (factorB & 0xFFFF0000) | (factorA & 0xFF);
+            rfactA = (factorA & 0xFFFF0000) | (colL & 0xFFFF);
+
             colM = ((colH & 0xFF) << 8) + (colL & 0xFF);
         }
 
-        factorB &= 0xFF;
         o = o_ln;
         m = vec_map;
         f = pixmap.fade_table;
         for (; pY > 0; pY--, o++)
         {
             ushort colL, colH;
-            ulong factorC;
-            TbBool factorA_carry;
-            TbBool factorB_carry;
-            TbBool factorC_carry;
+            ushort colS;
+            TbBool rfactA_carry;
+            TbBool rfactB_carry;
 
-            colM = (colM & 0xFF00) + (factorB & 0xFF);
-            colS = (((factorA >> 8) & 0xFF) << 8) + m[colM];
-            *o = f[colS];
+            colM = (colM & 0xFF00) + (rfactB & 0xFF);
+            colS = (((rfactA >> 8) & 0xFF) << 8) + m[colM];
 
-            factorA_carry = __CFADDS__(factorA, incA);
-            factorA = factorA + incA;
+            rfactA_carry = __CFADDL__(rfactA, lv.var_70);
+            rfactA = rfactA + lv.var_70;
 
-            factorC_carry = __CFADDS__(factorA_carry, factorB);
-            factorC = factorA_carry + factorB;
+            rfactB_carry = __CFADDL__(rfactB + rfactA_carry, lv.var_74);
+            rfactB = rfactB + lv.var_74 + rfactA_carry;
 
-            factorB_carry = __CFADDS__(incB, factorC);
-            factorB = incB + factorC;
-
-            colH = incC + (factorB_carry|factorC_carry) + (colM >> 8);
+            colH = lv.var_88 + rfactB_carry + (colM >> 8);
             colL = colM;
             colM = ((colH & 0xFF) << 8) + (colL & 0xFF);
+
+            *o = f[colS];
         }
     }
 #endif
