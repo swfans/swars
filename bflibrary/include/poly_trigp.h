@@ -66,7 +66,7 @@ struct TrigLocals {
     long var_7C; // 0x58 (unkn)
     long var_80; // 0x5C
     long var_84; // 0x60 (unkn)
-    ubyte var_88; // 0x64 (unkn)
+    ubyte var_88; // 0x64 trig_render_md??()
     ubyte var_89; // 0x65 (unkn)
     ubyte var_8A; // 0x66
     ubyte var_8B; // 0x67
