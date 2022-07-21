@@ -29,6 +29,8 @@ extern "C" {
 //TODO change to build system param
 // Enable defining list of memory blocks and arenas within the library,
 // rather than relying on standard C memory allocation interface.
+// Using the arenas, basically changes LbMemoryAlloc() into sub-allocator
+// which returns parts of a larger memory area designated for the app.
 #define LB_MEMORY_ARENAS 1
 
 /** Type for storing memory allocation routine
