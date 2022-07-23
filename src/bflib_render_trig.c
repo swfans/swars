@@ -2541,7 +2541,7 @@ void trig_render_md16(struct TrigLocals *lvu)
 
 void trig_render_md17(struct TrigLocals *lvu)
 {
-#if 1
+#if USE_ASM_TRIG_DIVIDED
         asm volatile (" \
             pushal\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
@@ -2603,6 +2603,80 @@ void trig_render_md17(struct TrigLocals *lvu)
                  : "o0" (lv)
                  : "memory", "cc");
 #else
+    struct PolyPoint *pp;
+    short pXa;
+    long colM;
+    short pYa;
+    ubyte *o;
+    ubyte *g;
+    ubyte *f;
+    ubyte factorA_carry;
+    short factorA;
+
+    pp = polyscans;
+    for (; lv.var_44; lv.var_44--, pp++)
+    {
+        pXa = (pp->X >> 16);
+        pYa = (pp->Y >> 16);
+        o = &lv.var_24[vec_screen_width];
+        lv.var_24 += vec_screen_width;
+        if ( (pXa & 0x8000u) != 0 )
+        {
+            ushort colL, colH;
+            ulong pXMa;
+            short pXMb;
+
+            if ( (short)pYa <= 0 )
+                continue;
+            pXMa = lv.var_60 * (ushort)-pXa;
+            pXMb = pXMa;
+            pXa = pXMa >> 8;
+            factorA_carry = __CFADDS__(pp->S, pXMb);
+            factorA = pp->S + pXMb;
+            colH = (pXa >> 8) + (pp->S >> 16) + factorA_carry;
+            if (pYa > vec_window_width)
+              pYa = vec_window_width;
+            colL = vec_colour;
+
+            pXa = ((colH & 0xFF) << 8) + (colL & 0xFF);
+        }
+        else
+        {
+            ushort colL, colH;
+            ubyte pY_overflow;
+
+            if (pYa > vec_window_width)
+                pYa = vec_window_width;
+            pY_overflow = __OFSUBS__(pYa, pXa);
+            pYa = pYa - pXa;
+            if ( (ubyte)(((pYa & 0x8000u) != 0) ^ pY_overflow) | ((ushort)pYa == 0) )
+                continue;
+
+            o += pXa;
+            colL = vec_colour;
+            factorA = pp->S;
+            colH = (pp->S >> 16);
+
+            pXa = ((colH & 0xFF) << 8) + (colL & 0xFF);
+        }
+
+        g = pixmap.ghost_table;
+        f = pixmap.fade_table;
+
+        for (; pYa > 0; pYa--, o++)
+        {
+            ushort colL, colH;
+
+            colM = ((*o) << 8) + f[pXa];
+            *o = g[colM];
+            factorA_carry = __CFADDS__(lv.var_60, factorA);
+            factorA += (lv.var_60 & 0xFFFF);
+            colH = (pXa >> 8) + ((lv.var_60 >> 16) & 0xFF) + factorA_carry;
+            colL = pXa;
+
+            pXa = ((colH & 0xFF) << 8) + (colL & 0xFF);
+        }
+    }
 #endif
 }
 
