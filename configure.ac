@@ -98,6 +98,8 @@ case "$host" in
     ;;
 esac
 
+AM_CONDITIONAL([TARGET_WINDOWS], [test "$have_windows" = "yes"])
+
 # On Windows, we can optionaly include resources in the executable.
 AM_CONDITIONAL([HAS_WINDRES], [test -n "${WINDRES}" -a "$have_windows" = "yes"])
 

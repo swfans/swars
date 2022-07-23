@@ -103,5 +103,15 @@ if HAS_WINDRES
 	$(WINDRES) $(swars_RCFLAGS) -i $< -J rc -o $@ -O coff
 endif
 
+# Include dynamic libraries in the package
+if TARGET_WINDOWS
+install-exec-hook:
+	mkdir -p "$(DESTDIR)${prefix}/lib"
+	$(eval lib_SHARED_INSTALL := $(shell objdump -p swars$(EXEEXT) | \
+		sed -n 's/\s*\(DLL Name:\|NEEDED\)\s*\(.*\)$$/\2/p' | \
+		xargs -I {} find $(shell dirname $(shell which ${CXX})) -name '{}'))
+	cp $(lib_SHARED_INSTALL) $(DESTDIR)${prefix}/lib
+endif
+
 CLEANFILES = wrappers_*.sx
 DISTCLEANFILES = *~
