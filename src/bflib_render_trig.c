@@ -2301,7 +2301,7 @@ void trig_render_md14(struct TrigLocals *lvu)
 
 void trig_render_md15(struct TrigLocals *lvu)
 {
-#if 1
+#if USE_ASM_TRIG_DIVIDED
         asm volatile (" \
             pushal\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
@@ -2349,6 +2349,51 @@ void trig_render_md15(struct TrigLocals *lvu)
                  : "o0" (lv)
                  : "memory", "cc");
 #else
+    struct PolyPoint *pp;
+    ubyte *o_ln;
+    long colM;
+    short pXa;
+    short pYa;
+    ubyte *o;
+    ubyte *g;
+
+    pp = polyscans;
+    o_ln = lv.var_24;
+    colM = vec_colour;
+    for (; lv.var_44; lv.var_44--, pp++)
+    {
+        pXa = (pp->X >> 16);
+        pYa = (pp->Y >> 16);
+        o_ln += vec_screen_width;
+        if (pXa < 0)
+        {
+            if (pYa <= 0)
+                continue;
+            if (pYa > vec_window_width)
+              pYa = vec_window_width;
+            o = o_ln;
+        }
+        else
+        {
+            ubyte pY_overflow;
+
+            if (pYa > vec_window_width)
+                pYa = vec_window_width;
+            pY_overflow = __OFSUBS__(pYa, pXa);
+            pYa = pYa - pXa;
+            if ( ((pYa < 0) ^ pY_overflow) | (pYa == 0) )
+                continue;
+            o = &o_ln[pXa];
+        }
+
+        g = pixmap.ghost_table;
+
+        for (; pYa > 0; pYa--, o++)
+        {
+              colM = (*o << 8) | (colM & 0xFF);
+              *o = g[colM];
+        }
+    }
 #endif
 }
 
