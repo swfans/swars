@@ -2682,7 +2682,7 @@ void trig_render_md17(struct TrigLocals *lvu)
 
 void trig_render_md18(struct TrigLocals *lvu)
 {
-#if 1
+#if USE_ASM_TRIG_DIVIDED
         asm volatile (" \
             pushal\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
@@ -2761,6 +2761,87 @@ void trig_render_md18(struct TrigLocals *lvu)
                  : "o0" (lv)
                  : "memory", "cc");
 #else
+    struct PolyPoint *pp;
+    short pXa;
+    ushort colM;
+    short pYa;
+    ubyte *o;
+    long factorA;
+    ubyte *m;
+    ubyte *g;
+
+    pp = polyscans;
+    lv.var_70 = lv.var_54 << 16;
+    for (; lv.var_44; lv.var_44--, pp++)
+    {
+        long pXm;
+
+        pXa = (pp->X >> 16);
+        pYa = (pp->Y >> 16);
+        o = &lv.var_24[vec_screen_width];
+        lv.var_24 += vec_screen_width;
+        if (pXa < 0)
+        {
+            ushort colL, colH;
+            ulong factorB, factorC;
+
+            if (pYa <= 0)
+                continue;
+            pXm = (ushort)-pXa;
+            factorA = __ROL4__(pp->V + lv.var_54 * pXm, 16);
+            colH = factorA;
+            factorB = pp->U + lv.var_48 * pXm;
+            factorA = (factorA & 0xFFFF0000) + (factorB & 0xFFFF);
+            factorC = factorB >> 8;
+            colL = (factorC >> 8);
+            if (pYa > vec_window_width)
+              pYa = vec_window_width;
+            pXa = (ushort)factorC;
+
+            colM = ((colH & 0xFF) << 8) + (colL & 0xFF);
+        }
+        else
+        {
+            ushort colL, colH;
+            ubyte pY_carry;
+
+            if (pYa > vec_window_width)
+                pYa = vec_window_width;
+            pY_carry = __OFSUBS__(pYa, pXa);
+            pYa = pYa - pXa;
+            if ( ((pYa < 0) ^ pY_carry) | (pYa == 0) )
+                continue;
+            o += pXa;
+            factorA = __ROL4__(pp->V, 16);
+            colH = factorA;
+            factorA = (factorA & 0xFFFF0000) + (pp->U & 0xFFFF);
+            colL = (pp->U >> 16);
+
+            colM = ((colH & 0xFF) << 8) + (colL & 0xFF);
+        }
+
+        m = vec_map;
+        g = pixmap.ghost_table;
+
+        for (; pYa > 0; pYa--, o++)
+        {
+            ushort colL, colH;
+            ubyte factorA_carry;
+
+            colH = m[colM];
+            factorA_carry = __CFADDS__(lv.var_48, factorA);
+            factorA = (factorA & 0xFFFF0000) | ((lv.var_48 + factorA) & 0xFFFF);
+            colL = *o;
+            pXa = ((colH & 0xFF) << 8) + (colL & 0xFF);
+            colL = ((lv.var_48 >> 16) & 0xFF) + factorA_carry + colM;
+            factorA_carry = __CFADDL__(lv.var_70, factorA);
+            factorA += lv.var_70;
+            *o = g[pXa];
+            colH = (colM >> 8) + ((lv.var_54 >> 16) & 0xFF) + factorA_carry;
+
+            colM = ((colH & 0xFF) << 8) + (colL & 0xFF);
+        }
+    }
 #endif
 }
 
