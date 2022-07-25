@@ -3126,8 +3126,8 @@ void trig_render_md20(struct TrigLocals *lvu)
         ushort colM;
         short pYa;
         ubyte *o;
-        long pXm;
-        long v7;
+        long pXMa;
+        long pXMb;
         long factorA;
         long factorC;
 
@@ -3145,15 +3145,15 @@ void trig_render_md20(struct TrigLocals *lvu)
             if (pYa > vec_window_width)
                 pYa = vec_window_width;
             lv.var_7C = pYa;
-            pXm = (ushort)-pXa;
-            v7 = pXm;
-            factorA = __ROL4__(pp->V + lv.var_54 * pXm, 16);
+            pXMa = (ushort)-pXa;
+            pXMb = pXMa;
+            factorA = __ROL4__(pp->V + lv.var_54 * pXMa, 16);
             colH = factorA;
-            factorB = pp->U + lv.var_48 * pXm;
+            factorB = pp->U + lv.var_48 * pXMa;
             factorA = (factorA & 0xFFFF0000) + (factorB & 0xFFFF);
             pXa = factorB >> 8;
             colL = ((pXa >> 8) & 0xFF);
-            factorC = __ROL4__(pp->S + lv.var_60 * v7, 16);
+            factorC = __ROL4__(pp->S + lv.var_60 * pXMb, 16);
 
             colM = ((colH & 0xFF) << 8) + (colL & 0xFF);
         }
