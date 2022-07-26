@@ -383,7 +383,7 @@ void make_general_palette(ubyte *pal)
 }
 
 void generate_xor_textute(ubyte *Tex, ushort Width, ushort Height, ushort FillW,
-  ushort FillH, ubyte *Pal, short FactorsX[], short FactorsY[])
+  ushort FillH, const ubyte *Pal, short FactorsX[], short FactorsY[])
 {
     short x, y;
     ubyte *t;
@@ -442,72 +442,35 @@ void raw_to_wscreen(short X, short Y, ushort Width, ushort Height, ubyte *Raw)
     }
 }
 
-TbBool test_trig(void)
+void generate_example_texture_map_xor_based(const ubyte *pal, ubyte *texmap)
 {
-    ubyte pal[PALETTE_8b_SIZE];
-    ubyte ref_pal[PALETTE_8b_SIZE];
-    TbPixel unaffected_colours[] = {0,};
-    ubyte *texmap;
-    TbPixel *ref_buffer;
+    ubyte *tmap;
+    short factors0[] = {256, 256, 256};
+    tmap = texmap;
+    generate_xor_textute(tmap, 256, 256, 256,  64, pal, factors0, factors0);
+    short factors1[] = {512,   0,   0};
+    tmap = texmap + 256 *  64 + 0;
+    generate_xor_textute(tmap, 256, 256, 128,  64, pal, factors1, factors1);
+    short factors2[] = {  0, 512,   0};
+    tmap = texmap + 256 *  64 + 128;
+    generate_xor_textute(tmap, 256, 256, 128,  64, pal, factors2, factors2);
+    short factors3[] = {  0,   0, 512};
+    tmap = texmap + 256 * 128 + 0;
+    generate_xor_textute(tmap, 256, 256, 128,  64, pal, factors3, factors3);
+    short factors4[] = {512, 512,   0};
+    tmap = texmap + 256 * 128 + 128;
+    generate_xor_textute(tmap, 256, 256, 128,  64, pal, factors4, factors4);
+    short factors5[] = {512,   0, 512};
+    tmap = texmap + 256 * 192 + 0;
+    generate_xor_textute(tmap, 256, 256, 128,  64, pal, factors5, factors5);
+    short factors6[] = {  0, 512, 512};
+    tmap = texmap + 256 * 192 + 128;
+    generate_xor_textute(tmap, 256, 256, 128,  64, pal, factors6, factors6);
+}
+
+void test_trig_draw_random_triangles(const ubyte *pal)
+{
     int i;
-
-#if 0
-    if (LbErrorLogSetup(NULL, "tst_trig.log", Lb_ERROR_LOG_NEW) != Lb_SUCCESS) {
-        LOGERR("execution log setup failed");
-        return false;
-    }
-#endif
-    if (MockBaseInitialise() != Lb_SUCCESS) {
-        LOGERR("bullfrog Library initialization failed");
-        return false;
-    }
-    LbMemorySetup();
-
-    // Prepare a palette, and colour tables for it
-    make_general_palette(pal);
-    LbFileSaveAt("tst_gp.pal", &pal, sizeof(pal));
-    LbColourTablesGenerate(pal, unaffected_colours, "tst_gptbl.dat");
-
-    if (MockScreenSetupAnyMode(Lb_SCREEN_MODE_640_480_8, 640, 480, pal) != Lb_SUCCESS) {
-        LOGERR("bullfrog Library initialization failed");
-        return false;
-    }
-
-    MockScreenLock();
-
-    texmap = LbMemoryAlloc(256*256*1);
-    {
-        ubyte *tmap;
-        short factors0[] = {256, 256, 256};
-        tmap = texmap;
-        generate_xor_textute(tmap, 256, 256, 256,  64, pal, factors0, factors0);
-        short factors1[] = {512,   0,   0};
-        tmap = texmap + 256 *  64 + 0;
-        generate_xor_textute(tmap, 256, 256, 128,  64, pal, factors1, factors1);
-        short factors2[] = {  0, 512,   0};
-        tmap = texmap + 256 *  64 + 128;
-        generate_xor_textute(tmap, 256, 256, 128,  64, pal, factors2, factors2);
-        short factors3[] = {  0,   0, 512};
-        tmap = texmap + 256 * 128 + 0;
-        generate_xor_textute(tmap, 256, 256, 128,  64, pal, factors3, factors3);
-        short factors4[] = {512, 512,   0};
-        tmap = texmap + 256 * 128 + 128;
-        generate_xor_textute(tmap, 256, 256, 128,  64, pal, factors4, factors4);
-        short factors5[] = {512,   0, 512};
-        tmap = texmap + 256 * 192 + 0;
-        generate_xor_textute(tmap, 256, 256, 128,  64, pal, factors5, factors5);
-        short factors6[] = {  0, 512, 512};
-        tmap = texmap + 256 * 192 + 128;
-        generate_xor_textute(tmap, 256, 256, 128,  64, pal, factors6, factors6);
-    }
-
-    setup_vecs(lbDisplay.WScreen, texmap, lbDisplay.PhysicalScreenWidth,
-        lbDisplay.PhysicalScreenWidth, lbDisplay.PhysicalScreenHeight);
-
-#if 0
-    LbPaletteDraw(320-256-8, 32, 16, 16, 0x01);
-    raw_to_wscreen(320+8, 32, 256, 256, texmap);
-#endif
 
     for (i = 0; i < 27*40; i++)
     {
@@ -599,6 +562,52 @@ TbBool test_trig(void)
         else
             trig_dbg(&point_a, &point_c, &point_b);
     }
+}
+
+TbBool test_trig(void)
+{
+    ubyte pal[PALETTE_8b_SIZE];
+    ubyte ref_pal[PALETTE_8b_SIZE];
+    TbPixel unaffected_colours[] = {0,};
+    ubyte *texmap;
+    TbPixel *ref_buffer;
+
+#if 0
+    if (LbErrorLogSetup(NULL, "tst_trig.log", Lb_ERROR_LOG_NEW) != Lb_SUCCESS) {
+        LOGERR("execution log setup failed");
+        return false;
+    }
+#endif
+    if (MockBaseInitialise() != Lb_SUCCESS) {
+        LOGERR("bullfrog Library initialization failed");
+        return false;
+    }
+    LbMemorySetup();
+
+    // Prepare a palette, and colour tables for it
+    make_general_palette(pal);
+    LbFileSaveAt("tst_gp.pal", &pal, sizeof(pal));
+    LbColourTablesGenerate(pal, unaffected_colours, "tst_gptbl.dat");
+
+    if (MockScreenSetupAnyMode(Lb_SCREEN_MODE_640_480_8, 640, 480, pal) != Lb_SUCCESS) {
+        LOGERR("bullfrog Library initialization failed");
+        return false;
+    }
+
+    MockScreenLock();
+
+    texmap = LbMemoryAlloc(256*256*1);
+    generate_example_texture_map_xor_based(pal, texmap);
+
+    setup_vecs(lbDisplay.WScreen, texmap, lbDisplay.PhysicalScreenWidth,
+        lbDisplay.PhysicalScreenWidth, lbDisplay.PhysicalScreenHeight);
+
+#if 0
+    LbPaletteDraw(320-256-8, 32, 16, 16, 0x01);
+    raw_to_wscreen(320+8, 32, 256, 256, texmap);
+#endif
+
+    test_trig_draw_random_triangles(pal);
 
     LbMemoryFree(texmap);
     LbPngSaveScreen("tst_trig1.png", lbDisplay.WScreen, pal, true);
