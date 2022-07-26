@@ -39,6 +39,7 @@
 
 
 /******************************************************************************/
+extern ulong seed;
 /******************************************************************************/
 
 void LbRegisterStandardVideoModes(void);
@@ -566,11 +567,13 @@ void test_trig_draw_random_triangles(const ubyte *pal)
 
 TbBool test_trig(void)
 {
+    static ulong seeds[] = {0x0, 0xD15C1234, };
     ubyte pal[PALETTE_8b_SIZE];
     ubyte ref_pal[PALETTE_8b_SIZE];
     TbPixel unaffected_colours[] = {0,};
     ubyte *texmap;
     TbPixel *ref_buffer;
+    int picno;
 
 #if 0
     if (LbErrorLogSetup(NULL, "tst_trig.log", Lb_ERROR_LOG_NEW) != Lb_SUCCESS) {
@@ -607,38 +610,47 @@ TbBool test_trig(void)
     raw_to_wscreen(320+8, 32, 256, 256, texmap);
 #endif
 
-    test_trig_draw_random_triangles(pal);
-
-    LbMemoryFree(texmap);
-    LbPngSaveScreen("tst_trig1.png", lbDisplay.WScreen, pal, true);
-
     ref_buffer = malloc(640 * 480 * (lbEngineBPP+7) / 8);
     if (ref_buffer == NULL) {
         LOGERR("reference screen buffer alloc failed");
         return false;
     }
+
+    for (picno = 1; picno < 2; picno++)
     {
+        char loc_fname[64];
         ulong ref_width, ref_height;
-        LbPngLoad("referenc/tst_trig1_rf.png", ref_buffer, &ref_width, &ref_height, ref_pal);
+        long maxdiff;
+        ulong maxpos;
+
+        LbScreenClear(0);
+        seed = seeds[picno];
+        test_trig_draw_random_triangles(pal);
+
+        sprintf(loc_fname, "referenc/tst_trig%d_rf.png", picno);
+        LbPngLoad(loc_fname, ref_buffer, &ref_width, &ref_height, ref_pal);
         if ((ref_width != 640) || (ref_height != 480)) {
-            LOGERR("unexpected reference image size");
+            LOGERR("%s: unexpected reference image size", loc_fname);
             return false;
         }
-    }
-    // compare image with reference
-    {
-        long maxdiff;
-        ulong maxpos = 0;
+
+        sprintf(loc_fname, "tst_trig%d.png", picno);
+        LbPngSaveScreen(loc_fname, lbDisplay.WScreen, pal, true);
+
+        // compare image with reference
+        maxpos = 0;
         maxdiff = LbImageBuffersMaxDifference(lbDisplay.WScreen, pal, ref_buffer,
           ref_pal, 640 * 480, &maxpos);
        if (maxdiff > 12) {
-            LOGERR("high pixel difference to reference (%ld) at (%lu,%lu)",
-              maxdiff, maxpos%640, maxpos/640);
+            LOGERR("%s: high pixel difference to reference (%ld) at (%lu,%lu)",
+              loc_fname, maxdiff, maxpos%640, maxpos/640);
             return false;
         }
-        LOGSYNC("acceptable pixel difference to reference (%ld) at (%lu,%lu)",
-            maxdiff, maxpos%640, maxpos/640);
+        LOGSYNC("%s: acceptable pixel difference to reference (%ld) at (%lu,%lu)",
+            loc_fname, maxdiff, maxpos%640, maxpos/640);
     }
+
+    LbMemoryFree(texmap);
     free(ref_buffer);
     
     MockScreenUnlock();
