@@ -4137,7 +4137,7 @@ void trig_render_md25(struct TrigLocals *lvu)
 
 void trig_render_md26(struct TrigLocals *lvu)
 {
-#if 1
+#if USE_ASM_TRIG_DIVIDED
         asm volatile (" \
             pushal\n \
             lea    "EXPORT_SYMBOL(polyscans)",%%esi\n \
@@ -4262,6 +4262,107 @@ t12_md01:\n \
                  : "o0" (lv)
                  : "memory", "cc");
 #else
+    struct PolyPoint *pp;
+    ubyte *m;
+    ubyte *g;
+    ubyte *f;
+
+    pp = polyscans;
+    lv.var_80 = pp;
+    {
+        ulong v1;
+        ulong v2;
+        ubyte v3;
+
+        v1 = __ROL4__(lv.var_48, 16);
+        v2 = __ROL4__(lv.var_54, 16);
+        v3 = v2;
+        v2 = (v2 & 0xFFFFFF00) + (v1 & 0xFF);
+        v1 = (v1 & 0xFFFF0000) + (((ulong)lv.var_60 >> 8) & 0xFFFF);
+        v2 = (v2 & 0xFFFF0000) + (v2 & 0xFF);
+        lv.var_70 = v1;
+        lv.var_74 = v2;
+        lv.var_88 = v3;
+    }
+    for (; lv.var_44; lv.var_44--)
+    {
+        long pXa;
+        long pYa;
+        ubyte *o;
+        ulong factorB, factorD;
+        long factorA;
+        ulong factorC;
+        ubyte pY_overflow;
+        ushort colM;
+
+        pp = lv.var_80;
+        lv.var_80 += 20;
+        pXa = pp->X >> 16;
+        pYa = pp->Y >> 16;
+        o = &lv.var_24[vec_screen_width];
+        lv.var_24 += vec_screen_width;
+        if (pXa < 0)
+        {
+            if (pYa <= 0)
+                continue;
+            pXa = -pXa;
+            factorA = __ROL4__(pp->U + pXa * lv.var_48, 16);
+            factorB = __ROL4__(pp->V + pXa * lv.var_54, 16);
+            factorC = (ulong)(pp->S + pXa * lv.var_60) >> 8;
+            factorB = (factorB & 0xFFFFFF00) | (factorA & 0xFF);
+            factorA = (factorA & 0xFFFF0000) | (factorC & 0xFFFF);
+            factorD = __ROL4__(pp->V + pXa * lv.var_54, 16);
+            if (pYa > vec_window_width)
+                pYa = vec_window_width;
+
+            colM = (factorC & 0xFF) + ((factorD & 0xFF) << 8);
+        }
+        else
+        {
+            if (pYa > vec_window_width)
+                pYa = vec_window_width;
+            pY_overflow = __OFSUBS__(pYa, pXa);
+            pYa -= pXa;
+            if (((pYa < 0) ^ pY_overflow) | (pYa == 0))
+                continue;
+            o += pXa;
+            factorA = __ROL4__(pp->U, 16);
+            factorB = __ROL4__(pp->V, 16);
+            factorC = (ulong)pp->S >> 8;
+            factorB = (factorB & 0xFFFFFF00) | (factorA & 0xFF);
+            factorA = (factorA & 0xFFFF0000) | (factorC & 0xFFFF);
+            factorD = __ROL4__(pp->V, 16);
+
+            colM = (factorC & 0xFF) + ((factorD & 0xFF) << 8);
+        }
+
+        factorB = (factorB & 0xFFFF00FF);
+        m = vec_map;
+        g = pixmap.ghost_table;
+        f = pixmap.fade_table;
+
+        for (; pYa > 0; pYa--, o++)
+        {
+            ushort colS;
+            ubyte factorA_carry, factorB_carry;
+
+            colS = (factorA & 0xFF00) | (factorB & 0xFF);
+            //colS = (factorA  & 0xFF00) | m[colM];  //TODO fix/enable
+
+            factorA_carry = __CFADDL__(lv.var_70, factorA);
+            factorA = lv.var_70 + factorA;
+            factorB_carry = __CFADDS__(lv.var_74, factorB + factorA_carry);
+            factorB = lv.var_74 + factorB + factorA_carry;
+            colM = (colM & 0xFF) + ((((colM >> 8) + lv.var_88 + factorA_carry) << 8) & 0xFF00);
+
+            if ((colS & 0xFF) <= 0xCu) {
+                colS = ((*o) << 8) | f[colS];
+                *o = g[colS];
+            } else {
+                *o = f[colS];
+            }
+        }
+    }
 #endif
 }
 /******************************************************************************/
