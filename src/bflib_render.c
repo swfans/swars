@@ -567,7 +567,7 @@ void test_trig_draw_random_triangles(const ubyte *pal)
 
 TbBool test_trig(void)
 {
-    static ulong seeds[] = {0x0, 0xD15C1234, 0xD15C0000, };
+    static ulong seeds[] = {0x0, 0xD15C1234, 0xD15C0000, 0xD15C0005, };
     ubyte pal[PALETTE_8b_SIZE];
     ubyte ref_pal[PALETTE_8b_SIZE];
     TbPixel unaffected_colours[] = {0,};
