@@ -420,21 +420,24 @@ void trig_render_md02(struct TrigLocals *lvu)
         pY = pp->Y >> 16;
         o = &lv.var_24[vec_screen_width];
         lv.var_24 += vec_screen_width;
+
         if (pX < 0)
         {
-            short colL, colH;
+            ushort colL, colH;
+            ulong factorA;
             long mX;
 
             if (pY <= 0)
                 continue;
             mX = lv.var_54 * (-pX);
-            colH = __ROL4__(pp->V + mX, 16);
+            factorA = __ROL4__(pp->V + mX, 16);
+            colH = factorA;
             mX = lv.var_48 * (-pX);
-            pU = pp->U + mX;
+            pU = (factorA & 0xFFFF0000) | ((pp->U + mX) & 0xFFFF);
             colL = (pp->U + mX) >> 16;
             if (pY > vec_window_width)
                 pY = vec_window_width;
-            pX = pU >> 8;
+            pX = (pp->U + mX) >> 8;
 
             colS = ((colH & 0xFF) << 8) + (colL & 0xFF);
         }
@@ -470,7 +473,7 @@ void trig_render_md02(struct TrigLocals *lvu)
             pU_carry = __CFADDS__(lv.var_48, pU);
             pU = lv.var_48 + pU;
             colL = (lv.var_48 >> 16) + pU_carry + colS;
-            // Why are we adding value for which only high 16 bits are important?
+
             pU_carry = __CFADDL__(lv.var_70, pU);
             pU = lv.var_70 + pU;
             colH = (lv.var_54 >> 16) + pU_carry + (colS >> 8);
