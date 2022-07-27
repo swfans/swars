@@ -576,6 +576,7 @@ void trig_render_md03(struct TrigLocals *lvu)
     for (; lv.var_44; lv.var_44--, pp++)
     {
         short pX, pY;
+        ulong factorA;
         long pU;
 
         pX = pp->X >> 16;
@@ -590,13 +591,13 @@ void trig_render_md03(struct TrigLocals *lvu)
             if (pY <= 0)
                 continue;
             mX = lv.var_54 * (-pX);
-            colH = __ROL4__(pp->V + mX, 16);
+            factorA = __ROL4__(pp->V + mX, 16);
+            colH = factorA;
             mX = lv.var_48 * (-pX);
-            pU = pp->U + mX;
-            colL = pU >> 16;
+            pU = (factorA & 0xFFFF0000) | ((pp->U + mX) & 0xFFFF);
+            colL = (pp->U + mX) >> 16;
             if (pY > vec_window_width)
                 pY = vec_window_width;
-            pX = pU >> 8;
 
             colS = ((colH & 0xFF) << 8) + (colL & 0xFF);
         }
@@ -614,8 +615,8 @@ void trig_render_md03(struct TrigLocals *lvu)
             o += pX;
             pU = __ROL4__(pp->V, 16);
             colH = pU;
-            pU = (pU & 0xFFFF0000) | (pp->U & 0xFFFF);
-            colL = pp->U >> 16;
+            pU = (pU & 0xFFFF0000) | ((pp->U) & 0xFFFF);
+            colL = (pp->U) >> 16;
 
             colS = ((colH & 0xFF) << 8) + (colL & 0xFF);
         }
