@@ -567,13 +567,13 @@ void test_trig_draw_random_triangles(const ubyte *pal)
 
 TbBool test_trig(void)
 {
-    static ulong seeds[] = {0x0, 0xD15C1234, };
+    static ulong seeds[] = {0x0, 0xD15C1234, 0xD15C0000, };
     ubyte pal[PALETTE_8b_SIZE];
     ubyte ref_pal[PALETTE_8b_SIZE];
     TbPixel unaffected_colours[] = {0,};
     ubyte *texmap;
     TbPixel *ref_buffer;
-    int picno;
+    ulong picno;
 
 #if 0
     if (LbErrorLogSetup(NULL, "tst_trig.log", Lb_ERROR_LOG_NEW) != Lb_SUCCESS) {
@@ -616,7 +616,7 @@ TbBool test_trig(void)
         return false;
     }
 
-    for (picno = 1; picno < 2; picno++)
+    for (picno = 1; picno < sizeof(seeds)/sizeof(seeds[0]); picno++)
     {
         char loc_fname[64];
         ulong ref_width, ref_height;
@@ -627,14 +627,14 @@ TbBool test_trig(void)
         seed = seeds[picno];
         test_trig_draw_random_triangles(pal);
 
-        sprintf(loc_fname, "referenc/tst_trig%d_rf.png", picno);
+        sprintf(loc_fname, "referenc/tst_trig%lu_rf.png", picno);
         LbPngLoad(loc_fname, ref_buffer, &ref_width, &ref_height, ref_pal);
         if ((ref_width != 640) || (ref_height != 480)) {
             LOGERR("%s: unexpected reference image size", loc_fname);
             return false;
         }
 
-        sprintf(loc_fname, "tst_trig%d.png", picno);
+        sprintf(loc_fname, "tst_trig%lu.png", picno);
         LbPngSaveScreen(loc_fname, lbDisplay.WScreen, pal, true);
 
         // compare image with reference
