@@ -583,6 +583,7 @@ void trig_render_md03(struct TrigLocals *lvu)
         pY = pp->Y >> 16;
         o = &lv.var_24[vec_screen_width];
         lv.var_24 += vec_screen_width;
+
         if (pX < 0)
         {
             short colL, colH;
@@ -630,10 +631,10 @@ void trig_render_md03(struct TrigLocals *lvu)
 
             if (m[colS] != 0)
                 *o = m[colS];
+
             pU_carry = __CFADDS__(lv.var_48, pU);
-            pU = lv.var_48 + pU;
+            pU = (pU & 0xFFFF0000) | ((lv.var_48 + pU) & 0xFFFF);
             colL = (lv.var_48 >> 16) + pU_carry + colS;
-            // Why are we adding value for which only high 16 bits are important?
             pU_carry = __CFADDL__(lv.var_70, pU);
             pU = lv.var_70 + pU;
             colH = (lv.var_54 >> 16) + pU_carry + (colS >> 8);
