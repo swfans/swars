@@ -900,14 +900,16 @@ gt_md01:\n \
     {
         ulong factorA, factorB, factorC;
         factorC = lv.var_48;
-        if (lv.var_60 < 0) factorC--;
+        // original code used unsigned compare here, making the condition always false
+        //if (lv.var_60 < 0) factorC--;
         factorC = __ROL4__(factorC, 16);
         factorA = __ROL4__(lv.var_54, 16);
         factorB = ((ulong)lv.var_60) >> 8;
-        lv.var_88 = (factorA & 0xFF);
-        lv.var_74 = (factorA & 0xFFFFFF00) | (factorC & 0xFF);
         lv.var_70 = (factorC & 0xFFFF0000) | (factorB & 0xFFFF);
+        lv.var_74 = (factorA & 0xFFFFFF00) | (factorC & 0xFF);
+        lv.var_88 = (factorA & 0xFF);
     }
+
     for (; lv.var_44; lv.var_44--, pp++)
     {
         long pX, pY;
@@ -933,7 +935,7 @@ gt_md01:\n \
             mX = lv.var_60 * (-pX);
             colL = (pp->S + mX) >> 8;
             colH = factorB;
-            rfactB = (factorA & 0xFF);
+            rfactB = (factorB & 0xFFFF0000) | (factorA & 0xFF);
             rfactA = (factorA & 0xFFFF0000) | (colL & 0xFFFF);
             if (pY > vec_window_width)
                 pY = vec_window_width;
