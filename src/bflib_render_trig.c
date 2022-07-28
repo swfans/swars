@@ -4305,6 +4305,7 @@ t12_md01:\n \
         pYa = pp->Y >> 16;
         o = &lv.var_24[vec_screen_width];
         lv.var_24 += vec_screen_width;
+
         if (pXa < 0)
         {
             if (pYa <= 0)
@@ -4350,14 +4351,13 @@ t12_md01:\n \
             ushort colS;
             ubyte factorA_carry, factorB_carry;
 
-            colS = (factorA & 0xFF00) | (factorB & 0xFF);
-            //colS = (factorA  & 0xFF00) | m[colM];  //TODO fix/enable
-
+            colM = (colM & 0xFF00) | (factorB & 0xFF);
+            colS = (factorA & 0xFF00) | m[colM];
             factorA_carry = __CFADDL__(lv.var_70, factorA);
             factorA = lv.var_70 + factorA;
-            factorB_carry = __CFADDS__(lv.var_74, factorB + factorA_carry);
+            factorB_carry = __CFADDL__(lv.var_74, factorB + factorA_carry);
             factorB = lv.var_74 + factorB + factorA_carry;
-            colM = (colM & 0xFF) + ((((colM >> 8) + lv.var_88 + factorA_carry) << 8) & 0xFF00);
+            colM = (colM & 0xFF) + ((((colM >> 8) + lv.var_88 + factorB_carry) & 0xFF) << 8);
 
             if ((colS & 0xFF) <= 0xCu) {
                 colS = ((*o) << 8) | f[colS];
