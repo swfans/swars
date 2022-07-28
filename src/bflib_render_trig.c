@@ -471,7 +471,7 @@ void trig_render_md02(struct TrigLocals *lvu)
             *o = m[colS];
 
             pU_carry = __CFADDS__(lv.var_48, pU);
-            pU = lv.var_48 + pU;
+            pU = (pU & 0xFFFF0000) | ((lv.var_48 + pU) & 0xFFFF);
             colL = (lv.var_48 >> 16) + pU_carry + colS;
 
             pU_carry = __CFADDL__(lv.var_70, pU);
