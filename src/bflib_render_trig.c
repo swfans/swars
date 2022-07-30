@@ -2619,9 +2619,6 @@ void trig_render_md17(struct TrigLocals *lvu)
                  : "memory", "cc");
 #else
     struct PolyPoint *pp;
-    short pXa;
-    long colM;
-    short pYa;
     ubyte *o;
     ubyte *g;
     ubyte *f;
@@ -2631,11 +2628,15 @@ void trig_render_md17(struct TrigLocals *lvu)
     pp = polyscans;
     for (; lv.var_44; lv.var_44--, pp++)
     {
+        short pXa, pYa;
+        ushort colS;
+
         pXa = (pp->X >> 16);
         pYa = (pp->Y >> 16);
         o = &lv.var_24[vec_screen_width];
         lv.var_24 += vec_screen_width;
-        if ( (pXa & 0x8000u) != 0 )
+
+        if (pXa < 0)
         {
             ushort colL, colH;
             ulong pXMa;
@@ -2653,7 +2654,7 @@ void trig_render_md17(struct TrigLocals *lvu)
               pYa = vec_window_width;
             colL = vec_colour;
 
-            pXa = ((colH & 0xFF) << 8) + (colL & 0xFF);
+            colS = ((colH & 0xFF) << 8) + (colL & 0xFF);
         }
         else
         {
@@ -2664,7 +2665,7 @@ void trig_render_md17(struct TrigLocals *lvu)
                 pYa = vec_window_width;
             pY_overflow = __OFSUBS__(pYa, pXa);
             pYa = pYa - pXa;
-            if ( (ubyte)(((pYa & 0x8000u) != 0) ^ pY_overflow) | ((ushort)pYa == 0) )
+            if (((pYa < 0) ^ pY_overflow) | (pYa == 0))
                 continue;
 
             o += pXa;
@@ -2672,7 +2673,7 @@ void trig_render_md17(struct TrigLocals *lvu)
             factorA = pp->S;
             colH = (pp->S >> 16);
 
-            pXa = ((colH & 0xFF) << 8) + (colL & 0xFF);
+            colS = ((colH & 0xFF) << 8) + (colL & 0xFF);
         }
 
         g = pixmap.ghost_table;
@@ -2681,15 +2682,17 @@ void trig_render_md17(struct TrigLocals *lvu)
         for (; pYa > 0; pYa--, o++)
         {
             ushort colL, colH;
+            ushort colM;
 
-            colM = ((*o) << 8) + f[pXa];
+            colM = ((*o) << 8) + f[colS];
             *o = g[colM];
+
             factorA_carry = __CFADDS__(lv.var_60, factorA);
             factorA += (lv.var_60 & 0xFFFF);
-            colH = (pXa >> 8) + ((lv.var_60 >> 16) & 0xFF) + factorA_carry;
-            colL = pXa;
+            colH = (colS >> 8) + ((lv.var_60 >> 16) & 0xFF) + factorA_carry;
+            colL = colS;
 
-            pXa = ((colH & 0xFF) << 8) + (colL & 0xFF);
+            colS = ((colH & 0xFF) << 8) + (colL & 0xFF);
         }
     }
 #endif
