@@ -20,6 +20,13 @@
 #include "poly_trigr.h"
 #include "poly.h"
 
+#define STRINGIFY(x) #x
+#ifdef NEED_UNDERSCORE
+# define EXPORT_SYMBOL(sym) STRINGIFY(_ ## sym)
+#else
+# define EXPORT_SYMBOL(sym) STRINGIFY(sym)
+#endif
+
 extern const long add_to_edi[];
 
 /**

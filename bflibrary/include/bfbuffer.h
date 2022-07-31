@@ -17,8 +17,8 @@
  *     (at your option) any later version.
  */
 /******************************************************************************/
-#ifndef BFLIBRARY_GBUFFER_H_
-#define BFLIBRARY_GBUFFER_H_
+#ifndef BFLIBRARY_BFBUFFER_H_
+#define BFLIBRARY_BFBUFFER_H_
 
 #include "bftypes.h"
 #include "bffile.h"
@@ -78,5 +78,5 @@ TbResult LbBufferFileSkip(ulong len);
 };
 #endif
 
-#endif // BFLIBRARY_GBUFFER_H_
+#endif // BFLIBRARY_BFBUFFER_H_
 /******************************************************************************/

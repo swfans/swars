@@ -17,8 +17,8 @@
  *     (at your option) any later version.
  */
 /******************************************************************************/
-#ifndef BFLIBRARY_SSCRSURF_H_
-#define BFLIBRARY_SSCRSURF_H_
+#ifndef BFLIBRARY_BFSCRSURF_H_
+#define BFLIBRARY_BFSCRSURF_H_
 
 #include "bftypes.h"
 
@@ -93,5 +93,5 @@ TbResult LbScreenSurfaceUnlock(struct SSurface *surf);
 #ifdef __cplusplus
 }
 #endif
-#endif // BFLIBRARY_SSCRSURF_H_
+#endif // BFLIBRARY_BFSCRSURF_H_
 /******************************************************************************/
