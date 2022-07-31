@@ -21,11 +21,20 @@
 #define MOCK_BFSCREEN_H_
 
 #include "bftypes.h"
+#include "bfscreen.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+TbResult MockScreenFindVideoModes(void);
+TbBool MockScreenIsModeAvailable(TbScreenMode mode);
+TbResult MockScreenSetupAnyMode(TbScreenMode mode, TbScreenCoord width,
+    TbScreenCoord height, ubyte *palette);
+TbResult MockScreenReset(void);
+TbBool MockScreenIsLocked(void);
+TbResult MockScreenLock(void);
+TbResult MockScreenUnlock(void);
 
 #ifdef __cplusplus
 };

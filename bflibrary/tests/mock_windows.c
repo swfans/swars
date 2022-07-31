@@ -18,5 +18,27 @@
  */
 /******************************************************************************/
 #include "mock_bfwindows.h"
+#include "mock_bfpalette.h"
+#include "bfwindows.h"
+#include "bfutility.h"
+#include "bfmouse.h"
+#include "bfscreen.h"
+#include "bftstlog.h"
+
+void LbRegisterStandardVideoModes(void);
+
+TbResult MockBaseInitialise(void)
+{
+    // Clear global variables
+    lbScreenInitialised = false;
+    lbAppActive = true;
+    LbMouseChangeMoveRatio(256, 256);
+    // Register default video modes
+    if (lbScreenModeInfoNum == 0) {
+        LbRegisterStandardVideoModes();
+    }
+    lbLibInitialised = true;
+    return Lb_SUCCESS;
+}
 
 /******************************************************************************/

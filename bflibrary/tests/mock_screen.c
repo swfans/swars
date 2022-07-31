@@ -17,6 +17,174 @@
  *     (at your option) any later version.
  */
 /******************************************************************************/
+#include <stdlib.h>
 #include "mock_bfscreen.h"
+#include "mock_bfmouse.h"
+#include "bfscreen.h"
+#include "bfscrsurf.h"
+#include "bfwindows.h"
+#include "bftstlog.h"
+
+extern long lbPhysicalResolutionMul;
+extern long lbMinPhysicalScreenResolutionDim;
+
+TbResult MockScreenFindVideoModes(void)
+{
+    int i;
+    for (i = 0; i < lbScreenModeInfoNum; i++)
+        lbScreenModeInfo[i].Available = true;
+    return Lb_SUCCESS;
+}
+
+TbBool MockScreenIsModeAvailable(TbScreenMode mode)
+{
+    TbScreenModeInfo *mdinfo;
+    static TbBool setup = false;
+    if (!setup) {
+        MockScreenFindVideoModes();
+        setup = true;
+    }
+    mdinfo = LbScreenGetModeInfo(mode);
+    return mdinfo->Available;
+}
+
+TbResult MockScreenSetupAnyMode(TbScreenMode mode, TbScreenCoord width,
+    TbScreenCoord height, ubyte *palette)
+{
+    long hot_x, hot_y;
+    long mdWidth, mdHeight;
+    const struct TbSprite *msspr;
+    TbScreenModeInfo *mdinfo;
+
+    msspr = NULL;
+    if (!lbLibInitialised) {
+        LOGERR("set screen mode on ununitialized bflibrary");
+        return Lb_FAIL;
+    }
+
+    if (lbDisplay.MouseSprite != NULL) {
+        msspr = lbDisplay.MouseSprite;
+        MockMouseGetSpriteOffset(&hot_x, &hot_y);
+    }
+    MockMouseChangeSprite(NULL);
+
+    free((void *)lbScreenSurface);
+    if (lbHasSecondSurface) {
+        free((void *)lbDrawSurface);
+        lbHasSecondSurface = false;
+    }
+    lbScreenInitialised = false;
+
+    if (lbDisplay.OldVideoMode == 0)
+        lbDisplay.OldVideoMode = 0xFF;
+
+    mdinfo = LbScreenGetModeInfo(mode);
+    if (!MockScreenIsModeAvailable(mode)) {
+        LOGERR("%s resolution %dx%d (mode %d) not available",
+            (mdinfo->VideoMode & Lb_VF_WINDOWED) ? "windowed" : "full screen",
+            (int)mdinfo->Width, (int)mdinfo->Height, (int)mode);
+        return Lb_FAIL;
+    }
+
+    {
+        long minDim = min(mdinfo->Width,mdinfo->Height);
+        if ((minDim != 0) && (minDim < lbMinPhysicalScreenResolutionDim)) {
+            lbPhysicalResolutionMul = (lbMinPhysicalScreenResolutionDim + minDim - 1) / minDim;
+        } else {
+            lbPhysicalResolutionMul = 1;
+        }
+        mdWidth = mdinfo->Width * lbPhysicalResolutionMul;
+        mdHeight = mdinfo->Height * lbPhysicalResolutionMul;
+        LOGDBG("physical resolution multiplier %ld", lbPhysicalResolutionMul);
+    }
+    lbDisplay.VesaIsSetUp = false;
+
+    lbScreenSurface = lbDrawSurface = (OSSurfaceHandle)malloc(mdWidth *
+      mdHeight * (mdinfo->BitsPerPixel+7) / 8);
+
+    if ((mdinfo->BitsPerPixel != lbEngineBPP) ||
+        (mdWidth != width) || (mdHeight != height))
+    {
+        lbDrawSurface = (OSSurfaceHandle)malloc(width * height * (lbEngineBPP+7) / 8);
+        lbHasSecondSurface = true;
+    }
+
+    lbDisplay.DrawFlags = 0;
+    lbDisplay.DrawColour = 0;
+#if defined(ENABLE_SHADOW_COLOUR)
+    lbDisplay.ShadowColour = 0;
+#endif
+    lbDisplay.PhysicalScreenWidth = mdinfo->Width;
+    lbDisplay.PhysicalScreenHeight = mdinfo->Height;
+    lbDisplay.ScreenMode = mode;
+    lbDisplay.PhysicalScreen = NULL;
+    lbDisplay.GraphicsScreenWidth  = width;
+    lbDisplay.GraphicsScreenHeight = height;
+
+    lbDisplay.WScreen = NULL;
+    lbDisplay.GraphicsWindowPtr = NULL;
+
+    lbScreenInitialised = true;
+    if (palette != NULL)
+    {
+        if (MockPaletteSet(palette) != Lb_SUCCESS) {
+            LOGERR("palette setting failed");
+            return Lb_FAIL;
+        }
+    }
+    LbScreenSetGraphicsWindow(0, 0, mdinfo->Width, mdinfo->Height);
+    LbTextSetWindow(0, 0, mdinfo->Width, mdinfo->Height);
+    if ( MockMouseIsInstalled() )
+    {
+        MockMouseChangeSpriteOffset(hot_x, hot_y);
+        if (msspr != NULL)
+          MockMouseChangeSprite(msspr);
+    }
+    return Lb_SUCCESS;
+}
+
+TbResult MockScreenReset(void)
+{
+    if (!lbScreenInitialised)
+      return Lb_FAIL;
+
+    free((void *)lbScreenSurface);
+    if (lbHasSecondSurface) {
+        free((void *)lbDrawSurface);
+        lbHasSecondSurface = false;
+    }
+    lbDrawSurface = NULL;
+    lbScreenSurface = NULL;
+    lbScreenInitialised = false;
+    return Lb_SUCCESS;
+}
+
+TbBool MockScreenIsLocked(void)
+{
+    return (lbDisplay.WScreen != NULL) && (lbScreenInitialised)
+      && (lbDrawSurface != NULL);
+}
+
+TbResult MockScreenLock(void)
+{
+    if (!lbScreenInitialised)
+        return Lb_FAIL;
+
+    lbDisplay.WScreen = (ubyte *) lbDrawSurface;
+    lbDisplay.GraphicsWindowPtr = &lbDisplay.WScreen[lbDisplay.GraphicsWindowX +
+        lbDisplay.GraphicsScreenWidth * lbDisplay.GraphicsWindowY];
+
+    return Lb_SUCCESS;
+}
+
+TbResult MockScreenUnlock(void)
+{
+    if (!lbScreenInitialised)
+        return Lb_FAIL;
+
+    lbDisplay.WScreen = NULL;
+    lbDisplay.GraphicsWindowPtr = NULL;
+    return Lb_SUCCESS;
+}
 
 /******************************************************************************/

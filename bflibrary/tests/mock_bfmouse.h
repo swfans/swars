@@ -29,6 +29,10 @@ extern "C" {
 struct TbSprite;
 struct TbPoint;
 
+TbBool MockMouseIsInstalled(void);
+TbResult MockMouseChangeSprite(const struct TbSprite *pointer_spr);
+TbResult MockMouseChangeSpriteOffset(long hot_x, long hot_y);
+TbResult MockMouseGetSpriteOffset(long *hot_x, long *hot_y);
 
 #ifdef __cplusplus
 };

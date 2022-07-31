@@ -26,6 +26,9 @@
 extern "C" {
 #endif
 
+/** Initialize for tests which do not use real video or input.
+ */
+TbResult MockBaseInitialise(void);
 
 #ifdef __cplusplus
 };
