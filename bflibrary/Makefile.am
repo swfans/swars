@@ -76,3 +76,16 @@ libbullfrog_a_CPPFLAGS = \
   -I$(top_srcdir)/include -I$(builddir)/include
 
 include_HEADERS = $(wildcard include/*.h) $(wildcard include/*.hpp)
+
+check_PROGRAMS = bflib_test_poly
+
+bflib_test_poly_SOURCES = tests/bflib_test_poly.c
+
+bflib_test_poly_CPPFLAGS = \
+  -I$(top_srcdir)/include -I$(builddir)/include
+
+bflib_test_poly_LDADD = \
+  -L$(builddir) -lbullfrog
+
+
+TESTS = bflib_test_poly
