@@ -6884,7 +6884,7 @@ GLOBAL_FUNC (ASM_play_smk_direct)
 		call   SMACKDOFRAME
 		cmpb   $0x0,0xc(%esp)
 		je     jump_eb32f
-		/* call   ac_LbScreenWaitVbi XXX: not needed */
+		call   ac_LbScreenWaitVbi
 		push   $data_1e56dc
 		call   ac_LbPaletteSet
 		add    $0x4,%esp
@@ -6903,6 +6903,7 @@ GLOBAL_FUNC (ASM_play_smk_direct)
 		/* XXX: intro loop */
 		call   ac_game_handle_sdl_events
 		call   ac_LbScreenWaitVbi
+		call   ac_game_hacky_update
 		cmpb   $0x0,EXPORT_SYMBOL(lbKeyOn)+1
 		jne    jump_eb373
 		cmpb   $0x0,EXPORT_SYMBOL(lbKeyOn)+28
@@ -7020,6 +7021,7 @@ GLOBAL_FUNC (ASM_play_smk_via_buffer)
 		push   %ebp
 		call   SMACKDOFRAME
 		call   ac_LbScreenWaitVbi
+		call   ac_game_hacky_update
 		push   $data_1e56dc
 		call   ac_LbPaletteSet
 		add    $0x4,%esp

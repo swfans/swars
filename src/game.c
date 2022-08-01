@@ -596,6 +596,7 @@ void init_outro(void)
 
     LbFileLoadAt("qdata/pal.pal", display_palette);
     LbScreenWaitVbi();
+	game_hacky_update();
 
     {
         char str[FILENAME_MAX];
@@ -2854,8 +2855,7 @@ game_update_full(bool wait)
     display_lock();
 }
 
-int
-LbScreenWaitVbi(void)
+int game_hacky_update(void)
 {
     game_update_full(false);
     return 1;
