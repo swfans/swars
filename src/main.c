@@ -60,9 +60,7 @@ print_help (const char *argv0)
 // To be moved to its own file when there are more tests
 static void tests_execute(void)
 {
-    // TODO bflib tests should be in a separate binary
-    if (!test_trig())
-        exit(51);
+    // TODO prpare tests
     exit(0);
 }
 
