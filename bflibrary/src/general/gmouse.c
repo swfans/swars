@@ -24,9 +24,7 @@
 
 TbResult LbMouseOnMove(struct TbPoint pos);
 
-#if 0
 volatile TbBool lbMouseInstalled = false;
-#endif
 volatile TbBool lbMouseOffline = false;
 volatile TbBool lbInteruptMouse = false;
 volatile TbBool lbMouseAutoReset = true;
