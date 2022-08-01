@@ -497,7 +497,6 @@ extern ubyte cmdln_param_bcg;
 extern ubyte cmdln_param_d;
 extern ubyte unkn01_maskarr[28];
 extern long map_editor;
-extern ulong seed;
 
 extern ubyte ingame__Cheats;
 extern ulong ingame__Credits;

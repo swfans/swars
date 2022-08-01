@@ -45,10 +45,6 @@
 #include "../bflibrary/tests/helpers_screen.c"
 
 /******************************************************************************/
-extern ulong seed;
-/******************************************************************************/
-
-ulong LbRandomAnyShort(void);
 
 void test_trig_draw_random_triangles(const ubyte *pal)
 {
@@ -206,7 +202,7 @@ TbBool test_trig(void)
         ulong maxpos;
 
         LbScreenClear(0);
-        seed = seeds[picno];
+        lbSeed = seeds[picno];
         test_trig_draw_random_triangles(pal);
 
         sprintf(loc_fname, "referenc/tst_trig%lu_rf.png", picno);

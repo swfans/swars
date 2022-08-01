@@ -168,8 +168,6 @@ char unk_credits_text_s[] = "";
 char unk_credits_text_z[] = "";
 char unk_credits_text_p[] = "";
 
-ulong LbRandomAnyShort(void);
-
 void PacketRecord_Close(void)
 {
     if (in_network_game)
@@ -1898,19 +1896,19 @@ void init_random_seed(void)
         mission_state[2] = 0;
         if (is_unkn_current_player())
         {
-            seed = time(0);
-            network_players[net_host_player_no].npfield_1 = seed;
+            lbSeed = time(0);
+            network_players[net_host_player_no].npfield_1 = lbSeed;
             LbNetworkExchange(network_players, 26);
         } else {
             LbNetworkExchange(network_players, 26);
-            seed = network_players[net_host_player_no].npfield_1;
+            lbSeed = network_players[net_host_player_no].npfield_1;
         }
     }
     else
     {
-        seed = time(0);
+        lbSeed = time(0);
     }
-    srand(seed);
+    srand(lbSeed);
 }
 
 ushort find_mission_with_mapid(short mapID, short mission_limit)
