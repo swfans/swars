@@ -19,7 +19,15 @@
 /******************************************************************************/
 #include "poly.h"
 
+#include <SDL.h>
+
+#if defined WIN32 && defined main
+// Anti SDL
+# undef main
+#endif
+
 /******************************************************************************/
+
 int main(int argc, char *argv[])
 {
     return 0;
