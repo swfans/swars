@@ -25,6 +25,8 @@
 #include "bfmemut.h"
 #include "privbflog.h"
 
+struct TbColorTables pixmap;
+
 /** @internal
  * Generate table for fading between given palette and given RGB colour.
  * The resulting array contains multiple palettes, which gradually
