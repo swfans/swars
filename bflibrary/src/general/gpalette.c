@@ -60,6 +60,8 @@ TbResult LbPaletteFade(ubyte *from_pal, ubyte fade_to, ubyte fade_steps)
             }
             LbScreenWaitVbi();
             LbPaletteSet(palette);
+            if (fade_count < fade_to)
+                LbDoMultitasking();
         }
         fade_started = false;
     }

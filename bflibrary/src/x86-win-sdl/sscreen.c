@@ -958,7 +958,7 @@ TbResult LbScreenDrawHVLineDirect(long X1, long Y1, long X2, long Y2)
     return Lb_SUCCESS;
 }
 
-TbResult LbScreenWaitVbi_UNUSED(void)
+TbResult LbScreenWaitVbi(void)
 {
     // No need to wait for vblank when using SDL
     // If we really, really wanted to achieve synchronization, we could use
