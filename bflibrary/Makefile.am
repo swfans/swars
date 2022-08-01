@@ -84,6 +84,7 @@ bflib_test_poly_SOURCES = \
   tests/mock_palette.c \
   tests/mock_screen.c \
   tests/mock_windows.c \
+  tests/helpers_screen.c \
   tests/bflib_test_poly.c
 
 bflib_test_poly_CPPFLAGS = \
