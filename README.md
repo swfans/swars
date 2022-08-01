@@ -218,10 +218,12 @@ pacman -Si mingw-w64-i686-libogg
 ```
 
 Now as our host is ready, we can start working on the actual `swars` sources.
-Go to that folder, and generate build scripts from templates using autotools:
+We will still have to provide paths to 32-bit configuration - MSYS will prefer
+folders with data for 64-bit building.
+Go to the `swars` folder, and generate build scripts from templates using autotools:
 
 ```
-autoreconf -ivf
+autoreconf -ivf --include=/mingw32/share/aclocal/
 ```
 
 Next, proceed with the build steps; we will do that in a separate folder.
