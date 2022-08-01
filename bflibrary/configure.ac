@@ -2,20 +2,30 @@
 # Process this file with autoconf to produce a configure script.
 AC_PREREQ([2.69])
 
-m4_define([bflibrary_version], [0.1.0.0])
+m4_define([bflibrary_version], [0.1.2.0])
 
 AC_INIT([bullfrog-library], [bflibrary_version], [mefistotelis@gmail.com], [bflibrary])
+
 AC_CONFIG_SRCDIR([src/general/gfile.c])
 AC_CONFIG_HEADERS([include/bfconfig.h])
 #AC_CONFIG_LINKS([include:include])
+AC_CONFIG_MACRO_DIRS([m4])
+
 AM_INIT_AUTOMAKE([foreign subdir-objects])
 
 # Checks for programs.
 AC_PROG_CC
 AC_PROG_CXX
+AC_PROG_RANLIB
 
 # Checks for libraries.
-LT_INIT
+AM_PATH_SDL([1.2.0], [], [
+  AC_MSG_ERROR([SDL not found])
+])
+
+PKG_CHECK_MODULES([PNG], [libpng], [], [
+  AC_MSG_ERROR([libpng not found])
+])
 
 # Checks for header files.
 AC_CHECK_HEADERS([fcntl.h stdint.h unistd.h])
@@ -48,15 +58,15 @@ AS_IF([test "$bflib_wscreen_control" = "yes"], [
         [Define to 1 if the bflibrary should change value of lbDisplay.WScreen])
 ])
 
-AC_ARG_ENABLE([bflib-tests],
-    AS_HELP_STRING([--disable-bflib-tests],
-        [do not build test binaries for the bflibrary]),
-    [bflib_tests=$enableval], [bflib_tests=no])
+# Flags
 
-AS_IF([test "$bflib_wscreen_control" = "yes"], [
-    AC_DEFINE([BFLIB_TESTS], 1,
-        [Define to 1 if tests are built with bflibrary])
-])
+CFLAGS="$CFLAGS $SDL_CFLAGS"
+LIBS="$LIBS $SDL_LIBS"
+
+CFLAGS="$CFLAGS $PNG_CFLAGS"
+LIBS="$LIBS $PNG_LIBS"
+
+# Final commands
 
 AC_CONFIG_FILES([Makefile])
 AC_OUTPUT
