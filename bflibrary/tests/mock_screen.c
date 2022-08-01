@@ -20,9 +20,12 @@
 #include <stdlib.h>
 #include "mock_bfscreen.h"
 #include "mock_bfmouse.h"
+#include "mock_bfpalette.h"
 #include "bfscreen.h"
 #include "bfscrsurf.h"
 #include "bfwindows.h"
+#include "bfanywnd.h"
+#include "bfutility.h"
 #include "bftstlog.h"
 
 extern long lbPhysicalResolutionMul;
