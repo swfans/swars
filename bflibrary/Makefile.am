@@ -12,7 +12,7 @@ libbullfrog_a_SOURCES = \
   src/general/gdata.c \
   src/general/gendian.c \
   src/general/gerrorlg.c \
-  src/general/gexe_key.cpp \
+  src/general/gexe_key.c \
   src/general/gfile.c \
   src/general/gfnuniq.c \
   src/general/gfont.c \
@@ -35,7 +35,7 @@ libbullfrog_a_SOURCES = \
   src/general/gstrut.c \
   src/general/gtext.c \
   src/general/gtrig.c \
-  src/general/gutility.cpp \
+  src/general/gutility.c \
   src/general/hvline.c \
   src/general/mshandler.cpp \
   src/general/mspointer.cpp \

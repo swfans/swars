@@ -2,7 +2,7 @@
 // Bullfrog Engine Emulation Library - for use to remake classic games like
 // Syndicate Wars, Magic Carpet, Genewars or Dungeon Keeper.
 /******************************************************************************/
-/** @file gexe_key.cpp
+/** @file gutility.c
  *     Implementation of related functions.
  * @par Purpose:
  *     Unknown.
@@ -17,18 +17,14 @@
  *     (at your option) any later version.
  */
 /******************************************************************************/
-#include "bfexe_key.h"
+#include "bfutility.h"
 
-const unsigned char exe_key[] = {
-    0x89, 0x0C, 0x0D5, 0x11,
-    0x00, 0x00, 0x00, 0x00,
-    0xE9, 0x2A, 0x80, 0x0C5,
-};
+ulong lbSeed = 0xD15C1234;
 
-unsigned long LbExeReferenceNumber(void)
+ushort LbRandomAnyShort(void)
 {
-    return *(unsigned long *)&exe_key[4];
+    lbSeed = 3141592621 * lbSeed + 0xD15C;
+    return (lbSeed >> 8);
 }
-
 
 /******************************************************************************/

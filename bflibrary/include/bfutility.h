@@ -35,6 +35,18 @@ extern "C" {
 #endif
 #endif
 
+/**
+ * Seed for LbRandomAnyShort() function; originally named just `seed`.
+ */
+extern ulong lbSeed;
+
+/**
+ * Generates a random number, by using just a simple multiplication
+ * and simple addition on the seed. Very simplistic, but fast.
+ * Uses well though constants: 3141592621 (pi) for multiplier,
+ * 0xD15C (disc) for addition.
+ */
+ushort LbRandomAnyShort(void);
 
 
 #ifdef __cplusplus
