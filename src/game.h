@@ -744,6 +744,7 @@ extern char net_players[25*5];
 bool game_initialise (void);
 void game_handle_sdl_events (void);
 void game_update (void);
+int game_hacky_update(void);
 void game_quit (void);
 void game_transform_path (const char *file_name, char *result);
 const char *game_get_data_path (void);
