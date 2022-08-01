@@ -23,6 +23,7 @@
 #include "bfpalette.h"
 
 #include "bfscreen.h"
+#include "bfwindows.h"
 #include "bfbox.h"
 #include "bftext.h"
 
