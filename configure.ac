@@ -16,7 +16,7 @@ AC_CONFIG_SUBDIRS([bflibrary])
 
 AC_CONFIG_SRCDIR([src/main.c])
 AC_CONFIG_HEADERS([src/config.h])
-AC_CONFIG_MACRO_DIR([m4])
+AC_CONFIG_MACRO_DIRS([m4])
 
 AC_CANONICAL_HOST
 AC_CANONICAL_TARGET
@@ -49,6 +49,7 @@ AM_PROG_AS
 AM_PATH_PYTHON([3.1])
 PKG_PROG_PKG_CONFIG
 AC_CHECK_PROGS(WINDRES, $WINDRES "${target_alias}-windres" "${target}-windres", "windres", :)
+AC_PROG_SED # `sed` is used in Makefile for packaging shared libraries on Windows
 
 # Checks for libraries.
 AC_MSG_CHECKING([if we are compiling for an i386 processor])
@@ -223,4 +224,3 @@ AC_OUTPUT
 
 echo
 AC_MSG_NOTICE([data path:         $data_path])
-AC_MSG_NOTICE([debugging options: $use_debug])
