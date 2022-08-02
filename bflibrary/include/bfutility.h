@@ -41,6 +41,11 @@ extern "C" {
 extern ulong lbSeed;
 
 /**
+ * Seed for LbRandomPosShort() function; originally named `seed_ps`.
+ */
+extern ulong lbSeed_ps;
+
+/**
  * Generates a random number, by using just a simple multiplication
  * and simple addition on the seed. Very simplistic, but fast.
  * Uses well though constants: 3141592621 (pi) for multiplier,
@@ -48,6 +53,7 @@ extern ulong lbSeed;
  */
 ushort LbRandomAnyShort(void);
 
+short LbRandomPosShort(void);
 
 #ifdef __cplusplus
 };

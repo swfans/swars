@@ -20,11 +20,18 @@
 #include "bfutility.h"
 
 ulong lbSeed = 0xD15C1234;
+ulong lbSeed_ps = 0xD15C1234;
 
 ushort LbRandomAnyShort(void)
 {
     lbSeed = 3141592621 * lbSeed + 0xD15C;
     return (lbSeed >> 8);
+}
+
+short LbRandomPosShort(void)
+{
+    lbSeed_ps *= 3141592621;
+    return (lbSeed_ps >> 8) & 0x7FFF;
 }
 
 /******************************************************************************/
