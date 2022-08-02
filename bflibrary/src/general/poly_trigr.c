@@ -17,6 +17,7 @@
  *     (at your option) any later version.
  */
 /******************************************************************************/
+#include <string.h>
 #include "poly_trigr.h"
 #include "poly.h"
 #include "bfgentab.h"

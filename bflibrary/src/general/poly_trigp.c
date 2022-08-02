@@ -743,7 +743,6 @@ int trig_ll_start(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
 static inline int trig_rl_md00(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
   const struct PolyPoint *opt_b, const struct PolyPoint *opt_c)
 {
-    int ret;
     ulong pXa, pXb, pY;
     struct PolyPoint *pp;
 
@@ -838,7 +837,6 @@ static inline int trig_rl_md00(struct TrigLocals *lvu, const struct PolyPoint *o
 static inline int trig_rl_md01(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
   const struct PolyPoint *opt_b, const struct PolyPoint *opt_c)
 {
-    int ret;
     long pXa, pXb, pY;
     long pS;
     struct PolyPoint *pp;
@@ -967,7 +965,6 @@ static inline int trig_rl_md01(struct TrigLocals *lvu, const struct PolyPoint *o
 static inline int trig_rl_md02(struct TrigLocals *lvu, const struct PolyPoint *opt_a,
   const struct PolyPoint *opt_b, const struct PolyPoint *opt_c)
 {
-    int ret;
     long pXa, pXb, pY;
     long pU, pV;
     struct PolyPoint *pp;

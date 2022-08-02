@@ -96,7 +96,7 @@ TbResult LbPngRead(FILE *img_fh, ubyte *out_buffer,
     bit_depth = png_get_bit_depth(png, info);
 
     action = "read colour palette";
-    if (color_type == PNG_COLOR_TYPE_PALETTE) {
+    if ((color_type == PNG_COLOR_TYPE_PALETTE) && (bit_depth <= 8)) {
         // If the file uses colour palette, get it
         png_colorp palette;
         int num;
@@ -110,6 +110,7 @@ TbResult LbPngRead(FILE *img_fh, ubyte *out_buffer,
 
     int number_of_passes;
     number_of_passes = png_set_interlace_handling(png);
+    (void) number_of_passes; // do not warn because unused
     png_read_update_info(png, info);
 
     action = "read image data";
