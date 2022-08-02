@@ -3,7 +3,6 @@ bin_PROGRAMS = swars
 MKW = $(PYTHON) $(top_srcdir)/util/mkwrappers
 
 swars_SOURCES = \
-	ariadne.sx \
 	bflib_basics.h \
 	bflib_fmvids.c \
 	bflib_fmvids.h \
@@ -11,12 +10,8 @@ swars_SOURCES = \
 	bflib_joyst.c \
 	bflib_joyst.h \
 	bflib_joyst_s.sx \
-	bflib_render.c \
 	bflib_render_gpoly.sx \
-	bflib_render.h \
 	bflib_render_plin.sx \
-	bflib_render_trig.c \
-	bflib_render_trig_s.sx \
 	bflib_sndlib_s.sx \
 	bflib_snd_cda.c \
 	bflib_snd_cda.h \

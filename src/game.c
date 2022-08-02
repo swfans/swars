@@ -20,7 +20,6 @@
 #include "poly.h"
 #include "svesa.h"
 #include "swlog.h"
-#include "bflib_render.h"
 #include "bflib_fmvids.h"
 #include "bflib_snd_sys.h"
 #include "bflib_snd_cda.h"
