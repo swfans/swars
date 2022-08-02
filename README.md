@@ -200,6 +200,11 @@ Explanation of the parameters:
   `CCAS`) and linker (`LD`). See [GNU Automake documentation](https://www.gnu.org/software/automake/manual/html_node/Programs.html)
   for deails on that.
 
+Some tests to verify the build are included in the project. To execute them:
+
+```
+make V=1 check
+```
 
 #### Build example - MSYS2 updated 2022-01 on Windows
 
