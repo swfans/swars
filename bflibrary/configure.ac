@@ -9,6 +9,11 @@ AC_INIT([bullfrog-library], [bflibrary_version], [mefistotelis@gmail.com], [bfli
 AC_CONFIG_SRCDIR([src/general/gfile.c])
 AC_CONFIG_HEADERS([include/bfconfig.h])
 #AC_CONFIG_LINKS([include:include])
+# custom command for AC_CONFIG_LINKS([referenc/:tests/referenc/*.png])
+AC_CONFIG_COMMANDS([tests_referenc], [
+	mkdir -p "$ac_builddir/referenc"
+	cp -f "$ac_srcdir/tests/referenc/"*.png "$ac_builddir/referenc"
+])
 AC_CONFIG_MACRO_DIRS([m4])
 
 AM_INIT_AUTOMAKE([foreign subdir-objects])

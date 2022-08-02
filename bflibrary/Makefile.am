@@ -96,4 +96,4 @@ nodist_EXTRA_bflib_test_poly_SOURCES = dummy.cxx
 bflib_test_poly_LDADD = \
   -L$(builddir) -lbullfrog
 
-TESTS = bflib_test_poly
+TESTS = $(check_PROGRAMS)
