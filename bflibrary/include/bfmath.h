@@ -24,12 +24,17 @@
 extern "C" {
 #endif
 
+#include "bftypes.h"
+
 #define LbFPMath_PI 1024
 #define LbFPMath_AngleMask 0x7FF
 /** Amount of fractional bits in resulting values of trigonometric operations. */
 #define LbFPMath_TrigmBits 16
 
-long LbSqrL(long x);
+/** Computes square root of given 32-bit integer.
+ * Works like sqrt(x), but is way faster. The input value is treated as unsigned.
+ */
+long LbSqrL(ulong x);
 
 /** Computes angle between negative Y axis and the line that crosses (0,0) and given (x,y).
  *  Uses arctan(x/y) with proper shift to get the angle.
