@@ -943,6 +943,14 @@ void BAT_unknsub_20(int a1, int a2, int a3, int a4, unsigned long a5)
         : : "a" (a1), "d" (a2), "b" (a3), "c" (a4), "g" (a5));
 }
 
+long LbSqrL(long x)
+{
+    long ret;
+    asm volatile ("call ASM_LbSqrL\n"
+        : "=r" (ret) : "a" (x) );
+    return ret;
+}
+
 void setup_host(void)
 {
     //ASM_setup_host(); return;
