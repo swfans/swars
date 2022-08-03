@@ -16,8 +16,22 @@ jobs:
       DEBIAN_FRONTEND: noninteractive
       TZ: Etc/UTC
     steps:
+      - name: Install GIT
+        run: |
+          # install GIT, as without it checkout would use REST API
+          apt update
+          apt install -y \
+            git
+
       - name: Checkout
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Set ownership
+        run: |
+          # this is to fix GIT not liking owner of the checkout dir
+          chown -R $(id -u):$(id -g) $PWD
 
       - name: Install dependencies
         run: |
@@ -54,9 +68,10 @@ jobs:
 
       - name: Copy for package
         run: |
+          VER_BUILD=$(git rev-list --count HEAD)
           cd release
           make V=1 DESTDIR=$PWD/pkg install
-          echo "PKG_NAME=swars-ubuntu-patch" >> $GITHUB_ENV
+          echo "PKG_NAME=swars-0_3_3_$VER_BUILD-ubuntu-patch" >> $GITHUB_ENV
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
@@ -73,6 +88,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
       - name: Install MSYS2
         uses: msys2/setup-msys2@v2
@@ -108,9 +125,10 @@ jobs:
 
       - name: Copy for package
         run: |
+          VER_BUILD=$(git rev-list --count HEAD)
           cd release
           make V=1 DESTDIR=$PWD/pkg install
-          echo "PKG_NAME=swars-win32-patch" >> $GITHUB_ENV
+          echo "PKG_NAME=swars-0_3_3_$VER_BUILD-win32-patch" >> $GITHUB_ENV
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
