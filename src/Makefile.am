@@ -10,8 +10,8 @@ swars_SOURCES = \
 	bflib_joyst.c \
 	bflib_joyst.h \
 	bflib_joyst_s.sx \
-	bflib_render_gpoly.sx \
-	bflib_render_plin.sx \
+	bflib_render_gpoly_s.sx \
+	bflib_render_plin_s.sx \
 	bflib_sndlib_s.sx \
 	bflib_snd_cda.c \
 	bflib_snd_cda.h \
@@ -22,7 +22,7 @@ swars_SOURCES = \
 	bflib_snd_sys.c \
 	bflib_snd_sys.h \
 	bflib_snd_sys_s.sx \
-	bflib_vidraw.sx \
+	bflib_vidraw_s.sx \
 	config.h \
 	display.c \
 	display.h \
@@ -54,7 +54,7 @@ swars_SOURCES = \
 	swlog.h \
 	thing.c \
 	thing.h \
-	thing_debug.sx \
+	thing_debug_s.sx \
 	timer.c \
 	timer.h \
 	unix.c \
