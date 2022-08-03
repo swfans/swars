@@ -27,7 +27,7 @@ unsigned short const lbSqrTable[] = {
 };
 
 
-long LbSqrL(long x)
+long LbSqrL_UNUSED(long x)
 {
   // code at 0001:00093b30
   long y;
