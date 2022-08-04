@@ -16,7 +16,6 @@ swars_SOURCES = \
 	bflib_sndlib_s.sx \
 	bflib_snd_cda.c \
 	bflib_snd_cda.h \
-	bflib_math.sx \
 	bflib_snd_cda_s.sx \
 	bflib_snd_mss.c \
 	bflib_snd_mss.h \
