@@ -169,7 +169,7 @@ ASM_draw_gpoly_spec:
 		jg     jump_128570
 		mov    %ecx,%ebx
 		shl    $0x8,%ebx
-		mov    gpoly_divtable+0x80(%ebx,%eax,4),%eax
+		mov    EXPORT_SYMBOL(gpoly_divtable)+0x80(%ebx,%eax,4),%eax
 		mov    %eax,(%esp)
 	jump_1284f4:
 		mov    0x4c(%esp),%ecx
@@ -185,7 +185,7 @@ ASM_draw_gpoly_spec:
 		jg     jump_128580
 		mov    %ecx,%ebx
 		shl    $0x8,%ebx
-		mov    gpoly_divtable+0x80(%ebx,%eax,4),%eax
+		mov    EXPORT_SYMBOL(gpoly_divtable)+0x80(%ebx,%eax,4),%eax
 		mov    %eax,0x4(%esp)
 	jump_12852c:
 		mov    0x64(%esp),%ecx
@@ -201,7 +201,7 @@ ASM_draw_gpoly_spec:
 		jg     jump_128590
 		mov    %ecx,%ebx
 		shl    $0x8,%ebx
-		mov    gpoly_divtable+0x80(%ebx,%eax,4),%eax
+		mov    EXPORT_SYMBOL(gpoly_divtable)+0x80(%ebx,%eax,4),%eax
 		mov    %eax,0x8(%esp)
 		jmp    jump_12859c
 	jump_128570:
@@ -3894,7 +3894,7 @@ vtable_12b390:
 
 		.fill   0x8
 		.ascii  "\x2e\x8b\xc0\x2e\x8b\xc0\x8b\xc0"
-gpoly_divtable:
+ASM_gpoly_divtable:
 		.fill   0x80
 data_12b8a0:
 		.fill   0x80
