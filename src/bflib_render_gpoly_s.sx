@@ -37,6 +37,9 @@
 .global EXPORT_SYMBOL(vec_screen);
 .global EXPORT_SYMBOL(vec_map);
 .global EXPORT_SYMBOL(pixmap);
+.global EXPORT_SYMBOL(gpoly_countdown);
+.global EXPORT_SYMBOL(gpoly_reptable);
+.global EXPORT_SYMBOL(gpoly_divtable);
 
 
 /*----------------------------------------------------------------*/
@@ -166,7 +169,7 @@ ASM_draw_gpoly_spec:
 		jg     jump_128570
 		mov    %ecx,%ebx
 		shl    $0x8,%ebx
-		mov    data_12b8a0(%ebx,%eax,4),%eax
+		mov    gpoly_divtable+0x80(%ebx,%eax,4),%eax
 		mov    %eax,(%esp)
 	jump_1284f4:
 		mov    0x4c(%esp),%ecx
@@ -182,7 +185,7 @@ ASM_draw_gpoly_spec:
 		jg     jump_128580
 		mov    %ecx,%ebx
 		shl    $0x8,%ebx
-		mov    data_12b8a0(%ebx,%eax,4),%eax
+		mov    gpoly_divtable+0x80(%ebx,%eax,4),%eax
 		mov    %eax,0x4(%esp)
 	jump_12852c:
 		mov    0x64(%esp),%ecx
@@ -198,7 +201,7 @@ ASM_draw_gpoly_spec:
 		jg     jump_128590
 		mov    %ecx,%ebx
 		shl    $0x8,%ebx
-		mov    data_12b8a0(%ebx,%eax,4),%eax
+		mov    gpoly_divtable+0x80(%ebx,%eax,4),%eax
 		mov    %eax,0x8(%esp)
 		jmp    jump_12859c
 	jump_128570:
@@ -320,7 +323,7 @@ func_1285c7:
 		sub    0x34(%esp),%ecx
 		cmp    $0xff,%ecx
 		jg     jump_1286bf
-		mov    data_12b410(,%ecx,4),%ebx
+		mov    EXPORT_SYMBOL(gpoly_reptable)(,%ecx,4),%ebx
 		jmp    jump_1286cd
 	jump_1286bf:
 		mov    $0x0,%edx
@@ -352,7 +355,7 @@ func_1285c7:
 		sub    0x4c(%esp),%ecx
 		cmp    $0xff,%ecx
 		jg     jump_128718
-		mov    data_12b410(,%ecx,4),%ebx
+		mov    EXPORT_SYMBOL(gpoly_reptable)(,%ecx,4),%ebx
 		jmp    jump_128726
 	jump_128718:
 		mov    $0x0,%edx
@@ -422,7 +425,7 @@ func_1285c7:
 		sub    0x34(%esp),%ecx
 		cmp    $0xff,%ecx
 		jg     jump_128800
-		mov    data_12b410(,%ecx,4),%ebx
+		mov    EXPORT_SYMBOL(gpoly_reptable)(,%ecx,4),%ebx
 		jmp    jump_12880e
 	jump_128800:
 		mov    $0x0,%edx
@@ -680,7 +683,7 @@ func_128a41:
 		sub    0x34(%esp),%ecx
 		cmp    $0xff,%ecx
 		jg     jump_128b74
-		mov    data_12b410(,%ecx,4),%ebx
+		mov    EXPORT_SYMBOL(gpoly_reptable)(,%ecx,4),%ebx
 		jmp    jump_128b82
 	jump_128b74:
 		mov    $0x0,%edx
@@ -722,7 +725,7 @@ func_128a41:
 		sub    0x4c(%esp),%ecx
 		cmp    $0xff,%ecx
 		jg     jump_128be6
-		mov    data_12b410(,%ecx,4),%ebx
+		mov    EXPORT_SYMBOL(gpoly_reptable)(,%ecx,4),%ebx
 		jmp    jump_128bf4
 	jump_128be6:
 		mov    $0x0,%edx
@@ -802,7 +805,7 @@ func_128a41:
 		sub    0x34(%esp),%ecx
 		cmp    $0xff,%ecx
 		jg     jump_128ce7
-		mov    data_12b410(,%ecx,4),%ebx
+		mov    EXPORT_SYMBOL(gpoly_reptable)(,%ecx,4),%ebx
 		jmp    jump_128cf5
 	jump_128ce7:
 		mov    $0x0,%edx
@@ -1068,7 +1071,7 @@ func_128fda:
 		sub    0x34(%esp),%ecx
 		cmp    $0xff,%ecx
 		jg     jump_12909b
-		mov    data_12b410(,%ecx,4),%ebx
+		mov    EXPORT_SYMBOL(gpoly_reptable)(,%ecx,4),%ebx
 		jmp    jump_1290a9
 	jump_12909b:
 		mov    $0x0,%edx
@@ -1090,7 +1093,7 @@ func_128fda:
 		sub    0x4c(%esp),%ecx
 		cmp    $0xff,%ecx
 		jg     jump_1290db
-		mov    data_12b410(,%ecx,4),%ebx
+		mov    EXPORT_SYMBOL(gpoly_reptable)(,%ecx,4),%ebx
 		jmp    jump_1290e9
 	jump_1290db:
 		mov    $0x0,%edx
@@ -1114,7 +1117,7 @@ func_128fda:
 		sub    0x34(%esp),%ecx
 		cmp    $0xff,%ecx
 		jg     jump_12911d
-		mov    data_12b410(,%ecx,4),%ebx
+		mov    EXPORT_SYMBOL(gpoly_reptable)(,%ecx,4),%ebx
 		jmp    jump_12912b
 	jump_12911d:
 		mov    $0x0,%edx
@@ -1229,7 +1232,7 @@ func_129165:
 		sub    0x34(%esp),%ecx
 		cmp    $0xff,%ecx
 		jg     jump_12925d
-		mov    data_12b410(,%ecx,4),%ebx
+		mov    EXPORT_SYMBOL(gpoly_reptable)(,%ecx,4),%ebx
 		jmp    jump_12926b
 	jump_12925d:
 		mov    $0x0,%edx
@@ -1261,7 +1264,7 @@ func_129165:
 		sub    0x4c(%esp),%ecx
 		cmp    $0xff,%ecx
 		jg     jump_1292b6
-		mov    data_12b410(,%ecx,4),%ebx
+		mov    EXPORT_SYMBOL(gpoly_reptable)(,%ecx,4),%ebx
 		jmp    jump_1292c4
 	jump_1292b6:
 		mov    $0x0,%edx
@@ -1295,7 +1298,7 @@ func_129165:
 		sub    0x34(%esp),%ecx
 		cmp    $0xff,%ecx
 		jg     jump_129311
-		mov    data_12b410(,%ecx,4),%ebx
+		mov    EXPORT_SYMBOL(gpoly_reptable)(,%ecx,4),%ebx
 		jmp    jump_12931f
 	jump_129311:
 		mov    $0x0,%edx
@@ -1531,7 +1534,7 @@ func_1294f4:
 		sub    0x34(%esp),%ecx
 		cmp    $0xff,%ecx
 		jg     jump_129627
-		mov    data_12b410(,%ecx,4),%ebx
+		mov    EXPORT_SYMBOL(gpoly_reptable)(,%ecx,4),%ebx
 		jmp    jump_129635
 	jump_129627:
 		mov    $0x0,%edx
@@ -1573,7 +1576,7 @@ func_1294f4:
 		sub    0x4c(%esp),%ecx
 		cmp    $0xff,%ecx
 		jg     jump_129699
-		mov    data_12b410(,%ecx,4),%ebx
+		mov    EXPORT_SYMBOL(gpoly_reptable)(,%ecx,4),%ebx
 		jmp    jump_1296a7
 	jump_129699:
 		mov    $0x0,%edx
@@ -1617,7 +1620,7 @@ func_1294f4:
 		sub    0x34(%esp),%ecx
 		cmp    $0xff,%ecx
 		jg     jump_12970d
-		mov    data_12b410(,%ecx,4),%ebx
+		mov    EXPORT_SYMBOL(gpoly_reptable)(,%ecx,4),%ebx
 		jmp    jump_12971b
 	jump_12970d:
 		mov    $0x0,%edx
@@ -2131,7 +2134,7 @@ func_129c5c:
 		jle    jump_129c87
 		mov    %ebp,%eax
 		and    $0xf,%eax
-		add    data_12b3d0(,%eax,4),%edi
+		add    EXPORT_SYMBOL(gpoly_countdown)(,%eax,4),%edi
 		mov    %ebp,0xdc(%esp)
 		mov    0xf4(%esp),%ebp
 		mov    0xf8(%esp),%esi
@@ -2535,7 +2538,7 @@ func_12a1ad:
 		jle    jump_12a1d8
 		mov    %ebp,%eax
 		and    $0xf,%eax
-		add    data_12b3d0(,%eax,4),%edi
+		add    EXPORT_SYMBOL(gpoly_countdown)(,%eax,4),%edi
 		mov    %ebp,0xdc(%esp)
 		mov    0xf4(%esp),%ebp
 		mov    0xf8(%esp),%esi
@@ -3075,7 +3078,7 @@ func_12a839:
 		jle    jump_12a85c
 		mov    %ebp,%eax
 		and    $0xf,%eax
-		add    data_12b3d0(,%eax,4),%edi
+		add    EXPORT_SYMBOL(gpoly_countdown)(,%eax,4),%edi
 		mov    %ebp,0xdc(%esp)
 		mov    0xf4(%esp),%ebp
 		mov    0xf8(%esp),%esi
@@ -3442,7 +3445,7 @@ func_12ad0a:
 		jle    jump_12ad2d
 		mov    %ebp,%eax
 		and    $0xf,%eax
-		add    data_12b3d0(,%eax,4),%edi
+		add    EXPORT_SYMBOL(gpoly_countdown)(,%eax,4),%edi
 		mov    %ebp,0xdc(%esp)
 		mov    0xf4(%esp),%ebp
 		mov    0xf8(%esp),%esi
@@ -3889,168 +3892,30 @@ vtable_12b390:
 
 .section .rodata
 
-data_12b3d0:
-		.fill   0x4
-		.ascii  "\xf1\xff\xff\xff\xf2\xff\xff\xff"
-		.ascii  "\xf3\xff\xff\xff\xf4\xff\xff\xff"
-		.ascii  "\xf5\xff\xff\xff\xf6\xff\xff\xff"
-		.ascii  "\xf7\xff\xff\xff\xf8\xff\xff\xff"
-		.ascii  "\xf9\xff\xff\xff\xfa\xff\xff\xff"
-		.ascii  "\xfb\xff\xff\xff\xfc\xff\xff\xff"
-		.ascii  "\xfd\xff\xff\xff\xfe\xff\xff\xff"
-		.ascii  "\xff\xff\xff\xff"
-data_12b410:
-		.fill   0x4
-		.ascii  "\xff\xff\xff\x7f\xff\xff\xff\x3f"
-		.ascii  "\xaa\xaa\xaa\x2a\xff\xff\xff\x1f"
-		.ascii  "\x99\x99\x99\x19\x55\x55\x55\x15"
-		.ascii  "\x92\x24\x49\x12\xff\xff\xff\x0f"
-		.ascii  "\x8e\xe3\x38\x0e\xcc\xcc\xcc\x0c"
-		.ascii  "\xba\xe8\xa2\x0b\xaa\xaa\xaa\x0a"
-		.ascii  "\x89\x9d\xd8\x09\x49\x92\x24\x09"
-		.ascii  "\x88\x88\x88\x08\xff\xff\xff\x07"
-		.ascii  "\x87\x87\x87\x07\xc7\x71\x1c\x07"
-		.ascii  "\xaf\xa1\xbc\x06\x66\x66\x66\x06"
-		.ascii  "\x86\x61\x18\x06\x5d\x74\xd1\x05"
-		.ascii  "\x16\xb2\x90\x05\x55\x55\x55\x05"
-		.ascii  "\x51\xb8\x1e\x05\xc4\x4e\xec\x04"
-		.ascii  "\x2f\xa1\xbd\x04\x24\x49\x92\x04"
-		.ascii  "\x58\xee\x69\x04\x44\x44\x44\x04"
-		.ascii  "\x42\x08\x21\x04\xff\xff\xff\x03"
-		.ascii  "\x3e\xf8\xe0\x03\xc3\xc3\xc3\x03"
-		.ascii  "\x83\x3a\xa8\x03\xe3\x38\x8e\x03"
-		.ascii  "\x22\x9f\x75\x03\xd7\x50\x5e\x03"
-		.ascii  "\x83\x34\x48\x03\x33\x33\x33\x03"
-		.ascii  "\x31\x38\x1f\x03\xc3\x30\x0c\x03"
-		.ascii  "\xe8\x0b\xfa\x02\x2e\xba\xe8\x02"
-		.ascii  "\x82\x2d\xd8\x02\x0b\x59\xc8\x02"
-		.ascii  "\x05\x31\xb9\x02\xaa\xaa\xaa\x02"
-		.ascii  "\x14\xbc\x9c\x02\x28\x5c\x8f\x02"
-		.ascii  "\x82\x82\x82\x02\x62\x27\x76\x02"
-		.ascii  "\x9f\x43\x6a\x02\x97\xd0\x5e\x02"
-		.ascii  "\x25\xc8\x53\x02\x92\x24\x49\x02"
-		.ascii  "\x8f\xe0\x3e\x02\x2c\xf7\x34\x02"
-		.ascii  "\xcb\x63\x2b\x02\x22\x22\x22\x02"
-		.ascii  "\x29\x2e\x19\x02\x21\x84\x10\x02"
-		.ascii  "\x82\x20\x08\x02\xff\xff\xff\x01"
-		.ascii  "\x81\x1f\xf8\x01\x1f\x7c\xf0\x01"
-		.ascii  "\x1a\x13\xe9\x01\xe1\xe1\xe1\x01"
-		.ascii  "\x07\xe6\xda\x01\x41\x1d\xd4\x01"
-		.ascii  "\x68\x85\xcd\x01\x71\x1c\xc7\x01"
-		.ascii  "\x70\xe0\xc0\x01\x91\xcf\xba\x01"
-		.ascii  "\x1b\xe8\xb4\x01\x6b\x28\xaf\x01"
-		.ascii  "\xf6\x8e\xa9\x01\x41\x1a\xa4\x01"
-		.ascii  "\xe9\xc8\x9e\x01\x99\x99\x99\x01"
-		.ascii  "\x0f\x8b\x94\x01\x18\x9c\x8f\x01"
-		.ascii  "\x90\xcb\x8a\x01\x61\x18\x86\x01"
-		.ascii  "\x81\x81\x81\x01\xf4\x05\x7d\x01"
-		.ascii  "\xc8\xa4\x78\x01\x17\x5d\x74\x01"
-		.ascii  "\x05\x2e\x70\x01\xc1\x16\x6c\x01"
-		.ascii  "\x81\x16\x68\x01\x85\x2c\x64\x01"
-		.ascii  "\x16\x58\x60\x01\x82\x98\x5c\x01"
-		.ascii  "\x23\xed\x58\x01\x55\x55\x55\x01"
-		.ascii  "\x7e\xd0\x51\x01\x0a\x5e\x4e\x01"
-		.ascii  "\x6a\xfd\x4a\x01\x14\xae\x47\x01"
-		.ascii  "\x86\x6f\x44\x01\x41\x41\x41\x01"
-		.ascii  "\xcb\x22\x3e\x01\xb1\x13\x3b\x01"
-		.ascii  "\x81\x13\x38\x01\xcf\x21\x35\x01"
-		.ascii  "\x34\x3e\x32\x01\x4b\x68\x2f\x01"
-		.ascii  "\xb4\x9f\x2c\x01\x12\xe4\x29\x01"
-		.ascii  "\x0b\x35\x27\x01\x49\x92\x24\x01"
-		.ascii  "\x78\xfb\x21\x01\x47\x70\x1f\x01"
-		.ascii  "\x6a\xf0\x1c\x01\x96\x7b\x1a\x01"
-		.ascii  "\x81\x11\x18\x01\xe5\xb1\x15\x01"
-		.ascii  "\x81\x5c\x13\x01\x11\x11\x11\x01"
-		.ascii  "\x56\xcf\x0e\x01\x14\x97\x0c\x01"
-		.ascii  "\x10\x68\x0a\x01\x10\x42\x08\x01"
-		.ascii  "\xdd\x24\x06\x01\x41\x10\x04\x01"
-		.ascii  "\x08\x04\x02\x01\xff\xff\xff\x00"
-		.ascii  "\xf8\x03\xfe\x00\xc0\x0f\xfc\x00"
-		.ascii  "\x2c\x23\xfa\x00\x0f\x3e\xf8\x00"
-		.ascii  "\x3d\x60\xf6\x00\x8d\x89\xf4\x00"
-		.ascii  "\xd6\xb9\xf2\x00\xf0\xf0\xf0\x00"
-		.ascii  "\xb7\x2e\xef\x00\x03\x73\xed\x00"
-		.ascii  "\xb2\xbd\xeb\x00\xa0\x0e\xea\x00"
-		.ascii  "\xac\x65\xe8\x00\xb4\xc2\xe6\x00"
-		.ascii  "\x98\x25\xe5\x00\x38\x8e\xe3\x00"
-		.ascii  "\x78\xfc\xe1\x00\x38\x70\xe0\x00"
-		.ascii  "\x5c\xe9\xde\x00\xc8\x67\xdd\x00"
-		.ascii  "\x61\xeb\xdb\x00\x0d\x74\xda\x00"
-		.ascii  "\xb2\x01\xd9\x00\x35\x94\xd7\x00"
-		.ascii  "\x80\x2b\xd6\x00\x7b\xc7\xd4\x00"
-		.ascii  "\x0d\x68\xd3\x00\x20\x0d\xd2\x00"
-		.ascii  "\x9f\xb6\xd0\x00\x74\x64\xcf\x00"
-		.ascii  "\x8a\x16\xce\x00\xcc\xcc\xcc\x00"
-		.ascii  "\x27\x87\xcb\x00\x87\x45\xca\x00"
-		.ascii  "\xda\x07\xc9\x00\x0c\xce\xc7\x00"
-		.ascii  "\x0c\x98\xc6\x00\xc8\x65\xc5\x00"
-		.ascii  "\x2f\x37\xc4\x00\x30\x0c\xc3\x00"
-		.ascii  "\xbb\xe4\xc1\x00\xc0\xc0\xc0\x00"
-		.ascii  "\x2f\xa0\xbf\x00\xfa\x82\xbe\x00"
-		.ascii  "\x10\x69\xbd\x00\x64\x52\xbc\x00"
-		.ascii  "\xe7\x3e\xbb\x00\x8b\x2e\xba\x00"
-		.ascii  "\x43\x21\xb9\x00\x02\x17\xb8\x00"
-		.ascii  "\xbb\x0f\xb7\x00\x60\x0b\xb6\x00"
-		.ascii  "\xe6\x09\xb5\x00\x40\x0b\xb4\x00"
-		.ascii  "\x63\x0f\xb3\x00\x42\x16\xb2\x00"
-		.ascii  "\xd3\x1f\xb1\x00\x0b\x2c\xb0\x00"
-		.ascii  "\xdd\x3a\xaf\x00\x41\x4c\xae\x00"
-		.ascii  "\x2b\x60\xad\x00\x91\x76\xac\x00"
-		.ascii  "\x69\x8f\xab\x00\xaa\xaa\xaa\x00"
-		.ascii  "\x4a\xc8\xa9\x00\x3f\xe8\xa8\x00"
-		.ascii  "\x80\x0a\xa8\x00\x05\x2f\xa7\x00"
-		.ascii  "\xc4\x55\xa6\x00\xb5\x7e\xa5\x00"
-		.ascii  "\xcf\xa9\xa4\x00\x0a\xd7\xa3\x00"
-		.ascii  "\x5e\x06\xa3\x00\xc3\x37\xa2\x00"
-		.ascii  "\x31\x6b\xa1\x00\xa0\xa0\xa0\x00"
-		.ascii  "\x09\xd8\x9f\x00\x65\x11\x9f\x00"
-		.ascii  "\xad\x4c\x9e\x00\xd8\x89\x9d\x00"
-		.ascii  "\xe1\xc8\x9c\x00\xc0\x09\x9c\x00"
-		.ascii  "\x6f\x4c\x9b\x00\xe7\x90\x9a\x00"
-		.ascii  "\x22\xd7\x99\x00\x1a\x1f\x99\x00"
-		.ascii  "\xc8\x68\x98\x00\x25\xb4\x97\x00"
-		.ascii  "\x2e\x01\x97\x00\xda\x4f\x96\x00"
-		.ascii  "\x25\xa0\x95\x00\x09\xf2\x94\x00"
-		.ascii  "\x80\x45\x94\x00\x85\x9a\x93\x00"
-		.ascii  "\x13\xf1\x92\x00\x24\x49\x92\x00"
-		.ascii  "\xb3\xa2\x91\x00\xbc\xfd\x90\x00"
-		.ascii  "\x38\x5a\x90\x00\x23\xb8\x8f\x00"
-		.ascii  "\x79\x17\x8f\x00\x35\x78\x8e\x00"
-		.ascii  "\x52\xda\x8d\x00\xcb\x3d\x8d\x00"
-		.ascii  "\x9c\xa2\x8c\x00\xc0\x08\x8c\x00"
-		.ascii  "\x34\x70\x8b\x00\xf2\xd8\x8a\x00"
-		.ascii  "\xf8\x42\x8a\x00\x40\xae\x89\x00"
-		.ascii  "\xc7\x1a\x89\x00\x88\x88\x88\x00"
-		.ascii  "\x80\xf7\x87\x00\xab\x67\x87\x00"
-		.ascii  "\x05\xd9\x86\x00\x8a\x4b\x86\x00"
-		.ascii  "\x37\xbf\x85\x00\x08\x34\x85\x00"
-		.ascii  "\xf9\xa9\x84\x00\x08\x21\x84\x00"
-		.ascii  "\x30\x99\x83\x00\x6e\x12\x83\x00"
-		.ascii  "\xbf\x8c\x82\x00\x20\x08\x82\x00"
-		.ascii  "\x8d\x84\x81\x00\x04\x02\x81\x00"
-		.ascii  "\x80\x80\x80"
-		.fill   0x9
+		.fill   0x8
 		.ascii  "\x2e\x8b\xc0\x2e\x8b\xc0\x8b\xc0"
+gpoly_divtable:
 		.fill   0x80
 data_12b8a0:
-		.fill   0x82
-		.ascii  "\xe0\xff\x00\x00\xe1\xff\x00\x00"
-		.ascii  "\xe2\xff\x00\x00\xe3\xff\x00\x00"
-		.ascii  "\xe4\xff\x00\x00\xe5\xff\x00\x00"
-		.ascii  "\xe6\xff\x00\x00\xe7\xff\x00\x00"
-		.ascii  "\xe8\xff\x00\x00\xe9\xff\x00\x00"
-		.ascii  "\xea\xff\x00\x00\xeb\xff\x00\x00"
-		.ascii  "\xec\xff\x00\x00\xed\xff\x00\x00"
-		.ascii  "\xee\xff\x00\x00\xef\xff\x00\x00"
-		.ascii  "\xf0\xff\x00\x00\xf1\xff\x00\x00"
-		.ascii  "\xf2\xff\x00\x00\xf3\xff\x00\x00"
-		.ascii  "\xf4\xff\x00\x00\xf5\xff\x00\x00"
-		.ascii  "\xf6\xff\x00\x00\xf7\xff\x00\x00"
-		.ascii  "\xf8\xff\x00\x00\xf9\xff\x00\x00"
-		.ascii  "\xfa\xff\x00\x00\xfb\xff\x00\x00"
-		.ascii  "\xfc\xff\x00\x00\xfd\xff\x00\x00"
-		.ascii  "\xfe\xff\x00\x00\xff\xff"
-		.fill   0x6
+		.fill   0x80
+		.ascii  "\x00\x00\xe0\xff\x00\x00\xe1\xff"
+		.ascii  "\x00\x00\xe2\xff\x00\x00\xe3\xff"
+		.ascii  "\x00\x00\xe4\xff\x00\x00\xe5\xff"
+		.ascii  "\x00\x00\xe6\xff\x00\x00\xe7\xff"
+		.ascii  "\x00\x00\xe8\xff\x00\x00\xe9\xff"
+		.ascii  "\x00\x00\xea\xff\x00\x00\xeb\xff"
+		.ascii  "\x00\x00\xec\xff\x00\x00\xed\xff"
+		.ascii  "\x00\x00\xee\xff\x00\x00\xef\xff"
+		.ascii  "\x00\x00\xf0\xff\x00\x00\xf1\xff"
+		.ascii  "\x00\x00\xf2\xff\x00\x00\xf3\xff"
+		.ascii  "\x00\x00\xf4\xff\x00\x00\xf5\xff"
+		.ascii  "\x00\x00\xf6\xff\x00\x00\xf7\xff"
+		.ascii  "\x00\x00\xf8\xff\x00\x00\xf9\xff"
+		.ascii  "\x00\x00\xfa\xff\x00\x00\xfb\xff"
+		.ascii  "\x00\x00\xfc\xff\x00\x00\xfd\xff"
+		.ascii  "\x00\x00\xfe\xff\x00\x00\xff\xff"
+		.ascii  "\x00\x00\x00\x00"
+		.ascii  "\x00\x00"
 		.ascii  "\x01\x00\x00\x00\x02\x00\x00\x00"
 		.ascii  "\x03\x00\x00\x00\x04\x00\x00\x00"
 		.ascii  "\x05\x00\x00\x00\x06\x00\x00\x00"
@@ -4083,9 +3948,9 @@ data_12b8a0:
 		.ascii  "\xfd\xff\x00\x00\xfe\xff\x00\x80"
 		.ascii  "\xfe\xff\x00\x00\xff\xff\x00\x80"
 		.ascii  "\xff\xff"
-		.fill   0x5
-		.ascii  "\x80"
-		.fill   0x4
+		.ascii  "\x00\x00\x00\x00"
+		.ascii  "\x00\x80"
+		.ascii  "\x00\x00\x00\x00"
 		.ascii  "\x01\x00\x00\x80\x01\x00\x00\x00"
 		.ascii  "\x02\x00\x00\x80\x02\x00\x00\x00"
 		.ascii  "\x03\x00\x00\x80\x03\x00\x00\x00"
