@@ -74,14 +74,16 @@ void trig_render_md00(struct TrigLocals *lvu)
     struct PolyPoint *pp;
     ubyte *o_ln;
     ubyte col;
-    short pX, pY;
-    ubyte *o;
 
     pp = polyscans;
     o_ln = lvu->var_24;
     col = vec_colour;
+
     for (; lvu->var_44; lvu->var_44--, pp++)
     {
+        short pX, pY;
+        ubyte *o;
+
         pX = pp->X >> 16;
         pY = pp->Y >> 16;
         o_ln += vec_screen_width;
@@ -110,15 +112,16 @@ void trig_render_md00(struct TrigLocals *lvu)
 
 void trig_render_md01(struct TrigLocals *lvu)
 {
-    short pS;
-    TbBool pS_carry;
     struct PolyPoint *pp;
-    ushort colS;
 
     pp = polyscans;
+
     for (; lvu->var_44; lvu->var_44--, pp++)
     {
         short pX, pY;
+        short pS;
+        TbBool pS_carry;
+        ushort colS;
         ubyte *o;
 
         pX = pp->X >> 16;
@@ -164,6 +167,7 @@ void trig_render_md01(struct TrigLocals *lvu)
         for (;pY > 0; pY--, o++)
         {
             short colH, colL;
+            TbBool pS_carry;
 
             *o = colS >> 8;
 
@@ -181,15 +185,17 @@ void trig_render_md02(struct TrigLocals *lvu)
 {
     struct PolyPoint *pp;
     ubyte *m;
-    ubyte *o;
-    ushort colS;
 
+    m = vec_map;
     pp = polyscans;
     lvu->var_70 = lvu->var_54 << 16;
+
     for (; lvu->var_44; lvu->var_44--, pp++)
     {
         short pX, pY;
         long pU;
+        ushort colS;
+        ubyte *o;
 
         pX = pp->X >> 16;
         pY = pp->Y >> 16;
@@ -236,8 +242,6 @@ void trig_render_md02(struct TrigLocals *lvu)
             colS = ((colH & 0xFF) << 8) + (colL & 0xFF);
         }
 
-        m = vec_map;
-
         for (; pY > 0; pY--, o++)
         {
             short colL, colH;
@@ -262,16 +266,18 @@ void trig_render_md03(struct TrigLocals *lvu)
 {
     struct PolyPoint *pp;
     ubyte *m;
-    ubyte *o;
-    ushort colS;
 
+    m = vec_map;
     pp = polyscans;
     lvu->var_70 = lvu->var_54 << 16;
+
     for (; lvu->var_44; lvu->var_44--, pp++)
     {
         short pX, pY;
-        ulong factorA;
         long pU;
+        ulong factorA;
+        ushort colS;
+        ubyte *o;
 
         pX = pp->X >> 16;
         pY = pp->Y >> 16;
@@ -316,8 +322,6 @@ void trig_render_md03(struct TrigLocals *lvu)
             colS = ((colH & 0xFF) << 8) + (colL & 0xFF);
         }
 
-        m = vec_map;
-
         for (; pY > 0; pY--, o++)
         {
             short colL, colH;
@@ -348,14 +352,16 @@ void trig_render_md04(struct TrigLocals *lvu)
 {
     struct PolyPoint *pp;
     ubyte *f;
-    ubyte *o;
-    ushort colS;
 
+    f = pixmap.fade_table;
     pp = polyscans;
+
     for (; lvu->var_44; lvu->var_44--, pp++)
     {
         short pX, pY;
         short pU;
+        ushort colS;
+        ubyte *o;
 
         pX = pp->X >> 16;
         pY = pp->Y >> 16;
@@ -398,8 +404,6 @@ void trig_render_md04(struct TrigLocals *lvu)
             colS = ((colH & 0xFF) << 8) + (colL & 0xFF);
         }
 
-        f = pixmap.fade_table;
-
         for (;pY > 0; pY--, o++)
         {
             ushort colL, colH;
@@ -421,11 +425,11 @@ void trig_render_md05(struct TrigLocals *lvu)
     struct PolyPoint *pp;
     ubyte *m;
     ubyte *f;
-    ubyte *o;
-    ubyte *o_ln;
-    long rfactA, rfactB;
 
+    m = vec_map;
+    f = pixmap.fade_table;
     pp = polyscans;
+
     {
         ulong factorA, factorB, factorC;
         factorC = lvu->var_48;
@@ -442,7 +446,10 @@ void trig_render_md05(struct TrigLocals *lvu)
     for (; lvu->var_44; lvu->var_44--, pp++)
     {
         long pX, pY;
+        long rfactA, rfactB;
         ushort colM;
+        ubyte *o;
+        ubyte *o_ln;
 
         pX = pp->X >> 16;
         pY = pp->Y >> 16;
@@ -496,8 +503,6 @@ void trig_render_md05(struct TrigLocals *lvu)
         }
 
         o = o_ln;
-        m = vec_map;
-        f = pixmap.fade_table;
 
         for (; pY > 0; pY--, o++)
         {
@@ -532,22 +537,23 @@ void trig_render_md05(struct TrigLocals *lvu)
 void trig_render_md06(struct TrigLocals *lvu)
 {
     struct PolyPoint *pp;
-    ushort colM;
+    ubyte *m;
+    ubyte *f;
 
+    m = vec_map;
+    f = pixmap.fade_table;
     pp = polyscans;
     lvu->var_70 = lvu->var_54 << 16;
     lvu->var_74 = lvu->var_60 << 16;
-    colM = 0;
 
     for (; lvu->var_44; lvu->var_44--, pp++)
     {
-        ubyte *m;
-        ubyte *f;
         ubyte *o;
         short pXa, pYa;
         long factorA;
         long pY;
         ulong factorB;
+        ushort colM;
 
         pXa = (pp->X >> 16);
         pYa = (pp->Y >> 16);
@@ -607,9 +613,6 @@ void trig_render_md06(struct TrigLocals *lvu)
             pY = factorB & 0xFFFF;
         }
 
-        m = vec_map;
-        f = pixmap.fade_table;
-
         for (; (pY & 0xFFFF) > 0; pY--, o++)
         {
             ushort colL, colH;
@@ -640,20 +643,23 @@ void trig_render_md06(struct TrigLocals *lvu)
 void trig_render_md07(struct TrigLocals *lvu)
 {
     struct PolyPoint *pp;
-    short pXa;
-    ushort colM;
-    long pYa;
-    ubyte *o;
-    long pXm;
-    long factorA;
     ubyte *m;
     ubyte *f;
 
+    m = vec_map;
+    f = pixmap.fade_table;
     pp = polyscans;
     lvu->var_70 = lvu->var_54 << 16;
-    colM = 0;
+
     for (; lvu->var_44; lvu->var_44--, pp++)
     {
+        short pXa;
+        long pYa;
+        long pXm;
+        long factorA;
+        ushort colM;
+        ubyte *o;
+
         pXa = (pp->X >> 16);
         pYa = (pp->Y >> 16);
         o = &lvu->var_24[vec_screen_width];
@@ -698,9 +704,6 @@ void trig_render_md07(struct TrigLocals *lvu)
             colM = ((colH & 0xFF) << 8) + (colL & 0xFF);
         }
 
-        m = vec_map;
-        f = pixmap.fade_table;
-
         for (; pYa > 0; pYa--, o++)
         {
             ushort colL, colH;
@@ -724,19 +727,22 @@ void trig_render_md07(struct TrigLocals *lvu)
 void trig_render_md08(struct TrigLocals *lvu)
 {
     struct PolyPoint *pp;
-    short pXa;
-    ushort colM;
-    long pYa;
-    ubyte *o;
-    long factorA;
     ubyte *m;
     ubyte *f;
 
+    m = vec_map;
+    f = pixmap.fade_table;
     pp = polyscans;
     lvu->var_70 = lvu->var_54 << 16;
-    colM = 0;
+
     for (; lvu->var_44; lvu->var_44--, pp++)
     {
+        short pXa;
+        long pYa;
+        ushort colM;
+        ubyte *o;
+        long factorA;
+
         pXa = (pp->X >> 16);
         pYa = (pp->Y >> 16);
         o = &lvu->var_24[vec_screen_width];
@@ -782,9 +788,6 @@ void trig_render_md08(struct TrigLocals *lvu)
             colM = ((colH & 0xFF) << 8) + (colL & 0xFF);
         }
 
-        m = vec_map;
-        f = pixmap.fade_table;
-
         for (; pYa > 0; pYa--, o++)
         {
             ushort colL, colH;
@@ -809,32 +812,34 @@ void trig_render_md08(struct TrigLocals *lvu)
 void trig_render_md09(struct TrigLocals *lvu)
 {
     struct PolyPoint *pp;
-    short pXa;
-    ushort colM;
-    long factorA;
-    short pYa;
-    ubyte *o;
-    long pXm;
     ubyte *m;
     ubyte *f;
 
+    m = vec_map;
+    f = pixmap.fade_table;
     pp = polyscans;
     lvu->var_70 = lvu->var_54 << 16;
-    colM = 0;
+
     for (; lvu->var_44; lvu->var_44--, pp++)
     {
+        short pXa, pYa;
+        long pXm;
+        long factorA;
+        ushort colM;
+        ubyte *o;
+
         pXa = (pp->X >> 16);
         pYa = (pp->Y >> 16);
         o = &lvu->var_24[vec_screen_width];
         lvu->var_24 += vec_screen_width;
-        if ( (pXa & 0x8000u) != 0 )
+        if (pXa < 0)
         {
             ushort colL, colH;
             ulong factorB, factorC;
 
-            if ( (short)pYa <= 0 )
+            if (pYa <= 0)
                 continue;
-            pXm = (ushort)-(short)pXa;
+            pXm = (ushort)-pXa;
             factorA = __ROL4__(pp->V + lvu->var_54 * pXm, 16);
             colH = factorA;
             factorB = pp->U + lvu->var_48 * pXm;
@@ -856,7 +861,7 @@ void trig_render_md09(struct TrigLocals *lvu)
                 pYa = vec_window_width;
             pY_overflow = __OFSUBS__(pYa, pXa);
             pYa = pYa - pXa;
-            if ( (ubyte)(((pYa & 0x8000u) != 0) ^ pY_overflow) | ((ushort)pYa == 0) )
+            if (((pYa < 0) ^ pY_overflow) | (pYa == 0))
                 continue;
             o += pXa;
             factorA = __ROL4__(pp->V, 16);
@@ -866,9 +871,6 @@ void trig_render_md09(struct TrigLocals *lvu)
 
             colM = ((colH & 0xFF) << 8) + (colL & 0xFF);
         }
-
-        m = vec_map;
-        f = pixmap.fade_table;
 
         for (; pYa > 0; pYa--, o++)
         {
@@ -896,31 +898,34 @@ void trig_render_md09(struct TrigLocals *lvu)
 void trig_render_md10(struct TrigLocals *lvu)
 {
     struct PolyPoint *pp;
-    short pXa;
-    ushort colM;
-    short pYa;
-    ubyte *o;
-    ulong factorB;
-    long factorA;
-    ulong factorC;
     ubyte *m;
     ubyte *f;
 
+    m = vec_map;
+    f = pixmap.fade_table;
     pp = polyscans;
     lvu->var_70 = lvu->var_54 << 16;
-    colM = 0;
+
     for (; lvu->var_44; lvu->var_44--, pp++)
     {
+        short pXa;
+        short pYa;
+        ulong factorB;
+        long factorA;
+        ulong factorC;
+        ushort colM;
+        ubyte *o;
+
         pXa = (pp->X >> 16);
         pYa = (pp->Y >> 16);
         o = &lvu->var_24[vec_screen_width];
         lvu->var_24 += vec_screen_width;
-        if ( (pXa & 0x8000u) != 0 )
+        if (pXa < 0)
         {
             ushort colL, colH;
             long pXm;
 
-            if ( (short)pYa <= 0 )
+            if (pYa <= 0)
                 continue;
             pXm = (ushort)-(short)pXa;
             factorA = __ROL4__(pp->V + lvu->var_54 * pXm, 16);
@@ -955,9 +960,6 @@ void trig_render_md10(struct TrigLocals *lvu)
             colM = ((colH & 0xFF) << 8) + (colL & 0xFF);
         }
 
-        m = vec_map;
-        f = pixmap.fade_table;
-
         for (; pYa > 0; pYa--, o++)
         {
             ushort colL, colH;
@@ -983,20 +985,23 @@ void trig_render_md10(struct TrigLocals *lvu)
 void trig_render_md12(struct TrigLocals *lvu)
 {
     struct PolyPoint *pp;
-    long pXa;
-    ushort colM;
-    short pYa;
-    ubyte *o;
-    long pXm;
-    long factorA;
     ubyte *m;
     ubyte *g;
 
+    m = vec_map;
+    g = pixmap.ghost_table;
     pp = polyscans;
     lvu->var_70 = lvu->var_54 << 16;
-    colM = 0;
+
     for (; lvu->var_44; lvu->var_44--, pp++)
     {
+        long pXa;
+        short pYa;
+        long pXm;
+        long factorA;
+        ushort colM;
+        ubyte *o;
+
         pXa = (pp->X >> 16);
         pYa = (pp->Y >> 16);
         o = &lvu->var_24[vec_screen_width];
@@ -1041,9 +1046,6 @@ void trig_render_md12(struct TrigLocals *lvu)
             colM = ((colH & 0xFF) << 8) + (colL & 0xFF);
         }
 
-        m = vec_map;
-        g = pixmap.ghost_table;
-
         for (; pYa > 0; pYa--, o++)
         {
             ushort colL, colH;
@@ -1067,25 +1069,27 @@ void trig_render_md12(struct TrigLocals *lvu)
 void trig_render_md13(struct TrigLocals *lvu)
 {
     struct PolyPoint *pp;
-    short pXa;
-    ushort colM;
-    short pYa;
-    ubyte *o;
-    long pXm;
-    long factorA;
     ubyte *m;
     ubyte *g;
 
+    m = vec_map;
+    g = pixmap.ghost_table;
     pp = polyscans;
     lvu->var_70 = lvu->var_54 << 16;
-    colM = 0;
+
     for (; lvu->var_44; lvu->var_44--, pp++)
     {
+        short pXa, pYa;
+        long pXm;
+        long factorA;
+        ushort colM;
+        ubyte *o;
+
         pXa = (pp->X >> 16);
         pYa = (pp->Y >> 16);
         o = &lvu->var_24[vec_screen_width];
         lvu->var_24 += vec_screen_width;
-        if ( (pXa & 0x8000u) != 0 )
+        if (pXa < 0)
         {
             ushort colL, colH;
             ulong factorB, factorC;
@@ -1125,9 +1129,6 @@ void trig_render_md13(struct TrigLocals *lvu)
             colM = ((colH & 0xFF) << 8) + (colL & 0xFF);
         }
 
-        m = vec_map;
-        g = pixmap.ghost_table;
-
         for (; pYa > 0; pYa--, o++)
         {
             ushort colL, colH;
@@ -1151,19 +1152,20 @@ void trig_render_md13(struct TrigLocals *lvu)
 void trig_render_md14(struct TrigLocals *lvu)
 {
     struct PolyPoint *pp;
-    ubyte *o_ln;
-    ushort colM;
-    short pXa;
-    short pYa;
-    ubyte *o;
     ubyte *g;
+    ushort colM;
+    ubyte *o_ln;
 
+    g = pixmap.ghost_table;
     pp = polyscans;
     o_ln = lvu->var_24;
     colM = (vec_colour << 8);
 
     for (; lvu->var_44; lvu->var_44--, pp++)
     {
+        short pXa, pYa;
+        ubyte *o;
+
         pXa = (pp->X >> 16);
         pYa = (pp->Y >> 16);
         o_ln += vec_screen_width;
@@ -1188,8 +1190,6 @@ void trig_render_md14(struct TrigLocals *lvu)
                 continue;
             o = &o_ln[pXa];
         }
-
-        g = pixmap.ghost_table;
 
         for (; pYa > 0; pYa--, o++)
         {
@@ -1202,18 +1202,20 @@ void trig_render_md14(struct TrigLocals *lvu)
 void trig_render_md15(struct TrigLocals *lvu)
 {
     struct PolyPoint *pp;
-    ubyte *o_ln;
-    ushort colM;
-    short pXa;
-    short pYa;
-    ubyte *o;
     ubyte *g;
+    ushort colM;
+    ubyte *o_ln;
 
+    g = pixmap.ghost_table;
     pp = polyscans;
     o_ln = lvu->var_24;
     colM = vec_colour;
+
     for (; lvu->var_44; lvu->var_44--, pp++)
     {
+        short pXa, pYa;
+        ubyte *o;
+
         pXa = (pp->X >> 16);
         pYa = (pp->Y >> 16);
         o_ln += vec_screen_width;
@@ -1238,8 +1240,6 @@ void trig_render_md15(struct TrigLocals *lvu)
             o = &o_ln[pXa];
         }
 
-        g = pixmap.ghost_table;
-
         for (; pYa > 0; pYa--, o++)
         {
               colM = (*o << 8) | (colM & 0xFF);
@@ -1251,17 +1251,20 @@ void trig_render_md15(struct TrigLocals *lvu)
 void trig_render_md16(struct TrigLocals *lvu)
 {
     struct PolyPoint *pp;
-    short pXa;
-    short pYa;
-    ushort colM;
-    ubyte *o;
     ubyte *g;
     ubyte *f;
-    short factorA;
 
+    g = pixmap.ghost_table;
+    f = pixmap.fade_table;
     pp = polyscans;
+
     for (; lvu->var_44; lvu->var_44--, pp++)
     {
+        short pXa, pYa;
+        short factorA;
+        ushort colM;
+        ubyte *o;
+
         pXa = (pp->X >> 16);
         pYa = (pp->Y >> 16);
         o = &lvu->var_24[vec_screen_width];
@@ -1307,9 +1310,6 @@ void trig_render_md16(struct TrigLocals *lvu)
             colM = ((colH & 0xFF) << 8) + (colL & 0xFF);
         }
 
-        g = pixmap.ghost_table;
-        f = pixmap.fade_table;
-
         for (; pYa > 0; pYa--, o++)
         {
             ushort colL, colH;
@@ -1331,17 +1331,20 @@ void trig_render_md16(struct TrigLocals *lvu)
 void trig_render_md17(struct TrigLocals *lvu)
 {
     struct PolyPoint *pp;
-    ubyte *o;
     ubyte *g;
     ubyte *f;
-    ubyte factorA_carry;
-    short factorA;
 
+    g = pixmap.ghost_table;
+    f = pixmap.fade_table;
     pp = polyscans;
+
     for (; lvu->var_44; lvu->var_44--, pp++)
     {
         short pXa, pYa;
+        ubyte factorA_carry;
+        short factorA;
         ushort colS;
+        ubyte *o;
 
         pXa = (pp->X >> 16);
         pYa = (pp->Y >> 16);
@@ -1354,7 +1357,7 @@ void trig_render_md17(struct TrigLocals *lvu)
             ulong pXMa;
             short pXMb;
 
-            if ( (short)pYa <= 0 )
+            if (pYa <= 0)
                 continue;
             pXMa = lvu->var_60 * (ushort)-pXa;
             pXMb = pXMa;
@@ -1388,9 +1391,6 @@ void trig_render_md17(struct TrigLocals *lvu)
             colS = ((colH & 0xFF) << 8) + (colL & 0xFF);
         }
 
-        g = pixmap.ghost_table;
-        f = pixmap.fade_table;
-
         for (; pYa > 0; pYa--, o++)
         {
             ushort colL, colH;
@@ -1412,19 +1412,21 @@ void trig_render_md17(struct TrigLocals *lvu)
 void trig_render_md18(struct TrigLocals *lvu)
 {
     struct PolyPoint *pp;
-    short pXa;
-    ushort colM;
-    short pYa;
-    ubyte *o;
-    long factorA;
     ubyte *m;
     ubyte *g;
 
+    m = vec_map;
+    g = pixmap.ghost_table;
     pp = polyscans;
     lvu->var_70 = lvu->var_54 << 16;
+
     for (; lvu->var_44; lvu->var_44--, pp++)
     {
+        short pXa, pYa;
         long pXm;
+        long factorA;
+        ushort colM;
+        ubyte *o;
 
         pXa = (pp->X >> 16);
         pYa = (pp->Y >> 16);
@@ -1470,9 +1472,6 @@ void trig_render_md18(struct TrigLocals *lvu)
             colM = ((colH & 0xFF) << 8) + (colL & 0xFF);
         }
 
-        m = vec_map;
-        g = pixmap.ghost_table;
-
         for (; pYa > 0; pYa--, o++)
         {
             ushort colL, colH;
@@ -1501,15 +1500,17 @@ void trig_render_md19(struct TrigLocals *lvu)
     ubyte *m;
     ubyte *g;
 
+    m = vec_map;
+    g = pixmap.ghost_table;
     pp = polyscans;
     lvu->var_70 = lvu->var_54 << 16;
+
     for (; lvu->var_44; lvu->var_44--, pp++)
     {
-        short pXa;
-        ushort colM;
-        short pYa;
-        ubyte *o;
+        short pXa, pYa;
         long factorA;
+        ushort colM;
+        ubyte *o;
 
         pXa = (pp->X >> 16);
         pYa = (pp->Y >> 16);
@@ -1555,9 +1556,6 @@ void trig_render_md19(struct TrigLocals *lvu)
             colM = ((colH & 0xFF) << 8) + (colL & 0xFF);
         }
 
-        m = vec_map;
-        g = pixmap.ghost_table;
-
         for (; pYa > 0; pYa--, o++)
         {
             ushort colL, colH;
@@ -1585,19 +1583,22 @@ void trig_render_md20(struct TrigLocals *lvu)
     ubyte *g;
     ubyte *f;
 
+    m = vec_map;
+    g = pixmap.ghost_table;
+    f = pixmap.fade_table;
     pp = polyscans;
     lvu->var_70 = lvu->var_54 << 16;
     lvu->var_74 = lvu->var_60 << 16;
+
     for (; lvu->var_44; lvu->var_44--, pp++)
     {
-        short pXa;
-        ushort colM;
-        short pYa;
-        ubyte *o;
+        short pXa, pYa;
         long pXMa;
         long pXMb;
         long factorA;
         long factorC;
+        ushort colM;
+        ubyte *o;
 
         pXa = (pp->X >> 16);
         pYa = (pp->Y >> 16);
@@ -1647,10 +1648,6 @@ void trig_render_md20(struct TrigLocals *lvu)
             colM = ((colH & 0xFF) << 8) + (colL & 0xFF);
         }
 
-        m = vec_map;
-        g = pixmap.ghost_table;
-        f = pixmap.fade_table;
-
         for (; lvu->var_7C > 0; lvu->var_7C--, o++)
         {
             ushort colL, colH;
@@ -1679,18 +1676,21 @@ void trig_render_md21(struct TrigLocals *lvu)
 {
     struct PolyPoint *pp;
     ubyte *m;
+    ubyte *g;
+    ubyte *f;
 
+    m = vec_map;
+    g = pixmap.ghost_table;
+    f = pixmap.fade_table;
     pp = polyscans;
     lvu->var_70 = lvu->var_54 << 16;
     lvu->var_74 = lvu->var_60 << 16;
+
     for (; lvu->var_44; lvu->var_44--, pp++)
     {
-        short pXa;
+        short pXa, pYa;
         ushort colM;
-        short pYa;
         ubyte *o;
-        ubyte *g;
-        ubyte *f;
         long factorA, factorC;
 
         pXa = (pp->X >> 16);
@@ -1744,10 +1744,6 @@ void trig_render_md21(struct TrigLocals *lvu)
             colM = ((colH & 0xFF) << 8) + (colL & 0xFF);
         }
 
-        m = vec_map;
-        g = pixmap.ghost_table;
-        f = pixmap.fade_table;
-
         for (; lvu->var_7C > 0; lvu->var_7C--, o++)
         {
             ushort colL, colH;
@@ -1778,8 +1774,11 @@ void trig_render_md22(struct TrigLocals *lvu)
     ubyte *m;
     ubyte *g;
 
+    m = vec_map;
+    g = pixmap.ghost_table;
     pp = polyscans;
     lvu->var_70 = lvu->var_54 << 16;
+
     for (; lvu->var_44; lvu->var_44--, pp++)
     {
         short pXa;
@@ -1833,9 +1832,6 @@ void trig_render_md22(struct TrigLocals *lvu)
             colM = ((colH & 0xFF) << 8) + (colL & 0xFF);
         }
 
-        m = vec_map;
-        g = pixmap.ghost_table;
-
         for (; pYa > 0; pYa--, o++)
         {
             ushort colL, colH;
@@ -1864,8 +1860,11 @@ void trig_render_md23(struct TrigLocals *lvu)
     ubyte *m;
     ubyte *g;
 
+    m = vec_map;
+    g = pixmap.ghost_table;
     pp = polyscans;
     lvu->var_70 = lvu->var_54 << 16;
+
     for (; lvu->var_44; lvu->var_44--, pp++)
     {
         short pXa;
@@ -1920,9 +1919,6 @@ void trig_render_md23(struct TrigLocals *lvu)
             colM = ((colH & 0xFF) << 8) + (colL & 0xFF);
         }
 
-        m = vec_map;
-        g = pixmap.ghost_table;
-
         for (; pYa > 0; pYa--, o++)
         {
             ushort colL, colH;
@@ -1951,9 +1947,13 @@ void trig_render_md24(struct TrigLocals *lvu)
     ubyte *g;
     ubyte *f;
 
+    m = vec_map;
+    g = pixmap.ghost_table;
+    f = pixmap.fade_table;
     pp = polyscans;
     lvu->var_70 = lvu->var_54 << 16;
     lvu->var_74 = lvu->var_60 << 16;
+
     for (; lvu->var_44; lvu->var_44--, pp++)
     {
         short pXa;
@@ -2013,10 +2013,6 @@ void trig_render_md24(struct TrigLocals *lvu)
 
             colM = ((colH & 0xFF) << 8) + (colL & 0xFF);
         }
-
-        m = vec_map;
-        g = pixmap.ghost_table;
-        f = pixmap.fade_table;
 
         for (; lvu->var_7C > 0; lvu->var_7C--, o++)
         {
@@ -2052,9 +2048,13 @@ void trig_render_md25(struct TrigLocals *lvu)
     ubyte *g;
     ubyte *f;
 
+    m = vec_map;
+    g = pixmap.ghost_table;
+    f = pixmap.fade_table;
     pp = polyscans;
     lvu->var_70 = lvu->var_54 << 16;
     lvu->var_74 = lvu->var_60 << 16;
+
     for (; lvu->var_44; lvu->var_44--, pp++)
     {
         short pXa;
@@ -2115,10 +2115,6 @@ void trig_render_md25(struct TrigLocals *lvu)
             colM = ((colH & 0xFF) << 8) + (colL & 0xFF);
         }
 
-        m = vec_map;
-        g = pixmap.ghost_table;
-        f = pixmap.fade_table;
-
         for (; lvu->var_7C > 0; lvu->var_7C--, o++)
         {
             ushort colL, colH;
@@ -2153,8 +2149,11 @@ void trig_render_md26(struct TrigLocals *lvu)
     ubyte *g;
     ubyte *f;
 
+    m = vec_map;
+    g = pixmap.ghost_table;
+    f = pixmap.fade_table;
     pp = polyscans;
-    lvu->var_80 = pp;
+
     {
         ulong v1;
         ulong v2;
@@ -2170,7 +2169,7 @@ void trig_render_md26(struct TrigLocals *lvu)
         lvu->var_74 = v2;
         lvu->var_88 = v3;
     }
-    for (; lvu->var_44; lvu->var_44--)
+    for (; lvu->var_44; lvu->var_44--, pp++)
     {
         long pXa;
         long pYa;
@@ -2181,8 +2180,6 @@ void trig_render_md26(struct TrigLocals *lvu)
         ubyte pY_overflow;
         ushort colM;
 
-        pp = lvu->var_80;
-        lvu->var_80 += 20;
         pXa = pp->X >> 16;
         pYa = pp->Y >> 16;
         o = &lvu->var_24[vec_screen_width];
@@ -2224,9 +2221,6 @@ void trig_render_md26(struct TrigLocals *lvu)
         }
 
         factorB = (factorB & 0xFFFF00FF);
-        m = vec_map;
-        g = pixmap.ghost_table;
-        f = pixmap.fade_table;
 
         for (; pYa > 0; pYa--, o++)
         {
