@@ -20,10 +20,6 @@
 #include "poly_trigp.h"
 #include "poly.h"
 
-
-// TODO Switch to local var when remade - this is global because assembly alters EBP
-struct TrigLocals lv;
-
 /**
  * whether the subtraction (x-y) of two long ints would overflow
  */

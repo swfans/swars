@@ -66,6 +66,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b,
     struct PolyPoint *opt_b;
     struct PolyPoint *opt_c;
     ubyte start_type;
+    struct TrigLocals lv;
 
     LOGNO("Pa(%ld,%ld,%ld)", point_a->X, point_a->Y, point_a->S);
     LOGNO("Pb(%ld,%ld,%ld)", point_b->X, point_b->Y, point_b->S);
