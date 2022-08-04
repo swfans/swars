@@ -185,10 +185,11 @@ void trig_render_md02(struct TrigLocals *lvu)
 {
     struct PolyPoint *pp;
     ubyte *m;
+    long lsh_var_54;
 
     m = vec_map;
     pp = polyscans;
-    lvu->var_70 = lvu->var_54 << 16;
+    lsh_var_54 = lvu->var_54 << 16;
 
     for (; lvu->var_44; lvu->var_44--, pp++)
     {
@@ -253,8 +254,8 @@ void trig_render_md02(struct TrigLocals *lvu)
             pU = (pU & 0xFFFF0000) | ((lvu->var_48 + pU) & 0xFFFF);
             colL = (lvu->var_48 >> 16) + pU_carry + colS;
 
-            pU_carry = __CFADDL__(lvu->var_70, pU);
-            pU = lvu->var_70 + pU;
+            pU_carry = __CFADDL__(lsh_var_54, pU);
+            pU = lsh_var_54 + pU;
             colH = (lvu->var_54 >> 16) + pU_carry + (colS >> 8);
 
             colS = ((colH & 0xFF) << 8) + (colL & 0xFF);
@@ -266,10 +267,11 @@ void trig_render_md03(struct TrigLocals *lvu)
 {
     struct PolyPoint *pp;
     ubyte *m;
+    long lsh_var_54;
 
     m = vec_map;
     pp = polyscans;
-    lvu->var_70 = lvu->var_54 << 16;
+    lsh_var_54 = lvu->var_54 << 16;
 
     for (; lvu->var_44; lvu->var_44--, pp++)
     {
@@ -333,8 +335,8 @@ void trig_render_md03(struct TrigLocals *lvu)
             pU_carry = __CFADDS__(lvu->var_48, pU);
             pU = (pU & 0xFFFF0000) | ((lvu->var_48 + pU) & 0xFFFF);
             colL = (lvu->var_48 >> 16) + pU_carry + colS;
-            pU_carry = __CFADDL__(lvu->var_70, pU);
-            pU = lvu->var_70 + pU;
+            pU_carry = __CFADDL__(lsh_var_54, pU);
+            pU = lsh_var_54 + pU;
             colH = (lvu->var_54 >> 16) + pU_carry + (colS >> 8);
 
             colS = ((colH & 0xFF) << 8) + (colL & 0xFF);
@@ -425,6 +427,9 @@ void trig_render_md05(struct TrigLocals *lvu)
     struct PolyPoint *pp;
     ubyte *m;
     ubyte *f;
+    long lsh_var_54;
+    long lsh_var_60;
+    long lvr_var_54;
 
     m = vec_map;
     f = pixmap.fade_table;
@@ -438,9 +443,9 @@ void trig_render_md05(struct TrigLocals *lvu)
         factorC = __ROL4__(factorC, 16);
         factorA = __ROL4__(lvu->var_54, 16);
         factorB = ((ulong)lvu->var_60) >> 8;
-        lvu->var_70 = (factorC & 0xFFFF0000) | (factorB & 0xFFFF);
-        lvu->var_74 = (factorA & 0xFFFFFF00) | (factorC & 0xFF);
-        lvu->var_88 = (factorA & 0xFF);
+        lsh_var_54 = (factorC & 0xFFFF0000) | (factorB & 0xFFFF);
+        lsh_var_60 = (factorA & 0xFFFFFF00) | (factorC & 0xFF);
+        lvr_var_54 = (factorA & 0xFF);
     }
 
     for (; lvu->var_44; lvu->var_44--, pp++)
@@ -514,13 +519,13 @@ void trig_render_md05(struct TrigLocals *lvu)
             colM = (colM & 0xFF00) + (rfactB & 0xFF);
             colS = (((rfactA >> 8) & 0xFF) << 8) + m[colM];
 
-            rfactA_carry = __CFADDL__(rfactA, lvu->var_70);
-            rfactA = rfactA + lvu->var_70;
+            rfactA_carry = __CFADDL__(rfactA, lsh_var_54);
+            rfactA = rfactA + lsh_var_54;
 
-            rfactB_carry = __CFADDL__(rfactB + rfactA_carry, lvu->var_74);
-            rfactB = rfactB + lvu->var_74 + rfactA_carry;
+            rfactB_carry = __CFADDL__(rfactB + rfactA_carry, lsh_var_60);
+            rfactB = rfactB + lsh_var_60 + rfactA_carry;
 
-            colH = lvu->var_88 + rfactB_carry + (colM >> 8);
+            colH = lvr_var_54 + rfactB_carry + (colM >> 8);
             colL = colM;
             colM = ((colH & 0xFF) << 8) + (colL & 0xFF);
 
@@ -539,12 +544,14 @@ void trig_render_md06(struct TrigLocals *lvu)
     struct PolyPoint *pp;
     ubyte *m;
     ubyte *f;
+    long lsh_var_54;
+    long lsh_var_60;
 
     m = vec_map;
     f = pixmap.fade_table;
     pp = polyscans;
-    lvu->var_70 = lvu->var_54 << 16;
-    lvu->var_74 = lvu->var_60 << 16;
+    lsh_var_54 = lvu->var_54 << 16;
+    lsh_var_60 = lvu->var_60 << 16;
 
     for (; lvu->var_44; lvu->var_44--, pp++)
     {
@@ -625,17 +632,17 @@ void trig_render_md06(struct TrigLocals *lvu)
             fct_carry = __CFADDS__(lvu->var_48, factorA);
             factorA = (factorA & 0xFFFF0000) | ((lvu->var_48 + factorA) & 0xFFFF);
             colL = (lvu->var_48 >> 16) + fct_carry + colM;
-            fct_carry = __CFADDL__(lvu->var_70, factorA);
-            factorA += lvu->var_70;
+            fct_carry = __CFADDL__(lsh_var_54, factorA);
+            factorA += lsh_var_54;
             colH = (lvu->var_54 >> 16) + fct_carry + (colM >> 8);
 
             colM = ((colH & 0xFF) << 8) + (colL & 0xFF);
 
             factorB = (factorB & 0xFFFF0000) | (pY & 0xFFFF);
-            fct_carry = __CFADDL__(lvu->var_74, factorB);
-            factorB += lvu->var_74;
+            fct_carry = __CFADDL__(lsh_var_60, factorB);
+            factorB += lsh_var_60;
             pXa = (((pXa >> 8) + (lvu->var_60 >> 16) + fct_carry) << 8) | (pXa & 0xFF);
-            pY += lvu->var_74; // Very alarming. Bug, maybe?
+            pY += lsh_var_60; // Very alarming. Bug, maybe?
         }
     }
 }
@@ -645,11 +652,12 @@ void trig_render_md07(struct TrigLocals *lvu)
     struct PolyPoint *pp;
     ubyte *m;
     ubyte *f;
+    long lsh_var_54;
 
     m = vec_map;
     f = pixmap.fade_table;
     pp = polyscans;
-    lvu->var_70 = lvu->var_54 << 16;
+    lsh_var_54 = lvu->var_54 << 16;
 
     for (; lvu->var_44; lvu->var_44--, pp++)
     {
@@ -714,8 +722,8 @@ void trig_render_md07(struct TrigLocals *lvu)
             factorA_carry = __CFADDS__(lvu->var_48, factorA);
             factorA = (factorA & 0xFFFF0000) | ((lvu->var_48 + factorA) & 0xFFFF);
             colL = ((lvu->var_48 >> 16) & 0xFF) + factorA_carry + colM;
-            factorA_carry = __CFADDL__(lvu->var_70, factorA);
-            factorA += lvu->var_70;
+            factorA_carry = __CFADDL__(lsh_var_54, factorA);
+            factorA += lsh_var_54;
             *o = f[colS];
             colH = (colM >> 8) + ((lvu->var_54 >> 16) & 0xFF) + factorA_carry;
 
@@ -729,11 +737,12 @@ void trig_render_md08(struct TrigLocals *lvu)
     struct PolyPoint *pp;
     ubyte *m;
     ubyte *f;
+    long lsh_var_54;
 
     m = vec_map;
     f = pixmap.fade_table;
     pp = polyscans;
-    lvu->var_70 = lvu->var_54 << 16;
+    lsh_var_54 = lvu->var_54 << 16;
 
     for (; lvu->var_44; lvu->var_44--, pp++)
     {
@@ -800,8 +809,8 @@ void trig_render_md08(struct TrigLocals *lvu)
             colL = ((lvu->var_48 >> 16) & 0xFF) + factorA_carry + colM;
             if (colS & 0xFF)
                 *o = f[colS];
-            factorA_carry = __CFADDL__(lvu->var_70, factorA);
-            factorA += lvu->var_70;
+            factorA_carry = __CFADDL__(lsh_var_54, factorA);
+            factorA += lsh_var_54;
             colH = (colM >> 8) + ((lvu->var_54 >> 16) & 0xFF) + factorA_carry;
 
             colM = ((colH & 0xFF) << 8) + (colL & 0xFF);
@@ -814,11 +823,12 @@ void trig_render_md09(struct TrigLocals *lvu)
     struct PolyPoint *pp;
     ubyte *m;
     ubyte *f;
+    long lsh_var_54;
 
     m = vec_map;
     f = pixmap.fade_table;
     pp = polyscans;
-    lvu->var_70 = lvu->var_54 << 16;
+    lsh_var_54 = lvu->var_54 << 16;
 
     for (; lvu->var_44; lvu->var_44--, pp++)
     {
@@ -886,8 +896,8 @@ void trig_render_md09(struct TrigLocals *lvu)
                 colS = (colS & 0xFF00) | (*o);
                 *o = f[colS];
             }
-            factorA_carry = __CFADDL__(lvu->var_70, factorA);
-            factorA += lvu->var_70;
+            factorA_carry = __CFADDL__(lsh_var_54, factorA);
+            factorA += lsh_var_54;
             colH = (colM >> 8) + ((lvu->var_54 >> 16) & 0xFF) + factorA_carry;
 
             colM = ((colH & 0xFF) << 8) + (colL & 0xFF);
@@ -900,11 +910,12 @@ void trig_render_md10(struct TrigLocals *lvu)
     struct PolyPoint *pp;
     ubyte *m;
     ubyte *f;
+    long lsh_var_54;
 
     m = vec_map;
     f = pixmap.fade_table;
     pp = polyscans;
-    lvu->var_70 = lvu->var_54 << 16;
+    lsh_var_54 = lvu->var_54 << 16;
 
     for (; lvu->var_44; lvu->var_44--, pp++)
     {
@@ -973,8 +984,8 @@ void trig_render_md10(struct TrigLocals *lvu)
             factorA_carry = __CFADDS__(lvu->var_48, factorA);
             factorA = (factorA & 0xFFFF0000) + ((lvu->var_48 + factorA) & 0xFFFF);
             colL = ((lvu->var_48 >> 16) & 0xFF) + factorA_carry + colM;
-            factorA_carry = __CFADDL__(lvu->var_70, factorA);
-            factorA += lvu->var_70;
+            factorA_carry = __CFADDL__(lsh_var_54, factorA);
+            factorA += lsh_var_54;
             colH = (colM >> 8) + ((lvu->var_54 >> 16) & 0xFF) + factorA_carry;
 
             colM = ((colH & 0xFF) << 8) + (colL & 0xFF);
@@ -987,11 +998,12 @@ void trig_render_md12(struct TrigLocals *lvu)
     struct PolyPoint *pp;
     ubyte *m;
     ubyte *g;
+    long lsh_var_54;
 
     m = vec_map;
     g = pixmap.ghost_table;
     pp = polyscans;
-    lvu->var_70 = lvu->var_54 << 16;
+    lsh_var_54 = lvu->var_54 << 16;
 
     for (; lvu->var_44; lvu->var_44--, pp++)
     {
@@ -1056,8 +1068,8 @@ void trig_render_md12(struct TrigLocals *lvu)
             factorA_carry = __CFADDS__(lvu->var_48, factorA);
             factorA = (factorA & 0xFFFF0000) + ((lvu->var_48 + factorA) & 0xFFFF);
             colL = ((lvu->var_48 >> 16) & 0xFF) + factorA_carry + colM;
-            factorA_carry = __CFADDL__(lvu->var_70, factorA);
-            factorA += lvu->var_70;
+            factorA_carry = __CFADDL__(lsh_var_54, factorA);
+            factorA += lsh_var_54;
             *o = g[colS];
             colH = (colM >> 8) + ((lvu->var_54 >> 16) & 0xFF) + factorA_carry;
 
@@ -1071,11 +1083,12 @@ void trig_render_md13(struct TrigLocals *lvu)
     struct PolyPoint *pp;
     ubyte *m;
     ubyte *g;
+    long lsh_var_54;
 
     m = vec_map;
     g = pixmap.ghost_table;
     pp = polyscans;
-    lvu->var_70 = lvu->var_54 << 16;
+    lsh_var_54 = lvu->var_54 << 16;
 
     for (; lvu->var_44; lvu->var_44--, pp++)
     {
@@ -1139,8 +1152,8 @@ void trig_render_md13(struct TrigLocals *lvu)
             factorA_carry = __CFADDS__(lvu->var_48, factorA);
             factorA = (factorA & 0xFFFF0000) + ((lvu->var_48 + factorA) & 0xFFFF);
             colL = ((lvu->var_48 >> 16) & 0xFF) + factorA_carry + colM;
-            factorA_carry = __CFADDL__(lvu->var_70, factorA);
-            factorA += lvu->var_70;
+            factorA_carry = __CFADDL__(lsh_var_54, factorA);
+            factorA += lsh_var_54;
             *o = g[colS];
             colH = (colM >> 8) + ((lvu->var_54 >> 16) & 0xFF) + factorA_carry;
 
@@ -1414,11 +1427,12 @@ void trig_render_md18(struct TrigLocals *lvu)
     struct PolyPoint *pp;
     ubyte *m;
     ubyte *g;
+    long lsh_var_54;
 
     m = vec_map;
     g = pixmap.ghost_table;
     pp = polyscans;
-    lvu->var_70 = lvu->var_54 << 16;
+    lsh_var_54 = lvu->var_54 << 16;
 
     for (; lvu->var_44; lvu->var_44--, pp++)
     {
@@ -1484,8 +1498,8 @@ void trig_render_md18(struct TrigLocals *lvu)
             colL = *o;
             colS = ((colH & 0xFF) << 8) + (colL & 0xFF);
             colL = ((lvu->var_48 >> 16) & 0xFF) + factorA_carry + colM;
-            factorA_carry = __CFADDL__(lvu->var_70, factorA);
-            factorA += lvu->var_70;
+            factorA_carry = __CFADDL__(lsh_var_54, factorA);
+            factorA += lsh_var_54;
             *o = g[colS];
             colH = (colM >> 8) + ((lvu->var_54 >> 16) & 0xFF) + factorA_carry;
 
@@ -1499,11 +1513,12 @@ void trig_render_md19(struct TrigLocals *lvu)
     struct PolyPoint *pp;
     ubyte *m;
     ubyte *g;
+    long lsh_var_54;
 
     m = vec_map;
     g = pixmap.ghost_table;
     pp = polyscans;
-    lvu->var_70 = lvu->var_54 << 16;
+    lsh_var_54 = lvu->var_54 << 16;
 
     for (; lvu->var_44; lvu->var_44--, pp++)
     {
@@ -1566,8 +1581,8 @@ void trig_render_md19(struct TrigLocals *lvu)
             factorA = (factorA & 0xFFFF0000) + ((lvu->var_48 + factorA) & 0xFFFF);
             colS = ((*o) << 8) + m[colM];
             colL = ((lvu->var_48 >> 16) & 0xFF) + factorA_carry + colM;
-            factorA_carry = __CFADDL__(lvu->var_70, factorA);
-            factorA += lvu->var_70;
+            factorA_carry = __CFADDL__(lsh_var_54, factorA);
+            factorA += lsh_var_54;
             *o = g[colS];
             colH = (colM >> 8) + (lvu->var_54 >> 16) + factorA_carry;
 
@@ -1582,13 +1597,15 @@ void trig_render_md20(struct TrigLocals *lvu)
     ubyte *m;
     ubyte *g;
     ubyte *f;
+    long lsh_var_54;
+    long lsh_var_60;
 
     m = vec_map;
     g = pixmap.ghost_table;
     f = pixmap.fade_table;
     pp = polyscans;
-    lvu->var_70 = lvu->var_54 << 16;
-    lvu->var_74 = lvu->var_60 << 16;
+    lsh_var_54 = lvu->var_54 << 16;
+    lsh_var_60 = lvu->var_60 << 16;
 
     for (; lvu->var_44; lvu->var_44--, pp++)
     {
@@ -1613,7 +1630,6 @@ void trig_render_md20(struct TrigLocals *lvu)
                 continue;
             if (pYa > vec_window_width)
                 pYa = vec_window_width;
-            lvu->var_7C = pYa;
             pXMa = (ushort)-pXa;
             pXMb = pXMa;
             factorA = __ROL4__(pp->V + lvu->var_54 * pXMa, 16);
@@ -1642,13 +1658,12 @@ void trig_render_md20(struct TrigLocals *lvu)
             colH = factorA;
             factorA = (factorA & 0xFFFF0000) + (pp->U & 0xFFFF);
             colL = ((pp->U >> 16) & 0xFF);
-            lvu->var_7C = pYa;
             factorC = __ROL4__(pp->S, 16);
 
             colM = ((colH & 0xFF) << 8) + (colL & 0xFF);
         }
 
-        for (; lvu->var_7C > 0; lvu->var_7C--, o++)
+        for (; pYa > 0; pYa--, o++)
         {
             ushort colL, colH;
             ushort colS;
@@ -1658,12 +1673,12 @@ void trig_render_md20(struct TrigLocals *lvu)
             factorA = (factorA & 0xFFFF0000) + ((lvu->var_48 + factorA) & 0xFFFF);
             colS = ((factorC & 0xFF) << 8) + m[colM];
             colL = ((lvu->var_48 >> 16) & 0xFF) + factorA_carry + colM;
-            factorA_carry = __CFADDL__(lvu->var_70, factorA);
-            factorA += lvu->var_70;
+            factorA_carry = __CFADDL__(lsh_var_54, factorA);
+            factorA += lsh_var_54;
             colS = ((f[colS] & 0xFF) << 8) + *o;
             colH = (colM >> 8) + ((lvu->var_54 >> 16) & 0xFF) + factorA_carry;
-            factorA_carry = __CFADDL__(lvu->var_74, factorC);
-            factorC += lvu->var_74;
+            factorA_carry = __CFADDL__(lsh_var_60, factorC);
+            factorC += lsh_var_60;
             *o = g[colS];
             factorC = (factorC & 0xFFFFFF00) | (((lvu->var_60 >> 16) + factorA_carry + factorC) & 0xFF);
 
@@ -1678,13 +1693,15 @@ void trig_render_md21(struct TrigLocals *lvu)
     ubyte *m;
     ubyte *g;
     ubyte *f;
+    long lsh_var_54;
+    long lsh_var_60;
 
     m = vec_map;
     g = pixmap.ghost_table;
     f = pixmap.fade_table;
     pp = polyscans;
-    lvu->var_70 = lvu->var_54 << 16;
-    lvu->var_74 = lvu->var_60 << 16;
+    lsh_var_54 = lvu->var_54 << 16;
+    lsh_var_60 = lvu->var_60 << 16;
 
     for (; lvu->var_44; lvu->var_44--, pp++)
     {
@@ -1708,7 +1725,6 @@ void trig_render_md21(struct TrigLocals *lvu)
                 continue;
             if (pYa > vec_window_width)
               pYa = vec_window_width;
-            lvu->var_7C = pYa;
             pXMa = (ushort)-pXa;
             pXMb = pXMa;
             factorA = __ROL4__(pp->V + lvu->var_54 * pXMa, 16);
@@ -1738,13 +1754,12 @@ void trig_render_md21(struct TrigLocals *lvu)
             colH = factorA;
             factorA = (factorA & 0xFFFF0000) + (pp->U & 0xFFFF);
             colL = ((pp->U >> 16) & 0xFF);
-            lvu->var_7C = pYa;
             factorC = __ROL4__(pp->S, 16);
 
             colM = ((colH & 0xFF) << 8) + (colL & 0xFF);
         }
 
-        for (; lvu->var_7C > 0; lvu->var_7C--, o++)
+        for (; pYa > 0; pYa--, o++)
         {
             ushort colL, colH;
             ushort colS;
@@ -1755,11 +1770,11 @@ void trig_render_md21(struct TrigLocals *lvu)
             colL = ((lvu->var_48 >> 16) & 0xFF) + factorA_carry + colM;
             colS = ((factorC & 0xFF) << 8) + (m[colM] & 0xFF);
             colS = (((*o) & 0xFF) << 8) + (f[colS] & 0xFF);
-            factorA_carry = __CFADDL__(lvu->var_70, factorA);
-            factorA += lvu->var_70;
+            factorA_carry = __CFADDL__(lsh_var_54, factorA);
+            factorA += lsh_var_54;
             colH = (colM >> 8) + ((lvu->var_54 >> 16) & 0xFF) + factorA_carry;
-            factorA_carry = __CFADDL__(lvu->var_74, factorC);
-            factorC += lvu->var_74;
+            factorA_carry = __CFADDL__(lsh_var_60, factorC);
+            factorC += lsh_var_60;
             *o = g[colS];
             factorC = (factorC & 0xFFFFFF00) | (((lvu->var_60 >> 16) + factorA_carry + factorC) & 0xFF);
 
@@ -1773,11 +1788,12 @@ void trig_render_md22(struct TrigLocals *lvu)
     struct PolyPoint *pp;
     ubyte *m;
     ubyte *g;
+    long lsh_var_54;
 
     m = vec_map;
     g = pixmap.ghost_table;
     pp = polyscans;
-    lvu->var_70 = lvu->var_54 << 16;
+    lsh_var_54 = lvu->var_54 << 16;
 
     for (; lvu->var_44; lvu->var_44--, pp++)
     {
@@ -1845,8 +1861,8 @@ void trig_render_md22(struct TrigLocals *lvu)
             factorA_carry = __CFADDS__(lvu->var_48, factorA);
             factorA = (factorA & 0xFFFF0000) + ((lvu->var_48 + factorA) & 0xFFFF);
             colL = ((lvu->var_48 >> 16) & 0xFF) + factorA_carry + colM;
-            factorA_carry = __CFADDL__(lvu->var_70, factorA);
-            factorA += lvu->var_70;
+            factorA_carry = __CFADDL__(lsh_var_54, factorA);
+            factorA += lsh_var_54;
             colH = (colM >> 8) + ((lvu->var_54 >> 16) & 0xFF) + factorA_carry;
 
             colM = ((colH & 0xFF) << 8) + (colL & 0xFF);
@@ -1859,11 +1875,12 @@ void trig_render_md23(struct TrigLocals *lvu)
     struct PolyPoint *pp;
     ubyte *m;
     ubyte *g;
+    long lsh_var_54;
 
     m = vec_map;
     g = pixmap.ghost_table;
     pp = polyscans;
-    lvu->var_70 = lvu->var_54 << 16;
+    lsh_var_54 = lvu->var_54 << 16;
 
     for (; lvu->var_44; lvu->var_44--, pp++)
     {
@@ -1931,8 +1948,8 @@ void trig_render_md23(struct TrigLocals *lvu)
             factorA_carry = __CFADDS__(lvu->var_48, factorA);
             factorA = (factorA & 0xFFFF0000) + ((lvu->var_48 + factorA) & 0xFFFF);
             colL = ((lvu->var_48 >> 16) & 0xFF) + factorA_carry + colM;
-            factorA_carry = __CFADDL__(lvu->var_70, factorA);
-            factorA += lvu->var_70;
+            factorA_carry = __CFADDL__(lsh_var_54, factorA);
+            factorA += lsh_var_54;
             colH = (colM >> 8) + ((lvu->var_54 >> 16) & 0xFF) + factorA_carry;
 
             colM = ((colH & 0xFF) << 8) + (colL & 0xFF);
@@ -1946,13 +1963,15 @@ void trig_render_md24(struct TrigLocals *lvu)
     ubyte *m;
     ubyte *g;
     ubyte *f;
+    long lsh_var_54;
+    long lsh_var_60;
 
     m = vec_map;
     g = pixmap.ghost_table;
     f = pixmap.fade_table;
     pp = polyscans;
-    lvu->var_70 = lvu->var_54 << 16;
-    lvu->var_74 = lvu->var_60 << 16;
+    lsh_var_54 = lvu->var_54 << 16;
+    lsh_var_60 = lvu->var_60 << 16;
 
     for (; lvu->var_44; lvu->var_44--, pp++)
     {
@@ -1978,7 +1997,6 @@ void trig_render_md24(struct TrigLocals *lvu)
                 continue;
             if (pYa > vec_window_width)
                 pYa = vec_window_width;
-            lvu->var_7C = pYa;
             pXMa = (ushort)-pXa;
             pXMb = pXMa;
             factorA = __ROL4__(pp->V + lvu->var_54 * pXMa, 16);
@@ -2008,13 +2026,12 @@ void trig_render_md24(struct TrigLocals *lvu)
             colH = factorA;
             factorA = (factorA & 0xFFFF0000) + (pp->U & 0xFFFF);
             colL = ((pp->U >> 16) & 0xFF);
-            lvu->var_7C = pYa;
             factorC = __ROL4__(pp->S, 16);
 
             colM = ((colH & 0xFF) << 8) + (colL & 0xFF);
         }
 
-        for (; lvu->var_7C > 0; lvu->var_7C--, o++)
+        for (; pYa > 0; pYa--, o++)
         {
             ushort colL, colH;
             ubyte factorA_carry;
@@ -2029,11 +2046,11 @@ void trig_render_md24(struct TrigLocals *lvu)
             factorA_carry = __CFADDS__(lvu->var_48, factorA);
             factorA = (factorA & 0xFFFF0000) + ((lvu->var_48 + factorA) & 0xFFFF);
             colL = ((lvu->var_48 >> 16) & 0xFF) + factorA_carry + colM;
-            factorA_carry = __CFADDL__(lvu->var_70, factorA);
-            factorA += lvu->var_70;
+            factorA_carry = __CFADDL__(lsh_var_54, factorA);
+            factorA += lsh_var_54;
             colH = (colM >> 8) + ((lvu->var_54 >> 16) & 0xFF) + factorA_carry;
-            factorA_carry = __CFADDL__(lvu->var_74, factorC);
-            factorC += lvu->var_74;
+            factorA_carry = __CFADDL__(lsh_var_60, factorC);
+            factorC += lsh_var_60;
             factorC = (factorC & 0xFFFFFF00) + (((lvu->var_60 >> 16) + factorA_carry + factorC) & 0xFF);
 
             colM = ((colH & 0xFF) << 8) + (colL & 0xFF);
@@ -2047,13 +2064,15 @@ void trig_render_md25(struct TrigLocals *lvu)
     ubyte *m;
     ubyte *g;
     ubyte *f;
+    long lsh_var_54;
+    long lsh_var_60;
 
     m = vec_map;
     g = pixmap.ghost_table;
     f = pixmap.fade_table;
     pp = polyscans;
-    lvu->var_70 = lvu->var_54 << 16;
-    lvu->var_74 = lvu->var_60 << 16;
+    lsh_var_54 = lvu->var_54 << 16;
+    lsh_var_60 = lvu->var_60 << 16;
 
     for (; lvu->var_44; lvu->var_44--, pp++)
     {
@@ -2079,7 +2098,6 @@ void trig_render_md25(struct TrigLocals *lvu)
                 continue;
             if (pYa > vec_window_width)
                 pYa = vec_window_width;
-            lvu->var_7C = pYa;
             pXMa = (ushort)-pXa;
             pXMb = pXMa;
             factorA = __ROL4__(pp->V + lvu->var_54 * pXMa, 16);
@@ -2109,13 +2127,12 @@ void trig_render_md25(struct TrigLocals *lvu)
             colH = factorA;
             factorA = (factorA & 0xFFFF0000) + (pp->U & 0xFFFF);
             colL = ((pp->U >> 16) & 0xFF);
-            lvu->var_7C = pYa;
             factorC = __ROL4__(pp->S, 16);
 
             colM = ((colH & 0xFF) << 8) + (colL & 0xFF);
         }
 
-        for (; lvu->var_7C > 0; lvu->var_7C--, o++)
+        for (; pYa > 0; pYa--, o++)
         {
             ushort colL, colH;
             ubyte factorA_carry;
@@ -2130,11 +2147,11 @@ void trig_render_md25(struct TrigLocals *lvu)
             factorA_carry = __CFADDS__(lvu->var_48, factorA);
             factorA = (factorA & 0xFFFF0000) + ((lvu->var_48 + factorA) & 0xFFFF);
             colL = ((lvu->var_48 >> 16) & 0xFF) + factorA_carry + colM;
-            factorA_carry = __CFADDL__(lvu->var_70, factorA);
-            factorA += lvu->var_70;
+            factorA_carry = __CFADDL__(lsh_var_54, factorA);
+            factorA += lsh_var_54;
             colH = (colM >> 8) + ((lvu->var_54 >> 16) & 0xFF) + factorA_carry;
-            factorA_carry = __CFADDL__(lvu->var_74, factorC);
-            factorC += lvu->var_74;
+            factorA_carry = __CFADDL__(lsh_var_60, factorC);
+            factorC += lsh_var_60;
             factorC = (factorC & 0xFFFFFF00) | (((lvu->var_60 >> 16) + factorA_carry + factorC) & 0xFF);
 
             colM = ((colH & 0xFF) << 8) + (colL & 0xFF);
@@ -2148,6 +2165,9 @@ void trig_render_md26(struct TrigLocals *lvu)
     ubyte *m;
     ubyte *g;
     ubyte *f;
+    long lsh_var_54;
+    long lsh_var_60;
+    long lvr_var_54;
 
     m = vec_map;
     g = pixmap.ghost_table;
@@ -2165,9 +2185,9 @@ void trig_render_md26(struct TrigLocals *lvu)
         v2 = (v2 & 0xFFFFFF00) + (v1 & 0xFF);
         v1 = (v1 & 0xFFFF0000) + (((ulong)lvu->var_60 >> 8) & 0xFFFF);
         v2 = (v2 & 0xFFFF0000) + (v2 & 0xFF);
-        lvu->var_70 = v1;
-        lvu->var_74 = v2;
-        lvu->var_88 = v3;
+        lsh_var_54 = v1;
+        lsh_var_60 = v2;
+        lvr_var_54 = v3;
     }
     for (; lvu->var_44; lvu->var_44--, pp++)
     {
@@ -2229,11 +2249,11 @@ void trig_render_md26(struct TrigLocals *lvu)
 
             colM = (colM & 0xFF00) | (factorB & 0xFF);
             colS = (factorA & 0xFF00) | m[colM];
-            factorA_carry = __CFADDL__(lvu->var_70, factorA);
-            factorA = lvu->var_70 + factorA;
-            factorB_carry = __CFADDL__(lvu->var_74, factorB + factorA_carry);
-            factorB = lvu->var_74 + factorB + factorA_carry;
-            colM = (colM & 0xFF) + ((((colM >> 8) + lvu->var_88 + factorB_carry) & 0xFF) << 8);
+            factorA_carry = __CFADDL__(lsh_var_54, factorA);
+            factorA = lsh_var_54 + factorA;
+            factorB_carry = __CFADDL__(lsh_var_60, factorB + factorA_carry);
+            factorB = lsh_var_60 + factorB + factorA_carry;
+            colM = (colM & 0xFF) + ((((colM >> 8) + lvr_var_54 + factorB_carry) & 0xFF) << 8);
 
             if ((colS & 0xFF) <= 0xCu) {
                 colS = ((*o) << 8) | f[colS];
