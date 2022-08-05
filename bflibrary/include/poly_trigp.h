@@ -40,44 +40,46 @@ enum RenderingStartType {
  * Only a part of it is probably required - to be simplified or removed
  * when everything is remade in C.
  */
-struct TrigLocals {
-    ubyte *var_24; // 0x00 trig_??_start() + trig_render_md??()
-    long var_28; // 0x04 trig_??_start()
-    long var_2C; // 0x08 trig_??_start()
-    long var_30; // 0x0C trig_??_start()
-    long var_34; // 0x10 trig_??_start()
-    long var_38; // 0x14 trig_??_start()
-    long var_3C; // 0x18 trig_??_start()
-    long var_40; // 0x1C trig_??_start()
-    long var_44; // 0x20 trig_??_start() + trig_render_md??()
-    long var_48; // 0x24 trig_??_start() + trig_render_md??()
-    long var_4C; // 0x28 trig_??_start()
-    long var_50; // 0x2C trig_??_start()
-    long var_54; // 0x30 trig_??_start() + trig_render_md??()
-    long var_58; // 0x34 trig_??_start()
-    long var_5C; // 0x38 trig_??_start()
-    long var_60; // 0x3C trig_??_start() + trig_render_md??()
-    long var_64; // 0x40 trig_??_start()
-    long var_68; // 0x44 trig_??_start()
-    long var_6C; // 0x48 trig_??_start()
-    long var_78; // 0x54 trig_??_start()
-    long var_80; // 0x5C trig_??_start()
-    ubyte var_8A; // 0x66 trig_??_start()
-    ubyte var_8B; // 0x67 trig_??_start()
-    ubyte var_8C; // 0x68 trig_??_start()
+struct TrigLocalPrep {
+    long var_28;
+    long var_2C;
+    long var_30;
+    long var_34;
+    long var_38;
+    long var_3C;
+    long var_40;
+    long var_4C;
+    long var_50;
+    long var_58;
+    long var_5C;
+    long var_64;
+    long var_68;
+    long var_6C;
+    long var_78;
+    ubyte var_8A;
+    ubyte var_8B;
+    ubyte var_8C;
+};
+
+struct TrigLocalRend {
+    ubyte *var_24;
+    long var_44;
+    long var_48;
+    long var_54;
+    long var_60;
 };
 
 #pragma pack()
 
 ubyte trig_reorder_input_points(struct PolyPoint **opt_a,
   struct PolyPoint **opt_b, struct PolyPoint **opt_c);
-int trig_ll_start(struct TrigLocals *lv, const struct PolyPoint *opt_a,
+int trig_ll_start(struct TrigLocalPrep *tlp, struct TrigLocalRend *tlr, const struct PolyPoint *opt_a,
   const struct PolyPoint *opt_b, const struct PolyPoint *opt_c);
-int trig_rl_start(struct TrigLocals *lv, const struct PolyPoint *opt_a,
+int trig_rl_start(struct TrigLocalPrep *tlp, struct TrigLocalRend *tlr, const struct PolyPoint *opt_a,
   const struct PolyPoint *opt_b, const struct PolyPoint *opt_c);
-int trig_fb_start(struct TrigLocals *lv, const struct PolyPoint *opt_a,
+int trig_fb_start(struct TrigLocalPrep *tlp, struct TrigLocalRend *tlr, const struct PolyPoint *opt_a,
   const struct PolyPoint *opt_b, const struct PolyPoint *opt_c);
-int trig_ft_start(struct TrigLocals *lv, const struct PolyPoint *opt_a,
+int trig_ft_start(struct TrigLocalPrep *tlp, struct TrigLocalRend *tlr, const struct PolyPoint *opt_a,
   const struct PolyPoint *opt_b, const struct PolyPoint *opt_c);
 
 
