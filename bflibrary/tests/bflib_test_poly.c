@@ -148,12 +148,11 @@ TbBool test_trig(void)
     TbPixel *ref_buffer;
     ulong picno;
 
-#if 0
     if (LbErrorLogSetup(NULL, "tst_trig.log", Lb_ERROR_LOG_NEW) != Lb_SUCCESS) {
         LOGERR("execution log setup failed");
         return false;
     }
-#endif
+
     if (MockBaseInitialise() != Lb_SUCCESS) {
         LOGERR("bullfrog Library initialization failed");
         return false;
