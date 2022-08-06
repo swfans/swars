@@ -216,7 +216,7 @@ GLOBAL_FUNC (ASM_draw_gpoly_)
 
 
 /*----------------------------------------------------------------*/
-func_1285c7:
+gpoly_sta_md27:
 /*----------------------------------------------------------------*/
 		mov    0x50(%esp),%esi
 		mov    0x7c(%esp),%edi
@@ -553,11 +553,11 @@ func_1285c7:
 		mov    %ecx,0x134(%esp)
 		mov    %edx,0x138(%esp)
 	jump_128a3c:
-		jmp    func_12998f
+		jmp    gpoly_sta_cont
 
 
 /*----------------------------------------------------------------*/
-func_128a41:
+gpoly_sta_md28:
 /*----------------------------------------------------------------*/
 		mov    0x50(%esp),%esi
 		mov    0x7c(%esp),%edi
@@ -979,11 +979,11 @@ func_128a41:
 		mov    0x138(%esp),%dl
 		mov    %edx,0x138(%esp)
 	jump_128fd5:
-		jmp    func_12998f
+		jmp    gpoly_sta_cont
 
 
 /*----------------------------------------------------------------*/
-func_128fda:
+gpoly_sta_md04:
 /*----------------------------------------------------------------*/
 		mov    0x50(%esp),%esi
 		mov    0x7c(%esp),%edi
@@ -1121,11 +1121,11 @@ func_128fda:
 		mov    0x58(%esp),%eax
 		shl    $0x10,%eax
 		mov    %eax,0x164(%esp)
-		jmp    func_12998f
+		jmp    gpoly_sta_cont
 
 
 /*----------------------------------------------------------------*/
-func_129165:
+gpoly_sta_md02:
 /*----------------------------------------------------------------*/
 		mov    0x50(%esp),%esi
 		mov    0x7c(%esp),%edi
@@ -1404,11 +1404,11 @@ func_129165:
 		mov    %ecx,0x134(%esp)
 		mov    %edx,0x138(%esp)
 	jump_1294ef:
-		jmp    func_12998f
+		jmp    gpoly_sta_cont
 
 
 /*----------------------------------------------------------------*/
-func_1294f4:
+gpoly_sta_md05:
 /*----------------------------------------------------------------*/
 		mov    0x50(%esp),%esi
 		mov    0x7c(%esp),%edi
@@ -1725,7 +1725,7 @@ func_1294f4:
 		mov    %edx,0x12c(%esp)
 		mov    0x7c(%esp),%esi
 		or     %esi,%esi
-		js     func_12998f
+		js     gpoly_sta_cont
 		mov    0x18(%esp),%eax
 		mov    %eax,%edx
 		shl    $0x10,%eax
@@ -1772,7 +1772,7 @@ func_1294f4:
 
 
 /*----------------------------------------------------------------*/
-func_12998f:
+gpoly_sta_cont:
 /*----------------------------------------------------------------*/
 		xor    %ecx,%ecx
 		mov    EXPORT_SYMBOL(vec_mode),%cl
@@ -1780,7 +1780,7 @@ func_12998f:
 
 
 /*----------------------------------------------------------------*/
-func_1299b6:
+gpoly_stb_md05:
 /*----------------------------------------------------------------*/
 		mov    0x170(%esp),%eax
 		or     %eax,%eax
@@ -2613,7 +2613,7 @@ func_12a1ad:
 
 
 /*----------------------------------------------------------------*/
-func_12a618:
+gpoly_stb_md27:
 /*----------------------------------------------------------------*/
 		mov    0x170(%esp),%eax
 		or     %eax,%eax
@@ -3369,7 +3369,7 @@ vtable_12b0c0:
 		.long   ASM_draw_gpoly_end
 		.long   ASM_draw_gpoly_end
 		.long   ASM_draw_gpoly_end
-		.long   func_1299b6
+		.long   gpoly_stb_md05
 		.long   ASM_draw_gpoly_end
 		.long   ASM_draw_gpoly_end
 		.long   ASM_draw_gpoly_end
@@ -3391,7 +3391,7 @@ vtable_12b0c0:
 		.long   ASM_draw_gpoly_end
 		.long   ASM_draw_gpoly_end
 		.long   ASM_draw_gpoly_end
-		.long   func_12a618
+		.long   gpoly_stb_md27
 		.long   ASM_draw_gpoly_end
 		.long   ASM_draw_gpoly_end
 		.long   ASM_draw_gpoly_end
@@ -3409,49 +3409,49 @@ vtable_12b0c0:
 		.long   ASM_draw_gpoly_end
 
 vtable_12b220:
-		.long   func_12998f
-		.long   func_12998f
-		.long   func_129165
-		.long   func_129165
-		.long   func_128fda
-		.long   func_1294f4
-		.long   func_1294f4
-		.long   func_12998f
-		.long   func_12998f
-		.long   func_12998f
-		.long   func_12998f
-		.long   func_12998f
-		.long   func_129165
-		.long   func_129165
-		.long   func_12998f
-		.long   func_12998f
-		.long   func_128fda
-		.long   func_128fda
-		.long   func_129165
-		.long   func_129165
-		.long   func_1294f4
-		.long   func_1294f4
-		.long   func_129165
-		.long   func_129165
-		.long   func_1294f4
-		.long   func_1294f4
-		.long   func_12998f
-		.long   func_1285c7
-		.long   func_128a41
-		.long   func_1285c7
-		.long   func_128a41
-		.long   func_1285c7
-		.long   func_1285c7
-		.long   func_1285c7
-		.long   func_1285c7
-		.long   func_128a41
-		.long   func_128a41
-		.long   func_1285c7
-		.long   func_1285c7
-		.long   func_128a41
-		.long   func_128a41
-		.long   func_12998f
-		.long   func_12998f
+		.long   gpoly_sta_cont
+		.long   gpoly_sta_cont
+		.long   gpoly_sta_md02
+		.long   gpoly_sta_md02
+		.long   gpoly_sta_md04
+		.long   gpoly_sta_md05
+		.long   gpoly_sta_md05
+		.long   gpoly_sta_cont
+		.long   gpoly_sta_cont
+		.long   gpoly_sta_cont
+		.long   gpoly_sta_cont
+		.long   gpoly_sta_cont
+		.long   gpoly_sta_md02
+		.long   gpoly_sta_md02
+		.long   gpoly_sta_cont
+		.long   gpoly_sta_cont
+		.long   gpoly_sta_md04
+		.long   gpoly_sta_md04
+		.long   gpoly_sta_md02
+		.long   gpoly_sta_md02
+		.long   gpoly_sta_md05
+		.long   gpoly_sta_md05
+		.long   gpoly_sta_md02
+		.long   gpoly_sta_md02
+		.long   gpoly_sta_md05
+		.long   gpoly_sta_md05
+		.long   gpoly_sta_cont
+		.long   gpoly_sta_md27
+		.long   gpoly_sta_md28
+		.long   gpoly_sta_md27
+		.long   gpoly_sta_md28
+		.long   gpoly_sta_md27
+		.long   gpoly_sta_md27
+		.long   gpoly_sta_md27
+		.long   gpoly_sta_md27
+		.long   gpoly_sta_md28
+		.long   gpoly_sta_md28
+		.long   gpoly_sta_md27
+		.long   gpoly_sta_md27
+		.long   gpoly_sta_md28
+		.long   gpoly_sta_md28
+		.long   gpoly_sta_cont
+		.long   gpoly_sta_cont
 
 vtable_12b2d0:
 		.long   func_129ad7
