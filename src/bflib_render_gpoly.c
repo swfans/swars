@@ -334,9 +334,18 @@ void gpoly_enable_pentium_pro(TbBool state)
 
 void draw_gpoly(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint *point_c)
 {
-    asm volatile (
-      "call ASM_draw_gpoly_\n"
-        : : "a" (point_a), "d" (point_b), "b" (point_c));
+    switch (vec_mode)
+    {
+    case 5:
+    case 27:
+        asm volatile (
+          "call ASM_draw_gpoly_\n"
+            : : "a" (point_a), "d" (point_b), "b" (point_c));
+      break;
+    default:
+      trig(point_a, point_b, point_c);
+      break;
+    }
 }
 
 /******************************************************************************/
