@@ -110,7 +110,7 @@ ASM_draw_gpoly_spec:
 	jump_12840f:
 		mov    0x4(%eax),%ecx
 		cmp    0x4(%ebx),%ecx
-		je     jump_12d820
+		je     ASM_draw_gpoly_end
 		mov    (%eax),%ecx
 		mov    0x4(%eax),%ebp
 		mov    %ecx,0x38(%esp)
@@ -1801,39 +1801,8 @@ func_12998f:
 
 
 /*----------------------------------------------------------------*/
-func_12999e:
-/*----------------------------------------------------------------*/
-		add    $0x190,%esp
-		popa
-		ret
-
-
-/*----------------------------------------------------------------*/
-func_1299a6:
-/*----------------------------------------------------------------*/
-		add    $0x190,%esp
-		popa
-		ret
-
-
-/*----------------------------------------------------------------*/
-func_1299ae:
-/*----------------------------------------------------------------*/
-		add    $0x190,%esp
-		popa
-		ret
-
-
-/*----------------------------------------------------------------*/
 func_1299b6:
 /*----------------------------------------------------------------*/
-		cs
-		mov    %eax,%eax
-		cs
-		mov    %eax,%eax
-		cs
-		mov    %eax,%eax
-		nop
 		mov    0x170(%esp),%eax
 		or     %eax,%eax
 		jne    jump_129f20
@@ -1873,7 +1842,7 @@ func_1299b6:
 		add    EXPORT_SYMBOL(vec_screen),%edi
 		mov    0x34(%esp),%eax
 		cmp    EXPORT_SYMBOL(vec_window_height),%eax
-		jg     jump_129f10
+		jg     ASM_draw_gpoly_end
 		mov    0x4c(%esp),%eax
 		cmp    EXPORT_SYMBOL(vec_window_height),%eax
 		jle    jump_129a9d
@@ -2166,7 +2135,7 @@ func_129c5c:
 		nop
 	jump_129de8:
 		decl   0x30(%esp)
-		je     jump_129f10
+		je     ASM_draw_gpoly_end
 		mov    %eax,0xb4(%esp)
 		mov    0x7c(%esp),%eax
 		or     %eax,%eax
@@ -2195,7 +2164,7 @@ func_129c5c:
 		mov    0x50(%esp),%eax
 		mov    %eax,0x13c(%esp)
 		mov    0x54(%esp),%eax
-		jle    jump_129f10
+		jle    ASM_draw_gpoly_end
 		mov    0x4c(%esp),%esi
 		or     %esi,%esi
 		js     jump_129d60
@@ -2213,17 +2182,13 @@ func_129c5c:
 		sub    0x4c(%esp),%eax
 		mov    %eax,0xf0(%esp)
 		mov    0xb4(%esp),%eax
-		jle    jump_129f10
+		jle    ASM_draw_gpoly_end
 		mov    %esi,0x13c(%esp)
 		mov    0x4c(%esp),%esi
 		or     %esi,%esi
 		js     jump_129d60
 		mov    0x13c(%esp),%esi
 		jmp    jump_129cf6
-	jump_129f10:
-		add    $0x190,%esp
-		popa
-		ret
 	jump_129f20:
 		mov    EXPORT_SYMBOL(vec_screen_width),%ecx
 		mov    %ecx,0xac(%esp)
@@ -2261,7 +2226,7 @@ func_129c5c:
 		add    EXPORT_SYMBOL(vec_screen),%edi
 		mov    0x34(%esp),%eax
 		cmp    EXPORT_SYMBOL(vec_window_height),%eax
-		jg     jump_12a590
+		jg     ASM_draw_gpoly_end
 		mov    0x4c(%esp),%eax
 		cmp    EXPORT_SYMBOL(vec_window_height),%eax
 		jle    jump_129fee
@@ -2612,7 +2577,7 @@ func_12a1ad:
 		nop
 	jump_12a468:
 		decl   0x30(%esp)
-		je     jump_12a590
+		je     ASM_draw_gpoly_end
 		mov    %eax,0xb4(%esp)
 		mov    0x7c(%esp),%eax
 		or     %eax,%eax
@@ -2641,7 +2606,7 @@ func_12a1ad:
 		mov    0x50(%esp),%eax
 		mov    %eax,0x13c(%esp)
 		mov    0x54(%esp),%eax
-		jle    jump_12a590
+		jle    ASM_draw_gpoly_end
 		mov    0x4c(%esp),%esi
 		or     %esi,%esi
 		js     jump_12a3e0
@@ -2659,155 +2624,18 @@ func_12a1ad:
 		sub    0x4c(%esp),%eax
 		mov    %eax,0xf0(%esp)
 		mov    0xb4(%esp),%eax
-		jle    jump_12a590
+		jle    ASM_draw_gpoly_end
 		mov    %esi,0x13c(%esp)
 		mov    0x4c(%esp),%esi
 		or     %esi,%esi
 		js     jump_12a3e0
 		mov    0x13c(%esp),%esi
 		jmp    jump_12a266
-	jump_12a590:
-		add    $0x190,%esp
-		popa
-		ret
-
-
-/*----------------------------------------------------------------*/
-func_12a598:
-/*----------------------------------------------------------------*/
-		add    $0x190,%esp
-		popa
-		ret
-
-
-/*----------------------------------------------------------------*/
-func_12a5a0:
-/*----------------------------------------------------------------*/
-		add    $0x190,%esp
-		popa
-		ret
-
-
-/*----------------------------------------------------------------*/
-func_12a5a8:
-/*----------------------------------------------------------------*/
-		add    $0x190,%esp
-		popa
-		ret
-
-
-/*----------------------------------------------------------------*/
-func_12a5b0:
-/*----------------------------------------------------------------*/
-		add    $0x190,%esp
-		popa
-		ret
-
-
-/*----------------------------------------------------------------*/
-func_12a5b8:
-/*----------------------------------------------------------------*/
-		add    $0x190,%esp
-		popa
-		ret
-
-
-/*----------------------------------------------------------------*/
-func_12a5c0:
-/*----------------------------------------------------------------*/
-		add    $0x190,%esp
-		popa
-		ret
-
-
-/*----------------------------------------------------------------*/
-func_12a5c8:
-/*----------------------------------------------------------------*/
-		add    $0x190,%esp
-		popa
-		ret
-
-
-/*----------------------------------------------------------------*/
-func_12a5d0:
-/*----------------------------------------------------------------*/
-		add    $0x190,%esp
-		popa
-		ret
-
-
-/*----------------------------------------------------------------*/
-func_12a5d8:
-/*----------------------------------------------------------------*/
-		add    $0x190,%esp
-		popa
-		ret
-
-
-/*----------------------------------------------------------------*/
-func_12a5e0:
-/*----------------------------------------------------------------*/
-		add    $0x190,%esp
-		popa
-		ret
-
-
-/*----------------------------------------------------------------*/
-func_12a5e8:
-/*----------------------------------------------------------------*/
-		add    $0x190,%esp
-		popa
-		ret
-
-
-/*----------------------------------------------------------------*/
-func_12a5f0:
-/*----------------------------------------------------------------*/
-		add    $0x190,%esp
-		popa
-		ret
-
-
-/*----------------------------------------------------------------*/
-func_12a5f8:
-/*----------------------------------------------------------------*/
-		add    $0x190,%esp
-		popa
-		ret
-
-
-/*----------------------------------------------------------------*/
-func_12a600:
-/*----------------------------------------------------------------*/
-		add    $0x190,%esp
-		popa
-		ret
-
-
-/*----------------------------------------------------------------*/
-func_12a608:
-/*----------------------------------------------------------------*/
-		add    $0x190,%esp
-		popa
-		ret
-
-
-/*----------------------------------------------------------------*/
-func_12a610:
-/*----------------------------------------------------------------*/
-		add    $0x190,%esp
-		popa
-		ret
 
 
 /*----------------------------------------------------------------*/
 func_12a618:
 /*----------------------------------------------------------------*/
-		cs
-		mov    %eax,%eax
-		cs
-		mov    %eax,%eax
-		mov    %eax,%eax
 		mov    0x170(%esp),%eax
 		or     %eax,%eax
 		jne    jump_12ab00
@@ -2845,7 +2673,7 @@ func_12a618:
 		add    EXPORT_SYMBOL(vec_screen),%edi
 		mov    0x34(%esp),%eax
 		cmp    EXPORT_SYMBOL(vec_window_height),%eax
-		jg     jump_12aaf0
+		jg     ASM_draw_gpoly_end
 		mov    0x4c(%esp),%eax
 		cmp    EXPORT_SYMBOL(vec_window_height),%eax
 		jle    jump_12a6f2
@@ -3117,7 +2945,7 @@ func_12a839:
 		nop
 	jump_12a9d8:
 		decl   0x30(%esp)
-		je     jump_12aaf0
+		je     ASM_draw_gpoly_end
 		mov    %eax,0xb4(%esp)
 		mov    0x7c(%esp),%eax
 		or     %eax,%eax
@@ -3144,7 +2972,7 @@ func_12a839:
 		mov    0x50(%esp),%eax
 		mov    %eax,0x13c(%esp)
 		mov    0x54(%esp),%eax
-		jle    jump_12aaf0
+		jle    ASM_draw_gpoly_end
 		mov    0x4c(%esp),%esi
 		or     %esi,%esi
 		js     jump_12a980
@@ -3162,17 +2990,13 @@ func_12a839:
 		sub    0x4c(%esp),%eax
 		mov    %eax,0xf0(%esp)
 		mov    0xb4(%esp),%eax
-		jle    jump_12aaf0
+		jle    ASM_draw_gpoly_end
 		mov    %esi,0x13c(%esp)
 		mov    0x4c(%esp),%esi
 		or     %esi,%esi
 		js     jump_12a980
 		mov    0x13c(%esp),%esi
 		jmp    jump_12a8c4
-	jump_12aaf0:
-		add    $0x190,%esp
-		popa
-		ret
 	jump_12ab00:
 		mov    EXPORT_SYMBOL(vec_screen_width),%ecx
 		mov    %ecx,0xac(%esp)
@@ -3208,7 +3032,7 @@ func_12a839:
 		add    EXPORT_SYMBOL(vec_screen),%edi
 		mov    0x34(%esp),%eax
 		cmp    EXPORT_SYMBOL(vec_window_height),%eax
-		jg     jump_12b040
+		jg     ASM_draw_gpoly_end
 		mov    0x4c(%esp),%eax
 		cmp    EXPORT_SYMBOL(vec_window_height),%eax
 		jle    jump_12abc3
@@ -3506,7 +3330,7 @@ func_12ad0a:
 		nop
 	jump_12af28:
 		decl   0x30(%esp)
-		je     jump_12b040
+		je     ASM_draw_gpoly_end
 		mov    %eax,0xb4(%esp)
 		mov    0x7c(%esp),%eax
 		or     %eax,%eax
@@ -3533,7 +3357,7 @@ func_12ad0a:
 		mov    0x50(%esp),%eax
 		mov    %eax,0x13c(%esp)
 		mov    0x54(%esp),%eax
-		jle    jump_12b040
+		jle    ASM_draw_gpoly_end
 		mov    0x4c(%esp),%esi
 		or     %esi,%esi
 		js     jump_12aed0
@@ -3551,182 +3375,59 @@ func_12ad0a:
 		sub    0x4c(%esp),%eax
 		mov    %eax,0xf0(%esp)
 		mov    0xb4(%esp),%eax
-		jle    jump_12b040
+		jle    ASM_draw_gpoly_end
 		mov    %esi,0x13c(%esp)
 		mov    0x4c(%esp),%esi
 		or     %esi,%esi
 		js     jump_12aed0
 		mov    0x13c(%esp),%esi
 		jmp    jump_12ad95
-	jump_12b040:
-		add    $0x190,%esp
-		popa
-		ret
 
-
-/*----------------------------------------------------------------*/
-func_12b048:
-/*----------------------------------------------------------------*/
-		add    $0x190,%esp
-		popa
-		ret
-
-
-/*----------------------------------------------------------------*/
-func_12b050:
-/*----------------------------------------------------------------*/
-		add    $0x190,%esp
-		popa
-		ret
-
-
-/*----------------------------------------------------------------*/
-func_12b058:
-/*----------------------------------------------------------------*/
-		add    $0x190,%esp
-		popa
-		ret
-
-
-/*----------------------------------------------------------------*/
-func_12b060:
-/*----------------------------------------------------------------*/
-		add    $0x190,%esp
-		popa
-		ret
-
-
-/*----------------------------------------------------------------*/
-func_12b068:
-/*----------------------------------------------------------------*/
-		add    $0x190,%esp
-		popa
-		ret
-
-
-/*----------------------------------------------------------------*/
-func_12b070:
-/*----------------------------------------------------------------*/
-		add    $0x190,%esp
-		popa
-		ret
-
-
-/*----------------------------------------------------------------*/
-func_12b078:
-/*----------------------------------------------------------------*/
-		add    $0x190,%esp
-		popa
-		ret
-
-
-/*----------------------------------------------------------------*/
-func_12b080:
-/*----------------------------------------------------------------*/
-		add    $0x190,%esp
-		popa
-		ret
-
-
-/*----------------------------------------------------------------*/
-func_12b088:
-/*----------------------------------------------------------------*/
-		add    $0x190,%esp
-		popa
-		ret
-
-
-/*----------------------------------------------------------------*/
-func_12b090:
-/*----------------------------------------------------------------*/
-		add    $0x190,%esp
-		popa
-		ret
-
-
-/*----------------------------------------------------------------*/
-func_12b098:
-/*----------------------------------------------------------------*/
-		add    $0x190,%esp
-		popa
-		ret
-
-
-/*----------------------------------------------------------------*/
-func_12b0a0:
-/*----------------------------------------------------------------*/
-		add    $0x190,%esp
-		popa
-		ret
-
-
-/*----------------------------------------------------------------*/
-func_12b0a8:
-/*----------------------------------------------------------------*/
-		add    $0x190,%esp
-		popa
-		ret
-
-
-/*----------------------------------------------------------------*/
-func_12b0b0:
-/*----------------------------------------------------------------*/
-		add    $0x190,%esp
-		popa
-		ret
-
-
-/*----------------------------------------------------------------*/
-func_12b0b8:
-/*----------------------------------------------------------------*/
-		add    $0x190,%esp
-		popa
-		ret
 
 vtable_12b0c0:
-		.long   func_12999e
-		.long   func_12b0b8
-		.long   func_1299ae
-		.long   func_12a598
-		.long   func_1299a6
+		.long   ASM_draw_gpoly_end
+		.long   ASM_draw_gpoly_end
+		.long   ASM_draw_gpoly_end
+		.long   ASM_draw_gpoly_end
+		.long   ASM_draw_gpoly_end
 		.long   func_1299b6
-		.long   func_12a5a0
-		.long   func_12b0b8
-		.long   func_12b0b8
-		.long   func_12b0b8
-		.long   func_12b0b8
-		.long   func_12b0b8
-		.long   func_12a5a8
-		.long   func_12a5b0
-		.long   func_12a5b8
-		.long   func_12a5c0
-		.long   func_12a5c8
-		.long   func_12a5d0
-		.long   func_12a5d8
-		.long   func_12a5e0
-		.long   func_12a5e8
-		.long   func_12a5f0
-		.long   func_12a5f8
-		.long   func_12a600
-		.long   func_12a608
-		.long   func_12a610
-		.long   func_12b0b8
+		.long   ASM_draw_gpoly_end
+		.long   ASM_draw_gpoly_end
+		.long   ASM_draw_gpoly_end
+		.long   ASM_draw_gpoly_end
+		.long   ASM_draw_gpoly_end
+		.long   ASM_draw_gpoly_end
+		.long   ASM_draw_gpoly_end
+		.long   ASM_draw_gpoly_end
+		.long   ASM_draw_gpoly_end
+		.long   ASM_draw_gpoly_end
+		.long   ASM_draw_gpoly_end
+		.long   ASM_draw_gpoly_end
+		.long   ASM_draw_gpoly_end
+		.long   ASM_draw_gpoly_end
+		.long   ASM_draw_gpoly_end
+		.long   ASM_draw_gpoly_end
+		.long   ASM_draw_gpoly_end
+		.long   ASM_draw_gpoly_end
+		.long   ASM_draw_gpoly_end
+		.long   ASM_draw_gpoly_end
+		.long   ASM_draw_gpoly_end
 		.long   func_12a618
-		.long   func_12b048
-		.long   func_12b050
-		.long   func_12b058
-		.long   func_12b060
-		.long   func_12b068
-		.long   func_12b070
-		.long   func_12b078
-		.long   func_12b080
-		.long   func_12b088
-		.long   func_12b090
-		.long   func_12b098
-		.long   func_12b0a0
-		.long   func_12b0a8
-		.long   func_12b0b8
-		.long   func_12b0b0
+		.long   ASM_draw_gpoly_end
+		.long   ASM_draw_gpoly_end
+		.long   ASM_draw_gpoly_end
+		.long   ASM_draw_gpoly_end
+		.long   ASM_draw_gpoly_end
+		.long   ASM_draw_gpoly_end
+		.long   ASM_draw_gpoly_end
+		.long   ASM_draw_gpoly_end
+		.long   ASM_draw_gpoly_end
+		.long   ASM_draw_gpoly_end
+		.long   ASM_draw_gpoly_end
+		.long   ASM_draw_gpoly_end
+		.long   ASM_draw_gpoly_end
+		.long   ASM_draw_gpoly_end
+		.long   ASM_draw_gpoly_end
 
 vtable_12b16c:
 		.long   ASM_draw_gpoly_trig
@@ -3893,7 +3594,7 @@ vtable_12b390:
 .text
 
 
-	jump_12d820:
+	ASM_draw_gpoly_end:
 		add    $0x190,%esp
 		popa
 		ret
