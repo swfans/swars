@@ -56,10 +56,14 @@ print_help (const char *argv0)
   argv0);
 }
 
+TbBool test_gpoly(void);
+
 // To be moved to its own file when there are more tests
 static void tests_execute(void)
 {
     // TODO prpare tests
+    if (!test_gpoly())
+        exit(51);
     exit(0);
 }
 
