@@ -47,27 +47,6 @@ GLOBAL_FUNC (ASM_draw_gpoly_)
 /*----------------------------------------------------------------*/
 		pusha
 		sub    $0x190,%esp
-		xor    %ecx,%ecx
-		or     EXPORT_SYMBOL(vec_mode),%cl
-		jmp    *vtable_12b16c(,%ecx,4)
-
-
-/*----------------------------------------------------------------*/
-ASM_draw_gpoly_trig:
-/*----------------------------------------------------------------*/
-		/*
-		 * XXX: if this is commented out then the gray shield bars are
-		 * not drawn (instead only white health bars appear)
-		 */
-		call   ac_trig
-		add    $0x190,%esp
-		popa
-		ret
-
-
-/*----------------------------------------------------------------*/
-ASM_draw_gpoly_spec:
-/*----------------------------------------------------------------*/
 		mov    (%eax),%ebp
 		or     (%edx),%ebp
 		or     (%ebx),%ebp
@@ -3428,51 +3407,6 @@ vtable_12b0c0:
 		.long   ASM_draw_gpoly_end
 		.long   ASM_draw_gpoly_end
 		.long   ASM_draw_gpoly_end
-
-vtable_12b16c:
-		.long   ASM_draw_gpoly_trig
-		.long   ASM_draw_gpoly_trig
-		.long   ASM_draw_gpoly_trig
-		.long   ASM_draw_gpoly_trig
-		.long   ASM_draw_gpoly_trig
-		.long   ASM_draw_gpoly_spec
-		.long   ASM_draw_gpoly_trig
-		.long   ASM_draw_gpoly_trig
-		.long   ASM_draw_gpoly_trig
-		.long   ASM_draw_gpoly_trig
-		.long   ASM_draw_gpoly_trig
-		.long   ASM_draw_gpoly_trig
-		.long   ASM_draw_gpoly_trig
-		.long   ASM_draw_gpoly_trig
-		.long   ASM_draw_gpoly_trig
-		.long   ASM_draw_gpoly_trig
-		.long   ASM_draw_gpoly_trig
-		.long   ASM_draw_gpoly_trig
-		.long   ASM_draw_gpoly_trig
-		.long   ASM_draw_gpoly_trig
-		.long   ASM_draw_gpoly_trig
-		.long   ASM_draw_gpoly_trig
-		.long   ASM_draw_gpoly_trig
-		.long   ASM_draw_gpoly_trig
-		.long   ASM_draw_gpoly_trig
-		.long   ASM_draw_gpoly_trig
-		.long   ASM_draw_gpoly_trig
-		.long   ASM_draw_gpoly_spec
-		.long   ASM_draw_gpoly_trig
-		.long   ASM_draw_gpoly_trig
-		.long   ASM_draw_gpoly_trig
-		.long   ASM_draw_gpoly_trig
-		.long   ASM_draw_gpoly_trig
-		.long   ASM_draw_gpoly_trig
-		.long   ASM_draw_gpoly_trig
-		.long   ASM_draw_gpoly_trig
-		.long   ASM_draw_gpoly_trig
-		.long   ASM_draw_gpoly_trig
-		.long   ASM_draw_gpoly_trig
-		.long   ASM_draw_gpoly_trig
-		.long   ASM_draw_gpoly_trig
-		.long   ASM_draw_gpoly_trig
-		.long   ASM_draw_gpoly_trig
 
 vtable_12b220:
 		.long   func_12998f

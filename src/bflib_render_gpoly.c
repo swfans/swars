@@ -332,7 +332,7 @@ void gpoly_enable_pentium_pro(TbBool state)
     gpoly_pro_enable_mode_ofs = 0;
 }
 
-void draw_gpoly(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint *point_c)
+void draw_trigpoly(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint *point_c)
 {
     switch (vec_mode)
     {
