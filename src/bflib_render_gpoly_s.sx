@@ -212,7 +212,7 @@ GLOBAL_FUNC (ASM_draw_gpoly_)
 		mov    %esi,0x7c(%esp)
 		xor    %ecx,%ecx
 		mov    EXPORT_SYMBOL(vec_mode),%cl
-		jmp    *vtable_12b220(,%ecx,4)
+		jmp    *jt_gpoly_sta(,%ecx,4)
 
 
 /*----------------------------------------------------------------*/
@@ -1776,7 +1776,7 @@ gpoly_sta_cont:
 /*----------------------------------------------------------------*/
 		xor    %ecx,%ecx
 		mov    EXPORT_SYMBOL(vec_mode),%cl
-		jmp    *vtable_12b0c0(,%ecx,4)
+		jmp    *jt_gpoly_stb(,%ecx,4)
 
 
 /*----------------------------------------------------------------*/
@@ -3363,7 +3363,7 @@ func_12ad0a:
 		jmp    jump_12ad95
 
 
-vtable_12b0c0:
+jt_gpoly_stb:	/* 0x12b0c0 */
 		.long   ASM_draw_gpoly_end
 		.long   ASM_draw_gpoly_end
 		.long   ASM_draw_gpoly_end
@@ -3408,7 +3408,7 @@ vtable_12b0c0:
 		.long   ASM_draw_gpoly_end
 		.long   ASM_draw_gpoly_end
 
-vtable_12b220:
+jt_gpoly_sta:	/* 0x12b220 */
 		.long   gpoly_sta_cont
 		.long   gpoly_sta_cont
 		.long   gpoly_sta_md02
