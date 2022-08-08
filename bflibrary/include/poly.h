@@ -61,11 +61,11 @@ enum RenderingVectorMode {
 };
 
 struct PolyPoint { // sizeof=20
-    long X; // offset=0
-    long Y; // offset=4
-    long U; // offset=8
-    long V; // offset=12
-    long S; // offset=16
+    long X; //< offset=0, Horizonal coordinate within screen buffer
+    long Y; //< offset=4, Vertical coordinate within screen buffer
+    long U; //< offset=8, Texture UV mapping, U coordinate
+    long V; //< offset=12, Texture UV mapping, V coordinate
+    long S; //< offset=16, Shiness / brighness of the point
 };
 
 #pragma pack()
