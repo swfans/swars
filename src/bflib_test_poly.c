@@ -19,6 +19,7 @@
 /******************************************************************************/
 #include "poly.h"
 #include "../tests/helpers_screen.h"
+#include "../tests/helpers_frame.h"
 #include "../tests/mock_bfmouse.h"
 #include "../tests/mock_bfpalette.h"
 #include "../tests/mock_bfscreen.h"
@@ -41,6 +42,7 @@
 #endif
 
 #include "../tests/helpers_screen.c"
+#include "../tests/helpers_fr_swars01.c"
 #include "../tests/mock_mouse.c"
 #include "../tests/mock_palette.c"
 #include "../tests/mock_screen.c"
@@ -144,10 +146,12 @@ void test_gpoly_draw_random_triangles(const ubyte *pal)
     }
 }
 
+
 TbBool test_gpoly(void)
 {
     static ulong seeds[] = {0x0, /* 0xD15C1234, 0xD15C0000, 0xD15C0005, 0xD15C000F, 0xD15C03DC,
       0xD15C07DF, 0xD15CE896, 0xB00710FA, */ };
+    static TestFrameFunc functs[] = {NULL, test_frame_swars01, };
     ubyte pal[PALETTE_8b_SIZE];
     ubyte ref_pal[PALETTE_8b_SIZE];
     TbPixel unaffected_colours[] = {0,};
@@ -215,6 +219,43 @@ TbBool test_gpoly(void)
         }
 
         sprintf(loc_fname, "tst_gpoly%lu.png", picno);
+        LbPngSaveScreen(loc_fname, lbDisplay.WScreen, pal, true);
+
+        // compare image with reference
+        maxpos = 0;
+        maxdiff = LbImageBuffersMaxDifference(lbDisplay.WScreen, pal, ref_buffer,
+          ref_pal, 640 * 480, &maxpos);
+       if (maxdiff > 12) {
+            LOGERR("%s: high pixel difference to reference (%ld) at (%lu,%lu)",
+              loc_fname, maxdiff, maxpos%640, maxpos/640);
+            return false;
+        }
+        LOGSYNC("%s: acceptable pixel difference to reference (%ld) at (%lu,%lu)",
+            loc_fname, maxdiff, maxpos%640, maxpos/640);
+    }
+
+    setup_vecs(lbDisplay.WScreen, texmap+256, lbDisplay.PhysicalScreenWidth,
+        lbDisplay.PhysicalScreenWidth, lbDisplay.PhysicalScreenHeight);
+
+    for (picno = 1; picno < sizeof(functs)/sizeof(functs[0]); picno++)
+    {
+        char loc_fname[64];
+        ulong ref_width, ref_height;
+        long maxdiff;
+        ulong maxpos;
+
+        LbScreenClear(0);
+        lbSeed = 0xD15C1234;
+        functs[picno]();
+
+        sprintf(loc_fname, "referenc/tst_gpoly_frame%02lu_rf.png", picno);
+        LbPngLoad(loc_fname, ref_buffer, &ref_width, &ref_height, ref_pal);
+        if ((ref_width != 640) || (ref_height != 480)) {
+            LOGERR("%s: unexpected reference image size", loc_fname);
+            return false;
+        }
+
+        sprintf(loc_fname, "tst_gpoly_frame%02lu.png", picno);
         LbPngSaveScreen(loc_fname, lbDisplay.WScreen, pal, true);
 
         // compare image with reference
