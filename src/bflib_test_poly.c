@@ -54,13 +54,13 @@ void test_gpoly_draw_random_triangles(const ubyte *pal)
 {
     int i;
 
-    for (i = 0; i < 27*40; i++)
+    for (i = 0; i < 43*40; i++)
     {
         struct PolyPoint point_a, point_b, point_c;
         ushort rnd;
 
         rnd = LbRandomAnyShort();
-        vec_mode = i % 27;
+        vec_mode = i % 43;
         // Random colour
         vec_colour = LbPaletteFindColour(pal, (rnd >> 0) & 0x3f, (rnd >> 5) & 0x3f, (rnd >> 10) & 0x3f);
         // Random texture coords, but show one of 32x32 textures from start
@@ -98,7 +98,7 @@ void test_gpoly_draw_random_triangles(const ubyte *pal)
         point_b.S = ((rnd >> 6) & 0x7F) << 15;
         point_c.S = ((rnd >> 3) & 0x7F) << 15;
         // Random positions - few big, more small
-        if (i < 27*2)
+        if (i < 43*2)
         {
             rnd = LbRandomAnyShort();
             point_a.X = ((rnd >> 0) & 1023) - (1023 - 640) / 2;
@@ -138,6 +138,13 @@ void test_gpoly_draw_random_triangles(const ubyte *pal)
                 point_a.Y = 480 - (point_a.Y & 0x3f);
         }
 
+        point_a.U <<= 16;
+        point_a.V <<= 16;
+        point_b.U <<= 16;
+        point_b.V <<= 16;
+        point_c.U <<= 16;
+        point_c.V <<= 16;
+
         if ((point_c.Y - point_b.Y) * (point_b.X - point_a.X) -
             (point_b.Y - point_a.Y) * (point_c.X - point_b.X) > 0)
             draw_gpoly(&point_a, &point_b, &point_c);
@@ -149,8 +156,7 @@ void test_gpoly_draw_random_triangles(const ubyte *pal)
 
 TbBool test_gpoly(void)
 {
-    static ulong seeds[] = {0x0, /* 0xD15C1234, 0xD15C0000, 0xD15C0005, 0xD15C000F, 0xD15C03DC,
-      0xD15C07DF, 0xD15CE896, 0xB00710FA, */ };
+    static ulong seeds[] = {0x0, 0xD15C1234, };
     static TestFrameFunc functs[] = {NULL, test_frame_swars01, };
     ubyte pal[PALETTE_8b_SIZE];
     ubyte ref_pal[PALETTE_8b_SIZE];
