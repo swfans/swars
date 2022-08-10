@@ -42,9 +42,7 @@
 .global EXPORT_SYMBOL(gpoly_divtable);
 
 
-/*----------------------------------------------------------------*/
 GLOBAL_FUNC (ASM_draw_gpoly_)
-/*----------------------------------------------------------------*/
 		pusha
 		sub    $0x190,%esp
 		mov    (%eax),%ebp
@@ -215,9 +213,7 @@ GLOBAL_FUNC (ASM_draw_gpoly_)
 		jmp    *jt_gpoly_sta(,%ecx,4)
 
 
-/*----------------------------------------------------------------*/
 gpoly_sta_md27:
-/*----------------------------------------------------------------*/
 		mov    0x50(%esp),%esi
 		mov    0x7c(%esp),%edi
 		or     %edi,%edi
@@ -556,9 +552,7 @@ gpoly_sta_md27:
 		jmp    gpoly_sta_cont
 
 
-/*----------------------------------------------------------------*/
 gpoly_sta_md28:
-/*----------------------------------------------------------------*/
 		mov    0x50(%esp),%esi
 		mov    0x7c(%esp),%edi
 		or     %edi,%edi
@@ -982,9 +976,7 @@ gpoly_sta_md28:
 		jmp    gpoly_sta_cont
 
 
-/*----------------------------------------------------------------*/
 gpoly_sta_md04:
-/*----------------------------------------------------------------*/
 		mov    0x50(%esp),%esi
 		mov    0x7c(%esp),%edi
 		or     %edi,%edi
@@ -1124,9 +1116,7 @@ gpoly_sta_md04:
 		jmp    gpoly_sta_cont
 
 
-/*----------------------------------------------------------------*/
 gpoly_sta_md02:
-/*----------------------------------------------------------------*/
 		mov    0x50(%esp),%esi
 		mov    0x7c(%esp),%edi
 		or     %edi,%edi
@@ -1407,9 +1397,7 @@ gpoly_sta_md02:
 		jmp    gpoly_sta_cont
 
 
-/*----------------------------------------------------------------*/
 gpoly_sta_md05:
-/*----------------------------------------------------------------*/
 		mov    0x50(%esp),%esi
 		mov    0x7c(%esp),%edi
 		or     %edi,%edi
@@ -1771,17 +1759,13 @@ gpoly_sta_md05:
 		mov    %edx,0x138(%esp)
 
 
-/*----------------------------------------------------------------*/
 gpoly_sta_cont:
-/*----------------------------------------------------------------*/
 		xor    %ecx,%ecx
 		mov    EXPORT_SYMBOL(vec_mode),%cl
 		jmp    *jt_gpoly_stb(,%ecx,4)
 
 
-/*----------------------------------------------------------------*/
 gpoly_stb_md05:
-/*----------------------------------------------------------------*/
 		mov    0x170(%esp),%eax
 		or     %eax,%eax
 		jne    jump_129f20
@@ -1841,9 +1825,7 @@ gpoly_stb_md05:
 		jmp    jump_129cf6
 
 
-/*----------------------------------------------------------------*/
-func_129ad7:
-/*----------------------------------------------------------------*/
+gpoly_drwa_00:
 		mov    %dl,%bl
 		mov    %ch,%ah
 		add    %ebp,%ecx
@@ -1854,9 +1836,7 @@ func_129ad7:
 		mov    %al,(%edi)
 
 
-/*----------------------------------------------------------------*/
-func_129af0:
-/*----------------------------------------------------------------*/
+gpoly_drwa_15:
 		mov    %dl,%bl
 		mov    %ch,%ah
 		add    %ebp,%ecx
@@ -1867,9 +1847,7 @@ func_129af0:
 		mov    %al,0x1(%edi)
 
 
-/*----------------------------------------------------------------*/
-func_129b0a:
-/*----------------------------------------------------------------*/
+gpoly_drwa_14:
 		mov    %dl,%bl
 		mov    %ch,%ah
 		add    %ebp,%ecx
@@ -1880,9 +1858,7 @@ func_129b0a:
 		mov    %al,0x2(%edi)
 
 
-/*----------------------------------------------------------------*/
-func_129b24:
-/*----------------------------------------------------------------*/
+gpoly_drwa_13:
 		mov    %dl,%bl
 		mov    %ch,%ah
 		add    %ebp,%ecx
@@ -1893,9 +1869,7 @@ func_129b24:
 		mov    %al,0x3(%edi)
 
 
-/*----------------------------------------------------------------*/
-func_129b3e:
-/*----------------------------------------------------------------*/
+gpoly_drwa_12:
 		mov    %dl,%bl
 		mov    %ch,%ah
 		add    %ebp,%ecx
@@ -1906,9 +1880,7 @@ func_129b3e:
 		mov    %al,0x4(%edi)
 
 
-/*----------------------------------------------------------------*/
-func_129b58:
-/*----------------------------------------------------------------*/
+gpoly_drwa_11:
 		mov    %dl,%bl
 		mov    %ch,%ah
 		add    %ebp,%ecx
@@ -1919,9 +1891,7 @@ func_129b58:
 		mov    %al,0x5(%edi)
 
 
-/*----------------------------------------------------------------*/
-func_129b72:
-/*----------------------------------------------------------------*/
+gpoly_drwa_10:
 		mov    %dl,%bl
 		mov    %ch,%ah
 		add    %ebp,%ecx
@@ -1932,9 +1902,7 @@ func_129b72:
 		mov    %al,0x6(%edi)
 
 
-/*----------------------------------------------------------------*/
-func_129b8c:
-/*----------------------------------------------------------------*/
+gpoly_drwa_09:
 		mov    %dl,%bl
 		mov    %ch,%ah
 		add    %ebp,%ecx
@@ -1945,9 +1913,7 @@ func_129b8c:
 		mov    %al,0x7(%edi)
 
 
-/*----------------------------------------------------------------*/
-func_129ba6:
-/*----------------------------------------------------------------*/
+gpoly_drwa_08:
 		mov    %dl,%bl
 		mov    %ch,%ah
 		add    %ebp,%ecx
@@ -1958,9 +1924,7 @@ func_129ba6:
 		mov    %al,0x8(%edi)
 
 
-/*----------------------------------------------------------------*/
-func_129bc0:
-/*----------------------------------------------------------------*/
+gpoly_drwa_07:
 		mov    %dl,%bl
 		mov    %ch,%ah
 		add    %ebp,%ecx
@@ -1971,9 +1935,7 @@ func_129bc0:
 		mov    %al,0x9(%edi)
 
 
-/*----------------------------------------------------------------*/
-func_129bda:
-/*----------------------------------------------------------------*/
+gpoly_drwa_06:
 		mov    %dl,%bl
 		mov    %ch,%ah
 		add    %ebp,%ecx
@@ -1984,9 +1946,7 @@ func_129bda:
 		mov    %al,0xa(%edi)
 
 
-/*----------------------------------------------------------------*/
-func_129bf4:
-/*----------------------------------------------------------------*/
+gpoly_drwa_05:
 		mov    %dl,%bl
 		mov    %ch,%ah
 		add    %ebp,%ecx
@@ -1997,9 +1957,7 @@ func_129bf4:
 		mov    %al,0xb(%edi)
 
 
-/*----------------------------------------------------------------*/
-func_129c0e:
-/*----------------------------------------------------------------*/
+gpoly_drwa_04:
 		mov    %dl,%bl
 		mov    %ch,%ah
 		add    %ebp,%ecx
@@ -2010,9 +1968,7 @@ func_129c0e:
 		mov    %al,0xc(%edi)
 
 
-/*----------------------------------------------------------------*/
-func_129c28:
-/*----------------------------------------------------------------*/
+gpoly_drwa_03:
 		mov    %dl,%bl
 		mov    %ch,%ah
 		add    %ebp,%ecx
@@ -2023,9 +1979,7 @@ func_129c28:
 		mov    %al,0xd(%edi)
 
 
-/*----------------------------------------------------------------*/
-func_129c42:
-/*----------------------------------------------------------------*/
+gpoly_drwa_02:
 		mov    %dl,%bl
 		mov    %ch,%ah
 		add    %ebp,%ecx
@@ -2036,9 +1990,7 @@ func_129c42:
 		mov    %al,0xe(%edi)
 
 
-/*----------------------------------------------------------------*/
-func_129c5c:
-/*----------------------------------------------------------------*/
+gpoly_drwa_01:
 		mov    %dl,%bl
 		mov    %ch,%ah
 		add    %ebp,%ecx
@@ -2049,7 +2001,7 @@ func_129c5c:
 		mov    %al,0xf(%edi)
 		add    $0x10,%edi
 		subl   $0x10,0xdc(%esp)
-		jg     func_129ad7
+		jg     gpoly_drwa_00
 	jump_129c87:
 		mov    0xb4(%esp),%eax
 		mov    0xb8(%esp),%ebp
@@ -2225,9 +2177,7 @@ func_129c5c:
 		jmp    jump_12a266
 
 
-/*----------------------------------------------------------------*/
-func_12a028:
-/*----------------------------------------------------------------*/
+gpoly_drwb_00:
 		mov    %dl,%bl
 		mov    %ch,%ah
 		add    %ebp,%ecx
@@ -2238,9 +2188,7 @@ func_12a028:
 		mov    %al,(%edi)
 
 
-/*----------------------------------------------------------------*/
-func_12a041:
-/*----------------------------------------------------------------*/
+gpoly_drwb_15:
 		mov    %dl,%bl
 		mov    %ch,%ah
 		add    %ebp,%ecx
@@ -2251,9 +2199,7 @@ func_12a041:
 		mov    %al,0x1(%edi)
 
 
-/*----------------------------------------------------------------*/
-func_12a05b:
-/*----------------------------------------------------------------*/
+gpoly_drwb_14:
 		mov    %dl,%bl
 		mov    %ch,%ah
 		add    %ebp,%ecx
@@ -2264,9 +2210,7 @@ func_12a05b:
 		mov    %al,0x2(%edi)
 
 
-/*----------------------------------------------------------------*/
-func_12a075:
-/*----------------------------------------------------------------*/
+gpoly_drwb_13:
 		mov    %dl,%bl
 		mov    %ch,%ah
 		add    %ebp,%ecx
@@ -2277,9 +2221,7 @@ func_12a075:
 		mov    %al,0x3(%edi)
 
 
-/*----------------------------------------------------------------*/
-func_12a08f:
-/*----------------------------------------------------------------*/
+gpoly_drwb_12:
 		mov    %dl,%bl
 		mov    %ch,%ah
 		add    %ebp,%ecx
@@ -2290,9 +2232,7 @@ func_12a08f:
 		mov    %al,0x4(%edi)
 
 
-/*----------------------------------------------------------------*/
-func_12a0a9:
-/*----------------------------------------------------------------*/
+gpoly_drwb_11:
 		mov    %dl,%bl
 		mov    %ch,%ah
 		add    %ebp,%ecx
@@ -2303,9 +2243,7 @@ func_12a0a9:
 		mov    %al,0x5(%edi)
 
 
-/*----------------------------------------------------------------*/
-func_12a0c3:
-/*----------------------------------------------------------------*/
+gpoly_drwb_10:
 		mov    %dl,%bl
 		mov    %ch,%ah
 		add    %ebp,%ecx
@@ -2316,9 +2254,7 @@ func_12a0c3:
 		mov    %al,0x6(%edi)
 
 
-/*----------------------------------------------------------------*/
-func_12a0dd:
-/*----------------------------------------------------------------*/
+gpoly_drwb_09:
 		mov    %dl,%bl
 		mov    %ch,%ah
 		add    %ebp,%ecx
@@ -2329,9 +2265,7 @@ func_12a0dd:
 		mov    %al,0x7(%edi)
 
 
-/*----------------------------------------------------------------*/
-func_12a0f7:
-/*----------------------------------------------------------------*/
+gpoly_drwb_08:
 		mov    %dl,%bl
 		mov    %ch,%ah
 		add    %ebp,%ecx
@@ -2342,9 +2276,7 @@ func_12a0f7:
 		mov    %al,0x8(%edi)
 
 
-/*----------------------------------------------------------------*/
-func_12a111:
-/*----------------------------------------------------------------*/
+gpoly_drwb_07:
 		mov    %dl,%bl
 		mov    %ch,%ah
 		add    %ebp,%ecx
@@ -2355,9 +2287,7 @@ func_12a111:
 		mov    %al,0x9(%edi)
 
 
-/*----------------------------------------------------------------*/
-func_12a12b:
-/*----------------------------------------------------------------*/
+gpoly_drwb_06:
 		mov    %dl,%bl
 		mov    %ch,%ah
 		add    %ebp,%ecx
@@ -2368,9 +2298,7 @@ func_12a12b:
 		mov    %al,0xa(%edi)
 
 
-/*----------------------------------------------------------------*/
-func_12a145:
-/*----------------------------------------------------------------*/
+gpoly_drwb_05:
 		mov    %dl,%bl
 		mov    %ch,%ah
 		add    %ebp,%ecx
@@ -2381,9 +2309,7 @@ func_12a145:
 		mov    %al,0xb(%edi)
 
 
-/*----------------------------------------------------------------*/
-func_12a15f:
-/*----------------------------------------------------------------*/
+gpoly_drwb_04:
 		mov    %dl,%bl
 		mov    %ch,%ah
 		add    %ebp,%ecx
@@ -2394,9 +2320,7 @@ func_12a15f:
 		mov    %al,0xc(%edi)
 
 
-/*----------------------------------------------------------------*/
-func_12a179:
-/*----------------------------------------------------------------*/
+gpoly_drwb_03:
 		mov    %dl,%bl
 		mov    %ch,%ah
 		add    %ebp,%ecx
@@ -2407,9 +2331,7 @@ func_12a179:
 		mov    %al,0xd(%edi)
 
 
-/*----------------------------------------------------------------*/
-func_12a193:
-/*----------------------------------------------------------------*/
+gpoly_drwb_02:
 		mov    %dl,%bl
 		mov    %ch,%ah
 		add    %ebp,%ecx
@@ -2420,9 +2342,7 @@ func_12a193:
 		mov    %al,0xe(%edi)
 
 
-/*----------------------------------------------------------------*/
-func_12a1ad:
-/*----------------------------------------------------------------*/
+gpoly_drwb_01:
 		mov    %dl,%bl
 		mov    %ch,%ah
 		add    %ebp,%ecx
@@ -2433,7 +2353,7 @@ func_12a1ad:
 		mov    %al,0xf(%edi)
 		add    $0x10,%edi
 		subl   $0x10,0xdc(%esp)
-		jg     func_12a028
+		jg     gpoly_drwb_00
 	jump_12a1d8:
 		mov    0xb4(%esp),%eax
 		mov    0xb8(%esp),%ebp
@@ -2612,9 +2532,7 @@ func_12a1ad:
 		jmp    jump_12a266
 
 
-/*----------------------------------------------------------------*/
 gpoly_stb_md27:
-/*----------------------------------------------------------------*/
 		mov    0x170(%esp),%eax
 		or     %eax,%eax
 		jne    jump_12ab00
@@ -2672,9 +2590,7 @@ gpoly_stb_md27:
 		jmp    jump_12a8c4
 
 
-/*----------------------------------------------------------------*/
-func_12a72c:
-/*----------------------------------------------------------------*/
+gpoly_drwc_00:
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
@@ -2683,9 +2599,7 @@ func_12a72c:
 		mov    %al,(%edi)
 
 
-/*----------------------------------------------------------------*/
-func_12a73d:
-/*----------------------------------------------------------------*/
+gpoly_drwc_15:
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
@@ -2694,9 +2608,7 @@ func_12a73d:
 		mov    %al,0x1(%edi)
 
 
-/*----------------------------------------------------------------*/
-func_12a74f:
-/*----------------------------------------------------------------*/
+gpoly_drwc_14:
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
@@ -2705,9 +2617,7 @@ func_12a74f:
 		mov    %al,0x2(%edi)
 
 
-/*----------------------------------------------------------------*/
-func_12a761:
-/*----------------------------------------------------------------*/
+gpoly_drwc_13:
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
@@ -2716,9 +2626,7 @@ func_12a761:
 		mov    %al,0x3(%edi)
 
 
-/*----------------------------------------------------------------*/
-func_12a773:
-/*----------------------------------------------------------------*/
+gpoly_drwc_12:
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
@@ -2727,9 +2635,7 @@ func_12a773:
 		mov    %al,0x4(%edi)
 
 
-/*----------------------------------------------------------------*/
-func_12a785:
-/*----------------------------------------------------------------*/
+gpoly_drwc_11:
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
@@ -2738,9 +2644,7 @@ func_12a785:
 		mov    %al,0x5(%edi)
 
 
-/*----------------------------------------------------------------*/
-func_12a797:
-/*----------------------------------------------------------------*/
+gpoly_drwc_10:
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
@@ -2749,9 +2653,7 @@ func_12a797:
 		mov    %al,0x6(%edi)
 
 
-/*----------------------------------------------------------------*/
-func_12a7a9:
-/*----------------------------------------------------------------*/
+gpoly_drwc_09:
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
@@ -2760,9 +2662,7 @@ func_12a7a9:
 		mov    %al,0x7(%edi)
 
 
-/*----------------------------------------------------------------*/
-func_12a7bb:
-/*----------------------------------------------------------------*/
+gpoly_drwc_08:
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
@@ -2771,9 +2671,7 @@ func_12a7bb:
 		mov    %al,0x8(%edi)
 
 
-/*----------------------------------------------------------------*/
-func_12a7cd:
-/*----------------------------------------------------------------*/
+gpoly_drwc_07:
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
@@ -2782,9 +2680,7 @@ func_12a7cd:
 		mov    %al,0x9(%edi)
 
 
-/*----------------------------------------------------------------*/
-func_12a7df:
-/*----------------------------------------------------------------*/
+gpoly_drwc_06:
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
@@ -2793,9 +2689,7 @@ func_12a7df:
 		mov    %al,0xa(%edi)
 
 
-/*----------------------------------------------------------------*/
-func_12a7f1:
-/*----------------------------------------------------------------*/
+gpoly_drwc_05:
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
@@ -2804,9 +2698,7 @@ func_12a7f1:
 		mov    %al,0xb(%edi)
 
 
-/*----------------------------------------------------------------*/
-func_12a803:
-/*----------------------------------------------------------------*/
+gpoly_drwc_04:
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
@@ -2815,9 +2707,7 @@ func_12a803:
 		mov    %al,0xc(%edi)
 
 
-/*----------------------------------------------------------------*/
-func_12a815:
-/*----------------------------------------------------------------*/
+gpoly_drwc_03:
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
@@ -2826,9 +2716,7 @@ func_12a815:
 		mov    %al,0xd(%edi)
 
 
-/*----------------------------------------------------------------*/
-func_12a827:
-/*----------------------------------------------------------------*/
+gpoly_drwc_02:
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
@@ -2837,9 +2725,7 @@ func_12a827:
 		mov    %al,0xe(%edi)
 
 
-/*----------------------------------------------------------------*/
-func_12a839:
-/*----------------------------------------------------------------*/
+gpoly_drwc_01:
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
@@ -2848,7 +2734,9 @@ func_12a839:
 		mov    %al,0xf(%edi)
 		add    $0x10,%edi
 		subl   $0x10,0xdc(%esp)
-		jg     func_12a72c
+		jg     gpoly_drwc_00
+
+
 	jump_12a85c:
 		mov    0xb4(%esp),%eax
 		mov    0xb8(%esp),%ebp
@@ -3023,17 +2911,15 @@ func_12a839:
 		mov    %esi,0x13c(%esp)
 		mov    0x3c(%esp),%eax
 		mov    %eax,%ebp
-		je     jump_12af28
+		je     jump_drwe_af28
 		mov    0x34(%esp),%esi
 		or     %esi,%esi
-		js     jump_12aed0
+		js     jump_drwe_aed0
 		mov    0x13c(%esp),%esi
-		jmp    jump_12ad95
+		jmp    jump_drwe_ad95
 
 
-/*----------------------------------------------------------------*/
-func_12abfd:
-/*----------------------------------------------------------------*/
+gpoly_drwd_00:
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
@@ -3042,9 +2928,7 @@ func_12abfd:
 		mov    %al,(%edi)
 
 
-/*----------------------------------------------------------------*/
-func_12ac0e:
-/*----------------------------------------------------------------*/
+gpoly_drwd_15:
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
@@ -3053,9 +2937,7 @@ func_12ac0e:
 		mov    %al,0x1(%edi)
 
 
-/*----------------------------------------------------------------*/
-func_12ac20:
-/*----------------------------------------------------------------*/
+gpoly_drwd_14:
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
@@ -3064,9 +2946,7 @@ func_12ac20:
 		mov    %al,0x2(%edi)
 
 
-/*----------------------------------------------------------------*/
-func_12ac32:
-/*----------------------------------------------------------------*/
+gpoly_drwd_13:
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
@@ -3075,9 +2955,7 @@ func_12ac32:
 		mov    %al,0x3(%edi)
 
 
-/*----------------------------------------------------------------*/
-func_12ac44:
-/*----------------------------------------------------------------*/
+gpoly_drwd_12:
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
@@ -3086,9 +2964,7 @@ func_12ac44:
 		mov    %al,0x4(%edi)
 
 
-/*----------------------------------------------------------------*/
-func_12ac56:
-/*----------------------------------------------------------------*/
+gpoly_drwd_11:
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
@@ -3097,9 +2973,7 @@ func_12ac56:
 		mov    %al,0x5(%edi)
 
 
-/*----------------------------------------------------------------*/
-func_12ac68:
-/*----------------------------------------------------------------*/
+gpoly_drwd_10:
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
@@ -3108,9 +2982,7 @@ func_12ac68:
 		mov    %al,0x6(%edi)
 
 
-/*----------------------------------------------------------------*/
-func_12ac7a:
-/*----------------------------------------------------------------*/
+gpoly_drwd_09:
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
@@ -3119,9 +2991,7 @@ func_12ac7a:
 		mov    %al,0x7(%edi)
 
 
-/*----------------------------------------------------------------*/
-func_12ac8c:
-/*----------------------------------------------------------------*/
+gpoly_drwd_08:
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
@@ -3130,9 +3000,7 @@ func_12ac8c:
 		mov    %al,0x8(%edi)
 
 
-/*----------------------------------------------------------------*/
-func_12ac9e:
-/*----------------------------------------------------------------*/
+gpoly_drwd_07:
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
@@ -3141,9 +3009,7 @@ func_12ac9e:
 		mov    %al,0x9(%edi)
 
 
-/*----------------------------------------------------------------*/
-func_12acb0:
-/*----------------------------------------------------------------*/
+gpoly_drwd_06:
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
@@ -3152,9 +3018,7 @@ func_12acb0:
 		mov    %al,0xa(%edi)
 
 
-/*----------------------------------------------------------------*/
-func_12acc2:
-/*----------------------------------------------------------------*/
+gpoly_drwd_05:
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
@@ -3163,9 +3027,7 @@ func_12acc2:
 		mov    %al,0xb(%edi)
 
 
-/*----------------------------------------------------------------*/
-func_12acd4:
-/*----------------------------------------------------------------*/
+gpoly_drwd_04:
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
@@ -3174,9 +3036,7 @@ func_12acd4:
 		mov    %al,0xc(%edi)
 
 
-/*----------------------------------------------------------------*/
-func_12ace6:
-/*----------------------------------------------------------------*/
+gpoly_drwd_03:
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
@@ -3185,9 +3045,7 @@ func_12ace6:
 		mov    %al,0xd(%edi)
 
 
-/*----------------------------------------------------------------*/
-func_12acf8:
-/*----------------------------------------------------------------*/
+gpoly_drwd_02:
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
@@ -3196,9 +3054,7 @@ func_12acf8:
 		mov    %al,0xe(%edi)
 
 
-/*----------------------------------------------------------------*/
-func_12ad0a:
-/*----------------------------------------------------------------*/
+gpoly_drwd_01:
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
@@ -3207,8 +3063,10 @@ func_12ad0a:
 		mov    %al,0xf(%edi)
 		add    $0x10,%edi
 		subl   $0x10,0xdc(%esp)
-		jg     func_12abfd
-	jump_12ad2d:
+		jg     gpoly_drwd_00
+
+
+	jump_drwe_ad2d:
 		mov    0xb4(%esp),%eax
 		mov    0xb8(%esp),%ebp
 		mov    0xbc(%esp),%edi
@@ -3223,17 +3081,17 @@ func_12ad0a:
 		adc    0xe8(%esp),%bh
 		add    0xac(%esp),%edi
 		decl   0xf0(%esp)
-		je     jump_12af28
-	jump_12ad95:
+		je     jump_drwe_af28
+	jump_drwe_ad95:
 		mov    %eax,0xb4(%esp)
 		mov    %ebp,0xb8(%esp)
 		mov    %edi,0xbc(%esp)
 		sar    $0x10,%eax
-		js     jump_12ae70
+		js     jump_drwe_ae70
 		cmp    %esi,%eax
-		jg     jump_12ae30
-		jl     jump_12ae50
-	jump_12adbd:
+		jg     jump_drwe_ae30
+		jl     jump_drwe_ae50
+	jump_drwe_adbd:
 		mov    %esi,0x13c(%esp)
 		mov    0xbc(%esp),%edi
 		mov    %ecx,0xd0(%esp)
@@ -3241,11 +3099,11 @@ func_12ad0a:
 		mov    %edx,0xd8(%esp)
 		sar    $0x10,%ebp
 		cmp    EXPORT_SYMBOL(vec_window_width),%ebp
-		jg     jump_12aec0
-	jump_12adef:
+		jg     jump_drwe_aec0
+	jump_drwe_adef:
 		add    %esi,%edi
 		sub    %esi,%ebp
-		jle    jump_12ad2d
+		jle    jump_drwe_ad2d
 		mov    %ebp,%eax
 		and    $0xf,%eax
 		add    EXPORT_SYMBOL(gpoly_countdown)(,%eax,4),%edi
@@ -3253,45 +3111,45 @@ func_12ad0a:
 		mov    0xf4(%esp),%ebp
 		mov    0xf8(%esp),%esi
 		jmp    *vtable_12b390(,%eax,4)
-	jump_12ae30:
+	jump_drwe_ae30:
 		add    0xf4(%esp),%ecx
 		adc    0xf8(%esp),%edx
 		adc    0xfc(%esp),%bh
 		inc    %esi
 		cmp    %esi,%eax
-		jle    jump_12adbd
-		jmp    jump_12ae30
-	jump_12ae50:
+		jle    jump_drwe_adbd
+		jmp    jump_drwe_ae30
+	jump_drwe_ae50:
 		sub    0xf4(%esp),%ecx
 		sbb    0xf8(%esp),%edx
 		sbb    0xfc(%esp),%bh
 		dec    %esi
 		cmp    %esi,%eax
-		jge    jump_12adbd
-		jmp    jump_12ae50
-	jump_12ae70:
+		jge    jump_drwe_adbd
+		jmp    jump_drwe_ae50
+	jump_drwe_ae70:
 		or     %esi,%esi
-		je     jump_12adbd
-		js     jump_12ae80
-		jmp    jump_12aea0
-	jump_12ae80:
+		je     jump_drwe_adbd
+		js     jump_drwe_ae80
+		jmp    jump_drwe_aea0
+	jump_drwe_ae80:
 		add    0xf4(%esp),%ecx
 		adc    0xf8(%esp),%edx
 		adc    0xfc(%esp),%bh
 		inc    %esi
-		je     jump_12adbd
-		jmp    jump_12ae80
-	jump_12aea0:
+		je     jump_drwe_adbd
+		jmp    jump_drwe_ae80
+	jump_drwe_aea0:
 		sub    0xf4(%esp),%ecx
 		sbb    0xf8(%esp),%edx
 		sbb    0xfc(%esp),%bh
 		dec    %esi
-		je     jump_12adbd
-		jmp    jump_12aea0
-	jump_12aec0:
+		je     jump_drwe_adbd
+		jmp    jump_drwe_aea0
+	jump_drwe_aec0:
 		mov    EXPORT_SYMBOL(vec_window_width),%ebp
-		jmp    jump_12adef
-	jump_12aed0:
+		jmp    jump_drwe_adef
+	jump_drwe_aed0:
 		add    0xe4(%esp),%ecx
 		adc    0xec(%esp),%edx
 		adc    0xe8(%esp),%bh
@@ -3299,21 +3157,21 @@ func_12ad0a:
 		add    0x88(%esp),%ebp
 		add    0xac(%esp),%edi
 		decl   0xf0(%esp)
-		je     jump_12af20
+		je     jump_drwe_af20
 		inc    %esi
-		js     jump_12aed0
+		js     jump_drwe_aed0
 		mov    0x13c(%esp),%esi
-		jmp    jump_12ad95
-	jump_12af20:
+		jmp    jump_drwe_ad95
+	jump_drwe_af20:
 		mov    0x13c(%esp),%esi
 		nop
-	jump_12af28:
+	jump_drwe_af28:
 		decl   0x30(%esp)
 		je     ASM_draw_gpoly_end
 		mov    %eax,0xb4(%esp)
 		mov    0x7c(%esp),%eax
 		or     %eax,%eax
-		js     jump_12afe0
+		js     jump_drwe_afe0
 		mov    0x8(%esp),%eax
 		mov    %eax,0x84(%esp)
 		mov    0x118(%esp),%eax
@@ -3328,9 +3186,9 @@ func_12ad0a:
 		add    EXPORT_SYMBOL(vec_map),%ebx
 		mov    0x64(%esp),%eax
 		cmp    EXPORT_SYMBOL(vec_window_height),%eax
-		jle    jump_12afa6
+		jle    jump_drwe_afa6
 		mov    EXPORT_SYMBOL(vec_window_height),%eax
-	jump_12afa6:
+	jump_drwe_afa6:
 		sub    0x4c(%esp),%eax
 		mov    %eax,0xf0(%esp)
 		mov    0x50(%esp),%eax
@@ -3339,18 +3197,18 @@ func_12ad0a:
 		jle    ASM_draw_gpoly_end
 		mov    0x4c(%esp),%esi
 		or     %esi,%esi
-		js     jump_12aed0
+		js     jump_drwe_aed0
 		mov    0x50(%esp),%esi
-		jmp    jump_12ad95
-	jump_12afe0:
+		jmp    jump_drwe_ad95
+	jump_drwe_afe0:
 		mov    0x8(%esp),%ebp
 		mov    %ebp,0x88(%esp)
 		mov    0x54(%esp),%ebp
 		mov    0x64(%esp),%eax
 		cmp    EXPORT_SYMBOL(vec_window_height),%eax
-		jle    jump_12b000
+		jle    jump_drwe_b000
 		mov    EXPORT_SYMBOL(vec_window_height),%eax
-	jump_12b000:
+	jump_drwe_b000:
 		sub    0x4c(%esp),%eax
 		mov    %eax,0xf0(%esp)
 		mov    0xb4(%esp),%eax
@@ -3358,9 +3216,9 @@ func_12ad0a:
 		mov    %esi,0x13c(%esp)
 		mov    0x4c(%esp),%esi
 		or     %esi,%esi
-		js     jump_12aed0
+		js     jump_drwe_aed0
 		mov    0x13c(%esp),%esi
-		jmp    jump_12ad95
+		jmp    jump_drwe_ad95
 
 
 jt_gpoly_stb:	/* 0x12b0c0 */
@@ -3454,76 +3312,76 @@ jt_gpoly_sta:	/* 0x12b220 */
 		.long   gpoly_sta_cont
 
 vtable_12b2d0:
-		.long   func_129ad7
-		.long   func_129c5c
-		.long   func_129c42
-		.long   func_129c28
-		.long   func_129c0e
-		.long   func_129bf4
-		.long   func_129bda
-		.long   func_129bc0
-		.long   func_129ba6
-		.long   func_129b8c
-		.long   func_129b72
-		.long   func_129b58
-		.long   func_129b3e
-		.long   func_129b24
-		.long   func_129b0a
-		.long   func_129af0
+		.long   gpoly_drwa_00
+		.long   gpoly_drwa_01
+		.long   gpoly_drwa_02
+		.long   gpoly_drwa_03
+		.long   gpoly_drwa_04
+		.long   gpoly_drwa_05
+		.long   gpoly_drwa_06
+		.long   gpoly_drwa_07
+		.long   gpoly_drwa_08
+		.long   gpoly_drwa_09
+		.long   gpoly_drwa_10
+		.long   gpoly_drwa_11
+		.long   gpoly_drwa_12
+		.long   gpoly_drwa_13
+		.long   gpoly_drwa_14
+		.long   gpoly_drwa_15
 
 vtable_12b310:
-		.long   func_12a028
-		.long   func_12a1ad
-		.long   func_12a193
-		.long   func_12a179
-		.long   func_12a15f
-		.long   func_12a145
-		.long   func_12a12b
-		.long   func_12a111
-		.long   func_12a0f7
-		.long   func_12a0dd
-		.long   func_12a0c3
-		.long   func_12a0a9
-		.long   func_12a08f
-		.long   func_12a075
-		.long   func_12a05b
-		.long   func_12a041
+		.long   gpoly_drwb_00
+		.long   gpoly_drwb_01
+		.long   gpoly_drwb_02
+		.long   gpoly_drwb_03
+		.long   gpoly_drwb_04
+		.long   gpoly_drwb_05
+		.long   gpoly_drwb_06
+		.long   gpoly_drwb_07
+		.long   gpoly_drwb_08
+		.long   gpoly_drwb_09
+		.long   gpoly_drwb_10
+		.long   gpoly_drwb_11
+		.long   gpoly_drwb_12
+		.long   gpoly_drwb_13
+		.long   gpoly_drwb_14
+		.long   gpoly_drwb_15
 
 vtable_12b350:
-		.long   func_12a72c
-		.long   func_12a839
-		.long   func_12a827
-		.long   func_12a815
-		.long   func_12a803
-		.long   func_12a7f1
-		.long   func_12a7df
-		.long   func_12a7cd
-		.long   func_12a7bb
-		.long   func_12a7a9
-		.long   func_12a797
-		.long   func_12a785
-		.long   func_12a773
-		.long   func_12a761
-		.long   func_12a74f
-		.long   func_12a73d
+		.long   gpoly_drwc_00
+		.long   gpoly_drwc_01
+		.long   gpoly_drwc_02
+		.long   gpoly_drwc_03
+		.long   gpoly_drwc_04
+		.long   gpoly_drwc_05
+		.long   gpoly_drwc_06
+		.long   gpoly_drwc_07
+		.long   gpoly_drwc_08
+		.long   gpoly_drwc_09
+		.long   gpoly_drwc_10
+		.long   gpoly_drwc_11
+		.long   gpoly_drwc_12
+		.long   gpoly_drwc_13
+		.long   gpoly_drwc_14
+		.long   gpoly_drwc_15
 
 vtable_12b390:
-		.long   func_12abfd
-		.long   func_12ad0a
-		.long   func_12acf8
-		.long   func_12ace6
-		.long   func_12acd4
-		.long   func_12acc2
-		.long   func_12acb0
-		.long   func_12ac9e
-		.long   func_12ac8c
-		.long   func_12ac7a
-		.long   func_12ac68
-		.long   func_12ac56
-		.long   func_12ac44
-		.long   func_12ac32
-		.long   func_12ac20
-		.long   func_12ac0e
+		.long   gpoly_drwd_00
+		.long   gpoly_drwd_01
+		.long   gpoly_drwd_02
+		.long   gpoly_drwd_03
+		.long   gpoly_drwd_04
+		.long   gpoly_drwd_05
+		.long   gpoly_drwd_06
+		.long   gpoly_drwd_07
+		.long   gpoly_drwd_08
+		.long   gpoly_drwd_09
+		.long   gpoly_drwd_10
+		.long   gpoly_drwd_11
+		.long   gpoly_drwd_12
+		.long   gpoly_drwd_13
+		.long   gpoly_drwd_14
+		.long   gpoly_drwd_15
 
 .text
 
