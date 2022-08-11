@@ -321,6 +321,10 @@ const long gpoly_divtable[][64] = {
 };
 
 long gpoly_pro_enable_mode_ofs;
+// Static variables used only inside draw_gpoly().
+// These don't really have to be global; but this helps
+// in using these inside assembly code
+long gpoly_mode;
 
 /******************************************************************************/
 void gpoly_enable_pentium_pro(TbBool state)

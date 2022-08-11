@@ -40,11 +40,15 @@
 .global EXPORT_SYMBOL(gpoly_countdown);
 .global EXPORT_SYMBOL(gpoly_reptable);
 .global EXPORT_SYMBOL(gpoly_divtable);
+.global EXPORT_SYMBOL(gpoly_mode);
 
 
 GLOBAL_FUNC (ASM_draw_gpoly_)
 		pusha
 		sub    $0x190,%esp
+		xor    %ecx,%ecx
+		mov    EXPORT_SYMBOL(vec_mode),%cl
+		mov    %ecx,EXPORT_SYMBOL(gpoly_mode)
 		mov    (%eax),%ebp
 		or     (%edx),%ebp
 		or     (%ebx),%ebp
@@ -217,8 +221,7 @@ GLOBAL_FUNC (ASM_draw_gpoly_)
 		add    %ebp,%esi
 		sub    0x54(%esp),%esi
 		mov    %esi,0x7c(%esp)
-		xor    %ecx,%ecx
-		mov    EXPORT_SYMBOL(vec_mode),%cl
+		mov    EXPORT_SYMBOL(gpoly_mode),%ecx
 		jmp    *jt_gpoly_sta(,%ecx,4)
 
 
@@ -1876,8 +1879,7 @@ gpoly_sta_md27:
 
 
 	gpoly_sta_cont:
-		xor    %ecx,%ecx
-		mov    EXPORT_SYMBOL(vec_mode),%cl
+		mov    EXPORT_SYMBOL(gpoly_mode),%ecx
 		jmp    *jt_gpoly_stb(,%ecx,4)
 
 	gpoly_stb_md05:
