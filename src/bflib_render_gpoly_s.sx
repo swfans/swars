@@ -62,28 +62,31 @@ GLOBAL_FUNC (ASM_draw_gpoly_)
 		mov    $0x0,%ebp
 		mov    %ebp,0x170(%esp)
 		jmp    jump_1283f0
+
 	jump_1283e0:
 		mov    $0x1,%ebp
 		mov    %ebp,0x170(%esp)
-		cs
-		mov    %eax,%eax
-		nop
+		/* Invalid code was here */
+
 	jump_1283f0:
 		mov    0x4(%eax),%ecx
 		cmp    0x4(%edx),%ecx
 		jle    jump_1283fc
 		mov    0x4(%edx),%ecx
 		xchg   %eax,%edx
+
 	jump_1283fc:
 		cmp    0x4(%ebx),%ecx
 		jle    jump_128405
 		mov    0x4(%ebx),%ecx
 		xchg   %eax,%ebx
+
 	jump_128405:
 		mov    0x4(%edx),%ecx
 		cmp    0x4(%ebx),%ecx
 		jle    jump_12840f
 		xchg   %edx,%ebx
+
 	jump_12840f:
 		mov    0x4(%eax),%ecx
 		cmp    0x4(%ebx),%ecx
@@ -148,6 +151,7 @@ GLOBAL_FUNC (ASM_draw_gpoly_)
 		shl    $0x8,%ebx
 		mov    EXPORT_SYMBOL(gpoly_divtable)+0x80(%ebx,%eax,4),%eax
 		mov    %eax,(%esp)
+
 	jump_1284f4:
 		mov    0x4c(%esp),%ecx
 		sub    0x34(%esp),%ecx
@@ -164,6 +168,7 @@ GLOBAL_FUNC (ASM_draw_gpoly_)
 		shl    $0x8,%ebx
 		mov    EXPORT_SYMBOL(gpoly_divtable)+0x80(%ebx,%eax,4),%eax
 		mov    %eax,0x4(%esp)
+
 	jump_12852c:
 		mov    0x64(%esp),%ecx
 		sub    0x4c(%esp),%ecx
@@ -181,24 +186,28 @@ GLOBAL_FUNC (ASM_draw_gpoly_)
 		mov    EXPORT_SYMBOL(gpoly_divtable)+0x80(%ebx,%eax,4),%eax
 		mov    %eax,0x8(%esp)
 		jmp    jump_12859c
+
 	jump_128570:
 		shl    $0x10,%eax
 		cltd
 		idiv   %ecx
 		mov    %eax,(%esp)
 		jmp    jump_1284f4
+
 	jump_128580:
 		shl    $0x10,%eax
 		cltd
 		idiv   %ecx
 		mov    %eax,0x4(%esp)
 		jmp    jump_12852c
+
 	jump_128590:
 		shl    $0x10,%eax
 		cltd
 		idiv   %ecx
 		mov    %eax,0x8(%esp)
 		mov    %eax,%eax
+
 	jump_12859c:
 		mov    0x4c(%esp),%ecx
 		sub    0x34(%esp),%ecx
@@ -235,6 +244,7 @@ gpoly_sta_md27:
 		js     jump_128604
 		sub    %eax,%ecx
 		sub    %eax,%ecx
+
 	jump_128604:
 		add    %eax,%ecx
 		imul   %edi,%ebx
@@ -265,6 +275,7 @@ gpoly_sta_md27:
 		rol    $0x10,%eax
 		jns    jump_128651
 		inc    %eax
+
 	jump_128651:
 		mov    %eax,0x100(%esp)
 		mov    %ebp,%eax
@@ -283,13 +294,16 @@ gpoly_sta_md27:
 		rol    $0x10,%eax
 		jns    jump_128681
 		inc    %eax
+
 	jump_128681:
 		mov    %eax,0x104(%esp)
 		jmp    jump_12869a
+
 	jump_12868a:
 		xor    %eax,%eax
 		mov    %eax,0x100(%esp)
 		mov    %eax,0x104(%esp)
+
 	jump_12869a:
 		mov    0x7c(%esp),%esi
 		or     %esi,%esi
@@ -300,11 +314,13 @@ gpoly_sta_md27:
 		jg     jump_1286bf
 		mov    EXPORT_SYMBOL(gpoly_reptable)(,%ecx,4),%ebx
 		jmp    jump_1286cd
+
 	jump_1286bf:
 		mov    $0x0,%edx
 		mov    $0x7fffffff,%eax
 		idiv   %ecx
 		mov    %eax,%ebx
+
 	jump_1286cd:
 		mov    0x5c(%esp),%eax
 		sub    0x44(%esp),%eax
@@ -314,6 +330,7 @@ gpoly_sta_md27:
 		rol    $0x10,%eax
 		jns    jump_1286e2
 		inc    %eax
+
 	jump_1286e2:
 		mov    %eax,0x1c(%esp)
 		mov    0x60(%esp),%eax
@@ -324,6 +341,7 @@ gpoly_sta_md27:
 		rol    $0x10,%eax
 		jns    jump_1286fb
 		inc    %eax
+
 	jump_1286fb:
 		mov    %eax,0x28(%esp)
 		mov    0x64(%esp),%ecx
@@ -332,11 +350,13 @@ gpoly_sta_md27:
 		jg     jump_128718
 		mov    EXPORT_SYMBOL(gpoly_reptable)(,%ecx,4),%ebx
 		jmp    jump_128726
+
 	jump_128718:
 		mov    $0x0,%edx
 		mov    $0x7fffffff,%eax
 		idiv   %ecx
 		mov    %eax,%ebx
+
 	jump_128726:
 		mov    0x74(%esp),%eax
 		sub    0x5c(%esp),%eax
@@ -346,6 +366,7 @@ gpoly_sta_md27:
 		rol    $0x10,%eax
 		jns    jump_12873b
 		inc    %eax
+
 	jump_12873b:
 		mov    %eax,0x18(%esp)
 		mov    0x78(%esp),%eax
@@ -356,6 +377,7 @@ gpoly_sta_md27:
 		rol    $0x10,%eax
 		jns    jump_128754
 		inc    %eax
+
 	jump_128754:
 		mov    %eax,0x24(%esp)
 		mov    0x4(%esp),%eax
@@ -395,6 +417,7 @@ gpoly_sta_md27:
 		rol    $0x10,%eax
 		sub    %eax,0x10(%esp)
 		jmp    jump_128882
+
 	jump_1287e7:
 		mov    0x64(%esp),%ecx
 		sub    0x34(%esp),%ecx
@@ -402,11 +425,13 @@ gpoly_sta_md27:
 		jg     jump_128800
 		mov    EXPORT_SYMBOL(gpoly_reptable)(,%ecx,4),%ebx
 		jmp    jump_12880e
+
 	jump_128800:
 		mov    $0x0,%edx
 		mov    $0x7fffffff,%eax
 		idiv   %ecx
 		mov    %eax,%ebx
+
 	jump_12880e:
 		mov    0x74(%esp),%eax
 		sub    0x44(%esp),%eax
@@ -416,6 +441,7 @@ gpoly_sta_md27:
 		rol    $0x10,%eax
 		jns    jump_128823
 		inc    %eax
+
 	jump_128823:
 		mov    %eax,0x1c(%esp)
 		mov    0x78(%esp),%eax
@@ -426,6 +452,7 @@ gpoly_sta_md27:
 		rol    $0x10,%eax
 		jns    jump_12883c
 		inc    %eax
+
 	jump_12883c:
 		mov    %eax,0x28(%esp)
 		mov    (%esp),%eax
@@ -446,6 +473,7 @@ gpoly_sta_md27:
 		mov    %dx,%ax
 		rol    $0x10,%eax
 		sub    %eax,0xc(%esp)
+
 	jump_128882:
 		mov    0x44(%esp),%eax
 		shl    $0x10,%eax
@@ -478,6 +506,7 @@ gpoly_sta_md27:
 		jns    jump_12891a
 		sub    $0x100,%eax
 		sbb    $0x0,%dl
+
 	jump_12891a:
 		mov    %eax,0xf8(%esp)
 		mov    %edx,0xfc(%esp)
@@ -496,6 +525,7 @@ gpoly_sta_md27:
 		jns    jump_128963
 		sub    $0x100,%eax
 		sbb    $0x0,%dl
+
 	jump_128963:
 		mov    %eax,0x110(%esp)
 		mov    %edx,0x114(%esp)
@@ -531,6 +561,7 @@ gpoly_sta_md27:
 		jns    jump_1289f3
 		sub    $0x100,%eax
 		sbb    $0x0,%dl
+
 	jump_1289f3:
 		mov    %eax,0x11c(%esp)
 		mov    %edx,0x120(%esp)
@@ -548,11 +579,11 @@ gpoly_sta_md27:
 		mov    %al,%cl
 		mov    %ecx,0x134(%esp)
 		mov    %edx,0x138(%esp)
+
 	jump_128a3c:
 		jmp    gpoly_sta_cont
 
-
-gpoly_sta_md28:
+	gpoly_sta_md28:
 		mov    0x50(%esp),%esi
 		mov    0x7c(%esp),%edi
 		or     %edi,%edi
@@ -574,6 +605,7 @@ gpoly_sta_md28:
 		js     jump_128a7e
 		sub    %eax,%ecx
 		sub    %eax,%ecx
+
 	jump_128a7e:
 		add    %eax,%ecx
 		imul   %edi,%ebx
@@ -604,6 +636,7 @@ gpoly_sta_md28:
 		rol    $0x10,%eax
 		jns    jump_128acf
 		inc    %eax
+
 	jump_128acf:
 		mov    %eax,0x108(%esp)
 		mov    %ebp,%eax
@@ -622,6 +655,7 @@ gpoly_sta_md28:
 		rol    $0x10,%eax
 		jns    jump_128aff
 		inc    %eax
+
 	jump_128aff:
 		mov    %eax,0x100(%esp)
 		mov    %ebp,%eax
@@ -640,14 +674,17 @@ gpoly_sta_md28:
 		rol    $0x10,%eax
 		jns    jump_128b2f
 		inc    %eax
+
 	jump_128b2f:
 		mov    %eax,0x104(%esp)
 		jmp    jump_128b4f
+
 	jump_128b38:
 		xor    %eax,%eax
 		mov    %eax,0x108(%esp)
 		mov    %eax,0x100(%esp)
 		mov    %eax,0x104(%esp)
+
 	jump_128b4f:
 		mov    0x7c(%esp),%esi
 		or     %esi,%esi
@@ -658,11 +695,13 @@ gpoly_sta_md28:
 		jg     jump_128b74
 		mov    EXPORT_SYMBOL(gpoly_reptable)(,%ecx,4),%ebx
 		jmp    jump_128b82
+
 	jump_128b74:
 		mov    $0x0,%edx
 		mov    $0x7fffffff,%eax
 		idiv   %ecx
 		mov    %eax,%ebx
+
 	jump_128b82:
 		mov    0x58(%esp),%eax
 		sub    0x40(%esp),%eax
@@ -672,6 +711,7 @@ gpoly_sta_md28:
 		rol    $0x10,%eax
 		jns    jump_128b97
 		inc    %eax
+
 	jump_128b97:
 		mov    %eax,0xc(%esp)
 		mov    0x5c(%esp),%eax
@@ -682,6 +722,7 @@ gpoly_sta_md28:
 		rol    $0x10,%eax
 		jns    jump_128bb0
 		inc    %eax
+
 	jump_128bb0:
 		mov    %eax,0x1c(%esp)
 		mov    0x60(%esp),%eax
@@ -692,6 +733,7 @@ gpoly_sta_md28:
 		rol    $0x10,%eax
 		jns    jump_128bc9
 		inc    %eax
+
 	jump_128bc9:
 		mov    %eax,0x28(%esp)
 		mov    0x64(%esp),%ecx
@@ -700,11 +742,13 @@ gpoly_sta_md28:
 		jg     jump_128be6
 		mov    EXPORT_SYMBOL(gpoly_reptable)(,%ecx,4),%ebx
 		jmp    jump_128bf4
+
 	jump_128be6:
 		mov    $0x0,%edx
 		mov    $0x7fffffff,%eax
 		idiv   %ecx
 		mov    %eax,%ebx
+
 	jump_128bf4:
 		mov    0x70(%esp),%eax
 		sub    0x58(%esp),%eax
@@ -714,6 +758,7 @@ gpoly_sta_md28:
 		rol    $0x10,%eax
 		jns    jump_128c09
 		inc    %eax
+
 	jump_128c09:
 		mov    %eax,0x10(%esp)
 		mov    0x74(%esp),%eax
@@ -724,6 +769,7 @@ gpoly_sta_md28:
 		rol    $0x10,%eax
 		jns    jump_128c22
 		inc    %eax
+
 	jump_128c22:
 		mov    %eax,0x18(%esp)
 		mov    0x78(%esp),%eax
@@ -734,6 +780,7 @@ gpoly_sta_md28:
 		rol    $0x10,%eax
 		jns    jump_128c3b
 		inc    %eax
+
 	jump_128c3b:
 		mov    %eax,0x24(%esp)
 		mov    0x4(%esp),%eax
@@ -773,6 +820,7 @@ gpoly_sta_md28:
 		rol    $0x10,%eax
 		sub    %eax,0x10(%esp)
 		jmp    jump_128d82
+
 	jump_128cce:
 		mov    0x64(%esp),%ecx
 		sub    0x34(%esp),%ecx
@@ -780,11 +828,13 @@ gpoly_sta_md28:
 		jg     jump_128ce7
 		mov    EXPORT_SYMBOL(gpoly_reptable)(,%ecx,4),%ebx
 		jmp    jump_128cf5
+
 	jump_128ce7:
 		mov    $0x0,%edx
 		mov    $0x7fffffff,%eax
 		idiv   %ecx
 		mov    %eax,%ebx
+
 	jump_128cf5:
 		mov    0x70(%esp),%eax
 		sub    0x40(%esp),%eax
@@ -794,6 +844,7 @@ gpoly_sta_md28:
 		rol    $0x10,%eax
 		jns    jump_128d0a
 		inc    %eax
+
 	jump_128d0a:
 		mov    %eax,0xc(%esp)
 		mov    0x74(%esp),%eax
@@ -804,6 +855,7 @@ gpoly_sta_md28:
 		rol    $0x10,%eax
 		jns    jump_128d23
 		inc    %eax
+
 	jump_128d23:
 		mov    %eax,0x1c(%esp)
 		mov    0x78(%esp),%eax
@@ -814,6 +866,7 @@ gpoly_sta_md28:
 		rol    $0x10,%eax
 		jns    jump_128d3c
 		inc    %eax
+
 	jump_128d3c:
 		mov    %eax,0x28(%esp)
 		mov    (%esp),%eax
@@ -834,6 +887,7 @@ gpoly_sta_md28:
 		mov    %dx,%ax
 		rol    $0x10,%eax
 		sub    %eax,0xc(%esp)
+
 	jump_128d82:
 		mov    0x40(%esp),%eax
 		shl    $0x10,%eax
@@ -868,6 +922,7 @@ gpoly_sta_md28:
 		jns    jump_128e24
 		sub    $0xffff,%eax
 		sbb    $0x0,%dl
+
 	jump_128e24:
 		mov    %eax,0xf4(%esp)
 		mov    %edx,0xf8(%esp)
@@ -880,6 +935,7 @@ gpoly_sta_md28:
 		jns    jump_128e59
 		sub    $0x100,%eax
 		sbb    $0x0,%dl
+
 	jump_128e59:
 		mov    %eax,0xf8(%esp)
 		mov    %edx,0xfc(%esp)
@@ -892,6 +948,7 @@ gpoly_sta_md28:
 		jns    jump_128e85
 		sub    $0x10000,%eax
 		sbb    $0x0,%dl
+
 	jump_128e85:
 		mov    %eax,0x10c(%esp)
 		mov    %edx,0x110(%esp)
@@ -904,6 +961,7 @@ gpoly_sta_md28:
 		jns    jump_128eb4
 		sub    $0x100,%eax
 		sbb    $0x0,%dl
+
 	jump_128eb4:
 		mov    %eax,0x110(%esp)
 		mov    %edx,0x114(%esp)
@@ -938,6 +996,7 @@ gpoly_sta_md28:
 		jns    jump_128f42
 		sub    $0x10000,%eax
 		sbb    $0x0,%dl
+
 	jump_128f42:
 		mov    %eax,0x118(%esp)
 		mov    %edx,0x11c(%esp)
@@ -950,6 +1009,7 @@ gpoly_sta_md28:
 		jns    jump_128f71
 		sub    $0x100,%eax
 		sbb    $0x0,%dl
+
 	jump_128f71:
 		mov    %eax,0x11c(%esp)
 		mov    %edx,0x120(%esp)
@@ -972,11 +1032,11 @@ gpoly_sta_md28:
 		mov    %ecx,0x134(%esp)
 		mov    0x138(%esp),%dl
 		mov    %edx,0x138(%esp)
+
 	jump_128fd5:
 		jmp    gpoly_sta_cont
 
-
-gpoly_sta_md04:
+	gpoly_sta_md04:
 		mov    0x50(%esp),%esi
 		mov    0x7c(%esp),%edi
 		or     %edi,%edi
@@ -998,6 +1058,7 @@ gpoly_sta_md04:
 		js     jump_129017
 		sub    %eax,%ecx
 		sub    %eax,%ecx
+
 	jump_129017:
 		add    %eax,%ecx
 		imul   %edi,%ebx
@@ -1028,12 +1089,15 @@ gpoly_sta_md04:
 		rol    $0x10,%eax
 		jns    jump_129064
 		inc    %eax
+
 	jump_129064:
 		mov    %eax,0x108(%esp)
 		jmp    jump_129076
+
 	jump_12906d:
 		xor    %eax,%eax
 		mov    %eax,0x108(%esp)
+
 	jump_129076:
 		mov    0x7c(%esp),%esi
 		or     %esi,%esi
@@ -1044,11 +1108,13 @@ gpoly_sta_md04:
 		jg     jump_12909b
 		mov    EXPORT_SYMBOL(gpoly_reptable)(,%ecx,4),%ebx
 		jmp    jump_1290a9
+
 	jump_12909b:
 		mov    $0x0,%edx
 		mov    $0x7fffffff,%eax
 		idiv   %ecx
 		mov    %eax,%ebx
+
 	jump_1290a9:
 		mov    0x58(%esp),%eax
 		sub    0x40(%esp),%eax
@@ -1058,6 +1124,7 @@ gpoly_sta_md04:
 		rol    $0x10,%eax
 		jns    jump_1290be
 		inc    %eax
+
 	jump_1290be:
 		mov    %eax,0xc(%esp)
 		mov    0x64(%esp),%ecx
@@ -1066,11 +1133,13 @@ gpoly_sta_md04:
 		jg     jump_1290db
 		mov    EXPORT_SYMBOL(gpoly_reptable)(,%ecx,4),%ebx
 		jmp    jump_1290e9
+
 	jump_1290db:
 		mov    $0x0,%edx
 		mov    $0x7fffffff,%eax
 		idiv   %ecx
 		mov    %eax,%ebx
+
 	jump_1290e9:
 		mov    0x70(%esp),%eax
 		sub    0x58(%esp),%eax
@@ -1080,9 +1149,11 @@ gpoly_sta_md04:
 		rol    $0x10,%eax
 		jns    jump_1290fe
 		inc    %eax
+
 	jump_1290fe:
 		mov    %eax,0x10(%esp)
 		jmp    jump_129144
+
 	jump_129104:
 		mov    0x64(%esp),%ecx
 		sub    0x34(%esp),%ecx
@@ -1090,11 +1161,13 @@ gpoly_sta_md04:
 		jg     jump_12911d
 		mov    EXPORT_SYMBOL(gpoly_reptable)(,%ecx,4),%ebx
 		jmp    jump_12912b
+
 	jump_12911d:
 		mov    $0x0,%edx
 		mov    $0x7fffffff,%eax
 		idiv   %ecx
 		mov    %eax,%ebx
+
 	jump_12912b:
 		mov    0x70(%esp),%eax
 		sub    0x40(%esp),%eax
@@ -1104,8 +1177,10 @@ gpoly_sta_md04:
 		rol    $0x10,%eax
 		jns    jump_129140
 		inc    %eax
+
 	jump_129140:
 		mov    %eax,0xc(%esp)
+
 	jump_129144:
 		mov    0x40(%esp),%eax
 		shl    $0x10,%eax
@@ -1115,8 +1190,7 @@ gpoly_sta_md04:
 		mov    %eax,0x164(%esp)
 		jmp    gpoly_sta_cont
 
-
-gpoly_sta_md02:
+	gpoly_sta_md02:
 		mov    0x50(%esp),%esi
 		mov    0x7c(%esp),%edi
 		or     %edi,%edi
@@ -1138,6 +1212,7 @@ gpoly_sta_md02:
 		js     jump_1291a2
 		sub    %eax,%ecx
 		sub    %eax,%ecx
+
 	jump_1291a2:
 		add    %eax,%ecx
 		imul   %edi,%ebx
@@ -1168,6 +1243,7 @@ gpoly_sta_md02:
 		rol    $0x10,%eax
 		jns    jump_1291ef
 		inc    %eax
+
 	jump_1291ef:
 		mov    %eax,0x100(%esp)
 		mov    %ebp,%eax
@@ -1186,13 +1262,16 @@ gpoly_sta_md02:
 		rol    $0x10,%eax
 		jns    jump_12921f
 		inc    %eax
+
 	jump_12921f:
 		mov    %eax,0x104(%esp)
 		jmp    jump_129238
+
 	jump_129228:
 		xor    %eax,%eax
 		mov    %eax,0x100(%esp)
 		mov    %eax,0x104(%esp)
+
 	jump_129238:
 		mov    0x7c(%esp),%esi
 		or     %esi,%esi
@@ -1203,11 +1282,13 @@ gpoly_sta_md02:
 		jg     jump_12925d
 		mov    EXPORT_SYMBOL(gpoly_reptable)(,%ecx,4),%ebx
 		jmp    jump_12926b
+
 	jump_12925d:
 		mov    $0x0,%edx
 		mov    $0x7fffffff,%eax
 		idiv   %ecx
 		mov    %eax,%ebx
+
 	jump_12926b:
 		mov    0x5c(%esp),%eax
 		sub    0x44(%esp),%eax
@@ -1217,6 +1298,7 @@ gpoly_sta_md02:
 		rol    $0x10,%eax
 		jns    jump_129280
 		inc    %eax
+
 	jump_129280:
 		mov    %eax,0x1c(%esp)
 		mov    0x60(%esp),%eax
@@ -1227,6 +1309,7 @@ gpoly_sta_md02:
 		rol    $0x10,%eax
 		jns    jump_129299
 		inc    %eax
+
 	jump_129299:
 		mov    %eax,0x28(%esp)
 		mov    0x64(%esp),%ecx
@@ -1235,11 +1318,13 @@ gpoly_sta_md02:
 		jg     jump_1292b6
 		mov    EXPORT_SYMBOL(gpoly_reptable)(,%ecx,4),%ebx
 		jmp    jump_1292c4
+
 	jump_1292b6:
 		mov    $0x0,%edx
 		mov    $0x7fffffff,%eax
 		idiv   %ecx
 		mov    %eax,%ebx
+
 	jump_1292c4:
 		mov    0x74(%esp),%eax
 		sub    0x5c(%esp),%eax
@@ -1249,6 +1334,7 @@ gpoly_sta_md02:
 		rol    $0x10,%eax
 		jns    jump_1292d9
 		inc    %eax
+
 	jump_1292d9:
 		mov    %eax,0x18(%esp)
 		mov    0x78(%esp),%eax
@@ -1259,9 +1345,11 @@ gpoly_sta_md02:
 		rol    $0x10,%eax
 		jns    jump_1292f2
 		inc    %eax
+
 	jump_1292f2:
 		mov    %eax,0x24(%esp)
 		jmp    jump_129351
+
 	jump_1292f8:
 		mov    0x64(%esp),%ecx
 		sub    0x34(%esp),%ecx
@@ -1269,11 +1357,13 @@ gpoly_sta_md02:
 		jg     jump_129311
 		mov    EXPORT_SYMBOL(gpoly_reptable)(,%ecx,4),%ebx
 		jmp    jump_12931f
+
 	jump_129311:
 		mov    $0x0,%edx
 		mov    $0x7fffffff,%eax
 		idiv   %ecx
 		mov    %eax,%ebx
+
 	jump_12931f:
 		mov    0x74(%esp),%eax
 		sub    0x44(%esp),%eax
@@ -1283,6 +1373,7 @@ gpoly_sta_md02:
 		rol    $0x10,%eax
 		jns    jump_129334
 		inc    %eax
+
 	jump_129334:
 		mov    %eax,0x1c(%esp)
 		mov    0x78(%esp),%eax
@@ -1293,8 +1384,10 @@ gpoly_sta_md02:
 		rol    $0x10,%eax
 		jns    jump_12934d
 		inc    %eax
+
 	jump_12934d:
 		mov    %eax,0x28(%esp)
+
 	jump_129351:
 		mov    0x44(%esp),%eax
 		shl    $0x10,%eax
@@ -1323,6 +1416,7 @@ gpoly_sta_md02:
 		jns    jump_1293cd
 		sub    $0x100,%eax
 		sbb    $0x0,%dl
+
 	jump_1293cd:
 		mov    %eax,0xf8(%esp)
 		mov    %edx,0xfc(%esp)
@@ -1341,6 +1435,7 @@ gpoly_sta_md02:
 		jns    jump_129416
 		sub    $0x100,%eax
 		sbb    $0x0,%dl
+
 	jump_129416:
 		mov    %eax,0x110(%esp)
 		mov    %edx,0x114(%esp)
@@ -1376,6 +1471,7 @@ gpoly_sta_md02:
 		jns    jump_1294a6
 		sub    $0x100,%eax
 		sbb    $0x0,%dl
+
 	jump_1294a6:
 		mov    %eax,0x11c(%esp)
 		mov    %edx,0x120(%esp)
@@ -1393,11 +1489,12 @@ gpoly_sta_md02:
 		mov    %al,%cl
 		mov    %ecx,0x134(%esp)
 		mov    %edx,0x138(%esp)
+
 	jump_1294ef:
 		jmp    gpoly_sta_cont
 
 
-gpoly_sta_md05:
+	gpoly_sta_md05:
 		mov    0x50(%esp),%esi
 		mov    0x7c(%esp),%edi
 		or     %edi,%edi
@@ -1419,6 +1516,7 @@ gpoly_sta_md05:
 		js     jump_129531
 		sub    %eax,%ecx
 		sub    %eax,%ecx
+
 	jump_129531:
 		add    %eax,%ecx
 		imul   %edi,%ebx
@@ -1467,6 +1565,7 @@ gpoly_sta_md05:
 		rol    $0x10,%eax
 		jns    jump_1295b2
 		inc    %eax
+
 	jump_1295b2:
 		mov    %eax,0x100(%esp)
 		mov    %ebp,%eax
@@ -1485,14 +1584,17 @@ gpoly_sta_md05:
 		rol    $0x10,%eax
 		jns    jump_1295e2
 		inc    %eax
+
 	jump_1295e2:
 		mov    %eax,0x104(%esp)
 		jmp    jump_129602
+
 	jump_1295eb:
 		xor    %eax,%eax
 		mov    %eax,0x108(%esp)
 		mov    %eax,0x100(%esp)
 		mov    %eax,0x104(%esp)
+
 	jump_129602:
 		mov    0x7c(%esp),%esi
 		or     %esi,%esi
@@ -1503,11 +1605,13 @@ gpoly_sta_md05:
 		jg     jump_129627
 		mov    EXPORT_SYMBOL(gpoly_reptable)(,%ecx,4),%ebx
 		jmp    jump_129635
+
 	jump_129627:
 		mov    $0x0,%edx
 		mov    $0x7fffffff,%eax
 		idiv   %ecx
 		mov    %eax,%ebx
+
 	jump_129635:
 		mov    0x58(%esp),%eax
 		sub    0x40(%esp),%eax
@@ -1527,6 +1631,7 @@ gpoly_sta_md05:
 		rol    $0x10,%eax
 		jns    jump_129663
 		inc    %eax
+
 	jump_129663:
 		mov    %eax,0x1c(%esp)
 		mov    0x60(%esp),%eax
@@ -1537,6 +1642,7 @@ gpoly_sta_md05:
 		rol    $0x10,%eax
 		jns    jump_12967c
 		inc    %eax
+
 	jump_12967c:
 		mov    %eax,0x28(%esp)
 		mov    0x64(%esp),%ecx
@@ -1545,11 +1651,13 @@ gpoly_sta_md05:
 		jg     jump_129699
 		mov    EXPORT_SYMBOL(gpoly_reptable)(,%ecx,4),%ebx
 		jmp    jump_1296a7
+
 	jump_129699:
 		mov    $0x0,%edx
 		mov    $0x7fffffff,%eax
 		idiv   %ecx
 		mov    %eax,%ebx
+
 	jump_1296a7:
 		mov    0x70(%esp),%eax
 		sub    0x58(%esp),%eax
@@ -1569,6 +1677,7 @@ gpoly_sta_md05:
 		rol    $0x10,%eax
 		jns    jump_1296d5
 		inc    %eax
+
 	jump_1296d5:
 		mov    %eax,0x18(%esp)
 		mov    0x78(%esp),%eax
@@ -1579,9 +1688,11 @@ gpoly_sta_md05:
 		rol    $0x10,%eax
 		jns    jump_1296ee
 		inc    %eax
+
 	jump_1296ee:
 		mov    %eax,0x24(%esp)
 		jmp    jump_129766
+
 	jump_1296f4:
 		mov    0x64(%esp),%ecx
 		sub    0x34(%esp),%ecx
@@ -1589,11 +1700,13 @@ gpoly_sta_md05:
 		jg     jump_12970d
 		mov    EXPORT_SYMBOL(gpoly_reptable)(,%ecx,4),%ebx
 		jmp    jump_12971b
+
 	jump_12970d:
 		mov    $0x0,%edx
 		mov    $0x7fffffff,%eax
 		idiv   %ecx
 		mov    %eax,%ebx
+
 	jump_12971b:
 		mov    0x70(%esp),%eax
 		sub    0x40(%esp),%eax
@@ -1613,6 +1726,7 @@ gpoly_sta_md05:
 		rol    $0x10,%eax
 		jns    jump_129749
 		inc    %eax
+
 	jump_129749:
 		mov    %eax,0x1c(%esp)
 		mov    0x78(%esp),%eax
@@ -1623,8 +1737,10 @@ gpoly_sta_md05:
 		rol    $0x10,%eax
 		jns    jump_129762
 		inc    %eax
+
 	jump_129762:
 		mov    %eax,0x28(%esp)
+
 	jump_129766:
 		mov    0x40(%esp),%eax
 		shl    $0x10,%eax
@@ -1759,13 +1875,13 @@ gpoly_sta_md05:
 		mov    %edx,0x138(%esp)
 
 
-gpoly_sta_cont:
+	gpoly_sta_cont:
 		xor    %ecx,%ecx
 		mov    EXPORT_SYMBOL(vec_mode),%cl
 		jmp    *jt_gpoly_stb(,%ecx,4)
 
-
-gpoly_stb_md05:
+	gpoly_stb_md05:
+		/* Invalid code was here */
 		mov    0x170(%esp),%eax
 		or     %eax,%eax
 		jne    jump_129f20
@@ -1789,11 +1905,13 @@ gpoly_stb_md05:
 		mov    (%esp),%eax
 		mov    %eax,0x88(%esp)
 		jmp    jump_129a4e
+
 	jump_129a39:
 		mov    (%esp),%eax
 		mov    %eax,0x84(%esp)
 		mov    0x4(%esp),%eax
 		mov    %eax,0x88(%esp)
+
 	jump_129a4e:
 		mov    0x124(%esp),%ecx
 		mov    0x128(%esp),%edx
@@ -1810,6 +1928,7 @@ gpoly_stb_md05:
 		cmp    EXPORT_SYMBOL(vec_window_height),%eax
 		jle    jump_129a9d
 		mov    EXPORT_SYMBOL(vec_window_height),%eax
+
 	jump_129a9d:
 		sub    0x34(%esp),%eax
 		mov    %eax,0xf0(%esp)
@@ -1824,179 +1943,163 @@ gpoly_stb_md05:
 		mov    0x13c(%esp),%esi
 		jmp    jump_129cf6
 
-
-gpoly_drwa_00:
+	gpoly_drwa_00:
 		mov    %dl,%bl
 		mov    %ch,%ah
 		add    %ebp,%ecx
 		mov    (%ebx),%al
 		adc    %esi,%edx
-		mov    EXPORT_SYMBOL(pixmap)+0x0000(%eax),%al
+		mov    EXPORT_SYMBOL(pixmap)+0x0(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,(%edi)
 
-
-gpoly_drwa_15:
+	gpoly_drwa_15:
 		mov    %dl,%bl
 		mov    %ch,%ah
 		add    %ebp,%ecx
 		mov    (%ebx),%al
 		adc    %esi,%edx
-		mov    EXPORT_SYMBOL(pixmap)+0x0000(%eax),%al
+		mov    EXPORT_SYMBOL(pixmap)+0x0(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0x1(%edi)
 
-
-gpoly_drwa_14:
+	gpoly_drwa_14:
 		mov    %dl,%bl
 		mov    %ch,%ah
 		add    %ebp,%ecx
 		mov    (%ebx),%al
 		adc    %esi,%edx
-		mov    EXPORT_SYMBOL(pixmap)+0x0000(%eax),%al
+		mov    EXPORT_SYMBOL(pixmap)+0x0(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0x2(%edi)
 
-
-gpoly_drwa_13:
+	gpoly_drwa_13:
 		mov    %dl,%bl
 		mov    %ch,%ah
 		add    %ebp,%ecx
 		mov    (%ebx),%al
 		adc    %esi,%edx
-		mov    EXPORT_SYMBOL(pixmap)+0x0000(%eax),%al
+		mov    EXPORT_SYMBOL(pixmap)+0x0(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0x3(%edi)
 
-
-gpoly_drwa_12:
+	gpoly_drwa_12:
 		mov    %dl,%bl
 		mov    %ch,%ah
 		add    %ebp,%ecx
 		mov    (%ebx),%al
 		adc    %esi,%edx
-		mov    EXPORT_SYMBOL(pixmap)+0x0000(%eax),%al
+		mov    EXPORT_SYMBOL(pixmap)+0x0(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0x4(%edi)
 
-
-gpoly_drwa_11:
+	gpoly_drwa_11:
 		mov    %dl,%bl
 		mov    %ch,%ah
 		add    %ebp,%ecx
 		mov    (%ebx),%al
 		adc    %esi,%edx
-		mov    EXPORT_SYMBOL(pixmap)+0x0000(%eax),%al
+		mov    EXPORT_SYMBOL(pixmap)+0x0(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0x5(%edi)
 
-
-gpoly_drwa_10:
+	gpoly_drwa_10:
 		mov    %dl,%bl
 		mov    %ch,%ah
 		add    %ebp,%ecx
 		mov    (%ebx),%al
 		adc    %esi,%edx
-		mov    EXPORT_SYMBOL(pixmap)+0x0000(%eax),%al
+		mov    EXPORT_SYMBOL(pixmap)+0x0(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0x6(%edi)
 
-
-gpoly_drwa_09:
+	gpoly_drwa_09:
 		mov    %dl,%bl
 		mov    %ch,%ah
 		add    %ebp,%ecx
 		mov    (%ebx),%al
 		adc    %esi,%edx
-		mov    EXPORT_SYMBOL(pixmap)+0x0000(%eax),%al
+		mov    EXPORT_SYMBOL(pixmap)+0x0(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0x7(%edi)
 
-
-gpoly_drwa_08:
+	gpoly_drwa_08:
 		mov    %dl,%bl
 		mov    %ch,%ah
 		add    %ebp,%ecx
 		mov    (%ebx),%al
 		adc    %esi,%edx
-		mov    EXPORT_SYMBOL(pixmap)+0x0000(%eax),%al
+		mov    EXPORT_SYMBOL(pixmap)+0x0(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0x8(%edi)
 
-
-gpoly_drwa_07:
+	gpoly_drwa_07:
 		mov    %dl,%bl
 		mov    %ch,%ah
 		add    %ebp,%ecx
 		mov    (%ebx),%al
 		adc    %esi,%edx
-		mov    EXPORT_SYMBOL(pixmap)+0x0000(%eax),%al
+		mov    EXPORT_SYMBOL(pixmap)+0x0(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0x9(%edi)
 
-
-gpoly_drwa_06:
+	gpoly_drwa_06:
 		mov    %dl,%bl
 		mov    %ch,%ah
 		add    %ebp,%ecx
 		mov    (%ebx),%al
 		adc    %esi,%edx
-		mov    EXPORT_SYMBOL(pixmap)+0x0000(%eax),%al
+		mov    EXPORT_SYMBOL(pixmap)+0x0(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0xa(%edi)
 
-
-gpoly_drwa_05:
+	gpoly_drwa_05:
 		mov    %dl,%bl
 		mov    %ch,%ah
 		add    %ebp,%ecx
 		mov    (%ebx),%al
 		adc    %esi,%edx
-		mov    EXPORT_SYMBOL(pixmap)+0x0000(%eax),%al
+		mov    EXPORT_SYMBOL(pixmap)+0x0(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0xb(%edi)
 
-
-gpoly_drwa_04:
+	gpoly_drwa_04:
 		mov    %dl,%bl
 		mov    %ch,%ah
 		add    %ebp,%ecx
 		mov    (%ebx),%al
 		adc    %esi,%edx
-		mov    EXPORT_SYMBOL(pixmap)+0x0000(%eax),%al
+		mov    EXPORT_SYMBOL(pixmap)+0x0(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0xc(%edi)
 
-
-gpoly_drwa_03:
+	gpoly_drwa_03:
 		mov    %dl,%bl
 		mov    %ch,%ah
 		add    %ebp,%ecx
 		mov    (%ebx),%al
 		adc    %esi,%edx
-		mov    EXPORT_SYMBOL(pixmap)+0x0000(%eax),%al
+		mov    EXPORT_SYMBOL(pixmap)+0x0(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0xd(%edi)
 
-
-gpoly_drwa_02:
+	gpoly_drwa_02:
 		mov    %dl,%bl
 		mov    %ch,%ah
 		add    %ebp,%ecx
 		mov    (%ebx),%al
 		adc    %esi,%edx
-		mov    EXPORT_SYMBOL(pixmap)+0x0000(%eax),%al
+		mov    EXPORT_SYMBOL(pixmap)+0x0(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0xe(%edi)
 
-
-gpoly_drwa_01:
+	gpoly_drwa_01:
 		mov    %dl,%bl
 		mov    %ch,%ah
 		add    %ebp,%ecx
 		mov    (%ebx),%al
 		adc    %esi,%edx
-		mov    EXPORT_SYMBOL(pixmap)+0x0000(%eax),%al
+		mov    EXPORT_SYMBOL(pixmap)+0x0(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0xf(%edi)
 		add    $0x10,%edi
@@ -2019,6 +2122,7 @@ gpoly_drwa_01:
 		add    0xac(%esp),%edi
 		decl   0xf0(%esp)
 		je     jump_129de8
+
 	jump_129cf6:
 		mov    %eax,0xb4(%esp)
 		mov    %ebp,0xb8(%esp)
@@ -2038,7 +2142,9 @@ gpoly_drwa_01:
 		mov    %ebp,0xdc(%esp)
 		mov    0xf4(%esp),%ebp
 		mov    0xf8(%esp),%esi
-		jmp    *vtable_12b2d0(,%eax,4)
+		jmp    *jt_gpoly_drwa(,%eax,4)
+
+
 	jump_129d60:
 		add    0x150(%esp),%bl
 		adc    0xe4(%esp),%ecx
@@ -2061,9 +2167,11 @@ gpoly_drwa_01:
 		js     jump_129d60
 		mov    0x13c(%esp),%esi
 		jmp    jump_129cf6
+
 	jump_129de0:
 		mov    0x13c(%esp),%esi
 		nop
+
 	jump_129de8:
 		decl   0x30(%esp)
 		je     ASM_draw_gpoly_end
@@ -2089,6 +2197,7 @@ gpoly_drwa_01:
 		cmp    EXPORT_SYMBOL(vec_window_height),%eax
 		jle    jump_129e71
 		mov    EXPORT_SYMBOL(vec_window_height),%eax
+
 	jump_129e71:
 		sub    0x4c(%esp),%eax
 		mov    %eax,0xf0(%esp)
@@ -2101,6 +2210,7 @@ gpoly_drwa_01:
 		js     jump_129d60
 		mov    0x50(%esp),%esi
 		jmp    jump_129cf6
+
 	jump_129eb0:
 		mov    0x8(%esp),%ebp
 		mov    %ebp,0x88(%esp)
@@ -2109,6 +2219,7 @@ gpoly_drwa_01:
 		cmp    EXPORT_SYMBOL(vec_window_height),%eax
 		jle    jump_129ed0
 		mov    EXPORT_SYMBOL(vec_window_height),%eax
+
 	jump_129ed0:
 		sub    0x4c(%esp),%eax
 		mov    %eax,0xf0(%esp)
@@ -2120,6 +2231,7 @@ gpoly_drwa_01:
 		js     jump_129d60
 		mov    0x13c(%esp),%esi
 		jmp    jump_129cf6
+
 	jump_129f20:
 		mov    EXPORT_SYMBOL(vec_screen_width),%ecx
 		mov    %ecx,0xac(%esp)
@@ -2141,11 +2253,13 @@ gpoly_drwa_01:
 		mov    (%esp),%eax
 		mov    %eax,0x88(%esp)
 		jmp    jump_129f9f
+
 	jump_129f8a:
 		mov    (%esp),%eax
 		mov    %eax,0x84(%esp)
 		mov    0x4(%esp),%eax
 		mov    %eax,0x88(%esp)
+
 	jump_129f9f:
 		mov    0x124(%esp),%ecx
 		mov    0x128(%esp),%edx
@@ -2162,6 +2276,7 @@ gpoly_drwa_01:
 		cmp    EXPORT_SYMBOL(vec_window_height),%eax
 		jle    jump_129fee
 		mov    EXPORT_SYMBOL(vec_window_height),%eax
+
 	jump_129fee:
 		sub    0x34(%esp),%eax
 		mov    %eax,0xf0(%esp)
@@ -2177,183 +2292,184 @@ gpoly_drwa_01:
 		jmp    jump_12a266
 
 
-gpoly_drwb_00:
+	gpoly_drwb_00:
 		mov    %dl,%bl
 		mov    %ch,%ah
 		add    %ebp,%ecx
 		mov    (%ebx),%al
 		adc    %esi,%edx
-		mov    EXPORT_SYMBOL(pixmap)+0x0000(%eax),%al
+		mov    EXPORT_SYMBOL(pixmap)+0x0(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,(%edi)
 
 
-gpoly_drwb_15:
+	gpoly_drwb_15:
 		mov    %dl,%bl
 		mov    %ch,%ah
 		add    %ebp,%ecx
 		mov    (%ebx),%al
 		adc    %esi,%edx
-		mov    EXPORT_SYMBOL(pixmap)+0x0000(%eax),%al
+		mov    EXPORT_SYMBOL(pixmap)+0x0(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0x1(%edi)
 
 
-gpoly_drwb_14:
+	gpoly_drwb_14:
 		mov    %dl,%bl
 		mov    %ch,%ah
 		add    %ebp,%ecx
 		mov    (%ebx),%al
 		adc    %esi,%edx
-		mov    EXPORT_SYMBOL(pixmap)+0x0000(%eax),%al
+		mov    EXPORT_SYMBOL(pixmap)+0x0(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0x2(%edi)
 
 
-gpoly_drwb_13:
+	gpoly_drwb_13:
 		mov    %dl,%bl
 		mov    %ch,%ah
 		add    %ebp,%ecx
 		mov    (%ebx),%al
 		adc    %esi,%edx
-		mov    EXPORT_SYMBOL(pixmap)+0x0000(%eax),%al
+		mov    EXPORT_SYMBOL(pixmap)+0x0(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0x3(%edi)
 
 
-gpoly_drwb_12:
+	gpoly_drwb_12:
 		mov    %dl,%bl
 		mov    %ch,%ah
 		add    %ebp,%ecx
 		mov    (%ebx),%al
 		adc    %esi,%edx
-		mov    EXPORT_SYMBOL(pixmap)+0x0000(%eax),%al
+		mov    EXPORT_SYMBOL(pixmap)+0x0(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0x4(%edi)
 
 
-gpoly_drwb_11:
+	gpoly_drwb_11:
 		mov    %dl,%bl
 		mov    %ch,%ah
 		add    %ebp,%ecx
 		mov    (%ebx),%al
 		adc    %esi,%edx
-		mov    EXPORT_SYMBOL(pixmap)+0x0000(%eax),%al
+		mov    EXPORT_SYMBOL(pixmap)+0x0(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0x5(%edi)
 
 
-gpoly_drwb_10:
+	gpoly_drwb_10:
 		mov    %dl,%bl
 		mov    %ch,%ah
 		add    %ebp,%ecx
 		mov    (%ebx),%al
 		adc    %esi,%edx
-		mov    EXPORT_SYMBOL(pixmap)+0x0000(%eax),%al
+		mov    EXPORT_SYMBOL(pixmap)+0x0(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0x6(%edi)
 
 
-gpoly_drwb_09:
+	gpoly_drwb_09:
 		mov    %dl,%bl
 		mov    %ch,%ah
 		add    %ebp,%ecx
 		mov    (%ebx),%al
 		adc    %esi,%edx
-		mov    EXPORT_SYMBOL(pixmap)+0x0000(%eax),%al
+		mov    EXPORT_SYMBOL(pixmap)+0x0(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0x7(%edi)
 
 
-gpoly_drwb_08:
+	gpoly_drwb_08:
 		mov    %dl,%bl
 		mov    %ch,%ah
 		add    %ebp,%ecx
 		mov    (%ebx),%al
 		adc    %esi,%edx
-		mov    EXPORT_SYMBOL(pixmap)+0x0000(%eax),%al
+		mov    EXPORT_SYMBOL(pixmap)+0x0(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0x8(%edi)
 
 
-gpoly_drwb_07:
+	gpoly_drwb_07:
 		mov    %dl,%bl
 		mov    %ch,%ah
 		add    %ebp,%ecx
 		mov    (%ebx),%al
 		adc    %esi,%edx
-		mov    EXPORT_SYMBOL(pixmap)+0x0000(%eax),%al
+		mov    EXPORT_SYMBOL(pixmap)+0x0(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0x9(%edi)
 
 
-gpoly_drwb_06:
+	gpoly_drwb_06:
 		mov    %dl,%bl
 		mov    %ch,%ah
 		add    %ebp,%ecx
 		mov    (%ebx),%al
 		adc    %esi,%edx
-		mov    EXPORT_SYMBOL(pixmap)+0x0000(%eax),%al
+		mov    EXPORT_SYMBOL(pixmap)+0x0(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0xa(%edi)
 
 
-gpoly_drwb_05:
+	gpoly_drwb_05:
 		mov    %dl,%bl
 		mov    %ch,%ah
 		add    %ebp,%ecx
 		mov    (%ebx),%al
 		adc    %esi,%edx
-		mov    EXPORT_SYMBOL(pixmap)+0x0000(%eax),%al
+		mov    EXPORT_SYMBOL(pixmap)+0x0(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0xb(%edi)
 
 
-gpoly_drwb_04:
+	gpoly_drwb_04:
 		mov    %dl,%bl
 		mov    %ch,%ah
 		add    %ebp,%ecx
 		mov    (%ebx),%al
 		adc    %esi,%edx
-		mov    EXPORT_SYMBOL(pixmap)+0x0000(%eax),%al
+		mov    EXPORT_SYMBOL(pixmap)+0x0(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0xc(%edi)
 
 
-gpoly_drwb_03:
+	gpoly_drwb_03:
 		mov    %dl,%bl
 		mov    %ch,%ah
 		add    %ebp,%ecx
 		mov    (%ebx),%al
 		adc    %esi,%edx
-		mov    EXPORT_SYMBOL(pixmap)+0x0000(%eax),%al
+		mov    EXPORT_SYMBOL(pixmap)+0x0(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0xd(%edi)
 
 
-gpoly_drwb_02:
+	gpoly_drwb_02:
 		mov    %dl,%bl
 		mov    %ch,%ah
 		add    %ebp,%ecx
 		mov    (%ebx),%al
 		adc    %esi,%edx
-		mov    EXPORT_SYMBOL(pixmap)+0x0000(%eax),%al
+		mov    EXPORT_SYMBOL(pixmap)+0x0(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0xe(%edi)
 
 
-gpoly_drwb_01:
+	gpoly_drwb_01:
 		mov    %dl,%bl
 		mov    %ch,%ah
 		add    %ebp,%ecx
 		mov    (%ebx),%al
 		adc    %esi,%edx
-		mov    EXPORT_SYMBOL(pixmap)+0x0000(%eax),%al
+		mov    EXPORT_SYMBOL(pixmap)+0x0(%eax),%al
 		adc    0xfc(%esp),%bh
 		mov    %al,0xf(%edi)
 		add    $0x10,%edi
 		subl   $0x10,0xdc(%esp)
 		jg     gpoly_drwb_00
+
 	jump_12a1d8:
 		mov    0xb4(%esp),%eax
 		mov    0xb8(%esp),%ebp
@@ -2378,6 +2494,7 @@ gpoly_drwb_01:
 		add    0xac(%esp),%edi
 		decl   0xf0(%esp)
 		je     jump_12a468
+
 	jump_12a266:
 		mov    %eax,0xb4(%esp)
 		mov    %ebp,0xb8(%esp)
@@ -2387,6 +2504,7 @@ gpoly_drwb_01:
 		cmp    %esi,%eax
 		jg     jump_12a300
 		jl     jump_12a330
+
 	jump_12a28e:
 		mov    %esi,0x13c(%esp)
 		mov    0xbc(%esp),%edi
@@ -2396,6 +2514,7 @@ gpoly_drwb_01:
 		sar    $0x10,%ebp
 		cmp    EXPORT_SYMBOL(vec_window_width),%ebp
 		jg     jump_12a3d0
+
 	jump_12a2c0:
 		add    %esi,%edi
 		sub    %esi,%ebp
@@ -2406,7 +2525,9 @@ gpoly_drwb_01:
 		mov    %ebp,0xdc(%esp)
 		mov    0xf4(%esp),%ebp
 		mov    0xf8(%esp),%esi
-		jmp    *vtable_12b310(,%eax,4)
+		jmp    *jt_gpoly_drwb(,%eax,4)
+
+
 	jump_12a300:
 		add    0x108(%esp),%bl
 		adc    0xf4(%esp),%ecx
@@ -2416,6 +2537,7 @@ gpoly_drwb_01:
 		cmp    %esi,%eax
 		jle    jump_12a28e
 		jmp    jump_12a300
+
 	jump_12a330:
 		sub    0x108(%esp),%bl
 		sbb    0xf4(%esp),%ecx
@@ -2425,11 +2547,13 @@ gpoly_drwb_01:
 		cmp    %esi,%eax
 		jge    jump_12a28e
 		jmp    jump_12a330
+
 	jump_12a360:
 		or     %esi,%esi
 		je     jump_12a28e
 		js     jump_12a370
 		jmp    jump_12a3a0
+
 	jump_12a370:
 		add    0x108(%esp),%bl
 		adc    0xf4(%esp),%ecx
@@ -2438,6 +2562,7 @@ gpoly_drwb_01:
 		inc    %esi
 		je     jump_12a28e
 		jmp    jump_12a370
+
 	jump_12a3a0:
 		sub    0x108(%esp),%bl
 		sbb    0xf4(%esp),%ecx
@@ -2446,9 +2571,11 @@ gpoly_drwb_01:
 		dec    %esi
 		je     jump_12a28e
 		jmp    jump_12a3a0
+
 	jump_12a3d0:
 		mov    EXPORT_SYMBOL(vec_window_width),%ebp
 		jmp    jump_12a2c0
+
 	jump_12a3e0:
 		add    0x150(%esp),%bl
 		adc    0xe4(%esp),%ecx
@@ -2471,9 +2598,11 @@ gpoly_drwb_01:
 		js     jump_12a3e0
 		mov    0x13c(%esp),%esi
 		jmp    jump_12a266
+
 	jump_12a460:
 		mov    0x13c(%esp),%esi
 		nop
+
 	jump_12a468:
 		decl   0x30(%esp)
 		je     ASM_draw_gpoly_end
@@ -2499,6 +2628,7 @@ gpoly_drwb_01:
 		cmp    EXPORT_SYMBOL(vec_window_height),%eax
 		jle    jump_12a4f1
 		mov    EXPORT_SYMBOL(vec_window_height),%eax
+
 	jump_12a4f1:
 		sub    0x4c(%esp),%eax
 		mov    %eax,0xf0(%esp)
@@ -2511,6 +2641,7 @@ gpoly_drwb_01:
 		js     jump_12a3e0
 		mov    0x50(%esp),%esi
 		jmp    jump_12a266
+
 	jump_12a530:
 		mov    0x8(%esp),%ebp
 		mov    %ebp,0x88(%esp)
@@ -2519,6 +2650,7 @@ gpoly_drwb_01:
 		cmp    EXPORT_SYMBOL(vec_window_height),%eax
 		jle    jump_12a550
 		mov    EXPORT_SYMBOL(vec_window_height),%eax
+
 	jump_12a550:
 		sub    0x4c(%esp),%eax
 		mov    %eax,0xf0(%esp)
@@ -2531,8 +2663,8 @@ gpoly_drwb_01:
 		mov    0x13c(%esp),%esi
 		jmp    jump_12a266
 
-
-gpoly_stb_md27:
+	gpoly_stb_md05p64:
+		/* Invalid code was here */
 		mov    0x170(%esp),%eax
 		or     %eax,%eax
 		jne    jump_12ab00
@@ -2554,11 +2686,13 @@ gpoly_stb_md27:
 		mov    (%esp),%eax
 		mov    %eax,0x88(%esp)
 		jmp    jump_12a6a3
+
 	jump_12a68e:
 		mov    (%esp),%eax
 		mov    %eax,0x84(%esp)
 		mov    0x4(%esp),%eax
 		mov    %eax,0x88(%esp)
+
 	jump_12a6a3:
 		mov    0x124(%esp),%ecx
 		mov    0x128(%esp),%edx
@@ -2575,6 +2709,7 @@ gpoly_stb_md27:
 		cmp    EXPORT_SYMBOL(vec_window_height),%eax
 		jle    jump_12a6f2
 		mov    EXPORT_SYMBOL(vec_window_height),%eax
+
 	jump_12a6f2:
 		sub    0x34(%esp),%eax
 		mov    %eax,0xf0(%esp)
@@ -2590,7 +2725,7 @@ gpoly_stb_md27:
 		jmp    jump_12a8c4
 
 
-gpoly_drwc_00:
+	gpoly_drwc_00:
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
@@ -2599,7 +2734,7 @@ gpoly_drwc_00:
 		mov    %al,(%edi)
 
 
-gpoly_drwc_15:
+	gpoly_drwc_15:
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
@@ -2608,7 +2743,7 @@ gpoly_drwc_15:
 		mov    %al,0x1(%edi)
 
 
-gpoly_drwc_14:
+	gpoly_drwc_14:
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
@@ -2617,7 +2752,7 @@ gpoly_drwc_14:
 		mov    %al,0x2(%edi)
 
 
-gpoly_drwc_13:
+	gpoly_drwc_13:
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
@@ -2626,7 +2761,7 @@ gpoly_drwc_13:
 		mov    %al,0x3(%edi)
 
 
-gpoly_drwc_12:
+	gpoly_drwc_12:
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
@@ -2635,7 +2770,7 @@ gpoly_drwc_12:
 		mov    %al,0x4(%edi)
 
 
-gpoly_drwc_11:
+	gpoly_drwc_11:
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
@@ -2644,7 +2779,7 @@ gpoly_drwc_11:
 		mov    %al,0x5(%edi)
 
 
-gpoly_drwc_10:
+	gpoly_drwc_10:
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
@@ -2653,7 +2788,7 @@ gpoly_drwc_10:
 		mov    %al,0x6(%edi)
 
 
-gpoly_drwc_09:
+	gpoly_drwc_09:
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
@@ -2662,7 +2797,7 @@ gpoly_drwc_09:
 		mov    %al,0x7(%edi)
 
 
-gpoly_drwc_08:
+	gpoly_drwc_08:
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
@@ -2671,7 +2806,7 @@ gpoly_drwc_08:
 		mov    %al,0x8(%edi)
 
 
-gpoly_drwc_07:
+	gpoly_drwc_07:
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
@@ -2680,7 +2815,7 @@ gpoly_drwc_07:
 		mov    %al,0x9(%edi)
 
 
-gpoly_drwc_06:
+	gpoly_drwc_06:
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
@@ -2689,7 +2824,7 @@ gpoly_drwc_06:
 		mov    %al,0xa(%edi)
 
 
-gpoly_drwc_05:
+	gpoly_drwc_05:
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
@@ -2698,7 +2833,7 @@ gpoly_drwc_05:
 		mov    %al,0xb(%edi)
 
 
-gpoly_drwc_04:
+	gpoly_drwc_04:
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
@@ -2707,7 +2842,7 @@ gpoly_drwc_04:
 		mov    %al,0xc(%edi)
 
 
-gpoly_drwc_03:
+	gpoly_drwc_03:
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
@@ -2716,7 +2851,7 @@ gpoly_drwc_03:
 		mov    %al,0xd(%edi)
 
 
-gpoly_drwc_02:
+	gpoly_drwc_02:
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
@@ -2725,7 +2860,7 @@ gpoly_drwc_02:
 		mov    %al,0xe(%edi)
 
 
-gpoly_drwc_01:
+	gpoly_drwc_01:
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
@@ -2735,7 +2870,6 @@ gpoly_drwc_01:
 		add    $0x10,%edi
 		subl   $0x10,0xdc(%esp)
 		jg     gpoly_drwc_00
-
 
 	jump_12a85c:
 		mov    0xb4(%esp),%eax
@@ -2777,7 +2911,7 @@ gpoly_drwc_01:
 		mov    %ebp,0xdc(%esp)
 		mov    0xf4(%esp),%ebp
 		mov    0xf8(%esp),%esi
-		jmp    *vtable_12b350(,%eax,4)
+		jmp    *jt_gpoly_drwc(,%eax,4)
 	jump_12a940:
 		add    0xf4(%esp),%ecx
 		adc    0xf8(%esp),%edx
@@ -2807,9 +2941,11 @@ gpoly_drwc_01:
 		js     jump_12a980
 		mov    0x13c(%esp),%esi
 		jmp    jump_12a8c4
+
 	jump_12a9d0:
 		mov    0x13c(%esp),%esi
 		nop
+
 	jump_12a9d8:
 		decl   0x30(%esp)
 		je     ASM_draw_gpoly_end
@@ -2833,6 +2969,7 @@ gpoly_drwc_01:
 		cmp    EXPORT_SYMBOL(vec_window_height),%eax
 		jle    jump_12aa56
 		mov    EXPORT_SYMBOL(vec_window_height),%eax
+
 	jump_12aa56:
 		sub    0x4c(%esp),%eax
 		mov    %eax,0xf0(%esp)
@@ -2845,6 +2982,7 @@ gpoly_drwc_01:
 		js     jump_12a980
 		mov    0x50(%esp),%esi
 		jmp    jump_12a8c4
+
 	jump_12aa90:
 		mov    0x8(%esp),%ebp
 		mov    %ebp,0x88(%esp)
@@ -2853,6 +2991,7 @@ gpoly_drwc_01:
 		cmp    EXPORT_SYMBOL(vec_window_height),%eax
 		jle    jump_12aab0
 		mov    EXPORT_SYMBOL(vec_window_height),%eax
+
 	jump_12aab0:
 		sub    0x4c(%esp),%eax
 		mov    %eax,0xf0(%esp)
@@ -2864,6 +3003,7 @@ gpoly_drwc_01:
 		js     jump_12a980
 		mov    0x13c(%esp),%esi
 		jmp    jump_12a8c4
+
 	jump_12ab00:
 		mov    EXPORT_SYMBOL(vec_screen_width),%ecx
 		mov    %ecx,0xac(%esp)
@@ -2883,11 +3023,13 @@ gpoly_drwc_01:
 		mov    (%esp),%eax
 		mov    %eax,0x88(%esp)
 		jmp    jump_12ab74
+
 	jump_12ab5f:
 		mov    (%esp),%eax
 		mov    %eax,0x84(%esp)
 		mov    0x4(%esp),%eax
 		mov    %eax,0x88(%esp)
+
 	jump_12ab74:
 		mov    0x124(%esp),%ecx
 		mov    0x128(%esp),%edx
@@ -2904,6 +3046,7 @@ gpoly_drwc_01:
 		cmp    EXPORT_SYMBOL(vec_window_height),%eax
 		jle    jump_12abc3
 		mov    EXPORT_SYMBOL(vec_window_height),%eax
+
 	jump_12abc3:
 		sub    0x34(%esp),%eax
 		mov    %eax,0xf0(%esp)
@@ -2919,7 +3062,7 @@ gpoly_drwc_01:
 		jmp    jump_drwe_ad95
 
 
-gpoly_drwd_00:
+	gpoly_drwd_00:
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
@@ -2928,7 +3071,7 @@ gpoly_drwd_00:
 		mov    %al,(%edi)
 
 
-gpoly_drwd_15:
+	gpoly_drwd_15:
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
@@ -2937,7 +3080,7 @@ gpoly_drwd_15:
 		mov    %al,0x1(%edi)
 
 
-gpoly_drwd_14:
+	gpoly_drwd_14:
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
@@ -2946,7 +3089,7 @@ gpoly_drwd_14:
 		mov    %al,0x2(%edi)
 
 
-gpoly_drwd_13:
+	gpoly_drwd_13:
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
@@ -2955,7 +3098,7 @@ gpoly_drwd_13:
 		mov    %al,0x3(%edi)
 
 
-gpoly_drwd_12:
+	gpoly_drwd_12:
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
@@ -2964,7 +3107,7 @@ gpoly_drwd_12:
 		mov    %al,0x4(%edi)
 
 
-gpoly_drwd_11:
+	gpoly_drwd_11:
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
@@ -2973,7 +3116,7 @@ gpoly_drwd_11:
 		mov    %al,0x5(%edi)
 
 
-gpoly_drwd_10:
+	gpoly_drwd_10:
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
@@ -2982,7 +3125,7 @@ gpoly_drwd_10:
 		mov    %al,0x6(%edi)
 
 
-gpoly_drwd_09:
+	gpoly_drwd_09:
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
@@ -2991,7 +3134,7 @@ gpoly_drwd_09:
 		mov    %al,0x7(%edi)
 
 
-gpoly_drwd_08:
+	gpoly_drwd_08:
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
@@ -3000,7 +3143,7 @@ gpoly_drwd_08:
 		mov    %al,0x8(%edi)
 
 
-gpoly_drwd_07:
+	gpoly_drwd_07:
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
@@ -3009,7 +3152,7 @@ gpoly_drwd_07:
 		mov    %al,0x9(%edi)
 
 
-gpoly_drwd_06:
+	gpoly_drwd_06:
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
@@ -3018,7 +3161,7 @@ gpoly_drwd_06:
 		mov    %al,0xa(%edi)
 
 
-gpoly_drwd_05:
+	gpoly_drwd_05:
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
@@ -3027,7 +3170,7 @@ gpoly_drwd_05:
 		mov    %al,0xb(%edi)
 
 
-gpoly_drwd_04:
+	gpoly_drwd_04:
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
@@ -3036,7 +3179,7 @@ gpoly_drwd_04:
 		mov    %al,0xc(%edi)
 
 
-gpoly_drwd_03:
+	gpoly_drwd_03:
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
@@ -3045,7 +3188,7 @@ gpoly_drwd_03:
 		mov    %al,0xd(%edi)
 
 
-gpoly_drwd_02:
+	gpoly_drwd_02:
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
@@ -3054,7 +3197,7 @@ gpoly_drwd_02:
 		mov    %al,0xe(%edi)
 
 
-gpoly_drwd_01:
+	gpoly_drwd_01:
 		mov    %dl,%bl
 		add    %ebp,%ecx
 		mov    (%ebx),%al
@@ -3082,6 +3225,7 @@ gpoly_drwd_01:
 		add    0xac(%esp),%edi
 		decl   0xf0(%esp)
 		je     jump_drwe_af28
+
 	jump_drwe_ad95:
 		mov    %eax,0xb4(%esp)
 		mov    %ebp,0xb8(%esp)
@@ -3091,6 +3235,7 @@ gpoly_drwd_01:
 		cmp    %esi,%eax
 		jg     jump_drwe_ae30
 		jl     jump_drwe_ae50
+
 	jump_drwe_adbd:
 		mov    %esi,0x13c(%esp)
 		mov    0xbc(%esp),%edi
@@ -3100,6 +3245,7 @@ gpoly_drwd_01:
 		sar    $0x10,%ebp
 		cmp    EXPORT_SYMBOL(vec_window_width),%ebp
 		jg     jump_drwe_aec0
+
 	jump_drwe_adef:
 		add    %esi,%edi
 		sub    %esi,%ebp
@@ -3110,7 +3256,7 @@ gpoly_drwd_01:
 		mov    %ebp,0xdc(%esp)
 		mov    0xf4(%esp),%ebp
 		mov    0xf8(%esp),%esi
-		jmp    *vtable_12b390(,%eax,4)
+		jmp    *jt_gpoly_drwd(,%eax,4)
 	jump_drwe_ae30:
 		add    0xf4(%esp),%ecx
 		adc    0xf8(%esp),%edx
@@ -3146,9 +3292,11 @@ gpoly_drwd_01:
 		dec    %esi
 		je     jump_drwe_adbd
 		jmp    jump_drwe_aea0
+
 	jump_drwe_aec0:
 		mov    EXPORT_SYMBOL(vec_window_width),%ebp
 		jmp    jump_drwe_adef
+
 	jump_drwe_aed0:
 		add    0xe4(%esp),%ecx
 		adc    0xec(%esp),%edx
@@ -3162,9 +3310,11 @@ gpoly_drwd_01:
 		js     jump_drwe_aed0
 		mov    0x13c(%esp),%esi
 		jmp    jump_drwe_ad95
+
 	jump_drwe_af20:
 		mov    0x13c(%esp),%esi
 		nop
+
 	jump_drwe_af28:
 		decl   0x30(%esp)
 		je     ASM_draw_gpoly_end
@@ -3188,6 +3338,7 @@ gpoly_drwd_01:
 		cmp    EXPORT_SYMBOL(vec_window_height),%eax
 		jle    jump_drwe_afa6
 		mov    EXPORT_SYMBOL(vec_window_height),%eax
+
 	jump_drwe_afa6:
 		sub    0x4c(%esp),%eax
 		mov    %eax,0xf0(%esp)
@@ -3200,6 +3351,7 @@ gpoly_drwd_01:
 		js     jump_drwe_aed0
 		mov    0x50(%esp),%esi
 		jmp    jump_drwe_ad95
+
 	jump_drwe_afe0:
 		mov    0x8(%esp),%ebp
 		mov    %ebp,0x88(%esp)
@@ -3208,6 +3360,7 @@ gpoly_drwd_01:
 		cmp    EXPORT_SYMBOL(vec_window_height),%eax
 		jle    jump_drwe_b000
 		mov    EXPORT_SYMBOL(vec_window_height),%eax
+
 	jump_drwe_b000:
 		sub    0x4c(%esp),%eax
 		mov    %eax,0xf0(%esp)
@@ -3249,7 +3402,7 @@ jt_gpoly_stb:	/* 0x12b0c0 */
 		.long   ASM_draw_gpoly_end
 		.long   ASM_draw_gpoly_end
 		.long   ASM_draw_gpoly_end
-		.long   gpoly_stb_md27
+		.long   gpoly_stb_md05p64
 		.long   ASM_draw_gpoly_end
 		.long   ASM_draw_gpoly_end
 		.long   ASM_draw_gpoly_end
@@ -3311,7 +3464,8 @@ jt_gpoly_sta:	/* 0x12b220 */
 		.long   gpoly_sta_cont
 		.long   gpoly_sta_cont
 
-vtable_12b2d0:
+
+jt_gpoly_drwa:
 		.long   gpoly_drwa_00
 		.long   gpoly_drwa_01
 		.long   gpoly_drwa_02
@@ -3329,7 +3483,7 @@ vtable_12b2d0:
 		.long   gpoly_drwa_14
 		.long   gpoly_drwa_15
 
-vtable_12b310:
+jt_gpoly_drwb:
 		.long   gpoly_drwb_00
 		.long   gpoly_drwb_01
 		.long   gpoly_drwb_02
@@ -3347,7 +3501,7 @@ vtable_12b310:
 		.long   gpoly_drwb_14
 		.long   gpoly_drwb_15
 
-vtable_12b350:
+jt_gpoly_drwc:
 		.long   gpoly_drwc_00
 		.long   gpoly_drwc_01
 		.long   gpoly_drwc_02
@@ -3365,7 +3519,7 @@ vtable_12b350:
 		.long   gpoly_drwc_14
 		.long   gpoly_drwc_15
 
-vtable_12b390:
+jt_gpoly_drwd:
 		.long   gpoly_drwd_00
 		.long   gpoly_drwd_01
 		.long   gpoly_drwd_02
@@ -3383,10 +3537,9 @@ vtable_12b390:
 		.long   gpoly_drwd_14
 		.long   gpoly_drwd_15
 
-.text
-
 
 	ASM_draw_gpoly_end:
 		add    $0x190,%esp
 		popa
 		ret
+
