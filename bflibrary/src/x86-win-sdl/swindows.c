@@ -21,6 +21,7 @@
 #include "bfwindows.h"
 #include "bfscreen.h"
 #include "bfscrsurf.h"
+#include "bfmemut.h"
 #include "bfmouse.h"
 #include "bfpalette.h"
 #include "privbflog.h"
@@ -38,6 +39,8 @@ volatile TbBool lbLibInitialised = false;
 volatile TbBool lbUserQuit = false;
 volatile TbBool lbAppActive;
 
+TbIdleControl lbIdleHandlers[LB_IDLE_HANDLERS_MAX] = {0};
+
 void LbRegisterStandardVideoModes(void);
 TbResult MEvent(const SDL_Event *ev);
 TbResult KEvent(const SDL_Event *ev);
@@ -53,6 +56,7 @@ TbResult LbBaseInitialise(void)
     lbScreenInitialised = false;
     lbScreenSurface = NULL;
     lbDrawSurface = NULL;
+    LbMemorySet(lbIdleHandlers, 0, sizeof(lbIdleHandlers));
     lbAppActive = true;
     LbMouseChangeMoveRatio(256, 256);
     // Register default video modes
@@ -173,7 +177,7 @@ TbBool LbWindowsControl(void)
 {
     SDL_Event ev;
     int n;
-    // process events until event queue is empty, nut also
+    // process events until event queue is empty, but also
     // limit the events to avoid a freeze
     for (n = 256; n != 0; n--)
     {
@@ -181,12 +185,35 @@ TbBool LbWindowsControl(void)
             break;
         LbI_ProcessEvent(&ev);
     }
+    for (n=0; n < LB_IDLE_HANDLERS_MAX; n++) {
+        TbIdleControl cb;
+
+        cb = lbIdleHandlers[n];
+        if (cb == NULL)
+            break;
+        cb();
+    }
     return !lbUserQuit;
+}
+
+TbResult LbRegisterIdleHandler(TbIdleControl cb)
+{
+    int n;
+
+    for (n=0; ; n++) {
+        if (n >= LB_IDLE_HANDLERS_MAX)
+            return Lb_FAIL;
+        if (lbIdleHandlers[n] == NULL)
+            break;
+    }
+    lbIdleHandlers[n] = cb;
+    return Lb_SUCCESS;
 }
 
 TbResult LbBaseReset(void)
 {
     lbLibInitialised = false;
+    LbMemorySet(lbIdleHandlers, 0, sizeof(lbIdleHandlers));
 #if !defined(LBI_SDL_QUIT_USE_ATEXIT)
     SDL_Quit();
 #endif

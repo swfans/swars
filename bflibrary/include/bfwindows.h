@@ -27,6 +27,10 @@ extern "C" {
 #endif
 
 #define LB_LARGE_DELAY_TIME 20
+#define LB_IDLE_HANDLERS_MAX 4
+
+typedef TbBool (*TbIdleControl)(void);
+
 
 /**
  * Informs if the library general preinitialization was called.
@@ -68,6 +72,16 @@ void LbDoMultitasking(void);
  *  On modern OSes, everything is managed by events rather than interrupts.
  */
 TbBool LbWindowsControl(void);
+
+/** Register an additionsal handler to be executed during LbWindowsControl().
+ *
+ * Some software modules may require execution of a handler when idling.
+ * For example, sound libraries often require maintenance of samples being
+ * played. This allows registering a callback to be executed while idling.
+ * During the idling, each callback will be executed at frequency around
+ * LB_LARGE_DELAY_TIME.
+ */
+TbResult LbRegisterIdleHandler(TbIdleControl cb);
 
 #ifdef __cplusplus
 };
