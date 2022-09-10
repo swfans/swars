@@ -15,7 +15,7 @@ extern "C" {
 #pragma pack(1)
 
 // Not sure about the value
-#define GAME_FPS 20
+#define GAME_FPS 16
 
 enum GameFlags {
     GamF_Unkn1       = 0x0001,

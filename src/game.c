@@ -2795,57 +2795,24 @@ game_transform_path(const char *file_name, char *result)
 static void
 game_update_full(bool wait)
 {
-    const int max_fps = 16;
-    const int32_t frame_duration = 1000 / max_fps;
-
-    static int32_t last_frame_ticks;
-    int32_t start_ticks;
+    static TbClockMSec last_loop_time = 0;
 
     display_unlock();
 
     game_handle_sdl_events();
 
-    start_ticks = SDL_GetTicks();
-
-    if (wait && last_frame_ticks != 0)
+    if (wait)
     {
-        int32_t last_frame_duration;
-
-        last_frame_duration = (int32_t)(start_ticks - last_frame_ticks + 2);
-
-        if (last_frame_duration < frame_duration)
-        {
-            int32_t total_sleep_time = frame_duration - last_frame_duration;
-            const int32_t min_sleep_time = 1000 / 40;
-            const int32_t max_sleep_time = 1000 / 20;
-
-            total_sleep_time = frame_duration - last_frame_duration;
-
-            if (total_sleep_time > 0)
-            {
-                float f = (float) total_sleep_time
-                    * (min_sleep_time + max_sleep_time)
-                    / (2 * min_sleep_time * max_sleep_time);
-                int32_t base_sleep_time = (int32_t)(total_sleep_time / f + .5f);
-
-                while (total_sleep_time > 0)
-                {
-                    int32_t sleep_time = MIN(base_sleep_time, total_sleep_time);
-                    int32_t ticks = SDL_GetTicks();
-
-                    SDL_Delay(sleep_time);
-
-                    display_lock();
-                    game_handle_sdl_events();
-                    display_unlock();
-
-                    total_sleep_time -= SDL_GetTicks() - ticks;
-                }
-            }
+        TbClockMSec curr_time = LbTimerClock();
+        TbClockMSec sleep_end = last_loop_time + 1000/GAME_FPS;
+        // If we missed the normal sleep target (ie. there was a slowdown), reset the value and do not sleep
+        if ((sleep_end < curr_time) || (sleep_end > curr_time + 1000/GAME_FPS)) {
+            LOGNO("missed FPS target, last frame time %ld too far from current %ld", (ulong)sleep_end, (ulong)curr_time);
+            sleep_end = curr_time;
         }
+        LbSleepUntil(sleep_end);
+        last_loop_time = sleep_end;
     }
-
-    last_frame_ticks = SDL_GetTicks();
 
     display_lock();
 }
