@@ -2803,7 +2803,6 @@ game_update_full(bool wait)
 
     display_unlock();
 
-    sound_update();
     game_handle_sdl_events();
 
     start_ticks = SDL_GetTicks();
@@ -2838,7 +2837,6 @@ game_update_full(bool wait)
 
                     display_lock();
                     game_handle_sdl_events();
-                    sound_update();
                     display_unlock();
 
                     total_sleep_time -= SDL_GetTicks() - ticks;

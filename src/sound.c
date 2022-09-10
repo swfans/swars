@@ -5,6 +5,7 @@
 #include OPENAL_ALC_H
 #include OPENAL_AL_H
 
+#include "bfwindows.h"
 #include "oggvorbis.h"
 #include "sound.h"
 #include "sound_util.h"
@@ -178,6 +179,8 @@ sound_initialise (void)
     goto err;
 
   if (!ogg_vorbis_stream_init (&sound_music_stream))
+    goto err;
+  if (LbRegisterIdleHandler(sound_update) != Lb_SUCCESS)
     goto err;
 
   sound_initialised = true;
@@ -390,8 +393,7 @@ unqueue_source_buffers (SourceDescriptor *src)
   s->status = 2;
 }
 
-void
-sound_update (void)
+TbBool sound_update(void)
 {
   int32_t n;
   SourceDescriptor *src;
@@ -399,7 +401,7 @@ sound_update (void)
   SoundPCMDriver *pcmdrv = sound_driver;
 
   if (!sound_initialised || sound_driver == NULL)
-    return;
+    return false;
 
   pcmdrv->n_active_samples = 0;
 
@@ -453,6 +455,7 @@ sound_update (void)
   ogg_vorbis_stream_set_gain (&sound_music_stream,
 			      sound_music_volume * (1.f / 322.f));
   ogg_vorbis_stream_update (&sound_music_stream);
+  return true;
 }
 
 SoundPCMDriver *
