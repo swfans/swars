@@ -1441,6 +1441,55 @@ void person_func_unknown_310(ubyte a1)
 
 ubyte do_user_interface(void)
 {
+    PlayerInfo *lplayer;
+    int n;
+
+    lplayer = &players[local_player_no];
+    person_func_unknown_310(0);
+    do_scroll_map();
+    do_rotate_map();
+    if (in_network_game)
+    {
+        if (lbKeyOn[KC_RETURN])
+        {
+            lbKeyOn[KC_RETURN] = 0;
+            if ((lplayer->PanelState[mouser] != 17) && (player_unkn0C9[local_player_no] <= 140))
+            {
+                lplayer->PanelState[mouser] = 17;
+                reset_buffered_keys();
+                player_unknCC9[local_player_no][0] = '\0';
+                player_unkn0C9[local_player_no] = 0;
+                scanner_unkn370 = 0;
+                scanner_unkn3CC = 0;
+            }
+        }
+    }
+    if (lplayer->PanelState[mouser] == 17)
+        return process_mouse_imputs() != 0;
+    // screenshot
+    if (lbKeyOn[KC_M])
+        LbIffSaveScreen("synII", lbDisplay.WScreen, display_palette, 0);
+
+    // TODO No idea what these are doing
+    for (n = 0; n < 5; n++)
+    {
+        if (lbKeyOn[KC_F1+n])
+        {
+            if (lbShift & KMod_ALT)
+            {
+                lbKeyOn[KC_F1+n] = 0;
+                my_build_packet(&packets[local_player_no], PAct_36, n, 0, 0, 0);
+                return 1;
+            }
+            if (lbShift & KMod_SHIFT)
+            {
+                lbKeyOn[KC_F1+n] = 0;
+                my_build_packet(&packets[local_player_no], PAct_35, n, 0, 0, 0);
+                return 1;
+            }
+        }
+    }
+
     ubyte ret;
     asm volatile ("call ASM_do_user_interface\n"
         : "=r" (ret));
