@@ -77,7 +77,6 @@ extern unsigned char *fade_data;
 extern char *fadedat_fname;
 extern char *pop_dat_fname_fmt;
 extern char *pop_tab_fname_fmt;
-extern unsigned short ingame__draw_unknprop_01;
 extern unsigned long unkn_buffer_04;
 
 extern struct TbSprite *small_font;
@@ -101,7 +100,6 @@ extern ushort *nstart_ani_end;
 extern struct Frame *frame;
 extern struct Frame *frame_end;
 
-extern unsigned short ingame__DisplayMode;
 extern unsigned char *display_palette;
 extern unsigned short unkn2_pos_x;
 extern unsigned short unkn2_pos_y;
@@ -142,8 +140,7 @@ extern char player_unknCC9[8][128];
 extern long scanner_unkn370;
 extern long scanner_unkn3CC;
 
-extern int8_t ingame__TrenchcoatPreference;
-extern int8_t ingame__PanelPermutation;
+extern short brightness;
 
 struct TbLoadFiles unk02_load_files[] =
 {
@@ -1439,6 +1436,14 @@ void person_func_unknown_310(ubyte a1)
         :  : "a" (a1));
 }
 
+TbResult read_palette_file(void)
+{
+    TbResult ret;
+    asm volatile ("call ASM_read_palette_file\n"
+        : "=r" (ret) : );
+    return ret;
+}
+
 ubyte do_user_interface(void)
 {
     PlayerInfo *lplayer;
@@ -1466,6 +1471,7 @@ ubyte do_user_interface(void)
     }
     if (lplayer->PanelState[mouser] == 17)
         return process_mouse_imputs() != 0;
+
     // screenshot
     if (lbKeyOn[KC_M])
         LbIffSaveScreen("synII", lbDisplay.WScreen, display_palette, 0);
@@ -1524,6 +1530,36 @@ ubyte do_user_interface(void)
             load_pop_sprites_lo();
         else
             load_pop_sprites_hi();
+    }
+
+    // change agents colours
+    if (lbKeyOn[KC_F10] && (lbShift == KMod_NONE))
+    {
+        lbKeyOn[KC_F10] = 0;
+        StopCD();
+        if (++ingame.TrenchcoatPreference > 5)
+            ingame.TrenchcoatPreference = 0;
+        load_multicolor_sprites();
+    }
+
+    // adjust palette brightness
+    if (lbKeyOn[KC_F11])
+    {
+        lbKeyOn[KC_F11] = 0;
+        if (lbShift & KMod_CONTROL)
+        {
+            read_palette_file();
+        }
+        else if (lbShift & KMod_SHIFT)
+        {
+            change_brightness(-1);
+            brightness--;
+        }
+        else if (lbShift == KMod_NONE)
+        {
+            change_brightness(1);
+            brightness++;
+        }
     }
 
     ubyte ret;

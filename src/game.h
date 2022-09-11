@@ -572,6 +572,10 @@ extern ubyte ingame__DetailLevel;
 extern ushort ingame__dword_180C4F;
 extern ubyte ingame__byte_180CA5;
 extern struct Scanner ingame__Scanner;
+extern int8_t ingame__TrenchcoatPreference;
+extern int8_t ingame__PanelPermutation;
+extern unsigned short ingame__draw_unknprop_01;
+extern unsigned short ingame__DisplayMode;
 
 extern ubyte login_control__State;
 extern ulong login_control__Money;
