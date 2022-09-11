@@ -519,7 +519,7 @@ struct InGame {
     ubyte fld_unkC98[5];
     short fld_unkCA0;
     ubyte fld_unkCA2;
-    ubyte PanelPermutation;
+    sbyte PanelPermutation;
     ubyte TrenchcoatPreference;
     ubyte fld_unkCA5;
     short fld_unkCA6;

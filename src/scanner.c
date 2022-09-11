@@ -25,4 +25,16 @@ void SCANNER_init(void)
         :  :  : "eax" );
 }
 
+void SCANNER_set_colour(ubyte col)
+{
+    asm volatile ("call ASM_SCANNER_set_colour\n"
+        :  : "a" ((long)col));
+}
+
+void SCANNER_fill_in(void)
+{
+    asm volatile ("call ASM_SCANNER_fill_in\n"
+        :  :  : "eax" );
+}
+
 /******************************************************************************/

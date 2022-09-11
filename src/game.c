@@ -1490,6 +1490,42 @@ ubyte do_user_interface(void)
         }
     }
 
+    // change panel style
+    if (lbKeyOn[KC_F9] && (lbShift == KMod_NONE))
+    {
+        sbyte panperm;
+
+        lbKeyOn[KC_F9] = 0;
+        StopCD();
+        if (ingame.PanelPermutation >= 0)
+        {
+            ingame.PanelPermutation++;
+            if (ingame.PanelPermutation > 2)
+                ingame.PanelPermutation = 0;
+        }
+        else
+        {
+            ingame.PanelPermutation--;
+            if (ingame.PanelPermutation < -3)
+                ingame.PanelPermutation = -1;
+        }
+        panperm = ingame.PanelPermutation;
+        if ((panperm == 2) || (panperm == -3))
+        {
+            SCANNER_set_colour(1);
+            SCANNER_fill_in();
+        } else
+        if ((panperm == 0) || (panperm == -1))
+        {
+            SCANNER_set_colour(2);
+            SCANNER_fill_in();
+        }
+        if (lbDisplay.ScreenMode == 1)
+            load_pop_sprites_lo();
+        else
+            load_pop_sprites_hi();
+    }
+
     ubyte ret;
     asm volatile ("call ASM_do_user_interface\n"
         : "=r" (ret));

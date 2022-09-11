@@ -82,6 +82,8 @@ struct Scanner
 extern long *SCANNER_width;
 
 void SCANNER_init(void);
+void SCANNER_fill_in(void);
+void SCANNER_set_colour(ubyte col);
 /******************************************************************************/
 #ifdef __cplusplus
 }
