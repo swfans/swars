@@ -141,6 +141,7 @@ extern long scanner_unkn370;
 extern long scanner_unkn3CC;
 
 extern short brightness;
+extern long game_speed;
 
 struct TbLoadFiles unk02_load_files[] =
 {
@@ -1560,6 +1561,121 @@ ubyte do_user_interface(void)
             change_brightness(1);
             brightness++;
         }
+    }
+
+    // TODO No idea what these are doing
+    if (lbKeyOn[KC_F1] && (lbShift & KMod_CONTROL))
+    {
+        lbKeyOn[KC_F1] = 0;
+        if (ingame.Flags & GamF_Unkn1)
+            ingame.Flags &= ~GamF_Unkn1;
+        else
+            ingame.Flags |= GamF_Unkn1;
+    }
+    if (lbKeyOn[KC_F2] && (lbShift & KMod_CONTROL))
+    {
+        lbKeyOn[KC_F2] = 0;
+        if (ingame.Flags & GamF_Unkn40)
+            ingame.Flags &= ~GamF_Unkn40;
+        else
+            ingame.Flags |= GamF_Unkn40;
+    }
+    if (lbKeyOn[KC_F3] && (lbShift & KMod_CONTROL))
+    {
+        lbKeyOn[KC_F3] = 0;
+        if (ingame.Flags & GamF_Unkn80)
+            ingame.Flags &= ~GamF_Unkn80;
+        else
+            ingame.Flags |= GamF_Unkn80;
+    }
+    if (lbKeyOn[KC_F4] && (lbShift & KMod_CONTROL))
+    {
+        lbKeyOn[KC_F4] = 0;
+        if (ingame.Flags & GamF_Unkn2)
+            ingame.Flags &= ~GamF_Unkn2;
+        else
+            ingame.Flags |= GamF_Unkn2;
+    }
+    if (lbKeyOn[KC_F6] && (lbShift & KMod_CONTROL))
+    {
+        lbKeyOn[KC_F6] = 0;
+        if (ingame.Flags & GamF_Unkn400)
+            ingame.Flags &= ~GamF_Unkn400;
+        else
+            ingame.Flags |= GamF_Unkn400;
+    }
+    if ( lbKeyOn[KC_F10] && (lbShift & KMod_CONTROL))
+    {
+        lbKeyOn[KC_F10] = 0;
+        if (ingame.Flags & GamF_Unkn2000)
+            ingame.Flags &= ~GamF_Unkn2000;
+        else
+            ingame.Flags |= GamF_Unkn2000;
+    }
+
+    // TODO Speed control - make it work, maybe?
+    if (lbKeyOn[KC_EQUALS])
+    {
+        lbKeyOn[KC_EQUALS] = 0;
+        game_speed -= 2500;
+        if (game_speed < 0)
+            game_speed = 0;
+    }
+    if (lbKeyOn[KC_MINUS])
+    {
+        lbKeyOn[KC_MINUS] = 0;
+        game_speed += 2500;
+    }
+#if 0 // What was that supposed to do?
+    for (n = 1; n < game_speed; n++)
+    {
+        ulong k;
+
+        k = n;
+        while (k > 1)
+        {
+            if (k & 1)
+                k = 3 * k + 1;
+            else
+                k = k >> 1;
+        }
+    }
+#endif
+
+    // Toggle Scanner beep
+    if (lbKeyOn[KC_S])
+    {
+        if (ingame.Flags & GamF_Unkn200000)
+            ingame.Flags &= ~GamF_Unkn200000;
+        else
+            ingame.Flags |= GamF_Unkn200000;
+    }
+
+    // Control map area to draw
+    if (lbKeyOn[KC_E])
+    {
+        lbKeyOn[KC_E] = 0;
+
+        if (lbShift & KMod_SHIFT)
+            n = -2;
+        else
+            n = 2;
+        render_area_a += n;
+
+        if ( lbShift & KMod_SHIFT )
+            n = -2;
+        else
+            n = 2;
+        render_area_b += n;
+
+        if (render_area_a < 2)
+            render_area_a = 2;
+        if (render_area_b < 2)
+            render_area_b = 2;
+        if (render_area_a > 28)
+            render_area_a = 28;
+        if (render_area_b > 28)
+            render_area_b = 28;
     }
 
     ubyte ret;
