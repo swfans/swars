@@ -59,6 +59,7 @@ TbResult LbDateTime(struct TbDate *curr_date, struct TbTime *curr_time)
 
 TbClockMSec LbTimerClock(void)
 {
+#ifndef __unix__
     // Unfortuately, CLOCKS_PER_SEC cannot be safely used in preprocessor directives
     if (CLOCKS_PER_SEC >= 10000)
         return clock() / (CLOCKS_PER_SEC / 1000);
@@ -70,6 +71,11 @@ TbClockMSec LbTimerClock(void)
         return ((TbClockMSec)clock() * (8000 / CLOCKS_PER_SEC)) >> 3;
     else
         return (TbClockMSec)clock() * (1000 / CLOCKS_PER_SEC);
+#else
+    static struct timespec ts;
+    clock_gettime(CLOCK_MONOTONIC, &ts);
+    return (ts.tv_sec * 1000) + (ts.tv_nsec / 1E6);
+#endif
 }
 
 TbBool LbSleepUntil(TbClockMSec endtime)
