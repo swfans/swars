@@ -1416,6 +1416,14 @@ void srm_scanner_reset(void)
     SCANNER_init();
 }
 
+ubyte do_user_interface(void)
+{
+    ubyte ret;
+    asm volatile ("call ASM_do_user_interface\n"
+        : "=r" (ret));
+    return ret;
+}
+
 void show_main_screen(void)
 {
     if ((game_projector_speed && (main_quit_button.Flags & 0x01)) ||
