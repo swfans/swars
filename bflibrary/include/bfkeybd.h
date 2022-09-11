@@ -170,6 +170,13 @@ enum KeyCodes {
 
 typedef unsigned char TbKeyCode;
 
+/** Enumeration of Key Modifiers.
+ *
+ * The Modifiers can be used to define key combinations.
+ * Originally that was treated as shifting key codes, so the variable
+ * which stores currently active modifiers is named lbShift.
+ * The bits for modifiers may differ between version of the library.
+ */
 enum KeyModifiers {
         KMod_NONE        = 0x00,
 /* TODO Use these flag values for better compatibility, when possible
