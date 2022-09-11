@@ -184,7 +184,7 @@ In case you also want a debug build:
 
 ```
 mkdir -p debug; cd debug
-CPPFLAGS="-DDEBUG -D__DEBUG" CFLAGS="-m32 -g -O0 -Wall" CXXFLAGS="-m32 -g -O0 -Wall" CCASFLAGS="-g" LDFLAGS="-m32 -g -O0 -Wall" PKG_CONFIG_PATH="/usr/lib/i386-linux-gnu/pkgconfig" ../configure
+CPPFLAGS="-DDEBUG -D__DEBUG" CFLAGS="-m32 -g -O0 -Wall" CXXFLAGS="-m32 -g -O0 -Wall" LDFLAGS="-m32 -g -O0 -Wall" PKG_CONFIG_PATH="/usr/lib/i386-linux-gnu/pkgconfig" ../configure
 make V=1
 ```
 
@@ -196,9 +196,9 @@ Explanation of the parameters:
 * The `-DDEBUG -D__DEBUG` defines make the binary store more information in
   `error.log` file. First one enables verbose logging from application code,
   second does the same for libraries used.
-* The flags are set separately for C preprocessor (`CPP`), compilers (`C`, `CXX`,
-  `CCAS`) and linker (`LD`). See [GNU Automake documentation](https://www.gnu.org/software/automake/manual/html_node/Programs.html)
-  for deails on that.
+* The flags are set separately for C preprocessor (`CPP`), compilers (`C`, `CXX`)
+  and linker (`LD`). See [GNU Automake documentation](https://www.gnu.org/software/automake/manual/html_node/Programs.html)
+  for details on that.
 
 Some tests to verify the build are included in the project. To execute them:
 
