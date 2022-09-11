@@ -917,12 +917,11 @@ void setup_host_sub6(void)
         :  :  : "eax" );
 }
 
-int setup_mele(void)
+void setup_debug_obj_trace(void)
 {
-    int ret;
-    asm volatile ("call ASM_setup_mele\n"
-        : "=r" (ret) : );
-    return ret;
+    // Code for setting memory ranges was here
+    // Removed, as we no longer have such tracking/profiling mechanism
+    debug_trace_place(0);
 }
 
 void set_smack_malloc(void *(*cb)(int))
@@ -945,7 +944,6 @@ void BAT_unknsub_20(int a1, int a2, int a3, int a4, unsigned long a5)
 
 void setup_host(void)
 {
-    //ASM_setup_host(); return;
     char fname[DISKPATH_SIZE];
     BAT_unknsub_20(0, 0, 0, 0, unkn_buffer_04 + 41024);
     set_smack_malloc(ASM_smack_malloc);
@@ -968,7 +966,7 @@ void setup_host(void)
     lbMouseAutoReset = false;
     LbMouseSetup(&pointer_sprites[1], 2, 2);
 
-    setup_mele();
+    setup_debug_obj_trace();
     LbSpriteSetup(m_sprites, m_sprites_end, m_spr_data);
     ingame__PanelPermutation = -2;
     {
@@ -1113,10 +1111,6 @@ void create_tables_file_from_palette(void)
 
 void game_setup(void)
 {
-#if 0
-    asm volatile ("call ASM_game_setup\n"
-        :  :  : "eax" );
-#endif
     engine_mem_alloc_ptr = LbMemoryAlloc(engine_mem_alloc_size);
     load_texturemaps();
     LbDataLoadAll(unk02_load_files);
