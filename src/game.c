@@ -37,6 +37,7 @@
 #include "windows.h"
 #include "research.h"
 #include "thing.h"
+#include "packet.h"
 #include "player.h"
 
 #include "timer.h"
@@ -127,7 +128,7 @@ extern struct UnkStruct7 *game_panel;
 extern struct UnkStruct7 game_panel_lo[];
 extern struct UnkStruct7 unknstrct7_arr2[];
 
-extern uint8_t execute_commands;
+extern ubyte execute_commands;
 extern long gamep_unknval_10;
 extern long gamep_unknval_11;
 extern long gamep_unknval_12;
@@ -136,6 +137,10 @@ extern long gamep_unknval_14;
 extern long gamep_unknval_15;
 extern long gamep_unknval_16;
 
+extern ubyte player_unkn0C9[8];
+extern char player_unknCC9[8][128];
+extern long scanner_unkn370;
+extern long scanner_unkn3CC;
 
 extern int8_t ingame__TrenchcoatPreference;
 extern int8_t ingame__PanelPermutation;
@@ -1414,6 +1419,24 @@ void srm_scanner_reset(void)
     }
     SCANNER_width = ingame__Scanner.Width;
     SCANNER_init();
+}
+
+void do_scroll_map(void)
+{
+    asm volatile ("call ASM_do_scroll_map\n"
+        :  :  : "eax" );
+}
+
+void do_rotate_map(void)
+{
+    asm volatile ("call ASM_do_rotate_map\n"
+        :  :  : "eax" );
+}
+
+void person_func_unknown_310(ubyte a1)
+{
+    asm volatile ("call ASM_person_func_unknown_310\n"
+        :  : "a" (a1));
 }
 
 ubyte do_user_interface(void)
