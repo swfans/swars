@@ -483,6 +483,65 @@ struct LevelDef {
   ubyte field_2B;
 };
 
+struct InGame {
+    short GameMode;
+    short DisplayMode;
+    short fld_unk7D8;
+    ubyte fld_unk7DA;
+    ubyte CDTrack;
+    ubyte DangerTrack;
+    ubyte UseMultiMedia;
+    ubyte fld_unk7DE;
+    ubyte fld_unk7DF;
+    struct Scanner Scanner;
+    long Credits;
+    short fld_unkC4B;
+    short fld_unkC4D;
+    short fld_unkC4F;
+    short MissionStatus;
+    long Flags;
+    long fld_unkC57;
+    short draw_unknprop_01;
+    short Rocket1[15];
+    short NextRocket;
+    short TrainMode;
+    short MyGroup;
+    short CurrentMission;
+    ubyte fld_unk4AF;
+    ubyte DetailLevel;
+    short UserZoom;
+    short cmdln_param_a;
+    short cmdln_param_w;
+    short fld_unkC8B[3];
+    long fld_unkC91;
+    long TrackX;
+    short TrackThing;
+    ubyte fld_unkC98[5];
+    short fld_unkCA0;
+    ubyte fld_unkCA2;
+    ubyte PanelPermutation;
+    ubyte TrenchcoatPreference;
+    ubyte fld_unkCA5;
+    short fld_unkCA6;
+    short fld_unkCA8;
+    ubyte fld_unkCAA;
+    ubyte PalType;
+    short FlameCount;
+    ubyte LastTmap;
+    short SoundThing;
+    ubyte fld_unkCB1;
+    ubyte fld_unkCB2;
+    short fld_unkCB3;
+    short fld_unkCB5;
+    short fld_unkCB7;
+    ubyte InNetGame_UNSURE;
+    ubyte fld_unkCBA[5];
+    ubyte Cheats;
+    ubyte fld_unkCC0;
+    long CashAtStart;
+    long Expenditure;
+};
+
 #pragma pack()
 
 extern char session_name[20];
@@ -498,6 +557,7 @@ extern ubyte cmdln_param_d;
 extern ubyte unkn01_maskarr[28];
 extern long map_editor;
 
+extern struct InGame ingame;
 extern ubyte ingame__Cheats;
 extern ulong ingame__Credits;
 extern ushort ingame__GameMode;
