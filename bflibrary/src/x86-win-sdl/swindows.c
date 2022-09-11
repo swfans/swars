@@ -125,7 +125,7 @@ void LbDoMultitasking(void)
 #if defined(WIN32)
     Sleep(LB_LARGE_DELAY_TIME>>1); // This switches to other tasks
 #else
-    sleep(LB_LARGE_DELAY_TIME);
+    SDL_Delay(LB_LARGE_DELAY_TIME);
 #endif
     LbWindowsControl();
 }
