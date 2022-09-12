@@ -44,6 +44,8 @@ swars_SOURCES = \
 	network.h \
 	oggvorbis.c \
 	oggvorbis.h \
+	packet.c \
+	packet.h \
 	player.h \
 	research.h \
 	scanner.c \

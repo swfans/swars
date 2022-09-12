@@ -127,9 +127,13 @@ struct Packet
 
 #pragma pack()
 /******************************************************************************/
-extern void (*my_build_packet)(struct Packet *packet, ushort type, ulong param1, long x, long y, long z);
 extern struct Packet packets[8];
+extern void (*my_build_packet)(struct Packet *packet, ushort type, ulong param1, long x, long y, long z);
 
+void build_packet(struct Packet *packet, ushort type, ulong param1, long x, long y, long z);
+void build_packet2(struct Packet *packet, ushort type, ulong param1, long x, long y, long z);
+void build_packet3(struct Packet *packet, ushort type, ulong param1, long x, long y, long z);
+void build_packet4(struct Packet *packet, ushort type, ulong param1, long x, long y, long z);
 /******************************************************************************/
 #ifdef __cplusplus
 }
