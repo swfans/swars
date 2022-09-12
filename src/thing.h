@@ -27,6 +27,66 @@ extern "C" {
 /******************************************************************************/
 #pragma pack(1)
 
+enum ThingType {
+    TT_NONE = 0x0,
+    TT_UNKN1 = 0x1,
+    TT_VEHICLE = 0x2,
+    TT_PERSON = 0x3,
+    TT_UNKN4 = 0x4,
+    SmTT_STATIC = 0x5,
+    TT_ROCKET = 0x6,
+    TT_UNKN7 = 0x7,
+    TT_UNKN8 = 0x8,
+    TT_BUILDING = 0x9,
+    TT_UNKN10 = 0xA,
+    TT_LASER11 = 0xB,
+    TT_LASER_GUIDED = 0xC,
+    TT_UNKN13 = 0xD,
+    TT_UNKN14 = 0xE,
+    TT_MINE = 0xF,
+    TT_GRENADE = 0x10,
+    SmTT_SPARK = 0x11,
+    TT_UNKN18 = 0x12,
+    TT_LASER_ELEC = 0x13,
+    SmTT_INTELLIG_DOOR = 0x14,
+    SmTT_SCALE_EFFECT = 0x15,
+    SmTT_NUCLEAR_BOMB = 0x16,
+    TT_UNKN23 = 0x17,
+    SmTT_SMOKE_GENERATOR = 0x18,
+    SmTT_MINE = 0x19,
+    SmTT_CARRIED_ITEM = 0x1A,
+    SmTT_ELECTRIC_STRAND = 0x1B,
+    TT_RAZOR_WIRE = 0x1C,
+    TT_LASER29 = 0x1D,
+    SmTT_TIME_POD = 0x1E,
+    TT_AIR_STRIKE = 0x1F,
+    SmTT_CANISTER = 0x20,
+    TT_UNKN33 = 0x21,
+    TT_UNKN34 = 0x22,
+    TT_UNKN35 = 0x23,
+    SmTT_STASIS_POD = 0x24,
+    SmTT_SOUL = 0x25,
+    TT_LASER38 = 0x26,
+    TT_UNKN39 = 0x27,
+    TT_UNKN40 = 0x28,
+    TT_UNKN41 = 0x29,
+    TT_UNKN42 = 0x2A,
+    TT_UNKN43 = 0x2B,
+    TT_UNKN44 = 0x2C,
+    TT_UNKN45 = 0x2D,
+    TT_UNKN46 = 0x2E,
+    TT_UNKN47 = 0x2F,
+    TT_UNKN48 = 0x30,
+    TT_UNKN49 = 0x31,
+    SmTT_BANG = 0x32,
+    TT_UNKN51 = 0x33,
+    SmTT_FIRE = 0x34,
+    SmTT_SFX = 0x35,
+    SmTT_TEMP_LIGHT = 0x36,
+    TT_UNKN55 = 0x37,
+    TT_UNKN56 = 0x38,
+};
+
 /** State of Thing of type Object.
  */
 struct TngUObject
@@ -292,9 +352,12 @@ struct Thing
 
 #pragma pack()
 /******************************************************************************/
+extern ushort things_used_head;
+
 void init_things(void);
 TbResult delete_node(struct Thing *p_thing);
 void add_node_thing(ushort new_thing);
+void remove_thing(ushort tngno);
 
 void do_weapon_quantities1(struct Thing *p_person);
 /******************************************************************************/

@@ -1065,10 +1065,74 @@ void init_player(void)
         :  :  : "eax" );
 }
 
+ushort make_group_into_players(ushort group, ushort plyr, ushort max_agent, short new_type)
+{
+    ushort ret;
+    asm volatile ("call ASM_make_group_into_players\n"
+        : "=r" (ret) : "a" (group), "d" (plyr), "b" (max_agent), "c" (new_type));
+    return ret;
+}
+
+int place_default_player(ushort player_id, TbBool replace)
+{
+    int ret;
+    asm volatile ("call ASM_place_default_player\n"
+        : "=r" (ret) : "a" (player_id), "d" (replace));
+    return ret;
+}
+
 void place_single_player(void)
 {
+#if 0
     asm volatile ("call ASM_place_single_player\n"
         :  :  : "eax" );
+#endif
+    PlayerInfo *p_locplayer;
+    ulong n;
+    ushort nagents, pl_agents, pl_group;
+
+    p_locplayer = &players[local_player_no];
+
+    // Figure out how many agents are attending the mission
+    if (p_locplayer->DoubleMode)
+        nagents = p_locplayer->DoubleMode + 1;
+    else
+        nagents = 4;
+    if (p_locplayer->MissionAgents < (1 << nagents) - 1)
+    {
+        switch (p_locplayer->MissionAgents)
+        {
+        case 1:
+            nagents = 1;
+            break;
+        case 3:
+            nagents = 2;
+            break;
+        case 7:
+            nagents = 3;
+            break;
+        }
+    }
+
+    pl_agents = make_group_into_players(level_def.PlayableGroups[0], local_player_no, nagents, -1);
+    pl_group = level_def.PlayableGroups[0];
+
+    n = things_used_head;
+    while (n != 0)
+    {
+        struct Thing *p_thing;
+
+        p_thing = &things[n];
+        n = p_thing->LinkChild;
+        if ((p_thing->U.UPerson.Group == pl_group) && (p_thing->Type == TT_PERSON) && !(p_thing->Flag & 0x2000))
+        {
+            remove_thing(p_thing->ThingOffset);
+            delete_node(p_thing);
+        }
+    }
+    playable_agents = pl_agents;
+    if (pl_agents == 0)
+      place_default_player(0, 1);
 }
 
 void init_game(ubyte reload)

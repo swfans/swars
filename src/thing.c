@@ -39,6 +39,12 @@ void add_node_thing(ushort new_thing)
         : : "a" (new_thing));
 }
 
+void remove_thing(ushort tngno)
+{
+    asm volatile ("call ASM_remove_thing\n"
+        : : "a" (tngno));
+}
+
 void do_weapon_quantities1(struct Thing *p_person)
 {
     asm volatile ("call ASM_do_weapon_quantities1\n"
