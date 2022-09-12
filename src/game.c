@@ -71,8 +71,6 @@ struct Frame;
 
 #pragma pack()
 
-extern uint8_t game_music_track;
-
 extern unsigned char *fade_data;
 extern char *fadedat_fname;
 extern char *pop_dat_fname_fmt;
@@ -218,7 +216,7 @@ game_initialise(void)
     // Make sure file names are properly converted before opening
     setup_file_names();
 
-    if ( cmdln_param_w == 1 )
+    if (ingame.cmdln_param_w == 1)
     {
         buffer_allocs[35].field_A = 1;
         buffer_allocs[28].field_A = 1;
@@ -326,7 +324,7 @@ void load_prim_quad(void)
     read_primveh_obj(primvehobj_fname, 1);
     read_textwalk();
     data_19ec6f = 1;
-    ingame__DisplayMode = 55;
+    ingame.DisplayMode = 55;
     if ( cmdln_param_bcg == 99 )
         test_open(99);
     if ( cmdln_param_bcg == 100 )
@@ -410,7 +408,7 @@ void play_intro(void)
 
     lbDisplay.LeftButton = 0;
     lbKeyOn[KC_ESCAPE] = 0;
-    if ( (cmdln_param_bcg || is_single_game) && !(ingame__Flags & GamF_Unkn80000) )
+    if ( (cmdln_param_bcg || is_single_game) && !(ingame.Flags & GamF_Unkn80000) )
     {
         setup_screen_mode(Lb_SCREEN_MODE_320_200_8);
         LbMouseChangeSprite(NULL);
@@ -776,15 +774,15 @@ void video_mode_switch_to_next(void)
         load_pop_sprites_hi();
         render_area_a = 30;
         render_area_b = 30;
-        ingame__Scanner.X1 = 1;
+        ingame.Scanner.X1 = 1;
         game_high_resolution = 1;
-        ingame__Scanner.Y1 = 341;
-        ingame__Scanner.Y2 = 460;
-        ingame__Scanner.X2 = 130;
+        ingame.Scanner.Y1 = 341;
+        ingame.Scanner.Y2 = 460;
+        ingame.Scanner.X2 = 130;
 
-        for (i = 0; i + ingame__Scanner.Y1 <= ingame__Scanner.Y2; i++)
+        for (i = 0; i + ingame.Scanner.Y1 <= ingame.Scanner.Y2; i++)
         {
-          ingame__Scanner.Width[i] = min(105 + i, 129);
+          ingame.Scanner.Width[i] = min(105 + i, 129);
         }
     }
     else
@@ -795,15 +793,15 @@ void video_mode_switch_to_next(void)
         overall_scale = 150;
         render_area_a = 24;
         render_area_b = 24;
-        ingame__Scanner.X1 = 1;
-        ingame__Scanner.Y1 = 127;
+        ingame.Scanner.X1 = 1;
+        ingame.Scanner.Y1 = 127;
         game_high_resolution = 0;
-        ingame__Scanner.X2 = 65;
-        ingame__Scanner.Y2 = 189;
+        ingame.Scanner.X2 = 65;
+        ingame.Scanner.Y2 = 189;
 
-        for (i = 0; i + ingame__Scanner.Y1 <= ingame__Scanner.Y2; i++)
+        for (i = 0; i + ingame.Scanner.Y1 <= ingame.Scanner.Y2; i++)
         {
-          ingame__Scanner.Width[i] = min(40 + i, 64);
+          ingame.Scanner.Width[i] = min(40 + i, 64);
         }
     }
 }
@@ -882,7 +880,7 @@ void game_graphics_inputs(void)
     PlayerInfo *p_locplayer;
 
     p_locplayer = &players[local_player_no];
-    if (ingame__DisplayMode != 50 && ingame__DisplayMode != 59)
+    if (ingame.DisplayMode != 50 && ingame.DisplayMode != 59)
         return;
     if (in_network_game && p_locplayer->PanelState[mouser] != 17)
         return;
@@ -896,13 +894,13 @@ void game_graphics_inputs(void)
             game_perspective = 5;
     }
 
-    if ((ingame__Cheats & 0x04) && lbKeyOn[KC_T] && (lbShift & KMod_ALT))
+    if ((ingame.Cheats & 0x04) && lbKeyOn[KC_T] && (lbShift & KMod_ALT))
     {
         lbKeyOn[KC_T] = 0;
         teleport_current_agent(p_locplayer);
     }
 
-    if ((ingame__Cheats & 0x04) && !in_network_game)
+    if ((ingame.Cheats & 0x04) && !in_network_game)
     {
         if (lbKeyOn[KC_Q] && (lbShift == KMod_SHIFT || lbShift == KMod_NONE))
         {
@@ -982,17 +980,17 @@ void setup_host(void)
 
     setup_debug_obj_trace();
     LbSpriteSetup(m_sprites, m_sprites_end, m_spr_data);
-    ingame__PanelPermutation = -2;
+    ingame.PanelPermutation = -2;
     {
         int file_len;
         sprintf(fname, pop_dat_fname_fmt, 1);
         LbFileLoadAt(fname, pop1_data);
-        sprintf(fname, pop_tab_fname_fmt, -ingame__PanelPermutation - 1);
+        sprintf(fname, pop_tab_fname_fmt, -ingame.PanelPermutation - 1);
         file_len = LbFileLoadAt(fname, pop1_sprites);
         pop1_sprites_end = &pop1_sprites[file_len/sizeof(struct TbSprite)];
         LbSpriteSetup(pop1_sprites, pop1_sprites_end, pop1_data);
     }
-    ingame__TrenchcoatPreference = 0;
+    ingame.TrenchcoatPreference = 0;
     game_panel = game_panel_lo;
     LbGhostTableGenerate(display_palette, 50, "data/synghost.tab");
     setup_host_sub5(buffer_allocs);
@@ -1005,8 +1003,8 @@ void setup_host(void)
       if ( !in_network_game )
       {
           int file_no;
-          file_no = get_new_packet_record_no(ingame__CurrentMission);
-          get_packet_record_fname(fname, ingame__CurrentMission, file_no+1);
+          file_no = get_new_packet_record_no(ingame.CurrentMission);
+          get_packet_record_fname(fname, ingame.CurrentMission, file_no+1);
           LOGDBG("%s: Opening for packet save", fname);
           packet_rec_fh = LbFileOpen(fname, Lb_FILE_MODE_NEW);
           LbFileWrite(packet_rec_fh, &cmdln_param_current_map, 2);
@@ -1015,7 +1013,7 @@ void setup_host(void)
     if (pktrec_mode == PktR_PLAYBACK)
     {
         ushort pktrec_head;
-        get_packet_record_fname(fname, ingame__CurrentMission, cmdln_pr_num);
+        get_packet_record_fname(fname, ingame.CurrentMission, cmdln_pr_num);
         LOGDBG("%s: Opening for packet input", fname);
         packet_rec_fh = LbFileOpen(fname, Lb_FILE_MODE_READ_ONLY);
         LbFileRead(packet_rec_fh, &pktrec_head, sizeof(pktrec_head));
@@ -1152,7 +1150,7 @@ void game_setup(void)
     init_arrays_1();
     bang_set_detail(0);
     game_setup_sub3();
-    ingame__draw_unknprop_01 = 0;
+    ingame.draw_unknprop_01 = 0;
     debug_trace_setup(-4);
     game_setup_stuff();
     create_strings_list(gui_strings, gui_strings_data, gui_strings_data_end);
@@ -1184,7 +1182,7 @@ void game_setup(void)
     if ( is_single_game && cmdln_param_current_map )
       init_game(0);
     if ( in_network_game || cmdln_param_bcg )
-      ingame__DisplayMode = 55;
+      ingame.DisplayMode = 55;
     debug_trace_setup(2);
     switch (cmdln_colour_tables)
     {
@@ -1248,9 +1246,9 @@ void load_multicolor_sprites(void)
     ulong sz;
     char fname[100];
 
-    sprintf(fname, "data/mspr-%d.dat", ingame__TrenchcoatPreference);
+    sprintf(fname, "data/mspr-%d.dat", ingame.TrenchcoatPreference);
     LbFileLoadAt(fname, m_spr_data);
-    sprintf(fname, "data/mspr-%d.tab", ingame__TrenchcoatPreference);
+    sprintf(fname, "data/mspr-%d.tab", ingame.TrenchcoatPreference);
     sz = LbFileLoadAt(fname, m_sprites);
     m_sprites_end = (struct TbSprite *)((ubyte *)m_sprites + sz);
     LbSpriteSetup(m_sprites, m_sprites_end, m_spr_data);
@@ -1429,24 +1427,24 @@ void srm_scanner_reset(void)
 {
     int i;
 
-    ingame__Scanner.X1 = 8;
-    ingame__Scanner.Y2 = 270;
-    ingame__Scanner.MX = 127;
-    ingame__Scanner.MZ = 127;
-    ingame__Scanner.Angle = 0;
-    ingame__Scanner.X2 = 325;
-    ingame__Scanner.Zoom = 256;
-    ingame__Scanner.Y1 = 73;
+    ingame.Scanner.X1 = 8;
+    ingame.Scanner.Y2 = 270;
+    ingame.Scanner.MX = 127;
+    ingame.Scanner.MZ = 127;
+    ingame.Scanner.Angle = 0;
+    ingame.Scanner.X2 = 325;
+    ingame.Scanner.Zoom = 256;
+    ingame.Scanner.Y1 = 73;
 
-    for (i = 0; i + ingame__Scanner.Y1 <= ingame__Scanner.Y2; i++)
+    for (i = 0; i + ingame.Scanner.Y1 <= ingame.Scanner.Y2; i++)
     {
-        ingame__Scanner.Width[i] = 318;
+        ingame.Scanner.Width[i] = 318;
     }
     for (i = 0; i != 16; i++)
     {
-        ingame__Scanner.BigBlip[i].Period = 0;
+        ingame.Scanner.BigBlip[i].Period = 0;
     }
-    SCANNER_width = ingame__Scanner.Width;
+    SCANNER_width = ingame.Scanner.Width;
     SCANNER_init();
 }
 
@@ -1852,7 +1850,7 @@ ubyte do_user_interface(void)
     static ushort sel_agent_gkeys[] = {
         GKey_SEL_AGENT_1, GKey_SEL_AGENT_2, GKey_SEL_AGENT_3, GKey_SEL_AGENT_4
     };
-    static ulong last_sel_agent_turn[8] = {0};
+    static ulong last_sel_agent_turn[4] = {0};
     for (n = 0; n < (int)(sizeof(sel_agent_gkeys)/sizeof(sel_agent_gkeys[0])); n++)
     {
         ulong gkey = sel_agent_gkeys[n];
@@ -1914,6 +1912,8 @@ ubyte do_user_interface(void)
         }
     }
 
+    // Final part of this function is left in ASM, for now. It requires updating
+    // definition of SpecialUserInput for the rewrting to make sense.
     ubyte ret;
     asm volatile ("call ASM_do_user_interface\n"
         : "=r" (ret));
@@ -2057,7 +2057,7 @@ void show_menu_screen_st0(void)
     purple_draw_list = (struct PurpleDrawItem *)((ubyte *)scratch_malloc_mem + 82432);
 
     init_read_all_sprite_files();
-    ingame__Credits = 50000;
+    ingame.Credits = 50000;
 
     debug_trace_place(17);
     LbColourTablesLoad(display_palette, "data/bgtables.dat");
@@ -2096,12 +2096,12 @@ void show_menu_screen_st0(void)
 void update_options_screen_state(void)
 {
     char *text;
-    if (ingame__PanelPermutation < 0)
-      text = gui_strings[abs(ingame__PanelPermutation) + 579];
+    if (ingame.PanelPermutation < 0)
+      text = gui_strings[abs(ingame.PanelPermutation) + 579];
     else
-      text = gui_strings[ingame__PanelPermutation + 580];
+      text = gui_strings[ingame.PanelPermutation + 580];
     options_gfx_buttons[14].Text = text;
-    text = gui_strings[ingame__TrenchcoatPreference + 583];
+    text = gui_strings[ingame.TrenchcoatPreference + 583];
     options_gfx_buttons[15].Text = text;
 }
 
@@ -2295,9 +2295,9 @@ void show_menu_screen_st2(void)
       login_control__State = 6;
       net_INITIATE_button.Text = gui_strings[385];
       net_INITIATE_button.Flags = 1;
-      ingame__Credits = 50000;
-      ingame__CashAtStart = 50000;
-      ingame__Expenditure = 0;
+      ingame.Credits = 50000;
+      ingame.CashAtStart = 50000;
+      ingame.Expenditure = 0;
       net_groups_LOGON_button.Text = gui_strings[386];
       data_15516d = -1;
       data_15516c = -1;
@@ -2327,7 +2327,7 @@ void show_menu_screen_st2(void)
       update_mission_time(0);
       city_id = -1;
       data_1c4aa3 = brief_store[open_brief - 1].RefNum;
-      if ((ingame__MissionStatus != 0) && (ingame__MissionStatus != 2))
+      if ((ingame.MissionStatus != 0) && (ingame.MissionStatus != 2))
       {
             memcpy(&mission_status[0], &mission_status[open_brief],
               sizeof(struct MissionStatus));
@@ -2340,17 +2340,17 @@ void show_menu_screen_st2(void)
       {
             old_mission_brief = open_brief;
       }
-      if ( ingame__byte_1807DF )
+      if ( ingame.fld_unk7DF )
       {
             screentype = SCRT_MAINMENU;
-            if (ingame__Flags & 0x10)
+            if (ingame.Flags & 0x10)
                 LbFileDelete("qdata/savegame/synwarsm.sav");
-            ingame__byte_1807DF = 0;
+            ingame.fld_unk7DF = 0;
       }
       else
       {
             forward_research_progress(mission_status[open_brief].CityDays);
-            if (ingame__Flags & 0x10)
+            if (ingame.Flags & 0x10)
                 save_game_write();
             screentype = SCRT_9;
             heading_box.Text = gui_strings[374];
@@ -2387,7 +2387,7 @@ void init_random_seed(void)
 {
     if (in_network_game)
     {
-        mission_open[1] = ingame__CurrentMission;
+        mission_open[1] = ingame.CurrentMission;
         mission_state[1] = 0;
         mission_open[2] = 0;
         mission_state[2] = 0;
@@ -2495,7 +2495,7 @@ void game_play_music(void)
 
     snprintf (file_name, sizeof (file_name),
           "%s" FS_SEP_STR "music" FS_SEP_STR "track_%i.ogg",
-          GetDirectoryHdd(), game_music_track - 1);
+          GetDirectoryHdd(), ingame.CDTrack - 1);
 
     sound_open_music_file(file_name);
     sound_play_music();
@@ -2565,20 +2565,20 @@ void show_load_and_prep_mission(void)
             update_open_brief();
         }
 
-        ingame__DisplayMode = DpM_UNKN_32;
+        ingame.DisplayMode = DpM_UNKN_32;
         debug_trace_place(6);
         if ( in_network_game )
         {
-          ingame__byte_180CA5 = 1;
+          ingame.MissionNo = 1;
           ushort mission;
           mission = find_mission_with_mapid(cities[login_control__City].MapID, next_mission);
           if (mission > 0) {
-              ingame__byte_180CA5 = mission;
-              ingame__CurrentMission = mission;
+              ingame.MissionNo = mission;
+              ingame.CurrentMission = mission;
           }
 
-          change_current_map(mission_list[ingame__byte_180CA5].MapNo);
-          load_mad_0_console(-(int)mission_list[ingame__byte_180CA5].LevelNo, ingame__byte_180CA5);
+          change_current_map(mission_list[ingame.MissionNo].MapNo);
+          load_mad_0_console(-(int)mission_list[ingame.MissionNo].LevelNo, ingame.MissionNo);
           randomize_playable_groups_order();
         }
         else
@@ -2590,7 +2590,7 @@ void show_load_and_prep_mission(void)
         debug_trace_place(7);
         // The file name is formatted in original code, but doesn't seem to be used
         //sprintf(fname, "maps/map%03d.scn", cities[unkn_city_no].MapID);
-        ingame__dword_180C4F = 0;
+        ingame.fld_unkC4F = 0;
         data_19ec6f = 1;
         execute_commands = 1;
         if ( !in_network_game )
@@ -2603,7 +2603,7 @@ void show_load_and_prep_mission(void)
     else
     {
         LbMouseChangeSprite(&pointer_sprites[1]);
-        ingame__DisplayMode = DpM_UNKN_1;
+        ingame.DisplayMode = DpM_UNKN_1;
     }
 
     debug_trace_place(9);
@@ -2646,8 +2646,8 @@ void show_load_and_prep_mission(void)
         if ( in_network_game )
         {
             if (data_1811ae != 1)
-                ingame__InNetGame_UNSURE = 3;
-            ingame__DetailLevel = 0;
+                ingame.InNetGame_UNSURE = 3;
+            ingame.DetailLevel = 0;
             bang_set_detail(1);
             update_mission_time(1);
             // why clear only 0x140 bytes?? the array is much larger
@@ -2673,7 +2673,7 @@ void show_load_and_prep_mission(void)
               if (mission_list[i].MapNo == cities[unkn_city_no].MapID)
                   break;
             }
-            ingame__CurrentMission = i;
+            ingame.CurrentMission = i;
             mission_result = 0;
             debug_trace_place(15);
         }
@@ -3136,17 +3136,17 @@ void show_menu_screen(void)
 void draw_game(void)
 {
     //ASM_draw_game(); return;
-    switch (ingame__DisplayMode)
+    switch (ingame.DisplayMode)
     {
     case 1:
         // No action
         break;
     case 50:
-        PlayCDTrack(game_music_track);
-        if ( !(ingame__Flags & 0x20) || !(gameturn & 0xF) )
+        PlayCDTrack(ingame.CDTrack);
+        if ( !(ingame.Flags & 0x20) || !(gameturn & 0xF) )
         {
             show_game_engine();
-            if ( ingame__Flags & 0x800 )
+            if ( ingame.Flags & 0x800 )
               gproc3_unknsub2();
             BAT_play();
             if ( execute_commands )
@@ -3170,7 +3170,7 @@ void draw_game(void)
         gproc3_unknsub3(0);
         break;
     default:
-        LOGERR("DisplayMode %d empty\n", (int)ingame__DisplayMode);
+        LOGERR("DisplayMode %d empty\n", (int)ingame.DisplayMode);
         break;
     }
 }
@@ -3201,7 +3201,7 @@ void game_process(void)
           navi2_unkn_counter_max = navi2_unkn_counter;
       if (cmdln_param_d)
           input_char = LbKeyboard();
-      if (ingame__DisplayMode == 55) {
+      if (ingame.DisplayMode == 55) {
           LOGDBG("id=%d  trial alloc = %d turn %lu", 0, triangulation, gameturn);
       }
       if (!LbScreenIsLocked()) {
@@ -3214,18 +3214,18 @@ void game_process(void)
       debug_trace_turn_bound(gameturn + 100);
       load_packet();
       if ( ((active_flags_general_unkn01 & 0x8000) != 0) !=
-        ((ingame__Flags & 0x8000) != 0) )
+        ((ingame.Flags & 0x8000) != 0) )
           LbPaletteSet(display_palette);
-      active_flags_general_unkn01 = ingame__Flags;
-      if ( ingame__DisplayMode == 50 || ingame__DisplayMode == 1 || ingame__DisplayMode == 59 )
+      active_flags_general_unkn01 = ingame.Flags;
+      if ( ingame.DisplayMode == 50 || ingame.DisplayMode == 1 || ingame.DisplayMode == 59 )
           game_process_sub02();
-      if ( ingame__DisplayMode != 55 )
+      if ( ingame.DisplayMode != 55 )
           process_packets();
       joy_input();
-      if ( ingame__DisplayMode == 55 ) {
+      if ( ingame.DisplayMode == 55 ) {
           swap_wscreen();
       }
-      else if ( !(ingame__Flags & 0x20) || ((gameturn & 0xF) == 0) ) {
+      else if ( !(ingame.Flags & 0x20) || ((gameturn & 0xF) == 0) ) {
           LbScreenSwapClear(0);
       }
       game_process_sub04();

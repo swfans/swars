@@ -75,7 +75,7 @@ enum ScreenType {
   SCRT_99 = 99,
 };
 
-enum DisplayMode {
+enum DisplayModes {
   DpM_NONE = 0x0,
   DpM_UNKN_1 = 0x1,
   DpM_2 = 0x2,
@@ -528,7 +528,7 @@ struct InGame {
     ubyte fld_unkCA2;
     sbyte PanelPermutation;
     ubyte TrenchcoatPreference;
-    ubyte fld_unkCA5;
+    ubyte MissionNo;
     short fld_unkCA6;
     short fld_unkCA8;
     ubyte fld_unkCAA;
@@ -565,24 +565,6 @@ extern ubyte unkn01_maskarr[28];
 extern long map_editor;
 
 extern struct InGame ingame;
-extern ubyte ingame__Cheats;
-extern ulong ingame__Credits;
-extern ushort ingame__GameMode;
-extern ulong ingame__Flags;
-extern ulong ingame__CashAtStart;
-extern ulong ingame__Expenditure;
-extern ubyte ingame__byte_1807DF;
-extern ushort ingame__MissionStatus;
-extern uint16_t ingame__CurrentMission;
-extern ubyte ingame__InNetGame_UNSURE;
-extern ubyte ingame__DetailLevel;
-extern ushort ingame__dword_180C4F;
-extern ubyte ingame__byte_180CA5;
-extern struct Scanner ingame__Scanner;
-extern int8_t ingame__TrenchcoatPreference;
-extern int8_t ingame__PanelPermutation;
-extern unsigned short ingame__draw_unknprop_01;
-extern unsigned short ingame__DisplayMode;
 
 extern ubyte login_control__State;
 extern ulong login_control__Money;

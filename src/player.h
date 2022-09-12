@@ -34,9 +34,9 @@ struct __attribute__((packed)) __attribute__((aligned(2))) SpecialUserInput
   long Bits;
   char DtX;
   char DtZ;
-  ubyte LastDir;
-  ubyte CurDir;
-  ushort Turn;
+  ushort Turn; /* from do_user_interface(), this seem to be game turn of last action */
+  ubyte LastDir; /* probably wrong place */
+  ubyte CurDir; /* probably wrong place */
   ushort MapX[3];
   ushort MapY[3];
   ushort MapZ[3];

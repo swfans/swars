@@ -93,8 +93,8 @@ process_options (int *argc, char ***argv)
         switch (val)
         {
         case 'A':
-            ingame__GameMode = 1;
-            cmdln_param_a = 3200;
+            ingame.GameMode = 1;
+            ingame.cmdln_param_a = 3200;
             break;
 
         case 'B':
@@ -121,8 +121,8 @@ process_options (int *argc, char ***argv)
 
         case 'g':
             cmdln_param_bcg = 1;
-            ingame__GameMode = 3;
-            ingame__Flags |= 0x08;
+            ingame.GameMode = 3;
+            ingame.Flags |= 0x08;
             break;
 
         case 'H':
@@ -142,9 +142,9 @@ process_options (int *argc, char ***argv)
         case 'm':
             is_single_game = 1;
             cmdln_param_current_map = atoi(optarg);
-            ingame__Flags |= 0x08;
-            ingame__CurrentMission = cmdln_param_current_map;
-            ingame__Cheats |= 0x04;
+            ingame.Flags |= 0x08;
+            ingame.CurrentMission = cmdln_param_current_map;
+            ingame.Cheats |= 0x04;
             LOGDBG("map index %d", cmdln_param_current_map);
             break;
 
@@ -160,7 +160,7 @@ process_options (int *argc, char ***argv)
             break;
 
         case 'q':
-            ingame__Flags |= 0x080000;
+            ingame.Flags |= 0x080000;
             break;
 
         case 'r':
@@ -195,7 +195,7 @@ process_options (int *argc, char ***argv)
             break;
 
         case 'w':
-            cmdln_param_w = 1;
+            ingame.cmdln_param_w = 1;
             break;
 
         default:
@@ -313,9 +313,9 @@ int
 main (int argc, char **argv)
 {
     lbDisplay.ScreenMode = Lb_SCREEN_MODE_320_200_8;
-    ingame__GameMode = 0;
-    cmdln_param_w = 0;
-    ingame__Flags = 0;
+    ingame.GameMode = 0;
+    ingame.cmdln_param_w = 0;
+    ingame.Flags = 0;
     if (LbErrorLogSetup(NULL, NULL, Lb_ERROR_LOG_NEW) != Lb_SUCCESS)
             printf("Execution log setup failed\n");
     /* Gravis Grip joystick driver initialization */
