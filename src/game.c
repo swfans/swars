@@ -1059,10 +1059,42 @@ void init_engine(void)
         :  :  : "eax" );
 }
 
-void init_game(ubyte num)
+void init_player(void)
 {
+    asm volatile ("call ASM_init_player\n"
+        :  :  : "eax" );
+}
+
+void init_game(ubyte reload)
+{
+#if 0
     asm volatile ("call ASM_init_game\n"
-        : : "a" (num));
+        : : "a" (reload));
+#endif
+    ushort mission_no, new_map_no;
+    long new_level_no;
+
+    mission_no = ingame.CurrentMission;
+    new_map_no = mission_list[mission_no].MapNo;
+    if (cmdln_param_current_map != new_map_no)
+        change_current_map(new_map_no);
+    debug_trace_setup(0);
+
+    if ((reload) && (mission_list[mission_no].ReLevelNo != 0)) {
+        new_level_no = mission_list[mission_no].ReLevelNo;
+    } else {
+        new_level_no = mission_list[mission_no].LevelNo;
+    }
+
+    load_mad_0_console(-new_level_no, mission_no);
+    if (ingame.GameMode == 0)
+        ingame.GameMode = 2;
+    debug_trace_setup(1);
+    init_player();
+    debug_trace_setup(2);
+    execute_commands = 1;
+    ingame.DisplayMode = DpM_UNKN_32;
+    debug_trace_setup(3);
 }
 
 void unkn_lights_func_11(void)
@@ -1253,12 +1285,6 @@ void load_multicolor_sprites(void)
     m_sprites_end = (struct TbSprite *)((ubyte *)m_sprites + sz);
     LbSpriteSetup(m_sprites, m_sprites_end, m_spr_data);
     //unknown_unused(); -- nop function, not sure what was its purpose
-}
-
-void init_player(void)
-{
-    asm volatile ("call ASM_init_player\n"
-        :  :  : "eax" );
 }
 
 int func_6edb8(ubyte a1)
@@ -1831,7 +1857,7 @@ ubyte do_user_interface(void)
             if (ingame.GameMode == 2)
                 execute_commands = 0;
             engn_yc = 0;
-            init_game(1u);
+            init_game(1);
             lbSeed = 0xD15C1234;
             if (pktrec_mode == PktR_RECORD)
             {
