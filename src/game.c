@@ -1486,10 +1486,10 @@ TbBool pause_screen_handle(void)
 
 ubyte do_user_interface(void)
 {
-    PlayerInfo *lplayer;
+    PlayerInfo *p_locplayer;
     int n;
 
-    lplayer = &players[local_player_no];
+    p_locplayer = &players[local_player_no];
     person_func_unknown_310(0);
     do_scroll_map();
     do_rotate_map();
@@ -1498,9 +1498,9 @@ ubyte do_user_interface(void)
         if (lbKeyOn[KC_RETURN])
         {
             lbKeyOn[KC_RETURN] = 0;
-            if ((lplayer->PanelState[mouser] != 17) && (player_unkn0C9[local_player_no] <= 140))
+            if ((p_locplayer->PanelState[mouser] != 17) && (player_unkn0C9[local_player_no] <= 140))
             {
-                lplayer->PanelState[mouser] = 17;
+                p_locplayer->PanelState[mouser] = 17;
                 reset_buffered_keys();
                 player_unknCC9[local_player_no][0] = '\0';
                 player_unkn0C9[local_player_no] = 0;
@@ -1509,7 +1509,7 @@ ubyte do_user_interface(void)
             }
         }
     }
-    if (lplayer->PanelState[mouser] == 17)
+    if (p_locplayer->PanelState[mouser] == 17)
         return process_mouse_imputs() != 0;
 
     // screenshot
@@ -1845,47 +1845,49 @@ ubyte do_user_interface(void)
 
     if (ingame.TrackThing)
     {
-        build_packet(&packets[local_player_no], 0, lplayer->DirectControl[0], 0, 0, 0);
+        build_packet(&packets[local_player_no], 0, p_locplayer->DirectControl[0], 0, 0, 0);
         return 1;
     }
 
-    static ushort sel_agent_gkeys[] = {GKey_SEL_AGENT_1, GKey_SEL_AGENT_2, GKey_SEL_AGENT_3, GKey_SEL_AGENT_4};
+    static ushort sel_agent_gkeys[] = {
+        GKey_SEL_AGENT_1, GKey_SEL_AGENT_2, GKey_SEL_AGENT_3, GKey_SEL_AGENT_4
+    };
     static ulong last_sel_agent_turn[8] = {0};
     for (n = 0; n < (int)(sizeof(sel_agent_gkeys)/sizeof(sel_agent_gkeys[0])); n++)
     {
         ulong gkey = sel_agent_gkeys[n];
         if (lbKeyOn[kbkeys[gkey]] && (lbShift == KMod_NONE))
         {
-            struct Thing *agentng;
+            struct Thing *p_agent;
 
-            agentng = lplayer->MyAgent[n];
-            if (agentng != NULL)
+            p_agent = p_locplayer->MyAgent[n];
+            if (p_agent != NULL)
             {
-                if (((agentng->Flag & 0x02) == 0) && ((agentng->Flag2 & 0x10) == 0) && (agentng->State != 36))
+                if (((p_agent->Flag & 0x02) == 0) && ((p_agent->Flag2 & 0x10) == 0) && (p_agent->State != 36))
                 {
                   lbKeyOn[kbkeys[gkey]] = 0;
-                  if (lplayer->DoubleMode)
+                  if (p_locplayer->DoubleMode)
                   {
                     byte_153198 = n+1;
                   }
                   else
                   {
-                    my_build_packet(&packets[local_player_no], PAct_17, lplayer->DirectControl[n],
-                        agentng->ThingOffset, 0, 0);
-                    lplayer->UserInput[0].ControlMode |= 0x8000u;
+                    my_build_packet(&packets[local_player_no], PAct_17,
+                        p_locplayer->DirectControl[n], p_agent->ThingOffset, 0, 0);
+                    p_locplayer->UserInput[0].ControlMode |= 0x8000u;
                     // Double tapping - center view on the agent
                     if (gameturn - last_sel_agent_turn[n] < 7)
                     {
-                      agentng = lplayer->MyAgent[n];
-                      ingame.TrackX = agentng->X >> 8;
-                      engn_yc = agentng->Y >> 8;
-                      ingame.TrackZ = agentng->Z >> 8;
-                      build_packet(&packets[local_player_no], PAct_17, lplayer->DirectControl[mouser],
-                          agentng->ThingOffset, 0, 0);
-                      if (agentng->ThingOffset == lplayer->DirectControl[mouser])
+                      p_agent = p_locplayer->MyAgent[n];
+                      ingame.TrackX = p_agent->X >> 8;
+                      engn_yc = p_agent->Y >> 8;
+                      ingame.TrackZ = p_agent->Z >> 8;
+                      build_packet(&packets[local_player_no], PAct_17,
+                          p_locplayer->DirectControl[mouser], p_agent->ThingOffset, 0, 0);
+                      if (p_agent->ThingOffset == p_locplayer->DirectControl[mouser])
                       {
-                          engn_xc = agentng->X >> 8;
-                          engn_zc = agentng->Z >> 8;
+                          engn_xc = p_agent->X >> 8;
+                          engn_zc = p_agent->Z >> 8;
                       }
                     }
                     last_sel_agent_turn[n] = gameturn;
@@ -1898,8 +1900,18 @@ ubyte do_user_interface(void)
 
     if (ingame.Flags & GamF_Unkn100)
     {
-        build_packet(&packets[local_player_no], 0, lplayer->DirectControl[0], 0, 0, 0);
+        build_packet(&packets[local_player_no], 0, p_locplayer->DirectControl[0], 0, 0, 0);
         return 1;
+    }
+
+    // Resurrection and bes equipment cheat
+    if (p_locplayer->DoubleMode && (ingame.Cheats & 0x04) && !in_network_game)
+    {
+        if (lbKeyOn[KC_Q] && ((lbShift == KMod_SHIFT) || (lbShift == KMod_NONE)))
+        {
+            lbKeyOn[KC_Q] = 0;
+            beefup_all_agents(p_locplayer);
+        }
     }
 
     ubyte ret;
