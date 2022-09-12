@@ -520,7 +520,8 @@ struct InGame {
     short cmdln_param_w;
     short fld_unkC8B[3];
     long fld_unkC91;
-    long TrackX;
+    ushort TrackX;
+    ushort TrackZ;
     short TrackThing;
     ubyte fld_unkC98[5];
     short fld_unkCA0;

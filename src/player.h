@@ -61,18 +61,14 @@ typedef struct {
     ushort Dummy98; /* offs=0xB8 */
     ubyte Dummy97;
     ubyte MissionAgents;
-  char field_BC[2];
-  char field_BE[8];
-  char field_C6;
-  char field_C7;
-  char field_C8;
-  char field_C9;
-  char field_CA[2];
-  int field_CC;
-  int field_D0;
-  int field_D4;
-  int field_D8;
-  int field_DC;
+    ushort LastPacketType;
+    ubyte State[4];
+    ubyte SubState[4]; /* offs=0xC2 */
+    ubyte PrevState[4];
+    ubyte SubStateTimer[4];
+    ubyte DoubleMode;
+    ubyte PlayerNo;
+    ulong Weapons[4];
   short field_E0;
   short field_E2;
   short field_E4;

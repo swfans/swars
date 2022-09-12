@@ -261,7 +261,7 @@ struct Thing
     short LinkSame;
     short LinkSameGroup;
     short Radius;
-    short ThingOffset;
+    ushort ThingOffset;
     long X;
     long Y;
     long Z;

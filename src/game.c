@@ -140,7 +140,10 @@ extern char player_unknCC9[8][128];
 extern long scanner_unkn370;
 extern long scanner_unkn3CC;
 
+extern long engn_xc;
 extern long engn_yc;
+extern long engn_zc;
+extern ubyte byte_153198;
 
 extern short brightness;
 extern long game_speed;
@@ -1838,6 +1841,65 @@ ubyte do_user_interface(void)
                 PacketRecord_OpenWrite();
             }
         }
+    }
+
+    if (ingame.TrackThing)
+    {
+        build_packet(&packets[local_player_no], 0, lplayer->DirectControl[0], 0, 0, 0);
+        return 1;
+    }
+
+    static ushort sel_agent_gkeys[] = {GKey_SEL_AGENT_1, GKey_SEL_AGENT_2, GKey_SEL_AGENT_3, GKey_SEL_AGENT_4};
+    static ulong last_sel_agent_turn[8] = {0};
+    for (n = 0; n < (int)(sizeof(sel_agent_gkeys)/sizeof(sel_agent_gkeys[0])); n++)
+    {
+        ulong gkey = sel_agent_gkeys[n];
+        if (lbKeyOn[kbkeys[gkey]] && (lbShift == KMod_NONE))
+        {
+            struct Thing *agentng;
+
+            agentng = lplayer->MyAgent[n];
+            if (agentng != NULL)
+            {
+                if (((agentng->Flag & 0x02) == 0) && ((agentng->Flag2 & 0x10) == 0) && (agentng->State != 36))
+                {
+                  lbKeyOn[kbkeys[gkey]] = 0;
+                  if (lplayer->DoubleMode)
+                  {
+                    byte_153198 = n+1;
+                  }
+                  else
+                  {
+                    my_build_packet(&packets[local_player_no], PAct_17, lplayer->DirectControl[n],
+                        agentng->ThingOffset, 0, 0);
+                    lplayer->UserInput[0].ControlMode |= 0x8000u;
+                    // Double tapping - center view on the agent
+                    if (gameturn - last_sel_agent_turn[n] < 7)
+                    {
+                      agentng = lplayer->MyAgent[n];
+                      ingame.TrackX = agentng->X >> 8;
+                      engn_yc = agentng->Y >> 8;
+                      ingame.TrackZ = agentng->Z >> 8;
+                      build_packet(&packets[local_player_no], PAct_17, lplayer->DirectControl[mouser],
+                          agentng->ThingOffset, 0, 0);
+                      if (agentng->ThingOffset == lplayer->DirectControl[mouser])
+                      {
+                          engn_xc = agentng->X >> 8;
+                          engn_zc = agentng->Z >> 8;
+                      }
+                    }
+                    last_sel_agent_turn[n] = gameturn;
+                  }
+                  return 1;
+                }
+            }
+        }
+    }
+
+    if (ingame.Flags & GamF_Unkn100)
+    {
+        build_packet(&packets[local_player_no], 0, lplayer->DirectControl[0], 0, 0, 0);
+        return 1;
     }
 
     ubyte ret;
