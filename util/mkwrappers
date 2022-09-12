@@ -58,14 +58,20 @@ Options:
 			self.functions[parts[0]] = (parts[1], parts[2], parts[3])
 
 	def wrap_name (self, name):
+		# Handle names which are a call to function pointer
+		if (name.startswith('*')):
+			return '%s%s' % (self.prefix, name[1:])
 		return '%s%s' % (self.prefix, name)
 
 	def sym_name (self, name):
 		name = self.renamed_functions.get (name, name)
 		if not self.underscore:
-			return '%s' % name
+			symprefix = ''
 		else:
-			return '_%s' % name
+			symprefix = '_'
+		if (name.startswith('*')):
+			return '*%s%s' % (symprefix, name[1:])
+		return '%s%s' % (symprefix, name)
 
 	def generate_wrappers (self):
 		self.read_input ()
