@@ -637,7 +637,7 @@ GLOBAL_FUNC (ASM_StopCD)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (SetCDVolume_)
+GLOBAL_FUNC (ASM_SetCDVolume)
 /*----------------------------------------------------------------*/
 		push   %edx
 		cmpb   $0x0,CDAble
@@ -676,7 +676,7 @@ GLOBAL_FUNC (FreeCD_)
 		je     FreeCDAudio_
 		xor    %eax,%eax
 		mov    InitialCDVolume,%al
-		call   SetCDVolume_
+		call   ac_SetCDVolume
 		jmp    FreeCDAudio_
 
 
@@ -1939,7 +1939,7 @@ GLOBAL_FUNC (ASM_FreeAudio)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (SetMusicMasterVolume_)
+GLOBAL_FUNC (ASM_SetMusicMasterVolume)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -1972,7 +1972,7 @@ GLOBAL_FUNC (SetMusicMasterVolume_)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (SetSoundMasterVolume_)	/* 0xEE700 */
+GLOBAL_FUNC (ASM_SetSoundMasterVolume)	/* 0xEE700 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -3316,7 +3316,7 @@ GLOBAL_FUNC(InitSound_)
 		mov    $SoundProgressMessage,%eax
 		call   SoundProgressLog_
 		mov    CurrentSoundMasterVolume,%eax
-		call   SetSoundMasterVolume_
+		call   ac_SetSoundMasterVolume
 	jump_ffa7c:
 		mov    SampleRate,%esi
 		add    $0x28,%esp
@@ -4064,7 +4064,7 @@ GLOBAL_FUNC(InitMusic_)
 		call   SoundProgressLog_
 		movb   $0x1,MusicInstalled
 		mov    CurrentMusicMasterVolume,%eax
-		call   SetMusicMasterVolume_
+		call   ac_SetMusicMasterVolume
 	jump_100489:
 		add    $0x148,%esp
 		pop    %edi

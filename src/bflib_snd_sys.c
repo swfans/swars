@@ -39,4 +39,22 @@ void FreeAudio(void)
         :  :  : "eax" );
 }
 
+void SetSoundMasterVolume(long vol)
+{
+    asm volatile ("call ASM_SetSoundMasterVolume\n"
+        :  : "a" (vol));
+}
+
+void SetMusicMasterVolume(long vol)
+{
+    asm volatile ("call ASM_SetMusicMasterVolume\n"
+        :  : "a" (vol));
+}
+
+void SetCDVolume(long vol)
+{
+    asm volatile ("call ASM_SetCDVolume\n"
+        :  : "a" (vol));
+}
+
 /******************************************************************************/

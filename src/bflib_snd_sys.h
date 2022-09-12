@@ -32,6 +32,10 @@ typedef void * TbSampleHandle;
 void StopAllSamples(void);
 TbBool IsSamplePlaying(long tng_offs, ushort smp_id, TbSampleHandle handle);
 void FreeAudio(void);
+
+void SetSoundMasterVolume(long vol);
+void SetMusicMasterVolume(long vol);
+void SetCDVolume(long vol);
 /******************************************************************************/
 #ifdef __cplusplus
 }

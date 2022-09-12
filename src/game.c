@@ -1445,6 +1445,14 @@ TbResult read_palette_file(void)
     return ret;
 }
 
+TbBool pause_screen_handle(void)
+{
+    TbBool ret;
+    asm volatile ("call ASM_pause_screen_handle\n"
+        : "=r" (ret) : );
+    return ret;
+}
+
 ubyte do_user_interface(void)
 {
     PlayerInfo *lplayer;
@@ -1676,6 +1684,94 @@ ubyte do_user_interface(void)
             render_area_a = 28;
         if (render_area_b > 28)
             render_area_b = 28;
+    }
+
+    // Entering pause screen
+    if (!in_network_game)
+    {
+        if (lbKeyOn[kbkeys[GKey_PAUSE]] ||
+            (jskeys[GKey_PAUSE] && jskeys[GKey_PAUSE] == joy.Buttons[0]))
+        {
+            if (pause_screen_handle()) {
+                return -1;
+            }
+        }
+    }
+
+    // Scanner appearence control
+    if (lbKeyOn[KC_NUMPAD6])
+        ingame.Scanner.Brightness += 4;
+    if (lbKeyOn[KC_NUMPAD4])
+        ingame.Scanner.Brightness -= 4;
+    if (ingame.Scanner.Brightness < 0)
+        ingame.Scanner.Brightness = 0;
+    if (ingame.Scanner.Brightness > 64)
+        ingame.Scanner.Brightness = 64;
+
+    // MIDI Music (tension) volume control
+    if (lbKeyOn[KC_NUMPAD8])
+    {
+        if (lbShift & KMod_SHIFT)
+            startscr_midivol += 1;
+        else
+            startscr_midivol += 10;
+        if (startscr_midivol > 322)
+            startscr_midivol = 322;
+        SetMusicMasterVolume(127 * startscr_midivol / 322);
+    }
+    if (lbKeyOn[KC_NUMPAD2])
+    {
+        if (lbShift & KMod_SHIFT)
+            startscr_midivol -= 1;
+        else
+            startscr_midivol -= 10;
+        if (startscr_midivol < 0)
+            startscr_midivol = 0;
+        SetMusicMasterVolume(127 * startscr_midivol / 322);
+    }
+
+    // Sample volume control
+    if (lbKeyOn[KC_NUMPAD7])
+    {
+        if (lbShift & KMod_SHIFT)
+            startscr_samplevol += 1;
+        else
+            startscr_samplevol += 10;
+        if (startscr_samplevol > 322)
+            startscr_samplevol = 322;
+        SetSoundMasterVolume(127 * startscr_samplevol / 322);
+    }
+    if (lbKeyOn[KC_NUMPAD1])
+    {
+        if (lbShift & KMod_SHIFT)
+            startscr_samplevol -= 1;
+        else
+            startscr_samplevol -= 10;
+        if (startscr_samplevol < 0)
+            startscr_samplevol = 0;
+        SetSoundMasterVolume(127 * startscr_samplevol / 322);
+    }
+
+    // CD Music volume control
+    if (lbKeyOn[KC_NUMPAD9])
+    {
+        if (lbShift & KMod_SHIFT)
+            startscr_cdvolume += 1;
+        else
+            startscr_cdvolume += 10;
+        if (startscr_cdvolume > 322)
+            startscr_cdvolume = 322;
+        SetCDVolume(70 * (127 * startscr_cdvolume / 322) / 100);
+    }
+    if (lbKeyOn[KC_NUMPAD3])
+    {
+        if (lbShift & KMod_SHIFT)
+            startscr_cdvolume -= 1;
+        else
+            startscr_cdvolume -= 10;
+        if (startscr_cdvolume < 0)
+            startscr_cdvolume = 0;
+        SetCDVolume(70 * (127 * startscr_cdvolume / 322) / 100);
     }
 
     ubyte ret;

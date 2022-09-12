@@ -28,6 +28,17 @@
 
 #pragma pack(1)
 
+#if 0
+ushort kbkeys[] = {
+    KC_UNASSIGNED, KC_LCONTROL, KC_LALT, KC_DELETE,
+    KC_PGDOWN, KC_TAB, KC_RCONTROL, KC_OEM_102,
+    KC_UP, KC_DOWN, KC_LEFT, KC_RIGHT,
+    KC_HOME, KC_END, KC_D, KC_Z,
+    KC_INSERT, KC_PGUP, KC_P, KC_K,
+    KC_1, KC_2, KC_3, KC_4
+};
+#endif
+
 ulong buffered_keys[KEYBOARD_BUFFER_SIZE];
 ulong buffered_keys_read_index;
 ulong buffered_keys_write_index;

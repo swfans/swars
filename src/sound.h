@@ -7,6 +7,8 @@
 #include "bftypes.h"
 #include "timer.h"
 
+#pragma pack(1)
+
 enum SoundDriverType
 {
   SOUND_DRIVER_PCM  = 0,
@@ -120,6 +122,12 @@ struct SoundDriverCallParameters
   int16_t si;
   int16_t di;
 } __attribute__ ((packed));
+
+#pragma pack()
+
+extern short startscr_samplevol;
+extern short startscr_midivol;
+extern short startscr_cdvolume;
 
 bool sound_initialise (void);
 void sound_finalise (void);
