@@ -1065,6 +1065,12 @@ void init_player(void)
         :  :  : "eax" );
 }
 
+void place_single_player(void)
+{
+    asm volatile ("call ASM_place_single_player\n"
+        :  :  : "eax" );
+}
+
 void init_game(ubyte reload)
 {
 #if 0
