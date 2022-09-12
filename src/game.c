@@ -140,6 +140,8 @@ extern char player_unknCC9[8][128];
 extern long scanner_unkn370;
 extern long scanner_unkn3CC;
 
+extern long engn_yc;
+
 extern short brightness;
 extern long game_speed;
 
@@ -175,6 +177,12 @@ void PacketRecord_Close(void)
     if (in_network_game)
         return;
     LbFileClose(packet_rec_fh);
+}
+
+void PacketRecord_OpenWrite(void)
+{
+    asm volatile ("call ASM_PacketRecord_OpenWrite\n"
+        :  :  : "eax" );
 }
 
 void debug_trace_place(int place)
@@ -989,7 +997,7 @@ void setup_host(void)
     LoadSounds(0);
     LoadMusic(0);
     setup_host_sub6();
-    if ( pktrec_mode == 1 )
+    if (pktrec_mode == PktR_RECORD)
     {
       if ( !in_network_game )
       {
@@ -1001,7 +1009,7 @@ void setup_host(void)
           LbFileWrite(packet_rec_fh, &cmdln_param_current_map, 2);
       }
     }
-    if ( pktrec_mode == 2 )
+    if (pktrec_mode == PktR_PLAYBACK)
     {
         ushort pktrec_head;
         get_packet_record_fname(fname, ingame__CurrentMission, cmdln_pr_num);
@@ -1050,10 +1058,30 @@ void init_engine(void)
         :  :  : "eax" );
 }
 
-void load_mission_map_lvl(ubyte num)
+void init_game(ubyte num)
 {
-    asm volatile ("call ASM_load_mission_map_lvl\n"
+    asm volatile ("call ASM_init_game\n"
         : : "a" (num));
+}
+
+void unkn_lights_func_11(void)
+{
+    asm volatile ("call ASM_unkn_lights_func_11\n"
+        :  :  : "eax" );
+}
+
+void init_level_3d(ubyte flag)
+{
+    asm volatile ("call ASM_init_level_3d\n"
+        : : "a" (flag));
+}
+
+short test_missions(ubyte flag)
+{
+    short ret;
+    asm volatile ("call ASM_test_missions\n"
+        : "=r" (ret) : "a" (flag));
+    return ret;
 }
 
 char *gui_strings_data_end;
@@ -1151,7 +1179,7 @@ void game_setup(void)
     test_open(15);
     debug_trace_setup(1);
     if ( is_single_game && cmdln_param_current_map )
-      load_mission_map_lvl(0);
+      init_game(0);
     if ( in_network_game || cmdln_param_bcg )
       ingame__DisplayMode = 55;
     debug_trace_setup(2);
@@ -1772,6 +1800,44 @@ ubyte do_user_interface(void)
         if (startscr_cdvolume < 0)
             startscr_cdvolume = 0;
         SetCDVolume(70 * (127 * startscr_cdvolume / 322) / 100);
+    }
+
+    // Music track control
+    if (lbKeyOn[KC_NUMPAD5])
+    {
+        lbKeyOn[KC_NUMPAD5] = 0;
+        if (++ingame.CDTrack > 4)
+            ingame.CDTrack = 2;
+    }
+    if (lbKeyOn[KC_NUMPAD0])
+    {
+        lbKeyOn[KC_NUMPAD0] = 0;
+        ingame.DangerTrack = 2 - ingame.DangerTrack + 1;
+    }
+
+    // Restart level
+    if (!in_network_game && !(ingame.Flags & GamF_Unkn10))
+    {
+        if (lbKeyOn[KC_R])
+        {
+            lbKeyOn[KC_R] = 0;
+            mission_result = 0;
+            StopCD();
+            test_missions(1u);
+            init_level_3d(1u);
+            change_current_map(cmdln_param_current_map);
+            unkn_lights_func_11();
+            if (ingame.GameMode == 2)
+                execute_commands = 0;
+            engn_yc = 0;
+            init_game(1u);
+            lbSeed = 0xD15C1234;
+            if (pktrec_mode == PktR_RECORD)
+            {
+                PacketRecord_Close();
+                PacketRecord_OpenWrite();
+            }
+        }
     }
 
     ubyte ret;

@@ -154,7 +154,7 @@ process_options (int *argc, char ***argv)
 
         case 'p':
             is_single_game = 1;
-            pktrec_mode = 2; /* playback */
+            pktrec_mode = PktR_PLAYBACK;
             cmdln_pr_num = atoi(optarg);
             LOGDBG("packet file play %d", cmdln_pr_num);
             break;
@@ -164,7 +164,7 @@ process_options (int *argc, char ***argv)
             break;
 
         case 'r':
-            pktrec_mode = 1; /* record */
+            pktrec_mode = PktR_RECORD;
             LOGDBG("packet file record enabled");
             break;
 

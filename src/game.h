@@ -91,6 +91,12 @@ enum DisplayMode {
   DpM_UNKN_3B = 0x3B,
 };
 
+enum PacketRecordMode {
+  PktR_NONE = 0x0,
+  PktR_RECORD = 0x1,
+  PktR_PLAYBACK = 0x2,
+};
+
 struct Thing;
 
 typedef struct {
