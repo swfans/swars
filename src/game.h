@@ -110,11 +110,11 @@ typedef struct {
     char *Name;
     void *BufferPtr;
     int16_t field_8;
-    int field_A;
+    int N;
     int field_E;
     char field_12[4];
     char field_16;
-} BuffUnknStruct02;
+} MemSystem;
 
 typedef struct {
   char field_0[15];
@@ -524,7 +524,7 @@ struct InGame {
     ubyte DetailLevel;
     short UserZoom;
     short cmdln_param_a;
-    short cmdln_param_w;
+    short LowerMemoryUse;
     short fld_unkC8B[3];
     long fld_unkC91;
     ushort TrackX;
@@ -567,7 +567,7 @@ extern ubyte in_network_game;
 extern ubyte is_single_game;
 extern ubyte cmdln_colour_tables;
 extern ubyte cmdln_param_bcg;
-extern ubyte cmdln_param_d;
+extern ubyte keyboard_mode_direct;
 extern ubyte unkn01_maskarr[28];
 extern long map_editor;
 
@@ -591,12 +591,10 @@ extern long unkn01_downcount;
 extern long unkn01_pos_x;
 extern long unkn01_pos_y;
 
-extern uint16_t cmdln_param_a;
-extern uint16_t cmdln_param_w;
 extern uint16_t cmdln_param_current_map;
 extern uint32_t engine_mem_alloc_size;
 extern void *engine_mem_alloc_ptr;
-extern BuffUnknStruct02 buffer_allocs[40];
+extern MemSystem mem_game[40];
 
 extern long navi2_unkn_counter;
 extern long navi2_unkn_counter_max;

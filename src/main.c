@@ -29,17 +29,19 @@ print_help (const char *argv0)
   printf (
 "Usage: %s [OPTIONS]\n\n"
 "Available options:\n"
-"                -A        ?\n"
-"                -B        ?\n"
-"                -C        ?\n"
-"                -D        ?\n"
+"                -A        Enter game mode 1; not sure what this mode should be\n"
+"                -B        Test scenario 99?\n"
+"                -C        Test scenario 100?\n"
+"                -D        Direct keyboard mode; queries kb rather than use\n"
+"                          events/interrupts\n"
 "                -E <num>  Joystick config\n"
-"                -F        re-compute colour fade tables\n"
-"                -g        no idea, but you should use it - original game did\n"
+"                -F        Re-compute colour fade tables\n"
+"                -g        Enter normal gameplay mode; to be used when playing\n"
+"                          the normal campaigns\n"
 "                -H        Initially enter high resolution mode\n"
 "  --help        -h        Display the help message\n"
 "                -I <num>  Connect through IPX\n"
-"                -m <num>  Load map of given index (use without -g)\n"
+"                -m <num>  Enter single map mode and load map of given index\n"
 "                -N        ?\n"
 "                -p <num>  Play replay packets from file of given index;\n"
 "                          use '-m' to specify map on which to play\n"
@@ -52,7 +54,7 @@ print_help (const char *argv0)
 "  --self-tests  -t        execute build self tests\n"
 "                -u <str>  Set user name string\n"
 "  --windowed    -W        Run in windowed mode\n"
-"                -w        adjust memory allocations for less RAM(?)\n",
+"                -w        Lower memory use; decreases size of static arrays\n",
   argv0);
 }
 
@@ -106,7 +108,7 @@ process_options (int *argc, char ***argv)
             break;
 
         case 'D':
-            cmdln_param_d = 1;
+            keyboard_mode_direct = 1;
             break;
 
         case 'E':
@@ -196,7 +198,7 @@ process_options (int *argc, char ***argv)
             break;
 
         case 'w':
-            ingame.cmdln_param_w = 1;
+            ingame.LowerMemoryUse = 1;
             break;
 
         default:
@@ -315,7 +317,7 @@ main (int argc, char **argv)
 {
     lbDisplay.ScreenMode = Lb_SCREEN_MODE_320_200_8;
     ingame.GameMode = GamM_None;
-    ingame.cmdln_param_w = 0;
+    ingame.LowerMemoryUse = 0;
     ingame.Flags = 0;
     if (LbErrorLogSetup(NULL, NULL, Lb_ERROR_LOG_NEW) != Lb_SUCCESS)
             printf("Execution log setup failed\n");

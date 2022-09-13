@@ -220,33 +220,34 @@ game_initialise(void)
     // Make sure file names are properly converted before opening
     setup_file_names();
 
-    if (ingame.cmdln_param_w == 1)
+    // Decrease the size of some arrays to reduce memory usage
+    if (ingame.LowerMemoryUse == 1)
     {
-        buffer_allocs[35].field_A = 1;
-        buffer_allocs[28].field_A = 1;
-        buffer_allocs[36].field_A = 1;
-        buffer_allocs[27].field_A = 1000;
-        buffer_allocs[26].field_A = 1124;
-        buffer_allocs[31].field_A = 2500;
-        buffer_allocs[32].field_A = 1000;
-        buffer_allocs[33].field_A = 700;
-        buffer_allocs[30].field_A = 3000;
+        mem_game[35].N = 1; // bez_edit
+        mem_game[28].N = 1; // objectives
+        mem_game[36].N = 1; // spare_map_buffer
+        mem_game[27].N = 1000; // used_objectives
+        mem_game[26].N = 1124; // floor_tiles
+        mem_game[31].N = 2500; // draw_list
+        mem_game[32].N = 1000; // sort_sprites
+        mem_game[33].N = 700; // sort_lines
+        mem_game[30].N = 3000; // screen_point_pool
         if ( is_single_game || cmdln_param_bcg )
         {
-            buffer_allocs[20].field_A = 2000;
-            buffer_allocs[21].field_A = 2000;
-            buffer_allocs[22].field_A = 2000;
+            mem_game[20].N = 2000; // prim_object_points
+            mem_game[21].N = 2000; // prim_object_faces increase(?)
+            mem_game[22].N = 2000; // prim_object_faces4 increase(?)
         }
-        buffer_allocs[4].field_A = 11000;
-        buffer_allocs[9].field_A = 11000;
-        buffer_allocs[5].field_A = 1500;
-        buffer_allocs[7].field_A = 1000;
-        buffer_allocs[13].field_A = 16000;
-        buffer_allocs[14].field_A = 9000;
+        mem_game[4].N = 11000; // object_faces
+        mem_game[9].N = 11000; // object_faces4 increase(?)
+        mem_game[5].N = 1500; // objects
+        mem_game[7].N = 1000; // full_lights
+        mem_game[13].N = 16000; // col_vects_list
+        mem_game[14].N = 9000; // col_vects
         engine_mem_alloc_size = 2700000;
-        game_perspective = (buffer_allocs[5].field_A >> 8) & 0xff;
+        game_perspective = (mem_game[5].N >> 8) & 0xff; // = 5
     }
-    if ( !is_single_game )
+    if (!is_single_game)
         cmdln_param_bcg = 1;
 
     return true;
@@ -723,10 +724,10 @@ void init_outro(void)
 #endif
 }
 
-int setup_host_sub5(BuffUnknStruct02 *a1)
+int init_memory(MemSystem *a1)
 {
     int ret;
-    asm volatile ("call ASM_setup_host_sub5\n"
+    asm volatile ("call ASM_init_memory\n"
         : "=r" (ret) : "a" (a1));
     return ret;
 }
@@ -975,7 +976,7 @@ void setup_host(void)
         spr->SWidth = 0;
         spr->SHeight = 0;
     }
-    if ( cmdln_param_d )
+    if ( keyboard_mode_direct )
         LbKeyboardOpen();
     else
         LbIKeyboardOpen();
@@ -998,7 +999,7 @@ void setup_host(void)
     ingame.TrenchcoatPreference = 0;
     game_panel = game_panel_lo;
     LbGhostTableGenerate(display_palette, 50, "data/synghost.tab");
-    setup_host_sub5(buffer_allocs);
+    init_memory(mem_game);
     init_syndwars();
     LoadSounds(0);
     LoadMusic(0);
@@ -3439,7 +3440,7 @@ void game_process(void)
           navi2_unkn_counter = 0;
       if (navi2_unkn_counter > navi2_unkn_counter_max)
           navi2_unkn_counter_max = navi2_unkn_counter;
-      if (cmdln_param_d)
+      if (keyboard_mode_direct)
           input_char = LbKeyboard();
       if (ingame.DisplayMode == DpM_UNKN_37) {
           LOGDBG("id=%d  trial alloc = %d turn %lu", 0, triangulation, gameturn);
