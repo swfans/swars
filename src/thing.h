@@ -87,6 +87,25 @@ enum ThingType {
     TT_UNKN56 = 0x38,
 };
 
+enum SubTypePerson {
+  SubTT_PERS_NONE = 0x0,
+  SubTT_PERS_AGENT = 0x1,
+  SubTT_PERS_ZEALOT = 0x2,
+  SubTT_PERS_PUNK_F = 0x3,
+  SubTT_PERS_BRIEFCASE_M = 0x4,
+  SubTT_PERS_WHITE_BRUN_F = 0x5,
+  SubTT_PERS_MERCENARY = 0x6,
+  SubTT_PERS_MECH_SPIDER = 0x7,
+  SubTT_PERS_POLICE = 0x8,
+  SubTT_PERS_PUNK_M = 0x9,
+  SubTT_PERS_SCIENTIST = 0xA,
+  SubTT_PERS_SHADY_M = 0xB,
+  SubTT_PERS_HIGH_PRIEST = 0xC,
+  SubTT_PERS_WHIT_BLOND_F = 0xD,
+  SubTT_PERS_LETH_JACKT_M = 0xE,
+  SubTT_PERS_FAST_BLOND_F = 0xF,
+};
+
 /** State of Thing of type Object.
  */
 struct TngUObject

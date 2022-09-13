@@ -35,6 +35,7 @@
 #include "unix.h"
 #include "util.h"
 #include "windows.h"
+#include "command.h"
 #include "research.h"
 #include "thing.h"
 #include "packet.h"
@@ -137,6 +138,9 @@ extern ubyte player_unkn0C9[8];
 extern char player_unknCC9[8][128];
 extern long scanner_unkn370;
 extern long scanner_unkn3CC;
+
+extern ushort netgame_agent_pos_x[32];
+extern ushort netgame_agent_pos_y[32];
 
 extern long engn_xc;
 extern long engn_yc;

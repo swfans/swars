@@ -69,10 +69,9 @@ typedef struct {
     ubyte DoubleMode;
     ubyte PlayerNo;
     ulong Weapons[4];
-  short field_E0;
-  short field_E2;
-  short field_E4;
-  int field_E6[2];
+    ushort Mods[4];
+  short field_E8;
+  int field_EA;
   int field_EE;
   int field_F2;
   int field_F6;
