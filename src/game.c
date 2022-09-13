@@ -328,10 +328,10 @@ void load_prim_quad(void)
     read_primveh_obj(primvehobj_fname, 1);
     read_textwalk();
     data_19ec6f = 1;
-    ingame.DisplayMode = 55;
-    if ( cmdln_param_bcg == 99 )
+    ingame.DisplayMode = DpM_UNKN_37;
+    if (cmdln_param_bcg == 99)
         test_open(99);
-    if ( cmdln_param_bcg == 100 )
+    if (cmdln_param_bcg == 100)
         test_open(100);
 }
 
@@ -884,7 +884,8 @@ void game_graphics_inputs(void)
     PlayerInfo *p_locplayer;
 
     p_locplayer = &players[local_player_no];
-    if (ingame.DisplayMode != 50 && ingame.DisplayMode != 59)
+    if ((ingame.DisplayMode != DpM_UNKN_32) &&
+        (ingame.DisplayMode != DpM_UNKN_3B))
         return;
     if (in_network_game && p_locplayer->PanelState[mouser] != 17)
         return;
@@ -1116,7 +1117,7 @@ ushort make_group_into_players(ushort group, ushort plyr, ushort max_agent, shor
         if (in_network_game)
             set_person_stats_type(p_person, 1);
 
-        if (ingame.GameMode != 2)
+        if (ingame.GameMode != GamM_Unkn2)
         {
             if ((p_person->SubType == SubTT_PERS_AGENT) || (p_person->SubType == SubTT_PERS_ZEALOT))
             {
@@ -1145,7 +1146,7 @@ ushort make_group_into_players(ushort group, ushort plyr, ushort max_agent, shor
         {
             p_person->Flag2 |= 0x0800;
             p_person->U.UPerson.ComCur = 4 * plyr + nagents;
-            if (ingame.GameMode == 3)
+            if (ingame.GameMode == GamM_Unkn3)
                 do_weapon_quantities_proper1(p_person);
             else
                 do_weapon_quantities1(p_person);
@@ -1157,7 +1158,7 @@ ushort make_group_into_players(ushort group, ushort plyr, ushort max_agent, shor
         {
             p_person->U.UPerson.ComCur = 4 * plyr + nagents;
             p_person->U.UPerson.ComHead = 0;
-            if (ingame.GameMode == 3)
+            if (ingame.GameMode == GamM_Unkn3)
                 do_weapon_quantities_proper1(p_person);
             else
                 do_weapon_quantities1(p_person);
@@ -1296,8 +1297,8 @@ void init_game(ubyte reload)
     }
 
     load_mad_0_console(-new_level_no, mission_no);
-    if (ingame.GameMode == 0)
-        ingame.GameMode = 2;
+    if (ingame.GameMode == GamM_None)
+        ingame.GameMode = GamM_Unkn2;
     debug_trace_setup(1);
     init_player();
     debug_trace_setup(2);
@@ -1420,10 +1421,10 @@ void game_setup(void)
     }
     test_open(15);
     debug_trace_setup(1);
-    if ( is_single_game && cmdln_param_current_map )
+    if (is_single_game && cmdln_param_current_map)
       init_game(0);
-    if ( in_network_game || cmdln_param_bcg )
-      ingame.DisplayMode = 55;
+    if (in_network_game || cmdln_param_bcg)
+      ingame.DisplayMode = DpM_UNKN_37;
     debug_trace_setup(2);
     switch (cmdln_colour_tables)
     {
@@ -2063,7 +2064,7 @@ ubyte do_user_interface(void)
             init_level_3d(1u);
             change_current_map(cmdln_param_current_map);
             unkn_lights_func_11();
-            if (ingame.GameMode == 2)
+            if (ingame.GameMode == GamM_Unkn2)
                 execute_commands = 0;
             engn_yc = 0;
             init_game(1);
@@ -2794,7 +2795,7 @@ void show_load_and_prep_mission(void)
     init_random_seed();
     show_mission_loading_screen();
 
-    if ( data_1c4b78 )
+    if ( start_into_mission )
     {
         if (!in_network_game) {
             update_open_brief();
@@ -2804,8 +2805,9 @@ void show_load_and_prep_mission(void)
         debug_trace_place(6);
         if ( in_network_game )
         {
-          ingame.MissionNo = 1;
           ushort mission;
+
+          ingame.MissionNo = 1;
           mission = find_mission_with_mapid(cities[login_control__City].MapID, next_mission);
           if (mission > 0) {
               ingame.MissionNo = mission;
@@ -2868,13 +2870,16 @@ void show_load_and_prep_mission(void)
     LbColourTablesLoad(display_palette, "data/tables.dat");
     LbGhostTableLoad(display_palette, 50, "data/synghost.tab");
     debug_trace_place(13);
-    if ( data_1c4b78 )
+    if ( start_into_mission )
     {
         load_multicolor_sprites();
         if (game_high_resolution)
             load_pop_sprites_hi();
         else
             load_pop_sprites_lo();
+
+        if (ingame.GameMode == GamM_None)
+            ingame.GameMode = GamM_Unkn2;
         init_player();
         flic_unkn03(1);
         func_6edb8(1);
@@ -2917,7 +2922,7 @@ void show_load_and_prep_mission(void)
     }
 
     map_editor = 0;
-    data_1c4b78 = 0;
+    start_into_mission = 0;
     reload_background_flag = 0;
     net_system_reset();
     stop_sample_using_heap(0, 122);
@@ -3051,7 +3056,7 @@ void show_menu_screen(void)
     }
     else if (login_control__State == 8)
     {
-        data_1c4b78 = 1;
+        start_into_mission = 1;
         in_network_game = 1;
         redraw_screen_flag = 1;
         local_player_no = LbNetworkPlayerNumber();
@@ -3350,7 +3355,7 @@ void show_menu_screen(void)
         LbIffSaveScreen("synII", lbDisplay.WScreen, display_palette, 0);
     }
 
-    if ( data_1c4b78 || map_editor )
+    if ( start_into_mission || map_editor )
     {
         show_load_and_prep_mission();
     }
@@ -3373,10 +3378,10 @@ void draw_game(void)
     //ASM_draw_game(); return;
     switch (ingame.DisplayMode)
     {
-    case 1:
+    case DpM_UNKN_1:
         // No action
         break;
-    case 50:
+    case DpM_UNKN_32:
         PlayCDTrack(ingame.CDTrack);
         if ( !(ingame.Flags & 0x20) || !(gameturn & 0xF) )
         {
@@ -3398,10 +3403,10 @@ void draw_game(void)
             }
         }
         break;
-    case 55:
+    case DpM_UNKN_37:
         show_menu_screen();
         break;
-    case 58:
+    case DpM_UNKN_3A:
         gproc3_unknsub3(0);
         break;
     default:
@@ -3436,7 +3441,7 @@ void game_process(void)
           navi2_unkn_counter_max = navi2_unkn_counter;
       if (cmdln_param_d)
           input_char = LbKeyboard();
-      if (ingame.DisplayMode == 55) {
+      if (ingame.DisplayMode == DpM_UNKN_37) {
           LOGDBG("id=%d  trial alloc = %d turn %lu", 0, triangulation, gameturn);
       }
       if (!LbScreenIsLocked()) {
@@ -3452,26 +3457,28 @@ void game_process(void)
         ((ingame.Flags & 0x8000) != 0) )
           LbPaletteSet(display_palette);
       active_flags_general_unkn01 = ingame.Flags;
-      if ( ingame.DisplayMode == 50 || ingame.DisplayMode == 1 || ingame.DisplayMode == 59 )
+      if ((ingame.DisplayMode == DpM_UNKN_32) ||
+          (ingame.DisplayMode == DpM_UNKN_1) ||
+          (ingame.DisplayMode == DpM_UNKN_3B))
           game_process_sub02();
-      if ( ingame.DisplayMode != 55 )
+      if (ingame.DisplayMode != DpM_UNKN_37)
           process_packets();
       joy_input();
-      if ( ingame.DisplayMode == 55 ) {
+      if (ingame.DisplayMode == DpM_UNKN_37) {
           swap_wscreen();
       }
       else if ( !(ingame.Flags & 0x20) || ((gameturn & 0xF) == 0) ) {
           LbScreenSwapClear(0);
       }
       game_process_sub04();
-      if ( unkn01_downcount > 0 ) /* orbital station explosion code */
+      if (unkn01_downcount > 0) /* orbital station explosion code */
       {
         unkn01_downcount--;
         LOGDBG("unkn01_downcount = %ld", unkn01_downcount);
         if ( unkn01_downcount == 40 ) {
             mapwho_unkn01(unkn01_pos_x, unkn01_pos_y);
         }
-        else if ( unkn01_downcount < 40 ) {
+        else if (unkn01_downcount < 40) {
             unsigned short stl_y;
             unsigned short stl_x;
             stl_y = unkn01_pos_y + (LbRandomAnyShort() & 0xF) - 7;

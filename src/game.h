@@ -17,6 +17,13 @@ extern "C" {
 // Not sure about the value
 #define GAME_FPS 16
 
+enum GameModes {
+    GamM_None        = 0,
+    GamM_Unkn1       = 1,
+    GamM_Unkn2       = 2,
+    GamM_Unkn3       = 3,
+};
+
 enum GameFlags {
     GamF_Unkn1       = 0x0001,
     GamF_Unkn2       = 0x0002,
@@ -667,7 +674,7 @@ extern ubyte data_1c498f;
 extern ubyte data_1c4990;
 extern ubyte data_1c4991;
 extern ubyte data_1c4aa2;
-extern ubyte data_1c4b78;
+extern ubyte start_into_mission;
 extern ulong text_buf_pos;
 extern ubyte edit_flag;
 extern ubyte change_screen;

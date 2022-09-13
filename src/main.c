@@ -93,7 +93,7 @@ process_options (int *argc, char ***argv)
         switch (val)
         {
         case 'A':
-            ingame.GameMode = 1;
+            ingame.GameMode = GamM_Unkn1;
             ingame.cmdln_param_a = 3200;
             break;
 
@@ -121,7 +121,7 @@ process_options (int *argc, char ***argv)
 
         case 'g':
             cmdln_param_bcg = 1;
-            ingame.GameMode = 3;
+            ingame.GameMode = GamM_Unkn3;
             ingame.Flags |= 0x08;
             break;
 
@@ -142,10 +142,11 @@ process_options (int *argc, char ***argv)
         case 'm':
             is_single_game = 1;
             cmdln_param_current_map = atoi(optarg);
+            ingame.GameMode = GamM_Unkn2;
             ingame.Flags |= 0x08;
             ingame.CurrentMission = cmdln_param_current_map;
             ingame.Cheats |= 0x04;
-            LOGDBG("map index %d", cmdln_param_current_map);
+            LOGDBG("mission index %d", (int)ingame.CurrentMission);
             break;
 
         case 'N':
@@ -313,7 +314,7 @@ int
 main (int argc, char **argv)
 {
     lbDisplay.ScreenMode = Lb_SCREEN_MODE_320_200_8;
-    ingame.GameMode = 0;
+    ingame.GameMode = GamM_None;
     ingame.cmdln_param_w = 0;
     ingame.Flags = 0;
     if (LbErrorLogSetup(NULL, NULL, Lb_ERROR_LOG_NEW) != Lb_SUCCESS)
