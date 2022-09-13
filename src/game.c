@@ -247,8 +247,15 @@ game_initialise(void)
         engine_mem_alloc_size = 2700000;
         game_perspective = (mem_game[5].N >> 8) & 0xff; // = 5
     }
-    if (!is_single_game)
+
+    if (!is_single_game) {
         cmdln_param_bcg = 1;
+    }
+    // If game mode was not selected, set it to normal gameplay
+    if (ingame.GameMode == GamM_None) {
+        ingame.GameMode = GamM_Unkn3;
+        ingame.Flags |= 0x08;
+    }
 
     return true;
 }
