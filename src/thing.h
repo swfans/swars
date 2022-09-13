@@ -369,9 +369,24 @@ struct Thing
     } U;
 };
 
+struct PeepStat
+{
+    short MaxHealth;
+    short MaxShield;
+    short MaximumStamina;
+    short MaxEnergy;
+    short PersuadeReqd;
+    short PersuadeWorth;
+    short Speed;
+    short dum2;
+    short dum3;
+    short dum4;
+};
+
 #pragma pack()
 /******************************************************************************/
 extern ushort things_used_head;
+extern struct PeepStat peep_type_stats[];
 
 void init_things(void);
 TbResult delete_node(struct Thing *p_thing);
@@ -379,6 +394,8 @@ void add_node_thing(ushort new_thing);
 void remove_thing(ushort tngno);
 
 void do_weapon_quantities1(struct Thing *p_person);
+void do_weapon_quantities_proper1(struct Thing *p_person);
+void set_person_stats_type(struct Thing *p_person, ushort type);
 /******************************************************************************/
 #ifdef __cplusplus
 }

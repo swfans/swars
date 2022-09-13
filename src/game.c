@@ -139,8 +139,8 @@ extern char player_unknCC9[8][128];
 extern long scanner_unkn370;
 extern long scanner_unkn3CC;
 
-extern ushort netgame_agent_pos_x[32];
-extern ushort netgame_agent_pos_y[32];
+extern ushort netgame_agent_pos_x[8][4];
+extern ushort netgame_agent_pos_y[8][4];
 
 extern long engn_xc;
 extern long engn_yc;
@@ -1071,10 +1071,145 @@ void init_player(void)
 
 ushort make_group_into_players(ushort group, ushort plyr, ushort max_agent, short new_type)
 {
+#if 0
     ushort ret;
     asm volatile ("call ASM_make_group_into_players\n"
         : "=r" (ret) : "a" (group), "d" (plyr), "b" (max_agent), "c" (new_type));
     return ret;
+#endif
+    ulong n, nframe;
+    ushort nagents, high_tier;
+    PlayerInfo *p_player;
+    struct Thing *p_person;
+
+    p_player = &players[plyr];
+    p_person = NULL;
+    nagents = 0;
+    high_tier = 0;
+    for (n = things_used_head; n != 0; n = p_person->LinkChild)
+    {
+        p_person = &things[n];
+        if ((p_person->U.UPerson.Group != group) || (p_person->Type != TT_PERSON))
+            continue;
+
+        if (nagents > p_player->DoubleMode)
+        {
+            if (in_network_game && p_player->DoubleMode) {
+                p_person->State = 13;
+                p_person->Flag |= 0x2000002;
+            }
+            p_player->DirectControl[nagents] = 0;
+        }
+        else
+        {
+            p_player->DirectControl[nagents] = p_person->ThingOffset;
+            p_person->Flag |= 0x1000;
+            if ((plyr == local_player_no) && (nagents == 0)) {
+                ingame.TrackX = p_person->X >> 8;
+                ingame.TrackZ = p_person->Z >> 8;
+            }
+        }
+        players[plyr].MyAgent[nagents] = p_person;
+        p_person->Flag |= 0x2000;
+        if ((p_person->SubType == SubTT_PERS_ZEALOT) && !cmdln_param_bcg)
+            background_type = 1;
+        if (in_network_game)
+            set_person_stats_type(p_person, 1);
+
+        if (ingame.GameMode != 2)
+        {
+            if ((p_person->SubType == SubTT_PERS_AGENT) || (p_person->SubType == SubTT_PERS_ZEALOT))
+            {
+                p_person->U.UPerson.WeaponsCarried = p_player->Weapons[high_tier] | 0x400000;
+                p_person->U.UPerson.UMod.Mods = p_player->Mods[high_tier].Mods;
+            }
+            p_person->U.UPerson.CurrentWeapon = 0;
+        }
+
+        if (game_commands[p_person->U.UPerson.ComHead].Type == PCmd_HARD_AS_AGENT)
+        {
+            set_person_stats_type(p_person, 1);
+            p_person->U.UPerson.ComHead = game_commands[p_person->U.UPerson.ComHead].Next;
+        }
+
+        if (game_commands[p_person->U.UPerson.ComHead].Type == PCmd_90)
+        {
+            p_person->U.UPerson.Stamina = peep_type_stats[1].MaximumStamina;
+            p_person->U.UPerson.MaxStamina = peep_type_stats[1].MaximumStamina;
+            p_person->U.UPerson.ComCur = p_person->U.UPerson.ComHead;
+            p_person->Flag |= 0x40;
+        }
+
+        if ((p_person->U.UPerson.ComHead != 0) &&
+            (game_commands[p_person->U.UPerson.ComHead].Type == PCmd_EXECUTE_COMS))
+        {
+            p_person->Flag2 |= 0x0800;
+            p_person->U.UPerson.ComCur = 4 * plyr + nagents;
+            if (ingame.GameMode == 3)
+                do_weapon_quantities_proper1(p_person);
+            else
+                do_weapon_quantities1(p_person);
+            p_person->Flag |= 0x40;
+            p_person->U.UPerson.ComCur = p_person->U.UPerson.ComHead;
+            ingame.Flags |= 0x0100;
+        }
+        else
+        {
+            p_person->U.UPerson.ComCur = 4 * plyr + nagents;
+            p_person->U.UPerson.ComHead = 0;
+            if (ingame.GameMode == 3)
+                do_weapon_quantities_proper1(p_person);
+            else
+                do_weapon_quantities1(p_person);
+        }
+        netgame_agent_pos_x[plyr][nagents] = p_person->X >> 8;
+        netgame_agent_pos_y[plyr][nagents] = p_person->Z >> 8;
+        p_person->State = 0;
+        {
+            ushort health;
+            health = 3 * p_person->Health;
+            p_person->Health = health;
+            p_person->U.UPerson.MaxHealth = health;
+        }
+
+        switch (new_type)
+        {
+        case 0:
+            p_person->SubType = SubTT_PERS_AGENT;
+            nframe = people_frames[p_person->SubType][p_person->U.UPerson.AnimMode];
+            p_person->StartFrame = nframe - 1;
+            p_person->Frame = nstart_ani[nframe + p_person->U.UPerson.Angle];
+            break;
+        case 1:
+            p_person->SubType = SubTT_PERS_ZEALOT;
+            nframe = people_frames[p_person->SubType][p_person->U.UPerson.AnimMode];
+            p_person->StartFrame = nframe - 1;
+            p_person->Frame = nstart_ani[nframe + p_person->U.UPerson.Angle];
+            break;
+        case 2:
+            p_person->SubType = SubTT_PERS_PUNK_M;
+            nframe = people_frames[p_person->SubType][p_person->U.UPerson.AnimMode];
+            p_person->StartFrame = nframe - 1;
+            p_person->Frame = nstart_ani[nframe + p_person->U.UPerson.Angle];
+            break;
+        }
+        p_person->U.UPerson.FrameId.Version[0] = 0;
+        if (p_person->U.UPerson.CurrentWeapon == 0)
+        {
+            nframe = people_frames[p_person->SubType][p_person->U.UPerson.AnimMode];
+            p_person->Frame -= nstart_ani[nframe + p_person->U.UPerson.Angle];
+            p_person->U.UPerson.AnimMode = 0;
+            nframe = people_frames[p_person->SubType][p_person->U.UPerson.AnimMode];
+            p_person->Frame += nstart_ani[nframe + p_person->U.UPerson.Angle];
+        }
+
+        if ((p_person->SubType == SubTT_PERS_AGENT) || (p_person->SubType == SubTT_PERS_ZEALOT))
+            high_tier++;
+
+        if (++nagents == max_agent)
+            break;
+    }
+    return nagents;
 }
 
 int place_default_player(ushort player_id, TbBool replace)
