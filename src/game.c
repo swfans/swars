@@ -15,7 +15,7 @@
 #include "bffile.h"
 #include "bfgentab.h"
 #include "bfwindows.h"
-#include "bfiff.h"
+#include "bfpng.h"
 #include "bfutility.h"
 #include "poly.h"
 #include "svesa.h"
@@ -1756,7 +1756,7 @@ ubyte do_user_interface(void)
 
     // screenshot
     if (lbKeyOn[KC_M])
-        LbIffSaveScreen("synII", lbDisplay.WScreen, display_palette, 0);
+        LbPngSaveScreen("synII", lbDisplay.WScreen, display_palette, 0);
 
     // TODO No idea what these are doing
     for (n = 0; n < 5; n++)
@@ -3360,7 +3360,7 @@ void show_menu_screen(void)
 
     if (lbKeyOn[KC_F12]) {
         lbKeyOn[KC_F12] = 0;
-        LbIffSaveScreen("synII", lbDisplay.WScreen, display_palette, 0);
+        LbPngSaveScreen("synII", lbDisplay.WScreen, display_palette, 0);
     }
 
     if ( start_into_mission || map_editor )
