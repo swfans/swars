@@ -19,7 +19,19 @@
 # undef main
 #endif
 
-extern char *conf_file_cmnds[10];
+const char *conf_file_cmnds[] = {
+  "CD",
+  "InstallDrive",
+  "Language",
+  "Data",
+  "Intro",
+  "Anims",
+  "Maps",
+  "Levels",
+  "Sound",
+  "DOS",
+};
+
 TbBool cmdln_fullscreen = true;
 TbBool cmdln_lores_stretch = true;
 

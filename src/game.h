@@ -109,11 +109,11 @@ struct Thing;
 typedef struct {
     char *Name;
     void *BufferPtr;
-    int16_t field_8;
-    int N;
-    int field_E;
-    char field_12[4];
-    char field_16;
+    ushort ESize;
+    long N;
+    long dum1;
+    long dum2;
+    ubyte dum3;
 } MemSystem;
 
 typedef struct {
@@ -594,7 +594,7 @@ extern long unkn01_pos_y;
 extern uint16_t cmdln_param_current_map;
 extern uint32_t engine_mem_alloc_size;
 extern void *engine_mem_alloc_ptr;
-extern MemSystem mem_game[40];
+extern MemSystem mem_game[];
 
 extern long navi2_unkn_counter;
 extern long navi2_unkn_counter_max;
