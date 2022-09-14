@@ -60,7 +60,7 @@ print_help (const char *argv0)
 "                -q        Affects game quit conditions (but how?)\n"
 "                -r        Record replay packets to file in savegame dir;\n"
 "                          next unused filename for selected map will be used\n"
-"  --no-stretch  -S        Don't display 320x200 graphics stretched to 640x480\n"
+"  --no-stretch  -S        Don't stretch 320x200 graphics to high res display\n"
 "                -s <str>  Set session name string\n"
 "                -T        color tables mode (no effect?)\n"
 "  --self-tests  -t        execute build self tests\n"

@@ -852,45 +852,56 @@ void load_pop_sprites_hi(void)
         :  :  : "eax" );
 }
 
+#define SCANNER_R0_WIDTH 64
+#define SCANNER_R0_HEIGHT 62
+
+#define SCANNER_R1_WIDTH 129
+#define SCANNER_R1_HEIGHT 119
+
 void video_mode_switch_to_next(void)
 {
     int i;
+    TbScreenMode nmode;
+
     if (lbDisplay.ScreenMode == Lb_SCREEN_MODE_320_200_8)
+        nmode = Lb_SCREEN_MODE_640_480_8;
+    else
+        nmode = Lb_SCREEN_MODE_320_200_8;
+
+    StopCD();
+    setup_screen_mode(nmode);
+    if (lbDisplay.GraphicsScreenWidth >= 640)
     {
-        StopCD();
-        setup_screen_mode(Lb_SCREEN_MODE_640_480_8);
         overall_scale = 400;
         load_pop_sprites_hi();
         render_area_a = 30;
         render_area_b = 30;
-        ingame.Scanner.X1 = 1;
         game_high_resolution = 1;
-        ingame.Scanner.Y1 = 341;
-        ingame.Scanner.Y2 = 460;
-        ingame.Scanner.X2 = 130;
+        ingame.Scanner.X1 = 1;
+        ingame.Scanner.Y1 = lbDisplay.GraphicsScreenHeight - 20 - SCANNER_R1_HEIGHT;
+        ingame.Scanner.X2 = ingame.Scanner.X1 + SCANNER_R1_WIDTH;
+        ingame.Scanner.Y2 = ingame.Scanner.Y1 + SCANNER_R1_HEIGHT;
 
         for (i = 0; i + ingame.Scanner.Y1 <= ingame.Scanner.Y2; i++)
         {
-          ingame.Scanner.Width[i] = min(105 + i, 129);
+          ingame.Scanner.Width[i] = min(105 + i, SCANNER_R1_WIDTH);
         }
     }
     else
     {
-        StopCD();
-        setup_screen_mode(Lb_SCREEN_MODE_320_200_8);
-        load_pop_sprites_lo();
         overall_scale = 150;
+        load_pop_sprites_lo();
         render_area_a = 24;
         render_area_b = 24;
-        ingame.Scanner.X1 = 1;
-        ingame.Scanner.Y1 = 127;
         game_high_resolution = 0;
-        ingame.Scanner.X2 = 65;
-        ingame.Scanner.Y2 = 189;
+        ingame.Scanner.X1 = 1;
+        ingame.Scanner.Y1 = lbDisplay.GraphicsScreenHeight - 11 - SCANNER_R0_HEIGHT;
+        ingame.Scanner.X2 = ingame.Scanner.X1 + SCANNER_R0_WIDTH;
+        ingame.Scanner.Y2 = ingame.Scanner.Y1 + SCANNER_R0_HEIGHT;
 
         for (i = 0; i + ingame.Scanner.Y1 <= ingame.Scanner.Y2; i++)
         {
-          ingame.Scanner.Width[i] = min(40 + i, 64);
+          ingame.Scanner.Width[i] = min(40 + i, SCANNER_R0_WIDTH);
         }
     }
 }
@@ -2850,8 +2861,8 @@ void show_mission_loading_screen(void)
     TbClockMSec last_loop_time = LbTimerClock();
     do
     {
-        memcpy(lbDisplay.WScreen, back_buffer, 640*480);
-        text_buf_pos = 640*480;
+        memcpy(lbDisplay.WScreen, back_buffer, lbDisplay.GraphicsScreenWidth * lbDisplay.GraphicsScreenHeight);
+        text_buf_pos = lbDisplay.GraphicsScreenWidth * lbDisplay.GraphicsScreenHeight;
         if ((0 != game_projector_speed && (loading_INITIATING_box.Flags & 0x0001))
           || (0 != lbKeyOn[KC_SPACE] && 0 == edit_flag))
             loading_INITIATING_box.Flags |= 0x0002;
@@ -2932,11 +2943,13 @@ void show_load_and_prep_mission(void)
     data_1c498d = 2;
     reload_background_flag = 1;
     debug_trace_place(10);
-    memset(lbDisplay.WScreen, 0, 640*480);
-    frame_unkn_func_06();
-    memset(lbDisplay.WScreen, 0, 640*480);
-    show_black_screen();
-    swap_wscreen();
+    {
+        memset(lbDisplay.WScreen, 0, lbDisplay.GraphicsScreenWidth * lbDisplay.GraphicsScreenHeight);
+        frame_unkn_func_06();
+        memset(lbDisplay.WScreen, 0, lbDisplay.GraphicsScreenWidth * lbDisplay.GraphicsScreenHeight);
+        show_black_screen();
+        swap_wscreen();
+    }
     LbFileLoadAt("qdata/pal.pal", display_palette);
     LbPaletteSet(display_palette);
     debug_trace_place(11);
@@ -3042,7 +3055,7 @@ void show_menu_screen(void)
         setup_vecs(lbDisplay.WScreen, vec_tmap, lbDisplay.PhysicalScreenWidth,
             lbDisplay.PhysicalScreenWidth, lbDisplay.PhysicalScreenHeight);
         reload_background();
-        my_set_text_window(0, 0, 640, 480);
+        my_set_text_window(0, 0, lbDisplay.GraphicsScreenWidth, lbDisplay.GraphicsScreenHeight);
     }
 
     if (screentype == SCRT_MAINMENU)
@@ -3060,7 +3073,7 @@ void show_menu_screen(void)
     if (screentype != SCRT_MAINMENU) {
         replay_intro_timer = 0;
     }
-    text_buf_pos = 640*480;
+    text_buf_pos = lbDisplay.GraphicsScreenWidth * lbDisplay.GraphicsScreenHeight;
 
     if ( !joy.Buttons[0] || net_unkn_pos_02 )
     {
@@ -3164,7 +3177,7 @@ void show_menu_screen(void)
         data_1c4990 = 0;
         lbDisplay.RightButton = 0;
     }
-    memcpy(lbDisplay.WScreen, back_buffer, 640*480);
+    memcpy(lbDisplay.WScreen, back_buffer, lbDisplay.GraphicsScreenWidth * lbDisplay.GraphicsScreenHeight);
     draw_purple_screen();
 
     if ( screentype != SCRT_MAINMENU && screentype != SCRT_PAUSE && !restore_savegame )
