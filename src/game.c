@@ -1423,6 +1423,14 @@ short test_missions(ubyte flag)
     return ret;
 }
 
+ubyte show_settings_controls_list(struct ScreenBox *box)
+{
+    ubyte ret;
+    asm volatile ("call ASM_show_settings_controls_list\n"
+        : "=r" (ret) : "a" (box));
+    return ret;
+}
+
 char *gui_strings_data_end;
 
 TbBool create_strings_list(char **strings, char *strings_data, char *strings_data_end)
