@@ -46,7 +46,7 @@ GLOBAL_FUNC (InitAudio_)
 		call   ac_getenv
 		test   %eax,%eax
 		je     jump_eb7dd
-		movb   $0x1,_DebugAudio
+		movb   $0x1,EXPORT_SYMBOL(DebugAudio)
 	jump_eb7dd:
 		push   $aSoundDig_ini
 		push   $FullDIG_INIPath
@@ -174,7 +174,7 @@ GLOBAL_FUNC (InitAudio_)
 		mov    0x19(%edx),%al
 		cmp    $0x1,%eax
 		jne    jump_eb928
-		movb   $0x1,DisableLoadMusic
+		movb   $0x1,EXPORT_SYMBOL(DisableLoadMusic)
 	jump_eb928:
 		xor    %eax,%eax
 		mov    0x1a(%edx),%al
@@ -189,14 +189,14 @@ GLOBAL_FUNC (InitAudio_)
 		movb   $0x1,UseMultiMediaExtensions
 	jump_eb94a:
 		xor    %eax,%eax
-		mov    MusicAble,%al
+		mov    EXPORT_SYMBOL(MusicAble),%al
 		push   %eax
 		push   $aBf1MaD
 		push   $SoundProgressMessage
 		call   ac_sprintf
 		add    $0xc,%esp
 		mov    $SoundProgressMessage,%eax
-		call   SoundProgressLog_
+		call   ac_SoundProgressLog
 		xor    %eax,%eax
 		mov    SoundAble,%al
 		push   %eax
@@ -205,11 +205,11 @@ GLOBAL_FUNC (InitAudio_)
 		call   ac_sprintf
 		add    $0xc,%esp
 		mov    $SoundProgressMessage,%eax
-		call   SoundProgressLog_
+		call   ac_SoundProgressLog
 		testb  $0x1,0xe(%edx)
 		jne    jump_eb99f
 		xor    %al,%al
-		mov    %al,MusicAble
+		mov    %al,EXPORT_SYMBOL(MusicAble)
 	jump_eb99f:
 		testb  $0x2,0xe(%edx)
 		jne    jump_eb9ad
@@ -240,14 +240,14 @@ GLOBAL_FUNC (InitAudio_)
 		call   prepare_SB16_volumes
 	jump_eb9f2:
 		xor    %eax,%eax
-		mov    MusicAble,%al
+		mov    EXPORT_SYMBOL(MusicAble),%al
 		push   %eax
 		push   $aBf54MaD
 		push   $SoundProgressMessage
 		call   ac_sprintf
 		add    $0xc,%esp
 		mov    $SoundProgressMessage,%eax
-		call   SoundProgressLog_
+		call   ac_SoundProgressLog
 		xor    %eax,%eax
 		mov    SoundAble,%al
 		push   %eax
@@ -256,21 +256,21 @@ GLOBAL_FUNC (InitAudio_)
 		call   ac_sprintf
 		add    $0xc,%esp
 		mov    $SoundProgressMessage,%eax
-		call   SoundProgressLog_
+		call   ac_SoundProgressLog
 		push   $awe32_s1
 		push   $aBf56MusicDrive
 		push   $SoundProgressMessage
 		call   ac_sprintf
 		add    $0xc,%esp
 		mov    $SoundProgressMessage,%eax
-		call   SoundProgressLog_
+		call   ac_SoundProgressLog
 		push   $SoundInstallChoice__Field1
 		push   $aBf57SoundDrive
 		push   $SoundProgressMessage
 		call   ac_sprintf
 		add    $0xc,%esp
 		mov    $SoundProgressMessage,%eax
-		call   SoundProgressLog_
+		call   ac_SoundProgressLog
 		pop    %ebp
 		pop    %edi
 		pop    %esi
@@ -684,14 +684,14 @@ GLOBAL_FUNC (FreeCD_)
 GLOBAL_FUNC (StopMusicIfActive_)
 /*----------------------------------------------------------------*/
 		push   %ebx
-		cmpb   $0x0,MusicInstalled
+		cmpb   $0x0,EXPORT_SYMBOL(MusicInstalled)
 		je     jump_ec269
-		cmpb   $0x0,MusicAble
+		cmpb   $0x0,EXPORT_SYMBOL(MusicAble)
 		je     jump_ec269
 		cmpb   $0x0,MusicActive
 		je     jump_ec269
 		xor    %bl,%bl
-		call   StopMusic_
+		call   ac_StopMusic
 		mov    %bl,MusicActive
 	jump_ec269:
 		pop    %ebx
@@ -708,7 +708,7 @@ GLOBAL_FUNC (GetSoundAble_)
 /*----------------------------------------------------------------*/
 GLOBAL_FUNC (GetMusicAble_)
 /*----------------------------------------------------------------*/
-		mov    MusicAble,%al
+		mov    EXPORT_SYMBOL(MusicAble),%al
 		ret
 
 
@@ -766,7 +766,7 @@ GLOBAL_FUNC (ASM_LoadSounds)
 		call   ac_sprintf
 		add    $0xc,%esp
 		mov    $SoundProgressMessage,%eax
-		call   SoundProgressLog_
+		call   ac_SoundProgressLog
 		cmpb   $0x0,SoundInstalled
 		je     jump_ec8ae
 		cmpb   $0x0,SoundAble
@@ -903,7 +903,7 @@ GLOBAL_FUNC (ASM_LoadSounds)
 		call   ac_sprintf
 		add    $0x8,%esp
 		mov    $SoundProgressMessage,%eax
-		call   SoundProgressLog_
+		call   ac_SoundProgressLog
 		xor    %eax,%eax
 		add    $0x20,%esp
 		pop    %edi
@@ -937,7 +937,7 @@ GLOBAL_FUNC (ASM_LoadSounds)
 		call   ac_sprintf
 		add    $0x8,%esp
 		mov    $SoundProgressMessage,%eax
-		call   SoundProgressLog_
+		call   ac_SoundProgressLog
 		mov    $0x1,%eax
 		add    $0x20,%esp
 		pop    %edi
@@ -1300,7 +1300,7 @@ AllocateSoundBankMemory_:
 		call   ac_sprintf
 		add    $0xc,%esp
 		mov    $SoundProgressMessage,%eax
-		call   SoundProgressLog_
+		call   ac_SoundProgressLog
 		lea    0x100(%edi),%eax
 		call   ac_LbMemoryAlloc
 		mov    SfxData,%edx
@@ -1373,16 +1373,16 @@ GLOBAL_FUNC (ASM_LoadMusic)
 		call   ac_sprintf
 		add    $0xc,%esp
 		mov    $SoundProgressMessage,%eax
-		call   SoundProgressLog_
-		cmpb   $0x0,MusicInstalled
+		call   ac_SoundProgressLog
+		cmpb   $0x0,EXPORT_SYMBOL(MusicInstalled)
 		je     jump_ecfef
-		cmpb   $0x0,MusicAble
+		cmpb   $0x0,EXPORT_SYMBOL(MusicAble)
 		je     jump_ecfef
 		xor    %eax,%eax
-		mov    DisableLoadMusic,%al
+		mov    EXPORT_SYMBOL(DisableLoadMusic),%al
 		test   %eax,%eax
 		jne    jump_ecfef
-		call   StopMusic_
+		call   ac_StopMusic
 		mov    $0x2,%edx
 		mov    $full_music_data_path,%eax
 		call   ac_LbFileOpen
@@ -1426,7 +1426,7 @@ GLOBAL_FUNC (ASM_LoadMusic)
 		mov    %esp,%edx
 		mov    %ecx,%eax
 		call   ac_LbFileRead
-		mov    MusicType,%cl
+		mov    EXPORT_SYMBOL(MusicType),%cl
 		inc    %edi
 		cmp    $0x57,%cl
 		jb     jump_ecf53
@@ -1473,7 +1473,7 @@ GLOBAL_FUNC (ASM_LoadMusic)
 		xor    %edx,%edx
 		mov    %esi,%eax
 		mov    0xc(%esp),%dl
-		call   load_music_bank
+		call   ac_load_music_bank
 		test   %al,%al
 		jne    jump_ecfc1
 		mov    %esi,%eax
@@ -1488,24 +1488,24 @@ GLOBAL_FUNC (ASM_LoadMusic)
 		call   ac_sprintf
 		add    $0x8,%esp
 		mov    $SoundProgressMessage,%eax
-		call   SoundProgressLog_
+		call   ac_SoundProgressLog
 		xor    %eax,%eax
 		jmp    jump_ed039
 	jump_ecfe8:
 		push   $aBf52LoadMusicB
 		jmp    jump_ed01d
 	jump_ecfef:
-		cmpb   $0x0,MusicInstalled
+		cmpb   $0x0,EXPORT_SYMBOL(MusicInstalled)
 		jne    jump_ecfff
 		push   $aBf53LoadMusicB
 		jmp    jump_ed01d
 	jump_ecfff:
-		cmpb   $0x0,MusicAble
+		cmpb   $0x0,EXPORT_SYMBOL(MusicAble)
 		jne    jump_ed00f
 		push   $aBf53LoadMusi_0
 		jmp    jump_ed01d
 	jump_ed00f:
-		cmpb   $0x0,DisableLoadMusic
+		cmpb   $0x0,EXPORT_SYMBOL(DisableLoadMusic)
 		je     jump_ed034
 		push   $aBf53LoadMusi_1
 	jump_ed01d:
@@ -1513,7 +1513,7 @@ GLOBAL_FUNC (ASM_LoadMusic)
 		call   ac_sprintf
 		add    $0x8,%esp
 		mov    $SoundProgressMessage,%eax
-		call   SoundProgressLog_
+		call   ac_SoundProgressLog
 	jump_ed034:
 		mov    $0x1,%eax
 	jump_ed039:
@@ -1569,9 +1569,7 @@ format_music:
 
 
 /*----------------------------------------------------------------*/
-/* uint8_t load_music_bank(long a1, uint8_t a2)
- */
-load_music_bank:
+GLOBAL_FUNC (ASM_load_music_bank)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -1735,7 +1733,7 @@ load_music_bank:
 		cmp    %edx,%eax
 		jle    jump_ed253
 		mov    $0x1,%ah
-		mov    %ah,MusicAble
+		mov    %ah,EXPORT_SYMBOL(MusicAble)
 		mov    %ah,%al
 		add    $0x44,%esp
 		pop    %ebp
@@ -1819,7 +1817,7 @@ AllocateMusicBankMemory_:
 		mov    %ecx,%eax
 		xor    %edi,%edi
 		call   ac_LbFileClose
-		mov    MusicType,%cl
+		mov    EXPORT_SYMBOL(MusicType),%cl
 		xor    %esi,%esi
 		cmp    $0x57,%cl
 		jb     jump_ed3bd
@@ -1945,10 +1943,10 @@ GLOBAL_FUNC (ASM_SetMusicMasterVolume)
 		push   %ecx
 		push   %edx
 		mov    %eax,%ebx
-		mov    MusicInstalled,%ah
+		mov    EXPORT_SYMBOL(MusicInstalled),%ah
 		test   %ah,%ah
 		je     jump_ee6f3
-		cmpb   $0x0,MusicAble
+		cmpb   $0x0,EXPORT_SYMBOL(MusicAble)
 		je     jump_ee6f3
 		test   %ah,%ah
 		je     jump_ee6f3
@@ -2107,9 +2105,9 @@ GLOBAL_FUNC (DangerMusicFadeTick)
 		push   %ebx
 		push   %esi
 		push   %edi
-		cmpb   $0x0,MusicInstalled
+		cmpb   $0x0,EXPORT_SYMBOL(MusicInstalled)
 		je     jump_ef11b
-		cmpb   $0x0,MusicAble
+		cmpb   $0x0,EXPORT_SYMBOL(MusicAble)
 		je     jump_ef11b
 		cmpb   $0x0,MusicActive
 		je     jump_ef11b
@@ -2223,9 +2221,9 @@ GLOBAL_FUNC (DangerMusicFadeSwitch)
 		jne    jump_ef27c
 		cmpb   $0x0,DangerMusicAble
 		je     jump_ef27c
-		cmpb   $0x0,MusicInstalled
+		cmpb   $0x0,EXPORT_SYMBOL(MusicInstalled)
 		je     jump_ef27c
-		cmpb   $0x0,MusicAble
+		cmpb   $0x0,EXPORT_SYMBOL(MusicAble)
 		je     jump_ef27c
 		cmpb   $0x0,MusicActive
 		je     jump_ef27c
@@ -2307,9 +2305,9 @@ GLOBAL_FUNC (SetSampleTempo)
 		push   %ebx
 		push   %ecx
 		mov    %eax,%ebx
-		cmpb   $0x0,MusicInstalled
+		cmpb   $0x0,EXPORT_SYMBOL(MusicInstalled)
 		je     jump_ef2dd
-		cmpb   $0x0,MusicAble
+		cmpb   $0x0,EXPORT_SYMBOL(MusicAble)
 		je     jump_ef2dd
 		cmpb   $0x0,MusicActive
 		je     jump_ef2dd
@@ -2338,9 +2336,9 @@ GLOBAL_FUNC (SetSampleTempoNormal)
 		push   %ebx
 		push   %ecx
 		push   %edx
-		cmpb   $0x0,MusicInstalled
+		cmpb   $0x0,EXPORT_SYMBOL(MusicInstalled)
 		je     jump_ef334
-		cmpb   $0x0,MusicAble
+		cmpb   $0x0,EXPORT_SYMBOL(MusicAble)
 		je     jump_ef334
 		cmpb   $0x0,MusicActive
 		je     jump_ef334
@@ -2528,9 +2526,9 @@ GLOBAL_FUNC (SetVolume_func_ee980) /* 0xee980 */
 		push   %ecx
 		push   %esi
 		mov    %eax,%ebx
-		cmpb   $0x0,MusicInstalled
+		cmpb   $0x0,EXPORT_SYMBOL(MusicInstalled)
 		je     jump_ee9dc
-		cmpb   $0x0,MusicAble
+		cmpb   $0x0,EXPORT_SYMBOL(MusicAble)
 		je     jump_ee9dc
 		cmpb   $0x0,MusicActive
 		je     jump_ee9dc
@@ -2640,9 +2638,9 @@ GLOBAL_FUNC (StartMusic_)
 		sub    $0x8,%esp
 		mov    %eax,%esi
 		mov    %dl,(%esp)
-		cmpb   $0x0,MusicInstalled
+		cmpb   $0x0,EXPORT_SYMBOL(MusicInstalled)
 		je     jump_f0656
-		cmpb   $0x0,MusicAble
+		cmpb   $0x0,EXPORT_SYMBOL(MusicAble)
 		je     jump_f0656
 		cmpb   $0x0,MusicActive
 		je     jump_f0656
@@ -2822,9 +2820,9 @@ GLOBAL_FUNC (StartMusic_)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC(SoundProgressLog_)
+GLOBAL_FUNC(ASM_SoundProgressLog_UNUSED)
 /*----------------------------------------------------------------*/
-		cmpb   $0x0,_DebugAudio
+		cmpb   $0x0,EXPORT_SYMBOL(DebugAudio)
 		je     jump_ff3e2
 		push   %eax
 		call   ac_printf
@@ -2854,7 +2852,7 @@ GLOBAL_FUNC(InitSound_)
 		call   ac_sprintf
 		add    $0x8,%esp
 		mov    $SoundProgressMessage,%eax
-		call   SoundProgressLog_
+		call   ac_SoundProgressLog
 		xor    %eax,%eax
 		mov    SoundType,%ax
 		push   %eax
@@ -2863,12 +2861,12 @@ GLOBAL_FUNC(InitSound_)
 		call   ac_sprintf
 		add    $0xc,%esp
 		mov    $SoundProgressMessage,%eax
-		call   SoundProgressLog_
+		call   ac_SoundProgressLog
 		xor    %eax,%eax
 		mov    SoundType,%ax
 		test   %eax,%eax
 		jne    jump_ff4c0
-		cmpb   $0x0,MusicAble
+		cmpb   $0x0,EXPORT_SYMBOL(MusicAble)
 		jne    jump_ff491
 		cmpb   $0x0,AILStartupAlreadyInitiated
 		je     jump_ff491
@@ -2878,7 +2876,7 @@ GLOBAL_FUNC(InitSound_)
 		call   ac_sprintf
 		add    $0x8,%esp
 		mov    $SoundProgressMessage,%eax
-		call   SoundProgressLog_
+		call   ac_SoundProgressLog
 	jump_ff491:
 		push   $aBf6NoSamplesRe
 		xor    %ah,%ah
@@ -2888,7 +2886,7 @@ GLOBAL_FUNC(InitSound_)
 		call   ac_sprintf
 		add    $0x8,%esp
 		mov    $SoundProgressMessage,%eax
-		call   SoundProgressLog_
+		call   ac_SoundProgressLog
 		jmp    jump_ffa7c
 	jump_ff4c0:
 		cmpb   $0x0,AILStartupAlreadyInitiated
@@ -2966,7 +2964,7 @@ GLOBAL_FUNC(InitSound_)
 		call   ac_sprintf
 		add    $0x8,%esp
 		mov    $SoundProgressMessage,%eax
-		call   SoundProgressLog_
+		call   ac_SoundProgressLog
 		lea    0x6(%esp),%eax
 		push   %eax
 		lea    0x8(%esp),%eax
@@ -2995,8 +2993,8 @@ GLOBAL_FUNC(InitSound_)
 		call   ac_sprintf
 		add    $0x8,%esp
 		mov    $SoundProgressMessage,%eax
-		call   SoundProgressLog_
-		cmpb   $0x0,MusicAble
+		call   ac_SoundProgressLog
+		cmpb   $0x0,EXPORT_SYMBOL(MusicAble)
 		jne    jump_ff62c
 		call   ail_shutdown
 	jump_ff62c:
@@ -3028,7 +3026,7 @@ GLOBAL_FUNC(InitSound_)
 		call   ac_sprintf
 		add    $0x8,%esp
 		mov    $SoundProgressMessage,%eax
-		call   SoundProgressLog_
+		call   ac_SoundProgressLog
 		mov    (%esp),%eax
 		mov    %ax,SoundInstallChoice__Field2
 	jump_ff698:
@@ -3037,7 +3035,7 @@ GLOBAL_FUNC(InitSound_)
 		call   ac_sprintf
 		add    $0x8,%esp
 		mov    $SoundProgressMessage,%eax
-		call   SoundProgressLog_
+		call   ac_SoundProgressLog
 		xor    %eax,%eax
 		mov    DisableLoadSounds,%al
 		test   %eax,%eax
@@ -3059,7 +3057,7 @@ GLOBAL_FUNC(InitSound_)
 		add    $0x8,%esp
 		mov    $SoundProgressMessage,%eax
 		mov    $ascNone_1,%edx
-		call   SoundProgressLog_
+		call   ac_SoundProgressLog
 		mov    $SoundInstallChoice__Field1,%eax
 		call   ac_stricmp
 		test   %eax,%eax
@@ -3069,8 +3067,8 @@ GLOBAL_FUNC(InitSound_)
 		call   ac_sprintf
 		add    $0x8,%esp
 		mov    $SoundProgressMessage,%eax
-		call   SoundProgressLog_
-		cmpb   $0x0,MusicAble
+		call   ac_SoundProgressLog
+		cmpb   $0x0,EXPORT_SYMBOL(MusicAble)
 		jne    jump_ff740
 		call   ail_shutdown
 	jump_ff740:
@@ -3118,7 +3116,7 @@ GLOBAL_FUNC(InitSound_)
 		add    $0x8,%esp
 		mov    $SoundProgressMessage,%eax
 	jump_ff7cc:
-		call   SoundProgressLog_
+		call   ac_SoundProgressLog
 		test   %bl,%bl
 		jne    jump_ff698
 		push   $aBf16AllDigDriv
@@ -3126,8 +3124,8 @@ GLOBAL_FUNC(InitSound_)
 		call   ac_sprintf
 		add    $0x8,%esp
 		mov    $SoundProgressMessage,%eax
-		call   SoundProgressLog_
-		cmpb   $0x0,MusicAble
+		call   ac_SoundProgressLog
+		cmpb   $0x0,EXPORT_SYMBOL(MusicAble)
 		jne    jump_ff803
 		call   ail_shutdown
 	jump_ff803:
@@ -3149,7 +3147,7 @@ GLOBAL_FUNC(InitSound_)
 		call   ac_sprintf
 		add    $0x8,%esp
 		mov    $SoundProgressMessage,%eax
-		call   SoundProgressLog_
+		call   ac_SoundProgressLog
 	jump_ff83b:
 		xor    %eax,%eax
 		mov    SoundType,%ax
@@ -3160,11 +3158,11 @@ GLOBAL_FUNC(InitSound_)
 		call   ac_sprintf
 		add    $0x8,%esp
 		mov    $SoundProgressMessage,%eax
-		call   SoundProgressLog_
+		call   ac_SoundProgressLog
 		push   $ascNone_4
 		push   $SoundInstallChoice__Field1
 		call   ac_sprintf
-		mov    MusicAble,%ah
+		mov    EXPORT_SYMBOL(MusicAble),%ah
 		add    $0x8,%esp
 		test   %ah,%ah
 		jne    jump_ff888
@@ -3314,7 +3312,7 @@ GLOBAL_FUNC(InitSound_)
 		call   ac_sprintf
 		add    $0x8,%esp
 		mov    $SoundProgressMessage,%eax
-		call   SoundProgressLog_
+		call   ac_SoundProgressLog
 		mov    CurrentSoundMasterVolume,%eax
 		call   ac_SetSoundMasterVolume
 	jump_ffa7c:
@@ -3344,7 +3342,7 @@ DetermineSoundType_:
 		call   ac_sprintf
 		add    $0xc,%esp
 		mov    %ebx,%eax
-		call   SoundProgressLog_
+		call   ac_SoundProgressLog
 		xor    %eax,%eax
 		mov    SoundType,%ax
 		call   AllocateSoundBankMemory_
@@ -3359,7 +3357,7 @@ DetermineSoundType_:
 		add    $0x8,%esp
 		mov    $SoundProgressMessage,%eax
 		xor    %ebx,%ebx
-		call   SoundProgressLog_
+		call   ac_SoundProgressLog
 		mov    %bx,SoundType
 		pop    %edx
 		pop    %ebx
@@ -3372,7 +3370,7 @@ DetermineSoundType_:
 		call   ac_sprintf
 		add    $0x8,%esp
 		mov    %ebx,%eax
-		call   SoundProgressLog_
+		call   ac_SoundProgressLog
 		jmp    jump_ffb35
 	jump_ffb17:
 		cmp    $0xfffffffe,%eax
@@ -3382,7 +3380,7 @@ DetermineSoundType_:
 		call   ac_sprintf
 		add    $0x8,%esp
 		mov    %ebx,%eax
-		call   SoundProgressLog_
+		call   ac_SoundProgressLog
 	jump_ffb35:
 		mov    SoundType,%ax
 		cmp    $0x64b,%ax
@@ -3477,7 +3475,7 @@ DetermineSoundType_:
 		call   ac_sprintf
 		add    $0x8,%esp
 		mov    %ebx,%eax
-		call   SoundProgressLog_
+		call   ac_SoundProgressLog
 	jump_ffc55:
 		test   %edx,%edx
 		jle    jump_ffa97
@@ -3495,7 +3493,7 @@ GLOBAL_FUNC(InitMusic_)
 		push   %esi
 		push   %edi
 		sub    $0x148,%esp
-		mov    MusicAble,%ah
+		mov    EXPORT_SYMBOL(MusicAble),%ah
 		xor    %bl,%bl
 		test   %ah,%ah
 		je     jump_100489
@@ -3504,7 +3502,7 @@ GLOBAL_FUNC(InitMusic_)
 		call   ac_sprintf
 		add    $0x8,%esp
 		mov    $SoundProgressMessage,%eax
-		call   SoundProgressLog_
+		call   ac_SoundProgressLog
 		cmpb   $0x0,AILStartupAlreadyInitiated
 		jne    jump_ffcc6
 		push   $ac_LbMemoryAlloc
@@ -3574,7 +3572,7 @@ GLOBAL_FUNC(InitMusic_)
 		call   ac_sprintf
 		add    $0x8,%esp
 		mov    $SoundProgressMessage,%eax
-		call   SoundProgressLog_
+		call   ac_SoundProgressLog
 	jump_ffd8a:
 		mov    %esp,%eax
 		push   %eax
@@ -3592,7 +3590,7 @@ GLOBAL_FUNC(InitMusic_)
 		call   ac_sprintf
 		add    $0x8,%esp
 		mov    $SoundProgressMessage,%eax
-		call   SoundProgressLog_
+		call   ac_SoundProgressLog
 	jump_ffdce:
 		mov    $aMdmusic,%eax
 		call   ac_getenv
@@ -3604,7 +3602,7 @@ GLOBAL_FUNC(InitMusic_)
 		call   ac_sprintf
 		add    $0x8,%esp
 		mov    $SoundProgressMessage,%eax
-		call   SoundProgressLog_
+		call   ac_SoundProgressLog
 		lea    0x126(%esp),%eax
 		push   %eax
 		lea    0x128(%esp),%eax
@@ -3633,13 +3631,13 @@ GLOBAL_FUNC(InitMusic_)
 		call   ac_sprintf
 		add    $0x8,%esp
 		mov    $SoundProgressMessage,%eax
-		call   SoundProgressLog_
+		call   ac_SoundProgressLog
 		cmpb   $0x0,SoundAble
 		jne    jump_ffe7f
 		call   ail_shutdown
 	jump_ffe7f:
 		xor    %dl,%dl
-		mov    %dl,MusicAble
+		mov    %dl,EXPORT_SYMBOL(MusicAble)
 		mov    %dl,MusicActive
 		jmp    jump_100489
 	jump_ffe92:
@@ -3648,7 +3646,7 @@ GLOBAL_FUNC(InitMusic_)
 		call   ac_sprintf
 		add    $0x8,%esp
 		mov    $SoundProgressMessage,%eax
-		call   SoundProgressLog_
+		call   ac_SoundProgressLog
 		lea    0x138(%esp),%eax
 		push   %eax
 		push   $ascS_10
@@ -3668,7 +3666,7 @@ GLOBAL_FUNC(InitMusic_)
 		jne    jump_10002c
 		mov    $ascF_0,%eax
 		push   %eax
-		mov    $MusicType,%eax
+		mov    $EXPORT_SYMBOL(MusicType),%eax
 		push   %eax
 		jmp    jump_1002e1
 	jump_fff04:
@@ -3684,7 +3682,7 @@ GLOBAL_FUNC(InitMusic_)
 		add    $0x8,%esp
 		mov    $SoundProgressMessage,%eax
 		mov    $ascNone_5,%edx
-		call   SoundProgressLog_
+		call   ac_SoundProgressLog
 		mov    $awe32_s1,%eax
 		call   ac_stricmp
 		test   %eax,%eax
@@ -3694,13 +3692,13 @@ GLOBAL_FUNC(InitMusic_)
 		call   ac_sprintf
 		add    $0x8,%esp
 		mov    $SoundProgressMessage,%eax
-		call   SoundProgressLog_
+		call   ac_SoundProgressLog
 		cmpb   $0x0,SoundAble
 		jne    jump_fff77
 		call   ail_shutdown
 	jump_fff77:
 		xor    %dl,%dl
-		mov    %dl,MusicAble
+		mov    %dl,EXPORT_SYMBOL(MusicAble)
 		mov    %dl,MusicActive
 		add    $0x148,%esp
 		pop    %edi
@@ -3733,7 +3731,7 @@ GLOBAL_FUNC(InitMusic_)
 		add    $0x8,%esp
 		mov    $SoundProgressMessage,%eax
 	jump_fffdb:
-		call   SoundProgressLog_
+		call   ac_SoundProgressLog
 		test   %bl,%bl
 		jne    jump_ffec8
 		push   $aBf37AllMusicDr
@@ -3741,13 +3739,13 @@ GLOBAL_FUNC(InitMusic_)
 		call   ac_sprintf
 		add    $0x8,%esp
 		mov    $SoundProgressMessage,%eax
-		call   SoundProgressLog_
+		call   ac_SoundProgressLog
 		cmpb   $0x0,SoundAble
 		jne    jump_100012
 		call   ail_shutdown
 	jump_100012:
 		xor    %ch,%ch
-		mov    %ch,MusicAble
+		mov    %ch,EXPORT_SYMBOL(MusicAble)
 		mov    %ch,MusicActive
 		add    $0x148,%esp
 		pop    %edi
@@ -3764,7 +3762,7 @@ GLOBAL_FUNC(InitMusic_)
 		jne    jump_100050
 		mov    $ascF_1,%eax
 		push   %eax
-		mov    $MusicType,%eax
+		mov    $EXPORT_SYMBOL(MusicType),%eax
 		push   %eax
 		jmp    jump_1002e1
 	jump_100050:
@@ -3775,7 +3773,7 @@ GLOBAL_FUNC(InitMusic_)
 		jne    jump_100074
 		mov    $ascF_2,%eax
 		push   %eax
-		mov    $MusicType,%eax
+		mov    $EXPORT_SYMBOL(MusicType),%eax
 		push   %eax
 		jmp    jump_1002e1
 	jump_100074:
@@ -3786,7 +3784,7 @@ GLOBAL_FUNC(InitMusic_)
 		jne    jump_100098
 		mov    $ascF_3,%eax
 		push   %eax
-		mov    $MusicType,%eax
+		mov    $EXPORT_SYMBOL(MusicType),%eax
 		push   %eax
 		jmp    jump_1002e1
 	jump_100098:
@@ -3836,21 +3834,21 @@ GLOBAL_FUNC(InitMusic_)
 		test   %eax,%eax
 		jne    jump_1001ca
 		push   $ascW_0
-		push   $MusicType
+		push   $EXPORT_SYMBOL(MusicType)
 		mov    $0x1,%ch
 		call   ac_sprintf
 		add    $0x8,%esp
 		mov    $_CurrentAwe32SoundfontPrefix,%eax
-		mov    %ch,MusicInstalled
+		mov    %ch,EXPORT_SYMBOL(MusicInstalled)
 		call   LoadAwe32Soundfont_
 		xor    %al,%al
-		mov    %al,MusicInstalled
+		mov    %al,EXPORT_SYMBOL(MusicInstalled)
 		xor    %eax,%eax
 		mov    Awe32SoundfontLoaded,%al
 		test   %eax,%eax
 		jne    jump_1001a9
 		push   $ascG_4
-		push   $MusicType
+		push   $EXPORT_SYMBOL(MusicType)
 		call   ac_sprintf
 		add    $0x8,%esp
 		push   $aBf38Awe32Sound
@@ -3858,7 +3856,7 @@ GLOBAL_FUNC(InitMusic_)
 		call   ac_sprintf
 		add    $0x8,%esp
 		mov    $SoundProgressMessage,%eax
-		call   SoundProgressLog_
+		call   ac_SoundProgressLog
 		jmp    jump_1002e9
 	jump_1001a9:
 		push   $aBf38Awe32Sou_0
@@ -3866,7 +3864,7 @@ GLOBAL_FUNC(InitMusic_)
 		call   ac_sprintf
 		add    $0x8,%esp
 		mov    $SoundProgressMessage,%eax
-		call   SoundProgressLog_
+		call   ac_SoundProgressLog
 		jmp    jump_1002e9
 	jump_1001ca:
 		mov    $aMpu401_mdi,%edx
@@ -3934,12 +3932,12 @@ GLOBAL_FUNC(InitMusic_)
 		push   $aBf39MusicDrive
 		xor    %bh,%bh
 		push   $SoundProgressMessage
-		mov    %bh,MusicAble
+		mov    %bh,EXPORT_SYMBOL(MusicAble)
 		mov    %bh,MusicActive
 		call   ac_sprintf
 		add    $0x8,%esp
 		mov    $SoundProgressMessage,%eax
-		call   SoundProgressLog_
+		call   ac_SoundProgressLog
 		add    $0x148,%esp
 		pop    %edi
 		pop    %esi
@@ -3950,24 +3948,24 @@ GLOBAL_FUNC(InitMusic_)
 	jump_1002d7:
 		push   $data_15fe57
 	jump_1002dc:
-		push   $MusicType
+		push   $EXPORT_SYMBOL(MusicType)
 	jump_1002e1:
 		call   ac_sprintf
 		add    $0x8,%esp
 	jump_1002e9:
-		cmpb   $0x0,DisableLoadMusic
+		cmpb   $0x0,EXPORT_SYMBOL(DisableLoadMusic)
 		jne    jump_100440
-		push   $MusicType
+		push   $EXPORT_SYMBOL(MusicType)
 		push   $aBf40MusicSBank
 		push   $SoundProgressMessage
 		call   ac_sprintf
 		add    $0xc,%esp
 		mov    $SoundProgressMessage,%eax
 		mov    $ascW,%edx
-		call   SoundProgressLog_
+		call   ac_SoundProgressLog
 		call   AllocateMusicBankMemory_
 		mov    %eax,music_allocated
-		mov    $MusicType,%eax
+		mov    $EXPORT_SYMBOL(MusicType),%eax
 		call   ac_stricmp
 		test   %eax,%eax
 		jne    jump_100396
@@ -3978,18 +3976,18 @@ GLOBAL_FUNC(InitMusic_)
 		call   ac_sprintf
 		add    $0x8,%esp
 		mov    $SoundProgressMessage,%eax
-		call   SoundProgressLog_
+		call   ac_SoundProgressLog
 		push   $ascG_3
-		push   $MusicType
+		push   $EXPORT_SYMBOL(MusicType)
 		call   ac_sprintf
 		add    $0x8,%esp
-		push   $MusicType
+		push   $EXPORT_SYMBOL(MusicType)
 		push   $aBf40aMusicSBan
 		push   $SoundProgressMessage
 		call   ac_sprintf
 		add    $0xc,%esp
 		mov    $SoundProgressMessage,%eax
-		call   SoundProgressLog_
+		call   ac_SoundProgressLog
 		call   AllocateMusicBankMemory_
 		mov    %eax,music_allocated
 	jump_100396:
@@ -4014,16 +4012,16 @@ GLOBAL_FUNC(InitMusic_)
 		call   ac_sprintf
 		add    $0x8,%esp
 		mov    $SoundProgressMessage,%eax
-		call   SoundProgressLog_
+		call   ac_SoundProgressLog
 	jump_1003db:
 		xor    %eax,%eax
 		mov    Awe32SoundfontLoaded,%al
 		cmp    $0x1,%eax
 		jne    jump_100401
-		movb   $0x1,MusicInstalled
+		movb   $0x1,EXPORT_SYMBOL(MusicInstalled)
 		xor    %dh,%dh
 		call   FreeAwe32Soundfont
-		mov    %dh,MusicInstalled
+		mov    %dh,EXPORT_SYMBOL(MusicInstalled)
 		mov    %dh,Awe32SoundfontLoaded
 	jump_100401:
 		mov    MusicDriver,%esi
@@ -4036,7 +4034,7 @@ GLOBAL_FUNC(InitMusic_)
 		call   ail_shutdown
 	jump_10041f:
 		xor    %cl,%cl
-		mov    %cl,MusicAble
+		mov    %cl,EXPORT_SYMBOL(MusicAble)
 		mov    %cl,MusicActive
 		add    $0x148,%esp
 		pop    %edi
@@ -4055,14 +4053,14 @@ GLOBAL_FUNC(InitMusic_)
 		call   ac_sprintf
 		add    $0x8,%esp
 		mov    $SoundProgressMessage,%eax
-		call   SoundProgressLog_
+		call   ac_SoundProgressLog
 		push   $aBf41InitMusicC
 		push   $SoundProgressMessage
 		call   ac_sprintf
 		add    $0x8,%esp
 		mov    $SoundProgressMessage,%eax
-		call   SoundProgressLog_
-		movb   $0x1,MusicInstalled
+		call   ac_SoundProgressLog
+		movb   $0x1,EXPORT_SYMBOL(MusicInstalled)
 		mov    CurrentMusicMasterVolume,%eax
 		call   ac_SetMusicMasterVolume
 	jump_100489:
@@ -4095,7 +4093,7 @@ InitAllBullfrogSoundTimers_:
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %edx
-		cmpb   $0x0,MusicInstalled
+		cmpb   $0x0,EXPORT_SYMBOL(MusicInstalled)
 		jne    jump_1004d4
 		cmpb   $0x0,SoundInstalled
 		je     jump_1004e5
@@ -4150,7 +4148,7 @@ InitStreamedSound_:
 	jump_10064d:
 		pop    %edi
 		mov    %edi,%eax
-		call   SoundProgressLog_
+		call   ac_SoundProgressLog
 		pop    %edi
 		pop    %esi
 		pop    %edx
@@ -4182,7 +4180,7 @@ InitStreamedSound_:
 	jump_10069a:
 		pop    %edi
 		mov    %edi,%eax
-		call   SoundProgressLog_
+		call   ac_SoundProgressLog
 		pop    %edi
 		pop    %esi
 		pop    %edx
@@ -4358,15 +4356,15 @@ free_buffers:
 
 
 /*----------------------------------------------------------------*/
-StopMusic_:
+GLOBAL_FUNC(ASM_StopMusic)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
 		push   %edx
 		push   %esi
-		cmpb   $0x0,MusicInstalled
+		cmpb   $0x0,EXPORT_SYMBOL(MusicInstalled)
 		je     jump_108c5a
-		cmpb   $0x0,MusicAble
+		cmpb   $0x0,EXPORT_SYMBOL(MusicAble)
 		je     jump_108c5a
 		cmpb   $0x0,MusicActive
 		je     jump_108c5a
@@ -4418,7 +4416,7 @@ FreeMusic_:
 		push   %edx
 		push   %esi
 		push   %edi
-		cmpb   $0x0,MusicInstalled
+		cmpb   $0x0,EXPORT_SYMBOL(MusicInstalled)
 		je     jump_108d00
 		cmpw   $0x0,SongCurrentlyPlaying
 		je     jump_108ca3
@@ -4458,9 +4456,9 @@ FreeMusic_:
 		call   ac_LbMemoryFree
 	jump_108cec:
 		xor    %dh,%dh
-		mov    %dh,MusicAble
+		mov    %dh,EXPORT_SYMBOL(MusicAble)
 		mov    %dh,MusicActive
-		mov    %dh,MusicInstalled
+		mov    %dh,EXPORT_SYMBOL(MusicInstalled)
 	jump_108d00:
 		pop    %edi
 		pop    %esi
@@ -4479,7 +4477,7 @@ FreeSound_:
 		cmpb   $0x0,SoundInstalled
 		je     jump_108d6d
 		call   ac_StopAllSamples
-		cmpb   $0x0,MusicInstalled
+		cmpb   $0x0,EXPORT_SYMBOL(MusicInstalled)
 		jne    jump_108d2f
 		call   ail_shutdown
 	jump_108d2f:
@@ -5221,9 +5219,9 @@ LoadAwe32Soundfont_:
 		movb   $0x1,Awe32SoundfontLoaded
 		jmp    jump_1105d0
 	jump_11035f:
-		cmpb   $0x0,MusicInstalled
+		cmpb   $0x0,EXPORT_SYMBOL(MusicInstalled)
 		je     jump_1105d0
-		cmpb   $0x0,MusicAble
+		cmpb   $0x0,EXPORT_SYMBOL(MusicAble)
 		je     jump_1105d0
 		mov    $aSbawe32_mdi_0,%edx
 		mov    $awe32_s1,%eax
@@ -5231,7 +5229,7 @@ LoadAwe32Soundfont_:
 		test   %eax,%eax
 		jne    jump_1105d0
 		mov    $ascW_2,%edx
-		mov    $MusicType,%eax
+		mov    $EXPORT_SYMBOL(MusicType),%eax
 		call   ac_stricmp
 		test   %eax,%eax
 		jne    jump_1105d0
@@ -5405,9 +5403,9 @@ FreeAwe32Soundfont:
 		push   %edx
 		cmpb   $0x0,UseCurrentAwe32Soundfont
 		jne    jump_110660
-		cmpb   $0x0,MusicInstalled
+		cmpb   $0x0,EXPORT_SYMBOL(MusicInstalled)
 		je     jump_110660
-		cmpb   $0x0,MusicAble
+		cmpb   $0x0,EXPORT_SYMBOL(MusicAble)
 		je     jump_110660
 		mov    $aSbawe32_mdi_1,%edx
 		mov    $awe32_s1,%eax
@@ -5415,7 +5413,7 @@ FreeAwe32Soundfont:
 		test   %eax,%eax
 		jne    jump_110660
 		mov    $data_16181c,%edx
-		mov    $MusicType,%eax
+		mov    $EXPORT_SYMBOL(MusicType),%eax
 		call   ac_stricmp
 		test   %eax,%eax
 		jne    jump_110660
@@ -6222,7 +6220,7 @@ DirectSoundUsingGameSDKWindow:
 		.long	0x01
 CurrentMusicMasterVolume:
 		.long	0x7f
-MusicAble:
+GLOBAL (MusicAble)
 		.byte	0x1
 MusicActive:
 		.byte	0x1
@@ -6368,10 +6366,10 @@ music_bank_size_info__Field6:
 		.long	0x0
 music_bank_size_info__Field7:
 		.long	0x0
-full_music_data_path:
+GLOBAL (full_music_data_path)
 		.fill   0x90
 
-_DebugAudio:	/* 0x1E86E0 */
+GLOBAL (DebugAudio)	/* 0x1E86E0 */
 		.long	0x0
 
 GLOBAL (SoundProgressMessage)	/* 0x1E86E4 */
@@ -6422,10 +6420,10 @@ music_allocated:
 		.long	0x0
 UseCurrentAwe32Soundfont:
 		.byte	0x0
-MusicInstalled:
+GLOBAL (MusicInstalled)
 		.byte	0x0
 		.fill   0x2
-MusicType:
+GLOBAL (MusicType)
 		.fill   0x6
 CurrentTempo:
 		.short  0x0
@@ -6448,7 +6446,7 @@ DangerMusicFadeHandle:
 		.long	0x0
 Awe32SoundfontLoaded:
 		.byte	0x0
-DisableLoadMusic:
+GLOBAL (DisableLoadMusic)
 		.short  0x0
 ive_got_an_awe32:
 		.byte	0x0

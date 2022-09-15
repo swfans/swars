@@ -579,7 +579,7 @@ GLOBAL_FUNC (cd_play_)
 		call   ac_sprintf
 		add    $0x8,%esp
 		mov    $EXPORT_SYMBOL(SoundProgressMessage),%eax
-		call   SoundProgressLog_
+		call   ac_SoundProgressLog
 	jump_10823a:
 		mov    data_1e94ff,%ax
 		pop    %ebp
@@ -668,7 +668,7 @@ GLOBAL_FUNC (cd_init_)
 		call   ac_sprintf
 		add    $0x8,%esp
 		mov    $EXPORT_SYMBOL(SoundProgressMessage),%eax
-		call   SoundProgressLog_
+		call   ac_SoundProgressLog
 		xor    %al,%al
 		jmp    jump_108658
 	jump_108408:
@@ -680,7 +680,7 @@ GLOBAL_FUNC (cd_init_)
 		call   ac_sprintf
 		add    $0x8,%esp
 		mov    $EXPORT_SYMBOL(SoundProgressMessage),%eax
-		call   SoundProgressLog_
+		call   ac_SoundProgressLog
 		xor    %al,%al
 		pop    %ebp
 		pop    %edi
@@ -710,7 +710,7 @@ GLOBAL_FUNC (cd_init_)
 		call   ac_sprintf
 		add    $0xc,%esp
 		mov    %edx,%eax
-		call   SoundProgressLog_
+		call   ac_SoundProgressLog
 		mov    %ecx,%eax
 		call   delay_
 		xor    %eax,%eax
@@ -740,7 +740,7 @@ GLOBAL_FUNC (cd_init_)
 		call   ac_sprintf
 		add    $0x8,%esp
 		mov    $EXPORT_SYMBOL(SoundProgressMessage),%eax
-		call   SoundProgressLog_
+		call   ac_SoundProgressLog
 		xor    %al,%al
 		pop    %ebp
 		pop    %edi
@@ -755,7 +755,7 @@ GLOBAL_FUNC (cd_init_)
 		call   ac_sprintf
 		add    $0x8,%esp
 		mov    $EXPORT_SYMBOL(SoundProgressMessage),%eax
-		call   SoundProgressLog_
+		call   ac_SoundProgressLog
 		mov    data_1e94a1,%al
 		xor    %bh,%bh
 		mov    %al,cd_lowest_track
@@ -809,7 +809,7 @@ GLOBAL_FUNC (cd_init_)
 		call   ac_sprintf
 		add    $0x8,%esp
 		mov    $EXPORT_SYMBOL(SoundProgressMessage),%eax
-		call   SoundProgressLog_
+		call   ac_SoundProgressLog
 		xor    %al,%al
 		pop    %ebp
 		pop    %edi
@@ -1001,7 +1001,7 @@ GLOBAL_FUNC (SetCDAudioVolume_)
 		call   ac_sprintf
 		add    $0xc,%esp
 		mov    $EXPORT_SYMBOL(SoundProgressMessage),%eax
-		call   SoundProgressLog_
+		call   ac_SoundProgressLog
 	jump_108a37:
 		pop    %ebp
 		pop    %edi
@@ -1097,7 +1097,7 @@ GLOBAL_FUNC (GetCDAudioVolume_)
 		call   ac_sprintf
 		add    $0xc,%esp
 		mov    $EXPORT_SYMBOL(SoundProgressMessage),%eax
-		call   SoundProgressLog_
+		call   ac_SoundProgressLog
 	jump_108b81:
 		mov    control_prot,%eax
 		xor    %edx,%edx
