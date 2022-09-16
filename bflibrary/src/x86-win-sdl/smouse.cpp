@@ -27,11 +27,10 @@
 #include "bfplanar.h"
 #include "privbflog.h"
 
+
 extern "C" {
 
 #define AUTORESET_MIN_SHIFT 50
-
-extern long lbPhysicalResolutionMul;
 
 };
 
@@ -291,11 +290,12 @@ void MouseToScreen(struct TbPoint *pos)
       my = orig.y;
     }
 
-    if ((lbPhysicalResolutionMul > 1) && lbHasSecondSurface)
-    {
-        pos->x = pos->x / lbPhysicalResolutionMul;
-        pos->y = pos->y / lbPhysicalResolutionMul;
-    }
+    if (lbScreenSurfaceDimensions.Width != lbDisplay.GraphicsScreenWidth)
+        pos->x = (pos->x * lbDisplay.GraphicsScreenWidth) /
+            lbScreenSurfaceDimensions.Width;
+    if (lbScreenSurfaceDimensions.Height != lbDisplay.GraphicsScreenHeight)
+        pos->y = (pos->y * lbDisplay.GraphicsScreenHeight) /
+            lbScreenSurfaceDimensions.Height;
     LOGNO("before (%ld,%ld) after (%ld,%ld)", orig.x, orig.y, pos->x, pos->y);
 }
 
