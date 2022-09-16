@@ -68,21 +68,22 @@ extern volatile TbBool lbPointerAdvancedDraw;
 volatile TbBool lbScreenDirectAccessActive = false;
 
 /** @internal
- *  Minimal value of dimensions in physical resolution.
+ *  Minimal value of screen surface (physical) width or height.
  *
- *  On a try to setup lower resolution, the library will use pixel doubling
- *  to reach the minimal size for both dimensions.
+ *  If the game tries to set a lower resolution, the library uses nearest-
+ *  neighbour scaling to reach the minimum width and height, while preserving
+ *  aspect ratio.
  *
- *  If the values is 1, phyical screen doubling is always disabled.
+ *  If the values is 1, scaling is disabled.
  */
-long lbMinPhysicalScreenResolutionDim = 1;
+long lbMinScreenSurfaceDimension = 1;
 
 /** @internal
- * Physical resolution multiplier.
- * Pixel doubling factor used to achieve minimal resolution.
- * If set to 1, no doubling is applied.
+ * Screen surface dimensions for scaling
+ * The size of the screen surface when scaling to achieve a minimum physical
+ * screen width and height.
  */
-long lbPhysicalResolutionMul = 1;
+TbSurfaceDimensions lbScreenSurfaceDimensions = { 320, 200 };
 
 /** @internal
  * Informs if separate screen and draw surfaces were created
@@ -218,9 +219,9 @@ TbResult LbScreenUpdateIcon(void)
 
 #endif
 
-TbResult LbScreenSetMinPhysicalScreenResolution(long dim)
+TbResult LbScreenSetMinScreenSurfaceDimension(long dim)
 {
-    lbMinPhysicalScreenResolutionDim = dim;
+    lbMinScreenSurfaceDimension = dim;
     return Lb_SUCCESS;
 }
 
@@ -310,19 +311,18 @@ TbResult LbScreenSetupAnyMode(TbScreenMode mode, TbScreenCoord width,
             (int)mdinfo->Width, (int)mdinfo->Height, (int)mode);
         return Lb_FAIL;
     }
-
+    mdWidth = mdinfo->Width;
+    mdHeight = mdinfo->Height;
     {
-        long minDim = min(mdinfo->Width,mdinfo->Height);
-        if ((minDim != 0) && (minDim < lbMinPhysicalScreenResolutionDim)) {
-            lbPhysicalResolutionMul = (lbMinPhysicalScreenResolutionDim + minDim - 1) / minDim;
-        } else {
-            lbPhysicalResolutionMul = 1;
+        const long minD = min(mdWidth, mdHeight);
+        if (minD != 0 && minD < lbMinScreenSurfaceDimension) {
+            mdWidth = lbScreenSurfaceDimensions.Width =
+                lbMinScreenSurfaceDimension * mdWidth / minD;
+            mdHeight = lbScreenSurfaceDimensions.Height =
+                lbMinScreenSurfaceDimension * mdHeight / minD;
         }
-        mdWidth = mdinfo->Width * lbPhysicalResolutionMul;
-        mdHeight = mdinfo->Height * lbPhysicalResolutionMul;
-        LOGDBG("physical resolution multiplier %ld", lbPhysicalResolutionMul);
     }
-
+    LOGDBG("screen surface dimensions set to %ldx%ld", mdWidth, mdHeight);
 
     // No need for video buffer paging when using SDL
     lbDisplay.VesaIsSetUp = false;
@@ -587,7 +587,6 @@ TbBool LbHwCheckIsModeAvailable(TbScreenMode mode)
 {
     TbScreenModeInfo *mdinfo;
     ulong sdlFlags;
-    long minDim;
     int closestBPP;
 
     mdinfo = LbScreenGetModeInfo(mode);
@@ -604,15 +603,20 @@ TbBool LbHwCheckIsModeAvailable(TbScreenMode mode)
     if ((mdinfo->VideoMode & Lb_VF_WINDOWED) == 0) {
         sdlFlags |= SDL_FULLSCREEN;
     }
-
-    minDim = min(mdinfo->Width,mdinfo->Height);
-    if ((minDim != 0) && (minDim < lbMinPhysicalScreenResolutionDim)) {
-        lbPhysicalResolutionMul =
-          (lbMinPhysicalScreenResolutionDim + minDim - 1) / minDim;
-        //TODO search for a matching mode instead
-        return true;
-    } else {
-        lbPhysicalResolutionMul = 1;
+    {
+        const long minD = min(mdinfo->Height, mdinfo->Width);
+        if (minD != 0 && minD < lbMinScreenSurfaceDimension) {
+            TbBool was_second_surface_ok = false;
+            // FIXME: a second surface will be required; check?
+            SDL_Surface * draw_surface =
+                SDL_CreateRGBSurface(SDL_SWSURFACE,
+                    lbMinScreenSurfaceDimension * mdinfo->Width / minD,
+                    lbMinScreenSurfaceDimension * mdinfo->Height / minD,
+                    lbEngineBPP, 0, 0, 0, 0);
+            was_second_surface_ok = draw_surface != NULL;
+            SDL_FreeSurface(draw_surface);
+            return was_second_surface_ok;
+        }
     }
 
     closestBPP = SDL_VideoModeOK(mdinfo->Width, mdinfo->Height,
@@ -626,42 +630,66 @@ TbBool LbHwCheckIsModeAvailable(TbScreenMode mode)
 /** @internal
  * Provides simplified SDL_BlitScaled() functionality for SDL1.
  */
-int LbI_SDL_BlitScaled(SDL_Surface *src, SDL_Surface *dst, int resolutionMul)
+int LbI_SDL_BlitScaled(SDL_Surface *src, SDL_Surface *dst)
 {
-    long i, j;
-    long mdWidth, mdHeight;
 
-    LbScreenLock();
-    LbIPhysicalScreenLock();
+    /* shortcircuit for 1:1 */
+    if (src->w == dst->w && src->h == dst->h)
+        return SDL_BlitSurface(src, NULL, dst, NULL);
 
-    ubyte *poutput = (ubyte *)dst->pixels;
-    ubyte *pinput  = (ubyte *)src->pixels;
+    if (SDL_MUSTLOCK(src) && SDL_LockSurface(src) < 0)
+        LOGERR("cannot lock source surface: %s", SDL_GetError());
 
-    mdWidth = lbDisplay.PhysicalScreenWidth;
-    mdHeight = lbDisplay.PhysicalScreenHeight;
+    if (SDL_MUSTLOCK(dst) && SDL_LockSurface(dst) < 0)
+            LOGERR("cannot lock destination Surface: %s", SDL_GetError());
 
-    for (j = 0; j < mdHeight; j++)
-    {
-        for (i = 0; i < mdWidth; i++)
-        {
-            long di, dj;
-            int input_xy = j * mdWidth + i;
+    {   /* denominator of a (source) pixel's fraction part */
+        const long denom_i = 2 * dst->h;
+        const long denom_j = 2 * dst->w;
 
-            for (dj = 0; dj < resolutionMul; dj++)
-            {
-                int output_xy = (j*resolutionMul+dj) *
-                  mdWidth*resolutionMul +
-                  i*resolutionMul;
+        /* number of whole units in each (source) step */
+        const long dsrc_i = 2 * src->h / denom_i;
+        const long dsrc_j = 2 * src->w / denom_j;
 
-                for (di = 0; di < resolutionMul; di++) {
-                    poutput[output_xy++] = pinput[input_xy];
-                }
+        /* numerator of fractional part of each (source) step */
+        const long dsrc_num_i = (2 * src->h) - dsrc_i * denom_i;
+        const long dsrc_num_j = (2 * src->w) - dsrc_j * denom_j;
+
+        /* number of whole units in a (source) half-step */
+        const long halfdsrc_i = src->h / denom_i;
+        const long halfdsrc_j = src->w / denom_j;
+
+        long dst_offset = 0;
+        long src_offset = halfdsrc_i * src->w+ halfdsrc_j;
+
+        /* start at fractional part of each (source) half-step */
+        long src_num_i =  src->h- halfdsrc_i * denom_i;
+        long src_num_j = src->w- halfdsrc_j * denom_j;
+
+        for (long i = 0; i != dst->h; ++i) {
+            if (src_num_i > denom_i) {
+                src_num_i -= denom_i;
+                src_offset += src->w;
             }
+            for (long j = 0; j != dst->w; ++j) {
+                if (src_num_j > denom_j) {
+                    src_num_j -= denom_j;
+                    ++src_offset;
+                }
+                // FIXME: only works with 8-bit pixel format
+                ((ubyte *)dst->pixels)[dst_offset] = ((ubyte *)src->pixels)[src_offset];
+                dst_offset++;
+                src_offset+=dsrc_j;
+                src_num_j+=dsrc_num_j;
+            }
+            src_offset+=(dsrc_i - 1) * src->w;
+            src_num_i+=dsrc_num_i;
         }
     }
 
-    LbIPhysicalScreenUnlock();
-    LbScreenUnlock();
+    if (SDL_MUSTLOCK(dst)) SDL_UnlockSurface(dst);
+    if (SDL_MUSTLOCK(src)) SDL_UnlockSurface(src);
+
     return 0;
 }
 
@@ -700,13 +728,8 @@ TbResult LbScreenSwap(void)
     // Put the data from Draw Surface onto Screen Surface
     if ((ret == Lb_SUCCESS) && (lbHasSecondSurface))
     {
-        if (lbPhysicalResolutionMul > 1) {
-            blresult = LbI_SDL_BlitScaled(to_SDLSurf(lbDrawSurface),
-              to_SDLSurf(lbScreenSurface), lbPhysicalResolutionMul);
-        } else {
-            blresult = SDL_BlitSurface(to_SDLSurf(lbDrawSurface), NULL,
-              to_SDLSurf(lbScreenSurface), NULL);
-        }
+        blresult = LbI_SDL_BlitScaled(to_SDLSurf(lbDrawSurface),
+                       to_SDLSurf(lbScreenSurface));
         if (blresult < 0) {
             LOGERR("blit failed: %s", SDL_GetError());
             ret = Lb_FAIL;
@@ -764,13 +787,8 @@ TbResult LbScreenSwapClear(TbPixel colour)
     // Put the data from Draw Surface onto Screen Surface
     if ((ret == Lb_SUCCESS) && (lbHasSecondSurface))
     {
-        if (lbPhysicalResolutionMul > 1) {
-            blresult = LbI_SDL_BlitScaled(to_SDLSurf(lbDrawSurface),
-              to_SDLSurf(lbScreenSurface), lbPhysicalResolutionMul);
-        } else {
-            blresult = SDL_BlitSurface(to_SDLSurf(lbDrawSurface), NULL,
-              to_SDLSurf(lbScreenSurface), NULL);
-        }
+        blresult = LbI_SDL_BlitScaled(to_SDLSurf(lbDrawSurface),
+                                      to_SDLSurf(lbScreenSurface));
         if (blresult < 0) {
             LOGERR("blit failed: %s", SDL_GetError());
             ret = Lb_FAIL;
@@ -844,13 +862,8 @@ TbResult LbScreenSwapBox(ubyte *sourceBuf, long sourceX, long sourceY,
     {
         SDL_Rect clipRect = {destX, destY, width, height};
         SDL_SetClipRect(to_SDLSurf(lbScreenSurface), &clipRect);
-        if (lbPhysicalResolutionMul > 1) {
-            blresult = LbI_SDL_BlitScaled(to_SDLSurf(lbDrawSurface),
-              to_SDLSurf(lbScreenSurface), lbPhysicalResolutionMul);
-        } else {
-            blresult = SDL_BlitSurface(to_SDLSurf(lbDrawSurface), NULL,
-              to_SDLSurf(lbScreenSurface), NULL);
-        }
+        blresult = LbI_SDL_BlitScaled(to_SDLSurf(lbDrawSurface),
+                                      to_SDLSurf(lbScreenSurface));
         SDL_SetClipRect(to_SDLSurf(lbScreenSurface), NULL);
         if (blresult < 0) {
             LOGERR("blit failed: %s", SDL_GetError());

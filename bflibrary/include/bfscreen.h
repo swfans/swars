@@ -218,9 +218,9 @@ struct DisplayStruct { // sizeof=118
      *  LbPaletteGet() should be used to retrieve a copy of the palette. */
     ubyte *Palette; // offset=114
 #if defined(ENABLE_MOUSE_WHEEL)
-    short WhellPosition;
-    ushort WhellMoveUp;
-    ushort WhellMoveDown;
+    short WheelPosition;
+    ushort WheelMoveUp;
+    ushort WheelMoveDown;
 #endif
 #if defined(ENABLE_MOUSE_MOVE_RATIO)
     short MouseMoveRatioX;
@@ -256,6 +256,12 @@ struct ScreenModeInfo { // sizeof=38
     char Desc[24]; // offset=14
 };
 
+typedef struct SurfaceDimensions TbSurfaceDimensions;
+
+struct SurfaceDimensions {
+    long Width, Height;
+};
+
 typedef const char *(*ResourceMappingFunc)(short);
 
 #pragma pack()
@@ -272,6 +278,9 @@ extern long lbScreenModeInfoNum;
 
 extern TbDisplayStruct lbDisplay;
 extern DwBool lbScreenInitialised;
+
+/* Used to transform mouse position when screen surface scaling is applied */
+extern TbSurfaceDimensions lbScreenSurfaceDimensions;
 
 /** True if we have two surfaces. */
 extern TbBool lbHasSecondSurface;
@@ -306,22 +315,23 @@ TbScreenMode LbRegisterVideoMode(const char *desc,
     TbScreenCoord width, TbScreenCoord height,
     ushort bpp, ulong flags);
 
-/** Set minimal value of dimensions in physical resolution.
+/** Set minimal value of screen surface width and height
  *
- *  On a try to setup lower resolution, the library will use pixel doubling
- *  to reach the minimal size for both dimensions. This mechanism should
- *  be used to rescale games which do not have resolution change implemented
- *  within them - when games are remade well enough to allow resolution
- *  control from config files, it is better to leave this feature inactive.
+ *  If an application requests a lower resolution, the library will use
+ *  nearest-neighbour scaling to reach the minimum width and height. This
+ *  mechanism should be used to rescale games which do not have resolution
+ *  change implemented within them - when games are remade well enough to allow
+ *  resolution control from config files, it is better to leave this feature
+ *  inactive.
  *
- *  The screen doubling is hidden within lbDisplay struct and mouse position,
- *  that is, related width/height/position values behave like there was no
- *  doubling and the screen size was smaller. This means the doubling does
- *  not require any code changes on application side, besides this call.
+ *  The scaling is invisible to the lbDisplay struct and mouse position; that
+ *  is, the related width/height/position values behave like there was no
+ *  scaling. This means that as the library performs scaling, the application
+ *  side does not need to change any behaviour as a result of this call.
  *
- *  If the values is 1, phyical screen doubling is always disabled.
+ *  If the values is 1, screen surface scaling is always disabled.
  */
-TbResult LbScreenSetMinPhysicalScreenResolution(long dim);
+TbResult LbScreenSetMinScreenSurfaceDimension(long dim);
 
 /** Set title of the application to be used in target OS.
  */

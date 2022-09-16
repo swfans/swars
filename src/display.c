@@ -79,7 +79,7 @@ display_set_full_screen (bool full_screen)
     if (lbScreenSurface != NULL)
         return;
 
-    for (i = 1; i < 99; i++)
+    for (i = 1; i < LB_MAX_SCREEN_MODES_COUNT; ++i)
     {
         TbScreenModeInfo *mdinfo;
 
@@ -97,9 +97,9 @@ void
 display_set_lowres_stretch (bool stretch)
 {
   if (stretch)
-      LbScreenSetMinPhysicalScreenResolution(400);
+      LbScreenSetMinScreenSurfaceDimension(400);
   else
-      LbScreenSetMinPhysicalScreenResolution(1);
+      LbScreenSetMinScreenSurfaceDimension(1);
 }
 
 void

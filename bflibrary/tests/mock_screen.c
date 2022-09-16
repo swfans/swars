@@ -28,8 +28,8 @@
 #include "bfutility.h"
 #include "bftstlog.h"
 
-extern long lbPhysicalResolutionMul;
-extern long lbMinPhysicalScreenResolutionDim;
+extern long lbMinScreenSurfaceDimension;
+
 
 TbResult MockScreenFindVideoModes(void)
 {
@@ -88,18 +88,18 @@ TbResult MockScreenSetupAnyMode(TbScreenMode mode, TbScreenCoord width,
             (int)mdinfo->Width, (int)mdinfo->Height, (int)mode);
         return Lb_FAIL;
     }
-
+    mdWidth = mdinfo->Width;
+    mdHeight = mdinfo->Height;
     {
-        long minDim = min(mdinfo->Width,mdinfo->Height);
-        if ((minDim != 0) && (minDim < lbMinPhysicalScreenResolutionDim)) {
-            lbPhysicalResolutionMul = (lbMinPhysicalScreenResolutionDim + minDim - 1) / minDim;
-        } else {
-            lbPhysicalResolutionMul = 1;
+        const long minD = min(mdWidth, mdHeight);
+        if (minD != 0 && minD < lbMinScreenSurfaceDimension) {
+            mdWidth = lbScreenSurfaceDimensions.Width =
+                lbMinScreenSurfaceDimension * mdWidth / minD;
+            mdHeight = lbScreenSurfaceDimensions.Height =
+                lbMinScreenSurfaceDimension * mdHeight / minD;
         }
-        mdWidth = mdinfo->Width * lbPhysicalResolutionMul;
-        mdHeight = mdinfo->Height * lbPhysicalResolutionMul;
-        LOGDBG("physical resolution multiplier %ld", lbPhysicalResolutionMul);
     }
+    LOGDBG("screen surface dimensions set to %ldx%ld", mdWidth, mdHeight);
     lbDisplay.VesaIsSetUp = false;
 
     lbScreenSurface = lbDrawSurface = (OSSurfaceHandle)malloc(mdWidth *
