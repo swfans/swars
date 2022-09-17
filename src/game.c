@@ -1004,6 +1004,7 @@ void init_syndwars(void)
     AudioInitOptions audOpts;
 
     //sprintf(locstr, "%sSound", cd_drive); -- unused
+    sound_initialise();
 
     audOpts.SoundDataPath = "Sound";
     audOpts.SoundDriverPath = "Sound";
@@ -1099,7 +1100,6 @@ void setup_host(void)
     LbGhostTableGenerate(display_palette, 50, "data/synghost.tab");
     init_memory(mem_game);
 
-    sound_initialise();
     init_syndwars();
     LoadSounds(0);
     LoadMusic(0);
