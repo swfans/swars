@@ -61,4 +61,10 @@ void StopCD(void)
     cd_stop(i);
 }
 
+void InitRedbook(void)
+{
+    asm volatile ("call ASM_InitRedbook\n"
+        :  :  : "eax" );
+}
+
 /******************************************************************************/

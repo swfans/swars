@@ -57,4 +57,34 @@ void SetCDVolume(long vol)
         :  : "a" (vol));
 }
 
+void InitSound(void)
+{
+    asm volatile ("call ASM_InitSound\n"
+        :  :  : "eax" );
+}
+
+void InitMusic(void)
+{
+    asm volatile ("call ASM_InitMusic\n"
+        :  :  : "eax" );
+}
+
+void InitStreamedSound(void)
+{
+    asm volatile ("call ASM_InitStreamedSound\n"
+        :  :  : "eax" );
+}
+
+void InitAllBullfrogSoundTimers(void)
+{
+    asm volatile ("call ASM_InitAllBullfrogSoundTimers\n"
+        :  :  : "eax" );
+}
+
+void prepare_SB16_volumes(void)
+{
+    asm volatile ("call ASM_prepare_SB16_volumes\n"
+        :  :  : "eax" );
+}
+
 /******************************************************************************/

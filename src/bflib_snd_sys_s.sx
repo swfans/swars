@@ -57,7 +57,7 @@ GLOBAL_FUNC (ASM_InitAudio)
 		call   ac_sprintf
 		add    $0x8,%esp
 		mov    $aSound_2,%esi
-		mov    $SoundAndMusicDataPath,%edi
+		mov    $SoundDataPath,%edi
 		push   %edi
 	jump_eb80c:
 		mov    (%esi),%al
@@ -107,7 +107,7 @@ GLOBAL_FUNC (ASM_InitAudio)
 		test   %edi,%edi
 		je     jump_eb89f
 		mov    %edi,%esi
-		mov    $SoundAndMusicDataPath,%edi
+		mov    $SoundDataPath,%edi
 		push   %edi
 	jump_eb886:
 		mov    (%esi),%al
@@ -162,7 +162,7 @@ GLOBAL_FUNC (ASM_InitAudio)
 		mov    0x17(%edx),%al
 		cmp    $0x1,%eax
 		jne    jump_eb906
-		movb   $0x1,ive_got_an_awe32
+		movb   $0x1,DisableDangerMusic
 	jump_eb906:
 		xor    %eax,%eax
 		mov    0x18(%edx),%al
@@ -216,20 +216,20 @@ GLOBAL_FUNC (ASM_InitAudio)
 		xor    %bl,%bl
 		mov    %bl,SoundAble
 	jump_eb9ad:
-		call   InitSound_
-		call   InitMusic_
-		call   InitAllBullfrogSoundTimers_
+		call   ac_InitSound
+		call   ac_InitMusic
+		call   ac_InitAllBullfrogSoundTimers
 		xor    %eax,%eax
 		mov    0x1c(%edx),%al
 		cmp    $0x1,%eax
 		jne    jump_eb9cb
-		call   InitStreamedSound_
+		call   ac_InitStreamedSound
 	jump_eb9cb:
 		xor    %eax,%eax
 		mov    0x1d(%edx),%al
 		cmp    $0x1,%eax
 		jne    jump_eb9dc
-		call   InitRedbook_
+		call   ac_InitRedbook
 		jmp    jump_eb9e4
 	jump_eb9dc:
 		xor    %bh,%bh
@@ -237,7 +237,7 @@ GLOBAL_FUNC (ASM_InitAudio)
 	jump_eb9e4:
 		cmpb   $0x0,ive_got_an_sb16
 		je     jump_eb9f2
-		call   prepare_SB16_volumes
+		call   ac_prepare_SB16_volumes
 	jump_eb9f2:
 		xor    %eax,%eax
 		mov    EXPORT_SYMBOL(MusicAble),%al
@@ -257,7 +257,7 @@ GLOBAL_FUNC (ASM_InitAudio)
 		add    $0xc,%esp
 		mov    $SoundProgressMessage,%eax
 		call   ac_SoundProgressLog
-		push   $awe32_s1
+		push   $MusicInstallChoice_str2
 		push   $aBf56MusicDrive
 		push   $SoundProgressMessage
 		call   ac_sprintf
@@ -283,7 +283,7 @@ GLOBAL_FUNC (ASM_InitAudio)
 /*----------------------------------------------------------------*/
 /* void prepare_SB16_volumes(void)
  */
-prepare_SB16_volumes:
+GLOBAL_FUNC (ASM_prepare_SB16_volumes)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -498,7 +498,7 @@ GLOBAL_FUNC (ASM_GetCDAble)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (InitRedbook_)
+GLOBAL_FUNC (ASM_InitRedbook)
 /*----------------------------------------------------------------*/
 		push   %ecx
 		push   %edx
@@ -1176,7 +1176,7 @@ AllocateSoundBankMemory_:
 		push   %ebp
 		sub    $0x4,%esp
 		mov    %eax,%ecx
-		push   $SoundAndMusicDataPath
+		push   $SoundDataPath
 		push   $aSSound_dat
 		push   $full_sound_data_path
 		call   ac_sprintf
@@ -1762,7 +1762,7 @@ AllocateMusicBankMemory_:
 		push   %esi
 		push   %edi
 		push   %ebp
-		push   $SoundAndMusicDataPath
+		push   $SoundDataPath
 		push   $aSMusic_dat
 		push   $full_music_data_path
 		call   ac_sprintf
@@ -2217,7 +2217,7 @@ GLOBAL_FUNC (DangerMusicFadeSwitch)
 		push   %edi
 		mov    %al,%bl
 		mov    %dl,%bh
-		cmpb   $0x0,ive_got_an_awe32
+		cmpb   $0x0,DisableDangerMusic
 		jne    jump_ef27c
 		cmpb   $0x0,DangerMusicAble
 		je     jump_ef27c
@@ -2570,7 +2570,7 @@ cb_get_trigger_info:	/* 0x0F0340 */
 		jne    jump_f03ac
 		movb   $0x1,DangerMusicAble
 		mov    %ebx,%eax
-		mov    ive_got_an_awe32,%dl
+		mov    DisableDangerMusic,%dl
 		or     $0xb0,%al
 		test   %dl,%dl
 		je     jump_f0389
@@ -2822,19 +2822,7 @@ GLOBAL_FUNC (StartMusic_)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC(ASM_SoundProgressLog_UNUSED)
-/*----------------------------------------------------------------*/
-		cmpb   $0x0,EXPORT_SYMBOL(DebugAudio)
-		je     jump_ff3e2
-		push   %eax
-		call   ac_printf
-		add    $0x4,%esp
-	jump_ff3e2:
-		ret
-
-
-/*----------------------------------------------------------------*/
-GLOBAL_FUNC(InitSound_)
+GLOBAL_FUNC(ASM_InitSound)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -3487,7 +3475,7 @@ DetermineSoundType_:
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC(InitMusic_)
+GLOBAL_FUNC (ASM_InitMusic)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -3548,7 +3536,7 @@ GLOBAL_FUNC(InitMusic_)
 		call   AIL_set_preference
 		add    $0x8,%esp
 	jump_ffd24:
-		push   $SoundAndMusicDataPath
+		push   $SoundDataPath
 		push   $aSSample
 		lea    0x8(%esp),%eax
 		push   %eax
@@ -3652,7 +3640,7 @@ GLOBAL_FUNC(InitMusic_)
 		lea    0x138(%esp),%eax
 		push   %eax
 		push   $ascS_10
-		push   $awe32_s1
+		push   $MusicInstallChoice_str2
 		call   ac_sprintf
 		add    $0xc,%esp
 	jump_ffec8:
@@ -3662,7 +3650,7 @@ GLOBAL_FUNC(InitMusic_)
 		mov    $aAdlib_mdi,%edx
 		add    $0x4,%esp
 		mov    %eax,SongHandle
-		mov    $awe32_s1,%eax
+		mov    $MusicInstallChoice_str2,%eax
 		call   ac_stricmp
 		test   %eax,%eax
 		jne    jump_10002c
@@ -3673,7 +3661,7 @@ GLOBAL_FUNC(InitMusic_)
 		jmp    jump_1002e1
 	jump_fff04:
 		push   $FullMDI_INIPath
-		push   $_MusicInstallChoice
+		push   $MusicInstallChoice
 		call   AIL_read_INI
 		add    $0x8,%esp
 		test   %eax,%eax
@@ -3685,7 +3673,7 @@ GLOBAL_FUNC(InitMusic_)
 		mov    $SoundProgressMessage,%eax
 		mov    $ascNone_5,%edx
 		call   ac_SoundProgressLog
-		mov    $awe32_s1,%eax
+		mov    $MusicInstallChoice_str2,%eax
 		call   ac_stricmp
 		test   %eax,%eax
 		jne    jump_fff91
@@ -3758,7 +3746,7 @@ GLOBAL_FUNC(InitMusic_)
 		ret
 	jump_10002c:
 		mov    $aAdlibg_mdi,%edx
-		mov    $awe32_s1,%eax
+		mov    $MusicInstallChoice_str2,%eax
 		call   ac_stricmp
 		test   %eax,%eax
 		jne    jump_100050
@@ -3769,7 +3757,7 @@ GLOBAL_FUNC(InitMusic_)
 		jmp    jump_1002e1
 	jump_100050:
 		mov    $aOpl3_mdi,%edx
-		mov    $awe32_s1,%eax
+		mov    $MusicInstallChoice_str2,%eax
 		call   ac_stricmp
 		test   %eax,%eax
 		jne    jump_100074
@@ -3780,7 +3768,7 @@ GLOBAL_FUNC(InitMusic_)
 		jmp    jump_1002e1
 	jump_100074:
 		mov    $aPas_mdi,%edx
-		mov    $awe32_s1,%eax
+		mov    $MusicInstallChoice_str2,%eax
 		call   ac_stricmp
 		test   %eax,%eax
 		jne    jump_100098
@@ -3791,7 +3779,7 @@ GLOBAL_FUNC(InitMusic_)
 		jmp    jump_1002e1
 	jump_100098:
 		mov    $aPasplus_mdi,%edx
-		mov    $awe32_s1,%eax
+		mov    $MusicInstallChoice_str2,%eax
 		call   ac_stricmp
 		test   %eax,%eax
 		jne    jump_1000b5
@@ -3799,7 +3787,7 @@ GLOBAL_FUNC(InitMusic_)
 		jmp    jump_1002dc
 	jump_1000b5:
 		mov    $aSblaster_mdi,%edx
-		mov    $awe32_s1,%eax
+		mov    $MusicInstallChoice_str2,%eax
 		call   ac_stricmp
 		test   %eax,%eax
 		jne    jump_1000d2
@@ -3807,7 +3795,7 @@ GLOBAL_FUNC(InitMusic_)
 		jmp    jump_1002dc
 	jump_1000d2:
 		mov    $aSbpro1_mdi,%edx
-		mov    $awe32_s1,%eax
+		mov    $MusicInstallChoice_str2,%eax
 		call   ac_stricmp
 		test   %eax,%eax
 		jne    jump_1000ef
@@ -3815,7 +3803,7 @@ GLOBAL_FUNC(InitMusic_)
 		jmp    jump_1002dc
 	jump_1000ef:
 		mov    $aSbpro2_mdi,%edx
-		mov    $awe32_s1,%eax
+		mov    $MusicInstallChoice_str2,%eax
 		call   ac_stricmp
 		test   %eax,%eax
 		jne    jump_10010c
@@ -3823,7 +3811,7 @@ GLOBAL_FUNC(InitMusic_)
 		jmp    jump_1002dc
 	jump_10010c:
 		mov    $aEsfm_mdi,%edx
-		mov    $awe32_s1,%eax
+		mov    $MusicInstallChoice_str2,%eax
 		call   ac_stricmp
 		test   %eax,%eax
 		jne    jump_100129
@@ -3831,7 +3819,7 @@ GLOBAL_FUNC(InitMusic_)
 		jmp    jump_1002dc
 	jump_100129:
 		mov    $aSbawe32_mdi,%edx
-		mov    $awe32_s1,%eax
+		mov    $MusicInstallChoice_str2,%eax
 		call   ac_stricmp
 		test   %eax,%eax
 		jne    jump_1001ca
@@ -3870,7 +3858,7 @@ GLOBAL_FUNC(InitMusic_)
 		jmp    jump_1002e9
 	jump_1001ca:
 		mov    $aMpu401_mdi,%edx
-		mov    $awe32_s1,%eax
+		mov    $MusicInstallChoice_str2,%eax
 		call   ac_stricmp
 		test   %eax,%eax
 		jne    jump_1001e7
@@ -3878,7 +3866,7 @@ GLOBAL_FUNC(InitMusic_)
 		jmp    jump_1002dc
 	jump_1001e7:
 		mov    $aSndscape_mdi,%edx
-		mov    $awe32_s1,%eax
+		mov    $MusicInstallChoice_str2,%eax
 		call   ac_stricmp
 		test   %eax,%eax
 		jne    jump_100204
@@ -3886,7 +3874,7 @@ GLOBAL_FUNC(InitMusic_)
 		jmp    jump_1002dc
 	jump_100204:
 		mov    $aUltra_mdi,%edx
-		mov    $awe32_s1,%eax
+		mov    $MusicInstallChoice_str2,%eax
 		call   ac_stricmp
 		test   %eax,%eax
 		jne    jump_100221
@@ -3894,7 +3882,7 @@ GLOBAL_FUNC(InitMusic_)
 		jmp    jump_1002dc
 	jump_100221:
 		mov    $aMt32mpu_mdi,%edx
-		mov    $awe32_s1,%eax
+		mov    $MusicInstallChoice_str2,%eax
 		call   ac_stricmp
 		test   %eax,%eax
 		jne    jump_10023e
@@ -4091,7 +4079,7 @@ fm_instrument_file_exists:
 
 
 /*----------------------------------------------------------------*/
-InitAllBullfrogSoundTimers_:
+GLOBAL_FUNC (ASM_InitAllBullfrogSoundTimers)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %edx
@@ -4111,7 +4099,7 @@ InitAllBullfrogSoundTimers_:
 
 
 /*----------------------------------------------------------------*/
-InitStreamedSound_:
+GLOBAL_FUNC (ASM_InitStreamedSound)
 /*----------------------------------------------------------------*/
 		push   %ecx
 		push   %edx
@@ -5226,7 +5214,7 @@ LoadAwe32Soundfont_:
 		cmpb   $0x0,EXPORT_SYMBOL(MusicAble)
 		je     jump_1105d0
 		mov    $aSbawe32_mdi_0,%edx
-		mov    $awe32_s1,%eax
+		mov    $MusicInstallChoice_str2,%eax
 		call   ac_stricmp
 		test   %eax,%eax
 		jne    jump_1105d0
@@ -5258,7 +5246,7 @@ LoadAwe32Soundfont_:
 	jump_1103dc:
 		pop    %edi
 		push   %edi
-		push   $SoundAndMusicDataPath
+		push   $SoundDataPath
 		push   $ascSS_sbk
 		lea    0xc(%esp),%eax
 		push   %eax
@@ -5410,7 +5398,7 @@ FreeAwe32Soundfont:
 		cmpb   $0x0,EXPORT_SYMBOL(MusicAble)
 		je     jump_110660
 		mov    $aSbawe32_mdi_1,%edx
-		mov    $awe32_s1,%eax
+		mov    $MusicInstallChoice_str2,%eax
 		call   ac_stricmp
 		test   %eax,%eax
 		jne    jump_110660
@@ -6196,27 +6184,27 @@ data_16181c:
 
 .data
 
-InitialCDVolume:	/* 0x158B34 */
+GLOBAL (InitialCDVolume)	/* 0x158B34 */
 		.byte	0xff
 GLOBAL (CDAble)
 		.ascii  "\x01\x00\x00"
 
-MaxNumberOfSamples:	/* 0x159300 */
+GLOBAL (MaxNumberOfSamples)	/* 0x159300 */
 		.long	0x0a
 GLOBAL (SoundAble)	/* 159304 */
 		.byte	0x1
-SixteenBit:
+GLOBAL (SixteenBit)
 		.byte	0x1
 GLOBAL (SoundActive)
 		.byte	0x1
-AutoScanForSoundHardware:
+GLOBAL (AutoScanForSoundHardware)
 		.byte	0x1
-StereoSound:
+GLOBAL (StereoSound)
 		.byte	0x1
-CurrentSoundBank:
+GLOBAL (CurrentSoundBank)
 		.byte	0x0ff
 		.ascii  "\x00\x00"
-CurrentSoundMasterVolume:
+GLOBAL (CurrentSoundMasterVolume)
 		.long	0x7f
 DirectSoundUsingGameSDKWindow:
 		.long	0x01
@@ -6256,7 +6244,7 @@ GLOBAL (FullDIG_INIPath)		/* 0x1e5a30 */
 		.fill   0x90
 GLOBAL (FullMDI_INIPath)		/* 0x1e5ac0 */
 		.fill   0x90
-SoundAndMusicDataPath:
+GLOBAL (SoundDataPath)			/* 0x1e5b50 */
 		.fill   0x90
 GLOBAL (SoundDriverPath)		/* 0x1e5be0 */
 		.fill   0x90
@@ -6400,18 +6388,19 @@ SoundDriver:
 AILStartupAlreadyInitiated:
 		.byte   0x0
 		.fill   0x3
-SampleRate:
+GLOBAL (SampleRate)
 		.long	0x0
-ive_got_an_sb16:
+GLOBAL (ive_got_an_sb16)
 		.byte   0x0
 		.fill   0x1
-Selected95WaveDevice:
+GLOBAL (Selected95WaveDevice)
 		.short  0x0
 SB16_io:
 		.long	0x0
-UseMultiMediaExtensions:
+GLOBAL (UseMultiMediaExtensions)
 		.byte   0x0
 		.fill   0x3
+GLOBAL (SoundInstallChoice)
 SoundInstallChoice__Field0:
 		.fill   0x80
 SoundInstallChoice__Field1:
@@ -6420,7 +6409,7 @@ SoundInstallChoice__Field2:
 		.fill   0x18
 music_allocated:
 		.long	0x0
-UseCurrentAwe32Soundfont:
+GLOBAL (UseCurrentAwe32Soundfont)
 		.byte	0x0
 GLOBAL (MusicInstalled)
 		.byte	0x0
@@ -6446,22 +6435,24 @@ SongHandle:
 		.long	0x0
 DangerMusicFadeHandle:
 		.long	0x0
-Awe32SoundfontLoaded:
+GLOBAL (Awe32SoundfontLoaded)
 		.byte	0x0
-GLOBAL (DisableLoadMusic)
-		.short  0x0
+GLOBAL (DisableLoadMusic)	/* 0x1E8C79 */
+		.byte	0x0
 ive_got_an_awe32:
 		.byte	0x0
-DangerMusicVolume:
+GLOBAL (DisableDangerMusic)
+		.byte	0x0
+GLOBAL (DangerMusicVolume)
 		.byte	0x0
 DangerMusicFadeActive:
 		.byte	0x0
-DangerMusicAble:
+DangerMusicAble:			/* 0x1E8C7E */
 		.fill   0x6
 
-_MusicInstallChoice:	/* 0x1E8C84 */
+GLOBAL (MusicInstallChoice)	/* 0x1E8C84 */
 		.fill   0x80
-awe32_s1:	/* 0x1e8d04 */
+MusicInstallChoice_str2:	/* 0x1e8d04 */
 		.fill   0x98
 
 data_1e5eac:	/* 0x1e5eac */
@@ -6473,7 +6464,7 @@ data_1e5edc:	/* 0x1e5edc */
 
 /* sound_timer_inf sound_timer[];
  */
-sound_timer:
+sound_timer:	/* 0x1E8D9C */
 		.long	0x0
 data_1e8da0: /* 0x1e8da0 */
 		.fill   0x15
@@ -6481,6 +6472,7 @@ data_1e8db5:
 		.ascii  "\x00\x00\x00"
 data_1e8db8:
 		.fill   0x90
+
 _StreamedSoundAble:	/* 0x1E8E48 */
 		.byte	0x0
 _CDSpeed:	/* 0x1E8E49 */

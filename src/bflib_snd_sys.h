@@ -36,6 +36,12 @@ void FreeAudio(void);
 void SetSoundMasterVolume(long vol);
 void SetMusicMasterVolume(long vol);
 void SetCDVolume(long vol);
+void InitSound(void);
+void InitMusic(void);
+void InitStreamedSound(void);
+void InitAllBullfrogSoundTimers(void);
+
+void prepare_SB16_volumes(void);
 /******************************************************************************/
 #ifdef __cplusplus
 }

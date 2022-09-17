@@ -7,6 +7,8 @@
 
 #include "bfwindows.h"
 #include "bffile.h"
+#include "bflib_snd_sys.h"
+#include "bflib_snd_cda.h"
 #include "oggvorbis.h"
 #include "sound.h"
 #include "sound_util.h"
@@ -40,16 +42,35 @@ SoundPCMDriver *SS_construct_DIG_driver (SoundDriver *driver,
 extern char SoundProgressMessage[256];
 extern long DebugAudio;
 
+extern char FullDIG_INIPath[144];
+extern char FullMDI_INIPath[144];
+extern char SoundDataPath[144];
+extern char SoundDriverPath[144];
+
+extern AudioDriverChoice MusicInstallChoice;
 extern char full_music_data_path[144];
 extern char MusicType[6];
 extern TbBool DisableLoadMusic;
 extern TbBool MusicInstalled;
 extern TbBool MusicAble;
 extern TbBool MusicActive;
+extern TbBool DisableDangerMusic;
 
+extern AudioDriverChoice SoundInstallChoice;
+extern ushort SoundType;
+extern TbBool DisableLoadSounds;
 extern TbBool SoundInstalled;
 extern TbBool SoundAble;
 extern TbBool SoundActive;
+
+extern TbBool CDAble;
+
+extern TbBool UseMultiMediaExtensions;
+extern TbBool AutoScanForSoundHardware;
+extern TbBool StereoSound;
+extern TbBool UseCurrentAwe32Soundfont;
+extern TbBool ive_got_an_sb16;
+extern ulong MaxNumberOfSamples;
 
 static bool		sound_initialised	= false;
 static SoundPCMDriver  *sound_driver		= NULL;
@@ -206,9 +227,77 @@ err:
 
 void InitAudio(AudioInitOptions *audOpts)
 {
+#if 0
     asm volatile (
       "call ASM_InitAudio\n"
         : : "a" (audOpts));
+#endif
+    if (getenv("DEBUG_BF_AUDIO"))
+        DebugAudio = 1;
+
+    sprintf(FullDIG_INIPath, "sound/DIG.INI");
+    sprintf(FullMDI_INIPath, "sound/MDI.INI");
+    strcpy(SoundDataPath, "sound");
+    strcpy(SoundDriverPath, "sound");
+    if (audOpts->IniPath) {
+        sprintf(FullDIG_INIPath, "%s/DIG.INI", audOpts->IniPath);
+        sprintf(FullMDI_INIPath, "%s/MDI.INI", audOpts->IniPath);
+    }
+    if (audOpts->SoundDataPath != NULL) {
+        strcpy(SoundDataPath, audOpts->SoundDataPath);
+    }
+    if (audOpts->SoundDriverPath != NULL) {
+        strcpy(SoundDriverPath, audOpts->SoundDriverPath);
+    }
+
+    MaxNumberOfSamples = audOpts->MaxSamples;
+    SoundType = audOpts->SoundType;
+    if (!audOpts->AutoScan)
+        AutoScanForSoundHardware = 0;
+    if (!audOpts->StereoOption)
+        StereoSound = 0;
+    if (audOpts->DisableDangerMusic == 1)
+        DisableDangerMusic = 1;
+    if (audOpts->DisableLoadSounds == 1)
+        DisableLoadSounds = 1;
+    if (audOpts->DisableLoadMusic == 1)
+        DisableLoadMusic = 1;
+    if (audOpts->UseCurrentAwe32Soundfont == 1)
+        UseCurrentAwe32Soundfont = 1;
+    if (audOpts->UseMultiMediaExtensions == 1)
+        UseMultiMediaExtensions = 1;
+    sprintf(SoundProgressMessage, "BF1  - MA   %d\n", MusicAble);
+    SoundProgressLog(SoundProgressMessage);
+    sprintf(SoundProgressMessage, "BF2  - SA   %d\n", SoundAble);
+    SoundProgressLog(SoundProgressMessage);
+    if (!(audOpts->AbleFlags & 0x01))
+        MusicAble = 0;
+    if (!(audOpts->AbleFlags & 0x02))
+        SoundAble = 0;
+
+    InitSound();
+    InitMusic();
+    InitAllBullfrogSoundTimers();
+
+    if (audOpts->InitStreamedSound == 1)
+        InitStreamedSound();
+
+    if (audOpts->InitRedbookAudio == 1)
+        InitRedbook();
+    else
+        CDAble = 0;
+
+    if (ive_got_an_sb16)
+        prepare_SB16_volumes();
+
+    sprintf(SoundProgressMessage, "BF54 - MA   %d\n", MusicAble);
+    SoundProgressLog(SoundProgressMessage);
+    sprintf(SoundProgressMessage, "BF55 - SA   %d\n", SoundAble);
+    SoundProgressLog(SoundProgressMessage);
+    sprintf(SoundProgressMessage, "BF56 - music driver = %s\n", MusicInstallChoice.str2);
+    SoundProgressLog(SoundProgressMessage);
+    sprintf(SoundProgressMessage, "BF57 - sound driver = %s\n", SoundInstallChoice.str2);
+    SoundProgressLog(SoundProgressMessage);
 }
 
 static void
