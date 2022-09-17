@@ -799,6 +799,7 @@ extern ubyte new_mail;
 extern char net_players[25*5];
 
 bool game_initialise (void);
+void adjust_memory_use(void);
 void game_handle_sdl_events (void);
 void game_update (void);
 int game_hacky_update(void);

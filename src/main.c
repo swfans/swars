@@ -220,28 +220,39 @@ process_options (int *argc, char ***argv)
     }
 }
 
+static void fixup_options(void)
+{
+    if (!is_single_game) {
+        cmdln_param_bcg = 1;
+    }
+    // If game mode was not selected, set it to normal gameplay
+    if (ingame.GameMode == GamM_None) {
+        ingame.GameMode = GamM_Unkn3;
+        ingame.Flags |= 0x08;
+    }
+}
+
 void read_conf_file(void)
 {
     char *curptr;
     TbFileHandle conf_fh;
     unsigned int i, n;
     char ch;
-    int text_len;
     char locbuf[1024];
     char prop_name[44];
     char *conf_fname = "config.ini";
-    char *text_fname = "data/text.dat";
+    int conf_len;
 
     conf_fh = LbFileOpen(conf_fname, Lb_FILE_MODE_READ_ONLY);
     if (conf_fh != INVALID_FILE)
     {
-        text_len = LbFileRead(conf_fh, locbuf, sizeof(locbuf));
+        conf_len = LbFileRead(conf_fh, locbuf, sizeof(locbuf));
         LbFileClose(conf_fh);
     } else {
         LOGERR("Could not open installation config file, going with defaults.");
-        text_len = 0;
+        conf_len = 0;
     }
-    locbuf[text_len] = '\0';
+    locbuf[conf_len] = '\0';
     // Parse the loaded file
     curptr = locbuf;
     while ( *curptr != 26 && *curptr != '\0' )
@@ -315,7 +326,15 @@ void read_conf_file(void)
           curptr++;
         }
     }
-    // Read file with all the language-specific texts
+}
+
+/** Read file with all the language-specific texts.
+ */
+void read_strings_file(void)
+{
+    char *text_fname = "data/text.dat";
+    int text_len;
+
     text_len = LbFileLength(text_fname);
     gui_strings_data = (char *)LbMemoryAlloc(text_len);
     if (gui_strings_data != NULL) {
@@ -344,6 +363,9 @@ main (int argc, char **argv)
         "and Gynvael Coldwind <gynvael@vexillium.org>\n"
         "Web site: http://swars.vexillium.org/\n");
 
+    fixup_options();
+    adjust_memory_use();
+
     if (!game_initialise())
         return 1;
 
@@ -351,6 +373,7 @@ main (int argc, char **argv)
     display_set_lowres_stretch(cmdln_lores_stretch);
 
     read_conf_file();
+    read_strings_file();
     game_setup();
 
     game_process();

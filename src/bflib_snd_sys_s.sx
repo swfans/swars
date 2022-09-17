@@ -33,7 +33,7 @@
 .global EXPORT_SYMBOL(XXX);
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (InitAudio_)
+GLOBAL_FUNC (ASM_InitAudio)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx

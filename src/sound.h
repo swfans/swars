@@ -16,12 +16,32 @@ enum SoundDriverType
 };
 
 
+typedef struct AudioInitOptions AudioInitOptions;
 typedef struct SoundDriver SoundDriver;
 typedef struct SoundDriverCallParameters SoundDriverCallParameters;
 typedef struct SoundIOParameters SoundIOParameters;
 typedef struct SoundPCMDriver SoundPCMDriver;
 typedef struct SoundSample SoundSample;
 
+struct AudioInitOptions {
+  const char *IniPath;
+  const char *SoundDriverPath;
+  const char *SoundDataPath;
+  ushort SoundType;
+  ushort AbleFlags;
+  short SelectedWin95MidiDevice;
+  short SelectedWin95WaveDevice;
+  ubyte MaxSamples;
+  ubyte StereoOption;
+  ubyte AutoScan;
+  ubyte DisableDangerMusic;
+  ubyte DisableLoadSounds;
+  ubyte DisableLoadMusic;
+  ubyte UseCurrentAwe32Soundfont;
+  ubyte UseMultiMediaExtensions;
+  ubyte InitStreamedSound;
+  ubyte InitRedbookAudio;
+};
 
 struct SoundDriver                   // Handle to driver
 {
@@ -128,6 +148,8 @@ struct SoundDriverCallParameters
 extern short startscr_samplevol;
 extern short startscr_midivol;
 extern short startscr_cdvolume;
+
+void InitAudio(AudioInitOptions *audOpts);
 
 bool sound_initialise (void);
 void sound_finalise (void);

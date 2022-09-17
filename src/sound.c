@@ -183,6 +183,13 @@ err:
   return false;
 }
 
+void InitAudio(AudioInitOptions *audOpts)
+{
+    asm volatile (
+      "call ASM_InitAudio\n"
+        : : "a" (audOpts));
+}
+
 static void
 destroy_sources (void)
 {

@@ -280,32 +280,10 @@ void debug_trace_place(int place)
     LOGDBG("reached place %d", place);
 }
 
-bool
-game_initialise(void)
+/** Decrease the size of some arrays to reduce memory usage.
+ */
+void adjust_memory_use(void)
 {
-    TbResult ret;
-    ret = LbBaseInitialise();
-    if (ret != Lb_SUCCESS)
-    {
-        LOGERR("Bullfrog Library initialization failed");
-        return false;
-    }
-
-#ifdef __unix__
-    /* clean up after SDL messing around where it shouldn't */
-    unix_restore_signal_handlers();
-#endif
-
-    LbSetUserResourceMapping(SWResourceMapping);
-    LbSetTitle(PACKAGE_NAME);
-    LbSetIcon(1);
-
-    sound_initialise();
-
-    // Make sure file names are properly converted before opening
-    setup_file_names();
-
-    // Decrease the size of some arrays to reduce memory usage
     if (ingame.LowerMemoryUse == 1)
     {
         mem_game[35].N = 1; // bez_edit
@@ -332,15 +310,29 @@ game_initialise(void)
         engine_mem_alloc_size = 2700000;
         game_perspective = (mem_game[5].N >> 8) & 0xff; // = 5
     }
+}
 
-    if (!is_single_game) {
-        cmdln_param_bcg = 1;
+bool game_initialise(void)
+{
+    TbResult ret;
+    ret = LbBaseInitialise();
+    if (ret != Lb_SUCCESS)
+    {
+        LOGERR("Bullfrog Library initialization failed");
+        return false;
     }
-    // If game mode was not selected, set it to normal gameplay
-    if (ingame.GameMode == GamM_None) {
-        ingame.GameMode = GamM_Unkn3;
-        ingame.Flags |= 0x08;
-    }
+
+#ifdef __unix__
+    /* clean up after SDL messing around where it shouldn't */
+    unix_restore_signal_handlers();
+#endif
+
+    LbSetUserResourceMapping(SWResourceMapping);
+    LbSetTitle(PACKAGE_NAME);
+    LbSetIcon(1);
+
+    // Make sure file names are properly converted before opening
+    setup_file_names();
 
     return true;
 }
@@ -1169,6 +1161,7 @@ void BAT_unknsub_20(int a1, int a2, int a3, int a4, unsigned long a5)
 void setup_host(void)
 {
     char fname[DISKPATH_SIZE];
+
     BAT_unknsub_20(0, 0, 0, 0, unkn_buffer_04 + 41024);
     set_smack_malloc(ASM_smack_malloc);
     set_smack_free(ASM_smack_mfree);
@@ -1206,9 +1199,12 @@ void setup_host(void)
     game_panel = game_panel_lo;
     LbGhostTableGenerate(display_palette, 50, "data/synghost.tab");
     init_memory(mem_game);
+
+    sound_initialise();
     init_syndwars();
     LoadSounds(0);
     LoadMusic(0);
+
     setup_host_sub6();
     if (pktrec_mode == PktR_RECORD)
     {
