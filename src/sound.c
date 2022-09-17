@@ -6,6 +6,7 @@
 #include OPENAL_AL_H
 
 #include "bfwindows.h"
+#include "bffile.h"
 #include "oggvorbis.h"
 #include "sound.h"
 #include "sound_util.h"
@@ -36,6 +37,20 @@ void SS_serve (SoundPCMDriver *driver);
 SoundPCMDriver *SS_construct_DIG_driver (SoundDriver *driver,
         			       const SoundIOParameters *iop);
 
+extern char SoundProgressMessage[256];
+extern long DebugAudio;
+
+extern char full_music_data_path[144];
+extern char MusicType[6];
+extern TbBool DisableLoadMusic;
+extern TbBool MusicInstalled;
+extern TbBool MusicAble;
+extern TbBool MusicActive;
+
+extern TbBool SoundInstalled;
+extern TbBool SoundAble;
+extern TbBool SoundActive;
+
 static bool		sound_initialised	= false;
 static SoundPCMDriver  *sound_driver		= NULL;
 static ALCdevice       *sound_device		= NULL;
@@ -65,6 +80,12 @@ check_alc_line (const char *source, int line)
     }
 
   return true;
+}
+
+void SoundProgressLog(const char *msg)
+{
+    if (DebugAudio)
+        printf(msg);
 }
 
 static void
@@ -565,4 +586,155 @@ void stop_sample_using_heap(struct _SEQUENCE *source, ulong sample_number)
     asm volatile (
       "call ASM_stop_sample_using_heap\n"
         : : "a" (source), "d" (sample_number));
+}
+
+TbBool GetSoundInstalled(void)
+{
+    return SoundInstalled;
+}
+
+TbBool GetSoundAble(void)
+{
+    return SoundAble;
+}
+
+TbBool GetSoundActive(void)
+{
+    return SoundActive;
+}
+
+TbBool GetMusicAble(void)
+{
+    return MusicAble;
+}
+
+void StopMusicIfActive(void)
+{
+    if (!MusicInstalled || !MusicAble)
+        return;
+    if (MusicActive)
+    {
+        StopMusic();
+        MusicActive = 0;
+    }
+}
+
+void StopMusic(void)
+{
+    asm volatile ("call ASM_StopMusic\n"
+        :  :  : "eax" );
+}
+
+//TODO better name?
+void fill_ail_sample_ids(void)
+{
+    asm volatile ("call ASM_fill_ail_sample_ids\n"
+        :  :  : "eax" );
+}
+
+int LoadSounds(unsigned char a1)
+{
+    int ret;
+    asm volatile ("call ASM_LoadSounds\n"
+        : "=r" (ret) : "a" (a1));
+    return ret;
+}
+
+ubyte load_music_bank(TbFileHandle fh, ubyte bankId)
+{
+    ubyte ret;
+    asm volatile ("call ASM_load_music_bank\n"
+        : "=r" (ret) : "a" (fh),  "d" (bankId));
+    return ret;
+}
+
+int LoadMusic(ushort bankNo)
+{
+#if 0
+    int ret;
+    asm volatile ("call ASM_LoadMusic\n"
+        : "=r" (ret) : "a" (a1));
+    return ret;
+#endif
+    TbFileHandle fh;
+    long fsize;
+    ulong nbanks_offs;
+    ushort nbanks[4];
+    ubyte bankId;
+
+    sprintf(SoundProgressMessage, "BF48 - load music bank %d\n", bankNo);
+    SoundProgressLog(SoundProgressMessage);
+
+    if (!MusicInstalled) {
+        sprintf(SoundProgressMessage, "BF53 - load music bank - failed - music not installed\n");
+        SoundProgressLog(SoundProgressMessage);
+        return 1;
+    }
+    if (!MusicAble) {
+        sprintf(SoundProgressMessage, "BF53 - load music bank - failed - MusicAble = 0\n");
+        SoundProgressLog(SoundProgressMessage);
+        return 1;
+    }
+    if (DisableLoadMusic) {
+        sprintf(SoundProgressMessage, "BF53 - load music bank - failed - LoadMusic Disabled = 0\n");
+        SoundProgressLog(SoundProgressMessage);
+        return 1;
+    }
+
+    StopMusic();
+    fh = LbFileOpen(full_music_data_path, Lb_FILE_MODE_READ_ONLY);
+    if (fh == INVALID_FILE) {
+        sprintf(SoundProgressMessage, "BF52 - load music bank - failed - no music.dat\n");
+        SoundProgressLog(SoundProgressMessage);
+        return 1;
+    }
+
+    LbFileSeek(fh, 0, Lb_FILE_SEEK_END);
+    fsize = LbFilePosition(fh);
+
+    LbFileSeek(fh, fsize - 4, Lb_FILE_SEEK_BEGINNING);
+    LbFileRead(fh, &nbanks_offs, 4);
+    LbFileSeek(fh, nbanks_offs, Lb_FILE_SEEK_BEGINNING);
+    LbFileRead(fh, nbanks, 8);
+
+    switch (MusicType[0])
+    {
+    case 'G':
+    case 'g':
+    default:
+        bankId = 0;
+        break;
+    case 'R':
+    case 'r':
+        bankId = 1;
+        break;
+    case 'F':
+    case 'f':
+        bankId = 2;
+        break;
+    case 'W':
+    case 'w':
+        bankId = 3;
+        break;
+    }
+
+    if (bankNo + 1 > nbanks[bankId]) {
+        LbFileClose(fh);
+        sprintf(SoundProgressMessage, "BF49 - load music bank - failed - bank not found\n");
+        SoundProgressLog(SoundProgressMessage);
+        return 1;
+    }
+
+    LbFileSeek(fh, bankNo << 6, 1u);
+    if (!load_music_bank(fh, bankId)) {
+        LbFileClose(fh);
+        sprintf(SoundProgressMessage, "BF50 - load music bank - failed - cannot allocate\n");
+        SoundProgressLog(SoundProgressMessage);
+        return 1;
+    }
+
+    LbFileClose(fh);
+    sprintf(SoundProgressMessage, "BF51 - load music bank - passed\n");
+    SoundProgressLog(SoundProgressMessage);
+    return 0;
 }

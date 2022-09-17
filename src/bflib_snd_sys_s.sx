@@ -491,7 +491,7 @@ cbCDCountdown:
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (GetCDAble_)
+GLOBAL_FUNC (ASM_GetCDAble)
 /*----------------------------------------------------------------*/
 		mov    CDAble,%al
 		ret
@@ -502,10 +502,10 @@ GLOBAL_FUNC (InitRedbook_)
 /*----------------------------------------------------------------*/
 		push   %ecx
 		push   %edx
-		call   GetSoundAble_
+		call   ac_GetSoundAble
 		test   %al,%al
 		jne    jump_ebce9
-		call   GetMusicAble_
+		call   ac_GetMusicAble
 		test   %al,%al
 		jne    jump_ebce9
 		call   ail_startup
@@ -681,7 +681,7 @@ GLOBAL_FUNC (FreeCD_)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (StopMusicIfActive_)
+GLOBAL_FUNC (ASM_StopMusicIfActive)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		cmpb   $0x0,EXPORT_SYMBOL(MusicInstalled)
@@ -699,28 +699,28 @@ GLOBAL_FUNC (StopMusicIfActive_)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (GetSoundAble_)
+GLOBAL_FUNC (ASM_GetSoundAble)
 /*----------------------------------------------------------------*/
 		mov    SoundAble,%al
 		ret
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (GetMusicAble_)
+GLOBAL_FUNC (ASM_GetMusicAble)
 /*----------------------------------------------------------------*/
 		mov    EXPORT_SYMBOL(MusicAble),%al
 		ret
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (GetSoundActive_)
+GLOBAL_FUNC (ASM_GetSoundActive)
 /*----------------------------------------------------------------*/
 		mov    SoundActive,%al
 		ret
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (GetSoundInstalled_)
+GLOBAL_FUNC (ASM_GetSoundInstalled)
 /*----------------------------------------------------------------*/
 		mov    SoundInstalled,%al
 		ret
@@ -1913,10 +1913,10 @@ GLOBAL_FUNC (ASM_FreeAudio)
 		cmpb   $0x0,CDAble
 		je     jump_ed4c7
 		call   FreeCD_
-		call   GetSoundAble_
+		call   ac_GetSoundAble
 		test   %al,%al
 		jne    jump_ed4c7
-		call   GetMusicAble_
+		call   ac_GetMusicAble
 		test   %al,%al
 		jne    jump_ed4c7
 		call   ail_shutdown
@@ -6207,7 +6207,7 @@ GLOBAL (SoundAble)	/* 159304 */
 		.byte	0x1
 SixteenBit:
 		.byte	0x1
-SoundActive:
+GLOBAL (SoundActive)
 		.byte	0x1
 AutoScanForSoundHardware:
 		.byte	0x1
@@ -6224,7 +6224,7 @@ CurrentMusicMasterVolume:
 		.long	0x7f
 GLOBAL (MusicAble)
 		.byte	0x1
-MusicActive:
+GLOBAL (MusicActive)
 		.byte	0x1
 CurrentDangerMusicFadeDirection:
 		.byte	0x1
@@ -6380,9 +6380,9 @@ sample_id:
 		.fill   0x320
 end_sample_id:
 		.long	0x0
-SoundInstalled:
+GLOBAL (SoundInstalled)
 		.byte	0x0
-DisableLoadSounds:
+GLOBAL (DisableLoadSounds)
 		.byte	0x0
 NumberOfSamples:
 		.short  0x0
@@ -6392,7 +6392,7 @@ EndSfxs:
 		.long	0x0
 SfxData:
 		.long	0x0
-SoundType:
+GLOBAL (SoundType)
 		.short  0x0
 		.fill   0x2
 SoundDriver:

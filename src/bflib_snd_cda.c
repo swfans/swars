@@ -32,6 +32,11 @@ ushort GetCDFirst(void)
   return cd_first;
 }
 
+TbBool GetCDAble(void)
+{
+  return CDAble;
+}
+
 ushort cd_stop(ushort a1)
 {
     ushort ret;
