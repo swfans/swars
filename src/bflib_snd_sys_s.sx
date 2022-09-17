@@ -2628,6 +2628,8 @@ cb_get_trigger_info:	/* 0x0F0340 */
 
 
 /*----------------------------------------------------------------*/
+/* void StartMusic(int songNo, ubyte volume)
+ */
 GLOBAL_FUNC (StartMusic_)
 /*----------------------------------------------------------------*/
 		push   %ebx

@@ -906,7 +906,7 @@ GLOBAL_FUNC (AIL_call_driver)	/* 101f00 */
 		push   %edi
 		mov    0x20(%esp),%ebp
 		push   %ebp
-		call   ac_sound_call_driver
+		call   ac_AIL2OAL_API_call_driver
 		mov    %eax,%ebx
 		mov    AIL_debug,%eax
 		add    $0x10,%esp
@@ -2166,7 +2166,7 @@ GLOBAL_FUNC (AIL_install_DIG_INI)	/* 102f00 */
 		add    $0xc,%esp
 	jump_102f60:
 		push   %ebx
-		call   ac_sound_install_dig_ini
+		call   ac_AIL2OAL_API_install_DIG_INI
 		mov    %eax,%ebx
 		mov    AIL_debug,%eax
 		add    $0x4,%esp
@@ -2267,7 +2267,7 @@ GLOBAL_FUNC (AIL_install_DIG_driver_file)	/* 103010 */
 		mov    0x18(%esp),%edx
 		push   %edx
 		push   %ebx
-		call   ac_sound_install_dig_driver_file
+		call   ac_AIL2OAL_API_install_DIG_driver_file
 		mov    AIL_debug,%ecx
 		mov    %eax,%ebx
 		add    $0x8,%esp
@@ -2563,7 +2563,7 @@ GLOBAL_FUNC (AIL_init_sample)	/* 103460 */
 	jump_1034c0:
 		mov    0x10(%esp),%eax
 		push   %eax
-		call   ailimpl_init_sample
+		call   AIL_API_init_sample
 		mov    AIL_indent,%edx
 		dec    %edx
 		add    $0x4,%esp
@@ -2841,7 +2841,7 @@ GLOBAL_FUNC (AIL_start_sample)	/* 103740 */
 	jump_1037a0:
 		mov    0x10(%esp),%eax
 		push   %eax
-		call   ailimpl_start_sample
+		call   AIL_API_start_sample
 		mov    AIL_indent,%edx
 		dec    %edx
 		add    $0x4,%esp
@@ -3112,7 +3112,7 @@ GLOBAL_FUNC (ail_set_sample_loop_count)	/* 103af0 */
 		push   %edx
 		mov    0x14(%esp),%ebx
 		push   %ebx
-		call   ailimpl_set_sample_loop_count
+		call   AIL_API_set_sample_loop_count
 		mov    AIL_indent,%ecx
 		dec    %ecx
 		add    $0x8,%esp
@@ -3322,7 +3322,7 @@ GLOBAL_FUNC (ail_minimum_sample_buffer_size)	/* 104390 */
 		mov    0x1c(%esp),%esi
 		push   %esi
 		push   %ebx
-		call   ailimpl_minimum_sample_buffer_size
+		call   AIL_API_minimum_sample_buffer_size
 		mov    AIL_debug,%edi
 		mov    %eax,%ebx
 		add    $0xc,%esp
@@ -3418,7 +3418,7 @@ GLOBAL_FUNC (AIL_sample_buffer_ready)	/* 1044b0 */
 		add    $0xc,%esp
 	jump_104510:
 		push   %ebx
-		call   ailimpl_sample_buffer_ready
+		call   AIL_API_sample_buffer_ready
 		mov    %eax,%ebx
 		mov    AIL_debug,%eax
 		add    $0x4,%esp
@@ -3844,7 +3844,7 @@ GLOBAL_FUNC (ail_install_mdi_ini)	/* 104f50 */
 		add    $0xc,%esp
 	jump_104fb0:
 		push   %ebx
-		call   ailimpl_install_mdi_ini
+		call   AIL_API_install_MDI_INI
 		mov    %eax,%ebx
 		mov    AIL_debug,%eax
 		add    $0x4,%esp
@@ -8520,7 +8520,7 @@ GLOBAL_FUNC (SS_construct_DIG_driver)	/* 113110 */
 		jne    jump_113289
 		mov    0x0(%ebp),%ecx
 		push   %ecx
-		call   ac_sound_get_io_environment
+		call   ac_AIL2OAL_get_IO_environment
 		mov    %eax,%ebx
 		add    $0x4,%esp
 		test   %eax,%eax
@@ -9031,7 +9031,7 @@ AIL_API_install_DIG_driver_file:	/* 113710 */
 
 
 /*----------------------------------------------------------------*/
-AIL_API_install_DIG_INI:	/* 113800 */
+AIL_API_install_DIG_INI:	/* 0x113800 */
 /*----------------------------------------------------------------*/
 		push   %esi
 		push   %edi
@@ -9148,7 +9148,7 @@ AIL_API_release_sample_handle:
 
 
 /*----------------------------------------------------------------*/
-ailimpl_init_sample:	/* 113940 */
+AIL_API_init_sample:	/* 113940 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		mov    0x8(%esp),%eax
@@ -9294,7 +9294,7 @@ AIL_API_set_sample_pan:
 
 
 /*----------------------------------------------------------------*/
-ailimpl_set_sample_loop_count:	/* 113b60 */
+AIL_API_set_sample_loop_count:	/* 113b60 */
 /*----------------------------------------------------------------*/
 		mov    0x4(%esp),%eax
 		test   %eax,%eax
@@ -9306,7 +9306,7 @@ ailimpl_set_sample_loop_count:	/* 113b60 */
 
 
 /*----------------------------------------------------------------*/
-ailimpl_start_sample:	/* 113b70 */
+AIL_API_start_sample:	/* 0x113b70 */
 /*----------------------------------------------------------------*/
 		push   %esi
 		mov    0x8(%esp),%eax
@@ -9451,7 +9451,7 @@ vtable_113d48:
 
 
 /*----------------------------------------------------------------*/
-ailimpl_minimum_sample_buffer_size:	/* 113d60 */
+AIL_API_minimum_sample_buffer_size:	/* 113d60 */
 /*----------------------------------------------------------------*/
 		mov    $2048,%eax /* XXX: sound */
 		ret
@@ -9562,7 +9562,7 @@ AIL_API_load_sample_buffer:
 
 
 /*----------------------------------------------------------------*/
-ailimpl_sample_buffer_ready:	/* 113e60 */
+AIL_API_sample_buffer_ready:	/* 113e60 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		mov    0x8(%esp),%eax
@@ -12964,7 +12964,7 @@ _AIL_API_install_MDI_driver_file:	/* 0x1164F0 */
 
 
 /*----------------------------------------------------------------*/
-ailimpl_install_mdi_ini:	/* 1165e0 */
+AIL_API_install_MDI_INI:	/* 1165e0 */
 /*----------------------------------------------------------------*/
 		push   %esi
 		push   %edi
