@@ -17,6 +17,7 @@
 #include "bfwindows.h"
 #include "bfpng.h"
 #include "bfutility.h"
+#include "bfsvaribl.h"
 #include "poly.h"
 #include "svesa.h"
 #include "swlog.h"

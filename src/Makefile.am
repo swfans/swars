@@ -33,6 +33,8 @@ swars_SOURCES = \
 	../bfsoundlib/src/aildebug.c \
 	../bfsoundlib/include/mssdig.h \
 	../bfsoundlib/src/mssdig.c \
+	../bfsoundlib/include/bfsvaribl.h \
+	../bfsoundlib/src/variable.c \
 	config.h \
 	display.c \
 	display.h \

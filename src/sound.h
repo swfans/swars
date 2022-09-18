@@ -53,11 +53,7 @@ extern short startscr_midivol;
 extern short startscr_cdvolume;
 
 void InitAudio(AudioInitOptions *audOpts);
-TbBool GetSoundInstalled(void);
-TbBool GetSoundAble(void);
-TbBool GetSoundActive(void);
 
-TbBool GetMusicAble(void);
 void StopMusicIfActive(void);
 void StopMusic(void);
 int LoadMusic(ushort bankNo);
