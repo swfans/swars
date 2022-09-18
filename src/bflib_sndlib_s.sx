@@ -4004,7 +4004,7 @@ GLOBAL_FUNC (ASM_AIL_install_MDI_driver_file)	/* 0x105060 */
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (ail_uninstall_mdi_driver)	/* 105180 */
+GLOBAL_FUNC (ASM_AIL_uninstall_MDI_driver)	/* 0x105180 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %edi
@@ -4043,7 +4043,7 @@ GLOBAL_FUNC (ail_uninstall_mdi_driver)	/* 105180 */
 	jump_1051e0:
 		mov    0x10(%esp),%eax
 		push   %eax
-		call   _AIL_API_uninstall_MDI_driver
+		call   ASM_AIL_API_uninstall_MDI_driver
 		mov    AIL_indent,%edx
 		dec    %edx
 		add    $0x4,%esp
@@ -13009,7 +13009,7 @@ AIL_API_install_MDI_INI:	/* 1165e0 */
 
 
 /*----------------------------------------------------------------*/
-_AIL_API_uninstall_MDI_driver:	/* 0x116660 */
+GLOBAL_FUNC (ASM_AIL_API_uninstall_MDI_driver)	/* 0x116660 */
 /*----------------------------------------------------------------*/
 		mov    0x4(%esp),%eax
 		mov    (%eax),%edx

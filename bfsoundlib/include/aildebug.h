@@ -35,6 +35,8 @@ uint32_t AIL_sample_status(SNDSAMPLE *s);
 
 MDI_DRIVER *AIL_install_MDI_driver_file(char *filename, SNDCARD_IO_PARMS *iop);
 
+void AIL_uninstall_MDI_driver(MDI_DRIVER *mdidrv);
+
 /******************************************************************************/
 #ifdef __cplusplus
 };

@@ -100,4 +100,17 @@ MDI_DRIVER *AIL_install_MDI_driver_file(char *filename, SNDCARD_IO_PARMS *iop)
     return mdidrv;
 }
 
+void AIL_uninstall_MDI_driver(MDI_DRIVER *mdidrv)
+{
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s(0x%p)\n", __func__, mdidrv);
+
+    AIL2OAL_API_uninstall_MDI_driver(mdidrv);
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Finished\n");
+    AIL_indent--;
+}
+
 /******************************************************************************/

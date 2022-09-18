@@ -3912,7 +3912,7 @@ GLOBAL_FUNC (ASM_InitMusic)
 		je     jump_1002d7
 		mov    MusicDriver,%edi
 		push   %edi
-		call   ail_uninstall_mdi_driver
+		call   ac_AIL_uninstall_MDI_driver
 		mov    SoundAble,%bl
 		add    $0x4,%esp
 		test   %bl,%bl
@@ -4016,7 +4016,7 @@ GLOBAL_FUNC (ASM_InitMusic)
 	jump_100401:
 		mov    MusicDriver,%esi
 		push   %esi
-		call   ail_uninstall_mdi_driver
+		call   ac_AIL_uninstall_MDI_driver
 		mov    SoundAble,%bh
 		add    $0x4,%esp
 		test   %bh,%bh

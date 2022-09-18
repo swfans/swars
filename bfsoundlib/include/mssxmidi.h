@@ -28,6 +28,7 @@ extern "C" {
 /******************************************************************************/
 
 MDI_DRIVER *AIL2OAL_API_install_MDI_driver_file(char *filename, SNDCARD_IO_PARMS *iop);
+void AIL2OAL_API_uninstall_MDI_driver(MDI_DRIVER *mdidrv);
 
 /******************************************************************************/
 #ifdef __cplusplus
