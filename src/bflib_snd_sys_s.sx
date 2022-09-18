@@ -3611,7 +3611,7 @@ GLOBAL_FUNC (ASM_InitMusic)
 		push   %eax
 		lea    0x13c(%esp),%eax
 		push   %eax
-		call   ail_install_mdi_driver_file
+		call   ac_AIL_install_MDI_driver_file
 		add    $0x8,%esp
 		mov    %eax,MusicDriver
 		test   %eax,%eax

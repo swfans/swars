@@ -33,6 +33,7 @@ extern "C" {
 typedef struct SNDCARD_IO_PARMS SNDCARD_IO_PARMS;
 typedef struct AIL_DRIVER AIL_DRIVER;
 typedef struct DIG_DRIVER DIG_DRIVER;
+typedef struct MDI_DRIVER MDI_DRIVER;
 typedef struct SNDSAMPLE SNDSAMPLE;
 typedef struct VDI_HDR VDI_HDR;
 typedef struct VDI_CALL VDI_CALL;

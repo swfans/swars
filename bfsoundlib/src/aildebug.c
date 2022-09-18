@@ -25,6 +25,7 @@
 #include "aildebug.h"
 #include "ail.h"
 #include "ailss.h"
+#include "mssxmidi.h"
 /******************************************************************************/
 extern uint16_t AIL_debug;
 extern uint16_t AIL_sys_debug;
@@ -80,6 +81,23 @@ uint32_t AIL_sample_status(SNDSAMPLE *s)
     AIL_indent--;
 
     return status;
+}
+
+MDI_DRIVER *AIL_install_MDI_driver_file(char *filename, SNDCARD_IO_PARMS *iop)
+{
+    MDI_DRIVER *mdidrv;
+
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s(%s,0x%p)\n", __func__, filename, iop);
+
+    mdidrv = AIL2OAL_API_install_MDI_driver_file(filename, iop);
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Result = 0x%p\n", mdidrv);
+    AIL_indent--;
+
+    return mdidrv;
 }
 
 /******************************************************************************/

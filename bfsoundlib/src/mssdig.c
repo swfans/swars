@@ -2,7 +2,7 @@
 // Bullfrog Sound Library - for use to remake classic games like
 // Syndicate Wars, Magic Carpet, Genewars or Dungeon Keeper.
 /******************************************************************************/
-/** @file aila.c
+/** @file mssdig.c
  *     OpenAL based reimplementation of MSS API.
  * @par Purpose:
  *     SS functions from MSS API.
