@@ -11,6 +11,7 @@
 #include "bflib_snd_cda.h"
 #include "oggvorbis.h"
 #include "sound.h"
+#include "ailss.h"
 #include "sound_util.h"
 #include "util.h"
 
@@ -18,7 +19,7 @@
 #define SOUND_MAX_SOURCES     64
 #define SOUND_BUFFERS_PER_SRC 3
 #define SOUND_MAX_BUFFERS     (SOUND_MAX_SOURCES * SOUND_BUFFERS_PER_SRC \
-        		       + SOUND_MUSIC_BUFFERS)
+                       + SOUND_MUSIC_BUFFERS)
 #define SOUND_MAX_BUFSIZE     2048
 
 
@@ -27,7 +28,7 @@
 
 struct SourceDescriptor
 {
-  SoundSample *sample;
+  SNDSAMPLE *sample;
   ALuint       name;
   size_t       buffers_used;
 };
@@ -35,9 +36,9 @@ struct SourceDescriptor
 typedef struct SourceDescriptor SourceDescriptor;
 
 
-void SS_serve (SoundPCMDriver *driver);
-SoundPCMDriver *SS_construct_DIG_driver (SoundDriver *driver,
-        			       const SoundIOParameters *iop);
+void SS_serve (DIG_DRIVER *driver);
+DIG_DRIVER *SS_construct_DIG_driver (AIL_DRIVER *driver,
+                           const SNDCARD_IO_PARMS *iop);
 
 extern char SoundProgressMessage[256];
 extern long DebugAudio;
@@ -72,15 +73,15 @@ extern TbBool UseCurrentAwe32Soundfont;
 extern TbBool ive_got_an_sb16;
 extern ulong MaxNumberOfSamples;
 
-static bool		sound_initialised	= false;
-static SoundPCMDriver  *sound_driver		= NULL;
-static ALCdevice       *sound_device		= NULL;
-static ALCcontext      *sound_context		= NULL;
-static size_t		sound_source_count	= 0;
-static size_t		sound_free_buffer_count	= 0;
-static ALuint		sound_free_buffers[SOUND_MAX_BUFFERS];
+bool sound_initialised    = false;
+static DIG_DRIVER  *sound_driver        = NULL;
+static ALCdevice       *sound_device        = NULL;
+static ALCcontext      *sound_context        = NULL;
+size_t sound_source_count    = 0;
+static size_t        sound_free_buffer_count    = 0;
+static ALuint        sound_free_buffers[SOUND_MAX_BUFFERS];
 static SourceDescriptor sound_sources[SOUND_MAX_SOURCES];
-static SoundSample	sound_samples[SOUND_MAX_SOURCES];
+SNDSAMPLE sound_samples[SOUND_MAX_SOURCES];
 static OggVorbisStream  sound_music_stream;
 
 
@@ -114,8 +115,8 @@ initialise_descriptor (size_t index, ALuint name)
 {
   SourceDescriptor *desc = &sound_sources[index];
 
-  desc->sample	     = &sound_samples[index];
-  desc->name	     = name;
+  desc->sample         = &sound_samples[index];
+  desc->name         = name;
   desc->buffers_used = 0;
 }
 
@@ -370,7 +371,7 @@ sound_pause_music (void)
 }
 
 static ALenum
-get_pcm_format (SoundSample *s)
+get_pcm_format (SNDSAMPLE *s)
 {
   switch (s->format)
     {
@@ -384,13 +385,13 @@ get_pcm_format (SoundSample *s)
 }
 
 static void
-queue_source_buffers (SoundPCMDriver *pcmdrv, SourceDescriptor *src)
+queue_source_buffers (DIG_DRIVER *digdrv, SourceDescriptor *src)
 {
   size_t len, total_len;
   void *data;
   float x_pos;
   ALint state;
-  SoundSample *s;
+  SNDSAMPLE *s;
   ALuint buf = 0;
 
   if (src->buffers_used >= SOUND_BUFFERS_PER_SRC)
@@ -434,8 +435,8 @@ queue_source_buffers (SoundPCMDriver *pcmdrv, SourceDescriptor *src)
         goto err;
 
       alSourcef (src->name, AL_GAIN,
-        	 (s->volume * (1.f / 127.f)
-        	  * (pcmdrv->master_volume * (1.f / 127.f))));
+             (s->volume * (1.f / 127.f)
+              * (digdrv->master_volume * (1.f / 127.f))));
       if (!check_al ("alSourcef (AL_GAIN)"))
         goto err;
 
@@ -476,7 +477,7 @@ err:
 static void
 unqueue_source_buffers (SourceDescriptor *src)
 {
-  SoundSample *s;
+  SNDSAMPLE *s;
 
   if (src->buffers_used == 0)
     return;
@@ -485,8 +486,8 @@ unqueue_source_buffers (SourceDescriptor *src)
 
   src->buffers_used -=
     sound_unqueue_buffers (src->name,
-        		   (SoundNameCallback) push_free_buffer,
-        		   NULL);
+                   (SoundNameCallback) push_free_buffer,
+                   NULL);
 
   if (src->buffers_used > 0
       || s->pos[s->current_buffer] < s->len[s->current_buffer]
@@ -506,15 +507,15 @@ TbBool sound_update(void)
 {
   int32_t n;
   SourceDescriptor *src;
-  SoundSample *s;
-  SoundPCMDriver *pcmdrv = sound_driver;
+  SNDSAMPLE *s;
+  DIG_DRIVER *digdrv = sound_driver;
 
   if (!sound_initialised || sound_driver == NULL)
     return false;
 
-  pcmdrv->n_active_samples = 0;
+  digdrv->n_active_samples = 0;
 
-  for (n = 0; n < pcmdrv->n_samples; n++)
+  for (n = 0; n < digdrv->n_samples; n++)
     {
       src = &sound_sources[n];
       s = src->sample;
@@ -536,9 +537,9 @@ TbBool sound_update(void)
       if (s->status != 4)
         continue;
 
-      pcmdrv->n_active_samples++;
+      digdrv->n_active_samples++;
 
-      queue_source_buffers (pcmdrv, src);
+      queue_source_buffers (digdrv, src);
     }
 
 #if 0
@@ -551,7 +552,7 @@ TbBool sound_update(void)
 
       cnt++;
 
-      if (pcmdrv->n_active_samples > 0)
+      if (digdrv->n_active_samples > 0)
         {
           uint32_t ticks;
 
@@ -562,71 +563,19 @@ TbBool sound_update(void)
 #endif
 
   ogg_vorbis_stream_set_gain (&sound_music_stream,
-        		      startscr_cdvolume * (1.f / 322.f));
+                      startscr_cdvolume * (1.f / 322.f));
   ogg_vorbis_stream_update (&sound_music_stream);
   return true;
 }
 
-SoundPCMDriver *
-AIL2OAL_API_install_DIG_driver_file (const char *fname,
-        		       const SoundIOParameters *iop)
-{
-  SoundPCMDriver *pcmdrv;
-  SoundDriver *drv;
-  int32_t n;
-
-  if (!sound_initialised)
-    return NULL;
-
-  drv	 = xcalloc (sizeof (*drv));
-  pcmdrv = xcalloc (sizeof (*pcmdrv));
-
-  pcmdrv->n_samples	      = sound_source_count;
-  pcmdrv->buffer_flag	      = xcalloc (sizeof (int16_t));
-  pcmdrv->build_buffer	      = xcalloc (4 * pcmdrv->n_samples);
-  pcmdrv->build_size          = 4 * pcmdrv->n_samples;
-  pcmdrv->bytes_per_channel   = 2;
-  pcmdrv->channels_per_sample = 2;
-  pcmdrv->channels_per_buffer = 2;
-  pcmdrv->drvr		      = drv;
-  pcmdrv->hw_format	      = 3;
-  pcmdrv->master_volume	      = 127;
-  pcmdrv->playing	      = 1;
-  pcmdrv->DMA_rate	      = 44100;
-  pcmdrv->half_buffer_size    = 2048;
-  pcmdrv->samples	      = sound_samples;
-
-  assert (sizeof (SoundSample) == 0x894);
-
-#if 0
-  pcmdrv->timer = timer_register_callback ((TimerCallback) update_sound);
-  timer_set_user_data (pcmdrv->timer, pcmdrv);
-
-  pcmdrv->timer = timer_register_callback ((TimerCallback) &SS_serve);
-  timer_set_user_data (pcmdrv->timer, pcmdrv);
-#endif
-
-  for (n = 0; n < pcmdrv->n_samples; n++)
-    {
-      pcmdrv->samples[n].driver = drv;
-      pcmdrv->samples[n].status = 1;
-    }
-
-  drv->descriptor = pcmdrv;
-  drv->initialized = 1;
-  drv->type = 0;
-
-  return pcmdrv;
-}
-
 int32_t
-AIL2OAL_API_install_DIG_INI(SoundPCMDriver **pcmdrv)
+AIL2OAL_API_install_DIG_INI(DIG_DRIVER **digdrv)
 {
   if (sound_driver != NULL)
     return -1;
 
   sound_driver = AIL2OAL_API_install_DIG_driver_file(NULL, NULL);
-  *pcmdrv = sound_driver;
+  *digdrv = sound_driver;
 
   if (sound_driver == NULL)
     return -1;
@@ -635,9 +584,8 @@ AIL2OAL_API_install_DIG_INI(SoundPCMDriver **pcmdrv)
 }
 
 void
-AIL2OAL_API_call_driver(SoundDriver *drv, int32_t fn,
-        	   SoundDriverCallParameters *in,
-        	   SoundDriverCallParameters *out)
+AIL2OAL_API_call_driver(AIL_DRIVER *drv, int32_t fn,
+               VDI_CALL *in, VDI_CALL *out)
 {
 #if 0
   printf ("AIL2OAL_API_call_driver (%p, 0x%x, %p, %p)\n",
@@ -645,17 +593,19 @@ AIL2OAL_API_call_driver(SoundDriver *drv, int32_t fn,
 #endif
 }
 
-const SoundIOParameters *
-AIL2OAL_API_get_IO_environment(SoundDriver *drv)
+const SNDCARD_IO_PARMS *
+AIL2OAL_API_get_IO_environment(AIL_DRIVER *drvr)
 {
-  static SoundIOParameters iop = {0x220, 7, 1, 1, {0, 0, 0, 0}};
-  return &iop;
+    static SNDCARD_IO_PARMS iop = {0x220, 7, 1, 1, {0, 0, 0, 0}};
+    return &iop;
 }
 
-const SoundIOParameters *
-AIL2OAL_get_IO_environment(SoundDriver *drv)
+const SNDCARD_IO_PARMS *
+AIL2OAL_get_IO_environment(AIL_DRIVER *drvr)
 {
-  return AIL2OAL_API_get_IO_environment(drv);
+    const SNDCARD_IO_PARMS *iop;
+    iop = AIL2OAL_API_get_IO_environment(drvr);
+    return iop;
 }
 
 struct SampleInfo *play_sample_using_heap(ulong a1, short smptbl_id, ulong a3, ulong a4, ulong a5, char a6, ubyte type)

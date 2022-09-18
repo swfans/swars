@@ -25,6 +25,12 @@ swars_SOURCES = \
 	bflib_snd_sys.h \
 	bflib_snd_sys_s.sx \
 	bflib_vidraw_s.sx \
+	../bfsoundlib/include/ail.h \
+	../bfsoundlib/src/ail.c \
+	../bfsoundlib/include/ailss.h \
+	../bfsoundlib/src/ailss.c \
+	../bfsoundlib/include/aildebug.h \
+	../bfsoundlib/src/aildebug.c \
 	config.h \
 	display.c \
 	display.h \
@@ -69,7 +75,8 @@ swars_SOURCES = \
 	windows.h
 
 swars_CPPFLAGS = \
-  -I"$(top_srcdir)/bflibrary/include"
+  -I"$(top_srcdir)/bflibrary/include" \
+  -I"$(top_srcdir)/bfsoundlib/include"
 
 swars_WRAPPERS = wrappers_dos.o wrappers_game.o wrappers_libc.o wrappers_util.o
 
