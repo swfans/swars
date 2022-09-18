@@ -31,6 +31,8 @@ AIL_DRIVER *AIL2OAL_API_install_driver(const uint8_t *driver_image, uint32_t n_b
 
 const SNDCARD_IO_PARMS *AIL2OAL_API_get_IO_environment(AIL_DRIVER *drvr);
 
+void AIL_release_timer_handle(HSNDTIMER timer);
+
 /******************************************************************************/
 #ifdef __cplusplus
 };

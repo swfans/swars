@@ -24,6 +24,7 @@
 
 #include "aildebug.h"
 #include "ail.h"
+#include "ailss.h"
 /******************************************************************************/
 extern uint16_t AIL_debug;
 extern uint16_t AIL_sys_debug;
@@ -62,6 +63,23 @@ const SNDCARD_IO_PARMS *AIL2OAL_get_IO_environment(AIL_DRIVER *drvr)
     AIL_indent--;
 
     return iop;
+}
+
+uint32_t AIL_sample_status(SNDSAMPLE *s)
+{
+    uint32_t status;
+
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s(0x%p)\n", __func__, s);
+
+    status = AIL2OAL_API_sample_status(s);
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Result = 0x%X\n", status);
+    AIL_indent--;
+
+    return status;
 }
 
 /******************************************************************************/

@@ -3124,7 +3124,7 @@ GLOBAL_FUNC (ail_set_sample_loop_count)	/* 103af0 */
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (AIL_sample_status)	/* 103b80 */
+GLOBAL_FUNC (ASM_AIL_sample_status)	/* 103b80 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %esi
@@ -14989,7 +14989,7 @@ _XDIG_MIDI_trap:
 		jne    jump_117f47
 		mov    0x4d4(%ebp),%edx
 		push   %edx
-		call   AIL_sample_status
+		call   ac_AIL_sample_status
 		add    $0x4,%esp
 		cmp    $0x4,%eax
 		jne    jump_117f47
@@ -15014,7 +15014,7 @@ _XDIG_MIDI_trap:
 		jne    jump_117f92
 		mov    0x4d4(%ebp),%edx
 		push   %edx
-		call   AIL_sample_status
+		call   ac_AIL_sample_status
 		add    $0x4,%esp
 		cmp    $0x4,%eax
 		jne    jump_117f92
@@ -15039,7 +15039,7 @@ _XDIG_MIDI_trap:
 		jne    jump_117fe3
 		mov    0x4d4(%ebx),%eax
 		push   %eax
-		call   AIL_sample_status
+		call   ac_AIL_sample_status
 		add    $0x4,%esp
 		cmp    $0x4,%eax
 		jne    jump_117fe3
@@ -15077,7 +15077,7 @@ _XDIG_MIDI_trap:
 		jne    jump_11804d
 		mov    0x4d4(%ebp),%eax
 		push   %eax
-		call   AIL_sample_status
+		call   ac_AIL_sample_status
 		add    $0x4,%esp
 		cmp    $0x4,%eax
 		jne    jump_11804d
@@ -15110,7 +15110,7 @@ _XDIG_MIDI_trap:
 	jump_118099:
 		mov    0x4d4(%ebp),%eax
 		push   %eax
-		call   AIL_sample_status
+		call   ac_AIL_sample_status
 		add    $0x4,%esp
 		cmp    $0x2,%eax
 		je     jump_1180bb
@@ -15217,7 +15217,7 @@ _XDIG_MIDI_trap:
 		jne    jump_118226
 		mov    0x4d4(%ebx),%eax
 		push   %eax
-		call   AIL_sample_status
+		call   ac_AIL_sample_status
 		add    $0x4,%esp
 		cmp    $0x4,%eax
 		jne    jump_118226

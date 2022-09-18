@@ -36,8 +36,6 @@ struct SourceDescriptor
 typedef struct SourceDescriptor SourceDescriptor;
 
 
-void SS_serve (DIG_DRIVER *driver);
-
 extern char SoundProgressMessage[256];
 extern long DebugAudio;
 

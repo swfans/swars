@@ -582,7 +582,7 @@ GLOBAL_FUNC (MSSLOWSOUNDCHECK)	/* 0xfc210 */
 		jne    jump_fc2a6
 		mov    0x38(%esi),%ebx
 		push   %ebx
-		call   AIL_sample_status
+		call   ac_AIL_sample_status
 		add    $0x4,%esp
 		cmp    $0x2,%eax
 		jne    jump_fc2c1

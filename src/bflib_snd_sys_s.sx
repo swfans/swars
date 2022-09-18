@@ -2020,7 +2020,7 @@ GLOBAL_FUNC (ASM_IsSamplePlaying)	/* 0xee750 */
 		test   %esi,%esi
 		jne    jump_ee7a3
 		push   %ebx
-		call   AIL_sample_status
+		call   ac_AIL_sample_status
 		add    $0x4,%esp
 		cmp    $0x4,%eax
 		jne    jump_ee828
@@ -2048,7 +2048,7 @@ GLOBAL_FUNC (ASM_IsSamplePlaying)	/* 0xee750 */
 		jne    jump_ee7bc
 		mov    (%ebx),%ebp
 		push   %ebp
-		call   AIL_sample_status
+		call   ac_AIL_sample_status
 		add    $0x4,%esp
 		cmp    $0x4,%eax
 		jne    jump_ee7bc
@@ -2080,7 +2080,7 @@ GLOBAL_FUNC (ASM_IsSamplePlaying)	/* 0xee750 */
 		jne    jump_ee7f9
 		mov    (%ebx),%edx
 		push   %edx
-		call   AIL_sample_status
+		call   ac_AIL_sample_status
 		add    $0x4,%esp
 		cmp    $0x4,%eax
 		jne    jump_ee7f9
@@ -2398,7 +2398,7 @@ GLOBAL_FUNC (SetSampleRepeat)
 		jne    jump_ef375
 		mov    (%ebx),%eax
 		push   %eax
-		call   AIL_sample_status
+		call   ac_AIL_sample_status
 		add    $0x4,%esp
 		cmp    $0x4,%eax
 		jne    jump_ef375
@@ -2451,7 +2451,7 @@ GLOBAL_FUNC (SetSamplePitch_)
 		jne    jump_ef3f3
 		mov    (%ebx),%edx
 		push   %edx
-		call   AIL_sample_status
+		call   ac_AIL_sample_status
 		add    $0x4,%esp
 		cmp    $0x4,%eax
 		jne    jump_ef3f3
@@ -4532,7 +4532,7 @@ GLOBAL_FUNC (SetSampleVolume_)	/* 0xf0a20 */
 		jne    jump_f0a5f
 		mov    (%ebx),%edx
 		push   %edx
-		call   AIL_sample_status
+		call   ac_AIL_sample_status
 		add    $0x4,%esp
 		cmp    $0x4,%eax
 		jne    jump_f0a5f
@@ -4591,7 +4591,7 @@ GLOBAL_FUNC (SetSamplePan_)	/* 0xF0AB0 */
 		jne    jump_f0aeb
 		mov    (%ebx),%eax
 		push   %eax
-		call   AIL_sample_status
+		call   ac_AIL_sample_status
 		add    $0x4,%esp
 		cmp    $0x4,%eax
 		jne    jump_f0aeb
@@ -4648,7 +4648,7 @@ GLOBAL_FUNC (StopSample_)
 		jne    jump_f1755
 		mov    (%ebx),%eax
 		push   %eax
-		call   AIL_sample_status
+		call   ac_AIL_sample_status
 		add    $0x4,%esp
 		cmp    $0x2,%eax
 		je     jump_f1755
@@ -4705,7 +4705,7 @@ GLOBAL_FUNC (PlaySampleFromAddress_)
 	jump_f17fd:
 		mov    (%ebx),%eax
 		push   %eax
-		call   AIL_sample_status
+		call   ac_AIL_sample_status
 		add    $0x4,%esp
 		cmp    $0x2,%eax
 		jne    jump_f17ec
@@ -4733,7 +4733,7 @@ GLOBAL_FUNC (PlaySampleFromAddress_)
 		jne    jump_f1831
 		mov    (%ebx),%edx
 		push   %edx
-		call   AIL_sample_status
+		call   ac_AIL_sample_status
 		add    $0x4,%esp
 		cmp    $0x2,%eax
 		je     jump_f1831
@@ -4755,7 +4755,7 @@ GLOBAL_FUNC (PlaySampleFromAddress_)
 	jump_f188e:
 		mov    (%ebx),%edx
 		push   %edx
-		call   AIL_sample_status
+		call   ac_AIL_sample_status
 		add    $0x4,%esp
 		cmp    $0x2,%eax
 		jne    jump_f187e
@@ -4799,7 +4799,7 @@ GLOBAL_FUNC (PlaySampleFromAddress_)
 	jump_f18fe:
 		mov    (%ebx),%eax
 		push   %eax
-		call   AIL_sample_status
+		call   ac_AIL_sample_status
 		add    $0x4,%esp
 		cmp    $0x2,%eax
 		jne    jump_f18f1
@@ -5469,7 +5469,7 @@ cbfadesample:
 		movb   $0x1,a_sample_is_fading
 		mov    (%ebx),%esi
 		push   %esi
-		call   AIL_sample_status
+		call   ac_AIL_sample_status
 		add    $0x4,%esp
 		cmp    $0x4,%eax
 		jne    jump_1092bd
@@ -5543,7 +5543,7 @@ cbfadesample:
 		movb   $0x1,a_sample_is_fading
 		mov    (%ebx),%eax
 		push   %eax
-		call   AIL_sample_status
+		call   ac_AIL_sample_status
 		add    $0x4,%esp
 		cmp    $0x4,%eax
 		jne    jump_1092bd

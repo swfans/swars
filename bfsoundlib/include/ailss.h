@@ -32,6 +32,8 @@ DIG_DRIVER *AIL2OAL_API_install_DIG_driver_file(const char *fname,
 
 int32_t AIL2OAL_API_install_DIG_INI(DIG_DRIVER **digdrv);
 
+uint32_t AIL2OAL_API_sample_status(SNDSAMPLE *s);
+
 /******************************************************************************/
 #ifdef __cplusplus
 };

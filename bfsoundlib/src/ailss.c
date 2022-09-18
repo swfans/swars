@@ -92,16 +92,21 @@ DIG_DRIVER *AIL2OAL_API_install_DIG_driver_file(const char *fname,
 
 int32_t AIL2OAL_API_install_DIG_INI(DIG_DRIVER **digdrv)
 {
-  if (sound_driver != NULL)
-    return -1;
+    if (sound_driver != NULL)
+        return -1;
 
-  sound_driver = AIL2OAL_API_install_DIG_driver_file(NULL, NULL);
-  *digdrv = sound_driver;
+    sound_driver = AIL2OAL_API_install_DIG_driver_file(NULL, NULL);
+    *digdrv = sound_driver;
 
-  if (sound_driver == NULL)
-    return -1;
+    if (sound_driver == NULL)
+        return -1;
 
-  return 0;
+    return 0;
+}
+
+uint32_t AIL2OAL_API_sample_status(SNDSAMPLE *s)
+{
+    return s->status;
 }
 
 /******************************************************************************/

@@ -19,7 +19,7 @@
 /******************************************************************************/
 #include "bflib_snd_cda.h"
 
-#include "bflib_snd_mss.h"
+#include "ail.h"
 /******************************************************************************/
 extern ushort cd_first;
 extern TbBool CDAble;
