@@ -37,8 +37,6 @@ typedef struct SourceDescriptor SourceDescriptor;
 
 
 void SS_serve (DIG_DRIVER *driver);
-DIG_DRIVER *SS_construct_DIG_driver (AIL_DRIVER *driver,
-                           const SNDCARD_IO_PARMS *iop);
 
 extern char SoundProgressMessage[256];
 extern long DebugAudio;
@@ -74,7 +72,7 @@ extern TbBool ive_got_an_sb16;
 extern ulong MaxNumberOfSamples;
 
 bool sound_initialised    = false;
-static DIG_DRIVER  *sound_driver        = NULL;
+DIG_DRIVER *sound_driver = NULL;
 static ALCdevice       *sound_device        = NULL;
 static ALCcontext      *sound_context        = NULL;
 size_t sound_source_count    = 0;
@@ -566,46 +564,6 @@ TbBool sound_update(void)
                       startscr_cdvolume * (1.f / 322.f));
   ogg_vorbis_stream_update (&sound_music_stream);
   return true;
-}
-
-int32_t
-AIL2OAL_API_install_DIG_INI(DIG_DRIVER **digdrv)
-{
-  if (sound_driver != NULL)
-    return -1;
-
-  sound_driver = AIL2OAL_API_install_DIG_driver_file(NULL, NULL);
-  *digdrv = sound_driver;
-
-  if (sound_driver == NULL)
-    return -1;
-
-  return 0;
-}
-
-void
-AIL2OAL_API_call_driver(AIL_DRIVER *drv, int32_t fn,
-               VDI_CALL *in, VDI_CALL *out)
-{
-#if 0
-  printf ("AIL2OAL_API_call_driver (%p, 0x%x, %p, %p)\n",
-          drv, fn, in, out);
-#endif
-}
-
-const SNDCARD_IO_PARMS *
-AIL2OAL_API_get_IO_environment(AIL_DRIVER *drvr)
-{
-    static SNDCARD_IO_PARMS iop = {0x220, 7, 1, 1, {0, 0, 0, 0}};
-    return &iop;
-}
-
-const SNDCARD_IO_PARMS *
-AIL2OAL_get_IO_environment(AIL_DRIVER *drvr)
-{
-    const SNDCARD_IO_PARMS *iop;
-    iop = AIL2OAL_API_get_IO_environment(drvr);
-    return iop;
 }
 
 struct SampleInfo *play_sample_using_heap(ulong a1, short smptbl_id, ulong a3, ulong a4, ulong a5, char a6, ubyte type)

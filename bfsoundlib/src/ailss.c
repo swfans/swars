@@ -25,11 +25,12 @@
 
 #include "ailss.h"
 #include "aildebug.h"
+#include "mssdig.h"
 /******************************************************************************/
 extern size_t sound_source_count;
 extern SNDSAMPLE sound_samples[];
 extern bool sound_initialised;
-
+extern DIG_DRIVER *sound_driver;
 
 static DIG_DRIVER *SS_construct_DIG_driver(AIL_DRIVER *drvr, const SNDCARD_IO_PARMS *iop)
 {
@@ -87,6 +88,20 @@ DIG_DRIVER *AIL2OAL_API_install_DIG_driver_file(const char *fname,
     drvr->initialized = 1;
 
     return digdrv;
+}
+
+int32_t AIL2OAL_API_install_DIG_INI(DIG_DRIVER **digdrv)
+{
+  if (sound_driver != NULL)
+    return -1;
+
+  sound_driver = AIL2OAL_API_install_DIG_driver_file(NULL, NULL);
+  *digdrv = sound_driver;
+
+  if (sound_driver == NULL)
+    return -1;
+
+  return 0;
 }
 
 /******************************************************************************/

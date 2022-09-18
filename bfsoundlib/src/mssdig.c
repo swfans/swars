@@ -2,10 +2,10 @@
 // Bullfrog Sound Library - for use to remake classic games like
 // Syndicate Wars, Magic Carpet, Genewars or Dungeon Keeper.
 /******************************************************************************/
-/** @file ail.c
+/** @file aila.c
  *     OpenAL based reimplementation of MSS API.
  * @par Purpose:
- *     Lib lifecycle functions from MSS API.
+ *     SS functions from MSS API.
  * @par Comment:
  *     None.
  * @author   Tomasz Lis
@@ -17,27 +17,14 @@
  *     (at your option) any later version.
  */
 /******************************************************************************/
+#include <stdio.h>
 #include <stddef.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <assert.h>
 
-#include "ail.h"
+#include "mssdig.h"
 /******************************************************************************/
-AIL_DRIVER *AIL2OAL_API_install_driver(const uint8_t *driver_image, uint32_t n_bytes)
-{
-    AIL_DRIVER *drvr;
 
-    drvr = calloc(1, sizeof(*drvr));
-
-    drvr->type = 0;
-
-    return drvr;
-}
-
-const SNDCARD_IO_PARMS *AIL2OAL_API_get_IO_environment(AIL_DRIVER *drvr)
-{
-    static SNDCARD_IO_PARMS iop = {0x220, 7, 1, 1, {0, 0, 0, 0}};
-    return &iop;
-}
 
 /******************************************************************************/

@@ -2,10 +2,10 @@
 // Bullfrog Sound Library - for use to remake classic games like
 // Syndicate Wars, Magic Carpet, Genewars or Dungeon Keeper.
 /******************************************************************************/
-/** @file ail.c
- *     OpenAL based reimplementation of MSS API.
+/** @file mssdig.h
+ *     Header file for mssdig.c.
  * @par Purpose:
- *     Lib lifecycle functions from MSS API.
+ *     OpenAL based reimplementation of MSS API.
  * @par Comment:
  *     None.
  * @author   Tomasz Lis
@@ -17,27 +17,24 @@
  *     (at your option) any later version.
  */
 /******************************************************************************/
-#include <stddef.h>
-#include <stdlib.h>
-#include <assert.h>
+#ifndef AIL2OAL_MSSDIG_H_
+#define AIL2OAL_MSSDIG_H_
 
-#include "ail.h"
+#include <stdint.h>
+#include "mssal.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 /******************************************************************************/
-AIL_DRIVER *AIL2OAL_API_install_driver(const uint8_t *driver_image, uint32_t n_bytes)
-{
-    AIL_DRIVER *drvr;
 
-    drvr = calloc(1, sizeof(*drvr));
-
-    drvr->type = 0;
-
-    return drvr;
-}
-
-const SNDCARD_IO_PARMS *AIL2OAL_API_get_IO_environment(AIL_DRIVER *drvr)
-{
-    static SNDCARD_IO_PARMS iop = {0x220, 7, 1, 1, {0, 0, 0, 0}};
-    return &iop;
-}
+/** Timer interrupt handler which processes samples.
+ */
+void SS_serve(uintptr_t clientval);
 
 /******************************************************************************/
+#ifdef __cplusplus
+};
+#endif
+
+#endif // AIL2OAL_MSSDIG_H_

@@ -3,7 +3,7 @@
 // Syndicate Wars, Magic Carpet, Genewars or Dungeon Keeper.
 /******************************************************************************/
 /** @file aila.h
- *     Header file for ail.c.
+ *     Header file for aila.c.
  * @par Purpose:
  *     OpenAL based reimplementation of MSS API.
  * @par Comment:
@@ -27,6 +27,8 @@ extern "C" {
 #endif
 /******************************************************************************/
 
+void AIL2OAL_API_call_driver(AIL_DRIVER *drvr, int32_t fn,
+        VDI_CALL *in, VDI_CALL *out);
 
 /******************************************************************************/
 #ifdef __cplusplus

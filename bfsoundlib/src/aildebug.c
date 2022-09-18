@@ -47,4 +47,21 @@ AIL_DRIVER *AIL_install_driver(const uint8_t *driver_image, uint32_t n_bytes)
     return drvr;
 }
 
+const SNDCARD_IO_PARMS *AIL2OAL_get_IO_environment(AIL_DRIVER *drvr)
+{
+    const SNDCARD_IO_PARMS *iop;
+
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s(0x%p)\n", __func__, drvr);
+
+    iop = AIL2OAL_API_get_IO_environment(drvr);
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Result = 0x%p\n", iop);
+    AIL_indent--;
+
+    return iop;
+}
+
 /******************************************************************************/

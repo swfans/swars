@@ -29,6 +29,8 @@ extern "C" {
 
 AIL_DRIVER *AIL_install_driver(const uint8_t *driver_image, uint32_t n_bytes);
 
+const SNDCARD_IO_PARMS *AIL2OAL_get_IO_environment(AIL_DRIVER *drvr);
+
 /******************************************************************************/
 #ifdef __cplusplus
 };
