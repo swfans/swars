@@ -33,6 +33,9 @@ const SNDCARD_IO_PARMS *AIL2OAL_get_IO_environment(AIL_DRIVER *drvr);
 
 uint32_t AIL_sample_status(SNDSAMPLE *s);
 
+int32_t AIL_call_driver(AIL_DRIVER *drvr, int32_t fn,
+        VDI_CALL *in, VDI_CALL *out);
+
 MDI_DRIVER *AIL_install_MDI_driver_file(char *filename, SNDCARD_IO_PARMS *iop);
 
 void AIL_uninstall_MDI_driver(MDI_DRIVER *mdidrv);

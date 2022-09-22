@@ -855,7 +855,7 @@ GLOBAL_FUNC (AIL_restore_interrupts)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (AIL_call_driver)	/* 101f00 */
+GLOBAL_FUNC (ASM_AIL_call_driver)	/* 101f00 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %esi
@@ -5944,7 +5944,7 @@ AIL_API_restore_interrupts:
 
 
 /*----------------------------------------------------------------*/
-AIL_API_call_driver:	/* 1114e7 */
+ASM_AIL_API_call_driver:	/* 1114e7 */
 /*----------------------------------------------------------------*/
 		push   %ebp
 		mov    %esp,%ebp
@@ -6333,7 +6333,7 @@ AIL_driver_server:
 		mov    0x18(%esp),%ecx
 		push   %ecx
 		mov    %eax,data_1ed808
-		call   AIL_call_driver
+		call   ac_AIL_call_driver
 		add    $0x10,%esp
 		mov    data_1ed808,%esi
 		push   %esi
@@ -6910,7 +6910,7 @@ AIL_API_install_driver:	/* 111d40 */
 		movl   $0x0,0x24(%ebp)
 		push   %ebp
 		movl   $0x0,0x28(%ebp)
-		call   AIL_call_driver
+		call   ac_AIL_call_driver
 		mov    0x10(%ebp),%eax
 		mov    0x2e(%eax),%dx
 		add    $0x10,%esp
@@ -7017,7 +7017,7 @@ AIL_API_uninstall_driver:
 		push   $0x0
 		push   $0x306
 		push   %ebx
-		call   AIL_call_driver
+		call   ac_AIL_call_driver
 		add    $0x10,%esp
 	jump_112032:
 		mov    0x10(%ebx),%eax
@@ -7086,7 +7086,7 @@ AIL_API_get_IO_environment:	/* 112090 */
 		push   $0x0
 		push   $0x303
 		push   %esi
-		call   AIL_call_driver
+		call   ac_AIL_call_driver
 		add    $0x10,%esp
 		cmp    $0xffffffff,%eax
 		jne    jump_1120e9
@@ -7380,7 +7380,7 @@ SS_start_DIG_driver_playback:
 		push   $0x401
 		mov    (%ebx),%ecx
 		push   %ecx
-		call   AIL_call_driver
+		call   ac_AIL_call_driver
 		add    $0x10,%esp
 		movl   $0x1,0x54(%ebx) /* ->playing = true */
 	jump_1125ae:
@@ -7401,7 +7401,7 @@ SS_stop_DIG_driver_playback:
 		push   $0x402
 		mov    (%ebx),%ecx
 		push   %ecx
-		call   AIL_call_driver
+		call   ac_AIL_call_driver
 		add    $0x10,%esp
 		movl   $0x0,0x54(%ebx) /* ->playing = false */
 	jump_1125e6:
@@ -7793,7 +7793,7 @@ GLOBAL_FUNC (SS_serve)
 		xor    $0x1,%dl
 		push   %ebp
 		mov    %dx,data_1ed8ba
-		call   AIL_call_driver
+		call   ac_AIL_call_driver
 		add    $0x10,%esp
 	jump_112aa3:
 		mov    data_1ed8c4,%eax
@@ -8338,7 +8338,7 @@ SS_attempt_DIG_detection:
 		mov    0x0(%ebp),%ecx
 		push   %ecx
 	jump_11305b:
-		call   AIL_call_driver
+		call   ac_AIL_call_driver
 		add    $0x10,%esp
 		add    $0x24,%esp
 		pop    %ebp
@@ -8462,7 +8462,7 @@ GLOBAL_FUNC (SS_construct_DIG_driver)	/* 113110 */
 		push   %ebx
 		push   $0x301
 		push   %eax
-		call   AIL_call_driver
+		call   ac_AIL_call_driver
 		add    $0x10,%esp
 		xor    %eax,%eax
 		xor    %edx,%edx
@@ -8717,7 +8717,7 @@ GLOBAL_FUNC (SS_construct_DIG_driver)	/* 113110 */
 		push   $0x305
 		mov    0x0(%ebp),%esi
 		push   %esi
-		call   AIL_call_driver
+		call   ac_AIL_call_driver
 		mov    0x0(%ebp),%eax
 		movl   $0x1,0x18(%eax)
 		mov    0x3c(%ebp),%ebx
@@ -8760,7 +8760,7 @@ GLOBAL_FUNC (SS_construct_DIG_driver)	/* 113110 */
 		push   $0x306
 		mov    0x0(%ebp),%eax
 		push   %eax
-		call   AIL_call_driver
+		call   ac_AIL_call_driver
 		mov    0x0(%ebp),%eax
 		movl   $0x0,0x18(%eax)
 		add    $0x10,%esp
@@ -8811,7 +8811,7 @@ GLOBAL_FUNC (SS_construct_DIG_driver)	/* 113110 */
 		push   $0x306
 		mov    0x0(%ebp),%esi
 		push   %esi
-		call   AIL_call_driver
+		call   ac_AIL_call_driver
 		mov    0x0(%ebp),%eax
 		movl   $0x0,0x18(%eax)
 		add    $0x10,%esp
@@ -8881,7 +8881,7 @@ GLOBAL_FUNC (SS_construct_DIG_driver)	/* 113110 */
 		push   $0x306
 		mov    0x0(%ebp),%ecx
 		push   %ecx
-		call   AIL_call_driver
+		call   ac_AIL_call_driver
 		mov    0x0(%ebp),%eax
 		movl   $0x0,0x18(%eax)
 		add    $0x10,%esp
@@ -10355,7 +10355,7 @@ _XMI_flush_buffer:	/* 0x1147B0 */
 		push   $0x502
 		mov    (%ebx),%ecx
 		push   %ecx
-		call   AIL_call_driver
+		call   ac_AIL_call_driver
 		movl   $0x0,0x1a8(%ebx)
 		add    $0x10,%esp
 		movl   $0x0,0x1ac(%ebx)
@@ -12265,7 +12265,7 @@ _XMI_attempt_MDI_detection:	/* 0x115D70 */
 		push   $0x304
 		mov    0x0(%ebp),%ebx
 		push   %ebx
-		call   AIL_call_driver
+		call   ac_AIL_call_driver
 		add    $0x10,%esp
 		add    $0x18,%esp
 		pop    %ebp
@@ -12368,7 +12368,7 @@ _XMI_construct_MDI_driver:	/* 0x115EA0 */
 		push   $0x0
 		push   $0x301
 		push   %eax
-		call   AIL_call_driver
+		call   ac_AIL_call_driver
 		add    $0x10,%esp
 		xor    %eax,%eax
 		mov    0x1e(%esp),%ax
@@ -12592,7 +12592,7 @@ _XMI_construct_MDI_driver:	/* 0x115EA0 */
 		push   $0x305
 		mov    0x0(%ebp),%ecx
 		push   %ecx
-		call   AIL_call_driver
+		call   ac_AIL_call_driver
 		mov    0x0(%ebp),%eax
 		add    $0x10,%esp
 		movl   $0x1,0x18(%eax)
@@ -12602,7 +12602,7 @@ _XMI_construct_MDI_driver:	/* 0x115EA0 */
 		push   $0x501
 		mov    0x0(%ebp),%esi
 		push   %esi
-		call   AIL_call_driver
+		call   ac_AIL_call_driver
 		add    $0x10,%esp
 		cmpw   $0x0,0x18(%esp)
 		jne    jump_11620d
@@ -12616,7 +12616,7 @@ _XMI_construct_MDI_driver:	/* 0x115EA0 */
 		push   $0x306
 		mov    0x0(%ebp),%ecx
 		push   %ecx
-		call   AIL_call_driver
+		call   ac_AIL_call_driver
 		add    $0x10,%esp
 		push   $0x1d4
 		mov    0x0(%ebp),%eax
@@ -12650,7 +12650,7 @@ _XMI_construct_MDI_driver:	/* 0x115EA0 */
 		push   $0x306
 		mov    0x0(%ebp),%ebx
 		push   %ebx
-		call   AIL_call_driver
+		call   ac_AIL_call_driver
 		add    $0x10,%esp
 		push   $0x1d4
 		mov    0x0(%ebp),%eax
@@ -12724,7 +12724,7 @@ _XMI_construct_MDI_driver:	/* 0x115EA0 */
 		push   $0x306
 		mov    0x0(%ebp),%ebx
 		push   %ebx
-		call   AIL_call_driver
+		call   ac_AIL_call_driver
 		mov    0x0(%ebp),%eax
 		movl   $0x0,0x18(%eax)
 		imul   $0x718,0x1c(%ebp),%eax
@@ -13451,7 +13451,7 @@ _AIL_API_init_sequence:	/* 0x116840 */
 		push   $0x503
 		mov    (%eax),%esi
 		push   %esi
-		call   AIL_call_driver
+		call   ac_AIL_call_driver
 		mov    0x0(%ebp),%eax
 		mov    0x14(%eax),%edi
 		dec    %edi

@@ -4895,7 +4895,7 @@ AWEGetTotalRAM_:
 		push   $0x506
 		mov    (%eax),%edx
 		push   %edx
-		call   AIL_call_driver
+		call   ac_AIL_call_driver
 		add    $0x10,%esp
 		movswl (%esp),%eax
 		test   %eax,%eax
@@ -4963,7 +4963,7 @@ AWEDefMemMap_:
 		push   $0x506
 		mov    (%edi),%ebx
 		push   %ebx
-		call   AIL_call_driver
+		call   ac_AIL_call_driver
 		add    $0x10,%esp
 		movswl (%esp),%eax
 	jump_1100a7:
@@ -5020,7 +5020,7 @@ AWEGetSFInfo_:
 		push   $0x506
 		mov    (%edi),%ebx
 		push   %ebx
-		call   AIL_call_driver
+		call   ac_AIL_call_driver
 		add    $0x10,%esp
 		movswl (%esp),%eax
 		test   %eax,%eax
@@ -5090,7 +5090,7 @@ AWEStreamSample_:
 		push   $0x506
 		mov    (%edi),%ebx
 		push   %ebx
-		call   AIL_call_driver
+		call   ac_AIL_call_driver
 		add    $0x10,%esp
 		movswl (%esp),%eax
 	jump_110227:
@@ -5149,7 +5149,7 @@ AWELoadPreset_:
 		push   $0x506
 		mov    (%edi),%ebx
 		push   %ebx
-		call   AIL_call_driver
+		call   ac_AIL_call_driver
 		add    $0x10,%esp
 		movswl (%esp),%eax
 	jump_1102d7:
@@ -5184,7 +5184,7 @@ AWEFreeMem_:
 		xor    %edx,%edx
 		push   %ecx
 		mov    %edx,awe32_sf_data
-		call   AIL_call_driver
+		call   ac_AIL_call_driver
 		add    $0x10,%esp
 		movswl (%esp),%eax
 		add    $0xc,%esp
