@@ -9,6 +9,7 @@
 #include "bffile.h"
 #include "bflib_snd_sys.h"
 #include "bflib_snd_cda.h"
+#include "snderr.h"
 #include "oggvorbis.h"
 #include "sound.h"
 #include "ailss.h"
@@ -35,9 +36,6 @@ struct SourceDescriptor
 
 typedef struct SourceDescriptor SourceDescriptor;
 
-
-extern char SoundProgressMessage[256];
-extern long DebugAudio;
 
 extern char FullDIG_INIPath[144];
 extern char FullMDI_INIPath[144];
@@ -96,12 +94,6 @@ check_alc_line (const char *source, int line)
     }
 
   return true;
-}
-
-void SoundProgressLog(const char *msg)
-{
-    if (DebugAudio)
-        printf(msg);
 }
 
 static void
