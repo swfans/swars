@@ -25,6 +25,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+/******************************************************************************/
 
 //int GetNumberOfSamples();
 TbBool GetSoundAble(void);
@@ -54,9 +55,9 @@ TbBool GetSoundInstalled(void);
 //int GetSongHandle();
 //int GetCDSpeed();
 
+/******************************************************************************/
 #ifdef __cplusplus
 };
 #endif
 
 #endif // BFSOUNDLIB_BFSVARIBL_H_
-/******************************************************************************/

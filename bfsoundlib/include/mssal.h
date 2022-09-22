@@ -35,11 +35,26 @@ typedef struct AIL_DRIVER AIL_DRIVER;
 typedef struct DIG_DRIVER DIG_DRIVER;
 typedef struct MDI_DRIVER MDI_DRIVER;
 typedef struct SNDSAMPLE SNDSAMPLE;
+typedef struct SNDSEQUENCE SNDSEQUENCE;
 typedef struct VDI_HDR VDI_HDR;
 typedef struct VDI_CALL VDI_CALL;
 typedef struct DIG_MODE DIG_MODE;
 typedef struct DIG_DDT DIG_DDT;
 typedef struct DIG_DST DIG_DST;
+typedef struct MDI_DDT MDI_DDT;
+typedef struct MDI_DST MDI_DST;
+
+/** Function numbers for XMIDI driver calls.
+ */
+enum MDIDriverFunctions {
+    MDI_HW_VOLUME     = 0x500,
+    MDI_INIT_INS_MGR  = 0x501,
+    MDI_MIDI_XMIT     = 0x502,
+    MDI_INSTALL_T_SET = 0x503,
+    MDI_GET_T_STATUS  = 0x504,
+    MDI_PROT_UNPROT_T = 0x505,
+    MDI_VSE           = 0x506,
+};
 
 /** Handle to timer.
  *
@@ -106,6 +121,32 @@ struct DIG_DRIVER {
   int32_t n_active_samples;                  /**< offs=0x64 # of samples being processed */
   int32_t master_volume;                     /**< offs=0x68 Master sample volume 0-127 */
   int32_t system_data[8];                    /**< offs=0x6C Miscellaneous system data */
+};
+
+/* XMIDI playback driver.
+ * sizeof=468
+ */
+struct MDI_DRIVER {
+    AIL_DRIVER *drvr;                        /**< offs=0   Handle to base driver descriptor */
+    MDI_DDT *DDT;                            /**< offs=4   Protected-mode pointer to DDT; specific to DOS implementation  */
+    MDI_DST *DST;                            /**< offs=8   Protected-mode pointer to DST; specific to DOS implementation  */
+    HSNDTIMER timer;                         /**< offs=12  XMIDI quantization timer */
+    int32_t interval_time;                   /**< offs=16  XMIDI quantization timer interval in uS */
+    int32_t disable;                         /**< offs=20  Set > 0 to disable XMIDI service */
+    SNDSEQUENCE *sequences;                  /**< offs=24  Pointer to list of SNDSEQUENCEs */
+    int32_t n_sequences;                     /**< offs=28  # of SNDSEQUENCEs */
+    int32_t lock[16];                        /**< offs=32  1 if locked, 2 if protected, else 0 */
+    SNDSEQUENCE *locker[16];                 /**< offs=96  Ref to SNDSEQUENCE which locked channel */
+    SNDSEQUENCE *owner[16];                  /**< offs=160 Ref to SNDSEQUENCE which owned locked channel */
+    SNDSEQUENCE *user[16];                   /**< offs=224 Ref to last SNDSEQUENCE to use channel */
+    int32_t state[16];                       /**< offs=288 Lock state prior to being locked */
+    int32_t notes[16];                       /**< offs=352 # of active notes in channel */
+    void *event_trap;                        /**< offs=416 MIDI event trap callback function */
+    void *timbre_trap;                       /**< offs=420 Timbre request callback function */
+    int32_t message_count;                   /**< offs=424 MIDI message count; specific to DOS implementation */
+    int32_t offset;                          /**< offs=428 MIDI buffer offset; specific to DOS implementation  */
+    int32_t master_volume;                   /**< offs=432 Master XMIDI note volume 0-127 */
+    int32_t system_data[8];                  /**< offs=436 Miscellaneous system data */
 };
 
 /** Representation of a sound sample.
@@ -185,6 +226,17 @@ struct DIG_MODE {
 struct DIG_DDT {
     int8_t format_supported[16];             /**< offs=0x00 List of formats for which data was gathered */
     DIG_MODE format_data[16];                /**< offs=0x10 Timing bounds for each mode */
+};
+
+/** MIDI Driver Timings gathered on initialization.
+ */
+struct MDI_DDT {
+    void *library_environment;               /**< offset=0  Name of environment variable for the Instrument Manager */
+    void *GTL_suffix;                        /**< offset=4  Global Timbre Library suffix */
+    uint16_t num_voices;                     /**< offset=8  # of parallel voices */
+    uint16_t max_melodic_channel;            /**< offset=10 Melodic channel max */
+    uint16_t min_melodic_channel;            /**< offset=12 Melodic channel min */
+    uint16_t percussion_channel;             /**< offset=14 Percussion channel */
 };
 
 #pragma pack()

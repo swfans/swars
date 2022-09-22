@@ -25,6 +25,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+/******************************************************************************/
 
 typedef struct TbsCDTime TbsCDTime;
 
@@ -54,9 +55,9 @@ struct TbsCDTime { // sizeof=unknown
 //TbsCDTime CDHeadPosition();
 //int FreeCD();
 
+/******************************************************************************/
 #ifdef __cplusplus
 };
 #endif
 
 #endif // BFSOUNDLIB_BFSCD_H_
-/******************************************************************************/
