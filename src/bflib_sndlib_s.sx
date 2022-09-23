@@ -39,27 +39,27 @@
 .global EXPORT_SYMBOL(SoundDriverPath);
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (AIL_vmm_lock)
+GLOBAL_FUNC (ASM_AIL_vmm_lock)
 /*----------------------------------------------------------------*/
 		mov    0x4(%esp),%edx
 		mov    0x8(%esp),%eax
 		add    %edx,%eax
 		push   %eax
 		push   %edx
-		call   VMM_lock_range
+		call   ac_AIL_VMM_lock_range
 		add    $0x8,%esp
 		ret
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (AIL_vmm_unlock)
+GLOBAL_FUNC (ASM_AIL_vmm_unlock)
 /*----------------------------------------------------------------*/
 		mov    0x4(%esp),%edx
 		mov    0x8(%esp),%eax
 		add    %edx,%eax
 		push   %eax
 		push   %edx
-		call   VMM_unlock_range
+		call   ac_AIL_VMM_unlock_range
 		add    $0x8,%esp
 		ret
 
@@ -194,40 +194,40 @@ AILDEBUG_start_:
 		jne    jump_101775
 		push   $AILDEBUG_end_
 		push   $AILDEBUG_start_
-		call   VMM_lock_range
+		call   ac_AIL_VMM_lock_range
 		add    $0x8,%esp
 		push   $0x4
 		push   $AIL_debug
-		call   AIL_vmm_lock
+		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
 		push   $0x4
 		push   $AIL_sys_debug
-		call   AIL_vmm_lock
+		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
 		push   $0x4
 		push   $AIL_debugfile
-		call   AIL_vmm_lock
+		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
 		push   $0x4
 		push   $data_1e8fac
-		call   AIL_vmm_lock
+		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
 		push   $0x4
 		push   $data_1e8fbc
-		call   AIL_vmm_lock
+		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
 		push   $0x4
 		push   $data_1e8fb8
-		call   AIL_vmm_lock
+		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
 		push   $0x4
 		push   $data_1e8fc0
-		call   AIL_vmm_lock
+		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
 		push   $0x4
 		push   $data_1e8fb0
 		mov    $0x1,%ebx
-		call   AIL_vmm_lock
+		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
 		mov    %ebx,_AIL_locked
 	jump_101775:
@@ -5433,7 +5433,7 @@ AILDEBUG_end_:
 		push   $AILDEBUG_end_
 		push   $AILDEBUG_start_
 		xor    %ebx,%ebx
-		call   VMM_unlock_range
+		call   ac_AIL_VMM_unlock_range
 		add    $0x8,%esp
 		mov    %ebx,_AIL_locked
 	jump_107916:
@@ -6264,11 +6264,11 @@ AILA_VMM_lock:
 /*----------------------------------------------------------------*/
 		push   $data_15aa48
 		push   $timer_callbacks
-		call   VMM_lock_range
+		call   ac_AIL_VMM_lock_range
 		add    $0x8,%esp
 		push   $AILA_VMM_lock
 		push   $AIL_API_lock
-		call   VMM_lock_range
+		call   ac_AIL_VMM_lock_range
 		add    $0x8,%esp
 		ret
 
@@ -6283,32 +6283,32 @@ AIL_start_:
 		jne    jump_1118c6
 		push   $AIL_end_
 		push   $AIL_start_
-		call   VMM_lock_range
+		call   ac_AIL_VMM_lock_range
 		add    $0x8,%esp
 		push   $0x40
 		push   $data_1ed6b0
-		call   AIL_vmm_lock
+		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
 		push   $0x4c
 		push   $data_1ed80c
-		call   AIL_vmm_lock
+		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
 		push   $0x100
 		push   $data_1ed6f0
-		call   AIL_vmm_lock
+		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
 		push   $0x18
 		push   $data_1ed7f0
-		call   AIL_vmm_lock
+		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
 		push   $0x4
 		push   $data_15aa48
-		call   AIL_vmm_lock
+		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
 		push   $0x4
 		push   $data_1ed808
 		mov    $0x1,%ebx
-		call   AIL_vmm_lock
+		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
 		mov    %ebx,data_15aa4c
 	jump_1118c6:
@@ -6744,7 +6744,7 @@ AIL_API_install_driver:	/* 111d40 */
 		mov    0x18(%esp),%esi
 		mov    0x1c(%esp),%ebx
 		push   $0x2c
-		call   MEM_alloc_lock
+		call   ac_AIL_MEM_alloc_lock
 		mov    %eax,0x4(%esp)
 		mov    %eax,%ebp
 		add    $0x4,%esp
@@ -6768,7 +6768,7 @@ AIL_API_install_driver:	/* 111d40 */
 		lea    0xf(%ebx),%eax
 		shr    $0x4,%eax
 		push   %eax
-		call   MEM_alloc_DOS
+		call   ac_AIL_MEM_alloc_DOS
 		add    $0x10,%esp
 		test   %eax,%eax
 		jne    jump_111dc6
@@ -6780,7 +6780,7 @@ AIL_API_install_driver:	/* 111d40 */
 		push   %edx
 		rep movsl %ds:(%esi),%es:(%edi)
 		movsb  %ds:(%esi),%es:(%edi)
-		call   MEM_free_lock
+		call   ac_AIL_MEM_free_lock
 		add    $0x8,%esp
 		xor    %eax,%eax
 		add    $0x4,%esp
@@ -6826,12 +6826,12 @@ AIL_API_install_driver:	/* 111d40 */
 		push   %edi
 		mov    0x8(%eax),%ebp
 		push   %ebp
-		call   MEM_free_DOS
+		call   ac_AIL_MEM_free_DOS
 		add    $0xc,%esp
 		push   $0x2c
 		mov    0x4(%esp),%eax
 		push   %eax
-		call   MEM_free_lock
+		call   ac_AIL_MEM_free_lock
 		add    $0x8,%esp
 		xor    %eax,%eax
 		add    $0x4,%esp
@@ -6873,11 +6873,11 @@ AIL_API_install_driver:	/* 111d40 */
 		push   %edx
 		mov    0x8(%ebp),%ebx
 		push   %ebx
-		call   MEM_free_DOS
+		call   ac_AIL_MEM_free_DOS
 		add    $0xc,%esp
 		push   $0x2c
 		push   %ebp
-		call   MEM_free_lock
+		call   ac_AIL_MEM_free_lock
 		add    $0x8,%esp
 		xor    %eax,%eax
 		add    $0x4,%esp
@@ -6942,11 +6942,11 @@ AIL_API_install_driver:	/* 111d40 */
 		push   %esi
 		mov    0x8(%ebp),%edi
 		push   %edi
-		call   MEM_free_DOS
+		call   ac_AIL_MEM_free_DOS
 		add    $0xc,%esp
 		push   $0x2c
 		push   %ebp
-		call   MEM_free_lock
+		call   ac_AIL_MEM_free_lock
 		add    $0x8,%esp
 		xor    %eax,%eax
 		add    $0x4,%esp
@@ -7032,11 +7032,11 @@ AIL_API_uninstall_driver:
 		push   %edi
 		mov    0x8(%ebx),%ebp
 		push   %ebp
-		call   MEM_free_DOS
+		call   ac_AIL_MEM_free_DOS
 		add    $0xc,%esp
 		push   $0x2c
 		push   %ebx
-		call   MEM_free_lock
+		call   ac_AIL_MEM_free_lock
 		add    $0x8,%esp
 		xor    %eax,%eax
 		lea    0x0(%eax),%eax
@@ -7240,32 +7240,32 @@ AIL_end_:
 		je     jump_112303
 		push   $AIL_end_
 		push   $AIL_start_
-		call   VMM_unlock_range
+		call   ac_AIL_VMM_unlock_range
 		add    $0x8,%esp
 		push   $0x40
 		push   $data_1ed6b0
-		call   AIL_vmm_unlock
+		call   ac_AIL_vmm_unlock
 		add    $0x8,%esp
 		push   $0x4c
 		push   $data_1ed80c
-		call   AIL_vmm_unlock
+		call   ac_AIL_vmm_unlock
 		add    $0x8,%esp
 		push   $0x100
 		push   $data_1ed6f0
-		call   AIL_vmm_unlock
+		call   ac_AIL_vmm_unlock
 		add    $0x8,%esp
 		push   $0x18
 		push   $data_1ed7f0
-		call   AIL_vmm_unlock
+		call   ac_AIL_vmm_unlock
 		add    $0x8,%esp
 		push   $0x4
 		push   $data_15aa48
-		call   AIL_vmm_unlock
+		call   ac_AIL_vmm_unlock
 		add    $0x8,%esp
 		push   $0x4
 		push   $data_1ed808
 		xor    %ebx,%ebx
-		call   AIL_vmm_unlock
+		call   ac_AIL_vmm_unlock
 		add    $0x8,%esp
 		mov    %ebx,data_15aa4c
 	jump_112303:
@@ -7313,43 +7313,43 @@ AILSS_start_:
 		jne    jump_11256c
 		push   $AILSS_end_
 		push   $AILSS_start_
-		call   VMM_lock_range
+		call   ac_AIL_VMM_lock_range
 		add    $0x8,%esp
 		push   $0x80
 		push   $data_15aa50
-		call   AIL_vmm_lock
+		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
 		push   $0x4
 		push   $data_15aad0
-		call   AIL_vmm_lock
+		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
 		push   $0x4
 		push   $data_1ed8c4
-		call   AIL_vmm_lock
+		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
 		push   $0xc
 		push   $data_1ed8b4
-		call   AIL_vmm_lock
+		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
 		push   $0x4
 		push   $data_1ed8cc
-		call   AIL_vmm_lock
+		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
 		push   $0x4
 		push   $data_1ed8d0
-		call   AIL_vmm_lock
+		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
 		push   $0x4
 		push   $data_1ed8c0
-		call   AIL_vmm_lock
+		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
 		push   $0x4
 		push   $data_1ed8c8
-		call   AIL_vmm_lock
+		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
 		push   $0x4
 		push   $data_1ed8b0
-		call   AIL_vmm_lock
+		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
 		mov    $0x1,%ebx
 		call   AILSSA_VMM_lock
@@ -8386,23 +8386,23 @@ SS_destroy_DIG_driver:
 		push   %edi
 		mov    0x28(%ebx),%ebp
 		push   %ebp
-		call   MEM_free_DOS
+		call   ac_AIL_MEM_free_DOS
 		imul   $0x894,0x60(%ebx),%eax
 		add    $0xc,%esp
 		push   %eax
 		mov    0x5c(%ebx),%ecx
 		push   %ecx
-		call   MEM_free_lock
+		call   ac_AIL_MEM_free_lock
 		add    $0x8,%esp
 		mov    0x4c(%ebx),%esi
 		push   %esi
 		mov    0x50(%ebx),%edi
 		push   %edi
-		call   MEM_free_lock
+		call   ac_AIL_MEM_free_lock
 		add    $0x8,%esp
 		push   $0x8c
 		push   %ebx
-		call   MEM_free_lock
+		call   ac_AIL_MEM_free_lock
 		add    $0x8,%esp
 		pop    %ebp
 		pop    %edi
@@ -8421,7 +8421,7 @@ GLOBAL_FUNC (SS_construct_DIG_driver)	/* 113110 */
 		sub    $0x3c,%esp
 		call   AILSS_start_
 		push   $0x8c
-		call   MEM_alloc_lock	/* allocate DIG_DRIVER */
+		call   ac_AIL_MEM_alloc_lock	/* allocate DIG_DRIVER */
 		mov    %eax,%ebp
 		add    $0x4,%esp
 		test   %eax,%eax
@@ -8447,7 +8447,7 @@ GLOBAL_FUNC (SS_construct_DIG_driver)	/* 113110 */
 		push   $0x8c
 		mov    %ebp,%ecx
 		push   %ecx
-		call   MEM_free_lock
+		call   ac_AIL_MEM_free_lock
 		add    $0x8,%esp
 		xor    %eax,%eax
 		add    $0x3c,%esp
@@ -8604,7 +8604,7 @@ GLOBAL_FUNC (SS_construct_DIG_driver)	/* 113110 */
 		push   %ebp
 		rep movsl %ds:(%esi),%es:(%edi)
 		movsw  %ds:(%esi),%es:(%edi)
-		call   MEM_free_lock
+		call   ac_AIL_MEM_free_lock
 		add    $0x8,%esp
 		xor    %eax,%eax
 		add    $0x3c,%esp
@@ -8641,7 +8641,7 @@ GLOBAL_FUNC (SS_construct_DIG_driver)	/* 113110 */
 		lea    0x34(%esp),%eax
 		push   %eax
 		push   %edi
-		call   MEM_alloc_DOS
+		call   ac_AIL_MEM_alloc_DOS
 		add    $0x10,%esp
 		test   %eax,%eax
 		jne    jump_1133d7
@@ -8651,7 +8651,7 @@ GLOBAL_FUNC (SS_construct_DIG_driver)	/* 113110 */
 		mov    $aCouldNotAllo_1,%esi
 		push   %ebp
 		rep movsl %ds:(%esi),%es:(%edi)
-		call   MEM_free_lock
+		call   ac_AIL_MEM_free_lock
 		add    $0x8,%esp
 		xor    %eax,%eax
 		add    $0x3c,%esp
@@ -8669,7 +8669,7 @@ GLOBAL_FUNC (SS_construct_DIG_driver)	/* 113110 */
 		mov    0x20(%ebp),%ebx
 		push   %ebx
 		push   %eax
-		call   MEM_free_DOS
+		call   ac_AIL_MEM_free_DOS
 		add    $0xc,%esp
 	jump_1133ef:
 		mov    0x2c(%esp),%eax
@@ -8698,11 +8698,11 @@ GLOBAL_FUNC (SS_construct_DIG_driver)	/* 113110 */
 		push   %edi
 		mov    0x28(%ebp),%eax
 		push   %eax
-		call   MEM_free_DOS
+		call   ac_AIL_MEM_free_DOS
 		add    $0xc,%esp
 		push   $0x8c
 		push   %ebp
-		call   MEM_free_lock
+		call   ac_AIL_MEM_free_lock
 		add    $0x8,%esp
 		xor    %eax,%eax
 		add    $0x3c,%esp
@@ -8737,7 +8737,7 @@ GLOBAL_FUNC (SS_construct_DIG_driver)	/* 113110 */
 		lea    0x0(,%eax,4),%eax
 		push   %eax
 		mov    %eax,0x4c(%ebp)
-		call   MEM_alloc_lock
+		call   ac_AIL_MEM_alloc_lock
 		add    $0x4,%esp
 		mov    %eax,0x50(%ebp)
 		test   %eax,%eax
@@ -8770,11 +8770,11 @@ GLOBAL_FUNC (SS_construct_DIG_driver)	/* 113110 */
 		push   %ebx
 		mov    0x28(%ebp),%ecx
 		push   %ecx
-		call   MEM_free_DOS
+		call   ac_AIL_MEM_free_DOS
 		add    $0xc,%esp
 		push   $0x8c
 		push   %ebp
-		call   MEM_free_lock
+		call   ac_AIL_MEM_free_lock
 		add    $0x8,%esp
 		xor    %eax,%eax
 		add    $0x3c,%esp
@@ -8788,7 +8788,7 @@ GLOBAL_FUNC (SS_construct_DIG_driver)	/* 113110 */
 		mov    %eax,0x60(%ebp)
 		imul   $0x894,%eax,%eax
 		push   %eax
-		call   MEM_alloc_lock
+		call   ac_AIL_MEM_alloc_lock
 		add    $0x4,%esp
 		mov    %eax,0x5c(%ebp)
 		test   %eax,%eax
@@ -8821,17 +8821,17 @@ GLOBAL_FUNC (SS_construct_DIG_driver)	/* 113110 */
 		push   %eax
 		mov    0x28(%ebp),%edx
 		push   %edx
-		call   MEM_free_DOS
+		call   ac_AIL_MEM_free_DOS
 		add    $0xc,%esp
 		mov    0x4c(%ebp),%ebx
 		push   %ebx
 		mov    0x50(%ebp),%ecx
 		push   %ecx
-		call   MEM_free_lock
+		call   ac_AIL_MEM_free_lock
 		add    $0x8,%esp
 		push   $0x8c
 		push   %ebp
-		call   MEM_free_lock
+		call   ac_AIL_MEM_free_lock
 		add    $0x8,%esp
 		xor    %eax,%eax
 		add    $0x3c,%esp
@@ -8891,23 +8891,23 @@ GLOBAL_FUNC (SS_construct_DIG_driver)	/* 113110 */
 		push   %edi
 		mov    0x28(%ebp),%eax
 		push   %eax
-		call   MEM_free_DOS
+		call   ac_AIL_MEM_free_DOS
 		imul   $0x894,0x60(%ebp),%eax
 		add    $0xc,%esp
 		push   %eax
 		mov    0x5c(%ebp),%ebx
 		push   %ebx
-		call   MEM_free_lock
+		call   ac_AIL_MEM_free_lock
 		add    $0x8,%esp
 		mov    0x4c(%ebp),%ecx
 		push   %ecx
 		mov    0x50(%ebp),%esi
 		push   %esi
-		call   MEM_free_lock
+		call   ac_AIL_MEM_free_lock
 		add    $0x8,%esp
 		push   $0x8c
 		push   %ebp
-		call   MEM_free_lock
+		call   ac_AIL_MEM_free_lock
 		add    $0x8,%esp
 		xor    %eax,%eax
 		add    $0x3c,%esp
@@ -9617,44 +9617,44 @@ AILSS_end_:
 		je     jump_113f74
 		push   $AILSS_end_
 		push   $AILSS_start_
-		call   VMM_unlock_range
+		call   ac_AIL_VMM_unlock_range
 		add    $0x8,%esp
 		push   $0x80
 		push   $data_15aa50
-		call   AIL_vmm_unlock
+		call   ac_AIL_vmm_unlock
 		add    $0x8,%esp
 		push   $0x4
 		push   $data_15aad0
-		call   AIL_vmm_unlock
+		call   ac_AIL_vmm_unlock
 		add    $0x8,%esp
 		push   $0x4
 		push   $data_1ed8c4
-		call   AIL_vmm_unlock
+		call   ac_AIL_vmm_unlock
 		add    $0x8,%esp
 		push   $0xc
 		push   $data_1ed8b4
-		call   AIL_vmm_unlock
+		call   ac_AIL_vmm_unlock
 		add    $0x8,%esp
 		push   $0x4
 		push   $data_1ed8cc
-		call   AIL_vmm_unlock
+		call   ac_AIL_vmm_unlock
 		add    $0x8,%esp
 		push   $0x4
 		push   $data_1ed8d0
-		call   AIL_vmm_unlock
+		call   ac_AIL_vmm_unlock
 		add    $0x8,%esp
 		push   $0x4
 		push   $data_1ed8c0
-		call   AIL_vmm_unlock
+		call   ac_AIL_vmm_unlock
 		add    $0x8,%esp
 		push   $0x4
 		push   $data_1ed8c8
-		call   AIL_vmm_unlock
+		call   ac_AIL_vmm_unlock
 		add    $0x8,%esp
 		push   $0x4
 		push   $data_1ed8b0
 		xor    %ebx,%ebx
-		call   AIL_vmm_unlock
+		call   ac_AIL_vmm_unlock
 		add    $0x8,%esp
 		mov    %ebx,data_15aad4
 	jump_113f74:
@@ -9675,7 +9675,7 @@ AILSFILE_start_:
 		push   $AILSFILE_end_
 		push   $AILSFILE_start_
 		mov    $0x1,%ebx
-		call   VMM_lock_range
+		call   ac_AIL_VMM_lock_range
 		add    $0x8,%esp
 		mov    %ebx,data_15aad8
 	jump_113fa9:
@@ -10206,7 +10206,7 @@ AILSFILE_end_:
 		push   $AILSFILE_end_
 		push   $AILSFILE_start_
 		xor    %ebx,%ebx
-		call   VMM_unlock_range
+		call   ac_AIL_VMM_unlock_range
 		add    $0x8,%esp
 		mov    %ebx,data_15aad8
 	jump_114626:
@@ -10226,68 +10226,68 @@ AILXMIDI_start_:
 		jne    jump_114741
 		push   $AILXMIDI_end_
 		push   $AILXMIDI_start_
-		call   VMM_lock_range
+		call   ac_AIL_VMM_lock_range
 		add    $0x8,%esp
 		push   $0x80
 		push   $aSample
-		call   AIL_vmm_lock
+		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
 		push   $0x4
 		push   $data_15ab5c
-		call   AIL_vmm_lock
+		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
 		push   $0x4
 		push   $data_1ed8f8
-		call   AIL_vmm_lock
+		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
 		push   $0x4
 		push   $data_1ed8fc
-		call   AIL_vmm_lock
+		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
 		push   $0x4
 		push   $data_1ed900
-		call   AIL_vmm_lock
+		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
 		push   $0x4
 		push   $data_1ed904
-		call   AIL_vmm_lock
+		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
 		push   $0x4
 		push   $data_1ed910
-		call   AIL_vmm_lock
+		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
 		push   $0x4
 		push   $data_1ed908
-		call   AIL_vmm_lock
+		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
 		push   $0x4
 		push   $data_1ed90c
-		call   AIL_vmm_lock
+		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
 		push   $0x4
 		push   $data_1ed8f4
-		call   AIL_vmm_lock
+		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
 		push   $0x4
 		push   $data_1ed8e8
-		call   AIL_vmm_lock
+		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
 		push   $0x4
 		push   $data_1ed8f0
-		call   AIL_vmm_lock
+		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
 		push   $0x4
 		push   $data_1ed8ec
-		call   AIL_vmm_lock
+		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
 		push   $0x4
 		push   $data_1ed8e0
-		call   AIL_vmm_lock
+		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
 		push   $0x4
 		push   $data_1ed8e4
 		mov    $0x1,%ebx
-		call   AIL_vmm_lock
+		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
 		mov    %ebx,data_15ab60
 	jump_114741:
@@ -12307,11 +12307,11 @@ _XMI_destroy_MDI_driver:	/* 0x115E40 */
 		push   %eax
 		mov    0x18(%edi),%eax
 		push   %eax
-		call   MEM_free_lock
+		call   ac_AIL_MEM_free_lock
 		add    $0x8,%esp
 		push   $0x1d4
 		push   %edi
-		call   MEM_free_lock
+		call   ac_AIL_MEM_free_lock
 		add    $0x8,%esp
 		pop    %edi
 		pop    %esi
@@ -12329,7 +12329,7 @@ _XMI_construct_MDI_driver:	/* 0x115EA0 */
 		sub    $0x30,%esp
 		call   AILXMIDI_start_
 		push   $0x1d4
-		call   MEM_alloc_lock
+		call   ac_AIL_MEM_alloc_lock
 		mov    %eax,%ebx
 		add    $0x4,%esp
 		mov    %eax,%ebp
@@ -12353,7 +12353,7 @@ _XMI_construct_MDI_driver:	/* 0x115EA0 */
 		push   %ebx
 		rep movsl %ds:(%esi),%es:(%edi)
 		movsw  %ds:(%esi),%es:(%edi)
-		call   MEM_free_lock
+		call   ac_AIL_MEM_free_lock
 		add    $0x8,%esp
 		xor    %eax,%eax
 		add    $0x30,%esp
@@ -12573,7 +12573,7 @@ _XMI_construct_MDI_driver:	/* 0x115EA0 */
 		mov    $aXmidiSoundHard,%esi
 		push   %ebp
 		rep movsl %ds:(%esi),%es:(%edi)
-		call   MEM_free_lock
+		call   ac_AIL_MEM_free_lock
 		add    $0x8,%esp
 		xor    %eax,%eax
 		add    $0x30,%esp
@@ -12622,7 +12622,7 @@ _XMI_construct_MDI_driver:	/* 0x115EA0 */
 		mov    0x0(%ebp),%eax
 		push   %ebp
 		movl   $0x0,0x18(%eax)
-		call   MEM_free_lock
+		call   ac_AIL_MEM_free_lock
 		add    $0x8,%esp
 		xor    %eax,%eax
 		add    $0x30,%esp
@@ -12636,7 +12636,7 @@ _XMI_construct_MDI_driver:	/* 0x115EA0 */
 		mov    %eax,0x1c(%ebp)
 		imul   $0x718,%eax,%eax
 		push   %eax
-		call   MEM_alloc_lock
+		call   ac_AIL_MEM_alloc_lock
 		add    $0x4,%esp
 		mov    %eax,0x18(%ebp)
 		test   %eax,%eax
@@ -12656,7 +12656,7 @@ _XMI_construct_MDI_driver:	/* 0x115EA0 */
 		mov    0x0(%ebp),%eax
 		push   %ebp
 		movl   $0x0,0x18(%eax)
-		call   MEM_free_lock
+		call   ac_AIL_MEM_free_lock
 		add    $0x8,%esp
 		xor    %eax,%eax
 		add    $0x30,%esp
@@ -12732,11 +12732,11 @@ _XMI_construct_MDI_driver:	/* 0x115EA0 */
 		push   %eax
 		mov    0x18(%ebp),%esi
 		push   %esi
-		call   MEM_free_lock
+		call   ac_AIL_MEM_free_lock
 		add    $0x8,%esp
 		push   $0x1d4
 		push   %ebp
-		call   MEM_free_lock
+		call   ac_AIL_MEM_free_lock
 		add    $0x8,%esp
 		xor    %eax,%eax
 		add    $0x30,%esp
@@ -14328,64 +14328,64 @@ AILXMIDI_end_:
 		je     jump_11781f
 		push   $AILXMIDI_end_
 		push   $AILXMIDI_start_
-		call   VMM_unlock_range
+		call   ac_AIL_VMM_unlock_range
 		add    $0x8,%esp
 		push   $0x80
 		push   $aSample
-		call   AIL_vmm_unlock
+		call   ac_AIL_vmm_unlock
 		add    $0x8,%esp
 		push   $0x4
 		push   $data_15ab5c
-		call   AIL_vmm_unlock
+		call   ac_AIL_vmm_unlock
 		add    $0x8,%esp
 		push   $0x4
 		push   $data_1ed8f8
-		call   AIL_vmm_unlock
+		call   ac_AIL_vmm_unlock
 		add    $0x8,%esp
 		push   $0x4
 		push   $data_1ed8fc
-		call   AIL_vmm_unlock
+		call   ac_AIL_vmm_unlock
 		add    $0x8,%esp
 		push   $0x4
 		push   $data_1ed904
-		call   AIL_vmm_unlock
+		call   ac_AIL_vmm_unlock
 		add    $0x8,%esp
 		push   $0x4
 		push   $data_1ed910
-		call   AIL_vmm_unlock
+		call   ac_AIL_vmm_unlock
 		add    $0x8,%esp
 		push   $0x4
 		push   $data_1ed908
-		call   AIL_vmm_unlock
+		call   ac_AIL_vmm_unlock
 		add    $0x8,%esp
 		push   $0x4
 		push   $data_1ed90c
-		call   AIL_vmm_unlock
+		call   ac_AIL_vmm_unlock
 		add    $0x8,%esp
 		push   $0x4
 		push   $data_1ed8f4
-		call   AIL_vmm_unlock
+		call   ac_AIL_vmm_unlock
 		add    $0x8,%esp
 		push   $0x4
 		push   $data_1ed8e8
-		call   AIL_vmm_unlock
+		call   ac_AIL_vmm_unlock
 		add    $0x8,%esp
 		push   $0x4
 		push   $data_1ed8f0
-		call   AIL_vmm_unlock
+		call   ac_AIL_vmm_unlock
 		add    $0x8,%esp
 		push   $0x4
 		push   $data_1ed8ec
-		call   AIL_vmm_unlock
+		call   ac_AIL_vmm_unlock
 		add    $0x8,%esp
 		push   $0x4
 		push   $data_1ed8e0
-		call   AIL_vmm_unlock
+		call   ac_AIL_vmm_unlock
 		add    $0x8,%esp
 		push   $0x4
 		push   $data_1ed8e4
 		xor    %ebx,%ebx
-		call   AIL_vmm_unlock
+		call   ac_AIL_vmm_unlock
 		add    $0x8,%esp
 		mov    %ebx,data_15ab60
 	jump_11781f:
@@ -14475,7 +14475,7 @@ AILXDIG_start_:
 		push   $AILXDIG_end_
 		push   $AILXDIG_start_
 		mov    $0x1,%ebx
-		call   VMM_lock_range
+		call   ac_AIL_VMM_lock_range
 		add    $0x8,%esp
 		mov    %ebx,_locked_AILXDIG
 	jump_117a59:
@@ -15257,7 +15257,7 @@ AILXDIG_end_:
 		push   $AILXDIG_end_
 		push   $AILXDIG_start_
 		xor    %ebx,%ebx
-		call   VMM_unlock_range
+		call   ac_AIL_VMM_unlock_range
 		add    $0x8,%esp
 		mov    %ebx,_locked_AILXDIG
 	jump_118456:
@@ -20583,11 +20583,11 @@ AILSSA_VMM_lock:
 		push   %es
 		push   $data_15ac0c_after
 		push   $data_15abf0
-		call   VMM_lock_range
+		call   ac_AIL_VMM_lock_range
 		add    $0x8,%esp
 		push   $AILSSA_VMM_lock
 		push   $vtable_11c07c
-		call   VMM_lock_range
+		call   ac_AIL_VMM_lock_range
 		add    $0x8,%esp
 		pop    %es
 		pop    %ds

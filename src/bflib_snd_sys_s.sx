@@ -4276,13 +4276,13 @@ allocate_buffers:
 		test   %eax,%eax
 		je     jump_100ff9
 		push   $0x4000
-		call   MEM_alloc_lock
+		call   ac_AIL_MEM_alloc_lock
 		add    $0x4,%esp
 		mov    %eax,data_1e8f60
 		test   %eax,%eax
 		je     jump_100ff9
 		push   $0x4000
-		call   MEM_alloc_lock
+		call   ac_AIL_MEM_alloc_lock
 		add    $0x4,%esp
 		mov    %eax,data_1e8f64
 		test   %eax,%eax
@@ -4307,7 +4307,7 @@ free_buffers:
 		je     jump_101025
 		push   $0x4000
 		push   %edx
-		call   MEM_free_lock
+		call   ac_AIL_MEM_free_lock
 		xor    %ecx,%ecx
 		add    $0x8,%esp
 		mov    %ecx,data_1e8f60
@@ -4318,7 +4318,7 @@ free_buffers:
 		push   $0x4000
 		push   %esi
 		xor    %ebp,%ebp
-		call   MEM_free_lock
+		call   ac_AIL_MEM_free_lock
 		add    $0x8,%esp
 		mov    %ebp,data_1e8f64
 	jump_101045:
@@ -6385,7 +6385,7 @@ GLOBAL (SoundType)
 		.fill   0x2
 SoundDriver:
 		.long	0x0
-AILStartupAlreadyInitiated:
+GLOBAL (AILStartupAlreadyInitiated)
 		.byte   0x0
 		.fill   0x3
 GLOBAL (SampleRate)

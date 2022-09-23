@@ -83,11 +83,11 @@ GLOBAL_FUNC (MSSSMACKTIMERDONE)
 		add    $0x4,%esp
 		push   $MSSSMACKTIMERSETUP
 		push   $ac_MSSSMACKTIMERREAD
-		call   VMM_unlock_range
+		call   ac_AIL_VMM_unlock_range
 		add    $0x8,%esp
 		push   $0x4
 		push   $mss_i_count
-		call   AIL_vmm_unlock
+		call   ac_AIL_vmm_unlock
 		add    $0x8,%esp
 	jump_fbd8f:
 		ret
@@ -105,11 +105,11 @@ GLOBAL_FUNC (MSSSMACKTIMERSETUP)
 		jne    jump_fbe2e
 		push   $MSSSMACKTIMERSETUP
 		push   $ac_MSSSMACKTIMERREAD
-		call   VMM_lock_range
+		call   ac_AIL_VMM_lock_range
 		add    $0x8,%esp
 		push   $0x4
 		push   $mss_i_count
-		call   AIL_vmm_lock
+		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
 		push   $_mss_int
 		call   AIL_register_timer
@@ -230,7 +230,7 @@ GLOBAL_FUNC (MSSLOWSOUNDCLOSE)
 		push   %eax
 		mov    0x54(%esi),%edi
 		push   %edi
-		call   AIL_vmm_unlock
+		call   ac_AIL_vmm_unlock
 		add    $0x8,%esp
 		mov    0x54(%esi),%ebp
 		push   %ebp
@@ -404,7 +404,7 @@ GLOBAL_FUNC (MSSLOWSOUNDOPEN)
 		push   %eax
 		mov    0x54(%esi),%edi
 		push   %edi
-		call   AIL_vmm_lock
+		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
 		mov    SmackMSSDigDriver,%ebp
 		push   %ebp

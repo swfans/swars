@@ -731,7 +731,7 @@ GLOBAL_FUNC (cd_init_)
 		push   $control_real
 		push   $control_prot
 		push   $0x1
-		call   MEM_alloc_DOS
+		call   ac_AIL_MEM_alloc_DOS
 		add    $0x10,%esp
 		test   %eax,%eax
 		jne    jump_1084dc
@@ -902,7 +902,7 @@ GLOBAL_FUNC (FreeCDAudio_)
 		mov    control_real,%ebx
 		push   %ebx
 		push   $control_prot
-		call   MEM_free_DOS
+		call   ac_AIL_MEM_free_DOS
 		xor    %eax,%eax
 		add    $0xc,%esp
 		mov    cd_ioctli_low_mem,%ax

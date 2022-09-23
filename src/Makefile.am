@@ -44,6 +44,8 @@ swars_SOURCES = \
 	../bfsoundlib/src/awe32.c \
 	../bfsoundlib/src/awe32use.c \
 	../bfsoundlib/include/awe32.h \
+	../bfsoundlib/include/memfile.h \
+	../bfsoundlib/src/memfile.c \
 	../bfsoundlib/include/snderr.h \
 	../bfsoundlib/src/snderr.c \
 	config.h \
