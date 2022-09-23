@@ -4922,14 +4922,14 @@ AWEDefMemMap_:
 		sub    $0xc,%esp
 		mov    %eax,%edi
 		mov    %edx,%esi
-		cmpl   $0x0,awe32_sf_data
+		cmpl   $0x0,awe_data
 		jne    jump_110042
-		cmpw   $0x0,awe32_sf_data_add
+		cmpw   $0x0,awe_data_seg
 		jne    jump_110042
 		mov    $0x4,%eax
 		call   AllocDOSmem_
-		mov    %dx,awe32_sf_data_add
-		mov    %eax,awe32_sf_data
+		mov    %dx,awe_data_seg
+		mov    %eax,awe_data
 		test   %eax,%eax
 		jne    jump_110042
 		test   %dx,%dx
@@ -4937,16 +4937,16 @@ AWEDefMemMap_:
 		mov    $0xffffffff,%eax
 		jmp    jump_1100a7
 	jump_110042:
-		lgs    awe32_sf_data,%eax
+		lgs    awe_data,%eax
 		mov    %ecx,%edx
 		mov    %si,%gs:(%eax)
 		mov    %ebx,%eax
 		xor    %eax,%eax
 		mov    %dx,%ax
 		call   GetDOSseg_
-		mov    awe32_sf_data_add,%gs
+		mov    awe_data_seg,%gs
 		mov    %eax,%ebx
-		mov    awe32_sf_data,%eax
+		mov    awe_data,%eax
 		mov    %bx,%gs:0x2(%eax)
 		mov    $0x11,%ebx
 		mov    %gs,%edx
@@ -4981,29 +4981,29 @@ AWEGetSFInfo_:
 		sub    $0xc,%esp
 		mov    %eax,%edi
 		mov    %edx,%esi
-		cmpl   $0x0,awe32_sf_data
+		cmpl   $0x0,awe_data
 		jne    jump_1100ef
-		cmpw   $0x0,awe32_sf_data_add
+		cmpw   $0x0,awe_data_seg
 		jne    jump_1100ef
 		mov    $0x4,%eax
 		call   AllocDOSmem_
-		mov    %dx,awe32_sf_data_add
-		mov    %eax,awe32_sf_data
+		mov    %dx,awe_data_seg
+		mov    %eax,awe_data
 		test   %eax,%eax
 		jne    jump_1100ef
 		test   %dx,%dx
 		je     jump_11016d
 	jump_1100ef:
-		lgs    awe32_sf_data,%eax
+		lgs    awe_data,%eax
 		mov    %ecx,%edx
 		mov    %si,%gs:(%eax)
 		mov    %ebx,%eax
 		xor    %eax,%eax
 		mov    %dx,%ax
 		call   GetDOSseg_
-		mov    awe32_sf_data_add,%gs
+		mov    awe_data_seg,%gs
 		mov    %eax,%ebx
-		mov    awe32_sf_data,%eax
+		mov    awe_data,%eax
 		mov    %bx,%gs:0x2(%eax)
 		mov    $0x17,%ebx
 		mov    %gs,%edx
@@ -5049,14 +5049,14 @@ AWEStreamSample_:
 		sub    $0xc,%esp
 		mov    %eax,%edi
 		mov    %edx,%esi
-		cmpl   $0x0,awe32_sf_data
+		cmpl   $0x0,awe_data
 		jne    jump_1101c2
-		cmpw   $0x0,awe32_sf_data_add
+		cmpw   $0x0,awe_data_seg
 		jne    jump_1101c2
 		mov    $0x4,%eax
 		call   AllocDOSmem_
-		mov    %dx,awe32_sf_data_add
-		mov    %eax,awe32_sf_data
+		mov    %dx,awe_data_seg
+		mov    %eax,awe_data
 		test   %eax,%eax
 		jne    jump_1101c2
 		test   %dx,%dx
@@ -5064,16 +5064,16 @@ AWEStreamSample_:
 		mov    $0xffffffff,%eax
 		jmp    jump_110227
 	jump_1101c2:
-		lgs    awe32_sf_data,%eax
+		lgs    awe_data,%eax
 		mov    %ecx,%edx
 		mov    %si,%gs:(%eax)
 		mov    %ebx,%eax
 		xor    %eax,%eax
 		mov    %dx,%ax
 		call   GetDOSseg_
-		mov    awe32_sf_data_add,%gs
+		mov    awe_data_seg,%gs
 		mov    %eax,%ebx
-		mov    awe32_sf_data,%eax
+		mov    awe_data,%eax
 		mov    %bx,%gs:0x2(%eax)
 		mov    $0x18,%ebx
 		mov    %gs,%edx
@@ -5108,14 +5108,14 @@ AWELoadPreset_:
 		sub    $0xc,%esp
 		mov    %eax,%edi
 		mov    %edx,%esi
-		cmpl   $0x0,awe32_sf_data
+		cmpl   $0x0,awe_data
 		jne    jump_110272
-		cmpw   $0x0,awe32_sf_data_add
+		cmpw   $0x0,awe_data_seg
 		jne    jump_110272
 		mov    $0x4,%eax
 		call   AllocDOSmem_
-		mov    %dx,awe32_sf_data_add
-		mov    %eax,awe32_sf_data
+		mov    %dx,awe_data_seg
+		mov    %eax,awe_data
 		test   %eax,%eax
 		jne    jump_110272
 		test   %dx,%dx
@@ -5123,16 +5123,16 @@ AWELoadPreset_:
 		mov    $0xffffffff,%eax
 		jmp    jump_1102d7
 	jump_110272:
-		lgs    awe32_sf_data,%eax
+		lgs    awe_data,%eax
 		mov    %ecx,%edx
 		mov    %si,%gs:(%eax)
 		mov    %ebx,%eax
 		xor    %eax,%eax
 		mov    %dx,%ax
 		call   GetDOSseg_
-		mov    awe32_sf_data_add,%gs
+		mov    awe_data_seg,%gs
 		mov    %eax,%ebx
-		mov    awe32_sf_data,%eax
+		mov    awe_data,%eax
 		mov    %bx,%gs:0x2(%eax)
 		mov    $0x19,%ebx
 		mov    %gs,%edx
@@ -5160,7 +5160,7 @@ AWELoadPreset_:
 
 
 /*----------------------------------------------------------------*/
-AWEFreeMem_:
+GLOBAL_FUNC (ASM_AWEFreeMem)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -5168,8 +5168,8 @@ AWEFreeMem_:
 		sub    $0xc,%esp
 		mov    %eax,%ebx
 		mov    %edx,%ecx
-		mov    awe32_sf_data_add,%dx
-		mov    awe32_sf_data,%eax
+		mov    awe_data_seg,%dx
+		mov    awe_data,%eax
 		call   ac_FreeDOSmem
 		mov    %esp,%eax
 		mov    $0x12,%esi
@@ -5178,12 +5178,12 @@ AWEFreeMem_:
 		xor    %edx,%edx
 		push   %eax
 		mov    %cx,0xe(%esp)
-		mov    %dx,awe32_sf_data_add
+		mov    %dx,awe_data_seg
 		push   $0x506
 		mov    (%ebx),%ecx
 		xor    %edx,%edx
 		push   %ecx
-		mov    %edx,awe32_sf_data
+		mov    %edx,awe_data
 		call   ac_AIL_call_driver
 		add    $0x10,%esp
 		movswl (%esp),%eax
@@ -5262,8 +5262,8 @@ LoadAwe32Soundfont_:
 		mov    %eax,%esi
 		mov    $0x200,%eax
 		call   AllocDOSmem_
-		mov    %dx,awe32_buffer_add
-		mov    %eax,awe32_buffer
+		mov    %dx,awe_buffer_seg
+		mov    %eax,awe_buffer
 		test   %eax,%eax
 		jne    jump_110439
 		test   %dx,%dx
@@ -5273,7 +5273,7 @@ LoadAwe32Soundfont_:
 		call   AWEGetTotalRAM_
 		cmp    $0xffffffff,%eax
 		je     jump_1105d0
-		lgs    awe32_buffer,%ebx
+		lgs    awe_buffer,%ebx
 		mov    $0x2,%edx
 		mov    MusicDriver,%eax
 		movl   $0x0,%gs:(%ebx)
@@ -5284,16 +5284,16 @@ LoadAwe32Soundfont_:
 		jne    jump_1105d0
 		lea    0x14(%esp),%eax
 		mov    $0x200,%edx
-		mov    awe32_buffer_add,%cx
+		mov    awe_buffer_seg,%cx
 		push   %eax
-		mov    awe32_buffer,%ebx
+		mov    awe_buffer,%ebx
 		mov    sbkHandle,%eax
 		call   ___dos_read_
 		test   %eax,%eax
 		jne    jump_1105d0
 		mov    $0x1,%edx
-		mov    awe32_buffer_add,%cx
-		mov    awe32_buffer,%ebx
+		mov    awe_buffer_seg,%cx
+		mov    awe_buffer,%ebx
 		mov    MusicDriver,%eax
 		call   AWEGetSFInfo_
 		mov    %edx,0x18(%esp)
@@ -5319,16 +5319,16 @@ LoadAwe32Soundfont_:
 		jge    jump_110544
 		lea    0x14(%esp),%eax
 		mov    $0x200,%edx
-		mov    awe32_buffer_add,%cx
+		mov    awe_buffer_seg,%cx
 		push   %eax
-		mov    awe32_buffer,%ebx
+		mov    awe_buffer,%ebx
 		mov    sbkHandle,%eax
 		call   ___dos_read_
 		test   %eax,%eax
 		jne    jump_1105d0
 		mov    $0x1,%edx
-		mov    awe32_buffer_add,%cx
-		mov    awe32_buffer,%ebx
+		mov    awe_buffer_seg,%cx
+		mov    awe_buffer,%ebx
 		mov    MusicDriver,%eax
 		call   AWEStreamSample_
 		test   %eax,%eax
@@ -5343,8 +5343,8 @@ LoadAwe32Soundfont_:
 	jump_110544:
 		mov    %gs:0xa(%edi),%eax
 		call   AllocDOSmem_
-		mov    %dx,awe32_preset_add
-		mov    %eax,awe32_preset
+		mov    %dx,awe_preset_seg
+		mov    %eax,awe_preset
 		test   %eax,%eax
 		jne    jump_110562
 		test   %dx,%dx
@@ -5357,8 +5357,8 @@ LoadAwe32Soundfont_:
 		call   ac_dos_lseek
 		lea    0x14(%esp),%eax
 		mov    0x18(%esp),%gs
-		mov    awe32_preset_add,%cx
-		mov    awe32_preset,%ebx
+		mov    awe_preset_seg,%cx
+		mov    awe_preset,%ebx
 		push   %eax
 		mov    %gs:0xa(%edi),%edx
 		mov    sbkHandle,%eax
@@ -5366,8 +5366,8 @@ LoadAwe32Soundfont_:
 		test   %eax,%eax
 		jne    jump_1105d0
 		mov    $0x1,%edx
-		mov    awe32_preset_add,%cx
-		mov    awe32_preset,%ebx
+		mov    awe_preset_seg,%cx
+		mov    awe_preset,%ebx
 		mov    MusicDriver,%eax
 		call   AWELoadPreset_
 		test   %eax,%eax
@@ -5409,12 +5409,12 @@ FreeAwe32Soundfont:
 		jne    jump_110660
 		mov    $0x1,%edx
 		mov    MusicDriver,%eax
-		call   AWEFreeMem_
-		mov    awe32_buffer_add,%dx
-		mov    awe32_buffer,%eax
+		call   ac_AWEFreeMem
+		mov    awe_buffer_seg,%dx
+		mov    awe_buffer,%eax
 		call   ac_FreeDOSmem
-		mov    awe32_preset_add,%dx
-		mov    awe32_preset,%eax
+		mov    awe_preset_seg,%dx
+		mov    awe_preset,%eax
 		xor    %bl,%bl
 		call   ac_FreeDOSmem
 		mov    %bl,Awe32SoundfontLoaded
@@ -6546,25 +6546,26 @@ sample_queue_handle:
 
 sbkHandle:	/* 0x1ED5F0 */
 		.long	0x0
-/* unsigned char *awe32_buffer;
+
+/* unsigned char *awe_buffer;
  */
-awe32_buffer:
+GLOBAL (awe_buffer)
 		.long	0x0
-awe32_buffer_add:
+GLOBAL (awe_buffer_seg)
 		.short	0x0
 		.align	4
-/* unsigned char *awe32_preset;
+/* unsigned char *awe_preset;
  */
-awe32_preset:
+GLOBAL (awe_preset) /* 0x1ED5FC */
 		.long	0x0
-awe32_preset_add:
+GLOBAL (awe_preset_seg)
 		.short	0x0
 		.align	4
-/* __38rogeSF_DATA *awe32_sf_data;
+/* struct SF_DATA *awe_data;
  */
-awe32_sf_data:
+GLOBAL (awe_data) /* 0x1ED604 */
 		.long	0x0
-awe32_sf_data_add:
+GLOBAL (awe_data_seg)
 		.short	0x0
 		.align	4
 
