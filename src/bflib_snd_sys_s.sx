@@ -3830,7 +3830,7 @@ GLOBAL_FUNC (ASM_InitMusic)
 		add    $0x8,%esp
 		mov    $_CurrentAwe32SoundfontPrefix,%eax
 		mov    %ch,EXPORT_SYMBOL(MusicInstalled)
-		call   LoadAwe32Soundfont_
+		call   ac_LoadAwe32Soundfont
 		xor    %al,%al
 		mov    %al,EXPORT_SYMBOL(MusicInstalled)
 		xor    %eax,%eax
@@ -4010,7 +4010,7 @@ GLOBAL_FUNC (ASM_InitMusic)
 		jne    jump_100401
 		movb   $0x1,EXPORT_SYMBOL(MusicInstalled)
 		xor    %dh,%dh
-		call   FreeAwe32Soundfont
+		call   ac_FreeAwe32Soundfont
 		mov    %dh,EXPORT_SYMBOL(MusicInstalled)
 		mov    %dh,Awe32SoundfontLoaded
 	jump_100401:
@@ -4425,7 +4425,7 @@ FreeMusic_:
 		mov    Awe32SoundfontLoaded,%al
 		cmp    $0x1,%eax
 		jne    jump_108cb4
-		call   FreeAwe32Soundfont
+		call   ac_FreeAwe32Soundfont
 	jump_108cb4:
 		cmpb   $0x0,SoundInstalled
 		jne    jump_108cc2
@@ -5195,7 +5195,7 @@ GLOBAL_FUNC (ASM_AWEFreeMem)
 
 
 /*----------------------------------------------------------------*/
-LoadAwe32Soundfont_:
+GLOBAL_FUNC (ASM_LoadAwe32Soundfont)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -5227,7 +5227,7 @@ LoadAwe32Soundfont_:
 		cmp    $0x1,%eax
 		jne    jump_1103be
 		xor    %bl,%bl
-		call   FreeAwe32Soundfont
+		call   ac_FreeAwe32Soundfont
 		mov    %bl,Awe32SoundfontLoaded
 	jump_1103be:
 		mov    $_CurrentAwe32SoundfontPrefix,%edi
@@ -5387,7 +5387,7 @@ LoadAwe32Soundfont_:
 
 
 /*----------------------------------------------------------------*/
-FreeAwe32Soundfont:
+GLOBAL_FUNC (ASM_FreeAwe32Soundfont)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %edx
@@ -6429,7 +6429,7 @@ EndMusic:
 MusicData:
 		.long	0x0
 
-MusicDriver:
+GLOBAL (MusicDriver)	/* 0x1E8C6C */
 		.long	0x0
 SongHandle:
 		.long	0x0
