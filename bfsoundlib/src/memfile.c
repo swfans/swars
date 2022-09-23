@@ -30,14 +30,21 @@
 extern AILMEMALLOCCB MEM_alloc;
 extern AILMEMFREECB MEM_free;
 
-int32_t ASM_AIL_MEM_alloc_DOS(uint32_t n_paras, void **protected_ptr,
-        uint32_t *segment_far_ptr, uint32_t *selector);
-
-
 int32_t AIL_MEM_alloc_DOS(uint32_t n_paras, void **protected_ptr,
         uint32_t *segment_far_ptr, uint32_t *selector)
 {
-    return ASM_AIL_MEM_alloc_DOS(n_paras, protected_ptr, segment_far_ptr, selector);
+    void *ptr;
+
+    ptr = LbMemoryAllocLow(16 * n_paras);
+    if (ptr == NULL)
+        return 0;
+
+    *segment_far_ptr = ((uint32_t)ptr >> 4) << 16;
+    *protected_ptr = ptr;
+    *selector = 0x4D0;
+    AIL_VMM_lock_range((void *)(*segment_far_ptr >> 12),
+        (void *)((*segment_far_ptr >> 12) + 16 * n_paras - 1));
+    return 1;
 }
 
 void AIL_MEM_free_DOS(void *mem_ptr, uint32_t segment_far_ptr, uint32_t selector)
