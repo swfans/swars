@@ -2,10 +2,10 @@
 // Bullfrog Sound Library - for use to remake classic games like
 // Syndicate Wars, Magic Carpet, Genewars or Dungeon Keeper.
 /******************************************************************************/
-/** @file mssxmidi.c
- *     OpenAL based reimplementation of MSS API.
+/** @file dpmi.h
+ *     Header file for dpmi.c.
  * @par Purpose:
- *     SS functions from MSS API.
+ *     OpenAL based reimplementation of MSS API.
  * @par Comment:
  *     None.
  * @author   Tomasz Lis
@@ -17,32 +17,27 @@
  *     (at your option) any later version.
  */
 /******************************************************************************/
-#include <stdio.h>
-#include <stddef.h>
-#include <stdlib.h>
-#include <stdbool.h>
-#include <assert.h>
+#ifndef AIL2OAL_DPMI_H_
+#define AIL2OAL_DPMI_H_
 
-#include "mssxmidi.h"
+#include <stdint.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 /******************************************************************************/
 
-MDI_DRIVER *AIL2OAL_API_install_MDI_driver_file(char *filename, SNDCARD_IO_PARMS *iop)
-{
-    MDI_DRIVER *mdidrv;
-    asm volatile (
-      "push %2\n"
-      "push %1\n"
-      "call ASM_AIL_API_install_MDI_driver_file\n"
-        : "=r" (mdidrv) : "g" (filename), "g" (iop));
-    return mdidrv;
-}
-
-void AIL2OAL_API_uninstall_MDI_driver(MDI_DRIVER *mdidrv)
-{
-    asm volatile (
-      "push %0\n"
-      "call ASM_AIL_API_uninstall_MDI_driver\n"
-        :  : "g" (mdidrv));
-}
+/** Frees a memory block allocated by AllocDOSmem().
+ *
+ * @param block Protected mode pointer to memory block.
+ * @param seg Segment of the block; for API compatibility, unused.
+ * @return OK (0) or ERROR (-1)
+ */
+int FreeDOSmem(void *block, uint16_t seg);
 
 /******************************************************************************/
+#ifdef __cplusplus
+};
+#endif
+
+#endif // AIL2OAL_DPMI_H_

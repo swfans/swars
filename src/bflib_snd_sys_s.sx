@@ -5170,7 +5170,7 @@ AWEFreeMem_:
 		mov    %edx,%ecx
 		mov    awe32_sf_data_add,%dx
 		mov    awe32_sf_data,%eax
-		call   FreeDOSmem_
+		call   ac_FreeDOSmem
 		mov    %esp,%eax
 		mov    $0x12,%esi
 		push   %eax
@@ -5412,11 +5412,11 @@ FreeAwe32Soundfont:
 		call   AWEFreeMem_
 		mov    awe32_buffer_add,%dx
 		mov    awe32_buffer,%eax
-		call   FreeDOSmem_
+		call   ac_FreeDOSmem
 		mov    awe32_preset_add,%dx
 		mov    awe32_preset,%eax
 		xor    %bl,%bl
-		call   FreeDOSmem_
+		call   ac_FreeDOSmem
 		mov    %bl,Awe32SoundfontLoaded
 	jump_110660:
 		pop    %edx

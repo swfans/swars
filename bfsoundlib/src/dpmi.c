@@ -2,10 +2,10 @@
 // Bullfrog Sound Library - for use to remake classic games like
 // Syndicate Wars, Magic Carpet, Genewars or Dungeon Keeper.
 /******************************************************************************/
-/** @file mssxmidi.c
- *     OpenAL based reimplementation of MSS API.
+/** @file dpmi.c
+ *     Reimplementation of Bullfrog Sound Library.
  * @par Purpose:
- *     SS functions from MSS API.
+ *     Protected Mode Interface calls.
  * @par Comment:
  *     None.
  * @author   Tomasz Lis
@@ -23,26 +23,27 @@
 #include <stdbool.h>
 #include <assert.h>
 
-#include "mssxmidi.h"
+#include "dpmi.h"
 /******************************************************************************/
 
-MDI_DRIVER *AIL2OAL_API_install_MDI_driver_file(char *filename, SNDCARD_IO_PARMS *iop)
-{
-    MDI_DRIVER *mdidrv;
-    asm volatile (
-      "push %2\n"
-      "push %1\n"
-      "call ASM_AIL_API_install_MDI_driver_file\n"
-        : "=r" (mdidrv) : "g" (filename), "g" (iop));
-    return mdidrv;
-}
 
-void AIL2OAL_API_uninstall_MDI_driver(MDI_DRIVER *mdidrv)
+/******************************************************************************/
+
+int FreeDOSmem(void *block, uint16_t seg)
 {
-    asm volatile (
-      "push %0\n"
-      "call ASM_AIL_API_uninstall_MDI_driver\n"
-        :  : "g" (mdidrv));
+#if 0
+    DOS_Registers r;
+
+    r.r32.eax = 0x0101; // DPMI free DOS memory
+    r.r32.edx = FP_SEG(block); // selector to free
+    dos_int386(0x31, &r, &r);
+
+    if (r.r32.eflag) // Failed?
+        return -1;
+#else
+    assert(!"not implemented");
+#endif
+    return 0;
 }
 
 /******************************************************************************/
