@@ -27,6 +27,9 @@ extern "C" {
 #endif
 /******************************************************************************/
 
+void AILA_startup(void);
+void AILA_shutdown(void);
+
 int32_t AIL2OAL_API_call_driver(AIL_DRIVER *drvr, int32_t fn,
         VDI_CALL *in, VDI_CALL *out);
 

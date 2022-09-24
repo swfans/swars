@@ -29,6 +29,34 @@
 /******************************************************************************/
 extern int32_t AIL_ISR_IRQ;
 
+void AILA_startup(void)
+{
+#if 1
+    asm volatile ("call ASM_AILA_startup\n"
+        :  :  : "eax" );
+#else
+  // removed DOS-specific calls, place 1
+  AILA_VMM_lock();
+  AIL_entry_count = 0;
+  AIL_lock_count = 0;
+  AIL_PIT_period = -1;
+  AIL_ISR_IRQ = -1;
+  memset(timer_status, 0, sizeof(timer_status));
+  memset(timer_callback_elapsed_times, 0, sizeof(timer_callback_elapsed_times));
+  memset(timer_callback_periods, 0, sizeof(timer_callback_periods));
+  memset(timer_trigger, 0, sizeof(timer_trigger));
+  // removed DOS-specific calls, place 2
+  AIL_set_timer_period((AIL_N_TIMERS-1) * 4, 54925);
+  // removed DOS-specific calls, place 3
+#endif
+}
+
+void AILA_shutdown(void)
+{
+    asm volatile ("call ASM_AILA_shutdown\n"
+        :  :  : "eax" );
+}
+
 int32_t AIL2OAL_API_call_driver(AIL_DRIVER *drvr, int32_t fn,
         VDI_CALL *in, VDI_CALL *out)
 {

@@ -30,6 +30,9 @@ extern "C" {
 #define AIL_N_PREFS 19
 #define AIL_N_TIMERS 15
 
+int32_t AIL2OAL_API_startup(void);
+void AIL2OAL_API_shutdown(void);
+
 int32_t AIL2OAL_API_set_preference(uint32_t number, int32_t value);
 
 AIL_DRIVER *AIL2OAL_API_install_driver(const uint8_t *driver_image, uint32_t n_bytes);

@@ -66,6 +66,70 @@ void AIL2OAL_start(void)
     AIL_use_locked = 1;
 }
 
+/** Initialize AIL API modules and resources.
+ *
+ * Must be called prior to any other AIL_...() calls.
+ */
+int32_t AIL2OAL_API_startup(void)
+{
+    int i;
+
+    AIL2OAL_start();
+
+    AIL_set_preference(0, 200);
+    AIL_set_preference(1, 1);
+    AIL_set_preference(2, 0x8000);
+    AIL_set_preference(3, 100);
+    AIL_set_preference(4, 16);
+    AIL_set_preference(5, 100);
+    AIL_set_preference(6, 655);
+    AIL_set_preference(7, 0);
+    AIL_set_preference(8, 0);
+    AIL_set_preference(9, 1);
+    AIL_set_preference(10, 0);
+    AIL_set_preference(11, 120);
+    AIL_set_preference(12, 8);
+    AIL_set_preference(13, 127);
+    AIL_set_preference(14, 1);
+    AIL_set_preference(15, 0);
+    AIL_set_preference(16, 2);
+    AIL_set_preference(17, 1);
+    AIL_set_preference(18, 1);
+
+    for (i=0; i < AIL_MAX_DRVRS; i++) {
+        AIL_driver[i] = NULL;
+    }
+    AIL_error[0] = 0;
+
+    AILA_startup();
+
+   return 1;
+}
+
+/** Shut down AIL API modules and resources, unloading all installed
+ * drivers from memory.
+ *
+ * No further AIL_...() calls other than AIL_startup() are permissible.
+ */
+void AIL2OAL_API_shutdown(void)
+{
+    int32_t i;
+
+    // Shut down and unload all registered drivers
+    for (i = AIL_MAX_DRVRS-1; i >= 0; i--) {
+        AIL_DRIVER *drvr;
+
+        if ((drvr = AIL_driver[i]) != NULL)
+            AIL_uninstall_driver(drvr);
+    }
+
+   // Release all application timers
+   AIL_release_all_timers();
+
+   // Shut down assembly API
+   AILA_shutdown();
+}
+
 AIL_DRIVER *AIL2OAL_API_install_driver(const uint8_t *driver_image, uint32_t n_bytes)
 {
     AIL_DRIVER *drvr;

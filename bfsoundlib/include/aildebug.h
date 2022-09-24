@@ -27,6 +27,15 @@ extern "C" {
 #endif
 /******************************************************************************/
 
+/** Initialize MSS and prepares for the installation and use of sound drivers.
+ */
+int32_t AIL_startup(void);
+
+/** Shuts down all active sound drivers, restore normal system timer operation,
+ * and disconnect the API timer interrupt handler.
+ */
+void AIL_shutdown(void);
+
 /** Set one of internal MSS parameters.
  *
  * @param number Specifies index of the preference to set.

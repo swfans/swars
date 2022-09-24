@@ -508,7 +508,7 @@ GLOBAL_FUNC (ASM_InitRedbook)
 		call   ac_GetMusicAble
 		test   %al,%al
 		jne    jump_ebce9
-		call   ail_startup
+		call   ac_AIL_startup
 	jump_ebce9:
 		call   cd_init_
 		test   %al,%al
@@ -1919,7 +1919,7 @@ GLOBAL_FUNC (ASM_FreeAudio)
 		call   ac_GetMusicAble
 		test   %al,%al
 		jne    jump_ed4c7
-		call   ail_shutdown
+		call   ac_AIL_shutdown
 	jump_ed4c7:
 		cmpb   $0x0,_StreamedSoundAble
 		je     jump_ed4d5
@@ -2860,7 +2860,7 @@ GLOBAL_FUNC(ASM_InitSound)
 		jne    jump_ff491
 		cmpb   $0x0,AILStartupAlreadyInitiated
 		je     jump_ff491
-		call   ail_shutdown
+		call   ac_AIL_shutdown
 		push   $aBf5NoSamplesRe
 		push   $SoundProgressMessage
 		call   ac_sprintf
@@ -2887,7 +2887,7 @@ GLOBAL_FUNC(ASM_InitSound)
 		push   $ac_LbMemoryFree
 		call   ac_AIL_MEM_use_free
 		add    $0x4,%esp
-		call   ail_startup
+		call   ac_AIL_startup
 		movb   $0x1,AILStartupAlreadyInitiated
 	jump_ff4ef:
 		push   $0x0
@@ -2986,7 +2986,7 @@ GLOBAL_FUNC(ASM_InitSound)
 		call   ac_SoundProgressLog
 		cmpb   $0x0,EXPORT_SYMBOL(MusicAble)
 		jne    jump_ff62c
-		call   ail_shutdown
+		call   ac_AIL_shutdown
 	jump_ff62c:
 		push   $aNone_0
 		push   $SoundInstallChoice__Field1
@@ -3060,7 +3060,7 @@ GLOBAL_FUNC(ASM_InitSound)
 		call   ac_SoundProgressLog
 		cmpb   $0x0,EXPORT_SYMBOL(MusicAble)
 		jne    jump_ff740
-		call   ail_shutdown
+		call   ac_AIL_shutdown
 	jump_ff740:
 		xor    %dh,%dh
 		mov    %dh,SoundAble
@@ -3117,7 +3117,7 @@ GLOBAL_FUNC(ASM_InitSound)
 		call   ac_SoundProgressLog
 		cmpb   $0x0,EXPORT_SYMBOL(MusicAble)
 		jne    jump_ff803
-		call   ail_shutdown
+		call   ac_AIL_shutdown
 	jump_ff803:
 		xor    %al,%al
 		mov    %al,SoundAble
@@ -3156,7 +3156,7 @@ GLOBAL_FUNC(ASM_InitSound)
 		add    $0x8,%esp
 		test   %ah,%ah
 		jne    jump_ff888
-		call   ail_shutdown
+		call   ac_AIL_shutdown
 	jump_ff888:
 		mov    SoundDriver,%edi
 		xor    %dl,%dl
@@ -3501,7 +3501,7 @@ GLOBAL_FUNC (ASM_InitMusic)
 		push   $ac_LbMemoryFree
 		call   ac_AIL_MEM_use_free
 		add    $0x4,%esp
-		call   ail_startup
+		call   ac_AIL_startup
 		movb   $0x1,AILStartupAlreadyInitiated
 	jump_ffcc6:
 		push   $0x78
@@ -3624,7 +3624,7 @@ GLOBAL_FUNC (ASM_InitMusic)
 		call   ac_SoundProgressLog
 		cmpb   $0x0,SoundAble
 		jne    jump_ffe7f
-		call   ail_shutdown
+		call   ac_AIL_shutdown
 	jump_ffe7f:
 		xor    %dl,%dl
 		mov    %dl,EXPORT_SYMBOL(MusicAble)
@@ -3685,7 +3685,7 @@ GLOBAL_FUNC (ASM_InitMusic)
 		call   ac_SoundProgressLog
 		cmpb   $0x0,SoundAble
 		jne    jump_fff77
-		call   ail_shutdown
+		call   ac_AIL_shutdown
 	jump_fff77:
 		xor    %dl,%dl
 		mov    %dl,EXPORT_SYMBOL(MusicAble)
@@ -3732,7 +3732,7 @@ GLOBAL_FUNC (ASM_InitMusic)
 		call   ac_SoundProgressLog
 		cmpb   $0x0,SoundAble
 		jne    jump_100012
-		call   ail_shutdown
+		call   ac_AIL_shutdown
 	jump_100012:
 		xor    %ch,%ch
 		mov    %ch,EXPORT_SYMBOL(MusicAble)
@@ -3917,7 +3917,7 @@ GLOBAL_FUNC (ASM_InitMusic)
 		add    $0x4,%esp
 		test   %bl,%bl
 		jne    jump_1002a1
-		call   ail_shutdown
+		call   ac_AIL_shutdown
 	jump_1002a1:
 		push   $aBf39MusicDrive
 		xor    %bh,%bh
@@ -4021,7 +4021,7 @@ GLOBAL_FUNC (ASM_InitMusic)
 		add    $0x4,%esp
 		test   %bh,%bh
 		jne    jump_10041f
-		call   ail_shutdown
+		call   ac_AIL_shutdown
 	jump_10041f:
 		xor    %cl,%cl
 		mov    %cl,EXPORT_SYMBOL(MusicAble)
@@ -4429,7 +4429,7 @@ FreeMusic_:
 	jump_108cb4:
 		cmpb   $0x0,SoundInstalled
 		jne    jump_108cc2
-		call   ail_shutdown
+		call   ac_AIL_shutdown
 	jump_108cc2:
 		mov    Music,%ecx
 		test   %ecx,%ecx
@@ -4469,7 +4469,7 @@ FreeSound_:
 		call   ac_StopAllSamples
 		cmpb   $0x0,EXPORT_SYMBOL(MusicInstalled)
 		jne    jump_108d2f
-		call   ail_shutdown
+		call   ac_AIL_shutdown
 	jump_108d2f:
 		mov    Sfx,%edx
 		test   %edx,%edx

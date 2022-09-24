@@ -35,6 +35,72 @@ extern uint16_t AIL_sys_debug;
 extern FILE *AIL_debugfile;
 extern uint32_t AIL_indent;
 
+int32_t AIL_startup(void)
+{
+    const char *logfname;
+    int32_t ret;
+
+    // Get profile string for debug script, and enable debug mode if script filename valid
+
+    AIL_debug = 0;
+    AIL_sys_debug = 0;
+
+    logfname = getenv("AIL_DEBUG");
+
+    if (logfname != NULL) {
+        if (getenv("AIL_SYS_DEBUG"))
+            AIL_sys_debug = 1;
+        AIL_debugfile = fopen(logfname, "w+t");
+    }
+
+    if (AIL_debugfile != NULL) {
+       char loctime[25];
+       time_t elapstime;
+       struct tm *adjtime;
+
+       time(&elapstime);
+       adjtime = localtime(&elapstime);
+       strcpy(loctime,asctime(adjtime));
+       loctime[sizeof(loctime)-1] = 0;
+
+       fprintf(AIL_debugfile,
+           "-------------------------------------------------------------------------------\n"
+           "Miles Sound System API reimplementation call log\n"
+           "Start time: %s\n"
+           "-------------------------------------------------------------------------------\n"
+           "\n", loctime);
+
+        AIL_debug = 1;
+    }
+    AIL_indent = 1;
+
+    if (AIL_debug && AIL_sys_debug)
+        fprintf(AIL_debugfile, "%s()\n", __func__);
+
+    ret = AIL2OAL_API_startup();
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Result = %d\n", ret);
+    AIL_indent--;
+
+    return ret;
+}
+
+void AIL_shutdown(void)
+{
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s()\n", __func__);
+
+    AIL2OAL_API_shutdown();
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug)) {
+        fprintf(AIL_debugfile, "Finished\n");
+        fclose(AIL_debugfile);
+    }
+    AIL_indent--;
+}
+
 int32_t AIL_set_preference(uint32_t number, int32_t value)
 {
    int32_t ret;

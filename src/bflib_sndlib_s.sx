@@ -337,7 +337,7 @@ TIME_write_:
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (ail_startup)	/* 1018a0 */
+GLOBAL_FUNC (ASM_AIL_startup)	/* 1018a0 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %esi
@@ -353,7 +353,7 @@ GLOBAL_FUNC (ail_startup)	/* 1018a0 */
 		mov    %eax,%ebx
 		test   %eax,%eax
 		jne    jump_1018d4
-		call   AIL_API_startup
+		call   ac_AIL2OAL_API_startup
 		jmp    jump_101a38
 	jump_1018d4:
 		mov    $aAil_sys_debug,%eax /* "AIL_SYS_DEBUG" */
@@ -368,7 +368,7 @@ GLOBAL_FUNC (ail_startup)	/* 1018a0 */
 		mov    %eax,AIL_debugfile
 		test   %eax,%eax
 		jne    jump_10190e
-		call   AIL_API_startup
+		call   ac_AIL2OAL_API_startup
 		add    $0x4,%esp
 		pop    %ebp
 		pop    %edi
@@ -429,7 +429,7 @@ GLOBAL_FUNC (ail_startup)	/* 1018a0 */
 		push   %eax
 		call   ac_fprintf
 		add    $0x8,%esp
-		call   AIL_API_startup
+		call   ac_AIL2OAL_API_startup
 		xor    %edx,%edx
 		mov    %edx,data_1e8fac
 		xor    %ebx,%ebx
@@ -468,7 +468,7 @@ GLOBAL_FUNC (ail_startup)	/* 1018a0 */
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (ail_shutdown)	/* 101a40 */
+GLOBAL_FUNC (ASM_AIL_shutdown)	/* 101a40 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %edi
@@ -5761,7 +5761,7 @@ GLOBAL_FUNC (ASM_AILA_startup)
 
 
 /*----------------------------------------------------------------*/
-AILA_shutdown:	/* 1111e3 */
+GLOBAL_FUNC (ASM_AILA_shutdown)	/* 0x1111e3 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %esi
@@ -7113,7 +7113,7 @@ ASM_AIL_API_get_IO_environment:	/* 0x112090 */
 
 
 /*----------------------------------------------------------------*/
-AIL_API_startup:	/* 112110 */
+GLOBAL_FUNC (ASM_AIL_API_startup)	/* 0x112110 */
 /*----------------------------------------------------------------*/
 		call   AIL_start_
 		push   $0xc8
@@ -7228,7 +7228,7 @@ AIL_API_shutdown:
 		cmp    $0xfffffffc,%ebx
 		jne    jump_112240
 		call   ac_AIL_release_all_timers
-		call   AILA_shutdown
+		call   ac_AILA_shutdown
 		pop    %ebx
 		ret
 
