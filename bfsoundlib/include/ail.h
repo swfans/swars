@@ -28,7 +28,7 @@ extern "C" {
 /******************************************************************************/
 #define AIL_MAX_DRVRS 16
 #define AIL_N_PREFS 19
-#define AIL_N_TIMERS 15
+#define AIL_N_TIMERS 16
 
 int32_t AIL2OAL_API_startup(void);
 void AIL2OAL_API_shutdown(void);
@@ -39,6 +39,16 @@ AIL_DRIVER *AIL2OAL_API_install_driver(const uint8_t *driver_image, uint32_t n_b
 void AIL2OAL_API_uninstall_driver(AIL_DRIVER *drvr);
 
 const SNDCARD_IO_PARMS *AIL2OAL_API_get_IO_environment(AIL_DRIVER *drvr);
+
+/** Lock AIL timer service (to enable atomic operations).
+ */
+void AIL_lock(void);
+
+/** Unlock AIL timer service.
+ */
+void AIL_unlock(void);
+
+void AIL2OAL_API_set_timer_period(HSNDTIMER timer, uint32_t usec);
 
 void AIL_release_timer_handle(HSNDTIMER timer);
 

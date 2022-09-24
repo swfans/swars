@@ -190,7 +190,7 @@ AILDEBUG_start_:
 		push   %ebx
 		push   %ecx
 		push   %edx
-		cmpl   $0x0,_AIL_locked
+		cmpl   $0x0,AIL_locked
 		jne    jump_101775
 		push   $AILDEBUG_end_
 		push   $AILDEBUG_start_
@@ -229,7 +229,7 @@ AILDEBUG_start_:
 		mov    $0x1,%ebx
 		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
-		mov    %ebx,_AIL_locked
+		mov    %ebx,AIL_locked
 	jump_101775:
 		pop    %edx
 		pop    %ecx
@@ -281,12 +281,12 @@ TIME_write_:
 		push   %esi
 		push   %edi
 		push   %ebp
-		call   AIL_API_lock
+		call   ac_AIL2OAL_API_lock
 		mov    data_1e8fac,%ebp
 		mov    data_1e8fbc,%edi
 		mov    data_1e8fb8,%esi
 		mov    data_1e8fc0,%ebx
-		call   AIL_API_unlock
+		call   ac_AIL2OAL_API_unlock
 		cmpl   $0x1,AIL_indent
 		jne    jump_10183b
 		push   %ebx
@@ -625,15 +625,15 @@ GLOBAL_FUNC (ASM_AIL_set_preference)	/* 0x101ae0 */
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (AIL_lock)	/* 101c00 */
+GLOBAL_FUNC (ASM_AIL_lock)	/* 0x101c00 */
 /*----------------------------------------------------------------*/
-		jmp    AIL_API_lock
+		jmp    ac_AIL2OAL_API_lock
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (AIL_unlock)	/* 101c10 */
+GLOBAL_FUNC (ASM_AIL_unlock)	/* 0x101c10 */
 /*----------------------------------------------------------------*/
-		jmp    AIL_API_unlock
+		jmp    ac_AIL2OAL_API_unlock
 
 
 /*----------------------------------------------------------------*/
@@ -1532,7 +1532,7 @@ GLOBAL_FUNC (AIL_set_timer_user)	/* 1025a0 */
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (AIL_set_timer_period)	/* 1026c0 */
+GLOBAL_FUNC (ASM_AIL_set_timer_period)	/* 0x1026c0 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %edi
@@ -5428,14 +5428,14 @@ GLOBAL_FUNC (AILDEBUG_end_)
 		push   %ebx
 		push   %ecx
 		push   %edx
-		cmpl   $0x0,_AIL_locked
+		cmpl   $0x0,AIL_locked
 		je     jump_107916
 		push   $AILDEBUG_end_
 		push   $AILDEBUG_start_
 		xor    %ebx,%ebx
 		call   ac_AIL_VMM_unlock_range
 		add    $0x8,%esp
-		mov    %ebx,_AIL_locked
+		mov    %ebx,AIL_locked
 	jump_107916:
 		pop    %edx
 		pop    %ecx
@@ -5444,12 +5444,12 @@ GLOBAL_FUNC (AILDEBUG_end_)
 
 
 /*----------------------------------------------------------------*/
-AIL_API_lock:
+ASM_AIL_API_lock:
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %esi
 		push   %edi
-		incl   timer_lock
+		incl   AIL_lock_count
 		pop    %edi
 		pop    %esi
 		pop    %ebx
@@ -5457,12 +5457,12 @@ AIL_API_lock:
 
 
 /*----------------------------------------------------------------*/
-AIL_API_unlock:
+ASM_AIL_API_unlock:
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %esi
 		push   %edi
-		decl   timer_lock
+		decl   AIL_lock_count
 		pop    %edi
 		pop    %esi
 		pop    %ebx
@@ -5472,7 +5472,7 @@ AIL_API_unlock:
 /*----------------------------------------------------------------*/
 ail_API_timer:	/* 110e62 */
 /*----------------------------------------------------------------*/
-		cmpl   $0x0,%cs:timer_reentrance_lock
+		cmpl   $0x0,%cs:AIL_entry_count
 		ja     jump_110f81
 		pusha
 		push   %ds
@@ -5481,27 +5481,27 @@ ail_API_timer:	/* 110e62 */
 		push   %gs
 		mov    %esp,%ebp
 		cld
-		data16 		mov    %cs:data_15a032,%ds
-		data16 		mov    %cs:data_15a032,%es
-		incl   timer_reentrance_lock
-		mov    %ss,data_15aa40
-		mov    %esp,data_15aa44
+		data16 		mov    %cs:AIL_local_DS,%ds
+		data16 		mov    %cs:AIL_local_DS,%es
+		incl   AIL_entry_count
+		mov    %ss,old_ss
+		mov    %esp,old_sp
 		mov    %ds,%ax
 		mov    %ax,%ss
-		mov    $data_15aa40,%esp
-		mov    timer_period,%edx
+		mov    $old_ss,%esp
+		mov    AIL_PIT_period,%edx
 		mov    $0x0,%edi
 	jump_110eb2:
-		cmpl   $0x2,timer_callback_states(%edi)
+		cmpl   $0x2,timer_status(%edi)
 		jne    jump_110edd
-		mov    timer_callback_elapsed_times(%edi),%eax
+		mov    timer_cb_elapsed_times(%edi),%eax
 		add    %edx,%eax
-		cmp    timer_callback_periods(%edi),%eax
+		cmp    timer_cb_periods(%edi),%eax
 		jb     jump_110ed7
-		sub    timer_callback_periods(%edi),%eax
-		incl   timer_callback_call_counts(%edi)
+		sub    timer_cb_periods(%edi),%eax
+		incl   timer_trigger(%edi)
 	jump_110ed7:
-		mov    %eax,timer_callback_elapsed_times(%edi)
+		mov    %eax,timer_cb_elapsed_times(%edi)
 	jump_110edd:
 		add    $0x4,%edi
 		cmp    $0x40,%edi
@@ -5509,17 +5509,17 @@ ail_API_timer:	/* 110e62 */
 		mov    $0x20,%al
 		out    %al,$0x20
 		sti
-		cmpl   $0x0,timer_lock
+		cmpl   $0x0,AIL_lock_count
 		jg     jump_110f22
 		mov    $0x0,%edi
 	jump_110ef8:
-		cmpl   $0x0,timer_callback_call_counts(%edi)
+		cmpl   $0x0,timer_trigger(%edi)
 		je     jump_110f1a
-		decl   timer_callback_call_counts(%edi)
+		decl   timer_trigger(%edi)
 		mov    %esp,%esi
-		mov    timer_callback_arguments(%edi),%eax
+		mov    timer_user(%edi),%eax
 		push   %eax
-		call   *timer_callbacks(%edi)
+		call   *timer_callback(%edi)
 		mov    %esi,%esp
 		jmp    jump_110ef8
 	jump_110f1a:
@@ -5530,11 +5530,11 @@ ail_API_timer:	/* 110e62 */
 		cmpl   $0x0,data_159fd4
 		je     jump_110f65
 		decl   data_159fd4
-		mov    data_15aa40,%ss
-		mov    data_15aa44,%esp
-		decl   timer_reentrance_lock
-		mov    timer_old_handler,%ecx
-		movzwl timer_old_handler_segment,%eax
+		mov    old_ss,%ss
+		mov    old_sp,%esp
+		decl   AIL_entry_count
+		mov    AIL_bios_cb,%ecx
+		movzwl AIL_bios_cb_seg,%eax
 		mov    %ebp,%esp
 		xchg   %ecx,0x28(%ebp)
 		xchg   %eax,0x2c(%ebp)
@@ -5550,9 +5550,9 @@ ail_API_timer:	/* 110e62 */
 		pop    %edx
 		lret
 	jump_110f65:
-		mov    data_15aa40,%ss
-		mov    data_15aa44,%esp
-		decl   timer_reentrance_lock
+		mov    old_ss,%ss
+		mov    old_sp,%esp
+		decl   AIL_entry_count
 		mov    %ebp,%esp
 		pop    %gs
 		pop    %fs
@@ -5581,7 +5581,7 @@ set_PIT_divisor:	/* 110f88 */
 		mov    $0x36,%al
 		out    %al,$0x43
 		mov    0x8(%ebp),%eax
-		mov    %eax,timer_divisor
+		mov    %eax,AIL_PIT_divisor
 		jmp    jump_110f9e
 	jump_110f9e:
 		out    %al,$0x40
@@ -5624,7 +5624,7 @@ set_PIT_period:	/* 110fb8 */
 		div    %ebx
 	jump_110fdd:
 		push   %eax
-		call   ac_timer_set_divisor
+		call   ac_AIL2OAL_set_PIT_divisor
 		add    $0x4,%esp
 		pop    %edi
 		pop    %esi
@@ -5646,16 +5646,16 @@ ailimpl_program_timers:	/* 110feb */
 		push   %esi
 		push   %edi
 		push   %es
-		call   AIL_lock
+		call   ac_AIL_lock
 		push   %ds
 		pop    %es
 		cld
 		mov    $0xffffffff,%ecx
 		mov    $0x0,%edi
 	jump_111001:
-		cmpl   $0x0,timer_callback_states(%edi)
+		cmpl   $0x0,timer_status(%edi)
 		je     jump_111016
-		mov    timer_callback_periods(%edi),%eax
+		mov    timer_cb_periods(%edi),%eax
 		cmp    %ecx,%eax
 		jae    jump_111016
 		mov    %eax,%ecx
@@ -5663,18 +5663,18 @@ ailimpl_program_timers:	/* 110feb */
 		add    $0x4,%edi
 		cmp    $0x40,%edi
 		jb     jump_111001
-		cmp    timer_period,%ecx
+		cmp    AIL_PIT_period,%ecx
 		je     jump_111046
-		mov    %ecx,timer_period
+		mov    %ecx,AIL_PIT_period
 		push   %ecx
 		call   set_PIT_period
 		add    $0x4,%esp
 		mov    $0x0,%eax
-		mov    $timer_callback_elapsed_times,%edi
+		mov    $timer_cb_elapsed_times,%edi
 		mov    $0x10,%ecx
 		rep stos %eax,%es:(%edi)
 	jump_111046:
-		call   AIL_unlock
+		call   ac_AIL_unlock
 		pop    %es
 		pop    %edi
 		pop    %esi
@@ -5693,24 +5693,24 @@ GLOBAL_FUNC (ASM_AILA_startup)
 		push   %ds
 		pop    %es
 		cld
-		data16 		mov    %ds,data_15a032
-		data16 		mov    data_15a032,%es
-		call   AILA_VMM_lock
-		movl   $0x0,timer_reentrance_lock
-		movl   $0x0,timer_lock
-		movl   $0xffffffff,timer_period
+		data16 		mov    %ds,AIL_local_DS
+		data16 		mov    AIL_local_DS,%es
+		call   ac_AILA_VMM_lock
+		movl   $0x0,AIL_entry_count
+		movl   $0x0,AIL_lock_count
+		movl   $0xffffffff,AIL_PIT_period
 		movl   $0xffffffff,AIL_ISR_IRQ
 		mov    $0x0,%eax
-		mov    $timer_callback_states,%edi
+		mov    $timer_status,%edi
 		mov    $0x10,%ecx
 		rep stos %eax,%es:(%edi)
-		mov    $timer_callback_elapsed_times,%edi
+		mov    $timer_cb_elapsed_times,%edi
 		mov    $0x10,%ecx
 		rep stos %eax,%es:(%edi)
-		mov    $timer_callback_periods,%edi
+		mov    $timer_cb_periods,%edi
 		mov    $0x10,%ecx
 		rep stos %eax,%es:(%edi)
-		mov    $timer_callback_call_counts,%edi
+		mov    $timer_trigger,%edi
 		mov    $0x10,%ecx
 		rep stos %eax,%es:(%edi)
 		mov    $0x8,%eax
@@ -5728,9 +5728,9 @@ GLOBAL_FUNC (ASM_AILA_startup)
 		mov    %es,%dx
 		pop    %es
 		pop    %ecx
-		mov    %ebx,timer_old_handler
-		mov    %dx,timer_old_handler_segment
-		mov    %ecx,data_15a01e
+		mov    %ebx,AIL_bios_cb
+		mov    %dx,AIL_bios_cb_seg
+		mov    %ecx,AIL_bios_cb_real
 		mov    $0x8,%eax
 		mov    $ail_API_timer,%edx
 		mov    %cs,%bx
@@ -5742,7 +5742,7 @@ GLOBAL_FUNC (ASM_AILA_startup)
 		movl   $0x2,data_159f14
 		push   $0xd68d
 		push   $0x3c
-		call   AIL_set_timer_period
+		call   ac_AIL_set_timer_period
 		add    $0x8,%esp
 		push   %ebp
 		mov    %esp,%ebp
@@ -5769,12 +5769,12 @@ GLOBAL_FUNC (ASM_AILA_shutdown)	/* 0x1111e3 */
 		pushf
 		/* cli */
 		push   $0x0
-		call   ac_timer_set_divisor
+		call   ac_AIL2OAL_set_PIT_divisor
 		add    $0x4,%esp
 #if 0
 		mov    $0x8,%eax
-		mov    timer_old_handler,%edx
-		movzwl timer_old_handler_segment,%ebx
+		mov    AIL_bios_cb,%edx
+		movzwl AIL_bios_cb_seg,%ebx
 		mov    $0x25,%ah
 		push   %ds
 		mov    %bx,%ds
@@ -5957,7 +5957,7 @@ ASM_AIL_API_call_driver:	/* 1114e7 */
 		push   %edi
 		push   %ds
 		push   %es
-		call   AIL_lock
+		call   ac_AIL_lock
 		cld
 		mov    $0x32,%ecx
 		push   %ds
@@ -6016,7 +6016,7 @@ ASM_AIL_API_call_driver:	/* 1114e7 */
 	jump_1115af:
 		movswl -0x1e(%ebp),%eax
 		push   %eax
-		call   AIL_unlock
+		call   ac_AIL_unlock
 		pop    %eax
 		pop    %es
 		pop    %ds
@@ -6069,7 +6069,7 @@ AIL_API_background:
 		push   %ebx
 		push   %esi
 		push   %esi
-		mov    timer_reentrance_lock,%eax
+		mov    AIL_entry_count,%eax
 		pop    %esi
 		pop    %esi
 		pop    %ebx
@@ -6084,10 +6084,10 @@ AIL_API_register_timer:	/* 11160a */
 		push   %ebx
 		push   %esi
 		push   %edi
-		call   AIL_lock
+		call   ac_AIL_lock
 		mov    $0x0,%eax
 	jump_11161a:
-		cmpl   $0x0,timer_callback_states(%eax)
+		cmpl   $0x0,timer_status(%eax)
 		je     jump_111632
 		add    $0x4,%eax
 		cmp    $0x3c,%eax
@@ -6095,12 +6095,12 @@ AIL_API_register_timer:	/* 11160a */
 		mov    $0xffffffff,%eax
 		jmp    jump_111645
 	jump_111632:
-		movl   $0x1,timer_callback_states(%eax)
+		movl   $0x1,timer_status(%eax)
 		mov    0x8(%ebp),%esi
-		mov    %esi,timer_callbacks(%eax)
+		mov    %esi,timer_callback(%eax)
 	jump_111645:
 		push   %eax
-		call   AIL_unlock
+		call   ac_AIL_unlock
 		pop    %eax
 		pop    %edi
 		pop    %esi
@@ -6117,15 +6117,15 @@ AIL_API_set_timer_user:	/* 111651 */
 		push   %ebx
 		push   %esi
 		push   %edi
-		call   AIL_lock
+		call   ac_AIL_lock
 		mov    0x8(%ebp),%ebx
 		cmp    $0xffffffff,%ebx
 		je     jump_11166d
 		mov    0xc(%ebp),%eax
-		xchg   %eax,timer_callback_arguments(%ebx)
+		xchg   %eax,timer_user(%ebx)
 	jump_11166d:
 		push   %eax
-		call   AIL_unlock
+		call   ac_AIL_unlock
 		pop    %eax
 		pop    %edi
 		pop    %esi
@@ -6142,13 +6142,13 @@ AIL_API_release_timer_handle:
 		push   %ebx
 		push   %esi
 		push   %edi
-		call   AIL_lock
+		call   ac_AIL_lock
 		mov    0x8(%ebp),%eax
 		cmp    $0xffffffff,%eax
 		je     jump_111696
-		movl   $0x0,timer_callback_states(%eax)
+		movl   $0x0,timer_status(%eax)
 	jump_111696:
-		call   AIL_unlock
+		call   ac_AIL_unlock
 		pop    %edi
 		pop    %esi
 		pop    %ebx
@@ -6162,7 +6162,7 @@ AIL_API_release_all_timers:
 		push   %ebx
 		push   %esi
 		push   %edi
-		call   AIL_lock
+		call   ac_AIL_lock
 		mov    $0x38,%esi
 	jump_1116ad:
 		push   %esi
@@ -6170,7 +6170,7 @@ AIL_API_release_all_timers:
 		add    $0x4,%esp
 		sub    $0x4,%esi
 		jge    jump_1116ad
-		call   AIL_unlock
+		call   ac_AIL_unlock
 		pop    %edi
 		pop    %esi
 		pop    %ebx
@@ -6185,15 +6185,15 @@ AIL_API_start_timer:
 		push   %ebx
 		push   %esi
 		push   %edi
-		call   AIL_lock
+		call   ac_AIL_lock
 		mov    0x8(%ebp),%ebx
 		cmp    $0xffffffff,%ebx
 		je     jump_1116ea
-		cmpl   $0x1,timer_callback_states(%ebx)
+		cmpl   $0x1,timer_status(%ebx)
 		jne    jump_1116ea
-		movl   $0x2,timer_callback_states(%ebx)
+		movl   $0x2,timer_status(%ebx)
 	jump_1116ea:
-		call   AIL_unlock
+		call   ac_AIL_unlock
 		pop    %edi
 		pop    %esi
 		pop    %ebx
@@ -6210,13 +6210,13 @@ AIL_API_set_timer_period:	/* 11176c */
 		push   %ebx
 		push   %esi
 		push   %edi
-		call   AIL_lock
+		call   ac_AIL_lock
 		mov    0x8(%ebp),%ebx
 		mov    0xc(%ebp),%eax
-		mov    %eax,timer_callback_periods(%ebx)
-		movl   $0x0,timer_callback_elapsed_times(%ebx)
+		mov    %eax,timer_cb_periods(%ebx)
+		movl   $0x0,timer_cb_elapsed_times(%ebx)
 		call   ailimpl_program_timers
-		call   AIL_unlock
+		call   ac_AIL_unlock
 		pop    %edi
 		pop    %esi
 		pop    %ebx
@@ -6232,16 +6232,16 @@ AIL_API_set_timer_frequency:	/* 11179c */
 		push   %ebx
 		push   %esi
 		push   %edi
-		call   AIL_lock
+		call   ac_AIL_lock
 		mov    $0x0,%edx
 		mov    $0xf4240,%eax
 		mov    0xc(%ebp),%ebx
 		div    %ebx
 		push   %eax
 		pushl  0x8(%ebp)
-		call   AIL_set_timer_period
+		call   ac_AIL_set_timer_period
 		add    $0x8,%esp
-		call   AIL_unlock
+		call   ac_AIL_unlock
 		pop    %edi
 		pop    %esi
 		pop    %ebx
@@ -6255,7 +6255,7 @@ AIL_API_interrupt_divisor:
 		push   %ebx
 		push   %esi
 		push   %edi
-		mov    timer_divisor,%eax
+		mov    AIL_PIT_divisor,%eax
 		pop    %edi
 		pop    %esi
 		pop    %ebx
@@ -6263,14 +6263,14 @@ AIL_API_interrupt_divisor:
 
 
 /*----------------------------------------------------------------*/
-AILA_VMM_lock:
+ASM_AILA_VMM_lock:
 /*----------------------------------------------------------------*/
 		push   $AIL_entry
-		push   $timer_callbacks
+		push   $timer_callback
 		call   ac_AIL_VMM_lock_range
 		add    $0x8,%esp
-		push   $AILA_VMM_lock
-		push   $AIL_API_lock
+		push   $ASM_AILA_VMM_lock
+		push   $ac_AIL2OAL_API_lock
 		call   ac_AIL_VMM_lock_range
 		add    $0x8,%esp
 		ret
@@ -9096,7 +9096,7 @@ AIL_API_allocate_sample_handle:	/* 1138c0 */
 		push   %esi
 		push   %edi
 		mov    0x10(%esp),%ebx
-		call   AIL_lock
+		call   ac_AIL_lock
 		mov    0x60(%ebx),%edx
 		xor    %eax,%eax
 		test   %edx,%edx
@@ -9119,7 +9119,7 @@ AIL_API_allocate_sample_handle:	/* 1138c0 */
 		rep movsl %ds:(%esi),%es:(%edi)
 		movsw  %ds:(%esi),%es:(%edi)
 		movsb  %ds:(%esi),%es:(%edi)
-		call   AIL_unlock
+		call   ac_AIL_unlock
 		xor    %eax,%eax
 		pop    %edi
 		pop    %esi
@@ -9132,7 +9132,7 @@ AIL_API_allocate_sample_handle:	/* 1138c0 */
 		push   %ebx
 		call   AIL_init_sample
 		add    $0x4,%esp
-		call   AIL_unlock
+		call   ac_AIL_unlock
 		mov    %ebx,%eax
 		pop    %edi
 		pop    %esi
@@ -13163,7 +13163,7 @@ _AIL_API_allocate_sequence_handle:	/* 0x1167A0 */
 		push   %esi
 		push   %edi
 		mov    0x10(%esp),%ebx
-		call   AIL_lock
+		call   ac_AIL_lock
 		mov    0x1c(%ebx),%edx
 		xor    %eax,%eax
 		test   %edx,%edx
@@ -13185,7 +13185,7 @@ _AIL_API_allocate_sequence_handle:	/* 0x1167A0 */
 		mov    $aOutOfSequenceH,%esi
 		rep movsl %ds:(%esi),%es:(%edi)
 		movsb  %ds:(%esi),%es:(%edi)
-		call   AIL_unlock
+		call   ac_AIL_unlock
 		xor    %eax,%eax
 		pop    %edi
 		pop    %esi
@@ -13200,7 +13200,7 @@ _AIL_API_allocate_sequence_handle:	/* 0x1167A0 */
 		call   _XMI_init_sequence_state
 		add    $0x4,%esp
 		movl   $0x0,0x28(%ebx)
-		call   AIL_unlock
+		call   ac_AIL_unlock
 		mov    %ebx,%eax
 		pop    %edi
 		pop    %esi
@@ -20605,60 +20605,62 @@ AILSSA_VMM_lock:
 .data
 
 
-_AIL_locked:	/* 0x159328 */
+GLOBAL (AIL_locked)	/* 0x159328 */
 		.long	0x0
 
-GLOBAL (timer_callbacks)		/* 159e98 */
+GLOBAL (timer_callback)		/* 0x159e98 */
 		.fill   0x40
-GLOBAL (timer_callback_states)		/* 159ed8 */
+
+GLOBAL (timer_status)		/* 159ed8 */
 		.fill   0x3c
 data_159f14:
 		.long	0x0
 
 /* μs */
-timer_callback_elapsed_times:	/* 159f18 */
+GLOBAL (timer_cb_elapsed_times)	/* 159f18 */
 		.fill   0x40
 
 /* μs */
-timer_callback_periods:		/* 159f58 */
+GLOBAL (timer_cb_periods)		/* 159f58 */
 		.fill   0x40
 
-/* number of times to call the callback */
-timer_callback_call_counts:	/* 159ed8 */
+GLOBAL (timer_trigger)	/* 159ed8 */
 		.fill   0x3c
-
 data_159fd4:
 		.long	0x0
-GLOBAL (timer_callback_arguments)	/* 0x159fd8 */
+
+GLOBAL (timer_user)				/* 0x159fd8 */
 		.fill   0x40
-GLOBAL (timer_old_handler)		/* 0x15a018 */
+
+GLOBAL (AIL_bios_cb)			/* 0x15a018 */
 		.long	0x0
-GLOBAL (timer_old_handler_segment)	/* 0x15a01c */
+GLOBAL (AIL_bios_cb_seg)		/* 0x15a01c */
 		.short  0x0
-data_15a01e:
+GLOBAL (AIL_bios_cb_real)		/* 0x15A01E */
 		.long	0x0
-GLOBAL (timer_divisor)			/* 0x15a022 */
+GLOBAL (AIL_PIT_divisor)			/* 0x15a022 */
 		.long	0x0
-GLOBAL (timer_period)			/* 0x15a026 */
+GLOBAL (AIL_PIT_period)			/* 0x15a026 */
 		.long	0x0
-GLOBAL (timer_reentrance_lock)	/* 0x15a02a */
+GLOBAL (AIL_entry_count)		/* 0x15a02a */
 		.long	0x0
-GLOBAL (timer_lock)				/* 0x15a02e */
+GLOBAL (AIL_lock_count)			/* 0x15a02e */
 		.long	0x0
-data_15a032:
+GLOBAL (AIL_local_DS)			/* 0x15A032 */
 		.short  0x0
-GLOBAL (AIL_ISR_IRQ)	/* 0x15A034 */
+GLOBAL (AIL_ISR_IRQ)			/* 0x15A034 */
 		.long	0x0
 data_15a038:
 		.long	0x0
 data_15a03c:
 		.long	0x0
-data_15a040:
+GLOBAL (ISR_stack)				/* 0x15a040 */
 		.fill   0xa00
-data_15aa40:
+old_ss:
 		.long	0x0
-data_15aa44:
+GLOBAL (old_sp)	/* 0x15AA44 */
 		.long	0x0
+
 GLOBAL (AIL_entry) /* 0x15aa48 */
 		.long	0x0
 GLOBAL (AIL_use_locked) /* 0x15AA4C */

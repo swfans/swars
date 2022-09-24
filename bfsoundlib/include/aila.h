@@ -27,15 +27,34 @@ extern "C" {
 #endif
 /******************************************************************************/
 
+void AIL2OAL_API_lock(void);
+void AIL2OAL_API_unlock(void);
+
 void AILA_startup(void);
 void AILA_shutdown(void);
+
+void AILA_VMM_lock(void);
 
 int32_t AIL2OAL_API_call_driver(AIL_DRIVER *drvr, int32_t fn,
         VDI_CALL *in, VDI_CALL *out);
 
 void AIL2OAL_API_restore_USE16_ISR(int32_t irq);
 
+/** Set real-mode interrupt vector.
+ */
 void AIL2OAL_API_set_real_vect(uint32_t vectnum, void *real_ptr);
+
+/** Write to 8253 Programmable Interval Timer chip.
+ */
+void AIL2OAL_set_PIT_divisor(uint32_t divsr);
+
+/** Set 8253 Programmable Interval Timer to desired period, in microseconds.
+ */
+void AIL2OAL_set_PIT_period(uint32_t period);
+
+/** Establish timer interrupt rates based on fastest active timer.
+ */
+void AIL2OAL_program_timers(void);
 
 /******************************************************************************/
 #ifdef __cplusplus

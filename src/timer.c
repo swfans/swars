@@ -8,18 +8,11 @@
 
 #pragma pack(1)
 
-extern TimerCallback timer_callbacks[TIMER_MAX_CALLBACKS];
-extern uint32_t	     timer_callback_states[TIMER_MAX_CALLBACKS];
-extern void         *timer_callback_arguments[TIMER_MAX_CALLBACKS];
-extern uint32_t	     timer_divisor;
+extern TimerCallback timer_callback[TIMER_MAX_CALLBACKS];
+extern uint32_t	     timer_status[TIMER_MAX_CALLBACKS];
+extern void         *timer_user[TIMER_MAX_CALLBACKS];
 
 #pragma pack()
-
-void
-timer_set_divisor (uint32_t divisor)
-{
-  timer_divisor = divisor;
-}
 
 uint32_t
 timer_get_18_2_hz_ticks (void)
@@ -40,11 +33,11 @@ timer_register_callback (TimerCallback fn)
 
   for (n = 0; n < TIMER_MAX_CALLBACKS - 1; n++)
     {
-      if (timer_callback_states[n] != 0)
+      if (timer_status[n] != 0)
 	continue;
 
-      timer_callback_states[n] = 1;
-      timer_callbacks[n]       = fn;
+      timer_status[n] = 1;
+      timer_callback[n] = fn;
 
       return (4 * n);
     }
@@ -61,8 +54,8 @@ timer_set_user_data (TimerId timer, void *user_data)
   assert (timer % sizeof (TimerCallback) == 0);
   assert (timer < 4 * TIMER_MAX_CALLBACKS);
 
-  retval = timer_callback_arguments[timer / 4];
-  timer_callback_arguments[timer / 4] = user_data;
+  retval = timer_user[timer / 4];
+  timer_user[timer / 4] = user_data;
 
   return retval;
 }

@@ -26,29 +26,75 @@
 
 #include "aila.h"
 #include "ail.h"
+#include "aildebug.h"
 /******************************************************************************/
+/** Callback function addrs for timers.
+*/
+extern int32_t timer_callback[AIL_N_TIMERS];
+
+/** States of timers (0=free 1=off 2=on)
+ */
+extern int32_t timer_status[AIL_N_TIMERS];
+
+/** Modified DDA error counts for timers
+ */
+extern int32_t timer_cb_elapsed_times[AIL_N_TIMERS];
+
+/** Modified DDA limit values for timers
+ */
+extern int32_t timer_cb_periods[AIL_N_TIMERS];
+
+/** Amount of triggers pending (number of times
+ * to call the callback).
+ */
+extern int32_t timer_trigger[AIL_N_TIMERS];
+
+/** User parameters for timer callbacks.
+ */
+extern int32_t timer_user[AIL_N_TIMERS];
+
+/** Last divisor value written to PIT.
+ */
+extern uint32_t AIL_PIT_divisor;
+
+/** PIT timer interval in uS.
+ */
+extern uint32_t AIL_PIT_period;
+
+extern uint32_t AIL_entry_count;
+
+extern uint32_t AIL_lock_count;
+
 extern int32_t AIL_ISR_IRQ;
+
+extern int32_t old_sp;
+
+
+void AIL2OAL_API_lock(void)
+{
+  ++AIL_lock_count;
+}
+
+void AIL2OAL_API_unlock(void)
+{
+  --AIL_lock_count;
+}
 
 void AILA_startup(void)
 {
-#if 1
-    asm volatile ("call ASM_AILA_startup\n"
-        :  :  : "eax" );
-#else
-  // removed DOS-specific calls, place 1
-  AILA_VMM_lock();
-  AIL_entry_count = 0;
-  AIL_lock_count = 0;
-  AIL_PIT_period = -1;
-  AIL_ISR_IRQ = -1;
-  memset(timer_status, 0, sizeof(timer_status));
-  memset(timer_callback_elapsed_times, 0, sizeof(timer_callback_elapsed_times));
-  memset(timer_callback_periods, 0, sizeof(timer_callback_periods));
-  memset(timer_trigger, 0, sizeof(timer_trigger));
-  // removed DOS-specific calls, place 2
-  AIL_set_timer_period((AIL_N_TIMERS-1) * 4, 54925);
-  // removed DOS-specific calls, place 3
-#endif
+    // removed DOS-specific calls, place 1
+    AILA_VMM_lock();
+    AIL_entry_count = 0;
+    AIL_lock_count = 0;
+    AIL_PIT_period = -1;
+    AIL_ISR_IRQ = -1;
+    memset(timer_status, 0, sizeof(timer_status));
+    memset(timer_cb_elapsed_times, 0, sizeof(timer_cb_elapsed_times));
+    memset(timer_cb_periods, 0, sizeof(timer_cb_periods));
+    memset(timer_trigger, 0, sizeof(timer_trigger));
+    // removed DOS-specific calls, place 2
+    AIL_set_timer_period((AIL_N_TIMERS-1) * 4, 54925);
+    // removed DOS-specific calls, place 3
 }
 
 void AILA_shutdown(void)
@@ -75,6 +121,56 @@ void AIL2OAL_API_restore_USE16_ISR(int32_t irq)
         // removed DOS-specific `int` call
         AIL_ISR_IRQ = -1;
     }
+}
+
+void AIL2OAL_set_PIT_divisor(uint32_t divsr)
+{
+    // removed DOS-specific calls, place 1
+    AIL_PIT_divisor = divsr;
+    // removed DOS-specific calls, place 2
+}
+
+void AIL2OAL_set_PIT_period(uint32_t period)
+{
+    uint32_t divsr;
+
+    divsr = 0;
+    if (period < 54925)
+        divsr = 10000 * period / 8380;
+    AIL2OAL_set_PIT_divisor(divsr);
+}
+
+void AIL2OAL_program_timers(void)
+{
+    uint32_t peri, min_peri;
+    HSNDTIMER i;
+
+    AIL_lock();
+
+    min_peri = 0xFFFFFFFF;
+    for (i = 0; i < AIL_N_TIMERS; i++)
+    {
+        if (timer_status[i] != 0)
+        {
+            peri = timer_cb_periods[i];
+            if (peri < min_peri)
+                min_peri = peri;
+        }
+    }
+
+    if (min_peri != AIL_PIT_period)
+    {
+        AIL_PIT_period = min_peri;
+        AIL2OAL_set_PIT_period(min_peri);
+        memset(timer_cb_elapsed_times, 0, sizeof(timer_cb_elapsed_times));
+    }
+    AIL_unlock();
+}
+
+void AILA_VMM_lock(void)
+{
+    AIL_VMM_lock_range(timer_callback, ((uint8_t *)&old_sp) + sizeof(old_sp));
+    AIL_VMM_lock_range(AIL2OAL_API_lock, AILA_VMM_lock);
 }
 
 /******************************************************************************/

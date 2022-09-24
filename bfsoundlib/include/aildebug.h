@@ -70,6 +70,10 @@ void AIL_set_real_vect(uint32_t vectnum, void *real_ptr);
 
 uint32_t AIL_sample_status(SNDSAMPLE *s);
 
+/** Sets period between timer triggers, in microseconds.
+ */
+void AIL_set_timer_period(HSNDTIMER timer, uint32_t usec);
+
 void AIL_release_all_timers(void);
 
 int32_t AIL_call_driver(AIL_DRIVER *drvr, int32_t fn,

@@ -47,6 +47,9 @@ extern uint32_t AIL_entry;
 extern int32_t AIL_flags;
 extern int32_t AIL_use_locked;
 
+extern int32_t timer_cb_periods[AIL_N_TIMERS];
+extern int32_t timer_cb_elapsed_times[AIL_N_TIMERS];
+
 void AIL2OAL_end(void);
 
 void AIL2OAL_start(void)
@@ -64,6 +67,16 @@ void AIL2OAL_start(void)
     AIL_vmm_lock(&AIL_flags, sizeof(AIL_flags));
 
     AIL_use_locked = 1;
+}
+
+void AIL_lock(void)
+{
+   AIL2OAL_API_lock();
+}
+
+void AIL_unlock(void)
+{
+   AIL2OAL_API_unlock();
 }
 
 /** Initialize AIL API modules and resources.
@@ -192,6 +205,23 @@ int32_t AIL2OAL_API_set_preference(uint32_t number, int32_t value)
     oldval = AIL_preference[number];
     AIL_preference[number] = value;
     return oldval;
+}
+
+void AIL2OAL_API_set_timer_period(HSNDTIMER timer, uint32_t usec)
+{
+    if (timer == -1)
+        return;
+
+    // Begin atomic operation
+    AIL_lock();
+
+    // Reset timer and set new period in microseconds
+    timer_cb_periods[timer] = usec;
+    timer_cb_elapsed_times[timer] = 0;
+    AIL2OAL_program_timers();
+
+    // End atomic operation
+    AIL_unlock();
 }
 
 void AIL2OAL_API_release_all_timers(void)

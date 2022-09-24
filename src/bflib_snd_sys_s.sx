@@ -587,7 +587,7 @@ GLOBAL_FUNC (ASM_PlayCDTrack)
 		push   $0x4c4b40
 		push   %eax
 		mov    %eax,CDCount_handle
-		call   AIL_set_timer_period
+		call   ac_AIL_set_timer_period
 		add    $0x8,%esp
 		call   GetCDFirst_
 		and    $0xffff,%eax
