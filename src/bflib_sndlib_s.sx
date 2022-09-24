@@ -5680,7 +5680,10 @@ ailimpl_program_timers:	/* 110feb */
 		pop    %esi
 		pop    %ebx
 		ret
-	jump_111050:
+
+/*----------------------------------------------------------------*/
+GLOBAL_FUNC (ASM_AILA_startup)
+/*----------------------------------------------------------------*/
 		push   %ebx
 		push   %esi
 		push   %edi
@@ -5696,7 +5699,7 @@ ailimpl_program_timers:	/* 110feb */
 		movl   $0x0,timer_reentrance_lock
 		movl   $0x0,timer_lock
 		movl   $0xffffffff,timer_period
-		movl   $0xffffffff,data_15a034
+		movl   $0xffffffff,AIL_ISR_IRQ
 		mov    $0x0,%eax
 		mov    $timer_callback_states,%edi
 		mov    $0x10,%ecx
@@ -5898,7 +5901,7 @@ AIL_API_restore_USE16_ISR:
 		mov    0x8(%ebp),%ebx
 		cmp    $0xffffffff,%ebx
 		je     jump_111476
-		cmp    data_15a034,%ebx
+		cmp    AIL_ISR_IRQ,%ebx
 		jne    jump_111476
 		cmp    $0x8,%ebx
 		jb     jump_111456
@@ -5909,7 +5912,7 @@ AIL_API_restore_USE16_ISR:
 		mov    data_15a038,%ecx
 		mov    data_15a03c,%edx
 		int    $0x31
-		movl   $0xffffffff,data_15a034
+		movl   $0xffffffff,AIL_ISR_IRQ
 	jump_111476:
 		pop    %es
 		pop    %edi
@@ -6262,7 +6265,7 @@ AIL_API_interrupt_divisor:
 /*----------------------------------------------------------------*/
 AILA_VMM_lock:
 /*----------------------------------------------------------------*/
-		push   $data_15aa48
+		push   $AIL_entry
 		push   $timer_callbacks
 		call   ac_AIL_VMM_lock_range
 		add    $0x8,%esp
@@ -6279,38 +6282,38 @@ AIL_start_:
 		push   %ebx
 		push   %ecx
 		push   %edx
-		cmpl   $0x0,data_15aa4c
+		cmpl   $0x0,AIL_use_locked
 		jne    jump_1118c6
 		push   $AIL_end_
 		push   $AIL_start_
 		call   ac_AIL_VMM_lock_range
 		add    $0x8,%esp
 		push   $0x40
-		push   $data_1ed6b0
+		push   $AIL_driver
 		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
 		push   $0x4c
-		push   $data_1ed80c
+		push   $AIL_preference
 		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
 		push   $0x100
-		push   $data_1ed6f0
+		push   $AIL_error
 		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
 		push   $0x18
-		push   $data_1ed7f0
+		push   $AIL_last_IO_attempt
 		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
 		push   $0x4
-		push   $data_15aa48
+		push   $AIL_entry
 		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
 		push   $0x4
-		push   $data_1ed808
+		push   $AIL_flags
 		mov    $0x1,%ebx
 		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
-		mov    %ebx,data_15aa4c
+		mov    %ebx,AIL_use_locked
 	jump_1118c6:
 		pop    %edx
 		pop    %ecx
@@ -6323,24 +6326,24 @@ AIL_driver_server:
 /*----------------------------------------------------------------*/
 		push   %esi
 		push   %edi
-		cmpl   $0x0,data_15aa48
+		cmpl   $0x0,AIL_entry
 		jne    jump_11191c
-		movl   $0x1,data_15aa48
+		movl   $0x1,AIL_entry
 		call   AIL_disable_interrupts
 		push   $0x0
 		push   $0x0
 		push   $0x302
 		mov    0x18(%esp),%ecx
 		push   %ecx
-		mov    %eax,data_1ed808
+		mov    %eax,AIL_flags
 		call   ac_AIL_call_driver
 		add    $0x10,%esp
-		mov    data_1ed808,%esi
+		mov    AIL_flags,%esi
 		push   %esi
 		xor    %edi,%edi
 		call   AIL_restore_interrupts
 		add    $0x4,%esp
-		mov    %edi,data_15aa48
+		mov    %edi,AIL_entry
 	jump_11191c:
 		pop    %edi
 		pop    %esi
@@ -6692,7 +6695,7 @@ AIL_API_read_INI:
 		jne    jump_111cf5
 	jump_111cd4:
 		mov    $0x5,%ecx
-		mov    $data_1ed6f0,%edi
+		mov    $AIL_error,%edi
 		mov    $aCorrupted_iniF,%esi
 		rep movsl %ds:(%esi),%es:(%edi)
 		movsb  %ds:(%esi),%es:(%edi)
@@ -6726,8 +6729,8 @@ AIL_API_set_preference:
 		push   %ebx
 		mov    0x8(%esp),%eax
 		mov    0xc(%esp),%ebx
-		mov    data_1ed80c(,%eax,4),%edx
-		mov    %ebx,data_1ed80c(,%eax,4)
+		mov    AIL_preference(,%eax,4),%edx
+		mov    %ebx,AIL_preference(,%eax,4)
 		mov    %edx,%eax
 		pop    %ebx
 		ret
@@ -6751,7 +6754,7 @@ AIL_API_install_driver:	/* 111d40 */
 		test   %eax,%eax
 		jne    jump_111d7c
 		mov    $0xa,%ecx
-		mov    $data_1ed6f0,%edi
+		mov    $AIL_error,%edi
 		mov    $aInsufficientMe,%esi
 		rep movsl %ds:(%esi),%es:(%edi)
 		movsw  %ds:(%esi),%es:(%edi)
@@ -6774,7 +6777,7 @@ AIL_API_install_driver:	/* 111d40 */
 		jne    jump_111dc6
 		mov    $0x6,%ecx
 		push   $0x2c
-		mov    $data_1ed6f0,%edi
+		mov    $AIL_error,%edi
 		mov    %ebp,%edx
 		mov    $aInsufficientLo,%esi
 		push   %edx
@@ -6815,7 +6818,7 @@ AIL_API_install_driver:	/* 111d40 */
 		test   %eax,%eax
 		je     jump_111e52
 		mov    $0x5,%ecx
-		mov    $data_1ed6f0,%edi
+		mov    $AIL_error,%edi
 		mov    $aInvalidDriverT,%esi
 		mov    %ebp,%eax
 		rep movsl %ds:(%esi),%es:(%edi)
@@ -6847,9 +6850,9 @@ AIL_API_install_driver:	/* 111d40 */
 		xor    %ecx,%ecx
 		xor    %esi,%esi
 	jump_111e5f:
-		cmpl   $0x0,data_1ed6b0(%esi)
+		cmpl   $0x0,AIL_driver(%esi)
 		jne    jump_111e77
-		mov    %ebp,data_1ed6b0(%esi)
+		mov    %ebp,AIL_driver(%esi)
 		mov    0x10(%ebp),%eax
 		mov    %cx,0x32(%eax)
 		jmp    jump_111e80
@@ -6862,7 +6865,7 @@ AIL_API_install_driver:	/* 111d40 */
 		cmp    $0x10,%ecx
 		jne    jump_111ec2
 		mov    $0x5,%ecx
-		mov    $data_1ed6f0,%edi
+		mov    $AIL_error,%edi
 		mov    $aOutOfDriverHan,%esi
 		rep movsl %ds:(%esi),%es:(%edi)
 		movsw  %ds:(%esi),%es:(%edi)
@@ -6926,7 +6929,7 @@ AIL_API_install_driver:	/* 111d40 */
 		cmp    $0xffffffff,%eax
 		jne    jump_111f9d
 		mov    $0x5,%ecx
-		mov    $data_1ed6f0,%edi
+		mov    $AIL_error,%edi
 		mov    $aOutOfTimerHand,%esi
 		rep movsl %ds:(%esi),%es:(%edi)
 		movsw  %ds:(%esi),%es:(%edi)
@@ -7043,10 +7046,10 @@ AIL_API_uninstall_driver:
 		lea    0x0(%edx),%edx
 		nop
 	jump_112070:
-		cmp    data_1ed6b0(%eax),%ebx
+		cmp    AIL_driver(%eax),%ebx
 		jne    jump_112080
 		xor    %ecx,%ecx
-		mov    %ecx,data_1ed6b0(%eax)
+		mov    %ecx,AIL_driver(%eax)
 	jump_112080:
 		add    $0x4,%eax
 		cmp    $0x40,%eax
@@ -7199,8 +7202,8 @@ AIL_API_startup:	/* 112110 */
 		cmp    $0x40,%eax
 		jne    jump_112210
 		xor    %ah,%ah
-		mov    %ah,data_1ed6f0
-		jmp    jump_111050
+		mov    %ah,AIL_error
+		jmp    ASM_AILA_startup
 
 
 /*----------------------------------------------------------------*/
@@ -7211,7 +7214,7 @@ AIL_API_shutdown:
 		lea    0x0(%eax),%eax
 		lea    0x0(%edx),%edx
 	jump_112240:
-		mov    data_1ed6b0(%ebx),%eax
+		mov    AIL_driver(%ebx),%eax
 		test   %eax,%eax
 		je     jump_112260
 		push   %eax
@@ -7236,38 +7239,38 @@ AIL_end_:
 		push   %ebx
 		push   %ecx
 		push   %edx
-		cmpl   $0x0,data_15aa4c
+		cmpl   $0x0,AIL_use_locked
 		je     jump_112303
 		push   $AIL_end_
 		push   $AIL_start_
 		call   ac_AIL_VMM_unlock_range
 		add    $0x8,%esp
 		push   $0x40
-		push   $data_1ed6b0
+		push   $AIL_driver
 		call   ac_AIL_vmm_unlock
 		add    $0x8,%esp
 		push   $0x4c
-		push   $data_1ed80c
+		push   $AIL_preference
 		call   ac_AIL_vmm_unlock
 		add    $0x8,%esp
 		push   $0x100
-		push   $data_1ed6f0
+		push   $AIL_error
 		call   ac_AIL_vmm_unlock
 		add    $0x8,%esp
 		push   $0x18
-		push   $data_1ed7f0
+		push   $AIL_last_IO_attempt
 		call   ac_AIL_vmm_unlock
 		add    $0x8,%esp
 		push   $0x4
-		push   $data_15aa48
+		push   $AIL_entry
 		call   ac_AIL_vmm_unlock
 		add    $0x8,%esp
 		push   $0x4
-		push   $data_1ed808
+		push   $AIL_flags
 		xor    %ebx,%ebx
 		call   ac_AIL_vmm_unlock
 		add    $0x8,%esp
-		mov    %ebx,data_15aa4c
+		mov    %ebx,AIL_use_locked
 	jump_112303:
 		pop    %edx
 		pop    %ecx
@@ -8132,7 +8135,7 @@ func_112dc1:
 		cmpl   $0x800,0x14(%esp)
 		jle    jump_112e52
 		mov    $0xa,%ecx
-		mov    $data_1ed6f0,%edi
+		mov    $AIL_error,%edi
 		mov    $aMinimumDmaBuff,%esi
 		xor    %eax,%eax
 		rep movsl %ds:(%esi),%es:(%edi)
@@ -8427,7 +8430,7 @@ GLOBAL_FUNC (SS_construct_DIG_driver)	/* 113110 */
 		test   %eax,%eax
 		jne    jump_113147
 		mov    $0x9,%ecx
-		mov    $data_1ed6f0,%edi
+		mov    $AIL_error,%edi
 		mov    $aCouldNotAllo_0,%esi
 		rep movsl %ds:(%esi),%es:(%edi)
 		movsw  %ds:(%esi),%es:(%edi)
@@ -8440,7 +8443,7 @@ GLOBAL_FUNC (SS_construct_DIG_driver)	/* 113110 */
 		test   %ebx,%ebx
 		je     jump_113183
 		mov    $0x5,%ecx
-		mov    $data_1ed6f0,%edi
+		mov    $AIL_error,%edi
 		mov    $a_digDriverRequ,%esi
 		rep movsl %ds:(%esi),%es:(%edi)
 		movsw  %ds:(%esi),%es:(%edi)
@@ -8493,13 +8496,13 @@ GLOBAL_FUNC (SS_construct_DIG_driver)	/* 113110 */
 		mov    %ebx,0x64(%edx)
 		mov    $0x18,%ebx
 		mov    $0xffffffff,%edx
-		mov    $data_1ed7f0,%eax
+		mov    $AIL_last_IO_attempt,%eax
 		mov    %ecx,0x34(%esp)
 		call   ac_memset
 		test   %esi,%esi
 		je     jump_113240
 		mov    $0x6,%ecx
-		mov    $data_1ed7f0,%edi
+		mov    $AIL_last_IO_attempt,%edi
 		rep movsl %ds:(%esi),%es:(%edi)
 		mov    0x54(%esp),%edi
 		push   %edi
@@ -8527,7 +8530,7 @@ GLOBAL_FUNC (SS_construct_DIG_driver)	/* 113110 */
 		je     jump_113289
 		mov    $0x6,%ecx
 		push   %eax
-		mov    $data_1ed7f0,%edi
+		mov    $AIL_last_IO_attempt,%edi
 		mov    %eax,%esi
 		push   %ebp
 		rep movsl %ds:(%esi),%es:(%edi)
@@ -8562,7 +8565,7 @@ GLOBAL_FUNC (SS_construct_DIG_driver)	/* 113110 */
 		test   %esi,%esi
 		jne    jump_1132d7
 		mov    $0x6,%ecx
-		mov    $data_1ed7f0,%edi
+		mov    $AIL_last_IO_attempt,%edi
 		mov    %ebx,%esi
 		rep movsl %ds:(%esi),%es:(%edi)
 	jump_1132d7:
@@ -8599,7 +8602,7 @@ GLOBAL_FUNC (SS_construct_DIG_driver)	/* 113110 */
 		jne    jump_113355
 		mov    $0x8,%ecx
 		push   $0x8c
-		mov    $data_1ed6f0,%edi
+		mov    $AIL_error,%edi
 		mov    $aDigitalSoundHa,%esi
 		push   %ebp
 		rep movsl %ds:(%esi),%es:(%edi)
@@ -8616,7 +8619,7 @@ GLOBAL_FUNC (SS_construct_DIG_driver)	/* 113110 */
 	jump_113355:
 		mov    $0x6,%ecx
 		mov    %esp,%esi
-		mov    $data_1ed7f0,%edi
+		mov    $AIL_last_IO_attempt,%edi
 		rep movsl %ds:(%esi),%es:(%edi)
 		cmpl   $0x0,data_1ed854
 		je     jump_113373
@@ -8647,7 +8650,7 @@ GLOBAL_FUNC (SS_construct_DIG_driver)	/* 113110 */
 		jne    jump_1133d7
 		mov    $0x8,%ecx
 		push   $0x8c
-		mov    $data_1ed6f0,%edi
+		mov    $AIL_error,%edi
 		mov    $aCouldNotAllo_1,%esi
 		push   %ebp
 		rep movsl %ds:(%esi),%es:(%edi)
@@ -8743,7 +8746,7 @@ GLOBAL_FUNC (SS_construct_DIG_driver)	/* 113110 */
 		test   %eax,%eax
 		jne    jump_11352b
 		mov    $0x8,%ecx
-		mov    $data_1ed6f0,%edi
+		mov    $AIL_error,%edi
 		mov    $aCouldNotAllo_2,%esi
 		mov    0x50(%esp),%eax
 		rep movsl %ds:(%esi),%es:(%edi)
@@ -8794,7 +8797,7 @@ GLOBAL_FUNC (SS_construct_DIG_driver)	/* 113110 */
 		test   %eax,%eax
 		jne    jump_1135d0
 		mov    $0x9,%ecx
-		mov    $data_1ed6f0,%edi
+		mov    $AIL_error,%edi
 		mov    $aCouldNotAllo_3,%esi
 		mov    0x50(%esp),%eax
 		rep movsl %ds:(%esi),%es:(%edi)
@@ -8864,7 +8867,7 @@ GLOBAL_FUNC (SS_construct_DIG_driver)	/* 113110 */
 		cmp    $0xffffffff,%eax
 		jne    jump_1136a9
 		mov    $0x5,%ecx
-		mov    $data_1ed6f0,%edi
+		mov    $AIL_error,%edi
 		mov    $aOutOfTimerHa_0,%esi
 		mov    0x50(%esp),%eax
 		rep movsl %ds:(%esi),%es:(%edi)
@@ -8921,7 +8924,7 @@ GLOBAL_FUNC (SS_construct_DIG_driver)	/* 113110 */
 		push   %eax
 		call   AIL_set_timer_user
 		add    $0x8,%esp
-		mov    data_1ed80c,%esi
+		mov    AIL_preference,%esi
 		push   %esi
 		mov    0xc(%ebp),%edi
 		push   %edi
@@ -8982,7 +8985,7 @@ ASM_AIL_API_install_DIG_driver_file:	/* 113710 */
 		test   %eax,%eax
 		jne    jump_113763
 		mov    $0x5,%ecx
-		mov    $data_1ed6f0,%edi
+		mov    $AIL_error,%edi
 		mov    $aDriverFileNotF,%esi
 		rep movsl %ds:(%esi),%es:(%edi)
 		movsw  %ds:(%esi),%es:(%edi)
@@ -9044,7 +9047,7 @@ AIL_API_install_DIG_INI:	/* 0x113800 */
 		test   %eax,%eax
 		jne    jump_113837
 		mov    $0x7,%ecx
-		mov    $data_1ed6f0,%edi
+		mov    $AIL_error,%edi
 		mov    $aUnableToOpenFi,%esi
 		mov    $0x1,%eax
 		rep movsl %ds:(%esi),%es:(%edi)
@@ -9111,7 +9114,7 @@ AIL_API_allocate_sample_handle:	/* 1138c0 */
 		cmp    0x60(%ebx),%eax
 		jne    jump_113910
 		mov    $0x5,%ecx
-		mov    $data_1ed6f0,%edi
+		mov    $AIL_error,%edi
 		mov    $aOutOfSampleHan,%esi
 		rep movsl %ds:(%esi),%es:(%edi)
 		movsw  %ds:(%esi),%es:(%edi)
@@ -10133,7 +10136,7 @@ AIL_API_allocate_file_sample:
 		test   %eax,%eax
 		je     jump_11454f
 		mov    $0x9,%ecx
-		mov    $data_1ed6f0,%edi
+		mov    $AIL_error,%edi
 		mov    $aUnrecognizedDi,%esi
 		xor    %eax,%eax
 		rep movsl %ds:(%esi),%es:(%edi)
@@ -10177,7 +10180,7 @@ AIL_API_allocate_file_sample:
 		cmpl   $0xffffffff,0x88c(%esi)
 		jne    jump_1145d3
 		mov    $0x7,%ecx
-		mov    $data_1ed6f0,%edi
+		mov    $AIL_error,%edi
 		mov    $aInvalidOrMissi,%esi
 		xor    %eax,%eax
 		rep movsl %ds:(%esi),%es:(%edi)
@@ -10229,7 +10232,7 @@ AILXMIDI_start_:
 		call   ac_AIL_VMM_lock_range
 		add    $0x8,%esp
 		push   $0x80
-		push   $aSample
+		push   $GTL_prefix
 		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
 		push   $0x4
@@ -12004,7 +12007,7 @@ _XMI_serve:	/* 0x1156A0 */
 		cmp    $0x20,%ebx
 		jne    jump_115b5b
 		mov    $0x7,%ecx
-		mov    $data_1ed6f0,%edi
+		mov    $AIL_error,%edi
 		mov    data_1ed8f8,%ebx
 		mov    $aInternalNoteQu,%esi
 		push   %ebx
@@ -12336,7 +12339,7 @@ _XMI_construct_MDI_driver:	/* 0x115EA0 */
 		test   %eax,%eax
 		jne    jump_115ed9
 		mov    $0x9,%ecx
-		mov    $data_1ed6f0,%edi
+		mov    $AIL_error,%edi
 		mov    $aCouldNotAllo_4,%esi
 		rep movsl %ds:(%esi),%es:(%edi)
 		movsw  %ds:(%esi),%es:(%edi)
@@ -12348,7 +12351,7 @@ _XMI_construct_MDI_driver:	/* 0x115EA0 */
 		je     jump_115f10
 		mov    $0x5,%ecx
 		push   $0x1d4
-		mov    $data_1ed6f0,%edi
+		mov    $AIL_error,%edi
 		mov    $a_mdiDriverRequ,%esi
 		push   %ebx
 		rep movsl %ds:(%esi),%es:(%edi)
@@ -12417,7 +12420,7 @@ _XMI_construct_MDI_driver:	/* 0x115EA0 */
 		cmpb   $0x0,(%ebx)
 		je     jump_116002
 		mov    0x8(%ebp),%edi
-		mov    $aSample,%esi
+		mov    $GTL_prefix,%esi
 		add    $0x80,%edi
 		push   %edi
 	jump_115fba:
@@ -12462,7 +12465,7 @@ _XMI_construct_MDI_driver:	/* 0x115EA0 */
 	jump_11600c:
 		mov    $0x18,%ebx
 		mov    $0xffffffff,%edx
-		mov    $data_1ed7f0,%eax
+		mov    $AIL_last_IO_attempt,%eax
 		call   ac_memset
 		xor    %ebx,%ebx
 		mov    0x48(%esp),%ecx
@@ -12471,7 +12474,7 @@ _XMI_construct_MDI_driver:	/* 0x115EA0 */
 		je     jump_116062
 		mov    $0x6,%ecx
 		mov    0x48(%esp),%esi
-		mov    $data_1ed7f0,%edi
+		mov    $AIL_last_IO_attempt,%edi
 		rep movsl %ds:(%esi),%es:(%edi)
 		mov    0x48(%esp),%esi
 		push   %esi
@@ -12497,7 +12500,7 @@ _XMI_construct_MDI_driver:	/* 0x115EA0 */
 		je     jump_1160ab
 		mov    $0x6,%ecx
 		push   %eax
-		mov    $data_1ed7f0,%edi
+		mov    $AIL_last_IO_attempt,%edi
 		mov    %eax,%esi
 		push   %ebp
 		rep movsl %ds:(%esi),%es:(%edi)
@@ -12532,7 +12535,7 @@ _XMI_construct_MDI_driver:	/* 0x115EA0 */
 		test   %ecx,%ecx
 		jne    jump_1160f9
 		mov    $0x6,%ecx
-		mov    $data_1ed7f0,%edi
+		mov    $AIL_last_IO_attempt,%edi
 		mov    %ebx,%esi
 		rep movsl %ds:(%esi),%es:(%edi)
 	jump_1160f9:
@@ -12569,7 +12572,7 @@ _XMI_construct_MDI_driver:	/* 0x115EA0 */
 		jne    jump_116175
 		mov    $0x8,%ecx
 		push   $0x1d4
-		mov    $data_1ed6f0,%edi
+		mov    $AIL_error,%edi
 		mov    $aXmidiSoundHard,%esi
 		push   %ebp
 		rep movsl %ds:(%esi),%es:(%edi)
@@ -12586,7 +12589,7 @@ _XMI_construct_MDI_driver:	/* 0x115EA0 */
 		mov    $0x6,%ecx
 		push   $0x0
 		lea    0x4(%esp),%esi
-		mov    $data_1ed7f0,%edi
+		mov    $AIL_last_IO_attempt,%edi
 		push   $0x0
 		rep movsl %ds:(%esi),%es:(%edi)
 		push   $0x305
@@ -12608,7 +12611,7 @@ _XMI_construct_MDI_driver:	/* 0x115EA0 */
 		jne    jump_11620d
 		mov    $0xa,%ecx
 		push   $0x0
-		mov    $data_1ed6f0,%edi
+		mov    $AIL_error,%edi
 		mov    $aCouldNotInitia,%esi
 		push   $0x0
 		rep movsl %ds:(%esi),%es:(%edi)
@@ -12643,7 +12646,7 @@ _XMI_construct_MDI_driver:	/* 0x115EA0 */
 		jne    jump_116271
 		mov    $0xa,%ecx
 		push   %eax
-		mov    $data_1ed6f0,%edi
+		mov    $AIL_error,%edi
 		mov    $aCouldNotAllo_5,%esi
 		push   %eax
 		rep movsl %ds:(%esi),%es:(%edi)
@@ -12716,7 +12719,7 @@ _XMI_construct_MDI_driver:	/* 0x115EA0 */
 		jne    jump_116388
 		mov    $0x5,%ecx
 		push   $0x0
-		mov    $data_1ed6f0,%edi
+		mov    $AIL_error,%edi
 		mov    $aOutOfTimerHa_1,%esi
 		push   $0x0
 		rep movsl %ds:(%esi),%es:(%edi)
@@ -12915,7 +12918,7 @@ GLOBAL_FUNC (ASM_AIL_API_install_MDI_driver_file)	/* 0x1164F0 */
 		test   %eax,%eax
 		jne    jump_116543
 		mov    $0x5,%ecx
-		mov    $data_1ed6f0,%edi
+		mov    $AIL_error,%edi
 		mov    $aDriverFileNo_0,%esi
 		rep movsl %ds:(%esi),%es:(%edi)
 		movsw  %ds:(%esi),%es:(%edi)
@@ -12977,7 +12980,7 @@ AIL_API_install_MDI_INI:	/* 1165e0 */
 		test   %eax,%eax
 		jne    jump_116617
 		mov    $0x7,%ecx
-		mov    $data_1ed6f0,%edi
+		mov    $AIL_error,%edi
 		mov    $aUnableToOpen_0,%esi
 		mov    $0x1,%eax
 		rep movsl %ds:(%esi),%es:(%edi)
@@ -13090,7 +13093,7 @@ _AIL_API_set_GTL_filename_prefix:	/* 0x116720 */
 		push   %esi
 		push   %edi
 		mov    0x10(%esp),%esi
-		mov    $aSample,%edi
+		mov    $GTL_prefix,%edi
 		push   %edi
 	jump_11672d:
 		mov    (%esi),%al
@@ -13115,10 +13118,10 @@ _AIL_API_set_GTL_filename_prefix:	/* 0x116720 */
 		test   %edx,%edx
 		je     jump_116796
 	jump_116757:
-		mov    aSample(%edx),%ah
+		mov    GTL_prefix(%edx),%ah
 		cmp    $0x5c,%ah
 		jne    jump_116782
-		mov    $aSample,%edi
+		mov    $GTL_prefix,%edi
 		sub    %ecx,%ecx
 		dec    %ecx
 		xor    %eax,%eax
@@ -13129,7 +13132,7 @@ _AIL_API_set_GTL_filename_prefix:	/* 0x116720 */
 		cmp    %ecx,%edx
 		jne    jump_116796
 		xor    %cl,%cl
-		mov    %cl,aSample(%edx)
+		mov    %cl,GTL_prefix(%edx)
 		pop    %edi
 		pop    %esi
 		pop    %ebx
@@ -13138,7 +13141,7 @@ _AIL_API_set_GTL_filename_prefix:	/* 0x116720 */
 		cmp    $0x2e,%ah
 		jne    jump_116793
 		xor    %bh,%bh
-		mov    %bh,aSample(%edx)
+		mov    %bh,GTL_prefix(%edx)
 		pop    %edi
 		pop    %esi
 		pop    %ebx
@@ -13178,7 +13181,7 @@ _AIL_API_allocate_sequence_handle:	/* 0x1167A0 */
 		cmp    0x1c(%ebx),%eax
 		jne    jump_1167ee
 		mov    $0x6,%ecx
-		mov    $data_1ed6f0,%edi
+		mov    $AIL_error,%edi
 		mov    $aOutOfSequenceH,%esi
 		rep movsl %ds:(%esi),%es:(%edi)
 		movsb  %ds:(%esi),%es:(%edi)
@@ -13230,7 +13233,7 @@ _AIL_API_init_sequence:	/* 0x116840 */
 		test   %eax,%eax
 		jne    jump_116892
 		mov    $0x6,%ecx
-		mov    $data_1ed6f0,%edi
+		mov    $AIL_error,%edi
 		mov    $aInvalidXmidiSe,%esi
 		xor    %ebx,%ebx
 		rep movsl %ds:(%esi),%es:(%edi)
@@ -13291,7 +13294,7 @@ _AIL_API_init_sequence:	/* 0x116840 */
 		cmpl   $0x0,0x10(%ebp)
 		jne    jump_116940
 		mov    $0x6,%ecx
-		mov    $data_1ed6f0,%edi
+		mov    $AIL_error,%edi
 		mov    $aInvalidXmidiSe,%esi
 		xor    %ebx,%ebx
 		rep movsl %ds:(%esi),%es:(%edi)
@@ -13415,7 +13418,7 @@ _AIL_API_init_sequence:	/* 0x116840 */
 		call   AIL_background
 		test   %eax,%eax
 		je     jump_116adb
-		mov    $data_1ed6f0,%edi
+		mov    $AIL_error,%edi
 		mov    $aNoTimbresLoade,%esi
 		mov    $0xffffffff,%ebx
 		movsl  %ds:(%esi),%es:(%edi)
@@ -13467,7 +13470,7 @@ _AIL_API_init_sequence:	/* 0x116840 */
 		sar    $0x8,%eax
 		push   %eax
 		push   $aDriverCouldNot
-		push   $data_1ed6f0
+		push   $AIL_error
 		mov    $0xffffffff,%ebx
 		call   ac_sprintf
 		add    $0x10,%esp
@@ -14331,7 +14334,7 @@ AILXMIDI_end_:
 		call   ac_AIL_VMM_unlock_range
 		add    $0x8,%esp
 		push   $0x80
-		push   $aSample
+		push   $GTL_prefix
 		call   ac_AIL_vmm_unlock
 		add    $0x8,%esp
 		push   $0x4
@@ -20626,25 +20629,25 @@ timer_callback_call_counts:	/* 159ed8 */
 
 data_159fd4:
 		.long	0x0
-GLOBAL (timer_callback_arguments)	/* 159fd8 */
+GLOBAL (timer_callback_arguments)	/* 0x159fd8 */
 		.fill   0x40
-timer_old_handler:		/* 15a018 */
+GLOBAL (timer_old_handler)		/* 0x15a018 */
 		.long	0x0
-timer_old_handler_segment:	/* 15a01c */
+GLOBAL (timer_old_handler_segment)	/* 0x15a01c */
 		.short  0x0
 data_15a01e:
 		.long	0x0
-GLOBAL (timer_divisor)		/* 15a022 */
+GLOBAL (timer_divisor)			/* 0x15a022 */
 		.long	0x0
-timer_period:			/* 15a026 */
+GLOBAL (timer_period)			/* 0x15a026 */
 		.long	0x0
-timer_reentrance_lock:		/* 15a02a */
+GLOBAL (timer_reentrance_lock)	/* 0x15a02a */
 		.long	0x0
-timer_lock:			/* 15a02e */
+GLOBAL (timer_lock)				/* 0x15a02e */
 		.long	0x0
 data_15a032:
 		.short  0x0
-data_15a034:
+GLOBAL (AIL_ISR_IRQ)	/* 0x15A034 */
 		.long	0x0
 data_15a038:
 		.long	0x0
@@ -20656,9 +20659,9 @@ data_15aa40:
 		.long	0x0
 data_15aa44:
 		.long	0x0
-data_15aa48:
+GLOBAL (AIL_entry) /* 0x15aa48 */
 		.long	0x0
-data_15aa4c:
+GLOBAL (AIL_use_locked) /* 0x15AA4C */
 		.long	0x0
 data_15aa50:
 		.ascii  "\x00\x02\x04\x06\x08\x0a\x0c\x0e"
@@ -20679,7 +20682,7 @@ data_15aad4:
 		.long	0x0
 data_15aad8:
 		.long	0x0
-aSample:	/* 0x15AADC */
+GLOBAL (GTL_prefix)	/* 0x15AADC */
 		.string "SAMPLE"
 		.fill   0x79
 data_15ab5c:
@@ -21337,15 +21340,16 @@ data_1e8fdc:
 
 data_1ed6ac:
 		.long	0x0
-data_1ed6b0:
+GLOBAL (AIL_driver)	/* 0x1ed6b0 */
 		.fill   0x40
-data_1ed6f0:
+GLOBAL (AIL_error)	/* 0x1ED6F0 */
 		.fill   0x100
-data_1ed7f0:
+GLOBAL (AIL_last_IO_attempt)	/* 0x1ed7f0 */
 		.fill   0x18
-data_1ed808:
+GLOBAL (AIL_flags) /* 0x1ed808 */
 		.long	0x0
-data_1ed80c:
+
+GLOBAL (AIL_preference)	/* 0x1ed80c */
 		.long	0x0
 data_1ed810:
 		.long	0x0

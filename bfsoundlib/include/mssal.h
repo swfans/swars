@@ -44,9 +44,25 @@ typedef struct DIG_DST DIG_DST;
 typedef struct MDI_DDT MDI_DDT;
 typedef struct MDI_DST MDI_DST;
 
-/** Function numbers for XMIDI driver calls.
+/** Function numbers for DIG and XMIDI driver calls.
  */
-enum MDIDriverFunctions {
+enum DIGMDIDriverFunctions {
+    // Functions common to .MDI and .DIG drivers
+    DRV_INIT          = 0x300,
+    DRV_GET_INFO      = 0x301,
+    DRV_SERVE         = 0x302,
+    DRV_PARSE_ENV     = 0x303,
+    DRV_VERIFY_IO     = 0x304,
+    DRV_INIT_DEV      = 0x305,
+    DRV_SHUTDOWN_DEV  = 0x306,
+    // .DIG driver functions
+    DIG_HW_VOLUME     = 0x400,
+    DIG_START_P_CMD   = 0x401,
+    DIG_STOP_P_REQ    = 0x402,
+    DIG_START_R_CMD   = 0x403,
+    DIG_STOP_R_REQ    = 0x404,
+    DIG_VSE           = 0x405,
+    // .MDI driver functions
     MDI_HW_VOLUME     = 0x500,
     MDI_INIT_INS_MGR  = 0x501,
     MDI_MIDI_XMIT     = 0x502,
@@ -54,6 +70,33 @@ enum MDIDriverFunctions {
     MDI_GET_T_STATUS  = 0x504,
     MDI_PROT_UNPROT_T = 0x505,
     MDI_VSE           = 0x506,
+};
+
+/** AIL internal preference names.
+ */
+enum AILPreferenceNames {
+    DIG_SERVICE_RATE         =  0, /**< DMA buffer-polling rate */
+    DIG_HARDWARE_SAMPLE_RATE =  1, /**< Hardware sample rate */
+    DIG_DMA_RESERVE          =  2, /**< Real-mode mem reserve for DMA */
+    DIG_LATENCY              =  3, /**< Half-buffer size in ms */
+    MDI_SERVICE_RATE         = 11, /**< XMIDI sequencer timing */
+    MDI_SEQUENCES            = 12, /**< Sequence handles per driver */
+    MDI_DEFAULT_VOLUME       = 13, /**< Default sequence volume (0-127) */
+    //DIG_RESAMPLING_TOLERANCE  = x, /**< Resampling trigger */
+    //DIG_MIXER_CHANNELS        = x, /**< Allocatable SAMPLE structures */
+    //DIG_DEFAULT_VOLUME        = x, /**< Default sample volume (0-127) */
+    //MDI_QUANT_ADVANCE        =  x, /**< Beat/bar count +1 interval */
+    //MDI_ALLOW_LOOP_BRANCHING =  x, /**< Branches cancel XMIDI FOR loops */
+    //MDI_DEFAULT_BEND_RANGE   =  x, /**< Default pitch-bend range */
+    //MDI_DOUBLE_NOTE_OFF      =  x, /**< For stuck notes on SB daughterboards */
+    //DIG_USE_STEREO           =  x, /**< Use mono output only */
+    //DIG_USE_16_BITS          =  x, /**< Sample accuracy */
+    //DIG_ALLOW_16_BIT_DMA     =  x, /**< OK to use 16-bit DMA if necessary */
+    //DIG_SS_LOCK              =  x, /**< Don't disable IRQs while mixing */
+    //AIL_SCAN_FOR_HARDWARE    =  x, /**< Scan for I/O settings if necessary */
+    //AIL_ALLOW_VDM_EXECUTION  =  x, /**< Allow Windows "DOS box" execution */
+    //DIG_ENABLE_RESAMPLE_FILTER= x, /**< Enable resampling filter */
+    //DIG_DECODE_BUFFER_SIZE   =  x, /**< Decode buffer size by default */
 };
 
 /** Handle to timer.
@@ -194,7 +237,7 @@ struct VDI_HDR {
                                              and cannot be interacted with */
    uint16_t driver_num;                      /**< offs=0x32 Driver number */
    uint16_t this_ISR;                        /**< offs=0x34 Offset of INT 66H dispatcher */
-   uint32_t prev_ISR;                        /**< offs=0x36 Pointer to previous INT 66H ISR */
+   uintptr_t prev_ISR;                       /**< offs=0x36 Pointer to previous INT 66H ISR */
    int8_t scratch[128];                      /**< offs=0x3A Shared scratch workspace */
    int8_t dev_name[80];                      /**< offs=0xBA Device name (only in newer versions) */
 };

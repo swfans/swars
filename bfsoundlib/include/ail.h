@@ -26,6 +26,9 @@
 extern "C" {
 #endif
 /******************************************************************************/
+#define AIL_MAX_DRVRS 16
+#define AIL_N_PREFS 19
+#define AIL_N_TIMERS 15
 
 AIL_DRIVER *AIL2OAL_API_install_driver(const uint8_t *driver_image, uint32_t n_bytes);
 
