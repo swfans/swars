@@ -68,6 +68,15 @@ void AIL_restore_USE16_ISR(int32_t irq);
  */
 void AIL_set_real_vect(uint32_t vectnum, void *real_ptr);
 
+/** Register an application function as a timer callback routine, and
+ * obtain a timer handle which may be used to control the timer.
+ */
+HSNDTIMER AIL_register_timer(AILTIMERCB fn);
+
+/** Set user data pointer for given timer.
+ */
+void *AIL_set_timer_user(HSNDTIMER timer, void *user_data);
+
 uint32_t AIL_sample_status(SNDSAMPLE *s);
 
 /** Sets period between timer triggers, in microseconds.

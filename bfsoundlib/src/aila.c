@@ -27,10 +27,11 @@
 #include "aila.h"
 #include "ail.h"
 #include "aildebug.h"
+#include "memfile.h"
 /******************************************************************************/
 /** Callback function addrs for timers.
 */
-extern int32_t timer_callback[AIL_N_TIMERS];
+extern AILTIMERCB timer_callback[AIL_N_TIMERS];
 
 /** States of timers (0=free 1=off 2=on)
  */
@@ -165,6 +166,27 @@ void AIL2OAL_program_timers(void)
         memset(timer_cb_elapsed_times, 0, sizeof(timer_cb_elapsed_times));
     }
     AIL_unlock();
+}
+
+HSNDTIMER AIL2OAL_API_register_timer(AILTIMERCB fn)
+{
+    size_t n;
+
+    AIL_lock();
+    for (n = 0; n < AIL_N_TIMERS; n++)
+    {
+        if (timer_status[n] != 0)
+            continue;
+
+        timer_status[n] = 1;
+        timer_callback[n] = fn;
+
+        AIL_unlock();
+        return n;
+    }
+
+    AIL_unlock();
+    return -1;
 }
 
 void AILA_VMM_lock(void)

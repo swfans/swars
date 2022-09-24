@@ -40,6 +40,8 @@ int32_t AIL2OAL_API_call_driver(AIL_DRIVER *drvr, int32_t fn,
 
 void AIL2OAL_API_restore_USE16_ISR(int32_t irq);
 
+HSNDTIMER AIL2OAL_API_register_timer(AILTIMERCB fn);
+
 /** Set real-mode interrupt vector.
  */
 void AIL2OAL_API_set_real_vect(uint32_t vectnum, void *real_ptr);

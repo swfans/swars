@@ -112,7 +112,7 @@ GLOBAL_FUNC (MSSSMACKTIMERSETUP)
 		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
 		push   $_mss_int
-		call   AIL_register_timer
+		call   ac_AIL_register_timer
 		add    $0x4,%esp
 		mov    %eax,_msstimer
 		mov    _MSSSpeed,%ecx

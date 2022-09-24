@@ -144,6 +144,40 @@ void AIL_set_real_vect(uint32_t vectnum, void *real_ptr)
     AIL_indent--;
 }
 
+HSNDTIMER AIL_register_timer(AILTIMERCB fn)
+{
+    HSNDTIMER timer;
+
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s(0x%p)\n", __func__, fn);
+
+    timer = AIL2OAL_API_register_timer(fn);
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Result = %ld\n", timer);
+    AIL_indent--;
+
+    return timer;
+}
+
+void *AIL_set_timer_user(HSNDTIMER timer, void *user_data)
+{
+    void *prev_data;
+
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s(%ld, 0x%p)\n", __func__, timer, user_data);
+
+    prev_data = AIL2OAL_API_set_timer_user(timer, user_data);
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Result = 0x%p\n", prev_data);
+    AIL_indent--;
+
+    return prev_data;
+}
+
 AIL_DRIVER *AIL_install_driver(const uint8_t *driver_image, uint32_t n_bytes)
 {
     AIL_DRIVER *drvr;

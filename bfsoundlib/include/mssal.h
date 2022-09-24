@@ -105,6 +105,10 @@ enum AILPreferenceNames {
  */
 typedef long HSNDTIMER;
 
+/** Timer trigger callcack function type.
+ */
+typedef void (*AILTIMERCB) (void *user_data);
+
 /** Sound card hardware I/O parameters structure.
  *
  * Originally named `IO_PARMS`. This less generic name helps when analyzing old code.

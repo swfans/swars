@@ -49,6 +49,7 @@ extern int32_t AIL_use_locked;
 
 extern int32_t timer_cb_periods[AIL_N_TIMERS];
 extern int32_t timer_cb_elapsed_times[AIL_N_TIMERS];
+extern int32_t timer_user[AIL_N_TIMERS];
 
 void AIL2OAL_end(void);
 
@@ -222,6 +223,20 @@ void AIL2OAL_API_set_timer_period(HSNDTIMER timer, uint32_t usec)
 
     // End atomic operation
     AIL_unlock();
+}
+
+void *AIL2OAL_API_set_timer_user(HSNDTIMER timer, void *user_data)
+{
+  void *retval;
+
+  assert (timer >= 0);
+  assert (timer % sizeof (AILTIMERCB) == 0);
+  assert (timer < AIL_N_TIMERS);
+
+  retval = timer_user[timer];
+  timer_user[timer] = user_data;
+
+  return retval;
 }
 
 void AIL2OAL_API_release_all_timers(void)

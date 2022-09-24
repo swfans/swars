@@ -48,6 +48,8 @@ void AIL_lock(void);
  */
 void AIL_unlock(void);
 
+void *AIL2OAL_API_set_timer_user(HSNDTIMER timer, void *user_data);
+
 void AIL2OAL_API_set_timer_period(HSNDTIMER timer, uint32_t usec);
 
 void AIL_release_timer_handle(HSNDTIMER timer);

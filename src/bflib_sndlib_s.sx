@@ -337,7 +337,7 @@ TIME_write_:
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (ASM_AIL_startup)	/* 1018a0 */
+GLOBAL_FUNC (ASM_AIL_startup)	/* 0x1018a0 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %esi
@@ -437,7 +437,7 @@ GLOBAL_FUNC (ASM_AIL_startup)	/* 1018a0 */
 		mov    %edx,data_1e8fb8
 		push   $_TIME_callback
 		mov    %edx,data_1e8fc0
-		call   ac_timer_register_callback
+		call   ac_AIL2OAL_API_register_timer
 		add    $0x4,%esp
 		push   $0x64
 		push   %eax
@@ -1334,7 +1334,7 @@ GLOBAL_FUNC (AIL_read_INI)	/* 1020c0 */
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (AIL_register_timer)	/* 102490 */
+GLOBAL_FUNC (ASM_AIL_register_timer)	/* 0x102490 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %esi
@@ -1372,7 +1372,7 @@ GLOBAL_FUNC (AIL_register_timer)	/* 102490 */
 		add    $0xc,%esp
 	jump_1024f0:
 		push   %ebx
-		call   ac_timer_register_callback
+		call   ac_AIL2OAL_API_register_timer
 		mov    %eax,%ebx
 		mov    AIL_debug,%eax
 		add    $0x4,%esp
@@ -1430,7 +1430,7 @@ GLOBAL_FUNC (AIL_register_timer)	/* 102490 */
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (AIL_set_timer_user)	/* 1025a0 */
+GLOBAL_FUNC (ASM_AIL_set_timer_user)	/* 0x1025a0 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %esi
@@ -1473,7 +1473,7 @@ GLOBAL_FUNC (AIL_set_timer_user)	/* 1025a0 */
 		mov    0x18(%esp),%edx
 		push   %edx
 		push   %ebx
-		call   ac_timer_set_user_data
+		call   ac_AIL2OAL_API_set_timer_user
 		mov    AIL_debug,%ecx
 		mov    %eax,%ebx
 		add    $0x8,%esp
@@ -6923,7 +6923,7 @@ AIL_API_install_driver:	/* 111d40 */
 		jmp    jump_111fc7
 	jump_111f3b:
 		push   $AIL_driver_server
-		call   AIL_register_timer
+		call   ac_AIL_register_timer
 		add    $0x4,%esp
 		mov    %eax,0x20(%ebp)
 		cmp    $0xffffffff,%eax
@@ -6961,7 +6961,7 @@ AIL_API_install_driver:	/* 111d40 */
 	jump_111f9d:
 		push   %ebp
 		push   %eax
-		call   AIL_set_timer_user
+		call   ac_AIL_set_timer_user
 		mov    0x10(%ebp),%eax
 		add    $0x8,%esp
 		movswl 0x2e(%eax),%eax
@@ -8861,7 +8861,7 @@ GLOBAL_FUNC (SS_construct_DIG_driver)	/* 113110 */
 		jl     jump_1135db
 	jump_1135f9:
 		push   $SS_serve
-		call   AIL_register_timer
+		call   ac_AIL_register_timer
 		add    $0x4,%esp
 		mov    %eax,0xc(%ebp)
 		cmp    $0xffffffff,%eax
@@ -8922,7 +8922,7 @@ GLOBAL_FUNC (SS_construct_DIG_driver)	/* 113110 */
 	jump_1136a9:
 		push   %ebp
 		push   %eax
-		call   AIL_set_timer_user
+		call   ac_AIL_set_timer_user
 		add    $0x8,%esp
 		mov    AIL_preference,%esi
 		push   %esi
@@ -12712,7 +12712,7 @@ _XMI_construct_MDI_driver:	/* 0x115EA0 */
 		cmp    %eax,%ebx
 		jne    jump_1162f0
 		push   $_XMI_serve
-		call   AIL_register_timer
+		call   ac_AIL_register_timer
 		add    $0x4,%esp
 		mov    %eax,0xc(%ebp)
 		cmp    $0xffffffff,%eax
@@ -12751,7 +12751,7 @@ _XMI_construct_MDI_driver:	/* 0x115EA0 */
 	jump_116388:
 		push   %ebp
 		push   %eax
-		call   AIL_set_timer_user
+		call   ac_AIL_set_timer_user
 		mov    0x0(%ebp),%eax
 		movl   $_XMI_destroy_MDI_driver,0x24(%eax)
 		mov    0x0(%ebp),%eax
