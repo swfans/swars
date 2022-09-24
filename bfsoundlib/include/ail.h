@@ -30,11 +30,16 @@ extern "C" {
 #define AIL_N_PREFS 19
 #define AIL_N_TIMERS 15
 
+int32_t AIL2OAL_API_set_preference(uint32_t number, int32_t value);
+
 AIL_DRIVER *AIL2OAL_API_install_driver(const uint8_t *driver_image, uint32_t n_bytes);
+void AIL2OAL_API_uninstall_driver(AIL_DRIVER *drvr);
 
 const SNDCARD_IO_PARMS *AIL2OAL_API_get_IO_environment(AIL_DRIVER *drvr);
 
 void AIL_release_timer_handle(HSNDTIMER timer);
+
+void AIL2OAL_API_release_all_timers(void);
 
 /******************************************************************************/
 #ifdef __cplusplus

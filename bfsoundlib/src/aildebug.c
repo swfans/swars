@@ -20,6 +20,8 @@
 #include <stdio.h>
 #include <stddef.h>
 #include <stdlib.h>
+#include <string.h>
+#include <time.h>
 #include <assert.h>
 
 #include "aildebug.h"
@@ -32,6 +34,49 @@ extern uint16_t AIL_debug;
 extern uint16_t AIL_sys_debug;
 extern FILE *AIL_debugfile;
 extern uint32_t AIL_indent;
+
+int32_t AIL_set_preference(uint32_t number, int32_t value)
+{
+   int32_t ret;
+
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s(%u,%u)\n", __func__, number, value);
+
+    ret = AIL2OAL_API_set_preference(number, value);
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Result = %d\n", ret);
+    AIL_indent--;
+
+   return ret;
+}
+
+void AIL_set_GTL_filename_prefix(char const *prefix)
+{
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s(\"%s\")\n", __func__, prefix);
+
+    AIL2OAL_API_set_GTL_filename_prefix(prefix);
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Finished\n");
+    AIL_indent--;
+}
+
+void AIL_set_real_vect(uint32_t vectnum, void *real_ptr)
+{
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s(%u, 0x%p)\n", __func__, vectnum, real_ptr);
+
+    AIL2OAL_API_set_real_vect(vectnum, real_ptr);
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Finished\n");
+    AIL_indent--;
+}
 
 AIL_DRIVER *AIL_install_driver(const uint8_t *driver_image, uint32_t n_bytes)
 {
@@ -50,7 +95,20 @@ AIL_DRIVER *AIL_install_driver(const uint8_t *driver_image, uint32_t n_bytes)
     return drvr;
 }
 
-const SNDCARD_IO_PARMS *AIL2OAL_get_IO_environment(AIL_DRIVER *drvr)
+void AIL_uninstall_driver(AIL_DRIVER *drvr)
+{
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s(0x%p)\n", __func__, drvr);
+
+    AIL2OAL_API_uninstall_driver(drvr);
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Finished\n");
+    AIL_indent--;
+}
+
+const SNDCARD_IO_PARMS *AIL_get_IO_environment(AIL_DRIVER *drvr)
 {
     const SNDCARD_IO_PARMS *iop;
 
@@ -65,6 +123,19 @@ const SNDCARD_IO_PARMS *AIL2OAL_get_IO_environment(AIL_DRIVER *drvr)
     AIL_indent--;
 
     return iop;
+}
+
+void AIL_restore_USE16_ISR(int32_t irq)
+{
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s(%d)\n", __func__, irq);
+
+    AIL2OAL_API_restore_USE16_ISR(irq);
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Finished\n");
+    AIL_indent--;
 }
 
 uint32_t AIL_sample_status(SNDSAMPLE *s)
@@ -82,6 +153,19 @@ uint32_t AIL_sample_status(SNDSAMPLE *s)
     AIL_indent--;
 
     return status;
+}
+
+void AIL_release_all_timers(void)
+{
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s()\n", __func__);
+
+    AIL2OAL_API_release_all_timers();
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Finished\n");
+    AIL_indent--;
 }
 
 int32_t AIL_call_driver(AIL_DRIVER *drvr, int32_t fn,

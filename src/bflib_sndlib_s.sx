@@ -523,7 +523,7 @@ GLOBAL_FUNC (ail_shutdown)	/* 101a40 */
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (AIL_set_preference)	/* 101ae0 */
+GLOBAL_FUNC (ASM_AIL_set_preference)	/* 0x101ae0 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %esi
@@ -733,7 +733,7 @@ GLOBAL_FUNC (ail_get_real_vect)	/* 101c20 */
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (ail_set_real_vect)	/* 101d30 */
+GLOBAL_FUNC (ASM_AIL_set_real_vect)	/* 0x101d30 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %edi
@@ -776,7 +776,7 @@ GLOBAL_FUNC (ail_set_real_vect)	/* 101d30 */
 		push   %edx
 		mov    0x14(%esp),%ebx
 		push   %ebx
-		call   AIL_API_set_real_vect
+		call   ac_AIL2OAL_API_set_real_vect
 		mov    AIL_indent,%ecx
 		dec    %ecx
 		add    $0x8,%esp
@@ -788,7 +788,7 @@ GLOBAL_FUNC (ail_set_real_vect)	/* 101d30 */
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (AIL_restore_USE16_ISR)
+GLOBAL_FUNC (ASM_AIL_restore_USE16_ISR)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %edi
@@ -1837,7 +1837,7 @@ GLOBAL_FUNC (AIL_release_timer_handle)	/* 102b60 */
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (AIL_release_all_timers)	/* 102be0 */
+GLOBAL_FUNC (ASM_AIL_release_all_timers)	/* 0x102be0 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %edi
@@ -1879,7 +1879,7 @@ GLOBAL_FUNC (AIL_release_all_timers)	/* 102be0 */
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (AIL_get_IO_environment)	/* 102c50 */
+GLOBAL_FUNC (ASM_AIL_get_IO_environment)	/* 0x102c50 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %esi
@@ -1917,7 +1917,7 @@ GLOBAL_FUNC (AIL_get_IO_environment)	/* 102c50 */
 		add    $0xc,%esp
 	jump_102cb0:
 		push   %ebx
-		call   AIL_API_get_IO_environment
+		call   ac_AIL2OAL_API_get_IO_environment
 		mov    %eax,%ebx
 		mov    AIL_debug,%eax
 		add    $0x4,%esp
@@ -2077,7 +2077,7 @@ GLOBAL_FUNC (ASM_AIL_install_driver)	/* 102d60 */
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (AIL_uninstall_driver)	/* 102e80 */
+GLOBAL_FUNC (ASM_AIL_uninstall_driver)	/* 0x102e80 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %edi
@@ -4829,7 +4829,7 @@ GLOBAL_FUNC (AIL_MDI_driver_type)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (AIL_set_GTL_filename_prefix)	/* 106090 */
+GLOBAL_FUNC (ASM_AIL_set_GTL_filename_prefix)	/* 106090 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %edi
@@ -5423,7 +5423,7 @@ GLOBAL_FUNC (AIL_send_channel_voice_message)
 
 
 /*----------------------------------------------------------------*/
-AILDEBUG_end_:
+GLOBAL_FUNC (AILDEBUG_end_)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -5797,7 +5797,7 @@ AILA_shutdown:	/* 1111e3 */
 
 
 /*----------------------------------------------------------------*/
-AIL_API_get_real_vect:
+GLOBAL_FUNC (AIL_API_get_real_vect)
 /*----------------------------------------------------------------*/
 		push   %ebp
 		mov    %esp,%ebp
@@ -5828,7 +5828,7 @@ AIL_API_get_real_vect:
 
 
 /*----------------------------------------------------------------*/
-AIL_API_set_real_vect:	/* 1111a5 */
+ASM_AIL_API_set_real_vect:	/* 0x1111a5 */
 /*----------------------------------------------------------------*/
 		ret /* XXX: sound */
 
@@ -6905,7 +6905,7 @@ AIL_API_install_driver:	/* 111d40 */
 		add    0x0(%ebp),%eax
 		push   %eax
 		push   $0x66
-		call   ail_set_real_vect
+		call   ac_AIL_set_real_vect
 		add    $0x8,%esp
 		push   $0x0
 		push   $0x0
@@ -6937,7 +6937,7 @@ AIL_API_install_driver:	/* 111d40 */
 		mov    0x36(%eax),%ebx
 		push   %ebx
 		push   $0x66
-		call   ail_set_real_vect
+		call   ac_AIL_set_real_vect
 		add    $0x8,%esp
 		mov    0x4(%ebp),%ecx
 		push   %ecx
@@ -7013,7 +7013,7 @@ AIL_API_uninstall_driver:
 		cmp    $0xffffffff,%eax
 		je     jump_112020
 		push   %eax
-		call   AIL_restore_USE16_ISR
+		call   ac_AIL_restore_USE16_ISR
 		add    $0x4,%esp
 	jump_112020:
 		push   $0x0
@@ -7027,7 +7027,7 @@ AIL_API_uninstall_driver:
 		mov    0x36(%eax),%ecx
 		push   %ecx
 		push   $0x66
-		call   ail_set_real_vect
+		call   ac_AIL_set_real_vect
 		add    $0x8,%esp
 		mov    0x4(%ebx),%esi
 		push   %esi
@@ -7062,7 +7062,7 @@ AIL_API_uninstall_driver:
 
 
 /*----------------------------------------------------------------*/
-AIL_API_get_IO_environment:	/* 112090 */
+ASM_AIL_API_get_IO_environment:	/* 0x112090 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %esi
@@ -7118,79 +7118,79 @@ AIL_API_startup:	/* 112110 */
 		call   AIL_start_
 		push   $0xc8
 		push   $0x0
-		call   AIL_set_preference
+		call   ac_AIL_set_preference
 		add    $0x8,%esp
 		push   $0x1
 		push   $0x1
-		call   AIL_set_preference
+		call   ac_AIL_set_preference
 		add    $0x8,%esp
 		push   $0x8000
 		push   $0x2
-		call   AIL_set_preference
+		call   ac_AIL_set_preference
 		add    $0x8,%esp
 		push   $0x64
 		push   $0x3
-		call   AIL_set_preference
+		call   ac_AIL_set_preference
 		add    $0x8,%esp
 		push   $0x10
 		push   $0x4
-		call   AIL_set_preference
+		call   ac_AIL_set_preference
 		add    $0x8,%esp
 		push   $0x64
 		push   $0x5
-		call   AIL_set_preference
+		call   ac_AIL_set_preference
 		add    $0x8,%esp
 		push   $0x28f
 		push   $0x6
-		call   AIL_set_preference
+		call   ac_AIL_set_preference
 		add    $0x8,%esp
 		push   $0x0
 		push   $0x7
-		call   AIL_set_preference
+		call   ac_AIL_set_preference
 		add    $0x8,%esp
 		push   $0x0
 		push   $0x8
-		call   AIL_set_preference
+		call   ac_AIL_set_preference
 		add    $0x8,%esp
 		push   $0x1
 		push   $0x9
-		call   AIL_set_preference
+		call   ac_AIL_set_preference
 		add    $0x8,%esp
 		push   $0x0
 		push   $0xa
-		call   AIL_set_preference
+		call   ac_AIL_set_preference
 		add    $0x8,%esp
 		push   $0x78
 		push   $0xb
-		call   AIL_set_preference
+		call   ac_AIL_set_preference
 		add    $0x8,%esp
 		push   $0x8
 		push   $0xc
-		call   AIL_set_preference
+		call   ac_AIL_set_preference
 		add    $0x8,%esp
 		push   $0x7f
 		push   $0xd
-		call   AIL_set_preference
+		call   ac_AIL_set_preference
 		add    $0x8,%esp
 		push   $0x1
 		push   $0xe
-		call   AIL_set_preference
+		call   ac_AIL_set_preference
 		add    $0x8,%esp
 		push   $0x0
 		push   $0xf
-		call   AIL_set_preference
+		call   ac_AIL_set_preference
 		add    $0x8,%esp
 		push   $0x2
 		push   $0x10
-		call   AIL_set_preference
+		call   ac_AIL_set_preference
 		add    $0x8,%esp
 		push   $0x1
 		push   $0x11
-		call   AIL_set_preference
+		call   ac_AIL_set_preference
 		add    $0x8,%esp
 		push   $0x1
 		push   $0x12
-		call   AIL_set_preference
+		call   ac_AIL_set_preference
 		add    $0x8,%esp
 		xor    %eax,%eax
 		lea    0x0(%eax),%eax
@@ -7218,7 +7218,7 @@ AIL_API_shutdown:
 		test   %eax,%eax
 		je     jump_112260
 		push   %eax
-		call   AIL_uninstall_driver
+		call   ac_AIL_uninstall_driver
 		add    $0x4,%esp
 		lea    0x0(%eax),%eax
 		lea    0x0(%edx),%edx
@@ -7227,7 +7227,7 @@ AIL_API_shutdown:
 		sub    $0x4,%ebx
 		cmp    $0xfffffffc,%ebx
 		jne    jump_112240
-		call   AIL_release_all_timers
+		call   ac_AIL_release_all_timers
 		call   AILA_shutdown
 		pop    %ebx
 		ret
@@ -8523,7 +8523,7 @@ GLOBAL_FUNC (SS_construct_DIG_driver)	/* 113110 */
 		jne    jump_113289
 		mov    0x0(%ebp),%ecx
 		push   %ecx
-		call   ac_AIL2OAL_get_IO_environment
+		call   ac_AIL_get_IO_environment
 		mov    %eax,%ebx
 		add    $0x4,%esp
 		test   %eax,%eax
@@ -8755,7 +8755,7 @@ GLOBAL_FUNC (SS_construct_DIG_driver)	/* 113110 */
 		cmp    $0xffffffff,%esi
 		je     jump_1134e0
 		push   %esi
-		call   AIL_restore_USE16_ISR
+		call   ac_AIL_restore_USE16_ISR
 		add    $0x4,%esp
 	jump_1134e0:
 		push   $0x0
@@ -8806,7 +8806,7 @@ GLOBAL_FUNC (SS_construct_DIG_driver)	/* 113110 */
 		cmp    $0xffffffff,%ebx
 		je     jump_113575
 		push   %ebx
-		call   AIL_restore_USE16_ISR
+		call   ac_AIL_restore_USE16_ISR
 		add    $0x4,%esp
 	jump_113575:
 		push   $0x0
@@ -8876,7 +8876,7 @@ GLOBAL_FUNC (SS_construct_DIG_driver)	/* 113110 */
 		cmp    $0xffffffff,%edx
 		je     jump_11363a
 		push   %edx
-		call   AIL_restore_USE16_ISR
+		call   ac_AIL_restore_USE16_ISR
 		add    $0x4,%esp
 	jump_11363a:
 		push   $0x0
@@ -9021,7 +9021,7 @@ ASM_AIL_API_install_DIG_driver_file:	/* 113710 */
 		test   %eax,%eax
 		jne    jump_1137b2
 		push   %esi
-		call   AIL_uninstall_driver
+		call   ac_AIL_uninstall_driver
 		add    $0x4,%esp
 	jump_1137b2:
 		mov    %ebx,%eax
@@ -9084,7 +9084,7 @@ AIL_API_uninstall_DIG_driver:
 		mov    0x4(%esp),%eax
 		mov    (%eax),%edx
 		push   %edx
-		call   AIL_uninstall_driver
+		call   ac_AIL_uninstall_driver
 		add    $0x4,%esp
 		ret
 
@@ -12493,7 +12493,7 @@ _XMI_construct_MDI_driver:	/* 0x115EA0 */
 		jne    jump_1160ab
 		mov    0x0(%ebp),%edx
 		push   %edx
-		call   AIL_get_IO_environment
+		call   ac_AIL_get_IO_environment
 		mov    %eax,%ebx
 		add    $0x4,%esp
 		test   %eax,%eax
@@ -12954,7 +12954,7 @@ GLOBAL_FUNC (ASM_AIL_API_install_MDI_driver_file)	/* 0x1164F0 */
 		test   %eax,%eax
 		jne    jump_116592
 		push   %esi
-		call   AIL_uninstall_driver
+		call   ac_AIL_uninstall_driver
 		add    $0x4,%esp
 	jump_116592:
 		mov    %ebx,%eax
@@ -13017,7 +13017,7 @@ GLOBAL_FUNC (ASM_AIL_API_uninstall_MDI_driver)	/* 0x116660 */
 		mov    0x4(%esp),%eax
 		mov    (%eax),%edx
 		push   %edx
-		call   AIL_uninstall_driver
+		call   ac_AIL_uninstall_driver
 		add    $0x4,%esp
 		ret
 

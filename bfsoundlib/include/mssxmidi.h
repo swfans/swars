@@ -27,6 +27,8 @@ extern "C" {
 #endif
 /******************************************************************************/
 
+void AIL2OAL_API_set_GTL_filename_prefix(char const *prefix);
+
 MDI_DRIVER *AIL2OAL_API_install_MDI_driver_file(char *filename, SNDCARD_IO_PARMS *iop);
 void AIL2OAL_API_uninstall_MDI_driver(MDI_DRIVER *mdidrv);
 

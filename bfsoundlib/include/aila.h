@@ -30,6 +30,10 @@ extern "C" {
 int32_t AIL2OAL_API_call_driver(AIL_DRIVER *drvr, int32_t fn,
         VDI_CALL *in, VDI_CALL *out);
 
+void AIL2OAL_API_restore_USE16_ISR(int32_t irq);
+
+void AIL2OAL_API_set_real_vect(uint32_t vectnum, void *real_ptr);
+
 /******************************************************************************/
 #ifdef __cplusplus
 };

@@ -27,11 +27,41 @@ extern "C" {
 #endif
 /******************************************************************************/
 
+/** Set one of internal MSS parameters.
+ *
+ * @param number Specifies index of the preference to set.
+ * @param value The desired preference value.
+ */
+int32_t AIL_set_preference(uint32_t number, int32_t value);
+
+/** Define a filename prefix for application's Global Timbre Library
+ * files.
+ *
+ * Under MS-DOS, prefix may be up to 8 characters long and must not end
+ * in a period.
+ */
+void AIL_set_GTL_filename_prefix(char const *prefix);
+
 AIL_DRIVER *AIL_install_driver(const uint8_t *driver_image, uint32_t n_bytes);
 
-const SNDCARD_IO_PARMS *AIL2OAL_get_IO_environment(AIL_DRIVER *drvr);
+/** Shut down and unload driver from memory; free driver descriptor
+ *
+ * Note: Not all DPMI hosts reclaim low DOS memory properly when freed.
+ * This function never needs to be called by most applications.
+ */
+void AIL_uninstall_driver(AIL_DRIVER *drvr);
+
+const SNDCARD_IO_PARMS *AIL_get_IO_environment(AIL_DRIVER *drvr);
+
+void AIL_restore_USE16_ISR(int32_t irq);
+
+/** Set a real-mode interrupt vector.
+ */
+void AIL_set_real_vect(uint32_t vectnum, void *real_ptr);
 
 uint32_t AIL_sample_status(SNDSAMPLE *s);
+
+void AIL_release_all_timers(void);
 
 int32_t AIL_call_driver(AIL_DRIVER *drvr, int32_t fn,
         VDI_CALL *in, VDI_CALL *out);

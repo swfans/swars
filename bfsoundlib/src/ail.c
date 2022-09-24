@@ -22,7 +22,50 @@
 #include <assert.h>
 
 #include "ail.h"
+#include "aila.h"
+#include "aildebug.h"
+#include "memfile.h"
 /******************************************************************************/
+
+/** List of installed AIL drivers.
+ */
+extern AIL_DRIVER * AIL_driver[AIL_MAX_DRVRS];
+
+/** AIL "preferences" array.
+ */
+extern int32_t AIL_preference[AIL_N_PREFS];
+
+/** ASCII error type string.
+ */
+extern char AIL_error[256];
+
+/** Last SNDCARD_IO_PARMS structure used to attempt device detection.
+ */
+extern SNDCARD_IO_PARMS AIL_last_IO_attempt;
+
+extern uint32_t AIL_entry;
+extern int32_t AIL_flags;
+extern int32_t AIL_use_locked;
+
+void AIL2OAL_end(void);
+
+void AIL2OAL_start(void)
+{
+    if (AIL_use_locked)
+        return;
+
+    AIL_VMM_lock_range(AIL2OAL_start, AIL2OAL_end);
+
+    AIL_vmm_lock(AIL_driver, sizeof(AIL_driver));
+    AIL_vmm_lock(AIL_preference, sizeof(AIL_preference));
+    AIL_vmm_lock(AIL_error, sizeof(AIL_error));
+    AIL_vmm_lock(&AIL_last_IO_attempt, sizeof(AIL_last_IO_attempt));
+    AIL_vmm_lock(&AIL_entry, sizeof(AIL_entry));
+    AIL_vmm_lock(&AIL_flags, sizeof(AIL_flags));
+
+    AIL_use_locked = 1;
+}
+
 AIL_DRIVER *AIL2OAL_API_install_driver(const uint8_t *driver_image, uint32_t n_bytes)
 {
     AIL_DRIVER *drvr;
@@ -34,10 +77,82 @@ AIL_DRIVER *AIL2OAL_API_install_driver(const uint8_t *driver_image, uint32_t n_b
     return drvr;
 }
 
+void AIL2OAL_API_uninstall_driver(AIL_DRIVER *drvr)
+{
+    int i;
+
+    // Call high-level destructor to free any allocated resources
+    if (drvr->destructor != NULL) {
+        drvr->destructor((DIG_DRIVER *)drvr->descriptor);
+    }
+
+    // Stop periodic timer service, if enabled
+    if (drvr->server != -1) {
+        AIL_release_timer_handle(drvr->server);
+    }
+
+    // If device successfully initialized, shut it down
+    if (drvr->initialized)
+    {
+        if (drvr->PM_ISR != -1) {
+            AIL_restore_USE16_ISR(drvr->PM_ISR);
+        }
+        AIL_call_driver(drvr, DRV_SHUTDOWN_DEV, NULL, NULL);
+    }
+
+    // Unlink driver from INT 66H chain
+    AIL_set_real_vect(0x66, (void *)drvr->VHDR->prev_ISR);
+
+    // Free low-memory buffer and AIL_DRIVER descriptor
+    AIL_MEM_free_DOS(drvr->buf, drvr->seg, drvr->sel);
+    AIL_MEM_free_lock(drvr, sizeof(AIL_DRIVER));
+
+    for (i = 0; i < AIL_MAX_DRVRS; i++)
+    {
+        if (AIL_driver[i] == drvr) {
+            AIL_driver[i] = NULL;
+        }
+    }
+}
+
 const SNDCARD_IO_PARMS *AIL2OAL_API_get_IO_environment(AIL_DRIVER *drvr)
 {
     static SNDCARD_IO_PARMS iop = {0x220, 7, 1, 1, {0, 0, 0, 0}};
     return &iop;
 }
 
+int32_t AIL2OAL_API_set_preference(uint32_t number, int32_t value)
+{
+    int32_t oldval;
+
+    oldval = AIL_preference[number];
+    AIL_preference[number] = value;
+    return oldval;
+}
+
+void AIL2OAL_API_release_all_timers(void)
+{
+    HSNDTIMER i;
+
+    for (i=0; i < AIL_N_TIMERS; i++) {
+        AIL_release_timer_handle(i);
+    }
+}
+
+void AIL2OAL_end(void)
+{
+    if (!AIL_use_locked)
+        return;
+
+    AIL_VMM_unlock_range(AIL2OAL_start, AIL2OAL_end);
+
+    AIL_vmm_unlock(AIL_driver, sizeof(AIL_driver));
+    AIL_vmm_unlock(AIL_preference, sizeof(AIL_preference));
+    AIL_vmm_unlock(AIL_error, sizeof(AIL_error));
+    AIL_vmm_unlock(&AIL_last_IO_attempt, sizeof(AIL_last_IO_attempt));
+    AIL_vmm_unlock(&AIL_entry, sizeof(AIL_entry));
+    AIL_vmm_unlock(&AIL_flags, sizeof(AIL_flags));
+
+    AIL_use_locked = 0;
+}
 /******************************************************************************/

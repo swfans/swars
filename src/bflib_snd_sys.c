@@ -109,6 +109,13 @@ void FreeAwe32Soundfont(void)
     }
 }
 
+/** Wrapper for LbMemoryFree(), needed due to return type.
+ */
+static void LbMemoryFree_wrap(void *ptr)
+{
+    LbMemoryFree(ptr);
+}
+
 void InitMusic(void)
 {
     asm volatile ("call ASM_InitMusic\n"

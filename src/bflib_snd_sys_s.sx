@@ -2892,23 +2892,23 @@ GLOBAL_FUNC(ASM_InitSound)
 	jump_ff4ef:
 		push   $0x0
 		push   $0x9
-		call   AIL_set_preference
+		call   ac_AIL_set_preference
 		add    $0x8,%esp
 		push   $0xc8
 		push   $0x0
-		call   AIL_set_preference
+		call   ac_AIL_set_preference
 		add    $0x8,%esp
 		push   $0x1
 		push   $0x8
-		call   AIL_set_preference
+		call   ac_AIL_set_preference
 		add    $0x8,%esp
 		push   $0x5622
 		push   $0x1
-		call   AIL_set_preference
+		call   ac_AIL_set_preference
 		add    $0x8,%esp
 		push   $0x64
 		push   $0x3
-		call   AIL_set_preference
+		call   ac_AIL_set_preference
 		xor    %eax,%eax
 		mov    MaxNumberOfSamples,%edx
 		mov    %bh,%al
@@ -2916,15 +2916,15 @@ GLOBAL_FUNC(ASM_InitSound)
 		add    %edx,%eax
 		push   %eax
 		push   $0x4
-		call   AIL_set_preference
+		call   ac_AIL_set_preference
 		add    $0x8,%esp
 		push   $0x7f
 		push   $0x5
-		call   AIL_set_preference
+		call   ac_AIL_set_preference
 		add    $0x8,%esp
 		push   $0x28f
 		push   $0x6
-		call   AIL_set_preference
+		call   ac_AIL_set_preference
 		mov    StereoSound,%bh
 		add    $0x8,%esp
 		test   %bh,%bh
@@ -2935,13 +2935,13 @@ GLOBAL_FUNC(ASM_InitSound)
 		push   $0x0
 	jump_ff573:
 		push   $0x7
-		call   AIL_set_preference
+		call   ac_AIL_set_preference
 		add    $0x8,%esp
 		cmpb   $0x0,AutoScanForSoundHardware
 		jne    jump_ff592
 		push   $0x0
 		push   $0x11
-		call   AIL_set_preference
+		call   ac_AIL_set_preference
 		add    $0x8,%esp
 	jump_ff592:
 		mov    $aMdsound,%eax
@@ -3506,34 +3506,34 @@ GLOBAL_FUNC (ASM_InitMusic)
 	jump_ffcc6:
 		push   $0x78
 		push   $0xb
-		call   AIL_set_preference
+		call   ac_AIL_set_preference
 		add    $0x8,%esp
 		push   $0x1
 		push   $0xc
-		call   AIL_set_preference
+		call   ac_AIL_set_preference
 		add    $0x8,%esp
 		push   $0x7f
 		push   $0xd
-		call   AIL_set_preference
+		call   ac_AIL_set_preference
 		add    $0x8,%esp
 		push   $0x1
 		push   $0xe
-		call   AIL_set_preference
+		call   ac_AIL_set_preference
 		add    $0x8,%esp
 		push   $0x0
 		push   $0xf
-		call   AIL_set_preference
+		call   ac_AIL_set_preference
 		add    $0x8,%esp
 		push   $0xc
 		push   $0x10
-		call   AIL_set_preference
+		call   ac_AIL_set_preference
 		mov    AutoScanForSoundHardware,%bh
 		add    $0x8,%esp
 		test   %bh,%bh
 		jne    jump_ffd24
 		push   $0x0
 		push   $0x11
-		call   AIL_set_preference
+		call   ac_AIL_set_preference
 		add    $0x8,%esp
 	jump_ffd24:
 		push   $SoundDataPath
@@ -3544,7 +3544,7 @@ GLOBAL_FUNC (ASM_InitMusic)
 		add    $0xc,%esp
 		mov    %esp,%eax
 		push   %eax
-		call   AIL_set_GTL_filename_prefix
+		call   ac_AIL_set_GTL_filename_prefix
 		add    $0x4,%esp
 		mov    %esp,%eax
 		push   %eax

@@ -21,10 +21,37 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <string.h>
 #include <assert.h>
 
 #include "mssxmidi.h"
 /******************************************************************************/
+extern char GTL_prefix[128];
+
+void AIL2OAL_API_set_GTL_filename_prefix(char const *prefix)
+{
+    int i;
+
+    strcpy(GTL_prefix,prefix);
+
+    // Truncate prefix string at final '.' character, if it exists and
+    // if it occurs after the last directory separator
+    for (i=strlen(GTL_prefix)-1; i > 0; i--)
+    {
+        if ((GTL_prefix[i] == '\\') || (GTL_prefix[i] == '/'))
+        {
+            if (i == (int)strlen(GTL_prefix)-1) {
+                GTL_prefix[i] = '\0';
+            }
+            break;
+        }
+
+        if (GTL_prefix[i] == '.') {
+            GTL_prefix[i] = '\0';
+            break;
+        }
+    }
+}
 
 MDI_DRIVER *AIL2OAL_API_install_MDI_driver_file(char *filename, SNDCARD_IO_PARMS *iop)
 {

@@ -303,14 +303,14 @@ GLOBAL_FUNC (MSSLOWSOUNDOPEN)
 	jump_fbfb7:
 		push   %eax
 		push   $0x7
-		call   AIL_set_preference
+		call   ac_AIL_set_preference
 		add    $0x8,%esp
 		cmpl   $0x0,0x48(%esi)
 		setne  %al
 		and    $0xff,%eax
 		push   %eax
 		push   $0x8
-		call   AIL_set_preference
+		call   ac_AIL_set_preference
 		add    $0x8,%esp
 		push   $0x0
 		push   $aSb16_dig

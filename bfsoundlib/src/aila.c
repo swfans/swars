@@ -21,15 +21,32 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <string.h>
 #include <assert.h>
 
 #include "aila.h"
+#include "ail.h"
 /******************************************************************************/
+extern int32_t AIL_ISR_IRQ;
 
 int32_t AIL2OAL_API_call_driver(AIL_DRIVER *drvr, int32_t fn,
         VDI_CALL *in, VDI_CALL *out)
 {
     return 0;
+}
+
+void AIL2OAL_API_set_real_vect(uint32_t vectnum, void *real_ptr)
+{
+    // removed DOS-specific `int` call
+}
+
+void AIL2OAL_API_restore_USE16_ISR(int32_t irq)
+{
+    if ((irq != -1) && (irq == AIL_ISR_IRQ))
+    {
+        // removed DOS-specific `int` call
+        AIL_ISR_IRQ = -1;
+    }
 }
 
 /******************************************************************************/
