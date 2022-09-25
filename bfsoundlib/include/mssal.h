@@ -31,6 +31,7 @@ extern "C" {
 #pragma pack(1)
 
 typedef struct SNDCARD_IO_PARMS SNDCARD_IO_PARMS;
+typedef struct AIL_INI AIL_INI;
 typedef struct AIL_DRIVER AIL_DRIVER;
 typedef struct DIG_DRIVER DIG_DRIVER;
 typedef struct MDI_DRIVER MDI_DRIVER;
@@ -43,6 +44,23 @@ typedef struct DIG_DDT DIG_DDT;
 typedef struct DIG_DST DIG_DST;
 typedef struct MDI_DDT MDI_DDT;
 typedef struct MDI_DST MDI_DST;
+
+/** MIDI driver types.
+ */
+enum MDIDrvrTypes {
+    MDIDRVRTYPE_GM   = 0,          /**< General MIDI driver (Roland-compatible) */
+    MDIDRVRTYPE_FM_2 = 1,          /**< 2-operator FM MIDI driver (OPL2) */
+    MDIDRVRTYPE_FM_4 = 2,          /**< 4-operator FM MIDI driver (OPL3) */
+    MDIDRVRTYPE_SPKR = 3,          /**< Tandy or PC speaker "beep" driver */
+};
+
+/** .INI installation result codes.
+ */
+enum AILINIResult {
+    AIL_INIT_SUCCESS = 0,          /**< Driver installed successfully */
+    AIL_NO_INI_FILE  = 1,          /**< No MDI.INI or DIG.INI file exists */
+    AIL_INIT_FAILURE = 2,          /**< Driver could not be initialized */
+};
 
 /** Function numbers for DIG and XMIDI driver calls.
  */
@@ -120,6 +138,15 @@ struct SNDCARD_IO_PARMS {
    int16_t DMA_16_bit;
    int32_t IO_reserved[4];
 };
+
+/** Initialization file structure.
+ */
+struct AIL_INI {
+    char device_name[128];                   /**< offs=0x000 Device name */
+    char driver_name[128];                   /**< offs=0x080 Driver filename */
+    SNDCARD_IO_PARMS IO;                     /**< offs=0x100 I/O parameters for driver */
+}
+;
 
 /** Base driver descriptor.
  */
@@ -243,7 +270,7 @@ struct VDI_HDR {
    uint16_t this_ISR;                        /**< offs=0x34 Offset of INT 66H dispatcher */
    uintptr_t prev_ISR;                       /**< offs=0x36 Pointer to previous INT 66H ISR */
    int8_t scratch[128];                      /**< offs=0x3A Shared scratch workspace */
-   int8_t dev_name[80];                      /**< offs=0xBA Device name (only in newer versions) */
+   char dev_name[80];                      /**< offs=0xBA Device name (only in newer versions) */
 };
 
 /** Vendor Device Interface register parameters.

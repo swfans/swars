@@ -18,7 +18,9 @@
  */
 /******************************************************************************/
 #include <stddef.h>
+#include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <assert.h>
 
 #include "ail.h"
@@ -49,7 +51,7 @@ extern int32_t AIL_use_locked;
 
 extern int32_t timer_cb_periods[AIL_N_TIMERS];
 extern int32_t timer_cb_elapsed_times[AIL_N_TIMERS];
-extern int32_t timer_user[AIL_N_TIMERS];
+extern void *timer_user[AIL_N_TIMERS];
 
 void AIL2OAL_end(void);
 
@@ -80,10 +82,6 @@ void AIL_unlock(void)
    AIL2OAL_API_unlock();
 }
 
-/** Initialize AIL API modules and resources.
- *
- * Must be called prior to any other AIL_...() calls.
- */
 int32_t AIL2OAL_API_startup(void)
 {
     int i;
@@ -113,18 +111,13 @@ int32_t AIL2OAL_API_startup(void)
     for (i=0; i < AIL_MAX_DRVRS; i++) {
         AIL_driver[i] = NULL;
     }
-    AIL_error[0] = 0;
+    AIL_error[0] = '\0';
 
     AILA_startup();
 
    return 1;
 }
 
-/** Shut down AIL API modules and resources, unloading all installed
- * drivers from memory.
- *
- * No further AIL_...() calls other than AIL_startup() are permissible.
- */
 void AIL2OAL_API_shutdown(void)
 {
     int32_t i;
@@ -142,6 +135,117 @@ void AIL2OAL_API_shutdown(void)
 
    // Shut down assembly API
    AILA_shutdown();
+}
+
+void AIL2OAL_API_set_error(const char *error_msg)
+{
+    strcpy(AIL_error, error_msg);
+}
+
+const char *AIL_API_last_error(void)
+{
+   return AIL_error;
+}
+
+int32_t AIL2OAL_API_read_INI(AIL_INI *ini, char *fname)
+{
+    FILE *in;
+    AIL_INI work;
+    char buffer[80];
+    uint32_t iobuf[67];  // three initial, 64 for buffering
+    int32_t i;
+    char *value;
+    char *parm,*end_parm;
+
+    // Init workspace
+    memset(&work, 0, sizeof(work));
+    memset(&work.IO, -1, sizeof(work.IO));
+
+    // Open .INI file
+    in = fopen(fname, "rt");
+
+    if (in == 0)
+        return 0;
+
+    iobuf[0] = sizeof(iobuf);
+    iobuf[1] = 0;
+
+    while (fgets(buffer, sizeof(buffer), in) != NULL)
+    {
+        // Parse line
+        for (i = strlen(buffer)-1; i >= 0; i--)
+        {
+            // Remove trailing whitespace
+            if (buffer[i] == ' ') {
+                buffer[i] = '\0';
+            } else {
+                break;
+            }
+        }
+
+        // Find "parm" (1st word on line)
+        for (i = 0; i < (int32_t)strlen(buffer); i++)
+        {
+            if (buffer[i] != ' ')
+                break;
+        }
+
+        parm = (char *)&buffer[i];
+
+        // Find "value" (2nd word on line)
+        for (; i < (int32_t)strlen(buffer); i++)
+        {
+            if (buffer[i] == ' ')
+                break;
+        }
+
+        end_parm = (char *)&buffer[i];
+
+        for (; i < (int32_t)strlen(buffer); i++)
+        {
+            if (buffer[i] != ' ')
+                break;
+        }
+
+        value = (char *)&buffer[i];
+
+        // Reject unparsable lines
+        if (i >= (int32_t)strlen(buffer))
+            continue;
+
+        *end_parm = 0;
+
+        // Reject comments explicitly
+        if (parm[0] == ';')
+            continue;
+
+        // Interpret line parameters
+        if (!strncasecmp((char*)parm, "DRIVER", sizeof("DRIVER"))) {
+            strcpy(work.driver_name, value);
+        } else if (!strncasecmp((char*)parm, "DEVICE", sizeof("DEVICE"))) {
+            strcpy(work.device_name, value);
+        } else if (!strncasecmp((char*)parm, "IO_ADDR", sizeof("IO_ADDR"))) {
+            work.IO.IO =         (int16_t) (strtoul(value, NULL, 16) & 0xffff);
+        } else if (!strncasecmp((char*)parm, "IRQ", sizeof("IRQ"))) {
+            work.IO.IRQ =        (int16_t) (strtoul(value, NULL, 10) & 0xffff);
+        } else if (!strncasecmp((char*)parm, "DMA_8_bit", sizeof("DMA_8_bit"))) {
+            work.IO.DMA_8_bit =  (int16_t) (strtoul(value, NULL, 10) & 0xffff);
+        } else if (!strncasecmp((char*)parm, "DMA_16_bit", sizeof("DMA_16_bit"))) {
+            work.IO.DMA_16_bit = (int16_t) (strtoul(value, NULL, 10) & 0xffff);
+        }
+    }
+
+    fclose(in);
+
+    // Fail call if neither driver nor device valid
+    if ((!strlen(work.driver_name)) || (!strlen(work.device_name)))
+    {
+        AIL_set_error("Corrupted .INI file.");
+        return 0;
+    }
+
+    *ini = work;
+    return 1;
 }
 
 AIL_DRIVER *AIL2OAL_API_install_driver(const uint8_t *driver_image, uint32_t n_bytes)
@@ -243,7 +347,7 @@ void AIL2OAL_API_release_all_timers(void)
 {
     HSNDTIMER i;
 
-    for (i=0; i < AIL_N_TIMERS; i++) {
+    for (i = 0; i < AIL_N_TIMERS; i++) {
         AIL_release_timer_handle(i);
     }
 }

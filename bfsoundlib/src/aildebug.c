@@ -131,6 +131,19 @@ void AIL_set_GTL_filename_prefix(char const *prefix)
     AIL_indent--;
 }
 
+void AIL_set_error(const char *error_msg)
+{
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s(\"%s\")\n", __func__, error_msg);
+
+    AIL2OAL_API_set_error(error_msg);
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Finished\n");
+    AIL_indent--;
+}
+
 void AIL_set_real_vect(uint32_t vectnum, void *real_ptr)
 {
     AIL_indent++;
@@ -297,6 +310,66 @@ int32_t AIL_call_driver(AIL_DRIVER *drvr, int32_t fn,
     AIL_indent--;
 
     return ret;
+}
+
+int32_t AIL_MDI_driver_type(MDI_DRIVER *mdidrv)
+{
+    int32_t dtype;
+
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s(0x%p)\n", __func__, mdidrv);
+
+    dtype = AIL2OAL_API_MDI_driver_type(mdidrv);
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Result = %d\n", dtype);
+    AIL_indent--;
+
+    return dtype;
+}
+
+int32_t AIL_install_MDI_INI(MDI_DRIVER **mdidrv)
+{
+    int32_t result;
+
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s(0x%p)\n", __func__, mdidrv);
+
+    result = AIL2OAL_API_install_MDI_INI(mdidrv);
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Result = %d\n", result);
+    AIL_indent--;
+
+    return result;
+}
+
+int32_t AIL_read_INI(AIL_INI *ini, char *fname)
+{
+    int32_t result;
+
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s(0x%p, \"%s\")\n", __func__, ini, fname);
+
+    result = AIL2OAL_API_read_INI(ini, fname);
+
+    if (result && AIL_debug && (AIL_indent == 1 || AIL_sys_debug)) {
+         fprintf(AIL_debugfile, "Driver = %s\n", ini->driver_name);
+         fprintf(AIL_debugfile, "Device = %s\n", ini->device_name);
+         fprintf(AIL_debugfile, "IO     = %X\n", ini->IO.IO);
+         fprintf(AIL_debugfile, "IRQ    = %d\n", ini->IO.IRQ);
+         fprintf(AIL_debugfile, "DMA_8  = %d\n", ini->IO.DMA_8_bit);
+         fprintf(AIL_debugfile, "DMA_16 = %d\n", ini->IO.DMA_16_bit);
+    }
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Result = %d\n", result);
+    AIL_indent--;
+
+    return result;
 }
 
 MDI_DRIVER *AIL_install_MDI_driver_file(char *filename, SNDCARD_IO_PARMS *iop)

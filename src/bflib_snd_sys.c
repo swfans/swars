@@ -23,6 +23,7 @@
 #include "bflib_snd_sys.h"
 
 #include "bfmemory.h"
+#include "aildebug.h"
 #include "awe32.h"
 #include "dpmi.h"
 #include "snderr.h"
@@ -34,7 +35,7 @@ extern TbBool MusicAble;
 extern TbBool AILStartupAlreadyInitiated;
 extern TbBool UseCurrentAwe32Soundfont;
 extern TbBool MusicInstalled;
-extern AudioDriverChoice MusicInstallChoice;
+extern AIL_INI MusicInstallChoice;
 extern char FullMDI_INIPath[144];
 extern char SoundDataPath[144];
 extern char MusicType[6];
@@ -99,7 +100,7 @@ void LoadAwe32Soundfont(const char *str)
 void FreeAwe32Soundfont(void)
 {
     if (!UseCurrentAwe32Soundfont && MusicInstalled  && MusicAble
-      && !strcasecmp(MusicInstallChoice.str2, "SBAWE32.MDI")
+      && !strcasecmp(MusicInstallChoice.driver_name, "SBAWE32.MDI")
       && !strcasecmp(MusicType, "w") )
     {
         AWEFreeMem(MusicDriver, 1);

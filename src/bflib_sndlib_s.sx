@@ -1022,7 +1022,7 @@ GLOBAL_FUNC (AIL_background)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (AIL_read_INI)	/* 1020c0 */
+GLOBAL_FUNC (ASM_AIL_read_INI)	/* 0x1020c0 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %esi
@@ -4733,7 +4733,7 @@ GLOBAL_FUNC (AIL_set_XMIDI_master_volume)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (AIL_MDI_driver_type)
+GLOBAL_FUNC (ASM_AIL_MDI_driver_type)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %esi
@@ -9042,7 +9042,7 @@ AIL_API_install_DIG_INI:	/* 0x113800 */
 		push   $EXPORT_SYMBOL(FullDIG_INIPath)
 		lea    0x4(%esp),%eax
 		push   %eax
-		call   AIL_read_INI
+		call   ac_AIL_read_INI
 		add    $0x8,%esp
 		test   %eax,%eax
 		jne    jump_113837
@@ -12975,7 +12975,7 @@ AIL_API_install_MDI_INI:	/* 1165e0 */
 		push   $EXPORT_SYMBOL(FullMDI_INIPath)
 		lea    0x4(%esp),%eax
 		push   %eax
-		call   AIL_read_INI
+		call   ac_AIL_read_INI
 		add    $0x8,%esp
 		test   %eax,%eax
 		jne    jump_116617

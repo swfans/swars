@@ -51,6 +51,10 @@ int32_t AIL_set_preference(uint32_t number, int32_t value);
  */
 void AIL_set_GTL_filename_prefix(char const *prefix);
 
+/** Set error text representing last error.
+ */
+void AIL_set_error(const char *error_msg);
+
 AIL_DRIVER *AIL_install_driver(const uint8_t *driver_image, uint32_t n_bytes);
 
 /** Shut down and unload driver from memory; free driver descriptor
@@ -87,6 +91,19 @@ void AIL_release_all_timers(void);
 
 int32_t AIL_call_driver(AIL_DRIVER *drvr, int32_t fn,
         VDI_CALL *in, VDI_CALL *out);
+
+/** Repors the MIDI synthesis technology available with a specified driver.
+ */
+int32_t AIL_MDI_driver_type(MDI_DRIVER *mdidrv);
+
+/** Load, install, and initialize MIDI audio driver according to
+ *  contents of MDI_INI file.
+ */
+int32_t AIL_install_MDI_INI(MDI_DRIVER **mdidrv);
+
+/** Read .INI file with sound hardware configuration.
+ */
+int32_t AIL_read_INI(AIL_INI *ini, char *fname);
 
 MDI_DRIVER *AIL_install_MDI_driver_file(char *filename, SNDCARD_IO_PARMS *iop);
 

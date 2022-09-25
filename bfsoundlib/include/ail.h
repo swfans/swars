@@ -30,8 +30,24 @@ extern "C" {
 #define AIL_N_PREFS 19
 #define AIL_N_TIMERS 16
 
+/** Initialize AIL API modules and resources.
+ *
+ * Must be called prior to any other AIL_...() calls.
+ */
 int32_t AIL2OAL_API_startup(void);
+
+/** Shut down AIL API modules and resources, unloading all installed
+ * drivers from memory.
+ *
+ * No further AIL_...() calls other than AIL_startup() are permissible.
+ */
 void AIL2OAL_API_shutdown(void);
+
+void AIL2OAL_API_set_error(const char *error_msg);
+
+const char *AIL_API_last_error(void);
+
+int32_t AIL2OAL_API_read_INI(AIL_INI *ini, char *fname);
 
 int32_t AIL2OAL_API_set_preference(uint32_t number, int32_t value);
 

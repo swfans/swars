@@ -18,7 +18,6 @@ enum SoundDriverType
 
 
 typedef struct AudioInitOptions AudioInitOptions;
-typedef struct AudioDriverChoice AudioDriverChoice;
 
 struct AudioInitOptions {
   const char *IniPath;
@@ -38,12 +37,6 @@ struct AudioInitOptions {
   ubyte UseMultiMediaExtensions;
   ubyte InitStreamedSound;
   ubyte InitRedbookAudio;
-};
-
-struct AudioDriverChoice {
-  char str1[128];
-  char str2[128];
-  char unkfield_100[24];
 };
 
 #pragma pack()

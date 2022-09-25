@@ -42,7 +42,7 @@ extern char FullMDI_INIPath[144];
 extern char SoundDataPath[144];
 extern char SoundDriverPath[144];
 
-extern AudioDriverChoice MusicInstallChoice;
+extern AIL_INI MusicInstallChoice;
 extern char full_music_data_path[144];
 extern char MusicType[6];
 extern TbBool DisableLoadMusic;
@@ -51,7 +51,7 @@ extern TbBool MusicInstalled;
 extern TbBool MusicAble;
 extern TbBool MusicActive;
 
-extern AudioDriverChoice SoundInstallChoice;
+extern AIL_INI SoundInstallChoice;
 extern ushort SoundType;
 extern TbBool DisableLoadSounds;
 extern TbBool SoundAble;
@@ -281,9 +281,9 @@ void InitAudio(AudioInitOptions *audOpts)
     SoundProgressLog(SoundProgressMessage);
     sprintf(SoundProgressMessage, "BF55 - SA   %d\n", SoundAble);
     SoundProgressLog(SoundProgressMessage);
-    sprintf(SoundProgressMessage, "BF56 - music driver = %s\n", MusicInstallChoice.str2);
+    sprintf(SoundProgressMessage, "BF56 - music driver = %s\n", MusicInstallChoice.driver_name);
     SoundProgressLog(SoundProgressMessage);
-    sprintf(SoundProgressMessage, "BF57 - sound driver = %s\n", SoundInstallChoice.str2);
+    sprintf(SoundProgressMessage, "BF57 - sound driver = %s\n", SoundInstallChoice.driver_name);
     SoundProgressLog(SoundProgressMessage);
 }
 

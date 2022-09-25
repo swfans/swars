@@ -3036,7 +3036,7 @@ GLOBAL_FUNC(ASM_InitSound)
 #if 0
 		push   $FullDIG_INIPath
 		push   $SoundInstallChoice__Field0
-		call   AIL_read_INI
+		call   ac_AIL_read_INI
 		add    $0x8,%esp
 		test   %eax,%eax
 		je     jump_ff7a3
@@ -3662,7 +3662,7 @@ GLOBAL_FUNC (ASM_InitMusic)
 	jump_fff04:
 		push   $FullMDI_INIPath
 		push   $MusicInstallChoice
-		call   AIL_read_INI
+		call   ac_AIL_read_INI
 		add    $0x8,%esp
 		test   %eax,%eax
 		je     jump_fffc4
@@ -3891,7 +3891,7 @@ GLOBAL_FUNC (ASM_InitMusic)
 	jump_10023e:
 		mov    MusicDriver,%ebx
 		push   %ebx
-		call   AIL_MDI_driver_type
+		call   ac_AIL_MDI_driver_type
 		add    $0x4,%esp
 		test   %eax,%eax
 		jne    jump_10025b
@@ -3900,13 +3900,13 @@ GLOBAL_FUNC (ASM_InitMusic)
 	jump_10025b:
 		mov    MusicDriver,%ecx
 		push   %ecx
-		call   AIL_MDI_driver_type
+		call   ac_AIL_MDI_driver_type
 		add    $0x4,%esp
 		cmp    $0x1,%eax
 		je     jump_1002d7
 		mov    MusicDriver,%esi
 		push   %esi
-		call   AIL_MDI_driver_type
+		call   ac_AIL_MDI_driver_type
 		add    $0x4,%esp
 		cmp    $0x2,%eax
 		je     jump_1002d7

@@ -25,6 +25,7 @@
 #include <assert.h>
 
 #include "mssxmidi.h"
+#include "aildebug.h"
 /******************************************************************************/
 extern char GTL_prefix[128];
 
@@ -51,6 +52,66 @@ void AIL2OAL_API_set_GTL_filename_prefix(char const *prefix)
             break;
         }
     }
+}
+
+int32_t AIL2OAL_API_MDI_driver_type(MDI_DRIVER *mdidrv)
+{
+    const char *name;
+
+    // If driver name corresponds to Tandy or IBM speaker driver, return
+    // speaker type
+    //
+    // Name field was added in VDI 1.12 spec, so don't check earlier drivers
+    if (mdidrv->drvr->VHDR->driver_version >= 0x112)
+    {
+        name = mdidrv->drvr->VHDR->dev_name;
+
+        if (strcasecmp(name, "Tandy 3-voice music") == 0)
+            return MDIDRVRTYPE_SPKR;
+        if (strcasecmp(name, "IBM internal speaker music") == 0)
+            return MDIDRVRTYPE_SPKR;
+    }
+
+    // If no GTL suffix, assume it's a hardwired General MIDI device
+    name = mdidrv->DDT->GTL_suffix;
+    if ((name == NULL) || (name[0] == '\0'))
+        return MDIDRVRTYPE_GM;
+
+     // If GTL suffix = '.AD', it's an OPL-2
+     //
+     // Note: Creative AWE32 driver incorrectly declares '.AD' GTL prefix,
+     // so provide workaround here - if driver bigger than 20K, it's not one
+     // of our FM drivers!
+    if (strcasecmp(name, ".AD") == 0)
+    {
+        if (mdidrv->drvr->size > 20480)
+            return MDIDRVRTYPE_GM;
+        return MDIDRVRTYPE_FM_2;
+    }
+
+    // If GTL suffix = '.OPL', it's an OPL-3
+    if (strcasecmp(name, ".OPL") == 0)
+        return MDIDRVRTYPE_FM_4;
+
+    // Otherwise, it's a currently-undefined GTL type - assume it's a GM device
+    return MDIDRVRTYPE_GM;
+}
+
+int32_t AIL2OAL_API_install_MDI_INI(MDI_DRIVER **mdidrv)
+{
+    AIL_INI ini;
+
+    // Attempt to read MDI_INI file
+    if (!AIL_read_INI(&ini, "MDI.INI")) {
+        AIL_set_error("Unable to open file MDI.INI.");
+        return AIL_NO_INI_FILE;
+    }
+
+    *mdidrv = AIL_install_MDI_driver_file(ini.driver_name, &ini.IO);
+    if (*mdidrv == NULL) {
+        return AIL_INIT_FAILURE;
+    }
+    return AIL_INIT_SUCCESS;
 }
 
 MDI_DRIVER *AIL2OAL_API_install_MDI_driver_file(char *filename, SNDCARD_IO_PARMS *iop)
