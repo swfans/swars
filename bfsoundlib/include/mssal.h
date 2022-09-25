@@ -30,6 +30,8 @@ extern "C" {
 
 #pragma pack(1)
 
+#define AIL_NUM_CHANS 16
+
 typedef struct SNDCARD_IO_PARMS SNDCARD_IO_PARMS;
 typedef struct AIL_INI AIL_INI;
 typedef struct AIL_DRIVER AIL_DRIVER;
@@ -37,6 +39,7 @@ typedef struct DIG_DRIVER DIG_DRIVER;
 typedef struct MDI_DRIVER MDI_DRIVER;
 typedef struct SNDSAMPLE SNDSAMPLE;
 typedef struct SNDSEQUENCE SNDSEQUENCE;
+typedef struct CTRL_LOG CTRL_LOG;
 typedef struct VDI_HDR VDI_HDR;
 typedef struct VDI_CALL VDI_CALL;
 typedef struct DIG_MODE DIG_MODE;
@@ -116,24 +119,36 @@ enum AILPreferenceNames {
     DIG_HARDWARE_SAMPLE_RATE =  1, /**< Hardware sample rate */
     DIG_DMA_RESERVE          =  2, /**< Real-mode mem reserve for DMA */
     DIG_LATENCY              =  3, /**< Half-buffer size in ms */
+    DIG_MIXER_CHANNELS        = 4, /**< Allocatable SNDSAMPLE structures */
+    DIG_DEFAULT_VOLUME        = 5, /**< Default sample volume (0-127) */
+    DIG_RESAMPLING_TOLERANCE  = 6, /**< Resampling trigger */
+    DIG_USE_STEREO           =  7, /**< Use mono output only */
+    DIG_USE_16_BITS          =  8, /**< Sample accuracy */
+    DIG_ALLOW_16_BIT_DMA     =  9, /**< OK to use 16-bit DMA if necessary */
+    DIG_SS_LOCK              = 10, /**< Don't disable IRQs while mixing */
     MDI_SERVICE_RATE         = 11, /**< XMIDI sequencer timing */
     MDI_SEQUENCES            = 12, /**< Sequence handles per driver */
     MDI_DEFAULT_VOLUME       = 13, /**< Default sequence volume (0-127) */
-    //DIG_RESAMPLING_TOLERANCE  = x, /**< Resampling trigger */
-    //DIG_MIXER_CHANNELS        = x, /**< Allocatable SAMPLE structures */
-    //DIG_DEFAULT_VOLUME        = x, /**< Default sample volume (0-127) */
-    //MDI_QUANT_ADVANCE        =  x, /**< Beat/bar count +1 interval */
-    //MDI_ALLOW_LOOP_BRANCHING =  x, /**< Branches cancel XMIDI FOR loops */
-    //MDI_DEFAULT_BEND_RANGE   =  x, /**< Default pitch-bend range */
-    //MDI_DOUBLE_NOTE_OFF      =  x, /**< For stuck notes on SB daughterboards */
-    //DIG_USE_STEREO           =  x, /**< Use mono output only */
-    //DIG_USE_16_BITS          =  x, /**< Sample accuracy */
-    //DIG_ALLOW_16_BIT_DMA     =  x, /**< OK to use 16-bit DMA if necessary */
-    //DIG_SS_LOCK              =  x, /**< Don't disable IRQs while mixing */
-    //AIL_SCAN_FOR_HARDWARE    =  x, /**< Scan for I/O settings if necessary */
-    //AIL_ALLOW_VDM_EXECUTION  =  x, /**< Allow Windows "DOS box" execution */
-    //DIG_ENABLE_RESAMPLE_FILTER= x, /**< Enable resampling filter */
-    //DIG_DECODE_BUFFER_SIZE   =  x, /**< Decode buffer size by default */
+    MDI_QUANT_ADVANCE        = 14, /**< Beat/bar count +1 interval */
+    MDI_ALLOW_LOOP_BRANCHING = 15, /**< Branches cancel XMIDI FOR loops */
+    MDI_DEFAULT_BEND_RANGE   = 16, /**< Default pitch-bend range */
+    AIL_SCAN_FOR_HARDWARE    = 17, /**< Scan for I/O settings if necessary */
+    AIL_ALLOW_VDM_EXECUTION  = 18, /**< Allow Windows "DOS box" execution */
+    //MDI_DOUBLE_NOTE_OFF      =  x, /**< For stuck notes on SB daughterboards; not defined in this MSS version */
+    //DIG_ENABLE_RESAMPLE_FILTER= x, /**< Enable resampling filter; not defined in this MSS version  */
+    //DIG_DECODE_BUFFER_SIZE   =  x, /**< Decode buffer size by default; not defined in this MSS version  */
+};
+
+/** SNDSEQUENCE.status flag values.
+ */
+enum SndSequenceStatusFlags {
+    SNDSEQ_FREE          = 0x0001, /**< Sequence is available for allocation */
+    SNDSEQ_DONE          = 0x0002, /**< Sequence has finished playing, or has
+                                   never been started */
+    SNDSEQ_PLAYING       = 0x0004, /**< Sequence is playing */
+    SNDSEQ_STOPPED       = 0x0008, /**< Sequence has been stopped */
+    SNDSEQ_PLAYINGRELEASED=0x0010, /**< Sequence is playing, but MIDI handle
+                                   has been temporarily released */
 };
 
 /** Handle to timer.
@@ -267,6 +282,78 @@ struct SNDSAMPLE {
   void *EOS;                                 /**< offs=0x850 End-of-sample callback function */
   int32_t user_data[8];                      /**< offs=0x854 Miscellaneous user data */
   int32_t system_data[8];                    /**< offs=0x874 Miscellaneous system data */
+};
+
+/** MIDI status log structure.
+ *
+ * sizeof=1152
+ */
+struct CTRL_LOG {
+    int32_t program[16];                     /**< offset=0   */
+    int32_t pitch_l[16];                     /**< offset=64  */
+    int32_t pitch_h[16];                     /**< offset=128 */
+    int32_t c_lock[16];                      /**< offset=192 */
+    int32_t c_prot[16];                      /**< offset=256 */
+    int32_t c_mute[16];                      /**< offset=320 */
+    int32_t c_v_prot[16];                    /**< offset=384 */
+    int32_t bank[16];                        /**< offset=448 */
+    int32_t indirect[16];                    /**< offset=512 */
+    int32_t callback[16];                    /**< offset=576 */
+    int32_t mod[16];                         /**< offset=640 */
+    int32_t vol[16];                         /**< offset=704 */
+    int32_t pan[16];                         /**< offset=768 */
+    int32_t exp[16];                         /**< offset=832 */
+    int32_t sus[16];                         /**< offset=896 */
+    int32_t reverb[16];                      /**< offset=960 */
+    int32_t chorus[16];                      /**< offset=1024 */
+    int32_t bend_range[16];                  /**< offset=1088 */
+};
+
+/** Representation of a MIDI sample sequence.
+ *
+ * Originally named `_SEQUENCE`. This less generic name helps when analyzing old code.
+ * sizeof=1816
+ */
+struct SNDSEQUENCE {
+    MDI_DRIVER *driver;                      /**< offset=0   */
+    uint32_t status;                         /**< offset=4   */
+    void *TIMB;                              /**< offset=8   */
+    void *RBRN;                              /**< offset=12  */
+    void *EVNT;                              /**< offset=16  */
+    uint8_t *EVNT_ptr;                       /**< offset=20  */
+    uint8_t *ICA;                            /**< offset=24  */
+    void *prefix_callback;                   /**< offset=28  */
+    void *trigger_callback;                  /**< offset=32  */
+    void *beat_callback;                     /**< offset=36  */
+    void *EOS;                               /**< offset=40  */
+    int32_t loop_count;                      /**< offset=44  */
+    int32_t interval_count;                  /**< offset=48  */
+    int32_t interval_num;                    /**< offset=52  */
+    int32_t volume;                          /**< offset=56  */
+    int32_t volume_target;                   /**< offset=60  */
+    int32_t volume_accum;                    /**< offset=64  */
+    int32_t volume_period;                   /**< offset=68  */
+    int32_t tempo_percent;                   /**< offset=72  */
+    int32_t tempo_target;                    /**< offset=76  */
+    int32_t tempo_accum;                     /**< offset=80  */
+    int32_t tempo_period;                    /**< offset=84  */
+    int32_t tempo_error;                     /**< offset=88  */
+    int32_t beat_count;                      /**< offset=92  */
+    int32_t measure_count;                   /**< offset=96  */
+    int32_t time_numerator;                  /**< offset=100 */
+    int32_t time_fraction;                   /**< offset=104 */
+    int32_t beat_fraction;                   /**< offset=108 */
+    int32_t time_per_beat;                   /**< offset=112 */
+    void *FOR_ptrs[4];                       /**< offset=116 */
+    int32_t FOR_loop_count[4];               /**< offset=132 */
+    int32_t chan_map[16];                    /**< offset=148 */
+    CTRL_LOG shadow;                         /**< offset=212 */
+    int32_t note_count;                      /**< offset=1364 */
+    int32_t note_chan[32];                   /**< offset=1368 */
+    int32_t note_num[32];                    /**< offset=1496 */
+    int32_t note_time[32];                   /**< offset=1624 */
+    int32_t user_data[8];                    /**< offset=1752 */
+    int32_t system_data[8];                  /**< offset=1784 */
 };
 
 /** Standard MSS Vendor Device Interface driver header.

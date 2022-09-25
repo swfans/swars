@@ -147,7 +147,7 @@ int32_t AIL2OAL_API_MDI_driver_type(MDI_DRIVER *mdidrv)
 
 /** Call device I/O verification function using current detection policy.
  */
-int32_t XMI_attempt_MDI_detection(MDI_DRIVER *mdidrv, SNDCARD_IO_PARMS *iop)
+int32_t XMI_attempt_MDI_detection(MDI_DRIVER *mdidrv, const SNDCARD_IO_PARMS *iop)
 {
     SNDCARD_IO_PARMS *f;
     SNDCARD_IO_PARMS try;
@@ -190,7 +190,7 @@ int32_t XMI_attempt_MDI_detection(MDI_DRIVER *mdidrv, SNDCARD_IO_PARMS *iop)
 
 /** Install and initialize XMIDI audio driver.
 */
-MDI_DRIVER *XMI_construct_MDI_driver(AIL_DRIVER *drvr, SNDCARD_IO_PARMS *iop)
+MDI_DRIVER *XMI_construct_MDI_driver(AIL_DRIVER *drvr, const SNDCARD_IO_PARMS *iop)
 {
     MDI_DRIVER *mdidrv;
     asm volatile (
