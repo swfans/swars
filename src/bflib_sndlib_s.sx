@@ -10225,7 +10225,7 @@ AILXMIDI_start_:
 		push   %ebx
 		push   %ecx
 		push   %edx
-		cmpl   $0x0,data_15ab60
+		cmpl   $0x0,MDI_locked
 		jne    jump_114741
 		push   $AILXMIDI_end_
 		push   $AILXMIDI_start_
@@ -10236,63 +10236,63 @@ AILXMIDI_start_:
 		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
 		push   $0x4
-		push   $data_15ab5c
+		push   $MDI_entry
 		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
 		push   $0x4
-		push   $data_1ed8f8
+		push   $MDI_S
 		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
 		push   $0x4
-		push   $data_1ed8fc
+		push   $MDI_i
 		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
 		push   $0x4
-		push   $data_1ed900
+		push   $MDI_j
 		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
 		push   $0x4
-		push   $data_1ed904
+		push   $MDI_n
 		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
 		push   $0x4
-		push   $data_1ed910
+		push   $MDI_sequence_done
 		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
 		push   $0x4
-		push   $data_1ed908
+		push   $MDI_q
 		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
 		push   $0x4
-		push   $data_1ed90c
+		push   $MDI_t
 		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
 		push   $0x4
-		push   $data_1ed8f4
+		push   $MDI_channel
 		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
 		push   $0x4
-		push   $data_1ed8e8
+		push   $MDI_status
 		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
 		push   $0x4
-		push   $data_1ed8f0
+		push   $MDI_type
 		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
 		push   $0x4
-		push   $data_1ed8ec
+		push   $MDI_len
 		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
 		push   $0x4
-		push   $data_1ed8e0
+		push   $MDI_ptr
 		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
 		push   $0x4
-		push   $data_1ed8e4
+		push   $MDI_event
 		mov    $0x1,%ebx
 		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
-		mov    %ebx,data_15ab60
+		mov    %ebx,MDI_locked
 	jump_114741:
 		pop    %edx
 		pop    %ecx
@@ -11672,21 +11672,21 @@ _XMI_serve:	/* 0x1156A0 */
 		mov    0x14(%esp),%esi
 		cmpl   $0x0,0x14(%esi)
 		jne    jump_115d60
-		cmpl   $0x0,data_15ab5c
+		cmpl   $0x0,MDI_entry
 		jne    jump_115d60
 		mov    $0x1,%ecx
 		mov    0x1c(%esi),%eax
-		mov    %ecx,data_15ab5c
-		mov    %eax,data_1ed904
+		mov    %ecx,MDI_entry
+		mov    %eax,MDI_n
 		mov    0x18(%esi),%eax
-		mov    data_1ed904,%edi
-		mov    %eax,data_1ed8f8
+		mov    MDI_n,%edi
+		mov    %eax,MDI_S
 		test   %edi,%edi
 		je     jump_115d4f
 		mov    $0xf42400,%ebp
 		xor    %edi,%edi
 	jump_1156ef:
-		mov    data_1ed8f8,%eax
+		mov    MDI_S,%eax
 		cmpl   $0x4,0x4(%eax)
 		jne    jump_115d28
 		mov    0x34(%eax),%ebx
@@ -11695,10 +11695,10 @@ _XMI_serve:	/* 0x1156A0 */
 		inc    %ebx
 		add    %edx,%ecx
 		mov    %ebx,0x34(%eax)
-		mov    %edi,data_1ed910
+		mov    %edi,MDI_sequence_done
 		mov    %ecx,0x58(%eax)
 	jump_115716:
-		mov    data_1ed8f8,%eax
+		mov    MDI_S,%eax
 		mov    0x58(%eax),%edx
 		cmp    $0x64,%edx
 		jl     jump_115c63
@@ -11707,11 +11707,11 @@ _XMI_serve:	/* 0x1156A0 */
 		mov    %ecx,0x58(%eax)
 		cmp    %edx,%edi
 		jge    jump_1157ce
-		mov    %edi,data_1ed8fc
+		mov    %edi,MDI_i
 		mov    $0xffffffff,%ebx
 	jump_115746:
-		mov    data_1ed8fc,%eax
-		mov    data_1ed8f8,%edx
+		mov    MDI_i,%eax
+		mov    MDI_S,%edx
 		lea    0x0(,%eax,4),%eax
 		add    %edx,%eax
 		cmp    0x558(%eax),%ebx
@@ -11722,7 +11722,7 @@ _XMI_serve:	/* 0x1156A0 */
 		cmp    %ecx,%edi
 		jl     jump_1157ba
 		push   %edi
-		mov    data_1ed8fc,%eax
+		mov    MDI_i,%eax
 		push   %edi
 		mov    0x5d8(%edx,%eax,4),%ecx
 		mov    0x558(%edx,%eax,4),%eax
@@ -11731,8 +11731,8 @@ _XMI_serve:	/* 0x1156A0 */
 		push   %eax
 		push   %edx
 		call   _XMI_send_channel_voice_message
-		mov    data_1ed8f8,%eax
-		mov    data_1ed8fc,%edx
+		mov    MDI_S,%eax
+		mov    MDI_i,%edx
 		mov    %ebx,0x558(%eax,%edx,4)
 		mov    0x554(%eax),%edx
 		add    %ebx,%edx
@@ -11741,27 +11741,27 @@ _XMI_serve:	/* 0x1156A0 */
 		cmp    %edx,%edi
 		je     jump_1157ce
 	jump_1157ba:
-		mov    data_1ed8fc,%eax
+		mov    MDI_i,%eax
 		inc    %eax
-		mov    %eax,data_1ed8fc
+		mov    %eax,MDI_i
 		cmp    $0x20,%eax
 		jl     jump_115746
 	jump_1157ce:
-		mov    data_1ed8f8,%eax
+		mov    MDI_S,%eax
 		mov    0x30(%eax),%ebx
 		dec    %ebx
 		mov    %ebx,0x30(%eax)
 		cmp    %ebx,%edi
 		jl     jump_115bdc
 	jump_1157e2:
-		mov    data_1ed8f8,%ebx
+		mov    MDI_S,%ebx
 		mov    0x14(%ebx),%edx
 		xor    %eax,%eax
 		mov    (%edx),%al
-		mov    %eax,data_1ed8e8
+		mov    %eax,MDI_status
 		cmp    $0x80,%eax
 		jb     jump_115bbb
-		cmp    data_1ed910,%edi
+		cmp    MDI_sequence_done,%edi
 		jne    jump_115bbb
 		cmp    $0xf7,%eax
 		jb     jump_115824
@@ -11779,11 +11779,11 @@ _XMI_serve:	/* 0x1156A0 */
 		add    $0x14,%ebx
 		mov    -0x1(%edx),%al
 		push   %ebx
-		mov    %eax,data_1ed8f0
+		mov    %eax,MDI_type
 		mov    %edx,(%ebx)
 		call   _XMI_read_VLN
-		mov    %eax,data_1ed8ec
-		mov    data_1ed8f0,%eax
+		mov    %eax,MDI_len
+		mov    MDI_type,%eax
 		add    $0x4,%esp
 		cmp    $0x51,%eax
 		jb     jump_115872
@@ -11794,10 +11794,10 @@ _XMI_serve:	/* 0x1156A0 */
 	jump_115872:
 		cmp    $0x2f,%eax
 		jne    jump_1159ed
-		mov    data_1ed8f8,%eax
+		mov    MDI_S,%eax
 		mov    $0x1,%ecx
 		mov    0x2c(%eax),%edx
-		mov    %ecx,data_1ed910
+		mov    %ecx,MDI_sequence_done
 		cmp    %edx,%edi
 		je     jump_11589d
 		mov    %edx,%ebx
@@ -11806,7 +11806,7 @@ _XMI_serve:	/* 0x1156A0 */
 		cmp    %ebx,%edi
 		je     jump_1158d0
 	jump_11589d:
-		mov    data_1ed8f8,%eax
+		mov    MDI_S,%eax
 		movl   $0xffffffff,0x60(%eax)
 		mov    %edi,0x5c(%eax)
 		mov    0x10(%eax),%edx
@@ -11827,7 +11827,7 @@ _XMI_serve:	/* 0x1156A0 */
 		push   %eax
 		mov    %ecx,0x2c(%eax)
 		call   AIL_stop_sequence
-		mov    data_1ed8f8,%eax
+		mov    MDI_S,%eax
 		add    $0x4,%esp
 		mov    0x28(%eax),%edx
 		movl   $0x2,0x4(%eax)
@@ -11837,12 +11837,12 @@ _XMI_serve:	/* 0x1156A0 */
 		push   %eax
 		call   *0x28(%edx)
 		add    $0x4,%esp
-		mov    data_1ed8f8,%eax
-		mov    data_1ed8ec,%edx
+		mov    MDI_S,%eax
+		mov    MDI_len,%edx
 		add    %edx,0x14(%eax)
 		jmp    jump_1157e2
 	jump_11590f:
-		mov    data_1ed8f8,%edx
+		mov    MDI_S,%edx
 		mov    0x14(%edx),%eax
 		xor    %ebx,%ebx
 		mov    0x1(%eax),%bl
@@ -11857,14 +11857,14 @@ _XMI_serve:	/* 0x1156A0 */
 		add    %eax,%ebx
 		mov    %ebx,%eax
 		shl    $0x4,%eax
-		mov    %ebx,data_1ed90c
+		mov    %ebx,MDI_t
 		mov    %eax,0x70(%edx)
-		mov    data_1ed8f8,%eax
-		mov    data_1ed8ec,%edx
+		mov    MDI_S,%eax
+		mov    MDI_len,%edx
 		add    %edx,0x14(%eax)
 		jmp    jump_1157e2
 	jump_115956:
-		mov    data_1ed8f8,%ebx
+		mov    MDI_S,%ebx
 		mov    0x14(%ebx),%eax
 		mov    (%eax),%al
 		and    $0xff,%eax
@@ -11876,25 +11876,25 @@ _XMI_serve:	/* 0x1156A0 */
 		mov    %ebp,%edx
 		sub    $0x2,%eax
 		sar    $0x1f,%edx
-		mov    %eax,data_1ed90c
+		mov    %eax,MDI_t
 		mov    %ebp,%eax
 		idiv   %ecx
-		mov    data_1ed90c,%edx
-		mov    %eax,data_1ed908
+		mov    MDI_t,%edx
+		mov    %eax,MDI_q
 		cmp    %edx,%edi
 		jle    jump_1159ae
 		mov    %edx,%ecx
 		neg    %ecx
-		mov    %ecx,data_1ed90c
-		mov    data_1ed90c,%cl
+		mov    %ecx,MDI_t
+		mov    MDI_t,%cl
 		sar    %cl,%eax
 		jmp    jump_1159b6
 	jump_1159ae:
-		mov    data_1ed90c,%cl
+		mov    MDI_t,%cl
 		shl    %cl,%eax
 	jump_1159b6:
 		mov    %eax,0x68(%ebx)
-		mov    data_1ed8f8,%eax
+		mov    MDI_S,%eax
 		mov    %edi,0x6c(%eax)
 		mov    %edi,%ebx
 		mov    0x68(%eax),%edx
@@ -11918,20 +11918,20 @@ _XMI_serve:	/* 0x1156A0 */
 		call   *0x24(%edx)
 		add    $0x10,%esp
 	jump_1159ed:
-		mov    data_1ed8f8,%eax
-		mov    data_1ed8ec,%edx
+		mov    MDI_S,%eax
+		mov    MDI_len,%edx
 		add    %edx,0x14(%eax)
 		jmp    jump_1157e2
 	jump_115a00:
-		mov    data_1ed8f8,%eax
+		mov    MDI_S,%eax
 		mov    0x14(%eax),%eax
 		inc    %eax
-		push   $data_1ed8e0
-		mov    %eax,data_1ed8e0
+		push   $MDI_ptr
+		mov    %eax,MDI_ptr
 		call   _XMI_read_VLN
-		mov    data_1ed8f8,%ebx
+		mov    MDI_S,%ebx
 		mov    %eax,%edx
-		mov    data_1ed8e0,%eax
+		mov    MDI_ptr,%eax
 		mov    0x14(%ebx),%ecx
 		sub    %ecx,%eax
 		add    $0x4,%esp
@@ -11939,44 +11939,44 @@ _XMI_serve:	/* 0x1156A0 */
 		push   %edx
 		push   %ecx
 		push   %esi
-		mov    %edx,data_1ed8ec
+		mov    %edx,MDI_len
 		call   _XMI_sysex_message
-		mov    data_1ed8f8,%eax
-		mov    data_1ed8ec,%edx
+		mov    MDI_S,%eax
+		mov    MDI_len,%edx
 		mov    0x14(%eax),%ebx
 		add    %edx,%ebx
 		add    $0xc,%esp
 		mov    %ebx,0x14(%eax)
 		jmp    jump_1157e2
 	jump_115a58:
-		mov    data_1ed8f8,%edx
+		mov    MDI_S,%edx
 		mov    0x14(%edx),%eax
-		mov    %eax,data_1ed8e4
-		mov    data_1ed8e8,%eax
+		mov    %eax,MDI_event
+		mov    MDI_status,%eax
 		and    $0xf,%eax
-		mov    %eax,data_1ed8f4
+		mov    %eax,MDI_channel
 		mov    0x14(%edx),%eax
 		xor    %ebx,%ebx
 		push   $0x1
 		mov    0x2(%eax),%bl
-		mov    data_1ed8e8,%ecx
+		mov    MDI_status,%ecx
 		push   %ebx
 		xor    %ebx,%ebx
 		and    $0xf0,%ecx
 		mov    0x1(%eax),%bl
-		mov    %ecx,data_1ed8e8
+		mov    %ecx,MDI_status
 		push   %ebx
 		mov    (%eax),%al
 		and    $0xff,%eax
 		push   %eax
 		push   %edx
 		call   _XMI_send_channel_voice_message
-		mov    data_1ed8e8,%eax
+		mov    MDI_status,%eax
 		add    $0x14,%esp
 		cmp    $0x90,%eax
 		je     jump_115ae6
-		mov    data_1ed8f8,%ebx
-		mov    data_1ed8e4,%eax
+		mov    MDI_S,%ebx
+		mov    MDI_event,%eax
 		mov    0x14(%ebx),%edx
 		cmp    %edx,%eax
 		jne    jump_1157e2
@@ -11990,34 +11990,34 @@ _XMI_serve:	/* 0x1156A0 */
 		mov    %ecx,0x14(%ebx)
 		jmp    jump_1157e2
 	jump_115ae6:
-		mov    %edi,data_1ed8fc
+		mov    %edi,MDI_i
 		mov    %edi,%eax
 	jump_115aee:
-		mov    data_1ed8f8,%edx
+		mov    MDI_S,%edx
 		cmpl   $0xffffffff,0x558(%edx,%eax,1)
 		je     jump_115b15
-		mov    data_1ed8fc,%edx
+		mov    MDI_i,%edx
 		inc    %edx
 		add    $0x4,%eax
-		mov    %edx,data_1ed8fc
+		mov    %edx,MDI_i
 		cmp    $0x80,%eax
 		jl     jump_115aee
 	jump_115b15:
-		mov    data_1ed8fc,%ebx
+		mov    MDI_i,%ebx
 		cmp    $0x20,%ebx
 		jne    jump_115b5b
 		mov    $0x7,%ecx
 		mov    $AIL_error,%edi
-		mov    data_1ed8f8,%ebx
+		mov    MDI_S,%ebx
 		mov    $aInternalNoteQu,%esi
 		push   %ebx
 		rep movsl %ds:(%esi),%es:(%edi)
 		movsw  %ds:(%esi),%es:(%edi)
 		call   AIL_stop_sequence
-		mov    data_1ed8f8,%eax
+		mov    MDI_S,%eax
 		xor    %ecx,%ecx
 		add    $0x4,%esp
-		mov    %ecx,data_15ab5c
+		mov    %ecx,MDI_entry
 		movl   $0x2,0x4(%eax)
 		pop    %ebp
 		pop    %edi
@@ -12025,16 +12025,16 @@ _XMI_serve:	/* 0x1156A0 */
 		pop    %ebx
 		ret
 	jump_115b5b:
-		mov    data_1ed8f8,%eax
+		mov    MDI_S,%eax
 		mov    0x554(%eax),%ecx
 		inc    %ecx
-		mov    data_1ed8f4,%edx
+		mov    MDI_channel,%edx
 		mov    %ecx,0x554(%eax)
 		mov    %edx,0x558(%eax,%ebx,4)
 		mov    0x14(%eax),%edx
 		xor    %ebx,%ebx
 		mov    0x1(%edx),%bl
-		mov    data_1ed8fc,%edx
+		mov    MDI_i,%edx
 		mov    %ebx,0x5d8(%eax,%edx,4)
 		mov    0x14(%eax),%edx
 		add    $0x14,%eax
@@ -12042,15 +12042,15 @@ _XMI_serve:	/* 0x1156A0 */
 		push   %eax
 		mov    %edx,(%eax)
 		call   _XMI_read_VLN
-		mov    data_1ed8f8,%edx
-		mov    data_1ed8fc,%ebx
+		mov    MDI_S,%edx
+		mov    MDI_i,%ebx
 		add    $0x4,%esp
 		mov    %eax,0x658(%edx,%ebx,4)
 		jmp    jump_1157e2
 	jump_115bbb:
-		cmp    data_1ed910,%edi
+		cmp    MDI_sequence_done,%edi
 		jne    jump_115bdc
-		mov    data_1ed8f8,%eax
+		mov    MDI_S,%eax
 		mov    0x14(%eax),%edx
 		lea    0x1(%edx),%ebx
 		mov    %ebx,0x14(%eax)
@@ -12058,9 +12058,9 @@ _XMI_serve:	/* 0x1156A0 */
 		and    $0xff,%edx
 		mov    %edx,0x30(%eax)
 	jump_115bdc:
-		cmp    data_1ed910,%edi
+		cmp    MDI_sequence_done,%edi
 		jne    jump_115716
-		mov    data_1ed8f8,%eax
+		mov    MDI_S,%eax
 		mov    0x68(%eax),%edx
 		mov    0x6c(%eax),%ebx
 		add    %edx,%ebx
@@ -12081,19 +12081,19 @@ _XMI_serve:	/* 0x1156A0 */
 		inc    %ecx
 		mov    %ecx,0x60(%eax)
 	jump_115c20:
-		mov    data_1ed8f8,%eax
+		mov    MDI_S,%eax
 		cmp    0x24(%eax),%edi
 		je     jump_115716
-		push   $data_1ed900
-		push   $data_1ed8fc
+		push   $MDI_j
+		push   $MDI_i
 		push   %eax
 		call   AIL_sequence_position
 		add    $0xc,%esp
-		mov    data_1ed900,%ebx
+		mov    MDI_j,%ebx
 		push   %ebx
-		mov    data_1ed8fc,%ecx
+		mov    MDI_i,%ecx
 		push   %ecx
-		mov    data_1ed8f8,%eax
+		mov    MDI_S,%eax
 		push   %eax
 		mov    (%eax),%edx
 		push   %edx
@@ -12101,7 +12101,7 @@ _XMI_serve:	/* 0x1156A0 */
 		add    $0x10,%esp
 		jmp    jump_115716
 	jump_115c63:
-		cmp    data_1ed910,%edi
+		cmp    MDI_sequence_done,%edi
 		jne    jump_115d28
 		mov    0x38(%eax),%edx
 		cmp    0x3c(%eax),%edx
@@ -12112,7 +12112,7 @@ _XMI_serve:	/* 0x1156A0 */
 		add    %edx,%ebx
 		mov    %ebx,0x40(%eax)
 	jump_115c84:
-		mov    data_1ed8f8,%eax
+		mov    MDI_S,%eax
 		mov    0x40(%eax),%edx
 		mov    0x44(%eax),%ebx
 		cmp    %ebx,%edx
@@ -12131,19 +12131,19 @@ _XMI_serve:	/* 0x1156A0 */
 		lea    -0x1(%ebx),%ecx
 		mov    %ecx,0x38(%eax)
 	jump_115cb2:
-		mov    data_1ed8f8,%eax
+		mov    MDI_S,%eax
 		mov    0x38(%eax),%edx
 		cmp    0x3c(%eax),%edx
 		jne    jump_115c84
 	jump_115cbf:
-		mov    data_1ed8f8,%eax
+		mov    MDI_S,%eax
 		testb  $0x7,0x34(%eax)
 		jne    jump_115cd3
 		push   %eax
 		call   _XMI_update_volume
 		add    $0x4,%esp
 	jump_115cd3:
-		mov    data_1ed8f8,%eax
+		mov    MDI_S,%eax
 		mov    0x48(%eax),%edx
 		cmp    0x4c(%eax),%edx
 		je     jump_115d28
@@ -12153,7 +12153,7 @@ _XMI_serve:	/* 0x1156A0 */
 		add    %edx,%ebx
 		mov    %ebx,0x50(%eax)
 	jump_115ced:
-		mov    data_1ed8f8,%eax
+		mov    MDI_S,%eax
 		mov    0x50(%eax),%edx
 		mov    0x54(%eax),%ecx
 		cmp    %ecx,%edx
@@ -12172,17 +12172,17 @@ _XMI_serve:	/* 0x1156A0 */
 		lea    -0x1(%ecx),%edx
 		mov    %edx,0x48(%eax)
 	jump_115d1b:
-		mov    data_1ed8f8,%eax
+		mov    MDI_S,%eax
 		mov    0x48(%eax),%edx
 		cmp    0x4c(%eax),%edx
 		jne    jump_115ced
 	jump_115d28:
-		mov    data_1ed904,%ebx
-		mov    data_1ed8f8,%ecx
+		mov    MDI_n,%ebx
+		mov    MDI_S,%ecx
 		dec    %ebx
 		add    $0x718,%ecx
-		mov    %ebx,data_1ed904
-		mov    %ecx,data_1ed8f8
+		mov    %ebx,MDI_n
+		mov    %ecx,MDI_S
 		cmp    %ebx,%edi
 		jne    jump_1156ef
 	jump_115d4f:
@@ -12190,7 +12190,7 @@ _XMI_serve:	/* 0x1156A0 */
 		call   _XMI_flush_buffer
 		xor    %edx,%edx
 		add    $0x4,%esp
-		mov    %edx,data_15ab5c
+		mov    %edx,MDI_entry
 	jump_115d60:
 		pop    %ebp
 		pop    %edi
@@ -12200,7 +12200,7 @@ _XMI_serve:	/* 0x1156A0 */
 
 
 /*----------------------------------------------------------------*/
-_XMI_attempt_MDI_detection:	/* 0x115D70 */
+ASM_XMI_attempt_MDI_detection:	/* 0x115D70 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %esi
@@ -12479,7 +12479,7 @@ GLOBAL_FUNC (ASM_XMI_construct_MDI_driver)	/* 0x115EA0 */
 		mov    0x48(%esp),%esi
 		push   %esi
 		push   %ebp
-		call   _XMI_attempt_MDI_detection
+		call   ac_XMI_attempt_MDI_detection
 		add    $0x8,%esp
 		test   %eax,%eax
 		je     jump_116062
@@ -12504,7 +12504,7 @@ GLOBAL_FUNC (ASM_XMI_construct_MDI_driver)	/* 0x115EA0 */
 		mov    %eax,%esi
 		push   %ebp
 		rep movsl %ds:(%esi),%es:(%edi)
-		call   _XMI_attempt_MDI_detection
+		call   ac_XMI_attempt_MDI_detection
 		add    $0x8,%esp
 		test   %eax,%eax
 		je     jump_1160ab
@@ -12541,7 +12541,7 @@ GLOBAL_FUNC (ASM_XMI_construct_MDI_driver)	/* 0x115EA0 */
 	jump_1160f9:
 		push   %ebx
 		push   %ebp
-		call   _XMI_attempt_MDI_detection
+		call   ac_XMI_attempt_MDI_detection
 		add    $0x8,%esp
 		test   %eax,%eax
 		je     jump_11611d
@@ -14327,7 +14327,7 @@ AILXMIDI_end_:
 		push   %ebx
 		push   %ecx
 		push   %edx
-		cmpl   $0x0,data_15ab60
+		cmpl   $0x0,MDI_locked
 		je     jump_11781f
 		push   $AILXMIDI_end_
 		push   $AILXMIDI_start_
@@ -14338,59 +14338,59 @@ AILXMIDI_end_:
 		call   ac_AIL_vmm_unlock
 		add    $0x8,%esp
 		push   $0x4
-		push   $data_15ab5c
+		push   $MDI_entry
 		call   ac_AIL_vmm_unlock
 		add    $0x8,%esp
 		push   $0x4
-		push   $data_1ed8f8
+		push   $MDI_S
 		call   ac_AIL_vmm_unlock
 		add    $0x8,%esp
 		push   $0x4
-		push   $data_1ed8fc
+		push   $MDI_i
 		call   ac_AIL_vmm_unlock
 		add    $0x8,%esp
 		push   $0x4
-		push   $data_1ed904
+		push   $MDI_n
 		call   ac_AIL_vmm_unlock
 		add    $0x8,%esp
 		push   $0x4
-		push   $data_1ed910
+		push   $MDI_sequence_done
 		call   ac_AIL_vmm_unlock
 		add    $0x8,%esp
 		push   $0x4
-		push   $data_1ed908
+		push   $MDI_q
 		call   ac_AIL_vmm_unlock
 		add    $0x8,%esp
 		push   $0x4
-		push   $data_1ed90c
+		push   $MDI_t
 		call   ac_AIL_vmm_unlock
 		add    $0x8,%esp
 		push   $0x4
-		push   $data_1ed8f4
+		push   $MDI_channel
 		call   ac_AIL_vmm_unlock
 		add    $0x8,%esp
 		push   $0x4
-		push   $data_1ed8e8
+		push   $MDI_status
 		call   ac_AIL_vmm_unlock
 		add    $0x8,%esp
 		push   $0x4
-		push   $data_1ed8f0
+		push   $MDI_type
 		call   ac_AIL_vmm_unlock
 		add    $0x8,%esp
 		push   $0x4
-		push   $data_1ed8ec
+		push   $MDI_len
 		call   ac_AIL_vmm_unlock
 		add    $0x8,%esp
 		push   $0x4
-		push   $data_1ed8e0
+		push   $MDI_ptr
 		call   ac_AIL_vmm_unlock
 		add    $0x8,%esp
 		push   $0x4
-		push   $data_1ed8e4
+		push   $MDI_event
 		xor    %ebx,%ebx
 		call   ac_AIL_vmm_unlock
 		add    $0x8,%esp
-		mov    %ebx,data_15ab60
+		mov    %ebx,MDI_locked
 	jump_11781f:
 		pop    %edx
 		pop    %ecx
@@ -20684,12 +20684,12 @@ data_15aad4:
 		.long	0x0
 data_15aad8:
 		.long	0x0
-GLOBAL (GTL_prefix)	/* 0x15AADC */
+GLOBAL (GTL_prefix)			/* 0x15AADC */
 		.string "SAMPLE"
 		.fill   0x79
-data_15ab5c:
+GLOBAL (MDI_entry)			/* 0x15ab5c */
 		.long	0x0
-data_15ab60:
+GLOBAL (MDI_locked)
 		.long	0x0
 aTimb_0:	/* 0x15AB64 */
 		.string "TIMB"
@@ -21393,7 +21393,7 @@ data_1ed858:
 		.fill   0x18
 loctm_var1:	/* 0x1ED870 */
 		.fill   0x24
-asciitm_var1:	/* 0x1ED894 */
+asciitm_var1:			/* 0x1ED894 */
 		.fill   0x1c
 data_1ed8b0:
 		.long	0x0
@@ -21413,31 +21413,31 @@ data_1ed8cc:
 		.long	0x0
 data_1ed8d0:
 		.fill   0x10
-data_1ed8e0:
+GLOBAL (MDI_ptr)		/* 0x1ED8E0 */
 		.long	0x0
-data_1ed8e4:
+GLOBAL (MDI_event)
 		.long	0x0
-data_1ed8e8:
+GLOBAL (MDI_status)
 		.long	0x0
-data_1ed8ec:
+GLOBAL (MDI_len)
 		.long	0x0
-data_1ed8f0:
+GLOBAL (MDI_type)		/* 0x1ED8F0 */
 		.long	0x0
-data_1ed8f4:
+GLOBAL (MDI_channel)
 		.long	0x0
-data_1ed8f8:
+GLOBAL (MDI_S)			/* 0x1ED8F8 */
 		.long	0x0
-data_1ed8fc:
+GLOBAL (MDI_i)
 		.long	0x0
-data_1ed900:
+GLOBAL (MDI_j)			/* 0x1ed900 */
 		.long	0x0
-data_1ed904:
+GLOBAL (MDI_n)
 		.long	0x0
-data_1ed908:
+GLOBAL (MDI_q)
 		.long	0x0
-data_1ed90c:
+GLOBAL (MDI_t)
 		.long	0x0
-data_1ed910:
+GLOBAL (MDI_sequence_done)	/* 0x1ED910 */
 		.long	0x0
 data_1ed914:
 		.fill   0x218

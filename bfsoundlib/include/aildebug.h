@@ -111,6 +111,8 @@ int32_t AIL_read_INI(AIL_INI *ini, char *fname);
 
 MDI_DRIVER *AIL_install_MDI_driver_file(char *filename, SNDCARD_IO_PARMS *iop);
 
+/** Uninstall XMIDI audio driver.
+ */
 void AIL_uninstall_MDI_driver(MDI_DRIVER *mdidrv);
 
 /******************************************************************************/

@@ -45,6 +45,13 @@ typedef struct DIG_DST DIG_DST;
 typedef struct MDI_DDT MDI_DDT;
 typedef struct MDI_DST MDI_DST;
 
+/** There are two types of AIL drivers.
+ */
+enum AILDrvrTypes {
+    AIL3DIG      = 0,          /**< .DIG driver */
+    AIL3MDI      = 1,          /**< .MDI driver */
+};
+
 /** MIDI driver types.
  */
 enum MDIDrvrTypes {
@@ -269,9 +276,9 @@ struct SNDSAMPLE {
 struct VDI_HDR {
    char ID[8];                               /**< offs=0x00 Magic ID string, "AIL3xxx" followed by ^Z */
    uint32_t driver_version;                  /**< offs=0x08 Version of this driver */
-   uint32_t common_IO_configurations;        /**< offs=0x0C Offset to common SNDCARD_IO_PARMS configs */
+   uintptr_t common_IO_configurations;       /**< offs=0x0C Offset to common SNDCARD_IO_PARMS configs */
    uint16_t num_IO_configurations;           /**< offs=0x10 Count of common SNDCARD_IO_PARMS provided */
-   uint32_t environment_string;              /**< offs=0x12 Offset to a string containing name of env
+   uintptr_t environment_string;             /**< offs=0x12 Offset to a string containing name of env
                                              variable with can be used to store IO params */
    SNDCARD_IO_PARMS IO;                      /**< offs=0x16 Sound hardware I/O parameters */
    int16_t service_rate;                     /**< offs=0x2E Frequency of backgound timer interrupts
@@ -282,7 +289,7 @@ struct VDI_HDR {
    uint16_t this_ISR;                        /**< offs=0x34 Offset of INT 66H dispatcher */
    uintptr_t prev_ISR;                       /**< offs=0x36 Pointer to previous INT 66H ISR */
    int8_t scratch[128];                      /**< offs=0x3A Shared scratch workspace */
-   char dev_name[80];                      /**< offs=0xBA Device name (only in newer versions) */
+   char dev_name[80];                        /**< offs=0xBA Device name (only in newer versions) */
 };
 
 /** Vendor Device Interface register parameters.
@@ -294,6 +301,12 @@ struct VDI_CALL {
   int16_t DX;
   int16_t SI;
   int16_t DI;
+};
+
+struct MDI_DST {
+   char library_directory[128];
+   char GTL_filename[128];
+   int8_t MIDI_data[512];
 };
 
 /** Digital playback timings for a specific Mode.
