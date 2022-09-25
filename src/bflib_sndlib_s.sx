@@ -3945,7 +3945,7 @@ GLOBAL_FUNC (ASM_AIL_install_MDI_driver_file)	/* 0x105060 */
 		mov    0x18(%esp),%edx
 		push   %edx
 		push   %ebx
-		call   ASM_AIL_API_install_MDI_driver_file
+		call   ac_AIL2OAL_API_install_MDI_driver_file
 		mov    AIL_debug,%ecx
 		mov    %eax,%ebx
 		add    $0x8,%esp
@@ -12323,7 +12323,7 @@ _XMI_destroy_MDI_driver:	/* 0x115E40 */
 
 
 /*----------------------------------------------------------------*/
-_XMI_construct_MDI_driver:	/* 0x115EA0 */
+GLOBAL_FUNC (ASM_XMI_construct_MDI_driver)	/* 0x115EA0 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %esi
@@ -12948,7 +12948,7 @@ GLOBAL_FUNC (ASM_AIL_API_install_MDI_driver_file)	/* 0x1164F0 */
 		mov    0xa4(%esp),%ebx
 		push   %ebx
 		push   %esi
-		call   _XMI_construct_MDI_driver
+		call   ac_XMI_construct_MDI_driver
 		add    $0x8,%esp
 		mov    %eax,%ebx
 		test   %eax,%eax

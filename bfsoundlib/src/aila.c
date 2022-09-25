@@ -100,8 +100,9 @@ void AILA_startup(void)
 
 void AILA_shutdown(void)
 {
-    asm volatile ("call ASM_AILA_shutdown\n"
-        :  :  : "eax" );
+    // removed DOS-specific calls, place 1
+    AIL2OAL_set_PIT_divisor(0);
+    // removed DOS-specific calls, place 2
 }
 
 int32_t AIL2OAL_API_call_driver(AIL_DRIVER *drvr, int32_t fn,

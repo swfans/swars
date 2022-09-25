@@ -26,8 +26,12 @@
 
 #include "mssxmidi.h"
 #include "aildebug.h"
+#include "dllload.h"
+#include "msssys.h"
 /******************************************************************************/
 extern char GTL_prefix[128];
+extern char SoundDriverPath[144];
+extern char AIL_error[256];
 
 void AIL2OAL_API_set_GTL_filename_prefix(char const *prefix)
 {
@@ -97,6 +101,19 @@ int32_t AIL2OAL_API_MDI_driver_type(MDI_DRIVER *mdidrv)
     return MDIDRVRTYPE_GM;
 }
 
+/** Install and initialize XMIDI audio driver.
+*/
+MDI_DRIVER *XMI_construct_MDI_driver(AIL_DRIVER *drvr, SNDCARD_IO_PARMS *iop)
+{
+    MDI_DRIVER *mdidrv;
+    asm volatile (
+      "push %2\n"
+      "push %1\n"
+      "call ASM_AIL_API_install_MDI_driver_file\n"
+        : "=r" (mdidrv) : "g" (drvr), "g" (iop));
+    return mdidrv;
+}
+
 int32_t AIL2OAL_API_install_MDI_INI(MDI_DRIVER **mdidrv)
 {
     AIL_INI ini;
@@ -124,14 +141,37 @@ SNDSEQUENCE *AIL2OAL_API_allocate_sequence_handle(MDI_DRIVER *mdidrv)
     return seq;
 }
 
-MDI_DRIVER *AIL2OAL_API_install_MDI_driver_file(char *filename, SNDCARD_IO_PARMS *iop)
+MDI_DRIVER *AIL2OAL_API_install_MDI_driver_file(char *fname, SNDCARD_IO_PARMS *iop)
 {
     MDI_DRIVER *mdidrv;
+#if 0
     asm volatile (
       "push %2\n"
       "push %1\n"
       "call ASM_AIL_API_install_MDI_driver_file\n"
-        : "=r" (mdidrv) : "g" (filename), "g" (iop));
+        : "=r" (mdidrv) : "g" (fname), "g" (iop));
+#else
+    char locstr[156];
+    int32_t flen;
+    void *drvbuf;
+    AIL_DRIVER *drvr;
+
+    sprintf(locstr, "%s/%s", SoundDriverPath, fname);
+    drvbuf = FILE_read(locstr, NULL);
+    if (drvbuf == NULL) {
+        strcpy(AIL_error, "Driver file not found\n");
+        return NULL;
+    }
+    flen = FILE_size(locstr);
+    drvr = AIL_install_driver(drvbuf, flen);
+    MEM_free(drvbuf);
+    if (drvr == NULL) {
+        return NULL;
+    }
+    mdidrv = XMI_construct_MDI_driver(drvr, iop);
+    if (mdidrv == NULL)
+        AIL_uninstall_driver(drvr);
+#endif
     return mdidrv;
 }
 

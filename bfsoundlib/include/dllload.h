@@ -2,10 +2,10 @@
 // Bullfrog Sound Library - for use to remake classic games like
 // Syndicate Wars, Magic Carpet, Genewars or Dungeon Keeper.
 /******************************************************************************/
-/** @file msssys.h
- *     Header file for msssys.c.
+/** @file dllload.h
+ *     Header file for dllload.c.
  * @par Purpose:
- *     OpenAL based reimplementation of MSS API.
+ *     File load functions from MSS API.
  * @par Comment:
  *     None.
  * @author   Tomasz Lis
@@ -17,29 +17,25 @@
  *     (at your option) any later version.
  */
 /******************************************************************************/
-#ifndef AIL2OAL_MSSSYS_H_
-#define AIL2OAL_MSSSYS_H_
+#ifndef AIL2OAL_DLLLOAD_H_
+#define AIL2OAL_DLLLOAD_H_
 
 #include <stdint.h>
-#include "mssal.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 /******************************************************************************/
+/** Return size of file, or -1 if error.
+ */
+int32_t FILE_size(char const *fname);
 
-typedef void *(*AILMEMALLOCCB)(uint32_t size);
-typedef void (*AILMEMFREECB)(void *);
-
-/******************************************************************************/
-extern AILMEMALLOCCB MEM_alloc;
-extern AILMEMFREECB MEM_free;
-
-void *AIL_MEM_use_malloc(AILMEMALLOCCB fn);
-void *AIL_MEM_use_free(AILMEMFREECB fn);
+/** Read file into memory at *dest, allocating memory first if dest=NULL.
+ */
+void *FILE_read(const char *fname, void *dest);
 /******************************************************************************/
 #ifdef __cplusplus
 };
 #endif
 
-#endif // AIL2OAL_MSSSYS_H_
+#endif // AIL2OAL_DLLLOAD_H_

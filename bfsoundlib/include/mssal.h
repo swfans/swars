@@ -62,6 +62,18 @@ enum AILINIResult {
     AIL_INIT_FAILURE = 2,          /**< Driver could not be initialized */
 };
 
+/** Errors for file operations, ie. `disk_err` variable.
+ */
+enum AILFileErrors {
+    AIL_NO_ERROR        = 0,
+    AIL_IO_ERROR        = 1,
+    AIL_OUT_OF_MEMORY   = 2,
+    AIL_FILE_NOT_FOUND  = 3,
+    AIL_CANT_WRITE_FILE = 4,
+    AIL_CANT_READ_FILE  = 5,
+    AIL_DISK_FULL       = 6,
+};
+
 /** Function numbers for DIG and XMIDI driver calls.
  */
 enum DIGMDIDriverFunctions {
