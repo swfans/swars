@@ -28,6 +28,16 @@ extern "C" {
 /******************************************************************************/
 typedef void * TbSampleHandle;
 
+struct MusicBankSizes {
+    ulong mbs0;
+    ulong mbs1;
+    ulong mbs2;
+    ulong mbs3;
+    ulong mbs4;
+    ulong mbs5;
+    ulong mbs6;
+    ulong mbs7;
+};
 /******************************************************************************/
 void StopAllSamples(void);
 TbBool IsSamplePlaying(long tng_offs, ushort smp_id, TbSampleHandle handle);
@@ -40,7 +50,7 @@ void InitSound(void);
 void InitMusic(void);
 void InitStreamedSound(void);
 void InitAllBullfrogSoundTimers(void);
-TbBool AllocateMusicBankMemory(void);
+sbyte AllocateMusicBankMemory(void);
 
 void prepare_SB16_volumes(void);
 /******************************************************************************/

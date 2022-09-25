@@ -1537,9 +1537,9 @@ format_music:
 		push   %esi
 		push   %edi
 		mov    NumberOfSongs,%bx
-		mov    EndMusic,%ecx
-		mov    MusicData,%esi
-		mov    Music,%edx
+		mov    BfEndMusic,%ecx
+		mov    BfMusicData,%esi
+		mov    BfMusic,%edx
 		test   %edx,%edx
 		je     jump_ed08f
 		test   %esi,%esi
@@ -1557,8 +1557,8 @@ format_music:
 		cmp    %ecx,%eax
 		jb     jump_ed07f
 	jump_ed08f:
-		mov    %esi,MusicData
-		mov    %ecx,EndMusic
+		mov    %esi,BfMusicData
+		mov    %ecx,BfEndMusic
 		mov    %bx,NumberOfSongs
 		pop    %edi
 		pop    %esi
@@ -1589,16 +1589,16 @@ GLOBAL_FUNC (ASM_load_music_bank)
 		shl    $0x4,%eax
 		cmpl   $0xffffffff,0x4(%esp,%eax,1)
 		je     jump_ed299
-		mov    MusicData,%ebx
+		mov    BfMusicData,%ebx
 		test   %ebx,%ebx
 		je     jump_ed299
-		mov    Music,%esi
+		mov    BfMusic,%esi
 		test   %esi,%esi
 		je     jump_ed299
 		mov    0x8(%esp,%eax,1),%edx
 		mov    %ebx,%edi
 		lea    (%esi,%edx,1),%ebx
-		mov    %ebx,EndMusic
+		mov    %ebx,BfEndMusic
 		mov    0x4(%esp,%eax,1),%edx
 		mov    %ecx,%eax
 		xor    %ebx,%ebx
@@ -1633,7 +1633,7 @@ GLOBAL_FUNC (ASM_load_music_bank)
 		shl    $0x8,%eax
 		mov    0x7(%edi),%dl
 		add    %edx,%eax
-		mov    MusicData,%edx
+		mov    BfMusicData,%edx
 		lea    -0x8(%eax),%ebx
 		add    $0x8,%edx
 		mov    %ecx,%eax
@@ -1646,7 +1646,7 @@ GLOBAL_FUNC (ASM_load_music_bank)
 		xor    %eax,%eax
 		mov    0x40(%esp),%al
 		shl    $0x4,%eax
-		mov    MusicData,%edx
+		mov    BfMusicData,%edx
 		mov    0xc(%esp,%eax,1),%ebx
 		add    $0x8,%edx
 		sub    $0x8,%ebx
@@ -1690,7 +1690,7 @@ GLOBAL_FUNC (ASM_load_music_bank)
 		shl    $0x8,%eax
 		mov    0x7(%esi),%dl
 		add    %edx,%eax
-		mov    Music,%edx
+		mov    BfMusic,%edx
 		lea    -0x8(%eax),%ebx
 		add    $0x8,%edx
 		mov    %ecx,%eax
@@ -1702,7 +1702,7 @@ GLOBAL_FUNC (ASM_load_music_bank)
 	jump_ed22a:
 		xor    %ebx,%ebx
 		mov    0x40(%esp),%bl
-		mov    Music,%edx
+		mov    BfMusic,%edx
 		shl    $0x4,%ebx
 		mov    %ecx,%eax
 		mov    0x8(%esp,%ebx,1),%ebx
@@ -1715,7 +1715,7 @@ GLOBAL_FUNC (ASM_load_music_bank)
 		jmp    jump_ed275
 	jump_ed253:
 		mov    %eax,%edx
-		mov    Music,%eax
+		mov    BfMusic,%eax
 		shl    $0x5,%edx
 		push   $0x0
 		mov    0x12(%edx,%eax,1),%edi
@@ -1775,24 +1775,24 @@ GLOBAL_FUNC (ASM_AllocateMusicBankMemory)
 		jne    jump_ed32c
 		jmp    jump_ed45d
 	jump_ed2e8:
-		mov    music_bank_size_info__Field4,%esi
-		mov    music_bank_size_info__Field5,%edi
+		mov    music_bank_size_info__mbs4,%esi
+		mov    music_bank_size_info__mbs5,%edi
 		jmp    jump_ed3dc
 	jump_ed2f9:
-		mov    music_bank_size_info__Field2,%esi
-		mov    music_bank_size_info__Field3,%edi
+		mov    music_bank_size_info__mbs2,%esi
+		mov    music_bank_size_info__mbs3,%edi
 		jmp    jump_ed3dc
 	jump_ed30a:
-		mov    music_bank_size_info__Field0,%esi
-		mov    music_bank_size_info__Field1,%edi
+		mov    music_bank_size_info__mbs0,%esi
+		mov    music_bank_size_info__mbs1,%edi
 		jmp    jump_ed3dc
 	jump_ed31b:
-		mov    music_bank_size_info__Field6,%esi
-		mov    music_bank_size_info__Field7,%edi
+		mov    music_bank_size_info__mbs6,%esi
+		mov    music_bank_size_info__mbs7,%edi
 		jmp    jump_ed3dc
 	jump_ed32c:
 		mov    $0x20,%ebx
-		mov    $music_bank_size_info__Field0,%eax
+		mov    $music_bank_size_info__mbs0,%eax
 		xor    %edx,%edx
 		call   ac_memset
 		mov    $0x2,%ebx
@@ -1811,7 +1811,7 @@ GLOBAL_FUNC (ASM_AllocateMusicBankMemory)
 		xor    %ebx,%ebx
 		call   ac_LbFileSeek
 		mov    $0x20,%ebx
-		mov    $music_bank_size_info__Field0,%edx
+		mov    $music_bank_size_info__mbs0,%edx
 		mov    %ecx,%eax
 		call   ac_LbFileRead
 		mov    %ecx,%eax
@@ -1852,19 +1852,19 @@ GLOBAL_FUNC (ASM_AllocateMusicBankMemory)
 		je     jump_ed458
 		lea    0x100(%esi),%eax
 		call   ac_LbMemoryAlloc
-		mov    %eax,MusicData
+		mov    %eax,BfMusicData
 		lea    0x100(%edi),%eax
 		call   ac_LbMemoryAlloc
-		mov    MusicData,%edx
-		mov    %eax,Music
+		mov    BfMusicData,%edx
+		mov    %eax,BfMusic
 		test   %edx,%edx
 		je     jump_ed416
 		test   %eax,%eax
 		jne    jump_ed433
 	jump_ed416:
-		mov    MusicData,%eax
+		mov    BfMusicData,%eax
 		call   ac_LbMemoryFree
-		mov    Music,%eax
+		mov    BfMusic,%eax
 		call   ac_LbMemoryFree
 		xor    %eax,%eax
 		pop    %ebp
@@ -1879,7 +1879,7 @@ GLOBAL_FUNC (ASM_AllocateMusicBankMemory)
 		mov    %esi,%ebx
 		xor    %edx,%edx
 		call   ac_memset
-		mov    Music,%eax
+		mov    BfMusic,%eax
 		mov    %edi,%ebx
 		xor    %edx,%edx
 		call   ac_memset
@@ -2689,7 +2689,7 @@ GLOBAL_FUNC (StartMusic_)
 		mov    %bx,SongCurrentlyPlaying
 	jump_f04d8:
 		movswl %si,%ebx
-		mov    Music,%eax
+		mov    BfMusic,%eax
 		shl    $0x5,%ebx
 		push   $0x0
 		mov    0x12(%ebx,%eax,1),%ebp
@@ -4431,15 +4431,15 @@ FreeMusic_:
 		jne    jump_108cc2
 		call   ac_AIL_shutdown
 	jump_108cc2:
-		mov    Music,%ecx
+		mov    BfMusic,%ecx
 		test   %ecx,%ecx
 		je     jump_108cdb
 		mov    %ecx,%eax
 		xor    %esi,%esi
 		call   ac_LbMemoryFree
-		mov    %esi,EndMusic
+		mov    %esi,BfEndMusic
 	jump_108cdb:
-		mov    MusicData,%edi
+		mov    BfMusicData,%edi
 		test   %edi,%edi
 		je     jump_108cec
 		mov    %edi,%eax
@@ -6340,21 +6340,22 @@ full_sound_data_path:
 		.fill   0xe0
 /* MusicBankSizes music_bank_size_info;
  */
-music_bank_size_info__Field0:
+GLOBAL (music_bank_size_info)
+music_bank_size_info__mbs0:
 		.long	0x0
-music_bank_size_info__Field1:
+music_bank_size_info__mbs1:
 		.long	0x0
-music_bank_size_info__Field2:
+music_bank_size_info__mbs2:
 		.long	0x0
-music_bank_size_info__Field3:
+music_bank_size_info__mbs3:
 		.long	0x0
-music_bank_size_info__Field4:
+music_bank_size_info__mbs4:
 		.long	0x0
-music_bank_size_info__Field5:
+music_bank_size_info__mbs5:
 		.long	0x0
-music_bank_size_info__Field6:
+music_bank_size_info__mbs6:
 		.long	0x0
-music_bank_size_info__Field7:
+music_bank_size_info__mbs7:
 		.long	0x0
 GLOBAL (full_music_data_path)
 		.fill   0x90
@@ -6420,16 +6421,16 @@ CurrentTempo:
 		.short  0x0
 SongCurrentlyPlaying:
 		.short  0x0
-NumberOfSongs:
+NumberOfSongs:				/* 0x1E8C5E */
 		.short  0x0
-Music:
+GLOBAL (BfMusic)
 		.long	0x0
-EndMusic:
+GLOBAL (BfEndMusic)
 		.long	0x0
-MusicData:
+GLOBAL (BfMusicData)
 		.long	0x0
 
-GLOBAL (MusicDriver)	/* 0x1E8C6C */
+GLOBAL (MusicDriver)		/* 0x1E8C6C */
 		.long	0x0
 GLOBAL (SongHandle)
 		.long	0x0

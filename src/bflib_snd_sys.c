@@ -23,6 +23,8 @@
 #include "bflib_snd_sys.h"
 
 #include "bfmemory.h"
+#include "bfmemut.h"
+#include "bffile.h"
 #include "aildebug.h"
 #include "awe32.h"
 #include "dpmi.h"
@@ -53,6 +55,11 @@ extern uint16_t awe_buffer_seg;
 extern uint8_t *awe_preset;
 extern uint16_t awe_preset_seg;
 extern TbBool Awe32SoundfontLoaded;
+
+extern char full_music_data_path[144];
+extern struct MusicBankSizes music_bank_size_info;
+extern void *BfMusicData;
+extern void *BfMusic;
 
 void StopAllSamples(void)
 {
@@ -117,12 +124,72 @@ void FreeAwe32Soundfont(void)
     }
 }
 
-TbBool AllocateMusicBankMemory(void)
+sbyte AllocateMusicBankMemory(void)
 {
+#if 0
     TbBool ret;
     asm volatile ("call ASM_AllocateMusicBankMemory\n"
         : "=r" (ret) : );
     return ret;
+#endif
+    ulong musLen, musDataLen;
+
+    {
+        TbFileHandle fh;
+        long pos;
+
+        sprintf(full_music_data_path, "%s/MUSIC.DAT", SoundDataPath);
+        fh = LbFileOpen(full_music_data_path, Lb_FILE_MODE_READ_ONLY);
+        if (fh == INVALID_FILE)
+            return -1;
+        memset(&music_bank_size_info, 0, sizeof(music_bank_size_info));
+        LbFileSeek(fh, 0, 2);
+        pos = LbFilePosition(fh);
+        LbFileSeek(fh, 0, 2);
+        LbFileSeek(fh, pos - 36, 0);
+        LbFileRead(fh, &music_bank_size_info, sizeof(music_bank_size_info));
+        LbFileClose(fh);
+    }
+
+    musLen = 0;
+    musDataLen = 0;
+    switch (MusicType[0])
+    {
+    case 'G':
+    case 'g':
+    default:
+        musDataLen = music_bank_size_info.mbs4;
+        musLen = music_bank_size_info.mbs5;
+        break;
+    case 'R':
+    case 'r':
+        musDataLen = music_bank_size_info.mbs2;
+        musLen = music_bank_size_info.mbs3;
+        break;
+    case 'F':
+    case 'f':
+        musDataLen = music_bank_size_info.mbs0;
+        musLen = music_bank_size_info.mbs1;
+        break;
+    case 'W':
+    case 'w':
+        musDataLen = music_bank_size_info.mbs6;
+        musLen = music_bank_size_info.mbs7;
+        break;
+    }
+
+    if ((musDataLen == 0) || (musLen == 0))
+        return -2;
+    BfMusicData = LbMemoryAlloc(musDataLen + 256);
+    BfMusic = LbMemoryAlloc(musLen + 256);
+    if ((BfMusicData == NULL) || (BfMusic == NULL)) {
+        LbMemoryFree(BfMusicData);
+        LbMemoryFree(BfMusic);
+        return 0;
+    }
+    LbMemorySet(BfMusicData, 0, musDataLen);
+    LbMemorySet(BfMusic, 0, musLen);
+    return 1;
 }
 
 TbBool fm_instrument_file_exists(const char *fname)
