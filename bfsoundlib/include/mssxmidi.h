@@ -33,6 +33,8 @@ int32_t AIL2OAL_API_MDI_driver_type(MDI_DRIVER *mdidrv);
 
 int32_t AIL2OAL_API_install_MDI_INI(MDI_DRIVER **mdidrv);
 
+SNDSEQUENCE *AIL2OAL_API_allocate_sequence_handle(MDI_DRIVER *mdidrv);
+
 MDI_DRIVER *AIL2OAL_API_install_MDI_driver_file(char *filename, SNDCARD_IO_PARMS *iop);
 void AIL2OAL_API_uninstall_MDI_driver(MDI_DRIVER *mdidrv);
 

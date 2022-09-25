@@ -129,4 +129,6 @@ void *dos_getvect (int num) __attribute__ ((noreturn));
 
 void dos_setvect (int num, void *function) __attribute__ ((noreturn));
 
+int dos_access(const char *path, int access_flags);
+
 #endif

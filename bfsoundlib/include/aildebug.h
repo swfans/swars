@@ -92,6 +92,10 @@ void AIL_release_all_timers(void);
 int32_t AIL_call_driver(AIL_DRIVER *drvr, int32_t fn,
         VDI_CALL *in, VDI_CALL *out);
 
+/** Allocate a SEQUENCE structure for use with a given driver.
+ */
+SNDSEQUENCE *AIL_allocate_sequence_handle(MDI_DRIVER *mdidrv);
+
 /** Repors the MIDI synthesis technology available with a specified driver.
  */
 int32_t AIL_MDI_driver_type(MDI_DRIVER *mdidrv);

@@ -40,6 +40,7 @@ void InitSound(void);
 void InitMusic(void);
 void InitStreamedSound(void);
 void InitAllBullfrogSoundTimers(void);
+TbBool AllocateMusicBankMemory(void);
 
 void prepare_SB16_volumes(void);
 /******************************************************************************/

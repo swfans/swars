@@ -4055,7 +4055,7 @@ GLOBAL_FUNC (ASM_AIL_uninstall_MDI_driver)	/* 0x105180 */
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (AIL_allocate_sequence_handle)	/* 105200 */
+GLOBAL_FUNC (ASM_AIL_allocate_sequence_handle)	/* 0x105200 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %esi
@@ -4093,7 +4093,7 @@ GLOBAL_FUNC (AIL_allocate_sequence_handle)	/* 105200 */
 		add    $0xc,%esp
 	jump_105260:
 		push   %ebx
-		call   _AIL_API_allocate_sequence_handle
+		call   ac_AIL2OAL_API_allocate_sequence_handle
 		mov    %eax,%ebx
 		mov    AIL_debug,%eax
 		add    $0x4,%esp
@@ -13157,7 +13157,7 @@ _AIL_API_set_GTL_filename_prefix:	/* 0x116720 */
 
 
 /*----------------------------------------------------------------*/
-_AIL_API_allocate_sequence_handle:	/* 0x1167A0 */
+GLOBAL_FUNC (ASM_AIL_API_allocate_sequence_handle)	/* 0x1167A0 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %esi

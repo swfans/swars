@@ -1754,7 +1754,7 @@ GLOBAL_FUNC (ASM_load_music_bank)
 
 
 /*----------------------------------------------------------------*/
-AllocateMusicBankMemory_:
+GLOBAL_FUNC (ASM_AllocateMusicBankMemory)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -3646,7 +3646,7 @@ GLOBAL_FUNC (ASM_InitMusic)
 	jump_ffec8:
 		mov    MusicDriver,%edx
 		push   %edx
-		call   AIL_allocate_sequence_handle
+		call   ac_AIL_allocate_sequence_handle
 		mov    $aAdlib_mdi,%edx
 		add    $0x4,%esp
 		mov    %eax,SongHandle
@@ -3953,7 +3953,7 @@ GLOBAL_FUNC (ASM_InitMusic)
 		mov    $SoundProgressMessage,%eax
 		mov    $ascW,%edx
 		call   ac_SoundProgressLog
-		call   AllocateMusicBankMemory_
+		call   ac_AllocateMusicBankMemory
 		mov    %eax,music_allocated
 		mov    $EXPORT_SYMBOL(MusicType),%eax
 		call   ac_stricmp
@@ -3978,7 +3978,7 @@ GLOBAL_FUNC (ASM_InitMusic)
 		add    $0xc,%esp
 		mov    $SoundProgressMessage,%eax
 		call   ac_SoundProgressLog
-		call   AllocateMusicBankMemory_
+		call   ac_AllocateMusicBankMemory
 		mov    %eax,music_allocated
 	jump_100396:
 		mov    music_allocated,%eax
@@ -6208,7 +6208,7 @@ GLOBAL (CurrentSoundMasterVolume)
 		.long	0x7f
 DirectSoundUsingGameSDKWindow:
 		.long	0x01
-CurrentMusicMasterVolume:
+GLOBAL (CurrentMusicMasterVolume)
 		.long	0x7f
 GLOBAL (MusicAble)
 		.byte	0x1
@@ -6407,7 +6407,7 @@ SoundInstallChoice__Field1:
 		.fill   0x80
 SoundInstallChoice__Field2:
 		.fill   0x18
-music_allocated:
+GLOBAL (music_allocated)	/* 0x1E8C4C */
 		.long	0x0
 GLOBAL (UseCurrentAwe32Soundfont)
 		.byte	0x0
@@ -6431,9 +6431,9 @@ MusicData:
 
 GLOBAL (MusicDriver)	/* 0x1E8C6C */
 		.long	0x0
-SongHandle:
+GLOBAL (SongHandle)
 		.long	0x0
-DangerMusicFadeHandle:
+GLOBAL (DangerMusicFadeHandle)
 		.long	0x0
 GLOBAL (Awe32SoundfontLoaded)
 		.byte	0x0

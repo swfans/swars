@@ -114,6 +114,16 @@ int32_t AIL2OAL_API_install_MDI_INI(MDI_DRIVER **mdidrv)
     return AIL_INIT_SUCCESS;
 }
 
+SNDSEQUENCE *AIL2OAL_API_allocate_sequence_handle(MDI_DRIVER *mdidrv)
+{
+    SNDSEQUENCE *seq;
+    asm volatile (
+      "push %1\n"
+      "call ASM_AIL_API_allocate_sequence_handle\n"
+        : "=r" (seq) : "g" (mdidrv));
+    return seq;
+}
+
 MDI_DRIVER *AIL2OAL_API_install_MDI_driver_file(char *filename, SNDCARD_IO_PARMS *iop)
 {
     MDI_DRIVER *mdidrv;

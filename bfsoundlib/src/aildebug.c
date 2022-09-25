@@ -372,6 +372,23 @@ int32_t AIL_read_INI(AIL_INI *ini, char *fname)
     return result;
 }
 
+SNDSEQUENCE *AIL_allocate_sequence_handle(MDI_DRIVER *mdidrv)
+{
+    SNDSEQUENCE *result;
+
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s(0x%p)\n", __func__, mdidrv);
+
+    result = AIL2OAL_API_allocate_sequence_handle(mdidrv);
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Result = 0x%p\n", result);
+    AIL_indent--;
+
+    return result;
+}
+
 MDI_DRIVER *AIL_install_MDI_driver_file(char *filename, SNDCARD_IO_PARMS *iop)
 {
     MDI_DRIVER *mdidrv;
