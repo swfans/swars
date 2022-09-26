@@ -125,6 +125,13 @@ void AIL2OAL_API_restore_USE16_ISR(int32_t irq)
     }
 }
 
+void AIL2OAL_API_set_timer_frequency(HSNDTIMER timer, uint32_t hertz)
+{
+    if (timer == -1)
+        return;
+    AIL_set_timer_period(timer, 1000000 / hertz);
+}
+
 void AIL2OAL_set_PIT_divisor(uint32_t divsr)
 {
     // removed DOS-specific calls, place 1

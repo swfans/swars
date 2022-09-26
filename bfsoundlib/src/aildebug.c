@@ -268,6 +268,19 @@ uint32_t AIL_sample_status(SNDSAMPLE *s)
     return status;
 }
 
+void AIL_set_timer_frequency(HSNDTIMER timer, uint32_t hertz)
+{
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s(%ld, %u)\n", __func__, timer, hertz);
+
+    AIL2OAL_API_set_timer_frequency(timer, hertz);
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Finished\n");
+    AIL_indent--;
+}
+
 void AIL_set_timer_period(HSNDTIMER timer, uint32_t usec)
 {
     AIL_indent++;
@@ -275,6 +288,32 @@ void AIL_set_timer_period(HSNDTIMER timer, uint32_t usec)
         fprintf(AIL_debugfile, "%s(%ld, %u)\n", __func__, timer, usec);
 
     AIL2OAL_API_set_timer_period(timer, usec);
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Finished\n");
+    AIL_indent--;
+}
+
+void AIL_start_timer(HSNDTIMER timer)
+{
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s(%ld)\n", __func__, timer);
+
+    AIL2OAL_API_start_timer(timer);
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Finished\n");
+    AIL_indent--;
+}
+
+void AIL_start_all_timers(void)
+{
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s()\n", __func__);
+
+    AIL2OAL_API_start_all_timers();
 
     if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
         fprintf(AIL_debugfile, "Finished\n");

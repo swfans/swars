@@ -119,11 +119,11 @@ GLOBAL_FUNC (MSSSMACKTIMERSETUP)
 		push   %ecx
 		mov    _msstimer,%esi
 		push   %esi
-		call   AIL_set_timer_frequency
+		call   ac_AIL_set_timer_frequency
 		add    $0x8,%esp
 		mov    _msstimer,%edi
 		push   %edi
-		call   AIL_start_timer
+		call   ac_AIL_start_timer
 		add    $0x4,%esp
 		call   AIL_interrupt_divisor
 		mov    %eax,%edx

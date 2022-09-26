@@ -83,9 +83,21 @@ void *AIL_set_timer_user(HSNDTIMER timer, void *user_data);
 
 uint32_t AIL_sample_status(SNDSAMPLE *s);
 
+/** Sets period between timer triggers, providing frequency.
+ */
+void AIL_set_timer_frequency(HSNDTIMER timer, uint32_t hertz);
+
 /** Sets period between timer triggers, in microseconds.
  */
 void AIL_set_timer_period(HSNDTIMER timer, uint32_t usec);
+
+/** Start given timer.
+ */
+void AIL_start_timer(HSNDTIMER timer);
+
+/** Start all configured timers.
+ */
+void AIL_start_all_timers(void);
 
 void AIL_release_all_timers(void);
 

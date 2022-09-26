@@ -151,6 +151,14 @@ enum SndSequenceStatusFlags {
                                    has been temporarily released */
 };
 
+/** Timer status values.
+ */
+enum AILTimerStatus {
+    AILT_FREE            = 0, /**< Timer handle is free for allocation */
+    AILT_STOPPED         = 1, /**< Timer is stopped */
+    AILT_RUNNING         = 2, /**< Timer is running */
+};
+
 /** Handle to timer.
  *
  * Originally named `HTIMER`. This less generic name helps to remember this is sound-related.

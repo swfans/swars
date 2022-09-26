@@ -52,6 +52,7 @@ extern int32_t AIL_use_locked;
 extern int32_t timer_cb_periods[AIL_N_TIMERS];
 extern int32_t timer_cb_elapsed_times[AIL_N_TIMERS];
 extern void *timer_user[AIL_N_TIMERS];
+extern int32_t timer_status[AIL_N_TIMERS];
 
 void AIL2OAL_end(void);
 
@@ -347,9 +348,33 @@ void AIL2OAL_API_release_all_timers(void)
 {
     HSNDTIMER i;
 
+    AIL_lock();
     for (i = 0; i < AIL_N_TIMERS; i++) {
         AIL_release_timer_handle(i);
     }
+    AIL_unlock();
+}
+
+void AIL2OAL_API_start_timer(HSNDTIMER timer)
+{
+    AIL_lock();
+    if (timer != -1)
+    {
+        if (timer_status[timer] == AILT_STOPPED)
+            timer_status[timer] = AILT_RUNNING;
+    }
+    AIL_unlock();
+}
+
+void AIL2OAL_API_start_all_timers(void)
+{
+    HSNDTIMER i;
+
+    AIL_lock();
+    for (i = 0; i < AIL_N_TIMERS; i++) {
+        AIL_start_timer(i);
+    }
+    AIL_unlock();
 }
 
 void AIL2OAL_end(void)

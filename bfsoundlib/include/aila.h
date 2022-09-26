@@ -46,6 +46,8 @@ HSNDTIMER AIL2OAL_API_register_timer(AILTIMERCB fn);
  */
 void AIL2OAL_API_set_real_vect(uint32_t vectnum, void *real_ptr);
 
+void AIL2OAL_API_set_timer_frequency(HSNDTIMER timer, uint32_t hertz);
+
 /** Write to 8253 Programmable Interval Timer chip.
  */
 void AIL2OAL_set_PIT_divisor(uint32_t divsr);

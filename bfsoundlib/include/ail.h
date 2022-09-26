@@ -72,6 +72,10 @@ void AIL_release_timer_handle(HSNDTIMER timer);
 
 void AIL2OAL_API_release_all_timers(void);
 
+void AIL2OAL_API_start_timer(HSNDTIMER timer);
+
+void AIL2OAL_API_start_all_timers(void);
+
 /******************************************************************************/
 #ifdef __cplusplus
 };

@@ -1587,7 +1587,7 @@ GLOBAL_FUNC (ASM_AIL_set_timer_period)	/* 0x1026c0 */
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (AIL_set_timer_frequency)	/* 102750 */
+GLOBAL_FUNC (ASM_AIL_set_timer_frequency)	/* 102750 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %edi
@@ -1735,7 +1735,7 @@ GLOBAL_FUNC (AIL_interrupt_divisor)	/* 102870 */
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (AIL_start_timer)	/* 102980 */
+GLOBAL_FUNC (ASM_AIL_start_timer)	/* 0x102980 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %edi
@@ -6968,11 +6968,11 @@ AIL_API_install_driver:	/* 111d40 */
 		push   %eax
 		mov    0x20(%ebp),%eax
 		push   %eax
-		call   AIL_set_timer_frequency
+		call   ac_AIL_set_timer_frequency
 		add    $0x8,%esp
 		mov    0x20(%ebp),%edx
 		push   %edx
-		call   AIL_start_timer
+		call   ac_AIL_start_timer
 		add    $0x4,%esp
 	jump_111fc7:
 		mov    %ebp,%eax
@@ -8928,11 +8928,11 @@ GLOBAL_FUNC (SS_construct_DIG_driver)	/* 113110 */
 		push   %esi
 		mov    0xc(%ebp),%edi
 		push   %edi
-		call   AIL_set_timer_frequency
+		call   ac_AIL_set_timer_frequency
 		add    $0x8,%esp
 		mov    0xc(%ebp),%eax
 		push   %eax
-		call   AIL_start_timer
+		call   ac_AIL_start_timer
 		mov    0x0(%ebp),%eax
 		movl   $SS_destroy_DIG_driver,0x24(%eax)
 		add    $0x4,%esp
@@ -12878,11 +12878,11 @@ GLOBAL_FUNC (ASM_XMI_construct_MDI_driver)	/* 0x115EA0 */
 		push   %edi
 		mov    0xc(%ebp),%eax
 		push   %eax
-		call   AIL_set_timer_frequency
+		call   ac_AIL_set_timer_frequency
 		add    $0x8,%esp
 		mov    0xc(%ebp),%edx
 		push   %edx
-		call   AIL_start_timer
+		call   ac_AIL_start_timer
 		add    $0x4,%esp
 		mov    %ebp,%eax
 	jump_1164db:

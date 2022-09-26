@@ -595,7 +595,7 @@ GLOBAL_FUNC (ASM_PlayCDTrack)
 		call   cd_play_
 		mov    CDCount_handle,%ebx
 		push   %ebx
-		call   AIL_start_timer
+		call   ac_AIL_start_timer
 		mov    $0x1,%dh
 		add    $0x4,%esp
 		mov    %dh,CDTimerActive
@@ -2270,7 +2270,7 @@ GLOBAL_FUNC (DangerMusicFadeSwitch)
 		add    %eax,%eax
 		push   %eax
 		push   %edx
-		call   AIL_set_timer_frequency
+		call   ac_AIL_set_timer_frequency
 		add    $0x8,%esp
 		mov    DangerMusicFadeHandle,%edi
 		push   %edi
@@ -2284,12 +2284,12 @@ GLOBAL_FUNC (DangerMusicFadeSwitch)
 		push   $0x1e
 		push   %eax
 		mov    %eax,DangerMusicFadeHandle
-		call   AIL_set_timer_frequency
+		call   ac_AIL_set_timer_frequency
 		add    $0x8,%esp
 		mov    DangerMusicFadeHandle,%esi
 		push   %esi
 	jump_ef274:
-		call   AIL_start_timer
+		call   ac_AIL_start_timer
 		add    $0x4,%esp
 	jump_ef27c:
 		pop    %edi
@@ -5681,11 +5681,11 @@ func_1094e1:
 		push   $0x14
 		push   %eax
 		mov    %eax,sample_fade_handle
-		call   AIL_set_timer_frequency
+		call   ac_AIL_set_timer_frequency
 		add    $0x8,%esp
 		mov    sample_fade_handle,%esi
 		push   %esi
-		call   AIL_start_timer
+		call   ac_AIL_start_timer
 		add    $0x4,%esp
 	jump_10952c:
 		add    $0x8,%esp
