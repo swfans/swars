@@ -10343,7 +10343,7 @@ ASM_XMI_message_size:	/* 0x114750 */
 
 
 /*----------------------------------------------------------------*/
-_XMI_flush_buffer:	/* 0x1147B0 */
+ASM_XMI_flush_buffer:	/* 0x1147B0 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		sub    $0xc,%esp
@@ -10369,7 +10369,7 @@ _XMI_flush_buffer:	/* 0x1147B0 */
 
 
 /*----------------------------------------------------------------*/
-_XMI_MIDI_message:	/* 0x114800 */
+ASM_XMI_MIDI_message:	/* 0x114800 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %esi
@@ -10385,7 +10385,7 @@ _XMI_MIDI_message:	/* 0x114800 */
 		cmp    $0x200,%eax
 		jbe    jump_11482e
 		push   %ebx
-		call   _XMI_flush_buffer
+		call   ac_XMI_flush_buffer
 		add    $0x4,%esp
 	jump_11482e:
 		mov    0x1ac(%ebx),%eax
@@ -10424,7 +10424,7 @@ _XMI_sysex_message:	/* 0x1148A0 */
 		mov    0xc(%esp),%esi
 		mov    0x14(%esp),%ebx
 		push   %esi
-		call   _XMI_flush_buffer
+		call   ac_XMI_flush_buffer
 		add    $0x4,%esp
 		cmp    $0x200,%ebx
 		jbe    jump_1148c0
@@ -10438,7 +10438,7 @@ _XMI_sysex_message:	/* 0x1148A0 */
 		inc    %edx
 		push   %esi
 		mov    %edx,0x1a8(%esi)
-		call   _XMI_flush_buffer
+		call   ac_XMI_flush_buffer
 		add    $0x4,%esp
 		pop    %esi
 		pop    %ebx
@@ -10833,7 +10833,7 @@ _XMI_write_log:	/* 0x114BF0 */
 
 
 /*----------------------------------------------------------------*/
-_XMI_send_channel_voice_message:	/* 0x114DE0 */
+GLOBAL_FUNC (ASM_XMI_send_channel_voice_message)	/* 0x114DE0 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %esi
@@ -10946,7 +10946,7 @@ _XMI_send_channel_voice_message:	/* 0x114DE0 */
 		or     $0xb0,%al
 		push   %eax
 		push   %ebx
-		call   _XMI_send_channel_voice_message
+		call   ac_XMI_send_channel_voice_message
 		add    $0x14,%esp
 		push   $0x0
 		push   $0x0
@@ -10955,7 +10955,7 @@ _XMI_send_channel_voice_message:	/* 0x114DE0 */
 		or     $0xb0,%al
 		push   %eax
 		push   %ebx
-		call   _XMI_send_channel_voice_message
+		call   ac_XMI_send_channel_voice_message
 		add    $0x14,%esp
 		push   $0x0
 		push   $0x0
@@ -10964,7 +10964,7 @@ _XMI_send_channel_voice_message:	/* 0x114DE0 */
 		or     $0xb0,%al
 		push   %eax
 		push   %ebx
-		call   _XMI_send_channel_voice_message
+		call   ac_XMI_send_channel_voice_message
 		add    $0x14,%esp
 	jump_114f8a:
 		mov    0x4(%esp),%eax
@@ -11225,7 +11225,7 @@ _XMI_send_channel_voice_message:	/* 0x114DE0 */
 		or     %ebx,%eax
 		push   %eax
 		push   %ebp
-		call   _XMI_MIDI_message
+		call   ac_XMI_MIDI_message
 		add    $0x10,%esp
 	jump_11522a:
 		add    $0x10,%esp
@@ -11237,7 +11237,7 @@ _XMI_send_channel_voice_message:	/* 0x114DE0 */
 
 
 /*----------------------------------------------------------------*/
-_XMI_flush_note_queue:	/* 0x115240 */
+ASM_XMI_flush_note_queue:	/* 0x115240 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %esi
@@ -11263,7 +11263,7 @@ _XMI_flush_note_queue:	/* 0x115240 */
 		push   %eax
 		push   %edi
 		inc    %esi
-		call   _XMI_send_channel_voice_message
+		call   ac_XMI_send_channel_voice_message
 		add    $0x14,%esp
 		movl   $0xffffffff,0x558(%ebx)
 		nop
@@ -11274,7 +11274,7 @@ _XMI_flush_note_queue:	/* 0x115240 */
 		mov    (%edi),%edx
 		push   %edx
 		movl   $0x0,0x554(%edi)
-		call   _XMI_flush_buffer
+		call   ac_XMI_flush_buffer
 		add    $0x4,%esp
 		test   %esi,%esi
 		je     jump_1152c3
@@ -11317,7 +11317,7 @@ _XMI_flush_channel_notes:	/* 0x1152D0 */
 		or     $0x80,%al
 		push   %eax
 		push   %esi
-		call   _XMI_send_channel_voice_message
+		call   ac_XMI_send_channel_voice_message
 		add    $0x14,%esp
 		movl   $0xffffffff,0x558(%ebx)
 		lea    0x0(%eax),%eax
@@ -11327,7 +11327,7 @@ _XMI_flush_channel_notes:	/* 0x1152D0 */
 		jne    jump_1152f0
 		mov    (%esi),%edi
 		push   %edi
-		call   _XMI_flush_buffer
+		call   ac_XMI_flush_buffer
 		add    $0x4,%esp
 		pop    %ebp
 		pop    %edi
@@ -11357,7 +11357,7 @@ _XMI_refresh_channel:	/* 0x115340 */
 		or     $0xb0,%al
 		push   %eax
 		push   %esi
-		call   _XMI_send_channel_voice_message
+		call   ac_XMI_send_channel_voice_message
 		add    $0x14,%esp
 	jump_115373:
 		lea    0x0(,%ebx,4),%eax
@@ -11372,7 +11372,7 @@ _XMI_refresh_channel:	/* 0x115340 */
 		or     $0xc0,%al
 		push   %eax
 		push   %esi
-		call   _XMI_send_channel_voice_message
+		call   ac_XMI_send_channel_voice_message
 		add    $0x14,%esp
 	jump_11539a:
 		lea    0x0(,%ebx,4),%eax
@@ -11388,7 +11388,7 @@ _XMI_refresh_channel:	/* 0x115340 */
 		or     $0xe0,%al
 		push   %eax
 		push   %esi
-		call   _XMI_send_channel_voice_message
+		call   ac_XMI_send_channel_voice_message
 		add    $0x14,%esp
 	jump_1153c6:
 		lea    0x0(,%ebx,4),%eax
@@ -11403,7 +11403,7 @@ _XMI_refresh_channel:	/* 0x115340 */
 		or     $0xb0,%al
 		push   %eax
 		push   %esi
-		call   _XMI_send_channel_voice_message
+		call   ac_XMI_send_channel_voice_message
 		add    $0x14,%esp
 	jump_1153ed:
 		lea    0x0(,%ebx,4),%eax
@@ -11418,7 +11418,7 @@ _XMI_refresh_channel:	/* 0x115340 */
 		or     $0xb0,%al
 		push   %eax
 		push   %esi
-		call   _XMI_send_channel_voice_message
+		call   ac_XMI_send_channel_voice_message
 		add    $0x14,%esp
 	jump_115414:
 		lea    0x0(,%ebx,4),%eax
@@ -11433,7 +11433,7 @@ _XMI_refresh_channel:	/* 0x115340 */
 		or     $0xb0,%al
 		push   %eax
 		push   %esi
-		call   _XMI_send_channel_voice_message
+		call   ac_XMI_send_channel_voice_message
 		add    $0x14,%esp
 	jump_11543b:
 		lea    0x0(,%ebx,4),%eax
@@ -11448,7 +11448,7 @@ _XMI_refresh_channel:	/* 0x115340 */
 		or     $0xb0,%al
 		push   %eax
 		push   %esi
-		call   _XMI_send_channel_voice_message
+		call   ac_XMI_send_channel_voice_message
 		add    $0x14,%esp
 	jump_115462:
 		lea    0x0(,%ebx,4),%eax
@@ -11463,7 +11463,7 @@ _XMI_refresh_channel:	/* 0x115340 */
 		or     $0xb0,%al
 		push   %eax
 		push   %esi
-		call   _XMI_send_channel_voice_message
+		call   ac_XMI_send_channel_voice_message
 		add    $0x14,%esp
 	jump_115489:
 		lea    0x0(,%ebx,4),%eax
@@ -11478,7 +11478,7 @@ _XMI_refresh_channel:	/* 0x115340 */
 		or     $0xb0,%al
 		push   %eax
 		push   %esi
-		call   _XMI_send_channel_voice_message
+		call   ac_XMI_send_channel_voice_message
 		add    $0x14,%esp
 	jump_1154b0:
 		lea    0x0(,%ebx,4),%eax
@@ -11493,7 +11493,7 @@ _XMI_refresh_channel:	/* 0x115340 */
 		or     $0xb0,%al
 		push   %eax
 		push   %esi
-		call   _XMI_send_channel_voice_message
+		call   ac_XMI_send_channel_voice_message
 		add    $0x14,%esp
 	jump_1154d7:
 		lea    0x0(,%ebx,4),%eax
@@ -11508,7 +11508,7 @@ _XMI_refresh_channel:	/* 0x115340 */
 		or     $0xb0,%al
 		push   %eax
 		push   %esi
-		call   _XMI_send_channel_voice_message
+		call   ac_XMI_send_channel_voice_message
 		add    $0x14,%esp
 	jump_1154fe:
 		lea    0x0(,%ebx,4),%eax
@@ -11523,7 +11523,7 @@ _XMI_refresh_channel:	/* 0x115340 */
 		or     $0xb0,%al
 		push   %eax
 		push   %esi
-		call   _XMI_send_channel_voice_message
+		call   ac_XMI_send_channel_voice_message
 		add    $0x14,%esp
 	jump_115525:
 		lea    0x0(,%ebx,4),%eax
@@ -11538,7 +11538,7 @@ _XMI_refresh_channel:	/* 0x115340 */
 		or     $0xb0,%al
 		push   %eax
 		push   %esi
-		call   _XMI_send_channel_voice_message
+		call   ac_XMI_send_channel_voice_message
 		add    $0x14,%esp
 	jump_11554c:
 		lea    0x0(,%ebx,4),%eax
@@ -11552,7 +11552,7 @@ _XMI_refresh_channel:	/* 0x115340 */
 		or     $0xb0,%bl
 		push   %ebx
 		push   %esi
-		call   _XMI_send_channel_voice_message
+		call   ac_XMI_send_channel_voice_message
 		add    $0x14,%esp
 	jump_115572:
 		pop    %ebp
@@ -11648,7 +11648,7 @@ _XMI_update_volume:	/* 0x115660 */
 		or     $0xb0,%al
 		push   %eax
 		push   %edi
-		call   _XMI_send_channel_voice_message
+		call   ac_XMI_send_channel_voice_message
 		add    $0x14,%esp
 		mov    %eax,%eax
 	jump_115690:
@@ -11730,7 +11730,7 @@ _XMI_serve:	/* 0x1156A0 */
 		or     $0x80,%al
 		push   %eax
 		push   %edx
-		call   _XMI_send_channel_voice_message
+		call   ac_XMI_send_channel_voice_message
 		mov    MDI_S,%eax
 		mov    MDI_i,%edx
 		mov    %ebx,0x558(%eax,%edx,4)
@@ -11970,7 +11970,7 @@ _XMI_serve:	/* 0x1156A0 */
 		and    $0xff,%eax
 		push   %eax
 		push   %edx
-		call   _XMI_send_channel_voice_message
+		call   ac_XMI_send_channel_voice_message
 		mov    MDI_status,%eax
 		add    $0x14,%esp
 		cmp    $0x90,%eax
@@ -12187,7 +12187,7 @@ _XMI_serve:	/* 0x1156A0 */
 		jne    jump_1156ef
 	jump_115d4f:
 		push   %esi
-		call   _XMI_flush_buffer
+		call   ac_XMI_flush_buffer
 		xor    %edx,%edx
 		add    $0x4,%esp
 		mov    %edx,MDI_entry
@@ -12768,7 +12768,7 @@ GLOBAL_FUNC (ASM_XMI_construct_MDI_driver)	/* 0x115EA0 */
 		or     $0xb0,%bl
 		push   %ebx
 		push   %ebp
-		call   _XMI_MIDI_message
+		call   ac_XMI_MIDI_message
 		add    $0x10,%esp
 		push   %edi
 		mov    %esi,%eax
@@ -12776,7 +12776,7 @@ GLOBAL_FUNC (ASM_XMI_construct_MDI_driver)	/* 0x115EA0 */
 		or     $0xc0,%al
 		push   %eax
 		push   %ebp
-		call   _XMI_MIDI_message
+		call   ac_XMI_MIDI_message
 		add    $0x10,%esp
 		push   $0x40
 		mov    %esi,%eax
@@ -12784,84 +12784,84 @@ GLOBAL_FUNC (ASM_XMI_construct_MDI_driver)	/* 0x115EA0 */
 		or     $0xe0,%al
 		push   %eax
 		push   %ebp
-		call   _XMI_MIDI_message
+		call   ac_XMI_MIDI_message
 		add    $0x10,%esp
 		push   %edi
 		push   $0x70
 		push   %ebx
 		push   %ebp
-		call   _XMI_MIDI_message
+		call   ac_XMI_MIDI_message
 		add    $0x10,%esp
 		push   %edi
 		push   $0x1
 		push   %ebx
 		push   %ebp
-		call   _XMI_MIDI_message
+		call   ac_XMI_MIDI_message
 		add    $0x10,%esp
 		mov    data_1ed840,%ecx
 		push   %ecx
 		push   $0x7
 		push   %ebx
 		push   %ebp
-		call   _XMI_MIDI_message
+		call   ac_XMI_MIDI_message
 		add    $0x10,%esp
 		push   $0x40
 		push   $0xa
 		push   %ebx
 		push   %ebp
-		call   _XMI_MIDI_message
+		call   ac_XMI_MIDI_message
 		add    $0x10,%esp
 		push   $0x7f
 		push   $0xb
 		push   %ebx
 		push   %ebp
-		call   _XMI_MIDI_message
+		call   ac_XMI_MIDI_message
 		add    $0x10,%esp
 		push   %edi
 		push   $0x40
 		push   %ebx
 		push   %ebp
-		call   _XMI_MIDI_message
+		call   ac_XMI_MIDI_message
 		add    $0x10,%esp
 		push   $0x28
 		push   $0x5b
 		push   %ebx
 		push   %ebp
-		call   _XMI_MIDI_message
+		call   ac_XMI_MIDI_message
 		add    $0x10,%esp
 		push   %edi
 		push   $0x5d
 		push   %ebx
 		push   %ebp
-		call   _XMI_MIDI_message
+		call   ac_XMI_MIDI_message
 		add    $0x10,%esp
 		push   %edi
 		push   $0x64
 		push   %ebx
 		push   %ebp
-		call   _XMI_MIDI_message
+		call   ac_XMI_MIDI_message
 		add    $0x10,%esp
 		push   %edi
 		push   $0x65
 		push   %ebx
 		push   %ebp
-		call   _XMI_MIDI_message
+		call   ac_XMI_MIDI_message
 		add    $0x10,%esp
 		push   %edi
 		push   $0x26
 		push   %ebx
 		push   %ebp
-		call   _XMI_MIDI_message
+		call   ac_XMI_MIDI_message
 		add    $0x10,%esp
 		mov    data_1ed84c,%eax
 		push   %eax
 		push   $0x6
 		push   %ebx
 		push   %ebp
-		call   _XMI_MIDI_message
+		call   ac_XMI_MIDI_message
 		add    $0x10,%esp
 		push   %ebp
-		call   _XMI_flush_buffer
+		call   ac_XMI_flush_buffer
 		add    $0x4,%esp
 		test   $0x3,%si
 		jne    jump_1164b0
@@ -13439,7 +13439,7 @@ _AIL_API_init_sequence:	/* 0x116840 */
 		incl   0x14(%eax)
 		mov    0x0(%ebp),%ecx
 		push   %ecx
-		call   _XMI_flush_buffer
+		call   ac_XMI_flush_buffer
 		mov    0x0(%ebp),%eax
 		mov    $0x200,%ebx
 		add    $0x4,%esp
@@ -13530,7 +13530,7 @@ _AIL_API_stop_sequence:	/* 0x116BA0 */
 		mov    %ebp,%ebx
 		movl   $0x8,0x4(%ebp)
 		add    $0x40,%ebp
-		call   _XMI_flush_note_queue
+		call   ac_XMI_flush_note_queue
 		add    $0x4,%esp
 		mov    -0x40(%ebp),%edi
 		lea    0x0(%eax),%eax
@@ -13547,7 +13547,7 @@ _AIL_API_stop_sequence:	/* 0x116BA0 */
 		or     $0xb0,%al
 		push   %eax
 		push   %edi
-		call   _XMI_MIDI_message
+		call   ac_XMI_MIDI_message
 		add    $0x10,%esp
 	jump_116c03:
 		cmpl   $0x40,0x1d4(%ebx)
@@ -13562,7 +13562,7 @@ _AIL_API_stop_sequence:	/* 0x116BA0 */
 		or     $0xb0,%al
 		push   %eax
 		push   %edi
-		call   _XMI_MIDI_message
+		call   ac_XMI_MIDI_message
 		add    $0x10,%esp
 	jump_116c2f:
 		cmpl   $0x40,0x194(%ebx)
@@ -14042,7 +14042,7 @@ _AIL_API_lock_channel:	/* 0x117310 */
 		push   %eax
 		mov    0x28(%esp),%esi
 		push   %esi
-		call   _XMI_MIDI_message
+		call   ac_XMI_MIDI_message
 		add    $0x10,%esp
 		mov    0x1c(%esi),%eax
 		mov    %eax,0x4(%esp)
@@ -14071,7 +14071,7 @@ _AIL_API_lock_channel:	/* 0x117310 */
 		or     $0x80,%al
 		push   %eax
 		push   %esi
-		call   _XMI_send_channel_voice_message
+		call   ac_XMI_send_channel_voice_message
 		add    $0x14,%esp
 		movl   $0xffffffff,0x558(%ebx)
 		lea    0x0(%eax),%eax
@@ -14142,7 +14142,7 @@ _AIL_API_release_channel:	/* 0x1174A0 */
 		push   %eax
 		push   %edx
 		mov    %edx,%esi
-		call   _XMI_MIDI_message
+		call   ac_XMI_MIDI_message
 		mov    %esi,%eax
 		add    $0x10,%esp
 		mov    0x1c(%eax),%eax
@@ -14174,7 +14174,7 @@ _AIL_API_release_channel:	/* 0x1174A0 */
 		or     $0x80,%al
 		push   %eax
 		push   %esi
-		call   _XMI_send_channel_voice_message
+		call   ac_XMI_send_channel_voice_message
 		add    $0x14,%esp
 		movl   $0xffffffff,0x558(%ebx)
 		lea    0x0(%eax),%eax
@@ -14296,7 +14296,7 @@ _AIL_API_send_channel_voice_message:	/* 0x117620 */
 		push   %edi
 		push   %ebp
 		push   %ebx
-		call   _XMI_MIDI_message
+		call   ac_XMI_MIDI_message
 		add    $0x10,%esp
 		jmp    jump_1176b5
 	jump_1176a7:
@@ -14305,11 +14305,11 @@ _AIL_API_send_channel_voice_message:	/* 0x117620 */
 		push   %edi
 		push   %ebp
 		push   %eax
-		call   _XMI_send_channel_voice_message
+		call   ac_XMI_send_channel_voice_message
 		add    $0x14,%esp
 	jump_1176b5:
 		push   %ebx
-		call   _XMI_flush_buffer
+		call   ac_XMI_flush_buffer
 		mov    0x14(%ebx),%esi
 		dec    %esi
 		add    $0x4,%esp

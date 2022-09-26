@@ -30,6 +30,7 @@
 #include "dllload.h"
 #include "memfile.h"
 #include "msssys.h"
+#include "miscutil.h"
 /******************************************************************************/
 extern char GTL_prefix[128];
 extern char SoundDriverPath[144];
@@ -75,6 +76,46 @@ void AILXMIDI_start(void)
     AIL_vmm_lock(&MDI_event, sizeof(MDI_event));
 
     MDI_locked = 1;
+}
+
+/** Force transmission of any buffered MIDI traffic.
+ */
+void XMI_flush_buffer(MDI_DRIVER *mdidrv)
+{
+    VDI_CALL VDI;
+
+    if (mdidrv->message_count < 1)
+        return;
+
+    VDI.CX = mdidrv->message_count;
+
+    AIL_call_driver(mdidrv->drvr, MDI_MIDI_XMIT, &VDI, NULL);
+
+    mdidrv->message_count = 0;
+    mdidrv->offset = 0;
+}
+
+/** Write channel voice message to MIDI driver buffer
+*/
+void XMI_MIDI_message(MDI_DRIVER *mdidrv, int32_t status,
+        int32_t d1, int32_t d2)
+{
+    uint32_t size;
+
+    {
+        size = XMI_message_size(status);
+
+        if ((mdidrv->offset + size) > sizeof(mdidrv->DST->MIDI_data))
+            XMI_flush_buffer(mdidrv);
+
+        mdidrv->DST->MIDI_data[mdidrv->offset++] = (int8_t)(status & 0xff);
+        mdidrv->DST->MIDI_data[mdidrv->offset++] = (int8_t)(d1 & 0xff);
+
+        if (size == 3)
+            mdidrv->DST->MIDI_data[mdidrv->offset++] = (int8_t)(d2 & 0xff);
+
+        mdidrv->message_count++;
+    }
 }
 
 void AIL2OAL_API_set_GTL_filename_prefix(char const *prefix)
@@ -199,6 +240,58 @@ MDI_DRIVER *XMI_construct_MDI_driver(AIL_DRIVER *drvr, const SNDCARD_IO_PARMS *i
       "call ASM_XMI_construct_MDI_driver\n"
         : "=r" (mdidrv) : "g" (drvr), "g" (iop));
     return mdidrv;
+}
+
+/** Send MIDI channel voice message associated with a specific sequence
+ *
+ * Includes controller logging and XMIDI extensions.
+ *
+ * Warnings: ICA_enable should be 0 when calling outside XMIDI event loop
+ * May be recursively called by XMIDI controller handlers.
+ */
+void XMI_send_channel_voice_message(SNDSEQUENCE *seq, int32_t status,
+        int32_t data_1, int32_t data_2, int32_t ICA_enable)
+{
+    asm volatile (
+      "push %4\n"
+      "push %3\n"
+      "push %2\n"
+      "push %1\n"
+      "push %0\n"
+      "call ASM_XMI_send_channel_voice_message\n"
+        :  : "g" (seq), "g" (status), "g" (data_1), "g" (data_2), "g" (ICA_enable));
+}
+
+/** Flush sequence note queue.
+ */
+void XMI_flush_note_queue(SNDSEQUENCE *seq)
+{
+    int32_t i, nmsgs;
+
+    nmsgs = 0;
+
+    for (i=0; i < AIL_MAX_NOTES; i++)
+    {
+        if (seq->note_chan[i] == -1)
+            continue;
+
+        // Send MIDI Note Off message
+        XMI_send_channel_voice_message(seq,
+                seq->note_chan[i] | MDI_EV_NOTE_OFF,
+                seq->note_num [i], 0, 0);
+
+        // Release queue entry and increment "note off" count
+        seq->note_chan[i] = -1;
+
+        nmsgs++;
+    }
+
+   seq->note_count = 0;
+
+    // If any messages were sent, delay before returning to give
+    // slower MPU-401 devices enough time to process MIDI data
+    if ((nmsgs) && (!AIL_background()))
+        AIL_delay(3);
 }
 
 int32_t AIL2OAL_API_install_MDI_INI(MDI_DRIVER **mdidrv)
