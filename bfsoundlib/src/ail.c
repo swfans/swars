@@ -314,6 +314,19 @@ int32_t AIL2OAL_API_set_preference(uint32_t number, int32_t value)
     return oldval;
 }
 
+void AIL2OAL_API_delay(int32_t intervals)
+{
+    uint32_t last_tick;
+
+    if (AIL_bkgnd_flag)
+        return;
+
+    // 16 = 62.5 intervals per second
+    last_tick = AIL_ms_count() + (16*intervals);
+    while (AIL_ms_count() < last_tick)
+        ;
+}
+
 int32_t AIL2OAL_API_background(void)
 {
     return AIL_bkgnd_flag;

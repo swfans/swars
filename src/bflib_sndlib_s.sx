@@ -965,7 +965,7 @@ GLOBAL_FUNC (ASM_AIL_call_driver)	/* 101f00 */
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (AIL_delay)	/* 102030 */
+GLOBAL_FUNC (ASM_AIL_delay)	/* 0x102030 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %edi
@@ -1004,7 +1004,7 @@ GLOBAL_FUNC (AIL_delay)	/* 102030 */
 	jump_102090:
 		mov    0x10(%esp),%eax
 		push   %eax
-		call   _AIL_API_delay
+		call   ac_AIL2OAL_API_delay
 		mov    AIL_indent,%edx
 		dec    %edx
 		add    $0x4,%esp
@@ -6028,7 +6028,7 @@ ASM_AIL_API_call_driver:	/* 1114e7 */
 
 
 /*----------------------------------------------------------------*/
-_AIL_API_delay:	/* 0x1115C1 */
+ASM_AIL_API_delay:	/* 0x1115C1 */
 /*----------------------------------------------------------------*/
 		push   %ebp
 		mov    %esp,%ebp
@@ -8376,7 +8376,7 @@ SS_destroy_DIG_driver:
 		call   AILSSA_DMA_copy
 		add    $0x8,%esp
 		push   $0xa
-		call   AIL_delay
+		call   ac_AIL_delay
 		add    $0x4,%esp
 	jump_1130b0:
 		mov    0xc(%ebx),%ecx
@@ -11282,7 +11282,7 @@ _XMI_flush_note_queue:	/* 0x115240 */
 		test   %eax,%eax
 		jne    jump_1152c3
 		push   $0x3
-		call   AIL_delay
+		call   ac_AIL_delay
 		add    $0x4,%esp
 	jump_1152c3:
 		pop    %ebp
@@ -12866,7 +12866,7 @@ GLOBAL_FUNC (ASM_XMI_construct_MDI_driver)	/* 0x115EA0 */
 		test   $0x3,%si
 		jne    jump_1164b0
 		push   $0x3
-		call   AIL_delay
+		call   ac_AIL_delay
 		add    $0x4,%esp
 		lea    0x0(%eax),%eax
 		lea    0x0(%edx),%edx

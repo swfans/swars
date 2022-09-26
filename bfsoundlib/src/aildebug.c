@@ -18,10 +18,12 @@
  */
 /******************************************************************************/
 #include <stdio.h>
+#include <stdint.h>
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <sys/time.h>
 #include <assert.h>
 
 #include "aildebug.h"
@@ -34,6 +36,8 @@ extern uint16_t AIL_debug;
 extern uint16_t AIL_sys_debug;
 extern FILE *AIL_debugfile;
 extern uint32_t AIL_indent;
+
+static long long tmcount_start = 0;
 
 int32_t AIL_startup(void)
 {
@@ -99,6 +103,21 @@ void AIL_shutdown(void)
         fclose(AIL_debugfile);
     }
     AIL_indent--;
+}
+
+uint32_t AIL_ms_count(void)
+{
+    long long now;
+    struct timeval tv;
+
+    gettimeofday(&tv, NULL);
+    now = tv.tv_sec;
+    now *= 1000000;
+    now += tv.tv_usec;
+    if (!tmcount_start) {
+        tmcount_start = now;
+    }
+    return ((now - tmcount_start) / 1000);
 }
 
 int32_t AIL_set_preference(uint32_t number, int32_t value)
@@ -266,6 +285,19 @@ uint32_t AIL_sample_status(SNDSAMPLE *s)
     AIL_indent--;
 
     return status;
+}
+
+void AIL_delay(int32_t intervals)
+{
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s(%d)\n", __func__, intervals);
+
+    AIL2OAL_API_delay(intervals);
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Finished\n");
+    AIL_indent--;
 }
 
 int32_t AIL_background(void)

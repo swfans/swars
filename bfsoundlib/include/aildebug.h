@@ -43,6 +43,10 @@ void AIL_shutdown(void);
  */
 int32_t AIL_set_preference(uint32_t number, int32_t value);
 
+/** Returns time since first initialization of the library, in miliseconds.
+ */
+uint32_t AIL_ms_count(void);
+
 /** Define a filename prefix for application's Global Timbre Library
  * files.
  *
@@ -82,6 +86,12 @@ HSNDTIMER AIL_register_timer(AILTIMERCB fn);
 void *AIL_set_timer_user(HSNDTIMER timer, void *user_data);
 
 uint32_t AIL_sample_status(SNDSAMPLE *s);
+
+/** System-independent delay in 1/60 second intervals.
+ *
+ * Returns at once if called from background.
+ */
+void AIL_delay(int32_t intervals);
 
 /** Returns TRUE if called from within timer handler or callback function.
  */
