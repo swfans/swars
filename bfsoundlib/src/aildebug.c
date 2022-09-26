@@ -268,6 +268,23 @@ uint32_t AIL_sample_status(SNDSAMPLE *s)
     return status;
 }
 
+int32_t AIL_background(void)
+{
+    int32_t result;
+
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s()\n", __func__);
+
+    result = AIL2OAL_API_background();
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Result = %d\n", result);
+    AIL_indent--;
+
+    return result;
+}
+
 void AIL_set_timer_frequency(HSNDTIMER timer, uint32_t hertz)
 {
     AIL_indent++;

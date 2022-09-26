@@ -83,6 +83,10 @@ void *AIL_set_timer_user(HSNDTIMER timer, void *user_data);
 
 uint32_t AIL_sample_status(SNDSAMPLE *s);
 
+/** Returns TRUE if called from within timer handler or callback function.
+ */
+int32_t AIL_background(void);
+
 /** Sets period between timer triggers, providing frequency.
  */
 void AIL_set_timer_frequency(HSNDTIMER timer, uint32_t hertz);

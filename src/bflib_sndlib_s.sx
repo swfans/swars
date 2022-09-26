@@ -483,7 +483,7 @@ GLOBAL_FUNC (ASM_AIL_shutdown)	/* 101a40 */
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_101a80
 	jump_101a67:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_101a80
 		call   TIME_write_
@@ -510,7 +510,7 @@ GLOBAL_FUNC (ASM_AIL_shutdown)	/* 101a40 */
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_101acd
 	jump_101aba:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_101acd
 		mov    AIL_debugfile,%eax
@@ -541,7 +541,7 @@ GLOBAL_FUNC (ASM_AIL_set_preference)	/* 0x101ae0 */
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_101b26
 	jump_101b0d:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_101b26
 		call   TIME_write_
@@ -577,7 +577,7 @@ GLOBAL_FUNC (ASM_AIL_set_preference)	/* 0x101ae0 */
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_101beb
 	jump_101b79:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_101beb
 		xor    %edx,%edx
@@ -654,7 +654,7 @@ GLOBAL_FUNC (ail_get_real_vect)	/* 101c20 */
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_101c65
 	jump_101c4c:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_101c65
 		call   TIME_write_
@@ -686,7 +686,7 @@ GLOBAL_FUNC (ail_get_real_vect)	/* 101c20 */
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_101d1a
 	jump_101cae:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_101d1a
 		xor    %edx,%edx
@@ -749,7 +749,7 @@ GLOBAL_FUNC (ASM_AIL_set_real_vect)	/* 0x101d30 */
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_101d71
 	jump_101d58:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_101d71
 		call   TIME_write_
@@ -804,7 +804,7 @@ GLOBAL_FUNC (ASM_AIL_restore_USE16_ISR)
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_101ea1
 	jump_101e88:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_101ea1
 		call   TIME_write_
@@ -873,7 +873,7 @@ GLOBAL_FUNC (ASM_AIL_call_driver)	/* 101f00 */
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_101f46
 	jump_101f2d:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_101f46
 		call   TIME_write_
@@ -917,7 +917,7 @@ GLOBAL_FUNC (ASM_AIL_call_driver)	/* 101f00 */
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_10201a
 	jump_101fad:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_10201a
 		xor    %edx,%edx
@@ -981,7 +981,7 @@ GLOBAL_FUNC (AIL_delay)	/* 102030 */
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_102071
 	jump_102058:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_102071
 		call   TIME_write_
@@ -1016,9 +1016,9 @@ GLOBAL_FUNC (AIL_delay)	/* 102030 */
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (AIL_background)
+GLOBAL_FUNC (ASM_AIL_background)
 /*----------------------------------------------------------------*/
-		jmp    AIL_API_background
+		jmp    ac_AIL2OAL_API_background
 
 
 /*----------------------------------------------------------------*/
@@ -1041,7 +1041,7 @@ GLOBAL_FUNC (ASM_AIL_read_INI)	/* 0x1020c0 */
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_10210a
 	jump_1020f1:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_10210a
 		call   TIME_write_
@@ -1076,7 +1076,7 @@ GLOBAL_FUNC (ASM_AIL_read_INI)	/* 0x1020c0 */
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_10247a
 	jump_10215c:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_10247a
 		xor    %edx,%edx
@@ -1286,7 +1286,7 @@ GLOBAL_FUNC (ASM_AIL_read_INI)	/* 0x1020c0 */
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_10247a
 	jump_102411:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_10247a
 		xor    %edx,%edx
@@ -1351,7 +1351,7 @@ GLOBAL_FUNC (ASM_AIL_register_timer)	/* 0x102490 */
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_1024d5
 	jump_1024bc:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_1024d5
 		call   TIME_write_
@@ -1383,7 +1383,7 @@ GLOBAL_FUNC (ASM_AIL_register_timer)	/* 0x102490 */
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_10258a
 	jump_10251e:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_10258a
 		xor    %edx,%edx
@@ -1448,7 +1448,7 @@ GLOBAL_FUNC (ASM_AIL_set_timer_user)	/* 0x1025a0 */
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_1025e6
 	jump_1025cd:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_1025e6
 		call   TIME_write_
@@ -1484,7 +1484,7 @@ GLOBAL_FUNC (ASM_AIL_set_timer_user)	/* 0x1025a0 */
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_1026ab
 	jump_102639:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_1026ab
 		xor    %edx,%edx
@@ -1548,7 +1548,7 @@ GLOBAL_FUNC (ASM_AIL_set_timer_period)	/* 0x1026c0 */
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_102701
 	jump_1026e8:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_102701
 		call   TIME_write_
@@ -1603,7 +1603,7 @@ GLOBAL_FUNC (ASM_AIL_set_timer_frequency)	/* 102750 */
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_102791
 	jump_102778:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_102791
 		call   TIME_write_
@@ -1658,7 +1658,7 @@ GLOBAL_FUNC (AIL_interrupt_divisor)	/* 102870 */
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_1028b1
 	jump_102898:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_1028b1
 		call   TIME_write_
@@ -1687,7 +1687,7 @@ GLOBAL_FUNC (AIL_interrupt_divisor)	/* 102870 */
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_10296a
 	jump_1028f6:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_10296a
 		xor    %edx,%edx
@@ -1751,7 +1751,7 @@ GLOBAL_FUNC (ASM_AIL_start_timer)	/* 0x102980 */
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_1029c1
 	jump_1029a8:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_1029c1
 		call   TIME_write_
@@ -1802,7 +1802,7 @@ GLOBAL_FUNC (AIL_release_timer_handle)	/* 102b60 */
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_102ba1
 	jump_102b88:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_102ba1
 		call   TIME_write_
@@ -1852,7 +1852,7 @@ GLOBAL_FUNC (ASM_AIL_release_all_timers)	/* 0x102be0 */
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_102c20
 	jump_102c07:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_102c20
 		call   TIME_write_
@@ -1896,7 +1896,7 @@ GLOBAL_FUNC (ASM_AIL_get_IO_environment)	/* 0x102c50 */
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_102c95
 	jump_102c7c:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_102c95
 		call   TIME_write_
@@ -1928,7 +1928,7 @@ GLOBAL_FUNC (ASM_AIL_get_IO_environment)	/* 0x102c50 */
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_102d4a
 	jump_102cde:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_102d4a
 		xor    %edx,%edx
@@ -1993,7 +1993,7 @@ GLOBAL_FUNC (ASM_AIL_install_driver)	/* 102d60 */
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_102da6
 	jump_102d8d:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_102da6
 		call   TIME_write_
@@ -2029,7 +2029,7 @@ GLOBAL_FUNC (ASM_AIL_install_driver)	/* 102d60 */
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_102e6b
 	jump_102df9:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_102e6b
 		xor    %edx,%edx
@@ -2093,7 +2093,7 @@ GLOBAL_FUNC (ASM_AIL_uninstall_driver)	/* 0x102e80 */
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_102ec1
 	jump_102ea8:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_102ec1
 		call   TIME_write_
@@ -2145,7 +2145,7 @@ GLOBAL_FUNC (AIL_install_DIG_INI)	/* 102f00 */
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_102f45
 	jump_102f2c:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_102f45
 		call   TIME_write_
@@ -2177,7 +2177,7 @@ GLOBAL_FUNC (AIL_install_DIG_INI)	/* 102f00 */
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_102ffa
 	jump_102f8e:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_102ffa
 		xor    %edx,%edx
@@ -2242,7 +2242,7 @@ GLOBAL_FUNC (AIL_install_DIG_driver_file)	/* 103010 */
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_103056
 	jump_10303d:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_103056
 		call   TIME_write_
@@ -2278,7 +2278,7 @@ GLOBAL_FUNC (AIL_install_DIG_driver_file)	/* 103010 */
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_10311b
 	jump_1030a9:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_10311b
 		xor    %edx,%edx
@@ -2342,7 +2342,7 @@ GLOBAL_FUNC (AIL_uninstall_DIG_driver)
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_103171
 	jump_103158:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_103171
 		call   TIME_write_
@@ -2394,7 +2394,7 @@ GLOBAL_FUNC (AIL_allocate_sample_handle)	/* 1031b0 */
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_1031f5
 	jump_1031dc:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_1031f5
 		call   TIME_write_
@@ -2426,7 +2426,7 @@ GLOBAL_FUNC (AIL_allocate_sample_handle)	/* 1031b0 */
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_1032aa
 	jump_10323e:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_1032aa
 		xor    %edx,%edx
@@ -2489,7 +2489,7 @@ GLOBAL_FUNC (AIL_release_sample_handle)
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_103421
 	jump_103408:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_103421
 		call   TIME_write_
@@ -2540,7 +2540,7 @@ GLOBAL_FUNC (AIL_init_sample)	/* 103460 */
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_1034a1
 	jump_103488:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_1034a1
 		call   TIME_write_
@@ -2593,7 +2593,7 @@ GLOBAL_FUNC (AIL_set_sample_file)	/* 1034e0 */
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_103526
 	jump_10350d:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_103526
 		call   TIME_write_
@@ -2633,7 +2633,7 @@ GLOBAL_FUNC (AIL_set_sample_file)	/* 1034e0 */
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_1035ea
 	jump_103584:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_1035ea
 		xor    %edx,%edx
@@ -2697,7 +2697,7 @@ GLOBAL_FUNC (AIL_set_sample_address)	/* 103600 */
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_103642
 	jump_103629:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_103642
 		call   TIME_write_
@@ -2758,7 +2758,7 @@ GLOBAL_FUNC (AIL_set_sample_type)	/* 1036a0 */
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_1036e2
 	jump_1036c9:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_1036e2
 		call   TIME_write_
@@ -2818,7 +2818,7 @@ GLOBAL_FUNC (AIL_start_sample)	/* 103740 */
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_103781
 	jump_103768:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_103781
 		call   TIME_write_
@@ -2869,7 +2869,7 @@ GLOBAL_FUNC (AIL_end_sample)
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_103901
 	jump_1038e8:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_103901
 		call   TIME_write_
@@ -2920,7 +2920,7 @@ GLOBAL_FUNC (AIL_set_sample_playback_rate)	/* 103940 */
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_103981
 	jump_103968:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_103981
 		call   TIME_write_
@@ -2975,7 +2975,7 @@ GLOBAL_FUNC (AIL_set_sample_volume)	/* 1039d0 */
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_103a11
 	jump_1039f8:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_103a11
 		call   TIME_write_
@@ -3030,7 +3030,7 @@ GLOBAL_FUNC (AIL_set_sample_pan)	/* 103a60 */
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_103aa1
 	jump_103a88:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_103aa1
 		call   TIME_write_
@@ -3085,7 +3085,7 @@ GLOBAL_FUNC (ail_set_sample_loop_count)	/* 103af0 */
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_103b31
 	jump_103b18:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_103b31
 		call   TIME_write_
@@ -3141,7 +3141,7 @@ GLOBAL_FUNC (ASM_AIL_sample_status)	/* 103b80 */
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_103bc5
 	jump_103bac:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_103bc5
 		call   TIME_write_
@@ -3173,7 +3173,7 @@ GLOBAL_FUNC (ASM_AIL_sample_status)	/* 103b80 */
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_103c7a
 	jump_103c0e:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_103c7a
 		xor    %edx,%edx
@@ -3236,7 +3236,7 @@ GLOBAL_FUNC (ail_set_digital_master_volume)	/* 1040d0 */
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_104111
 	jump_1040f8:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_104111
 		call   TIME_write_
@@ -3293,7 +3293,7 @@ GLOBAL_FUNC (ail_minimum_sample_buffer_size)	/* 104390 */
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_1043d6
 	jump_1043bd:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_1043d6
 		call   TIME_write_
@@ -3333,7 +3333,7 @@ GLOBAL_FUNC (ail_minimum_sample_buffer_size)	/* 104390 */
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_10449a
 	jump_104434:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_10449a
 		xor    %edx,%edx
@@ -3397,7 +3397,7 @@ GLOBAL_FUNC (AIL_sample_buffer_ready)	/* 1044b0 */
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_1044f5
 	jump_1044dc:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_1044f5
 		call   TIME_write_
@@ -3429,7 +3429,7 @@ GLOBAL_FUNC (AIL_sample_buffer_ready)	/* 1044b0 */
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_1045aa
 	jump_10453e:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_1045aa
 		xor    %edx,%edx
@@ -3493,7 +3493,7 @@ GLOBAL_FUNC (AIL_load_sample_buffer)	/* 1045c0 */
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_104602
 	jump_1045e9:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_104602
 		call   TIME_write_
@@ -3559,7 +3559,7 @@ GLOBAL_FUNC (AIL_register_EOS_callback)
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_104a86
 	jump_104a6d:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_104a86
 		call   TIME_write_
@@ -3595,7 +3595,7 @@ GLOBAL_FUNC (AIL_register_EOS_callback)
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_104b4b
 	jump_104ad9:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_104b4b
 		xor    %edx,%edx
@@ -3660,7 +3660,7 @@ GLOBAL_FUNC (AIL_set_sample_user_data)	/* 104c80 */
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_104cc2
 	jump_104ca9:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_104cc2
 		call   TIME_write_
@@ -3722,7 +3722,7 @@ GLOBAL_FUNC (ail_func_104d20)
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_104d66
 	jump_104d4d:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_104d66
 		call   TIME_write_
@@ -3758,7 +3758,7 @@ GLOBAL_FUNC (ail_func_104d20)
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_104e2b
 	jump_104db9:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_104e2b
 		xor    %edx,%edx
@@ -3823,7 +3823,7 @@ GLOBAL_FUNC (ail_install_mdi_ini)	/* 104f50 */
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_104f95
 	jump_104f7c:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_104f95
 		call   TIME_write_
@@ -3855,7 +3855,7 @@ GLOBAL_FUNC (ail_install_mdi_ini)	/* 104f50 */
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_10504a
 	jump_104fde:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_10504a
 		xor    %edx,%edx
@@ -3920,7 +3920,7 @@ GLOBAL_FUNC (ASM_AIL_install_MDI_driver_file)	/* 0x105060 */
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_1050a6
 	jump_10508d:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_1050a6
 		call   TIME_write_
@@ -3956,7 +3956,7 @@ GLOBAL_FUNC (ASM_AIL_install_MDI_driver_file)	/* 0x105060 */
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_10516b
 	jump_1050f9:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_10516b
 		xor    %edx,%edx
@@ -4020,7 +4020,7 @@ GLOBAL_FUNC (ASM_AIL_uninstall_MDI_driver)	/* 0x105180 */
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_1051c1
 	jump_1051a8:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_1051c1
 		call   TIME_write_
@@ -4072,7 +4072,7 @@ GLOBAL_FUNC (ASM_AIL_allocate_sequence_handle)	/* 0x105200 */
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_105245
 	jump_10522c:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_105245
 		call   TIME_write_
@@ -4104,7 +4104,7 @@ GLOBAL_FUNC (ASM_AIL_allocate_sequence_handle)	/* 0x105200 */
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_1052fa
 	jump_10528e:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_1052fa
 		xor    %edx,%edx
@@ -4169,7 +4169,7 @@ GLOBAL_FUNC (AIL_init_sequence)
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_1053d6
 	jump_1053bd:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_1053d6
 		call   TIME_write_
@@ -4209,7 +4209,7 @@ GLOBAL_FUNC (AIL_init_sequence)
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_10549a
 	jump_105434:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_10549a
 		xor    %edx,%edx
@@ -4272,7 +4272,7 @@ GLOBAL_FUNC (AIL_start_sequence)
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_1054f1
 	jump_1054d8:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_1054f1
 		call   TIME_write_
@@ -4323,7 +4323,7 @@ GLOBAL_FUNC (AIL_stop_sequence)
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_105571
 	jump_105558:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_105571
 		call   TIME_write_
@@ -4374,7 +4374,7 @@ GLOBAL_FUNC (AIL_resume_sequence)
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_1055f1
 	jump_1055d8:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_1055f1
 		call   TIME_write_
@@ -4425,7 +4425,7 @@ GLOBAL_FUNC (AIL_end_sequence)
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_105671
 	jump_105658:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_105671
 		call   TIME_write_
@@ -4477,7 +4477,7 @@ GLOBAL_FUNC (AIL_set_sequence_tempo)
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_1056f2
 	jump_1056d9:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_1056f2
 		call   TIME_write_
@@ -4538,7 +4538,7 @@ GLOBAL_FUNC (AIL_set_sequence_volume)
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_105792
 	jump_105779:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_105792
 		call   TIME_write_
@@ -4599,7 +4599,7 @@ GLOBAL_FUNC (AIL_sequence_status)
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_1058c5
 	jump_1058ac:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_1058c5
 		call   TIME_write_
@@ -4631,7 +4631,7 @@ GLOBAL_FUNC (AIL_sequence_status)
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_10597a
 	jump_10590e:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_10597a
 		xor    %edx,%edx
@@ -4694,7 +4694,7 @@ GLOBAL_FUNC (AIL_set_XMIDI_master_volume)
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_105d01
 	jump_105ce8:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_105d01
 		call   TIME_write_
@@ -4750,7 +4750,7 @@ GLOBAL_FUNC (ASM_AIL_MDI_driver_type)
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_105fc5
 	jump_105fac:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_105fc5
 		call   TIME_write_
@@ -4782,7 +4782,7 @@ GLOBAL_FUNC (ASM_AIL_MDI_driver_type)
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_10607a
 	jump_10600e:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_10607a
 		xor    %edx,%edx
@@ -4845,7 +4845,7 @@ GLOBAL_FUNC (ASM_AIL_set_GTL_filename_prefix)	/* 106090 */
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_1060d1
 	jump_1060b8:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_1060d1
 		call   TIME_write_
@@ -4899,7 +4899,7 @@ GLOBAL_FUNC (AIL_sequence_position)
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_10682a
 	jump_106811:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_10682a
 		call   TIME_write_
@@ -4936,7 +4936,7 @@ GLOBAL_FUNC (AIL_sequence_position)
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_1068f1
 	jump_10687e:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_1068f1
 		xor    %edx,%edx
@@ -5001,7 +5001,7 @@ GLOBAL_FUNC (AIL_branch_index)
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_106941
 	jump_106928:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_106941
 		call   TIME_write_
@@ -5058,7 +5058,7 @@ GLOBAL_FUNC (AIL_register_trigger_callback)
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_106af6
 	jump_106add:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_106af6
 		call   TIME_write_
@@ -5094,7 +5094,7 @@ GLOBAL_FUNC (AIL_register_trigger_callback)
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_106bbb
 	jump_106b49:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_106bbb
 		xor    %edx,%edx
@@ -5159,7 +5159,7 @@ GLOBAL_FUNC (AIL_lock_channel)
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_1072e5
 	jump_1072cc:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_1072e5
 		call   TIME_write_
@@ -5191,7 +5191,7 @@ GLOBAL_FUNC (AIL_lock_channel)
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_10739a
 	jump_10732e:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_10739a
 		xor    %edx,%edx
@@ -5254,7 +5254,7 @@ GLOBAL_FUNC (AIL_release_channel)
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_1073f1
 	jump_1073d8:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_1073f1
 		call   TIME_write_
@@ -5310,7 +5310,7 @@ GLOBAL_FUNC (AIL_map_sequence_channel)
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_107482
 	jump_107469:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_107482
 		call   TIME_write_
@@ -5371,7 +5371,7 @@ GLOBAL_FUNC (AIL_send_channel_voice_message)
 		cmpl   $0x0,AIL_sys_debug
 		je     jump_107642
 	jump_107629:
-		call   AIL_API_background
+		call   ac_AIL2OAL_API_background
 		test   %eax,%eax
 		jne    jump_107642
 		call   TIME_write_
@@ -5472,7 +5472,7 @@ ASM_AIL_API_unlock:
 /*----------------------------------------------------------------*/
 ail_API_timer:	/* 110e62 */
 /*----------------------------------------------------------------*/
-		cmpl   $0x0,%cs:AIL_entry_count
+		cmpl   $0x0,%cs:AIL_bkgnd_flag
 		ja     jump_110f81
 		pusha
 		push   %ds
@@ -5483,7 +5483,7 @@ ail_API_timer:	/* 110e62 */
 		cld
 		data16 		mov    %cs:AIL_local_DS,%ds
 		data16 		mov    %cs:AIL_local_DS,%es
-		incl   AIL_entry_count
+		incl   AIL_bkgnd_flag
 		mov    %ss,old_ss
 		mov    %esp,old_sp
 		mov    %ds,%ax
@@ -5532,7 +5532,7 @@ ail_API_timer:	/* 110e62 */
 		decl   data_159fd4
 		mov    old_ss,%ss
 		mov    old_sp,%esp
-		decl   AIL_entry_count
+		decl   AIL_bkgnd_flag
 		mov    AIL_bios_cb,%ecx
 		movzwl AIL_bios_cb_seg,%eax
 		mov    %ebp,%esp
@@ -5552,7 +5552,7 @@ ail_API_timer:	/* 110e62 */
 	jump_110f65:
 		mov    old_ss,%ss
 		mov    old_sp,%esp
-		decl   AIL_entry_count
+		decl   AIL_bkgnd_flag
 		mov    %ebp,%esp
 		pop    %gs
 		pop    %fs
@@ -5696,7 +5696,7 @@ GLOBAL_FUNC (ASM_AILA_startup)
 		data16 		mov    %ds,AIL_local_DS
 		data16 		mov    AIL_local_DS,%es
 		call   ac_AILA_VMM_lock
-		movl   $0x0,AIL_entry_count
+		movl   $0x0,AIL_bkgnd_flag
 		movl   $0x0,AIL_lock_count
 		movl   $0xffffffff,AIL_PIT_period
 		movl   $0xffffffff,AIL_ISR_IRQ
@@ -6064,12 +6064,12 @@ _AIL_API_delay:	/* 0x1115C1 */
 
 
 /*----------------------------------------------------------------*/
-AIL_API_background:
+ASM_AIL_API_background:
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %esi
 		push   %esi
-		mov    AIL_entry_count,%eax
+		mov    AIL_bkgnd_flag,%eax
 		pop    %esi
 		pop    %esi
 		pop    %ebx
@@ -10301,7 +10301,7 @@ AILXMIDI_start_:
 
 
 /*----------------------------------------------------------------*/
-_XMI_message_size:	/* 0x114750 */
+ASM_XMI_message_size:	/* 0x114750 */
 /*----------------------------------------------------------------*/
 		mov    0x4(%esp),%eax
 		and    $0xf0,%eax
@@ -10377,7 +10377,7 @@ _XMI_MIDI_message:	/* 0x114800 */
 		mov    0x10(%esp),%ebx
 		mov    0x14(%esp),%edx
 		push   %edx
-		call   _XMI_message_size
+		call   ac_XMI_message_size
 		mov    0x1ac(%ebx),%ecx
 		mov    %eax,%esi
 		add    %ecx,%eax
@@ -11278,7 +11278,7 @@ _XMI_flush_note_queue:	/* 0x115240 */
 		add    $0x4,%esp
 		test   %esi,%esi
 		je     jump_1152c3
-		call   AIL_background
+		call   ac_AIL_background
 		test   %eax,%eax
 		jne    jump_1152c3
 		push   $0x3
@@ -11983,7 +11983,7 @@ _XMI_serve:	/* 0x1156A0 */
 		mov    (%edx),%al
 		and    $0xff,%eax
 		push   %eax
-		call   _XMI_message_size
+		call   ac_XMI_message_size
 		mov    0x14(%ebx),%ecx
 		add    %eax,%ecx
 		add    $0x4,%esp
@@ -13415,7 +13415,7 @@ _AIL_API_init_sequence:	/* 0x116840 */
 	jump_116aa7:
 		cmpw   $0x0,0x8(%edi)
 		je     jump_116b5f
-		call   AIL_background
+		call   ac_AIL_background
 		test   %eax,%eax
 		je     jump_116adb
 		mov    $AIL_error,%edi
@@ -20617,14 +20617,14 @@ data_159f14:
 		.long	0x0
 
 /* μs */
-GLOBAL (timer_cb_elapsed_times)	/* 159f18 */
+GLOBAL (timer_cb_elapsed_times)	/* 0x159f18 */
 		.fill   0x40
 
 /* μs */
-GLOBAL (timer_cb_periods)		/* 159f58 */
+GLOBAL (timer_cb_periods)		/* 0x159f58 */
 		.fill   0x40
 
-GLOBAL (timer_trigger)	/* 159ed8 */
+GLOBAL (timer_trigger)			/* 0x159ed8 */
 		.fill   0x3c
 data_159fd4:
 		.long	0x0
@@ -20638,11 +20638,11 @@ GLOBAL (AIL_bios_cb_seg)		/* 0x15a01c */
 		.short  0x0
 GLOBAL (AIL_bios_cb_real)		/* 0x15A01E */
 		.long	0x0
-GLOBAL (AIL_PIT_divisor)			/* 0x15a022 */
+GLOBAL (AIL_PIT_divisor)		/* 0x15a022 */
 		.long	0x0
 GLOBAL (AIL_PIT_period)			/* 0x15a026 */
 		.long	0x0
-GLOBAL (AIL_entry_count)		/* 0x15a02a */
+GLOBAL (AIL_bkgnd_flag)			/* 0x15a02a */
 		.long	0x0
 GLOBAL (AIL_lock_count)			/* 0x15a02e */
 		.long	0x0
@@ -20658,12 +20658,12 @@ GLOBAL (ISR_stack)				/* 0x15a040 */
 		.fill   0xa00
 old_ss:
 		.long	0x0
-GLOBAL (old_sp)	/* 0x15AA44 */
+GLOBAL (old_sp)					/* 0x15AA44 */
 		.long	0x0
 
-GLOBAL (AIL_entry) /* 0x15aa48 */
+GLOBAL (AIL_entry)				/* 0x15aa48 */
 		.long	0x0
-GLOBAL (AIL_use_locked) /* 0x15AA4C */
+GLOBAL (AIL_use_locked)			/* 0x15AA4C */
 		.long	0x0
 data_15aa50:
 		.ascii  "\x00\x02\x04\x06\x08\x0a\x0c\x0e"
@@ -20684,10 +20684,10 @@ data_15aad4:
 		.long	0x0
 data_15aad8:
 		.long	0x0
-GLOBAL (GTL_prefix)			/* 0x15AADC */
+GLOBAL (GTL_prefix)				/* 0x15AADC */
 		.string "SAMPLE"
 		.fill   0x79
-GLOBAL (MDI_entry)			/* 0x15ab5c */
+GLOBAL (MDI_entry)				/* 0x15ab5c */
 		.long	0x0
 GLOBAL (MDI_locked)
 		.long	0x0
@@ -20698,7 +20698,7 @@ data_15ab6e:
 		.byte	0xff
 data_15ab6f:
 		.byte	0xff
-_locked_AILXDIG:	/* 0x15AB70 */
+_locked_AILXDIG:				/* 0x15AB70 */
 		.long	0x0
 
 

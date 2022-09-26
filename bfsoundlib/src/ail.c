@@ -48,6 +48,7 @@ extern SNDCARD_IO_PARMS AIL_last_IO_attempt;
 extern uint32_t AIL_entry;
 extern int32_t AIL_flags;
 extern int32_t AIL_use_locked;
+extern uint32_t AIL_bkgnd_flag;
 
 extern int32_t timer_cb_periods[AIL_N_TIMERS];
 extern int32_t timer_cb_elapsed_times[AIL_N_TIMERS];
@@ -311,6 +312,11 @@ int32_t AIL2OAL_API_set_preference(uint32_t number, int32_t value)
     oldval = AIL_preference[number];
     AIL_preference[number] = value;
     return oldval;
+}
+
+int32_t AIL2OAL_API_background(void)
+{
+    return AIL_bkgnd_flag;
 }
 
 void AIL2OAL_API_set_timer_period(HSNDTIMER timer, uint32_t usec)

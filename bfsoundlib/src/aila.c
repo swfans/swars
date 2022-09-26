@@ -62,7 +62,7 @@ extern uint32_t AIL_PIT_divisor;
  */
 extern uint32_t AIL_PIT_period;
 
-extern uint32_t AIL_entry_count;
+extern uint32_t AIL_bkgnd_flag;
 
 extern uint32_t AIL_lock_count;
 
@@ -85,7 +85,7 @@ void AILA_startup(void)
 {
     // removed DOS-specific calls, place 1
     AILA_VMM_lock();
-    AIL_entry_count = 0;
+    AIL_bkgnd_flag = 0;
     AIL_lock_count = 0;
     AIL_PIT_period = -1;
     AIL_ISR_IRQ = -1;

@@ -30,6 +30,9 @@ extern "C" {
 
 #pragma pack(1)
 
+/** Max # of notes "on" */
+#define AIL_MAX_NOTES 32
+/** # of possible MIDI channels */
 #define AIL_NUM_CHANS 16
 
 typedef struct SNDCARD_IO_PARMS SNDCARD_IO_PARMS;
@@ -157,6 +160,21 @@ enum AILTimerStatus {
     AILT_FREE            = 0, /**< Timer handle is free for allocation */
     AILT_STOPPED         = 1, /**< Timer is stopped */
     AILT_RUNNING         = 2, /**< Timer is running */
+};
+
+/** Non-specific XMIDI/MIDI event types
+ */
+enum AILMIDIEvents {
+    MDI_EV_NOTE_OFF      = 0x80,
+    MDI_EV_NOTE_ON       = 0x90,
+    MDI_EV_POLY_PRESS    = 0xa0,
+    MDI_EV_CONTROL       = 0xb0,
+    MDI_EV_PROGRAM       = 0xc0,
+    MDI_EV_CHAN_PRESS    = 0xd0,
+    MDI_EV_PITCH         = 0xe0,
+    MDI_EV_SYSEX         = 0xf0,
+    MDI_EV_ESC           = 0xf7,
+    MDI_EV_META          = 0xff,
 };
 
 /** Handle to timer.
