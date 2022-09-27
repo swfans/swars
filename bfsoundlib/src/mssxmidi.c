@@ -229,6 +229,16 @@ int32_t XMI_attempt_MDI_detection(MDI_DRIVER *mdidrv, const SNDCARD_IO_PARMS *io
     return AIL_call_driver(mdidrv->drvr, DRV_VERIFY_IO, NULL, NULL);
 }
 
+/** Timer interrupt routine for XMIDI sequencing.
+ */
+void XMI_serve(MDI_DRIVER *mdidrv)
+{
+    asm volatile (
+      "push %0\n"
+      "call ASM_XMI_serve\n"
+        :  : "g" (mdidrv));
+}
+
 /** Uninstall XMIDI audio driver, freeing all allocated resources.
  *
  * This function is called via the AIL_DRIVER.destructor vector only
@@ -255,11 +265,258 @@ void XMI_destroy_MDI_driver(MDI_DRIVER *mdidrv)
 MDI_DRIVER *XMI_construct_MDI_driver(AIL_DRIVER *drvr, const SNDCARD_IO_PARMS *iop)
 {
     MDI_DRIVER *mdidrv;
+#if 0
     asm volatile (
       "push %2\n"
       "push %1\n"
       "call ASM_XMI_construct_MDI_driver\n"
         : "=r" (mdidrv) : "g" (drvr), "g" (iop));
+#else
+    SNDCARD_IO_PARMS use;
+    int32_t i;
+    int32_t detected;
+    VDI_CALL VDI;
+    char *envname;
+    char *envval;
+
+    // Ensure that all AILXMIDI code and data is locked into memory
+    AILXMIDI_start();
+
+    // Allocate memory for MDI_DRIVER structure
+    mdidrv = AIL_MEM_alloc_lock(sizeof(MDI_DRIVER));
+    if (mdidrv == NULL) {
+        AIL_set_error("Could not allocate memory for driver.");
+        return NULL;
+    }
+
+    mdidrv->drvr = drvr;
+
+    // Reject driver if not of type .MDI
+    if (mdidrv->drvr->type != AIL3MDI) {
+        AIL_set_error(".MDI driver required.");
+        AIL_MEM_free_lock(mdidrv, sizeof(MDI_DRIVER));
+        return NULL;
+    }
+
+    // Get DDT and DST addresses
+    AIL_call_driver(mdidrv->drvr, DRV_GET_INFO, NULL, &VDI);
+
+    mdidrv->DDT = (void *) (((uint32_t)VDI.DX << 4) + (uint32_t)VDI.AX);
+    mdidrv->DST = (void *) (((uint32_t)VDI.CX << 4) + (uint32_t)VDI.BX);
+
+    // Copy library environment string to DST, if requested
+    envname = mdidrv->DDT->library_environment;
+
+    if (!((envname == NULL) || (envname[0] == '\0')))
+    {
+        envval = getenv(envname);
+
+        if (!((envval == NULL) || (envval[0] == '\0')))
+        {
+            i = strlen(envval);
+            if (i > 127) i = 127;
+            memcpy(mdidrv->DST->library_directory, envval, i);
+            mdidrv->DST->library_directory[i] = '\0';
+        }
+    }
+
+    // Copy AIL 2.X GTL filename to DST, if valid
+    // (By default, AIL applications use SAMPLE.XXX GTL filenames)
+    envname = mdidrv->DDT->GTL_suffix;
+    if (!((envname == NULL) || (envname[0] == '\0'))) {
+        strcpy(mdidrv->DST->GTL_filename, GTL_prefix);
+        strcat(mdidrv->DST->GTL_filename, envname);
+    } else {
+        mdidrv->DST->GTL_filename[0] = '\0';
+    }
+
+    // Verify hardware I/O parameters
+    memset(&AIL_last_IO_attempt, -1, sizeof(SNDCARD_IO_PARMS));
+
+    // If explicit IO_PARMS structure provided by application, try it
+    // first
+    detected = 0;
+    if (iop != NULL) {
+        AIL_last_IO_attempt = *iop;
+        if (XMI_attempt_MDI_detection(mdidrv, iop)) {
+            detected = 1;
+            use = *iop;
+        }
+    }
+
+    // Next, try device-specific environment string (if applicable)
+    if (!detected)
+    {
+        iop = AIL_get_IO_environment(mdidrv->drvr);
+        if (iop != NULL) {
+            AIL_last_IO_attempt = *iop;
+            if (XMI_attempt_MDI_detection(mdidrv, iop)) {
+                detected = 1;
+                use = *iop;
+            }
+        }
+    }
+
+    // Finally, try all common_IO_configurations[] entries in driver
+    if ((!detected) && (AIL_preference[AIL_SCAN_FOR_HARDWARE] == 1))
+    {
+        for (i = 0; i < mdidrv->drvr->VHDR->num_IO_configurations; i++)
+        {
+            iop = &((SNDCARD_IO_PARMS *)
+                (mdidrv->drvr->VHDR->common_IO_configurations))[i];
+
+            if (i == 0) {
+                AIL_last_IO_attempt = *iop;
+            }
+            if (XMI_attempt_MDI_detection(mdidrv, iop)) {
+                detected = 1;
+                use = *iop;
+                break;
+            }
+        }
+    }
+
+    // If all detection attempts failed, return NULL
+    if (detected) {
+        AIL_last_IO_attempt = use;
+    } else {
+        AIL_set_error("XMIDI sound hardware not found.");
+        AIL_MEM_free_lock(mdidrv, sizeof(MDI_DRIVER));
+        return NULL;
+    }
+
+    // Initialize device
+    AIL_call_driver(mdidrv->drvr, DRV_INIT_DEV, NULL, NULL);
+
+    mdidrv->drvr->initialized = 1;
+
+    // Initialize instrument manager
+    AIL_call_driver(mdidrv->drvr, MDI_INIT_INS_MGR, NULL, &VDI);
+    if (!VDI.AX) {
+        AIL_set_error("Could not initialize instrument manager.");
+        AIL_call_driver(mdidrv->drvr, DRV_SHUTDOWN_DEV, NULL, NULL);
+        mdidrv->drvr->initialized = 0;
+        AIL_MEM_free_lock(mdidrv, sizeof(MDI_DRIVER));
+        return NULL;
+    }
+
+    // Allocate SNDSEQUENCE structures for driver
+    mdidrv->n_sequences = AIL_preference[MDI_SEQUENCES];
+    mdidrv->sequences = AIL_MEM_alloc_lock(sizeof(SNDSEQUENCE) * mdidrv->n_sequences);
+    if (mdidrv->sequences == NULL) {
+        AIL_set_error("Could not allocate SEQUENCE structures.");
+        AIL_call_driver(mdidrv->drvr, DRV_SHUTDOWN_DEV, NULL, NULL);
+        mdidrv->drvr->initialized = 0;
+        AIL_MEM_free_lock(mdidrv, sizeof(MDI_DRIVER));
+        return NULL;
+    }
+
+    for (i = 0; i < mdidrv->n_sequences; i++)
+    {
+        mdidrv->sequences[i].status = SNDSEQ_FREE;
+        mdidrv->sequences[i].driver = mdidrv;
+    }
+
+    // Initialize miscellaneous MDI_DRIVER variables
+    mdidrv->event_trap = NULL;
+    mdidrv->timbre_trap = NULL;
+
+    mdidrv->message_count = 0;
+    mdidrv->offset = 0;
+
+    mdidrv->interval_time = 1000000L / AIL_preference[MDI_SERVICE_RATE];
+
+    mdidrv->disable = 0;
+
+    mdidrv->master_volume = 127;
+
+    // Initialize channel lock table to NULL (all physical channels
+    // available)
+    for (i=0; i < AIL_NUM_CHANS; i++)
+    {
+      mdidrv->lock[i] = 0;
+      mdidrv->locker[i] = NULL;
+      mdidrv->owner[i] = NULL;
+      mdidrv->user[i] = NULL;
+      mdidrv->state[i] = 0;
+      mdidrv->notes[i] = 0;
+    }
+
+    // Allocate timer for XMIDI sequencing
+    mdidrv->timer = AIL_register_timer((AILTIMERCB)XMI_serve);
+    if (mdidrv->timer == -1) {
+        AIL_set_error("Out of timer handles.");
+        AIL_call_driver(mdidrv->drvr, DRV_SHUTDOWN_DEV, NULL, NULL);
+        mdidrv->drvr->initialized = 0;
+        AIL_MEM_free_lock(mdidrv->sequences, mdidrv->n_sequences * sizeof(SNDSEQUENCE));
+        AIL_MEM_free_lock(mdidrv, sizeof(MDI_DRIVER));
+        return NULL;
+    }
+
+    AIL_set_timer_user(mdidrv->timer, mdidrv);
+
+    // Set destructor handler and descriptor
+    mdidrv->drvr->destructor = (void *) XMI_destroy_MDI_driver;
+    mdidrv->drvr->descriptor = mdidrv;
+
+   // Initialize synthesizer to General MIDI defaults
+    for (i=0; i < AIL_NUM_CHANS; i++)
+    {
+        XMI_MIDI_message(mdidrv, MDI_EV_CONTROL | i,
+                MDI_CTR_PATCH_BANK_SEL, 0);
+
+        XMI_MIDI_message(mdidrv, MDI_EV_PROGRAM | i,
+                0, 0);
+
+        XMI_MIDI_message(mdidrv, MDI_EV_PITCH   | i,
+                0x00,0x40);
+
+        XMI_MIDI_message(mdidrv, MDI_EV_CONTROL | i,
+                MDI_CTR_VOICE_PROTECT, 0);
+
+        XMI_MIDI_message(mdidrv, MDI_EV_CONTROL | i,
+                MDI_CTR_MODULATION, 0);
+
+        XMI_MIDI_message(mdidrv, MDI_EV_CONTROL | i,
+                MDI_CTR_PART_VOLUME, AIL_preference[MDI_DEFAULT_VOLUME]);
+
+        XMI_MIDI_message(mdidrv, MDI_EV_CONTROL | i,
+                MDI_CTR_PANPOT, 64);
+
+        XMI_MIDI_message(mdidrv, MDI_EV_CONTROL | i,
+                MDI_CTR_EXPRESSION, 127);
+
+        XMI_MIDI_message(mdidrv, MDI_EV_CONTROL | i,
+                MDI_CTR_SUSTAIN, 0);
+
+        XMI_MIDI_message(mdidrv, MDI_EV_CONTROL | i,
+                MDI_CTR_REVERB, 40);
+
+        XMI_MIDI_message(mdidrv, MDI_EV_CONTROL | i,
+                MDI_CTR_CHORUS, 0);
+
+        XMI_MIDI_message(mdidrv, MDI_EV_CONTROL | i,
+                MDI_CTR_RPN_LSB, 0);
+
+        XMI_MIDI_message(mdidrv, MDI_EV_CONTROL | i,
+                MDI_CTR_RPN_MSB, 0);
+
+        XMI_MIDI_message(mdidrv, MDI_EV_CONTROL | i,
+                MDI_CTR_DATA_LSB, 0);
+
+        XMI_MIDI_message(mdidrv, MDI_EV_CONTROL | i,
+                MDI_CTR_PB_RANGE, AIL_preference[MDI_DEFAULT_BEND_RANGE]);
+
+        XMI_flush_buffer(mdidrv);
+
+        if (!(i & 3))
+            AIL_delay(3);
+    }
+
+    // Start XMIDI timer service and return MDI_DRIVER descriptor
+    AIL_set_timer_frequency(mdidrv->timer, AIL_preference[MDI_SERVICE_RATE]);
+    AIL_start_timer(mdidrv->timer);
+#endif
     return mdidrv;
 }
 

@@ -11663,7 +11663,7 @@ _XMI_update_volume:	/* 0x115660 */
 
 
 /*----------------------------------------------------------------*/
-_XMI_serve:	/* 0x1156A0 */
+GLOBAL_FUNC (ASM_XMI_serve)	/* 0x1156A0 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %esi
@@ -12711,7 +12711,7 @@ GLOBAL_FUNC (ASM_XMI_construct_MDI_driver)	/* 0x115EA0 */
 		mov    %esi,0x15c(%ebx)
 		cmp    %eax,%ebx
 		jne    jump_1162f0
-		push   $_XMI_serve
+		push   $ac_XMI_serve
 		call   ac_AIL_register_timer
 		add    $0x4,%esp
 		mov    %eax,0xc(%ebp)

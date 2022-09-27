@@ -187,9 +187,12 @@ enum AILMIDIControlMsgs {
     MDI_CTR_PART_VOLUME      = 7,
     MDI_CTR_PANPOT           = 10,
     MDI_CTR_EXPRESSION       = 11,
+    MDI_CTR_DATA_LSB         = 38, // not set everywhere - unsure why
     MDI_CTR_SUSTAIN          = 64,
     MDI_CTR_REVERB           = 91,
     MDI_CTR_CHORUS           = 93,
+    MDI_CTR_RPN_LSB          = 100,
+    MDI_CTR_RPN_MSB          = 101,
     MDI_CTR_CHAN_MUTE        = 107,
     MDI_CTR_CHAN_PROTECT     = 111,
     MDI_CTR_VOICE_PROTECT    = 112,
