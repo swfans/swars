@@ -85,7 +85,26 @@ HSNDTIMER AIL_register_timer(AILTIMERCB fn);
  */
 void *AIL_set_timer_user(HSNDTIMER timer, void *user_data);
 
+/** Release (unlock) a locked physical channel.
+ */
+void AIL_release_channel(MDI_DRIVER *mdidrv, int32_t channel);
+
 uint32_t AIL_sample_status(SNDSAMPLE *s);
+
+/** Stop playback of sequence.
+ *
+ * Sequence playback may be resumed with AIL_resume_sequence(), or
+ * restarted from the beginning with AIL_start_sequence().
+ */
+void AIL_stop_sequence(SNDSEQUENCE *seq);
+
+/** Resume playback of previously stopped sequence.
+ */
+void AIL_resume_sequence(SNDSEQUENCE *seq);
+
+/** Terminate playback of sequence, setting sequence status to SEQ_DONE.
+ */
+void AIL_end_sequence(SNDSEQUENCE *seq);
 
 /** System-independent delay in 1/60 second intervals.
  *

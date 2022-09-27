@@ -287,6 +287,45 @@ uint32_t AIL_sample_status(SNDSAMPLE *s)
     return status;
 }
 
+void AIL_stop_sequence(SNDSEQUENCE *seq)
+{
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s(0x%p)\n", __func__, seq);
+
+    AIL2OAL_API_stop_sequence(seq);
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Finished\n");
+    AIL_indent--;
+}
+
+void AIL_resume_sequence(SNDSEQUENCE *seq)
+{
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s(0x%p)\n", __func__, seq);
+
+    AIL2OAL_API_resume_sequence(seq);
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Finished\n");
+    AIL_indent--;
+}
+
+void AIL_end_sequence(SNDSEQUENCE *seq)
+{
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s(0x%p)\n", __func__, seq);
+
+    AIL2OAL_API_end_sequence(seq);
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Finished\n");
+    AIL_indent--;
+}
+
 void AIL_delay(int32_t intervals)
 {
     AIL_indent++;
@@ -458,6 +497,19 @@ int32_t AIL_read_INI(AIL_INI *ini, char *fname)
     AIL_indent--;
 
     return result;
+}
+
+void AIL_release_channel(MDI_DRIVER *mdidrv, int32_t channel)
+{
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s(0x%p, %d)\n", __func__, mdidrv, channel);
+
+    AIL2OAL_API_release_channel(mdidrv, channel);
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Finished\n");
+    AIL_indent--;
 }
 
 SNDSEQUENCE *AIL_allocate_sequence_handle(MDI_DRIVER *mdidrv)

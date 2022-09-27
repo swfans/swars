@@ -2603,7 +2603,7 @@ cb_get_trigger_info:	/* 0x0F0340 */
 		jne    jump_f03ef
 		mov    SongHandle,%edx
 		push   %edx
-		call   AIL_stop_sequence
+		call   ac_AIL_stop_sequence
 		add    $0x4,%esp
 		push   $0x1
 		push   $0x0
@@ -2617,7 +2617,7 @@ cb_get_trigger_info:	/* 0x0F0340 */
 		add    $0x14,%esp
 		mov    SongHandle,%esi
 		push   %esi
-		call   AIL_resume_sequence
+		call   ac_AIL_resume_sequence
 		add    $0x4,%esp
 	jump_f03ef:
 		pop    %ebp
@@ -2678,11 +2678,11 @@ GLOBAL_FUNC (StartMusic_)
 		je     jump_f04cf
 		mov    SongHandle,%ecx
 		push   %ecx
-		call   AIL_stop_sequence
+		call   ac_AIL_stop_sequence
 		add    $0x4,%esp
 		mov    SongHandle,%edi
 		push   %edi
-		call   AIL_end_sequence
+		call   ac_AIL_end_sequence
 		add    $0x4,%esp
 	jump_f04cf:
 		xor    %ebx,%ebx
@@ -4381,11 +4381,11 @@ GLOBAL_FUNC(ASM_StopMusic)
 		je     jump_108c51
 		mov    SongHandle,%ecx
 		push   %ecx
-		call   AIL_stop_sequence
+		call   ac_AIL_stop_sequence
 		add    $0x4,%esp
 		mov    SongHandle,%esi
 		push   %esi
-		call   AIL_end_sequence
+		call   ac_AIL_end_sequence
 		add    $0x4,%esp
 	jump_108c51:
 		xor    %ebx,%ebx
@@ -4412,11 +4412,11 @@ FreeMusic_:
 		je     jump_108ca3
 		mov    SongHandle,%edx
 		push   %edx
-		call   AIL_stop_sequence
+		call   ac_AIL_stop_sequence
 		add    $0x4,%esp
 		mov    SongHandle,%ebx
 		push   %ebx
-		call   AIL_end_sequence
+		call   ac_AIL_end_sequence
 		xor    %ebx,%ebx
 		add    $0x4,%esp
 		mov    %bx,SongCurrentlyPlaying

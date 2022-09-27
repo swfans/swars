@@ -222,11 +222,32 @@ int32_t XMI_attempt_MDI_detection(MDI_DRIVER *mdidrv, const SNDCARD_IO_PARMS *io
         }
     }
 
-     // Copy IO parameter block to driver
-     mdidrv->drvr->VHDR->IO = try;
+    // Copy IO parameter block to driver
+    mdidrv->drvr->VHDR->IO = try;
 
-     // Call detection function
-     return AIL_call_driver(mdidrv->drvr, DRV_VERIFY_IO, NULL, NULL);
+    // Call detection function
+    return AIL_call_driver(mdidrv->drvr, DRV_VERIFY_IO, NULL, NULL);
+}
+
+/** Uninstall XMIDI audio driver, freeing all allocated resources.
+ *
+ * This function is called via the AIL_DRIVER.destructor vector only
+ */
+void XMI_destroy_MDI_driver(MDI_DRIVER *mdidrv)
+{
+    int32_t i;
+
+    // Stop all playing sequences to avoid hung notes
+    for (i = 0; i < mdidrv->n_sequences; i++) {
+        AIL_end_sequence(&mdidrv->sequences[i]);
+    }
+
+    // Stop sequencer timer service
+    AIL_release_timer_handle(mdidrv->timer);
+
+    // Release memory resources
+    AIL_MEM_free_lock(mdidrv->sequences, mdidrv->n_sequences * sizeof(SNDSEQUENCE));
+    AIL_MEM_free_lock(mdidrv, sizeof(MDI_DRIVER));
 }
 
 /** Install and initialize XMIDI audio driver.
@@ -260,6 +281,134 @@ void XMI_send_channel_voice_message(SNDSEQUENCE *seq, int32_t status,
       "push %0\n"
       "call ASM_XMI_send_channel_voice_message\n"
         :  : "g" (seq), "g" (status), "g" (data_1), "g" (data_2), "g" (ICA_enable));
+}
+
+/** Transmit logged channel controller values
+ */
+void XMI_refresh_channel(SNDSEQUENCE *seq, int32_t ch)
+{
+    if (seq->shadow.bank[ch] != -1) {
+        XMI_send_channel_voice_message(seq, MDI_EV_CONTROL | ch,
+                MDI_CTR_PATCH_BANK_SEL, seq->shadow.bank[ch], 0);
+    }
+
+    if (seq->shadow.program[ch] != -1) {
+        XMI_send_channel_voice_message(seq, MDI_EV_PROGRAM | ch,
+                seq->shadow.program[ch], 0, 0);
+    }
+
+    if (seq->shadow.pitch_h[ch] != -1) {
+        XMI_send_channel_voice_message(seq, MDI_EV_PITCH | ch,
+                seq->shadow.pitch_l[ch], seq->shadow.pitch_h[ch], 0);
+    }
+
+    if (seq->shadow.c_mute[ch] != -1) {
+        XMI_send_channel_voice_message(seq, MDI_EV_CONTROL | ch,
+                MDI_CTR_CHAN_MUTE, seq->shadow.c_mute[ch], 0);
+    }
+
+    if (seq->shadow.c_prot[ch] != -1) {
+      XMI_send_channel_voice_message(seq, MDI_EV_CONTROL | ch,
+                MDI_CTR_CHAN_PROTECT, seq->shadow.c_prot[ch], 0);
+    }
+
+    if (seq->shadow.c_v_prot[ch] != -1) {
+      XMI_send_channel_voice_message(seq, MDI_EV_CONTROL | ch,
+                MDI_CTR_VOICE_PROTECT, seq->shadow.c_v_prot[ch], 0);
+    }
+
+    if (seq->shadow.mod[ch] != -1) {
+      XMI_send_channel_voice_message(seq, MDI_EV_CONTROL | ch,
+                MDI_CTR_MODULATION, seq->shadow.mod[ch], 0);
+    }
+
+    if (seq->shadow.vol[ch] != -1) {
+      XMI_send_channel_voice_message(seq, MDI_EV_CONTROL | ch,
+                MDI_CTR_PART_VOLUME, seq->shadow.vol[ch], 0);
+    }
+
+    if (seq->shadow.pan[ch] != -1) {
+      XMI_send_channel_voice_message(seq, MDI_EV_CONTROL | ch,
+                MDI_CTR_PANPOT, seq->shadow.pan[ch], 0);
+    }
+
+    if (seq->shadow.exp[ch] != -1) {
+      XMI_send_channel_voice_message(seq, MDI_EV_CONTROL | ch,
+                MDI_CTR_EXPRESSION, seq->shadow.exp[ch], 0);
+    }
+
+    if (seq->shadow.sus[ch] != -1) {
+      XMI_send_channel_voice_message(seq, MDI_EV_CONTROL | ch,
+                MDI_CTR_SUSTAIN, seq->shadow.sus[ch], 0);
+    }
+
+    if (seq->shadow.reverb[ch] != -1) {
+      XMI_send_channel_voice_message(seq, MDI_EV_CONTROL | ch,
+                MDI_CTR_REVERB, seq->shadow.reverb[ch], 0);
+    }
+
+    if (seq->shadow.chorus[ch] != -1) {
+      XMI_send_channel_voice_message(seq, MDI_EV_CONTROL | ch,
+                MDI_CTR_CHORUS, seq->shadow.chorus[ch], 0);
+    }
+
+    if (seq->shadow.bend_range[ch] != -1) {
+      XMI_send_channel_voice_message(seq, MDI_EV_CONTROL | ch,
+                MDI_CTR_PB_RANGE, seq->shadow.bend_range[ch], 0);
+    }
+}
+
+void AIL2OAL_API_release_channel(MDI_DRIVER *mdidrv, int32_t channel)
+{
+    int32_t i, j, ch;
+    SNDSEQUENCE *seq;
+
+    // Convert channel # to 0-based internal notation
+    ch = channel-1;
+
+    // If channel is not locked, return
+    if (mdidrv->lock[ch] != 1)
+        return;
+
+    // Disable XMIDI service while unlocking channel
+    mdidrv->disable++;
+
+    // Restore channel's original state and ownership
+    mdidrv->lock[ch] = mdidrv->state[ch];
+    mdidrv->user[ch] = mdidrv->owner[ch];
+
+    // Release sustain pedal and turn all notes off in channel,
+    // regardless of sequence
+    XMI_MIDI_message(mdidrv, MDI_EV_CONTROL | ch,
+            MDI_CTR_SUSTAIN, 0);
+
+    for (i = mdidrv->n_sequences, seq = &mdidrv->sequences[0]; i; --i,++seq)
+    {
+        if (seq->status == SNDSEQ_FREE)
+            continue;
+
+        for (j=0; j < AIL_MAX_NOTES; j++)
+        {
+            if (seq->note_chan[j] == -1)
+                continue;
+            if (seq->chan_map[seq->note_chan[j]] != ch)
+                continue;
+            XMI_send_channel_voice_message(seq,
+                    seq->note_chan[j] | MDI_EV_NOTE_OFF,
+                    seq->note_num [j], 0, 0);
+            seq->note_chan[j] = -1;
+        }
+    }
+
+     // Bring channel up to date with owner's current controller values, if
+     // owner is valid sequence
+    if (mdidrv->owner[ch] != NULL)
+    {
+        if (mdidrv->owner[ch]->status != SNDSEQ_FREE)
+            XMI_refresh_channel(mdidrv->owner[ch], ch);
+    }
+
+    mdidrv->disable--;
 }
 
 /** Flush sequence note queue.
@@ -364,6 +513,81 @@ void AIL2OAL_API_uninstall_MDI_driver(MDI_DRIVER *mdidrv)
         :  : "g" (mdidrv));
 #endif
    AIL_uninstall_driver(mdidrv->drvr);
+}
+
+void AIL2OAL_API_stop_sequence(SNDSEQUENCE *seq)
+{
+    MDI_DRIVER *mdidrv;
+    int32_t log, phys;
+
+    if (seq == NULL)
+        return;
+
+     // Make sure sequence is currently playing
+    if ((seq->status != SNDSEQ_PLAYING)  &&
+      (seq->status != SNDSEQ_PLAYINGRELEASED))
+        return;
+
+    // Mask 'playing' status
+    seq->status = SNDSEQ_STOPPED;
+
+    // Turn off any active notes in sequence
+    XMI_flush_note_queue(seq);
+
+    // Prepare sequence's channels for use with other sequences, leaving
+    // shadow array intact for later recovery by AIL_resume_sequence()
+    mdidrv = seq->driver;
+
+    for (log = 0; log < AIL_NUM_CHANS; log++)
+    {
+        phys = seq->chan_map[log];
+
+        // If sustain pedal on, release it
+        if (seq->shadow.sus[log] >= 64)
+            XMI_MIDI_message(mdidrv, MDI_EV_CONTROL | phys,
+                    MDI_CTR_SUSTAIN, 0);
+
+       // If channel-lock protection active, cancel it
+        if (seq->shadow.c_prot[log] >= 64)
+            mdidrv->lock[phys] = 0;
+
+      // If voice-stealing protection active, cancel it
+        if (seq->shadow.c_v_prot[log] >= 64)
+            XMI_MIDI_message(mdidrv, MDI_EV_CONTROL | phys,
+                    MDI_CTR_VOICE_PROTECT, 0);
+
+      // Finally, if channel was locked, release it
+       if (seq->shadow.c_lock[log] >= 64)
+           AIL_release_channel(mdidrv, phys+1);
+    }
+}
+
+void AIL2OAL_API_resume_sequence(SNDSEQUENCE *seq)
+{
+    asm volatile (
+      "push %0\n"
+      "call ASM_AIL_API_resume_sequence\n"
+        :  : "g" (seq));
+}
+
+void AIL2OAL_API_end_sequence(SNDSEQUENCE *seq)
+{
+    if (seq == NULL)
+        return;
+
+    // Make sure sequence is currently allocated
+    if ((seq->status == SNDSEQ_FREE) || (seq->status == SNDSEQ_DONE))
+        return;
+
+    // Stop sequence and set 'done' status
+    AIL_stop_sequence(seq);
+
+    seq->status = SNDSEQ_DONE;
+
+   // Call EOS handler, if any
+    if (seq->EOS != NULL) {
+        ((AILSEQUENCECB)seq->EOS)(seq);
+    }
 }
 
 /** Unlock function, doubling as end of locked code.

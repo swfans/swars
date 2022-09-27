@@ -4307,7 +4307,7 @@ GLOBAL_FUNC (AIL_start_sequence)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (AIL_stop_sequence)
+GLOBAL_FUNC (ASM_AIL_stop_sequence)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %edi
@@ -4346,7 +4346,7 @@ GLOBAL_FUNC (AIL_stop_sequence)
 	jump_105590:
 		mov    0x10(%esp),%eax
 		push   %eax
-		call   _AIL_API_stop_sequence
+		call   ac_AIL2OAL_API_stop_sequence
 		mov    AIL_indent,%edx
 		dec    %edx
 		add    $0x4,%esp
@@ -4358,7 +4358,7 @@ GLOBAL_FUNC (AIL_stop_sequence)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (AIL_resume_sequence)
+GLOBAL_FUNC (ASM_AIL_resume_sequence)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %edi
@@ -4397,7 +4397,7 @@ GLOBAL_FUNC (AIL_resume_sequence)
 	jump_105610:
 		mov    0x10(%esp),%eax
 		push   %eax
-		call   _AIL_API_resume_sequence
+		call   ac_AIL2OAL_API_resume_sequence
 		mov    AIL_indent,%edx
 		dec    %edx
 		add    $0x4,%esp
@@ -4409,7 +4409,7 @@ GLOBAL_FUNC (AIL_resume_sequence)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (AIL_end_sequence)
+GLOBAL_FUNC (ASM_AIL_end_sequence)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %edi
@@ -4448,7 +4448,7 @@ GLOBAL_FUNC (AIL_end_sequence)
 	jump_105690:
 		mov    0x10(%esp),%eax
 		push   %eax
-		call   _AIL_API_end_sequence
+		call   ac_AIL2OAL_API_end_sequence
 		mov    AIL_indent,%edx
 		dec    %edx
 		add    $0x4,%esp
@@ -5238,7 +5238,7 @@ GLOBAL_FUNC (AIL_lock_channel)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (AIL_release_channel)
+GLOBAL_FUNC (ASM_AIL_release_channel)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %edi
@@ -5281,7 +5281,7 @@ GLOBAL_FUNC (AIL_release_channel)
 		push   %edx
 		mov    0x14(%esp),%ebx
 		push   %ebx
-		call   _AIL_API_release_channel
+		call   ac_AIL2OAL_API_release_channel
 		mov    AIL_indent,%ecx
 		dec    %ecx
 		add    $0x8,%esp
@@ -11177,7 +11177,7 @@ GLOBAL_FUNC (ASM_XMI_send_channel_voice_message)	/* 0x114DE0 */
 		inc    %eax
 		push   %eax
 		push   %ebp
-		call   AIL_release_channel
+		call   ac_AIL_release_channel
 		add    $0x8,%esp
 		push   %edi
 		push   %edi
@@ -11337,7 +11337,7 @@ _XMI_flush_channel_notes:	/* 0x1152D0 */
 
 
 /*----------------------------------------------------------------*/
-_XMI_refresh_channel:	/* 0x115340 */
+ASM_XMI_refresh_channel:	/* 0x115340 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %esi
@@ -11826,7 +11826,7 @@ _XMI_serve:	/* 0x1156A0 */
 	jump_1158d0:
 		push   %eax
 		mov    %ecx,0x2c(%eax)
-		call   AIL_stop_sequence
+		call   ac_AIL_stop_sequence
 		mov    MDI_S,%eax
 		add    $0x4,%esp
 		mov    0x28(%eax),%edx
@@ -12013,7 +12013,7 @@ _XMI_serve:	/* 0x1156A0 */
 		push   %ebx
 		rep movsl %ds:(%esi),%es:(%edi)
 		movsw  %ds:(%esi),%es:(%edi)
-		call   AIL_stop_sequence
+		call   ac_AIL_stop_sequence
 		mov    MDI_S,%eax
 		xor    %ecx,%ecx
 		add    $0x4,%esp
@@ -12279,7 +12279,7 @@ ASM_XMI_attempt_MDI_detection:	/* 0x115D70 */
 
 
 /*----------------------------------------------------------------*/
-_XMI_destroy_MDI_driver:	/* 0x115E40 */
+ASM_XMI_destroy_MDI_driver:	/* 0x115E40 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %esi
@@ -12295,7 +12295,7 @@ _XMI_destroy_MDI_driver:	/* 0x115E40 */
 		add    %ebx,%eax
 		push   %eax
 		inc    %esi
-		call   AIL_end_sequence
+		call   ac_AIL_end_sequence
 		add    $0x718,%ebx
 		mov    0x1c(%edi),%ecx
 		add    $0x4,%esp
@@ -12753,7 +12753,7 @@ GLOBAL_FUNC (ASM_XMI_construct_MDI_driver)	/* 0x115EA0 */
 		push   %eax
 		call   ac_AIL_set_timer_user
 		mov    0x0(%ebp),%eax
-		movl   $_XMI_destroy_MDI_driver,0x24(%eax)
+		movl   $ac_XMI_destroy_MDI_driver,0x24(%eax)
 		mov    0x0(%ebp),%eax
 		xor    %esi,%esi
 		add    $0x8,%esp
@@ -13503,7 +13503,7 @@ _AIL_API_start_sequence:	/* 0x116B70 */
 		cmpl   $0x1,0x4(%ebx)
 		je     jump_116b98
 		push   %ebx
-		call   AIL_stop_sequence
+		call   ac_AIL_stop_sequence
 		add    $0x4,%esp
 		push   %ebx
 		call   _XMI_rewind_sequence
@@ -13515,7 +13515,7 @@ _AIL_API_start_sequence:	/* 0x116B70 */
 
 
 /*----------------------------------------------------------------*/
-_AIL_API_stop_sequence:	/* 0x116BA0 */
+ASM_AIL_API_stop_sequence:	/* 0x116BA0 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %esi
@@ -13570,7 +13570,7 @@ _AIL_API_stop_sequence:	/* 0x116BA0 */
 		inc    %esi
 		push   %esi
 		push   %edi
-		call   AIL_release_channel
+		call   ac_AIL_release_channel
 		add    $0x8,%esp
 		lea    0x0(%eax),%eax
 		lea    0x0(%edx),%edx
@@ -13588,7 +13588,7 @@ _AIL_API_stop_sequence:	/* 0x116BA0 */
 
 
 /*----------------------------------------------------------------*/
-_AIL_API_resume_sequence:	/* 0x116C60 */
+GLOBAL_FUNC (ASM_AIL_API_resume_sequence)	/* 0x116C60 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %esi
@@ -13625,7 +13625,7 @@ _AIL_API_resume_sequence:	/* 0x116C60 */
 	jump_116cb0:
 		push   %ebx
 		push   %edi
-		call   _XMI_refresh_channel
+		call   ac_XMI_refresh_channel
 		inc    %ebx
 		add    $0x8,%esp
 		cmp    $0x10,%ebx
@@ -13640,7 +13640,7 @@ _AIL_API_resume_sequence:	/* 0x116C60 */
 
 
 /*----------------------------------------------------------------*/
-_AIL_API_end_sequence:	/* 0x116CD0 */
+ASM_AIL_API_end_sequence:	/* 0x116CD0 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %esi
@@ -13653,7 +13653,7 @@ _AIL_API_end_sequence:	/* 0x116CD0 */
 		cmp    $0x2,%edx
 		je     jump_116d05
 		push   %ebx
-		call   AIL_stop_sequence
+		call   ac_AIL_stop_sequence
 		add    $0x4,%esp
 		mov    0x28(%ebx),%esi
 		movl   $0x2,0x4(%ebx)
@@ -14115,7 +14115,7 @@ _AIL_API_lock_channel:	/* 0x117310 */
 
 
 /*----------------------------------------------------------------*/
-_AIL_API_release_channel:	/* 0x1174A0 */
+ASM_AIL_API_release_channel:	/* 0x1174A0 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %esi
@@ -14206,7 +14206,7 @@ _AIL_API_release_channel:	/* 0x1174A0 */
 		je     jump_1175b1
 		push   %ebp
 		push   %esi
-		call   _XMI_refresh_channel
+		call   ac_XMI_refresh_channel
 		add    $0x8,%esp
 	jump_1175b1:
 		mov    0x1c(%esp),%eax

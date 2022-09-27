@@ -177,6 +177,27 @@ enum AILMIDIEvents {
     MDI_EV_META          = 0xff,
 };
 
+/** MIDI controllers and Channel Mode messages.
+ * Thedse are recognized by AIL drivers when sent with
+ * MDI_EV_CONTROL events.
+ */
+enum AILMIDIControlMsgs {
+    MDI_CTR_MODULATION       = 1,
+    MDI_CTR_PB_RANGE         = 6, // later reused for DATA_MSB
+    MDI_CTR_PART_VOLUME      = 7,
+    MDI_CTR_PANPOT           = 10,
+    MDI_CTR_EXPRESSION       = 11,
+    MDI_CTR_SUSTAIN          = 64,
+    MDI_CTR_REVERB           = 91,
+    MDI_CTR_CHORUS           = 93,
+    MDI_CTR_CHAN_MUTE        = 107,
+    MDI_CTR_CHAN_PROTECT     = 111,
+    MDI_CTR_VOICE_PROTECT    = 112,
+    MDI_CTR_PATCH_BANK_SEL   = 114,
+    MDI_CTR_RESET_ALL_CTRLS  = 121,
+    MDI_CTR_ALL_NOTES_OFF    = 123,
+};
+
 /** Handle to timer.
  *
  * Originally named `HTIMER`. This less generic name helps to remember this is sound-related.
@@ -186,6 +207,10 @@ typedef long HSNDTIMER;
 /** Timer trigger callcack function type.
  */
 typedef void (*AILTIMERCB) (void *user_data);
+
+/** Sequence related callcack function type.
+ */
+typedef void (*AILSEQUENCECB) (SNDSEQUENCE *seq);
 
 /** Sound card hardware I/O parameters structure.
  *
