@@ -650,6 +650,7 @@ extern sbyte mission_result;
 extern char *weapon_text;
 extern struct PurpleDrawItem *purple_draw_list;
 extern ubyte *save_game_buffer;
+extern char save_active_desc[28];
 extern ubyte *unkn_buffer_05;
 extern ubyte *data_1c6de4;
 extern ubyte *data_1c6de8;

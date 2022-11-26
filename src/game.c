@@ -2612,11 +2612,11 @@ void draw_purple_screen(void)
         :  :  : "eax" );
 }
 
-int save_game_write(void)
+int save_game_write(ubyte slot, char *desc)
 {
     int ret;
     asm volatile ("call ASM_save_game_write\n"
-        : "=r" (ret));
+        : "=r" (ret) : "a" (slot), "d" (desc));
     return ret;
 }
 
@@ -2698,7 +2698,7 @@ void show_menu_screen_st2(void)
       {
             forward_research_progress(mission_status[open_brief].CityDays);
             if (ingame.Flags & 0x10)
-                save_game_write();
+                save_game_write(0, save_active_desc);
             screentype = SCRT_9;
             heading_box.Text = gui_strings[374];
             redraw_screen_flag = 1;
