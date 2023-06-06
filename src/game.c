@@ -1844,8 +1844,490 @@ ubyte ASM_show_settings_controls_list(struct ScreenBox *box);
 
 void init_screen_boxes(void)
 {
-    asm volatile ("call ASM_init_screen_boxes\n"
-        :  :  : "eax" );
+    int i, w, h, val;
+    const char *s;
+
+    init_screen_text_box(&heading_box, 7u, 25u, 626u, 38, 6, big_font, 1);
+    init_screen_text_box(&loading_INITIATING_box, 210u, 230u, 220u, 20, 6,
+        med_font, 1);
+    init_screen_box(&unkn32_box, 7u, 72u, 322u, 200, 6);
+    init_screen_text_box(&unkn36_box, 7u, 281u, 322u, 145, 6, small_med_font,
+        3);
+    init_screen_text_box(&mission_text_box, 338u, 72u, 295u, 354, 6, small_font,
+        3);
+    init_screen_button(&unkn1_ACCEPT_button, 343u, 405u, gui_strings[436], 6,
+        med2_font, 1, 0);
+    init_screen_button(&unkn1_CANCEL_button, 616u, 405u, gui_strings[437], 6,
+        med2_font, 1, 128);
+    init_screen_button(&brief_NETSCAN_button, 312u, 405u, gui_strings[441], 6,
+        med2_font, 1, 128);
+    init_screen_info_box(&brief_NETSCAN_COST_box, 12u, 405u, 213u,
+        gui_strings[442], unkn39_text, 6, med_font, small_med_font, 1);
+    brief_NETSCAN_COST_box.Width = 312 - brief_NETSCAN_button.Width - 17;
+    init_screen_box(&unkn30_box, 7u, 72u, 518u, 172, 6);
+    init_screen_box(&unkn31_box, 7u, 253u, 518u, 173, 6);
+    init_screen_box(&unkn29_box, 7u, 72u, 518u, 354, 6);
+    init_screen_text_box(&unkn38_box, 534u, 72u, 99u, 354, 6, small_med_font,
+        3);
+    init_screen_button(&unkn2_ACCEPT_button, 548u, 384u, gui_strings[436], 6,
+        med2_font, 1, 0);
+    init_screen_button(&unkn2_CANCEL_button, 548u, 405u, gui_strings[437], 6,
+        med2_font, 1, 0);
+    init_screen_text_box(&unkn13_SYSTEM_button, 7u, 25u, 197u, 38, 6, big_font,
+        1);
+    init_screen_text_box(&unkn35_box, 213u, 25u, 420u, 38, 6, big_font, 1);
+    init_screen_box(&unkn39_box, 213u, 72u, 420u, 354, 6);
+
+    h = 72;
+    for (i = 0; i < 3; i++)
+    {
+        init_screen_box(&unkn04_boxes[i], 213, h, 420, 62, 6);
+        h += 71;
+    }
+
+    init_screen_box(&unkn33_box, 213u, 285u, 420u, 62, 6);
+    init_screen_button(options_audio_buttons, 393u, 289u, gui_strings[531], 6,
+        med2_font, 1, 0);
+    init_screen_button(&options_audio_buttons[1], 458u, 289u, gui_strings[532],
+        6, med2_font, 1, 0);
+    init_screen_button(&options_audio_buttons[2], 523u, 289u, gui_strings[533],
+        6, med2_font, 1, 0);
+    init_screen_button(&options_audio_buttons[3], 458u, 307u, gui_strings[531],
+        6, med2_font, 1, 0);
+    init_screen_button(&options_audio_buttons[4], 523u, 307u, gui_strings[532],
+        6, med2_font, 1, 0);
+    init_screen_button(&options_audio_buttons[5], 458u, 325u, gui_strings[478],
+        6, med2_font, 1, 0);
+    init_screen_button(&options_audio_buttons[6], 523u, 325u, gui_strings[479],
+        6, med2_font, 1, 0);
+
+    val = 2;
+    for (i = 0; i < 3; i++)
+    {
+        options_audio_buttons[i].Radio = &ingame.CDTrack;
+        options_audio_buttons[i].RadioValue = val++;
+        options_audio_buttons[i].Flags |= 0x0100;
+    }
+
+    val = 1;
+    for (i = 3; i < 5; i++)
+    {
+        options_audio_buttons[i].Radio = &ingame.DangerTrack;
+        options_audio_buttons[i].RadioValue = val++;
+        options_audio_buttons[i].Flags |= 0x0100;
+    }
+
+    val = 0;
+    for (i = 5; i < 7; i++)
+    {
+        options_audio_buttons[i].Radio = &ingame.UseMultiMedia;
+        options_audio_buttons[i].RadioValue = val++;
+        options_audio_buttons[i].Flags |= 0x0100;
+    }
+
+    init_screen_button(&options_gfx_buttons[0], 456u, 94u, gui_strings[465], 6,
+        med2_font, 1, 0);
+    init_screen_button(&options_gfx_buttons[1], 544u, 94u, gui_strings[466], 6,
+        med2_font, 1, 0);
+    init_screen_button(&options_gfx_buttons[2], 456u, 112u, gui_strings[473], 6,
+        med2_font, 1, 0);
+    init_screen_button(&options_gfx_buttons[3], 544u, 112u, gui_strings[474], 6,
+        med2_font, 1, 0);
+    init_screen_button(&options_gfx_buttons[4], 456u, 130u, gui_strings[475], 6,
+        med2_font, 1, 0);
+    init_screen_button(&options_gfx_buttons[5], 544u, 130u, gui_strings[477], 6,
+        med2_font, 1, 0);
+    init_screen_button(&options_gfx_buttons[6], 456u, 148u, gui_strings[478], 6,
+        med2_font, 1, 0);
+    init_screen_button(&options_gfx_buttons[7], 544u, 148u, gui_strings[479], 6,
+        med2_font, 1, 0);
+    init_screen_button(&options_gfx_buttons[8], 456u, 166u, gui_strings[478], 6,
+        med2_font, 1, 0);
+    init_screen_button(&options_gfx_buttons[9], 544u, 166u, gui_strings[479], 6,
+        med2_font, 1, 0);
+    init_screen_button(&options_gfx_buttons[10], 456u, 184u, gui_strings[478],
+        6, med2_font, 1, 0);
+    init_screen_button(&options_gfx_buttons[11], 544u, 184u, gui_strings[479],
+        6, med2_font, 1, 0);
+    init_screen_button(&options_gfx_buttons[12], 456u, 202u, gui_strings[478],
+        6, med2_font, 1, 0);
+    init_screen_button(&options_gfx_buttons[13], 544u, 202u, gui_strings[479],
+        6, med2_font, 1, 0);
+
+    val = abs(ingame.PanelPermutation);
+    init_screen_button(&options_gfx_buttons[14], 320u, 274u,
+        gui_strings[579 + val], 6, med2_font, 1, 0);
+
+    val = ingame.TrenchcoatPreference;
+    init_screen_button(&options_gfx_buttons[15], 320u, 310u,
+        gui_strings[583 + val], 6, med2_font, 1, 0);
+
+    options_gfx_buttons[14].CallBackFn = ASM_change_panel_permutation;
+    options_gfx_buttons[15].CallBackFn = ASM_change_trenchcoat_preference;
+    options_gfx_buttons[14].Width += 60;
+    options_gfx_buttons[15].Width = options_gfx_buttons[14].Width;
+
+    val = 0;
+    for (i = 0; i < 2; i++)
+    {
+        options_gfx_buttons[i].Radio = &game_projector_speed;
+        options_gfx_buttons[i].RadioValue = val;
+        options_gfx_buttons[i].Flags |= 0x0100;
+        val++;
+    }
+
+    val = 0;
+    for (i = 2; i < 4; i++)
+    {
+        options_gfx_buttons[i].Radio = &game_high_resolution;
+        options_gfx_buttons[i].RadioValue = val;
+        options_gfx_buttons[i].Flags |= 0x0100;
+        val++;
+    }
+
+    val = 0;
+    for (i = 4; i < 6; i++)
+    {
+        options_gfx_buttons[i].Radio = &ingame.DetailLevel;
+        options_gfx_buttons[i].RadioValue = val;
+        options_gfx_buttons[i].Flags |= 0x0100;
+        val++;
+    }
+
+    val = 0;
+    for (i = 6; i < 8; i++)
+    {
+        options_gfx_buttons[i].Radio = &game_perspective;
+        options_gfx_buttons[i].RadioValue = val;
+        options_gfx_buttons[i].Flags |= 0x0100;
+        val += 5;
+    }
+
+    val = 0;
+    for (i = 8; i < 10; i++)
+    {
+        options_gfx_buttons[i].Radio = &unkn_gfx_option_2;
+        options_gfx_buttons[i].RadioValue = val;
+        options_gfx_buttons[i].Flags |= 0x0100;
+        ingame.Flags |= 0x02;
+        val++;
+    }
+
+    val = 0;
+    for (i = 10; i < 12; i++)
+    {
+        options_gfx_buttons[i].Radio = &unkn_option_3;
+        options_gfx_buttons[i].RadioValue = val;
+        options_gfx_buttons[i].Flags |= 0x0100;
+        ingame.Flags |= 0x01;
+        val++;
+    }
+
+    val = 0;
+    for (i = 12; i < 14; i++)
+    {
+        options_gfx_buttons[i].Radio = &unkn_option_4;
+        options_gfx_buttons[i].RadioValue = val;
+        options_gfx_buttons[i].Flags |= 0x0100;
+        ingame.Flags &= ~0x0400;
+        val++;
+    }
+
+    init_screen_text_box(&unkn37_box, 213u, 72u, 420u, 354, 6, med2_font, 1);
+
+    val = 0;
+    h = 72;
+    for (i = 0; i < 6; i++)
+    {
+        init_screen_button(&sysmnu_buttons[i], 7, h, gui_strings[378 + val], 6,
+            med2_font, 1, 0);
+        sysmnu_buttons[i].Width = 197;
+        sysmnu_buttons[i].Height = 21;
+        sysmnu_buttons[i].CallBackFn = ASM_do_sysmnu_button;
+        sysmnu_buttons[i].Flags |= 0x10;
+        sysmnu_buttons[i].Border = 3;
+        val++;
+        h += 30;
+    }
+
+    init_screen_box(&unkn34_box, 7u, 252u, 197u, 174, 6);
+    init_screen_button(&storage_LOAD_button, 219u, 405u, gui_strings[438], 6,
+        med2_font, 1, 0);
+    init_screen_button(&storage_SAVE_button, storage_LOAD_button.Width + 223,
+        405u, gui_strings[439], 6, med2_font, 1, 0);
+    init_screen_button(&storage_NEW_MORTAL_button, 627u, 405u, gui_strings[482],
+        6, med2_font, 1, 128);
+    init_screen_button(&net_INITIATE_button, 218u, 185u, gui_strings[385], 6,
+        med2_font, 1, 0);
+    init_screen_button(&net_groups_LOGON_button, 218u, 206u, gui_strings[386],
+        6, med2_font, 1, 0);
+    init_screen_button(&unkn8_EJECT_button, 308u, 206u, gui_strings[403], 6,
+        med2_font, 1, 0);
+    init_screen_button(&net_SET2_button, 562u, 251u, gui_strings[440], 6,
+        med2_font, 1, 0);
+    init_screen_button(&net_SET_button, 562u, 284u, gui_strings[440], 6,
+        med2_font, 1, 0);
+    init_screen_button(&net_protocol_select_button, 37u, 256u, gui_strings[498],
+        6, med2_font, 1, 0);
+    init_screen_button(&net_unkn40_button, 37u, 256u, net_unkn40_text, 6,
+        med2_font, 1, 0);
+    net_groups_LOGON_button.Width = 85;
+    net_INITIATE_button.Width = 85;
+    net_unkn40_button.Width = 21;
+    net_protocol_select_button.Width = 157;
+    init_screen_box(&net_unkn27, 213u, 72u, 171u, 155, 6);
+    init_screen_box(&net_unkn26, 393u, 72u, 240u, 155, 6);
+    init_screen_box(&net_unkn25, 213u, 236u, 73u, 67, 6);
+    init_screen_box(&net_unkn24, 295u, 236u, 72u, 67, 6);
+    init_screen_box(&net_unkn23, 376u, 236u, 257u, 67, 6);
+    init_screen_box(&net_unkn22, 295u, 312u, 336u, 104, 6);
+    init_screen_box(&net_unkn21, 7u, 312u, 279u, 104, 6);
+    init_screen_box(&net_unkn19_box, 7u, 252u, 197u, 51, 6);
+    init_screen_button(&net_protocol_option_button, 7u, 275u,
+        unkn_opt_number_text, 6, med2_font, 1, 0);
+    net_protocol_option_button.Width = net_protocol_select_button.Width;
+    net_protocol_select_button.X = ((net_unkn19_box.Width
+        - net_protocol_select_button.Width) >> 1) + 7;
+    net_protocol_option_button.X = ((net_unkn19_box.Width
+        - net_protocol_select_button.Width) >> 1) + 7;
+    net_unkn40_button.X = net_protocol_select_button.Width
+        + ((net_unkn19_box.Width - net_protocol_select_button.Width) >> 1) + 7
+        + 4;
+    net_protocol_option_button.CallBackFn = ASM_do_net_protocol_option;
+    init_screen_button(&unkn10_CALIBRATE_button, 219u, 405u, gui_strings[484],
+        6, med2_font, 1, 0);
+    init_screen_button(&unkn10_CONTROLS_button, 57u, 405u, gui_strings[485], 6,
+        med2_font, 1, 0);
+    init_screen_button(&unkn10_SAVE_button, 627u, 405u, gui_strings[439], 6,
+        med2_font, 1, 128);
+    init_screen_button(&main_map_editor_button, 260u, 387u, gui_strings[443], 6,
+        med2_font, 1, 0);
+    init_screen_button(&main_login_button, 260u, 300u, gui_strings[444], 6,
+        med2_font, 1, 0);
+    init_screen_button(&pause_continue_button, 260u, 300u, gui_strings[455], 6,
+        med2_font, 1, 0);
+    init_screen_button(&pause_abort_button, 260u, 329u, gui_strings[388], 6,
+        med2_font, 1, 0);
+    init_screen_button(&main_quit_button, 260u, 329u, gui_strings[445], 6,
+        med2_font, 1, 0);
+    init_screen_button(&main_load_button, 260u, 358u, gui_strings[496], 6,
+        med2_font, 1, 0);
+    init_screen_box(&pause_unkn11_box, 219u, 159u, 200u, 100, 6);
+    init_screen_box(&pause_unkn12_box, 150u, 128u, 337u, 22, 6);
+    init_screen_text_box(&slots_box, 7u, 122u, 191u, 22, 6, small_med_font, 1);
+    init_screen_text_box(&equip_name_box, 425u, 122u, 208u, 22, 6,
+        small_med_font, 1);
+    init_screen_box(&weapon_slots, 7u, 153u, 191u, 272, 6);
+    init_screen_text_box(&equip_list_box, 207u, 122u, 209u, 303, 6,
+        small_med_font, 1);
+    init_screen_text_box(&equip_display_box, 425u, 153u, 208u, 272, 6,
+        small_font, 3);
+    init_screen_button(&buy_equip_button, 430u, 404u, gui_strings[436], 6,
+        med2_font, 1, 0);
+    init_screen_button(&unkn11_CANCEL_button, 628u, 404u, gui_strings[437], 6,
+        med2_font, 1, 128);
+    init_screen_info_box(&equip_cost_box, 504u, 404u, 124u, gui_strings[442],
+        misc_text[0], 6, med_font, small_med_font, 1);
+    init_screen_text_box(&agent_list_box, 7u, 122u, 196u, 303, 6,
+        small_med_font, 1);
+    init_screen_text_box(&mod_list_box, 425u, 153u, 208u, 272, 6,
+        small_med_font, 1);
+    init_screen_box(&blokey_box, 212u, 122u, 203u, 303, 6);
+    init_screen_button(&all_agents_button, 7u, 96u, gui_strings[534], 6,
+        med2_font, 1, 0);
+    all_agents_button.Width = 165;
+    all_agents_button.RadioValue = 4;
+    all_agents_button.Flags |= 0x0100;
+    all_agents_button.Radio = &selected_agent;
+    init_screen_box(&research_unkn20_box, 7u, 103u, 409u, 322, 6);
+    init_screen_text_box(&research_progress_button, 7u, 72u, 409u, 23, 6,
+        med_font, 1);
+    init_screen_text_box(&research_unkn21_box, 425u, 72u, 208u, 353, 6,
+        small_med_font, 3);
+    init_screen_button(&research_submit_button, 430u, 302u, gui_strings[418], 6,
+        med2_font, 1, 0);
+    init_screen_button(&unkn12_WEAPONS_MODS_button, 616u, 302u,
+        gui_strings[450], 6, med2_font, 1, 128);
+    init_screen_button(research_list_buttons, 425u, 404u, gui_strings[478], 6,
+        med2_font, 1, 0);
+    init_screen_button(&research_list_buttons[1], 425u, 404u, gui_strings[479],
+        6, med2_font, 1, 0);
+    research_list_buttons[0].X = ((104 - research_list_buttons[0].Width) >> 1)
+        + 425;
+    research_list_buttons[1].X = ((104 - research_list_buttons[1].Width) >> 1)
+        + 529;
+
+    val = 0;
+    for (i = 0; i < 2; i++)
+    {
+        research_list_buttons[i].Radio = &ingame.fld_unk7DE;
+        research_list_buttons[i].RadioValue = val;
+        research_list_buttons[i].Flags |= 0x0100;
+        val++;
+    }
+
+    init_screen_box(&alert_box, 219u, 189u, 200u, 100, 6);
+    init_screen_button(&alert_OK_button, 10u, 269u, gui_strings[458], 6,
+        med2_font, 1, 0);
+    heading_box.DrawTextFn = ASM_show_title_box;
+    alert_OK_button.CallBackFn = ASM_alert_OK;
+    loading_INITIATING_box.Text = gui_strings[376];
+    heading_box.Text = options_title_text;
+    lbFontPtr = med_font;
+    alert_OK_button.X = 319 - (alert_OK_button.Width >> 1);
+    loading_INITIATING_box.Height = font_height(0x41u) + 8;
+    w = my_string_width(gui_strings[376]);
+    unkn37_box.DrawTextFn = ASM_show_menu_storage_unkn37_box;
+    unkn37_box.ScrollWindowHeight = 208;
+    unkn37_box.Lines = 99;
+    unkn34_box.SpecialDrawFn = ASM_show_unkn34_box;
+    loading_INITIATING_box.Width = w + 9;
+    unkn37_box.Flags |= 0x0300;
+    unkn33_box.SpecialDrawFn = ASM_show_unkn33_box;
+    mission_text_box.Buttons[0] = &unkn1_ACCEPT_button;
+    mission_text_box.Buttons[1] = &unkn1_CANCEL_button;
+    brief_NETSCAN_COST_box.Text2 = brief_netscan_cost_text;
+    unkn37_box.BGColour = 26;
+    mission_text_box.Flags |= 0x0300;
+    unkn37_box.ScrollWindowOffset += 27;
+    loading_INITIATING_box.X = 319 - ((w + 9) >> 1);
+    unkn32_box.SpecialDrawFn = ASM_show_unkn32_box;
+    loading_INITIATING_box.Y = 219 - (loading_INITIATING_box.Height >> 1);
+    unkn04_boxes[0].SpecialDrawFn = ASM_show_unkn04;
+    unkn04_boxes[1].SpecialDrawFn = ASM_show_unkn04;
+    unkn04_boxes[2].SpecialDrawFn = ASM_show_unkn04;
+    unkn31_box.SpecialDrawFn = ASM_show_unkn31_box;
+    mission_text_box.Text = mission_briefing_text;
+    unkn30_box.SpecialDrawFn = ASM_show_mission_stats;
+    unkn36_box.Flags |= 0x0300;
+    unkn36_box.DrawTextFn = ASM_show_unkn36_box;
+    unkn2_ACCEPT_button.X = unkn38_box.X
+        + ((unkn38_box.Width - unkn2_ACCEPT_button.Width) >> 1);
+    unkn29_box.SpecialDrawFn = ASM_show_unkn29_box;
+    unkn38_box.DrawTextFn = ASM_show_unkn38_box;
+    slots_box.DrawTextFn = ASM_show_title_box;
+    equip_display_box.DrawTextFn = ASM_display_weapon_info;
+    equip_list_box.DrawTextFn = ASM_show_weapon_list;
+    equip_cost_box.Text2 = equip_cost_text;
+    research_unkn21_box.DrawTextFn = ASM_show_unkn21_box;
+    unkn12_WEAPONS_MODS_button.CallBackFn = ASM_do_unkn12_WEAPONS_MODS;
+    weapon_slots.SpecialDrawFn = ASM_show_weapon_slots;
+    research_unkn21_box.ScrollWindowHeight = 180;
+    research_unkn21_box.Buttons[0] = &research_submit_button;
+    research_unkn21_box.Buttons[1] = &unkn12_WEAPONS_MODS_button;
+    unkn2_CANCEL_button.X =
+        ((unkn38_box.Width - unkn2_CANCEL_button.Width) >> 1) + unkn38_box.X;
+    equip_name_box.DrawTextFn = ASM_show_weapon_name;
+    unkn38_box.Flags |= 0x4000;
+    slots_box.Text = gui_strings[408];
+    slots_box.Font = med_font;
+    equip_name_box.Text = unkn41_text;
+    equip_list_box.ScrollWindowOffset += 27;
+    equip_name_box.Font = med_font;
+    research_unkn21_box.ScrollWindowOffset += 41;
+    equip_display_box.Flags |= 0x0300;
+    equip_display_box.ScrollWindowHeight = 117;
+    equip_list_box.Flags |= 0x0300;
+    research_submit_button.CallBackFn = ASM_do_research_submit;
+    equip_list_box.BGColour = unk2_sprites[15].SHeight + 3;
+    equip_list_box.ScrollWindowHeight -= 27;
+    research_progress_button.DrawTextFn = ASM_show_title_box;
+    research_submit_button.Text = gui_strings[417];
+    research_progress_button.Text = gui_strings[449];
+    research_unkn21_box.Flags |= 0x0300;
+    unkn12_WEAPONS_MODS_button.Text = gui_strings[451];
+    lbFontPtr = med2_font;
+    research_unkn20_box.SpecialDrawFn = ASM_show_unkn20;
+
+    if (my_string_width(gui_strings[418]) <= my_string_width(gui_strings[417]))
+        s = gui_strings[417];
+    else
+        s = gui_strings[418];
+    research_submit_button.Width = my_string_width(s) + 4;
+
+    if (my_string_width(gui_strings[451]) <= my_string_width(gui_strings[450]))
+        s = gui_strings[450];
+    else
+        s = gui_strings[451];
+    unkn12_WEAPONS_MODS_button.Width = my_string_width(s) + 4;
+
+    if (my_string_width(gui_strings[436]) <= my_string_width(gui_strings[407]))
+        s = gui_strings[407];
+    else
+        s = gui_strings[436];
+    buy_equip_button.Width = my_string_width(s) + 4;
+
+    mod_list_box.DrawTextFn = ASM_show_unkn18_box;
+    agent_list_box.BGColour = 25;
+    net_unkn27.SpecialDrawFn = ASM_show_net_unkn27;
+    net_unkn26.SpecialDrawFn = ASM_show_net_unkn26;
+    equip_cost_box.X = buy_equip_button.Width + buy_equip_button.X + 4;
+    net_INITIATE_button.CallBackFn = ASM_do_net_INITIATE;
+    net_unkn25.SpecialDrawFn = ASM_show_net_unkn25;
+    net_unkn24.SpecialDrawFn = ASM_show_net_unkn24;
+    net_unkn27.Flags |= 0x0300;
+    equip_cost_box.Width = 208 - buy_equip_button.Width - 14;
+    agent_list_box.DrawTextFn = ASM_show_agent_list;
+    net_unkn23.SpecialDrawFn = ASM_show_net_unkn23;
+    net_unkn40_button.CallBackFn = ASM_do_net_unkn40;
+    unkn1_ACCEPT_button.CallBackFn = ASM_accept_mission;
+    mod_list_box.Flags |= 0x0300;
+    net_SET_button.CallBackFn = ASM_do_net_SET;
+    blokey_box.SpecialDrawFn = ASM_show_blokey;
+    unkn8_EJECT_button.CallBackFn = ASM_do_unkn8_EJECT;
+    unkn1_CANCEL_button.CallBackFn = ASM_do_unkn1_CANCEL;
+    storage_SAVE_button.CallBackFn = ASM_save_game_slot;
+    storage_NEW_MORTAL_button.CallBackFn = ASM_do_storage_NEW_MORTAL;
+    mod_list_box.ScrollWindowHeight = 117;
+    net_protocol_select_button.CallBackFn = ASM_do_net_protocol_select;
+    unkn13_SYSTEM_button.Text = gui_strings[366];
+    net_unkn22.SpecialDrawFn = ASM_show_net_unkn22;
+    buy_equip_button.CallBackFn = ASM_do_buy_equip;
+    storage_LOAD_button.CallBackFn = ASM_load_game_slot;
+    net_unkn26.Flags |= 0x0300;
+    agent_list_box.ScrollWindowOffset += 27;
+    net_groups_LOGON_button.CallBackFn = ASM_do_net_groups_LOGON;
+    net_unkn21.SpecialDrawFn = ASM_show_net_unkn21;
+    unkn2_CANCEL_button.CallBackFn = ASM_do_unkn2_CANCEL;
+    unkn2_ACCEPT_button.CallBackFn = ASM_do_unkn2_ACCEPT;
+    unkn11_CANCEL_button.CallBackFn = ASM_do_unkn11_CANCEL;
+    unkn10_CALIBRATE_button.CallBackFn = ASM_do_unkn10_CALIBRATE;
+    agent_list_box.Flags |= 0x0300;
+    unkn10_CONTROLS_button.CallBackFn = ASM_do_unkn10_CONTROLS;
+    main_map_editor_button.X = 319 - (main_map_editor_button.Width >> 1);
+    unkn13_SYSTEM_button.DrawTextFn = ASM_show_title_box;
+    unkn35_box.DrawTextFn = ASM_show_title_box;
+    main_login_button.X = 319 - (main_login_button.Width >> 1);
+    net_SET2_button.CallBackFn = ASM_do_net_SET2;
+    pause_continue_button.X = 319 - (pause_continue_button.Width >> 1);
+    agent_list_box.ScrollWindowHeight -= 27;
+    net_unkn19_box.SpecialDrawFn = ASM_show_net_unkn19;
+    pause_abort_button.X = 319 - (pause_abort_button.Width >> 1);
+    brief_NETSCAN_button.CallBackFn = ASM_brief_do_netscan_enhance;
+    main_quit_button.X = 319 - (main_quit_button.Width >> 1);
+    unkn10_SAVE_button.CallBackFn = ASM_do_unkn10_SAVE;
+    main_load_button.X = 319 - (main_load_button.Width >> 1);
+    main_map_editor_button.Border = 3;
+    pause_abort_button.Border = 3;
+    pause_continue_button.Border = 3;
+    main_login_button.Border = 3;
+    main_quit_button.Border = 3;
+    main_load_button.Border = 3;
+    main_map_editor_button.CallBackFn = ASM_main_do_map_editor;
+    main_login_button.CallBackFn = ASM_main_do_login_1;
+    main_quit_button.CallBackFn = ASM_main_do_my_quit;
+    pause_unkn11_box.SpecialDrawFn = ASM_show_unkn12;
+    pause_unkn12_box.SpecialDrawFn = ASM_show_login_name;
+    pause_continue_button.CallBackFn = ASM_do_login_2;
+    main_load_button.CallBackFn = ASM_goto_savegame;
+    pause_abort_button.CallBackFn = ASM_do_abort_2;
+    pause_unkn12_box.Width = my_string_width(gui_strings[454]) + 254;
+    pause_continue_button.AccelKey = 28;
+    main_login_button.AccelKey = 28;
+    alert_OK_button.AccelKey = 28;
+    pause_unkn12_box.X = 319 - (pause_unkn12_box.Width >> 1);
+    pause_abort_button.AccelKey = 1;
+    main_quit_button.AccelKey = 1;
 }
 
 void update_menus(void)
