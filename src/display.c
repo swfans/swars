@@ -18,7 +18,6 @@ extern ushort data_1aa330;
 extern ushort data_1aa332;
 extern ubyte *vec_tmap;
 extern unsigned char *display_palette;
-extern struct TbSprite *pointer_sprites;
 
 TbPixel fade_unaffected_colours[] = {
   1,2,3,
@@ -162,4 +161,20 @@ void my_set_text_window(ushort x1, ushort y1, ushort w, ushort h)
     asm volatile (
       "call ASM_my_set_text_window\n"
         : : "a" (x1), "d" (y1), "b" (w), "c" (h));
+}
+
+ubyte font_height(uchar c)
+{
+    int ret;
+    asm volatile ("call ASM_font_height\n"
+        : "=r" (ret) : "a" (c));
+    return ret;
+}
+
+ulong my_string_width(const char *text)
+{
+    int ret;
+    asm volatile ("call ASM_my_string_width\n"
+        : "=r" (ret) : "a" (text));
+    return ret;
 }

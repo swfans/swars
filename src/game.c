@@ -9,6 +9,7 @@
 #include "bfscreen.h"
 #include "bfkeybd.h"
 #include "bfmouse.h"
+#include "bftext.h"
 #include "bfpalette.h"
 #include "bfmemory.h"
 #include "bfmemut.h"
@@ -79,19 +80,18 @@ extern char *pop_dat_fname_fmt;
 extern char *pop_tab_fname_fmt;
 extern unsigned long unkn_buffer_04;
 
-extern struct TbSprite *small_font;
-extern struct TbSprite *small_font_end;
 extern ubyte *small_font_data;
-extern struct TbSprite *pointer_sprites;
-extern struct TbSprite *pointer_sprites_end;
 extern ubyte *pointer_data;
 extern struct TbSprite *pop1_sprites;
 extern struct TbSprite *pop1_sprites_end;
 extern ubyte *pop1_data;
-extern struct TbSprite *m_sprites;
-extern struct TbSprite *m_sprites_end;
+
+extern struct TbSprite *unk2_sprites;
+extern struct TbSprite *unk2_sprites_end;
 extern ubyte *m_spr_data;
 extern ubyte *m_spr_data_end;
+extern struct TbSprite *m_sprites;
+extern struct TbSprite *m_sprites_end;
 
 extern struct Element *melement_ani;
 extern struct Element *mele_ani_end;
@@ -1768,6 +1768,79 @@ void init_screen_info_box(struct ScreenInfoBox *box, ushort x, ushort y, ushort 
       "call ASM_init_screen_info_box\n"
         : : "a" (box), "d" (x), "b" (y), "c" (width), "g" (text1), "g" (text2), "g" (drawspeed), "g" (font1), "g" (font2), "g" (textspeed));
 }
+
+ubyte ASM_show_title_box(struct ScreenTextBox *box);
+ubyte ASM_show_unkn38_box(struct ScreenTextBox *box);
+
+ubyte ASM_select_all_agents(ubyte click);
+ubyte ASM_do_net_protocol_option(ubyte click);
+ubyte ASM_do_net_unkn40(ubyte click);
+ubyte ASM_do_serial_speed_switch(ubyte click);
+ubyte ASM_change_panel_permutation(ubyte click);
+ubyte ASM_change_trenchcoat_preference(ubyte click);
+ubyte ASM_do_unkn10_CALIBRATE(ubyte click);
+ubyte ASM_do_unkn10_SAVE(ubyte click);
+ubyte ASM_do_unkn10_CONTROLS(ubyte click);
+ubyte ASM_alert_OK(ubyte click);
+ubyte ASM_do_net_SET2(ubyte click);
+ubyte ASM_do_net_SET(ubyte click);
+ubyte ASM_do_net_INITIATE(ubyte click);
+ubyte ASM_do_net_groups_LOGON(ubyte click);
+ubyte ASM_do_unkn8_EJECT(ubyte click);
+ubyte ASM_accept_mission(ubyte click);
+ubyte ASM_do_unkn1_CANCEL(ubyte click);
+ubyte ASM_do_unkn2_CANCEL(ubyte click);
+ubyte ASM_do_unkn2_ACCEPT(ubyte click);
+ubyte ASM_do_sysmnu_button(ubyte click);
+ubyte ASM_do_storage_NEW_MORTAL(ubyte click);
+ubyte ASM_load_game_slot(ubyte click);
+ubyte ASM_save_game_slot(ubyte click);
+ubyte ASM_main_do_my_quit(ubyte click);
+ubyte ASM_main_do_login_1(ubyte click);
+ubyte ASM_goto_savegame(ubyte click);
+ubyte ASM_do_abort_2(ubyte click);
+ubyte ASM_do_login_2(ubyte click);
+ubyte ASM_main_do_map_editor(ubyte click);
+ubyte ASM_brief_do_netscan_enhance(ubyte click);
+ubyte ASM_do_unkn11_CANCEL(ubyte click);
+ubyte ASM_do_buy_equip(ubyte click);
+ubyte ASM_sell_equipment(ubyte click);
+ubyte ASM_do_research_submit(ubyte click);
+ubyte ASM_do_research_suspend(ubyte click);
+ubyte ASM_do_unkn12_WEAPONS_MODS(ubyte click);
+
+ubyte ASM_show_unkn32_box(struct ScreenBox *box);
+ubyte ASM_show_unkn12(struct ScreenBox *box);
+ubyte ASM_show_login_name(struct ScreenBox *box);
+ubyte ASM_show_net_unkn23(struct ScreenBox *box);
+ubyte ASM_show_net_unkn21(struct ScreenBox *box);
+ubyte ASM_show_net_unkn22(struct ScreenBox *box);
+ubyte ASM_do_net_protocol_select(ubyte click);
+ubyte ASM_show_net_unkn19(struct ScreenBox *box);
+ubyte ASM_show_net_unkn25(struct ScreenBox *box);
+ubyte ASM_show_net_unkn24(struct ScreenBox *box);
+ubyte ASM_show_net_unkn27(struct ScreenBox *box);
+ubyte ASM_show_net_unkn26(struct ScreenBox *box);
+ubyte ASM_show_mission_stats(struct ScreenBox *box);
+ubyte ASM_show_unkn31_box(struct ScreenBox *box);
+ubyte ASM_show_unkn20(struct ScreenBox *box);
+ubyte ASM_show_unkn21_box(struct ScreenTextBox *box);
+ubyte ASM_show_unkn04(struct ScreenBox *box);
+ubyte ASM_show_unkn33_box(struct ScreenBox *box);
+ubyte ASM_show_netgame_unkn1(struct ScreenBox *box);
+ubyte ASM_show_menu_storage_unkn37_box(struct ScreenTextBox *box);
+ubyte ASM_show_unkn29_box(struct ScreenBox *box);
+ubyte ASM_display_weapon_info(struct ScreenTextBox *box);
+ubyte ASM_show_weapon_name(struct ScreenTextBox *box);
+ubyte ASM_show_weapon_list(struct ScreenTextBox *box);
+ubyte ASM_show_weapon_slots(struct ScreenBox *box);
+ubyte ASM_show_agent_list(struct ScreenTextBox *box);
+ubyte ASM_show_blokey(struct ScreenBox *box);
+ubyte ASM_show_unkn18_box(struct ScreenTextBox *box);
+ubyte ASM_show_unkn36_box(struct ScreenTextBox *box);
+ubyte ASM_show_unkn34_box(struct ScreenBox *box);
+ubyte ASM_show_settings_controls_list(struct ScreenBox *box);
+
 
 void init_screen_boxes(void)
 {
