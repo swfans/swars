@@ -1725,6 +1725,50 @@ TbPixel LbPaletteFindColour(ubyte *pal, ubyte rval, ubyte gval, ubyte bval)
 }
 #endif
 
+void init_screen_box(struct ScreenBox *box, ushort x, ushort y, ushort width, ushort height, int drawspeed)
+{
+    asm volatile (
+      "push %5\n"
+      "push %4\n"
+      "call ASM_init_screen_box\n"
+        : : "a" (box), "d" (x), "b" (y), "c" (width), "g" (height), "g" (drawspeed));
+}
+
+void init_screen_text_box(struct ScreenTextBox *box, ushort x, ushort y, ushort width, ushort height, int drawspeed, struct TbSprite *font, int textspeed)
+{
+    asm volatile (
+      "push %7\n"
+      "push %6\n"
+      "push %5\n"
+      "push %4\n"
+      "call ASM_init_screen_text_box\n"
+        : : "a" (box), "d" (x), "b" (y), "c" (width), "g" (height), "g" (drawspeed), "g" (font), "g" (textspeed));
+}
+
+void init_screen_button(struct ScreenButton *box, ushort x, ushort y, char *text, int drawspeed, struct TbSprite *font, int textspeed, int flags)
+{
+    asm volatile (
+      "push %7\n"
+      "push %6\n"
+      "push %5\n"
+      "push %4\n"
+      "call ASM_init_screen_button\n"
+        : : "a" (box), "d" (x), "b" (y), "c" (text), "g" (drawspeed), "g" (font), "g" (textspeed), "g" (flags));
+}
+
+void init_screen_info_box(struct ScreenInfoBox *box, ushort x, ushort y, ushort width, const char *text1, const char *text2, int drawspeed, struct TbSprite *font1, struct TbSprite *font2, int textspeed)
+{
+    asm volatile (
+      "push %9\n"
+      "push %8\n"
+      "push %7\n"
+      "push %6\n"
+      "push %5\n"
+      "push %4\n"
+      "call ASM_init_screen_info_box\n"
+        : : "a" (box), "d" (x), "b" (y), "c" (width), "g" (text1), "g" (text2), "g" (drawspeed), "g" (font1), "g" (font2), "g" (textspeed));
+}
+
 void init_screen_boxes(void)
 {
     asm volatile ("call ASM_init_screen_boxes\n"
