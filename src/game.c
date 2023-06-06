@@ -1812,15 +1812,15 @@ ubyte ASM_do_unkn12_WEAPONS_MODS(ubyte click);
 ubyte ASM_show_unkn32_box(struct ScreenBox *box);
 ubyte ASM_show_unkn12(struct ScreenBox *box);
 ubyte ASM_show_login_name(struct ScreenBox *box);
-ubyte ASM_show_net_unkn23(struct ScreenBox *box);
+ubyte ASM_show_net_benefits_box(struct ScreenBox *box);
 ubyte ASM_show_net_unkn21(struct ScreenBox *box);
-ubyte ASM_show_net_unkn22(struct ScreenBox *box);
+ubyte ASM_show_net_comms_box(struct ScreenBox *box);
 ubyte ASM_do_net_protocol_select(ubyte click);
-ubyte ASM_show_net_unkn19(struct ScreenBox *box);
-ubyte ASM_show_net_unkn25(struct ScreenBox *box);
-ubyte ASM_show_net_unkn24(struct ScreenBox *box);
-ubyte ASM_show_net_unkn27(struct ScreenBox *box);
-ubyte ASM_show_net_unkn26(struct ScreenBox *box);
+ubyte ASM_show_net_protocol_box(struct ScreenBox *box);
+ubyte ASM_show_net_faction_box(struct ScreenBox *box);
+ubyte ASM_show_net_team_box(struct ScreenBox *box);
+ubyte ASM_show_net_groups_box(struct ScreenBox *box);
+ubyte ASM_show_net_users_box(struct ScreenBox *box);
 ubyte ASM_show_mission_stats(struct ScreenBox *box);
 ubyte ASM_show_unkn31_box(struct ScreenBox *box);
 ubyte ASM_show_unkn20(struct ScreenBox *box);
@@ -2075,23 +2075,23 @@ void init_screen_boxes(void)
     net_INITIATE_button.Width = 85;
     net_unkn40_button.Width = 21;
     net_protocol_select_button.Width = 157;
-    init_screen_box(&net_unkn27, 213u, 72u, 171u, 155, 6);
-    init_screen_box(&net_unkn26, 393u, 72u, 240u, 155, 6);
-    init_screen_box(&net_unkn25, 213u, 236u, 73u, 67, 6);
-    init_screen_box(&net_unkn24, 295u, 236u, 72u, 67, 6);
-    init_screen_box(&net_unkn23, 376u, 236u, 257u, 67, 6);
-    init_screen_box(&net_unkn22, 295u, 312u, 336u, 104, 6);
+    init_screen_box(&net_groups_box, 213u, 72u, 171u, 155, 6);
+    init_screen_box(&net_users_box, 393u, 72u, 240u, 155, 6);
+    init_screen_box(&net_faction_box, 213u, 236u, 73u, 67, 6);
+    init_screen_box(&net_team_box, 295u, 236u, 72u, 67, 6);
+    init_screen_box(&net_benefits_box, 376u, 236u, 257u, 67, 6);
+    init_screen_box(&net_comms_box, 295u, 312u, 336u, 104, 6);
     init_screen_box(&net_unkn21, 7u, 312u, 279u, 104, 6);
-    init_screen_box(&net_unkn19_box, 7u, 252u, 197u, 51, 6);
+    init_screen_box(&net_protocol_box, 7u, 252u, 197u, 51, 6);
     init_screen_button(&net_protocol_option_button, 7u, 275u,
         unkn_opt_number_text, 6, med2_font, 1, 0);
     net_protocol_option_button.Width = net_protocol_select_button.Width;
-    net_protocol_select_button.X = ((net_unkn19_box.Width
+    net_protocol_select_button.X = ((net_protocol_box.Width
         - net_protocol_select_button.Width) >> 1) + 7;
-    net_protocol_option_button.X = ((net_unkn19_box.Width
+    net_protocol_option_button.X = ((net_protocol_box.Width
         - net_protocol_select_button.Width) >> 1) + 7;
     net_unkn40_button.X = net_protocol_select_button.Width
-        + ((net_unkn19_box.Width - net_protocol_select_button.Width) >> 1) + 7
+        + ((net_protocol_box.Width - net_protocol_select_button.Width) >> 1) + 7
         + 4;
     net_protocol_option_button.CallBackFn = ASM_do_net_protocol_option;
     init_screen_button(&unkn10_CALIBRATE_button, 219u, 405u, gui_strings[484],
@@ -2259,16 +2259,16 @@ void init_screen_boxes(void)
 
     mod_list_box.DrawTextFn = ASM_show_unkn18_box;
     agent_list_box.BGColour = 25;
-    net_unkn27.SpecialDrawFn = ASM_show_net_unkn27;
-    net_unkn26.SpecialDrawFn = ASM_show_net_unkn26;
+    net_groups_box.SpecialDrawFn = ASM_show_net_groups_box;
+    net_users_box.SpecialDrawFn = ASM_show_net_users_box;
     equip_cost_box.X = buy_equip_button.Width + buy_equip_button.X + 4;
     net_INITIATE_button.CallBackFn = ASM_do_net_INITIATE;
-    net_unkn25.SpecialDrawFn = ASM_show_net_unkn25;
-    net_unkn24.SpecialDrawFn = ASM_show_net_unkn24;
-    net_unkn27.Flags |= 0x0300;
+    net_faction_box.SpecialDrawFn = ASM_show_net_faction_box;
+    net_team_box.SpecialDrawFn = ASM_show_net_team_box;
+    net_groups_box.Flags |= 0x0300;
     equip_cost_box.Width = 208 - buy_equip_button.Width - 14;
     agent_list_box.DrawTextFn = ASM_show_agent_list;
-    net_unkn23.SpecialDrawFn = ASM_show_net_unkn23;
+    net_benefits_box.SpecialDrawFn = ASM_show_net_benefits_box;
     net_unkn40_button.CallBackFn = ASM_do_net_unkn40;
     unkn1_ACCEPT_button.CallBackFn = ASM_accept_mission;
     mod_list_box.Flags |= 0x0300;
@@ -2281,10 +2281,10 @@ void init_screen_boxes(void)
     mod_list_box.ScrollWindowHeight = 117;
     net_protocol_select_button.CallBackFn = ASM_do_net_protocol_select;
     unkn13_SYSTEM_button.Text = gui_strings[366];
-    net_unkn22.SpecialDrawFn = ASM_show_net_unkn22;
+    net_comms_box.SpecialDrawFn = ASM_show_net_comms_box;
     buy_equip_button.CallBackFn = ASM_do_buy_equip;
     storage_LOAD_button.CallBackFn = ASM_load_game_slot;
-    net_unkn26.Flags |= 0x0300;
+    net_users_box.Flags |= 0x0300;
     agent_list_box.ScrollWindowOffset += 27;
     net_groups_LOGON_button.CallBackFn = ASM_do_net_groups_LOGON;
     net_unkn21.SpecialDrawFn = ASM_show_net_unkn21;
@@ -2301,7 +2301,7 @@ void init_screen_boxes(void)
     net_SET2_button.CallBackFn = ASM_do_net_SET2;
     pause_continue_button.X = 319 - (pause_continue_button.Width >> 1);
     agent_list_box.ScrollWindowHeight -= 27;
-    net_unkn19_box.SpecialDrawFn = ASM_show_net_unkn19;
+    net_protocol_box.SpecialDrawFn = ASM_show_net_protocol_box;
     pause_abort_button.X = 319 - (pause_abort_button.Width >> 1);
     brief_NETSCAN_button.CallBackFn = ASM_brief_do_netscan_enhance;
     main_quit_button.X = 319 - (main_quit_button.Width >> 1);
@@ -3974,14 +3974,14 @@ void show_menu_screen(void)
         research_unkn20_box.Flags = 0x0001;
         research_progress_button.Flags = 0x0001;
         unkn30_box.Flags = 0x0001;
-        net_unkn26.Flags = 0x0001;
-        net_unkn27.Flags = 0x0001;
-        net_unkn23.Flags = 0x0001;
-        net_unkn24.Flags = 0x0001;
-        net_unkn25.Flags = 0x0001;
-        net_unkn22.Flags = 0x0001;
+        net_users_box.Flags = 0x0001;
+        net_groups_box.Flags = 0x0001;
+        net_benefits_box.Flags = 0x0001;
+        net_team_box.Flags = 0x0001;
+        net_faction_box.Flags = 0x0001;
+        net_comms_box.Flags = 0x0001;
         net_unkn21.Flags = 0x0001;
-        net_unkn19_box.Flags = 0x0001;
+        net_protocol_box.Flags = 0x0001;
         weapon_slots.Flags = 0x0001;
         equip_name_box.Flags = 0x0001;
         slots_box.Flags = 0x0001;
