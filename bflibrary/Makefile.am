@@ -19,6 +19,7 @@ libbullfrog_a_SOURCES = \
   src/general/ggenf.c \
   src/general/ggengh.c \
   src/general/giff.c \
+  src/general/gini.c \
   src/general/gkeybd.c \
   src/general/gline.c \
   src/general/gmemut.c \
