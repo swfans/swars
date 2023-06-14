@@ -4,6 +4,7 @@
 
 #include "bfmemory.h"
 #include "bffile.h"
+#include "bfini.h"
 #include "bfscreen.h"
 #include "bflog.h"
 #include "swlog.h"
@@ -19,18 +20,25 @@
 # undef main
 #endif
 
-const char *conf_file_cmnds[] = {
-  "CD",
-  "InstallDrive",
-  "Language",
-  "Data",
-  "Intro",
-  "Anims",
-  "Maps",
-  "Levels",
-  "Sound",
-  "DOS",
-};
+const struct TbNamedEnum conf_file_cmnds[] = {
+  {"CD", 1},
+  {"InstallDrive", 2},
+  {"Language", 3},
+  {"Data", 4},
+  {"Intro", 5},
+  {"Anims", 6},
+  {"Maps", 7},
+  {"Levels", 8},
+  {"Sound", 9},
+  {"DOS", 10},
+  {NULL,  0},
+  };
+
+const struct TbNamedEnum conf_file_disk_inst_lev[] = {
+  {"Min", 1},
+  {"Max", 2},
+  {NULL,  0},
+  };
 
 TbBool cmdln_fullscreen = true;
 TbBool cmdln_lores_stretch = true;
@@ -234,98 +242,134 @@ static void fixup_options(void)
 
 void read_conf_file(void)
 {
-    char *curptr;
     TbFileHandle conf_fh;
-    unsigned int i, n;
-    char ch;
+    unsigned int i;
+    int cmd_num;
     char locbuf[1024];
-    char prop_name[44];
+    struct TbIniParser parser;
     char *conf_fname = "config.ini";
     int conf_len;
 
     conf_fh = LbFileOpen(conf_fname, Lb_FILE_MODE_READ_ONLY);
-    if (conf_fh != INVALID_FILE)
-    {
+    if (conf_fh != INVALID_FILE) {
         conf_len = LbFileRead(conf_fh, locbuf, sizeof(locbuf));
+        LOGSYNC("Processing %s file, %d bytes", conf_fname, conf_len);
         LbFileClose(conf_fh);
     } else {
         LOGERR("Could not open installation config file, going with defaults.");
         conf_len = 0;
     }
     locbuf[conf_len] = '\0';
+    LbIniParseStart(&parser, locbuf, conf_len);
     // Parse the loaded file
-    curptr = locbuf;
-    while ( *curptr != 26 && *curptr != '\0' )
+#define COMMAND_TEXT(cmd_num) LbNamedEnumGetName(conf_file_cmnds,cmd_num)
+#define CONFWRNLOG(format,args...) LOGWARN("%s(line %lu): " format, conf_fname, parser.line_num, ## args)
+#define CONFDBGLOG(format,args...) LOGDBG("%s(line %lu): " format, conf_fname, parser.line_num, ## args)
+
+    while (parser.pos < parser.buflen)
     {
-        while (*curptr == '\n' || *curptr == '\r' || *curptr == '\t' || *curptr == ' ') {
-          curptr++;
-        }
-        for (i=0; (*curptr != '=' && *curptr != '\0'); i++)
+        // Finding command number in this line
+        i = 0;
+        cmd_num = LbIniRecognizeKey(&parser, conf_file_cmnds);
+        // Now store the config item in correct place
+        switch (cmd_num)
         {
-            ch = *curptr++;
-            prop_name[i] = ch;
-        }
-        curptr += 2;
-        prop_name[i] = '\0';
-        LOGDBG("%s: option '%s'", conf_fname, prop_name);
-        for (n = 0; n < sizeof(conf_file_cmnds)/sizeof(conf_file_cmnds[0]); n++)
-        {
-            if (strcmp(prop_name, conf_file_cmnds[n]) == 0)
+        case 1: // CD
+            i = LbIniValueGetStrWhole(&parser, cd_drive, sizeof(cd_drive));
+            if (i <= 0) {
+                CONFWRNLOG("Couldn't read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
                 break;
-        }
-        switch ( n )
-        {
-        case 0:
-            for (i = 0; *curptr != '"'; i++) {
-                ch = *curptr++;
-                cd_drive[i] = ch;
             }
-            cd_drive[i] = 0;
-            LOGDBG("%s: Dir with CD data '%s'", conf_fname, cd_drive);
+            CONFDBGLOG("Dir with CD data '%s'", cd_drive);
             break;
-        case 2:
+        case 2: // InstallDrive
+            // option ignored
+            break;
+        case 3: // Language
+            i = LbIniValueGetStrWhole(&parser, language_3str, sizeof(language_3str));
+            if (i <= 0) {
+                CONFWRNLOG("Couldn't read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                break;
+            }
             for (i = 0; i < 3; i++) {
-              ch = *curptr++;
-              language_3str[i] = tolower(ch);
+                language_3str[i] = tolower(language_3str[i]);
             }
             language_3str[i] = '\0';
+            CONFDBGLOG("Language '%s'", language_3str);
             break;
-        case 3:
-            if (curptr[1] == 'a') { // "Max"
-              game_dirs[DirPlace_Data].use_cd = 0;
+        case 4: // Data
+            i = LbIniValueGetNamedEnum(&parser, conf_file_disk_inst_lev);
+            if (i <= 0) {
+                CONFWRNLOG("Couldn't recognize \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                break;
             }
+            game_dirs[DirPlace_Data].use_cd = (i != 2);
             break;
-        case 4: // FIXME implementing original error - 'Intro' sets wrong option
-            if ( curptr[1] == 'a' ) {
-              game_dirs[DirPlace_Sound].use_cd = 0;
+        case 5: // Intro
+            i = LbIniValueGetNamedEnum(&parser, conf_file_disk_inst_lev);
+            if (i <= 0) {
+                CONFWRNLOG("Couldn't recognize \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                break;
             }
+            // FIXME implementing original error - 'Intro' sets wrong option
+            game_dirs[DirPlace_Sound].use_cd = (i != 2);
             break;
-        case 5: // FIXME implementing original error - 'Anims' sets wrong option
-            if ( curptr[1] == 'a' ) {
-              game_dirs[7].use_cd = 0;
+        case 6: // Anims
+            i = LbIniValueGetNamedEnum(&parser, conf_file_disk_inst_lev);
+            if (i <= 0) {
+                CONFWRNLOG("Couldn't recognize \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                break;
             }
+            // FIXME implementing original error - 'Anims' sets wrong option
+            game_dirs[7].use_cd = (i != 2);
             break;
-        case 6:
-            if ( curptr[1] == 'a' ) {
-              game_dirs[DirPlace_Maps].use_cd = 0;
+        case 7: // Maps
+            i = LbIniValueGetNamedEnum(&parser, conf_file_disk_inst_lev);
+            if (i <= 0) {
+                CONFWRNLOG("Couldn't recognize \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                break;
             }
+            game_dirs[DirPlace_Maps].use_cd = (i != 2);
             break;
-        case 7:
-            if ( curptr[1] == 'a' ) {
-              game_dirs[DirPlace_Levels].use_cd = 0;
+        case 8: // Levels
+            i = LbIniValueGetNamedEnum(&parser, conf_file_disk_inst_lev);
+            if (i <= 0) {
+                CONFWRNLOG("Couldn't recognize \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                break;
             }
+            game_dirs[DirPlace_Levels].use_cd = (i != 2);
             break;
-        case 8: // FIXME implementing original error - 'Sound' sets wrong option
-            if ( curptr[1] == 'a' ) {
-              game_dirs[DirPlace_Equip].use_cd = 0;
+        case 9: // Sound
+            i = LbIniValueGetNamedEnum(&parser, conf_file_disk_inst_lev);
+            if (i <= 0) {
+                CONFWRNLOG("Couldn't recognize \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                break;
             }
+            // FIXME implementing original error - 'Sound' sets wrong option
+            game_dirs[DirPlace_Equip].use_cd = (i != 2);
+            break;
+        case 10: // DOS
+            i = LbIniValueGetNamedEnum(&parser, conf_file_disk_inst_lev);
+            if (i <= 0) {
+                CONFWRNLOG("Couldn't recognize \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                break;
+            }
+            //game_dirs[DirPlace_?].use_cd = (i != 2);// option ignored
+            break;
+        case 0: // comment
+            break;
+        case -1: // end of buffer
+            break;
+        default:
+            CONFWRNLOG("Unrecognized command.");
             break;
         }
-
-        while (*curptr != '\n'  && *curptr != '\0') {
-          curptr++;
-        }
+        LbIniSkipToNextLine(&parser);
     }
+#undef CONFDBGLOG
+#undef CONFWRNLOG
+#undef COMMAND_TEXT
+    LbIniParseEnd(&parser);
 }
 
 /** Read file with all the language-specific texts.
