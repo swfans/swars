@@ -161,7 +161,7 @@ process_options (int *argc, char ***argv)
             break;
 
         case 'H':
-            lbDisplay.ScreenMode = Lb_SCREEN_MODE_640_480_8;
+            lbDisplay.ScreenMode = screen_mode_game_hi;
             break;
 
         case 'h':
@@ -403,6 +403,7 @@ void read_strings_file(void)
 int
 main (int argc, char **argv)
 {
+    // the initial mode will be overwritten in game_setup()
     lbDisplay.ScreenMode = Lb_SCREEN_MODE_320_200_8;
     ingame.GameMode = GamM_None;
     ingame.LowerMemoryUse = 0;

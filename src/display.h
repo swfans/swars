@@ -6,6 +6,11 @@
 #include <stddef.h>
 #include "bfscreen.h"
 
+extern TbScreenMode screen_mode_game_hi;
+extern TbScreenMode screen_mode_game_lo;
+extern TbScreenMode screen_mode_menu;
+extern TbScreenMode screen_mode_fmvid;
+
 extern ubyte *back_buffer;
 extern struct TbSprite *unk3_sprites;
 extern TbPixel fade_unaffected_colours[];
@@ -32,6 +37,7 @@ void display_unlock (void);
 void setup_screen_mode(TbScreenMode mode);
 const char * SWResourceMapping(short index);
 void swap_wscreen(void);
+void screen_buffer_fill_black(void);
 void show_black_screen(void);
 void my_set_text_window(ushort x1, ushort y1, ushort w, ushort h);
 ulong my_string_width(const char *text);

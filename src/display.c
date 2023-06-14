@@ -14,6 +14,11 @@
 #include "util.h"
 #include "bflib_basics.h"
 
+TbScreenMode screen_mode_game_hi = Lb_SCREEN_MODE_640_480_8;
+TbScreenMode screen_mode_game_lo = Lb_SCREEN_MODE_320_200_8;
+TbScreenMode screen_mode_menu = Lb_SCREEN_MODE_640_480_8;
+TbScreenMode screen_mode_fmvid = Lb_SCREEN_MODE_320_200_8;
+
 extern ushort data_1aa330;
 extern ushort data_1aa332;
 extern ubyte *vec_tmap;
@@ -141,6 +146,11 @@ void setup_screen_mode(TbScreenMode mode)
         lbDisplay.PhysicalScreenWidth, lbDisplay.PhysicalScreenHeight);
 }
 
+void screen_buffer_fill_black(void)
+{
+    memset(lbDisplay.WScreen, 0, lbDisplay.PhysicalScreenHeight * lbDisplay.PhysicalScreenWidth);
+}
+
 void show_black_screen(void)
 {
     TbBool was_locked;
@@ -150,7 +160,7 @@ void show_black_screen(void)
         while (LbScreenLock() != Lb_SUCCESS)
             ;
     }
-    memset(lbDisplay.WScreen, 0, lbDisplay.PhysicalScreenHeight * lbDisplay.PhysicalScreenWidth);
+    screen_buffer_fill_black();
     if (!was_locked)
         LbScreenUnlock();
     swap_wscreen();

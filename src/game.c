@@ -488,7 +488,7 @@ void play_intro(void)
     lbKeyOn[KC_ESCAPE] = 0;
     if ( (cmdln_param_bcg || is_single_game) && !(ingame.Flags & GamF_Unkn80000) )
     {
-        setup_screen_mode(Lb_SCREEN_MODE_320_200_8);
+        setup_screen_mode(screen_mode_fmvid);
         LbMouseChangeSprite(NULL);
         if (game_dirs[DirPlace_Sound].use_cd == 1)
             sprintf(fname, "%slanguage/%s/intro.smk", cd_drive, language_3str);
@@ -499,15 +499,18 @@ void play_intro(void)
         smack_malloc_used_tot = 0;
     }
     if (cmdln_param_bcg)
-        setup_screen_mode(Lb_SCREEN_MODE_640_480_8);
+        setup_screen_mode(screen_mode_menu);
     flic_unkn03(1u);
 }
 
 void replay_intro(void)
 {
     char fname[FILENAME_MAX];
+    TbScreenModeInfo *mdinfo;
 
-    LbScreenSetup(Lb_SCREEN_MODE_320_200_8, 320, 200, display_palette);
+    mdinfo = LbScreenGetModeInfo(screen_mode_fmvid);
+    if (mdinfo->Width == 0) return;
+    LbScreenSetup(screen_mode_fmvid, mdinfo->Width, mdinfo->Height, display_palette);
     LbMouseSetup(0, 2, 2);
     show_black_screen();
     stop_sample_using_heap(0, 122);
@@ -643,7 +646,7 @@ void init_outro(void)
     StopCD();
     show_black_screen();
     swap_wscreen();
-    setup_screen_mode(Lb_SCREEN_MODE_320_200_8);
+    setup_screen_mode(screen_mode_fmvid);
     LbMouseChangeSprite(0);
     lbKeyOn[KC_SPACE] = 0;
     lbKeyOn[KC_RETURN] = 0;
@@ -654,7 +657,7 @@ void init_outro(void)
         fname = "data/outro-s.smk";
     play_smk(fname, 13, 0);
     data_155704 = -1;
-    memset(lbDisplay.WScreen, 0, lbDisplay.GraphicsScreenHeight * lbDisplay.GraphicsScreenWidth);
+    screen_buffer_fill_black();
 
     switch (background_type)
     {
@@ -734,7 +737,7 @@ void init_outro(void)
     lbKeyOn[KC_RETURN] = 0;
 
     LbPaletteFade(0, 0xC8u, 1);
-    memset(lbDisplay.WScreen, 0, lbDisplay.GraphicsScreenHeight * lbDisplay.GraphicsScreenWidth);
+    screen_buffer_fill_black();
     swap_wscreen();
     StopAllSamples();
     reset_heaps();
@@ -757,7 +760,7 @@ void init_outro(void)
         process_sound_heap();
         func_2e440();
         swap_wscreen();
-        memset(lbDisplay.WScreen, 0, lbDisplay.GraphicsScreenHeight * lbDisplay.GraphicsScreenWidth);
+        screen_buffer_fill_black();
     }
 
     while (1)
@@ -789,7 +792,7 @@ void init_outro(void)
             }
           }
           swap_wscreen();
-          memset(lbDisplay.WScreen, 0, lbDisplay.PhysicalScreenHeight * lbDisplay.PhysicalScreenWidth);
+          screen_buffer_fill_black();
     }
     StopAllSamples();
     reset_heaps();
@@ -825,40 +828,42 @@ void load_pop_sprites_hi(void)
         :  :  : "eax" );
 }
 
+void srm_scanner_set_size_at_bottom_left(int margin, int width, int height)
+{
+    int i;
+    int cutout;
+
+    cutout = 24;
+    ingame.Scanner.X1 = 1;
+    ingame.Scanner.Y1 = lbDisplay.GraphicsScreenHeight - margin - height;
+    ingame.Scanner.X2 = ingame.Scanner.X1 + width;
+    ingame.Scanner.Y2 = ingame.Scanner.Y1 + height;
+
+    for (i = 0; i + ingame.Scanner.Y1 <= ingame.Scanner.Y2; i++) {
+        ingame.Scanner.Width[i] = min(width - cutout + i, width);
+    }
+}
+
 #define SCANNER_R0_WIDTH 64
 #define SCANNER_R0_HEIGHT 62
 
 #define SCANNER_R1_WIDTH 129
 #define SCANNER_R1_HEIGHT 119
 
-void video_mode_switch_to_next(void)
+/**
+ * Updates engine parameters for best display for current video mode within the tactical mission.
+ */
+void adjust_mission_engine_to_video_mode(void)
 {
-    int i;
-    TbScreenMode nmode;
+    int margin, width, height;
 
-    if (lbDisplay.ScreenMode == Lb_SCREEN_MODE_320_200_8)
-        nmode = Lb_SCREEN_MODE_640_480_8;
-    else
-        nmode = Lb_SCREEN_MODE_320_200_8;
-
-    StopCD();
-    setup_screen_mode(nmode);
+    game_high_resolution = (lbDisplay.ScreenMode == screen_mode_game_hi);
     if (lbDisplay.GraphicsScreenWidth >= 640)
     {
         overall_scale = 400;
         load_pop_sprites_hi();
         render_area_a = 30;
         render_area_b = 30;
-        game_high_resolution = 1;
-        ingame.Scanner.X1 = 1;
-        ingame.Scanner.Y1 = lbDisplay.GraphicsScreenHeight - 20 - SCANNER_R1_HEIGHT;
-        ingame.Scanner.X2 = ingame.Scanner.X1 + SCANNER_R1_WIDTH;
-        ingame.Scanner.Y2 = ingame.Scanner.Y1 + SCANNER_R1_HEIGHT;
-
-        for (i = 0; i + ingame.Scanner.Y1 <= ingame.Scanner.Y2; i++)
-        {
-          ingame.Scanner.Width[i] = min(SCANNER_R1_WIDTH - 24 + i, SCANNER_R1_WIDTH);
-        }
     }
     else
     {
@@ -866,17 +871,33 @@ void video_mode_switch_to_next(void)
         load_pop_sprites_lo();
         render_area_a = 24;
         render_area_b = 24;
-        game_high_resolution = 0;
-        ingame.Scanner.X1 = 1;
-        ingame.Scanner.Y1 = lbDisplay.GraphicsScreenHeight - 11 - SCANNER_R0_HEIGHT;
-        ingame.Scanner.X2 = ingame.Scanner.X1 + SCANNER_R0_WIDTH;
-        ingame.Scanner.Y2 = ingame.Scanner.Y1 + SCANNER_R0_HEIGHT;
-
-        for (i = 0; i + ingame.Scanner.Y1 <= ingame.Scanner.Y2; i++)
-        {
-          ingame.Scanner.Width[i] = min(SCANNER_R0_WIDTH - 24 + i, SCANNER_R0_WIDTH);
-        }
     }
+    width = lbDisplay.GraphicsScreenWidth * 20 / 100;
+    height = lbDisplay.GraphicsScreenHeight * 25 / 100;
+    if (lbDisplay.GraphicsScreenWidth >= 640) {
+        margin = 20;
+        width = width * 101 / 100;
+        height = height * 99 / 100;
+    } else {
+        margin = 11;
+        // width without change
+        height = height * 124 / 100;
+    }
+    srm_scanner_set_size_at_bottom_left(margin, width, height);
+}
+
+void video_mode_switch_to_next(void)
+{
+    TbScreenMode nmode;
+
+    if (lbDisplay.ScreenMode == screen_mode_game_lo)
+        nmode = screen_mode_game_hi;
+    else
+        nmode = screen_mode_game_lo;
+
+    StopCD();
+    setup_screen_mode(nmode);
+    adjust_mission_engine_to_video_mode();
 }
 
 void teleport_current_agent(PlayerInfo *p_locplayer)
@@ -1063,8 +1084,14 @@ void setup_host(void)
     set_smack_malloc(ASM_smack_malloc);
     set_smack_free(ASM_smack_mfree);
     LOGDBG("&setup_host() = 0x%lx", (ulong)setup_host);
-    lbDisplay.ScreenMode = Lb_SCREEN_MODE_320_200_8;
-    LbScreenSetup(lbDisplay.ScreenMode, 320, 200, display_palette);
+    {
+        TbScreenModeInfo *mdinfo;
+
+        // TODO we could use more complex mode selection here
+        lbDisplay.ScreenMode = screen_mode_game_lo;
+        mdinfo = LbScreenGetModeInfo(lbDisplay.ScreenMode);
+        LbScreenSetup(lbDisplay.ScreenMode, mdinfo->Width, mdinfo->Height, display_palette);
+    }
     LbSpriteSetup(pointer_sprites, pointer_sprites_end, pointer_data);
     { // Make mouse pointer sprite 1 an empty (zero size) sprite
         struct TbSprite *spr;
@@ -1125,8 +1152,11 @@ void setup_host(void)
     play_intro();
     if ( cmdln_param_bcg )
     {
-        lbDisplay.ScreenMode = Lb_SCREEN_MODE_640_480_8;
-        LbScreenSetup(lbDisplay.ScreenMode, 640, 480, display_palette);
+        TbScreenModeInfo *mdinfo;
+
+        lbDisplay.ScreenMode = screen_mode_menu;
+        mdinfo = LbScreenGetModeInfo(lbDisplay.ScreenMode);
+        LbScreenSetup(lbDisplay.ScreenMode, mdinfo->Width, mdinfo->Height, display_palette);
     }
     LbMouseSetup(&pointer_sprites[1], 2, 2);
     if ( cmdln_param_bcg )
@@ -1522,7 +1552,7 @@ void game_setup(void)
     init_engine();
     if ( !cmdln_param_bcg )
     {
-        LbMemorySet(lbDisplay.WScreen, 0, lbDisplay.PhysicalScreenWidth * lbDisplay.PhysicalScreenHeight);
+        screen_buffer_fill_black();
         swap_wscreen();
         LbPaletteSet(display_palette);
     }
@@ -3554,9 +3584,9 @@ void show_load_and_prep_mission(void)
     reload_background_flag = 1;
     debug_trace_place(10);
     {
-        memset(lbDisplay.WScreen, 0, lbDisplay.GraphicsScreenWidth * lbDisplay.GraphicsScreenHeight);
+        screen_buffer_fill_black();
         frame_unkn_func_06();
-        memset(lbDisplay.WScreen, 0, lbDisplay.GraphicsScreenWidth * lbDisplay.GraphicsScreenHeight);
+        screen_buffer_fill_black();
         show_black_screen();
         swap_wscreen();
     }
@@ -3565,13 +3595,19 @@ void show_load_and_prep_mission(void)
     debug_trace_place(11);
     if (game_high_resolution)
     {
-        overall_scale = 400;
-        render_area_a = 30;
-        render_area_b = 30;
+        if (lbDisplay.ScreenMode != screen_mode_game_hi)
+            setup_screen_mode(screen_mode_game_hi);
     }
     else
     {
-        setup_screen_mode(Lb_SCREEN_MODE_320_200_8);
+        if (lbDisplay.ScreenMode != screen_mode_game_lo)
+            setup_screen_mode(screen_mode_game_lo);
+    }
+    if (lbDisplay.GraphicsScreenWidth >= 640)
+    {
+        overall_scale = 400;
+        render_area_a = 30;
+        render_area_b = 30;
     }
 
     debug_trace_place(12);
@@ -3636,6 +3672,21 @@ void show_load_and_prep_mission(void)
     stop_sample_using_heap(0, 122);
 }
 
+void setup_menu_screen_mode(void)
+{
+    TbScreenModeInfo *mdinfo;
+
+    game_high_resolution = 0;
+    LbMouseReset();
+    screen_buffer_fill_black();
+    mdinfo = LbScreenGetModeInfo(screen_mode_menu);
+    if (mdinfo->Width == 0) return;
+    LbScreenSetup(screen_mode_menu, mdinfo->Width, mdinfo->Height, display_palette);
+    LbMouseSetup(&pointer_sprites[1], 1, 1);
+    setup_vecs(lbDisplay.WScreen, vec_tmap, lbDisplay.PhysicalScreenWidth,
+        lbDisplay.PhysicalScreenWidth, lbDisplay.PhysicalScreenHeight);
+}
+
 void ASM_show_menu_screen(void);
 void show_menu_screen(void)
 {
@@ -3655,15 +3706,9 @@ void show_menu_screen(void)
     default:
         break;
     }
-    if (lbDisplay.ScreenMode != Lb_SCREEN_MODE_640_480_8)
+    if (lbDisplay.ScreenMode != screen_mode_menu)
     {
-        game_high_resolution = 0;
-        LbMouseReset();
-        memset(lbDisplay.WScreen, 0, lbDisplay.PhysicalScreenHeight * lbDisplay.PhysicalScreenWidth);
-        LbScreenSetup(Lb_SCREEN_MODE_640_480_8, 640, 480, display_palette);
-        LbMouseSetup(&pointer_sprites[1], 1, 1);
-        setup_vecs(lbDisplay.WScreen, vec_tmap, lbDisplay.PhysicalScreenWidth,
-            lbDisplay.PhysicalScreenWidth, lbDisplay.PhysicalScreenHeight);
+        setup_menu_screen_mode();
         reload_background();
         my_set_text_window(0, 0, lbDisplay.GraphicsScreenWidth, lbDisplay.GraphicsScreenHeight);
     }
@@ -3695,13 +3740,14 @@ void show_menu_screen(void)
         int i;
         data_1c4991 = 1;
         lbDisplay.LeftButton = 1;
-        if (lbDisplay.ScreenMode == Lb_SCREEN_MODE_320_200_8)
-            i = 2 * lbDisplay.MMouseX;
+        // Scale mouse position in high resolutions
+        if (lbDisplay.GraphicsScreenWidth > 320)
+            i = lbDisplay.MMouseX * lbDisplay.GraphicsScreenWidth / 320;
         else
             i = lbDisplay.MMouseX;
         lbDisplay.MouseX = i;
-        if (lbDisplay.ScreenMode == Lb_SCREEN_MODE_320_200_8)
-            i = 2 * lbDisplay.MMouseY;
+        if (lbDisplay.GraphicsScreenHeight > 200)
+            i = lbDisplay.MMouseY * lbDisplay.GraphicsScreenHeight / 200;
         else
             i = lbDisplay.MMouseY;
         lbDisplay.MouseY = i;
