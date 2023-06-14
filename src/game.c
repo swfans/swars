@@ -604,10 +604,32 @@ void traffic_unkn_func_01(void)
         :  :  : "eax" );
 }
 
+void process_view_inputs(int thing)
+{
+    asm volatile ("call ASM_process_view_inputs\n"
+        : : "a" (thing));
+}
+
 void process_engine_unk1(void)
 {
     asm volatile ("call ASM_process_engine_unk1\n"
         :  :  : "eax" );
+}
+
+void process_engine_unk2(void)
+{
+    asm volatile ("call ASM_process_engine_unk2\n"
+        :  :  : "eax" );
+}
+
+void process_engine_unk3(void)
+{
+    asm volatile ("call ASM_process_engine_unk3\n"
+        :  :  : "eax" );
+}
+
+void setup_engine_nullsub4(void)
+{
 }
 
 void process_sound_heap(void)
@@ -1718,7 +1740,26 @@ void gproc3_unknsub3(int a1)
 void ASM_show_game_engine(void);
 void show_game_engine(void)
 {
+#if 0
     ASM_show_game_engine();
+#endif
+    int zoom;
+    int dctrl_thing;
+
+    dctrl_thing = players[local_player_no].DirectControl[0];
+    process_view_inputs(dctrl_thing);// inlined call gengine_ctrl
+
+    zoom = (900 - overall_scale) >> 1;
+    if (zoom < 50)
+        ingame.Scanner.Zoom = 50;
+    else if (zoom > 556)
+        ingame.Scanner.Zoom = 556;
+    else
+        ingame.Scanner.Zoom = zoom;
+    process_engine_unk1();
+    process_engine_unk2();
+    process_engine_unk3();
+    setup_engine_nullsub4();
 }
 
 void ASM_gproc3_unknsub2(void);
