@@ -622,6 +622,24 @@ void process_engine_unk2(void)
         :  :  : "eax" );
 }
 
+void draw_hud(int thing)
+{
+    asm volatile ("call ASM_draw_hud\n"
+        : : "a" (thing));
+}
+
+void draw_new_panel(void)
+{
+    asm volatile ("call ASM_draw_new_panel\n"
+        :  :  : "eax" );
+}
+
+void draw_screen(void)
+{
+    asm volatile ("call ASM_draw_screen\n"
+        :  :  : "eax" );
+}
+
 void process_engine_unk3(void)
 {
     asm volatile ("call ASM_process_engine_unk3\n"
