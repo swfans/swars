@@ -482,10 +482,6 @@ void play_smacker(int vid_type)
 
 void play_intro(void)
 {
-#if 0
-    asm volatile ("call ASM_play_intro\n"
-        :  :  : "eax" );
-#endif
     char fname[FILENAME_MAX];
 
     lbDisplay.LeftButton = 0;

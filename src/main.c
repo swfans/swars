@@ -20,19 +20,32 @@
 # undef main
 #endif
 
+enum ConfigCmd {
+    ConfCmd_CD = 1,
+    ConfCmd_InstallDrive,
+    ConfCmd_Language,
+    ConfCmd_Data,
+    ConfCmd_Intro,
+    ConfCmd_Anims,
+    ConfCmd_Maps,
+    ConfCmd_Levels,
+    ConfCmd_Sound,
+    ConfCmd_DOS,
+};
+
 const struct TbNamedEnum conf_file_cmnds[] = {
-  {"CD", 1},
-  {"InstallDrive", 2},
-  {"Language", 3},
-  {"Data", 4},
-  {"Intro", 5},
-  {"Anims", 6},
-  {"Maps", 7},
-  {"Levels", 8},
-  {"Sound", 9},
-  {"DOS", 10},
-  {NULL,  0},
-  };
+  {"CD",		ConfCmd_CD},
+  {"InstallDrive", ConfCmd_InstallDrive},
+  {"Language",	ConfCmd_Language},
+  {"Data",		ConfCmd_Data},
+  {"Intro",		ConfCmd_Intro},
+  {"Anims",		ConfCmd_Anims},
+  {"Maps",		ConfCmd_Maps},
+  {"Levels",	ConfCmd_Levels},
+  {"Sound",		ConfCmd_Sound},
+  {"DOS",		ConfCmd_DOS},
+  {NULL,		0},
+};
 
 const struct TbNamedEnum conf_file_disk_inst_lev[] = {
   {"Min", 1},
@@ -274,7 +287,7 @@ void read_conf_file(void)
         // Now store the config item in correct place
         switch (cmd_num)
         {
-        case 1: // CD
+        case ConfCmd_CD:
             i = LbIniValueGetStrWhole(&parser, cd_drive, sizeof(cd_drive));
             if (i <= 0) {
                 CONFWRNLOG("Couldn't read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
@@ -282,10 +295,10 @@ void read_conf_file(void)
             }
             CONFDBGLOG("Dir with CD data '%s'", cd_drive);
             break;
-        case 2: // InstallDrive
+        case ConfCmd_InstallDrive:
             // option ignored
             break;
-        case 3: // Language
+        case ConfCmd_Language:
             i = LbIniValueGetStrWhole(&parser, language_3str, sizeof(language_3str));
             if (i <= 0) {
                 CONFWRNLOG("Couldn't read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
@@ -297,7 +310,7 @@ void read_conf_file(void)
             language_3str[i] = '\0';
             CONFDBGLOG("Language '%s'", language_3str);
             break;
-        case 4: // Data
+        case ConfCmd_Data:
             i = LbIniValueGetNamedEnum(&parser, conf_file_disk_inst_lev);
             if (i <= 0) {
                 CONFWRNLOG("Couldn't recognize \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
@@ -305,7 +318,7 @@ void read_conf_file(void)
             }
             game_dirs[DirPlace_Data].use_cd = (i != 2);
             break;
-        case 5: // Intro
+        case ConfCmd_Intro:
             i = LbIniValueGetNamedEnum(&parser, conf_file_disk_inst_lev);
             if (i <= 0) {
                 CONFWRNLOG("Couldn't recognize \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
@@ -314,7 +327,7 @@ void read_conf_file(void)
             // FIXME implementing original error - 'Intro' sets wrong option
             game_dirs[DirPlace_Sound].use_cd = (i != 2);
             break;
-        case 6: // Anims
+        case ConfCmd_Anims:
             i = LbIniValueGetNamedEnum(&parser, conf_file_disk_inst_lev);
             if (i <= 0) {
                 CONFWRNLOG("Couldn't recognize \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
@@ -323,7 +336,7 @@ void read_conf_file(void)
             // FIXME implementing original error - 'Anims' sets wrong option
             game_dirs[7].use_cd = (i != 2);
             break;
-        case 7: // Maps
+        case ConfCmd_Maps:
             i = LbIniValueGetNamedEnum(&parser, conf_file_disk_inst_lev);
             if (i <= 0) {
                 CONFWRNLOG("Couldn't recognize \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
@@ -331,7 +344,7 @@ void read_conf_file(void)
             }
             game_dirs[DirPlace_Maps].use_cd = (i != 2);
             break;
-        case 8: // Levels
+        case ConfCmd_Levels:
             i = LbIniValueGetNamedEnum(&parser, conf_file_disk_inst_lev);
             if (i <= 0) {
                 CONFWRNLOG("Couldn't recognize \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
@@ -339,7 +352,7 @@ void read_conf_file(void)
             }
             game_dirs[DirPlace_Levels].use_cd = (i != 2);
             break;
-        case 9: // Sound
+        case ConfCmd_Sound:
             i = LbIniValueGetNamedEnum(&parser, conf_file_disk_inst_lev);
             if (i <= 0) {
                 CONFWRNLOG("Couldn't recognize \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
@@ -348,7 +361,7 @@ void read_conf_file(void)
             // FIXME implementing original error - 'Sound' sets wrong option
             game_dirs[DirPlace_Equip].use_cd = (i != 2);
             break;
-        case 10: // DOS
+        case ConfCmd_DOS:
             i = LbIniValueGetNamedEnum(&parser, conf_file_disk_inst_lev);
             if (i <= 0) {
                 CONFWRNLOG("Couldn't recognize \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
