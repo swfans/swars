@@ -14,6 +14,7 @@ extern TbScreenMode screen_mode_fmvid;
 extern ubyte *back_buffer;
 extern struct TbSprite *unk3_sprites;
 extern TbPixel fade_unaffected_colours[];
+extern TbPixel colour_lookup[];
 
 extern struct TbSprite *pointer_sprites;
 extern struct TbSprite *pointer_sprites_end;

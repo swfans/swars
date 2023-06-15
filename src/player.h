@@ -29,7 +29,7 @@ extern "C" {
 
 struct Thing;
 
-struct __attribute__((packed)) __attribute__((aligned(2))) SpecialUserInput
+struct SpecialUserInput
 {
   long Bits;
   char DtX;
@@ -77,19 +77,10 @@ typedef struct {
   int field_F6;
   char field_FA[4];
   int field_FE;
-  int field_102;
-  char field_106[3];
-  char field_109;
-  char field_10A[3];
-  char field_10D;
-  char field_10E[3];
-  char field_111;
-  char field_112[3];
-  char field_115;
-  char field_116[4];
-  char field_11A;
-  char field_11B[125];
-  short field_198;
+  short field_102;
+  short TargetType;
+  char FourPacks[20];
+  ubyte WepDelays[4][32];
   short field_19A;
   char field_19C[4];
   short field_1A0;

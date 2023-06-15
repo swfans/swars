@@ -49,24 +49,17 @@
 
 #pragma pack(1)
 
-struct UnkStruct7
+struct GamePanel
 {
-  char field_0;
-  char field_1;
-  char field_2;
-  char field_3;
-  char field_4;
-  char field_5;
-  char field_6;
-  char field_7;
-  char field_8;
-  char field_9;
-  char field_A;
-  char field_B;
-  char field_C;
-  char field_D;
-  char field_E;
-  char field_F;
+  short X;
+  short Y;
+  short Spr;
+  ushort Width;
+  ushort Height;
+  ushort Use;
+  ushort Flags;
+  ubyte ID;
+  ubyte Type;
 };
 
 struct Element;
@@ -156,9 +149,9 @@ extern ushort prim_objects_count;
 extern ushort prim4_textures_count;
 extern ushort prim_face_textures_count;
 extern ushort prim_unknprop01;
-extern struct UnkStruct7 *game_panel;
-extern struct UnkStruct7 game_panel_lo[];
-extern struct UnkStruct7 unknstrct7_arr2[];
+extern struct GamePanel *game_panel;
+extern struct GamePanel game_panel_lo[];
+extern struct GamePanel unknstrct7_arr2[];
 
 extern ubyte execute_commands;
 extern long gamep_unknval_10;
@@ -180,6 +173,7 @@ extern ushort netgame_agent_pos_y[8][4];
 extern long engn_xc;
 extern long engn_yc;
 extern long engn_zc;
+extern long dword_176D58;
 extern ubyte byte_153198;
 
 extern short brightness;
@@ -598,6 +592,14 @@ void change_brightness(ushort val)
         : : "a" (val));
 }
 
+int alt_at_point(ushort x, ushort z)
+{
+    int ret;
+    asm volatile ("call ASM_alt_at_point\n"
+        : "=r" (ret) : "a" (x), "d" (z));
+    return ret;
+}
+
 void traffic_unkn_func_01(void)
 {
     asm volatile ("call ASM_traffic_unkn_func_01\n"
@@ -628,7 +630,117 @@ void draw_hud(int thing)
         : : "a" (thing));
 }
 
-void draw_new_panel(void)
+void SCANNER_unkn_func_201(struct TbSprite *spr, int x, int y, ubyte *fade)
+{
+    asm volatile (
+      "call ASM_SCANNER_unkn_func_201\n"
+        : : "a" (spr), "d" (x), "b" (y), "c" (fade));
+}
+
+void SCANNER_unkn_func_202(struct TbSprite *spr, int x, int y, int ctr, int bri)
+{
+    asm volatile (
+      "push %4\n"
+      "call ASM_SCANNER_unkn_func_202\n"
+        : : "a" (spr), "d" (x), "b" (y), "c" (ctr), "g" (bri));
+}
+
+void LbSpriteDraw_1(int x, int y, struct TbSprite *spr)
+{
+    asm volatile (
+      "call ASM_LbSpriteDraw_1\n"
+        : : "a" (x), "d" (y), "b" (spr));
+}
+
+void SCANNER_draw_new_transparent(void)
+{
+    asm volatile ("call ASM_SCANNER_draw_new_transparent\n"
+        :  :  : "eax" );
+}
+
+void SCANNER_unkn_func_204(int a1, int a2, int a3)
+{
+    asm volatile (
+      "call ASM_SCANNER_unkn_func_204\n"
+        : : "a" (a1), "d" (a2), "b" (a3));
+}
+
+void SCANNER_unkn_func_205(void)
+{
+    asm volatile ("call ASM_SCANNER_unkn_func_205\n"
+        :  :  : "eax" );
+}
+
+TbBool func_1caf8(void)
+{
+    TbBool ret;
+    asm volatile ("call ASM_func_1caf8\n"
+        : "=r" (ret) : );
+    return ret;
+}
+
+void func_1efb8(void)
+{
+    asm volatile ("call ASM_func_1efb8\n"
+        :  :  : "eax" );
+}
+
+void func_1eae4(int a1, short a2, int a3, ushort a4, short a5, ushort a6, ubyte a7, int a8)
+{
+    asm volatile (
+      "push %7\n"
+      "push %6\n"
+      "push %5\n"
+      "push %4\n"
+      "call ASM_func_1eae4\n"
+        : : "a" (a1), "d" (a2), "b" (a3), "c" (a4), "g" (a5), "g" (a6), "g" (a7), "g" (a8));
+}
+
+void func_702c0(int a1, int a2, int a3, int a4, int a5, ubyte a6)
+{
+    asm volatile (
+      "push %5\n"
+      "push %4\n"
+      "call ASM_func_702c0\n"
+        : : "a" (a1), "d" (a2), "b" (a3), "c" (a4), "g" (a5), "g" (a6));
+}
+
+void func_1e998(short a1, short a2, ushort a3, int a4, short a5, ushort a6, ubyte a7, ubyte a8)
+{
+    asm volatile (
+      "push %7\n"
+      "push %6\n"
+      "push %5\n"
+      "push %4\n"
+      "call ASM_func_1e998\n"
+        : : "a" (a1), "d" (a2), "b" (a3), "c" (a4), "g" (a5), "g" (a6), "g" (a7), "g" (a8));
+}
+
+void func_1ec68(short a1, short a2, ushort a3, int a4, int a5)
+{
+    asm volatile (
+      "push %4\n"
+      "call ASM_func_1ec68\n"
+        : : "a" (a1), "d" (a2), "b" (a3), "c" (a4), "g" (a5));
+}
+
+void func_1ee14(short a1, short a2, short a3, short a4, int a5, int a6)
+{
+    asm volatile (
+      "push %5\n"
+      "push %4\n"
+      "call ASM_func_1ee14\n"
+        : : "a" (a1), "d" (a2), "b" (a3), "c" (a4), "g" (a5), "g" (a6));
+}
+
+void draw_unkn1_rect(int x1, int y1, int len_mul, int len_div)
+{
+    asm volatile (
+      "call ASM_draw_unkn1_rect\n"
+        : : "a" (x1), "d" (y1), "b" (len_mul), "c" (len_div));
+}
+
+void draw_new_panel()
 {
     asm volatile ("call ASM_draw_new_panel\n"
         :  :  : "eax" );
@@ -845,14 +957,6 @@ int init_memory(MemSystem *a1)
     int ret;
     asm volatile ("call ASM_init_memory\n"
         : "=r" (ret) : "a" (a1));
-    return ret;
-}
-
-int alt_at_point(ushort x, ushort z)
-{
-    int ret;
-    asm volatile ("call ASM_alt_at_point\n"
-        : "=r" (ret) : "a" (x), "d" (z));
     return ret;
 }
 

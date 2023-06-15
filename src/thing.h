@@ -321,7 +321,7 @@ struct TngUPerson
   short TempWeapon;
   short Stamina;
   short MaxStamina;
-  int WeaponsCarried;
+  ulong WeaponsCarried;
 };
 
 /** Structure for storing State of any Thing.
