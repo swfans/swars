@@ -503,7 +503,10 @@ void replay_intro(void)
     TbScreenModeInfo *mdinfo;
 
     mdinfo = LbScreenGetModeInfo(screen_mode_fmvid);
-    if (mdinfo->Width == 0) return;
+    if (mdinfo->Width == 0) {
+        LOGERR("Movies video mode %d is invalid", (int)screen_mode_fmvid);
+        return;
+    }
     LbScreenSetup(screen_mode_fmvid, mdinfo->Width, mdinfo->Height, display_palette);
     LbMouseSetup(0, 2, 2);
     show_black_screen();
@@ -1098,8 +1101,10 @@ void draw_new_panel()
         int lv, lvmax, x, w;
 
         p_agent = p_locplayer->MyAgent[i];
-        if ((p_agent->Flag & 0x2000) == 0)
+        if ((p_agent->Flag & 0x2000) == 0) {
+            LOGERR("Agent %d unexpected flags", i);
             return;
+        }
         if ((p_agent->Flag & 0x0002) == 0)
         {
             x = 79 * i + 27;
@@ -1399,9 +1404,13 @@ void load_pop_sprites_hi(void)
 void srm_scanner_set_size_at_bottom_left(int margin, int width, int height)
 {
     int i;
-    int cutout;
+    int hlimit, cutout;
 
+    hlimit = sizeof(ingame.Scanner.Width)/sizeof(ingame.Scanner.Width[0]);
+    if (height >= hlimit)
+        height = hlimit - 1;
     cutout = 24;
+
     ingame.Scanner.X1 = 1;
     ingame.Scanner.Y1 = lbDisplay.GraphicsScreenHeight - margin - height;
     ingame.Scanner.X2 = ingame.Scanner.X1 + width;
@@ -1462,6 +1471,7 @@ void video_mode_switch_to_next(void)
         nmode = screen_mode_game_hi;
     else
         nmode = screen_mode_game_lo;
+    LOGSYNC("Switching to mode %d", (int)nmode);
 
     StopCD();
     setup_screen_mode(nmode);
@@ -4058,6 +4068,22 @@ void game_play_music(void)
 
     sound_open_music_file(file_name);
     sound_play_music();
+}
+
+void copy_to_screen_ani(ubyte *buf)
+{
+    int y;
+    const ubyte *inp;
+    ubyte *o;
+
+    inp = buf;
+    o = lbDisplay.WScreen;
+    for (y = 0; y < 256; y++)
+    {
+        memcpy(o, inp, 256);
+        inp += 256;
+        o += lbDisplay.GraphicsScreenWidth;
+    }
 }
 
 void frame_unkn_func_06(void)

@@ -61,9 +61,7 @@ struct Scanner
   long Angle;
   long Contrast;
   long Brightness;
-  long Width[16];
-  char field_68[724];
-  struct BigBlip BigBlip_m1[1]; // data before BigBlip array
+  long Width[200];
   struct BigBlip BigBlip[15];
   char field_3FC[9];
   char Arc__Period;
