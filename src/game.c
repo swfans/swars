@@ -671,6 +671,44 @@ void SCANNER_unkn_func_205(void)
         :  :  : "eax" );
 }
 
+void draw_new_panel_sprite_A(int px, int py, ulong spr_id)
+{
+    struct TbSprite *spr;
+    int x, y;
+
+    spr = &pop1_sprites[spr_id];
+    if (lbDisplay.ScreenMode != 1) {
+        x = px;
+        y = py;
+    } else {
+        x = px >> 1;
+        y = py >> 1;
+    }
+    if (ingame.PanelPermutation == -1)
+        SCANNER_unkn_func_202(spr, x, y, ingame.Scanner.Contrast, ingame.Scanner.Brightness);
+    else
+        LbSpriteDraw_1(x, y, spr);
+}
+
+void draw_new_panel_sprite_B(int px, int py, ulong spr_id)
+{
+    struct TbSprite *spr;
+    int x, y;
+
+    spr = &pop1_sprites[spr_id];
+    if (lbDisplay.ScreenMode != 1) {
+        x = px;
+        y = py;
+    } else {
+        x = px >> 1;
+        y = py >> 1;
+    }
+    if (ingame.PanelPermutation == -1)
+        SCANNER_unkn_func_202(spr, x, y, ingame.Scanner.Contrast, 8);
+    else
+        SCANNER_unkn_func_201(spr, x, y, &pixmap.fade_table[4096]);
+}
+
 TbBool func_1caf8(void)
 {
     TbBool ret;
@@ -742,8 +780,281 @@ void draw_unkn1_rect(int x1, int y1, int len_mul, int len_div)
 
 void draw_new_panel()
 {
+#if 0
     asm volatile ("call ASM_draw_new_panel\n"
         :  :  : "eax" );
+#else
+    int i;
+    PlayerInfo *p_locplayer;
+
+    p_locplayer = &players[local_player_no];
+    // If an agent has a medkit, use the sprite with lighted cross
+    for (i = 0; i < playable_agents; i++)
+    {
+        struct Thing *p_agent;
+        p_agent = p_locplayer->MyAgent[i];
+        if (p_agent->U.UPerson.WeaponsCarried & ((1<<27) | (1<<26)))
+            game_panel[8+i].Spr = 96;
+        else
+            game_panel[8+i].Spr = 95;
+    }
+
+    {
+        struct Thing *p_agent;
+        p_agent = &things[p_locplayer->DirectControl[0]];
+        if (p_agent->Flag & 0x100)
+        {
+            game_panel[16].Spr = 99;
+            if (lbDisplay.ScreenMode != 1)
+                game_panel[17].Spr = 106;
+        }
+        else
+        {
+            game_panel[16].Spr = 10;
+            if (lbDisplay.ScreenMode != 1)
+                game_panel[17].Spr = 105;
+        }
+    }
+
+    for (i = 0; true; i++)
+    {
+        struct GamePanel *panel;
+
+        panel = &game_panel[i];
+        if (panel->Spr < 0)
+          break;
+        if (panel->Spr == 0)
+          continue;
+        lbDisplay.DrawFlags = 0;
+
+        if ( panel->Type != 1 && panel->Type != 6 && panel->Type != 5 )
+        {
+            draw_new_panel_sprite_A(panel->X, panel->Y, panel->Spr);
+        }
+        else
+        {
+            TbBool is_visible;
+
+            is_visible = true;
+            if (panel->Type == 5 && panel->ID < playable_agents)
+            {
+                struct Thing *p_agent;
+                ubyte weapon;
+
+                p_agent = p_locplayer->MyAgent[panel->ID];
+                if (p_agent < &things[0] || p_agent > &things[1000])
+                    break;
+                weapon = p_agent->U.UPerson.CurrentWeapon;
+                if (weapon == 0)
+                    weapon = p_locplayer->PrevWeapon[panel->ID];
+                is_visible = !p_locplayer->WepDelays[panel->ID][weapon] || (gameturn & 1);
+            }
+
+            if (p_locplayer->DoubleMode)
+            {
+                struct Thing *p_agent;
+                if (!is_visible)
+                    continue;
+                if (panel->ID >= playable_agents)
+                    continue;
+                p_agent = p_locplayer->MyAgent[panel->ID];
+                if (p_agent->Flag & 0x0002)
+                    continue;
+                draw_new_panel_sprite_A(panel->X, panel->Y, panel->Spr);
+            }
+            else
+            {
+                struct Thing *p_agent;
+                if (!is_visible)
+                    continue;
+                if (panel->ID >= playable_agents)
+                    continue;
+                p_agent = p_locplayer->MyAgent[panel->ID];
+                if (p_agent->Flag & 0x0002)
+                    continue;
+
+                if (panel->Type == 5) {
+                    ubyte weapon;
+
+                    weapon = p_agent->U.UPerson.CurrentWeapon;
+                    if (weapon == 0)
+                        weapon = p_locplayer->PrevWeapon[panel->ID];
+                    if (weapon == 0)
+                        continue;
+                }
+
+                if ((p_agent->State == 43) || (p_agent->Flag2 & 0x10000000))
+                    draw_new_panel_sprite_B(panel->X, panel->Y, panel->Spr);
+                else
+                    draw_new_panel_sprite_A(panel->X, panel->Y, panel->Spr);
+            }
+        }
+    }
+
+    if (gameturn & 4)
+    {
+        int x, cc;
+        int agent;
+        struct Thing *p_agent;
+
+        x = 0;
+        agent = p_locplayer->DoubleMode ? p_locplayer->DirectControl[byte_153198-1] : p_locplayer->DirectControl[0];
+        p_agent = &things[agent];
+        if ((p_agent->Flag & 2) == 0 && (p_agent->Flag2 & 0x800) == 0)
+        {
+            cc = p_agent->U.UPerson.ComCur & 3;
+            if (lbDisplay.ScreenMode == 1)
+            {
+                switch (cc)
+                {
+                case 0:
+                  x = 4;
+                  break;
+                case 1:
+                  x = 154;
+                  break;
+                case 2:
+                  x = 308;
+                  break;
+                case 3:
+                  x = 472;
+                  break;
+                }
+            }
+            else
+            {
+                switch (cc)
+                {
+                case 0:
+                  x = 4;
+                  break;
+                case 1:
+                  x = 153;
+                  break;
+                case 2:
+                  x = 306;
+                  break;
+                case 3:
+                  x = 469;
+                  break;
+                }
+            }
+            draw_new_panel_sprite_A(x, 2, 6 + cc);
+        }
+    }
+    lbDisplay.DrawFlags = 0;
+
+    if (!func_1caf8())
+    {
+        if (ingame.Flags & 0x200) {
+            ulong md, y;
+            md = p_locplayer->UserInput[0].ControlMode & 0x1FFF;
+            if (md == 1 && pktrec_mode != PktR_PLAYBACK) {
+                y = alt_at_point(mouse_map_x, mouse_map_z);
+                func_702c0(mouse_map_x, y >> 5, mouse_map_z, 64, 64, colour_lookup[2]);
+            }
+        }
+    }
+    func_1efb8();
+
+    // Fill the left energy bar
+    {
+        int agent;
+        struct Thing *p_agent;
+        int lv, lvmax, col, w;
+
+        agent = p_locplayer->DoubleMode ? p_locplayer->DirectControl[byte_153198-1] : p_locplayer->DirectControl[0];
+        p_agent = &things[agent];
+        if ((p_agent->U.UPerson.Energy < 50) && (gameturn & 1))
+            col = 2;
+        else
+            col = 1;
+        lvmax = p_agent->U.UPerson.MaxEnergy;
+        lv = p_agent->U.UPerson.Energy;
+        if (lbDisplay.ScreenMode == 1)
+            w = 0;
+        else
+            w = 45;
+        func_1eae4(3, 30, 4, 54+w, lv, lvmax, colour_lookup[col], 0);
+    }
+
+    // Fill the agents bar at top
+    for (i = 0; i < playable_agents; i++)
+    {
+        struct Thing *p_agent;
+        int lv, lvmax, x, w;
+
+        p_agent = p_locplayer->MyAgent[i];
+        if ((p_agent->Flag & 0x2000) == 0)
+            return;
+        if ((p_agent->Flag & 0x0002) == 0)
+        {
+            x = 79 * i + 27;
+            // Draw health level
+            lv = p_agent->Health;
+            lvmax = p_agent->U.UPerson.MaxHealth;
+            if (lv <= lvmax) {
+                func_1e998(x, 2, 0x2Cu, 2, lv, lvmax, colour_lookup[1], 0);
+            } else {
+                func_1e998(x, 2, 0x2Cu, 2, lvmax, lvmax, colour_lookup[1], 0);
+                func_1e998(x, 2, 0x2Cu, 2, lv - lvmax, lvmax, colour_lookup[2], 0);
+            }
+            // Draw shield level over health
+            lv = p_agent->U.UPerson.ShieldEnergy;
+            func_1e998(x, 2, 0x2Cu, 2, lv, 0x400, colour_lookup[1], 1);
+            // Draw drug level aka mood (or just a red line if no drugs)
+            w = game_panel[4+i].Width;
+            x = game_panel[4+i].X >> 1;
+            func_1ec68(x, 6, w, 3, p_agent->U.UPerson.Mood);
+            // Draw stamina level which caps the mood level
+            lv = p_agent->U.UPerson.Stamina;
+            lvmax = p_agent->U.UPerson.MaxStamina;
+            func_1ee14(x, 6, w, 2, lv, lvmax);
+            if (lbDisplay.ScreenMode == 1)
+                x = 158 * i + 54;
+            else
+                x = 157 * i + 54;
+            lv = p_agent->U.UPerson.Energy;
+            lvmax = p_agent->U.UPerson.MaxEnergy;
+            draw_unkn1_rect(x + 80, 18, lv, lvmax);
+        }
+    }
+
+    ingame.Scanner.MX = engn_xc >> 7;
+    ingame.Scanner.MZ = engn_zc >> 7;
+    ingame.Scanner.Angle = 2047 - ((dword_176D58 >> 5) & 0x7FF);
+    SCANNER_draw_new_transparent();
+
+    // Objective text, or net players list
+    if (lbDisplay.ScreenMode == 1) {
+        int w;
+        if (in_network_game) {
+            SCANNER_unkn_func_205();
+            w = lbDisplay.PhysicalScreenWidth;
+        } else {
+            w = 67;
+        }
+        SCANNER_unkn_func_204(0, 191, w);
+    } else {
+        int w;
+        if (in_network_game) {
+            SCANNER_unkn_func_205();
+            w = lbDisplay.PhysicalScreenWidth;
+        } else {
+            w = 132;
+        }
+        SCANNER_unkn_func_204(0, 462, w);
+    }
+
+    // Thermal vision button light
+    if ((ingame.Flags & 0x8000) != 0) {
+        int x;
+        x = 238;
+        if (lbDisplay.ScreenMode != 1)
+            x += 89;
+        draw_new_panel_sprite_A(4, x, 91);
+    }
+#endif
 }
 
 void draw_screen(void)
