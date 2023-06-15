@@ -630,6 +630,119 @@ void draw_hud(int thing)
         : : "a" (thing));
 }
 
+void SCANNER_unkn_func_200(struct TbSprite *spr, int x, int y, ubyte col)
+{
+#if 0
+    asm volatile (
+      "call ASM_SCANNER_unkn_func_200\n"
+        : : "a" (spr), "d" (x), "b" (y), "c" (col));
+#else
+    int xwind_beg;
+    int xwind_end;
+    int xwind_start;
+    sbyte *inp;
+    ubyte *oline;
+    int opitch;
+    int h;
+    TbBool needs_window_bounding;
+
+    xwind_beg = lbDisplay.GraphicsWindowX;
+    xwind_end = lbDisplay.GraphicsWindowX + lbDisplay.GraphicsWindowWidth;
+    xwind_start = lbDisplay.GraphicsWindowX + x;
+    inp = (sbyte *)spr->Data;
+    opitch = lbDisplay.GraphicsScreenWidth;
+    oline = &lbDisplay.WScreen[opitch * (lbDisplay.GraphicsWindowY + y) + lbDisplay.GraphicsWindowX + x];
+    if (xwind_start < lbDisplay.GraphicsWindowX) {
+        if (xwind_start + 2 * spr->SWidth <= lbDisplay.GraphicsWindowX)
+            return;
+        needs_window_bounding = true;
+    } else {
+        if (xwind_start >= xwind_end)
+            return;
+        needs_window_bounding = (xwind_start + 2 * spr->SWidth > xwind_end);
+    }
+
+    if (!needs_window_bounding)
+    {
+        // Simplified and faster drawing when we do not have to check bounds
+        for (h = 0; h < spr->SHeight; h++)
+        {
+            ubyte *o;
+
+            o = oline;
+            while (*inp)
+            {
+                int ival;
+                int i;
+
+                ival = *inp;
+                if (ival < 0)
+                {
+                    inp++;
+                    o -= 2 * ival;
+                    continue;
+                }
+                inp += ival + 1;
+                for (i = 0; i < ival; i++)
+                {
+                    o[0] = col;
+                    o[opitch + 0] = col;
+                    o[1] = col;
+                    o[opitch + 1] = col;
+                    o += 2;
+                }
+            }
+            inp++;
+            oline += 2 * opitch;
+        }
+    }
+    else
+    {
+        for (h = 0; h < spr->SHeight; h++)
+        {
+            ubyte *o;
+            int xwind_curr;
+
+            o = oline;
+            xwind_curr = xwind_start;
+            while (*inp)
+            {
+                int ival;
+                int i;
+
+                ival = *inp;
+                if (ival < 0)
+                {
+                    inp++;
+                    o -= 2 * ival;
+                    xwind_curr -= 2 * ival;
+                    continue;
+                }
+                inp += ival + 1;
+                for (i = 0; i < ival; i++)
+                {
+                    if (xwind_curr >= xwind_beg && xwind_curr < xwind_end) {
+                        o[0] = col;
+                        o[opitch] = col;
+                    }
+                    xwind_curr++;
+                    o++;
+                    if (xwind_curr >= xwind_beg && xwind_curr < xwind_end) {
+                        o[0] = col;
+                        o[opitch] = col;
+                    }
+                    xwind_curr++;
+                    o++;
+                }
+            }
+            inp++;
+            oline += 2 * opitch;
+        }
+    }
+#endif
+}
+
+
 void SCANNER_unkn_func_201(struct TbSprite *spr, int x, int y, ubyte *fade)
 {
     asm volatile (
