@@ -250,6 +250,13 @@ char unk_credits_text_s[] = "";
 char unk_credits_text_z[] = "";
 char unk_credits_text_p[] = "";
 
+// Original sizes of scanner in low res 64x62, high res 129x119
+
+/** Width of the scanner map area, in percentage of screen. */
+ubyte scanner_width_pct = 20;
+/** Height of the scanner map area, in percentage of screen. */
+ubyte scanner_height_pct = 25;
+
 void PacketRecord_Close(void)
 {
     if (in_network_game)
@@ -1145,24 +1152,23 @@ void draw_new_panel()
     SCANNER_draw_new_transparent();
 
     // Objective text, or net players list
-    if (lbDisplay.ScreenMode == 1) {
-        int w;
+    {
+        int x, y, w;
+        x = ingame.Scanner.X1 - 1;
+        if (x < 0)
+            x = 0;
+        if (lbDisplay.GraphicsScreenWidth >= 640)
+            y = lbDisplay.GraphicsScreenHeight - 18;
+        else
+            y = lbDisplay.GraphicsScreenHeight - 9;
         if (in_network_game) {
             SCANNER_unkn_func_205();
             w = lbDisplay.PhysicalScreenWidth;
         } else {
-            w = 67;
+            // original width 67 low res, 132 high res
+            w = ingame.Scanner.X2 - ingame.Scanner.X1 + 3;
         }
-        SCANNER_unkn_func_204(0, 191, w);
-    } else {
-        int w;
-        if (in_network_game) {
-            SCANNER_unkn_func_205();
-            w = lbDisplay.PhysicalScreenWidth;
-        } else {
-            w = 132;
-        }
-        SCANNER_unkn_func_204(0, 462, w);
+        SCANNER_unkn_func_204(x, y, w);
     }
 
     // Thermal vision button light
@@ -1422,12 +1428,6 @@ void srm_scanner_set_size_at_bottom_left(int margin, int width, int height)
     }
 }
 
-#define SCANNER_R0_WIDTH 64
-#define SCANNER_R0_HEIGHT 62
-
-#define SCANNER_R1_WIDTH 129
-#define SCANNER_R1_HEIGHT 119
-
 /**
  * Updates engine parameters for best display for current video mode within the tactical mission.
  */
@@ -1450,8 +1450,8 @@ void adjust_mission_engine_to_video_mode(void)
         render_area_a = 24;
         render_area_b = 24;
     }
-    width = lbDisplay.GraphicsScreenWidth * 20 / 100;
-    height = lbDisplay.GraphicsScreenHeight * 25 / 100;
+    width = lbDisplay.GraphicsScreenWidth * scanner_width_pct / 100;
+    height = lbDisplay.GraphicsScreenHeight * scanner_height_pct / 100;
     if (lbDisplay.GraphicsScreenWidth >= 640) {
         margin = 20;
         width = width * 101 / 100;
