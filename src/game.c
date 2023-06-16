@@ -1527,13 +1527,50 @@ void srm_scanner_set_size_at_bottom_left(int margin, int width, int height)
     }
 }
 
+void srm_scanner_size_update(void)
+{
+    int margin, width, height;
+
+    width = lbDisplay.GraphicsScreenWidth * scanner_width_pct / 100;
+    height = lbDisplay.GraphicsScreenHeight * scanner_height_pct / 100;
+    if (lbDisplay.GraphicsScreenWidth >= 640) {
+        margin = 20;
+        width = width * 101 / 100;
+        height = height * 99 / 100;
+    } else {
+        margin = 11;
+        // width without change
+        height = height * 124 / 100;
+    }
+    srm_scanner_set_size_at_bottom_left(margin, width, height);
+}
+
+void init_scanner(void)
+{
+    ubyte col;
+
+    if (ingame.PanelPermutation != 2 && ingame.PanelPermutation != -3)
+        col = 2;
+    else
+        col = 1;
+    SCANNER_set_colour(col);
+    dword_1AA5C4 = 0;
+    dword_1AA5C8 = 0;
+    SCANNER_fill_in();
+    ingame.Scanner.Brightness = 8;
+    ingame.Scanner.Contrast = 5;
+    SCANNER_width = ingame.Scanner.Width;
+    ingame.Scanner.Zoom = 128;
+    ingame.Scanner.Angle = 0;
+    srm_scanner_size_update();
+    SCANNER_init();
+}
+
 /**
  * Updates engine parameters for best display for current video mode within the tactical mission.
  */
 void adjust_mission_engine_to_video_mode(void)
 {
-    int margin, width, height;
-
     game_high_resolution = (lbDisplay.ScreenMode == screen_mode_game_hi);
     if (lbDisplay.GraphicsScreenWidth >= 640)
     {
@@ -1549,18 +1586,7 @@ void adjust_mission_engine_to_video_mode(void)
         render_area_a = 24;
         render_area_b = 24;
     }
-    width = lbDisplay.GraphicsScreenWidth * scanner_width_pct / 100;
-    height = lbDisplay.GraphicsScreenHeight * scanner_height_pct / 100;
-    if (lbDisplay.GraphicsScreenWidth >= 640) {
-        margin = 20;
-        width = width * 101 / 100;
-        height = height * 99 / 100;
-    } else {
-        margin = 11;
-        // width without change
-        height = height * 124 / 100;
-    }
-    srm_scanner_set_size_at_bottom_left(margin, width, height);
+    srm_scanner_size_update();
 }
 
 void video_mode_switch_to_next(void)

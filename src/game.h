@@ -698,6 +698,8 @@ extern long dword_177110;
 extern ubyte mouser;
 extern struct Thing *things;
 extern ubyte *dword_1AA280;
+extern long dword_1AA5C4;
+extern long dword_1AA5C8;
 
 extern ubyte num_cities;
 extern struct City cities[];
