@@ -3059,12 +3059,11 @@ void do_scroll_map(void)
     long engn_xc_orig, engn_zc_orig;
     ushort md;
     long abase, angle;
-    int dx, dy, dz;
+    int dx, dy;
     int dampr;
 
     dx = 0;
     dy = 0;
-    dz = 0;
     dampr = 10;
     if (ingame.fld_unkCA6)
         track_angle();
@@ -3072,6 +3071,7 @@ void do_scroll_map(void)
     if (p_locplayer->State[0] == 1)
     {
         ushort bitx, bity;
+        int dz;
         // TODO check if this makes sense
         bitx = (p_locplayer->UserInput[0].Bits >> 0);
         bity = (p_locplayer->UserInput[0].Bits >> 8);
@@ -3113,34 +3113,36 @@ void do_scroll_map(void)
         if (!p_locplayer->PanelState[mouser])
         {
             long cumm_alt;
+            int mv_border;
+
+            // Define a move border, getting the mouse beyond it causes map scroll
+            if (lbDisplay.GraphicsScreenWidth >= 640)
+                mv_border = 3;
+            else
+                mv_border = 2;
+
             if (!p_locplayer->DoubleMode)
             {
                 dx = (lbKeyOn[kbkeys[GKey_RIGHT]] & 1) - (lbKeyOn[kbkeys[GKey_LEFT]] & 1);
                 dy = (lbKeyOn[kbkeys[GKey_DOWN]] & 1) - (lbKeyOn[kbkeys[GKey_UP]] & 1);
             }
-            if (!dx)
+
+            if (dx == 0)
             {
                 int mx;
-                if (lbDisplay.ScreenMode == 1)
-                    mx = 2 * lbDisplay.MMouseX;
-                else
-                    mx = lbDisplay.MMouseX;
-                if (mx > 636)
+                mx = lbDisplay.MMouseX;
+                if (mx >= lbDisplay.GraphicsScreenWidth - mv_border)
                     dx = 1;
-                if (mx < 2)
+                if (mx < mv_border)
                     dx = -1;
             }
-            if (!dy)
+            if (dy == 0)
             {
                 int my;
-                if (lbDisplay.ScreenMode == 1)
-                    my = 2 * lbDisplay.MMouseY;
-                else
-                    my = lbDisplay.MMouseY;
-                if ((lbDisplay.ScreenMode == 1 && my >= 398)
-                    || (lbDisplay.ScreenMode != 1 && my > 476))
+                my = lbDisplay.MMouseY;
+                if (my >= lbDisplay.GraphicsScreenHeight - mv_border)
                     dy = 1;
-                if (my < 2)
+                if (my < mv_border)
                     dy = -1;
             }
             cumm_alt = alt_at_point(engn_xc, engn_zc) >> 8;
