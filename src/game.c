@@ -21,7 +21,6 @@
 #include "bfsvaribl.h"
 #include "bfmath.h"
 #include "bfline.h"
-#include "poly.h"
 #include "svesa.h"
 #include "swlog.h"
 #include "bflib_fmvids.h"
@@ -868,14 +867,62 @@ void func_702c0(int a1, int a2, int a3, int a4, int a5, ubyte a6)
         : : "a" (a1), "d" (a2), "b" (a3), "c" (a4), "g" (a5), "g" (a6));
 }
 
-void func_1e834(short a1, short a2, ushort a3, int a4)
+void draw_shield_level(short x, short y, ushort w, ushort h)
 {
+#if 0
     asm volatile (
-      "call ASM_func_1e834\n"
-        : : "a" (a1), "d" (a2), "b" (a3), "c" (a4));
+      "call ASM_draw_shield_level\n"
+        : : "a" (x), "d" (y), "b" (w), "c" (h));
+#else
+    ubyte m;
+    long waftx, wafty;
+    ushort tmx, tmy;
+    struct EnginePoint point4;
+    struct EnginePoint point2;
+    struct EnginePoint point1;
+    struct EnginePoint point3;
+
+    m = 1;
+    if (lbDisplay.ScreenMode == 1)
+        m = 0;
+    point1.pp.X = x << m;
+    point1.pp.Y = y << m;
+    point4.pp.X = (x + w) << m;
+    point4.pp.Y = y << m;
+    point2.pp.Y = (y + h) << m;
+    point2.pp.X = (x + w - 3) << m;
+    point3.pp.Y = (y + h) << m;
+    point3.pp.X = (x - 3) << m;
+
+    // The shield bar is animated, even if it's not possible to see
+    waftx = waft_table[(gameturn >> 3) & 31];
+    wafty = waft_table[(gameturn + 16) & 31];
+    tmx = ((waftx + 30) >> 1);
+    tmy = ((wafty + 30) >> 3) + 64;
+    point1.pp.U = tmx << 16;
+    point4.pp.U = (tmx + 64) << 16;
+    point2.pp.U = (tmx + 64) << 16;
+    point1.pp.V = tmy << 16;
+    point4.pp.V = tmy << 16;
+    point2.pp.V = (tmy + 8) << 16;
+    point3.pp.U = tmx << 16;
+    point3.pp.V = (tmy + 8) << 16;
+
+    point1.pp.S = 0;
+    point2.pp.S = 0;
+    point3.pp.S = 0;
+    point4.pp.S = 0;
+
+    vec_mode = 18;
+    vec_map = dword_1AA280;
+    draw_trigpoly(&point1.pp, &point4.pp, &point3.pp);
+    if (vec_mode == 2)
+        vec_mode = 27;
+    draw_trigpoly(&point4.pp, &point2.pp, &point3.pp);
+#endif
 }
 
-void func_1e998(short x, short y, ushort w, ushort h, short lv, ushort lvmax, ubyte col, ubyte a8)
+void draw_health_level(short x, short y, ushort w, ushort h, short lv, ushort lvmax, ubyte col, ubyte a8)
 {
 #if 0
     asm volatile (
@@ -883,7 +930,7 @@ void func_1e998(short x, short y, ushort w, ushort h, short lv, ushort lvmax, ub
       "push %6\n"
       "push %5\n"
       "push %4\n"
-      "call ASM_func_1e998\n"
+      "call ASM_draw_health_level\n"
         : : "a" (x), "d" (y), "b" (w), "c" (h), "g" (lv), "g" (lvmax), "g" (col), "g" (a8));
 #else
     short cw, ch;
@@ -894,7 +941,7 @@ void func_1e998(short x, short y, ushort w, ushort h, short lv, ushort lvmax, ub
     cw = w * lv / lvmax;
     if (a8)
     {
-        func_1e834(x, y, cw, h);
+        draw_shield_level(x, y, cw, h);
     }
     else if (lbDisplay.ScreenMode == 1)
     {
@@ -1172,14 +1219,14 @@ void draw_new_panel()
             lv = p_agent->Health;
             lvmax = p_agent->U.UPerson.MaxHealth;
             if (lv <= lvmax) {
-                func_1e998(x, 2, 0x2Cu, 2, lv, lvmax, colour_lookup[1], 0);
+                draw_health_level(x, 2, 0x2Cu, 2, lv, lvmax, colour_lookup[1], 0);
             } else {
-                func_1e998(x, 2, 0x2Cu, 2, lvmax, lvmax, colour_lookup[1], 0);
-                func_1e998(x, 2, 0x2Cu, 2, lv - lvmax, lvmax, colour_lookup[2], 0);
+                draw_health_level(x, 2, 0x2Cu, 2, lvmax, lvmax, colour_lookup[1], 0);
+                draw_health_level(x, 2, 0x2Cu, 2, lv - lvmax, lvmax, colour_lookup[2], 0);
             }
             // Draw shield level over health
             lv = p_agent->U.UPerson.ShieldEnergy;
-            func_1e998(x, 2, 0x2Cu, 2, lv, 0x400, colour_lookup[1], 1);
+            draw_health_level(x, 2, 0x2Cu, 2, lv, 0x400, colour_lookup[1], 1);
             // Draw drug level aka mood (or just a red line if no drugs)
             w = game_panel[4+i].Width;
             x = game_panel[4+i].X >> 1;

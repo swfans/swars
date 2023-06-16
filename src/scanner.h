@@ -79,6 +79,9 @@ struct Scanner
 /******************************************************************************/
 extern long *SCANNER_width;
 
+extern short waft_table2[32];
+extern short waft_table[32];
+
 void SCANNER_init(void);
 void SCANNER_fill_in(void);
 void SCANNER_set_colour(ubyte col);
