@@ -769,6 +769,16 @@ void SCANNER_unkn_func_202(struct TbSprite *spr, int x, int y, int ctr, int bri)
         : : "a" (spr), "d" (x), "b" (y), "c" (ctr), "g" (bri));
 }
 
+void SCANNER_unkn_func_203(int a1, int a2, int a3, int a4, ubyte a5, int a6, int a7)
+{
+    asm volatile (
+      "push %6\n"
+      "push %5\n"
+      "push %4\n"
+      "call ASM_SCANNER_unkn_func_203\n"
+        : : "a" (a1), "d" (a2), "b" (a3), "c" (a4), "g" (a5), "g" (a6), "g" (a7));
+}
+
 void LbSpriteDraw_1(int x, int y, struct TbSprite *spr)
 {
     asm volatile (
@@ -845,17 +855,6 @@ void func_1efb8(void)
 {
     asm volatile ("call ASM_func_1efb8\n"
         :  :  : "eax" );
-}
-
-void func_1eae4(int a1, short a2, int a3, ushort a4, short a5, ushort a6, ubyte a7, int a8)
-{
-    asm volatile (
-      "push %7\n"
-      "push %6\n"
-      "push %5\n"
-      "push %4\n"
-      "call ASM_func_1eae4\n"
-        : : "a" (a1), "d" (a2), "b" (a3), "c" (a4), "g" (a5), "g" (a6), "g" (a7), "g" (a8));
 }
 
 void func_702c0(int a1, int a2, int a3, int a4, int a5, ubyte a6)
@@ -971,6 +970,64 @@ void draw_health_level(short x, short y, ushort w, ushort h, short lv, ushort lv
             else
                 LbDrawLine(cx, cy, cx + cw, cy, col);
             --cx;
+            ++cy;
+        }
+    }
+#endif
+}
+
+void func_1eae4(int x, short y, int w, ushort h, short lv, ushort lvmax, ubyte col, int a8)
+{
+#if 0
+    asm volatile (
+      "push %7\n"
+      "push %6\n"
+      "push %5\n"
+      "push %4\n"
+      "call ASM_func_1eae4\n"
+        : : "a" (x), "d" (y), "b" (w), "c" (h), "g" (lv), "g" (lvmax), "g" (col), "g" (a8));
+#else
+    short cw, ch;
+
+    if ((lv <= 0) || (lvmax == 0))
+        return;
+
+    ch = h * lv / lvmax;
+    if (lbDisplay.ScreenMode == 1)
+    {
+        short cx, cy;
+        cx = x;
+        cy = y;
+        for (cw = w; cw > 0; cw--)
+        {
+            short cy1, cy2;
+            cy1 = cy + h;
+            cy2 = cy + h - ch;
+            if (lbDisplay.ScreenMode == 1)
+                SCANNER_unkn_func_203(2 * cx >> 1, 2 * cy1 >> 1, 2 * cx >> 1, 2 * cy2 >> 1, col,
+                    ingame.Scanner.Contrast, ingame.Scanner.Brightness);
+            else
+                SCANNER_unkn_func_203(2 * cx, 2 * cy1, 2 * cx, 2 * cy2, col,
+                    ingame.Scanner.Contrast, ingame.Scanner.Brightness);
+            ++cx;
+            ++cy;
+        }
+    }
+    else
+    {
+        short cx, cy;
+        cx = 2 * x;
+        cy = 2 * y;
+        for (cw = 2 * w; cw > 0; cw--)
+        {
+            short cy1, cy2;
+            cy1 = 2*h + cy;
+            cy2 = 2*h + cy - 2*ch;
+            if (lbDisplay.ScreenMode == 1)
+                LbDrawLine(cx >> 1, cy1 >> 1, cx >> 1, cy2 >> 1, col);
+            else
+                LbDrawLine(cx, cy1, cx, cy2, col);
+            ++cx;
             ++cy;
         }
     }
