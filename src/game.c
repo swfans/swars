@@ -3051,8 +3051,176 @@ void local_to_worldr(int *dx, int *dy, int *dz)
 
 void do_scroll_map(void)
 {
+#if 0
     asm volatile ("call ASM_do_scroll_map\n"
         :  :  : "eax" );
+#else
+    PlayerInfo *p_locplayer;
+    long engn_xc_orig, engn_zc_orig;
+    ushort md;
+    long abase, angle;
+    int dx, dy, dz;
+    int dampr;
+
+    dx = 0;
+    dy = 0;
+    dz = 0;
+    dampr = 10;
+    if (ingame.fld_unkCA6)
+        track_angle();
+    p_locplayer = &players[local_player_no];
+    if (p_locplayer->State[0] == 1)
+    {
+        ushort bitx, bity;
+        // TODO check if this makes sense
+        bitx = (p_locplayer->UserInput[0].Bits >> 0);
+        bity = (p_locplayer->UserInput[0].Bits >> 8);
+        dx = (bitx & 0xFF) << 8;
+        dz = (bity & 0xFF) << 8;
+        local_to_worldr(&dx, &dy, &dz);
+        engn_xc += dx;
+        engn_zc += dz;
+    }
+    else
+    {
+        ulong dcthing;
+        if (p_locplayer->DoubleMode)
+        {
+            if (byte_153198)
+                dcthing = p_locplayer->DirectControl[byte_153198-1];
+            else
+                dcthing = p_locplayer->DirectControl[0];
+            track_player(dcthing);
+            return;
+        }
+        dcthing = p_locplayer->DirectControl[0];
+        if (dcthing)
+        {
+            md = p_locplayer->UserInput[0].ControlMode & 0x1FFF;
+            if (md == 1 || pktrec_mode == PktR_PLAYBACK)
+                move_camera(ingame.TrackX, engn_yc, ingame.TrackZ);
+            else
+                track_player(dcthing);
+        }
+    }
+    dy = 0;
+    dx = 0;
+    md = p_locplayer->UserInput[byte_153198-1].ControlMode & 0x1FFF;
+    engn_xc_orig = engn_xc;
+    engn_zc_orig = engn_zc;
+    if (md == 1 || pktrec_mode == PktR_PLAYBACK)
+    {
+        if (!p_locplayer->PanelState[mouser])
+        {
+            long cumm_alt;
+            if (!p_locplayer->DoubleMode)
+            {
+                dx = (lbKeyOn[kbkeys[GKey_RIGHT]] & 1) - (lbKeyOn[kbkeys[GKey_LEFT]] & 1);
+                dy = (lbKeyOn[kbkeys[GKey_DOWN]] & 1) - (lbKeyOn[kbkeys[GKey_UP]] & 1);
+            }
+            if (!dx)
+            {
+                int mx;
+                if (lbDisplay.ScreenMode == 1)
+                    mx = 2 * lbDisplay.MMouseX;
+                else
+                    mx = lbDisplay.MMouseX;
+                if (mx > 636)
+                    dx = 1;
+                if (mx < 2)
+                    dx = -1;
+            }
+            if (!dy)
+            {
+                int my;
+                if (lbDisplay.ScreenMode == 1)
+                    my = 2 * lbDisplay.MMouseY;
+                else
+                    my = lbDisplay.MMouseY;
+                if ((lbDisplay.ScreenMode == 1 && my >= 398)
+                    || (lbDisplay.ScreenMode != 1 && my > 476))
+                    dy = 1;
+                if (my < 2)
+                    dy = -1;
+            }
+            cumm_alt = alt_at_point(engn_xc, engn_zc) >> 8;
+            cumm_alt += alt_at_point(engn_xc + 2048, engn_zc + 2048) >> 8;
+            cumm_alt += alt_at_point(engn_xc + 2048, engn_zc - 2048) >> 8;
+            cumm_alt += alt_at_point(engn_xc - 2048, engn_zc + 2048) >> 8;
+            cumm_alt += alt_at_point(engn_xc - 2048, engn_zc - 2048) >> 8;
+            track_y(cumm_alt / 5);
+            dampr = 9;
+        }
+    }
+
+    abase = -dword_176D58 >> 5;
+    angle = -1;
+    if (dx > 0)
+        angle = (abase + 3583) & 0x7FF;
+    if (dx < 0)
+        angle = (abase + 2559) & 0x7FF;
+    if (angle >= 0) {
+        int wibl_x, wibl_y;
+        wibl_x = dword_153194 * lbSinTable[angle] >> 8 >> dampr;
+        wibl_y = dword_153194 * lbSinTable[angle + 512] >> 8 >> dampr;
+        ingame.TrackX -= wibl_x;
+        ingame.TrackZ += wibl_y;
+        engn_xc -= wibl_x;
+        engn_zc += wibl_y;
+    }
+    angle = -1;
+    if (dy > 0)
+        angle = (abase + 3071) & 0x7FF;
+    if (dy < 0)
+        angle = (abase + 2047) & 0x7FF;
+    if (angle >= 0) {
+        int wibl_x, wibl_y;
+        wibl_x = dword_153194 * lbSinTable[angle] >> 8 >> dampr;
+        wibl_y = dword_153194 * lbSinTable[angle + 512] >> 8 >> dampr;
+        ingame.TrackX -= wibl_x;
+        ingame.TrackZ += wibl_y;
+        engn_xc -= wibl_x;
+        engn_zc += wibl_y;
+    }
+
+    if (engn_xc < 0)
+        engn_xc = 0;
+    else if (engn_xc >= 0x8000)
+        engn_xc = 0x7FFF;
+    if (engn_zc < 0)
+        engn_zc = 0;
+    else if (engn_zc >= 0x8000)
+        engn_zc = 0x7FFF;
+    if (ingame.TrackX > 0xC000)
+        ingame.TrackX = 0;
+    else if (ingame.TrackX >= 0x8000)
+        ingame.TrackX = 0x7FFF;
+    if (ingame.TrackZ > 0xC000)
+        ingame.TrackZ = 0;
+    else if (ingame.TrackZ >= 0x8000)
+        ingame.TrackZ = 0x7FFF;
+
+    if (dx) {
+        dword_153194 += 4 + ((dword_153194 - 252) >> 5);
+        if (dword_153194 > 800)
+            dword_153194 = 800;
+    } else {
+        dword_153194 -= (dword_153194 - 256) >> 2;
+    }
+    if ((engn_zc - engn_zc_orig) || (engn_xc - engn_xc_orig)) {
+        dword_17710C = engn_xc - engn_xc_orig;
+        dword_177110 = engn_zc - engn_zc_orig;
+    } else {
+        dword_17710C >>= 2;
+        dword_177110 >>= 2;
+        if (abs(dword_17710C) < 5)
+            dword_17710C = 0;
+        if (abs(dword_177110) < 5)
+            dword_177110 = 0;
+        engn_xc += dword_17710C;
+        engn_zc += dword_177110;
+    }
+#endif
 }
 
 void do_rotate_map(void)
