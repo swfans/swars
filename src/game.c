@@ -20,6 +20,7 @@
 #include "bfutility.h"
 #include "bfsvaribl.h"
 #include "bfmath.h"
+#include "bfline.h"
 #include "poly.h"
 #include "svesa.h"
 #include "swlog.h"
@@ -867,15 +868,66 @@ void func_702c0(int a1, int a2, int a3, int a4, int a5, ubyte a6)
         : : "a" (a1), "d" (a2), "b" (a3), "c" (a4), "g" (a5), "g" (a6));
 }
 
-void func_1e998(short a1, short a2, ushort a3, int a4, short a5, ushort a6, ubyte a7, ubyte a8)
+void func_1e834(short a1, short a2, ushort a3, int a4)
 {
+    asm volatile (
+      "call ASM_func_1e834\n"
+        : : "a" (a1), "d" (a2), "b" (a3), "c" (a4));
+}
+
+void func_1e998(short x, short y, ushort w, ushort h, short lv, ushort lvmax, ubyte col, ubyte a8)
+{
+#if 0
     asm volatile (
       "push %7\n"
       "push %6\n"
       "push %5\n"
       "push %4\n"
       "call ASM_func_1e998\n"
-        : : "a" (a1), "d" (a2), "b" (a3), "c" (a4), "g" (a5), "g" (a6), "g" (a7), "g" (a8));
+        : : "a" (x), "d" (y), "b" (w), "c" (h), "g" (lv), "g" (lvmax), "g" (col), "g" (a8));
+#else
+    short cw, ch;
+
+    if ((lv <= 0) || (lvmax == 0))
+        return;
+
+    cw = w * lv / lvmax;
+    if (a8)
+    {
+        func_1e834(x, y, cw, h);
+    }
+    else if (lbDisplay.ScreenMode == 1)
+    {
+        short cx, cy;
+        cx = x;
+        cy = y;
+        for (ch = h; ch > 0; ch--)
+        {
+            if (lbDisplay.ScreenMode == 1)
+                LbDrawLine(2 * cx >> 1, 2 * cy >> 1, 2 * (cx + cw) >> 1, 2 * cy >> 1, col);
+            else
+                LbDrawLine(2 * cx, 2 * cy, 2 * (cx + cw), 2 * cy, col);
+            --cx;
+            ++cy;
+        }
+    }
+    else
+    {
+        short cx, cy;
+        cx = 2 * x;
+        cy = 2 * y;
+        cw *= 2;
+        for (ch = 2 * h; ch > 0; ch--)
+        {
+            if (lbDisplay.ScreenMode == 1)
+                LbDrawLine(cx >> 1, cy >> 1, (cx + cw) >> 1, cy >> 1, col);
+            else
+                LbDrawLine(cx, cy, cx + cw, cy, col);
+            --cx;
+            ++cy;
+        }
+    }
+#endif
 }
 
 void func_1ec68(short a1, short a2, ushort a3, int a4, int a5)
