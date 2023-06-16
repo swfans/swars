@@ -662,6 +662,7 @@ extern sbyte data_15516c;
 extern sbyte data_15516d;
 extern ubyte data_1c6d48;
 extern ubyte unkn_flags_08;
+extern long dword_153194;
 extern ulong starting_cash_amounts[4];
 extern sbyte unkn_city_no;
 extern sbyte selected_weapon;
@@ -692,6 +693,8 @@ extern struct ModDef mod_defs[17];
 extern struct WeaponDef weapon_defs[33];
 extern struct LevelDef level_def;
 
+extern long dword_17710C;
+extern long dword_177110;
 extern ubyte mouser;
 extern struct Thing *things;
 

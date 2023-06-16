@@ -19,6 +19,7 @@
 #include "bfpng.h"
 #include "bfutility.h"
 #include "bfsvaribl.h"
+#include "bfmath.h"
 #include "poly.h"
 #include "svesa.h"
 #include "swlog.h"
@@ -3015,6 +3016,37 @@ void srm_scanner_reset(void)
     }
     SCANNER_width = ingame.Scanner.Width;
     SCANNER_init();
+}
+
+void move_camera(int x, int y, int z)
+{
+    asm volatile (
+      "call ASM_move_camera\n"
+        : : "a" (x), "d" (y), "b" (z));
+}
+
+void track_player(int thing)
+{
+    asm volatile ("call ASM_track_player\n"
+        : : "a" (thing));
+}
+
+void track_angle(void)
+{
+    asm volatile ("call ASM_track_angle\n"
+        :  :  : "eax" );
+}
+
+void track_y(int y)
+{
+    engn_yc += (y - engn_yc) >> 3;
+}
+
+void local_to_worldr(int *dx, int *dy, int *dz)
+{
+    asm volatile (
+      "call ASM_local_to_worldr\n"
+        : : "a" (dx), "d" (dy), "b" (dz));
 }
 
 void do_scroll_map(void)
