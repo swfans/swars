@@ -104,6 +104,43 @@ enum PacketRecordMode {
   PktR_PLAYBACK = 0x2,
 };
 
+enum WeaponType
+{
+  WEP_NULL = 0x0,
+  WEP_UZI = 0x1,
+  WEP_MINIGUN = 0x2,
+  WEP_LASER = 0x3,
+  WEP_ELLASER = 0x4,
+  WEP_RAP = 0x5,
+  WEP_NUCLGREN = 0x6,
+  WEP_PERSUADRTRN = 0x7,
+  WEP_FLAMER = 0x8,
+  WEP_H2HTASER = 0x9,
+  WEP_CRAZYGAS = 0xA,
+  WEP_KOGAS = 0xB,
+  WEP_ELEMINE = 0xC,
+  WEP_EXPLMINE = 0xD,
+  WEP_NAPALMMINE = 0xE,
+  WEP_LONGRANGE = 0xF,
+  WEP_AIRSTRIKE = 0x10,
+  WEP_BEAM = 0x11,
+  WEP_RAZORWIRE = 0x12,
+  WEP_SONICBLAST = 0x13,
+  WEP_QDEVASTATOR = 0x14,
+  WEP_PERSUADER2 = 0x15,
+  WEP_STASISFLD = 0x16,
+  WEP_ENERGYSHLD = 0x17,
+  WEP_SOULGUN = 0x18,
+  WEP_TIMEGUN = 0x19,
+  WEP_CEREBUSIFF = 0x1A,
+  WEP_MEDI1 = 0x1B,
+  WEP_MEDI2 = 0x1C,
+  WEP_EXPLWIRE = 0x1D,
+  WEP_CLONESHLD = 0x1E,
+  WEP_UNUSED1F = 0x1F,
+  WEP_TYPES_COUNT,
+};
+
 struct Thing;
 
 typedef struct {
@@ -696,7 +733,6 @@ extern struct LevelDef level_def;
 extern long dword_17710C;
 extern long dword_177110;
 extern ubyte mouser;
-extern struct Thing *things;
 extern ubyte *dword_1AA280;
 extern long dword_1AA5C4;
 extern long dword_1AA5C8;

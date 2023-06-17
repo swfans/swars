@@ -369,6 +369,31 @@ struct Thing
     } U;
 };
 
+struct SimpleThing
+{
+    short Parent;
+    short Next;
+    short LinkParent;
+    short LinkChild;
+    ubyte SubType;
+    ubyte Type;
+    short State;
+    ulong Flag;
+    short LinkSame;
+    short Object;
+    short Radius;
+    short ThingOffset;
+    long X;
+    long Y;
+    long Z;
+    short Frame;
+    short StartFrame;
+    short Timer1;
+    short StartTimer1;
+    char U[12];
+    long field_38;
+};
+
 struct PeepStat
 {
     short MaxHealth;
@@ -387,6 +412,9 @@ struct PeepStat
 /******************************************************************************/
 extern ushort things_used_head;
 extern struct PeepStat peep_type_stats[];
+
+extern struct Thing *things;
+extern struct SimpleThing *sthings;
 
 void init_things(void);
 TbResult delete_node(struct Thing *p_thing);

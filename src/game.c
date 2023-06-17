@@ -843,6 +843,27 @@ void draw_new_panel_sprite_B(int px, int py, ulong spr_id)
         SCANNER_unkn_func_201(spr, x, y, &pixmap.fade_table[4096]);
 }
 
+void draw_unkn_func_078(int a1, ushort a2, short a3, short a4)
+{
+    asm volatile (
+      "call ASM_draw_unkn_func_078\n"
+        : : "a" (a1), "d" (a2), "b" (a3), "c" (a4));
+}
+
+TbBool in_box(short x, short y, short box_x, short box_y, short box_w, short box_h)
+{
+    return x > box_x && x < box_x + box_w
+        && y > box_y && y < box_y + box_h;
+}
+
+sbyte find_nth_weapon_held(ushort index, ubyte n)
+{
+    char ret;
+    asm volatile ("call ASM_find_nth_weapon_held\n"
+        : "=r" (ret) : "a" (index), "d" (n));
+    return ret;
+}
+
 TbBool func_1caf8(void)
 {
     TbBool ret;
@@ -1079,10 +1100,10 @@ void draw_new_panel()
             game_panel[8+i].Spr = 95;
     }
 
-    {
+    { // If supershield is enabled for the current agent, draw energy bar in red
         struct Thing *p_agent;
         p_agent = &things[p_locplayer->DirectControl[0]];
-        if (p_agent->Flag & 0x100)
+        if ((p_agent->Flag & 0x100) != 0)
         {
             game_panel[16].Spr = 99;
             if (lbDisplay.ScreenMode != 1)

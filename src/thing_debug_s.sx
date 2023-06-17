@@ -32,7 +32,7 @@
 .text
 
 .global EXPORT_SYMBOL(things);
-.global EXPORT_SYMBOL(data_1a09e0);
+.global EXPORT_SYMBOL(sthings);
 
 
 /* The debug function which uses this switch was not disassembled.
@@ -1035,7 +1035,7 @@ format_debug_msg_case_b9621:
 		mov    %eax,%edx
 		shl    $0x4,%edx
 		sub    %eax,%edx
-		mov    EXPORT_SYMBOL(data_1a09e0),%eax
+		mov    EXPORT_SYMBOL(sthings),%eax
 		mov    0x3a(%eax,%edx,4),%ax
 		and    $0xffff,%eax
 		push   %eax
@@ -1099,7 +1099,7 @@ format_debug_msg_case_b969e:
 		mov    %eax,%edx
 		shl    $0x4,%edx
 		sub    %eax,%edx
-		mov    EXPORT_SYMBOL(data_1a09e0),%eax
+		mov    EXPORT_SYMBOL(sthings),%eax
 		mov    0x3a(%eax,%edx,4),%ax
 		and    $0xffff,%eax
 		push   %eax
