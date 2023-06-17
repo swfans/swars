@@ -864,12 +864,94 @@ sbyte find_nth_weapon_held(ushort index, ubyte n)
     return ret;
 }
 
+TbBool draw_panel_pickable_thing_below_agent(struct Thing *p_agent)
+{
+    struct SimpleThing *p_pickup;
+    short thing;
+    TbBool drawn;
+
+    drawn = false;
+    if (p_agent->Flag & 0x8000000)
+    {
+        ushort weptype;
+        thing = p_agent->U.UPerson.Vehicle; // Seem to be weapon standing over rather than vehicle
+        if (thing != 0)
+            p_pickup = &sthings[thing];
+        else
+            p_pickup = NULL;
+        if ((p_pickup != NULL) && (p_pickup->Type == 25)) {
+            lbDisplay.DrawFlags = 0;
+            weptype = p_pickup->U[0];
+            if (weptype)
+                draw_new_panel_sprite_A(548, 364, weapon_defs[weptype].Sprite & 0xFF);
+            else
+                draw_new_panel_sprite_A(540, 360, 70);
+            draw_new_panel_sprite_A(540, 360, 12);
+            drawn = true;
+        } else {
+            // FIXME a strange place for fixing state of an agent; should be moved to game world update
+            p_agent->Flag &= ~0x8000000;
+        }
+    }
+    return drawn;
+}
+
+TbBool draw_panel_pickable_thing_player_targeted(PlayerInfo *p_locplayer)
+{
+    ;
+    struct SimpleThing *p_pickup;
+    short thing;
+    TbBool drawn;
+
+    drawn = false;
+    if (p_locplayer->TargetType == 5)
+    {
+        ushort weptype;
+        thing = p_locplayer->field_102;
+        if (thing < 0)
+        {
+            lbDisplay.DrawFlags = 0;
+            p_pickup = &sthings[thing];
+            weptype = p_pickup->U[0];
+            if (weptype)
+                draw_new_panel_sprite_A(548, 364, weapon_defs[weptype].Sprite & 0xFF);
+            else
+                draw_new_panel_sprite_A(548, 364, 70);
+            draw_new_panel_sprite_A(540, 360, 12);
+            drawn = true;
+        }
+    }
+    return drawn;
+}
+
 TbBool func_1caf8(void)
 {
+#if 1
     TbBool ret;
     asm volatile ("call ASM_func_1caf8\n"
         : "=r" (ret) : );
     return ret;
+#else
+    TbBool ret;
+    PlayerInfo *p_locplayer;
+    struct Thing *p_agent;
+
+    p_locplayer = &players[local_player_no];
+    if ( p_locplayer->DoubleMode )
+        p_agent = &things[p_locplayer->DirectControl[byte_153198-1]];
+    else
+        p_agent = &things[p_locplayer->DirectControl[0]];
+
+    ret = draw_panel_pickable_thing_below_agent(p_agent);
+    if (!ret)
+        draw_panel_pickable_thing_player_targeted(p_locplayer);
+
+    //TODO rewrite the rest
+    asm volatile ("call ASM_func_1caf8\n"
+        : "=r" (ret) : );
+
+    return ret;
+#endif
 }
 
 void func_1efb8(void)
