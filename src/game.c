@@ -805,7 +805,13 @@ void SCANNER_unkn_func_205(void)
         :  :  : "eax" );
 }
 
-void draw_new_panel_sprite_A(int px, int py, ulong spr_id)
+/**
+ * Draw the button with standard palette, for selectable items.
+ * @param px
+ * @param py
+ * @param spr_id
+ */
+void draw_new_panel_sprite_std(int px, int py, ulong spr_id)
 {
     struct TbSprite *spr;
     int x, y;
@@ -824,7 +830,13 @@ void draw_new_panel_sprite_A(int px, int py, ulong spr_id)
         LbSpriteDraw_1(x, y, spr);
 }
 
-void draw_new_panel_sprite_B(int px, int py, ulong spr_id)
+/**
+ * Draw the button with darkened palette, like the item is unavailable.
+ * @param px
+ * @param py
+ * @param spr_id
+ */
+void draw_new_panel_sprite_dark(int px, int py, ulong spr_id)
 {
     struct TbSprite *spr;
     int x, y;
@@ -843,10 +855,18 @@ void draw_new_panel_sprite_B(int px, int py, ulong spr_id)
         SCANNER_unkn_func_201(spr, x, y, &pixmap.fade_table[4096]);
 }
 
-void draw_unkn_func_078(int a1, ushort a2, short a3, short a4)
+/**
+ * For weapons which contain up to four itemized parts, draw the items.
+ *
+ * @param a1
+ * @param a2
+ * @param a3
+ * @param a4
+ */
+void draw_fourpack_items(int a1, ushort a2, short a3, short a4)
 {
     asm volatile (
-      "call ASM_draw_unkn_func_078\n"
+      "call ASM_draw_fourpack_items\n"
         : : "a" (a1), "d" (a2), "b" (a3), "c" (a4));
 }
 
@@ -883,10 +903,10 @@ TbBool draw_panel_pickable_thing_below_agent(struct Thing *p_agent)
             lbDisplay.DrawFlags = 0;
             weptype = p_pickup->U[0];
             if (weptype)
-                draw_new_panel_sprite_A(548, 364, weapon_defs[weptype].Sprite & 0xFF);
+                draw_new_panel_sprite_std(548, 364, weapon_defs[weptype].Sprite & 0xFF);
             else
-                draw_new_panel_sprite_A(540, 360, 70);
-            draw_new_panel_sprite_A(540, 360, 12);
+                draw_new_panel_sprite_std(540, 360, 70);
+            draw_new_panel_sprite_std(540, 360, 12);
             drawn = true;
         } else {
             // FIXME a strange place for fixing state of an agent; should be moved to game world update
@@ -914,19 +934,349 @@ TbBool draw_panel_pickable_thing_player_targeted(PlayerInfo *p_locplayer)
             p_pickup = &sthings[thing];
             weptype = p_pickup->U[0];
             if (weptype)
-                draw_new_panel_sprite_A(548, 364, weapon_defs[weptype].Sprite & 0xFF);
+                draw_new_panel_sprite_std(548, 364, weapon_defs[weptype].Sprite & 0xFF);
             else
-                draw_new_panel_sprite_A(548, 364, 70);
-            draw_new_panel_sprite_A(540, 360, 12);
+                draw_new_panel_sprite_std(548, 364, 70);
+            draw_new_panel_sprite_std(540, 360, 12);
             drawn = true;
         }
     }
     return drawn;
 }
 
+/**
+ * Counts weapons in given flags, returning total, amount below given weapon and above it.
+ * To be used for displaying scrollable list of weapons where current weapon is always visible.
+ *
+ * @param p_ncarr_below
+ * @param p_ncarr_above
+ * @param weapons_carried
+ * @param current_weapon
+ * @return
+ */
+int count_weapons_in_flags(int *p_ncarr_below, int *p_ncarr_above, ulong weapons_carried, short current_weapon)
+{
+    int ncarried, ncarr_below, ncarr_above;
+    ulong wepflags;
+    ushort nweptype;
+
+    ncarried = 0;
+    ncarr_above = 0;
+    ncarr_below = 0;
+    wepflags = weapons_carried;
+
+    for (nweptype = 0; nweptype < WEP_TYPES_COUNT; nweptype++)
+    {
+        if (!wepflags)
+            break;
+        if (wepflags & 1)
+        {
+            ncarried++;
+            if (nweptype + 1 > current_weapon)
+                ncarr_above++;
+            if (nweptype + 1 < current_weapon)
+                ncarr_below++;
+        }
+        wepflags >>= 1;
+    }
+
+    *p_ncarr_below = ncarr_below;
+    *p_ncarr_above = ncarr_above;
+    return ncarried;
+}
+
+TbBool draw_weapons_list_single(PlayerInfo *p_locplayer, ushort comcur, ulong weapons_carried, short current_weapon)
+{
+    ushort nshown;
+    int weptype;
+    int nchecked;
+    ulong wepflags;
+    int cy;
+    int ncarried;
+    int ncarr_below;
+    int ncarr_above;
+    TbBool ret;
+
+    ret = false;
+    ncarried = count_weapons_in_flags(&ncarr_below, &ncarr_above, weapons_carried, current_weapon);
+    if (ncarried <= 6)
+        ncarr_below = 0;
+    else if (ncarr_below <= 4)
+        ncarr_below = 0;
+    else
+        ncarr_below -= 4;
+
+    nshown = 0;
+    wepflags = weapons_carried;
+    cy = 36;
+    nchecked = 0;
+    for (weptype = 0; weptype < WEP_TYPES_COUNT; weptype++, wepflags >>= 1)
+    {
+        if (wepflags == 0)
+            break;
+        if (wepflags & 1)
+        {
+            if (ncarr_below > nshown)
+            {
+                nshown++;
+                if (nchecked == 6)
+                    break;
+                continue;
+            }
+            lbDisplay.DrawFlags = 0;
+
+            if (!p_locplayer->WepDelays[comcur][weptype + 1] || (gameturn & 1))
+            {
+                if (nshown == 6)
+                    draw_new_panel_sprite_std(22, cy, 13);
+                else
+                    draw_new_panel_sprite_std(22, cy, 12);
+            }
+
+            if (!p_locplayer->WepDelays[comcur][weptype + 1] || (gameturn & 1))
+                draw_new_panel_sprite_std(30, cy + 4, weapon_defs[weptype+1].Sprite & 0xFF);
+            if (weptype+1 == current_weapon)
+            {
+                lbDisplay.DrawFlags = 0;
+                draw_new_panel_sprite_std(30, cy + 4, (weapon_defs[weptype+1].Sprite & 0xFF) + 27);
+            }
+            if (!lbDisplay.MRightButton)
+            {
+                short msy, msx;
+                msy = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.RMouseY : lbDisplay.RMouseY;
+                msx = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.RMouseX : lbDisplay.RMouseX;
+                if (in_box(msx, msy, 22, cy, 76, 22))
+                {
+                    lbDisplay.DrawFlags = 0;
+                    ret = true;
+                    p_locplayer->PanelItem[mouser] = weptype + 1;
+                    draw_new_panel_sprite_std(22, cy, 90);
+                }
+            }
+            draw_fourpack_items(22, cy, comcur, weptype + 1);
+            cy += 28;
+            ++nchecked;
+            ++nshown;
+            if (nchecked == 6)
+                break;
+        }
+    }
+    return ret;
+}
+
+short draw_current_weapon_button(PlayerInfo *p_locplayer, short nagent)
+{
+    struct Thing *p_agent;
+    ushort curwep, prevwep;
+    short cx, cy;
+
+    if (lbDisplay.ScreenMode == 1) {
+        cy = 28;
+        cx = 158 * nagent + 66;
+    } else {
+        cy = 29;
+        cx = 157 * nagent + 65;
+    }
+    p_agent = p_locplayer->MyAgent[nagent];
+
+    curwep = p_agent->U.UPerson.CurrentWeapon;
+    prevwep = p_locplayer->PrevWeapon[nagent];
+    if (!curwep && !prevwep) {
+        prevwep = find_nth_weapon_held(p_agent->ThingOffset, 1);
+        p_locplayer->PrevWeapon[nagent] = prevwep;
+    }
+
+    // Highlight button border on mouse over
+    if (curwep || prevwep)
+    {
+        TbBool wep_highlight;
+        short msx, msy;
+        wep_highlight = false;
+        if (!lbDisplay.MRightButton) {
+            msx = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.RMouseX : lbDisplay.RMouseX;
+            msy = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.RMouseY : lbDisplay.RMouseY;
+            if (in_box(msx, msy, cx - 4, cy - 4, 76, 24))
+                wep_highlight = true;
+        }
+        {
+            msx = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
+            msy = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
+            if (in_box(msx, msy, cx - 4, cy - 4, 76, 24))
+                wep_highlight = true;
+        }
+        if (wep_highlight)
+        {
+            if (curwep)
+                p_locplayer->PanelItem[mouser] = curwep;
+            else
+                p_locplayer->PanelItem[mouser] = prevwep;
+            draw_new_panel_sprite_std(cx - 8, cy - 4, 90);
+        }
+    }
+    if (curwep) // Active weapon - draw lighted weapon shape
+    {
+        if (!p_locplayer->WepDelays[nagent][curwep] || (gameturn & 1))
+        {
+            if (p_locplayer->MyAgent[nagent]->State == 43)
+            {
+                struct TbSprite *spr;
+                if (ingame.PanelPermutation == -1)
+                {
+                    spr = &pop1_sprites[14];
+                    if (lbDisplay.ScreenMode == 1)
+                        SCANNER_unkn_func_202(spr, cx >> 1, cy >> 1,
+                            ingame.Scanner.Contrast, ingame.Scanner.Brightness);
+                    else
+                        SCANNER_unkn_func_202(spr, cx, cy,
+                            ingame.Scanner.Contrast, ingame.Scanner.Brightness);
+                }
+                draw_new_panel_sprite_dark(cx, cy, (weapon_defs[curwep].Sprite & 0xFF) + 27);
+            }
+            else
+            {
+                struct TbSprite *spr;
+                if (ingame.PanelPermutation == -1)
+                {
+                    spr = &pop1_sprites[14];
+                    if (lbDisplay.ScreenMode == 1)
+                        SCANNER_unkn_func_202(spr, cx >> 1, cy >> 1,
+                            ingame.Scanner.Contrast, ingame.Scanner.Brightness);
+                    else
+                        SCANNER_unkn_func_202(spr, cx, cy,
+                            ingame.Scanner.Contrast, ingame.Scanner.Brightness);
+                }
+                draw_new_panel_sprite_std(cx, cy, (weapon_defs[curwep].Sprite & 0xFF) + 27);
+            }
+            draw_fourpack_items(cx - 8, cy - 4, nagent, curwep);
+        }
+    }
+    else
+    { // Weapon is hidden - draw with dark weapon shape
+        curwep = prevwep;
+        if (curwep && (!p_locplayer->WepDelays[nagent][curwep] || (gameturn & 1)))
+        {
+            if (p_locplayer->MyAgent[nagent]->State == 43)
+                draw_new_panel_sprite_dark(cx, cy, weapon_defs[curwep].Sprite & 0xFF);
+            else
+                draw_new_panel_sprite_std(cx, cy, weapon_defs[curwep].Sprite & 0xFF);
+            draw_fourpack_items(cx - 8, cy - 4, nagent, curwep);
+        }
+    }
+    return curwep;
+}
+
+TbBool draw_agent_weapons_selection(PlayerInfo *p_locplayer, struct Thing *p_agent, ubyte *cur_weapons, int nagent)
+{
+    int cx, cy;
+    int weptype;
+    int dcx, dcy;
+    int nunk1;
+    ulong wepflags;
+    ushort comcur;
+    ushort nshown;
+    int nchecked;
+    TbBool wep_highlight;
+    TbBool ret;
+
+    ret = false;
+    nunk1 = 0;
+    comcur = p_agent->U.UPerson.ComCur & 3;
+    wepflags = p_agent->U.UPerson.WeaponsCarried;
+    cy = 44;
+    cx = 158 * nagent + 42;
+    // Some weapons are not selectable
+    wepflags &= ~(1<<(WEP_ENERGYSHLD-1));
+    nshown = 0;
+    nchecked = 0;
+    for (weptype = 0; weptype < WEP_TYPES_COUNT; weptype++, wepflags >>= 1)
+    {
+        if (wepflags == 0)
+            break;
+        if ((wepflags & 1) == 0)
+            continue;
+
+        if (nunk1 > nshown || cur_weapons[comcur] == weptype + 1)
+        {
+            ++nshown;
+            if (nchecked == 12)
+                break;
+            continue;
+        }
+        lbDisplay.DrawFlags = 0;
+        if (!p_locplayer->WepDelays[comcur][weptype + 1] || (gameturn & 1))
+        {
+            if (!nchecked)
+                draw_new_panel_sprite_std(cx, cy, 13);
+            else
+                draw_new_panel_sprite_std(cx, cy, 94);
+        }
+
+        if (!p_locplayer->WepDelays[comcur][weptype + 1] || (gameturn & 1))
+        {
+            if (!nchecked)
+                draw_new_panel_sprite_std(cx + 24, cy + 12, weapon_defs[weptype + 1].Sprite & 0xFF);
+            else
+                draw_new_panel_sprite_std(cx + 8, cy + 8, weapon_defs[weptype + 1].Sprite & 0xFF);
+        }
+        dcx = 0;
+        dcy = 0;
+        if (!nchecked)
+        {
+            dcx = 14;
+            dcy = 8;
+        }
+
+        wep_highlight = false;
+        if (!lbDisplay.MRightButton) {
+            short dch;
+            short msx, msy;
+            dch = nchecked ? 0 : 8;
+            msx = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.RMouseX : lbDisplay.RMouseX;
+            msy = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.RMouseY : lbDisplay.RMouseY;
+            if (in_box(msx, msy, cx + dcx, cy + dcy, 76, 30 - dch))
+                wep_highlight = true;
+        }
+        if (!wep_highlight) {
+            short dch;
+            short msx, msy;
+            dch = nchecked ? 0 : 8;
+            msx = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
+            msy = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
+            if (in_box(msx, msy, cx + dcx, cy + dcy, 76, 30 - dch))
+                wep_highlight = true;
+        }
+        if (wep_highlight)
+        {
+            lbDisplay.DrawFlags = 0;
+            p_locplayer->PanelItem[mouser] = weptype + 1;
+            if (nchecked)
+                draw_new_panel_sprite_std(cx, cy, 93);
+            else
+                draw_new_panel_sprite_std(cx, cy, 92);
+            ret = 1;
+        }
+
+        if (nchecked)
+            draw_fourpack_items(cx, cy + 4, comcur, weptype + 1);
+        else
+            draw_fourpack_items(cx + 16, cy + 8, comcur, weptype + 1);
+        if (nchecked) {
+            cy += 28;
+        } else {
+            cx += 16;
+            cy += 32;
+        }
+        ++nchecked;
+        ++nshown;
+        if (nchecked == 12)
+            break;
+    }
+    return ret;
+}
+
 TbBool func_1caf8(void)
 {
-#if 1
+#if 0
     TbBool ret;
     asm volatile ("call ASM_func_1caf8\n"
         : "=r" (ret) : );
@@ -935,21 +1285,54 @@ TbBool func_1caf8(void)
     TbBool ret;
     PlayerInfo *p_locplayer;
     struct Thing *p_agent;
+    ubyte cur_weapons[4];
+    int nagent;
+    int panstate;
 
     p_locplayer = &players[local_player_no];
-    if ( p_locplayer->DoubleMode )
+    if (p_locplayer->DoubleMode)
         p_agent = &things[p_locplayer->DirectControl[byte_153198-1]];
     else
         p_agent = &things[p_locplayer->DirectControl[0]];
 
+    p_locplayer->PanelItem[mouser] = 0;
     ret = draw_panel_pickable_thing_below_agent(p_agent);
     if (!ret)
         draw_panel_pickable_thing_player_targeted(p_locplayer);
 
-    //TODO rewrite the rest
-    asm volatile ("call ASM_func_1caf8\n"
-        : "=r" (ret) : );
+    if (ingame.PanelPermutation >= 0)
+    {
+        ushort comcur;
+        comcur = p_agent->U.UPerson.ComCur & 3;
+        ret = draw_weapons_list_single(p_locplayer, comcur,
+            p_agent->U.UPerson.WeaponsCarried, p_agent->U.UPerson.CurrentWeapon);
+    }
+    else
+    {
+        for (nagent = 0; nagent < playable_agents; nagent++)
+        {
+            ushort curwep;
+            p_agent = p_locplayer->MyAgent[nagent];
+            if ((p_agent->Flag & 0x0002) != 0) {
+                cur_weapons[nagent] = 0;
+                continue;
+            }
+            curwep = draw_current_weapon_button(p_locplayer, nagent);
+            cur_weapons[nagent] = curwep;
+        }
 
+        ret = false;
+        panstate = p_locplayer->PanelState[mouser];
+        if (panstate >= 1 && panstate <= 8)
+        {
+            nagent = (panstate - 1) & 3;
+            p_agent = p_locplayer->MyAgent[nagent];
+            ret |= draw_agent_weapons_selection(p_locplayer, p_agent, cur_weapons, nagent);
+
+        }
+    }
+
+    lbDisplay.DrawFlags = 0;
     return ret;
 #endif
 }
@@ -1176,7 +1559,7 @@ void draw_new_panel()
     {
         struct Thing *p_agent;
         p_agent = p_locplayer->MyAgent[i];
-        if (p_agent->U.UPerson.WeaponsCarried & ((1<<27) | (1<<26)))
+        if (p_agent->U.UPerson.WeaponsCarried & ((1<<(WEP_MEDI2-1)) | (1<<(WEP_MEDI1-1))))
             game_panel[8+i].Spr = 96;
         else
             game_panel[8+i].Spr = 95;
@@ -1212,7 +1595,7 @@ void draw_new_panel()
 
         if ( panel->Type != 1 && panel->Type != 6 && panel->Type != 5 )
         {
-            draw_new_panel_sprite_A(panel->X, panel->Y, panel->Spr);
+            draw_new_panel_sprite_std(panel->X, panel->Y, panel->Spr);
         }
         else
         {
@@ -1243,7 +1626,7 @@ void draw_new_panel()
                 p_agent = p_locplayer->MyAgent[panel->ID];
                 if (p_agent->Flag & 0x0002)
                     continue;
-                draw_new_panel_sprite_A(panel->X, panel->Y, panel->Spr);
+                draw_new_panel_sprite_std(panel->X, panel->Y, panel->Spr);
             }
             else
             {
@@ -1267,9 +1650,9 @@ void draw_new_panel()
                 }
 
                 if ((p_agent->State == 43) || (p_agent->Flag2 & 0x10000000))
-                    draw_new_panel_sprite_B(panel->X, panel->Y, panel->Spr);
+                    draw_new_panel_sprite_dark(panel->X, panel->Y, panel->Spr);
                 else
-                    draw_new_panel_sprite_A(panel->X, panel->Y, panel->Spr);
+                    draw_new_panel_sprite_std(panel->X, panel->Y, panel->Spr);
             }
         }
     }
@@ -1322,7 +1705,7 @@ void draw_new_panel()
                   break;
                 }
             }
-            draw_new_panel_sprite_A(x, 2, 6 + cc);
+            draw_new_panel_sprite_std(x, 2, 6 + cc);
         }
     }
     lbDisplay.DrawFlags = 0;
@@ -1378,9 +1761,9 @@ void draw_new_panel()
             // Draw health level
             lv = p_agent->Health;
             lvmax = p_agent->U.UPerson.MaxHealth;
-            if (lv <= lvmax) {
+            if (lv <= lvmax) { // Normal health amount
                 draw_health_level(x, 2, 0x2Cu, 2, lv, lvmax, colour_lookup[1], 0);
-            } else {
+            } else { // Health reinforced beyond max is drawn in red
                 draw_health_level(x, 2, 0x2Cu, 2, lvmax, lvmax, colour_lookup[1], 0);
                 draw_health_level(x, 2, 0x2Cu, 2, lv - lvmax, lvmax, colour_lookup[2], 0);
             }
@@ -1436,7 +1819,7 @@ void draw_new_panel()
         x = 238;
         if (lbDisplay.ScreenMode != 1)
             x += 89;
-        draw_new_panel_sprite_A(4, x, 91);
+        draw_new_panel_sprite_std(4, x, 91);
     }
 #endif
 }
