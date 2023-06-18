@@ -98,4 +98,9 @@ short calc_person_speed(struct Thing *p_person)
     return speed;
 }
 
+void init_person_thing(struct Thing *p_person)
+{
+    asm volatile ("call ASM_init_person_thing\n"
+        : : "a" (p_person));
+}
 /******************************************************************************/
