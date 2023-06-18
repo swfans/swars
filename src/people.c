@@ -20,6 +20,7 @@
 #include "game.h"
 #include "thing.h"
 #include "weapon.h"
+#include "swlog.h"
 /******************************************************************************/
 struct PeepStat peep_type_stats[] = {
     {   0,    0,    0,    0,   0, 0,   0, 0, 0, 0},
@@ -50,22 +51,22 @@ void set_person_stats_type(struct Thing *p_person, ushort type)
 
 ubyte person_mod_level_A(struct Thing *p_person)
 {
-    return (p_person->U.UPerson.UMod.Mods << 7) >> 13;
+    return (p_person->U.UPerson.UMod.Mods >> 6) & 7;
 }
 
 ubyte person_mod_level_B(struct Thing *p_person)
 {
-    return (p_person->U.UPerson.UMod.Mods & 7);
+    return (p_person->U.UPerson.UMod.Mods) & 7;
 }
 
 ubyte person_mod_level_C(struct Thing *p_person)
 {
-    return (p_person->U.UPerson.UMod.Mods << 10) >> 13;
+    return (p_person->U.UPerson.UMod.Mods >> 3) & 7;
 }
 
 ubyte person_mod_level_D(struct Thing *p_person)
 {
-    return (p_person->U.UPerson.UMod.Mods << 4) >> 13;
+    return (p_person->U.UPerson.UMod.Mods >> 9) & 7;
 }
 
 short calc_person_speed(struct Thing *p_person)
@@ -100,7 +101,81 @@ short calc_person_speed(struct Thing *p_person)
 
 void init_person_thing(struct Thing *p_person)
 {
+#if 0
     asm volatile ("call ASM_init_person_thing\n"
         : : "a" (p_person));
+#endif
+    struct PeepStat *pstat;
+    ushort paniframe;
+
+    pstat = &peep_type_stats[p_person->SubType];
+
+    p_person->U.UPerson.Energy = pstat->MaxEnergy +
+        (person_mod_level_A(p_person) * pstat->MaxEnergy * 50 / 100);
+
+    p_person->U.UPerson.ShieldEnergy = pstat->MaxShield +
+        (person_mod_level_D(p_person) * pstat->MaxShield * 50 / 100);
+
+    p_person->Health = pstat->MaxHealth +
+       ((person_mod_level_A(p_person) * pstat->MaxHealth * 50 / 100) +
+        (person_mod_level_D(p_person) * pstat->MaxHealth * 50 / 100) +
+        (person_mod_level_B(p_person) * pstat->MaxHealth * 25 / 100) +
+        (person_mod_level_C(p_person) * pstat->MaxHealth * 25 / 100)) / 4;
+
+    p_person->U.UPerson.Stamina = pstat->MaximumStamina;
+    p_person->U.UPerson.PersuadePower = 0;
+    p_person->U.UPerson.MaxHealth = p_person->Health;
+    p_person->U.UPerson.MaxEnergy = p_person->U.UPerson.Energy;
+    p_person->U.UPerson.MaxShieldEnergy = p_person->U.UPerson.ShieldEnergy;
+    p_person->U.UPerson.MaxStamina = p_person->U.UPerson.Stamina;
+
+    if (person_mod_level_A(p_person) == 4)
+    {
+        p_person->Health = 2 * PERSON_MAX_HEALTH_LIMIT;
+        p_person->U.UPerson.MaxHealth = PERSON_MAX_HEALTH_LIMIT;
+    }
+    switch (p_person->SubType)
+    {
+    case SubTT_PERS_AGENT:
+    case SubTT_PERS_PUNK_F:
+    case SubTT_PERS_POLICE:
+    case SubTT_PERS_PUNK_M:
+        p_person->Radius = 80;
+        break;
+    case SubTT_PERS_ZEALOT:
+    case SubTT_PERS_BRIEFCASE_M:
+    case SubTT_PERS_WHITE_BRUN_F:
+    case SubTT_PERS_MERCENARY:
+    case SubTT_PERS_SCIENTIST:
+    case SubTT_PERS_SHADY_M:
+    case SubTT_PERS_HIGH_PRIEST:
+    case SubTT_PERS_WHIT_BLOND_F:
+    case SubTT_PERS_LETH_JACKT_M:
+        p_person->Radius = 100;
+        break;
+    case SubTT_PERS_MECH_SPIDER:
+        p_person->Radius = 384;
+        break;
+    default:
+        break;
+    }
+    if (current_level != 0)
+        p_person->U.UPerson.CurrentWeapon = 0;
+    if ((p_person->Flag & 0x0002) != 0)
+    {
+        p_person->U.UPerson.AnimMode = 20;
+        p_person->State = PerSt_DEAD;
+        p_person->U.UPerson.FrameId.Version[3] = 1;
+        p_person->U.UPerson.FrameId.Version[4] = 0;
+    }
+    else
+    {
+        paniframe = people_frames[p_person->SubType][p_person->U.UPerson.AnimMode];
+        p_person->Frame -= nstart_ani[paniframe + p_person->U.UPerson.Angle];
+        p_person->U.UPerson.AnimMode = 0;
+        p_person->Frame += nstart_ani[paniframe + p_person->U.UPerson.Angle];
+        p_person->StartFrame = paniframe - 1;
+        p_person->Speed = calc_person_speed(p_person);
+    }
 }
 /******************************************************************************/
