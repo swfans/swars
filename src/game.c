@@ -2202,10 +2202,10 @@ void beefup_all_agents(PlayerInfo *p_locplayer)
         {
             person_give_best_mods(p_agent);
 
-            p_agent->Health = 32000;
-            p_agent->U.UPerson.MaxHealth = 32000;
-            p_agent->U.UPerson.Energy = 32000;
+            p_agent->U.UPerson.MaxHealth = MAX_HEALTH_LIMIT;
+            p_agent->Health = 2 * p_agent->U.UPerson.MaxHealth; // double health - fill red bar
             p_agent->U.UPerson.MaxEnergy = 32000;
+            p_agent->U.UPerson.Energy = p_agent->U.UPerson.MaxEnergy;
         }
     }
     research.WeaponsCompleted = 0x3FFFFFFF;
@@ -2542,9 +2542,11 @@ ushort make_group_into_players(ushort group, ushort plyr, ushort max_agent, shor
         netgame_agent_pos_x[plyr][nagents] = p_person->X >> 8;
         netgame_agent_pos_y[plyr][nagents] = p_person->Z >> 8;
         p_person->State = 0;
-        {
-            ushort health;
+        { // Why are we tripling the health?
+            uint health;
             health = 3 * p_person->Health;
+            if (health > MAX_HEALTH_LIMIT)
+                health = MAX_HEALTH_LIMIT;
             p_person->Health = health;
             p_person->U.UPerson.MaxHealth = health;
         }

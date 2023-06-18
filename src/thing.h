@@ -106,6 +106,10 @@ enum SubTypePerson {
   SubTT_PERS_FAST_BLOND_F = 0xF,
 };
 
+/** Max health of a thing cannot safely go beyond that.
+ */
+#define MAX_HEALTH_LIMIT 16383
+
 /** State of Thing of type Object.
  */
 struct TngUObject
