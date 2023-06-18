@@ -87,29 +87,6 @@ enum ThingType {
     TT_UNKN56 = 0x38,
 };
 
-enum SubTypePerson {
-  SubTT_PERS_NONE = 0x0,
-  SubTT_PERS_AGENT = 0x1,
-  SubTT_PERS_ZEALOT = 0x2,
-  SubTT_PERS_PUNK_F = 0x3,
-  SubTT_PERS_BRIEFCASE_M = 0x4,
-  SubTT_PERS_WHITE_BRUN_F = 0x5,
-  SubTT_PERS_MERCENARY = 0x6,
-  SubTT_PERS_MECH_SPIDER = 0x7,
-  SubTT_PERS_POLICE = 0x8,
-  SubTT_PERS_PUNK_M = 0x9,
-  SubTT_PERS_SCIENTIST = 0xA,
-  SubTT_PERS_SHADY_M = 0xB,
-  SubTT_PERS_HIGH_PRIEST = 0xC,
-  SubTT_PERS_WHIT_BLOND_F = 0xD,
-  SubTT_PERS_LETH_JACKT_M = 0xE,
-  SubTT_PERS_FAST_BLOND_F = 0xF,
-};
-
-/** Max health of a thing cannot safely go beyond that.
- */
-#define MAX_HEALTH_LIMIT 16383
-
 /** State of Thing of type Object.
  */
 struct TngUObject
@@ -398,24 +375,9 @@ struct SimpleThing
     long field_38;
 };
 
-struct PeepStat
-{
-    short MaxHealth;
-    short MaxShield;
-    short MaximumStamina;
-    short MaxEnergy;
-    short PersuadeReqd;
-    short PersuadeWorth;
-    short Speed;
-    short dum2;
-    short dum3;
-    short dum4;
-};
-
 #pragma pack()
 /******************************************************************************/
 extern ushort things_used_head;
-extern struct PeepStat peep_type_stats[];
 
 extern struct Thing *things;
 extern struct SimpleThing *sthings;
@@ -425,9 +387,6 @@ TbResult delete_node(struct Thing *p_thing);
 void add_node_thing(ushort new_thing);
 void remove_thing(ushort tngno);
 
-void do_weapon_quantities1(struct Thing *p_person);
-void do_weapon_quantities_proper1(struct Thing *p_person);
-void set_person_stats_type(struct Thing *p_person, ushort type);
 /******************************************************************************/
 #ifdef __cplusplus
 }

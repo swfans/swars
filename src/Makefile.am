@@ -73,6 +73,8 @@ swars_SOURCES = \
 	oggvorbis.h \
 	packet.c \
 	packet.h \
+	people.c \
+	people.h \
 	player.h \
 	research.h \
 	scanner.c \
@@ -92,6 +94,8 @@ swars_SOURCES = \
 	unix.h \
 	util.c \
 	util.h \
+	weapon.c \
+	weapon.h \
 	windows.c \
 	windows.h
 

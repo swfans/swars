@@ -45,7 +45,7 @@ ulong buffered_keys_write_index;
 
 #pragma pack()
 
-static void add_key_to_buffer(uint8_t key)
+static void add_key_to_buffer(ubyte key)
 {
     ulong new_write_index;
 

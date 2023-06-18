@@ -7,6 +7,7 @@
 #include "bflib_basics.h"
 #include "globals.h"
 #include "scanner.h"
+#include "people.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -102,43 +103,6 @@ enum PacketRecordMode {
   PktR_NONE = 0x0,
   PktR_RECORD = 0x1,
   PktR_PLAYBACK = 0x2,
-};
-
-enum WeaponType
-{
-  WEP_NULL = 0x0,
-  WEP_UZI = 0x1,
-  WEP_MINIGUN = 0x2,
-  WEP_LASER = 0x3,
-  WEP_ELLASER = 0x4,
-  WEP_RAP = 0x5,
-  WEP_NUCLGREN = 0x6,
-  WEP_PERSUADRTRN = 0x7,
-  WEP_FLAMER = 0x8,
-  WEP_H2HTASER = 0x9,
-  WEP_CRAZYGAS = 0xA,
-  WEP_KOGAS = 0xB,
-  WEP_ELEMINE = 0xC,
-  WEP_EXPLMINE = 0xD,
-  WEP_NAPALMMINE = 0xE,
-  WEP_LONGRANGE = 0xF,
-  WEP_AIRSTRIKE = 0x10,
-  WEP_BEAM = 0x11,
-  WEP_RAZORWIRE = 0x12,
-  WEP_SONICBLAST = 0x13,
-  WEP_QDEVASTATOR = 0x14,
-  WEP_PERSUADER2 = 0x15,
-  WEP_STASISFLD = 0x16,
-  WEP_ENERGYSHLD = 0x17,
-  WEP_SOULGUN = 0x18,
-  WEP_TIMEGUN = 0x19,
-  WEP_CEREBUSIFF = 0x1A,
-  WEP_MEDI1 = 0x1B,
-  WEP_MEDI2 = 0x1C,
-  WEP_EXPLWIRE = 0x1D,
-  WEP_CLONESHLD = 0x1E,
-  WEP_UNUSED1F = 0x1F,
-  WEP_TYPES_COUNT,
 };
 
 struct Thing;
@@ -615,29 +579,31 @@ extern ulong login_control__Money;
 extern sbyte login_control__City;
 extern ubyte login_control__TechLevel;
 
-extern uint8_t cmdln_param_n;
-extern uint8_t pktrec_mode;
-extern uint8_t cmdln_pr_num;
-extern uint8_t game_perspective;
-extern uint8_t exit_game;
-extern uint8_t input_char;
+extern ubyte cmdln_param_n;
+extern ubyte pktrec_mode;
+extern ubyte cmdln_pr_num;
+extern ubyte game_perspective;
+extern ubyte exit_game;
+extern ubyte input_char;
 
-extern uint32_t active_flags_general_unkn01;
+extern ulong active_flags_general_unkn01;
 
 extern long unkn01_downcount;
 extern long unkn01_pos_x;
 extern long unkn01_pos_y;
 
-extern uint16_t cmdln_param_current_map;
-extern uint32_t engine_mem_alloc_size;
+extern ushort cmdln_param_current_map;
+extern short current_level;
+
+extern ulong engine_mem_alloc_size;
 extern void *engine_mem_alloc_ptr;
 extern MemSystem mem_game[];
 
 extern long navi2_unkn_counter;
 extern long navi2_unkn_counter_max;
-extern uint32_t triangulation;
+extern ulong triangulation;
 
-extern uint32_t smack_malloc_used_tot;
+extern ulong smack_malloc_used_tot;
 
 #define STRINGS_MAX 652
 
@@ -652,7 +618,7 @@ extern GameTurn prev_gameturn;
 extern ulong turns_delta;
 extern ushort fifties_per_gameturn;
 extern ushort gamep_unknval_01;
-extern uint8_t *vec_tmap;
+extern ubyte *vec_tmap;
 extern ubyte *memload;
 extern ubyte net_host_player_no;
 extern ubyte data_19ec6f;
@@ -678,7 +644,6 @@ extern long data_1ddb68;
 extern char *people_credits_groups[];
 extern ubyte playable_agents;
 extern ubyte game_high_resolution;
-extern ushort people_frames[22][16];
 extern char *mission_briefing_text;
 extern short mission_open[50];
 extern short mission_state[50];
@@ -729,6 +694,13 @@ extern ushort data_1811ae;
 extern struct ModDef mod_defs[17];
 extern struct WeaponDef weapon_defs[33];
 extern struct LevelDef level_def;
+
+extern struct Element *melement_ani;
+extern struct Element *mele_ani_end;
+extern ushort *nstart_ani;
+extern ushort *nstart_ani_end;
+extern struct Frame *frame;
+extern struct Frame *frame_end;
 
 extern long dword_17710C;
 extern long dword_177110;

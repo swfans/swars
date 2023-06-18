@@ -92,7 +92,7 @@ typedef struct {
 #pragma pack()
 /******************************************************************************/
 extern PlayerInfo players[8];
-extern uint8_t local_player_no;
+extern ubyte local_player_no;
 
 /******************************************************************************/
 #ifdef __cplusplus

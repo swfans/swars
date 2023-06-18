@@ -43,6 +43,7 @@
 #include "thing.h"
 #include "packet.h"
 #include "player.h"
+#include "weapon.h"
 
 #include "timer.h"
 
@@ -86,13 +87,6 @@ extern ubyte *m_spr_data;
 extern ubyte *m_spr_data_end;
 extern struct TbSprite *m_sprites;
 extern struct TbSprite *m_sprites_end;
-
-extern struct Element *melement_ani;
-extern struct Element *mele_ani_end;
-extern ushort *nstart_ani;
-extern ushort *nstart_ani_end;
-extern struct Frame *frame;
-extern struct Frame *frame_end;
 
 extern struct MyMapElement *game_my_big_map;
 extern struct SingleFloorTexture *game_textures;
@@ -2202,7 +2196,7 @@ void beefup_all_agents(PlayerInfo *p_locplayer)
         {
             person_give_best_mods(p_agent);
 
-            p_agent->U.UPerson.MaxHealth = MAX_HEALTH_LIMIT;
+            p_agent->U.UPerson.MaxHealth = PERSON_MAX_HEALTH_LIMIT;
             p_agent->Health = 2 * p_agent->U.UPerson.MaxHealth; // double health - fill red bar
             p_agent->U.UPerson.MaxEnergy = 32000;
             p_agent->U.UPerson.Energy = p_agent->U.UPerson.MaxEnergy;
@@ -2545,8 +2539,8 @@ ushort make_group_into_players(ushort group, ushort plyr, ushort max_agent, shor
         { // Why are we tripling the health?
             uint health;
             health = 3 * p_person->Health;
-            if (health > MAX_HEALTH_LIMIT)
-                health = MAX_HEALTH_LIMIT;
+            if (health > PERSON_MAX_HEALTH_LIMIT)
+                health = PERSON_MAX_HEALTH_LIMIT;
             p_person->Health = health;
             p_person->U.UPerson.MaxHealth = health;
         }
@@ -2860,7 +2854,7 @@ void game_process_sub09(void)
     case 2:
         for (i = 0; i < 10; i++) {
             ushort pos;
-            uint8_t *ptr;
+            ubyte *ptr;
             pos = LbRandomAnyShort() + (gameturn >> 2);
             ptr = &vec_tmap[pos];
             *ptr = pixmap.fade_table[40*PALETTE_8b_COLORS + *ptr];
