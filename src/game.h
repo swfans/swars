@@ -447,34 +447,6 @@ struct Mission { // sizeof=76
 	//ushort PreProcess; -- somewhere in the unknown fields above
 };
 
-struct ModDef {
-	ushort PowerOutput;
-	ushort Resilience;
-	ushort Funding;
-	ushort Flags;
-    char field_8[10];
-    short Sprite;
-	ushort Cost;
-	uchar PercentPerDay;
-	uchar Pad1;
-};
-
-struct WeaponDef {
-  ushort RangeBlocks;
-  ushort HitDamage;
-  ushort ReFireDelay;
-  ushort Weight;
-  short EnergyUsed;
-  ushort Accuracy;
-  ushort TargetType;
-  ushort TargetMode;
-  ushort Flags;
-  ushort Sprite;
-  ushort Category;
-  ushort Cost;
-  ubyte field_18;
-};
-
 struct ScreenMenuBox { // sizeof=42
   ubyte field_0;
   char field_1[8];
@@ -691,8 +663,6 @@ extern ubyte flic_mods[5];
 extern ubyte reload_background_flag;
 extern ushort data_1811ae;
 
-extern struct ModDef mod_defs[17];
-extern struct WeaponDef weapon_defs[33];
 extern struct LevelDef level_def;
 
 extern struct Element *melement_ani;

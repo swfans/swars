@@ -28,6 +28,7 @@
 #include "bflib_snd_cda.h"
 #include "bflib_joyst.h"
 #include "game_data.h"
+#include "cybmod.h"
 #include "display.h"
 #include "dos.h"
 #include "game.h"
@@ -1111,7 +1112,9 @@ short draw_current_weapon_button(PlayerInfo *p_locplayer, short nagent)
     {
         if (!p_locplayer->WepDelays[nagent][curwep] || (gameturn & 1))
         {
-            if (p_locplayer->MyAgent[nagent]->State == 43)
+            struct Thing *p_agent;
+            p_agent = p_locplayer->MyAgent[nagent];
+            if (p_agent->State == PerSt_PROTECT_PERSON)
             {
                 struct TbSprite *spr;
                 if (ingame.PanelPermutation == -1)
@@ -1149,7 +1152,9 @@ short draw_current_weapon_button(PlayerInfo *p_locplayer, short nagent)
         curwep = prevwep;
         if (curwep && (!p_locplayer->WepDelays[nagent][curwep] || (gameturn & 1)))
         {
-            if (p_locplayer->MyAgent[nagent]->State == 43)
+            struct Thing *p_agent;
+            p_agent = p_locplayer->MyAgent[nagent];
+            if (p_agent->State == PerSt_PROTECT_PERSON)
                 draw_new_panel_sprite_dark(cx, cy, weapon_defs[curwep].Sprite & 0xFF);
             else
                 draw_new_panel_sprite_std(cx, cy, weapon_defs[curwep].Sprite & 0xFF);
@@ -1643,7 +1648,7 @@ void draw_new_panel()
                         continue;
                 }
 
-                if ((p_agent->State == 43) || (p_agent->Flag2 & 0x10000000))
+                if ((p_agent->State == PerSt_PROTECT_PERSON) || (p_agent->Flag2 & 0x10000000))
                     draw_new_panel_sprite_dark(panel->X, panel->Y, panel->Spr);
                 else
                     draw_new_panel_sprite_std(panel->X, panel->Y, panel->Spr);
@@ -2157,7 +2162,7 @@ void person_resurrect(struct Thing *p_person)
     ulong person_anim;
     p_person->Flag &= ~0x0002;
     p_person->Flag &= ~0x02000000;
-    p_person->State = 5;
+    p_person->State = PerSt_WAIT;
     p_person->U.UPerson.AnimMode = 1;
     person_anim = people_frames[p_person->SubType][p_person->U.UPerson.AnimMode];
     p_person->StartFrame = person_anim - 1;
@@ -2466,7 +2471,7 @@ ushort make_group_into_players(ushort group, ushort plyr, ushort max_agent, shor
         if (nagents > p_player->DoubleMode)
         {
             if (in_network_game && p_player->DoubleMode) {
-                p_person->State = 13;
+                p_person->State = PerSt_DEAD;
                 p_person->Flag |= 0x2000002;
             }
             p_player->DirectControl[nagents] = 0;
@@ -2535,7 +2540,7 @@ ushort make_group_into_players(ushort group, ushort plyr, ushort max_agent, shor
         }
         netgame_agent_pos_x[plyr][nagents] = p_person->X >> 8;
         netgame_agent_pos_y[plyr][nagents] = p_person->Z >> 8;
-        p_person->State = 0;
+        p_person->State = PerSt_NONE;
         { // Why are we tripling the health?
             uint health;
             health = 3 * p_person->Health;
@@ -4296,7 +4301,7 @@ ubyte do_user_interface(void)
             p_agent = p_locplayer->MyAgent[n];
             if (p_agent != NULL)
             {
-                if (((p_agent->Flag & 0x02) == 0) && ((p_agent->Flag2 & 0x10) == 0) && (p_agent->State != 36))
+                if (((p_agent->Flag & 0x02) == 0) && ((p_agent->Flag2 & 0x10) == 0) && (p_agent->State != PerSt_PERSON_BURNING))
                 {
                   lbKeyOn[kbkeys[gkey]] = 0;
                   if (p_locplayer->DoubleMode)

@@ -53,6 +53,8 @@ swars_SOURCES = \
 	../bfsoundlib/include/snderr.h \
 	../bfsoundlib/src/snderr.c \
 	config.h \
+	cybmod.c \
+	cybmod.h \
 	display.c \
 	display.h \
 	dos.c \

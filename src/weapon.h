@@ -66,8 +66,26 @@ enum WeaponType
 
 struct Thing;
 
+struct WeaponDef {
+  ushort RangeBlocks;
+  ushort HitDamage;
+  ushort ReFireDelay;
+  ushort Weight;
+  short EnergyUsed;
+  ushort Accuracy;
+  ushort TargetType;
+  ushort TargetMode;
+  ushort Flags;
+  ushort Sprite;
+  ushort Category;
+  ushort Cost;
+  ubyte field_18;
+};
+
 #pragma pack()
 /******************************************************************************/
+extern struct WeaponDef weapon_defs[33];
+
 void do_weapon_quantities1(struct Thing *p_person);
 void do_weapon_quantities_proper1(struct Thing *p_person);
 /******************************************************************************/
