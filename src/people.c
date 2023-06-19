@@ -49,24 +49,56 @@ void set_person_stats_type(struct Thing *p_person, ushort type)
         : : "a" (p_person), "d" (type));
 }
 
-ubyte person_mod_level_A(struct Thing *p_person)
+ubyte person_mod_chest_level(struct Thing *p_person)
 {
     return (p_person->U.UPerson.UMod.Mods >> 6) & 7;
 }
 
-ubyte person_mod_level_B(struct Thing *p_person)
+void set_person_mod_chest_level(struct Thing *p_person, ubyte nmod)
+{
+    p_person->U.UPerson.UMod.Mods &= ~(7 << 6);
+    p_person->U.UPerson.UMod.Mods |= (nmod << 6);
+}
+
+ubyte person_mod_legs_level(struct Thing *p_person)
 {
     return (p_person->U.UPerson.UMod.Mods) & 7;
 }
 
-ubyte person_mod_level_C(struct Thing *p_person)
+void set_person_mod_legs_level(struct Thing *p_person, ubyte nmod)
+{
+    p_person->U.UPerson.UMod.Mods &= ~(7);
+    p_person->U.UPerson.UMod.Mods |= (nmod);
+}
+
+ubyte person_mod_arms_level(struct Thing *p_person)
 {
     return (p_person->U.UPerson.UMod.Mods >> 3) & 7;
 }
 
-ubyte person_mod_level_D(struct Thing *p_person)
+void set_person_mod_arms_level(struct Thing *p_person, ubyte nmod)
+{
+    p_person->U.UPerson.UMod.Mods &= ~(7 << 3);
+    p_person->U.UPerson.UMod.Mods |= (nmod << 3);
+}
+
+ubyte person_mod_brain_level(struct Thing *p_person)
 {
     return (p_person->U.UPerson.UMod.Mods >> 9) & 7;
+}
+
+void set_person_mod_brain_level(struct Thing *p_person, ubyte nmod)
+{
+    p_person->U.UPerson.UMod.Mods &= ~(7 << 9);
+    p_person->U.UPerson.UMod.Mods |= (nmod << 9);
+}
+
+void person_give_best_mods(struct Thing *p_person)
+{
+    set_person_mod_legs_level(p_person, 3);
+    set_person_mod_arms_level(p_person, 3);
+    set_person_mod_brain_level(p_person, 3);
+    set_person_mod_chest_level(p_person, 3);
 }
 
 short calc_person_speed(struct Thing *p_person)
@@ -81,7 +113,7 @@ short calc_person_speed(struct Thing *p_person)
     if (mood < 0)
         mood = -mood;
 
-    speed = pstat->Speed + 2 * mood + 100 * person_mod_level_B(p_person);
+    speed = pstat->Speed + 2 * mood + 100 * person_mod_legs_level(p_person);
 
     // Flamer slows you down? Why? This makes it even more useless..
     if (p_person->U.UPerson.CurrentWeapon == WEP_FLAMER)
@@ -111,16 +143,16 @@ void init_person_thing(struct Thing *p_person)
     pstat = &peep_type_stats[p_person->SubType];
 
     p_person->U.UPerson.Energy = pstat->MaxEnergy +
-        (person_mod_level_A(p_person) * pstat->MaxEnergy * 50 / 100);
+        (person_mod_chest_level(p_person) * pstat->MaxEnergy * 50 / 100);
 
     p_person->U.UPerson.ShieldEnergy = pstat->MaxShield +
-        (person_mod_level_D(p_person) * pstat->MaxShield * 50 / 100);
+        (person_mod_brain_level(p_person) * pstat->MaxShield * 50 / 100);
 
     p_person->Health = pstat->MaxHealth +
-       ((person_mod_level_A(p_person) * pstat->MaxHealth * 50 / 100) +
-        (person_mod_level_D(p_person) * pstat->MaxHealth * 50 / 100) +
-        (person_mod_level_B(p_person) * pstat->MaxHealth * 25 / 100) +
-        (person_mod_level_C(p_person) * pstat->MaxHealth * 25 / 100)) / 4;
+       ((person_mod_chest_level(p_person) * pstat->MaxHealth * 50 / 100) +
+        (person_mod_brain_level(p_person) * pstat->MaxHealth * 50 / 100) +
+        (person_mod_legs_level(p_person) * pstat->MaxHealth * 25 / 100) +
+        (person_mod_arms_level(p_person) * pstat->MaxHealth * 25 / 100)) / 4;
 
     p_person->U.UPerson.Stamina = pstat->MaximumStamina;
     p_person->U.UPerson.PersuadePower = 0;
@@ -129,7 +161,7 @@ void init_person_thing(struct Thing *p_person)
     p_person->U.UPerson.MaxShieldEnergy = p_person->U.UPerson.ShieldEnergy;
     p_person->U.UPerson.MaxStamina = p_person->U.UPerson.Stamina;
 
-    if (person_mod_level_A(p_person) == 4)
+    if (person_mod_chest_level(p_person) == 4)
     {
         p_person->Health = 2 * PERSON_MAX_HEALTH_LIMIT;
         p_person->U.UPerson.MaxHealth = PERSON_MAX_HEALTH_LIMIT;

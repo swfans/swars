@@ -2175,18 +2175,6 @@ void person_give_all_weapons(struct Thing *p_person)
     do_weapon_quantities1(p_person);
 }
 
-void person_give_best_mods(struct Thing *p_person)
-{
-    p_person->U.UPerson.UMod.Mods &= ~0x0007;
-    p_person->U.UPerson.UMod.Mods |= 0x0003;
-    p_person->U.UPerson.UMod.Mods &= ~0x0038;
-    p_person->U.UPerson.UMod.Mods |= 0x0018;
-    p_person->U.UPerson.UMod.Mods &= ~0x0E00;
-    p_person->U.UPerson.UMod.Mods |= 0x0600;
-    p_person->U.UPerson.UMod.Mods &= ~0x01C0;
-    p_person->U.UPerson.UMod.Mods |= 0x00C0;
-}
-
 void beefup_all_agents(PlayerInfo *p_locplayer)
 {
     int i;
