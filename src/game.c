@@ -755,9 +755,51 @@ void SCANNER_unkn_func_200(struct TbSprite *spr, int x, int y, ubyte col)
 
 void SCANNER_unkn_func_201(struct TbSprite *spr, int x, int y, ubyte *fade)
 {
+#if 0
     asm volatile (
       "call ASM_SCANNER_unkn_func_201\n"
         : : "a" (spr), "d" (x), "b" (y), "c" (fade));
+#endif
+    ubyte *oline;
+    ubyte *dt;
+    int ich;
+    ubyte *o;
+
+    oline = &lbDisplay.WScreen[lbDisplay.GraphicsScreenWidth * y + x];
+    dt = spr->Data;
+    for (ich = spr->SHeight; ich > 0; ich--)
+    {
+        o = oline;
+        while (1)
+        {
+            ushort ftidx;
+            sbyte len;
+
+            len = *dt;
+            if (!len)
+                break;
+            if (len > 0)
+            {
+                ++dt;
+                while (len)
+                {
+                    ftidx = *dt;
+                    *o = fade[ftidx];
+                    ++dt;
+                    ++o;
+                    len--;
+                }
+            }
+            else
+            {
+                len = -len;
+                o += len;
+                ++dt;
+            }
+        }
+        ++dt;
+        oline += lbDisplay.GraphicsScreenWidth;
+    }
 }
 
 void SCANNER_unkn_func_202(struct TbSprite *spr, int x, int y, int ctr, int bri)
@@ -770,10 +812,8 @@ void SCANNER_unkn_func_202(struct TbSprite *spr, int x, int y, int ctr, int bri)
 #endif
     ubyte *oline;
     ubyte *dt;
-    sbyte len;
     int ich;
     ubyte *o;
-    ushort ftsub, ftidx;
 
     if ((x < 0) || (x > lbDisplay.PhysicalScreenWidth))
         return;
@@ -787,12 +827,14 @@ void SCANNER_unkn_func_202(struct TbSprite *spr, int x, int y, int ctr, int bri)
     oline = &lbDisplay.WScreen[y * lbDisplay.GraphicsScreenWidth + x];
     dword_1DC36C = bri;
     dt = spr->Data;
-    len = 0;
     for (ich = spr->SHeight; ich > 0; ich--)
     {
         o = oline;
         while (1)
         {
+            ushort ftsub, ftidx;
+            sbyte len;
+
             len = *dt;
             if (!len)
                 break;
