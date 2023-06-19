@@ -131,6 +131,10 @@ extern int data_1c8428;
 extern const char *primvehobj_fname;
 extern unsigned char textwalk_data[640];
 
+extern ubyte byte_1CAB64[];
+extern ubyte byte_1DB088[];
+extern long dword_1DC36C;
+
 extern PrimObjectPoint *prim_object_points;
 extern PrimObjectFace *prim_object_faces;
 extern PrimObjectFace4 *prim_object_faces4;
@@ -758,10 +762,62 @@ void SCANNER_unkn_func_201(struct TbSprite *spr, int x, int y, ubyte *fade)
 
 void SCANNER_unkn_func_202(struct TbSprite *spr, int x, int y, int ctr, int bri)
 {
+#if 0
     asm volatile (
       "push %4\n"
       "call ASM_SCANNER_unkn_func_202\n"
         : : "a" (spr), "d" (x), "b" (y), "c" (ctr), "g" (bri));
+#endif
+    ubyte *oline;
+    ubyte *dt;
+    sbyte len;
+    int ich;
+    ubyte *o;
+    ushort ftsub, ftidx;
+
+    if ((x < 0) || (x > lbDisplay.PhysicalScreenWidth))
+        return;
+    if ((y < 0) || (y > lbDisplay.PhysicalScreenHeight))
+        return;
+    if ((x + spr->SWidth < 0) || (x + spr->SWidth > lbDisplay.PhysicalScreenWidth))
+        return;
+    if ((y + spr->SHeight < 0) || (y + spr->SHeight > lbDisplay.PhysicalScreenHeight))
+        return;
+
+    oline = &lbDisplay.WScreen[y * lbDisplay.GraphicsScreenWidth + x];
+    dword_1DC36C = bri;
+    dt = spr->Data;
+    len = 0;
+    for (ich = spr->SHeight; ich > 0; ich--)
+    {
+        o = oline;
+        while (1)
+        {
+            len = *dt;
+            if (!len)
+                break;
+            if (len > 0)
+            {
+                ++dt;
+                while (len)
+                {
+                    ftidx = *dt++;
+                    ftsub = dword_1DC36C + ((byte_1CAB64[ftidx] >> 1) + (byte_1CAB64[*o] >> 1));
+                    ftidx |= byte_1DB088[ftsub] << 8;
+                    *o++ = pixmap.fade_table[ftidx];
+                    len--;
+                }
+            }
+            else
+            {
+                len = -len;
+                o += len;
+                ++dt;
+            }
+        }
+        ++dt;
+        oline += lbDisplay.GraphicsScreenWidth;
+    }
 }
 
 void SCANNER_unkn_func_203(int a1, int a2, int a3, int a4, ubyte a5, int a6, int a7)
@@ -1184,7 +1240,7 @@ TbBool draw_agent_weapons_selection(PlayerInfo *p_locplayer, struct Thing *p_age
     cy = 44;
     cx = 158 * nagent + 42;
     // Some weapons are not selectable
-    wepflags &= ~(1<<(WEP_ENERGYSHLD-1));
+    wepflags &= ~(1 << (WEP_ENERGYSHLD-1));
     nshown = 0;
     nchecked = 0;
     for (weptype = 0; weptype < WEP_TYPES_COUNT; weptype++, wepflags >>= 1)
@@ -1761,14 +1817,14 @@ void draw_new_panel()
             lv = p_agent->Health;
             lvmax = p_agent->U.UPerson.MaxHealth;
             if (lv <= lvmax) { // Normal health amount
-                draw_health_level(x, 2, 0x2Cu, 2, lv, lvmax, colour_lookup[1], 0);
+                draw_health_level(x, 2, 44, 2, lv, lvmax, colour_lookup[1], 0);
             } else { // Health reinforced beyond max is drawn in red
-                draw_health_level(x, 2, 0x2Cu, 2, lvmax, lvmax, colour_lookup[1], 0);
-                draw_health_level(x, 2, 0x2Cu, 2, lv - lvmax, lvmax, colour_lookup[2], 0);
+                draw_health_level(x, 2, 44, 2, lvmax, lvmax, colour_lookup[1], 0);
+                draw_health_level(x, 2, 44, 2, lv - lvmax, lvmax, colour_lookup[2], 0);
             }
             // Draw shield level over health
             lv = p_agent->U.UPerson.ShieldEnergy;
-            draw_health_level(x, 2, 0x2Cu, 2, lv, 0x400, colour_lookup[1], 1);
+            draw_health_level(x, 2, 44, 2, lv, 0x400, colour_lookup[1], 1);
             // Draw drug level aka mood (or just a red line if no drugs)
             w = game_panel[4+i].Width;
             x = game_panel[4+i].X >> 1;
