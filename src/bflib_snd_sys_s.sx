@@ -469,7 +469,7 @@ reset_SB16_volumes:
 
 
 /*----------------------------------------------------------------*/
-cbCDCountdown:
+GLOBAL_FUNC (ASM_cbCDCountdown)
 /*----------------------------------------------------------------*/
 		push   %esi
 		cmpl   $0x0,CDCountdown
@@ -538,11 +538,11 @@ GLOBAL_FUNC (ASM_PlayCDTrack)
 		je     jump_ebe06
 		xor    %eax,%eax
 		mov    %si,%ax
-		call   is_daudio_track_
+		call   ac_is_daudio_track
 		test   %al,%al
 		je     jump_ebe06
 		mov    %esi,%eax
-		call   GetCDTrackStartSector_
+		call   ac_GetCDTrackStartSector
 		mov    %eax,%edi
 		mov    %esi,%eax
 		call   GetCDTrackLength_
@@ -580,7 +580,7 @@ GLOBAL_FUNC (ASM_PlayCDTrack)
 		lea    0x0(,%eax,4),%eax
 		add    %edx,%eax
 		add    %ecx,%eax
-		push   $cbCDCountdown
+		push   $ASM_cbCDCountdown
 		mov    %eax,CDCountdown
 		call   ac_AIL_register_timer
 		add    $0x4,%esp
@@ -592,7 +592,7 @@ GLOBAL_FUNC (ASM_PlayCDTrack)
 		call   GetCDFirst_
 		and    $0xffff,%eax
 		mov    %edi,%edx
-		call   cd_play_
+		call   ac_cd_play
 		mov    CDCount_handle,%ebx
 		push   %ebx
 		call   ac_AIL_start_timer

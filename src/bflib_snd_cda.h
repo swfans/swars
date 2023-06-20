@@ -30,6 +30,7 @@ extern "C" {
 /******************************************************************************/
 TbBool GetCDAble(void);
 void InitRedbook(void);
+void PlayCDTrack(ushort trkno);
 void StopCD(void);
 /******************************************************************************/
 #ifdef __cplusplus

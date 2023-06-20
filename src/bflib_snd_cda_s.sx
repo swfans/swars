@@ -137,14 +137,14 @@ GLOBAL_FUNC (GetCDTrackLength_)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (GetCDTrackStartSector_)
+GLOBAL_FUNC (ASM_GetCDTrackStartSector_)
 /*----------------------------------------------------------------*/
 		mov    track_start_sector(,%eax,4),%eax
 		ret
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (is_daudio_track_)
+GLOBAL_FUNC (ASM_is_daudio_track)
 /*----------------------------------------------------------------*/
 		and    $0xffff,%eax
 		mov    is_da_track(%eax),%al
@@ -519,7 +519,7 @@ mscdex_version:
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (cd_play_)
+GLOBAL_FUNC (ASM_cd_play)
 /*----------------------------------------------------------------*/
 		push   %ecx
 		push   %esi
@@ -1200,13 +1200,13 @@ aCdErrorD_0:	/* 0x16122B */
 
 current_da_track:
 		.fill   0x18
-track_start_sector:
+GLOBAL (track_start_sector)
 		.long	0x0
 data_1e9108:
 		.fill   0x188
-track_lengths:
+GLOBAL (track_lengths)
 		.fill   0x18c
-is_da_track:
+GLOBAL (is_da_track)
 		.fill   0x63
 cd_lowest_track:	/* 0x1E947F */
 		.byte	0x0

@@ -3036,14 +3036,6 @@ void input(void)
     lbShift = n;
 }
 
-short PlayCDTrack(int a1)
-{
-    int ret;
-    asm volatile ("call ASM_PlayCDTrack\n"
-        : "=r" (ret) : "a" (a1));
-    return ret;
-}
-
 void gproc3_unknsub3(int a1)
 {
     // Empty
