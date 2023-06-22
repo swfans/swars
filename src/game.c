@@ -879,6 +879,13 @@ void LbSpriteDraw_1(int x, int y, struct TbSprite *spr)
         : : "a" (x), "d" (y), "b" (spr));
 }
 
+void LbSpriteDraw_2(int x, int y, struct TbSprite *spr)
+{
+    asm volatile (
+      "call ASM_LbSpriteDraw_2\n"
+        : : "a" (x), "d" (y), "b" (spr));
+}
+
 void SCANNER_draw_new_transparent(void)
 {
     asm volatile ("call ASM_SCANNER_draw_new_transparent\n"
