@@ -39,6 +39,17 @@ struct AudioInitOptions {
   ubyte InitRedbookAudio;
 };
 
+struct HeapMgrHandle {
+  ubyte field_0[14];
+  ubyte field_E;
+};
+
+struct SampleTable {
+  long field_0;
+  long field_4;
+  struct HeapMgrHandle *hmhandle;
+};
+
 #pragma pack()
 
 extern short startscr_samplevol;

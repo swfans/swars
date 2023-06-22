@@ -134,6 +134,8 @@ extern unsigned char textwalk_data[640];
 extern ubyte byte_1CAB64[];
 extern ubyte byte_1DB088[];
 extern long dword_1DC36C;
+extern long sound_heap_size;
+extern struct SampleTable *sound_heap_memory;
 
 extern PrimObjectPoint *prim_object_points;
 extern PrimObjectFace *prim_object_faces;
@@ -530,16 +532,74 @@ void replay_intro(void)
     play_sample_using_heap(0, 122, 127, 64, 100, -1, 3);
 }
 
+int setup_heap_manager(struct SampleTable *smptable, size_t a2, const char *fname, unsigned int a4)
+{
+    int ret;
+    asm volatile ("call ASM_setup_heap_manager\n"
+        : "=r" (ret) : "a" (smptable), "d" (a2), "b" (fname), "c" (a4));
+    return ret;
+}
+
 void reset_heaps(void)
 {
 }
 
-size_t setup_heaps(int a1)
+void setup_heaps(int a1)
 {
+#if 0
     size_t ret;
     asm volatile ("call ASM_setup_heaps\n"
         : "=r" (ret) : "a" (a1));
     return ret;
+#endif
+    long sz;
+    unsigned int n;
+
+    if ((ingame.Flags & GamF_Unkn20000) == 0)
+        return;
+
+    switch (a1)
+    {
+    case 100:
+        sz = sound_heap_size;
+        setup_heap_manager(sound_heap_memory, sz, "sound/syncreds.dat", 1622);
+        break;
+    case 99:
+        break;
+    case 0:
+        sz = 1500000;
+        while ((sound_heap_memory == NULL) && (sz > 100))
+        {
+            sound_heap_memory = LbMemoryAlloc(sz);
+            if (sound_heap_memory == NULL)
+                sz -= 30000;
+        }
+        if ((sound_heap_memory == NULL) || sz < 120000) {
+            ingame.Flags &= GamF_Unkn20000;
+            break;
+        }
+        if (sz <= 500000)
+            n = 822;
+        else
+            n = 1622;
+        if (!setup_heap_manager(sound_heap_memory, sz, "sound/sound.dat", n))
+            ingame.Flags &= GamF_Unkn20000;
+        sound_heap_size = sz;
+        break;
+    case 2:
+        sz = 1500000;
+        if (!setup_heap_manager(sound_heap_memory, sz, "sound/sound.dat", 1622))
+            ingame.Flags &= GamF_Unkn20000;
+        sound_heap_size = sz;
+        break;
+    case 1:
+    default:
+        sz = 1500000;
+        reset_heaps();
+        LbMemoryFree(sound_heap_memory);
+        sound_heap_size = sz;
+        break;
+    }
 }
 
 char func_cc638(const char *text, const char *fname)
