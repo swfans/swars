@@ -29,6 +29,15 @@ extern "C" {
 
 struct Thing;
 
+struct AgentInfo {
+    long Weapons[32];
+    union Mod Mods[32];
+    long Sex;
+    char RandomName[32];
+    ubyte FourPacks[32][5];
+    ubyte NumAgents;
+};
+
 struct SpecialUserInput
 {
   long Bits;
@@ -93,6 +102,7 @@ typedef struct {
 /******************************************************************************/
 extern PlayerInfo players[8];
 extern ubyte local_player_no;
+extern struct AgentInfo cryo_agents;
 
 /******************************************************************************/
 #ifdef __cplusplus

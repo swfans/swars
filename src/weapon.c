@@ -103,8 +103,8 @@ void do_weapon_quantities1(struct Thing *p_person)
 #endif
     ushort plyr, cc2, n;
 
-    plyr = (p_person->U.UObject.MatrixIndex & 0x1C) >> 2;
-    cc2 = p_person->U.UObject.MatrixIndex & 3;
+    plyr = (p_person->U.UPerson.ComCur & 0x1C) >> 2;
+    cc2 = p_person->U.UPerson.ComCur & 3;
     if (in_network_game)
         return;
 
@@ -141,8 +141,79 @@ void do_weapon_quantities1(struct Thing *p_person)
 
 void do_weapon_quantities_proper1(struct Thing *p_person)
 {
+#if 0
     asm volatile ("call ASM_do_weapon_quantities_proper1\n"
         : : "a" (p_person));
+#endif
+    ushort plyr, cc2, n;
+
+    plyr = (p_person->U.UPerson.ComCur & 0x1C) >> 2;
+    cc2 = p_person->U.UPerson.ComCur & 3;
+
+    if (in_network_game)
+    {
+        if (person_carries_weapon(p_person, WEP_NUCLGREN))
+            n = players[plyr].FourPacks[WFRPK_NUCLGREN][cc2];
+        else
+            n = 0;
+        net_agents__FourPacks[plyr][cc2][2] = n;
+
+        if (person_carries_weapon(p_person, WEP_ELEMINE))
+            n = players[plyr].FourPacks[WFRPK_ELEMINE][cc2];
+        else
+            n = 0;
+        net_agents__FourPacks[plyr][cc2][WFRPK_ELEMINE] = n;
+
+        if (person_carries_weapon(p_person, WEP_EXPLMINE))
+            n = players[plyr].FourPacks[WFRPK_EXPLMINE][cc2];
+        else
+            n = 0;
+        net_agents__FourPacks[plyr][cc2][WFRPK_EXPLMINE] = n;
+
+        if (person_carries_weapon(p_person, WEP_KOGAS))
+            n = players[plyr].FourPacks[WFRPK_KOGAS][cc2];
+        else
+            n = 0;
+        net_agents__FourPacks[plyr][cc2][WFRPK_KOGAS] = n;
+
+        if (person_carries_weapon(p_person, WEP_CRAZYGAS))
+            n = players[plyr].FourPacks[WFRPK_CRAZYGAS][cc2];
+        else
+            n = 0;
+        net_agents__FourPacks[plyr][cc2][WFRPK_CRAZYGAS] = n;
+    }
+    else
+    {
+        if (person_carries_weapon(p_person, WEP_NUCLGREN))
+            n = cryo_agents.FourPacks[cc2][WFRPK_NUCLGREN];
+        else
+            n = 0;
+        players[plyr].FourPacks[WFRPK_NUCLGREN][cc2] = n;
+
+        if (person_carries_weapon(p_person, WEP_ELEMINE))
+            n = cryo_agents.FourPacks[cc2][WFRPK_ELEMINE];
+        else
+            n = 0;
+        players[plyr].FourPacks[WFRPK_ELEMINE][cc2] = n;
+
+        if (person_carries_weapon(p_person, WEP_EXPLMINE))
+            n = cryo_agents.FourPacks[cc2][WFRPK_EXPLMINE];
+        else
+            n = 0;
+        players[plyr].FourPacks[WFRPK_EXPLMINE][cc2] = n;
+
+        if (person_carries_weapon(p_person, WEP_KOGAS))
+            n = cryo_agents.FourPacks[cc2][WFRPK_KOGAS];
+        else
+            n = 0;
+        players[plyr].FourPacks[WFRPK_KOGAS][cc2] = n;
+
+        if (person_carries_weapon(p_person, WEP_CRAZYGAS))
+            n = cryo_agents.FourPacks[cc2][WFRPK_CRAZYGAS];
+        else
+            n = 0;
+        players[plyr].FourPacks[WFRPK_CRAZYGAS][cc2] = n;
+    }
 }
 
 /******************************************************************************/
