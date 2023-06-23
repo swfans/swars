@@ -93,6 +93,12 @@ void set_person_mod_brain_level(struct Thing *p_person, ubyte nmod)
     p_person->U.UPerson.UMod.Mods |= (nmod << 9);
 }
 
+TbBool person_carries_weapon(struct Thing *p_person, ubyte weapon)
+{
+    ulong wepflg = 1 << (weapon-1);
+    return (p_person->U.UPerson.WeaponsCarried & wepflg) != 0;
+}
+
 void person_give_best_mods(struct Thing *p_person)
 {
     set_person_mod_legs_level(p_person, 3);

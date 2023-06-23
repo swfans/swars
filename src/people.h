@@ -135,6 +135,8 @@ struct PeepStat
 extern struct PeepStat peep_type_stats[];
 extern ushort people_frames[22][16];
 
+TbBool person_carries_weapon(struct Thing *p_person, ubyte weapon);
+
 void set_person_stats_type(struct Thing *p_person, ushort type);
 void init_person_thing(struct Thing *p_person);
 void person_give_best_mods(struct Thing *p_person);

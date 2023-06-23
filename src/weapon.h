@@ -64,6 +64,16 @@ enum WeaponType
   WEP_TYPES_COUNT,
 };
 
+enum WeaponFourPack
+{
+    WFRPK_ELEMINE = 0,
+    WFRPK_EXPLMINE,
+    WFRPK_NUCLGREN,
+    WFRPK_CRAZYGAS,
+    WFRPK_KOGAS,
+};
+
+
 struct Thing;
 
 struct WeaponDef {
@@ -86,6 +96,7 @@ struct WeaponDef {
 /******************************************************************************/
 extern struct WeaponDef weapon_defs[33];
 
+void do_weapon_quantities_net_to_player(struct Thing *p_person);
 void do_weapon_quantities1(struct Thing *p_person);
 void do_weapon_quantities_proper1(struct Thing *p_person);
 /******************************************************************************/
