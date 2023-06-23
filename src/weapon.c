@@ -59,21 +59,40 @@ struct WeaponDef weapon_defs[] = {
 
 void do_weapon_quantities_net_to_player(struct Thing *p_person)
 {
-    ushort plyr, cc2;
+    ushort plyr, cc2, n;
 
     plyr = (p_person->U.UPerson.ComCur & 0x1C) >> 2;
     cc2 = (p_person->U.UPerson.ComCur & 3);
 
     if (person_carries_weapon(p_person, WEP_NUCLGREN))
-        players[plyr].FourPacks[WFRPK_NUCLGREN][cc2] = net_agents__FourPacks[plyr][cc2][WFRPK_NUCLGREN];
+        n = net_agents__FourPacks[plyr][cc2][WFRPK_NUCLGREN];
+    else
+        n = 0;
+    players[plyr].FourPacks[WFRPK_NUCLGREN][cc2] = n;
+
     if (person_carries_weapon(p_person, WEP_ELEMINE))
-        players[plyr].FourPacks[WFRPK_ELEMINE][cc2] = net_agents__FourPacks[plyr][cc2][WFRPK_ELEMINE];
+        n = net_agents__FourPacks[plyr][cc2][WFRPK_ELEMINE];
+    else
+        n = 0;
+    players[plyr].FourPacks[WFRPK_ELEMINE][cc2] = n;
+
     if (person_carries_weapon(p_person, WEP_EXPLMINE))
-        players[plyr].FourPacks[WFRPK_EXPLMINE][cc2] = net_agents__FourPacks[plyr][cc2][WFRPK_EXPLMINE];
+        n = net_agents__FourPacks[plyr][cc2][WFRPK_EXPLMINE];
+    else
+        n = 0;
+    players[plyr].FourPacks[WFRPK_EXPLMINE][cc2] = n;
+
     if (person_carries_weapon(p_person, WEP_KOGAS))
-        players[plyr].FourPacks[WFRPK_KOGAS][cc2] = net_agents__FourPacks[plyr][cc2][WFRPK_KOGAS];
+        n = net_agents__FourPacks[plyr][cc2][WFRPK_KOGAS];
+    else
+        n = 0;
+    players[plyr].FourPacks[WFRPK_KOGAS][cc2] = n;
+
     if (person_carries_weapon(p_person, WEP_CRAZYGAS))
-        players[plyr].FourPacks[WFRPK_CRAZYGAS][cc2] = net_agents__FourPacks[plyr][cc2][WFRPK_CRAZYGAS];
+        n = net_agents__FourPacks[plyr][cc2][WFRPK_CRAZYGAS];
+    else
+        n = 0;
+    players[plyr].FourPacks[WFRPK_CRAZYGAS][cc2] = n;
 }
 
 void do_weapon_quantities1(struct Thing *p_person)
@@ -82,7 +101,7 @@ void do_weapon_quantities1(struct Thing *p_person)
     asm volatile ("call ASM_do_weapon_quantities1\n"
         : : "a" (p_person));
 #endif
-    ushort plyr, cc2;
+    ushort plyr, cc2, n;
 
     plyr = (p_person->U.UObject.MatrixIndex & 0x1C) >> 2;
     cc2 = p_person->U.UObject.MatrixIndex & 3;
@@ -90,15 +109,34 @@ void do_weapon_quantities1(struct Thing *p_person)
         return;
 
     if (person_carries_weapon(p_person, WEP_NUCLGREN))
-        players[plyr].FourPacks[WFRPK_NUCLGREN][cc2] = 4;
+        n= 4;
+    else
+        n = 0;
+    players[plyr].FourPacks[WFRPK_NUCLGREN][cc2] = n;
+
     if (person_carries_weapon(p_person, WEP_ELEMINE))
-        players[plyr].FourPacks[WFRPK_ELEMINE][cc2] = 4;
+        n = 4;
+    else
+        n = 0;
+    players[plyr].FourPacks[WFRPK_ELEMINE][cc2] = n;
+
     if (person_carries_weapon(p_person, WEP_EXPLMINE))
-        players[plyr].FourPacks[WFRPK_EXPLMINE][cc2] = 4;
+        n = 4;
+    else
+        n = 0;
+    players[plyr].FourPacks[WFRPK_EXPLMINE][cc2] = n;
+
     if (person_carries_weapon(p_person, WEP_KOGAS))
-        players[plyr].FourPacks[WFRPK_KOGAS][cc2] = 4;
+        n = 4;
+    else
+        n = 0;
+    players[plyr].FourPacks[WFRPK_KOGAS][cc2] = n;
+
     if (person_carries_weapon(p_person, WEP_CRAZYGAS))
-        players[plyr].FourPacks[WFRPK_CRAZYGAS][cc2] = 4;
+        n = 4;
+    else
+        n = 0;
+    players[plyr].FourPacks[WFRPK_CRAZYGAS][cc2] = n;
 }
 
 void do_weapon_quantities_proper1(struct Thing *p_person)
