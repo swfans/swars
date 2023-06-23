@@ -1438,6 +1438,25 @@ TbBool draw_agent_weapons_selection(PlayerInfo *p_locplayer, struct Thing *p_age
     return ret;
 }
 
+void do_weapon_quantities_net_to_player(struct Thing *p_person)
+{
+    ushort cc1, cc2;
+
+    cc1 = (p_person->U.UPerson.ComCur & 0x1C) >> 2;
+    cc2 = (p_person->U.UPerson.ComCur & 3);
+
+    if (p_person->U.UPerson.WeaponsCarried & 0x0020)
+        players[cc1].FourPacks[2][cc2] = net_agents__FourPacks[cc1][cc2][2];
+    if (p_person->U.UPerson.WeaponsCarried & 0x0800)
+        players[cc1].FourPacks[0][cc2] = net_agents__FourPacks[cc1][cc2][0];
+    if (p_person->U.UPerson.WeaponsCarried & 0x1000)
+        players[cc1].FourPacks[1][cc2] = net_agents__FourPacks[cc1][cc2][1];
+    if (p_person->U.UPerson.WeaponsCarried & 0x0400)
+        players[cc1].FourPacks[4][cc2] = net_agents__FourPacks[cc1][cc2][4];
+    if (p_person->U.UPerson.WeaponsCarried & 0x0200)
+        players[cc1].FourPacks[3][cc2] = net_agents__FourPacks[cc1][cc2][3];
+}
+
 TbBool func_1caf8(void)
 {
 #if 0

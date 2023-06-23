@@ -79,7 +79,7 @@ typedef struct {
   int field_FE;
   short field_102;
   short TargetType;
-  char FourPacks[20];
+  ubyte FourPacks[5][4];
   ubyte WepDelays[4][32];
   short field_19A;
   char field_19C[4];

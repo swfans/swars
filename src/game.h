@@ -615,6 +615,8 @@ extern long people_groups_count;
 extern long data_1ddb68;
 extern char *people_credits_groups[];
 extern ubyte playable_agents;
+extern ubyte net_agents__FourPacks[8][4][5]; // maybe a part of larger struct, maybe not
+
 extern ubyte game_high_resolution;
 extern char *mission_briefing_text;
 extern short mission_open[50];
