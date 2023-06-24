@@ -34,6 +34,8 @@ int32_t AIL2OAL_API_install_DIG_INI(DIG_DRIVER **digdrv);
 
 uint32_t AIL2OAL_API_sample_status(SNDSAMPLE *s);
 
+SNDSAMPLE *AIL2OAL_API_allocate_sample_handle(DIG_DRIVER *dig);
+
 void AIL2OAL_API_init_sample(SNDSAMPLE *s);
 
 /******************************************************************************/

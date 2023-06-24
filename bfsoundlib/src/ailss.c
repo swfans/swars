@@ -119,4 +119,38 @@ void AIL2OAL_API_init_sample(SNDSAMPLE *s)
         :  : "g" (s) : "eax" );
 }
 
+SNDSAMPLE *AIL2OAL_API_allocate_sample_handle(DIG_DRIVER *dig)
+{
+    int32_t i;
+    SNDSAMPLE *s;
+
+    if (dig == NULL)
+        return NULL;
+
+    AIL_lock();
+
+    // Look for an unallocated sample structure
+    for (i = 0; i < dig->n_samples; i++)
+    {
+        if (dig->samples[i].status == SNDSMP_FREE)
+            break;
+    }
+
+    if (i == dig->n_samples)
+    {
+        AIL_set_error("Out of sample handles.");
+        AIL_unlock();
+        return NULL;
+    }
+
+    s = &dig->samples[i];
+
+    // Initialize sample to status SNDSMP_DONE with nominal
+    // sample attributes
+    AIL_init_sample(s);
+
+    AIL_unlock();
+    return s;
+}
+
 /******************************************************************************/

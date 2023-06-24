@@ -2377,7 +2377,7 @@ GLOBAL_FUNC (AIL_uninstall_DIG_driver)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (AIL_allocate_sample_handle)	/* 1031b0 */
+GLOBAL_FUNC (ASM_AIL_allocate_sample_handle)	/* 1031b0 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %esi

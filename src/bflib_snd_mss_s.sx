@@ -408,7 +408,7 @@ GLOBAL_FUNC (MSSLOWSOUNDOPEN)
 		add    $0x8,%esp
 		mov    SmackMSSDigDriver,%ebp
 		push   %ebp
-		call   AIL_allocate_sample_handle
+		call   ac_AIL_allocate_sample_handle
 		add    $0x4,%esp
 		mov    %eax,0x38(%esi)
 		cmpl   $0x0,0x38(%esi)

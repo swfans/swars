@@ -3286,7 +3286,7 @@ GLOBAL_FUNC(ASM_InitSound)
 		mov    EXPORT_SYMBOL(SoundDriver),%ebp
 		push   %ebp
 		add    $0x19,%ebx
-		call   AIL_allocate_sample_handle
+		call   ac_AIL_allocate_sample_handle
 		add    $0x4,%esp
 		mov    %eax,-0x19(%ebx)
 		movb   $0x0,-0x5(%ebx)
@@ -4147,7 +4147,7 @@ GLOBAL_FUNC (ASM_InitStreamedSound)
 	jump_10065a:
 		mov    EXPORT_SYMBOL(SoundDriver),%edx
 		push   %edx
-		call   AIL_allocate_sample_handle
+		call   ac_AIL_allocate_sample_handle
 		add    $0x4,%esp
 		mov    %eax,sample_handle
 		test   %eax,%eax

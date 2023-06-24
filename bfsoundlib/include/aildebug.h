@@ -91,6 +91,10 @@ void AIL_release_channel(MDI_DRIVER *mdidrv, int32_t channel);
 
 uint32_t AIL_sample_status(SNDSAMPLE *s);
 
+/** Allocate a SNDSAMPLE structure for use with a given driver.
+ */
+SNDSAMPLE *AIL_allocate_sample_handle(DIG_DRIVER *dig);
+
 /** Initialize a SNDSAMPLE structure to baseline values.
  *
  * Sample must be allocated (not free), done playing, and stopped.
