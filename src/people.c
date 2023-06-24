@@ -43,12 +43,6 @@ struct PeepStat peep_type_stats[] = {
 };
 
 
-void set_person_stats_type(struct Thing *p_person, ushort type)
-{
-    asm volatile ("call ASM_set_person_stats_type\n"
-        : : "a" (p_person), "d" (type));
-}
-
 ubyte person_mod_chest_level(struct Thing *p_person)
 {
     return (p_person->U.UPerson.UMod.Mods >> 6) & 7;
@@ -137,16 +131,11 @@ short calc_person_speed(struct Thing *p_person)
     return speed;
 }
 
-void init_person_thing(struct Thing *p_person)
+void set_person_health_energy_shield_stamina_type(struct Thing *p_person, ushort stype)
 {
-#if 0
-    asm volatile ("call ASM_init_person_thing\n"
-        : : "a" (p_person));
-#endif
     struct PeepStat *pstat;
-    ushort paniframe;
 
-    pstat = &peep_type_stats[p_person->SubType];
+    pstat = &peep_type_stats[stype];
 
     p_person->U.UPerson.Energy = pstat->MaxEnergy +
         (person_mod_chest_level(p_person) * pstat->MaxEnergy * 50 / 100);
@@ -161,7 +150,9 @@ void init_person_thing(struct Thing *p_person)
         (person_mod_arms_level(p_person) * pstat->MaxHealth * 25 / 100)) / 4;
 
     p_person->U.UPerson.Stamina = pstat->MaximumStamina;
+
     p_person->U.UPerson.PersuadePower = 0;
+
     p_person->U.UPerson.MaxHealth = p_person->Health;
     p_person->U.UPerson.MaxEnergy = p_person->U.UPerson.Energy;
     p_person->U.UPerson.MaxShieldEnergy = p_person->U.UPerson.ShieldEnergy;
@@ -172,13 +163,19 @@ void init_person_thing(struct Thing *p_person)
         p_person->Health = 2 * PERSON_MAX_HEALTH_LIMIT;
         p_person->U.UPerson.MaxHealth = PERSON_MAX_HEALTH_LIMIT;
     }
-    switch (p_person->SubType)
+}
+
+ushort calc_person_radius_type(struct Thing *p_person, ushort stype)
+{
+    ushort r;
+    switch (stype)
     {
     case SubTT_PERS_AGENT:
     case SubTT_PERS_PUNK_F:
     case SubTT_PERS_POLICE:
     case SubTT_PERS_PUNK_M:
-        p_person->Radius = 80;
+    default:
+        r = 80;
         break;
     case SubTT_PERS_ZEALOT:
     case SubTT_PERS_BRIEFCASE_M:
@@ -189,16 +186,38 @@ void init_person_thing(struct Thing *p_person)
     case SubTT_PERS_HIGH_PRIEST:
     case SubTT_PERS_WHIT_BLOND_F:
     case SubTT_PERS_LETH_JACKT_M:
-        p_person->Radius = 100;
+        r = 100;
         break;
     case SubTT_PERS_MECH_SPIDER:
-        p_person->Radius = 384;
-        break;
-    default:
+        r = 384;
         break;
     }
+    return r;
+}
+
+void set_person_stats_type(struct Thing *p_person, ushort stype)
+{
+#if 0
+    asm volatile ("call ASM_set_person_stats_type\n"
+        : : "a" (p_person), "d" (type));
+#endif
+    set_person_health_energy_shield_stamina_type(p_person, stype);
+    p_person->Speed = calc_person_speed(p_person);
+}
+
+void init_person_thing(struct Thing *p_person)
+{
+#if 0
+    asm volatile ("call ASM_init_person_thing\n"
+        : : "a" (p_person));
+#endif
+    set_person_health_energy_shield_stamina_type(p_person, p_person->SubType);
+
+    p_person->Radius = calc_person_radius_type(p_person, p_person->SubType);
+
     if (current_level != 0)
         p_person->U.UPerson.CurrentWeapon = 0;
+
     if ((p_person->Flag & 0x0002) != 0)
     {
         p_person->U.UPerson.AnimMode = 20;
@@ -208,6 +227,7 @@ void init_person_thing(struct Thing *p_person)
     }
     else
     {
+        ushort paniframe;
         paniframe = people_frames[p_person->SubType][p_person->U.UPerson.AnimMode];
         p_person->Frame -= nstart_ani[paniframe + p_person->U.UPerson.Angle];
         p_person->U.UPerson.AnimMode = 0;
