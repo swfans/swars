@@ -22,10 +22,12 @@
 #include <strings.h>
 #include "bflib_snd_sys.h"
 
+#include "bfsvaribl.h"
 #include "bfmemory.h"
 #include "bfmemut.h"
 #include "bffile.h"
 #include "aildebug.h"
+#include "memfile.h"
 #include "awe32.h"
 #include "dpmi.h"
 #include "snderr.h"
@@ -40,6 +42,8 @@ extern TbBool UseCurrentAwe32Soundfont;
 extern TbBool MusicActive;
 extern TbBool MusicInstalled;
 extern TbBool DisableLoadMusic;
+extern TbBool SoundInstalled;
+extern TbBool StreamedSoundAble;
 extern AIL_INI MusicInstallChoice;
 extern char FullMDI_INIPath[144];
 extern char SoundDataPath[144];
@@ -55,6 +59,9 @@ extern uint16_t awe_buffer_seg;
 extern uint8_t *awe_preset;
 extern uint16_t awe_preset_seg;
 extern TbBool Awe32SoundfontLoaded;
+extern uint8_t *ssnd_buffer[2];
+extern uint8_t *adpcm_source_buffer;
+extern int16_t *mixer_buffer;
 
 extern char full_music_data_path[144];
 extern struct MusicBankSizes music_bank_size_info;
@@ -432,10 +439,75 @@ completed:
     SetMusicMasterVolume(CurrentMusicMasterVolume);
 }
 
+TbBool allocate_buffers(void)
+{
+    mixer_buffer = LbMemoryAlloc(0x8000u);
+    if (mixer_buffer == NULL)
+        return false;
+    adpcm_source_buffer = LbMemoryAlloc(0x800u);
+    if (adpcm_source_buffer == NULL)
+        return false;
+    ssnd_buffer[0] = AIL_MEM_alloc_lock(0x4000);
+    if (ssnd_buffer[0] == NULL)
+        return false;
+    ssnd_buffer[1] = AIL_MEM_alloc_lock(0x4000);
+    if (ssnd_buffer[1] == NULL)
+        return false;
+    return true;
+}
+
+void free_buffers(void)
+{
+    if (ssnd_buffer[0] != NULL) {
+        AIL_MEM_free_lock(ssnd_buffer[0], 0x4000);
+        ssnd_buffer[0] = NULL;
+    }
+    if (ssnd_buffer[1] != NULL) {
+        AIL_MEM_free_lock(ssnd_buffer[1], 0x4000);
+        ssnd_buffer[1] = NULL;
+    }
+    if (adpcm_source_buffer != NULL) {
+        LbMemoryFree(adpcm_source_buffer);
+        adpcm_source_buffer = NULL;
+    }
+    if (mixer_buffer != NULL) {
+        LbMemoryFree(mixer_buffer);
+        mixer_buffer = NULL;
+    }
+}
+
 void InitStreamedSound(void)
 {
+#if 1
     asm volatile ("call ASM_InitStreamedSound\n"
         :  :  : "eax" );
+#else
+    if (!SoundInstalled || !SoundAble || StreamedSoundAble)
+        return;
+
+    flushall();
+    setbuf(stdout, NULL);
+
+    if (!allocate_buffers())
+    {
+        free_buffers();
+        sprintf(SoundProgressMessage,
+            "BF100 - Cannot allocate buffers for streamed sound\n");
+        SoundProgressLog(SoundProgressMessage);
+        return;
+    }
+
+    sample_handle = AIL_allocate_sample_handle(SoundDriver);
+    if (!sample_handle)
+    {
+        free_buffers();
+        sprintf(SoundProgressMessage,
+            "BF100 - Cannot allocate handle for streamed sound\n");
+        SoundProgressLog(SoundProgressMessage);
+        return;
+    }
+    StreamedSoundAble = 1;
+#endif
 }
 
 void InitAllBullfrogSoundTimers(void)

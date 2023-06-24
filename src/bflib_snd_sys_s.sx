@@ -4117,12 +4117,12 @@ GLOBAL_FUNC (ASM_InitStreamedSound)
 		xor    %edx,%edx
 		call   ac_setbuf
 #endif
-		call   allocate_buffers
+		call   ac_allocate_buffers
 		test   %eax,%eax
 		jne    jump_10065a
 		mov    $aBf100CannotAll,%esi
 		mov    $SoundProgressMessage,%edi
-		call   free_buffers
+		call   ac_free_buffers
 		push   %edi
 	jump_100635:
 		mov    (%esi),%al
@@ -4154,7 +4154,7 @@ GLOBAL_FUNC (ASM_InitStreamedSound)
 		jne    jump_1006a7
 		mov    $aBf100CannotA_0,%esi
 		mov    $SoundProgressMessage,%edi
-		call   free_buffers
+		call   ac_free_buffers
 		push   %edi
 	jump_100682:
 		mov    (%esi),%al
@@ -4200,7 +4200,7 @@ FreeStreamedSound_:
 		mov    %ebx,sample_file
 	jump_1006df:
 		call   SwitchOffStreamedSound_
-		call   free_buffers
+		call   ac_free_buffers
 		xor    %ah,%ah
 		mov    %ah,_StreamedSoundAble
 		pop    %edx
@@ -4224,11 +4224,11 @@ SwitchOffStreamedSound_:
 		mov    $0x4000,%ebx
 		call   AIL_end_sample
 		add    $0x4,%esp
-		mov    data_1e8f60,%eax
+		mov    EXPORT_SYMBOL(ssnd_buffer)+0,%eax
 		xor    %edx,%edx
 		call   ac_memset
 		mov    $0x4000,%ebx
-		mov    data_1e8f64,%eax
+		mov    EXPORT_SYMBOL(ssnd_buffer)+4,%eax
 		xor    %edx,%edx
 		call   ac_memset
 		mov    sample_file,%ebx
@@ -4261,30 +4261,30 @@ SwitchOffStreamedSound_:
 
 
 /*----------------------------------------------------------------*/
-allocate_buffers:
+GLOBAL_FUNC(ASM_allocate_buffers)
 /*----------------------------------------------------------------*/
 		push   %ecx
 		push   %edx
 		mov    $0x8000,%eax
 		call   ac_LbMemoryAlloc
-		mov    %eax,data_1e8f94
+		mov    %eax,EXPORT_SYMBOL(mixer_buffer)
 		test   %eax,%eax
 		je     jump_100ff9
 		mov    $0x800,%eax
 		call   ac_LbMemoryAlloc
-		mov    %eax,data_1e8f6c
+		mov    %eax,EXPORT_SYMBOL(adpcm_source_buffer)
 		test   %eax,%eax
 		je     jump_100ff9
 		push   $0x4000
 		call   ac_AIL_MEM_alloc_lock
 		add    $0x4,%esp
-		mov    %eax,data_1e8f60
+		mov    %eax,EXPORT_SYMBOL(ssnd_buffer)+0
 		test   %eax,%eax
 		je     jump_100ff9
 		push   $0x4000
 		call   ac_AIL_MEM_alloc_lock
 		add    $0x4,%esp
-		mov    %eax,data_1e8f64
+		mov    %eax,EXPORT_SYMBOL(ssnd_buffer)+4
 		test   %eax,%eax
 		je     jump_100ff9
 		mov    $0x1,%eax
@@ -4295,14 +4295,14 @@ allocate_buffers:
 
 
 /*----------------------------------------------------------------*/
-free_buffers:
+GLOBAL_FUNC(ASM_free_buffers)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
 		push   %edx
 		push   %esi
 		push   %ebp
-		mov    data_1e8f60,%edx
+		mov    EXPORT_SYMBOL(ssnd_buffer)+0,%edx
 		test   %edx,%edx
 		je     jump_101025
 		push   $0x4000
@@ -4310,9 +4310,9 @@ free_buffers:
 		call   ac_AIL_MEM_free_lock
 		xor    %ecx,%ecx
 		add    $0x8,%esp
-		mov    %ecx,data_1e8f60
+		mov    %ecx,EXPORT_SYMBOL(ssnd_buffer)+0
 	jump_101025:
-		mov    data_1e8f64,%esi
+		mov    EXPORT_SYMBOL(ssnd_buffer)+4,%esi
 		test   %esi,%esi
 		je     jump_101045
 		push   $0x4000
@@ -4320,22 +4320,22 @@ free_buffers:
 		xor    %ebp,%ebp
 		call   ac_AIL_MEM_free_lock
 		add    $0x8,%esp
-		mov    %ebp,data_1e8f64
+		mov    %ebp,EXPORT_SYMBOL(ssnd_buffer)+4
 	jump_101045:
-		mov    data_1e8f6c,%eax
+		mov    EXPORT_SYMBOL(adpcm_source_buffer),%eax
 		test   %eax,%eax
 		je     jump_10105b
 		xor    %edx,%edx
 		call   ac_LbMemoryFree
-		mov    %edx,data_1e8f6c
+		mov    %edx,EXPORT_SYMBOL(adpcm_source_buffer)
 	jump_10105b:
-		mov    data_1e8f94,%ebx
+		mov    EXPORT_SYMBOL(mixer_buffer),%ebx
 		test   %ebx,%ebx
 		je     jump_101074
 		mov    %ebx,%eax
 		xor    %ecx,%ecx
 		call   ac_LbMemoryFree
-		mov    %ecx,data_1e8f94
+		mov    %ecx,EXPORT_SYMBOL(mixer_buffer)
 	jump_101074:
 		pop    %ebp
 		pop    %esi
@@ -6488,17 +6488,18 @@ sample_rate:	/* 0x1E8F58 */
 		.long	0x0
 loop_count:	/* 0x1E8F5C */
 		.long	0x0
-data_1e8f60:
+GLOBAL (ssnd_buffer)
 		.long	0x0
-data_1e8f64:
-		.fill   0x8
-data_1e8f6c:
+		.long	0x0
+temp_buffer:
+		.long	0x0
+GLOBAL (adpcm_source_buffer)
 		.long	0x0
 adpcm_file_open:
 		.long	0x0
-data_1e8f74:
+adpcm_source_size:
 		.long	0x0
-data_1e8f78:
+adpcm_dest_size:
 		.long	0x0
 stream_flags:	/* 0x1E8F7C */
 		.long	0x0
@@ -6512,7 +6513,7 @@ pan_rate:	/* 0x1E8F8C */
 		.long	0x0
 pan_target:	/* 0x1E8F90 */
 		.long	0x0
-data_1e8f94: /* 0x1e8f94 */
+GLOBAL (mixer_buffer) /* 0x1e8f94 */
 		.long	0x0
 mixed_file_open:
 		.byte	0x0
