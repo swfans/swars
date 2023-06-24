@@ -2524,7 +2524,7 @@ GLOBAL_FUNC (AIL_release_sample_handle)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (AIL_init_sample)	/* 103460 */
+GLOBAL_FUNC (ASM_AIL_init_sample)	/* 103460 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %edi
@@ -2563,7 +2563,7 @@ GLOBAL_FUNC (AIL_init_sample)	/* 103460 */
 	jump_1034c0:
 		mov    0x10(%esp),%eax
 		push   %eax
-		call   AIL_API_init_sample
+		call   ac_AIL2OAL_API_init_sample
 		mov    AIL_indent,%edx
 		dec    %edx
 		add    $0x4,%esp
@@ -9130,7 +9130,7 @@ AIL_API_allocate_sample_handle:	/* 1138c0 */
 		mov    0x5c(%ebx),%ebx
 		add    %eax,%ebx
 		push   %ebx
-		call   AIL_init_sample
+		call   ac_AIL_init_sample
 		add    $0x4,%esp
 		call   ac_AIL_unlock
 		mov    %ebx,%eax
@@ -9151,7 +9151,7 @@ AIL_API_release_sample_handle:
 
 
 /*----------------------------------------------------------------*/
-AIL_API_init_sample:	/* 113940 */
+GLOBAL_FUNC (ASM_AIL_API_init_sample)	/* 113940 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		mov    0x8(%esp),%eax
@@ -15166,7 +15166,7 @@ _XDIG_MIDI_trap:
 		mov    0x4d4(%esi,%ebx,4),%ebp
 		push   %ebp
 		mov    %eax,0x658(%esi,%ebx,4)
-		call   AIL_init_sample
+		call   ac_AIL_init_sample
 		mov    0x494(%esi,%edi,4),%eax
 		add    $0x4,%esp
 		mov    0x18(%eax),%edx

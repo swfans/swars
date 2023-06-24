@@ -4824,7 +4824,7 @@ GLOBAL_FUNC (PlaySampleFromAddress_)
 		jne    jump_f17cc
 		mov    0x0(%ebp),%ecx
 		push   %ecx
-		call   AIL_init_sample
+		call   ac_AIL_init_sample
 		add    $0x4,%esp
 		mov    0x28(%esp),%eax
 		test   %eax,%eax
@@ -5751,7 +5751,7 @@ cb_sample_queue_callback:	/* 0x1095A0 */
 		jae    jump_10964f
 		mov    sample_queue_handle,%ecx
 		push   %ecx
-		call   AIL_init_sample
+		call   ac_AIL_init_sample
 		add    $0x4,%esp
 		push   $cb_sample_queue_callback
 		mov    sample_queue_handle,%esi

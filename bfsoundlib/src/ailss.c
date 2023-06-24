@@ -25,6 +25,7 @@
 
 #include "ailss.h"
 #include "aildebug.h"
+#include "ail.h"
 #include "mssdig.h"
 /******************************************************************************/
 extern size_t sound_source_count;
@@ -107,6 +108,15 @@ int32_t AIL2OAL_API_install_DIG_INI(DIG_DRIVER **digdrv)
 uint32_t AIL2OAL_API_sample_status(SNDSAMPLE *s)
 {
     return s->status;
+}
+
+void AIL2OAL_API_init_sample(SNDSAMPLE *s)
+{
+    asm volatile (
+      "push %0\n"
+      "call ASM_AIL_API_init_sample\n"
+      "add $0x4, %%esp\n"
+        :  : "g" (s) : "eax" );
 }
 
 /******************************************************************************/

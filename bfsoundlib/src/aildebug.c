@@ -287,6 +287,19 @@ uint32_t AIL_sample_status(SNDSAMPLE *s)
     return status;
 }
 
+void AIL_init_sample(SNDSAMPLE *s)
+{
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s(0x%p)\n", __func__, s);
+
+    AIL2OAL_API_init_sample(s);
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Finished\n");
+    AIL_indent--;
+}
+
 void AIL_stop_sequence(SNDSEQUENCE *seq)
 {
     AIL_indent++;

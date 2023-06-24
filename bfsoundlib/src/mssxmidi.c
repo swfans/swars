@@ -236,6 +236,7 @@ void XMI_serve(MDI_DRIVER *mdidrv)
     asm volatile (
       "push %0\n"
       "call ASM_XMI_serve\n"
+      "add $0x4, %%esp\n"
         :  : "g" (mdidrv));
 }
 
@@ -270,6 +271,7 @@ MDI_DRIVER *XMI_construct_MDI_driver(AIL_DRIVER *drvr, const SNDCARD_IO_PARMS *i
       "push %2\n"
       "push %1\n"
       "call ASM_XMI_construct_MDI_driver\n"
+      "add $0x8, %%esp\n"
         : "=r" (mdidrv) : "g" (drvr), "g" (iop));
 #else
     SNDCARD_IO_PARMS use;
@@ -537,6 +539,7 @@ void XMI_send_channel_voice_message(SNDSEQUENCE *seq, int32_t status,
       "push %1\n"
       "push %0\n"
       "call ASM_XMI_send_channel_voice_message\n"
+      "add $0x14, %%esp\n"
         :  : "g" (seq), "g" (status), "g" (data_1), "g" (data_2), "g" (ICA_enable));
 }
 
@@ -723,6 +726,7 @@ SNDSEQUENCE *AIL2OAL_API_allocate_sequence_handle(MDI_DRIVER *mdidrv)
     asm volatile (
       "push %1\n"
       "call ASM_AIL_API_allocate_sequence_handle\n"
+      "add $0x4, %%esp\n"
         : "=r" (seq) : "g" (mdidrv));
     return seq;
 }
@@ -735,6 +739,7 @@ MDI_DRIVER *AIL2OAL_API_install_MDI_driver_file(char *fname, SNDCARD_IO_PARMS *i
       "push %2\n"
       "push %1\n"
       "call ASM_AIL_API_install_MDI_driver_file\n"
+      "add $0x8, %%esp\n"
         : "=r" (mdidrv) : "g" (fname), "g" (iop));
 #else
     char locstr[156];
@@ -767,6 +772,7 @@ void AIL2OAL_API_uninstall_MDI_driver(MDI_DRIVER *mdidrv)
     asm volatile (
       "push %0\n"
       "call ASM_AIL_API_uninstall_MDI_driver\n"
+      "add $0x4, %%esp\n"
         :  : "g" (mdidrv));
 #endif
    AIL_uninstall_driver(mdidrv->drvr);
@@ -824,6 +830,7 @@ void AIL2OAL_API_resume_sequence(SNDSEQUENCE *seq)
     asm volatile (
       "push %0\n"
       "call ASM_AIL_API_resume_sequence\n"
+      "add $0x4, %%esp\n"
         :  : "g" (seq));
 }
 

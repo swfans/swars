@@ -450,7 +450,7 @@ doinit_:
 		mov    %eax,%esi
 		mov    0x38(%eax),%edx
 		push   %edx
-		call   AIL_init_sample
+		call   ac_AIL_init_sample
 		add    $0x4,%esp
 		mov    0x48(%esi),%ebx
 		test   %ebx,%ebx

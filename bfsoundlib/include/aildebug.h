@@ -91,6 +91,12 @@ void AIL_release_channel(MDI_DRIVER *mdidrv, int32_t channel);
 
 uint32_t AIL_sample_status(SNDSAMPLE *s);
 
+/** Initialize a SNDSAMPLE structure to baseline values.
+ *
+ * Sample must be allocated (not free), done playing, and stopped.
+ */
+void AIL_init_sample(SNDSAMPLE *s);
+
 /** Stop playback of sequence.
  *
  * Sequence playback may be resumed with AIL_resume_sequence(), or
