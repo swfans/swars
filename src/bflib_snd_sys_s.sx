@@ -729,7 +729,7 @@ GLOBAL_FUNC (ASM_GetSoundInstalled)
 /*----------------------------------------------------------------*/
 GLOBAL_FUNC (GetSoundDriver_)
 /*----------------------------------------------------------------*/
-		mov    SoundDriver,%eax
+		mov    EXPORT_SYMBOL(SoundDriver),%eax
 		ret
 
 
@@ -1921,7 +1921,7 @@ GLOBAL_FUNC (ASM_FreeAudio)
 		jne    jump_ed4c7
 		call   ac_AIL_shutdown
 	jump_ed4c7:
-		cmpb   $0x0,_StreamedSoundAble
+		cmpb   $0x0,EXPORT_SYMBOL(StreamedSoundAble)
 		je     jump_ed4d5
 		call   FreeStreamedSound_
 	jump_ed4d5:
@@ -1987,7 +1987,7 @@ GLOBAL_FUNC (ASM_SetSoundMasterVolume)	/* 0xEE700 */
 		test   %ebx,%ebx
 		jl     jump_ee73e
 		push   %ebx
-		mov    SoundDriver,%ecx
+		mov    EXPORT_SYMBOL(SoundDriver),%ecx
 		push   %ecx
 		call   ail_set_digital_master_volume
 		add    $0x8,%esp
@@ -2975,7 +2975,7 @@ GLOBAL_FUNC(ASM_InitSound)
 		push   %eax
 		call   AIL_install_DIG_driver_file
 		add    $0x8,%esp
-		mov    %eax,SoundDriver
+		mov    %eax,EXPORT_SYMBOL(SoundDriver)
 		test   %eax,%eax
 		jne    jump_ff65c
 		push   $aBf9MdsoundEnvi
@@ -3075,7 +3075,7 @@ GLOBAL_FUNC(ASM_InitSound)
 		pop    %ebx
 		ret
 	jump_ff75e:
-		push   $SoundDriver
+		push   $EXPORT_SYMBOL(SoundDriver)
 		call   AIL_install_DIG_INI
 		add    $0x4,%esp
 		test   %eax,%eax
@@ -3158,7 +3158,7 @@ GLOBAL_FUNC(ASM_InitSound)
 		jne    jump_ff888
 		call   ac_AIL_shutdown
 	jump_ff888:
-		mov    SoundDriver,%edi
+		mov    EXPORT_SYMBOL(SoundDriver),%edi
 		xor    %dl,%dl
 		push   %edi
 		mov    %dl,SoundAble
@@ -3283,7 +3283,7 @@ GLOBAL_FUNC(ASM_InitSound)
 		cmp    %ebx,%edx
 		jb     jump_ffa4e
 	jump_ffa28:
-		mov    SoundDriver,%ebp
+		mov    EXPORT_SYMBOL(SoundDriver),%ebp
 		push   %ebp
 		add    $0x19,%ebx
 		call   AIL_allocate_sample_handle
@@ -4109,7 +4109,7 @@ GLOBAL_FUNC (ASM_InitStreamedSound)
 		je     jump_1006ae
 		cmpb   $0x0,SoundAble
 		je     jump_1006ae
-		cmpb   $0x0,_StreamedSoundAble
+		cmpb   $0x0,EXPORT_SYMBOL(StreamedSoundAble)
 		jne    jump_1006ae
 #if 0
 		call   flushall_
@@ -4145,7 +4145,7 @@ GLOBAL_FUNC (ASM_InitStreamedSound)
 		pop    %ecx
 		ret
 	jump_10065a:
-		mov    SoundDriver,%edx
+		mov    EXPORT_SYMBOL(SoundDriver),%edx
 		push   %edx
 		call   AIL_allocate_sample_handle
 		add    $0x4,%esp
@@ -4177,7 +4177,7 @@ GLOBAL_FUNC (ASM_InitStreamedSound)
 		pop    %ecx
 		ret
 	jump_1006a7:
-		movb   $0x1,_StreamedSoundAble
+		movb   $0x1,EXPORT_SYMBOL(StreamedSoundAble)
 	jump_1006ae:
 		pop    %edi
 		pop    %esi
@@ -4202,7 +4202,7 @@ FreeStreamedSound_:
 		call   SwitchOffStreamedSound_
 		call   ac_free_buffers
 		xor    %ah,%ah
-		mov    %ah,_StreamedSoundAble
+		mov    %ah,EXPORT_SYMBOL(StreamedSoundAble)
 		pop    %edx
 		pop    %ebx
 		ret
@@ -4215,7 +4215,7 @@ SwitchOffStreamedSound_:
 		push   %ecx
 		push   %edx
 		push   %edi
-		cmpb   $0x0,_StreamedSoundAble
+		cmpb   $0x0,EXPORT_SYMBOL(StreamedSoundAble)
 		je     jump_100d1b
 		cmpb   $0x0,active
 		je     jump_100d1b
@@ -6384,7 +6384,7 @@ SfxData:
 GLOBAL (SoundType)
 		.short  0x0
 		.fill   0x2
-SoundDriver:
+GLOBAL (SoundDriver)
 		.long	0x0
 GLOBAL (AILStartupAlreadyInitiated)
 		.byte   0x0
@@ -6474,12 +6474,14 @@ data_1e8db5:
 data_1e8db8:
 		.fill   0x90
 
-_StreamedSoundAble:	/* 0x1E8E48 */
+GLOBAL (StreamedSoundAble)	/* 0x1E8E48 */
 		.byte	0x0
 _CDSpeed:	/* 0x1E8E49 */
 		.ascii  "\x00\x00\x00"
-sample_handle:	/* 0x1E8E4C */
-		.fill   0x104
+GLOBAL (sample_handle)	/* 0x1E8E4C */
+		.long	0x0
+sample_directory:
+		.fill   0x100
 sample_sign:	/* 0x1E8F50 */
 		.long	0x0
 sample_format:	/* 0x1E8F54 */

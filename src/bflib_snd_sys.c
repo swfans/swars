@@ -47,8 +47,10 @@ extern TbBool StreamedSoundAble;
 extern AIL_INI MusicInstallChoice;
 extern char FullMDI_INIPath[144];
 extern char SoundDataPath[144];
+extern DIG_DRIVER *SoundDriver;
 extern TbBool SoundAble;
 extern SNDSEQUENCE *SongHandle;
+extern SNDSAMPLE *sample_handle;
 extern int32_t music_allocated;
 extern int32_t CurrentMusicMasterVolume;
 extern char MusicType[6];
@@ -485,8 +487,10 @@ void InitStreamedSound(void)
     if (!SoundInstalled || !SoundAble || StreamedSoundAble)
         return;
 
-    flushall();
-    setbuf(stdout, NULL);
+#if 0
+    flushall(); // Not a standard C func; also why?
+    setbuf(stdout, NULL); // No reason for that
+#endif
 
     if (!allocate_buffers())
     {

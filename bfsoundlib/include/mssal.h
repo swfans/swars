@@ -142,17 +142,23 @@ enum AILPreferenceNames {
     //DIG_DECODE_BUFFER_SIZE   =  x, /**< Decode buffer size by default; not defined in this MSS version  */
 };
 
-/** SNDSEQUENCE.status flag values.
+/** SNDSEQUENCE.status and SNDSAMPLE.status flag values.
  */
 enum SndSequenceStatusFlags {
-    SNDSEQ_FREE          = 0x0001, /**< Sequence is available for allocation */
-    SNDSEQ_DONE          = 0x0002, /**< Sequence has finished playing, or has
+    SNDSEQ_FREE          = 0x0001, /**< Sequence/sample is available for allocation */
+    SNDSEQ_DONE          = 0x0002, /**< Sequence/sample has finished playing, or has
                                    never been started */
-    SNDSEQ_PLAYING       = 0x0004, /**< Sequence is playing */
-    SNDSEQ_STOPPED       = 0x0008, /**< Sequence has been stopped */
-    SNDSEQ_PLAYINGRELEASED=0x0010, /**< Sequence is playing, but MIDI handle
+    SNDSEQ_PLAYING       = 0x0004, /**< Sequence/sample is playing */
+    SNDSEQ_STOPPED       = 0x0008, /**< Sequence/sample has been stopped */
+    SNDSEQ_PLAYINGRELEASED=0x0010, /**< Sequence/sample is playing, but MIDI/DIG handle
                                    has been temporarily released */
 };
+
+#define SNDSMP_FREE		SNDSEQ_FREE
+#define SNDSMP_DONE		SNDSEQ_DONE
+#define SNDSMP_PLAYING	SNDSEQ_PLAYING
+#define SNDSMP_STOPPED	SNDSEQ_STOPPED
+#define SNDSMP_PLAYINGRELEASED	SNDSEQ_PLAYINGRELEASED
 
 /** Timer status values.
  */
