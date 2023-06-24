@@ -213,54 +213,9 @@ static void LbMemoryFree_wrap(void *ptr)
     LbMemoryFree(ptr);
 }
 
-void InitMusic(void)
+int InitMusicDriverFromEnvMDM(void)
 {
-#if 0
-    asm volatile ("call ASM_InitMusic\n"
-        :  :  : "eax" );
-#endif
-    char locnoext[144];
-    char locfname[144];
     char *envmusic;
-
-    if (!MusicAble)
-        return;
-
-    sprintf(SoundProgressMessage, "BF25 - Init Music\n");
-    SoundProgressLog(SoundProgressMessage);
-
-    if (!AILStartupAlreadyInitiated)
-    {
-        AIL_MEM_use_malloc(LbMemoryAlloc);
-        AIL_MEM_use_free(LbMemoryFree_wrap);
-        AIL_startup();
-        AILStartupAlreadyInitiated = 1;
-    }
-    AIL_set_preference(11, 120);
-    AIL_set_preference(12, 1);
-    AIL_set_preference(13, 127);
-    AIL_set_preference(14, 1);
-    AIL_set_preference(15, 0);
-    AIL_set_preference(16, 12);
-
-    if (!AutoScanForSoundHardware)
-        AIL_set_preference(17, 0);
-
-    sprintf(locnoext, "%s/SAMPLE", SoundDataPath);
-    AIL_set_GTL_filename_prefix(locnoext);
-
-    sprintf(locfname, "%s.ad", locnoext);
-    if (!fm_instrument_file_exists(locfname)) {
-        sprintf(SoundProgressMessage, "BF26 - sample.ad not found\n");
-        SoundProgressLog(SoundProgressMessage);
-    }
-
-    sprintf(locfname, "%s.opl", locnoext);
-    if (!fm_instrument_file_exists(locfname)) {
-        sprintf(SoundProgressMessage, "BF27 - sample.opl not found\n");
-        SoundProgressLog(SoundProgressMessage);
-    }
-
     envmusic = getenv("MDMUSIC");
     if (envmusic != NULL)
     {
@@ -275,63 +230,69 @@ void InitMusic(void)
         {
             sprintf(SoundProgressMessage, "BF30 - MDMUSIC environment driver installation - failed\n");
             SoundProgressLog(SoundProgressMessage);
-            if (!SoundAble)
-                AIL_shutdown();
-            MusicAble = 0;
-            MusicActive = 0;
-            return;
+            return -1;
         }
         sprintf(SoundProgressMessage, "BF31 - MDMUSIC environment driver installation - passed\n");
         SoundProgressLog(SoundProgressMessage);
         sprintf(MusicInstallChoice.driver_name, "%s", drvfile);
+        MusicInstallChoice.IO = iop;
+        return 1;
     }
-    else
+    sprintf(SoundProgressMessage, "BF28 - MDMUSIC environment not set\n");
+    SoundProgressLog(SoundProgressMessage);
+    return 0;
+}
+
+int InitMusicDriverFromMdiINI(void)
+{
+    if (!AIL_read_INI(&MusicInstallChoice, FullMDI_INIPath))
     {
-      bool music_installed = 0;
-      if (AIL_read_INI(&MusicInstallChoice, FullMDI_INIPath))
-      {
-        sprintf(SoundProgressMessage, "BF32 - Search for MDI.INI - passed\n");
+        sprintf(SoundProgressMessage, "BF36 - Search for MDI.INI - failed\n");
         SoundProgressLog(SoundProgressMessage);
+        return 0;
+    }
 
-        if (strcasecmp(MusicInstallChoice.driver_name, "None") == 0)
-        {
-            sprintf(SoundProgressMessage, "BF33 - user requests no music in SETSOUND\n");
-            SoundProgressLog(SoundProgressMessage);
-            if (!SoundAble)
-                AIL_shutdown();
-            MusicAble = 0;
-            MusicActive = 0;
-            return;
-        }
+    sprintf(SoundProgressMessage, "BF32 - Search for MDI.INI - passed\n");
+    SoundProgressLog(SoundProgressMessage);
 
-        if (AIL_install_MDI_INI(&MusicDriver)) {
-            sprintf(SoundProgressMessage, "BF35 - MDI.INI driver installation - failed\n");
-            SoundProgressLog(SoundProgressMessage);
-        } else {
-            sprintf(SoundProgressMessage, "BF34 - MDI.INI driver installation - passed\n");
-            SoundProgressLog(SoundProgressMessage);
-            music_installed = 1;
-        }
-      }
-      else
-      {
-          sprintf(SoundProgressMessage, "BF36 - Search for MDI.INI - failed\n");
-          SoundProgressLog(SoundProgressMessage);
-      }
+    if (strcasecmp(MusicInstallChoice.driver_name, "None") == 0)
+    {
+        sprintf(SoundProgressMessage, "BF33 - user requests no music in SETSOUND\n");
+        SoundProgressLog(SoundProgressMessage);
+        return -1;
+    }
 
-      if (!music_installed)
-      {
+    if (AIL_install_MDI_INI(&MusicDriver)) {
+        sprintf(SoundProgressMessage, "BF35 - MDI.INI driver installation - failed\n");
+        SoundProgressLog(SoundProgressMessage);
+        return -1;
+    }
+    sprintf(SoundProgressMessage, "BF34 - MDI.INI driver installation - passed\n");
+    SoundProgressLog(SoundProgressMessage);
+    return 1;
+}
+
+int InitMusicDriver(void)
+{
+    int ret = 0;
+
+    if (ret != 1)
+        ret = InitMusicDriverFromEnvMDM();
+
+    if (ret != 1)
+        ret = InitMusicDriverFromMdiINI();
+
+    if (ret != 1)
+    {
         sprintf(SoundProgressMessage, "BF37 - all music driver installation attempts failed\n");
         SoundProgressLog(SoundProgressMessage);
-        if ( !SoundAble )
-          AIL_shutdown();
-        MusicAble = 0;
-        MusicActive = 0;
-        return;
-      }
+        return -1;
     }
-    SongHandle = AIL_allocate_sequence_handle(MusicDriver);
+    return 1;
+}
 
+int InitMusicType(void)
+{
     if (strcasecmp(MusicInstallChoice.driver_name, "ADLIB.MDI") == 0) {
         sprintf(MusicType, "f");
     } else if (strcasecmp(MusicInstallChoice.driver_name, "ADLIBG.MDI") == 0) {
@@ -378,19 +339,19 @@ void InitMusic(void)
     } else if (AIL_MDI_driver_type(MusicDriver) == 2) {
         sprintf(MusicType, "f");
     } else {
-        AIL_uninstall_MDI_driver(MusicDriver);
-        if ( !SoundAble )
-          AIL_shutdown();
-        MusicAble = 0;
-        MusicActive = 0;
         sprintf(SoundProgressMessage, "BF39 - music driver type not supported\n");
         SoundProgressLog(SoundProgressMessage);
+        return -1;
     }
+    return 1;
+}
 
+int InitMusicBanks(void)
+{
     if (DisableLoadMusic) {
         sprintf(SoundProgressMessage, "BF40 - LoadMusic Disabled\n");
         SoundProgressLog(SoundProgressMessage);
-        goto completed;
+        return 0;
     }
 
     sprintf(SoundProgressMessage, "BF40 - music%s bank allocation", MusicType);
@@ -418,23 +379,99 @@ void InitMusic(void)
             sprintf(SoundProgressMessage, " - not present in music.dat\n");
             SoundProgressLog(SoundProgressMessage);
         }
-        if (Awe32SoundfontLoaded == 1) {
-            MusicInstalled = 1;
-            FreeAwe32Soundfont();
-            MusicInstalled = 0;
-            Awe32SoundfontLoaded = 0;
-        }
-        AIL_uninstall_MDI_driver(MusicDriver);
-        if (!SoundAble)
-            AIL_shutdown();
-        MusicAble = 0;
-        MusicActive = 0;
-        return;
+        return -1;
     }
     sprintf(SoundProgressMessage, " - allocation successful\n");
     SoundProgressLog(SoundProgressMessage);
+    return 1;
+}
 
-completed:
+void FiniMusic(void)
+{
+    if (Awe32SoundfontLoaded == 1) {
+        MusicInstalled = 1;
+        FreeAwe32Soundfont();
+        MusicInstalled = 0;
+        Awe32SoundfontLoaded = 0;
+    }
+    if (MusicDriver != NULL) {
+        AIL_uninstall_MDI_driver(MusicDriver);
+        MusicDriver = NULL;
+    }
+    if (!SoundAble)
+        AIL_shutdown();
+    MusicAble = 0;
+    MusicActive = 0;
+}
+
+void InitMusic(void)
+{
+#if 0
+    asm volatile ("call ASM_InitMusic\n"
+        :  :  : "eax" );
+#endif
+    char locnoext[144];
+    char locfname[144];
+    int ret;
+
+    if (!MusicAble)
+        return;
+
+    sprintf(SoundProgressMessage, "BF25 - Init Music\n");
+    SoundProgressLog(SoundProgressMessage);
+
+    if (!AILStartupAlreadyInitiated)
+    {
+        AIL_MEM_use_malloc(LbMemoryAlloc);
+        AIL_MEM_use_free(LbMemoryFree_wrap);
+        AIL_startup();
+        AILStartupAlreadyInitiated = 1;
+    }
+    AIL_set_preference(11, 120);
+    AIL_set_preference(12, 1);
+    AIL_set_preference(13, 127);
+    AIL_set_preference(14, 1);
+    AIL_set_preference(15, 0);
+    AIL_set_preference(16, 12);
+
+    if (!AutoScanForSoundHardware)
+        AIL_set_preference(17, 0);
+
+    sprintf(locnoext, "%s/SAMPLE", SoundDataPath);
+    AIL_set_GTL_filename_prefix(locnoext);
+
+    sprintf(locfname, "%s.ad", locnoext);
+    if (!fm_instrument_file_exists(locfname)) {
+        sprintf(SoundProgressMessage, "BF26 - sample.ad not found\n");
+        SoundProgressLog(SoundProgressMessage);
+    }
+
+    sprintf(locfname, "%s.opl", locnoext);
+    if (!fm_instrument_file_exists(locfname)) {
+        sprintf(SoundProgressMessage, "BF27 - sample.opl not found\n");
+        SoundProgressLog(SoundProgressMessage);
+    }
+
+    ret = InitMusicDriver();
+    if (ret == -1) {
+        FiniMusic();
+        return;
+    }
+
+    SongHandle = AIL_allocate_sequence_handle(MusicDriver);
+
+    ret = InitMusicType();
+    if (ret == -1) {
+        FiniMusic();
+        return;
+    }
+
+    ret = InitMusicBanks();
+    if (ret == -1) {
+        FiniMusic();
+        return;
+    }
+
     sprintf(SoundProgressMessage, "BF41 - Init music completed\n");
     SoundProgressLog(SoundProgressMessage);
     MusicInstalled = 1;

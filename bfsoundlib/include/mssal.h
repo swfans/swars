@@ -239,8 +239,7 @@ struct AIL_INI {
     char device_name[128];                   /**< offs=0x000 Device name */
     char driver_name[128];                   /**< offs=0x080 Driver filename */
     SNDCARD_IO_PARMS IO;                     /**< offs=0x100 I/O parameters for driver */
-}
-;
+};
 
 /** Base driver descriptor.
  */
