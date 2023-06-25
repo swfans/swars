@@ -40,6 +40,9 @@ SNDSEQUENCE *AIL2OAL_API_allocate_sequence_handle(MDI_DRIVER *mdidrv);
 MDI_DRIVER *AIL2OAL_API_install_MDI_driver_file(char *filename, SNDCARD_IO_PARMS *iop);
 void AIL2OAL_API_uninstall_MDI_driver(MDI_DRIVER *mdidrv);
 
+MDI_DRIVER *AIL2OAL_API_open_XMIDI_driver(uint32_t flags);
+void AIL2OAL_API_close_XMIDI_driver(MDI_DRIVER *mdidrv);
+
 void AIL2OAL_API_stop_sequence(SNDSEQUENCE *seq);
 
 void AIL2OAL_API_resume_sequence(SNDSEQUENCE *seq);

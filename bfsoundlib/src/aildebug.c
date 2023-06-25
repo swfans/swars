@@ -559,6 +559,67 @@ SNDSEQUENCE *AIL_allocate_sequence_handle(MDI_DRIVER *mdidrv)
     return result;
 }
 
+MDI_DRIVER *AIL_open_XMIDI_driver(uint32_t flags)
+{
+    MDI_DRIVER *mdidrv;
+
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s(0x%X)\n", __func__, flags);
+
+    mdidrv = NULL;
+#if defined(WIN32) && 0 // disabled as we do not use win32-specific MIDI API
+    if (mdidrv == NULL)
+    {
+        uint32_t opt;
+        opt = (flags & AIL_OPEN_XMIDI_NULL_DRIVER) ? MIDI_NULL_DRIVER : MIDI_MAPPER;
+        if (AIL2OAL_API_midiOutOpen(&mdidrv, 0, opt))
+            mdidrv = NULL;
+    }
+#elif defined(DOS)||defined(GO32)
+    if (mdidrv == NULL)
+    {
+        if (flags & AIL_OPEN_XMIDI_NULL_DRIVER)
+            mdidrv = AIL2OAL_API_install_MDI_driver_file("NULL.MDI",0);
+    }
+    if (mdidrv == NULL)
+    {
+        if (AIL2OAL_API_install_MDI_INI(&mdidrv) != AIL_INIT_SUCCESS)
+            mdidrv = NULL;
+    }
+#else
+    if (mdidrv == NULL)
+    {
+        mdidrv = AIL2OAL_API_open_XMIDI_driver(flags);
+    }
+#endif
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Result = 0x%p\n", mdidrv);
+    AIL_indent--;
+
+    return mdidrv;
+}
+
+void AIL_close_XMIDI_driver(MDI_DRIVER *mdidrv)
+{
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s(0x%p)\n", __func__, mdidrv);
+
+#if defined(WIN32) && 0 // disabled as we do not use win32-specific MIDI API
+    AIL2OAL_API_midiOutClose(mdidrv);
+#elif defined(DOS)||defined(GO32)
+    AIL2OAL_API_uninstall_MDI_driver(mdidrv)
+#else
+    AIL2OAL_API_close_XMIDI_driver(mdidrv);
+#endif
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Finished\n");
+    AIL_indent--;
+}
+
 MDI_DRIVER *AIL_install_MDI_driver_file(char *filename, SNDCARD_IO_PARMS *iop)
 {
     MDI_DRIVER *mdidrv;

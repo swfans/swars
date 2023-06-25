@@ -778,6 +778,17 @@ void AIL2OAL_API_uninstall_MDI_driver(MDI_DRIVER *mdidrv)
    AIL_uninstall_driver(mdidrv->drvr);
 }
 
+MDI_DRIVER *AIL2OAL_API_open_XMIDI_driver(uint32_t flags)
+{
+    // TODO: implement
+    return NULL;
+}
+
+void AIL2OAL_API_close_XMIDI_driver(MDI_DRIVER *mdidrv)
+{
+    // TODO: implement
+}
+
 void AIL2OAL_API_stop_sequence(SNDSEQUENCE *seq)
 {
     MDI_DRIVER *mdidrv;

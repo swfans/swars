@@ -272,15 +272,41 @@ int InitMusicDriverFromMdiINI(void)
     return 1;
 }
 
+int InitMusicDriverFromOS(void)
+{
+    {
+        sprintf(SoundProgressMessage, "BF29 - generic OPL3 driver init\n");
+        SoundProgressLog(SoundProgressMessage);
+        MusicDriver = AIL_open_XMIDI_driver(0);
+        if (!MusicDriver)
+        {
+            sprintf(SoundProgressMessage, "BF30 - generic OPL3 driver installation - failed\n");
+            SoundProgressLog(SoundProgressMessage);
+            return -1;
+        }
+        sprintf(SoundProgressMessage, "BF31 - generic OPL3 driver installation - passed\n");
+        SoundProgressLog(SoundProgressMessage);
+        // Fill DOS driver information with something which makes sense
+        sprintf(MusicInstallChoice.driver_name, "%s", "OPL3.MDI");
+        memset(&MusicInstallChoice.IO, 0, sizeof(MusicInstallChoice.IO));
+    }
+    return 1;
+}
+
 int InitMusicDriver(void)
 {
     int ret = 0;
 
+#if defined(DOS)||defined(GO32)
     if (ret != 1)
         ret = InitMusicDriverFromEnvMDM();
 
     if (ret != 1)
         ret = InitMusicDriverFromMdiINI();
+#else
+    if (ret != 1)
+        ret = InitMusicDriverFromOS();
+#endif
 
     if (ret != 1)
     {

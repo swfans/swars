@@ -164,11 +164,23 @@ int32_t AIL_install_MDI_INI(MDI_DRIVER **mdidrv);
  */
 int32_t AIL_read_INI(AIL_INI *ini, char *fname);
 
+/** Install and initialize DOS XMIDI audio driver.
+ */
 MDI_DRIVER *AIL_install_MDI_driver_file(char *filename, SNDCARD_IO_PARMS *iop);
 
-/** Uninstall XMIDI audio driver.
+/** Uninstall DOS XMIDI audio driver.
  */
 void AIL_uninstall_MDI_driver(MDI_DRIVER *mdidrv);
+
+/** Install and initialize XMIDI audio driver.
+ */
+MDI_DRIVER *AIL_open_XMIDI_driver(uint32_t flags);
+
+/** Uninstall XMIDI audio driver.
+ *
+ * This should not be called directly as it is within AIL_DRIVER.destructor vector.
+ */
+void AIL_close_XMIDI_driver(MDI_DRIVER *mdidrv);
 
 /******************************************************************************/
 #ifdef __cplusplus
