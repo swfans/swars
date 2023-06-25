@@ -166,7 +166,7 @@ int32_t AIL_read_INI(AIL_INI *ini, char *fname);
 
 /** Install and initialize DOS XMIDI audio driver.
  */
-MDI_DRIVER *AIL_install_MDI_driver_file(char *filename, SNDCARD_IO_PARMS *iop);
+MDI_DRIVER *AIL_install_MDI_driver_file(char *fname, SNDCARD_IO_PARMS *iop);
 
 /** Uninstall DOS XMIDI audio driver.
  */

@@ -317,11 +317,11 @@ struct MDI_DRIVER {
     int32_t notes[16];                       /**< offs=352 # of active notes in channel */
     void *event_trap;                        /**< offs=416 MIDI event trap callback function */
     void *timbre_trap;                       /**< offs=420 Timbre request callback function */
+    int32_t message_count;                   /**< offs=424 MIDI message count; specific to DOS implementation */
+    int32_t offset;                          /**< offs=428 MIDI buffer offset; specific to DOS implementation  */
+    int32_t master_volume;                   /**< offs=432 Master XMIDI note volume 0-127 */
     union {
       struct {
-        int32_t message_count;               /**< offs=424 MIDI message count; specific to DOS implementation */
-        int32_t offset;                      /**< offs=428 MIDI buffer offset; specific to DOS implementation  */
-        int32_t master_volume;               /**< offs=432 Master XMIDI note volume 0-127 */
         int32_t system_data[8];              /**< offs=436 Miscellaneous system data */
       } dos;
       struct {

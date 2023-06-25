@@ -84,14 +84,14 @@ void XMI_flush_buffer(MDI_DRIVER *mdidrv)
 {
     VDI_CALL VDI;
 
-    if (mdidrv->dos.message_count < 1)
+    if (mdidrv->message_count < 1)
         return;
 
-    VDI.CX = mdidrv->dos.message_count;
+    VDI.CX = mdidrv->message_count;
 
     AIL_call_driver(mdidrv->drvr, MDI_MIDI_XMIT, &VDI, NULL);
-    mdidrv->dos.message_count = 0;
-    mdidrv->dos.offset = 0;
+    mdidrv->message_count = 0;
+    mdidrv->offset = 0;
 }
 
 /** Write channel voice message to MIDI driver buffer
@@ -104,16 +104,16 @@ void XMI_MIDI_message(MDI_DRIVER *mdidrv, int32_t status,
     {
         size = XMI_message_size(status);
 
-        if ((mdidrv->dos.offset + size) > sizeof(mdidrv->DST->MIDI_data))
+        if ((mdidrv->offset + size) > sizeof(mdidrv->DST->MIDI_data))
             XMI_flush_buffer(mdidrv);
 
-        mdidrv->DST->MIDI_data[mdidrv->dos.offset++] = (int8_t)(status & 0xff);
-        mdidrv->DST->MIDI_data[mdidrv->dos.offset++] = (int8_t)(d1 & 0xff);
+        mdidrv->DST->MIDI_data[mdidrv->offset++] = (int8_t)(status & 0xff);
+        mdidrv->DST->MIDI_data[mdidrv->offset++] = (int8_t)(d1 & 0xff);
 
         if (size == 3)
-            mdidrv->DST->MIDI_data[mdidrv->dos.offset++] = (int8_t)(d2 & 0xff);
+            mdidrv->DST->MIDI_data[mdidrv->offset++] = (int8_t)(d2 & 0xff);
 
-        mdidrv->dos.message_count++;
+        mdidrv->message_count++;
     }
 }
 
@@ -258,6 +258,67 @@ void XMI_destroy_MDI_driver(MDI_DRIVER *mdidrv)
     // Release memory resources
     AIL_MEM_free_lock(mdidrv->sequences, mdidrv->n_sequences * sizeof(SNDSEQUENCE));
     AIL_MEM_free_lock(mdidrv, sizeof(MDI_DRIVER));
+}
+
+/** Initialize XMIDI device.
+ */
+void init_mdi_defaults(MDI_DRIVER *mdidrv)
+{
+    int32_t i;
+
+    // Initialize synthesizer to General MIDI defaults
+    for (i=0; i < AIL_NUM_CHANS; i++)
+    {
+        XMI_MIDI_message(mdidrv, MDI_EV_CONTROL | i,
+                MDI_CTR_PATCH_BANK_SEL, 0);
+
+        XMI_MIDI_message(mdidrv, MDI_EV_PROGRAM | i,
+                0, 0);
+
+        XMI_MIDI_message(mdidrv, MDI_EV_PITCH   | i,
+                0x00,0x40);
+
+        XMI_MIDI_message(mdidrv, MDI_EV_CONTROL | i,
+                MDI_CTR_VOICE_PROTECT, 0);
+
+        XMI_MIDI_message(mdidrv, MDI_EV_CONTROL | i,
+                MDI_CTR_MODULATION, 0);
+
+        XMI_MIDI_message(mdidrv, MDI_EV_CONTROL | i,
+                MDI_CTR_PART_VOLUME, AIL_preference[MDI_DEFAULT_VOLUME]);
+
+        XMI_MIDI_message(mdidrv, MDI_EV_CONTROL | i,
+                MDI_CTR_PANPOT, 64);
+
+        XMI_MIDI_message(mdidrv, MDI_EV_CONTROL | i,
+                MDI_CTR_EXPRESSION, 127);
+
+        XMI_MIDI_message(mdidrv, MDI_EV_CONTROL | i,
+                MDI_CTR_SUSTAIN, 0);
+
+        XMI_MIDI_message(mdidrv, MDI_EV_CONTROL | i,
+                MDI_CTR_REVERB, 40);
+
+        XMI_MIDI_message(mdidrv, MDI_EV_CONTROL | i,
+                MDI_CTR_CHORUS, 0);
+
+        XMI_MIDI_message(mdidrv, MDI_EV_CONTROL | i,
+                MDI_CTR_RPN_LSB, 0);
+
+        XMI_MIDI_message(mdidrv, MDI_EV_CONTROL | i,
+                MDI_CTR_RPN_MSB, 0);
+
+        XMI_MIDI_message(mdidrv, MDI_EV_CONTROL | i,
+                MDI_CTR_DATA_LSB, 0);
+
+        XMI_MIDI_message(mdidrv, MDI_EV_CONTROL | i,
+                MDI_CTR_PB_RANGE, AIL_preference[MDI_DEFAULT_BEND_RANGE]);
+
+        XMI_flush_buffer(mdidrv);
+
+        if (!(i & 3))
+            AIL_delay(3);
+    }
 }
 
 /** Install and initialize XMIDI audio driver.
@@ -422,25 +483,25 @@ MDI_DRIVER *XMI_construct_MDI_driver(AIL_DRIVER *drvr, const SNDCARD_IO_PARMS *i
     mdidrv->event_trap = NULL;
     mdidrv->timbre_trap = NULL;
 
-    mdidrv->dos.message_count = 0;
-    mdidrv->dos.offset = 0;
+    mdidrv->message_count = 0;
+    mdidrv->offset = 0;
 
     mdidrv->interval_time = 1000000L / AIL_preference[MDI_SERVICE_RATE];
 
     mdidrv->disable = 0;
 
-    mdidrv->dos.master_volume = 127;
+    mdidrv->master_volume = 127;
 
     // Initialize channel lock table to NULL (all physical channels
     // available)
-    for (i=0; i < AIL_NUM_CHANS; i++)
+    for (i = 0; i < AIL_NUM_CHANS; i++)
     {
-      mdidrv->lock[i] = 0;
-      mdidrv->locker[i] = NULL;
-      mdidrv->owner[i] = NULL;
-      mdidrv->user[i] = NULL;
-      mdidrv->state[i] = 0;
-      mdidrv->notes[i] = 0;
+        mdidrv->lock[i] = 0;
+        mdidrv->locker[i] = NULL;
+        mdidrv->owner[i] = NULL;
+        mdidrv->user[i] = NULL;
+        mdidrv->state[i] = 0;
+        mdidrv->notes[i] = 0;
     }
 
     // Allocate timer for XMIDI sequencing
@@ -460,59 +521,7 @@ MDI_DRIVER *XMI_construct_MDI_driver(AIL_DRIVER *drvr, const SNDCARD_IO_PARMS *i
     mdidrv->drvr->destructor = (void *) XMI_destroy_MDI_driver;
     mdidrv->drvr->descriptor = mdidrv;
 
-   // Initialize synthesizer to General MIDI defaults
-    for (i=0; i < AIL_NUM_CHANS; i++)
-    {
-        XMI_MIDI_message(mdidrv, MDI_EV_CONTROL | i,
-                MDI_CTR_PATCH_BANK_SEL, 0);
-
-        XMI_MIDI_message(mdidrv, MDI_EV_PROGRAM | i,
-                0, 0);
-
-        XMI_MIDI_message(mdidrv, MDI_EV_PITCH   | i,
-                0x00,0x40);
-
-        XMI_MIDI_message(mdidrv, MDI_EV_CONTROL | i,
-                MDI_CTR_VOICE_PROTECT, 0);
-
-        XMI_MIDI_message(mdidrv, MDI_EV_CONTROL | i,
-                MDI_CTR_MODULATION, 0);
-
-        XMI_MIDI_message(mdidrv, MDI_EV_CONTROL | i,
-                MDI_CTR_PART_VOLUME, AIL_preference[MDI_DEFAULT_VOLUME]);
-
-        XMI_MIDI_message(mdidrv, MDI_EV_CONTROL | i,
-                MDI_CTR_PANPOT, 64);
-
-        XMI_MIDI_message(mdidrv, MDI_EV_CONTROL | i,
-                MDI_CTR_EXPRESSION, 127);
-
-        XMI_MIDI_message(mdidrv, MDI_EV_CONTROL | i,
-                MDI_CTR_SUSTAIN, 0);
-
-        XMI_MIDI_message(mdidrv, MDI_EV_CONTROL | i,
-                MDI_CTR_REVERB, 40);
-
-        XMI_MIDI_message(mdidrv, MDI_EV_CONTROL | i,
-                MDI_CTR_CHORUS, 0);
-
-        XMI_MIDI_message(mdidrv, MDI_EV_CONTROL | i,
-                MDI_CTR_RPN_LSB, 0);
-
-        XMI_MIDI_message(mdidrv, MDI_EV_CONTROL | i,
-                MDI_CTR_RPN_MSB, 0);
-
-        XMI_MIDI_message(mdidrv, MDI_EV_CONTROL | i,
-                MDI_CTR_DATA_LSB, 0);
-
-        XMI_MIDI_message(mdidrv, MDI_EV_CONTROL | i,
-                MDI_CTR_PB_RANGE, AIL_preference[MDI_DEFAULT_BEND_RANGE]);
-
-        XMI_flush_buffer(mdidrv);
-
-        if (!(i & 3))
-            AIL_delay(3);
-    }
+    init_mdi_defaults(mdidrv);
 
     // Start XMIDI timer service and return MDI_DRIVER descriptor
     AIL_set_timer_frequency(mdidrv->timer, AIL_preference[MDI_SERVICE_RATE]);
@@ -779,8 +788,77 @@ void AIL2OAL_API_uninstall_MDI_driver(MDI_DRIVER *mdidrv)
 
 MDI_DRIVER *AIL2OAL_API_open_XMIDI_driver(uint32_t flags)
 {
-    // TODO: implement
-    return NULL;
+    int32_t i;
+    MDI_DRIVER *mdidrv;
+
+    mdidrv = AIL_MEM_alloc_lock(sizeof(MDI_DRIVER));
+    if (mdidrv == NULL) {
+        AIL_set_error("Could not allocate memory for driver descriptor.");
+        return NULL;
+    }
+
+    // Allocate SEQUENCE structures for driver and set params
+    mdidrv->n_sequences = AIL_preference[MDI_SEQUENCES];
+    mdidrv->sequences = AIL_MEM_alloc_lock(
+        sizeof(struct SNDSEQUENCE) * mdidrv->n_sequences);
+    if (mdidrv->sequences == NULL) {
+        AIL_set_error("Could not allocate SEQUENCE structures.");
+        AIL_MEM_free_lock(mdidrv, sizeof(MDI_DRIVER));
+        return NULL;
+    }
+
+    for (i = 0; i < mdidrv->n_sequences; i++)
+    {
+        mdidrv->sequences[i].status = SNDSEQ_FREE;
+        mdidrv->sequences[i].driver = mdidrv;
+    }
+
+    // Initialize miscellaneous MDI_DRIVER variables
+    mdidrv->event_trap = NULL;
+    mdidrv->timbre_trap = NULL;
+
+    mdidrv->interval_time = 1000000L / AIL_preference[MDI_SERVICE_RATE];
+
+    mdidrv->disable = 0;
+
+    mdidrv->master_volume = 127;
+
+    // Initialize channel lock table to NULL (all physical channels
+    // available)
+    for (i = 0; i < AIL_NUM_CHANS; i++)
+    {
+        mdidrv->lock[i] = 0;
+        mdidrv->locker[i] = NULL;
+        mdidrv->owner[i] = NULL;
+        mdidrv->user[i] = NULL;
+        mdidrv->state[i] = 0;
+        mdidrv->notes[i] = 0;
+    }
+
+    // Allocate timer for XMIDI sequencing
+    mdidrv->timer = AIL_register_timer((AILTIMERCB)XMI_serve);
+    if (mdidrv->timer == -1) {
+        AIL_set_error("Out of timer handles.");
+        AIL_MEM_free_lock(mdidrv->sequences, mdidrv->n_sequences * sizeof(SNDSEQUENCE));
+        AIL_MEM_free_lock(mdidrv, sizeof(MDI_DRIVER));
+        return NULL;
+    }
+
+    AIL_set_timer_user(mdidrv->timer, (void *)mdidrv);
+    init_mdi_defaults(mdidrv);
+
+    // Start XMIDI timer service and return MDI_DRIVER descriptor
+    AIL_set_timer_frequency(mdidrv->timer, AIL_preference[MDI_SERVICE_RATE]);
+    AIL_start_timer(mdidrv->timer);
+
+    // Link HMDIDRIVER into chain
+    if (MDI_first != NULL)
+        mdidrv->win.next = MDI_first;
+    else
+        mdidrv->win.next = NULL;
+
+    MDI_first = mdidrv;
+    return mdidrv;
 }
 
 void AIL2OAL_API_close_XMIDI_driver(MDI_DRIVER *mdidrv)

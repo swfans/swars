@@ -26,6 +26,7 @@
 #include "bfmemory.h"
 #include "bfmemut.h"
 #include "bffile.h"
+#include "ail.h"
 #include "aildebug.h"
 #include "memfile.h"
 #include "awe32.h"
@@ -37,10 +38,10 @@
 /******************************************************************************/
 extern char SoundProgressMessage[256];
 extern TbBool MusicAble;
-extern TbBool AILStartupAlreadyInitiated;
-extern TbBool UseCurrentAwe32Soundfont;
 extern TbBool MusicActive;
 extern TbBool MusicInstalled;
+extern TbBool AILStartupAlreadyInitiated;
+extern TbBool UseCurrentAwe32Soundfont;
 extern TbBool DisableLoadMusic;
 extern TbBool SoundInstalled;
 extern TbBool StreamedSoundAble;
@@ -69,6 +70,13 @@ extern char full_music_data_path[144];
 extern struct MusicBankSizes music_bank_size_info;
 extern void *BfMusicData;
 extern void *BfMusic;
+
+/** Wrapper for LbMemoryFree(), needed due to return type.
+ */
+static void LbMemoryFree_wrap(void *ptr)
+{
+    LbMemoryFree(ptr);
+}
 
 void StopAllSamples(void)
 {
@@ -206,13 +214,6 @@ TbBool fm_instrument_file_exists(const char *fname)
     return dos_access(fname, 0) == 0;
 }
 
-/** Wrapper for LbMemoryFree(), needed due to return type.
- */
-static void LbMemoryFree_wrap(void *ptr)
-{
-    LbMemoryFree(ptr);
-}
-
 int InitMusicDriverFromEnvMDM(void)
 {
     char *envmusic;
@@ -226,9 +227,11 @@ int InitMusicDriverFromEnvMDM(void)
         SoundProgressLog(SoundProgressMessage);
         sscanf(envmusic, "%s %hx %hd %hd %hd", drvfile, &iop.IO, &iop.IRQ, &iop.DMA_8_bit, &iop.DMA_16_bit);
         MusicDriver = AIL_install_MDI_driver_file(drvfile, &iop);
-        if (!MusicDriver)
+        if (MusicDriver == NULL)
         {
             sprintf(SoundProgressMessage, "BF30 - MDMUSIC environment driver installation - failed\n");
+            SoundProgressLog(SoundProgressMessage);
+            sprintf(SoundProgressMessage, " -- AIL: %s\n", AIL_API_last_error());
             SoundProgressLog(SoundProgressMessage);
             return -1;
         }
@@ -249,21 +252,25 @@ int InitMusicDriverFromMdiINI(void)
     {
         sprintf(SoundProgressMessage, "BF36 - Search for MDI.INI - failed\n");
         SoundProgressLog(SoundProgressMessage);
+        sprintf(SoundProgressMessage, " -- AIL: %s\n", AIL_API_last_error());
+        SoundProgressLog(SoundProgressMessage);
         return 0;
     }
 
     sprintf(SoundProgressMessage, "BF32 - Search for MDI.INI - passed\n");
     SoundProgressLog(SoundProgressMessage);
 
-    if (strcasecmp(MusicInstallChoice.driver_name, "None") == 0)
+    if (strcasecmp(MusicInstallChoice.driver_name, "none") == 0)
     {
         sprintf(SoundProgressMessage, "BF33 - user requests no music in SETSOUND\n");
         SoundProgressLog(SoundProgressMessage);
         return -1;
     }
 
-    if (AIL_install_MDI_INI(&MusicDriver)) {
+    if (AIL_install_MDI_INI(&MusicDriver) != 0) {
         sprintf(SoundProgressMessage, "BF35 - MDI.INI driver installation - failed\n");
+        SoundProgressLog(SoundProgressMessage);
+        sprintf(SoundProgressMessage, " -- AIL: %s\n", AIL_API_last_error());
         SoundProgressLog(SoundProgressMessage);
         return -1;
     }
@@ -281,6 +288,8 @@ int InitMusicDriverFromOS(void)
         if (!MusicDriver)
         {
             sprintf(SoundProgressMessage, "BF30 - generic OPL3 driver installation - failed\n");
+            SoundProgressLog(SoundProgressMessage);
+            sprintf(SoundProgressMessage, " -- AIL: %s\n", AIL_API_last_error());
             SoundProgressLog(SoundProgressMessage);
             return -1;
         }
@@ -317,7 +326,7 @@ int InitMusicDriver(void)
     return 1;
 }
 
-int InitMusicType(void)
+int DetermineMusicType(void)
 {
     if (strcasecmp(MusicInstallChoice.driver_name, "ADLIB.MDI") == 0) {
         sprintf(MusicType, "f");
@@ -486,7 +495,7 @@ void InitMusic(void)
 
     SongHandle = AIL_allocate_sequence_handle(MusicDriver);
 
-    ret = InitMusicType();
+    ret = DetermineMusicType();
     if (ret == -1) {
         FiniMusic();
         return;

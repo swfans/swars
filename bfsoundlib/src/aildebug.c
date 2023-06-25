@@ -620,15 +620,15 @@ void AIL_close_XMIDI_driver(MDI_DRIVER *mdidrv)
     AIL_indent--;
 }
 
-MDI_DRIVER *AIL_install_MDI_driver_file(char *filename, SNDCARD_IO_PARMS *iop)
+MDI_DRIVER *AIL_install_MDI_driver_file(char *fname, SNDCARD_IO_PARMS *iop)
 {
     MDI_DRIVER *mdidrv;
 
     AIL_indent++;
     if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
-        fprintf(AIL_debugfile, "%s(%s,0x%p)\n", __func__, filename, iop);
+        fprintf(AIL_debugfile, "%s(%s,0x%p)\n", __func__, fname, iop);
 
-    mdidrv = AIL2OAL_API_install_MDI_driver_file(filename, iop);
+    mdidrv = AIL2OAL_API_install_MDI_driver_file(fname, iop);
 
     if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
         fprintf(AIL_debugfile, "Result = 0x%p\n", mdidrv);
