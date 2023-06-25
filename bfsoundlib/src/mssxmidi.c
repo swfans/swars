@@ -38,6 +38,7 @@ extern char AIL_error[256];
 extern SNDCARD_IO_PARMS AIL_last_IO_attempt;
 extern int32_t AIL_preference[AIL_N_PREFS];
 
+extern MDI_DRIVER *MDI_first;
 extern uint32_t MDI_entry;
 extern SNDSEQUENCE *MDI_S;
 extern int32_t MDI_i,MDI_j,MDI_n,MDI_sequence_done;
@@ -47,7 +48,6 @@ extern const uint8_t *MDI_ptr;
 extern const uint8_t *MDI_event;
 
 extern int32_t MDI_locked;
-
 
 void AILXMIDI_end(void);
 
@@ -84,15 +84,14 @@ void XMI_flush_buffer(MDI_DRIVER *mdidrv)
 {
     VDI_CALL VDI;
 
-    if (mdidrv->message_count < 1)
+    if (mdidrv->dos.message_count < 1)
         return;
 
-    VDI.CX = mdidrv->message_count;
+    VDI.CX = mdidrv->dos.message_count;
 
     AIL_call_driver(mdidrv->drvr, MDI_MIDI_XMIT, &VDI, NULL);
-
-    mdidrv->message_count = 0;
-    mdidrv->offset = 0;
+    mdidrv->dos.message_count = 0;
+    mdidrv->dos.offset = 0;
 }
 
 /** Write channel voice message to MIDI driver buffer
@@ -105,16 +104,16 @@ void XMI_MIDI_message(MDI_DRIVER *mdidrv, int32_t status,
     {
         size = XMI_message_size(status);
 
-        if ((mdidrv->offset + size) > sizeof(mdidrv->DST->MIDI_data))
+        if ((mdidrv->dos.offset + size) > sizeof(mdidrv->DST->MIDI_data))
             XMI_flush_buffer(mdidrv);
 
-        mdidrv->DST->MIDI_data[mdidrv->offset++] = (int8_t)(status & 0xff);
-        mdidrv->DST->MIDI_data[mdidrv->offset++] = (int8_t)(d1 & 0xff);
+        mdidrv->DST->MIDI_data[mdidrv->dos.offset++] = (int8_t)(status & 0xff);
+        mdidrv->DST->MIDI_data[mdidrv->dos.offset++] = (int8_t)(d1 & 0xff);
 
         if (size == 3)
-            mdidrv->DST->MIDI_data[mdidrv->offset++] = (int8_t)(d2 & 0xff);
+            mdidrv->DST->MIDI_data[mdidrv->dos.offset++] = (int8_t)(d2 & 0xff);
 
-        mdidrv->message_count++;
+        mdidrv->dos.message_count++;
     }
 }
 
@@ -423,14 +422,14 @@ MDI_DRIVER *XMI_construct_MDI_driver(AIL_DRIVER *drvr, const SNDCARD_IO_PARMS *i
     mdidrv->event_trap = NULL;
     mdidrv->timbre_trap = NULL;
 
-    mdidrv->message_count = 0;
-    mdidrv->offset = 0;
+    mdidrv->dos.message_count = 0;
+    mdidrv->dos.offset = 0;
 
     mdidrv->interval_time = 1000000L / AIL_preference[MDI_SERVICE_RATE];
 
     mdidrv->disable = 0;
 
-    mdidrv->master_volume = 127;
+    mdidrv->dos.master_volume = 127;
 
     // Initialize channel lock table to NULL (all physical channels
     // available)
@@ -786,7 +785,39 @@ MDI_DRIVER *AIL2OAL_API_open_XMIDI_driver(uint32_t flags)
 
 void AIL2OAL_API_close_XMIDI_driver(MDI_DRIVER *mdidrv)
 {
-    // TODO: implement
+    MDI_DRIVER *cur, *prev;
+    int32_t i;
+
+    // Stop all playing sequences to avoid hung notes
+    for (i = 0; i < mdidrv->n_sequences; i++)
+        AIL_end_sequence(&mdidrv->sequences[i]);
+
+    // Unlink from MDI_DRIVER chain
+    if (mdidrv == MDI_first)
+    {
+        MDI_first = mdidrv->win.next;
+    }
+    else
+    {
+        prev = MDI_first;
+        cur = MDI_first->win.next;
+
+        while (cur != mdidrv)
+        {
+            if (cur == NULL)
+                return;
+            prev = cur;
+            cur = cur->win.next;
+        }
+        prev->win.next = cur->win.next;
+    }
+
+    // Stop sequencer timer service
+    AIL_release_timer_handle(mdidrv->timer);
+
+    // Release memory resources
+    AIL_MEM_free_lock(mdidrv->sequences, mdidrv->n_sequences * sizeof(SNDSEQUENCE));
+    AIL_MEM_free_lock(mdidrv, sizeof(MDI_DRIVER));
 }
 
 void AIL2OAL_API_stop_sequence(SNDSEQUENCE *seq)

@@ -37,6 +37,14 @@ extern AIL_DRIVER * AIL_driver[AIL_MAX_DRVRS];
  */
 extern int32_t AIL_preference[AIL_N_PREFS];
 
+/** DIG_DRIVER list head.
+ */
+DIG_DRIVER *DIG_first = NULL;
+
+/** MDI_DRIVER list head.
+ */
+MDI_DRIVER *MDI_first = NULL;
+
 /** ASCII error type string.
  */
 extern char AIL_error[256];
