@@ -30,6 +30,7 @@
 #include "ail.h"
 #include "aila.h"
 #include "ailss.h"
+#include "mssdig.h"
 #include "mssxmidi.h"
 /******************************************************************************/
 extern uint16_t AIL_debug;
@@ -467,6 +468,53 @@ int32_t AIL_call_driver(AIL_DRIVER *drvr, int32_t fn,
     AIL_indent--;
 
     return ret;
+}
+
+DIG_DRIVER *AIL_install_DIG_driver_file(char const *fname, SNDCARD_IO_PARMS *iop)
+{
+    DIG_DRIVER *digdrv;
+
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s(\"%s\", 0x%p)\n", __func__, fname, iop);
+
+    digdrv = AIL2OAL_API_install_DIG_driver_file(fname, iop);
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Result = 0x%p\n", digdrv);
+    AIL_indent--;
+
+    return digdrv;
+}
+
+int32_t AIL_install_DIG_INI(DIG_DRIVER **digdrv)
+{
+    int32_t ret;
+
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s(0x%p)\n", __func__, digdrv);
+
+    ret = AIL2OAL_API_install_DIG_INI(digdrv);
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Result = %d\n", ret);
+    AIL_indent--;
+
+    return ret;
+}
+
+void AIL_uninstall_DIG_driver(DIG_DRIVER *digdrv)
+{
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s(0x%p)\n", __func__, digdrv);
+
+    AIL2OAL_API_uninstall_DIG_driver(digdrv);
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Finished\n");
+    AIL_indent--;
 }
 
 int32_t AIL_MDI_driver_type(MDI_DRIVER *mdidrv)

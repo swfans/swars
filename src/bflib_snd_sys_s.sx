@@ -2973,7 +2973,7 @@ GLOBAL_FUNC(ASM_InitSound)
 		push   %eax
 		lea    0x1c(%esp),%eax
 		push   %eax
-		call   AIL_install_DIG_driver_file
+		call   ac_AIL_install_DIG_driver_file
 		add    $0x8,%esp
 		mov    %eax,EXPORT_SYMBOL(SoundDriver)
 		test   %eax,%eax
@@ -3076,7 +3076,7 @@ GLOBAL_FUNC(ASM_InitSound)
 		ret
 	jump_ff75e:
 		push   $EXPORT_SYMBOL(SoundDriver)
-		call   AIL_install_DIG_INI
+		call   ac_AIL_install_DIG_INI
 		add    $0x4,%esp
 		test   %eax,%eax
 		jne    jump_ff78a
@@ -3163,7 +3163,7 @@ GLOBAL_FUNC(ASM_InitSound)
 		push   %edi
 		mov    %dl,SoundAble
 		mov    %dl,SoundActive
-		call   AIL_uninstall_DIG_driver
+		call   ac_AIL_uninstall_DIG_driver
 		add    $0x4,%esp
 		mov    SampleRate,%esi
 		add    $0x28,%esp

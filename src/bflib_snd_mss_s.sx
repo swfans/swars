@@ -314,7 +314,7 @@ GLOBAL_FUNC (MSSLOWSOUNDOPEN)
 		add    $0x8,%esp
 		push   $0x0
 		push   $aSb16_dig
-		call   AIL_install_DIG_driver_file
+		call   ac_AIL_install_DIG_driver_file
 		add    $0x8,%esp
 		mov    %eax,SmackMSSDigDriver
 		mov    SmackMSSDigDriver,%ebp
@@ -322,14 +322,14 @@ GLOBAL_FUNC (MSSLOWSOUNDOPEN)
 		jne    jump_fc026
 		push   %ebp
 		push   $aSbpro_dig
-		call   AIL_install_DIG_driver_file
+		call   ac_AIL_install_DIG_driver_file
 		add    $0x8,%esp
 		mov    %eax,SmackMSSDigDriver
 		cmpl   $0x0,SmackMSSDigDriver
 		jne    jump_fc026
 		push   %ebp
 		push   $aSblaster_dig
-		call   AIL_install_DIG_driver_file
+		call   ac_AIL_install_DIG_driver_file
 		add    $0x8,%esp
 		mov    %eax,SmackMSSDigDriver
 	jump_fc026:

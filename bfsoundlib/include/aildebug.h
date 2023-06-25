@@ -91,6 +91,19 @@ void AIL_release_channel(MDI_DRIVER *mdidrv, int32_t channel);
 
 uint32_t AIL_sample_status(SNDSAMPLE *s);
 
+/** Load, install, and initialize digital audio driver according to
+ * contents of DIG_INI file.
+ */
+int32_t AIL_install_DIG_INI(DIG_DRIVER **digdrv);
+
+/** Load, install, and initialize digital audio driver.
+ */
+DIG_DRIVER *AIL_install_DIG_driver_file(char const *fname, SNDCARD_IO_PARMS *iop);
+
+/** Uninstall digital audio driver.
+ */
+void AIL_uninstall_DIG_driver(DIG_DRIVER *digdrv);
+
 /** Allocate a SNDSAMPLE structure for use with a given driver.
  */
 SNDSAMPLE *AIL_allocate_sample_handle(DIG_DRIVER *dig);

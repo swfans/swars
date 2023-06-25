@@ -2128,7 +2128,7 @@ GLOBAL_FUNC (ASM_AIL_uninstall_driver)	/* 0x102e80 */
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (AIL_install_DIG_INI)	/* 102f00 */
+GLOBAL_FUNC (ASM_AIL_install_DIG_INI)	/* 102f00 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %esi
@@ -2224,7 +2224,7 @@ GLOBAL_FUNC (AIL_install_DIG_INI)	/* 102f00 */
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (AIL_install_DIG_driver_file)	/* 103010 */
+GLOBAL_FUNC (ASM_AIL_install_DIG_driver_file)	/* 103010 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %esi
@@ -2326,7 +2326,7 @@ GLOBAL_FUNC (AIL_install_DIG_driver_file)	/* 103010 */
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (AIL_uninstall_DIG_driver)
+GLOBAL_FUNC (ASM_AIL_uninstall_DIG_driver)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %edi
@@ -9058,7 +9058,7 @@ AIL_API_install_DIG_INI:	/* 0x113800 */
 		push   %eax
 		lea    0x84(%esp),%eax
 		push   %eax
-		call   AIL_install_DIG_driver_file
+		call   ac_AIL_install_DIG_driver_file
 		add    $0x8,%esp
 		mov    0x124(%esp),%edx
 		mov    %eax,(%edx)
