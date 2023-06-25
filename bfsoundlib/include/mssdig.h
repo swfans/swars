@@ -28,6 +28,11 @@ extern "C" {
 #endif
 /******************************************************************************/
 
+DIG_DRIVER *AIL2OAL_API_install_DIG_driver_file(const char *fname,
+        const SNDCARD_IO_PARMS *iop);
+int32_t AIL2OAL_API_install_DIG_INI(DIG_DRIVER **digdrv);
+void AIL2OAL_API_uninstall_DIG_driver(DIG_DRIVER *digdrv);
+
 /** Timer interrupt handler which processes samples.
  */
 void SS_serve(uintptr_t clientval);

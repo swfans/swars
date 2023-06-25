@@ -8415,7 +8415,7 @@ SS_destroy_DIG_driver:
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (SS_construct_DIG_driver)	/* 113110 */
+GLOBAL_FUNC (ASM_SS_construct_DIG_driver)	/* 113110 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %esi
@@ -9015,7 +9015,7 @@ ASM_AIL_API_install_DIG_driver_file:	/* 113710 */
 		mov    0xa4(%esp),%ebx
 		push   %ebx
 		push   %esi
-		call   SS_construct_DIG_driver
+		call   ac_SS_construct_DIG_driver
 		add    $0x8,%esp
 		mov    %eax,%ebx
 		test   %eax,%eax

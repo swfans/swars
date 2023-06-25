@@ -30,10 +30,8 @@
 /******************************************************************************/
 extern size_t sound_source_count;
 extern SNDSAMPLE sound_samples[];
-extern bool sound_initialised;
-extern DIG_DRIVER *sound_driver;
 
-static DIG_DRIVER *SS_construct_DIG_driver(AIL_DRIVER *drvr, const SNDCARD_IO_PARMS *iop)
+DIG_DRIVER *SS_construct_DIG_driver(AIL_DRIVER *drvr, const SNDCARD_IO_PARMS *iop)
 {
     DIG_DRIVER *digdrv;
     int32_t n;
@@ -63,46 +61,6 @@ static DIG_DRIVER *SS_construct_DIG_driver(AIL_DRIVER *drvr, const SNDCARD_IO_PA
     }
 
     return digdrv;
-}
-
-DIG_DRIVER *AIL2OAL_API_install_DIG_driver_file(const char *fname,
-        const SNDCARD_IO_PARMS *iop)
-{
-    DIG_DRIVER *digdrv;
-    AIL_DRIVER *drvr;
-
-    if (!sound_initialised)
-        return NULL;
-
-    drvr = AIL_install_driver(NULL, 0);
-    digdrv = SS_construct_DIG_driver(drvr, iop);
-
-#if 0
-    digdrv->timer = timer_register_callback ((TimerCallback) update_sound);
-    AIL2OAL_API_set_timer_user(digdrv->timer, digdrv);
-	
-    digdrv->timer = timer_register_callback ((TimerCallback) &SS_serve);
-    AIL2OAL_API_set_timer_user(digdrv->timer, digdrv);
-#endif
-
-    drvr->descriptor = digdrv;
-    drvr->initialized = 1;
-
-    return digdrv;
-}
-
-int32_t AIL2OAL_API_install_DIG_INI(DIG_DRIVER **digdrv)
-{
-    if (sound_driver != NULL)
-        return -1;
-
-    sound_driver = AIL2OAL_API_install_DIG_driver_file(NULL, NULL);
-    *digdrv = sound_driver;
-
-    if (sound_driver == NULL)
-        return -1;
-
-    return 0;
 }
 
 uint32_t AIL2OAL_API_sample_status(SNDSAMPLE *s)

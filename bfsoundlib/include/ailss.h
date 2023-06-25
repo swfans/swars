@@ -27,14 +27,11 @@ extern "C" {
 #endif
 /******************************************************************************/
 
-DIG_DRIVER *AIL2OAL_API_install_DIG_driver_file(const char *fname,
-        const SNDCARD_IO_PARMS *iop);
-
-int32_t AIL2OAL_API_install_DIG_INI(DIG_DRIVER **digdrv);
+DIG_DRIVER *SS_construct_DIG_driver(AIL_DRIVER *drvr, const SNDCARD_IO_PARMS *iop);
 
 uint32_t AIL2OAL_API_sample_status(SNDSAMPLE *s);
 
-SNDSAMPLE *AIL2OAL_API_allocate_sample_handle(DIG_DRIVER *dig);
+SNDSAMPLE *AIL2OAL_API_allocate_sample_handle(DIG_DRIVER *digdrv);
 
 void AIL2OAL_API_init_sample(SNDSAMPLE *s);
 
