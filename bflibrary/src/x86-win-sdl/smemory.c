@@ -323,6 +323,7 @@ void * LbMemoryAlloc(TbMemSize size)
     LbMemoryCheck();
     if (ptr != NULL)
         memset(ptr, 0, algn_size);
+    LOGNO("memory allocation of %lu bytes ptr=0x%p", algn_size, ptr);
     return ptr;
 }
 
