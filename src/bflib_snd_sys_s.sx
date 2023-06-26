@@ -2881,10 +2881,10 @@ GLOBAL_FUNC(ASM_InitSound)
 	jump_ff4c0:
 		cmpb   $0x0,AILStartupAlreadyInitiated
 		jne    jump_ff4ef
-		push   $ac_LbMemoryAlloc
+		push   $EXPORT_SYMBOL(LbMemoryAlloc_wrap)
 		call   ac_AIL_MEM_use_malloc
 		add    $0x4,%esp
-		push   $ac_LbMemoryFree
+		push   $EXPORT_SYMBOL(LbMemoryFree_wrap)
 		call   ac_AIL_MEM_use_free
 		add    $0x4,%esp
 		call   ac_AIL_startup
@@ -3495,10 +3495,10 @@ GLOBAL_FUNC (ASM_InitMusic)
 		call   ac_SoundProgressLog
 		cmpb   $0x0,AILStartupAlreadyInitiated
 		jne    jump_ffcc6
-		push   $ac_LbMemoryAlloc
+		push   $EXPORT_SYMBOL(LbMemoryAlloc_wrap)
 		call   ac_AIL_MEM_use_malloc
 		add    $0x4,%esp
-		push   $ac_LbMemoryFree
+		push   $EXPORT_SYMBOL(LbMemoryFree_wrap)
 		call   ac_AIL_MEM_use_free
 		add    $0x4,%esp
 		call   ac_AIL_startup
@@ -6183,6 +6183,9 @@ data_16181c:
 		.ascii  "\x77\x00\x00\x00"
 
 .data
+
+GLOBAL (disk_err)
+		.long	0x0
 
 GLOBAL (InitialCDVolume)	/* 0x158B34 */
 		.byte	0xff

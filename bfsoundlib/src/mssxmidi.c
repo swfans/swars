@@ -823,6 +823,11 @@ MDI_DRIVER *AIL2OAL_API_open_XMIDI_driver(uint32_t flags)
     int32_t i;
     MDI_DRIVER *mdidrv;
 
+    {//TODO SWPort hack - forcing music disable
+        AIL_set_error("Force disabling as MIDI not implemented.");
+        return NULL;
+    }
+
     mdidrv = AIL_MEM_alloc_lock(sizeof(MDI_DRIVER));
     if (mdidrv == NULL) {
         AIL_set_error("Could not allocate memory for driver descriptor.");

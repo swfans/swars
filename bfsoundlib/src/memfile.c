@@ -27,8 +27,6 @@
 #include "msssys.h"
 #include "bfmemory.h"
 /******************************************************************************/
-extern AILMEMALLOCCB MEM_alloc;
-extern AILMEMFREECB MEM_free;
 
 int32_t AIL_MEM_alloc_DOS(uint32_t n_paras, void **protected_ptr,
         uint32_t *segment_far_ptr, uint32_t *selector)

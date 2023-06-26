@@ -71,9 +71,16 @@ extern struct MusicBankSizes music_bank_size_info;
 extern void *BfMusicData;
 extern void *BfMusic;
 
-/** Wrapper for LbMemoryFree(), needed due to return type.
+/** Wrapper for LbMemoryAlloc(), needed to make sure data sizes match.
  */
-static void LbMemoryFree_wrap(void *ptr)
+void *LbMemoryAlloc_wrap(uint32_t size)
+{
+    return LbMemoryAlloc(size);
+}
+
+/** Wrapper for LbMemoryFree(), needed to make sure data sizes match.
+ */
+void LbMemoryFree_wrap(void *ptr)
 {
     LbMemoryFree(ptr);
 }
@@ -457,7 +464,7 @@ void InitMusic(void)
 
     if (!AILStartupAlreadyInitiated)
     {
-        AIL_MEM_use_malloc(LbMemoryAlloc);
+        AIL_MEM_use_malloc(LbMemoryAlloc_wrap);
         AIL_MEM_use_free(LbMemoryFree_wrap);
         AIL_startup();
         AILStartupAlreadyInitiated = 1;

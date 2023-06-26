@@ -25,9 +25,8 @@
 
 #include "msssys.h"
 /******************************************************************************/
-
-extern AILMEMALLOCCB MEM_alloc;
-extern AILMEMFREECB MEM_free;
+AILMEMALLOCCB MEM_alloc;
+AILMEMFREECB MEM_free;
 
 void *AIL_MEM_use_malloc(AILMEMALLOCCB fn)
 {
