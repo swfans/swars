@@ -99,9 +99,10 @@ void XMI_flush_buffer(MDI_DRIVER *mdidrv)
 void XMI_MIDI_message(MDI_DRIVER *mdidrv, int32_t status,
         int32_t d1, int32_t d2)
 {
-    uint32_t size;
-
+#if defined(DOS)||defined(GO32)
     {
+        uint32_t size;
+
         size = XMI_message_size(status);
 
         if ((mdidrv->offset + size) > sizeof(mdidrv->DST->MIDI_data))
@@ -115,6 +116,7 @@ void XMI_MIDI_message(MDI_DRIVER *mdidrv, int32_t status,
 
         mdidrv->message_count++;
     }
+#endif
 }
 
 void AIL2OAL_API_set_GTL_filename_prefix(char const *prefix)
@@ -338,8 +340,6 @@ MDI_DRIVER *XMI_construct_MDI_driver(AIL_DRIVER *drvr, const SNDCARD_IO_PARMS *i
     int32_t i;
     int32_t detected;
     VDI_CALL VDI;
-    char *envname;
-    char *envval;
 
     // Ensure that all AILXMIDI code and data is locked into memory
     AILXMIDI_start();
@@ -360,6 +360,7 @@ MDI_DRIVER *XMI_construct_MDI_driver(AIL_DRIVER *drvr, const SNDCARD_IO_PARMS *i
         return NULL;
     }
 
+#if defined(DOS)||defined(GO32)
     // Get DDT and DST addresses
     AIL_call_driver(mdidrv->drvr, DRV_GET_INFO, NULL, &VDI);
 
@@ -384,13 +385,23 @@ MDI_DRIVER *XMI_construct_MDI_driver(AIL_DRIVER *drvr, const SNDCARD_IO_PARMS *i
 
     // Copy AIL 2.X GTL filename to DST, if valid
     // (By default, AIL applications use SAMPLE.XXX GTL filenames)
-    envname = mdidrv->DDT->GTL_suffix;
-    if (!((envname == NULL) || (envname[0] == '\0'))) {
-        strcpy(mdidrv->DST->GTL_filename, GTL_prefix);
-        strcat(mdidrv->DST->GTL_filename, envname);
-    } else {
-        mdidrv->DST->GTL_filename[0] = '\0';
+    {
+        char *envname;
+        char *envval;
+
+        envname = mdidrv->DDT->GTL_suffix;
+        if (!((envname == NULL) || (envname[0] == '\0'))) {
+            strcpy(mdidrv->DST->GTL_filename, GTL_prefix);
+            strcat(mdidrv->DST->GTL_filename, envname);
+        } else {
+            mdidrv->DST->GTL_filename[0] = '\0';
+        }
     }
+#else
+    // No DDT or DST addresses
+    mdidrv->DDT = NULL;
+    mdidrv->DST = NULL;
+#endif
 
     // Verify hardware I/O parameters
     memset(&AIL_last_IO_attempt, -1, sizeof(SNDCARD_IO_PARMS));

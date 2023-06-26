@@ -37,11 +37,46 @@ DIG_DRIVER *AIL2OAL_API_install_DIG_driver_file(const char *fname,
 {
     DIG_DRIVER *digdrv;
     AIL_DRIVER *drvr;
+    int32_t *driver_image;
 
-    if (!sound_initialised)
+    if (!sound_initialised)  // SWPort hack, to be removed
         return NULL;
 
+#if defined(DOS)||defined(GO32)
+    // Open the driver file
+    driver_image = (int32_t*) AIL_file_read(fname, FILE_READ_WITH_SIZE);
+    if ((driver_image == NULL) && (AIL_redist_directory[0] != '\0'))
+    {
+        char fn[256];
+        strcpy(fn, AIL_redist_directory);
+        strcat(fn, fname);
+        driver_image = (int32_t*) AIL_file_read(fn, FILE_READ_WITH_SIZE);
+    }
+#else
+    // Prepare fake driver data; make sure it has at least 7 bytes beyond side
+    // to allow magic value check
+    driver_image = (int32_t*) AIL_MEM_alloc_lock(20);
+    if (driver_image != NULL) {
+        driver_image[0] = 16;
+        driver_image[1] = 0;
+    }
+#endif
+/* TODO the mem allocation can fail sometimes - needs debug; for now we'll use NULL driver
+    if (driver_image == NULL)
+    {
+        AIL_set_error("Driver file not found.");
+        return NULL;
+    }
+
+    drvr = AIL_install_driver((uint8_t*)(&driver_image[1]), driver_image[0]);
+
+    AIL_MEM_free_lock(driver_image, driver_image[0] + 4);
+*/
     drvr = AIL_install_driver(NULL, 0);
+
+    if (drvr == NULL)
+        return NULL;
+
     digdrv = SS_construct_DIG_driver(drvr, iop);
 
 // TODO place is sub-function
@@ -57,6 +92,9 @@ DIG_DRIVER *AIL2OAL_API_install_DIG_driver_file(const char *fname,
     drvr->descriptor = digdrv;
     drvr->initialized = 1;
 // TODO place is sub-function - end
+
+    if (digdrv == NULL)
+        AIL_uninstall_driver(drvr);
 
     return digdrv;
 }
