@@ -49,11 +49,13 @@ DIG_DRIVER *AIL2OAL_API_install_DIG_driver_file(const char *fname,
     {
         char fn[256];
         strcpy(fn, AIL_redist_directory);
+        if (fn[strlen(fn)-1] != '/')
+            strcat(fn, "/");
         strcat(fn, fname);
         driver_image = (int32_t*) AIL_file_read(fn, FILE_READ_WITH_SIZE);
     }
 #else
-    // Prepare fake driver data; make sure it has at least 7 bytes beyond side
+    // Prepare fake driver data; make sure it has at least 7 bytes beyond size
     // to allow magic value check
     driver_image = (int32_t*) AIL_MEM_alloc_lock(20);
     if (driver_image != NULL) {

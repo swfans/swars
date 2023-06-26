@@ -27,9 +27,16 @@ extern "C" {
 #endif
 /******************************************************************************/
 
+extern char SoundDriverPath[144];
+#define AIL_redist_directory SoundDriverPath
+
+#define AIL_ptr_add(ptr,off) ((void*)(((uint8_t*)(ptr))+(off)))
+
 /** Return size in bytes of MIDI channel voice message, based on type.
  */
 int32_t XMI_message_size(int32_t status);
+
+void *AIL_API_file_read(const char *filename, void *dest);
 
 /******************************************************************************/
 #ifdef __cplusplus

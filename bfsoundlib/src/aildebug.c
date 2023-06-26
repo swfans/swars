@@ -29,6 +29,7 @@
 #include "aildebug.h"
 #include "ail.h"
 #include "aila.h"
+#include "miscutil.h"
 #include "ailss.h"
 #include "mssdig.h"
 #include "mssxmidi.h"
@@ -141,8 +142,12 @@ int32_t AIL_set_preference(uint32_t number, int32_t value)
 void AIL_set_GTL_filename_prefix(char const *prefix)
 {
     AIL_indent++;
-    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
-        fprintf(AIL_debugfile, "%s(\"%s\")\n", __func__, prefix);
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug)) {
+        if (prefix)
+            fprintf(AIL_debugfile, "%s(\"%s\")\n", __func__, prefix);
+        else
+            fprintf(AIL_debugfile, "%s(NULL)\n", __func__);
+    }
 
     AIL2OAL_API_set_GTL_filename_prefix(prefix);
 
@@ -154,14 +159,39 @@ void AIL_set_GTL_filename_prefix(char const *prefix)
 void AIL_set_error(const char *error_msg)
 {
     AIL_indent++;
-    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
-        fprintf(AIL_debugfile, "%s(\"%s\")\n", __func__, error_msg);
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug)) {
+        if (error_msg)
+            fprintf(AIL_debugfile, "%s(\"%s\")\n", __func__, error_msg);
+        else
+            fprintf(AIL_debugfile, "%s(NULL)\n", __func__);
+    }
 
     AIL2OAL_API_set_error(error_msg);
 
     if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
         fprintf(AIL_debugfile, "Finished\n");
     AIL_indent--;
+}
+
+void *AIL_file_read(const char *fname, void *dest)
+{
+    void *rdest;
+
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug)) {
+        if (fname)
+            fprintf(AIL_debugfile, "%s(\"%s\", 0x%p)\n", __func__, fname, dest);
+        else
+            fprintf(AIL_debugfile, "%s(NULL, 0x%p)\n", __func__, dest);
+    }
+
+    rdest = AIL_API_file_read(fname, dest);
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Result = 0x%p\n", rdest);
+    AIL_indent--;
+
+    return rdest;
 }
 
 void AIL_set_real_vect(uint32_t vectnum, void *real_ptr)
@@ -475,8 +505,12 @@ DIG_DRIVER *AIL_install_DIG_driver_file(char const *fname, SNDCARD_IO_PARMS *iop
     DIG_DRIVER *digdrv;
 
     AIL_indent++;
-    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
-        fprintf(AIL_debugfile, "%s(\"%s\", 0x%p)\n", __func__, fname, iop);
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug)) {
+        if (fname)
+            fprintf(AIL_debugfile, "%s(\"%s\", 0x%p)\n", __func__, fname, iop);
+        else
+            fprintf(AIL_debugfile, "%s(NULL, 0x%p)\n", __func__, iop);
+    }
 
     digdrv = AIL2OAL_API_install_DIG_driver_file(fname, iop);
 
@@ -556,8 +590,12 @@ int32_t AIL_read_INI(AIL_INI *ini, char *fname)
     int32_t result;
 
     AIL_indent++;
-    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
-        fprintf(AIL_debugfile, "%s(0x%p, \"%s\")\n", __func__, ini, fname);
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug)) {
+        if (fname)
+            fprintf(AIL_debugfile, "%s(0x%p, \"%s\")\n", __func__, ini, fname);
+        else
+            fprintf(AIL_debugfile, "%s(0x%p, NULL)\n", __func__, ini);
+    }
 
     result = AIL2OAL_API_read_INI(ini, fname);
 

@@ -324,7 +324,7 @@ void init_mdi_defaults(MDI_DRIVER *mdidrv)
 }
 
 /** Install and initialize XMIDI audio driver.
-*/
+ */
 MDI_DRIVER *XMI_construct_MDI_driver(AIL_DRIVER *drvr, const SNDCARD_IO_PARMS *iop)
 {
     MDI_DRIVER *mdidrv;

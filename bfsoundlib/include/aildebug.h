@@ -43,6 +43,12 @@ void AIL_shutdown(void);
  */
 int32_t AIL_set_preference(uint32_t number, int32_t value);
 
+#define FILE_READ_WITH_SIZE ((void *)(int32_t)-1)
+
+/** Read file into memory at *dest, allocating memory first if dest=NULL.
+ */
+void *AIL_file_read(const char *fname, void *dest);
+
 /** Returns time since first initialization of the library, in miliseconds.
  */
 uint32_t AIL_ms_count(void);

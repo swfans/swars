@@ -70,7 +70,6 @@ extern int32_t AIL_ISR_IRQ;
 
 extern int32_t old_sp;
 
-
 void AIL2OAL_API_lock(void)
 {
   ++AIL_lock_count;
