@@ -64,7 +64,6 @@ DIG_DRIVER *AIL2OAL_API_install_DIG_driver_file(const char *fname,
         driver_image[1] = 0;
     }
 #endif
-/* TODO the mem allocation can fail sometimes - needs debug; for now we'll use NULL driver
     if (driver_image == NULL)
     {
         AIL_set_error("Driver file not found.");
@@ -74,8 +73,6 @@ DIG_DRIVER *AIL2OAL_API_install_DIG_driver_file(const char *fname,
     drvr = AIL_install_driver((uint8_t*)(&driver_image[1]), driver_image[0]);
 
     AIL_MEM_free_lock(driver_image, driver_image[0] + 4);
-*/
-    drvr = AIL_install_driver(NULL, 0);
 
     if (drvr == NULL)
         return NULL;

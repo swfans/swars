@@ -31,7 +31,7 @@
 
 int FreeDOSmem(void *block, uint16_t seg)
 {
-#if 0
+#if defined(DOS)||defined(GO32)
     DOS_Registers r;
 
     r.r32.eax = 0x0101; // DPMI free DOS memory

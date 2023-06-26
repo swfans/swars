@@ -82,7 +82,7 @@ int32_t AIL_vmm_unlock(void *start, uint32_t size)
 
 int32_t AIL_VMM_lock_range(void *p1, void *p2)
 {
-#if 0
+#if defined(DOS)||defined(GO32)
     DOS_Registers inregs, outregs;
     uint32_t linear;
     uint32_t len;
@@ -108,7 +108,7 @@ int32_t AIL_VMM_lock_range(void *p1, void *p2)
 
 int32_t AIL_VMM_unlock_range(void *p1, void *p2)
 {
-#if 0
+#if defined(DOS)||defined(GO32)
     DOS_Registers inregs, outregs;
     uint32_t linear;
     uint32_t len;
