@@ -26,6 +26,7 @@
 
 #include "mssdig.h"
 #include "memfile.h"
+#include "miscutil.h"
 #include "ailss.h"
 #include "aildebug.h"
 /******************************************************************************/
@@ -103,16 +104,32 @@ DIG_DRIVER *AIL2OAL_API_install_DIG_driver_file(const char *fname,
 
 int32_t AIL2OAL_API_install_DIG_INI(DIG_DRIVER **digdrv)
 {
-    if (sound_driver != NULL)
+    AIL_INI ini;
+
+#if defined(DOS)||defined(GO32)
+    // Attempt to read DIG_INI file
+    if (!AIL_read_INI(&ini, "DIG.INI"))
+    {
+        AIL_set_error("Unable to open file DIG.INI.");
+        return AIL_NO_INI_FILE;
+    }
+#else
+    // Pretend we have a generic driver from DIG_INI
+    memset(&ini, 0, sizeof(ini));
+    sprintf(ini.driver_name, "%s", "SB16.DIG");
+#endif
+    if (sound_driver != NULL) // SWPort hack - remove when not needed
         return -1;
 
-    sound_driver = AIL2OAL_API_install_DIG_driver_file(NULL, NULL);
-    *digdrv = sound_driver;
+    *digdrv = AIL_install_DIG_driver_file(ini.driver_name,
+                                     &ini.IO);
 
-    if (sound_driver == NULL)
-        return -1;
+    if (*digdrv == NULL)
+        return AIL_INIT_FAILURE;
 
-    return 0;
+    sound_driver = *digdrv; // SWPort hack - remove when not needed
+
+    return AIL_INIT_SUCCESS;
 }
 
 void AIL2OAL_API_uninstall_DIG_driver(DIG_DRIVER *digdrv)

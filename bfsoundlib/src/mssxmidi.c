@@ -27,7 +27,7 @@
 #include "mssxmidi.h"
 #include "ail.h"
 #include "aildebug.h"
-#include "dllload.h"
+#include "miscutil.h"
 #include "memfile.h"
 #include "msssys.h"
 #include "miscutil.h"
@@ -761,23 +761,44 @@ MDI_DRIVER *AIL2OAL_API_install_MDI_driver_file(char *fname, SNDCARD_IO_PARMS *i
       "add $0x8, %%esp\n"
         : "=r" (mdidrv) : "g" (fname), "g" (iop));
 #else
-    char locstr[156];
-    int32_t flen;
-    void *drvbuf;
     AIL_DRIVER *drvr;
+    int32_t *driver_image;
 
-    sprintf(locstr, "%s/%s", SoundDriverPath, fname);
-    drvbuf = FILE_read(locstr, NULL);
-    if (drvbuf == NULL) {
-        strcpy(AIL_error, "Driver file not found\n");
+#if defined(DOS)||defined(GO32)
+    // Open the driver file
+    driver_image = (int32_t*) AIL_file_read(fname, FILE_READ_WITH_SIZE);
+    if ((driver_image == NULL) && (AIL_redist_directory[0] != '\0'))
+    {
+        char fn[256];
+        strcpy(fn, AIL_redist_directory);
+        if (fn[strlen(fn)-1] != '/')
+            strcat(fn, "/");
+        strcat(fn, fname);
+
+        driver_image = (int32_t*) AIL_file_read(fn, FILE_READ_WITH_SIZE);
+    }
+#else
+    // Prepare fake driver data; make sure it has at least 7 bytes beyond size
+    // to allow magic value check
+    driver_image = (int32_t*) AIL_MEM_alloc_lock(12);
+    if (driver_image != NULL) {
+        memset(driver_image, 0, 12);
+        driver_image[0] = 8;
+    }
+#endif
+    if (driver_image == NULL)
+    {
+        AIL_set_error("Driver file not found.");
         return NULL;
     }
-    flen = FILE_size(locstr);
-    drvr = AIL_install_driver(drvbuf, flen);
-    MEM_free(drvbuf);
-    if (drvr == NULL) {
+
+    drvr = AIL_install_driver((uint8_t*)(&driver_image[1]), driver_image[0]);
+
+    AIL_MEM_free_lock(driver_image, driver_image[0] + 4);
+
+    if (drvr == NULL)
         return NULL;
-    }
+
     mdidrv = XMI_construct_MDI_driver(drvr, iop);
     if (mdidrv == NULL)
         AIL_uninstall_driver(drvr);
