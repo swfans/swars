@@ -487,6 +487,7 @@ void play_intro(void)
 {
     char fname[FILENAME_MAX];
 
+    LOGSYNC("Starting");
     lbDisplay.LeftButton = 0;
     lbKeyOn[KC_ESCAPE] = 0;
     if ( (cmdln_param_bcg || is_single_game) && !(ingame.Flags & GamF_Unkn80000) )
@@ -511,6 +512,7 @@ void replay_intro(void)
     char fname[FILENAME_MAX];
     TbScreenModeInfo *mdinfo;
 
+    LOGSYNC("Starting");
     mdinfo = LbScreenGetModeInfo(screen_mode_fmvid);
     if (mdinfo->Width == 0) {
         LOGERR("Movies video mode %d is invalid", (int)screen_mode_fmvid);
@@ -2420,6 +2422,7 @@ void init_syndwars(void)
     //char locstr[100];
     AudioInitOptions audOpts;
 
+    LOGSYNC("Starting");
     //sprintf(locstr, "%sSound", cd_drive); -- unused
     sound_initialise();
 
