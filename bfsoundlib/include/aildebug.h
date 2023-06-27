@@ -133,6 +133,18 @@ void AIL_set_sample_user_data(SNDSAMPLE *s, uint32_t index, int32_t value);
  */
 void AIL_end_sample(SNDSAMPLE *s);
 
+/** Initialize a SEQUENCE structure to prepare for playback of desired
+ * XMIDI sequence file image.
+ *
+ * Sequence has to be allocated (not free), done playing, and stopped.
+ * Should not be called from callback function.
+ *
+ * @result Gives 0 if sequence initialization failed,
+ *        -1 if initialized OK but timbre was missing,
+ *         1 if initialization and timbre-loading successful.
+ */
+int32_t AIL_init_sequence(SNDSEQUENCE *seq, const void *start,  int32_t sequence_num);
+
 /** Stop playback of sequence.
  *
  * Sequence playback may be resumed with AIL_resume_sequence(), or

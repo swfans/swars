@@ -823,11 +823,6 @@ MDI_DRIVER *AIL2OAL_API_open_XMIDI_driver(uint32_t flags)
     int32_t i;
     MDI_DRIVER *mdidrv;
 
-    {//TODO SWPort hack - forcing music disable
-        AIL_set_error("Force disabling as MIDI not implemented.");
-        return NULL;
-    }
-
     mdidrv = AIL_MEM_alloc_lock(sizeof(MDI_DRIVER));
     if (mdidrv == NULL) {
         AIL_set_error("Could not allocate memory for driver descriptor.");
@@ -933,6 +928,17 @@ void AIL2OAL_API_close_XMIDI_driver(MDI_DRIVER *mdidrv)
     // Release memory resources
     AIL_MEM_free_lock(mdidrv->sequences, mdidrv->n_sequences * sizeof(SNDSEQUENCE));
     AIL_MEM_free_lock(mdidrv, sizeof(MDI_DRIVER));
+}
+
+int32_t AIL2OAL_API_init_sequence(SNDSEQUENCE *seq, const void *start,  int32_t sequence_num)
+{
+    if (seq == NULL)
+        return 0;
+
+    seq->status = SNDSEQ_DONE;
+
+    //TODO MIDI playback not implemented
+    return -1;
 }
 
 void AIL2OAL_API_stop_sequence(SNDSEQUENCE *seq)

@@ -1723,7 +1723,7 @@ GLOBAL_FUNC (ASM_load_music_bank)
 		mov    SongHandle,%ebp
 		push   %ebp
 		inc    %bl
-		call   AIL_init_sequence
+		call   ac_AIL_init_sequence
 		add    $0xc,%esp
 	jump_ed275:
 		xor    %edx,%edx
@@ -2696,7 +2696,7 @@ GLOBAL_FUNC (StartMusic_)
 		push   %ebp
 		mov    SongHandle,%eax
 		push   %eax
-		call   AIL_init_sequence
+		call   ac_AIL_init_sequence
 		add    $0xc,%esp
 		push   $cb_get_trigger_info
 		mov    SongHandle,%edx

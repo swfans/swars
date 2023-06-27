@@ -230,9 +230,10 @@ int InitSoundDriverFromEnvMDS(void)
             FiniSound();
             return -1;
         }
-        sprintf(SoundInstallChoice.driver_name, "%s", drvfile);
         sprintf(SoundProgressMessage, "BF10 - MDSOUND environment driver installation - passed\n");
         SoundProgressLog(SoundProgressMessage);
+        memset(&SoundInstallChoice, 0, sizeof(SoundInstallChoice));
+        sprintf(SoundInstallChoice.driver_name, "%s", drvfile);
         SoundInstallChoice.IO = iop;
         return 1;
     }
@@ -287,6 +288,9 @@ int InitSoundDriverFromOS(void)
     }
     sprintf(SoundProgressMessage, "BF13 - OS provided driver connection - passed\n");
     SoundProgressLog(SoundProgressMessage);
+    // Fill DOS driver information with something which makes sense
+    memset(&SoundInstallChoice, 0, sizeof(SoundInstallChoice));
+    sprintf(SoundInstallChoice.driver_name, "%s", "SB16.DIG");
     return 1;
 }
 

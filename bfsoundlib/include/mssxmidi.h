@@ -43,6 +43,8 @@ void AIL2OAL_API_uninstall_MDI_driver(MDI_DRIVER *mdidrv);
 MDI_DRIVER *AIL2OAL_API_open_XMIDI_driver(uint32_t flags);
 void AIL2OAL_API_close_XMIDI_driver(MDI_DRIVER *mdidrv);
 
+int32_t AIL2OAL_API_init_sequence(SNDSEQUENCE *seq, const void *start,  int32_t sequence_num);
+
 void AIL2OAL_API_stop_sequence(SNDSEQUENCE *seq);
 
 void AIL2OAL_API_resume_sequence(SNDSEQUENCE *seq);

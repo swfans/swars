@@ -4060,7 +4060,7 @@ GLOBAL_FUNC (ASM_AIL_allocate_sequence_handle)	/* 0x105200 */
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (AIL_init_sequence)
+GLOBAL_FUNC (ASM_AIL_init_sequence)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %esi

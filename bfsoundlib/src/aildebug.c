@@ -374,6 +374,23 @@ void AIL_end_sample(SNDSAMPLE *s)
     AIL_indent--;
 }
 
+int32_t AIL_init_sequence(SNDSEQUENCE *seq, const void *start,  int32_t sequence_num)
+{
+    int32_t result;
+
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s(0x%p, 0x%p, %d)\n", __func__, seq, start,  sequence_num);
+
+    result = AIL2OAL_API_init_sequence(seq, start,  sequence_num);
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Result = 0x%X\n", result);
+    AIL_indent--;
+
+    return result;
+}
+
 void AIL_stop_sequence(SNDSEQUENCE *seq)
 {
     AIL_indent++;
