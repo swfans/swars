@@ -36,7 +36,12 @@
 #include "sound.h"
 #include "dos.h"
 /******************************************************************************/
+extern ulong MaxNumberOfSamples;
+extern TbBool StereoSound;
+extern TbBool SixteenBit;
+extern ulong SampleRate;
 extern char SoundProgressMessage[256];
+extern long CurrentSoundMasterVolume;
 extern TbBool SoundAble;
 extern TbBool SoundActive;
 extern TbBool MusicAble;
@@ -58,6 +63,8 @@ extern SNDSEQUENCE *SongHandle;
 extern SNDSAMPLE *sample_handle;
 extern int32_t music_allocated;
 extern int32_t CurrentMusicMasterVolume;
+extern ushort SoundType;
+extern TbBool DisableLoadSounds;
 extern char MusicType[6];
 extern TbBool AutoScanForSoundHardware;
 extern MDI_DRIVER *MusicDriver;
@@ -69,6 +76,9 @@ extern TbBool Awe32SoundfontLoaded;
 extern uint8_t *ssnd_buffer[2];
 extern uint8_t *adpcm_source_buffer;
 extern int16_t *mixer_buffer;
+
+extern struct SampleInfo sample_id[32];
+extern struct SampleInfo *end_sample_id;
 
 extern char full_music_data_path[144];
 extern struct MusicBankSizes music_bank_size_info;
@@ -125,6 +135,12 @@ void SetCDVolume(long vol)
 {
     asm volatile ("call ASM_SetCDVolume\n"
         :  : "a" (vol));
+}
+
+void DetermineSoundType(void)
+{
+    asm volatile ("call ASM_DetermineSoundType\n"
+        :  :  : "eax" );
 }
 
 void FiniSound(void)
@@ -189,9 +205,9 @@ int InitSoundDriverFromDigINI(void)
         FiniSound();
         return 0;
     }
-    if (AIL_install_DIG_INI(&SoundDriver) != 0)
+    if (AIL_install_DIG_INI(&SoundDriver) != AIL_INIT_SUCCESS)
     {
-        sprintf(SoundProgressMessage, "BF14 - DIG.INI driver installation - \n");
+        sprintf(SoundProgressMessage, "BF14 - DIG.INI driver installation - failed\n");
         SoundProgressLog(SoundProgressMessage);
         sprintf(SoundProgressMessage, " -- AIL: %s\n", AIL_API_last_error());
         SoundProgressLog(SoundProgressMessage);
@@ -203,9 +219,38 @@ int InitSoundDriverFromDigINI(void)
     return 1;
 }
 
+int InitSoundDriverFromOS(void)
+{
+    //TODO AIL_open_digital_driver() would make more sense here; even if it only calls the same inside
+    if (AIL_install_DIG_INI(&SoundDriver) != AIL_INIT_SUCCESS)
+    {
+        sprintf(SoundProgressMessage, "BF14 - OS provided driver connection - failed\n");
+        SoundProgressLog(SoundProgressMessage);
+        sprintf(SoundProgressMessage, " -- AIL: %s\n", AIL_API_last_error());
+        SoundProgressLog(SoundProgressMessage);
+        FiniSound();
+        return -1;
+    }
+    sprintf(SoundProgressMessage, "BF13 - OS provided driver connection - passed\n");
+    SoundProgressLog(SoundProgressMessage);
+    return 1;
+}
+
+void InitAllSamples(void)
+{
+    struct SampleInfo *smpinfo;
+    end_sample_id = &sample_id[MaxNumberOfSamples - 1];
+    for (smpinfo = &sample_id[0]; smpinfo <= end_sample_id; smpinfo++)
+    {
+        smpinfo->SampleHandle = AIL_allocate_sample_handle(SoundDriver);
+        smpinfo->FadeState = 0;
+        smpinfo->UserFlag = 0;
+    }
+}
+
 void InitSound(void)
 {
-#if 1
+#if 0
     asm volatile ("call ASM_InitSound\n"
         :  :  : "eax" );
 #else
@@ -255,11 +300,16 @@ void InitSound(void)
 
     ret = 0;
 
+#if defined(DOS)||defined(GO32)
     if (ret != 1)
         ret = InitSoundDriverFromEnvMDS();
 
     if (ret != 1)
         ret = InitSoundDriverFromDigINI();
+#else
+    if (ret != 1)
+        ret = InitSoundDriverFromOS();
+#endif
 
     if (ret != 1)
     {
@@ -320,16 +370,7 @@ void InitSound(void)
 
     if (SoundAble)
     {
-#if 0 // TODO
-        struct SampleInfo *smpinfo;
-        end_sample_id = &sample_id[MaxNumberOfSamples - 1];
-        for (smpinfo = &sample_id; smpinfo <= end_sample_id; smpinfo++)
-        {
-                smpinfo->ail_sample = AIL_allocate_sample_handle(SoundDriver);
-                smpinfo->field_4[16] = 0;
-                smpinfo->field_4[19] = 0;
-        }
-#endif
+        InitAllSamples();
         SoundInstalled = 1;
         sprintf(SoundProgressMessage, "BF24 - Init sound completed\n");
         SoundProgressLog(SoundProgressMessage);
@@ -512,8 +553,8 @@ int InitMusicDriverFromOS(void)
         sprintf(SoundProgressMessage, "BF31 - generic OPL3 driver installation - passed\n");
         SoundProgressLog(SoundProgressMessage);
         // Fill DOS driver information with something which makes sense
+        memset(&MusicInstallChoice, 0, sizeof(MusicInstallChoice));
         sprintf(MusicInstallChoice.driver_name, "%s", "OPL3.MDI");
-        memset(&MusicInstallChoice.IO, 0, sizeof(MusicInstallChoice.IO));
     }
     return 1;
 }

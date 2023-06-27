@@ -5066,10 +5066,10 @@ void randomize_playable_groups_order(void)
     array_elements_in_random_order(level_def.PlayableGroups, incrementing_nubers, long, 8);
 }
 
-void wait_for_sound_sample_finish(ushort sample_id)
+void wait_for_sound_sample_finish(ushort smpl_id)
 {
     TbClockMSec last_loop_time = LbTimerClock();
-    while (IsSamplePlaying(0, sample_id, NULL)) {
+    while (IsSamplePlaying(0, smpl_id, NULL)) {
         game_update();
         TbClockMSec sleep_end = last_loop_time + 1000/GAME_FPS;
         LbSleepUntil(sleep_end);

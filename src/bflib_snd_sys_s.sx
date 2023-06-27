@@ -736,14 +736,14 @@ GLOBAL_FUNC (GetSoundDriver_)
 /*----------------------------------------------------------------*/
 GLOBAL_FUNC (GetFirstSampleInfoStructure_)
 /*----------------------------------------------------------------*/
-		mov    $sample_id,%eax
+		mov    $EXPORT_SYMBOL(sample_id),%eax
 		ret
 
 
 /*----------------------------------------------------------------*/
 GLOBAL_FUNC (GetLastSampleInfoStructure_)
 /*----------------------------------------------------------------*/
-		mov    end_sample_id,%eax
+		mov    EXPORT_SYMBOL(end_sample_id),%eax
 		ret
 
 
@@ -1980,7 +1980,7 @@ GLOBAL_FUNC (ASM_SetSoundMasterVolume)	/* 0xEE700 */
 		je     jump_ee73e
 		cmpb   $0x0,SoundInstalled
 		je     jump_ee73e
-		cmp    CurrentSoundMasterVolume,%ebx
+		cmp    EXPORT_SYMBOL(CurrentSoundMasterVolume),%ebx
 		je     jump_ee73e
 		cmp    $0x7f,%ebx
 		jg     jump_ee73e
@@ -1991,7 +1991,7 @@ GLOBAL_FUNC (ASM_SetSoundMasterVolume)	/* 0xEE700 */
 		push   %ecx
 		call   ail_set_digital_master_volume
 		add    $0x8,%esp
-		mov    %ebx,CurrentSoundMasterVolume
+		mov    %ebx,EXPORT_SYMBOL(CurrentSoundMasterVolume)
 	jump_ee73e:
 		pop    %edx
 		pop    %ecx
@@ -2034,12 +2034,12 @@ GLOBAL_FUNC (ASM_IsSamplePlaying)	/* 0xee750 */
 		movswl %di,%eax
 		test   %eax,%eax
 		jne    jump_ee7e5
-		mov    $sample_id,%ebx
-		cmp    end_sample_id,%ebx
+		mov    $EXPORT_SYMBOL(sample_id),%ebx
+		cmp    EXPORT_SYMBOL(end_sample_id),%ebx
 		jbe    jump_ee7c9
 		jmp    jump_ee828
 	jump_ee7bc:
-		mov    end_sample_id,%ecx
+		mov    EXPORT_SYMBOL(end_sample_id),%ecx
 		add    $0x19,%ebx
 		cmp    %ecx,%ebx
 		ja     jump_ee828
@@ -2059,8 +2059,8 @@ GLOBAL_FUNC (ASM_IsSamplePlaying)	/* 0xee750 */
 		pop    %ecx
 		ret
 	jump_ee7e5:
-		mov    $sample_id,%ebx
-		cmp    end_sample_id,%ebx
+		mov    $EXPORT_SYMBOL(sample_id),%ebx
+		cmp    EXPORT_SYMBOL(end_sample_id),%ebx
 		jbe    jump_ee806
 		xor    %al,%al
 		pop    %ebp
@@ -2069,7 +2069,7 @@ GLOBAL_FUNC (ASM_IsSamplePlaying)	/* 0xee750 */
 		pop    %ecx
 		ret
 	jump_ee7f9:
-		mov    end_sample_id,%ebp
+		mov    EXPORT_SYMBOL(end_sample_id),%ebp
 		add    $0x19,%ebx
 		cmp    %ebp,%ebx
 		ja     jump_ee828
@@ -2378,8 +2378,8 @@ GLOBAL_FUNC (SetSampleRepeat)
 		je     jump_ef3aa
 		cmpb   $0x0,SoundActive
 		je     jump_ef3aa
-		mov    $sample_id,%ebx
-		cmp    end_sample_id,%ebx
+		mov    $EXPORT_SYMBOL(sample_id),%ebx
+		cmp    EXPORT_SYMBOL(end_sample_id),%ebx
 		jbe    jump_ef382
 		pop    %edi
 		pop    %esi
@@ -2387,7 +2387,7 @@ GLOBAL_FUNC (SetSampleRepeat)
 		pop    %ebx
 		ret
 	jump_ef375:
-		mov    end_sample_id,%ecx
+		mov    EXPORT_SYMBOL(end_sample_id),%ecx
 		add    $0x19,%ebx
 		cmp    %ecx,%ebx
 		ja     jump_ef3aa
@@ -2431,8 +2431,8 @@ GLOBAL_FUNC (SetSamplePitch_)
 		je     jump_ef451
 		cmpb   $0x0,SoundActive
 		je     jump_ef451
-		mov    $sample_id,%ebx
-		cmp    end_sample_id,%ebx
+		mov    $EXPORT_SYMBOL(sample_id),%ebx
+		cmp    EXPORT_SYMBOL(end_sample_id),%ebx
 		jbe    jump_ef400
 		pop    %ebp
 		pop    %edi
@@ -2440,7 +2440,7 @@ GLOBAL_FUNC (SetSamplePitch_)
 		pop    %ecx
 		ret
 	jump_ef3f3:
-		mov    end_sample_id,%ecx
+		mov    EXPORT_SYMBOL(end_sample_id),%ecx
 		add    $0x19,%ebx
 		cmp    %ecx,%ebx
 		ja     jump_ef451
@@ -2462,7 +2462,7 @@ GLOBAL_FUNC (SetSamplePitch_)
 		mov    0x8(%ebx),%dx
 		cmp    %eax,%edx
 		je     jump_ef3f3
-		mov    SampleRate,%edx
+		mov    EXPORT_SYMBOL(SampleRate),%edx
 		imul   %eax,%edx
 		mov    $0x64,%ebp
 		mov    %edx,%eax
@@ -2495,8 +2495,8 @@ GLOBAL_FUNC (ASM_StopAllSamples)	/* 0xEE910 */
 		cmpb   $0x0,SoundActive
 		je     jump_ee970
 		call   StopAllSampleFadeTimers_
-		mov    $sample_id,%ebx
-		cmp    end_sample_id,%ebx
+		mov    $EXPORT_SYMBOL(sample_id),%ebx
+		cmp    EXPORT_SYMBOL(end_sample_id),%ebx
 		ja     jump_ee96b
 	jump_ee940:
 		mov    (%ebx),%ecx
@@ -2508,7 +2508,7 @@ GLOBAL_FUNC (ASM_StopAllSamples)	/* 0xEE910 */
 		movl   $0x0,-0xb(%ebx)
 		movb   $0x0,-0x5(%ebx)
 		movb   $0x0,-0x4(%ebx)
-		cmp    end_sample_id,%ebx
+		cmp    EXPORT_SYMBOL(end_sample_id),%ebx
 		jbe    jump_ee940
 	jump_ee96b:
 		call   StopSampleQueueList_
@@ -2831,7 +2831,7 @@ GLOBAL_FUNC(ASM_InitSound)
 		push   %edi
 		push   %ebp
 		sub    $0x28,%esp
-		mov    SampleRate,%esi
+		mov    EXPORT_SYMBOL(SampleRate),%esi
 		xor    %bl,%bl
 		mov    SoundAble,%ah
 		mov    $0x5,%bh
@@ -2995,7 +2995,7 @@ GLOBAL_FUNC(ASM_InitSound)
 		add    $0x8,%esp
 		mov    %bh,SoundAble
 		mov    %bh,SoundActive
-		mov    SampleRate,%esi
+		mov    EXPORT_SYMBOL(SampleRate),%esi
 		add    $0x28,%esp
 		pop    %ebp
 		pop    %edi
@@ -3030,7 +3030,7 @@ GLOBAL_FUNC(ASM_InitSound)
 		mov    DisableLoadSounds,%al
 		test   %eax,%eax
 		jne    jump_ff81f
-		call   DetermineSoundType_
+		call   ac_DetermineSoundType
 		jmp    jump_ff83b
 	jump_ff6cd:
 #if 0
@@ -3065,7 +3065,7 @@ GLOBAL_FUNC(ASM_InitSound)
 		xor    %dh,%dh
 		mov    %dh,SoundAble
 		mov    %dh,SoundActive
-		mov    SampleRate,%esi
+		mov    EXPORT_SYMBOL(SampleRate),%esi
 		add    $0x28,%esp
 		pop    %ebp
 		pop    %edi
@@ -3122,7 +3122,7 @@ GLOBAL_FUNC(ASM_InitSound)
 		xor    %al,%al
 		mov    %al,SoundAble
 		mov    %al,SoundActive
-		mov    SampleRate,%esi
+		mov    EXPORT_SYMBOL(SampleRate),%esi
 		add    $0x28,%esp
 		pop    %ebp
 		pop    %edi
@@ -3165,7 +3165,7 @@ GLOBAL_FUNC(ASM_InitSound)
 		mov    %dl,SoundActive
 		call   ac_AIL_uninstall_DIG_driver
 		add    $0x4,%esp
-		mov    SampleRate,%esi
+		mov    EXPORT_SYMBOL(SampleRate),%esi
 		add    $0x28,%esp
 		pop    %ebp
 		pop    %edi
@@ -3177,53 +3177,53 @@ GLOBAL_FUNC(ASM_InitSound)
 	jump_ff8b5:
 		mov    $0x1,%bh
 		mov    $0xac44,%esi
-		mov    %bh,SixteenBit
+		mov    %bh,EXPORT_SYMBOL(SixteenBit)
 		jmp    jump_ff9e5
 	jump_ff8c7:
 		mov    $0x1,%cl
 		mov    $0xac44,%esi
-		mov    %cl,SixteenBit
+		mov    %cl,EXPORT_SYMBOL(SixteenBit)
 		jmp    jump_ff9e5
 	jump_ff8d9:
 		mov    $0x1,%ch
 		mov    $0x5622,%esi
-		mov    %ch,SixteenBit
+		mov    %ch,EXPORT_SYMBOL(SixteenBit)
 		jmp    jump_ff9e5
 	jump_ff8eb:
 		mov    $0x1,%al
 		mov    $0x5622,%esi
-		mov    %al,SixteenBit
+		mov    %al,EXPORT_SYMBOL(SixteenBit)
 		jmp    jump_ff9e5
 	jump_ff8fc:
 		mov    $0x1,%ah
 		mov    $0x2b11,%esi
-		mov    %ah,SixteenBit
+		mov    %ah,EXPORT_SYMBOL(SixteenBit)
 		jmp    jump_ff9e5
 	jump_ff90e:
 		mov    $0x1,%dl
 		mov    $0x2b11,%esi
-		mov    %dl,SixteenBit
+		mov    %dl,EXPORT_SYMBOL(SixteenBit)
 		jmp    jump_ff9e5
 	jump_ff920:
 		xor    %dh,%dh
 		mov    $0x5622,%esi
-		mov    %dh,SixteenBit
+		mov    %dh,EXPORT_SYMBOL(SixteenBit)
 		jmp    jump_ff9e5
 	jump_ff932:
 		xor    %bl,%bl
 		mov    $0x2b11,%esi
-		mov    %bl,SixteenBit
+		mov    %bl,EXPORT_SYMBOL(SixteenBit)
 		jmp    jump_ff9e5
 	jump_ff944:
 		xor    %bh,%bh
 		mov    $0x2b11,%esi
-		mov    %bh,SixteenBit
+		mov    %bh,EXPORT_SYMBOL(SixteenBit)
 		jmp    jump_ff9e5
 	jump_ff956:
 		xor    %ch,%ch
 		mov    %ch,SoundAble
 		mov    %ch,SoundActive
-		mov    SampleRate,%esi
+		mov    EXPORT_SYMBOL(SampleRate),%esi
 		add    $0x28,%esp
 		pop    %ebp
 		pop    %edi
@@ -3233,7 +3233,7 @@ GLOBAL_FUNC(ASM_InitSound)
 		pop    %ebx
 		ret
 	jump_ff974:
-		mov    SampleRate,%esi
+		mov    EXPORT_SYMBOL(SampleRate),%esi
 		cmp    $0x64a,%ax
 		jb     jump_ff9bc
 		jbe    jump_ff90e
@@ -3267,7 +3267,7 @@ GLOBAL_FUNC(ASM_InitSound)
 		je     jump_ff956
 	jump_ff9e5:
 		mov    SoundAble,%cl
-		mov    %esi,SampleRate
+		mov    %esi,EXPORT_SYMBOL(SampleRate)
 		test   %cl,%cl
 		je     jump_ffa7c
 		mov    MaxNumberOfSamples,%ebx
@@ -3275,11 +3275,11 @@ GLOBAL_FUNC(ASM_InitSound)
 		lea    0x0(,%ebx,4),%eax
 		sub    %ebx,%eax
 		lea    0x0(,%eax,8),%eax
-		mov    $sample_id,%edx
+		mov    $EXPORT_SYMBOL(sample_id),%edx
 		add    %ebx,%eax
 		add    %eax,%edx
-		mov    $sample_id,%ebx
-		mov    %edx,end_sample_id
+		mov    $EXPORT_SYMBOL(sample_id),%ebx
+		mov    %edx,EXPORT_SYMBOL(end_sample_id)
 		cmp    %ebx,%edx
 		jb     jump_ffa4e
 	jump_ffa28:
@@ -3290,7 +3290,7 @@ GLOBAL_FUNC(ASM_InitSound)
 		add    $0x4,%esp
 		mov    %eax,-0x19(%ebx)
 		movb   $0x0,-0x5(%ebx)
-		mov    end_sample_id,%eax
+		mov    EXPORT_SYMBOL(end_sample_id),%eax
 		movb   $0x0,-0x2(%ebx)
 		cmp    %eax,%ebx
 		jbe    jump_ffa28
@@ -3303,10 +3303,10 @@ GLOBAL_FUNC(ASM_InitSound)
 		add    $0x8,%esp
 		mov    $SoundProgressMessage,%eax
 		call   ac_SoundProgressLog
-		mov    CurrentSoundMasterVolume,%eax
+		mov    EXPORT_SYMBOL(CurrentSoundMasterVolume),%eax
 		call   ac_SetSoundMasterVolume
 	jump_ffa7c:
-		mov    SampleRate,%esi
+		mov    EXPORT_SYMBOL(SampleRate),%esi
 		add    $0x28,%esp
 		pop    %ebp
 		pop    %edi
@@ -3318,7 +3318,7 @@ GLOBAL_FUNC(ASM_InitSound)
 
 
 /*----------------------------------------------------------------*/
-DetermineSoundType_:
+GLOBAL_FUNC (ASM_DetermineSoundType)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %edx
@@ -4512,8 +4512,8 @@ GLOBAL_FUNC (SetSampleVolume_)	/* 0xf0a20 */
 		je     jump_f0aaa
 		cmpb   $0x0,SoundActive
 		je     jump_f0aaa
-		mov    $sample_id,%ebx
-		cmp    end_sample_id,%ebx
+		mov    $EXPORT_SYMBOL(sample_id),%ebx
+		cmp    EXPORT_SYMBOL(end_sample_id),%ebx
 		jbe    jump_f0a6c
 		pop    %ebp
 		pop    %edi
@@ -4521,7 +4521,7 @@ GLOBAL_FUNC (SetSampleVolume_)	/* 0xf0a20 */
 		pop    %ecx
 		ret
 	jump_f0a5f:
-		mov    end_sample_id,%ecx
+		mov    EXPORT_SYMBOL(end_sample_id),%ecx
 		add    $0x19,%ebx
 		cmp    %ecx,%ebx
 		ja     jump_f0aaa
@@ -4574,12 +4574,12 @@ GLOBAL_FUNC (SetSamplePan_)	/* 0xF0AB0 */
 		je     jump_f0b31
 		cmpb   $0x0,SoundActive
 		je     jump_f0b31
-		mov    $sample_id,%ebx
-		cmp    end_sample_id,%ebx
+		mov    $EXPORT_SYMBOL(sample_id),%ebx
+		cmp    EXPORT_SYMBOL(end_sample_id),%ebx
 		jbe    jump_f0af8
 		jmp    jump_f0b31
 	jump_f0aeb:
-		mov    end_sample_id,%ecx
+		mov    EXPORT_SYMBOL(end_sample_id),%ecx
 		add    $0x19,%ebx
 		cmp    %ecx,%ebx
 		ja     jump_f0b31
@@ -4628,8 +4628,8 @@ GLOBAL_FUNC (StopSample_)
 		je     jump_f1788
 		cmpb   $0x0,SoundActive
 		je     jump_f1788
-		mov    $sample_id,%ebx
-		cmp    end_sample_id,%ebx
+		mov    $EXPORT_SYMBOL(sample_id),%ebx
+		cmp    EXPORT_SYMBOL(end_sample_id),%ebx
 		jbe    jump_f1762
 		pop    %edi
 		pop    %esi
@@ -4637,7 +4637,7 @@ GLOBAL_FUNC (StopSample_)
 		pop    %ebx
 		ret
 	jump_f1755:
-		mov    end_sample_id,%ecx
+		mov    EXPORT_SYMBOL(end_sample_id),%ecx
 		add    $0x19,%ebx
 		cmp    %ecx,%ebx
 		ja     jump_f1788
@@ -4691,14 +4691,14 @@ GLOBAL_FUNC (PlaySampleFromAddress_)
 		pop    %esi
 		ret    $0x10
 	jump_f17d7:
-		mov    $sample_id,%ebx
-		mov    end_sample_id,%eax
+		mov    $EXPORT_SYMBOL(sample_id),%ebx
+		mov    EXPORT_SYMBOL(end_sample_id),%eax
 		xor    %ebp,%ebp
 		cmp    %ebx,%eax
 		jae    jump_f17fd
 		jmp    jump_f1934
 	jump_f17ec:
-		mov    end_sample_id,%ecx
+		mov    EXPORT_SYMBOL(end_sample_id),%ecx
 		add    $0x19,%ebx
 		cmp    %ecx,%ebx
 		ja     jump_f1934
@@ -4715,14 +4715,14 @@ GLOBAL_FUNC (PlaySampleFromAddress_)
 		jmp    jump_f1934
 	jump_f181a:
 		xor    %ebx,%ebx
-		mov    end_sample_id,%ecx
+		mov    EXPORT_SYMBOL(end_sample_id),%ecx
 		mov    %ebx,0x8(%esp)
-		mov    $sample_id,%ebx
+		mov    $EXPORT_SYMBOL(sample_id),%ebx
 		cmp    %ebx,%ecx
 		jae    jump_f183e
 		jmp    jump_f185d
 	jump_f1831:
-		mov    end_sample_id,%ecx
+		mov    EXPORT_SYMBOL(end_sample_id),%ecx
 		add    $0x19,%ebx
 		cmp    %ecx,%ebx
 		ja     jump_f185d
@@ -4741,14 +4741,14 @@ GLOBAL_FUNC (PlaySampleFromAddress_)
 	jump_f185d:
 		cmpl   $0x0,0x8(%esp)
 		jne    jump_f1934
-		mov    $sample_id,%ebx
-		mov    end_sample_id,%ecx
+		mov    $EXPORT_SYMBOL(sample_id),%ebx
+		mov    EXPORT_SYMBOL(end_sample_id),%ecx
 		xor    %ebp,%ebp
 		cmp    %ebx,%ecx
 		jae    jump_f188e
 		jmp    jump_f1934
 	jump_f187e:
-		mov    end_sample_id,%eax
+		mov    EXPORT_SYMBOL(end_sample_id),%eax
 		add    $0x19,%ebx
 		cmp    %eax,%ebx
 		ja     jump_f1934
@@ -4762,14 +4762,14 @@ GLOBAL_FUNC (PlaySampleFromAddress_)
 		mov    %ebx,%ebp
 		jmp    jump_f1934
 	jump_f18a5:
-		mov    $sample_id,%ebx
-		mov    end_sample_id,%edx
+		mov    $EXPORT_SYMBOL(sample_id),%ebx
+		mov    EXPORT_SYMBOL(end_sample_id),%edx
 		xor    %al,%al
 		cmp    %ebx,%edx
 		jae    jump_f18c5
 		jmp    jump_f18da
 	jump_f18b8:
-		mov    end_sample_id,%edx
+		mov    EXPORT_SYMBOL(end_sample_id),%edx
 		add    $0x19,%ebx
 		cmp    %edx,%ebx
 		ja     jump_f18da
@@ -4785,14 +4785,14 @@ GLOBAL_FUNC (PlaySampleFromAddress_)
 	jump_f18da:
 		test   %al,%al
 		jne    jump_f1934
-		mov    $sample_id,%ebx
-		mov    end_sample_id,%edx
+		mov    $EXPORT_SYMBOL(sample_id),%ebx
+		mov    EXPORT_SYMBOL(end_sample_id),%edx
 		xor    %ebp,%ebp
 		cmp    %ebx,%edx
 		jae    jump_f18fe
 		jmp    jump_f1934
 	jump_f18f1:
-		mov    end_sample_id,%ecx
+		mov    EXPORT_SYMBOL(end_sample_id),%ecx
 		add    $0x19,%ebx
 		cmp    %ecx,%ebx
 		ja     jump_f1934
@@ -5449,8 +5449,8 @@ cbfadesample:
 		jmp    jump_1093cb
 	jump_1091bb:
 		mov    %cl,a_sample_is_fading
-		mov    $sample_id,%ebx
-		cmp    end_sample_id,%ebx
+		mov    $EXPORT_SYMBOL(sample_id),%ebx
+		cmp    EXPORT_SYMBOL(end_sample_id),%ebx
 		jbe    jump_109375
 	jump_1091d2:
 		xor    %eax,%eax
@@ -5611,7 +5611,7 @@ cbfadesample:
 		cmp    $0x2,%al
 		je     jump_1092ca
 	jump_10938a:
-		mov    end_sample_id,%ebp
+		mov    EXPORT_SYMBOL(end_sample_id),%ebp
 		add    $0x19,%ebx
 		cmp    %ebp,%ebx
 		jbe    jump_109375
@@ -5620,15 +5620,15 @@ cbfadesample:
 		movb   $0x1,switch_off_sample_fade_timer
 		xor    %bh,%bh
 		mov    %bh,amples_currently_fading
-		mov    $sample_id,%eax
-		cmp    end_sample_id,%eax
+		mov    $EXPORT_SYMBOL(sample_id),%eax
+		cmp    EXPORT_SYMBOL(end_sample_id),%eax
 		ja     jump_1093cb
 		xor    %bl,%bl
 	jump_1093ba:
 		add    $0x19,%eax
 		mov    %bl,-0x5(%eax)
 		mov    %bl,-0x4(%eax)
-		cmp    end_sample_id,%eax
+		cmp    EXPORT_SYMBOL(end_sample_id),%eax
 		jbe    jump_1093ba
 	jump_1093cb:
 		add    $0x4,%esp
@@ -5700,18 +5700,18 @@ StopAllSampleFadeTimers_:
 		push   %ebx
 		push   %ecx
 		push   %edx
-		mov    end_sample_id,%ebx
+		mov    EXPORT_SYMBOL(end_sample_id),%ebx
 		cmpb   $0x0,amples_currently_fading
 		je     jump_10958e
 		movb   $0x1,switch_off_sample_fade_timer
 		mov    sample_fade_handle,%edx
 		push   %edx
 		call   AIL_release_timer_handle
-		mov    end_sample_id,%ebx
+		mov    EXPORT_SYMBOL(end_sample_id),%ebx
 		add    $0x4,%esp
 		xor    %dh,%dh
 		mov    %dh,amples_currently_fading
-		mov    $sample_id,%eax
+		mov    $EXPORT_SYMBOL(sample_id),%eax
 		cmp    %eax,%ebx
 		jb     jump_10958e
 	jump_10957f:
@@ -5721,7 +5721,7 @@ StopAllSampleFadeTimers_:
 		cmp    %ebx,%eax
 		jbe    jump_10957f
 	jump_10958e:
-		mov    %ebx,end_sample_id
+		mov    %ebx,EXPORT_SYMBOL(end_sample_id)
 		pop    %edx
 		pop    %ecx
 		pop    %ebx
@@ -6368,9 +6368,10 @@ GLOBAL (DebugAudio)	/* 0x1E86E0 */
 
 GLOBAL (SoundProgressMessage)	/* 0x1E86E4 */
 		.fill   0x100
-sample_id:
+/* struct SampleInfo sample_id[32] */
+GLOBAL (sample_id)
 		.fill   0x320
-end_sample_id:
+GLOBAL (end_sample_id)
 		.long	0x0
 GLOBAL (SoundInstalled)
 		.byte	0x0
