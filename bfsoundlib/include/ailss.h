@@ -29,11 +29,17 @@ extern "C" {
 
 DIG_DRIVER *SS_construct_DIG_driver(AIL_DRIVER *drvr, const SNDCARD_IO_PARMS *iop);
 
-uint32_t AIL2OAL_API_sample_status(SNDSAMPLE *s);
-
 SNDSAMPLE *AIL2OAL_API_allocate_sample_handle(DIG_DRIVER *digdrv);
 
 void AIL2OAL_API_init_sample(SNDSAMPLE *s);
+
+uint32_t AIL2OAL_API_sample_status(SNDSAMPLE *s);
+
+AILSAMPLECB AIL2OAL_API_register_EOS_callback(SNDSAMPLE *s, AILSAMPLECB EOS);
+
+void AIL2OAL_API_set_sample_user_data(SNDSAMPLE *s, uint32_t index, int32_t value);
+
+void AIL2OAL_API_end_sample(SNDSAMPLE *s);
 
 /******************************************************************************/
 #ifdef __cplusplus

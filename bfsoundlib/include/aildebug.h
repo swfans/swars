@@ -120,6 +120,19 @@ SNDSAMPLE *AIL_allocate_sample_handle(DIG_DRIVER *dig);
  */
 void AIL_init_sample(SNDSAMPLE *s);
 
+/** Set sample user data value at specified index.
+ *
+ * Any desired value may be stored at one of eight user data words
+ * associated with a given SNDSAMPLE.
+ *
+ * Callback functions may access the user data array at interrupt time.
+ */
+void AIL_set_sample_user_data(SNDSAMPLE *s, uint32_t index, int32_t value);
+
+/** Terminate playback of sample, setting sample status to SNDSMP_DONE.
+ */
+void AIL_end_sample(SNDSAMPLE *s);
+
 /** Stop playback of sequence.
  *
  * Sequence playback may be resumed with AIL_resume_sequence(), or
@@ -162,6 +175,19 @@ void AIL_start_timer(HSNDTIMER timer);
 void AIL_start_all_timers(void);
 
 void AIL_release_all_timers(void);
+
+/** Set end-of-sample (EOS) callback function for sample.
+ *
+ * Allows to provide a callback function which will be invoked
+ * when all valid sample buffers have finished playing.
+ *
+ * When not double-buffering, the end-of-sample callback will be
+ * triggered immediately after the end of buffer 0.
+ *
+ * This function returns the sample's previous EOS callback handler
+ * address, or NULL if no EOS callback handler was registered.
+ */
+AILSAMPLECB AIL_register_EOS_callback(SNDSAMPLE *s, AILSAMPLECB EOS);
 
 int32_t AIL_call_driver(AIL_DRIVER *drvr, int32_t fn,
         VDI_CALL *in, VDI_CALL *out);

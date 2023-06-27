@@ -2762,7 +2762,7 @@ GLOBAL_FUNC (AIL_start_sample)	/* 103740 */
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (AIL_end_sample)
+GLOBAL_FUNC (ASM_AIL_end_sample)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %edi
@@ -3450,7 +3450,7 @@ GLOBAL_FUNC (AIL_load_sample_buffer)	/* 1045c0 */
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (AIL_register_EOS_callback)
+GLOBAL_FUNC (ASM_AIL_register_EOS_callback)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %esi
@@ -3493,7 +3493,7 @@ GLOBAL_FUNC (AIL_register_EOS_callback)
 		mov    0x18(%esp),%edx
 		push   %edx
 		push   %ebx
-		call   AIL_API_register_EOS_callback
+		call   ac_AIL2OAL_API_register_EOS_callback
 		mov    AIL_debug,%ecx
 		mov    %eax,%ebx
 		add    $0x8,%esp
@@ -3552,7 +3552,7 @@ GLOBAL_FUNC (AIL_register_EOS_callback)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (AIL_set_sample_user_data)	/* 104c80 */
+GLOBAL_FUNC (ASM_AIL_set_sample_user_data)	/* 104c80 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %esi
@@ -9205,7 +9205,7 @@ AIL_API_end_sample:
 
 
 /*----------------------------------------------------------------*/
-AIL_API_register_EOS_callback:
+GLOBAL_FUNC (ASM_AIL_API_register_EOS_callback)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		mov    0x8(%esp),%eax
@@ -14813,7 +14813,7 @@ _XDIG_MIDI_trap:
 		jne    jump_117fe3
 		mov    0x4d4(%ebx),%edx
 		push   %edx
-		call   AIL_end_sample
+		call   ac_AIL_end_sample
 		add    $0x4,%esp
 	jump_117fe3:
 		inc    %ebp
@@ -14911,7 +14911,7 @@ _XDIG_MIDI_trap:
 	jump_1180ee:
 		mov    0x4d4(%esi,%ebx,4),%ebp
 		push   %ebp
-		call   AIL_end_sample
+		call   ac_AIL_end_sample
 		add    $0x4,%esp
 	jump_1180fe:
 		mov    0x20(%esp),%eax
@@ -14991,7 +14991,7 @@ _XDIG_MIDI_trap:
 		jne    jump_118226
 		mov    0x4d4(%ebx),%edx
 		push   %edx
-		call   AIL_end_sample
+		call   ac_AIL_end_sample
 		mov    $0x1,%eax
 		add    $0x4,%esp
 		pop    %ebp

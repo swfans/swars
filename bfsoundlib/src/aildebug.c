@@ -348,6 +348,32 @@ void AIL_init_sample(SNDSAMPLE *s)
     AIL_indent--;
 }
 
+void AIL_set_sample_user_data(SNDSAMPLE *s, uint32_t index, int32_t value)
+{
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s(0x%p, %u, %d)\n", __func__, s, index, value);
+
+    AIL2OAL_API_set_sample_user_data(s, index, value);
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Finished\n");
+    AIL_indent--;
+}
+
+void AIL_end_sample(SNDSAMPLE *s)
+{
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s(0x%p)\n", __func__, s);
+
+    AIL2OAL_API_end_sample(s);
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Finished\n");
+    AIL_indent--;
+}
+
 void AIL_stop_sequence(SNDSEQUENCE *seq)
 {
     AIL_indent++;
@@ -480,6 +506,23 @@ void AIL_release_all_timers(void)
     if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
         fprintf(AIL_debugfile, "Finished\n");
     AIL_indent--;
+}
+
+AILSAMPLECB AIL_register_EOS_callback(SNDSAMPLE *s, AILSAMPLECB EOS)
+{
+    AILSAMPLECB result;
+
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s(0x%p, 0x%p)\n", __func__, s, EOS);
+
+    result = AIL2OAL_API_register_EOS_callback(s, EOS);
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Result = 0x%p\n", result);
+    AIL_indent--;
+
+    return result;
 }
 
 int32_t AIL_call_driver(AIL_DRIVER *drvr, int32_t fn,

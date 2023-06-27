@@ -63,11 +63,6 @@ DIG_DRIVER *SS_construct_DIG_driver(AIL_DRIVER *drvr, const SNDCARD_IO_PARMS *io
     return digdrv;
 }
 
-uint32_t AIL2OAL_API_sample_status(SNDSAMPLE *s)
-{
-    return s->status;
-}
-
 void AIL2OAL_API_init_sample(SNDSAMPLE *s)
 {
     asm volatile (
@@ -111,4 +106,50 @@ SNDSAMPLE *AIL2OAL_API_allocate_sample_handle(DIG_DRIVER *dig)
     return s;
 }
 
+void AIL2OAL_API_end_sample(SNDSAMPLE *s)
+{
+    if (s == NULL)
+        return;
+
+    // Make sure sample has been allocated
+    if (s->status == SNDSMP_FREE)
+        return;
+
+    // If sample is not already done, halt it and invoke its end-of-buffer
+    // and end-of-sample callback functions
+    if (s->status != SNDSMP_DONE)
+    {
+        s->status = SNDSMP_DONE;
+
+        if (s->EOB != NULL)
+            s->EOB(s);
+        if (s->EOS != NULL)
+            s->EOS(s);
+    }
+}
+
+uint32_t AIL2OAL_API_sample_status(SNDSAMPLE *s)
+{
+    return s->status;
+}
+
+AILSAMPLECB AIL2OAL_API_register_EOS_callback(SNDSAMPLE *s, AILSAMPLECB EOS)
+{
+    AILSAMPLECB old;
+
+    if (s == NULL)
+        return NULL;
+
+    old = s->EOS;
+    s->EOS = EOS;
+
+    return old;
+}
+
+void AIL2OAL_API_set_sample_user_data(SNDSAMPLE *s, uint32_t index, int32_t value)
+{
+    if (s == NULL)
+        return;
+    s->user_data[index] = value;
+}
 /******************************************************************************/

@@ -219,7 +219,7 @@ GLOBAL_FUNC (MSSLOWSOUNDCLOSE)
 		je     jump_fbf34
 		mov    0x38(%esi),%ebx
 		push   %ebx
-		call   AIL_end_sample
+		call   ac_AIL_end_sample
 		add    $0x4,%esp
 		mov    0x38(%esi),%ecx
 		push   %ecx
@@ -269,7 +269,7 @@ GLOBAL_FUNC (MSSLOWSOUNDPURGE)
 		mov    0x8(%esp),%esi
 		mov    0x38(%esi),%edx
 		push   %edx
-		call   AIL_end_sample
+		call   ac_AIL_end_sample
 		add    $0x4,%esp
 		movl   $0x0,0x50(%esi)
 		movl   $0x0,0x68(%esi)
@@ -489,7 +489,7 @@ doinit_:
 		push   $0x0
 		mov    0x38(%esi),%edi
 		push   %edi
-		call   AIL_set_sample_user_data
+		call   ac_AIL_set_sample_user_data
 		add    $0xc,%esp
 		push   $0x7f
 		mov    0x38(%esi),%eax

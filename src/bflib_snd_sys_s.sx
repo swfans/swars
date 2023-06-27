@@ -2502,7 +2502,7 @@ GLOBAL_FUNC (ASM_StopAllSamples)	/* 0xEE910 */
 		mov    (%ebx),%ecx
 		push   %ecx
 		add    $0x19,%ebx
-		call   AIL_end_sample
+		call   ac_AIL_end_sample
 		movw   $0x0,-0x7(%ebx)
 		add    $0x4,%esp
 		movl   $0x0,-0xb(%ebx)
@@ -4222,7 +4222,7 @@ SwitchOffStreamedSound_:
 		mov    sample_handle,%edx
 		push   %edx
 		mov    $0x4000,%ebx
-		call   AIL_end_sample
+		call   ac_AIL_end_sample
 		add    $0x4,%esp
 		mov    EXPORT_SYMBOL(ssnd_buffer)+0,%eax
 		xor    %edx,%edx
@@ -4654,7 +4654,7 @@ GLOBAL_FUNC (StopSample_)
 		je     jump_f1755
 		mov    (%ebx),%edx
 		push   %edx
-		call   AIL_end_sample
+		call   ac_AIL_end_sample
 		add    $0x4,%esp
 	jump_f1788:
 		pop    %edi
@@ -5439,10 +5439,10 @@ cbfadesample:
 		je     jump_10939c
 		cmpb   $0x0,SoundActive
 		je     jump_10939c
-		mov    switch_off_sample_fade_timer,%cl
+		mov    EXPORT_SYMBOL(switch_off_sample_fade_timer),%cl
 		test   %cl,%cl
 		je     jump_1091bb
-		mov    sample_fade_handle,%esi
+		mov    EXPORT_SYMBOL(sample_fade_handle),%esi
 		push   %esi
 		call   AIL_release_timer_handle
 		add    $0x4,%esp
@@ -5457,9 +5457,9 @@ cbfadesample:
 		mov    a_sample_is_fading,%al
 		test   %eax,%eax
 		jne    jump_1093cb
-		movb   $0x1,switch_off_sample_fade_timer
+		movb   $0x1,EXPORT_SYMBOL(switch_off_sample_fade_timer)
 		xor    %ah,%ah
-		mov    %ah,amples_currently_fading
+		mov    %ah,EXPORT_SYMBOL(samples_currently_fading)
 		add    $0x4,%esp
 		pop    %ebp
 		pop    %esi
@@ -5488,7 +5488,7 @@ cbfadesample:
 		je     jump_109247
 		mov    (%ebx),%ebp
 		push   %ebp
-		call   AIL_end_sample
+		call   ac_AIL_end_sample
 		add    $0x4,%esp
 		movb   $0x0,0x15(%ebx)
 	jump_109247:
@@ -5556,7 +5556,7 @@ cbfadesample:
 		je     jump_109305
 		mov    (%ebx),%ecx
 		push   %ecx
-		call   AIL_end_sample
+		call   ac_AIL_end_sample
 		add    $0x4,%esp
 		movb   $0x0,0x15(%ebx)
 	jump_109305:
@@ -5617,9 +5617,9 @@ cbfadesample:
 		jbe    jump_109375
 		jmp    jump_1091d2
 	jump_10939c:
-		movb   $0x1,switch_off_sample_fade_timer
+		movb   $0x1,EXPORT_SYMBOL(switch_off_sample_fade_timer)
 		xor    %bh,%bh
-		mov    %bh,amples_currently_fading
+		mov    %bh,EXPORT_SYMBOL(samples_currently_fading)
 		mov    $EXPORT_SYMBOL(sample_id),%eax
 		cmp    EXPORT_SYMBOL(end_sample_id),%eax
 		ja     jump_1093cb
@@ -5668,22 +5668,22 @@ func_1094e1:
 		movb   $0x5,0x16(%ebx)
 	jump_1094e5:
 		xor    %eax,%eax
-		mov    amples_currently_fading,%al
+		mov    EXPORT_SYMBOL(samples_currently_fading),%al
 		test   %eax,%eax
 		jne    jump_10952c
 		xor    %bl,%bl
-		mov    %bl,switch_off_sample_fade_timer
+		mov    %bl,EXPORT_SYMBOL(switch_off_sample_fade_timer)
 		mov    $0x1,%bh
 		push   $cbfadesample
-		mov    %bh,amples_currently_fading
+		mov    %bh,EXPORT_SYMBOL(samples_currently_fading)
 		call   ac_AIL_register_timer
 		add    $0x4,%esp
 		push   $0x14
 		push   %eax
-		mov    %eax,sample_fade_handle
+		mov    %eax,EXPORT_SYMBOL(sample_fade_handle)
 		call   ac_AIL_set_timer_frequency
 		add    $0x8,%esp
-		mov    sample_fade_handle,%esi
+		mov    EXPORT_SYMBOL(sample_fade_handle),%esi
 		push   %esi
 		call   ac_AIL_start_timer
 		add    $0x4,%esp
@@ -5701,16 +5701,16 @@ StopAllSampleFadeTimers_:
 		push   %ecx
 		push   %edx
 		mov    EXPORT_SYMBOL(end_sample_id),%ebx
-		cmpb   $0x0,amples_currently_fading
+		cmpb   $0x0,EXPORT_SYMBOL(samples_currently_fading)
 		je     jump_10958e
-		movb   $0x1,switch_off_sample_fade_timer
-		mov    sample_fade_handle,%edx
+		movb   $0x1,EXPORT_SYMBOL(switch_off_sample_fade_timer)
+		mov    EXPORT_SYMBOL(sample_fade_handle),%edx
 		push   %edx
 		call   AIL_release_timer_handle
 		mov    EXPORT_SYMBOL(end_sample_id),%ebx
 		add    $0x4,%esp
 		xor    %dh,%dh
-		mov    %dh,amples_currently_fading
+		mov    %dh,EXPORT_SYMBOL(samples_currently_fading)
 		mov    $EXPORT_SYMBOL(sample_id),%eax
 		cmp    %eax,%ebx
 		jb     jump_10958e
@@ -5737,11 +5737,11 @@ cb_sample_queue_callback:	/* 0x1095A0 */
 		push   %esi
 		push   %edi
 		push   %ebp
-		cmpb   $0x0,sample_queue_handle_stopped
+		cmpb   $0x0,EXPORT_SYMBOL(sample_queue_handle_stopped)
 		jne    jump_10964f
 		mov    current_sample_queue_count,%eax
 		push   %eax
-		mov    sample_queue_handle,%edx
+		mov    EXPORT_SYMBOL(sample_queue_handle),%edx
 		push   %edx
 		call   ail_func_104d20
 		add    $0x8,%esp
@@ -5749,19 +5749,19 @@ cb_sample_queue_callback:	/* 0x1095A0 */
 		je     jump_10964f
 		cmpl   $0x8,current_sample_queue_count
 		jae    jump_10964f
-		mov    sample_queue_handle,%ecx
+		mov    EXPORT_SYMBOL(sample_queue_handle),%ecx
 		push   %ecx
 		call   ac_AIL_init_sample
 		add    $0x4,%esp
 		push   $cb_sample_queue_callback
-		mov    sample_queue_handle,%esi
+		mov    EXPORT_SYMBOL(sample_queue_handle),%esi
 		push   %esi
-		call   AIL_register_EOS_callback
+		call   ac_AIL_register_EOS_callback
 		add    $0x8,%esp
 		push   $0x1
 		mov    current_sample_queue_count,%eax
 		push   %eax
-		mov    sample_queue_handle,%edi
+		mov    EXPORT_SYMBOL(sample_queue_handle),%edi
 		push   %edi
 		call   ail_func_104d20
 		mov    %eax,%edx
@@ -5770,12 +5770,12 @@ cb_sample_queue_callback:	/* 0x1095A0 */
 		add    $0x8,%esp
 		mov    0x12(%edx,%eax,1),%ebp
 		push   %ebp
-		mov    sample_queue_handle,%eax
+		mov    EXPORT_SYMBOL(sample_queue_handle),%eax
 		push   %eax
 		call   AIL_set_sample_file
 		add    $0xc,%esp
 		mov    current_sample_queue_count,%eax
-		mov    sample_queue_handle,%edx
+		mov    EXPORT_SYMBOL(sample_queue_handle),%edx
 		mov    current_sample_queue_count,%ebx
 		inc    %ebx
 		push   %edx
@@ -5799,66 +5799,66 @@ StopSampleQueueList_:
 		push   %esi
 		push   %edi
 		push   %ebp
-		cmpb   $0x0,sample_queue_handle_initiated
+		cmpb   $0x0,EXPORT_SYMBOL(sample_queue_handle_initiated)
 		je     jump_109862
 		mov    $0x1,%dl
 		push   $0x0
-		mov    %dl,sample_queue_handle_stopped
-		mov    sample_queue_handle,%edx
+		mov    %dl,EXPORT_SYMBOL(sample_queue_handle_stopped)
+		mov    EXPORT_SYMBOL(sample_queue_handle),%edx
 		push   %edx
-		call   AIL_register_EOS_callback
+		call   ac_AIL_register_EOS_callback
 		add    $0x8,%esp
-		mov    sample_queue_handle,%ebx
+		mov    EXPORT_SYMBOL(sample_queue_handle),%ebx
 		push   %ebx
-		call   AIL_end_sample
+		call   ac_AIL_end_sample
 		add    $0x4,%esp
 		push   $0x0
 		push   $0x0
-		mov    sample_queue_handle,%ecx
+		mov    EXPORT_SYMBOL(sample_queue_handle),%ecx
 		push   %ecx
-		call   AIL_set_sample_user_data
+		call   ac_AIL_set_sample_user_data
 		add    $0xc,%esp
 		push   $0x0
 		push   $0x1
-		mov    sample_queue_handle,%esi
+		mov    EXPORT_SYMBOL(sample_queue_handle),%esi
 		push   %esi
-		call   AIL_set_sample_user_data
+		call   ac_AIL_set_sample_user_data
 		add    $0xc,%esp
 		push   $0x0
 		push   $0x2
-		mov    sample_queue_handle,%edi
+		mov    EXPORT_SYMBOL(sample_queue_handle),%edi
 		push   %edi
-		call   AIL_set_sample_user_data
+		call   ac_AIL_set_sample_user_data
 		add    $0xc,%esp
 		push   $0x0
 		push   $0x3
-		mov    sample_queue_handle,%ebp
+		mov    EXPORT_SYMBOL(sample_queue_handle),%ebp
 		push   %ebp
-		call   AIL_set_sample_user_data
+		call   ac_AIL_set_sample_user_data
 		add    $0xc,%esp
 		push   $0x0
 		push   $0x4
-		mov    sample_queue_handle,%eax
+		mov    EXPORT_SYMBOL(sample_queue_handle),%eax
 		push   %eax
-		call   AIL_set_sample_user_data
+		call   ac_AIL_set_sample_user_data
 		add    $0xc,%esp
 		push   $0x0
 		push   $0x5
-		mov    sample_queue_handle,%edx
+		mov    EXPORT_SYMBOL(sample_queue_handle),%edx
 		push   %edx
-		call   AIL_set_sample_user_data
+		call   ac_AIL_set_sample_user_data
 		add    $0xc,%esp
 		push   $0x0
 		push   $0x6
-		mov    sample_queue_handle,%ebx
+		mov    EXPORT_SYMBOL(sample_queue_handle),%ebx
 		push   %ebx
-		call   AIL_set_sample_user_data
+		call   ac_AIL_set_sample_user_data
 		add    $0xc,%esp
 		push   $0x0
 		push   $0x7
-		mov    sample_queue_handle,%ecx
+		mov    EXPORT_SYMBOL(sample_queue_handle),%ecx
 		push   %ecx
-		call   AIL_set_sample_user_data
+		call   ac_AIL_set_sample_user_data
 		add    $0xc,%esp
 	jump_109862:
 		pop    %ebp
@@ -5892,7 +5892,7 @@ close_adpcm_file_:
 
 /* unsigned char sample_queue_handle_stopped
  */
-sample_queue_handle_stopped:	/* 0x15958c */
+GLOBAL (sample_queue_handle_stopped)	/* 0x15958c */
 		.byte	0x1
 		.align	4
 
@@ -6527,29 +6527,30 @@ mixed_file_open:
 
 /* long sample_fade_handle;
  */
-sample_fade_handle:	/* 0x1E9568 */
+GLOBAL (sample_fade_handle)	/* 0x1E9568 */
 		.long	0x0
 /* unsigned char volatile switch_off_sample_fade_timer;
  */
-switch_off_sample_fade_timer:
+GLOBAL (switch_off_sample_fade_timer)
 		.byte	0x0
 a_sample_is_fading:	/* 0x1E956D */
 		.byte	0x0
 /* unsigned char volatile samples_currently_fading
  */
-amples_currently_fading:	/* 0x2057DE */
-		.short  0x0
+GLOBAL (samples_currently_fading)	/* 0x2057DE */
+		.byte	0x0
+		.byte	0x0
 /* unsigned long volatile current_sample_queue_count;
  */
 current_sample_queue_count:	/* 0x2057E0 */
 		.long	0x0
 /* unsigned char sample_queue_handle_initiated
  */
-sample_queue_handle_initiated:
+GLOBAL (sample_queue_handle_initiated)
 		.long	0x0
-/* _SAMPLE *sample_queue_handle
+/* SNDSAMPLE *sample_queue_handle
  */
-sample_queue_handle:
+GLOBAL (sample_queue_handle)
 		.long	0x0
 
 sbkHandle:	/* 0x1ED5F0 */

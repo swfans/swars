@@ -79,6 +79,13 @@ extern int16_t *mixer_buffer;
 
 extern struct SampleInfo sample_id[32];
 extern struct SampleInfo *end_sample_id;
+extern ubyte volatile samples_currently_fading;
+extern ubyte volatile switch_off_sample_fade_timer;
+
+extern TbBool sample_queue_handle_initiated;
+extern TbBool sample_queue_handle_stopped;
+extern SNDSAMPLE *sample_queue_handle;
+extern long sample_fade_handle;
 
 extern char full_music_data_path[144];
 extern struct MusicBankSizes music_bank_size_info;
@@ -99,10 +106,57 @@ void LbMemoryFree_wrap(void *ptr)
     LbMemoryFree(ptr);
 }
 
+void StopSampleQueueList(void)
+{
+    int i;
+
+    if (!sample_queue_handle_initiated)
+        return;
+
+    sample_queue_handle_stopped = 1;
+    AIL_register_EOS_callback(sample_queue_handle, 0);
+    AIL_end_sample(sample_queue_handle);
+
+    for (i = 0; i < 8; i++)
+        AIL_set_sample_user_data(sample_queue_handle, i, 0);
+}
+
+void StopAllSampleFadeTimers(void)
+{
+    struct SampleInfo *smpinfo;
+
+    if (samples_currently_fading == 0)
+        return;
+    switch_off_sample_fade_timer = 1;
+    AIL_release_timer_handle(sample_fade_handle);
+    samples_currently_fading = 0;
+    for (smpinfo = sample_id; smpinfo <= end_sample_id; smpinfo++)
+    {
+        smpinfo->FadeState = 0;
+        smpinfo->FadeStopFlag = 0;
+    }
+}
+
 void StopAllSamples(void)
 {
+#if 0
     asm volatile ("call ASM_StopAllSamples\n"
         :  :  : "eax" );
+#endif
+    struct SampleInfo *smpinfo;
+
+    if (!SoundInstalled || !SoundAble || !SoundActive)
+        return;
+    StopAllSampleFadeTimers();
+    for (smpinfo = sample_id; smpinfo <= end_sample_id; smpinfo++)
+    {
+        AIL_end_sample(smpinfo->SampleHandle);
+        smpinfo->SampleNumber = 0;
+        smpinfo->SourceID = 0;
+        smpinfo->FadeState = 0;
+        smpinfo->FadeStopFlag = 0;
+    }
+    StopSampleQueueList();
 }
 
 TbBool IsSamplePlaying(long tng_offs, ushort smp_id, TbSampleHandle handle)

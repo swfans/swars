@@ -222,6 +222,10 @@ typedef void (*AILTIMERCB) (void *user_data);
  */
 typedef void (*AILSEQUENCECB) (SNDSEQUENCE *seq);
 
+/** Generic sample-related callcack function type.
+ */
+typedef void (*AILSAMPLECB) (SNDSAMPLE *s);
+
 /** Sound card hardware I/O parameters structure.
  *
  * Originally named `IO_PARMS`. This less generic name helps when analyzing old code.
@@ -354,9 +358,9 @@ struct SNDSAMPLE {
   int32_t volume;                            /**< offs=0x40 Sample volume 0-127 */
   int32_t pan;                               /**< offs=0x44 Mono panpot/stereo balance (0=L ... 127=R) */
   int32_t vol_scale[2][256];                 /**< offs=0x48 [left/mono=0,right=1][256] channel volume */
-  void *SOB;                                 /**< offs=0x848 Start-of-block callback function */
-  void *EOB;                                 /**< offs=0x84C End-of-buffer callback function */
-  void *EOS;                                 /**< offs=0x850 End-of-sample callback function */
+  AILSAMPLECB SOB;                           /**< offs=0x848 Start-of-block callback function */
+  AILSAMPLECB EOB;                           /**< offs=0x84C End-of-buffer callback function */
+  AILSAMPLECB EOS;                           /**< offs=0x850 End-of-sample callback function */
   int32_t user_data[8];                      /**< offs=0x854 Miscellaneous user data */
   int32_t system_data[8];                    /**< offs=0x874 Miscellaneous system data */
 };
