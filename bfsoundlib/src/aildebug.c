@@ -224,6 +224,23 @@ void AIL_set_real_vect(uint32_t vectnum, void *real_ptr)
     AIL_indent--;
 }
 
+uint32_t AIL_interrupt_divisor(void)
+{
+    uint32_t divisor;
+
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s()\n", __func__);
+
+    divisor = AIL2OAL_API_interrupt_divisor();
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Result = %u\n", divisor);
+    AIL_indent--;
+
+    return divisor;
+}
+
 HSNDTIMER AIL_register_timer(AILTIMERCB fn)
 {
     HSNDTIMER timer;

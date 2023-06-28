@@ -86,6 +86,10 @@ void *AIL_get_real_vect(uint32_t vectnum);
  */
 void AIL_set_real_vect(uint32_t vectnum, void *real_ptr);
 
+/** Get value last used by the API to program the PIT chip.
+ */
+uint32_t AIL_interrupt_divisor(void);
+
 /** Register an application function as a timer callback routine, and
  * obtain a timer handle which may be used to control the timer.
  */

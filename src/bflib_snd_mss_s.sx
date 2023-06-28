@@ -125,7 +125,7 @@ GLOBAL_FUNC (MSSSMACKTIMERSETUP)
 		push   %edi
 		call   ac_AIL_start_timer
 		add    $0x4,%esp
-		call   AIL_interrupt_divisor
+		call   ac_AIL_interrupt_divisor
 		mov    %eax,%edx
 		mov    %edx,%ebx
 #if 0

@@ -50,6 +50,7 @@ void AIL2OAL_API_set_timer_frequency(HSNDTIMER timer, uint32_t hertz);
 /** Write to 8253 Programmable Interval Timer chip.
  */
 void AIL2OAL_set_PIT_divisor(uint32_t divsr);
+uint32_t AIL2OAL_API_interrupt_divisor(void);
 
 /** Set 8253 Programmable Interval Timer to desired period, in microseconds.
  */

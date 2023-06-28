@@ -144,6 +144,11 @@ void AIL2OAL_set_PIT_divisor(uint32_t divsr)
     // removed DOS-specific calls, place 2
 }
 
+uint32_t AIL2OAL_API_interrupt_divisor(void)
+{
+    return AIL_PIT_divisor;
+}
+
 void AIL2OAL_set_PIT_period(uint32_t period)
 {
     uint32_t divsr;
