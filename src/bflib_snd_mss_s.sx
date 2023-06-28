@@ -79,7 +79,7 @@ GLOBAL_FUNC (MSSSMACKTIMERDONE)
 		jne    jump_fbd8f
 		mov    _msstimer,%ecx
 		push   %ecx
-		call   AIL_release_timer_handle
+		call   ac_AIL_release_timer_handle
 		add    $0x4,%esp
 		push   $MSSSMACKTIMERSETUP
 		push   $ac_MSSSMACKTIMERREAD

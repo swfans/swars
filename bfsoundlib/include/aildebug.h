@@ -78,6 +78,10 @@ const SNDCARD_IO_PARMS *AIL_get_IO_environment(AIL_DRIVER *drvr);
 
 void AIL_restore_USE16_ISR(int32_t irq);
 
+/** Get a real-mode interrupt vector.
+ */
+void *AIL_get_real_vect(uint32_t vectnum);
+
 /** Set a real-mode interrupt vector.
  */
 void AIL_set_real_vect(uint32_t vectnum, void *real_ptr);
@@ -86,6 +90,10 @@ void AIL_set_real_vect(uint32_t vectnum, void *real_ptr);
  * obtain a timer handle which may be used to control the timer.
  */
 HSNDTIMER AIL_register_timer(AILTIMERCB fn);
+
+/** Release timer handle(s).
+ */
+void AIL_release_timer_handle(HSNDTIMER timer);
 
 /** Set user data pointer for given timer.
  */

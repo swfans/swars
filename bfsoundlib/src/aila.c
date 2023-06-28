@@ -110,6 +110,12 @@ int32_t AIL2OAL_API_call_driver(AIL_DRIVER *drvr, int32_t fn,
     return 0;
 }
 
+void *AIL2OAL_API_get_real_vect(uint32_t vectnum)
+{
+    // removed DOS-specific `int` call
+    return NULL;
+}
+
 void AIL2OAL_API_set_real_vect(uint32_t vectnum, void *real_ptr)
 {
     // removed DOS-specific `int` call
@@ -158,7 +164,7 @@ void AIL2OAL_program_timers(void)
     min_peri = 0xFFFFFFFF;
     for (i = 0; i < AIL_N_TIMERS; i++)
     {
-        if (timer_status[i] != 0)
+        if (timer_status[i] != AILT_FREE)
         {
             peri = timer_cb_periods[i];
             if (peri < min_peri)
@@ -182,10 +188,10 @@ HSNDTIMER AIL2OAL_API_register_timer(AILTIMERCB fn)
     AIL_lock();
     for (n = 0; n < AIL_N_TIMERS; n++)
     {
-        if (timer_status[n] != 0)
+        if (timer_status[n] != AILT_FREE)
             continue;
 
-        timer_status[n] = 1;
+        timer_status[n] = AILT_STOPPED;
         timer_callback[n] = fn;
 
         AIL_unlock();
@@ -194,6 +200,14 @@ HSNDTIMER AIL2OAL_API_register_timer(AILTIMERCB fn)
 
     AIL_unlock();
     return -1;
+}
+
+void AIL2OAL_API_release_timer_handle(HSNDTIMER timer)
+{
+    if (timer == -1)
+        return;
+
+    timer_status[timer] = AILT_FREE;
 }
 
 void AILA_VMM_lock(void)

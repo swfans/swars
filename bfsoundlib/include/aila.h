@@ -42,8 +42,7 @@ void AIL2OAL_API_restore_USE16_ISR(int32_t irq);
 
 HSNDTIMER AIL2OAL_API_register_timer(AILTIMERCB fn);
 
-/** Set real-mode interrupt vector.
- */
+void *AIL2OAL_API_get_real_vect(uint32_t vectnum);
 void AIL2OAL_API_set_real_vect(uint32_t vectnum, void *real_ptr);
 
 void AIL2OAL_API_set_timer_frequency(HSNDTIMER timer, uint32_t hertz);
@@ -59,6 +58,8 @@ void AIL2OAL_set_PIT_period(uint32_t period);
 /** Establish timer interrupt rates based on fastest active timer.
  */
 void AIL2OAL_program_timers(void);
+
+void AIL2OAL_API_release_timer_handle(HSNDTIMER timer);
 
 /******************************************************************************/
 #ifdef __cplusplus

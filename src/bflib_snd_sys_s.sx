@@ -481,7 +481,7 @@ GLOBAL_FUNC (ASM_cbCDCountdown)
 		xor    %edx,%edx
 		push   %esi
 		mov    %dx,CurrentCDTrack
-		call   AIL_release_timer_handle
+		call   ac_AIL_release_timer_handle
 		add    $0x4,%esp
 		xor    %ah,%ah
 		mov    %ah,CDTimerActive
@@ -562,7 +562,7 @@ GLOBAL_FUNC (ASM_PlayCDTrack)
 		jne    jump_ebd87
 		mov    CDCount_handle,%edx
 		push   %edx
-		call   AIL_release_timer_handle
+		call   ac_AIL_release_timer_handle
 		add    $0x4,%esp
 		xor    %dl,%dl
 		mov    %dl,CDTimerActive
@@ -622,7 +622,7 @@ GLOBAL_FUNC (ASM_StopCD)
 		mov    %dh,CDTimerActive
 		mov    CDCount_handle,%edx
 		push   %edx
-		call   AIL_release_timer_handle
+		call   ac_AIL_release_timer_handle
 		add    $0x4,%esp
 	jump_ebf8b:
 		xor    %edx,%edx
@@ -2123,7 +2123,7 @@ GLOBAL_FUNC (DangerMusicFadeTick)
 		je     jump_ef06c
 		mov    DangerMusicFadeHandle,%ecx
 		push   %ecx
-		call   AIL_release_timer_handle
+		call   ac_AIL_release_timer_handle
 		add    $0x4,%esp
 		pop    %edi
 		pop    %esi
@@ -2194,7 +2194,7 @@ GLOBAL_FUNC (DangerMusicFadeTick)
 	jump_ef11b:
 		mov    DangerMusicFadeHandle,%ebx
 		push   %ebx
-		call   AIL_release_timer_handle
+		call   ac_AIL_release_timer_handle
 		add    $0x4,%esp
 		xor    %bl,%bl
 		mov    %bl,DangerMusicFadeActive
@@ -2245,7 +2245,7 @@ GLOBAL_FUNC (DangerMusicFadeSwitch)
 		je     jump_ef1eb
 		mov    DangerMusicFadeHandle,%ecx
 		push   %ecx
-		call   AIL_release_timer_handle
+		call   ac_AIL_release_timer_handle
 		add    $0x4,%esp
 	jump_ef1eb:
 		mov    %bl,CurrentDangerMusicFadeDirection
@@ -2659,7 +2659,7 @@ GLOBAL_FUNC (StartMusic_)
 		je     jump_f0471
 		mov    DangerMusicFadeHandle,%edx
 		push   %edx
-		call   AIL_release_timer_handle
+		call   ac_AIL_release_timer_handle
 		add    $0x4,%esp
 	jump_f0471:
 		xor    %bh,%bh
@@ -4364,7 +4364,7 @@ GLOBAL_FUNC(ASM_StopMusic)
 		je     jump_108bfd
 		mov    DangerMusicFadeHandle,%edx
 		push   %edx
-		call   AIL_release_timer_handle
+		call   ac_AIL_release_timer_handle
 		add    $0x4,%esp
 	jump_108bfd:
 		xor    %bh,%bh
@@ -5444,7 +5444,7 @@ cbfadesample:
 		je     jump_1091bb
 		mov    EXPORT_SYMBOL(sample_fade_handle),%esi
 		push   %esi
-		call   AIL_release_timer_handle
+		call   ac_AIL_release_timer_handle
 		add    $0x4,%esp
 		jmp    jump_1093cb
 	jump_1091bb:
@@ -5706,7 +5706,7 @@ StopAllSampleFadeTimers_:
 		movb   $0x1,EXPORT_SYMBOL(switch_off_sample_fade_timer)
 		mov    EXPORT_SYMBOL(sample_fade_handle),%edx
 		push   %edx
-		call   AIL_release_timer_handle
+		call   ac_AIL_release_timer_handle
 		mov    EXPORT_SYMBOL(end_sample_id),%ebx
 		add    $0x4,%esp
 		xor    %dh,%dh

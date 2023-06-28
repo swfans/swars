@@ -194,6 +194,23 @@ void *AIL_file_read(const char *fname, void *dest)
     return rdest;
 }
 
+void *AIL_get_real_vect(uint32_t vectnum)
+{
+    void *real_ptr;
+
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s(%u)\n", __func__, vectnum);
+
+    real_ptr = AIL2OAL_API_get_real_vect(vectnum);
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Result = 0x%p\n", real_ptr);
+    AIL_indent--;
+
+    return real_ptr;
+}
+
 void AIL_set_real_vect(uint32_t vectnum, void *real_ptr)
 {
     AIL_indent++;
@@ -222,6 +239,19 @@ HSNDTIMER AIL_register_timer(AILTIMERCB fn)
     AIL_indent--;
 
     return timer;
+}
+
+void AIL_release_timer_handle(HSNDTIMER timer)
+{
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s(%ld)\n", __func__, (long)timer);
+
+    AIL2OAL_API_release_timer_handle(timer);
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Finished\n");
+    AIL_indent--;
 }
 
 void *AIL_set_timer_user(HSNDTIMER timer, void *user_data)
