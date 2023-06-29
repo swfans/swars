@@ -141,9 +141,18 @@ void AIL_init_sample(SNDSAMPLE *s);
  */
 void AIL_set_sample_user_data(SNDSAMPLE *s, uint32_t index, int32_t value);
 
+/** Set a RIB provider for a specified sample pipeline phase.
+ */
+HAILPROVIDER AIL_set_sample_processor(SNDSAMPLE *s,
+    uint32_t pipeline_stage, HAILPROVIDER provider);
+
 /** Terminate playback of sample, setting sample status to SNDSMP_DONE.
  */
 void AIL_end_sample(SNDSAMPLE *s);
+
+/** Free a SAMPLE structure for later allocation.
+ */
+void AIL_release_sample_handle (SNDSAMPLE *s);
 
 /** Initialize a SEQUENCE structure to prepare for playback of desired
  * XMIDI sequence file image.

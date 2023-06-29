@@ -170,57 +170,6 @@ GLOBAL_FUNC (AIL_restore_interrupts)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (AIL_release_sample_handle)
-/*----------------------------------------------------------------*/
-		push   %ebx
-		push   %edi
-		push   %ebp
-		mov    AIL_indent,%edx
-		inc    %edx
-		mov    AIL_debug,%ebx
-		mov    %edx,AIL_indent
-		test   %ebx,%ebx
-		je     jump_103421
-		cmp    $0x1,%edx
-		je     jump_103408
-		cmpl   $0x0,AIL_sys_debug
-		je     jump_103421
-	jump_103408:
-		call   ac_AIL2OAL_API_background
-		test   %eax,%eax
-		jne    jump_103421
-		call   TIME_write_
-		test   %eax,%eax
-		je     jump_103421
-		mov    $0x1,%eax
-		jmp    jump_103423
-	jump_103421:
-		xor    %eax,%eax
-	jump_103423:
-		test   %eax,%eax
-		je     jump_103440
-		mov    0x10(%esp),%edi
-		push   %edi
-		push   $aAil_release_sa
-		mov    AIL_debugfile,%ebp
-		push   %ebp
-		call   ac_fprintf
-		add    $0xc,%esp
-	jump_103440:
-		mov    0x10(%esp),%eax
-		push   %eax
-		call   AIL_API_release_sample_handle
-		mov    AIL_indent,%edx
-		dec    %edx
-		add    $0x4,%esp
-		mov    %edx,AIL_indent
-		pop    %ebp
-		pop    %edi
-		pop    %ebx
-		ret
-
-
-/*----------------------------------------------------------------*/
 GLOBAL_FUNC (AIL_set_sample_file)	/* 1034e0 */
 /*----------------------------------------------------------------*/
 		push   %ebx
@@ -5587,17 +5536,6 @@ AIL_API_allocate_sample_handle:	/* 1138c0 */
 		ret
 
 /*----------------------------------------------------------------*/
-AIL_API_release_sample_handle:
-/*----------------------------------------------------------------*/
-		mov    0x4(%esp),%eax
-		test   %eax,%eax
-		je     jump_11393f
-		movl   $0x1,0x4(%eax)
-	jump_11393f:
-		ret
-
-
-/*----------------------------------------------------------------*/
 GLOBAL_FUNC (ASM_AIL_API_init_sample)	/* 113940 */
 /*----------------------------------------------------------------*/
 		push   %ebx
@@ -6158,7 +6096,7 @@ AIL_VOC_terminate:
 		cmpl   $0x0,0x88c(%ebx)
 		jle    jump_113fea
 		push   %ebx
-		call   AIL_release_sample_handle
+		call   ac_AIL_release_sample_handle
 		add    $0x4,%esp
 	jump_113fea:
 		movl   $0xffffffff,0x88c(%ebx)
@@ -6554,7 +6492,7 @@ AIL_WAV_EOS:
 		cmpl   $0x0,0x88c(%ebx)
 		jle    jump_1143ba
 		push   %ebx
-		call   AIL_release_sample_handle
+		call   ac_AIL_release_sample_handle
 		add    $0x4,%esp
 	jump_1143ba:
 		movl   $0xffffffff,0x88c(%ebx)

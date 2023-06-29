@@ -223,7 +223,7 @@ GLOBAL_FUNC (MSSLOWSOUNDCLOSE)
 		add    $0x4,%esp
 		mov    0x38(%esi),%ecx
 		push   %ecx
-		call   AIL_release_sample_handle
+		call   ac_AIL_release_sample_handle
 		add    $0x4,%esp
 		mov    0x3c(%esi),%eax
 		add    %eax,%eax

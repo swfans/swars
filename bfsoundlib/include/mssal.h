@@ -208,11 +208,29 @@ enum AILMIDIControlMsgs {
     MDI_CTR_ALL_NOTES_OFF    = 123,
 };
 
+/** Digital pipeline stages.
+ *
+ * These are the points at which external modules may be installed into
+ * a given SNDSAMPLE or DIG_DRIVER's processing pipeline
+ */
+enum SNDSAMPLESTAGE {
+   SNDSMST_DP_ASI_DECODER=0, /**< Must be "ASI codec stream" provider */
+   SNDSMST_DP_FILTER,        /**< Must be "MSS pipeline filter" provider */
+   SNDSMST_DP_MERGE,         /**< Must be "MSS mixer" provider */
+   SNDSMST_N_SAMPLE_STAGES,  /**< Placeholder for end of list (= # of valid stages) */
+   SNDSMST_SAMPLE_ALL_STAGES, /**< Used to signify all pipeline stages, for shutdown */
+};
+
 /** Handle to timer.
  *
  * Originally named `HTIMER`. This less generic name helps to remember this is sound-related.
  */
 typedef long HSNDTIMER;
+
+/** Handle to interface provider.
+ */
+typedef uint32_t HAILPROVIDER;
+
 
 /** Timer trigger callcack function type.
  */

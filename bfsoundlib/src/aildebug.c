@@ -408,6 +408,24 @@ void AIL_set_sample_user_data(SNDSAMPLE *s, uint32_t index, int32_t value)
     AIL_indent--;
 }
 
+HAILPROVIDER AIL_set_sample_processor(SNDSAMPLE *s,
+    uint32_t pipeline_stage, HAILPROVIDER provider)
+{
+   HAILPROVIDER result;
+
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s(0x%p, %u, %d)\n", __func__, s, pipeline_stage, provider);
+
+    result = AIL2OAL_API_set_sample_processor(s, pipeline_stage, provider);
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Result = %d\n", (int)result);
+    AIL_indent--;
+
+    return result;
+}
+
 void AIL_end_sample(SNDSAMPLE *s)
 {
     AIL_indent++;
@@ -415,6 +433,19 @@ void AIL_end_sample(SNDSAMPLE *s)
         fprintf(AIL_debugfile, "%s(0x%p)\n", __func__, s);
 
     AIL2OAL_API_end_sample(s);
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Finished\n");
+    AIL_indent--;
+}
+
+void AIL_release_sample_handle (SNDSAMPLE *s)
+{
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s(0x%p)\n", __func__, s);
+
+    AIL2OAL_API_release_sample_handle(s);
 
     if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
         fprintf(AIL_debugfile, "Finished\n");

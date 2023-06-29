@@ -133,6 +133,17 @@ uint32_t AIL2OAL_API_sample_status(SNDSAMPLE *s)
     return s->status;
 }
 
+void AIL2OAL_API_release_sample_handle(SNDSAMPLE *s)
+{
+    if (s == NULL)
+        return;
+
+    s->status = SNDSMP_FREE;
+
+    // Shut down any installed pipeline providers
+    AIL_set_sample_processor(s, SNDSMST_SAMPLE_ALL_STAGES, 0);
+}
+
 AILSAMPLECB AIL2OAL_API_register_EOS_callback(SNDSAMPLE *s, AILSAMPLECB EOS)
 {
     AILSAMPLECB old;
@@ -144,6 +155,13 @@ AILSAMPLECB AIL2OAL_API_register_EOS_callback(SNDSAMPLE *s, AILSAMPLECB EOS)
     s->EOS = EOS;
 
     return old;
+}
+
+HAILPROVIDER AIL2OAL_API_set_sample_processor(SNDSAMPLE *s,
+    uint32_t pipeline_stage, HAILPROVIDER provider)
+{
+    // No need to implement - filters are rarely used
+    return 0;
 }
 
 void AIL2OAL_API_set_sample_user_data(SNDSAMPLE *s, uint32_t index, int32_t value)
