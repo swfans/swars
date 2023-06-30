@@ -28,6 +28,14 @@
 #include "ail.h"
 #include "mssdig.h"
 /******************************************************************************/
+/** Recognized file types
+ */
+enum SampleFileTypes {
+    SMP_FTYP_VOC = 0,
+    SMP_FTYP_WAV = 1,
+    SMP_FTYP_ASI = 2,
+};
+
 extern size_t sound_source_count;
 extern SNDSAMPLE sound_samples[];
 
@@ -172,30 +180,37 @@ int32_t AIL2OAL_API_set_sample_file(SNDSAMPLE *s, const void *file_image, int32_
 
     AIL_init_sample(s);
 
-    ftype = strncasecmp(file_image, "Creative", 8);
-    if (ftype != 0)
+    ftype = -1;
+    if (ftype == -1)
     {
-        if (strncasecmp(file_image + 8, "WAVE", 4) != 0)
-        {
-            AIL_set_error("Unknown digital audio file type.");
-            return 0;
-        }
-        ftype = 1;
+        if (strncasecmp(file_image, "Creative", 8) == 0)
+            ftype = SMP_FTYP_VOC;
+    }
+    if (ftype == -1)
+    {
+        if (strncasecmp(file_image + 8, "WAVE", 4) == 0)
+            ftype = SMP_FTYP_WAV;
+    }
+    if (ftype == -1)
+    {
+        AIL_set_error("Unknown digital audio file type.");
+        return 0;
     }
 
     // Copy file attributes to sample
     switch (ftype)
     {
-    case 1:
+    case SMP_FTYP_WAV:
         s->system_data[6] = 0;
         AIL_process_WAV_image(file_image, s);
         break;
-    case 0:
+    case SMP_FTYP_VOC:
         // TODO pointer to integer conversion, change to mind the bits!
+        // Store pointer to sample data
         s->system_data[1] = (uint32_t)file_image + *(uint16_t *)(file_image + 20);
         s->system_data[4] = block;
         s->system_data[6] = 0;
-        s->system_data[5] = block == -1;
+        s->system_data[5] = (block == -1);
         AIL_process_VOC_block(s, 0);
         break;
     default: // s->system_data[6] == -1
