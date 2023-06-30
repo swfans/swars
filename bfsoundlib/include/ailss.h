@@ -35,6 +35,8 @@ void AIL2OAL_API_init_sample(SNDSAMPLE *s);
 
 uint32_t AIL2OAL_API_sample_status(SNDSAMPLE *s);
 
+int32_t AIL2OAL_API_set_sample_file(SNDSAMPLE *s, const void *file_image, int32_t block);
+
 AILSAMPLECB AIL2OAL_API_register_EOS_callback(SNDSAMPLE *s, AILSAMPLECB EOS);
 
 HAILPROVIDER AIL2OAL_API_set_sample_processor(SNDSAMPLE *s,

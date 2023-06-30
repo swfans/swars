@@ -86,6 +86,14 @@ void *AIL_get_real_vect(uint32_t vectnum);
  */
 void AIL_set_real_vect(uint32_t vectnum, void *real_ptr);
 
+/** Disable hardware interrupts.
+ */
+uint32_t AIL_disable_interrupts(void);
+
+/** Restore previous interrupt state.
+ */
+void AIL_restore_interrupts(uint32_t FD_reg);
+
 /** Get value last used by the API to program the PIT chip.
  */
 uint32_t AIL_interrupt_divisor(void);
@@ -108,6 +116,12 @@ void *AIL_set_timer_user(HSNDTIMER timer, void *user_data);
 void AIL_release_channel(MDI_DRIVER *mdidrv, int32_t channel);
 
 uint32_t AIL_sample_status(SNDSAMPLE *s);
+
+/** Set parameters of existing HSAMPLE according to file data.
+ *
+ * Returns 0 on error, else 1.
+ */
+int32_t AIL_set_sample_file(SNDSAMPLE *s, const void *file_image, int32_t block);
 
 /** Load, install, and initialize digital audio driver according to
  * contents of DIG_INI file.

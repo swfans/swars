@@ -224,6 +224,20 @@ void AIL_set_real_vect(uint32_t vectnum, void *real_ptr)
     AIL_indent--;
 }
 
+uint32_t AIL_disable_interrupts(void)
+{
+    uint32_t result;
+
+    result = AIL2OAL_API_disable_interrupts();
+
+    return result;
+}
+
+void AIL_restore_interrupts(uint32_t FD_reg)
+{
+    AIL2OAL_API_restore_interrupts(FD_reg);
+}
+
 uint32_t AIL_interrupt_divisor(void)
 {
     uint32_t divisor;
@@ -380,6 +394,23 @@ SNDSAMPLE *AIL_allocate_sample_handle(DIG_DRIVER *dig)
     AIL_indent--;
 
     return s;
+}
+
+int32_t AIL_set_sample_file(SNDSAMPLE *s, const void *file_image, int32_t block)
+{
+   int32_t result;
+
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s(0x%p, 0x%p, %d)\n", __func__, s, file_image, block);
+
+    result = AIL2OAL_API_set_sample_file(s, file_image, block);
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Result = %d\n", result);
+    AIL_indent--;
+
+    return result;
 }
 
 void AIL_init_sample(SNDSAMPLE *s)

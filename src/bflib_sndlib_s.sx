@@ -154,13 +154,13 @@ TIME_write_:
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (AIL_disable_interrupts)
+GLOBAL_FUNC (ASM_AIL_disable_interrupts)
 /*----------------------------------------------------------------*/
-		jmp    jump_11147c
+		jmp    AIL_API_disable_interrupts
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (AIL_restore_interrupts)
+GLOBAL_FUNC (ASM_AIL_restore_interrupts)
 /*----------------------------------------------------------------*/
 		mov    0x4(%esp),%edx
 		push   %edx
@@ -170,7 +170,7 @@ GLOBAL_FUNC (AIL_restore_interrupts)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (AIL_set_sample_file)	/* 1034e0 */
+GLOBAL_FUNC (ASM_AIL_set_sample_file)	/* 1034e0 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %esi
@@ -217,7 +217,7 @@ GLOBAL_FUNC (AIL_set_sample_file)	/* 1034e0 */
 		mov    0x1c(%esp),%esi
 		push   %esi
 		push   %ebx
-		call   AIL_API_allocate_file_sample
+		call   ASM_AIL_API_set_sample_file
 		mov    AIL_debug,%edi
 		mov    %eax,%ebx
 		add    $0xc,%esp
@@ -2637,7 +2637,11 @@ AIL_API_restore_USE16_ISR:
 		pop    %ebx
 		leave
 		ret
-	jump_11147c:
+
+
+/*----------------------------------------------------------------*/
+AIL_API_disable_interrupts:
+/*----------------------------------------------------------------*/
 		pushf
 		pop    %eax
 		cli
@@ -3046,7 +3050,7 @@ AIL_driver_server:
 		cmpl   $0x0,AIL_entry
 		jne    jump_11191c
 		movl   $0x1,AIL_entry
-		call   AIL_disable_interrupts
+		call   ac_AIL_disable_interrupts
 		push   $0x0
 		push   $0x0
 		push   $0x302
@@ -3058,7 +3062,7 @@ AIL_driver_server:
 		mov    AIL_flags,%esi
 		push   %esi
 		xor    %edi,%edi
-		call   AIL_restore_interrupts
+		call   ac_AIL_restore_interrupts
 		add    $0x4,%esp
 		mov    %edi,AIL_entry
 	jump_11191c:
@@ -4163,7 +4167,7 @@ GLOBAL_FUNC (SS_serve)
 		mov    %eax,data_1ed8c4
 		test   %esi,%esi
 		je     jump_11294f
-		call   AIL_disable_interrupts
+		call   ac_AIL_disable_interrupts
 		mov    %eax,data_1ed8cc
 	jump_11294f:
 		mov    data_1ed8c4,%eax
@@ -4175,7 +4179,7 @@ GLOBAL_FUNC (SS_serve)
 		je     jump_112979
 		mov    data_1ed8cc,%ecx
 		push   %ecx
-		call   AIL_restore_interrupts
+		call   ac_AIL_restore_interrupts
 		add    $0x4,%esp
 	jump_112979:
 		xor    %esi,%esi
@@ -4197,7 +4201,7 @@ GLOBAL_FUNC (SS_serve)
 		je     jump_1129c1
 		mov    data_1ed8cc,%ebp
 		push   %ebp
-		call   AIL_restore_interrupts
+		call   ac_AIL_restore_interrupts
 		add    $0x4,%esp
 	jump_1129c1:
 		xor    %eax,%eax
@@ -4288,7 +4292,7 @@ GLOBAL_FUNC (SS_serve)
 		je     jump_112aed
 		mov    data_1ed8cc,%esi
 		push   %esi
-		call   AIL_restore_interrupts
+		call   ac_AIL_restore_interrupts
 		add    $0x4,%esp
 	jump_112aed:
 		xor    %edi,%edi
@@ -6117,7 +6121,7 @@ vtable_113ff8:
 
 
 /*----------------------------------------------------------------*/
-AIL_process_VOC_block:
+GLOBAL_FUNC (ASM_AIL_process_VOC_block)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %esi
@@ -6377,13 +6381,13 @@ AIL_VOC_EOS:
 		push   $0x1
 		mov    0x8(%esp),%edx
 		push   %edx
-		call   AIL_process_VOC_block
+		call   ac_AIL_process_VOC_block
 		add    $0x8,%esp
 		ret
 
 
 /*----------------------------------------------------------------*/
-AIL_process_WAV_image:
+GLOBAL_FUNC (ASM_AIL_process_WAV_image)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %esi
@@ -6501,7 +6505,7 @@ AIL_WAV_EOS:
 
 
 /*----------------------------------------------------------------*/
-AIL_API_allocate_file_sample:
+ASM_AIL_API_set_sample_file:
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %esi
@@ -6552,13 +6556,13 @@ AIL_API_allocate_file_sample:
 		movl   $0x0,0x88c(%esi)
 		push   %esi
 		mov    %eax,0x888(%esi)
-		call   AIL_process_VOC_block
+		call   ac_AIL_process_VOC_block
 		jmp    jump_1145ad
 	jump_11459c:
 		push   %esi
 		push   %ecx
 		movl   $0x0,0x88c(%esi)
-		call   AIL_process_WAV_image
+		call   ac_AIL_process_WAV_image
 	jump_1145ad:
 		add    $0x8,%esp
 	jump_1145b0:

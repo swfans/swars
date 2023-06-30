@@ -121,6 +121,16 @@ void AIL2OAL_API_set_real_vect(uint32_t vectnum, void *real_ptr)
     // removed DOS-specific `int` call
 }
 
+uint32_t AIL2OAL_API_disable_interrupts(void)
+{
+    // removed privileged `cli` call
+}
+
+void AIL2OAL_API_restore_interrupts(uint32_t FD_reg)
+{
+    // removed privileged `sti` call
+}
+
 void AIL2OAL_API_restore_USE16_ISR(int32_t irq)
 {
     if ((irq != -1) && (irq == AIL_ISR_IRQ))

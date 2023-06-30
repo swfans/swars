@@ -23,6 +23,7 @@
 #define AIL2OAL_MSSAL_H_
 
 #include <stdint.h>
+#include <strings.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -41,6 +42,7 @@ typedef struct AIL_DRIVER AIL_DRIVER;
 typedef struct DIG_DRIVER DIG_DRIVER;
 typedef struct MDI_DRIVER MDI_DRIVER;
 typedef struct SNDSAMPLE SNDSAMPLE;
+typedef struct AILSOUNDINFO AILSOUNDINFO;
 typedef struct SNDSEQUENCE SNDSEQUENCE;
 typedef struct CTRL_LOG CTRL_LOG;
 typedef struct VDI_HDR VDI_HDR;
@@ -381,6 +383,18 @@ struct SNDSAMPLE {
   AILSAMPLECB EOS;                           /**< offs=0x850 End-of-sample callback function */
   int32_t user_data[8];                      /**< offs=0x854 Miscellaneous user data */
   int32_t system_data[8];                    /**< offs=0x874 Miscellaneous system data */
+};
+
+struct AILSOUNDINFO {
+    int32_t format;
+    const void *data_ptr;
+    uint32_t data_len;
+    uint32_t rate;
+    int32_t bits;
+    int32_t channels;
+    uint32_t samples;
+    uint32_t block_size;
+    const void *initial_ptr;
 };
 
 /** MIDI status log structure.

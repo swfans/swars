@@ -133,6 +133,78 @@ uint32_t AIL2OAL_API_sample_status(SNDSAMPLE *s)
     return s->status;
 }
 
+/** Process .VOC file block.
+ *
+ * Called by .VOC initialization code and as end-of-sample callback
+ * function (interrupt-based).
+ *
+ * If play_flag clear, search for first block after desired marker (if
+ * any) and return without playing it.
+ */
+void AIL_process_VOC_block(SNDSAMPLE *s, int32_t play_flag)
+{
+    asm volatile (
+      "push %1\n"
+      "push %0\n"
+      "call ASM_AIL_process_VOC_block\n"
+      "add $0x8, %%esp\n"
+        :  : "g" (s), "g" (play_flag) : "eax" );
+}
+
+/** Create sample instance by parsing .WAV file.
+ */
+void AIL_process_WAV_image(const AILSOUNDINFO *info, SNDSAMPLE *s)
+{
+    asm volatile (
+      "push %1\n"
+      "push %0\n"
+      "call ASM_AIL_process_WAV_image\n"
+      "add $0x8, %%esp\n"
+        :  : "g" (info), "g" (s) : "eax" );
+}
+
+int32_t AIL2OAL_API_set_sample_file(SNDSAMPLE *s, const void *file_image, int32_t block)
+{
+    int32_t ftype;
+
+    if ((s == NULL) || (file_image == NULL))
+        return 0;
+
+    AIL_init_sample(s);
+
+    ftype = strncasecmp(file_image, "Creative", 8);
+    if (ftype != 0)
+    {
+        if (strncasecmp(file_image + 8, "WAVE", 4) != 0)
+        {
+            AIL_set_error("Unknown digital audio file type.");
+            return 0;
+        }
+        ftype = 1;
+    }
+
+    // Copy file attributes to sample
+    switch (ftype)
+    {
+    case 1:
+        s->system_data[6] = 0;
+        AIL_process_WAV_image(file_image, s);
+        break;
+    case 0:
+        // TODO pointer to integer conversion, change to mind the bits!
+        s->system_data[1] = (uint32_t)file_image + *(uint16_t *)(file_image + 20);
+        s->system_data[4] = block;
+        s->system_data[6] = 0;
+        s->system_data[5] = block == -1;
+        AIL_process_VOC_block(s, 0);
+        break;
+    default: // s->system_data[6] == -1
+        AIL_set_error("Invalid or missing data block.");
+        return 0;
+    }
+    return 1;
+}
+
 void AIL2OAL_API_release_sample_handle(SNDSAMPLE *s)
 {
     if (s == NULL)
