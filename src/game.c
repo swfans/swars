@@ -2170,8 +2170,10 @@ void init_outro(void)
         gameturn++;
         traffic_unkn_func_01();
         process_engine_unk1();
-        if ( !(LbRandomAnyShort() & 0xF) && (data_155704 == -1 || !IsSamplePlaying(0, data_155704, NULL)) )
+        // Play applause sample
+        if (((LbRandomAnyShort() & 0xF) == 0) && (data_155704 == -1 || !IsSamplePlaying(0, data_155704, NULL)) )
         {
+            //TODO Why we're not storing new value of data_155704 ??
             play_sample_using_heap(0, 7 + (LbRandomAnyShort() % 5), 127, 64, 100, 0, 3u);
         }
         process_sound_heap();
