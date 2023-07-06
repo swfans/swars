@@ -160,13 +160,17 @@ void AIL_set_sample_user_data(SNDSAMPLE *s, uint32_t index, int32_t value);
 HAILPROVIDER AIL_set_sample_processor(SNDSAMPLE *s,
     uint32_t pipeline_stage, HAILPROVIDER provider);
 
+/** Set starting address and length of sample.
+ */
+void AIL_set_sample_address(SNDSAMPLE *s, const void *start, uint32_t len);
+
 /** Terminate playback of sample, setting sample status to SNDSMP_DONE.
  */
 void AIL_end_sample(SNDSAMPLE *s);
 
 /** Free a SAMPLE structure for later allocation.
  */
-void AIL_release_sample_handle (SNDSAMPLE *s);
+void AIL_release_sample_handle(SNDSAMPLE *s);
 
 /** Initialize a SEQUENCE structure to prepare for playback of desired
  * XMIDI sequence file image.

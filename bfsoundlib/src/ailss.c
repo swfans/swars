@@ -251,6 +251,18 @@ HAILPROVIDER AIL2OAL_API_set_sample_processor(SNDSAMPLE *s,
     return 0;
 }
 
+void AIL2OAL_API_set_sample_address(SNDSAMPLE *s, const void *start, uint32_t len)
+{
+    if (s == NULL)
+        return;
+
+    s->start[0] = start;
+    s->len[0]   = len;
+
+    s->start[1] = NULL;
+    s->len[1]   = 0;
+}
+
 void AIL2OAL_API_set_sample_user_data(SNDSAMPLE *s, uint32_t index, int32_t value)
 {
     if (s == NULL)

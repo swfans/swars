@@ -42,6 +42,8 @@ AILSAMPLECB AIL2OAL_API_register_EOS_callback(SNDSAMPLE *s, AILSAMPLECB EOS);
 HAILPROVIDER AIL2OAL_API_set_sample_processor(SNDSAMPLE *s,
     uint32_t pipeline_stage, HAILPROVIDER provider);
 
+void AIL2OAL_API_set_sample_address(SNDSAMPLE *s, const void *start, uint32_t len);
+
 void AIL2OAL_API_set_sample_user_data(SNDSAMPLE *s, uint32_t index, int32_t value);
 
 void AIL2OAL_API_end_sample(SNDSAMPLE *s);

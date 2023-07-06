@@ -457,6 +457,19 @@ HAILPROVIDER AIL_set_sample_processor(SNDSAMPLE *s,
     return result;
 }
 
+void AIL_set_sample_address(SNDSAMPLE *s, const void *start, uint32_t len)
+{
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s(0x%p, 0x%p, %u)\n", __func__, s, start, len);
+
+    AIL2OAL_API_set_sample_address(s, start, len);
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Finished\n");
+    AIL_indent--;
+}
+
 void AIL_end_sample(SNDSAMPLE *s)
 {
     AIL_indent++;

@@ -154,188 +154,6 @@ TIME_write_:
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (ASM_AIL_disable_interrupts)
-/*----------------------------------------------------------------*/
-		jmp    AIL_API_disable_interrupts
-
-
-/*----------------------------------------------------------------*/
-GLOBAL_FUNC (ASM_AIL_restore_interrupts)
-/*----------------------------------------------------------------*/
-		mov    0x4(%esp),%edx
-		push   %edx
-		call   AIL_API_restore_interrupts
-		add    $0x4,%esp
-		ret
-
-
-/*----------------------------------------------------------------*/
-GLOBAL_FUNC (ASM_AIL_set_sample_file)	/* 1034e0 */
-/*----------------------------------------------------------------*/
-		push   %ebx
-		push   %esi
-		push   %edi
-		push   %ebp
-		mov    0x14(%esp),%ebx
-		mov    AIL_indent,%edx
-		inc    %edx
-		mov    AIL_debug,%ecx
-		mov    %edx,AIL_indent
-		test   %ecx,%ecx
-		je     jump_103526
-		cmp    $0x1,%edx
-		je     jump_10350d
-		cmpl   $0x0,AIL_sys_debug
-		je     jump_103526
-	jump_10350d:
-		call   ac_AIL2OAL_API_background
-		test   %eax,%eax
-		jne    jump_103526
-		call   TIME_write_
-		test   %eax,%eax
-		je     jump_103526
-		mov    $0x1,%eax
-		jmp    jump_103528
-	jump_103526:
-		xor    %eax,%eax
-	jump_103528:
-		test   %eax,%eax
-		je     jump_10354b
-		mov    0x1c(%esp),%ebp
-		push   %ebp
-		mov    0x1c(%esp),%eax
-		push   %eax
-		push   %ebx
-		push   $aAil_set_sample
-		mov    AIL_debugfile,%edx
-		push   %edx
-		call   ac_fprintf
-		add    $0x14,%esp
-	jump_10354b:
-		mov    0x1c(%esp),%ecx
-		push   %ecx
-		mov    0x1c(%esp),%esi
-		push   %esi
-		push   %ebx
-		call   ASM_AIL_API_set_sample_file
-		mov    AIL_debug,%edi
-		mov    %eax,%ebx
-		add    $0xc,%esp
-		test   %edi,%edi
-		je     jump_1035ea
-		cmpl   $0x1,AIL_indent
-		je     jump_103584
-		cmpl   $0x0,AIL_sys_debug
-		je     jump_1035ea
-	jump_103584:
-		call   ac_AIL2OAL_API_background
-		test   %eax,%eax
-		jne    jump_1035ea
-		xor    %edx,%edx
-		nop
-	jump_103590:
-		push   $data_160110
-		mov    AIL_debugfile,%ecx
-		push   %ecx
-		inc    %edx
-		call   ac_fprintf
-		add    $0x8,%esp
-		cmp    $0xe,%edx
-		jb     jump_103590
-		mov    $0x1,%edx
-		cmp    AIL_indent,%edx
-		jae    jump_1035d6
-	jump_1035b7:
-		push   $data_160114
-		mov    AIL_debugfile,%edi
-		push   %edi
-		inc    %edx
-		call   ac_fprintf
-		mov    AIL_indent,%ebp
-		add    $0x8,%esp
-		cmp    %ebp,%edx
-		jb     jump_1035b7
-	jump_1035d6:
-		push   %ebx
-		push   $data_16027c_result_decimal
-		mov    AIL_debugfile,%eax
-		push   %eax
-		call   ac_fprintf
-		add    $0xc,%esp
-	jump_1035ea:
-		mov    AIL_indent,%edx
-		dec    %edx
-		mov    %ebx,%eax
-		mov    %edx,AIL_indent
-		pop    %ebp
-		pop    %edi
-		pop    %esi
-		pop    %ebx
-		ret
-
-
-/*----------------------------------------------------------------*/
-GLOBAL_FUNC (AIL_set_sample_address)	/* 103600 */
-/*----------------------------------------------------------------*/
-		push   %ebx
-		push   %esi
-		push   %edi
-		push   %ebp
-		mov    AIL_indent,%edx
-		inc    %edx
-		mov    AIL_debug,%ebx
-		mov    %edx,AIL_indent
-		test   %ebx,%ebx
-		je     jump_103642
-		cmp    $0x1,%edx
-		je     jump_103629
-		cmpl   $0x0,AIL_sys_debug
-		je     jump_103642
-	jump_103629:
-		call   ac_AIL2OAL_API_background
-		test   %eax,%eax
-		jne    jump_103642
-		call   TIME_write_
-		test   %eax,%eax
-		je     jump_103642
-		mov    $0x1,%eax
-		jmp    jump_103644
-	jump_103642:
-		xor    %eax,%eax
-	jump_103644:
-		test   %eax,%eax
-		je     jump_10366b
-		mov    0x1c(%esp),%edi
-		push   %edi
-		mov    0x1c(%esp),%ebp
-		push   %ebp
-		mov    0x1c(%esp),%eax
-		push   %eax
-		push   $aAil_set_samp_5
-		mov    AIL_debugfile,%edx
-		push   %edx
-		call   ac_fprintf
-		add    $0x14,%esp
-	jump_10366b:
-		mov    0x1c(%esp),%ebx
-		push   %ebx
-		mov    0x1c(%esp),%ecx
-		push   %ecx
-		mov    0x1c(%esp),%esi
-		push   %esi
-		call   AIL_API_set_sample_address
-		mov    AIL_indent,%edi
-		dec    %edi
-		add    $0xc,%esp
-		mov    %edi,AIL_indent
-		pop    %ebp
-		pop    %edi
-		pop    %esi
-		pop    %ebx
-		ret
-
-
-/*----------------------------------------------------------------*/
 GLOBAL_FUNC (AIL_set_sample_type)	/* 1036a0 */
 /*----------------------------------------------------------------*/
 		push   %ebx
@@ -5599,7 +5417,7 @@ AIL_API_sample_status:
 
 
 /*----------------------------------------------------------------*/
-AIL_API_set_sample_address:
+ASM_AIL_API_set_sample_address:
 /*----------------------------------------------------------------*/
 		mov    0x4(%esp),%eax
 		test   %eax,%eax
@@ -6165,7 +5983,7 @@ func_114059:
 		lea    0x6(%esi),%eax
 		push   %eax
 		push   %ebx
-		call   AIL_set_sample_address
+		call   ac_AIL_set_sample_address
 		xor    %eax,%eax
 		mov    $0x100,%edi
 		mov    0x4(%esi),%al
@@ -6282,7 +6100,7 @@ func_114138:
 		lea    0x6(%esi),%eax
 		push   %eax
 		push   %ebx
-		call   AIL_set_sample_address
+		call   ac_AIL_set_sample_address
 		add    $0xc,%esp
 		test   %ebp,%ebp
 		je     jump_11426c
@@ -6305,7 +6123,7 @@ func_1141d6:
 		lea    0x10(%esi),%eax
 		push   %eax
 		push   %ebx
-		call   AIL_set_sample_address
+		call   ac_AIL_set_sample_address
 		add    $0xc,%esp
 		mov    0x4(%esi),%ecx
 		push   %ecx
@@ -6474,7 +6292,7 @@ GLOBAL_FUNC (ASM_AIL_process_WAV_image)
 		add    $0x8,%esi
 		push   %esi
 		push   %edi
-		call   AIL_set_sample_address
+		call   ac_AIL_set_sample_address
 		add    $0xc,%esp
 		pop    %edi
 		pop    %esi
@@ -11503,7 +11321,7 @@ _XDIG_MIDI_trap:
 		push   %eax
 		mov    0x4d4(%esi,%ebx,4),%ecx
 		push   %ecx
-		call   AIL_set_sample_address
+		call   ac_AIL_set_sample_address
 		add    $0xc,%esp
 		mov    %ebx,%edx
 		mov    %esi,%eax
