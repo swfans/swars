@@ -678,6 +678,23 @@ void traffic_unkn_func_01(void)
         :  :  : "eax" );
 }
 
+void process_tank_turret(struct Thing *p_tank)
+{
+#if 1
+    asm volatile ("call ASM_process_tank_turret\n"
+        : : "a" (p_tank));
+#else
+    struct Thing *p_turret;
+    int turret;
+
+    turret = p_tank->U.UVehicle.SubThing;
+    if (turret != 0) {
+        p_turret = &things[turret];
+    }
+    //TODO remake the function completely
+#endif
+}
+
 void process_view_inputs(int thing)
 {
     asm volatile ("call ASM_process_view_inputs\n"
