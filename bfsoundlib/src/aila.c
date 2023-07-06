@@ -124,6 +124,7 @@ void AIL2OAL_API_set_real_vect(uint32_t vectnum, void *real_ptr)
 uint32_t AIL2OAL_API_disable_interrupts(void)
 {
     // removed privileged `cli` call
+    return 0;
 }
 
 void AIL2OAL_API_restore_interrupts(uint32_t FD_reg)

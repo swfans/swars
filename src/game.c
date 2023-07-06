@@ -308,6 +308,11 @@ void adjust_memory_use(void)
     }
 }
 
+short angle_between_points(int x1, int z1, int x2, int z2)
+{
+  return LbArcTanAngle(x2 - x1, z1 - z2);
+}
+
 bool game_initialise(void)
 {
     TbResult ret;
@@ -680,18 +685,80 @@ void traffic_unkn_func_01(void)
 
 void process_tank_turret(struct Thing *p_tank)
 {
-#if 1
+#if 0
     asm volatile ("call ASM_process_tank_turret\n"
         : : "a" (p_tank));
 #else
     struct Thing *p_turret;
+    int target_x, target_y;
     int turret;
+    short angle;
+    int dt_angle;
 
     turret = p_tank->U.UVehicle.SubThing;
-    if (turret != 0) {
-        p_turret = &things[turret];
+    p_tank->OldTarget = 1000;
+    if (turret == 0)
+        return;
+
+    p_turret = &things[turret];
+    if ((p_tank->Flag & 0x20000000) != 0)
+    {
+        target_x = p_tank->U.UVehicle.TargetDX;
+        target_y = p_tank->U.UVehicle.TargetDZ;
     }
-    //TODO remake the function completely
+    else
+    {
+        struct Thing *p_target;
+        p_target = p_tank->PTarget;
+        if (p_target == NULL)
+        {
+            p_tank->OldTarget = 20000;
+            return;
+        }
+        target_x = p_target->X >> 8;
+        target_y = p_target->Z >> 8;
+    }
+    angle = p_turret->U.UMGun.AngleY
+        - angle_between_points(target_x, target_y, p_tank->X >> 8, p_tank->Z >> 8);
+    if (angle < -1024)
+        angle += 2048;
+    else if (angle > 1024)
+        angle -= 2048;
+
+    dt_angle = angle >> 3;
+    if (dt_angle > 60)
+        dt_angle = 60;
+    if (dt_angle < -60)
+        dt_angle = -60;
+    if (dt_angle == 0)
+    {
+        if (angle > 0)
+            dt_angle = 1;
+        if (angle < 0)
+            dt_angle = -1;
+    }
+
+    if (p_turret->Flag2 & 0x200)
+    {
+        if (((gameturn & 0x7) == 0) && (dt_angle == 0))
+        {
+            ReleaseLoopedSample(p_turret->ThingOffset, 48);
+            p_turret->Flag2 &= ~0x0200;
+        }
+    }
+    else
+    {
+        if (dt_angle >= 10) {
+            play_dist_sample(p_turret, 48, 127, 0x40u, 100, -1, 1);
+            p_turret->Flag2 |= 0x0200;
+        } else if (dt_angle == 0) {
+            play_dist_sample(p_turret, 47, 127, 0x40u, 100, 0, 1);
+        }
+    }
+
+    p_turret->U.UMGun.AngleY -= dt_angle;
+    p_tank->OldTarget = abs(angle);
+    p_turret->U.UMGun.AngleY = (p_turret->U.UMGun.AngleY + 0x800) & 0x7ff;
 #endif
 }
 

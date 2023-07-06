@@ -337,7 +337,7 @@ struct Thing
     ushort Owner;
     char PathOffset;
     char SubState;
-    long PTarget;
+    struct Thing *PTarget;
     long Flag2;
     short GotoThingIndex;
     short OldTarget;

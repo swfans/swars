@@ -2364,7 +2364,7 @@ GLOBAL_FUNC (SetSampleTempoNormal)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (SetSampleRepeat)
+GLOBAL_FUNC (ASM_ReleaseLoopedSample)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx

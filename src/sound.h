@@ -10,6 +10,8 @@
 
 #pragma pack(1)
 
+struct Thing;
+
 enum SoundDriverType
 {
   SOUND_DRIVER_PCM  = 0,
@@ -93,5 +95,6 @@ struct _SEQUENCE;
 
 struct SampleInfo *play_sample_using_heap(ulong a1, short smptbl_id, ulong a3, ulong a4, ulong a5, char a6, ubyte type);
 void stop_sample_using_heap(struct _SEQUENCE *source, ulong sample_number);
+void play_dist_sample(struct Thing *p_thing, ushort smptbl_id, ushort vol, ushort pan, int pitch, int loop, ubyte type);
 
 #endif

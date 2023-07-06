@@ -573,6 +573,16 @@ void stop_sample_using_heap(struct _SEQUENCE *source, ulong sample_number)
         : : "a" (source), "d" (sample_number));
 }
 
+void play_dist_sample(struct Thing *p_thing, ushort smptbl_id, ushort vol, ushort pan, int pitch, int loop, ubyte type)
+{
+    asm volatile (
+      "push %6\n"
+      "push %5\n"
+      "push %4\n"
+      "call ASM_play_dist_sample\n"
+        : : "a" (p_thing), "d" (smptbl_id), "b" (vol), "c" (pan), "g" (pitch), "g" (loop), "g" (type));
+}
+
 void StopMusicIfActive(void)
 {
     if (!MusicInstalled || !MusicAble)
