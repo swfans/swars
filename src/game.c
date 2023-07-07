@@ -725,6 +725,7 @@ void process_tank_turret(struct Thing *p_tank)
     else if (angle > LbFPMath_PI)
         angle -= 2*LbFPMath_PI;
 
+    //TODO CONFIG how fast the tank can target could be a difficulty-related setting
     // Travel 1/8 of the distance in each game turn
     dt_angle = angle / 8;
     if (dt_angle > LbFPMath_PI/17)
@@ -4900,11 +4901,11 @@ void unkn_research_func_006(void)
         :  :  : "eax" );
 }
 
-int research_unkn_func_005(char a1)
+int research_daily_progress_for_type(ubyte rstype)
 {
     int ret;
-    asm volatile ("call ASM_research_unkn_func_005\n"
-        : "=r" (ret) : "a" (a1));
+    asm volatile ("call ASM_research_daily_progress_for_type\n"
+        : "=r" (ret) : "a" (rstype));
     return ret;
 }
 
@@ -4924,16 +4925,17 @@ void forward_research_progress(int num_days)
         int prev;
 
         prev = research.CurrentWeapon;
-        scientists_lost = research_unkn_func_005(0);
+        scientists_lost = research_daily_progress_for_type(0);
         if (research.CurrentWeapon != prev)
             new_weapons_researched |= 1 << prev;
 
         prev = research.CurrentMod;
-        scientists_lost += research_unkn_func_005(1);
+        scientists_lost += research_daily_progress_for_type(1);
         if (research.CurrentMod != prev)
             new_mods_researched |= 1 << prev;
     }
-    research.Scientists -= scientists_lost;
+    // Scientists were already removed during daily progress
+    //research.Scientists -= scientists_lost;
     if (research.Scientists < 0)
         research.Scientists = 0;
     research_unkn_func_002();
