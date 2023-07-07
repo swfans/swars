@@ -696,10 +696,10 @@ void process_tank_turret(struct Thing *p_tank)
     int dt_angle;
 
     turret = p_tank->U.UVehicle.SubThing;
-    p_tank->OldTarget = 1000;
-    if (turret == 0)
+    if (turret == 0) {
+        p_tank->OldTarget = LbFPMath_PI+1;
         return;
-
+    }
     p_turret = &things[turret];
     if ((p_tank->Flag & 0x20000000) != 0)
     {
@@ -720,16 +720,17 @@ void process_tank_turret(struct Thing *p_tank)
     }
     angle = p_turret->U.UMGun.AngleY
         - angle_between_points(target_x, target_y, p_tank->X >> 8, p_tank->Z >> 8);
-    if (angle < -1024)
-        angle += 2048;
-    else if (angle > 1024)
-        angle -= 2048;
+    if (angle < -LbFPMath_PI)
+        angle += 2*LbFPMath_PI;
+    else if (angle > LbFPMath_PI)
+        angle -= 2*LbFPMath_PI;
 
-    dt_angle = angle >> 3;
-    if (dt_angle > 60)
-        dt_angle = 60;
-    if (dt_angle < -60)
-        dt_angle = -60;
+    // Travel 1/8 of the distance in each game turn
+    dt_angle = angle / 8;
+    if (dt_angle > LbFPMath_PI/17)
+        dt_angle = LbFPMath_PI/17;
+    if (dt_angle < -LbFPMath_PI/17)
+        dt_angle = -LbFPMath_PI/17;
     if (dt_angle == 0)
     {
         if (angle > 0)
@@ -738,27 +739,32 @@ void process_tank_turret(struct Thing *p_tank)
             dt_angle = -1;
     }
 
-    if (p_turret->Flag2 & 0x200)
+    // Despite being caused by the turret, we bind the sound samples to the vehicle part
+    // of the tank. This is because turrets do not contain full position on map, so the
+    // sound update would misplace the sound source if it was bound to the turret
+    if ((p_turret->Flag2 & 0x0200) != 0)
     {
-        if (((gameturn & 0x7) == 0) && (dt_angle == 0))
-        {
-            ReleaseLoopedSample(p_turret->ThingOffset, 48);
+        if (dt_angle <= 1) {
+            // Play rotation stop sample
+            if (!IsSamplePlaying(p_tank->ThingOffset, 47, 0))
+                play_dist_sample(p_tank, 47, 127, 0x40u, 100, 0, 1);
             p_turret->Flag2 &= ~0x0200;
         }
     }
     else
     {
-        if (dt_angle >= 10) {
-            play_dist_sample(p_turret, 48, 127, 0x40u, 100, -1, 1);
+        // Play rotation sample if moving over 1.2 degree per turn and the angle is not getting smaller.
+        // Huge values of OldTarget (beyond pi) indicate that previously we had no target.
+        if ((abs(dt_angle) >= LbFPMath_PI/75) && (p_tank->OldTarget < abs(angle) || p_tank->OldTarget > LbFPMath_PI)) {
+            if (!IsSamplePlaying(p_tank->ThingOffset, 48, 0))
+                play_dist_sample(p_tank, 48, 127, 0x40u, 100, 0, 1);
             p_turret->Flag2 |= 0x0200;
-        } else if (dt_angle == 0) {
-            play_dist_sample(p_turret, 47, 127, 0x40u, 100, 0, 1);
         }
     }
 
     p_turret->U.UMGun.AngleY -= dt_angle;
     p_tank->OldTarget = abs(angle);
-    p_turret->U.UMGun.AngleY = (p_turret->U.UMGun.AngleY + 0x800) & 0x7ff;
+    p_turret->U.UMGun.AngleY = (p_turret->U.UMGun.AngleY + 2*LbFPMath_PI) & LbFPMath_AngleMask;
 #endif
 }
 
