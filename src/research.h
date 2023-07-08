@@ -27,6 +27,8 @@ extern "C" {
 /******************************************************************************/
 #pragma pack(1)
 
+#define RESEARCH_COMPLETE_POINTS 25600
+
 struct ResearchInfo
 {
     ushort WeaponProgress[10][32];

@@ -166,10 +166,71 @@ int research_cymod_next_type(void)
 
 int research_unkn_func_004(ushort percent_per_day, int expect_funding, int real_funding)
 {
+#if 1
     int ret;
     asm volatile ("call ASM_research_unkn_func_004\n"
         : "=r" (ret) : "a" (percent_per_day), "d" (expect_funding), "b" (real_funding));
     return ret;
+#else
+    int n_remain, overhead;
+    int points_total, points_by_group, ppd;
+    int dec_per_day, dec_cumult, delta;
+
+    // Adjust points to number of scientists
+    n_remain = research.Scientists;
+    delta = 4;
+    ppd = percent_per_day << 8;
+    points_total = ppd;
+    if (n_remain > delta)
+    {
+        overhead = 2;
+        dec_per_day = -4 * ppd;
+        dec_cumult = ppd * n_remain;
+        while (n_remain > delta)
+        {
+            if (overhead >= 0x40000000)
+                break;
+            n_remain -= delta;
+            dec_cumult += dec_per_day;
+            if (n_remain <= delta)
+                points_by_group = dec_cumult / delta;
+            else
+                points_by_group = ppd;
+            points_total += points_by_group / overhead;
+            overhead *= 2;
+        }
+    }
+    else
+    {
+        points_total = n_remain * points_total / delta;
+    }
+
+    // Adjust points to amount of funding
+    n_remain = real_funding;
+    delta = 100 * expect_funding;
+    ppd = points_total;
+    if (real_funding > delta)
+    {
+        overhead = 2;
+        while (n_remain > delta)
+        {
+            if (overhead >= 0x40000000)
+                break;
+            n_remain -= delta;
+            if (n_remain <= delta)
+                points_by_group = n_remain * ppd / delta;
+            else
+                points_by_group = ppd;
+            points_total += points_by_group / overhead;
+            overhead *= 2;
+        }
+    }
+    else
+    {
+        points_total = n_remain * points_total / delta;
+    }
+    return points_total;
+#endif
 }
 
 int research_daily_progress_for_type(ubyte rstype)
@@ -199,7 +260,7 @@ int research_daily_progress_for_type(ubyte rstype)
         wdef = &weapon_defs[research.CurrentWeapon + 1];
         progress = research_unkn_func_004(wdef->PercentPerDay, wdef->Funding, real_funding);
         research_wep_store_daily_progress(progress);
-        if (research_wep_get_progress(research.CurrentWeapon) < 25600)
+        if (research_wep_get_progress(research.CurrentWeapon) < RESEARCH_COMPLETE_POINTS)
         {
             if (research.WeaponFunding && research.Scientists && research.NumBases)
                 research.WeaponDaysDone[research.CurrentWeapon]++;
@@ -221,7 +282,7 @@ int research_daily_progress_for_type(ubyte rstype)
         mdef = &mod_defs[research.CurrentMod + 1];
         progress = research_unkn_func_004(mdef->PercentPerDay, mdef->Funding, real_funding);
         research_cymod_store_daily_progress(progress);
-        if (research_cymod_get_progress(research.CurrentMod) < 25600)
+        if (research_cymod_get_progress(research.CurrentMod) < RESEARCH_COMPLETE_POINTS)
         {
             if (research.ModFunding && research.Scientists && research.NumBases)
                 research.ModDaysDone[research.CurrentMod]++;
