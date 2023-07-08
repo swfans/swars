@@ -74,7 +74,7 @@ static size_t        sound_free_buffer_count    = 0;
 static ALuint        sound_free_buffers[SOUND_MAX_BUFFERS];
 static SourceDescriptor sound_sources[SOUND_MAX_SOURCES];
 SNDSAMPLE sound_samples[SOUND_MAX_SOURCES];
-static OggVorbisStream  sound_music_stream;
+OggVorbisStream  sound_music_stream;
 
 
 #define check_alc(source) check_alc_line ((source), __LINE__)
@@ -257,6 +257,8 @@ void InitAudio(AudioInitOptions *audOpts)
     SoundProgressLog(SoundProgressMessage);
     sprintf(SoundProgressMessage, "BF2  - SA   %d\n", SoundAble);
     SoundProgressLog(SoundProgressMessage);
+    sprintf(SoundProgressMessage, "BF3  - CDA  %d\n", CDAble);
+    SoundProgressLog(SoundProgressMessage);
     if (!(audOpts->AbleFlags & 0x01))
         MusicAble = 0;
     if (!(audOpts->AbleFlags & 0x02))
@@ -271,6 +273,8 @@ void InitAudio(AudioInitOptions *audOpts)
 
     if (audOpts->InitRedbookAudio == 1)
         InitRedbook();
+    else if (audOpts->InitRedbookAudio == 2)
+        InitMusicOGG();
     else
         CDAble = 0;
 
@@ -280,6 +284,8 @@ void InitAudio(AudioInitOptions *audOpts)
     sprintf(SoundProgressMessage, "BF54 - MA   %d\n", MusicAble);
     SoundProgressLog(SoundProgressMessage);
     sprintf(SoundProgressMessage, "BF55 - SA   %d\n", SoundAble);
+    SoundProgressLog(SoundProgressMessage);
+    sprintf(SoundProgressMessage, "BF55 - CDA  %d\n", CDAble);
     SoundProgressLog(SoundProgressMessage);
     sprintf(SoundProgressMessage, "BF56 - music driver = %s\n", MusicInstallChoice.driver_name);
     SoundProgressLog(SoundProgressMessage);

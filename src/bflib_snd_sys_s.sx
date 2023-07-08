@@ -510,7 +510,7 @@ GLOBAL_FUNC (ASM_InitRedbook)
 		jne    jump_ebce9
 		call   ac_AIL_startup
 	jump_ebce9:
-		call   cd_init_
+		call   ac_cd_init
 		test   %al,%al
 		jne    jump_ebcfa
 		mov    %al,CDAble
@@ -518,7 +518,7 @@ GLOBAL_FUNC (ASM_InitRedbook)
 		pop    %ecx
 		ret
 	jump_ebcfa:
-		call   GetCDVolume_
+		call   ac_GetCDVolume
 		mov    %al,InitialCDVolume
 		pop    %edx
 		pop    %ecx
@@ -660,10 +660,10 @@ GLOBAL_FUNC (ASM_SetCDVolume)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (GetCDVolume_)
+GLOBAL_FUNC (ASM_GetCDVolume)
 /*----------------------------------------------------------------*/
 		cmpb   $0x0,CDAble
-		jne    GetCDAudioVolume_
+		jne    ac_GetCDAudioVolume
 		mov    $0xff,%al
 		ret
 

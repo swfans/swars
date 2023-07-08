@@ -48,7 +48,7 @@ struct TbsCDTime { // sizeof=unknown
 //int CDTrackInfo();
 //int CDAudioStatus();
 //int SetCDVolume();
-//int GetCDVolume();
+sbyte GetCDVolume(void);
 //long unsigned ConvertCDTime( TbsCDTime );
 //TbsCDTime ConvertDOSCDTime( long unsigned );
 //int IsCDPlaying();

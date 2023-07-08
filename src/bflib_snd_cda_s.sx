@@ -651,7 +651,7 @@ GLOBAL_FUNC (ASM_cd_stop)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (cd_init_)
+GLOBAL_FUNC (ASM_cd_init)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -1011,7 +1011,7 @@ GLOBAL_FUNC (SetCDAudioVolume_)
 		pop    %ebx
 		ret
 
-GLOBAL_FUNC (GetCDAudioVolume_)
+GLOBAL_FUNC (ASM_GetCDAudioVolume)
 		push   %ebx
 		push   %ecx
 		push   %edx

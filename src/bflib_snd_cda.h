@@ -26,10 +26,16 @@
 extern "C" {
 #endif
 /******************************************************************************/
+enum CDDeviceTypes {
+    CDTYP_NONE,
+    CDTYP_REAL,
+    CDTYP_OGG,
+};
 
 /******************************************************************************/
 TbBool GetCDAble(void);
 void InitRedbook(void);
+void InitMusicOGG(void);
 void PlayCDTrack(ushort trkno);
 void StopCD(void);
 /******************************************************************************/
