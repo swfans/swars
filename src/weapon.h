@@ -87,9 +87,9 @@ struct WeaponDef {
   ushort TargetMode;
   ushort Flags;
   ushort Sprite;
-  ushort Category;
   ushort Cost;
-  ubyte field_18;
+  ushort Funding;
+  ubyte PercentPerDay;
 };
 
 #pragma pack()

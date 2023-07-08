@@ -5668,9 +5668,9 @@ void show_menu_screen(void)
             }
         }
         if (buy_equip_button.CallBackFn == do_buy_equip)
-            sprintf(equip_cost_text, "%d", 100 * weapon_defs[selected_weapon + 1].Category);
+            sprintf(equip_cost_text, "%d", 100 * weapon_defs[selected_weapon + 1].Cost);
         else
-            sprintf(equip_cost_text, "%d", 100 * weapon_defs[selected_weapon + 1].Category >> 1);
+            sprintf(equip_cost_text, "%d", 100 * weapon_defs[selected_weapon + 1].Cost >> 1);
         redraw_screen_flag = 1;
         edit_flag = 0;
         change_screen = 0;
