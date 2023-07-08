@@ -79,6 +79,7 @@ swars_SOURCES = \
 	people.c \
 	people.h \
 	player.h \
+	research.c \
 	research.h \
 	scanner.c \
 	scanner.h \

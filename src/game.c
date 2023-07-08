@@ -4901,14 +4901,6 @@ void unkn_research_func_006(void)
         :  :  : "eax" );
 }
 
-int research_daily_progress_for_type(ubyte rstype)
-{
-    int ret;
-    asm volatile ("call ASM_research_daily_progress_for_type\n"
-        : "=r" (ret) : "a" (rstype));
-    return ret;
-}
-
 void net_unkn_func_33(void)
 {
     asm volatile ("call ASM_net_unkn_func_33\n"

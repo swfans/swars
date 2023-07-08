@@ -29,6 +29,29 @@ extern "C" {
 
 struct Thing;
 
+enum CyModType
+{
+  MOD_NULL = 0x0,
+  MOD_TYP01 = 0x1,
+  MOD_TYP02 = 0x2,
+  MOD_TYP03 = 0x3,
+  MOD_TYP04 = 0x4,
+  MOD_TYP05 = 0x5,
+  MOD_TYP06 = 0x6,
+  MOD_TYP07 = 0x7,
+  MOD_TYP08 = 0x8,
+  MOD_TYP09 = 0x9,
+  MOD_TYP10 = 0xA,
+  MOD_TYP11 = 0xB,
+  MOD_TYP12 = 0xC,
+  MOD_EPIDERM1 = 0xD,
+  MOD_EPIDERM2 = 0xE,
+  MOD_EPIDERM3 = 0xF,
+  MOD_EPIDERM4 = 0x10,
+  MOD_TYPES_COUNT,
+};
+
+
 struct ModDef {
 	ushort PowerOutput;
 	ushort Resilience;

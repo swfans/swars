@@ -37,8 +37,8 @@ struct ResearchInfo
     long ModFunding;
     sbyte Scientists;
     char NumBases;
-    char CurrentWeapon;
-    char CurrentMod;
+    sbyte CurrentWeapon;
+    sbyte CurrentMod;
     long WeaponsAllowed;
     long ModsAllowed;
     long WeaponsCompleted;
@@ -49,6 +49,7 @@ struct ResearchInfo
 /******************************************************************************/
 extern struct ResearchInfo research;
 
+int research_daily_progress_for_type(ubyte rstype);
 /******************************************************************************/
 #ifdef __cplusplus
 }
