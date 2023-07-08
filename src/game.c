@@ -4926,10 +4926,6 @@ void forward_research_progress(int num_days)
         if (research.CurrentMod != prev)
             new_mods_researched |= 1 << prev;
     }
-    // Scientists were already removed during daily progress
-    //research.Scientists -= scientists_lost;
-    if (research.Scientists < 0)
-        research.Scientists = 0;
     research_unkn_func_002();
 }
 
