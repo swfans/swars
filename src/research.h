@@ -28,11 +28,12 @@ extern "C" {
 #pragma pack(1)
 
 #define RESEARCH_COMPLETE_POINTS 25600
+#define RESEARCH_DAYS_STORED 10
 
 struct ResearchInfo
 {
-    ushort WeaponProgress[10][32];
-    ushort ModProgress[10][32];
+    ushort WeaponProgress[32][RESEARCH_DAYS_STORED];
+    ushort ModProgress[32][RESEARCH_DAYS_STORED];
     ubyte WeaponDaysDone[32];
     ubyte ModDaysDone[32];
     long WeaponFunding;

@@ -34,16 +34,16 @@ void research_wep_store_daily_progress(int progress)
     ushort cday;
 
     cwep = research.CurrentWeapon;
-    if (research.WeaponDaysDone[cwep] < 9)
+    if (research.WeaponDaysDone[cwep] < RESEARCH_DAYS_STORED-1)
     {
         cday = research.WeaponDaysDone[cwep] + 1;
     } else
     {
         // Shift the data left to make place for the next day
-        for (cday = 0; cday < 9; cday++) {
+        for (cday = 0; cday < RESEARCH_DAYS_STORED-1; cday++) {
             research.WeaponProgress[cwep][cday] = research.WeaponProgress[cwep][cday + 1];
         }
-        cday = 9;
+        cday = RESEARCH_DAYS_STORED-1;
     }
     if (cday > 0)
         research.WeaponProgress[cwep][cday] = research.WeaponProgress[cwep][cday - 1];
@@ -56,8 +56,8 @@ int research_wep_get_progress(short cwep)
 {
     ushort cday;
 
-    if (research.WeaponDaysDone[cwep] >= 9)
-        cday = 9;
+    if (research.WeaponDaysDone[cwep] >= RESEARCH_DAYS_STORED-1)
+        cday = RESEARCH_DAYS_STORED-1;
     else
         cday = research.WeaponDaysDone[cwep] + 1;
     return research.WeaponProgress[cwep][cday];
@@ -100,16 +100,16 @@ void research_cymod_store_daily_progress(int progress)
     ushort cday;
 
     cmod = research.CurrentMod;
-    if (research.ModDaysDone[cmod] < 9)
+    if (research.ModDaysDone[cmod] < RESEARCH_DAYS_STORED-1)
     {
         cday = research.ModDaysDone[cmod] + 1;
     } else
     {
         // Shift the data left to make place for the next day
-        for (cday = 0; cday < 9; cday++) {
+        for (cday = 0; cday < RESEARCH_DAYS_STORED-1; cday++) {
             research.ModProgress[cmod][cday] = research.ModProgress[cmod][cday + 1];
         }
-        cday = 9;
+        cday = RESEARCH_DAYS_STORED-1;
     }
     if (cday > 0)
         research.ModProgress[cmod][cday] = research.ModProgress[cmod][cday - 1];
@@ -122,8 +122,8 @@ int research_cymod_get_progress(short cmod)
 {
     ushort cday;
 
-    if (research.ModDaysDone[cmod] >= 9)
-        cday = 9;
+    if (research.ModDaysDone[cmod] >= RESEARCH_DAYS_STORED-1)
+        cday = RESEARCH_DAYS_STORED-1;
     else
         cday = research.ModDaysDone[cmod] + 1;
     return research.ModProgress[cmod][cday];
