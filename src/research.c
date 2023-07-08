@@ -166,7 +166,7 @@ int research_cymod_next_type(void)
 
 int research_unkn_func_004(ushort percent_per_day, int expect_funding, int real_funding)
 {
-#if 1
+#if 0
     int ret;
     asm volatile ("call ASM_research_unkn_func_004\n"
         : "=r" (ret) : "a" (percent_per_day), "d" (expect_funding), "b" (real_funding));
