@@ -393,7 +393,7 @@ GLOBAL_FUNC (ASM_prepare_SB16_volumes)
 		lea    0x0(,%eax,8),%eax
 		sub    $0x10,%eax
 		out    %al,(%dx)
-		movb   $0x1,sb16_mixer_set
+		movb   $0x1,EXPORT_SYMBOL(sb16_mixer_set)
 	jump_ebbb1:
 		pop    %edx
 		pop    %ecx
@@ -403,7 +403,7 @@ GLOBAL_FUNC (ASM_prepare_SB16_volumes)
 
 /*----------------------------------------------------------------*/
 /* void reset_SB16_volumes(void) */
-reset_SB16_volumes:
+GLOBAL_FUNC (ASM_reset_SB16_volumes)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -751,9 +751,9 @@ format_sounds:
 		push   %esi
 		push   %edi
 		mov    NumberOfSamples,%bx
-		mov    EndSfxs,%ecx
-		mov    SfxData,%esi
-		mov    Sfx,%edx
+		mov    EXPORT_SYMBOL(EndSfxs),%ecx
+		mov    EXPORT_SYMBOL(SfxData),%esi
+		mov    EXPORT_SYMBOL(Sfx),%edx
 		test   %edx,%edx
 		je     jump_ec94f
 		test   %esi,%esi
@@ -771,8 +771,8 @@ format_sounds:
 		cmp    %ecx,%eax
 		jb     jump_ec93f
 	jump_ec94f:
-		mov    %esi,SfxData
-		mov    %ecx,EndSfxs
+		mov    %esi,EXPORT_SYMBOL(SfxData)
+		mov    %ecx,EXPORT_SYMBOL(EndSfxs)
 		mov    %bx,NumberOfSamples
 		pop    %edi
 		pop    %esi
@@ -805,31 +805,31 @@ load_sound_bank:
 		cmpl   $0xffffffff,0x4(%esp,%ebp,1)
 		je     jump_ecb73
 		xor    %ah,%ah
-		mov    SfxData,%ebx
+		mov    EXPORT_SYMBOL(SfxData),%ebx
 		mov    %ah,SoundAble
 		test   %ebx,%ebx
 		je     jump_ecb73
-		cmpl   $0x0,Sfx
+		cmpl   $0x0,EXPORT_SYMBOL(Sfx)
 		je     jump_ecb73
 		mov    largest_dat_size,%ebx
-		mov    SfxData,%eax
+		mov    EXPORT_SYMBOL(SfxData),%eax
 		xor    %edx,%edx
 		call   ac_memset
 		mov    largest_tab_size,%ebx
-		mov    Sfx,%eax
+		mov    EXPORT_SYMBOL(Sfx),%eax
 		xor    %edx,%edx
 		call   ac_memset
-		mov    Sfx,%esi
+		mov    EXPORT_SYMBOL(Sfx),%esi
 		mov    0x8(%esp,%ebp,1),%eax
 		lea    (%esi,%eax,1),%edx
 		xor    %ebx,%ebx
-		mov    %edx,EndSfxs
+		mov    %edx,EXPORT_SYMBOL(EndSfxs)
 		mov    %ecx,%eax
 		mov    0x4(%esp,%ebp,1),%edx
-		mov    SfxData,%edi
+		mov    EXPORT_SYMBOL(SfxData),%edi
 		call   ac_LbFileSeek
 		mov    $0x8,%ebx
-		mov    SfxData,%edx
+		mov    EXPORT_SYMBOL(SfxData),%edx
 		mov    %ecx,%eax
 		call   ac_LbFileRead
 		xor    %eax,%eax
@@ -858,7 +858,7 @@ load_sound_bank:
 		shl    $0x8,%eax
 		mov    0x7(%edi),%dl
 		add    %edx,%eax
-		mov    SfxData,%edx
+		mov    EXPORT_SYMBOL(SfxData),%edx
 		lea    -0x8(%eax),%ebx
 		add    $0x8,%edx
 		mov    %ecx,%eax
@@ -870,7 +870,7 @@ load_sound_bank:
 	jump_eca8a:
 		xor    %ebx,%ebx
 		mov    0x90(%esp),%bl
-		mov    SfxData,%edx
+		mov    EXPORT_SYMBOL(SfxData),%edx
 		shl    $0x4,%ebx
 		mov    %ecx,%eax
 		mov    0xc(%esp,%ebx,1),%ebx
@@ -886,7 +886,7 @@ load_sound_bank:
 		mov    %ecx,%eax
 		call   ac_LbFileSeek
 		mov    $0x8,%ebx
-		mov    Sfx,%edx
+		mov    EXPORT_SYMBOL(Sfx),%edx
 		mov    %ecx,%eax
 		call   ac_LbFileRead
 		xor    %eax,%eax
@@ -915,7 +915,7 @@ load_sound_bank:
 		shl    $0x8,%eax
 		mov    0x7(%esi),%dl
 		add    %edx,%eax
-		mov    Sfx,%edx
+		mov    EXPORT_SYMBOL(Sfx),%edx
 		lea    -0x8(%eax),%ebx
 		add    $0x8,%edx
 		mov    %ecx,%eax
@@ -928,7 +928,7 @@ load_sound_bank:
 		xor    %eax,%eax
 		mov    0x90(%esp),%al
 		shl    $0x4,%eax
-		mov    Sfx,%edx
+		mov    EXPORT_SYMBOL(Sfx),%edx
 		mov    0x8(%esp,%eax,1),%ebx
 		add    $0x8,%edx
 		sub    $0x8,%ebx
@@ -1088,23 +1088,23 @@ AllocateSoundBankMemory_:
 		push   %ebp
 		push   $aSoundDataSizeD
 		push   $SoundProgressMessage
-		mov    %eax,SfxData
+		mov    %eax,EXPORT_SYMBOL(SfxData)
 		call   ac_sprintf
 		add    $0xc,%esp
 		mov    $SoundProgressMessage,%eax
 		call   ac_SoundProgressLog
 		lea    0x100(%edi),%eax
 		call   ac_LbMemoryAlloc
-		mov    SfxData,%edx
-		mov    %eax,Sfx
+		mov    EXPORT_SYMBOL(SfxData),%edx
+		mov    %eax,EXPORT_SYMBOL(Sfx)
 		test   %edx,%edx
 		je     jump_ecd96
 		test   %eax,%eax
 		jne    jump_ecdb6
 	jump_ecd96:
-		mov    SfxData,%eax
+		mov    EXPORT_SYMBOL(SfxData),%eax
 		call   ac_LbMemoryFree
-		mov    Sfx,%eax
+		mov    EXPORT_SYMBOL(Sfx),%eax
 		call   ac_LbMemoryFree
 		xor    %eax,%eax
 		add    $0x4,%esp
@@ -1123,7 +1123,7 @@ AllocateSoundBankMemory_:
 		mov    %edi,largest_tab_size
 		call   ac_memset
 		mov    largest_tab_size,%ebx
-		mov    Sfx,%eax
+		mov    EXPORT_SYMBOL(Sfx),%eax
 		xor    %edx,%edx
 		call   ac_memset
 		mov    $0x1,%eax
@@ -1719,9 +1719,9 @@ GLOBAL_FUNC (ASM_FreeAudio)
 	jump_ed4d5:
 		call   FreeMusic_
 		call   FreeSound_
-		cmpb   $0x0,sb16_mixer_set
+		cmpb   $0x0,EXPORT_SYMBOL(sb16_mixer_set)
 		je     jump_ed4ed
-		call   reset_SB16_volumes
+		call   ac_reset_SB16_volumes
 	jump_ed4ed:
 		pop    %edx
 		pop    %ecx
@@ -1903,7 +1903,7 @@ GLOBAL_FUNC (DangerMusicFadeTick)
 		je     jump_ef11b
 		cmpb   $0x0,MusicActive
 		je     jump_ef11b
-		cmpw   $0x0,SongCurrentlyPlaying
+		cmpw   $0x0,EXPORT_SYMBOL(SongCurrentlyPlaying)
 		je     jump_ef11b
 		mov    SongHandle,%edx
 		push   %edx
@@ -2019,7 +2019,7 @@ GLOBAL_FUNC (DangerMusicFadeSwitch)
 		je     jump_ef27c
 		cmpb   $0x0,MusicActive
 		je     jump_ef27c
-		cmpw   $0x0,SongCurrentlyPlaying
+		cmpw   $0x0,EXPORT_SYMBOL(SongCurrentlyPlaying)
 		je     jump_ef27c
 		mov    SongHandle,%edx
 		push   %edx
@@ -2107,7 +2107,7 @@ GLOBAL_FUNC (SetSampleTempo)
 		mov    CurrentTempo,%ax
 		cmp    %ebx,%eax
 		je     jump_ef2dd
-		cmpw   $0x0,SongCurrentlyPlaying
+		cmpw   $0x0,EXPORT_SYMBOL(SongCurrentlyPlaying)
 		je     jump_ef2dd
 		push   %edx
 		push   %ebx
@@ -2138,7 +2138,7 @@ GLOBAL_FUNC (SetSampleTempoNormal)
 		mov    CurrentTempo,%ax
 		cmp    $0x64,%eax
 		je     jump_ef334
-		cmpw   $0x0,SongCurrentlyPlaying
+		cmpw   $0x0,EXPORT_SYMBOL(SongCurrentlyPlaying)
 		je     jump_ef334
 		push   $0x0
 		push   $0x64
@@ -2324,7 +2324,7 @@ GLOBAL_FUNC (SetVolume_func_ee980) /* 0xee980 */
 		je     jump_ee9dc
 		cmpb   $0x0,MusicActive
 		je     jump_ee9dc
-		cmpw   $0x0,SongCurrentlyPlaying
+		cmpw   $0x0,EXPORT_SYMBOL(SongCurrentlyPlaying)
 		je     jump_ee9dc
 		movzbl %dl,%esi
 		cmp    $0x7f,%esi
@@ -2444,7 +2444,7 @@ GLOBAL_FUNC (StartMusic_)
 		cmp    %ebx,%eax
 		jg     jump_f0656
 		xor    %ebx,%ebx
-		mov    SongCurrentlyPlaying,%bx
+		mov    EXPORT_SYMBOL(SongCurrentlyPlaying),%bx
 		cmp    %eax,%ebx
 		je     jump_f0656
 		cmpb   $0x0,DangerMusicFadeActive
@@ -2460,7 +2460,7 @@ GLOBAL_FUNC (StartMusic_)
 		movb   $0x1,CurrentDangerMusicFadeDirection
 		mov    %bh,DangerMusicVolume
 		movb   $0xff,DangerMusicVolumeChange
-		cmpw   $0x0,SongCurrentlyPlaying
+		cmpw   $0x0,EXPORT_SYMBOL(SongCurrentlyPlaying)
 		je     jump_f04d8
 		mov    SongHandle,%ebx
 		push   %ebx
@@ -2478,7 +2478,7 @@ GLOBAL_FUNC (StartMusic_)
 		add    $0x4,%esp
 	jump_f04cf:
 		xor    %ebx,%ebx
-		mov    %bx,SongCurrentlyPlaying
+		mov    %bx,EXPORT_SYMBOL(SongCurrentlyPlaying)
 	jump_f04d8:
 		movswl %si,%ebx
 		mov    BfMusic,%eax
@@ -2601,7 +2601,7 @@ GLOBAL_FUNC (StartMusic_)
 		call   AIL_start_sequence
 		mov    $0x64,%ecx
 		add    $0x4,%esp
-		mov    %si,SongCurrentlyPlaying
+		mov    %si,EXPORT_SYMBOL(SongCurrentlyPlaying)
 		mov    %cx,CurrentTempo
 	jump_f0656:
 		add    $0x8,%esp
@@ -2898,13 +2898,13 @@ FreeStreamedSound_:
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %edx
-		mov    sample_file,%edx
+		mov    EXPORT_SYMBOL(sample_file),%edx
 		cmp    $0xffffffff,%edx
 		je     jump_1006df
 		mov    %edx,%eax
 		mov    $0xffffffff,%ebx
 		call   ac_LbFileClose
-		mov    %ebx,sample_file
+		mov    %ebx,EXPORT_SYMBOL(sample_file)
 	jump_1006df:
 		call   SwitchOffStreamedSound_
 		call   ac_free_buffers
@@ -2924,7 +2924,7 @@ SwitchOffStreamedSound_:
 		push   %edi
 		cmpb   $0x0,EXPORT_SYMBOL(StreamedSoundAble)
 		je     jump_100d1b
-		cmpb   $0x0,active
+		cmpb   $0x0,EXPORT_SYMBOL(ssnd_active)
 		je     jump_100d1b
 		mov    sample_handle,%edx
 		push   %edx
@@ -2938,27 +2938,27 @@ SwitchOffStreamedSound_:
 		mov    EXPORT_SYMBOL(ssnd_buffer)+4,%eax
 		xor    %edx,%edx
 		call   ac_memset
-		mov    sample_file,%ebx
+		mov    EXPORT_SYMBOL(sample_file),%ebx
 		cmp    $0xffffffff,%ebx
 		je     jump_100cec
 		mov    %ebx,%eax
 		mov    $0xffffffff,%ecx
 		call   ac_LbFileClose
-		mov    %ecx,sample_file
+		mov    %ecx,EXPORT_SYMBOL(sample_file)
 	jump_100cec:
-		cmpl   $0x0,adpcm_file_open
+		cmpl   $0x0,EXPORT_SYMBOL(adpcm_file_open)
 		je     jump_100d02
 		xor    %edi,%edi
 		call   close_adpcm_file_
-		mov    %edi,adpcm_file_open
+		mov    %edi,EXPORT_SYMBOL(adpcm_file_open)
 	jump_100d02:
-		cmpb   $0x0,mixed_file_open
+		cmpb   $0x0,EXPORT_SYMBOL(mixed_file_open)
 		je     jump_100d13
 		xor    %bl,%bl
-		mov    %bl,mixed_file_open
+		mov    %bl,EXPORT_SYMBOL(mixed_file_open)
 	jump_100d13:
 		xor    %bh,%bh
-		mov    %bh,active
+		mov    %bh,EXPORT_SYMBOL(ssnd_active)
 	jump_100d1b:
 		pop    %edi
 		pop    %edx
@@ -3065,7 +3065,7 @@ GLOBAL_FUNC(ASM_StopMusic)
 		je     jump_108c5a
 		cmpb   $0x0,MusicActive
 		je     jump_108c5a
-		cmpw   $0x0,SongCurrentlyPlaying
+		cmpw   $0x0,EXPORT_SYMBOL(SongCurrentlyPlaying)
 		je     jump_108c5a
 		cmpb   $0x0,DangerMusicFadeActive
 		je     jump_108bfd
@@ -3096,7 +3096,7 @@ GLOBAL_FUNC(ASM_StopMusic)
 		add    $0x4,%esp
 	jump_108c51:
 		xor    %ebx,%ebx
-		mov    %bx,SongCurrentlyPlaying
+		mov    %bx,EXPORT_SYMBOL(SongCurrentlyPlaying)
 	jump_108c5a:
 		pop    %esi
 		pop    %edx
@@ -3115,7 +3115,7 @@ FreeMusic_:
 		push   %edi
 		cmpb   $0x0,EXPORT_SYMBOL(MusicInstalled)
 		je     jump_108d00
-		cmpw   $0x0,SongCurrentlyPlaying
+		cmpw   $0x0,EXPORT_SYMBOL(SongCurrentlyPlaying)
 		je     jump_108ca3
 		mov    SongHandle,%edx
 		push   %edx
@@ -3126,7 +3126,7 @@ FreeMusic_:
 		call   ac_AIL_end_sequence
 		xor    %ebx,%ebx
 		add    $0x4,%esp
-		mov    %bx,SongCurrentlyPlaying
+		mov    %bx,EXPORT_SYMBOL(SongCurrentlyPlaying)
 	jump_108ca3:
 		xor    %eax,%eax
 		mov    Awe32SoundfontLoaded,%al
@@ -3178,15 +3178,15 @@ FreeSound_:
 		jne    jump_108d2f
 		call   ac_AIL_shutdown
 	jump_108d2f:
-		mov    Sfx,%edx
+		mov    EXPORT_SYMBOL(Sfx),%edx
 		test   %edx,%edx
 		je     jump_108d48
 		mov    %edx,%eax
 		xor    %ebx,%ebx
 		call   ac_LbMemoryFree
-		mov    %ebx,EndSfxs
+		mov    %ebx,EXPORT_SYMBOL(EndSfxs)
 	jump_108d48:
-		mov    SfxData,%ecx
+		mov    EXPORT_SYMBOL(SfxData),%ecx
 		test   %ecx,%ecx
 		je     jump_108d59
 		mov    %ecx,%eax
@@ -4472,7 +4472,7 @@ cb_sample_queue_callback:	/* 0x1095A0 */
 		push   %edi
 		call   ail_func_104d20
 		mov    %eax,%edx
-		mov    Sfx,%eax
+		mov    EXPORT_SYMBOL(Sfx),%eax
 		shl    $0x5,%edx
 		add    $0x8,%esp
 		mov    0x12(%edx,%eax,1),%ebp
@@ -4582,13 +4582,13 @@ close_adpcm_file_:
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %edx
-		mov    adpcm_handle,%edx
+		mov    EXPORT_SYMBOL(adpcm_handle),%edx
 		cmp    $0xffffffff,%edx
 		je     jump_1109ff
 		mov    %edx,%eax
 		mov    $0xffffffff,%ebx
 		call   ac_LbFileClose
-		mov    %ebx,adpcm_handle
+		mov    %ebx,EXPORT_SYMBOL(adpcm_handle)
 	jump_1109ff:
 		pop    %edx
 		pop    %ebx
@@ -4923,17 +4923,17 @@ CurrentDangerMusicFadeDirection:
 		.byte	0x1
 DangerMusicVolumeChange:
 		.byte	0xff
-sample_file:
+GLOBAL (sample_file)
 		.ascii  "\xff\xff\xff\xff"
 sample_volume:
 		.long	0x7f
-active:
+GLOBAL (ssnd_active)
 		.long	0x01
 
 _CurrentAwe32SoundfontPrefix:
 		.string "Bullfrog"
 		.align	4
-adpcm_handle:	/* 0x159E54 */
+GLOBAL (adpcm_handle)	/* 0x159E54 */
 		.ascii  "\xff\xff\xff\xff"
 adaption_table:	/* 0x159E58 */
 		.ascii  "\xe6\x00\x00\x00\xe6\x00\x00\x00"
@@ -5070,11 +5070,11 @@ GLOBAL (DisableLoadSounds)
 		.byte	0x0
 NumberOfSamples:
 		.short  0x0
-Sfx:
+GLOBAL (Sfx)
 		.long	0x0
-EndSfxs:
+GLOBAL (EndSfxs)
 		.long	0x0
-SfxData:
+GLOBAL (SfxData)
 		.long	0x0
 GLOBAL (SoundType)
 		.short  0x0
@@ -5114,7 +5114,7 @@ GLOBAL (MusicType)
 		.fill   0x6
 CurrentTempo:
 		.short  0x0
-SongCurrentlyPlaying:
+GLOBAL (SongCurrentlyPlaying)
 		.short  0x0
 NumberOfSongs:				/* 0x1E8C5E */
 		.short  0x0
@@ -5192,7 +5192,7 @@ temp_buffer:
 		.long	0x0
 GLOBAL (adpcm_source_buffer)
 		.long	0x0
-adpcm_file_open:
+GLOBAL (adpcm_file_open)
 		.long	0x0
 adpcm_source_size:
 		.long	0x0
@@ -5212,7 +5212,7 @@ pan_target:	/* 0x1E8F90 */
 		.long	0x0
 GLOBAL (mixer_buffer) /* 0x1e8f94 */
 		.long	0x0
-mixed_file_open:
+GLOBAL (mixed_file_open)
 		.byte	0x0
 		.fill   0x7
 

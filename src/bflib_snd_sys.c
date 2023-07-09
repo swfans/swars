@@ -27,6 +27,7 @@
 #include "bfmemory.h"
 #include "bfmemut.h"
 #include "bffile.h"
+#include "bfscd.h"
 #include "ail.h"
 #include "aildebug.h"
 #include "memfile.h"
@@ -53,6 +54,12 @@ extern TbBool UseCurrentAwe32Soundfont;
 extern TbBool DisableLoadMusic;
 extern TbBool SoundInstalled;
 extern TbBool StreamedSoundAble;
+extern uint16_t SongCurrentlyPlaying;
+extern int32_t sample_file;
+extern uint8_t ssnd_active;
+extern TbFileHandle adpcm_handle;
+extern long adpcm_file_open;
+extern uint8_t mixed_file_open;
 extern AIL_INI MusicInstallChoice;
 extern AIL_INI SoundInstallChoice;
 extern char FullDIG_INIPath[144];
@@ -77,6 +84,7 @@ extern TbBool Awe32SoundfontLoaded;
 extern uint8_t *ssnd_buffer[2];
 extern uint8_t *adpcm_source_buffer;
 extern int16_t *mixer_buffer;
+extern uint8_t sb16_mixer_set;
 
 extern struct SampleInfo sample_id[32];
 extern struct SampleInfo *end_sample_id;
@@ -92,6 +100,10 @@ extern char full_music_data_path[144];
 extern struct MusicBankSizes music_bank_size_info;
 extern void *BfMusicData;
 extern void *BfMusic;
+extern void *BfEndMusic;
+extern void *SfxData;
+extern void *Sfx;
+extern void *EndSfxs;
 
 /** Wrapper for LbMemoryAlloc(), needed to make sure data sizes match.
  */
@@ -186,12 +198,6 @@ TbBool IsSamplePlaying(long tng_offs, ushort smp_id, TbSampleHandle handle)
     asm volatile ("call ASM_IsSamplePlaying\n"
         : "=r" (ret) : "a" (tng_offs), "d" (smp_id), "b" (handle));
     return ret;
-}
-
-void FreeAudio(void)
-{
-    asm volatile ("call ASM_FreeAudio\n"
-        :  :  : "eax" );
 }
 
 void SetSoundMasterVolume(long vol)
@@ -880,6 +886,14 @@ void free_buffers(void)
     }
 }
 
+void close_adpcm_file(void)
+{
+    if (adpcm_handle == INVALID_FILE)
+        return;
+    LbFileClose(adpcm_handle);
+    adpcm_handle = INVALID_FILE;
+}
+
 void InitStreamedSound(void)
 {
 #if 1
@@ -912,8 +926,39 @@ void InitStreamedSound(void)
         SoundProgressLog(SoundProgressMessage);
         return;
     }
-    StreamedSoundAble = 1;
+    StreamedSoundAble = true;
 #endif
+}
+
+void SwitchOffStreamedSound(void)
+{
+    if (!StreamedSoundAble || !ssnd_active)
+        return;
+    AIL_end_sample(sample_handle);
+    memset(ssnd_buffer[0], 0, 0x4000u);
+    memset(ssnd_buffer[1], 0, 0x4000u);
+    if (sample_file != -1) {
+        LbFileClose(sample_file);
+        sample_file = -1;
+    }
+    if (adpcm_file_open) {
+        close_adpcm_file();
+        adpcm_file_open = 0;
+    }
+    if (mixed_file_open)
+        mixed_file_open = 0;
+    ssnd_active = false;
+}
+
+void FreeStreamedSound(void)
+{
+    if (sample_file != -1) {
+        LbFileClose(sample_file);
+        sample_file = -1;
+    }
+    SwitchOffStreamedSound();
+    free_buffers();
+    StreamedSoundAble = false;
 }
 
 void InitAllBullfrogSoundTimers(void)
@@ -926,6 +971,74 @@ void prepare_SB16_volumes(void)
 {
     asm volatile ("call ASM_prepare_SB16_volumes\n"
         :  :  : "eax" );
+}
+
+void reset_SB16_volumes(void)
+{
+    asm volatile ("call ASM_reset_SB16_volumes\n"
+        :  :  : "eax" );
+}
+
+void FreeMusic(void)
+{
+    if (!MusicInstalled)
+        return;
+    if (SongCurrentlyPlaying)
+    {
+        AIL_stop_sequence(SongHandle);
+        AIL_end_sequence(SongHandle);
+        SongCurrentlyPlaying = 0;
+    }
+    if (Awe32SoundfontLoaded == 1)
+        FreeAwe32Soundfont();
+    if (!SoundInstalled)
+        AIL_shutdown();
+    if (BfMusic) {
+        LbMemoryFree(BfMusic);
+        BfEndMusic = 0;
+    }
+    if (BfMusicData)
+        LbMemoryFree(BfMusicData);
+    MusicAble = false;
+    MusicActive = false;
+    MusicInstalled = false;
+}
+
+void FreeSound(void)
+{
+    if (!SoundInstalled)
+        return;
+    StopAllSamples();
+    if (!MusicInstalled)
+        AIL_shutdown();
+    if (Sfx) {
+        LbMemoryFree(Sfx);
+        EndSfxs = 0;
+    }
+    if (SfxData)
+        LbMemoryFree(SfxData);
+    SoundAble = false;
+    SoundActive = false;
+    SoundInstalled = false;
+}
+
+void FreeAudio(void)
+{
+#if 0
+    asm volatile ("call ASM_FreeAudio\n"
+        :  :  : "eax" );
+#endif
+    if (GetCDAble()) {
+        FreeCD();
+        if (!GetSoundAble() && !GetMusicAble())
+            AIL_shutdown();
+    }
+    if (StreamedSoundAble)
+        FreeStreamedSound();
+    FreeMusic();
+    FreeSound();
+    if (sb16_mixer_set)
+        reset_SB16_volumes();
 }
 
 /******************************************************************************/
