@@ -208,8 +208,16 @@ void SetSoundMasterVolume(long vol)
 
 void SetMusicMasterVolume(long vol)
 {
+#if 0
     asm volatile ("call ASM_SetMusicMasterVolume\n"
         :  : "a" (vol));
+#endif
+    if (!MusicInstalled || !MusicAble || !MusicInstalled)
+        return;
+    if (vol == CurrentMusicMasterVolume || vol > 127 || vol < 0)
+        return;
+    AIL_set_XMIDI_master_volume(MusicDriver, vol);
+    CurrentMusicMasterVolume = vol;
 }
 
 void DetermineSoundType(void)

@@ -32,6 +32,12 @@ extern char SoundDriverPath[144];
 
 #define AIL_ptr_add(ptr,off) ((void*)(((uint8_t*)(ptr))+(off)))
 
+#define MSSLockedIncrement(var) (++var)
+#define MSSLockedDecrement(var) (--var)
+
+#define MSSLockedIncrementPtr(var) (++var)
+#define MSSLockedDecrementPtr(var) (--var)
+
 /** Return size in bytes of MIDI channel voice message, based on type.
  */
 int32_t XMI_message_size(int32_t status);

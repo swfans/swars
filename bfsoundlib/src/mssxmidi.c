@@ -637,6 +637,22 @@ void XMI_refresh_channel(SNDSEQUENCE *seq, int32_t ch)
     }
 }
 
+void XMI_update_volume(SNDSEQUENCE *seq)
+{
+    int32_t ch;
+
+    for (ch=0; ch < AIL_NUM_CHANS; ch++)
+    {
+      // Skip channels with no volume controller history
+      if (seq->shadow.vol[ch] == -1)
+         continue;
+
+      // Retransmit volume values to permit volume scaling
+      XMI_send_channel_voice_message(seq, MDI_EV_CONTROL | ch,
+              MDI_CTR_PART_VOLUME, seq->shadow.vol[ch], 0);
+    }
+}
+
 void AIL2OAL_API_release_channel(MDI_DRIVER *mdidrv, int32_t channel)
 {
     int32_t i, j, ch;
@@ -720,6 +736,30 @@ void XMI_flush_note_queue(SNDSEQUENCE *seq)
     // slower MPU-401 devices enough time to process MIDI data
     if ((nmsgs) && (!AIL_background()))
         AIL_delay(3);
+}
+
+void AIL2OAL_API_set_XMIDI_master_volume(MDI_DRIVER *mdidrv, int32_t master_volume)
+{
+    SNDSEQUENCE *seq;
+    int32_t i;
+
+    // Set new volume; return if redundant setting
+    if (mdidrv->master_volume == master_volume)
+       return;
+
+    mdidrv->master_volume = master_volume;
+
+    // Force all sequences to update their volume controllers
+    MSSLockedIncrementPtr(mdidrv->disable);
+
+    for (i = mdidrv->n_sequences, seq = &mdidrv->sequences[0]; i; i--,seq++)
+    {
+        if ((seq->status != SNDSEQ_PLAYING) && (seq->status != SNDSEQ_PLAYINGRELEASED))
+            continue;
+        XMI_update_volume(seq);
+    }
+
+    MSSLockedDecrementPtr(mdidrv->disable);
 }
 
 int32_t AIL2OAL_API_install_MDI_INI(MDI_DRIVER **mdidrv)

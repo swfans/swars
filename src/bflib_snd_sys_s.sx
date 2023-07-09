@@ -1751,7 +1751,7 @@ GLOBAL_FUNC (ASM_SetMusicMasterVolume)
 		push   %ebx
 		mov    MusicDriver,%ecx
 		push   %ecx
-		call   AIL_set_XMIDI_master_volume
+		call   ac_AIL_set_XMIDI_master_volume
 		add    $0x8,%esp
 		mov    %ebx,CurrentMusicMasterVolume
 	jump_ee6f3:

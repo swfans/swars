@@ -111,6 +111,10 @@ void AIL_release_timer_handle(HSNDTIMER timer);
  */
 void *AIL_set_timer_user(HSNDTIMER timer, void *user_data);
 
+/** Set master volume for all sequences.
+ */
+void AIL_set_XMIDI_master_volume(MDI_DRIVER *mdidrv, int32_t master_volume);
+
 /** Release (unlock) a locked physical channel.
  */
 void AIL_release_channel(MDI_DRIVER *mdidrv, int32_t channel);

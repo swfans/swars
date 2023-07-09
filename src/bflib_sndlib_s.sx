@@ -1239,7 +1239,7 @@ GLOBAL_FUNC (AIL_sequence_status)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (AIL_set_XMIDI_master_volume)
+GLOBAL_FUNC (ASM_AIL_set_XMIDI_master_volume)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %edi
@@ -1282,7 +1282,7 @@ GLOBAL_FUNC (AIL_set_XMIDI_master_volume)
 		push   %edx
 		mov    0x14(%esp),%ebx
 		push   %ebx
-		call   AIL_API_set_XMIDI_master_volume
+		call   ac_AIL2OAL_API_set_XMIDI_master_volume
 		mov    AIL_indent,%ecx
 		dec    %ecx
 		add    $0x8,%esp
@@ -9928,7 +9928,7 @@ _AIL_API_sequence_status:	/* 0x116E20 */
 
 
 /*----------------------------------------------------------------*/
-AIL_API_set_XMIDI_master_volume:
+ASM_AIL_API_set_XMIDI_master_volume:
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %esi
