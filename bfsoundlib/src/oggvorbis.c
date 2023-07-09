@@ -1,11 +1,31 @@
+/******************************************************************************/
+// Bullfrog Sound Library - for use to remake classic games like
+// Syndicate Wars, Magic Carpet, Genewars or Dungeon Keeper.
+/******************************************************************************/
+/** @file oggvorbis.c
+ *     Ogg/Vorbis audio files playback.
+ * @par Purpose:
+ *     Allows emulating CD Audio using compressed audio files.
+ * @par Comment:
+ *     None.
+ * @author   Gynvael Coldwind
+ * @author   Unavowed
+ * @date     12 Jan 2010 - 05 Jun 2023
+ * @par  Copying and copyrights:
+ *     This program is free software; you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation; either version 2 of the License, or
+ *     (at your option) any later version.
+ */
+/******************************************************************************/
 #include <assert.h>
 #include <string.h>
 #include <errno.h>
 
 #include "oggvorbis.h"
-#include "swlog.h"
 #include "sound_util.h"
 #include "util.h"
+#include "snderr.h"
 
 #define SOUND_MUSIC_BUFSIZE   16384
 
@@ -103,14 +123,16 @@ ogg_vorbis_stream_open (OggVorbisStream *stream, const char *fname)
   f = fopen (fname, "rb");
   if (f == NULL)
     {
-      LOGERR("%s: Cannot fopen: %s", fname, strerror(errno));
+      sprintf(SoundProgressMessage, "%s: Cannot fopen: %s", fname, strerror(errno));
+      SoundProgressLog(SoundProgressMessage);
       return false;
     }
 
   if (ov_open_callbacks (f, &stream->file,
 			 NULL, 0, OV_CALLBACKS_DEFAULT) != 0)
     {
-      LOGERR("%s: Invalid Ogg/Vorbis stream.", fname);
+      sprintf(SoundProgressMessage, "%s: Invalid Ogg/Vorbis stream.", fname);
+      SoundProgressLog(SoundProgressMessage);
       goto err;
     }
 
@@ -119,7 +141,8 @@ ogg_vorbis_stream_open (OggVorbisStream *stream, const char *fname)
   info = ov_info (&stream->file, -1);
   if (info == NULL)
     {
-      LOGERR("%s: Failed to read stream information.", fname);
+      sprintf(SoundProgressMessage, "%s: Failed to read stream information.", fname);
+      SoundProgressLog(SoundProgressMessage);
       goto err;
     }
 
@@ -222,7 +245,8 @@ ogg_vorbis_stream_update (OggVorbisStream *stream)
 			   true, NULL);
 	  if (count < 0)
 	    {
-	      LOGERR("Error: Failed to read ogg/vorbis data.");
+          sprintf(SoundProgressMessage, "Error: Failed to read ogg/vorbis data.");
+          SoundProgressLog(SoundProgressMessage);
 	      stream->playing = false;
 	      return false;
 	    }
@@ -278,3 +302,5 @@ ogg_vorbis_stream_update (OggVorbisStream *stream)
 
   return true;
 }
+
+/******************************************************************************/

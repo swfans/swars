@@ -27,6 +27,12 @@ extern "C" {
 #endif
 /******************************************************************************/
 
+enum CDDeviceTypes {
+    CDTYP_NONE,
+    CDTYP_REAL,
+    CDTYP_OGG,
+};
+
 typedef struct TbsCDTime TbsCDTime;
 
 struct TbsCDTime { // sizeof=unknown
@@ -35,25 +41,26 @@ struct TbsCDTime { // sizeof=unknown
 
 //void cbCDCountdown( long unsigned );
 //int GetCDCountdown();
-//int GetCDAble();
-//short unsigned CDTrackPlaying();
-//int InitRedbook();
-//int PlayCDTrack();
+TbBool GetCDAble(void);
+//ushort CDTrackPlaying();
+void InitRedbook(void);
+void InitMusicOGG(const char *nmusic_dir);
+void PlayCDTrack(ushort trkno);
 //int PlayCDChunk();
 //int PlayCDFromTrack();
-//int PauseCD();
-//int ResumeCD();
-//int StopCD();
+void PauseCD(void);
+void ResumeCD(void);
+void StopCD(void);
 //int NumCDTracks();
 //int CDTrackInfo();
 //int CDAudioStatus();
-//int SetCDVolume();
+void SetCDVolume(short vol);
 sbyte GetCDVolume(void);
 //long unsigned ConvertCDTime( TbsCDTime );
 //TbsCDTime ConvertDOSCDTime( long unsigned );
 //int IsCDPlaying();
 //TbsCDTime CDHeadPosition();
-//int FreeCD();
+void FreeCD(void);
 
 /******************************************************************************/
 #ifdef __cplusplus

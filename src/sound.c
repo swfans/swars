@@ -8,12 +8,13 @@
 #include "bfwindows.h"
 #include "bffile.h"
 #include "bflib_snd_sys.h"
-#include "bflib_snd_cda.h"
+#include "bfscd.h"
 #include "snderr.h"
 #include "oggvorbis.h"
 #include "sound.h"
 #include "ailss.h"
 #include "sound_util.h"
+#include "game_data.h"
 #include "util.h"
 
 
@@ -74,7 +75,7 @@ static size_t        sound_free_buffer_count    = 0;
 static ALuint        sound_free_buffers[SOUND_MAX_BUFFERS];
 static SourceDescriptor sound_sources[SOUND_MAX_SOURCES];
 SNDSAMPLE sound_samples[SOUND_MAX_SOURCES];
-OggVorbisStream  sound_music_stream;
+extern OggVorbisStream  sound_music_stream;
 
 
 #define check_alc(source) check_alc_line ((source), __LINE__)
@@ -269,11 +270,14 @@ void InitAudio(AudioInitOptions *audOpts)
     if (audOpts->InitStreamedSound == 1)
         InitStreamedSound();
 
-    if (audOpts->InitRedbookAudio == 1)
+    if (audOpts->InitRedbookAudio == 1) {
         InitRedbook();
-    else if (audOpts->InitRedbookAudio == 2)
-        InitMusicOGG();
-    else
+    } else if (audOpts->InitRedbookAudio == 2) {
+        char mdir[FILENAME_MAX];
+        snprintf(mdir, sizeof(mdir),
+              "%s" FS_SEP_STR "music", GetDirectoryHdd());
+        InitMusicOGG(mdir);
+    } else
         CDAble = 0;
 
     if (ive_got_an_sb16)
