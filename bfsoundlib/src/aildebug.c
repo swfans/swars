@@ -759,6 +759,19 @@ void AIL_uninstall_DIG_driver(DIG_DRIVER *digdrv)
     AIL_indent--;
 }
 
+void AIL_set_digital_master_volume(DIG_DRIVER *digdrv, int32_t master_volume)
+{
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s(0x%p, %d)\n", __func__, digdrv, master_volume);
+
+    AIL2OAL_API_set_digital_master_volume(digdrv, master_volume);
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Finished\n");
+    AIL_indent--;
+}
+
 void AIL_set_XMIDI_master_volume(MDI_DRIVER *mdidrv, int32_t master_volume)
 {
     AIL_indent++;

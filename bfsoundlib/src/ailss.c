@@ -71,6 +71,15 @@ DIG_DRIVER *SS_construct_DIG_driver(AIL_DRIVER *drvr, const SNDCARD_IO_PARMS *io
     return digdrv;
 }
 
+void SS_build_amplitude_tables(SNDSAMPLE *s)
+{
+    asm volatile (
+      "push %0\n"
+      "call ASM_SS_build_amplitude_tables\n"
+      "add $0x4, %%esp\n"
+        :  : "g" (s) : "eax" );
+}
+
 void AIL2OAL_API_init_sample(SNDSAMPLE *s)
 {
     asm volatile (
@@ -80,31 +89,31 @@ void AIL2OAL_API_init_sample(SNDSAMPLE *s)
         :  : "g" (s) : "eax" );
 }
 
-SNDSAMPLE *AIL2OAL_API_allocate_sample_handle(DIG_DRIVER *dig)
+SNDSAMPLE *AIL2OAL_API_allocate_sample_handle(DIG_DRIVER *digdrv)
 {
     int32_t i;
     SNDSAMPLE *s;
 
-    if (dig == NULL)
+    if (digdrv == NULL)
         return NULL;
 
     AIL_lock();
 
     // Look for an unallocated sample structure
-    for (i = 0; i < dig->n_samples; i++)
+    for (i = 0; i < digdrv->n_samples; i++)
     {
-        if (dig->samples[i].status == SNDSMP_FREE)
+        if (digdrv->samples[i].status == SNDSMP_FREE)
             break;
     }
 
-    if (i == dig->n_samples)
+    if (i == digdrv->n_samples)
     {
         AIL_set_error("Out of sample handles.");
         AIL_unlock();
         return NULL;
     }
 
-    s = &dig->samples[i];
+    s = &digdrv->samples[i];
 
     // Initialize sample to status SNDSMP_DONE with nominal
     // sample attributes
@@ -112,6 +121,31 @@ SNDSAMPLE *AIL2OAL_API_allocate_sample_handle(DIG_DRIVER *dig)
 
     AIL_unlock();
     return s;
+}
+
+/** Instead of setting hardware volume, scales volume for all samples.
+ */
+void set_master_hardware_volume(DIG_DRIVER *digdrv)
+{
+    SNDSAMPLE *s;
+    int i;
+
+    for (i = 0; i < digdrv->n_samples; i++)
+    {
+        s = &digdrv->samples[i];
+        if (s->status != SNDSMP_FREE)
+            SS_build_amplitude_tables(s);
+    }
+}
+
+void AIL2OAL_API_set_digital_master_volume(DIG_DRIVER *digdrv, int32_t master_volume)
+{
+    if (digdrv == NULL)
+        return;
+
+    digdrv->master_volume = master_volume;
+
+    set_master_hardware_volume(digdrv);
 }
 
 void AIL2OAL_API_end_sample(SNDSAMPLE *s)

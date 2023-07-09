@@ -3703,7 +3703,7 @@ SS_stop_DIG_driver_playback:
 
 
 /*----------------------------------------------------------------*/
-SS_build_amplitude_tables:
+GLOBAL_FUNC (ASM_SS_build_amplitude_tables)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %esi
@@ -5397,7 +5397,7 @@ GLOBAL_FUNC (ASM_AIL_API_init_sample)	/* 113940 */
 		movl   $0x0,0x84c(%eax)
 		push   %eax
 		movl   $0x0,0x850(%eax)
-		call   SS_build_amplitude_tables
+		call   ac_SS_build_amplitude_tables
 		add    $0x4,%esp
 	jump_113a04:
 		pop    %ebx
@@ -5450,7 +5450,7 @@ AIL_API_set_sample_type:
 		mov    0x10(%esp),%edx
 		push   %eax
 		mov    %edx,0x38(%eax)
-		call   SS_build_amplitude_tables
+		call   ac_SS_build_amplitude_tables
 		add    $0x4,%esp
 	jump_113a7e:
 		pop    %ebx
@@ -5480,7 +5480,7 @@ AIL_API_set_sample_volume:
 		je     jump_113acd
 		push   %eax
 		mov    %edx,0x40(%eax)
-		call   SS_build_amplitude_tables
+		call   ac_SS_build_amplitude_tables
 		add    $0x4,%esp
 	jump_113acd:
 		ret
@@ -5497,7 +5497,7 @@ AIL_API_set_sample_pan:
 		je     jump_113afd
 		push   %eax
 		mov    %edx,0x44(%eax)
-		call   SS_build_amplitude_tables
+		call   ac_SS_build_amplitude_tables
 		add    $0x4,%esp
 	jump_113afd:
 		ret
@@ -5639,7 +5639,7 @@ AIL_API_set_digital_master_volume:
 		cmpl   $0x1,0x4(%eax)
 		je     jump_113d2d
 		push   %eax
-		call   SS_build_amplitude_tables
+		call   ac_SS_build_amplitude_tables
 		add    $0x4,%esp
 	jump_113d2d:
 		inc    %ebx

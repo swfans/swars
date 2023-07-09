@@ -29,7 +29,11 @@ extern "C" {
 
 DIG_DRIVER *SS_construct_DIG_driver(AIL_DRIVER *drvr, const SNDCARD_IO_PARMS *iop);
 
+void SS_build_amplitude_tables(SNDSAMPLE *s);
+
 SNDSAMPLE *AIL2OAL_API_allocate_sample_handle(DIG_DRIVER *digdrv);
+
+void AIL2OAL_API_set_digital_master_volume(DIG_DRIVER *digdrv, int32_t master_volume);
 
 void AIL2OAL_API_init_sample(SNDSAMPLE *s);
 

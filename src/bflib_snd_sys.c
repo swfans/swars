@@ -202,8 +202,16 @@ TbBool IsSamplePlaying(long tng_offs, ushort smp_id, TbSampleHandle handle)
 
 void SetSoundMasterVolume(long vol)
 {
+#if 0
     asm volatile ("call ASM_SetSoundMasterVolume\n"
         :  : "a" (vol));
+#endif
+    if (!SoundAble || !SoundInstalled)
+        return;
+    if (vol == CurrentSoundMasterVolume || vol > 127 || vol < 0)
+        return;
+    AIL_set_digital_master_volume(SoundDriver, vol);
+    CurrentSoundMasterVolume = vol;
 }
 
 void SetMusicMasterVolume(long vol)
@@ -212,7 +220,7 @@ void SetMusicMasterVolume(long vol)
     asm volatile ("call ASM_SetMusicMasterVolume\n"
         :  : "a" (vol));
 #endif
-    if (!MusicInstalled || !MusicAble || !MusicInstalled)
+    if (!MusicAble || !MusicInstalled)
         return;
     if (vol == CurrentMusicMasterVolume || vol > 127 || vol < 0)
         return;
