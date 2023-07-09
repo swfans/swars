@@ -89,13 +89,21 @@ TbResult LbNetworkSessionNumberPlayers(void)
         : "=r" (ret) : );
     return ret;
 #else
-  if (NetworkServicePtr.Type < 1)
-      return Lb_FAIL;
-  if (NetworkServicePtr.Type <= 1)
-      return (ubyte)IPXPlayerHeader.field_10D;
-  if (NetworkServicePtr.Type > 5)
-      return Lb_FAIL;
-  return *((ubyte *)NetworkServicePtr.Id + 4268);
+    struct TbSerialDev *serhead;
+    switch (NetworkServicePtr.Type)
+    {
+    case NetSvc_IPX:
+        return (ubyte)IPXPlayerHeader.field_10D;
+    case NetSvc_COM1:
+    case NetSvc_COM2:
+    case NetSvc_COM3:
+    case NetSvc_COM4:
+        serhead = NetworkServicePtr.Id;
+        return serhead->num_players;
+    default:
+        break;
+    }
+    return Lb_FAIL;
 #endif
 }
 
@@ -141,20 +149,20 @@ TbResult LbNetworkReset(void)
     ret = Lb_FAIL;
     switch (NetworkServicePtr.Type)
     {
-    case 1:
+    case NetSvc_IPX:
         ret = ipx_shutdown(*(ushort *)(IPXHandler + 8));
         break;
-    case 2:
-    case 3:
-    case 4:
-    case 5:
+    case NetSvc_COM1:
+    case NetSvc_COM2:
+    case NetSvc_COM3:
+    case NetSvc_COM4:
         ret = LbCommDeInit(NetworkServicePtr.Id);
         break;
-    case 6:
+    case NetSvc_Unkn6:
         ret = netsvc6_shutdown();
         break;
     }
-    NetworkServicePtr.Type = 0;
+    NetworkServicePtr.Type = NetSvc_NONE;
     return ret;
 #endif
 }

@@ -29,6 +29,16 @@ extern "C" {
 
 typedef void *NSERV_HANDLE;
 
+enum NetworkServiceType {
+    NetSvc_NONE = 0x0,
+    NetSvc_IPX,
+    NetSvc_COM1,
+    NetSvc_COM2,
+    NetSvc_COM3,
+    NetSvc_COM4,
+    NetSvc_Unkn6,
+};
+
 struct NetworkServiceFunction { // sizeof=36
     NSERV_HANDLE SessionCreate; // offset=0
     NSERV_HANDLE SessionJoin;
