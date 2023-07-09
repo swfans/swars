@@ -653,7 +653,7 @@ GLOBAL_FUNC (ASM_SetCDVolume)
 	jump_ec071:
 		add    %al,%al
 		and    $0xff,%eax
-		call   SetCDAudioVolume_
+		call   ac_SetCDAudioVolume
 	jump_ec07d:
 		pop    %edx
 		ret
@@ -669,15 +669,15 @@ GLOBAL_FUNC (ASM_GetCDVolume)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (FreeCD_)
+GLOBAL_FUNC (ASM_FreeCD)
 /*----------------------------------------------------------------*/
 		movsbl InitialCDVolume,%eax
 		cmp    $0xffffffff,%eax
-		je     FreeCDAudio_
+		je     ac_FreeCDAudio
 		xor    %eax,%eax
 		mov    InitialCDVolume,%al
 		call   ac_SetCDVolume
-		jmp    FreeCDAudio_
+		jmp    ac_FreeCDAudio
 
 
 /*----------------------------------------------------------------*/
@@ -1912,7 +1912,7 @@ GLOBAL_FUNC (ASM_FreeAudio)
 		push   %edx
 		cmpb   $0x0,CDAble
 		je     jump_ed4c7
-		call   FreeCD_
+		call   ac_FreeCD
 		call   ac_GetSoundAble
 		test   %al,%al
 		jne    jump_ed4c7

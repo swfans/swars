@@ -46,7 +46,6 @@ void FreeAudio(void);
 
 void SetSoundMasterVolume(long vol);
 void SetMusicMasterVolume(long vol);
-void SetCDVolume(long vol);
 void InitSound(void);
 void InitMusic(void);
 void InitStreamedSound(void);

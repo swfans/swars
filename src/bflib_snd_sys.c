@@ -191,12 +191,6 @@ void SetMusicMasterVolume(long vol)
         :  : "a" (vol));
 }
 
-void SetCDVolume(long vol)
-{
-    asm volatile ("call ASM_SetCDVolume\n"
-        :  : "a" (vol));
-}
-
 void DetermineSoundType(void)
 {
     asm volatile ("call ASM_DetermineSoundType\n"

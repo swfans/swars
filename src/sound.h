@@ -86,8 +86,6 @@ int LoadSounds(unsigned char a1);
 bool sound_initialise (void);
 void sound_finalise (void);
 TbBool sound_update(void);
-bool sound_open_music_file (const char *fname);
-void sound_play_music (void);
 void sound_stop_music (void);
 void sound_pause_music (void);
 

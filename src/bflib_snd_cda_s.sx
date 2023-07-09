@@ -886,7 +886,7 @@ GLOBAL_FUNC (GetCDFirst_)
 		ret
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (FreeCDAudio_)
+GLOBAL_FUNC (ASM_FreeCDAudio)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -917,7 +917,7 @@ GLOBAL_FUNC (FreeCDAudio_)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (SetCDAudioVolume_)
+GLOBAL_FUNC (ASM_SetCDAudioVolume)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx

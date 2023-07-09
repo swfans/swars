@@ -2525,7 +2525,7 @@ void init_syndwars(void)
     audOpts.AutoScan = 1;
     audOpts.StereoOption = 1;
     audOpts.DisableLoadSounds = 1;
-    audOpts.InitRedbookAudio = 1;
+    audOpts.InitRedbookAudio = 2;
     audOpts.UseCurrentAwe32Soundfont = 1;
     audOpts.AbleFlags = 3;
     audOpts.SoundType = 1622;
@@ -5159,18 +5159,6 @@ void wait_for_sound_sample_finish(ushort smpl_id)
     }
 }
 
-void game_play_music(void)
-{
-    char file_name[FILENAME_MAX];
-
-    snprintf (file_name, sizeof (file_name),
-          "%s" FS_SEP_STR "music" FS_SEP_STR "track_%i.ogg",
-          GetDirectoryHdd(), ingame.CDTrack - 1);
-
-    sound_open_music_file(file_name);
-    sound_play_music();
-}
-
 void copy_to_screen_ani(ubyte *buf)
 {
     int y;
@@ -5236,8 +5224,6 @@ void show_mission_loading_screen(void)
 
     loading_INITIATING_box.Flags = 0x0001;
     wait_for_sound_sample_finish(118);
-    // TODO the below is added as part of the vexillium port; to be removed when proper music enabling works
-    game_play_music();
 }
 
 void show_load_and_prep_mission(void)

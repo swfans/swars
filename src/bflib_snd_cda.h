@@ -37,6 +37,7 @@ TbBool GetCDAble(void);
 void InitRedbook(void);
 void InitMusicOGG(void);
 void PlayCDTrack(ushort trkno);
+void SetCDVolume(short vol);
 void StopCD(void);
 /******************************************************************************/
 #ifdef __cplusplus

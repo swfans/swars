@@ -199,8 +199,6 @@ sound_initialise (void)
   if (!create_sources ())
     goto err;
 
-  if (!ogg_vorbis_stream_init (&sound_music_stream))
-    goto err;
   if (LbRegisterIdleHandler(sound_update) != Lb_SUCCESS)
     goto err;
 
@@ -316,32 +314,12 @@ sound_finalise (void)
   if (!sound_initialised)
     return;
 
-  ogg_vorbis_stream_free (&sound_music_stream);
   destroy_sources ();
 
   alcDestroyContext (alcGetCurrentContext ());
   check_alc ("alcDestroyContext");
 
   sound_initialised = false;
-}
-
-bool
-sound_open_music_file (const char *fname)
-{
-  fprintf (stdout, "%s: Music track selected.\n", fname);
-  if (!sound_initialised)
-    return false;
-
-  return ogg_vorbis_stream_open (&sound_music_stream, fname);
-}
-
-void
-sound_play_music (void)
-{
-  if (!sound_initialised)
-    return;
-
-  ogg_vorbis_stream_play (&sound_music_stream);
 }
 
 void
@@ -534,28 +512,6 @@ TbBool sound_update(void)
       queue_source_buffers (digdrv, src);
     }
 
-#if 0
-    {
-      static size_t cnt;
-      static uint32_t start_ticks;
-
-      if (start_ticks == 0)
-        start_ticks = SDL_GetTicks ();
-
-      cnt++;
-
-      if (digdrv->n_active_samples > 0)
-        {
-          uint32_t ticks;
-
-          ticks = SDL_GetTicks ();
-          printf ("fps: %f\n", (float) cnt * 1000.f / (ticks - start_ticks));
-        }
-    }
-#endif
-
-  ogg_vorbis_stream_set_gain (&sound_music_stream,
-                      startscr_cdvolume * (1.f / 322.f));
   ogg_vorbis_stream_update (&sound_music_stream);
   return true;
 }
