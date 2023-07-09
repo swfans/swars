@@ -29,6 +29,7 @@ void ogg_vorbis_stream_clear (OggVorbisStream *stream);
 bool ogg_vorbis_stream_open (OggVorbisStream *stream, const char *fname);
 bool ogg_vorbis_stream_restart (OggVorbisStream *stream);
 void ogg_vorbis_stream_set_gain (OggVorbisStream *stream, float gain);
+float ogg_vorbis_stream_get_gain (OggVorbisStream *stream);
 bool ogg_vorbis_stream_update (OggVorbisStream *stream);
 
 #endif

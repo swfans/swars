@@ -77,18 +77,14 @@ ulong GetCDTrackLength(ushort trkno)
 
 ushort cd_init(void)
 {
-    ushort ret;
-    asm volatile ("call ASM_cd_init\n"
-        : "=r" (ret) : );
-    return ret;
+    assert(!"not implemented");
+    return 0;
 }
 
 ushort cd_stop(ushort a1)
 {
-    ushort ret;
-    asm volatile ("call ASM_cd_stop\n"
-        : "=r" (ret) : "a" (a1));
-    return ret;
+    assert(!"not implemented");
+    return 0;
 }
 
 ushort cd_resume(ushort a1)
@@ -107,30 +103,37 @@ ushort cd_play(ushort cd, ulong start, ulong len)
 
 sbyte GetCDAudioVolume(void)
 {
-    sbyte ret;
-    asm volatile ("call ASM_GetCDAudioVolume\n"
-        : "=r" (ret) : );
-    return ret;
+    assert(!"not implemented");
+    return 0;
 }
 
 void SetCDAudioVolume(short vol)
 {
-    asm volatile ("call ASM_SetCDAudioVolume\n"
-        :  : "a" (vol));
+    assert(!"not implemented");
 }
 
 void FreeCDAudio(void)
 {
-    asm volatile ("call ASM_FreeCDAudio\n"
-        :  :  : "eax" );
+    assert(!"not implemented");
 }
 
 sbyte GetCDVolume(void)
 {
     sbyte vol;
+    float fvol;
+
     if (!CDAble)
         return -1;
-    vol = GetCDAudioVolume();
+    switch (CDType)
+    {
+    case CDTYP_REAL:
+        vol = GetCDAudioVolume();
+        break;
+    case CDTYP_OGG:
+        fvol = ogg_vorbis_stream_get_gain(&sound_music_stream);
+        vol = fvol * (127.f / 1.f);
+        break;
+    }
     return vol;
 }
 

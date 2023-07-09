@@ -165,6 +165,15 @@ ogg_vorbis_stream_set_gain (OggVorbisStream *stream, float gain)
   check_al ("alSourcef (AL_GAIN)");
 }
 
+float
+ogg_vorbis_stream_get_gain (OggVorbisStream *stream)
+{
+  ALfloat gain = 0.0f;
+  alGetSourcef(stream->source, AL_GAIN, &gain);
+  check_al ("alGetSourcef (AL_GAIN)");
+  return gain;
+}
+
 bool
 ogg_vorbis_stream_update (OggVorbisStream *stream)
 {
