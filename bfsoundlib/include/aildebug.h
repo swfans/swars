@@ -115,6 +115,8 @@ void *AIL_set_timer_user(HSNDTIMER timer, void *user_data);
  */
 void AIL_release_channel(MDI_DRIVER *mdidrv, int32_t channel);
 
+/** Get status of sample, one of SNDSMP_* enum members.
+ */
 uint32_t AIL_sample_status(SNDSAMPLE *s);
 
 /** Set parameters of existing HSAMPLE according to file data.
@@ -163,6 +165,15 @@ HAILPROVIDER AIL_set_sample_processor(SNDSAMPLE *s,
 /** Set starting address and length of sample.
  */
 void AIL_set_sample_address(SNDSAMPLE *s, const void *start, uint32_t len);
+
+/** Set sample loop count.
+ *
+ * Count values:
+ *    1: Single iteration, no looping
+ *    0: Loop indefinitely
+ *    n: Play sample n times
+ */
+void AIL_set_sample_loop_count(SNDSAMPLE *s, int32_t loop_count);
 
 /** Terminate playback of sample, setting sample status to SNDSMP_DONE.
  */

@@ -2197,7 +2197,7 @@ GLOBAL_FUNC (ASM_ReleaseLoopedSample)
 		push   $0x1
 		mov    (%ebx),%edx
 		push   %edx
-		call   ail_set_sample_loop_count
+		call   ac_AIL_set_sample_loop_count
 		add    $0x8,%esp
 	jump_ef3aa:
 		pop    %edi
@@ -3563,7 +3563,7 @@ GLOBAL_FUNC (PlaySampleFromAddress_)
 		push   %eax
 		mov    0x0(%ebp),%ecx
 		push   %ecx
-		call   ail_set_sample_loop_count
+		call   ac_AIL_set_sample_loop_count
 		add    $0x8,%esp
 		mov    0x0(%ebp),%eax
 		push   %eax

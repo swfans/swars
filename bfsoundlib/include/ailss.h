@@ -46,6 +46,8 @@ void AIL2OAL_API_set_sample_address(SNDSAMPLE *s, const void *start, uint32_t le
 
 void AIL2OAL_API_set_sample_user_data(SNDSAMPLE *s, uint32_t index, int32_t value);
 
+void AIL2OAL_API_set_sample_loop_count(SNDSAMPLE *s, int32_t loop_count);
+
 void AIL2OAL_API_end_sample(SNDSAMPLE *s);
 
 void AIL2OAL_API_release_sample_handle(SNDSAMPLE *s);

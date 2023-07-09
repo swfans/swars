@@ -431,7 +431,7 @@ GLOBAL_FUNC (AIL_set_sample_pan)	/* 103a60 */
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (ail_set_sample_loop_count)	/* 103af0 */
+GLOBAL_FUNC (ASM_AIL_set_sample_loop_count)	/* 103af0 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %edi
@@ -474,7 +474,7 @@ GLOBAL_FUNC (ail_set_sample_loop_count)	/* 103af0 */
 		push   %edx
 		mov    0x14(%esp),%ebx
 		push   %ebx
-		call   AIL_API_set_sample_loop_count
+		call   ASM_AIL_API_set_sample_loop_count
 		mov    AIL_indent,%ecx
 		dec    %ecx
 		add    $0x8,%esp
@@ -5504,7 +5504,7 @@ AIL_API_set_sample_pan:
 
 
 /*----------------------------------------------------------------*/
-AIL_API_set_sample_loop_count:	/* 113b60 */
+ASM_AIL_API_set_sample_loop_count:	/* 113b60 */
 /*----------------------------------------------------------------*/
 		mov    0x4(%esp),%eax
 		test   %eax,%eax

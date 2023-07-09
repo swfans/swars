@@ -269,4 +269,12 @@ void AIL2OAL_API_set_sample_user_data(SNDSAMPLE *s, uint32_t index, int32_t valu
         return;
     s->user_data[index] = value;
 }
+
+void AIL2OAL_API_set_sample_loop_count(SNDSAMPLE *s, int32_t loop_count)
+{
+    if (s == NULL)
+        return;
+
+    s->loop_count = loop_count;
+}
 /******************************************************************************/
