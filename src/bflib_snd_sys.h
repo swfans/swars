@@ -26,6 +26,8 @@
 extern "C" {
 #endif
 /******************************************************************************/
+#pragma pack(1)
+
 typedef void * TbSampleHandle;
 
 struct MusicBankSizes {
@@ -38,6 +40,28 @@ struct MusicBankSizes {
     ulong mbs6;
     ulong mbs7;
 };
+
+struct MusicBankHead {
+  long info_offset;
+  long data_offset;
+  long info_size;
+  long data_size;
+};
+
+struct BfMusicInfo {
+  //char fname[26];
+  long a1;
+  long a4;
+  long a8;
+  long a12;
+  short a16;
+  ubyte *a18;
+  short a22;
+  long a24;
+  long a28;
+};
+
+#pragma pack()
 /******************************************************************************/
 void StopAllSamples(void);
 TbBool IsSamplePlaying(long tng_offs, ushort smp_id, TbSampleHandle handle);
@@ -51,6 +75,7 @@ void InitMusic(void);
 void InitStreamedSound(void);
 void InitAllBullfrogSoundTimers(void);
 sbyte AllocateMusicBankMemory(void);
+int LoadMusic(ushort bankNo);
 
 void prepare_SB16_volumes(void);
 /******************************************************************************/

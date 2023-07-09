@@ -77,7 +77,6 @@ void InitAudio(AudioInitOptions *audOpts);
 
 void StopMusicIfActive(void);
 void StopMusic(void);
-int LoadMusic(ushort bankNo);
 
 void fill_ail_sample_ids(void);
 
@@ -87,10 +86,10 @@ bool sound_initialise (void);
 void sound_finalise (void);
 TbBool sound_update(void);
 
-struct _SEQUENCE;
+struct SNDSEQUENCE;
 
 struct SampleInfo *play_sample_using_heap(ulong a1, short smptbl_id, ulong a3, ulong a4, ulong a5, char a6, ubyte type);
-void stop_sample_using_heap(struct _SEQUENCE *source, ulong sample_number);
+void stop_sample_using_heap(struct SNDSEQUENCE *source, ulong sample_number);
 void play_dist_sample(struct Thing *p_thing, ushort smptbl_id, ushort vol, ushort pan, int pitch, int loop, ubyte type);
 
 #endif

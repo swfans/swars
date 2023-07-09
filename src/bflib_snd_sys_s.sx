@@ -1328,7 +1328,7 @@ format_music:
 		push   %edx
 		push   %esi
 		push   %edi
-		mov    NumberOfSongs,%bx
+		mov    EXPORT_SYMBOL(NumberOfSongs),%bx
 		mov    BfEndMusic,%ecx
 		mov    BfMusicData,%esi
 		mov    BfMusic,%edx
@@ -1351,7 +1351,7 @@ format_music:
 	jump_ed08f:
 		mov    %esi,BfMusicData
 		mov    %ecx,BfEndMusic
-		mov    %bx,NumberOfSongs
+		mov    %bx,EXPORT_SYMBOL(NumberOfSongs)
 		pop    %edi
 		pop    %esi
 		pop    %edx
@@ -1520,7 +1520,7 @@ GLOBAL_FUNC (ASM_load_music_bank)
 	jump_ed275:
 		xor    %edx,%edx
 		xor    %eax,%eax
-		mov    NumberOfSongs,%dx
+		mov    EXPORT_SYMBOL(NumberOfSongs),%dx
 		mov    %bl,%al
 		cmp    %edx,%eax
 		jle    jump_ed253
@@ -2440,7 +2440,7 @@ GLOBAL_FUNC (StartMusic_)
 		je     jump_f0656
 		xor    %ebx,%ebx
 		movswl %si,%eax
-		mov    NumberOfSongs,%bx
+		mov    EXPORT_SYMBOL(NumberOfSongs),%bx
 		cmp    %ebx,%eax
 		jg     jump_f0656
 		xor    %ebx,%ebx
@@ -5116,7 +5116,7 @@ CurrentTempo:
 		.short  0x0
 GLOBAL (SongCurrentlyPlaying)
 		.short  0x0
-NumberOfSongs:				/* 0x1E8C5E */
+GLOBAL (NumberOfSongs)				/* 0x1E8C5E */
 		.short  0x0
 GLOBAL (BfMusic)
 		.long	0x0

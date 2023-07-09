@@ -27,6 +27,8 @@
 #include "bfmemory.h"
 #include "bfmemut.h"
 #include "bffile.h"
+#include "bfendian.h"
+#include "rnc_1fm.h"
 #include "bfscd.h"
 #include "ail.h"
 #include "aildebug.h"
@@ -99,11 +101,12 @@ extern long sample_fade_handle;
 extern char full_music_data_path[144];
 extern struct MusicBankSizes music_bank_size_info;
 extern void *BfMusicData;
-extern void *BfMusic;
-extern void *BfEndMusic;
+extern struct BfMusicInfo *BfMusic;
+extern struct BfMusicInfo *BfEndMusic;
 extern void *SfxData;
 extern void *Sfx;
 extern void *EndSfxs;
+extern short NumberOfSongs;
 
 /** Wrapper for LbMemoryAlloc(), needed to make sure data sizes match.
  */
@@ -564,6 +567,204 @@ sbyte AllocateMusicBankMemory(void)
 TbBool fm_instrument_file_exists(const char *fname)
 {
     return dos_access(fname, 0) == 0;
+}
+
+void format_music(void)
+{
+    short nsongs;
+    ubyte *dt;
+    struct BfMusicInfo *musinf;
+    struct BfMusicInfo *musinfend;
+    ulong offs;
+
+    nsongs = NumberOfSongs;
+    musinfend = BfEndMusic;
+    dt = BfMusicData;
+    if ((BfMusic != NULL) && (BfMusicData != NULL))
+    {
+        nsongs = 0;
+        for (musinf = &BfMusic[1]; musinf < musinfend; musinf++)
+        {
+            offs = (ulong)musinf->a18;
+            musinf->a18 = &dt[offs];
+            nsongs++;
+        }
+    }
+    BfMusicData = dt;
+    BfEndMusic = musinfend;
+    NumberOfSongs = nsongs;
+}
+
+void init_music_bank_songs(void)
+{
+    int i;
+    struct BfMusicInfo *musinf;
+
+    // Entry 0 is unused, skip it
+    for (i = 1; i <= NumberOfSongs; i++)
+    {
+        musinf = &BfMusic[i];
+        AIL_init_sequence(SongHandle, musinf->a18, 0);
+    }
+}
+
+ubyte load_music_bank(TbFileHandle fh, ubyte bankId)
+{
+#if 0
+    ubyte ret;
+    asm volatile ("call ASM_load_music_bank\n"
+        : "=r" (ret) : "a" (fh),  "d" (bankId));
+    return ret;
+#endif
+    ubyte *m;
+    ubyte *dt;
+    struct MusicBankHead mbhead[4];
+
+    LbFilePosition(fh);
+    LbFileRead(fh, &mbhead, sizeof(mbhead));
+    if (mbhead[bankId].data_offset == -1)
+        return 0;
+
+    dt = BfMusicData;
+    if (dt == NULL)
+        return 0;
+    m = (ubyte *)BfMusic;
+    if (m == NULL)
+        return 0;
+    // Read songs data
+    BfEndMusic = (struct BfMusicInfo *)(m + mbhead[bankId].info_size);
+    LbFileSeek(fh, mbhead[bankId].data_offset, Lb_FILE_SEEK_BEGINNING);
+    LbFileRead(fh, dt, 8);
+    if (blong(dt+0) == RNC_SIGNATURE)
+    {
+        long flength;
+        flength = blong(dt+4);
+        LbFileRead(fh, dt + 8, flength - 8);
+        UnpackM1(dt, flength);
+    }
+    else
+    {
+        LbFileRead(fh, dt + 8, mbhead[bankId].data_size - 8);
+    }
+    // Read songs info
+    LbFileSeek(fh, mbhead[bankId].info_offset, Lb_FILE_SEEK_BEGINNING);
+    LbFileRead(fh, m, 8);
+    if (blong(m+0) == RNC_SIGNATURE)
+    {
+        long flength;
+        flength = blong(m+4);
+        LbFileRead(fh, m + 8, flength - 8);
+        UnpackM1(m, flength);
+    }
+    else
+    {
+        LbFileRead(fh, m + 8, mbhead[bankId].info_size - 8);
+    }
+
+    format_music();
+    init_music_bank_songs();
+
+    sprintf(SoundProgressMessage, "BF113 - loaded music bank %d, %d songs\n",
+            (int)bankId, (int)NumberOfSongs);
+    SoundProgressLog(SoundProgressMessage);
+
+    MusicAble = true;
+    return 1;
+}
+
+int LoadMusic(ushort bankNo)
+{
+#if 0
+    int ret;
+    asm volatile ("call ASM_LoadMusic\n"
+        : "=r" (ret) : "a" (a1));
+    return ret;
+#endif
+    TbFileHandle fh;
+    long fsize;
+    ulong nbanks_offs;
+    ushort nbanks[4];
+    ubyte bankId;
+
+    sprintf(SoundProgressMessage, "BF48 - load music bank %d\n", bankNo);
+    SoundProgressLog(SoundProgressMessage);
+
+    if (!MusicInstalled) {
+        sprintf(SoundProgressMessage, "BF53 - load music bank - failed - music not installed\n");
+        SoundProgressLog(SoundProgressMessage);
+        return 1;
+    }
+    if (!MusicAble) {
+        sprintf(SoundProgressMessage, "BF53 - load music bank - failed - MusicAble = 0\n");
+        SoundProgressLog(SoundProgressMessage);
+        return 1;
+    }
+    if (DisableLoadMusic) {
+        sprintf(SoundProgressMessage, "BF53 - load music bank - failed - LoadMusic Disabled = 0\n");
+        SoundProgressLog(SoundProgressMessage);
+        return 1;
+    }
+
+    StopMusic();
+    fh = LbFileOpen(full_music_data_path, Lb_FILE_MODE_READ_ONLY);
+    if (fh == INVALID_FILE) {
+        sprintf(SoundProgressMessage, "BF52 - load music bank - failed - no music.dat\n");
+        SoundProgressLog(SoundProgressMessage);
+        return 1;
+    }
+
+    LbFileSeek(fh, 0, Lb_FILE_SEEK_END);
+    fsize = LbFilePosition(fh);
+
+    // The bank file ends with offset to array of banks
+    LbFileSeek(fh, fsize - 4, Lb_FILE_SEEK_BEGINNING);
+    LbFileRead(fh, &nbanks_offs, 4);
+    LbFileSeek(fh, nbanks_offs, Lb_FILE_SEEK_BEGINNING);
+    // Array of banks has 4 16-bit entries
+    LbFileRead(fh, nbanks, 8);
+
+    switch (MusicType[0])
+    {
+    case 'G':
+    case 'g':
+    default:
+        bankId = 0;
+        break;
+    case 'R':
+    case 'r':
+        bankId = 1;
+        break;
+    case 'F':
+    case 'f':
+        bankId = 2;
+        break;
+    case 'W':
+    case 'w':
+        bankId = 3;
+        break;
+    }
+
+    if (bankNo + 1 > nbanks[bankId]) {
+        LbFileClose(fh);
+        sprintf(SoundProgressMessage, "BF49 - load music bank - failed - bank %d not found\n", (int)bankId);
+        SoundProgressLog(SoundProgressMessage);
+        return 1;
+    }
+
+    // Each bank has a 64-byte header, place the file at the one we want
+    LbFileSeek(fh, bankNo * 64, Lb_FILE_SEEK_CURRENT);
+    // Load the music tracks and info on each track
+    if (!load_music_bank(fh, bankId)) {
+        LbFileClose(fh);
+        sprintf(SoundProgressMessage, "BF50 - load music bank - failed - cannot allocate\n");
+        SoundProgressLog(SoundProgressMessage);
+        return 1;
+    }
+
+    LbFileClose(fh);
+    sprintf(SoundProgressMessage, "BF51 - load music bank - passed\n");
+    SoundProgressLog(SoundProgressMessage);
+    return 0;
 }
 
 int InitMusicDriverFromEnvMDM(void)
