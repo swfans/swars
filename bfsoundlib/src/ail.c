@@ -404,6 +404,17 @@ void AIL2OAL_API_start_all_timers(void)
     AIL_unlock();
 }
 
+void AIL2OAL_API_stop_timer(HSNDTIMER timer)
+{
+    AIL_lock();
+    if (timer != -1)
+    {
+        if (timer_status[timer] == AILT_RUNNING)
+            timer_status[timer] = AILT_STOPPED;
+    }
+    AIL_unlock();
+}
+
 void AIL2OAL_end(void)
 {
     if (!AIL_use_locked)

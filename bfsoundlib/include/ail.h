@@ -80,6 +80,8 @@ void AIL2OAL_API_start_timer(HSNDTIMER timer);
 
 void AIL2OAL_API_start_all_timers(void);
 
+void AIL2OAL_API_stop_timer(HSNDTIMER timer);
+
 /******************************************************************************/
 #ifdef __cplusplus
 };

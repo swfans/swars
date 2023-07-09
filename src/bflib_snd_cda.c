@@ -20,6 +20,8 @@
 #include "bflib_snd_cda.h"
 
 #include <stdio.h>
+#include <unistd.h>
+#include <assert.h>
 #include "bffile.h"
 #include "bfsvaribl.h"
 #include "ail.h"
@@ -87,6 +89,12 @@ ushort cd_stop(ushort a1)
     asm volatile ("call ASM_cd_stop\n"
         : "=r" (ret) : "a" (a1));
     return ret;
+}
+
+ushort cd_resume(ushort a1)
+{
+    assert(!"not implemented");
+    return 0;
 }
 
 ushort cd_play(ushort cd, ulong start, ulong len)
@@ -213,6 +221,54 @@ void PlayCDTrack(ushort trkno)
     AIL_start_timer(CDCount_handle);
     CDTimerActive = true;
     CurrentCDTrack = trkno;
+}
+
+void PauseCD(void)
+{
+    ushort i;
+
+    if (!CDAble)
+        return;
+    if (CurrentCDTrack == 0)
+        return;
+
+    switch (CDType)
+    {
+    case CDTYP_REAL:
+        i = GetCDFirst();
+        cd_stop(i);
+        break;
+    case CDTYP_OGG:
+        ogg_vorbis_stream_pause(&sound_music_stream);
+        break;
+    }
+
+    if (CDTimerActive)
+        AIL_stop_timer(CDCount_handle);
+}
+
+void ResumeCD(void)
+{
+    ushort i;
+
+    if (!CDAble)
+        return;
+    if (CurrentCDTrack == 0)
+        return;
+
+    switch (CDType)
+    {
+    case CDTYP_REAL:
+        i = GetCDFirst();
+        cd_resume(i);
+        break;
+    case CDTYP_OGG:
+        ogg_vorbis_stream_play(&sound_music_stream);
+        break;
+    }
+
+    if (CDTimerActive)
+        AIL_start_timer(CDCount_handle);
 }
 
 void StopCD(void)

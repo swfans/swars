@@ -256,7 +256,7 @@ void AIL2OAL_API_set_sample_address(SNDSAMPLE *s, const void *start, uint32_t le
     if (s == NULL)
         return;
 
-    s->start[0] = start;
+    s->start[0] = (void *)start;
     s->len[0]   = len;
 
     s->start[1] = NULL;

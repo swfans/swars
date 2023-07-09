@@ -322,24 +322,6 @@ sound_finalise (void)
   sound_initialised = false;
 }
 
-void
-sound_stop_music (void)
-{
-  if (!sound_initialised)
-    return;
-
-  ogg_vorbis_stream_stop (&sound_music_stream);
-}
-
-void
-sound_pause_music (void)
-{
-  if (!sound_initialised)
-    return;
-
-  ogg_vorbis_stream_pause (&sound_music_stream);
-}
-
 static ALenum
 get_pcm_format (SNDSAMPLE *s)
 {

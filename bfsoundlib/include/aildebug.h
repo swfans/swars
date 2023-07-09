@@ -225,6 +225,10 @@ void AIL_start_timer(HSNDTIMER timer);
  */
 void AIL_start_all_timers(void);
 
+/** Stop timer(s).
+ */
+void AIL_stop_timer(HSNDTIMER timer);
+
 void AIL_release_all_timers(void);
 
 /** Set end-of-sample (EOS) callback function for sample.
