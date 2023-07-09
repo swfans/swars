@@ -54,7 +54,7 @@ const char *cd_errors[] = {
 
 ushort cd_total;
 ushort cd_first;
-TbBool CDAble;
+TbBool CDAble = true;
 TbBool CDTimerActive;
 long CDCount_handle;
 ushort CurrentCDTrack;
@@ -202,8 +202,11 @@ void ogg_list_music_tracks(void)
               "%s" FS_SEP_STR "track_%i.ogg",
               music_dir, trkno - 1);
         is_da_track[trkno] = (access(file_name, F_OK) == 0);
-        if (!is_da_track[trkno] && trkno > 4)
+        if (!is_da_track[trkno] && trkno > 4) {
+            sprintf(SoundProgressMessage, "BF106 - No tracks beyond %d\n", (int)(trkno-1));
+            SoundProgressLog(SoundProgressMessage);
             break;
+        }
     }
     for (trkno++; trkno < 99; trkno++) {
         is_da_track[trkno] = false;
@@ -218,8 +221,11 @@ void PlayCDTrack(ushort trkno)
 
     if (!CDAble)
         return;
-    if (!is_daudio_track(trkno))
+    if (!is_daudio_track(trkno)) {
+        sprintf(SoundProgressMessage, "BF103 - No audio track %d\n", (int)trkno);
+        SoundProgressLog(SoundProgressMessage);
         return;
+    }
     if (CurrentCDTrack != 0 && CurrentCDTrack == trkno)
         return;
     StopCD();
