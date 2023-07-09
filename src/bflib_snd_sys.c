@@ -19,6 +19,7 @@
 /******************************************************************************/
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <strings.h>
 #include "bflib_snd_sys.h"
 

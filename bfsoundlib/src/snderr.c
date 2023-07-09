@@ -29,7 +29,7 @@
 void SoundProgressLog(const char *msg)
 {
     if (DebugAudio)
-        printf(msg);
+        fputs(msg, stdout);
 }
 
 
