@@ -30,17 +30,37 @@
 #include "oggvorbis.h"
 #include "game_data.h"
 /******************************************************************************/
-extern ushort cd_first;
-extern TbBool CDAble;
-extern TbBool CDTimerActive;
-extern long CDCount_handle;
-extern ushort CurrentCDTrack;
-extern ulong TrackLength;
-extern volatile ulong CDCountdown;
-extern TbBool is_da_track[99];
-extern ulong track_start_sector[99];
-extern ulong track_lengths[99];
-extern sbyte InitialCDVolume;
+const char *cd_errors[] = {
+    "Write-protect violation",
+    "Unknown unit",
+    "Drive not ready",
+    "Unknown command",
+    "CRC error",
+    "Bad drive request structure length",
+    "Seek error",
+    "Unknown media",
+    "Sector not found",
+    "Printer out of paper",
+    "Write fault",
+    "Read fault",
+    "General failure",
+    "Reserved",
+    "Reserved",
+    "Invalid disk change",
+};
+
+ushort cd_total;
+ushort cd_first;
+TbBool CDAble;
+TbBool CDTimerActive;
+long CDCount_handle;
+ushort CurrentCDTrack;
+ulong TrackLength;
+volatile ulong CDCountdown;
+TbBool is_da_track[99];
+ulong track_start_sector[99];
+ulong track_lengths[99];
+sbyte InitialCDVolume = -1;
 
 extern OggVorbisStream sound_music_stream;
 
@@ -75,6 +95,12 @@ ulong GetCDTrackLength(ushort trkno)
     return track_lengths[trkno];
 }
 
+ushort cd_getaudiodiscinfo(ushort a1)
+{
+    assert(!"not implemented");
+    return 0;
+}
+
 ushort cd_init(void)
 {
     assert(!"not implemented");
@@ -95,10 +121,8 @@ ushort cd_resume(ushort a1)
 
 ushort cd_play(ushort cd, ulong start, ulong len)
 {
-    int ret;
-    asm volatile ("call ASM_cd_play\n"
-        : "=r" (ret) : "a" (cd), "d" (start), "b" (len));
-    return ret;
+    assert(!"not implemented");
+    return 0;
 }
 
 sbyte GetCDAudioVolume(void)
@@ -179,11 +203,6 @@ void ogg_list_music_tracks(void)
 
 void PlayCDTrack(ushort trkno)
 {
-#if 0
-    int ret;
-    asm volatile ("call ASM_PlayCDTrack\n"
-        : "=r" (ret) : "a" (trkno));
-#endif
     char file_name[FILENAME_MAX];
     ulong start_sect, len_sect;
     ushort i;
@@ -300,10 +319,6 @@ void StopCD(void)
 
 void InitRedbook(void)
 {
-#if 0
-    asm volatile ("call ASM_InitRedbook\n"
-        :  :  : "eax" );
-#endif
     if (!GetSoundAble() && !GetMusicAble())
         AIL_startup();
 

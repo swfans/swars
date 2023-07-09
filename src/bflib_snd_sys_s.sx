@@ -233,7 +233,7 @@ GLOBAL_FUNC (ASM_InitAudio)
 		jmp    jump_eb9e4
 	jump_eb9dc:
 		xor    %bh,%bh
-		mov    %bh,CDAble
+		mov    %bh,EXPORT_SYMBOL(CDAble)
 	jump_eb9e4:
 		cmpb   $0x0,ive_got_an_sb16
 		je     jump_eb9f2
@@ -472,229 +472,21 @@ reset_SB16_volumes:
 GLOBAL_FUNC (ASM_cbCDCountdown)
 /*----------------------------------------------------------------*/
 		push   %esi
-		cmpl   $0x0,CDCountdown
+		cmpl   $0x0,EXPORT_SYMBOL(CDCountdown)
 		jbe    jump_ebc8a
-		subl   $0x5,CDCountdown
-		cmpl   $0x0,CDCountdown
+		subl   $0x5,EXPORT_SYMBOL(CDCountdown)
+		cmpl   $0x0,EXPORT_SYMBOL(CDCountdown)
 		jne    jump_ebc8a
-		mov    CDCount_handle,%esi
+		mov    EXPORT_SYMBOL(CDCount_handle),%esi
 		xor    %edx,%edx
 		push   %esi
-		mov    %dx,CurrentCDTrack
+		mov    %dx,EXPORT_SYMBOL(CurrentCDTrack)
 		call   ac_AIL_release_timer_handle
 		add    $0x4,%esp
 		xor    %ah,%ah
-		mov    %ah,CDTimerActive
+		mov    %ah,EXPORT_SYMBOL(CDTimerActive)
 	jump_ebc8a:
 		pop    %esi
-		ret
-
-
-/*----------------------------------------------------------------*/
-GLOBAL_FUNC (ASM_GetCDAble)
-/*----------------------------------------------------------------*/
-		mov    CDAble,%al
-		ret
-
-
-/*----------------------------------------------------------------*/
-GLOBAL_FUNC (ASM_InitRedbook)
-/*----------------------------------------------------------------*/
-		push   %ecx
-		push   %edx
-		call   ac_GetSoundAble
-		test   %al,%al
-		jne    jump_ebce9
-		call   ac_GetMusicAble
-		test   %al,%al
-		jne    jump_ebce9
-		call   ac_AIL_startup
-	jump_ebce9:
-		call   ac_cd_init
-		test   %al,%al
-		jne    jump_ebcfa
-		mov    %al,CDAble
-		pop    %edx
-		pop    %ecx
-		ret
-	jump_ebcfa:
-		call   ac_GetCDVolume
-		mov    %al,InitialCDVolume
-		pop    %edx
-		pop    %ecx
-		ret
-
-
-/*----------------------------------------------------------------*/
-GLOBAL_FUNC (ASM_PlayCDTrack)
-/*----------------------------------------------------------------*/
-		push   %ebx
-		push   %ecx
-		push   %edx
-		push   %esi
-		push   %edi
-		mov    %eax,%esi
-		cmpb   $0x0,CDAble
-		je     jump_ebe06
-		xor    %eax,%eax
-		mov    %si,%ax
-		call   ac_is_daudio_track
-		test   %al,%al
-		je     jump_ebe06
-		mov    %esi,%eax
-		call   ac_GetCDTrackStartSector
-		mov    %eax,%edi
-		mov    %esi,%eax
-		call   GetCDTrackLength_
-		mov    %eax,%ebx
-		xor    %eax,%eax
-		mov    CurrentCDTrack,%ax
-		test   %eax,%eax
-		je     jump_ebd64
-		xor    %eax,%eax
-		mov    CurrentCDTrack,%ax
-		cmp    %esi,%eax
-		je     jump_ebe06
-	jump_ebd64:
-		xor    %eax,%eax
-		mov    CDTimerActive,%al
-		cmp    $0x1,%eax
-		jne    jump_ebd87
-		mov    CDCount_handle,%edx
-		push   %edx
-		call   ac_AIL_release_timer_handle
-		add    $0x4,%esp
-		xor    %dl,%dl
-		mov    %dl,CDTimerActive
-	jump_ebd87:
-		call   ac_StopCD
-		mov    $0x4b,%ecx
-		mov    %ebx,%eax
-		xor    %edx,%edx
-		div    %ecx
-		mov    $0x5,%ecx
-		xor    %edx,%edx
-		mov    %eax,TrackLength
-		div    %ecx
-		mov    %eax,%edx
-		lea    0x0(,%eax,4),%eax
-		add    %edx,%eax
-		add    %ecx,%eax
-		push   $ASM_cbCDCountdown
-		mov    %eax,CDCountdown
-		call   ac_AIL_register_timer
-		add    $0x4,%esp
-		push   $0x4c4b40
-		push   %eax
-		mov    %eax,CDCount_handle
-		call   ac_AIL_set_timer_period
-		add    $0x8,%esp
-		call   GetCDFirst_
-		and    $0xffff,%eax
-		mov    %edi,%edx
-		call   ac_cd_play
-		mov    CDCount_handle,%ebx
-		push   %ebx
-		call   ac_AIL_start_timer
-		mov    $0x1,%dh
-		add    $0x4,%esp
-		mov    %dh,CDTimerActive
-		mov    %si,CurrentCDTrack
-	jump_ebe06:
-		pop    %edi
-		pop    %esi
-		pop    %edx
-		pop    %ecx
-		pop    %ebx
-		ret
-
-
-/*----------------------------------------------------------------*/
-GLOBAL_FUNC (ASM_StopCD)
-/*----------------------------------------------------------------*/
-		push   %ecx
-		push   %edx
-		cmpb   $0x0,CDAble
-		je     jump_ebfa3
-		cmpb   $0x0,CDTimerActive
-		je     jump_ebf8b
-		xor    %dh,%dh
-		mov    %dh,CDTimerActive
-		mov    CDCount_handle,%edx
-		push   %edx
-		call   ac_AIL_release_timer_handle
-		add    $0x4,%esp
-	jump_ebf8b:
-		xor    %edx,%edx
-		mov    %dx,CurrentCDTrack
-		call   GetCDFirst_
-		and    $0xffff,%eax
-		call   ac_cd_stop
-	jump_ebfa3:
-		pop    %edx
-		pop    %ecx
-		ret
-
-
-/*----------------------------------------------------------------*/
-GLOBAL_FUNC (ASM_SetCDVolume)
-/*----------------------------------------------------------------*/
-		push   %edx
-		cmpb   $0x0,CDAble
-		je     jump_ec07d
-		movsbl InitialCDVolume,%edx
-		cmp    $0xffffffff,%edx
-		je     jump_ec07d
-		xor    %edx,%edx
-		mov    %al,%dl
-		cmp    $0x7f,%edx
-		jle    jump_ec071
-		mov    $0x7f,%al
-	jump_ec071:
-		add    %al,%al
-		and    $0xff,%eax
-		call   ac_SetCDAudioVolume
-	jump_ec07d:
-		pop    %edx
-		ret
-
-
-/*----------------------------------------------------------------*/
-GLOBAL_FUNC (ASM_GetCDVolume)
-/*----------------------------------------------------------------*/
-		cmpb   $0x0,CDAble
-		jne    ac_GetCDAudioVolume
-		mov    $0xff,%al
-		ret
-
-
-/*----------------------------------------------------------------*/
-GLOBAL_FUNC (ASM_FreeCD)
-/*----------------------------------------------------------------*/
-		movsbl InitialCDVolume,%eax
-		cmp    $0xffffffff,%eax
-		je     ac_FreeCDAudio
-		xor    %eax,%eax
-		mov    InitialCDVolume,%al
-		call   ac_SetCDVolume
-		jmp    ac_FreeCDAudio
-
-
-/*----------------------------------------------------------------*/
-GLOBAL_FUNC (ASM_StopMusicIfActive)
-/*----------------------------------------------------------------*/
-		push   %ebx
-		cmpb   $0x0,EXPORT_SYMBOL(MusicInstalled)
-		je     jump_ec269
-		cmpb   $0x0,EXPORT_SYMBOL(MusicAble)
-		je     jump_ec269
-		cmpb   $0x0,MusicActive
-		je     jump_ec269
-		xor    %bl,%bl
-		call   ac_StopMusic
-		mov    %bl,MusicActive
-	jump_ec269:
-		pop    %ebx
 		ret
 
 
@@ -1910,7 +1702,7 @@ GLOBAL_FUNC (ASM_FreeAudio)
 /*----------------------------------------------------------------*/
 		push   %ecx
 		push   %edx
-		cmpb   $0x0,CDAble
+		cmpb   $0x0,EXPORT_SYMBOL(CDAble)
 		je     jump_ed4c7
 		call   ac_FreeCD
 		call   ac_GetSoundAble
@@ -5102,11 +4894,6 @@ data_16181c:
 GLOBAL (disk_err)
 		.long	0x0
 
-GLOBAL (InitialCDVolume)	/* 0x158B34 */
-		.byte	0xff
-GLOBAL (CDAble)
-		.ascii  "\x01\x00\x00"
-
 GLOBAL (MaxNumberOfSamples)	/* 0x159300 */
 		.long	0x0a
 GLOBAL (SoundAble)	/* 159304 */
@@ -5189,18 +4976,7 @@ old_SB16_right_bass_volume:
 GLOBAL (sb16_mixer_set)
 		.byte	0x0
 		.fill   0x3
-GLOBAL (CurrentCDTrack)
-		.short  0x0
-		.fill   0x2
-GLOBAL (TrackLength)
-		.long	0x0
-GLOBAL (CDCountdown)
-		.long	0x0
-GLOBAL (CDTimerActive)
-		.byte	0x0
-		.fill   0x3
-GLOBAL (CDCount_handle)
-		.long	0x0
+
 end_time:
 		.long	0x0
 
