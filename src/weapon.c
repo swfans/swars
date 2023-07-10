@@ -291,7 +291,7 @@ void read_weapons_conf_file(void)
                     CONFWRNLOG("Could not read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
                     break;
                 }
-                wdef->Cost = k;
+                wdef->Cost = k / 100;
                 CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)wdef->Cost);
                 break;
             case CCWep_Funding:
@@ -300,7 +300,7 @@ void read_weapons_conf_file(void)
                     CONFWRNLOG("Could not read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
                     break;
                 }
-                wdef->Funding = k;
+                wdef->Funding = k / 100;
                 CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)wdef->Funding);
                 break;
             case CCWep_PercentPerDay:
