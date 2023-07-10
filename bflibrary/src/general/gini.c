@@ -23,6 +23,7 @@
  */
 /******************************************************************************/
 #include <assert.h>
+#include <stdlib.h>
 #include <string.h>
 #include "bfini.h"
 
@@ -269,6 +270,18 @@ int LbIniValueGetStrWord(struct TbIniParser *parser, char *dst, long dstlen)
     }
     dst[i] = '\0';
     return i;
+}
+
+int LbIniValueGetLongInt(struct TbIniParser *parser, long *dst)
+{
+    char buf[32];
+    char *bend;
+    int i;
+    i = LbIniValueGetStrWord(parser, buf, sizeof(buf));
+    if (i < 1)
+        return i;
+    *dst = strtol(buf,&bend,0);
+    return (int)(bend - buf);
 }
 
 int LbIniValueGetNamedEnum(struct TbIniParser *parser, const struct TbNamedEnum vallist[])

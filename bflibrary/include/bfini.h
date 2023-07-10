@@ -117,6 +117,17 @@ int LbIniValueGetStrWhole(struct TbIniParser *parser, char *dst, long dstlen);
 int LbIniValueGetStrWord(struct TbIniParser *parser, char *dst, long dstlen);
 
 /**
+ * Parses INI value and fills destination buffer with the next long integer.
+ *
+ * The value parsed is contained in one word. Binary and hex strings are supported.
+ *
+ * @param parser The parser state defining input buffer and current position.
+ * @param dst Reference to the destination long value.
+ * @return Gives amount of number characters parsed, possibly 0 if there was no number.
+ */
+int LbIniValueGetLongInt(struct TbIniParser *parser, long *dst);
+
+/**
  * Parses INI value and if it stores enum item name, returns the enumeration item number.
  *
  * @param parser The parser state defining input buffer and current position.
