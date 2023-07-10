@@ -18,6 +18,7 @@
 /******************************************************************************/
 #include "weapon.h"
 
+#include "bfmemory.h"
 #include "bffile.h"
 #include "bfini.h"
 #include "thing.h"
@@ -107,7 +108,7 @@ void read_weapons_conf_file(void)
     unsigned int i;
     long k;
     int cmd_num;
-    char locbuf[1024];
+    char *conf_buf;
     struct TbIniParser parser;
     char *conf_fname = "conf" FS_SEP_STR "weapons.ini";
     int conf_len;
@@ -115,21 +116,28 @@ void read_weapons_conf_file(void)
 
     conf_fh = LbFileOpen(conf_fname, Lb_FILE_MODE_READ_ONLY);
     if (conf_fh != INVALID_FILE) {
-        conf_len = LbFileRead(conf_fh, locbuf, sizeof(locbuf));
+        conf_len = LbFileLengthHandle(conf_fh);
+        if (conf_len > 1024*1024)
+            conf_len = 1024*1024;
+        conf_buf = LbMemoryAlloc(conf_len+16);
+        conf_len = LbFileRead(conf_fh, conf_buf, conf_len);
         LOGSYNC("Processing %s file, %d bytes", conf_fname, conf_len);
         LbFileClose(conf_fh);
     } else {
         LOGERR("Could not open weapons config file, going with defaults.");
+        conf_buf = LbMemoryAlloc(16);
         conf_len = 0;
     }
-    locbuf[conf_len] = '\0';
-    LbIniParseStart(&parser, locbuf, conf_len);
+    conf_buf[conf_len] = '\0';
+    LbIniParseStart(&parser, conf_buf, conf_len);
 #define CONFWRNLOG(format,args...) LOGWARN("%s(line %lu): " format, conf_fname, parser.line_num, ## args)
 #define CONFDBGLOG(format,args...) LOGDBG("%s(line %lu): " format, conf_fname, parser.line_num, ## args)
     weapons_count = 0;
     // Parse the [common] section of loaded file
     if (LbIniFindSection(&parser, "common") != Lb_SUCCESS) {
-        CONFWRNLOG("Could not find \"[%s]\" section.", "common");
+        CONFWRNLOG("Could not find \"[%s]\" section, file skipped.", "common");
+        LbIniParseEnd(&parser);
+        LbMemoryFree(conf_buf);
         return;
     }
     done = false;
@@ -187,6 +195,14 @@ void read_weapons_conf_file(void)
             switch (cmd_num)
             {
             case CCWep_Name:
+#if 0 // TODO add name to weapon params
+                i = LbIniValueGetStrWord(&parser, wdef->Name, sizeof(wdef->Name));
+                if (i <= 0) {
+                    CONFWRNLOG("Couldn't read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                    break;
+                }
+                CONFDBGLOG("%s \"%s\"", COMMAND_TEXT(cmd_num), (int)wdef->Name);
+#endif
                 break;
             case CCWep_RangeBlocks:
                 i = LbIniValueGetLongInt(&parser, &k);
@@ -313,6 +329,7 @@ void read_weapons_conf_file(void)
 #undef CONFDBGLOG
 #undef CONFWRNLOG
     LbIniParseEnd(&parser);
+    LbMemoryFree(conf_buf);
 }
 
 void do_weapon_quantities_net_to_player(struct Thing *p_person)
