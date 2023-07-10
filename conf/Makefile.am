@@ -1,5 +1,7 @@
-conf_DATA = weapons.ini
 confdir = $(prefix)/opt/$(PACKAGE)/conf
+conf_DATA = \
+	cybmods.ini \
+	weapons.ini
 
 EXTRA_DIST = \
 	conf \
