@@ -1,4 +1,5 @@
 bin_PROGRAMS = swars
+bindir = $(prefix)/opt/$(PACKAGE)
 
 MKW = $(PYTHON) $(top_srcdir)/util/mkwrappers
 
@@ -140,11 +141,11 @@ endif
 # Include dynamic libraries in the package
 if TARGET_WINDOWS
 install-exec-hook:
-	mkdir -p "$(DESTDIR)${prefix}/lib"
+	mkdir -p "$(DESTDIR)${prefix}/opt/$(PACKAGE)"
 	$(eval lib_SHARED_INSTALL := $(shell objdump -p swars$(EXEEXT) | \
 		sed -n 's/\s*\(DLL Name:\|NEEDED\)\s*\(.*\)$$/\2/p' | \
 		xargs -I {} find $(shell dirname $(shell which ${CXX})) -name '{}'))
-	cp $(lib_SHARED_INSTALL) $(DESTDIR)${prefix}/lib
+	cp $(lib_SHARED_INSTALL) $(DESTDIR)${prefix}/opt/$(PACKAGE)
 endif
 
 CLEANFILES = wrappers_*.sx

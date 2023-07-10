@@ -6,4 +6,6 @@ SUBDIRS = bflibrary conf src util
 install installdirs: SUBDIRS = conf src util
 
 doc_DATA = AUTHORS COPYING
+docdir = $(prefix)/opt/$(PACKAGE)
+
 EXTRA_DIST = GPL3 doc res
