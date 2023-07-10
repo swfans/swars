@@ -173,14 +173,15 @@ int research_unkn_func_004(ushort percent_per_day, int expect_funding, int real_
     return ret;
 #else
     int n_remain, overhead;
-    int points_total, points_by_group, ppd;
+    int points_total, ppd;
     int dec_per_day, dec_cumult, delta;
+    int points_by_group;
 
     // Adjust points to number of scientists
+    points_total = percent_per_day << 8;
     n_remain = research.Scientists;
     delta = 4;
-    ppd = percent_per_day << 8;
-    points_total = ppd;
+    ppd = points_total;
     if (n_remain > delta)
     {
         overhead = 2;
@@ -202,15 +203,19 @@ int research_unkn_func_004(ushort percent_per_day, int expect_funding, int real_
     }
     else
     {
-        points_total = n_remain * points_total / delta;
+        points_total = n_remain * ppd / delta;
     }
 
     // Adjust points to amount of funding
+    // The integers multiplied here may go beyond 16-bit - so the result
+    // may not fit 32-bit variable; use 64-bit for intermediate values
     n_remain = real_funding;
     delta = 100 * expect_funding;
     ppd = points_total;
-    if (real_funding > delta)
+    if (n_remain > delta)
     {
+        // Our current value of points_total is as if we've already
+        // passed the iteration for overhead=1; so start with 2
         overhead = 2;
         while (n_remain > delta)
         {
@@ -218,7 +223,7 @@ int research_unkn_func_004(ushort percent_per_day, int expect_funding, int real_
                 break;
             n_remain -= delta;
             if (n_remain <= delta)
-                points_by_group = n_remain * ppd / delta;
+                points_by_group = n_remain * (long long)ppd / delta;
             else
                 points_by_group = ppd;
             points_total += points_by_group / overhead;
@@ -227,7 +232,7 @@ int research_unkn_func_004(ushort percent_per_day, int expect_funding, int real_
     }
     else
     {
-        points_total = n_remain * points_total / delta;
+        points_total = n_remain * (long long)ppd / delta;
     }
     return points_total;
 #endif
@@ -255,7 +260,7 @@ int research_daily_progress_for_type(ubyte rstype)
         if (research.CurrentWeapon == -1)
             break;
         real_funding = research.WeaponFunding;
-        if (ingame.Credits < research.WeaponFunding)
+        if (ingame.Credits < real_funding)
             real_funding = ingame.Credits;
         wdef = &weapon_defs[research.CurrentWeapon + 1];
         progress = research_unkn_func_004(wdef->PercentPerDay, wdef->Funding, real_funding);
@@ -277,7 +282,7 @@ int research_daily_progress_for_type(ubyte rstype)
         if (research.CurrentMod == -1)
             break;
         real_funding = research.ModFunding;
-        if (ingame.Credits < research.ModFunding)
+        if (ingame.Credits < real_funding)
             real_funding = ingame.Credits;
         mdef = &mod_defs[research.CurrentMod + 1];
         progress = research_unkn_func_004(mdef->PercentPerDay, mdef->Funding, real_funding);
