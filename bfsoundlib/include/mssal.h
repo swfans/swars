@@ -35,6 +35,8 @@ extern "C" {
 #define AIL_MAX_NOTES 32
 /** # of possible MIDI channels */
 #define AIL_NUM_CHANS 16
+/** # of nested XMIDI FOR loops */
+#define AIL_FOR_NEST   4
 
 typedef struct SNDCARD_IO_PARMS SNDCARD_IO_PARMS;
 typedef struct AIL_INI AIL_INI;

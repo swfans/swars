@@ -42,7 +42,21 @@ extern char SoundDriverPath[144];
  */
 int32_t XMI_message_size(int32_t status);
 
+/** Find nth sequence in XMIDI IFF file.
+ *
+ * @return Gives NULL if not found, else pointer to FORM XMID
+ */
+const void *XMI_find_sequence(const uint8_t *image, int32_t sequence);
+
 void *AIL_API_file_read(const char *filename, void *dest);
+
+static inline uint32_t XMI_swap32(uint32_t v)
+{
+    return (v << 24) |
+        ( (v << 8) & 0x00ff0000 ) |
+        ( (v >> 8) & 0x0000ff00 ) |
+        ( (v >> 24) & 0x000000ff);
+}
 
 /******************************************************************************/
 #ifdef __cplusplus

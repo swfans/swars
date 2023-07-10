@@ -78,6 +78,56 @@ void AILXMIDI_start(void)
     MDI_locked = 1;
 }
 
+//## Initialize state table entries                                         ##
+//##                                                                        ##
+//############################################################################
+
+static void XMI_init_sequence_state(SNDSEQUENCE *seq)
+{
+   int32_t i;
+   static CTRL_LOG temp_log;
+
+    // Initialize logical-physical channel map to identity set
+    for (i=0; i < AIL_NUM_CHANS; i++)
+        seq->chan_map[i] = i;
+
+    // Initialize all logged controllers to -1
+    memset(&temp_log, -1, sizeof(CTRL_LOG));
+    memcpy(&seq->shadow, &temp_log, sizeof(CTRL_LOG));
+
+
+    // Initialize FOR loop counters
+    for (i=0; i < AIL_FOR_NEST; i++)
+        seq->FOR_loop_count[i] = -1;
+
+    // Initialize note queue
+    for (i=0; i < AIL_MAX_NOTES; i++)
+        seq->note_chan[i] = -1;
+    seq->note_count = 0;
+
+    // Initialize timing variables
+    // Default to 4/4 time at 120 beats/minute
+    seq->interval_count =  0;
+    seq->beat_count     =  0;
+    seq->measure_count  = -1;
+    seq->beat_fraction  =  0;
+    seq->time_fraction  =  0;
+    seq->time_numerator =  4;
+    seq->time_per_beat  =  500000*16;
+    seq->interval_num   =  0;
+}
+
+/** Reset sequence pointers and initialize state table entries.
+ */
+static void XMI_rewind_sequence(SNDSEQUENCE *seq)
+{
+    // Initialize sequence state table
+    XMI_init_sequence_state(seq);
+
+    // Initialize event pointer to start of XMIDI EVNT chunk data
+    seq->EVNT_ptr = (uint8_t *)seq->EVNT + 8;
+}
+
 /** Force transmission of any buffered MIDI traffic.
  */
 void XMI_flush_buffer(MDI_DRIVER *mdidrv)
@@ -972,12 +1022,80 @@ void AIL2OAL_API_close_XMIDI_driver(MDI_DRIVER *mdidrv)
 
 int32_t AIL2OAL_API_init_sequence(SNDSEQUENCE *seq, const void *start,  int32_t sequence_num)
 {
+    const uint8_t *image;
+    const uint8_t *end;
+    uint32_t len;
+
     if (seq == NULL)
         return 0;
 
     seq->status = SNDSEQ_DONE;
 
-    //TODO MIDI playback not implemented
+    // Find requested sequence in XMIDI image
+    image = XMI_find_sequence(start, sequence_num);
+    if (image == NULL) {
+        AIL_set_error("Invalid XMIDI sequence.");
+        return 0;
+    }
+
+    // Locate IFF chunks within FORM XMID:
+    //
+    // TIMB = list of bank/patch pairs needed to play sequence (optional)
+    // RBRN = list of branch target points (optional)
+    // EVNT = XMIDI event list (mandatory)
+    len = 8 + XMI_swap32(*(uint32_t*)(image + 4));
+    end = image + len;
+    image += 12;
+
+    seq->TIMB = NULL;
+    seq->RBRN = NULL;
+    seq->EVNT = NULL;
+
+    while (image < end)
+    {
+        if (memcmp(image, "TIMB", 4) == 0)
+            seq->TIMB = (uint8_t *)image;
+        if (memcmp(image, "RBRN", 4) == 0)
+            seq->RBRN = (uint8_t *)image;
+        if (memcmp(image, "EVNT", 4) == 0)
+            seq->EVNT = (uint8_t *)image;
+
+        image += 8 + XMI_swap32(*(uint32_t*)(image + 4));
+    }
+
+    // Sequence must contain EVNT chunk
+    if (seq->EVNT == NULL) {
+        AIL_set_error("Invalid XMIDI sequence.");
+        return 0;
+    }
+
+    // Initialize sequence callback and state data
+    seq->ICA = NULL;
+    seq->prefix_callback = NULL;
+    seq->trigger_callback = NULL;
+    seq->beat_callback = NULL;
+    seq->EOS = NULL;
+    seq->loop_count = 1;
+
+    XMI_rewind_sequence(seq);
+
+    // Initialize volume and tempo
+    seq->volume = AIL_preference[MDI_DEFAULT_VOLUME];
+    seq->volume_target = AIL_preference[MDI_DEFAULT_VOLUME];
+    seq->volume_period = 0;
+    seq->volume_accum = 0;
+
+    seq->tempo_percent = 100;
+    seq->tempo_target = 100;
+    seq->tempo_period = 0;
+    seq->tempo_accum = 0;
+    seq->tempo_error = 0;
+
+    // If no TIMB chunk present, return success
+    if (seq->TIMB == NULL)
+        return 1;
+
+    //TODO do we need the TIMB support?
     return -1;
 }
 

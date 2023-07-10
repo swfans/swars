@@ -51,6 +51,61 @@ int32_t XMI_message_size(int32_t status)
    return 0;
 }
 
+const void *XMI_find_sequence(const uint8_t *image, int32_t sequence)
+{
+    uint32_t len;
+    const uint8_t *end;
+
+    len = 0;
+
+    do
+    {
+        // Skip previous block, if any
+        image += len;
+
+        // Exit if not FORM or CAT block
+        if ((strncasecmp((char *)image, "FORM", 4)) &&
+          (strncasecmp((char *)image, "CAT ", 4)))
+            return NULL;
+
+        // Continue searching if not FORM XMID or CAT XMID
+        //
+        // XMIDI files always have even FORM lengths; therefore, no
+        // odd-byte compensation is needed
+        len = 8 + XMI_swap32(*(uint32_t *)(image+4));
+    }
+    while (strncasecmp((char *)image+8, "XMID", 4));
+
+    // If outer header was a FORM, return successfully if first sequence
+    // requested
+    //
+    // If second or higher sequence requested, return NULL if
+    // single-sequence FORM encountered
+    if (!strncasecmp((char *)image, "FORM", 4))
+    {
+        if (sequence != 0)
+            return NULL;
+        return image;
+    }
+
+    // Calculate ending address of image, and skip 'CAT_nnnnXMID'
+    // header to index first FORM chunk in CAT
+    end    = image + len;
+    image += 12;
+
+    // Find nth FORM XMID chunk in outer CAT XMID block
+    while (image < end)
+    {
+        if (!strncasecmp((char *)image+8, "XMID", 4))
+        {
+            if (!sequence--)
+                return image;
+        }
+        image += 8 + XMI_swap32(*(uint32_t *)(image+4));
+    }
+    return NULL;
+}
+
 void *AIL_API_file_read(const char *fname, void *dest)
 {
     int fh;
