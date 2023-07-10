@@ -3024,6 +3024,7 @@ void game_setup(void)
     load_texturemaps();
     LbDataLoadAll(unk02_load_files);
     read_weapons_conf_file();
+    read_cybmods_conf_file();
     bang_init();
     init_arrays_1();
     bang_set_detail(0);
