@@ -173,8 +173,7 @@ int research_unkn_func_004(ushort percent_per_day, int expect_funding, int real_
     return ret;
 #else
     int n_remain, overhead;
-    int points_total, ppd;
-    int dec_per_day, dec_cumult, delta;
+    int points_total, ppd, delta;
     int points_by_group;
 
     // Adjust points to number of scientists
@@ -185,16 +184,13 @@ int research_unkn_func_004(ushort percent_per_day, int expect_funding, int real_
     if (n_remain > delta)
     {
         overhead = 2;
-        dec_per_day = -4 * ppd;
-        dec_cumult = ppd * n_remain;
         while (n_remain > delta)
         {
             if (overhead >= 0x40000000)
                 break;
             n_remain -= delta;
-            dec_cumult += dec_per_day;
             if (n_remain <= delta)
-                points_by_group = dec_cumult / delta;
+                points_by_group = n_remain * (long long)ppd / delta;
             else
                 points_by_group = ppd;
             points_total += points_by_group / overhead;
@@ -203,7 +199,7 @@ int research_unkn_func_004(ushort percent_per_day, int expect_funding, int real_
     }
     else
     {
-        points_total = n_remain * ppd / delta;
+        points_total = n_remain * (long long)ppd / delta;
     }
 
     // Adjust points to amount of funding
@@ -304,7 +300,7 @@ int research_daily_progress_for_type(ubyte rstype)
         break;
     }
     scientists_died = 0;
-    if (real_funding > 0)
+    if ((real_funding > 0) && (progress > 0))
     {
         ingame.Credits -= real_funding;
         ingame.Expenditure += real_funding;
