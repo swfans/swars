@@ -422,9 +422,9 @@ void load_prim_quad(void)
         test_open(100);
 }
 
-void game_setup_sub1(void)
+void bang_init(void)
 {
-    asm volatile ("call ASM_game_setup_sub1\n"
+    asm volatile ("call ASM_bang_init\n"
         :  :  : "eax" );
 }
 
@@ -3023,7 +3023,8 @@ void game_setup(void)
     engine_mem_alloc_ptr = LbMemoryAlloc(engine_mem_alloc_size);
     load_texturemaps();
     LbDataLoadAll(unk02_load_files);
-    game_setup_sub1();
+    read_weapons_conf_file();
+    bang_init();
     init_arrays_1();
     bang_set_detail(0);
     game_setup_sub3();

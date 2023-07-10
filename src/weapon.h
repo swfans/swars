@@ -96,6 +96,8 @@ struct WeaponDef {
 /******************************************************************************/
 extern struct WeaponDef weapon_defs[33];
 
+void read_weapons_conf_file(void);
+
 void do_weapon_quantities_net_to_player(struct Thing *p_person);
 void do_weapon_quantities1(struct Thing *p_person);
 void do_weapon_quantities_proper1(struct Thing *p_person);
