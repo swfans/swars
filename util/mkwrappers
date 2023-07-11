@@ -75,6 +75,34 @@ Options:
 
 	def generate_wrappers (self):
 		self.read_input ()
+		self.wrln ('#ifdef NEED_UNDERSCORE')
+		self.wrln ('# define TRANSFORM_SYMBOLS')
+		self.wrln ('# define EXPORT_SYMBOL(sym) _ ## sym')
+		self.wrln ('#else')
+		self.wrln ('# define EXPORT_SYMBOL(sym) sym')
+		self.wrln ('#endif')
+		self.wrln ()
+		self.wrln ('#ifndef TRANSFORM_SYMBOLS')
+		self.wrln ()
+		self.wrln ('# define GLOBAL(sym) \\')
+		self.wrln ('  .global sym; \\')
+		self.wrln ('  sym ##:')
+		self.wrln ()
+		self.wrln ('# define GLOBAL_FUNC(sym) \\')
+		self.wrln ('  GLOBAL (sym)')
+		self.wrln ()
+		self.wrln ('#else')
+		self.wrln ()
+		self.wrln ('# define GLOBAL(sym) \\')
+		self.wrln ('  .global EXPORT_SYMBOL (sym); \\')
+		self.wrln ('  EXPORT_SYMBOL (sym) ##: \\')
+		self.wrln ('  sym ##:')
+		self.wrln ()
+		self.wrln ('# define GLOBAL_FUNC(sym) \\')
+		self.wrln ('  .global sym; \\')
+		self.wrln ('  GLOBAL (sym)')
+		self.wrln ()
+		self.wrln ('#endif')
 		self.wrln ()
 		self.wrln ('.text')
 		funcs = list(self.functions.keys ())
@@ -181,8 +209,7 @@ Options:
 
 	def generate_wrapper (self, name, convention, type, args):
 		self.wrln ()
-		self.wrln ('.global %s'	  % self.wrap_name (name))
-		self.wrln ('%s: /* %s %s %s */' % (self.wrap_name (name), convention, type, args))
+		self.wrln ('GLOBAL_FUNC(%s) /* %s %s %s */' % (self.wrap_name (name), convention, type, args))
 
 		# How the code is generated depends on calling convention used
 		if convention == 'W': # W=watcom; fastcall (compiler-defined) calling convention with 4 args in regs, the rest on stack
