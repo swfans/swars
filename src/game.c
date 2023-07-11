@@ -2954,14 +2954,6 @@ short test_missions(ubyte flag)
     return ret;
 }
 
-ubyte show_settings_controls_list(struct ScreenBox *box)
-{
-    ubyte ret;
-    asm volatile ("call ASM_show_settings_controls_list\n"
-        : "=r" (ret) : "a" (box));
-    return ret;
-}
-
 char *gui_strings_data_end;
 
 TbBool create_strings_list(char **strings, char *strings_data, char *strings_data_end)
@@ -3306,9 +3298,317 @@ void init_screen_info_box(struct ScreenInfoBox *box, ushort x, ushort y, ushort 
         : : "a" (box), "d" (x), "b" (y), "c" (width), "g" (text1), "g" (text2), "g" (drawspeed), "g" (font1), "g" (font2), "g" (textspeed));
 }
 
+ubyte show_title_box(struct ScreenTextBox *box)
+{
+    ubyte ret;
+    asm volatile ("call ASM_show_title_box\n"
+        : "=r" (ret) : "a" (box));
+    return ret;
+}
+
+ubyte show_unkn38_box(struct ScreenTextBox *box)
+{
+    ubyte ret;
+    asm volatile ("call ASM_show_unkn38_box\n"
+        : "=r" (ret) : "a" (box));
+    return ret;
+}
+
 ubyte ASM_show_title_box(struct ScreenTextBox *box);
 ubyte ASM_show_unkn38_box(struct ScreenTextBox *box);
 
+void check_buy_sell_button(void)
+{
+    asm volatile ("call ASM_check_buy_sell_button\n"
+        :  :  : "eax" );
+}
+
+ubyte select_all_agents(ubyte click)
+{
+    selected_agent = 4;
+    check_buy_sell_button();
+    return 1;
+}
+
+ubyte do_net_protocol_option(ubyte click)
+{
+    ubyte ret;
+    asm volatile ("call ASM_do_net_protocol_option\n"
+        : "=r" (ret) : "a" (click));
+    return ret;
+}
+
+ubyte do_net_unkn40(ubyte click)
+{
+    ubyte ret;
+    asm volatile ("call ASM_do_net_unkn40\n"
+        : "=r" (ret) : "a" (click));
+    return ret;
+}
+
+ubyte do_serial_speed_switch(ubyte click)
+{
+    ubyte ret;
+    asm volatile ("call ASM_do_serial_speed_switch\n"
+        : "=r" (ret) : "a" (click));
+    return ret;
+}
+
+ubyte change_panel_permutation(ubyte click)
+{
+    ubyte ret;
+    asm volatile ("call ASM_change_panel_permutation\n"
+        : "=r" (ret) : "a" (click));
+    return ret;
+}
+
+ubyte change_trenchcoat_preference(ubyte click)
+{
+    ubyte ret;
+    asm volatile ("call ASM_change_trenchcoat_preference\n"
+        : "=r" (ret) : "a" (click));
+    return ret;
+}
+
+ubyte do_unkn10_CALIBRATE(ubyte click)
+{
+    ubyte ret;
+    asm volatile ("call ASM_do_unkn10_CALIBRATE\n"
+        : "=r" (ret) : "a" (click));
+    return ret;
+}
+
+ubyte do_unkn10_SAVE(ubyte click)
+{
+    ubyte ret;
+    asm volatile ("call ASM_do_unkn10_SAVE\n"
+        : "=r" (ret) : "a" (click));
+    return ret;
+}
+
+ubyte do_unkn10_CONTROLS(ubyte click)
+{
+    ubyte ret;
+    asm volatile ("call ASM_do_unkn10_CONTROLS\n"
+        : "=r" (ret) : "a" (click));
+    return ret;
+}
+
+ubyte alert_OK(ubyte click)
+{
+    ubyte ret;
+    asm volatile ("call ASM_alert_OK\n"
+        : "=r" (ret) : "a" (click));
+    return ret;
+}
+
+ubyte do_net_SET2(ubyte click)
+{
+    ubyte ret;
+    asm volatile ("call ASM_do_net_SET2\n"
+        : "=r" (ret) : "a" (click));
+    return ret;
+}
+
+ubyte do_net_SET(ubyte click)
+{
+    ubyte ret;
+    asm volatile ("call ASM_do_net_SET\n"
+        : "=r" (ret) : "a" (click));
+    return ret;
+}
+
+ubyte do_net_INITIATE(ubyte click)
+{
+    ubyte ret;
+    asm volatile ("call ASM_do_net_INITIATE\n"
+        : "=r" (ret) : "a" (click));
+    return ret;
+}
+
+ubyte do_net_groups_LOGON(ubyte click)
+{
+    ubyte ret;
+    asm volatile ("call ASM_do_net_groups_LOGON\n"
+        : "=r" (ret) : "a" (click));
+    return ret;
+}
+
+ubyte do_unkn8_EJECT(ubyte click)
+{
+    ubyte ret;
+    asm volatile ("call ASM_do_unkn8_EJECT\n"
+        : "=r" (ret) : "a" (click));
+    return ret;
+}
+
+ubyte accept_mission(ubyte click)
+{
+    ubyte ret;
+    asm volatile ("call ASM_accept_mission\n"
+        : "=r" (ret) : "a" (click));
+    return ret;
+}
+
+ubyte do_unkn1_CANCEL(ubyte click)
+{
+    ubyte ret;
+    asm volatile ("call ASM_do_unkn1_CANCEL\n"
+        : "=r" (ret) : "a" (click));
+    return ret;
+}
+
+ubyte do_unkn2_CANCEL(ubyte click)
+{
+    ubyte ret;
+    asm volatile ("call ASM_do_unkn2_CANCEL\n"
+        : "=r" (ret) : "a" (click));
+    return ret;
+}
+
+ubyte do_unkn2_ACCEPT(ubyte click)
+{
+    ubyte ret;
+    asm volatile ("call ASM_do_unkn2_ACCEPT\n"
+        : "=r" (ret) : "a" (click));
+    return ret;
+}
+
+ubyte do_sysmnu_button(ubyte click)
+{
+    ubyte ret;
+    asm volatile ("call ASM_do_sysmnu_button\n"
+        : "=r" (ret) : "a" (click));
+    return ret;
+}
+
+ubyte do_storage_NEW_MORTAL(ubyte click)
+{
+    ubyte ret;
+    asm volatile ("call ASM_do_storage_NEW_MORTAL\n"
+        : "=r" (ret) : "a" (click));
+    return ret;
+}
+
+ubyte load_game_slot(ubyte click)
+{
+    ubyte ret;
+    asm volatile ("call ASM_load_game_slot\n"
+        : "=r" (ret) : "a" (click));
+    return ret;
+}
+
+ubyte save_game_slot(ubyte click)
+{
+    ubyte ret;
+    asm volatile ("call ASM_save_game_slot\n"
+        : "=r" (ret) : "a" (click));
+    return ret;
+}
+
+ubyte main_do_my_quit(ubyte click)
+{
+    ubyte ret;
+    asm volatile ("call ASM_main_do_my_quit\n"
+        : "=r" (ret) : "a" (click));
+    return ret;
+}
+
+ubyte main_do_login_1(ubyte click)
+{
+    ubyte ret;
+    asm volatile ("call ASM_main_do_login_1\n"
+        : "=r" (ret) : "a" (click));
+    return ret;
+}
+
+ubyte goto_savegame(ubyte click)
+{
+    ubyte ret;
+    asm volatile ("call ASM_goto_savegame\n"
+        : "=r" (ret) : "a" (click));
+    return ret;
+}
+
+ubyte do_abort_2(ubyte click)
+{
+    ubyte ret;
+    asm volatile ("call ASM_do_abort_2\n"
+        : "=r" (ret) : "a" (click));
+    return ret;
+}
+
+ubyte do_login_2(ubyte click)
+{
+    ubyte ret;
+    asm volatile ("call ASM_do_login_2\n"
+        : "=r" (ret) : "a" (click));
+    return ret;
+}
+
+ubyte main_do_map_editor(ubyte click)
+{
+    ubyte ret;
+    asm volatile ("call ASM_main_do_map_editor\n"
+        : "=r" (ret) : "a" (click));
+    return ret;
+}
+
+ubyte brief_do_netscan_enhance(ubyte click)
+{
+    ubyte ret;
+    asm volatile ("call ASM_brief_do_netscan_enhance\n"
+        : "=r" (ret) : "a" (click));
+    return ret;
+}
+
+ubyte do_unkn11_CANCEL(ubyte click)
+{
+    ubyte ret;
+    asm volatile ("call ASM_do_unkn11_CANCEL\n"
+        : "=r" (ret) : "a" (click));
+    return ret;
+}
+
+ubyte do_buy_equip(ubyte click)
+{
+    ubyte ret;
+    asm volatile ("call ASM_do_buy_equip\n"
+        : "=r" (ret) : "a" (click));
+    return ret;
+}
+
+ubyte sell_equipment(ubyte click)
+{
+    ubyte ret;
+    asm volatile ("call ASM_sell_equipment\n"
+        : "=r" (ret) : "a" (click));
+    return ret;
+}
+
+ubyte do_research_submit(ubyte click)
+{
+    ubyte ret;
+    asm volatile ("call ASM_do_research_submit\n"
+        : "=r" (ret) : "a" (click));
+    return ret;
+}
+
+ubyte do_research_suspend(ubyte click)
+{
+    ubyte ret;
+    asm volatile ("call ASM_do_research_suspend\n"
+        : "=r" (ret) : "a" (click));
+    return ret;
+}
+
+ubyte do_unkn12_WEAPONS_MODS(ubyte click)
+{
+    ubyte ret;
+    asm volatile ("call ASM_do_unkn12_WEAPONS_MODS\n"
+        : "=r" (ret) : "a" (click));
+    return ret;
+}
 ubyte ASM_select_all_agents(ubyte click);
 ubyte ASM_do_net_protocol_option(ubyte click);
 ubyte ASM_do_net_unkn40(ubyte click);
@@ -3345,6 +3645,255 @@ ubyte ASM_sell_equipment(ubyte click);
 ubyte ASM_do_research_submit(ubyte click);
 ubyte ASM_do_research_suspend(ubyte click);
 ubyte ASM_do_unkn12_WEAPONS_MODS(ubyte click);
+
+
+ubyte show_unkn32_box(struct ScreenBox *box)
+{
+    ubyte ret;
+    asm volatile ("call ASM_show_unkn32_box\n"
+        : "=r" (ret) : "a" (box));
+    return ret;
+}
+
+ubyte show_unkn12(struct ScreenBox *box)
+{
+    ubyte ret;
+    asm volatile ("call ASM_show_unkn12\n"
+        : "=r" (ret) : "a" (box));
+    return ret;
+}
+
+ubyte show_login_name(struct ScreenBox *box)
+{
+    ubyte ret;
+    asm volatile ("call ASM_show_login_name\n"
+        : "=r" (ret) : "a" (box));
+    return ret;
+}
+
+ubyte show_net_benefits_box(struct ScreenBox *box)
+{
+    ubyte ret;
+    asm volatile ("call ASM_show_net_benefits_box\n"
+        : "=r" (ret) : "a" (box));
+    return ret;
+}
+
+ubyte show_net_unkn21(struct ScreenBox *box)
+{
+    ubyte ret;
+    asm volatile ("call ASM_show_net_unkn21\n"
+        : "=r" (ret) : "a" (box));
+    return ret;
+}
+
+ubyte show_net_comms_box(struct ScreenBox *box)
+{
+    ubyte ret;
+    asm volatile ("call ASM_show_net_comms_box\n"
+        : "=r" (ret) : "a" (box));
+    return ret;
+}
+
+ubyte do_net_protocol_select(ubyte click)
+{
+    ubyte ret;
+    asm volatile ("call ASM_do_net_protocol_select\n"
+        : "=r" (ret) : "a" (click));
+    return ret;
+}
+
+ubyte show_net_protocol_box(struct ScreenBox *box)
+{
+    ubyte ret;
+    asm volatile ("call ASM_show_net_protocol_box\n"
+        : "=r" (ret) : "a" (box));
+    return ret;
+}
+
+ubyte show_net_faction_box(struct ScreenBox *box)
+{
+    ubyte ret;
+    asm volatile ("call ASM_show_net_faction_box\n"
+        : "=r" (ret) : "a" (box));
+    return ret;
+}
+
+ubyte show_net_team_box(struct ScreenBox *box)
+{
+    ubyte ret;
+    asm volatile ("call ASM_show_net_team_box\n"
+        : "=r" (ret) : "a" (box));
+    return ret;
+}
+
+ubyte show_net_groups_box(struct ScreenBox *box)
+{
+    ubyte ret;
+    asm volatile ("call ASM_show_net_groups_box\n"
+        : "=r" (ret) : "a" (box));
+    return ret;
+}
+
+ubyte show_net_users_box(struct ScreenBox *box)
+{
+    ubyte ret;
+    asm volatile ("call ASM_show_net_users_box\n"
+        : "=r" (ret) : "a" (box));
+    return ret;
+}
+
+ubyte show_mission_stats(struct ScreenBox *box)
+{
+    ubyte ret;
+    asm volatile ("call ASM_show_mission_stats\n"
+        : "=r" (ret) : "a" (box));
+    return ret;
+}
+
+ubyte show_unkn31_box(struct ScreenBox *box)
+{
+    ubyte ret;
+    asm volatile ("call ASM_show_unkn31_box\n"
+        : "=r" (ret) : "a" (box));
+    return ret;
+}
+
+ubyte show_unkn20(struct ScreenBox *box)
+{
+    ubyte ret;
+    asm volatile ("call ASM_show_unkn20\n"
+        : "=r" (ret) : "a" (box));
+    return ret;
+}
+
+ubyte show_unkn21_box(struct ScreenTextBox *box)
+{
+    ubyte ret;
+    asm volatile ("call ASM_show_unkn21_box\n"
+        : "=r" (ret) : "a" (box));
+    return ret;
+}
+
+ubyte show_unkn04(struct ScreenBox *box)
+{
+    ubyte ret;
+    asm volatile ("call ASM_show_unkn04\n"
+        : "=r" (ret) : "a" (box));
+    return ret;
+}
+
+ubyte show_unkn33_box(struct ScreenBox *box)
+{
+    ubyte ret;
+    asm volatile ("call ASM_show_unkn33_box\n"
+        : "=r" (ret) : "a" (box));
+    return ret;
+}
+
+ubyte show_netgame_unkn1(struct ScreenBox *box)
+{
+    ubyte ret;
+    asm volatile ("call ASM_show_netgame_unkn1\n"
+        : "=r" (ret) : "a" (box));
+    return ret;
+}
+
+ubyte show_menu_storage_unkn37_box(struct ScreenTextBox *box)
+{
+    ubyte ret;
+    asm volatile ("call ASM_show_menu_storage_unkn37_box\n"
+        : "=r" (ret) : "a" (box));
+    return ret;
+}
+
+ubyte show_unkn29_box(struct ScreenBox *box)
+{
+    ubyte ret;
+    asm volatile ("call ASM_show_unkn29_box\n"
+        : "=r" (ret) : "a" (box));
+    return ret;
+}
+
+ubyte display_weapon_info(struct ScreenTextBox *box)
+{
+    ubyte ret;
+    asm volatile ("call ASM_display_weapon_info\n"
+        : "=r" (ret) : "a" (box));
+    return ret;
+}
+
+ubyte show_weapon_name(struct ScreenTextBox *box)
+{
+    ubyte ret;
+    asm volatile ("call ASM_show_weapon_name\n"
+        : "=r" (ret) : "a" (box));
+    return ret;
+}
+
+ubyte show_weapon_list(struct ScreenTextBox *box)
+{
+    ubyte ret;
+    asm volatile ("call ASM_show_weapon_list\n"
+        : "=r" (ret) : "a" (box));
+    return ret;
+}
+
+ubyte show_weapon_slots(struct ScreenBox *box)
+{
+    ubyte ret;
+    asm volatile ("call ASM_show_weapon_slots\n"
+        : "=r" (ret) : "a" (box));
+    return ret;
+}
+
+ubyte show_agent_list(struct ScreenTextBox *box)
+{
+    ubyte ret;
+    asm volatile ("call ASM_show_agent_list\n"
+        : "=r" (ret) : "a" (box));
+    return ret;
+}
+
+ubyte show_blokey(struct ScreenBox *box)
+{
+    ubyte ret;
+    asm volatile ("call ASM_show_blokey\n"
+        : "=r" (ret) : "a" (box));
+    return ret;
+}
+
+ubyte show_unkn18_box(struct ScreenTextBox *box)
+{
+    ubyte ret;
+    asm volatile ("call ASM_show_unkn18_box\n"
+        : "=r" (ret) : "a" (box));
+    return ret;
+}
+
+ubyte show_unkn36_box(struct ScreenTextBox *box)
+{
+    ubyte ret;
+    asm volatile ("call ASM_show_unkn36_box\n"
+        : "=r" (ret) : "a" (box));
+    return ret;
+}
+
+ubyte show_unkn34_box(struct ScreenBox *box)
+{
+    ubyte ret;
+    asm volatile ("call ASM_show_unkn34_box\n"
+        : "=r" (ret) : "a" (box));
+    return ret;
+}
+
+ubyte show_settings_controls_list(struct ScreenBox *box)
+{
+    ubyte ret;
+    asm volatile ("call ASM_show_settings_controls_list\n"
+        : "=r" (ret) : "a" (box));
+    return ret;
+}
 
 ubyte ASM_show_unkn32_box(struct ScreenBox *box);
 ubyte ASM_show_unkn12(struct ScreenBox *box);
@@ -3423,7 +3972,7 @@ void init_screen_boxes(void)
     }
 
     init_screen_box(&unkn33_box, 213u, 285u, 420u, 62, 6);
-    init_screen_button(options_audio_buttons, 393u, 289u, gui_strings[531], 6,
+    init_screen_button(&options_audio_buttons[0], 393u, 289u, gui_strings[531], 6,
         med2_font, 1, 0);
     init_screen_button(&options_audio_buttons[1], 458u, 289u, gui_strings[532],
         6, med2_font, 1, 0);
@@ -4876,14 +5425,6 @@ void show_date_time(void)
 void purple_unkn1_data_to_screen(void)
 {
     memcpy(data_1c6de4, data_1c6de8, 0x5FA0u);
-}
-
-ubyte do_buy_equip(ubyte click)
-{
-    ubyte ret;
-    asm volatile ("call ASM_do_buy_equip\n"
-        : "=r" (ret) : "a" (click));
-    return ret;
 }
 
 void init_weapon_anim(ubyte weapon)
