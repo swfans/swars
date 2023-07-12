@@ -4001,11 +4001,11 @@ void draw_chartxy_curve(int x, int y, int width, int height, ushort *y_vals, int
     lbDisplay.DrawFlags = 0;
 }
 
-ubyte show_unkn20(struct ScreenBox *box)
+ubyte show_research_graph(struct ScreenBox *box)
 {
 #if 0
     ubyte ret;
-    asm volatile ("call ASM_show_unkn20\n"
+    asm volatile ("call ASM_show_research_graph\n"
         : "=r" (ret) : "a" (box));
     return ret;
 #endif
@@ -4235,7 +4235,7 @@ ubyte ac_show_net_groups_box(struct ScreenBox *box);
 ubyte ac_show_net_users_box(struct ScreenBox *box);
 ubyte ac_show_mission_stats(struct ScreenBox *box);
 ubyte ac_show_unkn31_box(struct ScreenBox *box);
-ubyte ac_show_unkn20(struct ScreenBox *box);
+ubyte ac_show_research_graph(struct ScreenBox *box);
 ubyte ac_show_unkn21_box(struct ScreenTextBox *box);
 ubyte ac_show_unkn04(struct ScreenBox *box);
 ubyte ac_show_unkn33_box(struct ScreenBox *box);
@@ -4649,7 +4649,7 @@ void init_screen_boxes(void)
     research_unkn21_box.Flags |= 0x0300;
     unkn12_WEAPONS_MODS_button.Text = gui_strings[451];
     lbFontPtr = med2_font;
-    research_unkn20_box.SpecialDrawFn = ac_show_unkn20;
+    research_unkn20_box.SpecialDrawFn = ac_show_research_graph;
 
     if (my_string_width(gui_strings[418]) <= my_string_width(gui_strings[417]))
         s = gui_strings[417];
