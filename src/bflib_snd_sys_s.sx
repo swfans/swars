@@ -3937,7 +3937,7 @@ GLOBAL_FUNC (ASM_LoadAwe32Soundfont)
 		call   ac_FreeAwe32Soundfont
 		mov    %bl,Awe32SoundfontLoaded
 	jump_1103be:
-		mov    $_CurrentAwe32SoundfontPrefix,%edi
+		mov    $EXPORT_SYMBOL(CurrentAwe32SoundfontPrefix),%edi
 		push   %edi
 	jump_1103c4:
 		mov    (%esi),%al
@@ -3962,7 +3962,7 @@ GLOBAL_FUNC (ASM_LoadAwe32Soundfont)
 		mov    $0x2,%edx
 		mov    %esp,%eax
 		call   ac_LbFileOpen
-		mov    %eax,sbkHandle
+		mov    %eax,EXPORT_SYMBOL(sbkHandle)
 		cmp    $0xffffffff,%eax
 		je     jump_1105d0
 		call   ac_LbFileLengthHandle
@@ -3994,7 +3994,7 @@ GLOBAL_FUNC (ASM_LoadAwe32Soundfont)
 		mov    awe_buffer_seg,%cx
 		push   %eax
 		mov    awe_buffer,%ebx
-		mov    sbkHandle,%eax
+		mov    EXPORT_SYMBOL(sbkHandle),%eax
 		call   ___dos_read_
 		test   %eax,%eax
 		jne    jump_1105d0
@@ -4013,7 +4013,7 @@ GLOBAL_FUNC (ASM_LoadAwe32Soundfont)
 		mov    %edx,%gs
 		xor    %ebx,%ebx
 		mov    %gs:0x2(%eax),%edx
-		mov    sbkHandle,%eax
+		mov    EXPORT_SYMBOL(sbkHandle),%eax
 		xor    %esi,%esi
 		call   ac_dos_lseek
 		jmp    jump_1104e6
@@ -4029,7 +4029,7 @@ GLOBAL_FUNC (ASM_LoadAwe32Soundfont)
 		mov    awe_buffer_seg,%cx
 		push   %eax
 		mov    awe_buffer,%ebx
-		mov    sbkHandle,%eax
+		mov    EXPORT_SYMBOL(sbkHandle),%eax
 		call   ___dos_read_
 		test   %eax,%eax
 		jne    jump_1105d0
@@ -4059,7 +4059,7 @@ GLOBAL_FUNC (ASM_LoadAwe32Soundfont)
 	jump_110562:
 		mov    0x18(%esp),%gs
 		xor    %ebx,%ebx
-		mov    sbkHandle,%eax
+		mov    EXPORT_SYMBOL(sbkHandle),%eax
 		mov    %gs:0x6(%edi),%edx
 		call   ac_dos_lseek
 		lea    0x14(%esp),%eax
@@ -4068,7 +4068,7 @@ GLOBAL_FUNC (ASM_LoadAwe32Soundfont)
 		mov    awe_preset,%ebx
 		push   %eax
 		mov    %gs:0xa(%edi),%edx
-		mov    sbkHandle,%eax
+		mov    EXPORT_SYMBOL(sbkHandle),%eax
 		call   ___dos_read_
 		test   %eax,%eax
 		jne    jump_1105d0
@@ -4080,7 +4080,7 @@ GLOBAL_FUNC (ASM_LoadAwe32Soundfont)
 		test   %eax,%eax
 		jne    jump_1105d0
 		mov    $0x1,%cl
-		mov    sbkHandle,%eax
+		mov    EXPORT_SYMBOL(sbkHandle),%eax
 		mov    %cl,Awe32SoundfontLoaded
 		call   ac_LbFileClose
 	jump_1105d0:
@@ -4930,7 +4930,7 @@ sample_volume:
 GLOBAL (ssnd_active)
 		.long	0x01
 
-_CurrentAwe32SoundfontPrefix:
+GLOBAL (CurrentAwe32SoundfontPrefix)
 		.string "Bullfrog"
 		.align	4
 GLOBAL (adpcm_handle)	/* 0x159E54 */
@@ -5244,7 +5244,7 @@ GLOBAL (sample_queue_handle_initiated)
 GLOBAL (sample_queue_handle)
 		.long	0x0
 
-sbkHandle:	/* 0x1ED5F0 */
+GLOBAL (sbkHandle)	/* 0x1ED5F0 */
 		.long	0x0
 
 /* unsigned char *awe_buffer;

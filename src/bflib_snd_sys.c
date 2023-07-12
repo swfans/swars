@@ -108,6 +108,9 @@ extern void *Sfx;
 extern void *EndSfxs;
 extern short NumberOfSongs;
 
+extern char CurrentAwe32SoundfontPrefix[12]; // = "Bullfrog";
+extern TbFileHandle sbkHandle; // = INVALID_FILE;
+
 /** Wrapper for LbMemoryAlloc(), needed to make sure data sizes match.
  */
 void *LbMemoryAlloc_wrap(uint32_t size)
@@ -477,23 +480,110 @@ void InitSound(void)
 #endif
 }
 
-void LoadAwe32Soundfont(const char *str)
-{
-    asm volatile ("call ASM_LoadAwe32Soundfont\n"
-        :  :  "a" (str) );
-}
-
 void FreeAwe32Soundfont(void)
 {
-    if (!UseCurrentAwe32Soundfont && MusicInstalled  && MusicAble
-      && !strcasecmp(MusicInstallChoice.driver_name, "SBAWE32.MDI")
-      && !strcasecmp(MusicType, "w") )
-    {
-        AWEFreeMem(MusicDriver, 1);
-        FreeDOSmem(awe_buffer, awe_buffer_seg);
-        FreeDOSmem(awe_preset, awe_preset_seg);
+    if (UseCurrentAwe32Soundfont) {
+        return;
+    }
+    if (!MusicInstalled || !MusicAble)
+        return;
+    if (strcasecmp(MusicInstallChoice.driver_name, "SBAWE32.MDI") != 0)
+        return;
+    if (strcasecmp(MusicType, "w") != 0)
+        return;
+
+    AWEFreeMem(MusicDriver, 1);
+    FreeDOSmem(awe_buffer, awe_buffer_seg);
+    FreeDOSmem(awe_preset, awe_preset_seg);
+    Awe32SoundfontLoaded = 0;
+}
+
+void LoadAwe32Soundfont(const char *str)
+{
+#if 0
+    asm volatile ("call ASM_LoadAwe32Soundfont\n"
+        :  :  "a" (str) );
+#endif
+    char locstr[FILENAME_MAX];
+    long fsize;
+
+    if (UseCurrentAwe32Soundfont) {
+        Awe32SoundfontLoaded = 1;
+        return;
+    }
+    if (!MusicInstalled || !MusicAble)
+        return;
+    if (strcasecmp(MusicInstallChoice.driver_name, "SBAWE32.MDI") != 0)
+        return;
+    if (strcasecmp(MusicType, "w") != 0)
+        return;
+
+    if (Awe32SoundfontLoaded == 1) {
+        FreeAwe32Soundfont();
         Awe32SoundfontLoaded = 0;
     }
+
+    strncpy(CurrentAwe32SoundfontPrefix, str, sizeof(CurrentAwe32SoundfontPrefix));
+    sprintf(locstr, "%s/%s.sbk", SoundDataPath, CurrentAwe32SoundfontPrefix);
+    sbkHandle = LbFileOpen(locstr, Lb_FILE_MODE_READ_ONLY);
+    if (sbkHandle == INVALID_FILE) {
+        return;
+    }
+
+    fsize = LbFileLengthHandle(sbkHandle);
+
+    (void)fsize; // disable unused ver warning
+
+#if 0 // Awe32 sound bank not implemented
+    alloc = AllocDOSmem(512);
+    awe_buffer_seg = alloc.seg;
+    awe_buffer = alloc.offs;
+    if ((awe_buffer_seg == 0) && (awe_buffer == 0)) {
+        LbFileClose(sbkHandle);
+        return;
+    }
+
+    if (AWEGetTotalRAM(MusicDriver) == -1) {
+        LbFileClose(sbkHandle);
+        return;
+    }
+
+    if (AWEDefMemMap(MusicDriver, 2, awe_buffer) == 0) {
+        LbFileClose(sbkHandle);
+        return;
+    }
+
+    if (LbFileRead(sbkHandle, awe_buffer, 0x200) != 0x200) {
+        LbFileClose(sbkHandle);
+        return;
+    }
+
+    if (AWEGetSFInfo(MusicDriver, 1, awe_buffer) == 0) {
+        LbFileClose(sbkHandle);
+        return;
+    }
+
+    while (LbFileRead(sbkHandle, awe_buffer, 0x200) > 0)
+    {
+        if (AWEStreamSample(MusicDriver, 1, awe_buffer) == 0) {
+            LbFileClose(sbkHandle);
+            return;
+        }
+    }
+
+    if (LbFileRead(sbkHandle, awe_preset, preset_len) != preset_len) {
+        LbFileClose(sbkHandle);
+        return;
+    }
+
+    if (AWELoadPreset(MusicDriver, 1, awe_preset) != 0) {
+        LbFileClose(sbkHandle);
+        return;
+    }
+#endif
+
+    Awe32SoundfontLoaded = 1;
+    LbFileClose(sbkHandle);
 }
 
 sbyte AllocateMusicBankMemory(void)
