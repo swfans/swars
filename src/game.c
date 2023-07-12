@@ -140,6 +140,8 @@ extern long dword_1DC36C;
 extern long sound_heap_size;
 extern struct SampleTable *sound_heap_memory;
 
+extern ubyte research_on_weapons;// = true;
+
 extern PrimObjectPoint *prim_object_points;
 extern PrimObjectFace *prim_object_faces;
 extern PrimObjectFace4 *prim_object_faces4;
@@ -3209,6 +3211,42 @@ void draw_line_purple_list(int x1, int y1, int x2, int y2, int colour)
         : : "a" (x1), "d" (y1), "b" (x2), "c" (y2), "g" (colour));
 }
 
+void draw_box_purple_list(int x, int y, ulong width, ulong height, int colour)
+{
+    asm volatile (
+      "push %4\n"
+      "call ASM_draw_box_purple_list\n"
+        : : "a" (x), "d" (y), "b" (width), "c" (height), "g" (colour));
+}
+
+void draw_text_purple_list2(int x, int y, const char *text, ushort line)
+{
+    asm volatile (
+      "call ASM_draw_text_purple_list2\n"
+        : : "a" (x), "d" (y), "b" (text), "c" (line));
+}
+
+void draw_sprite_purple_list(int x, int y, struct TbSprite *sprite)
+{
+    asm volatile (
+      "call ASM_draw_sprite_purple_list\n"
+        : : "a" (x), "d" (y), "b" (sprite));
+}
+
+void copy_box_purple_list(long x, long y, ulong width, ulong height)
+{
+    asm volatile (
+      "call ASM_copy_box_purple_list\n"
+        : : "a" (x), "d" (y), "b" (width), "c" (height));
+}
+
+void draw_unkn20_subfunc_01(int x, int y, char *text, ubyte a4)
+{
+    asm volatile (
+      "call ASM_draw_unkn20_subfunc_01\n"
+        : : "a" (x), "d" (y), "b" (text), "c" (a4));
+}
+
 void ASM_show_game_engine(void);
 void show_game_engine(void)
 {
@@ -3769,12 +3807,290 @@ ubyte show_unkn31_box(struct ScreenBox *box)
     return ret;
 }
 
+void draw_chartxy_axis_y_values(int x, int y, int height, int ax_min, int ax_max, int tot_values)
+{
+    char str[8];
+    int i;
+    int ax_val;
+    int cy;
+
+    ax_val = ax_max;
+    cy = y;
+    for (i = 0; i < tot_values; i++)
+    {
+        int twidth;
+        char *text;
+        ulong spr_id;
+        struct TbSprite *spr;
+
+        lbDisplay.DrawFlags = 0;
+        if (i != tot_values/2 && i != 0)
+            spr_id = 146;
+        else
+            spr_id = 145;
+        spr = &sprites_Icons0_0[spr_id];
+        sprintf(str, "%d", ax_val);
+        twidth = LbTextStringWidth(str) + spr->SWidth;
+        strcpy((char *)(back_buffer + text_buf_pos), str);
+        text = (char *)(back_buffer + text_buf_pos);
+        text_buf_pos += strlen(str) + 1;
+        draw_text_purple_list2(x - twidth - 1, cy, text, 0);
+        cy += height / tot_values;
+        ax_val -= (ax_max - ax_min) / tot_values;
+    }
+}
+
+void draw_chartxy_axis_x_values(int x, int y, int width, int ax_min, int ax_max, int tot_values)
+{
+    char str[8];
+    int i;
+    int ax_val;
+    int cx;
+
+    ax_val = ax_min;
+    cx = x + 32;
+    for (i = 0; i < tot_values; i++)
+    {
+        int twidth;
+        char *text;
+        ulong spr_id;
+        struct TbSprite *spr;
+        int final_x;
+
+        lbDisplay.DrawFlags = 0;
+        if (i != tot_values / 2 - 1 && i != tot_values - 1)
+            spr_id = 146;
+        else
+            spr_id = 147;
+        spr = &sprites_Icons0_0[spr_id];
+        sprintf(str, "%d", ax_val);
+        twidth = LbTextStringWidth(str);
+        strcpy((char *)(back_buffer + text_buf_pos), str);
+        text = (char *)(back_buffer + text_buf_pos);
+        text_buf_pos += strlen(str) + 1;
+        if (ax_val == 1)
+            final_x = cx - (twidth - 2) + 3;
+        else
+            final_x = cx - (twidth - 2) + 1;
+        draw_text_purple_list2(final_x, y + 4 + spr->SHeight, text, 0);
+        cx += width / tot_values;
+        ax_val += (ax_max - ax_min) / tot_values;
+    }
+}
+
+void draw_chartxy_axis_y_grid(int x, int y, int width, int height, int tot_values)
+{
+    int i;
+    int cy;
+
+    cy = y;
+    for (i = 0; i < tot_values; i++)
+    {
+        ulong spr_id;
+        struct TbSprite *spr;
+
+        lbDisplay.DrawFlags = 0x0004;
+        draw_line_purple_list(x + 1, cy, x + width, cy, height + 7);
+        lbDisplay.DrawFlags = 0;
+        if (i != tot_values/2 && i != 0)
+            spr_id = 146;
+        else
+            spr_id = 145;
+        spr = &sprites_Icons0_0[spr_id];
+        draw_sprite_purple_list(x - spr->SWidth - 1, cy, spr);
+        cy += height / tot_values;
+    }
+}
+
+void draw_chartxy_axis_x_grid(int x, int y, int width, int height, int tot_values)
+{
+    int i;
+    int cx;
+
+    cx = x;
+    for (i = 0; i < tot_values; i++)
+    {
+        ulong spr_id;
+        struct TbSprite *spr;
+
+        lbDisplay.DrawFlags = 0x0004;
+        draw_line_purple_list(cx, 128, cx, y + height - 1, height + 7);
+        lbDisplay.DrawFlags = 0;
+        if (i != tot_values / 2 - 1 && i != tot_values - 1)
+            spr_id = 146;
+        else
+            spr_id = 147;
+        spr = &sprites_Icons0_0[spr_id];
+        draw_sprite_purple_list(cx - spr->SWidth + 1, y + height + 2, spr);
+        cx += width / tot_values;
+    }
+}
+
+void draw_line_purple_thick(int x1, int y1, int x2, int y2, ubyte colour, ubyte bkcolor)
+{
+    draw_line_purple_list(x1, y1, x2, y2, 87);
+    if (y1 - y2 <= x2 - x1)
+    {
+        draw_line_purple_list(x1, y1 + 1, x2, y2 + 1, colour);
+        draw_line_purple_list(x1, y1 - 1, x2, y2 - 1, colour);
+        draw_line_purple_list(x1, y1 + 2, x2, y2 + 2, bkcolor);
+        draw_line_purple_list(x1, y1 + 3, x2, y2 + 3, bkcolor);
+        draw_line_purple_list(x1, y1 + 4, x2, y2 + 4, bkcolor);
+    }
+    else
+    {
+        draw_line_purple_list(x1 + 1, y1, x2 + 1, y2, colour);
+        draw_line_purple_list(x1 - 1, y1, x2 - 1, y2, colour);
+        draw_line_purple_list(x1 + 2, y1, x2 + 2, y2, bkcolor);
+        draw_line_purple_list(x1 + 3, y1, x2 + 3, y2, bkcolor);
+        draw_line_purple_list(x1 + 4, y1, x2 + 4, y2, bkcolor);
+    }
+}
+
+void draw_chartxy_curve(int x, int y, int width, int height, ushort *y_vals, int n_y_vals, int y_scale, ushort y_trend_delta, int tot_values)
+{
+    int cday, progress, prev_progress, progress_scale;
+    int cx, cy, mcy;
+    int next_cx, next_cy, next_mcy;
+    int delta_x, delta_y, delta_u;
+    int remain_day;
+
+    // Draw existing points curve
+    delta_x = width / tot_values;
+    delta_y = height / tot_values;
+    delta_u = delta_x;
+    progress_scale = y_scale / tot_values;
+    cday = 0;
+    progress = y_vals[cday];
+    cx = x;
+    // To increase accuracy, we keep y value multiplied by progress_scale
+    mcy = (y + height) * progress_scale - (delta_y * progress);
+    for (cday++; cday < n_y_vals; cday++)
+    {
+        progress = y_vals[cday];
+        prev_progress = y_vals[cday-1];
+        next_mcy = mcy - delta_y * (progress - prev_progress);
+        next_cx = cx + delta_x;
+        cy = mcy / progress_scale;
+        next_cy = next_mcy / progress_scale;
+        draw_line_purple_thick(cx, cy, next_cx, next_cy, 87, 0);
+        cx = next_cx;
+        mcy = next_mcy;
+    }
+    // Draw trend curve
+    lbDisplay.DrawFlags = 0x0004;
+    remain_day = 11 - cday;
+    {
+        progress = y_trend_delta;
+        next_mcy = mcy - (delta_y * progress * remain_day);
+        cy = mcy / progress_scale;
+        next_cy = next_mcy / progress_scale;
+        delta_u = delta_x * remain_day;
+        if (next_cy >= y) {
+            // Everything fits on the chart
+            next_cx = cx + delta_u;
+        } else {
+            // Cap cy, and adjust cx accordingly
+            next_cx = cx + cy * delta_u / (cy - next_cy);
+            if (next_cx > width)
+                next_cx = width;
+            next_cy = y;
+        }
+        draw_line_purple_thick(cx, cy, next_cx, next_cy, 87, 0);
+    }
+    lbDisplay.DrawFlags = 0;
+}
+
 ubyte show_unkn20(struct ScreenBox *box)
 {
+#if 0
     ubyte ret;
     asm volatile ("call ASM_show_unkn20\n"
         : "=r" (ret) : "a" (box));
     return ret;
+#endif
+    struct TbSprite *spr;
+    char *text;
+    ushort *y_vals;
+    ushort y_trend_delta;
+    int n_y_vals;
+    int graph_days, done_days;
+
+    if ((box->Flags & 0x8000) == 0)
+    {
+        int twidth;
+
+        lbFontPtr = small_med_font;
+        my_set_text_window(0, 0, 640, 480);
+
+        draw_chartxy_axis_y_values(64, 128, 240, 0, 100, 10);
+
+        draw_chartxy_axis_y_grid(64, 128, 320, 240, 10);
+        draw_chartxy_axis_x_grid(96, 128, 320, 240, 10);
+
+        spr = &sprites_Icons0_0[145];
+        draw_sprite_purple_list(66 - spr->SWidth - 1, 368, spr);
+        spr = &sprites_Icons0_0[147];
+        draw_sprite_purple_list(61, 368, spr);
+        draw_text_purple_list2(52, 374, misc_text[0], 0);
+        lbFontPtr = med_font;
+        my_set_text_window(box->X + 4, box->Y + 4, box->Width - 8,  box->Height - 8);
+        text = gui_strings[453];
+        twidth = my_string_width(text);
+        draw_text_purple_list2((box->Width - 8 - twidth) >> 1, 290, text, 0);
+        text = gui_strings[452];
+        draw_unkn20_subfunc_01(10, 31, text, 2);
+        box->Flags |= 0x8000;
+        copy_box_purple_list(box->X, box->Y, box->Width, box->Height);
+    }
+
+    graph_days = 0;
+    if (research_on_weapons)
+        done_days = research.WeaponDaysDone[research.CurrentWeapon];
+    else
+        done_days = research.ModDaysDone[research.CurrentMod];
+    if (done_days >= 10) {
+        graph_days = done_days - 9;
+        n_y_vals = 10;
+    } else {
+        n_y_vals = done_days + 1;
+    }
+    lbFontPtr = small_med_font;
+    my_set_text_window(0, 0, 640, 480);
+    draw_chartxy_axis_x_values(64, 128 + 240, 320, graph_days+1, graph_days+11, 10);
+
+    LbScreenSetGraphicsWindow(64 - 1, 128, 320 + 3, 240 + 2);
+    if (research_on_weapons)
+    {
+        if (research.CurrentWeapon != -1)
+        {
+            struct WeaponDef *wdef;
+
+            y_vals = &research.WeaponProgress[research.CurrentWeapon][0];
+            wdef = &weapon_defs[research.CurrentWeapon + 1];
+            y_trend_delta = research_unkn_func_004(wdef->PercentPerDay, wdef->Funding, research.WeaponFunding);
+
+            draw_chartxy_curve(1, 0, 320, 240, y_vals, n_y_vals, RESEARCH_COMPLETE_POINTS, y_trend_delta, 10);
+        }
+    }
+    else
+    {
+        if (research.CurrentMod != -1)
+        {
+            struct ModDef *mdef;
+
+            y_vals = &research.ModProgress[research.CurrentMod][0];
+            mdef = &mod_defs[research.CurrentMod + 1];
+            y_trend_delta = research_unkn_func_004(mdef->PercentPerDay, mdef->Funding, research.ModFunding);
+
+            draw_chartxy_curve(1, 0, 320, 240, y_vals, n_y_vals, RESEARCH_COMPLETE_POINTS, y_trend_delta, 10);
+        }
+    }
+
+    LbScreenSetGraphicsWindow(0, 0, 640, 480);
+    draw_box_purple_list(64, 368, 321,   2, 247);
+    draw_box_purple_list(63, 128,   2, 241, 247);
+    return 0;
 }
 
 ubyte show_unkn21_box(struct ScreenTextBox *box)

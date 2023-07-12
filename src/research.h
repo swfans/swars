@@ -53,6 +53,7 @@ struct ResearchInfo
 extern struct ResearchInfo research;
 
 int research_daily_progress_for_type(ubyte rstype);
+int research_unkn_func_004(ushort percent_per_day, int expect_funding, int real_funding);
 /******************************************************************************/
 #ifdef __cplusplus
 }
