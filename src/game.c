@@ -79,6 +79,8 @@ extern unsigned long unkn_buffer_04;
 
 extern ubyte *small_font_data;
 extern ubyte *pointer_data;
+extern struct TbSprite *sprites_Icons0_0;
+extern struct TbSprite *sprites_Icons0_0_end;
 extern struct TbSprite *pop1_sprites;
 extern struct TbSprite *pop1_sprites_end;
 extern ubyte *pop1_data;
@@ -3197,6 +3199,14 @@ void input(void)
 void gproc3_unknsub3(int a1)
 {
     // Empty
+}
+
+void draw_line_purple_list(int x1, int y1, int x2, int y2, int colour)
+{
+    asm volatile (
+      "push %4\n"
+      "call ASM_draw_line_purple_list\n"
+        : : "a" (x1), "d" (y1), "b" (x2), "c" (y2), "g" (colour));
 }
 
 void ASM_show_game_engine(void);
