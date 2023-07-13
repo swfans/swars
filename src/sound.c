@@ -462,15 +462,11 @@ unqueue_source_buffers (SourceDescriptor *src)
   s->status = 2;
 }
 
-TbBool sound_update(void)
+void sound_update_dig_samples(DIG_DRIVER *digdrv)
 {
   int32_t n;
   SourceDescriptor *src;
   SNDSAMPLE *s;
-  DIG_DRIVER *digdrv = sound_driver;
-
-  if (!sound_initialised || sound_driver == NULL)
-    return false;
 
   digdrv->n_active_samples = 0;
 
@@ -500,6 +496,14 @@ TbBool sound_update(void)
 
       queue_source_buffers (digdrv, src);
     }
+}
+
+TbBool sound_update(void)
+{
+  if (!sound_initialised || sound_driver == NULL)
+    return false;
+
+  sound_update_dig_samples(sound_driver);
 
   ogg_vorbis_stream_update (&sound_music_stream);
   return true;

@@ -879,6 +879,19 @@ SNDSEQUENCE *AIL_allocate_sequence_handle(MDI_DRIVER *mdidrv)
     return result;
 }
 
+void AIL_release_sequence_handle(SNDSEQUENCE *seq)
+{
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s(0x%p)\n", __func__, seq);
+
+    AIL2OAL_API_release_sequence_handle(seq);
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Finished\n");
+    AIL_indent--;
+}
+
 MDI_DRIVER *AIL_open_XMIDI_driver(uint32_t flags)
 {
     MDI_DRIVER *mdidrv;

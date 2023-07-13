@@ -266,9 +266,13 @@ AILSAMPLECB AIL_register_EOS_callback(SNDSAMPLE *s, AILSAMPLECB EOS);
 int32_t AIL_call_driver(AIL_DRIVER *drvr, int32_t fn,
         VDI_CALL *in, VDI_CALL *out);
 
-/** Allocate a SEQUENCE structure for use with a given driver.
+/** Allocate a SNDSEQUENCE structure for use with a given driver.
  */
 SNDSEQUENCE *AIL_allocate_sequence_handle(MDI_DRIVER *mdidrv);
+
+/** Free a SNDSEQUENCE structure for later allocation.
+ */
+void AIL_release_sequence_handle(SNDSEQUENCE *seq);
 
 /** Repors the MIDI synthesis technology available with a specified driver.
  */

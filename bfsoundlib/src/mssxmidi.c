@@ -78,10 +78,8 @@ void AILXMIDI_start(void)
     MDI_locked = 1;
 }
 
-//## Initialize state table entries                                         ##
-//##                                                                        ##
-//############################################################################
-
+/** Initialize state table entries.
+ */
 static void XMI_init_sequence_state(SNDSEQUENCE *seq)
 {
    int32_t i;
@@ -832,12 +830,56 @@ int32_t AIL2OAL_API_install_MDI_INI(MDI_DRIVER **mdidrv)
 SNDSEQUENCE *AIL2OAL_API_allocate_sequence_handle(MDI_DRIVER *mdidrv)
 {
     SNDSEQUENCE *seq;
+#if 0
     asm volatile (
       "push %1\n"
       "call ASM_AIL_API_allocate_sequence_handle\n"
       "add $0x4, %%esp\n"
         : "=r" (seq) : "g" (mdidrv));
     return seq;
+#endif
+    int32_t i;
+
+    // Lock timer services to prevent reentry
+    AIL_lock();
+
+    // Look for an unallocated sequence structure
+    for (i=0; i < mdidrv->n_sequences; i++)
+    {
+        if (mdidrv->sequences[i].status == SNDSEQ_FREE)
+            break;
+    }
+
+    // If all structures in use, return NULL
+    if (i == mdidrv->n_sequences) {
+        AIL_set_error("Out of sequence handles.");
+        AIL_unlock();
+        return NULL;
+    }
+
+    seq = &mdidrv->sequences[i];
+
+    // Initialize sequence
+    seq->status = SNDSEQ_DONE;
+    XMI_init_sequence_state(seq);
+    // Initialize end-of-sequence callback
+    seq->EOS = NULL;
+
+    AIL_unlock();
+    return seq;
+}
+
+/** Free a SNDSEQUENCE structure for later allocation.
+ */
+void AIL2OAL_API_release_sequence_handle(SNDSEQUENCE *seq)
+{
+    if (seq == NULL)
+        return;
+
+    // Turn off all playing notes in sequence; release all channels
+    AIL_stop_sequence(seq);
+    // Set 'free' flag
+    seq->status = SNDSEQ_FREE;
 }
 
 MDI_DRIVER *AIL2OAL_API_install_MDI_driver_file(char *fname, SNDCARD_IO_PARMS *iop)
