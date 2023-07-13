@@ -1115,16 +1115,16 @@ void InitMusic(void)
     if (!AutoScanForSoundHardware)
         AIL_set_preference(17, 0);
 
-    sprintf(locnoext, "%s/SAMPLE", SoundDataPath);
+    snprintf(locnoext, sizeof(locnoext), "%s/SAMPLE", SoundDataPath);
     AIL_set_GTL_filename_prefix(locnoext);
 
-    sprintf(locfname, "%s.ad", locnoext);
+    snprintf(locfname, sizeof(locfname),"%s.ad", locnoext);
     if (!fm_instrument_file_exists(locfname)) {
         sprintf(SoundProgressMessage, "BF26 - sample.ad not found\n");
         SoundProgressLog(SoundProgressMessage);
     }
 
-    sprintf(locfname, "%s.opl", locnoext);
+    snprintf(locfname, sizeof(locfname), "%s.opl", locnoext);
     if (!fm_instrument_file_exists(locfname)) {
         sprintf(SoundProgressMessage, "BF27 - sample.opl not found\n");
         SoundProgressLog(SoundProgressMessage);
