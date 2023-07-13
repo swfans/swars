@@ -228,6 +228,12 @@ void AIL_end_sequence(SNDSEQUENCE *seq);
  */
 void AIL_set_sequence_tempo(SNDSEQUENCE *seq, int32_t tempo, int32_t milliseconds);
 
+/** Set volume scaling factor for all channels in sequence, 0-127.
+ *
+ * Values above 127 cause "compression" effect.
+ */
+void AIL_set_sequence_volume(SNDSEQUENCE *seq, int32_t volume, int32_t milliseconds);
+
 /** System-independent delay in 1/60 second intervals.
  *
  * Returns at once if called from background.

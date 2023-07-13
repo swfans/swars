@@ -1237,12 +1237,43 @@ void AIL2OAL_API_set_sequence_tempo(SNDSEQUENCE *seq, int32_t tempo, int32_t mil
     } else {
         seq->tempo_period = (milliseconds * 1000L) /
             labs(seq->tempo_percent - seq->tempo_target);
-
         seq->tempo_accum  = 0;
     }
 
    // Restore XMIDI service and return
    MSSLockedDecrementPtr(seq->driver->disable);
+}
+
+void AIL2OAL_API_set_sequence_volume(SNDSEQUENCE *seq, int32_t volume, int32_t milliseconds)
+{
+    if (seq == NULL)
+        return;
+
+    // Disable XMIDI service while altering volume control data
+    MSSLockedIncrementPtr(seq->driver->disable);
+
+    // Set new volume target; exit if no change
+    seq->volume_target = volume;
+
+    if (seq->volume == seq->volume_target) {
+        MSSLockedDecrementPtr(seq->driver->disable);
+        return;
+    }
+
+    // Otherwise, set up volume ramp
+    if (milliseconds == 0) {
+        seq->volume = seq->volume_target;
+    } else {
+        seq->volume_period = (milliseconds * 1000L) /
+            labs(seq->volume - seq->volume_target);
+        seq->volume_accum  = 0;
+    }
+
+    // Restore interrupt state, update channel volume settings, and exit
+    XMI_update_volume(seq);
+
+    // Restore XMIDI service and return
+    MSSLockedDecrementPtr(seq->driver->disable);
 }
 
 int32_t AIL2OAL_API_lock_channel(MDI_DRIVER *mdidrv)

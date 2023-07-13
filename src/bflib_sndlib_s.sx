@@ -1082,7 +1082,7 @@ GLOBAL_FUNC (ASM_AIL_set_sequence_tempo)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (AIL_set_sequence_volume)
+GLOBAL_FUNC (ASM_AIL_set_sequence_volume)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %esi
@@ -1130,7 +1130,7 @@ GLOBAL_FUNC (AIL_set_sequence_volume)
 		push   %ecx
 		mov    0x1c(%esp),%esi
 		push   %esi
-		call   _AIL_API_set_sequence_volume
+		call   ASM_AIL_API_set_sequence_volume
 		mov    AIL_indent,%edi
 		dec    %edi
 		add    $0xc,%esp
@@ -9853,7 +9853,7 @@ ASM_AIL_API_set_sequence_tempo:	/* 0x116D20 */
 
 
 /*----------------------------------------------------------------*/
-_AIL_API_set_sequence_volume:	/* 0x116D90 */
+ASM_AIL_API_set_sequence_volume:	/* 0x116D90 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %esi

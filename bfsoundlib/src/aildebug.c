@@ -621,6 +621,19 @@ void AIL_set_sequence_tempo(SNDSEQUENCE *seq, int32_t tempo, int32_t millisecond
     AIL_indent--;
 }
 
+void AIL_set_sequence_volume(SNDSEQUENCE *seq, int32_t volume, int32_t milliseconds)
+{
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s(0x%p, %d, %d)\n", __func__, seq, volume, milliseconds);
+
+    AIL2OAL_API_set_sequence_volume(seq, volume, milliseconds);
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Finished\n");
+    AIL_indent--;
+}
+
 void AIL_delay(int32_t intervals)
 {
     AIL_indent++;

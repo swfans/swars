@@ -2341,7 +2341,7 @@ GLOBAL_FUNC (SetVolume_func_ee980) /* 0xee980 */
 		push   %esi
 		mov    SongHandle,%ebx
 		push   %ebx
-		call   AIL_set_sequence_volume
+		call   ac_AIL_set_sequence_volume
 		add    $0xc,%esp
 	jump_ee9dc:
 		pop    %esi
@@ -2593,7 +2593,7 @@ GLOBAL_FUNC (StartMusic_)
 		push   %eax
 		mov    SongHandle,%ebx
 		push   %ebx
-		call   AIL_set_sequence_volume
+		call   ac_AIL_set_sequence_volume
 		add    $0xc,%esp
 	jump_f0634:
 		mov    SongHandle,%ecx
