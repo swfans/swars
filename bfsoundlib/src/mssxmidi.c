@@ -1215,6 +1215,36 @@ void AIL2OAL_API_end_sequence(SNDSEQUENCE *seq)
     }
 }
 
+void AIL2OAL_API_set_sequence_tempo(SNDSEQUENCE *seq, int32_t tempo, int32_t milliseconds)
+{
+    if (seq == NULL)
+        return;
+
+    // Disable XMIDI service while altering tempo control data
+    MSSLockedIncrementPtr(seq->driver->disable);
+
+    // Set new tempo target; exit if no change
+    seq->tempo_target = tempo;
+
+    if (seq->tempo_percent == seq->tempo_target) {
+        MSSLockedDecrementPtr(seq->driver->disable);
+        return;
+    }
+
+    // Otherwise, set up tempo ramp
+    if (milliseconds == 0) {
+        seq->tempo_percent = seq->tempo_target;
+    } else {
+        seq->tempo_period = (milliseconds * 1000L) /
+            labs(seq->tempo_percent - seq->tempo_target);
+
+        seq->tempo_accum  = 0;
+    }
+
+   // Restore XMIDI service and return
+   MSSLockedDecrementPtr(seq->driver->disable);
+}
+
 int32_t AIL2OAL_API_lock_channel(MDI_DRIVER *mdidrv)
 {
     int32_t i,j;

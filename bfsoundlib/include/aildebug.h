@@ -224,6 +224,10 @@ void AIL_resume_sequence(SNDSEQUENCE *seq);
  */
 void AIL_end_sequence(SNDSEQUENCE *seq);
 
+/** Set relative tempo percentage for sequence, 0-100+ %.
+ */
+void AIL_set_sequence_tempo(SNDSEQUENCE *seq, int32_t tempo, int32_t milliseconds);
+
 /** System-independent delay in 1/60 second intervals.
  *
  * Returns at once if called from background.

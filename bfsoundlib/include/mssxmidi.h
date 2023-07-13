@@ -57,6 +57,8 @@ void AIL2OAL_API_resume_sequence(SNDSEQUENCE *seq);
 
 void AIL2OAL_API_end_sequence(SNDSEQUENCE *seq);
 
+void AIL2OAL_API_set_sequence_tempo(SNDSEQUENCE *seq, int32_t tempo, int32_t milliseconds);
+
 int32_t AIL2OAL_API_lock_channel(MDI_DRIVER *mdidrv);
 
 /******************************************************************************/

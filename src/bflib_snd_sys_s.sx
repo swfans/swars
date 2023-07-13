@@ -2113,7 +2113,7 @@ GLOBAL_FUNC (SetSampleTempo)
 		push   %ebx
 		mov    SongHandle,%edx
 		push   %edx
-		call   AIL_set_sequence_tempo
+		call   ac_AIL_set_sequence_tempo
 		add    $0xc,%esp
 		mov    %bx,CurrentTempo
 	jump_ef2dd:
@@ -2145,7 +2145,7 @@ GLOBAL_FUNC (SetSampleTempoNormal)
 		mov    SongHandle,%edx
 		push   %edx
 		mov    $0x64,%ebx
-		call   AIL_set_sequence_tempo
+		call   ac_AIL_set_sequence_tempo
 		add    $0xc,%esp
 		mov    %bx,CurrentTempo
 	jump_ef334:

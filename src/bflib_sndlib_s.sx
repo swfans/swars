@@ -1021,7 +1021,7 @@ GLOBAL_FUNC (ASM_AIL_start_sequence)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (AIL_set_sequence_tempo)
+GLOBAL_FUNC (ASM_AIL_set_sequence_tempo)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %esi
@@ -1069,7 +1069,7 @@ GLOBAL_FUNC (AIL_set_sequence_tempo)
 		push   %ecx
 		mov    0x1c(%esp),%esi
 		push   %esi
-		call   _AIL_API_set_sequence_tempo
+		call   ASM_AIL_API_set_sequence_tempo
 		mov    AIL_indent,%edi
 		dec    %edi
 		add    $0xc,%esp
@@ -9804,7 +9804,7 @@ ASM_AIL_API_end_sequence:	/* 0x116CD0 */
 
 
 /*----------------------------------------------------------------*/
-_AIL_API_set_sequence_tempo:	/* 0x116D20 */
+ASM_AIL_API_set_sequence_tempo:	/* 0x116D20 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %esi
