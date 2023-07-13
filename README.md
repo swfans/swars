@@ -134,6 +134,7 @@ To build **Syndicate Wars Port**, you will need the following:
   * libogg
   * libpng
   * zlib
+  * WildMIDI
 
 Once you've made sure you have the above, proceed with the following steps:
 
@@ -214,12 +215,23 @@ to build the executable using the same way as for UNIX systems, with bash and au
 First install the dependencies - mingw32, since we need 32-bit toolchain:
 
 ```
-pacman -Si mingw-w64-i686-binutils mingw-w64-i686-pkgconf mingw-w64-i686-make mingw-w64-i686-gcc
-pacman -Si mingw-w64-i686-libpng
-pacman -Si mingw-w64-i686-SDL
-pacman -Si mingw-w64-i686-openal
-pacman -Si mingw-w64-i686-libvorbis
-pacman -Si mingw-w64-i686-libogg
+pacman -S mingw-w64-i686-binutils mingw-w64-i686-pkgconf mingw-w64-i686-make mingw-w64-i686-gcc
+pacman -S mingw-w64-i686-libpng
+pacman -S mingw-w64-i686-SDL
+pacman -S mingw-w64-i686-openal
+pacman -S mingw-w64-i686-libvorbis
+pacman -S mingw-w64-i686-libogg
+```
+
+The WildMIDI library is not available as MSYS2 pacman package, install manually:
+
+```
+pacman -S unzip
+wget https://github.com/Mindwerks/wildmidi/releases/download/wildmidi-0.4.5/wildmidi-0.4.5-win32.zip
+unzip wildmidi-0.4.5-win32.zip
+cp wildmidi-0.4.5-win32/*.h /mingw32/include/
+cp wildmidi-0.4.5-win32/*.a /mingw32/lib/
+cp wildmidi-0.4.5-win32/*.dll /mingw32/bin/
 ```
 
 Now as our host is ready, we can start working on the actual `swars` sources.
