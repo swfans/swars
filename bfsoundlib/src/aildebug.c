@@ -892,6 +892,23 @@ int32_t AIL_read_INI(AIL_INI *ini, char *fname)
     return result;
 }
 
+int32_t AIL_lock_channel(MDI_DRIVER *mdidrv)
+{
+    int32_t result;
+
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s(0x%p)\n", __func__, mdidrv);
+
+    result = AIL2OAL_API_lock_channel(mdidrv);
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Result = %d\n", result);
+    AIL_indent--;
+
+    return result;
+}
+
 void AIL_release_channel(MDI_DRIVER *mdidrv, int32_t channel)
 {
     AIL_indent++;

@@ -1703,7 +1703,7 @@ GLOBAL_FUNC (AIL_register_trigger_callback)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (AIL_lock_channel)
+GLOBAL_FUNC (ASM_AIL_lock_channel)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %esi
@@ -1741,7 +1741,7 @@ GLOBAL_FUNC (AIL_lock_channel)
 		add    $0xc,%esp
 	jump_107300:
 		push   %ebx
-		call   _AIL_API_lock_channel
+		call   ac_AIL2OAL_API_lock_channel
 		mov    %eax,%ebx
 		mov    AIL_debug,%eax
 		add    $0x4,%esp
@@ -7355,7 +7355,7 @@ GLOBAL_FUNC (ASM_XMI_send_channel_voice_message)	/* 0x114DE0 */
 		cmpl   $0x1,0x20(%eax)
 		je     jump_11522a
 		push   %ebp
-		call   AIL_lock_channel
+		call   ac_AIL_lock_channel
 		mov    %eax,%esi
 		add    $0x4,%esp
 		test   %eax,%eax
@@ -9741,7 +9741,7 @@ GLOBAL_FUNC (ASM_AIL_API_resume_sequence)	/* 0x116C60 */
 		cmpl   $0x40,0x194(%esi)
 		jl     jump_116ca0
 		push   %ebp
-		call   AIL_lock_channel
+		call   ac_AIL_lock_channel
 		dec    %eax
 		add    $0x4,%esp
 		cmp    $0xffffffff,%eax
@@ -10105,7 +10105,7 @@ _AIL_API_register_trigger_callback:	/* 0x117220 */
 
 
 /*----------------------------------------------------------------*/
-_AIL_API_lock_channel:	/* 0x117310 */
+ASM_AIL_API_lock_channel:	/* 0x117310 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %esi

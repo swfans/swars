@@ -37,6 +37,12 @@ extern "C" {
 #define AIL_NUM_CHANS 16
 /** # of nested XMIDI FOR loops */
 #define AIL_FOR_NEST   4
+/** Min channel available for locking */
+#define AIL_MIN_LOCK_CHAN ( 1-1)
+/** Max channel available for locking */
+#define AIL_MAX_LOCK_CHAN (16-1)
+/** Percussion channel (no locking) */
+#define AIL_PERCUSS_CHAN (10-1)
 
 typedef struct SNDCARD_IO_PARMS SNDCARD_IO_PARMS;
 typedef struct AIL_INI AIL_INI;

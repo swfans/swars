@@ -701,59 +701,6 @@ void XMI_update_volume(SNDSEQUENCE *seq)
     }
 }
 
-void AIL2OAL_API_release_channel(MDI_DRIVER *mdidrv, int32_t channel)
-{
-    int32_t i, j, ch;
-    SNDSEQUENCE *seq;
-
-    // Convert channel # to 0-based internal notation
-    ch = channel-1;
-
-    // If channel is not locked, return
-    if (mdidrv->lock[ch] != 1)
-        return;
-
-    // Disable XMIDI service while unlocking channel
-    mdidrv->disable++;
-
-    // Restore channel's original state and ownership
-    mdidrv->lock[ch] = mdidrv->state[ch];
-    mdidrv->user[ch] = mdidrv->owner[ch];
-
-    // Release sustain pedal and turn all notes off in channel,
-    // regardless of sequence
-    XMI_MIDI_message(mdidrv, MDI_EV_CONTROL | ch,
-            MDI_CTR_SUSTAIN, 0);
-
-    for (i = mdidrv->n_sequences, seq = &mdidrv->sequences[0]; i; --i,++seq)
-    {
-        if (seq->status == SNDSEQ_FREE)
-            continue;
-
-        for (j=0; j < AIL_MAX_NOTES; j++)
-        {
-            if (seq->note_chan[j] == -1)
-                continue;
-            if (seq->chan_map[seq->note_chan[j]] != ch)
-                continue;
-            XMI_send_channel_voice_message(seq,
-                    seq->note_chan[j] | MDI_EV_NOTE_OFF,
-                    seq->note_num [j], 0, 0);
-            seq->note_chan[j] = -1;
-        }
-    }
-
-     // Bring channel up to date with owner's current controller values, if
-     // owner is valid sequence
-    if (mdidrv->owner[ch] != NULL)
-    {
-        if (mdidrv->owner[ch]->status != SNDSEQ_FREE)
-            XMI_refresh_channel(mdidrv->owner[ch], ch);
-    }
-
-    mdidrv->disable--;
-}
-
 /** Flush sequence note queue.
  */
 void XMI_flush_note_queue(SNDSEQUENCE *seq)
@@ -1205,11 +1152,46 @@ void AIL2OAL_API_stop_sequence(SNDSEQUENCE *seq)
 
 void AIL2OAL_API_resume_sequence(SNDSEQUENCE *seq)
 {
+#if 0
     asm volatile (
       "push %0\n"
       "call ASM_AIL_API_resume_sequence\n"
       "add $0x4, %%esp\n"
         :  : "g" (seq));
+#endif
+    MDI_DRIVER *mdidrv;
+    int32_t log;
+    int32_t ch;
+
+    if (seq == NULL)
+        return;
+
+    // Make sure sequence has been previously stopped
+    if (seq->status == SNDSEQ_STOPPED)
+    {
+        // Re-establish channel locks
+        mdidrv = seq->driver;
+
+        for (log = 0; log < AIL_NUM_CHANS; log++)
+        {
+            if (seq->shadow.c_lock[log] >= 64)
+            {
+                ch = AIL_lock_channel(mdidrv) - 1;
+                seq->chan_map[log] = (ch == -1) ? log : ch;
+            }
+        }
+
+        // Re-establish logged controller values (except
+        // Channel Lock, which was done above)
+        for (log=0; log < AIL_NUM_CHANS; log++)
+            XMI_refresh_channel(seq,log);
+
+        seq->status = SNDSEQ_PLAYING;
+    }
+    else if (seq->status == SNDSEQ_DONE)
+    {
+        seq->status = SNDSEQ_PLAYING;
+    }
 }
 
 void AIL2OAL_API_end_sequence(SNDSEQUENCE *seq)
@@ -1230,6 +1212,146 @@ void AIL2OAL_API_end_sequence(SNDSEQUENCE *seq)
     if (seq->EOS != NULL) {
         ((AILSEQUENCECB)seq->EOS)(seq);
     }
+}
+
+int32_t AIL2OAL_API_lock_channel(MDI_DRIVER *mdidrv)
+{
+    int32_t i,j;
+    int32_t ch,best;
+    SNDSEQUENCE *seq;
+
+    // Disable XMIDI service while locking channel
+    MSSLockedIncrementPtr(mdidrv->disable);
+
+    // Search for highest channel # with lowest note activity,
+    // skipping already-locked and protected physical channels
+    ch   = -1;
+    best = LONG_MAX;
+
+    for (i = AIL_MAX_LOCK_CHAN; i >= AIL_MIN_LOCK_CHAN; i--)
+    {
+        if (i == AIL_PERCUSS_CHAN)
+            continue;
+
+        if ((mdidrv->lock[i] == 1) ||
+            (mdidrv->lock[i] == 2))
+            continue;
+        if (mdidrv->notes[i] < best) {
+            best = mdidrv->notes[i];
+            ch   = i;
+        }
+    }
+
+    // If no unprotected channels available, ignore
+    // lock protection and try again
+    if (ch == -1)
+    {
+        for (i = AIL_MAX_LOCK_CHAN; i >= AIL_MIN_LOCK_CHAN; i--)
+        {
+            if (i == AIL_PERCUSS_CHAN)
+                continue;
+
+            if (mdidrv->lock[i] == 1)
+                continue;
+
+            if (mdidrv->notes[i] < best) {
+                best = mdidrv->notes[i];
+                ch   = i;
+            }
+        }
+    }
+
+    // If no unlocked channels available, return failure
+    if (ch == -1) {
+        MSSLockedDecrementPtr(mdidrv->disable);
+        return 0;
+    }
+
+    // Otherwise, release sustain pedal and turn off all active notes in
+    // physical channel, regardless of sequence
+    XMI_MIDI_message(mdidrv, MDI_EV_CONTROL | ch, MDI_CTR_SUSTAIN, 0);
+
+    for (i = mdidrv->n_sequences,seq = &mdidrv->sequences[0]; i; --i,++seq)
+    {
+        if (seq->status == SNDSEQ_FREE)
+            continue;
+        for (j=0; j < AIL_MAX_NOTES; j++)
+        {
+            if (seq->note_chan[j] == -1)
+                continue;
+            if (seq->chan_map[seq->note_chan[j]] != ch)
+                continue;
+            XMI_send_channel_voice_message(seq,
+                seq->note_chan[j] | MDI_EV_NOTE_OFF, seq->note_num [j], 0, 0);
+            seq->note_chan[j] = -1;
+        }
+    }
+
+    // Lock channel
+    // By default, API asserts ownership of channel (locker=NULL), and
+    // last sequence to use channel is recorded as its original owner
+    mdidrv->state[ch] = mdidrv->lock[ch];
+    mdidrv->lock[ch] = 1;
+    mdidrv->locker[ch] = NULL;
+    mdidrv->owner[ch] = mdidrv->user[ch];
+
+    // Return 1-based channel number to caller
+    MSSLockedDecrementPtr(mdidrv->disable);
+
+    return ch+1;
+}
+
+void AIL2OAL_API_release_channel(MDI_DRIVER *mdidrv, int32_t channel)
+{
+    int32_t i, j, ch;
+    SNDSEQUENCE *seq;
+
+    // Convert channel # to 0-based internal notation
+    ch = channel-1;
+
+    // If channel is not locked, return
+    if (mdidrv->lock[ch] != 1)
+        return;
+
+    // Disable XMIDI service while unlocking channel
+    mdidrv->disable++;
+
+    // Restore channel's original state and ownership
+    mdidrv->lock[ch] = mdidrv->state[ch];
+    mdidrv->user[ch] = mdidrv->owner[ch];
+
+    // Release sustain pedal and turn all notes off in channel,
+    // regardless of sequence
+    XMI_MIDI_message(mdidrv, MDI_EV_CONTROL | ch,
+            MDI_CTR_SUSTAIN, 0);
+
+    for (i = mdidrv->n_sequences, seq = &mdidrv->sequences[0]; i; --i,++seq)
+    {
+        if (seq->status == SNDSEQ_FREE)
+            continue;
+
+        for (j=0; j < AIL_MAX_NOTES; j++)
+        {
+            if (seq->note_chan[j] == -1)
+                continue;
+            if (seq->chan_map[seq->note_chan[j]] != ch)
+                continue;
+            XMI_send_channel_voice_message(seq,
+                    seq->note_chan[j] | MDI_EV_NOTE_OFF,
+                    seq->note_num [j], 0, 0);
+            seq->note_chan[j] = -1;
+        }
+    }
+
+     // Bring channel up to date with owner's current controller values, if
+     // owner is valid sequence
+    if (mdidrv->owner[ch] != NULL)
+    {
+        if (mdidrv->owner[ch]->status != SNDSEQ_FREE)
+            XMI_refresh_channel(mdidrv->owner[ch], ch);
+    }
+
+    mdidrv->disable--;
 }
 
 /** Unlock function, doubling as end of locked code.
