@@ -1276,6 +1276,20 @@ void AIL2OAL_API_set_sequence_volume(SNDSEQUENCE *seq, int32_t volume, int32_t m
     MSSLockedDecrementPtr(seq->driver->disable);
 }
 
+uint32_t AIL2OAL_API_sequence_status(SNDSEQUENCE *seq)
+{
+    if (seq == NULL)
+        return 0;
+    return seq->status;
+}
+
+int32_t AIL2OAL_API_sequence_loop_count(SNDSEQUENCE *seq)
+{
+    if (seq == NULL)
+        return -1;
+    return seq->loop_count;
+}
+
 int32_t AIL2OAL_API_lock_channel(MDI_DRIVER *mdidrv)
 {
     int32_t i,j;

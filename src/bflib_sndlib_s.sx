@@ -1143,7 +1143,7 @@ GLOBAL_FUNC (ASM_AIL_set_sequence_volume)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (AIL_sequence_status)
+GLOBAL_FUNC (ASM_AIL_sequence_status)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %esi
@@ -1181,7 +1181,7 @@ GLOBAL_FUNC (AIL_sequence_status)
 		add    $0xc,%esp
 	jump_1058e0:
 		push   %ebx
-		call   _AIL_API_sequence_status
+		call   ASM_AIL_API_sequence_status
 		mov    %eax,%ebx
 		mov    AIL_debug,%eax
 		add    $0x4,%esp
@@ -9916,7 +9916,7 @@ ASM_AIL_API_set_sequence_volume:	/* 0x116D90 */
 
 
 /*----------------------------------------------------------------*/
-_AIL_API_sequence_status:	/* 0x116E20 */
+ASM_AIL_API_sequence_status:	/* 0x116E20 */
 /*----------------------------------------------------------------*/
 		mov    0x4(%esp),%eax
 		test   %eax,%eax

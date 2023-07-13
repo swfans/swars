@@ -1907,7 +1907,7 @@ GLOBAL_FUNC (DangerMusicFadeTick)
 		je     jump_ef11b
 		mov    SongHandle,%edx
 		push   %edx
-		call   AIL_sequence_status
+		call   ac_AIL_sequence_status
 		add    $0x4,%esp
 		cmp    $0x2,%eax
 		je     jump_ef11b
@@ -2023,7 +2023,7 @@ GLOBAL_FUNC (DangerMusicFadeSwitch)
 		je     jump_ef27c
 		mov    SongHandle,%edx
 		push   %edx
-		call   AIL_sequence_status
+		call   ac_AIL_sequence_status
 		add    $0x4,%esp
 		cmp    $0x2,%eax
 		je     jump_ef27c
@@ -2331,7 +2331,7 @@ GLOBAL_FUNC (SetVolume_func_ee980) /* 0xee980 */
 		jg     jump_ee9dc
 		mov    SongHandle,%edx
 		push   %edx
-		call   AIL_sequence_status
+		call   ac_AIL_sequence_status
 		add    $0x4,%esp
 		cmp    $0x2,%eax
 		je     jump_ee9dc
@@ -2464,7 +2464,7 @@ GLOBAL_FUNC (StartMusic_)
 		je     jump_f04d8
 		mov    SongHandle,%ebx
 		push   %ebx
-		call   AIL_sequence_status
+		call   ac_AIL_sequence_status
 		add    $0x4,%esp
 		cmp    $0x2,%eax
 		je     jump_f04cf
@@ -3082,7 +3082,7 @@ GLOBAL_FUNC(ASM_StopMusic)
 		movb   $0xff,DangerMusicVolumeChange
 		mov    SongHandle,%ebx
 		push   %ebx
-		call   AIL_sequence_status
+		call   ac_AIL_sequence_status
 		add    $0x4,%esp
 		cmp    $0x2,%eax
 		je     jump_108c51

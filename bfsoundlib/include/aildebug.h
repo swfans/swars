@@ -234,6 +234,18 @@ void AIL_set_sequence_tempo(SNDSEQUENCE *seq, int32_t tempo, int32_t millisecond
  */
 void AIL_set_sequence_volume(SNDSEQUENCE *seq, int32_t volume, int32_t milliseconds);
 
+/** Get status of sequence.
+ */
+uint32_t AIL_sequence_status(SNDSEQUENCE *seq);
+
+/** Get number of sequence loops remaining.
+ *
+ * @return Values:
+ *    1 indicates that the sequence is on its last iteration,
+ *    0 indicates that the sequence is looping indefinitely.
+ */
+int32_t AIL_sequence_loop_count(SNDSEQUENCE *seq);
+
 /** System-independent delay in 1/60 second intervals.
  *
  * Returns at once if called from background.

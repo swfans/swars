@@ -634,6 +634,40 @@ void AIL_set_sequence_volume(SNDSEQUENCE *seq, int32_t volume, int32_t milliseco
     AIL_indent--;
 }
 
+uint32_t AIL_sequence_status(SNDSEQUENCE *seq)
+{
+    int32_t result;
+
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s(0x%p)\n", __func__, seq);
+
+    result = AIL2OAL_API_sequence_status(seq);
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Result = 0x%X\n", result);
+    AIL_indent--;
+
+    return result;
+}
+
+int32_t AIL_sequence_loop_count(SNDSEQUENCE *seq)
+{
+    int32_t result;
+
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s(0x%p)\n", __func__, seq);
+
+    result = AIL2OAL_API_sequence_loop_count(seq);
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Result = 0x%X\n", result);
+    AIL_indent--;
+
+    return result;
+}
+
 void AIL_delay(int32_t intervals)
 {
     AIL_indent++;

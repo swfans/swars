@@ -35,8 +35,6 @@ void AIL2OAL_API_set_XMIDI_master_volume(MDI_DRIVER *mdidrv, int32_t master_volu
 
 int32_t AIL2OAL_API_install_MDI_INI(MDI_DRIVER **mdidrv);
 
-void AIL2OAL_API_release_channel(MDI_DRIVER *mdidrv, int32_t channel);
-
 MDI_DRIVER *AIL2OAL_API_install_MDI_driver_file(char *filename, SNDCARD_IO_PARMS *iop);
 void AIL2OAL_API_uninstall_MDI_driver(MDI_DRIVER *mdidrv);
 
@@ -61,7 +59,13 @@ void AIL2OAL_API_set_sequence_tempo(SNDSEQUENCE *seq, int32_t tempo, int32_t mil
 
 void AIL2OAL_API_set_sequence_volume(SNDSEQUENCE *seq, int32_t volume, int32_t milliseconds);
 
+uint32_t AIL2OAL_API_sequence_status(SNDSEQUENCE *seq);
+
+int32_t AIL2OAL_API_sequence_loop_count(SNDSEQUENCE *seq);
+
 int32_t AIL2OAL_API_lock_channel(MDI_DRIVER *mdidrv);
+
+void AIL2OAL_API_release_channel(MDI_DRIVER *mdidrv, int32_t channel);
 
 /******************************************************************************/
 #ifdef __cplusplus
