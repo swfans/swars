@@ -67,7 +67,6 @@ extern TbBool ive_got_an_sb16;
 extern ulong MaxNumberOfSamples;
 
 bool sound_initialised    = false;
-DIG_DRIVER *sound_driver = NULL;
 static ALCdevice       *sound_device        = NULL;
 static ALCcontext      *sound_context        = NULL;
 size_t sound_source_count    = 0;
@@ -76,6 +75,9 @@ static ALuint        sound_free_buffers[SOUND_MAX_BUFFERS];
 static SourceDescriptor sound_sources[SOUND_MAX_SOURCES];
 SNDSAMPLE sound_samples[SOUND_MAX_SOURCES];
 extern OggVorbisStream  sound_music_stream;
+
+extern MDI_DRIVER *MusicDriver;
+extern DIG_DRIVER *SoundDriver;
 
 
 #define check_alc(source) check_alc_line ((source), __LINE__)
@@ -436,41 +438,41 @@ err:
 static void
 unqueue_source_buffers (SourceDescriptor *src)
 {
-  SNDSAMPLE *s;
+    SNDSAMPLE *s;
 
-  if (src->buffers_used == 0)
-    return;
+    if (src->buffers_used == 0)
+        return;
 
-  s = src->sample;
+    s = src->sample;
 
-  src->buffers_used -=
-    sound_unqueue_buffers (src->name,
+    src->buffers_used -=
+        sound_unqueue_buffers (src->name,
                    (SoundNameCallback) push_free_buffer,
                    NULL);
 
-  if (src->buffers_used > 0
-      || s->pos[s->current_buffer] < s->len[s->current_buffer]
-      || s->loop_count == 0)
-    return;
+    if (src->buffers_used > 0
+        || s->pos[s->current_buffer] < s->len[s->current_buffer]
+        || s->loop_count == 0)
+      return;
 
-  /* this check prevents the sound in the intro from abruptly stopping */
-  if (!s->done[0] && !s->done[1])
-    return;
+    /* this check prevents the sound in the intro from abruptly stopping */
+    if (!s->done[0] && !s->done[1])
+        return;
 
-  alSourceStop (src->name);
-  check_al ("alSourceStop");
-  s->status = 2;
+    alSourceStop (src->name);
+    check_al ("alSourceStop");
+    s->status = 2;
 }
 
 void sound_update_dig_samples(DIG_DRIVER *digdrv)
 {
-  int32_t n;
-  SourceDescriptor *src;
-  SNDSAMPLE *s;
+    int32_t n;
+    SourceDescriptor *src;
+    SNDSAMPLE *s;
 
-  digdrv->n_active_samples = 0;
+    digdrv->n_active_samples = 0;
 
-  for (n = 0; n < digdrv->n_samples; n++)
+    for (n = 0; n < digdrv->n_samples; n++)
     {
       src = &sound_sources[n];
       s = src->sample;
@@ -498,15 +500,36 @@ void sound_update_dig_samples(DIG_DRIVER *digdrv)
     }
 }
 
+void sound_update_mdi_sequences(MDI_DRIVER *mdidrv)
+{
+    int32_t i;
+
+    for (i = 0; i < mdidrv->n_sequences; i++)
+    {
+        SNDSEQUENCE *seq;
+
+        seq = &mdidrv->sequences[i];
+
+        if (seq->status != SNDSEQ_PLAYING)
+            continue;
+
+        //TODO play MIDI
+
+    }
+}
+
 TbBool sound_update(void)
 {
-  if (!sound_initialised || sound_driver == NULL)
-    return false;
+    if (!sound_initialised)
+        return false;
 
-  sound_update_dig_samples(sound_driver);
+    if (SoundDriver != NULL)
+        sound_update_dig_samples(SoundDriver);
+    if (MusicDriver != NULL)
+        sound_update_mdi_sequences(MusicDriver);
 
-  ogg_vorbis_stream_update (&sound_music_stream);
-  return true;
+    ogg_vorbis_stream_update(&sound_music_stream);
+    return true;
 }
 
 struct SampleInfo *play_sample_using_heap(ulong a1, short smptbl_id, ulong a3, ulong a4, ulong a5, char a6, ubyte type)

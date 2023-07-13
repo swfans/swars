@@ -31,7 +31,6 @@
 #include "aildebug.h"
 /******************************************************************************/
 extern bool sound_initialised;
-extern DIG_DRIVER *sound_driver;
 
 DIG_DRIVER *AIL2OAL_API_install_DIG_driver_file(const char *fname,
         const SNDCARD_IO_PARMS *iop)
@@ -115,16 +114,12 @@ int32_t AIL2OAL_API_install_DIG_INI(DIG_DRIVER **digdrv)
     memset(&ini, 0, sizeof(ini));
     sprintf(ini.driver_name, "%s", "SB16.DIG");
 #endif
-    if (sound_driver != NULL) // SWPort hack - remove when not needed
-        return -1;
 
     *digdrv = AIL_install_DIG_driver_file(ini.driver_name,
                                      &ini.IO);
 
     if (*digdrv == NULL)
         return AIL_INIT_FAILURE;
-
-    sound_driver = *digdrv; // SWPort hack - remove when not needed
 
     return AIL_INIT_SUCCESS;
 }

@@ -895,7 +895,7 @@ void AIL2OAL_API_uninstall_MDI_driver(MDI_DRIVER *mdidrv)
       "add $0x4, %%esp\n"
         :  : "g" (mdidrv));
 #endif
-   AIL_uninstall_driver(mdidrv->drvr);
+    AIL_uninstall_driver(mdidrv->drvr);
 }
 
 MDI_DRIVER *AIL2OAL_API_open_XMIDI_driver(uint32_t flags)
@@ -914,7 +914,7 @@ MDI_DRIVER *AIL2OAL_API_open_XMIDI_driver(uint32_t flags)
     mdidrv->sequences = AIL_MEM_alloc_lock(
         sizeof(struct SNDSEQUENCE) * mdidrv->n_sequences);
     if (mdidrv->sequences == NULL) {
-        AIL_set_error("Could not allocate SEQUENCE structures.");
+        AIL_set_error("Could not allocate SNDSEQUENCE structures.");
         AIL_MEM_free_lock(mdidrv, sizeof(MDI_DRIVER));
         return NULL;
     }
