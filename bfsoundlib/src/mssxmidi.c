@@ -1141,6 +1141,21 @@ int32_t AIL2OAL_API_init_sequence(SNDSEQUENCE *seq, const void *start,  int32_t 
     return -1;
 }
 
+void AIL2OAL_API_start_sequence(SNDSEQUENCE *seq)
+{
+    if (seq == NULL)
+        return;
+
+    // Make sure sequence has been allocated
+    if (seq->status == SNDSEQ_FREE)
+        return;
+
+    AIL_stop_sequence(seq);
+    // Rewind sequence to beginning
+    XMI_rewind_sequence(seq);
+    seq->status = SNDSEQ_PLAYING;
+}
+
 void AIL2OAL_API_stop_sequence(SNDSEQUENCE *seq)
 {
     MDI_DRIVER *mdidrv;

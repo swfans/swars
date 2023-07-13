@@ -2598,7 +2598,7 @@ GLOBAL_FUNC (StartMusic_)
 	jump_f0634:
 		mov    SongHandle,%ecx
 		push   %ecx
-		call   AIL_start_sequence
+		call   ac_AIL_start_sequence
 		mov    $0x64,%ecx
 		add    $0x4,%esp
 		mov    %si,EXPORT_SYMBOL(SongCurrentlyPlaying)

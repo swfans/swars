@@ -970,7 +970,7 @@ GLOBAL_FUNC (ail_func_104d20)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (AIL_start_sequence)
+GLOBAL_FUNC (ASM_AIL_start_sequence)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %edi
@@ -1009,7 +1009,7 @@ GLOBAL_FUNC (AIL_start_sequence)
 	jump_105510:
 		mov    0x10(%esp),%eax
 		push   %eax
-		call   _AIL_API_start_sequence
+		call   ASM_AIL_API_start_sequence
 		mov    AIL_indent,%edx
 		dec    %edx
 		add    $0x4,%esp
@@ -9629,7 +9629,7 @@ _AIL_API_init_sequence:	/* 0x116840 */
 
 
 /*----------------------------------------------------------------*/
-_AIL_API_start_sequence:	/* 0x116B70 */
+ASM_AIL_API_start_sequence:	/* 0x116B70 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		mov    0x8(%esp),%ebx

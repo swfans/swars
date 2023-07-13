@@ -274,6 +274,13 @@ SNDSEQUENCE *AIL_allocate_sequence_handle(MDI_DRIVER *mdidrv);
  */
 void AIL_release_sequence_handle(SNDSEQUENCE *seq);
 
+/** Start playback of sequence from beginning.
+ *
+ * At a minimum, sequence must first have been initialized with a prior
+ * call to AIL_init_sequence().
+ */
+void AIL_start_sequence(SNDSEQUENCE *seq);
+
 /** Repors the MIDI synthesis technology available with a specified driver.
  */
 int32_t AIL_MDI_driver_type(MDI_DRIVER *mdidrv);

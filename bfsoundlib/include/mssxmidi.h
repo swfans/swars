@@ -49,6 +49,8 @@ void AIL2OAL_API_release_sequence_handle(SNDSEQUENCE *seq);
 
 int32_t AIL2OAL_API_init_sequence(SNDSEQUENCE *seq, const void *start,  int32_t sequence_num);
 
+void AIL2OAL_API_start_sequence(SNDSEQUENCE *seq);
+
 void AIL2OAL_API_stop_sequence(SNDSEQUENCE *seq);
 
 void AIL2OAL_API_resume_sequence(SNDSEQUENCE *seq);
