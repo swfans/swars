@@ -33,10 +33,6 @@
  */
 extern AIL_DRIVER * AIL_driver[AIL_MAX_DRVRS];
 
-/** AIL "preferences" array.
- */
-extern int32_t AIL_preference[AIL_N_PREFS];
-
 /** DIG_DRIVER list head.
  */
 DIG_DRIVER *DIG_first = NULL;
@@ -48,10 +44,6 @@ MDI_DRIVER *MDI_first = NULL;
 /** ASCII error type string.
  */
 extern char AIL_error[256];
-
-/** Last SNDCARD_IO_PARMS structure used to attempt device detection.
- */
-extern SNDCARD_IO_PARMS AIL_last_IO_attempt;
 
 extern uint32_t AIL_entry;
 extern int32_t AIL_flags;
@@ -262,9 +254,43 @@ AIL_DRIVER *AIL2OAL_API_install_driver(const uint8_t *driver_image, uint32_t n_b
 {
     AIL_DRIVER *drvr;
 
-    drvr = calloc(1, sizeof(*drvr));
+    drvr = AIL_MEM_alloc_lock(sizeof(*drvr));
+    if (drvr == NULL) {
+        AIL_set_error("Cannot alloc driver descriptor.");
+        return NULL;
+    }
 
-    drvr->type = 0;
+    drvr->size = n_bytes;
+
+    // Allocate a buffer for the VDI driver in real-mode (lower 1MB) memory
+    if (!AIL_MEM_alloc_DOS((n_bytes + 15) / 16, &drvr->buf, &drvr->seg, &drvr->sel))
+    {
+        AIL_set_error("Out of DOS memory.");
+        AIL_MEM_free_lock(drvr, sizeof(*drvr));
+        return NULL;
+    }
+
+    memcpy(drvr->buf, driver_image, n_bytes);
+
+    // Set up pointer to driver's VDI header
+    drvr->VHDR = (VDI_HDR *)drvr->buf;
+
+    // Identify driver type
+    if (strncasecmp((char*)drvr->VHDR->ID, "AIL3DIG", 7) == 0)
+    {
+        drvr->type = AIL3DIG;
+    }
+    else if (!strncasecmp((char*)drvr->VHDR->ID, "AIL3MDI", 7))
+    {
+        drvr->type = AIL3MDI;
+    }
+    else
+    {
+        AIL_set_error("Invalid driver type.");
+        AIL_MEM_free_DOS(drvr->buf, drvr->seg, drvr->sel);
+        AIL_MEM_free_lock(drvr, sizeof(*drvr));
+        return NULL;
+    }
 
     return drvr;
 }

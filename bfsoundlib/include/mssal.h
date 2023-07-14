@@ -126,6 +126,15 @@ enum DIGMDIDriverFunctions {
     MDI_VSE           = 0x506,
 };
 
+/** Parameters for DRV_VERIFY_IO function driver calls.
+ */
+enum DIGMDIDriverVerifyIoParams {
+    DIG_DETECT_8_BIT_ONLY    = 0x01,
+    DIG_DETECT_16_BIT_ONLY   = 0x02,
+    DIG_DETECT_8_AND_16_BITS = 0x03,
+};
+
+
 /** AIL internal preference names.
  */
 enum AILPreferenceNames {
@@ -509,6 +518,12 @@ struct VDI_CALL {
   int16_t DX;
   int16_t SI;
   int16_t DI;
+};
+
+struct DIG_DST {
+   void *DMA_buffer_A;
+   void *DMA_buffer_B;
+   int16_t active_buffer;
 };
 
 struct MDI_DST {

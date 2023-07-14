@@ -30,6 +30,17 @@ extern "C" {
 #define AIL_N_PREFS 19
 #define AIL_N_TIMERS 16
 
+/** AIL "preferences" array.
+ */
+extern int32_t AIL_preference[AIL_N_PREFS];
+
+/** Last SNDCARD_IO_PARMS structure used to attempt device detection.
+ *
+ * Set during detection of both DIG and MDI drivers.
+ */
+extern SNDCARD_IO_PARMS AIL_last_IO_attempt;
+
+
 /** Initialize AIL API modules and resources.
  *
  * Must be called prior to any other AIL_...() calls.
@@ -42,6 +53,20 @@ int32_t AIL2OAL_API_startup(void);
  * No further AIL_...() calls other than AIL_startup() are permissible.
  */
 void AIL2OAL_API_shutdown(void);
+
+/** Locks AIL library elements in memory, and marks the start of AIL library area.
+ *
+ * To be used internally. Not guaranteed to really mark the start,
+ * as that depends on the compiler.
+ */
+void AIL2OAL_start(void);
+
+/** Unlocks AIL library elements in memory, and marks the end of AIL library area.
+ *
+ * To be used internally. Not guaranteed to really mark the end,
+ * as that depends on the compiler.
+ */
+void AIL2OAL_end(void);
 
 void AIL2OAL_API_set_error(const char *error_msg);
 

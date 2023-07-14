@@ -36,7 +36,6 @@
 extern char GTL_prefix[128];
 extern char SoundDriverPath[144];
 extern char AIL_error[256];
-extern SNDCARD_IO_PARMS AIL_last_IO_attempt;
 extern int32_t AIL_preference[AIL_N_PREFS];
 
 extern MDI_DRIVER *MDI_first;
@@ -411,10 +410,11 @@ MDI_DRIVER *XMI_construct_MDI_driver(AIL_DRIVER *drvr, const SNDCARD_IO_PARMS *i
 
 #if defined(DOS)||defined(GO32)
     // Get DDT and DST addresses
-    AIL_call_driver(mdidrv->drvr, DRV_GET_INFO, NULL, &VDI);
-
-    mdidrv->DDT = (void *) (((uint32_t)VDI.DX << 4) + (uint32_t)VDI.AX);
-    mdidrv->DST = (void *) (((uint32_t)VDI.CX << 4) + (uint32_t)VDI.BX);
+    {
+        AIL_call_driver(mdidrv->drvr, DRV_GET_INFO, NULL, &VDI);
+        mdidrv->DDT = (void *) (((uint32_t)VDI.DX << 4) + (uint32_t)VDI.AX);
+        mdidrv->DST = (void *) (((uint32_t)VDI.CX << 4) + (uint32_t)VDI.BX);
+    }
 
     // Copy library environment string to DST, if requested
     envname = mdidrv->DDT->library_environment;
@@ -447,6 +447,7 @@ MDI_DRIVER *XMI_construct_MDI_driver(AIL_DRIVER *drvr, const SNDCARD_IO_PARMS *i
         }
     }
 #else
+    memset(&VDI, 0, sizeof(VDI_CALL));
     // No DDT or DST addresses
     mdidrv->DDT = NULL;
     mdidrv->DST = NULL;
@@ -860,10 +861,11 @@ MDI_DRIVER *AIL2OAL_API_install_MDI_driver_file(char *fname, SNDCARD_IO_PARMS *i
 #else
     // Prepare fake driver data; make sure it has at least 7 bytes beyond size
     // to allow magic value check
-    driver_image = (int32_t*) AIL_MEM_alloc_lock(12);
+    driver_image = (int32_t*) AIL_MEM_alloc_lock(20);
     if (driver_image != NULL) {
-        memset(driver_image, 0, 12);
-        driver_image[0] = 8;
+        memset(driver_image, 0, 20);
+        driver_image[0] = 16;
+        strcpy((char*)&driver_image[1], "AIL3MDI");
     }
 #endif
     if (driver_image == NULL)

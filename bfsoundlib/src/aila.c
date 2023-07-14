@@ -107,6 +107,36 @@ void AILA_shutdown(void)
 int32_t AIL2OAL_API_call_driver(AIL_DRIVER *drvr, int32_t fn,
         VDI_CALL *in, VDI_CALL *out)
 {
+    switch (fn)
+    {
+    case DRV_INIT:
+    case DRV_GET_INFO:
+    case DRV_SERVE:
+        break;
+    case DRV_PARSE_ENV:
+        break;
+    case DRV_VERIFY_IO:
+        // We do not care for IO parameters, so all match
+        return 1;
+    case DRV_INIT_DEV:
+    case DRV_SHUTDOWN_DEV:
+        break;
+    case DIG_HW_VOLUME:
+    case DIG_START_P_CMD:
+    case DIG_STOP_P_REQ:
+    case DIG_START_R_CMD:
+    case DIG_STOP_R_REQ:
+    case DIG_VSE:
+        break;
+    case MDI_HW_VOLUME:
+    case MDI_INIT_INS_MGR:
+    case MDI_MIDI_XMIT:
+    case MDI_INSTALL_T_SET:
+    case MDI_GET_T_STATUS:
+    case MDI_PROT_UNPROT_T:
+    case MDI_VSE:
+        break;
+    }
     return 0;
 }
 

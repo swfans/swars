@@ -27,6 +27,7 @@
 #include "mssdig.h"
 #include "memfile.h"
 #include "miscutil.h"
+#include "ail.h"
 #include "ailss.h"
 #include "aildebug.h"
 /******************************************************************************/
@@ -35,33 +36,186 @@ extern bool sound_initialised;
 extern size_t sound_source_count;
 extern SNDSAMPLE sound_samples[];
 
+/** Call device I/O verification function using current detection policy.
+ */
+int32_t SS_attempt_DIG_detection(DIG_DRIVER *digdrv, const SNDCARD_IO_PARMS *iop)
+{
+    SNDCARD_IO_PARMS *f;
+    SNDCARD_IO_PARMS try;
+    uint32_t i;
+
+    // Set up working I/O params structure
+    try = *iop;
+
+    // If any needed parameters are not specified, use parameter
+    // values from first factory-default IO structure
+    if (digdrv->drvr->VHDR->num_IO_configurations > 0)
+    {
+        f = (SNDCARD_IO_PARMS *) (digdrv->drvr->VHDR->common_IO_configurations);
+
+        if (try.IO < 1)
+            try.IO = f->IO;
+
+        if (try.IRQ < 1)
+            try.IRQ = f->IRQ;
+
+        if (try.DMA_8_bit < 1)
+            try.DMA_8_bit = f->DMA_8_bit;
+
+        if (try.DMA_16_bit < 1)
+            try.DMA_16_bit = f->DMA_16_bit;
+
+        for (i=0; i < 4; i++)
+        {
+            if (try.IO_reserved[i] < 1)
+                try.IO_reserved[i] = f->IO_reserved[i];
+        }
+    }
+
+    // Copy IO parameter block to driver
+    digdrv->drvr->VHDR->IO = try;
+
+    // Call detection function
+    //
+    // If application wishes to avoid 16-bit DMA channel usage,
+    // attempt detection on 8-bit channels only
+    //
+    // Otherwise, try either/both channels
+    {
+        VDI_CALL VDI;
+        if (AIL_preference[DIG_ALLOW_16_BIT_DMA] == 0)
+            VDI.DX = DIG_DETECT_8_BIT_ONLY;
+        else
+            VDI.DX = DIG_DETECT_8_AND_16_BITS;
+        return AIL_call_driver(digdrv->drvr, DRV_VERIFY_IO, &VDI, NULL);
+    }
+}
+
 DIG_DRIVER *SS_construct_DIG_driver(AIL_DRIVER *drvr, const SNDCARD_IO_PARMS *iop)
 {
     DIG_DRIVER *digdrv;
-    int32_t n;
+    SNDCARD_IO_PARMS use;
+    int32_t i;
+    int32_t detected;
 
-    digdrv = calloc(1, sizeof(*digdrv));
+    // Ensure that all AIL code and data is locked into memory
+    AIL2OAL_start();
     assert(sizeof(SNDSAMPLE) == 0x894);
 
+    // Allocate memory for DIG_DRIVER structure
+    digdrv = (DIG_DRIVER *)AIL_MEM_alloc_lock(sizeof(*digdrv));
+    if (digdrv == NULL) {
+        AIL_set_error("Cannot alloc mem for DIG driver.");
+        return NULL;
+    }
+    memset(digdrv, 0, sizeof(*digdrv));
+
+    digdrv->drvr = drvr;
+
+    // Reject driver if not of type .DIG
+    if (digdrv->drvr->type != AIL3DIG) {
+        AIL_set_error(".DIG driver required.");
+        AIL_MEM_free_lock(digdrv, sizeof(*digdrv));
+        return NULL;
+    }
+
+#if defined(DOS)||defined(GO32)
+    // Get DDT and DST addresses, the DOS driver way
+    {
+        VDI_CALL VDI;
+        AIL_call_driver(digdrv->drvr, DRV_GET_INFO, NULL, &VDI);
+        digdrv->DDT = (DIG_DDT *) (((uint32_t) (VDI.DX) << 4) + (uint32_t)VDI.AX);
+        digdrv->DST = (DIG_DST *) (((uint32_t) (VDI.CX) << 4) + (uint32_t)VDI.BX);
+    }
+#else
+    // Allocate local DDT and DST structures
+    digdrv->DDT = (DIG_DDT *)AIL_MEM_alloc_lock(sizeof(DIG_DDT));
+    memset(digdrv->DDT, 0, sizeof(DIG_DDT));
+    digdrv->DST = (DIG_DST *)AIL_MEM_alloc_lock(sizeof(DIG_DST));
+    memset(digdrv->DST, 0, sizeof(DIG_DST));
+#endif
+
+    // Initialize miscellaneous DIG_DRIVER members
+    digdrv->buffer_flag = &(digdrv->DST->active_buffer);
+    digdrv->last_buffer = -1;
+
+    digdrv->playing = 0;
+    digdrv->quiet = 0;
+
+    digdrv->n_active_samples = 0;
+
+    digdrv->master_volume = 127;
+
+    // Verify hardware I/O parameters
+    memset(&AIL_last_IO_attempt, -1, sizeof(SNDCARD_IO_PARMS));
+
+    // If explicit IO_PARMS structure provided by application, try it
+    // first
+    detected = 0;
+    if (iop != NULL) {
+        AIL_last_IO_attempt = *iop;
+        if (SS_attempt_DIG_detection(digdrv, iop)) {
+            detected = 1;
+            use = *iop;
+        }
+    }
+
+    // Next, try device-specific environment string (if applicable)
+    if (!detected)
+    {
+        iop = AIL_get_IO_environment(digdrv->drvr);
+        if (iop != NULL) {
+            AIL_last_IO_attempt = *iop;
+            if (SS_attempt_DIG_detection(digdrv, iop)) {
+                detected = 1;
+                use = *iop;
+            }
+        }
+    }
+
+    // Finally, try all common_IO_configurations[] entries in driver
+    if ((!detected) && (AIL_preference[AIL_SCAN_FOR_HARDWARE] == 1))
+    {
+        for (i = 0; i < digdrv->drvr->VHDR->num_IO_configurations; i++)
+        {
+            iop = &((SNDCARD_IO_PARMS *)
+                (digdrv->drvr->VHDR->common_IO_configurations))[i];
+
+            if (i == 0) {
+                AIL_last_IO_attempt = *iop;
+            }
+            if (SS_attempt_DIG_detection(digdrv, iop)) {
+                detected = 1;
+                use = *iop;
+                break;
+            }
+        }
+    }
+
+    // If all detection attempts failed, return NULL
+    if (detected) {
+        AIL_last_IO_attempt = use;
+    } else {
+        AIL_set_error("Digital sound hardware not found.");
+        AIL_MEM_free_lock(digdrv, sizeof(DIG_DRIVER));
+        return NULL;
+    }
+
     digdrv->n_samples = sound_source_count;
-    digdrv->buffer_flag = calloc(1, sizeof (int16_t));
     digdrv->build_buffer = calloc(digdrv->n_samples, 4);
     digdrv->build_size = 4 * digdrv->n_samples;
     digdrv->bytes_per_channel = 2;
     digdrv->channels_per_sample = 2;
     digdrv->channels_per_buffer = 2;
-    digdrv->drvr = drvr;
     digdrv->hw_format = 3;
-    digdrv->master_volume = 127;
-    digdrv->playing  = 1;
     digdrv->DMA_rate = 44100;
     digdrv->half_buffer_size = 2048;
     digdrv->samples = sound_samples;
 
-    for (n = 0; n < digdrv->n_samples; n++)
+    for (i = 0; i < digdrv->n_samples; i++)
     {
-        digdrv->samples[n].driver = digdrv;
-        digdrv->samples[n].status = 1;
+        digdrv->samples[i].driver = digdrv;
+        digdrv->samples[i].status = 1;
     }
 
     return digdrv;
@@ -97,6 +251,13 @@ void SS_destroy_DIG_driver(DIG_DRIVER *digdrv)
     AIL_MEM_free_DOS(digdrv->DMA_buf, digdrv->DMA_seg, digdrv->DMA_sel);
     AIL_MEM_free_lock(digdrv->samples, sizeof(SNDSAMPLE) * digdrv->n_samples);
     AIL_MEM_free_lock(digdrv->build_buffer, 4 * digdrv->build_size);
+#if defined(DOS)||defined(GO32)
+    // No need to free DDT nor DST
+#else
+    // Free the local DDT and DST structures
+    AIL_MEM_free_lock(digdrv->DDT, sizeof(DIG_DDT));
+    AIL_MEM_free_lock(digdrv->DST, sizeof(DIG_DST));
+#endif
     AIL_MEM_free_lock(digdrv, sizeof(DIG_DRIVER));
 }
 
@@ -137,8 +298,9 @@ DIG_DRIVER *AIL2OAL_API_install_DIG_driver_file(const char *fname,
     // to allow magic value check
     driver_image = (int32_t*) AIL_MEM_alloc_lock(20);
     if (driver_image != NULL) {
+        memset(driver_image, 0, 20);
         driver_image[0] = 16;
-        driver_image[1] = 0;
+        strcpy((char*)&driver_image[1], "AIL3DIG");
     }
 #endif
     if (driver_image == NULL)
