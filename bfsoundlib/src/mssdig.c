@@ -133,6 +133,13 @@ DIG_DRIVER *SS_construct_DIG_driver(AIL_DRIVER *drvr, const SNDCARD_IO_PARMS *io
     memset(digdrv->DDT, 0, sizeof(DIG_DDT));
     digdrv->DST = (DIG_DST *)AIL_MEM_alloc_lock(sizeof(DIG_DST));
     memset(digdrv->DST, 0, sizeof(DIG_DST));
+    // Hard-code data for OpenAL playback
+    digdrv->DDT->format_supported[DIG_F_STEREO_16] = 1;
+    digdrv->DDT->format_data[DIG_F_STEREO_16].minimum_DMA_half_buffer_size = 2048;
+    digdrv->DDT->format_data[DIG_F_STEREO_16].maximum_DMA_half_buffer_size = 2048;
+    digdrv->DDT->format_data[DIG_F_STEREO_16].minimum_physical_sample_rate = 44100;
+    digdrv->DDT->format_data[DIG_F_STEREO_16].nominal_physical_sample_rate = 44100;
+    digdrv->DDT->format_data[DIG_F_STEREO_16].maximum_physical_sample_rate = 44100;
 #endif
 
     // Initialize miscellaneous DIG_DRIVER members
@@ -221,15 +228,15 @@ DIG_DRIVER *SS_construct_DIG_driver(AIL_DRIVER *drvr, const SNDCARD_IO_PARMS *io
 
     // Allocate build buffer
     digdrv->samples_per_buffer = digdrv->half_buffer_size /
-    (digdrv->channels_per_sample * digdrv->bytes_per_channel);
+        (digdrv->channels_per_sample * digdrv->bytes_per_channel);
 
     digdrv->channels_per_buffer = digdrv->half_buffer_size /
-    digdrv->bytes_per_channel;
+        digdrv->bytes_per_channel;
 
 #if 0
     digdrv->build_size = sizeof(uint32_t) * digdrv->channels_per_buffer;
 #else
-    digdrv->build_size = 4 * sound_source_count;
+    digdrv->build_size = sizeof(uint32_t) * sound_source_count;
 #endif
 
     digdrv->build_buffer = (int32_t *)AIL_MEM_alloc_lock(digdrv->build_size);
@@ -248,8 +255,6 @@ DIG_DRIVER *SS_construct_DIG_driver(AIL_DRIVER *drvr, const SNDCARD_IO_PARMS *io
     }
 
     digdrv->n_samples = sound_source_count;
-
-    digdrv->half_buffer_size = 2048;
     digdrv->samples = sound_samples;
 
     for (i = 0; i < digdrv->n_samples; i++)

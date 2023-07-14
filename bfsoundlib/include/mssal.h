@@ -139,7 +139,8 @@ enum DIGMDIDriverVerifyIoParams {
  */
 enum AILPreferenceNames {
     DIG_SERVICE_RATE         =  0, /**< DMA buffer-polling rate */
-    DIG_HARDWARE_SAMPLE_RATE =  1, /**< Hardware sample rate */
+    DIG_HARDWARE_SAMPLE_RATE =  1, /**< Hardware sample rate, either amount of samples per sec or value from
+                                   AILPreferenceSelection */
     DIG_DMA_RESERVE          =  2, /**< Real-mode mem reserve for DMA */
     DIG_LATENCY              =  3, /**< Half-buffer size in ms */
     DIG_MIXER_CHANNELS        = 4, /**< Allocatable SNDSAMPLE structures */
@@ -160,6 +161,14 @@ enum AILPreferenceNames {
     //MDI_DOUBLE_NOTE_OFF      =  x, /**< For stuck notes on SB daughterboards; not defined in this MSS version */
     //DIG_ENABLE_RESAMPLE_FILTER= x, /**< Enable resampling filter; not defined in this MSS version  */
     //DIG_DECODE_BUFFER_SIZE   =  x, /**< Decode buffer size by default; not defined in this MSS version  */
+};
+
+/** Value selection for DIG_HARDWARE_SAMPLE_RATE preference.
+ */
+enum AILPreferenceSelection {
+    AILPREF_MIN_VAL = 0,
+    AILPREF_NOM_VAL = 1,
+    AILPREF_MAX_VAL = 2,
 };
 
 /** SNDSEQUENCE.status and SNDSAMPLE.status flag values.
@@ -240,6 +249,24 @@ enum SNDSAMPLESTAGE {
    SNDSMST_SAMPLE_ALL_STAGES, /**< Used to signify all pipeline stages, for shutdown */
 };
 
+/** Digital sound saple PCM data format flags.
+ */
+enum SndDigSampleFormatFlags {
+    DIG_F_16BITS_MASK          = 0x01,
+    DIG_F_STEREO_MASK          = 0x02,
+    DIG_F_ADPCM_MASK           = 0x04,
+    DIG_F_XBOX_ADPCM_MASK      = 0x08,
+    DIG_F_MULTICHANNEL_MASK    = 0x10,
+    DIG_F_OUTPUT_FILTER_IN_USE = 0x20,
+};
+
+#define DIG_F_MONO_8           0
+#define DIG_F_MONO_16          (DIG_F_16BITS_MASK)
+#define DIG_F_STEREO_8         (DIG_F_STEREO_MASK)
+#define DIG_F_MULTICHANNEL_8   (DIG_F_MULTICHANNEL_MASK)
+#define DIG_F_STEREO_16        (DIG_F_STEREO_MASK|DIG_F_16BITS_MASK)
+#define DIG_F_MULTICHANNEL_16  (DIG_F_MULTICHANNEL_MASK|DIG_F_16BITS_MASK)
+
 /** Handle to timer.
  *
  * Originally named `HTIMER`. This less generic name helps to remember this is sound-related.
@@ -319,7 +346,8 @@ struct DIG_DRIVER {
   int32_t last_buffer;                       /**< offs=0x38 Last active buffer flag value in driver */
   int32_t channels_per_sample;               /**< offs=0x3C # of channels per sample (1 or 2) */
   int32_t bytes_per_channel;                 /**< offs=0x40 # of bytes per channel (1 or 2) */
-  int32_t channels_per_buffer;               /**< offs=0x44 # of channels per half-buffer */
+  int32_t channels_per_buffer;               /**< offs=0x44 # of channels per half-buffer
+                                             (channels_per_sample * samples_per_buffer) */
   int32_t samples_per_buffer;                /**< offs=0x48 # of samples per half-buffer */
   int32_t build_size;                        /**< offs=0x4C # of bytes in build buffer */
   int32_t *build_buffer;                     /**< offs=0x50 Build buffer (4 * n_samples bytes) */

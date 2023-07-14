@@ -21,6 +21,7 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <limits.h>
 #include <assert.h>
 
 #include "ailss.h"
@@ -70,11 +71,144 @@ int32_t SS_configure_buffers(DIG_DRIVER *digdrv)
     int32_t pref[4];
     int32_t DMA_status;
 
-    digdrv->bytes_per_channel = 2;
-    digdrv->channels_per_sample = 2;
-    digdrv->channels_per_buffer = 2;
-    digdrv->hw_format = 3;
-    digdrv->DMA_rate = 44100;
+    DMA_status = digdrv->playing;
+
+    if (DMA_status)
+    {
+        // Pause all playing samples
+        for (i = 0; i < digdrv->n_samples; i++)
+        {
+            // use one of system_data[] slots for temporary storage,
+            // the storage place becomes free again when this function ends
+            digdrv->samples[i].system_data[7] =
+                digdrv->samples[i].status;
+
+            if (digdrv->samples[i].status == SNDSMP_PLAYING)
+                digdrv->samples[i].status = SNDSMP_STOPPED;
+        }
+
+        // Halt DMA playback and flush DMA buffers with silence
+        SS_stop_DIG_driver_playback(digdrv);
+        SS_flush(digdrv);
+        SS_copy(digdrv, digdrv->DMA[0]);
+        SS_copy(digdrv, digdrv->DMA[1]);
+    }
+
+    // Select hardware output format based on application's preference
+    // If desired mode is unavailable, downgrade/upgrade to other modes
+    switch ((AIL_preference[DIG_USE_STEREO] << 1)
+        | (AIL_preference[DIG_USE_16_BITS]))
+    {
+    case DIG_F_MONO_8:
+        pref[0] = DIG_F_MONO_8;
+        pref[1] = DIG_F_MONO_16;
+        pref[2] = DIG_F_STEREO_8;
+        pref[3] = DIG_F_STEREO_16;
+        break;
+
+    case DIG_F_MONO_16:
+        pref[0] = DIG_F_MONO_16;
+        pref[1] = DIG_F_MONO_8;
+        pref[2] = DIG_F_STEREO_16;
+        pref[3] = DIG_F_STEREO_8;
+        break;
+
+    case DIG_F_STEREO_8:
+        pref[0] = DIG_F_STEREO_8;
+        pref[1] = DIG_F_STEREO_16;
+        pref[2] = DIG_F_MONO_8;
+        pref[3] = DIG_F_MONO_16;
+        break;
+
+    case DIG_F_STEREO_16:
+        pref[0] = DIG_F_STEREO_16;
+        pref[1] = DIG_F_STEREO_8;
+        pref[2] = DIG_F_MONO_16;
+        pref[3] = DIG_F_MONO_8;
+        break;
+    }
+    // Check what the driver marked as supported
+    for (i = 0; i < 4; i++)
+    {
+        if (digdrv->DDT->format_supported[pref[i]])
+        {
+            digdrv->hw_format = pref[i];
+            break;
+        }
+    }
+
+    digdrv->hw_mode_flags = digdrv->DDT->format_data[digdrv->hw_format].flags;
+
+    // Select physical output rate based on application's preference
+    switch (AIL_preference[DIG_HARDWARE_SAMPLE_RATE])
+    {
+    case AILPREF_MIN_VAL:
+        digdrv->DMA_rate =
+            digdrv->DDT->format_data[digdrv->hw_format].minimum_physical_sample_rate;
+        break;
+
+    case AILPREF_NOM_VAL:
+        digdrv->DMA_rate =
+            digdrv->DDT->format_data[digdrv->hw_format].nominal_physical_sample_rate;
+        break;
+
+    case AILPREF_MAX_VAL:
+        digdrv->DMA_rate =
+            digdrv->DDT->format_data[digdrv->hw_format].maximum_physical_sample_rate;
+        break;
+
+    default:
+        // If preference set to explicit frequency, use best match with
+        // current driver
+        n = AIL_preference[DIG_HARDWARE_SAMPLE_RATE];
+        pref[0] =
+            digdrv->DDT->format_data[digdrv->hw_format].minimum_physical_sample_rate;
+        pref[1] =
+            digdrv->DDT->format_data[digdrv->hw_format].nominal_physical_sample_rate;
+        pref[2] =
+            digdrv->DDT->format_data[digdrv->hw_format].maximum_physical_sample_rate;
+        delta = LONG_MAX;
+        for (i = 0; i < 3; i++)
+        {
+            if (abs(n - pref[i]) <= delta) {
+                delta = abs(n - pref[i]);
+                match = i;
+            }
+        }
+        digdrv->DMA_rate = pref[match];
+        break;
+    }
+
+    // Set sample size values
+    switch (digdrv->hw_format)
+    {
+    case DIG_F_MONO_8:
+        digdrv->channels_per_sample = 1;
+        digdrv->bytes_per_channel = 1;
+        break;
+
+    case DIG_F_STEREO_8:
+        digdrv->channels_per_sample = 2;
+        digdrv->bytes_per_channel = 1;
+        break;
+
+    case DIG_F_MONO_16:
+        digdrv->channels_per_sample = 1;
+        digdrv->bytes_per_channel = 2;
+        break;
+
+    case DIG_F_STEREO_16:
+        digdrv->channels_per_sample = 2;
+        digdrv->bytes_per_channel = 2;
+        break;
+    }
+
+    // Get # of samples per half-buffer, assuming desired latency
+    hb_samples = (digdrv->DMA_rate * AIL_preference[DIG_LATENCY]) / 1000;
+
+    // Calculate half-buffer size in bytes
+    digdrv->half_buffer_size = hb_samples * digdrv->bytes_per_channel
+        * digdrv->channels_per_sample;
 
     // Make sure half-buffer size is legal with this driver
     bsmin = digdrv->DDT->format_data[digdrv->hw_format].minimum_DMA_half_buffer_size;
