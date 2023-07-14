@@ -388,7 +388,6 @@ void *AIL2OAL_API_set_timer_user(HSNDTIMER timer, void *user_data)
   void *retval;
 
   assert (timer >= 0);
-  assert (timer % sizeof (AILTIMERCB) == 0);
   assert (timer < AIL_N_TIMERS);
 
   retval = timer_user[timer];

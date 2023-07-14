@@ -254,14 +254,69 @@ DIG_DRIVER *SS_construct_DIG_driver(AIL_DRIVER *drvr, const SNDCARD_IO_PARMS *io
         return NULL;
     }
 
+#if 0
+    digdrv->n_samples = AIL_preference[DIG_MIXER_CHANNELS];
+#else
     digdrv->n_samples = sound_source_count;
-    digdrv->samples = sound_samples;
+#endif
 
-    for (i = 0; i < digdrv->n_samples; i++)
+    // Allocate physical SNDSAMPLE structures for driver
+#if 0
+    digdrv->samples = (SNDSAMPLE *)AIL_MEM_alloc_lock(sizeof(SNDSAMPLE) * digdrv->n_samples);
+#else
+    digdrv->samples = sound_samples;
+#endif
+
+    if (digdrv->samples == NULL)
     {
-        digdrv->samples[i].driver = digdrv;
-        digdrv->samples[i].status = 1;
+        AIL_set_error("Could not allocate SNDSAMPLE structures.");
+        if (drvr->PM_ISR != -1)
+            AIL_restore_USE16_ISR(drvr->PM_ISR);
+        AIL_call_driver(digdrv->drvr, DRV_SHUTDOWN_DEV, NULL, NULL);
+        digdrv->drvr->initialized = 0;
+        if (digdrv->DMA_buf != NULL)
+            AIL_MEM_free_DOS(digdrv->DMA_buf, digdrv->DMA_seg, digdrv->DMA_sel);
+        AIL_MEM_free_lock(digdrv->build_buffer, digdrv->build_size);
+        AIL_MEM_free_lock(digdrv, sizeof(DIG_DRIVER));
+        return NULL;
     }
+
+    for (i=0; i < digdrv->n_samples; i++) {
+        memset(&digdrv->samples[i], 0, sizeof(SNDSAMPLE));
+        digdrv->samples[i].status = SNDSMP_FREE;
+        digdrv->samples[i].driver = digdrv;
+    }
+
+    // Allocate timer for DMA buffer service
+    digdrv->timer = AIL_register_timer(SS_serve);
+
+    if (digdrv->timer == -1)
+    {
+        AIL_set_error("Out of timer handles.");
+        if (drvr->PM_ISR != -1)
+            AIL_restore_USE16_ISR(drvr->PM_ISR);
+        AIL_call_driver(digdrv->drvr, DRV_SHUTDOWN_DEV, NULL, NULL);
+        digdrv->drvr->initialized = 0;
+        if (digdrv->DMA_buf != NULL)
+            AIL_MEM_free_DOS(digdrv->DMA_buf, digdrv->DMA_seg, digdrv->DMA_sel);
+        AIL_MEM_free_lock(digdrv->samples, sizeof(SNDSAMPLE) * digdrv->n_samples);
+        AIL_MEM_free_lock(digdrv->build_buffer, digdrv->build_size);
+        AIL_MEM_free_lock(digdrv, sizeof(DIG_DRIVER));
+        return NULL;
+    }
+
+    AIL_set_timer_user(digdrv->timer, digdrv);
+    AIL_set_timer_frequency(digdrv->timer, AIL_preference[DIG_SERVICE_RATE]);
+    AIL_start_timer(digdrv->timer);
+
+    // Set destructor handler and descriptor
+    digdrv->drvr->destructor = (AILTIMERCB)SS_destroy_DIG_driver;
+    digdrv->drvr->descriptor = digdrv;
+
+    // Flush DMA buffers with silence
+    SS_flush(digdrv);
+    SS_copy(digdrv, digdrv->DMA[0]);
+    SS_copy(digdrv, digdrv->DMA[1]);
 
     return digdrv;
 }

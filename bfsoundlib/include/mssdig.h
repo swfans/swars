@@ -53,7 +53,7 @@ void AIL2OAL_API_uninstall_DIG_driver(DIG_DRIVER *digdrv);
 
 /** Timer interrupt handler which processes samples.
  */
-void SS_serve(uintptr_t clientval);
+void SS_serve(void *clientval);
 
 /******************************************************************************/
 #ifdef __cplusplus
