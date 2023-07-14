@@ -32,6 +32,84 @@
 /******************************************************************************/
 extern bool sound_initialised;
 
+extern size_t sound_source_count;
+extern SNDSAMPLE sound_samples[];
+
+DIG_DRIVER *SS_construct_DIG_driver(AIL_DRIVER *drvr, const SNDCARD_IO_PARMS *iop)
+{
+    DIG_DRIVER *digdrv;
+    int32_t n;
+
+    digdrv = calloc(1, sizeof(*digdrv));
+    assert(sizeof(SNDSAMPLE) == 0x894);
+
+    digdrv->n_samples = sound_source_count;
+    digdrv->buffer_flag = calloc(1, sizeof (int16_t));
+    digdrv->build_buffer = calloc(digdrv->n_samples, 4);
+    digdrv->build_size = 4 * digdrv->n_samples;
+    digdrv->bytes_per_channel = 2;
+    digdrv->channels_per_sample = 2;
+    digdrv->channels_per_buffer = 2;
+    digdrv->drvr = drvr;
+    digdrv->hw_format = 3;
+    digdrv->master_volume = 127;
+    digdrv->playing  = 1;
+    digdrv->DMA_rate = 44100;
+    digdrv->half_buffer_size = 2048;
+    digdrv->samples = sound_samples;
+
+    for (n = 0; n < digdrv->n_samples; n++)
+    {
+        digdrv->samples[n].driver = digdrv;
+        digdrv->samples[n].status = 1;
+    }
+
+    return digdrv;
+}
+
+void SS_destroy_DIG_driver(DIG_DRIVER *digdrv)
+{
+    int32_t i;
+
+    // Halt DMA traffic and flush buffer with silence
+    if (digdrv->playing)
+    {
+        SS_stop_DIG_driver_playback(digdrv);
+        SS_flush(digdrv);
+        SS_copy(digdrv, digdrv->DMA[0]);
+        SS_copy(digdrv, digdrv->DMA[1]);
+        AIL_delay(10);
+    }
+
+    // Stop buffer timer service
+    AIL_release_timer_handle(digdrv->timer);
+
+    // Release any open sample handles (to ensure that pipeline resources
+    // are deallocated properly)
+    for (i = 0; i < digdrv->n_samples; i++)
+    {
+        SNDSAMPLE *s;
+        s = &digdrv->samples[i];
+        if (s->status != SNDSMP_FREE)
+            AIL_release_sample_handle(s);
+    }
+
+    AIL_MEM_free_DOS(digdrv->DMA_buf, digdrv->DMA_seg, digdrv->DMA_sel);
+    AIL_MEM_free_lock(digdrv->samples, sizeof(SNDSAMPLE) * digdrv->n_samples);
+    AIL_MEM_free_lock(digdrv->build_buffer, 4 * digdrv->build_size);
+    AIL_MEM_free_lock(digdrv, sizeof(DIG_DRIVER));
+}
+
+void SS_stop_DIG_driver_playback(DIG_DRIVER *digdrv)
+{
+    if (!digdrv->playing)
+        return;
+
+    // Stop playback ASAP and return all buffers
+    AIL_call_driver(digdrv->drvr, DIG_STOP_P_REQ, NULL, NULL);
+    digdrv->playing = 0;
+}
+
 DIG_DRIVER *AIL2OAL_API_install_DIG_driver_file(const char *fname,
         const SNDCARD_IO_PARMS *iop)
 {

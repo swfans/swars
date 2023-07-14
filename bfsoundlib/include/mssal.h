@@ -296,7 +296,7 @@ struct DIG_DRIVER {
   AIL_DRIVER *drvr;                          /**< offs=0x00 Handle to base driver descriptor */
   DIG_DDT *DDT;                              /**< offs=0x04 Protected-mode pointer to DDT */
   DIG_DST *DST;                              /**< offs=0x08 Protected-mode pointer to DST */
-  HSNDTIMER timer;                           /**< offs=0x0C Buffer-polling timer */
+  HSNDTIMER timer;                           /**< offs=0x0C Buffer-polling timer; also called backgroundtimer */
   int32_t half_buffer_size;                  /**< offs=0x10 Size of DMA half-buffer */
   int32_t DMA_rate;                          /**< offs=0x14 Hardware sample rate */
   int32_t hw_format;                         /**< offs=0x18 DIG_F code in use */
@@ -372,7 +372,7 @@ struct MDI_DRIVER {
  */
 struct SNDSAMPLE {
   DIG_DRIVER *driver;                        /**< offs=0x00 Driver for playback */
-  uint32_t status;                           /**< offs=0x04 SMP_ flags: _FREE, _DONE, _PLAYING */
+  uint32_t status;                           /**< offs=0x04 SNDSMP_ flags: _FREE, _DONE, _PLAYING */
   void *start[2];                            /**< offs=0x08 Sample buffer address (W) */
   uint32_t len[2];                           /**< offs=0x10 Sample buffer size in bytes (W) */
   uint32_t pos[2];                           /**< offs=0x18 Index to next byte (R/W) */

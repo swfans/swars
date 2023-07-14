@@ -36,41 +36,6 @@ enum SampleFileTypes {
     SMP_FTYP_ASI = 2,
 };
 
-extern size_t sound_source_count;
-extern SNDSAMPLE sound_samples[];
-
-DIG_DRIVER *SS_construct_DIG_driver(AIL_DRIVER *drvr, const SNDCARD_IO_PARMS *iop)
-{
-    DIG_DRIVER *digdrv;
-    int32_t n;
-
-    digdrv = calloc(1, sizeof(*digdrv));
-    assert(sizeof(SNDSAMPLE) == 0x894);
-
-    digdrv->n_samples = sound_source_count;
-    digdrv->buffer_flag = calloc(1, sizeof (int16_t));
-    digdrv->build_buffer = calloc(digdrv->n_samples, 4);
-    digdrv->build_size = 4 * digdrv->n_samples;
-    digdrv->bytes_per_channel = 2;
-    digdrv->channels_per_sample = 2;
-    digdrv->channels_per_buffer = 2;
-    digdrv->drvr = drvr;
-    digdrv->hw_format = 3;
-    digdrv->master_volume = 127;
-    digdrv->playing  = 1;
-    digdrv->DMA_rate = 44100;
-    digdrv->half_buffer_size = 2048;
-    digdrv->samples = sound_samples;
-
-    for (n = 0; n < digdrv->n_samples; n++)
-    {
-        digdrv->samples[n].driver = digdrv;
-        digdrv->samples[n].status = 1;
-    }
-
-    return digdrv;
-}
-
 void SS_build_amplitude_tables(SNDSAMPLE *s)
 {
     asm volatile (
@@ -78,6 +43,24 @@ void SS_build_amplitude_tables(SNDSAMPLE *s)
       "call ASM_SS_build_amplitude_tables\n"
       "add $0x4, %%esp\n"
         :  : "g" (s) : "eax" );
+}
+
+void SS_flush(DIG_DRIVER *digdrv)
+{
+    // Initialize the build buffer by flushing with 0
+    memset(digdrv->build_buffer, 0, digdrv->build_size);
+}
+
+void SS_copy(DIG_DRIVER *digdrv, void *pWaveAddr)
+{
+#if defined(DOS)||defined(GO32)
+    AILSSA_DMA_copy((pWaveAddr == dig->DMA[0] ) ? 0 : 1,
+          &dig->DMA[0], dig->hw_mode_flags, dig->hw_format,
+          dig->n_active_samples, dig->build_buffer,
+          dig->samples_per_buffer, dig->buffer_size);
+#else
+    // TODO not sure what is needed here
+#endif
 }
 
 void AIL2OAL_API_init_sample(SNDSAMPLE *s)

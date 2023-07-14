@@ -126,54 +126,52 @@ push_free_buffer (ALuint buf, void *user_data)
 static bool
 create_sources (void)
 {
-  size_t n, m;
-  ALuint source;
-  ALuint buffers[SOUND_BUFFERS_PER_SRC];
+    size_t n, m;
+    ALuint source;
+    ALuint buffers[SOUND_BUFFERS_PER_SRC];
 
-  for (n = 0; n < SOUND_MUSIC_BUFFERS; n++)
+    for (n = 0; n < SOUND_MUSIC_BUFFERS; n++)
     {
-      alGenBuffers (1, &buffers[0]);
-      if (!check_al ("alGenBuffers"))
+        alGenBuffers(1, &buffers[0]);
+        if (!check_al ("alGenBuffers"))
+            goto err;
+
+        push_free_buffer(buffers[0], NULL);
+    }
+
+    for (n = 0; n < SOUND_MAX_SOURCES; n++)
+    {
+        alGenSources(1, &source);
+        if (alGetError() != AL_NO_ERROR) {
+            n--;
+            break;
+        }
+
+        alGenBuffers(SOUND_BUFFERS_PER_SRC, buffers);
+        if (alGetError() != AL_NO_ERROR) {
+          sound_delete_source_and_buffers(source);
+          n--;
+          break;
+        }
+
+        initialise_descriptor(sound_source_count++, source);
+
+        for (m = 0; m < SOUND_BUFFERS_PER_SRC; m++)
+            push_free_buffer(buffers[m], NULL);
+    }
+
+    if (sound_source_count == 0)
+    {
+        fprintf (stderr, "Error: OpenAL: "
+            "Failed to create sound sources.\n");
         goto err;
-
-      push_free_buffer (buffers[0], NULL);
-    }
-
-  for (n = 0; n < SOUND_MAX_SOURCES; n++)
-    {
-      alGenSources (1, &source);
-      if (alGetError () != AL_NO_ERROR)
-        {
-          n--;
-          break;
-        }
-
-      alGenBuffers (SOUND_BUFFERS_PER_SRC, buffers);
-      if (alGetError () != AL_NO_ERROR)
-        {
-          sound_delete_source_and_buffers (source);
-          n--;
-          break;
-        }
-
-      initialise_descriptor (sound_source_count++, source);
-
-      for (m = 0; m < SOUND_BUFFERS_PER_SRC; m++)
-        push_free_buffer (buffers[m], NULL);
-    }
-
-  if (sound_source_count == 0)
-    {
-      fprintf (stderr, "Error: OpenAL: "
-                       "Failed to create sound sources.\n");
-      goto err;
     }
 
 #ifdef DEBUG
-  printf ("OpenAL: Created %zu sound sources.\n", sound_source_count);
+    printf ("OpenAL: Created %zu sound sources.\n", sound_source_count);
 #endif
 
-  return true;
+    return true;
 
 err:
   /* TODO: clean up */

@@ -27,9 +27,19 @@ extern "C" {
 #endif
 /******************************************************************************/
 
-DIG_DRIVER *SS_construct_DIG_driver(AIL_DRIVER *drvr, const SNDCARD_IO_PARMS *iop);
-
 void SS_build_amplitude_tables(SNDSAMPLE *s);
+
+/** Flush mixer buffer.
+ *
+ * Also called AILSSA_flush_buffer().
+ */
+void SS_flush(DIG_DRIVER *digdrv);
+
+/** Copy mixer buffer to DMA buffer.
+ *
+ * Also called AILSSA_DMA_copy(), though that one has different params.
+ */
+void SS_copy(DIG_DRIVER *digdrv, void *pWaveAddr);
 
 SNDSAMPLE *AIL2OAL_API_allocate_sample_handle(DIG_DRIVER *digdrv);
 

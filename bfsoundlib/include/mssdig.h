@@ -28,6 +28,20 @@ extern "C" {
 #endif
 /******************************************************************************/
 
+/** Install and initialize digital audio driver.
+ */
+DIG_DRIVER *SS_construct_DIG_driver(AIL_DRIVER *drvr, const SNDCARD_IO_PARMS *iop);
+
+/** Uninstall digital audio driver, freeing all allocated resources.
+ *
+ * This function is called via the AIL_DRIVER.destructor vector only.
+ */
+void SS_destroy_DIG_driver(DIG_DRIVER *digdrv);
+
+/** Stop driver-based DMA buffer playback.
+ */
+void SS_stop_DIG_driver_playback(DIG_DRIVER *digdrv);
+
 DIG_DRIVER *AIL2OAL_API_install_DIG_driver_file(const char *fname,
         const SNDCARD_IO_PARMS *iop);
 int32_t AIL2OAL_API_install_DIG_INI(DIG_DRIVER **digdrv);

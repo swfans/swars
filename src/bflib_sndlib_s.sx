@@ -4642,7 +4642,7 @@ SS_attempt_DIG_detection:
 
 
 /*----------------------------------------------------------------*/
-SS_destroy_DIG_driver:
+ASM_SS_destroy_DIG_driver:
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %esi
@@ -5224,7 +5224,7 @@ GLOBAL_FUNC (ASM_SS_construct_DIG_driver)	/* 113110 */
 		push   %eax
 		call   ac_AIL_start_timer
 		mov    0x0(%ebp),%eax
-		movl   $SS_destroy_DIG_driver,0x24(%eax)
+		movl   $ac_SS_destroy_DIG_driver,0x24(%eax)
 		add    $0x4,%esp
 		mov    0x0(%ebp),%eax
 		mov    %ebp,0x28(%eax)
