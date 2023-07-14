@@ -130,6 +130,9 @@ int32_t AIL2OAL_API_call_driver(AIL_DRIVER *drvr, int32_t fn,
         break;
     case MDI_HW_VOLUME:
     case MDI_INIT_INS_MGR:
+        // Pretend instrument manager initialization to always succeed
+        out->AX = 1;
+        break;
     case MDI_MIDI_XMIT:
     case MDI_INSTALL_T_SET:
     case MDI_GET_T_STATUS:

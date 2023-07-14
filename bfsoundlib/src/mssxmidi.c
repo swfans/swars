@@ -831,17 +831,9 @@ void AIL2OAL_API_release_sequence_handle(SNDSEQUENCE *seq)
     seq->status = SNDSEQ_FREE;
 }
 
-MDI_DRIVER *AIL2OAL_API_install_MDI_driver_file(char *fname, SNDCARD_IO_PARMS *iop)
+MDI_DRIVER *AIL2OAL_API_install_MDI_driver_file(const char *fname, SNDCARD_IO_PARMS *iop)
 {
     MDI_DRIVER *mdidrv;
-#if 0
-    asm volatile (
-      "push %2\n"
-      "push %1\n"
-      "call ASM_AIL_API_install_MDI_driver_file\n"
-      "add $0x8, %%esp\n"
-        : "=r" (mdidrv) : "g" (fname), "g" (iop));
-#else
     AIL_DRIVER *drvr;
     int32_t *driver_image;
 
@@ -868,8 +860,7 @@ MDI_DRIVER *AIL2OAL_API_install_MDI_driver_file(char *fname, SNDCARD_IO_PARMS *i
         strcpy((char*)&driver_image[1], "AIL3MDI");
     }
 #endif
-    if (driver_image == NULL)
-    {
+    if (driver_image == NULL) {
         AIL_set_error("Driver file not found.");
         return NULL;
     }
@@ -884,7 +875,9 @@ MDI_DRIVER *AIL2OAL_API_install_MDI_driver_file(char *fname, SNDCARD_IO_PARMS *i
     mdidrv = XMI_construct_MDI_driver(drvr, iop);
     if (mdidrv == NULL)
         AIL_uninstall_driver(drvr);
-#endif
+
+    // Chain of MDI drivers is not preserved by this wrapper, but its head is available
+    MDI_first = mdidrv;
     return mdidrv;
 }
 
@@ -902,77 +895,9 @@ void AIL2OAL_API_uninstall_MDI_driver(MDI_DRIVER *mdidrv)
 
 MDI_DRIVER *AIL2OAL_API_open_XMIDI_driver(uint32_t flags)
 {
-    int32_t i;
-    MDI_DRIVER *mdidrv;
-
-    mdidrv = AIL_MEM_alloc_lock(sizeof(MDI_DRIVER));
-    if (mdidrv == NULL) {
-        AIL_set_error("Could not allocate memory for driver descriptor.");
-        return NULL;
-    }
-
-    // Allocate SEQUENCE structures for driver and set params
-    mdidrv->n_sequences = AIL_preference[MDI_SEQUENCES];
-    mdidrv->sequences = AIL_MEM_alloc_lock(
-        sizeof(struct SNDSEQUENCE) * mdidrv->n_sequences);
-    if (mdidrv->sequences == NULL) {
-        AIL_set_error("Could not allocate SNDSEQUENCE structures.");
-        AIL_MEM_free_lock(mdidrv, sizeof(MDI_DRIVER));
-        return NULL;
-    }
-
-    for (i = 0; i < mdidrv->n_sequences; i++)
-    {
-        mdidrv->sequences[i].status = SNDSEQ_FREE;
-        mdidrv->sequences[i].driver = mdidrv;
-    }
-
-    // Initialize miscellaneous MDI_DRIVER variables
-    mdidrv->event_trap = NULL;
-    mdidrv->timbre_trap = NULL;
-
-    mdidrv->interval_time = 1000000L / AIL_preference[MDI_SERVICE_RATE];
-
-    mdidrv->disable = 0;
-
-    mdidrv->master_volume = 127;
-
-    // Initialize channel lock table to NULL (all physical channels
-    // available)
-    for (i = 0; i < AIL_NUM_CHANS; i++)
-    {
-        mdidrv->lock[i] = 0;
-        mdidrv->locker[i] = NULL;
-        mdidrv->owner[i] = NULL;
-        mdidrv->user[i] = NULL;
-        mdidrv->state[i] = 0;
-        mdidrv->notes[i] = 0;
-    }
-
-    // Allocate timer for XMIDI sequencing
-    mdidrv->timer = AIL_register_timer((AILTIMERCB)XMI_serve);
-    if (mdidrv->timer == -1) {
-        AIL_set_error("Out of timer handles.");
-        AIL_MEM_free_lock(mdidrv->sequences, mdidrv->n_sequences * sizeof(SNDSEQUENCE));
-        AIL_MEM_free_lock(mdidrv, sizeof(MDI_DRIVER));
-        return NULL;
-    }
-
-    AIL_set_timer_user(mdidrv->timer, (void *)mdidrv);
-    init_mdi_defaults(mdidrv);
-
-    // Start XMIDI timer service and return MDI_DRIVER descriptor
-    AIL_set_timer_frequency(mdidrv->timer, AIL_preference[MDI_SERVICE_RATE]);
-    AIL_start_timer(mdidrv->timer);
-
-    // Link HMDIDRIVER into chain
-    if (MDI_first != NULL)
-        mdidrv->win.next = MDI_first;
-    else
-        mdidrv->win.next = NULL;
-
-    MDI_first = mdidrv;
-    return mdidrv;
+    // Since both Windows and old DOS API should work, there is no reason
+    // not to call the DOS initialization here
+    return AIL2OAL_API_install_MDI_driver_file("OPL3.MDI", NULL);
 }
 
 void AIL2OAL_API_close_XMIDI_driver(MDI_DRIVER *mdidrv)

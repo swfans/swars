@@ -35,7 +35,7 @@ void AIL2OAL_API_set_XMIDI_master_volume(MDI_DRIVER *mdidrv, int32_t master_volu
 
 int32_t AIL2OAL_API_install_MDI_INI(MDI_DRIVER **mdidrv);
 
-MDI_DRIVER *AIL2OAL_API_install_MDI_driver_file(char *filename, SNDCARD_IO_PARMS *iop);
+MDI_DRIVER *AIL2OAL_API_install_MDI_driver_file(const char *filename, SNDCARD_IO_PARMS *iop);
 void AIL2OAL_API_uninstall_MDI_driver(MDI_DRIVER *mdidrv);
 
 MDI_DRIVER *AIL2OAL_API_open_XMIDI_driver(uint32_t flags);

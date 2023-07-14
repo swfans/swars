@@ -203,7 +203,7 @@ void ogg_list_music_tracks(void)
               music_dir, trkno - 1);
         is_da_track[trkno] = (access(file_name, F_OK) == 0);
         if (!is_da_track[trkno] && trkno > 4) {
-            sprintf(SoundProgressMessage, "BF106 - No tracks beyond %d\n", (int)(trkno-1));
+            sprintf(SoundProgressMessage, "BF106 - No CD tracks beyond %d\n", (int)(trkno-1));
             SoundProgressLog(SoundProgressMessage);
             break;
         }
@@ -222,7 +222,7 @@ void PlayCDTrack(ushort trkno)
     if (!CDAble)
         return;
     if (!is_daudio_track(trkno)) {
-        sprintf(SoundProgressMessage, "BF103 - No audio track %d\n", (int)trkno);
+        sprintf(SoundProgressMessage, "BF103 - No CD audio track %d\n", (int)trkno);
         SoundProgressLog(SoundProgressMessage);
         return;
     }

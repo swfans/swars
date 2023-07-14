@@ -1003,7 +1003,7 @@ MDI_DRIVER *AIL_open_XMIDI_driver(uint32_t flags)
     if (mdidrv == NULL)
     {
         if (flags & AIL_OPEN_XMIDI_NULL_DRIVER)
-            mdidrv = AIL2OAL_API_install_MDI_driver_file("NULL.MDI",0);
+            mdidrv = AIL2OAL_API_install_MDI_driver_file("NULL.MDI", NULL);
     }
     if (mdidrv == NULL)
     {
@@ -1043,7 +1043,7 @@ void AIL_close_XMIDI_driver(MDI_DRIVER *mdidrv)
     AIL_indent--;
 }
 
-MDI_DRIVER *AIL_install_MDI_driver_file(char *fname, SNDCARD_IO_PARMS *iop)
+MDI_DRIVER *AIL_install_MDI_driver_file(const char *fname, SNDCARD_IO_PARMS *iop)
 {
     MDI_DRIVER *mdidrv;
 
