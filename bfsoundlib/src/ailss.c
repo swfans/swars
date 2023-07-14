@@ -63,6 +63,67 @@ void SS_copy(DIG_DRIVER *digdrv, void *pWaveAddr)
 #endif
 }
 
+int32_t SS_configure_buffers(DIG_DRIVER *digdrv)
+{
+    int32_t i, bsmin, bsmax, hb_samples;
+    int32_t n, match, delta;
+    int32_t pref[4];
+    int32_t DMA_status;
+
+    digdrv->bytes_per_channel = 2;
+    digdrv->channels_per_sample = 2;
+    digdrv->channels_per_buffer = 2;
+    digdrv->hw_format = 3;
+    digdrv->DMA_rate = 44100;
+
+    // Make sure half-buffer size is legal with this driver
+    bsmin = digdrv->DDT->format_data[digdrv->hw_format].minimum_DMA_half_buffer_size;
+    bsmax = digdrv->DDT->format_data[digdrv->hw_format].maximum_DMA_half_buffer_size;
+
+    // Round half-buffer size to nearest binary power between 8 and
+    // DIG_DMA_RESERVE / 2; ensure result within driver limits
+    delta = LONG_MAX;
+
+    for (n = 8; n <= (AIL_preference[DIG_DMA_RESERVE] / 2); n <<= 1)
+    {
+        if (abs(n - digdrv->half_buffer_size) <= delta)
+        {
+            delta = abs(n - digdrv->half_buffer_size);
+            match = n;
+        }
+    }
+
+    digdrv->half_buffer_size = match;
+    if (digdrv->half_buffer_size < bsmin)
+        digdrv->half_buffer_size = bsmin;
+    if (digdrv->half_buffer_size > bsmax)
+        digdrv->half_buffer_size = bsmax;
+
+    // Set DMA half-buffer segments in driver DST, and store equivalent
+    // protected-mode pointers in driver descriptor structure
+    digdrv->DST->DMA_buffer_A = digdrv->DMA_buf;
+    digdrv->DST->DMA_buffer_B = (digdrv->DMA_buf + digdrv->half_buffer_size);
+
+    digdrv->DMA[0] = digdrv->DST->DMA_buffer_A;
+    digdrv->DMA[1] = digdrv->DST->DMA_buffer_B;
+
+    if (DMA_status)
+    {
+        // Resume any interrupted samples
+        for (i = 0; i < digdrv->n_samples; i++)
+            digdrv->samples[i].status =
+                digdrv->samples[i].system_data[7];
+
+        // Flush new DMA buffers with silence and resume DMA playback
+        SS_flush(digdrv);
+        SS_copy(digdrv, digdrv->DMA[0]);
+        SS_copy(digdrv, digdrv->DMA[1]);
+        SS_start_DIG_driver_playback(digdrv);
+    }
+
+    return 1;
+}
+
 void AIL2OAL_API_init_sample(SNDSAMPLE *s)
 {
     asm volatile (

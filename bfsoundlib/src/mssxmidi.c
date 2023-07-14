@@ -853,10 +853,10 @@ MDI_DRIVER *AIL2OAL_API_install_MDI_driver_file(const char *fname, SNDCARD_IO_PA
 #else
     // Prepare fake driver data; make sure it has at least 7 bytes beyond size
     // to allow magic value check
-    driver_image = (int32_t*) AIL_MEM_alloc_lock(20);
+    driver_image = (int32_t*) AIL_MEM_alloc_lock(sizeof(struct VDI_HDR) + 4);
     if (driver_image != NULL) {
-        memset(driver_image, 0, 20);
-        driver_image[0] = 16;
+        memset(driver_image, 0, sizeof(struct VDI_HDR) + 4);
+        driver_image[0] = sizeof(struct VDI_HDR);
         strcpy((char*)&driver_image[1], "AIL3MDI");
     }
 #endif

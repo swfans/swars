@@ -201,14 +201,54 @@ DIG_DRIVER *SS_construct_DIG_driver(AIL_DRIVER *drvr, const SNDCARD_IO_PARMS *io
         return NULL;
     }
 
+    // The pair of DMA half-buffers is not needed
+    digdrv->DMA_buf = NULL;
+    digdrv->DMA_seg = 0;
+    digdrv->DMA_sel = 0;
+
+    // Configure working DMA half-buffers
+    if (!SS_configure_buffers(digdrv)) {
+        if (digdrv->DMA_buf != NULL)
+            AIL_MEM_free_DOS(digdrv->DMA_buf, digdrv->DMA_seg, digdrv->DMA_sel);
+        AIL_MEM_free_lock(digdrv, sizeof(DIG_DRIVER));
+        return NULL;
+    }
+
+    // Initialize device
+    AIL_call_driver(digdrv->drvr, DRV_INIT_DEV, NULL, NULL);
+
+    digdrv->drvr->initialized = 1;
+
+    // Allocate build buffer
+    digdrv->samples_per_buffer = digdrv->half_buffer_size /
+    (digdrv->channels_per_sample * digdrv->bytes_per_channel);
+
+    digdrv->channels_per_buffer = digdrv->half_buffer_size /
+    digdrv->bytes_per_channel;
+
+#if 0
+    digdrv->build_size = sizeof(uint32_t) * digdrv->channels_per_buffer;
+#else
+    digdrv->build_size = 4 * sound_source_count;
+#endif
+
+    digdrv->build_buffer = (int32_t *)AIL_MEM_alloc_lock(digdrv->build_size);
+
+    if (digdrv->build_buffer == NULL)
+    {
+        AIL_set_error("Could not allocate build buffer.");
+        if (drvr->PM_ISR != -1)
+            AIL_restore_USE16_ISR(drvr->PM_ISR);
+        AIL_call_driver(digdrv->drvr, DRV_SHUTDOWN_DEV, NULL, NULL);
+        digdrv->drvr->initialized = 0;
+        if (digdrv->DMA_buf != NULL)
+            AIL_MEM_free_DOS(digdrv->DMA_buf, digdrv->DMA_seg, digdrv->DMA_sel);
+        AIL_MEM_free_lock(digdrv, sizeof(DIG_DRIVER));
+        return NULL;
+    }
+
     digdrv->n_samples = sound_source_count;
-    digdrv->build_buffer = calloc(digdrv->n_samples, 4);
-    digdrv->build_size = 4 * digdrv->n_samples;
-    digdrv->bytes_per_channel = 2;
-    digdrv->channels_per_sample = 2;
-    digdrv->channels_per_buffer = 2;
-    digdrv->hw_format = 3;
-    digdrv->DMA_rate = 44100;
+
     digdrv->half_buffer_size = 2048;
     digdrv->samples = sound_samples;
 
@@ -261,6 +301,19 @@ void SS_destroy_DIG_driver(DIG_DRIVER *digdrv)
     AIL_MEM_free_lock(digdrv, sizeof(DIG_DRIVER));
 }
 
+void SS_start_DIG_driver_playback(DIG_DRIVER *digdrv)
+{
+    VDI_CALL VDI;
+
+    if (digdrv->playing)
+        return;
+
+    VDI.DX = (uint16_t)digdrv->hw_format;
+    VDI.CX = (uint16_t)digdrv->DMA_rate;
+    AIL_call_driver(digdrv->drvr, DIG_START_P_CMD, &VDI, NULL);
+    digdrv->playing = 1;
+}
+
 void SS_stop_DIG_driver_playback(DIG_DRIVER *digdrv)
 {
     if (!digdrv->playing)
@@ -296,10 +349,10 @@ DIG_DRIVER *AIL2OAL_API_install_DIG_driver_file(const char *fname,
 #else
     // Prepare fake driver data; make sure it has at least 7 bytes beyond size
     // to allow magic value check
-    driver_image = (int32_t*) AIL_MEM_alloc_lock(20);
+    driver_image = (int32_t*) AIL_MEM_alloc_lock(sizeof(struct VDI_HDR) + 4);
     if (driver_image != NULL) {
-        memset(driver_image, 0, 20);
-        driver_image[0] = 16;
+        memset(driver_image, 0, sizeof(struct VDI_HDR) + 4);
+        driver_image[0] = sizeof(struct VDI_HDR);
         strcpy((char*)&driver_image[1], "AIL3DIG");
     }
 #endif

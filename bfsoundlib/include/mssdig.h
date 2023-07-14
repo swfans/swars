@@ -38,6 +38,10 @@ DIG_DRIVER *SS_construct_DIG_driver(AIL_DRIVER *drvr, const SNDCARD_IO_PARMS *io
  */
 void SS_destroy_DIG_driver(DIG_DRIVER *digdrv);
 
+/** Start driver-based DMA buffer playback.
+ */
+void SS_start_DIG_driver_playback(DIG_DRIVER *digdrv);
+
 /** Stop driver-based DMA buffer playback.
  */
 void SS_stop_DIG_driver_playback(DIG_DRIVER *digdrv);

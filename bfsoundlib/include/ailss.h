@@ -41,6 +41,13 @@ void SS_flush(DIG_DRIVER *digdrv);
  */
 void SS_copy(DIG_DRIVER *digdrv, void *pWaveAddr);
 
+/** Configure DMA half-buffers.
+ *
+ * @return Givess 1 if configuration valid, else 0.
+ */
+int32_t SS_configure_buffers(DIG_DRIVER *digdrv);
+
+
 SNDSAMPLE *AIL2OAL_API_allocate_sample_handle(DIG_DRIVER *digdrv);
 
 void AIL2OAL_API_set_digital_master_volume(DIG_DRIVER *digdrv, int32_t master_volume);
