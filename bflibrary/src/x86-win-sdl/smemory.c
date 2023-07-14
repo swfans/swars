@@ -62,6 +62,7 @@ WINBASEAPI VOID WINAPI GlobalMemoryStatus(LPMEMORYSTATUS);
 
 #endif // defined(WIN32)
 
+#define AVAILABLE_LOW_MEMORY (512*1024)
 #define AVAILABLE_MEMORY (16*1024*1024)
 
 #pragma pack(1)
@@ -101,6 +102,7 @@ struct mem_arena
     mem_arena *Child;
     mem_arena *Parent;
     ubyte  Used;
+    /** Index in memory_blocks[] of the section containing this areana. */
     ubyte  Section;
 };
 
@@ -141,7 +143,7 @@ static void initialise_block_nodes(void)
     count = get_block_count();
 
     for (n = 0; n < count; n++)
-      {
+    {
         memory_arenas[n].Pointer  = memory_blocks[n].Pointer;
         memory_arenas[n].Size = memory_blocks[n].Size;
         memory_arenas[n].Section = n;
@@ -155,7 +157,7 @@ static void initialise_block_nodes(void)
             memory_arenas[n].Child = &memory_arenas[n + 1];
         else
             memory_arenas[n].Child = NULL;
-      }
+    }
 }
 
 /** @internal
@@ -257,7 +259,7 @@ void * LbMemoryAllocLow(TbMemSize size)
             if ( !curarena->Used )
             {
                 sect = curarena->Section;
-                if ( memory_blocks[sect].Selector )
+                if (memory_blocks[sect].Selector != 0)
                 {
                   splarena = curarena;
                   last_size = curarena->Size;
@@ -304,7 +306,7 @@ void * LbMemoryAlloc(TbMemSize size)
             if ( !curarena->Used )
             {
                 sect = curarena->Section;
-                if ( !memory_blocks[sect].Selector )
+                if (memory_blocks[sect].Selector == 0)
                 {
                     splarena = curarena;
                     last_size = curarena->Size;
@@ -420,10 +422,18 @@ TbResult LbMemorySetup(void)
     memset(&memory_blocks, 0, sizeof (memory_blocks));
     memset(&memory_arenas, 0, sizeof (memory_arenas));
 
+    // Simulated extended memory block
     memory_blocks[0].Pointer = malloc(AVAILABLE_MEMORY);
     memory_blocks[0].Size    = AVAILABLE_MEMORY;
+    memory_blocks[0].Selector = 0;
+
+    // Simulated conventional memory block
+    memory_blocks[1].Pointer = malloc(AVAILABLE_LOW_MEMORY);
+    memory_blocks[1].Size    = AVAILABLE_LOW_MEMORY;
+    memory_blocks[1].Selector = 1;
 
     assert(memory_blocks[0].Pointer != NULL);
+    assert(memory_blocks[1].Pointer != NULL);
 
     initialise_block_nodes();
 #endif
@@ -444,7 +454,7 @@ TbResult LbMemoryReset(void)
     cblock = memory_blocks;
     while (cblock->Size != 0)
     {
-        if (cblock->Selector) {
+        if (cblock->Selector == 1) {
 # if defined(DOS)||defined(GO32)
             dos_free(cblock->Selector);
 # else
