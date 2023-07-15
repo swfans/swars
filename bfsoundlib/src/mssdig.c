@@ -206,7 +206,7 @@ DIG_DRIVER *SS_construct_DIG_driver(AIL_DRIVER *drvr, const SNDCARD_IO_PARMS *io
         return NULL;
     }
 
-    oal_sound_initialise();
+    OPENAL_create_buffers_for_samples(digdrv);
 
     // The pair of DMA half-buffers is not needed
     digdrv->DMA_buf = NULL;
@@ -233,11 +233,7 @@ DIG_DRIVER *SS_construct_DIG_driver(AIL_DRIVER *drvr, const SNDCARD_IO_PARMS *io
     digdrv->channels_per_buffer = digdrv->half_buffer_size /
         digdrv->bytes_per_channel;
 
-#if 0
     digdrv->build_size = sizeof(uint32_t) * digdrv->channels_per_buffer;
-#else
-    digdrv->build_size = sizeof(uint32_t) * sound_free_buffer_count;
-#endif
 
     digdrv->build_buffer = (int32_t *)AIL_MEM_alloc_lock(digdrv->build_size);
 
@@ -303,6 +299,7 @@ DIG_DRIVER *SS_construct_DIG_driver(AIL_DRIVER *drvr, const SNDCARD_IO_PARMS *io
     AIL_set_timer_user(digdrv->timer, digdrv);
     AIL_set_timer_frequency(digdrv->timer, AIL_preference[DIG_SERVICE_RATE]);
     AIL_start_timer(digdrv->timer);
+    sound_fake_timer_initialize();
 
     // Set destructor handler and descriptor
     digdrv->drvr->destructor = (AILTIMERCB)SS_destroy_DIG_driver;
@@ -333,9 +330,6 @@ void SS_destroy_DIG_driver(DIG_DRIVER *digdrv)
     // Stop buffer timer service
     AIL_release_timer_handle(digdrv->timer);
 
-    oal_sound_finalise();
-    OPENAL_free_sources_for_samples(digdrv);
-
     // Release any open sample handles (to ensure that pipeline resources
     // are deallocated properly)
     for (i = 0; i < digdrv->n_samples; i++)
@@ -345,6 +339,10 @@ void SS_destroy_DIG_driver(DIG_DRIVER *digdrv)
         if (s->status != SNDSMP_FREE)
             AIL_release_sample_handle(s);
     }
+
+    OPENAL_free_sources_for_samples(digdrv);
+
+    OPENAL_free_buffers_for_samples(digdrv);
 
     AIL_MEM_free_DOS(digdrv->DMA_buf, digdrv->DMA_seg, digdrv->DMA_sel);
     AIL_MEM_free_lock(digdrv->samples, sizeof(SNDSAMPLE) * digdrv->n_samples);

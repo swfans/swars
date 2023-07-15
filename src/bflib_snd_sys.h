@@ -71,7 +71,10 @@ void FreeAudio(void);
 void SetSoundMasterVolume(long vol);
 void SetMusicMasterVolume(long vol);
 void InitSound(void);
+
 void InitMusic(void);
+void FreeMusic(void);
+
 void InitStreamedSound(void);
 void InitAllBullfrogSoundTimers(void);
 sbyte AllocateMusicBankMemory(void);

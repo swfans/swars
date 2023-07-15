@@ -46,10 +46,16 @@ ogg_vorbis_stream_init (OggVorbisStream *stream)
   return true;
 }
 
-static void
-push_free_buffer (ALuint buf, OggVorbisStream *stream)
+static void push_free_buffer(ALuint buf, OggVorbisStream *stream)
 {
+  assert(stream->buffer_count < SOUND_MUSIC_BUFFERS);
   stream->buffers[stream->buffer_count++] = buf;
+}
+
+static ALuint pop_free_buffer(OggVorbisStream *stream)
+{
+  assert(stream->buffer_count > 0);
+  return stream->buffers[--stream->buffer_count];
 }
 
 void
@@ -134,7 +140,7 @@ ogg_vorbis_stream_open (OggVorbisStream *stream, const char *fname)
     }
 
   if (ov_open_callbacks (f, &stream->file,
-			 NULL, 0, OV_CALLBACKS_DEFAULT) != 0)
+                         NULL, 0, OV_CALLBACKS_DEFAULT) != 0)
     {
       sprintf(SoundProgressMessage, "%s: Invalid Ogg/Vorbis stream.", fname);
       SoundProgressLog(SoundProgressMessage);
@@ -151,7 +157,7 @@ ogg_vorbis_stream_open (OggVorbisStream *stream, const char *fname)
       goto err;
     }
 
-  stream->info	    = *info;
+  stream->info            = *info;
   stream->file_name = xstrdup (fname);
 
   return true;
@@ -227,8 +233,8 @@ ogg_vorbis_stream_update (OggVorbisStream *stream)
 
   if (processed > 0)
     OPENAL_unqueue_source_buffers(stream->source,
-			   (SoundNameCallback) push_free_buffer,
-			   stream);
+                           (SoundNameCallback) push_free_buffer,
+                           stream);
 
   if (stream->file_name == NULL || !stream->playing)
     return true;
@@ -238,49 +244,46 @@ ogg_vorbis_stream_update (OggVorbisStream *stream)
       total = 0;
 
       while (total < (long) sizeof (buffer))
-	{
-	  count = ov_read (&stream->file, buffer + total,
-			   sizeof (buffer) - total, big_endian, 2,
-			   true, NULL);
-	  if (count < 0)
-	    {
+        {
+          count = ov_read (&stream->file, buffer + total,
+                           sizeof (buffer) - total, big_endian, 2,
+                           true, NULL);
+          if (count < 0)
+            {
           sprintf(SoundProgressMessage, "Error: Failed to read ogg/vorbis data.");
           SoundProgressLog(SoundProgressMessage);
-	      stream->playing = false;
-	      return false;
-	    }
-	  else if (count == 0)
-	    break;
+              stream->playing = false;
+              return false;
+            }
+          else if (count == 0)
+            break;
 
-	  total += count;
-	}
+          total += count;
+        }
 
       if (total == 0)
-	return ogg_vorbis_stream_restart (stream);
+        return ogg_vorbis_stream_restart (stream);
 
-      assert (stream->buffer_count > 0);
-      buf = stream->buffers[--stream->buffer_count];
+      buf = pop_free_buffer(stream);
 
       if (stream->info.channels == 2)
-	format = AL_FORMAT_STEREO16;
+        format = AL_FORMAT_STEREO16;
       else
-	format = AL_FORMAT_MONO16;
+        format = AL_FORMAT_MONO16;
 
       alBufferData (buf, format, buffer, total, stream->info.rate);
       if (!check_al ("alBufferData"))
-	{
-	  assert (stream->buffer_count < SOUND_MUSIC_BUFFERS);
-	  stream->buffers[stream->buffer_count++] = buf;
-	  return false;
-	}
+        {
+          push_free_buffer(buf, stream);
+          return false;
+        }
 
       alSourceQueueBuffers (stream->source , 1, &buf);
       if (!check_al ("alSourceQueueBuffers"))
-	{
-	  assert (stream->buffer_count < SOUND_MUSIC_BUFFERS);
-	  stream->buffers[stream->buffer_count++] = buf;
-	  return false;
-	}
+        {
+          push_free_buffer(buf, stream);
+          return false;
+        }
 
       queued += 1;
     }
@@ -296,7 +299,7 @@ ogg_vorbis_stream_update (OggVorbisStream *stream)
     {
       alSourcePlay (stream->source);
       if (!check_al ("alSourcePlay"))
-	return false;
+        return false;
     }
 
   return true;

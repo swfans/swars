@@ -12,13 +12,6 @@
 
 struct Thing;
 
-enum SoundDriverType
-{
-  SOUND_DRIVER_PCM  = 0,
-  SOUND_DRIVER_MIDI = 1
-};
-
-
 typedef struct AudioInitOptions AudioInitOptions;
 
 struct AudioInitOptions {
@@ -81,10 +74,6 @@ void StopMusic(void);
 void fill_ail_sample_ids(void);
 
 int LoadSounds(unsigned char a1);
-
-bool sound_initialise (void);
-void sound_finalise (void);
-TbBool sound_update(void);
 
 struct SNDSEQUENCE;
 

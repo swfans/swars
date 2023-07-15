@@ -34,10 +34,27 @@ typedef void (*SoundNameCallback)(ALuint name, void *user_data);
 int32_t OPENAL_startup(void);
 int32_t OPENAL_shutdown(void);
 
-int oal_sound_initialise(void);
-void oal_sound_finalise(void);
+/** Activates fake timer, as the real AIL timers do not work.
+ */
+int32_t sound_fake_timer_initialize(void);
+
+/** Creates OpenAL sources used for DIG driver playback.
+ */
 int32_t OPENAL_create_sources_for_samples(DIG_DRIVER *digdrv);
 int32_t OPENAL_free_sources_for_samples(DIG_DRIVER *digdrv);
+
+/** Creates OpenAL buffers used for DIG driver playback.
+ */
+int32_t OPENAL_create_buffers_for_samples(DIG_DRIVER *digdrv);
+int32_t OPENAL_free_buffers_for_samples(DIG_DRIVER *digdrv);
+
+/** Function to be called within a timer while DIG playback is able.
+ */
+void OPENAL_update_dig_samples(DIG_DRIVER *digdrv);
+
+/** Function to be called within a timer while MIDI playback is able.
+ */
+void OPENAL_update_mdi_sequences(MDI_DRIVER *mdidrv);
 
 /** Create source required for playback with the Ogg/Vorbis stream.
  */
@@ -57,10 +74,10 @@ int32_t OPENAL_create_buffers_for_ogg_vorbis(OggVorbisStream *stream);
  */
 int32_t OPENAL_free_buffers_for_ogg_vorbis(OggVorbisStream *stream);
 
-/** Unqueue all buffers from given source, callback for each.
+/** Unqueue buffers which finished playing on given source, callback for each.
  *
- * All buffers are unqueued. Currently playing buffers may remain,
- * so it is best to stop the stream first.
+ * Only finished buffers are unqueued. Currently playing and queued buffers
+ * may remain, so it is best to stop the stream first.
  */
 int32_t OPENAL_unqueue_source_buffers(ALuint source,
     SoundNameCallback callback, void *user_data);

@@ -58,7 +58,7 @@ void SS_copy(DIG_DRIVER *digdrv, void *pWaveAddr)
     AILSSA_DMA_copy((pWaveAddr == dig->DMA[0] ) ? 0 : 1,
           &dig->DMA[0], dig->hw_mode_flags, dig->hw_format,
           dig->n_active_samples, dig->build_buffer,
-          dig->samples_per_buffer, dig->buffer_size);
+          dig->samples_per_buffer, dig->half_buffer_size);
 #else
     // TODO not sure what is needed here
 #endif

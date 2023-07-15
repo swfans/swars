@@ -317,6 +317,7 @@ void AIL2OAL_API_uninstall_driver(AIL_DRIVER *drvr)
     // If device successfully initialized, shut it down
     if (drvr->initialized)
     {
+        drvr->initialized = 0;
         if (drvr->PM_ISR != -1) {
             AIL_restore_USE16_ISR(drvr->PM_ISR);
         }

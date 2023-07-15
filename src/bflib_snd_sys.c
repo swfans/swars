@@ -227,17 +227,27 @@ void DetermineSoundType(void)
         :  :  : "eax" );
 }
 
-void FiniSound(void)
+static void DoFreeSound(void)
 {
-    if (!MusicAble)
-        AIL_shutdown();
-    sprintf(SoundInstallChoice.driver_name, "none");
-    SoundAble = false;
-    SoundActive = false;
-    if (SoundDriver) {
+    StopAllSamples();
+    if (SoundDriver != NULL) {
         AIL_uninstall_DIG_driver(SoundDriver);
         SoundDriver = NULL;
     }
+    // shutdown AIL when either we're shutting down completely after successful setup
+    // or when sound install failed and music will not be tried
+    if ((!MusicInstalled) ||
+        (!SoundInstalled && !MusicAble))
+        AIL_shutdown();
+    sprintf(SoundInstallChoice.driver_name, "none");
+    if (Sfx != NULL) {
+        LbMemoryFree(Sfx);
+        EndSfxs = 0;
+    }
+    if (SfxData != NULL)
+        LbMemoryFree(SfxData);
+    SoundAble = false;
+    SoundActive = false;
 }
 
 int InitSoundDriverFromEnvMDS(void)
@@ -257,7 +267,7 @@ int InitSoundDriverFromEnvMDS(void)
         {
             sprintf(SoundProgressMessage, "BF9  - MDSOUND environment driver installation - failed\n");
             SoundProgressLog(SoundProgressMessage);
-            FiniSound();
+            DoFreeSound();
             return -1;
         }
         sprintf(SoundProgressMessage, "BF10 - MDSOUND environment driver installation - passed\n");
@@ -287,7 +297,7 @@ int InitSoundDriverFromDigINI(void)
     {
         sprintf(SoundProgressMessage, "BF12 - user requests no sound in SETSOUND   \n");
         SoundProgressLog(SoundProgressMessage);
-        FiniSound();
+        DoFreeSound();
         return 0;
     }
     if (AIL_install_DIG_INI(&SoundDriver) != AIL_INIT_SUCCESS)
@@ -296,7 +306,7 @@ int InitSoundDriverFromDigINI(void)
         SoundProgressLog(SoundProgressMessage);
         sprintf(SoundProgressMessage, " -- AIL: %s\n", AIL_API_last_error());
         SoundProgressLog(SoundProgressMessage);
-        FiniSound();
+        DoFreeSound();
         return -1;
     }
     sprintf(SoundProgressMessage, "BF13 - DIG.INI driver installation - passed\n");
@@ -313,7 +323,7 @@ int InitSoundDriverFromOS(void)
         SoundProgressLog(SoundProgressMessage);
         sprintf(SoundProgressMessage, " -- AIL: %s\n", AIL_API_last_error());
         SoundProgressLog(SoundProgressMessage);
-        FiniSound();
+        DoFreeSound();
         return -1;
     }
     sprintf(SoundProgressMessage, "BF13 - OS provided driver connection - passed\n");
@@ -359,6 +369,7 @@ void InitSound(void)
                 AIL_shutdown();
                 sprintf(SoundProgressMessage, "BF5  - No samples requested - AIL shutdown\n");
                 SoundProgressLog(SoundProgressMessage);
+                AILStartupAlreadyInitiated = false;
             }
         }
         SoundAble = false;
@@ -412,7 +423,7 @@ void InitSound(void)
     {
         sprintf(SoundProgressMessage, "BF20 - cannot allocate for digital samples\n");
         SoundProgressLog(SoundProgressMessage);
-        FiniSound();
+        DoFreeSound();
         return;
     }
 
@@ -1045,22 +1056,34 @@ int InitMusicBanks(void)
     return 1;
 }
 
-void FiniMusic(void)
+static void DoFreeMusic(void)
 {
+    if (SongCurrentlyPlaying)
+    {
+        AIL_stop_sequence(SongHandle);
+        AIL_end_sequence(SongHandle);
+        SongCurrentlyPlaying = 0;
+    }
+    if (MusicDriver != NULL) {
+        AIL_uninstall_MDI_driver(MusicDriver);
+        MusicDriver = NULL;
+    }
     if (Awe32SoundfontLoaded == 1) {
         MusicInstalled = 1;
         FreeAwe32Soundfont();
         MusicInstalled = 0;
         Awe32SoundfontLoaded = 0;
     }
-    if (MusicDriver != NULL) {
-        AIL_uninstall_MDI_driver(MusicDriver);
-        MusicDriver = NULL;
-    }
-    if (!SoundAble)
+    if (!SoundInstalled)
         AIL_shutdown();
-    MusicAble = 0;
-    MusicActive = 0;
+    if (BfMusic) {
+        LbMemoryFree(BfMusic);
+        BfEndMusic = 0;
+    }
+    if (BfMusicData)
+        LbMemoryFree(BfMusicData);
+    MusicAble = false;
+    MusicActive = false;
 }
 
 void InitMusic(void)
@@ -1107,7 +1130,7 @@ void InitMusic(void)
 
     ret = InitMusicDriver();
     if (ret == -1) {
-        FiniMusic();
+        DoFreeMusic();
         return;
     }
 
@@ -1115,13 +1138,13 @@ void InitMusic(void)
 
     ret = DetermineMusicType();
     if (ret == -1) {
-        FiniMusic();
+        DoFreeMusic();
         return;
     }
 
     ret = InitMusicBanks();
     if (ret == -1) {
-        FiniMusic();
+        DoFreeMusic();
         return;
     }
 
@@ -1265,24 +1288,7 @@ void FreeMusic(void)
 {
     if (!MusicInstalled)
         return;
-    if (SongCurrentlyPlaying)
-    {
-        AIL_stop_sequence(SongHandle);
-        AIL_end_sequence(SongHandle);
-        SongCurrentlyPlaying = 0;
-    }
-    if (Awe32SoundfontLoaded == 1)
-        FreeAwe32Soundfont();
-    if (!SoundInstalled)
-        AIL_shutdown();
-    if (BfMusic) {
-        LbMemoryFree(BfMusic);
-        BfEndMusic = 0;
-    }
-    if (BfMusicData)
-        LbMemoryFree(BfMusicData);
-    MusicAble = false;
-    MusicActive = false;
+    DoFreeMusic();
     MusicInstalled = false;
 }
 
@@ -1290,17 +1296,7 @@ void FreeSound(void)
 {
     if (!SoundInstalled)
         return;
-    StopAllSamples();
-    if (!MusicInstalled)
-        AIL_shutdown();
-    if (Sfx) {
-        LbMemoryFree(Sfx);
-        EndSfxs = 0;
-    }
-    if (SfxData)
-        LbMemoryFree(SfxData);
-    SoundAble = false;
-    SoundActive = false;
+    DoFreeSound();
     SoundInstalled = false;
 }
 
