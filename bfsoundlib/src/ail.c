@@ -91,25 +91,25 @@ int32_t AIL2OAL_API_startup(void)
 
     AIL2OAL_start();
 
-    AIL_set_preference(0, 200);
-    AIL_set_preference(1, 1);
-    AIL_set_preference(2, 0x8000);
-    AIL_set_preference(3, 100);
-    AIL_set_preference(4, 16);
-    AIL_set_preference(5, 100);
-    AIL_set_preference(6, 655);
-    AIL_set_preference(7, 0);
-    AIL_set_preference(8, 0);
-    AIL_set_preference(9, 1);
-    AIL_set_preference(10, 0);
-    AIL_set_preference(11, 120);
-    AIL_set_preference(12, 8);
-    AIL_set_preference(13, 127);
-    AIL_set_preference(14, 1);
-    AIL_set_preference(15, 0);
-    AIL_set_preference(16, 2);
-    AIL_set_preference(17, 1);
-    AIL_set_preference(18, 1);
+    AIL_set_preference(DIG_SERVICE_RATE, 200);
+    AIL_set_preference(DIG_HARDWARE_SAMPLE_RATE, AILPREF_NOM_VAL);
+    AIL_set_preference(DIG_DMA_RESERVE, 0x8000);
+    AIL_set_preference(DIG_LATENCY, 100);
+    AIL_set_preference(DIG_MIXER_CHANNELS, 16);
+    AIL_set_preference(DIG_DEFAULT_VOLUME, 100);
+    AIL_set_preference(DIG_RESAMPLING_TOLERANCE, 655);
+    AIL_set_preference(DIG_USE_STEREO, 0);
+    AIL_set_preference(DIG_USE_16_BITS, 0);
+    AIL_set_preference(DIG_ALLOW_16_BIT_DMA, 1);
+    AIL_set_preference(DIG_SS_LOCK, 0);
+    AIL_set_preference(MDI_SERVICE_RATE, 120);
+    AIL_set_preference(MDI_SEQUENCES, 8);
+    AIL_set_preference(MDI_DEFAULT_VOLUME, 127);
+    AIL_set_preference(MDI_ALLOW_LOOP_BRANCHING, 1);
+    AIL_set_preference(MDI_ALLOW_LOOP_BRANCHING, 0);
+    AIL_set_preference(MDI_DEFAULT_BEND_RANGE, 2);
+    AIL_set_preference(AIL_SCAN_FOR_HARDWARE, 1);
+    AIL_set_preference(AIL_ALLOW_VDM_EXECUTION, 1);
 
     for (i=0; i < AIL_MAX_DRVRS; i++) {
         AIL_driver[i] = NULL;

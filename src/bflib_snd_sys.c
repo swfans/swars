@@ -368,17 +368,17 @@ void InitSound(void)
         return;
     }
     EnsureAILStartup();
-    AIL_set_preference(9, 0);
-    AIL_set_preference(0, 200);
-    AIL_set_preference(8, 1);
-    AIL_set_preference(1, 22050);
-    AIL_set_preference(3, 100);
-    AIL_set_preference(4, MaxNumberOfSamples + 5);
-    AIL_set_preference(5, 127);
-    AIL_set_preference(6, 655);
-    AIL_set_preference(7, StereoSound != 0);
+    AIL_set_preference(DIG_ALLOW_16_BIT_DMA, 0);
+    AIL_set_preference(DIG_SERVICE_RATE, 200);
+    AIL_set_preference(DIG_USE_16_BITS, 1);
+    AIL_set_preference(DIG_HARDWARE_SAMPLE_RATE, 22050);
+    AIL_set_preference(DIG_LATENCY, 100);
+    AIL_set_preference(DIG_MIXER_CHANNELS, MaxNumberOfSamples + 5);
+    AIL_set_preference(DIG_DEFAULT_VOLUME, 127);
+    AIL_set_preference(DIG_RESAMPLING_TOLERANCE, 655);
+    AIL_set_preference(DIG_USE_STEREO, StereoSound != 0);
     if (!AutoScanForSoundHardware)
-        AIL_set_preference(17, 0);
+        AIL_set_preference(AIL_SCAN_FOR_HARDWARE, 0);
 
     ret = 0;
 
@@ -1080,15 +1080,15 @@ void InitMusic(void)
     SoundProgressLog(SoundProgressMessage);
 
     EnsureAILStartup();
-    AIL_set_preference(11, 120);
-    AIL_set_preference(12, 1);
-    AIL_set_preference(13, 127);
-    AIL_set_preference(14, 1);
-    AIL_set_preference(15, 0);
-    AIL_set_preference(16, 12);
+    AIL_set_preference(MDI_SERVICE_RATE, 120);
+    AIL_set_preference(MDI_SEQUENCES, 1);
+    AIL_set_preference(MDI_DEFAULT_VOLUME, 127);
+    AIL_set_preference(MDI_QUANT_ADVANCE, 1);
+    AIL_set_preference(MDI_ALLOW_LOOP_BRANCHING, 0);
+    AIL_set_preference(MDI_DEFAULT_BEND_RANGE, 12);
 
     if (!AutoScanForSoundHardware)
-        AIL_set_preference(17, 0);
+        AIL_set_preference(AIL_SCAN_FOR_HARDWARE, 0);
 
     snprintf(locnoext, sizeof(locnoext), "%s/SAMPLE", SoundDataPath);
     AIL_set_GTL_filename_prefix(locnoext);
