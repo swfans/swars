@@ -23,40 +23,45 @@
 #include <errno.h>
 
 #include "oggvorbis.h"
-#include "sound_util.h"
+#include "drv_oal.h"
 #include "util.h"
 #include "snderr.h"
 
 #define SOUND_MUSIC_BUFSIZE   16384
 
-#define check_al(msg) sound_check_al (msg)
+#define check_al(source) check_al_line((source), __LINE__)
+bool check_al_line(const char *source, int line);
 
 bool
 ogg_vorbis_stream_init (OggVorbisStream *stream)
 {
   memset (stream, 0, sizeof (*stream));
 
-  alGenSources (1, &stream->source);
-  if (!check_al ("alGenSources"))
+  if (!OPENAL_create_source_for_ogg_vorbis(stream))
     return false;
 
-  alGenBuffers (SOUND_MUSIC_BUFFERS, stream->buffers);
-  if (!check_al ("alGenBuffers"))
+  if (!OPENAL_create_buffers_for_ogg_vorbis(stream))
     return false;
-
-  stream->buffer_count = SOUND_MUSIC_BUFFERS;
 
   return true;
+}
+
+static void
+push_free_buffer (ALuint buf, OggVorbisStream *stream)
+{
+  stream->buffers[stream->buffer_count++] = buf;
 }
 
 void
 ogg_vorbis_stream_free (OggVorbisStream *stream)
 {
-  if (stream->source != 0)
-    sound_delete_source_and_buffers (stream->source);
+  OPENAL_stop_source_for_ogg_vorbis(stream);
+  OPENAL_unqueue_source_buffers(stream->source,
+    (SoundNameCallback) push_free_buffer, stream);
 
-  if (stream->buffers[0] != 0)
-    alDeleteBuffers (SOUND_MUSIC_BUFFERS, stream->buffers);
+  OPENAL_free_buffers_for_ogg_vorbis(stream);
+
+  OPENAL_free_source_for_ogg_vorbis(stream);
 
   if (stream->file_name != NULL)
     {
@@ -175,12 +180,6 @@ ogg_vorbis_stream_restart (OggVorbisStream *stream)
   return ogg_vorbis_stream_open (stream, fname);
 }
 
-static void
-push_free_buffer (ALuint buf, OggVorbisStream *stream)
-{
-  stream->buffers[stream->buffer_count++] = buf;
-}
-
 void
 ogg_vorbis_stream_set_gain (OggVorbisStream *stream, float gain)
 {
@@ -227,7 +226,7 @@ ogg_vorbis_stream_update (OggVorbisStream *stream)
     return true;
 
   if (processed > 0)
-    sound_unqueue_buffers (stream->source,
+    OPENAL_unqueue_source_buffers(stream->source,
 			   (SoundNameCallback) push_free_buffer,
 			   stream);
 

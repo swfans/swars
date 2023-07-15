@@ -32,8 +32,7 @@
 #include "aildebug.h"
 #include "drv_oal.h"
 /******************************************************************************/
-extern size_t sound_source_count;
-extern SNDSAMPLE sound_samples[];
+extern size_t sound_free_buffer_count;
 
 /** Call device I/O verification function using current detection policy.
  */
@@ -237,7 +236,7 @@ DIG_DRIVER *SS_construct_DIG_driver(AIL_DRIVER *drvr, const SNDCARD_IO_PARMS *io
 #if 0
     digdrv->build_size = sizeof(uint32_t) * digdrv->channels_per_buffer;
 #else
-    digdrv->build_size = sizeof(uint32_t) * sound_source_count;
+    digdrv->build_size = sizeof(uint32_t) * sound_free_buffer_count;
 #endif
 
     digdrv->build_buffer = (int32_t *)AIL_MEM_alloc_lock(digdrv->build_size);
@@ -255,18 +254,10 @@ DIG_DRIVER *SS_construct_DIG_driver(AIL_DRIVER *drvr, const SNDCARD_IO_PARMS *io
         return NULL;
     }
 
-#if 0
     digdrv->n_samples = AIL_preference[DIG_MIXER_CHANNELS];
-#else
-    digdrv->n_samples = sound_source_count;
-#endif
 
     // Allocate physical SNDSAMPLE structures for driver
-#if 0
     digdrv->samples = (SNDSAMPLE *)AIL_MEM_alloc_lock(sizeof(SNDSAMPLE) * digdrv->n_samples);
-#else
-    digdrv->samples = sound_samples;
-#endif
 
     if (digdrv->samples == NULL)
     {
@@ -284,10 +275,12 @@ DIG_DRIVER *SS_construct_DIG_driver(AIL_DRIVER *drvr, const SNDCARD_IO_PARMS *io
 
     for (i=0; i < digdrv->n_samples; i++) {
         SNDSAMPLE *s = &digdrv->samples[i];
-        //memset(s, 0, sizeof(SNDSAMPLE)); //TODO temporarly disabled - revert when sources are initialized below
+        memset(s, 0, sizeof(SNDSAMPLE));
         s->status = SNDSMP_FREE;
         s->driver = digdrv;
     }
+
+    OPENAL_create_sources_for_samples(digdrv);
 
     // Allocate timer for DMA buffer service
     digdrv->timer = AIL_register_timer(SS_serve);
@@ -341,6 +334,7 @@ void SS_destroy_DIG_driver(DIG_DRIVER *digdrv)
     AIL_release_timer_handle(digdrv->timer);
 
     oal_sound_finalise();
+    OPENAL_free_sources_for_samples(digdrv);
 
     // Release any open sample handles (to ensure that pipeline resources
     // are deallocated properly)

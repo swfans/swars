@@ -9,11 +9,11 @@
 #include "bflib_snd_sys.h"
 #include "bffile.h"
 #include "bfscd.h"
+#include "drv_oal.h"
 #include "snderr.h"
 #include "oggvorbis.h"
 #include "sound.h"
 #include "ailss.h"
-#include "sound_util.h"
 #include "game_data.h"
 #include "util.h"
 
@@ -25,7 +25,8 @@
 #define SOUND_MAX_BUFSIZE     2048
 
 
-#define check_al(msg) sound_check_al (msg)
+#define check_al(source) check_al_line((source), __LINE__)
+bool check_al_line(const char *source, int line);
 
 
 extern char FullDIG_INIPath[144];
@@ -56,10 +57,8 @@ extern TbBool UseCurrentAwe32Soundfont;
 extern TbBool ive_got_an_sb16;
 extern ulong MaxNumberOfSamples;
 
-size_t sound_source_count    = 0;
-static size_t        sound_free_buffer_count    = 0;
+size_t sound_free_buffer_count = 0;
 static ALuint        sound_free_buffers[SOUND_MAX_BUFFERS];
-SNDSAMPLE sound_samples[SOUND_MAX_SOURCES];
 extern OggVorbisStream  sound_music_stream;
 
 extern MDI_DRIVER *MusicDriver;
@@ -68,15 +67,6 @@ extern DIG_DRIVER *SoundDriver;
 
 #define check_alc(source) check_alc_line ((source), __LINE__)
 bool check_alc_line(const char *source, int line);
-
-static void
-initialise_descriptor(SNDSAMPLE *samples, size_t index, ALuint source)
-{
-    SNDSAMPLE *s = &samples[index];
-
-    s->system_data[5] = source;
-    s->system_data[4] = 0;
-}
 
 static ALuint
 pop_free_buffer (void)
@@ -108,35 +98,18 @@ static bool create_sources(void)
 
     for (n = 0; n < SOUND_MAX_SOURCES; n++)
     {
-        ALuint source;
-        alGenSources(1, &source);
-        if (alGetError() != AL_NO_ERROR) {
-            n--;
-            break;
-        }
-
         alGenBuffers(SOUND_BUFFERS_PER_SRC, buffers);
         if (alGetError() != AL_NO_ERROR) {
-          sound_delete_source_and_buffers(source);
           n--;
           break;
         }
-
-        initialise_descriptor(sound_samples, sound_source_count++, source);
 
         for (m = 0; m < SOUND_BUFFERS_PER_SRC; m++)
             push_free_buffer(buffers[m], NULL);
     }
 
-    if (sound_source_count == 0)
-    {
-        fprintf (stderr, "Error: OpenAL: "
-            "Failed to create sound sources.\n");
-        goto err;
-    }
-
 #ifdef DEBUG
-    printf ("OpenAL: Created %zu sound sources.\n", sound_source_count);
+    printf ("OpenAL: Created %zu sound buffers.\n", sound_free_buffer_count);
 #endif
 
     return true;
@@ -250,22 +223,6 @@ void InitAudio(AudioInitOptions *audOpts)
 static void
 destroy_sources(DIG_DRIVER *digdrv)
 {
-    int32_t i;
-    ALuint source;
-
-    for (i = 0; i < digdrv->n_samples; i++)
-    {
-        SNDSAMPLE *s;
-
-        s = &digdrv->samples[i];
-        source = s->system_data[5];
-
-        if (source == 0)
-            continue;
-
-        sound_delete_source_and_buffers(source);
-    }
-
     alDeleteBuffers (sound_free_buffer_count, sound_free_buffers);
     check_al ("alDeleteBuffers");
 }
@@ -395,7 +352,7 @@ unqueue_source_buffers(SNDSAMPLE *s)
         return;
 
     buffers_used -=
-        sound_unqueue_buffers(source,
+        OPENAL_unqueue_source_buffers(source,
                    (SoundNameCallback) push_free_buffer,
                    NULL);
 

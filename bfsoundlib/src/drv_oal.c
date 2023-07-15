@@ -28,12 +28,14 @@
 #include "aildebug.h"
 #include OPENAL_ALC_H
 #include OPENAL_AL_H
+#include "oggvorbis.h"
 /******************************************************************************/
 static ALCdevice *oal_sound_device = NULL;
 
 
 /******************************************************************************/
 #define check_alc(source) check_alc_line((source), __LINE__)
+#define check_al(source) check_al_line((source), __LINE__)
 
 bool check_alc_line(const char *source, int line)
 {
@@ -43,6 +45,22 @@ bool check_alc_line(const char *source, int line)
     assert (oal_sound_device != NULL);
 
     err = alcGetError(oal_sound_device);
+    if (err != ALC_NO_ERROR) {
+        snprintf(msg, sizeof(msg), "%s: Error code 0x%x at "__FILE__":%i.\n",
+            source, err, line);
+        AIL_set_error(msg);
+        return false;
+    }
+
+    return true;
+}
+
+bool check_al_line(const char *source, int line)
+{
+    char msg[80];
+    ALenum err;
+
+    err = alGetError();
     if (err != ALC_NO_ERROR) {
         snprintf(msg, sizeof(msg), "%s: Error code 0x%x at "__FILE__":%i.\n",
             source, err, line);
@@ -91,6 +109,112 @@ int32_t OPENAL_shutdown(void)
     alcDestroyContext(alcGetCurrentContext());
     check_alc("alcDestroyContext");
     alcCloseDevice(oal_sound_device);
+    return 1;
+}
+
+int32_t OPENAL_create_sources_for_samples(DIG_DRIVER *digdrv)
+{
+    int32_t i;
+
+    for (i = 0; i < digdrv->n_samples; i++)
+    {
+        SNDSAMPLE *s = &digdrv->samples[i];
+        ALuint source;
+
+        alGenSources(1, &source);
+        if (alGetError() != AL_NO_ERROR) {
+            AIL_set_error("alGenSources: Samples count truncated by OpenAL.");
+            digdrv->n_samples = i;
+            break;
+        }
+        s->system_data[5] = source;
+        s->system_data[4] = 0; // buffers used
+    }
+    return (digdrv->n_samples > 0);
+}
+
+int32_t OPENAL_free_sources_for_samples(DIG_DRIVER *digdrv)
+{
+    int32_t i;
+
+    for (i = 0; i < digdrv->n_samples; i++)
+    {
+        SNDSAMPLE *s = &digdrv->samples[i];
+        ALuint source;
+
+        source = s->system_data[5];
+        alDeleteSources(1, &source);
+        check_al("alDeleteSources");
+        s->system_data[5] = source;
+    }
+    return 1;
+}
+
+int32_t OPENAL_unqueue_source_buffers(ALuint source,
+    SoundNameCallback callback, void *user_data)
+{
+    ALint count;
+    ALuint buf;
+    size_t removed = 0;
+
+    alGetSourcei(source, AL_BUFFERS_PROCESSED, &count);
+    if (!check_al("alGetSourcei (AL_BUFFERS_PROCESSED)"))
+        return 0;
+
+    while (count-- > 0)
+    {
+        alSourceUnqueueBuffers (source, 1, &buf);
+        if (!check_al ("alSourceUnqueueBuffers"))
+            return removed;
+
+        if (callback != NULL)
+            callback (buf, user_data);
+
+      removed++;
+    }
+
+  return removed;
+}
+
+int32_t OPENAL_create_source_for_ogg_vorbis(OggVorbisStream *stream)
+{
+    alGenSources(1, &stream->source);
+    if (!check_al("alGenSources"))
+        return 0;
+    return 1;
+}
+
+int32_t OPENAL_free_source_for_ogg_vorbis(OggVorbisStream *stream)
+{
+    alDeleteSources(1, &stream->source);
+    if (!check_al("alDeleteSources"))
+        return 0;
+    return 1;
+}
+
+int32_t OPENAL_create_buffers_for_ogg_vorbis(OggVorbisStream *stream)
+{
+    alGenBuffers(SOUND_MUSIC_BUFFERS, stream->buffers);
+    if (!check_al("alGenBuffers"))
+        return 0;
+
+    stream->buffer_count = SOUND_MUSIC_BUFFERS;
+    return 1;
+}
+
+int32_t OPENAL_free_buffers_for_ogg_vorbis(OggVorbisStream *stream)
+{
+    assert(stream->buffer_count == SOUND_MUSIC_BUFFERS);
+    alDeleteBuffers(stream->buffer_count, stream->buffers);
+    check_al("alDeleteBuffers");
+    return 1;
+}
+
+int32_t OPENAL_stop_source_for_ogg_vorbis(OggVorbisStream *stream)
+{
+    alSourceStop(stream->source);
+    if (!check_al("alSourceStop"))
+        return 0;
     return 1;
 }
 

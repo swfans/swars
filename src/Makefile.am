@@ -89,8 +89,6 @@ swars_SOURCES = \
 	scanner.h \
 	sound.c \
 	sound.h \
-	sound_util.c \
-	sound_util.h \
 	swars.sx \
 	swlog.h \
 	thing.c \
