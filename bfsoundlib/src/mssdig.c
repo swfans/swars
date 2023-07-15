@@ -30,9 +30,8 @@
 #include "ail.h"
 #include "ailss.h"
 #include "aildebug.h"
+#include "drv_oal.h"
 /******************************************************************************/
-extern bool sound_initialised;
-
 extern size_t sound_source_count;
 extern SNDSAMPLE sound_samples[];
 
@@ -207,6 +206,8 @@ DIG_DRIVER *SS_construct_DIG_driver(AIL_DRIVER *drvr, const SNDCARD_IO_PARMS *io
         AIL_MEM_free_lock(digdrv, sizeof(DIG_DRIVER));
         return NULL;
     }
+
+    oal_sound_initialise();
 
     // The pair of DMA half-buffers is not needed
     digdrv->DMA_buf = NULL;
@@ -391,9 +392,6 @@ DIG_DRIVER *AIL2OAL_API_install_DIG_driver_file(const char *fname,
     AIL_DRIVER *drvr;
     int32_t *driver_image;
 
-    if (!sound_initialised)  // SWPort hack, to be removed
-        return NULL;
-
 #if defined(DOS)||defined(GO32)
     // Open the driver file
     driver_image = (int32_t*) AIL_file_read(fname, FILE_READ_WITH_SIZE);
@@ -480,5 +478,6 @@ int32_t AIL2OAL_API_install_DIG_INI(DIG_DRIVER **digdrv)
 void AIL2OAL_API_uninstall_DIG_driver(DIG_DRIVER *digdrv)
 {
    AIL_uninstall_driver(digdrv->drvr);
+   oal_sound_finalise();
 }
 /******************************************************************************/

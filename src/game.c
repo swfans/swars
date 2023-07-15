@@ -2522,7 +2522,6 @@ void init_syndwars(void)
 
     LOGSYNC("Starting");
     //sprintf(locstr, "%sSound", cd_drive); -- unused
-    sound_initialise();
 
     audOpts.SoundDataPath = "Sound";
     audOpts.SoundDriverPath = "Sound";
@@ -6823,7 +6822,7 @@ void game_process(void)
 void
 game_quit(void)
 {
-    sound_finalise();
+    host_reset();
     LbBaseReset();
     exit(0);
 }

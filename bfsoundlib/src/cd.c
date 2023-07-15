@@ -28,7 +28,9 @@
 #include "bfscd.h"
 #include "bffile.h"
 #include "bfsvaribl.h"
+#include "bfsound.h"
 #include "aildebug.h"
+#include "msssys.h"
 #include "oggvorbis.h"
 #include "snderr.h"
 /******************************************************************************/
@@ -81,12 +83,12 @@ void ASM_cbCDCountdown(void *data);
 
 ushort GetCDFirst(void)
 {
-  return cd_first;
+    return cd_first;
 }
 
 TbBool GetCDAble(void)
 {
-  return CDAble;
+    return CDAble;
 }
 
 TbBool is_daudio_track(ushort trkno)
@@ -239,7 +241,8 @@ void PlayCDTrack(ushort trkno)
         CDCountdown = 5 * (len_sect / 75 / 5) + 5;
         i = GetCDFirst();
         cd_play(i, start_sect, len_sect);
-        sprintf(SoundProgressMessage, "BF103 - CDA play track %d sect %lu len %lu\n", (int)trkno, start_sect, len_sect);
+        sprintf(SoundProgressMessage, "BF103 - "
+            "CDA play track %d sect %lu len %lu\n", (int)trkno, start_sect, len_sect);
         SoundProgressLog(SoundProgressMessage);
         break;
     case CDTYP_OGG:
@@ -334,14 +337,14 @@ void StopCD(void)
 
 void InitRedbook(void)
 {
-    if (!GetSoundAble() && !GetMusicAble())
-        AIL_startup();
+    EnsureAILStartup();
 
     if (cd_init()) {
         InitialCDVolume = GetCDVolume();
         CDType = CDTYP_REAL;
     } else {
-        sprintf(SoundProgressMessage, "BF101 - real cd init - failed - CDA disabled\n");
+        sprintf(SoundProgressMessage, "BF101 - "
+            "real cd init - failed - CDA disabled\n");
         SoundProgressLog(SoundProgressMessage);
         CDAble = false;
         CDType = CDTYP_NONE;
@@ -350,8 +353,7 @@ void InitRedbook(void)
 
 void InitMusicOGG(const char *nmusic_dir)
 {
-    if (!GetSoundAble() && !GetMusicAble())
-        AIL_startup();
+    EnsureAILStartup();
 
     strncpy(music_dir, nmusic_dir, sizeof(music_dir));
 
@@ -360,7 +362,8 @@ void InitMusicOGG(const char *nmusic_dir)
         CDType = CDTYP_OGG;
         ogg_list_music_tracks();
     } else {
-        sprintf(SoundProgressMessage, "BF101 - ogg vorbis stream init - failed - CDA disabled\n");
+        sprintf(SoundProgressMessage, "BF101 - "
+            "ogg vorbis stream init - failed - CDA disabled\n");
         SoundProgressLog(SoundProgressMessage);
         CDAble = false;
         CDType = CDTYP_NONE;

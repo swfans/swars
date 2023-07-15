@@ -51,8 +51,12 @@ swars_SOURCES = \
 	../bfsoundlib/src/miscutil.c \
 	../bfsoundlib/include/snderr.h \
 	../bfsoundlib/src/snderr.c \
+	../bfsoundlib/include/init_snd.h \
+	../bfsoundlib/src/init_snd.c \
 	../bfsoundlib/include/bfscd.h \
 	../bfsoundlib/src/cd.c \
+	../bfsoundlib/include/drv_oal.h \
+	../bfsoundlib/src/drv_oal.c \
 	../bfsoundlib/include/oggvorbis.h \
 	../bfsoundlib/src/oggvorbis.c \
 	config.h \

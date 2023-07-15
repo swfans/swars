@@ -30,6 +30,7 @@
 #include "bfendian.h"
 #include "rnc_1fm.h"
 #include "bfscd.h"
+#include "bfsound.h"
 #include "ail.h"
 #include "aildebug.h"
 #include "memfile.h"
@@ -110,20 +111,6 @@ extern short NumberOfSongs;
 
 extern char CurrentAwe32SoundfontPrefix[12]; // = "Bullfrog";
 extern TbFileHandle sbkHandle; // = INVALID_FILE;
-
-/** Wrapper for LbMemoryAlloc(), needed to make sure data sizes match.
- */
-void *LbMemoryAlloc_wrap(uint32_t size)
-{
-    return LbMemoryAlloc(size);
-}
-
-/** Wrapper for LbMemoryFree(), needed to make sure data sizes match.
- */
-void LbMemoryFree_wrap(void *ptr)
-{
-    LbMemoryFree(ptr);
-}
 
 void ReleaseLoopedSample(ushort thingOffset, ushort fx)
 {
@@ -380,13 +367,7 @@ void InitSound(void)
         SoundProgressLog(SoundProgressMessage);
         return;
     }
-    if (!AILStartupAlreadyInitiated)
-    {
-        AIL_MEM_use_malloc(LbMemoryAlloc_wrap);
-        AIL_MEM_use_free(LbMemoryFree_wrap);
-        AIL_startup();
-        AILStartupAlreadyInitiated = 1;
-    }
+    EnsureAILStartup();
     AIL_set_preference(9, 0);
     AIL_set_preference(0, 200);
     AIL_set_preference(8, 1);
@@ -1098,13 +1079,7 @@ void InitMusic(void)
     sprintf(SoundProgressMessage, "BF25 - Init Music\n");
     SoundProgressLog(SoundProgressMessage);
 
-    if (!AILStartupAlreadyInitiated)
-    {
-        AIL_MEM_use_malloc(LbMemoryAlloc_wrap);
-        AIL_MEM_use_free(LbMemoryFree_wrap);
-        AIL_startup();
-        AILStartupAlreadyInitiated = 1;
-    }
+    EnsureAILStartup();
     AIL_set_preference(11, 120);
     AIL_set_preference(12, 1);
     AIL_set_preference(13, 127);

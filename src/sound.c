@@ -66,9 +66,6 @@ extern TbBool UseCurrentAwe32Soundfont;
 extern TbBool ive_got_an_sb16;
 extern ulong MaxNumberOfSamples;
 
-bool sound_initialised    = false;
-static ALCdevice       *sound_device        = NULL;
-static ALCcontext      *sound_context        = NULL;
 size_t sound_source_count    = 0;
 static size_t        sound_free_buffer_count    = 0;
 static ALuint        sound_free_buffers[SOUND_MAX_BUFFERS];
@@ -81,30 +78,14 @@ extern DIG_DRIVER *SoundDriver;
 
 
 #define check_alc(source) check_alc_line ((source), __LINE__)
-bool
-check_alc_line (const char *source, int line)
-{
-  ALCenum err;
-
-  assert (sound_device != NULL);
-
-  err = alcGetError (sound_device);
-  if (err != ALC_NO_ERROR)
-    {
-      fprintf (stderr,
-               "Error: %s: 0x%x at "__FILE__":%i.\n", source, err, line);
-      return false;
-    }
-
-  return true;
-}
+bool check_alc_line(const char *source, int line);
 
 static void
-initialise_descriptor (size_t index, ALuint name)
+initialise_descriptor (SNDSAMPLE *samples, size_t index, ALuint name)
 {
   SourceDescriptor *desc = &sound_sources[index];
 
-  desc->sample         = &sound_samples[index];
+  desc->sample         = &samples[index];
   desc->name         = name;
   desc->buffers_used = 0;
 }
@@ -154,7 +135,7 @@ create_sources (void)
           break;
         }
 
-        initialise_descriptor(sound_source_count++, source);
+        initialise_descriptor(sound_samples, sound_source_count++, source);
 
         for (m = 0; m < SOUND_BUFFERS_PER_SRC; m++)
             push_free_buffer(buffers[m], NULL);
@@ -178,36 +159,17 @@ err:
   return false;
 }
 
-bool
-sound_initialise (void)
+int oal_sound_initialise(void)
 {
-  sound_device = alcOpenDevice (NULL);
-  if (sound_device == NULL)
-    {
-      fprintf (stderr, "Error: alcOpenDevice: "
-                       "Failed to open default OpenAL device.\n");
-      goto err;
-    }
-
-  sound_context = alcCreateContext (sound_device, NULL);
-  if (!check_alc ("alcCreateContext"))
-    goto err;
-
-  alcMakeContextCurrent (sound_context);
-  if (!check_alc ("alcMakeContextCurrent"))
-    goto err;
-
   if (!create_sources ())
     goto err;
 
   if (LbRegisterIdleHandler(sound_update) != Lb_SUCCESS)
     goto err;
 
-  sound_initialised = true;
   return true;
 
 err:
-  sound_initialised = false;
   return false;
 }
 
@@ -315,18 +277,9 @@ destroy_sources (void)
   check_al ("alDeleteBuffers");
 }
 
-void
-sound_finalise (void)
+void oal_sound_finalise(void)
 {
-  if (!sound_initialised)
-    return;
-
-  destroy_sources ();
-
-  alcDestroyContext (alcGetCurrentContext ());
-  check_alc ("alcDestroyContext");
-
-  sound_initialised = false;
+    destroy_sources();
 }
 
 static ALenum
@@ -518,7 +471,9 @@ void sound_update_mdi_sequences(MDI_DRIVER *mdidrv)
 
 TbBool sound_update(void)
 {
-    if (!sound_initialised)
+    if (!SoundDriver)
+        return false;
+    if (!SoundDriver->drvr->initialized)
         return false;
 
     if (SoundDriver != NULL)
