@@ -63,6 +63,13 @@ void AIL2OAL_set_PIT_period(uint32_t period);
  */
 void AIL2OAL_program_timers(void);
 
+/** AIL Process Services timer interrupt handler / server thread.
+ *
+ * Function which calls periodically to create timers support.
+ * Requires a thread, or call in a sleep loop, or interrupt if on bare metal.
+ */
+void AIL_API_timer(void);
+
 void AIL2OAL_API_release_timer_handle(HSNDTIMER timer);
 
 /******************************************************************************/

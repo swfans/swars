@@ -27,6 +27,7 @@
 #include "aila.h"
 #include "ail.h"
 #include "aildebug.h"
+#include "miscutil.h"
 #include "memfile.h"
 /******************************************************************************/
 /** Callback function addrs for timers.
@@ -52,7 +53,7 @@ extern int32_t timer_trigger[AIL_N_TIMERS];
 
 /** User parameters for timer callbacks.
  */
-extern int32_t timer_user[AIL_N_TIMERS];
+extern void *timer_user[AIL_N_TIMERS];
 
 /** Last divisor value written to PIT.
  */
@@ -62,13 +63,17 @@ extern uint32_t AIL_PIT_divisor;
  */
 extern uint32_t AIL_PIT_period;
 
-extern uint32_t AIL_bkgnd_flag;
+extern int32_t AIL_bkgnd_flag;
 
 extern uint32_t AIL_lock_count;
 
 extern int32_t AIL_ISR_IRQ;
 
 extern int32_t old_sp;
+
+uint32_t lastapitimerms = 0;
+
+static uint32_t highest_timer_delay = 0;
 
 void AIL2OAL_API_lock(void)
 {
@@ -257,6 +262,67 @@ void AIL2OAL_API_release_timer_handle(HSNDTIMER timer)
         return;
 
     timer_status[timer] = AILT_FREE;
+}
+
+void AIL_API_timer(void)
+{
+    static int32_t i;
+    uint32_t tme, diff;
+
+    tme = AIL_ms_count();
+
+    // If timer services uninitialized or locked, or reentry attempted, exit
+    MSSLockedIncrement(AIL_bkgnd_flag);
+
+    if ((AIL_lock_count > 0) || (AIL_bkgnd_flag != 1))
+        goto resume_and_exit;
+
+    // Advance all running timers
+    if (lastapitimerms == 0) {
+        diff = AIL_PIT_period;
+        lastapitimerms = tme;
+    } else {
+        diff = tme - lastapitimerms;
+
+        if (diff > highest_timer_delay)
+            highest_timer_delay = diff;
+
+        if (diff > 100)
+            diff = 100;
+        diff *= 1000;
+    }
+    lastapitimerms = tme;
+
+    for (i = 0; i < AIL_N_TIMERS; i++)
+    {
+        // Skip timer if not active
+        if (timer_status[i] != AILT_RUNNING)
+            continue;
+
+        // Add base MME timer period to timer's accumulator
+        timer_cb_elapsed_times[i] += diff;
+
+        // If elapsed time >= timer's period, reset timer and
+        // trigger callback function
+        while (timer_cb_elapsed_times[i] >= timer_cb_periods[i])
+        {
+            timer_cb_elapsed_times[i] -= timer_cb_periods[i];
+            timer_trigger[i]++;
+        }
+        while (timer_trigger[i] > 0)
+        {
+            timer_trigger[i]--;
+            // Invoke timer callback function with specified user value
+            timer_callback[i](timer_user[i]);
+            // check again, in case they canceled the time in the background
+            if (timer_status[i] != AILT_RUNNING)
+                break;
+        }
+    }
+
+    resume_and_exit:
+    // Enable future timer calls
+    MSSLockedDecrement(AIL_bkgnd_flag);
 }
 
 void AILA_VMM_lock(void)

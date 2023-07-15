@@ -424,20 +424,6 @@ DIG_DRIVER *AIL2OAL_API_install_DIG_driver_file(const char *fname,
 
     digdrv = SS_construct_DIG_driver(drvr, iop);
 
-// TODO place is sub-function
-
-#if 0
-    digdrv->timer = timer_register_callback((TimerCallback)update_sound);
-    AIL2OAL_API_set_timer_user(digdrv->timer, digdrv);
-
-    digdrv->timer = timer_register_callback((TimerCallback)SS_serve);
-    AIL2OAL_API_set_timer_user(digdrv->timer, digdrv);
-#endif
-
-    drvr->descriptor = digdrv;
-    drvr->initialized = 1;
-// TODO place is sub-function - end
-
     if (digdrv == NULL)
         AIL_uninstall_driver(drvr);
 

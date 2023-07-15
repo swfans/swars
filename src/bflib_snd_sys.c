@@ -237,8 +237,10 @@ static void DoFreeSound(void)
     // shutdown AIL when either we're shutting down completely after successful setup
     // or when sound install failed and music will not be tried
     if ((!MusicInstalled) ||
-        (!SoundInstalled && !MusicAble))
+        (!SoundInstalled && !MusicAble)) {
+        AILStartupAlreadyInitiated = false;
         AIL_shutdown();
+    }
     sprintf(SoundInstallChoice.driver_name, "none");
     if (Sfx != NULL) {
         LbMemoryFree(Sfx);
@@ -366,10 +368,10 @@ void InitSound(void)
         {
             if (AILStartupAlreadyInitiated)
             {
+                AILStartupAlreadyInitiated = false;
                 AIL_shutdown();
                 sprintf(SoundProgressMessage, "BF5  - No samples requested - AIL shutdown\n");
                 SoundProgressLog(SoundProgressMessage);
-                AILStartupAlreadyInitiated = false;
             }
         }
         SoundAble = false;
@@ -1074,8 +1076,10 @@ static void DoFreeMusic(void)
         MusicInstalled = 0;
         Awe32SoundfontLoaded = 0;
     }
-    if (!SoundInstalled)
+    if (!SoundInstalled) {
+        AILStartupAlreadyInitiated = false;
         AIL_shutdown();
+    }
     if (BfMusic) {
         LbMemoryFree(BfMusic);
         BfEndMusic = 0;

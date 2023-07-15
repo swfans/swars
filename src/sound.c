@@ -12,6 +12,7 @@
 #include "oggvorbis.h"
 #include "sound.h"
 #include "ailss.h"
+#include "aila.h"
 #include "game_data.h"
 #include "util.h"
 
@@ -42,6 +43,7 @@ extern TbBool StereoSound;
 extern TbBool UseCurrentAwe32Soundfont;
 extern TbBool ive_got_an_sb16;
 extern ulong MaxNumberOfSamples;
+extern TbBool AILStartupAlreadyInitiated;
 
 extern OggVorbisStream  sound_music_stream;
 extern MDI_DRIVER *MusicDriver;
@@ -50,6 +52,10 @@ extern DIG_DRIVER *SoundDriver;
 
 TbBool sound_update(void)
 {
+#if 0
+    if (AILStartupAlreadyInitiated)
+        AIL_API_timer();
+#endif
     if (!SoundDriver)
         return false;
     if (!SoundDriver->drvr->initialized)
