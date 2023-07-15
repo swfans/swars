@@ -283,9 +283,10 @@ DIG_DRIVER *SS_construct_DIG_driver(AIL_DRIVER *drvr, const SNDCARD_IO_PARMS *io
     }
 
     for (i=0; i < digdrv->n_samples; i++) {
-        memset(&digdrv->samples[i], 0, sizeof(SNDSAMPLE));
-        digdrv->samples[i].status = SNDSMP_FREE;
-        digdrv->samples[i].driver = digdrv;
+        SNDSAMPLE *s = &digdrv->samples[i];
+        //memset(s, 0, sizeof(SNDSAMPLE)); //TODO temporarly disabled - revert when sources are initialized below
+        s->status = SNDSMP_FREE;
+        s->driver = digdrv;
     }
 
     // Allocate timer for DMA buffer service
