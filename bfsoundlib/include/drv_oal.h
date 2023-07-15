@@ -21,7 +21,7 @@
 #ifndef DRV_OAL_H_
 #define DRV_OAL_H_
 
-#include OPENAL_AL_H
+#include "mssal.h"
 
 #ifdef __cplusplus
 extern "C" {

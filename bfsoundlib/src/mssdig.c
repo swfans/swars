@@ -339,6 +339,8 @@ void SS_destroy_DIG_driver(DIG_DRIVER *digdrv)
     // Stop buffer timer service
     AIL_release_timer_handle(digdrv->timer);
 
+    oal_sound_finalise();
+
     // Release any open sample handles (to ensure that pipeline resources
     // are deallocated properly)
     for (i = 0; i < digdrv->n_samples; i++)
@@ -478,6 +480,5 @@ int32_t AIL2OAL_API_install_DIG_INI(DIG_DRIVER **digdrv)
 void AIL2OAL_API_uninstall_DIG_driver(DIG_DRIVER *digdrv)
 {
    AIL_uninstall_driver(digdrv->drvr);
-   oal_sound_finalise();
 }
 /******************************************************************************/

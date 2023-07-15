@@ -421,9 +421,9 @@ int32_t AIL2OAL_API_set_sample_file(SNDSAMPLE *s, const void *file_image, int32_
         // TODO pointer to integer conversion, change to mind the bits!
         // Store pointer to sample data
         s->system_data[1] = (uint32_t)file_image + *(uint16_t *)(file_image + 20);
-        s->system_data[4] = block;
+        //s->system_data[4] = block; // used by OpenAL
         s->system_data[6] = 0;
-        s->system_data[5] = (block == -1);
+        //s->system_data[5] = (block == -1); // used by OpenAL
         AIL_process_VOC_block(s, 0);
         break;
     default: // s->system_data[6] == -1

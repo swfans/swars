@@ -27,6 +27,7 @@
 #include "drv_oal.h"
 #include "aildebug.h"
 #include OPENAL_ALC_H
+#include OPENAL_AL_H
 /******************************************************************************/
 static ALCdevice *oal_sound_device = NULL;
 

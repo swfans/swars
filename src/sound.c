@@ -107,7 +107,6 @@ push_free_buffer (ALuint buf, void *user_data)
 static bool create_sources(void)
 {
     size_t n, m;
-    ALuint source;
     ALuint buffers[SOUND_BUFFERS_PER_SRC];
 
     for (n = 0; n < SOUND_MUSIC_BUFFERS; n++)
@@ -121,6 +120,7 @@ static bool create_sources(void)
 
     for (n = 0; n < SOUND_MAX_SOURCES; n++)
     {
+        ALuint source;
         alGenSources(1, &source);
         if (alGetError() != AL_NO_ERROR) {
             n--;

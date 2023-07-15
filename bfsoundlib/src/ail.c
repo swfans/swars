@@ -306,7 +306,7 @@ void AIL2OAL_API_uninstall_driver(AIL_DRIVER *drvr)
 
     // Call high-level destructor to free any allocated resources
     if (drvr->destructor != NULL) {
-        drvr->destructor((DIG_DRIVER *)drvr->descriptor);
+        drvr->destructor(drvr->descriptor);
     }
 
     // Stop periodic timer service, if enabled

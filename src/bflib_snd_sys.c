@@ -1081,7 +1081,7 @@ void InitMusic(void)
 
     EnsureAILStartup();
     AIL_set_preference(MDI_SERVICE_RATE, 120);
-    AIL_set_preference(MDI_SEQUENCES, 1);
+    AIL_set_preference(MDI_SEQUENCES, 3);
     AIL_set_preference(MDI_DEFAULT_VOLUME, 127);
     AIL_set_preference(MDI_QUANT_ADVANCE, 1);
     AIL_set_preference(MDI_ALLOW_LOOP_BRANCHING, 0);
