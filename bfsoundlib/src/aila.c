@@ -32,44 +32,44 @@
 /******************************************************************************/
 /** Callback function addrs for timers.
 */
-extern AILTIMERCB timer_callback[AIL_N_TIMERS];
+AILTIMERCB timer_callback[AIL_N_TIMERS];
 
 /** States of timers (0=free 1=off 2=on)
  */
-extern int32_t timer_status[AIL_N_TIMERS];
+int32_t timer_status[AIL_N_TIMERS];
 
 /** Modified DDA error counts for timers
  */
-extern int32_t timer_cb_elapsed_times[AIL_N_TIMERS];
+int32_t timer_cb_elapsed_times[AIL_N_TIMERS];
 
 /** Modified DDA limit values for timers
  */
-extern int32_t timer_cb_periods[AIL_N_TIMERS];
+int32_t timer_cb_periods[AIL_N_TIMERS];
 
 /** Amount of triggers pending (number of times
  * to call the callback).
  */
-extern int32_t timer_trigger[AIL_N_TIMERS];
+int32_t timer_trigger[AIL_N_TIMERS];
 
 /** User parameters for timer callbacks.
  */
-extern void *timer_user[AIL_N_TIMERS];
+void *timer_user[AIL_N_TIMERS];
 
 /** Last divisor value written to PIT.
  */
-extern uint32_t AIL_PIT_divisor;
+uint32_t AIL_PIT_divisor;
 
 /** PIT timer interval in uS.
  */
-extern uint32_t AIL_PIT_period;
+uint32_t AIL_PIT_period;
 
-extern int32_t AIL_bkgnd_flag;
+int32_t AIL_bkgnd_flag;
 
-extern uint32_t AIL_lock_count;
+uint32_t AIL_lock_count;
 
-extern int32_t AIL_ISR_IRQ;
+int32_t AIL_ISR_IRQ;
 
-extern int32_t old_sp;
+int32_t old_sp;
 
 uint32_t lastapitimerms = 0;
 
