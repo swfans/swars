@@ -51,7 +51,11 @@ DIG_DRIVER *AIL2OAL_API_install_DIG_driver_file(const char *fname,
 int32_t AIL2OAL_API_install_DIG_INI(DIG_DRIVER **digdrv);
 void AIL2OAL_API_uninstall_DIG_driver(DIG_DRIVER *digdrv);
 
-/** Timer interrupt handler which processes samples.
+/** Timer interrupt routine to poll DMA buffer flags and process samples.
+ *
+ * Has anything to do with interrupts and DMA channels only on bare metal systems
+ * like DOS. On modern OSes, its periodical calls just transfer data buffers
+ * to a sound interface like OpenAL.
  */
 void SS_serve(void *clientval);
 

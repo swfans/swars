@@ -383,8 +383,6 @@ void SS_stop_DIG_driver_playback(DIG_DRIVER *digdrv)
     digdrv->playing = 0;
 }
 
-/** Timer interrupt routine to poll DMA buffer flags and process samples.
- */
 void SS_serve(void *clientval)
 {
     DIG_DRIVER *digdrv = clientval;

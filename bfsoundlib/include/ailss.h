@@ -52,6 +52,8 @@ int32_t SS_configure_buffers(DIG_DRIVER *digdrv);
  *
  * Or provide th data to external library, if that is what
  * the current platform requires.
+ *
+ * Also named AILSSA_merge(), depending on lib version.
  */
 void SS_stream_to_buffer(SNDSAMPLE *s);
 
