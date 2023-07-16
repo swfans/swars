@@ -38,16 +38,23 @@ int32_t OPENAL_shutdown(void);
  */
 int32_t sound_fake_timer_initialize(void);
 
+/** Creates more OpenAL buffers used for both DIG and MID drivers playback.
+ */
+int32_t OPENAL_create_buffers(uint32_t n_sources);
+
+/** Frees some or all of OpenAL buffers.
+ */
+int32_t OPENAL_free_buffers(uint32_t n_sources);
+
 /** Creates OpenAL sources used for DIG driver playback.
  */
 int32_t OPENAL_create_sources_for_samples(DIG_DRIVER *digdrv);
 int32_t OPENAL_free_sources_for_samples(DIG_DRIVER *digdrv);
 
-/** Creates OpenAL buffers used for DIG driver playback.
+/** Creates OpenAL sources used for MIDI driver playback.
  */
-int32_t OPENAL_create_buffers_for_samples(DIG_DRIVER *digdrv);
-int32_t OPENAL_free_buffers_for_samples(DIG_DRIVER *digdrv);
-
+int32_t OPENAL_create_sources_for_sequences(MDI_DRIVER *mdidrv);
+int32_t OPENAL_free_sources_for_sequences(MDI_DRIVER *mdidrv);
 
 /** Function to be called within a timer while DIG playback is able.
  *

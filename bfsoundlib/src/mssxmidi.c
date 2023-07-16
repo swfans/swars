@@ -304,6 +304,10 @@ void XMI_destroy_MDI_driver(MDI_DRIVER *mdidrv)
     // Stop sequencer timer service
     AIL_release_timer_handle(mdidrv->timer);
 
+    OPENAL_free_sources_for_sequences(mdidrv);
+
+    OPENAL_free_buffers(mdidrv->n_sequences);
+
     // Release memory resources
     AIL_MEM_free_lock(mdidrv->sequences, mdidrv->n_sequences * sizeof(SNDSEQUENCE));
     AIL_MEM_free_lock(mdidrv, sizeof(MDI_DRIVER));
@@ -514,6 +518,8 @@ MDI_DRIVER *XMI_construct_MDI_driver(AIL_DRIVER *drvr, const SNDCARD_IO_PARMS *i
         return NULL;
     }
 
+    OPENAL_create_buffers(AIL_preference[MDI_SEQUENCES]);
+
     // Allocate SNDSEQUENCE structures for driver
     mdidrv->n_sequences = AIL_preference[MDI_SEQUENCES];
     mdidrv->sequences = AIL_MEM_alloc_lock(sizeof(SNDSEQUENCE) * mdidrv->n_sequences);
@@ -530,6 +536,8 @@ MDI_DRIVER *XMI_construct_MDI_driver(AIL_DRIVER *drvr, const SNDCARD_IO_PARMS *i
         mdidrv->sequences[i].status = SNDSEQ_FREE;
         mdidrv->sequences[i].driver = mdidrv;
     }
+
+    OPENAL_create_sources_for_sequences(mdidrv);
 
     // Initialize miscellaneous MDI_DRIVER variables
     mdidrv->event_trap = NULL;

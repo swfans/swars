@@ -30,13 +30,16 @@
 #include OPENAL_AL_H
 #include "oggvorbis.h"
 /******************************************************************************/
-#define SOUND_MAX_SOURCES 64
+/** We expect up to 64 SNDSAMPLEs and up to 3 SNDSEQUENCEs.
+ */
+#define SOUND_EXPECT_MAX_SOURCES (64+3)
 #define SOUND_BUFFERS_PER_SRC 3
-#define SOUND_MAX_BUFFERS (SOUND_MAX_SOURCES * SOUND_BUFFERS_PER_SRC)
+#define SOUND_MAX_BUFFERS (SOUND_EXPECT_MAX_SOURCES * SOUND_BUFFERS_PER_SRC)
 #define SOUND_MAX_BUFSIZE 2048
 
 static ALCdevice *oal_sound_device = NULL;
 
+size_t sound_total_buffer_count = 0;
 size_t sound_free_buffer_count = 0;
 static ALuint sound_free_buffers[SOUND_MAX_BUFFERS];
 /******************************************************************************/
@@ -130,6 +133,54 @@ int32_t OPENAL_shutdown(void)
     return 1;
 }
 
+int32_t OPENAL_create_buffers(uint32_t n_sources)
+{
+    size_t n_buffers;
+
+    n_buffers = n_sources * SOUND_BUFFERS_PER_SRC;
+
+    assert(n_buffers + sound_total_buffer_count <= SOUND_MAX_BUFFERS);
+
+    alGenBuffers(n_buffers, &sound_free_buffers[sound_free_buffer_count]);
+    if (!check_al("alGenBuffers")) {
+        goto err;
+    }
+    sound_total_buffer_count += n_buffers;
+    sound_free_buffer_count += n_buffers;
+    {
+        char msg[120];
+        snprintf(msg, sizeof(msg), "%s: Created %zu sound buffers",
+            __func__, n_buffers);
+        AIL_set_error(msg);
+    }
+    return 1;
+
+err:
+    return 0;
+}
+
+int32_t OPENAL_free_buffers(uint32_t n_sources)
+{
+    size_t n_buffers;
+
+    n_buffers = n_sources * SOUND_BUFFERS_PER_SRC;
+
+    assert(n_buffers <= sound_total_buffer_count);
+
+    if (n_buffers > sound_free_buffer_count) {
+        char msg[120];
+        snprintf(msg, sizeof(msg), "%s: From %d buffers, %d escaped deletion",
+            __func__, n_buffers, n_buffers - sound_free_buffer_count);
+        AIL_set_error(msg);
+        n_buffers = sound_free_buffer_count;
+    }
+    sound_free_buffer_count -= n_buffers;
+    sound_total_buffer_count -= n_buffers;
+    alDeleteBuffers(n_buffers, &sound_free_buffers[sound_free_buffer_count]);
+    check_al("alDeleteBuffers");
+    return 1;
+}
+
 int32_t OPENAL_create_sources_for_samples(DIG_DRIVER *digdrv)
 {
     int32_t i;
@@ -168,32 +219,41 @@ int32_t OPENAL_free_sources_for_samples(DIG_DRIVER *digdrv)
     return 1;
 }
 
-int32_t OPENAL_create_buffers_for_samples(DIG_DRIVER *digdrv)
+int32_t OPENAL_create_sources_for_sequences(MDI_DRIVER *mdidrv)
 {
-    alGenBuffers(SOUND_MAX_BUFFERS, &sound_free_buffers[0]);
-    if (!check_al("alGenBuffers")) {
-        goto err;
-    }
-    sound_free_buffer_count = SOUND_MAX_BUFFERS;
-    {
-        char msg[120];
-        snprintf(msg, sizeof(msg), "%s: Created %zu sound buffers",
-            __func__, sound_free_buffer_count);
-        AIL_set_error(msg);
-    }
-    return 1;
+    int32_t i;
 
-err:
-    return 0;
+    for (i = 0; i < mdidrv->n_sequences; i++)
+    {
+        SNDSEQUENCE *seq = &mdidrv->sequences[i];
+        ALuint source;
+
+        alGenSources(1, &source);
+        if (alGetError() != AL_NO_ERROR) {
+            AIL_set_error("alGenSources: Sequences count truncated by OpenAL");
+            mdidrv->n_sequences = i;
+            break;
+        }
+        seq->system_data[5] = source;
+        seq->system_data[4] = 0; // buffers used
+    }
+    return (mdidrv->n_sequences > 0);
 }
 
-int32_t OPENAL_free_buffers_for_samples(DIG_DRIVER *digdrv)
+int32_t OPENAL_free_sources_for_sequences(MDI_DRIVER *mdidrv)
 {
-    size_t n_buffers;
-    n_buffers = sound_free_buffer_count;
-    sound_free_buffer_count = 0;
-    alDeleteBuffers(n_buffers, sound_free_buffers);
-    check_al ("alDeleteBuffers");
+    int32_t i;
+
+    for (i = 0; i < mdidrv->n_sequences; i++)
+    {
+        SNDSEQUENCE *seq = &mdidrv->sequences[i];
+        ALuint source;
+
+        source = seq->system_data[5];
+        alDeleteSources(1, &source);
+        check_al("alDeleteSources");
+        seq->system_data[5] = source;
+    }
     return 1;
 }
 

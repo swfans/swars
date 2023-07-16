@@ -210,7 +210,7 @@ DIG_DRIVER *SS_construct_DIG_driver(AIL_DRIVER *drvr, const SNDCARD_IO_PARMS *io
         return NULL;
     }
 
-    OPENAL_create_buffers_for_samples(digdrv);
+    OPENAL_create_buffers(AIL_preference[DIG_MIXER_CHANNELS]);
 
     // The pair of DMA half-buffers is not needed
     digdrv->DMA_buf = NULL;
@@ -345,7 +345,7 @@ void SS_destroy_DIG_driver(DIG_DRIVER *digdrv)
 
     OPENAL_free_sources_for_samples(digdrv);
 
-    OPENAL_free_buffers_for_samples(digdrv);
+    OPENAL_free_buffers(digdrv->n_samples);
 
     AIL_MEM_free_DOS(digdrv->DMA_buf, digdrv->DMA_seg, digdrv->DMA_sel);
     AIL_MEM_free_lock(digdrv->samples, sizeof(SNDSAMPLE) * digdrv->n_samples);
