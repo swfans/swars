@@ -48,9 +48,18 @@ int32_t OPENAL_free_sources_for_samples(DIG_DRIVER *digdrv);
 int32_t OPENAL_create_buffers_for_samples(DIG_DRIVER *digdrv);
 int32_t OPENAL_free_buffers_for_samples(DIG_DRIVER *digdrv);
 
+
 /** Function to be called within a timer while DIG playback is able.
+ *
+ * This part is to be called before the sample mixing loop.
  */
-void OPENAL_update_dig_samples(DIG_DRIVER *digdrv);
+void OPENAL_unqueue_finished_dig_samples(DIG_DRIVER *digdrv);
+
+/** Function to be called within a timer while DIG playback is able.
+ *
+ * This part is to be called within the sample mixing loop.
+ */
+void OPENAL_update_dig_sample(SNDSAMPLE *s);
 
 /** Function to be called within a timer while MIDI playback is able.
  */

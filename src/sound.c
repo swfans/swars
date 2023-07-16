@@ -52,17 +52,14 @@ extern DIG_DRIVER *SoundDriver;
 
 TbBool sound_update(void)
 {
-#if 0
     if (AILStartupAlreadyInitiated)
         AIL_API_timer();
-#endif
+
     if (!SoundDriver)
         return false;
     if (!SoundDriver->drvr->initialized)
         return false;
 
-    if (SoundDriver != NULL)
-        OPENAL_update_dig_samples(SoundDriver);
     if (MusicDriver != NULL)
         OPENAL_update_mdi_sequences(MusicDriver);
 

@@ -409,6 +409,7 @@ void SS_serve(void *clientval)
         return;
     }
 
+#if defined(DOS)||defined(GO32)
     // Return immediately if buffer has not switched
     current = *digdrv->buffer_flag;
 
@@ -423,6 +424,10 @@ void SS_serve(void *clientval)
 
     // Flush build buffer with silence
     SS_flush(digdrv);
+#else
+    // Unqueue finished OAL buffers
+    OPENAL_unqueue_finished_dig_samples(digdrv);
+#endif
 
     // Merge active samples (if any) into build buffer
     cnt = 0;
@@ -433,16 +438,25 @@ void SS_serve(void *clientval)
         if (s->status != SNDSMP_PLAYING)
             continue;
         ++cnt;
+#if defined(DOS)||defined(GO32)
         // Convert sample to 16-bit signed format and mix with
         // contents of build buffer
         SS_stream_to_buffer(s);
+#else
+        // Queue new buffers on OAL sources
+        OPENAL_update_dig_sample(s);
+#endif
     }
 
     // Set number of active samples
     digdrv->n_active_samples = cnt;
 
+#if defined(DOS)||defined(GO32)
     // Copy build buffer contents to DMA buffer
     SS_copy(digdrv, digdrv->DMA[current ^ 1]);
+#else
+    // No post-mixing action required for OAL
+#endif
 
     // Send buffer-service VSE callback to driver, if required
     if (digdrv->hw_mode_flags & DIG_BUFFER_SERVICE) {

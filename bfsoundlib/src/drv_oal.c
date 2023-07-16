@@ -423,23 +423,13 @@ unqueue_source_buffers(SNDSAMPLE *s)
         return;
 
     alSourceStop(source);
-    check_al ("alSourceStop");
-    s->status = 2;
+    check_al("alSourceStop");
+    s->status = SNDSMP_DONE;
 }
 
-void OPENAL_update_dig_sample(SNDSAMPLE *s)
-{
-    queue_source_buffers(s->driver, s);
-}
-
-void OPENAL_update_dig_samples(DIG_DRIVER *digdrv)
+void OPENAL_unqueue_finished_dig_samples(DIG_DRIVER *digdrv)
 {
     int32_t i;
-
-    if (!digdrv->drvr->initialized)
-        return;
-
-    digdrv->n_active_samples = 0;
 
     for (i = 0; i < digdrv->n_samples; i++)
     {
@@ -460,14 +450,12 @@ void OPENAL_update_dig_samples(DIG_DRIVER *digdrv)
 #endif
 
         unqueue_source_buffers(s);
-
-        if (s->status != SNDSEQ_PLAYING)
-            continue;
-
-        digdrv->n_active_samples++;
-
-        OPENAL_update_dig_sample(s);
     }
+}
+
+void OPENAL_update_dig_sample(SNDSAMPLE *s)
+{
+    queue_source_buffers(s->driver, s);
 }
 
 void OPENAL_update_mdi_sequences(MDI_DRIVER *mdidrv)
