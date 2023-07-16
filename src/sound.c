@@ -60,9 +60,6 @@ TbBool sound_update(void)
     if (!SoundDriver->drvr->initialized)
         return false;
 
-    if (MusicDriver != NULL)
-        OPENAL_update_mdi_sequences(MusicDriver);
-
     ogg_vorbis_stream_update(&sound_music_stream);
     return true;
 }

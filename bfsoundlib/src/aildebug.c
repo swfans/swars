@@ -668,6 +668,19 @@ int32_t AIL_sequence_loop_count(SNDSEQUENCE *seq)
     return result;
 }
 
+void AIL_sequence_position(SNDSEQUENCE *seq, int32_t *beat, int32_t *measure)
+{
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s(0x%p, 0x%p, 0x%p)\n", __func__, seq, beat, measure);
+
+    AIL2OAL_API_sequence_position(seq, beat, measure);
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Results = 0x%X, 0x%X\n", *beat, *measure);
+    AIL_indent--;
+}
+
 void AIL_delay(int32_t intervals)
 {
     AIL_indent++;

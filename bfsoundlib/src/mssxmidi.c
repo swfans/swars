@@ -30,6 +30,7 @@
 #include "aildebug.h"
 #include "miscutil.h"
 #include "memfile.h"
+#include "drv_oal.h"
 #include "msssys.h"
 #include "miscutil.h"
 /******************************************************************************/
@@ -48,6 +49,7 @@ extern const uint8_t *MDI_ptr;
 extern const uint8_t *MDI_event;
 
 extern int32_t MDI_locked;
+static uint32_t XMI_serve_entry = 0;
 
 void AILXMIDI_end(void);
 
@@ -143,7 +145,7 @@ void XMI_flush_buffer(MDI_DRIVER *mdidrv)
 }
 
 /** Write channel voice message to MIDI driver buffer
-*/
+ */
 void XMI_MIDI_message(MDI_DRIVER *mdidrv, int32_t status,
         int32_t d1, int32_t d2)
 {
@@ -165,6 +167,14 @@ void XMI_MIDI_message(MDI_DRIVER *mdidrv, int32_t status,
         mdidrv->message_count++;
     }
 #endif
+}
+
+/** Write system exclusive message to MIDI driver buffer.
+ */
+void XMI_sysex_message(MDI_DRIVER *mdidrv, uint8_t const *message,
+        int32_t size)
+{
+    // Not implemented in this wrapper
 }
 
 void AIL2OAL_API_set_GTL_filename_prefix(char const *prefix)
@@ -276,17 +286,6 @@ int32_t XMI_attempt_MDI_detection(MDI_DRIVER *mdidrv, const SNDCARD_IO_PARMS *io
 
     // Call detection function
     return AIL_call_driver(mdidrv->drvr, DRV_VERIFY_IO, NULL, NULL);
-}
-
-/** Timer interrupt routine for XMIDI sequencing.
- */
-void XMI_serve(MDI_DRIVER *mdidrv)
-{
-    asm volatile (
-      "push %0\n"
-      "call ASM_XMI_serve\n"
-      "add $0x4, %%esp\n"
-        :  : "g" (mdidrv));
 }
 
 /** Uninstall XMIDI audio driver, freeing all allocated resources.
@@ -558,7 +557,7 @@ MDI_DRIVER *XMI_construct_MDI_driver(AIL_DRIVER *drvr, const SNDCARD_IO_PARMS *i
     }
 
     // Allocate timer for XMIDI sequencing
-    mdidrv->timer = AIL_register_timer((AILTIMERCB)XMI_serve);
+    mdidrv->timer = AIL_register_timer(XMI_serve);
     if (mdidrv->timer == -1) {
         AIL_set_error("Out of timer handles.");
         AIL_call_driver(mdidrv->drvr, DRV_SHUTDOWN_DEV, NULL, NULL);
@@ -727,6 +726,382 @@ void XMI_flush_note_queue(SNDSEQUENCE *seq)
         AIL_delay(3);
 }
 
+/** Update XMIDI playback when playing natively within AIL library.
+ *
+ * This wrapper is unable to really play the MIDI without relying on
+ * an external synthesizer, so this is mostly for reference.
+ *
+ * @return Gives 0 if the sequence is still playing, 1 if we're done,
+ *     2 if there was a time or resource consuming event and we should
+ *     skip further sequences processing in this tick.
+ */
+int32_t XMI_playback_update(SNDSEQUENCE *seq)
+{
+    MDI_DRIVER *mdidrv = seq->driver;
+    int32_t i, j, sequence_done;
+
+    sequence_done = 0;
+
+    // Add tempo percent to tempo overflow counter
+    seq->tempo_error += seq->tempo_percent;
+
+    // Execute interval zero, one, or more times, depending on tempo DDA
+    // count
+    while (seq->tempo_error >= 100)
+    {
+        int32_t q, t;
+        uint32_t channel, status, type, len;
+        uint8_t const *ptr;
+        uint8_t const *event;
+
+        seq->tempo_error -= 100;
+
+        // Decrement note times and turn off any expired notes
+        if (seq->note_count > 0)
+        {
+            for (i = 0; i < AIL_MAX_NOTES; i++)
+            {
+                if (seq->note_chan[i] == -1)
+                    continue;
+
+                if (--seq->note_time[i] > 0)
+                    continue;
+
+                // Note expired -- send MIDI Note Off message
+                XMI_send_channel_voice_message(seq, seq->note_chan[i] | MDI_EV_NOTE_OFF,
+                    seq->note_num [i], 0, 0);
+
+                // Release queue entry, decrement sequence note count,
+                // and exit loop if no active sequence notes left
+                seq->note_chan[i] = -1;
+
+                if (--seq->note_count == 0)
+                    break;
+            }
+        }
+
+        // Decrement interval delta-time count and process next interval if ready
+        if (--seq->interval_count <= 0)
+        {
+            // Fetch events until next interval's delta-time byte (< 0x80)
+            while ((!sequence_done) && ((status = *seq->EVNT_ptr) >= 0x80))
+            {
+                switch (status)
+                {
+                // Process MIDI meta-event
+                case MDI_EV_META:
+                    type = *(seq->EVNT_ptr+1);
+
+                    seq->EVNT_ptr += 2;
+                    len = XMI_read_VLN((const uint8_t **)&seq->EVNT_ptr);
+
+                    switch (type)
+                    {
+                    // End-of-track event (XMIDI end-of-sequence)
+                    case MDI_META_EOT:
+                        // Set sequence_done to inhibit post-interval
+                        // processing
+                        sequence_done = 1;
+
+                        // If loop count == 0, loop indefinitely
+                        //
+                        // Otherwise, decrement loop count and, if the
+                        // result is not zero, return to beginning of
+                        // sequence
+                        if ((seq->loop_count == 0)
+                            ||
+                            (--seq->loop_count != 0))
+                        {
+                            seq->EVNT_ptr = (uint8_t *) seq->EVNT + 8;
+
+                            seq->beat_count = 0;
+                            seq->measure_count = -1;
+                            seq->beat_fraction = 0;
+
+                            // If beat/bar callback function active,
+                            // trigger it
+                            if (seq->beat_callback != NULL)
+                                seq->beat_callback(seq->driver, seq, 0, 0);
+
+                            break;
+                        }
+
+                        // Otherwise, stop sequence and set status
+                        // to SNDSEQ_DONE
+                        //
+                        // Reset loop count to 1, to enable unlooped replay
+                        seq->loop_count = 1;
+
+                        AIL_stop_sequence(seq);
+                        seq->status = SNDSEQ_DONE;
+
+                        // Invoke end-of-sequence callback function, if any
+                        if (seq->EOS != NULL)
+                            seq->EOS(seq);
+                        break;
+
+                    // Tempo event
+                    case MDI_META_TEMPO:
+                        // Calculate tempo as 1/16-uS per MIDI
+                        // quarter-note
+                        t = ((int32_t) *(seq->EVNT_ptr ) << 16) +
+                        ((int32_t) *(seq->EVNT_ptr+1) << 8 ) +
+                        ((int32_t) *(seq->EVNT_ptr+2) );
+
+                        seq->time_per_beat = t * 16;
+                        break;
+
+                    // Time signature event
+                    case MDI_META_TIME_SIG:
+                        // Fetch time numerator
+                        seq->time_numerator = *seq->EVNT_ptr;
+
+                        // Fetch time denominator: 0 = whole note,
+                        // 1 = half-note, 2 = quarter-note, 3 = eighth-note...
+                        t = *(seq->EVNT_ptr+1) - 2;
+
+                        // Calculate beat period in terms of quantization
+                        // rate
+                        q = 16000000L / AIL_preference[MDI_SERVICE_RATE];
+
+                        if (t < 0) {
+                            t = -t;
+                            seq->time_fraction = (q >> t);
+                        } else {
+                            seq->time_fraction = (q << t);
+                        }
+
+                        // Predecrement beat fraction for this interval;
+                        // signal beginning of new measure
+                        seq->beat_fraction = 0;
+                        seq->beat_fraction -= seq->time_fraction;
+
+                        seq->beat_count = 0;
+                        seq->measure_count++;
+
+                        // If beat/bar callback function active,
+                        // trigger it
+                        if (seq->beat_callback != NULL)
+                            seq->beat_callback(seq->driver, seq, seq->beat_count, seq->measure_count);
+
+                        break;
+                    }
+
+                    seq->EVNT_ptr += len;
+                    break;
+
+                // Process MIDI System Exclusive message
+                case MDI_EV_SYSEX:
+                case MDI_EV_ESC:
+                    // Read message length and copy data to buffer
+                    ptr = (uint8_t *) seq->EVNT_ptr + 1;
+
+                    len = XMI_read_VLN((const uint8_t **)&ptr);
+
+                    len += (int32_t) ((uint32_t)ptr - (uint32_t)seq->EVNT_ptr);
+
+                    XMI_sysex_message(mdidrv, seq->EVNT_ptr, len);
+
+                    seq->EVNT_ptr += len;
+                    break;
+
+                    // Process MIDI channel voice message
+                default:
+                    event = seq->EVNT_ptr;
+                    channel = status & 0x0f;
+                    status = status & 0xf0;
+
+                    // Transmit message with ICA override enabled
+                    XMI_send_channel_voice_message(seq, *seq->EVNT_ptr,
+                        *(seq->EVNT_ptr+1), *(seq->EVNT_ptr+2), 1);
+
+                    // Index next event
+                    //
+                    // Allocate note queue entries for Note On messages
+                    if (status != MDI_EV_NOTE_ON)
+                    {
+                        // If this was a control change event which caused
+                        // a branch to take place -- either a FOR/NEXT
+                        // controller or a user callback with an API branch
+                        // call -- then don't skip the current event
+                        if (event == seq->EVNT_ptr)
+                            seq->EVNT_ptr += XMI_message_size(*seq->EVNT_ptr);
+                    }
+                    else
+                    {
+                        // Find free note queue entry
+                        for (i=0; i < AIL_MAX_NOTES; i++) {
+                            if (seq->note_chan[i] == -1)
+                                break;
+                        }
+
+                        // Shut down sequence if note queue overflows
+                        //
+                        // Should never happen since excessive polyphony is
+                        // trapped by MIDIFORM
+                        if (i == AIL_MAX_NOTES) {
+                            AIL_set_error("Internal note queue overflow.");
+                            AIL_stop_sequence(seq);
+                            seq->status = SNDSEQ_DONE;
+                            XMI_serve_entry = 0;
+                            return 2;
+                        }
+
+                        // Increment sequence-based note counter
+                        //
+                        // Record note's channel, number, and duration
+                        ++seq->note_count;
+
+                        seq->note_chan[i] = channel;
+                        seq->note_num [i] = *(seq->EVNT_ptr+1);
+
+                        seq->EVNT_ptr += 3;
+                        seq->note_time[i] = XMI_read_VLN((const uint8_t **)&seq->EVNT_ptr);
+                    }
+                    break;
+                }
+            }
+
+            // Terminate this interval and set delta-time count to skip
+            // next 0-127 intervals
+            if (!sequence_done)
+                seq->interval_count = *seq->EVNT_ptr++;
+        }
+
+        if (!sequence_done)
+        {
+            // Advance beat/bar counters
+            seq->beat_fraction += seq->time_fraction;
+
+            if (seq->beat_fraction >= seq->time_per_beat)
+            {
+                seq->beat_fraction -= seq->time_per_beat;
+                ++seq->beat_count;
+
+                if (seq->beat_count >= seq->time_numerator) {
+                    seq->beat_count = 0;
+                    ++seq->measure_count;
+                }
+
+                // If beat/bar callback function active, trigger it
+                if (seq->beat_callback != NULL) {
+                    AIL_sequence_position(seq, &i, &j);
+                    seq->beat_callback(seq->driver, seq, i, j);
+                }
+            }
+        }
+    }
+    return sequence_done;
+}
+
+/** Timer interrupt routine for XMIDI sequencing.
+ */
+void XMI_serve(void *clientval)
+{
+    MDI_DRIVER *mdidrv = clientval;
+#if 0
+    asm volatile (
+      "push %0\n"
+      "call ASM_XMI_serve\n"
+      "add $0x4, %%esp\n"
+        :  : "g" (mdidrv));
+#endif
+    SNDSEQUENCE *seq;
+    int32_t n, sequence_done;
+
+    // Exit at once if service disabled
+    if (mdidrv->disable)
+        return;
+
+    // Disallow re-entrant calls (but leave interrupts enabled so that
+    // .DIG processing can run in a separate thread)
+    if (XMI_serve_entry)
+        return;
+
+    XMI_serve_entry = 1;
+
+#if defined(DOS)||defined(GO32)
+    // No pre-process call was required with AIL internal synth support
+#else
+    // Unqueue finished OAL buffers
+    OPENAL_unqueue_finished_mdi_sequences(mdidrv);
+#endif
+
+    // Process all active sequences
+    for (n = mdidrv->n_sequences,seq = &mdidrv->sequences[0]; n; --n,++seq)
+    {
+        // Skip sequence if stopped, finished, or not allocated
+        if (seq->status != SNDSEQ_PLAYING)
+            continue;
+
+        // Bump sequence interval number counter
+        ++seq->interval_num;
+
+#if defined(DOS)||defined(GO32)
+        // Play by directly processing MIDI notes
+        sequence_done = XMI_playback_update(seq);
+#else
+        // Software synth
+        // TODO
+        // Queue new buffers on OAL sources
+        sequence_done = OPENAL_update_mdi_sequence(seq);
+#endif
+
+        if (sequence_done == 2)
+            break;
+
+        if (!sequence_done)
+        {
+            // Update volume ramp, if any
+            if (seq->volume != seq->volume_target)
+            {
+                seq->volume_accum += seq->driver->interval_time;
+
+                while (seq->volume_accum >= seq->volume_period)
+                {
+                    seq->volume_accum -= seq->volume_period;
+
+                    if (seq->volume_target > seq->volume)
+                        ++seq->volume;
+                    else
+                        --seq->volume;
+                    if (seq->volume == seq->volume_target)
+                        break;
+                }
+
+                // Update volume controllers once every 8 intervals
+                // to avoid generating excessive MIDI traffic
+                if (!(seq->interval_num & 0x07))
+                    XMI_update_volume(seq);
+            }
+
+            // Update tempo ramp, if any
+            if (seq->tempo_percent != seq->tempo_target)
+            {
+                seq->tempo_accum += seq->driver->interval_time;
+
+                while (seq->tempo_accum >= seq->tempo_period)
+                {
+                    seq->tempo_accum -= seq->tempo_period;
+
+                    if (seq->tempo_target > seq->tempo_percent)
+                        ++seq->tempo_percent;
+                    else
+                        --seq->tempo_percent;
+
+                    if (seq->tempo_percent == seq->tempo_target)
+                        break;
+                }
+            }
+        }
+    }
+
+    // Flush MIDI event buffer at least once every timer tick
+    XMI_flush_buffer(mdidrv);
+
+    XMI_serve_entry = 0;
+}
+
 void AIL2OAL_API_set_XMIDI_master_volume(MDI_DRIVER *mdidrv, int32_t master_volume)
 {
     SNDSEQUENCE *seq;
@@ -750,6 +1125,14 @@ void AIL2OAL_API_set_XMIDI_master_volume(MDI_DRIVER *mdidrv, int32_t master_volu
 
     MSSLockedDecrementPtr(mdidrv->disable);
 }
+
+void AIL2OAL_API_sequence_position(SNDSEQUENCE *seq, int32_t *beat, int32_t *measure)
+{
+    // Not implemented
+    *beat = 0;
+    *measure = 0;
+}
+
 
 int32_t AIL2OAL_API_install_MDI_INI(MDI_DRIVER **mdidrv)
 {

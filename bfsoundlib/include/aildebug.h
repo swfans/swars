@@ -234,6 +234,10 @@ void AIL_set_sequence_tempo(SNDSEQUENCE *seq, int32_t tempo, int32_t millisecond
  */
 void AIL_set_sequence_volume(SNDSEQUENCE *seq, int32_t volume, int32_t milliseconds);
 
+/** Report relative beat and measure count for current XMIDI sequence.
+ */
+void AIL_sequence_position(SNDSEQUENCE *seq, int32_t *beat, int32_t *measure);
+
 /** Get status of sequence.
  */
 uint32_t AIL_sequence_status(SNDSEQUENCE *seq);

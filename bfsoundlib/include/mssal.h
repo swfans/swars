@@ -206,7 +206,7 @@ enum AILTimerStatus {
     AILT_RUNNING         = 2, /**< Timer is running */
 };
 
-/** Non-specific XMIDI/MIDI event types
+/** Non-specific XMIDI/MIDI event types.
  */
 enum AILMIDIEvents {
     MDI_EV_NOTE_OFF      = 0x80,
@@ -219,6 +219,14 @@ enum AILMIDIEvents {
     MDI_EV_SYSEX         = 0xf0,
     MDI_EV_ESC           = 0xf7,
     MDI_EV_META          = 0xff,
+};
+
+/** Sub-event types of the XMIDI/MIDI META event.
+ */
+enum AILMIDIMetaEvents {
+    MDI_META_EOT        = 0x2f,
+    MDI_META_TEMPO      = 0x51,
+    MDI_META_TIME_SIG   = 0x58,
 };
 
 /** MIDI controllers and Channel Mode messages.
@@ -287,17 +295,25 @@ typedef long HSNDTIMER;
 typedef uint32_t HAILPROVIDER;
 
 
-/** Timer trigger callcack function type.
+/** Timer trigger callback function type.
  */
 typedef void (*AILTIMERCB) (void *user_data);
 
-/** Sequence related callcack function type.
+/** Sequence related callback function type.
  */
 typedef void (*AILSEQUENCECB) (SNDSEQUENCE *seq);
 
-/** Generic sample-related callcack function type.
+/** Generic sample-related callback function type.
  */
 typedef void (*AILSAMPLECB) (SNDSAMPLE *s);
+
+/** Generic sequence-related callback function type.
+ */
+typedef void (*AILSEQUENCECB) (SNDSEQUENCE *seq);
+
+/** XMIDI beat/bar callback function type.
+ */
+typedef void (*AILBEATCB) (MDI_DRIVER *, SNDSEQUENCE *, int32_t, int32_t);
 
 /** Sound card hardware I/O parameters structure.
  *
@@ -487,12 +503,12 @@ struct SNDSEQUENCE {
     void *TIMB;                              /**< offset=8   */
     void *RBRN;                              /**< offset=12  */
     void *EVNT;                              /**< offset=16  */
-    uint8_t *EVNT_ptr;                       /**< offset=20  */
+    uint8_t *EVNT_ptr;                       /**< offset=20  Current event pointer */
     uint8_t *ICA;                            /**< offset=24  */
     void *prefix_callback;                   /**< offset=28  */
     void *trigger_callback;                  /**< offset=32  */
-    void *beat_callback;                     /**< offset=36  */
-    void *EOS;                               /**< offset=40  */
+    AILBEATCB beat_callback;                 /**< offset=36  XMIDI beat/bar change handler */
+    AILSEQUENCECB EOS;                       /**< offset=40  End-of-sequence callback function */
     int32_t loop_count;                      /**< offset=44  */
     int32_t interval_count;                  /**< offset=48  */
     int32_t interval_num;                    /**< offset=52  */

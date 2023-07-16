@@ -48,6 +48,10 @@ int32_t XMI_message_size(int32_t status);
  */
 const void *XMI_find_sequence(const uint8_t *image, int32_t sequence);
 
+/** Read MIDI variable-length number.
+ */
+uint32_t XMI_read_VLN(const uint8_t **ptr);
+
 void *AIL_API_file_read(const char *filename, void *dest);
 
 static inline uint32_t XMI_swap32(uint32_t v)

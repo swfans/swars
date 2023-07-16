@@ -1389,7 +1389,7 @@ GLOBAL_FUNC (ASM_AIL_set_GTL_filename_prefix)	/* 106090 */
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (AIL_sequence_position)
+GLOBAL_FUNC (ASM_AIL_sequence_position)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %esi
@@ -7391,7 +7391,7 @@ GLOBAL_FUNC (ASM_XMI_serve)	/* 0x1156A0 */
 		push   $MDI_j
 		push   $MDI_i
 		push   %eax
-		call   AIL_sequence_position
+		call   ac_AIL_sequence_position
 		add    $0xc,%esp
 		mov    MDI_j,%ebx
 		push   %ebx

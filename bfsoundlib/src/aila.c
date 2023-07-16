@@ -131,7 +131,10 @@ int32_t AIL2OAL_API_call_driver(AIL_DRIVER *drvr, int32_t fn,
     case DIG_STOP_P_REQ:
     case DIG_START_R_CMD:
     case DIG_STOP_R_REQ:
+        break;
     case DIG_VSE:
+        // Asks the driver to consume the current DMA buffer
+        // Only expected if DIG_BUFFER_SERVICE is set
         break;
     case MDI_HW_VOLUME:
     case MDI_INIT_INS_MGR:

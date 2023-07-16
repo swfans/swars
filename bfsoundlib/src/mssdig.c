@@ -141,6 +141,7 @@ DIG_DRIVER *SS_construct_DIG_driver(AIL_DRIVER *drvr, const SNDCARD_IO_PARMS *io
     digdrv->DDT->format_data[DIG_F_STEREO_16].minimum_physical_sample_rate = 44100;
     digdrv->DDT->format_data[DIG_F_STEREO_16].nominal_physical_sample_rate = 44100;
     digdrv->DDT->format_data[DIG_F_STEREO_16].maximum_physical_sample_rate = 44100;
+    digdrv->DDT->format_data[DIG_F_STEREO_16].flags = DIG_BUFFER_SERVICE;
 #endif
 
     // Initialize miscellaneous DIG_DRIVER members
@@ -302,7 +303,6 @@ DIG_DRIVER *SS_construct_DIG_driver(AIL_DRIVER *drvr, const SNDCARD_IO_PARMS *io
     AIL_set_timer_user(digdrv->timer, digdrv);
     AIL_set_timer_frequency(digdrv->timer, AIL_preference[DIG_SERVICE_RATE]);
     AIL_start_timer(digdrv->timer);
-    sound_fake_timer_initialize();
 
     // Set destructor handler and descriptor
     digdrv->drvr->destructor = (AILTIMERCB)SS_destroy_DIG_driver;
@@ -409,10 +409,10 @@ void SS_serve(void *clientval)
         return;
     }
 
-#if defined(DOS)||defined(GO32)
-    // Return immediately if buffer has not switched
     current = *digdrv->buffer_flag;
 
+#if defined(DOS)||defined(GO32)
+    // Return immediately if buffer has not switched
     if ((current == -1) || (current == digdrv->last_buffer)) {
         if (AIL_preference[DIG_SS_LOCK])
             AIL_restore_interrupts(SS_serve_flags);
@@ -425,6 +425,10 @@ void SS_serve(void *clientval)
     // Flush build buffer with silence
     SS_flush(digdrv);
 #else
+    digdrv->last_buffer = current;
+    // Simulate switching the DMA buffer
+    *digdrv->buffer_flag ^= 1;
+
     // Unqueue finished OAL buffers
     OPENAL_unqueue_finished_dig_samples(digdrv);
 #endif

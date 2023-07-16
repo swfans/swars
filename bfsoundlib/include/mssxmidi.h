@@ -59,6 +59,8 @@ void AIL2OAL_API_set_sequence_tempo(SNDSEQUENCE *seq, int32_t tempo, int32_t mil
 
 void AIL2OAL_API_set_sequence_volume(SNDSEQUENCE *seq, int32_t volume, int32_t milliseconds);
 
+void AIL2OAL_API_sequence_position(SNDSEQUENCE *seq, int32_t *beat, int32_t *measure);
+
 uint32_t AIL2OAL_API_sequence_status(SNDSEQUENCE *seq);
 
 int32_t AIL2OAL_API_sequence_loop_count(SNDSEQUENCE *seq);
@@ -66,6 +68,14 @@ int32_t AIL2OAL_API_sequence_loop_count(SNDSEQUENCE *seq);
 int32_t AIL2OAL_API_lock_channel(MDI_DRIVER *mdidrv);
 
 void AIL2OAL_API_release_channel(MDI_DRIVER *mdidrv, int32_t channel);
+
+/** Timer interrupt routine for XMIDI sequencing.
+ *
+ * Has anything to do with interrupts and DMA channels only on bare metal systems
+ * like DOS. On modern OSes, its periodical calls just transfer data buffers
+ * to a sound interface like OpenAL.
+ */
+void XMI_serve(void *clientval);
 
 /******************************************************************************/
 #ifdef __cplusplus

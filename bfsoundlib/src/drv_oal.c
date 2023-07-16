@@ -453,30 +453,21 @@ void OPENAL_unqueue_finished_dig_samples(DIG_DRIVER *digdrv)
     }
 }
 
-void OPENAL_update_dig_sample(SNDSAMPLE *s)
+int32_t OPENAL_update_dig_sample(SNDSAMPLE *s)
 {
     queue_source_buffers(s->driver, s);
+    return (s->status == SNDSMP_DONE) ? 1 : 0;
 }
 
-void OPENAL_update_mdi_sequences(MDI_DRIVER *mdidrv)
+void OPENAL_unqueue_finished_mdi_sequences(MDI_DRIVER *mdidrv)
 {
-    int32_t i;
+    //TODO
+}
 
-    if (!mdidrv->drvr->initialized)
-        return;
-
-    for (i = 0; i < mdidrv->n_sequences; i++)
-    {
-        SNDSEQUENCE *seq;
-
-        seq = &mdidrv->sequences[i];
-
-        if (seq->status != SNDSEQ_PLAYING)
-            continue;
-
-        //TODO play MIDI
-
-    }
+int32_t OPENAL_update_mdi_sequence(SNDSEQUENCE *seq)
+{
+    //TODO
+    return (seq->status == SNDSEQ_DONE) ? 1 : 0;
 }
 
 /******************************************************************************/

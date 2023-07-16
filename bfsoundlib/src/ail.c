@@ -120,6 +120,8 @@ int32_t AIL2OAL_API_startup(void)
 
     i = OPENAL_startup();
 
+    sound_fake_timer_initialize();
+
     return i;
 }
 

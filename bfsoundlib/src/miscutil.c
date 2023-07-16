@@ -106,6 +106,24 @@ const void *XMI_find_sequence(const uint8_t *image, int32_t sequence)
     return NULL;
 }
 
+uint32_t XMI_read_VLN(const uint8_t **ptr)
+{
+    uint32_t val,i,cnt;
+
+    val = 0;
+    cnt = 4;
+    do
+    {
+        i = (uint32_t)**ptr;
+        *ptr = (uint8_t *)AIL_ptr_add(*ptr, 1);
+        val = (val << 7) | (i & 0x7f);
+        if ((i & 0x80) == 0)
+            break;
+    } while (--cnt);
+
+    return val;
+}
+
 void *AIL_API_file_read(const char *fname, void *dest)
 {
     int fh;

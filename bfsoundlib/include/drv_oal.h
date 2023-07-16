@@ -58,12 +58,24 @@ void OPENAL_unqueue_finished_dig_samples(DIG_DRIVER *digdrv);
 /** Function to be called within a timer while DIG playback is able.
  *
  * This part is to be called within the sample mixing loop.
+ *
+ * @return Gives 1 if the sample is done playing.
  */
-void OPENAL_update_dig_sample(SNDSAMPLE *s);
+int32_t OPENAL_update_dig_sample(SNDSAMPLE *s);
 
 /** Function to be called within a timer while MIDI playback is able.
+ *
+ * This part is to be called before the sequence mixing loop.
  */
-void OPENAL_update_mdi_sequences(MDI_DRIVER *mdidrv);
+void OPENAL_unqueue_finished_mdi_sequences(MDI_DRIVER *mdidrv);
+
+/** Function to be called within a timer while MIDI playback is able.
+ *
+ * This part is to be called within the sequence mixing loop.
+ *
+ * @return Gives 1 if the sequence is done playing.
+ */
+int32_t OPENAL_update_mdi_sequence(SNDSEQUENCE *seq);
 
 /** Create source required for playback with the Ogg/Vorbis stream.
  */
