@@ -47,6 +47,14 @@ void SS_copy(DIG_DRIVER *digdrv, void *pWaveAddr);
  */
 int32_t SS_configure_buffers(DIG_DRIVER *digdrv);
 
+/** Copy data from source sample to build buffer, with mixing and ASI
+ * decompression.
+ *
+ * Or provide th data to external library, if that is what
+ * the current platform requires.
+ */
+void SS_stream_to_buffer(SNDSAMPLE *s);
+
 
 SNDSAMPLE *AIL2OAL_API_allocate_sample_handle(DIG_DRIVER *digdrv);
 

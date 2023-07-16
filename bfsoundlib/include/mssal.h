@@ -134,6 +134,15 @@ enum DIGMDIDriverVerifyIoParams {
     DIG_DETECT_8_AND_16_BITS = 0x03,
 };
 
+/** Flags for DIG_DRIVER.hw_mode_flags.
+ */
+enum DIGDriverHwModeFlags {
+    DIG_PCM_SIGN       = 0x0001,
+    DIG_PCM_ORDER      = 0x0002,
+    DIG_PCM_POLARITY   = 0x0004,
+    DIG_PCM_SPLIT      = 0x0008,
+    DIG_BUFFER_SERVICE = 0x0010,
+};
 
 /** AIL internal preference names.
  */

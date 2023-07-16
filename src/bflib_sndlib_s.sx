@@ -30,6 +30,7 @@
 
 .text
 
+.global EXPORT_SYMBOL(SS_serve);
 .global EXPORT_SYMBOL(disk_err);
 .global EXPORT_SYMBOL(_IsTable);
 .global EXPORT_SYMBOL(FullDIG_INIPath);
@@ -3220,162 +3221,6 @@ GLOBAL_FUNC (ASM_SS_build_amplitude_tables)
 		ret
 
 
-/*----------------------------------------------------------------*/
-GLOBAL_FUNC (SS_serve)
-/*----------------------------------------------------------------*/
-		push   %ebx
-		push   %esi
-		push   %edi
-		push   %ebp
-		mov    data_1ed8c0,%ebx
-		cmpl   $0x0,data_15aad0
-		jne    jump_112afb
-		mov    $0x1,%ecx
-		mov    0x14(%esp),%eax
-		mov    data_1ed834,%esi
-		mov    %ecx,data_15aad0
-		mov    %eax,data_1ed8c4
-		test   %esi,%esi
-		je     jump_11294f
-		call   ac_AIL_disable_interrupts
-		mov    %eax,data_1ed8cc
-	jump_11294f:
-		mov    data_1ed8c4,%eax
-		mov    0x54(%eax),%edi
-		mov    data_1ed8c0,%ebx
-		test   %edi,%edi
-		jne    jump_11298c
-		cmpl   $0x0,data_1ed834
-		je     jump_112979
-		mov    data_1ed8cc,%ecx
-		push   %ecx
-		call   ac_AIL_restore_interrupts
-		add    $0x4,%esp
-	jump_112979:
-		xor    %esi,%esi
-		mov    data_1ed8c0,%ebx
-		mov    %esi,data_15aad0
-		jmp    jump_112afb
-	jump_11298c:
-		mov    0x34(%eax),%edx
-		movswl (%edx),%edx
-		mov    %edx,data_1ed8c8
-		cmp    $0xffffffff,%edx
-		je     jump_1129a2
-		cmp    0x38(%eax),%edx
-		jne    jump_1129d9
-	jump_1129a2:
-		mov    data_1ed834,%edi
-		mov    %ebx,data_1ed8c0
-		test   %edi,%edi
-		je     jump_1129c1
-		mov    data_1ed8cc,%ebp
-		push   %ebp
-		call   ac_AIL_restore_interrupts
-		add    $0x4,%esp
-	jump_1129c1:
-		xor    %eax,%eax
-		mov    data_1ed8c0,%ebx
-		mov    %eax,data_15aad0
-		mov    %ebx,data_1ed8c0
-		pop    %ebp
-		pop    %edi
-		pop    %esi
-		pop    %ebx
-		ret
-	jump_1129d9:
-		push   %eax
-		mov    %edx,0x38(%eax)
-		call   AILSSA_flush_buffer
-		xor    %esi,%esi
-		mov    data_1ed8c4,%eax
-		add    $0x4,%esp
-		mov    %esi,data_1ed8d0
-		mov    0x60(%eax),%ebx
-		mov    0x5c(%eax),%eax
-		mov    %ebx,data_1ed8c0
-		mov    %eax,data_1ed8b0
-		test   %ebx,%ebx
-		je     jump_112a44
-	jump_112a07:
-		mov    data_1ed8b0,%eax
-		cmpl   $0x4,0x4(%eax)
-		jne    jump_112a21
-		push   %eax
-		incl   data_1ed8d0
-		call   AILSSA_merge
-		add    $0x4,%esp
-	jump_112a21:
-		mov    data_1ed8c0,%ebx
-		mov    data_1ed8b0,%edi
-		dec    %ebx
-		add    $0x894,%edi
-		mov    %ebx,data_1ed8c0
-		mov    %edi,data_1ed8b0
-		test   %ebx,%ebx
-		jne    jump_112a07
-	jump_112a44:
-		mov    data_1ed8c4,%eax
-		mov    data_1ed8d0,%edx
-		mov    %edx,0x64(%eax)
-		mov    data_1ed8c8,%edx
-		xor    $0x1,%dl
-		push   %edx
-		push   %eax
-		call   AILSSA_DMA_copy
-		mov    data_1ed8c4,%eax
-		mov    0x1c(%eax),%dl
-		add    $0x8,%esp
-		test   $0x10,%dl
-		je     jump_112aa3
-		push   $0x0
-		xor    %edx,%edx
-		push   $data_1ed8b4
-		mov    %dx,data_1ed8b8
-		push   $0x405
-		mov    data_1ed8c8,%dx
-		mov    (%eax),%ebp
-		xor    $0x1,%dl
-		push   %ebp
-		mov    %dx,data_1ed8ba
-		call   ac_AIL_call_driver
-		add    $0x10,%esp
-	jump_112aa3:
-		mov    data_1ed8c4,%eax
-		mov    0x64(%eax),%edx
-		mov    data_1ed8c0,%ebx
-		test   %edx,%edx
-		je     jump_112abe
-		movl   $0x0,0x58(%eax)
-		jmp    jump_112ad5
-	jump_112abe:
-		mov    0x58(%eax),%edx
-		lea    0x1(%edx),%ecx
-		mov    %ecx,0x58(%eax)
-		cmp    $0x2,%edx
-		jne    jump_112ad5
-		push   %eax
-		call   SS_stop_DIG_driver_playback
-		add    $0x4,%esp
-	jump_112ad5:
-		cmpl   $0x0,data_1ed834
-		je     jump_112aed
-		mov    data_1ed8cc,%esi
-		push   %esi
-		call   ac_AIL_restore_interrupts
-		add    $0x4,%esp
-	jump_112aed:
-		xor    %edi,%edi
-		mov    data_1ed8c0,%ebx
-		mov    %edi,data_15aad0
-	jump_112afb:
-		mov    %ebx,data_1ed8c0
-		pop    %ebp
-		pop    %edi
-		pop    %esi
-		pop    %ebx
-		ret
-
 vtable_112b08:
 		.long   func_112bc6
 		.long   func_112be8
@@ -4402,7 +4247,7 @@ GLOBAL_FUNC (ASM_SS_construct_DIG_driver)	/* 113110 */
 		cmp    %edx,%ecx
 		jl     jump_1135db
 	jump_1135f9:
-		push   $SS_serve
+		push   $EXPORT_SYMBOL(SS_serve)
 		call   ac_AIL_register_timer
 		add    $0x4,%esp
 		mov    %eax,0xc(%ebp)

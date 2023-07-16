@@ -427,6 +427,11 @@ unqueue_source_buffers(SNDSAMPLE *s)
     s->status = 2;
 }
 
+void OPENAL_update_dig_sample(SNDSAMPLE *s)
+{
+    queue_source_buffers(s->driver, s);
+}
+
 void OPENAL_update_dig_samples(DIG_DRIVER *digdrv)
 {
     int32_t i;
@@ -456,12 +461,12 @@ void OPENAL_update_dig_samples(DIG_DRIVER *digdrv)
 
         unqueue_source_buffers(s);
 
-        if (s->status != 4)
+        if (s->status != SNDSEQ_PLAYING)
             continue;
 
         digdrv->n_active_samples++;
 
-        queue_source_buffers(digdrv, s);
+        OPENAL_update_dig_sample(s);
     }
 }
 

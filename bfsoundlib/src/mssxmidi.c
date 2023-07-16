@@ -376,14 +376,6 @@ void init_mdi_defaults(MDI_DRIVER *mdidrv)
 MDI_DRIVER *XMI_construct_MDI_driver(AIL_DRIVER *drvr, const SNDCARD_IO_PARMS *iop)
 {
     MDI_DRIVER *mdidrv;
-#if 0
-    asm volatile (
-      "push %2\n"
-      "push %1\n"
-      "call ASM_XMI_construct_MDI_driver\n"
-      "add $0x8, %%esp\n"
-        : "=r" (mdidrv) : "g" (drvr), "g" (iop));
-#else
     SNDCARD_IO_PARMS use;
     int32_t i;
     int32_t detected;
@@ -587,7 +579,7 @@ MDI_DRIVER *XMI_construct_MDI_driver(AIL_DRIVER *drvr, const SNDCARD_IO_PARMS *i
     // Start XMIDI timer service and return MDI_DRIVER descriptor
     AIL_set_timer_frequency(mdidrv->timer, AIL_preference[MDI_SERVICE_RATE]);
     AIL_start_timer(mdidrv->timer);
-#endif
+
     return mdidrv;
 }
 
@@ -779,14 +771,6 @@ int32_t AIL2OAL_API_install_MDI_INI(MDI_DRIVER **mdidrv)
 SNDSEQUENCE *AIL2OAL_API_allocate_sequence_handle(MDI_DRIVER *mdidrv)
 {
     SNDSEQUENCE *seq;
-#if 0
-    asm volatile (
-      "push %1\n"
-      "call ASM_AIL_API_allocate_sequence_handle\n"
-      "add $0x4, %%esp\n"
-        : "=r" (seq) : "g" (mdidrv));
-    return seq;
-#endif
     int32_t i;
 
     // Lock timer services to prevent reentry
@@ -883,13 +867,6 @@ MDI_DRIVER *AIL2OAL_API_install_MDI_driver_file(const char *fname, SNDCARD_IO_PA
 
 void AIL2OAL_API_uninstall_MDI_driver(MDI_DRIVER *mdidrv)
 {
-#if 0
-    asm volatile (
-      "push %0\n"
-      "call ASM_AIL_API_uninstall_MDI_driver\n"
-      "add $0x4, %%esp\n"
-        :  : "g" (mdidrv));
-#endif
     AIL_uninstall_driver(mdidrv->drvr);
 }
 
@@ -1080,13 +1057,6 @@ void AIL2OAL_API_stop_sequence(SNDSEQUENCE *seq)
 
 void AIL2OAL_API_resume_sequence(SNDSEQUENCE *seq)
 {
-#if 0
-    asm volatile (
-      "push %0\n"
-      "call ASM_AIL_API_resume_sequence\n"
-      "add $0x4, %%esp\n"
-        :  : "g" (seq));
-#endif
     MDI_DRIVER *mdidrv;
     int32_t log;
     int32_t ch;

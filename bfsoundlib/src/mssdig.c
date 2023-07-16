@@ -34,6 +34,9 @@
 /******************************************************************************/
 extern size_t sound_free_buffer_count;
 
+static uint32_t SS_serve_entry = 0;
+static int32_t SS_serve_flags = 0;
+
 /** Call device I/O verification function using current detection policy.
  */
 int32_t SS_attempt_DIG_detection(DIG_DRIVER *digdrv, const SNDCARD_IO_PARMS *iop)
@@ -378,6 +381,90 @@ void SS_stop_DIG_driver_playback(DIG_DRIVER *digdrv)
     // Stop playback ASAP and return all buffers
     AIL_call_driver(digdrv->drvr, DIG_STOP_P_REQ, NULL, NULL);
     digdrv->playing = 0;
+}
+
+/** Timer interrupt routine to poll DMA buffer flags and process samples.
+ */
+void SS_serve(void *clientval)
+{
+    DIG_DRIVER *digdrv = clientval;
+    VDI_CALL    VDI;
+    int32_t cnt,n;
+    int32_t current;
+    SNDSAMPLE *s;
+
+    // Disallow re-entrant calls
+    if (SS_serve_entry)
+        return;
+
+    SS_serve_entry = 1;
+
+    // If desired, disable interrupts while manipulating DMA buffers
+    if (AIL_preference[DIG_SS_LOCK])
+        SS_serve_flags = AIL_disable_interrupts();
+
+    // If driver not transmitting buffer data, return
+    if (!digdrv->playing) {
+        if (AIL_preference[DIG_SS_LOCK])
+            AIL_restore_interrupts(SS_serve_flags);
+        SS_serve_entry = 0;
+        return;
+    }
+
+    // Return immediately if buffer has not switched
+    current = *digdrv->buffer_flag;
+
+    if ((current == -1) || (current == digdrv->last_buffer)) {
+        if (AIL_preference[DIG_SS_LOCK])
+            AIL_restore_interrupts(SS_serve_flags);
+        SS_serve_entry = 0;
+        return;
+    }
+
+    digdrv->last_buffer = current;
+
+    // Flush build buffer with silence
+    SS_flush(digdrv);
+
+    // Merge active samples (if any) into build buffer
+    cnt = 0;
+
+    for (n = digdrv->n_samples,s = &digdrv->samples[0]; n; --n,++s)
+    {
+        // Skip sample if stopped, finished, or not allocated
+        if (s->status != SNDSMP_PLAYING)
+            continue;
+        ++cnt;
+        // Convert sample to 16-bit signed format and mix with
+        // contents of build buffer
+        SS_stream_to_buffer(s);
+    }
+
+    // Set number of active samples
+    digdrv->n_active_samples = cnt;
+
+    // Copy build buffer contents to DMA buffer
+    SS_copy(digdrv, digdrv->DMA[current ^ 1]);
+
+    // Send buffer-service VSE callback to driver, if required
+    if (digdrv->hw_mode_flags & DIG_BUFFER_SERVICE) {
+        VDI.CX = 0;
+        VDI.DX = (current ^ 1);
+        AIL_call_driver(digdrv->drvr, DIG_VSE, &VDI, NULL);
+    }
+
+    // If no samples active for two consecutive interrupts,
+    // request DMA halt
+    if (digdrv->n_active_samples)
+        digdrv->quiet = 0;
+    else if (digdrv->quiet++ == 2)
+        SS_stop_DIG_driver_playback(digdrv);
+
+    // Restore interrupts and return
+    if (AIL_preference[DIG_SS_LOCK])
+        AIL_restore_interrupts(SS_serve_flags);
+
+    SS_serve_entry = 0;
 }
 
 DIG_DRIVER *AIL2OAL_API_install_DIG_driver_file(const char *fname,
