@@ -29,6 +29,7 @@
 #include OPENAL_ALC_H
 #include OPENAL_AL_H
 #include "oggvorbis.h"
+#include "bfmath.h" //TODO temp dependency, until MIDI synth works
 /******************************************************************************/
 /** We expect up to 64 SNDSAMPLEs and up to 3 SNDSEQUENCEs.
  */
@@ -271,7 +272,7 @@ int32_t OPENAL_unqueue_source_buffers(ALuint source,
     while (count-- > 0)
     {
         alSourceUnqueueBuffers (source, 1, &buf);
-        if (!check_al ("alSourceUnqueueBuffers"))
+        if (!check_al("alSourceUnqueueBuffers"))
             continue;
 
         if (callback != NULL)
@@ -360,7 +361,7 @@ get_pcm_format(SNDSAMPLE *s)
 }
 
 static void
-queue_source_buffers(DIG_DRIVER *digdrv, SNDSAMPLE *s)
+queue_dig_sample_buffers(DIG_DRIVER *digdrv, SNDSAMPLE *s)
 {
     size_t len, total_len;
     size_t buffers_used;
@@ -388,7 +389,6 @@ queue_source_buffers(DIG_DRIVER *digdrv, SNDSAMPLE *s)
         total_len = s->len[s->current_buffer] - s->pos[s->current_buffer];
     }
 
-
     while (total_len > 0 && buffers_used < SOUND_BUFFERS_PER_SRC)
     {
         data = s->start[s->current_buffer] + s->pos[s->current_buffer];
@@ -399,24 +399,24 @@ queue_source_buffers(DIG_DRIVER *digdrv, SNDSAMPLE *s)
         assert ((s->flags & 1) != 0);
 
         buf = pop_free_buffer ();
-        alBufferData (buf, get_pcm_format (s), data, len, s->playback_rate);
-        if (!check_al ("alBufferData"))
+        alBufferData(buf, get_pcm_format(s), data, len, s->playback_rate);
+        if (!check_al("alBufferData"))
             goto err;
 
         alSourceQueueBuffers(source, 1, &buf);
-        if (!check_al ("alSourceQueueBuffers"))
+        if (!check_al("alSourceQueueBuffers"))
             goto err;
 
         buffers_used++;
 
-        alGetSourcei (source, AL_SOURCE_STATE, &state);
-        if (!check_al ("alGetSourcei (AL_SOURCE_STATE)"))
+        alGetSourcei(source, AL_SOURCE_STATE, &state);
+        if (!check_al("alGetSourcei (AL_SOURCE_STATE)"))
             goto err;
 
-        alSourcef (source, AL_GAIN,
+        alSourcef(source, AL_GAIN,
              (s->volume * (1.f / 127.f)
               * (digdrv->master_volume * (1.f / 127.f))));
-        if (!check_al ("alSourcef (AL_GAIN)"))
+        if (!check_al("alSourcef (AL_GAIN)"))
             goto err;
 
         /* XXX: check if panning/position is OK */
@@ -425,14 +425,14 @@ queue_source_buffers(DIG_DRIVER *digdrv, SNDSAMPLE *s)
         else
             x_pos = (127 - s->pan - 64) * (1.f / 64.f);
 
-        alSource3f (source, AL_POSITION, x_pos, 0.f, -.25f);
-        if (!check_al ("alSource3f (AL_POSITION)"))
+        alSource3f(source, AL_POSITION, x_pos, 0.f, -.25f);
+        if (!check_al("alSource3f (AL_POSITION)"))
             goto err;
 
         if (state != AL_PLAYING)
         {
-            alSourcePlay (source);
-            if (!check_al ("alSourcePlay"))
+            alSourcePlay(source);
+            if (!check_al("alSourcePlay"))
                 goto err;
         }
 
@@ -451,11 +451,11 @@ queue_source_buffers(DIG_DRIVER *digdrv, SNDSAMPLE *s)
 err:
     s->system_data[4] = buffers_used;
     if (buf != 0)
-        push_free_buffer (buf, NULL);
+        push_free_buffer(buf, NULL);
 }
 
 static void
-unqueue_source_buffers(SNDSAMPLE *s)
+unqueue_dig_sample_buffers(SNDSAMPLE *s)
 {
     size_t buffers_used;
     ALuint source;
@@ -487,6 +487,115 @@ unqueue_source_buffers(SNDSAMPLE *s)
     s->status = SNDSMP_DONE;
 }
 
+static void
+queue_mdi_sequence_buffers(MDI_DRIVER *mdidrv, SNDSEQUENCE *seq)
+{
+    size_t len, total_len;
+    size_t buffers_used;
+    ALuint source;
+    void *data;
+    ALint state;
+    ALuint buf = 0;
+    uint8_t locbuf[3*SOUND_MAX_BUFSIZE];
+    size_t pos;
+
+    source = seq->system_data[5];
+    buffers_used = seq->system_data[4];
+
+    if (buffers_used >= SOUND_BUFFERS_PER_SRC)
+        return;
+
+    //TODO Software synth and queue buffers
+#if 0
+    {
+        size_t i, k;
+        k = 0;
+        for (i = 0; i < sizeof(locbuf); i++) {
+            locbuf[i] = 127 + lbSinTable[(k / 64) & LbFPMath_AngleMask] / 512;
+            k = k + i / 2;
+        }
+    }
+#else
+    memset(locbuf,127,sizeof(locbuf));
+#endif
+
+    total_len = 2*SOUND_MAX_BUFSIZE; //TODO Software synth length
+    pos = 0;
+
+    while (total_len > 0 && buffers_used < SOUND_BUFFERS_PER_SRC)
+    {
+        data = &locbuf[pos];
+        len = SOUND_MAX_BUFSIZE;
+
+        buf = pop_free_buffer();
+        alBufferData(buf, AL_FORMAT_MONO8, data, len, 22050);
+        if (!check_al("alBufferData"))
+            goto err;
+
+        alSourceQueueBuffers(source, 1, &buf);
+        if (!check_al("alSourceQueueBuffers"))
+            goto err;
+
+        buffers_used++;
+
+        alGetSourcei(source, AL_SOURCE_STATE, &state);
+        if (!check_al("alGetSourcei (AL_SOURCE_STATE)"))
+            goto err;
+
+        alSourcef(source, AL_GAIN,
+             (seq->volume * (1.f / 127.f)
+              * (mdidrv->master_volume * (1.f / 127.f))));
+        if (!check_al("alSourcef (AL_GAIN)"))
+            goto err;
+
+        if (state != AL_PLAYING)
+        {
+            alSourcePlay(source);
+            if (!check_al("alSourcePlay"))
+                goto err;
+        }
+
+        total_len -= len;
+        pos += len;
+    }
+
+    seq->system_data[4] = buffers_used;
+    return;
+
+err:
+    seq->system_data[4] = buffers_used;
+    if (buf != 0)
+        push_free_buffer(buf, NULL);
+}
+
+static void
+unqueue_mdi_sequence_buffers(SNDSEQUENCE *seq)
+{
+    size_t buffers_used;
+    ALuint source;
+
+    source = seq->system_data[5];
+    buffers_used = seq->system_data[4];
+
+    if (buffers_used == 0)
+        return;
+
+    buffers_used -=
+        OPENAL_unqueue_source_buffers(source,
+                   (SoundNameCallback) push_free_buffer,
+                   NULL);
+
+    seq->system_data[4] = buffers_used;
+
+    if (buffers_used > 0
+        || seq->loop_count == 0)
+      return;
+
+    alSourceStop(source);
+    check_al("alSourceStop");
+    seq->status = SNDSEQ_DONE;
+}
+
 void OPENAL_unqueue_finished_dig_samples(DIG_DRIVER *digdrv)
 {
     int32_t i;
@@ -506,27 +615,45 @@ void OPENAL_unqueue_finished_dig_samples(DIG_DRIVER *digdrv)
               s->pos[0], s->len[0],
               s->pos[1], s->len[1],
               s->done[0], s->done[1],
-              buffers_used);
+              s->system_data[4]); // buffers_used
 #endif
 
-        unqueue_source_buffers(s);
+        unqueue_dig_sample_buffers(s);
     }
 }
 
 int32_t OPENAL_update_dig_sample(SNDSAMPLE *s)
 {
-    queue_source_buffers(s->driver, s);
+    queue_dig_sample_buffers(s->driver, s);
     return (s->status == SNDSMP_DONE) ? 1 : 0;
 }
 
 void OPENAL_unqueue_finished_mdi_sequences(MDI_DRIVER *mdidrv)
 {
-    //TODO
+    int32_t i;
+
+    for (i = 0; i < mdidrv->n_sequences; i++)
+    {
+        SNDSEQUENCE *seq;
+
+        seq = &mdidrv->sequences[i];
+
+        if (seq->status == SNDSEQ_FREE)
+            continue;
+
+#if 0 // verbose debug code
+        printf ("sequence %i loops:%i %zu\n", n,
+              seq->loop_count,
+              seq->system_data[4]); // buffers_used
+#endif
+
+        unqueue_mdi_sequence_buffers(seq);
+    }
 }
 
 int32_t OPENAL_update_mdi_sequence(SNDSEQUENCE *seq)
 {
-    //TODO
+    queue_mdi_sequence_buffers(seq->driver, seq);
     return (seq->status == SNDSEQ_DONE) ? 1 : 0;
 }
 

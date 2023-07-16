@@ -1049,9 +1049,7 @@ void XMI_serve(void *clientval)
         // Play by directly processing MIDI notes
         sequence_done = XMI_playback_update(seq);
 #else
-        // Software synth
-        // TODO
-        // Queue new buffers on OAL sources
+        // Do software synth and queue new buffers on OAL sources
         sequence_done = OPENAL_update_mdi_sequence(seq);
 #endif
 

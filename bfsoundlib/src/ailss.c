@@ -260,7 +260,7 @@ int32_t SS_configure_buffers(DIG_DRIVER *digdrv)
 
 void SS_stream_to_buffer(SNDSAMPLE *s)
 {
-  //TODO
+  //TODO though this is not used with OpenAL
 }
 
 void AIL2OAL_API_init_sample(SNDSAMPLE *s)
