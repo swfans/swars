@@ -106,6 +106,36 @@ const void *XMI_find_sequence(const uint8_t *image, int32_t sequence)
     return NULL;
 }
 
+uint32_t XMI_whole_size(const uint8_t *image)
+{
+    uint32_t len;
+    const uint8_t *beg;
+
+    beg = image;
+    len = 0;
+
+    do
+    {
+        // Skip previous block, if any
+        beg += len;
+
+        // Exit if not FORM or CAT block
+        if ((strncasecmp((char *)beg, "FORM", 4)) &&
+          (strncasecmp((char *)beg, "CAT ", 4)))
+            return (uint32_t)(beg - image);
+
+        // Continue searching if not FORM XMID or CAT XMID
+        //
+        // XMIDI files always have even FORM lengths; therefore, no
+        // odd-byte compensation is needed
+        len = 8 + XMI_swap32(*(uint32_t *)(beg+4));
+    }
+    while (strncasecmp((char *)beg+8, "XMID", 4));
+
+    // Calculate ending address of image
+    return (uint32_t)(beg - image) + len;
+}
+
 uint32_t XMI_read_VLN(const uint8_t **ptr)
 {
     uint32_t val,i,cnt;

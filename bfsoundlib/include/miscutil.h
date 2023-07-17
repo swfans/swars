@@ -48,6 +48,15 @@ int32_t XMI_message_size(int32_t status);
  */
 const void *XMI_find_sequence(const uint8_t *image, int32_t sequence);
 
+/** Calculates whole size on an XMI file within buffer.
+ *
+ * This is not a standard AIL function, it was added because AIL
+ * API provides us with image without information on its size.
+ * Modern functions are always expected to receive size, due
+ * to security implications and posasible crashes.
+ */
+uint32_t XMI_whole_size(const uint8_t *image);
+
 /** Read MIDI variable-length number.
  */
 uint32_t XMI_read_VLN(const uint8_t **ptr);

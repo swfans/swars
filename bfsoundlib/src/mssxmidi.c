@@ -1219,6 +1219,8 @@ void AIL2OAL_API_release_sequence_handle(SNDSEQUENCE *seq)
     AIL_stop_sequence(seq);
     // Set 'free' flag
     seq->status = SNDSEQ_FREE;
+    // Release the WildMidi handle
+    WildMidi_Close(seq->ICA);
 }
 
 MDI_DRIVER *AIL2OAL_API_install_MDI_driver_file(const char *fname, SNDCARD_IO_PARMS *iop)
@@ -1294,6 +1296,7 @@ int32_t AIL2OAL_API_init_sequence(SNDSEQUENCE *seq, const void *start,  int32_t 
     const uint8_t *image;
     const uint8_t *end;
     uint32_t len;
+    int32_t i;
 
     if (seq == NULL)
         return 0;
@@ -1360,12 +1363,28 @@ int32_t AIL2OAL_API_init_sequence(SNDSEQUENCE *seq, const void *start,  int32_t 
     seq->tempo_accum = 0;
     seq->tempo_error = 0;
 
+    len = XMI_whole_size(start);
+    // Reuse the (currently unused) ICA pointer
+    seq->ICA = WildMidi_OpenBuffer(start, len);
+    if (seq->ICA == NULL) {
+        AIL_set_error("Could not init WildMIDI SNDSEQUENCE");
+        AIL_set_error(WildMidi_GetError());
+        return -1;
+    }
+
+    // Move to the selected sequence
+    i = sequence_num;
+    while (i > 0) {
+        WildMidi_SongSeek(seq->ICA, 1);
+        i--;
+    }
+
     // If no TIMB chunk present, return success
     if (seq->TIMB == NULL)
         return 1;
 
     //TODO do we need the TIMB support?
-    return -1;
+    return 1;
 }
 
 void AIL2OAL_API_start_sequence(SNDSEQUENCE *seq)
