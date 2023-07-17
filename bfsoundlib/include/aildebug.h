@@ -331,6 +331,13 @@ void AIL_start_sequence(SNDSEQUENCE *seq);
  */
 int32_t AIL_MDI_driver_type(MDI_DRIVER *mdidrv);
 
+/** Transmit MIDI channel voice message via desired physical channel.
+ *
+ * This function disregards channel locking and other XMIDI features.
+ */
+void AIL_send_channel_voice_message(MDI_DRIVER *mdidrv, SNDSEQUENCE *seq,
+        int32_t status, int32_t data_1, int32_t data_2);
+
 /** Load, install, and initialize MIDI audio driver according to
  *  contents of MDI_INI file.
  */

@@ -1007,6 +1007,21 @@ void AIL_release_channel(MDI_DRIVER *mdidrv, int32_t channel)
     AIL_indent--;
 }
 
+void AIL_send_channel_voice_message(MDI_DRIVER *mdidrv, SNDSEQUENCE *seq,
+        int32_t status, int32_t data_1, int32_t data_2)
+{
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s(0x%p, 0x%p, %d, %d, %d)\n",
+           __func__, mdidrv, seq, status, data_1, data_2);
+
+    AIL2OAL_API_send_channel_voice_message(mdidrv, seq, status, data_1, data_2);
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Finished\n");
+    AIL_indent--;
+}
+
 MDI_DRIVER *AIL_open_XMIDI_driver(uint32_t flags)
 {
     MDI_DRIVER *mdidrv;

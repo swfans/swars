@@ -1737,6 +1737,63 @@ void AIL2OAL_API_release_channel(MDI_DRIVER *mdidrv, int32_t channel)
     mdidrv->disable--;
 }
 
+/** Transmit MIDI channel voice message via desired physical channel.
+ *
+ * This function disregards channel locking and other XMIDI features.
+ */
+void AIL2OAL_API_send_channel_voice_message(MDI_DRIVER *mdidrv, SNDSEQUENCE *seq,
+        int32_t status, int32_t data_1, int32_t data_2)
+{
+    int32_t result;
+
+    // Get driver handle to use (derive from sequence handle if driver NULL)
+    if (mdidrv == NULL)
+    {
+        if (seq == NULL)
+            return;
+        mdidrv = seq->driver;
+    }
+
+    // Disable XMIDI service while accessing MIDI_data[] buffer
+    MSSLockedIncrementPtr(mdidrv->disable);
+
+    if (seq == NULL)
+    {
+        // If this is a Part Volume (7) controller, scale its value by the
+        // driver's master volume setting
+        if (((status & 0xf0) == MDI_EV_CONTROL) && (data_1 == MDI_CTR_PART_VOLUME))
+        {
+            data_2 = (data_2 * mdidrv->master_volume) / 127;
+
+            if (data_2 > 127)
+                data_2 = 127;
+            if (data_2 < 0)
+                data_2 = 0;
+        }
+
+        // If no sequence handle given, transmit message on physical channel
+        // without XMIDI logging
+        result = 0;
+
+        if (mdidrv->event_trap != NULL) {
+            mdidrv->event_trap(mdidrv, NULL, status, data_1, data_2);
+        }
+
+        if (!result)
+            XMI_MIDI_message(mdidrv, status, data_1, data_2);
+    }
+    else
+    {
+        // Otherwise, perform logical-to-physical translation and XMIDI
+        // interpretation based on sequence handle, when transmitting
+        // message
+        XMI_send_channel_voice_message(seq, status, data_1, data_2, 0);
+    }
+
+    // Reenable XMIDI service
+    MSSLockedDecrementPtr(mdidrv->disable);
+}
+
 /** Unlock function, doubling as end of locked code.
  */
 void AILXMIDI_end(void)

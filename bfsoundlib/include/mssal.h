@@ -315,6 +315,10 @@ typedef void (*AILSEQUENCECB) (SNDSEQUENCE *seq);
  */
 typedef void (*AILBEATCB) (MDI_DRIVER *, SNDSEQUENCE *, int32_t, int32_t);
 
+/** XMIDI event trap callback function type.
+ */
+typedef int32_t (*AILEVENTCB) (MDI_DRIVER *, SNDSEQUENCE *,int32_t, int32_t, int32_t);
+
 /** Sound card hardware I/O parameters structure.
  *
  * Originally named `IO_PARMS`. This less generic name helps when analyzing old code.
@@ -409,7 +413,7 @@ struct MDI_DRIVER {
     SNDSEQUENCE *user[16];                   /**< offs=224 Ref to last SNDSEQUENCE to use channel */
     int32_t state[16];                       /**< offs=288 Lock state prior to being locked */
     int32_t notes[16];                       /**< offs=352 # of active notes in channel */
-    void *event_trap;                        /**< offs=416 MIDI event trap callback function */
+    AILEVENTCB event_trap;                   /**< offs=416 MIDI event trap callback function */
     void *timbre_trap;                       /**< offs=420 Timbre request callback function */
     int32_t message_count;                   /**< offs=424 MIDI message count; specific to DOS implementation */
     int32_t offset;                          /**< offs=428 MIDI buffer offset; specific to DOS implementation  */

@@ -65,6 +65,9 @@ uint32_t AIL2OAL_API_sequence_status(SNDSEQUENCE *seq);
 
 int32_t AIL2OAL_API_sequence_loop_count(SNDSEQUENCE *seq);
 
+void AIL2OAL_API_send_channel_voice_message(MDI_DRIVER *mdidrv, SNDSEQUENCE *seq,
+        int32_t status, int32_t data_1, int32_t data_2);
+
 int32_t AIL2OAL_API_lock_channel(MDI_DRIVER *mdidrv);
 
 void AIL2OAL_API_release_channel(MDI_DRIVER *mdidrv, int32_t channel);
