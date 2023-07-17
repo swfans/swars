@@ -301,6 +301,10 @@ void XMI_destroy_MDI_driver(MDI_DRIVER *mdidrv)
         AIL_end_sequence(&mdidrv->sequences[i]);
     }
 
+    // Unlink from MDI_DRIVER chain - but there is no chain, only head, so just NULL it
+    if (mdidrv == MDI_first)
+        MDI_first = NULL;
+
     // Stop sequencer timer service
     AIL_release_timer_handle(mdidrv->timer);
 
@@ -1257,6 +1261,7 @@ MDI_DRIVER *AIL2OAL_API_install_MDI_driver_file(const char *fname, SNDCARD_IO_PA
 void AIL2OAL_API_uninstall_MDI_driver(MDI_DRIVER *mdidrv)
 {
     AIL_uninstall_driver(mdidrv->drvr);
+    // The uninstall will call destructor to free MDI_DRIVER as well, so we're done
 }
 
 MDI_DRIVER *AIL2OAL_API_open_XMIDI_driver(uint32_t flags)
@@ -1268,39 +1273,7 @@ MDI_DRIVER *AIL2OAL_API_open_XMIDI_driver(uint32_t flags)
 
 void AIL2OAL_API_close_XMIDI_driver(MDI_DRIVER *mdidrv)
 {
-    MDI_DRIVER *cur, *prev;
-    int32_t i;
-
-    // Stop all playing sequences to avoid hung notes
-    for (i = 0; i < mdidrv->n_sequences; i++)
-        AIL_end_sequence(&mdidrv->sequences[i]);
-
-    // Unlink from MDI_DRIVER chain
-    if (mdidrv == MDI_first)
-    {
-        MDI_first = mdidrv->win.next;
-    }
-    else
-    {
-        prev = MDI_first;
-        cur = MDI_first->win.next;
-
-        while (cur != mdidrv)
-        {
-            if (cur == NULL)
-                return;
-            prev = cur;
-            cur = cur->win.next;
-        }
-        prev->win.next = cur->win.next;
-    }
-
-    // Stop sequencer timer service
-    AIL_release_timer_handle(mdidrv->timer);
-
-    // Release memory resources
-    AIL_MEM_free_lock(mdidrv->sequences, mdidrv->n_sequences * sizeof(SNDSEQUENCE));
-    AIL_MEM_free_lock(mdidrv, sizeof(MDI_DRIVER));
+    AIL2OAL_API_uninstall_MDI_driver(mdidrv);
 }
 
 int32_t AIL2OAL_API_init_sequence(SNDSEQUENCE *seq, const void *start,  int32_t sequence_num)
