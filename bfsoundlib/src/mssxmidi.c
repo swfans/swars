@@ -33,6 +33,7 @@
 #include "drv_oal.h"
 #include "msssys.h"
 #include "miscutil.h"
+#include "wildmidi_lib.h"
 /******************************************************************************/
 extern char GTL_prefix[128];
 extern char SoundDriverPath[144];
@@ -312,6 +313,8 @@ void XMI_destroy_MDI_driver(MDI_DRIVER *mdidrv)
 
     OPENAL_free_buffers(mdidrv->n_sequences);
 
+    WildMidi_Shutdown();
+
     // Release memory resources
     AIL_MEM_free_lock(mdidrv->sequences, mdidrv->n_sequences * sizeof(SNDSEQUENCE));
     AIL_MEM_free_lock(mdidrv, sizeof(MDI_DRIVER));
@@ -387,6 +390,7 @@ MDI_DRIVER *XMI_construct_MDI_driver(AIL_DRIVER *drvr, const SNDCARD_IO_PARMS *i
     int32_t i;
     int32_t detected;
     VDI_CALL VDI;
+    uint32_t smp_rate;
 
     // Ensure that all AILXMIDI code and data is locked into memory
     AILXMIDI_start();
@@ -567,6 +571,22 @@ MDI_DRIVER *XMI_construct_MDI_driver(AIL_DRIVER *drvr, const SNDCARD_IO_PARMS *i
         mdidrv->state[i] = 0;
         mdidrv->notes[i] = 0;
     }
+
+    smp_rate = 22050;
+
+    i = WildMidi_Init("conf/midipats.cfg", smp_rate, WM_MO_ENHANCED_RESAMPLING);
+    if (i < 0) {
+        AIL_set_error("Cannot init music - invalid/missing WildMIDI config");
+        AIL_set_error(WildMidi_GetError());
+        AIL_call_driver(mdidrv->drvr, DRV_SHUTDOWN_DEV, NULL, NULL);
+        mdidrv->drvr->initialized = 0;
+        AIL_MEM_free_lock(mdidrv->sequences, mdidrv->n_sequences * sizeof(SNDSEQUENCE));
+        AIL_MEM_free_lock(mdidrv, sizeof(MDI_DRIVER));
+        return NULL;
+    }
+    WildMidi_MasterVolume(100);
+
+    mdidrv->system_data[0] = smp_rate;
 
     // Allocate timer for XMIDI sequencing
     mdidrv->timer = AIL_register_timer(XMI_serve);
