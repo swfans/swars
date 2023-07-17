@@ -29,14 +29,13 @@
 #include OPENAL_ALC_H
 #include OPENAL_AL_H
 #include "oggvorbis.h"
-#include "bfmath.h" //TODO temp dependency, until MIDI synth works
+#include "wildmidi_lib.h"
 /******************************************************************************/
 /** We expect up to 64 SNDSAMPLEs and up to 3 SNDSEQUENCEs.
  */
 #define SOUND_EXPECT_MAX_SOURCES (64+3)
 #define SOUND_BUFFERS_PER_SRC 3
 #define SOUND_MAX_BUFFERS (SOUND_EXPECT_MAX_SOURCES * SOUND_BUFFERS_PER_SRC)
-#define SOUND_MAX_BUFSIZE 2048
 
 static ALCdevice *oal_sound_device = NULL;
 
@@ -486,45 +485,34 @@ unqueue_dig_sample_buffers(SNDSAMPLE *s)
 static void
 queue_mdi_sequence_buffers(MDI_DRIVER *mdidrv, SNDSEQUENCE *seq)
 {
-    size_t len, total_len;
+    int32_t len;
     size_t buffers_used;
     ALuint source;
-    void *data;
     ALint state;
+    uint32_t smp_rate;
     ALuint buf = 0;
-    uint8_t locbuf[3*SOUND_MAX_BUFSIZE];
-    size_t pos;
+    int8_t *data = seq->FOR_ptrs[0];
 
+    smp_rate = mdidrv->system_data[0];
     source = seq->system_data[5];
     buffers_used = seq->system_data[4];
 
     if (buffers_used >= SOUND_BUFFERS_PER_SRC)
         return;
 
-    //TODO Software synth and queue buffers
-#if 0
+    while (buffers_used < SOUND_BUFFERS_PER_SRC)
     {
-        size_t i, k;
-        k = 0;
-        for (i = 0; i < sizeof(locbuf); i++) {
-            locbuf[i] = 127 + lbSinTable[(k / 64) & LbFPMath_AngleMask] / 512;
-            k = k + i / 2;
+        len = WildMidi_GetOutput(seq->ICA, data, SOUND_MAX_BUFSIZE);
+        if (len < 0) {
+            AIL_set_error("WildMidi GetOutput returned error");
+            AIL_set_error(WildMidi_GetError());
+            goto err;
         }
-    }
-#else
-    memset(locbuf,127,sizeof(locbuf));
-#endif
-
-    total_len = 2*SOUND_MAX_BUFSIZE; //TODO Software synth length
-    pos = 0;
-
-    while (total_len > 0 && buffers_used < SOUND_BUFFERS_PER_SRC)
-    {
-        data = &locbuf[pos];
-        len = SOUND_MAX_BUFSIZE;
+        if (len == 0)
+            break;
 
         buf = pop_free_buffer();
-        alBufferData(buf, AL_FORMAT_MONO8, data, len, 22050);
+        alBufferData(buf, AL_FORMAT_STEREO16, data, len, smp_rate);
         if (!check_al("alBufferData"))
             goto err;
 
@@ -532,6 +520,7 @@ queue_mdi_sequence_buffers(MDI_DRIVER *mdidrv, SNDSEQUENCE *seq)
         if (!check_al("alSourceQueueBuffers"))
             goto err;
 
+        buf = 0;
         buffers_used++;
 
         alGetSourcei(source, AL_SOURCE_STATE, &state);
@@ -550,9 +539,6 @@ queue_mdi_sequence_buffers(MDI_DRIVER *mdidrv, SNDSEQUENCE *seq)
             if (!check_al("alSourcePlay"))
                 goto err;
         }
-
-        total_len -= len;
-        pos += len;
     }
 
     seq->system_data[4] = buffers_used;

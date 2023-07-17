@@ -683,16 +683,7 @@ void format_music(void)
 
 void init_music_bank_songs(void)
 {
-    int i;
-    struct BfMusicInfo *musinf;
-
-    // Entry 0 is unused, skip it
-    for (i = 1; i <= NumberOfSongs; i++)
-    {
-        musinf = &BfMusic[i];
-        // TODO initializing multiple files on the same sequence makes little sense
-        AIL_init_sequence(SongHandle, musinf->DataBeg, 0);
-    }
+    // No action needed, song will be initiated by StartMusic()
 }
 
 ubyte load_music_bank(TbFileHandle fh, ubyte bankId)

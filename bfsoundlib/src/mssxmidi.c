@@ -1204,6 +1204,11 @@ SNDSEQUENCE *AIL2OAL_API_allocate_sequence_handle(MDI_DRIVER *mdidrv)
     // Initialize end-of-sequence callback
     seq->EOS = NULL;
 
+    // Clear pointers which we reuse for software synth
+    for (i=0; i < AIL_FOR_NEST; i++)
+        seq->FOR_ptrs[i] = NULL;
+    seq->ICA = NULL;
+
     AIL_unlock();
     return seq;
 }
@@ -1222,6 +1227,8 @@ void AIL2OAL_API_release_sequence_handle(SNDSEQUENCE *seq)
     // Release the WildMidi handle
     if (seq->ICA != NULL)
         WildMidi_Close(seq->ICA);
+    if (seq->FOR_ptrs[0] != NULL)
+        AIL_MEM_free_lock(seq->FOR_ptrs[0], SOUND_MAX_BUFSIZE);
 }
 
 MDI_DRIVER *AIL2OAL_API_install_MDI_driver_file(const char *fname, SNDCARD_IO_PARMS *iop)
@@ -1374,7 +1381,7 @@ int32_t AIL2OAL_API_init_sequence(SNDSEQUENCE *seq, const void *start,  int32_t 
     if (seq->ICA == NULL) {
         AIL_set_error("Could not init WildMIDI SNDSEQUENCE");
         AIL_set_error(WildMidi_GetError());
-        return -1;
+        return 0;
     }
 
     // Move to the selected sequence
@@ -1383,6 +1390,10 @@ int32_t AIL2OAL_API_init_sequence(SNDSEQUENCE *seq, const void *start,  int32_t 
         WildMidi_SongSeek(seq->ICA, 1);
         i--;
     }
+
+    // Reuse one of (otherwise unused) FOR_ptrs for sw synth buffer
+    if (seq->FOR_ptrs[0] == NULL)
+        seq->FOR_ptrs[0] = AIL_MEM_alloc_lock(SOUND_MAX_BUFSIZE);
 
     // If no TIMB chunk present, return success
     if (seq->TIMB == NULL)
