@@ -669,8 +669,10 @@ void format_music(void)
         nsongs = 0;
         for (musinf = &BfMusic[1]; musinf < musinfend; musinf++)
         {
-            offs = (ulong)musinf->a18;
-            musinf->a18 = &dt[offs];
+            offs = (ulong)musinf->DataBeg;
+            musinf->DataBeg = &dt[offs];
+            offs = (ulong)musinf->DataEnd;
+            musinf->DataEnd = &dt[offs];
             nsongs++;
         }
     }
@@ -688,7 +690,8 @@ void init_music_bank_songs(void)
     for (i = 1; i <= NumberOfSongs; i++)
     {
         musinf = &BfMusic[i];
-        AIL_init_sequence(SongHandle, musinf->a18, 0);
+        // TODO initializing multiple files on the same sequence makes little sense
+        AIL_init_sequence(SongHandle, musinf->DataBeg, 0);
     }
 }
 

@@ -1220,7 +1220,8 @@ void AIL2OAL_API_release_sequence_handle(SNDSEQUENCE *seq)
     // Set 'free' flag
     seq->status = SNDSEQ_FREE;
     // Release the WildMidi handle
-    WildMidi_Close(seq->ICA);
+    if (seq->ICA != NULL)
+        WildMidi_Close(seq->ICA);
 }
 
 MDI_DRIVER *AIL2OAL_API_install_MDI_driver_file(const char *fname, SNDCARD_IO_PARMS *iop)
@@ -1341,6 +1342,10 @@ int32_t AIL2OAL_API_init_sequence(SNDSEQUENCE *seq, const void *start,  int32_t 
         return 0;
     }
 
+    // Release the previous WildMidi handle
+    if (seq->ICA != NULL)
+        WildMidi_Close(seq->ICA);
+
     // Initialize sequence callback and state data
     seq->ICA = NULL;
     seq->prefix_callback = NULL;
@@ -1364,7 +1369,7 @@ int32_t AIL2OAL_API_init_sequence(SNDSEQUENCE *seq, const void *start,  int32_t 
     seq->tempo_error = 0;
 
     len = XMI_whole_size(start);
-    // Reuse the (currently unused) ICA pointer
+    // The (otherwise unused) ICA pointer will be our WildMIDI handle
     seq->ICA = WildMidi_OpenBuffer(start, len);
     if (seq->ICA == NULL) {
         AIL_set_error("Could not init WildMIDI SNDSEQUENCE");

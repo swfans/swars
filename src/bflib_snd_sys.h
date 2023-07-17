@@ -49,16 +49,13 @@ struct MusicBankHead {
 };
 
 struct BfMusicInfo {
-  //char fname[26];
-  long a1;
-  long a4;
-  long a8;
-  long a12;
-  short a16;
-  ubyte *a18;
-  short a22;
-  long a24;
-  long a28;
+  char FileName[12];
+  long mifld_12;
+  short mifld_16;
+  ubyte *DataBeg;
+  long mifld_22;
+  ubyte *DataEnd;
+  short mifld_30;
 };
 
 #pragma pack()
