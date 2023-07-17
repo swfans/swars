@@ -91,6 +91,11 @@ void AIL_lock(void);
  */
 void AIL_unlock(void);
 
+/** Timer interrupt routine to provide periodic service to driver,
+ * if requested.
+ */
+void AIL_driver_server(void *clientval);
+
 void *AIL2OAL_API_set_timer_user(HSNDTIMER timer, void *user_data);
 
 void AIL2OAL_API_set_timer_period(HSNDTIMER timer, uint32_t usec);

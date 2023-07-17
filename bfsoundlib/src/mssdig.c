@@ -426,8 +426,6 @@ void SS_serve(void *clientval)
     SS_flush(digdrv);
 #else
     digdrv->last_buffer = current;
-    // Simulate switching the DMA buffer
-    *digdrv->buffer_flag ^= 1;
 
     // Unqueue finished OAL buffers
     OPENAL_unqueue_finished_dig_samples(digdrv);
@@ -459,6 +457,8 @@ void SS_serve(void *clientval)
     // Copy build buffer contents to DMA buffer
     SS_copy(digdrv, digdrv->DMA[current ^ 1]);
 #else
+    // Simulate switching the DMA buffer
+    *digdrv->buffer_flag = (current ^ 1);
     // No post-mixing action required for OAL
 #endif
 

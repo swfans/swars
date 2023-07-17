@@ -129,6 +129,15 @@ void AIL_release_channel(MDI_DRIVER *mdidrv, int32_t channel);
  */
 uint32_t AIL_sample_status(SNDSAMPLE *s);
 
+/** Get double-buffer playback status for sample.
+ *
+ * @return Gives one of:
+ *   0: Buffer 0 is ready to be filled (buffer 1 or neither buffer playing),
+ *   1: Buffer 1 is ready to be filled (buffer 0 playing),
+ *  -1: Both buffers are already full.
+ */
+int32_t AIL_sample_buffer_ready(SNDSAMPLE *s);
+
 /** Set parameters of existing HSAMPLE according to file data.
  *
  * Returns 0 on error, else 1.

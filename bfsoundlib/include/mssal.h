@@ -31,7 +31,7 @@ extern "C" {
 
 #pragma pack(1)
 
-/** Max # of notes "on" */
+/** Max # of notes (MIDI instrument plays) "on" */
 #define AIL_MAX_NOTES 32
 /** # of possible MIDI channels */
 #define AIL_NUM_CHANS 16
@@ -414,18 +414,7 @@ struct MDI_DRIVER {
     int32_t message_count;                   /**< offs=424 MIDI message count; specific to DOS implementation */
     int32_t offset;                          /**< offs=428 MIDI buffer offset; specific to DOS implementation  */
     int32_t master_volume;                   /**< offs=432 Master XMIDI note volume 0-127 */
-    union {
-      struct {
-        int32_t system_data[8];              /**< offs=436 Miscellaneous system data */
-      } dos;
-      struct {
-        void *mhdr;                          /**< SysEx header */
-        MDI_DRIVER *next;                    /**< Pointer to next HMDIDRIVER in use */
-        int32_t callingCT;                   /**< Calling EXE's task number (16 bit only) */
-        int32_t callingDS;                   /**< Calling EXE's DS (used in 16 bit only) */
-        MIDIOUT *hMidiOut;                   /**< MIDI output driver */
-      } win;
-    };
+    int32_t system_data[8];                  /**< offs=436 Miscellaneous system data */
 };
 
 /** Representation of a sound sample.
@@ -498,13 +487,13 @@ struct CTRL_LOG {
  * sizeof=1816
  */
 struct SNDSEQUENCE {
-    MDI_DRIVER *driver;                      /**< offset=0   */
-    uint32_t status;                         /**< offset=4   */
-    void *TIMB;                              /**< offset=8   */
-    void *RBRN;                              /**< offset=12  */
-    void *EVNT;                              /**< offset=16  */
+    MDI_DRIVER *driver;                      /**< offset=0   Driver for playback */
+    uint32_t status;                         /**< offset=4   SNDSEQ_ flags: _FREE, _DONE, _PLAYING */
+    void *TIMB;                              /**< offset=8   XMIDI IFF Timbre chunk pointer */
+    void *RBRN;                              /**< offset=12  XMIDI IFF Branch target reference chunk pointer */
+    void *EVNT;                              /**< offset=16  XMIDI IFF Playback events chunk pointer */
     uint8_t *EVNT_ptr;                       /**< offset=20  Current event pointer */
-    uint8_t *ICA;                            /**< offset=24  */
+    uint8_t *ICA;                            /**< offset=24  Indirect Controller Array */
     void *prefix_callback;                   /**< offset=28  */
     void *trigger_callback;                  /**< offset=32  */
     AILBEATCB beat_callback;                 /**< offset=36  XMIDI beat/bar change handler */

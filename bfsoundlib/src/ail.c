@@ -46,8 +46,8 @@ MDI_DRIVER *MDI_first = NULL;
  */
 extern char AIL_error[256];
 
-extern uint32_t AIL_entry;
-extern int32_t AIL_flags;
+static uint32_t AIL_serve_entry = 0;
+static int32_t AIL_serve_flags = 0;
 extern int32_t AIL_use_locked;
 extern uint32_t AIL_bkgnd_flag;
 
@@ -69,8 +69,8 @@ void AIL2OAL_start(void)
     AIL_vmm_lock(AIL_preference, sizeof(AIL_preference));
     AIL_vmm_lock(AIL_error, sizeof(AIL_error));
     AIL_vmm_lock(&AIL_last_IO_attempt, sizeof(AIL_last_IO_attempt));
-    AIL_vmm_lock(&AIL_entry, sizeof(AIL_entry));
-    AIL_vmm_lock(&AIL_flags, sizeof(AIL_flags));
+    AIL_vmm_lock(&AIL_serve_entry, sizeof(AIL_serve_entry));
+    AIL_vmm_lock(&AIL_serve_flags, sizeof(AIL_serve_flags));
 
     AIL_use_locked = 1;
 }
@@ -154,6 +154,23 @@ void AIL2OAL_API_set_error(const char *error_msg)
 const char *AIL_API_last_error(void)
 {
    return AIL_error;
+}
+
+void AIL_driver_server(void *clientval)
+{
+    AIL_DRIVER *drvr = clientval;
+
+    // Disallow re-entrant calls and interrupts, switch to local stack
+    if (AIL_serve_entry) return;
+    AIL_serve_entry = 1;
+    AIL_serve_flags = AIL_disable_interrupts();
+
+    // call driver - this timer is enabled only if the driver requested such calls
+    AIL_call_driver(drvr, DRV_SERVE, NULL, NULL);
+
+    // restore stack and interrupt status
+    AIL_restore_interrupts(AIL_serve_flags);
+    AIL_serve_entry = 0;
 }
 
 int32_t AIL2OAL_API_read_INI(AIL_INI *ini, char *fname)
@@ -260,6 +277,7 @@ int32_t AIL2OAL_API_read_INI(AIL_INI *ini, char *fname)
 AIL_DRIVER *AIL2OAL_API_install_driver(const uint8_t *driver_image, uint32_t n_bytes)
 {
     AIL_DRIVER *drvr;
+    int32_t i;
 
     drvr = AIL_MEM_alloc_lock(sizeof(*drvr));
     if (drvr == NULL) {
@@ -299,7 +317,58 @@ AIL_DRIVER *AIL2OAL_API_install_driver(const uint8_t *driver_image, uint32_t n_b
         return NULL;
     }
 
-    return drvr;
+    // Add driver to list
+    for (i=0; i < AIL_MAX_DRVRS; i++)
+    {
+        if (AIL_driver[i] != NULL)
+            continue;
+        AIL_driver[i] = drvr;
+        drvr->VHDR->driver_num = i;
+        break;
+    }
+
+    if (i == AIL_MAX_DRVRS) {
+        AIL_set_error("Out of driver handles.");
+        AIL_MEM_free_DOS(drvr->buf, drvr->seg, drvr->sel);
+        AIL_MEM_free_lock(drvr, sizeof(*drvr));
+        return NULL;
+    }
+
+    // Initialize driver variables
+    drvr->VHDR->busy = 0;
+    drvr->initialized = 0;
+    drvr->PM_ISR = -1;
+
+    // Link driver into INT 66H chain after current ISR
+    drvr->VHDR->prev_ISR = (uintptr_t)AIL_get_real_vect(0x66);
+
+    AIL_set_real_vect(0x66, (void *)(drvr->VHDR->this_ISR + drvr->seg));
+
+    // Initialize destructor vector and high-level descriptor to NULL
+    drvr->destructor = NULL;
+    drvr->descriptor = NULL;
+
+    // Call initialization function
+    AIL_call_driver(drvr, DRV_INIT, NULL, NULL);
+
+    // Allocate periodic service timer, if requested
+    if (drvr->VHDR->service_rate <= 0) {
+        drvr->server = -1;
+    } else {
+        drvr->server = AIL_register_timer(AIL_driver_server);
+        if (drvr->server == -1) {
+            AIL_set_error("Out of timer handles.");
+            AIL_set_real_vect(0x66, (void *)(drvr->VHDR->prev_ISR));
+            AIL_MEM_free_DOS(drvr->buf, drvr->seg, drvr->sel);
+            AIL_MEM_free_lock(drvr, sizeof(*drvr));
+            return NULL;
+        }
+        AIL_set_timer_user(drvr->server, drvr);
+        AIL_set_timer_frequency(drvr->server, drvr->VHDR->service_rate);
+        AIL_start_timer(drvr->server);
+    }
+
+   return drvr;
 }
 
 void AIL2OAL_API_uninstall_driver(AIL_DRIVER *drvr)
@@ -459,8 +528,8 @@ void AIL2OAL_end(void)
     AIL_vmm_unlock(AIL_preference, sizeof(AIL_preference));
     AIL_vmm_unlock(AIL_error, sizeof(AIL_error));
     AIL_vmm_unlock(&AIL_last_IO_attempt, sizeof(AIL_last_IO_attempt));
-    AIL_vmm_unlock(&AIL_entry, sizeof(AIL_entry));
-    AIL_vmm_unlock(&AIL_flags, sizeof(AIL_flags));
+    AIL_vmm_unlock(&AIL_serve_entry, sizeof(AIL_serve_entry));
+    AIL_vmm_unlock(&AIL_serve_flags, sizeof(AIL_serve_flags));
 
     AIL_use_locked = 0;
 }

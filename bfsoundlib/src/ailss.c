@@ -359,6 +359,53 @@ uint32_t AIL2OAL_API_sample_status(SNDSAMPLE *s)
     return s->status;
 }
 
+/** Get double-buffer playback status for sample.
+ *
+ * @return Gives one of:
+ *   0: Buffer 0 is ready to be filled (buffer 1 or neither buffer playing),
+ *   1: Buffer 1 is ready to be filled (buffer 0 playing),
+ *  -1: Both buffers are already full.
+ */
+int32_t AIL2OAL_API_sample_buffer_ready(SNDSAMPLE *s)
+{
+    if (s == NULL)
+        return -1;
+
+    // For first two calls after sample initialization, return 0 and 1,
+    // respectively
+    //
+    // This allows the application to "prime" the buffers for continued
+    // playback
+    switch (s->last_buffer)
+    {
+    case -2:
+        // First call after AIL_init_sample() must clear second buffer's
+        // "done" flag to permit buffer-switching
+        s->done[1] = 0;
+
+        // Set up to load buffer 0 this call, and "bootstrap" buffer 1 at
+        // next call
+        s->last_buffer = -1;
+        return 0;
+
+    case -1:
+        // Return 1 to force load of second buffer immediately
+        // Subsequent calls should operate on alternating buffers
+        s->last_buffer = s->current_buffer;
+        return 1;
+    }
+
+    // If buffer has not switched since last call
+    if (s->last_buffer == s->current_buffer)
+        return -1;
+
+    // New current_buffer exists -- set last_buffer equal to
+    // current_buffer and return exhausted buffer
+    s->last_buffer = s->current_buffer;
+
+    return (s->current_buffer ^ 1);
+}
+
 /** Process .VOC file block.
  *
  * Called by .VOC initialization code and as end-of-sample callback

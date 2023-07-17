@@ -379,6 +379,23 @@ uint32_t AIL_sample_status(SNDSAMPLE *s)
     return status;
 }
 
+int32_t AIL_sample_buffer_ready(SNDSAMPLE *s)
+{
+    int32_t bufstat;
+
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s(0x%p)\n", __func__, s);
+
+    bufstat = AIL2OAL_API_sample_buffer_ready(s);
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Result = %d\n", bufstat);
+    AIL_indent--;
+
+    return bufstat;
+}
+
 SNDSAMPLE *AIL_allocate_sample_handle(DIG_DRIVER *dig)
 {
     SNDSAMPLE *s;

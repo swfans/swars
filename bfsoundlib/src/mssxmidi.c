@@ -1011,13 +1011,6 @@ int32_t XMI_playback_update(SNDSEQUENCE *seq)
 void XMI_serve(void *clientval)
 {
     MDI_DRIVER *mdidrv = clientval;
-#if 0
-    asm volatile (
-      "push %0\n"
-      "call ASM_XMI_serve\n"
-      "add $0x4, %%esp\n"
-        :  : "g" (mdidrv));
-#endif
     SNDSEQUENCE *seq;
     int32_t n, sequence_done;
 

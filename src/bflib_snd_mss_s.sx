@@ -548,7 +548,7 @@ GLOBAL_FUNC (MSSLOWSOUNDCHECK)	/* 0xfc210 */
 	jump_fc23c:
 		mov    0x38(%esi),%edi
 		push   %edi
-		call   AIL_sample_buffer_ready
+		call   ac_AIL_sample_buffer_ready
 		add    $0x4,%esp
 		mov    %eax,%edi
 		mov    %eax,%ebp
