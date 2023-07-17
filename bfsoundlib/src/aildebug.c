@@ -34,11 +34,6 @@
 #include "mssdig.h"
 #include "mssxmidi.h"
 /******************************************************************************/
-extern uint16_t AIL_debug;
-extern uint16_t AIL_sys_debug;
-extern FILE *AIL_debugfile;
-extern uint32_t AIL_indent;
-
 static long long tmcount_start = 0;
 
 int32_t AIL_startup(void)

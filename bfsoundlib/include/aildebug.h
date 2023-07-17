@@ -26,6 +26,11 @@
 extern "C" {
 #endif
 /******************************************************************************/
+extern uint16_t AIL_debug;
+extern uint16_t AIL_sys_debug;
+extern FILE *AIL_debugfile;
+extern uint32_t AIL_indent;
+/******************************************************************************/
 
 /** Initialize MSS and prepares for the installation and use of sound drivers.
  */
