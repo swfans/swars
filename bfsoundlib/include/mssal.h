@@ -319,6 +319,10 @@ typedef void (*AILBEATCB) (MDI_DRIVER *, SNDSEQUENCE *, int32_t, int32_t);
  */
 typedef int32_t (*AILEVENTCB) (MDI_DRIVER *, SNDSEQUENCE *,int32_t, int32_t, int32_t);
 
+/** XMIDItrigger callback function type.
+ */
+typedef void (*AILTRIGGERCB) (SNDSEQUENCE *, int32_t, int32_t);
+
 /** Sound card hardware I/O parameters structure.
  *
  * Originally named `IO_PARMS`. This less generic name helps when analyzing old code.
@@ -444,8 +448,8 @@ struct SNDSAMPLE {
   AILSAMPLECB SOB;                           /**< offs=0x848 Start-of-block callback function */
   AILSAMPLECB EOB;                           /**< offs=0x84C End-of-buffer callback function */
   AILSAMPLECB EOS;                           /**< offs=0x850 End-of-sample callback function */
-  int32_t user_data[8];                      /**< offs=0x854 Miscellaneous user data */
-  int32_t system_data[8];                    /**< offs=0x874 Miscellaneous system data */
+  uintptr_t user_data[8];                    /**< offs=0x854 Miscellaneous user data */
+  uintptr_t system_data[8];                  /**< offs=0x874 Miscellaneous system data */
 };
 
 struct AILSOUNDINFO {
@@ -499,7 +503,7 @@ struct SNDSEQUENCE {
     uint8_t *EVNT_ptr;                       /**< offset=20  Current event pointer */
     uint8_t *ICA;                            /**< offset=24  Indirect Controller Array */
     void *prefix_callback;                   /**< offset=28  */
-    void *trigger_callback;                  /**< offset=32  */
+    AILTRIGGERCB trigger_callback;           /**< offset=32  XMIDI Callback Trigger handler */
     AILBEATCB beat_callback;                 /**< offset=36  XMIDI beat/bar change handler */
     AILSEQUENCECB EOS;                       /**< offset=40  End-of-sequence callback function */
     int32_t loop_count;                      /**< offset=44  */
@@ -528,8 +532,8 @@ struct SNDSEQUENCE {
     int32_t note_chan[32];                   /**< offset=1368 */
     int32_t note_num[32];                    /**< offset=1496 */
     int32_t note_time[32];                   /**< offset=1624 */
-    int32_t user_data[8];                    /**< offset=1752 */
-    int32_t system_data[8];                  /**< offset=1784 */
+    uintptr_t user_data[8];                  /**< offset=1752 */
+    uintptr_t system_data[8];                /**< offset=1784 */
 };
 
 /** Standard MSS Vendor Device Interface driver header.

@@ -65,6 +65,14 @@ uint32_t AIL2OAL_API_sequence_status(SNDSEQUENCE *seq);
 
 int32_t AIL2OAL_API_sequence_loop_count(SNDSEQUENCE *seq);
 
+AILTRIGGERCB AIL2OAL_API_register_trigger_callback(SNDSEQUENCE *seq, AILTRIGGERCB callback);
+AILSEQUENCECB AIL2OAL_API_register_sequence_callback(SNDSEQUENCE *seq, AILSEQUENCECB callback);
+AILBEATCB AIL2OAL_API_register_beat_callback(SNDSEQUENCE *seq, AILBEATCB callback);
+AILEVENTCB AIL2OAL_API_register_event_callback(MDI_DRIVER *mdidrv, AILEVENTCB callback);
+
+void AIL2OAL_API_set_sequence_user_data(SNDSEQUENCE *seq, uint32_t index, intptr_t value);
+intptr_t AIL2OAL_API_sequence_user_data(SNDSEQUENCE *seq, uint32_t index);
+
 void AIL2OAL_API_send_channel_voice_message(MDI_DRIVER *mdidrv, SNDSEQUENCE *seq,
         int32_t status, int32_t data_1, int32_t data_2);
 

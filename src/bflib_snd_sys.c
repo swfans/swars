@@ -71,6 +71,16 @@ extern char SoundDataPath[144];
 extern DIG_DRIVER *SoundDriver;
 extern TbBool SoundAble;
 extern SNDSEQUENCE *SongHandle;
+extern ushort CurrentTempo;
+extern sbyte CurrentDangerMusicFadeDirection;
+extern ubyte DangerMusicFadeActive;
+extern ubyte DangerMusicAble;
+extern ubyte DangerMusicVolume;
+extern sbyte DangerMusicVolumeChange; // = -1;
+extern HSNDTIMER DangerMusicFadeHandle;
+extern TbBool DisableDangerMusic;
+extern ubyte data_1e5edc[16];
+
 extern SNDSAMPLE *sample_handle;
 extern int32_t music_allocated;
 extern int32_t CurrentMusicMasterVolume;
@@ -1150,6 +1160,83 @@ void InitMusic(void)
     SoundProgressLog(SoundProgressMessage);
     MusicInstalled = 1;
     SetMusicMasterVolume(CurrentMusicMasterVolume);
+}
+
+void cb_get_trigger_info(SNDSEQUENCE *seq, int32_t log, int32_t data)
+{
+    if (data == 0)
+    {
+        DangerMusicAble = 1;
+        if (DisableDangerMusic) {
+            AIL_send_channel_voice_message(MusicDriver, SongHandle, log | 0xB0, 107, 127);
+            DangerMusicAble = 0;
+        } else {
+            AIL_send_channel_voice_message(MusicDriver, SongHandle, log | 0xB0, 11, 0);
+            data_1e5edc[log] = 1;
+        }
+    }
+    if (data == 1)
+    {
+        AIL_stop_sequence(SongHandle);
+        AIL_send_channel_voice_message(MusicDriver, SongHandle, log | 0xB0, 0, 1);
+        AIL_resume_sequence(SongHandle);
+    }
+}
+
+void StartMusic(int songNo, ubyte volume)
+{
+    int i;
+
+    if (!MusicInstalled || !MusicAble)
+        return;
+    if (!MusicActive)
+        return;
+    if (songNo > NumberOfSongs) {
+        return;
+    }
+    if (SongCurrentlyPlaying == songNo)
+        return;
+
+    if (DangerMusicFadeActive)
+        AIL_release_timer_handle(DangerMusicFadeHandle);
+
+    DangerMusicAble = 0;
+    DangerMusicFadeActive = 0;
+    CurrentDangerMusicFadeDirection = 1;
+    DangerMusicVolume = 0;
+    DangerMusicVolumeChange = -1;
+
+    if (SongCurrentlyPlaying != 0)
+    {
+        if (AIL_sequence_status(SongHandle) != SNDSEQ_DONE) {
+            AIL_stop_sequence(SongHandle);
+            AIL_end_sequence(SongHandle);
+        }
+        SongCurrentlyPlaying = 0;
+    }
+
+    AIL_init_sequence(SongHandle, BfMusic[songNo].DataBeg, 0);
+    AIL_register_trigger_callback(SongHandle, cb_get_trigger_info);
+
+    for (i = 0; i < 16; i++)
+    {
+        data_1e5edc[i] = 0;
+        AIL_send_channel_voice_message(MusicDriver, SongHandle, i | 0xB0, 0, 0);
+        AIL_send_channel_voice_message(MusicDriver, SongHandle, i | 0xB0, 7, 0);
+        AIL_send_channel_voice_message(MusicDriver, SongHandle, i | 0xE0, 0, 64);
+        AIL_send_channel_voice_message(MusicDriver, SongHandle, i | 0xB0, 11, 127);
+        AIL_send_channel_voice_message(MusicDriver, SongHandle, i | 0xB0, 1, 0);
+        AIL_send_channel_voice_message(MusicDriver, SongHandle, i | 0xB0, 91, 0);
+        AIL_send_channel_voice_message(MusicDriver, SongHandle, i | 0xB0, 93, 0);
+        AIL_send_channel_voice_message(MusicDriver, SongHandle, i | 0xB0, 107, 0);
+    }
+
+    if (volume < 127) {
+        AIL_set_sequence_volume(SongHandle, volume, 0);
+    }
+    AIL_start_sequence(SongHandle);
+    SongCurrentlyPlaying = songNo;
+    CurrentTempo = 100;
 }
 
 TbBool allocate_buffers(void)

@@ -438,7 +438,7 @@ void AIL_init_sample(SNDSAMPLE *s)
     AIL_indent--;
 }
 
-void AIL_set_sample_user_data(SNDSAMPLE *s, uint32_t index, int32_t value)
+void AIL_set_sample_user_data(SNDSAMPLE *s, uint32_t index, intptr_t value)
 {
     AIL_indent++;
     if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
@@ -691,6 +691,104 @@ void AIL_sequence_position(SNDSEQUENCE *seq, int32_t *beat, int32_t *measure)
     if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
         fprintf(AIL_debugfile, "Results = 0x%X, 0x%X\n", *beat, *measure);
     AIL_indent--;
+}
+
+AILTRIGGERCB AIL_register_trigger_callback(SNDSEQUENCE *seq, AILTRIGGERCB callback)
+{
+    AILTRIGGERCB result;
+
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s(0x%p, 0x%p)\n", __func__, seq, callback);
+
+    result = AIL2OAL_API_register_trigger_callback(seq, callback);
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Result = 0x%p\n", result);
+    AIL_indent--;
+
+    return result;
+}
+
+AILSEQUENCECB AIL_register_sequence_callback(SNDSEQUENCE *seq, AILSEQUENCECB callback)
+{
+    AILSEQUENCECB result;
+
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s(0x%p, 0x%p)\n", __func__, seq, callback);
+
+    result = AIL2OAL_API_register_sequence_callback(seq, callback);
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Result = 0x%p\n", result);
+    AIL_indent--;
+
+    return result;
+}
+
+AILBEATCB AIL_register_beat_callback(SNDSEQUENCE *seq, AILBEATCB callback)
+{
+    AILBEATCB result;
+
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s(0x%p, 0x%p)\n", __func__, seq, callback);
+
+    result = AIL2OAL_API_register_beat_callback(seq, callback);
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Result = 0x%p\n", result);
+    AIL_indent--;
+
+    return result;
+}
+
+AILEVENTCB AIL_register_event_callback(MDI_DRIVER *mdidrv, AILEVENTCB callback)
+{
+    AILEVENTCB result;
+
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s(0x%p, 0x%p)\n", __func__, mdidrv, callback);
+
+    result = AIL2OAL_API_register_event_callback(mdidrv, callback);
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Result = 0x%p\n", result);
+    AIL_indent--;
+
+    return result;
+}
+
+void AIL_set_sequence_user_data(SNDSEQUENCE *seq, uint32_t index, intptr_t value)
+{
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s(0x%p, %d, %d)\n", __func__, seq, index, value);
+
+    AIL2OAL_API_set_sequence_user_data(seq, index, value);
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Finished\n");
+    AIL_indent--;
+}
+
+intptr_t AIL_sequence_user_data(SNDSEQUENCE *seq, uint32_t index)
+{
+    intptr_t result;
+
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s(0x%p, %d)\n", __func__, seq, index);
+
+    result = AIL2OAL_API_sequence_user_data(seq, index);
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Result = 0x%X\n", result);
+    AIL_indent--;
+
+    return result;
 }
 
 void AIL_delay(int32_t intervals)

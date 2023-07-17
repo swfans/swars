@@ -1549,7 +1549,7 @@ GLOBAL_FUNC (AIL_branch_index)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (AIL_register_trigger_callback)
+GLOBAL_FUNC (ASM_AIL_register_trigger_callback)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %esi
@@ -1592,7 +1592,7 @@ GLOBAL_FUNC (AIL_register_trigger_callback)
 		mov    0x18(%esp),%edx
 		push   %edx
 		push   %ebx
-		call   _AIL_API_register_trigger_callback
+		call   ASM_AIL_API_register_trigger_callback
 		mov    AIL_debug,%ecx
 		mov    %eax,%ebx
 		add    $0x8,%esp
@@ -1863,7 +1863,7 @@ GLOBAL_FUNC (AIL_map_sequence_channel)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (AIL_send_channel_voice_message)
+GLOBAL_FUNC (ASM_AIL_send_channel_voice_message)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %esi
@@ -1919,7 +1919,7 @@ GLOBAL_FUNC (AIL_send_channel_voice_message)
 		push   %eax
 		mov    0x24(%esp),%edx
 		push   %edx
-		call   _AIL_API_send_channel_voice_message
+		call   ASM_AIL_API_send_channel_voice_message
 		mov    AIL_indent,%ebx
 		dec    %ebx
 		add    $0x14,%esp
@@ -9186,7 +9186,7 @@ _AIL_API_branch_index:	/* 0x117170 */
 
 
 /*----------------------------------------------------------------*/
-_AIL_API_register_trigger_callback:	/* 0x117220 */
+ASM_AIL_API_register_trigger_callback:	/* 0x117220 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		mov    0x8(%esp),%eax
@@ -9477,7 +9477,7 @@ _AIL_API_map_sequence_channel:	/* 0x1175C0 */
 
 
 /*----------------------------------------------------------------*/
-_AIL_API_send_channel_voice_message:	/* 0x117620 */
+ASM_AIL_API_send_channel_voice_message:	/* 0x117620 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %esi

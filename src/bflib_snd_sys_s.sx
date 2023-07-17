@@ -162,7 +162,7 @@ GLOBAL_FUNC (ASM_InitAudio)
 		mov    0x17(%edx),%al
 		cmp    $0x1,%eax
 		jne    jump_eb906
-		movb   $0x1,DisableDangerMusic
+		movb   $0x1,EXPORT_SYMBOL(DisableDangerMusic)
 	jump_eb906:
 		xor    %eax,%eax
 		mov    0x18(%edx),%al
@@ -1913,7 +1913,7 @@ GLOBAL_FUNC (DangerMusicFadeTick)
 		je     jump_ef11b
 		cmpb   $0x0,data_1e5eac
 		je     jump_ef06c
-		mov    DangerMusicFadeHandle,%ecx
+		mov    EXPORT_SYMBOL(DangerMusicFadeHandle),%ecx
 		push   %ecx
 		call   ac_AIL_release_timer_handle
 		add    $0x4,%esp
@@ -1923,40 +1923,40 @@ GLOBAL_FUNC (DangerMusicFadeTick)
 		ret
 	jump_ef06c:
 		xor    %eax,%eax
-		mov    DangerMusicVolume,%al
+		mov    EXPORT_SYMBOL(DangerMusicVolume),%al
 		cmp    $0x7f,%eax
 		jne    jump_ef097
 		xor    %eax,%eax
-		mov    CurrentDangerMusicFadeDirection,%al
+		mov    EXPORT_SYMBOL(CurrentDangerMusicFadeDirection),%al
 		cmp    $0x2,%eax
 		jne    jump_ef097
 		movb   $0x1,data_1e5eac
 		xor    %cl,%cl
-		mov    %cl,DangerMusicFadeActive
+		mov    %cl,EXPORT_SYMBOL(DangerMusicFadeActive)
 		pop    %edi
 		pop    %esi
 		pop    %ebx
 		ret
 	jump_ef097:
 		xor    %eax,%eax
-		mov    DangerMusicVolume,%al
+		mov    EXPORT_SYMBOL(DangerMusicVolume),%al
 		test   %eax,%eax
 		jne    jump_ef0bf
-		mov    CurrentDangerMusicFadeDirection,%al
+		mov    EXPORT_SYMBOL(CurrentDangerMusicFadeDirection),%al
 		cmp    $0x1,%eax
 		jne    jump_ef0bf
 		movb   $0x1,data_1e5eac
 		xor    %bl,%bl
-		mov    %bl,DangerMusicFadeActive
+		mov    %bl,EXPORT_SYMBOL(DangerMusicFadeActive)
 		pop    %edi
 		pop    %esi
 		pop    %ebx
 		ret
 	jump_ef0bf:
-		cmpb   $0x0,DangerMusicFadeActive
+		cmpb   $0x0,EXPORT_SYMBOL(DangerMusicFadeActive)
 		je     jump_ef146
-		mov    DangerMusicVolumeChange,%al
-		add    %al,DangerMusicVolume
+		mov    EXPORT_SYMBOL(DangerMusicVolumeChange),%al
+		add    %al,EXPORT_SYMBOL(DangerMusicVolume)
 		xor    %bl,%bl
 		jmp    jump_ef0dd
 	jump_ef0db:
@@ -1966,10 +1966,10 @@ GLOBAL_FUNC (DangerMusicFadeTick)
 		mov    %bl,%al
 		cmp    $0x10,%eax
 		jge    jump_ef146
-		cmpb   $0x0,data_1e5edc(%eax)
+		cmpb   $0x0,EXPORT_SYMBOL(data_1e5edc)(%eax)
 		je     jump_ef0db
 		xor    %eax,%eax
-		mov    DangerMusicVolume,%al
+		mov    EXPORT_SYMBOL(DangerMusicVolume),%al
 		push   %eax
 		mov    %bl,%al
 		push   $0xb
@@ -1980,19 +1980,19 @@ GLOBAL_FUNC (DangerMusicFadeTick)
 		push   %esi
 		mov    MusicDriver,%edi
 		push   %edi
-		call   AIL_send_channel_voice_message
+		call   ac_AIL_send_channel_voice_message
 		add    $0x14,%esp
 		jmp    jump_ef0db
 	jump_ef11b:
-		mov    DangerMusicFadeHandle,%ebx
+		mov    EXPORT_SYMBOL(DangerMusicFadeHandle),%ebx
 		push   %ebx
 		call   ac_AIL_release_timer_handle
 		add    $0x4,%esp
 		xor    %bl,%bl
-		mov    %bl,DangerMusicFadeActive
-		movb   $0x1,CurrentDangerMusicFadeDirection
-		mov    %bl,DangerMusicVolume
-		movb   $0xff,DangerMusicVolumeChange
+		mov    %bl,EXPORT_SYMBOL(DangerMusicFadeActive)
+		movb   $0x1,EXPORT_SYMBOL(CurrentDangerMusicFadeDirection)
+		mov    %bl,EXPORT_SYMBOL(DangerMusicVolume)
+		movb   $0xff,EXPORT_SYMBOL(DangerMusicVolumeChange)
 	jump_ef146:
 		pop    %edi
 		pop    %esi
@@ -2009,9 +2009,9 @@ GLOBAL_FUNC (DangerMusicFadeSwitch)
 		push   %edi
 		mov    %al,%bl
 		mov    %dl,%bh
-		cmpb   $0x0,DisableDangerMusic
+		cmpb   $0x0,EXPORT_SYMBOL(DisableDangerMusic)
 		jne    jump_ef27c
-		cmpb   $0x0,DangerMusicAble
+		cmpb   $0x0,EXPORT_SYMBOL(DangerMusicAble)
 		je     jump_ef27c
 		cmpb   $0x0,EXPORT_SYMBOL(MusicInstalled)
 		je     jump_ef27c
@@ -2028,21 +2028,21 @@ GLOBAL_FUNC (DangerMusicFadeSwitch)
 		cmp    $0x2,%eax
 		je     jump_ef27c
 		xor    %edx,%edx
-		mov    CurrentDangerMusicFadeDirection,%dl
+		mov    EXPORT_SYMBOL(CurrentDangerMusicFadeDirection),%dl
 		xor    %eax,%eax
 		mov    %bl,%al
 		cmp    %eax,%edx
 		je     jump_ef27c
-		cmpb   $0x0,DangerMusicFadeActive
+		cmpb   $0x0,EXPORT_SYMBOL(DangerMusicFadeActive)
 		je     jump_ef1eb
-		mov    DangerMusicFadeHandle,%ecx
+		mov    EXPORT_SYMBOL(DangerMusicFadeHandle),%ecx
 		push   %ecx
 		call   ac_AIL_release_timer_handle
 		add    $0x4,%esp
 	jump_ef1eb:
-		mov    %bl,CurrentDangerMusicFadeDirection
-		negb   DangerMusicVolumeChange
-		movb   $0x1,DangerMusicFadeActive
+		mov    %bl,EXPORT_SYMBOL(CurrentDangerMusicFadeDirection)
+		negb   EXPORT_SYMBOL(DangerMusicVolumeChange)
+		movb   $0x1,EXPORT_SYMBOL(DangerMusicFadeActive)
 		mov    %bh,%bl
 		and    $0xff,%ebx
 		cmp    $0x4,%ebx
@@ -2054,7 +2054,7 @@ GLOBAL_FUNC (DangerMusicFadeSwitch)
 		mov    %cl,data_1e5eac
 		call   ac_AIL_register_timer
 		mov    %eax,%edx
-		mov    %eax,DangerMusicFadeHandle
+		mov    %eax,EXPORT_SYMBOL(DangerMusicFadeHandle)
 		mov    %ebx,%eax
 		shl    $0x4,%eax
 		sub    %ebx,%eax
@@ -2064,7 +2064,7 @@ GLOBAL_FUNC (DangerMusicFadeSwitch)
 		push   %edx
 		call   ac_AIL_set_timer_frequency
 		add    $0x8,%esp
-		mov    DangerMusicFadeHandle,%edi
+		mov    EXPORT_SYMBOL(DangerMusicFadeHandle),%edi
 		push   %edi
 		jmp    jump_ef274
 	jump_ef248:
@@ -2075,10 +2075,10 @@ GLOBAL_FUNC (DangerMusicFadeSwitch)
 		add    $0x4,%esp
 		push   $0x1e
 		push   %eax
-		mov    %eax,DangerMusicFadeHandle
+		mov    %eax,EXPORT_SYMBOL(DangerMusicFadeHandle)
 		call   ac_AIL_set_timer_frequency
 		add    $0x8,%esp
-		mov    DangerMusicFadeHandle,%esi
+		mov    EXPORT_SYMBOL(DangerMusicFadeHandle),%esi
 		push   %esi
 	jump_ef274:
 		call   ac_AIL_start_timer
@@ -2104,7 +2104,7 @@ GLOBAL_FUNC (SetSampleTempo)
 		cmpb   $0x0,MusicActive
 		je     jump_ef2dd
 		xor    %eax,%eax
-		mov    CurrentTempo,%ax
+		mov    EXPORT_SYMBOL(CurrentTempo),%ax
 		cmp    %ebx,%eax
 		je     jump_ef2dd
 		cmpw   $0x0,EXPORT_SYMBOL(SongCurrentlyPlaying)
@@ -2115,7 +2115,7 @@ GLOBAL_FUNC (SetSampleTempo)
 		push   %edx
 		call   ac_AIL_set_sequence_tempo
 		add    $0xc,%esp
-		mov    %bx,CurrentTempo
+		mov    %bx,EXPORT_SYMBOL(CurrentTempo)
 	jump_ef2dd:
 		pop    %ecx
 		pop    %ebx
@@ -2135,7 +2135,7 @@ GLOBAL_FUNC (SetSampleTempoNormal)
 		cmpb   $0x0,MusicActive
 		je     jump_ef334
 		xor    %eax,%eax
-		mov    CurrentTempo,%ax
+		mov    EXPORT_SYMBOL(CurrentTempo),%ax
 		cmp    $0x64,%eax
 		je     jump_ef334
 		cmpw   $0x0,EXPORT_SYMBOL(SongCurrentlyPlaying)
@@ -2147,7 +2147,7 @@ GLOBAL_FUNC (SetSampleTempoNormal)
 		mov    $0x64,%ebx
 		call   ac_AIL_set_sequence_tempo
 		add    $0xc,%esp
-		mov    %bx,CurrentTempo
+		mov    %bx,EXPORT_SYMBOL(CurrentTempo)
 	jump_ef334:
 		pop    %edx
 		pop    %ecx
@@ -2360,9 +2360,9 @@ cb_get_trigger_info:	/* 0x0F0340 */
 		mov    0x18(%esp),%ebx
 		cmpl   $0x0,0x1c(%esp)
 		jne    jump_f03ac
-		movb   $0x1,DangerMusicAble
+		movb   $0x1,EXPORT_SYMBOL(DangerMusicAble)
 		mov    %ebx,%eax
-		mov    DisableDangerMusic,%dl
+		mov    EXPORT_SYMBOL(DisableDangerMusic),%dl
 		or     $0xb0,%al
 		test   %dl,%dl
 		je     jump_f0389
@@ -2373,10 +2373,10 @@ cb_get_trigger_info:	/* 0x0F0340 */
 		push   %edi
 		mov    MusicDriver,%ebp
 		push   %ebp
-		call   AIL_send_channel_voice_message
+		call   ac_AIL_send_channel_voice_message
 		add    $0x14,%esp
 		xor    %cl,%cl
-		mov    %cl,DangerMusicAble
+		mov    %cl,EXPORT_SYMBOL(DangerMusicAble)
 		jmp    jump_f03ac
 	jump_f0389:
 		push   $0x0
@@ -2386,10 +2386,10 @@ cb_get_trigger_info:	/* 0x0F0340 */
 		push   %ecx
 		mov    MusicDriver,%esi
 		push   %esi
-		call   AIL_send_channel_voice_message
+		call   ac_AIL_send_channel_voice_message
 		mov    $0x1,%dh
 		add    $0x14,%esp
-		mov    %dh,data_1e5edc(%ebx)
+		mov    %dh,EXPORT_SYMBOL(data_1e5edc)(%ebx)
 	jump_f03ac:
 		cmpl   $0x1,0x1c(%esp)
 		jne    jump_f03ef
@@ -2405,7 +2405,7 @@ cb_get_trigger_info:	/* 0x0F0340 */
 		push   %ebx
 		mov    MusicDriver,%ecx
 		push   %ecx
-		call   AIL_send_channel_voice_message
+		call   ac_AIL_send_channel_voice_message
 		add    $0x14,%esp
 		mov    SongHandle,%esi
 		push   %esi
@@ -2415,200 +2415,6 @@ cb_get_trigger_info:	/* 0x0F0340 */
 		pop    %ebp
 		pop    %edi
 		pop    %esi
-		pop    %ebx
-		ret
-
-
-/*----------------------------------------------------------------*/
-/* void StartMusic(int songNo, ubyte volume)
- */
-GLOBAL_FUNC (StartMusic_)
-/*----------------------------------------------------------------*/
-		push   %ebx
-		push   %ecx
-		push   %esi
-		push   %edi
-		push   %ebp
-		sub    $0x8,%esp
-		mov    %eax,%esi
-		mov    %dl,(%esp)
-		cmpb   $0x0,EXPORT_SYMBOL(MusicInstalled)
-		je     jump_f0656
-		cmpb   $0x0,EXPORT_SYMBOL(MusicAble)
-		je     jump_f0656
-		cmpb   $0x0,MusicActive
-		je     jump_f0656
-		xor    %ebx,%ebx
-		movswl %si,%eax
-		mov    EXPORT_SYMBOL(NumberOfSongs),%bx
-		cmp    %ebx,%eax
-		jg     jump_f0656
-		xor    %ebx,%ebx
-		mov    EXPORT_SYMBOL(SongCurrentlyPlaying),%bx
-		cmp    %eax,%ebx
-		je     jump_f0656
-		cmpb   $0x0,DangerMusicFadeActive
-		je     jump_f0471
-		mov    DangerMusicFadeHandle,%edx
-		push   %edx
-		call   ac_AIL_release_timer_handle
-		add    $0x4,%esp
-	jump_f0471:
-		xor    %bh,%bh
-		mov    %bh,DangerMusicAble
-		mov    %bh,DangerMusicFadeActive
-		movb   $0x1,CurrentDangerMusicFadeDirection
-		mov    %bh,DangerMusicVolume
-		movb   $0xff,DangerMusicVolumeChange
-		cmpw   $0x0,EXPORT_SYMBOL(SongCurrentlyPlaying)
-		je     jump_f04d8
-		mov    SongHandle,%ebx
-		push   %ebx
-		call   ac_AIL_sequence_status
-		add    $0x4,%esp
-		cmp    $0x2,%eax
-		je     jump_f04cf
-		mov    SongHandle,%ecx
-		push   %ecx
-		call   ac_AIL_stop_sequence
-		add    $0x4,%esp
-		mov    SongHandle,%edi
-		push   %edi
-		call   ac_AIL_end_sequence
-		add    $0x4,%esp
-	jump_f04cf:
-		xor    %ebx,%ebx
-		mov    %bx,EXPORT_SYMBOL(SongCurrentlyPlaying)
-	jump_f04d8:
-		movswl %si,%ebx
-		mov    BfMusic,%eax
-		shl    $0x5,%ebx
-		push   $0x0
-		mov    0x12(%ebx,%eax,1),%ebp
-		push   %ebp
-		mov    SongHandle,%eax
-		push   %eax
-		call   ac_AIL_init_sequence
-		add    $0xc,%esp
-		push   $cb_get_trigger_info
-		mov    SongHandle,%edx
-		push   %edx
-		call   AIL_register_trigger_callback
-		add    $0x8,%esp
-		xor    %dl,%dl
-		mov    %dl,0x4(%esp)
-		jmp    jump_f0609
-	jump_f0517:
-		xor    %dh,%dh
-		push   $0x0
-		mov    %dh,data_1e5edc(%eax)
-		or     $0xb0,%al
-		xor    %ebx,%ebx
-		push   $0x0
-		mov    %al,%bl
-		push   %ebx
-		mov    SongHandle,%edi
-		push   %edi
-		mov    MusicDriver,%ebp
-		push   %ebp
-		call   AIL_send_channel_voice_message
-		add    $0x14,%esp
-		push   $0x0
-		push   $0x7
-		push   %ebx
-		mov    SongHandle,%eax
-		push   %eax
-		mov    MusicDriver,%edx
-		push   %edx
-		call   AIL_send_channel_voice_message
-		add    $0x14,%esp
-		push   $0x40
-		mov    0x8(%esp),%al
-		push   $0x0
-		or     $0xe0,%al
-		and    $0xff,%eax
-		push   %eax
-		mov    SongHandle,%ecx
-		push   %ecx
-		mov    MusicDriver,%edi
-		push   %edi
-		call   AIL_send_channel_voice_message
-		add    $0x14,%esp
-		push   $0x7f
-		push   $0xb
-		push   %ebx
-		mov    SongHandle,%ebp
-		push   %ebp
-		mov    MusicDriver,%eax
-		push   %eax
-		call   AIL_send_channel_voice_message
-		add    $0x14,%esp
-		push   $0x0
-		push   $0x1
-		push   %ebx
-		mov    SongHandle,%edx
-		push   %edx
-		mov    MusicDriver,%ecx
-		push   %ecx
-		call   AIL_send_channel_voice_message
-		add    $0x14,%esp
-		push   $0x0
-		push   $0x5b
-		push   %ebx
-		mov    SongHandle,%edi
-		push   %edi
-		mov    MusicDriver,%ebp
-		push   %ebp
-		call   AIL_send_channel_voice_message
-		add    $0x14,%esp
-		push   $0x0
-		push   $0x5d
-		push   %ebx
-		mov    SongHandle,%eax
-		push   %eax
-		mov    MusicDriver,%edx
-		push   %edx
-		call   AIL_send_channel_voice_message
-		add    $0x14,%esp
-		push   $0x0
-		push   $0x6b
-		push   %ebx
-		mov    SongHandle,%ebx
-		push   %ebx
-		mov    MusicDriver,%ecx
-		push   %ecx
-		call   AIL_send_channel_voice_message
-		add    $0x14,%esp
-		incb   0x4(%esp)
-	jump_f0609:
-		xor    %eax,%eax
-		mov    0x4(%esp),%al
-		cmp    $0x10,%eax
-		jl     jump_f0517
-		xor    %eax,%eax
-		mov    (%esp),%al
-		cmp    $0x7f,%eax
-		jge    jump_f0634
-		push   $0x0
-		push   %eax
-		mov    SongHandle,%ebx
-		push   %ebx
-		call   ac_AIL_set_sequence_volume
-		add    $0xc,%esp
-	jump_f0634:
-		mov    SongHandle,%ecx
-		push   %ecx
-		call   ac_AIL_start_sequence
-		mov    $0x64,%ecx
-		add    $0x4,%esp
-		mov    %si,EXPORT_SYMBOL(SongCurrentlyPlaying)
-		mov    %cx,CurrentTempo
-	jump_f0656:
-		add    $0x8,%esp
-		pop    %ebp
-		pop    %edi
-		pop    %esi
-		pop    %ecx
 		pop    %ebx
 		ret
 
@@ -3067,19 +2873,19 @@ GLOBAL_FUNC(ASM_StopMusic)
 		je     jump_108c5a
 		cmpw   $0x0,EXPORT_SYMBOL(SongCurrentlyPlaying)
 		je     jump_108c5a
-		cmpb   $0x0,DangerMusicFadeActive
+		cmpb   $0x0,EXPORT_SYMBOL(DangerMusicFadeActive)
 		je     jump_108bfd
-		mov    DangerMusicFadeHandle,%edx
+		mov    EXPORT_SYMBOL(DangerMusicFadeHandle),%edx
 		push   %edx
 		call   ac_AIL_release_timer_handle
 		add    $0x4,%esp
 	jump_108bfd:
 		xor    %bh,%bh
-		mov    %bh,DangerMusicAble
-		mov    %bh,DangerMusicFadeActive
-		movb   $0x1,CurrentDangerMusicFadeDirection
-		mov    %bh,DangerMusicVolume
-		movb   $0xff,DangerMusicVolumeChange
+		mov    %bh,EXPORT_SYMBOL(DangerMusicAble)
+		mov    %bh,EXPORT_SYMBOL(DangerMusicFadeActive)
+		movb   $0x1,EXPORT_SYMBOL(CurrentDangerMusicFadeDirection)
+		mov    %bh,EXPORT_SYMBOL(DangerMusicVolume)
+		movb   $0xff,EXPORT_SYMBOL(DangerMusicVolumeChange)
 		mov    SongHandle,%ebx
 		push   %ebx
 		call   ac_AIL_sequence_status
@@ -4919,9 +4725,9 @@ GLOBAL (MusicAble)
 		.byte	0x1
 GLOBAL (MusicActive)
 		.byte	0x1
-CurrentDangerMusicFadeDirection:
+GLOBAL (CurrentDangerMusicFadeDirection)
 		.byte	0x1
-DangerMusicVolumeChange:
+GLOBAL (DangerMusicVolumeChange)
 		.byte	0xff
 GLOBAL (sample_file)
 		.ascii  "\xff\xff\xff\xff"
@@ -5112,7 +4918,7 @@ GLOBAL (MusicInstalled)
 		.fill   0x2
 GLOBAL (MusicType)
 		.fill   0x6
-CurrentTempo:
+GLOBAL (CurrentTempo)
 		.short  0x0
 GLOBAL (SongCurrentlyPlaying)
 		.short  0x0
@@ -5141,9 +4947,9 @@ GLOBAL (DisableDangerMusic)
 		.byte	0x0
 GLOBAL (DangerMusicVolume)
 		.byte	0x0
-DangerMusicFadeActive:
+GLOBAL (DangerMusicFadeActive)
 		.byte	0x0
-DangerMusicAble:			/* 0x1E8C7E */
+GLOBAL (DangerMusicAble)			/* 0x1E8C7E */
 		.fill   0x6
 
 GLOBAL (MusicInstallChoice)	/* 0x1E8C84 */
@@ -5155,7 +4961,7 @@ data_1e5eac:	/* 0x1e5eac */
 		.byte	0x0
 		.align	4
 
-data_1e5edc:	/* 0x1e5edc */
+GLOBAL (data_1e5edc)	/* 0x1e5edc */
 		.fill   0x10
 
 /* sound_timer_inf sound_timer[];

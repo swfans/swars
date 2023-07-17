@@ -528,7 +528,7 @@ void AIL2OAL_API_set_sample_address(SNDSAMPLE *s, const void *start, uint32_t le
     s->len[1]   = 0;
 }
 
-void AIL2OAL_API_set_sample_user_data(SNDSAMPLE *s, uint32_t index, int32_t value)
+void AIL2OAL_API_set_sample_user_data(SNDSAMPLE *s, uint32_t index, intptr_t value)
 {
     if (s == NULL)
         return;

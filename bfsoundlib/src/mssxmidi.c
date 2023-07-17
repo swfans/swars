@@ -1597,6 +1597,69 @@ int32_t AIL2OAL_API_sequence_loop_count(SNDSEQUENCE *seq)
     return seq->loop_count;
 }
 
+AILTRIGGERCB AIL2OAL_API_register_trigger_callback(SNDSEQUENCE *seq, AILTRIGGERCB callback)
+{
+    AILTRIGGERCB old;
+
+    if (seq == NULL)
+        return NULL;
+
+    old = seq->trigger_callback;
+    seq->trigger_callback = callback;
+
+    return old;
+}
+
+AILSEQUENCECB AIL2OAL_API_register_sequence_callback(SNDSEQUENCE *seq, AILSEQUENCECB callback)
+{
+    AILSEQUENCECB old;
+
+    if (seq == NULL)
+        return NULL;
+
+    old = seq->EOS;
+    seq->EOS = callback;
+
+    return old;
+}
+
+AILBEATCB AIL2OAL_API_register_beat_callback(SNDSEQUENCE *seq, AILBEATCB callback)
+{
+    AILBEATCB old;
+
+    if (seq == NULL)
+        return NULL;
+
+    old = seq->beat_callback;
+    seq->beat_callback = callback;
+
+    return old;
+}
+
+AILEVENTCB AIL2OAL_API_register_event_callback(MDI_DRIVER *mdidrv, AILEVENTCB callback)
+{
+    AILEVENTCB old;
+
+    old = mdidrv->event_trap;
+    mdidrv->event_trap = callback;
+
+    return old;
+}
+
+void AIL2OAL_API_set_sequence_user_data(SNDSEQUENCE *seq, uint32_t index, intptr_t value)
+{
+    if (seq == NULL)
+        return;
+   seq->user_data[index] = value;
+}
+
+intptr_t AIL2OAL_API_sequence_user_data(SNDSEQUENCE *seq, uint32_t index)
+{
+    if (seq == NULL)
+        return 0;
+    return seq->user_data[index];
+}
+
 int32_t AIL2OAL_API_lock_channel(MDI_DRIVER *mdidrv)
 {
     int32_t i,j;

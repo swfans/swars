@@ -183,7 +183,7 @@ void AIL_init_sample(SNDSAMPLE *s);
  *
  * Callback functions may access the user data array at interrupt time.
  */
-void AIL_set_sample_user_data(SNDSAMPLE *s, uint32_t index, int32_t value);
+void AIL_set_sample_user_data(SNDSAMPLE *s, uint32_t index, intptr_t value);
 
 /** Set a RIB provider for a specified sample pipeline phase.
  */
@@ -337,6 +337,40 @@ int32_t AIL_MDI_driver_type(MDI_DRIVER *mdidrv);
  */
 void AIL_send_channel_voice_message(MDI_DRIVER *mdidrv, SNDSEQUENCE *seq,
         int32_t status, int32_t data_1, int32_t data_2);
+
+/** Install function handler for XMIDI Callback Trigger events.
+ */
+AILTRIGGERCB AIL_register_trigger_callback(SNDSEQUENCE *seq, AILTRIGGERCB callback);
+
+/** Install function handler for end-of-sequence callbacks.
+ */
+AILSEQUENCECB AIL_register_sequence_callback(SNDSEQUENCE *seq, AILSEQUENCECB callback);
+
+/** Install callback function handler for XMIDI beat/bar change events.
+ */
+AILBEATCB AIL_register_beat_callback(SNDSEQUENCE *seq, AILBEATCB callback);
+
+/** Install callback function handler for MIDI/XMIDI event trap.
+ */
+AILEVENTCB AIL_register_event_callback(MDI_DRIVER *mdidrv, AILEVENTCB callback);
+
+/** Set sequence user data value at specified index.
+ *
+ * Any desired value may be stored at one of eight user data words
+ * associated with a given SNDSEQUENCE
+ *
+ * Callback functions may access the user data array at interrupt time.
+ */
+void AIL_set_sequence_user_data(SNDSEQUENCE *seq, uint32_t index, intptr_t value);
+
+/** Get sequence user data value at specified index.
+ *
+ * Any desired value may be stored at one of eight user data words
+ * associated with a given SNDSEQUENCE
+ *
+ * Callback functions may access the user data array at interrupt time.
+ */
+intptr_t AIL_sequence_user_data(SNDSEQUENCE *seq, uint32_t index);
 
 /** Load, install, and initialize MIDI audio driver according to
  *  contents of MDI_INI file.
