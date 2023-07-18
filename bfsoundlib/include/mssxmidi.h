@@ -65,6 +65,8 @@ uint32_t AIL2OAL_API_sequence_status(SNDSEQUENCE *seq);
 
 int32_t AIL2OAL_API_sequence_loop_count(SNDSEQUENCE *seq);
 
+void AIL2OAL_API_branch_index(SNDSEQUENCE *seq, uint32_t marker);
+
 AILTRIGGERCB AIL2OAL_API_register_trigger_callback(SNDSEQUENCE *seq, AILTRIGGERCB callback);
 AILSEQUENCECB AIL2OAL_API_register_sequence_callback(SNDSEQUENCE *seq, AILSEQUENCECB callback);
 AILBEATCB AIL2OAL_API_register_beat_callback(SNDSEQUENCE *seq, AILBEATCB callback);
@@ -73,12 +75,24 @@ AILEVENTCB AIL2OAL_API_register_event_callback(MDI_DRIVER *mdidrv, AILEVENTCB ca
 void AIL2OAL_API_set_sequence_user_data(SNDSEQUENCE *seq, uint32_t index, intptr_t value);
 intptr_t AIL2OAL_API_sequence_user_data(SNDSEQUENCE *seq, uint32_t index);
 
+void AIL2OAL_API_map_sequence_channel(SNDSEQUENCE *seq, int32_t seq_channel, int32_t new_channel);
+
 void AIL2OAL_API_send_channel_voice_message(MDI_DRIVER *mdidrv, SNDSEQUENCE *seq,
         int32_t status, int32_t data_1, int32_t data_2);
 
 int32_t AIL2OAL_API_lock_channel(MDI_DRIVER *mdidrv);
 
 void AIL2OAL_API_release_channel(MDI_DRIVER *mdidrv, int32_t channel);
+
+/** Send MIDI channel voice message associated with a specific sequence
+ *
+ * Includes controller logging and XMIDI extensions.
+ *
+ * Warnings: ICA_enable should be 0 when calling outside XMIDI event loop
+ * May be recursively called by XMIDI controller handlers.
+ */
+void XMI_send_channel_voice_message(SNDSEQUENCE *seq, int32_t status,
+        int32_t data_1, int32_t data_2, int32_t ICA_enable);
 
 /** Timer interrupt routine for XMIDI sequencing.
  *

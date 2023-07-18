@@ -52,7 +52,7 @@ typedef struct MDI_DRIVER MDI_DRIVER;
 typedef struct SNDSAMPLE SNDSAMPLE;
 typedef struct AILSOUNDINFO AILSOUNDINFO;
 typedef struct SNDSEQUENCE SNDSEQUENCE;
-typedef struct CTRL_LOG CTRL_LOG;
+typedef struct MDI_CTRL_LOG MDI_CTRL_LOG;
 typedef struct VDI_HDR VDI_HDR;
 typedef struct VDI_CALL VDI_CALL;
 typedef struct DIG_MODE DIG_MODE;
@@ -230,13 +230,15 @@ enum AILMIDIMetaEvents {
 };
 
 /** MIDI controllers and Channel Mode messages.
- * Thedse are recognized by AIL drivers when sent with
+ * These are recognized by AIL drivers when sent with
  * MDI_EV_CONTROL events.
  */
 enum AILMIDIControlMsgs {
     MDI_CTR_GM_BANK_MSB      = 0,
     MDI_CTR_MODULATION       = 1,
-    MDI_CTR_PB_RANGE         = 6, // later reused for DATA_MSB
+    MDI_CTR_DATA_MSB         = 6,
+ /** Scale volume according to sequence's current volume setting
+   and overall driver master volume */
     MDI_CTR_PART_VOLUME      = 7,
     MDI_CTR_PANPOT           = 10,
     MDI_CTR_EXPRESSION       = 11,
@@ -246,10 +248,43 @@ enum AILMIDIControlMsgs {
     MDI_CTR_CHORUS           = 93,
     MDI_CTR_RPN_LSB          = 100,
     MDI_CTR_RPN_MSB          = 101,
+    MDI_CTR_SYSEX_BYTE       = 105,
+    /** Control bender range by first sending RPN 0 0. */
+    MDI_CTR_PB_RANGE         = 106,
     MDI_CTR_CHAN_MUTE        = 107,
+    /** Override value of next controller event with value from user
+      callback function. */
+    MDI_CTR_CALLBACK_PFX     = 108,
+    /** Branch immediately to specified Sequence Branch Index point */
+    MDI_CTR_SEQ_BRANCH       = 109,
+    /** Branch immediately to specified Sequence Branch Index point.
+      Lock/unlock physical channel for use by this sequence's logical channel.
+      Range 64-127: Search for and lock physical channel,
+      0-63: Release physical channel to prior user. */
+    MDI_CTR_CHAN_LOCK        = 110,
+    /** Protect physical channel from being locked by API or another sequence.
+      Range 64-127: Enable lock protection, 0-63: Disable lock protection */
     MDI_CTR_CHAN_PROTECT     = 111,
     MDI_CTR_VOICE_PROTECT    = 112,
+    MDI_CTR_TIMBRE_PROTECT   = 113,
     MDI_CTR_PATCH_BANK_SEL   = 114,
+    /** Override value of next controller event with value from nth index in
+      application's Indirect Controller Array. */
+    MDI_CTR_INDIRECT_C_PFX   = 115,
+    /** Mark the start of an XMIDI FOR...NEXT/BREAK loop.
+      Range 1-127: Play n iterations,  0: Play indefinitely. */
+    MDI_CTR_FOR_LOOP         = 116,
+    /** Mark the end of an XMIDI FOR...NEXT/BREAK loop
+      Range 64-127: Continue looping until FOR count reached,
+      0-63: Break from current loop. */
+    MDI_CTR_NEXT_LOOP        = 117,
+    /** Reset beat/bar count to 0:0, clear fraction, and predecrement
+      to compensate for current interval. */
+    MDI_CTR_CLEAR_BEAT_BAR   = 118,
+    /** Call XMIDI user function, passing sequence handle, channel #,
+      and callback controller value. */
+    MDI_CTR_CALLBACK_TRIG    = 119,
+    MDI_CTR_SEQ_INDEX        = 120,
     MDI_CTR_RESET_ALL_CTRLS  = 121,
     MDI_CTR_ALL_NOTES_OFF    = 123,
 };
@@ -320,7 +355,11 @@ typedef void (*AILBEATCB) (MDI_DRIVER *, SNDSEQUENCE *, int32_t, int32_t);
  */
 typedef int32_t (*AILEVENTCB) (MDI_DRIVER *, SNDSEQUENCE *,int32_t, int32_t, int32_t);
 
-/** XMIDItrigger callback function type.
+/** XMIDI prefix callback function type. Both have same definitions.
+ */
+typedef int32_t (*AILPREFIXCB) (SNDSEQUENCE *, int32_t, int32_t);
+
+/** XMIDI trigger callback function type. Both have same definitions.
  */
 typedef void (*AILTRIGGERCB) (SNDSEQUENCE *, int32_t, int32_t);
 
@@ -469,7 +508,7 @@ struct AILSOUNDINFO {
  *
  * sizeof=1152
  */
-struct CTRL_LOG {
+struct MDI_CTRL_LOG {
     int32_t program[16];                     /**< offset=0   */
     int32_t pitch_l[16];                     /**< offset=64  */
     int32_t pitch_h[16];                     /**< offset=128 */
@@ -503,7 +542,7 @@ struct SNDSEQUENCE {
     void *EVNT;                              /**< offset=16  XMIDI IFF Playback events chunk pointer */
     uint8_t *EVNT_ptr;                       /**< offset=20  Current event pointer */
     uint8_t *ICA;                            /**< offset=24  Indirect Controller Array */
-    void *prefix_callback;                   /**< offset=28  */
+    AILPREFIXCB prefix_callback;             /**< offset=28  XMIDI Callback Prefix handler */
     AILTRIGGERCB trigger_callback;           /**< offset=32  XMIDI Callback Trigger handler */
     AILBEATCB beat_callback;                 /**< offset=36  XMIDI beat/bar change handler */
     AILSEQUENCECB EOS;                       /**< offset=40  End-of-sequence callback function */
@@ -528,7 +567,7 @@ struct SNDSEQUENCE {
     void *FOR_ptrs[4];                       /**< offset=116 */
     int32_t FOR_loop_count[4];               /**< offset=132 */
     int32_t chan_map[16];                    /**< offset=148 */
-    CTRL_LOG shadow;                         /**< offset=212 */
+    MDI_CTRL_LOG shadow;                     /**< offset=212 */
     int32_t note_count;                      /**< offset=1364 */
     int32_t note_chan[32];                   /**< offset=1368 */
     int32_t note_num[32];                    /**< offset=1496 */

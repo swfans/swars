@@ -25,9 +25,6 @@
 #include "swlog.h"
 /******************************************************************************/
 
-extern ubyte weapon_tech_level[33];
-extern ubyte mod_tech_level[17];
-
 void research_wep_store_daily_progress(int progress)
 {
     short cwep;

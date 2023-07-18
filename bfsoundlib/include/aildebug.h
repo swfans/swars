@@ -331,12 +331,20 @@ void AIL_start_sequence(SNDSEQUENCE *seq);
  */
 int32_t AIL_MDI_driver_type(MDI_DRIVER *mdidrv);
 
+/** Map sequence's logical channel to desired physical output channel.
+ */
+void AIL_map_sequence_channel(SNDSEQUENCE *seq, int32_t seq_channel, int32_t new_channel);
+
 /** Transmit MIDI channel voice message via desired physical channel.
  *
  * This function disregards channel locking and other XMIDI features.
  */
 void AIL_send_channel_voice_message(MDI_DRIVER *mdidrv, SNDSEQUENCE *seq,
         int32_t status, int32_t data_1, int32_t data_2);
+
+/** Branch immediately to specified Sequence Branch Index point.
+ */
+void AIL_branch_index(SNDSEQUENCE *seq, uint32_t marker);
 
 /** Install function handler for XMIDI Callback Trigger events.
  */

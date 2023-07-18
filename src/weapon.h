@@ -95,6 +95,7 @@ struct WeaponDef {
 #pragma pack()
 /******************************************************************************/
 extern struct WeaponDef weapon_defs[33];
+extern ubyte weapon_tech_level[33];
 
 void read_weapons_conf_file(void);
 

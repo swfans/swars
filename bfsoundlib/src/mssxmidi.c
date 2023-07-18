@@ -86,15 +86,15 @@ void AILXMIDI_start(void)
 static void XMI_init_sequence_state(SNDSEQUENCE *seq)
 {
    int32_t i;
-   static CTRL_LOG temp_log;
+   static MDI_CTRL_LOG temp_log;
 
     // Initialize logical-physical channel map to identity set
     for (i=0; i < AIL_NUM_CHANS; i++)
         seq->chan_map[i] = i;
 
     // Initialize all logged controllers to -1
-    memset(&temp_log, -1, sizeof(CTRL_LOG));
-    memcpy(&seq->shadow, &temp_log, sizeof(CTRL_LOG));
+    memset(&temp_log, -1, sizeof(MDI_CTRL_LOG));
+    memcpy(&seq->shadow, &temp_log, sizeof(MDI_CTRL_LOG));
 
 
     // Initialize FOR loop counters
@@ -109,13 +109,13 @@ static void XMI_init_sequence_state(SNDSEQUENCE *seq)
     // Initialize timing variables
     // Default to 4/4 time at 120 beats/minute
     seq->interval_count =  0;
-    seq->beat_count     =  0;
-    seq->measure_count  = -1;
-    seq->beat_fraction  =  0;
-    seq->time_fraction  =  0;
+    seq->beat_count   =  0;
+    seq->measure_count = -1;
+    seq->beat_fraction =  0;
+    seq->time_fraction =  0;
     seq->time_numerator =  4;
-    seq->time_per_beat  =  500000*16;
-    seq->interval_num   =  0;
+    seq->time_per_beat =  500000*16;
+    seq->interval_num =  0;
 }
 
 /** Reset sequence pointers and initialize state table entries.
@@ -150,6 +150,24 @@ void XMI_flush_buffer(MDI_DRIVER *mdidrv)
     mdidrv->offset = 0;
 }
 
+/** Flush notes in one channel only.
+ */
+void XMI_flush_channel_notes(SNDSEQUENCE *seq, int32_t channel)
+{
+    int32_t i;
+
+    for (i=0; i < AIL_MAX_NOTES; i++)
+    {
+        if (seq->note_chan[i] != channel)
+            continue;
+        // Send MIDI Note Off message
+        XMI_send_channel_voice_message(seq, seq->note_chan[i] |MDI_EV_NOTE_OFF,
+                seq->note_num [i], 0, 0);
+        // Release queue entry
+        seq->note_chan[i] = -1;
+    }
+}
+
 /** Write channel voice message to MIDI driver buffer
  */
 void XMI_MIDI_message(MDI_DRIVER *mdidrv, int32_t status,
@@ -181,6 +199,89 @@ void XMI_sysex_message(MDI_DRIVER *mdidrv, uint8_t const *message,
         int32_t size)
 {
     // Not implemented in this wrapper
+}
+
+/** Write control log value.
+ */
+void XMI_write_log(MDI_CTRL_LOG *log, int32_t status, int32_t data_1, int32_t data_2)
+{
+    int32_t st;
+    int32_t ch;
+
+    st = status & 0xf0;
+    ch = status & 0x0f;
+
+    switch (st)
+    {
+    case MDI_EV_PROGRAM:
+        log->program[ch] = data_1;
+        break;
+
+    case MDI_EV_PITCH:
+        log->pitch_l[ch] = data_1;
+        log->pitch_h[ch] = data_2;
+        break;
+
+    case MDI_EV_CONTROL:
+        switch (data_1)
+        {
+        case MDI_CTR_CHAN_LOCK:
+            log->c_lock[ch] = data_2;
+            break;
+
+        case MDI_CTR_CHAN_PROTECT:
+            log->c_prot[ch] = data_2;
+            break;
+
+        case MDI_CTR_VOICE_PROTECT:
+            log->c_v_prot[ch] = data_2;
+            break;
+
+        case MDI_CTR_PATCH_BANK_SEL:
+            log->bank[ch]  = data_2;
+            break;
+
+        case MDI_CTR_INDIRECT_C_PFX:
+            log->indirect[ch] = data_2;
+            break;
+
+        case MDI_CTR_CALLBACK_TRIG:
+            log->callback[ch] = data_2;
+            break;
+
+        case MDI_CTR_MODULATION:
+            log->mod[ch]   = data_2;
+            break;
+
+        case MDI_CTR_PART_VOLUME:
+            log->vol[ch]   = data_2;
+            break;
+
+        case MDI_CTR_PANPOT:
+            log->pan[ch]   = data_2;
+            break;
+
+        case MDI_CTR_EXPRESSION:
+            log->exp[ch]   = data_2;
+            break;
+
+        case MDI_CTR_SUSTAIN:
+            log->sus[ch]   = data_2;
+            break;
+
+        case MDI_CTR_REVERB:
+            log->reverb[ch] = data_2;
+            break;
+
+        case MDI_CTR_CHORUS:
+            log->chorus[ch] = data_2;
+            break;
+
+        case MDI_CTR_DATA_MSB:
+            log->bend_range[ch] = data_2;
+            break;
+        }
+    }
 }
 
 void AIL2OAL_API_set_GTL_filename_prefix(char const *prefix)
@@ -377,7 +478,7 @@ void init_mdi_defaults(MDI_DRIVER *mdidrv)
                 MDI_CTR_DATA_LSB, 0);
 
         XMI_MIDI_message(mdidrv, MDI_EV_CONTROL | i,
-                MDI_CTR_PB_RANGE, AIL_preference[MDI_DEFAULT_BEND_RANGE]);
+                MDI_CTR_DATA_MSB, AIL_preference[MDI_DEFAULT_BEND_RANGE]);
 
         XMI_flush_buffer(mdidrv);
 
@@ -619,25 +720,191 @@ MDI_DRIVER *XMI_construct_MDI_driver(AIL_DRIVER *drvr, const SNDCARD_IO_PARMS *i
     return mdidrv;
 }
 
-/** Send MIDI channel voice message associated with a specific sequence
- *
- * Includes controller logging and XMIDI extensions.
- *
- * Warnings: ICA_enable should be 0 when calling outside XMIDI event loop
- * May be recursively called by XMIDI controller handlers.
+/** Map sequence's logical channel to desired physical output channel.
  */
+void AIL2OAL_API_map_sequence_channel(SNDSEQUENCE *seq, int32_t seq_channel, int32_t new_channel)
+{
+    if (seq == NULL)
+        return;
+
+    // Redirect output on this sequence's channel to new channel
+    seq->chan_map[seq_channel-1] = new_channel-1;
+
+    // If channel is locked by API or other sequence, reassign it to
+    // this sequence so it's not inhibited from playing
+    if ((seq->driver->lock  [new_channel-1] == 1) &&
+      (seq->driver->locker[new_channel-1] != seq))
+        seq->driver->locker[new_channel-1] = seq;
+}
+
 void XMI_send_channel_voice_message(SNDSEQUENCE *seq, int32_t status,
         int32_t data_1, int32_t data_2, int32_t ICA_enable)
 {
-    asm volatile (
-      "push %4\n"
-      "push %3\n"
-      "push %2\n"
-      "push %1\n"
-      "push %0\n"
-      "call ASM_XMI_send_channel_voice_message\n"
-      "add $0x14, %%esp\n"
-        :  : "g" (seq), "g" (status), "g" (data_1), "g" (data_2), "g" (ICA_enable));
+    int32_t st, i;
+    int32_t phys, log;
+    MDI_DRIVER *mdidrv;
+    int32_t result;
+
+    // Get driver for sequence
+    mdidrv = seq->driver;
+
+    // Translate logical to physical channel
+    st = status & 0xf0;
+    log = status & 0x0f;
+
+    phys = seq->chan_map[log];
+
+    // If indirect controller override active, substitute indirect
+    // controller value for data_2, and cancel indirect override
+    if ((st == MDI_EV_CONTROL) && (ICA_enable) && (seq->shadow.indirect[log] != -1))
+    {
+        data_2 = seq->shadow.indirect[log];
+        seq->shadow.indirect[log] = -1;
+    }
+
+    // Update local MIDI status log
+    if ((st == MDI_EV_CONTROL) || (st == MDI_EV_PROGRAM) || (st == MDI_EV_PITCH))
+    {
+        XMI_write_log(&seq->shadow, st | log, data_1, data_2);
+    }
+
+    // If this is a Control Change event, handle special XMIDI controllers
+    // and extended features
+    //
+    // Controller handlers should 'break' to pass message on to driver, or
+    // 'return' if message is not to be transmitted
+    if (st == MDI_EV_CONTROL)
+    {
+        switch (data_1)
+        {
+        case MDI_CTR_INDIRECT_C_PFX:
+            if (seq->ICA)
+                seq->shadow.indirect[log] = seq->ICA[data_2];
+            break;
+
+        case MDI_CTR_CALLBACK_PFX:
+            if (seq->prefix_callback != NULL)
+                seq->shadow.indirect[log] = seq->prefix_callback(seq, log, data_2);
+            break;
+
+        case MDI_CTR_PB_RANGE:
+            XMI_send_channel_voice_message(seq, MDI_EV_CONTROL | log, MDI_CTR_RPN_LSB, 0, 0);
+
+            XMI_send_channel_voice_message(seq, MDI_EV_CONTROL | log, MDI_CTR_RPN_MSB, 0, 0);
+
+            XMI_send_channel_voice_message(seq, MDI_EV_CONTROL | log, MDI_CTR_DATA_LSB, 0, 0);
+            break;
+
+        case MDI_CTR_PART_VOLUME:
+            data_2 = (data_2 * seq->volume * mdidrv->master_volume) / (127 * 127);
+            if (data_2 > 127)
+                data_2 = 127;
+            if (data_2 < 0)
+                data_2 = 0;
+            break;
+
+        case MDI_CTR_CLEAR_BEAT_BAR:
+            seq->beat_count = 0;
+            seq->measure_count = 0;
+            seq->beat_fraction = 0;
+            seq->beat_fraction -= seq->time_fraction;
+
+            // If beat/bar callback function active, trigger it
+            if (seq->beat_callback != NULL)
+            {
+                seq->beat_callback(mdidrv, seq, 0, 0);
+            }
+            return;
+
+        case MDI_CTR_CALLBACK_TRIG:
+            if (seq->trigger_callback != NULL)
+            {
+                seq->trigger_callback(seq, log, data_2);
+            }
+            return;
+
+        case MDI_CTR_FOR_LOOP:
+            return; // DISABLED - we re-used FOR_ptrs array in this wrapper
+
+        case MDI_CTR_NEXT_LOOP:
+            return; // DISABLED - we re-used FOR_ptrs array in this wrapper
+
+        case MDI_CTR_SEQ_BRANCH:
+            AIL_branch_index(seq, data_2);
+            return;
+
+        case MDI_CTR_CHAN_PROTECT:
+            // If channel is already locked, it's too late to protect it
+            if (mdidrv->lock[phys] == 1)
+                return;
+            // Otherwise, set 0 (UNLOCKED, and by implication, UNPROTECTED)
+            // or 2 (PROTECTED)
+            if (data_2 < 64)
+                mdidrv->lock[phys] = 0;
+            else
+                mdidrv->lock[phys] = 2;
+            return;
+
+        case MDI_CTR_CHAN_LOCK:
+            if (data_2 >= 64)
+            {
+                // Lock a physical channel (1-based), if possible
+                i = AIL_lock_channel(mdidrv);
+                if (!i)
+                    return;
+                // Map sequence channel (0-based) to locked physical
+                // channel (1-based)
+                AIL_map_sequence_channel(seq, log + 1, i);
+                // Keep track of which sequence locked the channel, so
+                // other sequences can be inhibited from writing to it
+                mdidrv->locker[i - 1] = seq;
+            }
+            else
+            {
+                // Channel must be locked in order to release it
+                if (mdidrv->lock[phys] != 1)
+                    return;
+                // Turn all notes off in channel
+                XMI_flush_channel_notes(seq, log);
+                // Release locked physical channel (1-based)
+                AIL_release_channel(mdidrv, phys + 1);
+                // Re-establish normal physical channel mapping
+                // for logical channel
+                AIL_map_sequence_channel(seq, log + 1, log + 1);
+            }
+            return;
+        }
+    }
+
+    // If this physical channel is locked by the API or by another
+    // sequence, return
+    if ((mdidrv->lock[phys] == 1) && (mdidrv->locker[phys] != seq))
+        return;
+
+    // Keep track of overall physical channel note counts
+    if (st == MDI_EV_NOTE_ON)
+        ++mdidrv->notes[phys];
+    else if (st == MDI_EV_NOTE_OFF)
+        --mdidrv->notes[phys];
+
+    // Keep track of most recent sequence to use channel
+    mdidrv->user[phys] = seq;
+
+    // If logical channel muted with XMIDI Channel Mute controller (107),
+    // return without transmitting note-on events
+    if ((st == MDI_EV_NOTE_ON) && (seq->shadow.c_mute[log] >= 64))
+        return;
+
+    // Allow application a chance to process the event...
+    if (mdidrv->event_trap != NULL)
+    {
+        result = mdidrv->event_trap(mdidrv, seq, st | phys, data_1, data_2);
+        if (result)
+            return;
+    }
+
+    // ...otherwise, transmit message to driver
+    XMI_MIDI_message(mdidrv, st | phys, data_1, data_2);
 }
 
 /** Transmit logged channel controller values
@@ -1551,7 +1818,7 @@ void AIL2OAL_API_set_sequence_tempo(SNDSEQUENCE *seq, int32_t tempo, int32_t mil
     } else {
         seq->tempo_period = (milliseconds * 1000L) /
             labs(seq->tempo_percent - seq->tempo_target);
-        seq->tempo_accum  = 0;
+        seq->tempo_accum = 0;
     }
 
    // Restore XMIDI service and return
@@ -1580,7 +1847,7 @@ void AIL2OAL_API_set_sequence_volume(SNDSEQUENCE *seq, int32_t volume, int32_t m
     } else {
         seq->volume_period = (milliseconds * 1000L) /
             labs(seq->volume - seq->volume_target);
-        seq->volume_accum  = 0;
+        seq->volume_accum = 0;
     }
 
     // Restore interrupt state, update channel volume settings, and exit
@@ -1602,6 +1869,11 @@ int32_t AIL2OAL_API_sequence_loop_count(SNDSEQUENCE *seq)
     if (seq == NULL)
         return -1;
     return seq->loop_count;
+}
+
+void AIL2OAL_API_branch_index(SNDSEQUENCE *seq, uint32_t marker)
+{
+    // Not implemented in this wrapper
 }
 
 AILTRIGGERCB AIL2OAL_API_register_trigger_callback(SNDSEQUENCE *seq, AILTRIGGERCB callback)
@@ -1678,7 +1950,7 @@ int32_t AIL2OAL_API_lock_channel(MDI_DRIVER *mdidrv)
 
     // Search for highest channel # with lowest note activity,
     // skipping already-locked and protected physical channels
-    ch   = -1;
+    ch = -1;
     best = LONG_MAX;
 
     for (i = AIL_MAX_LOCK_CHAN; i >= AIL_MIN_LOCK_CHAN; i--)
@@ -1691,7 +1963,7 @@ int32_t AIL2OAL_API_lock_channel(MDI_DRIVER *mdidrv)
             continue;
         if (mdidrv->notes[i] < best) {
             best = mdidrv->notes[i];
-            ch   = i;
+            ch = i;
         }
     }
 
@@ -1709,7 +1981,7 @@ int32_t AIL2OAL_API_lock_channel(MDI_DRIVER *mdidrv)
 
             if (mdidrv->notes[i] < best) {
                 best = mdidrv->notes[i];
-                ch   = i;
+                ch = i;
             }
         }
     }

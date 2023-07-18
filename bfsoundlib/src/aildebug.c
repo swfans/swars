@@ -693,6 +693,32 @@ void AIL_sequence_position(SNDSEQUENCE *seq, int32_t *beat, int32_t *measure)
     AIL_indent--;
 }
 
+void AIL_branch_index(SNDSEQUENCE *seq, uint32_t marker)
+{
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s(0x%p, %u)\n", __func__, seq, marker);
+
+    AIL2OAL_API_branch_index(seq, marker);
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Finished\n");
+    AIL_indent--;
+}
+
+void AIL_map_sequence_channel(SNDSEQUENCE *seq, int32_t seq_channel, int32_t new_channel)
+{
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s(0x%p, %d, %d)\n", __func__, seq, seq_channel, new_channel);
+
+    AIL2OAL_API_map_sequence_channel(seq, seq_channel, new_channel);
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Finished\n");
+    AIL_indent--;
+}
+
 AILTRIGGERCB AIL_register_trigger_callback(SNDSEQUENCE *seq, AILTRIGGERCB callback)
 {
     AILTRIGGERCB result;

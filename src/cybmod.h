@@ -67,6 +67,7 @@ struct ModDef {
 #pragma pack()
 /******************************************************************************/
 extern struct ModDef mod_defs[];
+extern ubyte mod_tech_level[17];
 
 void read_cybmods_conf_file(void);
 /******************************************************************************/

@@ -1494,163 +1494,6 @@ GLOBAL_FUNC (ASM_AIL_sequence_position)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (AIL_branch_index)
-/*----------------------------------------------------------------*/
-		push   %ebx
-		push   %edi
-		push   %ebp
-		mov    AIL_indent,%edx
-		inc    %edx
-		mov    AIL_debug,%ebx
-		mov    %edx,AIL_indent
-		test   %ebx,%ebx
-		je     jump_106941
-		cmp    $0x1,%edx
-		je     jump_106928
-		cmpl   $0x0,AIL_sys_debug
-		je     jump_106941
-	jump_106928:
-		call   ac_AIL2OAL_API_background
-		test   %eax,%eax
-		jne    jump_106941
-		call   TIME_write_
-		test   %eax,%eax
-		je     jump_106941
-		mov    $0x1,%eax
-		jmp    jump_106943
-	jump_106941:
-		xor    %eax,%eax
-	jump_106943:
-		test   %eax,%eax
-		je     jump_106964
-		mov    0x14(%esp),%edi
-		push   %edi
-		mov    0x14(%esp),%ebp
-		push   %ebp
-		push   $aAil_branch_ind
-		mov    AIL_debugfile,%eax
-		push   %eax
-		call   ac_fprintf
-		add    $0x10,%esp
-	jump_106964:
-		mov    0x14(%esp),%edx
-		push   %edx
-		mov    0x14(%esp),%ebx
-		push   %ebx
-		call   _AIL_API_branch_index
-		mov    AIL_indent,%ecx
-		dec    %ecx
-		add    $0x8,%esp
-		mov    %ecx,AIL_indent
-		pop    %ebp
-		pop    %edi
-		pop    %ebx
-		ret
-
-
-/*----------------------------------------------------------------*/
-GLOBAL_FUNC (ASM_AIL_register_trigger_callback)
-/*----------------------------------------------------------------*/
-		push   %ebx
-		push   %esi
-		push   %edi
-		push   %ebp
-		mov    0x14(%esp),%ebx
-		mov    AIL_indent,%edx
-		inc    %edx
-		mov    AIL_debug,%ecx
-		mov    %edx,AIL_indent
-		test   %ecx,%ecx
-		je     jump_106af6
-		cmp    $0x1,%edx
-		je     jump_106add
-		cmpl   $0x0,AIL_sys_debug
-		je     jump_106af6
-	jump_106add:
-		call   ac_AIL2OAL_API_background
-		test   %eax,%eax
-		jne    jump_106af6
-		call   TIME_write_
-		test   %eax,%eax
-		je     jump_106af6
-		mov    $0x1,%edx
-		jmp    jump_106af8
-	jump_106af6:
-		xor    %edx,%edx
-	jump_106af8:
-		test   %edx,%edx
-		je     jump_106b15
-		mov    0x18(%esp),%ebp
-		push   %ebp
-		push   %ebx
-		push   $aAil_register_0
-		mov    AIL_debugfile,%eax
-		push   %eax
-		call   ac_fprintf
-		add    $0x10,%esp
-	jump_106b15:
-		mov    0x18(%esp),%edx
-		push   %edx
-		push   %ebx
-		call   ASM_AIL_API_register_trigger_callback
-		mov    AIL_debug,%ecx
-		mov    %eax,%ebx
-		add    $0x8,%esp
-		test   %ecx,%ecx
-		je     jump_106bbb
-		cmpl   $0x1,AIL_indent
-		je     jump_106b49
-		cmpl   $0x0,AIL_sys_debug
-		je     jump_106bbb
-	jump_106b49:
-		call   ac_AIL2OAL_API_background
-		test   %eax,%eax
-		jne    jump_106bbb
-		xor    %edx,%edx
-		lea    0x0(%eax),%eax
-		lea    0x0(%edx),%edx
-	jump_106b60:
-		push   $data_160110
-		mov    AIL_debugfile,%ebp
-		push   %ebp
-		inc    %edx
-		call   ac_fprintf
-		add    $0x8,%esp
-		cmp    $0xe,%edx
-		jb     jump_106b60
-		mov    $0x1,%edx
-		cmp    AIL_indent,%edx
-		jae    jump_106ba6
-	jump_106b87:
-		push   $data_160114
-		mov    AIL_debugfile,%ecx
-		push   %ecx
-		inc    %edx
-		call   ac_fprintf
-		mov    AIL_indent,%esi
-		add    $0x8,%esp
-		cmp    %esi,%edx
-		jb     jump_106b87
-	jump_106ba6:
-		push   %ebx
-		push   $data_1602a8_result_hex
-		mov    AIL_debugfile,%edi
-		push   %edi
-		call   ac_fprintf
-		add    $0xc,%esp
-	jump_106bbb:
-		mov    AIL_indent,%ebp
-		dec    %ebp
-		mov    %ebx,%eax
-		mov    %ebp,AIL_indent
-		pop    %ebp
-		pop    %edi
-		pop    %esi
-		pop    %ebx
-		ret
-
-
-/*----------------------------------------------------------------*/
 GLOBAL_FUNC (ASM_AIL_lock_channel)
 /*----------------------------------------------------------------*/
 		push   %ebx
@@ -1802,7 +1645,7 @@ GLOBAL_FUNC (ASM_AIL_release_channel)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (AIL_map_sequence_channel)
+GLOBAL_FUNC (ASM_AIL_map_sequence_channel)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %esi
@@ -6416,7 +6259,7 @@ GLOBAL_FUNC (ASM_XMI_send_channel_voice_message)	/* 0x114DE0 */
 	jump_115107:
 		push   %esi
 		push   %ebx
-		call   AIL_branch_index
+		call   ac_AIL_branch_index
 		add    $0x8,%esp
 		add    $0x10,%esp
 		pop    %ebp
@@ -6460,7 +6303,7 @@ GLOBAL_FUNC (ASM_XMI_send_channel_voice_message)	/* 0x114DE0 */
 		push   %eax
 		push   %edi
 		push   %ebx
-		call   AIL_map_sequence_channel
+		call   ac_AIL_map_sequence_channel
 		add    $0xc,%esp
 		mov    %ebx,0x5c(%ebp,%esi,4)
 		add    $0x10,%esp
@@ -6486,7 +6329,7 @@ GLOBAL_FUNC (ASM_XMI_send_channel_voice_message)	/* 0x114DE0 */
 		push   %edi
 		push   %edi
 		push   %ebx
-		call   AIL_map_sequence_channel
+		call   ac_AIL_map_sequence_channel
 		add    $0xc,%esp
 		add    $0x10,%esp
 		pop    %ebp
