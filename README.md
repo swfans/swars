@@ -97,7 +97,7 @@ If you've decided on the hand-compilation option, proceed with the following ste
 
 1. download and unpack the source tarball or clone git repo
 2. follow [building instructions](#building-on-windows) below to get
-   a compiled executable
+   a compiled executable and configuration files
 3. copy all the files and directories, except for the Language directory, from
    the `Game` directory within the *Syndicate Wars CD* to the location of your
    desire, say `SWarsLocation`.
@@ -109,7 +109,7 @@ If you've decided on the hand-compilation option, proceed with the following ste
 6. *[optional]* rip the game CD Audio tracks to `track_{1,2,3}.ogg` (vorbis)
 7. *[optional]* create a `SWarsLocation\music` directory and copy the
    previously encoded ogg files there
-8. copy `swars.exe` to your `SWarsLocation` directory
+8. copy `swars.exe` and `conf` folder to your `SWarsLocation` directory
 
 You can now launch `swars.exe` and have fun!
 
@@ -159,6 +159,7 @@ sudo apt install libsdl1.2-dev:i386
 sudo apt install libopenal-dev:i386
 sudo apt install libvorbis-dev:i386 libvorbisfile3:i386
 sudo apt install libogg-dev:i386
+sudo apt install libwildmidi-dev:i386
 ```
 
 Now as our host is ready, we can start working on the actual `swars` sources.
