@@ -53,10 +53,14 @@ int32_t OPENAL_free_buffers(uint32_t n_sources);
 int32_t OPENAL_create_sources_for_samples(DIG_DRIVER *digdrv);
 int32_t OPENAL_free_sources_for_samples(DIG_DRIVER *digdrv);
 
+void OPENAL_stop_sample(SNDSAMPLE *s);
+
 /** Creates OpenAL sources used for MIDI driver playback.
  */
 int32_t OPENAL_create_sources_for_sequences(MDI_DRIVER *mdidrv);
 int32_t OPENAL_free_sources_for_sequences(MDI_DRIVER *mdidrv);
+
+void OPENAL_stop_sequence(SNDSEQUENCE *seq);
 
 /** Function to be called within a timer while DIG playback is able.
  *

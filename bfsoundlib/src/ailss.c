@@ -28,6 +28,7 @@
 #include "aildebug.h"
 #include "ail.h"
 #include "mssdig.h"
+#include "drv_oal.h"
 /******************************************************************************/
 /** Recognized file types
  */
@@ -345,6 +346,8 @@ void AIL2OAL_API_end_sample(SNDSAMPLE *s)
     if (s->status != SNDSMP_DONE)
     {
         s->status = SNDSMP_DONE;
+
+        OPENAL_stop_sample(s);
 
         if (s->EOB != NULL)
             s->EOB(s);

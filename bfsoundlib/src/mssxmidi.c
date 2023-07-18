@@ -122,11 +122,16 @@ static void XMI_init_sequence_state(SNDSEQUENCE *seq)
  */
 static void XMI_rewind_sequence(SNDSEQUENCE *seq)
 {
+    unsigned long int wildpos;
+
     // Initialize sequence state table
     XMI_init_sequence_state(seq);
 
     // Initialize event pointer to start of XMIDI EVNT chunk data
     seq->EVNT_ptr = (uint8_t *)seq->EVNT + 8;
+
+    wildpos = 0;
+    WildMidi_FastSeek(seq->ICA, &wildpos);
 }
 
 /** Force transmission of any buffered MIDI traffic.
@@ -1433,6 +1438,8 @@ void AIL2OAL_API_stop_sequence(SNDSEQUENCE *seq)
 
     // Mask 'playing' status
     seq->status = SNDSEQ_STOPPED;
+
+    OPENAL_stop_sequence(seq);
 
     // Turn off any active notes in sequence
     XMI_flush_note_queue(seq);

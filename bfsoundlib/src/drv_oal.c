@@ -355,6 +355,16 @@ get_pcm_format(SNDSAMPLE *s)
     }
 }
 
+void OPENAL_stop_sample(SNDSAMPLE *s)
+{
+    ALuint source;
+
+    source = s->system_data[5];
+
+    alSourceStop(source);
+    check_al("alSourceStop");
+}
+
 static void
 queue_dig_sample_buffers(DIG_DRIVER *digdrv, SNDSAMPLE *s)
 {
@@ -391,7 +401,7 @@ queue_dig_sample_buffers(DIG_DRIVER *digdrv, SNDSAMPLE *s)
         if (len > SOUND_MAX_BUFSIZE)
             len = SOUND_MAX_BUFSIZE;
 
-        assert ((s->flags & 1) != 0);
+        assert ((s->flags & DIG_PCM_SIGN) != 0);
 
         buf = pop_free_buffer ();
         alBufferData(buf, get_pcm_format(s), data, len, s->playback_rate);
@@ -482,6 +492,16 @@ unqueue_dig_sample_buffers(SNDSAMPLE *s)
     s->status = SNDSMP_DONE;
 }
 
+void OPENAL_stop_sequence(SNDSEQUENCE *seq)
+{
+    ALuint source;
+
+    source = seq->system_data[5];
+
+    alSourceStop(source);
+    check_al("alSourceStop");
+}
+
 static void
 queue_mdi_sequence_buffers(MDI_DRIVER *mdidrv, SNDSEQUENCE *seq)
 {
@@ -491,11 +511,12 @@ queue_mdi_sequence_buffers(MDI_DRIVER *mdidrv, SNDSEQUENCE *seq)
     ALint state;
     uint32_t smp_rate;
     ALuint buf = 0;
-    int8_t *data = seq->FOR_ptrs[0];
+    int8_t *data;
 
     smp_rate = mdidrv->system_data[0];
     source = seq->system_data[5];
     buffers_used = seq->system_data[4];
+    data = seq->FOR_ptrs[0];
 
     if (buffers_used >= SOUND_BUFFERS_PER_SRC)
         return;
@@ -509,7 +530,53 @@ queue_mdi_sequence_buffers(MDI_DRIVER *mdidrv, SNDSEQUENCE *seq)
             goto err;
         }
         if (len == 0)
+        {
+            // If loop count == 0, loop indefinitely
+            //
+            // Otherwise, decrement loop count and, if the
+            // result is not zero, return to beginning of
+            // sequence
+            if ((seq->loop_count == 0)
+                ||
+                (--seq->loop_count != 0))
+            {
+                unsigned long int wildpos;
+
+                seq->EVNT_ptr = (uint8_t *) seq->EVNT + 8;
+
+                wildpos = 0;
+                WildMidi_FastSeek(seq->ICA, &wildpos);
+
+                seq->beat_count = 0;
+                seq->measure_count = -1;
+                seq->beat_fraction = 0;
+
+                // If beat/bar callback function active,
+                // trigger it
+                if (seq->beat_callback != NULL)
+                    seq->beat_callback(seq->driver, seq, 0, 0);
+
+                break;
+            }
+
+            // Otherwise, stop sequence and set status
+            // to SNDSEQ_DONE
+
+            // But first wait until all buffers are played, to avoid hard cut
+            if (buffers_used > 0)
+                break;
+
+            // Reset loop count to 1, to enable unlooped replay
+            seq->loop_count = 1;
+
+            AIL_stop_sequence(seq);
+            seq->status = SNDSEQ_DONE;
+
+            // Invoke end-of-sequence callback function, if any
+            if (seq->EOS != NULL)
+                seq->EOS(seq);
             break;
+        }
 
         buf = pop_free_buffer();
         alBufferData(buf, AL_FORMAT_STEREO16, data, len, smp_rate);
@@ -568,14 +635,6 @@ unqueue_mdi_sequence_buffers(SNDSEQUENCE *seq)
                    NULL);
 
     seq->system_data[4] = buffers_used;
-
-    if (buffers_used > 0
-        || seq->loop_count == 0)
-      return;
-
-    alSourceStop(source);
-    check_al("alSourceStop");
-    seq->status = SNDSEQ_DONE;
 }
 
 void OPENAL_unqueue_finished_dig_samples(DIG_DRIVER *digdrv)
