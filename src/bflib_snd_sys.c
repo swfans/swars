@@ -1168,17 +1168,20 @@ void cb_get_trigger_info(SNDSEQUENCE *seq, int32_t log, int32_t data)
     {
         DangerMusicAble = 1;
         if (DisableDangerMusic) {
-            AIL_send_channel_voice_message(MusicDriver, SongHandle, log | 0xB0, 107, 127);
+            AIL_send_channel_voice_message(MusicDriver, SongHandle, log | MDI_EV_CONTROL,
+                MDI_CTR_CHAN_MUTE, 127);
             DangerMusicAble = 0;
         } else {
-            AIL_send_channel_voice_message(MusicDriver, SongHandle, log | 0xB0, 11, 0);
+            AIL_send_channel_voice_message(MusicDriver, SongHandle, log | MDI_EV_CONTROL,
+                MDI_CTR_EXPRESSION, 0);
             data_1e5edc[log] = 1;
         }
     }
     if (data == 1)
     {
         AIL_stop_sequence(SongHandle);
-        AIL_send_channel_voice_message(MusicDriver, SongHandle, log | 0xB0, 0, 1);
+        AIL_send_channel_voice_message(MusicDriver, SongHandle, log | MDI_EV_CONTROL,
+            MDI_CTR_GM_BANK_MSB, 1);
         AIL_resume_sequence(SongHandle);
     }
 }
@@ -1221,14 +1224,22 @@ void StartMusic(int songNo, ubyte volume)
     for (i = 0; i < 16; i++)
     {
         data_1e5edc[i] = 0;
-        AIL_send_channel_voice_message(MusicDriver, SongHandle, i | 0xB0, 0, 0);
-        AIL_send_channel_voice_message(MusicDriver, SongHandle, i | 0xB0, 7, 0);
-        AIL_send_channel_voice_message(MusicDriver, SongHandle, i | 0xE0, 0, 64);
-        AIL_send_channel_voice_message(MusicDriver, SongHandle, i | 0xB0, 11, 127);
-        AIL_send_channel_voice_message(MusicDriver, SongHandle, i | 0xB0, 1, 0);
-        AIL_send_channel_voice_message(MusicDriver, SongHandle, i | 0xB0, 91, 0);
-        AIL_send_channel_voice_message(MusicDriver, SongHandle, i | 0xB0, 93, 0);
-        AIL_send_channel_voice_message(MusicDriver, SongHandle, i | 0xB0, 107, 0);
+        AIL_send_channel_voice_message(MusicDriver, SongHandle, i | MDI_EV_CONTROL,
+            MDI_CTR_GM_BANK_MSB, 0);
+        AIL_send_channel_voice_message(MusicDriver, SongHandle, i | MDI_EV_CONTROL,
+            MDI_CTR_PART_VOLUME, 0);
+        AIL_send_channel_voice_message(MusicDriver, SongHandle, i | MDI_EV_PITCH,
+            0, 64);
+        AIL_send_channel_voice_message(MusicDriver, SongHandle, i | MDI_EV_CONTROL,
+            MDI_CTR_EXPRESSION, 127);
+        AIL_send_channel_voice_message(MusicDriver, SongHandle, i | MDI_EV_CONTROL,
+            MDI_CTR_MODULATION, 0);
+        AIL_send_channel_voice_message(MusicDriver, SongHandle, i | MDI_EV_CONTROL,
+            MDI_CTR_REVERB, 0);
+        AIL_send_channel_voice_message(MusicDriver, SongHandle, i | MDI_EV_CONTROL,
+            MDI_CTR_CHORUS, 0);
+        AIL_send_channel_voice_message(MusicDriver, SongHandle, i | MDI_EV_CONTROL,
+            MDI_CTR_CHAN_MUTE, 0);
     }
 
     if (volume < 127) {

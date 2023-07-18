@@ -234,6 +234,7 @@ enum AILMIDIMetaEvents {
  * MDI_EV_CONTROL events.
  */
 enum AILMIDIControlMsgs {
+    MDI_CTR_GM_BANK_MSB      = 0,
     MDI_CTR_MODULATION       = 1,
     MDI_CTR_PB_RANGE         = 6, // later reused for DATA_MSB
     MDI_CTR_PART_VOLUME      = 7,
