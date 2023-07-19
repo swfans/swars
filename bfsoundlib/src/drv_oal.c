@@ -149,7 +149,7 @@ int32_t OPENAL_create_buffers(uint32_t n_sources)
     sound_free_buffer_count += n_buffers;
 
     if (AIL_debug || AIL_sys_debug)
-        fprintf(AIL_debugfile, "%s: Created %zu sound buffers",
+        fprintf(AIL_debugfile, "%s: Created %zu sound buffers\n",
             __func__, n_buffers);
     return 1;
 
@@ -167,7 +167,7 @@ int32_t OPENAL_free_buffers(uint32_t n_sources)
 
     if (n_buffers > sound_free_buffer_count) {
         if (AIL_debug || AIL_sys_debug)
-            fprintf(AIL_debugfile, "%s: From %d buffers, %d escaped deletion",
+            fprintf(AIL_debugfile, "%s: From %d buffers, %d escaped deletion\n",
                 __func__, n_buffers, n_buffers - sound_free_buffer_count);
         n_buffers = sound_free_buffer_count;
     }
@@ -315,7 +315,7 @@ int32_t OPENAL_free_buffers_for_ogg_vorbis(OggVorbisStream *stream)
     check_al("alDeleteBuffers");
     if (n_buffers != SOUND_MUSIC_BUFFERS) {
         if (AIL_debug || AIL_sys_debug)
-            fprintf(AIL_debugfile, "%s: From %d buffers, %d escaped deletion",
+            fprintf(AIL_debugfile, "%s: From %d buffers, %d escaped deletion\n",
                 __func__, SOUND_MUSIC_BUFFERS, SOUND_MUSIC_BUFFERS - n_buffers);
     }
     return 1;
