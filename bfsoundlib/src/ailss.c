@@ -266,11 +266,57 @@ void SS_stream_to_buffer(SNDSAMPLE *s)
 
 void AIL2OAL_API_init_sample(SNDSAMPLE *s)
 {
+#if 0
     asm volatile (
       "push %0\n"
       "call ASM_AIL_API_init_sample\n"
       "add $0x4, %%esp\n"
         :  : "g" (s) : "eax" );
+#endif
+    if (s == NULL)
+        return;
+
+    // Set status to FREE while manipulating vars, to keep callback thread
+    // from reading invalid data
+    s->status = SNDSMP_FREE;
+
+    // Shut down any previously-active pipeline providers
+    //   and init pipeline stages
+    AIL_set_sample_processor(s, SNDSMST_SAMPLE_ALL_STAGES, 0);
+
+    // Initialize sample vars
+    s->start[0] = NULL;
+    s->len[0] = 0;
+    s->pos[0] = 0;
+    s->done[0] = 0;
+
+    s->start[1] = NULL;
+    s->len[1] = 0;
+    s->pos[1] = 0;
+    s->done[1] = 1;
+
+    s->current_buffer = 0;
+    s->last_buffer = -2;
+
+    s->loop_count = 1;
+    s->format = 0;
+    s->flags = 0;
+    s->volume = AIL_preference[5];
+    s->playback_rate = 11025;
+    if ((s->driver->hw_format != 0) && (s->driver->hw_format != 1))
+        s->pan = 64;
+    else
+        s->pan = 0;
+    s->vol_scale[1][255] = 0;
+
+    s->SOB = NULL;
+    s->EOB = NULL;
+    s->EOS = NULL;
+
+    // Mark sample initialized
+    s->status = SNDSMP_DONE;
+
+    SS_build_amplitude_tables(s);
 }
 
 SNDSAMPLE *AIL2OAL_API_allocate_sample_handle(DIG_DRIVER *digdrv)
@@ -473,9 +519,8 @@ int32_t AIL2OAL_API_set_sample_file(SNDSAMPLE *s, const void *file_image, int32_
         AIL_process_WAV_image(file_image, s);
         break;
     case SMP_FTYP_VOC:
-        // TODO pointer to integer conversion, change to mind the bits!
         // Store pointer to sample data
-        s->system_data[1] = (uint32_t)file_image + *(uint16_t *)(file_image + 20);
+        s->system_data[1] = (uintptr_t)file_image + *(uint16_t *)(file_image + 20);
         //s->system_data[4] = block; // used by OpenAL
         s->system_data[6] = 0;
         //s->system_data[5] = (block == -1); // used by OpenAL

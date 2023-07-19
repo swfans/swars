@@ -430,7 +430,7 @@ struct DIG_DRIVER {
   int32_t n_samples;                         /**< offs=0x60 # of sound samples */
   int32_t n_active_samples;                  /**< offs=0x64 # of samples being processed */
   int32_t master_volume;                     /**< offs=0x68 Master sample volume 0-127 */
-  int32_t system_data[8];                    /**< offs=0x6C Miscellaneous system data */
+  uintptr_t system_data[8];                  /**< offs=0x6C Miscellaneous system data */
 };
 
 /** MIDI output driver structure.
@@ -462,7 +462,7 @@ struct MDI_DRIVER {
     int32_t message_count;                   /**< offs=424 MIDI message count; specific to DOS implementation */
     int32_t offset;                          /**< offs=428 MIDI buffer offset; specific to DOS implementation  */
     int32_t master_volume;                   /**< offs=432 Master XMIDI note volume 0-127 */
-    int32_t system_data[8];                  /**< offs=436 Miscellaneous system data */
+    uintptr_t system_data[8];                /**< offs=436 Miscellaneous system data */
 };
 
 /** Representation of a sound sample.
