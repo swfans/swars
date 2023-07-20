@@ -160,6 +160,10 @@ extern struct GamePanel *game_panel;
 extern struct GamePanel game_panel_lo[];
 extern struct GamePanel unknstrct7_arr2[];
 
+extern ushort engine_mem_len;
+extern ushort next_used_objective; // = 1;
+extern ushort display_mode;
+
 extern ubyte execute_commands;
 extern long gamep_unknval_10;
 extern long gamep_unknval_11;
@@ -640,9 +644,9 @@ void fill_floor_textures(void)
         :  :  : "eax" );
 }
 
-void load_mad_console(ushort mapno)
+void load_mad_pc(ushort mapno)
 {
-    asm volatile ("call ASM_load_mad_console\n"
+    asm volatile ("call ASM_load_mad_pc\n"
         : : "a" (mapno));
 }
 
@@ -664,7 +668,7 @@ void change_current_map(ushort mapno)
 {
     cmdln_param_current_map = mapno;
     init_things();
-    load_mad_console(mapno);
+    load_mad_pc(mapno);
     fill_floor_textures();
 }
 
@@ -2682,8 +2686,47 @@ void game_setup_sub8(void)
 
 void load_missions(int num)
 {
+#if 0
     asm volatile ("call ASM_load_missions\n"
         : : "a" (num));
+#else
+    TbFileHandle fh;
+    char locstr[52];
+    ulong fmtver;
+    int i;
+
+    fmtver = 1;
+    sprintf(locstr, "%s/all%03d.mis", game_dirs[DirPlace_Levels].directory, num);
+    fh = LbFileOpen(locstr, Lb_FILE_MODE_READ_ONLY);
+    if (fh != INVALID_FILE)
+    {
+        LbFileRead(fh, &fmtver, sizeof(ulong));
+        LbFileRead(fh, &engine_mem_len, sizeof(ushort));
+        LbFileRead(fh, engine_mem_alloc_ptr + engine_mem_alloc_size - 64000, engine_mem_len);
+        LbFileRead(fh, &next_mission, sizeof(short));
+        LbFileRead(fh, mission_list, sizeof(struct Mission) * next_mission);
+        LbFileRead(fh, &next_used_objective, sizeof(ushort));
+        LbFileRead(fh, game_used_objectives, sizeof(struct Objective) * next_used_objective);
+        if (fmtver > 30)
+            LbFileRead(fh, engine_mem_alloc_ptr + engine_mem_alloc_size - 1320 - 33, 1320);
+        LbFileClose(fh);
+        display_mode = 0;
+    }
+    else
+    {
+        LOGERR("Missions file could not be opened");
+    }
+
+    if (!in_network_game)
+        LbMemorySet(mission_status, 0, 120 * sizeof(struct MissionStatus));
+    if (fmtver < 2)
+    {
+        for (i = 1; i < next_mission; i++)
+          mission_list[i].ReLevelNo = 0;
+    }
+    for (i = 1; i < next_mission; i++)
+        mission_list[i].Complete = 0;
+#endif
 }
 
 void init_engine(void)
