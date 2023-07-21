@@ -21,6 +21,7 @@
 #include "bfsvaribl.h"
 #include "bfmath.h"
 #include "bfline.h"
+#include "rom.h"
 #include "svesa.h"
 #include "swlog.h"
 #include "bflib_fmvids.h"
@@ -96,11 +97,23 @@ extern struct MyMapElement *game_my_big_map;
 extern struct SingleFloorTexture *game_textures;
 extern struct SingleTexture *game_face_textures;
 extern struct SinglePoint *game_object_points;
+extern ushort next_normal;
+extern ushort next_quick_light;
+extern ushort next_full_light;
+extern ushort next_face_texture;
+extern ushort next_floor_texture;
+extern ushort next_object_point;
+extern ushort next_object_face;
+extern ushort next_object_face4;
+extern ushort next_object;
 extern struct SingleObjectFace3 *game_object_faces;
 extern struct SingleObject *game_objects;
 extern struct QuickLight *game_quick_lights;
 extern struct FullLight *game_full_lights;
 extern struct Normal *game_normals;
+extern ushort next_local_mat;
+extern ushort next_special_face;
+extern ushort next_special_face4;
 extern struct SingleObjectFace4 *game_object_faces4;
 extern struct AnimTmap *game_anim_tmaps;
 extern struct TrafficNode *game_traffic_nodes;
@@ -125,6 +138,26 @@ extern struct UnknBezEdit *bez_edit;
 extern ubyte *spare_map_buffer;
 extern struct Objective *game_used_lvl_objectives;
 extern struct LevelMisc *game_level_miscs;
+
+extern ulong stored_l3d_next_object[1];
+extern ulong stored_l3d_next_object_face[1];
+extern ulong stored_l3d_next_object_face4[1];
+extern ulong stored_l3d_next_object_point[1];
+extern ulong stored_l3d_next_normal[1];
+extern ulong stored_l3d_next_face_texture[1];
+extern ulong stored_l3d_next_floor_texture[1];
+extern ulong stored_l3d_next_local_mat[1];
+extern ulong stored_level3d_inuse;
+
+extern ulong stored_g3d_next_object[1];
+extern ulong stored_g3d_next_object_face[1];
+extern ulong stored_g3d_next_object_face4[1];
+extern ulong stored_g3d_next_object_point[1];
+extern ulong stored_g3d_next_normal[1];
+extern ulong stored_g3d_next_face_texture[1];
+extern ulong stored_g3d_next_floor_texture[1];
+extern ulong stored_g3d_next_local_mat[1];
+extern ulong stored_global3d_inuse[1];
 
 extern unsigned char *display_palette;
 extern unsigned short unkn2_pos_x;
@@ -160,9 +193,11 @@ extern struct GamePanel *game_panel;
 extern struct GamePanel game_panel_lo[];
 extern struct GamePanel unknstrct7_arr2[];
 
-extern ushort engine_mem_len;
+extern ushort mission_strings_len;
 extern ushort next_used_objective; // = 1;
 extern ushort display_mode;
+extern void *dword_177750;
+extern ushort word_1C8446;
 
 extern ubyte execute_commands;
 extern long gamep_unknval_10;
@@ -215,7 +250,7 @@ MemSystem mem_game[] = {
   { "my_big_map",		&game_my_big_map,		18u, 16513, 0, 0, 0 },
   { "textures",			&game_textures,			18u, 4512, 0, 0, 0 },
   { "face_textures",	&game_face_textures,	16u, 4000, 0, 0, 0 },
-  { "object_points",	&game_object_points,	10u, 20000, 0, 0, 0 },
+  { "object_points",	&game_object_points,    10u, 20000, 0, 0, 0 },
   { "object_faces",		&game_object_faces,		32u, 15000, 0, 0, 0 },
   { "objects",			&game_objects,			36u, 2000, 0, 0, 0 },
   { "quick_lights",		&game_quick_lights,		6u, 64000, 0, 0, 0 },
@@ -497,6 +532,24 @@ void play_smacker(int vid_type)
         : : "a" (vid_type));
 }
 
+void draw_text(short x, short y, const char *text, ubyte colour)
+{
+    long scrn_w, scrn_h;
+    ubyte *scr;
+
+    if (x < 0 || y < 0)
+        return;
+    scrn_w = lbDisplay.GraphicsScreenWidth;
+    scrn_h = lbDisplay.GraphicsScreenHeight;
+    if (x > scrn_w - 1)
+        return;
+    if ( y > scrn_h - 1)
+        return;
+
+    scr = &lbDisplay.WScreen[x + scrn_w * y];
+    prop_text(text, scr, scrn_w, colour);
+}
+
 void play_intro(void)
 {
     char fname[FILENAME_MAX];
@@ -644,15 +697,53 @@ void fill_floor_textures(void)
         :  :  : "eax" );
 }
 
+void global_3d_store(int action)
+{
+    if (action == 2)
+    {
+        if (stored_global3d_inuse[0])
+            draw_text(100, 120, " GLOBAL 3d STORED ->INUSE", colour_lookup[2]);
+    }
+    else if (action == 1)
+    {
+        if (stored_global3d_inuse[0])
+        {
+            next_object = stored_g3d_next_object[0];
+            next_object_face = stored_g3d_next_object_face[0];
+            next_object_face4 = stored_g3d_next_object_face4[0];
+            next_object_point = stored_g3d_next_object_point[0];
+            next_normal = stored_g3d_next_normal[0];
+            next_face_texture = stored_g3d_next_face_texture[0];
+            next_floor_texture = stored_g3d_next_floor_texture[0];
+            next_local_mat = stored_g3d_next_local_mat[0];
+            stored_global3d_inuse[0] = 0;
+        }
+    } else
+    {
+        if (!stored_global3d_inuse[0])
+        {
+            stored_g3d_next_object[0] = next_object;
+            stored_g3d_next_object_face[0] = next_object_face;
+            stored_g3d_next_object_face4[0] = next_object_face4;
+            stored_g3d_next_object_point[0] = next_object_point;
+            stored_g3d_next_normal[0] = next_normal;
+            stored_g3d_next_face_texture[0] = next_face_texture;
+            stored_g3d_next_floor_texture[0] = next_floor_texture;
+            stored_g3d_next_local_mat[0] = next_local_mat;
+            stored_global3d_inuse[0] = 1;
+        }
+    }
+}
+
 void load_mad_pc(ushort mapno)
 {
     asm volatile ("call ASM_load_mad_pc\n"
         : : "a" (mapno));
 }
 
-void load_mad_0_console(ushort map, short level)
+void load_level_pc(ushort map, short level)
 {
-    asm volatile ("call ASM_load_mad_0_console\n"
+    asm volatile ("call ASM_load_level_pc\n"
         : : "a" (map), "d" (level));
 }
 
@@ -2701,9 +2792,9 @@ void load_missions(int num)
     if (fh != INVALID_FILE)
     {
         LbFileRead(fh, &fmtver, sizeof(ulong));
-        LbFileRead(fh, &engine_mem_len, sizeof(ushort));
-        LbFileRead(fh, engine_mem_alloc_ptr + engine_mem_alloc_size - 64000, engine_mem_len);
-        LbFileRead(fh, &next_mission, sizeof(short));
+        LbFileRead(fh, &mission_strings_len, sizeof(ushort));
+        LbFileRead(fh, engine_mem_alloc_ptr + engine_mem_alloc_size - 64000, mission_strings_len);
+        LbFileRead(fh, &next_mission, sizeof(ushort));
         LbFileRead(fh, mission_list, sizeof(struct Mission) * next_mission);
         LbFileRead(fh, &next_used_objective, sizeof(ushort));
         LbFileRead(fh, game_used_objectives, sizeof(struct Objective) * next_used_objective);
@@ -2969,7 +3060,7 @@ void init_game(ubyte reload)
         new_level_no = mission_list[mission_no].LevelNo;
     }
 
-    load_mad_0_console(-new_level_no, mission_no);
+    load_level_pc(-new_level_no, mission_no);
     if (ingame.GameMode == GamM_None)
         ingame.GameMode = GamM_Unkn2;
     debug_trace_setup(1);
@@ -6163,7 +6254,7 @@ void show_load_and_prep_mission(void)
           }
 
           change_current_map(mission_list[ingame.MissionNo].MapNo);
-          load_mad_0_console(-(int)mission_list[ingame.MissionNo].LevelNo, ingame.MissionNo);
+          load_level_pc(-(int)mission_list[ingame.MissionNo].LevelNo, ingame.MissionNo);
           randomize_playable_groups_order();
         }
         else
@@ -6181,7 +6272,7 @@ void show_load_and_prep_mission(void)
         if ( !in_network_game )
         {
             if (cities[unkn_city_no].Level != 0)
-                load_mad_0_console(-cities[unkn_city_no].Level, unkn_city_no);
+                load_level_pc(-cities[unkn_city_no].Level, unkn_city_no);
         }
         debug_trace_place(8);
     }
