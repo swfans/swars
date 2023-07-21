@@ -908,17 +908,17 @@ static inline short prop_text_draw_char(ubyte *o, ubyte c, long scanline, ushort
     return font[fpos];
 }
 
-void prop_text(char *text, TbPixel *out, long scanline, TbPixel colour)
+void prop_text(const char *text, TbPixel *out, long scanline, TbPixel colour)
 {
     TbPixel *obeg; // current line begin in output buffer
     TbPixel *o; // current pos in output buffer
     ushort colr; // Colour expanded to 16 bits
-    ubyte *pch; // Pointer to currently drawn character
+    const ubyte *pch; // Pointer to currently drawn character
     ulong linesize; // size of one line within the output buffer
 
     linesize = 6 * scanline;
     colr = (colour << 8) + colour;
-    pch = (ubyte *)text;
+    pch = (const ubyte *)text;
     obeg = out;
     o = obeg;
 

@@ -32,7 +32,7 @@ extern long tabwidth;
 
 /** Draw text on screen using simple built-in 5x6 font.
  */
-void prop_text(char *text, TbPixel *out, long scanline, TbPixel colour);
+void prop_text(const char *text, TbPixel *out, long scanline, TbPixel colour);
 
 /** Generate table for fading to and from given colour.
  */
