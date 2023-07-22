@@ -44,6 +44,7 @@ enum SubTypePerson {
   SubTT_PERS_WHIT_BLOND_F = 0xD,
   SubTT_PERS_LETH_JACKT_M = 0xE,
   SubTT_PERS_FAST_BLOND_F = 0xF,
+  SubTT_PERS_COUNT,
 };
 
 enum PersonState {
@@ -133,7 +134,7 @@ struct PeepStat
 #pragma pack()
 /******************************************************************************/
 extern struct PeepStat peep_type_stats[];
-extern ushort people_frames[22][16];
+extern ushort people_frames[SubTT_PERS_COUNT][22];
 
 TbBool person_carries_weapon(struct Thing *p_person, ubyte weapon);
 

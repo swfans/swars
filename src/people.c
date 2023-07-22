@@ -227,12 +227,12 @@ void init_person_thing(struct Thing *p_person)
     }
     else
     {
-        ushort paniframe;
-        paniframe = people_frames[p_person->SubType][p_person->U.UPerson.AnimMode];
-        p_person->Frame -= nstart_ani[paniframe + p_person->U.UPerson.Angle];
+        ushort person_anim;
+        person_anim = people_frames[p_person->SubType][p_person->U.UPerson.AnimMode];
+        p_person->Frame -= nstart_ani[person_anim + p_person->U.UPerson.Angle];
         p_person->U.UPerson.AnimMode = 0;
-        p_person->Frame += nstart_ani[paniframe + p_person->U.UPerson.Angle];
-        p_person->StartFrame = paniframe - 1;
+        p_person->Frame += nstart_ani[person_anim + p_person->U.UPerson.Angle];
+        p_person->StartFrame = person_anim - 1;
         p_person->Speed = calc_person_speed(p_person);
     }
 }
