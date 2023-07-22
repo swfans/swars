@@ -28,6 +28,7 @@
 #include "bflib_snd_sys.h"
 #include "bfscd.h"
 #include "bflib_joyst.h"
+#include "matrix.h"
 #include "game_data.h"
 #include "cybmod.h"
 #include "display.h"
@@ -95,6 +96,7 @@ extern struct TbSprite *m_sprites;
 extern struct TbSprite *m_sprites_end;
 
 extern struct MyMapElement *game_my_big_map;
+extern struct M33 local_mats[100];
 extern struct SingleFloorTexture *game_textures;
 extern struct SingleTexture *game_face_textures;
 extern struct SinglePoint *game_object_points;
@@ -176,6 +178,7 @@ extern int data_1c8428;
 extern const char *primvehobj_fname;
 extern unsigned char textwalk_data[640];
 
+extern ubyte byte_1C83D1;
 extern ubyte byte_1CAB64[];
 extern ubyte byte_1DB088[];
 extern long dword_1DC36C;

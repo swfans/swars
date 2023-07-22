@@ -395,6 +395,25 @@ struct UnknStruct04 { // sizeof=218
     char field_D9;
 };
 
+struct SingleObject { // sizeof=36
+  ushort StartFace;
+  ushort NumbFaces;
+  ushort NextObject;
+  ushort StartFace4;
+  ushort NumbFaces4;
+  ushort ZScale;
+  short OffsetX;
+  short OffsetY;
+  short OffsetZ;
+  short ObjectNo;
+  short MapX;
+  short MapZ;
+  ushort StartPoint;
+  ushort EndPoint;
+  ubyte field_1C[7];
+  ubyte field_23;
+};
+
 struct MissionStatus { // sizeof=40
     ulong CityDays;
     ulong CityHours;
