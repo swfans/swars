@@ -39,4 +39,16 @@ void mech_unkn_func_09(short thing)
         : : "a" (thing));
 }
 
+void veh_add(struct Thing *p_thing, short frame)
+{
+    asm volatile ("call ASM_veh_add\n"
+        : : "a" (p_thing), "d" (frame));
+}
+
+void VNAV_unkn_func_207(struct Thing *p_thing)
+{
+    asm volatile ("call ASM_VNAV_unkn_func_207\n"
+        : : "a" (p_thing));
+}
+
 /******************************************************************************/

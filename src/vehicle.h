@@ -53,6 +53,10 @@ void init_mech(void);
 void mech_unkn_func_02(void);
 void mech_unkn_func_09(short thing);
 
+void veh_add(struct Thing *p_thing, short frame);
+
+void VNAV_unkn_func_207(struct Thing *p_thing);
+
 /******************************************************************************/
 #ifdef __cplusplus
 }
