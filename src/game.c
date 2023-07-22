@@ -877,6 +877,12 @@ void unkn_object_shift_02(int norm1, int norm2, ushort objectno)
         : : "a" (norm1), "d" (norm2), "b" (objectno));
 }
 
+void func_6031c(short a1, short a2, short a3, short a4)
+{
+    asm volatile ("call ASM_func_6031c\n"
+        : : "a" (a1), "d" (a2), "b" (a3), "c" (a4));
+}
+
 void load_level_pc(ushort map, short level)
 {
     asm volatile ("call ASM_load_level_pc\n"
