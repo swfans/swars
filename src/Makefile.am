@@ -74,6 +74,8 @@ swars_SOURCES = \
 	keyboard.c \
 	keyboard.h \
 	main.c \
+	matrix.c \
+	matrix.h \
 	mouse.c \
 	mouse.h \
 	network.c \
