@@ -100,6 +100,8 @@ swars_SOURCES = \
 	unix.h \
 	util.c \
 	util.h \
+	vehicle.c \
+	vehicle.h \
 	weapon.c \
 	weapon.h \
 	windows.c \
