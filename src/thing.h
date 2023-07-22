@@ -385,7 +385,12 @@ extern struct SimpleThing *sthings;
 void init_things(void);
 TbResult delete_node(struct Thing *p_thing);
 void add_node_thing(ushort new_thing);
-void remove_thing(ushort tngno);
+short get_new_thing(void);
+void remove_thing(short tngno);
+
+void add_node_sthing(ushort new_thing);
+short get_new_sthing(void);
+void remove_sthing(short tngno);
 
 /******************************************************************************/
 #ifdef __cplusplus

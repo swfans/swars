@@ -46,6 +46,7 @@
 #include "thing.h"
 #include "packet.h"
 #include "player.h"
+#include "vehicle.h"
 #include "weapon.h"
 
 #include "timer.h"
@@ -100,6 +101,7 @@ extern struct SinglePoint *game_object_points;
 extern ushort next_normal;
 extern ushort next_quick_light;
 extern ushort next_full_light;
+extern ushort word_1531E0;
 extern ushort next_face_texture;
 extern ushort next_floor_texture;
 extern ushort next_object_point;
@@ -128,16 +130,23 @@ extern struct SingleObjectFace4 *game_special_object_faces4;
 extern struct FloorTile *game_floor_tiles;
 extern struct Objective *game_used_objectives;
 extern struct Objective *game_objectives;
+extern ushort next_command;
+extern ushort next_objective;
+extern ushort next_used_lvl_objective;
+extern ushort next_col_vect;
 extern ubyte *game_user_heap;
 extern struct SpecialPoint *game_screen_point_pool;
 extern struct DrawItem *game_draw_list;
 extern struct SortSprite *game_sort_sprites;
 extern struct SortLine *game_sort_lines;
-extern struct Command *game_game_commands;
 extern struct UnknBezEdit *bez_edit;
 extern ubyte *spare_map_buffer;
 extern struct Objective *game_used_lvl_objectives;
 extern struct LevelMisc *game_level_miscs;
+extern ushort same_type_head[290];
+extern ushort word_176E38;
+
+extern struct UnknGroup unkn_groups[32];
 
 extern ulong stored_l3d_next_object[1];
 extern ulong stored_l3d_next_object_face[1];
@@ -173,6 +182,10 @@ extern long dword_1DC36C;
 extern long sound_heap_size;
 extern struct SampleTable *sound_heap_memory;
 
+extern ushort word_1810E4;
+extern ubyte byte_1810E6[40];
+extern ubyte byte_18110E[40];
+
 extern ubyte research_on_weapons;// = true;
 
 extern PrimObjectPoint *prim_object_points;
@@ -194,6 +207,7 @@ extern struct GamePanel game_panel_lo[];
 extern struct GamePanel unknstrct7_arr2[];
 
 extern ushort mission_strings_len;
+extern ushort unkn3de_len;
 extern ushort next_used_objective; // = 1;
 extern ushort display_mode;
 extern void *dword_177750;
@@ -509,6 +523,26 @@ void merged_noop_unkn1(int a1)
 {
 }
 
+void debug_level(const char *text, int player)
+{
+    short thing;
+
+    thing = things_used_head;
+    while (thing != 0)
+    {
+        struct Thing *p_thing;
+
+        p_thing = &things[thing];
+        // TODO place debug/verification code
+        thing = p_thing->LinkChild;
+    }
+}
+
+void player_debug(int player)
+{
+    // TODO place debug/verification code
+}
+
 void game_setup_stuff(void)
 {
     asm volatile ("call ASM_game_setup_stuff\n"
@@ -735,10 +769,97 @@ void global_3d_store(int action)
     }
 }
 
+TbBool is_command_any_until(struct Command *cmd)
+{
+
+    if (cmd->Type < PCmd_UNTIL_P_PERSUADED)
+    {
+        if (cmd->Type < PCmd_UNTIL_P_V_DEAD)
+            return false;
+        return true;
+    }
+    else if (cmd->Type > PCmd_UNTIL_OBJECT_DESTROYED)
+    {
+        if (cmd->Type < PCmd_UNTIL_OBJ)
+        {
+          if (cmd->Type != PCmd_UNTIL_TIME)
+            return false;
+        }
+        else if (cmd->Type > PCmd_UNTIL_OBJ && cmd->Type != PCmd_UNTIL_G_NOT_SEEN)
+        {
+            return false;
+        }
+        return true;
+    }
+    return true;
+}
+
+void unkn_f_pressed_func(void)
+{
+    struct Command *gcmds;
+    short thing;
+    struct Thing *p_thing;
+    short i;
+    ushort cid;
+    ushort prev_cid;
+
+    gcmds = game_commands;
+    thing = same_type_head[1];
+    for (i = 0; true; i++)
+    {
+        if (thing == 0)
+            break;
+        if (i >= 1000) {
+            LOGERR("Infinite loop in same type things list");
+            break;
+        }
+        p_thing = &things[thing];
+        cid = p_thing->U.UPerson.ComHead;
+        prev_cid = 0;
+        while (cid != 0)
+        {
+            if (!is_command_any_until(&gcmds[cid]))
+            {
+                if (prev_cid)
+                    gcmds[prev_cid].Flags |= 0x20000;
+                gcmds[cid].Flags |= 0x40000;
+            }
+            prev_cid = cid;
+            cid = gcmds[cid].Next;
+        }
+        thing = p_thing->LinkSame;
+    }
+    game_commands = gcmds;
+}
+
+void fix_level_indexes(void)
+{
+    asm volatile ("call ASM_fix_level_indexes\n"
+        :  :  : "eax" );
+}
+
+void build_same_type_headers(void)
+{
+    asm volatile ("call ASM_build_same_type_headers\n"
+        :  :  : "eax" );
+}
+
+void level_misc_update(void)
+{
+    asm volatile ("call ASM_level_misc_update\n"
+        :  :  : "eax" );
+}
+
 void load_mad_pc(ushort mapno)
 {
     asm volatile ("call ASM_load_mad_pc\n"
         : : "a" (mapno));
+}
+
+void sanitize_cybmods_flags(short *modflg)
+{
+    asm volatile ("call ASM_sanitize_cybmods_flags\n"
+        : : "a" (modflg));
 }
 
 void load_level_pc(ushort map, short level)

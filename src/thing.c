@@ -39,9 +39,37 @@ void add_node_thing(ushort new_thing)
         : : "a" (new_thing));
 }
 
-void remove_thing(ushort tngno)
+short get_new_thing(void)
+{
+    short ret;
+    asm volatile ("call ASM_get_new_thing\n"
+        : "=r" (ret) : );
+    return ret;
+}
+
+void remove_thing(short tngno)
 {
     asm volatile ("call ASM_remove_thing\n"
+        : : "a" (tngno));
+}
+
+void add_node_sthing(ushort new_thing)
+{
+    asm volatile ("call ASM_add_node_sthing\n"
+        : : "a" (new_thing));
+}
+
+short get_new_sthing(void)
+{
+    short ret;
+    asm volatile ("call ASM_get_new_sthing\n"
+        : "=r" (ret) : );
+    return ret;
+}
+
+void remove_sthing(short tngno)
+{
+    asm volatile ("call ASM_remove_sthing\n"
         : : "a" (tngno));
 }
 

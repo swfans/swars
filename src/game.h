@@ -482,6 +482,18 @@ struct ScreenMenuBox { // sizeof=42
   sbyte field_29;
 };
 
+struct UnknGroup { // sizeof=40
+  long ugfld_0;
+  long ugfld_4;
+  long ugfld_8;
+  struct WarFlag *war_flags;
+  ubyte ugfld_16[8];
+  long ugfld_24;
+  long ugfld_28;
+  long ugfld_32;
+  long ugfld_36;
+};
+
 struct LevelDef {
   ubyte PlayableGroups[8];
   ubyte field_8[33];
