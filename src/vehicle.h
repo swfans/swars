@@ -45,8 +45,13 @@ enum SubTypeVehicle {
   SubTT_VEH_UNKN60 = 0x3C,
 };
 
+struct Thing;
+
 #pragma pack()
 /******************************************************************************/
+void init_mech(void);
+void mech_unkn_func_02(void);
+void mech_unkn_func_09(short thing);
 
 /******************************************************************************/
 #ifdef __cplusplus

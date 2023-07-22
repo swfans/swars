@@ -21,4 +21,22 @@
 #include "swlog.h"
 /******************************************************************************/
 
+void init_mech(void)
+{
+    asm volatile ("call ASM_init_mech\n"
+        :  :  : "eax" );
+}
+
+void mech_unkn_func_02(void)
+{
+    asm volatile ("call ASM_mech_unkn_func_02\n"
+        :  :  : "eax" );
+}
+
+void mech_unkn_func_09(short thing)
+{
+    asm volatile ("call ASM_mech_unkn_func_09\n"
+        : : "a" (thing));
+}
+
 /******************************************************************************/
