@@ -865,6 +865,18 @@ void sanitize_cybmods_flags(short *modflg)
         : : "a" (modflg));
 }
 
+void unkn_object_shift_03(ushort objectno)
+{
+    asm volatile ("call ASM_unkn_object_shift_03\n"
+        : : "a" (objectno));
+}
+
+void unkn_object_shift_02(int norm1, int norm2, ushort objectno)
+{
+    asm volatile ("call ASM_unkn_object_shift_02\n"
+        : : "a" (norm1), "d" (norm2), "b" (objectno));
+}
+
 void load_level_pc(ushort map, short level)
 {
     asm volatile ("call ASM_load_level_pc\n"
