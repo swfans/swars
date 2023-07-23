@@ -896,34 +896,18 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
     if (fmtver >= 1)
     {
         ushort count;
-        long pos_0, pos_1, pos_2, pos_3, pos_4;
-        long pos_5, pos_6, pos_7, pos_8;
+        long pos_0;
         short new_thing;
         struct Thing loc_thing;
         struct Thing *p_thing;
 
         count = 0;
         LbFileRead(lev_fh, &count, 2);
-        pos_0 = count;
-        pos_1 = count + 10001;
-        pos_2 = count + 10002;
-        pos_3 = count + 10003;
-        pos_6 = count + 10006;
-        pos_7 = count + 10007;
-        pos_8 = count + 10008;
-        while ( 1 )
+
+        for (pos_0 = count-1; pos_0 >= 0; pos_0--)
         {
             short angle;
 
-            --pos_0;
-            --pos_1;
-            --pos_2;
-            --pos_3;
-            --pos_6;
-            --pos_7;
-            --pos_8;
-            if (pos_0 < 0)
-                break;
             merged_noop_unkn1(pos_0);
 
             new_thing = get_new_thing();
@@ -977,7 +961,7 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
             if (p_thing->Type == TT_VEHICLE)
             {
                 if (pos_0 == 87)
-                    merged_noop_unkn1(pos_1);
+                    merged_noop_unkn1(pos_0 + 10001);
                 if (fmtver < 17)
                     p_thing->U.UVehicle.Armour = 4;
                 p_thing->U.UObject.TargetDY = 0;
@@ -985,11 +969,11 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
                 if (fmtver <= 8)
                     p_thing->Y >>= 3;
                 if (pos_0 == 87)
-                    merged_noop_unkn1(pos_2);
+                    merged_noop_unkn1(pos_0 + 10002);
                 k = next_local_mat++;
                 LbFileRead(lev_fh, &local_mats[k], 36);
                 if (pos_0 == 87)
-                    merged_noop_unkn1(pos_3);
+                    merged_noop_unkn1(pos_0 + 10003);
                 p_thing->U.UVehicle.MatrixIndex = next_local_mat - 1;
                 byte_1C83D1 = 0;
 
@@ -1000,7 +984,7 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
                 unkn_object_shift_02(i, k, next_object - 1);
 
                 if (pos_0 == 87)
-                    merged_noop_unkn1(pos_6);
+                    merged_noop_unkn1(pos_0 + 10006);
                 k = p_thing - things;
                 p_thing->U.UVehicle.Object = next_object - 1;
                 game_objects[next_object - 1].ZScale = k;
@@ -1009,7 +993,7 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
                 angle = LbArcTanAngle(local_mats[k].R[0][2], local_mats[k].R[2][2]);
                 p_thing->U.UVehicle.AngleY = (angle + LbFPMath_PI) & LbFPMath_AngleMask;
                 if (pos_0 == 87)
-                    merged_noop_unkn1(pos_7);
+                    merged_noop_unkn1(pos_0 + 10007);
                 veh_add(p_thing, p_thing->StartFrame);
                 k = p_thing->U.UPerson.ComCur;
                 angle = LbArcTanAngle(local_mats[k].R[0][2], local_mats[k].R[2][2]);
@@ -1025,7 +1009,7 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
                     mech_unkn_func_09(new_thing);
                 }
                 if (pos_0 == 87)
-                    merged_noop_unkn1(pos_8);
+                    merged_noop_unkn1(pos_0 + 10008);
                 debug_level(" placed vehicle", 1);
             }
         }
@@ -1152,7 +1136,9 @@ void load_level_pc(ushort map, short level)
         LOGERR("Next level index is not positive, load skipped");
         return;
     }
-    /* XXX: This fixes the inter-mission memory corruption bug */
+    /* XXX: This fixes the inter-mission memory corruption bug
+     * mefisto: No idea what "the" bug is, to be tested and described properly (or re-enabled)
+     */
     /*if ((ingame.Flags & 0x08) == 0)
     {
         if (prev_level)
