@@ -1,15 +1,5 @@
-Major items:
-• Network/multiplayer
-• Tension music support
-
-Less important items:
-• Joystick support
-• Fix policemen attacking you when you right-click with your weapons hidden
-  when near a policeman
-• Check the timing so that the mouse is updated 30fps, the screen at ~22fps and
-  the sound at how many it requires to play loops without crackling but also
-  smoothly modulate pitch for weapons that use it
-• Add some sort of sleep call to movie playback (atm they do busy waiting)
+The possible enhancenemts and bugs to fix are listed here:
+• github.com/mefistotelis/swars/issues
 
 Far future:
 • Re-write the game in C?
