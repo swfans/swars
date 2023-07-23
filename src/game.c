@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <errno.h>
 #include <limits.h>
 #include <stdio.h>
@@ -883,6 +884,14 @@ void func_6031c(short tx, short tz, short a3, short ty)
         : : "a" (tx), "d" (tz), "b" (a3), "c" (ty));
 }
 
+/** Maps fields from old Thing struct to the current one/
+ */
+void refresh_old_thing_format(struct Thing *p_thing, struct ThingOldV9 *p_oldthing, ulong fmtver)
+{
+    memcpy(p_thing, p_oldthing, sizeof(struct Thing));
+    // TODO remap fields which moved
+}
+
 ulong load_level_pc_handle(TbFileHandle lev_fh)
 {
     ulong fmtver;
@@ -904,6 +913,7 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
         count = 0;
         LbFileRead(lev_fh, &count, 2);
 
+        LOGSYNC("Level fmtver=%lu n_things=%hd", fmtver, count);
         for (pos_0 = count-1; pos_0 >= 0; pos_0--)
         {
             short angle;
@@ -913,7 +923,14 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
             new_thing = get_new_thing();
             p_thing = &things[new_thing];
             memcpy(&loc_thing, p_thing, sizeof(struct Thing));
-            LbFileRead(lev_fh, p_thing, sizeof(struct Thing));
+            if (fmtver < 12) {
+                struct ThingOldV9 s_oldthing;
+                assert(sizeof(s_oldthing) == 216);
+                LbFileRead(lev_fh, &s_oldthing, sizeof(s_oldthing));
+                refresh_old_thing_format(p_thing, &s_oldthing, fmtver);
+            } else {
+                LbFileRead(lev_fh, p_thing, sizeof(struct Thing));
+            }
             if (p_thing->Z >> 8 < 256)
                 p_thing->Z += 0x10000;
             if (p_thing->X >> 16 > 127)
@@ -934,6 +951,7 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
                 ushort person_anim;
 
                 if (fmtver < 15)
+                    // Causes invisible NPCs when non-zero
                     p_thing->Flag2 = 0;
                 p_thing->U.UPerson.Flag3 = 0;
                 p_thing->Flag2 &= 0x21000000;
@@ -964,7 +982,7 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
                     merged_noop_unkn1(pos_0 + 10001);
                 if (fmtver < 17)
                     p_thing->U.UVehicle.Armour = 4;
-                p_thing->U.UObject.TargetDY = 0;
+                p_thing->U.UVehicle.PassengerHead = 0;
                 p_thing->Flag2 &= 0x1000000;
                 if (fmtver <= 8)
                     p_thing->Y >>= 3;
@@ -989,13 +1007,13 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
                 p_thing->U.UVehicle.Object = next_object - 1;
                 game_objects[next_object - 1].ZScale = k;
                 VNAV_unkn_func_207(p_thing);
-                k = p_thing->U.UPerson.ComCur;
+                k = p_thing->U.UVehicle.MatrixIndex;
                 angle = LbArcTanAngle(local_mats[k].R[0][2], local_mats[k].R[2][2]);
                 p_thing->U.UVehicle.AngleY = (angle + LbFPMath_PI) & LbFPMath_AngleMask;
                 if (pos_0 == 87)
                     merged_noop_unkn1(pos_0 + 10007);
                 veh_add(p_thing, p_thing->StartFrame);
-                k = p_thing->U.UPerson.ComCur;
+                k = p_thing->U.UVehicle.MatrixIndex;
                 angle = LbArcTanAngle(local_mats[k].R[0][2], local_mats[k].R[2][2]);
                 p_thing->U.UVehicle.AngleY = (angle + LbFPMath_PI) & LbFPMath_AngleMask;
                 if (p_thing->SubType == SubTT_VEH_MECH)
@@ -1020,6 +1038,7 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
     LbFileRead(lev_fh, engine_mem_alloc_ptr + engine_mem_alloc_size - 1353, 1320);
     LbFileRead(lev_fh, unkn_groups, 32 * sizeof(struct UnknGroup));
     LbFileRead(lev_fh, &word_1531E0, sizeof(ushort));
+    LOGSYNC("Level fmtver=%lu n_command=%hu word_1531E0=%hu", fmtver, next_command, word_1531E0);
     for (k = 0; k < 32; k++)
     {
         for (i = 0; i < 8; i++)

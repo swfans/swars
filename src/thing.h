@@ -103,7 +103,7 @@ struct TngUObject
     char TokenDir;
     char OffX;
     char OffZ;
-    short TargetDX;
+    short TargetDX; // within Thing, pos=92
     short TargetDY;
     short TargetDZ;
     ushort BuildStartVect;
@@ -141,7 +141,7 @@ struct TngUMGun
     ubyte ShotTurn;
     short WeaponTurn;
     ushort ObjectNo;
-    short PrevThing;
+    short PrevThing; // within Thing, pos=92
     short NextThing;
     ubyte Token;
     char TokenDir;
@@ -174,7 +174,7 @@ struct TngUVehicle
   ubyte Dummy2;
   short WeaponTurn;
   short ReqdSpeed;
-  ushort MaxSpeed;
+  ushort MaxSpeed; // within Thing, pos=92
   ushort PassengerHead;
   short TNode;
   short AngleDY;
@@ -222,7 +222,7 @@ struct TngUEffect
   ubyte Angle;
   ushort PassengerHead;
   short TNode;
-  short AngleDY;
+  short AngleDY; // within Thing, pos=92
   short AngleX;
   short AngleY;
   short AngleZ;
@@ -263,7 +263,7 @@ struct TngUPerson
   short WeaponTurn;
   ubyte Brightness;
   ubyte ComRange;
-  ubyte BumpMode;
+  ubyte BumpMode; // within Thing, pos=92
   ubyte BumpCount;
   short Vehicle;
   short LinkPassenger;
@@ -308,8 +308,7 @@ struct TngUPerson
 /** Structure for storing State of any Thing.
  * Everything in game besides ground terrain, are Things.
  */
-struct Thing
-{
+struct Thing { // sizeof=168
     short Parent;
     short Next;
     short LinkParent;
@@ -341,7 +340,7 @@ struct Thing
     long Flag2;
     short GotoThingIndex;
     short OldTarget;
-    union {
+    union { // pos=76
         struct TngUObject UObject;
         struct TngUMGun UMGun;
         struct TngUVehicle UVehicle;
@@ -373,6 +372,53 @@ struct SimpleThing
     short StartTimer1;
     char U[12];
     long field_38;
+};
+
+/** Old structure for storing State of any Thing.
+ * Used only to allow reading old, pre-release levels.
+ */
+struct ThingOldV9 { // sizeof=216
+    short Parent;
+    short Next;
+    short LinkParent;
+    short LinkChild;
+    ubyte SubType;
+    ubyte Type;
+    short State;
+    ulong Flag;
+    short LinkSame;
+    short LinkSameGroup;
+    short Radius;
+    ushort ThingOffset;
+    long X;
+    long Y;
+    long Z;
+    short Frame;
+    ushort StartFrame;
+    short Timer1;
+    short StartTimer1;
+    long VX;
+    long VY;
+    long VZ;
+    short Speed;
+    short Health;
+    ushort Owner;
+    char PathOffset;
+    char SubState;
+    struct Thing *PTarget;
+    long Flag2;
+    short GotoThingIndex;
+    short OldTarget;
+    ubyte unkn76[16];
+    ubyte unkn92[16];
+    ubyte unkn108[16];
+    union { // pos=124
+        struct TngUObject UObject;
+        struct TngUMGun UMGun;
+        struct TngUVehicle UVehicle;
+        struct TngUEffect UEffect;
+        struct TngUPerson UPerson;
+    } U;
 };
 
 #pragma pack()
