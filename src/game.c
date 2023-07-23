@@ -877,16 +877,345 @@ void unkn_object_shift_02(int norm1, int norm2, ushort objectno)
         : : "a" (norm1), "d" (norm2), "b" (objectno));
 }
 
-void func_6031c(short a1, short a2, short a3, short a4)
+void func_6031c(short tx, short tz, short a3, short ty)
 {
     asm volatile ("call ASM_func_6031c\n"
-        : : "a" (a1), "d" (a2), "b" (a3), "c" (a4));
+        : : "a" (tx), "d" (tz), "b" (a3), "c" (ty));
+}
+
+ulong load_level_pc_handle(TbFileHandle lev_fh)
+{
+    ulong fmtver;
+    TbBool mech_initialized;
+    int i, k;
+
+    mech_initialized = 0;
+    fmtver = 0;
+    LbFileRead(lev_fh, &fmtver, 4);
+
+    if (fmtver >= 1)
+    {
+        ushort count;
+        long pos_0, pos_1, pos_2, pos_3, pos_4;
+        long pos_5, pos_6, pos_7, pos_8;
+        short new_thing;
+        struct Thing loc_thing;
+        struct Thing *p_thing;
+
+        count = 0;
+        LbFileRead(lev_fh, &count, 2);
+        pos_0 = count;
+        pos_1 = count + 10001;
+        pos_2 = count + 10002;
+        pos_3 = count + 10003;
+        pos_6 = count + 10006;
+        pos_7 = count + 10007;
+        pos_8 = count + 10008;
+        while ( 1 )
+        {
+            short angle;
+
+            --pos_0;
+            --pos_1;
+            --pos_2;
+            --pos_3;
+            --pos_6;
+            --pos_7;
+            --pos_8;
+            if (pos_0 < 0)
+                break;
+            merged_noop_unkn1(pos_0);
+
+            new_thing = get_new_thing();
+            p_thing = &things[new_thing];
+            memcpy(&loc_thing, p_thing, sizeof(struct Thing));
+            LbFileRead(lev_fh, p_thing, sizeof(struct Thing));
+            if (p_thing->Z >> 8 < 256)
+                p_thing->Z += 0x10000;
+            if (p_thing->X >> 16 > 127)
+                p_thing->X = 0x400000;
+            p_thing->PTarget = 0;
+            p_thing->LinkParent = loc_thing.LinkParent;
+            p_thing->LinkChild = loc_thing.LinkChild;
+            // All relevant thing types must have the values below at same position
+            p_thing->U.UObject.EffectiveGroup = p_thing->U.UObject.Group;
+
+            if (new_thing == 0)
+                continue;
+
+            add_node_thing(new_thing);
+
+            if (p_thing->Type == TT_PERSON)
+            {
+                ushort person_anim;
+
+                if (fmtver < 15)
+                    p_thing->Flag2 = 0;
+                p_thing->U.UPerson.Flag3 = 0;
+                p_thing->Flag2 &= 0x21000000;
+                if ((p_thing->Flag & 0x02000000) != 0)
+                {
+                    p_thing->ThingOffset = p_thing - things;
+                    remove_thing(new_thing);
+                    delete_node(p_thing);
+                    continue;
+                }
+                person_anim = people_frames[p_thing->SubType][p_thing->U.UPerson.AnimMode];
+                p_thing->StartFrame = person_anim - 1;
+                p_thing->Frame = nstart_ani[person_anim + p_thing->U.UPerson.Angle];
+                init_person_thing(p_thing);
+                p_thing->Flag |= 0x0004;
+                if (fmtver < 12)
+                    sanitize_cybmods_flags(&p_thing->U.UPerson.UMod.Mods);
+            }
+
+            if (p_thing->Type == SmTT_MINE)
+            {
+                p_thing->Frame = nstart_ani[p_thing->StartFrame + 1];
+            }
+
+            if (p_thing->Type == TT_VEHICLE)
+            {
+                if (pos_0 == 87)
+                    merged_noop_unkn1(pos_1);
+                if (fmtver < 17)
+                    p_thing->U.UVehicle.Armour = 4;
+                p_thing->U.UObject.TargetDY = 0;
+                p_thing->Flag2 &= 0x1000000;
+                if (fmtver <= 8)
+                    p_thing->Y >>= 3;
+                if (pos_0 == 87)
+                    merged_noop_unkn1(pos_2);
+                k = next_local_mat++;
+                LbFileRead(lev_fh, &local_mats[k], 36);
+                if (pos_0 == 87)
+                    merged_noop_unkn1(pos_3);
+                p_thing->U.UVehicle.MatrixIndex = next_local_mat - 1;
+                byte_1C83D1 = 0;
+
+                i = next_normal;
+                func_6031c(p_thing->X >> 8, p_thing->Z >> 8, -prim_unknprop01 - p_thing->StartFrame, p_thing->Y >> 8);
+                k = next_normal;
+                unkn_object_shift_03(next_object - 1);
+                unkn_object_shift_02(i, k, next_object - 1);
+
+                if (pos_0 == 87)
+                    merged_noop_unkn1(pos_6);
+                k = p_thing - things;
+                p_thing->U.UVehicle.Object = next_object - 1;
+                game_objects[next_object - 1].ZScale = k;
+                VNAV_unkn_func_207(p_thing);
+                k = p_thing->U.UPerson.ComCur;
+                angle = LbArcTanAngle(local_mats[k].R[0][2], local_mats[k].R[2][2]);
+                p_thing->U.UVehicle.AngleY = (angle + LbFPMath_PI) & LbFPMath_AngleMask;
+                if (pos_0 == 87)
+                    merged_noop_unkn1(pos_7);
+                veh_add(p_thing, p_thing->StartFrame);
+                k = p_thing->U.UPerson.ComCur;
+                angle = LbArcTanAngle(local_mats[k].R[0][2], local_mats[k].R[2][2]);
+                p_thing->U.UVehicle.AngleY = (angle + LbFPMath_PI) & LbFPMath_AngleMask;
+                if (p_thing->SubType == SubTT_VEH_MECH)
+                {
+                    if (!mech_initialized)
+                    {
+                        init_mech();
+                        mech_unkn_func_02();
+                        mech_initialized = 1;
+                    }
+                    mech_unkn_func_09(new_thing);
+                }
+                if (pos_0 == 87)
+                    merged_noop_unkn1(pos_8);
+                debug_level(" placed vehicle", 1);
+            }
+        }
+    }
+    LbFileRead(lev_fh, &next_command, sizeof(ushort));
+    LbFileRead(lev_fh, game_commands, 32 * next_command);
+    LbFileRead(lev_fh, &level_def, 44);
+    LbFileRead(lev_fh, engine_mem_alloc_ptr + engine_mem_alloc_size - 1353, 1320);
+    LbFileRead(lev_fh, unkn_groups, 32 * sizeof(struct UnknGroup));
+    LbFileRead(lev_fh, &word_1531E0, sizeof(ushort));
+    for (k = 0; k < 32; k++)
+    {
+        for (i = 0; i < 8; i++)
+        {
+            if (unkn_groups[k].ugfld_16[i] > 31)
+                unkn_groups[k].ugfld_16[i] = 0;
+        }
+    }
+    LbFileRead(lev_fh, engine_mem_alloc_ptr + engine_mem_alloc_size - 32000, 15 * word_1531E0);
+    LbFileRead(lev_fh, &unkn3de_len, sizeof(ushort));
+    LbFileRead(lev_fh, engine_mem_alloc_ptr + engine_mem_alloc_size - 32000, unkn3de_len);
+    merged_noop_unkn1(999);
+
+    if (fmtver >= 4)
+    {
+        ulong count;
+        short thing;
+
+        count = 0;
+        LbFileRead(lev_fh, &count, 2);
+        for (i = count; i > 0; i--)
+        {
+            struct SimpleThing loc_thing;
+            struct SimpleThing *p_thing;
+
+            thing = get_new_sthing();
+            p_thing = &sthings[thing];
+            memcpy(&loc_thing, p_thing, 60);
+            LbFileRead(lev_fh, p_thing, 60);
+            if (p_thing->Type == SmTT_CARRIED_ITEM)
+            {
+                p_thing->LinkParent = loc_thing.LinkParent;
+                p_thing->LinkChild = loc_thing.LinkChild;
+                remove_sthing(thing);
+            }
+            else
+            {
+              if (p_thing->Type == SmTT_MINE) {
+                  p_thing->Frame = nstart_ani[p_thing->StartFrame + 1];
+              }
+              p_thing->LinkParent = loc_thing.LinkParent;
+              p_thing->LinkChild = loc_thing.LinkChild;
+              if (thing != 0)
+                  add_node_sthing(thing);
+            }
+        }
+    }
+
+    if (fmtver > 5)
+    {
+        LbFileRead(lev_fh, &word_1810E4, 2);
+        if (word_1810E4 < 1000)
+            word_1810E4 = 1000;
+        if (word_1810E4 > 9000)
+            word_1810E4 = 4000;
+    }
+
+    if (fmtver <= 6) {
+        next_used_lvl_objective = 1;
+    } else {
+        LbFileRead(lev_fh, &next_used_lvl_objective, sizeof(ushort));
+        LbFileRead(lev_fh, game_used_lvl_objectives, 32 * next_used_lvl_objective);
+    }
+
+    if (fmtver >= 9) {
+        LbFileRead(lev_fh, byte_1810E6, 40);
+        LbFileRead(lev_fh, byte_18110E, 40);
+    }
+
+    if (fmtver >= 10)
+        LbFileRead(lev_fh, game_level_miscs, 4400);
+
+    if (fmtver >= 16)
+        LbFileRead(lev_fh, &dword_176D58, 4);
+
+    return fmtver;
 }
 
 void load_level_pc(ushort map, short level)
 {
+#if 0
     asm volatile ("call ASM_load_level_pc\n"
         : : "a" (map), "d" (level));
+#else
+    short next_level, prev_level;
+    TbFileHandle lev_fh;
+    char lev_fname[52];
+
+    next_level = map;
+    gameturn = 0;
+    LbMouseChangeSprite(0);
+    {
+        void **p = mem_game[34].BufferPtr;
+        *p = dword_177750;
+        mem_game[34].N = 3100;
+    }
+    read_primveh_obj(primvehobj_fname, 1);
+
+    prev_level = current_level;
+    if (next_level < 0)
+    {
+        next_level = -next_level;
+        word_1C8446 = 1;
+        if (next_level <= 15)
+            sprintf(lev_fname, "%s/c%03dl%03d.dat", game_dirs[DirPlace_Levels].directory,
+                cmdln_param_current_map, next_level);
+        else
+            sprintf(lev_fname, "%s/c%03dl%03d.d%d", game_dirs[DirPlace_Levels].directory,
+               cmdln_param_current_map, (next_level - 1) % 15 + 1, (next_level - 1) / 15);
+        if (next_level > 0)
+            current_level = next_level;
+    }
+    if (next_level <= 0) {
+        LOGERR("Next level index is not positive, load skipped");
+        return;
+    }
+    /* XXX: This fixes the inter-mission memory corruption bug */
+    /*if ((ingame.Flags & 0x08) == 0)
+    {
+        if (prev_level)
+            global_3d_store(1);
+        global_3d_store(0);
+    }*/
+    debug_level(" load level restart coms", 1);
+
+    lev_fh = LbFileOpen(lev_fname, Lb_FILE_MODE_READ_ONLY);
+    if (lev_fh != INVALID_FILE)
+    {
+        ulong fmtver;
+        int i;
+
+        word_1C8446 = 1;
+        word_176E38 = 0;
+
+        fmtver = load_level_pc_handle(lev_fh);
+
+        LbFileClose(lev_fh);
+
+        merged_noop_unkn1(998);
+
+        if (fmtver <= 10)
+        {
+            for (i = 1; i < next_command; i++)
+                game_commands[i].Time = 1;
+            for (i = 1; i < next_used_objective; i++)
+                game_used_objectives[i].Arg2 = 1;
+            for (i = 1; i < next_used_lvl_objective; i++)
+                game_used_lvl_objectives[i].Arg2 = 1;
+        }
+
+        merged_noop_unkn1(997);
+
+        for (i = 1; i < next_command ; i++)
+        {
+            if ((game_commands[i].Flags & 0x20000) != 0)
+            {
+                struct Command *nxcmd;
+
+                nxcmd = &game_commands[game_commands[i].Next];
+                if (!is_command_any_until(nxcmd)) {
+                    game_commands[i].Flags &= ~0x20000;
+                }
+            }
+        }
+        merged_noop_unkn1(996);
+        build_same_type_headers();
+        if (fmtver >= 10)
+            level_misc_update();
+        merged_noop_unkn1(995);
+    } else
+    {
+        LOGERR("Could not open mission file, load skipped");
+    }
+    merged_noop_unkn1(992);
+    // No idea what exactly pressing F during level load does
+    if (lbKeyOn[KC_F])
+        unkn_f_pressed_func();
+    fix_level_indexes();
+    merged_noop_unkn1(991);
+#endif
 }
 
 TbBool is_unkn_current_player(void)
