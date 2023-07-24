@@ -384,42 +384,99 @@ struct ThingOldV9 { // sizeof=216
     short LinkChild;
     ubyte SubType;
     ubyte Type;
-    short State;
+    short State; // pos=10
     ulong Flag;
     short LinkSame;
-    short LinkSameGroup;
-    short Radius;
-    ushort ThingOffset;
+    short unkn18;
+    short Radius; // pos=20
+    ushort unkn_22;
     long X;
     long Y;
     long Z;
     short Frame;
     ushort StartFrame;
-    short Timer1;
+    short Timer1; // pos=40
     short StartTimer1;
-    long VX;
-    long VY;
+    long VX; // pos=44
+    short unkn48; // pos=48
+    ushort ThingOffset; // pos=50
+    //long VY; -- location unknown
     long VZ;
-    short Speed;
-    short Health;
-    ushort Owner;
+    short unkn_56; // pos=56
+    short unkn_58; // pos=58
+    short unkn_60; // pos=60
     char PathOffset;
     char SubState;
     struct Thing *PTarget;
-    long Flag2;
+    short unkn68; // pos=68
+    short LinkSameGroup; // pos=70
+    //long Flag2; -- location unknown
     short GotoThingIndex;
     short OldTarget;
-    ubyte unkn76[16];
-    ubyte unkn92[16];
-    ubyte unkn108[16];
-    union { // pos=124
-        struct TngUObject UObject;
-        struct TngUMGun UMGun;
-        struct TngUVehicle UVehicle;
-        struct TngUEffect UEffect;
-        struct TngUPerson UPerson;
-    } U;
+    short Speed; // pos=76
+    short Health; // pos=78
+    ubyte unkn80[6]; // pos=80
+    ubyte PersonGroup; // pos=86
+    ubyte unkn87; // pos=87
+    ulong PersonWeaponsCarried; // pos=88
+    ubyte unkn92[8];
+    ushort Owner; // pos=100
+    ubyte unkn102[6]; // pos=102
+    ubyte unkn108[16]; // pos=108
+    short PersonPathIndex; // pos=124
+    ushort PersonUniqueID;
+    ubyte unkn_128; // pos=128
+    ubyte unkn_129;
+    //ubyte PersonEffectiveGroup; -- location unknown
+    ushort PersonComHead;
+    ushort PersonComCur;
+    char PersonSpecialTimer;
+    ubyte PersonAngle;
+    short PersonWeaponTurn;
+    ubyte PersonBrightness;
+    ubyte PersonComRange;
+    ubyte PersonBumpMode;
+    ubyte PersonBumpCount;
+    short PersonVehicle;
+    short PersonLinkPassenger;
+    ushort PersonWithin;
+    ushort PersonLastDist;
+    short PersonComTimer;
+    short PersonTimer2;
+    short PersonStartTimer2;
+    ubyte PersonAnimMode;
+    ubyte PersonOldAnimMode;
+    short PersonOnFace;
+    union Mod PersonUMod;
+    short PersonMood;
+    struct DrawFrameId PersonFrameId;
+    ubyte PersonShadows[4];
+    ubyte PersonRecoilTimer;
+    ushort PersonMaxHealth;
+    ubyte PersonFlag3;
+    ubyte PersonOldSubType;
+    short PersonShieldEnergy;
+    ubyte PersonShieldGlowTimer;
+    ubyte PersonWeaponDir;
+    ushort PersonSpecialOwner;
+    ushort PersonWorkPlace;
+    ushort PersonLeisurePlace;
+    short PersonWeaponTimer;
+    short PersonTarget2;
+    short PersonMaxShieldEnergy;
+    short PersonPersuadePower;
+    short PersonMaxEnergy;
+    short PersonEnergy;
+    ubyte PersonRecoilDir;
+    ubyte PersonCurrentWeapon;
+    short PersonGotoX;
+    short PersonGotoZ;
+    short PersonTempWeapon;
+    short PersonStamina;
+    short PersonMaxStamina;
+    ulong unkn_212; // pos=212
 };
+
 
 #pragma pack()
 /******************************************************************************/

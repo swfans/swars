@@ -888,7 +888,22 @@ void func_6031c(short tx, short tz, short a3, short ty)
  */
 void refresh_old_thing_format(struct Thing *p_thing, struct ThingOldV9 *p_oldthing, ulong fmtver)
 {
+    ushort len;
+
     memcpy(p_thing, p_oldthing, sizeof(struct Thing));
+
+    p_thing->LinkSameGroup = p_oldthing->LinkSameGroup;
+    p_thing->ThingOffset = p_oldthing->ThingOffset;
+    // Fields from VX to VZ
+    len = offsetof(struct Thing, VZ) + sizeof(p_thing->VZ) - offsetof(struct Thing, VX);
+    memset(&p_thing->VX, 0, len); // Leftover data in these three causes weird bugs for flying cars when they move
+    p_thing->Speed = p_oldthing->Speed;
+    p_thing->Health = p_oldthing->Health;
+    p_thing->Owner = p_oldthing->Owner;
+    p_thing->U.UPerson.UniqueID = p_oldthing->PersonUniqueID;
+    p_thing->U.UPerson.Group = p_oldthing->PersonGroup;
+    p_thing->U.UPerson.EffectiveGroup = p_oldthing->PersonGroup;
+    p_thing->U.UPerson.WeaponsCarried = p_oldthing->PersonWeaponsCarried;
     // TODO remap fields which moved
 }
 
