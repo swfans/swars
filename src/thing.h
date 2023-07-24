@@ -448,8 +448,7 @@ struct ThingOldV9 { // sizeof=216
     ushort PersonWithin; // pos=146
     ushort PersonLastDist;
     short PersonComTimer;
-    short PersonTimer2;
-    short PersonStartTimer2;
+    ulong PTarget; // pos=152 cleared during load
     ubyte PersonAnimMode; // pos=156
     ubyte PersonOldAnimMode;
     short PersonOnFace;
