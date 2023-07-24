@@ -419,55 +419,58 @@ struct ThingOldV9 { // sizeof=216
     ubyte PersonGroup; // pos=86
     ubyte unkn87; // pos=87
     ulong PersonWeaponsCarried; // pos=88
-    ubyte unkn92[8];
+    ushort PersonComHead; // pos=92
+    ubyte unkn94[6]; // pos=94
     ushort Owner; // pos=100
     ubyte unkn102[6]; // pos=102
-    ubyte unkn108[16]; // pos=108
+    ushort PersonComCur; // pos=108
+    ubyte unkn110[14]; // pos=110
     short PersonPathIndex; // pos=124
     ushort PersonUniqueID;
     ubyte unkn_128; // pos=128
     ubyte unkn_129;
     //ubyte PersonEffectiveGroup; -- location unknown
-    ushort PersonComHead;
-    ushort PersonComCur;
+    ushort unkn_130; // pos=130
+    short PersonShieldEnergy; // pos=132
     char PersonSpecialTimer;
     ubyte PersonAngle;
     short PersonWeaponTurn;
-    ubyte PersonBrightness;
+    ubyte PersonBrightness; // pos=138
     ubyte PersonComRange;
     ubyte PersonBumpMode;
     ubyte PersonBumpCount;
     short PersonVehicle;
     short PersonLinkPassenger;
-    ushort PersonWithin;
+    ushort PersonWithin; // pos=146
     ushort PersonLastDist;
     short PersonComTimer;
     short PersonTimer2;
     short PersonStartTimer2;
-    ubyte PersonAnimMode;
+    ubyte PersonAnimMode; // pos=156
     ubyte PersonOldAnimMode;
     short PersonOnFace;
-    union Mod PersonUMod;
+    union Mod PersonUMod; // pos=160
     short PersonMood;
     struct DrawFrameId PersonFrameId;
-    ubyte PersonShadows[4];
+    ubyte PersonShadows[4]; // pos=169
     ubyte PersonRecoilTimer;
-    ushort PersonMaxHealth;
-    ubyte PersonFlag3;
+    ushort unkn_174;
+    ubyte PersonFlag3; // pos=176
     ubyte PersonOldSubType;
-    short PersonShieldEnergy;
+    short unkn_178; // pos=178
     ubyte PersonShieldGlowTimer;
     ubyte PersonWeaponDir;
-    ushort PersonSpecialOwner;
+    ushort PersonSpecialOwner; // pos=182
     ushort PersonWorkPlace;
     ushort PersonLeisurePlace;
     short PersonWeaponTimer;
-    short PersonTarget2;
+    ushort PersonMaxHealth; // pos=190
+    //short PersonTarget2; -- location unknown
     short PersonMaxShieldEnergy;
     short PersonPersuadePower;
     short PersonMaxEnergy;
     short PersonEnergy;
-    ubyte PersonRecoilDir;
+    ubyte PersonRecoilDir; // pos=200
     ubyte PersonCurrentWeapon;
     short PersonGotoX;
     short PersonGotoZ;
