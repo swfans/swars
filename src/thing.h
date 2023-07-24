@@ -387,9 +387,9 @@ struct ThingOldV9 { // sizeof=216
     short State; // pos=10
     ulong Flag;
     short LinkSame;
-    short unkn18;
+    short Unknown18; // This actually looks like Parent data for vehicles
     short Radius; // pos=20
-    ushort unkn_22;
+    ushort Unknown22;
     long X;
     long Y;
     long Z;
@@ -397,40 +397,44 @@ struct ThingOldV9 { // sizeof=216
     ushort StartFrame;
     short Timer1; // pos=40
     short StartTimer1;
-    long VX; // pos=44
-    short unkn48; // pos=48
+    long Unknown44; // pos=44
+    short Unknown48; // pos=48
     ushort ThingOffset; // pos=50
-    //long VY; -- location unknown
-    long VZ;
-    short unkn_56; // pos=56
-    short unkn_58; // pos=58
-    short unkn_60; // pos=60
-    char PathOffset;
-    char SubState;
-    struct Thing *PTarget;
-    short unkn68; // pos=68
+    short Unknown52; // TODO has more data in it
+    short Unknown54; // pos=54
+    short Unknown56; // pos=56
+    short Unknown58; // pos=58
+    short Unknown60; // pos=60
+    short Unknown62; // pos=62
+    short PersonStamina;
+    short PersonMaxStamina;
+    short Unknown68; // pos=68
     short LinkSameGroup; // pos=70
-    //long Flag2; -- location unknown
-    short GotoThingIndex;
-    short OldTarget;
+    short Unknown72;
+    short Unknown74; // Some kind of NPC stat, uniform for each type of NPC. No corresponding pair value though
     short Speed; // pos=76
     short Health; // pos=78
-    ubyte unkn80[6]; // pos=80
+    short Unknown80; // pos=80
+    short Unknown82; // pos=82
+    short Unknown84; // pos=84
     ubyte PersonGroup; // pos=86
-    ubyte unkn87; // pos=87
+    ubyte Unknown87; // pos=87
     ulong PersonWeaponsCarried; // pos=88
     ushort PersonComHead; // pos=92
-    ubyte unkn94[6]; // pos=94
+    short Unknown94; // pos=94
+    short Unknown96; // pos=96
+    short Unknown98; // pos=98
     ushort Owner; // pos=100
-    ubyte unkn102[6]; // pos=102
+    short Unknown102; // pos=102
+    short Unknown104; // pos=104
+    short Unknown106; // pos=106
     ushort PersonComCur; // pos=108
-    ubyte unkn110[14]; // pos=110
+    ubyte Unknown110[14]; // pos=110
     short PersonPathIndex; // pos=124
     ushort PersonUniqueID;
-    ubyte unkn_128; // pos=128
-    ubyte unkn_129;
-    //ubyte PersonEffectiveGroup; -- location unknown
-    ushort unkn_130; // pos=130
+    ubyte Unknown128; // pos=128
+    ubyte Unknown129;
+    ushort Unknown130; // pos=130
     short PersonShieldEnergy; // pos=132
     char PersonSpecialTimer;
     ubyte PersonAngle;
@@ -454,10 +458,10 @@ struct ThingOldV9 { // sizeof=216
     struct DrawFrameId PersonFrameId;
     ubyte PersonShadows[4]; // pos=169
     ubyte PersonRecoilTimer;
-    ushort unkn_174;
+    ushort Unknown174;
     ubyte PersonFlag3; // pos=176
     ubyte PersonOldSubType;
-    short unkn_178; // pos=178
+    short Unknown178; // pos=178
     ubyte PersonShieldGlowTimer;
     ubyte PersonWeaponDir;
     ushort PersonSpecialOwner; // pos=182
@@ -465,7 +469,6 @@ struct ThingOldV9 { // sizeof=216
     ushort PersonLeisurePlace;
     short PersonWeaponTimer;
     ushort PersonMaxHealth; // pos=190
-    //short PersonTarget2; -- location unknown
     short PersonMaxShieldEnergy;
     short PersonPersuadePower;
     short PersonMaxEnergy;
@@ -475,11 +478,10 @@ struct ThingOldV9 { // sizeof=216
     short PersonGotoX;
     short PersonGotoZ;
     short PersonTempWeapon;
-    short PersonStamina;
-    short PersonMaxStamina;
-    ulong unkn_212; // pos=212
+    short Unknown208;
+    short Unknown210;
+    ulong Unknown212; // pos=212
 };
-
 
 #pragma pack()
 /******************************************************************************/

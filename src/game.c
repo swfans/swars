@@ -884,7 +884,7 @@ void func_6031c(short tx, short tz, short a3, short ty)
         : : "a" (tx), "d" (tz), "b" (a3), "c" (ty));
 }
 
-/** Maps fields from old Thing struct to the current one/
+/** Maps fields from old Thing struct to the current one.
  */
 void refresh_old_thing_format(struct Thing *p_thing, struct ThingOldV9 *p_oldthing, ulong fmtver)
 {
@@ -900,19 +900,20 @@ void refresh_old_thing_format(struct Thing *p_thing, struct ThingOldV9 *p_oldthi
     p_thing->Speed = p_oldthing->Speed;
     p_thing->Health = p_oldthing->Health;
     p_thing->Owner = p_oldthing->Owner;
+    // Type-dependent fields which are the same for most types
     p_thing->U.UPerson.UniqueID = p_oldthing->PersonUniqueID;
-    // Type-dependent fields
+    p_thing->U.UPerson.Group = p_oldthing->PersonGroup;
+    p_thing->U.UPerson.EffectiveGroup = p_oldthing->PersonGroup;
+    // Really type-dependent fields
     if (p_thing->Type == TT_PERSON)
     {
-        p_thing->U.UPerson.Group = p_oldthing->PersonGroup;
-        p_thing->U.UPerson.EffectiveGroup = p_oldthing->PersonGroup;
         p_thing->U.UPerson.ComHead = p_oldthing->PersonComHead;
         p_thing->U.UPerson.ComCur = p_oldthing->PersonComCur;
         p_thing->U.UPerson.WeaponsCarried = p_oldthing->PersonWeaponsCarried;
         p_thing->U.UPerson.BumpMode = 0;
         p_thing->U.UPerson.LastDist = 0;
         p_thing->U.UPerson.AnimMode = 0;
-        // TODO verify - should be clear UMod? We're sanitizing it later, so maybe not...
+        // TODO verify - should we clear UMod? We're sanitizing it later, so maybe not...
         // Field FrameId
         len = 2;
         memset(&p_thing->U.UPerson.FrameId.Version[0], 0, len); // Blank part of it, to avoid missing body parts
@@ -926,12 +927,13 @@ void refresh_old_thing_format(struct Thing *p_thing, struct ThingOldV9 *p_oldthi
         }
         p_thing->U.UPerson.MaxHealth = p_oldthing->PersonMaxHealth;
         p_thing->U.UPerson.ShieldEnergy = p_oldthing->PersonShieldEnergy;
+        p_thing->U.UPerson.Stamina = p_oldthing->PersonStamina;
+        p_thing->U.UPerson.MaxStamina = p_oldthing->PersonMaxStamina;
     }
     else if (p_thing->Type == TT_VEHICLE)
     {
-        p_thing->U.UPerson.MaxHealth = 0; // In old format this is stored in additional vehicle block, not in the thing
+        p_thing->U.UVehicle.MaxHealth = 0; // In old format this is stored in additional vehicle block, not in the thing
     }
-    // TODO remap fields which moved
 }
 
 ulong load_level_pc_handle(TbFileHandle lev_fh)
