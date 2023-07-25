@@ -449,44 +449,6 @@ struct NewMailItem { // sizeof=5
 	ubyte Flag;
 };
 
-struct Mission { // sizeof=76
-    char *TextName;
-    ushort TextId;
-    ushort StartHead;
-    ushort SpecialEffectID;
-    ushort SuccessHead;
-    ushort FailHead;
-    ushort SourceID;
-    ushort SuccessID;
-    ushort FailID;
-    ubyte SpecialTrigger[3];
-    ubyte SuccessTrigger[3];
-    ubyte FailTrigger[3];
-    ubyte BankTest;
-    ushort SpecialEffectFailID;
-    ushort SpecialEffectSuccessID;
-    ushort StringIndex;
-    ubyte StartMap[3];
-    ubyte StartLevel[3];
-    ubyte SuccessMap[3];
-    ubyte SuccessLevel[3];
-    ubyte FailMap[3];
-    ubyte FailLevel[3];
-    ubyte MapNo;
-    ubyte LevelNo;
-    ubyte BankTestFail;
-    sbyte Complete;
-    ubyte MissionCond[5];
-    ubyte ReLevelNo;
-    ushort CashReward;
-    ubyte PANStart;
-    ubyte PANEnd;
-    ushort WaitToFade;
-    ubyte field_46[5];
-    ubyte field_4B;
-	//ushort PreProcess; -- somewhere in the unknown fields above
-};
-
 struct ScreenMenuBox { // sizeof=42
   ubyte field_0;
   char field_1[8];
@@ -738,7 +700,6 @@ extern struct City cities[];
 extern sbyte city_id;
 extern struct SynTime global_date;
 extern struct MissionStatus mission_status[120];
-extern struct Mission mission_list[120];
 extern short old_mission_brief;
 extern short open_brief;
 extern short next_brief;
