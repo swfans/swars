@@ -87,7 +87,7 @@ enum ThingType {
     TT_UNKN56 = 0x38,
 };
 
-/** State of Thing of type Object.
+/** State of Thing of type Object/Building.
  */
 struct TngUObject
 {
@@ -125,6 +125,8 @@ struct TngUObject
     ushort TurnPadOnPS;
     short tnode[4];
     ubyte player_in_me;
+    ubyte unkn_4D;
+    ulong DrawTurn; // set within draw_thing_object() for a building
 };
 
 /** State of Thing of type MGun.
@@ -387,9 +389,9 @@ struct ThingOldV9 { // sizeof=216
     short State; // pos=10
     ulong Flag;
     short LinkSame;
-    short Unknown18; // This actually looks like Parent data for vehicles
+    short TngUnkn18; // This actually looks like Parent data for vehicles
     short Radius; // pos=20
-    ushort Unknown22;
+    ushort TngUnkn22;
     long X;
     long Y;
     long Z;
@@ -397,44 +399,46 @@ struct ThingOldV9 { // sizeof=216
     ushort StartFrame;
     short Timer1; // pos=40
     short StartTimer1;
-    long Unknown44; // pos=44
-    short Unknown48; // pos=48
+    long TngUnkn44; // pos=44
+    short TngUnkn48; // pos=48
     ushort ThingOffset; // pos=50
-    short Unknown52; // TODO has more data in it
-    short Unknown54; // pos=54
-    short Unknown56; // pos=56
-    short Unknown58; // pos=58
-    short Unknown60; // pos=60
-    short Unknown62; // pos=62
+    short TngUnkn52; // TODO has more data in it
+    short TngUnkn54; // pos=54
+    short TngUnkn56; // pos=56
+    short TngUnkn58; // pos=58
+    short TngUnkn60; // pos=60
+    short TngUnkn62; // pos=62
     short PersonStamina;
     short PersonMaxStamina;
-    short Unknown68; // pos=68
+    short TngUnkn68; // pos=68
     short LinkSameGroup; // pos=70
-    short Unknown72;
-    short Unknown74; // Some kind of NPC stat, uniform for each type of NPC. No corresponding pair value though
+    short TngUnkn72;
+    short TngUnkn74; // Some kind of NPC stat, uniform for each type of NPC. No corresponding pair value though
     short Speed; // pos=76
     short Health; // pos=78
-    short Unknown80; // pos=80
-    short Unknown82; // pos=82
-    short Unknown84; // pos=84
+    short TngUnkn80; // pos=80
+    short TngUnkn82; // pos=82
+    short TngUnkn84; // pos=84
     ubyte PersonGroup; // pos=86
-    ubyte Unknown87; // pos=87
+    ubyte TngUnkn87; // pos=87
     ulong PersonWeaponsCarried; // pos=88
     ushort PersonComHead; // pos=92
-    short Unknown94; // pos=94
-    short Unknown96; // pos=96
-    short Unknown98; // pos=98
+    short TngUnkn94; // pos=94
+    short TngUnkn96; // pos=96
+    short TngUnkn98; // pos=98
     ushort Owner; // pos=100
-    short Unknown102; // pos=102
-    short Unknown104; // pos=104
-    short Unknown106; // pos=106
+    short TngUnkn102; // pos=102
+    short TngUnkn104; // pos=104
+    short TngUnkn106; // pos=106
     ushort PersonComCur; // pos=108
-    ubyte Unknown110[14]; // pos=110
+    ushort TngUnkn110; // pos=110
+    ushort UnkFrame; // pos=112
+    ubyte TngUnkn114[10]; // pos=114
     short PersonPathIndex; // pos=124
     ushort PersonUniqueID;
-    ubyte Unknown128; // pos=128
-    ubyte Unknown129;
-    ushort Unknown130; // pos=130
+    ubyte TngUnkn128; // pos=128
+    ubyte TngUnkn129;
+    ushort TngUnkn130; // pos=130
     short PersonShieldEnergy; // pos=132
     char PersonSpecialTimer;
     ubyte PersonAngle;
@@ -457,10 +461,10 @@ struct ThingOldV9 { // sizeof=216
     struct DrawFrameId PersonFrameId;
     ubyte PersonShadows[4]; // pos=169
     ubyte PersonRecoilTimer;
-    ushort Unknown174;
+    ushort TngUnkn174;
     ubyte PersonFlag3; // pos=176
     ubyte PersonOldSubType;
-    short Unknown178; // pos=178
+    short TngUnkn178; // pos=178
     ubyte PersonShieldGlowTimer;
     ubyte PersonWeaponDir;
     ushort PersonSpecialOwner; // pos=182
@@ -477,9 +481,10 @@ struct ThingOldV9 { // sizeof=216
     short PersonGotoX;
     short PersonGotoZ;
     short PersonTempWeapon;
-    short Unknown208;
-    short Unknown210;
-    ulong Unknown212; // pos=212
+    short TngUnkn208;
+    short TngUnkn210;
+    short TngUnkn212; // pos=212
+    short TngUnkn214;
 };
 
 #pragma pack()
