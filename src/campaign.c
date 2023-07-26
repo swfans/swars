@@ -30,7 +30,7 @@ enum ObjectiveDefFlags {
     ObDF_None = 0x0000,
     // What to place in Thing/UniqueId
     ObDF_ReqGroup = 0x0001,
-    ObDF_ReqThing = 0x0002,
+    ObDF_ReqThing = 0x0002, // May use Thing on UniqueId, depending on LevelNo and type; so set both
     ObDF_ReqCount = 0x0004,
     // What to place in Coord/Radius
     ObDF_ReqCoord = 0x0010,
@@ -50,38 +50,39 @@ struct ObjectiveDef {
 struct ObjectiveDef objectv_defs[] = {
     /* Unreachable. */
     {"GAME_OBJ_NONE",		"DO NOTHING",		ObDF_None },
-    /** Require the target person to reach DEAD state. */
+    /* Require the target person to reach DEAD state. */
     {"GAME_OBJ_P_DEAD",		"ASSASSINATE",		ObDF_ReqThing },
-    /** Require whole group to be neutralized. */
+    /* Require whole group to be neutralized. */
     {"GAME_OBJ_ALL_G_DEAD",	"ELIMINATE GROUP",	ObDF_ReqGroup },
-    /** Require at least specified amount of group members to reach DEAD state. */
+    /* Require at least specified amount of group members to reach DEAD state. */
     {"GAME_OBJ_MEM_G_DEAD",	"KILL GROUP MEM",	ObDF_ReqGroup|ObDF_ReqAmount },
-    /** Unreachable. Require person near? */
+    /* Unreachable. Require person near? */
     {"GAME_OBJ_P_NEAR",		"RENDEZVOUS",		ObDF_ReqThing|ObDF_ReqCoord|ObDF_ReqRadius },
-    /** Unreachable. Require specified amount of group members near? */
+    /* Unreachable. Require specified amount of group members near? */
     {"GAME_OBJ_MEM_G_NEAR",	"RENDEZVOUS2",		ObDF_ReqGroup|ObDF_ReqCoord|ObDF_ReqRadius },
-    /** Require the target person to be within given radius around given coordinates. */
+    /* Require the target person to be within given radius around given coordinates. */
     {"GAME_OBJ_P_ARRIVES",	"GOTO LOCATION",	ObDF_ReqThing|ObDF_ReqCoord|ObDF_ReqRadius },
-    /** Require at least specified amount of group members to be within radius around given coords. */
+    /* Require at least specified amount of group members to be within radius around given coords. */
     {"GAME_OBJ_MEM_G_ARRIVES", "GOTO LOCATION", ObDF_ReqGroup|ObDF_ReqCoord|ObDF_ReqRadius|ObDF_ReqAmount },
-    /** Require all of group members to be within radius around given coords. */
+    /* Require all of group members to be within radius around given coords. */
     {"GAME_OBJ_ALL_G_ARRIVES", "ALL GOTO LOCATION", ObDF_ReqGroup|ObDF_ReqCoord|ObDF_ReqRadius },
-    /** Require target person to be within the group belonging to local player. */
+    /* Require target person to be within the group belonging to local player. */
     {"GAME_OBJ_PERSUADE_P",	"PERSUADE",			ObDF_ReqThing },
-    /** Require at least specified amount of group members to be within the local player group. */
+    /* Require at least specified amount of group members to be within the local player group. */
     {"GAME_OBJ_PERSUADE_MEM_G", "PERSUADE GANG MEM", ObDF_ReqGroup|ObDF_ReqAmount },
-    /** Require all of group members to be persuaded. */
+    /* Require all of group members to be persuaded. */
     {"GAME_OBJ_PERSUADE_ALL_G", "PERSUADE ALL GANG", ObDF_ReqGroup },
-    /** Require specified amount of game turns to pass. */
+    /* Require specified amount of game turns to pass. */
     {"GAME_OBJ_TIME",		"TIMER",			ObDF_ReqCount },
-    /** Require specified carried item to change owner to a person belonging to local player. */
+    /* Require specified carried item to change owner to a person belonging to local player. */
     {"GAME_OBJ_GET_ITEM",	"COLLECT ITEM",		ObDF_ReqThing },
-    /** Unreachable. Require specified item to be used? */
+    /* Unreachable. Require specified item to be used? */
     {"GAME_OBJ_USE_ITEM",	"USE ITEM",			ObDF_ReqThing },
-    /** Unreachable. Require acquiring specified amount of funds? */
+    /* Unreachable. Require acquiring specified amount of funds? */
     {"GAME_OBJ_FUNDS",		"GET BULLION",		ObDF_None },
-    /** Require given thing to have DESTROYED flag set. */
-    {"GAME_OBJ_DESTROY_OBJECT", "DESTROY BUILDING", ObDF_ReqThing },
+    /* Require given thing to have DESTROYED flag set.
+     * Coords need to be provided, rather than UniqueId, to find the object thing in case it changed. */
+    {"GAME_OBJ_DESTROY_OBJECT", "DESTROY BUILDING", ObDF_ReqThing|ObDF_ReqCoord },
     /** Require the target person to either be DESTROYED or change owner to local player group. */
     {"GAME_OBJ_PKILL_P",	"NEUTRALISE",		ObDF_ReqThing },
     /* Require FIRST group member to either be DESTROYED or change owner to local player group.
@@ -203,18 +204,25 @@ void save_objective_chain_conf(TbFileHandle fh, ushort objectv_head, char *buf)
     char *s;
     ubyte nparams;
 
-    objectv = objectv_head;
-    while (objectv != 0)
+    objectv = 0;
+    while (objectv != objectv_head)
     {
         struct Objective *p_objectv;
         struct ObjectiveDef *p_odef;
 
+        { // Go backwards through single-directional chain
+            ushort nxobjectv;
+            nxobjectv = objectv_head;
+            while (game_used_objectives[nxobjectv].Next != objectv)
+                nxobjectv = game_used_objectives[nxobjectv].Next;
+            objectv = nxobjectv;
+        }
+
         p_objectv = &game_used_objectives[objectv];
         p_odef = &objectv_defs[p_objectv->Type];
-        objectv = p_objectv->Next;
         s = buf;
 
-        sprintf(s, "%s( ", p_odef->CmdName);
+        sprintf(s, "P%02d = %s( ", (int)p_objectv->Pri, p_odef->CmdName);
         s += strlen(s);
         nparams = 0;
 
@@ -272,11 +280,6 @@ void save_objective_chain_conf(TbFileHandle fh, ushort objectv_head, char *buf)
         } else if (p_objectv->Arg2 != 0) {
             if (nparams) { sprintf(s, ", "); s += strlen(s); }
             sprintf(s, "Arg2(%d)", (int)p_objectv->Arg2);
-            s += strlen(s);
-        }
-        if (p_objectv->Pri != 0) {
-            if (nparams) { sprintf(s, ", "); s += strlen(s); }
-            sprintf(s, "Pri(%d)", (int)p_objectv->Pri);
             s += strlen(s);
         }
         if (p_objectv->StringIndex != 0) {
