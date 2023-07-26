@@ -239,27 +239,6 @@ struct PurpleDrawItem { // sizeof=26
 	ushort Flags;
 };
 
-struct Objective { // sizeof=32
-    short Next;
-    char Map;
-    char Level;
-    short Status;
-    ushort Type;
-    short Flags;
-    short Thing;
-    short X;
-    short Y;
-    short Z;
-    short Radius;
-    char Pri;
-    char Arg2;
-    short StringIndex;
-    short UniqueID;
-    char ObjText;
-    char field_1B[4];
-    char field_1F;
-};
-
 struct City { // sizeof=40
     short X;
     short Y;
