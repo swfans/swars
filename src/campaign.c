@@ -21,6 +21,7 @@
 #include "bffile.h"
 #include "bfmemory.h"
 #include "bfmemut.h"
+#include "bfini.h"
 #include "game_data.h"
 #include "game.h"
 #include "swlog.h"
@@ -135,6 +136,80 @@ const char *gameobjctv_names[] = {
     "GAME_OBJ_ALL_G_USE_V",
     "GAME_OBJ_UNUSED_25",
     "GAME_OBJ_UNUSED_26",
+};
+
+enum MissionListConfigCmd {
+    MissL_MissionsCount = 1,
+    MissL_TextName,
+    MissL_TextId,
+    MissL_SpecialEffectID,
+    MissL_SourceID,
+    MissL_SuccessID,
+    MissL_FailID,
+    MissL_SpecialTrigger,
+    MissL_SuccessTrigger,
+    MissL_FailTrigger,
+    MissL_BankTest,
+    MissL_SpecialEffectFailID,
+    MissL_SpecialEffectSuccessID,
+    MissL_StringIndex,
+    MissL_StartMap,
+    MissL_StartLevel,
+    MissL_SuccessMap,
+    MissL_SuccessLevel,
+    MissL_FailMap,
+    MissL_FailLevel,
+    MissL_MapNo,
+    MissL_LevelNo,
+    MissL_BankTestFail,
+    MissL_Complete,
+    MissL_MissionCond,
+    MissL_ReLevelNo,
+    MissL_CashReward,
+    MissL_PANStart,
+    MissL_PANEnd,
+    MissL_WaitToFade,
+    MissL_PreProcess,
+};
+
+const struct TbNamedEnum missions_conf_common_cmds[] = {
+  {"MissionsCount",	MissL_MissionsCount},
+  {NULL,		0},
+};
+
+const struct TbNamedEnum missions_conf_mission_cmds[] = {
+  {"MissionsCount",	MissL_MissionsCount},
+  {"Name",			MissL_TextName},
+  {"TextId",		MissL_TextId},
+  {"SpecialEffectID",	MissL_SpecialEffectID},
+  {"SourceID",		MissL_SourceID},
+  {"SuccessID",		MissL_SuccessID},
+  {"FailID",		MissL_FailID},
+  {"SpecialTrigger",	MissL_SpecialTrigger},
+  {"SuccessTrigger",	MissL_SuccessTrigger},
+  {"FailTrigger",	MissL_FailTrigger},
+  {"BankTest",		MissL_BankTest},
+  {"SpecialEffectFailID",	MissL_SpecialEffectFailID},
+  {"SpecialEffectSuccessID",	MissL_SpecialEffectSuccessID},
+  {"StringIndex",	MissL_StringIndex},
+  {"StartMap",		MissL_StartMap},
+  {"StartLevel",	MissL_StartLevel},
+  {"SuccessMap",	MissL_SuccessMap},
+  {"SuccessLevel",	MissL_SuccessLevel},
+  {"FailMap",		MissL_FailMap},
+  {"FailLevel",		MissL_FailLevel},
+  {"MapNo",			MissL_MapNo},
+  {"LevelNo"	,	MissL_LevelNo},
+  {"BankTestFail",	MissL_BankTestFail},
+  {"Complete",		MissL_Complete},
+  {"MissionCond",	MissL_MissionCond},
+  {"ReLevelNo",		MissL_ReLevelNo},
+  {"CashReward",	MissL_CashReward},
+  {"PANStart",		MissL_PANStart},
+  {"PANEnd",		MissL_PANEnd},
+  {"WaitToFade",	MissL_WaitToFade},
+  {"PreProcess",	MissL_PreProcess},
+  {NULL,			0},
 };
 
 extern ushort mission_strings_len;
@@ -463,16 +538,17 @@ void save_mission_single_conf(TbFileHandle fh, struct Mission *p_missi, char *bu
     }
 }
 
-void save_missions_conf(int num)
+void save_missions_conf_file(int num)
 {
     TbFileHandle fh;
     char locbuf[120];
+    char conf_fname[80];
     int i;
 
-    sprintf(locbuf, "%s/miss%03d.ini", "conf", num);
-    fh = LbFileOpen(locbuf, Lb_FILE_MODE_NEW);
+    sprintf(conf_fname, "%s" FS_SEP_STR "miss%03d.ini", "conf", num);
+    fh = LbFileOpen(conf_fname, Lb_FILE_MODE_NEW);
     if (fh == INVALID_FILE) {
-        LOGERR("Missions config file could not be created");
+        LOGERR("Could not create '%s' file.", conf_fname);
         return;
     }
 
@@ -531,6 +607,447 @@ void save_missions_conf(int num)
         }
     }
     LbFileClose(fh);
+}
+
+void read_missions_conf_file(int num)
+{
+    TbFileHandle conf_fh;
+    TbBool done;
+    unsigned int i, n;
+    long k;
+    int cmd_num;
+    char *conf_buf;
+    struct TbIniParser parser;
+    char conf_fname[80];
+    int conf_len;
+    int missi;
+    char *p_str;
+
+    sprintf(conf_fname, "%s" FS_SEP_STR "miss%03d.ini", "conf", num);
+    conf_fh = LbFileOpen(conf_fname, Lb_FILE_MODE_READ_ONLY);
+    if (conf_fh != INVALID_FILE) {
+        conf_len = LbFileLengthHandle(conf_fh);
+        if (conf_len > 1024*1024)
+            conf_len = 1024*1024;
+        conf_buf = LbMemoryAlloc(conf_len+16);
+        conf_len = LbFileRead(conf_fh, conf_buf, conf_len);
+        LOGSYNC("Processing '%s' file, %d bytes", conf_fname, conf_len);
+        LbFileClose(conf_fh);
+    } else {
+        LOGERR("Could not open '%s' file, mission list empty.", conf_fname);
+        conf_buf = LbMemoryAlloc(16);
+        conf_len = 0;
+    }
+    conf_buf[conf_len] = '\0';
+    LbIniParseStart(&parser, conf_buf, conf_len);
+#define CONFWRNLOG(format,args...) LOGWARN("%s(line %lu): " format, conf_fname, parser.line_num, ## args)
+#define CONFDBGLOG(format,args...) LOGDBG("%s(line %lu): " format, conf_fname, parser.line_num, ## args)
+    next_mission = 0;
+    next_used_objective = 0;
+    p_str = engine_mem_alloc_ptr + engine_mem_alloc_size - 64000;
+    // Parse the [common] section of loaded file
+    if (LbIniFindSection(&parser, "common") != Lb_SUCCESS) {
+        CONFWRNLOG("Could not find \"[%s]\" section, file skipped.", "common");
+        LbIniParseEnd(&parser);
+        LbMemoryFree(conf_buf);
+        return;
+    }
+    done = false;
+#define COMMAND_TEXT(cmd_num) LbNamedEnumGetName(missions_conf_common_cmds,cmd_num)
+    while (!done)
+    {
+        // Finding command number in this line
+        i = 0;
+        cmd_num = LbIniRecognizeKey(&parser, missions_conf_common_cmds);
+        // Now store the config item in correct place
+        switch (cmd_num)
+        {
+        case MissL_MissionsCount:
+            i = LbIniValueGetLongInt(&parser, &k);
+            if (i <= 0) {
+                CONFWRNLOG("Could not read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                break;
+            }
+            next_mission = k;
+            CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)next_mission);
+            break;
+        case 0: // comment
+            break;
+        case -1: // end of buffer
+        case -3: // end of section
+            done = true;
+            break;
+        default:
+            CONFWRNLOG("Unrecognized command.");
+            break;
+        }
+        LbIniSkipToNextLine(&parser);
+    }
+#undef COMMAND_TEXT
+    for (missi = 0; missi < next_mission; missi++)
+    {
+        char sect_name[16];
+        struct Mission *p_missi;
+
+        // Parse the [missionN] sections of loaded file
+        sprintf(sect_name, "mission%d", missi);
+        p_missi = &mission_list[missi];
+        if (LbIniFindSection(&parser, sect_name) != Lb_SUCCESS) {
+            CONFWRNLOG("Could not find \"[%s]\" section.", sect_name);
+            continue;
+        }
+        done = false;
+#define COMMAND_TEXT(cmd_num) LbNamedEnumGetName(missions_conf_mission_cmds,cmd_num)
+        while (!done)
+        {
+            // Finding command number in this line
+            i = 0;
+            cmd_num = LbIniRecognizeKey(&parser, missions_conf_mission_cmds);
+            // Now store the config item in correct place
+            switch (cmd_num)
+            {
+            case MissL_TextName:
+                i = LbIniValueGetStrWhole(&parser, p_str, 80);
+                if (i <= 0) {
+                    CONFWRNLOG("Couldn't read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                    break;
+                }
+                p_missi->TextName = p_str;
+                p_str += strlen(p_str) + 1;
+                CONFDBGLOG("%s \"%s\"", COMMAND_TEXT(cmd_num), (int)p_missi->TextName);
+                break;
+            case MissL_TextId:
+                i = LbIniValueGetLongInt(&parser, &k);
+                if (i <= 0) {
+                    CONFWRNLOG("Could not read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                    break;
+                }
+                p_missi->TextId = k;
+                CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)p_missi->TextId);
+                break;
+            case MissL_SpecialEffectID:
+                i = LbIniValueGetLongInt(&parser, &k);
+                if (i <= 0) {
+                    CONFWRNLOG("Could not read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                    break;
+                }
+                p_missi->SpecialEffectID = k;
+                CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)p_missi->SpecialEffectID);
+                break;
+            case MissL_SourceID:
+                i = LbIniValueGetLongInt(&parser, &k);
+                if (i <= 0) {
+                    CONFWRNLOG("Could not read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                    break;
+                }
+                p_missi->SourceID = k;
+                CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)p_missi->SourceID);
+                break;
+            case MissL_SuccessID:
+                i = LbIniValueGetLongInt(&parser, &k);
+                if (i <= 0) {
+                    CONFWRNLOG("Could not read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                    break;
+                }
+                p_missi->SuccessID = k;
+                CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)p_missi->SuccessID);
+                break;
+            case MissL_FailID:
+                i = LbIniValueGetLongInt(&parser, &k);
+                if (i <= 0) {
+                    CONFWRNLOG("Could not read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                    break;
+                }
+                p_missi->FailID = k;
+                CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)p_missi->FailID);
+                break;
+            case MissL_SpecialTrigger:
+                for (n=0; n < 3; n++)
+                {
+                    i = LbIniValueGetLongInt(&parser, &k);
+                    if (i <= 0) {
+                        CONFWRNLOG("Could not read \"%s\" command parameter %u.", COMMAND_TEXT(cmd_num), n);
+                        break;
+                    }
+                    p_missi->SpecialTrigger[n] = k;
+                }
+                CONFDBGLOG("%s %d %d %d", COMMAND_TEXT(cmd_num), (int)p_missi->SpecialTrigger[0],
+                  (int)p_missi->SpecialTrigger[1], (int)p_missi->SpecialTrigger[2]);
+                break;
+            case MissL_SuccessTrigger:
+                for (n=0; n < 3; n++)
+                {
+                    i = LbIniValueGetLongInt(&parser, &k);
+                    if (i <= 0) {
+                        CONFWRNLOG("Could not read \"%s\" command parameter %u.", COMMAND_TEXT(cmd_num), n);
+                        break;
+                    }
+                    p_missi->SuccessTrigger[n] = k;
+                }
+                CONFDBGLOG("%s %d %d %d", COMMAND_TEXT(cmd_num), (int)p_missi->SuccessTrigger[0],
+                  (int)p_missi->SuccessTrigger[1], (int)p_missi->SuccessTrigger[2]);
+                break;
+            case MissL_FailTrigger:
+                for (n=0; n < 3; n++)
+                {
+                    i = LbIniValueGetLongInt(&parser, &k);
+                    if (i <= 0) {
+                        CONFWRNLOG("Could not read \"%s\" command parameter %u.", COMMAND_TEXT(cmd_num), n);
+                        break;
+                    }
+                    p_missi->FailTrigger[n] = k;
+                }
+                CONFDBGLOG("%s %d %d %d", COMMAND_TEXT(cmd_num), (int)p_missi->FailTrigger[0],
+                  (int)p_missi->FailTrigger[1], (int)p_missi->FailTrigger[2]);
+                break;
+            case MissL_BankTest:
+                i = LbIniValueGetLongInt(&parser, &k);
+                if (i <= 0) {
+                    CONFWRNLOG("Could not read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                    break;
+                }
+                p_missi->BankTest = k;
+                CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)p_missi->BankTest);
+                break;
+            case MissL_SpecialEffectFailID:
+                i = LbIniValueGetLongInt(&parser, &k);
+                if (i <= 0) {
+                    CONFWRNLOG("Could not read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                    break;
+                }
+                p_missi->SpecialEffectFailID = k;
+                CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)p_missi->SpecialEffectFailID);
+                break;
+            case MissL_SpecialEffectSuccessID:
+                i = LbIniValueGetLongInt(&parser, &k);
+                if (i <= 0) {
+                    CONFWRNLOG("Could not read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                    break;
+                }
+                p_missi->SpecialEffectSuccessID = k;
+                CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)p_missi->SpecialEffectSuccessID);
+                break;
+            case MissL_StringIndex:
+                i = LbIniValueGetLongInt(&parser, &k);
+                if (i <= 0) {
+                    CONFWRNLOG("Could not read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                    break;
+                }
+                p_missi->StringIndex = k;
+                CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)p_missi->StringIndex);
+                break;
+            case MissL_StartMap:
+                for (n=0; n < 3; n++)
+                {
+                    i = LbIniValueGetLongInt(&parser, &k);
+                    if (i <= 0) {
+                        CONFWRNLOG("Could not read \"%s\" command parameter %u.", COMMAND_TEXT(cmd_num), n);
+                        break;
+                    }
+                    p_missi->StartMap[n] = k;
+                }
+                CONFDBGLOG("%s %d %d %d", COMMAND_TEXT(cmd_num), (int)p_missi->StartMap[0],
+                  (int)p_missi->StartMap[1], (int)p_missi->StartMap[2]);
+                break;
+            case MissL_StartLevel:
+                for (n=0; n < 3; n++)
+                {
+                    i = LbIniValueGetLongInt(&parser, &k);
+                    if (i <= 0) {
+                        CONFWRNLOG("Could not read \"%s\" command parameter %u.", COMMAND_TEXT(cmd_num), n);
+                        break;
+                    }
+                    p_missi->StartLevel[n] = k;
+                }
+                CONFDBGLOG("%s %d %d %d", COMMAND_TEXT(cmd_num), (int)p_missi->StartLevel[0],
+                  (int)p_missi->StartLevel[1], (int)p_missi->StartLevel[2]);
+                break;
+            case MissL_SuccessMap:
+                for (n=0; n < 3; n++)
+                {
+                    i = LbIniValueGetLongInt(&parser, &k);
+                    if (i <= 0) {
+                        CONFWRNLOG("Could not read \"%s\" command parameter %u.", COMMAND_TEXT(cmd_num), n);
+                        break;
+                    }
+                    p_missi->SuccessMap[n] = k;
+                }
+                CONFDBGLOG("%s %d %d %d", COMMAND_TEXT(cmd_num), (int)p_missi->SuccessMap[0],
+                  (int)p_missi->SuccessMap[1], (int)p_missi->SuccessMap[2]);
+                break;
+            case MissL_SuccessLevel:
+                for (n=0; n < 3; n++)
+                {
+                    i = LbIniValueGetLongInt(&parser, &k);
+                    if (i <= 0) {
+                        CONFWRNLOG("Could not read \"%s\" command parameter %u.", COMMAND_TEXT(cmd_num), n);
+                        break;
+                    }
+                    p_missi->SuccessLevel[n] = k;
+                }
+                CONFDBGLOG("%s %d %d %d", COMMAND_TEXT(cmd_num), (int)p_missi->SuccessLevel[0],
+                  (int)p_missi->SuccessLevel[1], (int)p_missi->SuccessLevel[2]);
+                break;
+            case MissL_FailMap:
+                for (n=0; n < 3; n++)
+                {
+                    i = LbIniValueGetLongInt(&parser, &k);
+                    if (i <= 0) {
+                        CONFWRNLOG("Could not read \"%s\" command parameter %u.", COMMAND_TEXT(cmd_num), n);
+                        break;
+                    }
+                    p_missi->FailMap[n] = k;
+                }
+                CONFDBGLOG("%s %d %d %d", COMMAND_TEXT(cmd_num), (int)p_missi->FailMap[0],
+                  (int)p_missi->FailMap[1], (int)p_missi->FailMap[2]);
+                break;
+            case MissL_FailLevel:
+                for (n=0; n < 3; n++)
+                {
+                    i = LbIniValueGetLongInt(&parser, &k);
+                    if (i <= 0) {
+                        CONFWRNLOG("Could not read \"%s\" command parameter %u.", COMMAND_TEXT(cmd_num), n);
+                        break;
+                    }
+                    p_missi->FailLevel[n] = k;
+                }
+                CONFDBGLOG("%s %d %d %d", COMMAND_TEXT(cmd_num), (int)p_missi->FailLevel[0],
+                  (int)p_missi->FailLevel[1], (int)p_missi->FailLevel[2]);
+                break;
+            case MissL_MapNo:
+                i = LbIniValueGetLongInt(&parser, &k);
+                if (i <= 0) {
+                    CONFWRNLOG("Could not read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                    break;
+                }
+                p_missi->MapNo = k;
+                CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)p_missi->MapNo);
+                break;
+            case MissL_LevelNo:
+                i = LbIniValueGetLongInt(&parser, &k);
+                if (i <= 0) {
+                    CONFWRNLOG("Could not read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                    break;
+                }
+                p_missi->LevelNo = k;
+                CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)p_missi->LevelNo);
+                break;
+            case MissL_BankTestFail:
+                i = LbIniValueGetLongInt(&parser, &k);
+                if (i <= 0) {
+                    CONFWRNLOG("Could not read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                    break;
+                }
+                p_missi->BankTestFail = k;
+                CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)p_missi->BankTestFail);
+                break;
+            case MissL_Complete:
+                i = LbIniValueGetLongInt(&parser, &k);
+                if (i <= 0) {
+                    CONFWRNLOG("Could not read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                    break;
+                }
+                p_missi->Complete = k;
+                CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)p_missi->Complete);
+                break;
+            case MissL_MissionCond:
+                for (n=0; n < 5; n++)
+                {
+                    i = LbIniValueGetLongInt(&parser, &k);
+                    if (i <= 0) {
+                        CONFWRNLOG("Could not read \"%s\" command parameter %u.", COMMAND_TEXT(cmd_num), n);
+                        break;
+                    }
+                    p_missi->MissionCond[n] = k;
+                }
+                CONFDBGLOG("%s %d %d %d %d %d", COMMAND_TEXT(cmd_num), (int)p_missi->MissionCond[0],
+                  (int)p_missi->MissionCond[1], (int)p_missi->MissionCond[2],
+                  (int)p_missi->MissionCond[3], (int)p_missi->MissionCond[4]);
+                break;
+            case MissL_ReLevelNo:
+                i = LbIniValueGetLongInt(&parser, &k);
+                if (i <= 0) {
+                    CONFWRNLOG("Could not read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                    break;
+                }
+                p_missi->ReLevelNo = k;
+                CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)p_missi->ReLevelNo);
+                break;
+            case MissL_CashReward:
+                i = LbIniValueGetLongInt(&parser, &k);
+                if (i <= 0) {
+                    CONFWRNLOG("Could not read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                    break;
+                }
+                p_missi->CashReward = k;
+                CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)p_missi->CashReward);
+                break;
+            case MissL_PANStart:
+                i = LbIniValueGetLongInt(&parser, &k);
+                if (i <= 0) {
+                    CONFWRNLOG("Could not read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                    break;
+                }
+                p_missi->PANStart = k;
+                CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)p_missi->PANStart);
+                break;
+            case MissL_PANEnd:
+                i = LbIniValueGetLongInt(&parser, &k);
+                if (i <= 0) {
+                    CONFWRNLOG("Could not read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                    break;
+                }
+                p_missi->PANEnd = k;
+                CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)p_missi->PANEnd);
+                break;
+            case MissL_WaitToFade:
+                i = LbIniValueGetLongInt(&parser, &k);
+                if (i <= 0) {
+                    CONFWRNLOG("Could not read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                    break;
+                }
+                p_missi->WaitToFade = k;
+                CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)p_missi->WaitToFade);
+                break;
+            case MissL_PreProcess:
+                i = LbIniValueGetLongInt(&parser, &k);
+                if (i <= 0) {
+                    CONFWRNLOG("Could not read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                    break;
+                }
+                p_missi->PreProcess = k;
+                CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)p_missi->PreProcess);
+                break;
+            case 0: // comment
+                break;
+            case -1: // end of buffer
+            case -3: // end of section
+                done = true;
+                break;
+            default:
+                CONFWRNLOG("Unrecognized command.");
+                break;
+            }
+            LbIniSkipToNextLine(&parser);
+        }
+#undef COMMAND_TEXT
+    }
+
+#if 0
+        struct Objective *p_objectv;
+        struct ObjectiveDef *p_odef;
+        p_objectv = &game_used_objectives[objectv];
+        mdef = &mod_defs[objectv];
+#endif
+
+
+
+
+#undef CONFDBGLOG
+#undef CONFWRNLOG
+    LbIniParseEnd(&parser);
+    LbMemoryFree(conf_buf);
+    mission_strings_len = p_str - (char *)(engine_mem_alloc_ptr + engine_mem_alloc_size - 64000);
 }
 
 /******************************************************************************/
