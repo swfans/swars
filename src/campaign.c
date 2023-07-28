@@ -793,9 +793,7 @@ int parse_objective_param(struct Objective *p_objectv, const char *buf, long buf
             return -1;
         }
         p_objectv->X = atoi(toklist[1]);
-        break;
         p_objectv->Y = atoi(toklist[2]);
-        break;
         p_objectv->Z = atoi(toklist[3]);
         break;
     case ObvP_Radius:
@@ -823,13 +821,32 @@ int parse_objective_param(struct Objective *p_objectv, const char *buf, long buf
     return 1;
 }
 
-int parse_next_objective(const char *buf, long buflen, long pri, long mapno, long levelno)
+int add_used_objective(long mapno, long levelno)
+{
+    struct Objective *p_objectv;
+    int i;
+
+    i = next_used_objective;
+    next_used_objective++;
+
+    p_objectv = &game_used_objectives[i];
+    LbMemorySet(p_objectv, 0, sizeof(struct Objective));
+    p_objectv->Type = 0;
+    p_objectv->Pri = 0;
+    p_objectv->Map = mapno;
+    p_objectv->Level = levelno;
+    p_objectv->Status = 0;
+
+    return i;
+}
+
+int parse_next_used_objective(const char *buf, long buflen, long pri, long mapno, long levelno)
 {
     struct ObjectiveDef *p_odef;
     struct Objective *p_objectv;
     char *toklist[32];
     char tokbuf[256];
-    int i;
+    int i, objectv;
 
     tokenize_script_func(toklist, tokbuf, buf, buflen);
 
@@ -847,22 +864,17 @@ int parse_next_objective(const char *buf, long buflen, long pri, long mapno, lon
         LOGWARN("Objective name not recognized.");
         return -1;
     }
-    p_objectv = &game_used_objectives[next_used_objective];
-    LbMemorySet(p_objectv, 0, sizeof(struct Objective));
+    objectv = add_used_objective(mapno, levelno);
+    p_objectv = &game_used_objectives[objectv];
     p_objectv->Type = i;
     p_objectv->Pri = pri;
-    p_objectv->Map = mapno;
-    p_objectv->Level = levelno;
-    p_objectv->Status = 0;
 
     for (i = 1; toklist[i] != NULL; i++)
     {
         parse_objective_param(p_objectv, toklist[i], sizeof(tokbuf) - (toklist[i] - tokbuf) );
     }
 
-    i = next_used_objective;
-    next_used_objective++;
-    return i;
+    return objectv;
 }
 
 void read_missions_conf_file(int num)
@@ -900,6 +912,9 @@ void read_missions_conf_file(int num)
 #define CONFDBGLOG(format,args...) LOGDBG("%s(line %lu): " format, conf_fname, parser.line_num, ## args)
     next_mission = 0;
     next_used_objective = 0;
+    // Add empty objective 0
+    add_used_objective(0, 0);
+
     p_str = engine_mem_alloc_ptr + engine_mem_alloc_size - 64000;
     // Parse the [common] section of loaded file
     done = false;
@@ -1328,7 +1343,7 @@ void read_missions_conf_file(int num)
                     CONFWRNLOG("Could not read the latter of key-value pair in \"%s\" section.", sect_name);
                     break;
                 }
-                k = parse_next_objective(locbuf, sizeof(locbuf), pri, p_missi->MapNo, p_missi->LevelNo);
+                k = parse_next_used_objective(locbuf, sizeof(locbuf), pri, p_missi->MapNo, p_missi->LevelNo);
                 if (k < 0) {
                     CONFWRNLOG("Could parse objective command in \"%s\" section.", sect_name);
                     break;
@@ -1376,7 +1391,7 @@ void read_missions_conf_file(int num)
                     CONFWRNLOG("Could not read the latter of key-value pair in \"%s\" section.", sect_name);
                     break;
                 }
-                k = parse_next_objective(locbuf, sizeof(locbuf), pri, p_missi->MapNo, p_missi->LevelNo);
+                k = parse_next_used_objective(locbuf, sizeof(locbuf), pri, p_missi->MapNo, p_missi->LevelNo);
                 if (k < 0) {
                     CONFWRNLOG("Could parse objective command in \"%s\" section.", sect_name);
                     break;
