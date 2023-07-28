@@ -86,6 +86,10 @@ TbResult LbIniFindSection(struct TbIniParser *parser, const char *sectname);
 /**
  * Parses INI buffer, recognizing a key from given list.
  *
+ * If key is recognized, the parser position ends up at first character of
+ * the value after the key. If not recognized, the position remains at first
+ * character of the key, allowing reading it.
+ *
  * @param parser The parser state defining input buffer and current position.
  * @param keylist List of expected INI keys in current section.
  * @return If positive integer is returned, it is the command number recognized in the line.
@@ -95,6 +99,22 @@ TbResult LbIniFindSection(struct TbIniParser *parser, const char *sectname);
  * If -3 is returned, that means we have reached end of the INI section.
  */
 int LbIniRecognizeKey(struct TbIniParser *parser, const struct TbNamedEnum keylist[]);
+
+/**
+ * Parses INI buffer, filling destination buffer with key.
+ *
+ * The key is returned, and parser position ends up at first character of
+ * the value after the key.
+ *
+ * @param parser The parser state defining input buffer and current position.
+ * @param dst The destination string buffer.
+ * @param dstlen Length of the destination string buffer.
+ * @return If positive integer is returned, it is the length of the key filled.
+ * If 0 is returned, that means the current line did not contained any key-value pair and should be skipped.
+ * If -1 is returned, that means we have reached end of file.
+ * If -3 is returned, that means we have reached end of the INI section.
+ */
+int LbIniGetKey(struct TbIniParser *parser, char *dst, long dstlen);
 
 /**
  * Parses INI value and fills destination buffer with the whole string, that is until EOLN.

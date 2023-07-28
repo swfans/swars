@@ -82,6 +82,20 @@ static TbBool IniSkipSpaces(struct TbIniParser *parser)
     return (parser->pos < parser->buflen);
 }
 
+static TbBool IniSkipKeyEndToValue(struct TbIniParser *parser)
+{
+    while (parser->pos < parser->buflen)
+    {
+        if ((parser->buf[parser->pos] != ' ') &&
+            (parser->buf[parser->pos] != '\t') &&
+            (parser->buf[parser->pos] != '=') &&
+            ((uchar)parser->buf[parser->pos] >= 7))
+            break;
+        parser->pos++;
+    }
+    return (parser->pos < parser->buflen);
+}
+
 TbResult LbIniFindSection(struct TbIniParser *parser, const char *sectname)
 {
     int blname_len;
@@ -170,25 +184,90 @@ int LbIniRecognizeKey(struct TbIniParser *parser, const struct TbNamedEnum keyli
                    (parser->buf[parser->pos] != '=')  &&
                    ((uchar)parser->buf[parser->pos] >= 7))
                {
-                  parser->pos -= cmdname_len;
-                  i++;
-                  continue;
+                   parser->pos -= cmdname_len;
+                   i++;
+                   continue;
                }
-               // Skipping spaces between command and parameters
-               while ((parser->buf[parser->pos] == ' ') ||
-                  (parser->buf[parser->pos] == '\t') ||
-                  (parser->buf[parser->pos] == '=')  ||
-                  ((uchar)parser->buf[parser->pos] < 7))
-               {
-                 parser->pos++;
-                 if (parser->pos >= parser->buflen) break;
-               }
+               // Skipping spaces between key and value
+               if (!IniSkipKeyEndToValue(parser))
+                   break;
             }
             return keylist[i].num;
         }
         i++;
     }
     return -2;
+}
+
+int LbIniGetKey(struct TbIniParser *parser, char *dst, long dstlen)
+{
+    int i;
+    TbBool in_quotes;
+
+    LOGNO("Starting");
+    if ((parser->pos) >= parser->buflen)
+        return -1;
+    // Skipping starting spaces
+    while ((parser->buf[parser->pos] == ' ') ||
+           (parser->buf[parser->pos] == '\t') ||
+           (parser->buf[parser->pos] == '\n') ||
+           (parser->buf[parser->pos] == '\r') ||
+           (parser->buf[parser->pos] == 26) ||
+           ((uchar)parser->buf[parser->pos] < 7))
+    {
+        parser->pos++;
+        if (parser->pos >= parser->buflen) return -1;
+    }
+    // Checking if this line is a comment
+    if (parser->buf[parser->pos] == ';')
+        return 0;
+    // Checking if this line is start of a block
+    if (parser->buf[parser->pos] == '[')
+        return -3;
+    // Finding key length
+    in_quotes = false;
+    if (parser->buf[parser->pos] == '\"') {
+        in_quotes = true;
+        parser->pos++;
+        if (parser->pos >= parser->buflen) return 0;
+    }
+    for (i=0; i+1 < dstlen; i++)
+    {
+        if (in_quotes) {
+            if ((parser->buf[parser->pos] == '\"') ||
+                 (parser->buf[parser->pos] == '\r') ||
+                 (parser->buf[parser->pos] == '\n'))
+                break;
+        } else {
+            if ((parser->buf[parser->pos] == '=') ||
+                 (parser->buf[parser->pos] == '\r') ||
+                 (parser->buf[parser->pos] == '\n'))
+                break;
+        }
+        dst[i] = parser->buf[parser->pos];
+        parser->pos++;
+        if (parser->pos >= parser->buflen) {
+            i++;
+            break;
+        }
+    }
+    if (!in_quotes) {
+        // Remove any spaces that were before eq sign
+        int p;
+        p = parser->pos - 1;
+        while (i > 0) {
+            if ((parser->buf[p] != ' ') &&
+                 (parser->buf[p] != '\t') &&
+                 ((uchar)parser->buf[p] >= 7))
+                break;
+            i--;
+            p--;
+        }
+    }
+    // Skipping spaces between key and value
+    IniSkipKeyEndToValue(parser);
+    dst[i] = '\0';
+    return i;
 }
 
 int LbIniValueGetStrWhole(struct TbIniParser *parser, char *dst, long dstlen)
