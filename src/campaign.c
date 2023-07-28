@@ -423,6 +423,10 @@ void save_objective_chain_conf(TbFileHandle fh, ushort objectv_head, char *buf)
 
         LbFileWrite(fh, buf, s - buf);
     }
+    if (objectv_head == 0) {
+        sprintf(buf, "; no objectives defined\n");
+        LbFileWrite(fh, buf, strlen(buf));
+    }
 }
 
 void save_mission_single_conf(TbFileHandle fh, struct Mission *p_missi, char *buf)
@@ -619,7 +623,7 @@ void save_missions_conf_file(int num)
             LbFileWrite(fh, locbuf, strlen(locbuf));
         }
 
-        if (p_missi->SuccessHead != 0) {
+        {
             sprintf(locbuf, "[missuccess%d]\n", i);
             LbFileWrite(fh, locbuf, strlen(locbuf));
 
@@ -742,9 +746,11 @@ int parse_objective_param(struct Objective *p_objectv, const char *buf, long buf
     char tokbuf[128];
     int i;
 
+    LbMemorySet(toklist, 0, sizeof(toklist));
     i = tokenize_script_func(toklist, tokbuf, buf, buflen);
     if (i < 2) {
-        LOGWARN("Objective parameter has less than 2 tokens.");
+        LOGWARN("Objective parameter consists of less than 2 tokens.");
+        return -1;
     }
 
     // Finding parameter number
@@ -771,6 +777,10 @@ int parse_objective_param(struct Objective *p_objectv, const char *buf, long buf
         p_objectv->Thing = atoi(toklist[1]);
         break;
     case ObvP_Thing:
+        if (toklist[2] == NULL)  {
+            LOGWARN("Objective parameter \"%s\" requires 2 numbers.", toklist[0]);
+            return -1;
+        }
         p_objectv->Thing = atoi(toklist[1]);
         p_objectv->UniqueID = atoi(toklist[2]);
         break;
@@ -778,6 +788,10 @@ int parse_objective_param(struct Objective *p_objectv, const char *buf, long buf
         p_objectv->UniqueID = atoi(toklist[1]);
         break;
     case ObvP_Coord:
+        if (toklist[3] == NULL)  {
+            LOGWARN("Objective parameter \"%s\" requires 3 numbers.", toklist[0]);
+            return -1;
+        }
         p_objectv->X = atoi(toklist[1]);
         break;
         p_objectv->Y = atoi(toklist[2]);
@@ -803,7 +817,7 @@ int parse_objective_param(struct Objective *p_objectv, const char *buf, long buf
         p_objectv->ObjText = atoi(toklist[1]);
         break;
     default:
-        LOGWARN("Objective parameter name not recognized.");
+        LOGWARN("Objective parameter name \"%s\" not recognized.", toklist[0]);
         return -1;
     }
     return 1;
@@ -834,6 +848,7 @@ int parse_next_objective(const char *buf, long buflen, long pri, long mapno, lon
         return -1;
     }
     p_objectv = &game_used_objectives[next_used_objective];
+    LbMemorySet(p_objectv, 0, sizeof(struct Objective));
     p_objectv->Type = i;
     p_objectv->Pri = pri;
     p_objectv->Map = mapno;
@@ -1287,6 +1302,7 @@ void read_missions_conf_file(int num)
         while (!done)
         {
             long pri;
+            struct Objective *p_objectv;
 
             // Get the key, as it holds priority
             k = LbIniGetKey(&parser, locbuf, sizeof(locbuf));
@@ -1317,7 +1333,57 @@ void read_missions_conf_file(int num)
                     CONFWRNLOG("Could parse objective command in \"%s\" section.", sect_name);
                     break;
                 }
-                //TODO add objective to mission
+                p_objectv = &game_used_objectives[k];
+                p_objectv->Next = p_missi->SuccessHead;
+                p_missi->SuccessHead = k;
+            }
+
+            LbIniSkipToNextLine(&parser);
+        }
+
+        // Parse the [missuccessN] sections of loaded file
+        done = false;
+        sprintf(sect_name, "misfail%d", missi);
+        if (LbIniFindSection(&parser, sect_name) != Lb_SUCCESS) {
+            CONFWRNLOG("Could not find \"[%s]\" section.", sect_name);
+        } else
+        while (!done)
+        {
+            long pri;
+            struct Objective *p_objectv;
+
+            // Get the key, as it holds priority
+            k = LbIniGetKey(&parser, locbuf, sizeof(locbuf));
+            // Now store the config item in correct place
+            switch (k)
+            {
+            case 0: // comment
+                break;
+            case -1: // end of buffer
+            case -3: // end of section
+                done = true;
+                break;
+            default:
+                if ((locbuf[0] != 'P') || !isdigit(locbuf[1])) {
+                    CONFWRNLOG("Unrecognized key in \"%s\" section.", sect_name);
+                    break;
+                }
+                // Priority is in key name
+                pri = atol(&locbuf[1]);
+                // Now get the objective command from value
+                k = LbIniValueGetStrWhole(&parser, locbuf, sizeof(locbuf));
+                if (k <= 0) {
+                    CONFWRNLOG("Could not read the latter of key-value pair in \"%s\" section.", sect_name);
+                    break;
+                }
+                k = parse_next_objective(locbuf, sizeof(locbuf), pri, p_missi->MapNo, p_missi->LevelNo);
+                if (k < 0) {
+                    CONFWRNLOG("Could parse objective command in \"%s\" section.", sect_name);
+                    break;
+                }
+                p_objectv = &game_used_objectives[k];
+                p_objectv->Next = p_missi->FailHead;
+                p_missi->FailHead = k;
             }
 
             LbIniSkipToNextLine(&parser);
