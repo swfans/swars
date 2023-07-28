@@ -105,6 +105,7 @@ struct ObjectiveDef objectv_defs[] = {
     {"GAME_OBJ_UNUSED_25",	"UNEXPECT 25",		ObDF_None },
     /* Unreachable. */
     {"GAME_OBJ_UNUSED_26",	"UNEXPECT 26",		ObDF_None },
+    {NULL,					NULL,				ObDF_None },
 };
 
 /* deprecated */
@@ -172,13 +173,28 @@ enum MissionListConfigCmd {
     MissL_PreProcess,
 };
 
+enum ObjectiveConfigParam {
+    ObvP_Thing = 1,
+    ObvP_Group,
+    ObvP_Count,
+    ObvP_UniqueID,
+    ObvP_Coord,
+    ObvP_Radius,
+    ObvP_Amount,
+    ObvP_SecGroup,
+    ObvP_SecThing,
+    ObvP_Arg2,
+    ObvP_StringIndex,
+    ObvP_Flags,
+    ObvP_TextId,
+};
+
 const struct TbNamedEnum missions_conf_common_cmds[] = {
   {"MissionsCount",	MissL_MissionsCount},
   {NULL,		0},
 };
 
 const struct TbNamedEnum missions_conf_mission_cmds[] = {
-  {"MissionsCount",	MissL_MissionsCount},
   {"Name",			MissL_TextName},
   {"TextId",		MissL_TextId},
   {"SpecialEffectID",	MissL_SpecialEffectID},
@@ -209,6 +225,23 @@ const struct TbNamedEnum missions_conf_mission_cmds[] = {
   {"PANEnd",		MissL_PANEnd},
   {"WaitToFade",	MissL_WaitToFade},
   {"PreProcess",	MissL_PreProcess},
+  {NULL,			0},
+};
+
+const struct TbNamedEnum missions_conf_objective_params[] = {
+  {"Thing",			ObvP_Thing},
+  {"Group",			ObvP_Group},
+  {"Count",			ObvP_Count},
+  {"UniqueID",		ObvP_UniqueID},
+  {"Coord",			ObvP_Coord},
+  {"Radius",		ObvP_Radius},
+  {"Amount",		ObvP_Amount},
+  {"SecGroup",		ObvP_SecGroup},
+  {"SecThing",		ObvP_SecThing},
+  {"Arg2",			ObvP_Arg2},
+  {"StringIndex",	ObvP_StringIndex},
+  {"Flags",			ObvP_Flags},
+  {"TextId",		ObvP_TextId},
   {NULL,			0},
 };
 
@@ -609,15 +642,223 @@ void save_missions_conf_file(int num)
     LbFileClose(fh);
 }
 
+int tokenize_script_func(char *olist[], char *obuf, const char *ibuf, long ibuflen)
+{
+    TbBool in_quotes, token_end, parse_end;
+    int li;
+    int opos, pos, in_parath;
+
+    li = 0;
+    pos = 0;
+    in_quotes = false;
+    token_end = true;
+    parse_end = false;
+    in_parath = 0;
+    if (pos >= ibuflen) return 0;
+    // Skipping spaces after previous parameter
+    while ((ibuf[pos] == ' ') || (ibuf[pos] == '\t'))
+    {
+        pos++;
+        if (pos >= ibuflen) return 0;
+    }
+    if (ibuf[pos] == '\"') {
+        in_quotes = true;
+        pos++;
+        if (pos >= ibuflen) return 0;
+    }
+    opos = 0;
+    while (!parse_end)
+    {
+        if (token_end) {
+            olist[li] = &obuf[opos];
+            li++;
+            token_end = false;
+        }
+        for (; pos < ibuflen; pos++)
+        {
+            if (in_quotes) {
+                if ((ibuf[pos] == '\"') ||
+                     (ibuf[pos] == '\r') ||
+                     (ibuf[pos] == '\n')) {
+                    in_quotes = false;
+                    if (in_parath == 0) {
+                        token_end = true;
+                        continue; // do not copy quote to output
+                    }
+                }
+            } else if (ibuf[pos] == '\"') {
+                in_quotes = true;
+                if (in_parath == 0)
+                    continue; // do not copy quote to output
+            } else if (ibuf[pos] == '(') {
+                in_parath++;
+                if (in_parath == 1) {
+                    token_end = true;
+                    // do not copy first parenthesis to output
+                    continue;
+                }
+            } else if (ibuf[pos] == ')') {
+                in_parath--;
+                if (in_parath == 0) {
+                    // do not copy last parenthesis to output, and end here
+                    parse_end = true;
+                    break;
+                }
+            } else if (in_parath < 2) {
+                if (ibuf[pos] == ',') {
+                    token_end = true;
+                    continue;
+                } else if ((ibuf[pos] == ' ') ||
+                     (ibuf[pos] == '\t') ||
+                     ((uchar)ibuf[pos] < 7)) {
+                    continue;
+                } else if ((ibuf[pos] == '\r') ||
+                     (ibuf[pos] == '\n')) {
+                    parse_end = true;
+                    break;
+                } else if (token_end) {
+                    // we found a char to include in a token, but that's a new one
+                    break;
+                }
+            }
+            obuf[opos] = ibuf[pos];
+            opos++;
+            if (pos >= ibuflen) {
+                opos++;
+                parse_end = true;
+                break;
+            }
+        }
+        obuf[opos] = '\0';
+        opos++;
+    }
+    olist[li] = NULL;
+    return li;
+}
+
+int parse_objective_param(struct Objective *p_objectv, const char *buf, long buflen)
+{
+    char *toklist[16];
+    char tokbuf[128];
+    int i;
+
+    i = tokenize_script_func(toklist, tokbuf, buf, buflen);
+    if (i < 2) {
+        LOGWARN("Objective parameter has less than 2 tokens.");
+    }
+
+    // Finding parameter number
+    i = 0;
+    while (1)
+    {
+        const struct TbNamedEnum *param;
+
+        if (missions_conf_objective_params[i].name == NULL) {
+            i = -1;
+            break;
+        }
+        param = &missions_conf_objective_params[i];
+        if (strcasecmp(toklist[0], param->name) == 0) {
+            i = param->num;
+            break;
+        }
+        i++;
+    }
+    switch (i)
+    {
+    case ObvP_Group:
+    case ObvP_Count:
+        p_objectv->Thing = atoi(toklist[1]);
+        break;
+    case ObvP_Thing:
+        p_objectv->Thing = atoi(toklist[1]);
+        p_objectv->UniqueID = atoi(toklist[2]);
+        break;
+    case ObvP_UniqueID:
+        p_objectv->UniqueID = atoi(toklist[1]);
+        break;
+    case ObvP_Coord:
+        p_objectv->X = atoi(toklist[1]);
+        break;
+        p_objectv->Y = atoi(toklist[2]);
+        break;
+        p_objectv->Z = atoi(toklist[3]);
+        break;
+    case ObvP_Radius:
+        p_objectv->Radius = atoi(toklist[1]);
+        break;
+    case ObvP_Amount:
+    case ObvP_SecGroup:
+    case ObvP_SecThing:
+    case ObvP_Arg2:
+        p_objectv->Arg2 = atoi(toklist[1]);
+        break;
+    case ObvP_StringIndex:
+        p_objectv->StringIndex = atoi(toklist[1]);
+        break;
+    case ObvP_Flags:
+        p_objectv->Flags = atoi(toklist[1]);
+        break;
+    case ObvP_TextId:
+        p_objectv->ObjText = atoi(toklist[1]);
+        break;
+    default:
+        LOGWARN("Objective parameter name not recognized.");
+        return -1;
+    }
+    return 1;
+}
+
+int parse_next_objective(const char *buf, long buflen, long pri, long mapno, long levelno)
+{
+    struct ObjectiveDef *p_odef;
+    struct Objective *p_objectv;
+    char *toklist[32];
+    char tokbuf[256];
+    int i;
+
+    tokenize_script_func(toklist, tokbuf, buf, buflen);
+
+    // Finding command number
+    i = 0;
+    while (objectv_defs[i].CmdName != NULL)
+    {
+        p_odef = &objectv_defs[i];
+        if (strcasecmp(toklist[0], p_odef->CmdName) == 0)
+            break;
+        i++;
+    }
+    p_odef = &objectv_defs[i];
+    if (p_odef->CmdName == NULL) {
+        LOGWARN("Objective name not recognized.");
+        return -1;
+    }
+    p_objectv = &game_used_objectives[next_used_objective];
+    p_objectv->Type = i;
+    p_objectv->Pri = pri;
+    p_objectv->Map = mapno;
+    p_objectv->Level = levelno;
+    p_objectv->Status = 0;
+
+    for (i = 1; toklist[i] != NULL; i++)
+    {
+        parse_objective_param(p_objectv, toklist[i], sizeof(tokbuf) - (toklist[i] - tokbuf) );
+    }
+
+    i = next_used_objective;
+    next_used_objective++;
+    return i;
+}
+
 void read_missions_conf_file(int num)
 {
     TbFileHandle conf_fh;
     TbBool done;
     unsigned int i, n;
     long k;
-    int cmd_num;
     char *conf_buf;
     struct TbIniParser parser;
+    char locbuf[120];
     char conf_fname[80];
     int conf_len;
     int missi;
@@ -646,16 +887,18 @@ void read_missions_conf_file(int num)
     next_used_objective = 0;
     p_str = engine_mem_alloc_ptr + engine_mem_alloc_size - 64000;
     // Parse the [common] section of loaded file
+    done = false;
     if (LbIniFindSection(&parser, "common") != Lb_SUCCESS) {
         CONFWRNLOG("Could not find \"[%s]\" section, file skipped.", "common");
         LbIniParseEnd(&parser);
         LbMemoryFree(conf_buf);
         return;
     }
-    done = false;
 #define COMMAND_TEXT(cmd_num) LbNamedEnumGetName(missions_conf_common_cmds,cmd_num)
     while (!done)
     {
+        int cmd_num;
+
         // Finding command number in this line
         i = 0;
         cmd_num = LbIniRecognizeKey(&parser, missions_conf_common_cmds);
@@ -689,17 +932,20 @@ void read_missions_conf_file(int num)
         char sect_name[16];
         struct Mission *p_missi;
 
-        // Parse the [missionN] sections of loaded file
-        sprintf(sect_name, "mission%d", missi);
         p_missi = &mission_list[missi];
+
+        // Parse the [missionN] sections of loaded file
+        done = false;
+        sprintf(sect_name, "mission%d", missi);
         if (LbIniFindSection(&parser, sect_name) != Lb_SUCCESS) {
             CONFWRNLOG("Could not find \"[%s]\" section.", sect_name);
             continue;
         }
-        done = false;
 #define COMMAND_TEXT(cmd_num) LbNamedEnumGetName(missions_conf_mission_cmds,cmd_num)
         while (!done)
         {
+            int cmd_num;
+
             // Finding command number in this line
             i = 0;
             cmd_num = LbIniRecognizeKey(&parser, missions_conf_mission_cmds);
@@ -1031,18 +1277,52 @@ void read_missions_conf_file(int num)
             LbIniSkipToNextLine(&parser);
         }
 #undef COMMAND_TEXT
+
+        // Parse the [missuccessN] sections of loaded file
+        done = false;
+        sprintf(sect_name, "missuccess%d", missi);
+        if (LbIniFindSection(&parser, sect_name) != Lb_SUCCESS) {
+            CONFWRNLOG("Could not find \"[%s]\" section.", sect_name);
+        } else
+        while (!done)
+        {
+            long pri;
+
+            // Get the key, as it holds priority
+            k = LbIniGetKey(&parser, locbuf, sizeof(locbuf));
+            // Now store the config item in correct place
+            switch (k)
+            {
+            case 0: // comment
+                break;
+            case -1: // end of buffer
+            case -3: // end of section
+                done = true;
+                break;
+            default:
+                if ((locbuf[0] != 'P') || !isdigit(locbuf[1])) {
+                    CONFWRNLOG("Unrecognized key in \"%s\" section.", sect_name);
+                    break;
+                }
+                // Priority is in key name
+                pri = atol(&locbuf[1]);
+                // Now get the objective command from value
+                k = LbIniValueGetStrWhole(&parser, locbuf, sizeof(locbuf));
+                if (k <= 0) {
+                    CONFWRNLOG("Could not read the latter of key-value pair in \"%s\" section.", sect_name);
+                    break;
+                }
+                k = parse_next_objective(locbuf, sizeof(locbuf), pri, p_missi->MapNo, p_missi->LevelNo);
+                if (k < 0) {
+                    CONFWRNLOG("Could parse objective command in \"%s\" section.", sect_name);
+                    break;
+                }
+                //TODO add objective to mission
+            }
+
+            LbIniSkipToNextLine(&parser);
+        }
     }
-
-#if 0
-        struct Objective *p_objectv;
-        struct ObjectiveDef *p_odef;
-        p_objectv = &game_used_objectives[objectv];
-        mdef = &mod_defs[objectv];
-#endif
-
-
-
-
 #undef CONFDBGLOG
 #undef CONFWRNLOG
     LbIniParseEnd(&parser);
