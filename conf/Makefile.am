@@ -2,6 +2,8 @@ confdir = $(prefix)/opt/$(PACKAGE)/conf
 conf_DATA = \
 	cybmods.ini \
 	weapons.ini \
+	miss000.ini \
+	miss001.ini \
 	midipats.cfg
 
 tone000dir = $(prefix)/opt/$(PACKAGE)/conf/Tone_000
