@@ -250,7 +250,7 @@ extern ushort display_mode;
 
 void load_missions(int num)
 {
-    read_missions_bin_file(num);
+    read_missions_conf_file(num);
 }
 
 void read_missions_bin_file(int num)
@@ -968,6 +968,7 @@ void read_missions_conf_file(int num)
         struct Mission *p_missi;
 
         p_missi = &mission_list[missi];
+        LbMemorySet(p_missi, 0, sizeof(struct Mission));
 
         // Parse the [missionN] sections of loaded file
         done = false;
