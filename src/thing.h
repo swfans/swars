@@ -504,6 +504,7 @@ void add_node_sthing(ushort new_thing);
 short get_new_sthing(void);
 void remove_sthing(short tngno);
 
+short find_nearest_from_group(struct Thing *p_person, ushort group, ubyte no_persuaded);
 /******************************************************************************/
 #ifdef __cplusplus
 }

@@ -27,6 +27,9 @@ extern "C" {
 /******************************************************************************/
 #pragma pack(1)
 
+#define SCANNER_BIG_BLIP_COUNT 16
+#define SCANNER_GROUP_COUNT 6
+
 struct BigBlip
 {
   long X;

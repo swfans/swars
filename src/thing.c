@@ -73,4 +73,12 @@ void remove_sthing(short tngno)
         : : "a" (tngno));
 }
 
+short find_nearest_from_group(struct Thing *p_person, ushort group, ubyte no_persuaded)
+{
+    short ret;
+    asm volatile ("call ASM_find_nearest_from_group\n"
+        : "=r" (ret) : "a" (p_person), "d" (group), "b" (no_persuaded));
+    return ret;
+}
+
 /******************************************************************************/
