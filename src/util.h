@@ -22,6 +22,7 @@
 #endif
 
 void strtolower (char *string);
+void strtocapwords(char *s);
 
 const char *extract_path_segment (const char *path,
 				  char *buffer, size_t size);

@@ -24,6 +24,27 @@ strtolower (char *string)
     }
 }
 
+void
+strtocapwords(char *s)
+{
+    TbBool word_start = 1;
+
+    while (*s != '\0')
+    {
+      if (word_start) {
+        if (isalpha(*s)) {
+          *s = toupper(*s);
+          word_start = 0;
+        }
+      } else {
+          *s = tolower(*s);
+          if (*s == ' ')
+              word_start = 1;
+      }
+      s++;
+    }
+}
+
 void *
 xmalloc (size_t size)
 {

@@ -715,6 +715,8 @@ extern char options_title_text[];
 extern char brief_netscan_cost_text[];
 extern const char *misc_text[5];
 
+extern ubyte game_system_screen;
+
 extern struct ScreenTextBox heading_box;
 extern struct ScreenTextBox loading_INITIATING_box;
 extern struct ScreenTextBox unkn13_SYSTEM_button;

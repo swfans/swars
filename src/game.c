@@ -4198,26 +4198,94 @@ ubyte do_abort_2(ubyte click)
     return ret;
 }
 
-ubyte do_login_2(ubyte click)
+void load_city_txt(void)
 {
-    ubyte ret;
-    asm volatile ("call ASM_do_login_2\n"
-        : "=r" (ret) : "a" (click));
-    return ret;
+    asm volatile ("call ASM_load_city_txt\n"
+        :  :  : "eax" );
 }
 
-ubyte main_do_map_editor(ubyte click)
+void load_city_data(ubyte type)
 {
-    ubyte ret;
-    asm volatile ("call ASM_main_do_map_editor\n"
-        : "=r" (ret) : "a" (click));
-    return ret;
+    TbFileHandle fh;
+
+    fh = LbFileOpen("data/cities.dat", Lb_FILE_MODE_READ_ONLY);
+    if (fh == INVALID_FILE) {
+        return;
+    }
+    LbFileRead(fh, &num_cities, 1);
+    LbFileRead(fh, cities, sizeof(struct City) * num_cities);
+    LbFileClose(fh);
+}
+
+void init_weapon_text(void)
+{
+    asm volatile ("call ASM_init_weapon_text\n"
+        :  :  : "eax" );
+}
+
+void srm_reset_research(void)
+{
+    asm volatile ("call ASM_srm_reset_research\n"
+        :  :  : "eax" );
+}
+
+void init_agents(void)
+{
+    asm volatile ("call ASM_init_agents\n"
+        :  :  : "eax" );
+}
+
+void do_start_triggers(ushort missi)
+{
+    asm volatile (
+      "call ASM_do_start_triggers\n"
+        : : "a" (missi));
+}
+
+void queue_up_new_mail(ubyte type, ushort missi)
+{
+    asm volatile (
+      "call ASM_queue_up_new_mail\n"
+        : : "a" (type), "d" (missi));
+}
+
+ushort open_new_mission(ushort missi)
+{
+    int i;
+
+    i = 1;
+    if (missi != 88 && missi != 101 && missi != 102)
+    {
+        while (mission_open[i] && i < 50)
+            i++;
+        if (i < 50) {
+            mission_open[i] = missi;
+            mission_state[i] = 0;
+        }
+        do_start_triggers(missi);
+        queue_up_new_mail(1, missi);
+    }
+    return 0;
 }
 
 ubyte brief_do_netscan_enhance(ubyte click)
 {
     ubyte ret;
     asm volatile ("call ASM_brief_do_netscan_enhance\n"
+        : "=r" (ret) : "a" (click));
+    return ret;
+}
+
+void init_variables(void)
+{
+    asm volatile ("call ASM_init_variables\n"
+        :  :  : "eax" );
+}
+
+ubyte main_do_map_editor(ubyte click)
+{
+    ubyte ret;
+    asm volatile ("call ASM_main_do_map_editor\n"
         : "=r" (ret) : "a" (click));
     return ret;
 }
@@ -4306,6 +4374,86 @@ ubyte ac_do_research_submit(ubyte click);
 ubyte ac_do_research_suspend(ubyte click);
 ubyte ac_do_unkn12_WEAPONS_MODS(ubyte click);
 
+
+ubyte do_login_2(ubyte click)
+{
+#if 0
+    ubyte ret;
+    asm volatile ("call ASM_do_login_2\n"
+        : "=r" (ret) : "a" (click));
+    return ret;
+#else
+    int i;
+    const char *text;
+
+    if (strlen(login_name) == 0)
+        return 0;
+    strtocapwords(login_name);
+
+    read_user_settings();
+    i = ingame.PanelPermutation;
+    if (i < 0)
+        text = gui_strings[579 + abs(i)];
+    else
+        text = gui_strings[580 + i];
+    options_gfx_buttons[14].Text = text;
+    i = ingame.TrenchcoatPreference;
+    options_gfx_buttons[15].Text = gui_strings[583 + i];
+
+    if (in_network_game)
+    {
+        screentype = 7;
+        game_system_screen = 3;
+        reload_background_flag = 1;
+        edit_flag = 0;
+        return 1;
+    }
+
+    if ((ingame.Flags & 0x10) != 0)
+    {
+        for (i = 2; i < 6; i++) {
+            sysmnu_buttons[i].Y += 60;
+        }
+        ingame.Flags &= ~0x10;
+    }
+
+    screentype = 99;
+    game_system_screen = 0;
+    players[local_player_no].MissionAgents = 0x0F;
+    load_city_data(0);
+    init_weapon_text();
+    load_city_txt();
+    init_variables();
+    srm_reset_research();
+    init_agents();
+    load_missions(0);
+    switch (background_type)
+    {
+    case 0:
+        open_new_mission(1);
+        init_screen_button(&brief_NETSCAN_button, 312, 405, gui_strings[441], 6, med2_font, 1, 128);
+        brief_NETSCAN_button.CallBackFn = ac_brief_do_netscan_enhance;
+        brief_NETSCAN_COST_box.Width = 312 - brief_NETSCAN_button.Width - 17;
+        break;
+    case 1:
+        open_new_mission(48);
+        init_screen_button(&brief_NETSCAN_button, 312, 405, gui_strings[650], 6, med2_font, 1, 128);
+        brief_NETSCAN_COST_box.Width = 312 - brief_NETSCAN_button.Width - 17;
+        brief_NETSCAN_button.CallBackFn = ac_brief_do_netscan_enhance;
+        break;
+    case 2:
+        //TODO Punk campaign not supported
+        break;
+    }
+
+    if (new_mail)
+      play_sample_using_heap(0, 119 + (LbRandomAnyShort() % 3), 127, 64, 100, 0, 3u);
+
+    reload_background_flag = 1;
+    edit_flag = 0;
+    return 1;
+#endif
+}
 
 ubyte show_unkn32_box(struct ScreenBox *box)
 {
@@ -5360,25 +5508,6 @@ void update_menus(void)
         :  :  : "eax" );
 }
 
-void load_city_txt(void)
-{
-    asm volatile ("call ASM_load_city_txt\n"
-        :  :  : "eax" );
-}
-
-void load_city_data(ubyte type)
-{
-    TbFileHandle handle;
-
-    handle = LbFileOpen("data/cities.dat", Lb_FILE_MODE_READ_ONLY);
-    if (handle != (TbFileHandle)-1)
-    {
-        LbFileRead(handle, &num_cities, 1);
-        LbFileRead(handle, cities, sizeof(struct City) * num_cities);
-        LbFileClose(handle);
-    }
-}
-
 void reload_background(void)
 {
     asm volatile ("call ASM_reload_background\n"
@@ -6322,24 +6451,6 @@ void activate_cities(ubyte brief)
 {
     asm volatile ("call ASM_activate_cities\n"
         : : "a" (brief));
-}
-
-void init_weapon_text(void)
-{
-    asm volatile ("call ASM_init_weapon_text\n"
-        :  :  : "eax" );
-}
-
-void srm_reset_research(void)
-{
-    asm volatile ("call ASM_srm_reset_research\n"
-        :  :  : "eax" );
-}
-
-void init_agents(void)
-{
-    asm volatile ("call ASM_init_agents\n"
-        :  :  : "eax" );
 }
 
 void draw_flic_purple_list(void (*fn)())
