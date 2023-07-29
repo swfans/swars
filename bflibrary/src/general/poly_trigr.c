@@ -76,6 +76,8 @@ void trig_render_md00(struct TrigLocalRend *tlr)
     ubyte col;
 
     pp = polyscans;
+    if (pp == NULL)
+        return;
     o_ln = tlr->var_24;
     col = vec_colour;
 
@@ -115,6 +117,8 @@ void trig_render_md01(struct TrigLocalRend *tlr)
     struct PolyPoint *pp;
 
     pp = polyscans;
+    if (pp == NULL)
+        return;
 
     for (; tlr->var_44; tlr->var_44--, pp++)
     {
@@ -189,6 +193,8 @@ void trig_render_md02(struct TrigLocalRend *tlr)
 
     m = vec_map;
     pp = polyscans;
+    if ((m == NULL) || (pp == NULL))
+        return;
     lsh_var_54 = tlr->var_54 << 16;
 
     for (; tlr->var_44; tlr->var_44--, pp++)
@@ -271,6 +277,8 @@ void trig_render_md03(struct TrigLocalRend *tlr)
 
     m = vec_map;
     pp = polyscans;
+    if ((m == NULL) || (pp == NULL))
+        return;
     lsh_var_54 = tlr->var_54 << 16;
 
     for (; tlr->var_44; tlr->var_44--, pp++)
@@ -357,6 +365,8 @@ void trig_render_md04(struct TrigLocalRend *tlr)
 
     f = pixmap.fade_table;
     pp = polyscans;
+    if ((f == NULL) || (pp == NULL))
+        return;
 
     for (; tlr->var_44; tlr->var_44--, pp++)
     {
@@ -434,6 +444,8 @@ void trig_render_md05(struct TrigLocalRend *tlr)
     m = vec_map;
     f = pixmap.fade_table;
     pp = polyscans;
+    if ((m == NULL) || (f == NULL) || (pp == NULL))
+        return;
 
     {
         ulong factorA, factorB, factorC;
@@ -550,6 +562,8 @@ void trig_render_md06(struct TrigLocalRend *tlr)
     m = vec_map;
     f = pixmap.fade_table;
     pp = polyscans;
+    if ((m == NULL) || (f == NULL) || (pp == NULL))
+        return;
     lsh_var_54 = tlr->var_54 << 16;
     lsh_var_60 = tlr->var_60 << 16;
 
@@ -657,6 +671,8 @@ void trig_render_md07(struct TrigLocalRend *tlr)
     m = vec_map;
     f = pixmap.fade_table;
     pp = polyscans;
+    if ((m == NULL) || (f == NULL) || (pp == NULL))
+        return;
     lsh_var_54 = tlr->var_54 << 16;
 
     for (; tlr->var_44; tlr->var_44--, pp++)
@@ -742,6 +758,8 @@ void trig_render_md08(struct TrigLocalRend *tlr)
     m = vec_map;
     f = pixmap.fade_table;
     pp = polyscans;
+    if ((m == NULL) || (f == NULL) || (pp == NULL))
+        return;
     lsh_var_54 = tlr->var_54 << 16;
 
     for (; tlr->var_44; tlr->var_44--, pp++)
@@ -828,6 +846,8 @@ void trig_render_md09(struct TrigLocalRend *tlr)
     m = vec_map;
     f = pixmap.fade_table;
     pp = polyscans;
+    if ((m == NULL) || (f == NULL) || (pp == NULL))
+        return;
     lsh_var_54 = tlr->var_54 << 16;
 
     for (; tlr->var_44; tlr->var_44--, pp++)
@@ -915,6 +935,8 @@ void trig_render_md10(struct TrigLocalRend *tlr)
     m = vec_map;
     f = pixmap.fade_table;
     pp = polyscans;
+    if ((m == NULL) || (f == NULL) || (pp == NULL))
+        return;
     lsh_var_54 = tlr->var_54 << 16;
 
     for (; tlr->var_44; tlr->var_44--, pp++)
@@ -1003,6 +1025,8 @@ void trig_render_md12(struct TrigLocalRend *tlr)
     m = vec_map;
     g = pixmap.ghost_table;
     pp = polyscans;
+    if ((m == NULL) || (g == NULL) || (pp == NULL))
+        return;
     lsh_var_54 = tlr->var_54 << 16;
 
     for (; tlr->var_44; tlr->var_44--, pp++)
@@ -1088,6 +1112,8 @@ void trig_render_md13(struct TrigLocalRend *tlr)
     m = vec_map;
     g = pixmap.ghost_table;
     pp = polyscans;
+    if ((m == NULL) || (g == NULL) || (pp == NULL))
+        return;
     lsh_var_54 = tlr->var_54 << 16;
 
     for (; tlr->var_44; tlr->var_44--, pp++)
@@ -1171,6 +1197,8 @@ void trig_render_md14(struct TrigLocalRend *tlr)
 
     g = pixmap.ghost_table;
     pp = polyscans;
+    if ((g == NULL) || (pp == NULL))
+        return;
     o_ln = tlr->var_24;
     colM = (vec_colour << 8);
 
