@@ -3650,32 +3650,7 @@ void game_setup(void)
     debug_trace_setup(-2);
     LbSpriteSetup(small_font, small_font_end, small_font_data);
     game_setup_sub8();
-
-    { // Fill campaign list
-        struct Campaign *p_campgn;
-
-        p_campgn = &campaigns[0];
-        p_campgn->TextId = 642;
-        p_campgn->FirstMission = 1;
-        p_campgn->NetscanTextId = 441;
-        p_campgn->OutroFMV = "data/outro-s.smk";
-        p_campgn->OutroBkFn = "data/outro-s.raw";
-
-        p_campgn = &campaigns[1];
-        p_campgn->TextId = 643;
-        p_campgn->FirstMission = 48;
-        p_campgn->NetscanTextId = 650;
-        p_campgn->OutroFMV = "data/outro-z.smk";
-        p_campgn->OutroBkFn = "data/outro-z.raw";
-
-        p_campgn = &campaigns[2];
-        p_campgn->TextId = 644;
-        p_campgn->FirstMission = 103;
-        p_campgn->NetscanTextId = 441;
-        p_campgn->OutroFMV = "data/outro-p.smk";
-        p_campgn->OutroBkFn = "data/outro-p.raw";
-    }
-
+    load_campaigns();
     load_missions(0);
     players[local_player_no].MissionAgents = 0x0f;
     debug_trace_setup(-1);
@@ -4503,7 +4478,7 @@ ubyte show_campaigns_list(struct ScreenBox *box)
     box_height = box->Height - 8;
     my_set_text_window(box->X + 4, box->Y + 4, box_width, box_height);
     byte_197160 = 4;
-    ncampgns = 2; // TODO count existing campaigns
+    ncampgns = selectable_campaigns_count();
     campgn_height = box_height / (ncampgns + 1);
     cy = box_height / (ncampgns + 1);
     line_height = font_height('A');

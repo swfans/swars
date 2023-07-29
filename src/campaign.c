@@ -250,6 +250,51 @@ struct Campaign campaigns[CAMPAIGNS_MAX_COUNT];
 extern ushort mission_strings_len;
 extern ushort display_mode;
 
+void load_campaigns(void)
+{
+    { // Fill campaign list, with static data for now
+        struct Campaign *p_campgn;
+
+        p_campgn = &campaigns[0];
+        p_campgn->TextName = "Eurocorp";
+        p_campgn->TextId = 642;
+        p_campgn->FirstMission = 1;
+        p_campgn->NetscanTextId = 441;
+        p_campgn->OutroFMV = "data/outro-s.smk";
+        p_campgn->OutroBkFn = "data/outro-s.raw";
+
+        p_campgn = &campaigns[1];
+        p_campgn->TextName = "Church";
+        p_campgn->TextId = 643;
+        p_campgn->FirstMission = 48;
+        p_campgn->NetscanTextId = 650;
+        p_campgn->OutroFMV = "data/outro-z.smk";
+        p_campgn->OutroBkFn = "data/outro-z.raw";
+
+        p_campgn = &campaigns[2];
+        //p_campgn->TextName = "Unguided";
+        p_campgn->TextId = 644;
+        p_campgn->FirstMission = 103;
+        p_campgn->NetscanTextId = 441;
+        p_campgn->OutroFMV = "data/outro-p.smk";
+        p_campgn->OutroBkFn = "data/outro-p.raw";
+    }
+}
+
+ushort selectable_campaigns_count(void)
+{
+    ushort campgn;
+
+    for (campgn = 0; campgn < CAMPAIGNS_MAX_COUNT; campgn++) {
+        struct Campaign *p_campgn;
+
+        p_campgn = &campaigns[campgn];
+        if (p_campgn->TextName == NULL)
+            break;
+    }
+    return campgn;
+}
+
 void load_missions(int num)
 {
     read_missions_conf_file(num);

@@ -73,7 +73,7 @@ struct Campaign {
     ushort NetscanTextId;
     /** Outro movie file name. */
     const char *OutroFMV;
-    /** Outro background after intro. */
+    /** Outro background after the FMV ends. */
     const char *OutroBkFn;
 };
 
@@ -158,6 +158,9 @@ extern ushort next_used_objective; // = 1;
 extern struct Objective *game_objectives;
 extern ushort next_objective;
 extern struct Mission mission_list[120];
+
+void load_campaigns(void);
+ushort selectable_campaigns_count(void);
 
 void load_missions(int num);
 void save_missions_conf_file(int num);
