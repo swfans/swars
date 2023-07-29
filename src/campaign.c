@@ -245,6 +245,8 @@ const struct TbNamedEnum missions_conf_objective_params[] = {
   {NULL,			0},
 };
 
+struct Campaign campaigns[CAMPAIGNS_MAX_COUNT];
+
 extern ushort mission_strings_len;
 extern ushort display_mode;
 

@@ -27,6 +27,8 @@ extern "C" {
 /******************************************************************************/
 #pragma pack(1)
 
+#define CAMPAIGNS_MAX_COUNT 6
+
 /* deprecated - when callbacks are defined within objectv_defs[],
  * there will be no need to reference specific objective.
  */
@@ -58,6 +60,21 @@ enum GameObjectiveTypes {
     GAME_OBJ_ALL_G_USE_V,
     GAME_OBJ_UNUSED_25,
     GAME_OBJ_UNUSED_26,
+};
+
+struct Campaign {
+    /** Default campaign title. */
+    const char *TextName;
+    /** Translated campaign title text ID. */
+    ushort TextId;
+    /** Index of first mission in the campaign. */
+    ushort FirstMission;
+    /** Translated text ID for netscan button. */
+    ushort NetscanTextId;
+    /** Outro movie file name. */
+    const char *OutroFMV;
+    /** Outro background after intro. */
+    const char *OutroBkFn;
 };
 
 struct Mission { // sizeof=76
@@ -135,6 +152,7 @@ struct Objective { // sizeof=32
 
 #pragma pack()
 /******************************************************************************/
+extern struct Campaign campaigns[CAMPAIGNS_MAX_COUNT];
 extern struct Objective *game_used_objectives;
 extern ushort next_used_objective; // = 1;
 extern struct Objective *game_objectives;

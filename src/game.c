@@ -422,7 +422,7 @@ void test_open(int num)
     // Empty for production version
 }
 
-ushort my_count_lines(char *text)
+ushort my_count_lines(const char *text)
 {
     ushort ret;
     asm volatile ("call ASM_my_count_lines\n"
@@ -2756,8 +2756,9 @@ void init_outro(void)
     return;
 #else
     TbClockMSec last_loop_time;
-    const char *fname;
-    const char *text;
+    struct Campaign *p_campgn;
+    const char *text1;
+    const char *text2;
     int fh;
     int i;
 
@@ -2771,28 +2772,14 @@ void init_outro(void)
     lbKeyOn[KC_SPACE] = 0;
     lbKeyOn[KC_RETURN] = 0;
     lbKeyOn[KC_ESCAPE] = 0;
-    if (background_type == 1)
-        fname = "data/outro-z.smk";
-    else
-        fname = "data/outro-s.smk";
-    play_smk(fname, 13, 0);
+
+    p_campgn = &campaigns[background_type];
+
+    play_smk(p_campgn->OutroFMV, 13, 0);
     data_155704 = -1;
     screen_buffer_fill_black();
 
-    switch (background_type)
-    {
-    case 0:
-    default:
-        fname = "data/outro-s.raw";
-        break;
-    case 1:
-        fname = "data/outro-z.raw";
-        break;
-    case 2:
-        fname = "data/outro-p.raw";
-        break;
-    }
-    fh = LbFileOpen(fname, Lb_FILE_MODE_READ_ONLY);
+    fh = LbFileOpen(p_campgn->OutroBkFn, Lb_FILE_MODE_READ_ONLY);
     if (fh != -1)
     {
         for (i = 24; i != 174; i++)
@@ -2824,19 +2811,19 @@ void init_outro(void)
     {
     case 0:
     default:
-        text = unk_credits_text_s;
-        fname = outro_text_s;
+        text1 = unk_credits_text_s;
+        text2 = outro_text_s;
         break;
     case 1:
-        text = unk_credits_text_z;
-        fname = outro_text_z;
+        text1 = unk_credits_text_z;
+        text2 = outro_text_z;
         break;
     case 2:
-        text = unk_credits_text_p;
-        fname = outro_text_z;
+        text1 = unk_credits_text_p;
+        text2 = outro_text_z;
         break;
     }
-    func_cc638(text, fname);
+    func_cc638(text1, text2);
 
     // Sleep for up to 10 seconds
     last_loop_time = LbTimerClock();
@@ -3663,6 +3650,32 @@ void game_setup(void)
     debug_trace_setup(-2);
     LbSpriteSetup(small_font, small_font_end, small_font_data);
     game_setup_sub8();
+
+    { // Fill campaign list
+        struct Campaign *p_campgn;
+
+        p_campgn = &campaigns[0];
+        p_campgn->TextId = 642;
+        p_campgn->FirstMission = 1;
+        p_campgn->NetscanTextId = 441;
+        p_campgn->OutroFMV = "data/outro-s.smk";
+        p_campgn->OutroBkFn = "data/outro-s.raw";
+
+        p_campgn = &campaigns[1];
+        p_campgn->TextId = 643;
+        p_campgn->FirstMission = 48;
+        p_campgn->NetscanTextId = 650;
+        p_campgn->OutroFMV = "data/outro-z.smk";
+        p_campgn->OutroBkFn = "data/outro-z.raw";
+
+        p_campgn = &campaigns[2];
+        p_campgn->TextId = 644;
+        p_campgn->FirstMission = 103;
+        p_campgn->NetscanTextId = 441;
+        p_campgn->OutroFMV = "data/outro-p.smk";
+        p_campgn->OutroBkFn = "data/outro-p.raw";
+    }
+
     load_missions(0);
     players[local_player_no].MissionAgents = 0x0f;
     debug_trace_setup(-1);
@@ -3948,7 +3961,7 @@ void init_screen_text_box(struct ScreenTextBox *box, ushort x, ushort y, ushort 
         : : "a" (box), "d" (x), "b" (y), "c" (width), "g" (height), "g" (drawspeed), "g" (font), "g" (textspeed));
 }
 
-void init_screen_button(struct ScreenButton *box, ushort x, ushort y, char *text, int drawspeed, struct TbSprite *font, int textspeed, int flags)
+void init_screen_button(struct ScreenButton *box, ushort x, ushort y, const char *text, int drawspeed, struct TbSprite *font, int textspeed, int flags)
 {
     asm volatile (
       "push %7\n"
@@ -4400,6 +4413,7 @@ ubyte do_login_2(ubyte click)
 #else
     int i;
     const char *text;
+    struct Campaign *p_campgn;
 
     if (strlen(login_name) == 0)
         return 0;
@@ -4442,23 +4456,14 @@ ubyte do_login_2(ubyte click)
     srm_reset_research();
     init_agents();
     load_missions(0);
-    switch (background_type)
+
+    p_campgn = &campaigns[background_type];
     {
-    case 0:
-        open_new_mission(1);
-        init_screen_button(&brief_NETSCAN_button, 312, 405, gui_strings[441], 6, med2_font, 1, 128);
-        brief_NETSCAN_button.CallBackFn = ac_brief_do_netscan_enhance;
-        brief_NETSCAN_COST_box.Width = 312 - brief_NETSCAN_button.Width - 17;
-        break;
-    case 1:
-        open_new_mission(48);
-        init_screen_button(&brief_NETSCAN_button, 312, 405, gui_strings[650], 6, med2_font, 1, 128);
+        open_new_mission(p_campgn->FirstMission);
+        text = gui_strings[p_campgn->NetscanTextId];
+        init_screen_button(&brief_NETSCAN_button, 312, 405, text, 6, med2_font, 1, 128);
         brief_NETSCAN_COST_box.Width = 312 - brief_NETSCAN_button.Width - 17;
         brief_NETSCAN_button.CallBackFn = ac_brief_do_netscan_enhance;
-        break;
-    case 2:
-        //TODO Punk campaign not supported
-        break;
     }
 
     if (new_mail)
@@ -4486,7 +4491,8 @@ ubyte show_campaigns_list(struct ScreenBox *box)
         : "=r" (ret) : "a" (box));
     return ret;
 #else
-    int campgn;
+    int campgn, ncampgns;
+    struct Campaign *p_campgn;
     const char *text;
     int campgn_height, line_height, nlines;
     int box_width, box_height;
@@ -4497,16 +4503,19 @@ ubyte show_campaigns_list(struct ScreenBox *box)
     box_height = box->Height - 8;
     my_set_text_window(box->X + 4, box->Y + 4, box_width, box_height);
     byte_197160 = 4;
-    campgn_height = box_height / 3;
-    cy = box_height / 3;
+    ncampgns = 2; // TODO count existing campaigns
+    campgn_height = box_height / (ncampgns + 1);
+    cy = box_height / (ncampgns + 1);
     line_height = font_height('A');
     lbDisplay.DrawColour = 87;
 
-    for (campgn = 0; campgn < 2; campgn++)
+    for (campgn = 0; campgn < ncampgns; campgn++)
     {
         int hbeg;
 
-        nlines = my_count_lines(gui_strings[642 + campgn]);
+        p_campgn = &campaigns[campgn];
+        text = gui_strings[p_campgn->TextId];
+        nlines = my_count_lines(text);
         if (background_type == campgn)
             lbDisplay.DrawFlags = 0x140;
         else
@@ -4519,12 +4528,14 @@ ubyte show_campaigns_list(struct ScreenBox *box)
         cy += campgn_height;
     }
 
-    cy = box_height / 3;
-    for (campgn = 0; campgn < 2; campgn++)
+    cy = box_height / (ncampgns + 1);
+    for (campgn = 0; campgn < ncampgns; campgn++)
     {
         int hbeg, hend;
 
-        nlines = my_count_lines(gui_strings[642 + campgn]);
+        p_campgn = &campaigns[campgn];
+        text = gui_strings[p_campgn->TextId];
+        nlines = my_count_lines(text);
         hbeg = cy - (4 * nlines - 4 + nlines * line_height) / 2;
         hend = hbeg + (line_height + 4) * (nlines - 1) + line_height;
         if (lbDisplay.LeftButton)
