@@ -514,6 +514,7 @@ struct InGame {
     short fld_unkCB3;
     short fld_unkCB5;
     short fld_unkCB7;
+    /** Flags representing active human players, in both net and local games. */
     ubyte InNetGame_UNSURE;
     ubyte fld_unkCBA[5];
     ubyte Cheats;

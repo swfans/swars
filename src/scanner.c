@@ -17,6 +17,8 @@
  */
 /******************************************************************************/
 #include "scanner.h"
+
+#include "campaign.h"
 /******************************************************************************/
 
 void SCANNER_init(void)
@@ -35,6 +37,14 @@ void SCANNER_fill_in(void)
 {
     asm volatile ("call ASM_SCANNER_fill_in\n"
         :  :  : "eax" );
+}
+
+ushort do_group_scanner(struct Objective *p_objectv, ushort signal_count)
+{
+    ushort ret;
+    asm volatile ("call ASM_do_group_scanner\n"
+        : "=r" (ret) : "a" (p_objectv), "d" (signal_count));
+    return ret;
 }
 
 /******************************************************************************/

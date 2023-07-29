@@ -3494,6 +3494,11 @@ void place_single_player(void)
 
     pl_agents = make_group_into_players(level_def.PlayableGroups[0], local_player_no, nagents, -1);
     pl_group = level_def.PlayableGroups[0];
+    if (pl_agents == 0) {
+        LOGERR("Player %d playable agents not found amongst %d things", (int)local_player_no, (int)things_used_head);
+    } else {
+        LOGSYNC("Player %d playable agents found %d expected %d", (int)local_player_no, (int)pl_agents, (int)nagents);
+    }
 
     n = things_used_head;
     while (n != 0)
