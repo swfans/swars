@@ -716,6 +716,11 @@ extern char brief_netscan_cost_text[];
 extern const char *misc_text[5];
 
 extern ubyte game_system_screen;
+extern ubyte byte_197160;
+extern ushort text_window_x1;
+extern ushort text_window_y1;
+extern ushort text_window_x2;
+extern ushort text_window_y2;
 
 extern struct ScreenTextBox heading_box;
 extern struct ScreenTextBox loading_INITIATING_box;

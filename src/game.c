@@ -422,6 +422,14 @@ void test_open(int num)
     // Empty for production version
 }
 
+ushort my_count_lines(char *text)
+{
+    ushort ret;
+    asm volatile ("call ASM_my_count_lines\n"
+        : "=r" (ret) : "a" (text));
+    return ret;
+}
+
 void read_textwalk(void)
 {
     TbFileHandle handle;
@@ -1746,6 +1754,12 @@ TbBool in_box(short x, short y, short box_x, short box_y, short box_w, short box
 {
     return x > box_x && x < box_x + box_w
         && y > box_y && y < box_y + box_h;
+}
+
+TbBool in_box_coords(short x, short y, short box_x1, short box_y1, short box_x2, short box_y2)
+{
+    return x > box_x1 && x < box_x2
+        && y > box_y1 && y < box_y2;
 }
 
 sbyte find_nth_weapon_held(ushort index, ubyte n)
@@ -4337,6 +4351,7 @@ ubyte do_unkn12_WEAPONS_MODS(ubyte click)
         : "=r" (ret) : "a" (click));
     return ret;
 }
+
 ubyte ac_select_all_agents(ubyte click);
 ubyte ac_do_net_protocol_option(ubyte click);
 ubyte ac_do_net_unkn40(ubyte click);
@@ -4463,12 +4478,74 @@ ubyte show_unkn32_box(struct ScreenBox *box)
     return ret;
 }
 
-ubyte show_unkn12(struct ScreenBox *box)
+ubyte show_campaigns_list(struct ScreenBox *box)
 {
+#if 0
     ubyte ret;
-    asm volatile ("call ASM_show_unkn12\n"
+    asm volatile ("call ASM_show_campaigns_list\n"
         : "=r" (ret) : "a" (box));
     return ret;
+#else
+    int campgn;
+    const char *text;
+    int campgn_height, line_height, nlines;
+    int box_width, box_height;
+    int cy;
+
+    lbFontPtr = small_med_font;
+    box_width = box->Width - 8;
+    box_height = box->Height - 8;
+    my_set_text_window(box->X + 4, box->Y + 4, box_width, box_height);
+    byte_197160 = 4;
+    campgn_height = box_height / 3;
+    cy = box_height / 3;
+    line_height = font_height('A');
+    lbDisplay.DrawColour = 87;
+
+    for (campgn = 0; campgn < 2; campgn++)
+    {
+        int hbeg;
+
+        nlines = my_count_lines(gui_strings[642 + campgn]);
+        if (background_type == campgn)
+            lbDisplay.DrawFlags = 0x140;
+        else
+            lbDisplay.DrawFlags = 0x100;
+        hbeg = cy - (4 * nlines - 4 + nlines * line_height) / 2;
+        lbDisplay.DrawFlags |= 0x8000;
+        text = gui_strings[642 + campgn];
+        draw_text_purple_list2(0, hbeg, text, 0);
+        lbDisplay.DrawFlags &= ~0x8000;
+        cy += campgn_height;
+    }
+
+    cy = box_height / 3;
+    for (campgn = 0; campgn < 2; campgn++)
+    {
+        int hbeg, hend;
+
+        nlines = my_count_lines(gui_strings[642 + campgn]);
+        hbeg = cy - (4 * nlines - 4 + nlines * line_height) / 2;
+        hend = hbeg + (line_height + 4) * (nlines - 1) + line_height;
+        if (lbDisplay.LeftButton)
+        {
+            short msy, msx;
+            short y1, y2;
+            msy = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MouseY : lbDisplay.MouseY;
+            msx = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MouseX : lbDisplay.MouseX;
+
+            y1 = text_window_y1 + hbeg;
+            y2 = text_window_y1 + hend;
+            if (in_box_coords(msx, msy, text_window_x1, y1, text_window_x2, y2))
+            {
+                lbDisplay.LeftButton = 0;
+                background_type = campgn;
+            }
+        }
+        cy += campgn_height;
+    }
+    return 0;
+#endif
 }
 
 ubyte show_login_name(struct ScreenBox *box)
@@ -4982,7 +5059,7 @@ ubyte show_settings_controls_list(struct ScreenBox *box)
 }
 
 ubyte ac_show_unkn32_box(struct ScreenBox *box);
-ubyte ac_show_unkn12(struct ScreenBox *box);
+ubyte ac_show_campaigns_list(struct ScreenBox *box);
 ubyte ac_show_login_name(struct ScreenBox *box);
 ubyte ac_show_net_benefits_box(struct ScreenBox *box);
 ubyte ac_show_net_unkn21(struct ScreenBox *box);
@@ -5488,7 +5565,7 @@ void init_screen_boxes(void)
     main_map_editor_button.CallBackFn = ac_main_do_map_editor;
     main_login_button.CallBackFn = ac_main_do_login_1;
     main_quit_button.CallBackFn = ac_main_do_my_quit;
-    pause_unkn11_box.SpecialDrawFn = ac_show_unkn12;
+    pause_unkn11_box.SpecialDrawFn = ac_show_campaigns_list;
     pause_unkn12_box.SpecialDrawFn = ac_show_login_name;
     pause_continue_button.CallBackFn = ac_do_login_2;
     main_load_button.CallBackFn = ac_goto_savegame;
