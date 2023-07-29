@@ -250,6 +250,11 @@ extern ushort display_mode;
 
 void load_missions(int num)
 {
+    read_missions_bin_file(num);
+}
+
+void read_missions_bin_file(int num)
+{
 #if 0
     asm volatile ("call ASM_load_missions\n"
         : : "a" (num));
@@ -824,20 +829,20 @@ int parse_objective_param(struct Objective *p_objectv, const char *buf, long buf
 int add_used_objective(long mapno, long levelno)
 {
     struct Objective *p_objectv;
-    int i;
+    int objectv;
 
-    i = next_used_objective;
+    objectv = next_used_objective;
     next_used_objective++;
 
-    p_objectv = &game_used_objectives[i];
+    p_objectv = &game_used_objectives[objectv];
     LbMemorySet(p_objectv, 0, sizeof(struct Objective));
     p_objectv->Type = 0;
     p_objectv->Pri = 0;
     p_objectv->Map = mapno;
-    p_objectv->Level = levelno;
+    p_objectv->Level = (levelno - 1) % 15 + 1;
     p_objectv->Status = 0;
 
-    return i;
+    return objectv;
 }
 
 int parse_next_used_objective(const char *buf, long buflen, long pri, long mapno, long levelno)
@@ -1344,7 +1349,7 @@ void read_missions_conf_file(int num)
                     break;
                 }
                 k = parse_next_used_objective(locbuf, sizeof(locbuf), pri, p_missi->MapNo, p_missi->LevelNo);
-                if (k < 0) {
+                if (k <= 0) {
                     CONFWRNLOG("Could parse objective command in \"%s\" section.", sect_name);
                     break;
                 }
@@ -1356,11 +1361,11 @@ void read_missions_conf_file(int num)
             LbIniSkipToNextLine(&parser);
         }
 
-        // Parse the [missuccessN] sections of loaded file
+        // Parse the [misfailN] sections of loaded file
         done = false;
         sprintf(sect_name, "misfail%d", missi);
         if (LbIniFindSection(&parser, sect_name) != Lb_SUCCESS) {
-            CONFWRNLOG("Could not find \"[%s]\" section.", sect_name);
+            CONFDBGLOG("Could not find \"[%s]\" section.", sect_name);
         } else
         while (!done)
         {
@@ -1392,7 +1397,7 @@ void read_missions_conf_file(int num)
                     break;
                 }
                 k = parse_next_used_objective(locbuf, sizeof(locbuf), pri, p_missi->MapNo, p_missi->LevelNo);
-                if (k < 0) {
+                if (k <= 0) {
                     CONFWRNLOG("Could parse objective command in \"%s\" section.", sect_name);
                     break;
                 }

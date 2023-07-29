@@ -78,6 +78,7 @@ struct Mission { // sizeof=76
     ubyte SpecialTrigger[3];
     ubyte SuccessTrigger[3];
     ubyte FailTrigger[3];
+    /** Objective priority number reached for chain within SuccessHead. */
     ubyte BankTest;
     ushort SpecialEffectFailID;
     ushort SpecialEffectSuccessID;
@@ -92,6 +93,7 @@ struct Mission { // sizeof=76
     ubyte MapNo;
     /** Level number identifying level file to play. */
     ubyte LevelNo;
+    /** Objective priority number reached for chain within FailHead. */
     ubyte BankTestFail;
     /** Whether the mission was completed by the current player; replaced by load game. */
     sbyte Complete;
@@ -142,6 +144,7 @@ extern struct Mission mission_list[120];
 void load_missions(int num);
 void save_missions_conf_file(int num);
 void read_missions_conf_file(int num);
+void read_missions_bin_file(int num);
 /******************************************************************************/
 #ifdef __cplusplus
 }
