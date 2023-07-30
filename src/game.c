@@ -6530,9 +6530,9 @@ void update_options_screen_state(void)
 void init_net_players(void)
 {
     int i;
-    for (i = 0; i != 125; i += 25)
+    for (i = 0; i < 5; i++)
     {
-        net_players[i] = '\0';
+        LbMemorySet(&net_players[i], '\0', sizeof(struct NetPlayer2));
     }
 }
 
@@ -6616,10 +6616,140 @@ void unkn_research_func_006(void)
         :  :  : "eax" );
 }
 
+void net_unkn_func_33_sub1(int plyr)
+{
+    struct NetworkPlayer *p_netplyr;
+
+    p_netplyr = &network_players[plyr];
+    if (p_netplyr->Type == 17)
+        return;
+
+    //TODO rewite the function
+}
+
 void net_unkn_func_33(void)
 {
+#if 1
     asm volatile ("call ASM_net_unkn_func_33\n"
         :  :  : "eax" );
+#else
+    struct NetworkPlayer *p_netplyr;
+    int player;
+    int i;
+
+    player = LbNetworkPlayerNumber();
+    net_players_num = LbNetworkSessionNumberPlayers();
+    net_host_player_no = LbNetworkHostPlayerNumber();
+    p_netplyr = &network_players[player];
+
+    switch (p_netplyr->Type)
+    {
+    case 14:
+        for (i = 0; i < 4; i++)
+        {
+            p_netplyr->U.WepMod.Weapons[i] = cryo_agents.Weapons[i];
+            p_netplyr->U.WepMod.Mods[i] = cryo_agents.Mods[i];
+        }
+        break;
+    case 15:
+        for (i = 0; i < 4; i++)
+        {
+            int k;
+            for (k = 0; k < 5; k++) {
+                p_netplyr->U.FourPacks.FourPacks[i][k] =
+                  cryo_agents.FourPacks[i][k];
+            }
+        }
+        break;
+    case 10:
+        break;
+    case 17:
+        p_netplyr->Type = 0;
+        // Fall through
+    default:
+        p_netplyr->U.Progress.SelectedCity = login_control__City;
+        if (((gameturn & 1) == 0) && (unkn_flags_08 & 8))
+            p_netplyr->U.Progress.Credits = -ingame.Credits;
+        else
+            p_netplyr->U.Progress.Credits = login_control__Money;
+        p_netplyr->U.Progress.TechLevel = login_control__TechLevel;
+        p_netplyr->U.Progress.val_flags_08 = unkn_flags_08;
+        p_netplyr->U.Progress.val_181189 = byte_181189;
+        p_netplyr->U.Progress.val_181183 = byte_181183;
+        p_netplyr->U.Progress.val_15516D = byte_15516D;
+        p_netplyr->U.Progress.Expenditure = ingame.Expenditure;
+
+        for (i = 0; i < 4; i++)
+        {
+            p_netplyr->U.Progress.ControlMode[i] =
+              players[player].UserInput[i].ControlMode;
+        }
+        p_netplyr->U.Progress.DoubleMode = players[player].DoubleMode;
+        break;
+    }
+
+    // TODO VERIFY why are we exchanging first packet, not the one we filled?
+    if (LbNetworkExchange(&network_players[0], sizeof(struct NetworkPlayer)) != 1)
+    {
+        LbNetworkSessionStop();
+        login_control__State = 6;
+        net_INITIATE_button.Flags = 1;
+        ingame.Expenditure = 0;
+        net_INITIATE_button.Text = gui_strings[385];
+        byte_15516D = -1;
+        byte_15516C = -1;
+        ingame.Credits = 50000;
+        ingame.CashAtStart = 50000;
+        login_control__TechLevel = 4;
+        unkn_city_no = -1;
+        login_control__City = -1;
+        net_groups_LOGON_button.Text = gui_strings[386];
+        unkn_flags_08 = 60;
+        login_control__Money = starting_cash_amounts[0];
+        init_agents();
+        srm_reset_research();
+        load_missions(0);
+
+        for (i = 0; i < 5; i++)
+        {
+            net_players[i].field_D = 0;
+        }
+        draw_flic_purple_list(purple_unkn1_data_to_screen);
+        if (word_1811AE != 1)
+        {
+            if (byte_1C4A6F)
+                LbNetworkHangUp();
+            LbNetworkReset();
+            byte_1C4A7C = 0;
+        }
+    }
+
+    for (i = 0; i < 8; i++)
+    {
+        net_unkn_func_33_sub1(i);
+    }
+
+    if (byte_1C6D4A)
+    {
+        p_netplyr = &network_players[net_host_player_no];
+        if (p_netplyr->Type != 10 && p_netplyr->Type != 14 && p_netplyr->Type != 15)
+        {
+            login_control__TechLevel = p_netplyr->U.Progress.TechLevel;
+            unkn_flags_08 = p_netplyr->U.Progress.val_flags_08;
+            login_control__City = p_netplyr->U.Progress.SelectedCity;
+            ingame.Expenditure = p_netplyr->U.Progress.Expenditure;
+            login_control__Money = abs(p_netplyr->U.Progress.Credits);
+            ingame.Credits = login_control__Money;
+            ingame.CashAtStart = login_control__Money;
+        }
+        byte_1C6D4A = 0;
+    }
+
+    for (i = 0; i < 8; i++)
+    {
+        network_players[i].Type = 17;
+    }
+#endif
 }
 
 void forward_research_progress(int num_days)
@@ -6676,8 +6806,8 @@ void show_menu_screen_st2(void)
       ingame.CashAtStart = 50000;
       ingame.Expenditure = 0;
       net_groups_LOGON_button.Text = gui_strings[386];
-      data_15516d = -1;
-      data_15516c = -1;
+      byte_15516D = -1;
+      byte_15516C = -1;
       login_control__TechLevel = 4;
       unkn_city_no = -1;
       login_control__City = -1;
@@ -6764,18 +6894,22 @@ void init_random_seed(void)
 {
     if (in_network_game)
     {
+        struct NetworkPlayer *p_netplyr;
+
         mission_open[1] = ingame.CurrentMission;
         mission_state[1] = 0;
         mission_open[2] = 0;
         mission_state[2] = 0;
+
+        p_netplyr = &network_players[net_host_player_no];
         if (is_unkn_current_player())
         {
             lbSeed = time(0);
-            network_players[net_host_player_no].npfield_1 = lbSeed;
-            LbNetworkExchange(network_players, 26);
+            p_netplyr->U.RandInit.Seed = lbSeed;
+            LbNetworkExchange(network_players, sizeof(struct NetworkPlayer));
         } else {
-            LbNetworkExchange(network_players, 26);
-            lbSeed = network_players[net_host_player_no].npfield_1;
+            LbNetworkExchange(network_players, sizeof(struct NetworkPlayer));
+            lbSeed = p_netplyr->U.RandInit.Seed;
         }
     }
     else
@@ -7036,7 +7170,7 @@ void show_load_and_prep_mission(void)
         func_6edb8(1);
         if ( in_network_game )
         {
-            if (data_1811ae != 1)
+            if (word_1811AE != 1)
                 ingame.InNetGame_UNSURE = 3;
             ingame.DetailLevel = 0;
             bang_set_detail(1);
@@ -7224,9 +7358,9 @@ void show_menu_screen(void)
         net_players_num = LbNetworkSessionNumberPlayers();
         net_INITIATE_button.Text = gui_strings[385];
         net_groups_LOGON_button.Text = gui_strings[386];
-        network_players[local_player_no].npfield_0 = 14;
+        network_players[local_player_no].Type = 14;
         net_unkn_func_33();
-        network_players[local_player_no].npfield_0 = 15;
+        network_players[local_player_no].Type = 15;
         net_unkn_func_33();
         init_net_players();
     }

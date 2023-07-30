@@ -21,6 +21,8 @@
 #include "bfkeybd.h"
 #include "display.h"
 /******************************************************************************/
+extern ubyte lbICommSessionActive;
+
 
 TbResult LbNetworkReadConfig(const char *fname)
 {
@@ -81,6 +83,44 @@ TbResult LbNetworkSetTimeoutSec(ulong tmsec)
     return Lb_SUCCESS;
 }
 
+int ipx_get_host_player_number(void)
+{
+    int ret;
+    asm volatile ("call ASM_ipx_get_host_player_number\n"
+        : "=r" (ret) : );
+    return ret;
+}
+
+void ipx_shutdown(ushort a1)
+{
+    asm volatile ("call ASM_ipx_shutdown\n"
+        : : "a" (a1));
+}
+
+int ipx_stop_network(void)
+{
+    int ret;
+    asm volatile ("call ASM_ipx_stop_network\n"
+        : "=r" (ret) : );
+    return ret;
+}
+
+int LbCommStopExchange(ubyte a1)
+{
+    int ret;
+    asm volatile ("call ASM_LbCommStopExchange\n"
+        : "=r" (ret) : "a" (a1) );
+    return ret;
+}
+
+int LbCommDeInit(void *a1)
+{
+    int ret;
+    asm volatile ("call ASM_LbCommDeInit\n"
+        : "=r" (ret) : "a" (a1) );
+    return ret;
+}
+
 TbResult LbNetworkSessionNumberPlayers(void)
 {
 #if 1
@@ -105,6 +145,50 @@ TbResult LbNetworkSessionNumberPlayers(void)
     }
     return Lb_FAIL;
 #endif
+}
+
+TbResult LbNetworkSessionStop(void)
+{
+    struct TbSerialDev *serhead;
+    switch (NetworkServicePtr.Type)
+    {
+    case NetSvc_IPX:
+        ipx_stop_network();
+        return Lb_SUCCESS;
+    case NetSvc_COM1:
+    case NetSvc_COM2:
+    case NetSvc_COM3:
+    case NetSvc_COM4:
+        serhead = NetworkServicePtr.Id;
+        LbCommStopExchange(serhead->comdev_id);
+        lbICommSessionActive = 0;
+        return Lb_SUCCESS;
+    default:
+        break;
+    }
+    return Lb_FAIL;
+}
+
+TbResult LbNetworkHostPlayerNumber(void)
+{
+    struct TbSerialDev *serhead;
+
+    switch (NetworkServicePtr.Type)
+    {
+    case NetSvc_IPX:
+        return ipx_get_host_player_number();
+    case NetSvc_COM1:
+    case NetSvc_COM2:
+    case NetSvc_COM3:
+    case NetSvc_COM4:
+        serhead = NetworkServicePtr.Id;
+        if (!serhead->field_10A9)
+            return 0;
+        return 1;
+    default:
+        break;
+    }
+    return Lb_FAIL;
 }
 
 TbResult LbNetworkSetupIPXAddress(ulong addr)
@@ -167,6 +251,32 @@ TbResult LbNetworkReset(void)
 #endif
 }
 
+TbResult LbModemHangUp(ushort dev_id)
+{
+    TbResult ret;
+    asm volatile ("call ASM_LbModemHangUp\n"
+        : "=r" (ret) : "a" (dev_id));
+    return ret;
+}
+
+TbResult LbNetworkHangUp(void)
+{
+    struct TbSerialDev *serhead;
+    switch (NetworkServicePtr.Type)
+    {
+    case NetSvc_IPX:
+        return Lb_FAIL;
+    case NetSvc_COM1:
+    case NetSvc_COM2:
+    case NetSvc_COM3:
+    case NetSvc_COM4:
+        serhead = NetworkServicePtr.Id;
+        return LbModemHangUp(serhead->comdev_id);
+    default:
+        break;
+    }
+    return Lb_FAIL;
+}
 
 TbResult LbModemReadConfig(const char *fname)
 {
@@ -220,5 +330,4 @@ void net_system_reset(void)
     LbNetworkSetSessionAnswerFunction(NULL);
     LbNetworkSetSessionHangUpFunction(NULL);
 }
-
 /******************************************************************************/

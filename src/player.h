@@ -20,6 +20,7 @@
 #define PLAYER_H
 
 #include "bftypes.h"
+#include "cybmod.h"
 
 #ifdef __cplusplus
 extern "C" {

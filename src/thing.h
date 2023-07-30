@@ -20,6 +20,7 @@
 #define THING_H
 
 #include "bftypes.h"
+#include "cybmod.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -234,13 +235,6 @@ struct TngUEffect
   short VehicleAcceleration;
   short MatrixIndex;
   short LeisurePlace;
-};
-
-/** Person Modifications.
- */
-union Mod
-{
-  short Mods;
 };
 
 /** Person Draw Sprite Frame.

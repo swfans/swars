@@ -64,6 +64,13 @@ struct ModDef {
 	uchar Pad1;
 };
 
+/** Person Modifications.
+ */
+union Mod
+{
+  short Mods;
+};
+
 #pragma pack()
 /******************************************************************************/
 extern struct ModDef mod_defs[];

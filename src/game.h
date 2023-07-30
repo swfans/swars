@@ -544,6 +544,8 @@ extern ubyte login_control__State;
 extern ulong login_control__Money;
 extern sbyte login_control__City;
 extern ubyte login_control__TechLevel;
+extern ubyte byte_181183;
+extern ubyte byte_181189;
 
 extern ubyte cmdln_param_n;
 extern ubyte pktrec_mode;
@@ -577,6 +579,7 @@ extern char *gui_strings_data;
 extern char *gui_strings_data_end;
 extern char *gui_strings[STRINGS_MAX];
 
+extern ubyte byte_1C4A7C;
 extern ulong curr_tick_time;
 extern ulong prev_tick_time;
 extern GameTurn gameturn;
@@ -587,6 +590,7 @@ extern ushort gamep_unknval_01;
 extern ubyte *vec_tmap;
 extern ubyte *memload;
 extern ubyte net_host_player_no;
+extern ubyte byte_1C6D4A;
 extern ubyte data_19ec6f;
 
 extern ubyte background_type;
@@ -628,8 +632,9 @@ extern ubyte scientists_lost;
 extern ulong new_mods_researched;
 extern ulong new_weapons_researched;
 extern ubyte redraw_screen_flag;
-extern sbyte data_15516c;
-extern sbyte data_15516d;
+
+extern sbyte byte_15516C;
+extern sbyte byte_15516D;
 extern ubyte data_1c6d48;
 extern ubyte unkn_flags_08;
 extern long dword_153194;
@@ -657,7 +662,7 @@ extern ubyte new_current_drawing_mod;
 extern ubyte refresh_equip_list;
 extern ubyte flic_mods[5];
 extern ubyte reload_background_flag;
-extern ushort data_1811ae;
+extern ushort word_1811AE;
 
 extern struct LevelDef level_def;
 
@@ -704,6 +709,7 @@ extern struct StartScreenPoint *hotspot_buffer;
 extern ubyte unkn_gfx_option_2;
 extern ubyte unkn_option_3;
 extern ubyte unkn_option_4;
+extern ubyte byte_1C4A6F;
 
 extern char unkn39_text[];
 extern char net_unkn40_text[];
@@ -802,7 +808,6 @@ extern struct ScreenBox alert_box;
 extern struct ScreenButton alert_OK_button;
 
 extern ubyte new_mail;
-extern char net_players[25*5];
 
 bool game_initialise (void);
 void adjust_memory_use(void);
