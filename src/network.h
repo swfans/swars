@@ -70,12 +70,12 @@ struct NetworkPlayerUProgress {
   ubyte val_181183;
   ubyte TechLevel;
   ubyte SelectedCity;
-  ubyte field_8[3];
-  ubyte field_B;
+  ushort npfield_8;
+  ushort npfield_A;
   ubyte ControlMode[4];
   ubyte DoubleMode;
   ubyte val_flags_08;
-  ubyte field_12;
+  ubyte npfield_12;
   ubyte val_15516D;
   long Expenditure;
 };
@@ -114,11 +114,13 @@ struct NetworkPlayer { // sizeof=26
       struct NetworkPlayerUProgress Progress;
       struct NetworkPlayerUWepMod WepMod;
       struct NetworkPlayerURandInit RandInit;
+      char Text[24];
       struct NetworkPlayerUUnkn Unkn;
     } U;
     sbyte npfield_19;
 };
 
+// TODO maybe this only ocntains one string?
 struct NetPlayer2 {
   char field_0[13];
   char field_D;
@@ -175,6 +177,7 @@ TbResult LbNetworkExchange(void *a1, int a2);
 TbResult LbNetworkReset(void);
 TbResult LbNetworkHangUp(void);
 TbResult LbNetworkSessionStop(void);
+TbResult LbNetworkShutDownListeners(void);
 
 TbResult LbModemReadConfig(const char *fname);
 

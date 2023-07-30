@@ -97,6 +97,14 @@ void ipx_shutdown(ushort a1)
         : : "a" (a1));
 }
 
+int ipx_shutdown_listeners(void)
+{
+    int ret;
+    asm volatile ("call ASM_ipx_shutdown_listeners\n"
+        : "=r" (ret) : );
+    return ret;
+}
+
 int ipx_stop_network(void)
 {
     int ret;
@@ -276,6 +284,13 @@ TbResult LbNetworkHangUp(void)
         break;
     }
     return Lb_FAIL;
+}
+
+TbResult LbNetworkShutDownListeners(void)
+{
+    if (NetworkServicePtr.Type == NetSvc_IPX)
+        ipx_shutdown_listeners();
+    return Lb_SUCCESS;
 }
 
 TbResult LbModemReadConfig(const char *fname)

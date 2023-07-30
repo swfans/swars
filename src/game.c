@@ -6616,20 +6616,376 @@ void unkn_research_func_006(void)
         :  :  : "eax" );
 }
 
-void net_unkn_func_33_sub1(int plyr)
+void net_unkn_func_29(short a1, short a2, ubyte a3, sbyte a4, ubyte a5)
+{
+    asm volatile (
+      "push %4\n"
+      "call ASM_net_unkn_func_29\n"
+        : : "a" (a1), "d" (a2), "b" (a3), "c" (a4), "g" (a5));
+}
+
+void update_flic_mods(ubyte *mods)
+{
+    asm volatile ("call ASM_update_flic_mods\n"
+        : : "a" (mods));
+}
+
+void net_unkn_func_33_sub1(int plyr, int netplyr)
 {
     struct NetworkPlayer *p_netplyr;
+    ushort nptype;
+    int i;
 
     p_netplyr = &network_players[plyr];
     if (p_netplyr->Type == 17)
         return;
 
-    //TODO rewite the function
+    nptype = p_netplyr->Type & 0x1F;
+    if (nptype != 10 && nptype != 14 && nptype != 15)
+    {
+        group_types[plyr] = p_netplyr->U.Progress.val_181183;
+        byte_1C5C28[plyr] = p_netplyr->U.Progress.val_181189;
+        if (net_host_player_no == plyr)
+        {
+            if ((unkn_flags_08 & 0x02) == 0)
+                login_control__TechLevel = p_netplyr->U.Progress.TechLevel;
+            if ((unkn_flags_08 & 0x01) == 0) {
+                login_control__Money = abs(p_netplyr->U.Progress.Credits);
+                ingame.Credits = login_control__Money;
+                ingame.CashAtStart = login_control__Money;
+            }
+            if ((unkn_flags_08 & 0x08) != 0)
+            {
+                long credits;
+
+              credits = p_netplyr->U.Progress.Credits;
+              if (credits >= 0) {
+                  login_control__Money = credits;
+                  ingame.CashAtStart = credits;
+              } else {
+                  ingame.Credits = -credits;
+              }
+              ingame.Expenditure = p_netplyr->U.Progress.Expenditure;
+            }
+        }
+        for ( i = 0; i < 4; i++)
+        {
+            players[plyr].UserInput[i].ControlMode =
+              network_players[0].U.Progress.ControlMode[i];
+        }
+        players[plyr].DoubleMode = p_netplyr->U.Progress.DoubleMode;
+    }
+
+    switch (p_netplyr->Type & 0x1F)
+    {
+    case 2:
+        login_control__State = 8;
+        LbNetworkShutDownListeners();
+        LbMemorySet(unkstruct04_arr, 0, 20 * sizeof(struct UnknStruct04));
+        byte_1C6D48 = 0;
+        break;
+    case 3:
+        draw_flic_purple_list(purple_unkn1_data_to_screen);
+        break;
+    case 4:
+        login_control__TechLevel = p_netplyr->U.Progress.TechLevel;
+        break;
+    case 5:
+        i = p_netplyr->U.Progress.Credits;
+        ingame.Expenditure = 0;
+        login_control__Money = i;
+        ingame.Credits = i;
+        ingame.CashAtStart = i;
+        break;
+    case 6:
+        refresh_equip_list = 1;
+        unkn_flags_08 = p_netplyr->U.Progress.val_flags_08;
+        break;
+    case 9:
+        login_control__City = p_netplyr->U.Progress.SelectedCity;
+        break;
+    case 10:
+        // Free last net_players[] slot
+        {
+            struct NetPlayer2 *p_nplyr1;
+            struct NetPlayer2 *p_nplyr2;
+            p_nplyr2 = &net_players[1];
+            p_nplyr1 = &net_players[0];
+            for (i = 0; i < 3; i++)
+            {
+                byte_1C6DDC[i] = byte_1C6DDC[i+1];
+                strcpy(p_nplyr1->field_0, p_nplyr2->field_0);
+                p_nplyr1++;
+                p_nplyr2++;
+            }
+        }
+        // Fill the slot from packet
+        {
+            struct NetPlayer2 *p_nplyr1;
+            const char *p_text;
+            byte_1C6DDC[4] = plyr;
+            p_nplyr1 = &net_players[4];
+            p_text = p_netplyr->U.Text;
+            strcpy(p_nplyr1->field_0, p_text);
+        }
+        break;
+    case 11:
+        net_unkn_func_29(
+          p_netplyr->U.Progress.npfield_8,
+          p_netplyr->U.Progress.npfield_A,
+          p_netplyr->U.Progress.npfield_12,
+            1, i);
+        break;
+    case 12:
+        byte_15516D = -1;
+        unkn8_EJECT_button.Flags = 1;
+        LbNetworkSessionStop();
+        if (word_1811AE == 1)
+        {
+            if (p_netplyr->U.Progress.val_15516D == netplyr)
+            {
+                net_INITIATE_button.Flags = 1;
+                login_control__State = 6;
+                net_INITIATE_button.Text = gui_strings[385];
+                byte_15516D = -1;
+                byte_15516C = -1;
+                ingame.Credits = 50000;
+                ingame.CashAtStart = 50000;
+                login_control__TechLevel = 4;
+                unkn_city_no = -1;
+                login_control__City = -1;
+                ingame.Expenditure = 0;
+                net_groups_LOGON_button.Text = gui_strings[386];
+                unkn_flags_08 = 60;
+                login_control__Money = starting_cash_amounts[0];
+                init_agents();
+                srm_reset_research();
+                load_missions(0);
+                for (i = 0; i < 5; i++) {
+                    net_players[i].field_0[0] = '\0';
+                }
+                draw_flic_purple_list(purple_unkn1_data_to_screen);
+                if (screentype == 4)
+                {
+                    update_flic_mods(flic_mods);
+                    for (i = 0; i < 4; i++) {
+                        if (flic_mods[i] != old_flic_mods[i])
+                            mod_draw_states[i] |= 0x08;
+                    }
+                }
+            }
+        } else {
+            if (p_netplyr->U.Progress.val_15516D != netplyr)
+                LbNetworkSessionStop();
+            login_control__State = 6;
+            net_INITIATE_button.Text = gui_strings[385];
+            ingame.Credits = 50000;
+            ingame.CashAtStart = 50000;
+            ingame.Expenditure = 0;
+            unkn_flags_08 = 60;
+            net_INITIATE_button.Flags = 1;
+            byte_15516D = -1;
+            byte_15516C = -1;
+            net_groups_LOGON_button.Text = gui_strings[386];
+            unkn_city_no = -1;
+            login_control__Money = starting_cash_amounts[0];
+            login_control__City = -1;
+            login_control__TechLevel = 4;
+            init_agents();
+            srm_reset_research();
+            load_missions(0);
+            for (i = 0; i < 5; i++) {
+                net_players[i].field_0[0] = '\0';
+            }
+            draw_flic_purple_list(purple_unkn1_data_to_screen);
+            if (byte_1C4A6F)
+                LbNetworkHangUp();
+            LbNetworkReset();
+            byte_1C4A7C = 0;
+        }
+        break;
+    case 13:
+        if (word_1811AE == 1)
+        {
+            if (plyr != netplyr && net_host_player_no != plyr)
+            {
+                LbNetworkSessionStop();
+            }
+            else
+            {
+                LbNetworkSessionStop();
+                net_INITIATE_button.Flags = 1;
+                ingame.Expenditure = 0;
+                unkn_flags_08 = 60;
+                login_control__State = 6;
+                net_INITIATE_button.Text = gui_strings[385];
+                ingame.Credits = 50000;
+                net_groups_LOGON_button.Text = gui_strings[386];
+                ingame.CashAtStart = 50000;
+                byte_15516D = -1;
+                byte_15516C = -1;
+                login_control__Money = starting_cash_amounts[0];
+                login_control__TechLevel = 4;
+                unkn_city_no = -1;
+                login_control__City = -1;
+                init_agents();
+                srm_reset_research();
+                load_missions(0);
+                for (i = 0; i < 5; i++) {
+                    net_players[i].field_0[0] = '\0';
+                }
+                draw_flic_purple_list(purple_unkn1_data_to_screen);
+                memset(unkstruct04_arr, 0, 0x1108u);
+                byte_1C6D48 = 0;
+                for (i = 0; i < 8; i++) {
+                    unkn2_names[i][0] = '\0';
+                }
+                if (screentype == 4)
+                {
+                    update_flic_mods(flic_mods);
+                    for (i = 0; i < 4; i++) {
+                        if (flic_mods[i] != old_flic_mods[i])
+                            mod_draw_states[i] |= 0x08;
+                    }
+                }
+            }
+        }
+        else
+        {
+            LbNetworkSessionStop();
+            login_control__State = 6;
+            ingame.Credits = 50000;
+            ingame.CashAtStart = 50000;
+            login_control__TechLevel = 4;
+            unkn_flags_08 = 60;
+            net_INITIATE_button.Text = gui_strings[385];
+            net_groups_LOGON_button.Text = gui_strings[386];
+            net_INITIATE_button.Flags = 1;
+            byte_15516D = -1;
+            byte_15516C = -1;
+            unkn_city_no = -1;
+            ingame.Expenditure = 0;
+            login_control__City = -1;
+            login_control__Money = starting_cash_amounts[0];
+            init_agents();
+            srm_reset_research();
+            load_missions(0);
+            for (i = 0; i < 5; i++) {
+                net_players[i].field_0[0] = '\0';
+            }
+            draw_flic_purple_list(purple_unkn1_data_to_screen);
+            for (i = 0; i < 8; i++) {
+                unkn2_names[i][0] = '\0';
+            }
+            if ( byte_1C4A6F )
+              LbNetworkHangUp();
+            LbNetworkReset();
+            byte_1C4A7C = 0;
+            if (screentype == 4)
+            {
+                update_flic_mods(flic_mods);
+                for (i = 0; i < 4; i++) {
+                    if (flic_mods[i] != old_flic_mods[i])
+                        mod_draw_states[i] |= 0x08;
+                }
+            }
+        }
+        break;
+    case 14:
+        if ((net_host_player_no == plyr) && ((unkn_flags_08 & 0x08) != 0))
+        {
+            for (i = 0; i < 8; i++)
+            {
+                int k;
+                if (unkn2_names[i][0] == '\0')
+                    continue;
+                for (k = 0; k < 4; k++) {
+                    players[i].Weapons[k] = p_netplyr->U.WepMod.Weapons[k];
+                    players[i].Mods[k] = p_netplyr->U.WepMod.Mods[k];
+                }
+            }
+            {
+                int k;
+                for (k = 0; k < 4; k++) {
+                    cryo_agents.Weapons[k] = p_netplyr->U.WepMod.Weapons[k];
+                    cryo_agents.Mods[k] = p_netplyr->U.WepMod.Mods[k];
+                }
+            }
+            if (net_host_player_no != netplyr)
+            {
+                update_flic_mods(flic_mods);
+                for (i = 0; i < 4; i++) {
+                    if (flic_mods[i] != old_flic_mods[i])
+                        mod_draw_states[i] |= 0x08;
+                }
+            }
+        }
+        else if ((unkn_flags_08 & 0x08) == 0)
+        {
+            for (i = 0; i != 4; i++) {
+                players[plyr].Weapons[i] = p_netplyr->U.WepMod.Weapons[i];
+                players[plyr].Mods[i] = p_netplyr->U.WepMod.Mods[i];
+            }
+        }
+        break;
+    case 15:
+        if ((net_host_player_no == plyr) && ((unkn_flags_08 & 0x08) != 0))
+        {
+            for (i = 0; i < 8; i++)
+            {
+                int n, k;
+                if (unkn2_names[i][0] == '\0')
+                    continue;
+                for (n = 0; n < 4; n++) {
+                    for (k = 0; k < 5; k++) {
+                        players[i].FourPacks[n][k] = \
+                          p_netplyr->U.FourPacks.FourPacks[n][k];
+                    }
+                }
+            }
+            {
+                int n, k;
+                for (n = 0; n < 4; n++) {
+                    for (k = 0; k < 5; k++) {
+                        cryo_agents.FourPacks[n][k] = \
+                          p_netplyr->U.FourPacks.FourPacks[n][k];
+                    }
+                }
+            }
+        }
+        else if ((unkn_flags_08 & 0x08) == 0)
+        {
+            int n, k;
+            for (n = 0; n < 4; n++) {
+                for (k = 0; k < 5; k++) {
+                    players[plyr].FourPacks[n][k] = \
+                      p_netplyr->U.FourPacks.FourPacks[n][k];
+                }
+            }
+        }
+        break;
+    case 16:
+        net_unkn_func_29(
+          p_netplyr->U.Progress.npfield_8,
+          p_netplyr->U.Progress.npfield_A,
+          p_netplyr->U.Progress.npfield_12,
+          0, i);
+        break;
+    case 18:
+        net_unkn_func_29(
+          p_netplyr->U.Progress.npfield_8,
+          p_netplyr->U.Progress.npfield_A,
+          p_netplyr->U.Progress.npfield_12,
+          2, i);
+        break;
+    default:
+        break;
+    }
 }
 
 void net_unkn_func_33(void)
 {
-#if 1
+#if 0
     asm volatile ("call ASM_net_unkn_func_33\n"
         :  :  : "eax" );
 #else
@@ -6726,7 +7082,7 @@ void net_unkn_func_33(void)
 
     for (i = 0; i < 8; i++)
     {
-        net_unkn_func_33_sub1(i);
+        net_unkn_func_33_sub1(i, player);
     }
 
     if (byte_1C6D4A)
@@ -6817,7 +7173,7 @@ void show_menu_screen_st2(void)
       srm_reset_research();
       load_missions(0);
       memset(unkstruct04_arr, 0, 20 * sizeof(struct UnknStruct04)); //clear 4360 bytes
-      data_1c6d48 = 0;
+      byte_1C6D48 = 0;
       selected_mod = -1;
       selected_weapon = -1;
       init_net_players();

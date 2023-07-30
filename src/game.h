@@ -591,6 +591,7 @@ extern ubyte *vec_tmap;
 extern ubyte *memload;
 extern ubyte net_host_player_no;
 extern ubyte byte_1C6D4A;
+extern ubyte byte_1C6DDC[5];
 extern ubyte data_19ec6f;
 
 extern ubyte background_type;
@@ -635,13 +636,15 @@ extern ubyte redraw_screen_flag;
 
 extern sbyte byte_15516C;
 extern sbyte byte_15516D;
-extern ubyte data_1c6d48;
+extern ubyte byte_1C5C28[8];
+extern ubyte byte_1C6D48;
 extern ubyte unkn_flags_08;
 extern long dword_153194;
 extern ulong starting_cash_amounts[4];
 extern sbyte unkn_city_no;
 extern sbyte selected_weapon;
 extern sbyte selected_mod;
+extern ubyte group_types[8];
 extern struct UnknStruct04 unkstruct04_arr[20];
 extern ubyte data_1c4aa3;
 extern ubyte net_unkn_pos_02;
@@ -661,6 +664,7 @@ extern char equip_cost_text[20];
 extern ubyte new_current_drawing_mod;
 extern ubyte refresh_equip_list;
 extern ubyte flic_mods[5];
+extern ubyte old_flic_mods[5];
 extern ubyte reload_background_flag;
 extern ushort word_1811AE;
 
