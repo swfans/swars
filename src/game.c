@@ -4144,6 +4144,14 @@ ubyte do_sysmnu_button(ubyte click)
     return ret;
 }
 
+ubyte load_game(int slot, const char *desc)
+{
+    ubyte ret;
+    asm volatile ("call ASM_load_game\n"
+        : "=r" (ret) : "a" (slot), "d" (desc));
+    return ret;
+}
+
 ubyte load_game_slot(ubyte click)
 {
     ubyte ret;
