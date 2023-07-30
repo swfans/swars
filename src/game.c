@@ -4144,14 +4144,6 @@ ubyte do_sysmnu_button(ubyte click)
     return ret;
 }
 
-ubyte do_storage_NEW_MORTAL(ubyte click)
-{
-    ubyte ret;
-    asm volatile ("call ASM_do_storage_NEW_MORTAL\n"
-        : "=r" (ret) : "a" (click));
-    return ret;
-}
-
 ubyte load_game_slot(ubyte click)
 {
     ubyte ret;
@@ -4292,6 +4284,14 @@ ubyte main_do_map_editor(ubyte click)
     return ret;
 }
 
+int save_game_write(ubyte slot, char *desc)
+{
+    int ret;
+    asm volatile ("call ASM_save_game_write\n"
+        : "=r" (ret) : "a" (slot), "d" (desc));
+    return ret;
+}
+
 ubyte do_unkn11_CANCEL(ubyte click)
 {
     ubyte ret;
@@ -4377,6 +4377,65 @@ ubyte ac_do_research_submit(ubyte click);
 ubyte ac_do_research_suspend(ubyte click);
 ubyte ac_do_unkn12_WEAPONS_MODS(ubyte click);
 
+ubyte do_storage_NEW_MORTAL(ubyte click)
+{
+#if 0
+    ubyte ret;
+    asm volatile ("call ASM_do_storage_NEW_MORTAL\n"
+        : "=r" (ret) : "a" (click));
+    return ret;
+#else
+    int i;
+    const char *text;
+    struct Campaign *p_campgn;
+
+    if (login_control__State != 6)
+        return 0;
+    ingame.Flags |= 0x0010;
+
+    screentype = 99;
+    game_system_screen = 0;
+    players[local_player_no].MissionAgents = 0x0F;
+    load_city_data(0);
+    load_city_txt();
+    init_variables();
+    srm_reset_research();
+    init_agents();
+    load_missions(0);
+
+    p_campgn = &campaigns[background_type];
+    {
+        open_new_mission(p_campgn->FirstMission);
+        text = gui_strings[p_campgn->NetscanTextId];
+        init_screen_button(&brief_NETSCAN_button, 312, 405, text, 6, med2_font, 1, 128);
+        brief_NETSCAN_COST_box.Width = 312 - brief_NETSCAN_button.Width - 17;
+        brief_NETSCAN_button.CallBackFn = ac_brief_do_netscan_enhance;
+    }
+
+    if( save_game_write(0, save_active_desc)) {
+        show_alert = 1;
+        sprintf(alert_text, "%s", gui_strings[566]);
+    }
+
+    reload_background_flag = 1;
+    if (restore_savegame)  {
+        restore_savegame = 0;
+        sysmnu_buttons[5].Y += 150;
+    }
+
+    if (true)
+    {
+        for (i = 2; i < 6; i++) {
+            sysmnu_buttons[i].Y -= 60;
+        }
+    }
+
+    if (true)
+      play_sample_using_heap(0, 119 + (LbRandomAnyShort() % 3), 127, 64, 100, 0, 3u);
+
+    return 1;
+#endif
+}
 
 ubyte do_login_2(ubyte click)
 {
@@ -6589,14 +6648,6 @@ void draw_purple_screen(void)
 {
     asm volatile ("call ASM_draw_purple_screen\n"
         :  :  : "eax" );
-}
-
-int save_game_write(ubyte slot, char *desc)
-{
-    int ret;
-    asm volatile ("call ASM_save_game_write\n"
-        : "=r" (ret) : "a" (slot), "d" (desc));
-    return ret;
 }
 
 void clear_mission_status(ulong id)

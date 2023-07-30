@@ -716,6 +716,7 @@ extern char brief_netscan_cost_text[];
 extern const char *misc_text[5];
 
 extern ubyte game_system_screen;
+extern char alert_text[200];
 extern ubyte byte_197160;
 extern ushort text_window_x1;
 extern ushort text_window_y1;
