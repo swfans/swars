@@ -71,6 +71,7 @@ enum WeaponFourPack
     WFRPK_NUCLGREN,
     WFRPK_CRAZYGAS,
     WFRPK_KOGAS,
+    WFRPK_COUNT,
 };
 
 

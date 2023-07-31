@@ -91,11 +91,8 @@ typedef struct {
   short TargetType;
   ubyte FourPacks[5][4];
   ubyte WepDelays[4][32];
-  short field_19A;
-  char field_19C[4];
-  short field_1A0;
-  char field_1A2[4];
-  char field_1A6[4];
+  ushort field_19A[4];
+  ushort field_1A2[4];
 } PlayerInfo;
 
 

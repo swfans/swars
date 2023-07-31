@@ -691,7 +691,13 @@ extern ubyte num_cities;
 extern struct City cities[];
 extern sbyte city_id;
 extern struct SynTime global_date;
+extern struct SynTime research_curr_wep_date;
+extern struct SynTime research_curr_mod_date;
+
 extern struct MissionStatus mission_status[120];
+extern ubyte new_mail;
+extern struct NewMailItem newmail_store[29];
+extern ushort next_email;
 extern short old_mission_brief;
 extern short open_brief;
 extern short next_brief;
@@ -813,8 +819,6 @@ extern struct ScreenButton unkn10_CONTROLS_button;
 
 extern struct ScreenBox alert_box;
 extern struct ScreenButton alert_OK_button;
-
-extern ubyte new_mail;
 
 bool game_initialise (void);
 void adjust_memory_use(void);

@@ -4176,14 +4176,14 @@ ulong save_crypto_transform3(ubyte a1)
 
 ubyte load_game(int slot, char *desc)
 {
-#if 1
+#if 0
     ubyte ret;
     asm volatile ("call ASM_load_game\n"
         : "=r" (ret) : "a" (slot), "d" (desc));
     return ret;
 #else
     char str[32];
-    ulong gblen, gbslot, decrypt_verify;
+    ulong gblen, fmtver, decrypt_verify;
     TbFileHandle fh;
 
     if (slot == 0)
@@ -4198,12 +4198,12 @@ ubyte load_game(int slot, char *desc)
         return 1;
     LbFileRead(fh, desc, 25);
     LbFileRead(fh, &gblen, 4);
-    LbFileRead(fh, &gbslot, 4);
+    LbFileRead(fh, &fmtver, 4);
     LbFileRead(fh, save_game_buffer, gblen);
     LbFileRead(fh, &decrypt_verify, 4);
     LbFileClose(fh);
 
-    if (gbslot > 8)
+    if (fmtver > 8)
     {
         // Decrypt the file
         ubyte *gbpos;
@@ -4276,7 +4276,338 @@ ubyte load_game(int slot, char *desc)
     load_missions(0);
     memcpy(&ingame.Credits, &save_game_buffer[0], sizeof(ingame.Credits));
 
-    // TODO rewrite the rest
+    gblen = 4;
+    if (fmtver <= 4)
+    {
+        int agent, k;
+        memcpy(&cryo_agents, &save_game_buffer[gblen], offsetof(struct AgentInfo, FourPacks));
+        gblen += offsetof(struct AgentInfo, FourPacks);
+        memcpy(&cryo_agents.NumAgents, &save_game_buffer[gblen], 1);
+        gblen += 1;
+        for (agent = 0; agent < 32; agent++)
+        {
+            for (k = 0; k < WFRPK_COUNT; k++) {
+                if (cryo_agents.FourPacks[k][agent] > 4)
+                    cryo_agents.FourPacks[k][agent] = 1;
+            }
+            // Remove bad mod flags
+            if (cryo_agents.Mods[agent].Mods >> 12 > 4) {
+                cryo_agents.Mods[agent].Mods &= 0x0FFF;
+                cryo_agents.Mods[agent].Mods |= 0x1000;
+            }
+            // Reset bad amounts of consumable weapons
+            cryo_agents.FourPacks[agent][WFRPK_NUCLGREN] = 0;
+            cryo_agents.FourPacks[agent][WFRPK_ELEMINE] = 0;
+            cryo_agents.FourPacks[agent][WFRPK_EXPLMINE] = 0;
+            cryo_agents.FourPacks[agent][WFRPK_KOGAS] = 0;
+            cryo_agents.FourPacks[agent][WFRPK_CRAZYGAS] = 0;
+            if (cryo_agents.Weapons[agent] & (1 << 5))
+                cryo_agents.FourPacks[agent][WFRPK_NUCLGREN] = 1;
+            if (cryo_agents.Weapons[agent] & (1 << 11))
+                cryo_agents.FourPacks[agent][WFRPK_ELEMINE] = 1;
+            if (cryo_agents.Weapons[agent] & (1 << 12))
+                cryo_agents.FourPacks[agent][WFRPK_EXPLMINE] = 1;
+            if (cryo_agents.Weapons[agent] & (1 << 10))
+                cryo_agents.FourPacks[agent][WFRPK_KOGAS] = 1;
+            if (cryo_agents.Weapons[agent] & (1 << 9))
+                cryo_agents.FourPacks[agent][WFRPK_CRAZYGAS] = 1;
+        }
+    }
+    else
+    {
+        int agent, k;
+        memcpy(&cryo_agents, &save_game_buffer[gblen], offsetof(struct AgentInfo, NumAgents));
+        gblen += offsetof(struct AgentInfo, NumAgents);
+        memcpy(&cryo_agents.NumAgents, &save_game_buffer[gblen], sizeof(cryo_agents.NumAgents));
+        gblen += sizeof(cryo_agents.NumAgents);
+        for (agent = 0; agent < 32; agent++)
+        {
+            for (k = 0; k < WFRPK_COUNT; k++) {
+                if (cryo_agents.FourPacks[agent][k] > 4)
+                    cryo_agents.FourPacks[agent][k] = 1;
+            }
+            // Remove bad mod flags
+            if (cryo_agents.Mods[agent].Mods >> 12 > 4) {
+                cryo_agents.Mods[agent].Mods &= 0x0FFF;
+                cryo_agents.Mods[agent].Mods |= 0x1000;
+            }
+        }
+    }
+
+    if (fmtver <= 2)
+    {
+        int i, k;
+        // Old version has one byte progress
+        for (i = 0; i < 32; i++)
+        {
+            for (k = 0; k < 10; k++)
+            {
+                research.WeaponProgress[i][k] = save_game_buffer[gblen];
+                gblen++;
+            }
+        }
+        for (i = 0; i < 32; i++)
+        {
+            for (k = 0; k < 10; k++)
+            {
+                research.ModProgress[i][k] = save_game_buffer[gblen];
+                gblen++;
+            }
+        }
+        i = sizeof(struct ResearchInfo) - offsetof(struct ResearchInfo, WeaponDaysDone);
+        assert(i == 92);
+        memcpy(research.WeaponDaysDone, &save_game_buffer[gblen], i);
+        gblen += 732; // and not 92? we don't have old saves, so cannot verify.
+    }
+    else
+    {
+        assert(sizeof(struct ResearchInfo) == 1372);
+        memcpy(&research, &save_game_buffer[gblen], sizeof(struct ResearchInfo));
+        gblen += sizeof(struct ResearchInfo);
+    }
+
+    if (fmtver <= 3)
+    {
+        PlayerInfo *p_locplayer;
+        int agent, i;
+        p_locplayer = &players[local_player_no];
+
+        i = sizeof(PlayerInfo) - offsetof(PlayerInfo, FourPacks);
+        assert(i == 262);
+        memcpy(p_locplayer, &save_game_buffer[gblen], i);
+        gblen += i;
+        // The old struct matches until FourPacks
+        i = 8;
+        memcpy(p_locplayer->FourPacks, &save_game_buffer[gblen], i);
+        gblen += i;
+
+        for (i = 0; i < 4; i++)
+        {
+            // Remove bad mod flags
+            if (p_locplayer->Mods[i].Mods >> 12 > 4) {
+                p_locplayer->Mods[i].Mods &= 0x0FFF;
+                p_locplayer->Mods[i].Mods |= 0x1000;
+            }
+            // Reset bad amounts of consumable weapons
+            if (p_locplayer->Weapons[i] & (1 << 5))
+                p_locplayer->FourPacks[WFRPK_NUCLGREN][i] = 1;
+            if (p_locplayer->Weapons[i] & (1 << 11))
+                p_locplayer->FourPacks[WFRPK_ELEMINE][i] = 1;
+            if (p_locplayer->Weapons[i] & (1 << 12))
+                p_locplayer->FourPacks[WFRPK_EXPLMINE][i] = 1;
+            if (p_locplayer->Weapons[i] & (1 << 10))
+                p_locplayer->FourPacks[WFRPK_KOGAS][i] = 1;
+            if (p_locplayer->Weapons[i] & (1 << 9))
+                p_locplayer->FourPacks[WFRPK_CRAZYGAS][i] = 1;
+
+            p_locplayer->field_19A[i] = 0;
+            p_locplayer->field_1A2[i] = 0;
+        }
+
+        for (agent = 0; agent < 32; agent++)
+        {
+            for (i = 0; i < 4; i++) {
+                p_locplayer->WepDelays[i][agent] = 0;
+            }
+        }
+    }
+    else if (fmtver <= 6)
+    {
+        PlayerInfo *p_locplayer;
+        int i;
+        p_locplayer = &players[local_player_no];
+
+        i = sizeof(PlayerInfo) - offsetof(PlayerInfo, WepDelays);
+        assert(i == 282);
+        memcpy(p_locplayer, &save_game_buffer[gblen], i);
+        gblen += i;
+        // The old struct matches until WepDelays
+        i = 48;
+        memcpy(p_locplayer->WepDelays, &save_game_buffer[gblen], i);
+        gblen += i;
+        // Remove bad mod flags
+        for (i = 0; i < 4; i++)
+        {
+            if (p_locplayer->Mods[i].Mods >> 12 > 4)
+            {
+                p_locplayer->Mods[i].Mods &= 0x0FFF;
+                p_locplayer->Mods[i].Mods |= 0x1000;
+            }
+        }
+    }
+    else
+    {
+        PlayerInfo *p_locplayer;
+        int i;
+        assert(sizeof(PlayerInfo) == 426);
+        p_locplayer = &players[local_player_no];
+        memcpy(p_locplayer, &save_game_buffer[gblen], sizeof(PlayerInfo));
+        gblen += sizeof(PlayerInfo);
+        // Remove bad mod flags
+        for (i = 0; i < 4; i++)
+        {
+            if (p_locplayer->Mods[i].Mods >> 12 > 4)
+            {
+                p_locplayer->Mods[i].Mods &= 0x0FFF;
+                p_locplayer->Mods[i].Mods |= 0x1000;
+            }
+        }
+    }
+
+    {
+        PlayerInfo *p_locplayer;
+        int i, k;
+        p_locplayer = &players[local_player_no];
+        for (i = 0; i < 4; i++)
+        {
+            p_locplayer->Weapons[i] = cryo_agents.Weapons[i];
+            p_locplayer->Mods[i].Mods = cryo_agents.Mods[i].Mods;
+            for (k = 0; k != WFRPK_COUNT; k++) {
+                p_locplayer->FourPacks[k][i] = cryo_agents.FourPacks[i][k];
+            }
+        }
+
+        i = p_locplayer->MissionAgents;
+        if (i != 0x01 && i != 0x03 && i != 0x07 && i != 0x0F)
+            p_locplayer->MissionAgents = 0x0F;
+
+    }
+
+    memcpy(&global_date, &save_game_buffer[gblen], sizeof(struct SynTime));
+    gblen += sizeof(struct SynTime);
+    memcpy(&research_curr_wep_date, &save_game_buffer[gblen], sizeof(struct SynTime));
+    gblen += sizeof(struct SynTime);
+    memcpy(&research_curr_mod_date, &save_game_buffer[gblen], sizeof(struct SynTime));
+    gblen += sizeof(struct SynTime);
+
+    next_email = save_game_buffer[gblen + 0];
+    next_brief = save_game_buffer[gblen + 2];
+    old_mission_brief = save_game_buffer[gblen + 4];
+    open_brief = save_game_buffer[gblen + 6];
+    next_ref = save_game_buffer[gblen + 8];
+    new_mail = save_game_buffer[gblen + 10];
+    background_type = save_game_buffer[gblen + 11];
+    gblen += 12;
+
+    if (fmtver <= 9)
+    {
+        // Mission status block did not existed in this version
+    }
+    else if (fmtver <= 11)
+    {
+        int i;
+        i = sizeof(struct MissionStatus) - offsetof(struct MissionStatus, Expenditure);
+        assert(i == 32);
+        memcpy(&mission_status[open_brief], &save_game_buffer[gblen], i);
+        gblen += i;
+        gblen += 2;
+        mission_status[open_brief].AgentsLost = save_game_buffer[gblen];
+        gblen++;
+        mission_status[open_brief].AgentsGained = save_game_buffer[gblen];
+        gblen++;
+    }
+    else
+    {
+        int i;
+        i = sizeof(struct MissionStatus);
+        assert(i == 40);
+        memcpy(&mission_status[open_brief], &save_game_buffer[gblen], i);
+        gblen += i;
+    }
+
+    memcpy(email_store, &save_game_buffer[gblen], 5 * next_email);
+    gblen += 5 * next_email;
+    memcpy(brief_store, &save_game_buffer[gblen], 5 * next_brief);
+    gblen += 5 * next_brief;
+    memcpy(newmail_store, &save_game_buffer[gblen], 5 * new_mail);
+    gblen += 5 * new_mail;
+
+    {
+        int i;
+        memcpy(&ingame.MissionStatus, &save_game_buffer[gblen], sizeof(ingame.MissionStatus));
+        gblen += sizeof(ingame.MissionStatus);
+        i = sizeof(mission_open);
+        assert(i == 100);
+        memcpy(mission_open, &save_game_buffer[gblen], i);
+        gblen += i;
+        i = sizeof(mission_state);
+        assert(i == 100);
+        memcpy(mission_state, &save_game_buffer[gblen], i);
+        gblen += i;
+    }
+
+    if (fmtver < 8)
+    {
+        // Deprecated data
+        gblen += 32;
+    }
+
+    if (fmtver <= 11)
+    {
+        next_mission = save_game_buffer[gblen];
+        gblen += 2;
+    } else
+    {
+        memcpy(&next_mission, &save_game_buffer[gblen], sizeof(next_mission));
+        gblen += 2;
+    }
+
+
+    {
+        int i;
+        for (i = 1; i < next_mission; i++)
+        {
+            mission_list[i].SpecialTrigger[0] = save_game_buffer[gblen];
+            gblen++;
+            mission_list[i].SpecialTrigger[1] = save_game_buffer[gblen];
+            gblen++;
+            mission_list[i].SpecialTrigger[2] = save_game_buffer[gblen];
+            gblen++;
+            if (fmtver > 1)
+            {
+                mission_list[i].Complete = save_game_buffer[gblen];
+                gblen++;
+            }
+        }
+    }
+
+    if (fmtver <= 5)
+    {
+        if (login_name[0] == '\0')
+          strcpy(login_name, "ANON");
+    }
+    else
+    {
+        int i;
+        i = 16;
+        memcpy(login_name, &save_game_buffer[gblen], i);
+        gblen += i;
+    }
+
+    if (fmtver > 10)
+    {
+        int i;
+        for (i = 0; i < num_cities; i++)
+        {
+          cities[i].Info = save_game_buffer[gblen];
+          gblen++;
+        }
+        ingame.fld_unk7DE = save_game_buffer[gblen];
+        gblen++;
+    }
+
+    // TODO: Special fix for specific mission? to be removed.
+    if (mission_list[28].SpecialTrigger[1]) {
+        mission_list[28].SpecialTrigger[0] = 0;
+        mission_list[28].SpecialTrigger[1] = 0;
+        mission_list[28].SpecialTrigger[2] = 7;
+    }
+
+    read_user_settings();
+    login_control__Money = ingame.Credits;
+    ingame.CashAtStart = ingame.Credits;
+    ingame.Expenditure = 0;
+    return 0;
 #endif
 }
 
