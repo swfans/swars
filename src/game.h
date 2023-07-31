@@ -616,6 +616,9 @@ extern char *people_credits_groups[];
 extern ubyte playable_agents;
 extern ubyte net_agents__FourPacks[8][4][5]; // maybe a part of larger struct, maybe not
 
+extern ubyte save_crypto_tables_state[3];
+extern ubyte save_crypto_data_state[3];
+
 extern ubyte game_high_resolution;
 extern char *mission_briefing_text;
 extern short mission_open[50];

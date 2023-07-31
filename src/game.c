@@ -4144,12 +4144,140 @@ ubyte do_sysmnu_button(ubyte click)
     return ret;
 }
 
-ubyte load_game(int slot, const char *desc)
+void save_crypto_make_hashtable(ubyte simple_salt)
 {
+    asm volatile ("call ASM_save_crypto_make_hashtable\n"
+        :  : "a" (simple_salt));
+}
+
+ulong save_crypto_transform1(ubyte a1)
+{
+    ulong ret;
+    asm volatile ("call ASM_save_crypto_transform1\n"
+        : "=r" (ret) : "a" (a1));
+    return ret;
+}
+
+ulong save_crypto_transform2(ubyte a1)
+{
+    ulong ret;
+    asm volatile ("call ASM_save_crypto_transform2\n"
+        : "=r" (ret) : "a" (a1));
+    return ret;
+}
+
+ulong save_crypto_transform3(ubyte a1)
+{
+    ulong ret;
+    asm volatile ("call ASM_save_crypto_transform3\n"
+        : "=r" (ret) : "a" (a1));
+    return ret;
+}
+
+ubyte load_game(int slot, char *desc)
+{
+#if 1
     ubyte ret;
     asm volatile ("call ASM_load_game\n"
         : "=r" (ret) : "a" (slot), "d" (desc));
     return ret;
+#else
+    char str[32];
+    ulong gblen, gbslot, decrypt_verify;
+    TbFileHandle fh;
+
+    if (slot == 0)
+        sprintf(str, "qdata/savegame/synwarsm.sav");
+    else if (slot < 9)
+        sprintf(str, "qdata/savegame/synwars%d.sav", slot - 1);
+    else
+        sprintf(str, "qdata/savegame/swars%03d.sav", slot - 1);
+
+    fh = LbFileOpen(str, Lb_FILE_MODE_READ_ONLY);
+    if (fh == INVALID_FILE)
+        return 1;
+    LbFileRead(fh, desc, 25);
+    LbFileRead(fh, &gblen, 4);
+    LbFileRead(fh, &gbslot, 4);
+    LbFileRead(fh, save_game_buffer, gblen);
+    LbFileRead(fh, &decrypt_verify, 4);
+    LbFileClose(fh);
+
+    if (gbslot > 8)
+    {
+        // Decrypt the file
+        ubyte *gbpos;
+        ubyte *gbend;
+        save_crypto_make_hashtable(slot);
+        gbpos = save_game_buffer;
+        gbend = &save_game_buffer[4 * (gblen >> 2)];
+        while (gbpos < gbend)
+        {
+            ulong key, keysel;
+            ulong *cryptpos;
+            keysel = (save_crypto_data_state[1] << 8) | (save_crypto_data_state[0] << 16) | save_crypto_data_state[2];
+            cryptpos = (ulong *)gbpos;
+            switch (keysel)
+            {
+            case 0x00001:
+            case 0x10100:
+                key = save_crypto_transform1(1);
+                key ^= save_crypto_transform2(1);
+                key ^= save_crypto_transform3(0);
+                break;
+            case 0x00100:
+            case 0x10001:
+                key = save_crypto_transform1(1);
+                key ^= save_crypto_transform2(0);
+                key ^= save_crypto_transform3(1);
+                break;
+            case 0x00000:
+            case 0x10101:
+                key = save_crypto_transform1(1);
+                key ^= save_crypto_transform2(1);
+                key ^= save_crypto_transform3(1);
+                break;
+            case 0x00101:
+            case 0x10000:
+                key = save_crypto_transform1(0);
+                key ^= save_crypto_transform2(1);
+                key ^= save_crypto_transform3(1);
+                break;
+            default:
+                key = 0;
+                break;
+            }
+            gbpos += 4;
+            *cryptpos ^= key;
+        }
+    }
+
+    { // Verify data
+        ulong *cpos;
+        ulong clen, hash;
+        ulong i;
+
+        if (gblen & 3)
+            clen = gblen + 4;
+        else
+            clen = gblen;
+        clen >>= 2;
+        cpos = (ulong *)save_game_buffer;
+
+        hash = *cpos;
+        for (i = 1; i < clen; i++) {
+            cpos++;
+            hash ^= *cpos;
+        }
+        if (hash != decrypt_verify)
+            return 2;
+    }
+
+    load_missions(0);
+    memcpy(&ingame.Credits, &save_game_buffer[0], sizeof(ingame.Credits));
+
+    // TODO rewrite the rest
+#endif
 }
 
 ubyte load_game_slot(ubyte click)
