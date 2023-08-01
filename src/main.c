@@ -223,6 +223,7 @@ process_options (int *argc, char ***argv)
 
         case 'u':
             sprintf(user_name, "%s", optarg);
+            strcpy(login_name, user_name);
             LOGDBG("user name '%s'", user_name);
             break;
 
