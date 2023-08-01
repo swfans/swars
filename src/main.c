@@ -74,7 +74,8 @@ print_help (const char *argv0)
 "                -H        Initially enter high resolution mode\n"
 "  --help        -h        Display the help message\n"
 "                -I <num>  Connect through IPX\n"
-"                -m <num>  Enter single map mode and load map of given index\n"
+"                -m <n>,<n> Load campaign with given index, from which load level\n"
+"                          with given index in single map mode\n"
 "                -N        ?\n"
 "                -p <num>  Play replay packets from file of given index;\n"
 "                          use '-m' to specify map on which to play\n"
@@ -102,8 +103,7 @@ static void tests_execute(void)
     exit(0);
 }
 
-static void
-process_options (int *argc, char ***argv)
+static TbBool process_options(int *argc, char ***argv)
 {
     int index;
     int val;
@@ -176,12 +176,17 @@ process_options (int *argc, char ***argv)
 
         case 'm':
             is_single_game = 1;
-            cmdln_param_current_map = atoi(optarg);
+            if (sscanf(optarg, "%hhu,%hu", &background_type, &cmdln_param_current_map) != 2)
+            {
+                LOGERR("Invalid value after '-m' parameter. Required two comma separated ints.");
+                return false;
+            }
+            //cmdln_param_current_map = atoi(optarg);
             ingame.GameMode = GamM_Unkn2;
             ingame.Flags |= 0x08;
             ingame.CurrentMission = cmdln_param_current_map;
             ingame.Cheats |= 0x04;
-            LOGDBG("mission index %d", (int)ingame.CurrentMission);
+            LOGDBG("Campaign %d mission index %d", (int)background_type, (int)ingame.CurrentMission);
             break;
 
         case 'N':
@@ -237,9 +242,10 @@ process_options (int *argc, char ***argv)
 
         default:
             LOGERR("Command line parser error");
-            exit (1);
+            return false;
         }
     }
+    return true;
 }
 
 static void fixup_options(void)
@@ -414,7 +420,8 @@ main (int argc, char **argv)
     /* Gravis Grip joystick driver initialization */
     /* joy_grip_init(); */
 
-    process_options(&argc, &argv);
+    if (!process_options(&argc, &argv))
+        return 1;
 
     printf("Syndicate Wars Port "VERSION"\n"
         "The original by Bullfrog\n"

@@ -3349,8 +3349,13 @@ ushort make_group_into_players(ushort group, ushort plyr, ushort max_agent, shor
         }
         players[plyr].MyAgent[nagents] = p_person;
         p_person->Flag |= 0x2000;
-        if ((p_person->SubType == SubTT_PERS_ZEALOT) && !cmdln_param_bcg)
-            background_type = 1;
+#if 0 // This no longer makes sense - campaign is given with mission number
+        if (!cmdln_param_bcg)
+        {
+            if (p_person->SubType == SubTT_PERS_ZEALOT)
+                background_type = 1;
+        }
+#endif
         if (in_network_game)
             set_person_stats_type(p_person, 1);
 
@@ -3651,7 +3656,6 @@ void game_setup(void)
     LbSpriteSetup(small_font, small_font_end, small_font_data);
     game_setup_sub8();
     load_campaigns();
-    load_missions(0);
     players[local_player_no].MissionAgents = 0x0F;
     debug_trace_setup(-1);
     if ( is_single_game || cmdln_param_bcg )
@@ -3669,7 +3673,10 @@ void game_setup(void)
     test_open(15);
     debug_trace_setup(1);
     if (is_single_game && cmdln_param_current_map)
-      init_game(0);
+    {
+        load_missions(background_type);
+        init_game(0);
+    }
     if (in_network_game || cmdln_param_bcg)
       ingame.DisplayMode = DpM_UNKN_37;
     debug_trace_setup(2);
@@ -4273,7 +4280,6 @@ ubyte load_game(int slot, char *desc)
             return 2;
     }
 
-    load_missions(0);
     memcpy(&ingame.Credits, &save_game_buffer[0], sizeof(ingame.Credits));
 
     gblen = 4;
@@ -4488,6 +4494,8 @@ ubyte load_game(int slot, char *desc)
     new_mail = save_game_buffer[gblen + 10];
     background_type = save_game_buffer[gblen + 11];
     gblen += 12;
+
+    load_missions(background_type);
 
     if (fmtver <= 9)
     {
@@ -4859,7 +4867,7 @@ void campaign_new_game_prepare(void)
     init_variables();
     srm_reset_research();
     init_agents();
-    load_missions(0);
+    load_missions(background_type);
 
     {
         open_new_mission(p_campgn->FirstMission);
@@ -7221,7 +7229,7 @@ void net_unkn_func_33_sub1(int plyr, int netplyr)
                 login_control__Money = starting_cash_amounts[0];
                 init_agents();
                 srm_reset_research();
-                load_missions(0);
+                load_missions(background_type);
                 for (i = 0; i < 5; i++) {
                     net_players[i].field_0[0] = '\0';
                 }
@@ -7254,7 +7262,7 @@ void net_unkn_func_33_sub1(int plyr, int netplyr)
             login_control__TechLevel = 4;
             init_agents();
             srm_reset_research();
-            load_missions(0);
+            load_missions(background_type);
             for (i = 0; i < 5; i++) {
                 net_players[i].field_0[0] = '\0';
             }
@@ -7291,7 +7299,7 @@ void net_unkn_func_33_sub1(int plyr, int netplyr)
                 login_control__City = -1;
                 init_agents();
                 srm_reset_research();
-                load_missions(0);
+                load_missions(background_type);
                 for (i = 0; i < 5; i++) {
                     net_players[i].field_0[0] = '\0';
                 }
@@ -7330,7 +7338,7 @@ void net_unkn_func_33_sub1(int plyr, int netplyr)
             login_control__Money = starting_cash_amounts[0];
             init_agents();
             srm_reset_research();
-            load_missions(0);
+            load_missions(background_type);
             for (i = 0; i < 5; i++) {
                 net_players[i].field_0[0] = '\0';
             }
@@ -7525,7 +7533,7 @@ void net_unkn_func_33(void)
         login_control__Money = starting_cash_amounts[0];
         init_agents();
         srm_reset_research();
-        load_missions(0);
+        load_missions(background_type);
 
         for (i = 0; i < 5; i++) {
             net_players[i].field_D = 0;
@@ -7631,7 +7639,7 @@ void show_menu_screen_st2(void)
       login_control__Money = starting_cash_amounts[0];
       init_agents();
       srm_reset_research();
-      load_missions(0);
+      load_missions(background_type);
       memset(unkstruct04_arr, 0, 20 * sizeof(struct UnknStruct04)); //clear 4360 bytes
       byte_1C6D48 = 0;
       selected_mod = -1;
@@ -8300,7 +8308,7 @@ void show_menu_screen(void)
             init_weapon_anim(selected_weapon);
             if ((research.WeaponsCompleted & (1 << selected_weapon)) || (login_control__State != 6))
             {
-              if ( background_type == 1 )
+              if (background_type == 1)
                   equip_name_box.Text = gui_strings[selected_weapon + 30];
               else
                   equip_name_box.Text = gui_strings[selected_weapon];
