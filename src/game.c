@@ -3652,7 +3652,7 @@ void game_setup(void)
     game_setup_sub8();
     load_campaigns();
     load_missions(0);
-    players[local_player_no].MissionAgents = 0x0f;
+    players[local_player_no].MissionAgents = 0x0F;
     debug_trace_setup(-1);
     if ( is_single_game || cmdln_param_bcg )
     {
@@ -4844,21 +4844,12 @@ ubyte ac_do_research_submit(ubyte click);
 ubyte ac_do_research_suspend(ubyte click);
 ubyte ac_do_unkn12_WEAPONS_MODS(ubyte click);
 
-ubyte do_storage_NEW_MORTAL(ubyte click)
+void campaign_new_game_prepare(void)
 {
-#if 0
-    ubyte ret;
-    asm volatile ("call ASM_do_storage_NEW_MORTAL\n"
-        : "=r" (ret) : "a" (click));
-    return ret;
-#else
-    int i;
     const char *text;
     struct Campaign *p_campgn;
 
-    if (login_control__State != 6)
-        return 0;
-    ingame.Flags |= 0x0010;
+    p_campgn = &campaigns[background_type];
 
     screentype = 99;
     game_system_screen = 0;
@@ -4870,7 +4861,6 @@ ubyte do_storage_NEW_MORTAL(ubyte click)
     init_agents();
     load_missions(0);
 
-    p_campgn = &campaigns[background_type];
     {
         open_new_mission(p_campgn->FirstMission);
         text = gui_strings[p_campgn->NetscanTextId];
@@ -4879,12 +4869,32 @@ ubyte do_storage_NEW_MORTAL(ubyte click)
         brief_NETSCAN_button.CallBackFn = ac_brief_do_netscan_enhance;
     }
 
+    reload_background_flag = 1;
+    edit_flag = 0;
+}
+
+ubyte do_storage_NEW_MORTAL(ubyte click)
+{
+#if 0
+    ubyte ret;
+    asm volatile ("call ASM_do_storage_NEW_MORTAL\n"
+        : "=r" (ret) : "a" (click));
+    return ret;
+#else
+    int i;
+
+    if (login_control__State != 6)
+        return 0;
+
+    ingame.Flags |= 0x0010;
+
+    campaign_new_game_prepare();
+
     if( save_game_write(0, save_active_desc)) {
         show_alert = 1;
         sprintf(alert_text, "%s", gui_strings[566]);
     }
 
-    reload_background_flag = 1;
     if (restore_savegame)  {
         restore_savegame = 0;
         sysmnu_buttons[5].Y += 150;
@@ -4914,7 +4924,6 @@ ubyte do_login_2(ubyte click)
 #else
     int i;
     const char *text;
-    struct Campaign *p_campgn;
 
     if (strlen(login_name) == 0)
         return 0;
@@ -4947,31 +4956,12 @@ ubyte do_login_2(ubyte click)
         ingame.Flags &= ~0x10;
     }
 
-    screentype = 99;
-    game_system_screen = 0;
-    players[local_player_no].MissionAgents = 0x0F;
-    load_city_data(0);
     init_weapon_text();
-    load_city_txt();
-    init_variables();
-    srm_reset_research();
-    init_agents();
-    load_missions(0);
-
-    p_campgn = &campaigns[background_type];
-    {
-        open_new_mission(p_campgn->FirstMission);
-        text = gui_strings[p_campgn->NetscanTextId];
-        init_screen_button(&brief_NETSCAN_button, 312, 405, text, 6, med2_font, 1, 128);
-        brief_NETSCAN_COST_box.Width = 312 - brief_NETSCAN_button.Width - 17;
-        brief_NETSCAN_button.CallBackFn = ac_brief_do_netscan_enhance;
-    }
+    campaign_new_game_prepare();
 
     if (new_mail)
       play_sample_using_heap(0, 119 + (LbRandomAnyShort() % 3), 127, 64, 100, 0, 3u);
 
-    reload_background_flag = 1;
-    edit_flag = 0;
     return 1;
 #endif
 }
@@ -7533,8 +7523,7 @@ void net_unkn_func_33(void)
         srm_reset_research();
         load_missions(0);
 
-        for (i = 0; i < 5; i++)
-        {
+        for (i = 0; i < 5; i++) {
             net_players[i].field_D = 0;
         }
         draw_flic_purple_list(purple_unkn1_data_to_screen);
