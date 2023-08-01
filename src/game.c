@@ -4886,6 +4886,10 @@ ubyte do_storage_NEW_MORTAL(ubyte click)
     if (login_control__State != 6)
         return 0;
 
+    if (strlen(login_name) == 0)
+        strcpy(login_name, "ANON");
+    read_user_settings();
+
     ingame.Flags |= 0x0010;
 
     campaign_new_game_prepare();
@@ -4907,7 +4911,7 @@ ubyte do_storage_NEW_MORTAL(ubyte click)
         }
     }
 
-    if (true)
+    if (new_mail)
       play_sample_using_heap(0, 119 + (LbRandomAnyShort() % 3), 127, 64, 100, 0, 3u);
 
     return 1;
