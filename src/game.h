@@ -580,6 +580,7 @@ extern char *gui_strings_data_end;
 extern char *gui_strings[STRINGS_MAX];
 
 extern ubyte byte_1C4A7C;
+extern ubyte byte_1C4A9F;
 extern ulong curr_tick_time;
 extern ulong prev_tick_time;
 extern GameTurn gameturn;
@@ -593,6 +594,7 @@ extern ubyte net_host_player_no;
 extern ubyte byte_1C6D4A;
 extern ubyte byte_1C6DDC[5];
 extern ubyte data_19ec6f;
+extern ulong save_mortal_salt;
 
 extern ubyte background_type;
 extern ubyte old_screentype;

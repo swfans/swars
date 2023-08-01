@@ -3190,6 +3190,14 @@ void BAT_unknsub_20(int a1, int a2, int a3, int a4, unsigned long a5)
         : : "a" (a1), "d" (a2), "b" (a3), "c" (a4), "g" (a5));
 }
 
+int joy_func_067(struct DevInput *dinp, int a2)
+{
+    int ret;
+    asm volatile ("call ASM_joy_func_067\n"
+        : "=r" (ret) : "a" (dinp), "d" (a2));
+    return ret;
+}
+
 void setup_host(void)
 {
     char fname[DISKPATH_SIZE];
@@ -3277,10 +3285,100 @@ void setup_host(void)
       LbMouseChangeSprite(NULL);
 }
 
+void set_default_user_settings(void)
+{
+    asm volatile ("call ASM_set_default_user_settings\n"
+        :  :  : "eax" );
+}
+
 void read_user_settings(void)
 {
+#if 0
     asm volatile ("call ASM_read_user_settings\n"
         :  :  : "eax" );
+#else
+    char fname[52];
+    TbFileHandle fh;
+    int i;
+
+    if (strlen(login_name) > 0)
+        sprintf(fname, "qdata/savegame/%.8s.ini", login_name);
+    else
+        sprintf(fname, "qdata/savegame/%.8s.ini", "ANON");
+
+    fh = LbFileOpen(fname, Lb_FILE_MODE_READ_ONLY);
+    if (fh == INVALID_FILE)
+    {
+        set_default_user_settings();
+        // Read mortal game salt from backup
+        fh = LbFileOpen("qdata/keys.dat", 1u);
+        if (fh != INVALID_FILE)
+        {
+            i = sizeof(save_mortal_salt);
+            LbFileSeek(fh, -i, Lb_FILE_SEEK_END);
+            LbFileRead(fh, &save_mortal_salt, i);
+            LbFileClose(fh);
+        }
+    } else
+    {
+        ushort cheats;
+
+        LbFileRead(fh, kbkeys, 46);
+        LbFileRead(fh, jskeys, 46);
+        LbFileRead(fh, &byte_1C4A9F, 1);
+        LbFileRead(fh, &players[local_player_no].DoubleMode, 1);
+        for (i = 0; i != 4; i++)
+        {
+            PlayerInfo *p_locplayer;
+            p_locplayer = &players[local_player_no];
+            LbFileRead(fh, &p_locplayer->UserInput[i].ControlMode, 2);
+        }
+        LbFileRead(fh, &startscr_samplevol, 2);
+        LbFileRead(fh, &startscr_midivol, 2);
+        LbFileRead(fh, &startscr_cdvolume, 2);
+        LbFileRead(fh, &unkn_gfx_option_2, 1);
+        LbFileRead(fh, &unkn_option_3, 1);
+        LbFileRead(fh, &unkn_option_4, 1);
+        LbFileRead(fh, &ingame.DetailLevel, 1);
+        LbFileRead(fh, &game_high_resolution, 1);
+        LbFileRead(fh, &game_projector_speed, 1);
+        LbFileRead(fh, &game_perspective, 1);
+        LbFileRead(fh, &ingame.PanelPermutation, 1);
+        LbFileRead(fh, &ingame.TrenchcoatPreference, 1);
+        LbFileRead(fh, &ingame.CDTrack, 1);
+        LbFileRead(fh, &ingame.DangerTrack, 1);
+        LbFileRead(fh, &ingame.UseMultiMedia, 1);
+        LbFileRead(fh, &cheats, 2);
+        LbFileRead(fh, &save_mortal_salt, 4);
+        LbFileClose(fh);
+
+        if (unkn_gfx_option_2)
+            ingame.Flags |= 0x0002;
+        else
+            ingame.Flags &= ~0x0002;
+
+        if (unkn_option_3)
+            ingame.Flags |= 0x0001;
+        else
+            ingame.Flags &= ~0x0001;
+
+        if (unkn_option_4)
+            ingame.Flags |= 0x0400;
+        else
+            ingame.Flags &= ~0x0400;
+
+        bang_set_detail(ingame.DetailLevel == 0);
+        SetSoundMasterVolume(127 * startscr_samplevol / 322);
+        SetMusicMasterVolume(127 * startscr_midivol / 322);
+        SetCDVolume((70 * (127 * startscr_cdvolume / 322) / 100));
+    }
+
+    i = -1;
+    if (byte_1C4A9F)
+        i = joy_func_067(&joy, byte_1C4A9F);
+    if (i != 1)
+        byte_1C4A9F = 0;
+#endif
 }
 
 void setup_color_lookups(void)
