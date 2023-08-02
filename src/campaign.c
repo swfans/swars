@@ -265,6 +265,12 @@ const struct TbNamedEnum missions_conf_common_types[] = {
   {NULL,			0},
 };
 
+const struct TbNamedEnum missions_conf_any_bool[] = {
+  {"True",			1},
+  {"False",			2},
+  {NULL,			0},
+};
+
 struct Campaign campaigns[CAMPAIGNS_MAX_COUNT];
 
 /** Size of campaign strings within the engine buffer.
@@ -278,37 +284,14 @@ extern ushort display_mode;
 
 void load_campaigns(void)
 {
+    ushort campgn;
+
     campaign_strings_len = 0;
     mission_strings_len = 0;
-    { // Fill campaign list, with static data for now
-        struct Campaign *p_campgn;
 
-        p_campgn = &campaigns[0];
-        p_campgn->TextName = "Eurocorp";
-        p_campgn->TextId = 642;
-        p_campgn->FirstTrigger = 1;
-        p_campgn->NetscanTextId = 441;
-        p_campgn->OutroFMV = "data/outro-s.smk";
-        p_campgn->OutroBkFn = "data/outro-s.raw";
-        p_campgn->Flags = CmpgF_IsSelectable | CmpgF_IsSinglePlayer;
-
-        p_campgn = &campaigns[1];
-        p_campgn->TextName = "Church";
-        p_campgn->TextId = 643;
-        p_campgn->FirstTrigger = 48;
-        p_campgn->NetscanTextId = 650;
-        p_campgn->OutroFMV = "data/outro-z.smk";
-        p_campgn->OutroBkFn = "data/outro-z.raw";
-        p_campgn->Flags = CmpgF_IsSelectable | CmpgF_IsSinglePlayer;
-
-        p_campgn = &campaigns[2];
-        //p_campgn->TextName = "Unguided";
-        p_campgn->TextId = 644;
-        p_campgn->FirstTrigger = 103;
-        p_campgn->NetscanTextId = 441;
-        p_campgn->OutroFMV = "data/outro-p.smk";
-        p_campgn->OutroBkFn = "data/outro-p.raw";
-        p_campgn->Flags = CmpgF_IsSelectable | CmpgF_IsSinglePlayer;
+    for (campgn = 0; campgn < CAMPAIGNS_MAX_COUNT; campgn++) {
+        if (!read_missions_conf_info(campgn))
+            break;
     }
 }
 
@@ -965,7 +948,7 @@ int parse_next_used_objective(const char *buf, long buflen, long pri, long mapno
 
 /** Reads common information block only, from missions file.
  */
-void read_missions_conf_info(int num)
+TbBool read_missions_conf_info(int num)
 {
     TbFileHandle conf_fh;
     TbBool done;
@@ -1004,10 +987,10 @@ void read_missions_conf_info(int num)
     // Parse the [common] section of loaded file
     done = false;
     if (LbIniFindSection(&parser, "common") != Lb_SUCCESS) {
-        CONFWRNLOG("Could not find \"[%s]\" section, file skipped.", "common");
+        CONFDBGLOG("Could not find \"[%s]\" section, file skipped.", "common");
         LbIniParseEnd(&parser);
         LbMemoryFree(conf_buf);
-        return;
+        return false;
     }
 #define COMMAND_TEXT(cmd_num) LbNamedEnumGetName(missions_conf_common_cmds,cmd_num)
     while (!done)
@@ -1080,12 +1063,12 @@ void read_missions_conf_info(int num)
             CONFDBGLOG("%s \"%s\"", COMMAND_TEXT(cmd_num), (int)p_campgn->OutroBkFn);
             break;
         case MissL_Selectable:
-            i = LbIniValueGetLongInt(&parser, &k);
+            i = LbIniValueGetNamedEnum(&parser, missions_conf_any_bool);
             if (i <= 0) {
-                CONFWRNLOG("Could not read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                CONFWRNLOG("Could not recognize \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
                 break;
             }
-            if (k)
+            if (i == 1)
                 p_campgn->Flags |= CmpgF_IsSelectable;
             else
                 p_campgn->Flags &= ~CmpgF_IsSelectable;
@@ -1119,6 +1102,7 @@ void read_missions_conf_info(int num)
     LbIniParseEnd(&parser);
     LbMemoryFree(conf_buf);
     campaign_strings_len = p_str - (char *)(engine_mem_alloc_ptr + engine_mem_alloc_size - 64000);
+    return true;
 }
 
 /** Reads missions file, with information on all missions included.

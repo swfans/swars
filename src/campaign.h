@@ -169,6 +169,7 @@ extern struct Mission mission_list[120];
 void load_campaigns(void);
 ushort selectable_campaigns_count(void);
 
+TbBool read_missions_conf_info(int num);
 void load_missions(int num);
 void save_missions_conf_file(int num);
 void read_missions_conf_file(int num);
