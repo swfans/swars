@@ -596,6 +596,7 @@ extern ubyte byte_1C6DDC[5];
 extern ubyte data_19ec6f;
 extern ulong save_mortal_salt;
 
+extern ushort weapon_text_index[32];
 extern ubyte background_type;
 extern ubyte old_screentype;
 extern ubyte screentype;

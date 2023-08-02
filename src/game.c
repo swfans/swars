@@ -4765,6 +4765,20 @@ ubyte do_abort_2(ubyte click)
     return ret;
 }
 
+void my_preprocess_text(char *text)
+{
+    asm volatile ("call ASM_my_preprocess_text\n"
+        :  : "a" (text));
+}
+
+int load_file_wad(const char *textdt_fname, const char *alltext_fname, void *a3)
+{
+    int ret;
+    asm volatile ("call ASM_load_file_wad\n"
+        : "=r" (ret) : "a" (textdt_fname), "d" (alltext_fname), "b" (a3));
+    return ret;
+}
+
 void load_city_txt(void)
 {
     asm volatile ("call ASM_load_city_txt\n"
@@ -4786,8 +4800,113 @@ void load_city_data(ubyte type)
 
 void init_weapon_text(void)
 {
+#if 0
     asm volatile ("call ASM_init_weapon_text\n"
         :  :  : "eax" );
+#else
+    const char *codename;
+    char locstr[56];
+    int weptxt_pos;
+    char *s;
+    int i, n;
+
+    if (load_file_wad("textdata/wms.txt", "qdata/alltext", weapon_text) == Lb_FAIL)
+        return;
+
+    s = weapon_text;
+    n = (background_type == 1) ? 1 : 0; // TODO store naming convention within INI file
+    for (i = 0; i != n; i++)
+    {
+        if (s) s = strchr(s, ']'); // PLAYER type
+        if (s) s++;
+        if (s) s = strchr(s, ']'); // WEAPONS section
+        if (s) s++;
+        if (s) s = strchr(s, ']'); // MODS section
+        if (s) s++;
+    }
+
+    if (s) s = strchr(s, ']');
+    if (s) s++;
+    if (s) s = strchr(s, ']');
+    if (s) s++;
+
+    // section_start = s;
+
+    weptxt_pos = 0;
+    s += 2;
+    while (1)
+    {
+        if (*s == '[')
+            break;
+
+        n = 0;
+        while ((*s != '\r') && (*s != '\n'))
+        {
+            locstr[n] = *s++;
+            n++;
+        }
+        locstr[n] = '\0';
+        s += 2;
+
+        for (i = 0; i < 30; i++)
+        {
+            if (background_type == 0) {
+              codename = gui_strings[i];
+            } else if (background_type == 1) {
+              codename = gui_strings[i + 30];
+            } else if ( background_type == 2 ) {
+              codename = gui_strings[i];
+            } else {
+              codename = gui_strings[i];
+            }
+            if (strcmp(codename, locstr) == 0)
+                break;
+        }
+        if (i < 30)
+        {
+            weapon_text_index[i] = weptxt_pos;
+
+            while ((*s != '\r') && (*s != '\n')) {
+                weapon_text[weptxt_pos] = *s++;
+                weptxt_pos++;
+            }
+            weapon_text[weptxt_pos] = 0;
+            s += 2;
+
+            n = weapon_text_index[i];
+            my_preprocess_text(&weapon_text[n]);
+        } else {
+            if (s) s = strpbrk(s, "\r\n");
+            if (s) s += 2;
+        }
+    }
+
+    if (s) s = strchr(s, '[');
+    if (s) s++;
+    if (s) s = strchr(s, ']');
+    if (s) s++;
+
+    s += 2;
+    for (i = 32; i < 48; i++)
+    {
+        if (*s == '[')
+            break;
+
+        if (s) s = strpbrk(s, "\r\n");
+        if (s) s++;
+
+        weapon_text_index[i] = weptxt_pos;
+        while ((*s != '\r') && (*s != '\n')) {
+            weapon_text[weptxt_pos] = *s++;
+            weptxt_pos++;
+        }
+        weapon_text[weptxt_pos] = 0;
+        s += 2;
+
+        n = weapon_text_index[i];
+        my_preprocess_text(&weapon_text[n]);
+    }
+#endif
 }
 
 void srm_reset_research(void)
