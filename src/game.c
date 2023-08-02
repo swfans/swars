@@ -567,10 +567,106 @@ void flic_unkn03(ubyte a1)
         : : "a" (a1));
 }
 
+void person_func_unknown_310(ubyte a1)
+{
+    asm volatile ("call ASM_person_func_unknown_310\n"
+        :  : "a" (a1));
+}
+
 void play_smacker(int vid_type)
 {
+#if 0
     asm volatile ("call ASM_play_smacker\n"
         : : "a" (vid_type));
+#else
+    char str[52];
+    const char *fname;
+
+    // TODO case for a specific level, remove
+    if (cmdln_param_current_map == 51)
+    {
+        overall_scale = 256;
+        unkn_flags_01 &= 0xFE;
+        return;
+    }
+    person_func_unknown_310(2);
+    if (lbDisplay.ScreenMode != 13)
+        setup_screen_mode(13);
+    LbMouseChangeSprite(0);
+    show_black_screen();
+
+    switch (background_type)
+    {
+    case 0:
+        switch (vid_type)
+        {
+        case 0:
+        case 2:
+            // TODO case for a specific level, remove
+            if (cmdln_param_current_map == 46)
+            {
+                if (game_dirs[0].use_cd == 1)
+                    sprintf(str, "%slanguage/%s/syn_ele.smk", cd_drive, language_3str);
+                else
+                    sprintf(str, "data/syn_ele.smk");
+                fname = str;
+            }
+            else
+            {
+                fname = "qdata/syn_mc.smk";
+            }
+            break;
+        case 1:
+            fname = "qdata/syn_fail.smk";
+            break;
+        case 3:
+            fname = "qdata/syn_go.smk";
+            break;
+        }
+        break;
+    case 1:
+        switch (vid_type)
+        {
+        case 0:
+        case 2:
+            // TODO case for a specific level, remove
+            if (cmdln_param_current_map == 46)
+            {
+              if (game_dirs[0].use_cd == 1)
+                sprintf(str, "%slanguage/%s/chu_ele.smk", cd_drive, language_3str);
+              else
+                sprintf(str, "data/chu_ele.smk");
+              fname = str;
+            }
+            else
+            {
+              fname = "qdata/zel-mc.smk";
+            }
+            break;
+        case 1:
+            fname = "qdata/syn_fail.smk";
+            break;
+        case 3:
+            fname = "qdata/zel-go.smk";
+            break;
+        default:
+            fname = NULL;
+            break;
+        }
+        break;
+    case 2:
+        fname = NULL;
+        break;
+    default:
+        fname = NULL;
+        break;
+    }
+    if (fname != NULL) {
+        play_smk(fname, 13, 0);
+        smack_malloc_free_all();
+    }
+    show_black_screen();
+#endif
 }
 
 void draw_text(short x, short y, const char *text, ubyte colour)
@@ -6566,12 +6662,6 @@ void do_rotate_map(void)
 {
     asm volatile ("call ASM_do_rotate_map\n"
         :  :  : "eax" );
-}
-
-void person_func_unknown_310(ubyte a1)
-{
-    asm volatile ("call ASM_person_func_unknown_310\n"
-        :  : "a" (a1));
 }
 
 TbResult read_palette_file(void)
