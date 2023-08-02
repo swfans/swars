@@ -6412,10 +6412,109 @@ void update_menus(void)
         :  :  : "eax" );
 }
 
+void init_weapon_anim(ubyte weapon)
+{
+#if 0
+    asm volatile ("call ASM_init_weapon_anim\n"
+        : : "a" (weapon));
+#else
+    ulong k;
+
+    if (weapon >= 32)
+    {
+        k = anim_slots[2];
+        switch (background_type)
+        {
+        default:
+        case 0:
+            sprintf(animations[k].Filename, "data/equip/mod-%02d.fli", weapon - 32);
+            break;
+        case 1:
+            sprintf(animations[k].Filename, "data/equip/mod-%02dz.fli", weapon - 32);
+            break;
+#if 0 // TODO no FLIcs for unguided
+        case 2:
+            sprintf(animations[k].Filename, "data/equip/mod-%02db.fli", weapon - 32);
+            break;
+#endif
+        }
+    }
+    else
+    {
+        k = anim_slots[2];
+        switch (background_type)
+        {
+        default:
+        case 0:
+          sprintf(animations[k].Filename, "data/equip/wep-%02d.fli", weapon);
+            break;
+        case 1:
+            sprintf(animations[k].Filename, "data/equip/wep-%02dz.fli", weapon);
+            break;
+#if 0 // TODO no FLIcs for unguided
+        case 2:
+            sprintf(animations[k].Filename, "data/equip/wep-%02db.fli", weapon);
+            break;
+#endif
+        }
+    }
+    flic_unkn03(2);
+#endif
+}
+
 void reload_background(void)
 {
+#if 0
     asm volatile ("call ASM_reload_background\n"
         :  :  : "eax" );
+#else
+    const char *fname;
+
+    if (screentype == 6 || screentype == 10 || restore_savegame)
+    {
+        struct TbSprite *spr;
+        ubyte *scr_bkp;
+        int x, y;
+
+        scr_bkp = lbDisplay.WScreen;
+        lbDisplay.WScreen = back_buffer;
+        spr = &sprites_Icons0_0[168];
+        for (y = 0; y < 480; y += spr->SHeight)
+        {
+            for (x = 0; x < 640; x += spr->SWidth) {
+                LbSpriteDraw(x, y, spr);
+            }
+        }
+        lbDisplay.WScreen = scr_bkp;
+    }
+    else
+    {
+        switch (background_type)
+        {
+        case 0:
+        default:
+            fname = "qdata/s-proj.dat";
+            break;
+        case 1:
+            fname = "qdata/z-proj.dat";
+            break;
+#if 0 // TODO no background for unguided
+        case 2:
+            fname = "data/b-proj.dat";
+            break;
+#endif
+        }
+        LbFileLoadAt(fname, back_buffer);
+    }
+    if (screentype == 5 && selected_weapon != -1)
+    {
+        init_weapon_anim(selected_weapon);
+    }
+    if (screentype == 4 && selected_mod != -1)
+    {
+        init_weapon_anim(selected_mod + 32);
+    }
+#endif
 }
 
 void players_init_control_mode(void)
@@ -7372,50 +7471,6 @@ void show_date_time(void)
 void purple_unkn1_data_to_screen(void)
 {
     memcpy(data_1c6de4, data_1c6de8, 0x5FA0u);
-}
-
-void init_weapon_anim(ubyte weapon)
-{
-#if 0
-    asm volatile ("call ASM_init_weapon_anim\n"
-        : : "a" (weapon));
-#else
-    ulong k;
-
-    if (weapon >= 32)
-    {
-        k = anim_slots[2];
-        switch (background_type)
-        {
-        case 0:
-            sprintf(animations[k].Filename, "data/equip/mod-%02d.fli", weapon - 32);
-            break;
-        case 1:
-            sprintf(animations[k].Filename, "data/equip/mod-%02dz.fli", weapon - 32);
-            break;
-        case 2:
-            sprintf(animations[k].Filename, "data/equip/mod-%02db.fli", weapon - 32);
-            break;
-        }
-    }
-    else
-    {
-        k = anim_slots[2];
-        switch (background_type)
-        {
-        case 0:
-          sprintf(animations[k].Filename, "data/equip/wep-%02d.fli", weapon);
-            break;
-        case 1:
-            sprintf(animations[k].Filename, "data/equip/wep-%02dz.fli", weapon);
-            break;
-        case 2:
-            sprintf(animations[k].Filename, "data/equip/wep-%02db.fli", weapon);
-            break;
-        }
-    }
-    flic_unkn03(2);
-#endif
 }
 
 void research_unkn_func_002(void)
