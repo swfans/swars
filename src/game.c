@@ -5007,8 +5007,45 @@ void init_weapon_text(void)
 
 void srm_reset_research(void)
 {
+#if 0
     asm volatile ("call ASM_srm_reset_research\n"
         :  :  : "eax" );
+#else
+    int i;
+
+    for (i = 0; i < 32; i++)
+    {
+        research.WeaponDaysDone[i] = 0;
+        research.ModDaysDone[i] = 0;
+        research.WeaponProgress[i][0] = 0;
+        research.ModProgress[i][0] = 0;
+    }
+
+    switch (background_type)
+    {
+    case 0:
+    default:
+        research.WeaponsAllowed = 0x0;
+        research.WeaponsCompleted = 0x4000443;
+        research.ModsAllowed = 0x492;
+        research.ModsCompleted = 0x249;
+        research.CurrentWeapon = -1;
+        research.CurrentMod = -1;
+        research.Scientists = 0;
+        research.NumBases = 0;
+        break;
+    case 1:
+        research.WeaponsAllowed = 0;
+        research.WeaponsCompleted = 0x4020241;
+        research.ModsAllowed = 0x492;
+        research.ModsCompleted = 0x249;
+        research.CurrentWeapon = -1;
+        research.CurrentMod = -1;
+        research.Scientists = 0;
+        research.NumBases = 0;
+        break;
+    }
+#endif
 }
 
 void init_agents(void)
