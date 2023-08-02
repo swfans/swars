@@ -62,19 +62,26 @@ enum GameObjectiveTypes {
     GAME_OBJ_UNUSED_26,
 };
 
+enum CampaignFlags {
+    CmpgF_IsSinglePlayer = 0x0001,
+    CmpgF_IsSelectable   = 0x0002,
+};
+
 struct Campaign {
     /** Default campaign title. */
     const char *TextName;
     /** Translated campaign title text ID. */
     ushort TextId;
     /** Index of first mission in the campaign. */
-    ushort FirstMission;
+    ushort FirstTrigger;
     /** Translated text ID for netscan button. */
     ushort NetscanTextId;
     /** Outro movie file name. */
     const char *OutroFMV;
     /** Outro background after the FMV ends. */
     const char *OutroBkFn;
+    /** Flag switches for the campaign. */
+    ushort Flags;
 };
 
 struct Mission { // sizeof=76

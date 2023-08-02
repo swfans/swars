@@ -4968,7 +4968,7 @@ void campaign_new_game_prepare(void)
     load_missions(background_type);
 
     {
-        open_new_mission(p_campgn->FirstMission);
+        open_new_mission(p_campgn->FirstTrigger);
         text = gui_strings[p_campgn->NetscanTextId];
         init_screen_button(&brief_NETSCAN_button, 312, 405, text, 6, med2_font, 1, 128);
         brief_NETSCAN_COST_box.Width = 312 - brief_NETSCAN_button.Width - 17;

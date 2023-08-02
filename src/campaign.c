@@ -143,6 +143,12 @@ enum MissionListConfigCmd {
     MissL_MissionsCount = 1,
     MissL_TextName,
     MissL_TextId,
+    MissL_FirstTrigger,
+    MissL_NetscanTextId,
+    MissL_OutroFMV,
+    MissL_OutroBkFn,
+    MissL_Selectable,
+    MissL_Type,
     MissL_SpecialEffectID,
     MissL_SourceID,
     MissL_SuccessID,
@@ -191,7 +197,15 @@ enum ObjectiveConfigParam {
 
 const struct TbNamedEnum missions_conf_common_cmds[] = {
   {"MissionsCount",	MissL_MissionsCount},
-  {NULL,		0},
+  {"TextName",		MissL_TextName},
+  {"TextId",		MissL_TextId},
+  {"FirstTrigger",	MissL_FirstTrigger},
+  {"NetscanTextId",	MissL_NetscanTextId},
+  {"OutroFMV",		MissL_OutroFMV},
+  {"OutroBkFn",		MissL_OutroBkFn},
+  {"Selectable",	MissL_Selectable},
+  {"Type",			MissL_Type},
+  {NULL,			0},
 };
 
 const struct TbNamedEnum missions_conf_mission_cmds[] = {
@@ -245,54 +259,74 @@ const struct TbNamedEnum missions_conf_objective_params[] = {
   {NULL,			0},
 };
 
+const struct TbNamedEnum missions_conf_common_types[] = {
+  {"SP",			1},
+  {"MP",			2},
+  {NULL,			0},
+};
+
 struct Campaign campaigns[CAMPAIGNS_MAX_COUNT];
 
-extern ushort mission_strings_len;
+/** Size of campaign strings within the engine buffer.
+ */
+ushort campaign_strings_len = 0;
+
+/** Size of mission strings after campaign strings.
+ */
+extern ushort mission_strings_len; // = 0;
 extern ushort display_mode;
 
 void load_campaigns(void)
 {
+    campaign_strings_len = 0;
+    mission_strings_len = 0;
     { // Fill campaign list, with static data for now
         struct Campaign *p_campgn;
 
         p_campgn = &campaigns[0];
         p_campgn->TextName = "Eurocorp";
         p_campgn->TextId = 642;
-        p_campgn->FirstMission = 1;
+        p_campgn->FirstTrigger = 1;
         p_campgn->NetscanTextId = 441;
         p_campgn->OutroFMV = "data/outro-s.smk";
         p_campgn->OutroBkFn = "data/outro-s.raw";
+        p_campgn->Flags = CmpgF_IsSelectable | CmpgF_IsSinglePlayer;
 
         p_campgn = &campaigns[1];
         p_campgn->TextName = "Church";
         p_campgn->TextId = 643;
-        p_campgn->FirstMission = 48;
+        p_campgn->FirstTrigger = 48;
         p_campgn->NetscanTextId = 650;
         p_campgn->OutroFMV = "data/outro-z.smk";
         p_campgn->OutroBkFn = "data/outro-z.raw";
+        p_campgn->Flags = CmpgF_IsSelectable | CmpgF_IsSinglePlayer;
 
         p_campgn = &campaigns[2];
         //p_campgn->TextName = "Unguided";
         p_campgn->TextId = 644;
-        p_campgn->FirstMission = 103;
+        p_campgn->FirstTrigger = 103;
         p_campgn->NetscanTextId = 441;
         p_campgn->OutroFMV = "data/outro-p.smk";
         p_campgn->OutroBkFn = "data/outro-p.raw";
+        p_campgn->Flags = CmpgF_IsSelectable | CmpgF_IsSinglePlayer;
     }
 }
 
 ushort selectable_campaigns_count(void)
 {
+    ushort matches;
     ushort campgn;
 
+    matches = 0;
     for (campgn = 0; campgn < CAMPAIGNS_MAX_COUNT; campgn++) {
         struct Campaign *p_campgn;
 
         p_campgn = &campaigns[campgn];
-        if (p_campgn->TextName == NULL)
-            break;
+        if ((p_campgn->Flags & CmpgF_IsSinglePlayer) != 0)
+            if ((p_campgn->Flags & CmpgF_IsSelectable) != 0)
+                matches++;
     }
-    return campgn;
+    return matches;
 }
 
 void load_missions(int num)
@@ -309,16 +343,18 @@ void read_missions_bin_file(int num)
     TbFileHandle fh;
     char locstr[52];
     ulong fmtver;
+    char *p_str;
     int i;
 
     fmtver = 1;
+    p_str = engine_mem_alloc_ptr + engine_mem_alloc_size - 64000 + campaign_strings_len;
     sprintf(locstr, "%s/all%03d.mis", game_dirs[DirPlace_Levels].directory, num);
     fh = LbFileOpen(locstr, Lb_FILE_MODE_READ_ONLY);
     if (fh != INVALID_FILE)
     {
         LbFileRead(fh, &fmtver, sizeof(ulong));
         LbFileRead(fh, &mission_strings_len, sizeof(ushort));
-        LbFileRead(fh, engine_mem_alloc_ptr + engine_mem_alloc_size - 64000, mission_strings_len);
+        LbFileRead(fh, p_str, mission_strings_len);
         LbFileRead(fh, &next_mission, sizeof(ushort));
         LbFileRead(fh, mission_list, sizeof(struct Mission) * next_mission);
         LbFileRead(fh, &next_used_objective, sizeof(ushort));
@@ -334,15 +370,13 @@ void read_missions_bin_file(int num)
     }
 
     { // Fill mission names from strings block
-        char *s;
-        char *s_end;
+        char *p_strend;
 
-        s = engine_mem_alloc_ptr + engine_mem_alloc_size - 64000;
-        s_end = s + mission_strings_len;
+        p_strend = p_str + mission_strings_len;
         for (i = 1; i < next_mission; i++) {
-            if (s >= s_end) break;
-            mission_list[i].TextName = s;
-            s += strlen(s) + 1;
+            if (p_str >= p_strend) break;
+            mission_list[i].TextName = p_str;
+            p_str += strlen(p_str) + 1;
         }
     }
 
@@ -929,6 +963,166 @@ int parse_next_used_objective(const char *buf, long buflen, long pri, long mapno
     return objectv;
 }
 
+/** Reads common information block only, from missions file.
+ */
+void read_missions_conf_info(int num)
+{
+    TbFileHandle conf_fh;
+    TbBool done;
+    unsigned int i;
+    long k;
+    char *conf_buf;
+    struct TbIniParser parser;
+    char conf_fname[80];
+    int conf_len;
+    struct Campaign *p_campgn;
+    char *p_str;
+
+    sprintf(conf_fname, "%s" FS_SEP_STR "miss%03d.ini", "conf", num);
+    conf_fh = LbFileOpen(conf_fname, Lb_FILE_MODE_READ_ONLY);
+    if (conf_fh != INVALID_FILE) {
+        conf_len = LbFileLengthHandle(conf_fh);
+        if (conf_len > 1024*1024)
+            conf_len = 1024*1024;
+        conf_buf = LbMemoryAlloc(conf_len+16);
+        conf_len = LbFileRead(conf_fh, conf_buf, conf_len);
+        LOGSYNC("Processing '%s' file, %d bytes", conf_fname, conf_len);
+        LbFileClose(conf_fh);
+    } else {
+        LOGSYNC("Could not open '%s' file.", conf_fname);
+        conf_buf = LbMemoryAlloc(16);
+        conf_len = 0;
+    }
+    conf_buf[conf_len] = '\0';
+    LbIniParseStart(&parser, conf_buf, conf_len);
+#define CONFWRNLOG(format,args...) LOGWARN("%s(line %lu): " format, conf_fname, parser.line_num, ## args)
+#define CONFDBGLOG(format,args...) LOGDBG("%s(line %lu): " format, conf_fname, parser.line_num, ## args)
+    p_campgn = &campaigns[num];
+    LbMemorySet(p_campgn, 0, sizeof(struct Campaign));
+
+    p_str = engine_mem_alloc_ptr + engine_mem_alloc_size - 64000;
+    // Parse the [common] section of loaded file
+    done = false;
+    if (LbIniFindSection(&parser, "common") != Lb_SUCCESS) {
+        CONFWRNLOG("Could not find \"[%s]\" section, file skipped.", "common");
+        LbIniParseEnd(&parser);
+        LbMemoryFree(conf_buf);
+        return;
+    }
+#define COMMAND_TEXT(cmd_num) LbNamedEnumGetName(missions_conf_common_cmds,cmd_num)
+    while (!done)
+    {
+        int cmd_num;
+
+        // Finding command number in this line
+        i = 0;
+        cmd_num = LbIniRecognizeKey(&parser, missions_conf_common_cmds);
+        // Now store the config item in correct place
+        switch (cmd_num)
+        {
+        case MissL_MissionsCount:
+            break;
+        case MissL_TextName:
+            i = LbIniValueGetStrWhole(&parser, p_str, 80);
+            if (i <= 0) {
+                CONFWRNLOG("Couldn't read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                break;
+            }
+            p_campgn->TextName = p_str;
+            p_str += strlen(p_str) + 1;
+            CONFDBGLOG("%s \"%s\"", COMMAND_TEXT(cmd_num), (int)p_campgn->TextName);
+            break;
+        case MissL_TextId:
+            i = LbIniValueGetLongInt(&parser, &k);
+            if (i <= 0) {
+                CONFWRNLOG("Could not read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                break;
+            }
+            p_campgn->TextId = k;
+            CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)p_campgn->TextId);
+            break;
+        case MissL_FirstTrigger:
+            i = LbIniValueGetLongInt(&parser, &k);
+            if (i <= 0) {
+                CONFWRNLOG("Could not read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                break;
+            }
+            p_campgn->FirstTrigger = k;
+            CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)p_campgn->FirstTrigger);
+            break;
+        case MissL_NetscanTextId:
+            i = LbIniValueGetLongInt(&parser, &k);
+            if (i <= 0) {
+                CONFWRNLOG("Could not read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                break;
+            }
+            p_campgn->NetscanTextId = k;
+            CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)p_campgn->NetscanTextId);
+            break;
+        case MissL_OutroFMV:
+            i = LbIniValueGetStrWhole(&parser, p_str, 80);
+            if (i <= 0) {
+                CONFWRNLOG("Couldn't read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                break;
+            }
+            p_campgn->OutroFMV = p_str;
+            p_str += strlen(p_str) + 1;
+            CONFDBGLOG("%s \"%s\"", COMMAND_TEXT(cmd_num), (int)p_campgn->OutroFMV);
+            break;
+        case MissL_OutroBkFn:
+            i = LbIniValueGetStrWhole(&parser, p_str, 80);
+            if (i <= 0) {
+                CONFWRNLOG("Couldn't read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                break;
+            }
+            p_campgn->OutroBkFn = p_str;
+            p_str += strlen(p_str) + 1;
+            CONFDBGLOG("%s \"%s\"", COMMAND_TEXT(cmd_num), (int)p_campgn->OutroBkFn);
+            break;
+        case MissL_Selectable:
+            i = LbIniValueGetLongInt(&parser, &k);
+            if (i <= 0) {
+                CONFWRNLOG("Could not read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                break;
+            }
+            if (k)
+                p_campgn->Flags |= CmpgF_IsSelectable;
+            else
+                p_campgn->Flags &= ~CmpgF_IsSelectable;
+            CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)(p_campgn->Flags & CmpgF_IsSelectable));
+            break;
+        case MissL_Type:
+            i = LbIniValueGetNamedEnum(&parser, missions_conf_common_types);
+            if (i <= 0) {
+                CONFWRNLOG("Could not recognize \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                break;
+            }
+            if (i == 1)
+                p_campgn->Flags |= CmpgF_IsSinglePlayer;
+            else
+                p_campgn->Flags &= ~CmpgF_IsSinglePlayer;
+            CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)(p_campgn->Flags & CmpgF_IsSinglePlayer));
+            break;
+        case 0: // comment
+            break;
+        case -1: // end of buffer
+        case -3: // end of section
+            done = true;
+            break;
+        default:
+            CONFWRNLOG("Unrecognized command.");
+            break;
+        }
+        LbIniSkipToNextLine(&parser);
+    }
+#undef COMMAND_TEXT
+    LbIniParseEnd(&parser);
+    LbMemoryFree(conf_buf);
+    campaign_strings_len = p_str - (char *)(engine_mem_alloc_ptr + engine_mem_alloc_size - 64000);
+}
+
+/** Reads missions file, with information on all missions included.
+ */
 void read_missions_conf_file(int num)
 {
     TbFileHandle conf_fh;
@@ -967,7 +1161,7 @@ void read_missions_conf_file(int num)
     // Add empty objective 0
     add_used_objective(0, 0);
 
-    p_str = engine_mem_alloc_ptr + engine_mem_alloc_size - 64000;
+    p_str = engine_mem_alloc_ptr + engine_mem_alloc_size - 64000 + campaign_strings_len;
     // Parse the [common] section of loaded file
     done = false;
     if (LbIniFindSection(&parser, "common") != Lb_SUCCESS) {
@@ -995,6 +1189,16 @@ void read_missions_conf_file(int num)
             }
             next_mission = k;
             CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)next_mission);
+            break;
+        case MissL_TextName:
+        case MissL_TextId:
+        case MissL_FirstTrigger:
+        case MissL_NetscanTextId:
+        case MissL_OutroFMV:
+        case MissL_OutroBkFn:
+        case MissL_Selectable:
+        case MissL_Type:
+            // These properties are handled when reading campaign info
             break;
         case 0: // comment
             break;
@@ -1461,7 +1665,7 @@ void read_missions_conf_file(int num)
 #undef CONFWRNLOG
     LbIniParseEnd(&parser);
     LbMemoryFree(conf_buf);
-    mission_strings_len = p_str - (char *)(engine_mem_alloc_ptr + engine_mem_alloc_size - 64000);
+    mission_strings_len = p_str - (char *)(engine_mem_alloc_ptr + engine_mem_alloc_size - 64000 + campaign_strings_len);
 }
 
 /******************************************************************************/
