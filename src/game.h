@@ -523,6 +523,30 @@ struct InGame {
     long Expenditure;
 };
 
+struct Animation {
+  ubyte *OutBuf;
+  long field_4;
+  short PosX;
+  short PosY;
+  short field_C;
+  ushort Flags;
+  long field_10;
+  long field_14;
+  short field_18;
+  short field_1A[1];
+  short field_1C[1];
+  short field_1E[1];
+  long field_20;
+  short field_24;
+  short field_26[5];
+  long field_30;
+  long field_34;
+  long FileHandle;
+  char Filename[48];
+  short anonymous_15;
+  short field_6E;
+};
+
 #pragma pack()
 
 extern char session_name[20];
@@ -572,6 +596,8 @@ extern long navi2_unkn_counter_max;
 extern ulong triangulation;
 
 extern ulong smack_malloc_used_tot;
+extern ubyte anim_slots[];
+extern struct Animation animations[2];
 
 #define STRINGS_MAX 652
 

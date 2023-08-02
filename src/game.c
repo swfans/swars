@@ -7376,8 +7376,46 @@ void purple_unkn1_data_to_screen(void)
 
 void init_weapon_anim(ubyte weapon)
 {
+#if 0
     asm volatile ("call ASM_init_weapon_anim\n"
         : : "a" (weapon));
+#else
+    ulong k;
+
+    if (weapon >= 32)
+    {
+        k = anim_slots[2];
+        switch (background_type)
+        {
+        case 0:
+            sprintf(animations[k].Filename, "data/equip/mod-%02d.fli", weapon - 32);
+            break;
+        case 1:
+            sprintf(animations[k].Filename, "data/equip/mod-%02dz.fli", weapon - 32);
+            break;
+        case 2:
+            sprintf(animations[k].Filename, "data/equip/mod-%02db.fli", weapon - 32);
+            break;
+        }
+    }
+    else
+    {
+        k = anim_slots[2];
+        switch (background_type)
+        {
+        case 0:
+          sprintf(animations[k].Filename, "data/equip/wep-%02d.fli", weapon);
+            break;
+        case 1:
+            sprintf(animations[k].Filename, "data/equip/wep-%02dz.fli", weapon);
+            break;
+        case 2:
+            sprintf(animations[k].Filename, "data/equip/wep-%02db.fli", weapon);
+            break;
+        }
+    }
+    flic_unkn03(2);
+#endif
 }
 
 void research_unkn_func_002(void)
