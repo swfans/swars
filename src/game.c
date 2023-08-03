@@ -5005,10 +5005,49 @@ void init_weapon_text(void)
 #endif
 }
 
+#define PURPLE_MOD_AREA_WIDTH 139
+#define PURPLE_MOD_AREA_HEIGHT 295
+
 void purple_mods_data_to_screen(void)
 {
+#if 0
     asm volatile ("call ASM_purple_mods_data_to_screen\n"
         :  :  : "eax" );
+#else
+    ubyte *buf;
+    ulong h;
+    int pos;
+    ubyte *o1;
+    ubyte *o2;
+
+    buf = back_buffer - PURPLE_MOD_AREA_WIDTH*PURPLE_MOD_AREA_HEIGHT;
+    pos = 123 * lbDisplay.PhysicalScreenWidth + 275;
+    o1 = &back_buffer[pos];
+    o2 = &lbDisplay.WScreen[pos];
+    switch (background_type)
+    {
+    default:
+    case 0:
+        LbFileLoadAt("qdata/equip/bgman.dat", buf);
+        break;
+    case 1:
+        LbFileLoadAt("qdata/equip/bgmanz.dat", buf);
+        break;
+#if 0 // TODO No animation files for Unguided
+    case 2:
+        LbFileLoadAt("qdata/equip/bgmanb.dat", buf);
+        break;
+#endif
+    }
+    for (h = 0; h < PURPLE_MOD_AREA_HEIGHT; h++)
+    {
+        LbMemoryCopy(o1, buf, PURPLE_MOD_AREA_WIDTH);
+        LbMemoryCopy(o2, buf, PURPLE_MOD_AREA_WIDTH);
+        buf += PURPLE_MOD_AREA_WIDTH;
+        o1 += lbDisplay.PhysicalScreenWidth;
+        o2 += lbDisplay.PhysicalScreenWidth;
+    }
+#endif
 }
 
 void blokey_static_flic_data_to_screen(void)
