@@ -396,12 +396,9 @@ struct ThingOldV9 { // sizeof=216
     long TngUnkn44; // pos=44
     short TngUnkn48; // pos=48 Seems to be a boolean only used against people
     ushort ThingOffset; // pos=50
-    short TngUnkn52; // TODO uncommonly used people only stats, if used then nearly always paired with TngUnkn56 and TngUnkn60
-    short TngUnkn54; // pos=54
-    short TngUnkn56; // TODO as per TngUnkn52 - numbers used suggests maybe comcur?
-    short TngUnkn58; // pos=58
-    short TngUnkn60; // TODO as per TngUnkn52
-    short TngUnkn62; // pos=62
+    long VX;
+    long VY;
+    long VZ;
     short PersonStamina; //This is only here in V12 files - stamina doesn't seem to exist in 9 and 11
     short PersonMaxStamina; //pos178 This is only here in V12 files
     short TngUnkn68; // pos=68
@@ -424,7 +421,7 @@ struct ThingOldV9 { // sizeof=216
     short TngUnkn102; // pos=102  People only, low values
     short TngUnkn104; // pos=104
     short TngUnkn106; // pos=106
-    ushort PersonComCur; // pos=108  This seems to only be used by vehicles, so likely is NOT comcur
+    ushort VehicleMatrixIndex; // pos=108 
     ushort TngUnkn110; // pos=110
     ushort UnkFrame; // pos=112
     short TngUnkn114; // pos=114
@@ -456,7 +453,7 @@ struct ThingOldV9 { // sizeof=216
     short PersonMood;
     struct DrawFrameId PersonFrameId;
     ubyte PersonShadows; // pos=169
-    ushort TngUnkn170; //contains mostly vehicle data, but some people use too
+    ushort VehiclePassengerHead; // LinkPassenger in person structure
     ushort TngUnkn172;
     ushort TngUnkn174;
     short PersonMaxEnergy; 
@@ -476,7 +473,7 @@ struct ThingOldV9 { // sizeof=216
     ubyte PersonCurrentWeapon;
     short PersonGotoX;
     short PersonGotoZ;  // Contains vehicle data
-    short PersonTempWeapon;  // This seems to correspond with TngUnkn170 in some way
+    short PersonTempWeapon;  // Values for what are in PersuadePower when using people union, need to check what this corresponds to in vehicle structure as these are vehicle stats that mirror VehiclePassengerHead
     short TngUnkn208;
     short TngUnkn210;
     short TngUnkn212; // pos=212
