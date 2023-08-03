@@ -145,6 +145,7 @@ enum MissionListConfigCmd {
     MissL_TextId,
     MissL_FirstTrigger,
     MissL_NetscanTextId,
+    MissL_ProjectorFnMk,
     MissL_OutroFMV,
     MissL_OutroBkFn,
     MissL_Selectable,
@@ -201,6 +202,7 @@ const struct TbNamedEnum missions_conf_common_cmds[] = {
   {"TextId",		MissL_TextId},
   {"FirstTrigger",	MissL_FirstTrigger},
   {"NetscanTextId",	MissL_NetscanTextId},
+  {"ProjectorFnMk",	MissL_ProjectorFnMk},
   {"OutroFMV",		MissL_OutroFMV},
   {"OutroBkFn",		MissL_OutroBkFn},
   {"Selectable",	MissL_Selectable},
@@ -983,7 +985,7 @@ TbBool read_missions_conf_info(int num)
     p_campgn = &campaigns[num];
     LbMemorySet(p_campgn, 0, sizeof(struct Campaign));
 
-    p_str = engine_mem_alloc_ptr + engine_mem_alloc_size - 64000;
+    p_str = engine_mem_alloc_ptr + engine_mem_alloc_size - 64000 + campaign_strings_len;
     // Parse the [common] section of loaded file
     done = false;
     if (LbIniFindSection(&parser, "common") != Lb_SUCCESS) {
@@ -1041,6 +1043,16 @@ TbBool read_missions_conf_info(int num)
             }
             p_campgn->NetscanTextId = k;
             CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)p_campgn->NetscanTextId);
+            break;
+        case MissL_ProjectorFnMk:
+            i = LbIniValueGetStrWhole(&parser, p_str, 80);
+            if (i <= 0) {
+                CONFWRNLOG("Couldn't read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                break;
+            }
+            p_campgn->ProjectorFnMk = p_str;
+            p_str += strlen(p_str) + 1;
+            CONFDBGLOG("%s \"%s\"", COMMAND_TEXT(cmd_num), (int)p_campgn->ProjectorFnMk);
             break;
         case MissL_OutroFMV:
             i = LbIniValueGetStrWhole(&parser, p_str, 80);
@@ -1178,6 +1190,7 @@ void read_missions_conf_file(int num)
         case MissL_TextId:
         case MissL_FirstTrigger:
         case MissL_NetscanTextId:
+        case MissL_ProjectorFnMk:
         case MissL_OutroFMV:
         case MissL_OutroBkFn:
         case MissL_Selectable:

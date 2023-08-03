@@ -5033,26 +5033,18 @@ void init_next_blokey_flic(void)
     asm volatile ("call ASM_init_next_blokey_flic\n"
         :  :  : "eax" );
 #else
-    char campgn_mark;
+    struct Campaign *p_campgn;
+    const char *campgn_mark;
     const char *flic_dir;
     ushort cmod, stage;
     int k;
 
-    switch (background_type)
-    {
-    default:
-    case 0:
-        campgn_mark = 'm';
-        break;
-    case 1:
-        campgn_mark = 'z';
-        break;
-#if 0 // TODO No animation files for Unguided
-    case 2:
-        campgn_mark = 'b';
-        break;
-#endif
-    }
+    p_campgn = &campaigns[background_type];
+    campgn_mark = p_campgn->ProjectorFnMk;
+    // TODO FNAMES the convention with mark char is broken for "s"
+    if (strcmp(campgn_mark, "s") == 0)
+        campgn_mark = "m";
+
     flic_dir = "qdata/equip";
 
     stage = 0;
@@ -5109,7 +5101,7 @@ void init_next_blokey_flic(void)
         else if (!IsSamplePlaying(0, 134, 0))
         {
             k = anim_slots[8];
-            sprintf(animations[k].Filename, "%s/%c%da%d.fli", flic_dir, campgn_mark, flic_mods[0], flic_mods[2]);
+            sprintf(animations[k].Filename, "%s/%s%da%d.fli", flic_dir, campgn_mark, flic_mods[0], flic_mods[2]);
             flic_unkn03(8u);
             play_sample_using_heap(0, 126, 127, 64, 100, 0, 1u);
             current_frame = 0;
@@ -5122,16 +5114,16 @@ void init_next_blokey_flic(void)
         switch (cmod)
         {
         case 0:
-            sprintf(animations[k].Filename, "%s/%c%dbo.fli", flic_dir, campgn_mark, old_flic_mods[0]);
+            sprintf(animations[k].Filename, "%s/%s%dbo.fli", flic_dir, campgn_mark, old_flic_mods[0]);
             break;
         case 1:
-            sprintf(animations[k].Filename, "%s/%c%dbbo.fli", flic_dir, campgn_mark, old_flic_mods[0]);
+            sprintf(animations[k].Filename, "%s/%s%dbbo.fli", flic_dir, campgn_mark, old_flic_mods[0]);
             break;
         case 2:
-            sprintf(animations[k].Filename, "%s/%c%da%do.fli", flic_dir, campgn_mark, old_flic_mods[0], old_flic_mods[2]);
+            sprintf(animations[k].Filename, "%s/%s%da%do.fli", flic_dir, campgn_mark, old_flic_mods[0], old_flic_mods[2]);
             break;
         case 3:
-            sprintf(animations[k].Filename, "%s/%c%dl%do.fli", flic_dir, campgn_mark, old_flic_mods[0], old_flic_mods[3]);
+            sprintf(animations[k].Filename, "%s/%s%dl%do.fli", flic_dir, campgn_mark, old_flic_mods[0], old_flic_mods[3]);
             break;
         default:
             assert(!"unreachable");
@@ -5149,16 +5141,16 @@ void init_next_blokey_flic(void)
         switch (cmod)
         {
           case 0:
-            sprintf(animations[k].Filename, "%s/%c%dbi.fli", flic_dir, campgn_mark, flic_mods[0]);
+            sprintf(animations[k].Filename, "%s/%s%dbi.fli", flic_dir, campgn_mark, flic_mods[0]);
             break;
           case 1:
-            sprintf(animations[k].Filename, "%s/%c%dbbi.fli", flic_dir, campgn_mark, flic_mods[0]);
+            sprintf(animations[k].Filename, "%s/%s%dbbi.fli", flic_dir, campgn_mark, flic_mods[0]);
             break;
           case 2:
-            sprintf(animations[k].Filename, "%s/%c%da%di.fli", flic_dir, campgn_mark, flic_mods[0], flic_mods[2]);
+            sprintf(animations[k].Filename, "%s/%s%da%di.fli", flic_dir, campgn_mark, flic_mods[0], flic_mods[2]);
             break;
           case 3:
-            sprintf(animations[k].Filename, "%s/%c%dl%di.fli", flic_dir, campgn_mark, flic_mods[0], flic_mods[3]);
+            sprintf(animations[k].Filename, "%s/%s%dl%di.fli", flic_dir, campgn_mark, flic_mods[0], flic_mods[3]);
             break;
           default:
             assert(!"unreachable");
@@ -5185,25 +5177,26 @@ void purple_mods_data_to_screen(void)
     asm volatile ("call ASM_purple_mods_data_to_screen\n"
         :  :  : "eax" );
 #else
+    struct Campaign *p_campgn;
+    const char *campgn_mark;
+    const char *flic_dir;
+    char str[52];
     ubyte *buf;
     ubyte *o[2];
 
+    p_campgn = &campaigns[background_type];
+    campgn_mark = p_campgn->ProjectorFnMk;
+    // TODO FNAMES the convention with mark char is broken for "s"
+    if (strcmp(campgn_mark, "s") == 0)
+        campgn_mark = "";
+
+    flic_dir = "qdata/equip";
+
+    sprintf(str, "%s/bgman%s.dat", flic_dir, campgn_mark);
+
     buf = back_buffer - PURPLE_MOD_AREA_WIDTH*PURPLE_MOD_AREA_HEIGHT;
-    switch (background_type)
-    {
-    default:
-    case 0:
-        LbFileLoadAt("qdata/equip/bgman.dat", buf);
-        break;
-    case 1:
-        LbFileLoadAt("qdata/equip/bgmanz.dat", buf);
-        break;
-#if 0 // TODO No animation files for Unguided
-    case 2:
-        LbFileLoadAt("qdata/equip/bgmanb.dat", buf);
-        break;
-#endif
-    }
+    LbFileLoadAt(str, buf);
+
     o[1] = back_buffer;
     o[0] = lbDisplay.WScreen;
 
@@ -5219,28 +5212,20 @@ void blokey_static_flic_data_to_screen(void)
     asm volatile ("call ASM_blokey_static_flic_data_to_screen\n"
         :  :  : "eax" );
 #else
-    char campgn_mark;
+    struct Campaign *p_campgn;
+    const char *campgn_mark;
     const char *flic_dir;
     char str[52];
     ubyte *buf;
     ubyte *o[2];
     int k;
 
-    switch (background_type)
-    {
-    default:
-    case 0:
-        campgn_mark = 'm';
-        break;
-    case 1:
-        campgn_mark = 'z';
-        break;
-#if 0 // TODO No animation files for Unguided
-    case 2:
-        campgn_mark = 'b';
-        break;
-#endif
-    }
+    p_campgn = &campaigns[background_type];
+    campgn_mark = p_campgn->ProjectorFnMk;
+    // TODO FNAMES the convention with mark char is broken for "s"
+    if (strcmp(campgn_mark, "s") == 0)
+        campgn_mark = "m";
+
     flic_dir = "qdata/equip";
 
     o[1] = back_buffer;
@@ -5254,16 +5239,16 @@ void blokey_static_flic_data_to_screen(void)
         switch (k)
         {
         case 0:
-            sprintf(str, "%s/%c%db.dat", flic_dir, campgn_mark, flic_mods[0]);
+            sprintf(str, "%s/%s%db.dat", flic_dir, campgn_mark, flic_mods[0]);
             break;
         case 1:
-            sprintf(str, "%s/%c%dbb.dat", flic_dir, campgn_mark, flic_mods[0]);
+            sprintf(str, "%s/%s%dbb.dat", flic_dir, campgn_mark, flic_mods[0]);
             break;
         case 2:
-            sprintf(str, "%s/%c%da%d.dat", flic_dir, campgn_mark, flic_mods[0], flic_mods[2]);
+            sprintf(str, "%s/%s%da%d.dat", flic_dir, campgn_mark, flic_mods[0], flic_mods[2]);
             break;
         case 3:
-            sprintf(str, "%s/%c%dl%d.dat", flic_dir, campgn_mark, flic_mods[0], flic_mods[3]);
+            sprintf(str, "%s/%s%dl%d.dat", flic_dir, campgn_mark, flic_mods[0], flic_mods[3]);
             break;
         }
 
@@ -6729,45 +6714,28 @@ void init_weapon_anim(ubyte weapon)
     asm volatile ("call ASM_init_weapon_anim\n"
         : : "a" (weapon));
 #else
+    struct Campaign *p_campgn;
+    const char *campgn_mark;
+    const char *flic_dir;
     ulong k;
+
+    p_campgn = &campaigns[background_type];
+    campgn_mark = p_campgn->ProjectorFnMk;
+    // TODO FNAMES the convention with mark char is broken for "s"
+    if (strcmp(campgn_mark, "s") == 0)
+        campgn_mark = "";
+
+    flic_dir = "data/equip";
 
     if (weapon >= 32)
     {
         k = anim_slots[2];
-        switch (background_type)
-        {
-        default:
-        case 0:
-            sprintf(animations[k].Filename, "data/equip/mod-%02d.fli", weapon - 32);
-            break;
-        case 1:
-            sprintf(animations[k].Filename, "data/equip/mod-%02dz.fli", weapon - 32);
-            break;
-#if 0 // TODO no FLIcs for unguided
-        case 2:
-            sprintf(animations[k].Filename, "data/equip/mod-%02db.fli", weapon - 32);
-            break;
-#endif
-        }
+        sprintf(animations[k].Filename, "%s/mod-%02d%s.fli", flic_dir, (int)weapon - 32, campgn_mark);
     }
     else
     {
         k = anim_slots[2];
-        switch (background_type)
-        {
-        default:
-        case 0:
-          sprintf(animations[k].Filename, "data/equip/wep-%02d.fli", weapon);
-            break;
-        case 1:
-            sprintf(animations[k].Filename, "data/equip/wep-%02dz.fli", weapon);
-            break;
-#if 0 // TODO no FLIcs for unguided
-        case 2:
-            sprintf(animations[k].Filename, "data/equip/wep-%02db.fli", weapon);
-            break;
-#endif
-        }
+        sprintf(animations[k].Filename, "%s/wep-%02d%s.fli", flic_dir, (int)weapon, campgn_mark);
     }
     flic_unkn03(2);
 #endif
