@@ -2856,7 +2856,7 @@ void init_outro(void)
     struct Campaign *p_campgn;
     const char *text1;
     const char *text2;
-    int fh;
+    TbFileHandle fh;
     int i;
 
     gamep_unknval_01 = 0;
@@ -2877,7 +2877,7 @@ void init_outro(void)
     screen_buffer_fill_black();
 
     fh = LbFileOpen(p_campgn->OutroBkFn, Lb_FILE_MODE_READ_ONLY);
-    if (fh != -1)
+    if (fh != INVALID_FILE)
     {
         for (i = 24; i != 174; i++)
         {
@@ -6747,8 +6747,6 @@ void reload_background(void)
     asm volatile ("call ASM_reload_background\n"
         :  :  : "eax" );
 #else
-    const char *fname;
-
     if (screentype == 6 || screentype == 10 || restore_savegame)
     {
         struct TbSprite *spr;
@@ -6768,23 +6766,19 @@ void reload_background(void)
     }
     else
     {
-        switch (background_type)
-        {
-        case 0:
-        default:
-            fname = "qdata/s-proj.dat";
-            break;
-        case 1:
-            fname = "qdata/z-proj.dat";
-            break;
-#if 0 // TODO no background for unguided
-        case 2:
-            fname = "data/b-proj.dat";
-            break;
-#endif
-        }
-        LbFileLoadAt(fname, back_buffer);
+        struct Campaign *p_campgn;
+        char str[52];
+        const char *campgn_mark;
+        const char *bkdata_dir;
+
+        p_campgn = &campaigns[background_type];
+        campgn_mark = p_campgn->ProjectorFnMk;
+        bkdata_dir = "qdata";
+
+        sprintf(str, "%s/%s-proj.dat", bkdata_dir, campgn_mark);
+        LbFileLoadAt(str, back_buffer);
     }
+
     if (screentype == 5 && selected_weapon != -1)
     {
         init_weapon_anim(selected_weapon);
@@ -7684,8 +7678,7 @@ void update_options_screen_state(void)
 void init_net_players(void)
 {
     int i;
-    for (i = 0; i < 5; i++)
-    {
+    for (i = 0; i < 5; i++) {
         LbMemorySet(&net_players[i], '\0', sizeof(struct NetPlayer2));
     }
 }
@@ -7776,6 +7769,29 @@ void update_flic_mods(ubyte *mods)
 {
     asm volatile ("call ASM_update_flic_mods\n"
         : : "a" (mods));
+}
+
+void net_new_game_prepare(void)
+{
+    net_INITIATE_button.Flags = 1;
+    login_control__State = 6;
+    net_INITIATE_button.Text = gui_strings[385];
+    byte_15516D = -1;
+    byte_15516C = -1;
+    ingame.Credits = 50000;
+    ingame.CashAtStart = 50000;
+    login_control__TechLevel = 4;
+    unkn_city_no = -1;
+    login_control__City = -1;
+    ingame.Expenditure = 0;
+    net_groups_LOGON_button.Text = gui_strings[386];
+    unkn_flags_08 = 60;
+    login_control__Money = starting_cash_amounts[0];
+    init_agents();
+    srm_reset_research();
+    load_missions(background_type);
+    init_net_players();
+    draw_flic_purple_list(purple_unkn1_data_to_screen);
 }
 
 void net_unkn_func_33_sub1(int plyr, int netplyr)
@@ -7892,27 +7908,7 @@ void net_unkn_func_33_sub1(int plyr, int netplyr)
         {
             if (p_netplyr->U.Progress.val_15516D == netplyr)
             {
-                net_INITIATE_button.Flags = 1;
-                login_control__State = 6;
-                net_INITIATE_button.Text = gui_strings[385];
-                byte_15516D = -1;
-                byte_15516C = -1;
-                ingame.Credits = 50000;
-                ingame.CashAtStart = 50000;
-                login_control__TechLevel = 4;
-                unkn_city_no = -1;
-                login_control__City = -1;
-                ingame.Expenditure = 0;
-                net_groups_LOGON_button.Text = gui_strings[386];
-                unkn_flags_08 = 60;
-                login_control__Money = starting_cash_amounts[0];
-                init_agents();
-                srm_reset_research();
-                load_missions(background_type);
-                for (i = 0; i < 5; i++) {
-                    net_players[i].field_0[0] = '\0';
-                }
-                draw_flic_purple_list(purple_unkn1_data_to_screen);
+                net_new_game_prepare();
                 if (screentype == 4)
                 {
                     update_flic_mods(flic_mods);
@@ -7925,27 +7921,7 @@ void net_unkn_func_33_sub1(int plyr, int netplyr)
         } else {
             if (p_netplyr->U.Progress.val_15516D != netplyr)
                 LbNetworkSessionStop();
-            login_control__State = 6;
-            net_INITIATE_button.Text = gui_strings[385];
-            ingame.Credits = 50000;
-            ingame.CashAtStart = 50000;
-            ingame.Expenditure = 0;
-            unkn_flags_08 = 60;
-            net_INITIATE_button.Flags = 1;
-            byte_15516D = -1;
-            byte_15516C = -1;
-            net_groups_LOGON_button.Text = gui_strings[386];
-            unkn_city_no = -1;
-            login_control__Money = starting_cash_amounts[0];
-            login_control__City = -1;
-            login_control__TechLevel = 4;
-            init_agents();
-            srm_reset_research();
-            load_missions(background_type);
-            for (i = 0; i < 5; i++) {
-                net_players[i].field_0[0] = '\0';
-            }
-            draw_flic_purple_list(purple_unkn1_data_to_screen);
+            net_new_game_prepare();
             if (byte_1C4A6F)
                 LbNetworkHangUp();
             LbNetworkReset();
@@ -7953,75 +7929,22 @@ void net_unkn_func_33_sub1(int plyr, int netplyr)
         }
         break;
     case 13:
+        LbNetworkSessionStop();
         if (word_1811AE == 1)
         {
-            if (plyr != netplyr && net_host_player_no != plyr)
+            if (plyr == netplyr || net_host_player_no == plyr)
             {
-                LbNetworkSessionStop();
-            }
-            else
-            {
-                LbNetworkSessionStop();
-                net_INITIATE_button.Flags = 1;
-                ingame.Expenditure = 0;
-                unkn_flags_08 = 60;
-                login_control__State = 6;
-                net_INITIATE_button.Text = gui_strings[385];
-                ingame.Credits = 50000;
-                net_groups_LOGON_button.Text = gui_strings[386];
-                ingame.CashAtStart = 50000;
-                byte_15516D = -1;
-                byte_15516C = -1;
-                login_control__Money = starting_cash_amounts[0];
-                login_control__TechLevel = 4;
-                unkn_city_no = -1;
-                login_control__City = -1;
-                init_agents();
-                srm_reset_research();
-                load_missions(background_type);
-                for (i = 0; i < 5; i++) {
-                    net_players[i].field_0[0] = '\0';
-                }
-                draw_flic_purple_list(purple_unkn1_data_to_screen);
+                net_new_game_prepare();
                 memset(unkstruct04_arr, 0, 0x1108u);
                 byte_1C6D48 = 0;
                 for (i = 0; i < 8; i++) {
                     unkn2_names[i][0] = '\0';
                 }
-                if (screentype == 4)
-                {
-                    update_flic_mods(flic_mods);
-                    for (i = 0; i < 4; i++) {
-                        if (flic_mods[i] != old_flic_mods[i])
-                            mod_draw_states[i] |= 0x08;
-                    }
-                }
             }
         }
         else
         {
-            LbNetworkSessionStop();
-            login_control__State = 6;
-            ingame.Credits = 50000;
-            ingame.CashAtStart = 50000;
-            login_control__TechLevel = 4;
-            unkn_flags_08 = 60;
-            net_INITIATE_button.Text = gui_strings[385];
-            net_groups_LOGON_button.Text = gui_strings[386];
-            net_INITIATE_button.Flags = 1;
-            byte_15516D = -1;
-            byte_15516C = -1;
-            unkn_city_no = -1;
-            ingame.Expenditure = 0;
-            login_control__City = -1;
-            login_control__Money = starting_cash_amounts[0];
-            init_agents();
-            srm_reset_research();
-            load_missions(background_type);
-            for (i = 0; i < 5; i++) {
-                net_players[i].field_0[0] = '\0';
-            }
-            draw_flic_purple_list(purple_unkn1_data_to_screen);
+            net_new_game_prepare();
             for (i = 0; i < 8; i++) {
                 unkn2_names[i][0] = '\0';
             }
@@ -8029,13 +7952,13 @@ void net_unkn_func_33_sub1(int plyr, int netplyr)
               LbNetworkHangUp();
             LbNetworkReset();
             byte_1C4A7C = 0;
-            if (screentype == 4)
-            {
-                update_flic_mods(flic_mods);
-                for (i = 0; i < 4; i++) {
-                    if (flic_mods[i] != old_flic_mods[i])
-                        mod_draw_states[i] |= 0x08;
-                }
+        }
+        if (screentype == 4)
+        {
+            update_flic_mods(flic_mods);
+            for (i = 0; i < 4; i++) {
+                if (flic_mods[i] != old_flic_mods[i])
+                    mod_draw_states[i] |= 0x08;
             }
         }
         break;
@@ -8196,28 +8119,7 @@ void net_unkn_func_33(void)
     if (LbNetworkExchange(&network_players[0], sizeof(struct NetworkPlayer)) != 1)
     {
         LbNetworkSessionStop();
-        login_control__State = 6;
-        net_INITIATE_button.Flags = 1;
-        ingame.Expenditure = 0;
-        net_INITIATE_button.Text = gui_strings[385];
-        byte_15516D = -1;
-        byte_15516C = -1;
-        ingame.Credits = 50000;
-        ingame.CashAtStart = 50000;
-        login_control__TechLevel = 4;
-        unkn_city_no = -1;
-        login_control__City = -1;
-        net_groups_LOGON_button.Text = gui_strings[386];
-        unkn_flags_08 = 60;
-        login_control__Money = starting_cash_amounts[0];
-        init_agents();
-        srm_reset_research();
-        load_missions(background_type);
-
-        for (i = 0; i < 5; i++) {
-            net_players[i].field_D = 0;
-        }
-        draw_flic_purple_list(purple_unkn1_data_to_screen);
+        net_new_game_prepare();
         if (word_1811AE != 1)
         {
             if (byte_1C4A6F)
@@ -8301,36 +8203,18 @@ void show_menu_screen_st2(void)
 {
     if ( in_network_game )
     {
-      local_player_no = 0;
-      login_control__State = 6;
-      net_INITIATE_button.Text = gui_strings[385];
-      net_INITIATE_button.Flags = 1;
-      ingame.Credits = 50000;
-      ingame.CashAtStart = 50000;
-      ingame.Expenditure = 0;
-      net_groups_LOGON_button.Text = gui_strings[386];
-      byte_15516D = -1;
-      byte_15516C = -1;
-      login_control__TechLevel = 4;
-      unkn_city_no = -1;
-      login_control__City = -1;
-      unkn_flags_08 = 60;
-      login_control__Money = starting_cash_amounts[0];
-      init_agents();
-      srm_reset_research();
-      load_missions(background_type);
-      memset(unkstruct04_arr, 0, 20 * sizeof(struct UnknStruct04)); //clear 4360 bytes
-      byte_1C6D48 = 0;
-      selected_mod = -1;
-      selected_weapon = -1;
-      init_net_players();
-      draw_flic_purple_list(purple_unkn1_data_to_screen);
-      scientists_lost = 0;
-      update_mission_time(0);
-      in_network_game = 0;
-      screentype = SCRT_B;
-      redraw_screen_flag = 1;
-      heading_box.Text = gui_strings[374];
+        local_player_no = 0;
+        net_new_game_prepare();
+        memset(unkstruct04_arr, 0, 20 * sizeof(struct UnknStruct04)); //clear 4360 bytes
+        byte_1C6D48 = 0;
+        selected_mod = -1;
+        selected_weapon = -1;
+        scientists_lost = 0;
+        update_mission_time(0);
+        in_network_game = 0;
+        screentype = SCRT_B;
+        redraw_screen_flag = 1;
+        heading_box.Text = gui_strings[374];
     }
     else
     {
