@@ -5005,6 +5005,24 @@ void init_weapon_text(void)
 #endif
 }
 
+/** Copy given rect buffer to the same position at two larger buffers.
+ */
+void copy_buffer_to_double_bufs(ubyte *ibuf, ushort iwidth, ushort iheight,
+    ubyte *obufs[2], short x, short y, ushort owidth, ushort oheight)
+{
+    long pos;
+    short h;
+
+    pos = y * owidth + x;
+    for (h = 0; h < iheight; h++)
+    {
+        LbMemoryCopy(&obufs[0][pos], ibuf, iwidth);
+        LbMemoryCopy(&obufs[1][pos], ibuf, iwidth);
+        ibuf += iwidth;
+        pos += owidth;
+    }
+}
+
 #define PURPLE_MOD_AREA_WIDTH 139
 #define PURPLE_MOD_AREA_HEIGHT 295
 
@@ -5015,15 +5033,9 @@ void purple_mods_data_to_screen(void)
         :  :  : "eax" );
 #else
     ubyte *buf;
-    ulong h;
-    int pos;
-    ubyte *o1;
-    ubyte *o2;
+    ubyte *o[2];
 
     buf = back_buffer - PURPLE_MOD_AREA_WIDTH*PURPLE_MOD_AREA_HEIGHT;
-    pos = 123 * lbDisplay.PhysicalScreenWidth + 275;
-    o1 = &back_buffer[pos];
-    o2 = &lbDisplay.WScreen[pos];
     switch (background_type)
     {
     default:
@@ -5039,14 +5051,12 @@ void purple_mods_data_to_screen(void)
         break;
 #endif
     }
-    for (h = 0; h < PURPLE_MOD_AREA_HEIGHT; h++)
-    {
-        LbMemoryCopy(o1, buf, PURPLE_MOD_AREA_WIDTH);
-        LbMemoryCopy(o2, buf, PURPLE_MOD_AREA_WIDTH);
-        buf += PURPLE_MOD_AREA_WIDTH;
-        o1 += lbDisplay.PhysicalScreenWidth;
-        o2 += lbDisplay.PhysicalScreenWidth;
-    }
+    o[1] = back_buffer;
+    o[0] = lbDisplay.WScreen;
+
+    copy_buffer_to_double_bufs(buf, PURPLE_MOD_AREA_WIDTH, PURPLE_MOD_AREA_HEIGHT,
+        o, 275, 123,
+        lbDisplay.GraphicsScreenWidth, lbDisplay.GraphicsScreenHeight);
 #endif
 }
 
@@ -5060,10 +5070,8 @@ void blokey_static_flic_data_to_screen(void)
     const char *flic_dir;
     char str[52];
     ubyte *buf;
-    ulong bpos;
-    ubyte *o1;
-    ubyte *o2;
-    int i, k, n;
+    ubyte *o[2];
+    int k;
 
     switch (background_type)
     {
@@ -5081,6 +5089,9 @@ void blokey_static_flic_data_to_screen(void)
 #endif
     }
     flic_dir = "qdata/equip";
+
+    o[1] = back_buffer;
+    o[0] = lbDisplay.WScreen;
 
     for (k = 0; k < 4; k++)
     {
@@ -5106,34 +5117,10 @@ void blokey_static_flic_data_to_screen(void)
         buf = unkn_buffer_05 + 0x8000;
         LbFileLoadAt(str, buf);
 
-        bpos = flic_mod_coords_b[2*k+1] * lbDisplay.PhysicalScreenWidth + flic_mod_coords_b[2*k];
-        o1 = &back_buffer[bpos];
-        o2 = &lbDisplay.WScreen[bpos];
-        for (n = 0; n < byte_15573C[k]; ++n)
-        {
-            ubyte *out1;
-            ubyte *out2;
-            ubyte *inp;
+        copy_buffer_to_double_bufs(buf, byte_15573C[k], byte_15573C[k],
+          o, flic_mod_coords_b[2*k], flic_mod_coords_b[2*k+1],
+          lbDisplay.GraphicsScreenWidth, lbDisplay.GraphicsScreenHeight);
 
-            out1 = o1;
-            out2 = o2;
-            inp = buf;
-            for (i = 0; i < byte_155740[k]; i++)
-            {
-                ubyte px;
-                px = *inp;
-                if (px) {
-                    *out1 = px;
-                    *out2 = px;
-                }
-                inp++;
-                out1++;
-                out2++;
-            }
-            buf += byte_15573C[k];
-            o2 += lbDisplay.PhysicalScreenWidth;
-            o1 += lbDisplay.PhysicalScreenWidth;
-        }
         mod_draw_states[k] = 4;
     }
 #endif
