@@ -5026,6 +5026,12 @@ void copy_buffer_to_double_bufs(ubyte *ibuf, ushort iwidth, ushort iheight,
 #define PURPLE_MOD_AREA_WIDTH 139
 #define PURPLE_MOD_AREA_HEIGHT 295
 
+void init_next_blokey_flic(void)
+{
+    asm volatile ("call ASM_init_next_blokey_flic\n"
+        :  :  : "eax" );
+}
+
 void purple_mods_data_to_screen(void)
 {
 #if 0
