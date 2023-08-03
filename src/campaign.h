@@ -76,6 +76,8 @@ struct Campaign {
     ushort FirstTrigger;
     /** Translated text ID for netscan button. */
     ushort NetscanTextId;
+    /** Char marking projector file names for the campaign. */
+    const char *ProjectorFnMk;
     /** Outro movie file name. */
     const char *OutroFMV;
     /** Outro background after the FMV ends. */

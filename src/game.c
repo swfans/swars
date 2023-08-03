@@ -181,6 +181,7 @@ extern ubyte byte_1C83D1;
 extern ubyte byte_1CAB64[];
 extern ubyte byte_1DB088[];
 extern long dword_1DC36C;
+extern ubyte current_frame;
 extern long sound_heap_size;
 extern struct SampleTable *sound_heap_memory;
 
@@ -2855,7 +2856,7 @@ void init_outro(void)
     struct Campaign *p_campgn;
     const char *text1;
     const char *text2;
-    int fh;
+    TbFileHandle fh;
     int i;
 
     gamep_unknval_01 = 0;
@@ -2876,7 +2877,7 @@ void init_outro(void)
     screen_buffer_fill_black();
 
     fh = LbFileOpen(p_campgn->OutroBkFn, Lb_FILE_MODE_READ_ONLY);
-    if (fh != -1)
+    if (fh != INVALID_FILE)
     {
         for (i = 24; i != 174; i++)
         {
@@ -5026,31 +5027,176 @@ void copy_buffer_to_double_bufs(ubyte *ibuf, ushort iwidth, ushort iheight,
 #define PURPLE_MOD_AREA_WIDTH 139
 #define PURPLE_MOD_AREA_HEIGHT 295
 
+void init_next_blokey_flic(void)
+{
+#if 0
+    asm volatile ("call ASM_init_next_blokey_flic\n"
+        :  :  : "eax" );
+#else
+    struct Campaign *p_campgn;
+    const char *campgn_mark;
+    const char *flic_dir;
+    ushort cmod, stage;
+    int k;
+
+    p_campgn = &campaigns[background_type];
+    campgn_mark = p_campgn->ProjectorFnMk;
+    // TODO FNAMES the convention with mark char is broken for "s"
+    if (strcmp(campgn_mark, "s") == 0)
+        campgn_mark = "m";
+
+    flic_dir = "qdata/equip";
+
+    stage = 0;
+
+    if (stage == 0)
+    {
+        for (cmod = 1; cmod < 4; cmod = (cmod+1) % 4)
+        {
+            if (((mod_draw_states[cmod] & 0x08) != 0) &&
+              ((mod_draw_states[cmod] & 0x04) != 0)) {
+                stage = 1;
+                break;
+            }
+            if (cmod == 0)
+                break;
+        }
+    }
+
+    if (stage == 0)
+    {
+        for (cmod = 0; cmod < 4; cmod++)
+        {
+            if (((mod_draw_states[cmod] & 0x08) != 0) &&
+              ((mod_draw_states[cmod] & 0x04) == 0) &&
+              (flic_mods[cmod] != 0)) {
+                stage = 2;
+                break;
+            }
+        }
+    }
+
+    if (stage == 0)
+    {
+        if (current_drawing_mod == 4) {
+            stage = 3;
+        } else
+        for (cmod = 0; cmod < 4; cmod++)
+        {
+            if (flic_mods[cmod] == 0) {
+                stage = 3;
+                break;
+            }
+        }
+    }
+
+    switch (stage)
+    {
+    case 0:
+        if (!byte_1DDC40)
+        {
+            byte_1DDC40 = 1;
+            play_sample_using_heap(0, 134, 127, 64, 100, 0, 3u);
+        }
+        else if (!IsSamplePlaying(0, 134, 0))
+        {
+            k = anim_slots[8];
+            sprintf(animations[k].Filename, "%s/%s%da%d.fli", flic_dir, campgn_mark, flic_mods[0], flic_mods[2]);
+            flic_unkn03(8u);
+            play_sample_using_heap(0, 126, 127, 64, 100, 0, 1u);
+            current_frame = 0;
+            new_current_drawing_mod = 4;
+            byte_1DDC40 = 0;
+        }
+        break;
+    case 1:
+        k = anim_slots[3];
+        switch (cmod)
+        {
+        case 0:
+            sprintf(animations[k].Filename, "%s/%s%dbo.fli", flic_dir, campgn_mark, old_flic_mods[0]);
+            break;
+        case 1:
+            sprintf(animations[k].Filename, "%s/%s%dbbo.fli", flic_dir, campgn_mark, old_flic_mods[0]);
+            break;
+        case 2:
+            sprintf(animations[k].Filename, "%s/%s%da%do.fli", flic_dir, campgn_mark, old_flic_mods[0], old_flic_mods[2]);
+            break;
+        case 3:
+            sprintf(animations[k].Filename, "%s/%s%dl%do.fli", flic_dir, campgn_mark, old_flic_mods[0], old_flic_mods[3]);
+            break;
+        default:
+            assert(!"unreachable");
+            break;
+        }
+        flic_unkn03(3);
+        new_current_drawing_mod = cmod;
+        mod_draw_states[cmod] |= 0x02;
+        blokey_box.Flags &= ~0x0100;
+        play_sample_using_heap(0, 132, 127, 64, 100, 0, 3);
+        byte_1DDC40 = 0;
+        break;
+    case 2:
+        k = anim_slots[3];
+        switch (cmod)
+        {
+          case 0:
+            sprintf(animations[k].Filename, "%s/%s%dbi.fli", flic_dir, campgn_mark, flic_mods[0]);
+            break;
+          case 1:
+            sprintf(animations[k].Filename, "%s/%s%dbbi.fli", flic_dir, campgn_mark, flic_mods[0]);
+            break;
+          case 2:
+            sprintf(animations[k].Filename, "%s/%s%da%di.fli", flic_dir, campgn_mark, flic_mods[0], flic_mods[2]);
+            break;
+          case 3:
+            sprintf(animations[k].Filename, "%s/%s%dl%di.fli", flic_dir, campgn_mark, flic_mods[0], flic_mods[3]);
+            break;
+          default:
+            assert(!"unreachable");
+            break;
+        }
+        flic_unkn03(3);
+        new_current_drawing_mod = cmod;
+        mod_draw_states[cmod] |= 0x01;
+        mod_draw_states[cmod] &= ~0x08;
+        old_flic_mods[cmod] = flic_mods[cmod];
+        blokey_box.Flags &= ~0x0100;
+        byte_1DDC40 = 0;
+        break;
+    case 3:
+        // No further action
+        break;
+    }
+#endif
+}
+
 void purple_mods_data_to_screen(void)
 {
 #if 0
     asm volatile ("call ASM_purple_mods_data_to_screen\n"
         :  :  : "eax" );
 #else
+    struct Campaign *p_campgn;
+    const char *campgn_mark;
+    const char *flic_dir;
+    char str[52];
     ubyte *buf;
     ubyte *o[2];
 
+    p_campgn = &campaigns[background_type];
+    campgn_mark = p_campgn->ProjectorFnMk;
+    // TODO FNAMES the convention with mark char is broken for "s"
+    if (strcmp(campgn_mark, "s") == 0)
+        campgn_mark = "";
+
+    flic_dir = "qdata/equip";
+
+    sprintf(str, "%s/bgman%s.dat", flic_dir, campgn_mark);
+
     buf = back_buffer - PURPLE_MOD_AREA_WIDTH*PURPLE_MOD_AREA_HEIGHT;
-    switch (background_type)
-    {
-    default:
-    case 0:
-        LbFileLoadAt("qdata/equip/bgman.dat", buf);
-        break;
-    case 1:
-        LbFileLoadAt("qdata/equip/bgmanz.dat", buf);
-        break;
-#if 0 // TODO No animation files for Unguided
-    case 2:
-        LbFileLoadAt("qdata/equip/bgmanb.dat", buf);
-        break;
-#endif
-    }
+    LbFileLoadAt(str, buf);
+
     o[1] = back_buffer;
     o[0] = lbDisplay.WScreen;
 
@@ -5066,28 +5212,20 @@ void blokey_static_flic_data_to_screen(void)
     asm volatile ("call ASM_blokey_static_flic_data_to_screen\n"
         :  :  : "eax" );
 #else
-    char campgn_mark;
+    struct Campaign *p_campgn;
+    const char *campgn_mark;
     const char *flic_dir;
     char str[52];
     ubyte *buf;
     ubyte *o[2];
     int k;
 
-    switch (background_type)
-    {
-    default:
-    case 0:
-        campgn_mark = 'm';
-        break;
-    case 1:
-        campgn_mark = 'z';
-        break;
-#if 0 // TODO No animation files for Unguided
-    case 2:
-        campgn_mark = 'b';
-        break;
-#endif
-    }
+    p_campgn = &campaigns[background_type];
+    campgn_mark = p_campgn->ProjectorFnMk;
+    // TODO FNAMES the convention with mark char is broken for "s"
+    if (strcmp(campgn_mark, "s") == 0)
+        campgn_mark = "m";
+
     flic_dir = "qdata/equip";
 
     o[1] = back_buffer;
@@ -5101,16 +5239,16 @@ void blokey_static_flic_data_to_screen(void)
         switch (k)
         {
         case 0:
-            sprintf(str, "%s/%c%db.dat", flic_dir, campgn_mark, flic_mods[0]);
+            sprintf(str, "%s/%s%db.dat", flic_dir, campgn_mark, flic_mods[0]);
             break;
         case 1:
-            sprintf(str, "%s/%c%dbb.dat", flic_dir, campgn_mark, flic_mods[0]);
+            sprintf(str, "%s/%s%dbb.dat", flic_dir, campgn_mark, flic_mods[0]);
             break;
         case 2:
-            sprintf(str, "%s/%c%da%d.dat", flic_dir, campgn_mark, flic_mods[0], flic_mods[2]);
+            sprintf(str, "%s/%s%da%d.dat", flic_dir, campgn_mark, flic_mods[0], flic_mods[2]);
             break;
         case 3:
-            sprintf(str, "%s/%c%dl%d.dat", flic_dir, campgn_mark, flic_mods[0], flic_mods[3]);
+            sprintf(str, "%s/%s%dl%d.dat", flic_dir, campgn_mark, flic_mods[0], flic_mods[3]);
             break;
         }
 
@@ -6576,45 +6714,28 @@ void init_weapon_anim(ubyte weapon)
     asm volatile ("call ASM_init_weapon_anim\n"
         : : "a" (weapon));
 #else
+    struct Campaign *p_campgn;
+    const char *campgn_mark;
+    const char *flic_dir;
     ulong k;
+
+    p_campgn = &campaigns[background_type];
+    campgn_mark = p_campgn->ProjectorFnMk;
+    // TODO FNAMES the convention with mark char is broken for "s"
+    if (strcmp(campgn_mark, "s") == 0)
+        campgn_mark = "";
+
+    flic_dir = "data/equip";
 
     if (weapon >= 32)
     {
         k = anim_slots[2];
-        switch (background_type)
-        {
-        default:
-        case 0:
-            sprintf(animations[k].Filename, "data/equip/mod-%02d.fli", weapon - 32);
-            break;
-        case 1:
-            sprintf(animations[k].Filename, "data/equip/mod-%02dz.fli", weapon - 32);
-            break;
-#if 0 // TODO no FLIcs for unguided
-        case 2:
-            sprintf(animations[k].Filename, "data/equip/mod-%02db.fli", weapon - 32);
-            break;
-#endif
-        }
+        sprintf(animations[k].Filename, "%s/mod-%02d%s.fli", flic_dir, (int)weapon - 32, campgn_mark);
     }
     else
     {
         k = anim_slots[2];
-        switch (background_type)
-        {
-        default:
-        case 0:
-          sprintf(animations[k].Filename, "data/equip/wep-%02d.fli", weapon);
-            break;
-        case 1:
-            sprintf(animations[k].Filename, "data/equip/wep-%02dz.fli", weapon);
-            break;
-#if 0 // TODO no FLIcs for unguided
-        case 2:
-            sprintf(animations[k].Filename, "data/equip/wep-%02db.fli", weapon);
-            break;
-#endif
-        }
+        sprintf(animations[k].Filename, "%s/wep-%02d%s.fli", flic_dir, (int)weapon, campgn_mark);
     }
     flic_unkn03(2);
 #endif
@@ -6626,8 +6747,6 @@ void reload_background(void)
     asm volatile ("call ASM_reload_background\n"
         :  :  : "eax" );
 #else
-    const char *fname;
-
     if (screentype == 6 || screentype == 10 || restore_savegame)
     {
         struct TbSprite *spr;
@@ -6647,23 +6766,19 @@ void reload_background(void)
     }
     else
     {
-        switch (background_type)
-        {
-        case 0:
-        default:
-            fname = "qdata/s-proj.dat";
-            break;
-        case 1:
-            fname = "qdata/z-proj.dat";
-            break;
-#if 0 // TODO no background for unguided
-        case 2:
-            fname = "data/b-proj.dat";
-            break;
-#endif
-        }
-        LbFileLoadAt(fname, back_buffer);
+        struct Campaign *p_campgn;
+        char str[52];
+        const char *campgn_mark;
+        const char *bkdata_dir;
+
+        p_campgn = &campaigns[background_type];
+        campgn_mark = p_campgn->ProjectorFnMk;
+        bkdata_dir = "qdata";
+
+        sprintf(str, "%s/%s-proj.dat", bkdata_dir, campgn_mark);
+        LbFileLoadAt(str, back_buffer);
     }
+
     if (screentype == 5 && selected_weapon != -1)
     {
         init_weapon_anim(selected_weapon);
@@ -7563,8 +7678,7 @@ void update_options_screen_state(void)
 void init_net_players(void)
 {
     int i;
-    for (i = 0; i < 5; i++)
-    {
+    for (i = 0; i < 5; i++) {
         LbMemorySet(&net_players[i], '\0', sizeof(struct NetPlayer2));
     }
 }
@@ -7655,6 +7769,29 @@ void update_flic_mods(ubyte *mods)
 {
     asm volatile ("call ASM_update_flic_mods\n"
         : : "a" (mods));
+}
+
+void net_new_game_prepare(void)
+{
+    net_INITIATE_button.Flags = 1;
+    login_control__State = 6;
+    net_INITIATE_button.Text = gui_strings[385];
+    byte_15516D = -1;
+    byte_15516C = -1;
+    ingame.Credits = 50000;
+    ingame.CashAtStart = 50000;
+    login_control__TechLevel = 4;
+    unkn_city_no = -1;
+    login_control__City = -1;
+    ingame.Expenditure = 0;
+    net_groups_LOGON_button.Text = gui_strings[386];
+    unkn_flags_08 = 60;
+    login_control__Money = starting_cash_amounts[0];
+    init_agents();
+    srm_reset_research();
+    load_missions(background_type);
+    init_net_players();
+    draw_flic_purple_list(purple_unkn1_data_to_screen);
 }
 
 void net_unkn_func_33_sub1(int plyr, int netplyr)
@@ -7771,27 +7908,7 @@ void net_unkn_func_33_sub1(int plyr, int netplyr)
         {
             if (p_netplyr->U.Progress.val_15516D == netplyr)
             {
-                net_INITIATE_button.Flags = 1;
-                login_control__State = 6;
-                net_INITIATE_button.Text = gui_strings[385];
-                byte_15516D = -1;
-                byte_15516C = -1;
-                ingame.Credits = 50000;
-                ingame.CashAtStart = 50000;
-                login_control__TechLevel = 4;
-                unkn_city_no = -1;
-                login_control__City = -1;
-                ingame.Expenditure = 0;
-                net_groups_LOGON_button.Text = gui_strings[386];
-                unkn_flags_08 = 60;
-                login_control__Money = starting_cash_amounts[0];
-                init_agents();
-                srm_reset_research();
-                load_missions(background_type);
-                for (i = 0; i < 5; i++) {
-                    net_players[i].field_0[0] = '\0';
-                }
-                draw_flic_purple_list(purple_unkn1_data_to_screen);
+                net_new_game_prepare();
                 if (screentype == 4)
                 {
                     update_flic_mods(flic_mods);
@@ -7804,27 +7921,7 @@ void net_unkn_func_33_sub1(int plyr, int netplyr)
         } else {
             if (p_netplyr->U.Progress.val_15516D != netplyr)
                 LbNetworkSessionStop();
-            login_control__State = 6;
-            net_INITIATE_button.Text = gui_strings[385];
-            ingame.Credits = 50000;
-            ingame.CashAtStart = 50000;
-            ingame.Expenditure = 0;
-            unkn_flags_08 = 60;
-            net_INITIATE_button.Flags = 1;
-            byte_15516D = -1;
-            byte_15516C = -1;
-            net_groups_LOGON_button.Text = gui_strings[386];
-            unkn_city_no = -1;
-            login_control__Money = starting_cash_amounts[0];
-            login_control__City = -1;
-            login_control__TechLevel = 4;
-            init_agents();
-            srm_reset_research();
-            load_missions(background_type);
-            for (i = 0; i < 5; i++) {
-                net_players[i].field_0[0] = '\0';
-            }
-            draw_flic_purple_list(purple_unkn1_data_to_screen);
+            net_new_game_prepare();
             if (byte_1C4A6F)
                 LbNetworkHangUp();
             LbNetworkReset();
@@ -7832,75 +7929,22 @@ void net_unkn_func_33_sub1(int plyr, int netplyr)
         }
         break;
     case 13:
+        LbNetworkSessionStop();
         if (word_1811AE == 1)
         {
-            if (plyr != netplyr && net_host_player_no != plyr)
+            if (plyr == netplyr || net_host_player_no == plyr)
             {
-                LbNetworkSessionStop();
-            }
-            else
-            {
-                LbNetworkSessionStop();
-                net_INITIATE_button.Flags = 1;
-                ingame.Expenditure = 0;
-                unkn_flags_08 = 60;
-                login_control__State = 6;
-                net_INITIATE_button.Text = gui_strings[385];
-                ingame.Credits = 50000;
-                net_groups_LOGON_button.Text = gui_strings[386];
-                ingame.CashAtStart = 50000;
-                byte_15516D = -1;
-                byte_15516C = -1;
-                login_control__Money = starting_cash_amounts[0];
-                login_control__TechLevel = 4;
-                unkn_city_no = -1;
-                login_control__City = -1;
-                init_agents();
-                srm_reset_research();
-                load_missions(background_type);
-                for (i = 0; i < 5; i++) {
-                    net_players[i].field_0[0] = '\0';
-                }
-                draw_flic_purple_list(purple_unkn1_data_to_screen);
+                net_new_game_prepare();
                 memset(unkstruct04_arr, 0, 0x1108u);
                 byte_1C6D48 = 0;
                 for (i = 0; i < 8; i++) {
                     unkn2_names[i][0] = '\0';
                 }
-                if (screentype == 4)
-                {
-                    update_flic_mods(flic_mods);
-                    for (i = 0; i < 4; i++) {
-                        if (flic_mods[i] != old_flic_mods[i])
-                            mod_draw_states[i] |= 0x08;
-                    }
-                }
             }
         }
         else
         {
-            LbNetworkSessionStop();
-            login_control__State = 6;
-            ingame.Credits = 50000;
-            ingame.CashAtStart = 50000;
-            login_control__TechLevel = 4;
-            unkn_flags_08 = 60;
-            net_INITIATE_button.Text = gui_strings[385];
-            net_groups_LOGON_button.Text = gui_strings[386];
-            net_INITIATE_button.Flags = 1;
-            byte_15516D = -1;
-            byte_15516C = -1;
-            unkn_city_no = -1;
-            ingame.Expenditure = 0;
-            login_control__City = -1;
-            login_control__Money = starting_cash_amounts[0];
-            init_agents();
-            srm_reset_research();
-            load_missions(background_type);
-            for (i = 0; i < 5; i++) {
-                net_players[i].field_0[0] = '\0';
-            }
-            draw_flic_purple_list(purple_unkn1_data_to_screen);
+            net_new_game_prepare();
             for (i = 0; i < 8; i++) {
                 unkn2_names[i][0] = '\0';
             }
@@ -7908,13 +7952,13 @@ void net_unkn_func_33_sub1(int plyr, int netplyr)
               LbNetworkHangUp();
             LbNetworkReset();
             byte_1C4A7C = 0;
-            if (screentype == 4)
-            {
-                update_flic_mods(flic_mods);
-                for (i = 0; i < 4; i++) {
-                    if (flic_mods[i] != old_flic_mods[i])
-                        mod_draw_states[i] |= 0x08;
-                }
+        }
+        if (screentype == 4)
+        {
+            update_flic_mods(flic_mods);
+            for (i = 0; i < 4; i++) {
+                if (flic_mods[i] != old_flic_mods[i])
+                    mod_draw_states[i] |= 0x08;
             }
         }
         break;
@@ -8075,28 +8119,7 @@ void net_unkn_func_33(void)
     if (LbNetworkExchange(&network_players[0], sizeof(struct NetworkPlayer)) != 1)
     {
         LbNetworkSessionStop();
-        login_control__State = 6;
-        net_INITIATE_button.Flags = 1;
-        ingame.Expenditure = 0;
-        net_INITIATE_button.Text = gui_strings[385];
-        byte_15516D = -1;
-        byte_15516C = -1;
-        ingame.Credits = 50000;
-        ingame.CashAtStart = 50000;
-        login_control__TechLevel = 4;
-        unkn_city_no = -1;
-        login_control__City = -1;
-        net_groups_LOGON_button.Text = gui_strings[386];
-        unkn_flags_08 = 60;
-        login_control__Money = starting_cash_amounts[0];
-        init_agents();
-        srm_reset_research();
-        load_missions(background_type);
-
-        for (i = 0; i < 5; i++) {
-            net_players[i].field_D = 0;
-        }
-        draw_flic_purple_list(purple_unkn1_data_to_screen);
+        net_new_game_prepare();
         if (word_1811AE != 1)
         {
             if (byte_1C4A6F)
@@ -8180,36 +8203,18 @@ void show_menu_screen_st2(void)
 {
     if ( in_network_game )
     {
-      local_player_no = 0;
-      login_control__State = 6;
-      net_INITIATE_button.Text = gui_strings[385];
-      net_INITIATE_button.Flags = 1;
-      ingame.Credits = 50000;
-      ingame.CashAtStart = 50000;
-      ingame.Expenditure = 0;
-      net_groups_LOGON_button.Text = gui_strings[386];
-      byte_15516D = -1;
-      byte_15516C = -1;
-      login_control__TechLevel = 4;
-      unkn_city_no = -1;
-      login_control__City = -1;
-      unkn_flags_08 = 60;
-      login_control__Money = starting_cash_amounts[0];
-      init_agents();
-      srm_reset_research();
-      load_missions(background_type);
-      memset(unkstruct04_arr, 0, 20 * sizeof(struct UnknStruct04)); //clear 4360 bytes
-      byte_1C6D48 = 0;
-      selected_mod = -1;
-      selected_weapon = -1;
-      init_net_players();
-      draw_flic_purple_list(purple_unkn1_data_to_screen);
-      scientists_lost = 0;
-      update_mission_time(0);
-      in_network_game = 0;
-      screentype = SCRT_B;
-      redraw_screen_flag = 1;
-      heading_box.Text = gui_strings[374];
+        local_player_no = 0;
+        net_new_game_prepare();
+        memset(unkstruct04_arr, 0, 20 * sizeof(struct UnknStruct04)); //clear 4360 bytes
+        byte_1C6D48 = 0;
+        selected_mod = -1;
+        selected_weapon = -1;
+        scientists_lost = 0;
+        update_mission_time(0);
+        in_network_game = 0;
+        screentype = SCRT_B;
+        redraw_screen_flag = 1;
+        heading_box.Text = gui_strings[374];
     }
     else
     {
