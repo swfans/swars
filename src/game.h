@@ -644,6 +644,7 @@ extern long outro_unkn02;
 extern long outro_unkn03;
 extern long people_groups_count;
 extern long data_1ddb68;
+extern ubyte byte_1DDC40;
 extern char *people_credits_groups[];
 extern ubyte playable_agents;
 extern ubyte net_agents__FourPacks[8][4][5]; // maybe a part of larger struct, maybe not

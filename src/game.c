@@ -181,6 +181,7 @@ extern ubyte byte_1C83D1;
 extern ubyte byte_1CAB64[];
 extern ubyte byte_1DB088[];
 extern long dword_1DC36C;
+extern ubyte current_frame;
 extern long sound_heap_size;
 extern struct SampleTable *sound_heap_memory;
 
@@ -5028,8 +5029,154 @@ void copy_buffer_to_double_bufs(ubyte *ibuf, ushort iwidth, ushort iheight,
 
 void init_next_blokey_flic(void)
 {
+#if 0
     asm volatile ("call ASM_init_next_blokey_flic\n"
         :  :  : "eax" );
+#else
+    char campgn_mark;
+    const char *flic_dir;
+    ushort cmod, stage;
+    int k;
+
+    switch (background_type)
+    {
+    default:
+    case 0:
+        campgn_mark = 'm';
+        break;
+    case 1:
+        campgn_mark = 'z';
+        break;
+#if 0 // TODO No animation files for Unguided
+    case 2:
+        campgn_mark = 'b';
+        break;
+#endif
+    }
+    flic_dir = "qdata/equip";
+
+    stage = 0;
+
+    if (stage == 0)
+    {
+        for (cmod = 1; cmod < 4; cmod = (cmod+1) % 4)
+        {
+            if (((mod_draw_states[cmod] & 0x08) != 0) &&
+              ((mod_draw_states[cmod] & 0x04) != 0)) {
+                stage = 1;
+                break;
+            }
+            if (cmod == 0)
+                break;
+        }
+    }
+
+    if (stage == 0)
+    {
+        for (cmod = 0; cmod < 4; cmod++)
+        {
+            if (((mod_draw_states[cmod] & 0x08) != 0) &&
+              ((mod_draw_states[cmod] & 0x04) == 0) &&
+              (flic_mods[cmod] != 0)) {
+                stage = 2;
+                break;
+            }
+        }
+    }
+
+    if (stage == 0)
+    {
+        if (current_drawing_mod == 4) {
+            stage = 3;
+        } else
+        for (cmod = 0; cmod < 4; cmod++)
+        {
+            if (flic_mods[cmod] == 0) {
+                stage = 3;
+                break;
+            }
+        }
+    }
+
+    switch (stage)
+    {
+    case 0:
+        if (!byte_1DDC40)
+        {
+            byte_1DDC40 = 1;
+            play_sample_using_heap(0, 134, 127, 64, 100, 0, 3u);
+        }
+        else if (!IsSamplePlaying(0, 134, 0))
+        {
+            k = anim_slots[8];
+            sprintf(animations[k].Filename, "%s/%c%da%d.fli", flic_dir, campgn_mark, flic_mods[0], flic_mods[2]);
+            flic_unkn03(8u);
+            play_sample_using_heap(0, 126, 127, 64, 100, 0, 1u);
+            current_frame = 0;
+            new_current_drawing_mod = 4;
+            byte_1DDC40 = 0;
+        }
+        break;
+    case 1:
+        k = anim_slots[3];
+        switch (cmod)
+        {
+        case 0:
+            sprintf(animations[k].Filename, "%s/%c%dbo.fli", flic_dir, campgn_mark, old_flic_mods[0]);
+            break;
+        case 1:
+            sprintf(animations[k].Filename, "%s/%c%dbbo.fli", flic_dir, campgn_mark, old_flic_mods[0]);
+            break;
+        case 2:
+            sprintf(animations[k].Filename, "%s/%c%da%do.fli", flic_dir, campgn_mark, old_flic_mods[0], old_flic_mods[2]);
+            break;
+        case 3:
+            sprintf(animations[k].Filename, "%s/%c%dl%do.fli", flic_dir, campgn_mark, old_flic_mods[0], old_flic_mods[3]);
+            break;
+        default:
+            assert(!"unreachable");
+            break;
+        }
+        flic_unkn03(3);
+        new_current_drawing_mod = cmod;
+        mod_draw_states[cmod] |= 0x02;
+        blokey_box.Flags &= ~0x0100;
+        play_sample_using_heap(0, 132, 127, 64, 100, 0, 3);
+        byte_1DDC40 = 0;
+        break;
+    case 2:
+        k = anim_slots[3];
+        switch (cmod)
+        {
+          case 0:
+            sprintf(animations[k].Filename, "%s/%c%dbi.fli", flic_dir, campgn_mark, flic_mods[0]);
+            break;
+          case 1:
+            sprintf(animations[k].Filename, "%s/%c%dbbi.fli", flic_dir, campgn_mark, flic_mods[0]);
+            break;
+          case 2:
+            sprintf(animations[k].Filename, "%s/%c%da%di.fli", flic_dir, campgn_mark, flic_mods[0], flic_mods[2]);
+            break;
+          case 3:
+            sprintf(animations[k].Filename, "%s/%c%dl%di.fli", flic_dir, campgn_mark, flic_mods[0], flic_mods[3]);
+            break;
+          default:
+            assert(!"unreachable");
+            break;
+        }
+        flic_unkn03(3);
+        new_current_drawing_mod = cmod;
+        mod_draw_states[cmod] |= 0x01;
+        mod_draw_states[cmod] &= ~0x08;
+        old_flic_mods[cmod] = flic_mods[cmod];
+        blokey_box.Flags &= ~0x0100;
+        byte_1DDC40 = 0;
+        break;
+    case 3:
+        // No further action
+        break;
+    }
+#endif
 }
 
 void purple_mods_data_to_screen(void)
