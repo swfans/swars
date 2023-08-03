@@ -5005,6 +5005,12 @@ void init_weapon_text(void)
 #endif
 }
 
+void purple_mods_data_to_screen(void)
+{
+    asm volatile ("call ASM_purple_mods_data_to_screen\n"
+        :  :  : "eax" );
+}
+
 void blokey_static_flic_data_to_screen(void)
 {
 #if 0
