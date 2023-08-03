@@ -383,7 +383,7 @@ struct ThingOldV9 { // sizeof=216
     short State; // pos=10
     ulong Flag;
     short LinkSame;
-    short TngUnkn18; // This actually looks like Parent data for vehicles
+    short TngUnkn18; // Used only by vehicles, numbers used are too high to be ThingOffset references
     short Radius; // pos=20
     ushort TngUnkn22;
     long X;
@@ -394,26 +394,26 @@ struct ThingOldV9 { // sizeof=216
     short Timer1; // pos=40
     short StartTimer1;
     long TngUnkn44; // pos=44
-    short TngUnkn48; // pos=48
+    short TngUnkn48; // pos=48 Seems to be a boolean only used against people
     ushort ThingOffset; // pos=50
-    short TngUnkn52; // TODO has more data in it
+    short TngUnkn52; // TODO uncommonly used people only stats, if used then nearly always paired with TngUnkn56 and TngUnkn60
     short TngUnkn54; // pos=54
-    short TngUnkn56; // pos=56
+    short TngUnkn56; // TODO as per TngUnkn52 - numbers used suggests maybe comcur?
     short TngUnkn58; // pos=58
-    short TngUnkn60; // pos=60
+    short TngUnkn60; // TODO as per TngUnkn52
     short TngUnkn62; // pos=62
-    short PersonStamina;
-    short PersonMaxStamina;
+    short PersonStamina; //This is only here in V12 files - stamina doesn't seem to exist in 9 and 11
+    short PersonMaxStamina; //pos178 This is only here in V12 files
     short TngUnkn68; // pos=68
     short LinkSameGroup; // pos=70
     short TngUnkn72;
-    short TngUnkn74; // Some kind of NPC stat, uniform for each type of NPC. No corresponding pair value though
+    short TngUnkn74; // Unsure, possibly UMOD values? People only
     short Speed; // pos=76
     short Health; // pos=78
     short TngUnkn80; // pos=80
     short TngUnkn82; // pos=82
     short TngUnkn84; // pos=84
-    ubyte PersonGroup; // pos=86
+    ubyte PersonGroup; // pos=86 There seems to be no EffectiveGroup in early files
     ubyte TngUnkn87; // pos=87
     ulong PersonWeaponsCarried; // pos=88
     ushort PersonComHead; // pos=92
@@ -421,17 +421,19 @@ struct ThingOldV9 { // sizeof=216
     short TngUnkn96; // pos=96
     short TngUnkn98; // pos=98
     ushort Owner; // pos=100
-    short TngUnkn102; // pos=102
+    short TngUnkn102; // pos=102  People only, low values
     short TngUnkn104; // pos=104
     short TngUnkn106; // pos=106
-    ushort PersonComCur; // pos=108
+    ushort PersonComCur; // pos=108  This seems to only be used by vehicles, so likely is NOT comcur
     ushort TngUnkn110; // pos=110
     ushort UnkFrame; // pos=112
-    ubyte TngUnkn114[10]; // pos=114
+    short TngUnkn114; // pos=114
+    short PersonMaxShieldEnergy;
+    short TngUnkn118;
+    long  TngUnkn120;
     short PersonPathIndex; // pos=124
-    ushort PersonUniqueID;
-    ubyte TngUnkn128; // pos=128
-    ubyte TngUnkn129;
+    short TngUnkn128;
+    short PersonUniqueID;
     ushort TngUnkn130; // pos=130
     short PersonShieldEnergy; // pos=132
     char PersonSpecialTimer;
@@ -453,12 +455,12 @@ struct ThingOldV9 { // sizeof=216
     union Mod PersonUMod; // pos=160
     short PersonMood;
     struct DrawFrameId PersonFrameId;
-    ubyte PersonShadows[4]; // pos=169
-    ubyte PersonRecoilTimer;
+    ubyte PersonShadows; // pos=169
+    ushort TngUnkn170; //contains mostly vehicle data, but some people use too
+    ushort TngUnkn172;
     ushort TngUnkn174;
-    ubyte PersonFlag3; // pos=176
-    ubyte PersonOldSubType;
-    short TngUnkn178; // pos=178
+    short PersonMaxEnergy; 
+    short PersonEnergy; 
     ubyte PersonShieldGlowTimer;
     ubyte PersonWeaponDir;
     ushort PersonSpecialOwner; // pos=182
@@ -466,15 +468,15 @@ struct ThingOldV9 { // sizeof=216
     ushort PersonLeisurePlace;
     short PersonWeaponTimer;
     ushort PersonMaxHealth; // pos=190
-    short PersonMaxShieldEnergy;
+    short TngUnkn192;
     short PersonPersuadePower;
-    short PersonMaxEnergy;
-    short PersonEnergy;
+    short TngUnkn196;
+    short TngUnkn198;
     ubyte PersonRecoilDir; // pos=200
     ubyte PersonCurrentWeapon;
     short PersonGotoX;
-    short PersonGotoZ;
-    short PersonTempWeapon;
+    short PersonGotoZ;  // Contains vehicle data
+    short PersonTempWeapon;  // This seems to correspond with TngUnkn170 in some way
     short TngUnkn208;
     short TngUnkn210;
     short TngUnkn212; // pos=212
