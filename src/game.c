@@ -5005,6 +5005,95 @@ void init_weapon_text(void)
 #endif
 }
 
+void blokey_static_flic_data_to_screen(void)
+{
+#if 0
+    asm volatile ("call ASM_blokey_static_flic_data_to_screen\n"
+        :  :  : "eax" );
+#else
+    char campgn_mark;
+    const char *flic_dir;
+    char str[52];
+    ubyte *buf;
+    ulong bpos;
+    ubyte *o1;
+    ubyte *o2;
+    int i, k, n;
+
+    switch (background_type)
+    {
+    default:
+    case 0:
+        campgn_mark = 'm';
+        break;
+    case 1:
+        campgn_mark = 'z';
+        break;
+#if 0 // TODO No animation files for Unguided
+    case 2:
+        campgn_mark = 'b';
+        break;
+#endif
+    }
+    flic_dir = "qdata/equip";
+
+    for (k = 0; k < 4; k++)
+    {
+        if (flic_mods[k] == 0)
+            continue;
+
+        switch (k)
+        {
+        case 0:
+            sprintf(str, "%s/%c%db.dat", flic_dir, campgn_mark, flic_mods[0]);
+            break;
+        case 1:
+            sprintf(str, "%s/%c%dbb.dat", flic_dir, campgn_mark, flic_mods[0]);
+            break;
+        case 2:
+            sprintf(str, "%s/%c%da%d.dat", flic_dir, campgn_mark, flic_mods[0], flic_mods[2]);
+            break;
+        case 3:
+            sprintf(str, "%s/%c%dl%d.dat", flic_dir, campgn_mark, flic_mods[0], flic_mods[3]);
+            break;
+        }
+
+        buf = unkn_buffer_05 + 0x8000;
+        LbFileLoadAt(str, buf);
+
+        bpos = flic_mod_coords_b[2*k+1] * lbDisplay.PhysicalScreenWidth + flic_mod_coords_b[2*k];
+        o1 = &back_buffer[bpos];
+        o2 = &lbDisplay.WScreen[bpos];
+        for (n = 0; n < byte_15573C[k]; ++n)
+        {
+            ubyte *out1;
+            ubyte *out2;
+            ubyte *inp;
+
+            out1 = o1;
+            out2 = o2;
+            inp = buf;
+            for (i = 0; i < byte_155740[k]; i++)
+            {
+                ubyte px;
+                px = *inp;
+                if (px) {
+                    *out1 = px;
+                    *out2 = px;
+                }
+                inp++;
+                out1++;
+                out2++;
+            }
+            buf += byte_15573C[k];
+            o2 += lbDisplay.PhysicalScreenWidth;
+            o1 += lbDisplay.PhysicalScreenWidth;
+        }
+        mod_draw_states[k] = 4;
+    }
+#endif
+}
+
 void srm_reset_research(void)
 {
 #if 0
