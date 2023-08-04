@@ -65,6 +65,12 @@ struct ModDef {
 	uchar Pad1;
 };
 
+/* Additional ModDef fields, to be later merged with that struct.
+ */
+struct ModDefAdd {
+  char Name[12];
+};
+
 /** Person Modifications.
  */
 union Mod

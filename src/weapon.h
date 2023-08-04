@@ -94,6 +94,12 @@ struct WeaponDef {
   ubyte PercentPerDay;
 };
 
+/* Additional WeaponDef fields, to be later merged with that struct.
+ */
+struct WeaponDefAdd {
+  char Name[12];
+};
+
 #pragma pack()
 /******************************************************************************/
 extern struct WeaponDef weapon_defs[33];

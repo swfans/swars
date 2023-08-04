@@ -5285,15 +5285,15 @@ void srm_reset_research(void)
     case 0:
     default:
         research.WeaponsAllowed = 0x0;
-        research.WeaponsCompleted = 0x4000443;
-        research.ModsAllowed = 0x492;
-        research.ModsCompleted = 0x249;
+        research.WeaponsCompleted = (1 << (27-1)) | (1 << (11-1)) | (1 << (7-1)) | (1 << (2-1)) | (1 << (1-1));
+        research.ModsAllowed = 0x400 | 0x80 | 0x10 | 0x02;
+        research.ModsCompleted = 0x200 | 0x40 | 0x08 | 0x01;
         break;
     case 1:
         research.WeaponsAllowed = 0;
-        research.WeaponsCompleted = 0x4020241;
-        research.ModsAllowed = 0x492;
-        research.ModsCompleted = 0x249;
+        research.WeaponsCompleted = (1 << (27-1)) | (1 << (18-1)) | (1 << (10-1)) | (1 << (7-1)) | (1 << (1-1));
+        research.ModsAllowed = 0x400 | 0x80 | 0x10 | 0x02;
+        research.ModsCompleted = 0x200 | 0x40 | 0x08 | 0x01;
         break;
     }
     research.CurrentWeapon = -1;

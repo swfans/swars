@@ -43,6 +43,7 @@ struct ModDef mod_defs[] = {
     {1, 2, 950, 0, {0}, 35, 9500, 10, 0},
 };
 
+struct ModDefAdd mod_defs_a[33] = {0};
 struct TbNamedEnum mod_names[33] = {0};
 
 enum CybModsConfigCmd {
@@ -76,7 +77,7 @@ void read_cybmods_conf_file(void)
 {
     TbFileHandle conf_fh;
     TbBool done;
-    unsigned int i;
+    int i;
     long k;
     int cmd_num;
     char *conf_buf;
@@ -147,10 +148,12 @@ void read_cybmods_conf_file(void)
     {
         char sect_name[16];
         struct ModDef *mdef;
+        struct ModDefAdd *mdefa;
 
         // Parse the [modN] sections of loaded file
         sprintf(sect_name, "mod%d", mtype);
         mdef = &mod_defs[mtype];
+        mdefa = &mod_defs_a[mtype];
         if (LbIniFindSection(&parser, sect_name) != Lb_SUCCESS) {
             CONFWRNLOG("Could not find \"[%s]\" section.", sect_name);
             continue;
@@ -166,14 +169,12 @@ void read_cybmods_conf_file(void)
             switch (cmd_num)
             {
             case CCMod_Name:
-#if 0 // TODO add name to mod params
-                i = LbIniValueGetStrWord(&parser, mdef->Name, sizeof(mdef->Name));
+                i = LbIniValueGetStrWord(&parser, mdefa->Name, sizeof(mdefa->Name));
                 if (i <= 0) {
                     CONFWRNLOG("Couldn't read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
                     break;
                 }
-                CONFDBGLOG("%s \"%s\"", COMMAND_TEXT(cmd_num), (int)mdef->Name);
-#endif
+                CONFDBGLOG("%s \"%s\"", COMMAND_TEXT(cmd_num), (int)mdefa->Name);
                 break;
             case CCMod_PowerOutput:
                 i = LbIniValueGetLongInt(&parser, &k);
@@ -247,6 +248,21 @@ void read_cybmods_conf_file(void)
 #undef CONFWRNLOG
     LbIniParseEnd(&parser);
     LbMemoryFree(conf_buf);
+
+    i = 0;
+    for (mtype = 1; mtype < mods_count; mtype++)
+    {
+        struct ModDefAdd *mdefa;
+
+        mdefa = &mod_defs_a[mtype];
+        if (strlen(mdefa->Name) > 0) {
+            mod_names[i].name = mdefa->Name;
+            mod_names[i].num = mtype;
+            i++;
+        }
+    }
+    mod_names[i].name = NULL;
+    mod_names[i].num = 0;
 }
 
 /******************************************************************************/

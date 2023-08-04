@@ -1150,7 +1150,7 @@ void read_missions_conf_file(int num)
 {
     TbFileHandle conf_fh;
     TbBool done;
-    unsigned int i, n;
+    int i, n;
     long k;
     char *conf_buf;
     struct TbIniParser parser;
@@ -1223,9 +1223,10 @@ void read_missions_conf_file(int num)
                 if (i <= 0) {
                     break;
                 }
-                n |= (1 << (n-1));
+                n |= (1 << (i-1));
             }
             p_campgn->ResearchWeapons = n;
+            CONFDBGLOG("%s 0x%lx", COMMAND_TEXT(cmd_num), p_campgn->ResearchWeapons);
             break;
         case MissL_StandardWeapons:
             n = 0;
@@ -1235,9 +1236,10 @@ void read_missions_conf_file(int num)
                 if (i <= 0) {
                     break;
                 }
-                n |= (1 << (n-1));
+                n |= (1 << (i-1));
             }
             p_campgn->StandardWeapons = n;
+            CONFDBGLOG("%s 0x%lx", COMMAND_TEXT(cmd_num), p_campgn->StandardWeapons);
             break;
         case MissL_ResearchMods:
             n = 0;
@@ -1247,9 +1249,10 @@ void read_missions_conf_file(int num)
                 if (i <= 0) {
                     break;
                 }
-                n |= (1 << (n-1));
+                n |= (1 << (i-1));
             }
             p_campgn->ResearchMods = n;
+            CONFDBGLOG("%s 0x%lx", COMMAND_TEXT(cmd_num), p_campgn->ResearchMods);
             break;
         case MissL_StandardMods:
             n = 0;
@@ -1259,9 +1262,10 @@ void read_missions_conf_file(int num)
                 if (i <= 0) {
                     break;
                 }
-                n |= (1 << (n-1));
+                n |= (1 << (i-1));
             }
             p_campgn->StandardMods = n;
+            CONFDBGLOG("%s 0x%lx", COMMAND_TEXT(cmd_num), p_campgn->StandardMods);
             break;
         case MissL_TextName:
         case MissL_TextId:
