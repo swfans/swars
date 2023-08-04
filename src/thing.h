@@ -473,7 +473,7 @@ struct ThingOldV9 { // sizeof=216
     ubyte PersonCurrentWeapon;
     short PersonGotoX;
     short PersonGotoZ;  // Contains vehicle data
-    short TngUnkn206;  // These map to values in the third and fourth bytes of the "Dummy2" vehicle value of the final level structure. These are vehicle stats that are similar to  VehiclePassengerHead
+    short TngUnkn206;  // These map to values in the third and fourth bytes of the "Dummy" vehicle value of the final level structure. These are vehicle stats that are similar to  VehiclePassengerHead
     short TngUnkn208;
     short TngUnkn210;
     short TngUnkn212; // pos=212
