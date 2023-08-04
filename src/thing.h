@@ -383,7 +383,7 @@ struct ThingOldV9 { // sizeof=216
     short State; // pos=10
     ulong Flag;
     short LinkSame;
-    short TngUnkn18; // Used only by vehicles, numbers used are too high to be ThingOffset references
+    short VehicleObject; 
     short Radius; // pos=20
     ushort TngUnkn22;
     long X;
@@ -453,7 +453,7 @@ struct ThingOldV9 { // sizeof=216
     short PersonMood;
     struct DrawFrameId PersonFrameId;
     ubyte PersonShadows; // pos=169
-    ushort VehiclePassengerHead; // LinkPassenger in person structure
+    ushort VehicleTNode; 
     ushort TngUnkn172;
     ushort TngUnkn174;
     short PersonMaxEnergy; 
@@ -473,7 +473,7 @@ struct ThingOldV9 { // sizeof=216
     ubyte PersonCurrentWeapon;
     short PersonGotoX;
     short PersonGotoZ;  // Contains vehicle data
-    short PersonTempWeapon;  // Values for what are in PersuadePower when using people union, need to check what this corresponds to in vehicle structure as these are vehicle stats that mirror VehiclePassengerHead
+    short TngUnkn206;  // These map to values in the third and fourth bytes of the "Dummy2" vehicle value of the final level structure. These are vehicle stats that are similar to  VehiclePassengerHead
     short TngUnkn208;
     short TngUnkn210;
     short TngUnkn212; // pos=212
