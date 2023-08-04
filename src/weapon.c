@@ -62,6 +62,8 @@ struct WeaponDef weapon_defs[] = {
     { 0,    0,  0, 16,   4,  5, 0, 0, 0, 1352,  3000,    10,  8},
 };
 
+struct TbNamedEnum weapon_names[33] = {0};
+
 enum WeaponsConfigCmd {
     CCWep_WeaponsCount = 1,
     CCWep_Name,

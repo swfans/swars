@@ -5288,22 +5288,18 @@ void srm_reset_research(void)
         research.WeaponsCompleted = 0x4000443;
         research.ModsAllowed = 0x492;
         research.ModsCompleted = 0x249;
-        research.CurrentWeapon = -1;
-        research.CurrentMod = -1;
-        research.Scientists = 0;
-        research.NumBases = 0;
         break;
     case 1:
         research.WeaponsAllowed = 0;
         research.WeaponsCompleted = 0x4020241;
         research.ModsAllowed = 0x492;
         research.ModsCompleted = 0x249;
-        research.CurrentWeapon = -1;
-        research.CurrentMod = -1;
-        research.Scientists = 0;
-        research.NumBases = 0;
         break;
     }
+    research.CurrentWeapon = -1;
+    research.CurrentMod = -1;
+    research.Scientists = 0;
+    research.NumBases = 0;
 #endif
 }
 

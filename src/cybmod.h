@@ -20,6 +20,7 @@
 #define CYBMOD_H
 
 #include "bftypes.h"
+#include "bfini.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -74,6 +75,7 @@ union Mod
 #pragma pack()
 /******************************************************************************/
 extern struct ModDef mod_defs[];
+extern struct TbNamedEnum mod_names[33];
 extern ubyte mod_tech_level[17];
 
 void read_cybmods_conf_file(void);

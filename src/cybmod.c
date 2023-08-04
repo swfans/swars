@@ -43,6 +43,8 @@ struct ModDef mod_defs[] = {
     {1, 2, 950, 0, {0}, 35, 9500, 10, 0},
 };
 
+struct TbNamedEnum mod_names[33] = {0};
+
 enum CybModsConfigCmd {
     CCMod_ModsCount = 1,
     CCMod_Name,

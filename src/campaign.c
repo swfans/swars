@@ -22,6 +22,8 @@
 #include "bfmemory.h"
 #include "bfmemut.h"
 #include "bfini.h"
+#include "cybmod.h"
+#include "weapon.h"
 #include "game_data.h"
 #include "game.h"
 #include "swlog.h"
@@ -145,6 +147,11 @@ enum MissionListConfigCmd {
     MissL_TextId,
     MissL_FirstTrigger,
     MissL_NetscanTextId,
+    MissL_WeaponsTextIdShift,
+    MissL_ResearchWeapons,
+    MissL_StandardWeapons,
+    MissL_ResearchMods,
+    MissL_StandardMods,
     MissL_ProjectorFnMk,
     MissL_OutroFMV,
     MissL_OutroBkFn,
@@ -202,6 +209,11 @@ const struct TbNamedEnum missions_conf_common_cmds[] = {
   {"TextId",		MissL_TextId},
   {"FirstTrigger",	MissL_FirstTrigger},
   {"NetscanTextId",	MissL_NetscanTextId},
+  {"WeaponsTextIdShift",MissL_WeaponsTextIdShift},
+  {"ResearchWeapons",MissL_ResearchWeapons},
+  {"StandardWeapons",MissL_StandardWeapons},
+  {"ResearchMods",	MissL_ResearchMods},
+  {"StandardMods",	MissL_StandardMods},
   {"ProjectorFnMk",	MissL_ProjectorFnMk},
   {"OutroFMV",		MissL_OutroFMV},
   {"OutroBkFn",		MissL_OutroBkFn},
@@ -1044,6 +1056,21 @@ TbBool read_missions_conf_info(int num)
             p_campgn->NetscanTextId = k;
             CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)p_campgn->NetscanTextId);
             break;
+        case MissL_WeaponsTextIdShift:
+            i = LbIniValueGetLongInt(&parser, &k);
+            if (i <= 0) {
+                CONFWRNLOG("Could not read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                break;
+            }
+            p_campgn->WeaponsTextIdShift = k;
+            CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)p_campgn->WeaponsTextIdShift);
+            break;
+        case MissL_ResearchWeapons:
+        case MissL_StandardWeapons:
+        case MissL_ResearchMods:
+        case MissL_StandardMods:
+            // Not reading at this point - cannot guarantee weapons list and mods list is loaded
+            break;
         case MissL_ProjectorFnMk:
             i = LbIniValueGetStrWhole(&parser, p_str, 80);
             if (i <= 0) {
@@ -1127,6 +1154,7 @@ void read_missions_conf_file(int num)
     long k;
     char *conf_buf;
     struct TbIniParser parser;
+    struct Campaign *p_campgn;
     char locbuf[120];
     char conf_fname[80];
     int conf_len;
@@ -1152,6 +1180,7 @@ void read_missions_conf_file(int num)
     LbIniParseStart(&parser, conf_buf, conf_len);
 #define CONFWRNLOG(format,args...) LOGWARN("%s(line %lu): " format, conf_fname, parser.line_num, ## args)
 #define CONFDBGLOG(format,args...) LOGDBG("%s(line %lu): " format, conf_fname, parser.line_num, ## args)
+    p_campgn = &campaigns[num];
     next_mission = 0;
     next_used_objective = 0;
     // Add empty objective 0
@@ -1186,10 +1215,59 @@ void read_missions_conf_file(int num)
             next_mission = k;
             CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)next_mission);
             break;
+        case MissL_ResearchWeapons:
+            n = 0;
+            while (1)
+            {
+                i = LbIniValueGetNamedEnum(&parser, weapon_names);
+                if (i <= 0) {
+                    break;
+                }
+                n |= (1 << (n-1));
+            }
+            p_campgn->ResearchWeapons = n;
+            break;
+        case MissL_StandardWeapons:
+            n = 0;
+            while (1)
+            {
+                i = LbIniValueGetNamedEnum(&parser, weapon_names);
+                if (i <= 0) {
+                    break;
+                }
+                n |= (1 << (n-1));
+            }
+            p_campgn->StandardWeapons = n;
+            break;
+        case MissL_ResearchMods:
+            n = 0;
+            while (1)
+            {
+                i = LbIniValueGetNamedEnum(&parser, mod_names);
+                if (i <= 0) {
+                    break;
+                }
+                n |= (1 << (n-1));
+            }
+            p_campgn->ResearchMods = n;
+            break;
+        case MissL_StandardMods:
+            n = 0;
+            while (1)
+            {
+                i = LbIniValueGetNamedEnum(&parser, mod_names);
+                if (i <= 0) {
+                    break;
+                }
+                n |= (1 << (n-1));
+            }
+            p_campgn->StandardMods = n;
+            break;
         case MissL_TextName:
         case MissL_TextId:
         case MissL_FirstTrigger:
         case MissL_NetscanTextId:
+        case MissL_WeaponsTextIdShift:
         case MissL_ProjectorFnMk:
         case MissL_OutroFMV:
         case MissL_OutroBkFn:
