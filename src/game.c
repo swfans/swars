@@ -4910,6 +4910,7 @@ void init_weapon_text(void)
     if (load_file_wad("textdata/wms.txt", "qdata/alltext", weapon_text) == Lb_FAIL)
         return;
 
+    // TODO change the format to use our INI parser, and weapon codenames from config
     s = weapon_text;
     n = (background_type == 1) ? 1 : 0; // TODO store naming convention within INI file
     for (i = 0; i != n; i++)
@@ -5264,13 +5265,18 @@ void blokey_static_flic_data_to_screen(void)
 #endif
 }
 
+/** Initializes the research data for a new game.
+ */
 void srm_reset_research(void)
 {
 #if 0
     asm volatile ("call ASM_srm_reset_research\n"
         :  :  : "eax" );
 #else
+    struct Campaign *p_campgn;
     int i;
+
+    p_campgn = &campaigns[background_type];
 
     for (i = 0; i < 32; i++)
     {
@@ -5279,23 +5285,10 @@ void srm_reset_research(void)
         research.WeaponProgress[i][0] = 0;
         research.ModProgress[i][0] = 0;
     }
-
-    switch (background_type)
-    {
-    case 0:
-    default:
-        research.WeaponsAllowed = 0x0;
-        research.WeaponsCompleted = (1 << (27-1)) | (1 << (11-1)) | (1 << (7-1)) | (1 << (2-1)) | (1 << (1-1));
-        research.ModsAllowed = 0x400 | 0x80 | 0x10 | 0x02;
-        research.ModsCompleted = 0x200 | 0x40 | 0x08 | 0x01;
-        break;
-    case 1:
-        research.WeaponsAllowed = 0;
-        research.WeaponsCompleted = (1 << (27-1)) | (1 << (18-1)) | (1 << (10-1)) | (1 << (7-1)) | (1 << (1-1));
-        research.ModsAllowed = 0x400 | 0x80 | 0x10 | 0x02;
-        research.ModsCompleted = 0x200 | 0x40 | 0x08 | 0x01;
-        break;
-    }
+    research.WeaponsCompleted = p_campgn->StandardWeapons;
+    research.WeaponsAllowed = p_campgn->ResearchWeapons;
+    research.ModsCompleted = p_campgn->StandardMods;
+    research.ModsAllowed = p_campgn->ResearchMods;
     research.CurrentWeapon = -1;
     research.CurrentMod = -1;
     research.Scientists = 0;
@@ -5470,9 +5463,9 @@ void campaign_new_game_prepare(void)
     load_city_data(0);
     load_city_txt();
     init_variables();
-    srm_reset_research();
     init_agents();
     load_missions(background_type);
+    srm_reset_research();
 
     {
         open_new_mission(p_campgn->FirstTrigger);
@@ -7784,8 +7777,8 @@ void net_new_game_prepare(void)
     unkn_flags_08 = 60;
     login_control__Money = starting_cash_amounts[0];
     init_agents();
-    srm_reset_research();
     load_missions(background_type);
+    srm_reset_research();
     init_net_players();
     draw_flic_purple_list(purple_unkn1_data_to_screen);
 }
@@ -8867,10 +8860,9 @@ void show_menu_screen(void)
             init_weapon_anim(selected_weapon);
             if ((research.WeaponsCompleted & (1 << selected_weapon)) || (login_control__State != 6))
             {
-              if (background_type == 1)
-                  equip_name_box.Text = gui_strings[selected_weapon + 30];
-              else
-                  equip_name_box.Text = gui_strings[selected_weapon];
+                struct Campaign *p_campgn;
+                p_campgn = &campaigns[background_type];
+                equip_name_box.Text = gui_strings[p_campgn->WeaponsTextIdShift + selected_weapon];
             }
             else
             {
