@@ -108,16 +108,6 @@ enum PacketRecordMode {
 struct Thing;
 
 typedef struct {
-    char *Name;
-    void *BufferPtr;
-    ushort ESize;
-    long N;
-    long dum1;
-    long dum2;
-    ubyte dum3;
-} MemSystem;
-
-typedef struct {
   char field_0[15];
   char field_F;
 } PrimFaceTexture;
@@ -589,7 +579,6 @@ extern short current_level;
 
 extern ulong engine_mem_alloc_size;
 extern void *engine_mem_alloc_ptr;
-extern MemSystem mem_game[];
 
 extern long navi2_unkn_counter;
 extern long navi2_unkn_counter_max;
@@ -604,6 +593,70 @@ extern struct Animation animations[2];
 extern char *gui_strings_data;
 extern char *gui_strings_data_end;
 extern char *gui_strings[STRINGS_MAX];
+
+extern struct MyMapElement *game_my_big_map;
+extern struct SingleFloorTexture *game_textures;
+extern struct SingleTexture *game_face_textures;
+extern struct SinglePoint *game_object_points;
+extern ushort next_normal;
+extern ushort next_quick_light;
+extern ushort next_full_light;
+extern ushort word_1531E0;
+extern ushort next_face_texture;
+extern ushort next_floor_texture;
+extern ushort next_object_point;
+extern ushort next_object_face;
+extern ushort next_object_face4;
+extern ushort next_object;
+extern struct SingleObjectFace3 *game_object_faces;
+extern struct SingleObject *game_objects;
+extern struct QuickLight *game_quick_lights;
+extern struct FullLight *game_full_lights;
+extern struct Normal *game_normals;
+extern ushort next_local_mat;
+extern ushort next_special_face;
+extern ushort next_special_face4;
+extern struct SingleObjectFace4 *game_object_faces4;
+extern struct AnimTmap *game_anim_tmaps;
+extern struct TrafficNode *game_traffic_nodes;
+extern struct LightCommand *game_light_commands;
+extern struct ColVectList *game_col_vects_list;
+extern struct ColVect *game_col_vects;
+extern struct WalkHeader *game_walk_headers;
+extern short *game_walk_items;
+extern struct ColColumn *game_col_columns;
+extern struct SingleObjectFace3 *game_special_object_faces;
+extern struct SingleObjectFace4 *game_special_object_faces4;
+extern struct FloorTile *game_floor_tiles;
+extern ushort next_command;
+extern ushort next_col_vect;
+extern ubyte *game_user_heap;
+extern struct SpecialPoint *game_screen_point_pool;
+extern struct DrawItem *game_draw_list;
+extern struct SortSprite *game_sort_sprites;
+extern struct SortLine *game_sort_lines;
+extern struct UnknBezEdit *bez_edit;
+extern ubyte *spare_map_buffer;
+extern struct Objective *game_used_lvl_objectives;
+extern ushort next_used_lvl_objective;
+extern struct LevelMisc *game_level_miscs;
+extern ushort same_type_head[290];
+extern ushort word_176E38;
+
+extern PrimObjectPoint *prim_object_points;
+extern PrimObjectFace *prim_object_faces;
+extern PrimObjectFace4 *prim_object_faces4;
+extern PrimObject *prim_objects;
+extern Prim4Texture *prim4_textures;
+extern PrimFaceTexture *prim_face_textures;
+
+extern ushort prim_object_points_count;
+extern ushort prim_object_faces_count;
+extern ushort prim_object_faces4_count;
+extern ushort prim_objects_count;
+extern ushort prim4_textures_count;
+extern ushort prim_face_textures_count;
+extern ushort prim_unknprop01;
 
 extern ubyte byte_1C4A7C;
 extern ubyte byte_1C4A9F;
@@ -854,7 +907,6 @@ extern struct ScreenBox alert_box;
 extern struct ScreenButton alert_OK_button;
 
 bool game_initialise (void);
-void adjust_memory_use(void);
 void game_handle_sdl_events (void);
 void game_update (void);
 int game_hacky_update(void);

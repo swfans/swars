@@ -23,6 +23,9 @@
 #include "bffile.h"
 #include "bfdir.h"
 #include "bffnuniq.h"
+#include "campaign.h"
+#include "command.h"
+#include "game.h"
 #include "swlog.h"
 #include "unix.h"
 #include "windows.h"
@@ -35,6 +38,49 @@ static char game_dir_screenshots[] = "qdata/screenshots";
 static char game_file_text_dat[] = "data/text.dat";
 
 /******************************************************************************/
+
+MemSystem mem_game[] = {
+  { "my_big_map",		&game_my_big_map,		18u, 16513, 0, 0, 0 },
+  { "textures",			&game_textures,			18u, 4512, 0, 0, 0 },
+  { "face_textures",	&game_face_textures,	16u, 4000, 0, 0, 0 },
+  { "object_points",	&game_object_points,    10u, 20000, 0, 0, 0 },
+  { "object_faces",		&game_object_faces,		32u, 15000, 0, 0, 0 },
+  { "objects",			&game_objects,			36u, 2000, 0, 0, 0 },
+  { "quick_lights",		&game_quick_lights,		6u, 64000, 0, 0, 0 },
+  { "full_lights",		&game_full_lights,		32u, 4000, 0, 0, 0 },
+  { "normals",			&game_normals,			16u, 10000, 0, 0, 0 },
+  { "object_faces4",	&game_object_faces4,	40u, 10000, 0, 0, 0 },
+  { "anim_tmaps",		&game_anim_tmaps,		54u, 66, 0, 0, 0 },
+  { "traffic_nodes",	&game_traffic_nodes,	36u, 500, 0, 0, 0 },
+  { "light_commands",	&game_light_commands,	36u, 1000, 0, 0, 0 },
+  { "col_vects_list",	&game_col_vects_list,	6u, 26000, 0, 0, 0 },
+  { "col_vects",		&game_col_vects,		14u, 13000, 0, 0, 0 },
+  { "walk_headers",		&game_walk_headers,		4u, 3000, 0, 0, 0 },
+  { "walk_items",		&game_walk_items,		2u, 18000, 0, 0, 0 },
+  { "col_columns",		&game_col_columns,		16u, 6000, 0, 0, 0 },
+  { "prim4_textures",	&prim4_textures,		18u, 1200, 0, 0, 0 },
+  { "prim_face_textures", &prim_face_textures,	16u, 500, 0, 0, 0 },
+  { "prim_object_points", &prim_object_points,	10u, 2000, 0, 0, 0 },
+  { "prim_object_faces", &prim_object_faces,	32u, 800, 0, 0, 0 },
+  { "prim_object_faces4", &prim_object_faces4,	40u, 1300, 0, 0, 0 },
+  { "prim_objects",		&prim_objects,			36u, 60, 0, 0, 0 },
+  { "special_object_faces", &game_special_object_faces, 32u, 1400, 0, 0, 0 },
+  { "special_object_faces4",&game_special_object_faces4, 40u, 1400, 0, 0, 0 },
+  { "floor_tiles",		&game_floor_tiles,		39u, 18000, 0, 0, 0 },
+  { "used_objectives",	&game_used_objectives,	32u, 1200, 0, 0, 0 },
+  { "objectives",		&game_objectives,		32u, 1200, 0, 0, 0 },
+  { "user_heap",		&game_user_heap,		1u, 292228, 0, 0, 0 },
+  { "screen_point_pool",&game_screen_point_pool,8u, 45000, 0, 0, 0 },
+  { "draw_list",		&game_draw_list,		5u, 45001, 0, 0, 0 },
+  { "sort_sprites",		&game_sort_sprites,		16u, 4001, 0, 0, 0 },
+  { "sort_lines",		&game_sort_lines,		11u, 4001, 0, 0, 0 },
+  { "commands",			&game_commands,			32u, 1, 0, 0, 0 },
+  { "bez edit",			&bez_edit,				28u, 2000, 0, 0, 0 },
+  { "spare map buffer",	&spare_map_buffer,		1u, 101, 0, 0, 1 },
+  { "used_lvl_objectives", &game_used_lvl_objectives,32u, 20, 0, 0, 0 },
+  { "level_miscs",		&game_level_miscs,		22u, 200, 0, 0, 0 },
+  { NULL,				NULL,					0u, 0, 0, 0, 0 }
+};
 
 const char *
 GetDirectoryUser(void)
@@ -194,4 +240,56 @@ get_packet_record_fname(char *fname, int map_index, int file_no)
 {
     sprintf(fname, "%s/rec%03d.%d", game_dir_savegame, map_index, file_no);
 }
+
+/** Decrease the size of some arrays to reduce memory usage.
+ */
+void adjust_memory_use(void)
+{
+    if (ingame.LowerMemoryUse == 1)
+    {
+        mem_game[35].N = 1; // bez_edit
+        mem_game[28].N = 1; // objectives
+        mem_game[36].N = 1; // spare_map_buffer
+        mem_game[27].N = 1000; // used_objectives
+        mem_game[26].N = 1124; // floor_tiles
+        mem_game[31].N = 2500; // draw_list
+        mem_game[32].N = 1000; // sort_sprites
+        mem_game[33].N = 700; // sort_lines
+        mem_game[30].N = 3000; // screen_point_pool
+        if ( is_single_game || cmdln_param_bcg )
+        {
+            mem_game[20].N = 2000; // prim_object_points
+            mem_game[21].N = 2000; // prim_object_faces increase(?)
+            mem_game[22].N = 2000; // prim_object_faces4 increase(?)
+        }
+        mem_game[4].N = 11000; // object_faces
+        mem_game[9].N = 11000; // object_faces4 increase(?)
+        mem_game[5].N = 1500; // objects
+        mem_game[7].N = 1000; // full_lights
+        mem_game[13].N = 16000; // col_vects_list
+        mem_game[14].N = 9000; // col_vects
+        engine_mem_alloc_size = 2700000;
+        game_perspective = (mem_game[5].N >> 8) & 0xff; // = 5
+    }
+}
+
+int init_memory(MemSystem *mems)
+{
+    int ret;
+    asm volatile ("call ASM_init_memory\n"
+        : "=r" (ret) : "a" (mems));
+    return ret;
+}
+
+long get_memory_ptr_allocated_count(void **mgptr)
+{
+    int i;
+    for (i = 0; mem_game[i].Name != NULL; i++)
+    {
+        if (mem_game[i].BufferPtr == mgptr)
+            return mem_game[i].N;
+    }
+    return -1;
+}
+
 /******************************************************************************/
