@@ -113,8 +113,39 @@ void refresh_old_thing_format(struct Thing *p_thing, struct ThingOldV9 *p_oldthi
     p_thing->VZ = p_oldthing->VZ;
     p_thing->Speed = p_oldthing->Speed;
     p_thing->Health = p_oldthing->Health;
-
     p_thing->Owner = p_oldthing->Owner;
+
+    // Type-dependent fields
+    if (p_thing->Type == TT_PERSON)
+    {
+        p_thing->U.UPerson.AnimMode = p_oldthing->PersonAnimMode;
+        p_thing->U.UPerson.OldAnimMode = p_oldthing->PersonOldAnimMode;
+        if (fmtver >= 12) {
+            p_thing->U.UPerson.Stamina = p_oldthing->PersonStamina;
+            p_thing->U.UPerson.MaxStamina = p_oldthing->PersonMaxStamina;
+        }
+        // Field FrameId
+        if (p_thing->SubType == SubTT_PERS_PUNK_F) {
+            // Randomize hair color - 50% normal red(0), 25% blonde(1), 25% blue(2)
+            // The ThingOffset should be random enough
+            len = (p_thing->ThingOffset & 0xF);
+            if (len < 4)
+                p_thing->U.UPerson.FrameId.Version[0] = 1;
+            else if (len < 8)
+                p_thing->U.UPerson.FrameId.Version[0] = 2;
+        }
+    }
+    else if (p_thing->Type == TT_VEHICLE)
+    {
+        p_thing->U.UVehicle.Object = p_oldthing->VehicleObject;
+        p_thing->U.UVehicle.NumbObjects = p_oldthing->VehicleNumbObjects;
+    }
+    else if (p_thing->Type == TT_BUILDING)
+    {
+        p_thing->U.UObject.Object = p_oldthing->ObjectObject;
+        p_thing->U.UObject.NumbObjects = p_oldthing->ObjectNumbObjects;
+    }
+
     // Type-dependent fields which are the same for most types
     p_thing->U.UPerson.UniqueID = p_oldthing->PersonUniqueID;
     p_thing->U.UPerson.Group = p_oldthing->PersonGroup;
@@ -127,23 +158,9 @@ void refresh_old_thing_format(struct Thing *p_thing, struct ThingOldV9 *p_oldthi
         p_thing->U.UPerson.WeaponsCarried = p_oldthing->PersonWeaponsCarried;
         p_thing->U.UPerson.BumpMode = 0;
         p_thing->U.UPerson.LastDist = 0;
-        p_thing->U.UPerson.AnimMode = 0;
         // TODO verify - should we clear UMod? We're sanitizing it later, so maybe not...
-        // Field FrameId
-        len = 2;
-        memset(&p_thing->U.UPerson.FrameId.Version[0], 0, len); // Blank part of it, to avoid missing body parts
-        if (p_thing->SubType == SubTT_PERS_PUNK_F) {
-            // Randomize hair color - 50% normal red(0), 25% blonde(1), 25% blue(2)
-            len = (LbRandomAnyShort() & 0xFF);
-            if (len < 64)
-                p_thing->U.UPerson.FrameId.Version[0] = 1;
-            else if (len < 128)
-                p_thing->U.UPerson.FrameId.Version[0] = 2;
-        }
         p_thing->U.UPerson.MaxHealth = p_oldthing->PersonMaxHealth;
         p_thing->U.UPerson.ShieldEnergy = p_oldthing->PersonShieldEnergy;
-        p_thing->U.UPerson.Stamina = p_oldthing->PersonStamina;
-        p_thing->U.UPerson.MaxStamina = p_oldthing->PersonMaxStamina;
     }
     else if (p_thing->Type == TT_VEHICLE)
     {

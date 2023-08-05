@@ -387,7 +387,7 @@ struct ThingOldV9 { // sizeof=216
      * and from comparative analysis of binary data in level files).
      */
     short LinkSame;
-    /* Stores index of first item within game_objects[].
+    /** Stores index of first item within game_objects[].
      * Since fmtver=4, most types (Object,Vehicle,MGun,Effect) have `Object`
      * and it is at the same place for all types (from Pre-Alpha Demo code
      * analysis). The Vehicle `Object` confirmed in fmtver=8-11 files (from
@@ -444,7 +444,7 @@ struct ThingOldV9 { // sizeof=216
         short ObjectTimer1;
     };
     /* Since fmtver=4, Person `AnimMode` (from Pre-Alpha Demo code analysis).
-     * Confirmed to be low value used against peole in fmtver=8-11 files
+     * Confirmed to be low value used against Person in fmtver=8-11 files
      * (from comparative analysis of binary data in level files).
      */
     ubyte PersonAnimMode; // pos=48
@@ -515,24 +515,58 @@ struct ThingOldV9 { // sizeof=216
     /* Since fmtver=4, `GotoZ` for Person (from Pre-Alpha Demo code analysis).
      */
     short PersonGotoZ; // pos=84
-    ubyte PersonGroup; // pos=86 There seems to be no EffectiveGroup in early files
+    /* Confirmed to be Person `Group` in fmtver=8-11 (from comparative analysis
+     * of binary data in level files). There seems to be no EffectiveGroup
+     * in early files (from the same comparative analysis).
+     */
+    ubyte PersonGroup; // pos=86
     ubyte TngUnkn87; // pos=87
     ulong PersonWeaponsCarried; // pos=88
+    /** Next command assigned to the Person.
+     * Confirmed since fmtver=4 (from Pre-Alpha Demo code analysis).
+     */
     ushort PersonComHead; // pos=92
-    short TngUnkn94; // pos=94
-    short TngUnkn96; // pos=96
+    ushort PersonComCur; // pos=94
+    short PersonComTimer; // pos=96
     short TngUnkn98; // pos=98
+    /** Index of a thing which owns this one.
+     * Confirmed since fmtver=4 (from Pre-Alpha Demo code analysis). Also
+     * confirmed  in fmtver=8-11 (from comparative analysis of binary data
+     * in level files).
+     */
     ushort Owner; // pos=100
-    short TngUnkn102; // pos=102  People only, low values
+    /* Since fmtver=4 set for some Person states, purpose unknown (from
+     * Pre-Alpha Demo code analysis). Uses low values, for Person only
+     * (from comparative analysis of binary data in level files).
+     */
+    short PersonUnkn102; // pos=102
     short TngUnkn104; // pos=104
-    short TngUnkn106; // pos=106
+    /* Some kind of counter to restore Person state, unknown (from Pre-Alpha
+     * Demo code analysis).
+     */
+    short PersonUnkn106; // pos=106
+    /** Rotation matrix index for a Vehicle.
+     * Confirmed since fmtver=4 (from Pre-Alpha Demo code analysis). Also
+     * confirmed  in fmtver=8-11 (from comparative analysis of binary data
+     * in level files).
+     */
     ushort VehicleMatrixIndex; // pos=108
-    ushort TngUnkn110; // pos=110
-    ushort UnkFrame; // pos=112
+    /* Confirmed to be Person `Brightness` since fmtver=4 (from Pre-Alpha
+     * Demo code analysis).
+     */
+    ubyte PersonBrightness; // pos=110
+    ubyte TngUnkn111;
+    /* Since fmtver=4, Person sprite frame of some kind (from Pre-Alpha
+     * Demo code analysis).
+     */
+    ushort PersonFrameUnkn112; // pos=112
     short TngUnkn114; // pos=114
     short PersonMaxShieldEnergy;
     short TngUnkn118;
     long  TngUnkn120;
+    /** Index of the path a person is walking.
+     * Confirmed since fmtver=4 (from Pre-Alpha Demo code analysis).
+     */
     short PersonPathIndex; // pos=124
     short TngUnkn128;
     short PersonUniqueID;
@@ -541,7 +575,7 @@ struct ThingOldV9 { // sizeof=216
     char PersonSpecialTimer;
     ubyte TngUnkn135;
     short PersonWeaponTurn;
-    ubyte PersonBrightness; // pos=138
+    ubyte TngUnkn138; // pos=138
     ubyte PersonComRange;
     ubyte PersonBumpMode;
     ubyte PersonBumpCount;
@@ -549,7 +583,7 @@ struct ThingOldV9 { // sizeof=216
     short PersonLinkPassenger;
     ushort PersonWithin; // pos=146
     ushort PersonLastDist;
-    short PersonComTimer;
+    short TngUnkn150;
     ulong PTarget; // pos=152 cleared during load
     short TngUnkn156; // pos=156
     short PersonOnFace;
