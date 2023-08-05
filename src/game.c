@@ -1015,7 +1015,7 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
             new_thing = get_new_thing();
             p_thing = &things[new_thing];
             memcpy(&loc_thing, p_thing, sizeof(struct Thing));
-            if (fmtver < 12) {
+            if (fmtver <= 12) {
                 struct ThingOldV9 s_oldthing;
                 assert(sizeof(s_oldthing) == 216);
                 LbFileRead(lev_fh, &s_oldthing, sizeof(s_oldthing));

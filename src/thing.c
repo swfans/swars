@@ -106,14 +106,14 @@ void refresh_old_thing_format(struct Thing *p_thing, struct ThingOldV9 *p_oldthi
     p_thing->StartFrame = p_oldthing->StartFrame;
     p_thing->Timer1 = p_oldthing->Timer1;
     p_thing->StartTimer1 = p_oldthing->StartTimer1;
-
     p_thing->LinkSameGroup = p_oldthing->LinkSameGroup;
     p_thing->ThingOffset = p_oldthing->ThingOffset;
-    // Fields from VX to VZ
-    len = offsetof(struct Thing, VZ) + sizeof(p_thing->VZ) - offsetof(struct Thing, VX);
-    memset(&p_thing->VX, 0, len); // Leftover data in these three causes weird bugs for flying cars when they move
+    p_thing->VX = p_oldthing->VX;
+    p_thing->VY = p_oldthing->VY;
+    p_thing->VZ = p_oldthing->VZ;
     p_thing->Speed = p_oldthing->Speed;
     p_thing->Health = p_oldthing->Health;
+
     p_thing->Owner = p_oldthing->Owner;
     // Type-dependent fields which are the same for most types
     p_thing->U.UPerson.UniqueID = p_oldthing->PersonUniqueID;

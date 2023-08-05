@@ -382,12 +382,16 @@ struct ThingOldV9 { // sizeof=216
     ubyte Type;
     short State; // pos=10
     ulong Flag;
+    /* Since fmtver=4, this and all previous fields confirmed to match
+     * file layout in final release (from Pre-Alpha Demo code analysis
+     * and from comparative analysis of binary data in level files).
+     */
     short LinkSame;
     /* Stores index of first item within game_objects[].
      * Since fmtver=4, most types (Object,Vehicle,MGun,Effect) have `Object`
-     * and it is at the same place (from Pre-Alpha Demo code analysis).
-     * The `VehicleObject` confirmed in fmtver=8-11 files (from comparative
-     * analysis of binary data in level files).
+     * and it is at the same place for all types (from Pre-Alpha Demo code
+     * analysis). The Vehicle `Object` confirmed in fmtver=8-11 files (from
+     * comparative analysis of binary data in level files).
      */
     union {
         short ObjectObject;
@@ -439,22 +443,78 @@ struct ThingOldV9 { // sizeof=216
         short StartTimer2;
         short ObjectTimer1;
     };
-    short TngUnkn48; // pos=48 Seems to be a boolean only used against people
+    /* Since fmtver=4, Person `AnimMode` (from Pre-Alpha Demo code analysis).
+     * Confirmed to be low value used against peole in fmtver=8-11 files
+     * (from comparative analysis of binary data in level files).
+     */
+    ubyte PersonAnimMode; // pos=48
+    /* Since fmtver=4, Person `OldAnimMode` (from Pre-Alpha Demo code analysis).
+     */
+    ubyte PersonOldAnimMode;
     ushort ThingOffset; // pos=50
-    long VX;
+    /* Since fmtver=4, usually `VX`, but Object type GATE reuses it for
+     * `RaiseDY[]` (from Pre-Alpha Demo code analysis).
+     * The `VX`/`VY`/`VZ` confirmed in fmtver=8-11 (from comparative analysis
+     * of binary data in level files).
+     */
+    union {
+        long VX;
+        short ObjectRaiseDY[2];
+    };
     long VY;
     long VZ;
-    short PersonStamina; //This is only here in V12 files - stamina doesn't seem to exist in 9 and 11
-    short PersonMaxStamina; //pos178 This is only here in V12 files
-    short TngUnkn68; // pos=68
+    /* Since fmtver=4, `AngleX` for Vehicle and MGun (from Pre-Alpha Demo code
+     * analysis). Stamina is only here in fmtver=12 files - does not seem to
+     * exist in 9-11 (from comparative analysis of binary data in level files).
+     */
+    union {
+        short VehicleAngleX;
+        short MGunAngleX;
+        short PersonStamina;
+    };
+    /* Since fmtver=4, `AngleY` for Vehicle and MGun (from Pre-Alpha Demo code
+     * analysis). MaxStamina is only here in fmtver=12 files (from comparative
+     * analysis of binary data in level files).
+     */
+    union {
+        short VehicleAngleY;
+        short MGunAngleY;
+        short PersonMaxStamina;
+    };
+    /* Since fmtver=4, `AngleZ` for Vehicle and MGun (from Pre-Alpha Demo code
+     * analysis).
+     */
+    union { // pos=68
+        short VehicleAngleZ;
+        short MGunAngleZ;
+    };
+    /* The `LinkSameGroup` confirmed in fmtver=8-11 (from comparative analysis
+     * of binary data in level files).
+     */
     short LinkSameGroup; // pos=70
     short TngUnkn72;
-    short TngUnkn74; // Unsure, possibly UMOD values? People only
+    /* Since fmtver=4, `Angle` for Person and Object (from Pre-Alpha Demo code
+     * analysis). Confirmed to be some Person stat in fmtver=8-11 (from
+     * comparative analysis of binary data in level files).
+     */
+    union {
+        ubyte PersonAngle;
+        ubyte ObjectAngle;
+    };
+    ubyte TngUnkn75;
+    /* Since fmtver=4, `Speed` for Vehicle (from Pre-Alpha Demo code analysis).
+     */
     short Speed; // pos=76
     short Health; // pos=78
-    short TngUnkn80; // pos=80
-    short TngUnkn82; // pos=82
-    short TngUnkn84; // pos=84
+    /* Since fmtver=4, `GotoX` for Person (from Pre-Alpha Demo code analysis).
+     */
+    short PersonGotoX; // pos=80
+    /* Since fmtver=4, `GotoY` for Person (from Pre-Alpha Demo code analysis).
+     */
+    short PersonGotoY; // pos=82
+    /* Since fmtver=4, `GotoZ` for Person (from Pre-Alpha Demo code analysis).
+     */
+    short PersonGotoZ; // pos=84
     ubyte PersonGroup; // pos=86 There seems to be no EffectiveGroup in early files
     ubyte TngUnkn87; // pos=87
     ulong PersonWeaponsCarried; // pos=88
@@ -466,7 +526,7 @@ struct ThingOldV9 { // sizeof=216
     short TngUnkn102; // pos=102  People only, low values
     short TngUnkn104; // pos=104
     short TngUnkn106; // pos=106
-    ushort VehicleMatrixIndex; // pos=108 
+    ushort VehicleMatrixIndex; // pos=108
     ushort TngUnkn110; // pos=110
     ushort UnkFrame; // pos=112
     short TngUnkn114; // pos=114
@@ -479,7 +539,7 @@ struct ThingOldV9 { // sizeof=216
     ushort TngUnkn130; // pos=130
     short PersonShieldEnergy; // pos=132
     char PersonSpecialTimer;
-    ubyte PersonAngle;
+    ubyte TngUnkn135;
     short PersonWeaponTurn;
     ubyte PersonBrightness; // pos=138
     ubyte PersonComRange;
@@ -491,18 +551,17 @@ struct ThingOldV9 { // sizeof=216
     ushort PersonLastDist;
     short PersonComTimer;
     ulong PTarget; // pos=152 cleared during load
-    ubyte PersonAnimMode; // pos=156
-    ubyte PersonOldAnimMode;
+    short TngUnkn156; // pos=156
     short PersonOnFace;
     union Mod PersonUMod; // pos=160
     short PersonMood;
     struct DrawFrameId PersonFrameId;
     ubyte PersonShadows; // pos=169
-    ushort VehicleTNode; 
+    ushort VehicleTNode;
     ushort TngUnkn172;
     ushort TngUnkn174;
-    short PersonMaxEnergy; 
-    short PersonEnergy; 
+    short PersonMaxEnergy;
+    short PersonEnergy;
     ubyte PersonShieldGlowTimer;
     ubyte PersonWeaponDir;
     ushort PersonSpecialOwner; // pos=182
@@ -516,8 +575,8 @@ struct ThingOldV9 { // sizeof=216
     short TngUnkn198;
     ubyte PersonRecoilDir; // pos=200
     ubyte PersonCurrentWeapon;
-    short PersonGotoX;
-    short PersonGotoZ;  // Contains vehicle data
+    short TngUnkn202;
+    short TngUnkn204;  // Contains vehicle data
     short TngUnkn206;  // These map to values in the third and fourth bytes of the "Dummy" vehicle value of the final level structure. These are vehicle stats that are similar to  VehiclePassengerHead
     short TngUnkn208;
     short TngUnkn210;
