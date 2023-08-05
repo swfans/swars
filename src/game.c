@@ -1089,7 +1089,7 @@ void load_level_pc(ushort map, short level)
     next_level = map;
     gameturn = 0;
     LbMouseChangeSprite(0);
-    {
+    if (0) { // No need to conserve memory to such extent - mem_game[] was changed
         // Optimization for memory conservation - reserve no space for game_commands,
         // and instead re-use some of triangulation area during map load.
         void **p = mem_game[34].BufferPtr;

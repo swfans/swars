@@ -74,7 +74,7 @@ MemSystem mem_game[] = {
   { "draw_list",		&game_draw_list,		5u, 45001, 0, 0, 0 },
   { "sort_sprites",		&game_sort_sprites,		16u, 4001, 0, 0, 0 },
   { "sort_lines",		&game_sort_lines,		11u, 4001, 0, 0, 0 },
-  { "commands",			&game_commands,			32u, 1, 0, 0, 0 },
+  { "commands",			&game_commands,			32u, 3100, 0, 0, 0 },
   { "bez edit",			&bez_edit,				28u, 2000, 0, 0, 0 },
   { "spare map buffer",	&spare_map_buffer,		1u, 101, 0, 0, 1 },
   { "used_lvl_objectives", &game_used_lvl_objectives,32u, 20, 0, 0, 0 },
