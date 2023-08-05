@@ -560,13 +560,13 @@ struct ThingOldV9 { // sizeof=216
      */
     short PersonUnkn102; // pos=102
     short TngUnkn104; // pos=104
-    /* Some kind of counter to restore Person state, unknown (from Pre-Alpha
-     * Demo code analysis).
+    /* Since fmtver=4, some kind of counter to restore Person state,
+     * unknown (from Pre-Alpha Demo code analysis).
      */
     short PersonUnkn106; // pos=106
     /** Rotation matrix index for a Vehicle.
      * Confirmed since fmtver=4 (from Pre-Alpha Demo code analysis). Also
-     * confirmed  in fmtver=8-11 (from comparative analysis of binary data
+     * confirmed in fmtver=8-11 (from comparative analysis of binary data
      * in level files).
      */
     ushort VehicleMatrixIndex; // pos=108
@@ -580,6 +580,9 @@ struct ThingOldV9 { // sizeof=216
      */
     ushort PersonFrameUnkn112; // pos=112
     short TngUnkn114; // pos=114
+    /* Person `MaxShieldEnergy` recognized in fmtver=8-11 (from comparative
+     * analysis of binary data in level files).
+     */
     short PersonMaxShieldEnergy;
     short TngUnkn118;
     long  TngUnkn120;
@@ -591,15 +594,13 @@ struct ThingOldV9 { // sizeof=216
     union { // pos=128
         ushort PersonUniqueID;
         ushort MGunUniqueID;
-        ushort VehicleUniqueID;
     };
     ushort TngUnkn130; // pos=130
     short PersonShieldEnergy; // pos=132
     char PersonSpecialTimer;
     ubyte TngUnkn135;
     short PersonWeaponTurn;
-    ubyte TngUnkn138; // pos=138
-    ubyte PersonComRange;
+    short TngUnkn138; // pos=138
     ubyte PersonBumpMode;
     ubyte PersonBumpCount;
     short PersonVehicle;
@@ -626,36 +627,73 @@ struct ThingOldV9 { // sizeof=216
         short ObjectTargetDZ;
         short TngUnkn150;
     };
-    /* Pointer to another thing; cleared during load.
+    /** Pointer to a Thing being targeted by this one; cleared during load.
+     * Confirmed since fmtver=4 (from Pre-Alpha Demo code analysis).
      */
     ulong PTarget; // pos=152
     short TngUnkn156; // pos=156
+    /* Assumed to be `OnFace` for Person, no proof.
+     */
     short PersonOnFace;
-    union Mod PersonUMod; // pos=160
-    short PersonMood;
-    struct DrawFrameId PersonFrameId;
-    ubyte PersonShadows; // pos=169
-    ushort VehicleTNode;
-    ushort TngUnkn172;
+    ushort PersonUnkn160; // pos=160
+    ubyte SubState;
+    ubyte PersonComRange;
+    ushort VehicleMaxSpeed; // pos=164
+    /* Besides use in Vehicles, it is set within some Person states since
+     * fmtver=4 (from Pre-Alpha Demo code analysis).
+     */
+    union { // pos=166
+        ushort VehicleUniqueID;
+        short PersonUnkn166;
+    };
+    /* Vehicle `PassengerHead`, confirmed since fmtver=4 (from Pre-Alpha Demo
+     * code analysis).
+     */
+    short VehiclePassengerHead; // pos=168
+    /* Vehicle `TNode`, confirmed since fmtver=4 (from Pre-Alpha Demo code
+     * analysis). Also confirmed in fmtver=8-11 (from comparative analysis
+     * of binary data in level files).
+     */
+    short VehicleTNode;
+    /* Vehicle `AngleDY`, confirmed since fmtver=4 (from Pre-Alpha Demo code
+     * analysis).
+     */
+    short VehicleAngleDY; // pos=172
     ushort TngUnkn174;
-    short PersonMaxEnergy;
-    short PersonEnergy;
-    ubyte PersonShieldGlowTimer;
-    ubyte PersonWeaponDir;
-    ushort PersonSpecialOwner; // pos=182
-    ushort PersonWorkPlace;
-    ushort PersonLeisurePlace;
-    short PersonWeaponTimer;
+    ushort TngUnkn176; // pos=176
+    ushort TngUnkn178;
+    ushort TngUnkn180; // pos=180
+    ushort TngUnkn182;
+    ubyte TngUnkn184; // pos=184
+    /** Used by lights processing routine.
+     * Confirmed since fmtver=4 (from Pre-Alpha Demo code analysis).
+     */
+    ubyte PersonShadows[4]; // pos=185
+    /* `RecoilTimer` at the same position for People and Vehicle.
+     * Confirmed since fmtver=4 (from Pre-Alpha Demo code analysis).
+     */
+    union { // pos=189
+        ubyte VehicleRecoilTimer;
+        ubyte PersonRecoilTimer;
+    };
     ushort PersonMaxHealth; // pos=190
-    short TngUnkn192;
-    short PersonPersuadePower;
+    ubyte PersonRecoilDir; // pos=192
+    ubyte TngUnkn193; // pos=193
+    short GotoThingIndex; // pos=194
     short TngUnkn196;
     short TngUnkn198;
-    ubyte PersonRecoilDir; // pos=200
-    ubyte PersonCurrentWeapon;
+    short TngUnkn200;
     short TngUnkn202;
-    short TngUnkn204;  // Contains vehicle data
-    short TngUnkn206;  // These map to values in the third and fourth bytes of the "Dummy" vehicle value of the final level structure. These are vehicle stats that are similar to  VehiclePassengerHead
+    /* Contains vehicle data in fmtver=8-11, specifics unknown
+     * (from comparative analysis of binary data in level files).
+     */
+    short TngUnkn204;
+    /* In fmtver=8-11, these map to values in the third and fourth bytes
+     * of the "Dummy" vehicle value of the final level structure; vehicle
+     * stats, similar to VehiclePassengerHead, specifics unknown
+     * (from comparative analysis of binary data in level files).
+     */
+    short TngUnkn206;
     short TngUnkn208;
     short TngUnkn210;
     short TngUnkn212; // pos=212

@@ -119,6 +119,8 @@ void refresh_old_thing_format(struct Thing *p_thing, struct ThingOldV9 *p_oldthi
     p_thing->PathOffset = p_oldthing->PersonPathIndex;
     // The target pointer will be cleared anyway
     p_thing->PTarget = NULL; // p_oldthing->PTarget;
+    p_thing->GotoThingIndex = p_oldthing->GotoThingIndex;
+    p_thing->SubState = p_oldthing->SubState;
 
     // Type-dependent fields
     if (p_thing->Type == TT_PERSON)
@@ -150,7 +152,18 @@ void refresh_old_thing_format(struct Thing *p_thing, struct ThingOldV9 *p_oldthi
         p_thing->U.UPerson.LinkPassenger = p_oldthing->PersonLinkPassenger;
         p_thing->U.UPerson.Within = p_oldthing->PersonWithin;
         p_thing->U.UPerson.LastDist = p_oldthing->PersonLastDist;
+        p_thing->U.UPerson.OnFace = p_oldthing->PersonOnFace;
         // End of uncertain fields
+        p_thing->U.UPerson.ComRange = p_oldthing->PersonComRange;
+        p_thing->U.UPerson.Shadows[0] = p_oldthing->PersonShadows[0];
+        p_thing->U.UPerson.Shadows[1] = p_oldthing->PersonShadows[1];
+        p_thing->U.UPerson.Shadows[2] = p_oldthing->PersonShadows[2];
+        p_thing->U.UPerson.Shadows[3] = p_oldthing->PersonShadows[3];
+        p_thing->U.UPerson.RecoilTimer = p_oldthing->PersonRecoilTimer;
+        p_thing->U.UPerson.MaxHealth = p_oldthing->PersonMaxHealth;
+        p_thing->U.UPerson.RecoilDir = p_oldthing->PersonRecoilDir;
+        // Having cybernetic mods is kind of important; but we do not have location of these
+        //p_thing->U.UPerson.UMod.Mods = p_oldthing->?;
         if (fmtver >= 12) {
             p_thing->U.UPerson.Stamina = p_oldthing->PersonStamina;
             p_thing->U.UPerson.MaxStamina = p_oldthing->PersonMaxStamina;
@@ -179,6 +192,13 @@ void refresh_old_thing_format(struct Thing *p_thing, struct ThingOldV9 *p_oldthi
         p_thing->U.UVehicle.GotoZ = p_oldthing->VehicleGotoZ;
         p_thing->U.UVehicle.MatrixIndex = p_oldthing->VehicleMatrixIndex;
         p_thing->U.UVehicle.UniqueID = p_oldthing->VehicleUniqueID;
+        p_thing->U.UVehicle.MaxSpeed = p_oldthing->VehicleMaxSpeed;
+        p_thing->U.UVehicle.PassengerHead = p_oldthing->VehiclePassengerHead;
+        p_thing->U.UVehicle.TNode = p_oldthing->VehicleTNode;
+        p_thing->U.UVehicle.AngleDY = p_oldthing->VehicleAngleDY;
+        p_thing->U.UVehicle.RecoilTimer = p_oldthing->VehicleRecoilTimer;
+        // In old format, MaxHealth is stored in additional vehicle block, not in the thing
+        //p_thing->U.UVehicle.MaxHealth = ?;
     }
     else if (p_thing->Type == TT_BUILDING)
     {
@@ -212,18 +232,6 @@ void refresh_old_thing_format(struct Thing *p_thing, struct ThingOldV9 *p_oldthi
             p_thing->U.UMGun.GotoZ = p_oldthing->MGunGotoZ;
             p_thing->U.UMGun.UniqueID = p_oldthing->MGunUniqueID;
         }
-    }
-
-    // Really type-dependent fields
-    if (p_thing->Type == TT_PERSON)
-    {
-        // TODO verify - should we clear UMod? We're sanitizing it later, so maybe not...
-        p_thing->U.UPerson.MaxHealth = p_oldthing->PersonMaxHealth;
-        p_thing->U.UPerson.ShieldEnergy = p_oldthing->PersonShieldEnergy;
-    }
-    else if (p_thing->Type == TT_VEHICLE)
-    {
-        p_thing->U.UVehicle.MaxHealth = 0; // In old format this is stored in additional vehicle block, not in the thing
     }
 }
 
