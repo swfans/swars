@@ -3,6 +3,8 @@ conf_DATA = \
 	cybmods.ini \
 	weapons.ini \
 	miss000.ini \
+	miss001.ini \
+	miss002.ini \
 	miss999.ini \
 	midipats.cfg
 

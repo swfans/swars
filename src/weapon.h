@@ -20,6 +20,7 @@
 #define WEAPON_H
 
 #include "bftypes.h"
+#include "bfini.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -93,9 +94,16 @@ struct WeaponDef {
   ubyte PercentPerDay;
 };
 
+/* Additional WeaponDef fields, to be later merged with that struct.
+ */
+struct WeaponDefAdd {
+  char Name[12];
+};
+
 #pragma pack()
 /******************************************************************************/
 extern struct WeaponDef weapon_defs[33];
+extern struct TbNamedEnum weapon_names[33];
 extern ubyte weapon_tech_level[33];
 
 void read_weapons_conf_file(void);

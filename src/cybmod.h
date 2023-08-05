@@ -20,6 +20,7 @@
 #define CYBMOD_H
 
 #include "bftypes.h"
+#include "bfini.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -64,6 +65,12 @@ struct ModDef {
 	uchar Pad1;
 };
 
+/* Additional ModDef fields, to be later merged with that struct.
+ */
+struct ModDefAdd {
+  char Name[12];
+};
+
 /** Person Modifications.
  */
 union Mod
@@ -74,6 +81,7 @@ union Mod
 #pragma pack()
 /******************************************************************************/
 extern struct ModDef mod_defs[];
+extern struct TbNamedEnum mod_names[33];
 extern ubyte mod_tech_level[17];
 
 void read_cybmods_conf_file(void);

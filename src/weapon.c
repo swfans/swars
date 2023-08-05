@@ -62,6 +62,9 @@ struct WeaponDef weapon_defs[] = {
     { 0,    0,  0, 16,   4,  5, 0, 0, 0, 1352,  3000,    10,  8},
 };
 
+struct WeaponDefAdd weapon_defs_a[33] = {0};
+struct TbNamedEnum weapon_names[33] = {0};
+
 enum WeaponsConfigCmd {
     CCWep_WeaponsCount = 1,
     CCWep_Name,
@@ -105,7 +108,7 @@ void read_weapons_conf_file(void)
 {
     TbFileHandle conf_fh;
     TbBool done;
-    unsigned int i;
+    int i;
     long k;
     int cmd_num;
     char *conf_buf;
@@ -176,10 +179,12 @@ void read_weapons_conf_file(void)
     {
         char sect_name[16];
         struct WeaponDef *wdef;
+        struct WeaponDefAdd *wdefa;
 
         // Parse the [weaponN] sections of loaded file
         sprintf(sect_name, "weapon%d", wtype);
         wdef = &weapon_defs[wtype];
+        wdefa = &weapon_defs_a[wtype];
         if (LbIniFindSection(&parser, sect_name) != Lb_SUCCESS) {
             CONFWRNLOG("Could not find \"[%s]\" section.", sect_name);
             continue;
@@ -195,14 +200,12 @@ void read_weapons_conf_file(void)
             switch (cmd_num)
             {
             case CCWep_Name:
-#if 0 // TODO add name to weapon params
-                i = LbIniValueGetStrWord(&parser, wdef->Name, sizeof(wdef->Name));
+                i = LbIniValueGetStrWord(&parser, wdefa->Name, sizeof(wdefa->Name));
                 if (i <= 0) {
                     CONFWRNLOG("Couldn't read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
                     break;
                 }
-                CONFDBGLOG("%s \"%s\"", COMMAND_TEXT(cmd_num), (int)wdef->Name);
-#endif
+                CONFDBGLOG("%s \"%s\"", COMMAND_TEXT(cmd_num), (int)wdefa->Name);
                 break;
             case CCWep_RangeBlocks:
                 i = LbIniValueGetLongInt(&parser, &k);
@@ -330,6 +333,21 @@ void read_weapons_conf_file(void)
 #undef CONFWRNLOG
     LbIniParseEnd(&parser);
     LbMemoryFree(conf_buf);
+
+    i = 0;
+    for (wtype = 1; wtype < weapons_count; wtype++)
+    {
+        struct WeaponDefAdd *wdefa;
+
+        wdefa = &weapon_defs_a[wtype];
+        if (strlen(wdefa->Name) > 0) {
+            weapon_names[i].name = wdefa->Name;
+            weapon_names[i].num = wtype;
+            i++;
+        }
+    }
+    weapon_names[i].name = NULL;
+    weapon_names[i].num = 0;
 }
 
 void do_weapon_quantities_net_to_player(struct Thing *p_person)

@@ -76,6 +76,12 @@ struct Campaign {
     ushort FirstTrigger;
     /** Translated text ID for netscan button. */
     ushort NetscanTextId;
+    /** Shift for translated text IDs for all weapon names. */
+    ushort WeaponsTextIdShift;
+    ulong ResearchWeapons;
+    ulong StandardWeapons;
+    ulong ResearchMods;
+    ulong StandardMods;
     /** Char marking projector file names for the campaign. */
     const char *ProjectorFnMk;
     /** Outro movie file name. */

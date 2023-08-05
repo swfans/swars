@@ -984,58 +984,6 @@ void func_6031c(short tx, short tz, short a3, short ty)
         : : "a" (tx), "d" (tz), "b" (a3), "c" (ty));
 }
 
-/** Maps fields from old Thing struct to the current one.
- */
-void refresh_old_thing_format(struct Thing *p_thing, struct ThingOldV9 *p_oldthing, ulong fmtver)
-{
-    ushort len;
-
-    memcpy(p_thing, p_oldthing, sizeof(struct Thing));
-
-    p_thing->LinkSameGroup = p_oldthing->LinkSameGroup;
-    p_thing->ThingOffset = p_oldthing->ThingOffset;
-    // Fields from VX to VZ
-    len = offsetof(struct Thing, VZ) + sizeof(p_thing->VZ) - offsetof(struct Thing, VX);
-    memset(&p_thing->VX, 0, len); // Leftover data in these three causes weird bugs for flying cars when they move
-    p_thing->Speed = p_oldthing->Speed;
-    p_thing->Health = p_oldthing->Health;
-    p_thing->Owner = p_oldthing->Owner;
-    // Type-dependent fields which are the same for most types
-    p_thing->U.UPerson.UniqueID = p_oldthing->PersonUniqueID;
-    p_thing->U.UPerson.Group = p_oldthing->PersonGroup;
-    p_thing->U.UPerson.EffectiveGroup = p_oldthing->PersonGroup;
-    // Really type-dependent fields
-    if (p_thing->Type == TT_PERSON)
-    {
-        p_thing->U.UPerson.ComHead = p_oldthing->PersonComHead;
-        p_thing->U.UPerson.ComCur = p_oldthing->PersonComCur;
-        p_thing->U.UPerson.WeaponsCarried = p_oldthing->PersonWeaponsCarried;
-        p_thing->U.UPerson.BumpMode = 0;
-        p_thing->U.UPerson.LastDist = 0;
-        p_thing->U.UPerson.AnimMode = 0;
-        // TODO verify - should we clear UMod? We're sanitizing it later, so maybe not...
-        // Field FrameId
-        len = 2;
-        memset(&p_thing->U.UPerson.FrameId.Version[0], 0, len); // Blank part of it, to avoid missing body parts
-        if (p_thing->SubType == SubTT_PERS_PUNK_F) {
-            // Randomize hair color - 50% normal red(0), 25% blonde(1), 25% blue(2)
-            len = (LbRandomAnyShort() & 0xFF);
-            if (len < 64)
-                p_thing->U.UPerson.FrameId.Version[0] = 1;
-            else if (len < 128)
-                p_thing->U.UPerson.FrameId.Version[0] = 2;
-        }
-        p_thing->U.UPerson.MaxHealth = p_oldthing->PersonMaxHealth;
-        p_thing->U.UPerson.ShieldEnergy = p_oldthing->PersonShieldEnergy;
-        p_thing->U.UPerson.Stamina = p_oldthing->PersonStamina;
-        p_thing->U.UPerson.MaxStamina = p_oldthing->PersonMaxStamina;
-    }
-    else if (p_thing->Type == TT_VEHICLE)
-    {
-        p_thing->U.UVehicle.MaxHealth = 0; // In old format this is stored in additional vehicle block, not in the thing
-    }
-}
-
 ulong load_level_pc_handle(TbFileHandle lev_fh)
 {
     ulong fmtver;
@@ -4910,6 +4858,7 @@ void init_weapon_text(void)
     if (load_file_wad("textdata/wms.txt", "qdata/alltext", weapon_text) == Lb_FAIL)
         return;
 
+    // TODO change the format to use our INI parser, and weapon codenames from config
     s = weapon_text;
     n = (background_type == 1) ? 1 : 0; // TODO store naming convention within INI file
     for (i = 0; i != n; i++)
@@ -5264,13 +5213,18 @@ void blokey_static_flic_data_to_screen(void)
 #endif
 }
 
+/** Initializes the research data for a new game.
+ */
 void srm_reset_research(void)
 {
 #if 0
     asm volatile ("call ASM_srm_reset_research\n"
         :  :  : "eax" );
 #else
+    struct Campaign *p_campgn;
     int i;
+
+    p_campgn = &campaigns[background_type];
 
     for (i = 0; i < 32; i++)
     {
@@ -5279,31 +5233,14 @@ void srm_reset_research(void)
         research.WeaponProgress[i][0] = 0;
         research.ModProgress[i][0] = 0;
     }
-
-    switch (background_type)
-    {
-    case 0:
-    default:
-        research.WeaponsAllowed = 0x0;
-        research.WeaponsCompleted = 0x4000443;
-        research.ModsAllowed = 0x492;
-        research.ModsCompleted = 0x249;
-        research.CurrentWeapon = -1;
-        research.CurrentMod = -1;
-        research.Scientists = 0;
-        research.NumBases = 0;
-        break;
-    case 1:
-        research.WeaponsAllowed = 0;
-        research.WeaponsCompleted = 0x4020241;
-        research.ModsAllowed = 0x492;
-        research.ModsCompleted = 0x249;
-        research.CurrentWeapon = -1;
-        research.CurrentMod = -1;
-        research.Scientists = 0;
-        research.NumBases = 0;
-        break;
-    }
+    research.WeaponsCompleted = p_campgn->StandardWeapons;
+    research.WeaponsAllowed = p_campgn->ResearchWeapons;
+    research.ModsCompleted = p_campgn->StandardMods;
+    research.ModsAllowed = p_campgn->ResearchMods;
+    research.CurrentWeapon = -1;
+    research.CurrentMod = -1;
+    research.Scientists = 0;
+    research.NumBases = 0;
 #endif
 }
 
@@ -5474,9 +5411,9 @@ void campaign_new_game_prepare(void)
     load_city_data(0);
     load_city_txt();
     init_variables();
-    srm_reset_research();
     init_agents();
     load_missions(background_type);
+    srm_reset_research();
 
     {
         open_new_mission(p_campgn->FirstTrigger);
@@ -7788,8 +7725,8 @@ void net_new_game_prepare(void)
     unkn_flags_08 = 60;
     login_control__Money = starting_cash_amounts[0];
     init_agents();
-    srm_reset_research();
     load_missions(background_type);
+    srm_reset_research();
     init_net_players();
     draw_flic_purple_list(purple_unkn1_data_to_screen);
 }
@@ -8871,10 +8808,9 @@ void show_menu_screen(void)
             init_weapon_anim(selected_weapon);
             if ((research.WeaponsCompleted & (1 << selected_weapon)) || (login_control__State != 6))
             {
-              if (background_type == 1)
-                  equip_name_box.Text = gui_strings[selected_weapon + 30];
-              else
-                  equip_name_box.Text = gui_strings[selected_weapon];
+                struct Campaign *p_campgn;
+                p_campgn = &campaigns[background_type];
+                equip_name_box.Text = gui_strings[p_campgn->WeaponsTextIdShift + selected_weapon];
             }
             else
             {

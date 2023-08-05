@@ -383,17 +383,62 @@ struct ThingOldV9 { // sizeof=216
     short State; // pos=10
     ulong Flag;
     short LinkSame;
-    short VehicleObject; 
+    /* Stores index of first item within game_objects[].
+     * Since fmtver=4, most types (Object,Vehicle,MGun,Effect) have `Object`
+     * and it is at the same place (from Pre-Alpha Demo code analysis).
+     * The `VehicleObject` confirmed in fmtver=8-11 files (from comparative
+     * analysis of binary data in level files).
+     */
+    union {
+        short ObjectObject;
+        short VehicleObject;
+        short MGunObject;
+        short EffectObject;
+    };
     short Radius; // pos=20
-    ushort TngUnkn22;
+    /* Since fmtver=4, most types (Object,Vehicle,MGun,Effect) have `NumbObjects`
+     * and it is at the same place (from Pre-Alpha Demo code analysis).
+     */
+    union {
+        ubyte ObjectNumbObjects;
+        ubyte VehicleNumbObjects;
+        ubyte MGunNumbObjects;
+        ubyte EffectNumbObjects;
+    };
+    ubyte TngUnkn23;
     long X;
     long Y;
     long Z;
-    short Frame;
-    ushort StartFrame;
+    /* Since fmtver=4, most types have `Frame`, only Object type GATE reuses it
+     * for `MinY[0]` (from Pre-Alpha Demo code analysis).
+     */
+    union {
+        short Frame;
+        short ObjectMinY0;
+    };
+    /* Since fmtver=4, most types have `StartFrame`, only Object type GATE
+     *  reuses it for `RaiseY[1]` (from Pre-Alpha Demo code analysis).
+     */
+    union {
+        ushort StartFrame;
+        short ObjectRaiseY1;
+    };
     short Timer1; // pos=40
     short StartTimer1;
-    long TngUnkn44; // pos=44
+    /* Since fmtver=4, usually `Timer2`, but Objects have `Timer[0]` (from
+     * Pre-Alpha Demo code analysis).
+     */
+    union {
+        short Timer2;
+        short ObjectTimer0;
+    };
+    /* Since fmtver=4, usually `StartTimer2`, but Objects have `Timer[1]`
+     * (from Pre-Alpha Demo code analysis).
+     */
+    union {
+        short StartTimer2;
+        short ObjectTimer1;
+    };
     short TngUnkn48; // pos=48 Seems to be a boolean only used against people
     ushort ThingOffset; // pos=50
     long VX;
@@ -496,6 +541,8 @@ void remove_thing(short tngno);
 void add_node_sthing(ushort new_thing);
 short get_new_sthing(void);
 void remove_sthing(short tngno);
+
+void refresh_old_thing_format(struct Thing *p_thing, struct ThingOldV9 *p_oldthing, ulong fmtver);
 
 short find_nearest_from_group(struct Thing *p_person, ushort group, ubyte no_persuaded);
 /******************************************************************************/
