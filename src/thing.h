@@ -130,7 +130,7 @@ struct TngUObject
     ulong DrawTurn; // set within draw_thing_object() for a building
 };
 
-/** State of Thing of type MGun.
+/** State of Thing of type Mounted Gun.
  */
 struct TngUMGun
 {
@@ -330,8 +330,8 @@ struct Thing { // sizeof=168
     short Speed;
     short Health;
     ushort Owner;
-    char PathOffset;
-    char SubState;
+    ubyte PathOffset;
+    ubyte SubState;
     struct Thing *PTarget;
     long Flag2;
     short GotoThingIndex;
@@ -507,14 +507,33 @@ struct ThingOldV9 { // sizeof=216
     short Speed; // pos=76
     short Health; // pos=78
     /* Since fmtver=4, `GotoX` for Person (from Pre-Alpha Demo code analysis).
+     * Assumed to be `GotoX` for most types (MGun,Vehicle,Effect).
      */
-    short PersonGotoX; // pos=80
+    union { // pos=80
+        short PersonGotoX;
+        short MGunGotoX;
+        short VehicleGotoX;
+        short EffectGotoX;
+    };
     /* Since fmtver=4, `GotoY` for Person (from Pre-Alpha Demo code analysis).
+     * Though there is no Parson `GotoY` in final, this is assumed to be `GotoY`
+     * for most types (MGun,Vehicle,Effect).
      */
-    short PersonGotoY; // pos=82
+    union { // pos=82
+        short PersonGotoY;
+        short MGunGotoY;
+        short VehicleGotoY;
+        short EffectGotoY;
+    };
     /* Since fmtver=4, `GotoZ` for Person (from Pre-Alpha Demo code analysis).
+     * Assumed to be `GotoZ` for most types (MGun,Vehicle,Effect).
      */
-    short PersonGotoZ; // pos=84
+    union { // pos=84
+        short PersonGotoZ;
+        short MGunGotoZ;
+        short VehicleGotoZ;
+        short EffectGotoZ;
+    };
     /* Confirmed to be Person `Group` in fmtver=8-11 (from comparative analysis
      * of binary data in level files). There seems to be no EffectiveGroup
      * in early files (from the same comparative analysis).
@@ -569,7 +588,11 @@ struct ThingOldV9 { // sizeof=216
      */
     short PersonPathIndex; // pos=124
     ushort TngUnkn126;
-    short PersonUniqueID; // pos=128
+    union { // pos=128
+        ushort PersonUniqueID;
+        ushort MGunUniqueID;
+        ushort VehicleUniqueID;
+    };
     ushort TngUnkn130; // pos=130
     short PersonShieldEnergy; // pos=132
     char PersonSpecialTimer;
@@ -581,10 +604,31 @@ struct ThingOldV9 { // sizeof=216
     ubyte PersonBumpCount;
     short PersonVehicle;
     short PersonLinkPassenger;
-    ushort PersonWithin; // pos=146
-    ushort PersonLastDist;
-    short TngUnkn150;
-    ulong PTarget; // pos=152 cleared during load
+    /* Since fmtver=4, `TargetDX` for Object type GATE; Person sets it
+     * as well, though purpose is uncertain (from Pre-Alpha Demo code
+     * analysis). Assumed to be `Within` for Person, no proof.
+     */
+    union { // pos=146
+        short ObjectTargetDX;
+        ushort PersonWithin;
+    };
+    /* Since fmtver=4, `TargetDY` for Object type GATE (from Pre-Alpha Demo
+     * code analysis). Assumed to be `LastDist` for Person, no proof.
+     */
+    union { // pos=148
+        short ObjectTargetDY;
+        ushort PersonLastDist;
+    };
+    /* Since fmtver=4, `TargetDZ` for Object type GATE (from Pre-Alpha Demo
+     * code analysis).
+     */
+    union { // pos=150
+        short ObjectTargetDZ;
+        short TngUnkn150;
+    };
+    /* Pointer to another thing; cleared during load.
+     */
+    ulong PTarget; // pos=152
     short TngUnkn156; // pos=156
     short PersonOnFace;
     union Mod PersonUMod; // pos=160
