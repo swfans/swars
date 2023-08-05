@@ -429,14 +429,14 @@ struct ThingOldV9 { // sizeof=216
     };
     short Timer1; // pos=40
     short StartTimer1;
-    /* Since fmtver=4, usually `Timer2`, but Objects have `Timer[0]` (from
-     * Pre-Alpha Demo code analysis).
+    /* Since fmtver=4, `Timer2` for Person and Vehicle, but Objects have
+     * `Timer[0]` (from Pre-Alpha Demo code analysis).
      */
     union {
         short Timer2;
         short ObjectTimer0;
     };
-    /* Since fmtver=4, usually `StartTimer2`, but Objects have `Timer[1]`
+    /* Since fmtver=4, `StartTimer2` for Person, but Objects have `Timer[1]`
      * (from Pre-Alpha Demo code analysis).
      */
     union {
@@ -568,8 +568,8 @@ struct ThingOldV9 { // sizeof=216
      * Confirmed since fmtver=4 (from Pre-Alpha Demo code analysis).
      */
     short PersonPathIndex; // pos=124
-    short TngUnkn128;
-    short PersonUniqueID;
+    ushort TngUnkn126;
+    short PersonUniqueID; // pos=128
     ushort TngUnkn130; // pos=130
     short PersonShieldEnergy; // pos=132
     char PersonSpecialTimer;

@@ -19,6 +19,7 @@
 #include "thing.h"
 
 #include "bfutility.h"
+#include "building.h"
 #include "game.h"
 /******************************************************************************/
 void init_things(void)
@@ -120,6 +121,7 @@ void refresh_old_thing_format(struct Thing *p_thing, struct ThingOldV9 *p_oldthi
     {
         p_thing->U.UPerson.AnimMode = p_oldthing->PersonAnimMode;
         p_thing->U.UPerson.OldAnimMode = p_oldthing->PersonOldAnimMode;
+        p_thing->U.UPerson.Timer2 = p_oldthing->Timer2;
         if (fmtver >= 12) {
             p_thing->U.UPerson.Stamina = p_oldthing->PersonStamina;
             p_thing->U.UPerson.MaxStamina = p_oldthing->PersonMaxStamina;
@@ -139,11 +141,24 @@ void refresh_old_thing_format(struct Thing *p_thing, struct ThingOldV9 *p_oldthi
     {
         p_thing->U.UVehicle.Object = p_oldthing->VehicleObject;
         p_thing->U.UVehicle.NumbObjects = p_oldthing->VehicleNumbObjects;
+        p_thing->U.UVehicle.Timer2 = p_oldthing->Timer2;
     }
     else if (p_thing->Type == TT_BUILDING)
     {
         p_thing->U.UObject.Object = p_oldthing->ObjectObject;
         p_thing->U.UObject.NumbObjects = p_oldthing->ObjectNumbObjects;
+        p_thing->U.UObject.Timer[0] = p_oldthing->ObjectTimer0;
+        if (p_thing->SubType == SubTT_BLD_GATE) {
+            p_thing->U.UObject.RaiseDY[0] = p_oldthing->ObjectRaiseDY[0];
+            p_thing->U.UObject.RaiseDY[1] = p_oldthing->ObjectRaiseDY[1];
+            p_thing->VX = 0;
+            p_thing->VY = 0;
+            p_thing->VZ = 0;
+            p_thing->U.UObject.MinY[0] = p_oldthing->ObjectMinY0;
+            p_thing->U.UObject.RaiseY[1] = p_oldthing->ObjectRaiseY1;
+            p_thing->Frame = 0;
+            p_thing->StartFrame = 0;
+        }
     }
 
     // Type-dependent fields which are the same for most types
