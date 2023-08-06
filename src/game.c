@@ -3572,6 +3572,51 @@ void init_level_3d(ubyte flag)
         : : "a" (flag));
 }
 
+void restart_back_into_mission(ushort mapno, ushort mission)
+{
+    mission_result = 0;
+    ingame.CurrentMission = mission;
+    mission_list[mission].Complete = 0;
+    change_current_map(mapno);
+    unkn_lights_func_11();
+    if (ingame.GameMode == GamM_Unkn2)
+        execute_commands = 0;
+    engn_yc = 0;
+    init_game(1);
+    lbSeed = 0xD15C1234;
+    if (pktrec_mode == PktR_RECORD)
+    {
+        PacketRecord_Close();
+        PacketRecord_OpenWrite();
+    }
+}
+
+void compound_mission_immediate_start_next(void)
+{
+    ushort i, mapno, mission;
+
+    LbFileLoadAt("qdata/pal.pal", display_palette);
+    LbPaletteSet(display_palette);
+
+    // TODO get rid of hard-coded mission numbers
+    if (ingame.CurrentMission == 88)
+      mission = 101;
+    else // CurrentMission == 100
+      mission = 102;
+    mapno = 65;
+
+    for (i = 1; i < 50; i++) {
+        if (mission_open[i] == ingame.CurrentMission)
+            break;
+        ++i;
+    }
+    brief_store[open_brief - 1].Mission = mission;
+    mission_open[i] = mission;
+    mission_state[i] = 0;
+
+    restart_back_into_mission(mapno, mission);
+}
+
 short test_missions(ubyte flag)
 {
     short ret;
@@ -7190,22 +7235,11 @@ ubyte do_user_interface(void)
         if (lbKeyOn[KC_R])
         {
             lbKeyOn[KC_R] = 0;
-            mission_result = 0;
             StopCD();
-            test_missions(1u);
-            init_level_3d(1u);
-            change_current_map(current_map);
-            unkn_lights_func_11();
-            if (ingame.GameMode == GamM_Unkn2)
-                execute_commands = 0;
-            engn_yc = 0;
-            init_game(1);
-            lbSeed = 0xD15C1234;
-            if (pktrec_mode == PktR_RECORD)
-            {
-                PacketRecord_Close();
-                PacketRecord_OpenWrite();
-            }
+            test_missions(1);
+            init_level_3d(1);
+
+            restart_back_into_mission(current_map, ingame.CurrentMission);
         }
     }
 
