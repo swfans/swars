@@ -3534,22 +3534,22 @@ void init_game(ubyte reload)
     asm volatile ("call ASM_init_game\n"
         : : "a" (reload));
 #endif
-    ushort mission_no, next_map_no;
+    ushort missi_no, next_map_no;
     long new_level_no;
 
-    mission_no = ingame.CurrentMission;
-    next_map_no = mission_list[mission_no].MapNo;
+    missi_no = ingame.CurrentMission;
+    next_map_no = mission_list[missi_no].MapNo;
     if (current_map != next_map_no)
         change_current_map(next_map_no);
     debug_trace_setup(0);
 
-    if ((reload) && (mission_list[mission_no].ReLevelNo != 0)) {
-        new_level_no = mission_list[mission_no].ReLevelNo;
+    if ((reload) && (mission_list[missi_no].ReLevelNo != 0)) {
+        new_level_no = mission_list[missi_no].ReLevelNo;
     } else {
-        new_level_no = mission_list[mission_no].LevelNo;
+        new_level_no = mission_list[missi_no].LevelNo;
     }
 
-    load_level_pc(-new_level_no, mission_no);
+    load_level_pc(-new_level_no, missi_no);
     if (ingame.GameMode == GamM_None)
         ingame.GameMode = GamM_Unkn2;
     debug_trace_setup(1);
@@ -3572,14 +3572,14 @@ void init_level_3d(ubyte flag)
         : : "a" (flag));
 }
 
-void restart_back_into_mission(ushort mission)
+void restart_back_into_mission(ushort missi)
 {
     ushort mapno;
 
-    mapno = mission_list[mission].MapNo;
+    mapno = mission_list[missi].MapNo;
     mission_result = 0;
-    ingame.CurrentMission = mission;
-    mission_list[mission].Complete = 0;
+    ingame.CurrentMission = missi;
+    mission_list[missi].Complete = 0;
     change_current_map(mapno);
     unkn_lights_func_11();
     if (ingame.GameMode == GamM_Unkn2)
@@ -3596,25 +3596,22 @@ void restart_back_into_mission(ushort mission)
 
 void compound_mission_immediate_start_next(void)
 {
-    ushort i, mission;
+    short i;
+    ushort missi;
 
     LbFileLoadAt("qdata/pal.pal", display_palette);
     LbPaletteSet(display_palette);
 
-    for (i = 1; i < 50; i++) {
-        if (mission_open[i] == ingame.CurrentMission)
-            break;
-        ++i;
-    }
+    i = find_mission_state_slot(ingame.CurrentMission);
 
-    mission = ingame.CurrentMission;
-    mission = mission_list[mission].SuccessTrigger[0];
+    missi = ingame.CurrentMission;
+    missi = mission_list[missi].SuccessTrigger[0];
 
-    brief_store[open_brief - 1].Mission = mission;
-    mission_open[i] = mission;
+    brief_store[open_brief - 1].Mission = missi;
+    mission_open[i] = missi;
     mission_state[i] = 0;
 
-    restart_back_into_mission(mission);
+    restart_back_into_mission(missi);
 }
 
 short test_missions(ubyte flag)
@@ -5172,20 +5169,22 @@ void queue_up_new_mail(ubyte type, ushort missi)
 
 ushort open_new_mission(ushort missi)
 {
-    int i;
+    int mslot;
 
-    i = 1;
-    if (missi != 88 && missi != 101 && missi != 102)
-    {
-        while (mission_open[i] && i < 50)
-            i++;
-        if (i < 50) {
-            mission_open[i] = missi;
-            mission_state[i] = 0;
-        }
-        do_start_triggers(missi);
-        queue_up_new_mail(1, missi);
+    // TODO MISSI specific missions hard-coded - remove
+    if (missi == 88 || missi == 101 || missi == 102)
+        return 0;
+
+    mslot = find_empty_mission_state_slot();
+    if (mslot > 0) {
+        mission_open[mslot] = missi;
+        mission_state[mslot] = 0;
+    } else {
+        LOGERR("No free slot found for mission %d", (int)missi);
     }
+    do_start_triggers(missi);
+    queue_up_new_mail(1, missi);
+
     return 0;
 }
 

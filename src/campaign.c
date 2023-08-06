@@ -328,6 +328,79 @@ ushort selectable_campaigns_count(void)
     return matches;
 }
 
+ushort find_mission_state_slot(ushort missi)
+{
+    ushort i;
+
+    if (missi < 1)
+        return 0;
+    for (i = 1; i < 50; i++) {
+        if (mission_open[i] == missi)
+            break;
+        ++i;
+    }
+    if (i >= 50)
+        i = 0;
+    return i;
+}
+
+ushort find_empty_mission_state_slot(void)
+{
+    ushort i;
+
+    for (i = 1; i < 50; i++) {
+        if (mission_open[i] == 0)
+            break;
+        ++i;
+    }
+    if (i >= 50)
+        i = 0;
+    return i;
+}
+
+void init_mission_states(void)
+{
+    struct Objective *p_objectv;
+    ushort missi, mslot;
+    ushort objectv;
+    int i;
+
+    mslot = find_mission_state_slot(ingame.CurrentMission);
+    if (mslot > 0) {
+        missi = mission_open[mslot];
+        mission_state[mslot] = 0;
+    } else {
+        missi = ingame.CurrentMission;
+        LOGERR("Mission %d has no slot; initing anyway", (int)missi);
+    }
+    if (missi > next_mission) {
+        LOGERR("Ignored request for unallocated mission %d", (int)missi);
+        return;
+    }
+
+    mission_list[missi].BankTest = 0;
+
+    objectv = mission_list[missi].SuccessHead;
+    for (i = 0; i < 100; i++) {
+        if (objectv == 0)
+            break;
+        p_objectv = &game_used_objectives[objectv];
+        p_objectv->Status = 0;
+        objectv = p_objectv->Next;
+    }
+    LOGSYNC("Prepared %d success objectives for mission %d", i, (int)missi);
+
+    objectv = mission_list[missi].FailHead;
+    for (i = 0; i < 100; i++) {
+        if (objectv == 0)
+            break;
+        p_objectv = &game_used_objectives[objectv];
+        p_objectv->Status = 0;
+        objectv = p_objectv->Next;
+    }
+    LOGSYNC("Prepared %d fail objectives for mission %d", i, (int)missi);
+}
+
 void load_missions(int num)
 {
     read_missions_conf_file(num);
