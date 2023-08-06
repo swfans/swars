@@ -184,6 +184,7 @@ enum MissionListConfigCmd {
     MissL_PANStart,
     MissL_PANEnd,
     MissL_WaitToFade,
+    MissL_ImmediateNextOnSuccess,
     MissL_PreProcess,
 };
 
@@ -252,6 +253,7 @@ const struct TbNamedEnum missions_conf_mission_cmds[] = {
   {"PANStart",		MissL_PANStart},
   {"PANEnd",		MissL_PANEnd},
   {"WaitToFade",	MissL_WaitToFade},
+  {"ImmediateNextOnSuccess",MissL_ImmediateNextOnSuccess},
   {"PreProcess",	MissL_PreProcess},
   {NULL,			0},
 };
@@ -647,9 +649,8 @@ void save_mission_single_conf(TbFileHandle fh, struct Mission *p_missi, char *bu
       sprintf(buf, "PreProcess = %hu\n", p_missi->PreProcess);
       LbFileWrite(fh, buf, strlen(buf));
     }
-    if ((p_missi->field_48[0]|p_missi->field_48[1]|p_missi->field_48[2]) != 0) {
-        sprintf(buf, "field_48 = %d %d %d\n", (int)p_missi->field_48[0],
-          (int)p_missi->field_48[1], (int)p_missi->field_48[2]);
+    if ((p_missi->field_4A) != 0) {
+        sprintf(buf, "field_4A = %d\n", (int)p_missi->field_4A);
         LbFileWrite(fh, buf, strlen(buf));
     }
     if (p_missi->field_4B != 0) {
@@ -1620,6 +1621,19 @@ void read_missions_conf_file(int num)
                 }
                 p_missi->WaitToFade = k;
                 CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)p_missi->WaitToFade);
+                break;
+
+            case MissL_ImmediateNextOnSuccess:
+                i = LbIniValueGetNamedEnum(&parser, missions_conf_any_bool);
+                if (i <= 0) {
+                    CONFWRNLOG("Could not recognize \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                    break;
+                }
+                if (i == 1)
+                    p_missi->Flags |= MisF_ImmediateNextOnSuccess;
+                else
+                    p_missi->Flags &= ~MisF_ImmediateNextOnSuccess;
+                CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)(p_missi->Flags & MisF_ImmediateNextOnSuccess));
                 break;
             case MissL_PreProcess:
                 i = LbIniValueGetLongInt(&parser, &k);

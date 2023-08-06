@@ -67,6 +67,10 @@ enum CampaignFlags {
     CmpgF_IsSelectable   = 0x0002,
 };
 
+enum MissionFlags {
+    MisF_ImmediateNextOnSuccess = 0x0001,
+};
+
 struct Campaign {
     /** Default campaign title. */
     const char *TextName;
@@ -140,7 +144,9 @@ struct Mission { // sizeof=76
     ushort WaitToFade;
     /** Amount of game turns to blindly process before the level starts. */
 	ushort PreProcess;
-    ubyte field_48[3];
+    /** Flag switches for the mission. */
+    ushort Flags;
+    ubyte field_4A;
     ubyte field_4B;
 };
 
