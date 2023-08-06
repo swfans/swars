@@ -3572,8 +3572,11 @@ void init_level_3d(ubyte flag)
         : : "a" (flag));
 }
 
-void restart_back_into_mission(ushort mapno, ushort mission)
+void restart_back_into_mission(ushort mission)
 {
+    ushort mapno;
+
+    mapno = mission_list[mission].MapNo;
     mission_result = 0;
     ingame.CurrentMission = mission;
     mission_list[mission].Complete = 0;
@@ -3593,28 +3596,25 @@ void restart_back_into_mission(ushort mapno, ushort mission)
 
 void compound_mission_immediate_start_next(void)
 {
-    ushort i, mapno, mission;
+    ushort i, mission;
 
     LbFileLoadAt("qdata/pal.pal", display_palette);
     LbPaletteSet(display_palette);
-
-    // TODO get rid of hard-coded mission numbers
-    if (ingame.CurrentMission == 88)
-      mission = 101;
-    else // CurrentMission == 100
-      mission = 102;
-    mapno = 65;
 
     for (i = 1; i < 50; i++) {
         if (mission_open[i] == ingame.CurrentMission)
             break;
         ++i;
     }
+
+    mission = ingame.CurrentMission;
+    mission = mission_list[mission].SuccessTrigger[0];
+
     brief_store[open_brief - 1].Mission = mission;
     mission_open[i] = mission;
     mission_state[i] = 0;
 
-    restart_back_into_mission(mapno, mission);
+    restart_back_into_mission(mission);
 }
 
 short test_missions(ubyte flag)
@@ -7239,7 +7239,7 @@ ubyte do_user_interface(void)
             test_missions(1);
             init_level_3d(1);
 
-            restart_back_into_mission(current_map, ingame.CurrentMission);
+            restart_back_into_mission(ingame.CurrentMission);
         }
     }
 
@@ -7540,9 +7540,13 @@ void brief_load_mission_info(void)
     if (open_brief != 0)
     {
         if (open_brief < 0) {
-            sprintf(fname, "%s/mail%03d.txt", "textdata", email_store[-open_brief - 1].Mission);
+            ushort email;
+            email = -open_brief - 1;
+            sprintf(fname, "%s/mail%03d.txt", "textdata", email_store[email].Mission);
         } else if (open_brief > 0) {
-            sprintf(fname, "%s/miss%03d.txt", "textdata", mission_list[brief_store[open_brief - 1].Mission].SourceID);
+            ushort mission;
+            mission = brief_store[open_brief - 1].Mission;
+            sprintf(fname, "%s/miss%03d.txt", "textdata", mission_list[mission].SourceID);
         }
         load_mail_text(fname);
     }
