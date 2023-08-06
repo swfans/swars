@@ -97,56 +97,6 @@ extern ubyte *m_spr_data_end;
 extern struct TbSprite *m_sprites;
 extern struct TbSprite *m_sprites_end;
 
-extern struct MyMapElement *game_my_big_map;
-extern struct M33 local_mats[100];
-extern struct SingleFloorTexture *game_textures;
-extern struct SingleTexture *game_face_textures;
-extern struct SinglePoint *game_object_points;
-extern ushort next_normal;
-extern ushort next_quick_light;
-extern ushort next_full_light;
-extern ushort word_1531E0;
-extern ushort next_face_texture;
-extern ushort next_floor_texture;
-extern ushort next_object_point;
-extern ushort next_object_face;
-extern ushort next_object_face4;
-extern ushort next_object;
-extern struct SingleObjectFace3 *game_object_faces;
-extern struct SingleObject *game_objects;
-extern struct QuickLight *game_quick_lights;
-extern struct FullLight *game_full_lights;
-extern struct Normal *game_normals;
-extern ushort next_local_mat;
-extern ushort next_special_face;
-extern ushort next_special_face4;
-extern struct SingleObjectFace4 *game_object_faces4;
-extern struct AnimTmap *game_anim_tmaps;
-extern struct TrafficNode *game_traffic_nodes;
-extern struct LightCommand *game_light_commands;
-extern struct ColVectList *game_col_vects_list;
-extern struct ColVect *game_col_vects;
-extern struct WalkHeader *game_walk_headers;
-extern short *game_walk_items;
-extern struct ColColumn *game_col_columns;
-extern struct SingleObjectFace3 *game_special_object_faces;
-extern struct SingleObjectFace4 *game_special_object_faces4;
-extern struct FloorTile *game_floor_tiles;
-extern ushort next_command;
-extern ushort next_col_vect;
-extern ubyte *game_user_heap;
-extern struct SpecialPoint *game_screen_point_pool;
-extern struct DrawItem *game_draw_list;
-extern struct SortSprite *game_sort_sprites;
-extern struct SortLine *game_sort_lines;
-extern struct UnknBezEdit *bez_edit;
-extern ubyte *spare_map_buffer;
-extern struct Objective *game_used_lvl_objectives;
-extern ushort next_used_lvl_objective;
-extern struct LevelMisc *game_level_miscs;
-extern ushort same_type_head[290];
-extern ushort word_176E38;
-
 extern struct UnknGroup unkn_groups[32];
 
 extern ulong stored_l3d_next_object[1];
@@ -185,29 +135,15 @@ extern ubyte current_frame;
 extern long sound_heap_size;
 extern struct SampleTable *sound_heap_memory;
 
+extern struct GamePanel *game_panel;
+extern struct GamePanel game_panel_lo[];
+extern struct GamePanel unknstrct7_arr2[];
+
 extern ushort word_1810E4;
 extern ubyte byte_1810E6[40];
 extern ubyte byte_18110E[40];
 
 extern ubyte research_on_weapons;// = true;
-
-extern PrimObjectPoint *prim_object_points;
-extern PrimObjectFace *prim_object_faces;
-extern PrimObjectFace4 *prim_object_faces4;
-extern PrimObject *prim_objects;
-extern Prim4Texture *prim4_textures;
-extern PrimFaceTexture *prim_face_textures;
-
-extern ushort prim_object_points_count;
-extern ushort prim_object_faces_count;
-extern ushort prim_object_faces4_count;
-extern ushort prim_objects_count;
-extern ushort prim4_textures_count;
-extern ushort prim_face_textures_count;
-extern ushort prim_unknprop01;
-extern struct GamePanel *game_panel;
-extern struct GamePanel game_panel_lo[];
-extern struct GamePanel unknstrct7_arr2[];
 
 extern ushort unkn3de_len;
 extern void *dword_177750;
@@ -260,49 +196,6 @@ struct TbLoadFiles unk02_load_files[] =
   { "",					(void **)NULL, 				(void **)NULL,			0, 0, 0 }
 };
 
-MemSystem mem_game[] = {
-  { "my_big_map",		&game_my_big_map,		18u, 16513, 0, 0, 0 },
-  { "textures",			&game_textures,			18u, 4512, 0, 0, 0 },
-  { "face_textures",	&game_face_textures,	16u, 4000, 0, 0, 0 },
-  { "object_points",	&game_object_points,    10u, 20000, 0, 0, 0 },
-  { "object_faces",		&game_object_faces,		32u, 15000, 0, 0, 0 },
-  { "objects",			&game_objects,			36u, 2000, 0, 0, 0 },
-  { "quick_lights",		&game_quick_lights,		6u, 64000, 0, 0, 0 },
-  { "full_lights",		&game_full_lights,		32u, 4000, 0, 0, 0 },
-  { "normals",			&game_normals,			16u, 10000, 0, 0, 0 },
-  { "object_faces4",	&game_object_faces4,	40u, 10000, 0, 0, 0 },
-  { "anim_tmaps",		&game_anim_tmaps,		54u, 66, 0, 0, 0 },
-  { "traffic_nodes",	&game_traffic_nodes,	36u, 500, 0, 0, 0 },
-  { "light_commands",	&game_light_commands,	36u, 1000, 0, 0, 0 },
-  { "col_vects_list",	&game_col_vects_list,	6u, 26000, 0, 0, 0 },
-  { "col_vects",		&game_col_vects,		14u, 13000, 0, 0, 0 },
-  { "walk_headers",		&game_walk_headers,		4u, 3000, 0, 0, 0 },
-  { "walk_items",		&game_walk_items,		2u, 18000, 0, 0, 0 },
-  { "col_columns",		&game_col_columns,		16u, 6000, 0, 0, 0 },
-  { "prim4_textures",	&prim4_textures,		18u, 1200, 0, 0, 0 },
-  { "prim_face_textures", &prim_face_textures,	16u, 500, 0, 0, 0 },
-  { "prim_object_points", &prim_object_points,	10u, 2000, 0, 0, 0 },
-  { "prim_object_faces", &prim_object_faces,	32u, 800, 0, 0, 0 },
-  { "prim_object_faces4", &prim_object_faces4,	40u, 1300, 0, 0, 0 },
-  { "prim_objects",		&prim_objects,			36u, 60, 0, 0, 0 },
-  { "special_object_faces", &game_special_object_faces, 32u, 1400, 0, 0, 0 },
-  { "special_object_faces4",&game_special_object_faces4, 40u, 1400, 0, 0, 0 },
-  { "floor_tiles",		&game_floor_tiles,		39u, 18000, 0, 0, 0 },
-  { "used_objectives",	&game_used_objectives,	32u, 1200, 0, 0, 0 },
-  { "objectives",		&game_objectives,		32u, 1200, 0, 0, 0 },
-  { "user_heap",		&game_user_heap,		1u, 292228, 0, 0, 0 },
-  { "screen_point_pool",&game_screen_point_pool,8u, 45000, 0, 0, 0 },
-  { "draw_list",		&game_draw_list,		5u, 45001, 0, 0, 0 },
-  { "sort_sprites",		&game_sort_sprites,		16u, 4001, 0, 0, 0 },
-  { "sort_lines",		&game_sort_lines,		11u, 4001, 0, 0, 0 },
-  { "commands",			&game_commands,			32u, 1, 0, 0, 0 },
-  { "bez edit",			&bez_edit,				28u, 2000, 0, 0, 0 },
-  { "spare map buffer",	&spare_map_buffer,		1u, 101, 0, 0, 1 },
-  { "used_lvl_objectives", &game_used_lvl_objectives,32u, 20, 0, 0, 0 },
-  { "level_miscs",		&game_level_miscs,		22u, 200, 0, 0, 0 },
-  { NULL,				NULL,					0u, 0, 0, 0, 0 }
-};
-
 extern TbFileHandle packet_rec_fh;
 
 char unk_credits_text_s[] = "";
@@ -332,38 +225,6 @@ void PacketRecord_OpenWrite(void)
 void debug_trace_place(int place)
 {
     LOGDBG("reached place %d", place);
-}
-
-/** Decrease the size of some arrays to reduce memory usage.
- */
-void adjust_memory_use(void)
-{
-    if (ingame.LowerMemoryUse == 1)
-    {
-        mem_game[35].N = 1; // bez_edit
-        mem_game[28].N = 1; // objectives
-        mem_game[36].N = 1; // spare_map_buffer
-        mem_game[27].N = 1000; // used_objectives
-        mem_game[26].N = 1124; // floor_tiles
-        mem_game[31].N = 2500; // draw_list
-        mem_game[32].N = 1000; // sort_sprites
-        mem_game[33].N = 700; // sort_lines
-        mem_game[30].N = 3000; // screen_point_pool
-        if ( is_single_game || cmdln_param_bcg )
-        {
-            mem_game[20].N = 2000; // prim_object_points
-            mem_game[21].N = 2000; // prim_object_faces increase(?)
-            mem_game[22].N = 2000; // prim_object_faces4 increase(?)
-        }
-        mem_game[4].N = 11000; // object_faces
-        mem_game[9].N = 11000; // object_faces4 increase(?)
-        mem_game[5].N = 1500; // objects
-        mem_game[7].N = 1000; // full_lights
-        mem_game[13].N = 16000; // col_vects_list
-        mem_game[14].N = 9000; // col_vects
-        engine_mem_alloc_size = 2700000;
-        game_perspective = (mem_game[5].N >> 8) & 0xff; // = 5
-    }
 }
 
 short angle_between_points(int x1, int z1, int x2, int z2)
@@ -583,11 +444,11 @@ void play_smacker(int vid_type)
     char str[52];
     const char *fname;
 
-    // TODO case for a specific level, remove
-    if (cmdln_param_current_map == 51)
+    // TODO case for a specific map, remove
+    if (current_map == 51)
     {
         overall_scale = 256;
-        unkn_flags_01 &= 0xFE;
+        unkn_flags_01 &= ~0x01;
         return;
     }
     person_func_unknown_310(2);
@@ -603,8 +464,8 @@ void play_smacker(int vid_type)
         {
         case 0:
         case 2:
-            // TODO case for a specific level, remove
-            if (cmdln_param_current_map == 46)
+            // TODO case for a specific map, remove
+            if (current_map == 46)
             {
                 if (game_dirs[0].use_cd == 1)
                     sprintf(str, "%slanguage/%s/syn_ele.smk", cd_drive, language_3str);
@@ -630,8 +491,8 @@ void play_smacker(int vid_type)
         {
         case 0:
         case 2:
-            // TODO case for a specific level, remove
-            if (cmdln_param_current_map == 46)
+            // TODO case for a specific map, remove
+            if (current_map == 46)
             {
               if (game_dirs[0].use_cd == 1)
                 sprintf(str, "%slanguage/%s/chu_ele.smk", cd_drive, language_3str);
@@ -988,6 +849,7 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
 {
     ulong fmtver;
     TbBool mech_initialized;
+    long limit;
     int i, k;
 
     mech_initialized = 0;
@@ -1015,7 +877,7 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
             new_thing = get_new_thing();
             p_thing = &things[new_thing];
             memcpy(&loc_thing, p_thing, sizeof(struct Thing));
-            if (fmtver < 12) {
+            if (fmtver <= 12) {
                 struct ThingOldV9 s_oldthing;
                 assert(sizeof(s_oldthing) == 216);
                 LbFileRead(lev_fh, &s_oldthing, sizeof(s_oldthing));
@@ -1125,6 +987,11 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
         }
     }
     LbFileRead(lev_fh, &next_command, sizeof(ushort));
+    limit = get_memory_ptr_allocated_count((void **)&game_commands);
+    if ((limit >= 0) && (next_command > limit)) {
+        LOGERR("Restricting \"%s\", wanted %d, limit %ld", "game_commands", (int)next_command, limit);
+        next_command = limit;
+    }
     LbFileRead(lev_fh, game_commands, 32 * next_command);
     LbFileRead(lev_fh, &level_def, 44);
     LbFileRead(lev_fh, engine_mem_alloc_ptr + engine_mem_alloc_size - 1353, 1320);
@@ -1222,7 +1089,9 @@ void load_level_pc(ushort map, short level)
     next_level = map;
     gameturn = 0;
     LbMouseChangeSprite(0);
-    {
+    if (0) { // No need to conserve memory to such extent - mem_game[] was changed
+        // Optimization for memory conservation - reserve no space for game_commands,
+        // and instead re-use some of triangulation area during map load.
         void **p = mem_game[34].BufferPtr;
         *p = dword_177750;
         mem_game[34].N = 3100;
@@ -1236,10 +1105,10 @@ void load_level_pc(ushort map, short level)
         word_1C8446 = 1;
         if (next_level <= 15)
             sprintf(lev_fname, "%s/c%03dl%03d.dat", game_dirs[DirPlace_Levels].directory,
-                cmdln_param_current_map, next_level);
+                current_map, next_level);
         else
             sprintf(lev_fname, "%s/c%03dl%03d.d%d", game_dirs[DirPlace_Levels].directory,
-               cmdln_param_current_map, (next_level - 1) % 15 + 1, (next_level - 1) / 15);
+               current_map, (next_level - 1) % 15 + 1, (next_level - 1) / 15);
         if (next_level > 0)
             current_level = next_level;
     }
@@ -1329,7 +1198,7 @@ TbBool is_unkn_current_player(void)
 
 void change_current_map(ushort mapno)
 {
-    cmdln_param_current_map = mapno;
+    current_map = mapno;
     init_things();
     load_mad_pc(mapno);
     fill_floor_textures();
@@ -2954,14 +2823,6 @@ void init_outro(void)
 #endif
 }
 
-int init_memory(MemSystem *a1)
-{
-    int ret;
-    asm volatile ("call ASM_init_memory\n"
-        : "=r" (ret) : "a" (a1));
-    return ret;
-}
-
 void load_pop_sprites_lo(void)
 {
     asm volatile ("call ASM_load_pop_sprites_lo\n"
@@ -3305,7 +3166,7 @@ void setup_host(void)
           get_packet_record_fname(fname, ingame.CurrentMission, file_no+1);
           LOGDBG("%s: Opening for packet save", fname);
           packet_rec_fh = LbFileOpen(fname, Lb_FILE_MODE_NEW);
-          LbFileWrite(packet_rec_fh, &cmdln_param_current_map, 2);
+          LbFileWrite(packet_rec_fh, &current_map, 2);
       }
     }
     if (pktrec_mode == PktR_PLAYBACK)
@@ -3673,13 +3534,13 @@ void init_game(ubyte reload)
     asm volatile ("call ASM_init_game\n"
         : : "a" (reload));
 #endif
-    ushort mission_no, new_map_no;
+    ushort mission_no, next_map_no;
     long new_level_no;
 
     mission_no = ingame.CurrentMission;
-    new_map_no = mission_list[mission_no].MapNo;
-    if (cmdln_param_current_map != new_map_no)
-        change_current_map(new_map_no);
+    next_map_no = mission_list[mission_no].MapNo;
+    if (current_map != next_map_no)
+        change_current_map(next_map_no);
     debug_trace_setup(0);
 
     if ((reload) && (mission_list[mission_no].ReLevelNo != 0)) {
@@ -3709,6 +3570,51 @@ void init_level_3d(ubyte flag)
 {
     asm volatile ("call ASM_init_level_3d\n"
         : : "a" (flag));
+}
+
+void restart_back_into_mission(ushort mapno, ushort mission)
+{
+    mission_result = 0;
+    ingame.CurrentMission = mission;
+    mission_list[mission].Complete = 0;
+    change_current_map(mapno);
+    unkn_lights_func_11();
+    if (ingame.GameMode == GamM_Unkn2)
+        execute_commands = 0;
+    engn_yc = 0;
+    init_game(1);
+    lbSeed = 0xD15C1234;
+    if (pktrec_mode == PktR_RECORD)
+    {
+        PacketRecord_Close();
+        PacketRecord_OpenWrite();
+    }
+}
+
+void compound_mission_immediate_start_next(void)
+{
+    ushort i, mapno, mission;
+
+    LbFileLoadAt("qdata/pal.pal", display_palette);
+    LbPaletteSet(display_palette);
+
+    // TODO get rid of hard-coded mission numbers
+    if (ingame.CurrentMission == 88)
+      mission = 101;
+    else // CurrentMission == 100
+      mission = 102;
+    mapno = 65;
+
+    for (i = 1; i < 50; i++) {
+        if (mission_open[i] == ingame.CurrentMission)
+            break;
+        ++i;
+    }
+    brief_store[open_brief - 1].Mission = mission;
+    mission_open[i] = mission;
+    mission_state[i] = 0;
+
+    restart_back_into_mission(mapno, mission);
 }
 
 short test_missions(ubyte flag)
@@ -3815,7 +3721,7 @@ void game_setup(void)
     }
     test_open(15);
     debug_trace_setup(1);
-    if (is_single_game && cmdln_param_current_map)
+    if (is_single_game && (ingame.CurrentMission != 0))
     {
         load_missions(background_type);
         init_game(0);
@@ -7329,22 +7235,11 @@ ubyte do_user_interface(void)
         if (lbKeyOn[KC_R])
         {
             lbKeyOn[KC_R] = 0;
-            mission_result = 0;
             StopCD();
-            test_missions(1u);
-            init_level_3d(1u);
-            change_current_map(cmdln_param_current_map);
-            unkn_lights_func_11();
-            if (ingame.GameMode == GamM_Unkn2)
-                execute_commands = 0;
-            engn_yc = 0;
-            init_game(1);
-            lbSeed = 0xD15C1234;
-            if (pktrec_mode == PktR_RECORD)
-            {
-                PacketRecord_Close();
-                PacketRecord_OpenWrite();
-            }
+            test_missions(1);
+            init_level_3d(1);
+
+            restart_back_into_mission(current_map, ingame.CurrentMission);
         }
     }
 

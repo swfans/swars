@@ -21,29 +21,46 @@
 
 #include "bflib_basics.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+/******************************************************************************/
+
 enum DirPlacement {
-        DirPlace_Data = 0,
-        DirPlace_QData,
-        DirPlace_Maps,
-        DirPlace_Levels,
-        DirPlace_Intro,
-        DirPlace_Sound,
-        DirPlace_Equip,
-        DirPlace_None,
+    DirPlace_Data = 0,
+    DirPlace_QData,
+    DirPlace_Maps,
+    DirPlace_Levels,
+    DirPlace_Intro,
+    DirPlace_Sound,
+    DirPlace_Equip,
+    DirPlace_None,
 };
 
 #pragma pack(1)
 
 typedef struct {
-  char *directory;
-  TbBool use_cd;
+    char *directory;
+    TbBool use_cd;
 } PathInfo;
+
+typedef struct {
+    char *Name;
+    void *BufferPtr;
+    ushort ESize;
+    long N;
+    long dum1;
+    long dum2;
+    ubyte dum3;
+} MemSystem;
 
 #pragma pack()
 
 extern PathInfo game_dirs[8];
 extern char cd_drive[52];
 extern char language_3str[4];
+
+extern MemSystem mem_game[];
 
 /******************************************************************************/
 
@@ -56,4 +73,12 @@ void setup_file_names(void);
 int get_new_packet_record_no(int map_index);
 void get_packet_record_fname(char *fname, int map_index, int file_no);
 
+void adjust_memory_use(void);
+int init_memory(MemSystem *mems);
+long get_memory_ptr_allocated_count(void **mgptr);
+
+/******************************************************************************/
+#ifdef __cplusplus
+}
+#endif
 #endif

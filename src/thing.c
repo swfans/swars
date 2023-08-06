@@ -19,6 +19,7 @@
 #include "thing.h"
 
 #include "bfutility.h"
+#include "building.h"
 #include "game.h"
 /******************************************************************************/
 void init_things(void)
@@ -106,48 +107,131 @@ void refresh_old_thing_format(struct Thing *p_thing, struct ThingOldV9 *p_oldthi
     p_thing->StartFrame = p_oldthing->StartFrame;
     p_thing->Timer1 = p_oldthing->Timer1;
     p_thing->StartTimer1 = p_oldthing->StartTimer1;
-
     p_thing->LinkSameGroup = p_oldthing->LinkSameGroup;
     p_thing->ThingOffset = p_oldthing->ThingOffset;
-    // Fields from VX to VZ
-    len = offsetof(struct Thing, VZ) + sizeof(p_thing->VZ) - offsetof(struct Thing, VX);
-    memset(&p_thing->VX, 0, len); // Leftover data in these three causes weird bugs for flying cars when they move
+    p_thing->VX = p_oldthing->VX;
+    p_thing->VY = p_oldthing->VY;
+    p_thing->VZ = p_oldthing->VZ;
     p_thing->Speed = p_oldthing->Speed;
     p_thing->Health = p_oldthing->Health;
     p_thing->Owner = p_oldthing->Owner;
-    // Type-dependent fields which are the same for most types
-    p_thing->U.UPerson.UniqueID = p_oldthing->PersonUniqueID;
-    p_thing->U.UPerson.Group = p_oldthing->PersonGroup;
-    p_thing->U.UPerson.EffectiveGroup = p_oldthing->PersonGroup;
-    // Really type-dependent fields
+    // Not sure if these values really match
+    p_thing->PathOffset = p_oldthing->PersonPathIndex;
+    // The target pointer will be cleared anyway
+    p_thing->PTarget = NULL; // p_oldthing->PTarget;
+    p_thing->GotoThingIndex = p_oldthing->GotoThingIndex;
+    p_thing->SubState = p_oldthing->SubState;
+
+    // Type-dependent fields
     if (p_thing->Type == TT_PERSON)
     {
-        p_thing->U.UPerson.ComHead = p_oldthing->PersonComHead;
-        //p_thing->U.UPerson.ComCur = p_oldthing->PersonComCur; -- not yet re-added
+        p_thing->U.UPerson.AnimMode = p_oldthing->PersonAnimMode;
+        p_thing->U.UPerson.OldAnimMode = p_oldthing->PersonOldAnimMode;
+        p_thing->U.UPerson.Timer2 = p_oldthing->Timer2;
+        p_thing->U.UPerson.StartTimer2 = p_oldthing->StartTimer2;
+        p_thing->U.UPerson.Angle = p_oldthing->PersonAngle;
+        p_thing->U.UPerson.GotoX = p_oldthing->PersonGotoX;
+        p_thing->U.UPerson.GotoZ = p_oldthing->PersonGotoZ;
+        p_thing->U.UPerson.Group = p_oldthing->PersonGroup;
+        p_thing->U.UPerson.EffectiveGroup = p_oldthing->PersonGroup;
         p_thing->U.UPerson.WeaponsCarried = p_oldthing->PersonWeaponsCarried;
-        p_thing->U.UPerson.BumpMode = 0;
-        p_thing->U.UPerson.LastDist = 0;
-        p_thing->U.UPerson.AnimMode = 0;
-        // TODO verify - should we clear UMod? We're sanitizing it later, so maybe not...
+        p_thing->U.UPerson.ComHead = p_oldthing->PersonComHead;
+        p_thing->U.UPerson.ComCur = p_oldthing->PersonComCur;
+        p_thing->U.UPerson.ComTimer = p_oldthing->PersonComTimer;
+        p_thing->U.UPerson.Brightness = p_oldthing->PersonBrightness;
+        p_thing->U.UPerson.MaxShieldEnergy = p_oldthing->PersonMaxShieldEnergy;
+        p_thing->U.UPerson.UniqueID = p_oldthing->PersonUniqueID;
+        // Uncertain fields
+        p_thing->U.UPerson.ShieldEnergy = p_oldthing->PersonShieldEnergy;
+        p_thing->U.UPerson.SpecialTimer = p_oldthing->PersonSpecialTimer;
+        p_thing->U.UPerson.WeaponTurn = p_oldthing->PersonWeaponTurn;
+        p_thing->U.UPerson.ComRange = p_oldthing->PersonComRange;
+        p_thing->U.UPerson.BumpMode = p_oldthing->PersonBumpMode;
+        p_thing->U.UPerson.BumpCount = p_oldthing->PersonBumpCount;
+        p_thing->U.UPerson.Vehicle = p_oldthing->PersonVehicle;
+        p_thing->U.UPerson.LinkPassenger = p_oldthing->PersonLinkPassenger;
+        p_thing->U.UPerson.Within = p_oldthing->PersonWithin;
+        p_thing->U.UPerson.LastDist = p_oldthing->PersonLastDist;
+        p_thing->U.UPerson.OnFace = p_oldthing->PersonOnFace;
+        // End of uncertain fields
+        p_thing->U.UPerson.ComRange = p_oldthing->PersonComRange;
+        p_thing->U.UPerson.Shadows[0] = p_oldthing->PersonShadows[0];
+        p_thing->U.UPerson.Shadows[1] = p_oldthing->PersonShadows[1];
+        p_thing->U.UPerson.Shadows[2] = p_oldthing->PersonShadows[2];
+        p_thing->U.UPerson.Shadows[3] = p_oldthing->PersonShadows[3];
+        p_thing->U.UPerson.RecoilTimer = p_oldthing->PersonRecoilTimer;
+        p_thing->U.UPerson.MaxHealth = p_oldthing->PersonMaxHealth;
+        p_thing->U.UPerson.RecoilDir = p_oldthing->PersonRecoilDir;
+        // Having cybernetic mods is kind of important; but we do not have location of these
+        //p_thing->U.UPerson.UMod.Mods = p_oldthing->?;
+        if (fmtver >= 12) {
+            p_thing->U.UPerson.Stamina = p_oldthing->PersonStamina;
+            p_thing->U.UPerson.MaxStamina = p_oldthing->PersonMaxStamina;
+        }
         // Field FrameId
-        len = 2;
-        memset(&p_thing->U.UPerson.FrameId.Version[0], 0, len); // Blank part of it, to avoid missing body parts
         if (p_thing->SubType == SubTT_PERS_PUNK_F) {
             // Randomize hair color - 50% normal red(0), 25% blonde(1), 25% blue(2)
-            len = (LbRandomAnyShort() & 0xFF);
-            if (len < 64)
+            // The ThingOffset should be random enough
+            len = (p_thing->ThingOffset & 0xF);
+            if (len < 4)
                 p_thing->U.UPerson.FrameId.Version[0] = 1;
-            else if (len < 128)
+            else if (len < 8)
                 p_thing->U.UPerson.FrameId.Version[0] = 2;
         }
-        p_thing->U.UPerson.MaxHealth = p_oldthing->PersonMaxHealth;
-        p_thing->U.UPerson.ShieldEnergy = p_oldthing->PersonShieldEnergy;
-        p_thing->U.UPerson.Stamina = p_oldthing->PersonStamina;
-        p_thing->U.UPerson.MaxStamina = p_oldthing->PersonMaxStamina;
     }
     else if (p_thing->Type == TT_VEHICLE)
     {
-        p_thing->U.UVehicle.MaxHealth = 0; // In old format this is stored in additional vehicle block, not in the thing
+        p_thing->U.UVehicle.Object = p_oldthing->VehicleObject;
+        p_thing->U.UVehicle.NumbObjects = p_oldthing->VehicleNumbObjects;
+        p_thing->U.UVehicle.Timer2 = p_oldthing->Timer2;
+        p_thing->U.UVehicle.AngleX = p_oldthing->VehicleAngleX;
+        p_thing->U.UVehicle.AngleY = p_oldthing->VehicleAngleY;
+        p_thing->U.UVehicle.AngleZ = p_oldthing->VehicleAngleZ;
+        p_thing->U.UVehicle.GotoX = p_oldthing->VehicleGotoX;
+        p_thing->U.UVehicle.GotoY = p_oldthing->VehicleGotoY;
+        p_thing->U.UVehicle.GotoZ = p_oldthing->VehicleGotoZ;
+        p_thing->U.UVehicle.MatrixIndex = p_oldthing->VehicleMatrixIndex;
+        p_thing->U.UVehicle.UniqueID = p_oldthing->VehicleUniqueID;
+        p_thing->U.UVehicle.MaxSpeed = p_oldthing->VehicleMaxSpeed;
+        p_thing->U.UVehicle.PassengerHead = p_oldthing->VehiclePassengerHead;
+        p_thing->U.UVehicle.TNode = p_oldthing->VehicleTNode;
+        p_thing->U.UVehicle.AngleDY = p_oldthing->VehicleAngleDY;
+        p_thing->U.UVehicle.RecoilTimer = p_oldthing->VehicleRecoilTimer;
+        // In old format, MaxHealth is stored in additional vehicle block, not in the thing
+        //p_thing->U.UVehicle.MaxHealth = ?;
+    }
+    else if (p_thing->Type == TT_BUILDING)
+    {
+        p_thing->U.UObject.Object = p_oldthing->ObjectObject;
+        p_thing->U.UObject.NumbObjects = p_oldthing->ObjectNumbObjects;
+        p_thing->U.UObject.Timer[0] = p_oldthing->ObjectTimer0;
+        p_thing->U.UObject.Timer[1] = p_oldthing->ObjectTimer1;
+        p_thing->U.UObject.Angle = p_oldthing->ObjectAngle;
+        p_thing->U.UObject.TargetDX = p_oldthing->ObjectTargetDX;
+        p_thing->U.UObject.TargetDY = p_oldthing->ObjectTargetDY;
+        p_thing->U.UObject.TargetDZ = p_oldthing->ObjectTargetDZ;
+        if (p_thing->SubType == SubTT_BLD_GATE) {
+            p_thing->U.UObject.RaiseDY[0] = p_oldthing->ObjectRaiseDY[0];
+            p_thing->U.UObject.RaiseDY[1] = p_oldthing->ObjectRaiseDY[1];
+            p_thing->VX = 0;
+            p_thing->VY = 0;
+            p_thing->VZ = 0;
+            p_thing->U.UObject.MinY[0] = p_oldthing->ObjectMinY0;
+            p_thing->U.UObject.RaiseY[1] = p_oldthing->ObjectRaiseY1;
+            p_thing->Frame = 0;
+            p_thing->StartFrame = 0;
+        }
+        else if (p_thing->SubType == SubTT_BLD_MGUN) {
+            p_thing->U.UMGun.Object = p_oldthing->MGunObject;
+            p_thing->U.UMGun.NumbObjects = p_oldthing->MGunNumbObjects;
+            p_thing->U.UMGun.AngleX = p_oldthing->MGunAngleX;
+            p_thing->U.UMGun.AngleY = p_oldthing->MGunAngleY;
+            p_thing->U.UMGun.AngleZ = p_oldthing->MGunAngleZ;
+            p_thing->U.UMGun.GotoX = p_oldthing->MGunGotoX;
+            p_thing->U.UMGun.GotoY = p_oldthing->MGunGotoY;
+            p_thing->U.UMGun.GotoZ = p_oldthing->MGunGotoZ;
+            p_thing->U.UMGun.UniqueID = p_oldthing->MGunUniqueID;
+        }
     }
 }
 

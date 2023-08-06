@@ -176,15 +176,14 @@ static TbBool process_options(int *argc, char ***argv)
 
         case 'm':
             is_single_game = 1;
-            if (sscanf(optarg, "%hhu,%hu", &background_type, &cmdln_param_current_map) != 2)
+            if (sscanf(optarg, "%hhu,%d", &background_type, &tmpint) != 2)
             {
                 LOGERR("Invalid value after '-m' parameter. Required two comma separated ints.");
                 return false;
             }
-            //cmdln_param_current_map = atoi(optarg);
             ingame.GameMode = GamM_Unkn2;
             ingame.Flags |= 0x08;
-            ingame.CurrentMission = cmdln_param_current_map;
+            ingame.CurrentMission = tmpint;
             ingame.Cheats |= 0x04;
             LOGDBG("Campaign %d mission index %d", (int)background_type, (int)ingame.CurrentMission);
             break;

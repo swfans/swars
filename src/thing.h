@@ -130,7 +130,7 @@ struct TngUObject
     ulong DrawTurn; // set within draw_thing_object() for a building
 };
 
-/** State of Thing of type MGun.
+/** State of Thing of type Mounted Gun.
  */
 struct TngUMGun
 {
@@ -330,8 +330,8 @@ struct Thing { // sizeof=168
     short Speed;
     short Health;
     ushort Owner;
-    char PathOffset;
-    char SubState;
+    ubyte PathOffset;
+    ubyte SubState;
     struct Thing *PTarget;
     long Flag2;
     short GotoThingIndex;
@@ -382,12 +382,16 @@ struct ThingOldV9 { // sizeof=216
     ubyte Type;
     short State; // pos=10
     ulong Flag;
+    /* Since fmtver=4, this and all previous fields confirmed to match
+     * file layout in final release (from Pre-Alpha Demo code analysis
+     * and from comparative analysis of binary data in level files).
+     */
     short LinkSame;
-    /* Stores index of first item within game_objects[].
+    /** Stores index of first item within game_objects[].
      * Since fmtver=4, most types (Object,Vehicle,MGun,Effect) have `Object`
-     * and it is at the same place (from Pre-Alpha Demo code analysis).
-     * The `VehicleObject` confirmed in fmtver=8-11 files (from comparative
-     * analysis of binary data in level files).
+     * and it is at the same place for all types (from Pre-Alpha Demo code
+     * analysis). The Vehicle `Object` confirmed in fmtver=8-11 files (from
+     * comparative analysis of binary data in level files).
      */
     union {
         short ObjectObject;
@@ -425,100 +429,271 @@ struct ThingOldV9 { // sizeof=216
     };
     short Timer1; // pos=40
     short StartTimer1;
-    /* Since fmtver=4, usually `Timer2`, but Objects have `Timer[0]` (from
-     * Pre-Alpha Demo code analysis).
+    /* Since fmtver=4, `Timer2` for Person and Vehicle, but Objects have
+     * `Timer[0]` (from Pre-Alpha Demo code analysis).
      */
     union {
         short Timer2;
         short ObjectTimer0;
     };
-    /* Since fmtver=4, usually `StartTimer2`, but Objects have `Timer[1]`
+    /* Since fmtver=4, `StartTimer2` for Person, but Objects have `Timer[1]`
      * (from Pre-Alpha Demo code analysis).
      */
     union {
         short StartTimer2;
         short ObjectTimer1;
     };
-    short TngUnkn48; // pos=48 Seems to be a boolean only used against people
+    /* Since fmtver=4, Person `AnimMode` (from Pre-Alpha Demo code analysis).
+     * Confirmed to be low value used against Person in fmtver=8-11 files
+     * (from comparative analysis of binary data in level files).
+     */
+    ubyte PersonAnimMode; // pos=48
+    /* Since fmtver=4, Person `OldAnimMode` (from Pre-Alpha Demo code analysis).
+     */
+    ubyte PersonOldAnimMode;
     ushort ThingOffset; // pos=50
-    long VX;
+    /* Since fmtver=4, usually `VX`, but Object type GATE reuses it for
+     * `RaiseDY[]` (from Pre-Alpha Demo code analysis).
+     * The `VX`/`VY`/`VZ` confirmed in fmtver=8-11 (from comparative analysis
+     * of binary data in level files).
+     */
+    union {
+        long VX;
+        short ObjectRaiseDY[2];
+    };
     long VY;
     long VZ;
-    short PersonStamina; //This is only here in V12 files - stamina doesn't seem to exist in 9 and 11
-    short PersonMaxStamina; //pos178 This is only here in V12 files
-    short TngUnkn68; // pos=68
+    /* Since fmtver=4, `AngleX` for Vehicle and MGun (from Pre-Alpha Demo code
+     * analysis). Stamina is only here in fmtver=12 files - does not seem to
+     * exist in 9-11 (from comparative analysis of binary data in level files).
+     */
+    union {
+        short VehicleAngleX;
+        short MGunAngleX;
+        short PersonStamina;
+    };
+    /* Since fmtver=4, `AngleY` for Vehicle and MGun (from Pre-Alpha Demo code
+     * analysis). MaxStamina is only here in fmtver=12 files (from comparative
+     * analysis of binary data in level files).
+     */
+    union {
+        short VehicleAngleY;
+        short MGunAngleY;
+        short PersonMaxStamina;
+    };
+    /* Since fmtver=4, `AngleZ` for Vehicle and MGun (from Pre-Alpha Demo code
+     * analysis).
+     */
+    union { // pos=68
+        short VehicleAngleZ;
+        short MGunAngleZ;
+    };
+    /* The `LinkSameGroup` confirmed in fmtver=8-11 (from comparative analysis
+     * of binary data in level files).
+     */
     short LinkSameGroup; // pos=70
     short TngUnkn72;
-    short TngUnkn74; // Unsure, possibly UMOD values? People only
+    /* Since fmtver=4, `Angle` for Person and Object (from Pre-Alpha Demo code
+     * analysis). Confirmed to be some Person stat in fmtver=8-11 (from
+     * comparative analysis of binary data in level files).
+     */
+    union {
+        ubyte PersonAngle;
+        ubyte ObjectAngle;
+    };
+    ubyte TngUnkn75;
+    /* Since fmtver=4, `Speed` for Vehicle (from Pre-Alpha Demo code analysis).
+     */
     short Speed; // pos=76
     short Health; // pos=78
-    short TngUnkn80; // pos=80
-    short TngUnkn82; // pos=82
-    short TngUnkn84; // pos=84
-    ubyte PersonGroup; // pos=86 There seems to be no EffectiveGroup in early files
+    /* Since fmtver=4, `GotoX` for Person (from Pre-Alpha Demo code analysis).
+     * Assumed to be `GotoX` for most types (MGun,Vehicle,Effect).
+     */
+    union { // pos=80
+        short PersonGotoX;
+        short MGunGotoX;
+        short VehicleGotoX;
+        short EffectGotoX;
+    };
+    /* Since fmtver=4, `GotoY` for Person (from Pre-Alpha Demo code analysis).
+     * Though there is no Parson `GotoY` in final, this is assumed to be `GotoY`
+     * for most types (MGun,Vehicle,Effect).
+     */
+    union { // pos=82
+        short PersonGotoY;
+        short MGunGotoY;
+        short VehicleGotoY;
+        short EffectGotoY;
+    };
+    /* Since fmtver=4, `GotoZ` for Person (from Pre-Alpha Demo code analysis).
+     * Assumed to be `GotoZ` for most types (MGun,Vehicle,Effect).
+     */
+    union { // pos=84
+        short PersonGotoZ;
+        short MGunGotoZ;
+        short VehicleGotoZ;
+        short EffectGotoZ;
+    };
+    /* Confirmed to be Person `Group` in fmtver=8-11 (from comparative analysis
+     * of binary data in level files). There seems to be no EffectiveGroup
+     * in early files (from the same comparative analysis).
+     */
+    ubyte PersonGroup; // pos=86
     ubyte TngUnkn87; // pos=87
     ulong PersonWeaponsCarried; // pos=88
+    /** Next command assigned to the Person.
+     * Confirmed since fmtver=4 (from Pre-Alpha Demo code analysis).
+     */
     ushort PersonComHead; // pos=92
-    short TngUnkn94; // pos=94
-    short TngUnkn96; // pos=96
+    ushort PersonComCur; // pos=94
+    short PersonComTimer; // pos=96
     short TngUnkn98; // pos=98
+    /** Index of a thing which owns this one.
+     * Confirmed since fmtver=4 (from Pre-Alpha Demo code analysis). Also
+     * confirmed  in fmtver=8-11 (from comparative analysis of binary data
+     * in level files).
+     */
     ushort Owner; // pos=100
-    short TngUnkn102; // pos=102  People only, low values
+    /* Since fmtver=4 set for some Person states, purpose unknown (from
+     * Pre-Alpha Demo code analysis). Uses low values, for Person only
+     * (from comparative analysis of binary data in level files).
+     */
+    short PersonUnkn102; // pos=102
     short TngUnkn104; // pos=104
-    short TngUnkn106; // pos=106
-    ushort VehicleMatrixIndex; // pos=108 
-    ushort TngUnkn110; // pos=110
-    ushort UnkFrame; // pos=112
+    /* Since fmtver=4, some kind of counter to restore Person state,
+     * unknown (from Pre-Alpha Demo code analysis).
+     */
+    short PersonUnkn106; // pos=106
+    /** Rotation matrix index for a Vehicle.
+     * Confirmed since fmtver=4 (from Pre-Alpha Demo code analysis). Also
+     * confirmed in fmtver=8-11 (from comparative analysis of binary data
+     * in level files).
+     */
+    ushort VehicleMatrixIndex; // pos=108
+    /* Confirmed to be Person `Brightness` since fmtver=4 (from Pre-Alpha
+     * Demo code analysis).
+     */
+    ubyte PersonBrightness; // pos=110
+    ubyte TngUnkn111;
+    /* Since fmtver=4, Person sprite frame of some kind (from Pre-Alpha
+     * Demo code analysis).
+     */
+    ushort PersonFrameUnkn112; // pos=112
     short TngUnkn114; // pos=114
+    /* Person `MaxShieldEnergy` recognized in fmtver=8-11 (from comparative
+     * analysis of binary data in level files).
+     */
     short PersonMaxShieldEnergy;
     short TngUnkn118;
     long  TngUnkn120;
+    /** Index of the path a person is walking.
+     * Confirmed since fmtver=4 (from Pre-Alpha Demo code analysis).
+     */
     short PersonPathIndex; // pos=124
-    short TngUnkn128;
-    short PersonUniqueID;
+    ushort TngUnkn126;
+    union { // pos=128
+        ushort PersonUniqueID;
+        ushort MGunUniqueID;
+    };
     ushort TngUnkn130; // pos=130
     short PersonShieldEnergy; // pos=132
     char PersonSpecialTimer;
-    ubyte PersonAngle;
+    ubyte TngUnkn135;
     short PersonWeaponTurn;
-    ubyte PersonBrightness; // pos=138
-    ubyte PersonComRange;
+    short TngUnkn138; // pos=138
     ubyte PersonBumpMode;
     ubyte PersonBumpCount;
     short PersonVehicle;
     short PersonLinkPassenger;
-    ushort PersonWithin; // pos=146
-    ushort PersonLastDist;
-    short PersonComTimer;
-    ulong PTarget; // pos=152 cleared during load
-    ubyte PersonAnimMode; // pos=156
-    ubyte PersonOldAnimMode;
+    /* Since fmtver=4, `TargetDX` for Object type GATE; Person sets it
+     * as well, though purpose is uncertain (from Pre-Alpha Demo code
+     * analysis). Assumed to be `Within` for Person, no proof.
+     */
+    union { // pos=146
+        short ObjectTargetDX;
+        ushort PersonWithin;
+    };
+    /* Since fmtver=4, `TargetDY` for Object type GATE (from Pre-Alpha Demo
+     * code analysis). Assumed to be `LastDist` for Person, no proof.
+     */
+    union { // pos=148
+        short ObjectTargetDY;
+        ushort PersonLastDist;
+    };
+    /* Since fmtver=4, `TargetDZ` for Object type GATE (from Pre-Alpha Demo
+     * code analysis).
+     */
+    union { // pos=150
+        short ObjectTargetDZ;
+        short TngUnkn150;
+    };
+    /** Pointer to a Thing being targeted by this one; cleared during load.
+     * Confirmed since fmtver=4 (from Pre-Alpha Demo code analysis).
+     */
+    ulong PTarget; // pos=152
+    short TngUnkn156; // pos=156
+    /* Assumed to be `OnFace` for Person, no proof.
+     */
     short PersonOnFace;
-    union Mod PersonUMod; // pos=160
-    short PersonMood;
-    struct DrawFrameId PersonFrameId;
-    ubyte PersonShadows; // pos=169
-    ushort VehicleTNode; 
-    ushort TngUnkn172;
+    ushort PersonUnkn160; // pos=160
+    ubyte SubState;
+    ubyte PersonComRange;
+    ushort VehicleMaxSpeed; // pos=164
+    /* Besides use in Vehicles, it is set within some Person states since
+     * fmtver=4 (from Pre-Alpha Demo code analysis).
+     */
+    union { // pos=166
+        ushort VehicleUniqueID;
+        short PersonUnkn166;
+    };
+    /* Vehicle `PassengerHead`, confirmed since fmtver=4 (from Pre-Alpha Demo
+     * code analysis).
+     */
+    short VehiclePassengerHead; // pos=168
+    /* Vehicle `TNode`, confirmed since fmtver=4 (from Pre-Alpha Demo code
+     * analysis). Also confirmed in fmtver=8-11 (from comparative analysis
+     * of binary data in level files).
+     */
+    short VehicleTNode;
+    /* Vehicle `AngleDY`, confirmed since fmtver=4 (from Pre-Alpha Demo code
+     * analysis).
+     */
+    short VehicleAngleDY; // pos=172
     ushort TngUnkn174;
-    short PersonMaxEnergy; 
-    short PersonEnergy; 
-    ubyte PersonShieldGlowTimer;
-    ubyte PersonWeaponDir;
-    ushort PersonSpecialOwner; // pos=182
-    ushort PersonWorkPlace;
-    ushort PersonLeisurePlace;
-    short PersonWeaponTimer;
+    ushort TngUnkn176; // pos=176
+    ushort TngUnkn178;
+    ushort TngUnkn180; // pos=180
+    ushort TngUnkn182;
+    ubyte TngUnkn184; // pos=184
+    /** Used by lights processing routine.
+     * Confirmed since fmtver=4 (from Pre-Alpha Demo code analysis).
+     */
+    ubyte PersonShadows[4]; // pos=185
+    /* `RecoilTimer` at the same position for People and Vehicle.
+     * Confirmed since fmtver=4 (from Pre-Alpha Demo code analysis).
+     */
+    union { // pos=189
+        ubyte VehicleRecoilTimer;
+        ubyte PersonRecoilTimer;
+    };
     ushort PersonMaxHealth; // pos=190
-    short TngUnkn192;
-    short PersonPersuadePower;
+    ubyte PersonRecoilDir; // pos=192
+    ubyte TngUnkn193; // pos=193
+    short GotoThingIndex; // pos=194
     short TngUnkn196;
     short TngUnkn198;
-    ubyte PersonRecoilDir; // pos=200
-    ubyte PersonCurrentWeapon;
-    short PersonGotoX;
-    short PersonGotoZ;  // Contains vehicle data
-    short TngUnkn206;  // These map to values in the third and fourth bytes of the "Dummy" vehicle value of the final level structure. These are vehicle stats that are similar to  VehiclePassengerHead
+    short TngUnkn200;
+    short TngUnkn202;
+    /* Contains vehicle data in fmtver=8-11, specifics unknown
+     * (from comparative analysis of binary data in level files).
+     */
+    short TngUnkn204;
+    /* In fmtver=8-11, these map to values in the third and fourth bytes
+     * of the "Dummy" vehicle value of the final level structure; vehicle
+     * stats, similar to VehiclePassengerHead, specifics unknown
+     * (from comparative analysis of binary data in level files).
+     */
+    short TngUnkn206;
     short TngUnkn208;
     short TngUnkn210;
     short TngUnkn212; // pos=212
