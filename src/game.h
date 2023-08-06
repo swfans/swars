@@ -574,7 +574,7 @@ extern long unkn01_downcount;
 extern long unkn01_pos_x;
 extern long unkn01_pos_y;
 
-extern ushort cmdln_param_current_map;
+extern ushort current_map;
 extern short current_level;
 
 extern ulong engine_mem_alloc_size;

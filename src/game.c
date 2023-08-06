@@ -444,11 +444,11 @@ void play_smacker(int vid_type)
     char str[52];
     const char *fname;
 
-    // TODO case for a specific level, remove
-    if (cmdln_param_current_map == 51)
+    // TODO case for a specific map, remove
+    if (current_map == 51)
     {
         overall_scale = 256;
-        unkn_flags_01 &= 0xFE;
+        unkn_flags_01 &= ~0x01;
         return;
     }
     person_func_unknown_310(2);
@@ -464,8 +464,8 @@ void play_smacker(int vid_type)
         {
         case 0:
         case 2:
-            // TODO case for a specific level, remove
-            if (cmdln_param_current_map == 46)
+            // TODO case for a specific map, remove
+            if (current_map == 46)
             {
                 if (game_dirs[0].use_cd == 1)
                     sprintf(str, "%slanguage/%s/syn_ele.smk", cd_drive, language_3str);
@@ -491,8 +491,8 @@ void play_smacker(int vid_type)
         {
         case 0:
         case 2:
-            // TODO case for a specific level, remove
-            if (cmdln_param_current_map == 46)
+            // TODO case for a specific map, remove
+            if (current_map == 46)
             {
               if (game_dirs[0].use_cd == 1)
                 sprintf(str, "%slanguage/%s/chu_ele.smk", cd_drive, language_3str);
@@ -1105,10 +1105,10 @@ void load_level_pc(ushort map, short level)
         word_1C8446 = 1;
         if (next_level <= 15)
             sprintf(lev_fname, "%s/c%03dl%03d.dat", game_dirs[DirPlace_Levels].directory,
-                cmdln_param_current_map, next_level);
+                current_map, next_level);
         else
             sprintf(lev_fname, "%s/c%03dl%03d.d%d", game_dirs[DirPlace_Levels].directory,
-               cmdln_param_current_map, (next_level - 1) % 15 + 1, (next_level - 1) / 15);
+               current_map, (next_level - 1) % 15 + 1, (next_level - 1) / 15);
         if (next_level > 0)
             current_level = next_level;
     }
@@ -1198,7 +1198,7 @@ TbBool is_unkn_current_player(void)
 
 void change_current_map(ushort mapno)
 {
-    cmdln_param_current_map = mapno;
+    current_map = mapno;
     init_things();
     load_mad_pc(mapno);
     fill_floor_textures();
@@ -3166,7 +3166,7 @@ void setup_host(void)
           get_packet_record_fname(fname, ingame.CurrentMission, file_no+1);
           LOGDBG("%s: Opening for packet save", fname);
           packet_rec_fh = LbFileOpen(fname, Lb_FILE_MODE_NEW);
-          LbFileWrite(packet_rec_fh, &cmdln_param_current_map, 2);
+          LbFileWrite(packet_rec_fh, &current_map, 2);
       }
     }
     if (pktrec_mode == PktR_PLAYBACK)
@@ -3534,13 +3534,13 @@ void init_game(ubyte reload)
     asm volatile ("call ASM_init_game\n"
         : : "a" (reload));
 #endif
-    ushort mission_no, new_map_no;
+    ushort mission_no, next_map_no;
     long new_level_no;
 
     mission_no = ingame.CurrentMission;
-    new_map_no = mission_list[mission_no].MapNo;
-    if (cmdln_param_current_map != new_map_no)
-        change_current_map(new_map_no);
+    next_map_no = mission_list[mission_no].MapNo;
+    if (current_map != next_map_no)
+        change_current_map(next_map_no);
     debug_trace_setup(0);
 
     if ((reload) && (mission_list[mission_no].ReLevelNo != 0)) {
@@ -3676,7 +3676,7 @@ void game_setup(void)
     }
     test_open(15);
     debug_trace_setup(1);
-    if (is_single_game && cmdln_param_current_map)
+    if (is_single_game && (ingame.CurrentMission != 0))
     {
         load_missions(background_type);
         init_game(0);
@@ -7194,7 +7194,7 @@ ubyte do_user_interface(void)
             StopCD();
             test_missions(1u);
             init_level_3d(1u);
-            change_current_map(cmdln_param_current_map);
+            change_current_map(current_map);
             unkn_lights_func_11();
             if (ingame.GameMode == GamM_Unkn2)
                 execute_commands = 0;
