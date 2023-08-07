@@ -2820,6 +2820,9 @@ void init_outro(void)
     StopAllSamples();
     reset_heaps();
     setup_heaps(2);
+    // We've overwritten area used by campaigns; reload these
+    load_campaigns();
+    load_missions(background_type);
 #endif
 }
 
