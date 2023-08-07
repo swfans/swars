@@ -337,7 +337,6 @@ ushort find_mission_state_slot(ushort missi)
     for (i = 1; i < 50; i++) {
         if (mission_open[i] == missi)
             break;
-        ++i;
     }
     if (i >= 50)
         i = 0;
@@ -351,7 +350,6 @@ ushort find_empty_mission_state_slot(void)
     for (i = 1; i < 50; i++) {
         if (mission_open[i] == 0)
             break;
-        ++i;
     }
     if (i >= 50)
         i = 0;

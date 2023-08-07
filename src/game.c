@@ -3594,25 +3594,12 @@ void restart_back_into_mission(ushort missi)
     }
 }
 
-void tweak_for_compound_mission_m84(void)
-{
-    // TODO MISSI specific missions hard-coded inside - rewrite, make unified
-    asm volatile ("call ASM_tweak_for_compound_mission_m84\n"
-        :  :  : "eax" );
-}
-
 void compound_mission_immediate_start_next(void)
 {
     short i;
     ushort missi;
 
-    // TODO MISSI specific missions hard-coded - remove
-    if (ingame.CurrentMission == 84)
-    {
-        tweak_for_compound_mission_m84();
-        return;
-    }
-
+    show_black_screen();
     LbFileLoadAt("qdata/pal.pal", display_palette);
     LbPaletteSet(display_palette);
 
@@ -3625,7 +3612,28 @@ void compound_mission_immediate_start_next(void)
     mission_open[i] = missi;
     mission_state[i] = 0;
 
+    // TODO MISSI specific missions hard-coded - remove
+    if (ingame.CurrentMission == 84)
+    {
+        ushort bkpmode;
+
+        bkpmode = lbDisplay.ScreenMode;
+        play_smacker(0);
+        LbFileLoadAt("qdata/pal.pal", display_palette);
+        setup_screen_mode(bkpmode);
+    }
+
     restart_back_into_mission(missi);
+}
+
+// deprecated - use compound_mission_immediate_start_next()
+void tweak_for_compound_mission_m84(void)
+{
+#if 0
+    asm volatile ("call ASM_tweak_for_compound_mission_m84\n"
+        :  :  : "eax" );
+#endif
+    compound_mission_immediate_start_next();
 }
 
 short test_missions(ubyte flag)
