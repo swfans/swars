@@ -382,7 +382,7 @@ void init_mission_states(void)
         mission_state[mslot] = 0;
     } else {
         missi = ingame.CurrentMission;
-        LOGERR("Mission %d has no slot; initing anyway", (int)missi);
+        LOGWARN("Mission %d has no slot; initing anyway", (int)missi);
     }
     if (missi > next_mission) {
         LOGERR("Ignored request for unallocated mission %d", (int)missi);

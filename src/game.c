@@ -5218,10 +5218,8 @@ ushort open_new_mission(ushort missi)
     return 0;
 }
 
-TbBool mission_remains_until_success(ushort missi)
+TbBool mission_remain_until_success(ushort missi)
 {
-    // TODO MISSI specific missions hard-coded - remove
-    return missi == 4 || missi == 37 || missi == 29 || missi == 26 || missi == 50 || missi == 38 || missi == 25;
     struct Mission *p_missi;
     p_missi = &mission_list[missi];
     return ((p_missi->Flags &= MisF_RemainUntilSuccess) != 0);
@@ -5378,7 +5376,7 @@ void delete_open_mission(ushort mslot, sbyte state)
     missi = mission_open[mslot];
     if (state == 1) {
         mission_list[missi].Complete = state;
-    } else if (mission_remains_until_success(missi)) {
+    } else if (mission_remain_until_success(missi)) {
           mission_list[missi].Complete = 0;
           mission_state[mslot] = 0;
     } else {
@@ -5434,7 +5432,7 @@ void delete_open_mission(ushort mslot, sbyte state)
             }
             else if (state == -1)
             {
-                if (mission_remains_until_success(missi))
+                if (mission_remain_until_success(missi))
                 {
                     ingame.MissionStatus = 0;
                 }
@@ -5467,10 +5465,11 @@ void delete_open_mission(ushort mslot, sbyte state)
             }
             else if (state == -1)
             {
-                if (mission_remains_until_success(missi))
+                if (mission_remain_until_success(missi))
                 {
                     ingame.MissionStatus = 0;
-                } else
+                }
+                else
                 {
                     if (conds_met)
                     {
@@ -5512,7 +5511,7 @@ void delete_open_mission(ushort mslot, sbyte state)
         }
         else if (state == -1)
         {
-            if (mission_remains_until_success(missi))
+            if (mission_remain_until_success(missi))
             {
                 ingame.MissionStatus = 0;
             }
@@ -5527,7 +5526,7 @@ void delete_open_mission(ushort mslot, sbyte state)
         }
     }
 
-    if (!mission_remains_until_success(missi) || (state == 1))
+    if (!mission_remain_until_success(missi) || (state == 1))
     {
         remove_mission_state_slot(mslot);
     }
