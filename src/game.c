@@ -4672,12 +4672,14 @@ ubyte load_game(int slot, char *desc)
         gblen++;
     }
 
-    // TODO MISSI Special fix for specific mission? to be removed.
+#if 0
+    // TODO MISSI Special fix for specific mission; why is it there?
     if (mission_list[28].SpecialTrigger[1]) {
         mission_list[28].SpecialTrigger[0] = 0;
         mission_list[28].SpecialTrigger[1] = 0;
         mission_list[28].SpecialTrigger[2] = 7;
     }
+#endif
 
     read_user_settings();
     login_control__Money = ingame.Credits;
@@ -5280,6 +5282,7 @@ void mission_reset_spec_triggers_2_chain(ushort missi)
     {
         ushort tmp_missi;
 
+        LOGSYNC("Setting mission=%d owner to mission=%d", (int)next_missi, (int)missi);
         mission_list[next_missi].SpecialTrigger[2] = missi;
 
         // TODO Why only one these? If replacing, shouldn't we replace both?
@@ -5301,7 +5304,7 @@ void mission_special_triggers_0_1_set_fail(ushort missi)
 
         mission_list[next_missi].Complete = -1;
 
-        // TODO Why only one these? If failing, shouldn't we fail both
+        // TODO Why only one these? If failing, shouldn't we fail both?
         tmp_missi = mission_list[next_missi].SpecialTrigger[0];
         if (tmp_missi == 0)
             tmp_missi = mission_list[next_missi].SpecialTrigger[1];
@@ -5313,6 +5316,7 @@ void mission_copy_conds_and_succ_fail_triggers(ushort dst_missi, ushort src_miss
 {
     int i;
 
+    LOGSYNC("Copying mission=%d props to mission=%d", (int)src_missi, (int)dst_missi);
     for (i = 0; i < 5; i++) {
         mission_list[dst_missi].MissionCond[i] = mission_list[src_missi].MissionCond[i];
     }
