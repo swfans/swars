@@ -5343,7 +5343,7 @@ ushort mission_fire_fail_triggers(ushort missi)
 
 void delete_open_mission(ushort mslot, sbyte state)
 {
-#if 1
+#if 0
     asm volatile ("call ASM_delete_open_mission\n"
         : : "a" (mslot), "d" (state));
 #else
