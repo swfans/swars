@@ -5179,6 +5179,12 @@ ubyte research_unkn_func_006(ushort missi)
     return ret;
 }
 
+void mission_over(void)
+{
+    asm volatile ("call ASM_mission_over\n"
+        :  :  : "eax" );
+}
+
 void init_agents(void)
 {
     asm volatile ("call ASM_init_agents\n"
