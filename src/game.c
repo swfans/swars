@@ -5222,6 +5222,9 @@ TbBool mission_remains_until_success(ushort missi)
 {
     // TODO MISSI specific missions hard-coded - remove
     return missi == 4 || missi == 37 || missi == 29 || missi == 26 || missi == 50 || missi == 38 || missi == 25;
+    struct Mission *p_missi;
+    p_missi = &mission_list[missi];
+    return ((p_missi->Flags &= MisF_RemainUntilSuccess) != 0);
 }
 
 TbBool mission_immediate_next_on_success(ushort missi)
