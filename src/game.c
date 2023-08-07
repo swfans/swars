@@ -5661,23 +5661,29 @@ void mission_over(void)
     mission_over_gain_persuaded_crowd_rewards();
     player_update_agents_from_cryo();
 
-    // TODO MISSI specific missions hard-coded - remove
-    if ((ingame.CurrentMission == 101) || (ingame.CurrentMission == 102))
-        init_outro();
-
     ushort mslot;
-    ushort missi;
+    ushort last_missi;
     short lstate;
 
-    mslot = find_mission_state_slot(ingame.CurrentMission);
+    last_missi = ingame.CurrentMission;
+    mslot = find_mission_state_slot(last_missi);
     if (mission_state[mslot] == 0)
         mission_state[mslot] = ingame.MissionStatus;
+
+    if (mission_state[mslot] == 1)
+    {
+        // TODO MISSI specific missions hard-coded - remove
+        if ((last_missi == 101) || (last_missi == 102))
+            init_outro();
+
+    }
 
     lstate = 0;
     if (mission_state[mslot] == 1)
     {
         long cr_award;
         short email;
+        ushort missi;
 
         lstate = 1;
         missi = mission_open[mslot];
@@ -5692,6 +5698,7 @@ void mission_over(void)
     else if (mission_state[mslot] == -1)
     {
         short email;
+        ushort missi;
 
         lstate = -1;
         missi = mission_open[mslot];
