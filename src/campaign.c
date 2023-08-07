@@ -358,6 +358,17 @@ ushort find_empty_mission_state_slot(void)
     return i;
 }
 
+void remove_mission_state_slot(ushort mslot)
+{
+    ushort i;
+
+    for (i = mslot; i < 50-1; i++)
+    {
+        mission_open[i] = mission_open[i + 1];
+        mission_state[i] = mission_state[i + 1];
+    }
+}
+
 void init_mission_states(void)
 {
     struct Objective *p_objectv;

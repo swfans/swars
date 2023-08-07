@@ -185,6 +185,7 @@ ushort selectable_campaigns_count(void);
 
 ushort find_mission_state_slot(ushort missi);
 ushort find_empty_mission_state_slot(void);
+void remove_mission_state_slot(ushort mslot);
 void init_mission_states(void);
 
 TbBool read_missions_conf_info(int num);

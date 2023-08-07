@@ -3614,6 +3614,13 @@ void compound_mission_immediate_start_next(void)
     restart_back_into_mission(missi);
 }
 
+void tweak_for_compound_mission_m84(void)
+{
+    // TODO MISSI specific missions hard-coded inside - rewrite, make unified
+    asm volatile ("call ASM_tweak_for_compound_mission_m84\n"
+        :  :  : "eax" );
+}
+
 short test_missions(ubyte flag)
 {
     short ret;
@@ -5147,6 +5154,14 @@ void srm_reset_research(void)
 #endif
 }
 
+ubyte research_unkn_func_006(ushort missi)
+{
+    ubyte ret;
+    asm volatile ("call ASM_research_unkn_func_006\n"
+        : "=r" (ret) : "a" (missi));
+    return ret;
+}
+
 void init_agents(void)
 {
     asm volatile ("call ASM_init_agents\n"
@@ -5188,7 +5203,7 @@ ushort open_new_mission(ushort missi)
     return 0;
 }
 
-TbBool is_a_scientist_mission(ushort missi)
+TbBool is_a_scientist_mission(ushort missi)// TODO rename mission_remains_until_success
 {
     // TODO MISSI specific missions hard-coded - remove
     return missi == 4 || missi == 37 || missi == 29 || missi == 26 || missi == 50 || missi == 38 || missi == 25;
@@ -5222,6 +5237,66 @@ TbBool mission_has_no_special_triggers(ushort missi)
           return false;
     }
     return true;
+}
+
+TbBool mission_special_triggers_2_is_self(ushort missi)
+{
+    struct Mission *p_missi;
+
+    p_missi = &mission_list[missi];
+
+    return (p_missi->SpecialTrigger[2] == missi);
+}
+
+void mission_reset_spec_triggers_2_chain(ushort missi)
+{
+    ushort next_missi;
+
+    next_missi = missi;
+    while (next_missi != 0)
+    {
+        ushort tmp_missi;
+
+        mission_list[next_missi].SpecialTrigger[2] = missi;
+
+        // TODO Why only one these? If replacing, shouldn't we replace both?
+        tmp_missi = mission_list[next_missi].SpecialTrigger[0];
+        if (tmp_missi == 0)
+            tmp_missi = mission_list[next_missi].SpecialTrigger[1];
+        next_missi = tmp_missi;
+    }
+}
+
+void mission_special_triggers_0_1_set_fail(ushort missi)
+{
+    ushort next_missi;
+
+    next_missi = missi;
+    while (next_missi > 0)
+    {
+        ushort tmp_missi;
+
+        mission_list[next_missi].Complete = -1;
+
+        // TODO Why only one these? If failing, shouldn't we fail both
+        tmp_missi = mission_list[next_missi].SpecialTrigger[0];
+        if (tmp_missi == 0)
+            tmp_missi = mission_list[next_missi].SpecialTrigger[1];
+        next_missi = tmp_missi;
+    }
+}
+
+void mission_copy_conds_and_succ_fail_triggers(ushort dst_missi, ushort src_missi)
+{
+    int i;
+
+    for (i = 0; i < 5; i++) {
+        mission_list[dst_missi].MissionCond[i] = mission_list[src_missi].MissionCond[i];
+    }
+    for (i = 0; i < 3; i++) {
+        mission_list[dst_missi].SuccessTrigger[i] = mission_list[src_missi].SuccessTrigger[i];
+        mission_list[dst_missi].FailTrigger[i] = mission_list[src_missi].FailTrigger[i];
+    }
 }
 
 ushort mission_fire_success_triggers(ushort missi)
@@ -5268,8 +5343,182 @@ ushort mission_fire_fail_triggers(ushort missi)
 
 void delete_open_mission(ushort mslot, sbyte state)
 {
+#if 1
     asm volatile ("call ASM_delete_open_mission\n"
         : : "a" (mslot), "d" (state));
+#else
+    ushort missi;
+    TbBool conds_met;
+
+    missi = mission_open[mslot];
+    if (state == 1) {
+        mission_list[missi].Complete = state;
+    } else if (is_a_scientist_mission(missi)) {
+          mission_list[missi].Complete = 0;
+          mission_state[mslot] = 0;
+    } else {
+          mission_list[missi].Complete = state;
+    }
+
+    conds_met = check_mission_conds(missi);
+
+    research_unkn_func_006(missi);
+
+    if (mission_has_no_special_triggers(missi))
+    {
+        LOGSYNC("SpecialTriggers none, mission=%d, state=%d", (int)missi, (int)state);
+        if (state == 1)
+        {
+            if (conds_met)
+            {
+                mission_fire_success_triggers(missi);
+            }
+            // TODO MISSI specific missions hard-coded - remove
+            if ((ingame.CurrentMission == 88) || (ingame.CurrentMission == 100))
+            {
+                compound_mission_immediate_start_next();
+                return;
+            }
+            if (ingame.CurrentMission == 84)
+            {
+                tweak_for_compound_mission_m84();
+                return;
+            }
+            play_smacker(0);
+        }
+        else if (state == -1)
+        {
+            if (conds_met)
+            {
+                mission_fire_fail_triggers(missi);
+            }
+        }
+    }
+    else if (mission_special_triggers_2_is_self(missi))
+    {
+        ushort trg_missi;
+
+        trg_missi = mission_list[missi].SpecialTrigger[0];
+        if (trg_missi == 0)
+            trg_missi = mission_list[missi].SpecialTrigger[1];
+        if (trg_missi != 0)
+        {
+            LOGSYNC("SpecialTriggers self-owned and set, mission=%d, state=%d", (int)missi, (int)state);
+            if (state == 1)
+            {
+                brief_store[open_brief - 1].Mission = trg_missi;
+
+                mission_copy_conds_and_succ_fail_triggers(trg_missi, missi);
+                mission_reset_spec_triggers_2_chain(trg_missi);
+
+                ingame.MissionStatus = 0;
+            }
+            else if (state == -1)
+            {
+                if (is_a_scientist_mission(missi))
+                {
+                    ingame.MissionStatus = 0;
+                }
+                else
+                {
+                    if (conds_met)
+                    {
+                        mission_fire_success_triggers(missi);
+                    }
+
+                    mission_special_triggers_0_1_set_fail(trg_missi);
+                }
+            }
+        }
+        else
+        {
+            LOGSYNC("SpecialTriggers self-owned but unset, mission=%d, state=%d", (int)missi, (int)state);
+            if (state == 1)
+            {
+                if (conds_met)
+                {
+                    mission_fire_success_triggers(missi);
+                }
+                // TODO MISSI specific missions hard-coded - remove
+                if ((ingame.CurrentMission == 88) || (ingame.CurrentMission == 100))
+                {
+                    compound_mission_immediate_start_next();
+                    return;
+                }
+                if (ingame.CurrentMission == 84)
+                {
+                    tweak_for_compound_mission_m84();
+                    return;
+                }
+                play_smacker(0);
+            }
+            else if (state == -1)
+            {
+                if (is_a_scientist_mission(missi))
+                {
+                    ingame.MissionStatus = 0;
+                } else
+                {
+                    if (conds_met)
+                    {
+                        mission_fire_fail_triggers(missi);
+                    }
+                }
+            }
+        }
+    }
+    else
+    {
+        ushort trg_missi;
+
+        trg_missi = mission_list[missi].SpecialTrigger[2];
+
+        LOGSYNC("SpecialTriggers owner=%d, mission=%d, state=%d", (int)trg_missi, (int)missi, (int)state);
+        if (state == 1)
+        {
+            ushort tmp_missi, tmp2_missi, next_missi;
+
+            next_missi = trg_missi;
+            while (1)
+            {
+                tmp_missi = mission_list[next_missi].SpecialTrigger[0];
+                if ((tmp_missi == missi) || (next_missi == 0))
+                    break;
+                next_missi = tmp_missi;
+            }
+            if (next_missi > 0)
+            {
+                tmp_missi = mission_list[next_missi].SpecialTrigger[0];
+                tmp2_missi = mission_list[tmp_missi].SpecialTrigger[0];
+                if (tmp2_missi > 0)
+                    mission_list[next_missi].SpecialTrigger[0] = tmp2_missi;
+                else
+                    mission_list[next_missi].SpecialTrigger[0] = mission_list[tmp_missi].SpecialTrigger[1];
+            }
+            ingame.MissionStatus = 0;
+        }
+        else if (state == -1)
+        {
+            if (is_a_scientist_mission(missi))
+            {
+                ingame.MissionStatus = 0;
+            }
+            else
+            {
+                if (conds_met)
+                {
+                    mission_fire_fail_triggers(trg_missi);
+                }
+                mission_special_triggers_0_1_set_fail(trg_missi);
+            }
+        }
+    }
+
+    if (!is_a_scientist_mission(missi) || (state == 1))
+    {
+        remove_mission_state_slot(mslot);
+    }
+#endif
 }
 
 ubyte brief_do_netscan_enhance(ubyte click)
