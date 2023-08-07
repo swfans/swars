@@ -3594,10 +3594,24 @@ void restart_back_into_mission(ushort missi)
     }
 }
 
+void tweak_for_compound_mission_m84(void)
+{
+    // TODO MISSI specific missions hard-coded inside - rewrite, make unified
+    asm volatile ("call ASM_tweak_for_compound_mission_m84\n"
+        :  :  : "eax" );
+}
+
 void compound_mission_immediate_start_next(void)
 {
     short i;
     ushort missi;
+
+    // TODO MISSI specific missions hard-coded - remove
+    if (ingame.CurrentMission == 84)
+    {
+        tweak_for_compound_mission_m84();
+        return;
+    }
 
     LbFileLoadAt("qdata/pal.pal", display_palette);
     LbPaletteSet(display_palette);
@@ -3612,13 +3626,6 @@ void compound_mission_immediate_start_next(void)
     mission_state[i] = 0;
 
     restart_back_into_mission(missi);
-}
-
-void tweak_for_compound_mission_m84(void)
-{
-    // TODO MISSI specific missions hard-coded inside - rewrite, make unified
-    asm volatile ("call ASM_tweak_for_compound_mission_m84\n"
-        :  :  : "eax" );
 }
 
 short test_missions(ubyte flag)
@@ -4657,7 +4664,7 @@ ubyte load_game(int slot, char *desc)
         gblen++;
     }
 
-    // TODO: Special fix for specific mission? to be removed.
+    // TODO MISSI Special fix for specific mission? to be removed.
     if (mission_list[28].SpecialTrigger[1]) {
         mission_list[28].SpecialTrigger[0] = 0;
         mission_list[28].SpecialTrigger[1] = 0;
@@ -5203,10 +5210,17 @@ ushort open_new_mission(ushort missi)
     return 0;
 }
 
-TbBool is_a_scientist_mission(ushort missi)// TODO rename mission_remains_until_success
+TbBool mission_remains_until_success(ushort missi)
 {
     // TODO MISSI specific missions hard-coded - remove
     return missi == 4 || missi == 37 || missi == 29 || missi == 26 || missi == 50 || missi == 38 || missi == 25;
+}
+
+TbBool mission_immediate_next_on_success(ushort missi)
+{
+    struct Mission *p_missi;
+    p_missi = &mission_list[missi];
+    return ((p_missi->Flags & MisF_ImmediateNextOnSuccess) != 0);
 }
 
 TbBool check_mission_conds(ushort missi)
@@ -5353,7 +5367,7 @@ void delete_open_mission(ushort mslot, sbyte state)
     missi = mission_open[mslot];
     if (state == 1) {
         mission_list[missi].Complete = state;
-    } else if (is_a_scientist_mission(missi)) {
+    } else if (mission_remains_until_success(missi)) {
           mission_list[missi].Complete = 0;
           mission_state[mslot] = 0;
     } else {
@@ -5373,15 +5387,9 @@ void delete_open_mission(ushort mslot, sbyte state)
             {
                 mission_fire_success_triggers(missi);
             }
-            // TODO MISSI specific missions hard-coded - remove
-            if ((ingame.CurrentMission == 88) || (ingame.CurrentMission == 100))
+            if (mission_immediate_next_on_success(ingame.CurrentMission))
             {
                 compound_mission_immediate_start_next();
-                return;
-            }
-            if (ingame.CurrentMission == 84)
-            {
-                tweak_for_compound_mission_m84();
                 return;
             }
             play_smacker(0);
@@ -5415,7 +5423,7 @@ void delete_open_mission(ushort mslot, sbyte state)
             }
             else if (state == -1)
             {
-                if (is_a_scientist_mission(missi))
+                if (mission_remains_until_success(missi))
                 {
                     ingame.MissionStatus = 0;
                 }
@@ -5439,22 +5447,16 @@ void delete_open_mission(ushort mslot, sbyte state)
                 {
                     mission_fire_success_triggers(missi);
                 }
-                // TODO MISSI specific missions hard-coded - remove
-                if ((ingame.CurrentMission == 88) || (ingame.CurrentMission == 100))
+                if (mission_immediate_next_on_success(ingame.CurrentMission))
                 {
                     compound_mission_immediate_start_next();
-                    return;
-                }
-                if (ingame.CurrentMission == 84)
-                {
-                    tweak_for_compound_mission_m84();
                     return;
                 }
                 play_smacker(0);
             }
             else if (state == -1)
             {
-                if (is_a_scientist_mission(missi))
+                if (mission_remains_until_success(missi))
                 {
                     ingame.MissionStatus = 0;
                 } else
@@ -5499,7 +5501,7 @@ void delete_open_mission(ushort mslot, sbyte state)
         }
         else if (state == -1)
         {
-            if (is_a_scientist_mission(missi))
+            if (mission_remains_until_success(missi))
             {
                 ingame.MissionStatus = 0;
             }
@@ -5514,7 +5516,7 @@ void delete_open_mission(ushort mslot, sbyte state)
         }
     }
 
-    if (!is_a_scientist_mission(missi) || (state == 1))
+    if (!mission_remains_until_success(missi) || (state == 1))
     {
         remove_mission_state_slot(mslot);
     }
@@ -7876,9 +7878,9 @@ void brief_load_mission_info(void)
             email = -open_brief - 1;
             sprintf(fname, "%s/mail%03d.txt", "textdata", email_store[email].Mission);
         } else if (open_brief > 0) {
-            ushort mission;
-            mission = brief_store[open_brief - 1].Mission;
-            sprintf(fname, "%s/miss%03d.txt", "textdata", mission_list[mission].SourceID);
+            ushort missi;
+            missi = brief_store[open_brief - 1].Mission;
+            sprintf(fname, "%s/miss%03d.txt", "textdata", mission_list[missi].SourceID);
         }
         load_mail_text(fname);
     }
@@ -8637,13 +8639,13 @@ void show_load_and_prep_mission(void)
         debug_trace_place(6);
         if ( in_network_game )
         {
-          ushort mission;
+          ushort missi;
 
           ingame.MissionNo = 1;
-          mission = find_mission_with_mapid(cities[login_control__City].MapID, next_mission);
-          if (mission > 0) {
-              ingame.MissionNo = mission;
-              ingame.CurrentMission = mission;
+          missi = find_mission_with_mapid(cities[login_control__City].MapID, next_mission);
+          if (missi > 0) {
+              ingame.MissionNo = missi;
+              ingame.CurrentMission = missi;
           }
 
           change_current_map(mission_list[ingame.MissionNo].MapNo);
@@ -8746,12 +8748,12 @@ void show_load_and_prep_mission(void)
             update_mission_time(1);
             cities[unkn_city_no].Info = 0;
             debug_trace_place(14);
-            //TODO SpecialTrigger doesn't seem to be correct name for next mission
+
             for (i = brief_store[open_brief - 1].Mission; i != 0;
               i = mission_list[i].SpecialTrigger[0])
             {
-              if (mission_list[i].MapNo == cities[unkn_city_no].MapID)
-                  break;
+                if (mission_list[i].MapNo == cities[unkn_city_no].MapID)
+                    break;
             }
             ingame.CurrentMission = i;
             mission_result = 0;
