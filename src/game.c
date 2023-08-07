@@ -5260,6 +5260,12 @@ void mission_over_gain_persuaded_crowd_rewards(void)
     }
 }
 
+void update_player_cash(void)
+{
+    asm volatile ("call ASM_update_player_cash\n"
+        :  :  : "eax" );
+}
+
 void player_update_agents_from_cryo(void)
 {
     PlayerInfo *p_locplayer;
@@ -5640,7 +5646,7 @@ void delete_open_mission(ushort mslot, sbyte state)
 
 void mission_over(void)
 {
-#if 1
+#if 0
     asm volatile ("call ASM_mission_over\n"
         :  :  : "eax" );
 #else
@@ -5649,13 +5655,13 @@ void mission_over(void)
     update_player_cash();
     StopCD();
     StopAllSamples();
-    missi = 1;
     SetMusicVolume(100, 0);
 
     mission_over_update_players();
     mission_over_gain_persuaded_crowd_rewards();
     player_update_agents_from_cryo();
 
+    // TODO MISSI specific missions hard-coded - remove
     if ((ingame.CurrentMission == 101) || (ingame.CurrentMission == 102))
         init_outro();
 
