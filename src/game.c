@@ -4361,8 +4361,8 @@ ubyte load_game(int slot, char *desc)
         for (agent = 0; agent < 32; agent++)
         {
             for (k = 0; k < WFRPK_COUNT; k++) {
-                if (cryo_agents.FourPacks[k][agent] > 4)
-                    cryo_agents.FourPacks[k][agent] = 1;
+                if (cryo_agents.FourPacks[agent][k] > 4)
+                    cryo_agents.FourPacks[agent][k] = 1;
             }
             // Remove bad mod flags
             if (cryo_agents.Mods[agent].Mods >> 12 > 4) {
@@ -5179,10 +5179,105 @@ ubyte research_unkn_func_006(ushort missi)
     return ret;
 }
 
-void mission_over(void)
+void remove_agent(ubyte cryo_no)
 {
-    asm volatile ("call ASM_mission_over\n"
-        :  :  : "eax" );
+    asm volatile ("call ASM_remove_agent\n"
+        : : "a" (cryo_no));
+}
+
+void add_agent(ulong weapons, ushort mods)
+{
+    asm volatile ("call ASM_add_agent\n"
+        : : "a" (weapons), "d" (mods));
+}
+
+
+void mission_over_update_players(void)
+{
+    ushort agent, nremoved;
+    PlayerInfo *p_locplayer;
+
+    p_locplayer = &players[local_player_no];
+
+    nremoved = 0;
+    for (agent = 0; agent < playable_agents; agent++)
+    {
+        struct Thing *p_agent;
+
+        p_agent = p_locplayer->MyAgent[agent];
+        if ((p_agent->Flag & 0x02) != 0) {
+            remove_agent(agent);
+            ++nremoved;
+            continue;
+        }
+        if ((p_agent->SubType == SubTT_PERS_AGENT) || (p_agent->SubType == SubTT_PERS_ZEALOT))
+        {
+            ushort cryo_no;
+            int i;
+
+            cryo_no = agent - nremoved;
+            cryo_agents.Weapons[cryo_no] = p_agent->U.UPerson.WeaponsCarried & ~0x400000;
+            cryo_agents.Mods[cryo_no].Mods = p_agent->U.UPerson.UMod.Mods;
+            for (i = 0; i < 5; i++) {
+                cryo_agents.FourPacks[cryo_no][i] = p_locplayer->FourPacks[i][agent];
+            }
+        }
+    }
+}
+
+void mission_over_gain_persuaded_crowd_rewards(void)
+{
+    struct Thing *p_person;
+    ushort person;
+
+    for (person = same_type_head[1]; person == 0; person = things[person].LinkSame)
+    {
+        p_person = &things[person];
+        if ((p_person->Flag & 0x80000) == 0)
+            continue;
+        if (p_person->U.UPerson.EffectiveGroup == ingame.MyGroup)
+            continue;
+        switch (p_person->SubType)
+        {
+        case SubTT_PERS_AGENT:
+            add_agent(p_person->U.UPerson.WeaponsCarried, p_person->U.UPerson.UMod.Mods);
+            ingame.Credits += 1000;
+            break;
+        case SubTT_PERS_ZEALOT:
+            ingame.Credits += 1000;
+            break;
+        case SubTT_PERS_PUNK_M:
+        case SubTT_PERS_PUNK_F:
+            ingame.Credits += 150;
+            break;
+        case SubTT_PERS_SCIENTIST:
+            research.Scientists++;
+            break;
+        default:
+            ingame.Credits += 100;
+            break;
+        }
+    }
+}
+
+void player_update_agents_from_cryo(void)
+{
+    PlayerInfo *p_locplayer;
+    ushort cryo_no;
+
+    p_locplayer = &players[local_player_no];
+
+    for (cryo_no = 0; cryo_no < 4; cryo_no++)
+    {
+        int wepfp;
+
+        p_locplayer->Weapons[cryo_no] = cryo_agents.Weapons[cryo_no];
+        p_locplayer->Mods[cryo_no].Mods = cryo_agents.Mods[cryo_no].Mods;
+
+        for (wepfp = 0; wepfp < WFRPK_COUNT; wepfp++) {
+            p_locplayer->FourPacks[wepfp][cryo_no] = cryo_agents.FourPacks[cryo_no][wepfp];
+        }
+    }
 }
 
 void init_agents(void)
@@ -5540,6 +5635,80 @@ void delete_open_mission(ushort mslot, sbyte state)
     {
         remove_mission_state_slot(mslot);
     }
+#endif
+}
+
+void mission_over(void)
+{
+#if 1
+    asm volatile ("call ASM_mission_over\n"
+        :  :  : "eax" );
+#else
+    ingame.DisplayMode = DpM_UNKN_37;
+    LbMouseChangeSprite(0);
+    update_player_cash();
+    StopCD();
+    StopAllSamples();
+    missi = 1;
+    SetMusicVolume(100, 0);
+
+    mission_over_update_players();
+    mission_over_gain_persuaded_crowd_rewards();
+    player_update_agents_from_cryo();
+
+    if ((ingame.CurrentMission == 101) || (ingame.CurrentMission == 102))
+        init_outro();
+
+    ushort mslot;
+    ushort missi;
+    short lstate;
+
+    mslot = find_mission_state_slot(ingame.CurrentMission);
+    if (mission_state[mslot] == 0)
+        mission_state[mslot] = ingame.MissionStatus;
+
+    lstate = 0;
+    if (mission_state[mslot] == 1)
+    {
+        long cr_award;
+        short email;
+
+        lstate = 1;
+        missi = mission_open[mslot];
+        cr_award = 1000 * mission_list[missi].CashReward;
+        ingame.fld_unkC57++;
+        email = mission_list[missi].SuccessID;
+        ingame.Credits += cr_award;
+        if (email != 0)
+            queue_up_new_mail(0, -email);
+        delete_open_mission(mslot, 1);
+    }
+    else if (mission_state[mslot] == -1)
+    {
+        short email;
+
+        lstate = -1;
+        missi = mission_open[mslot];
+        email = mission_list[missi].FailID;
+         ingame.fld_unkC57++;
+        if (email != 0)
+            queue_up_new_mail(0, -email);
+        delete_open_mission(mslot, -1);
+        play_smacker(1);
+    }
+
+    ingame.fld_unk7DF = 0;
+    if (lstate == -1)
+    {
+      if (!mission_remain_until_success(ingame.CurrentMission))
+        ingame.fld_unk7DF = 1;
+    }
+    if (new_mail)
+        ingame.fld_unk7DF = 0;
+    if (cryo_agents.NumAgents == 0)
+        ingame.fld_unk7DF = 1;
+    if (ingame.fld_unk7DF)
+        play_smacker(3);
 #endif
 }
 
@@ -7894,7 +8063,7 @@ void brief_load_mission_info(void)
     if (open_brief != 0)
     {
         if (open_brief < 0) {
-            ushort email;
+            short email;
             email = -open_brief - 1;
             sprintf(fname, "%s/mail%03d.txt", "textdata", email_store[email].Mission);
         } else if (open_brief > 0) {
