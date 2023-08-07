@@ -105,6 +105,13 @@ enum PacketRecordMode {
   PktR_PLAYBACK = 0x2,
 };
 
+enum MissionFMVPlay {
+    MPly_MissiComplete,
+    MPly_MissiFail,
+    MPly_MPartComplete,
+    MPly_GameOver,
+};
+
 struct Thing;
 
 typedef struct {

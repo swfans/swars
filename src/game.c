@@ -444,7 +444,7 @@ void play_smacker(int vid_type)
     char str[52];
     const char *fname;
 
-    // TODO case for a specific map, remove
+    // TODO MAPNO case for a specific map, remove
     if (current_map == 51)
     {
         overall_scale = 256;
@@ -462,9 +462,9 @@ void play_smacker(int vid_type)
     case 0:
         switch (vid_type)
         {
-        case 0:
-        case 2:
-            // TODO case for a specific map, remove
+        case MPly_MissiComplete:
+        case MPly_MPartComplete:
+            // TODO MAPNO case for a specific map, remove
             if (current_map == 46)
             {
                 if (game_dirs[0].use_cd == 1)
@@ -478,10 +478,10 @@ void play_smacker(int vid_type)
                 fname = "qdata/syn_mc.smk";
             }
             break;
-        case 1:
+        case MPly_MissiFail:
             fname = "qdata/syn_fail.smk";
             break;
-        case 3:
+        case MPly_GameOver:
             fname = "qdata/syn_go.smk";
             break;
         }
@@ -489,9 +489,9 @@ void play_smacker(int vid_type)
     case 1:
         switch (vid_type)
         {
-        case 0:
-        case 2:
-            // TODO case for a specific map, remove
+        case MPly_MissiComplete:
+        case MPly_MPartComplete:
+            // TODO MAPNO case for a specific map, remove
             if (current_map == 46)
             {
               if (game_dirs[0].use_cd == 1)
@@ -505,10 +505,10 @@ void play_smacker(int vid_type)
               fname = "qdata/zel-mc.smk";
             }
             break;
-        case 1:
+        case MPly_MissiFail:
             fname = "qdata/syn_fail.smk";
             break;
-        case 3:
+        case MPly_GameOver:
             fname = "qdata/zel-go.smk";
             break;
         default:
@@ -3618,7 +3618,7 @@ void compound_mission_immediate_start_next(void)
         ushort bkpmode;
 
         bkpmode = lbDisplay.ScreenMode;
-        play_smacker(0);
+        play_smacker(MPly_MPartComplete);
         LbFileLoadAt("qdata/pal.pal", display_palette);
         setup_screen_mode(bkpmode);
     }
@@ -5512,7 +5512,7 @@ void delete_open_mission(ushort mslot, sbyte state)
                 compound_mission_immediate_start_next();
                 return;
             }
-            play_smacker(0);
+            play_smacker(MPly_MissiComplete);
         }
         else if (state == -1)
         {
@@ -5572,7 +5572,7 @@ void delete_open_mission(ushort mslot, sbyte state)
                     compound_mission_immediate_start_next();
                     return;
                 }
-                play_smacker(0);
+                play_smacker(MPly_MissiComplete);
             }
             else if (state == -1)
             {
@@ -5700,7 +5700,7 @@ void mission_over(void)
         if (email != 0)
             queue_up_new_mail(0, -email);
         delete_open_mission(mslot, -1);
-        play_smacker(1);
+        play_smacker(MPly_MissiFail);
     }
 
     ingame.fld_unk7DF = 0;
@@ -5714,7 +5714,7 @@ void mission_over(void)
     if (cryo_agents.NumAgents == 0)
         ingame.fld_unk7DF = 1;
     if (ingame.fld_unk7DF)
-        play_smacker(3);
+        play_smacker(MPly_GameOver);
 #endif
 }
 
