@@ -5188,6 +5188,90 @@ ushort open_new_mission(ushort missi)
     return 0;
 }
 
+TbBool is_a_scientist_mission(ushort missi)
+{
+    // TODO MISSI specific missions hard-coded - remove
+    return missi == 4 || missi == 37 || missi == 29 || missi == 26 || missi == 50 || missi == 38 || missi == 25;
+}
+
+TbBool check_mission_conds(ushort missi)
+{
+    int i;
+    ushort cmissi;
+
+    cmissi = missi;
+    for (i = 0; i < 5; i++)
+    {
+        cmissi = mission_list[cmissi].MissionCond[i];
+        if ((cmissi > 0) && (mission_list[cmissi].Complete != 1))
+          return false;
+    }
+    return true;
+}
+
+TbBool mission_has_no_special_triggers(ushort missi)
+{
+    struct Mission *p_missi;
+    int i;
+
+    p_missi = &mission_list[missi];
+
+    for (i = 0; i < 3; i++)
+    {
+        if (p_missi->SpecialTrigger[i] != 0)
+          return false;
+    }
+    return true;
+}
+
+ushort mission_fire_success_triggers(ushort missi)
+{
+    struct Mission *p_missi;
+    ushort n;
+    int i;
+
+    p_missi = &mission_list[missi];
+
+    n = 0;
+    for (i = 0; i < 3; i++)
+    {
+        ushort new_missi;
+        new_missi = p_missi->SuccessTrigger[i];
+        if (new_missi != 0) {
+            open_new_mission(new_missi);
+            n++;
+        }
+    }
+    return n;
+}
+
+ushort mission_fire_fail_triggers(ushort missi)
+{
+    struct Mission *p_missi;
+    ushort n;
+    int i;
+
+    p_missi = &mission_list[missi];
+
+    n = 0;
+    for (i = 0; i < 3; i++)
+    {
+        ushort new_missi;
+        new_missi = p_missi->FailTrigger[i];
+        if (new_missi != 0) {
+            open_new_mission(new_missi);
+            n++;
+        }
+    }
+    return n;
+}
+
+void delete_open_mission(ushort mslot, sbyte state)
+{
+    asm volatile ("call ASM_delete_open_mission\n"
+        : : "a" (mslot), "d" (state));
+}
+
 ubyte brief_do_netscan_enhance(ubyte click)
 {
     ubyte ret;
