@@ -3355,6 +3355,10 @@ void simulated_level(void)
         :  :  : "eax" );
 }
 
+/** Initializes player presence on a level.
+ *
+ * CurrentMission needs to be set before this funcion is called.
+ */
 void init_player(void)
 {
 #if 0
@@ -9045,26 +9049,11 @@ void show_load_and_prep_mission(void)
     LbGhostTableLoad(display_palette, 50, "data/synghost.tab");
     debug_trace_place(13);
 
+    // Update game progress and prepare level to play
     if ( start_into_mission )
     {
-        load_multicolor_sprites();
-        if (game_high_resolution)
-            load_pop_sprites_hi();
-        else
-            load_pop_sprites_lo();
-
-        if (ingame.GameMode == GamM_None)
-            ingame.GameMode = GamM_Unkn2;
-
-        init_player();
-        flic_unkn03(1);
-        func_6edb8(1);
         if ( in_network_game )
         {
-            if (word_1811AE != 1)
-                ingame.InNetGame_UNSURE = 3;
-            ingame.DetailLevel = 0;
-            bang_set_detail(1);
             update_mission_time(1);
             // why clear only 0x140 bytes?? the array is much larger
             memset(mission_status, 0, sizeof(struct MissionStatus) * 8);
@@ -9093,6 +9082,32 @@ void show_load_and_prep_mission(void)
             mission_result = 0;
             debug_trace_place(15);
         }
+        init_player();
+    }
+
+    // Set up remaining graphics data and controls
+    if ( start_into_mission )
+    {
+        load_multicolor_sprites();
+        if (game_high_resolution)
+            load_pop_sprites_hi();
+        else
+            load_pop_sprites_lo();
+
+        if (ingame.GameMode == GamM_None)
+            ingame.GameMode = GamM_Unkn2;
+
+        flic_unkn03(1);
+        func_6edb8(1);
+
+        if ( in_network_game )
+        {
+            if (word_1811AE != 1)
+                ingame.InNetGame_UNSURE = 3;
+            ingame.DetailLevel = 0;
+            bang_set_detail(1);
+        }
+
         lbDisplay.MLeftButton = 0;
         lbDisplay.LeftButton = 0;
     }
