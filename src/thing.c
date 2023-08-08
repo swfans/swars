@@ -144,6 +144,7 @@ void refresh_old_thing_format(struct Thing *p_thing, struct ThingOldV9 *p_oldthi
         p_thing->U.UPerson.Group = p_oldthing->PersonGroup;
         p_thing->U.UPerson.EffectiveGroup = p_oldthing->PersonGroup;
         p_thing->U.UPerson.WeaponsCarried = p_oldthing->PersonWeaponsCarried;
+        p_thing->U.UPerson.CurrentWeapon = p_oldthing->PersonCurrentWeapon;
         p_thing->U.UPerson.ComHead = p_oldthing->PersonComHead;
         p_thing->U.UPerson.ComCur = p_oldthing->PersonComCur;
         p_thing->U.UPerson.ComTimer = p_oldthing->PersonComTimer;

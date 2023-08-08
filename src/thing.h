@@ -179,6 +179,8 @@ struct TngUVehicle
   short ReqdSpeed;
   ushort MaxSpeed; // within Thing, pos=92
   ushort PassengerHead;
+  /** Traffic node where the vehicle is moving.
+   */
   short TNode;
   short AngleDY;
   short AngleX;
@@ -554,11 +556,11 @@ struct ThingOldV9 { // sizeof=216
      * in level files).
      */
     ushort Owner; // pos=100
-    /* Since fmtver=4 set for some Person states, purpose unknown (from
+    /* Confirmed to be Person `CurrentWeapon` since fmtver=4 (from
      * Pre-Alpha Demo code analysis). Uses low values, for Person only
      * (from comparative analysis of binary data in level files).
      */
-    short PersonUnkn102; // pos=102
+    short PersonCurrentWeapon; // pos=102
     short TngUnkn104; // pos=104
     /* Since fmtver=4, some kind of counter to restore Person state,
      * unknown (from Pre-Alpha Demo code analysis).
@@ -650,7 +652,8 @@ struct ThingOldV9 { // sizeof=216
      * code analysis).
      */
     short VehiclePassengerHead; // pos=168
-    /* Vehicle `TNode`, confirmed since fmtver=4 (from Pre-Alpha Demo code
+    /** Traffic node where the vehicle is moving.
+     * Vehicle `TNode`, confirmed since fmtver=4 (from Pre-Alpha Demo code
      * analysis). Also confirmed in fmtver=8-11 (from comparative analysis
      * of binary data in level files).
      */
