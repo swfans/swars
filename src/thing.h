@@ -644,12 +644,12 @@ struct ThingOldV9 { // sizeof=216
     ubyte SubState;
     ubyte PersonComRange;
     ushort VehicleMaxSpeed; // pos=164
-    /* Besides use in Vehicles, it is set within some Person states since
-     * fmtver=4 (from Pre-Alpha Demo code analysis).
+    /* Is Vehicle `UniqueID`, Person `WeaponTimer`, and also used in Objects
+     * since fmtver=4 (from Pre-Alpha Demo code analysis).
      */
     union { // pos=166
         ushort VehicleUniqueID;
-        short PersonUnkn166;
+        short PersonWeaponTimer;
     };
     /* Vehicle `PassengerHead`, confirmed since fmtver=4 (from Pre-Alpha Demo
      * code analysis).
