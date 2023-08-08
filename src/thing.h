@@ -562,10 +562,10 @@ struct ThingOldV9 { // sizeof=216
      */
     short PersonCurrentWeapon; // pos=102
     short TngUnkn104; // pos=104
-    /* Since fmtver=4, some kind of counter to restore Person state,
-     * unknown (from Pre-Alpha Demo code analysis).
+    /* Confirmed to be Person `WeaponTurn` since fmtver=4 (from
+     * Pre-Alpha Demo code analysis).
      */
-    short PersonUnkn106; // pos=106
+    ushort PersonWeaponTurn; // pos=106
     /** Rotation matrix index for a Vehicle.
      * Confirmed since fmtver=4 (from Pre-Alpha Demo code analysis). Also
      * confirmed in fmtver=8-11 (from comparative analysis of binary data
@@ -604,7 +604,7 @@ struct ThingOldV9 { // sizeof=216
     short PersonShieldEnergy; // pos=132
     char PersonSpecialTimer;
     ubyte TngUnkn135;
-    short PersonWeaponTurn;
+    short TngUnkn136;
     short TngUnkn138; // pos=138
     ubyte PersonBumpMode;
     ubyte PersonBumpCount;
