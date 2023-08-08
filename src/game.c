@@ -5346,7 +5346,6 @@ TbBool mission_immediate_next_on_success(ushort missi)
 
 TbBool mission_is_final_at_game_end(ushort missi)
 {
-    return (last_missi == 101) || (last_missi == 102); //TODO remove when config files updated
     struct Mission *p_missi;
     p_missi = &mission_list[missi];
     return ((p_missi->Flags & MisF_IsFinalMission) != 0);
