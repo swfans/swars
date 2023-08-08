@@ -584,17 +584,17 @@ struct ThingOldV9 { // sizeof=216
      * Demo code analysis).
      */
     ushort PersonFrameUnkn112; // pos=112
-    short TngUnkn114; // pos=114
+    /** Index of the path a person is walking.
+     * Confirmed since fmtver=4 (from Pre-Alpha Demo code analysis).
+     */
+    ushort PersonPathIndex; // pos=114
     /* Person `MaxShieldEnergy` recognized in fmtver=8-11 (from comparative
      * analysis of binary data in level files).
      */
     short PersonMaxShieldEnergy;
     short TngUnkn118;
     long  TngUnkn120;
-    /** Index of the path a person is walking.
-     * Confirmed since fmtver=4 (from Pre-Alpha Demo code analysis).
-     */
-    short PersonPathIndex; // pos=124
+    short TngUnkn124; // pos=124
     ushort TngUnkn126;
     union { // pos=128
         ushort PersonUniqueID;
