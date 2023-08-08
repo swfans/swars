@@ -19,6 +19,7 @@
 #include "thing.h"
 
 #include "bfutility.h"
+#include "bfmemut.h"
 #include "building.h"
 #include "game.h"
 /******************************************************************************/
@@ -95,6 +96,8 @@ short find_nearest_from_group(struct Thing *p_person, ushort group, ubyte no_per
 void refresh_old_thing_format(struct Thing *p_thing, struct ThingOldV9 *p_oldthing, ulong fmtver)
 {
     ushort len;
+
+    LbMemorySet(p_thing, 0, sizeof(struct Thing));
 
     p_thing->Parent = p_oldthing->Parent;
     p_thing->Next = p_oldthing->Next;
