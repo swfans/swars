@@ -5210,8 +5210,6 @@ TbBool mission_has_immediate_next_on_success(ushort missi)
 
 TbBool mission_has_immediate_previous(ushort missi)
 {
-    // TODO MISSI specific missions hard-coded - remove
-    return (missi == 88 || missi == 101 || missi == 102);
     struct Mission *p_missi;
     p_missi = &mission_list[missi];
     return ((p_missi->Flags & MisF_ImmediatePrevious) != 0);
@@ -5342,8 +5340,10 @@ ushort open_new_mission(ushort missi)
 {
     int mslot;
 
-    if (mission_has_immediate_previous(missi))
+    if (mission_has_immediate_previous(missi)) {
+        LOGSYNC("No slot needed for mission %d", (int)missi);
         return 0;
+    }
 
     mslot = find_empty_mission_state_slot();
     if (mslot > 0) {
