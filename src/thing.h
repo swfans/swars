@@ -708,6 +708,8 @@ extern struct Thing *things;
 extern struct SimpleThing *sthings;
 
 void init_things(void);
+void process_things(void);
+
 TbResult delete_node(struct Thing *p_thing);
 void add_node_thing(ushort new_thing);
 short get_new_thing(void);

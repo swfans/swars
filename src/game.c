@@ -153,7 +153,7 @@ extern ubyte execute_commands;
 extern long gamep_unknval_10;
 extern long gamep_unknval_11;
 extern long gamep_unknval_12;
-extern long gamep_unknval_13;
+extern long nav_stats__ThisTurn;
 extern long gamep_unknval_14;
 extern long gamep_unknval_15;
 extern long gamep_unknval_16;
@@ -407,7 +407,7 @@ void debug_level(const char *text, int player)
     }
 }
 
-void player_debug(int player)
+void player_debug(const char *text)
 {
     // TODO place debug/verification code
 }
@@ -3308,10 +3308,131 @@ void init_engine(void)
         :  :  : "eax" );
 }
 
+void unkn_truce_groups(void)
+{
+    asm volatile ("call ASM_unkn_truce_groups\n"
+        :  :  : "eax" );
+}
+
+void blind_progress_game(ulong nturns)
+{
+    ulong n;
+
+    for (n = 0; n < nturns; n++)
+    {
+        process_things();
+        gameturn++;
+    }
+}
+
+void init_level(void)
+{
+    asm volatile ("call ASM_init_level\n"
+        :  :  : "eax" );
+}
+
+void init_level_3d(ubyte flag)
+{
+    asm volatile ("call ASM_init_level_3d\n"
+        : : "a" (flag));
+}
+
+void unkn1_handle_agent_groups(void)
+{
+    asm volatile ("call ASM_unkn1_handle_agent_groups\n"
+        :  :  : "eax" );
+}
+
+void init_game_controls(void)
+{
+    asm volatile ("call ASM_init_game_controls\n"
+        :  :  : "eax" );
+}
+
+void simulated_level(void)
+{
+    asm volatile ("call ASM_simulated_level\n"
+        :  :  : "eax" );
+}
+
 void init_player(void)
 {
+#if 0
     asm volatile ("call ASM_init_player\n"
         :  :  : "eax" );
+#endif
+    PlayerInfo *p_locplayer;
+    int i;
+
+    p_locplayer = &players[local_player_no];
+
+    gamep_unknval_10 = 0;
+    gamep_unknval_12 = 0;
+    nav_stats__ThisTurn = 0;
+    ingame.Flags &= ~0x0100;
+    gamep_unknval_16 = 0;
+    init_level_3d(0);
+    init_level();
+    if (in_network_game)
+    {
+        unkn1_handle_agent_groups();
+        unkn_truce_groups();
+    }
+    else
+    {
+        struct Thing *p_agent;
+        place_single_player();
+        p_agent = p_locplayer->MyAgent[0];
+        ingame.TrackX = p_agent->X >> 8;
+        ingame.TrackZ = p_agent->Z >> 8;
+    }
+    player_debug(" after place player");
+    if (current_level == 0)
+        simulated_level();
+    player_debug(" after sim level");
+    gameturn = 1;
+    player_debug(" after group action");
+    {
+        struct Thing *p_agent;
+        p_agent = p_locplayer->MyAgent[0];
+        ingame.MyGroup = p_agent->U.UPerson.EffectiveGroup;
+    }
+
+    switch (playable_agents)
+    {
+    case 1:
+        p_locplayer->DoubleMode = 0;
+        break;
+    case 2:
+        if (p_locplayer->DoubleMode > 1)
+            p_locplayer->DoubleMode = 1;
+        break;
+    case 3:
+        if (p_locplayer->DoubleMode > 2)
+              p_locplayer->DoubleMode = 2;
+        break;
+    default:
+        break;
+    }
+
+    for (i = 0; i < playable_agents; i++)
+    {
+        struct Thing *p_agent;
+        ulong wep;
+        p_agent = p_locplayer->MyAgent[i];
+        wep = find_nth_weapon_held(p_agent->ThingOffset, 1);
+        p_locplayer->PrevWeapon[i] = wep;
+    }
+
+    init_game_controls();
+
+    {
+        struct Mission *p_missi;
+        p_missi = &mission_list[ingame.CurrentMission];
+        LOGSYNC("PreProcess %d turns for mission %d",
+          (int)p_missi->PreProcess, (int)ingame.CurrentMission);
+        blind_progress_game(p_missi->PreProcess);
+    }
 }
 
 ushort make_group_into_players(ushort group, ushort plyr, ushort max_agent, short new_type)
@@ -3567,12 +3688,6 @@ void unkn_lights_func_11(void)
 {
     asm volatile ("call ASM_unkn_lights_func_11\n"
         :  :  : "eax" );
-}
-
-void init_level_3d(ubyte flag)
-{
-    asm volatile ("call ASM_init_level_3d\n"
-        : : "a" (flag));
 }
 
 void restart_back_into_mission(ushort missi)
@@ -8929,6 +9044,7 @@ void show_load_and_prep_mission(void)
     LbColourTablesLoad(display_palette, "data/tables.dat");
     LbGhostTableLoad(display_palette, 50, "data/synghost.tab");
     debug_trace_place(13);
+
     if ( start_into_mission )
     {
         load_multicolor_sprites();
@@ -8939,6 +9055,7 @@ void show_load_and_prep_mission(void)
 
         if (ingame.GameMode == GamM_None)
             ingame.GameMode = GamM_Unkn2;
+
         init_player();
         flic_unkn03(1);
         func_6edb8(1);
@@ -9460,8 +9577,8 @@ void draw_game(void)
             if ( execute_commands )
             {
                 long tmp;
-                gamep_unknval_16 = gamep_unknval_13;
-                gamep_unknval_13 = 0;
+                gamep_unknval_16 = nav_stats__ThisTurn;
+                nav_stats__ThisTurn = 0;
                 ++gamep_unknval_12;
                 gamep_unknval_10 += gamep_unknval_16;
                 gamep_unknval_15 = gamep_unknval_14;
@@ -9484,7 +9601,6 @@ void draw_game(void)
 }
 
 void load_packet(void);
-void game_process_sub02(void);
 void process_packets(void);
 void joy_input(void);
 void game_process_sub04(void);
@@ -9528,7 +9644,7 @@ void game_process(void)
       if ((ingame.DisplayMode == DpM_UNKN_32) ||
           (ingame.DisplayMode == DpM_UNKN_1) ||
           (ingame.DisplayMode == DpM_UNKN_3B))
-          game_process_sub02();
+          process_things();
       if (ingame.DisplayMode != DpM_UNKN_37)
           process_packets();
       joy_input();

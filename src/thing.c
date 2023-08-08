@@ -28,6 +28,12 @@ void init_things(void)
         :  :  : "eax" );
 }
 
+void process_things(void)
+{
+    asm volatile ("call ASM_process_things\n"
+        :  :  : "eax" );
+}
+
 TbResult delete_node(struct Thing *p_thing)
 {
     TbResult ret;
