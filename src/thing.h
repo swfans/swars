@@ -576,7 +576,10 @@ struct ThingOldV9 { // sizeof=216
      * Demo code analysis).
      */
     ubyte PersonBrightness; // pos=110
-    ubyte TngUnkn111;
+    /* Confirmed to be Person `PathOffset` since fmtver=4 (from
+     * Pre-Alpha Demo code analysis).
+     */
+    ubyte PathOffset;
     /* Since fmtver=4, Person sprite frame of some kind (from Pre-Alpha
      * Demo code analysis).
      */

@@ -124,8 +124,7 @@ void refresh_old_thing_format(struct Thing *p_thing, struct ThingOldV9 *p_oldthi
     p_thing->Speed = p_oldthing->Speed;
     p_thing->Health = p_oldthing->Health;
     p_thing->Owner = p_oldthing->Owner;
-    // Not sure if these values really match
-    p_thing->PathOffset = p_oldthing->PersonPathIndex;
+    p_thing->PathOffset = p_oldthing->PathOffset;
     // The target pointer will be cleared anyway
     p_thing->PTarget = NULL; // p_oldthing->PTarget;
     p_thing->GotoThingIndex = p_oldthing->GotoThingIndex;
