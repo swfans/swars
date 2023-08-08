@@ -214,6 +214,7 @@ void load_missions(int num);
 void save_missions_conf_file(int num);
 void read_missions_conf_file(int num);
 void read_missions_bin_file(int num);
+void apply_missions_fixups(void);
 /******************************************************************************/
 #ifdef __cplusplus
 }

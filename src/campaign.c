@@ -417,6 +417,55 @@ void init_mission_states(void)
 void load_missions(int num)
 {
     read_missions_conf_file(num);
+    apply_missions_fixups();
+}
+
+void apply_missions_fixups(void)
+{
+    ushort missi;
+
+    for (missi = 0; missi < next_mission; missi++)
+    {
+        struct Mission *p_missi;
+        int n;
+
+        p_missi = &mission_list[missi];
+
+        for (n=0; n < 3; n++)
+        {
+            if (p_missi->SpecialTrigger[n] > next_mission) {
+                LOGWARN("Reference to invalid mission %d within mission %d %s; cleared",
+                    (int)p_missi->SpecialTrigger[n], (int)missi, "SpecialTrigger");
+                p_missi->SpecialTrigger[n] = 0;
+            }
+        }
+        for (n=0; n < 3; n++)
+        {
+            struct Mission *p_trg_missi;
+
+            if (p_missi->SuccessTrigger[n] > next_mission) {
+                LOGWARN("Reference to invalid mission %d within mission %d %s; cleared",
+                    (int)p_missi->SuccessTrigger[n], (int)missi, "SuccessTrigger");
+                p_missi->SuccessTrigger[n] = 0;
+            }
+            if (p_missi->SuccessTrigger[n] == 0)
+                continue;
+            p_trg_missi = &mission_list[p_missi->SuccessTrigger[n]];
+            // Mark mission which are immediate after previous
+            if (p_missi->Flags & MisF_ImmediateNextOnSuccess)
+                p_trg_missi->Flags |= MisF_ImmediatePrevious;
+             else
+                p_trg_missi->Flags &= ~MisF_ImmediatePrevious;
+        }
+        for (n=0; n < 3; n++)
+        {
+            if (p_missi->FailTrigger[n] > next_mission) {
+                LOGWARN("Reference to invalid mission %d within  mission %d%s; cleared",
+                    (int)p_missi->FailTrigger[n], (int)missi, "FailTrigger");
+                p_missi->FailTrigger[n] = 0;
+            }
+        }
+    }
 }
 
 void read_missions_bin_file(int num)
