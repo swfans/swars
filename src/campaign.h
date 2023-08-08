@@ -68,9 +68,28 @@ enum CampaignFlags {
 };
 
 enum MissionFlags {
+    /** Set if after this mission ends with success, a next one should start
+     * immediatelly without going through menu. It is not possible to save
+     * game or reequip your agents before the next mission starts.
+     */
     MisF_ImmediateNextOnSuccess = 0x0001,
-    MisF_RemainUntilSuccess = 0x0002,
-    MisF_IsFinalMission = 0x0004,
+    /** Set if the current mission in set as SuccessTrigger in a mission
+     * which has ImmediateNextOnSuccess flag set. This flag has no config file
+     * mnemonic - it is set automatically for all missions pointed at by
+     * other missions with expected flags. If this flag is set, the mission
+     * will not have its own briefing slot, as it should replace values
+     * within slot of the previous mission.
+     */
+    MisF_ImmediatePrevious = 0x0002,
+    /** Set if failing this mission does not cause game over nor the mission
+     * disappearing from selection. The mission can be played any amount
+     * of times, and disappears only if it is finally completed.
+     */
+    MisF_RemainUntilSuccess = 0x0004,
+    /** Set if the current mission it the final one in the campaign. After
+     * the final mission is completed, outro sequence will play.
+     */
+    MisF_IsFinalMission = 0x0008,
 };
 
 struct Campaign {

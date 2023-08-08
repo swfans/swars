@@ -5194,6 +5194,35 @@ void add_agent(ulong weapons, ushort mods)
         : : "a" (weapons), "d" (mods));
 }
 
+TbBool mission_remain_until_success(ushort missi)
+{
+    struct Mission *p_missi;
+    p_missi = &mission_list[missi];
+    return ((p_missi->Flags &= MisF_RemainUntilSuccess) != 0);
+}
+
+TbBool mission_has_immediate_next_on_success(ushort missi)
+{
+    struct Mission *p_missi;
+    p_missi = &mission_list[missi];
+    return ((p_missi->Flags & MisF_ImmediateNextOnSuccess) != 0);
+}
+
+TbBool mission_has_immediate_previous(ushort missi)
+{
+    // TODO MISSI specific missions hard-coded - remove
+    return (missi == 88 || missi == 101 || missi == 102);
+    struct Mission *p_missi;
+    p_missi = &mission_list[missi];
+    return ((p_missi->Flags & MisF_ImmediatePrevious) != 0);
+}
+
+TbBool mission_is_final_at_game_end(ushort missi)
+{
+    struct Mission *p_missi;
+    p_missi = &mission_list[missi];
+    return ((p_missi->Flags & MisF_IsFinalMission) != 0);
+}
 
 void mission_over_update_players(void)
 {
@@ -5313,8 +5342,7 @@ ushort open_new_mission(ushort missi)
 {
     int mslot;
 
-    // TODO MISSI specific missions hard-coded - remove
-    if (missi == 88 || missi == 101 || missi == 102)
+    if (mission_has_immediate_previous(missi))
         return 0;
 
     mslot = find_empty_mission_state_slot();
@@ -5328,27 +5356,6 @@ ushort open_new_mission(ushort missi)
     queue_up_new_mail(1, missi);
 
     return 0;
-}
-
-TbBool mission_remain_until_success(ushort missi)
-{
-    struct Mission *p_missi;
-    p_missi = &mission_list[missi];
-    return ((p_missi->Flags &= MisF_RemainUntilSuccess) != 0);
-}
-
-TbBool mission_immediate_next_on_success(ushort missi)
-{
-    struct Mission *p_missi;
-    p_missi = &mission_list[missi];
-    return ((p_missi->Flags & MisF_ImmediateNextOnSuccess) != 0);
-}
-
-TbBool mission_is_final_at_game_end(ushort missi)
-{
-    struct Mission *p_missi;
-    p_missi = &mission_list[missi];
-    return ((p_missi->Flags & MisF_IsFinalMission) != 0);
 }
 
 TbBool check_mission_conds(ushort missi)
@@ -5517,7 +5524,7 @@ void delete_open_mission(ushort mslot, sbyte state)
             {
                 mission_fire_success_triggers(missi);
             }
-            if (mission_immediate_next_on_success(ingame.CurrentMission))
+            if (mission_has_immediate_next_on_success(ingame.CurrentMission))
             {
                 compound_mission_immediate_start_next();
                 return;
@@ -5577,7 +5584,7 @@ void delete_open_mission(ushort mslot, sbyte state)
                 {
                     mission_fire_success_triggers(missi);
                 }
-                if (mission_immediate_next_on_success(ingame.CurrentMission))
+                if (mission_has_immediate_next_on_success(ingame.CurrentMission))
                 {
                     compound_mission_immediate_start_next();
                     return;
