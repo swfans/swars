@@ -152,6 +152,7 @@ void refresh_old_thing_format(struct Thing *p_thing, struct ThingOldV9 *p_oldthi
         p_thing->U.UPerson.UniqueID = p_oldthing->PersonUniqueID;
         p_thing->U.UPerson.PathIndex = p_oldthing->PersonPathIndex;
         p_thing->U.UPerson.WeaponTimer = p_oldthing->PersonWeaponTimer;
+        p_thing->U.UPerson.Energy = p_oldthing->PersonEnergy;
         // Uncertain fields
         p_thing->U.UPerson.ShieldEnergy = p_oldthing->PersonShieldEnergy;
         p_thing->U.UPerson.SpecialTimer = p_oldthing->PersonSpecialTimer;

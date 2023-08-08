@@ -667,7 +667,10 @@ struct ThingOldV9 { // sizeof=216
     short VehicleAngleDY; // pos=172
     ushort TngUnkn174;
     ushort TngUnkn176; // pos=176
-    ushort TngUnkn178;
+    /* Person weapon `Energy`, confirmed since fmtver=4 (from Pre-Alpha Demo
+     * code analysis).
+     */
+    ushort PersonEnergy;
     ushort TngUnkn180; // pos=180
     ushort TngUnkn182;
     ubyte TngUnkn184; // pos=184
