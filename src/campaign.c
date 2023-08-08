@@ -186,6 +186,7 @@ enum MissionListConfigCmd {
     MissL_WaitToFade,
     MissL_ImmediateNextOnSuccess,
     MissL_RemainUntilSuccess,
+    MissL_IsFinalMission,
     MissL_PreProcess,
 };
 
@@ -256,6 +257,7 @@ const struct TbNamedEnum missions_conf_mission_cmds[] = {
   {"WaitToFade",	MissL_WaitToFade},
   {"ImmediateNextOnSuccess",MissL_ImmediateNextOnSuccess},
   {"RemainUntilSuccess",MissL_RemainUntilSuccess},
+  {"IsFinalMission",MissL_IsFinalMission},
   {"PreProcess",	MissL_PreProcess},
   {NULL,			0},
 };
@@ -1730,6 +1732,18 @@ void read_missions_conf_file(int num)
                 else
                     p_missi->Flags &= ~MisF_RemainUntilSuccess;
                 CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)(p_missi->Flags & MisF_RemainUntilSuccess));
+                break;
+            case MissL_IsFinalMission:
+                i = LbIniValueGetNamedEnum(&parser, missions_conf_any_bool);
+                if (i <= 0) {
+                    CONFWRNLOG("Could not recognize \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                    break;
+                }
+                if (i == 1)
+                    p_missi->Flags |= MisF_IsFinalMission;
+                else
+                    p_missi->Flags &= ~MisF_IsFinalMission;
+                CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)(p_missi->Flags & MisF_IsFinalMission));
                 break;
             case MissL_PreProcess:
                 i = LbIniValueGetLongInt(&parser, &k);

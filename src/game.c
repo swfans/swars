@@ -5344,6 +5344,14 @@ TbBool mission_immediate_next_on_success(ushort missi)
     return ((p_missi->Flags & MisF_ImmediateNextOnSuccess) != 0);
 }
 
+TbBool mission_is_final_at_game_end(ushort missi)
+{
+    return (last_missi == 101) || (last_missi == 102); //TODO remove when config files updated
+    struct Mission *p_missi;
+    p_missi = &mission_list[missi];
+    return ((p_missi->Flags & MisF_IsFinalMission) != 0);
+}
+
 TbBool check_mission_conds(ushort missi)
 {
     int i;
@@ -5675,10 +5683,8 @@ void mission_over(void)
 
     if (mission_state[mslot] == 1)
     {
-        // TODO MISSI specific missions hard-coded - remove
-        if ((last_missi == 101) || (last_missi == 102))
+        if (mission_is_final_at_game_end(last_missi))
             init_outro();
-
     }
 
     lstate = 0;

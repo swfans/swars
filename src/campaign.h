@@ -70,6 +70,7 @@ enum CampaignFlags {
 enum MissionFlags {
     MisF_ImmediateNextOnSuccess = 0x0001,
     MisF_RemainUntilSuccess = 0x0002,
+    MisF_IsFinalMission = 0x0004,
 };
 
 struct Campaign {
