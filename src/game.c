@@ -97,7 +97,7 @@ extern ubyte *m_spr_data_end;
 extern struct TbSprite *m_sprites;
 extern struct TbSprite *m_sprites_end;
 
-extern struct UnknGroup unkn_groups[32];
+extern struct WarFlag war_flags[32];
 
 extern ulong stored_l3d_next_object[1];
 extern ulong stored_l3d_next_object_face[1];
@@ -995,15 +995,15 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
     LbFileRead(lev_fh, game_commands, 32 * next_command);
     LbFileRead(lev_fh, &level_def, 44);
     LbFileRead(lev_fh, engine_mem_alloc_ptr + engine_mem_alloc_size - 1353, 1320);
-    LbFileRead(lev_fh, unkn_groups, 32 * sizeof(struct UnknGroup));
+    LbFileRead(lev_fh, war_flags, 32 * sizeof(struct WarFlag));
     LbFileRead(lev_fh, &word_1531E0, sizeof(ushort));
     LOGSYNC("Level fmtver=%lu n_command=%hu word_1531E0=%hu", fmtver, next_command, word_1531E0);
     for (k = 0; k < 32; k++)
     {
         for (i = 0; i < 8; i++)
         {
-            if (unkn_groups[k].ugfld_16[i] > 31)
-                unkn_groups[k].ugfld_16[i] = 0;
+            if (war_flags[k].Guardians[i] > 31)
+                war_flags[k].Guardians[i] = 0;
         }
     }
     LbFileRead(lev_fh, engine_mem_alloc_ptr + engine_mem_alloc_size - 32000, 15 * word_1531E0);
