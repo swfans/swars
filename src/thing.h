@@ -665,7 +665,11 @@ struct ThingOldV9 { // sizeof=216
     ushort PersonUnkn160; // pos=160
     ubyte SubState;
     ubyte PersonComRange;
-    ushort VehicleMaxSpeed; // pos=164
+    /* Vehicle `ReqdSpeed`, confirmed since fmtver=4 (from Pre-Alpha Demo
+     * code analysis). In that version there was no MaxSpeed, so this counted
+     * for both.
+     */
+    ushort VehicleReqdSpeed; // pos=164
     /* Is Vehicle `UniqueID`, Person `WeaponTimer`, and also used in Objects
      * since fmtver=4 (from Pre-Alpha Demo code analysis).
      */

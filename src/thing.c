@@ -205,7 +205,8 @@ void refresh_old_thing_format(struct Thing *p_thing, struct ThingOldV9 *p_oldthi
         p_thing->U.UVehicle.GotoZ = p_oldthing->VehicleGotoZ;
         p_thing->U.UVehicle.MatrixIndex = p_oldthing->VehicleMatrixIndex;
         p_thing->U.UVehicle.UniqueID = p_oldthing->VehicleUniqueID;
-        p_thing->U.UVehicle.MaxSpeed = p_oldthing->VehicleMaxSpeed;
+        p_thing->U.UVehicle.MaxSpeed = p_oldthing->VehicleReqdSpeed;
+        p_thing->U.UVehicle.ReqdSpeed = p_oldthing->VehicleReqdSpeed;
         p_thing->U.UVehicle.PassengerHead = p_oldthing->VehiclePassengerHead;
         p_thing->U.UVehicle.TNode = p_oldthing->VehicleTNode;
         p_thing->U.UVehicle.AngleDY = p_oldthing->VehicleAngleDY;
