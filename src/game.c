@@ -1878,6 +1878,9 @@ short draw_current_weapon_button(PlayerInfo *p_locplayer, short nagent)
         cx = 157 * nagent + 65;
     }
     p_agent = p_locplayer->MyAgent[nagent];
+    // Protect from damaged / unfinished levels
+    if (p_agent == NULL)
+        return 0;
 
     curwep = p_agent->U.UPerson.CurrentWeapon;
     prevwep = p_locplayer->PrevWeapon[nagent];
@@ -3387,8 +3390,13 @@ void init_player(void)
         struct Thing *p_agent;
         place_single_player();
         p_agent = p_locplayer->MyAgent[0];
-        ingame.TrackX = p_agent->X >> 8;
-        ingame.TrackZ = p_agent->Z >> 8;
+        if (p_agent != NULL) {
+            ingame.TrackX = p_agent->X >> 8;
+            ingame.TrackZ = p_agent->Z >> 8;
+        } else {
+            ingame.TrackX = 128;
+            ingame.TrackZ = 128;
+        }
     }
     player_debug(" after place player");
     if (current_level == 0)
@@ -3399,7 +3407,11 @@ void init_player(void)
     {
         struct Thing *p_agent;
         p_agent = p_locplayer->MyAgent[0];
-        ingame.MyGroup = p_agent->U.UPerson.EffectiveGroup;
+        if (p_agent != NULL) {
+            ingame.MyGroup = p_agent->U.UPerson.EffectiveGroup;
+        } else {
+            ingame.MyGroup = 0;
+        }
     }
 
     switch (playable_agents)
@@ -3424,7 +3436,10 @@ void init_player(void)
         struct Thing *p_agent;
         ulong wep;
         p_agent = p_locplayer->MyAgent[i];
-        wep = find_nth_weapon_held(p_agent->ThingOffset, 1);
+        if (p_agent != NULL)
+            wep = find_nth_weapon_held(p_agent->ThingOffset, 1);
+        else
+            wep = 0;
         p_locplayer->PrevWeapon[i] = wep;
     }
 
@@ -3438,6 +3453,15 @@ void init_player(void)
         blind_progress_game(p_missi->PreProcess);
     }
 }
+
+struct Thing *new_sim_person(int x, int y, int z, ubyte subtype)
+{
+    struct Thing *p_person;
+    asm volatile ("call ASM_new_sim_person\n"
+        : "=r" (p_person) : "a" (x), "d" (y), "b" (z), "c" (subtype));
+    return p_person;
+}
+
 
 ushort make_group_into_players(ushort group, ushort plyr, ushort max_agent, short new_type)
 {
@@ -3630,10 +3654,15 @@ void place_single_player(void)
         }
     }
 
-    pl_agents = make_group_into_players(level_def.PlayableGroups[0], local_player_no, nagents, -1);
     pl_group = level_def.PlayableGroups[0];
+    pl_agents = make_group_into_players(pl_group, local_player_no, nagents, -1);
     if (pl_agents == 0) {
+        struct Thing *p_person;
         LOGERR("Player %d playable agents not found amongst %d things", (int)local_player_no, (int)things_used_head);
+        p_person = new_sim_person(513, 1, 513, SubTT_PERS_AGENT);
+        p_person->U.UPerson.Group = pl_group;
+        p_person->U.UPerson.EffectiveGroup = pl_group;
+        pl_agents = make_group_into_players(pl_group, local_player_no, 1, -1);
     } else {
         LOGSYNC("Player %d playable agents found %d expected %d", (int)local_player_no, (int)pl_agents, (int)nagents);
     }
