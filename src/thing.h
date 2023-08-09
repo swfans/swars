@@ -688,7 +688,10 @@ struct ThingOldV9 { // sizeof=216
      */
     short VehicleAngleDY; // pos=172
     ushort TngUnkn174;
-    ushort TngUnkn176; // pos=176
+    /* Person weapon `MaxEnergy`, confirmed in fmtver=8-11 (from comparative analysis
+     * of binary data in level files).
+     */
+    ushort PersonMaxEnergy; // pos=176
     /* Person weapon `Energy`, confirmed since fmtver=4 (from Pre-Alpha Demo
      * code analysis).
      */
