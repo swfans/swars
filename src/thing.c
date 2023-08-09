@@ -185,7 +185,7 @@ void refresh_old_thing_format(struct Thing *p_thing, struct ThingOldV9 *p_oldthi
         if (p_thing->SubType == SubTT_PERS_PUNK_F) {
             // Randomize hair color - 50% normal red(0), 25% blonde(1), 25% blue(2)
             // The ThingOffset should be random enough
-            len = (p_thing->ThingOffset & 0xF);
+            len = (p_thing->ThingOffset ^ p_thing->U.UPerson.UniqueID) & 0xF;
             if (len < 4)
                 p_thing->U.UPerson.FrameId.Version[0] = 1;
             else if (len < 8)
