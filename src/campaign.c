@@ -184,6 +184,9 @@ enum MissionListConfigCmd {
     MissL_PANStart,
     MissL_PANEnd,
     MissL_WaitToFade,
+    MissL_ImmediateNextOnSuccess,
+    MissL_RemainUntilSuccess,
+    MissL_IsFinalMission,
     MissL_PreProcess,
 };
 
@@ -252,6 +255,9 @@ const struct TbNamedEnum missions_conf_mission_cmds[] = {
   {"PANStart",		MissL_PANStart},
   {"PANEnd",		MissL_PANEnd},
   {"WaitToFade",	MissL_WaitToFade},
+  {"ImmediateNextOnSuccess",MissL_ImmediateNextOnSuccess},
+  {"RemainUntilSuccess",MissL_RemainUntilSuccess},
+  {"IsFinalMission",MissL_IsFinalMission},
   {"PreProcess",	MissL_PreProcess},
   {NULL,			0},
 };
@@ -326,9 +332,140 @@ ushort selectable_campaigns_count(void)
     return matches;
 }
 
+ushort find_mission_state_slot(ushort missi)
+{
+    ushort i;
+
+    if (missi < 1)
+        return 0;
+    for (i = 1; i < 50; i++) {
+        if (mission_open[i] == missi)
+            break;
+    }
+    if (i >= 50)
+        i = 0;
+    return i;
+}
+
+ushort find_empty_mission_state_slot(void)
+{
+    ushort i;
+
+    for (i = 1; i < 50; i++) {
+        if (mission_open[i] == 0)
+            break;
+    }
+    if (i >= 50)
+        i = 0;
+    return i;
+}
+
+void remove_mission_state_slot(ushort mslot)
+{
+    ushort i;
+
+    for (i = mslot; i < 50-1; i++)
+    {
+        mission_open[i] = mission_open[i + 1];
+        mission_state[i] = mission_state[i + 1];
+    }
+}
+
+void init_mission_states(void)
+{
+    struct Objective *p_objectv;
+    ushort missi, mslot;
+    ushort objectv;
+    int i;
+
+    mslot = find_mission_state_slot(ingame.CurrentMission);
+    if (mslot > 0) {
+        missi = mission_open[mslot];
+        mission_state[mslot] = 0;
+    } else {
+        missi = ingame.CurrentMission;
+        LOGWARN("Mission %d has no slot; initing anyway", (int)missi);
+    }
+    if (missi > next_mission) {
+        LOGERR("Ignored request for unallocated mission %d", (int)missi);
+        return;
+    }
+
+    mission_list[missi].BankTest = 0;
+
+    objectv = mission_list[missi].SuccessHead;
+    for (i = 0; i < 100; i++) {
+        if (objectv == 0)
+            break;
+        p_objectv = &game_used_objectives[objectv];
+        p_objectv->Status = 0;
+        objectv = p_objectv->Next;
+    }
+    LOGSYNC("Prepared %d success objectives for mission %d", i, (int)missi);
+
+    objectv = mission_list[missi].FailHead;
+    for (i = 0; i < 100; i++) {
+        if (objectv == 0)
+            break;
+        p_objectv = &game_used_objectives[objectv];
+        p_objectv->Status = 0;
+        objectv = p_objectv->Next;
+    }
+    LOGSYNC("Prepared %d fail objectives for mission %d", i, (int)missi);
+}
+
 void load_missions(int num)
 {
     read_missions_conf_file(num);
+    apply_missions_fixups();
+}
+
+void apply_missions_fixups(void)
+{
+    ushort missi;
+
+    for (missi = 0; missi < next_mission; missi++)
+    {
+        struct Mission *p_missi;
+        int n;
+
+        p_missi = &mission_list[missi];
+
+        for (n=0; n < 3; n++)
+        {
+            if (p_missi->SpecialTrigger[n] > next_mission) {
+                LOGWARN("Reference to invalid mission %d within mission %d %s; cleared",
+                    (int)p_missi->SpecialTrigger[n], (int)missi, "SpecialTrigger");
+                p_missi->SpecialTrigger[n] = 0;
+            }
+        }
+        for (n=0; n < 3; n++)
+        {
+            struct Mission *p_trg_missi;
+
+            if (p_missi->SuccessTrigger[n] > next_mission) {
+                LOGWARN("Reference to invalid mission %d within mission %d %s; cleared",
+                    (int)p_missi->SuccessTrigger[n], (int)missi, "SuccessTrigger");
+                p_missi->SuccessTrigger[n] = 0;
+            }
+            if (p_missi->SuccessTrigger[n] == 0)
+                continue;
+            p_trg_missi = &mission_list[p_missi->SuccessTrigger[n]];
+            // Mark mission which are immediate after previous
+            if (p_missi->Flags & MisF_ImmediateNextOnSuccess)
+                p_trg_missi->Flags |= MisF_ImmediatePrevious;
+             else
+                p_trg_missi->Flags &= ~MisF_ImmediatePrevious;
+        }
+        for (n=0; n < 3; n++)
+        {
+            if (p_missi->FailTrigger[n] > next_mission) {
+                LOGWARN("Reference to invalid mission %d within  mission %d%s; cleared",
+                    (int)p_missi->FailTrigger[n], (int)missi, "FailTrigger");
+                p_missi->FailTrigger[n] = 0;
+            }
+        }
+    }
 }
 
 void read_missions_bin_file(int num)
@@ -647,9 +784,8 @@ void save_mission_single_conf(TbFileHandle fh, struct Mission *p_missi, char *bu
       sprintf(buf, "PreProcess = %hu\n", p_missi->PreProcess);
       LbFileWrite(fh, buf, strlen(buf));
     }
-    if ((p_missi->field_48[0]|p_missi->field_48[1]|p_missi->field_48[2]) != 0) {
-        sprintf(buf, "field_48 = %d %d %d\n", (int)p_missi->field_48[0],
-          (int)p_missi->field_48[1], (int)p_missi->field_48[2]);
+    if ((p_missi->field_4A) != 0) {
+        sprintf(buf, "field_4A = %d\n", (int)p_missi->field_4A);
         LbFileWrite(fh, buf, strlen(buf));
     }
     if (p_missi->field_4B != 0) {
@@ -1620,6 +1756,43 @@ void read_missions_conf_file(int num)
                 }
                 p_missi->WaitToFade = k;
                 CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)p_missi->WaitToFade);
+                break;
+
+            case MissL_ImmediateNextOnSuccess:
+                i = LbIniValueGetNamedEnum(&parser, missions_conf_any_bool);
+                if (i <= 0) {
+                    CONFWRNLOG("Could not recognize \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                    break;
+                }
+                if (i == 1)
+                    p_missi->Flags |= MisF_ImmediateNextOnSuccess;
+                else
+                    p_missi->Flags &= ~MisF_ImmediateNextOnSuccess;
+                CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)(p_missi->Flags & MisF_ImmediateNextOnSuccess));
+                break;
+            case MissL_RemainUntilSuccess:
+                i = LbIniValueGetNamedEnum(&parser, missions_conf_any_bool);
+                if (i <= 0) {
+                    CONFWRNLOG("Could not recognize \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                    break;
+                }
+                if (i == 1)
+                    p_missi->Flags |= MisF_RemainUntilSuccess;
+                else
+                    p_missi->Flags &= ~MisF_RemainUntilSuccess;
+                CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)(p_missi->Flags & MisF_RemainUntilSuccess));
+                break;
+            case MissL_IsFinalMission:
+                i = LbIniValueGetNamedEnum(&parser, missions_conf_any_bool);
+                if (i <= 0) {
+                    CONFWRNLOG("Could not recognize \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                    break;
+                }
+                if (i == 1)
+                    p_missi->Flags |= MisF_IsFinalMission;
+                else
+                    p_missi->Flags &= ~MisF_IsFinalMission;
+                CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)(p_missi->Flags & MisF_IsFinalMission));
                 break;
             case MissL_PreProcess:
                 i = LbIniValueGetLongInt(&parser, &k);

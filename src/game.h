@@ -105,6 +105,13 @@ enum PacketRecordMode {
   PktR_PLAYBACK = 0x2,
 };
 
+enum MissionFMVPlay {
+    MPly_MissiComplete,
+    MPly_MissiFail,
+    MPly_MPartComplete,
+    MPly_GameOver,
+};
+
 struct Thing;
 
 typedef struct {
@@ -469,7 +476,8 @@ struct InGame {
     short fld_unkC4F;
     short MissionStatus;
     long Flags;
-    long fld_unkC57;
+    ushort fld_unkC57;
+    short fld_unkC59;
     short draw_unknprop_01;
     short Rocket1[15];
     short NextRocket;

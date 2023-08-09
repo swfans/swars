@@ -179,6 +179,8 @@ struct TngUVehicle
   short ReqdSpeed;
   ushort MaxSpeed; // within Thing, pos=92
   ushort PassengerHead;
+  /** Traffic node where the vehicle is moving.
+   */
   short TNode;
   short AngleDY;
   short AngleX;
@@ -250,7 +252,13 @@ struct TngUPerson
 {
   short PathIndex;
   ushort UniqueID;
+  /** Normal GroupId assignment of a thing.
+   * Used to reset `EffectiveGroup` when neccessary.
+   */
   ubyte Group;
+  /** Effective group is the GroupId of a thing which is actually in effect.
+   * It may diverge from normal `Group` ie when a Person is persuaded.
+   */
   ubyte EffectiveGroup;
   ushort ComHead;
   ushort ComCur;
@@ -501,7 +509,18 @@ struct ThingOldV9 { // sizeof=216
         ubyte PersonAngle;
         ubyte ObjectAngle;
     };
-    ubyte TngUnkn75;
+    /** Effective group is the GroupId of a thing which is actually in effect.
+     * Configrmed to be  Person `EffectiveGroup` since fmtver=4 (from Pre-Alpha
+     * Demo code analysis). Also xonfirmed in fmtver=8-11 (from comparative
+     * analysis of binary data in level files). These sources do not provide a
+     * definite proof about which group field is effective and which the default.
+     */
+    union { // pos=75
+        ubyte PersonEffectiveGroup;
+        ubyte VehicleEffectiveGroup;
+        ubyte ObjectEffectiveGroup;
+        ubyte MGunEffectiveGroup;
+    };
     /* Since fmtver=4, `Speed` for Vehicle (from Pre-Alpha Demo code analysis).
      */
     short Speed; // pos=76
@@ -534,12 +553,17 @@ struct ThingOldV9 { // sizeof=216
         short VehicleGotoZ;
         short EffectGotoZ;
     };
-    /* Confirmed to be Person `Group` in fmtver=8-11 (from comparative analysis
-     * of binary data in level files). There seems to be no EffectiveGroup
-     * in early files (from the same comparative analysis).
+    /* Since fmtver=4, `Group` for Person (from Pre-Alpha Demo code analysis).
+     * Confirmed the same in fmtver=8-11 (from comparative analysis of
+     * binary data in level files).
      */
-    ubyte PersonGroup; // pos=86
-    ubyte TngUnkn87; // pos=87
+    union {  // pos=86
+        short VehicleUnknTng86;
+        struct {
+            ubyte PersonGroup;
+            ubyte TngUnkn87;
+        };
+    };
     ulong PersonWeaponsCarried; // pos=88
     /** Next command assigned to the Person.
      * Confirmed since fmtver=4 (from Pre-Alpha Demo code analysis).
@@ -554,16 +578,16 @@ struct ThingOldV9 { // sizeof=216
      * in level files).
      */
     ushort Owner; // pos=100
-    /* Since fmtver=4 set for some Person states, purpose unknown (from
+    /* Confirmed to be Person `CurrentWeapon` since fmtver=4 (from
      * Pre-Alpha Demo code analysis). Uses low values, for Person only
      * (from comparative analysis of binary data in level files).
      */
-    short PersonUnkn102; // pos=102
+    short PersonCurrentWeapon; // pos=102
     short TngUnkn104; // pos=104
-    /* Since fmtver=4, some kind of counter to restore Person state,
-     * unknown (from Pre-Alpha Demo code analysis).
+    /* Confirmed to be Person `WeaponTurn` since fmtver=4 (from
+     * Pre-Alpha Demo code analysis).
      */
-    short PersonUnkn106; // pos=106
+    ushort PersonWeaponTurn; // pos=106
     /** Rotation matrix index for a Vehicle.
      * Confirmed since fmtver=4 (from Pre-Alpha Demo code analysis). Also
      * confirmed in fmtver=8-11 (from comparative analysis of binary data
@@ -574,22 +598,25 @@ struct ThingOldV9 { // sizeof=216
      * Demo code analysis).
      */
     ubyte PersonBrightness; // pos=110
-    ubyte TngUnkn111;
+    /* Confirmed to be Person `PathOffset` since fmtver=4 (from
+     * Pre-Alpha Demo code analysis).
+     */
+    ubyte PathOffset;
     /* Since fmtver=4, Person sprite frame of some kind (from Pre-Alpha
      * Demo code analysis).
      */
     ushort PersonFrameUnkn112; // pos=112
-    short TngUnkn114; // pos=114
+    /** Index of the path a person is walking.
+     * Confirmed since fmtver=4 (from Pre-Alpha Demo code analysis).
+     */
+    ushort PersonPathIndex; // pos=114
     /* Person `MaxShieldEnergy` recognized in fmtver=8-11 (from comparative
      * analysis of binary data in level files).
      */
     short PersonMaxShieldEnergy;
     short TngUnkn118;
     long  TngUnkn120;
-    /** Index of the path a person is walking.
-     * Confirmed since fmtver=4 (from Pre-Alpha Demo code analysis).
-     */
-    short PersonPathIndex; // pos=124
+    short TngUnkn124; // pos=124
     ushort TngUnkn126;
     union { // pos=128
         ushort PersonUniqueID;
@@ -599,7 +626,7 @@ struct ThingOldV9 { // sizeof=216
     short PersonShieldEnergy; // pos=132
     char PersonSpecialTimer;
     ubyte TngUnkn135;
-    short PersonWeaponTurn;
+    short TngUnkn136;
     short TngUnkn138; // pos=138
     ubyte PersonBumpMode;
     ubyte PersonBumpCount;
@@ -639,18 +666,19 @@ struct ThingOldV9 { // sizeof=216
     ubyte SubState;
     ubyte PersonComRange;
     ushort VehicleMaxSpeed; // pos=164
-    /* Besides use in Vehicles, it is set within some Person states since
-     * fmtver=4 (from Pre-Alpha Demo code analysis).
+    /* Is Vehicle `UniqueID`, Person `WeaponTimer`, and also used in Objects
+     * since fmtver=4 (from Pre-Alpha Demo code analysis).
      */
     union { // pos=166
         ushort VehicleUniqueID;
-        short PersonUnkn166;
+        short PersonWeaponTimer;
     };
     /* Vehicle `PassengerHead`, confirmed since fmtver=4 (from Pre-Alpha Demo
      * code analysis).
      */
     short VehiclePassengerHead; // pos=168
-    /* Vehicle `TNode`, confirmed since fmtver=4 (from Pre-Alpha Demo code
+    /** Traffic node where the vehicle is moving.
+     * Vehicle `TNode`, confirmed since fmtver=4 (from Pre-Alpha Demo code
      * analysis). Also confirmed in fmtver=8-11 (from comparative analysis
      * of binary data in level files).
      */
@@ -661,7 +689,10 @@ struct ThingOldV9 { // sizeof=216
     short VehicleAngleDY; // pos=172
     ushort TngUnkn174;
     ushort TngUnkn176; // pos=176
-    ushort TngUnkn178;
+    /* Person weapon `Energy`, confirmed since fmtver=4 (from Pre-Alpha Demo
+     * code analysis).
+     */
+    ushort PersonEnergy;
     ushort TngUnkn180; // pos=180
     ushort TngUnkn182;
     ubyte TngUnkn184; // pos=184
@@ -708,6 +739,8 @@ extern struct Thing *things;
 extern struct SimpleThing *sthings;
 
 void init_things(void);
+void process_things(void);
+
 TbResult delete_node(struct Thing *p_thing);
 void add_node_thing(ushort new_thing);
 short get_new_thing(void);

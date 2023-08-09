@@ -203,6 +203,23 @@ TbBool IsSamplePlaying(long tng_offs, ushort smp_id, TbSampleHandle handle)
     return ret;
 }
 
+void SetMusicVolume(int msec, ubyte volume)
+{
+    if (!MusicAble || !MusicInstalled)
+        return;
+
+    if (!MusicActive || !SongCurrentlyPlaying)
+        return;
+
+    if (volume > 127)
+        return;
+
+    if (AIL_sequence_status(SongHandle) == 2)
+        return;
+
+    AIL_set_sequence_volume(SongHandle, volume, msec);
+}
+
 void SetSoundMasterVolume(long vol)
 {
 #if 0

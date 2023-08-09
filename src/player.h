@@ -102,6 +102,7 @@ extern PlayerInfo players[8];
 extern ubyte local_player_no;
 extern struct AgentInfo cryo_agents;
 
+void place_single_player(void);
 /******************************************************************************/
 #ifdef __cplusplus
 }

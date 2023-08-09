@@ -153,7 +153,7 @@ extern ubyte execute_commands;
 extern long gamep_unknval_10;
 extern long gamep_unknval_11;
 extern long gamep_unknval_12;
-extern long gamep_unknval_13;
+extern long nav_stats__ThisTurn;
 extern long gamep_unknval_14;
 extern long gamep_unknval_15;
 extern long gamep_unknval_16;
@@ -407,7 +407,7 @@ void debug_level(const char *text, int player)
     }
 }
 
-void player_debug(int player)
+void player_debug(const char *text)
 {
     // TODO place debug/verification code
 }
@@ -444,7 +444,7 @@ void play_smacker(int vid_type)
     char str[52];
     const char *fname;
 
-    // TODO case for a specific map, remove
+    // TODO MAPNO case for a specific map, remove
     if (current_map == 51)
     {
         overall_scale = 256;
@@ -462,9 +462,9 @@ void play_smacker(int vid_type)
     case 0:
         switch (vid_type)
         {
-        case 0:
-        case 2:
-            // TODO case for a specific map, remove
+        case MPly_MissiComplete:
+        case MPly_MPartComplete:
+            // TODO MAPNO case for a specific map, remove
             if (current_map == 46)
             {
                 if (game_dirs[0].use_cd == 1)
@@ -478,10 +478,10 @@ void play_smacker(int vid_type)
                 fname = "qdata/syn_mc.smk";
             }
             break;
-        case 1:
+        case MPly_MissiFail:
             fname = "qdata/syn_fail.smk";
             break;
-        case 3:
+        case MPly_GameOver:
             fname = "qdata/syn_go.smk";
             break;
         }
@@ -489,9 +489,9 @@ void play_smacker(int vid_type)
     case 1:
         switch (vid_type)
         {
-        case 0:
-        case 2:
-            // TODO case for a specific map, remove
+        case MPly_MissiComplete:
+        case MPly_MPartComplete:
+            // TODO MAPNO case for a specific map, remove
             if (current_map == 46)
             {
               if (game_dirs[0].use_cd == 1)
@@ -505,10 +505,10 @@ void play_smacker(int vid_type)
               fname = "qdata/zel-mc.smk";
             }
             break;
-        case 1:
+        case MPly_MissiFail:
             fname = "qdata/syn_fail.smk";
             break;
-        case 3:
+        case MPly_GameOver:
             fname = "qdata/zel-go.smk";
             break;
         default:
@@ -1878,6 +1878,9 @@ short draw_current_weapon_button(PlayerInfo *p_locplayer, short nagent)
         cx = 157 * nagent + 65;
     }
     p_agent = p_locplayer->MyAgent[nagent];
+    // Protect from damaged / unfinished levels
+    if (p_agent == NULL)
+        return 0;
 
     curwep = p_agent->U.UPerson.CurrentWeapon;
     prevwep = p_locplayer->PrevWeapon[nagent];
@@ -2820,6 +2823,9 @@ void init_outro(void)
     StopAllSamples();
     reset_heaps();
     setup_heaps(2);
+    // We've overwritten area used by campaigns; reload these
+    load_campaigns();
+    load_missions(background_type);
 #endif
 }
 
@@ -3305,11 +3311,157 @@ void init_engine(void)
         :  :  : "eax" );
 }
 
-void init_player(void)
+void unkn_truce_groups(void)
 {
-    asm volatile ("call ASM_init_player\n"
+    asm volatile ("call ASM_unkn_truce_groups\n"
         :  :  : "eax" );
 }
+
+void blind_progress_game(ulong nturns)
+{
+    ulong n;
+
+    for (n = 0; n < nturns; n++)
+    {
+        process_things();
+        gameturn++;
+    }
+}
+
+void init_level(void)
+{
+    asm volatile ("call ASM_init_level\n"
+        :  :  : "eax" );
+}
+
+void init_level_3d(ubyte flag)
+{
+    asm volatile ("call ASM_init_level_3d\n"
+        : : "a" (flag));
+}
+
+void unkn1_handle_agent_groups(void)
+{
+    asm volatile ("call ASM_unkn1_handle_agent_groups\n"
+        :  :  : "eax" );
+}
+
+void init_game_controls(void)
+{
+    asm volatile ("call ASM_init_game_controls\n"
+        :  :  : "eax" );
+}
+
+void simulated_level(void)
+{
+    asm volatile ("call ASM_simulated_level\n"
+        :  :  : "eax" );
+}
+
+/** Initializes player presence on a level.
+ *
+ * CurrentMission needs to be set before this funcion is called.
+ */
+void init_player(void)
+{
+#if 0
+    asm volatile ("call ASM_init_player\n"
+        :  :  : "eax" );
+#endif
+    PlayerInfo *p_locplayer;
+    int i;
+
+    p_locplayer = &players[local_player_no];
+
+    gamep_unknval_10 = 0;
+    gamep_unknval_12 = 0;
+    nav_stats__ThisTurn = 0;
+    ingame.Flags &= ~0x0100;
+    gamep_unknval_16 = 0;
+    init_level_3d(0);
+    init_level();
+    if (in_network_game)
+    {
+        unkn1_handle_agent_groups();
+        unkn_truce_groups();
+    }
+    else
+    {
+        struct Thing *p_agent;
+        place_single_player();
+        p_agent = p_locplayer->MyAgent[0];
+        if (p_agent != NULL) {
+            ingame.TrackX = p_agent->X >> 8;
+            ingame.TrackZ = p_agent->Z >> 8;
+        } else {
+            ingame.TrackX = 128;
+            ingame.TrackZ = 128;
+        }
+    }
+    player_debug(" after place player");
+    if (current_level == 0)
+        simulated_level();
+    player_debug(" after sim level");
+    gameturn = 1;
+    player_debug(" after group action");
+    {
+        struct Thing *p_agent;
+        p_agent = p_locplayer->MyAgent[0];
+        if (p_agent != NULL) {
+            ingame.MyGroup = p_agent->U.UPerson.EffectiveGroup;
+        } else {
+            ingame.MyGroup = 0;
+        }
+    }
+
+    switch (playable_agents)
+    {
+    case 1:
+        p_locplayer->DoubleMode = 0;
+        break;
+    case 2:
+        if (p_locplayer->DoubleMode > 1)
+            p_locplayer->DoubleMode = 1;
+        break;
+    case 3:
+        if (p_locplayer->DoubleMode > 2)
+              p_locplayer->DoubleMode = 2;
+        break;
+    default:
+        break;
+    }
+
+    for (i = 0; i < playable_agents; i++)
+    {
+        struct Thing *p_agent;
+        ulong wep;
+        p_agent = p_locplayer->MyAgent[i];
+        if (p_agent != NULL)
+            wep = find_nth_weapon_held(p_agent->ThingOffset, 1);
+        else
+            wep = 0;
+        p_locplayer->PrevWeapon[i] = wep;
+    }
+
+    init_game_controls();
+
+    {
+        struct Mission *p_missi;
+        p_missi = &mission_list[ingame.CurrentMission];
+        LOGSYNC("PreProcess %d turns for mission %d",
+          (int)p_missi->PreProcess, (int)ingame.CurrentMission);
+        blind_progress_game(p_missi->PreProcess);
+    }
+}
+
+struct Thing *new_sim_person(int x, int y, int z, ubyte subtype)
+{
+    struct Thing *p_person;
+    asm volatile ("call ASM_new_sim_person\n"
+        : "=r" (p_person) : "a" (x), "d" (y), "b" (z), "c" (subtype));
+    return p_person;
+}
+
 
 ushort make_group_into_players(ushort group, ushort plyr, ushort max_agent, short new_type)
 {
@@ -3502,10 +3654,15 @@ void place_single_player(void)
         }
     }
 
-    pl_agents = make_group_into_players(level_def.PlayableGroups[0], local_player_no, nagents, -1);
     pl_group = level_def.PlayableGroups[0];
+    pl_agents = make_group_into_players(pl_group, local_player_no, nagents, -1);
     if (pl_agents == 0) {
+        struct Thing *p_person;
         LOGERR("Player %d playable agents not found amongst %d things", (int)local_player_no, (int)things_used_head);
+        p_person = new_sim_person(513, 1, 513, SubTT_PERS_AGENT);
+        p_person->U.UPerson.Group = pl_group;
+        p_person->U.UPerson.EffectiveGroup = pl_group;
+        pl_agents = make_group_into_players(pl_group, local_player_no, 1, -1);
     } else {
         LOGSYNC("Player %d playable agents found %d expected %d", (int)local_player_no, (int)pl_agents, (int)nagents);
     }
@@ -3534,22 +3691,22 @@ void init_game(ubyte reload)
     asm volatile ("call ASM_init_game\n"
         : : "a" (reload));
 #endif
-    ushort mission_no, next_map_no;
+    ushort missi_no, next_map_no;
     long new_level_no;
 
-    mission_no = ingame.CurrentMission;
-    next_map_no = mission_list[mission_no].MapNo;
+    missi_no = ingame.CurrentMission;
+    next_map_no = mission_list[missi_no].MapNo;
     if (current_map != next_map_no)
         change_current_map(next_map_no);
     debug_trace_setup(0);
 
-    if ((reload) && (mission_list[mission_no].ReLevelNo != 0)) {
-        new_level_no = mission_list[mission_no].ReLevelNo;
+    if ((reload) && (mission_list[missi_no].ReLevelNo != 0)) {
+        new_level_no = mission_list[missi_no].ReLevelNo;
     } else {
-        new_level_no = mission_list[mission_no].LevelNo;
+        new_level_no = mission_list[missi_no].LevelNo;
     }
 
-    load_level_pc(-new_level_no, mission_no);
+    load_level_pc(-new_level_no, missi_no);
     if (ingame.GameMode == GamM_None)
         ingame.GameMode = GamM_Unkn2;
     debug_trace_setup(1);
@@ -3566,17 +3723,14 @@ void unkn_lights_func_11(void)
         :  :  : "eax" );
 }
 
-void init_level_3d(ubyte flag)
+void restart_back_into_mission(ushort missi)
 {
-    asm volatile ("call ASM_init_level_3d\n"
-        : : "a" (flag));
-}
+    ushort mapno;
 
-void restart_back_into_mission(ushort mapno, ushort mission)
-{
+    mapno = mission_list[missi].MapNo;
     mission_result = 0;
-    ingame.CurrentMission = mission;
-    mission_list[mission].Complete = 0;
+    ingame.CurrentMission = missi;
+    mission_list[missi].Complete = 0;
     change_current_map(mapno);
     unkn_lights_func_11();
     if (ingame.GameMode == GamM_Unkn2)
@@ -3593,28 +3747,44 @@ void restart_back_into_mission(ushort mapno, ushort mission)
 
 void compound_mission_immediate_start_next(void)
 {
-    ushort i, mapno, mission;
+    short i;
+    ushort missi;
 
+    show_black_screen();
     LbFileLoadAt("qdata/pal.pal", display_palette);
     LbPaletteSet(display_palette);
 
-    // TODO get rid of hard-coded mission numbers
-    if (ingame.CurrentMission == 88)
-      mission = 101;
-    else // CurrentMission == 100
-      mission = 102;
-    mapno = 65;
+    i = find_mission_state_slot(ingame.CurrentMission);
 
-    for (i = 1; i < 50; i++) {
-        if (mission_open[i] == ingame.CurrentMission)
-            break;
-        ++i;
-    }
-    brief_store[open_brief - 1].Mission = mission;
-    mission_open[i] = mission;
+    missi = ingame.CurrentMission;
+    missi = mission_list[missi].SuccessTrigger[0];
+
+    brief_store[open_brief - 1].Mission = missi;
+    mission_open[i] = missi;
     mission_state[i] = 0;
 
-    restart_back_into_mission(mapno, mission);
+    // TODO MISSI specific missions hard-coded - remove
+    if (ingame.CurrentMission == 84)
+    {
+        ushort bkpmode;
+
+        bkpmode = lbDisplay.ScreenMode;
+        play_smacker(MPly_MPartComplete);
+        LbFileLoadAt("qdata/pal.pal", display_palette);
+        setup_screen_mode(bkpmode);
+    }
+
+    restart_back_into_mission(missi);
+}
+
+// deprecated - use compound_mission_immediate_start_next()
+void tweak_for_compound_mission_m84(void)
+{
+#if 0
+    asm volatile ("call ASM_tweak_for_compound_mission_m84\n"
+        :  :  : "eax" );
+#endif
+    compound_mission_immediate_start_next();
 }
 
 short test_missions(ubyte flag)
@@ -4342,8 +4512,8 @@ ubyte load_game(int slot, char *desc)
         for (agent = 0; agent < 32; agent++)
         {
             for (k = 0; k < WFRPK_COUNT; k++) {
-                if (cryo_agents.FourPacks[k][agent] > 4)
-                    cryo_agents.FourPacks[k][agent] = 1;
+                if (cryo_agents.FourPacks[agent][k] > 4)
+                    cryo_agents.FourPacks[agent][k] = 1;
             }
             // Remove bad mod flags
             if (cryo_agents.Mods[agent].Mods >> 12 > 4) {
@@ -4653,12 +4823,14 @@ ubyte load_game(int slot, char *desc)
         gblen++;
     }
 
-    // TODO: Special fix for specific mission? to be removed.
+#if 0
+    // TODO MISSI Special fix for specific mission; why is it there?
     if (mission_list[28].SpecialTrigger[1]) {
         mission_list[28].SpecialTrigger[0] = 0;
         mission_list[28].SpecialTrigger[1] = 0;
         mission_list[28].SpecialTrigger[2] = 7;
     }
+#endif
 
     read_user_settings();
     login_control__Money = ingame.Credits;
@@ -5150,6 +5322,148 @@ void srm_reset_research(void)
 #endif
 }
 
+ubyte research_unkn_func_006(ushort missi)
+{
+    ubyte ret;
+    asm volatile ("call ASM_research_unkn_func_006\n"
+        : "=r" (ret) : "a" (missi));
+    return ret;
+}
+
+void remove_agent(ubyte cryo_no)
+{
+    asm volatile ("call ASM_remove_agent\n"
+        : : "a" (cryo_no));
+}
+
+void add_agent(ulong weapons, ushort mods)
+{
+    asm volatile ("call ASM_add_agent\n"
+        : : "a" (weapons), "d" (mods));
+}
+
+TbBool mission_remain_until_success(ushort missi)
+{
+    struct Mission *p_missi;
+    p_missi = &mission_list[missi];
+    return ((p_missi->Flags &= MisF_RemainUntilSuccess) != 0);
+}
+
+TbBool mission_has_immediate_next_on_success(ushort missi)
+{
+    struct Mission *p_missi;
+    p_missi = &mission_list[missi];
+    return ((p_missi->Flags & MisF_ImmediateNextOnSuccess) != 0);
+}
+
+TbBool mission_has_immediate_previous(ushort missi)
+{
+    struct Mission *p_missi;
+    p_missi = &mission_list[missi];
+    return ((p_missi->Flags & MisF_ImmediatePrevious) != 0);
+}
+
+TbBool mission_is_final_at_game_end(ushort missi)
+{
+    struct Mission *p_missi;
+    p_missi = &mission_list[missi];
+    return ((p_missi->Flags & MisF_IsFinalMission) != 0);
+}
+
+void mission_over_update_players(void)
+{
+    ushort agent, nremoved;
+    PlayerInfo *p_locplayer;
+
+    p_locplayer = &players[local_player_no];
+
+    nremoved = 0;
+    for (agent = 0; agent < playable_agents; agent++)
+    {
+        struct Thing *p_agent;
+
+        p_agent = p_locplayer->MyAgent[agent];
+        if ((p_agent->Flag & 0x02) != 0) {
+            remove_agent(agent);
+            ++nremoved;
+            continue;
+        }
+        if ((p_agent->SubType == SubTT_PERS_AGENT) || (p_agent->SubType == SubTT_PERS_ZEALOT))
+        {
+            ushort cryo_no;
+            int i;
+
+            cryo_no = agent - nremoved;
+            cryo_agents.Weapons[cryo_no] = p_agent->U.UPerson.WeaponsCarried & ~0x400000;
+            cryo_agents.Mods[cryo_no].Mods = p_agent->U.UPerson.UMod.Mods;
+            for (i = 0; i < 5; i++) {
+                cryo_agents.FourPacks[cryo_no][i] = p_locplayer->FourPacks[i][agent];
+            }
+        }
+    }
+}
+
+void mission_over_gain_persuaded_crowd_rewards(void)
+{
+    struct Thing *p_person;
+    ushort person;
+
+    for (person = same_type_head[1]; person == 0; person = things[person].LinkSame)
+    {
+        p_person = &things[person];
+        if ((p_person->Flag & 0x80000) == 0)
+            continue;
+        if (p_person->U.UPerson.EffectiveGroup == ingame.MyGroup)
+            continue;
+        switch (p_person->SubType)
+        {
+        case SubTT_PERS_AGENT:
+            add_agent(p_person->U.UPerson.WeaponsCarried, p_person->U.UPerson.UMod.Mods);
+            ingame.Credits += 1000;
+            break;
+        case SubTT_PERS_ZEALOT:
+            ingame.Credits += 1000;
+            break;
+        case SubTT_PERS_PUNK_M:
+        case SubTT_PERS_PUNK_F:
+            ingame.Credits += 150;
+            break;
+        case SubTT_PERS_SCIENTIST:
+            research.Scientists++;
+            break;
+        default:
+            ingame.Credits += 100;
+            break;
+        }
+    }
+}
+
+void update_player_cash(void)
+{
+    asm volatile ("call ASM_update_player_cash\n"
+        :  :  : "eax" );
+}
+
+void player_update_agents_from_cryo(void)
+{
+    PlayerInfo *p_locplayer;
+    ushort cryo_no;
+
+    p_locplayer = &players[local_player_no];
+
+    for (cryo_no = 0; cryo_no < 4; cryo_no++)
+    {
+        int wepfp;
+
+        p_locplayer->Weapons[cryo_no] = cryo_agents.Weapons[cryo_no];
+        p_locplayer->Mods[cryo_no].Mods = cryo_agents.Mods[cryo_no].Mods;
+
+        for (wepfp = 0; wepfp < WFRPK_COUNT; wepfp++) {
+            p_locplayer->FourPacks[wepfp][cryo_no] = cryo_agents.FourPacks[cryo_no][wepfp];
+        }
+    }
+}
+
 void init_agents(void)
 {
     asm volatile ("call ASM_init_agents\n"
@@ -5172,21 +5486,406 @@ void queue_up_new_mail(ubyte type, ushort missi)
 
 ushort open_new_mission(ushort missi)
 {
+    int mslot;
+
+    if (mission_has_immediate_previous(missi)) {
+        LOGSYNC("No slot needed for mission %d", (int)missi);
+        return 0;
+    }
+
+    mslot = find_empty_mission_state_slot();
+    if (mslot > 0) {
+        mission_open[mslot] = missi;
+        mission_state[mslot] = 0;
+    } else {
+        LOGERR("No free slot found for mission %d", (int)missi);
+    }
+    do_start_triggers(missi);
+    queue_up_new_mail(1, missi);
+
+    return 0;
+}
+
+TbBool check_mission_conds(ushort missi)
+{
+    int i;
+    ushort cmissi;
+
+    cmissi = missi;
+    for (i = 0; i < 5; i++)
+    {
+        cmissi = mission_list[cmissi].MissionCond[i];
+        if ((cmissi > 0) && (mission_list[cmissi].Complete != 1))
+          return false;
+    }
+    return true;
+}
+
+TbBool mission_has_no_special_triggers(ushort missi)
+{
+    struct Mission *p_missi;
     int i;
 
-    i = 1;
-    if (missi != 88 && missi != 101 && missi != 102)
+    p_missi = &mission_list[missi];
+
+    for (i = 0; i < 3; i++)
     {
-        while (mission_open[i] && i < 50)
-            i++;
-        if (i < 50) {
-            mission_open[i] = missi;
-            mission_state[i] = 0;
-        }
-        do_start_triggers(missi);
-        queue_up_new_mail(1, missi);
+        if (p_missi->SpecialTrigger[i] != 0)
+          return false;
     }
-    return 0;
+    return true;
+}
+
+TbBool mission_special_triggers_2_is_self(ushort missi)
+{
+    struct Mission *p_missi;
+
+    p_missi = &mission_list[missi];
+
+    return (p_missi->SpecialTrigger[2] == missi);
+}
+
+void mission_reset_spec_triggers_2_chain(ushort missi)
+{
+    ushort next_missi;
+
+    next_missi = missi;
+    while (next_missi != 0)
+    {
+        ushort tmp_missi;
+
+        LOGSYNC("Setting mission=%d owner to mission=%d", (int)next_missi, (int)missi);
+        mission_list[next_missi].SpecialTrigger[2] = missi;
+
+        // TODO Why only one these? If replacing, shouldn't we replace both?
+        tmp_missi = mission_list[next_missi].SpecialTrigger[0];
+        if (tmp_missi == 0)
+            tmp_missi = mission_list[next_missi].SpecialTrigger[1];
+        next_missi = tmp_missi;
+    }
+}
+
+void mission_special_triggers_0_1_set_fail(ushort missi)
+{
+    ushort next_missi;
+
+    next_missi = missi;
+    while (next_missi > 0)
+    {
+        ushort tmp_missi;
+
+        mission_list[next_missi].Complete = -1;
+
+        // TODO Why only one these? If failing, shouldn't we fail both?
+        tmp_missi = mission_list[next_missi].SpecialTrigger[0];
+        if (tmp_missi == 0)
+            tmp_missi = mission_list[next_missi].SpecialTrigger[1];
+        next_missi = tmp_missi;
+    }
+}
+
+void mission_copy_conds_and_succ_fail_triggers(ushort dst_missi, ushort src_missi)
+{
+    int i;
+
+    LOGSYNC("Copying mission=%d props to mission=%d", (int)src_missi, (int)dst_missi);
+    for (i = 0; i < 5; i++) {
+        mission_list[dst_missi].MissionCond[i] = mission_list[src_missi].MissionCond[i];
+    }
+    for (i = 0; i < 3; i++) {
+        mission_list[dst_missi].SuccessTrigger[i] = mission_list[src_missi].SuccessTrigger[i];
+        mission_list[dst_missi].FailTrigger[i] = mission_list[src_missi].FailTrigger[i];
+    }
+}
+
+ushort mission_fire_success_triggers(ushort missi)
+{
+    struct Mission *p_missi;
+    ushort n;
+    int i;
+
+    p_missi = &mission_list[missi];
+
+    n = 0;
+    for (i = 0; i < 3; i++)
+    {
+        ushort new_missi;
+        new_missi = p_missi->SuccessTrigger[i];
+        if (new_missi != 0) {
+            open_new_mission(new_missi);
+            n++;
+        }
+    }
+    return n;
+}
+
+ushort mission_fire_fail_triggers(ushort missi)
+{
+    struct Mission *p_missi;
+    ushort n;
+    int i;
+
+    p_missi = &mission_list[missi];
+
+    n = 0;
+    for (i = 0; i < 3; i++)
+    {
+        ushort new_missi;
+        new_missi = p_missi->FailTrigger[i];
+        if (new_missi != 0) {
+            open_new_mission(new_missi);
+            n++;
+        }
+    }
+    return n;
+}
+
+void delete_open_mission(ushort mslot, sbyte state)
+{
+#if 0
+    asm volatile ("call ASM_delete_open_mission\n"
+        : : "a" (mslot), "d" (state));
+#else
+    ushort missi;
+    TbBool conds_met;
+
+    missi = mission_open[mslot];
+    if (state == 1) {
+        mission_list[missi].Complete = state;
+    } else if (mission_remain_until_success(missi)) {
+          mission_list[missi].Complete = 0;
+          mission_state[mslot] = 0;
+    } else {
+          mission_list[missi].Complete = state;
+    }
+
+    conds_met = check_mission_conds(missi);
+
+    research_unkn_func_006(missi);
+
+    if (mission_has_no_special_triggers(missi))
+    {
+        LOGSYNC("SpecialTriggers none, mission=%d, state=%d", (int)missi, (int)state);
+        if (state == 1)
+        {
+            if (conds_met)
+            {
+                mission_fire_success_triggers(missi);
+            }
+            if (mission_has_immediate_next_on_success(ingame.CurrentMission))
+            {
+                compound_mission_immediate_start_next();
+                return;
+            }
+            play_smacker(MPly_MissiComplete);
+        }
+        else if (state == -1)
+        {
+            if (conds_met)
+            {
+                mission_fire_fail_triggers(missi);
+            }
+        }
+    }
+    else if (mission_special_triggers_2_is_self(missi))
+    {
+        ushort trg_missi;
+
+        trg_missi = mission_list[missi].SpecialTrigger[0];
+        if (trg_missi == 0)
+            trg_missi = mission_list[missi].SpecialTrigger[1];
+        if (trg_missi != 0)
+        {
+            LOGSYNC("SpecialTriggers self-owned and set, mission=%d, state=%d", (int)missi, (int)state);
+            if (state == 1)
+            {
+                brief_store[open_brief - 1].Mission = trg_missi;
+
+                mission_copy_conds_and_succ_fail_triggers(trg_missi, missi);
+                mission_reset_spec_triggers_2_chain(trg_missi);
+
+                ingame.MissionStatus = 0;
+            }
+            else if (state == -1)
+            {
+                if (mission_remain_until_success(missi))
+                {
+                    ingame.MissionStatus = 0;
+                }
+                else
+                {
+                    if (conds_met)
+                    {
+                        mission_fire_success_triggers(missi);
+                    }
+
+                    mission_special_triggers_0_1_set_fail(trg_missi);
+                }
+            }
+        }
+        else
+        {
+            LOGSYNC("SpecialTriggers self-owned but unset, mission=%d, state=%d", (int)missi, (int)state);
+            if (state == 1)
+            {
+                if (conds_met)
+                {
+                    mission_fire_success_triggers(missi);
+                }
+                if (mission_has_immediate_next_on_success(ingame.CurrentMission))
+                {
+                    compound_mission_immediate_start_next();
+                    return;
+                }
+                play_smacker(MPly_MissiComplete);
+            }
+            else if (state == -1)
+            {
+                if (mission_remain_until_success(missi))
+                {
+                    ingame.MissionStatus = 0;
+                }
+                else
+                {
+                    if (conds_met)
+                    {
+                        mission_fire_fail_triggers(missi);
+                    }
+                }
+            }
+        }
+    }
+    else
+    {
+        ushort trg_missi;
+
+        trg_missi = mission_list[missi].SpecialTrigger[2];
+
+        LOGSYNC("SpecialTriggers owner=%d, mission=%d, state=%d", (int)trg_missi, (int)missi, (int)state);
+        if (state == 1)
+        {
+            ushort tmp_missi, tmp2_missi, next_missi;
+
+            next_missi = trg_missi;
+            while (1)
+            {
+                tmp_missi = mission_list[next_missi].SpecialTrigger[0];
+                if ((tmp_missi == missi) || (next_missi == 0))
+                    break;
+                next_missi = tmp_missi;
+            }
+            if (next_missi > 0)
+            {
+                tmp_missi = mission_list[next_missi].SpecialTrigger[0];
+                tmp2_missi = mission_list[tmp_missi].SpecialTrigger[0];
+                if (tmp2_missi > 0)
+                    mission_list[next_missi].SpecialTrigger[0] = tmp2_missi;
+                else
+                    mission_list[next_missi].SpecialTrigger[0] = mission_list[tmp_missi].SpecialTrigger[1];
+            }
+            ingame.MissionStatus = 0;
+        }
+        else if (state == -1)
+        {
+            if (mission_remain_until_success(missi))
+            {
+                ingame.MissionStatus = 0;
+            }
+            else
+            {
+                if (conds_met)
+                {
+                    mission_fire_fail_triggers(trg_missi);
+                }
+                mission_special_triggers_0_1_set_fail(trg_missi);
+            }
+        }
+    }
+
+    if (!mission_remain_until_success(missi) || (state == 1))
+    {
+        remove_mission_state_slot(mslot);
+    }
+#endif
+}
+
+void mission_over(void)
+{
+#if 0
+    asm volatile ("call ASM_mission_over\n"
+        :  :  : "eax" );
+#else
+    ingame.DisplayMode = DpM_UNKN_37;
+    LbMouseChangeSprite(0);
+    update_player_cash();
+    StopCD();
+    StopAllSamples();
+    SetMusicVolume(100, 0);
+
+    mission_over_update_players();
+    mission_over_gain_persuaded_crowd_rewards();
+    player_update_agents_from_cryo();
+
+    ushort mslot;
+    ushort last_missi;
+    short lstate;
+
+    last_missi = ingame.CurrentMission;
+    mslot = find_mission_state_slot(last_missi);
+    if (mission_state[mslot] == 0)
+        mission_state[mslot] = ingame.MissionStatus;
+
+    if (mission_state[mslot] == 1)
+    {
+        if (mission_is_final_at_game_end(last_missi))
+            init_outro();
+    }
+
+    lstate = 0;
+    if (mission_state[mslot] == 1)
+    {
+        long cr_award;
+        short email;
+        ushort missi;
+
+        lstate = 1;
+        missi = mission_open[mslot];
+        cr_award = 1000 * mission_list[missi].CashReward;
+        ingame.fld_unkC57++;
+        email = mission_list[missi].SuccessID;
+        ingame.Credits += cr_award;
+        if (email != 0)
+            queue_up_new_mail(0, -email);
+        delete_open_mission(mslot, 1);
+    }
+    else if (mission_state[mslot] == -1)
+    {
+        short email;
+        ushort missi;
+
+        lstate = -1;
+        missi = mission_open[mslot];
+        email = mission_list[missi].FailID;
+         ingame.fld_unkC57++;
+        if (email != 0)
+            queue_up_new_mail(0, -email);
+        delete_open_mission(mslot, -1);
+        play_smacker(MPly_MissiFail);
+    }
+
+    ingame.fld_unk7DF = 0;
+    if (lstate == -1)
+    {
+      if (!mission_remain_until_success(ingame.CurrentMission))
+        ingame.fld_unk7DF = 1;
+    }
+    if (new_mail)
+        ingame.fld_unk7DF = 0;
+    if (cryo_agents.NumAgents == 0)
+        ingame.fld_unk7DF = 1;
+    if (ingame.fld_unk7DF)
+        play_smacker(MPly_GameOver);
+#endif
 }
 
 ubyte brief_do_netscan_enhance(ubyte click)
@@ -7239,7 +7938,7 @@ ubyte do_user_interface(void)
             test_missions(1);
             init_level_3d(1);
 
-            restart_back_into_mission(current_map, ingame.CurrentMission);
+            restart_back_into_mission(ingame.CurrentMission);
         }
     }
 
@@ -7540,9 +8239,13 @@ void brief_load_mission_info(void)
     if (open_brief != 0)
     {
         if (open_brief < 0) {
-            sprintf(fname, "%s/mail%03d.txt", "textdata", email_store[-open_brief - 1].Mission);
+            short email;
+            email = -open_brief - 1;
+            sprintf(fname, "%s/mail%03d.txt", "textdata", email_store[email].Mission);
         } else if (open_brief > 0) {
-            sprintf(fname, "%s/miss%03d.txt", "textdata", mission_list[brief_store[open_brief - 1].Mission].SourceID);
+            ushort missi;
+            missi = brief_store[open_brief - 1].Mission;
+            sprintf(fname, "%s/miss%03d.txt", "textdata", mission_list[missi].SourceID);
         }
         load_mail_text(fname);
     }
@@ -8301,13 +9004,13 @@ void show_load_and_prep_mission(void)
         debug_trace_place(6);
         if ( in_network_game )
         {
-          ushort mission;
+          ushort missi;
 
           ingame.MissionNo = 1;
-          mission = find_mission_with_mapid(cities[login_control__City].MapID, next_mission);
-          if (mission > 0) {
-              ingame.MissionNo = mission;
-              ingame.CurrentMission = mission;
+          missi = find_mission_with_mapid(cities[login_control__City].MapID, next_mission);
+          if (missi > 0) {
+              ingame.MissionNo = missi;
+              ingame.CurrentMission = missi;
           }
 
           change_current_map(mission_list[ingame.MissionNo].MapNo);
@@ -8374,25 +9077,12 @@ void show_load_and_prep_mission(void)
     LbColourTablesLoad(display_palette, "data/tables.dat");
     LbGhostTableLoad(display_palette, 50, "data/synghost.tab");
     debug_trace_place(13);
+
+    // Update game progress and prepare level to play
     if ( start_into_mission )
     {
-        load_multicolor_sprites();
-        if (game_high_resolution)
-            load_pop_sprites_hi();
-        else
-            load_pop_sprites_lo();
-
-        if (ingame.GameMode == GamM_None)
-            ingame.GameMode = GamM_Unkn2;
-        init_player();
-        flic_unkn03(1);
-        func_6edb8(1);
         if ( in_network_game )
         {
-            if (word_1811AE != 1)
-                ingame.InNetGame_UNSURE = 3;
-            ingame.DetailLevel = 0;
-            bang_set_detail(1);
             update_mission_time(1);
             // why clear only 0x140 bytes?? the array is much larger
             memset(mission_status, 0, sizeof(struct MissionStatus) * 8);
@@ -8410,17 +9100,43 @@ void show_load_and_prep_mission(void)
             update_mission_time(1);
             cities[unkn_city_no].Info = 0;
             debug_trace_place(14);
-            //TODO SpecialTrigger doesn't seem to be correct name for next mission
+
             for (i = brief_store[open_brief - 1].Mission; i != 0;
               i = mission_list[i].SpecialTrigger[0])
             {
-              if (mission_list[i].MapNo == cities[unkn_city_no].MapID)
-                  break;
+                if (mission_list[i].MapNo == cities[unkn_city_no].MapID)
+                    break;
             }
             ingame.CurrentMission = i;
             mission_result = 0;
             debug_trace_place(15);
         }
+        init_player();
+    }
+
+    // Set up remaining graphics data and controls
+    if ( start_into_mission )
+    {
+        load_multicolor_sprites();
+        if (game_high_resolution)
+            load_pop_sprites_hi();
+        else
+            load_pop_sprites_lo();
+
+        if (ingame.GameMode == GamM_None)
+            ingame.GameMode = GamM_Unkn2;
+
+        flic_unkn03(1);
+        func_6edb8(1);
+
+        if ( in_network_game )
+        {
+            if (word_1811AE != 1)
+                ingame.InNetGame_UNSURE = 3;
+            ingame.DetailLevel = 0;
+            bang_set_detail(1);
+        }
+
         lbDisplay.MLeftButton = 0;
         lbDisplay.LeftButton = 0;
     }
@@ -8905,8 +9621,8 @@ void draw_game(void)
             if ( execute_commands )
             {
                 long tmp;
-                gamep_unknval_16 = gamep_unknval_13;
-                gamep_unknval_13 = 0;
+                gamep_unknval_16 = nav_stats__ThisTurn;
+                nav_stats__ThisTurn = 0;
                 ++gamep_unknval_12;
                 gamep_unknval_10 += gamep_unknval_16;
                 gamep_unknval_15 = gamep_unknval_14;
@@ -8929,7 +9645,6 @@ void draw_game(void)
 }
 
 void load_packet(void);
-void game_process_sub02(void);
 void process_packets(void);
 void joy_input(void);
 void game_process_sub04(void);
@@ -8973,7 +9688,7 @@ void game_process(void)
       if ((ingame.DisplayMode == DpM_UNKN_32) ||
           (ingame.DisplayMode == DpM_UNKN_1) ||
           (ingame.DisplayMode == DpM_UNKN_3B))
-          game_process_sub02();
+          process_things();
       if (ingame.DisplayMode != DpM_UNKN_37)
           process_packets();
       joy_input();

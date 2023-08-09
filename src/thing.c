@@ -19,12 +19,19 @@
 #include "thing.h"
 
 #include "bfutility.h"
+#include "bfmemut.h"
 #include "building.h"
 #include "game.h"
 /******************************************************************************/
 void init_things(void)
 {
     asm volatile ("call ASM_init_things\n"
+        :  :  : "eax" );
+}
+
+void process_things(void)
+{
+    asm volatile ("call ASM_process_things\n"
         :  :  : "eax" );
 }
 
@@ -90,6 +97,8 @@ void refresh_old_thing_format(struct Thing *p_thing, struct ThingOldV9 *p_oldthi
 {
     ushort len;
 
+    LbMemorySet(p_thing, 0, sizeof(struct Thing));
+
     p_thing->Parent = p_oldthing->Parent;
     p_thing->Next = p_oldthing->Next;
     p_thing->LinkParent = p_oldthing->LinkParent;
@@ -115,8 +124,7 @@ void refresh_old_thing_format(struct Thing *p_thing, struct ThingOldV9 *p_oldthi
     p_thing->Speed = p_oldthing->Speed;
     p_thing->Health = p_oldthing->Health;
     p_thing->Owner = p_oldthing->Owner;
-    // Not sure if these values really match
-    p_thing->PathOffset = p_oldthing->PersonPathIndex;
+    p_thing->PathOffset = p_oldthing->PathOffset;
     // The target pointer will be cleared anyway
     p_thing->PTarget = NULL; // p_oldthing->PTarget;
     p_thing->GotoThingIndex = p_oldthing->GotoThingIndex;
@@ -133,18 +141,22 @@ void refresh_old_thing_format(struct Thing *p_thing, struct ThingOldV9 *p_oldthi
         p_thing->U.UPerson.GotoX = p_oldthing->PersonGotoX;
         p_thing->U.UPerson.GotoZ = p_oldthing->PersonGotoZ;
         p_thing->U.UPerson.Group = p_oldthing->PersonGroup;
-        p_thing->U.UPerson.EffectiveGroup = p_oldthing->PersonGroup;
+        p_thing->U.UPerson.EffectiveGroup = p_oldthing->PersonEffectiveGroup;
         p_thing->U.UPerson.WeaponsCarried = p_oldthing->PersonWeaponsCarried;
+        p_thing->U.UPerson.CurrentWeapon = p_oldthing->PersonCurrentWeapon;
         p_thing->U.UPerson.ComHead = p_oldthing->PersonComHead;
         p_thing->U.UPerson.ComCur = p_oldthing->PersonComCur;
         p_thing->U.UPerson.ComTimer = p_oldthing->PersonComTimer;
         p_thing->U.UPerson.Brightness = p_oldthing->PersonBrightness;
         p_thing->U.UPerson.MaxShieldEnergy = p_oldthing->PersonMaxShieldEnergy;
         p_thing->U.UPerson.UniqueID = p_oldthing->PersonUniqueID;
+        p_thing->U.UPerson.PathIndex = p_oldthing->PersonPathIndex;
+        p_thing->U.UPerson.WeaponTimer = p_oldthing->PersonWeaponTimer;
+        p_thing->U.UPerson.WeaponTurn = p_oldthing->PersonWeaponTurn;
+        p_thing->U.UPerson.Energy = p_oldthing->PersonEnergy;
         // Uncertain fields
         p_thing->U.UPerson.ShieldEnergy = p_oldthing->PersonShieldEnergy;
         p_thing->U.UPerson.SpecialTimer = p_oldthing->PersonSpecialTimer;
-        p_thing->U.UPerson.WeaponTurn = p_oldthing->PersonWeaponTurn;
         p_thing->U.UPerson.ComRange = p_oldthing->PersonComRange;
         p_thing->U.UPerson.BumpMode = p_oldthing->PersonBumpMode;
         p_thing->U.UPerson.BumpCount = p_oldthing->PersonBumpCount;
@@ -197,6 +209,9 @@ void refresh_old_thing_format(struct Thing *p_thing, struct ThingOldV9 *p_oldthi
         p_thing->U.UVehicle.TNode = p_oldthing->VehicleTNode;
         p_thing->U.UVehicle.AngleDY = p_oldthing->VehicleAngleDY;
         p_thing->U.UVehicle.RecoilTimer = p_oldthing->VehicleRecoilTimer;
+        // Only one group seem to exist in the old vehicles
+        p_thing->U.UVehicle.Group = p_oldthing->VehicleEffectiveGroup;
+        p_thing->U.UVehicle.EffectiveGroup = p_oldthing->VehicleEffectiveGroup;
         // In old format, MaxHealth is stored in additional vehicle block, not in the thing
         //p_thing->U.UVehicle.MaxHealth = ?;
     }
@@ -210,6 +225,9 @@ void refresh_old_thing_format(struct Thing *p_thing, struct ThingOldV9 *p_oldthi
         p_thing->U.UObject.TargetDX = p_oldthing->ObjectTargetDX;
         p_thing->U.UObject.TargetDY = p_oldthing->ObjectTargetDY;
         p_thing->U.UObject.TargetDZ = p_oldthing->ObjectTargetDZ;
+        // Only one group seem to exist in the old Objects
+        p_thing->U.UObject.Group = p_oldthing->ObjectEffectiveGroup;
+        p_thing->U.UObject.EffectiveGroup = p_oldthing->ObjectEffectiveGroup;
         if (p_thing->SubType == SubTT_BLD_GATE) {
             p_thing->U.UObject.RaiseDY[0] = p_oldthing->ObjectRaiseDY[0];
             p_thing->U.UObject.RaiseDY[1] = p_oldthing->ObjectRaiseDY[1];
@@ -231,6 +249,9 @@ void refresh_old_thing_format(struct Thing *p_thing, struct ThingOldV9 *p_oldthi
             p_thing->U.UMGun.GotoY = p_oldthing->MGunGotoY;
             p_thing->U.UMGun.GotoZ = p_oldthing->MGunGotoZ;
             p_thing->U.UMGun.UniqueID = p_oldthing->MGunUniqueID;
+            // Only one group seem to exist in the old MGun
+            p_thing->U.UMGun.Group = p_oldthing->MGunEffectiveGroup;
+            p_thing->U.UMGun.EffectiveGroup = p_oldthing->MGunEffectiveGroup;
         }
     }
 }

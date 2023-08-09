@@ -67,6 +67,31 @@ enum CampaignFlags {
     CmpgF_IsSelectable   = 0x0002,
 };
 
+enum MissionFlags {
+    /** Set if after this mission ends with success, a next one should start
+     * immediatelly without going through menu. It is not possible to save
+     * game or reequip your agents before the next mission starts.
+     */
+    MisF_ImmediateNextOnSuccess = 0x0001,
+    /** Set if the current mission in set as SuccessTrigger in a mission
+     * which has ImmediateNextOnSuccess flag set. This flag has no config file
+     * mnemonic - it is set automatically for all missions pointed at by
+     * other missions with expected flags. If this flag is set, the mission
+     * will not have its own briefing slot, as it should replace values
+     * within slot of the previous mission.
+     */
+    MisF_ImmediatePrevious = 0x0002,
+    /** Set if failing this mission does not cause game over nor the mission
+     * disappearing from selection. The mission can be played any amount
+     * of times, and disappears only if it is finally completed.
+     */
+    MisF_RemainUntilSuccess = 0x0004,
+    /** Set if the current mission it the final one in the campaign. After
+     * the final mission is completed, outro sequence will play.
+     */
+    MisF_IsFinalMission = 0x0008,
+};
+
 struct Campaign {
     /** Default campaign title. */
     const char *TextName;
@@ -140,7 +165,9 @@ struct Mission { // sizeof=76
     ushort WaitToFade;
     /** Amount of game turns to blindly process before the level starts. */
 	ushort PreProcess;
-    ubyte field_48[3];
+    /** Flag switches for the mission. */
+    ushort Flags;
+    ubyte field_4A;
     ubyte field_4B;
 };
 
@@ -177,11 +204,17 @@ extern struct Mission mission_list[120];
 void load_campaigns(void);
 ushort selectable_campaigns_count(void);
 
+ushort find_mission_state_slot(ushort missi);
+ushort find_empty_mission_state_slot(void);
+void remove_mission_state_slot(ushort mslot);
+void init_mission_states(void);
+
 TbBool read_missions_conf_info(int num);
 void load_missions(int num);
 void save_missions_conf_file(int num);
 void read_missions_conf_file(int num);
 void read_missions_bin_file(int num);
+void apply_missions_fixups(void);
 /******************************************************************************/
 #ifdef __cplusplus
 }

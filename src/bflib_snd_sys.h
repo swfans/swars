@@ -71,6 +71,7 @@ void InitSound(void);
 
 void InitMusic(void);
 void FreeMusic(void);
+void SetMusicVolume(int msec, ubyte volume);
 
 void InitStreamedSound(void);
 void InitAllBullfrogSoundTimers(void);
