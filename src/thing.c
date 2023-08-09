@@ -141,7 +141,7 @@ void refresh_old_thing_format(struct Thing *p_thing, struct ThingOldV9 *p_oldthi
         p_thing->U.UPerson.GotoX = p_oldthing->PersonGotoX;
         p_thing->U.UPerson.GotoZ = p_oldthing->PersonGotoZ;
         p_thing->U.UPerson.Group = p_oldthing->PersonGroup;
-        p_thing->U.UPerson.EffectiveGroup = p_oldthing->PersonGroup;
+        p_thing->U.UPerson.EffectiveGroup = p_oldthing->PersonEffectiveGroup;
         p_thing->U.UPerson.WeaponsCarried = p_oldthing->PersonWeaponsCarried;
         p_thing->U.UPerson.CurrentWeapon = p_oldthing->PersonCurrentWeapon;
         p_thing->U.UPerson.ComHead = p_oldthing->PersonComHead;
@@ -209,6 +209,9 @@ void refresh_old_thing_format(struct Thing *p_thing, struct ThingOldV9 *p_oldthi
         p_thing->U.UVehicle.TNode = p_oldthing->VehicleTNode;
         p_thing->U.UVehicle.AngleDY = p_oldthing->VehicleAngleDY;
         p_thing->U.UVehicle.RecoilTimer = p_oldthing->VehicleRecoilTimer;
+        // Only one group seem to exist in the old vehicles
+        p_thing->U.UVehicle.Group = p_oldthing->VehicleEffectiveGroup;
+        p_thing->U.UVehicle.EffectiveGroup = p_oldthing->VehicleEffectiveGroup;
         // In old format, MaxHealth is stored in additional vehicle block, not in the thing
         //p_thing->U.UVehicle.MaxHealth = ?;
     }
@@ -222,6 +225,9 @@ void refresh_old_thing_format(struct Thing *p_thing, struct ThingOldV9 *p_oldthi
         p_thing->U.UObject.TargetDX = p_oldthing->ObjectTargetDX;
         p_thing->U.UObject.TargetDY = p_oldthing->ObjectTargetDY;
         p_thing->U.UObject.TargetDZ = p_oldthing->ObjectTargetDZ;
+        // Only one group seem to exist in the old Objects
+        p_thing->U.UObject.Group = p_oldthing->ObjectEffectiveGroup;
+        p_thing->U.UObject.EffectiveGroup = p_oldthing->ObjectEffectiveGroup;
         if (p_thing->SubType == SubTT_BLD_GATE) {
             p_thing->U.UObject.RaiseDY[0] = p_oldthing->ObjectRaiseDY[0];
             p_thing->U.UObject.RaiseDY[1] = p_oldthing->ObjectRaiseDY[1];
@@ -243,6 +249,9 @@ void refresh_old_thing_format(struct Thing *p_thing, struct ThingOldV9 *p_oldthi
             p_thing->U.UMGun.GotoY = p_oldthing->MGunGotoY;
             p_thing->U.UMGun.GotoZ = p_oldthing->MGunGotoZ;
             p_thing->U.UMGun.UniqueID = p_oldthing->MGunUniqueID;
+            // Only one group seem to exist in the old MGun
+            p_thing->U.UMGun.Group = p_oldthing->MGunEffectiveGroup;
+            p_thing->U.UMGun.EffectiveGroup = p_oldthing->MGunEffectiveGroup;
         }
     }
 }

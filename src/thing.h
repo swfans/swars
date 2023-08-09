@@ -252,7 +252,13 @@ struct TngUPerson
 {
   short PathIndex;
   ushort UniqueID;
+  /** Normal GroupId assignment of a thing.
+   * Used to reset `EffectiveGroup` when neccessary.
+   */
   ubyte Group;
+  /** Effective group is the GroupId of a thing which is actually in effect.
+   * It may diverge from normal `Group` ie when a Person is persuaded.
+   */
   ubyte EffectiveGroup;
   ushort ComHead;
   ushort ComCur;
@@ -503,7 +509,18 @@ struct ThingOldV9 { // sizeof=216
         ubyte PersonAngle;
         ubyte ObjectAngle;
     };
-    ubyte TngUnkn75;
+    /** Effective group is the GroupId of a thing which is actually in effect.
+     * Configrmed to be  Person `EffectiveGroup` since fmtver=4 (from Pre-Alpha
+     * Demo code analysis). Also xonfirmed in fmtver=8-11 (from comparative
+     * analysis of binary data in level files). These sources do not provide a
+     * definite proof about which group field is effective and which the default.
+     */
+    union { // pos=75
+        ubyte PersonEffectiveGroup;
+        ubyte VehicleEffectiveGroup;
+        ubyte ObjectEffectiveGroup;
+        ubyte MGunEffectiveGroup;
+    };
     /* Since fmtver=4, `Speed` for Vehicle (from Pre-Alpha Demo code analysis).
      */
     short Speed; // pos=76
@@ -536,12 +553,17 @@ struct ThingOldV9 { // sizeof=216
         short VehicleGotoZ;
         short EffectGotoZ;
     };
-    /* Confirmed to be Person `Group` in fmtver=8-11 (from comparative analysis
-     * of binary data in level files). There seems to be no EffectiveGroup
-     * in early files (from the same comparative analysis).
+    /* Since fmtver=4, `Group` for Person (from Pre-Alpha Demo code analysis).
+     * Confirmed the same in fmtver=8-11 (from comparative analysis of
+     * binary data in level files).
      */
-    ubyte PersonGroup; // pos=86
-    ubyte TngUnkn87; // pos=87
+    union {  // pos=86
+        short VehicleUnknTng86;
+        struct {
+            ubyte PersonGroup;
+            ubyte TngUnkn87;
+        };
+    };
     ulong PersonWeaponsCarried; // pos=88
     /** Next command assigned to the Person.
      * Confirmed since fmtver=4 (from Pre-Alpha Demo code analysis).
