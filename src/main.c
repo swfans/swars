@@ -55,6 +55,7 @@ const struct TbNamedEnum conf_file_disk_inst_lev[] = {
 
 TbBool cmdln_fullscreen = true;
 TbBool cmdln_lores_stretch = true;
+extern TbBool level_deep_fix;
 
 static void
 print_help (const char *argv0)
@@ -74,15 +75,19 @@ print_help (const char *argv0)
 "                -H        Initially enter high resolution mode\n"
 "  --help        -h        Display the help message\n"
 "                -I <num>  Connect through IPX\n"
-"                -m <n>,<n> Load campaign with given index, from which load level\n"
-"                          with given index in single map mode\n"
+"                -m <n>,<n> Load campaign with given index, from which load\n"
+"                          mission with given index in single map mode\n"
 "                -N        ?\n"
 "                -p <num>  Play replay packets from file of given index;\n"
-"                          use '-m' to specify map on which to play\n"
+"                          use '-m' to specify mission on which to play\n"
 "                -q        Affects game quit conditions (but how?)\n"
 "                -r        Record replay packets to file in savegame dir;\n"
 "                          next unused filename for selected map will be used\n"
-"  --no-stretch  -S        Don't stretch 320x200 graphics to high res display\n"
+"  --level-deep-fix -L     Perform deeper fixes to the loaded levels; this may\n"
+"                          fix some glitches, but such autamatic rework may\n"
+"                          also break stuff; non-damaging fixes are applied\n"
+"                          even without this option\n"
+"  --no-stretch  -S        Do not stretch 320x200 graphics to high res display\n"
 "                -s <str>  Set session name string\n"
 "                -T        color tables mode (no effect?)\n"
 "  --self-tests  -t        execute build self tests\n"
@@ -114,6 +119,7 @@ static TbBool process_options(int *argc, char ***argv)
     {
       {"windowed",    0, NULL, 'W'},
       {"no-stretch",  0, NULL, 'S'},
+      {"level-deep-fix", 0, NULL, 'L'},
       {"self-test",   0, NULL, 't'},
       {"help",        0, NULL, 'h'},
       {NULL,          0, NULL,  0 },
@@ -122,7 +128,7 @@ static TbBool process_options(int *argc, char ***argv)
     argv0 = (*argv)[0];
     index = 0;
 
-    while ((val = getopt_long (*argc, *argv, "ABCDE:FgHhI:m:Np:qrSs:Ttu:Ww", options, &index)) >= 0)
+    while ((val = getopt_long (*argc, *argv, "ABCDE:FgHhI:Lm:Np:qrSs:Ttu:Ww", options, &index)) >= 0)
     {
         LOGDBG("Command line option: '%c'", val);
         switch (val)
@@ -172,6 +178,10 @@ static TbBool process_options(int *argc, char ***argv)
         case 'I':
             tmpint = atoi(optarg);
             LbNetworkSetupIPXAddress(tmpint);
+            break;
+
+        case 'L':
+            level_deep_fix = true;
             break;
 
         case 'm':
