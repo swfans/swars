@@ -878,6 +878,33 @@ short find_unused_group_id(TbBool largest)
     return -1;
 }
 
+/** Count how many people of given kind are in given group.
+ */
+ushort count_people_in_group(ushort group, short subtype)
+{
+    short thing;
+    struct Thing *p_thing;
+    ushort count;
+
+    count = 0;
+    for (thing = things_used_head; thing != 0; thing = p_thing->LinkChild)
+    {
+        p_thing = &things[thing];
+
+        if (p_thing->U.UPerson.Group != group)
+            continue;
+
+        if (p_thing->Type != TT_PERSON)
+            continue;
+
+        if ((subtype != -1) && (p_thing->SubType != subtype))
+            continue;
+
+        count++;
+    }
+    return count;
+}
+
 /** Copy all properties of one group into another group.
  */
 void thing_group_copy(short pv_group, short nx_group, ubyte allow_kill)
@@ -944,11 +971,13 @@ void thing_group_copy(short pv_group, short nx_group, ubyte allow_kill)
 
 /** Transfer some people of given subtype from one group to the other.
  */
-void thing_group_transfer_people(short pv_group, short nx_group, short subtype, int limit)
+int thing_group_transfer_people(short pv_group, short nx_group, short subtype, int limit)
 {
     short thing;
     struct Thing *p_thing;
+    int count;
 
+    count = 0;
     for (thing = things_used_head; thing != 0; thing = p_thing->LinkChild)
     {
         p_thing = &things[thing];
@@ -961,19 +990,123 @@ void thing_group_transfer_people(short pv_group, short nx_group, short subtype, 
 
         if (p_thing->U.UObject.Group == pv_group) {
             p_thing->U.UObject.Group = nx_group;
-            limit--;
+            count++;
         }
         if (p_thing->U.UObject.EffectiveGroup == pv_group) {
             p_thing->U.UObject.EffectiveGroup = nx_group;
         }
 
-        if (limit <= 0)
+        if (count >= limit)
             break;
     }
+    return count;
+}
+
+short find_group_which_looks_like_human_player(TbBool strict)
+{
+    short group;
+    short partial_group;
+    short n_partial;
+
+    n_partial = 0;
+    for (group = 0; group < 32; group++)
+    {
+        int n_all, n_agents, n_zealots, n_punks;
+
+        n_all = count_people_in_group(group, -1);
+        if (n_all < 1)
+            continue;
+
+        if (strict && (n_all > 4))
+            continue;
+
+        n_agents = count_people_in_group(group, SubTT_PERS_AGENT);
+        if (n_agents == 4)
+            return group;
+        n_zealots = count_people_in_group(group, SubTT_PERS_ZEALOT);
+        if (n_zealots == 4)
+            return group;
+        n_punks = count_people_in_group(group, SubTT_PERS_PUNK_F) +
+          count_people_in_group(group, SubTT_PERS_PUNK_M);
+        if (n_punks == 4)
+            return group;
+
+        if ((n_agents > 0) && (!strict || (n_agents <= 4)))
+        {
+            if (n_partial < n_agents) {
+                partial_group = group;
+                n_partial = n_agents;
+            }
+        }
+        if ((n_zealots > 0) && (!strict || (n_zealots <= 4)))
+        {
+            if (n_partial < n_zealots) {
+                partial_group = group;
+                n_partial = n_zealots;
+            }
+        }
+        if ((n_punks > 0) && (!strict || (n_punks <= 4)))
+        {
+            if (n_partial < n_punks) {
+                partial_group = group;
+                n_partial = n_punks;
+            }
+        }
+    }
+
+    if (n_partial > 0)
+        return partial_group;
+    return -1;
 }
 
 void level_perform_deep_fix(void)
 {
+    {
+        short pv_group, nx_group;
+        TbBool need_fix;
+        int i;
+
+        pv_group = level_def.PlayableGroups[0];
+        i = count_people_in_group(pv_group, -1);
+        need_fix = (i < 1) || (i > 4);
+        if (need_fix) {
+            nx_group = find_group_which_looks_like_human_player(true);
+            if (nx_group >= 0) {
+                LOGWARN("Local player group %d has no team; switching to better group %d",
+                  (int)pv_group, (int)nx_group);
+                level_def.PlayableGroups[0] = nx_group;
+                need_fix = false;
+            }
+        }
+        if (need_fix) {
+            short lp_group;
+            int n;
+
+            nx_group = find_group_which_looks_like_human_player(false);
+            lp_group = -1;
+            if (nx_group >= 0)
+                lp_group = find_unused_group_id(true);
+            if (lp_group >= 0) {
+                thing_group_copy(pv_group, nx_group, 0x01|0x02|0x04);
+                n = thing_group_transfer_people(nx_group, lp_group, SubTT_PERS_AGENT, 4);
+                if (n <= 0)
+                    n = thing_group_transfer_people(nx_group, lp_group, SubTT_PERS_ZEALOT, 4);
+                if (n <= 0)
+                    n = thing_group_transfer_people(nx_group, lp_group, -1, 4);
+                if (n > 0) {
+                    LOGWARN("Local player group %d has no team; switching to new group %d based on %d",
+                      (int)pv_group, (int)lp_group, (int)nx_group);
+                    level_def.PlayableGroups[0] = lp_group;
+                    need_fix = false;
+                }
+            }
+        }
+        if (need_fix) {
+            LOGWARN("Local player group %d has no team; fix attempts failed",
+              (int)pv_group);
+        }
+    }
+
     if (level_def.PlayableGroups[0] == 0) {
         short pv_group, nx_group;
 
@@ -983,7 +1116,7 @@ void level_perform_deep_fix(void)
           (int)pv_group, (int)nx_group);
         if (nx_group > 0) {
             thing_group_copy(pv_group, nx_group, 0x01|0x02);
-            thing_group_transfer_people(pv_group, nx_group, -1, SHRT_MAX);
+            thing_group_transfer_people(pv_group, nx_group, -1, 4);
         }
     }
 }
