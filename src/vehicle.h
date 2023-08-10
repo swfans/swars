@@ -28,6 +28,12 @@ extern "C" {
 #pragma pack(1)
 
 enum SubTypeVehicle {
+  SubTT_VEH_GROUND = 0x28,
+  SubTT_VEH_SHUTTLE_POD = 0x29,
+  SubTT_VEH_UNKN42 = 0x2A,
+  SubTT_VEH_UNKN43 = 0x2B,
+  SubTT_VEH_UNKN44 = 0x2C,
+  SubTT_VEH_UNKN45 = 0x2D,
   SubTT_VEH_UNKN46 = 0x2E,
   SubTT_VEH_UNKN47 = 0x2F,
   SubTT_VEH_UNKN48 = 0x30,
