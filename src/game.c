@@ -196,6 +196,8 @@ struct TbLoadFiles unk02_load_files[] =
   { "",					(void **)NULL, 				(void **)NULL,			0, 0, 0 }
 };
 
+TbBool level_deep_fix = false;
+
 extern TbFileHandle packet_rec_fh;
 
 char unk_credits_text_s[] = "";
@@ -845,6 +847,147 @@ void func_6031c(short tx, short tz, short a3, short ty)
         : : "a" (tx), "d" (tz), "b" (a3), "c" (ty));
 }
 
+/** Finds Group ID for which there are no things created.
+ */
+short find_unused_group_id(TbBool largest)
+{
+    short thing, i;
+    ulong used_groups;
+    struct Thing *p_thing;
+
+    used_groups = 0;
+    for (thing = things_used_head; thing != 0; thing = p_thing->LinkChild)
+    {
+        p_thing = &things[thing];
+        used_groups |= (1 << p_thing->U.UPerson.Group);
+    }
+    if (largest)
+    {
+        for (i = 31; i > 0; i--) {
+            if ((used_groups & (1 << i)) == 0)
+                return i;
+        }
+    }
+    else
+    {
+        for (i = 1; i < 32; i++) {
+            if ((used_groups & (1 << i)) == 0)
+                return i;
+        }
+    }
+    return -1;
+}
+
+/** Copy all properties of one group into another group.
+ */
+void thing_group_copy(short pv_group, short nx_group, ubyte allow_kill)
+{
+    int i;
+
+    for (i = 0; i < 32; i++)
+    {
+        if (i == pv_group)
+        {
+            war_flags[i].KillOnSight &= ~(1 << pv_group);
+            war_flags[i].KillIfWeaponOut &= ~(1 << pv_group);
+            war_flags[i].KillIfArmed &= ~(1 << pv_group);
+            war_flags[i].KillOnSight &= ~(1 << nx_group);
+            war_flags[i].KillIfWeaponOut &= ~(1 << nx_group);
+            war_flags[i].KillIfArmed &= ~(1 << nx_group);
+            continue;
+        }
+        if ((war_flags[i].KillOnSight & (1 << pv_group)) != 0)
+            war_flags[i].KillOnSight |= (1 << nx_group);
+        else
+            war_flags[i].KillOnSight &= ~(1 << nx_group);
+
+        if ((war_flags[i].KillIfWeaponOut & (1 << pv_group)) != 0)
+            war_flags[i].KillIfWeaponOut |= (1 << nx_group);
+        else
+            war_flags[i].KillIfWeaponOut &= ~(1 << nx_group);
+
+        if ((war_flags[i].KillIfArmed & (1 << pv_group)) != 0)
+            war_flags[i].KillIfArmed |= (1 << nx_group);
+        else
+            war_flags[i].KillIfArmed &= ~(1 << nx_group);
+
+        if ((war_flags[i].Truce & (1 << pv_group)) != 0)
+            war_flags[i].Truce |= (1 << nx_group);
+        else
+            war_flags[i].Truce &= ~(1 << nx_group);
+    }
+
+    LbMemoryCopy(&war_flags[nx_group], &war_flags[pv_group], sizeof(struct WarFlag));
+
+    if (allow_kill & 0x01) {
+        war_flags[pv_group].KillOnSight |= (1 << nx_group);
+        war_flags[nx_group].KillOnSight |= (1 << pv_group);
+    }
+    if (allow_kill & 0x02) {
+        war_flags[pv_group].KillIfWeaponOut |= (1 << nx_group);
+        war_flags[nx_group].KillIfWeaponOut |= (1 << pv_group);
+    }
+    if (allow_kill & 0x04) {
+        war_flags[pv_group].KillIfArmed |= (1 << nx_group);
+        war_flags[nx_group].KillIfArmed |= (1 << pv_group);
+    }
+
+    for (i = 0; i < 8; i++)
+    {
+        if (level_def.PlayableGroups[i] == pv_group) {
+            level_def.PlayableGroups[i] = nx_group;
+            if (pv_group == 0) // If replacing group 0, don't modify all the filler zeros
+                break;
+        }
+    }
+}
+
+/** Transfer some people of given subtype from one group to the other.
+ */
+void thing_group_transfer_people(short pv_group, short nx_group, short subtype, int limit)
+{
+    short thing;
+    struct Thing *p_thing;
+
+    for (thing = things_used_head; thing != 0; thing = p_thing->LinkChild)
+    {
+        p_thing = &things[thing];
+
+        if (p_thing->Type != TT_PERSON)
+            continue;
+
+        if ((subtype != -1) && (p_thing->SubType != subtype))
+            continue;
+
+        if (p_thing->U.UObject.Group == pv_group) {
+            p_thing->U.UObject.Group = nx_group;
+            limit--;
+        }
+        if (p_thing->U.UObject.EffectiveGroup == pv_group) {
+            p_thing->U.UObject.EffectiveGroup = nx_group;
+        }
+
+        if (limit <= 0)
+            break;
+    }
+}
+
+void level_perform_deep_fix(void)
+{
+    if (level_def.PlayableGroups[0] == 0) {
+        short pv_group, nx_group;
+
+        pv_group = level_def.PlayableGroups[0];
+        nx_group = find_unused_group_id(true);
+        LOGWARN("Local player group is %d; switching to %d",
+          (int)pv_group, (int)nx_group);
+        if (nx_group > 0) {
+            thing_group_copy(pv_group, nx_group, 0x01|0x02);
+            thing_group_transfer_people(pv_group, nx_group, -1, SHRT_MAX);
+        }
+    }
+}
+
 ulong load_level_pc_handle(TbFileHandle lev_fh)
 {
     ulong fmtver;
@@ -892,6 +1035,9 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
             p_thing->PTarget = 0;
             p_thing->LinkParent = loc_thing.LinkParent;
             p_thing->LinkChild = loc_thing.LinkChild;
+            // We have limited amount of group definitions
+            if (p_thing->U.UObject.Group >= 32)
+                p_thing->U.UObject.Group = 0;
             // All relevant thing types must have the values below at same position
             p_thing->U.UObject.EffectiveGroup = p_thing->U.UObject.Group;
 
@@ -994,6 +1140,12 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
     }
     LbFileRead(lev_fh, game_commands, 32 * next_command);
     LbFileRead(lev_fh, &level_def, 44);
+    for (i = 0; i < 8; i++)
+    {
+        if (level_def.PlayableGroups[i] >= 32)
+            level_def.PlayableGroups[i] = 0;
+    }
+
     LbFileRead(lev_fh, engine_mem_alloc_ptr + engine_mem_alloc_size - 1353, 1320);
     LbFileRead(lev_fh, war_flags, 32 * sizeof(struct WarFlag));
     LbFileRead(lev_fh, &word_1531E0, sizeof(ushort));
@@ -1002,7 +1154,7 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
     {
         for (i = 0; i < 8; i++)
         {
-            if (war_flags[k].Guardians[i] > 31)
+            if (war_flags[k].Guardians[i] >= 32)
                 war_flags[k].Guardians[i] = 0;
         }
     }
@@ -1175,6 +1327,13 @@ void load_level_pc(ushort map, short level)
         if (fmtver >= 10)
             level_misc_update();
         merged_noop_unkn1(995);
+        if (level_deep_fix) {
+            level_perform_deep_fix();
+        } else {
+            if (level_def.PlayableGroups[0] == 0) {
+                LOGWARN("Local player group equal 0 will cause issues; fix the level");
+            }
+        }
     } else
     {
         LOGERR("Could not open mission file, load skipped");
@@ -3658,13 +3817,15 @@ void place_single_player(void)
     pl_agents = make_group_into_players(pl_group, local_player_no, nagents, -1);
     if (pl_agents == 0) {
         struct Thing *p_person;
-        LOGERR("Player %d playable agents not found amongst %d things", (int)local_player_no, (int)things_used_head);
+        LOGERR("Player %d group %d playable agents not found amongst %d things",
+          (int)local_player_no, (int)pl_group, (int)things_used_head);
         p_person = new_sim_person(513, 1, 513, SubTT_PERS_AGENT);
         p_person->U.UPerson.Group = pl_group;
         p_person->U.UPerson.EffectiveGroup = pl_group;
         pl_agents = make_group_into_players(pl_group, local_player_no, 1, -1);
     } else {
-        LOGSYNC("Player %d playable agents found %d expected %d", (int)local_player_no, (int)pl_agents, (int)nagents);
+        LOGSYNC("Player %d group %d playable agents found %d expected %d",
+          (int)local_player_no, (int)pl_group, (int)pl_agents, (int)nagents);
     }
 
     n = things_used_head;
