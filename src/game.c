@@ -831,6 +831,46 @@ void check_and_fix_thing_commands(void)
     }
 }
 
+short search_things_for_index(short index)
+{
+    short ret;
+    asm volatile ("call ASM_search_things_for_index\n"
+        : "=r" (ret) : "a" (index));
+    return ret;
+}
+
+short find_nearest_object2(short mx, short mz, ushort sub_type)
+{
+    short ret;
+    asm volatile ("call ASM_find_nearest_object2\n"
+        : "=r" (ret) : "a" (mx), "d" (mz), "b" (sub_type));
+    return ret;
+}
+
+short search_object_for_qface(ushort object, ubyte gflag, ubyte flag, ushort after)
+{
+    short ret;
+    asm volatile ("call ASM_search_object_for_qface\n"
+        : "=r" (ret) : "a" (object), "d" (gflag), "b" (flag), "c" (after));
+    return ret;
+}
+
+short search_for_station(short x, short z)
+{
+    ushort ret;
+    asm volatile ("call ASM_search_for_station\n"
+        : "=r" (ret) : "a" (x), "d" (z));
+    return ret;
+}
+
+ubyte fix_single_objective(struct Objective *p_objectv)
+{
+    ubyte ret;
+    asm volatile ("call ASM_fix_single_objective\n"
+        : "=r" (ret) : "a" (p_objectv));
+    return ret;
+}
+
 void unkn_f_pressed_func(void)
 {
     struct Command *gcmds;
@@ -868,10 +908,181 @@ void unkn_f_pressed_func(void)
     game_commands = gcmds;
 }
 
+void fix_thing_command(ushort cmd)
+{
+    struct Command *p_cmd;
+    struct Thing *p_secthing;
+    short secthing;
+
+    p_cmd = &game_commands[cmd];
+
+    if (p_cmd->OtherThing == 0)
+        return;
+
+    switch (p_cmd->Type)
+    {
+    case PCmd_STAY:
+    case PCmd_GO_TO_POINT:
+    case PCmd_GO_TO_PERSON:
+    case PCmd_KILL_PERSON:
+    case PCmd_PERSUADE_PERSON:
+    case PCmd_BLOCK_PERSON:
+    case PCmd_SCARE_PERSON:
+    case PCmd_FOLLOW_PERSON:
+    case PCmd_SUPPORT_PERSON:
+    case PCmd_PROTECT_PERSON:
+    case PCmd_HIDE:
+    case PCmd_GET_ITEM:
+    case PCmd_DROP_SPEC_ITEM:
+    case PCmd_AVOID_PERSON:
+    case PCmd_UNKN16:
+    case PCmd_CATCH_FERRY:
+    case PCmd_EXIT_FERRY:
+    case PCmd_PING_EXIST:
+    case PCmd_SELF_DESTRUCT:
+    case PCmd_EXIT_VEHICLE:
+    case PCmd_GUARD_OFF:
+    case PCmd_EXECUTE_COMS:
+    case PCmd_UNKN27:
+    case PCmd_UNKN28:
+    case PCmd_UNKN29:
+    case PCmd_UNKN2A:
+    case PCmd_UNKN2B:
+    case PCmd_UNKN2C:
+    case PCmd_UNKN2D:
+    case PCmd_UNKN2E:
+    case PCmd_UNKN2F:
+    case PCmd_UNKN30:
+    case PCmd_UNKN31:
+    case PCmd_UNKN32:
+    case PCmd_WAIT_P_V_DEAD:
+    case PCmd_WAIT_P_V_I_NEAR:
+    case PCmd_WAIT_P_V_I_ARRIVES:
+    case PCmd_WAIT_P_PERSUADED:
+    case PCmd_WAIT_TIME:
+    case PCmd_UNKN44:
+    case PCmd_UNKN45:
+    case PCmd_UNKN46:
+    case PCmd_WAND_P_V_DEAD:
+    case PCmd_WAND_P_V_I_NEAR:
+    case PCmd_WAND_P_V_I_ARRIVES:
+    case PCmd_WAND_P_PERSUADED:
+    case PCmd_WAND_MEM_G_PERSUADED:
+    case PCmd_WAND_ALL_G_PERSUADED:
+    case PCmd_WAND_MISSION_SUCC:
+    case PCmd_WAND_MISSION_FAIL:
+    case PCmd_WAND_TIME:
+    case PCmd_UNKN58:
+    case PCmd_UNKN59:
+    case PCmd_UNKN5A:
+    case PCmd_UNKN5B:
+    case PCmd_UNKN5C:
+    case PCmd_UNKN5D:
+    case PCmd_UNKN5E:
+    case PCmd_UNKN5F:
+    case PCmd_UNKN60:
+    case PCmd_UNKN61:
+    case PCmd_UNKN62:
+    case PCmd_UNKN63:
+    case PCmd_UNKN64:
+    case PCmd_UNKN65:
+    case PCmd_UNKN66:
+    case PCmd_UNKN67:
+    case PCmd_UNKN68:
+    case PCmd_UNKN69:
+    case PCmd_UNKN6A:
+    case PCmd_UNKN6B:
+    case PCmd_UNKN6C:
+    case PCmd_UNKN6D:
+    case PCmd_UNTIL_P_V_DEAD:
+    case PCmd_UNTIL_P_V_I_NEAR:
+    case PCmd_UNTIL_P_V_I_ARRIVES:
+    case PCmd_UNTIL_P_PERSUADED:
+    case PCmd_UNTIL_TIME:
+    case PCmd_WITHIN_AREA:
+    case PCmd_WITHIN_OFF:
+    case PCmd_UNLOCK_BUILD:
+    case PCmd_HARD_AS_AGENT:
+    case PCmd_UNTIL_G_NOT_SEEN:
+    case PCmd_START_DANGER_MUSIC:
+    case PCmd_PING_P_V:
+    case PCmd_CAMERA_TRACK:
+    case PCmd_IGNORE_ENEMIES:
+    case PCmd_UNKN90:
+        p_cmd->OtherThing = search_things_for_index(p_cmd->OtherThing);
+        break;
+    case PCmd_DESTROY_BUILDING:
+    case PCmd_WAIT_OBJECT_DESTROYED:
+    case PCmd_WAND_OBJECT_DESTROYED:
+    case PCmd_UNTIL_OBJECT_DESTROYED:
+    case PCmd_LOCK_BUILD:
+        p_cmd->OtherThing = find_nearest_object2(p_cmd->X, p_cmd->Z, 0);
+        break;
+    case PCmd_USE_VEHICLE:
+        p_cmd->OtherThing = search_things_for_index(p_cmd->OtherThing);
+        break;
+    case PCmd_CATCH_TRAIN:
+        secthing = search_for_station(p_cmd->X, p_cmd->Z);
+        p_secthing = &things[secthing];
+        p_cmd->OtherThing = search_object_for_qface(p_secthing->U.UPerson.ComHead, 4u, 2u, 0);
+        break;
+    case PCmd_OPEN_DOME:
+    case PCmd_CLOSE_DOME:
+        p_cmd->OtherThing = find_nearest_object2(p_cmd->X, p_cmd->Z, 24);
+        break;
+    }
+}
+
 void fix_level_indexes(void)
 {
+#if 0
     asm volatile ("call ASM_fix_level_indexes\n"
         :  :  : "eax" );
+#endif
+    ushort cmd;
+    ushort objectv;
+    short thing;
+
+    for (cmd = 1; cmd < next_command; cmd++)
+    {
+        fix_thing_command(cmd);
+    }
+
+    for (objectv = 1; objectv < next_used_lvl_objective; objectv++)
+    {
+          struct Objective *p_objectv;
+
+          p_objectv = &game_used_lvl_objectives[objectv];
+          p_objectv->Level = (current_level - 1) % 15 + 1;
+          p_objectv->Map = current_map;
+          fix_single_objective(p_objectv);
+    }
+
+    for (objectv = 1; objectv < next_used_lvl_objective; objectv++)
+    {
+        struct Objective *p_objectv;
+
+        p_objectv = &game_used_lvl_objectives[objectv];
+        fix_single_objective(p_objectv);
+    }
+
+    for (objectv = 1; objectv < next_used_objective; objectv++)
+    {
+        struct Objective *p_objectv;
+
+        p_objectv = &game_used_objectives[objectv];
+        fix_single_objective(p_objectv);
+    }
+
+    for (thing = 1; thing < 1000; thing++)
+    {
+        things[thing].ThingOffset = thing;
+    }
+
+    for (thing = 1; thing < 1500; thing++)
+    {
+        sthings[-thing].ThingOffset = -thing;
+    }
 }
 
 void build_same_type_headers(void)
