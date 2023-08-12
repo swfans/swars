@@ -761,38 +761,107 @@ TbBool is_command_any_until(struct Command *p_cmd)
     return true;
 }
 
-void unkn_f_pressed_func(void)
+/** Verify and update commands array.
+ */
+void check_and_fix_commands(void)
 {
-    struct Command *gcmds;
-    short thing;
-    struct Thing *p_thing;
-    short i;
-    ushort cid;
-    ushort prev_cid;
+    ushort cmd;
 
-    gcmds = game_commands;
-    thing = same_type_head[1];
-    for (i = 0; true; i++)
+    for (cmd = 1; cmd < next_command ; cmd++)
     {
-        if (thing == 0)
-            break;
+        struct Command *p_cmd;
+
+        p_cmd = &game_commands[cmd];
+
+        if (p_cmd->Next > next_command)
+            p_cmd->Next = 0;
+
+        if ((p_cmd->Flags & 0x20000) != 0)
+        {
+            struct Command *p_nxcmd;
+
+            p_nxcmd = &game_commands[p_cmd->Next];
+            if (!is_command_any_until(p_nxcmd)) {
+                p_cmd->Flags &= ~0x20000;
+            }
+        }
+    }
+}
+
+/** Verify and update commands in the context of their assignment to things.
+ * Requires same_type lists to be already populated.
+ */
+void check_and_fix_thing_commands(void)
+{
+    short thing;
+    short i;
+    ushort cmd;
+
+    thing = same_type_head[1];
+    for (i = 0; thing != 0; i++)
+    {
+        struct Thing *p_thing;
+
         if (i >= 1000) {
             LOGERR("Infinite loop in same type things list");
             break;
         }
         p_thing = &things[thing];
-        cid = p_thing->U.UPerson.ComHead;
-        prev_cid = 0;
-        while (cid != 0)
+
+        cmd = p_thing->U.UPerson.ComHead;
+        if (cmd > next_command) {
+            cmd = 0;
+            p_thing->U.UPerson.ComHead = cmd;
+        }
+        while (cmd != 0)
         {
-            if (!is_command_any_until(&gcmds[cid]))
-            {
-                if (prev_cid)
-                    gcmds[prev_cid].Flags |= 0x20000;
-                gcmds[cid].Flags |= 0x40000;
+            struct Command *p_cmd;
+
+            p_cmd = &game_commands[cmd];
+
+            if (0) { // Commands debug code
+                char locbuf[256];
+                snprint_command(locbuf, sizeof(locbuf), cmd);
+                LOGSYNC("Person %hd Command %hu: %s", thing, cmd, locbuf);
             }
-            prev_cid = cid;
-            cid = gcmds[cid].Next;
+
+            cmd = p_cmd->Next;
+        }
+        thing = p_thing->LinkSame;
+    }
+}
+
+void unkn_f_pressed_func(void)
+{
+    struct Command *gcmds;
+    short thing;
+    short i;
+
+    gcmds = game_commands;
+    thing = same_type_head[1];
+    for (i = 0; thing != 0; i++)
+    {
+        struct Thing *p_thing;
+        ushort cmd;
+        ushort prev_cmd;
+
+        if (i >= 1000) {
+            LOGERR("Infinite loop in same type things list");
+            break;
+        }
+        p_thing = &things[thing];
+        cmd = p_thing->U.UPerson.ComHead;
+        prev_cmd = 0;
+        while (cmd != 0)
+        {
+            if (!is_command_any_until(&gcmds[cmd]))
+            {
+                if (prev_cmd)
+                    gcmds[prev_cmd].Flags |= 0x20000;
+                gcmds[cmd].Flags |= 0x40000;
+            }
+            prev_cmd = cmd;
+            cmd = gcmds[cmd].Next;
         }
         thing = p_thing->LinkSame;
     }
@@ -1431,20 +1500,12 @@ void load_level_pc(ushort map, short level)
                 game_used_lvl_objectives[i].Arg2 = 1;
         }
 
+        check_and_fix_commands();
 
-        for (i = 1; i < next_command ; i++)
-        {
-            if ((game_commands[i].Flags & 0x20000) != 0)
-            {
-                struct Command *nxcmd;
-
-                nxcmd = &game_commands[game_commands[i].Next];
-                if (!is_command_any_until(nxcmd)) {
-                    game_commands[i].Flags &= ~0x20000;
-                }
-            }
-        }
         build_same_type_headers();
+
+        check_and_fix_thing_commands();
+
         if (fmtver >= 10)
             level_misc_update();
 
