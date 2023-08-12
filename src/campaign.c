@@ -526,7 +526,7 @@ void read_missions_bin_file(int num)
 #endif
 }
 
-void sprint_objective(char *buf, ushort objectv)
+void snprint_objective(char *buf, ulong buflen, ushort objectv)
 {
     struct Objective *p_objectv;
     struct ObjectiveDef *p_odef;
@@ -626,7 +626,7 @@ void sprint_objective(char *buf, ushort objectv)
         s += strlen(s);
     }
 
-    sprintf(s, " )");
+    snprintf(s, buflen - (s-buf), " )");
 }
 
 void save_objective_chain_conf(TbFileHandle fh, ushort objectv_head, char *buf, ulong buflen)
@@ -644,7 +644,7 @@ void save_objective_chain_conf(TbFileHandle fh, ushort objectv_head, char *buf, 
             objectv = nxobjectv;
         }
 
-        sprint_objective(buf, objectv);
+        snprint_objective(buf, buflen, objectv);
         strncat(buf, "\n", buflen);
         LbFileWrite(fh, buf, strlen(buf));
     }
