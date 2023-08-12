@@ -31,6 +31,7 @@
 #include "bflib_joyst.h"
 #include "matrix.h"
 #include "game_data.h"
+#include "building.h"
 #include "campaign.h"
 #include "cybmod.h"
 #include "display.h"
@@ -988,8 +989,8 @@ void fix_thing_command(ushort cmd)
     case PCmd_UNKN65:
     case PCmd_UNKN66:
     case PCmd_UNKN67:
-    case PCmd_UNKN68:
-    case PCmd_UNKN69:
+    case PCmd_ADD_STATIC:
+    case PCmd_WAIT_TIME2:
     case PCmd_UNKN6A:
     case PCmd_UNKN6B:
     case PCmd_UNKN6C:
@@ -1008,7 +1009,7 @@ void fix_thing_command(ushort cmd)
     case PCmd_PING_P_V:
     case PCmd_CAMERA_TRACK:
     case PCmd_IGNORE_ENEMIES:
-    case PCmd_UNKN90:
+    case PCmd_FULL_STAMINA:
         p_cmd->OtherThing = search_things_for_index(p_cmd->OtherThing);
         break;
     case PCmd_DESTROY_BUILDING:
@@ -1028,7 +1029,7 @@ void fix_thing_command(ushort cmd)
         break;
     case PCmd_OPEN_DOME:
     case PCmd_CLOSE_DOME:
-        p_cmd->OtherThing = find_nearest_object2(p_cmd->X, p_cmd->Z, 24);
+        p_cmd->OtherThing = find_nearest_object2(p_cmd->X, p_cmd->Z, SubTT_BLD_DOME);
         break;
     }
 }
@@ -4081,7 +4082,7 @@ ushort make_group_into_players(ushort group, ushort plyr, ushort max_agent, shor
             p_person->U.UPerson.ComHead = game_commands[p_person->U.UPerson.ComHead].Next;
         }
 
-        if (game_commands[p_person->U.UPerson.ComHead].Type == PCmd_UNKN90)
+        if (game_commands[p_person->U.UPerson.ComHead].Type == PCmd_FULL_STAMINA)
         {
             p_person->U.UPerson.Stamina = peep_type_stats[1].MaximumStamina;
             p_person->U.UPerson.MaxStamina = peep_type_stats[1].MaximumStamina;

@@ -46,10 +46,15 @@ enum PersonCommandType
   PCmd_PROTECT_PERSON = 0xE,
   PCmd_HIDE = 0xF,
   PCmd_GET_ITEM = 0x10,
+  /** Use specified weapon pointing at given coords.
+   */
   PCmd_USE_WEAPON = 0x11,
   PCmd_DROP_SPEC_ITEM = 0x12,
   PCmd_AVOID_PERSON = 0x13,
   PCmd_WAND_AVOID_GROUP = 0x14,
+  /** Plant a bomb under a building. Given coords not only
+   * identify the building, but are also bomb location.
+   */
   PCmd_DESTROY_BUILDING = 0x15,
   PCmd_UNKN16 = 0x16,
   PCmd_USE_VEHICLE = 0x17,
@@ -133,8 +138,8 @@ enum PersonCommandType
   PCmd_UNKN65,
   PCmd_UNKN66,
   PCmd_UNKN67,
-  PCmd_UNKN68,
-  PCmd_UNKN69,
+  PCmd_ADD_STATIC,
+  PCmd_WAIT_TIME2,
   PCmd_UNKN6A,
   PCmd_UNKN6B,
   PCmd_UNKN6C,
@@ -173,7 +178,7 @@ enum PersonCommandType
   PCmd_UNTRUCE_GROUP = 0x8D,
   PCmd_PLAY_SAMPLE = 0x8E,
   PCmd_IGNORE_ENEMIES = 0x8F,
-  PCmd_UNKN90 = 0x90,
+  PCmd_FULL_STAMINA = 0x90, // Name uncertain
   PCmd_UNKN91 = 0x91,
   PCmd_TYPES_COUNT,
 };
