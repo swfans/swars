@@ -51,7 +51,7 @@ enum PersonCommandType
   PCmd_AVOID_PERSON = 0x13,
   PCmd_WAND_AVOID_GROUP = 0x14,
   PCmd_DESTROY_BUILDING = 0x15,
-  PCmd_16 = 0x16,
+  PCmd_UNKN16 = 0x16,
   PCmd_USE_VEHICLE = 0x17,
   PCmd_EXIT_VEHICLE = 0x18,
   PCmd_CATCH_TRAIN = 0x19,
@@ -68,8 +68,18 @@ enum PersonCommandType
   PCmd_KILL_EVERYONE = 0x24,
   PCmd_GUARD_OFF = 0x25,
   PCmd_EXECUTE_COMS = 0x26,
-  PCmd_27 = 0x27,
-  PCmd_32 = 0x32,
+  PCmd_UNKN27 = 0x27,
+  PCmd_UNKN28,
+  PCmd_UNKN29,
+  PCmd_UNKN2A,
+  PCmd_UNKN2B,
+  PCmd_UNKN2C,
+  PCmd_UNKN2D,
+  PCmd_UNKN2E,
+  PCmd_UNKN2F,
+  PCmd_UNKN30, // = 0x30
+  PCmd_UNKN31,
+  PCmd_UNKN32,
   PCmd_WAIT_P_V_DEAD = 0x33,
   PCmd_WAIT_MEM_G_DEAD = 0x34,
   PCmd_WAIT_ALL_G_DEAD = 0x35,
@@ -87,6 +97,9 @@ enum PersonCommandType
   PCmd_WAIT_MISSION_START = 0x41,
   PCmd_WAIT_OBJECT_DESTROYED = 0x42,
   PCmd_WAIT_TIME = 0x43,
+  PCmd_UNKN44,
+  PCmd_UNKN45,
+  PCmd_UNKN46,
   PCmd_WAND_P_V_DEAD = 0x47,
   PCmd_WAND_MEM_G_DEAD = 0x48,
   PCmd_WAND_ALL_G_DEAD = 0x49,
@@ -104,6 +117,28 @@ enum PersonCommandType
   PCmd_WAND_MISSION_START = 0x55,
   PCmd_WAND_OBJECT_DESTROYED = 0x56,
   PCmd_WAND_TIME = 0x57,
+  PCmd_UNKN58,
+  PCmd_UNKN59,
+  PCmd_UNKN5A,
+  PCmd_UNKN5B,
+  PCmd_UNKN5C,
+  PCmd_UNKN5D,
+  PCmd_UNKN5E,
+  PCmd_UNKN5F,
+  PCmd_UNKN60,
+  PCmd_UNKN61,
+  PCmd_UNKN62,
+  PCmd_UNKN63,
+  PCmd_UNKN64,
+  PCmd_UNKN65,
+  PCmd_UNKN66,
+  PCmd_UNKN67,
+  PCmd_UNKN68,
+  PCmd_UNKN69,
+  PCmd_UNKN6A,
+  PCmd_UNKN6B,
+  PCmd_UNKN6C,
+  PCmd_UNKN6D,
   PCmd_LOOP_COM = 0x6E,
   PCmd_UNTIL_P_V_DEAD = 0x6F,
   PCmd_UNTIL_MEM_G_DEAD = 0x70,
@@ -138,8 +173,9 @@ enum PersonCommandType
   PCmd_UNTRUCE_GROUP = 0x8D,
   PCmd_PLAY_SAMPLE = 0x8E,
   PCmd_IGNORE_ENEMIES = 0x8F,
-  PCmd_90 = 0x90,
-  PCmd_91 = 0x91,
+  PCmd_UNKN90 = 0x90,
+  PCmd_UNKN91 = 0x91,
+  PCmd_TYPES_COUNT,
 };
 
 struct Command
@@ -166,6 +202,7 @@ struct Command
 /******************************************************************************/
 extern struct Command *game_commands;
 
+void snprint_command(char *buf, ulong buflen, ushort cmd);
 /******************************************************************************/
 #ifdef __cplusplus
 }

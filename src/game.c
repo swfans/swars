@@ -736,23 +736,23 @@ void global_3d_store(int action)
     }
 }
 
-TbBool is_command_any_until(struct Command *cmd)
+TbBool is_command_any_until(struct Command *p_cmd)
 {
 
-    if (cmd->Type < PCmd_UNTIL_P_PERSUADED)
+    if (p_cmd->Type < PCmd_UNTIL_P_PERSUADED)
     {
-        if (cmd->Type < PCmd_UNTIL_P_V_DEAD)
+        if (p_cmd->Type < PCmd_UNTIL_P_V_DEAD)
             return false;
         return true;
     }
-    else if (cmd->Type > PCmd_UNTIL_OBJECT_DESTROYED)
+    else if (p_cmd->Type > PCmd_UNTIL_OBJECT_DESTROYED)
     {
-        if (cmd->Type < PCmd_UNTIL_OBJ)
+        if (p_cmd->Type < PCmd_UNTIL_OBJ)
         {
-          if (cmd->Type != PCmd_UNTIL_TIME)
+          if (p_cmd->Type != PCmd_UNTIL_TIME)
             return false;
         }
-        else if (cmd->Type > PCmd_UNTIL_OBJ && cmd->Type != PCmd_UNTIL_G_NOT_SEEN)
+        else if (p_cmd->Type > PCmd_UNTIL_OBJ && p_cmd->Type != PCmd_UNTIL_G_NOT_SEEN)
         {
             return false;
         }
@@ -3826,7 +3826,7 @@ ushort make_group_into_players(ushort group, ushort plyr, ushort max_agent, shor
             p_person->U.UPerson.ComHead = game_commands[p_person->U.UPerson.ComHead].Next;
         }
 
-        if (game_commands[p_person->U.UPerson.ComHead].Type == PCmd_90)
+        if (game_commands[p_person->U.UPerson.ComHead].Type == PCmd_UNKN90)
         {
             p_person->U.UPerson.Stamina = peep_type_stats[1].MaximumStamina;
             p_person->U.UPerson.MaxStamina = peep_type_stats[1].MaximumStamina;
