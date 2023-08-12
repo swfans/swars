@@ -157,7 +157,7 @@ struct Command
   short MyThing;
   short Parent;
   ulong Flags;
-  ubyte field_1A[4];
+  ulong field_1A;
   short field_1E;
 };
 

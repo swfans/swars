@@ -64,6 +64,8 @@ swars_SOURCES = \
 	building.h \
 	campaign.c \
 	campaign.h \
+	command.c \
+	command.h \
 	cybmod.c \
 	cybmod.h \
 	display.c \
