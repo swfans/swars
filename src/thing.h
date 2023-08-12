@@ -110,7 +110,7 @@ struct TngUObject
     ushort BuildStartVect;
     ushort BuildNumbVect;
     ushort ZZ_unused_but_pads_to_long_ObjectNo;
-    short ComHead;
+    ushort ComHead;
     short ComCur;
     short Mood;
     short RaiseDY[2];
@@ -196,7 +196,7 @@ struct TngUVehicle
   short TargetDZ;
   short OnFace;
   short WorkPlace;
-  short ComHead;
+  ushort ComHead;
   short ComCur;
   short Timer2;
   short RecoilTimer;

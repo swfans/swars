@@ -1126,7 +1126,7 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
     ulong fmtver;
     TbBool mech_initialized;
     long limit;
-    int i, k;
+    int i, k, n;
 
     mech_initialized = 0;
     fmtver = 0;
@@ -1135,7 +1135,6 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
     if (fmtver >= 1)
     {
         ushort count;
-        long pos_0;
         short new_thing;
         struct Thing loc_thing;
         struct Thing *p_thing;
@@ -1144,11 +1143,9 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
         LbFileRead(lev_fh, &count, 2);
 
         LOGSYNC("Level fmtver=%lu n_things=%hd", fmtver, count);
-        for (pos_0 = count-1; pos_0 >= 0; pos_0--)
+        for (i = 0; i < count; i++)
         {
             short angle;
-
-            merged_noop_unkn1(pos_0);
 
             new_thing = get_new_thing();
             p_thing = &things[new_thing];
@@ -1164,10 +1161,10 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
             LOGNO("Thing at (%d,%d,%d) type=%d,%d", p_thing->X, p_thing->Y, p_thing->Z,
               (int)p_thing->Type, (int)p_thing->SubType);
 
-            if (p_thing->Z >> 8 < 256)
-                p_thing->Z += 0x10000;
-            if (p_thing->X >> 16 > 127)
-                p_thing->X = 0x400000;
+            if ((p_thing->Z >> 8) < 256)
+                p_thing->Z += (256 << 8);
+            if ((p_thing->X >> 16) >= 128)
+                p_thing->X = (64 << 16);
             p_thing->PTarget = 0;
             p_thing->LinkParent = loc_thing.LinkParent;
             p_thing->LinkChild = loc_thing.LinkChild;
@@ -1214,31 +1211,25 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
 
             if (p_thing->Type == TT_VEHICLE)
             {
-                if (pos_0 == 87)
-                    merged_noop_unkn1(pos_0 + 10001);
                 if (fmtver < 17)
                     p_thing->U.UVehicle.Armour = 4;
                 p_thing->U.UVehicle.PassengerHead = 0;
                 p_thing->Flag2 &= 0x1000000;
                 if (fmtver <= 8)
                     p_thing->Y >>= 3;
-                if (pos_0 == 87)
-                    merged_noop_unkn1(pos_0 + 10002);
+
                 k = next_local_mat++;
                 LbFileRead(lev_fh, &local_mats[k], 36);
-                if (pos_0 == 87)
-                    merged_noop_unkn1(pos_0 + 10003);
+
                 p_thing->U.UVehicle.MatrixIndex = next_local_mat - 1;
                 byte_1C83D1 = 0;
 
-                i = next_normal;
+                n = next_normal;
                 func_6031c(p_thing->X >> 8, p_thing->Z >> 8, -prim_unknprop01 - p_thing->StartFrame, p_thing->Y >> 8);
                 k = next_normal;
                 unkn_object_shift_03(next_object - 1);
-                unkn_object_shift_02(i, k, next_object - 1);
+                unkn_object_shift_02(n, k, next_object - 1);
 
-                if (pos_0 == 87)
-                    merged_noop_unkn1(pos_0 + 10006);
                 k = p_thing - things;
                 p_thing->U.UVehicle.Object = next_object - 1;
                 game_objects[next_object - 1].ZScale = k;
@@ -1246,8 +1237,7 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
                 k = p_thing->U.UVehicle.MatrixIndex;
                 angle = LbArcTanAngle(local_mats[k].R[0][2], local_mats[k].R[2][2]);
                 p_thing->U.UVehicle.AngleY = (angle + LbFPMath_PI) & LbFPMath_AngleMask;
-                if (pos_0 == 87)
-                    merged_noop_unkn1(pos_0 + 10007);
+
                 veh_add(p_thing, p_thing->StartFrame);
                 k = p_thing->U.UVehicle.MatrixIndex;
                 angle = LbArcTanAngle(local_mats[k].R[0][2], local_mats[k].R[2][2]);
@@ -1262,8 +1252,6 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
                     }
                     mech_unkn_func_09(new_thing);
                 }
-                if (pos_0 == 87)
-                    merged_noop_unkn1(pos_0 + 10008);
                 debug_level(" placed vehicle", 1);
             }
         }
@@ -1274,7 +1262,9 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
         LOGERR("Restricting \"%s\", wanted %d, limit %ld", "game_commands", (int)next_command, limit);
         next_command = limit;
     }
-    LbFileRead(lev_fh, game_commands, 32 * next_command);
+    assert(sizeof(struct Command) == 32);
+    LbFileRead(lev_fh, game_commands, sizeof(struct Command) * next_command);
+
     LbFileRead(lev_fh, &level_def, 44);
     for (i = 0; i < 8; i++)
     {
@@ -1297,7 +1287,6 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
     LbFileRead(lev_fh, engine_mem_alloc_ptr + engine_mem_alloc_size - 32000, 15 * word_1531E0);
     LbFileRead(lev_fh, &unkn3de_len, sizeof(ushort));
     LbFileRead(lev_fh, engine_mem_alloc_ptr + engine_mem_alloc_size - 32000, unkn3de_len);
-    merged_noop_unkn1(999);
 
     if (fmtver >= 4)
     {
@@ -1432,8 +1421,6 @@ void load_level_pc(ushort map, short level)
 
         LbFileClose(lev_fh);
 
-        merged_noop_unkn1(998);
-
         if (fmtver <= 10)
         {
             for (i = 1; i < next_command; i++)
@@ -1444,7 +1431,6 @@ void load_level_pc(ushort map, short level)
                 game_used_lvl_objectives[i].Arg2 = 1;
         }
 
-        merged_noop_unkn1(997);
 
         for (i = 1; i < next_command ; i++)
         {
@@ -1458,11 +1444,10 @@ void load_level_pc(ushort map, short level)
                 }
             }
         }
-        merged_noop_unkn1(996);
         build_same_type_headers();
         if (fmtver >= 10)
             level_misc_update();
-        merged_noop_unkn1(995);
+
         if (level_deep_fix) {
             level_perform_deep_fix();
         } else {
@@ -1474,12 +1459,10 @@ void load_level_pc(ushort map, short level)
     {
         LOGERR("Could not open mission file, load skipped");
     }
-    merged_noop_unkn1(992);
     // No idea what exactly pressing F during level load does
     if (lbKeyOn[KC_F])
         unkn_f_pressed_func();
     fix_level_indexes();
-    merged_noop_unkn1(991);
 #endif
 }
 
