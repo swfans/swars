@@ -526,18 +526,116 @@ void read_missions_bin_file(int num)
 #endif
 }
 
-void save_objective_chain_conf(TbFileHandle fh, ushort objectv_head, char *buf)
+void sprint_objective(char *buf, ushort objectv)
 {
-    ushort objectv;
+    struct Objective *p_objectv;
+    struct ObjectiveDef *p_odef;
     char *s;
     ubyte nparams;
+
+    p_objectv = &game_used_objectives[objectv];
+    p_odef = &objectv_defs[p_objectv->Type];
+
+    s = buf;
+
+    sprintf(s, "P%02d = %s( ", (int)p_objectv->Pri, p_odef->CmdName);
+    s += strlen(s);
+    nparams = 0;
+
+    if ((p_odef->Flags & ObDF_ReqGroup) != 0) {
+        if (nparams) { sprintf(s, ", "); s += strlen(s); }
+        sprintf(s, "Group(%hd)", p_objectv->Thing);
+        s += strlen(s);
+        nparams++;
+    } else if ((p_odef->Flags & ObDF_ReqCount) != 0) {
+        if (nparams) { sprintf(s, ", "); s += strlen(s); }
+        sprintf(s, "Count(%hd)", p_objectv->Thing);
+        s += strlen(s);
+        nparams++;
+    } else if (((p_odef->Flags & ObDF_ReqThing) != 0) ||
+      (p_objectv->Thing != 0) || (p_objectv->UniqueID != 0)) {
+        if (nparams) { sprintf(s, ", "); s += strlen(s); }
+        sprintf(s, "Thing(%hd,%hu)", p_objectv->Thing, p_objectv->UniqueID);
+        s += strlen(s);
+        nparams++;
+    }
+    // Unexpected to have unique id withiut thing
+    if (((p_odef->Flags & ObDF_ReqThing) == 0) && (p_objectv->UniqueID != 0)) {
+        if (nparams) { sprintf(s, ", "); s += strlen(s); }
+        sprintf(s, "UniqueID(%hu)", p_objectv->UniqueID);
+        s += strlen(s);
+    }
+
+    if (((p_odef->Flags & ObDF_ReqCoord) != 0) ||
+      (p_objectv->X|p_objectv->Y|p_objectv->Z) != 0) {
+        if (nparams) { sprintf(s, ", "); s += strlen(s); }
+        sprintf(s, "Coord(%hd,%hd,%hd)", p_objectv->X, p_objectv->Y, p_objectv->Z);
+        s += strlen(s);
+        nparams++;
+    }
+    if (((p_odef->Flags & ObDF_ReqRadius) != 0) ||
+      (p_objectv->Radius != 0)) {
+        if (nparams) { sprintf(s, ", "); s += strlen(s); }
+        sprintf(s, "Radius(%hd)", p_objectv->Radius);
+        s += strlen(s);
+        nparams++;
+    }
+    if ((p_odef->Flags & ObDF_ReqAmount) != 0) {
+        if (nparams) { sprintf(s, ", "); s += strlen(s); }
+        sprintf(s, "Amount(%d)", (int)p_objectv->Arg2);
+        s += strlen(s);
+    } else if ((p_odef->Flags & ObDF_ReqSecGrp) != 0) {
+        if (nparams) { sprintf(s, ", "); s += strlen(s); }
+        sprintf(s, "SecGroup(%d)", (int)p_objectv->Arg2);
+        s += strlen(s);
+    } else if ((p_odef->Flags & ObDF_ReqSecTng) != 0) {
+        // TODO storing a ThingOffset in 8-bit value is risky; when possible, switch Arg2 with Thing
+        if (nparams) { sprintf(s, ", "); s += strlen(s); }
+        sprintf(s, "SecThing(%d)", (int)p_objectv->Arg2);
+        s += strlen(s);
+    } else if (p_objectv->Arg2 != 0) {
+        if (nparams) { sprintf(s, ", "); s += strlen(s); }
+        sprintf(s, "Arg2(%d)", (int)p_objectv->Arg2);
+        s += strlen(s);
+    }
+    if (p_objectv->StringIndex != 0) {
+        if (nparams) { sprintf(s, ", "); s += strlen(s); }
+        sprintf(s, "StringIndex(%hu)", p_objectv->StringIndex);
+        s += strlen(s);
+    }
+    if (p_objectv->Flags != 0) {
+        if (nparams) { sprintf(s, ", "); s += strlen(s); }
+        sprintf(s, "Flags(%hu)", p_objectv->Flags);
+        s += strlen(s);
+        nparams++;
+    }
+    if (p_objectv->ObjText != 0) {
+        if (nparams) { sprintf(s, ", "); s += strlen(s); }
+        sprintf(s, "TextId(%d)", (int)p_objectv->ObjText);
+        s += strlen(s);
+    }
+    if ((p_objectv->field_1B[0]|p_objectv->field_1B[1]|p_objectv->field_1B[2]|p_objectv->field_1B[3]) != 0) {
+        if (nparams) { sprintf(s, ", "); s += strlen(s); }
+        sprintf(s, "field_1B(%d,%d,%d,%d)", (int)p_objectv->field_1B[0],
+          (int)p_objectv->field_1B[1], (int)p_objectv->field_1B[2], (int)p_objectv->field_1B[3]);
+        s += strlen(s);
+    }
+    if (p_objectv->field_1F != 0) {
+        if (nparams) { sprintf(s, ", "); s += strlen(s); }
+        sprintf(s, "field_1F(%d)", (int)p_objectv->field_1F);
+        s += strlen(s);
+    }
+
+    sprintf(s, " )");
+}
+
+void save_objective_chain_conf(TbFileHandle fh, ushort objectv_head, char *buf, ulong buflen)
+{
+    ushort objectv;
 
     objectv = 0;
     while (objectv != objectv_head)
     {
-        struct Objective *p_objectv;
-        struct ObjectiveDef *p_odef;
-
         { // Go backwards through single-directional chain
             ushort nxobjectv;
             nxobjectv = objectv_head;
@@ -546,102 +644,9 @@ void save_objective_chain_conf(TbFileHandle fh, ushort objectv_head, char *buf)
             objectv = nxobjectv;
         }
 
-        p_objectv = &game_used_objectives[objectv];
-        p_odef = &objectv_defs[p_objectv->Type];
-        s = buf;
-
-        sprintf(s, "P%02d = %s( ", (int)p_objectv->Pri, p_odef->CmdName);
-        s += strlen(s);
-        nparams = 0;
-
-        if ((p_odef->Flags & ObDF_ReqGroup) != 0) {
-            if (nparams) { sprintf(s, ", "); s += strlen(s); }
-            sprintf(s, "Group(%hd)", p_objectv->Thing);
-            s += strlen(s);
-            nparams++;
-        } else if ((p_odef->Flags & ObDF_ReqCount) != 0) {
-            if (nparams) { sprintf(s, ", "); s += strlen(s); }
-            sprintf(s, "Count(%hd)", p_objectv->Thing);
-            s += strlen(s);
-            nparams++;
-        } else if (((p_odef->Flags & ObDF_ReqThing) != 0) ||
-          (p_objectv->Thing != 0) || (p_objectv->UniqueID != 0)) {
-            if (nparams) { sprintf(s, ", "); s += strlen(s); }
-            sprintf(s, "Thing(%hd,%hu)", p_objectv->Thing, p_objectv->UniqueID);
-            s += strlen(s);
-            nparams++;
-        }
-        // Unexpected to have unique id withiut thing
-        if (((p_odef->Flags & ObDF_ReqThing) == 0) && (p_objectv->UniqueID != 0)) {
-            if (nparams) { sprintf(s, ", "); s += strlen(s); }
-            sprintf(s, "UniqueID(%hu)", p_objectv->UniqueID);
-            s += strlen(s);
-        }
-
-        if (((p_odef->Flags & ObDF_ReqCoord) != 0) ||
-          (p_objectv->X|p_objectv->Y|p_objectv->Z) != 0) {
-            if (nparams) { sprintf(s, ", "); s += strlen(s); }
-            sprintf(s, "Coord(%hd,%hd,%hd)", p_objectv->X, p_objectv->Y, p_objectv->Z);
-            s += strlen(s);
-            nparams++;
-        }
-        if (((p_odef->Flags & ObDF_ReqRadius) != 0) ||
-          (p_objectv->Radius != 0)) {
-            if (nparams) { sprintf(s, ", "); s += strlen(s); }
-            sprintf(s, "Radius(%hd)", p_objectv->Radius);
-            s += strlen(s);
-            nparams++;
-        }
-        if ((p_odef->Flags & ObDF_ReqAmount) != 0) {
-            if (nparams) { sprintf(s, ", "); s += strlen(s); }
-            sprintf(s, "Amount(%d)", (int)p_objectv->Arg2);
-            s += strlen(s);
-        } else if ((p_odef->Flags & ObDF_ReqSecGrp) != 0) {
-            if (nparams) { sprintf(s, ", "); s += strlen(s); }
-            sprintf(s, "SecGroup(%d)", (int)p_objectv->Arg2);
-            s += strlen(s);
-        } else if ((p_odef->Flags & ObDF_ReqSecTng) != 0) {
-            // TODO storing a ThingOffset in 8-bit value is risky; when possible, switch Arg2 with Thing
-            if (nparams) { sprintf(s, ", "); s += strlen(s); }
-            sprintf(s, "SecThing(%d)", (int)p_objectv->Arg2);
-            s += strlen(s);
-        } else if (p_objectv->Arg2 != 0) {
-            if (nparams) { sprintf(s, ", "); s += strlen(s); }
-            sprintf(s, "Arg2(%d)", (int)p_objectv->Arg2);
-            s += strlen(s);
-        }
-        if (p_objectv->StringIndex != 0) {
-            if (nparams) { sprintf(s, ", "); s += strlen(s); }
-            sprintf(s, "StringIndex(%hu)", p_objectv->StringIndex);
-            s += strlen(s);
-        }
-        if (p_objectv->Flags != 0) {
-            if (nparams) { sprintf(s, ", "); s += strlen(s); }
-            sprintf(s, "Flags(%hu)", p_objectv->Flags);
-            s += strlen(s);
-            nparams++;
-        }
-        if (p_objectv->ObjText != 0) {
-            if (nparams) { sprintf(s, ", "); s += strlen(s); }
-            sprintf(s, "TextId(%d)", (int)p_objectv->ObjText);
-            s += strlen(s);
-        }
-        if ((p_objectv->field_1B[0]|p_objectv->field_1B[1]|p_objectv->field_1B[2]|p_objectv->field_1B[3]) != 0) {
-            if (nparams) { sprintf(s, ", "); s += strlen(s); }
-            sprintf(s, "field_1B(%d,%d,%d,%d)", (int)p_objectv->field_1B[0],
-              (int)p_objectv->field_1B[1], (int)p_objectv->field_1B[2], (int)p_objectv->field_1B[3]);
-            s += strlen(s);
-        }
-        if (p_objectv->field_1F != 0) {
-            if (nparams) { sprintf(s, ", "); s += strlen(s); }
-            sprintf(s, "field_1F(%d)", (int)p_objectv->field_1F);
-            s += strlen(s);
-        }
-
-        sprintf(s, " )\n");
-        s += strlen(s);
-
-        LbFileWrite(fh, buf, s - buf);
+        sprint_objective(buf, objectv);
+        strncat(buf, "\n", buflen);
+        LbFileWrite(fh, buf, strlen(buf));
     }
     if (objectv_head == 0) {
         sprintf(buf, "; no objectives defined\n");
@@ -836,7 +841,7 @@ void save_missions_conf_file(int num)
             sprintf(locbuf, "[misstart%d]\n", i);
             LbFileWrite(fh, locbuf, strlen(locbuf));
 
-            save_objective_chain_conf(fh, p_missi->StartHead, locbuf);
+            save_objective_chain_conf(fh, p_missi->StartHead, locbuf, sizeof(locbuf));
 
             sprintf(locbuf, "\n");
             LbFileWrite(fh, locbuf, strlen(locbuf));
@@ -846,7 +851,7 @@ void save_missions_conf_file(int num)
             sprintf(locbuf, "[missuccess%d]\n", i);
             LbFileWrite(fh, locbuf, strlen(locbuf));
 
-            save_objective_chain_conf(fh, p_missi->SuccessHead, locbuf);
+            save_objective_chain_conf(fh, p_missi->SuccessHead, locbuf, sizeof(locbuf));
 
             sprintf(locbuf, "\n");
             LbFileWrite(fh, locbuf, strlen(locbuf));
@@ -856,7 +861,7 @@ void save_missions_conf_file(int num)
             sprintf(locbuf, "[misfail%d]\n", i);
             LbFileWrite(fh, locbuf, strlen(locbuf));
 
-            save_objective_chain_conf(fh, p_missi->FailHead, locbuf);
+            save_objective_chain_conf(fh, p_missi->FailHead, locbuf, sizeof(locbuf));
 
             sprintf(locbuf, "\n");
             LbFileWrite(fh, locbuf, strlen(locbuf));
