@@ -740,20 +740,20 @@ void global_3d_store(int action)
 TbBool is_command_any_until(struct Command *p_cmd)
 {
 
-    if (p_cmd->Type < PCmd_UNTIL_P_PERSUADED)
+    if (p_cmd->Type < PCmd_UNTIL_P_PERSUADE)
     {
         if (p_cmd->Type < PCmd_UNTIL_P_V_DEAD)
             return false;
         return true;
     }
-    else if (p_cmd->Type > PCmd_UNTIL_OBJECT_DESTROYED)
+    else if (p_cmd->Type > PCmd_UNTIL_OBJT_DESTROY)
     {
-        if (p_cmd->Type < PCmd_UNTIL_OBJ)
+        if (p_cmd->Type < PCmd_UNTIL_OBJV)
         {
           if (p_cmd->Type != PCmd_UNTIL_TIME)
             return false;
         }
-        else if (p_cmd->Type > PCmd_UNTIL_OBJ && p_cmd->Type != PCmd_UNTIL_G_NOT_SEEN)
+        else if (p_cmd->Type > PCmd_UNTIL_OBJV && p_cmd->Type != PCmd_UNTIL_G_NOT_SEEN)
         {
             return false;
         }
@@ -958,18 +958,18 @@ void fix_thing_command(ushort cmd)
     case PCmd_UNKN32:
     case PCmd_WAIT_P_V_DEAD:
     case PCmd_WAIT_P_V_I_NEAR:
-    case PCmd_WAIT_P_V_I_ARRIVES:
-    case PCmd_WAIT_P_PERSUADED:
+    case PCmd_WAIT_P_V_I_ARRIVE:
+    case PCmd_WAIT_P_PERSUADE:
     case PCmd_WAIT_TIME:
     case PCmd_UNKN44:
     case PCmd_UNKN45:
     case PCmd_UNKN46:
     case PCmd_WAND_P_V_DEAD:
     case PCmd_WAND_P_V_I_NEAR:
-    case PCmd_WAND_P_V_I_ARRIVES:
-    case PCmd_WAND_P_PERSUADED:
-    case PCmd_WAND_MEM_G_PERSUADED:
-    case PCmd_WAND_ALL_G_PERSUADED:
+    case PCmd_WAND_P_V_I_ARRIVE:
+    case PCmd_WAND_P_PERSUADE:
+    case PCmd_WAND_MEM_G_PERSUADE:
+    case PCmd_WAND_ALL_G_PERSUADE:
     case PCmd_WAND_MISSION_SUCC:
     case PCmd_WAND_MISSION_FAIL:
     case PCmd_WAND_TIME:
@@ -997,12 +997,12 @@ void fix_thing_command(ushort cmd)
     case PCmd_UNKN6D:
     case PCmd_UNTIL_P_V_DEAD:
     case PCmd_UNTIL_P_V_I_NEAR:
-    case PCmd_UNTIL_P_V_I_ARRIVES:
-    case PCmd_UNTIL_P_PERSUADED:
+    case PCmd_UNTIL_P_V_I_ARRIVE:
+    case PCmd_UNTIL_P_PERSUADE:
     case PCmd_UNTIL_TIME:
     case PCmd_WITHIN_AREA:
     case PCmd_WITHIN_OFF:
-    case PCmd_UNLOCK_BUILD:
+    case PCmd_UNLOCK_BUILDN:
     case PCmd_HARD_AS_AGENT:
     case PCmd_UNTIL_G_NOT_SEEN:
     case PCmd_START_DANGER_MUSIC:
@@ -1013,10 +1013,10 @@ void fix_thing_command(ushort cmd)
         p_cmd->OtherThing = search_things_for_index(p_cmd->OtherThing);
         break;
     case PCmd_DESTROY_BUILDING:
-    case PCmd_WAIT_OBJECT_DESTROYED:
-    case PCmd_WAND_OBJECT_DESTROYED:
-    case PCmd_UNTIL_OBJECT_DESTROYED:
-    case PCmd_LOCK_BUILD:
+    case PCmd_WAIT_OBJT_DESTROY:
+    case PCmd_WAND_OBJT_DESTROY:
+    case PCmd_UNTIL_OBJT_DESTROY:
+    case PCmd_LOCK_BUILDN:
         p_cmd->OtherThing = find_nearest_object2(p_cmd->X, p_cmd->Z, 0);
         break;
     case PCmd_USE_VEHICLE:
