@@ -90,6 +90,8 @@ swars_SOURCES = \
 	packet.h \
 	people.c \
 	people.h \
+	pepgroup.c \
+	pepgroup.h \
 	player.h \
 	research.c \
 	research.h \
