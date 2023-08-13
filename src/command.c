@@ -24,6 +24,7 @@
 #include "bfmemut.h"
 #include "thing.h"
 #include "building.h"
+#include "pepgroup.h"
 #include "swlog.h"
 /******************************************************************************/
 
@@ -357,125 +358,170 @@ TbBool is_command_any_until(struct Command *p_cmd)
 void fix_thing_command_indexes(ushort cmd)
 {
     struct Command *p_cmd;
-    struct Thing *p_secthing;
-    short secthing;
+    struct CommandDef *p_cdef;
+    short thing;
 
     p_cmd = &game_commands[cmd];
+    p_cdef = &command_defs[p_cmd->Type];
 
-    if (p_cmd->OtherThing == 0)
-        return;
-
-    switch (p_cmd->Type)
+    if ((p_cdef->Flags & CmDF_ReqGroup) != 0)
     {
-    case PCmd_STAY:
-    case PCmd_GO_TO_POINT:
-    case PCmd_GO_TO_PERSON:
-    case PCmd_KILL_PERSON:
-    case PCmd_PERSUADE_PERSON:
-    case PCmd_BLOCK_PERSON:
-    case PCmd_SCARE_PERSON:
-    case PCmd_FOLLOW_PERSON:
-    case PCmd_SUPPORT_PERSON:
-    case PCmd_PROTECT_PERSON:
-    case PCmd_HIDE:
-    case PCmd_GET_ITEM:
-    case PCmd_DROP_SPEC_ITEM:
-    case PCmd_AVOID_PERSON:
-    case PCmd_UNKN16:
-    case PCmd_CATCH_FERRY:
-    case PCmd_EXIT_FERRY:
-    case PCmd_PING_EXIST:
-    case PCmd_SELF_DESTRUCT:
-    case PCmd_EXIT_VEHICLE:
-    case PCmd_GUARD_OFF:
-    case PCmd_EXECUTE_COMS:
-    case PCmd_UNKN27:
-    case PCmd_UNKN28:
-    case PCmd_UNKN29:
-    case PCmd_UNKN2A:
-    case PCmd_UNKN2B:
-    case PCmd_UNKN2C:
-    case PCmd_UNKN2D:
-    case PCmd_UNKN2E:
-    case PCmd_UNKN2F:
-    case PCmd_UNKN30:
-    case PCmd_UNKN31:
-    case PCmd_UNKN32:
-    case PCmd_WAIT_P_V_DEAD:
-    case PCmd_WAIT_P_V_I_NEAR:
-    case PCmd_WAIT_P_V_I_ARRIVE:
-    case PCmd_WAIT_P_PERSUADE:
-    case PCmd_WAIT_TIME:
-    case PCmd_UNKN44:
-    case PCmd_UNKN45:
-    case PCmd_UNKN46:
-    case PCmd_WAND_P_V_DEAD:
-    case PCmd_WAND_P_V_I_NEAR:
-    case PCmd_WAND_P_V_I_ARRIVE:
-    case PCmd_WAND_P_PERSUADE:
-    case PCmd_WAND_MEM_G_PERSUADE:
-    case PCmd_WAND_ALL_G_PERSUADE:
-    case PCmd_WAND_MISSION_SUCC:
-    case PCmd_WAND_MISSION_FAIL:
-    case PCmd_WAND_TIME:
-    case PCmd_UNKN58:
-    case PCmd_UNKN59:
-    case PCmd_UNKN5A:
-    case PCmd_UNKN5B:
-    case PCmd_UNKN5C:
-    case PCmd_UNKN5D:
-    case PCmd_UNKN5E:
-    case PCmd_UNKN5F:
-    case PCmd_UNKN60:
-    case PCmd_UNKN61:
-    case PCmd_UNKN62:
-    case PCmd_UNKN63:
-    case PCmd_UNKN64:
-    case PCmd_UNKN65:
-    case PCmd_UNKN66:
-    case PCmd_UNKN67:
-    case PCmd_ADD_STATIC:
-    case PCmd_WAIT_TIME2:
-    case PCmd_UNKN6A:
-    case PCmd_UNKN6B:
-    case PCmd_UNKN6C:
-    case PCmd_UNKN6D:
-    case PCmd_UNTIL_P_V_DEAD:
-    case PCmd_UNTIL_P_V_I_NEAR:
-    case PCmd_UNTIL_P_V_I_ARRIVE:
-    case PCmd_UNTIL_P_PERSUADE:
-    case PCmd_UNTIL_TIME:
-    case PCmd_WITHIN_AREA:
-    case PCmd_WITHIN_OFF:
-    case PCmd_UNLOCK_BUILDN:
-    case PCmd_HARD_AS_AGENT:
-    case PCmd_UNTIL_G_NOT_SEEN:
-    case PCmd_START_DANGER_MUSIC:
-    case PCmd_PING_P_V:
-    case PCmd_CAMERA_TRACK:
-    case PCmd_IGNORE_ENEMIES:
-    case PCmd_FULL_STAMINA:
-        p_cmd->OtherThing = search_things_for_index(p_cmd->OtherThing);
-        break;
-    case PCmd_DESTROY_BUILDING:
-    case PCmd_WAIT_OBJT_DESTROY:
-    case PCmd_WAND_OBJT_DESTROY:
-    case PCmd_UNTIL_OBJT_DESTROY:
-    case PCmd_LOCK_BUILDN:
-        p_cmd->OtherThing = find_nearest_object2(p_cmd->X, p_cmd->Z, 0);
-        break;
-    case PCmd_USE_VEHICLE:
-        p_cmd->OtherThing = search_things_for_index(p_cmd->OtherThing);
-        break;
-    case PCmd_CATCH_TRAIN:
+        if ((p_cmd->OtherThing < 0) || (p_cmd->OtherThing >= PEOPLE_GROUPS_COUNT)) {
+            LOGERR("%s %hu target group %hd out of range",
+              p_cdef->CmdName, cmd, p_cmd->OtherThing);
+            p_cmd->OtherThing = 1;
+        }
+    }
+    else if ((p_cdef->Flags & CmDF_ReqStationCoord) != 0)
+    {
+        struct Thing *p_secthing;
+        short secthing;
         secthing = search_for_station(p_cmd->X, p_cmd->Z);
         p_secthing = &things[secthing];
-        p_cmd->OtherThing = search_object_for_qface(p_secthing->U.UPerson.ComHead, 4u, 2u, 0);
-        break;
-    case PCmd_OPEN_DOME:
-    case PCmd_CLOSE_DOME:
-        p_cmd->OtherThing = find_nearest_object2(p_cmd->X, p_cmd->Z, SubTT_BLD_DOME);
-        break;
+        thing = search_object_for_qface(p_secthing->U.UPerson.ComHead, 4u, 2u, 0);
+        if (thing == 0) {
+            LOGSYNC("%s %hu target station not found based on coords (%hd,%hd); using train index",
+              p_cdef->CmdName, cmd, p_cmd->X, p_cmd->Z);
+            thing = search_things_for_index(p_cmd->OtherThing);
+        }
+        if (thing != 0)
+            p_cmd->OtherThing = thing;
+        else
+            LOGERR("%s %hu target train not found", p_cdef->CmdName, cmd);
+    }
+    else if ((p_cdef->Flags & CmDF_ReqDomeCoord) != 0)
+    {
+        thing = find_nearest_object2(p_cmd->X, p_cmd->Z, SubTT_BLD_DOME);
+        if (thing == 0) {
+            LOGSYNC("%s %hu target dome not found based on coords (%hd,%hd); using object index",
+              p_cdef->CmdName, cmd, p_cmd->X, p_cmd->Z);
+            thing = search_things_for_index(p_cmd->OtherThing);
+        }
+        if (thing != 0)
+            p_cmd->OtherThing = thing;
+        else
+            LOGERR("%s %hu target dome %hd not found",
+              p_cdef->CmdName, cmd, p_cmd->OtherThing);
+    }
+    else if ((p_cdef->Flags & CmDF_ReqBuildingCoord) != 0)
+    {
+        thing = find_nearest_object2(p_cmd->X, p_cmd->Z, 0);
+        if (thing == 0) {
+            LOGSYNC("%s %hu target building not found based on coords (%hd,%hd); using object index",
+              p_cdef->CmdName, cmd, p_cmd->X, p_cmd->Z);
+            thing = search_things_for_index(p_cmd->OtherThing);
+        }
+        if (thing != 0)
+            p_cmd->OtherThing = thing;
+        else
+            LOGERR("%s %hu target building %hd not found",
+              p_cdef->CmdName, cmd, p_cmd->OtherThing);
+    }
+    else if ((p_cdef->Flags & CmDF_ReqVehicleCoord) != 0)
+    {
+        thing = 0; // TODO no function to search for vehicle based on coords
+        if (thing == 0) {
+            LOGNO("%s %hu target vehicle not found based on coords (%hd,%hd); using vehicle index",
+              p_cdef->CmdName, cmd, p_cmd->X, p_cmd->Z);
+            thing = search_things_for_index(p_cmd->OtherThing);
+        }
+        if (thing != 0)
+            p_cmd->OtherThing = thing;
+        else
+            LOGERR("%s %hu target vehicle %hd not found",
+              p_cdef->CmdName, cmd, p_cmd->OtherThing);
+    }
+    else if ((p_cdef->Flags & CmDF_ReqThingCoord) != 0)
+    {
+        thing = 0; // TODO no function to search for thing based on coords
+        if (thing == 0) {
+            LOGNO("%s %hu target thing not found based on coords (%hd,%hd); using thing index",
+              p_cdef->CmdName, cmd, p_cmd->X, p_cmd->Z);
+            thing = search_things_for_index(p_cmd->OtherThing);
+        }
+        if (thing != 0)
+            p_cmd->OtherThing = thing;
+        else
+            LOGERR("%s %hu target thing %hs not found",
+              p_cdef->CmdName, cmd, p_cmd->OtherThing);
+    }
+    else if ((p_cdef->Flags & CmDF_ReqPersonThing) != 0)
+    {
+        thing = search_things_for_index(p_cmd->OtherThing);
+        if (thing != 0)
+            p_cmd->OtherThing = thing;
+        else
+            LOGERR("%s %hu target person %hd not found",
+              p_cdef->CmdName, cmd, p_cmd->OtherThing);
+    }
+    else if ((p_cdef->Flags & CmDF_ReqPVIThing) != 0)
+    {
+        thing = search_things_for_index(p_cmd->OtherThing);
+        if (thing != 0)
+            p_cmd->OtherThing = thing;
+        else
+            LOGERR("%s %hu target person/vehicle/item %hd not found",
+              p_cdef->CmdName, cmd, p_cmd->OtherThing);
+    }
+    else if ((p_cdef->Flags & CmDF_ReqOtherThing) != 0)
+    {
+        thing = search_things_for_index(p_cmd->OtherThing);
+        if (thing != 0)
+            p_cmd->OtherThing = thing;
+        else
+            LOGERR("%s %hu target thing %hd not found",
+              p_cdef->CmdName, cmd, p_cmd->OtherThing);
+    }
+
+    if ((p_cdef->Flags & CmDF_ReqCoord) != 0)
+    {
+        if ((p_cmd->X < 255) || (p_cmd->X > 32767 - 255)) {
+            LOGERR("%s %hu target coord X of %hd out of range", p_cdef->CmdName, cmd, p_cmd->X);
+            if (p_cmd->X < 255)
+                p_cmd->X = 255;
+            if (p_cmd->X > 32767 - 255)
+                p_cmd->X = 32767 - 255;
+        }
+        if ((p_cmd->Z < 255) || (p_cmd->Z > 32767 - 255)) {
+            LOGERR("%s %hu target coord Z of %hd out of range", p_cdef->CmdName, cmd, p_cmd->Z);
+            if (p_cmd->Z < 255)
+                p_cmd->Z = 255;
+            if (p_cmd->Z > 32767 - 255)
+                p_cmd->Z = 32767 - 255;
+        }
+    }
+
+    if (((p_cdef->Flags & CmDF_ReqCoord2) != 0) && (((p_cdef->Flags & CmDF_ReqRange2) == 0) ||
+        (((p_cdef->Flags & CmDF_ReqRange2) != 0) && ((p_cmd->Flags & 0x100000) != 0))))
+    {
+        if ((p_cmd->Arg2 < 255) || (p_cmd->Arg2 > 32767 - 255)) {
+            LOGERR("%s %hu target coord X/Arg2 of %d out of range",
+              p_cdef->CmdName, cmd, (int)p_cmd->Arg2);
+            if (p_cmd->Arg2 < 255)
+                p_cmd->Arg2 = 255;
+            if (p_cmd->Arg2 > 32767 - 255)
+                p_cmd->Arg2 = 32767 - 255;
+        }
+        if ((p_cmd->MyThing < 255) || (p_cmd->MyThing > 32767 - 255)) {
+            LOGERR("%s %hu target coord Z/MyThing of %d out of range",
+              p_cdef->CmdName, cmd, (int)p_cmd->MyThing);
+            if (p_cmd->MyThing < 255)
+                p_cmd->MyThing = 255;
+            if (p_cmd->MyThing > 32767 - 255)
+                p_cmd->MyThing = 32767 - 255;
+        }
+    } else
+    if (((p_cdef->Flags & CmDF_ReqRange2) != 0) && (((p_cdef->Flags & CmDF_ReqCoord2) == 0) ||
+        (((p_cdef->Flags & CmDF_ReqCoord2) != 0) && ((p_cmd->Flags & 0x100000) == 0))))
+    {
+        if ((p_cmd->Arg2 < 1) || (p_cmd->Arg2 > 32767 - 255)) {
+            LOGERR("%s %hu target Range/Arg2 of %d out of range",
+              p_cdef->CmdName, cmd, (int)p_cmd->Arg2);
+            if (p_cmd->Arg2 < 1)
+                p_cmd->Arg2 = 1;
+            if (p_cmd->Arg2 > 32767 - 255)
+                p_cmd->Arg2 = 32767 - 255;
+        }
     }
 }
 
