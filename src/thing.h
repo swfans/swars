@@ -741,6 +741,7 @@ struct ThingOldV9 { // sizeof=216
 #pragma pack()
 /******************************************************************************/
 extern ushort things_used_head;
+extern ushort same_type_head[256+32];
 
 extern struct Thing *things;
 extern struct SimpleThing *sthings;
@@ -760,6 +761,11 @@ void remove_sthing(short tngno);
 void refresh_old_thing_format(struct Thing *p_thing, struct ThingOldV9 *p_oldthing, ulong fmtver);
 
 short find_nearest_from_group(struct Thing *p_person, ushort group, ubyte no_persuaded);
+short search_things_for_index(short index);
+short find_nearest_object2(short mx, short mz, ushort sub_type);
+short search_object_for_qface(ushort object, ubyte gflag, ubyte flag, ushort after);
+short search_for_station(short x, short z);
+
 /******************************************************************************/
 #ifdef __cplusplus
 }

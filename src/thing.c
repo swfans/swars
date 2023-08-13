@@ -91,6 +91,38 @@ short find_nearest_from_group(struct Thing *p_person, ushort group, ubyte no_per
     return ret;
 }
 
+short search_things_for_index(short index)
+{
+    short ret;
+    asm volatile ("call ASM_search_things_for_index\n"
+        : "=r" (ret) : "a" (index));
+    return ret;
+}
+
+short find_nearest_object2(short mx, short mz, ushort sub_type)
+{
+    short ret;
+    asm volatile ("call ASM_find_nearest_object2\n"
+        : "=r" (ret) : "a" (mx), "d" (mz), "b" (sub_type));
+    return ret;
+}
+
+short search_object_for_qface(ushort object, ubyte gflag, ubyte flag, ushort after)
+{
+    short ret;
+    asm volatile ("call ASM_search_object_for_qface\n"
+        : "=r" (ret) : "a" (object), "d" (gflag), "b" (flag), "c" (after));
+    return ret;
+}
+
+short search_for_station(short x, short z)
+{
+    ushort ret;
+    asm volatile ("call ASM_search_for_station\n"
+        : "=r" (ret) : "a" (x), "d" (z));
+    return ret;
+}
+
 /** Maps fields from old Thing struct to the current one.
  */
 void refresh_old_thing_format(struct Thing *p_thing, struct ThingOldV9 *p_oldthing, ulong fmtver)

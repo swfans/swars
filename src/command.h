@@ -206,8 +206,24 @@ struct Command
 #pragma pack()
 /******************************************************************************/
 extern struct Command *game_commands;
+extern ushort next_command;
 
 void snprint_command(char *buf, ulong buflen, ushort cmd);
+TbBool is_command_any_until(struct Command *p_cmd);
+
+/** For Commands which rely on searching Things on map, find the Things
+ * and set indexes.
+ */
+void fix_thing_commands_indexes(void);
+
+/** Verify and update commands array.
+ */
+void check_and_fix_commands(void);
+
+/** Verify and update commands in the context of their assignment to things.
+ * Requires same_type lists to be already populated.
+ */
+void check_and_fix_thing_commands(void);
 /******************************************************************************/
 #ifdef __cplusplus
 }

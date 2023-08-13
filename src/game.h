@@ -646,7 +646,6 @@ extern struct ColColumn *game_col_columns;
 extern struct SingleObjectFace3 *game_special_object_faces;
 extern struct SingleObjectFace4 *game_special_object_faces4;
 extern struct FloorTile *game_floor_tiles;
-extern ushort next_command;
 extern ushort next_col_vect;
 extern ubyte *game_user_heap;
 extern struct SpecialPoint *game_screen_point_pool;
@@ -658,7 +657,6 @@ extern ubyte *spare_map_buffer;
 extern struct Objective *game_used_lvl_objectives;
 extern ushort next_used_lvl_objective;
 extern struct LevelMisc *game_level_miscs;
-extern ushort same_type_head[290];
 extern ushort word_176E38;
 
 extern PrimObjectPoint *prim_object_points;

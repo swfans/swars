@@ -22,6 +22,9 @@
 #include <string.h>
 #include "bfmemory.h"
 #include "bfmemut.h"
+#include "thing.h"
+#include "building.h"
+#include "swlog.h"
 /******************************************************************************/
 
 enum CommandDefFlags {
@@ -324,6 +327,231 @@ void snprint_command(char *buf, ulong buflen, ushort cmd)
 
 
     snprintf(s, buflen - (s-buf), " )");
+}
+
+TbBool is_command_any_until(struct Command *p_cmd)
+{
+
+    if (p_cmd->Type < PCmd_UNTIL_P_PERSUADE)
+    {
+        if (p_cmd->Type < PCmd_UNTIL_P_V_DEAD)
+            return false;
+        return true;
+    }
+    else if (p_cmd->Type > PCmd_UNTIL_OBJT_DESTROY)
+    {
+        if (p_cmd->Type < PCmd_UNTIL_OBJV)
+        {
+          if (p_cmd->Type != PCmd_UNTIL_TIME)
+            return false;
+        }
+        else if (p_cmd->Type > PCmd_UNTIL_OBJV && p_cmd->Type != PCmd_UNTIL_G_NOT_SEEN)
+        {
+            return false;
+        }
+        return true;
+    }
+    return true;
+}
+
+void fix_thing_command(ushort cmd)
+{
+    struct Command *p_cmd;
+    struct Thing *p_secthing;
+    short secthing;
+
+    p_cmd = &game_commands[cmd];
+
+    if (p_cmd->OtherThing == 0)
+        return;
+
+    switch (p_cmd->Type)
+    {
+    case PCmd_STAY:
+    case PCmd_GO_TO_POINT:
+    case PCmd_GO_TO_PERSON:
+    case PCmd_KILL_PERSON:
+    case PCmd_PERSUADE_PERSON:
+    case PCmd_BLOCK_PERSON:
+    case PCmd_SCARE_PERSON:
+    case PCmd_FOLLOW_PERSON:
+    case PCmd_SUPPORT_PERSON:
+    case PCmd_PROTECT_PERSON:
+    case PCmd_HIDE:
+    case PCmd_GET_ITEM:
+    case PCmd_DROP_SPEC_ITEM:
+    case PCmd_AVOID_PERSON:
+    case PCmd_UNKN16:
+    case PCmd_CATCH_FERRY:
+    case PCmd_EXIT_FERRY:
+    case PCmd_PING_EXIST:
+    case PCmd_SELF_DESTRUCT:
+    case PCmd_EXIT_VEHICLE:
+    case PCmd_GUARD_OFF:
+    case PCmd_EXECUTE_COMS:
+    case PCmd_UNKN27:
+    case PCmd_UNKN28:
+    case PCmd_UNKN29:
+    case PCmd_UNKN2A:
+    case PCmd_UNKN2B:
+    case PCmd_UNKN2C:
+    case PCmd_UNKN2D:
+    case PCmd_UNKN2E:
+    case PCmd_UNKN2F:
+    case PCmd_UNKN30:
+    case PCmd_UNKN31:
+    case PCmd_UNKN32:
+    case PCmd_WAIT_P_V_DEAD:
+    case PCmd_WAIT_P_V_I_NEAR:
+    case PCmd_WAIT_P_V_I_ARRIVE:
+    case PCmd_WAIT_P_PERSUADE:
+    case PCmd_WAIT_TIME:
+    case PCmd_UNKN44:
+    case PCmd_UNKN45:
+    case PCmd_UNKN46:
+    case PCmd_WAND_P_V_DEAD:
+    case PCmd_WAND_P_V_I_NEAR:
+    case PCmd_WAND_P_V_I_ARRIVE:
+    case PCmd_WAND_P_PERSUADE:
+    case PCmd_WAND_MEM_G_PERSUADE:
+    case PCmd_WAND_ALL_G_PERSUADE:
+    case PCmd_WAND_MISSION_SUCC:
+    case PCmd_WAND_MISSION_FAIL:
+    case PCmd_WAND_TIME:
+    case PCmd_UNKN58:
+    case PCmd_UNKN59:
+    case PCmd_UNKN5A:
+    case PCmd_UNKN5B:
+    case PCmd_UNKN5C:
+    case PCmd_UNKN5D:
+    case PCmd_UNKN5E:
+    case PCmd_UNKN5F:
+    case PCmd_UNKN60:
+    case PCmd_UNKN61:
+    case PCmd_UNKN62:
+    case PCmd_UNKN63:
+    case PCmd_UNKN64:
+    case PCmd_UNKN65:
+    case PCmd_UNKN66:
+    case PCmd_UNKN67:
+    case PCmd_ADD_STATIC:
+    case PCmd_WAIT_TIME2:
+    case PCmd_UNKN6A:
+    case PCmd_UNKN6B:
+    case PCmd_UNKN6C:
+    case PCmd_UNKN6D:
+    case PCmd_UNTIL_P_V_DEAD:
+    case PCmd_UNTIL_P_V_I_NEAR:
+    case PCmd_UNTIL_P_V_I_ARRIVE:
+    case PCmd_UNTIL_P_PERSUADE:
+    case PCmd_UNTIL_TIME:
+    case PCmd_WITHIN_AREA:
+    case PCmd_WITHIN_OFF:
+    case PCmd_UNLOCK_BUILDN:
+    case PCmd_HARD_AS_AGENT:
+    case PCmd_UNTIL_G_NOT_SEEN:
+    case PCmd_START_DANGER_MUSIC:
+    case PCmd_PING_P_V:
+    case PCmd_CAMERA_TRACK:
+    case PCmd_IGNORE_ENEMIES:
+    case PCmd_FULL_STAMINA:
+        p_cmd->OtherThing = search_things_for_index(p_cmd->OtherThing);
+        break;
+    case PCmd_DESTROY_BUILDING:
+    case PCmd_WAIT_OBJT_DESTROY:
+    case PCmd_WAND_OBJT_DESTROY:
+    case PCmd_UNTIL_OBJT_DESTROY:
+    case PCmd_LOCK_BUILDN:
+        p_cmd->OtherThing = find_nearest_object2(p_cmd->X, p_cmd->Z, 0);
+        break;
+    case PCmd_USE_VEHICLE:
+        p_cmd->OtherThing = search_things_for_index(p_cmd->OtherThing);
+        break;
+    case PCmd_CATCH_TRAIN:
+        secthing = search_for_station(p_cmd->X, p_cmd->Z);
+        p_secthing = &things[secthing];
+        p_cmd->OtherThing = search_object_for_qface(p_secthing->U.UPerson.ComHead, 4u, 2u, 0);
+        break;
+    case PCmd_OPEN_DOME:
+    case PCmd_CLOSE_DOME:
+        p_cmd->OtherThing = find_nearest_object2(p_cmd->X, p_cmd->Z, SubTT_BLD_DOME);
+        break;
+    }
+}
+
+void fix_thing_commands_indexes(void)
+{
+    ushort cmd;
+
+    for (cmd = 1; cmd < next_command; cmd++)
+    {
+        fix_thing_command(cmd);
+    }
+}
+
+void check_and_fix_commands(void)
+{
+    ushort cmd;
+
+    for (cmd = 1; cmd < next_command ; cmd++)
+    {
+        struct Command *p_cmd;
+
+        p_cmd = &game_commands[cmd];
+
+        if (p_cmd->Next > next_command)
+            p_cmd->Next = 0;
+
+        if ((p_cmd->Flags & 0x20000) != 0)
+        {
+            struct Command *p_nxcmd;
+
+            p_nxcmd = &game_commands[p_cmd->Next];
+            if (!is_command_any_until(p_nxcmd)) {
+                p_cmd->Flags &= ~0x20000;
+            }
+        }
+    }
+}
+
+void check_and_fix_thing_commands(void)
+{
+    short thing;
+    short i;
+    ushort cmd;
+
+    thing = same_type_head[1];
+    for (i = 0; thing != 0; i++)
+    {
+        struct Thing *p_thing;
+
+        if (i >= 1000) {
+            LOGERR("Infinite loop in same type things list");
+            break;
+        }
+        p_thing = &things[thing];
+
+        cmd = p_thing->U.UPerson.ComHead;
+        if (cmd > next_command) {
+            cmd = 0;
+            p_thing->U.UPerson.ComHead = cmd;
+        }
+        while (cmd != 0)
+        {
+            struct Command *p_cmd;
+
+            p_cmd = &game_commands[cmd];
+
+            if (0) { // Commands debug code
+                char locbuf[256];
+                snprint_command(locbuf, sizeof(locbuf), cmd);
+                LOGSYNC("Person %hd Command %hu: %s", thing, cmd, locbuf);
+            }
+
+            cmd = p_cmd->Next;
+        }
+        thing = p_thing->LinkSame;
+    }
 }
 
 /******************************************************************************/
