@@ -96,7 +96,7 @@ struct CommandDef command_defs[] = {
     {"TNG_CMD_SUPPORT_PERSON",		NULL,				CmDF_ReqPersonThing },
     {"TNG_CMD_PROTECT_PERSON",		NULL,				CmDF_ReqPersonThing },
     {"TNG_CMD_HIDE",				NULL,				CmDF_None },
-    {"TNG_CMD_GET_ITEM",			NULL,				CmDF_ReqOtherIndex },
+    {"TNG_CMD_GET_ITEM",			NULL,				CmDF_ReqPVIThing },
     {"TNG_CMD_USE_WEAPON",			NULL,				CmDF_ReqOtherIndex|CmDF_ReqCoord }, // OtherIndex = weapon
     {"TNG_CMD_DROP_SPEC_ITEM",		NULL,				CmDF_ReqPVIThing },
     {"TNG_CMD_AVOID_PERSON",		NULL,				CmDF_ReqPersonThing },
@@ -354,7 +354,7 @@ TbBool is_command_any_until(struct Command *p_cmd)
     return true;
 }
 
-void fix_thing_command(ushort cmd)
+void fix_thing_command_indexes(ushort cmd)
 {
     struct Command *p_cmd;
     struct Thing *p_secthing;
@@ -485,7 +485,7 @@ void fix_thing_commands_indexes(void)
 
     for (cmd = 1; cmd < next_command; cmd++)
     {
-        fix_thing_command(cmd);
+        fix_thing_command_indexes(cmd);
     }
 }
 
