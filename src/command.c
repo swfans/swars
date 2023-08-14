@@ -355,6 +355,8 @@ TbBool is_command_any_until(struct Command *p_cmd)
     return true;
 }
 
+#define MAP_BORDER_MARGIN 32
+
 void fix_thing_command_indexes(ushort cmd)
 {
     struct Command *p_cmd;
@@ -475,52 +477,52 @@ void fix_thing_command_indexes(ushort cmd)
 
     if ((p_cdef->Flags & CmDF_ReqCoord) != 0)
     {
-        if ((p_cmd->X < 255) || (p_cmd->X > 32767 - 255)) {
+        if ((p_cmd->X < MAP_BORDER_MARGIN) || (p_cmd->X > 32767 - MAP_BORDER_MARGIN)) {
             LOGERR("%s %hu target coord X of %hd out of range", p_cdef->CmdName, cmd, p_cmd->X);
-            if (p_cmd->X < 255)
-                p_cmd->X = 255;
-            if (p_cmd->X > 32767 - 255)
-                p_cmd->X = 32767 - 255;
+            if ((p_cmd->X < MAP_BORDER_MARGIN) && (p_cmd->X >= -16384))
+                p_cmd->X = MAP_BORDER_MARGIN;
+            if ((p_cmd->X > 32767 - MAP_BORDER_MARGIN) || (p_cmd->X < -16384))
+                p_cmd->X = 32767 - MAP_BORDER_MARGIN;
         }
-        if ((p_cmd->Z < 255) || (p_cmd->Z > 32767 - 255)) {
+        if ((p_cmd->Z < MAP_BORDER_MARGIN) || (p_cmd->Z > 32767 - MAP_BORDER_MARGIN)) {
             LOGERR("%s %hu target coord Z of %hd out of range", p_cdef->CmdName, cmd, p_cmd->Z);
-            if (p_cmd->Z < 255)
-                p_cmd->Z = 255;
-            if (p_cmd->Z > 32767 - 255)
-                p_cmd->Z = 32767 - 255;
+            if ((p_cmd->Z < MAP_BORDER_MARGIN) && (p_cmd->Z >= -16384))
+                p_cmd->Z = MAP_BORDER_MARGIN;
+            if ((p_cmd->Z > 32767 - MAP_BORDER_MARGIN) || (p_cmd->Z < -16384))
+                p_cmd->Z = 32767 - MAP_BORDER_MARGIN;
         }
     }
 
     if (((p_cdef->Flags & CmDF_ReqCoord2) != 0) && (((p_cdef->Flags & CmDF_ReqRange2) == 0) ||
         (((p_cdef->Flags & CmDF_ReqRange2) != 0) && ((p_cmd->Flags & 0x100000) != 0))))
     {
-        if ((p_cmd->Arg2 < 255) || (p_cmd->Arg2 > 32767 - 255)) {
+        if ((p_cmd->Arg2 < MAP_BORDER_MARGIN) || (p_cmd->Arg2 > 32767 - MAP_BORDER_MARGIN)) {
             LOGERR("%s %hu target coord X/Arg2 of %d out of range",
               p_cdef->CmdName, cmd, (int)p_cmd->Arg2);
-            if (p_cmd->Arg2 < 255)
-                p_cmd->Arg2 = 255;
-            if (p_cmd->Arg2 > 32767 - 255)
-                p_cmd->Arg2 = 32767 - 255;
+            if ((p_cmd->Arg2 < MAP_BORDER_MARGIN) && (p_cmd->Arg2 >= -16384))
+                p_cmd->Arg2 = MAP_BORDER_MARGIN;
+            if ((p_cmd->Arg2 > 32767 - MAP_BORDER_MARGIN) || (p_cmd->Arg2 < -16384))
+                p_cmd->Arg2 = 32767 - MAP_BORDER_MARGIN;
         }
-        if ((p_cmd->MyThing < 255) || (p_cmd->MyThing > 32767 - 255)) {
+        if ((p_cmd->MyThing < MAP_BORDER_MARGIN) || (p_cmd->MyThing > 32767 - MAP_BORDER_MARGIN)) {
             LOGERR("%s %hu target coord Z/MyThing of %d out of range",
               p_cdef->CmdName, cmd, (int)p_cmd->MyThing);
-            if (p_cmd->MyThing < 255)
-                p_cmd->MyThing = 255;
-            if (p_cmd->MyThing > 32767 - 255)
-                p_cmd->MyThing = 32767 - 255;
+            if ((p_cmd->MyThing < MAP_BORDER_MARGIN) && (p_cmd->MyThing >= -16384))
+                p_cmd->MyThing = MAP_BORDER_MARGIN;
+            if ((p_cmd->MyThing > 32767 - MAP_BORDER_MARGIN) || (p_cmd->MyThing < -16384))
+                p_cmd->MyThing = 32767 - MAP_BORDER_MARGIN;
         }
     } else
     if (((p_cdef->Flags & CmDF_ReqRange2) != 0) && (((p_cdef->Flags & CmDF_ReqCoord2) == 0) ||
         (((p_cdef->Flags & CmDF_ReqCoord2) != 0) && ((p_cmd->Flags & 0x100000) == 0))))
     {
-        if ((p_cmd->Arg2 < 1) || (p_cmd->Arg2 > 32767 - 255)) {
+        if ((p_cmd->Arg2 < 1) || (p_cmd->Arg2 > 32767 - MAP_BORDER_MARGIN)) {
             LOGERR("%s %hu target Range/Arg2 of %d out of range",
               p_cdef->CmdName, cmd, (int)p_cmd->Arg2);
-            if (p_cmd->Arg2 < 1)
+            if ((p_cmd->Arg2 < 1) && (p_cmd->Arg2 >= -16384))
                 p_cmd->Arg2 = 1;
-            if (p_cmd->Arg2 > 32767 - 255)
-                p_cmd->Arg2 = 32767 - 255;
+            if ((p_cmd->Arg2 > 32767 - MAP_BORDER_MARGIN) || (p_cmd->Arg2 < -16384))
+                p_cmd->Arg2 = 32767 - MAP_BORDER_MARGIN;
         }
     }
 }
