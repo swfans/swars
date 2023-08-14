@@ -337,7 +337,7 @@ struct Thing { // sizeof=168
     long VZ;
     short Speed;
     short Health;
-    ushort Owner;
+    short Owner;
     ubyte PathOffset;
     ubyte SubState;
     struct Thing *PTarget;
@@ -375,7 +375,8 @@ struct SimpleThing
     short Timer1;
     short StartTimer1;
     char U[12];
-    long field_38;
+    short field_38;
+    ushort UniqueID;
 };
 
 /** Old structure for storing State of any Thing.
@@ -766,6 +767,7 @@ short search_things_for_index(short index);
 short find_nearest_object2(short mx, short mz, ushort sub_type);
 short search_object_for_qface(ushort object, ubyte gflag, ubyte flag, ushort after);
 short search_for_station(short x, short z);
+short search_things_for_uniqueid(short index, ubyte flag);
 
 /******************************************************************************/
 #ifdef __cplusplus

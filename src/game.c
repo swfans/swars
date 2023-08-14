@@ -738,10 +738,91 @@ void global_3d_store(int action)
 
 ubyte fix_single_objective(struct Objective *p_objectv)
 {
+#if 0
     ubyte ret;
     asm volatile ("call ASM_fix_single_objective\n"
         : "=r" (ret) : "a" (p_objectv));
     return ret;
+#else
+    struct Thing *p_thing;
+    struct SimpleThing *p_sthing;
+    short thing;
+    ubyte ret;
+
+    ret = 0;
+    switch (p_objectv->Type) // TODO fix parameters based on objectv_defs[] flags
+    {
+    case GAME_OBJ_P_DEAD:
+    case GAME_OBJ_P_ARRIVES:
+    case GAME_OBJ_PERSUADE_P:
+    case GAME_OBJ_GET_ITEM:
+    case GAME_OBJ_PKILL_P:
+        // TODO this seem stupid - why would fixing some objectives depend on level and map number?
+        if (p_objectv->Level != (current_level - 1) % 15 + 1) {
+            ret = 1;
+            break;
+        }
+        if (p_objectv->Map != current_map) {
+            ret = 1;
+            break;
+        }
+        if (p_objectv->Thing > 0)
+        {
+            thing = search_things_for_index(p_objectv->Thing);
+            p_thing = &things[thing];
+            if (p_thing->U.UPerson.UniqueID != p_objectv->UniqueID)
+                thing = 0;
+            if (thing == 0) {
+                thing = search_things_for_uniqueid(p_objectv->UniqueID, 1);
+            }
+        }
+        else
+        {
+            thing = search_things_for_index(p_objectv->Thing);
+            p_sthing = &sthings[thing];
+            if (p_sthing->UniqueID != p_objectv->UniqueID)
+                thing = 0;
+            if (thing == 0) {
+                thing = search_things_for_uniqueid(p_objectv->UniqueID, 0);
+            }
+        }
+        if (thing != 0) {
+            p_objectv->Thing = thing;
+            ret = 1;
+        } else {
+            LOGWARN("OBJV type=%d target Thing%d UID=%d not found",
+              (int)p_objectv->Type, (int)p_objectv->Thing, (int)p_objectv->UniqueID);
+        }
+        break;
+    case GAME_OBJ_ALL_G_DEAD:
+    case GAME_OBJ_MEM_G_DEAD:
+    case GAME_OBJ_P_NEAR:
+    case GAME_OBJ_MEM_G_NEAR:
+    case GAME_OBJ_MEM_G_ARRIVES:
+    case GAME_OBJ_ALL_G_ARRIVES:
+    case GAME_OBJ_PERSUADE_MEM_G:
+    case GAME_OBJ_PERSUADE_ALL_G:
+    case GAME_OBJ_TIME:
+    case GAME_OBJ_USE_ITEM:
+    case GAME_OBJ_FUNDS:
+    case GAME_OBJ_PKILL_G:
+    case GAME_OBJ_PKILL_ALL_G:
+    default:
+        break;
+    case GAME_OBJ_DESTROY_OBJECT:
+        thing = find_nearest_object2(p_objectv->X, p_objectv->Z, 0);
+        if (thing != 0) {
+            p_objectv->Thing = thing;
+            ret = 1;
+        } else {
+            LOGWARN("OBJV type=%d target Thing%d at (%d,%d) not found",
+              (int)p_objectv->Type, (int)p_objectv->Thing,
+              (int)p_objectv->X, (int)p_objectv->Z);
+        }
+        break;
+    }
+    return ret;
+#endif
 }
 
 void unkn_f_pressed_func(void)

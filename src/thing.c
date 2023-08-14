@@ -126,6 +126,14 @@ short search_things_for_index(short index)
     return 0;
 }
 
+short search_things_for_uniqueid(short index, ubyte flag)
+{
+    short ret;
+    asm volatile ("call ASM_search_things_for_uniqueid\n"
+        : "=r" (ret) : "a" (index), "d" (flag));
+    return ret;
+}
+
 short find_nearest_object2(short mx, short mz, ushort sub_type)
 {
     short ret;
