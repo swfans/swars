@@ -478,7 +478,7 @@ struct InGame {
     ubyte DangerTrack;
     ubyte UseMultiMedia;
     ubyte fld_unk7DE;
-    ubyte fld_unk7DF;
+    ubyte GameOver;
     struct Scanner Scanner;
     long Credits;
     short fld_unkC4B;

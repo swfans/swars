@@ -6204,24 +6204,26 @@ void mission_over(void)
         lstate = -1;
         missi = mission_open[mslot];
         email = mission_list[missi].FailID;
-         ingame.fld_unkC57++;
+        ingame.fld_unkC57++;
         if (email != 0)
             queue_up_new_mail(0, -email);
         delete_open_mission(mslot, -1);
         play_smacker(MPly_MissiFail);
     }
 
-    ingame.fld_unk7DF = 0;
+    ingame.GameOver = 0;
     if (lstate == -1)
     {
       if (!mission_remain_until_success(ingame.CurrentMission))
-        ingame.fld_unk7DF = 1;
+        ingame.GameOver = 1;
     }
     if (new_mail)
-        ingame.fld_unk7DF = 0;
+        ingame.GameOver = 0;
     if (cryo_agents.NumAgents == 0)
-        ingame.fld_unk7DF = 1;
-    if (ingame.fld_unk7DF)
+        ingame.GameOver = 1;
+    LOGSYNC("Mission %d ended with state=%d gameover=%d",
+      (int)last_missi, (int)lstate, (int)ingame.GameOver);
+    if (ingame.GameOver)
         play_smacker(MPly_GameOver);
 #endif
 }
@@ -9107,12 +9109,12 @@ void show_menu_screen_st2(void)
       {
             old_mission_brief = open_brief;
       }
-      if ( ingame.fld_unk7DF )
+      if ( ingame.GameOver )
       {
             screentype = SCRT_MAINMENU;
             if (ingame.Flags & 0x10)
                 LbFileDelete("qdata/savegame/synwarsm.sav");
-            ingame.fld_unk7DF = 0;
+            ingame.GameOver = 0;
       }
       else
       {
