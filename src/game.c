@@ -736,7 +736,7 @@ void global_3d_store(int action)
     }
 }
 
-ubyte fix_single_objective(struct Objective *p_objectv)
+ubyte fix_single_objective(struct Objective *p_objectv, ushort objectv, const char *srctext)
 {
 #if 0
     ubyte ret;
@@ -790,8 +790,9 @@ ubyte fix_single_objective(struct Objective *p_objectv)
             p_objectv->Thing = thing;
             ret = 1;
         } else {
-            LOGWARN("OBJV type=%d target Thing%d UID=%d not found",
-              (int)p_objectv->Type, (int)p_objectv->Thing, (int)p_objectv->UniqueID);
+            LOGWARN("OBJV-%s-%d type=%d target Thing%d UID=%d not found",
+              srctext, objectv, (int)p_objectv->Type,
+              (int)p_objectv->Thing, (int)p_objectv->UniqueID);
         }
         break;
     case GAME_OBJ_ALL_G_DEAD:
@@ -815,9 +816,9 @@ ubyte fix_single_objective(struct Objective *p_objectv)
             p_objectv->Thing = thing;
             ret = 1;
         } else {
-            LOGWARN("OBJV type=%d target Thing%d at (%d,%d) not found",
-              (int)p_objectv->Type, (int)p_objectv->Thing,
-              (int)p_objectv->X, (int)p_objectv->Z);
+            LOGWARN("OBJV-%s-%d type=%d target Thing%d at (%d,%d) not found",
+              srctext, objectv, (int)p_objectv->Type,
+              (int)p_objectv->Thing, (int)p_objectv->X, (int)p_objectv->Z);
         }
         break;
     }
@@ -875,20 +876,20 @@ void fix_level_indexes(void)
 
     for (objectv = 1; objectv < next_used_lvl_objective; objectv++)
     {
-          struct Objective *p_objectv;
-
-          p_objectv = &game_used_lvl_objectives[objectv];
-          p_objectv->Level = (current_level - 1) % 15 + 1;
-          p_objectv->Map = current_map;
-          fix_single_objective(p_objectv);
-    }
-
-    for (objectv = 1; objectv < next_used_lvl_objective; objectv++)
-    {
         struct Objective *p_objectv;
 
         p_objectv = &game_used_lvl_objectives[objectv];
-        fix_single_objective(p_objectv);
+        p_objectv->Level = (current_level - 1) % 15 + 1;
+        p_objectv->Map = current_map;
+        fix_single_objective(p_objectv, objectv, "UL");
+    }
+
+    for (objectv = 1; objectv < next_objective; objectv++)
+    {
+        struct Objective *p_objectv;
+
+        p_objectv = &game_objectives[objectv];
+        fix_single_objective(p_objectv, objectv, "S");
     }
 
     for (objectv = 1; objectv < next_used_objective; objectv++)
@@ -896,7 +897,7 @@ void fix_level_indexes(void)
         struct Objective *p_objectv;
 
         p_objectv = &game_used_objectives[objectv];
-        fix_single_objective(p_objectv);
+        fix_single_objective(p_objectv, objectv, "U");
     }
 
     for (thing = 1; thing < 1000; thing++)
