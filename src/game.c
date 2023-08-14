@@ -34,6 +34,7 @@
 #include "building.h"
 #include "campaign.h"
 #include "cybmod.h"
+#include "pepgroup.h"
 #include "display.h"
 #include "dos.h"
 #include "game.h"
@@ -97,8 +98,6 @@ extern ubyte *m_spr_data;
 extern ubyte *m_spr_data_end;
 extern struct TbSprite *m_sprites;
 extern struct TbSprite *m_sprites_end;
-
-extern struct WarFlag war_flags[32];
 
 extern ulong stored_l3d_next_object[1];
 extern ulong stored_l3d_next_object_face[1];
@@ -872,128 +871,6 @@ void func_6031c(short tx, short tz, short a3, short ty)
         : : "a" (tx), "d" (tz), "b" (a3), "c" (ty));
 }
 
-/** Finds Group ID for which there are no things created.
- */
-short find_unused_group_id(TbBool largest)
-{
-    short thing, i;
-    ulong used_groups;
-    struct Thing *p_thing;
-
-    used_groups = 0;
-    for (thing = things_used_head; thing != 0; thing = p_thing->LinkChild)
-    {
-        p_thing = &things[thing];
-        used_groups |= (1 << p_thing->U.UPerson.Group);
-    }
-    if (largest)
-    {
-        for (i = 31; i > 0; i--) {
-            if ((used_groups & (1 << i)) == 0)
-                return i;
-        }
-    }
-    else
-    {
-        for (i = 1; i < 32; i++) {
-            if ((used_groups & (1 << i)) == 0)
-                return i;
-        }
-    }
-    return -1;
-}
-
-/** Count how many people of given kind are in given group.
- */
-ushort count_people_in_group(ushort group, short subtype)
-{
-    short thing;
-    struct Thing *p_thing;
-    ushort count;
-
-    count = 0;
-    for (thing = things_used_head; thing != 0; thing = p_thing->LinkChild)
-    {
-        p_thing = &things[thing];
-
-        if (p_thing->U.UPerson.Group != group)
-            continue;
-
-        if (p_thing->Type != TT_PERSON)
-            continue;
-
-        if ((subtype != -1) && (p_thing->SubType != subtype))
-            continue;
-
-        count++;
-    }
-    return count;
-}
-
-/** Copy all properties of one group into another group.
- */
-void thing_group_copy(short pv_group, short nx_group, ubyte allow_kill)
-{
-    int i;
-
-    for (i = 0; i < 32; i++)
-    {
-        if (i == pv_group)
-        {
-            war_flags[i].KillOnSight &= ~(1 << pv_group);
-            war_flags[i].KillIfWeaponOut &= ~(1 << pv_group);
-            war_flags[i].KillIfArmed &= ~(1 << pv_group);
-            war_flags[i].KillOnSight &= ~(1 << nx_group);
-            war_flags[i].KillIfWeaponOut &= ~(1 << nx_group);
-            war_flags[i].KillIfArmed &= ~(1 << nx_group);
-            continue;
-        }
-        if ((war_flags[i].KillOnSight & (1 << pv_group)) != 0)
-            war_flags[i].KillOnSight |= (1 << nx_group);
-        else
-            war_flags[i].KillOnSight &= ~(1 << nx_group);
-
-        if ((war_flags[i].KillIfWeaponOut & (1 << pv_group)) != 0)
-            war_flags[i].KillIfWeaponOut |= (1 << nx_group);
-        else
-            war_flags[i].KillIfWeaponOut &= ~(1 << nx_group);
-
-        if ((war_flags[i].KillIfArmed & (1 << pv_group)) != 0)
-            war_flags[i].KillIfArmed |= (1 << nx_group);
-        else
-            war_flags[i].KillIfArmed &= ~(1 << nx_group);
-
-        if ((war_flags[i].Truce & (1 << pv_group)) != 0)
-            war_flags[i].Truce |= (1 << nx_group);
-        else
-            war_flags[i].Truce &= ~(1 << nx_group);
-    }
-
-    LbMemoryCopy(&war_flags[nx_group], &war_flags[pv_group], sizeof(struct WarFlag));
-
-    if (allow_kill & 0x01) {
-        war_flags[pv_group].KillOnSight |= (1 << nx_group);
-        war_flags[nx_group].KillOnSight |= (1 << pv_group);
-    }
-    if (allow_kill & 0x02) {
-        war_flags[pv_group].KillIfWeaponOut |= (1 << nx_group);
-        war_flags[nx_group].KillIfWeaponOut |= (1 << pv_group);
-    }
-    if (allow_kill & 0x04) {
-        war_flags[pv_group].KillIfArmed |= (1 << nx_group);
-        war_flags[nx_group].KillIfArmed |= (1 << pv_group);
-    }
-
-    for (i = 0; i < 8; i++)
-    {
-        if (level_def.PlayableGroups[i] == pv_group) {
-            level_def.PlayableGroups[i] = nx_group;
-            if (pv_group == 0) // If replacing group 0, don't modify all the filler zeros
-                break;
-        }
-    }
-}
-
 /** Transfer some people of given subtype from one group to the other.
  */
 int thing_group_transfer_people(short pv_group, short nx_group, short subtype, int limit)
@@ -1034,7 +911,7 @@ short find_group_which_looks_like_human_player(TbBool strict)
     short n_partial;
 
     n_partial = 0;
-    for (group = 0; group < 32; group++)
+    for (group = 0; group < PEOPLE_GROUPS_COUNT; group++)
     {
         int n_all, n_agents, n_zealots, n_punks;
 
@@ -1195,7 +1072,7 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
             p_thing->LinkParent = loc_thing.LinkParent;
             p_thing->LinkChild = loc_thing.LinkChild;
             // We have limited amount of group definitions
-            if (p_thing->U.UObject.Group >= 32)
+            if (p_thing->U.UObject.Group >= PEOPLE_GROUPS_COUNT)
                 p_thing->U.UObject.Group = 0;
             // All relevant thing types must have the values below at same position
             p_thing->U.UObject.EffectiveGroup = p_thing->U.UObject.Group;
@@ -1294,7 +1171,7 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
     LbFileRead(lev_fh, &level_def, 44);
     for (i = 0; i < 8; i++)
     {
-        if (level_def.PlayableGroups[i] >= 32)
+        if (level_def.PlayableGroups[i] >= PEOPLE_GROUPS_COUNT)
             level_def.PlayableGroups[i] = 0;
     }
 
@@ -1302,7 +1179,7 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
     LbFileRead(lev_fh, war_flags, 32 * sizeof(struct WarFlag));
     LbFileRead(lev_fh, &word_1531E0, sizeof(ushort));
     LOGSYNC("Level fmtver=%lu n_command=%hu word_1531E0=%hu", fmtver, next_command, word_1531E0);
-    for (k = 0; k < 32; k++)
+    for (k = 0; k < PEOPLE_GROUPS_COUNT; k++)
     {
         for (i = 0; i < 8; i++)
         {

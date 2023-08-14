@@ -20,7 +20,6 @@
 #define PEPGROUP_H
 
 #include "bftypes.h"
-#include "cybmod.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -30,8 +29,45 @@ extern "C" {
 
 #define PEOPLE_GROUPS_COUNT 32
 
+/** Data presenting group attitude toward other groups.
+ */
+struct WarFlag { // sizeof=40
+ /** Bitfields of groups whose members are attacked  on sight.
+  */
+  ulong KillOnSight;
+ /** Bitfields of groups whose members are attacked if wielding visible weapons.
+  */
+  ulong KillIfWeaponOut;
+ /** Bitfields of groups whose members are attacked if have any weapons, even concealed.
+  */
+  ulong KillIfArmed;
+ /** Bitfields of groups whose members are not attacked.
+  */
+  ulong Truce;
+  ubyte Guardians[8];
+  long ugfld_24;
+  long ugfld_28;
+  long ugfld_32;
+  long ugfld_36;
+};
+
 #pragma pack()
 /******************************************************************************/
+extern struct WarFlag war_flags[PEOPLE_GROUPS_COUNT];
+
+/** Finds Group ID for which there are no things created.
+ */
+short find_unused_group_id(TbBool largest);
+
+/** Count how many people of given kind are in given group.
+ *
+ * This can be called during level load, as it does not use per-type linked lists.
+ */
+ushort count_people_in_group(ushort group, short subtype);
+
+/** Copy all properties of one group into another group.
+ */
+void thing_group_copy(short pv_group, short nx_group, ubyte allow_kill);
 
 /******************************************************************************/
 #ifdef __cplusplus

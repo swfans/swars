@@ -439,28 +439,6 @@ struct ScreenMenuBox { // sizeof=42
   sbyte field_29;
 };
 
-/** Data presenting group attitude toward other groups.
- */
-struct WarFlag { // sizeof=40
- /** Bitfields of groups whose members are attacked  on sight.
-  */
-  ulong KillOnSight;
- /** Bitfields of groups whose members are attacked if wielding visible weapons.
-  */
-  ulong KillIfWeaponOut;
- /** Bitfields of groups whose members are attacked if have any weapons, even concealed.
-  */
-  ulong KillIfArmed;
- /** Bitfields of groups whose members are not attacked.
-  */
-  ulong Truce;
-  ubyte Guardians[8];
-  long ugfld_24;
-  long ugfld_28;
-  long ugfld_32;
-  long ugfld_36;
-};
-
 struct LevelDef {
   ubyte PlayableGroups[8];
   ubyte field_8[33];
