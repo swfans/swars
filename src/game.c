@@ -1183,7 +1183,8 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
             } else {
                 LbFileRead(lev_fh, p_thing, sizeof(struct Thing));
             }
-            LOGNO("Thing at (%d,%d,%d) type=%d,%d", p_thing->X, p_thing->Y, p_thing->Z,
+            LOGNO("Thing%d at (%d,%d,%d) type=%d,%d", p_thing->ThingOffset,
+              p_thing->X >> 8, p_thing->Y >> 8, p_thing->Z >> 8,
               (int)p_thing->Type, (int)p_thing->SubType);
 
             if ((p_thing->Z >> 8) < 256)

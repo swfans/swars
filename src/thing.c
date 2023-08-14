@@ -93,10 +93,37 @@ short find_nearest_from_group(struct Thing *p_person, ushort group, ubyte no_per
 
 short search_things_for_index(short index)
 {
+#if 0
     short ret;
     asm volatile ("call ASM_search_things_for_index\n"
         : "=r" (ret) : "a" (index));
     return ret;
+#endif
+    short thing;
+    if (index <= 0)
+    {
+        struct SimpleThing *p_sthing;
+        for (thing = sthings_used_head; thing < 0; thing = p_sthing->LinkChild)
+        {
+            p_sthing = &sthings[thing];
+            if (index == p_sthing->ThingOffset) {
+                return thing;
+            }
+        }
+    }
+    else
+    {
+        struct Thing *p_thing;
+        for (thing = things_used_head; thing > 0; thing = p_thing->LinkChild)
+        {
+            p_thing = &things[thing];
+            if (index == p_thing->ThingOffset) {
+                if (p_thing->Type != TT_UNKN33)
+                    return thing;
+            }
+        }
+    }
+    return 0;
 }
 
 short find_nearest_object2(short mx, short mz, ushort sub_type)
