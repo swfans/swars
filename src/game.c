@@ -6054,7 +6054,7 @@ void delete_open_mission(ushort mslot, sbyte state)
                 {
                     if (conds_met)
                     {
-                        mission_fire_success_triggers(missi);
+                        mission_fire_fail_triggers(missi);
                     }
 
                     mission_special_triggers_0_1_set_fail(trg_missi);
