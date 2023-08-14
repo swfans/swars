@@ -5331,6 +5331,22 @@ void init_weapon_text(void)
 #endif
 }
 
+void * memory_copy_with_skip(void *in_dst, const void *in_src, TbMemSize size, ubyte bskip)
+{
+    const ubyte *s;
+    ubyte *d;
+    d = in_dst;
+    s = in_src;
+    for (; size > 0; size--)
+    {
+        if (*s != bskip)
+            *d = *s;
+        s++;
+        d++;
+    }
+    return in_dst;
+}
+
 /** Copy given rect buffer to the same position at two larger buffers.
  */
 void copy_buffer_to_double_bufs(ubyte *ibuf, ushort iwidth, ushort iheight,
@@ -5344,6 +5360,25 @@ void copy_buffer_to_double_bufs(ubyte *ibuf, ushort iwidth, ushort iheight,
     {
         LbMemoryCopy(&obufs[0][pos], ibuf, iwidth);
         LbMemoryCopy(&obufs[1][pos], ibuf, iwidth);
+        ibuf += iwidth;
+        pos += owidth;
+    }
+}
+
+/** Copy given rect buffer to the same position at two larger buffers, skipping
+ * pixels with transparency color.
+ */
+void copy_buffer_to_double_bufs_with_trans(ubyte *ibuf, ushort iwidth, ushort iheight,
+    ubyte *obufs[2], short x, short y, ushort owidth, ushort oheight, ubyte trans_col)
+{
+    long pos;
+    short h;
+
+    pos = y * owidth + x;
+    for (h = 0; h < iheight; h++)
+    {
+        memory_copy_with_skip(&obufs[0][pos], ibuf, iwidth, trans_col);
+        memory_copy_with_skip(&obufs[1][pos], ibuf, iwidth, trans_col);
         ibuf += iwidth;
         pos += owidth;
     }
@@ -5558,6 +5593,8 @@ void blokey_static_flic_data_to_screen(void)
 
     for (k = 0; k < 4; k++)
     {
+        long len;
+
         if (flic_mods[k] == 0)
             continue;
 
@@ -5578,11 +5615,14 @@ void blokey_static_flic_data_to_screen(void)
         }
 
         buf = unkn_buffer_05 + 0x8000;
-        LbFileLoadAt(str, buf);
+        len = LbFileLoadAt(str, buf);
+        if (len < 4) {
+            LbMemorySet(buf, 0, flic_mod_widths[k] * flic_mod_heights[k]);
+        }
 
-        copy_buffer_to_double_bufs(buf, byte_15573C[k], byte_15573C[k],
+        copy_buffer_to_double_bufs_with_trans(buf, flic_mod_widths[k], flic_mod_heights[k],
           o, flic_mod_coords_b[2*k], flic_mod_coords_b[2*k+1],
-          lbDisplay.GraphicsScreenWidth, lbDisplay.GraphicsScreenHeight);
+          lbDisplay.GraphicsScreenWidth, lbDisplay.GraphicsScreenHeight, 0);
 
         mod_draw_states[k] = 4;
     }
