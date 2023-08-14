@@ -369,8 +369,8 @@ void fix_thing_command_indexes(ushort cmd)
     if ((p_cdef->Flags & CmDF_ReqGroup) != 0)
     {
         if ((p_cmd->OtherThing < 0) || (p_cmd->OtherThing >= PEOPLE_GROUPS_COUNT)) {
-            LOGERR("%s %hu target group %hd out of range",
-              p_cdef->CmdName, cmd, p_cmd->OtherThing);
+            LOGERR("CMD%hu=%s target group %hd out of range",
+              cmd, p_cdef->CmdName, p_cmd->OtherThing);
             p_cmd->OtherThing = 1;
         }
     }
@@ -382,70 +382,70 @@ void fix_thing_command_indexes(ushort cmd)
         p_secthing = &things[secthing];
         thing = search_object_for_qface(p_secthing->U.UPerson.ComHead, 4u, 2u, 0);
         if (thing == 0) {
-            LOGSYNC("%s %hu target station not found based on coords (%hd,%hd); using train index",
-              p_cdef->CmdName, cmd, p_cmd->X, p_cmd->Z);
+            LOGSYNC("CMD%hu=%s target station not found based on coords (%hd,%hd); using train index",
+              cmd, p_cdef->CmdName, p_cmd->X, p_cmd->Z);
             thing = search_things_for_index(p_cmd->OtherThing);
         }
         if (thing != 0)
             p_cmd->OtherThing = thing;
         else
-            LOGERR("%s %hu target train not found", p_cdef->CmdName, cmd);
+            LOGERR("CMD%hu=%s target train not found", p_cdef->CmdName, cmd);
     }
     else if ((p_cdef->Flags & CmDF_ReqDomeCoord) != 0)
     {
         thing = find_nearest_object2(p_cmd->X, p_cmd->Z, SubTT_BLD_DOME);
         if (thing == 0) {
-            LOGSYNC("%s %hu target dome not found based on coords (%hd,%hd); using object index",
-              p_cdef->CmdName, cmd, p_cmd->X, p_cmd->Z);
+            LOGSYNC("CMD%hu=%s target dome not found based on coords (%hd,%hd); using object index",
+              cmd, p_cdef->CmdName, p_cmd->X, p_cmd->Z);
             thing = search_things_for_index(p_cmd->OtherThing);
         }
         if (thing != 0)
             p_cmd->OtherThing = thing;
         else
-            LOGERR("%s %hu target dome %hd not found",
-              p_cdef->CmdName, cmd, p_cmd->OtherThing);
+            LOGERR("CMD%hu=%s target dome %hd not found",
+              cmd, p_cdef->CmdName, p_cmd->OtherThing);
     }
     else if ((p_cdef->Flags & CmDF_ReqBuildingCoord) != 0)
     {
         thing = find_nearest_object2(p_cmd->X, p_cmd->Z, 0);
         if (thing == 0) {
-            LOGSYNC("%s %hu target building not found based on coords (%hd,%hd); using object index",
-              p_cdef->CmdName, cmd, p_cmd->X, p_cmd->Z);
+            LOGSYNC("CMD%hu=%s target building not found based on coords (%hd,%hd); using object index",
+              cmd, p_cdef->CmdName, p_cmd->X, p_cmd->Z);
             thing = search_things_for_index(p_cmd->OtherThing);
         }
         if (thing != 0)
             p_cmd->OtherThing = thing;
         else
-            LOGERR("%s %hu target building %hd not found",
-              p_cdef->CmdName, cmd, p_cmd->OtherThing);
+            LOGERR("CMD%hu=%s target building %hd not found",
+              cmd, p_cdef->CmdName, p_cmd->OtherThing);
     }
     else if ((p_cdef->Flags & CmDF_ReqVehicleCoord) != 0)
     {
         thing = 0; // TODO no function to search for vehicle based on coords
         if (thing == 0) {
-            LOGNO("%s %hu target vehicle not found based on coords (%hd,%hd); using vehicle index",
-              p_cdef->CmdName, cmd, p_cmd->X, p_cmd->Z);
+            LOGNO("CMD%hu=%s target vehicle not found based on coords (%hd,%hd); using vehicle index",
+              cmd, p_cdef->CmdName, p_cmd->X, p_cmd->Z);
             thing = search_things_for_index(p_cmd->OtherThing);
         }
         if (thing != 0)
             p_cmd->OtherThing = thing;
         else
-            LOGERR("%s %hu target vehicle %hd not found",
-              p_cdef->CmdName, cmd, p_cmd->OtherThing);
+            LOGERR("CMD%hu=%s target vehicle %hd not found",
+              cmd, p_cdef->CmdName, p_cmd->OtherThing);
     }
     else if ((p_cdef->Flags & CmDF_ReqThingCoord) != 0)
     {
         thing = 0; // TODO no function to search for thing based on coords
         if (thing == 0) {
-            LOGNO("%s %hu target thing not found based on coords (%hd,%hd); using thing index",
-              p_cdef->CmdName, cmd, p_cmd->X, p_cmd->Z);
+            LOGNO("CMD%hu=%s target thing not found based on coords (%hd,%hd); using thing index",
+              cmd, p_cdef->CmdName, p_cmd->X, p_cmd->Z);
             thing = search_things_for_index(p_cmd->OtherThing);
         }
         if (thing != 0)
             p_cmd->OtherThing = thing;
         else
-            LOGERR("%s %hu target thing %hs not found",
-              p_cdef->CmdName, cmd, p_cmd->OtherThing);
+            LOGERR("CMD%hu=%s target thing %hs not found",
+              cmd, p_cdef->CmdName, p_cmd->OtherThing);
     }
     else if ((p_cdef->Flags & CmDF_ReqPersonThing) != 0)
     {
@@ -453,8 +453,8 @@ void fix_thing_command_indexes(ushort cmd)
         if (thing != 0)
             p_cmd->OtherThing = thing;
         else
-            LOGERR("%s %hu target person %hd not found",
-              p_cdef->CmdName, cmd, p_cmd->OtherThing);
+            LOGERR("CMD%hu=%s target person %hd not found",
+              cmd, p_cdef->CmdName, p_cmd->OtherThing);
     }
     else if ((p_cdef->Flags & CmDF_ReqPVIThing) != 0)
     {
@@ -462,8 +462,8 @@ void fix_thing_command_indexes(ushort cmd)
         if (thing != 0)
             p_cmd->OtherThing = thing;
         else
-            LOGERR("%s %hu target person/vehicle/item %hd not found",
-              p_cdef->CmdName, cmd, p_cmd->OtherThing);
+            LOGERR("CMD%hu=%s target person/vehicle/item %hd not found",
+              cmd, p_cdef->CmdName, p_cmd->OtherThing);
     }
     else if ((p_cdef->Flags & CmDF_ReqOtherThing) != 0)
     {
@@ -471,21 +471,23 @@ void fix_thing_command_indexes(ushort cmd)
         if (thing != 0)
             p_cmd->OtherThing = thing;
         else
-            LOGERR("%s %hu target thing %hd not found",
-              p_cdef->CmdName, cmd, p_cmd->OtherThing);
+            LOGERR("CMD%hu=%s target thing %hd not found",
+              cmd, p_cdef->CmdName, p_cmd->OtherThing);
     }
 
     if ((p_cdef->Flags & CmDF_ReqCoord) != 0)
     {
         if ((p_cmd->X < MAP_BORDER_MARGIN) || (p_cmd->X > 32767 - MAP_BORDER_MARGIN)) {
-            LOGERR("%s %hu target coord X of %hd out of range", p_cdef->CmdName, cmd, p_cmd->X);
+            LOGERR("CMD%hu=%s target coord X of (%hd,%hd) out of range",
+              cmd, p_cdef->CmdName, p_cmd->X, p_cmd->Z);
             if ((p_cmd->X < MAP_BORDER_MARGIN) && (p_cmd->X >= -16384))
                 p_cmd->X = MAP_BORDER_MARGIN;
             if ((p_cmd->X > 32767 - MAP_BORDER_MARGIN) || (p_cmd->X < -16384))
                 p_cmd->X = 32767 - MAP_BORDER_MARGIN;
         }
         if ((p_cmd->Z < MAP_BORDER_MARGIN) || (p_cmd->Z > 32767 - MAP_BORDER_MARGIN)) {
-            LOGERR("%s %hu target coord Z of %hd out of range", p_cdef->CmdName, cmd, p_cmd->Z);
+            LOGERR("CMD%hu=%s target coord Z of (%hd,%hd) out of range",
+              cmd, p_cdef->CmdName, p_cmd->X, p_cmd->Z);
             if ((p_cmd->Z < MAP_BORDER_MARGIN) && (p_cmd->Z >= -16384))
                 p_cmd->Z = MAP_BORDER_MARGIN;
             if ((p_cmd->Z > 32767 - MAP_BORDER_MARGIN) || (p_cmd->Z < -16384))
@@ -497,16 +499,16 @@ void fix_thing_command_indexes(ushort cmd)
         (((p_cdef->Flags & CmDF_ReqRange2) != 0) && ((p_cmd->Flags & 0x100000) != 0))))
     {
         if ((p_cmd->Arg2 < MAP_BORDER_MARGIN) || (p_cmd->Arg2 > 32767 - MAP_BORDER_MARGIN)) {
-            LOGERR("%s %hu target coord X/Arg2 of %d out of range",
-              p_cdef->CmdName, cmd, (int)p_cmd->Arg2);
+            LOGERR("CMD%hu=%s target coord X/Arg2 of (%d,%d) out of range",
+              cmd, p_cdef->CmdName, (int)p_cmd->Arg2, (int)p_cmd->MyThing);
             if ((p_cmd->Arg2 < MAP_BORDER_MARGIN) && (p_cmd->Arg2 >= -16384))
                 p_cmd->Arg2 = MAP_BORDER_MARGIN;
             if ((p_cmd->Arg2 > 32767 - MAP_BORDER_MARGIN) || (p_cmd->Arg2 < -16384))
                 p_cmd->Arg2 = 32767 - MAP_BORDER_MARGIN;
         }
         if ((p_cmd->MyThing < MAP_BORDER_MARGIN) || (p_cmd->MyThing > 32767 - MAP_BORDER_MARGIN)) {
-            LOGERR("%s %hu target coord Z/MyThing of %d out of range",
-              p_cdef->CmdName, cmd, (int)p_cmd->MyThing);
+            LOGERR("CMD%hu=%s target coord Z/MyThing of (%d,%d) out of range",
+              cmd, p_cdef->CmdName, (int)p_cmd->Arg2, (int)p_cmd->MyThing);
             if ((p_cmd->MyThing < MAP_BORDER_MARGIN) && (p_cmd->MyThing >= -16384))
                 p_cmd->MyThing = MAP_BORDER_MARGIN;
             if ((p_cmd->MyThing > 32767 - MAP_BORDER_MARGIN) || (p_cmd->MyThing < -16384))
@@ -517,8 +519,8 @@ void fix_thing_command_indexes(ushort cmd)
         (((p_cdef->Flags & CmDF_ReqCoord2) != 0) && ((p_cmd->Flags & 0x100000) == 0))))
     {
         if ((p_cmd->Arg2 < 1) || (p_cmd->Arg2 > 32767 - MAP_BORDER_MARGIN)) {
-            LOGERR("%s %hu target Range/Arg2 of %d out of range",
-              p_cdef->CmdName, cmd, (int)p_cmd->Arg2);
+            LOGERR("CMD%hu=%s target Range/Arg2 of %d out of range",
+              cmd, p_cdef->CmdName, (int)p_cmd->Arg2);
             if ((p_cmd->Arg2 < 1) && (p_cmd->Arg2 >= -16384))
                 p_cmd->Arg2 = 1;
             if ((p_cmd->Arg2 > 32767 - MAP_BORDER_MARGIN) || (p_cmd->Arg2 < -16384))
