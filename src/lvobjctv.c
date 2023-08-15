@@ -223,6 +223,89 @@ ubyte thing_arrived_at_obj(short thing, struct Objective *p_objectv)
     return ret;
 }
 
+TbBool thing_is_destroyed(short thing)
+{
+    struct Thing *p_thing;
+    p_thing = &things[thing];
+    return ((p_thing->Flag & 0x0002) != 0);
+}
+
+TbBool person_is_dead(short thing)
+{
+    struct Thing *p_thing;
+
+    if (thing <= 0)
+        return false;
+
+    p_thing = &things[thing];
+    return (p_thing->State == PerSt_DEAD);
+}
+
+TbBool item_is_carried_by_player(short thing, ushort plyr)
+{
+    struct SimpleThing *p_sthing;
+    short plyagent, plygroup;
+    struct Thing *p_person;
+
+    if (thing >= 0)
+        return false;
+
+    p_sthing = &sthings[thing];
+    if (p_sthing->Type != SmTT_CARRIED_ITEM)
+        return false;
+
+    plyagent = players[plyr].DirectControl[0];
+    plygroup = things[plyagent].U.UPerson.Group;
+
+    p_person = &things[p_sthing->U.UWeapon.Owner];
+    return (p_person->U.UPerson.Group == plygroup);
+}
+
+TbBool person_is_persuaded(short thing)
+{
+    struct Thing *p_person;
+
+    if (thing <= 0)
+        return false;
+
+    p_person = &things[thing];
+    return ((p_person->Flag & 0x80000) != 0);
+}
+
+TbBool person_is_persuaded_by_person(short thing, short owntng)
+{
+    struct Thing *p_person;
+
+    if (thing <= 0)
+        return false;
+
+    p_person = &things[thing];
+    if ((p_person->Flag & 0x80000) == 0)
+        return false;
+
+    return (p_person->Owner == owntng);
+}
+
+TbBool person_is_persuaded_by_player(short thing, ushort plyr)
+{
+    struct Thing *p_thing;
+    short plyagent, plygroup;
+    struct Thing *p_person;
+
+    if (thing <= 0)
+        return false;
+
+    p_thing = &things[thing];
+    if ((p_thing->Flag & 0x80000) == 0)
+        return false;
+
+    plyagent = players[plyr].DirectControl[0];
+    plygroup = things[plyagent].U.UPerson.Group;
+
+    p_person = &things[p_thing->Owner];
+    return (p_person->U.UPerson.Group == plygroup);
+}
+
 ubyte all_group_arrived(ushort group, short x, short y, short z, int radius)
 {
     ubyte ret;
@@ -231,6 +314,100 @@ ubyte all_group_arrived(ushort group, short x, short y, short z, int radius)
       "call ASM_all_group_arrived\n"
         : "=r" (ret) : "a" (group), "d" (x), "b" (y), "c" (z), "g" (radius));
     return ret;
+}
+
+TbBool all_group_persuaded(ushort group)
+{
+    short thing;
+    struct Thing *p_thing;
+
+    thing = same_type_head[256 + group];
+    for (; thing > 0; thing = p_thing->LinkSameGroup)
+    {
+            p_thing = &things[thing];
+            if (!person_is_persuaded(thing) || ((things[p_thing->Owner].Flag & 0x2000) == 0))
+            {
+                if (!person_is_dead(thing) && !thing_is_destroyed(thing))
+                    return false;
+            }
+    }
+    return true;
+}
+
+TbBool group_all_killed_or_persuaded_by_player(ushort group, ushort plyr)
+{
+    short thing;
+    struct Thing *p_thing;
+
+    thing = same_type_head[256 + group];
+    for (; thing > 0; thing = p_thing->LinkSameGroup)
+    {
+        p_thing = &things[thing];
+        if (!person_is_persuaded_by_player(thing, plyr))
+        {
+            if (!person_is_dead(thing) && !thing_is_destroyed(thing))
+                return false;
+        }
+    }
+    return true;
+}
+
+TbBool group_all_survivors_are_in_vehicle(ushort group, short vehicle)
+{
+    short thing;
+    struct Thing *p_thing;
+
+    thing = same_type_head[256 + group];
+    for (; thing > 0; thing = p_thing->LinkSameGroup)
+    {
+        p_thing = &things[thing];
+        if (p_thing->U.UPerson.Vehicle != vehicle)
+        {
+            if (!person_is_dead(thing) && !thing_is_destroyed(thing))
+                return false;
+        }
+    }
+    return false;
+}
+
+TbBool group_members_dead(ushort group, ushort amount)
+{
+    short thing;
+    struct Thing *p_thing;
+    ushort n;
+
+    n = 0;
+    thing = same_type_head[256 + group];
+    for (; thing > 0; thing = p_thing->LinkSameGroup)
+    {
+        p_thing = &things[thing];
+        if (person_is_dead(thing) || thing_is_destroyed(thing))
+            n++;
+        if (n >= amount) {
+            return true;
+        }
+    }
+    return false;
+}
+
+TbBool group_members_persuaded_by_person(ushort group, short owntng, ushort amount)
+{
+    short thing;
+    struct Thing *p_thing;
+    ushort n;
+
+    n = 0;
+    thing = same_type_head[256 + group];
+    for (; thing > 0; thing = p_thing->LinkSameGroup)
+    {
+        p_thing = &things[thing];
+        if (person_is_persuaded_by_person(thing, owntng))
+            n++;
+        if (n >= amount) {
+            return true;
+        }
+    }
+    return false;
 }
 
 ubyte fix_single_objective(struct Objective *p_objectv, ushort objectv, const char *srctext)
@@ -472,10 +649,242 @@ ubyte fix_single_objective(struct Objective *p_objectv, ushort objectv, const ch
 
 short test_objective(ushort objectv, ushort show_obj)
 {
+#if 1
     short ret;
     asm volatile ("call ASM_test_objective\n"
         : "=r" (ret) : "a" (objectv), "d" (show_obj));
     return ret;
+#else
+    struct Objective *p_objectv;
+    short thing, group;
+    struct Thing *p_thing;
+    struct SimpleThing *p_sthing;
+    long dX, dZ, n;
+
+    if (show_obj == 2)
+    {
+        p_objectv = &game_used_lvl_objectives[objectv];
+        if (((ingame.Cheats & 0x04) != 0) &&
+          (p_objectv->Status != 2) && lbKeyOn[KC_BACKSLASH])
+        {
+            lbKeyOn[KC_BACKSLASH] = 0;
+            p_objectv->Status = 2;
+        }
+        if (p_objectv->Status == 2)
+            return 1;
+        if (p_objectv->Status == 1)
+            return 0;
+    }
+    else
+    {
+        p_objectv = &game_used_objectives[objectv];
+        if (((ingame.Cheats & 0x04) != 0) &&
+          (p_objectv->Status != 2) && lbKeyOn[KC_BACKSLASH])
+        {
+            lbKeyOn[KC_BACKSLASH] = 0;
+            p_objectv->Status = 2;
+        }
+        if (p_objectv->Status == 2)
+            return 1;
+        if (((p_objectv->Flags & 0x01) == 0) && word_1C8446 && (show_obj != 0))
+            draw_objective(objectv, 0);
+        if (show_obj != 0)
+            add_signal_to_scanner(p_objectv, 0);
+        if ((p_objectv->Flags & 0x02) != 0)
+            return 1;
+        if (p_objectv->Status == 1)
+            return -1;
+    }
+
+    switch (p_objectv->Type)
+    {
+    case GAME_OBJ_P_DEAD:
+        thing = p_objectv->Thing;
+        if (person_is_dead(thing) || thing_is_destroyed(thing)) {
+            p_objectv->Status = 2;
+            return 1;
+        }
+        p_objectv->Status = 0;
+        break;
+    case GAME_OBJ_ALL_G_DEAD:
+        group = p_objectv->Thing;
+        if (group_actions[group].Alive <= 0) {
+            p_objectv->Status = 2;
+            return 1;
+        }
+        break;
+    case GAME_OBJ_MEM_G_DEAD:
+        group = p_objectv->Thing;
+        n = 0;
+        thing = same_type_head[256 + group];
+        for (; thing > 0; thing = p_thing->LinkSameGroup)
+        {
+            p_thing = &things[thing];
+            if (person_is_dead(thing) || thing_is_destroyed(thing))
+                n++;
+            if (n >= p_objectv->Arg2) {
+                p_objectv->Status = 2;
+                return 1;
+            }
+        }
+        break;
+    case GAME_OBJ_P_NEAR:
+    case GAME_OBJ_MEM_G_NEAR:
+    case GAME_OBJ_USE_ITEM:
+    case GAME_OBJ_FUNDS:
+    case GAME_OBJ_USE_PANET:
+    case GAME_OBJ_UNUSED_21:
+        break;
+    case GAME_OBJ_P_ARRIVES:
+        thing = p_objectv->Thing;
+        if (thing == 0)
+            break;
+        if (thing <= 0)
+        {
+            p_sthing = &sthings[thing];
+            dX = (p_sthing->X >> 8) - p_objectv->X;
+            dZ = (p_sthing->Z >> 8) - p_objectv->Z;
+            if ((dZ * dZ + dX * dX) < ((p_objectv->Radius * p_objectv->Radius) << 12)) {
+                p_objectv->Status = 2;
+                return 1;
+            }
+        }
+        else
+        {
+            if (thing_arrived_at_obj(thing, p_objectv)) {
+                p_objectv->Status = 2;
+                return 1;
+            }
+        }
+        break;
+    case GAME_OBJ_MEM_G_ARRIVES:
+        group = p_objectv->Thing;
+        n = 0;
+        thing = same_type_head[256 + group];
+        for (; thing > 0; thing = p_thing->LinkSameGroup)
+        {
+            p_thing = &things[thing];
+            if (thing_arrived_at_obj(thing, p_objectv))
+                  n++;
+            if (n >= p_objectv->Arg2) {
+                p_objectv->Status = 2;
+                return 1;
+            }
+        }
+        break;
+    case GAME_OBJ_ALL_G_ARRIVES:
+        group = p_objectv->Thing;
+        if (all_group_arrived(group, p_objectv->X, p_objectv->Y, p_objectv->Z, p_objectv->Radius)) {
+            p_objectv->Status = 2;
+            return 1;
+        }
+        break;
+    case GAME_OBJ_PERSUADE_P:
+        thing = p_objectv->Thing;
+        if (person_is_persuaded_by_player(thing, local_player_no)) {
+            p_objectv->Status = 2;
+            return 1;
+        }
+        break;
+    case GAME_OBJ_PERSUADE_MEM_G:
+        group = p_objectv->Thing;
+        n = 0;
+        thing = same_type_head[256 + group];
+        for (; thing > 0; thing = p_thing->LinkSameGroup)
+        {
+            p_thing = &things[thing];
+            if (person_is_persuaded_by_player(thing, local_player_no)) {
+                n++;
+            }
+            if (n >= p_objectv->Arg2) {
+                p_objectv->Status = 2;
+                return 1;
+            }
+        }
+        break;
+    case GAME_OBJ_PERSUADE_ALL_G:
+        group = p_objectv->Thing;
+        if (all_group_persuaded(group)) {
+            p_objectv->Status = 2;
+            return 1;
+        }
+        break;
+    case GAME_OBJ_TIME:
+        p_objectv->Radius++;
+        if (p_objectv->Radius >= p_objectv->Thing) {
+            p_objectv->Radius = 0;
+            p_objectv->Status = 2;
+            return 1;
+        }
+        break;
+    case GAME_OBJ_GET_ITEM:
+        thing = p_objectv->Thing;
+        if (item_is_carried_by_player(thing, local_player_no)) {
+            p_objectv->Status = 2;
+            return 1;
+        }
+        break;
+    case GAME_OBJ_DESTROY_OBJECT:
+        thing = p_objectv->Thing;
+        if (thing_is_destroyed(thing)) {
+            p_objectv->Status = 2;
+            return 1;
+        }
+        break;
+    case GAME_OBJ_PKILL_P:
+        thing = p_objectv->Thing;
+        if (person_is_persuaded_by_player(thing, local_player_no) ||
+          person_is_dead(thing) || thing_is_destroyed(thing)) {
+            p_objectv->Status = 2;
+            return 1;
+        }
+        break;
+    case GAME_OBJ_PKILL_G: // TODO is this really what it was meant to be??
+        thing = same_type_head[256 + p_objectv->Thing];
+        for (; thing > 0; thing = p_thing->LinkSameGroup)
+        {
+            p_thing = &things[thing];
+            if (person_is_persuaded_by_player(thing, local_player_no) ||
+              person_is_dead(thing) || thing_is_destroyed(thing)) {
+                p_objectv->Status = 2;
+                return 1;
+            }
+            break;
+        }
+        break;
+    case GAME_OBJ_PKILL_ALL_G:
+        group = p_objectv->Thing;
+        if (group_all_killed_or_persuaded_by_player(group, local_player_no)) {
+            p_objectv->Status = 2;
+            return 1;
+        }
+        break;
+    case GAME_OBJ_PROTECT_G:
+        group = p_objectv->Thing;
+        if (group_members_dead(group, 1)) {
+            p_objectv->Status = 1;
+            return 0;
+        }
+        break;
+    case GAME_OBJ_P_PERS_G:
+        group = p_objectv->Thing;
+        thing = p_objectv->Arg2;
+        if (group_members_persuaded_by_person(group, thing, 1)) {
+            p_objectv->Status = 2;
+            return 1;
+        }
+        break;
+    case GAME_OBJ_ALL_G_USE_V:
+        group = p_objectv->Arg2;
+        thing = p_objectv->Thing;
+        if (group_all_survivors_are_in_vehicle(group, thing)) {
+            p_objectv->Status = 2;
+            return 1;
+        }
+        break;
+    }
+    return 0;
+#endif
 }
 
 void snprint_objective(char *buf, ulong buflen, ushort objectv)

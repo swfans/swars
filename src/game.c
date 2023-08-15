@@ -1864,9 +1864,9 @@ TbBool draw_panel_pickable_thing_below_agent(struct Thing *p_agent)
             p_pickup = &sthings[thing];
         else
             p_pickup = NULL;
-        if ((p_pickup != NULL) && (p_pickup->Type == 25)) {
+        if ((p_pickup != NULL) && (p_pickup->Type == SmTT_DROPPED_ITEM)) {
             lbDisplay.DrawFlags = 0;
-            weptype = p_pickup->U[0];
+            weptype = p_pickup->U.UWeapon.WeaponType;
             if (weptype)
                 draw_new_panel_sprite_std(548, 364, weapon_defs[weptype].Sprite & 0xFF);
             else
@@ -1897,7 +1897,7 @@ TbBool draw_panel_pickable_thing_player_targeted(PlayerInfo *p_locplayer)
         {
             lbDisplay.DrawFlags = 0;
             p_pickup = &sthings[thing];
-            weptype = p_pickup->U[0];
+            weptype = p_pickup->U.UWeapon.WeaponType;
             if (weptype)
                 draw_new_panel_sprite_std(548, 364, weapon_defs[weptype].Sprite & 0xFF);
             else

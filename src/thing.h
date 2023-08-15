@@ -356,6 +356,51 @@ struct Thing { // sizeof=168
     } U;
 };
 
+struct STngUEffect {
+    short VX;
+    short VY;
+    short VZ;
+    short OX;
+    short OY;
+    short OZ;
+};
+
+struct STngUScenery {
+    ushort Frame;
+    ushort StartFrame;
+    short LightHead;
+    short LightDie;
+    short LightAnim;
+    short Health;
+};
+
+struct STngUWeapon {
+    short WeaponType;
+    short LastFired;
+    short Ammo;
+    short Owner;
+    short OnFace;
+};
+
+struct STngUTraffic {
+    short Link[4];
+    ubyte Flags[4];
+};
+
+struct STngULight {
+    short MinBright;
+    short RangeBright;
+};
+
+struct STngUBang {
+    short shrapnel;
+    short phwoar;
+};
+
+struct STngUFire {
+    short flame;
+};
+
 struct SimpleThing
 {
     short Parent;
@@ -377,7 +422,15 @@ struct SimpleThing
     short StartFrame;
     short Timer1;
     short StartTimer1;
-    char U[12];
+    union {
+        struct STngUEffect UEffect;
+        struct STngUScenery UScenery;
+        struct STngUWeapon UWeapon;
+        struct STngUTraffic UTraffic;
+        struct STngULight ULight;
+        struct STngUBang UBang;
+        struct STngUFire UFire;
+    } U;
     short field_38;
     ushort UniqueID;
 };
