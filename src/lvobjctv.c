@@ -443,6 +443,14 @@ ubyte fix_single_objective(struct Objective *p_objectv, ushort objectv, const ch
 #endif
 }
 
+short test_objective(ushort objectv, ushort show_obj)
+{
+    short ret;
+    asm volatile ("call ASM_test_objective\n"
+        : "=r" (ret) : "a" (objectv), "d" (show_obj));
+    return ret;
+}
+
 void snprint_objective(char *buf, ulong buflen, ushort objectv)
 {
     struct Objective *p_objectv;
