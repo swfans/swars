@@ -362,10 +362,12 @@ void fix_thing_command_indexes(ushort cmd)
     struct Command *p_cmd;
     struct CommandDef *p_cdef;
     short thing;
+    TbBool reject;
 
     p_cmd = &game_commands[cmd];
     p_cdef = &command_defs[p_cmd->Type];
 
+    reject = false;
     if ((p_cdef->Flags & CmDF_ReqGroup) != 0)
     {
         if ((p_cmd->OtherThing < 0) || (p_cmd->OtherThing >= PEOPLE_GROUPS_COUNT)) {
@@ -432,6 +434,19 @@ void fix_thing_command_indexes(ushort cmd)
         else
             LOGERR("CMD%hu=%s target vehicle %hd not found",
               cmd, p_cdef->CmdName, p_cmd->OtherThing);
+        // Reject in case of type mismatch
+        if (p_cmd->OtherThing < 0) {
+            reject = true;
+        }
+        else if (p_cmd->OtherThing > 0) {
+            struct Thing *p_thing = &things[p_cmd->OtherThing];
+            reject = (p_thing->Type != TT_VEHICLE);
+        }
+        if (reject) {
+            p_cmd->OtherThing = 0;
+            LOGWARN("CMD%hu=%s target vehicle cleared due to type mismatch",
+              cmd, p_cdef->CmdName);
+        }
     }
     else if ((p_cdef->Flags & CmDF_ReqThingCoord) != 0)
     {
@@ -455,6 +470,19 @@ void fix_thing_command_indexes(ushort cmd)
         else
             LOGERR("CMD%hu=%s target person %hd not found",
               cmd, p_cdef->CmdName, p_cmd->OtherThing);
+        // Reject in case of type mismatch
+        if (p_cmd->OtherThing < 0) {
+            reject = true;
+        }
+        else if (p_cmd->OtherThing > 0) {
+            struct Thing *p_thing = &things[p_cmd->OtherThing];
+            reject = (p_thing->Type != TT_PERSON);
+        }
+        if (reject) {
+            p_cmd->OtherThing = 0;
+            LOGNO("CMD%hu=%s target person cleared due to type mismatch",
+              cmd, p_cdef->CmdName);
+        }
     }
     else if ((p_cdef->Flags & CmDF_ReqPVIThing) != 0)
     {
@@ -464,6 +492,20 @@ void fix_thing_command_indexes(ushort cmd)
         else
             LOGERR("CMD%hu=%s target person/vehicle/item %hd not found",
               cmd, p_cdef->CmdName, p_cmd->OtherThing);
+        // Reject in case of type mismatch
+        if (p_cmd->OtherThing < 0) {
+            struct SimpleThing *p_sthing = &sthings[p_cmd->OtherThing];
+            reject = (p_sthing->Type != SmTT_CARRIED_ITEM);
+        }
+        else if (p_cmd->OtherThing > 0) {
+            struct Thing *p_thing = &things[p_cmd->OtherThing];
+            reject = ((p_thing->Type != TT_PERSON) && (p_thing->Type != TT_VEHICLE));
+        }
+        if (reject) {
+            p_cmd->OtherThing = 0;
+            LOGNO("CMD%hu=%s target person/vehicle/item cleared due to type mismatch",
+              cmd, p_cdef->CmdName);
+        }
     }
     else if ((p_cdef->Flags & CmDF_ReqOtherThing) != 0)
     {
