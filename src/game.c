@@ -736,6 +736,10 @@ void global_3d_store(int action)
     }
 }
 
+/** Fixes parameters within objectives.
+ *
+ * @return Gives 2 if a parameter was updated, 1 if no update was neccessary, 0 if update failed.
+ */
 ubyte fix_single_objective(struct Objective *p_objectv, ushort objectv, const char *srctext)
 {
 #if 0
@@ -744,10 +748,13 @@ ubyte fix_single_objective(struct Objective *p_objectv, ushort objectv, const ch
         : "=r" (ret) : "a" (p_objectv));
     return ret;
 #else
-    struct Thing *p_thing;
-    struct SimpleThing *p_sthing;
     short thing;
     ubyte ret;
+
+    if (p_objectv->Level != (current_level - 1) % 15 + 1)
+        return 1;
+    if (p_objectv->Map != current_map)
+        return 1;
 
     ret = 0;
     switch (p_objectv->Type) // TODO fix parameters based on objectv_defs[] flags
@@ -757,21 +764,17 @@ ubyte fix_single_objective(struct Objective *p_objectv, ushort objectv, const ch
     case GAME_OBJ_PERSUADE_P:
     case GAME_OBJ_GET_ITEM:
     case GAME_OBJ_PKILL_P:
-        // TODO this seem stupid - why would fixing some objectives depend on level and map number?
-        if (p_objectv->Level != (current_level - 1) % 15 + 1) {
-            ret = 1;
-            break;
-        }
-        if (p_objectv->Map != current_map) {
-            ret = 1;
-            break;
-        }
         if (p_objectv->Thing > 0)
         {
             thing = search_things_for_index(p_objectv->Thing);
-            p_thing = &things[thing];
-            if (p_thing->U.UPerson.UniqueID != p_objectv->UniqueID)
+            if (thing <= 0) {
                 thing = 0;
+            }
+            else if (thing > 0) {
+                struct Thing *p_thing = &things[thing];
+                if (p_thing->U.UPerson.UniqueID != p_objectv->UniqueID)
+                    thing = 0;
+            }
             if (thing == 0) {
                 thing = search_things_for_uniqueid(p_objectv->UniqueID, 1);
             }
@@ -779,16 +782,21 @@ ubyte fix_single_objective(struct Objective *p_objectv, ushort objectv, const ch
         else
         {
             thing = search_things_for_index(p_objectv->Thing);
-            p_sthing = &sthings[thing];
-            if (p_sthing->UniqueID != p_objectv->UniqueID)
+            if (thing <= 0) {
+                struct SimpleThing *p_sthing = &sthings[thing];
+                if (p_sthing->UniqueID != p_objectv->UniqueID)
+                    thing = 0;
+            }
+            else if (thing > 0) {
                 thing = 0;
+            }
             if (thing == 0) {
                 thing = search_things_for_uniqueid(p_objectv->UniqueID, 0);
             }
         }
         if (thing != 0) {
             p_objectv->Thing = thing;
-            ret = 1;
+            ret = 2;
         } else {
             LOGWARN("OBJV-%s-%d type=%d target Thing%d UID=%d not found",
               srctext, objectv, (int)p_objectv->Type,
@@ -814,7 +822,7 @@ ubyte fix_single_objective(struct Objective *p_objectv, ushort objectv, const ch
         thing = find_nearest_object2(p_objectv->X, p_objectv->Z, 0);
         if (thing != 0) {
             p_objectv->Thing = thing;
-            ret = 1;
+            ret = 2;
         } else {
             LOGWARN("OBJV-%s-%d type=%d target Thing%d at (%d,%d) not found",
               srctext, objectv, (int)p_objectv->Type,
