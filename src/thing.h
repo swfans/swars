@@ -28,6 +28,9 @@ extern "C" {
 /******************************************************************************/
 #pragma pack(1)
 
+#define THINGS_LIMIT 1000
+#define STHINGS_LIMIT 1500
+
 enum ThingType {
     TT_NONE = 0x0,
     TT_UNKN1 = 0x1,

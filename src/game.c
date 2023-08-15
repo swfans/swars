@@ -751,7 +751,7 @@ void unkn_f_pressed_func(void)
         ushort cmd;
         ushort prev_cmd;
 
-        if (i >= 1000) {
+        if (i >= max(STHINGS_LIMIT,THINGS_LIMIT)) {
             LOGERR("Infinite loop in same type things list");
             break;
         }
@@ -811,12 +811,12 @@ void fix_level_indexes(void)
         fix_single_objective(p_objectv, objectv, "U");
     }
 
-    for (thing = 1; thing < 1000; thing++)
+    for (thing = 1; thing < THINGS_LIMIT; thing++)
     {
         things[thing].ThingOffset = thing;
     }
 
-    for (thing = 1; thing < 1500; thing++)
+    for (thing = 1; thing < STHINGS_LIMIT; thing++)
     {
         sthings[-thing].ThingOffset = -thing;
     }
@@ -2581,7 +2581,7 @@ void draw_new_panel()
                 ubyte weapon;
 
                 p_agent = p_locplayer->MyAgent[panel->ID];
-                if (p_agent < &things[0] || p_agent > &things[1000])
+                if (p_agent < &things[0] || p_agent > &things[THINGS_LIMIT])
                     break;
                 weapon = p_agent->U.UPerson.CurrentWeapon;
                 if (weapon == 0)

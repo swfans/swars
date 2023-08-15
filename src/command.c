@@ -22,6 +22,7 @@
 #include <string.h>
 #include "bfmemory.h"
 #include "bfmemut.h"
+#include "bfutility.h"
 #include "thing.h"
 #include "building.h"
 #include "pepgroup.h"
@@ -617,7 +618,7 @@ void check_and_fix_thing_commands(void)
     {
         struct Thing *p_thing;
 
-        if (i >= 1000) {
+        if (i >= max(STHINGS_LIMIT,THINGS_LIMIT)) {
             LOGERR("Infinite loop in same type things list");
             break;
         }
