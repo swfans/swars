@@ -31,17 +31,28 @@
 
 enum ObjectiveDefFlags {
     ObDF_None = 0x0000,
-    // What to place in Thing/UniqueId
+    /* === What to place in Thing/UniqueId === */
+    /** Group index in Thing field */
     ObDF_ReqGroup = 0x0001,
-    ObDF_ReqThing = 0x0002, // May use Thing on UniqueId, depending on LevelNo and type; so set both
-    ObDF_ReqCount = 0x0004,
-    // What to place in Coord/Radius
-    ObDF_ReqCoord = 0x0010,
-    ObDF_ReqRadius = 0x0020,
-    // What to place in Arg2
-    ObDF_ReqAmount = 0x0040,
-    ObDF_ReqSecTng = 0x0080, // TODO this can cause bugs, use only Thing for thing index
-    ObDF_ReqSecGrp = 0x0100,
+    /** Person reference in Thing and UniqueID fields */
+    ObDF_ReqPerson = 0x0002,
+    /** Vehicle reference in Thing and UniqueID fields */
+    ObDF_ReqVehicle = 0x0004,
+    /** Carried Item reference in Thing and UniqueID fields */
+    ObDF_ReqItem = 0x0008,
+    /** Object (ie building) index in Thing field */
+    ObDF_ReqObject = 0x0010,
+    /** Any Thing reference in Thing and UniqueID fields */
+    ObDF_ReqThing = 0x0020,
+    /** Count/Amount in Thing field */
+    ObDF_ReqCount = 0x0020,
+    /* === What to place in Coord/Radius === */
+    ObDF_ReqCoord = 0x0100,
+    ObDF_ReqRadius = 0x0200,
+    /* === What to place in Arg2 === */
+    ObDF_ReqAmount = 0x0400,
+    ObDF_ReqSecTng = 0x0800, // TODO this can cause bugs, use only Thing for thing index
+    ObDF_ReqSecGrp = 0x1000,
 };
 
 struct ObjectiveDef {
@@ -54,23 +65,23 @@ struct ObjectiveDef objectv_defs[] = {
     /* Unreachable. */
     {"GAME_OBJ_NONE",		"DO NOTHING",		ObDF_None },
     /* Require the target person to reach DEAD state. */
-    {"GAME_OBJ_P_DEAD",		"ASSASSINATE",		ObDF_ReqThing },
+    {"GAME_OBJ_P_DEAD",		"ASSASSINATE",		ObDF_ReqPerson },
     /* Require whole group to be neutralized. */
     {"GAME_OBJ_ALL_G_DEAD",	"ELIMINATE GROUP",	ObDF_ReqGroup },
     /* Require at least specified amount of group members to reach DEAD state. */
     {"GAME_OBJ_MEM_G_DEAD",	"KILL GROUP MEM",	ObDF_ReqGroup|ObDF_ReqAmount },
     /* Unreachable. Require person near? */
-    {"GAME_OBJ_P_NEAR",		"RENDEZVOUS",		ObDF_ReqThing|ObDF_ReqCoord|ObDF_ReqRadius },
+    {"GAME_OBJ_P_NEAR",		"RENDEZVOUS",		ObDF_ReqPerson|ObDF_ReqCoord|ObDF_ReqRadius },
     /* Unreachable. Require specified amount of group members near? */
     {"GAME_OBJ_MEM_G_NEAR",	"RENDEZVOUS2",		ObDF_ReqGroup|ObDF_ReqCoord|ObDF_ReqRadius },
     /* Require the target person to be within given radius around given coordinates. */
-    {"GAME_OBJ_P_ARRIVES",	"GOTO LOCATION",	ObDF_ReqThing|ObDF_ReqCoord|ObDF_ReqRadius },
+    {"GAME_OBJ_P_ARRIVES",	"GOTO LOCATION",	ObDF_ReqPerson|ObDF_ReqCoord|ObDF_ReqRadius },
     /* Require at least specified amount of group members to be within radius around given coords. */
     {"GAME_OBJ_MEM_G_ARRIVES", "GOTO LOCATION", ObDF_ReqGroup|ObDF_ReqCoord|ObDF_ReqRadius|ObDF_ReqAmount },
     /* Require all of group members to be within radius around given coords. */
     {"GAME_OBJ_ALL_G_ARRIVES", "ALL GOTO LOCATION", ObDF_ReqGroup|ObDF_ReqCoord|ObDF_ReqRadius },
     /* Require target person to be within the group belonging to local player. */
-    {"GAME_OBJ_PERSUADE_P",	"PERSUADE",			ObDF_ReqThing },
+    {"GAME_OBJ_PERSUADE_P",	"PERSUADE",			ObDF_ReqPerson },
     /* Require at least specified amount of group members to be within the local player group. */
     {"GAME_OBJ_PERSUADE_MEM_G", "PERSUADE GANG MEM", ObDF_ReqGroup|ObDF_ReqAmount },
     /* Require all of group members to be persuaded. */
@@ -78,16 +89,16 @@ struct ObjectiveDef objectv_defs[] = {
     /* Require specified amount of game turns to pass. */
     {"GAME_OBJ_TIME",		"TIMER",			ObDF_ReqCount },
     /* Require specified carried item to change owner to a person belonging to local player. */
-    {"GAME_OBJ_GET_ITEM",	"COLLECT ITEM",		ObDF_ReqThing },
+    {"GAME_OBJ_GET_ITEM",	"COLLECT ITEM",		ObDF_ReqItem },
     /* Unreachable. Require specified item to be used? */
-    {"GAME_OBJ_USE_ITEM",	"USE ITEM",			ObDF_ReqThing },
+    {"GAME_OBJ_USE_ITEM",	"USE ITEM",			ObDF_ReqItem },
     /* Unreachable. Require acquiring specified amount of funds? */
     {"GAME_OBJ_FUNDS",		"GET BULLION",		ObDF_None },
     /* Require given thing to have DESTROYED flag set.
      * Coords need to be provided, rather than UniqueId, to find the object thing in case it changed. */
-    {"GAME_OBJ_DESTROY_OBJECT", "DESTROY BUILDING", ObDF_ReqThing|ObDF_ReqCoord },
+    {"GAME_OBJ_DESTROY_OBJECT", "DESTROY BUILDING", ObDF_ReqObject|ObDF_ReqCoord },
     /** Require the target person to either be DESTROYED or change owner to local player group. */
-    {"GAME_OBJ_PKILL_P",	"NEUTRALISE",		ObDF_ReqThing },
+    {"GAME_OBJ_PKILL_P",	"NEUTRALISE",		ObDF_ReqPerson },
     /* Require FIRST group member to either be DESTROYED or change owner to local player group.
       Suspicious implementation, looks like copy-paste error. */
     {"GAME_OBJ_PKILL_G",	"NEUTRALISE MEM",	ObDF_ReqGroup|ObDF_ReqAmount },
@@ -102,7 +113,7 @@ struct ObjectiveDef objectv_defs[] = {
     /* Require all of group members to change owner to specified person. */
     {"GAME_OBJ_P_PERS_G",	"PEEP PERSUADE ALL", ObDF_ReqGroup|ObDF_ReqSecTng },
     /* Require all of group members to either be DEAD or within specified vehicle. */
-    {"GAME_OBJ_ALL_G_USE_V", "USE VEHICLE",		ObDF_ReqThing|ObDF_ReqSecGrp },
+    {"GAME_OBJ_ALL_G_USE_V", "USE VEHICLE",		ObDF_ReqVehicle|ObDF_ReqSecGrp },
     /* Unreachable. */
     {"GAME_OBJ_UNUSED_25",	"UNEXPECT 25",		ObDF_None },
     /* Unreachable. */
@@ -202,13 +213,17 @@ ubyte fix_single_objective(struct Objective *p_objectv, ushort objectv, const ch
         : "=r" (ret) : "a" (p_objectv));
     return ret;
 #else
+    struct ObjectiveDef *p_odef;
     short thing;
     ubyte ret;
 
+    // Skip objectives for other levels
     if (p_objectv->Level != (current_level - 1) % 15 + 1)
         return 1;
     if (p_objectv->Map != current_map)
         return 1;
+
+    p_odef = &objectv_defs[p_objectv->Type];
 
     ret = 0;
     switch (p_objectv->Type) // TODO fix parameters based on objectv_defs[] flags
@@ -252,8 +267,8 @@ ubyte fix_single_objective(struct Objective *p_objectv, ushort objectv, const ch
             p_objectv->Thing = thing;
             ret = 2;
         } else {
-            LOGWARN("OBJV-%s-%d type=%d target Thing%d UID=%d not found",
-              srctext, objectv, (int)p_objectv->Type,
+            LOGWARN("Objv%s%d = %s target Thing%d UID=%d not found",
+              srctext, objectv, p_odef->CmdName,
               (int)p_objectv->Thing, (int)p_objectv->UniqueID);
         }
         break;
@@ -278,8 +293,8 @@ ubyte fix_single_objective(struct Objective *p_objectv, ushort objectv, const ch
             p_objectv->Thing = thing;
             ret = 2;
         } else {
-            LOGWARN("OBJV-%s-%d type=%d target Thing%d at (%d,%d) not found",
-              srctext, objectv, (int)p_objectv->Type,
+            LOGWARN("Objv%s%d = %s target Thing%d at (%d,%d) not found",
+              srctext, objectv, p_odef->CmdName,
               (int)p_objectv->Thing, (int)p_objectv->X, (int)p_objectv->Z);
         }
         break;
@@ -315,14 +330,20 @@ void snprint_objective(char *buf, ulong buflen, ushort objectv)
         s += strlen(s);
         nparams++;
     } else if (((p_odef->Flags & ObDF_ReqThing) != 0) ||
+      ((p_odef->Flags & ObDF_ReqPerson) != 0) ||
+      ((p_odef->Flags & ObDF_ReqVehicle) != 0) ||
+      ((p_odef->Flags & ObDF_ReqItem) != 0) ||
+      ((p_odef->Flags & ObDF_ReqObject) != 0) ||
       (p_objectv->Thing != 0) || (p_objectv->UniqueID != 0)) {
         if (nparams) { sprintf(s, ", "); s += strlen(s); }
         sprintf(s, "Thing(%hd,%hu)", p_objectv->Thing, p_objectv->UniqueID);
         s += strlen(s);
         nparams++;
     }
-    // Unexpected to have unique id withiut thing
-    if (((p_odef->Flags & ObDF_ReqThing) == 0) && (p_objectv->UniqueID != 0)) {
+
+    // Unexpected to have unique id without thing
+    if (((p_odef->Flags & (ObDF_ReqThing|ObDF_ReqPerson|ObDF_ReqVehicle|
+      ObDF_ReqItem|ObDF_ReqObject)) == 0) && (p_objectv->UniqueID != 0)) {
         if (nparams) { sprintf(s, ", "); s += strlen(s); }
         sprintf(s, "UniqueID(%hu)", p_objectv->UniqueID);
         s += strlen(s);
