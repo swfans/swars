@@ -158,7 +158,6 @@ void read_missions_conf_file(int num);
 void read_missions_bin_file(int num);
 void apply_missions_fixups(void);
 
-void snprint_objective(char *buf, ulong buflen, ushort objectv);
 /******************************************************************************/
 #ifdef __cplusplus
 }

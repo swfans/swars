@@ -20,6 +20,7 @@
 #define LVOBJCTV_H
 
 #include "bftypes.h"
+#include "bffile.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -88,6 +89,18 @@ extern ushort next_used_objective; // = 1;
 extern struct Objective *game_objectives;
 extern ushort next_objective;
 
+int add_used_objective(long mapno, long levelno);
+
+/** Fixes parameters within objectives.
+ *
+ * @return Gives 2 if a parameter was updated, 1 if no update was neccessary, 0 if update failed.
+ */
+ubyte fix_single_objective(struct Objective *p_objectv, ushort objectv, const char *srctext);
+
+void save_objective_chain_conf(TbFileHandle fh, ushort objectv_head, char *buf, ulong buflen);
+int parse_next_used_objective(const char *buf, long buflen, long pri, long mapno, long levelno);
+
+void snprint_objective(char *buf, ulong buflen, ushort objectv);
 /******************************************************************************/
 #ifdef __cplusplus
 }
