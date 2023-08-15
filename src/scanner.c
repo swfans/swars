@@ -22,6 +22,7 @@
 #include "thing.h"
 #include "player.h"
 #include "game.h"
+#include "lvobjctv.h"
 #include "display.h"
 #include "swlog.h"
 /******************************************************************************/

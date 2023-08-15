@@ -25,6 +25,7 @@
 #include "bffnuniq.h"
 #include "campaign.h"
 #include "command.h"
+#include "lvobjctv.h"
 #include "game.h"
 #include "swlog.h"
 #include "unix.h"

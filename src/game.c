@@ -35,6 +35,7 @@
 #include "campaign.h"
 #include "cybmod.h"
 #include "pepgroup.h"
+#include "lvobjctv.h"
 #include "display.h"
 #include "dos.h"
 #include "game.h"

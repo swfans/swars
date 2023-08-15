@@ -79,6 +79,8 @@ swars_SOURCES = \
 	globals.h \
 	keyboard.c \
 	keyboard.h \
+	lvobjctv.c \
+	lvobjctv.h \
 	main.c \
 	matrix.c \
 	matrix.h \

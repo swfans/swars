@@ -29,39 +29,6 @@ extern "C" {
 
 #define CAMPAIGNS_MAX_COUNT 6
 
-/* deprecated - when callbacks are defined within objectv_defs[],
- * there will be no need to reference specific objective.
- */
-enum GameObjectiveTypes {
-    GAME_OBJ_NONE = 0,
-    GAME_OBJ_P_DEAD,
-    GAME_OBJ_ALL_G_DEAD,
-    GAME_OBJ_MEM_G_DEAD,
-    GAME_OBJ_P_NEAR,
-    GAME_OBJ_MEM_G_NEAR,
-    GAME_OBJ_P_ARRIVES,
-    GAME_OBJ_MEM_G_ARRIVES,
-    GAME_OBJ_ALL_G_ARRIVES,
-    GAME_OBJ_PERSUADE_P,
-    GAME_OBJ_PERSUADE_MEM_G,
-    GAME_OBJ_PERSUADE_ALL_G,
-    GAME_OBJ_TIME,
-    GAME_OBJ_GET_ITEM,
-    GAME_OBJ_USE_ITEM,
-    GAME_OBJ_FUNDS,
-    GAME_OBJ_DESTROY_OBJECT,
-    GAME_OBJ_PKILL_P,
-    GAME_OBJ_PKILL_G,
-    GAME_OBJ_PKILL_ALL_G,
-    GAME_OBJ_USE_PANET,
-    GAME_OBJ_UNUSED_21,
-    GAME_OBJ_PROTECT_G,
-    GAME_OBJ_P_PERS_G,
-    GAME_OBJ_ALL_G_USE_V,
-    GAME_OBJ_UNUSED_25,
-    GAME_OBJ_UNUSED_26,
-};
-
 enum CampaignFlags {
     CmpgF_IsSinglePlayer = 0x0001,
     CmpgF_IsSelectable   = 0x0002,
@@ -171,34 +138,9 @@ struct Mission { // sizeof=76
     ubyte field_4B;
 };
 
-struct Objective { // sizeof=32
-    ushort Next;
-    ubyte Map;
-    ubyte Level;
-    ushort Status;
-    ushort Type;
-    ushort Flags;
-    short Thing;
-    short X;
-    short Y;
-    short Z;
-    short Radius;
-    ubyte Pri;
-    ubyte Arg2;
-    ushort StringIndex;
-    ushort UniqueID;
-    ubyte ObjText;
-    ubyte field_1B[4];
-    ubyte field_1F;
-};
-
 #pragma pack()
 /******************************************************************************/
 extern struct Campaign campaigns[CAMPAIGNS_MAX_COUNT];
-extern struct Objective *game_used_objectives;
-extern ushort next_used_objective; // = 1;
-extern struct Objective *game_objectives;
-extern ushort next_objective;
 extern struct Mission mission_list[120];
 
 void load_campaigns(void);

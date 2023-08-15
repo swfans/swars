@@ -24,6 +24,7 @@
 #include "bfini.h"
 #include "cybmod.h"
 #include "weapon.h"
+#include "lvobjctv.h"
 #include "game_data.h"
 #include "game.h"
 #include "swlog.h"
