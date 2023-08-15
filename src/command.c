@@ -358,23 +358,28 @@ TbBool is_command_any_until(struct Command *p_cmd)
 
 #define MAP_BORDER_MARGIN 32
 
-void fix_thing_command_indexes(ushort cmd)
+/** Fixes parameters within a command.
+ *
+ * @return Gives 2 if a parameter was updated, 1 if no update was neccessary, 0 if update failed.
+ */
+ubyte fix_thing_command_indexes(ushort cmd)
 {
     struct Command *p_cmd;
     struct CommandDef *p_cdef;
     short thing;
-    TbBool reject;
+    ubyte ret;
 
     p_cmd = &game_commands[cmd];
     p_cdef = &command_defs[p_cmd->Type];
 
-    reject = false;
+    ret = 1;
     if ((p_cdef->Flags & CmDF_ReqGroup) != 0)
     {
         if ((p_cmd->OtherThing < 0) || (p_cmd->OtherThing >= PEOPLE_GROUPS_COUNT)) {
-            LOGERR("CMD%hu=%s target group %hd out of range",
+            LOGERR("Cmd%hu = %s Group(%hd) out of range",
               cmd, p_cdef->CmdName, p_cmd->OtherThing);
-            p_cmd->OtherThing = 1;
+            p_cmd->OtherThing = 0;
+            ret = 0;
         }
     }
     else if ((p_cdef->Flags & CmDF_ReqStationCoord) != 0)
@@ -385,156 +390,211 @@ void fix_thing_command_indexes(ushort cmd)
         p_secthing = &things[secthing];
         thing = search_object_for_qface(p_secthing->U.UPerson.ComHead, 4u, 2u, 0);
         if (thing == 0) {
-            LOGSYNC("CMD%hu=%s target station not found based on coords (%hd,%hd); using train index",
+            LOGSYNC("Cmd%hu = %s target station not found based on Coord(%hd,%hd); using train index",
               cmd, p_cdef->CmdName, p_cmd->X, p_cmd->Z);
             thing = search_things_for_index(p_cmd->OtherThing);
+            if (thing <= 0) {
+                thing = 0;
+            } else {
+                struct Thing *p_thing = &things[thing];
+                if (p_thing->Type != TT_VEHICLE)
+                    thing = 0;
+            }
         }
-        if (thing != 0)
+        if (thing != 0) {
             p_cmd->OtherThing = thing;
-        else
-            LOGERR("CMD%hu=%s target train not found", p_cdef->CmdName, cmd);
+            if (ret) ret = 2;
+        } else {
+            LOGERR("Cmd%hu = %s target train not found", p_cdef->CmdName, cmd);
+            p_cmd->OtherThing = 0;
+            ret = 0;
+        }
     }
     else if ((p_cdef->Flags & CmDF_ReqDomeCoord) != 0)
     {
         thing = find_nearest_object2(p_cmd->X, p_cmd->Z, SubTT_BLD_DOME);
         if (thing == 0) {
-            LOGSYNC("CMD%hu=%s target dome not found based on coords (%hd,%hd); using object index",
+            LOGSYNC("Cmd%hu = %s target dome not found based on Coord(%hd,%hd); using object index",
               cmd, p_cdef->CmdName, p_cmd->X, p_cmd->Z);
             thing = search_things_for_index(p_cmd->OtherThing);
+            if (thing <= 0) {
+                thing = 0;
+            } else {
+                struct Thing *p_thing = &things[thing];
+                if (p_thing->Type != TT_BUILDING)
+                    thing = 0;
+            }
         }
-        if (thing != 0)
+        if (thing != 0) {
             p_cmd->OtherThing = thing;
-        else
-            LOGERR("CMD%hu=%s target dome %hd not found",
+            if (ret) ret = 2;
+        } else {
+            LOGERR("Cmd%hu = %s target dome %hd not found",
               cmd, p_cdef->CmdName, p_cmd->OtherThing);
+            p_cmd->OtherThing = 0;
+            ret = 0;
+        }
     }
     else if ((p_cdef->Flags & CmDF_ReqBuildingCoord) != 0)
     {
         thing = find_nearest_object2(p_cmd->X, p_cmd->Z, 0);
         if (thing == 0) {
-            LOGSYNC("CMD%hu=%s target building not found based on coords (%hd,%hd); using object index",
+            LOGSYNC("Cmd%hu = %s target building not found based on Coord(%hd,%hd); using object index",
               cmd, p_cdef->CmdName, p_cmd->X, p_cmd->Z);
             thing = search_things_for_index(p_cmd->OtherThing);
+            if (thing <= 0) {
+                thing = 0;
+            } else {
+                struct Thing *p_thing = &things[thing];
+                if (p_thing->Type != TT_BUILDING)
+                    thing = 0;
+            }
         }
-        if (thing != 0)
+        if (thing != 0) {
             p_cmd->OtherThing = thing;
-        else
-            LOGERR("CMD%hu=%s target building %hd not found",
+            if (ret) ret = 2;
+        } else {
+            LOGERR("Cmd%hu = %s target building %hd not found",
               cmd, p_cdef->CmdName, p_cmd->OtherThing);
+            p_cmd->OtherThing = 0;
+            ret = 0;
+        }
     }
     else if ((p_cdef->Flags & CmDF_ReqVehicleCoord) != 0)
     {
         thing = 0; // TODO no function to search for vehicle based on coords
         if (thing == 0) {
-            LOGNO("CMD%hu=%s target vehicle not found based on coords (%hd,%hd); using vehicle index",
+            LOGNO("Cmd%hu = %s target vehicle not found based on Coord(%hd,%hd); using vehicle index",
               cmd, p_cdef->CmdName, p_cmd->X, p_cmd->Z);
             thing = search_things_for_index(p_cmd->OtherThing);
+            if (thing <= 0) {
+                thing = 0;
+            } else {
+                struct Thing *p_thing = &things[thing];
+                if (p_thing->Type != TT_VEHICLE)
+                    thing = 0;
+            }
         }
-        if (thing != 0)
+        if (thing != 0) {
             p_cmd->OtherThing = thing;
-        else
-            LOGERR("CMD%hu=%s target vehicle %hd not found",
+            if (ret) ret = 2;
+        } else {
+            LOGERR("Cmd%hu = %s target vehicle %hd not found",
               cmd, p_cdef->CmdName, p_cmd->OtherThing);
-        // Reject in case of type mismatch
-        if (p_cmd->OtherThing < 0) {
-            reject = true;
-        }
-        else if (p_cmd->OtherThing > 0) {
-            struct Thing *p_thing = &things[p_cmd->OtherThing];
-            reject = (p_thing->Type != TT_VEHICLE);
-        }
-        if (reject) {
             p_cmd->OtherThing = 0;
-            LOGWARN("CMD%hu=%s target vehicle cleared due to type mismatch",
-              cmd, p_cdef->CmdName);
+            ret = 0;
         }
     }
     else if ((p_cdef->Flags & CmDF_ReqThingCoord) != 0)
     {
         thing = 0; // TODO no function to search for thing based on coords
         if (thing == 0) {
-            LOGNO("CMD%hu=%s target thing not found based on coords (%hd,%hd); using thing index",
+            LOGNO("Cmd%hu = %s target thing not found based on Coord(%hd,%hd); using thing index",
               cmd, p_cdef->CmdName, p_cmd->X, p_cmd->Z);
             thing = search_things_for_index(p_cmd->OtherThing);
         }
-        if (thing != 0)
+        if (thing != 0) {
             p_cmd->OtherThing = thing;
-        else
-            LOGERR("CMD%hu=%s target thing %hs not found",
+            if (ret) ret = 2;
+        } else {
+            LOGERR("Cmd%hu = %s target thing %hd not found",
               cmd, p_cdef->CmdName, p_cmd->OtherThing);
+            p_cmd->OtherThing = 0;
+            ret = 0;
+        }
     }
     else if ((p_cdef->Flags & CmDF_ReqPersonThing) != 0)
     {
-        thing = search_things_for_index(p_cmd->OtherThing);
-        if (thing != 0)
+        thing = 0;
+        if (thing == 0) {
+            thing = search_things_for_index(p_cmd->OtherThing);
+            if (thing <= 0) {
+                thing = 0;
+            } else {
+                struct Thing *p_thing = &things[thing];
+                if (p_thing->Type != TT_PERSON)
+                    thing = 0;
+            }
+        }
+        if (thing != 0) {
             p_cmd->OtherThing = thing;
-        else
-            LOGERR("CMD%hu=%s target person %hd not found",
+            if (ret) ret = 2;
+        } else {
+            LOGERR("Cmd%hu = %s target person %hd not found",
               cmd, p_cdef->CmdName, p_cmd->OtherThing);
-        // Reject in case of type mismatch
-        if (p_cmd->OtherThing < 0) {
-            reject = true;
-        }
-        else if (p_cmd->OtherThing > 0) {
-            struct Thing *p_thing = &things[p_cmd->OtherThing];
-            reject = (p_thing->Type != TT_PERSON);
-        }
-        if (reject) {
             p_cmd->OtherThing = 0;
-            LOGNO("CMD%hu=%s target person cleared due to type mismatch",
-              cmd, p_cdef->CmdName);
+            ret = 0;
         }
     }
     else if ((p_cdef->Flags & CmDF_ReqPVIThing) != 0)
     {
-        thing = search_things_for_index(p_cmd->OtherThing);
-        if (thing != 0)
+        thing = 0;
+        if (thing == 0) {
+            thing = search_things_for_index(p_cmd->OtherThing);
+            if (thing <= 0) {
+                struct SimpleThing *p_sthing = &sthings[p_cmd->OtherThing];
+                if (p_sthing->Type != SmTT_CARRIED_ITEM)
+                    thing = 0;
+            } else {
+                struct Thing *p_thing = &things[thing];
+                if ((p_thing->Type != TT_PERSON) && (p_thing->Type != TT_VEHICLE))
+                    thing = 0;
+            }
+        }
+        if (thing != 0) {
             p_cmd->OtherThing = thing;
-        else
-            LOGERR("CMD%hu=%s target person/vehicle/item %hd not found",
+            if (ret) ret = 2;
+        } else {
+            LOGERR("Cmd%hu = %s target person/vehicle/item %hd not found",
               cmd, p_cdef->CmdName, p_cmd->OtherThing);
-        // Reject in case of type mismatch
-        if (p_cmd->OtherThing < 0) {
-            struct SimpleThing *p_sthing = &sthings[p_cmd->OtherThing];
-            reject = (p_sthing->Type != SmTT_CARRIED_ITEM);
-        }
-        else if (p_cmd->OtherThing > 0) {
-            struct Thing *p_thing = &things[p_cmd->OtherThing];
-            reject = ((p_thing->Type != TT_PERSON) && (p_thing->Type != TT_VEHICLE));
-        }
-        if (reject) {
             p_cmd->OtherThing = 0;
-            LOGNO("CMD%hu=%s target person/vehicle/item cleared due to type mismatch",
-              cmd, p_cdef->CmdName);
+            ret = 0;
         }
     }
     else if ((p_cdef->Flags & CmDF_ReqOtherThing) != 0)
     {
-        thing = search_things_for_index(p_cmd->OtherThing);
-        if (thing != 0)
+        thing = 0; // TODO no function to search for thing based on coords
+        if (thing == 0) {
+            LOGNO("Cmd%hu = %s target thing not found based on Coord(%hd,%hd); using thing index",
+              cmd, p_cdef->CmdName, p_cmd->X, p_cmd->Z);
+            thing = search_things_for_index(p_cmd->OtherThing);
+        }
+        if (thing != 0) {
             p_cmd->OtherThing = thing;
-        else
-            LOGERR("CMD%hu=%s target thing %hd not found",
+            if (ret) ret = 2;
+        } else {
+            LOGERR("Cmd%hu = %s target thing %hd not found",
               cmd, p_cdef->CmdName, p_cmd->OtherThing);
+            p_cmd->OtherThing = 0;
+            ret = 0;
+        }
     }
 
     if ((p_cdef->Flags & CmDF_ReqCoord) != 0)
     {
         if ((p_cmd->X < MAP_BORDER_MARGIN) || (p_cmd->X > 32767 - MAP_BORDER_MARGIN)) {
-            LOGERR("CMD%hu=%s target coord X of (%hd,%hd) out of range",
+            LOGERR("Cmd%hu = %s target coord X of (%hd,%hd) out of range",
               cmd, p_cdef->CmdName, p_cmd->X, p_cmd->Z);
-            if ((p_cmd->X < MAP_BORDER_MARGIN) && (p_cmd->X >= -16384))
+            if ((p_cmd->X < MAP_BORDER_MARGIN) && (p_cmd->X >= -16384)) {
                 p_cmd->X = MAP_BORDER_MARGIN;
-            if ((p_cmd->X > 32767 - MAP_BORDER_MARGIN) || (p_cmd->X < -16384))
+                if (ret) ret = 2;
+            }
+            if ((p_cmd->X > 32767 - MAP_BORDER_MARGIN) || (p_cmd->X < -16384)) {
                 p_cmd->X = 32767 - MAP_BORDER_MARGIN;
+                if (ret) ret = 2;
+            }
         }
         if ((p_cmd->Z < MAP_BORDER_MARGIN) || (p_cmd->Z > 32767 - MAP_BORDER_MARGIN)) {
-            LOGERR("CMD%hu=%s target coord Z of (%hd,%hd) out of range",
+            LOGERR("Cmd%hu = %s target coord Z of (%hd,%hd) out of range",
               cmd, p_cdef->CmdName, p_cmd->X, p_cmd->Z);
-            if ((p_cmd->Z < MAP_BORDER_MARGIN) && (p_cmd->Z >= -16384))
+            if ((p_cmd->Z < MAP_BORDER_MARGIN) && (p_cmd->Z >= -16384)) {
                 p_cmd->Z = MAP_BORDER_MARGIN;
-            if ((p_cmd->Z > 32767 - MAP_BORDER_MARGIN) || (p_cmd->Z < -16384))
+                if (ret) ret = 2;
+            }
+            if ((p_cmd->Z > 32767 - MAP_BORDER_MARGIN) || (p_cmd->Z < -16384)) {
                 p_cmd->Z = 32767 - MAP_BORDER_MARGIN;
+                if (ret) ret = 2;
+            }
         }
     }
 
@@ -542,34 +602,48 @@ void fix_thing_command_indexes(ushort cmd)
         (((p_cdef->Flags & CmDF_ReqRange2) != 0) && ((p_cmd->Flags & 0x100000) != 0))))
     {
         if ((p_cmd->Arg2 < MAP_BORDER_MARGIN) || (p_cmd->Arg2 > 32767 - MAP_BORDER_MARGIN)) {
-            LOGERR("CMD%hu=%s target coord X/Arg2 of (%d,%d) out of range",
+            LOGERR("Cmd%hu = %s target coord X/Arg2 of (%d,%d) out of range",
               cmd, p_cdef->CmdName, (int)p_cmd->Arg2, (int)p_cmd->MyThing);
-            if ((p_cmd->Arg2 < MAP_BORDER_MARGIN) && (p_cmd->Arg2 >= -16384))
+            if ((p_cmd->Arg2 < MAP_BORDER_MARGIN) && (p_cmd->Arg2 >= -16384)) {
                 p_cmd->Arg2 = MAP_BORDER_MARGIN;
-            if ((p_cmd->Arg2 > 32767 - MAP_BORDER_MARGIN) || (p_cmd->Arg2 < -16384))
+                if (ret) ret = 2;
+            }
+            if ((p_cmd->Arg2 > 32767 - MAP_BORDER_MARGIN) || (p_cmd->Arg2 < -16384)) {
                 p_cmd->Arg2 = 32767 - MAP_BORDER_MARGIN;
+                if (ret) ret = 2;
+            }
         }
         if ((p_cmd->MyThing < MAP_BORDER_MARGIN) || (p_cmd->MyThing > 32767 - MAP_BORDER_MARGIN)) {
-            LOGERR("CMD%hu=%s target coord Z/MyThing of (%d,%d) out of range",
+            LOGERR("Cmd%hu = %s target coord Z/MyThing of (%d,%d) out of range",
               cmd, p_cdef->CmdName, (int)p_cmd->Arg2, (int)p_cmd->MyThing);
-            if ((p_cmd->MyThing < MAP_BORDER_MARGIN) && (p_cmd->MyThing >= -16384))
+            if ((p_cmd->MyThing < MAP_BORDER_MARGIN) && (p_cmd->MyThing >= -16384)) {
                 p_cmd->MyThing = MAP_BORDER_MARGIN;
-            if ((p_cmd->MyThing > 32767 - MAP_BORDER_MARGIN) || (p_cmd->MyThing < -16384))
+                if (ret) ret = 2;
+            }
+            if ((p_cmd->MyThing > 32767 - MAP_BORDER_MARGIN) || (p_cmd->MyThing < -16384)) {
                 p_cmd->MyThing = 32767 - MAP_BORDER_MARGIN;
+                if (ret) ret = 2;
+            }
         }
     } else
     if (((p_cdef->Flags & CmDF_ReqRange2) != 0) && (((p_cdef->Flags & CmDF_ReqCoord2) == 0) ||
         (((p_cdef->Flags & CmDF_ReqCoord2) != 0) && ((p_cmd->Flags & 0x100000) == 0))))
     {
         if ((p_cmd->Arg2 < 1) || (p_cmd->Arg2 > 32767 - MAP_BORDER_MARGIN)) {
-            LOGERR("CMD%hu=%s target Range/Arg2 of %d out of range",
+            LOGERR("Cmd%hu = %s target Range/Arg2 of %d out of range",
               cmd, p_cdef->CmdName, (int)p_cmd->Arg2);
-            if ((p_cmd->Arg2 < 1) && (p_cmd->Arg2 >= -16384))
+            if ((p_cmd->Arg2 < 1) && (p_cmd->Arg2 >= -16384)) {
                 p_cmd->Arg2 = 1;
-            if ((p_cmd->Arg2 > 32767 - MAP_BORDER_MARGIN) || (p_cmd->Arg2 < -16384))
+                if (ret) ret = 2;
+            }
+            if ((p_cmd->Arg2 > 32767 - MAP_BORDER_MARGIN) || (p_cmd->Arg2 < -16384)) {
                 p_cmd->Arg2 = 32767 - MAP_BORDER_MARGIN;
+                if (ret) ret = 2;
+            }
         }
     }
+
+    return ret;
 }
 
 void fix_thing_commands_indexes(void)
