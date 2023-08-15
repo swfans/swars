@@ -116,4 +116,10 @@ ushort do_group_scanner(struct Objective *p_objectv, ushort signal_count)
 #endif
 }
 
+void add_signal_to_scanner(struct Objective *p_objectv, ubyte flag)
+{
+    asm volatile ("call ASM_add_signal_to_scanner\n"
+        :  : "a" (p_objectv), "d" (flag));
+}
+
 /******************************************************************************/

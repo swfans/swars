@@ -51,9 +51,19 @@ struct WarFlag { // sizeof=40
   long ugfld_36;
 };
 
+struct GroupAction {
+  ulong FiredOn;
+  ulong Hit;
+  short Dead;
+  short Alive;
+  short Persuaded;
+  short Storming;
+};
+
 #pragma pack()
 /******************************************************************************/
 extern struct WarFlag war_flags[PEOPLE_GROUPS_COUNT];
+extern struct GroupAction group_actions[PEOPLE_GROUPS_COUNT];
 
 /** Finds Group ID for which there are no things created.
  */

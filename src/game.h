@@ -666,6 +666,7 @@ extern ubyte *memload;
 extern ubyte net_host_player_no;
 extern ubyte byte_1C6D4A;
 extern ubyte byte_1C6DDC[5];
+extern ushort word_1C8446;
 extern ubyte data_19ec6f;
 extern ulong save_mortal_salt;
 

@@ -148,7 +148,6 @@ extern ubyte research_on_weapons;// = true;
 
 extern ushort unkn3de_len;
 extern void *dword_177750;
-extern ushort word_1C8446;
 
 extern ubyte execute_commands;
 extern long gamep_unknval_10;

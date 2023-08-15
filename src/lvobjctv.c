@@ -24,8 +24,11 @@
 #include "bfmemory.h"
 #include "bfmemut.h"
 #include "bfini.h"
+#include "bfkeybd.h"
 #include "thing.h"
 #include "pepgroup.h"
+#include "player.h"
+#include "scanner.h"
 #include "game.h"
 #include "swlog.h"
 /******************************************************************************/
@@ -204,6 +207,30 @@ int add_used_objective(long mapno, long levelno)
     p_objectv->Status = 0;
 
     return objectv;
+}
+
+void draw_objective(ushort objective, ubyte flag)
+{
+    asm volatile ("call ASM_draw_objective\n"
+        : : "a" (objective), "d" (flag));
+}
+
+ubyte thing_arrived_at_obj(short thing, struct Objective *p_objectv)
+{
+    ubyte ret;
+    asm volatile ("call ASM_thing_arrived_at_obj\n"
+        : "=r" (ret) : "a" (thing), "d" (p_objectv));
+    return ret;
+}
+
+ubyte all_group_arrived(ushort group, short x, short y, short z, int radius)
+{
+    ubyte ret;
+    asm volatile (
+      "push %5\n"
+      "call ASM_all_group_arrived\n"
+        : "=r" (ret) : "a" (group), "d" (x), "b" (y), "c" (z), "g" (radius));
+    return ret;
 }
 
 ubyte fix_single_objective(struct Objective *p_objectv, ushort objectv, const char *srctext)

@@ -30,6 +30,8 @@ extern "C" {
 #define SCANNER_BIG_BLIP_COUNT 16
 #define SCANNER_GROUP_COUNT 6
 
+struct Objective;
+
 struct BigBlip
 {
   long X;
@@ -88,6 +90,8 @@ extern short waft_table[32];
 void SCANNER_init(void);
 void SCANNER_fill_in(void);
 void SCANNER_set_colour(ubyte col);
+
+void add_signal_to_scanner(struct Objective *p_objectv, ubyte flag);
 /******************************************************************************/
 #ifdef __cplusplus
 }
