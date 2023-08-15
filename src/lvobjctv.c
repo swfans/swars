@@ -649,7 +649,7 @@ ubyte fix_single_objective(struct Objective *p_objectv, ushort objectv, const ch
 
 short test_objective(ushort objectv, ushort show_obj)
 {
-#if 1
+#if 0
     short ret;
     asm volatile ("call ASM_test_objective\n"
         : "=r" (ret) : "a" (objectv), "d" (show_obj));
