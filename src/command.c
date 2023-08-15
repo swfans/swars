@@ -533,7 +533,7 @@ ubyte fix_thing_command_indexes(ushort cmd)
             thing = search_things_for_index(p_cmd->OtherThing);
             if (thing <= 0) {
                 struct SimpleThing *p_sthing = &sthings[p_cmd->OtherThing];
-                if (p_sthing->Type != SmTT_CARRIED_ITEM)
+                if ((p_sthing->Type != SmTT_CARRIED_ITEM) && (p_sthing->Type != SmTT_DROPPED_ITEM))
                     thing = 0;
             } else {
                 struct Thing *p_thing = &things[thing];

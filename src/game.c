@@ -1100,7 +1100,7 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
                     sanitize_cybmods_flags(&p_thing->U.UPerson.UMod.Mods);
             }
 
-            if (p_thing->Type == SmTT_MINE)
+            if (p_thing->Type == SmTT_DROPPED_ITEM)
             {
                 p_thing->Frame = nstart_ani[p_thing->StartFrame + 1];
             }
@@ -1208,7 +1208,7 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
             }
             else
             {
-              if (p_thing->Type == SmTT_MINE) {
+              if (p_thing->Type == SmTT_DROPPED_ITEM) {
                   p_thing->Frame = nstart_ani[p_thing->StartFrame + 1];
               }
               p_thing->LinkParent = loc_thing.LinkParent;

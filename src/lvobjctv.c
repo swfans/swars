@@ -326,7 +326,7 @@ ubyte fix_single_objective(struct Objective *p_objectv, ushort objectv, const ch
                 thing = 0;
             } else {
                 struct SimpleThing *p_sthing = &sthings[thing];
-                if (p_sthing->Type != SmTT_CARRIED_ITEM)
+                if ((p_sthing->Type != SmTT_CARRIED_ITEM) && (p_sthing->Type != SmTT_DROPPED_ITEM))
                     thing = 0;
                 else if (p_sthing->UniqueID != p_objectv->UniqueID)
                     thing = 0;
@@ -338,7 +338,7 @@ ubyte fix_single_objective(struct Objective *p_objectv, ushort objectv, const ch
                 thing = 0;
             } else {
                 struct SimpleThing *p_sthing = &sthings[thing];
-                if (p_sthing->Type != SmTT_CARRIED_ITEM)
+                if ((p_sthing->Type != SmTT_CARRIED_ITEM) && (p_sthing->Type != SmTT_DROPPED_ITEM))
                     thing = 0;
                 else if (p_sthing->UniqueID != p_objectv->UniqueID)
                     thing = 0;

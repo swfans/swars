@@ -57,7 +57,7 @@ enum ThingType {
     SmTT_NUCLEAR_BOMB = 0x16,
     TT_UNKN23 = 0x17,
     SmTT_SMOKE_GENERATOR = 0x18,
-    SmTT_MINE = 0x19,
+    SmTT_DROPPED_ITEM = 0x19,
     SmTT_CARRIED_ITEM = 0x1A,
     SmTT_ELECTRIC_STRAND = 0x1B,
     TT_RAZOR_WIRE = 0x1C,
