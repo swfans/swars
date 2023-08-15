@@ -25,6 +25,7 @@
 #include "bfmemut.h"
 #include "bfini.h"
 #include "thing.h"
+#include "pepgroup.h"
 #include "game.h"
 #include "swlog.h"
 /******************************************************************************/
@@ -225,80 +226,219 @@ ubyte fix_single_objective(struct Objective *p_objectv, ushort objectv, const ch
 
     p_odef = &objectv_defs[p_objectv->Type];
 
-    ret = 0;
-    switch (p_objectv->Type) // TODO fix parameters based on objectv_defs[] flags
+    ret = 1;
+    if ((p_odef->Flags & ObDF_ReqGroup) != 0)
     {
-    case GAME_OBJ_P_DEAD:
-    case GAME_OBJ_P_ARRIVES:
-    case GAME_OBJ_PERSUADE_P:
-    case GAME_OBJ_GET_ITEM:
-    case GAME_OBJ_PKILL_P:
-        if (p_objectv->Thing > 0)
-        {
-            thing = search_things_for_index(p_objectv->Thing);
-            if (thing <= 0) {
-                thing = 0;
-            }
-            else if (thing > 0) {
-                struct Thing *p_thing = &things[thing];
-                if (p_thing->U.UPerson.UniqueID != p_objectv->UniqueID)
-                    thing = 0;
-            }
-            if (thing == 0) {
-                thing = search_things_for_uniqueid(p_objectv->UniqueID, 1);
-            }
+        if ((p_objectv->Thing < 0) || (p_objectv->Thing >= PEOPLE_GROUPS_COUNT)) {
+            LOGERR("Objv%s%d = %s Group(%hd) out of range",
+              srctext, objectv, p_odef->CmdName, p_objectv->Thing);
+            p_objectv->Thing = 0;
+            ret = 0;
         }
-        else
-        {
-            thing = search_things_for_index(p_objectv->Thing);
-            if (thing <= 0) {
-                struct SimpleThing *p_sthing = &sthings[thing];
-                if (p_sthing->UniqueID != p_objectv->UniqueID)
-                    thing = 0;
-            }
-            else if (thing > 0) {
-                thing = 0;
-            }
-            if (thing == 0) {
-                thing = search_things_for_uniqueid(p_objectv->UniqueID, 0);
-            }
-        }
-        if (thing != 0) {
-            p_objectv->Thing = thing;
-            ret = 2;
-        } else {
-            LOGWARN("Objv%s%d = %s target Thing%d UID=%d not found",
-              srctext, objectv, p_odef->CmdName,
-              (int)p_objectv->Thing, (int)p_objectv->UniqueID);
-        }
-        break;
-    case GAME_OBJ_ALL_G_DEAD:
-    case GAME_OBJ_MEM_G_DEAD:
-    case GAME_OBJ_P_NEAR:
-    case GAME_OBJ_MEM_G_NEAR:
-    case GAME_OBJ_MEM_G_ARRIVES:
-    case GAME_OBJ_ALL_G_ARRIVES:
-    case GAME_OBJ_PERSUADE_MEM_G:
-    case GAME_OBJ_PERSUADE_ALL_G:
-    case GAME_OBJ_TIME:
-    case GAME_OBJ_USE_ITEM:
-    case GAME_OBJ_FUNDS:
-    case GAME_OBJ_PKILL_G:
-    case GAME_OBJ_PKILL_ALL_G:
-    default:
-        break;
-    case GAME_OBJ_DESTROY_OBJECT:
-        thing = find_nearest_object2(p_objectv->X, p_objectv->Z, 0);
-        if (thing != 0) {
-            p_objectv->Thing = thing;
-            ret = 2;
-        } else {
-            LOGWARN("Objv%s%d = %s target Thing%d at (%d,%d) not found",
-              srctext, objectv, p_odef->CmdName,
-              (int)p_objectv->Thing, (int)p_objectv->X, (int)p_objectv->Z);
-        }
-        break;
     }
+    else if ((p_odef->Flags & ObDF_ReqPerson) != 0)
+    {
+        {
+            thing = search_things_for_index(p_objectv->Thing);
+            if (thing <= 0) {
+                thing = 0;
+            } else {
+                struct Thing *p_thing = &things[thing];
+                if (p_thing->Type != TT_PERSON)
+                    thing = 0;
+                else if (p_thing->U.UPerson.UniqueID != p_objectv->UniqueID)
+                    thing = 0;
+            }
+        }
+        if (thing == 0) {
+            thing = search_things_for_uniqueid(p_objectv->UniqueID, 1);
+            if (thing <= 0) {
+                thing = 0;
+            } else {
+                struct Thing *p_thing = &things[thing];
+                if (p_thing->Type != TT_PERSON)
+                    thing = 0;
+            }
+        }
+#if 0 // If UniqueID does not match, it is probably better to give up
+        if (thing == 0) {
+            thing = p_objectv->Thing;
+            if ((thing <= 0) || (thing >= THINGS_LIMIT)) {
+                thing = 0;
+            } else {
+                struct Thing *p_thing = &things[thing];
+                if (p_thing->Type != TT_PERSON)
+                    thing = 0;
+            }
+        }
+#endif
+        if (thing != 0) {
+            p_objectv->Thing = thing;
+            if (ret) ret = 2;
+        } else {
+            LOGERR("Objv%s%d = %s Thing(%hd,%hu) not found",
+              srctext, objectv, p_odef->CmdName,
+              p_objectv->Thing, p_objectv->UniqueID);
+            p_objectv->Thing = 0;
+            ret = 0;
+        }
+    }
+    else if ((p_odef->Flags & ObDF_ReqVehicle) != 0)
+    {
+        {
+            thing = search_things_for_index(p_objectv->Thing);
+            if (thing <= 0) {
+                thing = 0;
+            } else {
+                struct Thing *p_thing = &things[thing];
+                if (p_thing->Type != TT_VEHICLE)
+                    thing = 0;
+                else if (p_thing->U.UVehicle.UniqueID != p_objectv->UniqueID)
+                    thing = 0;
+            }
+        }
+        if (thing == 0) {
+            thing = search_things_for_uniqueid(p_objectv->UniqueID, 1);
+            if (thing <= 0) {
+                thing = 0;
+            } else {
+                struct Thing *p_thing = &things[thing];
+                if (p_thing->Type != TT_VEHICLE)
+                    thing = 0;
+            }
+        }
+        if (thing != 0) {
+            p_objectv->Thing = thing;
+            if (ret) ret = 2;
+        } else {
+            LOGERR("Objv%s%d = %s Thing(%hd,%hu) not found",
+              srctext, objectv, p_odef->CmdName,
+              p_objectv->Thing, p_objectv->UniqueID);
+            p_objectv->Thing = 0;
+            ret = 0;
+        }
+    }
+    else if ((p_odef->Flags & ObDF_ReqItem) != 0)
+    {
+        {
+            thing = search_things_for_index(p_objectv->Thing);
+            if (thing >= 0) {
+                thing = 0;
+            } else {
+                struct SimpleThing *p_sthing = &sthings[thing];
+                if (p_sthing->Type != SmTT_CARRIED_ITEM)
+                    thing = 0;
+                else if (p_sthing->UniqueID != p_objectv->UniqueID)
+                    thing = 0;
+            }
+        }
+        if (thing == 0) {
+            thing = search_things_for_uniqueid(p_objectv->UniqueID, 1);
+            if (thing >= 0) {
+                thing = 0;
+            } else {
+                struct SimpleThing *p_sthing = &sthings[thing];
+                if (p_sthing->Type != SmTT_CARRIED_ITEM)
+                    thing = 0;
+                else if (p_sthing->UniqueID != p_objectv->UniqueID)
+                    thing = 0;
+            }
+        }
+        if (thing != 0) {
+            p_objectv->Thing = thing;
+            if (ret) ret = 2;
+        } else {
+            LOGERR("Objv%s%d = %s Thing(%hd,%hu) not found",
+              srctext, objectv, p_odef->CmdName,
+              p_objectv->Thing, p_objectv->UniqueID);
+            p_objectv->Thing = 0;
+            ret = 0;
+        }
+    }
+    else if ((p_odef->Flags & ObDF_ReqObject) != 0)
+    {
+        {
+            thing = find_nearest_object2(p_objectv->X, p_objectv->Z, 0);
+        }
+        if (thing == 0) {
+            thing = search_things_for_index(p_objectv->Thing);
+            if (thing <= 0) {
+                thing = 0;
+            } else {
+                struct Thing *p_thing = &things[thing];
+                if (p_thing->Type != TT_BUILDING)
+                    thing = 0;
+            }
+        }
+        if (thing != 0) {
+            p_objectv->Thing = thing;
+            if (ret) ret = 2;
+        } else {
+            LOGERR("Objv%s%d = %s Thing(%hd,%hu) not found",
+              srctext, objectv, p_odef->CmdName,
+              p_objectv->Thing, p_objectv->UniqueID);
+            p_objectv->Thing = 0;
+            ret = 0;
+        }
+    }
+    else if ((p_odef->Flags & ObDF_ReqThing) != 0)
+    {
+        {
+            thing = search_things_for_index(p_objectv->Thing);
+        }
+        if (thing == 0) { // Not all things have UniqueID, but worth to try
+            thing = search_things_for_uniqueid(p_objectv->UniqueID, 1);
+        }
+        if (thing != 0) {
+            p_objectv->Thing = thing;
+            if (ret) ret = 2;
+        } else {
+            LOGERR("Objv%s%d = %s Thing(%hd,%hu) not found",
+              srctext, objectv, p_odef->CmdName,
+              p_objectv->Thing, p_objectv->UniqueID);
+            p_objectv->Thing = 0;
+            ret = 0;
+        }
+    }
+
+    if ((p_odef->Flags & ObDF_ReqSecGrp) != 0)
+    {
+        if ((p_objectv->Arg2 <= 0) || (p_objectv->Arg2 >= PEOPLE_GROUPS_COUNT)) {
+            LOGERR("Objv%s%d = %s SecGroup(%d) out of range",
+              srctext, objectv, p_odef->CmdName, (int)p_objectv->Arg2);
+            p_objectv->Arg2 = 0;
+            ret = 0;
+        }
+    }
+    else if ((p_odef->Flags & ObDF_ReqSecTng) != 0)
+    {
+        {
+            thing = search_things_for_index(p_objectv->Arg2);
+        }
+        if (thing > 255) { // TODO when possible , stop storing thing index in Arg2
+            LOGERR("Objv%s%d = %s SecThing(%d) exceeds 8-bit Arg2 range",
+              srctext, objectv, p_odef->CmdName, (int)p_objectv->Arg2);
+            ret = 0;
+        } else if (thing != 0) {
+            p_objectv->Arg2 = thing;
+            if (ret) ret = 2;
+        } else {
+            LOGERR("Objv%s%d = %s SecThing(%d) not found",
+              srctext, objectv, p_odef->CmdName, (int)p_objectv->Arg2);
+            p_objectv->Arg2 = 0;
+            ret = 0;
+        }
+    }
+    else if ((p_odef->Flags & ObDF_ReqAmount) != 0)
+    {
+        if (p_objectv->Arg2 < 1) {
+            LOGERR("Objv%s%d = %s Amount(%d) out of range",
+              srctext, objectv, p_odef->CmdName, (int)p_objectv->Arg2);
+            p_objectv->Arg2 = 1;
+            ret = 0;
+        }
+    }
+
     return ret;
 #endif
 }
