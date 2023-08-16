@@ -773,7 +773,7 @@ void unkn_f_pressed_func(void)
     game_commands = gcmds;
 }
 
-void fix_level_indexes(void)
+void fix_level_indexes(ulong fmtver, ubyte reload)
 {
 #if 0
     asm volatile ("call ASM_fix_level_indexes\n"
@@ -802,12 +802,18 @@ void fix_level_indexes(void)
         fix_single_objective(p_objectv, objectv, "S");
     }
 
-    for (objectv = 1; objectv < next_used_objective; objectv++)
+    // Used objectives are not part of the level file, but part of
+    // the mission file. If restarting level, leave these intact,
+    // as fixups were already applied on first load.
+    if (!reload)
     {
-        struct Objective *p_objectv;
+        for (objectv = 1; objectv < next_used_objective; objectv++)
+        {
+            struct Objective *p_objectv;
 
-        p_objectv = &game_used_objectives[objectv];
-        fix_single_objective(p_objectv, objectv, "U");
+            p_objectv = &game_used_objectives[objectv];
+            fix_single_objective(p_objectv, objectv, "U");
+        }
     }
 
     for (thing = 1; thing < THINGS_LIMIT; thing++)
@@ -1248,12 +1254,8 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
     return fmtver;
 }
 
-void load_level_pc(ushort map, short level)
+void load_level_pc(ushort map, short level, ubyte reload)
 {
-#if 0
-    asm volatile ("call ASM_load_level_pc\n"
-        : : "a" (map), "d" (level));
-#else
     short next_level, prev_level;
     TbFileHandle lev_fh;
     char lev_fname[52];
@@ -1342,6 +1344,7 @@ void load_level_pc(ushort map, short level)
                 LOGWARN("Local player group equal 0 will cause issues; fix the level");
             }
         }
+        fix_level_indexes(fmtver, reload);
     } else
     {
         LOGERR("Could not open mission file, load skipped");
@@ -1349,8 +1352,6 @@ void load_level_pc(ushort map, short level)
     // No idea what exactly pressing F during level load does
     if (lbKeyOn[KC_F])
         unkn_f_pressed_func();
-    fix_level_indexes();
-#endif
 }
 
 TbBool is_unkn_current_player(void)
@@ -3910,10 +3911,6 @@ void place_single_player(void)
 
 void init_game(ubyte reload)
 {
-#if 0
-    asm volatile ("call ASM_init_game\n"
-        : : "a" (reload));
-#endif
     ushort missi_no, next_map_no;
     long new_level_no;
 
@@ -3929,7 +3926,7 @@ void init_game(ubyte reload)
         new_level_no = mission_list[missi_no].LevelNo;
     }
 
-    load_level_pc(-new_level_no, missi_no);
+    load_level_pc(-new_level_no, missi_no, reload);
     if (ingame.GameMode == GamM_None)
         ingame.GameMode = GamM_Unkn2;
     debug_trace_setup(1);
@@ -9279,7 +9276,7 @@ void show_load_and_prep_mission(void)
           }
 
           change_current_map(mission_list[ingame.MissionNo].MapNo);
-          load_level_pc(-(int)mission_list[ingame.MissionNo].LevelNo, ingame.MissionNo);
+          load_level_pc(-(int)mission_list[ingame.MissionNo].LevelNo, ingame.MissionNo, 0);
           randomize_playable_groups_order();
         }
         else
@@ -9297,7 +9294,7 @@ void show_load_and_prep_mission(void)
         if ( !in_network_game )
         {
             if (cities[unkn_city_no].Level != 0)
-                load_level_pc(-cities[unkn_city_no].Level, unkn_city_no);
+                load_level_pc(-cities[unkn_city_no].Level, unkn_city_no, 0);
         }
         debug_trace_place(8);
     }
@@ -9428,12 +9425,8 @@ void setup_menu_screen_mode(void)
         lbDisplay.PhysicalScreenWidth, lbDisplay.PhysicalScreenHeight);
 }
 
-void ASM_show_menu_screen(void);
 void show_menu_screen(void)
 {
-#if 0
-    ASM_show_menu_screen();
-#else
     switch (data_1c498d)
     {
     case 2:
@@ -9864,7 +9857,6 @@ void show_menu_screen(void)
         wait_for_sound_sample_finish(111);
         stop_sample_using_heap(0, 122);
     }
-#endif
 }
 
 void draw_game(void)
