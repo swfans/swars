@@ -43,7 +43,7 @@ enum ObjectiveDefFlags {
     /** Vehicle reference in Thing and UniqueID fields */
     ObDF_ReqVehicle = 0x0004,
     /** Carried Item reference in Thing and UniqueID fields; this also uses
-     * Arg2 field, filling it with type of weapon stored in the item. */
+     * Arg2 field, filling it with type of weapon stored in the item */
     ObDF_ReqItem = 0x0008,
     /** Object (ie building) index in Thing field */
     ObDF_ReqObject = 0x0010,
@@ -52,18 +52,24 @@ enum ObjectiveDefFlags {
     /** Count/Amount in Thing field */
     ObDF_ReqCount = 0x0020,
     /* === What to place in Coord/Radius === */
+    /** Coordinates in X/Y/Z fields (or only X/Z, if the Y is reused) */
     ObDF_ReqCoord = 0x0100,
+    /** Radius/Range in Radius field */
     ObDF_ReqRadius = 0x0200,
+    /** Amount in the Y field; if used, it leaves only X/Z for coords */
+    ObDF_ReqAmountY = 0x0400,
+    /** Thing index in the Y field; if used, it leaves only X/Z for coords */
+    ObDF_ReqThingY = 0x0800,
     /* === What to place in Arg2 === */
-    ObDF_ReqAmount = 0x0400,
-    ObDF_ReqSecTng = 0x0800, // TODO this can cause bugs, use only Thing for thing index
-    ObDF_ReqSecGrp = 0x1000,
+    ObDF_ReqAmount = 0x1000,
+    ObDF_ReqSecTng = 0x2000, // TODO this can cause bugs, use only Thing for thing index
+    ObDF_ReqSecGrp = 0x4000,
 };
 
 struct ObjectiveDef {
     const char *CmdName;
     const char *DefText;
-    ushort Flags;
+    ulong Flags;
 };
 
 struct ObjectiveDef objectv_defs[] = {
@@ -75,10 +81,10 @@ struct ObjectiveDef objectv_defs[] = {
     {"GAME_OBJ_ALL_G_DEAD",	"ELIMINATE GROUP",	ObDF_ReqGroup },
     /* Require at least specified amount of group members to reach DEAD state. */
     {"GAME_OBJ_MEM_G_DEAD",	"KILL GROUP MEM",	ObDF_ReqGroup|ObDF_ReqAmount },
-    /* Unreachable. Require person near? */
-    {"GAME_OBJ_P_NEAR",		"RENDEZVOUS",		ObDF_ReqPerson|ObDF_ReqCoord|ObDF_ReqRadius },
-    /* Unreachable. Require specified amount of group members near? */
-    {"GAME_OBJ_MEM_G_NEAR",	"RENDEZVOUS2",		ObDF_ReqGroup|ObDF_ReqCoord|ObDF_ReqRadius },
+    /* Require the Person and the Thing to be within Radius around each other. */
+    {"GAME_OBJ_P_NEAR",		"RENDEZVOUS",		ObDF_ReqPerson|ObDF_ReqThingY|ObDF_ReqRadius },
+    /* Require specified amount of group members within radius around given thing. */
+    {"GAME_OBJ_MEM_G_NEAR",	"RENDEZVOUS MEM",	ObDF_ReqThing|ObDF_ReqSecGrp|ObDF_ReqAmountY|ObDF_ReqRadius },
     /* Require the target person to be within given radius around given coordinates. */
     {"GAME_OBJ_P_ARRIVES",	"GOTO LOCATION",	ObDF_ReqPerson|ObDF_ReqCoord|ObDF_ReqRadius },
     /* Require at least specified amount of group members to be within radius around given coords. */
@@ -216,36 +222,34 @@ void draw_objective(ushort objective, ubyte flag)
         : : "a" (objective), "d" (flag));
 }
 
-ubyte thing_arrived_at_obj(short thing, struct Objective *p_objectv)
+TbBool thing_arrived_at_xz(short thing, short X, short Z, ushort R)
 {
+    long dtX, dtZ, r2;
+
+    if (thing <= 0) {
+        struct SimpleThing *p_sthing;
+        p_sthing = &sthings[thing];
+        dtX = (p_sthing->X >> 8) - X;
+        dtZ = (p_sthing->Z >> 8) - Z;
+    } else {
+        struct Thing *p_thing;
+        p_thing = &things[thing];
+        dtX = (p_thing->X >> 8) - X;
+        dtZ = (p_thing->Z >> 8) - Z;
+    }
+    r2 = R * R;
+    return ((dtZ * dtZ + dtX * dtX) < r2);
+}
+
+TbBool thing_arrived_at_obj(short thing, struct Objective *p_objectv)
+{
+#if 0
     ubyte ret;
     asm volatile ("call ASM_thing_arrived_at_obj\n"
         : "=r" (ret) : "a" (thing), "d" (p_objectv));
     return ret;
-}
-
-TbBool sthing_arrived_at_obj(short thing, struct Objective *p_objectv)
-{
-    struct SimpleThing *p_sthing;
-    long dX, dZ, r;
-
-    p_sthing = &sthings[thing];
-    dX = (p_sthing->X >> 8) - p_objectv->X;
-    dZ = (p_sthing->Z >> 8) - p_objectv->Z;
-    r = p_objectv->Radius;
-    return ((dZ * dZ + dX * dX) < ((r * r) << 12));
-}
-
-TbBool thing_or_sthing_arrived_at_objectv(short thing, struct Objective *p_objectv)
-{
-    TbBool ret;
-    if (thing == 0)
-        return false;
-    if (thing <= 0)
-        ret = sthing_arrived_at_obj(thing, p_objectv);
-    else
-        ret = thing_arrived_at_obj(thing, p_objectv);
-    return ret;
+#endif
+    return thing_arrived_at_xz(thing, p_objectv->X, p_objectv->Z, p_objectv->Radius << 6);
 }
 
 TbBool thing_is_destroyed(short thing)
@@ -263,7 +267,20 @@ TbBool person_is_dead(short thing)
         return false;
 
     p_thing = &things[thing];
+
+    if (p_thing->Type != TT_PERSON)
+        return false;
+
     return (p_thing->State == PerSt_DEAD);
+}
+
+TbBool person_arrived_at_objectv(short thing, struct Objective *p_objectv)
+{
+    if (thing == 0)
+        return false;
+    if (thing_is_destroyed(thing))
+        return false;
+    return thing_arrived_at_xz(thing, p_objectv->X, p_objectv->Z, p_objectv->Radius << 6);
 }
 
 /** Returns if given item, or the weapon which it represented, is carried
@@ -474,6 +491,68 @@ TbBool group_members_dead(ushort group, ushort amount)
         p_thing = &things[thing];
         if (person_is_dead(thing) || thing_is_destroyed(thing))
             n++;
+        if (n >= amount)
+            return true;
+    }
+    return false;
+}
+
+TbBool person_is_near_thing(short neartng, short thing, ushort radius)
+{
+    short nearX, nearZ;
+
+    if ((neartng == 0) || person_is_dead(neartng) || thing_is_destroyed(neartng))
+        return false;
+    if (neartng <= 0) {
+        struct SimpleThing *p_neartng;
+        p_neartng = &sthings[neartng];
+        nearX = p_neartng->X;
+        nearZ = p_neartng->Z;
+    } else {
+        struct Thing *p_neartng;
+        p_neartng = &things[neartng];
+        nearX = p_neartng->X;
+        nearZ = p_neartng->Z;
+    }
+
+    if ((thing == 0) || person_is_dead(thing) || thing_is_destroyed(thing))
+        return false;
+
+    return (thing_arrived_at_xz(thing, nearX, nearZ, radius << 6));
+}
+
+
+TbBool group_members_near_thing(short neartng, ushort group, ushort amount, ushort radius)
+{
+    short thing;
+    struct Thing *p_thing;
+    ushort n;
+    short nearX, nearZ;
+
+    if ((neartng == 0) || person_is_dead(neartng) || thing_is_destroyed(neartng))
+        return false;
+    if (neartng <= 0) {
+        struct SimpleThing *p_neartng;
+        p_neartng = &sthings[neartng];
+        nearX = p_neartng->X;
+        nearZ = p_neartng->Z;
+    } else {
+        struct Thing *p_neartng;
+        p_neartng = &things[neartng];
+        nearX = p_neartng->X;
+        nearZ = p_neartng->Z;
+    }
+
+    n = 0;
+    thing = same_type_head[256 + group];
+    for (; thing > 0; thing = p_thing->LinkSameGroup)
+    {
+        p_thing = &things[thing];
+        if (!person_is_dead(thing) && !thing_is_destroyed(thing))
+        {
+            if (thing_arrived_at_xz(thing, nearX, nearZ, radius << 6))
+                n++;
+        }
         if (n >= amount)
             return true;
     }
@@ -766,7 +845,7 @@ short test_objective(ushort objectv, ushort show_obj)
     return ret;
 #else
     struct Objective *p_objectv;
-    short thing, group;
+    short thing, thing2, group, amount;
     struct Thing *p_thing;
 
     if (show_obj == 2)
@@ -823,28 +902,40 @@ short test_objective(ushort objectv, ushort show_obj)
         break;
     case GAME_OBJ_MEM_G_DEAD:
         group = p_objectv->Thing;
-        if (group_members_dead(group, p_objectv->Arg2)) {
+        amount = p_objectv->Arg2;
+        if (group_members_dead(group, amount)) {
             p_objectv->Status = 2;
             return 1;
         }
         break;
     case GAME_OBJ_P_NEAR:
+        thing = p_objectv->Thing;
+        thing2 = p_objectv->Y;
+        if (person_is_near_thing(thing, thing2, p_objectv->Radius)) {
+            p_objectv->Status = 2;
+            return 1;
+        }
+        break;
     case GAME_OBJ_MEM_G_NEAR:
-    case GAME_OBJ_USE_ITEM:
-    case GAME_OBJ_FUNDS:
-    case GAME_OBJ_USE_PANET:
-    case GAME_OBJ_UNUSED_21:
+        thing = p_objectv->Thing;
+        group = p_objectv->Arg2;
+        amount = p_objectv->Y;
+        if (group_members_near_thing(thing, group, amount, p_objectv->Radius)) {
+            p_objectv->Status = 2;
+            return 1;
+        }
         break;
     case GAME_OBJ_P_ARRIVES:
         thing = p_objectv->Thing;
-        if (thing_or_sthing_arrived_at_objectv(thing, p_objectv)) {
+        if (person_arrived_at_objectv(thing, p_objectv)) {
             p_objectv->Status = 2;
             return 1;
         }
         break;
     case GAME_OBJ_MEM_G_ARRIVES:
         group = p_objectv->Thing;
-        if (group_members_arrived_at_objectv(group, p_objectv, p_objectv->Arg2)) {
+        amount = p_objectv->Arg2;
+        if (group_members_arrived_at_objectv(group, p_objectv, amount)) {
             p_objectv->Status = 2;
             return 1;
         }
@@ -865,7 +956,8 @@ short test_objective(ushort objectv, ushort show_obj)
         break;
     case GAME_OBJ_PERSUADE_MEM_G:
         group = p_objectv->Thing;
-        if (group_members_persuaded_by_player(group, local_player_no, p_objectv->Arg2)) {
+        amount = p_objectv->Arg2;
+        if (group_members_persuaded_by_player(group, local_player_no, amount)) {
             p_objectv->Status = 2;
             return 1;
         }
@@ -891,6 +983,10 @@ short test_objective(ushort objectv, ushort show_obj)
             p_objectv->Status = 2;
             return 1;
         }
+        break;
+    case GAME_OBJ_USE_ITEM:
+    case GAME_OBJ_FUNDS:
+        //TODO implement
         break;
     case GAME_OBJ_DESTROY_OBJECT:
         thing = p_objectv->Thing;
@@ -929,6 +1025,10 @@ short test_objective(ushort objectv, ushort show_obj)
             return 1;
         }
         break;
+    case GAME_OBJ_USE_PANET:
+    case GAME_OBJ_UNUSED_21:
+        //TODO implement
+        break;
     case GAME_OBJ_PROTECT_G:
         group = p_objectv->Thing;
         if (group_members_dead(group, 1)) {
@@ -951,6 +1051,10 @@ short test_objective(ushort objectv, ushort show_obj)
             p_objectv->Status = 2;
             return 1;
         }
+        break;
+    case GAME_OBJ_UNUSED_25:
+    case GAME_OBJ_UNUSED_26:
+        //TODO implement
         break;
     }
     return 0;
