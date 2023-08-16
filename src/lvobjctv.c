@@ -42,7 +42,8 @@ enum ObjectiveDefFlags {
     ObDF_ReqPerson = 0x0002,
     /** Vehicle reference in Thing and UniqueID fields */
     ObDF_ReqVehicle = 0x0004,
-    /** Carried Item reference in Thing and UniqueID fields */
+    /** Carried Item reference in Thing and UniqueID fields; this also uses
+     * Arg2 field, filling it with type of weapon stored in the item. */
     ObDF_ReqItem = 0x0008,
     /** Object (ie building) index in Thing field */
     ObDF_ReqObject = 0x0010,
@@ -265,24 +266,51 @@ TbBool person_is_dead(short thing)
     return (p_thing->State == PerSt_DEAD);
 }
 
-TbBool item_is_carried_by_player(short thing, ushort plyr)
+/** Returns if given item, or the weapon which it represented, is carried
+ * by given player.
+ *
+ * Many pickups are CARRIED_ITEM things, converted from DROPPED_ITEM.
+ * But for weapons, the DROPPED_ITEM is deleted rather than converted.
+ * So to make the function quasi-work for weapons, we check if the player
+ * acquired said weapon. We can't check Unique ID to make sure this is the
+ * exact same weapon instance, but that should not matter in most practical
+ * uses of the objective.
+ */
+TbBool item_is_carried_by_player(short thing, ushort plyr, ushort weapon)
 {
     struct SimpleThing *p_sthing;
     short plyagent, plygroup;
     struct Thing *p_person;
+    PlayerInfo *p_player;
+    int i;
 
     if (thing >= 0)
         return false;
 
     p_sthing = &sthings[thing];
-    if (p_sthing->Type != SmTT_CARRIED_ITEM)
+    p_player = &players[plyr];
+
+    if ((p_sthing->Type == SmTT_DROPPED_ITEM) &&
+      (p_sthing->U.UWeapon.WeaponType == weapon))
         return false;
 
-    plyagent = players[plyr].DirectControl[0];
+    plyagent = p_player->DirectControl[0];
     plygroup = things[plyagent].U.UPerson.Group;
 
-    p_person = &things[p_sthing->U.UWeapon.Owner];
-    return (p_person->U.UPerson.Group == plygroup);
+    if (p_sthing->Type == SmTT_CARRIED_ITEM)
+    {
+        p_person = &things[p_sthing->U.UWeapon.Owner];
+        return (p_person->U.UPerson.Group == plygroup);
+    }
+
+    for (i = 0; i < 4; i++)
+    {
+        struct Thing *p_agent;
+        p_agent = p_player->MyAgent[i];
+        if (person_carries_weapon(p_agent, weapon))
+            return true;
+    }
+    return false;
 }
 
 TbBool person_is_persuaded(short thing)
@@ -629,7 +657,9 @@ ubyte fix_single_objective(struct Objective *p_objectv, ushort objectv, const ch
             }
         }
         if (thing != 0) {
+            struct SimpleThing *p_sthing = &sthings[thing];
             p_objectv->Thing = thing;
+            p_objectv->Arg2 = p_sthing->U.UWeapon.WeaponType;
             if (ret) ret = 2;
         } else {
             LOGERR("Objv%s%d = %s Thing(%hd,%hu) not found",
@@ -857,7 +887,7 @@ short test_objective(ushort objectv, ushort show_obj)
         break;
     case GAME_OBJ_GET_ITEM:
         thing = p_objectv->Thing;
-        if (item_is_carried_by_player(thing, local_player_no)) {
+        if (item_is_carried_by_player(thing, local_player_no, p_objectv->Arg2)) {
             p_objectv->Status = 2;
             return 1;
         }
