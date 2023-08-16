@@ -75,15 +75,15 @@ struct ObjectiveDef {
 struct ObjectiveDef objectv_defs[] = {
     /* Unreachable. */
     {"GAME_OBJ_NONE",		"DO NOTHING",		ObDF_None },
-    /* Require the target person to reach DEAD state. */
+    /* Require the target person to be dead or destroyed. */
     {"GAME_OBJ_P_DEAD",		"ASSASSINATE",		ObDF_ReqPerson },
     /* Require whole group to be neutralized. */
     {"GAME_OBJ_ALL_G_DEAD",	"ELIMINATE GROUP",	ObDF_ReqGroup },
-    /* Require at least specified amount of group members to reach DEAD state. */
+    /* Require at least specified amount of group members to be dead or destroyed. */
     {"GAME_OBJ_MEM_G_DEAD",	"KILL GROUP MEM",	ObDF_ReqGroup|ObDF_ReqAmount },
     /* Require the Person and the Thing to be within Radius around each other. */
     {"GAME_OBJ_P_NEAR",		"RENDEZVOUS",		ObDF_ReqPerson|ObDF_ReqThingY|ObDF_ReqRadius },
-    /* Require specified amount of group members within radius around given thing. */
+    /* Require specified amount of group members to be within radius around given thing. */
     {"GAME_OBJ_MEM_G_NEAR",	"RENDEZVOUS MEM",	ObDF_ReqThing|ObDF_ReqSecGrp|ObDF_ReqAmountY|ObDF_ReqRadius },
     /* Require the target person to be within given radius around given coordinates. */
     {"GAME_OBJ_P_ARRIVES",	"GOTO LOCATION",	ObDF_ReqPerson|ObDF_ReqCoord|ObDF_ReqRadius },
@@ -110,20 +110,19 @@ struct ObjectiveDef objectv_defs[] = {
     {"GAME_OBJ_DESTROY_OBJECT", "DESTROY BUILDING", ObDF_ReqObject|ObDF_ReqCoord },
     /** Require the target person to either be DESTROYED or change owner to local player group. */
     {"GAME_OBJ_PKILL_P",	"NEUTRALISE",		ObDF_ReqPerson },
-    /* Require FIRST group member to either be DESTROYED or change owner to local player group.
-      Suspicious implementation, looks like copy-paste error. */
-    {"GAME_OBJ_PKILL_G",	"NEUTRALISE MEM",	ObDF_ReqGroup|ObDF_ReqAmount },
+    /* Require all of group members to be killed or persuaded by local player group. */
+    {"GAME_OBJ_PKILL_MEM_G", "NEUTRALISE MEM",	ObDF_ReqGroup|ObDF_ReqAmount },
     /* Require all of group members to either be DESTROYED or change owner to local player group. */
     {"GAME_OBJ_PKILL_ALL_G", "NEUTRALISE G",	ObDF_ReqGroup },
     /* Unreachable. Require using P.A. Network? */
     {"GAME_OBJ_USE_PANET",	"USE P.A.NET",		ObDF_None },
     /* Unreachable. */
     {"GAME_OBJ_UNUSED_21",	"UNEXPECT 21",		ObDF_None },
-    /* Fail if any of group members reach DEAD state. The only negative objective. */
+    /* Fail if any of group members are dead/destroyed. The only negative objective. */
     {"GAME_OBJ_PROTECT_G",	"PROTECT GROUP",	ObDF_ReqGroup },
     /* Require all of group members to change owner to specified person. */
     {"GAME_OBJ_P_PERS_G",	"PEEP PERSUADE ALL", ObDF_ReqGroup|ObDF_ReqSecTng },
-    /* Require all of group members to either be DEAD or within specified vehicle. */
+    /* Require all of group members to either be dead/destroyed or within specified vehicle. */
     {"GAME_OBJ_ALL_G_USE_V", "USE VEHICLE",		ObDF_ReqVehicle|ObDF_ReqSecGrp },
     /* Unreachable. */
     {"GAME_OBJ_UNUSED_25",	"UNEXPECT 25",		ObDF_None },
@@ -152,7 +151,7 @@ const char *gameobjctv_names[] = {
     "GAME_OBJ_FUNDS",
     "GAME_OBJ_DESTROY_OBJECT",
     "GAME_OBJ_PKILL_P",
-    "GAME_OBJ_PKILL_G",
+    "GAME_OBJ_PKILL_MEM_G",
     "GAME_OBJ_PKILL_ALL_G",
     "GAME_OBJ_USE_PANET",
     "GAME_OBJ_UNUSED_21",
@@ -846,7 +845,6 @@ short test_objective(ushort objectv, ushort show_obj)
 #else
     struct Objective *p_objectv;
     short thing, thing2, group, amount;
-    struct Thing *p_thing;
 
     if (show_obj == 2)
     {
@@ -1003,19 +1001,12 @@ short test_objective(ushort objectv, ushort show_obj)
             return 1;
         }
         break;
-    case GAME_OBJ_PKILL_G: // TODO is this really what it was meant to be??
+    case GAME_OBJ_PKILL_MEM_G:
         group = p_objectv->Thing;
-        //if (group_members_killed_or_persuaded_by_player(group, local_player_no, p_objectv->Arg2)) {
-        thing = same_type_head[256 + group];
-        for (; thing > 0; thing = p_thing->LinkSameGroup)
-        {
-            p_thing = &things[thing];
-            if (person_is_persuaded_by_player(thing, local_player_no) ||
-              person_is_dead(thing) || thing_is_destroyed(thing)) {
-                p_objectv->Status = 2;
-                return 1;
-            }
-            break;
+        amount = p_objectv->Arg2;
+        if (group_members_killed_or_persuaded_by_player(group, local_player_no, amount)) {
+            p_objectv->Status = 2;
+            return 1;
         }
         break;
     case GAME_OBJ_PKILL_ALL_G:
