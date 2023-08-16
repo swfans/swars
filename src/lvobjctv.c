@@ -413,6 +413,26 @@ TbBool group_members_persuaded_by_player(ushort group, ushort plyr, ushort amoun
     return false;
 }
 
+TbBool group_members_killed_or_persuaded_by_player(ushort group, ushort plyr, ushort amount)
+{
+    short thing;
+    struct Thing *p_thing;
+    ushort n;
+
+    n = 0;
+    thing = same_type_head[256 + group];
+    for (; thing > 0; thing = p_thing->LinkSameGroup)
+    {
+        p_thing = &things[thing];
+        if (person_is_persuaded_by_player(thing, plyr) ||
+          person_is_dead(thing) || thing_is_destroyed(thing))
+            n++;
+        if (n >= amount)
+            return true;
+    }
+    return false;
+}
+
 TbBool group_members_dead(ushort group, ushort amount)
 {
     short thing;
@@ -718,7 +738,6 @@ short test_objective(ushort objectv, ushort show_obj)
     struct Objective *p_objectv;
     short thing, group;
     struct Thing *p_thing;
-    long n;
 
     if (show_obj == 2)
     {
@@ -774,17 +793,9 @@ short test_objective(ushort objectv, ushort show_obj)
         break;
     case GAME_OBJ_MEM_G_DEAD:
         group = p_objectv->Thing;
-        n = 0;
-        thing = same_type_head[256 + group];
-        for (; thing > 0; thing = p_thing->LinkSameGroup)
-        {
-            p_thing = &things[thing];
-            if (person_is_dead(thing) || thing_is_destroyed(thing))
-                n++;
-            if (n >= p_objectv->Arg2) {
-                p_objectv->Status = 2;
-                return 1;
-            }
+        if (group_members_dead(group, p_objectv->Arg2)) {
+            p_objectv->Status = 2;
+            return 1;
         }
         break;
     case GAME_OBJ_P_NEAR:
@@ -868,6 +879,7 @@ short test_objective(ushort objectv, ushort show_obj)
         break;
     case GAME_OBJ_PKILL_G: // TODO is this really what it was meant to be??
         group = p_objectv->Thing;
+        //if (group_members_killed_or_persuaded_by_player(group, local_player_no, p_objectv->Arg2)) {
         thing = same_type_head[256 + group];
         for (; thing > 0; thing = p_thing->LinkSameGroup)
         {
