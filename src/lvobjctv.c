@@ -223,6 +223,30 @@ ubyte thing_arrived_at_obj(short thing, struct Objective *p_objectv)
     return ret;
 }
 
+TbBool sthing_arrived_at_obj(short thing, struct Objective *p_objectv)
+{
+    struct SimpleThing *p_sthing;
+    long dX, dZ, r;
+
+    p_sthing = &sthings[thing];
+    dX = (p_sthing->X >> 8) - p_objectv->X;
+    dZ = (p_sthing->Z >> 8) - p_objectv->Z;
+    r = p_objectv->Radius;
+    return ((dZ * dZ + dX * dX) < ((r * r) << 12));
+}
+
+TbBool thing_or_sthing_arrived_at_objectv(short thing, struct Objective *p_objectv)
+{
+    TbBool ret;
+    if (thing == 0)
+        return false;
+    if (thing <= 0)
+        ret = sthing_arrived_at_obj(thing, p_objectv);
+    else
+        ret = thing_arrived_at_obj(thing, p_objectv);
+    return ret;
+}
+
 TbBool thing_is_destroyed(short thing)
 {
     struct Thing *p_thing;
@@ -420,6 +444,25 @@ TbBool group_members_persuaded_by_person(ushort group, short owntng, ushort amou
     {
         p_thing = &things[thing];
         if (person_is_persuaded_by_person(thing, owntng))
+            n++;
+        if (n >= amount)
+            return true;
+    }
+    return false;
+}
+
+TbBool group_members_arrived_at_objectv(ushort group, struct Objective *p_objectv, ushort amount)
+{
+    short thing;
+    struct Thing *p_thing;
+    ushort n;
+
+    n = 0;
+    thing = same_type_head[256 + group];
+    for (; thing > 0; thing = p_thing->LinkSameGroup)
+    {
+        p_thing = &things[thing];
+        if (thing_arrived_at_obj(thing, p_objectv))
             n++;
         if (n >= amount)
             return true;
@@ -675,8 +718,7 @@ short test_objective(ushort objectv, ushort show_obj)
     struct Objective *p_objectv;
     short thing, group;
     struct Thing *p_thing;
-    struct SimpleThing *p_sthing;
-    long dX, dZ, n;
+    long n;
 
     if (show_obj == 2)
     {
@@ -754,39 +796,16 @@ short test_objective(ushort objectv, ushort show_obj)
         break;
     case GAME_OBJ_P_ARRIVES:
         thing = p_objectv->Thing;
-        if (thing == 0)
-            break;
-        if (thing <= 0)
-        {
-            p_sthing = &sthings[thing];
-            dX = (p_sthing->X >> 8) - p_objectv->X;
-            dZ = (p_sthing->Z >> 8) - p_objectv->Z;
-            if ((dZ * dZ + dX * dX) < ((p_objectv->Radius * p_objectv->Radius) << 12)) {
-                p_objectv->Status = 2;
-                return 1;
-            }
-        }
-        else
-        {
-            if (thing_arrived_at_obj(thing, p_objectv)) {
-                p_objectv->Status = 2;
-                return 1;
-            }
+        if (thing_or_sthing_arrived_at_objectv(thing, p_objectv)) {
+            p_objectv->Status = 2;
+            return 1;
         }
         break;
     case GAME_OBJ_MEM_G_ARRIVES:
         group = p_objectv->Thing;
-        n = 0;
-        thing = same_type_head[256 + group];
-        for (; thing > 0; thing = p_thing->LinkSameGroup)
-        {
-            p_thing = &things[thing];
-            if (thing_arrived_at_obj(thing, p_objectv))
-                  n++;
-            if (n >= p_objectv->Arg2) {
-                p_objectv->Status = 2;
-                return 1;
-            }
+        if (group_members_arrived_at_objectv(group, p_objectv, p_objectv->Arg2)) {
+            p_objectv->Status = 2;
+            return 1;
         }
         break;
     case GAME_OBJ_ALL_G_ARRIVES:
