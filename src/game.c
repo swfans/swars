@@ -3388,7 +3388,7 @@ void read_user_settings(void)
     {
         set_default_user_settings();
         // Read mortal game salt from backup
-        fh = LbFileOpen("qdata/keys.dat", 1u);
+        fh = LbFileOpen("qdata/keys.dat", Lb_FILE_MODE_READ_ONLY);
         if (fh != INVALID_FILE)
         {
             i = sizeof(save_mortal_salt);
@@ -3403,30 +3403,32 @@ void read_user_settings(void)
         LbFileRead(fh, kbkeys, 23 * sizeof(ushort));
         LbFileRead(fh, jskeys, 23 * sizeof(ushort));
         LbFileRead(fh, &byte_1C4A9F, 1);
-        LbFileRead(fh, &players[local_player_no].DoubleMode, 1);
+        LbFileRead(fh, &players[local_player_no].DoubleMode,
+          sizeof(players[local_player_no].DoubleMode));
         for (i = 0; i != 4; i++)
         {
             PlayerInfo *p_locplayer;
             p_locplayer = &players[local_player_no];
-            LbFileRead(fh, &p_locplayer->UserInput[i].ControlMode, 2);
+            LbFileRead(fh, &p_locplayer->UserInput[i].ControlMode,
+              sizeof(p_locplayer->UserInput[i].ControlMode));
         }
-        LbFileRead(fh, &startscr_samplevol, 2);
-        LbFileRead(fh, &startscr_midivol, 2);
-        LbFileRead(fh, &startscr_cdvolume, 2);
-        LbFileRead(fh, &unkn_gfx_option_2, 1);
-        LbFileRead(fh, &unkn_option_3, 1);
-        LbFileRead(fh, &unkn_option_4, 1);
-        LbFileRead(fh, &ingame.DetailLevel, 1);
-        LbFileRead(fh, &game_high_resolution, 1);
-        LbFileRead(fh, &game_projector_speed, 1);
-        LbFileRead(fh, &game_perspective, 1);
-        LbFileRead(fh, &ingame.PanelPermutation, 1);
-        LbFileRead(fh, &ingame.TrenchcoatPreference, 1);
-        LbFileRead(fh, &ingame.CDTrack, 1);
-        LbFileRead(fh, &ingame.DangerTrack, 1);
-        LbFileRead(fh, &ingame.UseMultiMedia, 1);
-        LbFileRead(fh, &cheats, 2);
-        LbFileRead(fh, &save_mortal_salt, 4);
+        LbFileRead(fh, &startscr_samplevol, sizeof(startscr_samplevol));
+        LbFileRead(fh, &startscr_midivol, sizeof(startscr_midivol));
+        LbFileRead(fh, &startscr_cdvolume, sizeof(startscr_cdvolume));
+        LbFileRead(fh, &unkn_gfx_option_2, sizeof(unkn_gfx_option_2));
+        LbFileRead(fh, &unkn_option_3, sizeof(unkn_option_3));
+        LbFileRead(fh, &unkn_option_4, sizeof(unkn_option_4));
+        LbFileRead(fh, &ingame.DetailLevel, sizeof(ingame.DetailLevel));
+        LbFileRead(fh, &game_high_resolution, sizeof(game_high_resolution));
+        LbFileRead(fh, &game_projector_speed, sizeof(game_projector_speed));
+        LbFileRead(fh, &game_perspective, sizeof(game_perspective));
+        LbFileRead(fh, &ingame.PanelPermutation, sizeof(ingame.PanelPermutation));
+        LbFileRead(fh, &ingame.TrenchcoatPreference, sizeof(ingame.TrenchcoatPreference));
+        LbFileRead(fh, &ingame.CDTrack, sizeof(ingame.CDTrack));
+        LbFileRead(fh, &ingame.DangerTrack, sizeof(ingame.DangerTrack));
+        LbFileRead(fh, &ingame.UseMultiMedia, sizeof(ingame.UseMultiMedia));
+        LbFileRead(fh, &cheats, sizeof(cheats));
+        LbFileRead(fh, &save_mortal_salt, sizeof(save_mortal_salt));
         LbFileClose(fh);
 
         if (unkn_gfx_option_2)
@@ -3458,12 +3460,58 @@ void read_user_settings(void)
 #endif
 }
 
-TbBool save_user_settings(void)
+ubyte save_user_settings(void)
 {
+#if 0
     TbBool ret;
     asm volatile ("call ASM_save_user_settings\n"
         : "=r" (ret) : );
     return ret;
+#endif
+    char fname[52];
+    TbFileHandle fh;
+    int i;
+
+    if (strlen(login_name) > 0)
+        sprintf(fname, "qdata/savegame/%.8s.ini", login_name);
+    else
+        sprintf(fname, "qdata/savegame/%.8s.ini", "ANON");
+
+    fh = LbFileOpen(fname, Lb_FILE_MODE_NEW);
+    if (fh == INVALID_FILE)
+        return 1;
+
+    LbFileWrite(fh, kbkeys, 23 * sizeof(ushort));
+    LbFileWrite(fh, jskeys, 23 * sizeof(ushort));
+    LbFileWrite(fh, &byte_1C4A9F, sizeof(byte_1C4A9F));
+    LbFileWrite(fh, &players[local_player_no].DoubleMode,
+      sizeof(players[local_player_no].DoubleMode));
+    for (i = 0; i != 4; i++)
+    {
+        PlayerInfo *p_locplayer;
+        p_locplayer = &players[local_player_no];
+        LbFileWrite(fh, &p_locplayer->UserInput[i].ControlMode,
+          sizeof(p_locplayer->UserInput[i].ControlMode));
+    }
+    LbFileWrite(fh, &startscr_samplevol, sizeof(startscr_samplevol));
+    LbFileWrite(fh, &startscr_midivol, sizeof(startscr_midivol));
+    LbFileWrite(fh, &startscr_cdvolume, sizeof(startscr_cdvolume));
+    LbFileWrite(fh, &unkn_gfx_option_2, sizeof(unkn_gfx_option_2));
+    LbFileWrite(fh, &unkn_option_3, sizeof(unkn_option_3));
+    LbFileWrite(fh, &unkn_option_4, sizeof(unkn_option_4));
+    LbFileWrite(fh, &ingame.DetailLevel, sizeof(ingame.DetailLevel));
+    LbFileWrite(fh, &game_high_resolution, sizeof(game_high_resolution));
+    LbFileWrite(fh, &game_projector_speed, sizeof(game_projector_speed));
+    LbFileWrite(fh, &game_perspective, sizeof(game_perspective));
+    LbFileWrite(fh, &ingame.PanelPermutation, sizeof(ingame.PanelPermutation));
+    LbFileWrite(fh, &ingame.TrenchcoatPreference, sizeof(ingame.TrenchcoatPreference));
+    LbFileWrite(fh, &ingame.CDTrack, sizeof(ingame.CDTrack));
+    LbFileWrite(fh, &ingame.DangerTrack, sizeof(ingame.DangerTrack));
+    LbFileWrite(fh, &ingame.UseMultiMedia, sizeof(ingame.UseMultiMedia));
+    LbFileWrite(fh, &ingame.Cheats, sizeof(ingame.Cheats));
+    LbFileWrite(fh, &save_mortal_salt, sizeof(save_mortal_salt));
+    LbFileClose(fh);
+    return 0;
 }
 
 void setup_color_lookups(void)
