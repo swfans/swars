@@ -3400,8 +3400,8 @@ void read_user_settings(void)
     {
         ushort cheats;
 
-        LbFileRead(fh, kbkeys, 46);
-        LbFileRead(fh, jskeys, 46);
+        LbFileRead(fh, kbkeys, 23 * sizeof(ushort));
+        LbFileRead(fh, jskeys, 23 * sizeof(ushort));
         LbFileRead(fh, &byte_1C4A9F, 1);
         LbFileRead(fh, &players[local_player_no].DoubleMode, 1);
         for (i = 0; i != 4; i++)
@@ -3456,6 +3456,14 @@ void read_user_settings(void)
     if (i != 1)
         byte_1C4A9F = 0;
 #endif
+}
+
+TbBool save_user_settings(void)
+{
+    TbBool ret;
+    asm volatile ("call ASM_save_user_settings\n"
+        : "=r" (ret) : );
+    return ret;
 }
 
 void setup_color_lookups(void)
