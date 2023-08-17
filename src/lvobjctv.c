@@ -712,6 +712,18 @@ ubyte fix_single_objective(struct Objective *p_objectv, ushort objectv, const ch
     {
         {
             thing = search_things_for_index(p_objectv->Thing);
+            // One mistake which often happens on the map, is that we have static
+            // lights assigned as items. This should be really fixed in the level,
+            // but there is also no reson not to try fix it here.
+            if (thing < 0) {
+                struct SimpleThing *p_sthing = &sthings[thing];
+                if (p_sthing->Type == SmTT_STATIC) {
+                    LOGWARN("Objv%s%d = %s target Thing(%hd,%hu) index %hd is a static; jumping to parent",
+                      srctext, objectv, p_odef->CmdName,
+                      p_objectv->Thing, p_objectv->UniqueID, thing);
+                    thing = p_sthing->Parent;
+                }
+            }
             if (thing >= 0) {
                 thing = 0;
             } else {

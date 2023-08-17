@@ -531,8 +531,19 @@ ubyte fix_thing_command_indexes(ushort cmd)
         thing = 0;
         if (thing == 0) {
             thing = search_things_for_index(p_cmd->OtherThing);
+            // One mistake which often happens on the map, is that we have static
+            // lights assigned as items. This should be really fixed in the level,
+            // but there is also no reson not to try fix it here.
+            if (thing < 0) {
+                struct SimpleThing *p_sthing = &sthings[thing];
+                if (p_sthing->Type == SmTT_STATIC) {
+                    LOGWARN("Cmd%hu = %s target p/v/i %hd is a static; jumping to parent",
+                      cmd, p_cdef->CmdName, thing);
+                    thing = p_sthing->Parent;
+                }
+            }
             if (thing <= 0) {
-                struct SimpleThing *p_sthing = &sthings[p_cmd->OtherThing];
+                struct SimpleThing *p_sthing = &sthings[thing];
                 if ((p_sthing->Type != SmTT_CARRIED_ITEM) && (p_sthing->Type != SmTT_DROPPED_ITEM))
                     thing = 0;
             } else {
