@@ -1058,7 +1058,9 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
             } else {
                 LbFileRead(lev_fh, p_thing, sizeof(struct Thing));
             }
-            LOGNO("Thing%d at (%d,%d,%d) type=%d,%d", p_thing->ThingOffset,
+            LOGNO("Thing(%hd,%hd) group %hd at (%d,%d,%d) type=%d,%d",
+              p_thing->ThingOffset, p_thing->U.UPerson.UniqueID,
+              p_thing->U.UPerson.Group,
               p_thing->X >> 8, p_thing->Y >> 8, p_thing->Z >> 8,
               (int)p_thing->Type, (int)p_thing->SubType);
 
