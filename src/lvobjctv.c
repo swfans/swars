@@ -735,7 +735,7 @@ ubyte fix_single_objective(struct Objective *p_objectv, ushort objectv, const ch
             }
         }
         if (thing == 0) {
-            thing = search_things_for_uniqueid(p_objectv->UniqueID, 1);
+            thing = search_things_for_uniqueid(p_objectv->UniqueID, 0);
             if (thing >= 0) {
                 thing = 0;
             } else {
@@ -792,6 +792,9 @@ ubyte fix_single_objective(struct Objective *p_objectv, ushort objectv, const ch
         }
         if (thing == 0) { // Not all things have UniqueID, but worth to try
             thing = search_things_for_uniqueid(p_objectv->UniqueID, 1);
+        }
+        if (thing == 0) {
+            thing = search_things_for_uniqueid(p_objectv->UniqueID, 0);
         }
         if (thing != 0) {
             p_objectv->Thing = thing;

@@ -1223,6 +1223,10 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
               if (thing != 0)
                   add_node_sthing(thing);
             }
+            LOGNO("Thing(%hd,%hd) at (%d,%d,%d) type=%d,%d",
+              p_thing->ThingOffset, p_thing->UniqueID,
+              p_thing->X >> 8, p_thing->Y >> 8, p_thing->Z >> 8,
+              (int)p_thing->Type, (int)p_thing->SubType);
         }
     }
 
