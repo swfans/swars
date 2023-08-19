@@ -558,7 +558,7 @@ void play_intro(void)
     LOGSYNC("Starting");
     lbDisplay.LeftButton = 0;
     lbKeyOn[KC_ESCAPE] = 0;
-    if ( (cmdln_param_bcg || is_single_game) && !(ingame.Flags & GamF_Unkn80000) )
+    if ( (cmdln_param_bcg || is_single_game) && ((ingame.Flags & GamF_Unkn80000) == 0))
     {
         setup_screen_mode(screen_mode_fmvid);
         LbMouseChangeSprite(NULL);
@@ -1300,7 +1300,7 @@ void load_level_pc(ushort map, short level, ubyte reload)
      * mefisto: No idea what "the" bug is, to be tested and described properly (or re-enabled)
      */
 #if 0
-    if ((ingame.Flags & 0x08) == 0)
+    if ((ingame.Flags & GamF_Unkn8) == 0)
     {
         if (prev_level)
             global_3d_store(1);
@@ -2691,7 +2691,7 @@ void draw_new_panel()
 
     if (!func_1caf8())
     {
-        if (ingame.Flags & 0x200) {
+        if (ingame.Flags & GamF_Unkn200) {
             ulong md, y;
             md = p_locplayer->UserInput[0].ControlMode & 0x1FFF;
             if (md == 1 && pktrec_mode != PktR_PLAYBACK) {
@@ -2793,7 +2793,7 @@ void draw_new_panel()
     }
 
     // Thermal vision button light
-    if ((ingame.Flags & 0x8000) != 0) {
+    if ((ingame.Flags & GamF_Unkn8000) != 0) {
         int x;
         x = 238;
         if (lbDisplay.ScreenMode != 1)
@@ -3239,7 +3239,7 @@ void init_syndwars(void)
         StopMusicIfActive();
     fill_ail_sample_ids();
     if (GetSoundInstalled() && GetSoundAble() && GetSoundActive())
-        ingame.Flags |= 0x020000;
+        ingame.Flags |= GamF_Unkn20000;
     setup_heaps(0);
 }
 
@@ -3439,19 +3439,19 @@ void read_user_settings(void)
         LbFileClose(fh);
 
         if (unkn_gfx_option_2)
-            ingame.Flags |= 0x0002;
+            ingame.Flags |= GamF_Unkn2;
         else
-            ingame.Flags &= ~0x0002;
+            ingame.Flags &= ~GamF_Unkn2;
 
         if (unkn_option_3)
-            ingame.Flags |= 0x0001;
+            ingame.Flags |= GamF_Unkn1;
         else
-            ingame.Flags &= ~0x0001;
+            ingame.Flags &= ~GamF_Unkn1;
 
         if (unkn_option_4)
-            ingame.Flags |= 0x0400;
+            ingame.Flags |= GamF_Unkn400;
         else
-            ingame.Flags &= ~0x0400;
+            ingame.Flags &= ~GamF_Unkn400;
 
         bang_set_detail(ingame.DetailLevel == 0);
         SetSoundMasterVolume(127 * startscr_samplevol / 322);
@@ -3604,7 +3604,7 @@ void init_player(void)
     gamep_unknval_10 = 0;
     gamep_unknval_12 = 0;
     nav_stats__ThisTurn = 0;
-    ingame.Flags &= ~0x0100;
+    ingame.Flags &= ~GamF_Unkn100;
     gamep_unknval_16 = 0;
     init_level_3d(0);
     init_level();
@@ -3778,7 +3778,7 @@ ushort make_group_into_players(ushort group, ushort plyr, ushort max_agent, shor
                 do_weapon_quantities1(p_person);
             p_person->Flag |= 0x40;
             p_person->U.UPerson.ComCur = p_person->U.UPerson.ComHead;
-            ingame.Flags |= 0x0100;
+            ingame.Flags |= GamF_Unkn100;
         }
         else
         {
@@ -6317,7 +6317,7 @@ ubyte do_storage_NEW_MORTAL(ubyte click)
         strcpy(login_name, "ANON");
     read_user_settings();
 
-    ingame.Flags |= 0x0010;
+    ingame.Flags |= GamF_Unkn10;
 
     campaign_new_game_prepare();
 
@@ -6379,12 +6379,12 @@ ubyte do_login_2(ubyte click)
         return 1;
     }
 
-    if ((ingame.Flags & 0x10) != 0)
+    if ((ingame.Flags & GamF_Unkn10) != 0)
     {
         for (i = 2; i < 6; i++) {
             sysmnu_buttons[i].Y += 60;
         }
-        ingame.Flags &= ~0x10;
+        ingame.Flags &= ~GamF_Unkn10;
     }
 
     init_weapon_text();
@@ -7191,7 +7191,7 @@ void init_screen_boxes(void)
         options_gfx_buttons[i].Radio = &unkn_gfx_option_2;
         options_gfx_buttons[i].RadioValue = val;
         options_gfx_buttons[i].Flags |= 0x0100;
-        ingame.Flags |= 0x02;
+        ingame.Flags |= GamF_Unkn2;
         val++;
     }
 
@@ -7201,7 +7201,7 @@ void init_screen_boxes(void)
         options_gfx_buttons[i].Radio = &unkn_option_3;
         options_gfx_buttons[i].RadioValue = val;
         options_gfx_buttons[i].Flags |= 0x0100;
-        ingame.Flags |= 0x01;
+        ingame.Flags |= GamF_Unkn1;
         val++;
     }
 
@@ -7211,7 +7211,7 @@ void init_screen_boxes(void)
         options_gfx_buttons[i].Radio = &unkn_option_4;
         options_gfx_buttons[i].RadioValue = val;
         options_gfx_buttons[i].Flags |= 0x0100;
-        ingame.Flags &= ~0x0400;
+        ingame.Flags &= ~GamF_Unkn400;
         val++;
     }
 
@@ -9040,14 +9040,14 @@ void show_menu_screen_st2(void)
       if ( ingame.GameOver )
       {
             screentype = SCRT_MAINMENU;
-            if (ingame.Flags & 0x10)
+            if (ingame.Flags & GamF_Unkn10)
                 LbFileDelete("qdata/savegame/synwarsm.sav");
             ingame.GameOver = 0;
       }
       else
       {
             forward_research_progress(mission_status[open_brief].CityDays);
-            if (ingame.Flags & 0x10)
+            if (ingame.Flags & GamF_Unkn10)
                 save_game_write(0, save_active_desc);
             screentype = SCRT_9;
             heading_box.Text = gui_strings[374];
@@ -9875,10 +9875,10 @@ void draw_game(void)
         break;
     case DpM_UNKN_32:
         PlayCDTrack(ingame.CDTrack);
-        if ( !(ingame.Flags & 0x20) || !(gameturn & 0xF) )
+        if ( !(ingame.Flags & GamF_Unkn20) || !(gameturn & 0xF) )
         {
             show_game_engine();
-            if ( ingame.Flags & 0x800 )
+            if ((ingame.Flags & GamF_Unkn800) != 0)
               gproc3_unknsub2();
             BAT_play();
             if ( execute_commands )
@@ -9945,7 +9945,7 @@ void game_process(void)
       debug_trace_turn_bound(gameturn + 100);
       load_packet();
       if ( ((active_flags_general_unkn01 & 0x8000) != 0) !=
-        ((ingame.Flags & 0x8000) != 0) )
+        ((ingame.Flags & GamF_Unkn8000) != 0) )
           LbPaletteSet(display_palette);
       active_flags_general_unkn01 = ingame.Flags;
       if ((ingame.DisplayMode == DpM_UNKN_32) ||
@@ -9958,7 +9958,7 @@ void game_process(void)
       if (ingame.DisplayMode == DpM_UNKN_37) {
           swap_wscreen();
       }
-      else if ( !(ingame.Flags & 0x20) || ((gameturn & 0xF) == 0) ) {
+      else if ( !(ingame.Flags & GamF_Unkn20) || ((gameturn & 0xF) == 0) ) {
           LbScreenSwapClear(0);
       }
       game_process_sub04();
