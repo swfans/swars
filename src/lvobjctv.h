@@ -57,8 +57,9 @@ enum GameObjectiveTypes {
     GAME_OBJ_PROTECT_G,
     GAME_OBJ_P_PERS_G,
     GAME_OBJ_ALL_G_USE_V,
-    GAME_OBJ_UNUSED_25,
-    GAME_OBJ_UNUSED_26,
+    GAME_OBJ_MEM_G_USE_V,
+    GAME_OBJ_V_ARRIVES,
+    GAME_OBJ_DESTROY_V,
 };
 
 struct Objective { // sizeof=32

@@ -123,11 +123,13 @@ struct ObjectiveDef objectv_defs[] = {
     /* Require all of group members to change owner to specified person. */
     {"GAME_OBJ_P_PERS_G",	"PEEP PERSUADE ALL", ObDF_ReqGroup|ObDF_ReqSecTng },
     /* Require all of group members to either be dead/destroyed or within specified vehicle. */
-    {"GAME_OBJ_ALL_G_USE_V", "USE VEHICLE",		ObDF_ReqVehicle|ObDF_ReqSecGrp },
-    /* Unreachable. */
-    {"GAME_OBJ_UNUSED_25",	"UNEXPECT 25",		ObDF_None },
-    /* Unreachable. */
-    {"GAME_OBJ_UNUSED_26",	"UNEXPECT 26",		ObDF_None },
+    {"GAME_OBJ_ALL_G_USE_V", "ALL USE VEHICLE",	ObDF_ReqVehicle|ObDF_ReqSecGrp },
+    /* Require at least specified amount of group members to be within specified vehicle. */
+    {"GAME_OBJ_MEM_G_USE_V", "MEM USE VEHICLE",	ObDF_ReqVehicle|ObDF_ReqSecGrp|ObDF_ReqAmountY },
+    /* Require the target vehicle to be within given radius around given coordinates. */
+    {"GAME_OBJ_V_ARRIVES",	"DRIVE TO LOCATION",ObDF_ReqVehicle|ObDF_ReqCoord|ObDF_ReqRadius },
+    /* Require given thing to have DESTROYED flag set. */
+    {"GAME_OBJ_DESTROY_V", "DESTROY VEHICLE",   ObDF_ReqVehicle },
     {NULL,					NULL,				ObDF_None },
 };
 
@@ -158,8 +160,9 @@ const char *gameobjctv_names[] = {
     "GAME_OBJ_PROTECT_G",
     "GAME_OBJ_P_PERS_G",
     "GAME_OBJ_ALL_G_USE_V",
-    "GAME_OBJ_UNUSED_25",
-    "GAME_OBJ_UNUSED_26",
+    "GAME_OBJ_MEM_G_USE_V",
+    "GAME_OBJ_V_ARRIVES",
+    "GAME_OBJ_DESTROY_V",
 };
 
 enum ObjectiveConfigParam {
@@ -273,7 +276,7 @@ TbBool person_is_dead(short thing)
     return (p_thing->State == PerSt_DEAD);
 }
 
-TbBool person_arrived_at_objectv(short thing, struct Objective *p_objectv)
+TbBool thing_arrived_at_objectv(short thing, struct Objective *p_objectv)
 {
     if (thing == 0)
         return false;
@@ -420,7 +423,7 @@ TbBool group_all_killed_or_persuaded_by_player(ushort group, ushort plyr)
     return true;
 }
 
-TbBool group_all_survivors_are_in_vehicle(ushort group, short vehicle)
+TbBool group_all_survivors_in_vehicle(ushort group, short vehicle)
 {
     short thing;
     struct Thing *p_thing;
@@ -434,6 +437,28 @@ TbBool group_all_survivors_are_in_vehicle(ushort group, short vehicle)
             if (!person_is_dead(thing) && !thing_is_destroyed(thing))
                 return false;
         }
+    }
+    return false;
+}
+
+TbBool group_members_in_vehicle(ushort group, short vehicle, ushort amount)
+{
+    short thing;
+    struct Thing *p_thing;
+    ushort n;
+
+    n = 0;
+    thing = same_type_head[256 + group];
+    for (; thing > 0; thing = p_thing->LinkSameGroup)
+    {
+        p_thing = &things[thing];
+        if (!person_is_dead(thing) && !thing_is_destroyed(thing))
+        {
+            if (p_thing->U.UPerson.Vehicle == vehicle)
+                n++;
+        }
+        if (n >= amount)
+            return true;
     }
     return false;
 }
@@ -877,6 +902,7 @@ short test_objective(ushort objectv, ushort show_obj)
     }
     else
     {
+        ushort bkpType;
         p_objectv = &game_used_objectives[objectv];
         if (((ingame.Cheats & 0x04) != 0) &&
           (p_objectv->Status != 2) && lbKeyOn[KC_BACKSLASH])
@@ -886,10 +912,26 @@ short test_objective(ushort objectv, ushort show_obj)
         }
         if (p_objectv->Status == 2)
             return 1;
+        // TODO workaround due to scanner not understanding new objectives
+        bkpType = p_objectv->Type;
+        switch (bkpType)
+        {
+        case GAME_OBJ_MEM_G_USE_V:
+            p_objectv->Type = GAME_OBJ_ALL_G_USE_V;
+            break;
+        case GAME_OBJ_V_ARRIVES:
+            p_objectv->Type = GAME_OBJ_P_ARRIVES;
+            break;
+        case GAME_OBJ_DESTROY_V:
+            p_objectv->Type = GAME_OBJ_P_DEAD;
+            break;
+        }
         if (((p_objectv->Flags & 0x01) == 0) && word_1C8446 && (show_obj != 0))
             draw_objective(objectv, 0);
         if (show_obj != 0)
             add_signal_to_scanner(p_objectv, 0);
+        p_objectv->Type = bkpType;
+        // TODO workaround end
         if ((p_objectv->Flags & 0x02) != 0)
             return 1;
         if (p_objectv->Status == 1)
@@ -940,7 +982,7 @@ short test_objective(ushort objectv, ushort show_obj)
         break;
     case GAME_OBJ_P_ARRIVES:
         thing = p_objectv->Thing;
-        if (person_arrived_at_objectv(thing, p_objectv)) {
+        if (thing_arrived_at_objectv(thing, p_objectv)) {
             p_objectv->Status = 2;
             return 1;
         }
@@ -1053,14 +1095,34 @@ short test_objective(ushort objectv, ushort show_obj)
     case GAME_OBJ_ALL_G_USE_V:
         group = p_objectv->Arg2;
         thing = p_objectv->Thing;
-        if (group_all_survivors_are_in_vehicle(group, thing)) {
+        if (group_all_survivors_in_vehicle(group, thing)) {
             p_objectv->Status = 2;
             return 1;
         }
         break;
-    case GAME_OBJ_UNUSED_25:
-    case GAME_OBJ_UNUSED_26:
-        //TODO implement
+    case GAME_OBJ_MEM_G_USE_V:
+        group = p_objectv->Arg2;
+        thing = p_objectv->Thing;
+        amount = p_objectv->Y;
+        if (group_members_in_vehicle(group, thing, amount)) {
+            p_objectv->Status = 2;
+            return 1;
+        }
+        break;
+    case GAME_OBJ_V_ARRIVES:
+        thing = p_objectv->Thing;
+        if (thing_arrived_at_objectv(thing, p_objectv)) {
+            p_objectv->Status = 2;
+            return 1;
+        }
+        break;
+    case GAME_OBJ_DESTROY_V:
+        thing = p_objectv->Thing;
+        if (thing_is_destroyed(thing)) {
+            p_objectv->Status = 2;
+            return 1;
+        }
+        p_objectv->Status = 0;
         break;
     }
     return 0;
