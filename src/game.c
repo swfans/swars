@@ -9936,11 +9936,20 @@ void draw_game(void)
     }
 }
 
-void load_packet(void);
-void process_packets(void);
+void load_packet(void)
+{
+    asm volatile ("call ASM_load_packet\n"
+        :  :  : "eax" );
+}
+
+void process_packets(void)
+{
+    asm volatile ("call ASM_process_packets\n"
+        :  :  : "eax" );
+}
+
 void joy_input(void);
 void game_process_sub04(void);
-void process_packets(void);
 
 void game_process(void)
 {
