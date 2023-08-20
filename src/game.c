@@ -199,6 +199,7 @@ struct TbLoadFiles unk02_load_files[] =
 TbBool level_deep_fix = false;
 
 extern TbFileHandle packet_rec_fh;
+ushort packet_rec_no = 0;
 
 char unk_credits_text_s[] = "";
 char unk_credits_text_z[] = "";
@@ -220,8 +221,46 @@ void PacketRecord_Close(void)
 
 void PacketRecord_OpenWrite(void)
 {
+#if 0
     asm volatile ("call ASM_PacketRecord_OpenWrite\n"
         :  :  : "eax" );
+#endif
+    char fname[DISKPATH_SIZE];
+    int file_no;
+    ushort campgn;
+    ushort missi;
+    ushort mapno;
+
+    campgn = background_type;
+    missi = ingame.CurrentMission;
+    mapno = current_map;
+    file_no = get_highest_used_packet_record_no(campgn, missi);
+    packet_rec_no = file_no + 1;
+    get_packet_record_fname(fname, campgn, missi, packet_rec_no);
+    LOGDBG("%s: Opening for packet save", fname);
+    packet_rec_fh = LbFileOpen(fname, Lb_FILE_MODE_NEW);
+    LbFileWrite(packet_rec_fh, &campgn, sizeof(campgn));
+    LbFileWrite(packet_rec_fh, &missi, sizeof(missi));
+    LbFileWrite(packet_rec_fh, &mapno, sizeof(mapno));
+}
+
+void PacketRecord_OpenRead(void)
+{
+    char fname[DISKPATH_SIZE];
+    ushort campgn;
+    ushort missi;
+    ushort mapno;
+
+    campgn = background_type;
+    missi = ingame.CurrentMission;
+    get_packet_record_fname(fname, campgn, missi, packet_rec_no);
+    LOGDBG("%s: Opening for packet input", fname);
+    packet_rec_fh = LbFileOpen(fname, Lb_FILE_MODE_READ_ONLY);
+    LbFileRead(packet_rec_fh, &campgn, sizeof(campgn));
+    LbFileRead(packet_rec_fh, &missi, sizeof(missi));
+    LbFileRead(packet_rec_fh, &mapno, sizeof(mapno));
+    if (mapno != current_map)
+        LOGWARN("Packet file expects map %hu", mapno);
 }
 
 void debug_trace_place(int place)
@@ -3284,8 +3323,6 @@ int joy_func_067(struct DevInput *dinp, int a2)
 
 void setup_host(void)
 {
-    char fname[DISKPATH_SIZE];
-
     BAT_unknsub_20(0, 0, 0, 0, unkn_buffer_04 + 41024);
     set_smack_malloc(ASM_smack_malloc);
     set_smack_free(ASM_smack_mfree);
@@ -3317,6 +3354,7 @@ void setup_host(void)
     LbSpriteSetup(m_sprites, m_sprites_end, m_spr_data);
     ingame.PanelPermutation = -2;
     {
+        char fname[DISKPATH_SIZE];
         int file_len;
         sprintf(fname, pop_dat_fname_fmt, 1);
         LbFileLoadAt(fname, pop1_data);
@@ -3339,21 +3377,12 @@ void setup_host(void)
     {
       if ( !in_network_game )
       {
-          int file_no;
-          file_no = get_new_packet_record_no(ingame.CurrentMission);
-          get_packet_record_fname(fname, ingame.CurrentMission, file_no+1);
-          LOGDBG("%s: Opening for packet save", fname);
-          packet_rec_fh = LbFileOpen(fname, Lb_FILE_MODE_NEW);
-          LbFileWrite(packet_rec_fh, &current_map, 2);
+          PacketRecord_OpenWrite();
       }
     }
     if (pktrec_mode == PktR_PLAYBACK)
     {
-        ushort pktrec_head;
-        get_packet_record_fname(fname, ingame.CurrentMission, cmdln_pr_num);
-        LOGDBG("%s: Opening for packet input", fname);
-        packet_rec_fh = LbFileOpen(fname, Lb_FILE_MODE_READ_ONLY);
-        LbFileRead(packet_rec_fh, &pktrec_head, sizeof(pktrec_head));
+        PacketRecord_OpenRead();
     }
     play_intro();
     if ( cmdln_param_bcg )

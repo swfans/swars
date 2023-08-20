@@ -218,10 +218,28 @@ int add_used_objective(long mapno, long levelno)
     return objectv;
 }
 
-void draw_objective(ushort objective, ubyte flag)
+void draw_objective(ushort objectv, ubyte flag)
 {
+    struct Objective *p_objectv;
+    ushort bkpType;
+    // workaround due to scanner not understanding new objectives
+    p_objectv = &game_used_objectives[objectv];
+    bkpType = p_objectv->Type;
+    switch (bkpType)
+    {
+    case GAME_OBJ_MEM_G_USE_V:
+        p_objectv->Type = GAME_OBJ_ALL_G_USE_V;
+        break;
+    case GAME_OBJ_V_ARRIVES:
+        p_objectv->Type = GAME_OBJ_P_ARRIVES;
+        break;
+    case GAME_OBJ_DESTROY_V:
+        p_objectv->Type = GAME_OBJ_P_DEAD;
+        break;
+    }
     asm volatile ("call ASM_draw_objective\n"
-        : : "a" (objective), "d" (flag));
+        : : "a" (objectv), "d" (flag));
+    p_objectv->Type = bkpType;
 }
 
 TbBool thing_arrived_at_xz(short thing, short X, short Z, ushort R)
@@ -902,7 +920,6 @@ short test_objective(ushort objectv, ushort show_obj)
     }
     else
     {
-        ushort bkpType;
         p_objectv = &game_used_objectives[objectv];
         if (((ingame.Cheats & 0x04) != 0) &&
           (p_objectv->Status != 2) && lbKeyOn[KC_BACKSLASH])
@@ -912,26 +929,10 @@ short test_objective(ushort objectv, ushort show_obj)
         }
         if (p_objectv->Status == 2)
             return 1;
-        // TODO workaround due to scanner not understanding new objectives
-        bkpType = p_objectv->Type;
-        switch (bkpType)
-        {
-        case GAME_OBJ_MEM_G_USE_V:
-            p_objectv->Type = GAME_OBJ_ALL_G_USE_V;
-            break;
-        case GAME_OBJ_V_ARRIVES:
-            p_objectv->Type = GAME_OBJ_P_ARRIVES;
-            break;
-        case GAME_OBJ_DESTROY_V:
-            p_objectv->Type = GAME_OBJ_P_DEAD;
-            break;
-        }
         if (((p_objectv->Flags & 0x01) == 0) && word_1C8446 && (show_obj != 0))
             draw_objective(objectv, 0);
         if (show_obj != 0)
             add_signal_to_scanner(p_objectv, 0);
-        p_objectv->Type = bkpType;
-        // TODO workaround end
         if ((p_objectv->Flags & 0x02) != 0)
             return 1;
         if (p_objectv->Status == 1)

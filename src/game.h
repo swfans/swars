@@ -559,7 +559,7 @@ extern ubyte byte_181189;
 
 extern ubyte cmdln_param_n;
 extern ubyte pktrec_mode;
-extern ubyte cmdln_pr_num;
+extern ushort packet_rec_no;
 extern ubyte game_perspective;
 extern ubyte exit_game;
 extern ubyte input_char;

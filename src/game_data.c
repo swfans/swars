@@ -228,18 +228,16 @@ setup_file_names(void)
     GetDirectoryUser();
 }
 
-int
-get_new_packet_record_no(int map_index)
+int get_highest_used_packet_record_no(int campgn, int missi)
 {
     char fname[DISKPATH_SIZE];
-    sprintf(fname, "%s/rec%03d.*", game_dir_savegame, map_index);
-    return get_highest_file_no(fname, 7, game_dir_savegame);
+    sprintf(fname, "%s/rc%02dm%03d.s*", game_dir_savegame, campgn, missi);
+    return get_highest_file_no(fname, strrchr(fname, '*') - fname, game_dir_savegame);
 }
 
-void
-get_packet_record_fname(char *fname, int map_index, int file_no)
+void get_packet_record_fname(char *fname, int campgn, int missi, int file_no)
 {
-    sprintf(fname, "%s/rec%03d.%d", game_dir_savegame, map_index, file_no);
+    sprintf(fname, "%s/rc%02dm%03d.s%02d", game_dir_savegame, campgn, missi, file_no);
 }
 
 /** Decrease the size of some arrays to reduce memory usage.

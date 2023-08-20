@@ -205,8 +205,8 @@ static TbBool process_options(int *argc, char ***argv)
         case 'p':
             is_single_game = 1;
             pktrec_mode = PktR_PLAYBACK;
-            cmdln_pr_num = atoi(optarg);
-            LOGDBG("packet file play %d", cmdln_pr_num);
+            packet_rec_no = atoi(optarg);
+            LOGDBG("packet file play %hu", packet_rec_no);
             break;
 
         case 'q':

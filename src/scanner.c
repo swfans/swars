@@ -249,9 +249,9 @@ ushort do_group_arrive_area_scanner(struct Objective *p_objectv, ushort next_sig
     n = next_signal;
     ingame.Scanner.BigBlip[n].X = p_objectv->X << 8;
     ingame.Scanner.BigBlip[n].Z = p_objectv->Z << 8;
-    ingame.Scanner.BigBlip[n].Period = 32;
     ingame.Scanner.BigBlip[n].Speed = 4;
     ingame.Scanner.BigBlip[n].Colour = colour_lookup[2];
+    ingame.Scanner.BigBlip[n].Period = 32;
     n++;
     return n;
 }
