@@ -27,6 +27,11 @@
 #include "swlog.h"
 /******************************************************************************/
 
+extern ushort signal_count;
+extern ulong turn_last; // = 999;
+extern ulong SCANNER_keep_arcs;
+extern ulong dword_1DB1A0;
+
 void SCANNER_init(void)
 {
     asm volatile ("call ASM_SCANNER_init\n"
@@ -45,12 +50,20 @@ void SCANNER_fill_in(void)
         :  :  : "eax" );
 }
 
-ushort do_group_scanner(struct Objective *p_objectv, ushort signal_count)
+void SCANNER_init_arcpoint(int x1, int z1, int x2, int z2, int c)
+{
+    asm volatile (
+      "push %4\n"
+      "call ASM_SCANNER_init_arcpoint\n"
+        : : "a" (x1), "d" (z1), "b" (x2), "c" (z2), "g" (c));
+}
+
+ushort do_group_scanner(struct Objective *p_objectv, ushort next_signal)
 {
 #if 0
     ushort ret;
     asm volatile ("call ASM_do_group_scanner\n"
-        : "=r" (ret) : "a" (p_objectv), "d" (signal_count));
+        : "=r" (ret) : "a" (p_objectv), "d" (next_signal));
     return ret;
 #else
     ushort n;
@@ -59,11 +72,7 @@ ushort do_group_scanner(struct Objective *p_objectv, ushort signal_count)
     short nearthing;
     int blipX, blipZ;
 
-    n = signal_count;
-    if (n >= SCANNER_BIG_BLIP_COUNT) {
-        LOGWARN("Scaner blips limit reached, blip discarded.");
-        return n;
-    }
+    n = next_signal;
     dcthing = players[local_player_no].DirectControl[0];
     switch (p_objectv->Type)
     {
@@ -96,11 +105,11 @@ ushort do_group_scanner(struct Objective *p_objectv, ushort signal_count)
             blipX = p_thing->X;
             blipZ = p_thing->Z;
         }
-        ingame.Scanner.BigBlip[n].Period = 32;
         ingame.Scanner.BigBlip[n].X = blipX;
         ingame.Scanner.BigBlip[n].Z = blipZ;
         ingame.Scanner.BigBlip[n].Speed = 4;
         ingame.Scanner.BigBlip[n].Colour = col;
+        ingame.Scanner.BigBlip[n].Period = 32;
         ++n;
         if (ingame.Scanner.GroupCount < SCANNER_GROUP_COUNT)
         {
@@ -116,10 +125,208 @@ ushort do_group_scanner(struct Objective *p_objectv, ushort signal_count)
 #endif
 }
 
+ushort do_target_thing_scanner(struct Objective *p_objectv, ushort next_signal)
+{
+    long X, Z;
+    ushort n;
+
+    n = next_signal;
+    if (p_objectv->Thing <= 0) {
+        struct SimpleThing *p_sthing;
+        p_sthing = &sthings[p_objectv->Thing];
+        X = p_sthing->X;
+        Z = p_sthing->Z;
+    } else {
+        struct Thing *p_thing;
+        p_thing = &things[p_objectv->Thing];
+        X = p_thing->X;
+        Z = p_thing->Z;
+    }
+    ingame.Scanner.BigBlip[n].X = X;
+    ingame.Scanner.BigBlip[n].Z = Z;
+    ingame.Scanner.BigBlip[n].Speed = 4;
+    ingame.Scanner.BigBlip[n].Colour = colour_lookup[1];
+    ingame.Scanner.BigBlip[n].Period = 32;
+    n++;
+    return n;
+}
+
+ushort do_target_item_scanner(struct Objective *p_objectv, ushort next_signal)
+{
+    long X, Z;
+    ushort n;
+
+    n = next_signal;
+    if (p_objectv->Thing <= 0) {
+        struct SimpleThing *p_sthing;
+        p_sthing = &sthings[p_objectv->Thing];
+        X = p_sthing->X;
+        Z = p_sthing->Z;
+    } else {
+        return n;
+    }
+    // TODO handle situation where the weapon was picked up
+    ingame.Scanner.BigBlip[n].X = X;
+    ingame.Scanner.BigBlip[n].Z = Z;
+    ingame.Scanner.BigBlip[n].Speed = 4;
+    ingame.Scanner.BigBlip[n].Colour = colour_lookup[1];
+    ingame.Scanner.BigBlip[n].Period = 32;
+    n++;
+    return n;
+}
+
+ushort do_persuade_thing_scanner(struct Objective *p_objectv, ushort next_signal)
+{
+    long X, Z;
+    ushort n;
+
+    n = next_signal;
+    if (p_objectv->Thing <= 0) {
+        struct SimpleThing *p_sthing;
+        p_sthing = &sthings[p_objectv->Thing];
+        X = p_sthing->X;
+        Z = p_sthing->Z;
+    } else {
+        struct Thing *p_thing;
+        p_thing = &things[p_objectv->Thing];
+        X = p_thing->X;
+        Z = p_thing->Z;
+    }
+    ingame.Scanner.BigBlip[n].X = X;
+    ingame.Scanner.BigBlip[n].Z = Z;
+    ingame.Scanner.BigBlip[n].Speed = 4;
+    ingame.Scanner.BigBlip[n].Colour = colour_lookup[3];
+    ingame.Scanner.BigBlip[n].Period = 32;
+    n++;
+    return n;
+}
+
+ushort do_person_arrive_area_scanner(struct Objective *p_objectv, ushort next_signal)
+{
+    long X, Z;
+    ushort n;
+
+    n = next_signal;
+    ingame.Scanner.BigBlip[n].X = p_objectv->X << 8;
+    ingame.Scanner.BigBlip[n].Z = p_objectv->Z << 8;
+    ingame.Scanner.BigBlip[n].Speed = 4;
+    ingame.Scanner.BigBlip[n].Colour = colour_lookup[2];
+    ingame.Scanner.BigBlip[n].Period = 32;
+    n++;
+    if (p_objectv->Thing <= 0) {
+        struct SimpleThing *p_sthing;
+        p_sthing = &sthings[p_objectv->Thing];
+        X = p_sthing->X;
+        Z = p_sthing->Z;
+    } else {
+        struct Thing *p_thing;
+        p_thing = &things[p_objectv->Thing];
+        X = p_thing->X;
+        Z = p_thing->Z;
+    }
+    if (dword_1DB1A0)
+    {
+        ingame.Scanner.Arc[0].X1 = Z;
+        ingame.Scanner.Arc[0].Z1 = X;
+        ingame.Scanner.Arc[0].X2 = p_objectv->Z << 8;
+        ingame.Scanner.Arc[0].Z2 = p_objectv->X << 8;
+    }
+    else
+    {
+        struct Thing *p_thing;
+        p_thing = &things[ingame.TrackThing];
+        if (((ingame.TrackThing == 0) || p_thing->Flag & 0x2000) && (ingame.Flags & 0x2000))
+            SCANNER_init_arcpoint(Z, X, p_objectv->Z << 8, p_objectv->X << 8, 1);
+    }
+    SCANNER_keep_arcs = 1;
+    return n;
+}
+
+ushort do_group_arrive_area_scanner(struct Objective *p_objectv, ushort next_signal)
+{
+    ushort n;
+
+    n = next_signal;
+    ingame.Scanner.BigBlip[n].X = p_objectv->X << 8;
+    ingame.Scanner.BigBlip[n].Z = p_objectv->Z << 8;
+    ingame.Scanner.BigBlip[n].Period = 32;
+    ingame.Scanner.BigBlip[n].Speed = 4;
+    ingame.Scanner.BigBlip[n].Colour = colour_lookup[2];
+    n++;
+    return n;
+}
+
 void add_signal_to_scanner(struct Objective *p_objectv, ubyte flag)
 {
+#if 0
     asm volatile ("call ASM_add_signal_to_scanner\n"
         :  : "a" (p_objectv), "d" (flag));
+#endif
+    if (flag)
+    {
+        int i;
+
+        signal_count = 0;
+        for (i = 0; i < SCANNER_BIG_BLIP_COUNT; i++)
+            ingame.Scanner.BigBlip[i].Period = 0;
+        for (i = 0; i < SCANNER_ARC_COUNT; i++)
+            ingame.Scanner.Arc[i].Period = 0;
+    }
+    if (gameturn != turn_last)
+    {
+        turn_last = gameturn;
+        ingame.Scanner.GroupCount = 0;
+    }
+    if ((p_objectv == NULL) || ((p_objectv->Flags & 0x01) != 0))
+        return;
+
+    if (signal_count >= SCANNER_BIG_BLIP_COUNT) {
+        LOGWARN("Scaner blips limit reached, blip discarded.");
+        return;
+    }
+    switch (p_objectv->Type)
+    {
+    case GAME_OBJ_GET_ITEM:
+        signal_count = do_target_item_scanner(p_objectv, signal_count);
+        break;
+    case GAME_OBJ_DESTROY_OBJECT:
+    case GAME_OBJ_PKILL_P:
+    case GAME_OBJ_P_DEAD:
+    case GAME_OBJ_DESTROY_V:
+    case GAME_OBJ_ALL_G_USE_V:
+    case GAME_OBJ_MEM_G_USE_V:
+        signal_count = do_target_thing_scanner(p_objectv, signal_count);
+        break;
+    case GAME_OBJ_P_ARRIVES:
+    case GAME_OBJ_V_ARRIVES:
+        signal_count = do_person_arrive_area_scanner(p_objectv, signal_count);
+        break;
+    case GAME_OBJ_MEM_G_ARRIVES:
+    case GAME_OBJ_ALL_G_ARRIVES:
+        signal_count = do_group_arrive_area_scanner(p_objectv, signal_count);
+        break;
+    case GAME_OBJ_PERSUADE_P:
+        signal_count = do_persuade_thing_scanner(p_objectv, signal_count);
+        break;
+    case GAME_OBJ_PERSUADE_MEM_G:
+    case GAME_OBJ_PERSUADE_ALL_G:
+    case GAME_OBJ_PKILL_MEM_G:
+    case GAME_OBJ_PKILL_ALL_G:
+    case GAME_OBJ_PROTECT_G:
+    case GAME_OBJ_ALL_G_DEAD:
+    case GAME_OBJ_MEM_G_DEAD:
+        signal_count = do_group_scanner(p_objectv, signal_count);
+        break;
+    case GAME_OBJ_P_PERS_G:
+    case GAME_OBJ_TIME:
+    case GAME_OBJ_USE_ITEM:
+    case GAME_OBJ_FUNDS:
+    case GAME_OBJ_USE_PANET:
+    case GAME_OBJ_UNUSED_21:
+    case GAME_OBJ_P_NEAR:
+    case GAME_OBJ_MEM_G_NEAR:
+        break;
+    }
 }
 
 /******************************************************************************/

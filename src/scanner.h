@@ -29,6 +29,7 @@ extern "C" {
 
 #define SCANNER_BIG_BLIP_COUNT 16
 #define SCANNER_GROUP_COUNT 6
+#define SCANNER_ARC_COUNT 4
 
 struct Objective;
 
@@ -69,11 +70,10 @@ struct Scanner
   long Width[200];
   struct BigBlip BigBlip[15];
   char field_3FC[9];
-  char Arc__Period;
+  char Arc_m1__Period;
   char field_406;
   char field_407;
-  struct Arc Arc1[3];
-  char field_444[20];
+  struct Arc Arc[4];
   char Group[6];
   char GroupCol[6];
   ubyte GroupCount;
