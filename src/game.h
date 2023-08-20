@@ -45,7 +45,7 @@ enum GameFlags {
     GamF_Unkn10000   = 0x010000,
     GamF_Unkn20000   = 0x020000,
     GamF_Unkn40000   = 0x040000,
-    GamF_Unkn80000   = 0x080000,
+    GamF_SkipIntro   = 0x080000,
     GamF_Unkn100000  = 0x00100000,
     GamF_Unkn200000  = 0x00200000,
     GamF_Unkn400000  = 0x00400000,

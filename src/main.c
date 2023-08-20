@@ -80,7 +80,7 @@ print_help (const char *argv0)
 "                -N        ?\n"
 "                -p <num>  Play replay packets from file of given index;\n"
 "                          use '-m' to specify mission on which to play\n"
-"                -q        Affects game quit conditions (but how?)\n"
+"                -q        Skip intro movie\n"
 "                -r        Record replay packets to file in savegame dir;\n"
 "                          next unused filename for selected map will be used\n"
 "  --level-deep-fix -L     Perform deeper fixes to the loaded levels; this may\n"
@@ -210,7 +210,7 @@ static TbBool process_options(int *argc, char ***argv)
             break;
 
         case 'q':
-            ingame.Flags |= GamF_Unkn80000;
+            ingame.Flags |= GamF_SkipIntro;
             break;
 
         case 'r':

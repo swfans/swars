@@ -597,7 +597,7 @@ void play_intro(void)
     LOGSYNC("Starting");
     lbDisplay.LeftButton = 0;
     lbKeyOn[KC_ESCAPE] = 0;
-    if ( (cmdln_param_bcg || is_single_game) && ((ingame.Flags & GamF_Unkn80000) == 0))
+    if ( (cmdln_param_bcg || is_single_game) && ((ingame.Flags & GamF_SkipIntro) == 0))
     {
         setup_screen_mode(screen_mode_fmvid);
         LbMouseChangeSprite(NULL);
