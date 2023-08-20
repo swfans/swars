@@ -264,8 +264,17 @@ void PacketRecord_OpenRead(void)
     get_packet_record_fname(fname, head.campgn, head.missi, packet_rec_no);
     LOGDBG("%s: Opening for packet input", fname);
     packet_rec_fh = LbFileOpen(fname, Lb_FILE_MODE_READ_ONLY);
+    if (packet_rec_fh == INVALID_FILE) {
+        LOGERR("Packet file open failed");
+        pktrec_mode = PktR_NONE;
+        exit_game = true;
+        return;
+    }
     LbFileRead(packet_rec_fh, &head, sizeof(head));
-    p_missi = &mission_list[head.missi];
+    if (head.missi < next_mission)
+        p_missi = &mission_list[head.missi];
+    else
+        p_missi = &mission_list[0];
     if (head.magic != 0x544B4350)
         LOGWARN("%s: Packet file has bad magic value", fname);
     if ((head.campgn != background_type) && (head.campgn != 0xFFFF))
@@ -3411,10 +3420,11 @@ void setup_host(void)
         lbDisplay.ScreenMode = screen_mode_menu;
         mdinfo = LbScreenGetModeInfo(lbDisplay.ScreenMode);
         LbScreenSetup(lbDisplay.ScreenMode, mdinfo->Width, mdinfo->Height, display_palette);
+        LOGDBG("%s: Video mode %dx%d", mdinfo->Width, mdinfo->Height);
     }
     LbMouseSetup(&pointer_sprites[1], 2, 2);
-    if ( cmdln_param_bcg )
-      LbMouseChangeSprite(NULL);
+    if (cmdln_param_bcg)
+        LbMouseChangeSprite(NULL);
 }
 
 void set_default_user_settings(void)
@@ -4137,10 +4147,11 @@ void game_setup(void)
     bang_set_detail(0);
     game_setup_sub3();
     ingame.draw_unknprop_01 = 0;
-    debug_trace_setup(-4);
+    debug_trace_setup(-5);
     game_setup_stuff();
     create_strings_list(gui_strings, gui_strings_data, gui_strings_data_end);
     setup_host();
+    debug_trace_setup(-4);
     read_user_settings();
     debug_trace_setup(-3);
     setup_color_lookups();
