@@ -19,6 +19,7 @@
 #include "bigmap.h"
 #include "swlog.h"
 /******************************************************************************/
+struct MapOffset spiral_step[SPIRAL_STEPS_COUNT];
 
 short get_mapwho_thing_index(short tile_x, short tile_y)
 {
@@ -32,6 +33,60 @@ short get_mapwho_thing_index(short tile_x, short tile_y)
     mapel = &game_my_big_map[MAP_TILE_WIDTH * tile_y + tile_x];
 
     return mapel->Child;
+}
+
+void init_spiral_steps(void)
+{
+    struct MapOffset *sstep;
+    long x,y;
+    long i;
+    y = 0;
+    x = 0;
+    sstep = &spiral_step[0];
+    sstep->h = y;
+    sstep->v = x;
+    sstep->both = (short)y + ((short)x << 8);
+    y = -1;
+    x = -1;
+    for (i=1; i < SPIRAL_STEPS_COUNT; i++)
+    {
+      sstep = &spiral_step[i];
+      sstep->h = y;
+      sstep->v = x;
+      sstep->both = (short)y + ((short)x << 8);
+      if ((y < 0) && (x-y == 1))
+      {
+          y--;
+          x -= 2;
+      } else
+      if (x == y)
+      {
+          if (y < 0)
+            y++;
+          else
+            y--;
+      } else
+      if (y+x == 0)
+      {
+          if (x >= 0)
+            x--;
+          else
+            x++;
+      } else
+      if (abs(x) >= abs(y))
+      {
+          if (x < 0)
+            y++;
+          else
+            y--;
+      } else
+      {
+          if (y >= 0)
+            x++;
+          else
+            x--;
+      }
+    }
 }
 
 /******************************************************************************/

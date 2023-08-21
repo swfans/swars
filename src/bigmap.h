@@ -30,6 +30,8 @@ extern "C" {
 #define MAP_TILE_WIDTH 128
 #define MAP_TILE_HEIGHT 128
 
+#define SPIRAL_STEPS_COUNT   2500
+
 struct MyMapElement {
   ushort Texture;
   ushort Alt;
@@ -44,9 +46,16 @@ struct MyMapElement {
   ushort field_10;
 };
 
+struct MapOffset {
+  sbyte v;
+  sbyte h;
+  short both;
+};
+
 #pragma pack()
 /******************************************************************************/
 extern struct MyMapElement *game_my_big_map;
+extern struct MapOffset spiral_step[SPIRAL_STEPS_COUNT];
 
 short get_mapwho_thing_index(short tile_x, short tile_y);
 /******************************************************************************/

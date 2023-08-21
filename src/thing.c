@@ -148,6 +148,31 @@ short find_thing_on_mapwho_tile(short tile_x, short tile_y, short ttype, short s
     return 0;
 }
 
+/**
+ * Searches for thing of given type and subtype around given tile.
+ * Uses `spiral` checking of surrounding `mapwho` tiles, up to given number of tiles.
+ * @return Gives thing index, or 0 if not found.
+ */
+short find_thing_spiral_near_tile_with_filter(short tile_x, short tile_y, long spiral_len, short ttype, short subtype)
+{
+    int around;
+
+    for (around = 0; around < spiral_len; around++)
+    {
+        struct MapOffset *sstep;
+        short thing;
+        long sx,sy;
+
+        sstep = &spiral_step[around];
+        sx = tile_x + sstep->h;
+        sy = tile_y + sstep->v;
+        thing = find_thing_on_mapwho_tile(sx, sy, ttype, subtype);
+        if (thing != 0)
+            return thing;
+    }
+    return 0;
+}
+
 short find_nearest_from_group(struct Thing *p_person, ushort group, ubyte no_persuaded)
 {
     short ret;
