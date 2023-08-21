@@ -299,6 +299,7 @@ void add_signal_to_scanner(struct Objective *p_objectv, ubyte flag)
         break;
     case GAME_OBJ_P_ARRIVES:
     case GAME_OBJ_V_ARRIVES:
+    case GAME_OBJ_ITEM_ARRIVES:
         signal_count = do_person_arrive_area_scanner(p_objectv, signal_count);
         break;
     case GAME_OBJ_MEM_G_ARRIVES:

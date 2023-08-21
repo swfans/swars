@@ -60,6 +60,7 @@ enum GameObjectiveTypes {
     GAME_OBJ_MEM_G_USE_V,
     GAME_OBJ_V_ARRIVES,
     GAME_OBJ_DESTROY_V,
+    GAME_OBJ_ITEM_ARRIVES,
 };
 
 struct Objective { // sizeof=32

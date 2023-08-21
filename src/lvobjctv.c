@@ -130,6 +130,8 @@ struct ObjectiveDef objectv_defs[] = {
     {"GAME_OBJ_V_ARRIVES",	"DRIVE TO LOCATION",ObDF_ReqVehicle|ObDF_ReqCoord|ObDF_ReqRadius },
     /* Require given thing to have DESTROYED flag set. */
     {"GAME_OBJ_DESTROY_V", "DESTROY VEHICLE",   ObDF_ReqVehicle },
+    /* Require the target person to be within given radius around given coordinates. */
+    {"GAME_OBJ_ITEM_ARRIVES", "BRING TO LOCATION",	ObDF_ReqItem|ObDF_ReqCoord|ObDF_ReqRadius },
     {NULL,					NULL,				ObDF_None },
 };
 
@@ -163,6 +165,7 @@ const char *gameobjctv_names[] = {
     "GAME_OBJ_MEM_G_USE_V",
     "GAME_OBJ_V_ARRIVES",
     "GAME_OBJ_DESTROY_V",
+    "GAME_OBJ_ITEM_ARRIVES",
 };
 
 enum ObjectiveConfigParam {
@@ -231,6 +234,7 @@ void draw_objective(ushort objectv, ubyte flag)
         p_objectv->Type = GAME_OBJ_ALL_G_USE_V;
         break;
     case GAME_OBJ_V_ARRIVES:
+    case GAME_OBJ_ITEM_ARRIVES:
         p_objectv->Type = GAME_OBJ_P_ARRIVES;
         break;
     case GAME_OBJ_DESTROY_V:
@@ -242,25 +246,6 @@ void draw_objective(ushort objectv, ubyte flag)
     p_objectv->Type = bkpType;
 }
 
-TbBool thing_arrived_at_xz(short thing, short X, short Z, ushort R)
-{
-    long dtX, dtZ, r2;
-
-    if (thing <= 0) {
-        struct SimpleThing *p_sthing;
-        p_sthing = &sthings[thing];
-        dtX = (p_sthing->X >> 8) - X;
-        dtZ = (p_sthing->Z >> 8) - Z;
-    } else {
-        struct Thing *p_thing;
-        p_thing = &things[thing];
-        dtX = (p_thing->X >> 8) - X;
-        dtZ = (p_thing->Z >> 8) - Z;
-    }
-    r2 = R * R;
-    return ((dtZ * dtZ + dtX * dtX) < r2);
-}
-
 TbBool thing_arrived_at_obj(short thing, struct Objective *p_objectv)
 {
 #if 0
@@ -269,7 +254,7 @@ TbBool thing_arrived_at_obj(short thing, struct Objective *p_objectv)
         : "=r" (ret) : "a" (thing), "d" (p_objectv));
     return ret;
 #endif
-    return thing_arrived_at_xz(thing, p_objectv->X, p_objectv->Z, p_objectv->Radius << 6);
+    return thing_is_within_circle(thing, p_objectv->X, p_objectv->Z, p_objectv->Radius << 6);
 }
 
 TbBool thing_is_destroyed(short thing)
@@ -300,7 +285,28 @@ TbBool thing_arrived_at_objectv(short thing, struct Objective *p_objectv)
         return false;
     if (thing_is_destroyed(thing))
         return false;
-    return thing_arrived_at_xz(thing, p_objectv->X, p_objectv->Z, p_objectv->Radius << 6);
+    return thing_is_within_circle(thing, p_objectv->X, p_objectv->Z, p_objectv->Radius << 6);
+}
+
+TbBool item_arrived_at_objectv(short thing, struct Objective *p_objectv)
+{
+    struct SimpleThing *p_sthing;
+
+    if (thing >= 0)
+        return false;
+
+    p_sthing = &sthings[thing];
+
+    if ((p_sthing->Type == SmTT_DROPPED_ITEM) || (p_sthing->Type == SmTT_CARRIED_ITEM))
+    {
+        if (!thing_is_destroyed(thing))
+            return thing_is_within_circle(thing, p_objectv->X, p_objectv->Z, p_objectv->Radius << 6);
+    }
+    // If the target is no longer a thing, then it is either carried weapon
+    // or a different dropped weapon (dropping created another thing)
+
+    // TODO implement
+    return false;
 }
 
 /** Returns if given item, or the weapon which it represented, is carried
@@ -560,7 +566,7 @@ TbBool person_is_near_thing(short neartng, short thing, ushort radius)
     if ((thing == 0) || person_is_dead(thing) || thing_is_destroyed(thing))
         return false;
 
-    return (thing_arrived_at_xz(thing, nearX, nearZ, radius << 6));
+    return (thing_is_within_circle(thing, nearX, nearZ, radius << 6));
 }
 
 
@@ -592,7 +598,7 @@ TbBool group_members_near_thing(short neartng, ushort group, ushort amount, usho
         p_thing = &things[thing];
         if (!person_is_dead(thing) && !thing_is_destroyed(thing))
         {
-            if (thing_arrived_at_xz(thing, nearX, nearZ, radius << 6))
+            if (thing_is_within_circle(thing, nearX, nearZ, radius << 6))
                 n++;
         }
         if (n >= amount)
@@ -1124,6 +1130,13 @@ short test_objective(ushort objectv, ushort show_obj)
             return 1;
         }
         p_objectv->Status = 0;
+        break;
+    case GAME_OBJ_ITEM_ARRIVES:
+        thing = p_objectv->Thing;
+        if (item_arrived_at_objectv(thing, p_objectv)) {
+            p_objectv->Status = 2;
+            return 1;
+        }
         break;
     }
     return 0;

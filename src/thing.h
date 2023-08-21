@@ -316,7 +316,11 @@ struct TngUPerson
  * Everything in game besides ground terrain, are Things.
  */
 struct Thing { // sizeof=168
+    /** Previous object in the `mapwho` linked list.
+     */
     short Parent;
+    /** Next object in the `mapwho` linked list.
+     */
     short Next;
     short LinkParent;
     short LinkChild;
@@ -805,9 +809,13 @@ extern struct SimpleThing *sthings;
 extern ushort sthings_used_head;
 
 void init_things(void);
+void refresh_old_thing_format(struct Thing *p_thing, struct ThingOldV9 *p_oldthing, ulong fmtver);
 void process_things(void);
 
+/** Delete the thing from `mapwho` chain.
+ */
 TbResult delete_node(struct Thing *p_thing);
+
 void add_node_thing(ushort new_thing);
 short get_new_thing(void);
 void remove_thing(short tngno);
@@ -816,7 +824,7 @@ void add_node_sthing(ushort new_thing);
 short get_new_sthing(void);
 void remove_sthing(short tngno);
 
-void refresh_old_thing_format(struct Thing *p_thing, struct ThingOldV9 *p_oldthing, ulong fmtver);
+TbBool thing_is_within_circle(short thing, short X, short Z, ushort R);
 
 short find_nearest_from_group(struct Thing *p_person, ushort group, ubyte no_persuaded);
 short search_things_for_index(short index);

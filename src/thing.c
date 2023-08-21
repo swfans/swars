@@ -83,6 +83,25 @@ void remove_sthing(short tngno)
         : : "a" (tngno));
 }
 
+TbBool thing_is_within_circle(short thing, short X, short Z, ushort R)
+{
+    long dtX, dtZ, r2;
+
+    if (thing <= 0) {
+        struct SimpleThing *p_sthing;
+        p_sthing = &sthings[thing];
+        dtX = (p_sthing->X >> 8) - X;
+        dtZ = (p_sthing->Z >> 8) - Z;
+    } else {
+        struct Thing *p_thing;
+        p_thing = &things[thing];
+        dtX = (p_thing->X >> 8) - X;
+        dtZ = (p_thing->Z >> 8) - Z;
+    }
+    r2 = R * R;
+    return ((dtZ * dtZ + dtX * dtX) < r2);
+}
+
 short find_nearest_from_group(struct Thing *p_person, ushort group, ubyte no_persuaded)
 {
     short ret;
