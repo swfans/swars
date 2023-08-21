@@ -106,8 +106,10 @@ TbBool thing_is_within_circle(short thing, short X, short Z, ushort R)
 }
 
 /** Searches for a thing of given type on the specific mapwho tile.
+ * Besides being given a title, the thing must also meet circular range condition.
  */
-short find_thing_on_mapwho_tile(short tile_x, short tile_z, short ttype, short subtype)
+short find_thing_on_mapwho_tile_within_circle_with_filter(short tile_x, short tile_z, short X, short Z, ushort R,
+  short ttype, short subtype, ThingBoolFilter filter, ThingFilterParams *params)
 {
     short thing;
     ulong k;
@@ -122,8 +124,13 @@ short find_thing_on_mapwho_tile(short tile_x, short tile_z, short ttype, short s
             p_sthing = &sthings[thing];
             // Per thing code start
             if (p_sthing->Type == ttype) {
-                if ((p_sthing->SubType == subtype) || (subtype == -1))
-                    return thing;
+                if ((p_sthing->SubType == subtype) || (subtype == -1)) {
+                    // Our search radius could have exceeded expected one a bit
+                    if (thing_is_within_circle(thing, X, Z, R)) {
+                        if (filter(thing, params))
+                            return thing;
+                    }
+                }
             }
             // Per thing code end
             thing = p_sthing->Next;
@@ -134,8 +141,13 @@ short find_thing_on_mapwho_tile(short tile_x, short tile_z, short ttype, short s
             p_thing = &things[thing];
             // Per thing code start
             if (p_thing->Type == ttype) {
-                if ((p_thing->SubType == subtype) || (subtype == -1))
-                    return thing;
+                if ((p_thing->SubType == subtype) || (subtype == -1)) {
+                    // Our search radius could have exceeded expected one a bit
+                    if (thing_is_within_circle(thing, X, Z, R)) {
+                        if (filter(thing, params))
+                            return thing;
+                    }
+                }
             }
             // Per thing code end
             thing = p_thing->Next;
@@ -155,7 +167,8 @@ short find_thing_on_mapwho_tile(short tile_x, short tile_z, short ttype, short s
  *
  * @return Gives thing index, or 0 if not found.
  */
-static short find_thing_type_on_spiral_near_tile(short X, short Z, ushort R, long spiral_len, short ttype, short subtype)
+static short find_thing_type_on_spiral_near_tile(short X, short Z, ushort R, long spiral_len,
+  short ttype, short subtype, ThingBoolFilter filter, ThingFilterParams *params)
 {
     short tile_x, tile_z;
     int around;
@@ -171,10 +184,8 @@ static short find_thing_type_on_spiral_near_tile(short X, short Z, ushort R, lon
         sstep = &spiral_step[around];
         sX = tile_x + sstep->h;
         sZ = tile_z + sstep->v;
-        thing = find_thing_on_mapwho_tile(sX, sZ, ttype, subtype);
-        // Our search radius could have exceeded expected one a bit; verify
-        if ((thing != 0) && !thing_is_within_circle(thing, X, Z, R))
-            thing = 0;
+        thing = find_thing_on_mapwho_tile_within_circle_with_filter(sX, sZ, X, Z, R,
+          ttype, subtype, filter, params);
         if (thing != 0)
             return thing;
     }
@@ -235,7 +246,8 @@ TbBool thing_type_is_simple(short ttype)
      (ttype == SmTT_TEMP_LIGHT);
 }
 
-static short find_thing_type_on_same_type_list_within_circle(short X, short Z, ushort R, short ttype, short subtype)
+static short find_thing_type_on_same_type_list_within_circle(short X, short Z, ushort R,
+  short ttype, short subtype, ThingBoolFilter filter, ThingFilterParams *params)
 {
     short thing;
     ulong k;
@@ -250,9 +262,12 @@ static short find_thing_type_on_same_type_list_within_circle(short X, short Z, u
             p_sthing = &sthings[thing];
             // Per thing code start
             if (p_sthing->Type == ttype) {
-                if ((p_sthing->SubType == subtype) || (subtype == -1))
-                    if (thing_is_within_circle(thing, X, Z, R))
-                        return thing;
+                if ((p_sthing->SubType == subtype) || (subtype == -1)) {
+                    if (thing_is_within_circle(thing, X, Z, R)) {
+                        if (filter(thing, params))
+                            return thing;
+                    }
+                }
             }
             // Per thing code end
             thing = p_sthing->LinkSame;
@@ -263,9 +278,12 @@ static short find_thing_type_on_same_type_list_within_circle(short X, short Z, u
             p_thing = &things[thing];
             // Per thing code start
             if (p_thing->Type == ttype) {
-                if ((p_thing->SubType == subtype) || (subtype == -1))
-                    if (thing_is_within_circle(thing, X, Z, R))
-                        return thing;
+                if ((p_thing->SubType == subtype) || (subtype == -1)) {
+                    if (thing_is_within_circle(thing, X, Z, R)) {
+                        if (filter(thing, params))
+                            return thing;
+                    }
+                }
             }
             // Per thing code end
             thing = p_thing->LinkSame;
@@ -289,7 +307,8 @@ static short find_thing_type_on_same_type_list_within_circle(short X, short Z, u
     return 0;
 }
 
-static short find_thing_type_on_used_list_within_circle(short X, short Z, ushort R, short ttype, short subtype)
+static short find_thing_type_on_used_list_within_circle(short X, short Z, ushort R,
+  short ttype, short subtype, ThingBoolFilter filter, ThingFilterParams *params)
 {
     short thing;
 
@@ -301,9 +320,12 @@ static short find_thing_type_on_used_list_within_circle(short X, short Z, ushort
             p_sthing = &sthings[thing];
             // Per thing code start
             if (p_sthing->Type == ttype) {
-                if ((p_sthing->SubType == subtype) || (subtype == -1))
-                    if (thing_is_within_circle(thing, X, Z, R))
-                        return thing;
+                if ((p_sthing->SubType == subtype) || (subtype == -1)) {
+                    if (thing_is_within_circle(thing, X, Z, R)) {
+                        if (filter(thing, params))
+                            return thing;
+                    }
+                }
             }
             // Per thing code end
         }
@@ -316,9 +338,12 @@ static short find_thing_type_on_used_list_within_circle(short X, short Z, ushort
             p_thing = &things[thing];
             // Per thing code start
             if (p_thing->Type == ttype) {
-                if ((p_thing->SubType == subtype) || (subtype == -1))
-                    if (thing_is_within_circle(thing, X, Z, R))
-                        return thing;
+                if ((p_thing->SubType == subtype) || (subtype == -1)) {
+                    if (thing_is_within_circle(thing, X, Z, R)) {
+                        if (filter(thing, params))
+                            return thing;
+                    }
+                }
             }
             // Per thing code end
         }
@@ -326,7 +351,8 @@ static short find_thing_type_on_used_list_within_circle(short X, short Z, ushort
     return 0;
 }
 
-short find_thing_type_within_circle(short X, short Z, ushort R, short ttype, short subtype)
+short find_thing_type_within_circle_with_filter(short X, short Z, ushort R,
+  short ttype, short subtype, ThingBoolFilter filter, ThingFilterParams *params)
 {
     ushort tile_dist;
     short thing;
@@ -335,21 +361,74 @@ short find_thing_type_within_circle(short X, short Z, ushort R, short ttype, sho
     if (tile_dist <= spiral_dist_tiles_limit)
     {
         thing = find_thing_type_on_spiral_near_tile(X, Z, R,
-          dist_tiles_to_spiral_step[tile_dist], ttype, subtype);
+          dist_tiles_to_spiral_step[tile_dist], ttype, subtype, filter, params);
     }
     else if ((ttype == TT_PERSON) || (ttype == TT_UNKN4) || (ttype == TT_VEHICLE) || (ttype == TT_BUILDING))
     {
         thing = find_thing_type_on_same_type_list_within_circle(
-          X, Z, R, ttype, subtype);
+          X, Z, R, ttype, subtype, filter, params);
     }
     else
     {
         thing = find_thing_type_on_used_list_within_circle(
-          X, Z, R, ttype, subtype);
+          X, Z, R, ttype, subtype, filter, params);
     }
     return thing;
 }
 
+TbBool bfilter_item_is_weapon(short thing, ThingFilterParams *params)
+{
+    struct SimpleThing *p_sthing;
+    short weapon;
+
+    if (thing >= 0)
+        return false;
+    weapon = params->Arg1;
+
+    p_sthing = &sthings[thing];
+    if ((p_sthing->Type != SmTT_DROPPED_ITEM) && (p_sthing->Type != SmTT_CARRIED_ITEM))
+        return false;
+
+    return (weapon == -1) || (p_sthing->U.UWeapon.WeaponType == weapon);
+}
+
+TbBool bfilter_person_carries_weapon(short thing, ThingFilterParams *params)
+{
+    struct Thing *p_thing;
+    short weapon;
+
+    if (thing <= 0)
+        return false;
+    weapon = params->Arg1;
+
+    p_thing = &things[thing];
+    if (p_thing->Type != TT_PERSON)
+        return false;
+
+    return (weapon == -1) || person_carries_weapon(p_thing, weapon);
+}
+
+short find_dropped_weapon_within_circle(short X, short Z, ushort R, short weapon)
+{
+    short thing;
+    ThingFilterParams params;
+
+    params.Arg1 = weapon;
+    thing = find_thing_type_within_circle_with_filter(X, Z, R, SmTT_DROPPED_ITEM, 0, bfilter_item_is_weapon, &params);
+
+    return (thing != 0);
+}
+
+short find_person_carrying_weapon_within_circle(short X, short Z, ushort R, short weapon)
+{
+    short thing;
+    ThingFilterParams params;
+
+    params.Arg1 = weapon;
+    thing = find_thing_type_within_circle_with_filter(X, Z, R, TT_PERSON, -1, bfilter_person_carries_weapon, &params);
+
+    return (thing != 0);
+}
 
 short find_nearest_from_group(struct Thing *p_person, ushort group, ubyte no_persuaded)
 {

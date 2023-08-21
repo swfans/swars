@@ -288,7 +288,7 @@ TbBool thing_arrived_at_objectv(short thing, struct Objective *p_objectv)
     return thing_is_within_circle(thing, p_objectv->X, p_objectv->Z, p_objectv->Radius << 6);
 }
 
-TbBool item_arrived_at_objectv(short thing, struct Objective *p_objectv)
+TbBool item_arrived_at_objectv(short thing, ushort weapon, struct Objective *p_objectv)
 {
     struct SimpleThing *p_sthing;
 
@@ -302,12 +302,13 @@ TbBool item_arrived_at_objectv(short thing, struct Objective *p_objectv)
         if (!thing_is_destroyed(thing))
             return thing_is_within_circle(thing, p_objectv->X, p_objectv->Z, p_objectv->Radius << 6);
     }
-    // If the target is no longer a correct thing, then it is now either
-    // carried weapon or a different dropped weapon (dropping it created
-    // another thing)
-
-    // TODO implement
-    return false;
+    // If the target is no longer a correct thing, then it is now either carried weapon or
+    // a different dropped weapon (dropping it created another thing)
+    thing = find_dropped_weapon_within_circle(p_objectv->X, p_objectv->Z, p_objectv->Radius << 6, weapon);
+    if (thing != 0)
+        return true;
+    thing = find_person_carrying_weapon_within_circle(p_objectv->X, p_objectv->Z, p_objectv->Radius << 6, weapon);
+    return (thing != 0);
 }
 
 /** Returns if given item, or the weapon which it represented, is carried
@@ -1134,7 +1135,7 @@ short test_objective(ushort objectv, ushort show_obj)
         break;
     case GAME_OBJ_ITEM_ARRIVES:
         thing = p_objectv->Thing;
-        if (item_arrived_at_objectv(thing, p_objectv)) {
+        if (item_arrived_at_objectv(thing, p_objectv->Arg2, p_objectv)) {
             p_objectv->Status = 2;
             return 1;
         }

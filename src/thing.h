@@ -439,6 +439,17 @@ struct SimpleThing
     ushort UniqueID;
 };
 
+typedef struct {
+    short Arg1;
+    short Arg2;
+    short Arg3;
+    short Arg4;
+    long Arg5;
+} ThingFilterParams;
+
+/** Definition of a simple callback type which can only return true/false and has no memory of previous checks. */
+typedef TbBool (*ThingBoolFilter)(short thing, ThingFilterParams *params);
+
 /** Old structure for storing State of any Thing.
  * Used only to allow reading old, pre-release levels.
  */
@@ -826,7 +837,7 @@ void remove_sthing(short tngno);
 
 TbBool thing_is_within_circle(short thing, short X, short Z, ushort R);
 
-/** Unified function to find a thing of given type within given circle.
+/** Unified function to find a thing of given type within given circle and matching filter.
  *
  * Tries to use mapwho and same type list, and if cannot then just searches all used things.
  *
@@ -835,8 +846,14 @@ TbBool thing_is_within_circle(short thing, short X, short Z, ushort R);
  * @param R Circle radius in map units.
  * @param ttype Thing Type; need to be specific, no -1 allowed.
  * @param subtype Thing SubType; to catch all, use -1.
+ * @param filter Filter callback function.
+ * @param param Parameters for filter callback function.
  */
-short find_thing_type_within_circle(short X, short Z, ushort R, short ttype, short subtype);
+short find_thing_type_within_circle_with_filter(short X, short Z, ushort R,
+  short ttype, short subtype, ThingBoolFilter filter, ThingFilterParams *params);
+
+short find_dropped_weapon_within_circle(short X, short Z, ushort R, short weapon);
+short find_person_carrying_weapon_within_circle(short X, short Z, ushort R, short weapon);
 
 short find_nearest_from_group(struct Thing *p_person, ushort group, ubyte no_persuaded);
 short search_things_for_index(short index);
