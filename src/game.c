@@ -36,6 +36,7 @@
 #include "cybmod.h"
 #include "pepgroup.h"
 #include "lvobjctv.h"
+#include "bigmap.h"
 #include "display.h"
 #include "dos.h"
 #include "game.h"
@@ -4144,6 +4145,7 @@ void game_setup(void)
     read_cybmods_conf_file();
     bang_init();
     init_arrays_1();
+    init_search_spiral();
     bang_set_detail(0);
     game_setup_sub3();
     ingame.draw_unknprop_01 = 0;

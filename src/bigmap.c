@@ -17,9 +17,13 @@
  */
 /******************************************************************************/
 #include "bigmap.h"
+
+#include <stdlib.h>
 #include "swlog.h"
 /******************************************************************************/
 struct MapOffset spiral_step[SPIRAL_STEPS_COUNT];
+ushort dist_tiles_to_spiral_step[MAP_TILE_WIDTH];
+ushort spiral_dist_tiles_limit = 0;
 
 short get_mapwho_thing_index(short tile_x, short tile_y)
 {
@@ -35,11 +39,12 @@ short get_mapwho_thing_index(short tile_x, short tile_y)
     return mapel->Child;
 }
 
-void init_spiral_steps(void)
+void init_search_spiral_steps(void)
 {
     struct MapOffset *sstep;
     long x,y;
     long i;
+
     y = 0;
     x = 0;
     sstep = &spiral_step[0];
@@ -53,7 +58,7 @@ void init_spiral_steps(void)
       sstep = &spiral_step[i];
       sstep->h = y;
       sstep->v = x;
-      sstep->both = (short)y + ((short)x << 8);
+      sstep->both = (short)y + ((short)x * MAP_TILE_WIDTH);
       if ((y < 0) && (x-y == 1))
       {
           y--;
@@ -87,6 +92,39 @@ void init_spiral_steps(void)
             x--;
       }
     }
+}
+
+void init_dist_to_spiral_steps(void)
+{
+    struct MapOffset *sstep;
+    long i, ssi;
+    ulong dist, distss;
+
+    ssi = SPIRAL_STEPS_COUNT-1;
+    for (i = MAP_TILE_WIDTH; i > 0; i--)
+    {
+        dist = (i * i) * 2;
+        for (; ssi > 0; ssi--) {
+            sstep = &spiral_step[ssi];
+            distss = (sstep->h * sstep->h) + (sstep->v * sstep->v);
+            if (distss < dist) {
+                break;
+            }
+        }
+        dist_tiles_to_spiral_step[i-1] = ssi + 1;
+    }
+    for (i = 0; i < MAP_TILE_WIDTH; i++) {
+        if (dist_tiles_to_spiral_step[i] >= SPIRAL_STEPS_COUNT)
+            break;
+    }
+    spiral_dist_tiles_limit = i;
+}
+
+void init_search_spiral(void)
+{
+    init_search_spiral_steps();
+    init_dist_to_spiral_steps();
+    LOGSYNC("Created for distance up to %hu tiles", spiral_dist_tiles_limit);
 }
 
 /******************************************************************************/

@@ -30,7 +30,12 @@ extern "C" {
 #define MAP_TILE_WIDTH 128
 #define MAP_TILE_HEIGHT 128
 
-#define SPIRAL_STEPS_COUNT   2500
+/** Length of the spiral, which speeds up searching for things in vicinity
+ * of given map coords. It does not make sense to search this way if the
+ * amount of tiles searched exceeds half of things limit; so this should
+ * be set to no more than (THINGS_LIMIT+STHINGS_LIMIT)/2.
+ */
+#define SPIRAL_STEPS_COUNT   1700
 
 struct MyMapElement {
   ushort Texture;
@@ -55,9 +60,13 @@ struct MapOffset {
 #pragma pack()
 /******************************************************************************/
 extern struct MyMapElement *game_my_big_map;
+
 extern struct MapOffset spiral_step[SPIRAL_STEPS_COUNT];
+extern ushort dist_tiles_to_spiral_step[MAP_TILE_WIDTH];
+extern ushort spiral_dist_tiles_limit;
 
 short get_mapwho_thing_index(short tile_x, short tile_y);
+void init_search_spiral(void);
 /******************************************************************************/
 #ifdef __cplusplus
 }

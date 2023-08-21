@@ -826,6 +826,18 @@ void remove_sthing(short tngno);
 
 TbBool thing_is_within_circle(short thing, short X, short Z, ushort R);
 
+/** Unified function to find a thing of given type within given circle.
+ *
+ * Tries to use mapwho and same type list, and if cannot then just searches all used things.
+ *
+ * @param X Map coordinate in map units.
+ * @param Z Map coordinate in map units.
+ * @param R Circle radius in map units.
+ * @param ttype Thing Type; need to be specific, no -1 allowed.
+ * @param subtype Thing SubType; to catch all, use -1.
+ */
+short find_thing_type_within_circle(short X, short Z, ushort R, short ttype, short subtype);
+
 short find_nearest_from_group(struct Thing *p_person, ushort group, ubyte no_persuaded);
 short search_things_for_index(short index);
 short find_nearest_object2(short mx, short mz, ushort sub_type);

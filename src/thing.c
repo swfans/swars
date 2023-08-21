@@ -21,6 +21,7 @@
 #include "bfutility.h"
 #include "bfmemut.h"
 #include "building.h"
+#include "vehicle.h"
 #include "bigmap.h"
 #include "game.h"
 #include "swlog.h"
@@ -106,13 +107,13 @@ TbBool thing_is_within_circle(short thing, short X, short Z, ushort R)
 
 /** Searches for a thing of given type on the specific mapwho tile.
  */
-short find_thing_on_mapwho_tile(short tile_x, short tile_y, short ttype, short subtype)
+short find_thing_on_mapwho_tile(short tile_x, short tile_z, short ttype, short subtype)
 {
     short thing;
     ulong k;
 
     k = 0;
-    thing = get_mapwho_thing_index(tile_x, tile_y);
+    thing = get_mapwho_thing_index(tile_x, tile_z);
     while (thing != 0)
     {
         if (thing <= 0)
@@ -149,29 +150,206 @@ short find_thing_on_mapwho_tile(short tile_x, short tile_y, short ttype, short s
 }
 
 /**
- * Searches for thing of given type and subtype around given tile.
+ * Searches for thing of given type and subtype around tile under given coords.
  * Uses `spiral` checking of surrounding `mapwho` tiles, up to given number of tiles.
+ *
  * @return Gives thing index, or 0 if not found.
  */
-short find_thing_spiral_near_tile_with_filter(short tile_x, short tile_y, long spiral_len, short ttype, short subtype)
+static short find_thing_type_on_spiral_near_tile(short X, short Z, ushort R, long spiral_len, short ttype, short subtype)
 {
+    short tile_x, tile_z;
     int around;
 
+    tile_x = X >> 8;
+    tile_z = Z >> 8;
     for (around = 0; around < spiral_len; around++)
     {
         struct MapOffset *sstep;
         short thing;
-        long sx,sy;
+        long sX, sZ;
 
         sstep = &spiral_step[around];
-        sx = tile_x + sstep->h;
-        sy = tile_y + sstep->v;
-        thing = find_thing_on_mapwho_tile(sx, sy, ttype, subtype);
+        sX = tile_x + sstep->h;
+        sZ = tile_z + sstep->v;
+        thing = find_thing_on_mapwho_tile(sX, sZ, ttype, subtype);
+        // Our search radius could have exceeded expected one a bit; verify
+        if ((thing != 0) && !thing_is_within_circle(thing, X, Z, R))
+            thing = 0;
         if (thing != 0)
             return thing;
     }
     return 0;
 }
+
+short get_thing_same_type_head(short ttype, short subtype)
+{
+    short thing;
+
+    switch (ttype)
+    {
+    case TT_PERSON:
+    case TT_UNKN4:
+        thing = same_type_head[1];
+        break;
+    case TT_VEHICLE:
+        if (subtype == SubTT_VEH_SHIP)
+            thing = same_type_head[5];
+        else
+            thing = same_type_head[2];
+        break;
+    case TT_BUILDING:
+        if (subtype == SubTT_BLD_MGUN)
+            thing = same_type_head[7];
+        else
+            thing = same_type_head[3];
+        break;
+    case TT_MINE:
+        if (subtype == 48)
+            thing = same_type_head[6];
+        break;
+    default:
+        thing = 0;
+        break;
+    }
+    return thing;
+}
+
+TbBool thing_type_is_simple(short ttype)
+{
+    return (ttype == SmTT_STATIC) ||
+     (ttype == SmTT_SPARK) ||
+     (ttype == SmTT_INTELLIG_DOOR) ||
+     (ttype == SmTT_SCALE_EFFECT) ||
+     (ttype == SmTT_NUCLEAR_BOMB) ||
+     (ttype == SmTT_SMOKE_GENERATOR) ||
+     (ttype == SmTT_DROPPED_ITEM) ||
+     (ttype == SmTT_CARRIED_ITEM) ||
+     (ttype == SmTT_ELECTRIC_STRAND) ||
+     (ttype == SmTT_TIME_POD) ||
+     (ttype == SmTT_CANISTER) ||
+     (ttype == SmTT_STASIS_POD) ||
+     (ttype == SmTT_SOUL) ||
+     (ttype == SmTT_BANG) ||
+     (ttype == SmTT_FIRE) ||
+     (ttype == SmTT_SFX) ||
+     (ttype == SmTT_TEMP_LIGHT);
+}
+
+static short find_thing_type_on_same_type_list_within_circle(short X, short Z, ushort R, short ttype, short subtype)
+{
+    short thing;
+    ulong k;
+
+    k = 0;
+    thing = get_thing_same_type_head(ttype, subtype);
+    while (thing != 0)
+    {
+        if (thing <= 0)
+        {
+            struct SimpleThing *p_sthing;
+            p_sthing = &sthings[thing];
+            // Per thing code start
+            if (p_sthing->Type == ttype) {
+                if ((p_sthing->SubType == subtype) || (subtype == -1))
+                    if (thing_is_within_circle(thing, X, Z, R))
+                        return thing;
+            }
+            // Per thing code end
+            thing = p_sthing->LinkSame;
+        }
+        else
+        {
+            struct Thing *p_thing;
+            p_thing = &things[thing];
+            // Per thing code start
+            if (p_thing->Type == ttype) {
+                if ((p_thing->SubType == subtype) || (subtype == -1))
+                    if (thing_is_within_circle(thing, X, Z, R))
+                        return thing;
+            }
+            // Per thing code end
+            thing = p_thing->LinkSame;
+        }
+        // If searching for all subtypes, make sure we really catch them all; switch to
+        // second linked list if forst one did not gave results
+        if ((thing == 0) && (subtype == -1) && (ttype == TT_VEHICLE)) {
+            subtype = SubTT_VEH_SHIP;
+            thing = get_thing_same_type_head(ttype, subtype);
+        }
+        if ((thing == 0) && (subtype == -1) && (ttype == TT_BUILDING)) {
+            subtype = SubTT_BLD_MGUN;
+            thing = get_thing_same_type_head(ttype, subtype);
+        }
+        k++;
+        if (k >= STHINGS_LIMIT+THINGS_LIMIT) {
+            LOGERR("Infinite loop in mapwho things list");
+            break;
+        }
+    }
+    return 0;
+}
+
+static short find_thing_type_on_used_list_within_circle(short X, short Z, ushort R, short ttype, short subtype)
+{
+    short thing;
+
+    if (thing_type_is_simple(ttype))
+    {
+        struct SimpleThing *p_sthing;
+        for (thing = sthings_used_head; thing < 0; thing = p_sthing->LinkChild)
+        {
+            p_sthing = &sthings[thing];
+            // Per thing code start
+            if (p_sthing->Type == ttype) {
+                if ((p_sthing->SubType == subtype) || (subtype == -1))
+                    if (thing_is_within_circle(thing, X, Z, R))
+                        return thing;
+            }
+            // Per thing code end
+        }
+    }
+    else
+    {
+        struct Thing *p_thing;
+        for (thing = things_used_head; thing > 0; thing = p_thing->LinkChild)
+        {
+            p_thing = &things[thing];
+            // Per thing code start
+            if (p_thing->Type == ttype) {
+                if ((p_thing->SubType == subtype) || (subtype == -1))
+                    if (thing_is_within_circle(thing, X, Z, R))
+                        return thing;
+            }
+            // Per thing code end
+        }
+    }
+    return 0;
+}
+
+short find_thing_type_within_circle(short X, short Z, ushort R, short ttype, short subtype)
+{
+    ushort tile_dist;
+    short thing;
+
+    tile_dist = (R + 256) >> 8;
+    if (tile_dist <= spiral_dist_tiles_limit)
+    {
+        thing = find_thing_type_on_spiral_near_tile(X, Z, R,
+          dist_tiles_to_spiral_step[tile_dist], ttype, subtype);
+    }
+    else if ((ttype == TT_PERSON) || (ttype == TT_UNKN4) || (ttype == TT_VEHICLE) || (ttype == TT_BUILDING))
+    {
+        thing = find_thing_type_on_same_type_list_within_circle(
+          X, Z, R, ttype, subtype);
+    }
+    else
+    {
+        thing = find_thing_type_on_used_list_within_circle(
+          X, Z, R, ttype, subtype);
+    }
+    return thing;
+}
+
 
 short find_nearest_from_group(struct Thing *p_person, ushort group, ubyte no_persuaded)
 {
