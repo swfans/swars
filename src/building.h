@@ -75,7 +75,7 @@ enum SubTypeBuilding {
   SubTT_BLD_2C = 0x2C,
   SubTT_BLD_2D = 0x2D,
   SubTT_BLD_2E = 0x2E,
-  SubTT_BLD_2F = 0x2F,
+  SubTT_BLD_STATION = 0x2F,
   SubTT_BLD_30 = 0x30,
   SubTT_BLD_31 = 0x31,
   SubTT_BLD_32 = 0x32,

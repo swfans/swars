@@ -21,7 +21,9 @@
 #include "bfutility.h"
 #include "bfmemut.h"
 #include "building.h"
+#include "bigmap.h"
 #include "game.h"
+#include "swlog.h"
 /******************************************************************************/
 void init_things(void)
 {
@@ -100,6 +102,50 @@ TbBool thing_is_within_circle(short thing, short X, short Z, ushort R)
     }
     r2 = R * R;
     return ((dtZ * dtZ + dtX * dtX) < r2);
+}
+
+/** Searches for a thing of given type on the specific mapwho tile.
+ */
+short find_thing_on_mapwho_tile(short tile_x, short tile_y, short ttype, short subtype)
+{
+    short thing;
+    ulong k;
+
+    k = 0;
+    thing = get_mapwho_thing_index(tile_x, tile_y);
+    while (thing != 0)
+    {
+        if (thing <= 0)
+        {
+            struct SimpleThing *p_sthing;
+            p_sthing = &sthings[thing];
+            // Per thing code start
+            if (p_sthing->Type == ttype) {
+                if ((p_sthing->SubType == subtype) || (subtype == -1))
+                    return thing;
+            }
+            // Per thing code end
+            thing = p_sthing->Next;
+        }
+        else
+        {
+            struct Thing *p_thing;
+            p_thing = &things[thing];
+            // Per thing code start
+            if (p_thing->Type == ttype) {
+                if ((p_thing->SubType == subtype) || (subtype == -1))
+                    return thing;
+            }
+            // Per thing code end
+            thing = p_thing->Next;
+        }
+        k++;
+        if (k >= STHINGS_LIMIT+THINGS_LIMIT) {
+            LOGERR("Infinite loop in mapwho things list");
+            break;
+        }
+    }
+    return 0;
 }
 
 short find_nearest_from_group(struct Thing *p_person, ushort group, ubyte no_persuaded)

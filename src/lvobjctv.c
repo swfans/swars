@@ -302,8 +302,9 @@ TbBool item_arrived_at_objectv(short thing, struct Objective *p_objectv)
         if (!thing_is_destroyed(thing))
             return thing_is_within_circle(thing, p_objectv->X, p_objectv->Z, p_objectv->Radius << 6);
     }
-    // If the target is no longer a thing, then it is either carried weapon
-    // or a different dropped weapon (dropping created another thing)
+    // If the target is no longer a correct thing, then it is now either
+    // carried weapon or a different dropped weapon (dropping it created
+    // another thing)
 
     // TODO implement
     return false;

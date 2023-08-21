@@ -26,6 +26,7 @@
 #include "campaign.h"
 #include "command.h"
 #include "lvobjctv.h"
+#include "bigmap.h"
 #include "game.h"
 #include "swlog.h"
 #include "unix.h"

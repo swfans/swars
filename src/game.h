@@ -590,7 +590,6 @@ extern char *gui_strings_data;
 extern char *gui_strings_data_end;
 extern char *gui_strings[STRINGS_MAX];
 
-extern struct MyMapElement *game_my_big_map;
 extern struct SingleFloorTexture *game_textures;
 extern struct SingleTexture *game_face_textures;
 extern struct SinglePoint *game_object_points;

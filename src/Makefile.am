@@ -60,6 +60,8 @@ swars_SOURCES = \
 	../bfsoundlib/include/oggvorbis.h \
 	../bfsoundlib/src/oggvorbis.c \
 	config.h \
+	bigmap.c \
+	bigmap.h \
 	building.c \
 	building.h \
 	campaign.c \
