@@ -102,7 +102,7 @@ ubyte fix_single_objective(struct Objective *p_objectv, ushort objectv, const ch
 void save_objective_chain_conf(TbFileHandle fh, ushort objectv_head, char *buf, ulong buflen);
 int parse_next_used_objective(const char *buf, long buflen, long pri, long mapno, long levelno);
 
-void snprint_objective(char *buf, ulong buflen, ushort objectv);
+void snprint_objective(char *buf, ulong buflen, struct Objective *p_objectv, ushort objectv);
 /******************************************************************************/
 #ifdef __cplusplus
 }

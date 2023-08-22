@@ -1146,14 +1146,12 @@ short test_objective(ushort objectv, ushort show_obj)
 #endif
 }
 
-void snprint_objective(char *buf, ulong buflen, ushort objectv)
+void snprint_objective(char *buf, ulong buflen, struct Objective *p_objectv, ushort objectv)
 {
-    struct Objective *p_objectv;
     struct ObjectiveDef *p_odef;
     char *s;
     ubyte nparams;
 
-    p_objectv = &game_used_objectives[objectv];
     p_odef = &objectv_defs[p_objectv->Type];
 
     s = buf;
@@ -1262,6 +1260,8 @@ void save_objective_chain_conf(TbFileHandle fh, ushort objectv_head, char *buf, 
     objectv = 0;
     while (objectv != objectv_head)
     {
+        struct Objective *p_objectv;
+
         { // Go backwards through single-directional chain
             ushort nxobjectv;
             nxobjectv = objectv_head;
@@ -1269,8 +1269,8 @@ void save_objective_chain_conf(TbFileHandle fh, ushort objectv_head, char *buf, 
                 nxobjectv = game_used_objectives[nxobjectv].Next;
             objectv = nxobjectv;
         }
-
-        snprint_objective(buf, buflen, objectv);
+        p_objectv = &game_used_objectives[objectv];
+        snprint_objective(buf, buflen, p_objectv, objectv);
         strncat(buf, "\n", buflen);
         LbFileWrite(fh, buf, strlen(buf));
     }
