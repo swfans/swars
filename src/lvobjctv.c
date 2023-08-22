@@ -352,6 +352,7 @@ TbBool item_is_carried_by_player(short thing, ushort plyr, ushort weapon)
     {
         struct Thing *p_agent;
         p_agent = p_player->MyAgent[i];
+        if (p_agent == NULL) continue;
         if (person_carries_weapon(p_agent, weapon))
             return true;
     }
