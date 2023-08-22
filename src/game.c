@@ -1390,8 +1390,6 @@ void load_level_pc(short level, short missi, ubyte reload)
         {
             for (i = 1; i < next_command; i++)
                 game_commands[i].Time = 1;
-            for (i = 1; i < next_used_objective; i++)
-                game_used_objectives[i].Arg2 = 1;
             for (i = 1; i < next_used_lvl_objective; i++)
                 game_used_lvl_objectives[i].Arg2 = 1;
         }
