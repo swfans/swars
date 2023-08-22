@@ -321,7 +321,7 @@ TbBool item_arrived_at_objectv(short thing, ushort weapon, struct Objective *p_o
  * exact same weapon instance, but that should not matter in most practical
  * uses of the objective.
  */
-TbBool item_is_carried_by_player(short thing, ushort plyr, ushort weapon)
+TbBool item_is_carried_by_player(short thing, ushort weapon, ushort plyr)
 {
     struct SimpleThing *p_sthing;
     short plyagent, plygroup;
@@ -1044,7 +1044,7 @@ short test_objective(ushort objectv, ushort show_obj)
         break;
     case GAME_OBJ_GET_ITEM:
         thing = p_objectv->Thing;
-        if (item_is_carried_by_player(thing, local_player_no, p_objectv->Arg2)) {
+        if (item_is_carried_by_player(thing, p_objectv->Arg2, local_player_no)) {
             p_objectv->Status = 2;
             return 1;
         }
