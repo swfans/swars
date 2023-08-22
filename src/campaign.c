@@ -324,6 +324,34 @@ void apply_missions_fixups(void)
     }
 }
 
+void fix_mission_used_objectives(short missi)
+{
+    struct Mission *p_missi;
+    struct Objective *p_objectv;
+    ushort objectv;
+    int i;
+
+    p_missi = &mission_list[missi];
+
+    objectv = p_missi->SuccessHead;
+    for (i = 0; i < 100; i++) {
+        if (objectv == 0)
+            break;
+        p_objectv = &game_used_objectives[objectv];
+        fix_single_objective(p_objectv, objectv, "U");
+        objectv = p_objectv->Next;
+    }
+
+    objectv = p_missi->FailHead;
+    for (i = 0; i < 100; i++) {
+        if (objectv == 0)
+            break;
+        p_objectv = &game_used_objectives[objectv];
+        fix_single_objective(p_objectv, objectv, "U");
+        objectv = p_objectv->Next;
+    }
+}
+
 void read_missions_bin_file(int num)
 {
 #if 0

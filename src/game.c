@@ -841,7 +841,7 @@ void unkn_f_pressed_func(void)
     game_commands = gcmds;
 }
 
-void fix_level_indexes(ulong fmtver, ubyte reload)
+void fix_level_indexes(short missi, ulong fmtver, ubyte reload)
 {
 #if 0
     asm volatile ("call ASM_fix_level_indexes\n"
@@ -875,13 +875,7 @@ void fix_level_indexes(ulong fmtver, ubyte reload)
     // as fixups were already applied on first load.
     if (!reload)
     {
-        for (objectv = 1; objectv < next_used_objective; objectv++)
-        {
-            struct Objective *p_objectv;
-
-            p_objectv = &game_used_objectives[objectv];
-            fix_single_objective(p_objectv, objectv, "U");
-        }
+        fix_mission_used_objectives(missi);
     }
 
     for (thing = 1; thing < THINGS_LIMIT; thing++)
@@ -1328,13 +1322,13 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
     return fmtver;
 }
 
-void load_level_pc(ushort map, short level, ubyte reload)
+void load_level_pc(short level, short missi, ubyte reload)
 {
     short next_level, prev_level;
     TbFileHandle lev_fh;
     char lev_fname[52];
 
-    next_level = map;
+    next_level = level;
     gameturn = 0;
     LbMouseChangeSprite(0);
     if (0) { // No need to conserve memory to such extent - mem_game[] was changed
@@ -1418,7 +1412,7 @@ void load_level_pc(ushort map, short level, ubyte reload)
                 LOGWARN("Local player group equal 0 will cause issues; fix the level");
             }
         }
-        fix_level_indexes(fmtver, reload);
+        fix_level_indexes(missi, fmtver, reload);
     } else
     {
         LOGERR("Could not open mission file, load skipped");
