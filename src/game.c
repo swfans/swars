@@ -3413,7 +3413,7 @@ void setup_host(void)
         lbDisplay.ScreenMode = screen_mode_menu;
         mdinfo = LbScreenGetModeInfo(lbDisplay.ScreenMode);
         LbScreenSetup(lbDisplay.ScreenMode, mdinfo->Width, mdinfo->Height, display_palette);
-        LOGDBG("%s: Video mode %dx%d", mdinfo->Width, mdinfo->Height);
+        LOGDBG("Video mode %dx%d", mdinfo->Width, mdinfo->Height);
     }
     LbMouseSetup(&pointer_sprites[1], 2, 2);
     if (cmdln_param_bcg)
