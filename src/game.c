@@ -5228,9 +5228,9 @@ void init_weapon_text(void)
         if (s) s++;
     }
 
-    if (s) s = strchr(s, ']');
+    if (s) s = strchr(s, ']'); // position at start of PLAYER type
     if (s) s++;
-    if (s) s = strchr(s, ']');
+    if (s) s = strchr(s, ']'); // position at start of WEAPONS section
     if (s) s++;
 
     // section_start = s;
@@ -5242,6 +5242,7 @@ void init_weapon_text(void)
         if (*s == '[')
             break;
 
+        // Read weapon name
         n = 0;
         while ((*s != '\r') && (*s != '\n'))
         {
@@ -5251,6 +5252,7 @@ void init_weapon_text(void)
         locstr[n] = '\0';
         s += 2;
 
+        // Recognize the weapon name
         for (i = 0; i < 30; i++)
         {
             if (background_type == 0) {
@@ -5279,25 +5281,36 @@ void init_weapon_text(void)
             n = weapon_text_index[i];
             my_preprocess_text(&weapon_text[n]);
         } else {
+            LOGERR("Weapon name not recognized: \"%s\"", locstr);
             if (s) s = strpbrk(s, "\r\n");
             if (s) s += 2;
         }
     }
 
-    if (s) s = strchr(s, '[');
-    if (s) s++;
-    if (s) s = strchr(s, ']');
-    if (s) s++;
+    s = strchr(s, '[');
+    s++;
+    s = strchr(s, ']'); // position at start of MODS section
+    s++;
 
     s += 2;
-    for (i = 32; i < 48; i++)
+    for (i = 32; i < 32+16; i++)
     {
         if (*s == '[')
             break;
 
-        if (s) s = strpbrk(s, "\r\n");
-        if (s) s++;
+        // Read mod name
+        n = 0;
+        while ((*s != '\r') && (*s != '\n'))
+        {
+            locstr[n] = *s++;
+            n++;
+        }
+        locstr[n] = '\0';
+        s += 2;
 
+        // Now ignore the name and just assume mods are in order
+        // If you looked at this parser from start, you shouldn't
+        // be surprised by how lazy this is
         weapon_text_index[i] = weptxt_pos;
         while ((*s != '\r') && (*s != '\n')) {
             weapon_text[weptxt_pos] = *s++;
