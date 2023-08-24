@@ -58,6 +58,16 @@ void SCANNER_init_arcpoint(int x1, int z1, int x2, int z2, int c)
         : : "a" (x1), "d" (z1), "b" (x2), "c" (z2), "g" (c));
 }
 
+void SCANNER_update_arcpoint(ushort arc_no, short fromX, short fromZ, short toX, short toZ)
+{
+    if (arc_no >= SCANNER_ARC_COUNT)
+        return;
+    ingame.Scanner.Arc[arc_no].X1 = fromX;
+    ingame.Scanner.Arc[arc_no].Z1 = fromZ;
+    ingame.Scanner.Arc[arc_no].X2 = toX;
+    ingame.Scanner.Arc[arc_no].Z2 = toZ;
+}
+
 ushort do_group_scanner(struct Objective *p_objectv, ushort next_signal)
 {
 #if 0
@@ -155,17 +165,36 @@ ushort do_target_item_scanner(struct Objective *p_objectv, ushort next_signal)
 {
     long X, Z;
     ushort n;
+    ushort weapon;
 
     n = next_signal;
-    if (p_objectv->Thing <= 0) {
+    weapon = p_objectv->Arg2;
+    if (p_objectv->Thing <= 0)
+    {
         struct SimpleThing *p_sthing;
         p_sthing = &sthings[p_objectv->Thing];
-        X = p_sthing->X;
-        Z = p_sthing->Z;
-    } else {
+        if ((p_sthing->Type == SmTT_DROPPED_ITEM) &&
+          (p_sthing->U.UWeapon.WeaponType == weapon)) {
+            X = p_sthing->X;
+            Z = p_sthing->Z;
+        } else if (p_sthing->Type == SmTT_CARRIED_ITEM) {
+            struct Thing *p_person;
+            p_person = &things[p_sthing->U.UWeapon.Owner];
+            X = p_person->X;
+            Z = p_person->Z;
+        } else {
+            struct Thing *p_person;
+            short person;
+            person = find_person_carrying_weapon(weapon);
+            p_person = &things[person];
+            X = p_person->X;
+            Z = p_person->Z;
+        }
+    }
+    else
+    {
         return n;
     }
-    // TODO handle situation where the weapon was picked up
     ingame.Scanner.BigBlip[n].X = X;
     ingame.Scanner.BigBlip[n].Z = Z;
     ingame.Scanner.BigBlip[n].Speed = 4;
@@ -226,10 +255,7 @@ ushort do_person_arrive_area_scanner(struct Objective *p_objectv, ushort next_si
     }
     if (dword_1DB1A0)
     {
-        ingame.Scanner.Arc[0].X1 = Z;
-        ingame.Scanner.Arc[0].Z1 = X;
-        ingame.Scanner.Arc[0].X2 = p_objectv->Z << 8;
-        ingame.Scanner.Arc[0].Z2 = p_objectv->X << 8;
+        SCANNER_update_arcpoint(0, Z, X, p_objectv->Z << 8, p_objectv->X << 8);
     }
     else
     {

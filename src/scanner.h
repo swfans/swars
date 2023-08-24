@@ -37,10 +37,10 @@ struct BigBlip
 {
   long X;
   long Z;
-  char Colour;
-  char Period;
-  char Speed;
-  char Counter;
+  ubyte Colour;
+  ubyte Period;
+  ubyte Speed;
+  ubyte Counter;
 };
 
 struct Arc
@@ -49,10 +49,10 @@ struct Arc
   long Z1;
   long X2;
   long Z2;
-  char ColourIsUnused;
-  char Period;
-  char SpeedIsUnused;
-  char Counter;
+  ubyte ColourIsUnused;
+  ubyte Period;
+  ubyte SpeedIsUnused;
+  ubyte Counter;
 };
 
 struct Scanner
@@ -68,14 +68,10 @@ struct Scanner
   long Contrast;
   long Brightness;
   long Width[200];
-  struct BigBlip BigBlip[15];
-  char field_3FC[9];
-  char Arc_m1__Period;
-  char field_406;
-  char field_407;
-  struct Arc Arc[4];
-  char Group[6];
-  char GroupCol[6];
+  struct BigBlip BigBlip[SCANNER_BIG_BLIP_COUNT];
+  struct Arc Arc[SCANNER_ARC_COUNT];
+  ubyte Group[SCANNER_GROUP_COUNT];
+  ubyte GroupCol[SCANNER_GROUP_COUNT];
   ubyte GroupCount;
   short NearThing1;
 };
