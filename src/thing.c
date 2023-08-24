@@ -307,6 +307,63 @@ static short find_thing_type_on_same_type_list_within_circle(short X, short Z, u
     return 0;
 }
 
+static short find_thing_type_on_same_type_list(short ttype, short subtype,
+  ThingBoolFilter filter, ThingFilterParams *params)
+{
+    short thing;
+    ulong k;
+
+    k = 0;
+    thing = get_thing_same_type_head(ttype, subtype);
+    while (thing != 0)
+    {
+        if (thing <= 0)
+        {
+            struct SimpleThing *p_sthing;
+            p_sthing = &sthings[thing];
+            // Per thing code start
+            if (p_sthing->Type == ttype) {
+                if ((p_sthing->SubType == subtype) || (subtype == -1)) {
+                    if (filter(thing, params))
+                        return thing;
+                }
+            }
+            // Per thing code end
+            thing = p_sthing->LinkSame;
+        }
+        else
+        {
+            struct Thing *p_thing;
+            p_thing = &things[thing];
+            // Per thing code start
+            if (p_thing->Type == ttype) {
+                if ((p_thing->SubType == subtype) || (subtype == -1)) {
+                    if (filter(thing, params))
+                        return thing;
+                }
+            }
+            // Per thing code end
+            thing = p_thing->LinkSame;
+        }
+        // If searching for all subtypes, make sure we really catch them all; switch to
+        // second linked list if forst one did not gave results
+        if ((thing == 0) && (subtype == -1) && (ttype == TT_VEHICLE)) {
+            subtype = SubTT_VEH_SHIP;
+            thing = get_thing_same_type_head(ttype, subtype);
+        }
+        if ((thing == 0) && (subtype == -1) && (ttype == TT_BUILDING)) {
+            subtype = SubTT_BLD_MGUN;
+            thing = get_thing_same_type_head(ttype, subtype);
+        }
+        k++;
+        if (k >= STHINGS_LIMIT+THINGS_LIMIT) {
+            LOGERR("Infinite loop in mapwho things list");
+            break;
+        }
+    }
+    return 0;
+}
+
 static short find_thing_type_on_used_list_within_circle(short X, short Z, ushort R,
   short ttype, short subtype, ThingBoolFilter filter, ThingFilterParams *params)
 {
@@ -416,7 +473,7 @@ short find_dropped_weapon_within_circle(short X, short Z, ushort R, short weapon
     params.Arg1 = weapon;
     thing = find_thing_type_within_circle_with_filter(X, Z, R, SmTT_DROPPED_ITEM, 0, bfilter_item_is_weapon, &params);
 
-    return (thing != 0);
+    return thing;
 }
 
 short find_person_carrying_weapon_within_circle(short X, short Z, ushort R, short weapon)
@@ -427,7 +484,7 @@ short find_person_carrying_weapon_within_circle(short X, short Z, ushort R, shor
     params.Arg1 = weapon;
     thing = find_thing_type_within_circle_with_filter(X, Z, R, TT_PERSON, -1, bfilter_person_carries_weapon, &params);
 
-    return (thing != 0);
+    return thing;
 }
 
 short find_nearest_from_group(struct Thing *p_person, ushort group, ubyte no_persuaded)
@@ -436,6 +493,17 @@ short find_nearest_from_group(struct Thing *p_person, ushort group, ubyte no_per
     asm volatile ("call ASM_find_nearest_from_group\n"
         : "=r" (ret) : "a" (p_person), "d" (group), "b" (no_persuaded));
     return ret;
+}
+
+short find_person_carrying_weapon(short weapon)
+{
+    short thing;
+    ThingFilterParams params;
+
+    params.Arg1 = weapon;
+    thing = find_thing_type_on_same_type_list(TT_PERSON, -1, bfilter_person_carries_weapon, &params);
+
+    return thing;
 }
 
 short search_things_for_index(short index)

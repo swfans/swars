@@ -854,6 +854,7 @@ short find_thing_type_within_circle_with_filter(short X, short Z, ushort R,
 
 short find_dropped_weapon_within_circle(short X, short Z, ushort R, short weapon);
 short find_person_carrying_weapon_within_circle(short X, short Z, ushort R, short weapon);
+short find_person_carrying_weapon(short weapon);
 
 short find_nearest_from_group(struct Thing *p_person, ushort group, ubyte no_persuaded);
 short search_things_for_index(short index);
