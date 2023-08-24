@@ -29,6 +29,8 @@
 #include "pepgroup.h"
 #include "player.h"
 #include "scanner.h"
+#include "scandraw.h"
+#include "display.h"
 #include "game.h"
 #include "swlog.h"
 /******************************************************************************/
@@ -201,6 +203,13 @@ const struct TbNamedEnum missions_conf_objective_params[] = {
   {NULL,			0},
 };
 
+extern ulong dword_1C8460;
+extern ulong dword_1C8464;
+extern short draw_objectv_x;
+extern short draw_objectv_y;
+extern const char *scroll_text;
+extern ubyte byte_1C844F;
+extern char *objective_text[170];
 
 int add_used_objective(long mapno, long levelno)
 {

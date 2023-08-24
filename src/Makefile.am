@@ -74,6 +74,8 @@ swars_SOURCES = \
 	display.h \
 	dos.c \
 	dos.h \
+	engintrns.c \
+	engintrns.h \
 	game.c \
 	game_data.c \
 	game_data.h \
@@ -101,6 +103,8 @@ swars_SOURCES = \
 	research.h \
 	scanner.c \
 	scanner.h \
+	scandraw.c \
+	scandraw.h \
 	sound.c \
 	sound.h \
 	swars.sx \

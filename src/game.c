@@ -30,6 +30,7 @@
 #include "bfscd.h"
 #include "bflib_joyst.h"
 #include "matrix.h"
+#include "engintrns.h"
 #include "game_data.h"
 #include "building.h"
 #include "campaign.h"
@@ -175,9 +176,6 @@ extern long scanner_unkn3CC;
 extern ushort netgame_agent_pos_x[8][4];
 extern ushort netgame_agent_pos_y[8][4];
 
-extern long engn_xc;
-extern long engn_yc;
-extern long engn_zc;
 extern long dword_176D58;
 extern ubyte byte_153198;
 
