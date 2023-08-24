@@ -231,84 +231,97 @@ int add_used_objective(long mapno, long levelno)
     return objectv;
 }
 
-void draw_objective(ushort objectv, ubyte flag)
+void draw_objective_group_whole_on_engine_scene(ushort group)
 {
-#if 0
-    struct Objective *p_objectv;
-    ushort bkpType;
-    // workaround due to scanner not understanding new objectives
-    p_objectv = &game_used_objectives[objectv];
-    bkpType = p_objectv->Type;
-    switch (bkpType)
-    {
-    case GAME_OBJ_MEM_G_USE_V:
-        p_objectv->Type = GAME_OBJ_ALL_G_USE_V;
-        break;
-    case GAME_OBJ_V_ARRIVES:
-    case GAME_OBJ_ITEM_ARRIVES:
-        p_objectv->Type = GAME_OBJ_P_ARRIVES;
-        break;
-    case GAME_OBJ_DESTROY_V:
-        p_objectv->Type = GAME_OBJ_P_DEAD;
-        break;
-    }
-    asm volatile ("call ASM_draw_objective\n"
-        : : "a" (objectv), "d" (flag));
-    p_objectv->Type = bkpType;
-#else
-    struct Objective *p_objectv;
-    struct ObjectiveDef *p_odef;
+    short thing;
     struct Thing *p_thing;
+    ubyte colk;
+
+    colk = dword_1C8460 & 7;
+    for (thing = same_type_head[256 + group]; thing != 0; thing = p_thing->LinkSameGroup)
+    {
+        p_thing = &things[thing];
+        draw_objective_point(draw_objectv_x - 10, draw_objectv_y, thing, 0, colour_lookup[colk]);
+    }
+}
+
+void draw_objective_group_non_flag2_on_engine_scene(ushort group)
+{
+    short thing;
+    struct Thing *p_thing;
+    ubyte colk;
+
+    colk = dword_1C8460 & 7;
+    for (thing = same_type_head[256 + group]; thing != 0; thing = p_thing->LinkSameGroup)
+    {
+        p_thing = &things[thing];
+        if ((p_thing->Flag & 0x02) == 0) {
+            draw_objective_point(draw_objectv_x - 10, draw_objectv_y, thing, 0, colour_lookup[colk]);
+        }
+    }
+}
+
+void draw_objective_group_non_pers_on_engine_scene(ushort group)
+{
+    short thing;
+    struct Thing *p_thing;
+    ubyte colk;
+
+    colk = dword_1C8460 & 7;
+    for (thing = same_type_head[256 + group]; thing != 0; thing = p_thing->LinkSameGroup)
+    {
+        p_thing = &things[thing];
+        if ((p_thing->Flag & 0x80000) == 0) {
+            draw_objective_point(draw_objectv_x - 10, draw_objectv_y, thing, 0, colour_lookup[colk]);
+        }
+    }
+}
+
+void draw_objective_group_not_own_by_plyr_on_engine_scene(ushort group, ushort plyr)
+{
     short plyagent, plygroup;
+    short thing;
+    struct Thing *p_thing;
+    ubyte colk;
+
+    colk = dword_1C8460 & 7;
+    plyagent = players[plyr].DirectControl[0];
+    plygroup = things[plyagent].U.UPerson.Group;
+    for (thing = same_type_head[256 + group]; thing != 0; thing = p_thing->LinkSameGroup)
+    {
+        p_thing = &things[thing];
+        if (((p_thing->Flag & 0x80000) == 0) || things[p_thing->Owner].U.UPerson.Group != plygroup) {
+            if ((p_thing->Flag & 0x02) == 0)
+                draw_objective_point(draw_objectv_x - 10, draw_objectv_y, thing, 0, colour_lookup[colk]);
+        }
+    }
+}
+
+void draw_objective_group_not_own_by_pers_on_engine_scene(ushort group, short owntng)
+{
+    short thing;
+    struct Thing *p_thing;
+    ubyte colk;
+
+    colk = dword_1C8460 & 7;
+    for (thing = same_type_head[256 + group]; thing != 0; thing = p_thing->LinkSameGroup)
+    {
+        p_thing = &things[thing];
+        if (((p_thing->Flag & 0x80000) == 0) && (p_thing->Owner != owntng)) {
+            if ((p_thing->Flag & 0x02) == 0)
+                draw_objective_point(draw_objectv_x - 10, draw_objectv_y, thing, 0, colour_lookup[colk]);
+        }
+    }
+}
+
+void draw_objective_dirctly_on_engine_scene(ushort objectv)
+{
+    struct Objective *p_objectv;
     short thing, group;
     ubyte colk;
 
     p_objectv = &game_used_objectives[objectv];
-    if (flag == 1)
-    {
-        dword_1C8464 = 0;
-        draw_objectv_x = 200;
-        draw_objectv_y = 10;
-        dword_1C8460 = 0;
-        return;
-    }
 
-    if (p_objectv->Type < sizeof(objectv_defs)/sizeof(objectv_defs[0]))
-        p_odef = &objectv_defs[p_objectv->Type];
-    else
-        p_odef = &objectv_defs[0];
-
-    if (!byte_1C844F)
-    {
-        if ((p_objectv->Flags & 0x01) != 0)
-            scroll_text = "-";
-        else if (p_objectv->ObjText != 0)
-            scroll_text = objective_text[p_objectv->ObjText];
-        else
-            scroll_text = p_odef->DefText;
-        ++dword_1C8464;
-    }
-    else
-    {
-        char locstr[112];
-        group = p_objectv->Thing;
-        if (group >= PEOPLE_GROUPS_COUNT) group = 0;
-        sprintf(locstr, "[%d] %20s t %d id %d", group_actions[group].Alive,
-          p_odef->CmdName, p_objectv->Thing, p_objectv->UniqueID);
-        if (gameturn & 4)
-            colk = dword_1C8460 & 7;
-        else
-            colk = 1;
-        draw_text(2 * draw_objectv_x, 2 * draw_objectv_y, locstr, colour_lookup[colk]);
-    }
-
-    if (!byte_1C844F) {
-        draw_objectv_y += 8;
-        dword_1C8460++;
-        return;
-    }
-
-    p_objectv = &game_used_objectives[objectv];
     colk = dword_1C8460 & 7;
 
     switch (p_objectv->Type)
@@ -316,13 +329,7 @@ void draw_objective(ushort objectv, ubyte flag)
     case GAME_OBJ_PERSUADE_ALL_G:
     case GAME_OBJ_PERSUADE_MEM_G:
         group = p_objectv->Thing;
-        for (thing = same_type_head[256 + group]; thing != 0; thing = p_thing->LinkSameGroup)
-        {
-            p_thing = &things[thing];
-            if ((things[thing].Flag & 0x80000) == 0) {
-                draw_objective_point(draw_objectv_x - 10, draw_objectv_y, thing, 0, colour_lookup[colk]);
-            }
-        }
+        draw_objective_group_non_pers_on_engine_scene(group);
         break;
     case GAME_OBJ_GET_ITEM:
     case GAME_OBJ_DESTROY_OBJECT:
@@ -337,50 +344,26 @@ void draw_objective(ushort objectv, ubyte flag)
     case GAME_OBJ_PKILL_ALL_G:
     case GAME_OBJ_PKILL_MEM_G:
         group = p_objectv->Thing;
-        plyagent = players[local_player_no].DirectControl[0];
-        plygroup = things[plyagent].U.UPerson.Group;
-        for (thing = same_type_head[256 + group]; thing != 0; thing = p_thing->LinkSameGroup)
-        {
-            p_thing = &things[thing];
-            if (((p_thing->Flag & 0x80000) == 0) || things[p_thing->Owner].U.UPerson.Group != plygroup) {
-                if ((p_thing->Flag & 0x02) == 0)
-                    draw_objective_point(draw_objectv_x - 10, draw_objectv_y, thing, 0, colour_lookup[colk]);
-            }
-        }
+        draw_objective_group_not_own_by_plyr_on_engine_scene(group, local_player_no);
         draw_objectv_y += 8;
         break;
     case GAME_OBJ_P_PERS_G:
         group = p_objectv->Thing;
-        for (thing = same_type_head[256 + group]; thing != 0; thing = p_thing->LinkSameGroup)
-        {
-            p_thing = &things[thing];
-            if (((p_thing->Flag & 0x80000) == 0) && (p_thing->Owner != p_objectv->Arg2)) {
-                if ((p_thing->Flag & 0x02) == 0)
-                    draw_objective_point(draw_objectv_x - 10, draw_objectv_y, thing, 0, colour_lookup[colk]);
-            }
-        }
+        draw_objective_group_not_own_by_pers_on_engine_scene(group, p_objectv->Arg2);
         break;
     case GAME_OBJ_ALL_G_USE_V:
     case GAME_OBJ_MEM_G_USE_V:
         group = p_objectv->Arg2;
-        for (thing = same_type_head[256 + group]; thing != 0; thing = p_thing->LinkSameGroup)
-        {
-            p_thing = &things[thing];
-            draw_objective_point(draw_objectv_x - 10, draw_objectv_y, thing, 0, colour_lookup[colk]);
-        }
+        draw_objective_group_whole_on_engine_scene(group);
         draw_objectv_y += 8;
-        draw_objective_point(draw_objectv_x - 10, draw_objectv_y, p_objectv->Thing, 0, colour_lookup[colk+1]);
+        thing = p_objectv->Thing;
+        draw_objective_point(draw_objectv_x - 10, draw_objectv_y, thing, 0, colour_lookup[colk+1]);
         break;
     case GAME_OBJ_PROTECT_G:
     case GAME_OBJ_ALL_G_DEAD:
     case GAME_OBJ_MEM_G_DEAD:
         group = p_objectv->Thing;
-        for (thing = same_type_head[256 + group]; thing != 0; thing = p_thing->LinkSameGroup)
-        {
-            p_thing = &things[thing];
-            if ((p_thing->Flag & 0x02) == 0)
-                draw_objective_point(draw_objectv_x - 10, draw_objectv_y, thing, 0, colour_lookup[colk]);
-        }
+        draw_objective_group_non_flag2_on_engine_scene(group);
         break;
     case GAME_OBJ_P_NEAR:
     case GAME_OBJ_USE_PANET:
@@ -414,6 +397,83 @@ void draw_objective(ushort objectv, ubyte flag)
         thing = p_objectv->Thing;
         draw_objective_point(draw_objectv_x - 10, draw_objectv_y, thing, 0, colour_lookup[colk]);
         break;
+    }
+}
+
+/** Prepares objective text. Can also draw objective data and additional info directly on 3D scene.
+ */
+void draw_objective(ushort objectv, ubyte flag)
+{
+#if 0
+    struct Objective *p_objectv;
+    ushort bkpType;
+    // workaround due to scanner not understanding new objectives
+    p_objectv = &game_used_objectives[objectv];
+    bkpType = p_objectv->Type;
+    switch (bkpType)
+    {
+    case GAME_OBJ_MEM_G_USE_V:
+        p_objectv->Type = GAME_OBJ_ALL_G_USE_V;
+        break;
+    case GAME_OBJ_V_ARRIVES:
+    case GAME_OBJ_ITEM_ARRIVES:
+        p_objectv->Type = GAME_OBJ_P_ARRIVES;
+        break;
+    case GAME_OBJ_DESTROY_V:
+        p_objectv->Type = GAME_OBJ_P_DEAD;
+        break;
+    }
+    asm volatile ("call ASM_draw_objective\n"
+        : : "a" (objectv), "d" (flag));
+    p_objectv->Type = bkpType;
+#else
+    struct Objective *p_objectv;
+    struct ObjectiveDef *p_odef;
+    ubyte colk;
+
+    p_objectv = &game_used_objectives[objectv];
+    if (flag == 1)
+    {
+        dword_1C8464 = 0;
+        draw_objectv_x = 200;
+        draw_objectv_y = 10;
+        dword_1C8460 = 0;
+        return;
+    }
+
+    if (p_objectv->Type < sizeof(objectv_defs)/sizeof(objectv_defs[0]))
+        p_odef = &objectv_defs[p_objectv->Type];
+    else
+        p_odef = &objectv_defs[0];
+
+    if (!byte_1C844F)
+    {
+        if ((p_objectv->Flags & 0x01) != 0)
+            scroll_text = "-";
+        else if (p_objectv->ObjText != 0)
+            scroll_text = objective_text[p_objectv->ObjText];
+        else
+            scroll_text = p_odef->DefText;
+        ++dword_1C8464;
+    }
+    else
+    {
+        char locstr[112];
+        short group;
+
+        group = p_objectv->Thing;
+        if (group >= PEOPLE_GROUPS_COUNT) group = 0;
+        sprintf(locstr, "[%d] %20s t %d id %d", group_actions[group].Alive,
+          p_odef->CmdName, p_objectv->Thing, p_objectv->UniqueID);
+        if (gameturn & 4)
+            colk = dword_1C8460 & 7;
+        else
+            colk = 1;
+        draw_text(2 * draw_objectv_x, 2 * draw_objectv_y, locstr, colour_lookup[colk]);
+    }
+
+    if (byte_1C844F) {
+        draw_objective_dirctly_on_engine_scene(objectv);
     }
     draw_objectv_y += 8;
     dword_1C8460++;
