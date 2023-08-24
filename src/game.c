@@ -22,7 +22,6 @@
 #include "bfsvaribl.h"
 #include "bfmath.h"
 #include "bfline.h"
-#include "rom.h"
 #include "svesa.h"
 #include "swlog.h"
 #include "bflib_fmvids.h"
@@ -30,6 +29,7 @@
 #include "bfscd.h"
 #include "bflib_joyst.h"
 #include "matrix.h"
+#include "drawtext.h"
 #include "engintrns.h"
 #include "game_data.h"
 #include "building.h"
@@ -597,24 +597,6 @@ void play_smacker(int vid_type)
     }
     show_black_screen();
 #endif
-}
-
-void draw_text(short x, short y, const char *text, ubyte colour)
-{
-    long scrn_w, scrn_h;
-    ubyte *scr;
-
-    if (x < 0 || y < 0)
-        return;
-    scrn_w = lbDisplay.GraphicsScreenWidth;
-    scrn_h = lbDisplay.GraphicsScreenHeight;
-    if (x > scrn_w - 1)
-        return;
-    if ( y > scrn_h - 1)
-        return;
-
-    scr = &lbDisplay.WScreen[x + scrn_w * y];
-    prop_text(text, scr, scrn_w, colour);
 }
 
 void play_intro(void)

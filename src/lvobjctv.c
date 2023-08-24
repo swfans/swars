@@ -25,6 +25,7 @@
 #include "bfmemut.h"
 #include "bfini.h"
 #include "bfkeybd.h"
+#include "drawtext.h"
 #include "thing.h"
 #include "pepgroup.h"
 #include "player.h"
@@ -286,7 +287,6 @@ void draw_objective(ushort objectv, ubyte flag)
         else
             scroll_text = p_odef->DefText;
         ++dword_1C8464;
-
     }
     else
     {
@@ -314,6 +314,7 @@ void draw_objective(ushort objectv, ubyte flag)
     switch (p_objectv->Type)
     {
     case GAME_OBJ_PERSUADE_ALL_G:
+    case GAME_OBJ_PERSUADE_MEM_G:
         group = p_objectv->Thing;
         for (thing = same_type_head[256 + group]; thing != 0; thing = p_thing->LinkSameGroup)
         {
@@ -370,8 +371,6 @@ void draw_objective(ushort objectv, ubyte flag)
         draw_objectv_y += 8;
         draw_objective_point(draw_objectv_x - 10, draw_objectv_y, p_objectv->Thing, 0, colour_lookup[colk+1]);
         break;
-    case GAME_OBJ_DESTROY_V:
-        break;
     case GAME_OBJ_PROTECT_G:
     case GAME_OBJ_ALL_G_DEAD:
     case GAME_OBJ_MEM_G_DEAD:
@@ -388,7 +387,9 @@ void draw_objective(ushort objectv, ubyte flag)
     case GAME_OBJ_UNUSED_21:
         break;
     case GAME_OBJ_P_DEAD:
-        draw_objective_point(draw_objectv_x - 10, draw_objectv_y, p_objectv->Thing, 0, colour_lookup[colk]);
+    case GAME_OBJ_DESTROY_V:
+        thing = p_objectv->Thing;
+        draw_objective_point(draw_objectv_x - 10, draw_objectv_y, thing, 0, colour_lookup[colk]);
         break;
     case GAME_OBJ_MEM_G_NEAR:
     case GAME_OBJ_MEM_G_ARRIVES:
@@ -412,8 +413,6 @@ void draw_objective(ushort objectv, ubyte flag)
     case GAME_OBJ_PERSUADE_P:
         thing = p_objectv->Thing;
         draw_objective_point(draw_objectv_x - 10, draw_objectv_y, thing, 0, colour_lookup[colk]);
-        break;
-    case GAME_OBJ_PERSUADE_MEM_G:
         break;
     }
     draw_objectv_y += 8;

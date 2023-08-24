@@ -74,6 +74,8 @@ swars_SOURCES = \
 	display.h \
 	dos.c \
 	dos.h \
+	drawtext.c \
+	drawtext.h \
 	engintrns.c \
 	engintrns.h \
 	game.c \
