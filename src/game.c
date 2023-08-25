@@ -3406,6 +3406,29 @@ void set_default_user_settings(void)
         :  :  : "eax" );
 }
 
+void apply_user_settings(void)
+{
+    if (unkn_gfx_option_2)
+        ingame.Flags |= GamF_Unkn2;
+    else
+        ingame.Flags &= ~GamF_Unkn2;
+
+    if (unkn_option_3)
+        ingame.Flags |= GamF_Unkn1;
+    else
+        ingame.Flags &= ~GamF_Unkn1;
+
+    if (unkn_option_4)
+        ingame.Flags |= GamF_Unkn400;
+    else
+        ingame.Flags &= ~GamF_Unkn400;
+
+    bang_set_detail(ingame.DetailLevel == 0);
+    SetSoundMasterVolume(127 * startscr_samplevol / 322);
+    SetMusicMasterVolume(127 * startscr_midivol / 322);
+    SetCDVolume((70 * (127 * startscr_cdvolume / 322) / 100));
+}
+
 void read_user_settings(void)
 {
 #if 0
@@ -3414,23 +3437,26 @@ void read_user_settings(void)
 #else
     char fname[52];
     TbFileHandle fh;
+    TbBool read_mortal_salt_backup;
     int i;
 
+    read_mortal_salt_backup = false;
     get_user_settings_fname(fname, login_name);
 
     fh = LbFileOpen(fname, Lb_FILE_MODE_READ_ONLY);
+
+    // Try default settings file instead
+    if ((fh == INVALID_FILE) && (strlen(login_name) > 0))
+    {
+        get_user_settings_fname(fname, "");
+        fh = LbFileOpen(fname, Lb_FILE_MODE_READ_ONLY);
+        read_mortal_salt_backup = true;
+    }
+
     if (fh == INVALID_FILE)
     {
         set_default_user_settings();
-        // Read mortal game salt from backup
-        fh = LbFileOpen("qdata/keys.dat", Lb_FILE_MODE_READ_ONLY);
-        if (fh != INVALID_FILE)
-        {
-            i = sizeof(save_mortal_salt);
-            LbFileSeek(fh, -i, Lb_FILE_SEEK_END);
-            LbFileRead(fh, &save_mortal_salt, i);
-            LbFileClose(fh);
-        }
+        read_mortal_salt_backup = true;
     } else
     {
         ushort cheats;
@@ -3466,25 +3492,20 @@ void read_user_settings(void)
         LbFileRead(fh, &save_mortal_salt, sizeof(save_mortal_salt));
         LbFileClose(fh);
 
-        if (unkn_gfx_option_2)
-            ingame.Flags |= GamF_Unkn2;
-        else
-            ingame.Flags &= ~GamF_Unkn2;
+        apply_user_settings();
+    }
 
-        if (unkn_option_3)
-            ingame.Flags |= GamF_Unkn1;
-        else
-            ingame.Flags &= ~GamF_Unkn1;
-
-        if (unkn_option_4)
-            ingame.Flags |= GamF_Unkn400;
-        else
-            ingame.Flags &= ~GamF_Unkn400;
-
-        bang_set_detail(ingame.DetailLevel == 0);
-        SetSoundMasterVolume(127 * startscr_samplevol / 322);
-        SetMusicMasterVolume(127 * startscr_midivol / 322);
-        SetCDVolume((70 * (127 * startscr_cdvolume / 322) / 100));
+    if (read_mortal_salt_backup)
+    {
+        // Read mortal game encryption salt from backup
+        fh = LbFileOpen("qdata/keys.dat", Lb_FILE_MODE_READ_ONLY);
+        if (fh != INVALID_FILE)
+        {
+            i = sizeof(save_mortal_salt);
+            LbFileSeek(fh, -i, Lb_FILE_SEEK_END);
+            LbFileRead(fh, &save_mortal_salt, i);
+            LbFileClose(fh);
+        }
     }
 
     i = -1;
