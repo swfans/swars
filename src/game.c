@@ -5762,14 +5762,15 @@ void mission_over_update_players(void)
 void mission_over_gain_persuaded_crowd_rewards(void)
 {
     struct Thing *p_person;
-    ushort person;
+    short person;
 
-    for (person = same_type_head[1]; person == 0; person = things[person].LinkSame)
+    person = get_thing_same_type_head(TT_PERSON, -1);
+    for (; person > 0; person = p_person->LinkSame)
     {
         p_person = &things[person];
         if ((p_person->Flag & 0x80000) == 0)
             continue;
-        if (p_person->U.UPerson.EffectiveGroup == ingame.MyGroup)
+        if (p_person->U.UPerson.EffectiveGroup != ingame.MyGroup)
             continue;
         switch (p_person->SubType)
         {
