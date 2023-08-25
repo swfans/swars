@@ -60,6 +60,20 @@ void * LbStringToLowerCopy(char *dst, const char *src, const ulong dst_buflen)
     return dst;
 }
 
+void * LbStringToLower(char *str)
+{
+    ulong i;
+    char chr;
+    for (i=0; true; i++)
+    {
+        chr = tolower(str[i]);
+        str[i] = chr;
+        if (chr == '\0')
+            break;
+    }
+    return str;
+}
+
 ulong LbStringLength(const char *str)
 {
     if (str == NULL) return 0;
