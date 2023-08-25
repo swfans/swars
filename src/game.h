@@ -533,6 +533,12 @@ struct Animation {
   short field_6E;
 };
 
+struct WADIndexEntry {
+    char Filename[12];
+    ulong Offset;
+    ulong Length;
+};
+
 #pragma pack()
 
 extern char session_name[20];

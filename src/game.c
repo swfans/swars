@@ -5153,12 +5153,56 @@ void my_preprocess_text(char *text)
         :  : "a" (text));
 }
 
-int load_file_wad(const char *textdt_fname, const char *alltext_fname, void *a3)
+int load_file_wad(const char *textdt_fname, const char *alltext_fname, void *outbuf)
 {
+#if 0
     int ret;
     asm volatile ("call ASM_load_file_wad\n"
-        : "=r" (ret) : "a" (textdt_fname), "d" (alltext_fname), "b" (a3));
+        : "=r" (ret) : "a" (textdt_fname), "d" (alltext_fname), "b" (outbuf));
     return ret;
+#endif
+    char locfname[64];
+    char locstr[64];
+    struct WADIndexEntry fentry;
+    const char *only_fname;
+    TbFileHandle fh;
+    long nread;
+    int i;
+
+    only_fname = strrchr(textdt_fname, '/');
+    if (only_fname != NULL)
+        only_fname++;
+    else
+        only_fname = textdt_fname;
+
+    for (i = 0; only_fname[i] != '\0'; i++)
+    {
+        locstr[i] = toupper(only_fname[i]);
+    }
+    locstr[i] = '\0';
+
+    sprintf(locfname, "%s.IDX", alltext_fname);
+    fh = LbFileOpen(locfname, Lb_FILE_MODE_READ_ONLY);
+    if (fh == INVALID_FILE)
+        return -1;
+    do {
+        nread = LbFileRead(fh, &fentry, sizeof(struct WADIndexEntry));
+    } while ((strcmp(locstr, fentry.Filename) != 0) &&
+      (nread == sizeof(struct WADIndexEntry)));
+    LbFileClose(fh);
+
+    if (nread != sizeof(struct WADIndexEntry))
+        return -1;
+
+    sprintf(locfname, "%s.WAD", alltext_fname);
+    fh = LbFileOpen(locfname, Lb_FILE_MODE_READ_ONLY);
+    if (fh == INVALID_FILE)
+        return -1;
+
+    LbFileSeek(fh, fentry.Offset, 0);
+    nread = LbFileRead(fh, outbuf, fentry.Length);
+    LbFileClose(fh);
+    return nread;
 }
 
 void load_city_txt(void)
