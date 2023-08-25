@@ -3416,10 +3416,7 @@ void read_user_settings(void)
     TbFileHandle fh;
     int i;
 
-    if (strlen(login_name) > 0)
-        sprintf(fname, "qdata/savegame/%.8s.ini", login_name);
-    else
-        sprintf(fname, "qdata/savegame/%.8s.ini", "ANON");
+    get_user_settings_fname(fname, login_name);
 
     fh = LbFileOpen(fname, Lb_FILE_MODE_READ_ONLY);
     if (fh == INVALID_FILE)
@@ -3510,10 +3507,7 @@ ubyte save_user_settings(void)
     TbFileHandle fh;
     int i;
 
-    if (strlen(login_name) > 0)
-        sprintf(fname, "qdata/savegame/%.8s.ini", login_name);
-    else
-        sprintf(fname, "qdata/savegame/%.8s.ini", "ANON");
+    get_user_settings_fname(fname, login_name);
 
     fh = LbFileOpen(fname, Lb_FILE_MODE_NEW);
     if (fh == INVALID_FILE)
@@ -4667,16 +4661,11 @@ ubyte load_game(int slot, char *desc)
         : "=r" (ret) : "a" (slot), "d" (desc));
     return ret;
 #else
-    char str[32];
+    char str[52];
     ulong gblen, fmtver, decrypt_verify;
     TbFileHandle fh;
 
-    if (slot == 0)
-        sprintf(str, "qdata/savegame/synwarsm.sav");
-    else if (slot < 9)
-        sprintf(str, "qdata/savegame/synwars%d.sav", slot - 1);
-    else
-        sprintf(str, "qdata/savegame/swars%03d.sav", slot - 1);
+    get_saved_game_fname(str, slot);
 
     fh = LbFileOpen(str, Lb_FILE_MODE_READ_ONLY);
     if (fh == INVALID_FILE)
@@ -9131,8 +9120,11 @@ void show_menu_screen_st2(void)
       if ( ingame.GameOver )
       {
             screentype = SCRT_MAINMENU;
-            if (ingame.Flags & GamF_Unkn10)
-                LbFileDelete("qdata/savegame/synwarsm.sav");
+            if (ingame.Flags & GamF_Unkn10) {
+                char fname[52];
+                get_saved_game_fname(fname, 0);
+                LbFileDelete(fname);
+            }
             ingame.GameOver = 0;
       }
       else

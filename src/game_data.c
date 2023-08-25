@@ -23,6 +23,7 @@
 #include "bffile.h"
 #include "bfdir.h"
 #include "bffnuniq.h"
+#include "bfstrut.h"
 #include "campaign.h"
 #include "command.h"
 #include "lvobjctv.h"
@@ -239,6 +240,24 @@ int get_highest_used_packet_record_no(int campgn, int missi)
 void get_packet_record_fname(char *fname, int campgn, int missi, int file_no)
 {
     sprintf(fname, "%s/rc%02dm%03d.s%02d", game_dir_savegame, campgn, missi, file_no);
+}
+
+void get_user_settings_fname(char *fname, const char *name)
+{
+    if (strlen(name) == 0)
+        name = "default";
+    sprintf(fname, "%s/%.8s.ini", game_dir_savegame, name);
+    LbStringToLower(fname+strlen(game_dir_savegame));
+}
+
+void get_saved_game_fname(char *fname, ushort slot)
+{
+    if (slot == 0)
+        sprintf(fname, "%s/synwarsm.sav", game_dir_savegame);
+    else if (slot < 9)
+        sprintf(fname, "%s/synwars%d.sav", game_dir_savegame, (int)slot - 1);
+    else
+        sprintf(fname, "%s/swars%03d.sav", game_dir_savegame, (int)slot - 1);
 }
 
 /** Decrease the size of some arrays to reduce memory usage.
