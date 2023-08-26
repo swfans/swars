@@ -67,6 +67,11 @@ enum ObjectiveDefFlags {
     ObDF_ReqAmount = 0x1000,
     ObDF_ReqSecTng = 0x2000, // TODO this can cause bugs, use only Thing for thing index
     ObDF_ReqSecGrp = 0x4000,
+    /* === Type of target, used for displaying on scanner; default is enemy === */
+    /** The target is to be acquired (picked/persuaded). */
+    ObDF_IsAcquire = 0x01000000,
+    /** The target is an ally (to be protected). */
+    ObDF_IsAlly = 0x02000000,
 };
 
 struct ObjectiveDef {
@@ -95,15 +100,15 @@ struct ObjectiveDef objectv_defs[] = {
     /* Require all of group members to be within radius around given coords. */
     {"GAME_OBJ_ALL_G_ARRIVES", "ALL GOTO LOCATION", ObDF_ReqGroup|ObDF_ReqCoord|ObDF_ReqRadius },
     /* Require target person to be within the group belonging to local player. */
-    {"GAME_OBJ_PERSUADE_P",	"PERSUADE",			ObDF_ReqPerson },
+    {"GAME_OBJ_PERSUADE_P",	"PERSUADE",			ObDF_ReqPerson|ObDF_IsAcquire },
     /* Require at least specified amount of group members to be within the local player group. */
-    {"GAME_OBJ_PERSUADE_MEM_G", "PERSUADE GANG MEM", ObDF_ReqGroup|ObDF_ReqAmount },
+    {"GAME_OBJ_PERSUADE_MEM_G", "PERSUADE GANG MEM", ObDF_ReqGroup|ObDF_ReqAmount|ObDF_IsAcquire },
     /* Require all of group members to be persuaded. */
-    {"GAME_OBJ_PERSUADE_ALL_G", "PERSUADE ALL GANG", ObDF_ReqGroup },
+    {"GAME_OBJ_PERSUADE_ALL_G", "PERSUADE ALL GANG", ObDF_ReqGroup|ObDF_IsAcquire },
     /* Require specified amount of game turns to pass. */
     {"GAME_OBJ_TIME",		"TIMER",			ObDF_ReqCount },
     /* Require specified carried item to change owner to a person belonging to local player. */
-    {"GAME_OBJ_GET_ITEM",	"COLLECT ITEM",		ObDF_ReqItem },
+    {"GAME_OBJ_GET_ITEM",	"COLLECT ITEM",		ObDF_ReqItem|ObDF_IsAcquire },
     /* Unreachable. Require specified item to be used? */
     {"GAME_OBJ_USE_ITEM",	"USE ITEM",			ObDF_ReqItem },
     /* Unreachable. Require acquiring specified amount of funds? */
@@ -122,13 +127,13 @@ struct ObjectiveDef objectv_defs[] = {
     /* Unreachable. */
     {"GAME_OBJ_UNUSED_21",	"UNEXPECT 21",		ObDF_None },
     /* Fail if any of group members are dead/destroyed. The only negative objective. */
-    {"GAME_OBJ_PROTECT_G",	"PROTECT GROUP",	ObDF_ReqGroup },
+    {"GAME_OBJ_PROTECT_G",	"PROTECT GROUP",	ObDF_ReqGroup|ObDF_IsAlly },
     /* Require all of group members to change owner to specified person. */
     {"GAME_OBJ_P_PERS_G",	"PEEP PERSUADE ALL", ObDF_ReqGroup|ObDF_ReqSecTng },
     /* Require all of group members to either be dead/destroyed or within specified vehicle. */
-    {"GAME_OBJ_ALL_G_USE_V", "ALL USE VEHICLE",	ObDF_ReqVehicle|ObDF_ReqSecGrp },
+    {"GAME_OBJ_ALL_G_USE_V", "ALL USE VEHICLE",	ObDF_ReqVehicle|ObDF_ReqSecGrp|ObDF_IsAcquire },
     /* Require at least specified amount of group members to be within specified vehicle. */
-    {"GAME_OBJ_MEM_G_USE_V", "MEM USE VEHICLE",	ObDF_ReqVehicle|ObDF_ReqSecGrp|ObDF_ReqAmountY },
+    {"GAME_OBJ_MEM_G_USE_V", "MEM USE VEHICLE",	ObDF_ReqVehicle|ObDF_ReqSecGrp|ObDF_ReqAmountY|ObDF_IsAcquire },
     /* Require the target vehicle to be within given radius around given coordinates. */
     {"GAME_OBJ_V_ARRIVES",	"DRIVE TO LOCATION",ObDF_ReqVehicle|ObDF_ReqCoord|ObDF_ReqRadius },
     /* Require given thing to have DESTROYED flag set. */
@@ -229,6 +234,102 @@ int add_used_objective(long mapno, long levelno)
     p_objectv->Status = 0;
 
     return objectv;
+}
+
+TbBool objective_target_is_to_be_acquired(struct Objective *p_objectv)
+{
+    struct ObjectiveDef *p_odef;
+    p_odef = &objectv_defs[p_objectv->Type];
+    return ((p_odef->Flags & ObDF_IsAcquire) != 0);
+}
+
+TbBool objective_target_is_ally(struct Objective *p_objectv)
+{
+    struct ObjectiveDef *p_odef;
+    p_odef = &objectv_defs[p_objectv->Type];
+    return ((p_odef->Flags & ObDF_IsAlly) != 0);
+}
+
+TbBool objective_target_is_group(struct Objective *p_objectv)
+{
+    struct ObjectiveDef *p_odef;
+    p_odef = &objectv_defs[p_objectv->Type];
+    return ((p_odef->Flags & ObDF_ReqGroup) != 0);
+}
+
+TbBool objective_target_is_group_to_area(struct Objective *p_objectv)
+{
+    struct ObjectiveDef *p_odef;
+    p_odef = &objectv_defs[p_objectv->Type];
+    return ((p_odef->Flags & ObDF_ReqGroup) != 0) &&
+      ((p_odef->Flags & ObDF_ReqCoord) != 0) &&
+      ((p_odef->Flags & ObDF_ReqRadius) != 0);
+}
+
+TbBool objective_target_is_person(struct Objective *p_objectv)
+{
+    struct ObjectiveDef *p_odef;
+    p_odef = &objectv_defs[p_objectv->Type];
+    return ((p_odef->Flags & ObDF_ReqPerson) != 0);
+}
+
+TbBool objective_target_is_person_to_area(struct Objective *p_objectv)
+{
+    struct ObjectiveDef *p_odef;
+    p_odef = &objectv_defs[p_objectv->Type];
+    return ((p_odef->Flags & ObDF_ReqPerson) != 0) &&
+      ((p_odef->Flags & ObDF_ReqCoord) != 0) &&
+      ((p_odef->Flags & ObDF_ReqRadius) != 0);
+}
+
+TbBool objective_target_is_vehicle(struct Objective *p_objectv)
+{
+    struct ObjectiveDef *p_odef;
+    p_odef = &objectv_defs[p_objectv->Type];
+    return ((p_odef->Flags & ObDF_ReqVehicle) != 0);
+}
+
+TbBool objective_target_is_vehicle_to_area(struct Objective *p_objectv)
+{
+    struct ObjectiveDef *p_odef;
+    p_odef = &objectv_defs[p_objectv->Type];
+    return ((p_odef->Flags & ObDF_ReqVehicle) != 0) &&
+      ((p_odef->Flags & ObDF_ReqCoord) != 0) &&
+      ((p_odef->Flags & ObDF_ReqRadius) != 0);
+}
+
+TbBool objective_target_is_item(struct Objective *p_objectv)
+{
+    struct ObjectiveDef *p_odef;
+    p_odef = &objectv_defs[p_objectv->Type];
+    return ((p_odef->Flags & ObDF_ReqItem) != 0);
+}
+
+TbBool objective_target_is_item_to_area(struct Objective *p_objectv)
+{
+    struct ObjectiveDef *p_odef;
+    p_odef = &objectv_defs[p_objectv->Type];
+    return ((p_odef->Flags & ObDF_ReqItem) != 0) &&
+      ((p_odef->Flags & ObDF_ReqCoord) != 0) &&
+      ((p_odef->Flags & ObDF_ReqRadius) != 0);
+}
+
+TbBool objective_target_is_object(struct Objective *p_objectv)
+{
+    struct ObjectiveDef *p_odef;
+    p_odef = &objectv_defs[p_objectv->Type];
+    return ((p_odef->Flags & ObDF_ReqObject) != 0);
+}
+
+TbBool objective_target_is_any_thing(struct Objective *p_objectv)
+{
+    struct ObjectiveDef *p_odef;
+    p_odef = &objectv_defs[p_objectv->Type];
+    return ((p_odef->Flags & ObDF_ReqPerson) != 0) ||
+      ((p_odef->Flags & ObDF_ReqVehicle) != 0) ||
+      ((p_odef->Flags & ObDF_ReqItem) != 0) ||
+      ((p_odef->Flags & ObDF_ReqObject) != 0) ||
+      ((p_odef->Flags & ObDF_ReqThing) != 0);
 }
 
 void draw_objective_group_whole_on_engine_scene(ushort group)

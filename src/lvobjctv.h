@@ -94,6 +94,20 @@ extern ushort next_objective;
 
 int add_used_objective(long mapno, long levelno);
 
+TbBool objective_target_is_to_be_acquired(struct Objective *p_objectv);
+TbBool objective_target_is_ally(struct Objective *p_objectv);
+
+TbBool objective_target_is_group(struct Objective *p_objectv);
+TbBool objective_target_is_group_to_area(struct Objective *p_objectv);
+TbBool objective_target_is_person(struct Objective *p_objectv);
+TbBool objective_target_is_person_to_area(struct Objective *p_objectv);
+TbBool objective_target_is_vehicle(struct Objective *p_objectv);
+TbBool objective_target_is_vehicle_to_area(struct Objective *p_objectv);
+TbBool objective_target_is_item(struct Objective *p_objectv);
+TbBool objective_target_is_item_to_area(struct Objective *p_objectv);
+TbBool objective_target_is_object(struct Objective *p_objectv);
+TbBool objective_target_is_any_thing(struct Objective *p_objectv);
+
 /** Fixes parameters within objectives.
  *
  * @return Gives 2 if a parameter was updated, 1 if no update was neccessary, 0 if update failed.
