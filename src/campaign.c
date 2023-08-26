@@ -341,6 +341,7 @@ void fix_mission_used_objectives(short missi)
         fix_single_objective(p_objectv, objectv, "U");
         objectv = p_objectv->Next;
     }
+    LOGSYNC("Fixed %d success objectives for mission %hd", i, missi);
 
     objectv = p_missi->FailHead;
     for (i = 0; i < 100; i++) {
@@ -350,6 +351,7 @@ void fix_mission_used_objectives(short missi)
         fix_single_objective(p_objectv, objectv, "U");
         objectv = p_objectv->Next;
     }
+    LOGSYNC("Fixed %d fail objectives for mission %hd", i, missi);
 }
 
 void read_missions_bin_file(int num)

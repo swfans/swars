@@ -3965,22 +3965,23 @@ void place_single_player(void)
 
 void init_game(ubyte reload)
 {
-    ushort missi_no, next_map_no;
+    ushort missi, next_map_no;
     long new_level_no;
 
-    missi_no = ingame.CurrentMission;
-    next_map_no = mission_list[missi_no].MapNo;
+    missi = ingame.CurrentMission;
+    next_map_no = mission_list[missi].MapNo;
+    LOGSYNC("Init mission %hu on map %hu", missi, next_map_no);
     if (current_map != next_map_no)
         change_current_map(next_map_no);
     debug_trace_setup(0);
 
-    if ((reload) && (mission_list[missi_no].ReLevelNo != 0)) {
-        new_level_no = mission_list[missi_no].ReLevelNo;
+    if ((reload) && (mission_list[missi].ReLevelNo != 0)) {
+        new_level_no = mission_list[missi].ReLevelNo;
     } else {
-        new_level_no = mission_list[missi_no].LevelNo;
+        new_level_no = mission_list[missi].LevelNo;
     }
 
-    load_level_pc(-new_level_no, missi_no, reload);
+    load_level_pc(-new_level_no, missi, reload);
     if (ingame.GameMode == GamM_None)
         ingame.GameMode = GamM_Unkn2;
     debug_trace_setup(1);
@@ -9377,6 +9378,8 @@ void show_load_and_prep_mission(void)
 
     if ( start_into_mission )
     {
+        ushort missi, next_map_no;
+
         if (!in_network_game) {
             update_open_brief();
         }
@@ -9385,23 +9388,25 @@ void show_load_and_prep_mission(void)
         debug_trace_place(6);
         if ( in_network_game )
         {
-          ushort missi;
+            ingame.MissionNo = 1;
+            missi = find_mission_with_mapid(cities[login_control__City].MapID, next_mission);
+            if (missi > 0) {
+                ingame.MissionNo = missi;
+                ingame.CurrentMission = missi;
+            }
 
-          ingame.MissionNo = 1;
-          missi = find_mission_with_mapid(cities[login_control__City].MapID, next_mission);
-          if (missi > 0) {
-              ingame.MissionNo = missi;
-              ingame.CurrentMission = missi;
-          }
-
-          change_current_map(mission_list[ingame.MissionNo].MapNo);
-          load_level_pc(-(int)mission_list[ingame.MissionNo].LevelNo, ingame.MissionNo, 0);
-          randomize_playable_groups_order();
+            missi = ingame.MissionNo;
+            next_map_no = mission_list[missi].MapNo;
+            LOGSYNC("Init MP mission %hu on map %hu", missi, next_map_no);
+            change_current_map(next_map_no);
         }
         else
         {
-            load_all_text(brief_store[open_brief - 1].Mission);
-            change_current_map(cities[unkn_city_no].MapID);
+            missi = brief_store[open_brief - 1].Mission;
+            next_map_no = cities[unkn_city_no].MapID;
+            LOGSYNC("Init SP mission %hu on map %hu", missi, next_map_no);
+            load_all_text(missi);
+            change_current_map(next_map_no);
         }
 
         debug_trace_place(7);
@@ -9410,10 +9415,15 @@ void show_load_and_prep_mission(void)
         ingame.fld_unkC4F = 0;
         data_19ec6f = 1;
         execute_commands = 1;
-        if ( !in_network_game )
+        if ( in_network_game )
+        {
+            load_level_pc(-(int)mission_list[missi].LevelNo, missi, 0);
+            randomize_playable_groups_order();
+        }
+        else
         {
             if (cities[unkn_city_no].Level != 0)
-                load_level_pc(-cities[unkn_city_no].Level, unkn_city_no, 0);
+                load_level_pc(-cities[unkn_city_no].Level, missi, 0);
         }
         debug_trace_place(8);
     }
