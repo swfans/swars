@@ -68,6 +68,17 @@ void SCANNER_update_arcpoint(ushort arc_no, short fromX, short fromZ, short toX,
     ingame.Scanner.Arc[arc_no].Z2 = toZ;
 }
 
+void SCANNER_init_blippoint(ushort blip_no, int x, int z, int colour)
+{
+    if (blip_no >= SCANNER_BIG_BLIP_COUNT)
+        return;
+    ingame.Scanner.BigBlip[blip_no].X = x;
+    ingame.Scanner.BigBlip[blip_no].Z = z;
+    ingame.Scanner.BigBlip[blip_no].Speed = 4;
+    ingame.Scanner.BigBlip[blip_no].Colour = colour;
+    ingame.Scanner.BigBlip[blip_no].Period = 32;
+}
+
 ushort do_group_scanner(struct Objective *p_objectv, ushort next_signal)
 {
 #if 0
@@ -77,28 +88,22 @@ ushort do_group_scanner(struct Objective *p_objectv, ushort next_signal)
     return ret;
 #else
     ushort n;
-    ubyte col;
+    ubyte colr;
     short dcthing;
     short nearthing;
     int blipX, blipZ;
 
     n = next_signal;
     dcthing = players[local_player_no].DirectControl[0];
-    switch (p_objectv->Type)
-    {
-    case GAME_OBJ_PERSUADE_MEM_G:
-    case GAME_OBJ_PERSUADE_ALL_G:
+    if (objective_target_is_ally(p_objectv)) {
+        nearthing = find_nearest_from_group(&things[dcthing], p_objectv->Thing, 0);
+        colr = colour_lookup[1];
+    } else if (objective_target_is_to_be_acquired(p_objectv)) {
         nearthing = find_nearest_from_group(&things[dcthing], p_objectv->Thing, 1);
-        col = colour_lookup[3];
-        break;
-    case GAME_OBJ_PROTECT_G:
+        colr = colour_lookup[3];
+    } else {
         nearthing = find_nearest_from_group(&things[dcthing], p_objectv->Thing, 0);
-        col = colour_lookup[1];
-        break;
-    default:
-        nearthing = find_nearest_from_group(&things[dcthing], p_objectv->Thing, 0);
-        col = colour_lookup[2];
-        break;
+        colr = colour_lookup[2];
     }
     ingame.Scanner.NearThing1 = nearthing;
 
@@ -115,12 +120,8 @@ ushort do_group_scanner(struct Objective *p_objectv, ushort next_signal)
             blipX = p_thing->X;
             blipZ = p_thing->Z;
         }
-        ingame.Scanner.BigBlip[n].X = blipX;
-        ingame.Scanner.BigBlip[n].Z = blipZ;
-        ingame.Scanner.BigBlip[n].Speed = 4;
-        ingame.Scanner.BigBlip[n].Colour = col;
-        ingame.Scanner.BigBlip[n].Period = 32;
-        ++n;
+        SCANNER_init_blippoint(n, blipX, blipZ, colr);
+        n++;
         if (ingame.Scanner.GroupCount < SCANNER_GROUP_COUNT)
         {
             int group;
@@ -128,7 +129,7 @@ ushort do_group_scanner(struct Objective *p_objectv, ushort next_signal)
             group = ingame.Scanner.GroupCount;
             ++ingame.Scanner.GroupCount;
             ingame.Scanner.Group[group] = p_objectv->Thing;
-            ingame.Scanner.GroupCol[group] = col;
+            ingame.Scanner.GroupCol[group] = colr;
         }
     }
     return n;
@@ -139,6 +140,14 @@ ushort do_target_thing_scanner(struct Objective *p_objectv, ushort next_signal)
 {
     long X, Z;
     ushort n;
+    ubyte colr;
+
+    if (objective_target_is_ally(p_objectv))
+        colr = colour_lookup[1];
+    else if (objective_target_is_to_be_acquired(p_objectv))
+        colr = colour_lookup[3];
+    else
+        colr = colour_lookup[2];
 
     n = next_signal;
     if (p_objectv->Thing <= 0) {
@@ -152,11 +161,7 @@ ushort do_target_thing_scanner(struct Objective *p_objectv, ushort next_signal)
         X = p_thing->X;
         Z = p_thing->Z;
     }
-    ingame.Scanner.BigBlip[n].X = X;
-    ingame.Scanner.BigBlip[n].Z = Z;
-    ingame.Scanner.BigBlip[n].Speed = 4;
-    ingame.Scanner.BigBlip[n].Colour = colour_lookup[1];
-    ingame.Scanner.BigBlip[n].Period = 32;
+    SCANNER_init_blippoint(n, X, Z, colr);
     n++;
     return n;
 }
@@ -166,6 +171,14 @@ ushort do_target_item_scanner(struct Objective *p_objectv, ushort next_signal)
     long X, Z;
     ushort n;
     ushort weapon;
+    ubyte colr;
+
+    if (objective_target_is_ally(p_objectv))
+        colr = colour_lookup[1];
+    else if (objective_target_is_to_be_acquired(p_objectv))
+        colr = colour_lookup[3];
+    else
+        colr = colour_lookup[2];
 
     n = next_signal;
     weapon = p_objectv->Arg2;
@@ -195,52 +208,26 @@ ushort do_target_item_scanner(struct Objective *p_objectv, ushort next_signal)
     {
         return n;
     }
-    ingame.Scanner.BigBlip[n].X = X;
-    ingame.Scanner.BigBlip[n].Z = Z;
-    ingame.Scanner.BigBlip[n].Speed = 4;
-    ingame.Scanner.BigBlip[n].Colour = colour_lookup[1];
-    ingame.Scanner.BigBlip[n].Period = 32;
+    SCANNER_init_blippoint(n, X, Z, colr);
     n++;
     return n;
 }
 
-ushort do_persuade_thing_scanner(struct Objective *p_objectv, ushort next_signal)
+ushort do_thing_arrive_area_scanner(struct Objective *p_objectv, ushort next_signal)
 {
     long X, Z;
     ushort n;
+    ubyte colr;
+
+    if (objective_target_is_ally(p_objectv))
+        colr = colour_lookup[1];
+    else if (objective_target_is_to_be_acquired(p_objectv))
+        colr = colour_lookup[3];
+    else
+        colr = colour_lookup[2];
 
     n = next_signal;
-    if (p_objectv->Thing <= 0) {
-        struct SimpleThing *p_sthing;
-        p_sthing = &sthings[p_objectv->Thing];
-        X = p_sthing->X;
-        Z = p_sthing->Z;
-    } else {
-        struct Thing *p_thing;
-        p_thing = &things[p_objectv->Thing];
-        X = p_thing->X;
-        Z = p_thing->Z;
-    }
-    ingame.Scanner.BigBlip[n].X = X;
-    ingame.Scanner.BigBlip[n].Z = Z;
-    ingame.Scanner.BigBlip[n].Speed = 4;
-    ingame.Scanner.BigBlip[n].Colour = colour_lookup[3];
-    ingame.Scanner.BigBlip[n].Period = 32;
-    n++;
-    return n;
-}
-
-ushort do_person_arrive_area_scanner(struct Objective *p_objectv, ushort next_signal)
-{
-    long X, Z;
-    ushort n;
-
-    n = next_signal;
-    ingame.Scanner.BigBlip[n].X = p_objectv->X << 8;
-    ingame.Scanner.BigBlip[n].Z = p_objectv->Z << 8;
-    ingame.Scanner.BigBlip[n].Speed = 4;
-    ingame.Scanner.BigBlip[n].Colour = colour_lookup[2];
-    ingame.Scanner.BigBlip[n].Period = 32;
+    SCANNER_init_blippoint(n, p_objectv->X << 8, p_objectv->Z << 8, colr);
     n++;
     if (p_objectv->Thing <= 0) {
         struct SimpleThing *p_sthing;
@@ -271,13 +258,17 @@ ushort do_person_arrive_area_scanner(struct Objective *p_objectv, ushort next_si
 ushort do_group_arrive_area_scanner(struct Objective *p_objectv, ushort next_signal)
 {
     ushort n;
+    ubyte colr;
+
+    if (objective_target_is_ally(p_objectv))
+        colr = colour_lookup[1];
+    else if (objective_target_is_to_be_acquired(p_objectv))
+        colr = colour_lookup[3];
+    else
+        colr = colour_lookup[2];
 
     n = next_signal;
-    ingame.Scanner.BigBlip[n].X = p_objectv->X << 8;
-    ingame.Scanner.BigBlip[n].Z = p_objectv->Z << 8;
-    ingame.Scanner.BigBlip[n].Speed = 4;
-    ingame.Scanner.BigBlip[n].Colour = colour_lookup[2];
-    ingame.Scanner.BigBlip[n].Period = 32;
+    SCANNER_init_blippoint(n, p_objectv->X << 8, p_objectv->Z << 8, colr);
     n++;
     return n;
 }
@@ -310,49 +301,46 @@ void add_signal_to_scanner(struct Objective *p_objectv, ubyte flag)
         LOGWARN("Scaner blips limit reached, blip discarded.");
         return;
     }
-    switch (p_objectv->Type)
+
+    if (objective_target_is_group_to_area(p_objectv))
     {
-    case GAME_OBJ_GET_ITEM:
-        signal_count = do_target_item_scanner(p_objectv, signal_count);
-        break;
-    case GAME_OBJ_DESTROY_OBJECT:
-    case GAME_OBJ_PKILL_P:
-    case GAME_OBJ_P_DEAD:
-    case GAME_OBJ_DESTROY_V:
-    case GAME_OBJ_ALL_G_USE_V:
-    case GAME_OBJ_MEM_G_USE_V:
-        signal_count = do_target_thing_scanner(p_objectv, signal_count);
-        break;
-    case GAME_OBJ_P_ARRIVES:
-    case GAME_OBJ_V_ARRIVES:
-    case GAME_OBJ_ITEM_ARRIVES:
-        signal_count = do_person_arrive_area_scanner(p_objectv, signal_count);
-        break;
-    case GAME_OBJ_MEM_G_ARRIVES:
-    case GAME_OBJ_ALL_G_ARRIVES:
         signal_count = do_group_arrive_area_scanner(p_objectv, signal_count);
-        break;
-    case GAME_OBJ_PERSUADE_P:
-        signal_count = do_persuade_thing_scanner(p_objectv, signal_count);
-        break;
-    case GAME_OBJ_PERSUADE_MEM_G:
-    case GAME_OBJ_PERSUADE_ALL_G:
-    case GAME_OBJ_PKILL_MEM_G:
-    case GAME_OBJ_PKILL_ALL_G:
-    case GAME_OBJ_PROTECT_G:
-    case GAME_OBJ_ALL_G_DEAD:
-    case GAME_OBJ_MEM_G_DEAD:
+    }
+    else if (objective_target_is_group(p_objectv))
+    {
         signal_count = do_group_scanner(p_objectv, signal_count);
-        break;
-    case GAME_OBJ_P_PERS_G:
-    case GAME_OBJ_TIME:
-    case GAME_OBJ_USE_ITEM:
-    case GAME_OBJ_FUNDS:
-    case GAME_OBJ_USE_PANET:
-    case GAME_OBJ_UNUSED_21:
-    case GAME_OBJ_P_NEAR:
-    case GAME_OBJ_MEM_G_NEAR:
-        break;
+    }
+    else if (objective_target_is_person_to_area(p_objectv))
+    {
+        signal_count = do_thing_arrive_area_scanner(p_objectv, signal_count);
+    }
+    else if (objective_target_is_person(p_objectv))
+    {
+        signal_count = do_target_thing_scanner(p_objectv, signal_count);
+    }
+    else if (objective_target_is_vehicle_to_area(p_objectv))
+    {
+        signal_count = do_thing_arrive_area_scanner(p_objectv, signal_count);
+    }
+    else if (objective_target_is_vehicle(p_objectv))
+    {
+        signal_count = do_target_thing_scanner(p_objectv, signal_count);
+    }
+    else if (objective_target_is_item_to_area(p_objectv))
+    {
+        signal_count = do_thing_arrive_area_scanner(p_objectv, signal_count);
+    }
+    else if (objective_target_is_item(p_objectv))
+    {
+        signal_count = do_target_item_scanner(p_objectv, signal_count);
+    }
+    else if (objective_target_is_object(p_objectv))
+    {
+        signal_count = do_target_thing_scanner(p_objectv, signal_count);
+    }
+    else if (objective_target_is_any_thing(p_objectv))
+    {
+        signal_count = do_target_thing_scanner(p_objectv, signal_count);
     }
 }
 
