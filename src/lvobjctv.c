@@ -90,9 +90,9 @@ struct ObjectiveDef objectv_defs[] = {
     /* Require at least specified amount of group members to be dead or destroyed. */
     {"GAME_OBJ_MEM_G_DEAD",	"KILL GROUP MEM",	ObDF_ReqGroup|ObDF_ReqAmount },
     /* Require the Person and the Thing to be within Radius around each other. */
-    {"GAME_OBJ_P_NEAR",		"RENDEZVOUS",		ObDF_ReqPerson|ObDF_ReqThingY|ObDF_ReqRadius },
+    {"GAME_OBJ_P_NEAR",		"RENDEZVOUS",		ObDF_ReqPerson|ObDF_ReqThingY|ObDF_ReqRadius|ObDF_IsAcquire },
     /* Require specified amount of group members to be within radius around given thing. */
-    {"GAME_OBJ_MEM_G_NEAR",	"RENDEZVOUS MEM",	ObDF_ReqThing|ObDF_ReqSecGrp|ObDF_ReqAmountY|ObDF_ReqRadius },
+    {"GAME_OBJ_MEM_G_NEAR",	"RENDEZVOUS MEM",	ObDF_ReqThing|ObDF_ReqSecGrp|ObDF_ReqAmountY|ObDF_ReqRadius|ObDF_IsAcquire },
     /* Require the target person to be within given radius around given coordinates. */
     {"GAME_OBJ_P_ARRIVES",	"GOTO LOCATION",	ObDF_ReqPerson|ObDF_ReqCoord|ObDF_ReqRadius },
     /* Require at least specified amount of group members to be within radius around given coords. */
@@ -108,9 +108,9 @@ struct ObjectiveDef objectv_defs[] = {
     /* Require specified amount of game turns to pass. */
     {"GAME_OBJ_TIME",		"TIMER",			ObDF_ReqCount },
     /* Require specified carried item to change owner to a person belonging to local player. */
-    {"GAME_OBJ_GET_ITEM",	"COLLECT ITEM",		ObDF_ReqItem|ObDF_IsAcquire },
+    {"GAME_OBJ_GET_ITEM",	"COLLECT ITEM",		ObDF_ReqItem|ObDF_IsAlly },
     /* Unreachable. Require specified item to be used? */
-    {"GAME_OBJ_USE_ITEM",	"USE ITEM",			ObDF_ReqItem },
+    {"GAME_OBJ_USE_ITEM",	"USE ITEM",			ObDF_ReqItem|ObDF_IsAlly },
     /* Unreachable. Require acquiring specified amount of funds? */
     {"GAME_OBJ_FUNDS",		"GET BULLION",		ObDF_None },
     /* Require given thing to have DESTROYED flag set.
@@ -129,11 +129,11 @@ struct ObjectiveDef objectv_defs[] = {
     /* Fail if any of group members are dead/destroyed. The only negative objective. */
     {"GAME_OBJ_PROTECT_G",	"PROTECT GROUP",	ObDF_ReqGroup|ObDF_IsAlly },
     /* Require all of group members to change owner to specified person. */
-    {"GAME_OBJ_P_PERS_G",	"PEEP PERSUADE ALL", ObDF_ReqGroup|ObDF_ReqSecTng },
+    {"GAME_OBJ_P_PERS_G",	"PEEP PERSUADE ALL", ObDF_ReqGroup|ObDF_ReqSecTng|ObDF_IsAcquire },
     /* Require all of group members to either be dead/destroyed or within specified vehicle. */
-    {"GAME_OBJ_ALL_G_USE_V", "ALL USE VEHICLE",	ObDF_ReqVehicle|ObDF_ReqSecGrp|ObDF_IsAcquire },
+    {"GAME_OBJ_ALL_G_USE_V", "ALL USE VEHICLE",	ObDF_ReqVehicle|ObDF_ReqSecGrp|ObDF_IsAlly },
     /* Require at least specified amount of group members to be within specified vehicle. */
-    {"GAME_OBJ_MEM_G_USE_V", "MEM USE VEHICLE",	ObDF_ReqVehicle|ObDF_ReqSecGrp|ObDF_ReqAmountY|ObDF_IsAcquire },
+    {"GAME_OBJ_MEM_G_USE_V", "MEM USE VEHICLE",	ObDF_ReqVehicle|ObDF_ReqSecGrp|ObDF_ReqAmountY|ObDF_IsAlly },
     /* Require the target vehicle to be within given radius around given coordinates. */
     {"GAME_OBJ_V_ARRIVES",	"DRIVE TO LOCATION",ObDF_ReqVehicle|ObDF_ReqCoord|ObDF_ReqRadius },
     /* Require given thing to have DESTROYED flag set. */
