@@ -2911,7 +2911,7 @@ void init_outro(void)
     fh = LbFileOpen(p_campgn->OutroBkFn, Lb_FILE_MODE_READ_ONLY);
     if (fh != INVALID_FILE)
     {
-        for (i = 24; i != 174; i++)
+        for (i = 24; i != 24+150; i++)
         {
             ubyte *buf;
             buf = &lbDisplay.WScreen[i*lbDisplay.GraphicsScreenWidth + 10];
