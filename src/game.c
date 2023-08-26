@@ -3965,23 +3965,23 @@ void place_single_player(void)
 
 void init_game(ubyte reload)
 {
-    ushort missi, next_map_no;
-    long new_level_no;
+    ushort missi, next_mapno;
+    short next_level;
 
     missi = ingame.CurrentMission;
-    next_map_no = mission_list[missi].MapNo;
-    LOGSYNC("Init mission %hu on map %hu", missi, next_map_no);
-    if (current_map != next_map_no)
-        change_current_map(next_map_no);
+    next_mapno = mission_list[missi].MapNo;
+    LOGSYNC("Init mission %hu on map %hu", missi, next_mapno);
+    if (current_map != next_mapno)
+        change_current_map(next_mapno);
     debug_trace_setup(0);
 
     if ((reload) && (mission_list[missi].ReLevelNo != 0)) {
-        new_level_no = mission_list[missi].ReLevelNo;
+        next_level = mission_list[missi].ReLevelNo;
     } else {
-        new_level_no = mission_list[missi].LevelNo;
+        next_level = mission_list[missi].LevelNo;
     }
 
-    load_level_pc(-new_level_no, missi, reload);
+    load_level_pc(-next_level, missi, reload);
     if (ingame.GameMode == GamM_None)
         ingame.GameMode = GamM_Unkn2;
     debug_trace_setup(1);
@@ -9378,7 +9378,8 @@ void show_load_and_prep_mission(void)
 
     if ( start_into_mission )
     {
-        ushort missi, next_map_no;
+        ushort missi, next_mapno;
+        short next_level;
 
         if (!in_network_game) {
             update_open_brief();
@@ -9396,34 +9397,31 @@ void show_load_and_prep_mission(void)
             }
 
             missi = ingame.MissionNo;
-            next_map_no = mission_list[missi].MapNo;
-            LOGSYNC("Init MP mission %hu on map %hu", missi, next_map_no);
-            change_current_map(next_map_no);
+            next_mapno = mission_list[missi].MapNo;
+            next_level = mission_list[missi].LevelNo;
         }
         else
         {
             missi = brief_store[open_brief - 1].Mission;
-            next_map_no = cities[unkn_city_no].MapID;
-            LOGSYNC("Init SP mission %hu on map %hu", missi, next_map_no);
+            next_mapno = cities[unkn_city_no].MapID;
+            next_level = cities[unkn_city_no].Level;
             load_all_text(missi);
-            change_current_map(next_map_no);
         }
-
+        LOGSYNC("Init %s mission %hu on map %hu level %hd", in_network_game ? "MP" : "SP",
+          missi, next_mapno, next_level);
+        change_current_map(next_mapno);
         debug_trace_place(7);
         // The file name is formatted in original code, but doesn't seem to be used
-        //sprintf(fname, "maps/map%03d.scn", cities[unkn_city_no].MapID);
+        //sprintf(fname, "maps/map%03d.scn", next_mapno);
         ingame.fld_unkC4F = 0;
         data_19ec6f = 1;
         execute_commands = 1;
-        if ( in_network_game )
-        {
-            load_level_pc(-(int)mission_list[missi].LevelNo, missi, 0);
-            randomize_playable_groups_order();
-        }
+        if (next_level != 0)
+            load_level_pc(-next_level, missi, 0);
         else
-        {
-            if (cities[unkn_city_no].Level != 0)
-                load_level_pc(-cities[unkn_city_no].Level, missi, 0);
+            LOGWARN("Requested level %hd; load skipped", next_level);
+        if (in_network_game) {
+            randomize_playable_groups_order();
         }
         debug_trace_place(8);
     }
