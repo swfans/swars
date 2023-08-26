@@ -3331,8 +3331,10 @@ void setup_host(void)
     {
         TbScreenModeInfo *mdinfo;
 
-        // TODO we could use more complex mode selection here
-        lbDisplay.ScreenMode = screen_mode_game_lo;
+        if (game_high_resolution)
+            lbDisplay.ScreenMode = screen_mode_game_hi;
+        else
+            lbDisplay.ScreenMode = screen_mode_game_lo;
         mdinfo = LbScreenGetModeInfo(lbDisplay.ScreenMode);
         LbScreenSetup(lbDisplay.ScreenMode, mdinfo->Width, mdinfo->Height, display_palette);
     }
@@ -3995,6 +3997,14 @@ void unkn_lights_func_11(void)
         :  :  : "eax" );
 }
 
+void prep_single_mission(void)
+{
+    load_missions(background_type);
+    init_game(0);
+    load_multicolor_sprites();
+    adjust_mission_engine_to_video_mode();
+}
+
 void restart_back_into_mission(ushort missi)
 {
     ushort mapno;
@@ -4167,8 +4177,7 @@ void game_setup(void)
     debug_trace_setup(1);
     if (is_single_game && (ingame.CurrentMission != 0))
     {
-        load_missions(background_type);
-        init_game(0);
+        prep_single_mission();
     }
     if (in_network_game || cmdln_param_bcg)
       ingame.DisplayMode = DpM_UNKN_37;
@@ -9438,12 +9447,6 @@ void show_load_and_prep_mission(void)
         if (lbDisplay.ScreenMode != screen_mode_game_lo)
             setup_screen_mode(screen_mode_game_lo);
     }
-    if (lbDisplay.GraphicsScreenWidth >= 640)
-    {
-        overall_scale = 400;
-        render_area_a = 30;
-        render_area_b = 30;
-    }
 
     debug_trace_place(12);
     LbColourTablesLoad(display_palette, "data/tables.dat");
@@ -9490,10 +9493,7 @@ void show_load_and_prep_mission(void)
     if ( start_into_mission )
     {
         load_multicolor_sprites();
-        if (game_high_resolution)
-            load_pop_sprites_hi();
-        else
-            load_pop_sprites_lo();
+        adjust_mission_engine_to_video_mode();
 
         if (ingame.GameMode == GamM_None)
             ingame.GameMode = GamM_Unkn2;
@@ -9506,7 +9506,7 @@ void show_load_and_prep_mission(void)
             if (word_1811AE != 1)
                 ingame.InNetGame_UNSURE = 3;
             ingame.DetailLevel = 0;
-            bang_set_detail(1);
+            bang_set_detail(ingame.DetailLevel == 0);
         }
 
         lbDisplay.MLeftButton = 0;

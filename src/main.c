@@ -167,7 +167,7 @@ static TbBool process_options(int *argc, char ***argv)
             break;
 
         case 'H':
-            lbDisplay.ScreenMode = screen_mode_game_hi;
+            game_high_resolution = true;
             break;
 
         case 'h':
@@ -421,6 +421,7 @@ main (int argc, char **argv)
 {
     // the initial mode will be overwritten in game_setup()
     lbDisplay.ScreenMode = Lb_SCREEN_MODE_320_200_8;
+    game_high_resolution = false;
     ingame.GameMode = GamM_None;
     ingame.LowerMemoryUse = 0;
     ingame.Flags = 0;
