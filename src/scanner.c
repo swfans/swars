@@ -229,6 +229,9 @@ ushort do_target_thing_scanner(struct Objective *p_objectv, ushort next_signal)
     long X, Z;
     ushort n;
     ubyte colr;
+    short thing;
+
+    thing = p_objectv->Thing;
 
     if (objective_target_is_ally(p_objectv))
         colr = colour_lookup[1];
@@ -238,14 +241,14 @@ ushort do_target_thing_scanner(struct Objective *p_objectv, ushort next_signal)
         colr = colour_lookup[2];
 
     n = next_signal;
-    if (p_objectv->Thing <= 0) {
+    if (thing <= 0) {
         struct SimpleThing *p_sthing;
-        p_sthing = &sthings[p_objectv->Thing];
+        p_sthing = &sthings[thing];
         X = p_sthing->X;
         Z = p_sthing->Z;
     } else {
         struct Thing *p_thing;
-        p_thing = &things[p_objectv->Thing];
+        p_thing = &things[thing];
         X = p_thing->X;
         Z = p_thing->Z;
     }
@@ -260,6 +263,10 @@ ushort do_target_item_scanner(struct Objective *p_objectv, ushort next_signal)
     ushort n;
     ushort weapon;
     ubyte colr;
+    short thing;
+
+    thing = p_objectv->Thing;
+    weapon = p_objectv->Arg2;
 
     if (objective_target_is_ally(p_objectv))
         colr = colour_lookup[1];
@@ -269,11 +276,10 @@ ushort do_target_item_scanner(struct Objective *p_objectv, ushort next_signal)
         colr = colour_lookup[2];
 
     n = next_signal;
-    weapon = p_objectv->Arg2;
-    if (p_objectv->Thing <= 0)
+    if (thing <= 0)
     {
         struct SimpleThing *p_sthing;
-        p_sthing = &sthings[p_objectv->Thing];
+        p_sthing = &sthings[thing];
         if ((p_sthing->Type == SmTT_DROPPED_ITEM) &&
           (p_sthing->U.UWeapon.WeaponType == weapon)) {
             X = p_sthing->X;
@@ -306,6 +312,9 @@ ushort do_thing_arrive_area_scanner(struct Objective *p_objectv, ushort next_sig
     long X, Z;
     ushort n;
     ubyte colr;
+    short thing;
+
+    thing = p_objectv->Thing;
 
     if (objective_target_is_ally(p_objectv))
         colr = colour_lookup[1];
@@ -317,14 +326,14 @@ ushort do_thing_arrive_area_scanner(struct Objective *p_objectv, ushort next_sig
     n = next_signal;
     SCANNER_init_blippoint(n, p_objectv->X << 8, p_objectv->Z << 8, colr);
     n++;
-    if (p_objectv->Thing <= 0) {
+    if (thing <= 0) {
         struct SimpleThing *p_sthing;
-        p_sthing = &sthings[p_objectv->Thing];
+        p_sthing = &sthings[thing];
         X = p_sthing->X;
         Z = p_sthing->Z;
     } else {
         struct Thing *p_thing;
-        p_thing = &things[p_objectv->Thing];
+        p_thing = &things[thing];
         X = p_thing->X;
         Z = p_thing->Z;
     }
@@ -349,6 +358,10 @@ ushort do_thing_near_thing_scanner(struct Objective *p_objectv, ushort next_sign
     long X2, Z2;
     ushort n;
     ubyte colr;
+    short thing1, thing2;
+
+    thing1 = p_objectv->Thing;
+    thing2 = p_objectv->Y;
 
     if (objective_target_is_ally(p_objectv))
         colr = colour_lookup[1];
@@ -358,27 +371,27 @@ ushort do_thing_near_thing_scanner(struct Objective *p_objectv, ushort next_sign
         colr = colour_lookup[2];
 
     n = next_signal;
-    if (p_objectv->Thing <= 0) {
+    if (thing1 <= 0) {
         struct SimpleThing *p_sthing;
-        p_sthing = &sthings[p_objectv->Thing];
+        p_sthing = &sthings[thing1];
         X1 = p_sthing->X;
         Z1 = p_sthing->Z;
     } else {
         struct Thing *p_thing;
-        p_thing = &things[p_objectv->Thing];
+        p_thing = &things[thing1];
         X1 = p_thing->X;
         Z1 = p_thing->Z;
     }
     SCANNER_init_blippoint(n, X1, Z1, colr);
     n++;
-    if (p_objectv->Y <= 0) {
+    if (thing2 <= 0) {
         struct SimpleThing *p_sthing;
-        p_sthing = &sthings[p_objectv->Y];
+        p_sthing = &sthings[thing2];
         X2 = p_sthing->X;
         Z2 = p_sthing->Z;
     } else {
         struct Thing *p_thing;
-        p_thing = &things[p_objectv->Y];
+        p_thing = &things[thing2];
         X2 = p_thing->X;
         Z2 = p_thing->Z;
     }
