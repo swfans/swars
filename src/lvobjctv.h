@@ -99,8 +99,11 @@ TbBool objective_target_is_ally(struct Objective *p_objectv);
 
 TbBool objective_target_is_group(struct Objective *p_objectv);
 TbBool objective_target_is_group_to_area(struct Objective *p_objectv);
+TbBool objective_target_is_group_to_thing(struct Objective *p_objectv);
+TbBool objective_target_is_group_to_vehicle(struct Objective *p_objectv);
 TbBool objective_target_is_person(struct Objective *p_objectv);
 TbBool objective_target_is_person_to_area(struct Objective *p_objectv);
+TbBool objective_target_is_person_to_thing(struct Objective *p_objectv);
 TbBool objective_target_is_vehicle(struct Objective *p_objectv);
 TbBool objective_target_is_vehicle_to_area(struct Objective *p_objectv);
 TbBool objective_target_is_item(struct Objective *p_objectv);

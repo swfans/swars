@@ -266,6 +266,15 @@ TbBool objective_target_is_group_to_area(struct Objective *p_objectv)
       ((p_odef->Flags & ObDF_ReqRadius) != 0);
 }
 
+TbBool objective_target_is_group_to_thing(struct Objective *p_objectv)
+{
+    struct ObjectiveDef *p_odef;
+    p_odef = &objectv_defs[p_objectv->Type];
+    return ((p_odef->Flags & ObDF_ReqSecGrp) != 0) &&
+      ((p_odef->Flags & ObDF_ReqThing) != 0) &&
+      ((p_odef->Flags & ObDF_ReqRadius) != 0);
+}
+
 TbBool objective_target_is_person(struct Objective *p_objectv)
 {
     struct ObjectiveDef *p_odef;
@@ -279,6 +288,15 @@ TbBool objective_target_is_person_to_area(struct Objective *p_objectv)
     p_odef = &objectv_defs[p_objectv->Type];
     return ((p_odef->Flags & ObDF_ReqPerson) != 0) &&
       ((p_odef->Flags & ObDF_ReqCoord) != 0) &&
+      ((p_odef->Flags & ObDF_ReqRadius) != 0);
+}
+
+TbBool objective_target_is_person_to_thing(struct Objective *p_objectv)
+{
+    struct ObjectiveDef *p_odef;
+    p_odef = &objectv_defs[p_objectv->Type];
+    return ((p_odef->Flags & ObDF_ReqPerson) != 0) &&
+      ((p_odef->Flags & ObDF_ReqThingY) != 0) &&
       ((p_odef->Flags & ObDF_ReqRadius) != 0);
 }
 
@@ -296,6 +314,14 @@ TbBool objective_target_is_vehicle_to_area(struct Objective *p_objectv)
     return ((p_odef->Flags & ObDF_ReqVehicle) != 0) &&
       ((p_odef->Flags & ObDF_ReqCoord) != 0) &&
       ((p_odef->Flags & ObDF_ReqRadius) != 0);
+}
+
+TbBool objective_target_is_group_to_vehicle(struct Objective *p_objectv)
+{
+    struct ObjectiveDef *p_odef;
+    p_odef = &objectv_defs[p_objectv->Type];
+    return ((p_odef->Flags & ObDF_ReqSecGrp) != 0) &&
+      ((p_odef->Flags & ObDF_ReqVehicle) != 0);
 }
 
 TbBool objective_target_is_item(struct Objective *p_objectv)

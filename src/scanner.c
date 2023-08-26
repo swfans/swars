@@ -91,18 +91,22 @@ ushort do_group_scanner(struct Objective *p_objectv, ushort next_signal)
     ubyte colr;
     short dcthing;
     short nearthing;
-    int blipX, blipZ;
+    ushort group;
+    int X, Z;
+
+    group = p_objectv->Thing;
+    dcthing = players[local_player_no].DirectControl[0];
 
     n = next_signal;
-    dcthing = players[local_player_no].DirectControl[0];
+    // Find thing in group close to dcthing
     if (objective_target_is_ally(p_objectv)) {
-        nearthing = find_nearest_from_group(&things[dcthing], p_objectv->Thing, 0);
+        nearthing = find_nearest_from_group(&things[dcthing],group, 0);
         colr = colour_lookup[1];
     } else if (objective_target_is_to_be_acquired(p_objectv)) {
-        nearthing = find_nearest_from_group(&things[dcthing], p_objectv->Thing, 1);
+        nearthing = find_nearest_from_group(&things[dcthing], group, 1);
         colr = colour_lookup[3];
     } else {
-        nearthing = find_nearest_from_group(&things[dcthing], p_objectv->Thing, 0);
+        nearthing = find_nearest_from_group(&things[dcthing], group, 0);
         colr = colour_lookup[2];
     }
     ingame.Scanner.NearThing1 = nearthing;
@@ -112,28 +116,112 @@ ushort do_group_scanner(struct Objective *p_objectv, ushort next_signal)
         if (ingame.Scanner.NearThing1 <= 0) {
             struct SimpleThing *p_sthing;
             p_sthing = &sthings[ingame.Scanner.NearThing1];
-            blipX = p_sthing->X;
-            blipZ = p_sthing->Z;
+            X = p_sthing->X;
+            Z = p_sthing->Z;
         } else {
             struct Thing *p_thing;
             p_thing = &things[ingame.Scanner.NearThing1];
-            blipX = p_thing->X;
-            blipZ = p_thing->Z;
+            X = p_thing->X;
+            Z = p_thing->Z;
         }
-        SCANNER_init_blippoint(n, blipX, blipZ, colr);
+        SCANNER_init_blippoint(n, X, Z, colr);
         n++;
         if (ingame.Scanner.GroupCount < SCANNER_GROUP_COUNT)
         {
-            int group;
+            int sgroup;
 
-            group = ingame.Scanner.GroupCount;
+            sgroup = ingame.Scanner.GroupCount;
             ++ingame.Scanner.GroupCount;
-            ingame.Scanner.Group[group] = p_objectv->Thing;
-            ingame.Scanner.GroupCol[group] = colr;
+            ingame.Scanner.Group[sgroup] = group;
+            ingame.Scanner.GroupCol[sgroup] = colr;
         }
     }
     return n;
 #endif
+}
+
+ushort do_group_near_thing_scanner(struct Objective *p_objectv, ushort next_signal)
+{
+    ushort n;
+    ubyte colr;
+    short tgthing;
+    short nearthing;
+    ushort group;
+    long X1, Z1;
+    int X2, Z2;
+
+    group = p_objectv->Arg2;
+    tgthing = p_objectv->Thing;
+
+    n = next_signal;
+    // Find thing in group close to tgthing
+    if (objective_target_is_ally(p_objectv)) {
+        nearthing = find_nearest_from_group(&things[tgthing], group, 0);
+        colr = colour_lookup[1];
+    } else if (objective_target_is_to_be_acquired(p_objectv)) {
+        nearthing = find_nearest_from_group(&things[tgthing], group, 1);
+        colr = colour_lookup[3];
+    } else {
+        nearthing = find_nearest_from_group(&things[tgthing], group, 0);
+        colr = colour_lookup[2];
+    }
+    ingame.Scanner.NearThing1 = nearthing;
+
+    // Blip the target thing
+    n = next_signal;
+    if (tgthing <= 0) {
+        struct SimpleThing *p_sthing;
+        p_sthing = &sthings[tgthing];
+        X1 = p_sthing->X;
+        Z1 = p_sthing->Z;
+    } else {
+        struct Thing *p_thing;
+        p_thing = &things[tgthing];
+        X1 = p_thing->X;
+        Z1 = p_thing->Z;
+    }
+    SCANNER_init_blippoint(n, X1, Z1, colr);
+    n++;
+
+    // Arc the nearest group member
+    if (nearthing != 0)
+    {
+        if (nearthing <= 0) {
+            struct SimpleThing *p_sthing;
+            p_sthing = &sthings[nearthing];
+            X2 = p_sthing->X;
+            Z2 = p_sthing->Z;
+        } else {
+            struct Thing *p_thing;
+            p_thing = &things[nearthing];
+            X2 = p_thing->X;
+            Z2 = p_thing->Z;
+        }
+        if (dword_1DB1A0)
+        {
+            SCANNER_update_arcpoint(0, Z2, X2, Z1, X1);
+        }
+        else
+        {
+            struct Thing *p_thing;
+            p_thing = &things[ingame.TrackThing];
+            if (((ingame.TrackThing == 0) || p_thing->Flag & 0x2000) && (ingame.Flags & 0x2000))
+                SCANNER_init_arcpoint(Z2, X2, Z1, X1, 1);
+        }
+        SCANNER_keep_arcs = 1;
+
+        n++;
+        if (ingame.Scanner.GroupCount < SCANNER_GROUP_COUNT)
+        {
+            int sgroup;
+
+            sgroup = ingame.Scanner.GroupCount;
+            ++ingame.Scanner.GroupCount;
+            ingame.Scanner.Group[sgroup] = group;
+            ingame.Scanner.GroupCol[sgroup] = colr;
+        }
+    }
+    return n;
 }
 
 ushort do_target_thing_scanner(struct Objective *p_objectv, ushort next_signal)
@@ -255,6 +343,60 @@ ushort do_thing_arrive_area_scanner(struct Objective *p_objectv, ushort next_sig
     return n;
 }
 
+ushort do_thing_near_thing_scanner(struct Objective *p_objectv, ushort next_signal)
+{
+    long X1, Z1;
+    long X2, Z2;
+    ushort n;
+    ubyte colr;
+
+    if (objective_target_is_ally(p_objectv))
+        colr = colour_lookup[1];
+    else if (objective_target_is_to_be_acquired(p_objectv))
+        colr = colour_lookup[3];
+    else
+        colr = colour_lookup[2];
+
+    n = next_signal;
+    if (p_objectv->Thing <= 0) {
+        struct SimpleThing *p_sthing;
+        p_sthing = &sthings[p_objectv->Thing];
+        X1 = p_sthing->X;
+        Z1 = p_sthing->Z;
+    } else {
+        struct Thing *p_thing;
+        p_thing = &things[p_objectv->Thing];
+        X1 = p_thing->X;
+        Z1 = p_thing->Z;
+    }
+    SCANNER_init_blippoint(n, X1, Z1, colr);
+    n++;
+    if (p_objectv->Y <= 0) {
+        struct SimpleThing *p_sthing;
+        p_sthing = &sthings[p_objectv->Y];
+        X2 = p_sthing->X;
+        Z2 = p_sthing->Z;
+    } else {
+        struct Thing *p_thing;
+        p_thing = &things[p_objectv->Y];
+        X2 = p_thing->X;
+        Z2 = p_thing->Z;
+    }
+    if (dword_1DB1A0)
+    {
+        SCANNER_update_arcpoint(0, Z2, X2, Z1, X1);
+    }
+    else
+    {
+        struct Thing *p_thing;
+        p_thing = &things[ingame.TrackThing];
+        if (((ingame.TrackThing == 0) || p_thing->Flag & 0x2000) && (ingame.Flags & 0x2000))
+            SCANNER_init_arcpoint(Z2, X2, Z1, X1, 1);
+    }
+    SCANNER_keep_arcs = 1;
+    return n;
+}
+
 ushort do_group_arrive_area_scanner(struct Objective *p_objectv, ushort next_signal)
 {
     ushort n;
@@ -306,6 +448,14 @@ void add_signal_to_scanner(struct Objective *p_objectv, ubyte flag)
     {
         signal_count = do_group_arrive_area_scanner(p_objectv, signal_count);
     }
+    else if (objective_target_is_group_to_vehicle(p_objectv))
+    {
+        signal_count = do_group_near_thing_scanner(p_objectv, signal_count);
+    }
+    else if (objective_target_is_group_to_thing(p_objectv))
+    {
+        signal_count = do_group_near_thing_scanner(p_objectv, signal_count);
+    }
     else if (objective_target_is_group(p_objectv))
     {
         signal_count = do_group_scanner(p_objectv, signal_count);
@@ -313,6 +463,10 @@ void add_signal_to_scanner(struct Objective *p_objectv, ubyte flag)
     else if (objective_target_is_person_to_area(p_objectv))
     {
         signal_count = do_thing_arrive_area_scanner(p_objectv, signal_count);
+    }
+    else if (objective_target_is_person_to_thing(p_objectv))
+    {
+        signal_count = do_thing_near_thing_scanner(p_objectv, signal_count);
     }
     else if (objective_target_is_person(p_objectv))
     {
