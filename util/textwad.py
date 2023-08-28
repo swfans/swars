@@ -69,7 +69,7 @@ class POEntry:
         pass
 
 
-campaign_names = ["SYNDCT", "CHURCH", "PUNKS"]
+campaign_names = ["SYNDCT", "CHURCH", "PUNKS", "COMM"]
 
 
 def pofile_store_entry(po, pofh, e):
@@ -84,15 +84,16 @@ def pofile_store_entry(po, pofh, e):
         pofh.write("#, " + " ".join(e.flags) + "\n")
     if len(e.msgctxt) > 0:
         pofh.write("msgctxt \"" + e.msgctxt + "\"\n")
-    if len(e.msgid) > 0:
-        pofh.write("msgid \"" + e.msgid + "\"\n")
-    if len(e.msgstr) > 0:
-        pofh.write("msgstr \"" + e.msgstr + "\"\n")
+    pofh.write("msgid \"" + e.msgid + "\"\n")
+    pofh.write("msgstr \"" + e.msgstr + "\"\n")
     return
 
 
-def pofile_store(po, pofname, polist):
-    polang = "en_GB"
+def pofile_store(po, pofname, polist, lang):
+    if lang == "eng":
+        polang = "en_GB"
+    else:
+        polang = "UNKNOWN"
     with open(pofname, "w", encoding="utf-8") as pofh:
         pofh.write("# *****************************************************************************\n")
         pofh.write("#  Syndicate Wars Port, source port of the classic strategy game from Bullfrog.\n")
@@ -114,24 +115,24 @@ def pofile_store(po, pofname, polist):
         pofh.write("# *****************************************************************************\n")
         pofh.write("msgid \"\"\n")
         pofh.write("msgstr \"\"\n")
-        pofh.write("\"Project-Id-Version: Menu text for SW Port\"\n")
-        pofh.write("\"Report-Msgid-Bugs-To: https://github.com/swfans/swars/issues\"\n")
-        pofh.write("\"POT-Creation-Date: 2023-08-20 01:12+0200\"\n")
-        pofh.write("\"PO-Revision-Date: 2023-09-02 12:00+0100\"\n")
-        pofh.write("\"Last-Translator: Mefistotelis <mefistotelis@gmail.com>\"\n")
-        pofh.write("\"Language-Team: Syndicate Wars Fans <github.com/swfans>\"\n")
-        pofh.write("\"Language: "+ polang + "\"\n")
-        pofh.write("\"MIME-Version: 1.0\"\n")
-        pofh.write("\"Content-Type: text/plain; charset=UTF-8\"\n")
-        pofh.write("\"Content-Transfer-Encoding: 8bit\"\n")
-        pofh.write("\"X-Poedit-SourceCharset: utf-8\"\n")
-        pofh.write("\"X-Generator: Poedit 1.5.7\"\n")
+        pofh.write("\"Project-Id-Version: Menu text for SW Port\\n\"\n")
+        pofh.write("\"Report-Msgid-Bugs-To: https://github.com/swfans/swars/issues\\n\"\n")
+        pofh.write("\"POT-Creation-Date: 2023-08-20 01:12+0200\\n\"\n")
+        pofh.write("\"PO-Revision-Date: 2023-09-02 12:00+0100\\n\"\n")
+        pofh.write("\"Last-Translator: Mefistotelis <mefistotelis@gmail.com>\\n\"\n")
+        pofh.write("\"Language-Team: Syndicate Wars Fans <github.com/swfans>\\n\"\n")
+        pofh.write("\"Language: "+ polang + "\\n\"\n")
+        pofh.write("\"MIME-Version: 1.0\\n\"\n")
+        pofh.write("\"Content-Type: text/plain; charset=UTF-8\\n\"\n")
+        pofh.write("\"Content-Transfer-Encoding: 8bit\\n\"\n")
+        pofh.write("\"X-Poedit-SourceCharset: utf-8\\n\"\n")
+        pofh.write("\"X-Generator: Poedit 1.5.7\\n\"\n")
         for e in polist:
             pofile_store_entry(po, pofh, e)
     return
 
 
-def prep_po_entries_city(po, lines):
+def prep_po_entries_city(po, podict, lines):
     city_prop_comments = [
         "name",
         "population size",
@@ -153,7 +154,7 @@ def prep_po_entries_city(po, lines):
         if ln == "#UTOPIA":
             e = POEntry(ln[1:], comment)
             e.references.append("mapscreen.title")
-            polist.append(e)
+            podict["COMM"].append(e)
             n += 1
             continue
         if ln[0] == "#":
@@ -179,8 +180,8 @@ def prep_po_entries_city(po, lines):
         if k < 6:
             e = POEntry(ln, comment + " - " + city_prop_comments[k])
             campgn = campaign_names[entryno]
-            e.references.append(f"mapscreen.heading.{campgn}:{k}")
-            polist.append(e)
+            e.references.append(f"mapscreen.heading:{k}")
+            podict[campgn].append(e)
             n += 1
             k += 1
             continue
@@ -201,55 +202,73 @@ def prep_po_entries_city(po, lines):
             entryno += 1
         if True:
             if comment == "city data":
-                e = POEntry(ln, "map screen location " + str(entryno) + " - " + city_prop_comments[k])
+                e = POEntry(ln, "map screen location - " + city_prop_comments[k])
             else:
                 e = POEntry(ln, comment)
             e.references.append(f"mapscreen.city{entryno}:{k}")
-            polist.append(e)
+            podict["COMM"].append(e)
             n += 1
             k += 1
             continue
         break
     return polist
 
-def textwad_extract_po(po, potdict, txtfname, lines):
-    polist = []
+
+def prep_po_entries_per_line(po, podict, lines, refstart, comment):
+    # Read initial comments
+    n = 0
+    for ln in lines[n:]:
+        if len(ln) < 1:
+            n += 1
+            continue
+        if True:
+            text = ln[0].upper() + ln[1:].lower()
+            e = POEntry(text, comment)
+            e.references.append(f"{refstart}:{n}")
+            podict["COMM"].append(e)
+            n += 1
+            continue
+        break
+    return
+
+
+def textwad_extract_po(po, podict, txtfname, lines):
     match = None
     if not match:
         match = re.match(r'^(city)[.]txt$', txtfname)
         if match:
-            polist = prep_po_entries_city(po, lines)
+            prep_po_entries_city(po, podict, lines)
     if not match:
         match = re.match(r'^(lost)[.]txt$', txtfname)
         if match:
-            polist = [] # TODO
+            prep_po_entries_per_line(po, podict, lines, "sci.death.reason", "scientists death reason")
     if not match:
         match = re.match(r'^(miss([0-9]+))[.]txt$', txtfname)
         if match:
-            polist = [] # TODO
+            pass # TODO
     if not match:
         match = re.match(r'^(names)[.]txt$', txtfname)
         if match:
-            polist = [] # TODO
+            pass # TODO
     if not match:
         match = re.match(r'^(netscan)[.]txt$', txtfname)
         if match:
-            polist = [] # TODO
+            pass # TODO
     if not match:
         match = re.match(r'^(obj)[.]txt$', txtfname)
         if match:
-            polist = [] # TODO
+            prep_po_entries_per_line(po, podict, lines, "scanner.objective", "objective text shown on scanner")
     if not match:
         match = re.match(r'^(outtro)[.]txt$', txtfname)
         if match:
-            polist = [] # TODO
+            pass # TODO
     if not match:
         match = re.match(r'^(wms)[.]txt$', txtfname)
         if match:
-            polist = [] # TODO
+            pass # TODO
     if not match:
         pass # unrecognized file type
-    return polist
+    return
 
 
 def textwad_extract_raw(po, wadfh, idxfh):
@@ -266,6 +285,12 @@ def textwad_extract_raw(po, wadfh, idxfh):
 
 
 def textwad_extract(po, wadfh, idxfh):
+    lang = "eng"
+    # Prepare empty dict
+    podict = {}
+    for campgn in campaign_names:
+        podict[campgn] = []
+    # Fill with files from WAD
     e = WADIndexEntry()
     while idxfh.readinto(e) == sizeof(e):
         txtfname = e.Filename.decode("utf-8").lower()
@@ -274,10 +299,19 @@ def textwad_extract(po, wadfh, idxfh):
         lines = txt_buffer.split(b'\n')
         # TODO support SW code page
         lines = [ln.decode("utf-8").rstrip() for ln in lines]
-        polist = textwad_extract_po(po, {}, txtfname, lines)
+        textwad_extract_po(po, podict, txtfname, lines)
         basename = os.path.splitext(os.path.basename(txtfname))[0]
-        pofname = basename + ".po"
-        pofile_store(po, pofname, polist)
+    if lang == "eng":
+        poext = "pot"
+        for campgn in campaign_names:
+            for e in podict[campgn]:
+                e.msgid = e.msgstr
+                e.msgstr = ""
+    else:
+        poext = "po"
+    for campgn in campaign_names:
+        pofname = "text_" + campgn.lower() + "_" + lang + "." + poext
+        pofile_store(po, pofname, podict[campgn], lang)
     return
 
 
