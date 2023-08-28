@@ -71,6 +71,56 @@ class POEntry:
 
 campaign_names = ["SYNDCT", "CHURCH", "PUNKS", "COMM"]
 
+church_missions = [ 2, 6, 10, 11, 12, 13, 14, 15, 16, 17, 18,
+  19, 27, 30, 31, 32, 33, 39, 40, 43, 44, 45, 47, 48, 51, 52,
+  53, 54, 71, 72, 73, 79, 85, 86, 87, 98, 100, 102, 108 ]
+
+weapon_mod_names_to_code = {
+    "uzi" : "UZI",
+    "minigun" : "MINIGUN",
+    "electron mace" : "ELLASER",
+    "pulse laser" : "LASER",
+    "plasma lance" : "BEAM",
+    "launcher" : "RAP",
+    "nuclear grenade" : "NUCLGREN",
+    "persuadertron" : "PERSUADER",
+    "indoctrinator" : "PERSUADER",
+    "flamer" : "FLAMER",
+    "disrupter" : "H2HTASER",
+    "psycho gas" : "CRAZYGAS",
+    "knockout gas" : "KOGAS",
+    "ion mine" : "ELEMINE",
+    "high explosive" : "EXPLMINE",
+    "long range rifle" : "LONGRANGE",
+    "satellite rain" : "AIRSTRIKE",
+    "graviton gun" : "QDEVASTATOR",
+    "razor wire" : "RAZORWIRE",
+    "persuadertron ii" : "PERSUADER2",
+    "stasis field" : "STASISFLD",
+    "chromotap" : "SOULGUN",
+    "displacertron" : "TIMEGUN",
+    "cerberus iff" : "CEREBUSIFF",
+    "medikit" : "MEDI1",
+    "automedikit" : "MEDI2",
+    "trigger wire" : "EXPLWIRE",
+    "clone shield" : "CLONESHLD",
+    "legs 1" : "LEGS1",
+    "legs 2" : "LEGS2",
+    "legs 3" : "LEGS3",
+    "arms 1" : "ARMS1",
+    "arms 2" : "ARMS2",
+    "arms 3" : "ARMS3",
+    "body 1" : "CHEST1",
+    "body 2" : "CHEST2",
+    "body 3" : "CHEST3",
+    "brain 1" : "BRAIN1",
+    "brain 2" : "BRAIN2",
+    "brain 3" : "BRAIN3",
+    "hard skin" : "SKIN1",
+    "flame skin" : "SKIN2",
+    "energy skin" : "SKIN3",
+    "stealth skin" : "SKIN4",
+}
 
 def pofile_store_entry(po, pofh, e):
     pofh.write("\n")
@@ -214,8 +264,119 @@ def prep_po_entries_city(po, podict, lines):
     return polist
 
 
+def prep_po_entries_names(po, podict, lines):
+    comment = "mission title"
+    n = 0
+    for ln in lines[n:]:
+        if len(ln) < 1:
+            n += 1
+            continue
+        if ln[0] == "#":
+            n += 1
+            continue
+        match = re.match(r'^([0-9]+)[.](.*)$', ln)
+        if match:
+            text = match.group(2)
+            missi = int(match.group(1), 10)
+            if len(text) > 0:
+                e = POEntry(text, comment)
+                e.references.append(f"mission.title:{missi}")
+                if missi in church_missions:
+                    campgn = campaign_names[1]
+                else:
+                    campgn = campaign_names[0]
+                podict[campgn].append(e)
+            n += 1
+            continue
+        break
+    return
+
+
+def prep_po_entries_outro(po, podict, lines):
+    comment = "outro message"
+    n = 0
+    k = 0
+    entryno = -1
+    for ln in lines[n:]:
+        if len(ln) < 1:
+            n += 1
+            continue
+        if ln[0] == "#":
+            n += 1
+            continue
+        match = re.match(r'^[\[](.*)[\]]$', ln)
+        if match:
+            comment = match.group(1)
+            n += 1
+            k = 0
+            entryno += 1
+            continue
+        if entryno < 0:
+            entryno += 1
+        if True:
+            e = POEntry(ln, comment)
+            campgn = campaign_names[entryno]
+            e.references.append(f"message.win:{k}")
+            podict[campgn].append(e)
+            n += 1
+            k += 1
+            continue
+        break
+    return
+
+
+def prep_po_entries_wms(po, podict, lines):
+    comment1 = "outro message"
+    comment2 = ""
+    n = 0
+    k = 0
+    entryno = -1
+    for ln in lines[n:]:
+        if len(ln) < 1:
+            n += 1
+            continue
+        if ln[0] == "#":
+            n += 1
+            continue
+        match = re.match(r'^[\[](.*PLAYER)[\]]$', ln)
+        if match:
+            comment1 = match.group(1).lower()
+            n += 1
+            k = 0
+            entryno += 1
+            comment2 = ""
+            comment3 = ""
+            continue
+        match = re.match(r'^[\[](.*)[\]]$', ln)
+        if match:
+            comment2 = match.group(1).lower()
+            comment3 = ""
+            n += 1
+            k = 0
+            continue
+        if (k % 2) == 0:
+            comment3 = ln.lower()
+            n += 1
+            k += 1
+            continue
+        if True:
+            e = POEntry(ln, comment2 + " description - " + comment3)
+            campgn = campaign_names[entryno]
+            idx = (k // 2) + 1
+            if comment3 in weapon_mod_names_to_code:
+                codename = weapon_mod_names_to_code[comment3]
+                e.references.append(f"{comment2}.{codename}.description")
+            else:
+                e.references.append(f"{comment2}.description:{idx}")
+            podict[campgn].append(e)
+            n += 1
+            k += 1
+            continue
+        break
+    return
+
+
 def prep_po_entries_per_line(po, podict, lines, refstart, comment):
-    # Read initial comments
     n = 0
     for ln in lines[n:]:
         if len(ln) < 1:
@@ -249,7 +410,7 @@ def textwad_extract_po(po, podict, txtfname, lines):
     if not match:
         match = re.match(r'^(names)[.]txt$', txtfname)
         if match:
-            pass # TODO
+            prep_po_entries_names(po, podict, lines)
     if not match:
         match = re.match(r'^(netscan)[.]txt$', txtfname)
         if match:
@@ -261,11 +422,11 @@ def textwad_extract_po(po, podict, txtfname, lines):
     if not match:
         match = re.match(r'^(outtro)[.]txt$', txtfname)
         if match:
-            pass # TODO
+            prep_po_entries_outro(po, podict, lines)
     if not match:
         match = re.match(r'^(wms)[.]txt$', txtfname)
         if match:
-            pass # TODO
+            prep_po_entries_wms(po, podict, lines)
     if not match:
         pass # unrecognized file type
     return
