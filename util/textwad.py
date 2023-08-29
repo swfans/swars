@@ -31,7 +31,7 @@ import argparse
 import os
 import re
 import io
-import json
+import polib
 
 from ctypes import c_char, c_int, c_ubyte, c_ushort, c_uint, c_ulonglong, c_float
 from ctypes import memmove, addressof, sizeof, Array, LittleEndianStructure
@@ -44,29 +44,6 @@ class WADIndexEntry(LittleEndianStructure):
       ('Offset', c_uint),
       ('Length', c_uint),
     ]
-
-
-class POEntry:
-    # Translator Comment is something usually added by the translator
-    comment_trans = ""
-    # Extracted Comment come from the code, so are written by the programmer
-    comment_extr = ""
-    # String position reference, usually in form <file_name>:<line>
-    references = None
-    # Flags determining condition of the translation and its special handling
-    flags = None
-    # Context for the message - ie. general area where the message is displayed
-    msgctxt = None
-    # Untranslated string
-    msgid = ""
-    # Translated string
-    msgstr = None
-    def __init__(self, mstr = "", mctxt = ""):
-        self.msgstr = mstr
-        self.msgctxt = mctxt
-        self.references = []
-        self.flags = []
-        pass
 
 
 campaign_names = ["SYNDCT", "CHURCH", "PUNKS", "COMM"]
@@ -137,12 +114,12 @@ def dict_key_for_value(d, v):
 
 def pofile_store_entry(po, pofh, e):
     pofh.write("\n")
-    if len(e.comment_trans) > 0:
-        pofh.write("# " + e.comment_trans + "\n")
-    if len(e.comment_extr) > 0:
-        pofh.write("#. " + e.comment_extr + "\n")
-    if len(e.references) > 0:
-        pofh.write("#: " + " ".join(e.references) + "\n")
+    if len(e.tcomment) > 0:
+        pofh.write("# " + e.tcomment + "\n")
+    if len(e.comment) > 0:
+        pofh.write("#. " + e.comment + "\n")
+    if len(e.occurrences) > 0:
+        pofh.write("#: " + " ".join(e.occurrences) + "\n")
     if len(e.flags) > 0:
         pofh.write("#, " + " ".join(e.flags) + "\n")
     if len(e.msgctxt) > 0:
@@ -160,46 +137,58 @@ def pofile_store_entry(po, pofh, e):
     return
 
 
-def pofile_store(po, pofname, polist, lang):
+def pofile_load(po, pofname, polist, lang):
+    pofile = polib.pofile(pofname)
+    for entry in pofile:
+        print(entry.msgid, entry.msgstr)
+    return
+
+
+def pofile_set_default_metadata(polist, lang):
     if lang == "eng":
         polang = "en_GB"
+    elif lang == "fre":
+        polang = "fr_FR"
+    elif lang == "jap":
+        polang = "ja_JP"
     else:
         polang = "UNKNOWN"
-    with open(pofname, "w", encoding="utf-8") as pofh:
-        pofh.write("# *****************************************************************************\n")
-        pofh.write("#  Syndicate Wars Port, source port of the classic strategy game from Bullfrog.\n")
-        pofh.write("# *****************************************************************************\n")
-        pofh.write("#   @file " + pofname + "\n")
-        pofh.write("#      Menu text for SW Port translation file\n")
-        pofh.write("#  @par Purpose:\n")
-        pofh.write("#      Contains translation of the national text in the game.\n")
-        pofh.write("#  @par Comment:\n")
-        pofh.write("#      Use this file to improve the translation for specific language.\n")
-        pofh.write("#  @author   Syndicate Wars Fans\n")
-        pofh.write("#  @date     20 Aug 2023 - 02 Sep 2023\n")
-        pofh.write("#  @par  Copying and copyrights:\n")
-        pofh.write("#      This program is free software; you can redistribute it and/or modify\n")
-        pofh.write("#      it under the terms of the GNU General Public License as published by\n")
-        pofh.write("#      the Free Software Foundation; either version 2 of the License, or\n")
-        pofh.write("#      (at your option) any later version.\n")
-        pofh.write("#\n")
-        pofh.write("# *****************************************************************************\n")
-        pofh.write("msgid \"\"\n")
-        pofh.write("msgstr \"\"\n")
-        pofh.write("\"Project-Id-Version: Menu text for SW Port\\n\"\n")
-        pofh.write("\"Report-Msgid-Bugs-To: https://github.com/swfans/swars/issues\\n\"\n")
-        pofh.write("\"POT-Creation-Date: 2023-08-20 01:12+0200\\n\"\n")
-        pofh.write("\"PO-Revision-Date: 2023-09-02 12:00+0100\\n\"\n")
-        pofh.write("\"Last-Translator: Mefistotelis <mefistotelis@gmail.com>\\n\"\n")
-        pofh.write("\"Language-Team: Syndicate Wars Fans <github.com/swfans>\\n\"\n")
-        pofh.write("\"Language: "+ polang + "\\n\"\n")
-        pofh.write("\"MIME-Version: 1.0\\n\"\n")
-        pofh.write("\"Content-Type: text/plain; charset=UTF-8\\n\"\n")
-        pofh.write("\"Content-Transfer-Encoding: 8bit\\n\"\n")
-        pofh.write("\"X-Poedit-SourceCharset: utf-8\\n\"\n")
-        pofh.write("\"X-Generator: Poedit 1.5.7\\n\"\n")
-        for e in polist:
-            pofile_store_entry(po, pofh, e)
+    polist.metadata = {
+      'Project-Id-Version': 'Menu text for SW Port',
+      'Report-Msgid-Bugs-To': 'https://github.com/swfans/swars/issues',
+      'POT-Creation-Date': '2023-08-20 01:12+0200',
+      'PO-Revision-Date': '2023-09-02 12:00+0100',
+      'Last-Translator': 'Mefistotelis <mefistotelis@gmail.com>',
+      'Language-Team': 'Syndicate Wars Fans <github.com/swfans>',
+      'Language': polang,
+      'MIME-Version': '1.0',
+      'Content-Type': 'text/plain; charset=UTF-8',
+      'Content-Transfer-Encoding': '8bit',
+      'X-Poedit-SourceCharset': 'utf-8',
+    }
+    return
+
+
+def pofile_set_default_head_comment(polist, pofname):
+    polist.header = \
+      "*****************************************************************************\n" + \
+      " Syndicate Wars Port, source port of the classic strategy game from Bullfrog.\n" + \
+      "*****************************************************************************\n" + \
+      "  @file " + pofname + "\n" + \
+      "     Menu text for SW Port translation file\n" + \
+      " @par Purpose:\n" + \
+      "     Contains translation of the national text in the game.\n" + \
+      " @par Comment:\n" + \
+      "     Use this file to improve the translation for specific language.\n" + \
+      " @author   Syndicate Wars Fans\n" + \
+      " @date     20 Aug 2023 - 02 Sep 2023\n" + \
+      " @par  Copying and copyrights:\n" + \
+      "     This program is free software; you can redistribute it and/or modify\n" + \
+      "     it under the terms of the GNU General Public License as published by\n" + \
+      "     the Free Software Foundation; either version 2 of the License, or\n" + \
+      "     (at your option) any later version.\n" + \
+      "\n" + \
+      "*****************************************************************************";
     return
 
 
@@ -223,8 +212,8 @@ def prep_po_entries_city(po, podict, lines):
             continue
         # Special case for translation which is commented out in original files
         if ln == "#UTOPIA":
-            e = POEntry(ln[1:], comment)
-            e.references.append("mapscreen.title")
+            e = polib.POEntry(msgstr=ln[1:], msgctxt=comment)
+            e.occurrences.append( ("mapscreen.title",None,) )
             podict["COMM"].append(e)
             n += 1
             continue
@@ -249,9 +238,10 @@ def prep_po_entries_city(po, podict, lines):
         if entryno >= 2:
             break
         if k < 6:
-            e = POEntry(ln, comment + " - " + city_prop_comments[k])
+            ctxt = comment + " - " + city_prop_comments[k]
+            e = polib.POEntry(msgstr=ln, msgctxt=ctxt)
             campgn = campaign_names[entryno]
-            e.references.append(f"mapscreen.heading:{k}")
+            e.occurrences.append( ("mapscreen.heading",k,) )
             podict[campgn].append(e)
             n += 1
             k += 1
@@ -273,10 +263,11 @@ def prep_po_entries_city(po, podict, lines):
             entryno += 1
         if True:
             if comment == "city data":
-                e = POEntry(ln, "map screen location - " + city_prop_comments[k])
+                ctxt = "map screen location - " + city_prop_comments[k]
             else:
-                e = POEntry(ln, comment)
-            e.references.append(f"mapscreen.city{entryno}:{k}")
+                ctxt = comment
+            e = polib.POEntry(msgstr=ln, msgctxt=ctxt)
+            e.occurrences.append( (f"mapscreen.city{entryno}",k,) )
             podict["COMM"].append(e)
             n += 1
             k += 1
@@ -300,8 +291,8 @@ def prep_po_entries_names(po, podict, lines):
             text = match.group(2)
             missi = int(match.group(1), 10)
             if len(text) > 0:
-                e = POEntry(text, comment)
-                e.references.append(f"mission.title:{missi}")
+                e = polib.POEntry(msgstr=text, msgctxt=comment)
+                e.occurrences.append( ("mission.title",missi,) )
                 if missi in church_missions.keys():
                     campgn = campaign_names[1]
                 else:
@@ -335,9 +326,9 @@ def prep_po_entries_outro(po, podict, lines):
         if entryno < 0:
             entryno += 1
         if True:
-            e = POEntry(ln, comment)
+            e = polib.POEntry(msgstr=ln, msgctxt=comment)
             campgn = campaign_names[entryno]
-            e.references.append(f"message.win:{k}")
+            e.occurrences.append( ("message.win",k,) )
             podict[campgn].append(e)
             n += 1
             k += 1
@@ -381,14 +372,15 @@ def prep_po_entries_wms(po, podict, lines):
             k += 1
             continue
         if True:
-            e = POEntry(ln, comment2 + " description - " + comment3)
+            ctxt = comment2 + " description - " + comment3
+            e = polib.POEntry(msgstr=ln, msgctxt=ctxt)
             campgn = campaign_names[entryno]
             idx = (k // 2) + 1
             if comment3 in weapon_mod_names_to_code:
                 codename = weapon_mod_names_to_code[comment3]
-                e.references.append(f"{comment2}.{codename}.description")
+                e.occurrences.append( (f"{comment2}.{codename}.description",None,) )
             else:
-                e.references.append(f"{comment2}.description:{idx}")
+                e.occurrences.append( (f"{comment2}.description",idx,) )
             podict[campgn].append(e)
             n += 1
             k += 1
@@ -419,13 +411,14 @@ def prep_po_entries_netscan(po, podict, lines):
             k = 0
             continue
         if True:
-            e = POEntry(ln, "mission brief netscan information")
+            ctxt = "mission brief netscan information"
+            e = polib.POEntry(msgstr=ln, msgctxt=ctxt)
             missi = dict_key_for_value(church_missions, (mapno,level,))
             if missi is None:
                 campgn = campaign_names[0]
             else:
                 campgn = campaign_names[1]
-            e.references.append(f"mission.brief.map{mapno}.level{level}:{k}")
+            e.occurrences.append( (f"mission.brief.map{mapno}.level{level}",k,) )
             podict[campgn].append(e)
             n += 1
             k += 1
@@ -448,6 +441,7 @@ def prep_po_entries_miss(po, podict, lines, sourceid):
     fmtchar = "c5"
     for ln in lines[n:]:
         text = ln
+        text = text.replace("\\l", "<login>")
         if text.startswith("\\") and not text.startswith("\\n"):
             fmtchar = text[1]
             if fmtchar == "c":
@@ -455,7 +449,6 @@ def prep_po_entries_miss(po, podict, lines, sourceid):
                 text = text[3:]
             else:
                 text = text[2:]
-        text = text.replace("\\l", "<login>")
         text = text.replace("\\c1", "")
         text = text.replace("\\c2", "")
         text = text.replace("\\c3", "")
@@ -469,12 +462,22 @@ def prep_po_entries_miss(po, podict, lines, sourceid):
             text = text[:-2]
             msgstr += text
             if len(msgstr) > 0:
-                e = POEntry(msgstr, "mission brief email paragraph")
-                e.references.append(f"mission.{mailid}.brief.par{k}.{fmtchar}")
+                if fmtchar == "h":
+                    ctxt="mission brief email header"
+                elif fmtchar == "c1":
+                    ctxt="mission brief book quote"
+                elif fmtchar == "c2":
+                    ctxt="mission brief email orders"
+                elif fmtchar == "c4":
+                    ctxt="mission brief email sender"
+                else:
+                    ctxt="mission brief email paragraph"
+                e = polib.POEntry(msgstr=msgstr, msgctxt=ctxt)
+                e.occurrences.append( (f"mission.brief.mail{mailid}.par{k+1}.{fmtchar}",None,) )
                 podict[campgn].append(e)
+                k += 1
             msgstr = ""
             n += 1
-            k += 1
             continue
     return
 
@@ -487,8 +490,8 @@ def prep_po_entries_per_line(po, podict, lines, refstart, comment):
             continue
         if True:
             text = ln[0].upper() + ln[1:].lower()
-            e = POEntry(text, comment)
-            e.references.append(f"{refstart}:{n}")
+            e = polib.POEntry(msgstr=text, msgctxt=comment)
+            e.occurrences.append( (f"{refstart}",n,) )
             podict["COMM"].append(e)
             n += 1
             continue
@@ -557,7 +560,7 @@ def merge_same_po_entries(po, podict):
                 if e2 is None:
                     break;
                 polist.remove(e2)
-                e1.references.extend(e2.references)
+                e1.occurrences.extend(e2.occurrences)
                 e1.flags.extend(e2.flags)
             n += 1
     return
@@ -576,12 +579,13 @@ def textwad_extract_raw(po, wadfh, idxfh):
     return
 
 
-def textwad_extract(po, wadfh, idxfh):
-    lang = "eng"
+def textwad_extract(po, wadfh, idxfh, lang):
     # Prepare empty dict
     podict = {}
     for campgn in campaign_names:
-        podict[campgn] = []
+        polist = polib.POFile()
+        podict[campgn] = polist
+        pofile_set_default_metadata(polist, lang)
     # Fill with files from WAD
     e = WADIndexEntry()
     while idxfh.readinto(e) == sizeof(e):
@@ -604,12 +608,29 @@ def textwad_extract(po, wadfh, idxfh):
     merge_same_po_entries(po, podict)
     for campgn in campaign_names:
         pofname = "text_" + campgn.lower() + "_" + lang + "." + poext
-        pofile_store(po, pofname, podict[campgn], lang)
+        polist = podict[campgn]
+        pofile_set_default_head_comment(polist, pofname)
+        polist.save(pofname)
     return
 
 
-def textwad_create(po, wadfh, idxfh):
-    idxfh.write((c_ubyte * sizeof(e)).from_buffer_copy(e))
+def textwad_create(po, wadfh, idxfh, lang):
+    # Prepare empty dict
+    podict = {}
+    for campgn in campaign_names:
+        podict[campgn] = None
+    # Load PO files to the dict
+    if lang == "eng":
+        poext = "pot"
+    else:
+        poext = "po"
+    for campgn in campaign_names:
+        pofname = "text_" + campgn.lower() + "_" + lang + "." + poext
+        pofile_load(po, pofname, podict[campgn], lang)
+
+    if False:
+        e = WADIndexEntry()
+        idxfh.write((c_ubyte * sizeof(e)).from_buffer_copy(e))
 
 
 def main():
@@ -644,12 +665,14 @@ def main():
     po.wadfile = po.wadbase + ".wad"
     po.idxfile = po.wadbase + ".idx"
 
+    po.lang = "eng"
+
     if po.extract:
         if (po.verbose > 0):
             print("{}: Opening for extract".format(po.wadfile))
         with open(po.wadfile, 'rb') as wadfh:
             with open(po.idxfile, 'rb') as idxfh:
-                textwad_extract(po, wadfh, idxfh)
+                textwad_extract(po, wadfh, idxfh, po.lang)
 
     elif po.create:
         if (po.verbose > 0):
@@ -657,7 +680,7 @@ def main():
         raise NotImplementedError("Unsupported command.")
         with open(po.wadfile, 'wb') as wadfh:
             with open(po.idxfile, 'wb') as idxfh:
-                TODO(po, wadfh)
+                textwad_create(po, wadfh, idxfh, po.lang)
 
     else:
         raise NotImplementedError("Unsupported command.")
