@@ -376,6 +376,84 @@ def prep_po_entries_wms(po, podict, lines):
     return
 
 
+def prep_po_entries_netscan(po, podict, lines):
+    comment = "outro message"
+    n = 0
+    k = 0
+    level = 0
+    mapno = 0
+    for ln in lines[n:]:
+        if len(ln) < 1:
+            n += 1
+            continue
+        if ln[0] == "#":
+            n += 1
+            continue
+        match = re.match(r'^[\[](.*)[\]]$', ln)
+        if match:
+            compnum = int(match.group(1), 10)
+            level = compnum % 100
+            mapno = compnum // 100
+            n += 1
+            k = 0
+            continue
+        if True:
+            e = POEntry(ln, "mission brief netscan information")
+            campgn = campaign_names[0]#TODO
+            e.references.append(f"mission.brief.map{mapno}.level{level}:{k}")
+            podict[campgn].append(e)
+            n += 1
+            k += 1
+            continue
+        break
+    return
+
+
+def prep_po_entries_miss(po, podict, lines, sourceid):
+    n = 0
+    k = 0
+    if sourceid < 24:
+        campgn = campaign_names[0]
+        mailid = sourceid
+    else:
+        campgn = campaign_names[1]
+        mailid = sourceid - 23
+    entryno = 0
+    msgstr = ""
+    fmtchar = "c5"
+    for ln in lines[n:]:
+        text = ln
+        if text.startswith("\\") and not text.startswith("\\n"):
+            fmtchar = text[1]
+            if fmtchar == "c":
+                fmtchar += text[2]
+                text = text[3:]
+            else:
+                text = text[2:]
+        text = text.replace("\\l", "<login>")
+        text = text.replace("\\c1", "")
+        text = text.replace("\\c2", "")
+        text = text.replace("\\c3", "")
+        text = text.replace("\\c4", "")
+        text = text.replace("\\c5", "")
+        if not text.endswith("\\n"):
+            msgstr += text
+            n += 1
+            continue
+        if True:
+            text = text[:-2]
+            msgstr += text
+            if len(msgstr) > 0:
+                e = POEntry(msgstr, f"mission {mailid} brief email paragraph")
+                e.references.append(f"mission.{mailid}.brief.par{k}.{fmtchar}")
+                podict[campgn].append(e)
+            msgstr = ""
+            n += 1
+            k += 1
+            continue
+    return
+
+
 def prep_po_entries_per_line(po, podict, lines, refstart, comment):
     n = 0
     for ln in lines[n:]:
@@ -406,7 +484,8 @@ def textwad_extract_po(po, podict, txtfname, lines):
     if not match:
         match = re.match(r'^(miss([0-9]+))[.]txt$', txtfname)
         if match:
-            pass # TODO
+            sourceid = int(match.group(2), 10)
+            prep_po_entries_miss(po, podict, lines, sourceid)
     if not match:
         match = re.match(r'^(names)[.]txt$', txtfname)
         if match:
@@ -414,7 +493,7 @@ def textwad_extract_po(po, podict, txtfname, lines):
     if not match:
         match = re.match(r'^(netscan)[.]txt$', txtfname)
         if match:
-            pass # TODO
+            prep_po_entries_netscan(po, podict, lines)
     if not match:
         match = re.match(r'^(obj)[.]txt$', txtfname)
         if match:
@@ -459,7 +538,7 @@ def textwad_extract(po, wadfh, idxfh):
         txt_buffer = wadfh.read(e.Length)
         lines = txt_buffer.split(b'\n')
         # TODO support SW code page
-        lines = [ln.decode("utf-8").rstrip() for ln in lines]
+        lines = [ln.decode("utf-8").rstrip("\r\n") for ln in lines]
         textwad_extract_po(po, podict, txtfname, lines)
         basename = os.path.splitext(os.path.basename(txtfname))[0]
     if lang == "eng":
