@@ -71,9 +71,13 @@ class POEntry:
 
 campaign_names = ["SYNDCT", "CHURCH", "PUNKS", "COMM"]
 
-church_missions = [ 2, 6, 10, 11, 12, 13, 14, 15, 16, 17, 18,
-  19, 27, 30, 31, 32, 33, 39, 40, 43, 44, 45, 47, 48, 51, 52,
-  53, 54, 71, 72, 73, 79, 85, 86, 87, 98, 100, 102, 108 ]
+church_missions = {
+   2 : (25,16,),  6 : (28,31,), 10 : (21,46,), 11 : (22,2,),  12 : (25,46,), 13 : (30,2,),  14 : (20,16,), 15 : (32,2,),
+  16 : (27,1,),  17 : (22,3,),  18 : (79,2,),  19 : (22,4,),  27 : (7,3,),   30 : (2,3,),   31 : (1,3,),   32 : (8,3,),
+  33 : (7,5,),   39 : (50,47,), 40 : (41,1,),  43 : (41,47,), 44 : (45,1,),  45 : (44,2,),  47 : (46,14,), 48 : (35,2,),
+  51 : (26,2,),  52 : (26,3,),  53 : (36,2,),  54 : (36,3,),  71 : (6,3,),   72 : (4,3,),   73 : (9,3,),   79 : (44,7,),
+  85 : (3,2,),   86 : (4,15,),  87 : (44,3,),  98 : (50,2,), 100 : (46,2,), 102 : (65,3,), 108 : (3,10,),
+}
 
 weapon_mod_names_to_code = {
     "uzi" : "UZI",
@@ -122,6 +126,15 @@ weapon_mod_names_to_code = {
     "stealth skin" : "SKIN4",
 }
 
+
+def dict_key_for_value(d, v):
+    try:
+        idx = list(d.values()).index(v)
+    except ValueError:
+        return None
+    return list(d.keys())[idx]
+
+
 def pofile_store_entry(po, pofh, e):
     pofh.write("\n")
     if len(e.comment_trans) > 0:
@@ -133,9 +146,17 @@ def pofile_store_entry(po, pofh, e):
     if len(e.flags) > 0:
         pofh.write("#, " + " ".join(e.flags) + "\n")
     if len(e.msgctxt) > 0:
-        pofh.write("msgctxt \"" + e.msgctxt + "\"\n")
-    pofh.write("msgid \"" + e.msgid + "\"\n")
-    pofh.write("msgstr \"" + e.msgstr + "\"\n")
+        text = e.msgctxt
+        text = text.replace("\"", "\\\"")
+        pofh.write("msgctxt \"" + text + "\"\n")
+    if True:
+        text = e.msgid
+        text = text.replace("\"", "\\\"")
+        pofh.write("msgid \"" + text + "\"\n")
+    if True:
+        text = e.msgstr
+        text = text.replace("\"", "\\\"")
+        pofh.write("msgstr \"" + text + "\"\n")
     return
 
 
@@ -281,7 +302,7 @@ def prep_po_entries_names(po, podict, lines):
             if len(text) > 0:
                 e = POEntry(text, comment)
                 e.references.append(f"mission.title:{missi}")
-                if missi in church_missions:
+                if missi in church_missions.keys():
                     campgn = campaign_names[1]
                 else:
                     campgn = campaign_names[0]
@@ -399,7 +420,11 @@ def prep_po_entries_netscan(po, podict, lines):
             continue
         if True:
             e = POEntry(ln, "mission brief netscan information")
-            campgn = campaign_names[0]#TODO
+            missi = dict_key_for_value(church_missions, (mapno,level,))
+            if missi is None:
+                campgn = campaign_names[0]
+            else:
+                campgn = campaign_names[1]
             e.references.append(f"mission.brief.map{mapno}.level{level}:{k}")
             podict[campgn].append(e)
             n += 1
@@ -444,7 +469,7 @@ def prep_po_entries_miss(po, podict, lines, sourceid):
             text = text[:-2]
             msgstr += text
             if len(msgstr) > 0:
-                e = POEntry(msgstr, f"mission {mailid} brief email paragraph")
+                e = POEntry(msgstr, "mission brief email paragraph")
                 e.references.append(f"mission.{mailid}.brief.par{k}.{fmtchar}")
                 podict[campgn].append(e)
             msgstr = ""
@@ -511,6 +536,33 @@ def textwad_extract_po(po, podict, txtfname, lines):
     return
 
 
+def find_duplicate_po_entry_after(polist, n):
+    e1 = polist[n]
+    n += 1
+    while n < len(polist):
+        e2 = polist[n]
+        if (e1.msgctxt == e2.msgctxt) and (e1.msgid == e2.msgid) and (e1.msgstr == e2.msgstr):
+            return e2
+        n += 1
+    return None
+
+
+def merge_same_po_entries(po, podict):
+    for campgn, polist in podict.items():
+        n = 0
+        while n < len(polist):
+            e1 = polist[n]
+            while True:
+                e2 = find_duplicate_po_entry_after(polist, n)
+                if e2 is None:
+                    break;
+                polist.remove(e2)
+                e1.references.extend(e2.references)
+                e1.flags.extend(e2.flags)
+            n += 1
+    return
+
+
 def textwad_extract_raw(po, wadfh, idxfh):
     e = WADIndexEntry()
     while idxfh.readinto(e) == sizeof(e):
@@ -549,6 +601,7 @@ def textwad_extract(po, wadfh, idxfh):
                 e.msgstr = ""
     else:
         poext = "po"
+    merge_same_po_entries(po, podict)
     for campgn in campaign_names:
         pofname = "text_" + campgn.lower() + "_" + lang + "." + poext
         pofile_store(po, pofname, podict[campgn], lang)
