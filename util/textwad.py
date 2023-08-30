@@ -49,6 +49,15 @@ class WADIndexEntry(LittleEndianStructure):
 
 campaign_names = ['SYNDCT', 'CHURCH', 'PUNKS', 'COMM']
 
+syndct_missions = {
+   1 : (30,16,),  3 : (32,16,),  4 : (21,31,),  5 : (28,46,),  7 : (79,31,),  8 : (30,46,),  9 : (22,16,), 20 : (27,2,),
+  21 : (10,1,),  22 : (1,1,),   23 : (3,1,),   24 : (5,1,),   25 : (6,1,),   26 : (7,1,),   28 : (8,1,),   29 : (2,1,),
+  34 : (9,1,),   35 : (4,1,),   36 : (47,1,),  37 : (50,1,),  38 : (44,1,),  41 : (40,46,), 42 : (46,1,),  46 : (46,60,),
+  49 : (35,1,),  50 : (26,1,),  55 : (1,15,),  56 : (10,15,), 57 : (28,15,), 58 : (32,15,), 59 : (36,1,),  63 : (27,3,),
+  74 : (40,1,),  76 : (47,1,),  83 : (45,2,),  84 : (46,15,), 88 : (11,1,),  89 : (12,1,),  92 : (41,3,),  96 : (47,31,),
+  97 : (47,15,),101 : (65,2,), 104 : (70,11,),105 : (47,11,),
+}
+
 church_missions = {
    2 : (25,16,),  6 : (28,31,), 10 : (21,46,), 11 : (22,2,),  12 : (25,46,), 13 : (30,2,),  14 : (20,16,), 15 : (32,2,),
   16 : (27,1,),  17 : (22,3,),  18 : (79,2,),  19 : (22,4,),  27 : (7,3,),   30 : (2,3,),   31 : (1,3,),   32 : (8,3,),
@@ -292,8 +301,10 @@ def prep_po_entries_names(podict, lines):
                 e.occurrences.append( ('mission.title',f'{missi}',) )
                 if missi in church_missions.keys():
                     campgn = campaign_names[1]
-                else:
+                elif missi in syndct_missions.keys():
                     campgn = campaign_names[0]
+                else:
+                    campgn = campaign_names[2]
                 podict[campgn].append(e)
             n += 1
             continue
@@ -377,7 +388,7 @@ def prep_po_entries_wms(podict, lines):
                 codename = weapon_mod_names_to_code[comment3]
                 e.occurrences.append( (f'{comment2}.{codename}.description','',) )
             else:
-                e.occurrences.append( (f'{comment2}.description',idx,) )
+                e.occurrences.append( (f'{comment2}.description',f'{idx}',) )
             podict[campgn].append(e)
             n += 1
             k += 1
@@ -392,6 +403,7 @@ def prep_po_entries_netscan(podict, lines):
     k = 0
     level = 0
     mapno = 0
+    sourceid = 0
     for ln in lines[n:]:
         if len(ln) < 1:
             n += 1
@@ -404,18 +416,34 @@ def prep_po_entries_netscan(podict, lines):
             compnum = int(match.group(1), 10)
             level = compnum % 100
             mapno = compnum // 100
+            sourceid += 1
             n += 1
             k = 0
             continue
         if True:
-            ctxt = "mission brief netscan information"
-            e = polib.POEntry(msgstr=ln, msgctxt=ctxt)
-            missi = dict_key_for_value(church_missions, (mapno,level,))
-            if missi is None:
+            if sourceid < 24:
                 campgn = campaign_names[0]
+                mailid = sourceid
             else:
                 campgn = campaign_names[1]
-            e.occurrences.append( (f'mission.brief.map{mapno}.level{level}',k,) )
+                mailid = sourceid - 23
+
+            ctxt = "mission brief tactical information"
+            e = polib.POEntry(msgstr=ln, msgctxt=ctxt)
+            # No need to have mission number
+            #missi = None
+            #if missi is None:
+            #    missi = dict_key_for_value(church_missions, (mapno,level,))
+            #    if missi is not None:
+            #        campgn = campaign_names[1]
+            #if missi is None:
+            #    missi = dict_key_for_value(syndct_missions, (mapno,level,))
+            #    if missi is not None:
+            #        campgn = campaign_names[0]
+            #if missi is None:
+            #    campgn = campaign_names[2]
+
+            e.occurrences.append( (f'mission.brief.mail{mailid}.map{mapno}.level{level}',f'{k+1}',) )
             podict[campgn].append(e)
             n += 1
             k += 1
@@ -521,7 +549,7 @@ def po_occurrence_to_fname(campgn, place, num):
     match = re.match(r'^mission[.]title$', place)
     if match:
         return "names.txt"
-    match = re.match(r'^mission[.]brief[.]map[0-9]+[.]level[0-9]+$', place)
+    match = re.match(r'^mission[.]brief[.]mail([0-9]+)[.]map([0-9]+)[.]level([0-9]+)$', place)
     if match:
         return "netscan.txt"
     match = re.match(r'^scanner[.]objective$', place)
@@ -666,7 +694,7 @@ def create_lines_for_miss(lines, pomdict):
             prevfmt = ''
             for place in paragraphs:
                 match = re.match(r'^mission[.]brief[.]mail([0-9]+)[.]par([0-9]+)[.](.*)$', place)
-                assert match, "Invalid mission.brief.mail occurrence"
+                assert match, "Invalid mission.brief.mailN.par occurrence"
                 par = int(match.group(2),10)
                 fmt = match.group(3)
                 if fmt == "expansion":
@@ -711,16 +739,78 @@ def create_lines_for_miss(lines, pomdict):
 
 
 def create_lines_for_names(lines, pomdict):
-    for occurrence, e in pomdict.items():
-        campgn, place, num = occurrence
-        pass
+    lines.append("# Names.txt")
+    lines.append("# Contains all city drop names in the mission number order.")
+    lines.append("")
+    pounidict = {}
+    for (ccampgn, place, num,), e in pomdict.items():
+        pounidict[ (place,num,) ] = e
+    n = 0
+    for missi in range(1,256):
+        try:
+            e = pounidict[('mission.title',f'{missi}',)]
+            n += 1
+        except:
+            e = polib.POEntry()
+        lines.append(f"{missi}.{e.msgstr}")
+        if n == len(pounidict):
+            break
+    lines.append("")
     return
 
 
 def create_lines_for_netscan(lines, pomdict):
-    for occurrence, e in pomdict.items():
-        campgn, place, num = occurrence
-        pass
+    lines.append("# Netscan.txt")
+    lines.append("# Master file containing all OBJ****.txt files.")
+    lines.append("# Files indexed Sn and Cn in Miss***.txt order.")
+    lines.append("# Scan entries listed by Points Of Significance (POS).")
+    pounilist = []
+    for (campgn, place, num,), e in pomdict.items():
+        match = re.match(r'^mission[.]brief[.]mail([0-9]+)[.]map([0-9]+)[.]level([0-9]+)$', place)
+        assert match, "Invalid netscan mission.brief.mailN.map occurrence"
+        mailid = int(match.group(1), 10)
+        if campgn == campaign_names[1]:
+            sourceid = mailid + 23
+        elif campgn == campaign_names[2]:
+            sourceid = mailid + 50
+        else:
+            sourceid = mailid
+        mapno = int(match.group(2), 10)
+        level = int(match.group(3), 10)
+        num = int(num, 10) - 1
+        while sourceid >= len(pounilist):
+            pounilist.append( (None,None,None,) )
+        if pounilist[sourceid] == (None,None,None,):
+            pounilist[sourceid] = (mapno,level,[],)
+        (cmapno,clevel,clist,) = pounilist[sourceid]
+        assert cmapno == mapno
+        assert clevel == level
+        while num >= len(clist):
+            clist.append(None)
+        clist[num] = e
+    # Some hard-coded values; not really needed, but make the file more like original
+    pounilist.append( (65,3,[],) )
+    if pounilist[21] == (None,None,None,):
+        pounilist[21] = (79,31,[],)
+    if pounilist[22] == (None,None,None,):
+        pounilist[22] = (8,1,[],)
+    if pounilist[33] == (None,None,None,):
+        pounilist[33] = (11,1,[],)
+    if pounilist[34] == (None,None,None,):
+        pounilist[34] = (65,2,[],)
+    if pounilist[59] == (None,None,None,):
+        pounilist[59] = (79,2,[],)
+    # Now generate the lines
+    for sourceid, (mapno,level,clist,) in enumerate(pounilist):
+        if mapno is None:
+            if sourceid == 0:
+                continue
+            (mapno,level,) = (99,sourceid,)
+            clist = []
+        lines.append(f"[{mapno:02d}{level:02d}]")
+        for e in clist:
+           lines.append(e.msgstr)
+    lines.append("")
     return
 
 
