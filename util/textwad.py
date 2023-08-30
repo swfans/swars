@@ -32,6 +32,7 @@ import os
 import re
 import io
 import polib
+import textwrap
 
 from ctypes import c_char, c_int, c_ubyte, c_ushort, c_uint, c_ulonglong, c_float
 from ctypes import memmove, addressof, sizeof, Array, LittleEndianStructure
@@ -445,6 +446,9 @@ def prep_po_entries_miss(podict, lines, sourceid):
                 text = text[3:]
             else:
                 text = text[2:]
+        custom_fmt = None
+        if (fmtchar == "c4") and re.search(r'[\\]c4[A-Z][\\]c3', text):
+            custom_fmt = "expansion"
         text = text.replace("\\c1", "")
         text = text.replace("\\c2", "")
         text = text.replace("\\c3", "")
@@ -468,6 +472,8 @@ def prep_po_entries_miss(podict, lines, sourceid):
                     ctxt="mission brief email sender"
                 else:
                     ctxt="mission brief email paragraph"
+                if custom_fmt is not None:
+                    fmtchar = custom_fmt
                 e = polib.POEntry(msgstr=msgstr, msgctxt=ctxt)
                 e.occurrences.append( (f'mission.brief.mail{mailid}.par{k+1}.{fmtchar}','',) )
                 podict[campgn].append(e)
@@ -487,7 +493,7 @@ def prep_po_entries_per_line(podict, lines, refstart, comment):
         if True:
             text = ln[0].upper() + ln[1:].lower()
             e = polib.POEntry(msgstr=text, msgctxt=comment)
-            e.occurrences.append( (f'{refstart}',n,) )
+            e.occurrences.append( (f'{refstart}',f'{n+1}',) )
             podict['COMM'].append(e)
             n += 1
             continue
@@ -617,26 +623,90 @@ def create_lines_for_city(lines, pomdict):
             lines.append(e.msgstr)
         if noexist:
             break
-
-    for occurrence, e in pomdict.items():
-        campgn, place, num = occurrence
-        pass
     return
 
 
-def create_lines_for_per_line(lines, pomdict):
-    # sort by key
-    pomdict = dict(sorted(pomdict.items()))
-    for occurrence, e in pomdict.items():
-        campgn, place, num = occurrence
-        pass
+def create_lines_for_per_line(lines, pomdict, refstart):
+    if True:
+        noexist = False
+        for k in range(1,32768):
+            try:
+                e = pomdict[('COMM',refstart,f'{k}',)]
+            except:
+                e = polib.POEntry()
+                # Finish if the next entry does not exist as well
+                noexist = ('COMM',refstart,f'{k+1}',) not in pomdict
+            if noexist:
+                break
+            lines.append(e.msgstr.upper())
     return
 
 
 def create_lines_for_miss(lines, pomdict):
-    for occurrence, e in pomdict.items():
-        campgn, place, num = occurrence
-        pass
+    for campgn in campaign_names[0:3]:
+        empty_mailid = 0
+        for mailid in range(1,32768):
+            if campgn == campaign_names[1]:
+                sourceid = mailid + 23
+            elif campgn == campaign_names[2]:
+                sourceid = mailid + 50
+            else:
+                sourceid = mailid
+            paragraphs = []
+            for ccampgn, place, num in pomdict.keys():
+                if (ccampgn == campgn) and (place.startswith(f'mission.brief.mail{mailid}.par')):
+                    paragraphs.append(place)
+            if len(paragraphs) < 1:
+                empty_mailid += 1
+                if empty_mailid > 5:
+                    break
+                continue
+            empty_mailid = 0
+            paragraphs.sort()
+            prevfmt = ''
+            for place in paragraphs:
+                match = re.match(r'^mission[.]brief[.]mail([0-9]+)[.]par([0-9]+)[.](.*)$', place)
+                assert match, "Invalid mission.brief.mail occurrence"
+                par = int(match.group(2),10)
+                fmt = match.group(3)
+                if fmt == "expansion":
+                    custom_fmt = fmt
+                    fmt = "c3"
+                else:
+                    custom_fmt = None
+                e = pomdict[(campgn,place,'',)]
+                if par > 1:
+                    text = "\\n"
+                    if (prevfmt != fmt) and (fmt == 'c5') and (custom_fmt is None):
+                        text = f"\\{fmt}{text}"
+                        prevfmt = fmt
+                    lines.append(text)
+                text = e.msgstr
+                text = text.replace("<login>", "\\l")
+                if custom_fmt == "expansion":
+                    for i in range(len(text)-1, -1, -1):
+                        if not text[i].isupper():
+                            continue
+                        if (i < 1):
+                            text = f"\\c4{text[i]}\\{fmt}{text[i+1:]}"
+                        else:
+                            text = f"{text[:i]}\\c4{text[i]}\\{fmt}{text[i+1:]}"
+                elif prevfmt != fmt:
+                    text = f"\\{fmt}{text}"
+                    prevfmt = fmt
+                text = f"{text}\\n"
+                wraplines = textwrap.wrap(text, width=104, break_long_words=False,
+                  drop_whitespace=False, break_on_hyphens=False)
+                for ln in wraplines:
+                    lines.append(ln)
+            if True:
+                fmt = 'c5'
+                text = "\\n"
+                if prevfmt != fmt:
+                    text = f"\\{fmt}{text}"
+                    prevfmt = fmt
+                lines.append(text)
+
     return
 
 
@@ -685,7 +755,7 @@ def textwad_create_from_po(lines, podict, txtfname):
     if not match:
         match = re.match(r'^(lost)[.]txt$', txtfname)
         if match:
-            create_lines_for_per_line(lines, pomdict)
+            create_lines_for_per_line(lines, pomdict, 'sci.death.reason')
     if not match:
         match = re.match(r'^(miss([0-9]+))[.]txt$', txtfname)
         if match:
@@ -701,7 +771,7 @@ def textwad_create_from_po(lines, podict, txtfname):
     if not match:
         match = re.match(r'^(obj)[.]txt$', txtfname)
         if match:
-            create_lines_for_per_line(lines, pomdict)
+            create_lines_for_per_line(lines, pomdict, 'scanner.objective')
     if not match:
         match = re.match(r'^(outtro)[.]txt$', txtfname)
         if match:
