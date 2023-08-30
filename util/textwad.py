@@ -46,7 +46,7 @@ class WADIndexEntry(LittleEndianStructure):
     ]
 
 
-campaign_names = ["SYNDCT", "CHURCH", "PUNKS", "COMM"]
+campaign_names = ['SYNDCT', 'CHURCH', 'PUNKS', 'COMM']
 
 church_missions = {
    2 : (25,16,),  6 : (28,31,), 10 : (21,46,), 11 : (22,2,),  12 : (25,46,), 13 : (30,2,),  14 : (20,16,), 15 : (32,2,),
@@ -57,53 +57,53 @@ church_missions = {
 }
 
 weapon_mod_names_to_code = {
-    "uzi" : "UZI",
-    "minigun" : "MINIGUN",
-    "electron mace" : "ELLASER",
-    "pulse laser" : "LASER",
-    "plasma lance" : "BEAM",
-    "launcher" : "RAP",
-    "nuclear grenade" : "NUCLGREN",
-    "persuadertron" : "PERSUADER",
-    "indoctrinator" : "PERSUADER",
-    "flamer" : "FLAMER",
-    "disrupter" : "H2HTASER",
-    "psycho gas" : "CRAZYGAS",
-    "knockout gas" : "KOGAS",
-    "ion mine" : "ELEMINE",
-    "high explosive" : "EXPLMINE",
-    "long range rifle" : "LONGRANGE",
-    "satellite rain" : "AIRSTRIKE",
-    "graviton gun" : "QDEVASTATOR",
-    "razor wire" : "RAZORWIRE",
-    "persuadertron ii" : "PERSUADER2",
-    "stasis field" : "STASISFLD",
-    "chromotap" : "SOULGUN",
-    "displacertron" : "TIMEGUN",
-    "cerberus iff" : "CEREBUSIFF",
-    "medikit" : "MEDI1",
-    "automedikit" : "MEDI2",
-    "trigger wire" : "EXPLWIRE",
-    "clone shield" : "CLONESHLD",
-    "legs 1" : "LEGS1",
-    "legs 2" : "LEGS2",
-    "legs 3" : "LEGS3",
-    "arms 1" : "ARMS1",
-    "arms 2" : "ARMS2",
-    "arms 3" : "ARMS3",
-    "arm 1" : "ARMS1",
-    "arm 2" : "ARMS2",
-    "arm 3" : "ARMS3",
-    "body 1" : "CHEST1",
-    "body 2" : "CHEST2",
-    "body 3" : "CHEST3",
-    "brain 1" : "BRAIN1",
-    "brain 2" : "BRAIN2",
-    "brain 3" : "BRAIN3",
-    "hard skin" : "SKIN1",
-    "flame skin" : "SKIN2",
-    "energy skin" : "SKIN3",
-    "stealth skin" : "SKIN4",
+    "uzi" : 'UZI',
+    "minigun" : 'MINIGUN',
+    "electron mace" : 'ELLASER',
+    "pulse laser" : 'LASER',
+    "plasma lance" : 'BEAM',
+    "launcher" : 'RAP',
+    "nuclear grenade" : 'NUCLGREN',
+    "persuadertron" : 'PERSUADER',
+    "indoctrinator" : 'PERSUADER',
+    "flamer" : 'FLAMER',
+    "disrupter" : 'H2HTASER',
+    "psycho gas" : 'CRAZYGAS',
+    "knockout gas" : 'KOGAS',
+    "ion mine" : 'ELEMINE',
+    "high explosive" : 'EXPLMINE',
+    "long range rifle" : 'LONGRANGE',
+    "satellite rain" : 'AIRSTRIKE',
+    "graviton gun" : 'QDEVASTATOR',
+    "razor wire" : 'RAZORWIRE',
+    "persuadertron ii" : 'PERSUADER2',
+    "stasis field" : 'STASISFLD',
+    "chromotap" : 'SOULGUN',
+    "displacertron" : 'TIMEGUN',
+    "cerberus iff" : 'CEREBUSIFF',
+    "medikit" : 'MEDI1',
+    "automedikit" : 'MEDI2',
+    "trigger wire" : 'EXPLWIRE',
+    "clone shield" : 'CLONESHLD',
+    "legs 1" : 'LEGS1',
+    "legs 2" : 'LEGS2',
+    "legs 3" : 'LEGS3',
+    "arms 1" : 'ARMS1',
+    "arms 2" : 'ARMS2',
+    "arms 3" : 'ARMS3',
+    "arm 1" : 'ARMS1',
+    "arm 2" : 'ARMS2',
+    "arm 3" : 'ARMS3',
+    "body 1" : 'CHEST1',
+    "body 2" : 'CHEST2',
+    "body 3" : 'CHEST3',
+    "brain 1" : 'BRAIN1',
+    "brain 2" : 'BRAIN2',
+    "brain 3" : 'BRAIN3',
+    "hard skin" : 'SKIN1',
+    "flame skin" : 'SKIN2',
+    "energy skin" : 'SKIN3',
+    "stealth skin" : 'SKIN4',
 }
 
 
@@ -188,7 +188,7 @@ def pofile_set_default_head_comment(polist, pofname):
     return
 
 
-def prep_po_entries_city(po, podict, lines):
+def prep_po_entries_city(podict, lines):
     city_prop_comments = [
         "name",
         "population size",
@@ -209,8 +209,8 @@ def prep_po_entries_city(po, podict, lines):
         # Special case for translation which is commented out in original files
         if ln == "#UTOPIA":
             e = polib.POEntry(msgstr=ln[1:], msgctxt=comment)
-            e.occurrences.append( ("mapscreen.title",None,) )
-            podict["COMM"].append(e)
+            e.occurrences.append( ('mapscreen.title','',) )
+            podict['COMM'].append(e)
             n += 1
             continue
         if ln[0] == "#":
@@ -237,7 +237,7 @@ def prep_po_entries_city(po, podict, lines):
             ctxt = comment + " - " + city_prop_comments[k]
             e = polib.POEntry(msgstr=ln, msgctxt=ctxt)
             campgn = campaign_names[entryno]
-            e.occurrences.append( ("mapscreen.heading",k,) )
+            e.occurrences.append( ('mapscreen.heading',f'{k+1}',) )
             podict[campgn].append(e)
             n += 1
             k += 1
@@ -245,7 +245,7 @@ def prep_po_entries_city(po, podict, lines):
         break
     # Read the properties of cities - 6 per city
     k = 0
-    entryno = 0
+    entryno = 1
     for ln in lines[n:]:
         if len(ln) < 1:
             n += 1
@@ -263,8 +263,8 @@ def prep_po_entries_city(po, podict, lines):
             else:
                 ctxt = comment
             e = polib.POEntry(msgstr=ln, msgctxt=ctxt)
-            e.occurrences.append( (f"mapscreen.city{entryno}",k,) )
-            podict["COMM"].append(e)
+            e.occurrences.append( (f'mapscreen.city{entryno}',f'{k+1}',) )
+            podict['COMM'].append(e)
             n += 1
             k += 1
             continue
@@ -272,7 +272,7 @@ def prep_po_entries_city(po, podict, lines):
     return polist
 
 
-def prep_po_entries_names(po, podict, lines):
+def prep_po_entries_names(podict, lines):
     comment = "mission title"
     n = 0
     for ln in lines[n:]:
@@ -288,7 +288,7 @@ def prep_po_entries_names(po, podict, lines):
             missi = int(match.group(1), 10)
             if len(text) > 0:
                 e = polib.POEntry(msgstr=text, msgctxt=comment)
-                e.occurrences.append( ("mission.title",missi,) )
+                e.occurrences.append( ('mission.title',f'{missi}',) )
                 if missi in church_missions.keys():
                     campgn = campaign_names[1]
                 else:
@@ -300,7 +300,7 @@ def prep_po_entries_names(po, podict, lines):
     return
 
 
-def prep_po_entries_outro(po, podict, lines):
+def prep_po_entries_outro(podict, lines):
     comment = "outro message"
     n = 0
     k = 0
@@ -324,7 +324,7 @@ def prep_po_entries_outro(po, podict, lines):
         if True:
             e = polib.POEntry(msgstr=ln, msgctxt=comment)
             campgn = campaign_names[entryno]
-            e.occurrences.append( ("message.win",k,) )
+            e.occurrences.append( ('message.win',k,) )
             podict[campgn].append(e)
             n += 1
             k += 1
@@ -333,7 +333,7 @@ def prep_po_entries_outro(po, podict, lines):
     return
 
 
-def prep_po_entries_wms(po, podict, lines):
+def prep_po_entries_wms(podict, lines):
     comment1 = "outro message"
     comment2 = ""
     n = 0
@@ -374,9 +374,9 @@ def prep_po_entries_wms(po, podict, lines):
             idx = (k // 2) + 1
             if comment3 in weapon_mod_names_to_code:
                 codename = weapon_mod_names_to_code[comment3]
-                e.occurrences.append( (f"{comment2}.{codename}.description",None,) )
+                e.occurrences.append( (f'{comment2}.{codename}.description','',) )
             else:
-                e.occurrences.append( (f"{comment2}.description",idx,) )
+                e.occurrences.append( (f'{comment2}.description',idx,) )
             podict[campgn].append(e)
             n += 1
             k += 1
@@ -385,7 +385,7 @@ def prep_po_entries_wms(po, podict, lines):
     return
 
 
-def prep_po_entries_netscan(po, podict, lines):
+def prep_po_entries_netscan(podict, lines):
     comment = "outro message"
     n = 0
     k = 0
@@ -414,7 +414,7 @@ def prep_po_entries_netscan(po, podict, lines):
                 campgn = campaign_names[0]
             else:
                 campgn = campaign_names[1]
-            e.occurrences.append( (f"mission.brief.map{mapno}.level{level}",k,) )
+            e.occurrences.append( (f'mission.brief.map{mapno}.level{level}',k,) )
             podict[campgn].append(e)
             n += 1
             k += 1
@@ -423,7 +423,7 @@ def prep_po_entries_netscan(po, podict, lines):
     return
 
 
-def prep_po_entries_miss(po, podict, lines, sourceid):
+def prep_po_entries_miss(podict, lines, sourceid):
     n = 0
     k = 0
     if sourceid < 24:
@@ -469,7 +469,7 @@ def prep_po_entries_miss(po, podict, lines, sourceid):
                 else:
                     ctxt="mission brief email paragraph"
                 e = polib.POEntry(msgstr=msgstr, msgctxt=ctxt)
-                e.occurrences.append( (f"mission.brief.mail{mailid}.par{k+1}.{fmtchar}",None,) )
+                e.occurrences.append( (f'mission.brief.mail{mailid}.par{k+1}.{fmtchar}','',) )
                 podict[campgn].append(e)
                 k += 1
             msgstr = ""
@@ -478,7 +478,7 @@ def prep_po_entries_miss(po, podict, lines, sourceid):
     return
 
 
-def prep_po_entries_per_line(po, podict, lines, refstart, comment):
+def prep_po_entries_per_line(podict, lines, refstart, comment):
     n = 0
     for ln in lines[n:]:
         if len(ln) < 1:
@@ -487,8 +487,8 @@ def prep_po_entries_per_line(po, podict, lines, refstart, comment):
         if True:
             text = ln[0].upper() + ln[1:].lower()
             e = polib.POEntry(msgstr=text, msgctxt=comment)
-            e.occurrences.append( (f"{refstart}",n,) )
-            podict["COMM"].append(e)
+            e.occurrences.append( (f'{refstart}',n,) )
+            podict['COMM'].append(e)
             n += 1
             continue
         break
@@ -543,43 +543,174 @@ def list_txtfiles_from_po_content(podict):
     return txtfiles
 
 
-def textwad_extract_to_po(po, podict, txtfname, lines):
+def textwad_extract_to_po(podict, txtfname, lines):
     match = None
     if not match:
         match = re.match(r'^(city)[.]txt$', txtfname)
         if match:
-            prep_po_entries_city(po, podict, lines)
+            prep_po_entries_city(podict, lines)
     if not match:
         match = re.match(r'^(lost)[.]txt$', txtfname)
         if match:
-            prep_po_entries_per_line(po, podict, lines, "sci.death.reason", "scientists death reason")
+            prep_po_entries_per_line(podict, lines, 'sci.death.reason', "scientists death reason")
     if not match:
         match = re.match(r'^(miss([0-9]+))[.]txt$', txtfname)
         if match:
             sourceid = int(match.group(2), 10)
-            prep_po_entries_miss(po, podict, lines, sourceid)
+            prep_po_entries_miss(podict, lines, sourceid)
     if not match:
         match = re.match(r'^(names)[.]txt$', txtfname)
         if match:
-            prep_po_entries_names(po, podict, lines)
+            prep_po_entries_names(podict, lines)
     if not match:
         match = re.match(r'^(netscan)[.]txt$', txtfname)
         if match:
-            prep_po_entries_netscan(po, podict, lines)
+            prep_po_entries_netscan(podict, lines)
     if not match:
         match = re.match(r'^(obj)[.]txt$', txtfname)
         if match:
-            prep_po_entries_per_line(po, podict, lines, "scanner.objective", "objective text shown on scanner")
+            prep_po_entries_per_line(podict, lines, 'scanner.objective', "objective text shown on scanner")
     if not match:
         match = re.match(r'^(outtro)[.]txt$', txtfname)
         if match:
-            prep_po_entries_outro(po, podict, lines)
+            prep_po_entries_outro(podict, lines)
     if not match:
         match = re.match(r'^(wms)[.]txt$', txtfname)
         if match:
-            prep_po_entries_wms(po, podict, lines)
+            prep_po_entries_wms(podict, lines)
+    assert match, "unrecognized file type"
+    return
+
+
+def create_lines_for_city(lines, pomdict):
+    lines.append("# == syndicate & church map screen text ==")
+
+    lines.append("# syndicate & church map screen title")
+    if True:
+        e = pomdict[('COMM','mapscreen.title','',)]
+        lines.append(f"#{e.msgstr}")
+
+    for entryno in range(0,2):
+        campgn = campaign_names[entryno]
+        lines.append(f"# {campgn} map screen headings")
+        for k in range(1,7):
+            try:
+                e = pomdict[(campgn,'mapscreen.heading',f'{k}',)]
+            except:
+                e = polib.POEntry()
+            lines.append(e.msgstr)
+
+    lines.append("")
+    lines.append("# city data")
+    lines.append("")
+
+    for entryno in range(1,256):
+        noexist = False
+        for k in range(1,8):
+            try:
+                e = pomdict[('COMM',f'mapscreen.city{entryno}',f'{k}',)]
+            except:
+                e = polib.POEntry()
+            if (k == 1) and (e.msgstr == ""):
+                noexist = True
+                break
+            lines.append(e.msgstr)
+        if noexist:
+            break
+
+    for occurrence, e in pomdict.items():
+        campgn, place, num = occurrence
+        pass
+    return
+
+
+def create_lines_for_per_line(lines, pomdict):
+    # sort by key
+    pomdict = dict(sorted(pomdict.items()))
+    for occurrence, e in pomdict.items():
+        campgn, place, num = occurrence
+        pass
+    return
+
+
+def create_lines_for_miss(lines, pomdict):
+    for occurrence, e in pomdict.items():
+        campgn, place, num = occurrence
+        pass
+    return
+
+
+def create_lines_for_names(lines, pomdict):
+    for occurrence, e in pomdict.items():
+        campgn, place, num = occurrence
+        pass
+    return
+
+
+def create_lines_for_netscan(lines, pomdict):
+    for occurrence, e in pomdict.items():
+        campgn, place, num = occurrence
+        pass
+    return
+
+
+def create_lines_for_outro(lines, pomdict):
+    for occurrence, e in pomdict.items():
+        campgn, place, num = occurrence
+        pass
+    return
+
+
+def create_lines_for_wms(lines, pomdict):
+    for occurrence, e in pomdict.items():
+        campgn, place, num = occurrence
+        pass
+    return
+
+
+def textwad_create_from_po(lines, podict, txtfname):
+    pomdict = {}
+    for campgn, polist in podict.items():
+        for e in polist:
+            # Find entries matching for current txt file
+            for place, num in e.occurrences:
+                fname = po_occurrence_to_fname(campgn, place, num)
+                if fname == txtfname:
+                    pomdict[ (campgn,place,num,) ] = e
+    match = None
     if not match:
-        pass # unrecognized file type
+        match = re.match(r'^(city)[.]txt$', txtfname)
+        if match:
+            create_lines_for_city(lines, pomdict)
+    if not match:
+        match = re.match(r'^(lost)[.]txt$', txtfname)
+        if match:
+            create_lines_for_per_line(lines, pomdict)
+    if not match:
+        match = re.match(r'^(miss([0-9]+))[.]txt$', txtfname)
+        if match:
+            create_lines_for_miss(lines, pomdict)
+    if not match:
+        match = re.match(r'^(names)[.]txt$', txtfname)
+        if match:
+            create_lines_for_names(lines, pomdict)
+    if not match:
+        match = re.match(r'^(netscan)[.]txt$', txtfname)
+        if match:
+            create_lines_for_netscan(lines, pomdict)
+    if not match:
+        match = re.match(r'^(obj)[.]txt$', txtfname)
+        if match:
+            create_lines_for_per_line(lines, pomdict)
+    if not match:
+        match = re.match(r'^(outtro)[.]txt$', txtfname)
+        if match:
+            create_lines_for_outro(lines, pomdict)
+    if not match:
+        match = re.match(r'^(wms)[.]txt$', txtfname)
+        if match:
+            create_lines_for_wms(lines, pomdict)
+    assert match, "unrecognized file type"
     return
 
 
@@ -639,16 +770,17 @@ def textwad_extract(po, wadfh, idxfh, lang):
         lines = txt_buffer.split(b'\n')
         # TODO support SW code page
         lines = [ln.decode("utf-8").rstrip("\r\n") for ln in lines]
-        textwad_extract_to_po(po, podict, txtfname, lines)
+        textwad_extract_to_po(podict, txtfname, lines)
         basename = os.path.splitext(os.path.basename(txtfname))[0]
     if lang == "eng":
         poext = "pot"
+    else:
+        poext = "po"
+    if poext == "pot":
         for campgn in campaign_names:
             for e in podict[campgn]:
                 e.msgid = e.msgstr
                 e.msgstr = ""
-    else:
-        poext = "po"
     merge_same_po_entries(podict)
     for campgn in campaign_names:
         pofname = "text_" + campgn.lower() + "_" + lang + "." + poext
@@ -669,13 +801,21 @@ def textwad_create(po, wadfh, idxfh, lang):
         pofname = "text_" + campgn.lower() + "_" + lang + "." + poext
         polist = polib.pofile(pofname)
         podict[campgn] = polist
+    if poext == "pot":
+        for campgn in campaign_names:
+            for e in podict[campgn]:
+                e.msgstr = e.msgid
+                e.msgid = ""
     txtfiles = list_txtfiles_from_po_content(podict)
-    for fname in txtfiles:
+    for txtfname in txtfiles:
+        lines = []
         e = WADIndexEntry()
-        e.Filename = fname.encode("utf-8")
+        e.Filename = txtfname.encode("utf-8")
         e.Offset = wadfh.tell()
-        #TODO write WAD
-        wadfh.write(b'\0\1')
+        textwad_create_from_po(lines, podict, txtfname)
+        # TODO support SW code page
+        lines = [ln.encode("utf-8") for ln in lines]
+        wadfh.write(b'\r\n'.join(lines))
         e.Length = wadfh.tell() - e.Offset
         idxfh.write((c_ubyte * sizeof(e)).from_buffer_copy(e))
 
