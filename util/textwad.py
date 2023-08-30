@@ -91,6 +91,9 @@ weapon_mod_names_to_code = {
     "arms 1" : "ARMS1",
     "arms 2" : "ARMS2",
     "arms 3" : "ARMS3",
+    "arm 1" : "ARMS1",
+    "arm 2" : "ARMS2",
+    "arm 3" : "ARMS3",
     "body 1" : "CHEST1",
     "body 2" : "CHEST2",
     "body 3" : "CHEST3",
@@ -134,13 +137,6 @@ def pofile_store_entry(po, pofh, e):
         text = e.msgstr
         text = text.replace("\"", "\\\"")
         pofh.write("msgstr \"" + text + "\"\n")
-    return
-
-
-def pofile_load(po, pofname, polist, lang):
-    pofile = polib.pofile(pofname)
-    for entry in pofile:
-        print(entry.msgid, entry.msgstr)
     return
 
 
@@ -499,7 +495,55 @@ def prep_po_entries_per_line(po, podict, lines, refstart, comment):
     return
 
 
-def textwad_extract_po(po, podict, txtfname, lines):
+def po_occurrence_to_fname(campgn, place, num):
+    match = re.match(r'^mapscreen[.](title|heading|city[0-9]+)$', place)
+    if match:
+        return "city.txt"
+    match = re.match(r'^sci[.]death[.]reason$', place)
+    if match:
+        return "lost.txt"
+    match = re.match(r'^mission[.]brief[.]mail([0-9]+)[.]par[0-9]+[.].*$', place)
+    if match:
+        mailid = int(match.group(1),10)
+        if campgn == campaign_names[1]:
+            sourceid = mailid + 23
+        elif campgn == campaign_names[2]:
+            sourceid = mailid + 50
+        else:
+            sourceid = mailid
+        return f"miss{sourceid:03d}.txt"
+    match = re.match(r'^mission[.]title$', place)
+    if match:
+        return "names.txt"
+    match = re.match(r'^mission[.]brief[.]map[0-9]+[.]level[0-9]+$', place)
+    if match:
+        return "netscan.txt"
+    match = re.match(r'^scanner[.]objective$', place)
+    if match:
+        return "obj.txt"
+    match = re.match(r'^message[.]win$', place)
+    if match:
+        return "outtro.txt"
+    match = re.match(r'^(weapons|mods)[.].*[.]description$', place)
+    if match:
+        return "wms.txt"
+    assert False, f"unrecognized occurence \"{place}\""
+    return None
+
+def list_txtfiles_from_po_content(podict):
+    txtfiles = []
+    for campgn, polist in podict.items():
+        for e in polist:
+            for place, num in e.occurrences:
+                fname = po_occurrence_to_fname(campgn, place, num)
+                if fname:
+                    txtfiles.append(fname)
+    txtfiles = list(set(txtfiles))
+    txtfiles.sort()
+    return txtfiles
+
+
+def textwad_extract_to_po(po, podict, txtfname, lines):
     match = None
     if not match:
         match = re.match(r'^(city)[.]txt$', txtfname)
@@ -550,7 +594,7 @@ def find_duplicate_po_entry_after(polist, n):
     return None
 
 
-def merge_same_po_entries(po, podict):
+def merge_same_po_entries(podict):
     for campgn, polist in podict.items():
         n = 0
         while n < len(polist):
@@ -595,7 +639,7 @@ def textwad_extract(po, wadfh, idxfh, lang):
         lines = txt_buffer.split(b'\n')
         # TODO support SW code page
         lines = [ln.decode("utf-8").rstrip("\r\n") for ln in lines]
-        textwad_extract_po(po, podict, txtfname, lines)
+        textwad_extract_to_po(po, podict, txtfname, lines)
         basename = os.path.splitext(os.path.basename(txtfname))[0]
     if lang == "eng":
         poext = "pot"
@@ -605,7 +649,7 @@ def textwad_extract(po, wadfh, idxfh, lang):
                 e.msgstr = ""
     else:
         poext = "po"
-    merge_same_po_entries(po, podict)
+    merge_same_po_entries(podict)
     for campgn in campaign_names:
         pofname = "text_" + campgn.lower() + "_" + lang + "." + poext
         polist = podict[campgn]
@@ -615,21 +659,24 @@ def textwad_extract(po, wadfh, idxfh, lang):
 
 
 def textwad_create(po, wadfh, idxfh, lang):
-    # Prepare empty dict
-    podict = {}
-    for campgn in campaign_names:
-        podict[campgn] = None
-    # Load PO files to the dict
+    # Load PO files
     if lang == "eng":
         poext = "pot"
     else:
         poext = "po"
+    podict = {}
     for campgn in campaign_names:
         pofname = "text_" + campgn.lower() + "_" + lang + "." + poext
-        pofile_load(po, pofname, podict[campgn], lang)
-
-    if False:
+        polist = polib.pofile(pofname)
+        podict[campgn] = polist
+    txtfiles = list_txtfiles_from_po_content(podict)
+    for fname in txtfiles:
         e = WADIndexEntry()
+        e.Filename = fname.encode("utf-8")
+        e.Offset = wadfh.tell()
+        #TODO write WAD
+        wadfh.write(b'\0\1')
+        e.Length = wadfh.tell() - e.Offset
         idxfh.write((c_ubyte * sizeof(e)).from_buffer_copy(e))
 
 
@@ -677,7 +724,6 @@ def main():
     elif po.create:
         if (po.verbose > 0):
             print("{}: Opening for creation".format(po.wadfile))
-        raise NotImplementedError("Unsupported command.")
         with open(po.wadfile, 'wb') as wadfh:
             with open(po.idxfile, 'wb') as idxfh:
                 textwad_create(po, wadfh, idxfh, po.lang)
