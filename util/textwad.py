@@ -336,7 +336,7 @@ def prep_po_entries_outro(podict, lines):
         if True:
             e = polib.POEntry(msgstr=ln, msgctxt=comment)
             campgn = campaign_names[entryno]
-            e.occurrences.append( ('message.win',k,) )
+            e.occurrences.append( ('message.win',f'{k+1}',) )
             podict[campgn].append(e)
             n += 1
             k += 1
@@ -667,74 +667,81 @@ def create_lines_for_per_line(lines, pomdict, refstart):
             if noexist:
                 break
             lines.append(e.msgstr.upper())
+    lines.append("")
     return
 
 
-def create_lines_for_miss(lines, pomdict):
-    for campgn in campaign_names[0:3]:
-        empty_mailid = 0
-        for mailid in range(1,32768):
-            if campgn == campaign_names[1]:
-                sourceid = mailid + 23
-            elif campgn == campaign_names[2]:
-                sourceid = mailid + 50
-            else:
-                sourceid = mailid
-            paragraphs = []
-            for ccampgn, place, num in pomdict.keys():
-                if (ccampgn == campgn) and (place.startswith(f'mission.brief.mail{mailid}.par')):
-                    paragraphs.append(place)
-            if len(paragraphs) < 1:
-                empty_mailid += 1
-                if empty_mailid > 5:
-                    break
+def create_lines_for_miss(lines, pomdict, sourceid):
+    if sourceid < 24:
+        campgn = campaign_names[0]
+        mailid = sourceid
+    elif sourceid < 51:
+        campgn = campaign_names[1]
+        mailid = sourceid - 23
+    else:
+        campgn = campaign_names[2]
+        mailid = sourceid - 50
+
+    paragraphs = []
+    if True:
+        for (ccampgn,place,num,), e in pomdict.items():
+            if ccampgn != campgn:
                 continue
-            empty_mailid = 0
-            paragraphs.sort()
-            prevfmt = ''
-            for place in paragraphs:
-                match = re.match(r'^mission[.]brief[.]mail([0-9]+)[.]par([0-9]+)[.](.*)$', place)
-                assert match, "Invalid mission.brief.mailN.par occurrence"
-                par = int(match.group(2),10)
-                fmt = match.group(3)
-                if fmt == "expansion":
-                    custom_fmt = fmt
-                    fmt = "c3"
-                else:
-                    custom_fmt = None
-                e = pomdict[(campgn,place,'',)]
-                if par > 1:
-                    text = "\\n"
-                    if (prevfmt != fmt) and (fmt == 'c5') and (custom_fmt is None):
-                        text = f"\\{fmt}{text}"
-                        prevfmt = fmt
-                    lines.append(text)
-                text = e.msgstr
-                text = text.replace("<login>", "\\l")
-                if custom_fmt == "expansion":
-                    for i in range(len(text)-1, -1, -1):
-                        if not text[i].isupper():
-                            continue
-                        if (i < 1):
-                            text = f"\\c4{text[i]}\\{fmt}{text[i+1:]}"
-                        else:
-                            text = f"{text[:i]}\\c4{text[i]}\\{fmt}{text[i+1:]}"
-                elif prevfmt != fmt:
-                    text = f"\\{fmt}{text}"
-                    prevfmt = fmt
-                text = f"{text}\\n"
-                wraplines = textwrap.wrap(text, width=104, break_long_words=False,
-                  drop_whitespace=False, break_on_hyphens=False)
-                for ln in wraplines:
-                    lines.append(ln)
-            if True:
-                fmt = 'c5'
+            match = re.match(r'^mission[.]brief[.]mail([0-9]+)[.]par([0-9]+)[.](.*)$', place)
+            assert match, "Invalid mission.brief.mailN.par occurrence"
+            cmailid = int(match.group(1),10)
+            if cmailid != mailid:
+                continue
+            n = int(match.group(2),10)
+            fmt = match.group(3)
+            while n >= len(paragraphs):
+                paragraphs.append( (None,None,) )
+            paragraphs[n] = (fmt,e,)
+
+    assert len(paragraphs) > 0
+
+    if True:
+        prevfmt = ''
+        for n, (fmt,e,) in enumerate(paragraphs):
+            if e is None:
+                continue
+            if fmt == "expansion":
+                custom_fmt = fmt
+                fmt = "c3"
+            else:
+                custom_fmt = None
+            if n > 1:
                 text = "\\n"
-                if prevfmt != fmt:
+                if (prevfmt != fmt) and (fmt == 'c5') and (custom_fmt is None):
                     text = f"\\{fmt}{text}"
                     prevfmt = fmt
                 lines.append(text)
-
+            text = e.msgstr
+            text = text.replace("<login>", "\\l")
+            if custom_fmt == "expansion":
+                for i in range(len(text)-1, -1, -1):
+                    if not text[i].isupper():
+                        continue
+                    if (i < 1):
+                        text = f"\\c4{text[i]}\\{fmt}{text[i+1:]}"
+                    else:
+                        text = f"{text[:i]}\\c4{text[i]}\\{fmt}{text[i+1:]}"
+            elif prevfmt != fmt:
+                text = f"\\{fmt}{text}"
+                prevfmt = fmt
+            text = f"{text}\\n"
+            wraplines = textwrap.wrap(text, width=104, break_long_words=False,
+              drop_whitespace=False, break_on_hyphens=False)
+            for ln in wraplines:
+                lines.append(ln)
+        if True:
+            fmt = 'c5'
+            text = "\\n"
+            if prevfmt != fmt:
+                text = f"\\{fmt}{text}"
+                prevfmt = fmt
+            lines.append(text)
+    lines.append("")
     return
 
 
@@ -815,16 +822,61 @@ def create_lines_for_netscan(lines, pomdict):
 
 
 def create_lines_for_outro(lines, pomdict):
-    for occurrence, e in pomdict.items():
-        campgn, place, num = occurrence
-        pass
+    for campgn in campaign_names[0:3]:
+        lines.append(f"[{campgn}_win]".lower())
+        noexist = False
+        for k in range(1,256):
+            try:
+                e = pomdict[(campgn,'message.win',f'{k}',)]
+            except:
+                e = polib.POEntry()
+                # Finish if the next entry does not exist as well
+                noexist = (campgn,'message.win',f'{k+1}',) not in pomdict
+            if noexist:
+                break
+            if k > 1:
+                lines.append("")
+            lines.append(e.msgstr)
+    lines.append("")
     return
 
 
 def create_lines_for_wms(lines, pomdict):
-    for occurrence, e in pomdict.items():
-        campgn, place, num = occurrence
-        pass
+    for campgn in campaign_names[0:3]:
+        lines.append(f"[{campgn}_player]".lower())
+
+        poweplist = []
+        pomodlist = []
+        for (ccampgn, place, num,), e in pomdict.items():
+            if ccampgn != campgn:
+                continue
+            match = re.match(r'^(weapons|mods)[.](.+)[.]description$', place)
+            if not match:
+                continue
+            wmtype = match.group(2)
+            if match.group(1) == "weapons":
+                poweplist.append( (wmtype,e,) )
+            else:
+                pomodlist.append( (wmtype,e,) )
+
+        lines.append("[weapons]")
+        for wmtype,e in poweplist:
+            wep_name = dict_key_for_value(weapon_mod_names_to_code, wmtype)
+            if (campgn == 'CHURCH') and (wmtype == 'PERSUADER'):
+                wep_name = "indoctrinator"
+            if wep_name is None:
+                wep_name = wmtype
+            lines.append(wep_name.upper())
+            lines.append(e.msgstr)
+
+        lines.append("[mods]")
+        for wmtype,e in pomodlist:
+            mod_name = dict_key_for_value(weapon_mod_names_to_code, wmtype)
+            if mod_name is None:
+                mod_name = wmtype
+            lines.append(mod_name.upper())
+            lines.append(e.msgstr)
+    lines.append("")
     return
 
 
@@ -849,7 +901,8 @@ def textwad_create_from_po(lines, podict, txtfname):
     if not match:
         match = re.match(r'^(miss([0-9]+))[.]txt$', txtfname)
         if match:
-            create_lines_for_miss(lines, pomdict)
+            sourceid = int(match.group(2),10)
+            create_lines_for_miss(lines, pomdict, sourceid)
     if not match:
         match = re.match(r'^(names)[.]txt$', txtfname)
         if match:
@@ -990,6 +1043,9 @@ def main():
     parser.add_argument('-w', '--wadfile', type=str, required=True,
           help="Name for WAD/IDX files")
 
+    parser.add_argument('-r', '--raw', action='store_true',
+          help="Import or export raw files (TXT) rather than .PO/POT")
+
     parser.add_argument('-v', '--verbose', action='count', default=0,
           help="Increases verbosity level; max level is set by -vvv")
 
@@ -1019,7 +1075,10 @@ def main():
             print("{}: Opening for extract".format(po.wadfile))
         with open(po.wadfile, 'rb') as wadfh:
             with open(po.idxfile, 'rb') as idxfh:
-                textwad_extract(po, wadfh, idxfh, po.lang)
+                if po.raw:
+                    textwad_extract_raw(po, wadfh, idxfh)
+                else:
+                    textwad_extract(po, wadfh, idxfh, po.lang)
 
     elif po.create:
         if (po.verbose > 0):
