@@ -125,6 +125,53 @@ def dict_key_for_value(d, v):
     return list(d.keys())[idx]
 
 
+def read_enctable(po, fname):
+    po.chartable_decode = [''] * 256
+    po.chartable_encode = {}
+    # Fill initial data
+    ctd = po.chartable_decode
+    cte = po.chartable_encode
+    for n in range(32):
+        c = n.to_bytes(1, 'big').decode("utf-8", errors="ignore")
+        ctd[n] = c
+        if len(c) > 0:
+            cte[c] = n.to_bytes(1, 'big')
+    # Read char table
+    with open(fname, 'r', encoding="utf-8") as fh:
+        lines = fh.readlines()
+    for ln in lines:
+        ln = ln.lstrip()
+        if len(ln) < 2:
+            continue
+        if ln[0] == '#':
+            continue
+        match = re.match(r'^([0-9]+|0x[0-9a-fA-F]+)[\t](.)$', ln)
+        assert match, f"{fname}: Invalid entry"
+        n = int(match.group(1),0)
+        c = match.group(2)
+        if ctd[n] == '':
+            ctd[n] = c
+        cte[c] = n.to_bytes(1, 'big')
+
+
+def enctable_bytes_to_string(po, b):
+    #return b.decode("utf-8")
+    ctd = po.chartable_decode
+    s = ""
+    for c in b:
+        s = s + ctd[c]
+    return s
+
+
+def enctable_string_to_bytes(po, s):
+    #return s.encode("utf-8")
+    ctd = po.chartable_encode
+    b = b""
+    for c in b:
+        b.append(cte[c])
+    return b
+
+
 def pofile_store_entry(po, pofh, e):
     pofh.write("\n")
     if len(e.tcomment) > 0:
@@ -712,7 +759,7 @@ def create_lines_for_miss(lines, pomdict, sourceid):
                 custom_fmt = None
             if n > 1:
                 text = "\\n"
-                if (prevfmt != fmt) and (fmt == 'c5') and (custom_fmt is None):
+                if (prevfmt != fmt) and (fmt in ('c2','c5',)) and (custom_fmt is None):
                     text = f"\\{fmt}{text}"
                     prevfmt = fmt
                 lines.append(text)
@@ -967,13 +1014,13 @@ def textwad_extract_raw(po, wadfh, idxfh):
     return
 
 
-def textwad_extract(po, wadfh, idxfh, lang):
+def textwad_extract(po, wadfh, idxfh):
     # Prepare empty dict
     podict = {}
     for campgn in campaign_names:
         polist = polib.POFile()
         podict[campgn] = polist
-        pofile_set_default_metadata(polist, lang)
+        pofile_set_default_metadata(polist, po.lang)
     # Fill with files from WAD
     e = WADIndexEntry()
     while idxfh.readinto(e) == sizeof(e):
@@ -981,11 +1028,10 @@ def textwad_extract(po, wadfh, idxfh, lang):
         wadfh.seek(e.Offset, os.SEEK_SET)
         txt_buffer = wadfh.read(e.Length)
         lines = txt_buffer.split(b'\n')
-        # TODO support SW code page
-        lines = [ln.decode("utf-8").rstrip("\r\n") for ln in lines]
+        lines = [enctable_bytes_to_string(po, ln).rstrip("\r\n") for ln in lines]
         textwad_extract_to_po(podict, txtfname, lines)
         basename = os.path.splitext(os.path.basename(txtfname))[0]
-    if lang == "eng":
+    if po.lang == "eng":
         poext = "pot"
     else:
         poext = "po"
@@ -996,22 +1042,22 @@ def textwad_extract(po, wadfh, idxfh, lang):
                 e.msgstr = ""
     merge_same_po_entries(podict)
     for campgn in campaign_names:
-        pofname = "text_" + campgn.lower() + "_" + lang + "." + poext
+        pofname = "text_" + campgn.lower() + "_" + po.lang + "." + poext
         polist = podict[campgn]
         pofile_set_default_head_comment(polist, pofname)
         polist.save(pofname)
     return
 
 
-def textwad_create(po, wadfh, idxfh, lang):
+def textwad_create(po, wadfh, idxfh):
     # Load PO files
-    if lang == "eng":
+    if po.lang == "eng":
         poext = "pot"
     else:
         poext = "po"
     podict = {}
     for campgn in campaign_names:
-        pofname = "text_" + campgn.lower() + "_" + lang + "." + poext
+        pofname = "text_" + campgn.lower() + "_" + po.lang + "." + poext
         polist = polib.pofile(pofname)
         podict[campgn] = polist
     if poext == "pot":
@@ -1026,8 +1072,7 @@ def textwad_create(po, wadfh, idxfh, lang):
         e.Filename = txtfname.encode("utf-8")
         e.Offset = wadfh.tell()
         textwad_create_from_po(lines, podict, txtfname)
-        # TODO support SW code page
-        lines = [ln.encode("utf-8") for ln in lines]
+        lines = [enctable_string_to_bytes(po, ln) for ln in lines]
         wadfh.write(b'\r\n'.join(lines))
         e.Length = wadfh.tell() - e.Offset
         idxfh.write((c_ubyte * sizeof(e)).from_buffer_copy(e))
@@ -1045,6 +1090,12 @@ def main():
 
     parser.add_argument('-r', '--raw', action='store_true',
           help="Import or export raw files (TXT) rather than .PO/POT")
+
+    parser.add_argument('-t', '--enctable', type=str, required=True,
+          help="Character encoding table file name")
+
+    parser.add_argument('-l', '--lang', type=str, default="eng",
+          help="Language of the processed files")
 
     parser.add_argument('-v', '--verbose', action='count', default=0,
           help="Increases verbosity level; max level is set by -vvv")
@@ -1068,7 +1119,7 @@ def main():
     po.wadfile = po.wadbase + ".wad"
     po.idxfile = po.wadbase + ".idx"
 
-    po.lang = "eng"
+    read_enctable(po, po.enctable)
 
     if po.extract:
         if (po.verbose > 0):
@@ -1078,14 +1129,14 @@ def main():
                 if po.raw:
                     textwad_extract_raw(po, wadfh, idxfh)
                 else:
-                    textwad_extract(po, wadfh, idxfh, po.lang)
+                    textwad_extract(po, wadfh, idxfh)
 
     elif po.create:
         if (po.verbose > 0):
             print("{}: Opening for creation".format(po.wadfile))
         with open(po.wadfile, 'wb') as wadfh:
             with open(po.idxfile, 'wb') as idxfh:
-                textwad_create(po, wadfh, idxfh, po.lang)
+                textwad_create(po, wadfh, idxfh)
 
     else:
         raise NotImplementedError("Unsupported command.")
