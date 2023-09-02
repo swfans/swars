@@ -114,6 +114,48 @@ weapon_mod_names_to_code = {
     "flame skin" : 'SKIN2',
     "energy skin" : 'SKIN3',
     "stealth skin" : 'SKIN4',
+    # French names
+    "miniflingue" : 'MINIGUN',
+    "masse a electrons" : 'ELLASER',
+    "laser a impulsions" : 'LASER',
+    "lance a plasma" : 'BEAM',
+    "lanceur" : 'RAP',
+    "grenade nucleaire" : 'NUCLGREN',
+    "persuatron" : 'PERSUADER',
+    "lance-flammes" : 'FLAMER',
+    "deprogrammeur" : 'H2HTASER',
+    "psychogaz" : 'CRAZYGAS',
+    "gaz inhibiteur" : 'KOGAS',
+    "mine a ions" : 'ELEMINE',
+    "explosif" : 'EXPLMINE',
+    "fusil long.portee" : 'LONGRANGE',
+    "pluie d'acier" : 'AIRSTRIKE',
+    "canon atomiseur" : 'QDEVASTATOR',
+    "barbeles" : 'RAZORWIRE',
+    "persuatron ii" : 'PERSUADER2',
+    "ch. ralentisseur" : 'STASISFLD',
+    "bioextracteur" : 'SOULGUN',
+    "transp. temporel" : 'TIMEGUN',
+    "cerbere iff" : 'CEREBUSIFF',
+    "automedic" : 'MEDI2',
+    "cable declencheur" : 'EXPLWIRE',
+    "morphobouclier" : 'CLONESHLD',
+    "jambes 1" : 'LEGS1',
+    "jambes 2" : 'LEGS2',
+    "jambes 3" : 'LEGS3',
+    "bras 1" : 'ARMS1',
+    "bras 2" : 'ARMS2',
+    "bras 3" : 'ARMS3',
+    "corps 1" : 'CHEST1',
+    "corps 2" : 'CHEST2',
+    "corps 3" : 'CHEST3',
+    "cerveau 1" : 'BRAIN1',
+    "cerveau 2" : 'BRAIN2',
+    "cerveau 3" : 'BRAIN3',
+    "peau renforcee" : 'SKIN1',
+    "peau anti-brulures" : 'SKIN2',
+    "peau energetique" : 'SKIN3',
+    "peau furtive" : 'SKIN4',
 }
 
 
@@ -125,6 +167,20 @@ def dict_key_for_value(d, v):
     return list(d.keys())[idx]
 
 
+def find_occurence_in_polist(polist, occur):
+    for e in polist:
+        if occur in e.occurrences:
+            return e
+    match = re.match(r'^(.+)[.][a-z0-9]+$', occur[0])
+    if match:
+        findplace_start = match.group(1)
+        for e in polist:
+            for place, num in e.occurrences:
+                if place.startswith(findplace_start):
+                    return e
+    return None
+
+
 def read_enctable(po, fname):
     po.chartable_decode = [''] * 256
     po.chartable_encode = {}
@@ -132,12 +188,12 @@ def read_enctable(po, fname):
     ctd = po.chartable_decode
     cte = po.chartable_encode
     for n in range(32):
-        c = n.to_bytes(1, 'big').decode("utf-8", errors="ignore")
+        c = n.to_bytes(1, 'big').decode('utf-8', errors='ignore')
         ctd[n] = c
         if len(c) > 0:
             cte[c] = n.to_bytes(1, 'big')
     # Read char table
-    with open(fname, 'r', encoding="utf-8") as fh:
+    with open(fname, 'r', encoding='utf-8') as fh:
         lines = fh.readlines()
     for ln in lines:
         ln = ln.lstrip()
@@ -155,7 +211,7 @@ def read_enctable(po, fname):
 
 
 def enctable_bytes_to_string(po, b):
-    #return b.decode("utf-8")
+    #return b.decode('utf-8')
     ctd = po.chartable_decode
     s = ""
     for c in b:
@@ -164,7 +220,7 @@ def enctable_bytes_to_string(po, b):
 
 
 def enctable_string_to_bytes(po, s):
-    #return s.encode("utf-8")
+    #return s.encode('utf-8')
     ctd = po.chartable_encode
     b = b""
     for c in b:
@@ -1004,7 +1060,7 @@ def merge_same_po_entries(podict):
 def textwad_extract_raw(po, wadfh, idxfh):
     e = WADIndexEntry()
     while idxfh.readinto(e) == sizeof(e):
-        txtfname = e.Filename.decode("utf-8").lower()
+        txtfname = e.Filename.decode('utf-8').lower()
         n = 0
         wadfh.seek(e.Offset, os.SEEK_SET)
         with open(txtfname, 'wb') as txtfh:
@@ -1014,32 +1070,59 @@ def textwad_extract_raw(po, wadfh, idxfh):
     return
 
 
-def textwad_extract(po, wadfh, idxfh):
+def textwad_empty_podict(po, lang):
     # Prepare empty dict
     podict = {}
     for campgn in campaign_names:
         polist = polib.POFile()
         podict[campgn] = polist
-        pofile_set_default_metadata(polist, po.lang)
+        pofile_set_default_metadata(polist, lang)
+    return podict
+
+
+def textwad_read_to_podict(po, podict,  wadfh, idxfh):
     # Fill with files from WAD
     e = WADIndexEntry()
     while idxfh.readinto(e) == sizeof(e):
-        txtfname = e.Filename.decode("utf-8").lower()
+        txtfname = e.Filename.decode('utf-8').lower()
         wadfh.seek(e.Offset, os.SEEK_SET)
         txt_buffer = wadfh.read(e.Length)
         lines = txt_buffer.split(b'\n')
         lines = [enctable_bytes_to_string(po, ln).rstrip("\r\n") for ln in lines]
         textwad_extract_to_po(podict, txtfname, lines)
-        basename = os.path.splitext(os.path.basename(txtfname))[0]
+    return
+
+
+def textwad_extract(po):
+    podict = textwad_empty_podict(po, po.lang)
+    engpodict = textwad_empty_podict(po, "eng")
+    if True:
+        # Input language PO
+        with open(po.wadfile, 'rb') as wadfh:
+            with open(po.idxfile, 'rb') as idxfh:
+                textwad_read_to_podict(po, podict, wadfh, idxfh)
+
     if po.lang == "eng":
         poext = "pot"
     else:
         poext = "po"
+        # Temporary English PO
+        with open(po.engwadfile, 'rb') as wadfh:
+            with open(po.engidxfile, 'rb') as idxfh:
+                textwad_read_to_podict(po, engpodict, wadfh, idxfh)
+
     if poext == "pot":
         for campgn in campaign_names:
             for e in podict[campgn]:
                 e.msgid = e.msgstr
                 e.msgstr = ""
+    else:
+        for campgn in campaign_names:
+            engpolist = engpodict[campgn]
+            for e in podict[campgn]:
+                ene = find_occurence_in_polist(engpolist, e.occurrences[0])
+                if ene is not None:
+                    e.msgid = ene.msgstr
     merge_same_po_entries(podict)
     for campgn in campaign_names:
         pofname = "text_" + campgn.lower() + "_" + po.lang + "." + poext
@@ -1069,7 +1152,7 @@ def textwad_create(po, wadfh, idxfh):
     for txtfname in txtfiles:
         lines = []
         e = WADIndexEntry()
-        e.Filename = txtfname.encode("utf-8")
+        e.Filename = txtfname.encode('utf-8')
         e.Offset = wadfh.tell()
         textwad_create_from_po(lines, podict, txtfname)
         lines = [enctable_string_to_bytes(po, ln) for ln in lines]
@@ -1087,6 +1170,9 @@ def main():
 
     parser.add_argument('-w', '--wadfile', type=str, required=True,
           help="Name for WAD/IDX files")
+
+    parser.add_argument('-e', '--engwadfile', type=str, default="",
+          help="Name for english language WAD/IDX files, required to extract non-english WADs to PO")
 
     parser.add_argument('-r', '--raw', action='store_true',
           help="Import or export raw files (TXT) rather than .PO/POT")
@@ -1119,17 +1205,26 @@ def main():
     po.wadfile = po.wadbase + ".wad"
     po.idxfile = po.wadbase + ".idx"
 
+    if len(po.engwadfile) > 0:
+        po.engwadbase = os.path.splitext(os.path.basename(po.engwadfile))[0]
+        po.engwadfile = po.engwadbase + ".wad"
+        po.engidxfile = po.engwadbase + ".idx"
+    else:
+        po.engwadbase = ""
+        po.engwadfile = ""
+        po.engidxfile = ""
+
     read_enctable(po, po.enctable)
 
     if po.extract:
         if (po.verbose > 0):
             print("{}: Opening for extract".format(po.wadfile))
-        with open(po.wadfile, 'rb') as wadfh:
-            with open(po.idxfile, 'rb') as idxfh:
-                if po.raw:
+        if po.raw:
+            with open(po.wadfile, 'rb') as wadfh:
+                with open(po.idxfile, 'rb') as idxfh:
                     textwad_extract_raw(po, wadfh, idxfh)
-                else:
-                    textwad_extract(po, wadfh, idxfh)
+        else:
+            textwad_extract(po)
 
     elif po.create:
         if (po.verbose > 0):
