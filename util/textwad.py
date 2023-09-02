@@ -122,6 +122,7 @@ weapon_mod_names_to_code = {
     "lanceur" : 'RAP',
     "grenade nucleaire" : 'NUCLGREN',
     "persuatron" : 'PERSUADER',
+    "endoctrineur" : 'PERSUADER',
     "lance-flammes" : 'FLAMER',
     "deprogrammeur" : 'H2HTASER',
     "psychogaz" : 'CRAZYGAS',
@@ -136,6 +137,7 @@ weapon_mod_names_to_code = {
     "ch. ralentisseur" : 'STASISFLD',
     "bioextracteur" : 'SOULGUN',
     "transp. temporel" : 'TIMEGUN',
+    "trans. temporel" : 'TIMEGUN',
     "cerbere iff" : 'CEREBUSIFF',
     "automedic" : 'MEDI2',
     "cable declencheur" : 'EXPLWIRE',
@@ -1125,7 +1127,7 @@ def textwad_extract(po):
                     e.msgid = ene.msgstr
     merge_same_po_entries(podict)
     for campgn in campaign_names:
-        pofname = "text_" + campgn.lower() + "_" + po.lang + "." + poext
+        pofname = po.poprefix + "_" + campgn.lower() + "_" + po.lang + "." + poext
         polist = podict[campgn]
         pofile_set_default_head_comment(polist, pofname)
         polist.save(pofname)
@@ -1140,7 +1142,7 @@ def textwad_create(po, wadfh, idxfh):
         poext = "po"
     podict = {}
     for campgn in campaign_names:
-        pofname = "text_" + campgn.lower() + "_" + po.lang + "." + poext
+        pofname = po.poprefix + "_" + campgn.lower() + "_" + po.lang + "." + poext
         polist = polib.pofile(pofname)
         podict[campgn] = polist
     if poext == "pot":
@@ -1173,6 +1175,9 @@ def main():
 
     parser.add_argument('-e', '--engwadfile', type=str, default="",
           help="Name for english language WAD/IDX files, required to extract non-english WADs to PO")
+
+    parser.add_argument('-p', '--poprefix', type=str, default="alltext",
+          help="Prefix (possibly with directory) for PO/POT files")
 
     parser.add_argument('-r', '--raw', action='store_true',
           help="Import or export raw files (TXT) rather than .PO/POT")
