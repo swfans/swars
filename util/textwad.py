@@ -223,10 +223,10 @@ def enctable_bytes_to_string(po, b):
 
 def enctable_string_to_bytes(po, s):
     #return s.encode('utf-8')
-    ctd = po.chartable_encode
+    cte = po.chartable_encode
     b = b""
-    for c in b:
-        b.append(cte[c])
+    for c in s:
+        b = b + cte[c]
     return b
 
 
@@ -1145,11 +1145,10 @@ def textwad_create(po, wadfh, idxfh):
         pofname = po.poprefix + "_" + campgn.lower() + "_" + po.lang + "." + poext
         polist = polib.pofile(pofname)
         podict[campgn] = polist
-    if poext == "pot":
-        for campgn in campaign_names:
-            for e in podict[campgn]:
+    for campgn in campaign_names:
+        for e in podict[campgn]:
+            if e.msgstr == "":
                 e.msgstr = e.msgid
-                e.msgid = ""
     txtfiles = list_txtfiles_from_po_content(podict)
     for txtfname in txtfiles:
         lines = []
