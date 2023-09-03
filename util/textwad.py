@@ -1294,16 +1294,13 @@ def textwad_extract(po):
             with open(po.idxfile, 'rb') as idxfh:
                 textwad_read_to_podict(po, podict, wadfh, idxfh)
 
-    if po.lang == "eng":
-        poext = "pot"
-    else:
-        poext = "po"
+    if po.lang != "eng":
         # Temporary English PO
         with open(po.engwadfile, 'rb') as wadfh:
             with open(po.engidxfile, 'rb') as idxfh:
                 textwad_read_to_podict(po, engpodict, wadfh, idxfh)
 
-    if poext == "pot":
+    if po.lang == "eng":
         for campgn in campaign_names:
             for e in podict[campgn]:
                 e.msgid = e.msgstr
@@ -1316,8 +1313,10 @@ def textwad_extract(po):
                 if ene is not None:
                     e.msgid = ene.msgstr
     merge_same_po_entries(podict)
-    for campgn in campaign_names:
-        pofname = po.poprefix + "_" + campgn.lower() + "_" + po.lang + "." + poext
+    for cidx, campgn in enumerate(campaign_names):
+        pofname = po.pofiles[cidx]
+        if campgn.lower() not in pofname:
+            print("{}: File name lacks campaign name, is there a mistake?".format(pofname))
         polist = podict[campgn]
         pofile_set_default_head_comment(polist, pofname)
         polist.save(pofname)
@@ -1326,13 +1325,11 @@ def textwad_extract(po):
 
 def textwad_create(po, wadfh, idxfh):
     # Load PO files
-    if po.lang == "eng":
-        poext = "pot"
-    else:
-        poext = "po"
     podict = {}
-    for campgn in campaign_names:
-        pofname = po.poprefix + "_" + campgn.lower() + "_" + po.lang + "." + poext
+    for cidx, campgn in enumerate(campaign_names):
+        pofname = po.pofiles[cidx]
+        if campgn.lower() not in pofname:
+            print("{}: File name lacks campaign name, is there a mistake?".format(pofname))
         polist = polib.pofile(pofname)
         podict[campgn] = polist
     for campgn in campaign_names:
@@ -1359,23 +1356,23 @@ def main():
     """
     parser = argparse.ArgumentParser(description=__doc__.split('.')[0])
 
+    parser.add_argument('pofiles', type=str, nargs=len(campaign_names),
+          help="List of per-campaign PO/POT file names, in proper order (sy ch pu co)")
+
     parser.add_argument('-w', '--wadfile', type=str, required=True,
           help="Name for WAD/IDX files")
 
     parser.add_argument('-e', '--engwadfile', type=str, default="",
           help="Name for english language WAD/IDX files, required to extract non-english WADs to PO")
 
-    parser.add_argument('-p', '--poprefix', type=str, default="alltext",
-          help="Prefix (possibly with directory) for PO/POT files")
+    parser.add_argument('-l', '--lang', type=str, default="eng",
+          help="Language of the processed files, required to extract non-english WADs to PO")
 
     parser.add_argument('-r', '--raw', action='store_true',
           help="Import or export raw files (TXT) rather than .PO/POT")
 
     parser.add_argument('-t', '--enctable', type=str, required=True,
           help="Character encoding table file name")
-
-    parser.add_argument('-l', '--lang', type=str, default="eng",
-          help="Language of the processed files")
 
     parser.add_argument('-v', '--verbose', action='count', default=0,
           help="Increases verbosity level; max level is set by -vvv")
@@ -1394,7 +1391,10 @@ def main():
 
     po = parser.parse_args()
 
-    po.wadbase = os.path.splitext(os.path.basename(po.wadfile))[0]
+    if po.wadfile.lower().endswith(".wad"):
+        po.wadbase = os.path.splitext(po.wadfile)[0]
+    else:
+        po.wadbase = po.wadfile
     assert len(po.wadbase) > 0, "Provided WAD file name base is too short"
     po.wadfile = po.wadbase + ".wad"
     po.idxfile = po.wadbase + ".idx"
