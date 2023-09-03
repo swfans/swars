@@ -752,7 +752,7 @@ msgctxt "mission title"
 msgid "Soul Crusader"
 msgstr ""
 
-#: mission.title:40
+#: mission.title:43
 msgctxt "mission title"
 msgid "Deadly Harvest"
 msgstr ""
