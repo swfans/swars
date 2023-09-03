@@ -1102,7 +1102,7 @@ msgstr ""
 
 #: mapscreen.city11:1
 msgctxt "map screen location - name"
-msgid "Bahrain"
+msgid "Al Manamah"
 msgstr ""
 
 #: mapscreen.city11:4 mapscreen.city24:4 mapscreen.city28:4 mapscreen.city34:4
