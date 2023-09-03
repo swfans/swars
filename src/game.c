@@ -5262,7 +5262,8 @@ void init_weapon_text(void)
     // TODO change the format to use our INI parser, and weapon codenames from config
     s = weapon_text;
     n = (background_type == 1) ? 1 : 0; // TODO store naming convention within INI file
-    for (i = 0; i != n; i++)
+    LOGSYNC("Read names after skipping %d sets", n);
+    for (i = 0; i < n; i++)
     {
         if (s) s = strchr(s, ']'); // PLAYER type
         if (s) s++;
@@ -5319,7 +5320,8 @@ void init_weapon_text(void)
                 weapon_text[weptxt_pos] = *s++;
                 weptxt_pos++;
             }
-            weapon_text[weptxt_pos] = 0;
+            weapon_text[weptxt_pos] = '\0';
+            weptxt_pos++;
             s += 2;
 
             n = weapon_text_index[i];
@@ -5360,7 +5362,8 @@ void init_weapon_text(void)
             weapon_text[weptxt_pos] = *s++;
             weptxt_pos++;
         }
-        weapon_text[weptxt_pos] = 0;
+        weapon_text[weptxt_pos] = '\0';
+        weptxt_pos++;
         s += 2;
 
         n = weapon_text_index[i];
