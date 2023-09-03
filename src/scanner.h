@@ -29,15 +29,18 @@ extern "C" {
 
 #define SCANNER_BIG_BLIP_COUNT 16
 #define SCANNER_GROUP_COUNT 6
+#define SCANNER_ARC_COUNT 4
+
+struct Objective;
 
 struct BigBlip
 {
   long X;
   long Z;
-  char Colour;
-  char Period;
-  char Speed;
-  char Counter;
+  ubyte Colour;
+  ubyte Period;
+  ubyte Speed;
+  ubyte Counter;
 };
 
 struct Arc
@@ -46,10 +49,10 @@ struct Arc
   long Z1;
   long X2;
   long Z2;
-  char ColourIsUnused;
-  char Period;
-  char SpeedIsUnused;
-  char Counter;
+  ubyte ColourIsUnused;
+  ubyte Period;
+  ubyte SpeedIsUnused;
+  ubyte Counter;
 };
 
 struct Scanner
@@ -65,15 +68,10 @@ struct Scanner
   long Contrast;
   long Brightness;
   long Width[200];
-  struct BigBlip BigBlip[15];
-  char field_3FC[9];
-  char Arc__Period;
-  char field_406;
-  char field_407;
-  struct Arc Arc1[3];
-  char field_444[20];
-  char Group[6];
-  char GroupCol[6];
+  struct BigBlip BigBlip[SCANNER_BIG_BLIP_COUNT];
+  struct Arc Arc[SCANNER_ARC_COUNT];
+  ubyte Group[SCANNER_GROUP_COUNT];
+  ubyte GroupCol[SCANNER_GROUP_COUNT];
   ubyte GroupCount;
   short NearThing1;
 };
@@ -88,6 +86,8 @@ extern short waft_table[32];
 void SCANNER_init(void);
 void SCANNER_fill_in(void);
 void SCANNER_set_colour(ubyte col);
+
+void add_signal_to_scanner(struct Objective *p_objectv, ubyte flag);
 /******************************************************************************/
 #ifdef __cplusplus
 }

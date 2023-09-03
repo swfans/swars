@@ -45,7 +45,7 @@ enum GameFlags {
     GamF_Unkn10000   = 0x010000,
     GamF_Unkn20000   = 0x020000,
     GamF_Unkn40000   = 0x040000,
-    GamF_Unkn80000   = 0x080000,
+    GamF_SkipIntro   = 0x080000,
     GamF_Unkn100000  = 0x00100000,
     GamF_Unkn200000  = 0x00200000,
     GamF_Unkn400000  = 0x00400000,
@@ -439,18 +439,6 @@ struct ScreenMenuBox { // sizeof=42
   sbyte field_29;
 };
 
-struct UnknGroup { // sizeof=40
-  long ugfld_0;
-  long ugfld_4;
-  long ugfld_8;
-  struct WarFlag *war_flags;
-  ubyte ugfld_16[8];
-  long ugfld_24;
-  long ugfld_28;
-  long ugfld_32;
-  long ugfld_36;
-};
-
 struct LevelDef {
   ubyte PlayableGroups[8];
   ubyte field_8[33];
@@ -468,7 +456,7 @@ struct InGame {
     ubyte DangerTrack;
     ubyte UseMultiMedia;
     ubyte fld_unk7DE;
-    ubyte fld_unk7DF;
+    ubyte GameOver;
     struct Scanner Scanner;
     long Credits;
     short fld_unkC4B;
@@ -545,6 +533,12 @@ struct Animation {
   short field_6E;
 };
 
+struct WADIndexEntry {
+    char Filename[12];
+    ulong Offset;
+    ulong Length;
+};
+
 #pragma pack()
 
 extern char session_name[20];
@@ -571,7 +565,7 @@ extern ubyte byte_181189;
 
 extern ubyte cmdln_param_n;
 extern ubyte pktrec_mode;
-extern ubyte cmdln_pr_num;
+extern ushort packet_rec_no;
 extern ubyte game_perspective;
 extern ubyte exit_game;
 extern ubyte input_char;
@@ -602,7 +596,6 @@ extern char *gui_strings_data;
 extern char *gui_strings_data_end;
 extern char *gui_strings[STRINGS_MAX];
 
-extern struct MyMapElement *game_my_big_map;
 extern struct SingleFloorTexture *game_textures;
 extern struct SingleTexture *game_face_textures;
 extern struct SinglePoint *game_object_points;
@@ -636,7 +629,6 @@ extern struct ColColumn *game_col_columns;
 extern struct SingleObjectFace3 *game_special_object_faces;
 extern struct SingleObjectFace4 *game_special_object_faces4;
 extern struct FloorTile *game_floor_tiles;
-extern ushort next_command;
 extern ushort next_col_vect;
 extern ubyte *game_user_heap;
 extern struct SpecialPoint *game_screen_point_pool;
@@ -648,7 +640,6 @@ extern ubyte *spare_map_buffer;
 extern struct Objective *game_used_lvl_objectives;
 extern ushort next_used_lvl_objective;
 extern struct LevelMisc *game_level_miscs;
-extern ushort same_type_head[290];
 extern ushort word_176E38;
 
 extern PrimObjectPoint *prim_object_points;
@@ -680,6 +671,7 @@ extern ubyte *memload;
 extern ubyte net_host_player_no;
 extern ubyte byte_1C6D4A;
 extern ubyte byte_1C6DDC[5];
+extern ushort word_1C8446;
 extern ubyte data_19ec6f;
 extern ulong save_mortal_salt;
 
@@ -689,8 +681,8 @@ extern ubyte old_screentype;
 extern ubyte screentype;
 extern long data_155704;
 extern short flic_mod_coords_b[8];
-extern ubyte byte_15573C[4];
-extern ubyte byte_155740[4];
+extern ubyte flic_mod_heights[4];
+extern ubyte flic_mod_widths[4];
 extern ubyte data_1c498d;
 extern ubyte data_1c498e;
 extern char *outro_text_s;
@@ -922,6 +914,8 @@ void game_quit (void);
 void game_transform_path (const char *file_name, char *result);
 const char *game_get_data_path (void);
 const char *game_get_user_path (void);
+
+void load_multicolor_sprites(void);
 
 void read_conf_file(void);
 void game_setup(void);

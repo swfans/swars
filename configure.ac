@@ -230,7 +230,7 @@ LIBS="$LIBS $WILDMIDI_LIBS"
 AC_SUBST([MKWFLAGS])
 AC_SUBST([WINDRES])
 
-AC_CONFIG_FILES([Makefile conf/Makefile src/Makefile util/Makefile])
+AC_CONFIG_FILES([Makefile conf/Makefile lang/Makefile src/Makefile util/Makefile])
 AC_OUTPUT
 
 echo

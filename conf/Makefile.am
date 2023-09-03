@@ -5,7 +5,8 @@ conf_DATA = \
 	miss000.ini \
 	miss001.ini \
 	miss002.ini \
-	miss999.ini \
+	miss003.ini \
+	miss099.ini \
 	midipats.cfg
 
 tone000dir = $(prefix)/opt/$(PACKAGE)/conf/Tone_000

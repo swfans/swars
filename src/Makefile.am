@@ -60,16 +60,24 @@ swars_SOURCES = \
 	../bfsoundlib/include/oggvorbis.h \
 	../bfsoundlib/src/oggvorbis.c \
 	config.h \
+	bigmap.c \
+	bigmap.h \
 	building.c \
 	building.h \
 	campaign.c \
 	campaign.h \
+	command.c \
+	command.h \
 	cybmod.c \
 	cybmod.h \
 	display.c \
 	display.h \
 	dos.c \
 	dos.h \
+	drawtext.c \
+	drawtext.h \
+	engintrns.c \
+	engintrns.h \
 	game.c \
 	game_data.c \
 	game_data.h \
@@ -77,6 +85,8 @@ swars_SOURCES = \
 	globals.h \
 	keyboard.c \
 	keyboard.h \
+	lvobjctv.c \
+	lvobjctv.h \
 	main.c \
 	matrix.c \
 	matrix.h \
@@ -88,11 +98,15 @@ swars_SOURCES = \
 	packet.h \
 	people.c \
 	people.h \
+	pepgroup.c \
+	pepgroup.h \
 	player.h \
 	research.c \
 	research.h \
 	scanner.c \
 	scanner.h \
+	scandraw.c \
+	scandraw.h \
 	sound.c \
 	sound.h \
 	swars.sx \

@@ -28,6 +28,9 @@ extern "C" {
 /******************************************************************************/
 #pragma pack(1)
 
+#define THINGS_LIMIT 1000
+#define STHINGS_LIMIT 1500
+
 enum ThingType {
     TT_NONE = 0x0,
     TT_UNKN1 = 0x1,
@@ -54,7 +57,7 @@ enum ThingType {
     SmTT_NUCLEAR_BOMB = 0x16,
     TT_UNKN23 = 0x17,
     SmTT_SMOKE_GENERATOR = 0x18,
-    SmTT_MINE = 0x19,
+    SmTT_DROPPED_ITEM = 0x19,
     SmTT_CARRIED_ITEM = 0x1A,
     SmTT_ELECTRIC_STRAND = 0x1B,
     TT_RAZOR_WIRE = 0x1C,
@@ -110,7 +113,7 @@ struct TngUObject
     ushort BuildStartVect;
     ushort BuildNumbVect;
     ushort ZZ_unused_but_pads_to_long_ObjectNo;
-    short ComHead;
+    ushort ComHead;
     short ComCur;
     short Mood;
     short RaiseDY[2];
@@ -196,7 +199,7 @@ struct TngUVehicle
   short TargetDZ;
   short OnFace;
   short WorkPlace;
-  short ComHead;
+  ushort ComHead;
   short ComCur;
   short Timer2;
   short RecoilTimer;
@@ -313,7 +316,11 @@ struct TngUPerson
  * Everything in game besides ground terrain, are Things.
  */
 struct Thing { // sizeof=168
+    /** Previous object in the `mapwho` linked list.
+     */
     short Parent;
+    /** Next object in the `mapwho` linked list.
+     */
     short Next;
     short LinkParent;
     short LinkChild;
@@ -337,7 +344,7 @@ struct Thing { // sizeof=168
     long VZ;
     short Speed;
     short Health;
-    ushort Owner;
+    short Owner;
     ubyte PathOffset;
     ubyte SubState;
     struct Thing *PTarget;
@@ -351,6 +358,51 @@ struct Thing { // sizeof=168
         struct TngUEffect UEffect;
         struct TngUPerson UPerson;
     } U;
+};
+
+struct STngUEffect {
+    short VX;
+    short VY;
+    short VZ;
+    short OX;
+    short OY;
+    short OZ;
+};
+
+struct STngUScenery {
+    ushort Frame;
+    ushort StartFrame;
+    short LightHead;
+    short LightDie;
+    short LightAnim;
+    short Health;
+};
+
+struct STngUWeapon {
+    short WeaponType;
+    short LastFired;
+    short Ammo;
+    short Owner;
+    short OnFace;
+};
+
+struct STngUTraffic {
+    short Link[4];
+    ubyte Flags[4];
+};
+
+struct STngULight {
+    short MinBright;
+    short RangeBright;
+};
+
+struct STngUBang {
+    short shrapnel;
+    short phwoar;
+};
+
+struct STngUFire {
+    short flame;
 };
 
 struct SimpleThing
@@ -374,9 +426,29 @@ struct SimpleThing
     short StartFrame;
     short Timer1;
     short StartTimer1;
-    char U[12];
-    long field_38;
+    union {
+        struct STngUEffect UEffect;
+        struct STngUScenery UScenery;
+        struct STngUWeapon UWeapon;
+        struct STngUTraffic UTraffic;
+        struct STngULight ULight;
+        struct STngUBang UBang;
+        struct STngUFire UFire;
+    } U;
+    short field_38;
+    ushort UniqueID;
 };
+
+typedef struct {
+    short Arg1;
+    short Arg2;
+    short Arg3;
+    short Arg4;
+    long Arg5;
+} ThingFilterParams;
+
+/** Definition of a simple callback type which can only return true/false and has no memory of previous checks. */
+typedef TbBool (*ThingBoolFilter)(short thing, ThingFilterParams *params);
 
 /** Old structure for storing State of any Thing.
  * Used only to allow reading old, pre-release levels.
@@ -665,7 +737,11 @@ struct ThingOldV9 { // sizeof=216
     ushort PersonUnkn160; // pos=160
     ubyte SubState;
     ubyte PersonComRange;
-    ushort VehicleMaxSpeed; // pos=164
+    /* Vehicle `ReqdSpeed`, confirmed since fmtver=4 (from Pre-Alpha Demo
+     * code analysis). In that version there was no MaxSpeed, so this counted
+     * for both.
+     */
+    ushort VehicleReqdSpeed; // pos=164
     /* Is Vehicle `UniqueID`, Person `WeaponTimer`, and also used in Objects
      * since fmtver=4 (from Pre-Alpha Demo code analysis).
      */
@@ -736,15 +812,21 @@ struct ThingOldV9 { // sizeof=216
 
 #pragma pack()
 /******************************************************************************/
-extern ushort things_used_head;
-
 extern struct Thing *things;
+extern ushort things_used_head;
+extern ushort same_type_head[256+32];
+
 extern struct SimpleThing *sthings;
+extern ushort sthings_used_head;
 
 void init_things(void);
+void refresh_old_thing_format(struct Thing *p_thing, struct ThingOldV9 *p_oldthing, ulong fmtver);
 void process_things(void);
 
+/** Delete the thing from `mapwho` chain.
+ */
 TbResult delete_node(struct Thing *p_thing);
+
 void add_node_thing(ushort new_thing);
 short get_new_thing(void);
 void remove_thing(short tngno);
@@ -753,9 +835,36 @@ void add_node_sthing(ushort new_thing);
 short get_new_sthing(void);
 void remove_sthing(short tngno);
 
-void refresh_old_thing_format(struct Thing *p_thing, struct ThingOldV9 *p_oldthing, ulong fmtver);
+short get_thing_same_type_head(short ttype, short subtype);
+
+TbBool thing_is_within_circle(short thing, short X, short Z, ushort R);
+
+/** Unified function to find a thing of given type within given circle and matching filter.
+ *
+ * Tries to use mapwho and same type list, and if cannot then just searches all used things.
+ *
+ * @param X Map coordinate in map units.
+ * @param Z Map coordinate in map units.
+ * @param R Circle radius in map units.
+ * @param ttype Thing Type; need to be specific, no -1 allowed.
+ * @param subtype Thing SubType; to catch all, use -1.
+ * @param filter Filter callback function.
+ * @param param Parameters for filter callback function.
+ */
+short find_thing_type_within_circle_with_filter(short X, short Z, ushort R,
+  short ttype, short subtype, ThingBoolFilter filter, ThingFilterParams *params);
+
+short find_dropped_weapon_within_circle(short X, short Z, ushort R, short weapon);
+short find_person_carrying_weapon_within_circle(short X, short Z, ushort R, short weapon);
+short find_person_carrying_weapon(short weapon);
 
 short find_nearest_from_group(struct Thing *p_person, ushort group, ubyte no_persuaded);
+short search_things_for_index(short index);
+short find_nearest_object2(short mx, short mz, ushort sub_type);
+short search_object_for_qface(ushort object, ubyte gflag, ubyte flag, ushort after);
+short search_for_station(short x, short z);
+short search_things_for_uniqueid(short index, ubyte flag);
+
 /******************************************************************************/
 #ifdef __cplusplus
 }

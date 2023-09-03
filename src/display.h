@@ -5,23 +5,6 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include "bfscreen.h"
-#include "poly.h"
-
-// TODO figure out why we have PolyPoint and EnginePoint
-struct EnginePoint {
-  struct PolyPoint pp;
-  /*long X;
-  long Y;
-  long TMapX;
-  long TMapY;
-  long Shade;*/
-  long X3d;
-  long Y3d;
-  long Z3d;
-  long DistSqr;
-  ulong Flags; // TODO check if it is ushort
-};
-
 
 extern TbScreenMode screen_mode_game_hi;
 extern TbScreenMode screen_mode_game_lo;
@@ -32,6 +15,10 @@ extern ubyte *back_buffer;
 extern struct TbSprite *unk3_sprites;
 extern TbPixel fade_unaffected_colours[];
 extern TbPixel colour_lookup[];
+
+extern long engn_xc;
+extern long engn_yc;
+extern long engn_zc;
 
 extern struct TbSprite *pointer_sprites;
 extern struct TbSprite *pointer_sprites_end;
@@ -60,7 +47,5 @@ void show_black_screen(void);
 void my_set_text_window(ushort x1, ushort y1, ushort w, ushort h);
 ulong my_string_width(const char *text);
 ubyte font_height(uchar c);
-
-void draw_trigpoly(struct PolyPoint *point_a, struct PolyPoint *point_b, struct PolyPoint *point_c);
 
 #endif

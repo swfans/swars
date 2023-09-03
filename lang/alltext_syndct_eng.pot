@@ -1,0 +1,2176 @@
+# *****************************************************************************
+#  Syndicate Wars Port, source port of the classic strategy game from Bullfrog.
+# *****************************************************************************
+#   @file alltext_syndct_eng.pot
+#      Menu text for SW Port translation file
+#  @par Purpose:
+#      Contains translation of the national text in the game.
+#  @par Comment:
+#      Use this file to improve the translation for specific language.
+#  @author   Syndicate Wars Fans
+#  @date     20 Aug 2023 - 02 Sep 2023
+#  @par  Copying and copyrights:
+#      This program is free software; you can redistribute it and/or modify
+#      it under the terms of the GNU General Public License as published by
+#      the Free Software Foundation; either version 2 of the License, or
+#      (at your option) any later version.
+#
+# *****************************************************************************
+msgid ""
+msgstr ""
+"Project-Id-Version: Menu text for SW Port\n"
+"Report-Msgid-Bugs-To: https://github.com/swfans/swars/issues\n"
+"POT-Creation-Date: 2023-08-20 01:12+0200\n"
+"PO-Revision-Date: 2023-09-02 12:00+0100\n"
+"Last-Translator: Mefistotelis <mefistotelis@gmail.com>\n"
+"Language-Team: Syndicate Wars Fans <github.com/swfans>\n"
+"Language: en_GB\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-SourceCharset: utf-8\n"
+
+#: mission.brief.mail1.par1.h mission.brief.mail14.par1.h
+#: mission.brief.mail15.par1.h mission.brief.mail17.par1.h
+#: mission.brief.mail18.par1.h mission.brief.mail19.par1.h
+#: mission.brief.mail20.par1.h mission.brief.mail21.par1.h
+msgctxt "mission brief email header"
+msgid "Message Type: DIRECT"
+msgstr ""
+
+#: mission.brief.mail1.par2.h
+msgctxt "mission brief email header"
+msgid "Priority: 3"
+msgstr ""
+
+#: mission.brief.mail1.par3.h mission.brief.mail2.par3.h
+#: mission.brief.mail3.par3.h mission.brief.mail4.par3.h
+#: mission.brief.mail6.par3.h mission.brief.mail7.par3.h
+#: mission.brief.mail8.par3.h mission.brief.mail9.par3.h
+#: mission.brief.mail10.par3.h mission.brief.mail11.par3.h
+#: mission.brief.mail12.par3.h mission.brief.mail13.par3.h
+#: mission.brief.mail14.par3.h mission.brief.mail15.par3.h
+#: mission.brief.mail16.par3.h mission.brief.mail17.par3.h
+#: mission.brief.mail18.par3.h mission.brief.mail19.par3.h
+#: mission.brief.mail20.par3.h mission.brief.mail21.par3.h
+msgctxt "mission brief email header"
+msgid "Message begins:"
+msgstr ""
+
+#: mission.brief.mail1.par4.c2 mission.brief.mail2.par4.c2
+#: mission.brief.mail3.par4.c2 mission.brief.mail4.par4.c2
+#: mission.brief.mail5.par4.c2 mission.brief.mail6.par4.c2
+#: mission.brief.mail7.par4.c2 mission.brief.mail8.par4.c2
+#: mission.brief.mail9.par4.c2 mission.brief.mail10.par4.c2
+#: mission.brief.mail11.par4.c2 mission.brief.mail12.par4.c2
+#: mission.brief.mail13.par4.c2 mission.brief.mail14.par4.c2
+#: mission.brief.mail15.par4.c2 mission.brief.mail16.par4.c2
+#: mission.brief.mail17.par4.c2 mission.brief.mail18.par4.c2
+#: mission.brief.mail19.par4.c2 mission.brief.mail20.par4.c2
+#: mission.brief.mail21.par4.c2
+msgctxt "mission brief email orders"
+msgid "Orders"
+msgstr ""
+
+#: mission.brief.mail1.par5.c2
+msgctxt "mission brief email orders"
+msgid "London: Quell disorder."
+msgstr ""
+
+#: mission.brief.mail1.par6.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Extraordinary malfunctions of UTOPIA chips are being reported. The "
+"malfunctions are all total dropouts, complete CHIP failures. Subsequent "
+"category of citizens is U-Unguided. U category civilians reported in "
+"violation of behaviour codes within one square kilometre of this substation."
+msgstr ""
+
+#: mission.brief.mail1.par7.c4
+msgctxt "mission brief email sender"
+msgid "EuroCorp Core 0-1-0/171261/26D: London Artificial Intelligence, UTOPIA"
+msgstr ""
+
+#: mission.brief.mail1.par8.expansion
+msgctxt "mission brief email sender"
+msgid "Universal Transferred Organic Processing Interface Architecture"
+msgstr ""
+
+#: mission.brief.mail2.par1.h mission.brief.mail3.par1.h
+#: mission.brief.mail4.par1.h mission.brief.mail5.par1.h
+#: mission.brief.mail6.par1.h mission.brief.mail7.par1.h
+#: mission.brief.mail8.par1.h mission.brief.mail9.par1.h
+#: mission.brief.mail10.par1.h mission.brief.mail11.par1.h
+#: mission.brief.mail12.par1.h mission.brief.mail13.par1.h
+#: mission.brief.mail16.par1.h
+msgctxt "mission brief email header"
+msgid "Message Type: HARDWIRED"
+msgstr ""
+
+#: mission.brief.mail2.par2.h
+msgctxt "mission brief email header"
+msgid "Priority: 1 - Emergency"
+msgstr ""
+
+#: mission.brief.mail2.par5.c2
+msgctxt "mission brief email orders"
+msgid ""
+"Detroit: Seek out members of the Church of the New Epoch and terminate them."
+" Neutralise category U-Unguided citizens."
+msgstr ""
+
+#: mission.brief.mail2.par6.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Attention, Executive <login>. I am UTOPIA Agent Maritz, EuroCorp "
+"Intelligence."
+msgstr ""
+
+#: mission.brief.mail2.par7.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"The situation is critical. UTOPIA has been attacked. The EuroCorp "
+"information infrastructure has been fundamentally compromised. Emergency "
+"procedure has been initiated."
+msgstr ""
+
+#: mission.brief.mail2.par8.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"I am transferring all EuroCorp command decisions to the backup AI "
+"immediately. I will relay its analysis and orders to you. I repeat, supreme "
+"EuroCorp command is being transferred to the London Artificial Intelligence."
+" Its primary standing order is to rebuild UTOPIA, from first principles if "
+"necessary."
+msgstr ""
+
+#: mission.brief.mail2.par9.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"London AI is already making its initial assessment of the situation. The "
+"formulation of missions will follow."
+msgstr ""
+
+#: mission.brief.mail2.par10.c5
+msgctxt "mission brief email paragraph"
+msgid "You will direct agents to execute these missions."
+msgstr ""
+
+#: mission.brief.mail2.par11.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"The general situation looks bad. A global attack has been launched on the "
+"Syndicate. Detroit's UTOPIA AI was targeted and my counterpart there "
+"eliminated. Detroit's attackers released a sophisticated virus into UTOPIA. "
+"Fail-safes aren't activating. However the virus works, it's shifting from AI"
+" to AI faster than we can track it."
+msgstr ""
+
+#: mission.brief.mail2.par12.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"A completely unauthorised group calling itself The Church of the New Epoch "
+"claims responsibility for the virus - they call it \"Harbinger\". It is "
+"Harbinger which is causing the exponential rise in CHIP dropouts. The Church"
+" of the New Epoch has also begun a propaganda campaign inciting violence "
+"against EuroCorp, which is being transmitted on hijacked UTOPIA channels."
+msgstr ""
+
+#: mission.brief.mail2.par13.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"The most zealous followers of this so-called \"Church\" refer to themselves "
+"as \"Disciples\" and can be distinguished by caped body armour."
+msgstr ""
+
+#: mission.brief.mail2.par14.c4 mission.brief.mail3.par12.c4
+#: mission.brief.mail4.par12.c4 mission.brief.mail5.par8.c4
+#: mission.brief.mail6.par10.c4 mission.brief.mail7.par10.c4
+#: mission.brief.mail8.par20.c4 mission.brief.mail9.par10.c4
+#: mission.brief.mail10.par11.c4 mission.brief.mail11.par10.c4
+#: mission.brief.mail12.par10.c4 mission.brief.mail13.par11.c4
+#: mission.brief.mail16.par9.c4
+msgctxt "mission brief email sender"
+msgid "Maritz"
+msgstr ""
+
+#: mission.brief.mail3.par2.h mission.brief.mail4.par2.h
+#: mission.brief.mail5.par2.h mission.brief.mail6.par2.h
+#: mission.brief.mail7.par2.h mission.brief.mail8.par2.h
+#: mission.brief.mail9.par2.h mission.brief.mail10.par2.h
+#: mission.brief.mail11.par2.h mission.brief.mail12.par2.h
+#: mission.brief.mail13.par2.h mission.brief.mail14.par2.h
+#: mission.brief.mail15.par2.h mission.brief.mail16.par2.h
+#: mission.brief.mail17.par2.h mission.brief.mail18.par2.h
+#: mission.brief.mail19.par2.h mission.brief.mail20.par2.h
+#: mission.brief.mail21.par2.h
+msgctxt "mission brief email header"
+msgid "Priority: 1"
+msgstr ""
+
+#: mission.brief.mail3.par5.c2
+msgctxt "mission brief email orders"
+msgid "Hong Kong: Persuade Yamaguchi power plant technicians."
+msgstr ""
+
+#: mission.brief.mail3.par6.c2
+msgctxt "mission brief email orders"
+msgid "Beijing: Persuade Yamaguchi corporation executives."
+msgstr ""
+
+#: mission.brief.mail3.par7.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Congratulations, <login>. Detroit has been successfully stabilised. However,"
+" the chaos brought by the Harbinger virus has spread elsewhere. Syndicate "
+"communications are being intercepted globally. Unauthorised order codes are "
+"being issued all over UTOPIA. Regional EuroCorp divisions are isolating "
+"themselves for their own security, effectively creating new syndicates in "
+"the process. These must be brought back under the control of EuroCorp where "
+"possible. Otherwise they will have to be destroyed."
+msgstr ""
+
+#: mission.brief.mail3.par8.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"In Hong Kong, Yamaguchi Holodata, the Pacific Rim's major UTOPIA CHIP "
+"manufacturer, is attempting to establish an independent syndicate. We intend"
+" to undermine Yamaguchi's plans in two key strikes."
+msgstr ""
+
+#: mission.brief.mail3.par9.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"The Yamaguchi corporation's main power supply comes from the Hong Kong "
+"fusion plant. Send a team of agents to penetrate this site and persuade the "
+"technicians to join us. Without the technicians' attention, the core will "
+"overload, causing an explosion. Destroying this station should be enough to "
+"keep Yamaguchi pre-occupied for a while."
+msgstr ""
+
+#: mission.brief.mail3.par10.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"To complete the blow against Yamaguchi, pay a visit to their Beijing "
+"offices. Locate and persuade their chief executives. Neutralise any agents "
+"you encounter. As London AI's mission simulations indicate a need for more "
+"agents to complement those in stasis in our cryovats, you are authorised to "
+"use the persuadertron at your discretion."
+msgstr ""
+
+#: mission.brief.mail3.par11.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"By the time you complete your objectives, Yamaguchi should be eager to "
+"discard any notion of leaving the EuroCorp fold."
+msgstr ""
+
+#: mission.brief.mail4.par5.c2
+msgctxt "mission brief email orders"
+msgid ""
+"Geneva, Vancouver and Matochkin Shar: Seek and persuade Bluesky Tendencies "
+"scientists."
+msgstr ""
+
+#: mission.brief.mail4.par6.c5
+msgctxt "mission brief email paragraph"
+msgid "Greetings, <login>. Your success is heartening."
+msgstr ""
+
+#: mission.brief.mail4.par7.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Your next mission is to provide us with the brains we need to build a new "
+"R&D department. The Yamaguchi executives you persuaded provided us with "
+"information regarding the whereabouts of some top scientific personnel. "
+"Bluesky Tendencies has laboratories in Geneva, Vancouver and Matochkin Shar."
+" All had Grade A scientific personnel assigned to them. As soon as your "
+"agents reach any of these destinations, a UTOPIA identkey trace in the local"
+" network should pick out target personnel."
+msgstr ""
+
+#: mission.brief.mail4.par8.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"These scientists are some of the most prized brains in the Syndicate. It is "
+"imperative that they come to no harm."
+msgstr ""
+
+#: mission.brief.mail4.par9.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Update: The mysterious Church of the New Epoch gains more members hourly, "
+"converting citizens with a combination of brainwashing and CHIP hacking "
+"techniques. The converts show little evidence of genuine religious "
+"motivation. The Church of the New Epoch tells its followers that the end of "
+"the world is near and that only the Church possesses the technology to save "
+"the faithful from the Cataclysm. Their doctrine is defiantly anti-Syndicate."
+msgstr ""
+
+#: mission.brief.mail4.par10.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Significantly, Unguided citizens don't necessarily join this cult, even when"
+" they encounter its zealots."
+msgstr ""
+
+#: mission.brief.mail4.par11.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"It also seems that our Persuadertrons do not work on the cultists "
+"themselves. We don't know why. We know practically nothing about the cult's "
+"technology but research into it has now begun as a matter of the highest "
+"priority. Their technical expertise is unquestionably impressive."
+msgstr ""
+
+#: mission.brief.mail5.par3.h
+msgctxt "mission brief email header"
+msgid "Message begins: "
+msgstr ""
+
+#: mission.brief.mail5.par5.c2
+msgctxt "mission brief email orders"
+msgid "Singapore: Deliver bullion car to evac zone."
+msgstr ""
+
+#: mission.brief.mail5.par6.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"<login>, your report is interesting. A number of the most highly qualified "
+"R&D staff EuroCorp has ever had at its disposal remain unaccounted for, so "
+"we must learn their current whereabouts and activities. It is possible that "
+"they are working for a splinter syndicate. I will continue to monitor all "
+"channels for additional information."
+msgstr ""
+
+#: mission.brief.mail5.par7.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"A more immediate problem demands your attention at this time. Singaporean "
+"security corporation Tang Assurance has foolishly decided to declare the "
+"city independent. As a consequence, bullion is to be be moved under armed "
+"escort, from the central bank vault to Tang's headquarters. There is no time"
+" to destroy the bank, as Tang operatives will arrive there before your "
+"agents. However, this presents us with the opportunity to hijack the "
+"armoured convoy before it reaches its destination."
+msgstr ""
+
+#: mission.brief.mail6.par5.c2
+msgctxt "mission brief email orders"
+msgid ""
+"Phoenix: Penetrate the defences of the cult's temple and steal technology "
+"secrets."
+msgstr ""
+
+#: mission.brief.mail6.par6.c5
+msgctxt "mission brief email paragraph"
+msgid "Greetings, <login>."
+msgstr ""
+
+#: mission.brief.mail6.par7.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"The Church of the New Epoch is deploying increasingly sophisticated "
+"weaponry, designed using proprietary technologies completely new to our R&D "
+"department. We want to acquire more examples of this technology, analysis of"
+" which will prove useful in determining who is behind the Cult and how best "
+"to combat its influence."
+msgstr ""
+
+#: mission.brief.mail6.par8.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"According to correlative netscans and satellite sweeps, the Cult has "
+"established a major operational centre in Phoenix, where Harbinger has "
+"completely corrupted the resident UTOPIA AI, enabling an almost complete "
+"overthrow of EuroCorp authority. Senior cultists, to whom converts refer as "
+"\"acolytes\", take recently converted zealots on intensive indoctrination "
+"and training. The newly converted zealot's efficiency is tempered in the "
+"carnage wrought by the thousands of citizens who became Unguided, in the "
+"aftermath of the viral attack."
+msgstr ""
+
+#: mission.brief.mail6.par9.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Make your way to the temple and look for anything that can explain more to "
+"us."
+msgstr ""
+
+#: mission.brief.mail7.par5.c2
+msgctxt "mission brief email orders"
+msgid ""
+"Rome: All category U citizens must be completely eliminated, in order to "
+"send the message to other Harbinger victims that EuroCorp will maintain "
+"control."
+msgstr ""
+
+#: mission.brief.mail7.par6.c2
+msgctxt "mission brief email orders"
+msgid ""
+"Prevent emergence of independent syndicate by annihilating the local "
+"garrison."
+msgstr ""
+
+#: mission.brief.mail7.par7.c5
+msgctxt "mission brief email paragraph"
+msgid "Well met, <login>."
+msgstr ""
+
+#: mission.brief.mail7.par8.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Harbinger has been particularly effective in Rome. With its passing, a tide "
+"of chaos is breaking on the streets. Unguided gather and turn to the "
+"destruction of the city, block by block."
+msgstr ""
+
+#: mission.brief.mail7.par9.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"The former EuroCorp security garrison has sealed itself off, while the agent"
+" stationed there attempts to regain control of the local, virus-ridden AI. "
+"However, the conditions leave the garrison's vault vulnerable. Neutralise "
+"all garrison personnel."
+msgstr ""
+
+#: mission.brief.mail8.par5.c2
+msgctxt "mission brief email orders"
+msgid "Hong Kong, Beijing and Phoenix: neutralise rogue agents."
+msgstr ""
+
+#: mission.brief.mail8.par6.c2
+msgctxt "mission brief email orders"
+msgid "Return to base for further instructions."
+msgstr ""
+
+#: mission.brief.mail8.par7.c5
+msgctxt "mission brief email paragraph"
+msgid "Felicitations, <login>."
+msgstr ""
+
+#: mission.brief.mail8.par8.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"The following message was intercepted by netscan at 06:55 yesterday. London "
+"AI has just decrypted it."
+msgstr ""
+
+#: mission.brief.mail8.par9.c3
+msgctxt "mission brief email paragraph"
+msgid "Message Type: Encoded Transcript"
+msgstr ""
+
+#: mission.brief.mail8.par10.c3
+msgctxt "mission brief email paragraph"
+msgid "Priority: High"
+msgstr ""
+
+#: mission.brief.mail8.par11.c3
+msgctxt "mission brief email paragraph"
+msgid "FROM: Control"
+msgstr ""
+
+#: mission.brief.mail8.par12.c3
+msgctxt "mission brief email paragraph"
+msgid "TO: All Field Executives"
+msgstr ""
+
+#: mission.brief.mail8.par13.c3
+msgctxt "mission brief email paragraph"
+msgid "Message begins:"
+msgstr ""
+
+#: mission.brief.mail8.par14.c3
+msgctxt "mission brief email paragraph"
+msgid ""
+"Agents purporting to represent EuroCorp have carried out covert operations "
+"in sectors of interest to us."
+msgstr ""
+
+#: mission.brief.mail8.par15.c3
+msgctxt "mission brief email paragraph"
+msgid ""
+"Reconnaissance of these areas is desired. Agents should include assessments "
+"of their new mods in their reports."
+msgstr ""
+
+#: mission.brief.mail8.par16.c3
+msgctxt "mission brief email paragraph"
+msgid "Message ends."
+msgstr ""
+
+#: mission.brief.mail8.par17.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"It is evident from this message that our activities have been monitored by "
+"rogue agents with access to cyber-technology. Some of this technology may be"
+" more advanced than our own - we do not know what development resources this"
+" group has at its disposal."
+msgstr ""
+
+#: mission.brief.mail8.par18.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"The message has been traced to destinations in Hong Kong, Beijing and "
+"Phoenix. Deploy a team of cyborgs to track down and neutralise all "
+"unauthorised agents. Our resident AI is now modifying these cities' "
+"surveillance systems to detect agents equipped with advanced cybernetic "
+"enhancements. Seek out these agents. They must be persuaded to join us or be"
+" exterminated."
+msgstr ""
+
+#: mission.brief.mail8.par19.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Additional: Study of the Indoctrinator components you recovered from Phoenix"
+" has revealed how the Church of the New Epoch gains converts. The cultists' "
+"device contains UTOPIA command-compatible transceiver circuitry. In other "
+"words, our enemy has something similar in function to our Persuadertron. "
+"Every component is made of a memory plastic which instantly bio-degrades "
+"when a zealot's lifesign sensor stops working. This is why we have never "
+"found anything on the bodies of cultists, which would have accounted for "
+"their power of persuasion. With further study, our R&D staff expect to "
+"design a more effective Persuadertron for us, one which would work on "
+"zealots."
+msgstr ""
+
+#: mission.brief.mail9.par5.c2
+msgctxt "mission brief email orders"
+msgid "Rome: Persuade rogue agent."
+msgstr ""
+
+#: mission.brief.mail9.par6.c5
+msgctxt "mission brief email paragraph"
+msgid "Salutations, <login>."
+msgstr ""
+
+#: mission.brief.mail9.par7.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"That was a very successful sweep your agents just conducted. However, the "
+"rogue agents' group leader took an IML to Rome and attacked the outpost we "
+"recently established. We want this capable agent to join our ranks."
+msgstr ""
+
+#: mission.brief.mail9.par8.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Update: We were lucky to discover Harbinger when we did. At least it means "
+"we have an intact AI which continues to prove useful. Consider this: our so-"
+"called \"Unguided\" are being transformed, from unruly mob to determined "
+"fighting force. At the helm - one Ko-Paull Vissick; polymath wunderkind and "
+"exceptionally gifted intellectual. Vissick is supposed to be one of our top "
+"researchers but London AI has picked up his trace right where it shouldn't "
+"be."
+msgstr ""
+
+#: mission.brief.mail9.par9.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"We've been tracking as much UTOPIA traffic as we can. The Church of the New "
+"Epoch has hijacked a lot of it and most of the rest is just meaningless "
+"debris left by Harbinger. However, London AI noticed someone else hacking "
+"into UTOPIA, now that such things are actually possible. It appeared to be "
+"Vissick. Ultimately, it turned out to be a ghost. No way of telling where it"
+" was being sent from. But it must have been Vissick. Hardly anyone else in "
+"the Syndicate could have done what he did. God only knows why he's hooked up"
+" with this Unguided scum. I'll look into it."
+msgstr ""
+
+#: mission.brief.mail10.par5.c2
+msgctxt "mission brief email orders"
+msgid "New York: Persuade Jennifer Taks."
+msgstr ""
+
+#: mission.brief.mail10.par6.c5
+msgctxt "mission brief email paragraph"
+msgid "Fortuitous greetings, Executive <login>."
+msgstr ""
+
+#: mission.brief.mail10.par7.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Your presence is required in New York. Several North American corporations "
+"have united locally under the banner of the New Atlantic Alliance (NAA). The"
+" rapid development of this syndicate is remarkable, given the devastation of"
+" UTOPIA communication systems."
+msgstr ""
+
+#: mission.brief.mail10.par8.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"It appears that one of our former media chiefs, Jennifer Taks, is using her "
+"privileged access to the Global News Network to locate scientists for the "
+"NAA. Ms Taks seems to be having considerable success with this endeavour. We"
+" want her and we want to know where to find these scientists."
+msgstr ""
+
+#: mission.brief.mail10.par9.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Despatch a team to New York and infiltrate the NAA's Manhattan office in the"
+" Global News Network block. Find Ms Taks and persuade her that her loyalties"
+" lie with us."
+msgstr ""
+
+#: mission.brief.mail10.par10.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"The centre's security is extremely tight. It may be impossible to force "
+"entry to it. I will attempt to track the UTOPIA ident signals of the "
+"centre's staff to see if any of them leave the centre for any reason. All "
+"personnel have codegraft passes, so you will have to persuade one of them to"
+" accompany you through the security barriers. Beware of attracting the "
+"attentions of local police units who are on heightened alert status."
+msgstr ""
+
+#: mission.brief.mail11.par5.c2
+msgctxt "mission brief email orders"
+msgid "Santiago, Buenos Aires, Cape Town, Adelaide: Scientists traced."
+msgstr ""
+
+#: mission.brief.mail11.par6.c5
+msgctxt "mission brief email paragraph"
+msgid "Profound greetings."
+msgstr ""
+
+#: mission.brief.mail11.par7.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"London AI has been psych-profiling the message content of an increasing "
+"number of subversive broadcasts from Ko-Paull Vissick. His seminal message, "
+"sent on an open channel, clearly incited the Unguided to rise up, not only "
+"againstthe Syndicate, but also the Church of the New Epoch. Unfortunately, "
+"Vissick's invective was littered with prophecies of doom, indicating that "
+"his current state of mind is far from stable. He claimed, for example, that "
+"the Church of the New Epoch would bring about nothing less than Armageddon. "
+"I can only speculate as to how they're supposed to initiate global "
+"destruction."
+msgstr ""
+
+#: mission.brief.mail11.par8.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Vissick's last assignment was so highly classified - and UTOPIA has been so "
+"desolated by the Harbinger virus - that information on the nature of his "
+"mission is sketchy. However, we know that he was working as part of a team "
+"of top researchers from Gel Data and The Hexagon Corporation on a project in"
+" Iceland. Jennifer Taks has given us the locations of Gel Data and Hexagon "
+"scientists in Santiago, Buenos Aires, Cape Town and Adelaide. Seek out and "
+"persuade these scientists at your discretion."
+msgstr ""
+
+#: mission.brief.mail11.par9.c5
+msgctxt "mission brief email paragraph"
+msgid "Good luck, <login>."
+msgstr ""
+
+#: mission.brief.mail12.par5.c2
+msgctxt "mission brief email orders"
+msgid ""
+"Christchurch: Despatch a team of agents immediately. Locate and secure the "
+"trans-polar IML Link."
+msgstr ""
+
+#: mission.brief.mail12.par6.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"It seems that shortly before Harbinger penetrated UTOPIA, Vissick was "
+"engaged in a top secret R&D program in Reykjavik. The program's objective "
+"was the design of a machine capable of amplifying human cognitive abilities "
+"to levels beyond those of AIs. Apparently, the team got further than the "
+"design stage. They actually built a device. However, the scientists you "
+"persuaded acted only as ancillary technicians to the main project team and "
+"so were unable to tell us much more."
+msgstr ""
+
+#: mission.brief.mail12.par7.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"The ten key members of the team were known collectively as the Cybernetic "
+"Cognition Conference or C3. Chief among them was Ko-Paull Vissick. All C3 "
+"members were taken from EuroCorp's R&D elite."
+msgstr ""
+
+#: mission.brief.mail12.par8.c5
+msgctxt "mission brief email paragraph"
+msgid "At this time, they all remain unaccounted for."
+msgstr ""
+
+#: mission.brief.mail12.par9.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"News of the failure of the Reykjavik IML Link last month, now appears to "
+"have been engineered to provide the project team with maximum security. The "
+"C3, meanwhile, secretly commissioned its own trans-polar IML Link from "
+"Christchurch. Apparently, this was completed very recently. Secure this IML "
+"LInk for our use."
+msgstr ""
+
+#: mission.brief.mail13.par5.c2
+msgctxt "mission brief email orders"
+msgid ""
+"Reykjavik: Find out what happened to the C3 project. Activate the IML link "
+"to Nuuk."
+msgstr ""
+
+#: mission.brief.mail13.par6.c2
+msgctxt "mission brief email orders"
+msgid "Nuuk: Conduct a full sweep of the city."
+msgstr ""
+
+#: mission.brief.mail13.par7.c5
+msgctxt "mission brief email paragraph"
+msgid "Congratulations on achieving your latest objectives, <login>."
+msgstr ""
+
+#: mission.brief.mail13.par8.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"It is imperative that your agents take immediate advantage of access to the "
+"trans-polar IML. Send your team to Reykjavik to investigate the C3 research "
+"site in Reykjavik. It is difficult to advise you what sort of presence you "
+"might expect to find there but, given the sensitive nature of the site, your"
+" agents should be on maximum alert. Recover evidence of the status of the C3"
+" programme."
+msgstr ""
+
+#: mission.brief.mail13.par9.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Additional: Since CHIP downtime began, Nuuk has remained completely sealed "
+"off from the outside world. There have been reports of Cult activity around "
+"the city's outer perimeter but nothing has reached us from inside the city "
+"itself. Nuuk is directly connected to Reykjavik via IML. The link may still "
+"be open from Reykjavik. When you have completed the Reykjavik stage of your "
+"mission, find and, if necessary, activate the Nuuk IML link. Proceed to Nuuk"
+" and investigate the situation there."
+msgstr ""
+
+#: mission.brief.mail13.par10.c5
+msgctxt "mission brief email paragraph"
+msgid "Remain vigilant!"
+msgstr ""
+
+#: mission.brief.mail14.par5.c2
+msgctxt "mission brief email orders"
+msgid "London: Provide maximum security for the Chief Executive meeting."
+msgstr ""
+
+#: mission.brief.mail14.par6.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Listen, Executive <login>. This is London Artificial Intelligence. I have "
+"new information and orders for you."
+msgstr ""
+
+#: mission.brief.mail14.par7.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"I now know more about the Church of the New Epoch. The C3 did indeed "
+"construct a human intelligence-enhancing device, more effective than "
+"anything in conventional cybernetics."
+msgstr ""
+
+#: mission.brief.mail14.par8.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Against the orders of Ko-Paull Vissick, certain members of the group then "
+"used the experimental cerebral amplifier they had made, on themselves. C3 "
+"member Tyrone Chodak was the first to use the device. He also maintained the"
+" mission logbook. Several of the log's entries refer to a second book which "
+"Chodak began writing to explain some of the scientific theories his enhanced"
+" brain was now capable of formulating. He called this second log book the "
+"'Codex' and, thanks to you, we now have a copy. Its entries consist of "
+"intensely complex mathematics, quantum physics, genetics and some brand new "
+"work in fields as diverse as unified force mechanics and evolutionary "
+"cognition. The Codex contains enough revolutionary science to keep every AI "
+"in UTOPIA busy for years. London AI is going to do the best it can to study "
+"it alone."
+msgstr ""
+
+#: mission.brief.mail14.par9.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"From the mission log, it seems there was a power struggle between Chodak and"
+" Vissick, climaxing in an explosion that wrecked the C3's Reykjavik "
+"facility. In his notes, Chodak accused Vissick - who was nowhere to be found"
+" after the explosion - of sabotage. Chodak also charges EuroCorp with "
+"complicity and threatened to use technology derived from the Codex to "
+"completely annihilate the Syndicate. The rest of the C3 followed Chodak's "
+"lead."
+msgstr ""
+
+#: mission.brief.mail14.par10.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"The explosion at Reykjavik and the disappearance of the C3 both happened "
+"less than forty-eight hours before the Harbinger virus hit UTOPIA."
+msgstr ""
+
+#: mission.brief.mail14.par11.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Analysis of your agents' attack on the Nuuk Cathedral uncovered Cult dogma "
+"inscribed on walls and pillars, which refers mysteriously to 'The Nine'. It "
+"is reasonable to deduce that the Nine and the C3 are one and the same and, "
+"therefore, that the Church of the New Epoch is merely a front for carrying "
+"out Chodak's threats to destroy the Syndicate."
+msgstr ""
+
+#: mission.brief.mail14.par12.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"This means we are up against EuroCorp's former intellectual elite, equipped "
+"with advanced technologies, as well as the wildcard Vissick who is giving "
+"guidance to the Unguided."
+msgstr ""
+
+#: mission.brief.mail14.par13.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Professor Kurt Drennan will give our department heads an immediate strategy "
+"briefing, here in London. Drennan and his aide are scheduled to collect a "
+"copy of the Codex for the presentation in New Hyde Park. Our recently "
+"reconstructed Chief Executive group will be in attendance. The area will be "
+"monitored by local police, who are now under our direct control."
+msgstr ""
+
+#: mission.brief.mail14.par14.c4 mission.brief.mail15.par10.c4
+#: mission.brief.mail17.par10.c4 mission.brief.mail18.par8.c4
+#: mission.brief.mail19.par15.c4 mission.brief.mail20.par9.c4
+#: mission.brief.mail21.par10.c4
+msgctxt "mission brief email sender"
+msgid "London Artificial Intelligence"
+msgstr ""
+
+#: mission.brief.mail15.par5.c2
+msgctxt "mission brief email orders"
+msgid "Tokyo: Rescue Professor Drennan from the Cultists."
+msgstr ""
+
+#: mission.brief.mail15.par6.c2
+msgctxt "mission brief email orders"
+msgid ""
+"Bangkok: Escort the professor to the EuroCorp campus. Ensure the professor "
+"is returned to us unharmed."
+msgstr ""
+
+#: mission.brief.mail15.par7.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Attention, Executive. Professor Drennan has been abducted. An imposter was "
+"able to evade my scans, kill Drennan's aide, and take her place for the "
+"duration of the lecture. The actual abduction occurred immediately after the"
+" meeting. The costly zealot raid was merely a diversionary tactic to cover "
+"the final phase of Drennan's abduction."
+msgstr ""
+
+#: mission.brief.mail15.par8.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"I am still tracking Drennan. He is being held in Tokyo. His UTOPIA chip has "
+"not been tampered with."
+msgstr ""
+
+#: mission.brief.mail15.par9.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"When you've freed the professor, guide him to safety. Our Bangkok operations"
+" centre is secure; take him there."
+msgstr ""
+
+#: mission.brief.mail16.par5.c2
+msgctxt "mission brief email orders"
+msgid ""
+"Hawaii: Your mission is to provide security for a meeting with EuroCorp "
+"Honolulu personnel."
+msgstr ""
+
+#: mission.brief.mail16.par6.c5
+msgctxt "mission brief email paragraph"
+msgid "Congratulations, <login>. Good to be in communication with you again."
+msgstr ""
+
+#: mission.brief.mail16.par7.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Drennan is safely back and undergoing neural re-calibration. In his short "
+"time with the Church of the New Epoch, the professor managed to learn more "
+"about the Nine and what they have planned for us. As soon as he stops "
+"dribbling, we'll ask him what he knows."
+msgstr ""
+
+#: mission.brief.mail16.par8.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"In the meantime, we have received a message from the Honolulu AI. Honolulu "
+"AI wishes to confirm an allied status with EuroCorp. It has never supported "
+"enemies of London AI's strategy, nor is it carrying the Harbinger virus. It "
+"is ready to transfer all its resources to EuroCorp's absolute command. Our "
+"people and theirs will meet and exchange protocol keys. Security during the "
+"proceedings is your responsibility."
+msgstr ""
+
+#: mission.brief.mail17.par5.c2
+msgctxt "mission brief email orders"
+msgid ""
+"Johannesburg: Initiate drone connection immediately and take control of "
+"Agent Wu. Seek out and persuade Mirabelle Lucy De Saxo."
+msgstr ""
+
+#: mission.brief.mail17.par6.c5
+msgctxt "mission brief email paragraph"
+msgid "Executive, once again this is London AI."
+msgstr ""
+
+#: mission.brief.mail17.par7.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"I now have the UTOPIA identkey of the cult agent who abducted Professor "
+"Drennan. She is Mirabelle Lucy De Saxo IK-771.6482.2002, currently located "
+"in Johannesburg."
+msgstr ""
+
+#: mission.brief.mail17.par8.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"I have just received this information from a retired EuroCorp agent whose "
+"antique cyber-technology has nevertheless enabled him to survive "
+"independently, since downtime began. His name is Wu. Because of Wu's extreme"
+" resourcefulness, I have done a deal with him. Wu will give me access to all"
+" his higher level cerebral functions for one more mission. If he "
+"successfully completes it, I will build myself more bubble memory and make "
+"his consciousness a part of my own, as soon as UTOPIA is restored. I want Wu"
+" to try to persuade De Saxo. I suspect her of being able to detect our "
+"agents."
+msgstr ""
+
+#: mission.brief.mail17.par9.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Wu has already equipped himself with one of the Church's modified "
+"Persuadertrons and is fully prepared for the task ahead of him. If he "
+"succeeds, almost eternal consciousness is his."
+msgstr ""
+
+#: mission.brief.mail18.par5.c2
+msgctxt "mission brief email orders"
+msgid "Cairo: Eliminate Mirabelle Lucy De Saxo."
+msgstr ""
+
+#: mission.brief.mail18.par6.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Executive, I am changing your orders. Wu's Persuadertron could not establish"
+" a positive lock on his target's identkey. De Saxo can never be one of us. "
+"Therefore she must be terminated."
+msgstr ""
+
+#: mission.brief.mail18.par7.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Wu saw our prey board a Cairo-bound IML. Despatch a team of agents to Cairo "
+"immediately. Under no circumstances should De Saxo be allowed to escape."
+msgstr ""
+
+#: mission.brief.mail19.par5.c2
+msgctxt "mission brief email orders"
+msgid ""
+"Sevastopol: We want Sevastopol sterilised. Leave nothing alive there. We can"
+" re-populate it later when our clone factories are back on line."
+msgstr ""
+
+#: mission.brief.mail19.par6.c2
+msgctxt "mission brief email orders"
+msgid "Delhi: Eliminate Deel Gonda. Crush the uprising."
+msgstr ""
+
+#: mission.brief.mail19.par7.c5
+msgctxt "mission brief email paragraph"
+msgid "Attention, Executive. You have just eliminated Anika Maritz."
+msgstr ""
+
+#: mission.brief.mail19.par8.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"She was a double agent. I knew this much from the beginning, since Executive"
+" Maritz informed me of her plan to infiltrate the Church of the New Epoch. "
+"However, I only began to suspect her betrayal when Professor Drennan was "
+"abducted. On her return, Maritz told me that her duplicity had been "
+"necessary, in order to convince the Nine of her fidelity. The credibility of"
+" her story relied upon the conviction that you could get the professor back,"
+" which you did. However, I remained unconvinced."
+msgstr ""
+
+#: mission.brief.mail19.par9.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"When she disappeared a second time, without warning, I finally accepted that"
+" she had been corrupted by the Church of the New Epoch. This left no "
+"alternative. Anika-Mirabelle had to be terminated."
+msgstr ""
+
+#: mission.brief.mail19.par10.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"We must continue to restore the integrity of UTOPIA. To this end, you will "
+"receive further briefings directly from me."
+msgstr ""
+
+#: mission.brief.mail19.par11.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Update: Intercepted communications between Ko-Paull Vissick and his "
+"lieutenants indicate that the Unguided are planning to breakout beyond city "
+"perimeters. Vissick expects his followers to rendezvous at Lake Margui Caka "
+"on the Tibetan plateau. Here, according to Vissick, they will survive the "
+"Cataclysm. The truth is that the end will come for them long before they "
+"reach their destination. Nevertheless, massive uprisings are being reported "
+"in Delhi and Sevastopol, where we have not yet re-established EuroCorp "
+"control. It is this situation you must bring under control."
+msgstr ""
+
+#: mission.brief.mail19.par12.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Sevastopol's heavy industrial sector has been completely overrun by the "
+"Unguided mob. Anything that hasn't already been destroyed is now in their "
+"hands. Fortunately, they seem to be waiting for something, perhaps a final "
+"instruction from Vissick, before attempting to break through the city "
+"perimeter controls."
+msgstr ""
+
+#: mission.brief.mail19.par13.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"There is similar trouble in Delhi. We still have operatives in the city but "
+"they are vastly outnumbered, trapped within the old police compound. Their "
+"one remaining tank keeps the Unguided at bay for now."
+msgstr ""
+
+#: mission.brief.mail19.par14.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"The Unguided themselves are heavily defended within the city's river port "
+"district, which they have taken over, presumably as it provides their escape"
+" route. An ex-EuroCorp strategist, Deel Gonda, has sided with Ko-Paull "
+"Vissick and is openly directing the Unguided from there. Without his "
+"tactical expertise, the rebellion would be doomed to failure."
+msgstr ""
+
+#: mission.brief.mail20.par5.c2
+msgctxt "mission brief email orders"
+msgid ""
+"Bahrain: Neutralise rogue agents. Seek and destroy Unguided assaults before "
+"they reach the AI."
+msgstr ""
+
+#: mission.brief.mail20.par6.c5
+msgctxt "mission brief email paragraph"
+msgid "Executive <login>."
+msgstr ""
+
+#: mission.brief.mail20.par7.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Worrying intelligence reaches us from Bahrain. Remnants of the Unguided have"
+" somehow equipped themselves with heavy armour and have moved on the city's "
+"perimeter. A full scale attack now looks imminent. Their likely target is "
+"Bahrain AI, the hub of UTOPIA's Middle-Eastern control system. If this is "
+"destroyed, restoring EuroCorp world-wide could take years."
+msgstr ""
+
+#: mission.brief.mail20.par8.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Bahrain AI controls a cadre of former EuroCorp agents and has deployed these"
+" in defensive positions throughout the central city district. We must regain"
+" control of the city before vital facilities are hit."
+msgstr ""
+
+#: mission.title:1
+msgctxt "mission title"
+msgid "Executive Alert"
+msgstr ""
+
+#: mission.title:3
+msgctxt "mission title"
+msgid "Friendly Persuasion"
+msgstr ""
+
+#: mission.title:4
+msgctxt "mission title"
+msgid "Where Is Wisdom?"
+msgstr ""
+
+#: mission.title:5
+msgctxt "mission title"
+msgid "Sack of Rome"
+msgstr ""
+
+#: mission.title:7
+msgctxt "mission title"
+msgid "Dark Angels In The Architecture"
+msgstr ""
+
+#: mission.title:8
+msgctxt "mission title"
+msgid "Duplicity"
+msgstr ""
+
+#: mission.title:9
+msgctxt "mission title"
+msgid "The Special Agent"
+msgstr ""
+
+#: mission.title:20
+msgctxt "mission title"
+msgid "Exodus"
+msgstr ""
+
+#: mission.title:21
+msgctxt "mission title"
+msgid "Phoenix In Flames"
+msgstr ""
+
+#: mission.title:22
+msgctxt "mission title"
+msgid "Fusion"
+msgstr ""
+
+#: mission.title:23
+msgctxt "mission title"
+msgid "Bring Him Back Alive"
+msgstr ""
+
+#: mission.title:24
+msgctxt "mission title"
+msgid "Edge Of Darkness"
+msgstr ""
+
+#: mission.title:25
+msgctxt "mission title"
+msgid "Walkabout"
+msgstr ""
+
+#: mission.title:26
+msgctxt "mission title"
+msgid "Forbidden Knowledge"
+msgstr ""
+
+#: mission.title:28
+msgctxt "mission title"
+msgid "The Hive"
+msgstr ""
+
+#: mission.title:29
+msgctxt "mission title"
+msgid "Lost Minds"
+msgstr ""
+
+#: mission.title:34
+msgctxt "mission title"
+msgid "Open Re-Bullion"
+msgstr ""
+
+#: mission.title:35
+msgctxt "mission title"
+msgid "Taken To Taks"
+msgstr ""
+
+#: mission.title:36
+msgctxt "mission title"
+msgid "Deep Mind"
+msgstr ""
+
+#: mission.title:37
+msgctxt "mission title"
+msgid "Guru"
+msgstr ""
+
+#: mission.title:38
+msgctxt "mission title"
+msgid "EuroLore"
+msgstr ""
+
+#: mission.title:49
+msgctxt "mission title"
+msgid "Detroit Drop-Outs"
+msgstr ""
+
+#: mission.title:50
+msgctxt "mission title"
+msgid "Secrets"
+msgstr ""
+
+#: mission.title:55
+msgctxt "mission title"
+msgid "Body Matters"
+msgstr ""
+
+#: mission.title:56
+msgctxt "mission title"
+msgid "Interloper"
+msgstr ""
+
+#: mission.title:57
+msgctxt "mission title"
+msgid "Head Hunt"
+msgstr ""
+
+#: mission.title:58
+msgctxt "mission title"
+msgid "Semi-Automatic"
+msgstr ""
+
+#: mission.title:59
+msgctxt "mission title"
+msgid "Missing Link"
+msgstr ""
+
+#: mission.title:74
+msgctxt "mission title"
+msgid "Re-Alignment"
+msgstr ""
+
+#: mission.title:83
+msgctxt "mission title"
+msgid "Slowdive"
+msgstr ""
+
+#: mission.title:84
+msgctxt "mission title"
+msgid "Confrontation"
+msgstr ""
+
+#: mission.title:88
+msgctxt "mission title"
+msgid "High Sierra"
+msgstr ""
+
+#: mission.title:92
+msgctxt "mission title"
+msgid "Arab Agenda"
+msgstr ""
+
+#: mission.title:101
+msgctxt "mission title"
+msgid "Church Of The Poisoned Mind"
+msgstr ""
+
+#: mission.title:104
+msgctxt "mission title"
+msgid "Tokyo Fuseki"
+msgstr ""
+
+#: mapscreen.heading:1
+msgctxt "syndicate map screen headings - name"
+msgid "Dropsite"
+msgstr ""
+
+#: mapscreen.heading:2
+msgctxt "syndicate map screen headings - population size"
+msgid "UTOPIA Identkeys"
+msgstr ""
+
+#: mapscreen.heading:3
+msgctxt "syndicate map screen headings - landscape"
+msgid "Infra-structure"
+msgstr ""
+
+#: mapscreen.heading:4
+msgctxt "syndicate map screen headings - language"
+msgid "Dialect"
+msgstr ""
+
+#: mapscreen.heading:5
+msgctxt "syndicate map screen headings - industry"
+msgid "Commerce"
+msgstr ""
+
+#: mapscreen.heading:6
+msgctxt "syndicate map screen headings - toxicity"
+msgid "Toxicity"
+msgstr ""
+
+#: mission.brief.mail1.map30.level16:1
+msgctxt "mission brief tactical information"
+msgid "Dropsite: EuroCorp London AI Ground Station"
+msgstr ""
+
+#: mission.brief.mail1.map30.level16:2
+msgctxt "mission brief tactical information"
+msgid "Category U-Unguided citizens monitored in corporate district"
+msgstr ""
+
+#: mission.brief.mail1.map30.level16:3
+msgctxt "mission brief tactical information"
+msgid ""
+"Ground Station personnel: will defend Ground Station from attack or "
+"infiltration"
+msgstr ""
+
+#: mission.brief.mail1.map30.level16:4
+msgctxt "mission brief tactical information"
+msgid "Eavesdrop: police on patrol with orders to engage anyone bearing arms"
+msgstr ""
+
+#: mission.brief.mail2.map35.level1:1
+msgctxt "mission brief tactical information"
+msgid "City surveillance camera recording"
+msgstr ""
+
+#: mission.brief.mail2.map35.level1:2
+msgctxt "mission brief tactical information"
+msgid "Dropsite: Detroit IML Link"
+msgstr ""
+
+#: mission.brief.mail2.map35.level1:3
+msgctxt "mission brief tactical information"
+msgid "Gateway to attacked Ground Station"
+msgstr ""
+
+#: mission.brief.mail2.map35.level1:4
+msgctxt "mission brief tactical information"
+msgid ""
+"Eavesdrop: police report rising number of behaviour violations by Unguided "
+"citizens"
+msgstr ""
+
+#: mission.brief.mail3.map1.level1:1 mission.brief.mail11.map1.level15:1
+msgctxt "mission brief tactical information"
+msgid "Dropsite: Hong Kong IML Link"
+msgstr ""
+
+#: mission.brief.mail3.map1.level1:2
+msgctxt "mission brief tactical information"
+msgid "Yamaguchi Fusion Batteries"
+msgstr ""
+
+#: mission.brief.mail3.map1.level1:3
+msgctxt "mission brief tactical information"
+msgid "Technicians"
+msgstr ""
+
+#: mission.brief.mail3.map1.level1:4 mission.brief.mail4.map32.level16:4
+#: mission.brief.mail9.map10.level1:4 mission.brief.mail15.map4.level1:4
+#: mission.brief.mail16.map7.level1:3 mission.brief.mail17.map26.level1:4
+#: mission.brief.mail18.map44.level1:4 mission.brief.mail19.map6.level1:4
+msgctxt "mission brief tactical information"
+msgid "Evac zone: IML Link"
+msgstr ""
+
+#: mission.brief.mail3.map1.level1:5
+msgctxt "mission brief tactical information"
+msgid "Zealots of the Church of the New Epoch have been sighted in the city"
+msgstr ""
+
+#: mission.brief.mail4.map32.level16:1 mission.brief.mail12.map32.level15:1
+msgctxt "mission brief tactical information"
+msgid "Dropsite: Beijing IML Link"
+msgstr ""
+
+#: mission.brief.mail4.map32.level16:2
+msgctxt "mission brief tactical information"
+msgid "Yamaguchi Executive Zaibatsu"
+msgstr ""
+
+#: mission.brief.mail4.map32.level16:3
+msgctxt "mission brief tactical information"
+msgid "Yamaguchi Agent Training Camp"
+msgstr ""
+
+#: mission.brief.mail4.map32.level16:5
+msgctxt "mission brief tactical information"
+msgid "Eavesdrop: police report rioting by the Unguided"
+msgstr ""
+
+#: mission.brief.mail5.map21.level31:1
+msgctxt "mission brief tactical information"
+msgid "Dropsite & evac zone: Geneva IML Link"
+msgstr ""
+
+#: mission.brief.mail5.map21.level31:2
+msgctxt "mission brief tactical information"
+msgid "Bluesky laboratories"
+msgstr ""
+
+#: mission.brief.mail5.map21.level31:3
+msgctxt "mission brief tactical information"
+msgid ""
+"Eavesdrop: Bluesky requests police escort for Grade D finance executive"
+msgstr ""
+
+#: mission.brief.mail6.map50.level1:1
+msgctxt "mission brief tactical information"
+msgid "Dropsite & evac zone: Vancouver IML Link"
+msgstr ""
+
+#: mission.brief.mail6.map50.level1:2
+msgctxt "mission brief tactical information"
+msgid "Bluesky laboratory"
+msgstr ""
+
+#: mission.brief.mail6.map50.level1:3
+msgctxt "mission brief tactical information"
+msgid "Eavesdrop: Unguided activity being monitored by police"
+msgstr ""
+
+#: mission.brief.mail6.map50.level1:4
+msgctxt "mission brief tactical information"
+msgid ""
+"Satellite Alert: Zealot personnel carriers detected approaching city from "
+"south west"
+msgstr ""
+
+#: mission.brief.mail7.map2.level1:1
+msgctxt "mission brief tactical information"
+msgid "Dropsite: Matochkin Shar"
+msgstr ""
+
+#: mission.brief.mail7.map2.level1:2
+msgctxt "mission brief tactical information"
+msgid "Bluesky R&D facility"
+msgstr ""
+
+#: mission.brief.mail7.map2.level1:3
+msgctxt "mission brief tactical information"
+msgid "Hover car licences detected"
+msgstr ""
+
+#: mission.brief.mail7.map2.level1:4
+msgctxt "mission brief tactical information"
+msgid "Eavesdrop: credit transfer traced to Church of the New Epoch temple"
+msgstr ""
+
+#: mission.brief.mail8.map9.level1:1
+msgctxt "mission brief tactical information"
+msgid "Dropsite: Singapore IML Link"
+msgstr ""
+
+#: mission.brief.mail8.map9.level1:2
+msgctxt "mission brief tactical information"
+msgid "Singapore City Bank"
+msgstr ""
+
+#: mission.brief.mail8.map9.level1:3
+msgctxt "mission brief tactical information"
+msgid "Primary vault (underground)"
+msgstr ""
+
+#: mission.brief.mail8.map9.level1:4
+msgctxt "mission brief tactical information"
+msgid "Tang Protective bullion convoy"
+msgstr ""
+
+#: mission.brief.mail8.map9.level1:5
+msgctxt "mission brief tactical information"
+msgid "Target vehicle"
+msgstr ""
+
+#: mission.brief.mail8.map9.level1:6
+msgctxt "mission brief tactical information"
+msgid "Rendezvous point"
+msgstr ""
+
+#: mission.brief.mail8.map9.level1:7
+msgctxt "mission brief tactical information"
+msgid "Tang HQ"
+msgstr ""
+
+#: mission.brief.mail9.map10.level1:1 mission.brief.mail13.map10.level15:1
+msgctxt "mission brief tactical information"
+msgid "Dropsite: Phoenix IML Link"
+msgstr ""
+
+#: mission.brief.mail9.map10.level1:2
+msgctxt "mission brief tactical information"
+msgid "Cult of the New Epoch temple"
+msgstr ""
+
+#: mission.brief.mail9.map10.level1:3
+msgctxt "mission brief tactical information"
+msgid "Estimated location of Cult indoctrination technology"
+msgstr ""
+
+#: mission.brief.mail9.map10.level1:5
+msgctxt "mission brief tactical information"
+msgid ""
+"Eavesdrop: police reports indicate that the Unguided are completely out of "
+"control"
+msgstr ""
+
+#: mission.brief.mail9.map10.level1:6
+msgctxt "mission brief tactical information"
+msgid ""
+"London AI analysis: any engagement of the Unguided is likely to attract the "
+"wrath of the whole mob"
+msgstr ""
+
+#: mission.brief.mail10.map28.level46:1 mission.brief.mail14.map28.level15:1
+msgctxt "mission brief tactical information"
+msgid "Dropsite: Rome IML Link"
+msgstr ""
+
+#: mission.brief.mail10.map28.level46:2
+msgctxt "mission brief tactical information"
+msgid ""
+"Low-order domicile bunker complexes fortified by category U-Unguided "
+"citizens"
+msgstr ""
+
+#: mission.brief.mail10.map28.level46:3
+msgctxt "mission brief tactical information"
+msgid "Security garrison"
+msgstr ""
+
+#: mission.brief.mail10.map28.level46:4
+msgctxt "mission brief tactical information"
+msgid "Garrison vault (underground): estimated value 0.4 MCr"
+msgstr ""
+
+#: mission.brief.mail10.map28.level46:5
+msgctxt "mission brief tactical information"
+msgid ""
+"Satellite alert: control of Rome's Strategic Defense Satellite has been lost"
+" to hostile forces unknown"
+msgstr ""
+
+#: mission.brief.mail11.map1.level15:2 mission.brief.mail12.map32.level15:2
+#: mission.brief.mail13.map10.level15:2 mission.brief.mail14.map28.level15:2
+msgctxt "mission brief tactical information"
+msgid "Target agent"
+msgstr ""
+
+#: mission.brief.mail11.map1.level15:3
+msgctxt "mission brief tactical information"
+msgid "Suitable vehicle for gaining access to base"
+msgstr ""
+
+#: mission.brief.mail12.map32.level15:3
+msgctxt "mission brief tactical information"
+msgid "Eavesdrop: bank security systems have been recently improved"
+msgstr ""
+
+#: mission.brief.mail14.map28.level15:3
+msgctxt "mission brief tactical information"
+msgid ""
+"Eavesdrop: police on the lookout for an Unguided group which has infiltrated"
+" the city in order to fund another uprising"
+msgstr ""
+
+#: mission.brief.mail14.map28.level15:4
+msgctxt "mission brief tactical information"
+msgid ""
+"Eavesdrop: unstable UTOPIA ident signal pattern detected - possible Unguided"
+" hideaway"
+msgstr ""
+
+#: mission.brief.mail15.map4.level1:1
+msgctxt "mission brief tactical information"
+msgid "Dropsite: New York IML Link"
+msgstr ""
+
+#: mission.brief.mail15.map4.level1:2
+msgctxt "mission brief tactical information"
+msgid "New Atlantic Alliance HQ"
+msgstr ""
+
+#: mission.brief.mail15.map4.level1:3
+msgctxt "mission brief tactical information"
+msgid "Civilian staff housing"
+msgstr ""
+
+#: mission.brief.mail15.map4.level1:5
+msgctxt "mission brief tactical information"
+msgid ""
+"Eavesdrop: police have upgraded their vault-breach response teams recently"
+msgstr ""
+
+#: mission.brief.mail16.map7.level1:1
+msgctxt "mission brief tactical information"
+msgid "Dropsite: Santiago IML Link"
+msgstr ""
+
+#: mission.brief.mail16.map7.level1:2 mission.brief.mail17.map26.level1:3
+#: mission.brief.mail18.map44.level1:3 mission.brief.mail19.map6.level1:3
+msgctxt "mission brief tactical information"
+msgid "Target"
+msgstr ""
+
+#: mission.brief.mail16.map7.level1:4
+msgctxt "mission brief tactical information"
+msgid "North Side over-run by zealots"
+msgstr ""
+
+#: mission.brief.mail17.map26.level1:1
+msgctxt "mission brief tactical information"
+msgid "Dropsite: Buenos Aires IML Link"
+msgstr ""
+
+#: mission.brief.mail17.map26.level1:2
+msgctxt "mission brief tactical information"
+msgid "Hexagon Corporation Headquarters"
+msgstr ""
+
+#: mission.brief.mail17.map26.level1:5
+msgctxt "mission brief tactical information"
+msgid "Eavesdrop: Hexagon reserves vault"
+msgstr ""
+
+#: mission.brief.mail17.map26.level1:6
+msgctxt "mission brief tactical information"
+msgid "Additional cultist activity detected"
+msgstr ""
+
+#: mission.brief.mail18.map44.level1:1
+msgctxt "mission brief tactical information"
+msgid "Dropsite: Cape Town via APC"
+msgstr ""
+
+#: mission.brief.mail18.map44.level1:2
+msgctxt "mission brief tactical information"
+msgid "Hexagon research facility gateway"
+msgstr ""
+
+#: mission.brief.mail18.map44.level1:5
+msgctxt "mission brief tactical information"
+msgid "Eavesdrop: Zealots have taken control of this installation"
+msgstr ""
+
+#: mission.brief.mail19.map6.level1:1
+msgctxt "mission brief tactical information"
+msgid "Dropsite: Adelaide IML Link"
+msgstr ""
+
+#: mission.brief.mail19.map6.level1:2
+msgctxt "mission brief tactical information"
+msgid "Gel Data Testing Facility"
+msgstr ""
+
+#: mission.brief.mail20.map36.level1:1
+msgctxt "mission brief tactical information"
+msgid "Dropsite: Christchurch IML Link A"
+msgstr ""
+
+#: mission.brief.mail20.map36.level1:2
+msgctxt "mission brief tactical information"
+msgid "Target area: Christchurch IML Link B"
+msgstr ""
+
+#: mission.brief.mail20.map36.level1:3
+msgctxt "mission brief tactical information"
+msgid "Tang Protective agents detected"
+msgstr ""
+
+#: mission.brief.mail20.map36.level1:4
+msgctxt "mission brief tactical information"
+msgid "Tang agent orders intercepted - agents' target is city bank vault"
+msgstr ""
+
+#: mission.brief.mail23.map30.level46:1
+msgctxt "mission brief tactical information"
+msgid "Dropsite: (a) Presentation podium (b) Professor Drennan's location"
+msgstr ""
+
+#: mission.brief.mail23.map30.level46:2
+msgctxt "mission brief tactical information"
+msgid ""
+"Data vault, containing watcher drone digital film of the Reykjavik site"
+msgstr ""
+
+#: mission.brief.mail23.map30.level46:3
+msgctxt "mission brief tactical information"
+msgid "EuroCorp Executive"
+msgstr ""
+
+#: mission.brief.mail23.map30.level46:4
+msgctxt "mission brief tactical information"
+msgid "Massive unguided identkey trace north of HQ district"
+msgstr ""
+
+#: message.win:1
+msgctxt "game win message"
+msgid ""
+"You have prevailed over the Nine. You have succeeded in completely defeating"
+" the Church of the New Epoch and have averted the Cataclysm. UTOPIA will be "
+"rebuilt. Congratulations on your promotion, Chief Executive."
+msgstr ""
+
+#: weapons.UZI.description
+msgctxt "weapons description - uzi"
+msgid ""
+"Forged from the chaos of mid 20th century street-fighting, the energy pellet"
+" modified Uzi 9mm machine gun is still the basis of EuroCorp operations "
+"tech. It's an inexpensive and lightweight backup for agents dealing with "
+"cases of dropout psychosis."
+msgstr ""
+
+#: weapons.MINIGUN.description
+msgctxt "weapons description - minigun"
+msgid ""
+"Throughout the New Calendar syndicate deployment of inertia-damped chain "
+"gunners has become more commonplace. This 20mm plasma powered, torque "
+"stabilised version has foam alloy barrels to reduce mass and production "
+"costs."
+msgstr ""
+
+#: weapons.ELLASER.description
+msgctxt "weapons description - electron mace"
+msgid ""
+"This is proof of the Church's revolutionary scientific thinking. Simply put,"
+" it's a kind of lightning whip. We've never made such devices practical; the"
+" energy input required was always prohibitive. This device uses a "
+"sophisticated system of subatomic levers to ensure the absolute minimum "
+"possible drain on a personal power pack, yet it can still be overcharged. "
+"Impressive technology indeed."
+msgstr ""
+
+#: weapons.LASER.description
+msgctxt "weapons description - pulse laser"
+msgid ""
+"This laser makes use of the base TriSodium 89 gas (developed circa -20 NC). "
+"The weapon can be overcharged by delaying trigger release. In critical close"
+" quarters situations, a single overcharged burst of laser fire may be hot "
+"enough to disintegrate its target."
+msgstr ""
+
+#: weapons.BEAM.description
+msgctxt "weapons description - plasma lance"
+msgid ""
+"Electron annihilation techniques have led to the development of this "
+"powerful weapon. It uses a monopolar focus to project a beam-structured "
+"field which converts atmospheric molecules into plasma. Solid matter is "
+"vapourised on contact with the plasma, releasing even more energy. The field"
+" can wreak utter devastation over a considerable distance. Pull back the "
+"monopolar focus by delaying trigger release for more effective results "
+"against dense or tempered materials."
+msgstr ""
+
+#: weapons.RAP.description
+msgctxt "weapons description - launcher"
+msgid ""
+"Designed to face the challenge of New Calendar cyber-proliferation, this "
+"rocket launcher fires a homing grenade which releases a spray of cluster-"
+"bomblets on impact. Rocket guidance features target-seek gyro-stabilization."
+msgstr ""
+
+#: weapons.NUCLGREN.description
+msgctxt "weapons description - nuclear grenade"
+msgid ""
+"Stressed Techium in this thermonuclear device's casing dampens blast "
+"products, keeping the chain reaction within a tightly contained area. A "
+"custom isotope core ensures radiation levels drop to within tolerance levels"
+" moments after the explosion. These advancements enable a detonator to be "
+"enclosed in a hand-held casing for the first time. Nevertheless, the blast's"
+" effective radius demands attention be paid to safety."
+msgstr ""
+
+#: weapons.PERSUADER.description
+msgctxt "weapons description - persuadertron"
+msgid ""
+"A standard issue utility for seizing the higher level brain functions of "
+"citizens equipped with UTOPIA CHIPs. Although very low power and "
+"lightweight, the Persuadertron's historical significance should not be "
+"under-estimated, as it was instrumental in bringing about EuroCorp's global "
+"domination. Persuaded subjects follow the controlling agent without "
+"question, to the extent of equipping themselves for combat and engaging in "
+"hostilities without fear."
+msgstr ""
+
+#: weapons.FLAMER.description
+msgctxt "weapons description - flamer"
+msgid ""
+"Retro-research recommends this short-range, hand-held napalm jet. When "
+"activated, the weapon squirts ignited petroleum jelly. In contact with "
+"organic matter, the napalm sticks and burns fiercely. A highly effective "
+"crowd control solution."
+msgstr ""
+
+#: weapons.H2HTASER.description
+msgctxt "weapons description - disrupter"
+msgid ""
+"This close-proximity device activates a resonant ion wave which interferes "
+"with CHIP programming of those caught in the wavefront. Put simply, this has"
+" the effect of rendering persuaded individuals un-persuaded once more. The "
+"disrupter would prove most effective against a persuadertron user, where the"
+" ion wave would attack the signal at source, reverting all the targets "
+"persuaded followers to their previously un-persuaded state."
+msgstr ""
+
+#: weapons.CRAZYGAS.description
+msgctxt "weapons description - psycho gas"
+msgid ""
+"Research into the narcotic properties of the Creation planet fungus have "
+"yielded the active ingredient of this dangerous hallucinogenic. The hand-"
+"held canister contains a mixture of fungal spores and an oxidising agent "
+"which is released in a cloud, causing psychotic behaviour in anyone within "
+"it. This weapon provides a useful diversionary tactic when the number of "
+"hostiles is too great for other forms of neutralization, though results are "
+"unpredictable."
+msgstr ""
+
+#: weapons.KOGAS.description
+msgctxt "weapons description - knockout gas"
+msgid ""
+"This hand grenade contains an asphyxiating nerve agent. The cloud emitted on"
+" detonation renders all personnel in the area unconscious for a limited "
+"time."
+msgstr ""
+
+#: weapons.ELEMINE.description
+msgctxt "weapons description - ion mine"
+msgid ""
+"A proximity triggered, electromagnetic pulse mine. Equipment caught in the "
+"pulse's field is temporarily, or even permanently, disabled and the "
+"electrical mechanisms of organic tissue are burned out. Conductors such as "
+"vehicles, street furniture and cyborgs take most of the charge. Can affect "
+"persuaded status of anyone caught in its area of effect."
+msgstr ""
+
+#: weapons.EXPLMINE.description
+msgctxt "weapons description - high explosive"
+msgid ""
+"With an impressive area of effect and enough explosive power to inflict "
+"terminal damage on vehicles and do serious damage to buildings, this is a "
+"basic but effective weapon. Place at will in a strategic position in the "
+"mission zone and withdraw your agents to a safe distance. High Explosive's "
+"detonation is triggered by a timer."
+msgstr ""
+
+#: weapons.LONGRANGE.description
+msgctxt "weapons description - long range rifle"
+msgid ""
+"The new LR Rifle uses monopolar sled technology to accelerate high calibre "
+"depleted uranium ammunition to Mach 5.2. The sled's capacitors completely "
+"discharge in a single shot and must be fully recharged before firing again "
+"but accuracy and operational range are unequalled by other delivery systems."
+" In keeping with the design spec, the rate-of-fire sacrifice buys on-the-fly"
+" re-calibration, making this the optimal sniper's weapon."
+msgstr ""
+
+#: weapons.AIRSTRIKE.description
+msgctxt "weapons description - satellite rain"
+msgid ""
+"Every satellite in UTOPIA's network of geo-synchronous orbital platforms is "
+"equipped with a stockpile of tungsten-uranium alloy rods on a steerable "
+"mounting. When these rods are launched, the process of atmospheric re-entry "
+"heats them to the point at which they liquefy, producing a plasma rain with "
+"true battlefield potential. We can now successfully over-ride the system "
+"lockouts triggered by Harbinger. By transmitting re-initialisation "
+"protocols, the system can be placed at your agents' disposal. This can be "
+"done using a hand-held activator but caution should be exercised; the cost "
+"of firing this system is extremely high."
+msgstr ""
+
+#: weapons.QDEVASTATOR.description
+msgctxt "weapons description - graviton gun"
+msgid ""
+"Twin graviton prisms in a Noxon-filled chamber act as a catalyst for a chain"
+" reaction which inverts the strong molecular force along a path defined by "
+"gravitic polarisation. The chain reaction begins when the trigger is pressed"
+" and is contained in the Noxon chamber, where it builds up until the trigger"
+" is released. Targeted matter is ripped apart molecule by molecule. The "
+"weapon may cause collateral damage as it emits tendrils of excess energy."
+msgstr ""
+
+#: weapons.RAZORWIRE.description
+msgctxt "weapons description - razor wire"
+msgid ""
+"This titanium-steel alloy wire is fashioned into a very long, very thin and "
+"very sharp spiked coil. Its use prevents access to secure areas by "
+"unauthorised civilians and presents a considerable obstacle for even "
+"cybernetically enhanced intruders to overcome. Its lethal nature is enhanced"
+" by its near invisibility to unmodified eyes."
+msgstr ""
+
+#: weapons.PERSUADER2.description
+msgctxt "weapons description - persuadertron ii"
+msgid ""
+"Drennan's on-going research into Church technology has paid off with the "
+"development of the Persuadertron II. This device is capable of infiltrating "
+"the minds of even the most battle-hardened zealot. Once exposed to its "
+"influence, cultists will obey your orders as doggedly as they followed the "
+"Church's twisted teachings."
+msgstr ""
+
+#: weapons.STASISFLD.description
+msgctxt "weapons description - stasis field"
+msgid ""
+"This portable field generator actually alters the rate at which time passes "
+"within the field. Held in near-suspended animation, the reaction speed of "
+"anyone or anything in the field is negligible, thus making the target much "
+"more vulnerable to other forms of attack. The energy required to activate "
+"the field is considerable and the timing of its operation should be chosen "
+"with care."
+msgstr ""
+
+#: weapons.SOULGUN.description
+msgctxt "weapons description - chromotap"
+msgid ""
+"In one of the Nine's most esoteric breakthroughs, they have learned how to "
+"unlock the electrochemical forces still locked away in the bodies of "
+"terminated organisms. The understanding of these mechanisms we now have "
+"gives us complete power over them. The Chromotap is based on this "
+"technology. It extracts energy from organic matter at the cellular level and"
+" transfers it to the device's controller. The Chromotap is especially useful"
+" for recharging agents after a firefight, as it can still utilise the "
+"cellular energy of casualties."
+msgstr ""
+
+#: weapons.TIMEGUN.description
+msgctxt "weapons description - displacertron"
+msgid ""
+"Professor Drennan has come up with the goods again. The Displacertron uses a"
+" core of ultra-dense matter surrounded by a stroboscopic stasis shell to "
+"provide limited access to higher dimensional time. This causes the target to"
+" vanish entirely and reappear at a point in the near future. Never has the "
+"saboteur been given a more powerful tool."
+msgstr ""
+
+#: weapons.CEREBUSIFF.description
+msgctxt "weapons description - cerberus iff"
+msgid ""
+"This electronic guardian can make a big difference to your agents' defensive"
+" actions and attacks. Positioned in an appropriate area and armed with a "
+"pulse laser, it takes on sentry duty and will open fire on any unsuspecting "
+"hostile target that comes in range until it exhausts its power pack or is "
+"destroyed."
+msgstr ""
+
+#: weapons.MEDI1.description
+msgctxt "weapons description - medikit"
+msgid ""
+"This multifunction pack can be used to quickly repair the kinds of wounds "
+"and damage sustained in combat. The kit comprises a toughened skin graft "
+"patch impregnated with anaesthetic and surgical nanobots. Can be used once "
+"only."
+msgstr ""
+
+#: weapons.MEDI2.description
+msgctxt "weapons description - automedikit"
+msgid ""
+"Like the Medikit, except that this upgraded version is worn by the user, so "
+"that it can automatically detect the level of damage sustained. If it drops "
+"below a critical level, the AutoMedikit activates itself and conducts "
+"accelerated surgical repairs. The AutoMedikit takes a few moments to start "
+"working, so a user who is continually sustaining damage might perish before "
+"the kit has a chance to work."
+msgstr ""
+
+#: weapons.EXPLWIRE.description
+msgctxt "weapons description - trigger wire"
+msgid ""
+"Similar to Razor Wire, Trigger Wire is an excellent tool for access-"
+"prevention. Just a few molecules thick, Trigger Wire is very difficult to "
+"see with even the later modification eyes, yet when touched activates "
+"multiple explosions along its length."
+msgstr ""
+
+#: weapons.CLONESHLD.description
+msgctxt "weapons description - clone shield"
+msgid ""
+"Produces a disguise so effective it fools even UTOPIA scanner readouts. The "
+"Clone Shield organically alters clothing and an agent's features, turning "
+"the user into an ordinary executive for a time. This can be extremely useful"
+" to agents on infiltration assignments, as they blend into any executive "
+"zone."
+msgstr ""
+
+#: mods.LEGS1.description
+msgctxt "mods description - legs 1"
+msgid ""
+"Constructed of a lightweight plasteel core with vat-grown organic outer "
+"coating, these artificial legs provide immediate improvement to both an "
+"agent's health and top speed. Stamina is also improved, thereby increasing "
+"the range an agent fitted with these legs can cover at maximum speed."
+msgstr ""
+
+#: mods.LEGS2.description
+msgctxt "mods description - legs 2"
+msgid ""
+"Advances in foam-metal technologies have produced this cybernetic limb "
+"system. Legs 2 deliver an impressive boost to speed, stamina and health, "
+"which prolongs an agent's maximum operational capacity still further."
+msgstr ""
+
+#: mods.LEGS3.description
+msgctxt "mods description - legs 3"
+msgid ""
+"Level 3 legs replace the fibre-optic nervous transmission found at lower "
+"levels with Super-Synapse memory plastic. The deployment of agents modified "
+"with level 3 legs is likely to have a profound impact on combat zone "
+"performance."
+msgstr ""
+
+#: mods.ARMS1.description
+msgctxt "mods description - arms 1"
+msgid ""
+"With the tungsten tendons and steel sinews of cybernetic arms, your agents "
+"will experience an immediate improvement in accuracy when shooting, and a "
+"subsequent saving in energy. The operational lifespan of an agent equipped "
+"with these arms is also lengthened by the characteristic health boost which "
+"accompanies cybernetic enhancement."
+msgstr ""
+
+#: mods.ARMS2.description
+msgctxt "mods description - arms 2"
+msgid ""
+"The foam-metal manufacturing process is now being successfully applied to "
+"precision cybernetics. With less inertia to overcome, these lightweight arms"
+" not only deliver a demonstrable improvement to accuracy but to range of "
+"throw as well."
+msgstr ""
+
+#: mods.ARMS3.description
+msgctxt "mods description - arms 3"
+msgid ""
+"The ultimate in forelimb technology is at your disposal. As our agents are "
+"facing increasingly well-equipped punks and cultists, the tangible "
+"improvements to combat proficiency these limbs provide will help to sustain "
+"our mission objective success rate."
+msgstr ""
+
+#: mods.CHEST1.description
+msgctxt "mods description - body 1"
+msgid ""
+"For significantly increased survivability in hostile environments, encase an"
+" agent's vital organs in triple-plate titanium alloy. An enhanced body "
+"modification provides the single biggest protection from punishment you can "
+"give a cyborg. Note that this modification must be fitted in order for the "
+"cyborg to support any other mods."
+msgstr ""
+
+#: mods.CHEST2.description
+msgctxt "mods description - body 2"
+msgid ""
+"This enhancement uses the honeycombed superstructure of foam-metal, forged "
+"in the microgravity of low orbit, to make it lighter than the body "
+"prosthetic currently in use and a higher tensile strength. Improved energy "
+"reserve is just one of the advantages of a level 2 body upgrade. "
+"Operationally, this translates into having more power and there being less "
+"risk of critical damage. With a level 2 body, the way is clear for you to "
+"upgrade to level 3 modifications in all other categories."
+msgstr ""
+
+#: mods.CHEST3.description
+msgctxt "mods description - body 3"
+msgid ""
+"Memory plastic tendons replace the steel micro-fibres of earlier mods, "
+"making the cyborg now significantly tougher than any with lower tech "
+"upgrades. Most notably, this enhancement protects an agent from all known "
+"nerve gas weapons."
+msgstr ""
+
+#: mods.BRAIN1.description
+msgctxt "mods description - brain 1"
+msgid ""
+"It's the ability to make decisions independently of Executive control that "
+"differentiates a decisive agent from a dead agent. This unit contains "
+"diamond processors in a 3D matrix integrated with the cyborg's conventional "
+"cognitive biomass. It increases basic perceptions and contains trauma "
+"management software to improve the cyborg's ability to withstand otherwise "
+"critical damage."
+msgstr ""
+
+#: mods.BRAIN2.description
+msgctxt "mods description - brain 2"
+msgid ""
+"Holographic core memory decreases reaction lag and boosts persuadertron "
+"range and signal strength. It also increases the cyborg's resistance to "
+"attempts to persuade it. This brain model brings perceptual enhancements "
+"across the board and further improvements to the trauma software, increasing"
+" the cyborg's survivability margin."
+msgstr ""
+
+#: mods.BRAIN3.description
+msgctxt "mods description - brain 3"
+msgid ""
+"The apogee of portable artificial intelligence technology. At level 3 a "
+"modified brain not only delivers increased health but also guarantees "
+"improved targeting accuracy; hit rate and energy efficiency benefits. The "
+"cyborg can be exposed to environments which would destroy the biological "
+"brain almost instantly; this unit can completely backup the biological data "
+"and enable the agent to continue to function."
+msgstr ""
+
+#: mods.SKIN1.description
+msgctxt "mods description - hard skin"
+msgid ""
+"This is complex cellular cyberskin, weaved to provide a bullet-resistant "
+"epidermis that radically reduces damage from projectile weapons. Development"
+" of a pachyderm/steel mesh hybrid and careful cosmetic enhancement has "
+"produced a substance that is extraordinarily tough but just as flexible as "
+"normal, vat-grown cyborg flesh."
+msgstr ""
+
+#: mods.SKIN2.description
+msgctxt "mods description - flame skin"
+msgid ""
+"This cyberskin takes advantage of the latest form of non-toxic asbestos "
+"designed for use in spacecraft re-entry. When carrying out operations during"
+" firestorm conditions, an agent wearing this skin would suffer far less from"
+" incendiary damage than an unprotected counterpart."
+msgstr ""
+
+#: mods.SKIN3.description
+msgctxt "mods description - energy skin"
+msgid ""
+"This is a cyberskin variant based on hydrocarbon polymer augmented by fibre-"
+"optic micro-filaments. It should absorb much of the destructive power of "
+"energy-based weapon systems. The energy is dispersed from the point of "
+"impact around the modified agent's body, and recycled to sustain the skin's "
+"protective properties."
+msgstr ""
+
+#: mods.SKIN4.description
+msgctxt "mods description - stealth skin"
+msgid ""
+"This is cutting edge cyberskin technology. The skin uses asynchronous "
+"temporal phase-shifting cells to confuse targetting systems, making weapon "
+"lock very hard to get. An agent wearing this skin would be almost invisible "
+"to his opponents' firepower."
+msgstr ""
+
+#: mission.brief.mail21.par5.c2
+msgctxt "mission brief email orders"
+msgid ""
+"Colombo: Retake control of the orbital elevator facility. Additional "
+"operatives will be on site to assist."
+msgstr ""
+
+#: mission.brief.mail21.par6.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Vissick himself has escaped but his rebellion is over. He and a few others "
+"will die in the toxic wilderness beyond city perimeters. When we have "
+"finished dealing with the Church, we can mount a search for the bodies."
+msgstr ""
+
+#: mission.brief.mail21.par7.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"I have deciphered the coded orders Anika-Mirabelle was carrying when you "
+"terminated her. She was scheduled to rendezvous with the cult's leadership -"
+" the Nine - in Sri Lanka. The Church has taken over the Orbital Elevator at "
+"Colombo. From there, they could take control of the Moon."
+msgstr ""
+
+#: mission.brief.mail21.par8.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Professor Drennan fears that the Nine have plans to carry into practice some"
+" of the theories set out in the Codex.Namely, to enhance the power of the "
+"experimental ionospheric re-calibration equipment being developedby "
+"scientists at the Amundsen Research Colony on the surface of the Moon, and "
+"to use it as a weapon."
+msgstr ""
+
+#: mission.brief.mail21.par9.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Reports from other AIs indicate a global reduction in zealot activity, "
+"suggesting that their Cataclysm might be about to happen."
+msgstr ""

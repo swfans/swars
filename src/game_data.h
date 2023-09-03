@@ -70,8 +70,10 @@ const char *GetDirectoryCd(void);
 
 void setup_file_names(void);
 
-int get_new_packet_record_no(int map_index);
-void get_packet_record_fname(char *fname, int map_index, int file_no);
+int get_highest_used_packet_record_no(int campgn, int missi);
+void get_packet_record_fname(char *fname, int campgn, int missi, int file_no);
+void get_user_settings_fname(char *fname, const char *name);
+void get_saved_game_fname(char *fname, ushort slot);
 
 void adjust_memory_use(void);
 int init_memory(MemSystem *mems);

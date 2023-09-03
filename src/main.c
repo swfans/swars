@@ -55,6 +55,7 @@ const struct TbNamedEnum conf_file_disk_inst_lev[] = {
 
 TbBool cmdln_fullscreen = true;
 TbBool cmdln_lores_stretch = true;
+extern TbBool level_deep_fix;
 
 static void
 print_help (const char *argv0)
@@ -74,15 +75,19 @@ print_help (const char *argv0)
 "                -H        Initially enter high resolution mode\n"
 "  --help        -h        Display the help message\n"
 "                -I <num>  Connect through IPX\n"
-"                -m <n>,<n> Load campaign with given index, from which load level\n"
-"                          with given index in single map mode\n"
+"                -m <n>,<n> Load campaign with given index, from which load\n"
+"                          mission with given index in single map mode\n"
 "                -N        ?\n"
 "                -p <num>  Play replay packets from file of given index;\n"
-"                          use '-m' to specify map on which to play\n"
-"                -q        Affects game quit conditions (but how?)\n"
+"                          use '-m' to specify mission on which to play\n"
+"                -q        Skip intro movie\n"
 "                -r        Record replay packets to file in savegame dir;\n"
 "                          next unused filename for selected map will be used\n"
-"  --no-stretch  -S        Don't stretch 320x200 graphics to high res display\n"
+"  --level-deep-fix -L     Perform deeper fixes to the loaded levels; this may\n"
+"                          fix some glitches, but such autamatic rework may\n"
+"                          also break stuff; non-damaging fixes are applied\n"
+"                          even without this option\n"
+"  --no-stretch  -S        Do not stretch 320x200 graphics to high res display\n"
 "                -s <str>  Set session name string\n"
 "                -T        color tables mode (no effect?)\n"
 "  --self-tests  -t        execute build self tests\n"
@@ -114,6 +119,7 @@ static TbBool process_options(int *argc, char ***argv)
     {
       {"windowed",    0, NULL, 'W'},
       {"no-stretch",  0, NULL, 'S'},
+      {"level-deep-fix", 0, NULL, 'L'},
       {"self-test",   0, NULL, 't'},
       {"help",        0, NULL, 'h'},
       {NULL,          0, NULL,  0 },
@@ -122,7 +128,7 @@ static TbBool process_options(int *argc, char ***argv)
     argv0 = (*argv)[0];
     index = 0;
 
-    while ((val = getopt_long (*argc, *argv, "ABCDE:FgHhI:m:Np:qrSs:Ttu:Ww", options, &index)) >= 0)
+    while ((val = getopt_long (*argc, *argv, "ABCDE:FgHhI:Lm:Np:qrSs:Ttu:Ww", options, &index)) >= 0)
     {
         LOGDBG("Command line option: '%c'", val);
         switch (val)
@@ -157,11 +163,11 @@ static TbBool process_options(int *argc, char ***argv)
         case 'g':
             cmdln_param_bcg = 1;
             ingame.GameMode = GamM_Unkn3;
-            ingame.Flags |= 0x08;
+            ingame.Flags |= GamF_Unkn8;
             break;
 
         case 'H':
-            lbDisplay.ScreenMode = screen_mode_game_hi;
+            game_high_resolution = true;
             break;
 
         case 'h':
@@ -174,6 +180,10 @@ static TbBool process_options(int *argc, char ***argv)
             LbNetworkSetupIPXAddress(tmpint);
             break;
 
+        case 'L':
+            level_deep_fix = true;
+            break;
+
         case 'm':
             is_single_game = 1;
             if (sscanf(optarg, "%hhu,%d", &background_type, &tmpint) != 2)
@@ -182,7 +192,7 @@ static TbBool process_options(int *argc, char ***argv)
                 return false;
             }
             ingame.GameMode = GamM_Unkn2;
-            ingame.Flags |= 0x08;
+            ingame.Flags |= GamF_Unkn8;
             ingame.CurrentMission = tmpint;
             ingame.Cheats |= 0x04;
             LOGDBG("Campaign %d mission index %d", (int)background_type, (int)ingame.CurrentMission);
@@ -195,12 +205,12 @@ static TbBool process_options(int *argc, char ***argv)
         case 'p':
             is_single_game = 1;
             pktrec_mode = PktR_PLAYBACK;
-            cmdln_pr_num = atoi(optarg);
-            LOGDBG("packet file play %d", cmdln_pr_num);
+            packet_rec_no = atoi(optarg);
+            LOGDBG("packet file play %hu", packet_rec_no);
             break;
 
         case 'q':
-            ingame.Flags |= 0x080000;
+            ingame.Flags |= GamF_SkipIntro;
             break;
 
         case 'r':
@@ -255,7 +265,7 @@ static void fixup_options(void)
     // If game mode was not selected, set it to normal gameplay
     if (ingame.GameMode == GamM_None) {
         ingame.GameMode = GamM_Unkn3;
-        ingame.Flags |= 0x08;
+        ingame.Flags |= GamF_Unkn8;
     }
 }
 
@@ -411,6 +421,7 @@ main (int argc, char **argv)
 {
     // the initial mode will be overwritten in game_setup()
     lbDisplay.ScreenMode = Lb_SCREEN_MODE_320_200_8;
+    game_high_resolution = false;
     ingame.GameMode = GamM_None;
     ingame.LowerMemoryUse = 0;
     ingame.Flags = 0;

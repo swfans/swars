@@ -39,6 +39,7 @@ void * LbStringConcat(char *dst, const char *src, const ulong dst_buflen);
 
 ulong LbStringLength(const char *str);
 
+void * LbStringToLower(char *str);
 void * LbStringToLowerCopy(char *dst, const char *src, const ulong dst_buflen);
 
 #ifdef __cplusplus
