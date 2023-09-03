@@ -1154,7 +1154,7 @@ def create_lines_for_wms(lines, pomdict):
             else:
                 pomodlist.append( (wmtype,e,) )
 
-        lines.append("[weapons]")
+        lines.append(f"[{campgn}_weapons]".lower())
         for wmtype,e in poweplist:
             wep_name = dict_key_for_value(weapon_mod_names_to_code, wmtype)
             if (campgn == 'CHURCH') and (wmtype == 'PERSUADER'):
@@ -1164,7 +1164,7 @@ def create_lines_for_wms(lines, pomdict):
             lines.append(wep_name.upper())
             lines.append(e.msgstr)
 
-        lines.append("[mods]")
+        lines.append(f"[{campgn}_mods]".lower())
         for wmtype,e in pomodlist:
             mod_name = dict_key_for_value(weapon_mod_names_to_code, wmtype)
             if mod_name is None:
@@ -1340,7 +1340,7 @@ def textwad_create(po, wadfh, idxfh):
     for txtfname in txtfiles:
         lines = []
         e = WADIndexEntry()
-        e.Filename = txtfname.encode('utf-8')
+        e.Filename = txtfname.upper().encode('utf-8')
         e.Offset = wadfh.tell()
         textwad_create_from_po(lines, podict, txtfname)
         lines = [enctable_string_to_bytes(po, ln) for ln in lines]
@@ -1368,14 +1368,16 @@ def main():
     parser.add_argument('-l', '--lang', type=str, default="eng",
           help="Language of the processed files, required to extract non-english WADs to PO")
 
-    parser.add_argument('-r', '--raw', action='store_true',
-          help="Import or export raw files (TXT) rather than .PO/POT")
-
-    parser.add_argument('-t', '--enctable', type=str, required=True,
-          help="Character encoding table file name")
-
     parser.add_argument('-v', '--verbose', action='count', default=0,
           help="Increases verbosity level; max level is set by -vvv")
+
+    subparser = parser.add_mutually_exclusive_group(required=True)
+
+    subparser.add_argument('-r', '--raw', action='store_true',
+          help="Import or export raw files (TXT) rather than .PO/POT")
+
+    subparser.add_argument('-t', '--enctable', type=str,
+          help="Character encoding table file name")
 
     subparser = parser.add_mutually_exclusive_group(required=True)
 
@@ -1408,7 +1410,8 @@ def main():
         po.engwadfile = ""
         po.engidxfile = ""
 
-    read_enctable(po, po.enctable)
+    if not po.raw:
+        read_enctable(po, po.enctable)
 
     if po.extract:
         if (po.verbose > 0):
