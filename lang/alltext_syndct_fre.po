@@ -20,8 +20,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Menu text for SW Port\n"
 "Report-Msgid-Bugs-To: https://github.com/swfans/swars/issues\n"
-"POT-Creation-Date: 2023-08-20 01:12+0200\n"
-"PO-Revision-Date: 2023-09-04 02:53+0200\n"
+"POT-Creation-Date: 2023-09-04 09:58+0200\n"
+"PO-Revision-Date: 2023-09-04 10:00+0200\n"
 "Last-Translator: Mefistotelis <mefistotelis@gmail.com>\n"
 "Language-Team: Syndicate Wars Fans <github.com/swfans>\n"
 "Language: fr_FR\n"
@@ -54,6 +54,7 @@ msgstr "Priorité: 3"
 #: mission.brief.mail16.par3.h mission.brief.mail17.par3.h
 #: mission.brief.mail18.par3.h mission.brief.mail19.par3.h
 #: mission.brief.mail20.par3.h mission.brief.mail21.par3.h
+#: mission.brief.mail5.par3.h mission.brief.mail8.par13.c3
 msgctxt "mission brief email header"
 msgid "Message begins:"
 msgstr "Début de message:"
@@ -409,11 +410,6 @@ msgstr ""
 "recherches sur ce sujet. Il est clair que leur savoir-faire est "
 "impressionnant."
 
-#: mission.brief.mail5.par3.h
-msgctxt "mission brief email header"
-msgid "Message begins: "
-msgstr "Début de message:"
-
 #: mission.brief.mail5.par5.c2
 msgctxt "mission brief email orders"
 msgid "Singapore: Deliver bullion car to evac zone."
@@ -608,11 +604,6 @@ msgstr "DE: Contrôle"
 msgctxt "mission brief email paragraph"
 msgid "TO: All Field Executives"
 msgstr "A L'ATTENTION DE: Tous les Exécutants sur le terrain"
-
-#: mission.brief.mail8.par13.c3
-msgctxt "mission brief email paragraph"
-msgid "Message begins:"
-msgstr "Début de message:"
 
 #: mission.brief.mail8.par14.c3
 msgctxt "mission brief email paragraph"
@@ -1065,7 +1056,7 @@ msgstr ""
 "Chodak et Vissick, atteignant son paroxysme à l'explosion qui ruina les "
 "installations du C3 à Reykjavik. Dans ses notes, Chodak accusait Vissick "
 "(introuvable après l'explosion) de sabotage et l'EuroCorp de complicité. Il "
-"menaçait d'appliquer la technologie décrite dans le  \"Codex\" pour anéantir "
+"menaçait d'appliquer la technologie décrite dans le \"Codex\" pour anéantir "
 "le Syndicat. Les autres membres du C3 suivirent Chodak."
 
 #: mission.brief.mail14.par10.c5
@@ -1263,7 +1254,7 @@ msgstr ""
 "de technologie antique lui a quand même permis de garder son indépendance. "
 "Il s'appelle Wu et comme il peut nous être très utile, j'ai conclu un marché "
 "avec lui. Wu me permettra d'accéder à l'ensemble de ses fonctions cérébrales "
-"supérieures pour une mission supplémentaire. S'il réussit, j'augmenterai ma  "
+"supérieures pour une mission supplémentaire. S'il réussit, j'augmenterai ma "
 "mémoire à bulles pour intégrer sa conscience dès que le réseau UTOPIA sera "
 "remis sur pied. Je veux que Wu tente de persuader De Saxo. Je la soupçonne "
 "de pouvoir détecter les agents de l'EuroCorp."
@@ -1395,7 +1386,7 @@ msgstr ""
 "La meute des Dévoyés a pris le contrôle de la zone industrielle de "
 "Sébastopol. Tout ce qui n'a pas été détruit est désormais entre leurs mains. "
 "Heureusement, ils semblent attendre quelque chose avant de tenter une "
-"évasion au-delà du périmètre gardé de la ville,  peut-être un signal de "
+"évasion au-delà du périmètre gardé de la ville, peut-être un signal de "
 "Vissick."
 
 #: mission.brief.mail19.par13.c5
@@ -1640,7 +1631,7 @@ msgstr "Eglise des Esprits Corrompus"
 #: mission.title:104
 msgctxt "mission title"
 msgid "Tokyo Fuseki"
-msgstr ""
+msgstr "Tokyo Fuseki"
 
 #: mapscreen.heading:1
 msgctxt "syndicate map screen headings - name"
@@ -1695,7 +1686,7 @@ msgstr ""
 msgctxt "mission brief tactical information"
 msgid "Eavesdrop: police on patrol with orders to engage anyone bearing arms"
 msgstr ""
-"Ecoutes: Ordre aux patrouilles de police d'enrOler toute personne ayant une "
+"Ecoutes: Ordre aux patrouilles de police d'enrôler toute personne ayant une "
 "arme"
 
 #: mission.brief.mail2.map35.level1:1
@@ -1888,14 +1879,14 @@ msgctxt "mission brief tactical information"
 msgid ""
 "Eavesdrop: police reports indicate that the Unguided are completely out of "
 "control"
-msgstr "Ecoutes: Les Dévoyés sont totalement incontrOlables"
+msgstr "Ecoutes: Les Dévoyés sont totalement incontrôlables"
 
 #: mission.brief.mail9.map10.level1:6
 msgctxt "mission brief tactical information"
 msgid ""
 "London AI analysis: any engagement of the Unguided is likely to attract the "
 "wrath of the whole mob"
-msgstr "Analyse de l'IA de Londres: Evitez l'enrOlement de Dévoyés"
+msgstr "Analyse de l'IA de Londres: Évitez l'enrôlement de Dévoyés"
 
 #: mission.brief.mail10.map28.level46:1 mission.brief.mail14.map28.level15:1
 msgctxt "mission brief tactical information"
@@ -2711,14 +2702,6 @@ msgstr ""
 "l'agent d'achever sa mission."
 
 #: mods.SKIN1.description
-#, fuzzy
-#| msgctxt "mods description - peau renforcee"
-#| msgid ""
-#| "This is complex cellular cyberskin, weaved to provide a bullet-resistant "
-#| "epidermis that radically reduces damage from projectile weapons. "
-#| "Development of a pachyderm/steel mesh hybrid and careful cosmetic "
-#| "enhancement has produced a substance that is extraordinarily tough but "
-#| "just as flexible as normal, vat-grown cyborg flesh."
 msgctxt "mods description - hard skin"
 msgid ""
 "This is complex cellular cyberskin, weaved to provide a bullet-resistant "
@@ -2762,13 +2745,6 @@ msgstr ""
 "les propriétés protectrices de la peau."
 
 #: mods.SKIN4.description
-#, fuzzy
-#| msgctxt "mods description - peau furtive"
-#| msgid ""
-#| "This is cutting edge cyberskin technology. The skin uses asynchronous "
-#| "temporal phase-shifting cells to confuse targetting systems, making "
-#| "weapon lock very hard to get. An agent wearing this skin would be almost "
-#| "invisible to his opponents' firepower."
 msgctxt "mods description - stealth skin"
 msgid ""
 "This is cutting edge cyberskin technology. The skin uses asynchronous "
@@ -2846,22 +2822,3 @@ msgstr ""
 "l’Église tente de rassembler la plus grosse force de frappe possible. "
 "L'attaque de Colombo est imminente."
 
-#~ msgctxt "mission brief email paragraph"
-#~ msgid "Message Type: HARDWIRED"
-#~ msgstr "Type de message: CABLE"
-
-#~ msgctxt "mission brief email paragraph"
-#~ msgid "Priority: 1"
-#~ msgstr "Priorité: 1"
-
-#~ msgctxt "mission brief email paragraph"
-#~ msgid "Maritz"
-#~ msgstr "Maritz"
-
-#~ msgctxt "mission brief email header"
-#~ msgid "Orders"
-#~ msgstr "Ordres"
-
-#~ msgctxt "mission brief email header"
-#~ msgid "Maritz"
-#~ msgstr "Maritz"
