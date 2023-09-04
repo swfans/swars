@@ -1329,7 +1329,7 @@ msgstr ""
 
 #: mapscreen.city20:6
 msgctxt "map screen location - toxicity"
-msgid "Heavy Industrial "
+msgid "Heavy Industrial"
 msgstr ""
 
 #: mapscreen.city21:1
