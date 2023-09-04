@@ -20,8 +20,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Menu text for SW Port\n"
 "Report-Msgid-Bugs-To: https://github.com/swfans/swars/issues\n"
-"POT-Creation-Date: 2023-08-20 01:12+0200\n"
-"PO-Revision-Date: 2023-09-04 03:11+0200\n"
+"POT-Creation-Date: 2023-09-04 03:12+0200\n"
+"PO-Revision-Date: 2023-09-04 12:13+0200\n"
 "Last-Translator: Mefistotelis <mefistotelis@gmail.com>\n"
 "Language-Team: Syndicate Wars Fans <github.com/swfans>\n"
 "Language: fr_FR\n"
@@ -31,105 +31,807 @@ msgstr ""
 "X-Poedit-SourceCharset: utf-8\n"
 "X-Generator: Poedit 3.0.1\n"
 
-#: sci.death.reason:1
-msgctxt "scientists death reason"
-msgid "Laboratory accident"
-msgstr "Accident en laboratoire"
+#: scanner.objective:1
+msgctxt "objective text shown on scanner"
+msgid "Eliminate the Unguided"
+msgstr "Eliminez les Devoyes"
 
-#: sci.death.reason:2
-msgctxt "scientists death reason"
-msgid "Natural causes"
-msgstr "Causes naturelles"
+#: scanner.objective:2
+msgctxt "objective text shown on scanner"
+msgid "Return to HQ"
+msgstr "Retournez au QG"
 
-#: sci.death.reason:3
-msgctxt "scientists death reason"
-msgid "Time-delay virus"
-msgstr "Virus a retardement"
+#: scanner.objective:3
+msgctxt "objective text shown on scanner"
+msgid "Persuade yamaguchi technicians"
+msgstr "Persuadez les techniciens de yamaguchi"
 
-#: sci.death.reason:4
-msgctxt "scientists death reason"
-msgid "Experimental error"
-msgstr "Mauvaise manipulation"
+#: scanner.objective:4
+msgctxt "objective text shown on scanner"
+msgid "Evacuate"
+msgstr "Evacuez"
 
-#: sci.death.reason:5
-msgctxt "scientists death reason"
-msgid "Fatal miscalculation"
-msgstr "Erreur fatale"
+#: scanner.objective:5
+msgctxt "objective text shown on scanner"
+msgid "Technician fatality"
+msgstr "Mort du technicien"
 
-#: sci.death.reason:6
-msgctxt "scientists death reason"
-msgid "Illogical deduction"
-msgstr "Deduction illogique"
+#: scanner.objective:6
+msgctxt "objective text shown on scanner"
+msgid "Persuade yamaguchi executives"
+msgstr "Persuadez les cadres de yamaguchi"
 
-#: sci.death.reason:7
-msgctxt "scientists death reason"
-msgid "Terminal delusion"
-msgstr "Hallucinations"
+#: scanner.objective:7
+msgctxt "objective text shown on scanner"
+msgid "Executive fatality"
+msgstr "Mort du cadre"
 
-#: sci.death.reason:8
-msgctxt "scientists death reason"
-msgid "Rash judgement"
-msgstr "Erreur de jugement"
+#: scanner.objective:8
+msgctxt "objective text shown on scanner"
+msgid "Neutralise yamaguchi agents"
+msgstr "Neutralisez les agents yamaguchi"
 
-#: sci.death.reason:9
-msgctxt "scientists death reason"
-msgid "Flawed reasoning"
-msgstr "Raisonnement altere"
+#: scanner.objective:9
+msgctxt "objective text shown on scanner"
+msgid "Agent fatality"
+msgstr "Mort de l'agent"
 
-#: sci.death.reason:10
-msgctxt "scientists death reason"
-msgid "Insanity"
-msgstr "Folie"
+#: scanner.objective:10
+msgctxt "objective text shown on scanner"
+msgid "Persuade Bluesky scientists"
+msgstr "Persuadez les scientifiques de Bluesky"
 
-#: sci.death.reason:11
-msgctxt "scientists death reason"
-msgid "Negligence"
-msgstr "Negligence"
+#: scanner.objective:11 scanner.objective:161
+msgctxt "objective text shown on scanner"
+msgid "Persuade Bluesky scientist"
+msgstr "Persuadez le scientifique de Bluesky"
 
-#: sci.death.reason:12
-msgctxt "scientists death reason"
-msgid "Unsafe procedure"
-msgstr "Procedure non protegee"
+#: scanner.objective:12
+msgctxt "objective text shown on scanner"
+msgid "Mission update: eliminate Unguided threat"
+msgstr "Nouvel ordre : eliminez la menace des Devoyes"
 
-#: sci.death.reason:13
-msgctxt "scientists death reason"
-msgid "Mental collapse"
-msgstr "Effondrement mental"
+#: scanner.objective:13 scanner.objective:38
+msgctxt "objective text shown on scanner"
+msgid "Escort scientists to IML link"
+msgstr "Escortez les scientifiques vers la liaison LMI"
 
-#: sci.death.reason:14
-msgctxt "scientists death reason"
-msgid "Equipment malfunction"
-msgstr "Mauvais equipement"
+#: scanner.objective:14
+msgctxt "objective text shown on scanner"
+msgid "Steal bullion car"
+msgstr "Emparez-vous du fourgon blinde"
 
-#: sci.death.reason:15
-msgctxt "scientists death reason"
-msgid "Unsuccessful test"
-msgstr "Test echoue"
+#: scanner.objective:15 scanner.objective:100
+msgctxt "objective text shown on scanner"
+msgid "The bullion car has been destroyed"
+msgstr "Le fourgon blinde a ete detruit"
 
-#: sci.death.reason:16
-msgctxt "scientists death reason"
-msgid "Cardiac arrest"
-msgstr "Arret cardiaque"
+#: scanner.objective:16
+msgctxt "objective text shown on scanner"
+msgid "The bullion car has reached Tang HQ"
+msgstr "Le fourgon blinde a atteint le QG de Tang"
 
-#: sci.death.reason:17
-msgctxt "scientists death reason"
-msgid "Incorrect assumption"
-msgstr "Mauvais calcul"
+#: scanner.objective:17
+msgctxt "objective text shown on scanner"
+msgid "Deliver car to evac zone"
+msgstr "Amenez le fourgon a la zone d'evacuation"
 
-#: sci.death.reason:18
-msgctxt "scientists death reason"
-msgid "Electrocution"
-msgstr "Electrocution"
+#: scanner.objective:18
+msgctxt "objective text shown on scanner"
+msgid "Steal cult technology from temple"
+msgstr "Emparez-vous  du materiel a l'interieur du temple"
 
-#: sci.death.reason:19
-msgctxt "scientists death reason"
-msgid "Disintegration"
-msgstr "Desintegration"
+#: scanner.objective:19
+msgctxt "objective text shown on scanner"
+msgid "Deliver cult artefact to evac zone"
+msgstr "Amenez le materiel a la zone d'evacuation"
 
-#: sci.death.reason:20
-msgctxt "scientists death reason"
-msgid "Misadventure"
-msgstr "Accident"
+#: scanner.objective:20
+msgctxt "objective text shown on scanner"
+msgid "Remove Unguided stronghold"
+msgstr "Prenez la forteresse des Devoyes"
+
+#: scanner.objective:21
+msgctxt "objective text shown on scanner"
+msgid "Eliminate rioters"
+msgstr "Eliminez les emeutiers"
+
+#: scanner.objective:22
+msgctxt "objective text shown on scanner"
+msgid "Sterilise sector"
+msgstr "Sterilisez le secteur"
+
+#: scanner.objective:23
+msgctxt "objective text shown on scanner"
+msgid "Eliminate guards"
+msgstr "Eliminez les gardes"
+
+#: scanner.objective:24
+msgctxt "objective text shown on scanner"
+msgid "Eliminate agent"
+msgstr "Eliminez l'agent"
+
+#: scanner.objective:25
+msgctxt "objective text shown on scanner"
+msgid "Persuade agent"
+msgstr "Persuadez l'agent"
+
+#: scanner.objective:26
+msgctxt "objective text shown on scanner"
+msgid "Target agent has died"
+msgstr "L'agent cible est mort"
+
+#: scanner.objective:27
+msgctxt "objective text shown on scanner"
+msgid "Target agent has escaped"
+msgstr "L'agent cible s'est echappe"
+
+#: scanner.objective:28
+msgctxt "objective text shown on scanner"
+msgid "Persuade NAA employee"
+msgstr "Persuadez l'employe NAA"
+
+#: scanner.objective:29
+msgctxt "objective text shown on scanner"
+msgid "Persuade Jennifer Taks"
+msgstr "Persuadez Jennifer Taks"
+
+#: scanner.objective:30
+msgctxt "objective text shown on scanner"
+msgid "Escort Taks to IML link"
+msgstr "Escortez Taks vers la liaison LMI"
+
+#: scanner.objective:31
+msgctxt "objective text shown on scanner"
+msgid "Jennifer Taks is dead"
+msgstr "Jennifer Taks est morte"
+
+#: scanner.objective:32
+msgctxt "objective text shown on scanner"
+msgid "Eliminate Zealots"
+msgstr "Eliminez les Zelateurs"
+
+#: scanner.objective:33
+msgctxt "objective text shown on scanner"
+msgid "Persuade Gel Data scientist"
+msgstr "Persuadez le scientifique de Gel Data"
+
+#: scanner.objective:34
+msgctxt "objective text shown on scanner"
+msgid "Persuade Gel Data scientists"
+msgstr "Persuadez les scientifiques de Gel Data"
+
+#: scanner.objective:35
+msgctxt "objective text shown on scanner"
+msgid "Persuade Hexagon scientist"
+msgstr "Persuadez le scientifique de Hexagon"
+
+#: scanner.objective:36
+msgctxt "objective text shown on scanner"
+msgid "Persuade Hexagon scientists"
+msgstr "Persuadez les scientifiques de Hexagon"
+
+#: scanner.objective:37
+msgctxt "objective text shown on scanner"
+msgid "Escort scientist to IML link"
+msgstr "Escortez le scientifique vers la liaison LMI"
+
+#: scanner.objective:39
+msgctxt "objective text shown on scanner"
+msgid "Update: eliminate Zealot threat"
+msgstr "Nouvel ordre: eliminez la menace des Zelateurs"
+
+#: scanner.objective:40
+msgctxt "objective text shown on scanner"
+msgid "Vehicle destroyed: agents stranded"
+msgstr "Vehicule detruit; agents isoles"
+
+#: scanner.objective:41
+msgctxt "objective text shown on scanner"
+msgid "Scientist lost"
+msgstr "Scientifique perdu"
+
+#: scanner.objective:42
+msgctxt "objective text shown on scanner"
+msgid "Persuade C3 scientists"
+msgstr "Persuade les scientifiques C3"
+
+#: scanner.objective:43
+msgctxt "objective text shown on scanner"
+msgid "C3 scientists eliminated"
+msgstr "Scientifiques C3 elimines"
+
+#: scanner.objective:44
+msgctxt "objective text shown on scanner"
+msgid "Laboratory destroyed"
+msgstr "Laboratoire detruit"
+
+#: scanner.objective:45
+msgctxt "objective text shown on scanner"
+msgid "Facility destroyed"
+msgstr "Installations detruites"
+
+#: scanner.objective:46
+msgctxt "objective text shown on scanner"
+msgid "Sterilise city"
+msgstr "Sterilisez la ville"
+
+#: scanner.objective:47
+msgctxt "objective text shown on scanner"
+msgid "Protect Drennan"
+msgstr "Protegez Drennan"
+
+#: scanner.objective:48
+msgctxt "objective text shown on scanner"
+msgid "Protect Professor's assistant"
+msgstr "Protegez l'assistante du professeur"
+
+#: scanner.objective:49
+msgctxt "objective text shown on scanner"
+msgid "Protect executives"
+msgstr "Protegez les executants"
+
+#: scanner.objective:50
+msgctxt "objective text shown on scanner"
+msgid "Professor Drennan is dead"
+msgstr "Le professeur Drennan est mort"
+
+#: scanner.objective:51
+msgctxt "objective text shown on scanner"
+msgid "Professor Drennan's aide is dead"
+msgstr "L'assistante du professeur Drennan est morte"
+
+#: scanner.objective:52
+msgctxt "objective text shown on scanner"
+msgid "Eurocorp executives have been wiped out"
+msgstr "Les executants d'eurocorp ont ete aneantis"
+
+#: scanner.objective:53
+msgctxt "objective text shown on scanner"
+msgid "Rescue professor Drennan"
+msgstr "Portez secours au professeur Drennan"
+
+#: scanner.objective:54
+msgctxt "objective text shown on scanner"
+msgid "Escort professor Drennan to Eurocorp facility"
+msgstr "Escortez le professeur Drennan vers les installations d'Eurocorp"
+
+#: scanner.objective:55
+msgctxt "objective text shown on scanner"
+msgid "Mission update: evacuate all personnel"
+msgstr "Nouvel ordre: evacuez tout le personnel"
+
+#: scanner.objective:56
+msgctxt "objective text shown on scanner"
+msgid "Evacuation failed"
+msgstr "L'evacuation a echoue"
+
+#: scanner.objective:57
+msgctxt "objective text shown on scanner"
+msgid "Persuade Mirabelle Lucy De Saxo"
+msgstr "Persuadez Mirabelle Lucy De Saxo"
+
+#: scanner.objective:58
+msgctxt "objective text shown on scanner"
+msgid "De Saxo has fled: new orders available"
+msgstr "De Saxo a pris la fuite: preparez-vous a recevoir de nouveaux ordres"
+
+#: scanner.objective:59
+msgctxt "objective text shown on scanner"
+msgid "Eliminate Mirabelle Lucy De Saxo"
+msgstr "Eliminez Mirabelle Lucy De Saxo"
+
+#: scanner.objective:60
+msgctxt "objective text shown on scanner"
+msgid "Crush the uprising"
+msgstr "Matez la revolte"
+
+#: scanner.objective:61
+msgctxt "objective text shown on scanner"
+msgid "Eliminate Unguided rebels"
+msgstr "Eliminez les Devoyes rebelles"
+
+#: scanner.objective:62
+msgctxt "objective text shown on scanner"
+msgid "Protect the Bahrain AI"
+msgstr "Protegez l'IA de Bahrein"
+
+#: scanner.objective:63
+msgctxt "objective text shown on scanner"
+msgid "Bahrain AI has been destroyed"
+msgstr "L'IA de Bahrein a ete detruite"
+
+#: scanner.objective:64
+msgctxt "objective text shown on scanner"
+msgid "Secure orbital elevator"
+msgstr "Assurez la securite de l'elevateur orbital"
+
+#: scanner.objective:65
+msgctxt "objective text shown on scanner"
+msgid "Insufficient agents to complete mission"
+msgstr "Agents en nombre insuffisant pour accomplir la mission"
+
+#: scanner.objective:66
+msgctxt "objective text shown on scanner"
+msgid "The orbital elevator has been destroyed"
+msgstr "L'elevateur orbital a ete detruit"
+
+#: scanner.objective:67
+msgctxt "objective text shown on scanner"
+msgid "The space station has been destroyed"
+msgstr "La station spatiale a ete detruite"
+
+#: scanner.objective:68
+msgctxt "objective text shown on scanner"
+msgid "Get shuttle nav computer"
+msgstr "Emparez-vous de l'ordinateur de bord de la navette"
+
+#: scanner.objective:69
+msgctxt "objective text shown on scanner"
+msgid "Station self-destruct armed: de-activate"
+msgstr "Mecanisme d'autodestruction de la station arme: desactivez-le"
+
+#: scanner.objective:70
+msgctxt "objective text shown on scanner"
+msgid "Get shuttle life support module"
+msgstr "Emparez-vous du module de survie de la navette"
+
+#: scanner.objective:71
+msgctxt "objective text shown on scanner"
+msgid "Access lunar shuttle craft"
+msgstr "Montez a bord du vaisseau lunaire"
+
+#: scanner.objective:72
+msgctxt "objective text shown on scanner"
+msgid "Eliminate The Nine"
+msgstr "Eliminez les Neuf"
+
+#: scanner.objective:73
+msgctxt "objective text shown on scanner"
+msgid "The Nine have activated the ion gate. you have been defeated."
+msgstr "Les Neuf ont active le rideau ionique. Vous avez perdu."
+
+#: scanner.objective:74
+msgctxt "objective text shown on scanner"
+msgid "Eliminate the Unguided heathens"
+msgstr "Eliminez les Devoyes paiens"
+
+#: scanner.objective:75
+msgctxt "objective text shown on scanner"
+msgid "Our garden of meditations has been destroyed"
+msgstr "Notre jardin de meditation a ete detruit"
+
+#: scanner.objective:76
+msgctxt "objective text shown on scanner"
+msgid "Convert Eurocorp agent"
+msgstr "Convertis l'agent Eurocorp"
+
+#: scanner.objective:77
+msgctxt "objective text shown on scanner"
+msgid "Escort agent to IML link"
+msgstr "Escorte l'agent vers la liaison LMI"
+
+#: scanner.objective:78
+msgctxt "objective text shown on scanner"
+msgid "Your target has been eliminated"
+msgstr "Ta cible a ete eliminee"
+
+#: scanner.objective:79 scanner.objective:162
+msgctxt "objective text shown on scanner"
+msgid "Your target has escaped"
+msgstr "Ta cible s'est echappee"
+
+#: scanner.objective:80
+msgctxt "objective text shown on scanner"
+msgid "Acquire funds"
+msgstr "Recolte des fonds"
+
+#: scanner.objective:81
+msgctxt "objective text shown on scanner"
+msgid "You have lost your quarry"
+msgstr "Ta proie t'a echappe"
+
+#: scanner.objective:82
+msgctxt "objective text shown on scanner"
+msgid "Take dr Schweizer to see father black"
+msgstr "Emmene le dr Schweizer voir pere noir"
+
+#: scanner.objective:83
+msgctxt "objective text shown on scanner"
+msgid "Dr Schweizer is dead"
+msgstr "Le dr Schweizer est mort"
+
+#: scanner.objective:84
+msgctxt "objective text shown on scanner"
+msgid "Father black is dead"
+msgstr "Pere noir est mort"
+
+#: scanner.objective:85
+msgctxt "objective text shown on scanner"
+msgid "Protect your brethren and the temple"
+msgstr "Protege tes freres et le temple"
+
+#: scanner.objective:86
+msgctxt "objective text shown on scanner"
+msgid "Your brethren are all dead"
+msgstr "Tous tes freres sont morts"
+
+#: scanner.objective:87
+msgctxt "objective text shown on scanner"
+msgid "The temple has been destroyed"
+msgstr "Le temple a ete detruit"
+
+#: scanner.objective:88
+msgctxt "objective text shown on scanner"
+msgid "Vanquish the unbelievers"
+msgstr "Ecrase les non-croyants"
+
+#: scanner.objective:89
+msgctxt "objective text shown on scanner"
+msgid "Punish the rioters"
+msgstr "Punis les emeutiers"
+
+#: scanner.objective:90
+msgctxt "objective text shown on scanner"
+msgid "Annihilate the forces of chaos"
+msgstr "Aneantis les forces du chaos"
+
+#: scanner.objective:91
+msgctxt "objective text shown on scanner"
+msgid "Destroy the Unguided vermin"
+msgstr "Detruis cette vermine de Devoyes"
+
+#: scanner.objective:92
+msgctxt "objective text shown on scanner"
+msgid "Wipe out Eurocorp personnel"
+msgstr "Ecrase le personnel d'Eurocorp"
+
+#: scanner.objective:93
+msgctxt "objective text shown on scanner"
+msgid "Eliminate Eurocorp agents"
+msgstr "Elimine les agents d'Eurocorp"
+
+#: scanner.objective:94
+msgctxt "objective text shown on scanner"
+msgid "Assist Acolytes"
+msgstr "Viens en aide aux Acolytes"
+
+#: scanner.objective:95
+msgctxt "objective text shown on scanner"
+msgid "Assassinate the saboteur"
+msgstr "Assassine le saboteur"
+
+#: scanner.objective:96
+msgctxt "objective text shown on scanner"
+msgid "Vanquish the desecrators"
+msgstr "Ecrase les profanateurs d'Eurocorp"
+
+#: scanner.objective:97
+msgctxt "objective text shown on scanner"
+msgid "Protect the order of Acolytes"
+msgstr "Protege l'ordre des Acolytes"
+
+#: scanner.objective:98
+msgctxt "objective text shown on scanner"
+msgid "The order of Acolytes has been completely eliminated"
+msgstr "L'ordre des Acolytes a ete aneanti"
+
+#: scanner.objective:99
+msgctxt "objective text shown on scanner"
+msgid "Deliver bullion car to collection point"
+msgstr "Amene le fourgon blinde au point de ramassage"
+
+#: scanner.objective:101
+msgctxt "objective text shown on scanner"
+msgid "Assassinate the professor's assistant"
+msgstr "Assassinez l'assistante du professeur"
+
+#: scanner.objective:102
+msgctxt "objective text shown on scanner"
+msgid "Take the assistant's place by the professor's side"
+msgstr "Prenez la place de l'assistante aupres du professeur"
+
+#: scanner.objective:103
+msgctxt "objective text shown on scanner"
+msgid "Collect video data for lecture"
+msgstr "Collectez des donnees video pour la conference"
+
+#: scanner.objective:104
+msgctxt "objective text shown on scanner"
+msgid "Go to podium"
+msgstr "Monte sur le podium"
+
+#: scanner.objective:105
+msgctxt "objective text shown on scanner"
+msgid "Attend lecture"
+msgstr "Assiste a la conference"
+
+#: scanner.objective:106
+msgctxt "objective text shown on scanner"
+msgid "Escort professor Drennan"
+msgstr "Escorte le professeur Drennan"
+
+#: scanner.objective:107
+msgctxt "objective text shown on scanner"
+msgid "The professor has met his assistant"
+msgstr "Le professeur a rencontre son assistante"
+
+#: scanner.objective:108
+msgctxt "objective text shown on scanner"
+msgid "The professor is dead"
+msgstr "Le professeur est mort"
+
+#: scanner.objective:109
+msgctxt "objective text shown on scanner"
+msgid "Mirabelle Lucy De Saxo is dead"
+msgstr "Mirabelle Lucy De Saxo est morte"
+
+#: scanner.objective:110
+msgctxt "objective text shown on scanner"
+msgid "Destroy Eurocorp weapons bunker"
+msgstr "Detruis le depot d'armes d'Eurocorp"
+
+#: scanner.objective:111
+msgctxt "objective text shown on scanner"
+msgid "Steal Eurocorp weapon design"
+msgstr "Derobe les plans des armes d'Eurocorp"
+
+#: scanner.objective:112
+msgctxt "objective text shown on scanner"
+msgid "Upload weapon design"
+msgstr "Telecharge les plans des armes"
+
+#: scanner.objective:113
+msgctxt "objective text shown on scanner"
+msgid "Return"
+msgstr "Reviens"
+
+#: scanner.objective:114
+msgctxt "objective text shown on scanner"
+msgid "Acolytes stranded: cannot complete mission"
+msgstr "Acolytes isoles : impossible d'accomplir la mission"
+
+#: scanner.objective:115
+msgctxt "objective text shown on scanner"
+msgid "Assassinate hacker"
+msgstr "Assassine le pirate"
+
+#: scanner.objective:116
+msgctxt "objective text shown on scanner"
+msgid "Eliminate Eurocorp personnel controlling river port"
+msgstr "Elimine les forces controlant le port fluvial"
+
+#: scanner.objective:117
+msgctxt "objective text shown on scanner"
+msgid "Return to IML link"
+msgstr "Retourne a la liaison LMI"
+
+#: scanner.objective:118
+msgctxt "objective text shown on scanner"
+msgid "Abduct Eurocorp captive"
+msgstr "Enleve le prisonnier d'Eurocorp"
+
+#: scanner.objective:119
+msgctxt "objective text shown on scanner"
+msgid "The target has been eliminated"
+msgstr "La cible a ete eliminee"
+
+#: scanner.objective:120
+msgctxt "objective text shown on scanner"
+msgid "Destroy R&D facilities"
+msgstr "Detruis les installations R&D"
+
+#: scanner.objective:121
+msgctxt "objective text shown on scanner"
+msgid "Eliminate agents of Eurocorp"
+msgstr "Elimine les agents d'Eurocorp"
+
+#: scanner.objective:122
+msgctxt "objective text shown on scanner"
+msgid "De Saxo must perish"
+msgstr "De Saxo doit mourir"
+
+#: scanner.objective:123
+msgctxt "objective text shown on scanner"
+msgid "Leave this place"
+msgstr "Quitte les lieux"
+
+#: scanner.objective:124
+msgctxt "objective text shown on scanner"
+msgid "Subdue the Unguided"
+msgstr "Soumets les Devoyes"
+
+#: scanner.objective:125
+msgctxt "objective text shown on scanner"
+msgid "Seek and destroy the leader of the uprising"
+msgstr "Abats le meneur de la revolte"
+
+#: scanner.objective:126
+msgctxt "objective text shown on scanner"
+msgid "Rescue IX and guide him to rendezvous"
+msgstr "Porte secours a IX et mene-le au point de rendez-vous"
+
+#: scanner.objective:127
+msgctxt "objective text shown on scanner"
+msgid "Protect IX"
+msgstr "Protege IX"
+
+#: scanner.objective:128
+msgctxt "objective text shown on scanner"
+msgid "You have allowed IX to perish"
+msgstr "Tu as permis la mort d'IX"
+
+#: scanner.objective:129
+msgctxt "objective text shown on scanner"
+msgid "Nothing can stop The Nine now. you have been defeated."
+msgstr "Rien ne peut plus arreter les Neuf. Tu as perdu."
+
+#: scanner.objective:130
+msgctxt "objective text shown on scanner"
+msgid "Do nothing: obey The Nine"
+msgstr "Ne faites rien: obeissez aux ordres des Neuf"
+
+#: scanner.objective:131
+msgctxt "objective text shown on scanner"
+msgid "All citizens converted by Zealots"
+msgstr ""
+"La ville n'est plus sous controle: les Zelateurs de l'eglise ont converti "
+"tous les citoyens"
+
+#: scanner.objective:132
+msgctxt "objective text shown on scanner"
+msgid "Eliminate intruder"
+msgstr "Elimine l'intrus"
+
+#: scanner.objective:133
+msgctxt "objective text shown on scanner"
+msgid "Eliminate intruders"
+msgstr "Elimine les intrus"
+
+#: scanner.objective:134
+msgctxt "objective text shown on scanner"
+msgid "Persuade infiltrator"
+msgstr "Persuade l'agent infiltre"
+
+#: scanner.objective:135
+msgctxt "objective text shown on scanner"
+msgid "Proceed to IML link"
+msgstr "Regagne la liaison LMI"
+
+#: scanner.objective:136
+msgctxt "objective text shown on scanner"
+msgid "Target eliminated"
+msgstr "Cible eliminee"
+
+#: scanner.objective:137
+msgctxt "objective text shown on scanner"
+msgid "Activate IML link"
+msgstr "Active la liaison LMI"
+
+#: scanner.objective:138
+msgctxt "objective text shown on scanner"
+msgid "IML link destroyed"
+msgstr "Liaison LMI detruite"
+
+#: scanner.objective:139
+msgctxt "objective text shown on scanner"
+msgid "Eliminate agents"
+msgstr "Elimine les agents"
+
+#: scanner.objective:140
+msgctxt "objective text shown on scanner"
+msgid "Penetrate bunker: release virus"
+msgstr "Penetre dans le bunker et repands le virus"
+
+#: scanner.objective:141
+msgctxt "objective text shown on scanner"
+msgid "Depart"
+msgstr "Pars"
+
+#: scanner.objective:142
+msgctxt "objective text shown on scanner"
+msgid "Retreat"
+msgstr "Bats en retraite"
+
+#: scanner.objective:143
+msgctxt "objective text shown on scanner"
+msgid "Convert Ormandoz"
+msgstr "Convertis Ormandoz"
+
+#: scanner.objective:144
+msgctxt "objective text shown on scanner"
+msgid "Convert Ramirez"
+msgstr "Convertis Ramirez"
+
+#: scanner.objective:145
+msgctxt "objective text shown on scanner"
+msgid "Bring them to us"
+msgstr "Ramene-les-nous"
+
+#: scanner.objective:146
+msgctxt "objective text shown on scanner"
+msgid "You have allowed Ormandoz to perish"
+msgstr "Tu as permis la mort d'Ormandoz"
+
+#: scanner.objective:147
+msgctxt "objective text shown on scanner"
+msgid "You have allowed Ramirez to perish"
+msgstr "Tu as permis la mort de Ramirez"
+
+#: scanner.objective:148
+msgctxt "objective text shown on scanner"
+msgid "Steal dr Schweizer's work"
+msgstr "Empare-toi des travaux du dr Schweizer"
+
+#: scanner.objective:149
+msgctxt "objective text shown on scanner"
+msgid "Return to us"
+msgstr "Reviens vers nous "
+
+#: scanner.objective:150
+msgctxt "objective text shown on scanner"
+msgid "Eurocorp agents must join us or die"
+msgstr "Les agents d'eurocorp doivent se rallier a notre cause ou mourir"
+
+#: scanner.objective:151
+msgctxt "objective text shown on scanner"
+msgid "Neutralise Eurocorp agents"
+msgstr "Neutralise les agents d'Eurocorp"
+
+#: scanner.objective:152
+msgctxt "objective text shown on scanner"
+msgid "Assassinate Kotosek"
+msgstr "Assassine Koto sek"
+
+#: scanner.objective:153
+msgctxt "objective text shown on scanner"
+msgid "Neutralise all Eurocorp agents"
+msgstr "Neutralise tous les agents d'Eurocorp"
+
+#: scanner.objective:154
+msgctxt "objective text shown on scanner"
+msgid "Let no harm come to De Saxo"
+msgstr "Protege Mirabelle Lucy De Saxo"
+
+#: scanner.objective:155
+msgctxt "objective text shown on scanner"
+msgid "Take control of the IML link"
+msgstr "Prends le controle de la liaison LMI"
+
+#: scanner.objective:156
+msgctxt "objective text shown on scanner"
+msgid "Our blessed daughter is dead"
+msgstr "Notre fille benie est morte"
+
+#: scanner.objective:157
+msgctxt "objective text shown on scanner"
+msgid "You will die for this heresy!"
+msgstr "Tu mourras pour cette heresie !"
+
+#: scanner.objective:158
+msgctxt "objective text shown on scanner"
+msgid "Eurocorp must choose between our faith or death"
+msgstr "Eurocorp doit choisir entre la foi et la mort"
+
+#: scanner.objective:159
+msgctxt "objective text shown on scanner"
+msgid "Seek sanctuary"
+msgstr "Cherche le sanctuaire"
+
+#: scanner.objective:160
+msgctxt "objective text shown on scanner"
+msgid "Get in"
+msgstr "Entre"
+
+#: scanner.objective:163
+msgctxt "objective text shown on scanner"
+msgid "Target persuaded"
+msgstr "Cible persuadee"
+
+#: scanner.objective:164
+msgctxt "objective text shown on scanner"
+msgid "Neutralise agent"
+msgstr "Neutralise l'agent"
 
 #: mapscreen.title
 msgctxt "syndicate & church map screen title"
@@ -395,15 +1097,15 @@ msgctxt "map screen location - industry"
 msgid "Consumer Durables"
 msgstr "Biens durables"
 
-#: mapscreen.city10:6 mapscreen.city23:6 mapscreen.city28:6 mapscreen.city41:6
-#: mapscreen.city45:6 mapscreen.city15:6
+#: mapscreen.city10:6 mapscreen.city15:6 mapscreen.city23:6 mapscreen.city28:6
+#: mapscreen.city41:6 mapscreen.city45:6
 msgctxt "map screen location - toxicity"
 msgid "Heavy Industrial"
 msgstr "Dechets de l'industrie lourde"
 
 #: mapscreen.city11:1
 msgctxt "map screen location - name"
-msgid "Bahrain"
+msgid "Al Manamah"
 msgstr "Al-Manamah"
 
 #: mapscreen.city11:4 mapscreen.city24:4 mapscreen.city28:4 mapscreen.city34:4
@@ -794,14 +1496,14 @@ msgstr "Station orbitale"
 
 #: mapscreen.city30:4
 msgctxt "map screen location - language"
-msgid "EuroCorp Technical Multi-State Code"
-msgstr "Neo-idiome"
+msgid "Eurocorp Technical Multi-State Code"
+msgstr "Neo-idiome technique"
 
 #: mapscreen.city30:5
 msgctxt "map screen location - industry"
 msgid "Interstellar Transport, Microgravitic Manufacture"
 msgstr ""
-"Codes techniques de l'EuroCorp, Transport interstel- laire, Micro- gravite"
+"Codes techniques de l'EuroCorp, Transport interstel-laire, Micro-gravite"
 
 #: mapscreen.city30:6
 msgctxt "map screen location - toxicity"
@@ -852,7 +1554,7 @@ msgstr "Omni-scando"
 #: mapscreen.city32:5
 msgctxt "map screen location - industry"
 msgid "Forestry"
-msgstr "Sylvi- culture"
+msgstr "Sylvi-culture"
 
 #: mapscreen.city33:1
 msgctxt "map screen location - name"
@@ -861,8 +1563,8 @@ msgstr "Omsk"
 
 #: mapscreen.city33:2
 msgctxt "map screen location - population size"
-msgid "0.48  M"
-msgstr "0.48  M"
+msgid "0.48 M"
+msgstr "0.48 M"
 
 #: mapscreen.city33:4
 msgctxt "map screen location - language"
@@ -1164,804 +1866,102 @@ msgctxt "map screen location - toxicity"
 msgid "Radioactive Waste, Light Industrial"
 msgstr "Dechets toxiques, Dechets de l'industrie legere"
 
-#: scanner.objective:1
-msgctxt "objective text shown on scanner"
-msgid "Eliminate the unguided"
-msgstr "Eliminez les devoyes"
-
-#: scanner.objective:2
-msgctxt "objective text shown on scanner"
-msgid "Return to hq"
-msgstr "Retournez au qg"
-
-#: scanner.objective:3
-msgctxt "objective text shown on scanner"
-msgid "Persuade yamaguchi technicians"
-msgstr "Persuadez les techniciens de yamaguchi"
-
-#: scanner.objective:4
-msgctxt "objective text shown on scanner"
-msgid "Evacuate"
-msgstr "Evacuez"
-
-#: scanner.objective:5
-msgctxt "objective text shown on scanner"
-msgid "Technician fatality"
-msgstr "Mort du technicien"
-
-#: scanner.objective:6
-msgctxt "objective text shown on scanner"
-msgid "Persuade yamaguchi executives"
-msgstr "Persuadez les cadres de yamaguchi"
-
-#: scanner.objective:7
-msgctxt "objective text shown on scanner"
-msgid "Executive fatality"
-msgstr "Mort du cadre"
-
-#: scanner.objective:8
-msgctxt "objective text shown on scanner"
-msgid "Neutralise yamaguchi agents"
-msgstr "Neutralisez les agents yamaguchi"
-
-#: scanner.objective:9
-msgctxt "objective text shown on scanner"
-msgid "Agent fatality"
-msgstr "Mort de l'agent"
-
-#: scanner.objective:10
-msgctxt "objective text shown on scanner"
-msgid "Persuade bluesky scientists"
-msgstr "Persuadez les scientifiques de bluesky"
-
-#: scanner.objective:11 scanner.objective:161
-msgctxt "objective text shown on scanner"
-msgid "Persuade bluesky scientist"
-msgstr "Persuadez le scientifique de bluesky"
-
-#: scanner.objective:12
-msgctxt "objective text shown on scanner"
-msgid "Mission update: eliminate unguided threat"
-msgstr "Nouvel ordre : eliminez la menace des devoyes"
-
-#: scanner.objective:13 scanner.objective:38
-msgctxt "objective text shown on scanner"
-msgid "Escort scientists to iml link"
-msgstr "Escortez les scientifiques vers la liaison lmi"
-
-#: scanner.objective:14
-msgctxt "objective text shown on scanner"
-msgid "Steal bullion car"
-msgstr "Emparez-vous du fourgon blinde"
-
-#: scanner.objective:15 scanner.objective:100
-msgctxt "objective text shown on scanner"
-msgid "The bullion car has been destroyed"
-msgstr "Le fourgon blinde a ete detruit"
-
-#: scanner.objective:16
-msgctxt "objective text shown on scanner"
-msgid "The bullion car has reached tang hq"
-msgstr "Le fourgon blinde a atteint le qg de tang"
-
-#: scanner.objective:17
-msgctxt "objective text shown on scanner"
-msgid "Deliver car to evac zone"
-msgstr "Amenez le fourgon a la zone d'evacuation"
-
-#: scanner.objective:18
-msgctxt "objective text shown on scanner"
-msgid "Steal cult technology from temple"
-msgstr "Emparez-vous  du materiel a l'interieur du temple"
-
-#: scanner.objective:19
-msgctxt "objective text shown on scanner"
-msgid "Deliver cult artefact to evac zone"
-msgstr "Amenez le materiel a la zone d'evacuation"
-
-#: scanner.objective:20
-msgctxt "objective text shown on scanner"
-msgid "Remove unguided stronghold"
-msgstr "Prenez la forteresse des devoyes"
-
-#: scanner.objective:21
-msgctxt "objective text shown on scanner"
-msgid "Eliminate rioters"
-msgstr "Eliminez les emeutiers"
-
-#: scanner.objective:22
-msgctxt "objective text shown on scanner"
-msgid "Sterilise sector"
-msgstr "Sterilisez le secteur"
-
-#: scanner.objective:23
-msgctxt "objective text shown on scanner"
-msgid "Eliminate guards"
-msgstr "Eliminez les gardes"
-
-#: scanner.objective:24
-msgctxt "objective text shown on scanner"
-msgid "Eliminate agent"
-msgstr "Eliminez l'agent"
-
-#: scanner.objective:25
-msgctxt "objective text shown on scanner"
-msgid "Persuade agent"
-msgstr "Persuadez l'agent"
-
-#: scanner.objective:26
-msgctxt "objective text shown on scanner"
-msgid "Target agent has died"
-msgstr "L'agent cible est mort"
-
-#: scanner.objective:27
-msgctxt "objective text shown on scanner"
-msgid "Target agent has escaped"
-msgstr "L'agent cible s'est echappe"
-
-#: scanner.objective:28
-msgctxt "objective text shown on scanner"
-msgid "Persuade naa employee"
-msgstr "Persuadez l'employe naa"
-
-#: scanner.objective:29
-msgctxt "objective text shown on scanner"
-msgid "Persuade jennifer taks"
-msgstr "Persuadez jennifer taks"
-
-#: scanner.objective:30
-msgctxt "objective text shown on scanner"
-msgid "Escort taks to iml link"
-msgstr "Escortez taks vers la liaison lmi"
-
-#: scanner.objective:31
-msgctxt "objective text shown on scanner"
-msgid "Jennifer taks is dead"
-msgstr "Jennifer taks est morte"
-
-#: scanner.objective:32
-msgctxt "objective text shown on scanner"
-msgid "Eliminate zealots"
-msgstr "Eliminez les zelateurs"
-
-#: scanner.objective:33
-msgctxt "objective text shown on scanner"
-msgid "Persuade gel data scientist"
-msgstr "Persuadez le scientifique de gel data"
-
-#: scanner.objective:34
-msgctxt "objective text shown on scanner"
-msgid "Persuade gel data scientists"
-msgstr "Persuadez les scientifiques de gel data"
-
-#: scanner.objective:35
-msgctxt "objective text shown on scanner"
-msgid "Persuade hexagon scientist"
-msgstr "Persuadez le scientifique de hexagon"
-
-#: scanner.objective:36
-msgctxt "objective text shown on scanner"
-msgid "Persuade hexagon scientists"
-msgstr "Persuadez les scientifiques de hexagon"
-
-#: scanner.objective:37
-msgctxt "objective text shown on scanner"
-msgid "Escort scientist to iml link"
-msgstr "Escortez le scientifique vers la liaison lmi"
-
-#: scanner.objective:39
-msgctxt "objective text shown on scanner"
-msgid "Update: eliminate zealot threat"
-msgstr "Nouvel ordre : eliminez la menace des zelateurs"
-
-#: scanner.objective:40
-msgctxt "objective text shown on scanner"
-msgid "Vehicle destroyed: agents stranded"
-msgstr "Vehicule detruit ; agents isoles"
-
-#: scanner.objective:41
-msgctxt "objective text shown on scanner"
-msgid "Scientist lost"
-msgstr "Scientifique perdu"
-
-#: scanner.objective:42
-msgctxt "objective text shown on scanner"
-msgid "Persuade c3 scientists"
-msgstr "Persuade les scientifiques c3"
-
-#: scanner.objective:43
-msgctxt "objective text shown on scanner"
-msgid "C3 scientists eliminated"
-msgstr "Scientifiques c3 elimines"
-
-#: scanner.objective:44
-msgctxt "objective text shown on scanner"
-msgid "Laboratory destroyed"
-msgstr "Laboratoire detruit"
-
-#: scanner.objective:45
-msgctxt "objective text shown on scanner"
-msgid "Facility destroyed"
-msgstr "Installations detruites"
-
-#: scanner.objective:46
-msgctxt "objective text shown on scanner"
-msgid "Sterilise city"
-msgstr "Sterilisez la ville"
-
-#: scanner.objective:47
-msgctxt "objective text shown on scanner"
-msgid "Protect drennan"
-msgstr "Protegez drennan"
-
-#: scanner.objective:48
-msgctxt "objective text shown on scanner"
-msgid "Protect professor's assistant"
-msgstr "Protegez l'assistante du professeur"
-
-#: scanner.objective:49
-msgctxt "objective text shown on scanner"
-msgid "Protect executives"
-msgstr "Protegez les executants"
-
-#: scanner.objective:50
-msgctxt "objective text shown on scanner"
-msgid "Professor drennan is dead"
-msgstr "Le professeur drennan est mort"
-
-#: scanner.objective:51
-msgctxt "objective text shown on scanner"
-msgid "Professor drennan's aide is dead"
-msgstr "L'assistante du professeur drennan est morte"
-
-#: scanner.objective:52
-msgctxt "objective text shown on scanner"
-msgid "Eurocorp executives have been wiped out"
-msgstr "Les executants d'eurocorp ont ete aneantis"
-
-#: scanner.objective:53
-msgctxt "objective text shown on scanner"
-msgid "Rescue professor drennan"
-msgstr "Portez secours au professeur drennan"
-
-#: scanner.objective:54
-msgctxt "objective text shown on scanner"
-msgid "Escort professor drennan to eurocorp facility"
-msgstr "Escortez le professeur drennan vers les installations d'eurocorp"
-
-#: scanner.objective:55
-msgctxt "objective text shown on scanner"
-msgid "Mission update: evacuate all personnel"
-msgstr "Nouvel ordre : evacuez tout le personnel"
-
-#: scanner.objective:56
-msgctxt "objective text shown on scanner"
-msgid "Evacuation failed"
-msgstr "L'evacuation a echoue"
-
-#: scanner.objective:57
-msgctxt "objective text shown on scanner"
-msgid "Persuade mirabelle lucy de saxo"
-msgstr "Persuadez mirabelle lucy de saxo"
-
-#: scanner.objective:58
-msgctxt "objective text shown on scanner"
-msgid "De saxo has fled: new orders available"
-msgstr "De saxo a pris la fuite : preparez-vous a recevoir de nouveaux ordres"
-
-#: scanner.objective:59
-msgctxt "objective text shown on scanner"
-msgid "Eliminate mirabelle lucy de saxo"
-msgstr "Eliminez mirabelle lucy de saxo"
-
-#: scanner.objective:60
-msgctxt "objective text shown on scanner"
-msgid "Crush the uprising"
-msgstr "Matez la revolte"
-
-#: scanner.objective:61
-msgctxt "objective text shown on scanner"
-msgid "Eliminate unguided rebels"
-msgstr "Eliminez les devoyes rebelles"
-
-#: scanner.objective:62
-msgctxt "objective text shown on scanner"
-msgid "Protect the bahrain ai"
-msgstr "Protegez l'ia de bahrein"
-
-#: scanner.objective:63
-msgctxt "objective text shown on scanner"
-msgid "Bahrain ai has been destroyed"
-msgstr "L'ia de bahrein a ete detruite"
-
-#: scanner.objective:64
-msgctxt "objective text shown on scanner"
-msgid "Secure orbital elevator"
-msgstr "Assurez la securite de l'elevateur orbital"
-
-#: scanner.objective:65
-msgctxt "objective text shown on scanner"
-msgid "Insufficient agents to complete mission"
-msgstr "Agents en nombre insuffisant pour accomplir la mission"
-
-#: scanner.objective:66
-msgctxt "objective text shown on scanner"
-msgid "The orbital elevator has been destroyed"
-msgstr "L'elevateur orbital a ete detruit"
-
-#: scanner.objective:67
-msgctxt "objective text shown on scanner"
-msgid "The space station has been destroyed"
-msgstr "La station spatiale a ete detruite"
-
-#: scanner.objective:68
-msgctxt "objective text shown on scanner"
-msgid "Get shuttle nav computer"
-msgstr "Emparez-vous de l'ordinateur de bord de la navette"
-
-#: scanner.objective:69
-msgctxt "objective text shown on scanner"
-msgid "Station self-destruct armed: de-activate"
-msgstr "Mecanisme d'autodestruction de la station arme: desactivez-le"
-
-#: scanner.objective:70
-msgctxt "objective text shown on scanner"
-msgid "Get shuttle life support module"
-msgstr "Emparez-vous du module de survie de la navette"
-
-#: scanner.objective:71
-msgctxt "objective text shown on scanner"
-msgid "Access lunar shuttle craft"
-msgstr "Montez a bord du vaisseau lunaire"
-
-#: scanner.objective:72
-msgctxt "objective text shown on scanner"
-msgid "Eliminate the nine"
-msgstr "Eliminez les neuf"
-
-#: scanner.objective:73
-msgctxt "objective text shown on scanner"
-msgid "The nine have activated the ion gate. you have been defeated."
-msgstr "Les neuf ont active le rideau ionique. vous avez perdu."
-
-#: scanner.objective:74
-msgctxt "objective text shown on scanner"
-msgid "Eliminate the unguided heathens"
-msgstr "Eliminez les devoyes paiens"
-
-#: scanner.objective:75
-msgctxt "objective text shown on scanner"
-msgid "Our garden of meditations has been destroyed"
-msgstr "Notre jardin de meditation a ete detruit"
-
-#: scanner.objective:76
-msgctxt "objective text shown on scanner"
-msgid "Convert eurocorp agent"
-msgstr "Convertis l'agent eurocorp"
-
-#: scanner.objective:77
-msgctxt "objective text shown on scanner"
-msgid "Escort agent to iml link"
-msgstr "Escorte l'agent vers la liaison lmi"
-
-#: scanner.objective:78
-msgctxt "objective text shown on scanner"
-msgid "Your target has been eliminated"
-msgstr "Ta cible a ete eliminee"
-
-#: scanner.objective:79 scanner.objective:162
-msgctxt "objective text shown on scanner"
-msgid "Your target has escaped"
-msgstr "Ta cible s'est echappee"
-
-#: scanner.objective:80
-msgctxt "objective text shown on scanner"
-msgid "Acquire funds"
-msgstr "Recolte des fonds"
-
-#: scanner.objective:81
-msgctxt "objective text shown on scanner"
-msgid "You have lost your quarry"
-msgstr "Ta proie t'a echappe"
-
-#: scanner.objective:82
-msgctxt "objective text shown on scanner"
-msgid "Take dr schweizer to see father black"
-msgstr "Emmene le dr schweizer voir pere noir"
-
-#: scanner.objective:83
-msgctxt "objective text shown on scanner"
-msgid "Dr schweizer is dead"
-msgstr "Le dr schweizer est mort"
-
-#: scanner.objective:84
-msgctxt "objective text shown on scanner"
-msgid "Father black is dead"
-msgstr "Pere noir est mort"
-
-#: scanner.objective:85
-msgctxt "objective text shown on scanner"
-msgid "Protect your brethren and the temple"
-msgstr "Protege tes freres et le temple"
-
-#: scanner.objective:86
-msgctxt "objective text shown on scanner"
-msgid "Your brethren are all dead"
-msgstr "Tous tes freres sont morts"
-
-#: scanner.objective:87
-msgctxt "objective text shown on scanner"
-msgid "The temple has been destroyed"
-msgstr "Le temple a ete detruit"
-
-#: scanner.objective:88
-msgctxt "objective text shown on scanner"
-msgid "Vanquish the unbelievers"
-msgstr "Ecrase les non-croyants"
-
-#: scanner.objective:89
-msgctxt "objective text shown on scanner"
-msgid "Punish the rioters"
-msgstr "Punis les emeutiers"
-
-#: scanner.objective:90
-msgctxt "objective text shown on scanner"
-msgid "Annihilate the forces of chaos"
-msgstr "Aneantis les forces du chaos"
-
-#: scanner.objective:91
-msgctxt "objective text shown on scanner"
-msgid "Destroy the unguided vermin"
-msgstr "Detruis cette vermine de devoyes"
-
-#: scanner.objective:92
-msgctxt "objective text shown on scanner"
-msgid "Wipe out eurocorp personnel"
-msgstr "Ecrase le personnel d'eurocorp"
-
-#: scanner.objective:93
-msgctxt "objective text shown on scanner"
-msgid "Eliminate eurocorp agents"
-msgstr "Elimine les agents d'eurocorp"
-
-#: scanner.objective:94
-msgctxt "objective text shown on scanner"
-msgid "Assist acolytes"
-msgstr "Viens en aide aux acolytes"
-
-#: scanner.objective:95
-msgctxt "objective text shown on scanner"
-msgid "Assassinate the saboteur"
-msgstr "Assassine le saboteur"
-
-#: scanner.objective:96
-msgctxt "objective text shown on scanner"
-msgid "Vanquish the desecrators"
-msgstr "Ecrase les profanateurs d'eurocorp"
-
-#: scanner.objective:97
-msgctxt "objective text shown on scanner"
-msgid "Protect the order of acolytes"
-msgstr "Protege l'ordre des acolytes"
-
-#: scanner.objective:98
-msgctxt "objective text shown on scanner"
-msgid "The order of acolytes has been completely eliminated"
-msgstr "L'ordre des acolytes a ete aneanti"
-
-#: scanner.objective:99
-msgctxt "objective text shown on scanner"
-msgid "Deliver bullion car to collection point"
-msgstr "Amene le fourgon blinde au point de ramassage"
-
-#: scanner.objective:101
-msgctxt "objective text shown on scanner"
-msgid "Assassinate the professor's assistant"
-msgstr "Assassinez l'assistante du professeur"
-
-#: scanner.objective:102
-msgctxt "objective text shown on scanner"
-msgid "Take the assistant's place by the professor's side"
-msgstr "Prenez la place de l'assistante aupres du professeur"
-
-#: scanner.objective:103
-msgctxt "objective text shown on scanner"
-msgid "Collect video data for lecture"
-msgstr "Collectez des donnees video pour la conference"
-
-#: scanner.objective:104
-msgctxt "objective text shown on scanner"
-msgid "Go to podium"
-msgstr "Monte sur le podium"
-
-#: scanner.objective:105
-msgctxt "objective text shown on scanner"
-msgid "Attend lecture"
-msgstr "Assiste a la conference"
-
-#: scanner.objective:106
-msgctxt "objective text shown on scanner"
-msgid "Escort professor drennan"
-msgstr "Escorte le professeur drennan"
-
-#: scanner.objective:107
-msgctxt "objective text shown on scanner"
-msgid "The professor has met his assistant"
-msgstr "Le professeur a rencontre son assistante"
-
-#: scanner.objective:108
-msgctxt "objective text shown on scanner"
-msgid "The professor is dead"
-msgstr "Le professeur est mort"
-
-#: scanner.objective:109
-msgctxt "objective text shown on scanner"
-msgid "Mirabelle lucy de saxo is dead"
-msgstr "Mirabelle lucy de saxo est morte"
-
-#: scanner.objective:110
-msgctxt "objective text shown on scanner"
-msgid "Destroy eurocorp weapons bunker"
-msgstr "Detruis le depot d'armes d'eurocorp"
-
-#: scanner.objective:111
-msgctxt "objective text shown on scanner"
-msgid "Steal eurocorp weapon design"
-msgstr "Derobe les plans des armes d'eurocorp"
-
-#: scanner.objective:112
-msgctxt "objective text shown on scanner"
-msgid "Upload weapon design"
-msgstr "Telecharge les plans des armes"
-
-#: scanner.objective:113
-msgctxt "objective text shown on scanner"
-msgid "Return"
-msgstr "Reviens"
-
-#: scanner.objective:114
-msgctxt "objective text shown on scanner"
-msgid "Acolytes stranded: cannot complete mission"
-msgstr "Acolytes isoles : impossible d'accomplir la mission"
-
-#: scanner.objective:115
-msgctxt "objective text shown on scanner"
-msgid "Assassinate hacker"
-msgstr "Assassine le pirate"
-
-#: scanner.objective:116
-msgctxt "objective text shown on scanner"
-msgid "Eliminate eurocorp personnel controlling river port"
-msgstr "Elimine les forces controlant le port fluvial"
-
-#: scanner.objective:117
-msgctxt "objective text shown on scanner"
-msgid "Return to iml link"
-msgstr "Retourne a la liaison lmi"
-
-#: scanner.objective:118
-msgctxt "objective text shown on scanner"
-msgid "Abduct eurocorp captive"
-msgstr "Enleve le prisonnier d'eurocorp"
-
-#: scanner.objective:119
-msgctxt "objective text shown on scanner"
-msgid "The target has been eliminated"
-msgstr "La cible a ete eliminee"
-
-#: scanner.objective:120
-msgctxt "objective text shown on scanner"
-msgid "Destroy r&d facilities"
-msgstr "Detruis les installations r&d"
-
-#: scanner.objective:121
-msgctxt "objective text shown on scanner"
-msgid "Eliminate agents of eurocorp"
-msgstr "Elimine les agents d'eurocorp"
-
-#: scanner.objective:122
-msgctxt "objective text shown on scanner"
-msgid "De saxo must perish"
-msgstr "De saxo doit mourir"
-
-#: scanner.objective:123
-msgctxt "objective text shown on scanner"
-msgid "Leave this place"
-msgstr "Quitte les lieux"
-
-#: scanner.objective:124
-msgctxt "objective text shown on scanner"
-msgid "Subdue the unguided"
-msgstr "Soumets les devoyes"
-
-#: scanner.objective:125
-msgctxt "objective text shown on scanner"
-msgid "Seek and destroy the leader of the uprising"
-msgstr "Abats le meneur de la revolte"
-
-#: scanner.objective:126
-msgctxt "objective text shown on scanner"
-msgid "Rescue ix and guide him to rendezvous"
-msgstr "Porte secours a ix et mene-le au point de rendez-vous"
-
-#: scanner.objective:127
-msgctxt "objective text shown on scanner"
-msgid "Protect ix"
-msgstr "Protege ix"
-
-#: scanner.objective:128
-msgctxt "objective text shown on scanner"
-msgid "You have allowed ix to perish"
-msgstr "Tu as permis la mort d'ix"
-
-#: scanner.objective:129
-msgctxt "objective text shown on scanner"
-msgid "Nothing can stop the nine now. you have been defeated."
-msgstr "Rien ne peut plus arreter les neuf. tu as perdu."
-
-#: scanner.objective:130
-msgctxt "objective text shown on scanner"
-msgid "Do nothing: obey the nine"
-msgstr "Ne faites rien : obeissez aux ordres des neuf"
-
-#: scanner.objective:131
-msgctxt "objective text shown on scanner"
-msgid "All citizens converted by zealots"
-msgstr ""
-"La ville n'est plus sous controle : les zelateurs de l'eglise ont converti "
-"tous les citoyens"
-
-#: scanner.objective:132
-msgctxt "objective text shown on scanner"
-msgid "Eliminate intruder"
-msgstr "Elimine l'intrus"
-
-#: scanner.objective:133
-msgctxt "objective text shown on scanner"
-msgid "Eliminate intruders"
-msgstr "Elimine les intrus"
-
-#: scanner.objective:134
-msgctxt "objective text shown on scanner"
-msgid "Persuade infiltrator"
-msgstr "Persuade l'agent infiltre"
-
-#: scanner.objective:135
-msgctxt "objective text shown on scanner"
-msgid "Proceed to iml link"
-msgstr "Regagne la liaison lmi"
-
-#: scanner.objective:136
-msgctxt "objective text shown on scanner"
-msgid "Target eliminated"
-msgstr "Cible eliminee"
-
-#: scanner.objective:137
-msgctxt "objective text shown on scanner"
-msgid "Activate iml link"
-msgstr "Active la liaison lmi"
-
-#: scanner.objective:138
-msgctxt "objective text shown on scanner"
-msgid "Iml link destroyed"
-msgstr "Liaison lmi detruite"
-
-#: scanner.objective:139
-msgctxt "objective text shown on scanner"
-msgid "Eliminate agents"
-msgstr "Elimine les agents"
-
-#: scanner.objective:140
-msgctxt "objective text shown on scanner"
-msgid "Penetrate bunker: release virus"
-msgstr "Penetre dans le bunker et repands le virus"
-
-#: scanner.objective:141
-msgctxt "objective text shown on scanner"
-msgid "Depart"
-msgstr "Pars"
-
-#: scanner.objective:142
-msgctxt "objective text shown on scanner"
-msgid "Retreat"
-msgstr "Bats en retraite"
-
-#: scanner.objective:143
-msgctxt "objective text shown on scanner"
-msgid "Convert ormandoz"
-msgstr "Convertis ormandoz"
-
-#: scanner.objective:144
-msgctxt "objective text shown on scanner"
-msgid "Convert ramirez"
-msgstr "Convertis ramirez"
-
-#: scanner.objective:145
-msgctxt "objective text shown on scanner"
-msgid "Bring them to us"
-msgstr "Ramene-les-nous"
-
-#: scanner.objective:146
-msgctxt "objective text shown on scanner"
-msgid "You have allowed ormandoz to perish"
-msgstr "Tu as permis la mort d'ormandoz"
-
-#: scanner.objective:147
-msgctxt "objective text shown on scanner"
-msgid "You have allowed ramirez to perish"
-msgstr "Tu as permis la mort de ramirez"
-
-#: scanner.objective:148
-msgctxt "objective text shown on scanner"
-msgid "Steal dr schweizer's work"
-msgstr "Empare-toi des travaux du dr schweizer"
-
-#: scanner.objective:149
-msgctxt "objective text shown on scanner"
-msgid "Return to us"
-msgstr "Reviens vers nous "
-
-#: scanner.objective:150
-msgctxt "objective text shown on scanner"
-msgid "Eurocorp agents must join us or die"
-msgstr "Les agents d'eurocorp doivent se rallier a notre cause ou mourir"
-
-#: scanner.objective:151
-msgctxt "objective text shown on scanner"
-msgid "Neutralise eurocorp agents"
-msgstr "Neutralise les agents d'eurocorp"
-
-#: scanner.objective:152
-msgctxt "objective text shown on scanner"
-msgid "Assassinate kotosek"
-msgstr "Assassine koto sek"
-
-#: scanner.objective:153
-msgctxt "objective text shown on scanner"
-msgid "Neutralise all eurocorp agents"
-msgstr "Neutralise tous les agents d'eurocorp"
-
-#: scanner.objective:154
-msgctxt "objective text shown on scanner"
-msgid "Let no harm come to de saxo"
-msgstr "Protege mirabelle lucy de saxo"
-
-#: scanner.objective:155
-msgctxt "objective text shown on scanner"
-msgid "Take control of the iml link"
-msgstr "Prends le controle de la liaison lmi"
-
-#: scanner.objective:156
-msgctxt "objective text shown on scanner"
-msgid "Our blessed daughter is dead"
-msgstr "Notre fille benie est morte"
-
-#: scanner.objective:157
-msgctxt "objective text shown on scanner"
-msgid "You will die for this heresy!"
-msgstr "Tu mourras pour cette heresie !"
-
-#: scanner.objective:158
-msgctxt "objective text shown on scanner"
-msgid "Eurocorp must choose between our faith or death"
-msgstr "Eurocorp doit choisir entre la foi et la mort"
-
-#: scanner.objective:159
-msgctxt "objective text shown on scanner"
-msgid "Seek sanctuary"
-msgstr "Cherche le sanctuaire"
-
-#: scanner.objective:160
-msgctxt "objective text shown on scanner"
-msgid "Get in"
-msgstr "Entre"
-
-#: scanner.objective:163
-msgctxt "objective text shown on scanner"
-msgid "Target persuaded"
-msgstr "Cible persuadee"
-
-#: scanner.objective:164
-msgctxt "objective text shown on scanner"
-msgid "Neutralise agent"
-msgstr "Neutralise l'agent"
+#: sci.death.reason:1
+msgctxt "scientists death reason"
+msgid "Laboratory accident"
+msgstr "Accident en laboratoire"
+
+#: sci.death.reason:2
+msgctxt "scientists death reason"
+msgid "Natural causes"
+msgstr "Causes naturelles"
+
+#: sci.death.reason:3
+msgctxt "scientists death reason"
+msgid "Time-delay virus"
+msgstr "Virus a retardement"
+
+#: sci.death.reason:4
+msgctxt "scientists death reason"
+msgid "Experimental error"
+msgstr "Mauvaise manipulation"
+
+#: sci.death.reason:5
+msgctxt "scientists death reason"
+msgid "Fatal miscalculation"
+msgstr "Erreur fatale"
+
+#: sci.death.reason:6
+msgctxt "scientists death reason"
+msgid "Illogical deduction"
+msgstr "Deduction illogique"
+
+#: sci.death.reason:7
+msgctxt "scientists death reason"
+msgid "Terminal delusion"
+msgstr "Hallucinations"
+
+#: sci.death.reason:8
+msgctxt "scientists death reason"
+msgid "Rash judgement"
+msgstr "Erreur de jugement"
+
+#: sci.death.reason:9
+msgctxt "scientists death reason"
+msgid "Flawed reasoning"
+msgstr "Raisonnement altere"
+
+#: sci.death.reason:10
+msgctxt "scientists death reason"
+msgid "Insanity"
+msgstr "Folie"
+
+#: sci.death.reason:11
+msgctxt "scientists death reason"
+msgid "Negligence"
+msgstr "Negligence"
+
+#: sci.death.reason:12
+msgctxt "scientists death reason"
+msgid "Unsafe procedure"
+msgstr "Procedure non protegee"
+
+#: sci.death.reason:13
+msgctxt "scientists death reason"
+msgid "Mental collapse"
+msgstr "Effondrement mental"
+
+#: sci.death.reason:14
+msgctxt "scientists death reason"
+msgid "Equipment malfunction"
+msgstr "Mauvais equipement"
+
+#: sci.death.reason:15
+msgctxt "scientists death reason"
+msgid "Unsuccessful test"
+msgstr "Test echoue"
+
+#: sci.death.reason:16
+msgctxt "scientists death reason"
+msgid "Cardiac arrest"
+msgstr "Arret cardiaque"
+
+#: sci.death.reason:17
+msgctxt "scientists death reason"
+msgid "Incorrect assumption"
+msgstr "Mauvais calcul"
+
+#: sci.death.reason:18
+msgctxt "scientists death reason"
+msgid "Electrocution"
+msgstr "Electrocution"
+
+#: sci.death.reason:19
+msgctxt "scientists death reason"
+msgid "Disintegration"
+msgstr "Desintegration"
+
+#: sci.death.reason:20
+msgctxt "scientists death reason"
+msgid "Misadventure"
+msgstr "Accident"
