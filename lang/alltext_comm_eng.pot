@@ -33,12 +33,12 @@ msgstr ""
 
 #: scanner.objective:1
 msgctxt "objective text shown on scanner"
-msgid "Eliminate the unguided"
+msgid "Eliminate the Unguided"
 msgstr ""
 
 #: scanner.objective:2
 msgctxt "objective text shown on scanner"
-msgid "Return to hq"
+msgid "Return to HQ"
 msgstr ""
 
 #: scanner.objective:3
@@ -78,22 +78,22 @@ msgstr ""
 
 #: scanner.objective:10
 msgctxt "objective text shown on scanner"
-msgid "Persuade bluesky scientists"
+msgid "Persuade Bluesky scientists"
 msgstr ""
 
 #: scanner.objective:11 scanner.objective:161
 msgctxt "objective text shown on scanner"
-msgid "Persuade bluesky scientist"
+msgid "Persuade Bluesky scientist"
 msgstr ""
 
 #: scanner.objective:12
 msgctxt "objective text shown on scanner"
-msgid "Mission update: eliminate unguided threat"
+msgid "Mission update: eliminate Unguided threat"
 msgstr ""
 
 #: scanner.objective:13 scanner.objective:38
 msgctxt "objective text shown on scanner"
-msgid "Escort scientists to iml link"
+msgid "Escort scientists to IML link"
 msgstr ""
 
 #: scanner.objective:14
@@ -108,7 +108,7 @@ msgstr ""
 
 #: scanner.objective:16
 msgctxt "objective text shown on scanner"
-msgid "The bullion car has reached tang hq"
+msgid "The bullion car has reached Tang HQ"
 msgstr ""
 
 #: scanner.objective:17
@@ -128,7 +128,7 @@ msgstr ""
 
 #: scanner.objective:20
 msgctxt "objective text shown on scanner"
-msgid "Remove unguided stronghold"
+msgid "Remove Unguided stronghold"
 msgstr ""
 
 #: scanner.objective:21
@@ -168,57 +168,57 @@ msgstr ""
 
 #: scanner.objective:28
 msgctxt "objective text shown on scanner"
-msgid "Persuade naa employee"
+msgid "Persuade NAA employee"
 msgstr ""
 
 #: scanner.objective:29
 msgctxt "objective text shown on scanner"
-msgid "Persuade jennifer taks"
+msgid "Persuade Jennifer Taks"
 msgstr ""
 
 #: scanner.objective:30
 msgctxt "objective text shown on scanner"
-msgid "Escort taks to iml link"
+msgid "Escort Taks to IML link"
 msgstr ""
 
 #: scanner.objective:31
 msgctxt "objective text shown on scanner"
-msgid "Jennifer taks is dead"
+msgid "Jennifer Taks is dead"
 msgstr ""
 
 #: scanner.objective:32
 msgctxt "objective text shown on scanner"
-msgid "Eliminate zealots"
+msgid "Eliminate Zealots"
 msgstr ""
 
 #: scanner.objective:33
 msgctxt "objective text shown on scanner"
-msgid "Persuade gel data scientist"
+msgid "Persuade Gel Data scientist"
 msgstr ""
 
 #: scanner.objective:34
 msgctxt "objective text shown on scanner"
-msgid "Persuade gel data scientists"
+msgid "Persuade Gel Data scientists"
 msgstr ""
 
 #: scanner.objective:35
 msgctxt "objective text shown on scanner"
-msgid "Persuade hexagon scientist"
+msgid "Persuade Hexagon scientist"
 msgstr ""
 
 #: scanner.objective:36
 msgctxt "objective text shown on scanner"
-msgid "Persuade hexagon scientists"
+msgid "Persuade Hexagon scientists"
 msgstr ""
 
 #: scanner.objective:37
 msgctxt "objective text shown on scanner"
-msgid "Escort scientist to iml link"
+msgid "Escort scientist to IML link"
 msgstr ""
 
 #: scanner.objective:39
 msgctxt "objective text shown on scanner"
-msgid "Update: eliminate zealot threat"
+msgid "Update: eliminate Zealot threat"
 msgstr ""
 
 #: scanner.objective:40
@@ -233,7 +233,7 @@ msgstr ""
 
 #: scanner.objective:42
 msgctxt "objective text shown on scanner"
-msgid "Persuade c3 scientists"
+msgid "Persuade C3 scientists"
 msgstr ""
 
 #: scanner.objective:43
@@ -258,12 +258,12 @@ msgstr ""
 
 #: scanner.objective:47
 msgctxt "objective text shown on scanner"
-msgid "Protect drennan"
+msgid "Protect Drennan"
 msgstr ""
 
 #: scanner.objective:48
 msgctxt "objective text shown on scanner"
-msgid "Protect professor's assistant"
+msgid "Protect Professor's assistant"
 msgstr ""
 
 #: scanner.objective:49
@@ -273,12 +273,12 @@ msgstr ""
 
 #: scanner.objective:50
 msgctxt "objective text shown on scanner"
-msgid "Professor drennan is dead"
+msgid "Professor Drennan is dead"
 msgstr ""
 
 #: scanner.objective:51
 msgctxt "objective text shown on scanner"
-msgid "Professor drennan's aide is dead"
+msgid "Professor Drennan's aide is dead"
 msgstr ""
 
 #: scanner.objective:52
@@ -288,12 +288,12 @@ msgstr ""
 
 #: scanner.objective:53
 msgctxt "objective text shown on scanner"
-msgid "Rescue professor drennan"
+msgid "Rescue professor Drennan"
 msgstr ""
 
 #: scanner.objective:54
 msgctxt "objective text shown on scanner"
-msgid "Escort professor drennan to eurocorp facility"
+msgid "Escort professor Drennan to Eurocorp facility"
 msgstr ""
 
 #: scanner.objective:55
@@ -308,17 +308,17 @@ msgstr ""
 
 #: scanner.objective:57
 msgctxt "objective text shown on scanner"
-msgid "Persuade mirabelle lucy de saxo"
+msgid "Persuade Mirabelle Lucy De Saxo"
 msgstr ""
 
 #: scanner.objective:58
 msgctxt "objective text shown on scanner"
-msgid "De saxo has fled: new orders available"
+msgid "De Saxo has fled: new orders available"
 msgstr ""
 
 #: scanner.objective:59
 msgctxt "objective text shown on scanner"
-msgid "Eliminate mirabelle lucy de saxo"
+msgid "Eliminate Mirabelle Lucy De Saxo"
 msgstr ""
 
 #: scanner.objective:60
@@ -328,17 +328,17 @@ msgstr ""
 
 #: scanner.objective:61
 msgctxt "objective text shown on scanner"
-msgid "Eliminate unguided rebels"
+msgid "Eliminate Unguided rebels"
 msgstr ""
 
 #: scanner.objective:62
 msgctxt "objective text shown on scanner"
-msgid "Protect the bahrain ai"
+msgid "Protect the Bahrain AI"
 msgstr ""
 
 #: scanner.objective:63
 msgctxt "objective text shown on scanner"
-msgid "Bahrain ai has been destroyed"
+msgid "Bahrain AI has been destroyed"
 msgstr ""
 
 #: scanner.objective:64
@@ -383,17 +383,17 @@ msgstr ""
 
 #: scanner.objective:72
 msgctxt "objective text shown on scanner"
-msgid "Eliminate the nine"
+msgid "Eliminate The Nine"
 msgstr ""
 
 #: scanner.objective:73
 msgctxt "objective text shown on scanner"
-msgid "The nine have activated the ion gate. you have been defeated."
+msgid "The Nine have activated the ion gate. you have been defeated."
 msgstr ""
 
 #: scanner.objective:74
 msgctxt "objective text shown on scanner"
-msgid "Eliminate the unguided heathens"
+msgid "Eliminate the Unguided heathens"
 msgstr ""
 
 #: scanner.objective:75
@@ -403,12 +403,12 @@ msgstr ""
 
 #: scanner.objective:76
 msgctxt "objective text shown on scanner"
-msgid "Convert eurocorp agent"
+msgid "Convert Eurocorp agent"
 msgstr ""
 
 #: scanner.objective:77
 msgctxt "objective text shown on scanner"
-msgid "Escort agent to iml link"
+msgid "Escort agent to IML link"
 msgstr ""
 
 #: scanner.objective:78
@@ -433,12 +433,12 @@ msgstr ""
 
 #: scanner.objective:82
 msgctxt "objective text shown on scanner"
-msgid "Take dr schweizer to see father black"
+msgid "Take dr Schweizer to see father black"
 msgstr ""
 
 #: scanner.objective:83
 msgctxt "objective text shown on scanner"
-msgid "Dr schweizer is dead"
+msgid "Dr Schweizer is dead"
 msgstr ""
 
 #: scanner.objective:84
@@ -478,22 +478,22 @@ msgstr ""
 
 #: scanner.objective:91
 msgctxt "objective text shown on scanner"
-msgid "Destroy the unguided vermin"
+msgid "Destroy the Unguided vermin"
 msgstr ""
 
 #: scanner.objective:92
 msgctxt "objective text shown on scanner"
-msgid "Wipe out eurocorp personnel"
+msgid "Wipe out Eurocorp personnel"
 msgstr ""
 
 #: scanner.objective:93
 msgctxt "objective text shown on scanner"
-msgid "Eliminate eurocorp agents"
+msgid "Eliminate Eurocorp agents"
 msgstr ""
 
 #: scanner.objective:94
 msgctxt "objective text shown on scanner"
-msgid "Assist acolytes"
+msgid "Assist Acolytes"
 msgstr ""
 
 #: scanner.objective:95
@@ -508,12 +508,12 @@ msgstr ""
 
 #: scanner.objective:97
 msgctxt "objective text shown on scanner"
-msgid "Protect the order of acolytes"
+msgid "Protect the order of Acolytes"
 msgstr ""
 
 #: scanner.objective:98
 msgctxt "objective text shown on scanner"
-msgid "The order of acolytes has been completely eliminated"
+msgid "The order of Acolytes has been completely eliminated"
 msgstr ""
 
 #: scanner.objective:99
@@ -548,7 +548,7 @@ msgstr ""
 
 #: scanner.objective:106
 msgctxt "objective text shown on scanner"
-msgid "Escort professor drennan"
+msgid "Escort professor Drennan"
 msgstr ""
 
 #: scanner.objective:107
@@ -563,17 +563,17 @@ msgstr ""
 
 #: scanner.objective:109
 msgctxt "objective text shown on scanner"
-msgid "Mirabelle lucy de saxo is dead"
+msgid "Mirabelle Lucy De Saxo is dead"
 msgstr ""
 
 #: scanner.objective:110
 msgctxt "objective text shown on scanner"
-msgid "Destroy eurocorp weapons bunker"
+msgid "Destroy Eurocorp weapons bunker"
 msgstr ""
 
 #: scanner.objective:111
 msgctxt "objective text shown on scanner"
-msgid "Steal eurocorp weapon design"
+msgid "Steal Eurocorp weapon design"
 msgstr ""
 
 #: scanner.objective:112
@@ -598,17 +598,17 @@ msgstr ""
 
 #: scanner.objective:116
 msgctxt "objective text shown on scanner"
-msgid "Eliminate eurocorp personnel controlling river port"
+msgid "Eliminate Eurocorp personnel controlling river port"
 msgstr ""
 
 #: scanner.objective:117
 msgctxt "objective text shown on scanner"
-msgid "Return to iml link"
+msgid "Return to IML link"
 msgstr ""
 
 #: scanner.objective:118
 msgctxt "objective text shown on scanner"
-msgid "Abduct eurocorp captive"
+msgid "Abduct Eurocorp captive"
 msgstr ""
 
 #: scanner.objective:119
@@ -618,17 +618,17 @@ msgstr ""
 
 #: scanner.objective:120
 msgctxt "objective text shown on scanner"
-msgid "Destroy r&d facilities"
+msgid "Destroy R&D facilities"
 msgstr ""
 
 #: scanner.objective:121
 msgctxt "objective text shown on scanner"
-msgid "Eliminate agents of eurocorp"
+msgid "Eliminate agents of Eurocorp"
 msgstr ""
 
 #: scanner.objective:122
 msgctxt "objective text shown on scanner"
-msgid "De saxo must perish"
+msgid "De Saxo must perish"
 msgstr ""
 
 #: scanner.objective:123
@@ -638,7 +638,7 @@ msgstr ""
 
 #: scanner.objective:124
 msgctxt "objective text shown on scanner"
-msgid "Subdue the unguided"
+msgid "Subdue the Unguided"
 msgstr ""
 
 #: scanner.objective:125
@@ -648,32 +648,32 @@ msgstr ""
 
 #: scanner.objective:126
 msgctxt "objective text shown on scanner"
-msgid "Rescue ix and guide him to rendezvous"
+msgid "Rescue IX and guide him to rendezvous"
 msgstr ""
 
 #: scanner.objective:127
 msgctxt "objective text shown on scanner"
-msgid "Protect ix"
+msgid "Protect IX"
 msgstr ""
 
 #: scanner.objective:128
 msgctxt "objective text shown on scanner"
-msgid "You have allowed ix to perish"
+msgid "You have allowed IX to perish"
 msgstr ""
 
 #: scanner.objective:129
 msgctxt "objective text shown on scanner"
-msgid "Nothing can stop the nine now. you have been defeated."
+msgid "Nothing can stop The Nine now. you have been defeated."
 msgstr ""
 
 #: scanner.objective:130
 msgctxt "objective text shown on scanner"
-msgid "Do nothing: obey the nine"
+msgid "Do nothing: obey The Nine"
 msgstr ""
 
 #: scanner.objective:131
 msgctxt "objective text shown on scanner"
-msgid "All citizens converted by zealots"
+msgid "All citizens converted by Zealots"
 msgstr ""
 
 #: scanner.objective:132
@@ -693,7 +693,7 @@ msgstr ""
 
 #: scanner.objective:135
 msgctxt "objective text shown on scanner"
-msgid "Proceed to iml link"
+msgid "Proceed to IML link"
 msgstr ""
 
 #: scanner.objective:136
@@ -703,12 +703,12 @@ msgstr ""
 
 #: scanner.objective:137
 msgctxt "objective text shown on scanner"
-msgid "Activate iml link"
+msgid "Activate IML link"
 msgstr ""
 
 #: scanner.objective:138
 msgctxt "objective text shown on scanner"
-msgid "Iml link destroyed"
+msgid "IML link destroyed"
 msgstr ""
 
 #: scanner.objective:139
@@ -733,12 +733,12 @@ msgstr ""
 
 #: scanner.objective:143
 msgctxt "objective text shown on scanner"
-msgid "Convert ormandoz"
+msgid "Convert Ormandoz"
 msgstr ""
 
 #: scanner.objective:144
 msgctxt "objective text shown on scanner"
-msgid "Convert ramirez"
+msgid "Convert Ramirez"
 msgstr ""
 
 #: scanner.objective:145
@@ -748,17 +748,17 @@ msgstr ""
 
 #: scanner.objective:146
 msgctxt "objective text shown on scanner"
-msgid "You have allowed ormandoz to perish"
+msgid "You have allowed Ormandoz to perish"
 msgstr ""
 
 #: scanner.objective:147
 msgctxt "objective text shown on scanner"
-msgid "You have allowed ramirez to perish"
+msgid "You have allowed Ramirez to perish"
 msgstr ""
 
 #: scanner.objective:148
 msgctxt "objective text shown on scanner"
-msgid "Steal dr schweizer's work"
+msgid "Steal dr Schweizer's work"
 msgstr ""
 
 #: scanner.objective:149
@@ -773,27 +773,27 @@ msgstr ""
 
 #: scanner.objective:151
 msgctxt "objective text shown on scanner"
-msgid "Neutralise eurocorp agents"
+msgid "Neutralise Eurocorp agents"
 msgstr ""
 
 #: scanner.objective:152
 msgctxt "objective text shown on scanner"
-msgid "Assassinate kotosek"
+msgid "Assassinate Kotosek"
 msgstr ""
 
 #: scanner.objective:153
 msgctxt "objective text shown on scanner"
-msgid "Neutralise all eurocorp agents"
+msgid "Neutralise all Eurocorp agents"
 msgstr ""
 
 #: scanner.objective:154
 msgctxt "objective text shown on scanner"
-msgid "Let no harm come to de saxo"
+msgid "Let no harm come to De Saxo"
 msgstr ""
 
 #: scanner.objective:155
 msgctxt "objective text shown on scanner"
-msgid "Take control of the iml link"
+msgid "Take control of the IML link"
 msgstr ""
 
 #: scanner.objective:156
@@ -1494,7 +1494,7 @@ msgstr ""
 
 #: mapscreen.city30:4
 msgctxt "map screen location - language"
-msgid "EuroCorp Technical Multi-State Code"
+msgid "Eurocorp Technical Multi-State Code"
 msgstr ""
 
 #: mapscreen.city30:5
