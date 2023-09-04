@@ -1329,353 +1329,507 @@ msgid ""
 "citizens"
 msgstr ""
 
-#: mission.brief.mail3.map1.level1:1 mission.brief.mail11.map1.level15:1
+#: mission.brief.mail3b.map1.level1:1 mission.brief.mail8a.map1.level15:1
 msgctxt "mission brief tactical information"
 msgid "Dropsite: Hong Kong IML Link"
 msgstr ""
 
-#: mission.brief.mail3.map1.level1:2
+#: mission.brief.mail3b.map1.level1:2
 msgctxt "mission brief tactical information"
 msgid "Yamaguchi Fusion Batteries"
 msgstr ""
 
-#: mission.brief.mail3.map1.level1:3
+#: mission.brief.mail3b.map1.level1:3
 msgctxt "mission brief tactical information"
 msgid "Technicians"
 msgstr ""
 
-#: mission.brief.mail3.map1.level1:4 mission.brief.mail4.map32.level16:4
-#: mission.brief.mail9.map10.level1:4 mission.brief.mail15.map4.level1:4
-#: mission.brief.mail16.map7.level1:3 mission.brief.mail17.map26.level1:4
-#: mission.brief.mail18.map44.level1:4 mission.brief.mail19.map6.level1:4
+#: mission.brief.mail3b.map1.level1:4 mission.brief.mail3a.map32.level16:4
+#: mission.brief.mail6.map10.level1:4 mission.brief.mail10.map4.level1:4
+#: mission.brief.mail11b.map7.level1:3 mission.brief.mail11d.map26.level1:4
+#: mission.brief.mail11c.map44.level1:4 mission.brief.mail11a.map6.level1:4
+#: mission.brief.mail15a.map47.level1:4
 msgctxt "mission brief tactical information"
 msgid "Evac zone: IML Link"
 msgstr ""
 
-#: mission.brief.mail3.map1.level1:5
+#: mission.brief.mail3b.map1.level1:5
 msgctxt "mission brief tactical information"
 msgid "Zealots of the Church of the New Epoch have been sighted in the city"
 msgstr ""
 
-#: mission.brief.mail4.map32.level16:1 mission.brief.mail12.map32.level15:1
+#: mission.brief.mail3a.map32.level16:1 mission.brief.mail8c.map32.level15:1
 msgctxt "mission brief tactical information"
 msgid "Dropsite: Beijing IML Link"
 msgstr ""
 
-#: mission.brief.mail4.map32.level16:2
+#: mission.brief.mail3a.map32.level16:2
 msgctxt "mission brief tactical information"
 msgid "Yamaguchi Executive Zaibatsu"
 msgstr ""
 
-#: mission.brief.mail4.map32.level16:3
+#: mission.brief.mail3a.map32.level16:3
 msgctxt "mission brief tactical information"
 msgid "Yamaguchi Agent Training Camp"
 msgstr ""
 
-#: mission.brief.mail4.map32.level16:5
+#: mission.brief.mail3a.map32.level16:5
 msgctxt "mission brief tactical information"
 msgid "Eavesdrop: police report rioting by the Unguided"
 msgstr ""
 
-#: mission.brief.mail5.map21.level31:1
+#: mission.brief.mail4a.map21.level31:1
 msgctxt "mission brief tactical information"
 msgid "Dropsite & evac zone: Geneva IML Link"
 msgstr ""
 
-#: mission.brief.mail5.map21.level31:2
+#: mission.brief.mail4a.map21.level31:2
 msgctxt "mission brief tactical information"
 msgid "Bluesky laboratories"
 msgstr ""
 
-#: mission.brief.mail5.map21.level31:3
+#: mission.brief.mail4a.map21.level31:3
 msgctxt "mission brief tactical information"
 msgid "Eavesdrop: Bluesky requests police escort for Grade D finance executive"
 msgstr ""
 
-#: mission.brief.mail6.map50.level1:1
+#: mission.brief.mail4c.map50.level1:1
 msgctxt "mission brief tactical information"
 msgid "Dropsite & evac zone: Vancouver IML Link"
 msgstr ""
 
-#: mission.brief.mail6.map50.level1:2
+#: mission.brief.mail4c.map50.level1:2
 msgctxt "mission brief tactical information"
 msgid "Bluesky laboratory"
 msgstr ""
 
-#: mission.brief.mail6.map50.level1:3
+#: mission.brief.mail4c.map50.level1:3
 msgctxt "mission brief tactical information"
 msgid "Eavesdrop: Unguided activity being monitored by police"
 msgstr ""
 
-#: mission.brief.mail6.map50.level1:4
+#: mission.brief.mail4c.map50.level1:4
 msgctxt "mission brief tactical information"
 msgid ""
 "Satellite Alert: Zealot personnel carriers detected approaching city from "
 "south west"
 msgstr ""
 
-#: mission.brief.mail7.map2.level1:1
+#: mission.brief.mail4b.map2.level1:1
 msgctxt "mission brief tactical information"
 msgid "Dropsite: Matochkin Shar"
 msgstr ""
 
-#: mission.brief.mail7.map2.level1:2
+#: mission.brief.mail4b.map2.level1:2
 msgctxt "mission brief tactical information"
 msgid "Bluesky R&D facility"
 msgstr ""
 
-#: mission.brief.mail7.map2.level1:3
+#: mission.brief.mail4b.map2.level1:3
 msgctxt "mission brief tactical information"
 msgid "Hover car licences detected"
 msgstr ""
 
-#: mission.brief.mail7.map2.level1:4
+#: mission.brief.mail4b.map2.level1:4
 msgctxt "mission brief tactical information"
 msgid "Eavesdrop: credit transfer traced to Church of the New Epoch temple"
 msgstr ""
 
-#: mission.brief.mail8.map9.level1:1
+#: mission.brief.mail5.map9.level1:1 mission.brief.mail16.map40.level1:2
 msgctxt "mission brief tactical information"
 msgid "Dropsite: Singapore IML Link"
 msgstr ""
 
-#: mission.brief.mail8.map9.level1:2
+#: mission.brief.mail5.map9.level1:2
 msgctxt "mission brief tactical information"
 msgid "Singapore City Bank"
 msgstr ""
 
-#: mission.brief.mail8.map9.level1:3
+#: mission.brief.mail5.map9.level1:3
 msgctxt "mission brief tactical information"
 msgid "Primary vault (underground)"
 msgstr ""
 
-#: mission.brief.mail8.map9.level1:4
+#: mission.brief.mail5.map9.level1:4
 msgctxt "mission brief tactical information"
 msgid "Tang Protective bullion convoy"
 msgstr ""
 
-#: mission.brief.mail8.map9.level1:5
+#: mission.brief.mail5.map9.level1:5
 msgctxt "mission brief tactical information"
 msgid "Target vehicle"
 msgstr ""
 
-#: mission.brief.mail8.map9.level1:6
+#: mission.brief.mail5.map9.level1:6
 msgctxt "mission brief tactical information"
 msgid "Rendezvous point"
 msgstr ""
 
-#: mission.brief.mail8.map9.level1:7
+#: mission.brief.mail5.map9.level1:7
 msgctxt "mission brief tactical information"
 msgid "Tang HQ"
 msgstr ""
 
-#: mission.brief.mail9.map10.level1:1 mission.brief.mail13.map10.level15:1
+#: mission.brief.mail6.map10.level1:1 mission.brief.mail8b.map10.level15:1
 msgctxt "mission brief tactical information"
 msgid "Dropsite: Phoenix IML Link"
 msgstr ""
 
-#: mission.brief.mail9.map10.level1:2
+#: mission.brief.mail6.map10.level1:2
 msgctxt "mission brief tactical information"
 msgid "Cult of the New Epoch temple"
 msgstr ""
 
-#: mission.brief.mail9.map10.level1:3
+#: mission.brief.mail6.map10.level1:3
 msgctxt "mission brief tactical information"
 msgid "Estimated location of Cult indoctrination technology"
 msgstr ""
 
-#: mission.brief.mail9.map10.level1:5
+#: mission.brief.mail6.map10.level1:5
 msgctxt "mission brief tactical information"
 msgid ""
 "Eavesdrop: police reports indicate that the Unguided are completely out of "
 "control"
 msgstr ""
 
-#: mission.brief.mail9.map10.level1:6
+#: mission.brief.mail6.map10.level1:6
 msgctxt "mission brief tactical information"
 msgid ""
 "London AI analysis: any engagement of the Unguided is likely to attract the "
 "wrath of the whole mob"
 msgstr ""
 
-#: mission.brief.mail10.map28.level46:1 mission.brief.mail14.map28.level15:1
+#: mission.brief.mail7.map28.level46:1 mission.brief.mail9.map28.level15:1
 msgctxt "mission brief tactical information"
 msgid "Dropsite: Rome IML Link"
 msgstr ""
 
-#: mission.brief.mail10.map28.level46:2
+#: mission.brief.mail7.map28.level46:2
 msgctxt "mission brief tactical information"
 msgid ""
 "Low-order domicile bunker complexes fortified by category U-Unguided citizens"
 msgstr ""
 
-#: mission.brief.mail10.map28.level46:3
+#: mission.brief.mail7.map28.level46:3
 msgctxt "mission brief tactical information"
 msgid "Security garrison"
 msgstr ""
 
-#: mission.brief.mail10.map28.level46:4
+#: mission.brief.mail7.map28.level46:4
 msgctxt "mission brief tactical information"
 msgid "Garrison vault (underground): estimated value 0.4 MCr"
 msgstr ""
 
-#: mission.brief.mail10.map28.level46:5
+#: mission.brief.mail7.map28.level46:5
 msgctxt "mission brief tactical information"
 msgid ""
 "Satellite alert: control of Rome's Strategic Defense Satellite has been lost "
 "to hostile forces unknown"
 msgstr ""
 
-#: mission.brief.mail11.map1.level15:2 mission.brief.mail12.map32.level15:2
-#: mission.brief.mail13.map10.level15:2 mission.brief.mail14.map28.level15:2
+#: mission.brief.mail8a.map1.level15:2 mission.brief.mail8c.map32.level15:2
+#: mission.brief.mail8b.map10.level15:2 mission.brief.mail9.map28.level15:2
 msgctxt "mission brief tactical information"
 msgid "Target agent"
 msgstr ""
 
-#: mission.brief.mail11.map1.level15:3
+#: mission.brief.mail8a.map1.level15:3
 msgctxt "mission brief tactical information"
 msgid "Suitable vehicle for gaining access to base"
 msgstr ""
 
-#: mission.brief.mail12.map32.level15:3
+#: mission.brief.mail8c.map32.level15:3
 msgctxt "mission brief tactical information"
 msgid "Eavesdrop: bank security systems have been recently improved"
 msgstr ""
 
-#: mission.brief.mail14.map28.level15:3
+#: mission.brief.mail9.map28.level15:3
 msgctxt "mission brief tactical information"
 msgid ""
 "Eavesdrop: police on the lookout for an Unguided group which has infiltrated "
 "the city in order to fund another uprising"
 msgstr ""
 
-#: mission.brief.mail14.map28.level15:4
+#: mission.brief.mail9.map28.level15:4
 msgctxt "mission brief tactical information"
 msgid ""
 "Eavesdrop: unstable UTOPIA ident signal pattern detected - possible Unguided "
 "hideaway"
 msgstr ""
 
-#: mission.brief.mail15.map4.level1:1
+#: mission.brief.mail10.map4.level1:1
 msgctxt "mission brief tactical information"
 msgid "Dropsite: New York IML Link"
 msgstr ""
 
-#: mission.brief.mail15.map4.level1:2
+#: mission.brief.mail10.map4.level1:2
 msgctxt "mission brief tactical information"
 msgid "New Atlantic Alliance HQ"
 msgstr ""
 
-#: mission.brief.mail15.map4.level1:3
+#: mission.brief.mail10.map4.level1:3
 msgctxt "mission brief tactical information"
 msgid "Civilian staff housing"
 msgstr ""
 
-#: mission.brief.mail15.map4.level1:5
+#: mission.brief.mail10.map4.level1:5
 msgctxt "mission brief tactical information"
 msgid ""
 "Eavesdrop: police have upgraded their vault-breach response teams recently"
 msgstr ""
 
-#: mission.brief.mail16.map7.level1:1
+#: mission.brief.mail11b.map7.level1:1
 msgctxt "mission brief tactical information"
 msgid "Dropsite: Santiago IML Link"
 msgstr ""
 
-#: mission.brief.mail16.map7.level1:2 mission.brief.mail17.map26.level1:3
-#: mission.brief.mail18.map44.level1:3 mission.brief.mail19.map6.level1:3
+#: mission.brief.mail11b.map7.level1:2 mission.brief.mail11d.map26.level1:3
+#: mission.brief.mail11c.map44.level1:3 mission.brief.mail11a.map6.level1:3
 msgctxt "mission brief tactical information"
 msgid "Target"
 msgstr ""
 
-#: mission.brief.mail16.map7.level1:4
+#: mission.brief.mail11b.map7.level1:4
 msgctxt "mission brief tactical information"
 msgid "North Side over-run by zealots"
 msgstr ""
 
-#: mission.brief.mail17.map26.level1:1
+#: mission.brief.mail11d.map26.level1:1
 msgctxt "mission brief tactical information"
 msgid "Dropsite: Buenos Aires IML Link"
 msgstr ""
 
-#: mission.brief.mail17.map26.level1:2
+#: mission.brief.mail11d.map26.level1:2
 msgctxt "mission brief tactical information"
 msgid "Hexagon Corporation Headquarters"
 msgstr ""
 
-#: mission.brief.mail17.map26.level1:5
+#: mission.brief.mail11d.map26.level1:5
 msgctxt "mission brief tactical information"
 msgid "Eavesdrop: Hexagon reserves vault"
 msgstr ""
 
-#: mission.brief.mail17.map26.level1:6
+#: mission.brief.mail11d.map26.level1:6
 msgctxt "mission brief tactical information"
 msgid "Additional cultist activity detected"
 msgstr ""
 
-#: mission.brief.mail18.map44.level1:1
+#: mission.brief.mail11c.map44.level1:1
 msgctxt "mission brief tactical information"
 msgid "Dropsite: Cape Town via APC"
 msgstr ""
 
-#: mission.brief.mail18.map44.level1:2
+#: mission.brief.mail11c.map44.level1:2
 msgctxt "mission brief tactical information"
 msgid "Hexagon research facility gateway"
 msgstr ""
 
-#: mission.brief.mail18.map44.level1:5
+#: mission.brief.mail11c.map44.level1:5
 msgctxt "mission brief tactical information"
 msgid "Eavesdrop: Zealots have taken control of this installation"
 msgstr ""
 
-#: mission.brief.mail19.map6.level1:1
+#: mission.brief.mail11a.map6.level1:1
 msgctxt "mission brief tactical information"
 msgid "Dropsite: Adelaide IML Link"
 msgstr ""
 
-#: mission.brief.mail19.map6.level1:2
+#: mission.brief.mail11a.map6.level1:2
 msgctxt "mission brief tactical information"
 msgid "Gel Data Testing Facility"
 msgstr ""
 
-#: mission.brief.mail20.map36.level1:1
+#: mission.brief.mail12.map36.level1:1
 msgctxt "mission brief tactical information"
 msgid "Dropsite: Christchurch IML Link A"
 msgstr ""
 
-#: mission.brief.mail20.map36.level1:2
+#: mission.brief.mail12.map36.level1:2
 msgctxt "mission brief tactical information"
 msgid "Target area: Christchurch IML Link B"
 msgstr ""
 
-#: mission.brief.mail20.map36.level1:3
+#: mission.brief.mail12.map36.level1:3
 msgctxt "mission brief tactical information"
 msgid "Tang Protective agents detected"
 msgstr ""
 
-#: mission.brief.mail20.map36.level1:4
+#: mission.brief.mail12.map36.level1:4
 msgctxt "mission brief tactical information"
 msgid "Tang agent orders intercepted - agents' target is city bank vault"
 msgstr ""
 
-#: mission.brief.mail23.map30.level46:1
+#: mission.brief.mail14.map30.level46:1
 msgctxt "mission brief tactical information"
 msgid "Dropsite: (a) Presentation podium (b) Professor Drennan's location"
 msgstr ""
 
-#: mission.brief.mail23.map30.level46:2
+#: mission.brief.mail14.map30.level46:2
 msgctxt "mission brief tactical information"
 msgid "Data vault, containing watcher drone digital film of the Reykjavik site"
 msgstr ""
 
-#: mission.brief.mail23.map30.level46:3
+#: mission.brief.mail14.map30.level46:3
 msgctxt "mission brief tactical information"
 msgid "EuroCorp Executive"
 msgstr ""
 
-#: mission.brief.mail23.map30.level46:4
+#: mission.brief.mail14.map30.level46:4
 msgctxt "mission brief tactical information"
 msgid "Massive unguided identkey trace north of HQ district"
+msgstr ""
+
+#: mission.brief.mail15a.map47.level1:1
+msgctxt "mission brief tactical information"
+msgid "Dropsite: Tokyo IML Link"
+msgstr ""
+
+#: mission.brief.mail15a.map47.level1:2
+msgctxt "mission brief tactical information"
+msgid "Cultist stronghold"
+msgstr ""
+
+#: mission.brief.mail15a.map47.level1:3
+msgctxt "mission brief tactical information"
+msgid "Professor Drennan"
+msgstr ""
+
+#: mission.brief.mail15a.map47.level1:5
+msgctxt "mission brief tactical information"
+msgid "Laser turrets under police control"
+msgstr ""
+
+#: mission.brief.mail15a.map47.level1:6
+msgctxt "mission brief tactical information"
+msgid "Estimated contents value of bank vault: 2.5M Cr"
+msgstr ""
+
+#: mission.brief.mail15b.map3.level1:1
+msgctxt "mission brief tactical information"
+msgid "Dropsite: Bangkok IML Link"
+msgstr ""
+
+#: mission.brief.mail15b.map3.level1:2
+msgctxt "mission brief tactical information"
+msgid "EuroCorp Bangkok Operations Centre"
+msgstr ""
+
+#: mission.brief.mail16.map40.level1:1
+msgctxt "mission brief tactical information"
+msgid "Dropsite: Honolulu water purification plant"
+msgstr ""
+
+#: mission.brief.mail17.map22.level16:1
+msgctxt "mission brief tactical information"
+msgid "Agent Wu's current position"
+msgstr ""
+
+#: mission.brief.mail17.map22.level16:2
+msgctxt "mission brief tactical information"
+msgid "De Saxo's current position"
+msgstr ""
+
+#: mission.brief.mail17.map22.level16:3
+msgctxt "mission brief tactical information"
+msgid "Zealot held facilities"
+msgstr ""
+
+#: mission.brief.mail18.map45.level2:1
+msgctxt "mission brief tactical information"
+msgid "Dropsite: Cairo IML Link A"
+msgstr ""
+
+#: mission.brief.mail18.map45.level2:2
+msgctxt "mission brief tactical information"
+msgid "Evac zone: IML Link B"
+msgstr ""
+
+#: mission.brief.mail18.map45.level2:3
+msgctxt "mission brief tactical information"
+msgid ""
+"Eavesdrop: significant cult presence throughout city - no police response"
+msgstr ""
+
+#: mission.brief.mail18.map45.level2:4
+msgctxt "mission brief tactical information"
+msgid ""
+"Eavesdrop: Foamsteel Defence Industries executives scheduled to meet "
+"cultists - reason unknown"
+msgstr ""
+
+#: mission.brief.mail19a.map27.level2:1
+msgctxt "mission brief tactical information"
+msgid "Dropsite: Delhi IML Link"
+msgstr ""
+
+#: mission.brief.mail19a.map27.level2:2
+msgctxt "mission brief tactical information"
+msgid "Chemical plant"
+msgstr ""
+
+#: mission.brief.mail19a.map27.level2:3
+msgctxt "mission brief tactical information"
+msgid "FoamSteel Defence Industries distribution facility"
+msgstr ""
+
+#: mission.brief.mail19a.map27.level2:4
+msgctxt "mission brief tactical information"
+msgid "Satellite Alert: EuroCorp operatives and MBT"
+msgstr ""
+
+#: mission.brief.mail19b.map5.level1:1
+msgctxt "mission brief tactical information"
+msgid "Dropsite: South Side gate"
+msgstr ""
+
+#: mission.brief.mail19b.map5.level1:2
+msgctxt "mission brief tactical information"
+msgid "R&D facility"
+msgstr ""
+
+#: mission.brief.mail19b.map5.level1:3
+msgctxt "mission brief tactical information"
+msgid "Eavesdrop: possible ghost trace - Ko-Paull Vissick"
+msgstr ""
+
+#: mission.brief.mail20.map41.level3:1
+msgctxt "mission brief tactical information"
+msgid "Dropsite: Bahrain IML Link"
+msgstr ""
+
+#: mission.brief.mail20.map41.level3:2
+msgctxt "mission brief tactical information"
+msgid "AI bunker"
+msgstr ""
+
+#: mission.brief.mail20.map41.level3:3
+msgctxt "mission brief tactical information"
+msgid "Disposition of rogue agents"
+msgstr ""
+
+#: mission.brief.mail20.map41.level3:4
+msgctxt "mission brief tactical information"
+msgid "Direction of approaching Unguided forces"
+msgstr ""
+
+#: mission.brief.mail20.map41.level3:5
+msgctxt "mission brief tactical information"
+msgid "A minor Church of the New Epoch shrine remains occupied"
+msgstr ""
+
+#: mission.brief.mail21a.map46.level15:1
+msgctxt "mission brief tactical information"
+msgid "Dropsites"
+msgstr ""
+
+#: mission.brief.mail21a.map46.level15:2
+msgctxt "mission brief tactical information"
+msgid "Orbital elevator"
+msgstr ""
+
+#: mission.brief.mail21a.map46.level15:3
+msgctxt "mission brief tactical information"
+msgid "Orbital elevator anti-satellite missile system"
 msgstr ""
 
 #: message.win:1
