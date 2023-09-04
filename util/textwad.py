@@ -1393,22 +1393,22 @@ def main():
 
     po = parser.parse_args()
 
-    if po.wadfile.lower().endswith(".wad"):
-        po.wadbase = os.path.splitext(po.wadfile)[0]
-    else:
-        po.wadbase = po.wadfile
-    assert len(po.wadbase) > 0, "Provided WAD file name base is too short"
-    po.wadfile = po.wadbase + ".wad"
-    po.idxfile = po.wadbase + ".idx"
+    if True:
+        if po.wadfile.lower().endswith(".wad"):
+            po.wadbase = os.path.splitext(po.wadfile)[0]
+        else:
+            po.wadbase = po.wadfile
+        assert len(po.wadbase) > 0, "Provided WAD file name base is too short"
+        po.wadfile = po.wadbase + ".wad"
+        po.idxfile = po.wadbase + ".idx"
 
-    if len(po.engwadfile) > 0:
-        po.engwadbase = os.path.splitext(os.path.basename(po.engwadfile))[0]
+    if po.extract and not po.raw:
+        if po.engwadfile.lower().endswith(".wad"):
+            po.engwadbase = os.path.splitext(po.engwadfile)[0]
+        else:
+            po.engwadbase = po.engwadfile
         po.engwadfile = po.engwadbase + ".wad"
         po.engidxfile = po.engwadbase + ".idx"
-    else:
-        po.engwadbase = ""
-        po.engwadfile = ""
-        po.engidxfile = ""
 
     if not po.raw:
         read_enctable(po, po.enctable)
