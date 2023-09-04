@@ -20,7 +20,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Menu text for SW Port\n"
 "Report-Msgid-Bugs-To: https://github.com/swfans/swars/issues\n"
-"POT-Creation-Date: 2023-09-04 03:12+0200\n"
+"POT-Creation-Date: 2023-09-04 09:58+0200\n"
 "PO-Revision-Date: 2023-09-02 12:00+0100\n"
 "Last-Translator: Mefistotelis <mefistotelis@gmail.com>\n"
 "Language-Team: Syndicate Wars Fans <github.com/swfans>\n"
@@ -54,7 +54,7 @@ msgstr ""
 #: mission.brief.mail16.par3.h mission.brief.mail17.par3.h
 #: mission.brief.mail18.par3.h mission.brief.mail19.par3.h
 #: mission.brief.mail20.par3.h mission.brief.mail21.par3.h
-#: mission.brief.mail5.par3.h
+#: mission.brief.mail5.par3.h mission.brief.mail8.par13.c3
 msgctxt "mission brief email header"
 msgid "Message begins:"
 msgstr ""
@@ -471,11 +471,6 @@ msgstr ""
 #: mission.brief.mail8.par12.c3
 msgctxt "mission brief email paragraph"
 msgid "TO: All Field Executives"
-msgstr ""
-
-#: mission.brief.mail8.par13.c3
-msgctxt "mission brief email paragraph"
-msgid "Message begins:"
 msgstr ""
 
 #: mission.brief.mail8.par14.c3
