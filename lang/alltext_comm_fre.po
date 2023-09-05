@@ -20,8 +20,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Menu text for SW Port\n"
 "Report-Msgid-Bugs-To: https://github.com/swfans/swars/issues\n"
-"POT-Creation-Date: 2023-09-04 03:12+0200\n"
-"PO-Revision-Date: 2023-09-04 12:13+0200\n"
+"POT-Creation-Date: 2023-09-05 11:43+0200\n"
+"PO-Revision-Date: 2023-09-05 15:47+0200\n"
 "Last-Translator: Mefistotelis <mefistotelis@gmail.com>\n"
 "Language-Team: Syndicate Wars Fans <github.com/swfans>\n"
 "Language: fr_FR\n"
@@ -766,7 +766,7 @@ msgstr "Empare-toi des travaux du dr Schweizer"
 #: scanner.objective:149
 msgctxt "objective text shown on scanner"
 msgid "Return to us"
-msgstr "Reviens vers nous "
+msgstr "Reviens vers nous"
 
 #: scanner.objective:150
 msgctxt "objective text shown on scanner"
@@ -781,7 +781,7 @@ msgstr "Neutralise les agents d'Eurocorp"
 #: scanner.objective:152
 msgctxt "objective text shown on scanner"
 msgid "Assassinate Kotosek"
-msgstr "Assassine Koto sek"
+msgstr "Assassine KotoSek"
 
 #: scanner.objective:153
 msgctxt "objective text shown on scanner"
@@ -1097,8 +1097,8 @@ msgctxt "map screen location - industry"
 msgid "Consumer Durables"
 msgstr "Biens durables"
 
-#: mapscreen.city10:6 mapscreen.city15:6 mapscreen.city23:6 mapscreen.city28:6
-#: mapscreen.city41:6 mapscreen.city45:6
+#: mapscreen.city10:6 mapscreen.city15:6 mapscreen.city20:6 mapscreen.city23:6
+#: mapscreen.city28:6 mapscreen.city41:6 mapscreen.city45:6
 msgctxt "map screen location - toxicity"
 msgid "Heavy Industrial"
 msgstr "Dechets de l'industrie lourde"
@@ -1187,7 +1187,7 @@ msgstr "15.71 M"
 #: mapscreen.city14:3
 msgctxt "map screen location - landscape"
 msgid "Ultra Metropolitan"
-msgstr "Ultrapole "
+msgstr "Ultrapole"
 
 #: mapscreen.city14:4
 msgctxt "map screen location - language"
@@ -1328,11 +1328,6 @@ msgstr "Neo-japonais"
 msgctxt "map screen location - industry"
 msgid "Hi-Tech Manufacture, Financial Services"
 msgstr "Hi-tech, Services financiers"
-
-#: mapscreen.city20:6
-msgctxt "map screen location - toxicity"
-msgid "Heavy Industrial "
-msgstr "Dechets de l'industrie lourde "
 
 #: mapscreen.city21:1
 msgctxt "map screen location - name"
