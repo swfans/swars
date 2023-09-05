@@ -31,450 +31,354 @@ msgstr ""
 "X-Poedit-SourceCharset: utf-8\n"
 "X-Generator: Poedit 3.0.1\n"
 
-#: mission.brief.mail23.par1.h
-msgctxt "mission brief email header"
-msgid "Hark these words, Apostle."
+#: mapscreen.heading:1
+msgctxt "church maps screen headings - name"
+msgid "Pilgrimage"
 msgstr ""
 
-#: mission.brief.mail23.par2.c2
+#: mapscreen.heading:2
+msgctxt "church maps screen headings - population size"
+msgid "Heathens"
+msgstr ""
+
+#: mapscreen.heading:3
+msgctxt "church maps screen headings - landscape"
+msgid "Geography"
+msgstr ""
+
+#: mapscreen.heading:4
+msgctxt "church maps screen headings - language"
+msgid "Tongue"
+msgstr ""
+
+#: mapscreen.heading:5
+msgctxt "church maps screen headings - industry"
+msgid "Material Riches"
+msgstr ""
+
+#: mapscreen.heading:6
+msgctxt "church maps screen headings - toxicity"
+msgid "Legacy"
+msgstr ""
+
+#: mission.title:48
+msgctxt "mission title"
+msgid "Harbinger"
+msgstr ""
+
+#: mission.brief.mail1.par1.h
+msgctxt "mission brief email header"
+msgid "Blessings, Disciple."
+msgstr ""
+
+#: mission.brief.mail1.par2.c2
 msgctxt "mission brief email orders"
 msgid ""
-"The Great Church at Johannesburg has been desecrated by a swarm of Unguided "
-"ones. One of their number, Rene Galact, is visibly directing the throng. He "
-"must be destroyed in the name of all that is holy."
+"Your mission is to take control of a substation belonging to EuroCorp's "
+"UTOPIA network. It is situated in Detroit. When we have it, the Cataclysm "
+"will begin."
 msgstr ""
 
-#: mission.brief.mail23.par3.c5
+#: mission.brief.mail1.par3.c5
 msgctxt "mission brief email paragraph"
 msgid ""
-"There is an unforgivably large Unguided presence in the city. The raised mall "
-"and concourse in the south-west of the city is now the outcasts' fortress. A "
-"great victory will be born from the destruction of all those who would hide "
-"behind its irrelevant walls, and the Church will roll ever closer to the "
-"Final Day. It is written in the Codex, Disciple."
+"Delivered unto you this day is the automorphic computer virus which will end "
+"the tyranny the Syndicate calls UTOPIA. We have named this virus Harbinger "
+"and it will snatch control from the Syndicate, computer by computer, "
+"preparing the way for the enlightenment to follow."
 msgstr ""
 
-#: mission.brief.mail23.par4.c5
+#: mission.brief.mail1.par4.c5
 msgctxt "mission brief email paragraph"
-msgid "Go with fire and serenity."
+msgid ""
+"Lead your Acolytes into the Detroit UTOPIA ground station, in order that we "
+"may release the virus. The Syndicate operatives who guard the station will "
+"not be expecting force, because none has been used for years. This is our "
+"advantage."
 msgstr ""
 
-#: mission.brief.mail23.par5.c4 mission.brief.mail14.par6.c4
-#: mission.brief.mail15.par7.c4 mission.brief.mail16.par4.c4
-#: mission.brief.mail18.par6.c4 mission.brief.mail19.par7.c4
-#: mission.brief.mail20.par6.c4 mission.brief.mail21.par6.c4
-#: mission.brief.mail22.par7.c4 mission.brief.mail5.par6.c4
-#: mission.brief.mail11.par5.c4 mission.brief.mail17.par6.c4
-#: mission.brief.mail24.par5.c4 mission.brief.mail25.par5.c4
+#: mission.brief.mail1.par5.c5
+msgctxt "mission brief email paragraph"
+msgid "Blessed be."
+msgstr ""
+
+#: mission.brief.mail1.par6.c4 mission.brief.mail2.par7.c4
+#: mission.brief.mail3.par5.c4 mission.brief.mail5.par6.c4
 #: mission.brief.mail4.par6.c4 mission.brief.mail6.par9.c4
 #: mission.brief.mail7.par7.c4 mission.brief.mail8.par5.c4
 #: mission.brief.mail9.par8.c4 mission.brief.mail10.par5.c4
-#: mission.brief.mail12.par5.c4 mission.brief.mail13.par6.c4
-#: mission.brief.mail1.par6.c4 mission.brief.mail2.par7.c4
-#: mission.brief.mail3.par5.c4
+#: mission.brief.mail11.par5.c4 mission.brief.mail12.par5.c4
+#: mission.brief.mail13.par6.c4 mission.brief.mail14.par6.c4
+#: mission.brief.mail15.par7.c4 mission.brief.mail16.par4.c4
+#: mission.brief.mail17.par6.c4 mission.brief.mail18.par6.c4 mission.brief.mail19.par7.c4
+#: mission.brief.mail20.par6.c4 mission.brief.mail21.par6.c4
+#: mission.brief.mail22.par7.c4 mission.brief.mail23.par5.c4
+#: mission.brief.mail24.par5.c4 mission.brief.mail25.par5.c4
 msgctxt "mission brief email sender"
 msgid "Virgil"
 msgstr ""
 
-#: mission.brief.mail23.par6.c1
+#: mission.brief.mail1.par7.c1
 msgctxt "mission brief book quote"
-msgid "To take one life is sin. To take a thousand is religion."
+msgid ""
+"The non-believers climbed for days to confront the master in the mountains. "
+"\"Where do you get your so-called faith?\" they asked."
 msgstr ""
 
-#: mission.brief.mail23.par7.c1 mission.brief.mail14.par8.c1
-#: mission.brief.mail15.par10.c1 mission.brief.mail16.par6.c1
-#: mission.brief.mail18.par8.c1 mission.brief.mail19.par9.c1
-#: mission.brief.mail20.par8.c1 mission.brief.mail21.par10.c1
-#: mission.brief.mail22.par9.c1 mission.brief.mail5.par8.c1
-#: mission.brief.mail11.par7.c1 mission.brief.mail17.par8.c1
-#: mission.brief.mail24.par7.c1 mission.brief.mail25.par8.c1
+#: mission.brief.mail1.par8.c1
+msgctxt "mission brief book quote"
+msgid "\"You brought it,\" the master replied. \"You've all climbed so high.\""
+msgstr ""
+
+#: mission.brief.mail1.par9.c1 mission.brief.mail2.par9.c1 mission.brief.mail3.par7.c1
+#: mission.brief.mail4.par8.c1 mission.brief.mail5.par8.c1
 #: mission.brief.mail6.par11.c1 mission.brief.mail7.par9.c1
 #: mission.brief.mail8.par7.c1 mission.brief.mail9.par10.c1
-#: mission.brief.mail10.par7.c1 mission.brief.mail12.par7.c1
-#: mission.brief.mail13.par8.c1 mission.brief.mail1.par9.c1
-#: mission.brief.mail2.par9.c1 mission.brief.mail3.par7.c1
+#: mission.brief.mail10.par7.c1 mission.brief.mail11.par7.c1
+#: mission.brief.mail12.par7.c1 mission.brief.mail13.par8.c1
+#: mission.brief.mail14.par8.c1 mission.brief.mail15.par10.c1
+#: mission.brief.mail16.par6.c1 mission.brief.mail17.par8.c1
+#: mission.brief.mail18.par8.c1 mission.brief.mail19.par9.c1
+#: mission.brief.mail20.par8.c1 mission.brief.mail21.par10.c1
+#: mission.brief.mail22.par9.c1 mission.brief.mail23.par7.c1
+#: mission.brief.mail24.par7.c1 mission.brief.mail25.par8.c1
 msgctxt "mission brief book quote"
 msgid "- The Book of Cataclysm."
 msgstr ""
 
-#: mission.brief.mail14.par1.h
-msgctxt "mission brief email header"
-msgid "Meditate with us, Disciple."
+#: mission.brief.mail1.map35.level2:1
+msgctxt "mission brief tactical information"
+msgid "Landing Ground: Detroit IML Link"
 msgstr ""
 
-#: mission.brief.mail14.par2.c2
+#: mission.brief.mail1.map35.level2:2
+msgctxt "mission brief tactical information"
+msgid "Target building: EuroCorp AI Ground Station"
+msgstr ""
+
+#: mission.brief.mail1.map35.level2:3
+msgctxt "mission brief tactical information"
+msgid "Disposition of EuroCorp guards"
+msgstr ""
+
+#: mission.brief.mail1.map35.level2:4 mission.brief.mail3.map26.level2:4
+#: mission.brief.mail4.map7.level3:3 mission.brief.mail5.map22.level3:6
+#: mission.brief.mail6c.map50.level47:3 mission.brief.mail9c.map22.level2:4
+#: mission.brief.mail9b.map26.level3:3 mission.brief.mail9a.map7.level5:3
+#: mission.brief.mail9d.map25.level46:4 mission.brief.mail10.map45.level1:4
+#: mission.brief.mail13.map30.level2:5 mission.brief.mail14.map4.level3:7
+#: mission.brief.mail15.map20.level16:3 mission.brief.mail16.map44.level3:3
+#: mission.brief.mail17.map32.level2:3 mission.brief.mail18.map27.level1:4
+#: mission.brief.mail19.map3.level2:4 mission.brief.mail22.map44.level2:3
+#: mission.brief.mail23.map22.level4:4
+msgctxt "mission brief tactical information"
+msgid "Sanctuary"
+msgstr ""
+
+#: mission.brief.mail1.map35.level2:5
+msgctxt "mission brief tactical information"
+msgid ""
+"Eavesdrop: recommended means of gaining entry to Syndicate Ground Station"
+msgstr ""
+
+#: mission.title:2
+msgctxt "mission title"
+msgid "Missionary"
+msgstr ""
+
+#: mission.brief.mail2.par1.h
+msgctxt "mission brief email header"
+msgid "Congratulations, Disciple."
+msgstr ""
+
+#: mission.brief.mail2.par2.c2
 msgctxt "mission brief email orders"
 msgid ""
-"Steal plans for a new Syndicate weapon from the EuroCorp installation in New "
-"York."
+"Your acolytes' firm guidance is required in Tripoli, where the emergent chaos "
+"brought by the Cataclysm threatens our Garden of Meditations. Defend our "
+"faith with maximum force."
 msgstr ""
 
-#: mission.brief.mail14.par3.c5
+#: mission.brief.mail2.par3.c5
 msgctxt "mission brief email paragraph"
 msgid ""
-"Professor Drennan is dead. His resistance to our neural inquisitors caused "
-"him to suffer a massive haemorrhage. Disappointing. Nevertheless, through our "
-"prayers, he survived long enough to furnish us with reliable information that "
-"the Syndicate is planning a major counter-offensive against our hallowed "
-"Church. Preparations for the counter-strike are being made in EuroCorp bases "
-"in New York."
+"Harbinger, our holy virus, has begun working to free the population. However, "
+"not all those released from the yoke of repression immediately embrace the "
+"way of enlightenment our Church offers. Indeed, without our guidance, many "
+"will be lost. Soon there will be a Day of Reckoning and every soul will count."
 msgstr ""
 
-#: mission.brief.mail14.par4.c5
+#: mission.brief.mail2.par4.c5
 msgctxt "mission brief email paragraph"
 msgid ""
-"In New York, guarded Syndicate technicians have been testing a thermonuclear "
-"hand weapon we ourselves foresee a use for. Two days ago our brothers and "
-"sisters - who occupy the city's Cathedral in defiance of EuroCorp's presence "
-"- witnessed a terrible blast inside the enemy's compound. It is from within "
-"this compound that Drennan said we would find experimental data regarding "
-"these devices. However, the compound is heavily defended. A diversion is "
-"probably required."
+"Our Garden of Meditations in Tripoli is besieged by lost souls the Syndicate "
+"call the Unguided. Sadly, we must protect each other with maximum force, for "
+"this is the lesson of all religions. Equip your acolytes appropriately and "
+"send them to Tripoli to impose some tranquillity there."
 msgstr ""
 
-#: mission.brief.mail14.par5.c5
+#: mission.brief.mail2.par5.c5
 msgctxt "mission brief email paragraph"
 msgid ""
-"Brother Methuselah will forsake the sanctuary the cathedral provides and meet "
-"you at the IML. He will lead you to a residential and commercial sector where "
-"he will incite a riot, by administering a censer cloud of psycho gas in the "
-"midst of the civilian population. During this time you should find some means "
-"of entering the compound. The Syndicate's response to the riot should occupy "
-"some of the guards for a while."
+"We have plans for Earth, Acolyte. The Church must change the whole world. "
+"This is our time. We will save only the chosen. Enough for now."
 msgstr ""
 
-#: mission.brief.mail14.par7.c1
+#: mission.brief.mail2.par6.c5
+msgctxt "mission brief email paragraph"
+msgid "The Nine have said this."
+msgstr ""
+
+#: mission.brief.mail2.par8.c1
 msgctxt "mission brief book quote"
 msgid ""
-"The courageous enter dark caves alone. The clever send in the courageous "
-"first. The cleverest wait behind the clever."
+"The Master told his pupils, \"Forget being taught and concentrate on "
+"learning. When you're sure, question everything.\""
 msgstr ""
 
-#: mission.brief.mail15.par1.h
+#: mission.brief.mail2.map25.level16:1 mission.brief.mail9d.map25.level46:1
+msgctxt "mission brief tactical information"
+msgid "Landing Ground: Tripoli IML Link"
+msgstr ""
+
+#: mission.brief.mail2.map25.level16:2 mission.brief.mail9d.map25.level46:2
+msgctxt "mission brief tactical information"
+msgid "Our Garden of Meditations"
+msgstr ""
+
+#: mission.title:51
+msgctxt "mission title"
+msgid "Conversions"
+msgstr ""
+
+#: mission.brief.mail3.par1.h
 msgctxt "mission brief email header"
-msgid "Precious Believer,"
+msgid "Harbinger is about its work. Let us pray."
 msgstr ""
 
-#: mission.brief.mail15.par2.c2
+#: mission.brief.mail3.par2.c2
 msgctxt "mission brief email orders"
 msgid ""
-"Destroy EuroCorp weapons bunkers in Riyadh. In wreaking such devastation do "
-"we celebrate the Cataclysm."
+"We must stir this brew in Buenos Aires. By converting two mutual enemies, our "
+"Church will assume control of the whole of the city."
 msgstr ""
 
-#: mission.brief.mail15.par3.c5
+#: mission.brief.mail3.par3.c5
 msgctxt "mission brief email paragraph"
 msgid ""
-"Harbinger has brought UTOPIA to its knees. EuroCorp's continuing quest to "
-"build a new army continues to prove the effectiveness of our strikes against "
-"it. Many of the Syndicate's arms are being stockpiled, to give the depleted "
-"cryovats time to repair their dwindling cadre of agents. Drennan confessed to "
-"us of the largest such repository of firepower. It lies within the ancient "
-"city walls of Riyadh."
+"Our brothers and sisters in South America have gathered intelligence useful "
+"to our cause. They have identified Juan Ormandoz, a senior EuroCorp lackey "
+"from Buenos Aires, who is attempting to maintain the city's stability in "
+"spite of the activities of the Unguided. The leader of this group, Chico "
+"Ramirez, foolishly believes he can take and keep control of a commercial "
+"district. Convert them both and we will succeed where EuroCorp has so far "
+"failed."
 msgstr ""
 
-#: mission.brief.mail15.par4.c5
+#: mission.brief.mail3.par4.c5
 msgctxt "mission brief email paragraph"
-msgid ""
-"It is the Nine's holy wish that this arsenal is buried forever beneath the "
-"desert sands. Locate the target bunkers and destroy them. Convert or "
-"obliterate any agents who dare to stand in your way. Use your own judgment in "
-"this matter. When the Syndicate's stockpile is no more than a memory, your "
-"name shall be sung by the faithful."
+msgid "Spread the good news."
 msgstr ""
 
-#: mission.brief.mail15.par5.c5
-msgctxt "mission brief email paragraph"
-msgid ""
-"Our machines will remake the world, Acolyte. They will plunge the planet into "
-"turmoil. Most of the population will die, but it is the renewal of life that "
-"calls us. Imagine a world with no syndicates, no mind-control, no violence. "
-"It will happen, Disciple. It will happen. More minds are needed."
-msgstr ""
-
-#: mission.brief.mail15.par6.c5
-msgctxt "mission brief email paragraph"
-msgid "Tempus fugit."
-msgstr ""
-
-#: mission.brief.mail15.par8.c1
+#: mission.brief.mail3.par6.c1
 msgctxt "mission brief book quote"
-msgid "The apprentices asked the Master. \"When shall we achieve immortality?\""
+msgid "Faithful minds are not enough. Deliver unto us brains also."
 msgstr ""
 
-#: mission.brief.mail15.par9.c1
-msgctxt "mission brief book quote"
-msgid "And the Master answered, \"Not in this life.\""
+#: mission.brief.mail3.map26.level2:1 mission.brief.mail9b.map26.level3:1
+msgctxt "mission brief tactical information"
+msgid "Landing Ground: Buenos Aires IML Link"
 msgstr ""
 
-#: mission.brief.mail16.par1.h
+#: mission.brief.mail3.map26.level2:2
+msgctxt "mission brief tactical information"
+msgid "Juan Ormandoz works in this executive office estate"
+msgstr ""
+
+#: mission.brief.mail3.map26.level2:3
+msgctxt "mission brief tactical information"
+msgid "Chico Ramirez and his gang occupy this Old Calendar high street"
+msgstr ""
+
+#: mission.brief.mail3.map26.level2:5
+msgctxt "mission brief tactical information"
+msgid "Eavesdrop: city vaults estimated to contain Cr 1,000,000"
+msgstr ""
+
+#: mission.title:27
+msgctxt "mission title"
+msgid "Test Of Faith"
+msgstr ""
+
+#: mission.brief.mail4.par1.h
 msgctxt "mission brief email header"
-msgid "Brave Apostle."
+msgid "Our prayers are with you, <login>."
 msgstr ""
 
-#: mission.brief.mail16.par2.c2
+#: mission.brief.mail4.par2.c2
 msgctxt "mission brief email orders"
 msgid ""
-"Our daughter of the New Epoch, Mirabelle Lucy De Saxo, has crash-landed in "
-"Unguided territory, near her Cape Town sanctuary. Your acolytes must hasten "
-"to her side. She must live if she is to fulfil her destiny, as the first to "
-"tread the path to salvation."
+"The time has come to test the strength of our faith. A lone agent of the "
+"Syndicate has been seen lurking in the shadows of Santiago. Convert him."
 msgstr ""
 
-#: mission.brief.mail16.par3.c5
+#: mission.brief.mail4.par3.c5
 msgctxt "mission brief email paragraph"
 msgid ""
-"We know she is still alive, but she is in urgent need of rescue. You are of "
-"course our first choice for this hazardous calling. Enter the Unguided zone "
-"and find De Saxo. Evacuate her with all haste. She may be in mortal danger. "
-"Be decisive with those who would stand in your way."
+"What better place to find those with the strength we seek than in the ranks "
+"of our enemy, the Syndicate? Its agents are our Acolytes in waiting. Just as "
+"you were one of their number, before we showed you the light, so shall you "
+"soon lead EuroCorp's elite from the dark path they tread. A EuroCorp agent "
+"has been sent to Santiago to undermine our work there. You will not allow "
+"this to happen."
 msgstr ""
 
-#: mission.brief.mail16.par5.c1
+#: mission.brief.mail4.par4.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Before you commit your Acolytes to Santiago, ensure they carry the "
+"Indoctrinator and use it, so that others may see its light. When the "
+"Indoctrinator is used, UTOPIA's cruel illusion is shattered by our Truth. "
+"Those who see then gather and follow where the Acolyte leads. And when their "
+"numbers are sufficient, even the agent of EuroCorp will hear their chorus and "
+"gladly join it."
+msgstr ""
+
+#: mission.brief.mail4.par5.c5
+msgctxt "mission brief email paragraph"
+msgid "Peace be with you afterwards."
+msgstr ""
+
+#: mission.brief.mail4.par7.c1
 msgctxt "mission brief book quote"
 msgid ""
-"Bravery will take you into the most dangerous of places. Overwhelming "
-"firepower will see you safely through them."
+"Mark thine enemy, for all that separates the damned from the chosen is a dot "
+"of monochrome light, projected onto the back of a neck."
 msgstr ""
 
-#: mission.brief.mail18.par1.h
-msgctxt "mission brief email header"
-msgid "Disciple, your aura feeds our strength."
+#: mission.brief.mail4.map7.level3:1
+msgctxt "mission brief tactical information"
+msgid "Landing Ground: APC to deliver your acolytes"
 msgstr ""
 
-#: mission.brief.mail18.par2.c2
-msgctxt "mission brief email orders"
-msgid ""
-"The Syndicate has lost control of Delhi to the Unguided. Riding armour stolen "
-"from their vanquished foes, the heretic unbelievers bring desolation to every "
-"quarter. They are false prophets, all of them. Send them to the Cataclysm."
+#: mission.brief.mail4.map7.level3:2
+msgctxt "mission brief tactical information"
+msgid "EuroCorp agent search area"
 msgstr ""
 
-#: mission.brief.mail18.par3.c5
-msgctxt "mission brief email paragraph"
-msgid ""
-"Those who use such infernal weaponry against us must pay the ultimate price. "
-"There is no honour in destroying machines, and there is considerable danger."
+#: mission.brief.mail4.map7.level3:4
+msgctxt "mission brief tactical information"
+msgid "Bridges have been destroyed in a Syndicate attack"
 msgstr ""
 
-#: mission.brief.mail18.par4.c5
-msgctxt "mission brief email paragraph"
-msgid ""
-"Tread carefully as you make your way towards the island. Secure that first."
+#: mission.brief.mail4.map7.level3:5
+msgctxt "mission brief tactical information"
+msgid "Eavesdrop: IML route to target is guarded by EuroCorp forces"
 msgstr ""
 
-#: mission.brief.mail18.par5.c5
-msgctxt "mission brief email paragraph"
-msgid "Be full of spirit."
-msgstr ""
-
-#: mission.brief.mail18.par7.c1
-msgctxt "mission brief book quote"
-msgid ""
-"The brave hide behind technology. The stupid hide from it. But the clever "
-"have technology, and hide it."
-msgstr ""
-
-#: mission.brief.mail19.par1.h
-msgctxt "mission brief email header"
-msgid "Blessings, Chosen One."
-msgstr ""
-
-#: mission.brief.mail19.par2.c2
-msgctxt "mission brief email orders"
-msgid ""
-"Bring us the secret EuroCorp is protecting in Bangkok and we will pray for "
-"your salvation."
-msgstr ""
-
-#: mission.brief.mail19.par3.c5
-msgctxt "mission brief email paragraph"
-msgid ""
-"The stink of chaos spreads to every street corner as UTOPIA forsakes the "
-"populace at large and takes its favoured children deeper underground. In "
-"Bangkok the Syndicate has abandoned all attempts to restore their regime. "
-"Instead, it has imposed a dead zone there. What goes on there we do not know "
-"for certain."
-msgstr ""
-
-#: mission.brief.mail19.par4.c5
-msgctxt "mission brief email paragraph"
-msgid ""
-"One of our brothers recently attempted to find out what EuroCorp is going to "
-"such lengths to hide. He learned that the enemy's agents occasionally venture "
-"through the dead zone, in order to abduct Unguided, many of whom still cling "
-"to their forlorn hopes among the shattered remains. The agents then return to "
-"their stronghold with their captives. The Nine do not understand why the "
-"Syndicate should do this when it eliminates the Unguided on sight everywhere "
-"else."
-msgstr ""
-
-#: mission.brief.mail19.par5.c5
-msgctxt "mission brief email paragraph"
-msgid ""
-"We seek enlightenment in this matter. Direct your Acolytes through the city's "
-"hostile outskirts and into the dead zone. Find out what EuroCorp is up to and "
-"take any steps you consider necessary to deal with the situation you find. "
-"Then return and confess to us everything you have learned, so that we may "
-"cleanse you of the evil to which you have been exposed."
-msgstr ""
-
-#: mission.brief.mail19.par6.c5
-msgctxt "mission brief email paragraph"
-msgid "Forgive nothing."
-msgstr ""
-
-#: mission.brief.mail19.par8.c1
-msgctxt "mission brief book quote"
-msgid ""
-"A war refugee sought the Master. He said, \"You are wise and serene. Teach me "
-"to escape the horrors of this world.\" And the Master blinded him with fire-"
-"irons."
-msgstr ""
-
-#: mission.brief.mail20.par1.h
-msgctxt "mission brief email header"
-msgid "Listen strong, Acolyte."
-msgstr ""
-
-#: mission.brief.mail20.par2.c2
-msgctxt "mission brief email orders"
-msgid ""
-"We need an IML link to Reykjavik, where the sacraments of our founding "
-"religion are in danger. Our favoured daughter, Mirabelle Lucy De Saxo, must "
-"reactivate this path. It is up to you to clear a route to the IML station in "
-"the north-east of Christchurch. Purest Mirabelle will take the place normally "
-"occupied by your fourth Acolyte."
-msgstr ""
-
-#: mission.brief.mail20.par3.c5
-msgctxt "mission brief email paragraph"
-msgid ""
-"Tread with care, pilgrim. Traps and ambushes abound, and you must bring the "
-"firepower of our faith to bear against any who stand in the way. De Saxo is "
-"special, and must not be harmed. Pray for this and do your utmost to see that "
-"it should be so."
-msgstr ""
-
-#: mission.brief.mail20.par4.c5
-msgctxt "mission brief email paragraph"
-msgid ""
-"When enough people are of our faith, we shall open a gate in the Earth's "
-"ionosphere. The effects of unfettered cosmic rays on any part of the planet "
-"exposed to the ion gate will destroy nearly everything. Only those in the "
-"cause will be saved. We shall reset the world and it shall rise, safe in our "
-"religion."
-msgstr ""
-
-#: mission.brief.mail20.par5.c5
-msgctxt "mission brief email paragraph"
-msgid "Toil for our cause."
-msgstr ""
-
-#: mission.brief.mail20.par7.c1
-msgctxt "mission brief book quote"
-msgid "Follow the more successful thief and steal his ideas."
-msgstr ""
-
-#: mission.brief.mail21.par1.h
-msgctxt "mission brief email header"
-msgid "Blessed One,"
-msgstr ""
-
-#: mission.brief.mail21.par2.c2
-msgctxt "mission brief email orders"
-msgid ""
-"Destroy the EuroCorp Advanced R&D Facility near Reykjavik. Eliminate EuroCorp "
-"agents on sight."
-msgstr ""
-
-#: mission.brief.mail21.par3.c5
-msgctxt "mission brief email paragraph"
-msgid ""
-"The history of this place is the very structure of the Church of the New "
-"Epoch. Here you will see the raw essence that lead us all to believe. And "
-"EuroCorp is defiling it. You must eradicate with extreme force any agents you "
-"find here."
-msgstr ""
-
-#: mission.brief.mail21.par4.c5
-msgctxt "mission brief email paragraph"
-msgid ""
-"You must also destroy all the places where the Nine prepared their minds for "
-"the seed of wisdom. It is only material substance, and our faith lives and "
-"beats in our hearts. Do not falter. Destroy. No harm will come to the Church "
-"now, for the Codex dwells deep inside the minds of the Nine. Only shadows of "
-"its wisdom remain in Reykjavik. Be thorough in your work, for the sake of "
-"precision."
-msgstr ""
-
-#: mission.brief.mail21.par5.c5
-msgctxt "mission brief email paragraph"
-msgid "In holy footsteps."
-msgstr ""
-
-#: mission.brief.mail21.par7.c1
-msgctxt "mission brief book quote"
-msgid ""
-"\"Here!\" said the Master. \"Build me a great tomb in this place.\" His "
-"apprentices did. It glittered in the sun. \"Now go inside,\" said he. They "
-"entered. An earthquake then destroyed the tomb, burying those within."
-msgstr ""
-
-#: mission.brief.mail21.par8.c1
-msgctxt "mission brief book quote"
-msgid "The Master smiled. \"Even the faithful are not always chosen."
-msgstr ""
-
-#: mission.brief.mail21.par9.c1
-msgctxt "mission brief book quote"
-msgid "\"This is called sacrifice.\""
-msgstr ""
-
-#: mission.brief.mail22.par1.h
-msgctxt "mission brief email header"
-msgid "Walk in Light, Disciple."
-msgstr ""
-
-#: mission.brief.mail22.par2.c2
-msgctxt "mission brief email orders"
-msgid ""
-"Eliminate Mirabelle Lucy De Saxo immediately. You will find her at the Cape "
-"Town sanctuary we gave her, and which we now take away."
-msgstr ""
-
-#: mission.brief.mail22.par3.c5
-msgctxt "mission brief email paragraph"
-msgid ""
-"Your heart beats only for us. Do not question the faith when it requires "
-"action you do not yet understand. De Saxo has trespassed against us. The Nine "
-"have exposed her as our enemy incarnate. She is an agent of the Syndicate. "
-"Travel to Cape Town with vengeance in your breast, and terminate her."
-msgstr ""
-
-#: mission.brief.mail22.par4.c5
-msgctxt "mission brief email paragraph"
-msgid ""
-"The weak-minded will side with her. Let them feel the force of the true way."
-msgstr ""
-
-#: mission.brief.mail22.par5.c5
-msgctxt "mission brief email paragraph"
-msgid ""
-"We have nearly done enough to begin the final stage of the Cataclysm and "
-"change this world beyond all measure. Fight for it, Acolyte. You are chosen "
-"and will be saved. Millions of non-believers will perish. We will cleanse "
-"this planet."
-msgstr ""
-
-#: mission.brief.mail22.par6.c5
-msgctxt "mission brief email paragraph"
-msgid "Keep the faith."
-msgstr ""
-
-#: mission.brief.mail22.par8.c1
-msgctxt "mission brief book quote"
-msgid "Even the salamander sometimes burns."
+#: mission.title:17
+msgctxt "mission title"
+msgid "Foundations"
 msgstr ""
 
 #: mission.brief.mail5.par1.h
@@ -524,160 +428,30 @@ msgctxt "mission brief book quote"
 msgid "Remember, the meek shall inherit nothing."
 msgstr ""
 
-#: mission.brief.mail11.par1.h
-msgctxt "mission brief email header"
-msgid "You shine strong, Apostle."
+#: mission.brief.mail5.map22.level3:1 mission.brief.mail9c.map22.level2:1
+#: mission.brief.mail23.map22.level4:1
+msgctxt "mission brief tactical information"
+msgid "Landing Ground: Johannesburg IML Link"
 msgstr ""
 
-#: mission.brief.mail11.par2.c2
-msgctxt "mission brief email orders"
-msgid ""
-"In Bahrain, EuroCorp prepares for an assault on our way of enlightenment. It "
-"shall come to pass that you are the toll by which they are stopped."
+#: mission.brief.mail5.map22.level3:2
+msgctxt "mission brief tactical information"
+msgid "EuroCorp vault"
 msgstr ""
 
-#: mission.brief.mail11.par3.c5
-msgctxt "mission brief email paragraph"
-msgid ""
-"By the bounty of our faith, we have provided you with many targets here. And "
-"for your use is a battle-tank. Be wise, Acolyte. Always use equipment well. "
-"And make sure that you silence the voice of EuroCorp here. It must be so if "
-"we are to triumph and free the world."
+#: mission.brief.mail5.map22.level3:3
+msgctxt "mission brief tactical information"
+msgid "Bullion convoy"
 msgstr ""
 
-#: mission.brief.mail11.par4.c5
-msgctxt "mission brief email paragraph"
-msgid "The light of your being grows ever brighter."
+#: mission.brief.mail5.map22.level3:4
+msgctxt "mission brief tactical information"
+msgid "Target vehicle"
 msgstr ""
 
-#: mission.brief.mail11.par6.c1
-msgctxt "mission brief book quote"
-msgid ""
-"The people stood like corn in the high fields and listened to the Master. As "
-"the reaper's blade scythed them all, the Master fell silent. The lesson would "
-"be learned by others."
-msgstr ""
-
-#: mission.brief.mail17.par1.h
-msgctxt "mission brief email header"
-msgid "May faith be with you, <login>."
-msgstr ""
-
-#: mission.brief.mail17.par2.c2
-msgctxt "mission brief email orders"
-msgid ""
-"Seek and obliterate a dangerous, meddling hacker who hides among the "
-"Unguided, for he has gained control of a strategic weapons satellite above "
-"Beijing."
-msgstr ""
-
-#: mission.brief.mail17.par3.c5
-msgctxt "mission brief email paragraph"
-msgid ""
-"An outcast hacker with access to UTOPIA satellite defences is bringing steel "
-"rain from heaven where and whenever he chooses. He must be stopped. He must "
-"be found and eliminated."
-msgstr ""
-
-#: mission.brief.mail17.par4.c5
-msgctxt "mission brief email paragraph"
-msgid ""
-"Be wary, Disciple. Beijing is a faithless place, ridden with the Unguided, "
-"who see only through the sights of their guns."
-msgstr ""
-
-#: mission.brief.mail17.par5.c5
-msgctxt "mission brief email paragraph"
-msgid "Go with spirit."
-msgstr ""
-
-#: mission.brief.mail17.par7.c1
-msgctxt "mission brief book quote"
-msgid ""
-"He who lives in the eye of the storm is a mote in the eye of an angry god."
-msgstr ""
-
-#: mission.brief.mail24.par1.h
-msgctxt "mission brief email header"
-msgid "Blessings, Acolyte."
-msgstr ""
-
-#: mission.brief.mail24.par2.c2
-msgctxt "mission brief email orders"
-msgid ""
-"An emergency has arisen, to try us. One of the Nine has been captured. He is "
-"being held in a detention centre in Adelaide. You must release him and escort "
-"him to sanctuary."
-msgstr ""
-
-#: mission.brief.mail24.par3.c5
-msgctxt "mission brief email paragraph"
-msgid ""
-"You must pray for a way into the centre and must carry arms to beat off those "
-"unbelievers who would cut you down in your tracks. This is where your faith "
-"is tested, Disciple. Do not fail. Remain alert. Trust the true way and, if it "
-"is willed, you shall succeed."
-msgstr ""
-
-#: mission.brief.mail24.par4.c5
-msgctxt "mission brief email paragraph"
-msgid "Travel on holy paths."
-msgstr ""
-
-#: mission.brief.mail24.par6.c1
-msgctxt "mission brief book quote"
-msgid "In the darkest times, the true believer hones his combat skills."
-msgstr ""
-
-#: mission.brief.mail25.par1.h
-msgctxt "mission brief email header"
-msgid "Disciple."
-msgstr ""
-
-#: mission.brief.mail25.par2.c2
-msgctxt "mission brief email orders"
-msgid ""
-"You have served us well. Now the moment is ours. Remain where you are and do "
-"not follow us. We will proceed to the Moon alone. When we activate our Ion "
-"Gate, those who remain on Earth will perish. Fear not - your name will "
-"forever be remembered and we shall call you a Saint of the New Epoch."
-msgstr ""
-
-#: mission.brief.mail25.par3.c5
-msgctxt "mission brief email paragraph"
-msgid ""
-"Human life on this planet will be virtually eradicated and we shall return to "
-"repopulate the globe with our likenesses. This has been our faith, and we "
-"shall carry it forward alone."
-msgstr ""
-
-#: mission.brief.mail25.par4.c5
-msgctxt "mission brief email paragraph"
-msgid ""
-"Anyone who now tries to stop us will be exterminated by the elite Sanctum "
-"Protectorate Guards. Accept your fate - do not be foolish and interfere. The "
-"power of the Sanctum Protectorate is immense. Remain where you are and lay "
-"down your weapons, for it is over and we have won."
-msgstr ""
-
-#: mission.brief.mail25.par6.c1
-msgctxt "mission brief book quote"
-msgid "The world shall turn and the human race shall pass."
-msgstr ""
-
-#: mission.brief.mail25.par7.c1
-msgctxt "mission brief book quote"
-msgid "Everything begins anew. The faith has run its course and it is over."
-msgstr ""
-
-#: mission.title:2
-msgctxt "mission title"
-msgid "Missionary"
-msgstr ""
-
-#: mission.title:6
-msgctxt "mission title"
-msgid "Sack Of Rome"
+#: mission.brief.mail5.map22.level3:5
+msgctxt "mission brief tactical information"
+msgid "Convoy's destination"
 msgstr ""
 
 #: mission.title:10
@@ -685,880 +459,9 @@ msgctxt "mission title"
 msgid "A Meeting Of Minds"
 msgstr ""
 
-#: mission.title:11
-msgctxt "mission title"
-msgid "Serpent's Egg"
-msgstr ""
-
-#: mission.title:12
-msgctxt "mission title"
-msgid "A Mote In God's Eye"
-msgstr ""
-
-#: mission.title:13
-msgctxt "mission title"
-msgid "Audacity"
-msgstr ""
-
-#: mission.title:14
-msgctxt "mission title"
-msgid "The Levellers"
-msgstr ""
-
-#: mission.title:15
-msgctxt "mission title"
-msgid "Rain Of Terror"
-msgstr ""
-
-#: mission.title:16
-msgctxt "mission title"
-msgid "Armour Of The Gods"
-msgstr ""
-
-#: mission.title:17
-msgctxt "mission title"
-msgid "Foundations"
-msgstr ""
-
-#: mission.title:18
-msgctxt "mission title"
-msgid "Deconstruction"
-msgstr ""
-
-#: mission.title:19
-msgctxt "mission title"
-msgid "Day Of The Damned"
-msgstr ""
-
-#: mission.title:27
-msgctxt "mission title"
-msgid "Test Of Faith"
-msgstr ""
-
-#: mission.title:31
-msgctxt "mission title"
-msgid "Heretics"
-msgstr ""
-
-#: mission.title:33
-msgctxt "mission title"
-msgid "Not One Of Us"
-msgstr ""
-
 #: mission.title:39
 msgctxt "mission title"
 msgid "Soul Crusader"
-msgstr ""
-
-#: mission.title:43
-msgctxt "mission title"
-msgid "Deadly Harvest"
-msgstr ""
-
-#: mission.title:44
-msgctxt "mission title"
-msgid "Powermonger"
-msgstr ""
-
-#: mission.title:45
-msgctxt "mission title"
-msgid "Retribution"
-msgstr ""
-
-#: mission.title:48
-msgctxt "mission title"
-msgid "Harbinger"
-msgstr ""
-
-#: mission.title:51
-msgctxt "mission title"
-msgid "Conversions"
-msgstr ""
-
-#: mission.title:52
-msgctxt "mission title"
-msgid "Watcher"
-msgstr ""
-
-#: mission.title:53
-msgctxt "mission title"
-msgid "Establish The Link"
-msgstr ""
-
-#: mission.title:71
-msgctxt "mission title"
-msgid "Recapture"
-msgstr ""
-
-#: mission.title:72
-msgctxt "mission title"
-msgid "Divine Light"
-msgstr ""
-
-#: mission.title:73
-msgctxt "mission title"
-msgid "Donation"
-msgstr ""
-
-#: mission.title:85
-msgctxt "mission title"
-msgid "The Dead Zone"
-msgstr ""
-
-#: mission.title:87
-msgctxt "mission title"
-msgid "Fallen Among Thieves"
-msgstr ""
-
-#: mission.title:100
-msgctxt "mission title"
-msgid "Revelations"
-msgstr ""
-
-#: mission.title:102
-msgctxt "mission title"
-msgid "Cataclysm"
-msgstr ""
-
-#: mapscreen.heading:1
-msgctxt "church maps screen headings - name"
-msgid "Pilgrimage"
-msgstr ""
-
-#: mapscreen.heading:2
-msgctxt "church maps screen headings - population size"
-msgid "Heathens"
-msgstr ""
-
-#: mapscreen.heading:3
-msgctxt "church maps screen headings - landscape"
-msgid "Geography"
-msgstr ""
-
-#: mapscreen.heading:4
-msgctxt "church maps screen headings - language"
-msgid "Tongue"
-msgstr ""
-
-#: mapscreen.heading:5
-msgctxt "church maps screen headings - industry"
-msgid "Material Riches"
-msgstr ""
-
-#: mapscreen.heading:6
-msgctxt "church maps screen headings - toxicity"
-msgid "Legacy"
-msgstr ""
-
-#: mission.brief.mail1.map47.level1:1
-msgctxt "mission brief tactical information"
-msgid "Dropsite: Tokyo IML Link"
-msgstr ""
-
-#: mission.brief.mail1.map47.level1:2
-msgctxt "mission brief tactical information"
-msgid "Cultist stronghold"
-msgstr ""
-
-#: mission.brief.mail1.map47.level1:3 mission.brief.mail28.map30.level2:3
-msgctxt "mission brief tactical information"
-msgid "Professor Drennan"
-msgstr ""
-
-#: mission.brief.mail1.map47.level1:4
-msgctxt "mission brief tactical information"
-msgid "Evac zone: IML Link"
-msgstr ""
-
-#: mission.brief.mail1.map47.level1:5
-msgctxt "mission brief tactical information"
-msgid "Laser turrets under police control"
-msgstr ""
-
-#: mission.brief.mail1.map47.level1:6
-msgctxt "mission brief tactical information"
-msgid "Estimated contents value of bank vault: 2.5M Cr"
-msgstr ""
-
-#: mission.brief.mail2.map3.level1:1
-msgctxt "mission brief tactical information"
-msgid "Dropsite: Bangkok IML Link"
-msgstr ""
-
-#: mission.brief.mail2.map3.level1:2
-msgctxt "mission brief tactical information"
-msgid "EuroCorp Bangkok Operations Centre"
-msgstr ""
-
-#: mission.brief.mail3.map40.level1:1
-msgctxt "mission brief tactical information"
-msgid "Dropsite: Honolulu water purification plant"
-msgstr ""
-
-#: mission.brief.mail3.map40.level1:2 mission.brief.mail39.map6.level3:3
-msgctxt "mission brief tactical information"
-msgid "Rendezvous point"
-msgstr ""
-
-#: mission.brief.mail4.map22.level16:1
-msgctxt "mission brief tactical information"
-msgid "Agent Wu's current position"
-msgstr ""
-
-#: mission.brief.mail4.map22.level16:2
-msgctxt "mission brief tactical information"
-msgid "De Saxo's current position"
-msgstr ""
-
-#: mission.brief.mail4.map22.level16:3
-msgctxt "mission brief tactical information"
-msgid "Zealot held facilities"
-msgstr ""
-
-#: mission.brief.mail5.map45.level2:1
-msgctxt "mission brief tactical information"
-msgid "Dropsite: Cairo IML Link A"
-msgstr ""
-
-#: mission.brief.mail5.map45.level2:2
-msgctxt "mission brief tactical information"
-msgid "Evac zone: IML Link B"
-msgstr ""
-
-#: mission.brief.mail5.map45.level2:3
-msgctxt "mission brief tactical information"
-msgid ""
-"Eavesdrop: significant cult presence throughout city - no police response"
-msgstr ""
-
-#: mission.brief.mail5.map45.level2:4
-msgctxt "mission brief tactical information"
-msgid ""
-"Eavesdrop: Foamsteel Defence Industries executives scheduled to meet cultists "
-"- reason unknown"
-msgstr ""
-
-#: mission.brief.mail6.map27.level2:1
-msgctxt "mission brief tactical information"
-msgid "Dropsite: Delhi IML Link"
-msgstr ""
-
-#: mission.brief.mail6.map27.level2:2
-msgctxt "mission brief tactical information"
-msgid "Chemical plant"
-msgstr ""
-
-#: mission.brief.mail6.map27.level2:3
-msgctxt "mission brief tactical information"
-msgid "FoamSteel Defence Industries distribution facility"
-msgstr ""
-
-#: mission.brief.mail6.map27.level2:4
-msgctxt "mission brief tactical information"
-msgid "Satellite Alert: EuroCorp operatives and MBT"
-msgstr ""
-
-#: mission.brief.mail7.map5.level1:1
-msgctxt "mission brief tactical information"
-msgid "Dropsite: South Side gate"
-msgstr ""
-
-#: mission.brief.mail7.map5.level1:2
-msgctxt "mission brief tactical information"
-msgid "R&D facility"
-msgstr ""
-
-#: mission.brief.mail7.map5.level1:3
-msgctxt "mission brief tactical information"
-msgid "Eavesdrop: possible ghost trace - Ko-Paull Vissick"
-msgstr ""
-
-#: mission.brief.mail8.map41.level3:1
-msgctxt "mission brief tactical information"
-msgid "Dropsite: Bahrain IML Link"
-msgstr ""
-
-#: mission.brief.mail8.map41.level3:2
-msgctxt "mission brief tactical information"
-msgid "AI bunker"
-msgstr ""
-
-#: mission.brief.mail8.map41.level3:3
-msgctxt "mission brief tactical information"
-msgid "Disposition of rogue agents"
-msgstr ""
-
-#: mission.brief.mail8.map41.level3:4
-msgctxt "mission brief tactical information"
-msgid "Direction of approaching Unguided forces"
-msgstr ""
-
-#: mission.brief.mail8.map41.level3:5
-msgctxt "mission brief tactical information"
-msgid "A minor Church of the New Epoch shrine remains occupied"
-msgstr ""
-
-#: mission.brief.mail9.map46.level15:1
-msgctxt "mission brief tactical information"
-msgid "Dropsites"
-msgstr ""
-
-#: mission.brief.mail9.map46.level15:2
-msgctxt "mission brief tactical information"
-msgid "Orbital elevator"
-msgstr ""
-
-#: mission.brief.mail9.map46.level15:3
-msgctxt "mission brief tactical information"
-msgid "Orbital elevator anti-satellite missile system"
-msgstr ""
-
-#: mission.brief.mail12.map35.level2:1
-msgctxt "mission brief tactical information"
-msgid "Landing Ground: Detroit IML Link"
-msgstr ""
-
-#: mission.brief.mail12.map35.level2:2
-msgctxt "mission brief tactical information"
-msgid "Target building: EuroCorp AI Ground Station"
-msgstr ""
-
-#: mission.brief.mail12.map35.level2:3
-msgctxt "mission brief tactical information"
-msgid "Disposition of EuroCorp guards"
-msgstr ""
-
-#: mission.brief.mail12.map35.level2:4 mission.brief.mail14.map26.level2:4
-#: mission.brief.mail15.map7.level3:3 mission.brief.mail16.map22.level3:6
-#: mission.brief.mail18.map50.level47:3 mission.brief.mail21.map22.level2:4
-#: mission.brief.mail22.map26.level3:3 mission.brief.mail23.map7.level5:3
-#: mission.brief.mail24.map25.level46:4 mission.brief.mail25.map45.level1:4
-#: mission.brief.mail28.map30.level2:5 mission.brief.mail29.map4.level3:7
-#: mission.brief.mail30.map20.level16:3 mission.brief.mail31.map44.level3:3
-#: mission.brief.mail32.map32.level2:3 mission.brief.mail33.map27.level1:4
-#: mission.brief.mail34.map3.level2:4 mission.brief.mail37.map44.level2:3
-#: mission.brief.mail38.map22.level4:4
-msgctxt "mission brief tactical information"
-msgid "Sanctuary"
-msgstr ""
-
-#: mission.brief.mail12.map35.level2:5
-msgctxt "mission brief tactical information"
-msgid ""
-"Eavesdrop: recommended means of gaining entry to Syndicate Ground Station"
-msgstr ""
-
-#: mission.brief.mail13.map25.level16:1 mission.brief.mail24.map25.level46:1
-msgctxt "mission brief tactical information"
-msgid "Landing Ground: Tripoli IML Link"
-msgstr ""
-
-#: mission.brief.mail13.map25.level16:2 mission.brief.mail24.map25.level46:2
-msgctxt "mission brief tactical information"
-msgid "Our Garden of Meditations"
-msgstr ""
-
-#: mission.brief.mail14.map26.level2:1 mission.brief.mail22.map26.level3:1
-msgctxt "mission brief tactical information"
-msgid "Landing Ground: Buenos Aires IML Link"
-msgstr ""
-
-#: mission.brief.mail14.map26.level2:2
-msgctxt "mission brief tactical information"
-msgid "Juan Ormandoz works in this executive office estate"
-msgstr ""
-
-#: mission.brief.mail14.map26.level2:3
-msgctxt "mission brief tactical information"
-msgid "Chico Ramirez and his gang occupy this Old Calendar high street"
-msgstr ""
-
-#: mission.brief.mail14.map26.level2:5
-msgctxt "mission brief tactical information"
-msgid "Eavesdrop: city vaults estimated to contain Cr 1,000,000"
-msgstr ""
-
-#: mission.brief.mail15.map7.level3:1
-msgctxt "mission brief tactical information"
-msgid "Landing Ground: APC to deliver your acolytes"
-msgstr ""
-
-#: mission.brief.mail15.map7.level3:2
-msgctxt "mission brief tactical information"
-msgid "EuroCorp agent search area"
-msgstr ""
-
-#: mission.brief.mail15.map7.level3:4
-msgctxt "mission brief tactical information"
-msgid "Bridges have been destroyed in a Syndicate attack"
-msgstr ""
-
-#: mission.brief.mail15.map7.level3:5
-msgctxt "mission brief tactical information"
-msgid "Eavesdrop: IML route to target is guarded by EuroCorp forces"
-msgstr ""
-
-#: mission.brief.mail16.map22.level3:1 mission.brief.mail21.map22.level2:1
-#: mission.brief.mail38.map22.level4:1
-msgctxt "mission brief tactical information"
-msgid "Landing Ground: Johannesburg IML Link"
-msgstr ""
-
-#: mission.brief.mail16.map22.level3:2
-msgctxt "mission brief tactical information"
-msgid "EuroCorp vault"
-msgstr ""
-
-#: mission.brief.mail16.map22.level3:3
-msgctxt "mission brief tactical information"
-msgid "Bullion convoy"
-msgstr ""
-
-#: mission.brief.mail16.map22.level3:4
-msgctxt "mission brief tactical information"
-msgid "Target vehicle"
-msgstr ""
-
-#: mission.brief.mail16.map22.level3:5
-msgctxt "mission brief tactical information"
-msgid "Convoy's destination"
-msgstr ""
-
-#: mission.brief.mail17.map21.level46:1
-msgctxt "mission brief tactical information"
-msgid "Landing Ground: Geneva IML Link"
-msgstr ""
-
-#: mission.brief.mail17.map21.level46:2
-msgctxt "mission brief tactical information"
-msgid "EuroCorp conference centre"
-msgstr ""
-
-#: mission.brief.mail17.map21.level46:3
-msgctxt "mission brief tactical information"
-msgid "Dr Schweizer"
-msgstr ""
-
-#: mission.brief.mail17.map21.level46:4
-msgctxt "mission brief tactical information"
-msgid "Father Black's temple"
-msgstr ""
-
-#: mission.brief.mail18.map50.level47:1
-msgctxt "mission brief tactical information"
-msgid "Landing Ground: Vancouver IML Link"
-msgstr ""
-
-#: mission.brief.mail18.map50.level47:2
-msgctxt "mission brief tactical information"
-msgid "Dr Schweizer's laboratory"
-msgstr ""
-
-#: mission.brief.mail18.map50.level47:4
-msgctxt "mission brief tactical information"
-msgid "Eavesdrop: Syndicate agents detected"
-msgstr ""
-
-#: mission.brief.mail19.map1.level3:1
-msgctxt "mission brief tactical information"
-msgid "Landing Ground: Hong Kong IML Link"
-msgstr ""
-
-#: mission.brief.mail19.map1.level3:2
-msgctxt "mission brief tactical information"
-msgid "Our temple and brethren"
-msgstr ""
-
-#: mission.brief.mail19.map1.level3:3
-msgctxt "mission brief tactical information"
-msgid "Unguided landing zones"
-msgstr ""
-
-#: mission.brief.mail19.map1.level3:4
-msgctxt "mission brief tactical information"
-msgid "Eavesdrop: EuroCorp special agents (sappers) despatched to Hong Kong"
-msgstr ""
-
-#: mission.brief.mail20.map28.level31:1
-msgctxt "mission brief tactical information"
-msgid "Landing Ground: Rome IML Link"
-msgstr ""
-
-#: mission.brief.mail20.map28.level31:2
-msgctxt "mission brief tactical information"
-msgid "Domicile zones overrun by the Unguided"
-msgstr ""
-
-#: mission.brief.mail20.map28.level31:3
-msgctxt "mission brief tactical information"
-msgid "EuroCorp garrison"
-msgstr ""
-
-#: mission.brief.mail20.map28.level31:4
-msgctxt "mission brief tactical information"
-msgid "EuroCorp agents"
-msgstr ""
-
-#: mission.brief.mail20.map28.level31:5
-msgctxt "mission brief tactical information"
-msgid "Eavesdrop: estimated contents of vault Cr 400,000"
-msgstr ""
-
-#: mission.brief.mail21.map22.level2:2
-msgctxt "mission brief tactical information"
-msgid "City district under our control"
-msgstr ""
-
-#: mission.brief.mail21.map22.level2:3
-msgctxt "mission brief tactical information"
-msgid "Your brethren"
-msgstr ""
-
-#: mission.brief.mail22.map26.level3:2
-msgctxt "mission brief tactical information"
-msgid "EuroCorp militia garrisons"
-msgstr ""
-
-#: mission.brief.mail23.map7.level5:1
-msgctxt "mission brief tactical information"
-msgid "Landing Ground: Santiago IML Link"
-msgstr ""
-
-#: mission.brief.mail23.map7.level5:2
-msgctxt "mission brief tactical information"
-msgid "Our temple"
-msgstr ""
-
-#: mission.brief.mail23.map7.level5:4
-msgctxt "mission brief tactical information"
-msgid ""
-"Eavesdrop: Syndicate strike team scheduled to arrive at garrisons within 48 "
-"hours"
-msgstr ""
-
-#: mission.brief.mail24.map25.level46:3
-msgctxt "mission brief tactical information"
-msgid "Those you shall keep from harm"
-msgstr ""
-
-#: mission.brief.mail24.map25.level46:5
-msgctxt "mission brief tactical information"
-msgid "Vault: estimated worth Cr 800,000"
-msgstr ""
-
-#: mission.brief.mail24.map25.level46:6
-msgctxt "mission brief tactical information"
-msgid "Satellite alert: EuroCorp agent type identkeys detected, tracks unstable"
-msgstr ""
-
-#: mission.brief.mail25.map45.level1:1 mission.brief.mail37.map44.level2:1
-msgctxt "mission brief tactical information"
-msgid "Landing Ground: APC destination"
-msgstr ""
-
-#: mission.brief.mail25.map45.level1:2
-msgctxt "mission brief tactical information"
-msgid "EuroCorp HQ"
-msgstr ""
-
-#: mission.brief.mail25.map45.level1:3
-msgctxt "mission brief tactical information"
-msgid "Executive shuttle carrying KotoSek"
-msgstr ""
-
-#: mission.brief.mail26.map41.level47:1
-msgctxt "mission brief tactical information"
-msgid "Landing Ground: Bahrain IML Link"
-msgstr ""
-
-#: mission.brief.mail26.map41.level47:2
-msgctxt "mission brief tactical information"
-msgid "EuroCorp reforger zone"
-msgstr ""
-
-#: mission.brief.mail26.map41.level47:3
-msgctxt "mission brief tactical information"
-msgid ""
-"Eavesdrop: police have been assigned to escort a EuroCorp finance executive "
-"on business in the north-east of the city"
-msgstr ""
-
-#: mission.brief.mail27.map9.level3:1
-msgctxt "mission brief tactical information"
-msgid "Landing Ground: Singapore IML Link"
-msgstr ""
-
-#: mission.brief.mail27.map9.level3:2
-msgctxt "mission brief tactical information"
-msgid "Vault (empty)"
-msgstr ""
-
-#: mission.brief.mail27.map9.level3:3
-msgctxt "mission brief tactical information"
-msgid "Target vehicles A and B"
-msgstr ""
-
-#: mission.brief.mail27.map9.level3:4
-msgctxt "mission brief tactical information"
-msgid "Rendezvous"
-msgstr ""
-
-#: mission.brief.mail27.map9.level3:5
-msgctxt "mission brief tactical information"
-msgid "Eavesdrop: Vehicle A's destination"
-msgstr ""
-
-#: mission.brief.mail27.map9.level3:6
-msgctxt "mission brief tactical information"
-msgid "Eavesdrop: Vehicle B's destination"
-msgstr ""
-
-#: mission.brief.mail28.map30.level2:1
-msgctxt "mission brief tactical information"
-msgid "Landing Ground: London"
-msgstr ""
-
-#: mission.brief.mail28.map30.level2:2
-msgctxt "mission brief tactical information"
-msgid "Professor Drennan's assistant"
-msgstr ""
-
-#: mission.brief.mail28.map30.level2:4
-msgctxt "mission brief tactical information"
-msgid "Presentation podium"
-msgstr ""
-
-#: mission.brief.mail28.map30.level2:6
-msgctxt "mission brief tactical information"
-msgid ""
-"Eavesdrop: the professor's itinary includes collection of data from this "
-"building"
-msgstr ""
-
-#: mission.brief.mail28.map30.level2:7
-msgctxt "mission brief tactical information"
-msgid "Eavesdrop: Unguided invasion of North Side imminent"
-msgstr ""
-
-#: mission.brief.mail29.map4.level3:1
-msgctxt "mission brief tactical information"
-msgid "Landing Ground: New York IML Link"
-msgstr ""
-
-#: mission.brief.mail29.map4.level3:2
-msgctxt "mission brief tactical information"
-msgid "EuroCorp installation gateways"
-msgstr ""
-
-#: mission.brief.mail29.map4.level3:3
-msgctxt "mission brief tactical information"
-msgid "Site of blast"
-msgstr ""
-
-#: mission.brief.mail29.map4.level3:4
-msgctxt "mission brief tactical information"
-msgid "Target building"
-msgstr ""
-
-#: mission.brief.mail29.map4.level3:5
-msgctxt "mission brief tactical information"
-msgid "Diversion will be created in this commercial zone"
-msgstr ""
-
-#: mission.brief.mail29.map4.level3:6
-msgctxt "mission brief tactical information"
-msgid "Our temple and satellite uplink"
-msgstr ""
-
-#: mission.brief.mail29.map4.level3:8
-msgctxt "mission brief tactical information"
-msgid "Eavesdrop: estimated value of vault Cr 2,000,000"
-msgstr ""
-
-#: mission.brief.mail30.map20.level16:1
-msgctxt "mission brief tactical information"
-msgid "Landing Ground: Riyadh IML Link"
-msgstr ""
-
-#: mission.brief.mail30.map20.level16:2
-msgctxt "mission brief tactical information"
-msgid "Target bunkers"
-msgstr ""
-
-#: mission.brief.mail31.map44.level3:1
-msgctxt "mission brief tactical information"
-msgid "Landing Ground: Cape Town APC destination"
-msgstr ""
-
-#: mission.brief.mail31.map44.level3:2
-msgctxt "mission brief tactical information"
-msgid "De Saxo's crash site"
-msgstr ""
-
-#: mission.brief.mail31.map44.level3:4
-msgctxt "mission brief tactical information"
-msgid "Eavesdrop: EuroCorp squad scheduled arrival -36 hours"
-msgstr ""
-
-#: mission.brief.mail32.map32.level2:1
-msgctxt "mission brief tactical information"
-msgid "Landing Ground: Beijing IML Link"
-msgstr ""
-
-#: mission.brief.mail32.map32.level2:2
-msgctxt "mission brief tactical information"
-msgid "Hacker's location"
-msgstr ""
-
-#: mission.brief.mail32.map32.level2:4
-msgctxt "mission brief tactical information"
-msgid "Eavesdrop: city vault estimated to contain Cr 1,500,000"
-msgstr ""
-
-#: mission.brief.mail33.map27.level1:1
-msgctxt "mission brief tactical information"
-msgid "Landing Ground: Delhi IML Link"
-msgstr ""
-
-#: mission.brief.mail33.map27.level1:2
-msgctxt "mission brief tactical information"
-msgid "EuroCorp forces in river port island"
-msgstr ""
-
-#: mission.brief.mail33.map27.level1:3 mission.brief.mail38.map22.level4:2
-msgctxt "mission brief tactical information"
-msgid "The Unguided"
-msgstr ""
-
-#: mission.brief.mail34.map3.level2:1
-msgctxt "mission brief tactical information"
-msgid "Landing Ground: Bangkok IML Link"
-msgstr ""
-
-#: mission.brief.mail34.map3.level2:2
-msgctxt "mission brief tactical information"
-msgid "Dead zone perimeter"
-msgstr ""
-
-#: mission.brief.mail34.map3.level2:3
-msgctxt "mission brief tactical information"
-msgid "EuroCorp outpost"
-msgstr ""
-
-#: mission.brief.mail34.map3.level2:5
-msgctxt "mission brief tactical information"
-msgid "A commercial vault still stands here"
-msgstr ""
-
-#: mission.brief.mail34.map3.level2:6
-msgctxt "mission brief tactical information"
-msgid "Satellite alert: evidence of weapons testing at outpost"
-msgstr ""
-
-#: mission.brief.mail35.map36.level2:1
-msgctxt "mission brief tactical information"
-msgid "Landing Ground: Christchurch IML Link A"
-msgstr ""
-
-#: mission.brief.mail35.map36.level2:2
-msgctxt "mission brief tactical information"
-msgid "Christchurch IML Link B"
-msgstr ""
-
-#: mission.brief.mail37.map44.level2:2
-msgctxt "mission brief tactical information"
-msgid "The blasphemer Mirabelle Lucy De Saxo"
-msgstr ""
-
-#: mission.brief.mail38.map22.level4:3
-msgctxt "mission brief tactical information"
-msgid "Rene Galact"
-msgstr ""
-
-#: mission.brief.mail39.map6.level3:1
-msgctxt "mission brief tactical information"
-msgid "Landing Ground: Adelaide IML Link"
-msgstr ""
-
-#: mission.brief.mail39.map6.level3:2
-msgctxt "mission brief tactical information"
-msgid "The compound holding Brother Ix"
-msgstr ""
-
-#: mission.brief.mail39.map6.level3:4
-msgctxt "mission brief tactical information"
-msgid "Syndicate MBT deployment"
-msgstr ""
-
-#: mission.brief.mail40.map46.level2:1
-msgctxt "mission brief tactical information"
-msgid "Landing Site: Colombo Executive Shuttle Pad"
-msgstr ""
-
-#: mission.brief.mail40.map46.level2:2
-msgctxt "mission brief tactical information"
-msgid "Your proper place"
-msgstr ""
-
-#: mission.brief.mail40.map46.level2:3
-msgctxt "mission brief tactical information"
-msgid "Colombo Orbital Elevator"
-msgstr ""
-
-#: mission.brief.mail40.map46.level2:4
-msgctxt "mission brief tactical information"
-msgid "Elevator anti-missile missile system"
-msgstr ""
-
-#: mission.brief.mail4.par1.h
-msgctxt "mission brief email header"
-msgid "Our prayers are with you, <login>."
-msgstr ""
-
-#: mission.brief.mail4.par2.c2
-msgctxt "mission brief email orders"
-msgid ""
-"The time has come to test the strength of our faith. A lone agent of the "
-"Syndicate has been seen lurking in the shadows of Santiago. Convert him."
-msgstr ""
-
-#: mission.brief.mail4.par3.c5
-msgctxt "mission brief email paragraph"
-msgid ""
-"What better place to find those with the strength we seek than in the ranks "
-"of our enemy, the Syndicate? Its agents are our Acolytes in waiting. Just as "
-"you were one of their number, before we showed you the light, so shall you "
-"soon lead EuroCorp's elite from the dark path they tread. A EuroCorp agent "
-"has been sent to Santiago to undermine our work there. You will not allow "
-"this to happen."
-msgstr ""
-
-#: mission.brief.mail4.par4.c5
-msgctxt "mission brief email paragraph"
-msgid ""
-"Before you commit your Acolytes to Santiago, ensure they carry the "
-"Indoctrinator and use it, so that others may see its light. When the "
-"Indoctrinator is used, UTOPIA's cruel illusion is shattered by our Truth. "
-"Those who see then gather and follow where the Acolyte leads. And when their "
-"numbers are sufficient, even the agent of EuroCorp will hear their chorus and "
-"gladly join it."
-msgstr ""
-
-#: mission.brief.mail4.par5.c5
-msgctxt "mission brief email paragraph"
-msgid "Peace be with you afterwards."
-msgstr ""
-
-#: mission.brief.mail4.par7.c1
-msgctxt "mission brief book quote"
-msgid ""
-"Mark thine enemy, for all that separates the damned from the chosen is a dot "
-"of monochrome light, projected onto the back of a neck."
-msgstr ""
-
-#: mission.brief.mail4.par8.c1
-msgctxt "mission brief book quote"
-msgid "- The Book of Cataclysm"
 msgstr ""
 
 #: mission.brief.mail6.par1.h
@@ -1630,6 +533,46 @@ msgid ""
 "mortar."
 msgstr ""
 
+#: mission.brief.mail6a.map21.level46:1
+msgctxt "mission brief tactical information"
+msgid "Landing Ground: Geneva IML Link"
+msgstr ""
+
+#: mission.brief.mail6a.map21.level46:2
+msgctxt "mission brief tactical information"
+msgid "EuroCorp conference centre"
+msgstr ""
+
+#: mission.brief.mail6a.map21.level46:3
+msgctxt "mission brief tactical information"
+msgid "Dr Schweizer"
+msgstr ""
+
+#: mission.brief.mail6a.map21.level46:4
+msgctxt "mission brief tactical information"
+msgid "Father Black's temple"
+msgstr ""
+
+#: mission.brief.mail6c.map50.level47:1
+msgctxt "mission brief tactical information"
+msgid "Landing Ground: Vancouver IML Link"
+msgstr ""
+
+#: mission.brief.mail6c.map50.level47:2
+msgctxt "mission brief tactical information"
+msgid "Dr Schweizer's laboratory"
+msgstr ""
+
+#: mission.brief.mail6c.map50.level47:4
+msgctxt "mission brief tactical information"
+msgid "Eavesdrop: Syndicate agents detected"
+msgstr ""
+
+#: mission.title:31
+msgctxt "mission title"
+msgid "Heretics"
+msgstr ""
+
 #: mission.brief.mail7.par1.h
 msgctxt "mission brief email header"
 msgid "Bless you, Disciple."
@@ -1684,6 +627,31 @@ msgid ""
 "swing of the reaper's blade."
 msgstr ""
 
+#: mission.brief.mail7.map1.level3:1
+msgctxt "mission brief tactical information"
+msgid "Landing Ground: Hong Kong IML Link"
+msgstr ""
+
+#: mission.brief.mail7.map1.level3:2
+msgctxt "mission brief tactical information"
+msgid "Our temple and brethren"
+msgstr ""
+
+#: mission.brief.mail7.map1.level3:3
+msgctxt "mission brief tactical information"
+msgid "Unguided landing zones"
+msgstr ""
+
+#: mission.brief.mail7.map1.level3:4
+msgctxt "mission brief tactical information"
+msgid "Eavesdrop: EuroCorp special agents (sappers) despatched to Hong Kong"
+msgstr ""
+
+#: mission.title:6
+msgctxt "mission title"
+msgid "Sack Of Rome"
+msgstr ""
+
 #: mission.brief.mail8.par1.h
 msgctxt "mission brief email header"
 msgid "Hear me, Disciple."
@@ -1714,6 +682,51 @@ msgctxt "mission brief book quote"
 msgid ""
 "Poor workers blame their tools. Good workers build better tools. The best "
 "workers get their tools to do the work for them."
+msgstr ""
+
+#: mission.brief.mail8.map28.level31:1
+msgctxt "mission brief tactical information"
+msgid "Landing Ground: Rome IML Link"
+msgstr ""
+
+#: mission.brief.mail8.map28.level31:2
+msgctxt "mission brief tactical information"
+msgid "Domicile zones overrun by the Unguided"
+msgstr ""
+
+#: mission.brief.mail8.map28.level31:3
+msgctxt "mission brief tactical information"
+msgid "EuroCorp garrison"
+msgstr ""
+
+#: mission.brief.mail8.map28.level31:4
+msgctxt "mission brief tactical information"
+msgid "EuroCorp agents"
+msgstr ""
+
+#: mission.brief.mail8.map28.level31:5
+msgctxt "mission brief tactical information"
+msgid "Eavesdrop: estimated contents of vault Cr 400,000"
+msgstr ""
+
+#: mission.title:33
+msgctxt "mission title"
+msgid "Not One Of Us"
+msgstr ""
+
+#: mission.title:52
+msgctxt "mission title"
+msgid "Watcher"
+msgstr ""
+
+#: mission.title:11
+msgctxt "mission title"
+msgid "Serpent's Egg"
+msgstr ""
+
+#: mission.title:12
+msgctxt "mission title"
+msgid "A Mote In God's Eye"
 msgstr ""
 
 #: mission.brief.mail9.par1.h
@@ -1772,6 +785,58 @@ msgctxt "mission brief book quote"
 msgid "There is pleasure in stealing the souls of machines."
 msgstr ""
 
+#: mission.brief.mail9c.map22.level2:2
+msgctxt "mission brief tactical information"
+msgid "City district under our control"
+msgstr ""
+
+#: mission.brief.mail9c.map22.level2:3
+msgctxt "mission brief tactical information"
+msgid "Your brethren"
+msgstr ""
+
+#: mission.brief.mail9b.map26.level3:2
+msgctxt "mission brief tactical information"
+msgid "EuroCorp militia garrisons"
+msgstr ""
+
+#: mission.brief.mail9a.map7.level5:1
+msgctxt "mission brief tactical information"
+msgid "Landing Ground: Santiago IML Link"
+msgstr ""
+
+#: mission.brief.mail9a.map7.level5:2
+msgctxt "mission brief tactical information"
+msgid "Our temple"
+msgstr ""
+
+#: mission.brief.mail9a.map7.level5:4
+msgctxt "mission brief tactical information"
+msgid ""
+"Eavesdrop: Syndicate strike team scheduled to arrive at garrisons within 48 "
+"hours"
+msgstr ""
+
+#: mission.brief.mail9d.map25.level46:3
+msgctxt "mission brief tactical information"
+msgid "Those you shall keep from harm"
+msgstr ""
+
+#: mission.brief.mail9d.map25.level46:5
+msgctxt "mission brief tactical information"
+msgid "Vault: estimated worth Cr 800,000"
+msgstr ""
+
+#: mission.brief.mail9d.map25.level46:6
+msgctxt "mission brief tactical information"
+msgid "Satellite alert: EuroCorp agent type identkeys detected, tracks unstable"
+msgstr ""
+
+#: mission.title:44
+msgctxt "mission title"
+msgid "Powermonger"
+msgstr ""
+
 #: mission.brief.mail10.par1.h
 msgctxt "mission brief email header"
 msgid "May faith burn within you, Favourite One."
@@ -1806,6 +871,82 @@ msgid ""
 "well."
 msgstr ""
 
+#: mission.brief.mail10.map45.level1:1 mission.brief.mail22.map44.level2:1
+msgctxt "mission brief tactical information"
+msgid "Landing Ground: APC destination"
+msgstr ""
+
+#: mission.brief.mail10.map45.level1:2
+msgctxt "mission brief tactical information"
+msgid "EuroCorp HQ"
+msgstr ""
+
+#: mission.brief.mail10.map45.level1:3
+msgctxt "mission brief tactical information"
+msgid "Executive shuttle carrying KotoSek"
+msgstr ""
+
+#: mission.title:43
+msgctxt "mission title"
+msgid "Deadly Harvest"
+msgstr ""
+
+#: mission.brief.mail11.par1.h
+msgctxt "mission brief email header"
+msgid "You shine strong, Apostle."
+msgstr ""
+
+#: mission.brief.mail11.par2.c2
+msgctxt "mission brief email orders"
+msgid ""
+"In Bahrain, EuroCorp prepares for an assault on our way of enlightenment. It "
+"shall come to pass that you are the toll by which they are stopped."
+msgstr ""
+
+#: mission.brief.mail11.par3.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"By the bounty of our faith, we have provided you with many targets here. And "
+"for your use is a battle-tank. Be wise, Acolyte. Always use equipment well. "
+"And make sure that you silence the voice of EuroCorp here. It must be so if "
+"we are to triumph and free the world."
+msgstr ""
+
+#: mission.brief.mail11.par4.c5
+msgctxt "mission brief email paragraph"
+msgid "The light of your being grows ever brighter."
+msgstr ""
+
+#: mission.brief.mail11.par6.c1
+msgctxt "mission brief book quote"
+msgid ""
+"The people stood like corn in the high fields and listened to the Master. As "
+"the reaper's blade scythed them all, the Master fell silent. The lesson would "
+"be learned by others."
+msgstr ""
+
+#: mission.brief.mail11.map41.level47:1
+msgctxt "mission brief tactical information"
+msgid "Landing Ground: Bahrain IML Link"
+msgstr ""
+
+#: mission.brief.mail11.map41.level47:2
+msgctxt "mission brief tactical information"
+msgid "EuroCorp reforger zone"
+msgstr ""
+
+#: mission.brief.mail11.map41.level47:3
+msgctxt "mission brief tactical information"
+msgid ""
+"Eavesdrop: police have been assigned to escort a EuroCorp finance executive "
+"on business in the north-east of the city"
+msgstr ""
+
+#: mission.title:73
+msgctxt "mission title"
+msgid "Donation"
+msgstr ""
+
 #: mission.brief.mail12.par1.h
 msgctxt "mission brief email header"
 msgid "Congratulations on your progress, Disciple."
@@ -1838,6 +979,41 @@ msgctxt "mission brief book quote"
 msgid ""
 "The Master has no need for money. But still he sits and counts it. As a "
 "meditation."
+msgstr ""
+
+#: mission.brief.mail12.map9.level3:1
+msgctxt "mission brief tactical information"
+msgid "Landing Ground: Singapore IML Link"
+msgstr ""
+
+#: mission.brief.mail12.map9.level3:2
+msgctxt "mission brief tactical information"
+msgid "Vault (empty)"
+msgstr ""
+
+#: mission.brief.mail12.map9.level3:3
+msgctxt "mission brief tactical information"
+msgid "Target vehicles A and B"
+msgstr ""
+
+#: mission.brief.mail12.map9.level3:4
+msgctxt "mission brief tactical information"
+msgid "Rendezvous"
+msgstr ""
+
+#: mission.brief.mail12.map9.level3:5
+msgctxt "mission brief tactical information"
+msgid "Eavesdrop: Vehicle A's destination"
+msgstr ""
+
+#: mission.brief.mail12.map9.level3:6
+msgctxt "mission brief tactical information"
+msgid "Eavesdrop: Vehicle B's destination"
+msgstr ""
+
+#: mission.title:13
+msgctxt "mission title"
+msgid "Audacity"
 msgstr ""
 
 #: mission.brief.mail13.par1.h
@@ -1885,6 +1061,803 @@ msgctxt "mission brief book quote"
 msgid ""
 "A hundred elephants can wreck the outer walls of a fortress. One diseased rat "
 "can kill all those inside."
+msgstr ""
+
+#: mission.brief.mail13.map30.level2:1
+msgctxt "mission brief tactical information"
+msgid "Landing Ground: London"
+msgstr ""
+
+#: mission.brief.mail13.map30.level2:2
+msgctxt "mission brief tactical information"
+msgid "Professor Drennan's assistant"
+msgstr ""
+
+#: mission.brief.mail13.map30.level2:3
+msgctxt "mission brief tactical information"
+msgid "Professor Drennan"
+msgstr ""
+
+#: mission.brief.mail13.map30.level2:4
+msgctxt "mission brief tactical information"
+msgid "Presentation podium"
+msgstr ""
+
+#: mission.brief.mail13.map30.level2:6
+msgctxt "mission brief tactical information"
+msgid ""
+"Eavesdrop: the professor's itinary includes collection of data from this "
+"building"
+msgstr ""
+
+#: mission.brief.mail13.map30.level2:7
+msgctxt "mission brief tactical information"
+msgid "Eavesdrop: Unguided invasion of North Side imminent"
+msgstr ""
+
+#: mission.title:72
+msgctxt "mission title"
+msgid "Divine Light"
+msgstr ""
+
+#: mission.brief.mail14.par1.h
+msgctxt "mission brief email header"
+msgid "Meditate with us, Disciple."
+msgstr ""
+
+#: mission.brief.mail14.par2.c2
+msgctxt "mission brief email orders"
+msgid ""
+"Steal plans for a new Syndicate weapon from the EuroCorp installation in New "
+"York."
+msgstr ""
+
+#: mission.brief.mail14.par3.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Professor Drennan is dead. His resistance to our neural inquisitors caused "
+"him to suffer a massive haemorrhage. Disappointing. Nevertheless, through our "
+"prayers, he survived long enough to furnish us with reliable information that "
+"the Syndicate is planning a major counter-offensive against our hallowed "
+"Church. Preparations for the counter-strike are being made in EuroCorp bases "
+"in New York."
+msgstr ""
+
+#: mission.brief.mail14.par4.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"In New York, guarded Syndicate technicians have been testing a thermonuclear "
+"hand weapon we ourselves foresee a use for. Two days ago our brothers and "
+"sisters - who occupy the city's Cathedral in defiance of EuroCorp's presence "
+"- witnessed a terrible blast inside the enemy's compound. It is from within "
+"this compound that Drennan said we would find experimental data regarding "
+"these devices. However, the compound is heavily defended. A diversion is "
+"probably required."
+msgstr ""
+
+#: mission.brief.mail14.par5.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Brother Methuselah will forsake the sanctuary the cathedral provides and meet "
+"you at the IML. He will lead you to a residential and commercial sector where "
+"he will incite a riot, by administering a censer cloud of psycho gas in the "
+"midst of the civilian population. During this time you should find some means "
+"of entering the compound. The Syndicate's response to the riot should occupy "
+"some of the guards for a while."
+msgstr ""
+
+#: mission.brief.mail14.par7.c1
+msgctxt "mission brief book quote"
+msgid ""
+"The courageous enter dark caves alone. The clever send in the courageous "
+"first. The cleverest wait behind the clever."
+msgstr ""
+
+#: mission.brief.mail14.map4.level3:1
+msgctxt "mission brief tactical information"
+msgid "Landing Ground: New York IML Link"
+msgstr ""
+
+#: mission.brief.mail14.map4.level3:2
+msgctxt "mission brief tactical information"
+msgid "EuroCorp installation gateways"
+msgstr ""
+
+#: mission.brief.mail14.map4.level3:3
+msgctxt "mission brief tactical information"
+msgid "Site of blast"
+msgstr ""
+
+#: mission.brief.mail14.map4.level3:4
+msgctxt "mission brief tactical information"
+msgid "Target building"
+msgstr ""
+
+#: mission.brief.mail14.map4.level3:5
+msgctxt "mission brief tactical information"
+msgid "Diversion will be created in this commercial zone"
+msgstr ""
+
+#: mission.brief.mail14.map4.level3:6
+msgctxt "mission brief tactical information"
+msgid "Our temple and satellite uplink"
+msgstr ""
+
+#: mission.brief.mail14.map4.level3:8
+msgctxt "mission brief tactical information"
+msgid "Eavesdrop: estimated value of vault Cr 2,000,000"
+msgstr ""
+
+#: mission.title:14
+msgctxt "mission title"
+msgid "The Levellers"
+msgstr ""
+
+#: mission.brief.mail15.par1.h
+msgctxt "mission brief email header"
+msgid "Precious Believer,"
+msgstr ""
+
+#: mission.brief.mail15.par2.c2
+msgctxt "mission brief email orders"
+msgid ""
+"Destroy EuroCorp weapons bunkers in Riyadh. In wreaking such devastation do "
+"we celebrate the Cataclysm."
+msgstr ""
+
+#: mission.brief.mail15.par3.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Harbinger has brought UTOPIA to its knees. EuroCorp's continuing quest to "
+"build a new army continues to prove the effectiveness of our strikes against "
+"it. Many of the Syndicate's arms are being stockpiled, to give the depleted "
+"cryovats time to repair their dwindling cadre of agents. Drennan confessed to "
+"us of the largest such repository of firepower. It lies within the ancient "
+"city walls of Riyadh."
+msgstr ""
+
+#: mission.brief.mail15.par4.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"It is the Nine's holy wish that this arsenal is buried forever beneath the "
+"desert sands. Locate the target bunkers and destroy them. Convert or "
+"obliterate any agents who dare to stand in your way. Use your own judgment in "
+"this matter. When the Syndicate's stockpile is no more than a memory, your "
+"name shall be sung by the faithful."
+msgstr ""
+
+#: mission.brief.mail15.par5.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Our machines will remake the world, Acolyte. They will plunge the planet into "
+"turmoil. Most of the population will die, but it is the renewal of life that "
+"calls us. Imagine a world with no syndicates, no mind-control, no violence. "
+"It will happen, Disciple. It will happen. More minds are needed."
+msgstr ""
+
+#: mission.brief.mail15.par6.c5
+msgctxt "mission brief email paragraph"
+msgid "Tempus fugit."
+msgstr ""
+
+#: mission.brief.mail15.par8.c1
+msgctxt "mission brief book quote"
+msgid "The apprentices asked the Master. \"When shall we achieve immortality?\""
+msgstr ""
+
+#: mission.brief.mail15.par9.c1
+msgctxt "mission brief book quote"
+msgid "And the Master answered, \"Not in this life.\""
+msgstr ""
+
+#: mission.brief.mail15.map20.level16:1
+msgctxt "mission brief tactical information"
+msgid "Landing Ground: Riyadh IML Link"
+msgstr ""
+
+#: mission.brief.mail15.map20.level16:2
+msgctxt "mission brief tactical information"
+msgid "Target bunkers"
+msgstr ""
+
+#: mission.title:87
+msgctxt "mission title"
+msgid "Fallen Among Thieves"
+msgstr ""
+
+#: mission.brief.mail16.par1.h
+msgctxt "mission brief email header"
+msgid "Brave Apostle."
+msgstr ""
+
+#: mission.brief.mail16.par2.c2
+msgctxt "mission brief email orders"
+msgid ""
+"Our daughter of the New Epoch, Mirabelle Lucy De Saxo, has crash-landed in "
+"Unguided territory, near her Cape Town sanctuary. Your acolytes must hasten "
+"to her side. She must live if she is to fulfil her destiny, as the first to "
+"tread the path to salvation."
+msgstr ""
+
+#: mission.brief.mail16.par3.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"We know she is still alive, but she is in urgent need of rescue. You are of "
+"course our first choice for this hazardous calling. Enter the Unguided zone "
+"and find De Saxo. Evacuate her with all haste. She may be in mortal danger. "
+"Be decisive with those who would stand in your way."
+msgstr ""
+
+#: mission.brief.mail16.par5.c1
+msgctxt "mission brief book quote"
+msgid ""
+"Bravery will take you into the most dangerous of places. Overwhelming "
+"firepower will see you safely through them."
+msgstr ""
+
+#: mission.brief.mail16.map44.level3:1
+msgctxt "mission brief tactical information"
+msgid "Landing Ground: Cape Town APC destination"
+msgstr ""
+
+#: mission.brief.mail16.map44.level3:2
+msgctxt "mission brief tactical information"
+msgid "De Saxo's crash site"
+msgstr ""
+
+#: mission.brief.mail16.map44.level3:4
+msgctxt "mission brief tactical information"
+msgid "Eavesdrop: EuroCorp squad scheduled arrival -36 hours"
+msgstr ""
+
+#: mission.title:15
+msgctxt "mission title"
+msgid "Rain Of Terror"
+msgstr ""
+
+#: mission.brief.mail17.par1.h
+msgctxt "mission brief email header"
+msgid "May faith be with you, <login>."
+msgstr ""
+
+#: mission.brief.mail17.par2.c2
+msgctxt "mission brief email orders"
+msgid ""
+"Seek and obliterate a dangerous, meddling hacker who hides among the "
+"Unguided, for he has gained control of a strategic weapons satellite above "
+"Beijing."
+msgstr ""
+
+#: mission.brief.mail17.par3.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"An outcast hacker with access to UTOPIA satellite defences is bringing steel "
+"rain from heaven where and whenever he chooses. He must be stopped. He must "
+"be found and eliminated."
+msgstr ""
+
+#: mission.brief.mail17.par4.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Be wary, Disciple. Beijing is a faithless place, ridden with the Unguided, "
+"who see only through the sights of their guns."
+msgstr ""
+
+#: mission.brief.mail17.par5.c5
+msgctxt "mission brief email paragraph"
+msgid "Go with spirit."
+msgstr ""
+
+#: mission.brief.mail17.par7.c1
+msgctxt "mission brief book quote"
+msgid ""
+"He who lives in the eye of the storm is a mote in the eye of an angry god."
+msgstr ""
+
+#: mission.brief.mail17.map32.level2:1
+msgctxt "mission brief tactical information"
+msgid "Landing Ground: Beijing IML Link"
+msgstr ""
+
+#: mission.brief.mail17.map32.level2:2
+msgctxt "mission brief tactical information"
+msgid "Hacker's location"
+msgstr ""
+
+#: mission.brief.mail17.map32.level2:4
+msgctxt "mission brief tactical information"
+msgid "Eavesdrop: city vault estimated to contain Cr 1,500,000"
+msgstr ""
+
+#: mission.title:16
+msgctxt "mission title"
+msgid "Armour Of The Gods"
+msgstr ""
+
+#: mission.brief.mail18.par1.h
+msgctxt "mission brief email header"
+msgid "Disciple, your aura feeds our strength."
+msgstr ""
+
+#: mission.brief.mail18.par2.c2
+msgctxt "mission brief email orders"
+msgid ""
+"The Syndicate has lost control of Delhi to the Unguided. Riding armour stolen "
+"from their vanquished foes, the heretic unbelievers bring desolation to every "
+"quarter. They are false prophets, all of them. Send them to the Cataclysm."
+msgstr ""
+
+#: mission.brief.mail18.par3.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Those who use such infernal weaponry against us must pay the ultimate price. "
+"There is no honour in destroying machines, and there is considerable danger."
+msgstr ""
+
+#: mission.brief.mail18.par4.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Tread carefully as you make your way towards the island. Secure that first."
+msgstr ""
+
+#: mission.brief.mail18.par5.c5
+msgctxt "mission brief email paragraph"
+msgid "Be full of spirit."
+msgstr ""
+
+#: mission.brief.mail18.par7.c1
+msgctxt "mission brief book quote"
+msgid ""
+"The brave hide behind technology. The stupid hide from it. But the clever "
+"have technology, and hide it."
+msgstr ""
+
+#: mission.brief.mail18.map27.level1:1
+msgctxt "mission brief tactical information"
+msgid "Landing Ground: Delhi IML Link"
+msgstr ""
+
+#: mission.brief.mail18.map27.level1:2
+msgctxt "mission brief tactical information"
+msgid "EuroCorp forces in river port island"
+msgstr ""
+
+#: mission.brief.mail18.map27.level1:3 mission.brief.mail23.map22.level4:2
+msgctxt "mission brief tactical information"
+msgid "The Unguided"
+msgstr ""
+
+#: mission.title:85
+msgctxt "mission title"
+msgid "The Dead Zone"
+msgstr ""
+
+#: mission.brief.mail19.par1.h
+msgctxt "mission brief email header"
+msgid "Blessings, Chosen One."
+msgstr ""
+
+#: mission.brief.mail19.par2.c2
+msgctxt "mission brief email orders"
+msgid ""
+"Bring us the secret EuroCorp is protecting in Bangkok and we will pray for "
+"your salvation."
+msgstr ""
+
+#: mission.brief.mail19.par3.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"The stink of chaos spreads to every street corner as UTOPIA forsakes the "
+"populace at large and takes its favoured children deeper underground. In "
+"Bangkok the Syndicate has abandoned all attempts to restore their regime. "
+"Instead, it has imposed a dead zone there. What goes on there we do not know "
+"for certain."
+msgstr ""
+
+#: mission.brief.mail19.par4.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"One of our brothers recently attempted to find out what EuroCorp is going to "
+"such lengths to hide. He learned that the enemy's agents occasionally venture "
+"through the dead zone, in order to abduct Unguided, many of whom still cling "
+"to their forlorn hopes among the shattered remains. The agents then return to "
+"their stronghold with their captives. The Nine do not understand why the "
+"Syndicate should do this when it eliminates the Unguided on sight everywhere "
+"else."
+msgstr ""
+
+#: mission.brief.mail19.par5.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"We seek enlightenment in this matter. Direct your Acolytes through the city's "
+"hostile outskirts and into the dead zone. Find out what EuroCorp is up to and "
+"take any steps you consider necessary to deal with the situation you find. "
+"Then return and confess to us everything you have learned, so that we may "
+"cleanse you of the evil to which you have been exposed."
+msgstr ""
+
+#: mission.brief.mail19.par6.c5
+msgctxt "mission brief email paragraph"
+msgid "Forgive nothing."
+msgstr ""
+
+#: mission.brief.mail19.par8.c1
+msgctxt "mission brief book quote"
+msgid ""
+"A war refugee sought the Master. He said, \"You are wise and serene. Teach me "
+"to escape the horrors of this world.\" And the Master blinded him with fire-"
+"irons."
+msgstr ""
+
+#: mission.brief.mail19.map3.level2:1
+msgctxt "mission brief tactical information"
+msgid "Landing Ground: Bangkok IML Link"
+msgstr ""
+
+#: mission.brief.mail19.map3.level2:2
+msgctxt "mission brief tactical information"
+msgid "Dead zone perimeter"
+msgstr ""
+
+#: mission.brief.mail19.map3.level2:3
+msgctxt "mission brief tactical information"
+msgid "EuroCorp outpost"
+msgstr ""
+
+#: mission.brief.mail19.map3.level2:5
+msgctxt "mission brief tactical information"
+msgid "A commercial vault still stands here"
+msgstr ""
+
+#: mission.brief.mail19.map3.level2:6
+msgctxt "mission brief tactical information"
+msgid "Satellite alert: evidence of weapons testing at outpost"
+msgstr ""
+
+#: mission.title:53
+msgctxt "mission title"
+msgid "Establish The Link"
+msgstr ""
+
+#: mission.brief.mail20.par1.h
+msgctxt "mission brief email header"
+msgid "Listen strong, Acolyte."
+msgstr ""
+
+#: mission.brief.mail20.par2.c2
+msgctxt "mission brief email orders"
+msgid ""
+"We need an IML link to Reykjavik, where the sacraments of our founding "
+"religion are in danger. Our favoured daughter, Mirabelle Lucy De Saxo, must "
+"reactivate this path. It is up to you to clear a route to the IML station in "
+"the north-east of Christchurch. Purest Mirabelle will take the place normally "
+"occupied by your fourth Acolyte."
+msgstr ""
+
+#: mission.brief.mail20.par3.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Tread with care, pilgrim. Traps and ambushes abound, and you must bring the "
+"firepower of our faith to bear against any who stand in the way. De Saxo is "
+"special, and must not be harmed. Pray for this and do your utmost to see that "
+"it should be so."
+msgstr ""
+
+#: mission.brief.mail20.par4.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"When enough people are of our faith, we shall open a gate in the Earth's "
+"ionosphere. The effects of unfettered cosmic rays on any part of the planet "
+"exposed to the ion gate will destroy nearly everything. Only those in the "
+"cause will be saved. We shall reset the world and it shall rise, safe in our "
+"religion."
+msgstr ""
+
+#: mission.brief.mail20.par5.c5
+msgctxt "mission brief email paragraph"
+msgid "Toil for our cause."
+msgstr ""
+
+#: mission.brief.mail20.par7.c1
+msgctxt "mission brief book quote"
+msgid "Follow the more successful thief and steal his ideas."
+msgstr ""
+
+#: mission.brief.mail20a.map36.level2:1
+msgctxt "mission brief tactical information"
+msgid "Landing Ground: Christchurch IML Link A"
+msgstr ""
+
+#: mission.brief.mail20a.map36.level2:2
+msgctxt "mission brief tactical information"
+msgid "Christchurch IML Link B"
+msgstr ""
+
+#: mission.title:18
+msgctxt "mission title"
+msgid "Deconstruction"
+msgstr ""
+
+#: mission.brief.mail21.par1.h
+msgctxt "mission brief email header"
+msgid "Blessed One,"
+msgstr ""
+
+#: mission.brief.mail21.par2.c2
+msgctxt "mission brief email orders"
+msgid ""
+"Destroy the EuroCorp Advanced R&D Facility near Reykjavik. Eliminate EuroCorp "
+"agents on sight."
+msgstr ""
+
+#: mission.brief.mail21.par3.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"The history of this place is the very structure of the Church of the New "
+"Epoch. Here you will see the raw essence that lead us all to believe. And "
+"EuroCorp is defiling it. You must eradicate with extreme force any agents you "
+"find here."
+msgstr ""
+
+#: mission.brief.mail21.par4.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"You must also destroy all the places where the Nine prepared their minds for "
+"the seed of wisdom. It is only material substance, and our faith lives and "
+"beats in our hearts. Do not falter. Destroy. No harm will come to the Church "
+"now, for the Codex dwells deep inside the minds of the Nine. Only shadows of "
+"its wisdom remain in Reykjavik. Be thorough in your work, for the sake of "
+"precision."
+msgstr ""
+
+#: mission.brief.mail21.par5.c5
+msgctxt "mission brief email paragraph"
+msgid "In holy footsteps."
+msgstr ""
+
+#: mission.brief.mail21.par7.c1
+msgctxt "mission brief book quote"
+msgid ""
+"\"Here!\" said the Master. \"Build me a great tomb in this place.\" His "
+"apprentices did. It glittered in the sun. \"Now go inside,\" said he. They "
+"entered. An earthquake then destroyed the tomb, burying those within."
+msgstr ""
+
+#: mission.brief.mail21.par8.c1
+msgctxt "mission brief book quote"
+msgid "The Master smiled. \"Even the faithful are not always chosen."
+msgstr ""
+
+#: mission.brief.mail21.par9.c1
+msgctxt "mission brief book quote"
+msgid "\"This is called sacrifice.\""
+msgstr ""
+
+#: mission.title:45
+msgctxt "mission title"
+msgid "Retribution"
+msgstr ""
+
+#: mission.brief.mail22.par1.h
+msgctxt "mission brief email header"
+msgid "Walk in Light, Disciple."
+msgstr ""
+
+#: mission.brief.mail22.par2.c2
+msgctxt "mission brief email orders"
+msgid ""
+"Eliminate Mirabelle Lucy De Saxo immediately. You will find her at the Cape "
+"Town sanctuary we gave her, and which we now take away."
+msgstr ""
+
+#: mission.brief.mail22.par3.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Your heart beats only for us. Do not question the faith when it requires "
+"action you do not yet understand. De Saxo has trespassed against us. The Nine "
+"have exposed her as our enemy incarnate. She is an agent of the Syndicate. "
+"Travel to Cape Town with vengeance in your breast, and terminate her."
+msgstr ""
+
+#: mission.brief.mail22.par4.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"The weak-minded will side with her. Let them feel the force of the true way."
+msgstr ""
+
+#: mission.brief.mail22.par5.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"We have nearly done enough to begin the final stage of the Cataclysm and "
+"change this world beyond all measure. Fight for it, Acolyte. You are chosen "
+"and will be saved. Millions of non-believers will perish. We will cleanse "
+"this planet."
+msgstr ""
+
+#: mission.brief.mail22.par6.c5
+msgctxt "mission brief email paragraph"
+msgid "Keep the faith."
+msgstr ""
+
+#: mission.brief.mail22.par8.c1
+msgctxt "mission brief book quote"
+msgid "Even the salamander sometimes burns."
+msgstr ""
+
+#: mission.brief.mail22.map44.level2:2
+msgctxt "mission brief tactical information"
+msgid "The blasphemer Mirabelle Lucy De Saxo"
+msgstr ""
+
+#: mission.title:19
+msgctxt "mission title"
+msgid "Day Of The Damned"
+msgstr ""
+
+#: mission.brief.mail23.par1.h
+msgctxt "mission brief email header"
+msgid "Hark these words, Apostle."
+msgstr ""
+
+#: mission.brief.mail23.par2.c2
+msgctxt "mission brief email orders"
+msgid ""
+"The Great Church at Johannesburg has been desecrated by a swarm of Unguided "
+"ones. One of their number, Rene Galact, is visibly directing the throng. He "
+"must be destroyed in the name of all that is holy."
+msgstr ""
+
+#: mission.brief.mail23.par3.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"There is an unforgivably large Unguided presence in the city. The raised mall "
+"and concourse in the south-west of the city is now the outcasts' fortress. A "
+"great victory will be born from the destruction of all those who would hide "
+"behind its irrelevant walls, and the Church will roll ever closer to the "
+"Final Day. It is written in the Codex, Disciple."
+msgstr ""
+
+#: mission.brief.mail23.par4.c5
+msgctxt "mission brief email paragraph"
+msgid "Go with fire and serenity."
+msgstr ""
+
+#: mission.brief.mail23.par6.c1
+msgctxt "mission brief book quote"
+msgid "To take one life is sin. To take a thousand is religion."
+msgstr ""
+
+#: mission.brief.mail23.map22.level4:3
+msgctxt "mission brief tactical information"
+msgid "Rene Galact"
+msgstr ""
+
+#: mission.title:71
+msgctxt "mission title"
+msgid "Recapture"
+msgstr ""
+
+#: mission.brief.mail24.par1.h
+msgctxt "mission brief email header"
+msgid "Blessings, Acolyte."
+msgstr ""
+
+#: mission.brief.mail24.par2.c2
+msgctxt "mission brief email orders"
+msgid ""
+"An emergency has arisen, to try us. One of the Nine has been captured. He is "
+"being held in a detention centre in Adelaide. You must release him and escort "
+"him to sanctuary."
+msgstr ""
+
+#: mission.brief.mail24.par3.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"You must pray for a way into the centre and must carry arms to beat off those "
+"unbelievers who would cut you down in your tracks. This is where your faith "
+"is tested, Disciple. Do not fail. Remain alert. Trust the true way and, if it "
+"is willed, you shall succeed."
+msgstr ""
+
+#: mission.brief.mail24.par4.c5
+msgctxt "mission brief email paragraph"
+msgid "Travel on holy paths."
+msgstr ""
+
+#: mission.brief.mail24.par6.c1
+msgctxt "mission brief book quote"
+msgid "In the darkest times, the true believer hones his combat skills."
+msgstr ""
+
+#: mission.brief.mail24.map6.level3:1
+msgctxt "mission brief tactical information"
+msgid "Landing Ground: Adelaide IML Link"
+msgstr ""
+
+#: mission.brief.mail24.map6.level3:2
+msgctxt "mission brief tactical information"
+msgid "The compound holding Brother Ix"
+msgstr ""
+
+#: mission.brief.mail24.map6.level3:3
+msgctxt "mission brief tactical information"
+msgid "Rendezvous point"
+msgstr ""
+
+#: mission.brief.mail24.map6.level3:4
+msgctxt "mission brief tactical information"
+msgid "Syndicate MBT deployment"
+msgstr ""
+
+#: mission.title:100
+msgctxt "mission title"
+msgid "Revelations"
+msgstr ""
+
+#: mission.title:102
+msgctxt "mission title"
+msgid "Cataclysm"
+msgstr ""
+
+#: mission.brief.mail25.par1.h
+msgctxt "mission brief email header"
+msgid "Disciple."
+msgstr ""
+
+#: mission.brief.mail25.par2.c2
+msgctxt "mission brief email orders"
+msgid ""
+"You have served us well. Now the moment is ours. Remain where you are and do "
+"not follow us. We will proceed to the Moon alone. When we activate our Ion "
+"Gate, those who remain on Earth will perish. Fear not - your name will "
+"forever be remembered and we shall call you a Saint of the New Epoch."
+msgstr ""
+
+#: mission.brief.mail25.par3.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Human life on this planet will be virtually eradicated and we shall return to "
+"repopulate the globe with our likenesses. This has been our faith, and we "
+"shall carry it forward alone."
+msgstr ""
+
+#: mission.brief.mail25.par4.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Anyone who now tries to stop us will be exterminated by the elite Sanctum "
+"Protectorate Guards. Accept your fate - do not be foolish and interfere. The "
+"power of the Sanctum Protectorate is immense. Remain where you are and lay "
+"down your weapons, for it is over and we have won."
+msgstr ""
+
+#: mission.brief.mail25.par6.c1
+msgctxt "mission brief book quote"
+msgid "The world shall turn and the human race shall pass."
+msgstr ""
+
+#: mission.brief.mail25.par7.c1
+msgctxt "mission brief book quote"
+msgid "Everything begins anew. The faith has run its course and it is over."
+msgstr ""
+
+#: mission.brief.mail25.map46.level2:1
+msgctxt "mission brief tactical information"
+msgid "Landing Site: Colombo Executive Shuttle Pad"
+msgstr ""
+
+#: mission.brief.mail25.map46.level2:2
+msgctxt "mission brief tactical information"
+msgid "Your proper place"
+msgstr ""
+
+#: mission.brief.mail25.map46.level2:3
+msgctxt "mission brief tactical information"
+msgid "Colombo Orbital Elevator"
+msgstr ""
+
+#: mission.brief.mail25.map46.level2:4
+msgctxt "mission brief tactical information"
+msgid "Elevator anti-missile missile system"
 msgstr ""
 
 #: message.win:1
@@ -2287,136 +2260,4 @@ msgid ""
 "superior technology. Nevertheless, they have come up with something special. "
 "This cyberskin reflects UTOPIA sensor scans, thereby making weapon lock on a "
 "target contained in this substance extremely difficult to achieve."
-msgstr ""
-
-#: mission.brief.mail1.par1.h
-msgctxt "mission brief email header"
-msgid "Blessings, Disciple."
-msgstr ""
-
-#: mission.brief.mail1.par2.c2
-msgctxt "mission brief email orders"
-msgid ""
-"Your mission is to take control of a substation belonging to EuroCorp's "
-"UTOPIA network. It is situated in Detroit. When we have it, the Cataclysm "
-"will begin."
-msgstr ""
-
-#: mission.brief.mail1.par3.c5
-msgctxt "mission brief email paragraph"
-msgid ""
-"Delivered unto you this day is the automorphic computer virus which will end "
-"the tyranny the Syndicate calls UTOPIA. We have named this virus Harbinger "
-"and it will snatch control from the Syndicate, computer by computer, "
-"preparing the way for the enlightenment to follow."
-msgstr ""
-
-#: mission.brief.mail1.par4.c5
-msgctxt "mission brief email paragraph"
-msgid ""
-"Lead your Acolytes into the Detroit UTOPIA ground station, in order that we "
-"may release the virus. The Syndicate operatives who guard the station will "
-"not be expecting force, because none has been used for years. This is our "
-"advantage."
-msgstr ""
-
-#: mission.brief.mail1.par5.c5
-msgctxt "mission brief email paragraph"
-msgid "Blessed be."
-msgstr ""
-
-#: mission.brief.mail1.par7.c1
-msgctxt "mission brief book quote"
-msgid ""
-"The non-believers climbed for days to confront the master in the mountains. "
-"\"Where do you get your so-called faith?\" they asked."
-msgstr ""
-
-#: mission.brief.mail1.par8.c1
-msgctxt "mission brief book quote"
-msgid "\"You brought it,\" the master replied. \"You've all climbed so high.\""
-msgstr ""
-
-#: mission.brief.mail2.par1.h
-msgctxt "mission brief email header"
-msgid "Congratulations, Disciple."
-msgstr ""
-
-#: mission.brief.mail2.par2.c2
-msgctxt "mission brief email orders"
-msgid ""
-"Your acolytes' firm guidance is required in Tripoli, where the emergent chaos "
-"brought by the Cataclysm threatens our Garden of Meditations. Defend our "
-"faith with maximum force."
-msgstr ""
-
-#: mission.brief.mail2.par3.c5
-msgctxt "mission brief email paragraph"
-msgid ""
-"Harbinger, our holy virus, has begun working to free the population. However, "
-"not all those released from the yoke of repression immediately embrace the "
-"way of enlightenment our Church offers. Indeed, without our guidance, many "
-"will be lost. Soon there will be a Day of Reckoning and every soul will count."
-msgstr ""
-
-#: mission.brief.mail2.par4.c5
-msgctxt "mission brief email paragraph"
-msgid ""
-"Our Garden of Meditations in Tripoli is besieged by lost souls the Syndicate "
-"call the Unguided. Sadly, we must protect each other with maximum force, for "
-"this is the lesson of all religions. Equip your acolytes appropriately and "
-"send them to Tripoli to impose some tranquillity there."
-msgstr ""
-
-#: mission.brief.mail2.par5.c5
-msgctxt "mission brief email paragraph"
-msgid ""
-"We have plans for Earth, Acolyte. The Church must change the whole world. "
-"This is our time. We will save only the chosen. Enough for now."
-msgstr ""
-
-#: mission.brief.mail2.par6.c5
-msgctxt "mission brief email paragraph"
-msgid "The Nine have said this."
-msgstr ""
-
-#: mission.brief.mail2.par8.c1
-msgctxt "mission brief book quote"
-msgid ""
-"The Master told his pupils, \"Forget being taught and concentrate on "
-"learning. When you're sure, question everything.\""
-msgstr ""
-
-#: mission.brief.mail3.par1.h
-msgctxt "mission brief email header"
-msgid "Harbinger is about its work. Let us pray."
-msgstr ""
-
-#: mission.brief.mail3.par2.c2
-msgctxt "mission brief email orders"
-msgid ""
-"We must stir this brew in Buenos Aires. By converting two mutual enemies, our "
-"Church will assume control of the whole of the city."
-msgstr ""
-
-#: mission.brief.mail3.par3.c5
-msgctxt "mission brief email paragraph"
-msgid ""
-"Our brothers and sisters in South America have gathered intelligence useful "
-"to our cause. They have identified Juan Ormandoz, a senior EuroCorp lackey "
-"from Buenos Aires, who is attempting to maintain the city's stability in "
-"spite of the activities of the Unguided. The leader of this group, Chico "
-"Ramirez, foolishly believes he can take and keep control of a commercial "
-"district. Convert them both and we will succeed where EuroCorp has so far "
-"failed."
-msgstr ""
-
-#: mission.brief.mail3.par4.c5
-msgctxt "mission brief email paragraph"
-msgid "Spread the good news."
-msgstr ""
-
-#: mission.brief.mail3.par6.c1
-msgctxt "mission brief book quote"
-msgid "Faithful minds are not enough. Deliver unto us brains also."
 msgstr ""
