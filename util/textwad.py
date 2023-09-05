@@ -1138,7 +1138,8 @@ def create_lines_for_netscan(lines, pomdict):
             (mapno,level,) = (99,ssourceid,)
             clist = []
         lines.append(f"[{mapno:02d}{level:02d}]")
-        for e in clist:
+        for i, e in enumerate(clist):
+           assert e is not None, f"Missing netscan entry mission.brief.mailN.map{mapno}.level{level}:{i+1}"
            lines.append(e.msgstr)
     lines.append("")
     return
