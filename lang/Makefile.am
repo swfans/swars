@@ -15,7 +15,25 @@ langalleng_DATA = $(langalleng_WADFILES)
 
 $(langalleng_WADFILES): $(langalleng_POFILES)
 	$(MKDIR_P) "$(@D)"
-	$(TEXTWAD) -t "$(top_srcdir)/conf/char_encoding_tbl_euwad.txt" -l "eng" -w $@ -c $+
+	$(TEXTWAD) -t "$(top_srcdir)/conf/char_encoding_tbl_euwad.txt" -w $@ -c $+
+
+langallfre_WADFILES = \
+    fre/alltext.wad \
+    fre/alltext.idx
+
+langallfre_POFILES = \
+	alltext_syndct_fre.po \
+	alltext_church_fre.po \
+	alltext_punks_fre.po \
+	alltext_comm_fre.po
+
+langallfredir = $(prefix)/opt/$(PACKAGE)/language/fre
+langallfre_DATA = $(langallfre_WADFILES)
+
+$(langallfre_WADFILES): $(langallfre_POFILES)
+	$(MKDIR_P) "$(@D)"
+	$(TEXTWAD) -t "$(top_srcdir)/conf/char_encoding_tbl_euwad.txt" -w $@ -c $+
 
 EXTRA_DIST = \
+	langallfre \
 	langalleng
