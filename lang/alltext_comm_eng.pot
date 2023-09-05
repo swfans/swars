@@ -20,7 +20,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Menu text for SW Port\n"
 "Report-Msgid-Bugs-To: https://github.com/swfans/swars/issues\n"
-"POT-Creation-Date: 2023-09-04 03:12+0200\n"
+"POT-Creation-Date: 2023-09-05 11:43+0200\n"
 "PO-Revision-Date: 2023-09-02 12:00+0100\n"
 "Last-Translator: Mefistotelis <mefistotelis@gmail.com>\n"
 "Language-Team: Syndicate Wars Fans <github.com/swfans>\n"
@@ -1095,8 +1095,8 @@ msgctxt "map screen location - industry"
 msgid "Consumer Durables"
 msgstr ""
 
-#: mapscreen.city10:6 mapscreen.city15:6 mapscreen.city23:6 mapscreen.city28:6
-#: mapscreen.city41:6 mapscreen.city45:6
+#: mapscreen.city10:6 mapscreen.city15:6 mapscreen.city20:6 mapscreen.city23:6
+#: mapscreen.city28:6 mapscreen.city41:6 mapscreen.city45:6
 msgctxt "map screen location - toxicity"
 msgid "Heavy Industrial"
 msgstr ""
@@ -1325,11 +1325,6 @@ msgstr ""
 #: mapscreen.city20:5
 msgctxt "map screen location - industry"
 msgid "Hi-Tech Manufacture, Financial Services"
-msgstr ""
-
-#: mapscreen.city20:6
-msgctxt "map screen location - toxicity"
-msgid "Heavy Industrial"
 msgstr ""
 
 #: mapscreen.city21:1
