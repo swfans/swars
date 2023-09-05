@@ -156,7 +156,7 @@ msgstr ""
 
 #: mission.brief.mail1.map35.level2:4 mission.brief.mail3.map26.level2:4
 #: mission.brief.mail4.map7.level3:3 mission.brief.mail5.map22.level3:6
-#: mission.brief.mail6c.map50.level47:3 mission.brief.mail9c.map22.level2:4
+#: mission.brief.mail6c.map50.level47:3
 #: mission.brief.mail9b.map26.level3:3 mission.brief.mail9a.map7.level5:3
 #: mission.brief.mail9d.map25.level46:4 mission.brief.mail10.map45.level1:4
 #: mission.brief.mail13.map30.level2:5 mission.brief.mail14.map4.level3:7
@@ -771,6 +771,14 @@ msgstr ""
 msgctxt "mission brief tactical information"
 msgid "Your brethren"
 msgstr ""
+
+#: mission.brief.mail9c.map22.level2:4
+msgctxt "mission brief tactical information"
+msgid ""
+"Eavesdrop: tinkering with UTOPIA ident signal detected - with focus around "
+"entrances to transport tubes, and detection of carrying explosive devices"
+msgstr ""
+
 
 #: mission.brief.mail9b.map26.level3:2
 msgctxt "mission brief tactical information"
