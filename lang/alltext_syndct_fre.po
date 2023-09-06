@@ -21,7 +21,7 @@ msgstr ""
 "Project-Id-Version: Menu text for SW Port\n"
 "Report-Msgid-Bugs-To: https://github.com/swfans/swars/issues\n"
 "POT-Creation-Date: 2023-09-05 11:32+0200\n"
-"PO-Revision-Date: 2023-09-05 16:01+0200\n"
+"PO-Revision-Date: 2023-09-06 23:11+0200\n"
 "Last-Translator: Mefistotelis <mefistotelis@gmail.com>\n"
 "Language-Team: Syndicate Wars Fans <github.com/swfans>\n"
 "Language: fr_FR\n"
@@ -1320,7 +1320,7 @@ msgstr "Cible"
 #: mission.brief.mail11b.map7.level1:4
 msgctxt "mission brief tactical information"
 msgid "North Side over-run by zealots"
-msgstr "Nord de la ville passé sous contrOle des zélateurs"
+msgstr "Nord de la ville passé sous contrôle des zélateurs"
 
 #: mission.brief.mail11d.map26.level1:1
 msgctxt "mission brief tactical information"
@@ -1355,7 +1355,7 @@ msgstr "Porte d'accès aux installations de recherche d'Hexagon"
 #: mission.brief.mail11c.map44.level1:5
 msgctxt "mission brief tactical information"
 msgid "Eavesdrop: Zealots have taken control of this installation"
-msgstr "Ecoutes: Les zélateurs ont pris le contrOle de ces installations"
+msgstr "Ecoutes: Les zélateurs ont pris le contrôle de ces installations"
 
 #: mission.brief.mail11a.map6.level1:1
 msgctxt "mission brief tactical information"
