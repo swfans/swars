@@ -33,6 +33,7 @@ import re
 import io
 import polib
 import textwrap
+import unicodedata
 
 from ctypes import c_char, c_int, c_ubyte, c_ushort, c_uint, c_ulonglong, c_float
 from ctypes import memmove, addressof, sizeof, Array, LittleEndianStructure
@@ -399,18 +400,39 @@ def enctable_bytes_to_string(ctd, b):
 
 def enctable_string_to_bytes(cte, s):
     b = b""
-    for c in s:
-        assert c in cte, f"Encode table lacks '{c}' from '{s}'"
+    for i,c in enumerate(s):
+        assert c in cte, f"Encode table lacks '{c}'at {i} from '{s}'"
         b = b + cte[c]
     return b
 
 
+def waditem_string_national_to_upper(stri):
+    stro = ""
+    for c in stri:
+        if c in "ê":
+            stro = stro + unicodedata.normalize('NFKD', c).encode('ascii', 'ignore').decode('ascii', errors='ignore')
+        elif c in "ìäåéöüñáàèíòúù":
+            stro = stro + c.upper()
+        else:
+            stro = stro + c
+    return stro
+
+
 def waditem_string_to_bytes(po, fname, s):
-    return enctable_string_to_bytes(po.chartable_m_encode, s)
+    if fname.startswith("miss"):
+        b = enctable_string_to_bytes(po.chartable_m_encode, s)
+    else:
+        s = waditem_string_national_to_upper(s)
+        b = enctable_string_to_bytes(po.chartable_d_encode, s)
+    return b
 
 
-def waditem_bytes_to_string(po, fname, s):
-    return enctable_bytes_to_string(po.chartable_m_decode, s)
+def waditem_bytes_to_string(po, fname, b):
+    if fname.startswith("miss"):
+        s = enctable_bytes_to_string(po.chartable_m_decode, b)
+    else:
+        s = enctable_bytes_to_string(po.chartable_d_decode, b)
+    return s
 
 
 def pofile_store_entry(po, pofh, e):
