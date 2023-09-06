@@ -361,11 +361,11 @@ def find_occurence_in_polist(polist, occur):
 
 
 def read_enctable(po, fname):
-    po.chartable_decode = [''] * 256
-    po.chartable_encode = {}
+    chartable_decode = [''] * 256
+    chartable_encode = {}
     # Fill initial data
-    ctd = po.chartable_decode
-    cte = po.chartable_encode
+    ctd = chartable_decode
+    cte = chartable_encode
     for n in range(32):
         c = n.to_bytes(1, 'big').decode('utf-8', errors='ignore')
         ctd[n] = c
@@ -387,24 +387,30 @@ def read_enctable(po, fname):
         if ctd[n] == '':
             ctd[n] = c
         cte[c] = n.to_bytes(1, 'big')
+    return chartable_decode, chartable_encode
 
 
-def enctable_bytes_to_string(po, b):
-    #return b.decode('utf-8')
-    ctd = po.chartable_decode
+def enctable_bytes_to_string(ctd, b):
     s = ""
     for c in b:
         s = s + ctd[c]
     return s
 
 
-def enctable_string_to_bytes(po, s):
-    #return s.encode('utf-8')
-    cte = po.chartable_encode
+def enctable_string_to_bytes(cte, s):
     b = b""
     for c in s:
+        assert c in cte, f"Encode table lacks '{c}' from '{s}'"
         b = b + cte[c]
     return b
+
+
+def waditem_string_to_bytes(po, fname, s):
+    return enctable_string_to_bytes(po.chartable_m_encode, s)
+
+
+def waditem_bytes_to_string(po, fname, s):
+    return enctable_bytes_to_string(po.chartable_m_decode, s)
 
 
 def pofile_store_entry(po, pofh, e):
@@ -1309,7 +1315,7 @@ def textwad_read_to_podict(po, podict,  wadfh, idxfh):
         wadfh.seek(e.Offset, os.SEEK_SET)
         txt_buffer = wadfh.read(e.Length)
         lines = txt_buffer.split(b'\n')
-        lines = [enctable_bytes_to_string(po, ln).rstrip("\r\n") for ln in lines]
+        lines = [waditem_bytes_to_string(po, txtfname, ln).rstrip("\r\n") for ln in lines]
         textwad_extract_to_po(podict, txtfname, lines)
     return
 
@@ -1372,7 +1378,7 @@ def textwad_create(po, wadfh, idxfh):
         e.Filename = txtfname.upper().encode('utf-8')
         e.Offset = wadfh.tell()
         textwad_create_from_po(lines, podict, txtfname)
-        lines = [enctable_string_to_bytes(po, ln) for ln in lines]
+        lines = [waditem_string_to_bytes(po, txtfname, ln) for ln in lines]
         wadfh.write(b'\r\n'.join(lines))
         e.Length = wadfh.tell() - e.Offset
         idxfh.write((c_ubyte * sizeof(e)).from_buffer_copy(e))
@@ -1406,7 +1412,10 @@ def main():
           help="Import or export raw files (TXT) rather than .PO/POT")
 
     subparser.add_argument('-t', '--enctable', type=str,
-          help="Character encoding table file name")
+          help="Character encoding table file name for directly converted strings")
+
+    parser.add_argument('-m', '--menctable', type=str,
+          help="Character encoding table file name for mission briefing strings")
 
     subparser = parser.add_mutually_exclusive_group(required=True)
 
@@ -1440,7 +1449,8 @@ def main():
         po.engidxfile = po.engwadbase + ".idx"
 
     if not po.raw:
-        read_enctable(po, po.enctable)
+        (po.chartable_d_decode, po.chartable_d_encode) = read_enctable(po, po.enctable)
+        (po.chartable_m_decode, po.chartable_m_encode) = read_enctable(po, po.menctable)
 
     if po.extract:
         if (po.verbose > 0):
