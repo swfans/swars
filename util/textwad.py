@@ -375,14 +375,14 @@ def read_enctable(po, fname):
     # Read char table
     with open(fname, 'r', encoding='utf-8') as fh:
         lines = fh.readlines()
-    for ln in lines:
+    for i,ln in enumerate(lines):
         ln = ln.lstrip()
         if len(ln) < 2:
             continue
         if ln[0] == '#':
             continue
         match = re.match(r'^([0-9]+|0x[0-9a-fA-F]+)[\t](.)$', ln)
-        assert match, f"{fname}: Invalid entry"
+        assert match, f"{fname} line {i}: Invalid entry"
         n = int(match.group(1),0)
         c = match.group(2)
         if ctd[n] == '':
@@ -409,7 +409,7 @@ def enctable_string_to_bytes(cte, s):
 def waditem_string_national_to_upper(stri):
     stro = ""
     for c in stri:
-        if c in "ê":
+        if c in "êô":
             stro = stro + unicodedata.normalize('NFKD', c).encode('ascii', 'ignore').decode('ascii', errors='ignore')
         elif c in "ìäåéöüñáàèíòúù":
             stro = stro + c.upper()
