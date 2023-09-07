@@ -433,7 +433,7 @@ msgstr ""
 
 #: scanner.objective:82
 msgctxt "objective text shown on scanner"
-msgid "Take dr Schweizer to see father black"
+msgid "Take dr Schweizer to see father Black"
 msgstr ""
 
 #: scanner.objective:83
@@ -443,7 +443,7 @@ msgstr ""
 
 #: scanner.objective:84
 msgctxt "objective text shown on scanner"
-msgid "Father black is dead"
+msgid "Father Black is dead"
 msgstr ""
 
 #: scanner.objective:85

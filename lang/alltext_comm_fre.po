@@ -433,7 +433,7 @@ msgstr "Ta proie t'a echappe"
 
 #: scanner.objective:82
 msgctxt "objective text shown on scanner"
-msgid "Take dr Schweizer to see father black"
+msgid "Take dr Schweizer to see father Black"
 msgstr "Emmene le dr Schweizer voir pere noir"
 
 #: scanner.objective:83
@@ -443,7 +443,7 @@ msgstr "Le dr Schweizer est mort"
 
 #: scanner.objective:84
 msgctxt "objective text shown on scanner"
-msgid "Father black is dead"
+msgid "Father Black is dead"
 msgstr "Pere noir est mort"
 
 #: scanner.objective:85
