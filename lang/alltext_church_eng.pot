@@ -828,7 +828,7 @@ msgstr ""
 #: mission.brief.mail10.par2.c2
 msgctxt "mission brief email orders"
 msgid ""
-"Our oracles tell us that a supremely important Syndicate official called KotoSek is "
+"Our oracles tell us that a supremely important Syndicate official called Koto Sek is "
 "visiting Cairo. He has a powerful entourage and is well-protected. However, in the "
 "name of all that is right, he must die."
 msgstr ""
@@ -836,7 +836,7 @@ msgstr ""
 #: mission.brief.mail10.par3.c5
 msgctxt "mission brief email paragraph"
 msgid ""
-"KotoSek plans to board a shuttle for parts unknown. Stop him as soon as you can. Make "
+"Koto Sek plans to board a shuttle for parts unknown. Stop him as soon as you can. Make "
 "sure that he is dead before you report back. If there are other casualties, then that "
 "is the way of things. I am sure you are used to that now."
 msgstr ""
@@ -863,7 +863,7 @@ msgstr ""
 
 #: mission.brief.mail10.map45.level1:3
 msgctxt "mission brief tactical information"
-msgid "Executive shuttle carrying KotoSek"
+msgid "Executive shuttle carrying Koto Sek"
 msgstr ""
 
 #: mission.title:43

@@ -1679,7 +1679,7 @@ msgstr "Exécutant de l'EuroCorp"
 
 #: mission.brief.mail14.map30.level46:4
 msgctxt "mission brief tactical information"
-msgid "Massive unguided identkey trace north of HQ district"
+msgid "Massive Unguided identkey trace north of HQ district"
 msgstr ""
 "Présence massive de Dévoyés repéré par code d'identification au nord QG"
 

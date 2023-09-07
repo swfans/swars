@@ -43,8 +43,8 @@ msgstr "Kehren sie zum hauptquartier zurück"
 
 #: scanner.objective:3
 msgctxt "objective text shown on scanner"
-msgid "Persuade yamaguchi technicians"
-msgstr "Berzeugen sie die techniker von yamaguchi"
+msgid "Persuade Yamaguchi technicians"
+msgstr "Berzeugen sie die techniker von Yamaguchi"
 
 #: scanner.objective:4
 msgctxt "objective text shown on scanner"
@@ -58,8 +58,8 @@ msgstr "Techniker verstorben"
 
 #: scanner.objective:6
 msgctxt "objective text shown on scanner"
-msgid "Persuade yamaguchi executives"
-msgstr "Berzeugen sie die manager von yamaguchi"
+msgid "Persuade Yamaguchi executives"
+msgstr "Berzeugen sie die manager von Yamaguchi"
 
 #: scanner.objective:7
 msgctxt "objective text shown on scanner"
@@ -68,8 +68,8 @@ msgstr "Manager verstorben"
 
 #: scanner.objective:8
 msgctxt "objective text shown on scanner"
-msgid "Neutralise yamaguchi agents"
-msgstr "Neutralisieren sie die yamaguchi-agenten"
+msgid "Neutralise Yamaguchi agents"
+msgstr "Neutralisieren sie die Yamaguchi-agenten"
 
 #: scanner.objective:9
 msgctxt "objective text shown on scanner"
@@ -283,8 +283,8 @@ msgstr "Professor Drennans assistentin ist gestorben"
 
 #: scanner.objective:52
 msgctxt "objective text shown on scanner"
-msgid "Eurocorp executives have been wiped out"
-msgstr "Eurocorp-manager wurden umgebracht"
+msgid "EuroCorp executives have been wiped out"
+msgstr "EuroCorp-manager wurden umgebracht"
 
 #: scanner.objective:53
 msgctxt "objective text shown on scanner"
@@ -293,8 +293,8 @@ msgstr "Befreien sie professor Drennan"
 
 #: scanner.objective:54
 msgctxt "objective text shown on scanner"
-msgid "Escort professor Drennan to Eurocorp facility"
-msgstr "Eskortieren sie professor Drennan zum Eurocorp-gebäude"
+msgid "Escort professor Drennan to EuroCorp facility"
+msgstr "Eskortieren sie professor Drennan zum EuroCorp-gebäude"
 
 #: scanner.objective:55
 msgctxt "objective text shown on scanner"
@@ -403,8 +403,8 @@ msgstr "Unser garten der meditation wurde zerstört"
 
 #: scanner.objective:76
 msgctxt "objective text shown on scanner"
-msgid "Convert Eurocorp agent"
-msgstr "Bekehrt Eurocorp-agenten"
+msgid "Convert EuroCorp agent"
+msgstr "Bekehrt EuroCorp-agenten"
 
 #: scanner.objective:77
 msgctxt "objective text shown on scanner"
@@ -483,13 +483,13 @@ msgstr "Zertretet das Ungeleitete ungeziefer"
 
 #: scanner.objective:92
 msgctxt "objective text shown on scanner"
-msgid "Wipe out Eurocorp personnel"
-msgstr "Beseitigt die Eurocorp-mitarbeiter"
+msgid "Wipe out EuroCorp personnel"
+msgstr "Beseitigt die EuroCorp-mitarbeiter"
 
 #: scanner.objective:93
 msgctxt "objective text shown on scanner"
-msgid "Eliminate Eurocorp agents"
-msgstr "Eliminiert die Eurocorp-agenten"
+msgid "Eliminate EuroCorp agents"
+msgstr "Eliminiert die EuroCorp-agenten"
 
 #: scanner.objective:94
 msgctxt "objective text shown on scanner"
@@ -568,13 +568,13 @@ msgstr "Mirabelle Lucy De Saxo ist gestorben"
 
 #: scanner.objective:110
 msgctxt "objective text shown on scanner"
-msgid "Destroy Eurocorp weapons bunker"
-msgstr "Zerstört den waffenbunker von Eurocorp"
+msgid "Destroy EuroCorp weapons bunker"
+msgstr "Zerstört den waffenbunker von EuroCorp"
 
 #: scanner.objective:111
 msgctxt "objective text shown on scanner"
-msgid "Steal Eurocorp weapon design"
-msgstr "Stehlt die waffenpläne von Eurocorp"
+msgid "Steal EuroCorp weapon design"
+msgstr "Stehlt die waffenpläne von EuroCorp"
 
 #: scanner.objective:112
 msgctxt "objective text shown on scanner"
@@ -598,7 +598,7 @@ msgstr "Verübt ein attentat auf hacker"
 
 #: scanner.objective:116
 msgctxt "objective text shown on scanner"
-msgid "Eliminate Eurocorp personnel controlling river port"
+msgid "Eliminate EuroCorp personnel controlling river port"
 msgstr "Eliminiert die streitkräfte, die den flusshafen kontrollieren"
 
 #: scanner.objective:117
@@ -608,8 +608,8 @@ msgstr "Kehrt zur IML-station zurück"
 
 #: scanner.objective:118
 msgctxt "objective text shown on scanner"
-msgid "Abduct Eurocorp captive"
-msgstr "Entführt den gefangenen von Eurocorp"
+msgid "Abduct EuroCorp captive"
+msgstr "Entführt den gefangenen von EuroCorp"
 
 #: scanner.objective:119
 msgctxt "objective text shown on scanner"
@@ -623,8 +623,8 @@ msgstr "Vernichtet die Forschungseinrichtungen"
 
 #: scanner.objective:121
 msgctxt "objective text shown on scanner"
-msgid "Eliminate agents of Eurocorp"
-msgstr "Eliminiert die agenten von Eurocorp"
+msgid "Eliminate agents of EuroCorp"
+msgstr "Eliminiert die agenten von EuroCorp"
 
 #: scanner.objective:122
 msgctxt "objective text shown on scanner"
@@ -663,7 +663,7 @@ msgstr "Ihr habt zugelassen, dass IX stirbt"
 
 #: scanner.objective:129
 msgctxt "objective text shown on scanner"
-msgid "Nothing can stop The Nine now. you have been defeated."
+msgid "Nothing can stop The Nine now. You have been defeated."
 msgstr "Nichts kann die Neun stoppen. ihr wurdet besiegt."
 
 #: scanner.objective:130
@@ -768,23 +768,23 @@ msgstr "Kehrt zu uns zurück"
 
 #: scanner.objective:150
 msgctxt "objective text shown on scanner"
-msgid "Eurocorp agents must join us or die"
-msgstr "Die Eurocorp-agenten müssen uns beitreten oder sterben"
+msgid "EuroCorp agents must join us or die"
+msgstr "Die EuroCorp-agenten müssen uns beitreten oder sterben"
 
 #: scanner.objective:151
 msgctxt "objective text shown on scanner"
-msgid "Neutralise Eurocorp agents"
-msgstr "Neutralisiert die Eurocorp-agenten"
+msgid "Neutralise EuroCorp agents"
+msgstr "Neutralisiert die EuroCorp-agenten"
 
 #: scanner.objective:152
 msgctxt "objective text shown on scanner"
-msgid "Assassinate Kotosek"
-msgstr "Tötet Kotosek"
+msgid "Assassinate Koto Sek"
+msgstr "Tötet Koto Sek"
 
 #: scanner.objective:153
 msgctxt "objective text shown on scanner"
-msgid "Neutralise all Eurocorp agents"
-msgstr "Neutralisiert alle Eurocorp-agenten"
+msgid "Neutralise all EuroCorp agents"
+msgstr "Neutralisiert alle EuroCorp-agenten"
 
 #: scanner.objective:154
 msgctxt "objective text shown on scanner"
@@ -808,8 +808,8 @@ msgstr "Für diese ketzerei werdet ihr sterben!"
 
 #: scanner.objective:158
 msgctxt "objective text shown on scanner"
-msgid "Eurocorp must choose between our faith or death"
-msgstr "Eurocorp muss zwischen unserem glauben und dem tod wählen"
+msgid "EuroCorp must choose between our faith or death"
+msgstr "EuroCorp muss zwischen unserem glauben und dem tod wählen"
 
 #: scanner.objective:159
 msgctxt "objective text shown on scanner"
@@ -1489,7 +1489,7 @@ msgstr "Experi-mentell"
 
 #: mapscreen.city30:4
 msgctxt "map screen location - language"
-msgid "Eurocorp Technical Multi-State Code"
+msgid "EuroCorp Technical Multi-State Code"
 msgstr "EuroCorp techn. Code"
 
 #: mapscreen.city30:5

@@ -1710,7 +1710,7 @@ msgstr "Manager von EuroCorp"
 
 #: mission.brief.mail14.map30.level46:4
 msgctxt "mission brief tactical information"
-msgid "Massive unguided identkey trace north of HQ district"
+msgid "Massive Unguided identkey trace north of HQ district"
 msgstr ""
 "Sehr starkes Identifikationsschlüsselsignal im nördlichen Bereich des "
 "Hauptquartiers"

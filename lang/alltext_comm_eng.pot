@@ -43,7 +43,7 @@ msgstr ""
 
 #: scanner.objective:3
 msgctxt "objective text shown on scanner"
-msgid "Persuade yamaguchi technicians"
+msgid "Persuade Yamaguchi technicians"
 msgstr ""
 
 #: scanner.objective:4
@@ -58,7 +58,7 @@ msgstr ""
 
 #: scanner.objective:6
 msgctxt "objective text shown on scanner"
-msgid "Persuade yamaguchi executives"
+msgid "Persuade Yamaguchi executives"
 msgstr ""
 
 #: scanner.objective:7
@@ -68,7 +68,7 @@ msgstr ""
 
 #: scanner.objective:8
 msgctxt "objective text shown on scanner"
-msgid "Neutralise yamaguchi agents"
+msgid "Neutralise Yamaguchi agents"
 msgstr ""
 
 #: scanner.objective:9
@@ -283,7 +283,7 @@ msgstr ""
 
 #: scanner.objective:52
 msgctxt "objective text shown on scanner"
-msgid "Eurocorp executives have been wiped out"
+msgid "EuroCorp executives have been wiped out"
 msgstr ""
 
 #: scanner.objective:53
@@ -293,7 +293,7 @@ msgstr ""
 
 #: scanner.objective:54
 msgctxt "objective text shown on scanner"
-msgid "Escort professor Drennan to Eurocorp facility"
+msgid "Escort professor Drennan to EuroCorp facility"
 msgstr ""
 
 #: scanner.objective:55
@@ -403,7 +403,7 @@ msgstr ""
 
 #: scanner.objective:76
 msgctxt "objective text shown on scanner"
-msgid "Convert Eurocorp agent"
+msgid "Convert EuroCorp agent"
 msgstr ""
 
 #: scanner.objective:77
@@ -483,12 +483,12 @@ msgstr ""
 
 #: scanner.objective:92
 msgctxt "objective text shown on scanner"
-msgid "Wipe out Eurocorp personnel"
+msgid "Wipe out EuroCorp personnel"
 msgstr ""
 
 #: scanner.objective:93
 msgctxt "objective text shown on scanner"
-msgid "Eliminate Eurocorp agents"
+msgid "Eliminate EuroCorp agents"
 msgstr ""
 
 #: scanner.objective:94
@@ -568,12 +568,12 @@ msgstr ""
 
 #: scanner.objective:110
 msgctxt "objective text shown on scanner"
-msgid "Destroy Eurocorp weapons bunker"
+msgid "Destroy EuroCorp weapons bunker"
 msgstr ""
 
 #: scanner.objective:111
 msgctxt "objective text shown on scanner"
-msgid "Steal Eurocorp weapon design"
+msgid "Steal EuroCorp weapon design"
 msgstr ""
 
 #: scanner.objective:112
@@ -598,7 +598,7 @@ msgstr ""
 
 #: scanner.objective:116
 msgctxt "objective text shown on scanner"
-msgid "Eliminate Eurocorp personnel controlling river port"
+msgid "Eliminate EuroCorp personnel controlling river port"
 msgstr ""
 
 #: scanner.objective:117
@@ -608,7 +608,7 @@ msgstr ""
 
 #: scanner.objective:118
 msgctxt "objective text shown on scanner"
-msgid "Abduct Eurocorp captive"
+msgid "Abduct EuroCorp captive"
 msgstr ""
 
 #: scanner.objective:119
@@ -623,7 +623,7 @@ msgstr ""
 
 #: scanner.objective:121
 msgctxt "objective text shown on scanner"
-msgid "Eliminate agents of Eurocorp"
+msgid "Eliminate agents of EuroCorp"
 msgstr ""
 
 #: scanner.objective:122
@@ -663,7 +663,7 @@ msgstr ""
 
 #: scanner.objective:129
 msgctxt "objective text shown on scanner"
-msgid "Nothing can stop The Nine now. you have been defeated."
+msgid "Nothing can stop The Nine now. You have been defeated."
 msgstr ""
 
 #: scanner.objective:130
@@ -768,22 +768,22 @@ msgstr ""
 
 #: scanner.objective:150
 msgctxt "objective text shown on scanner"
-msgid "Eurocorp agents must join us or die"
+msgid "EuroCorp agents must join us or die"
 msgstr ""
 
 #: scanner.objective:151
 msgctxt "objective text shown on scanner"
-msgid "Neutralise Eurocorp agents"
+msgid "Neutralise EuroCorp agents"
 msgstr ""
 
 #: scanner.objective:152
 msgctxt "objective text shown on scanner"
-msgid "Assassinate Kotosek"
+msgid "Assassinate Koto Sek"
 msgstr ""
 
 #: scanner.objective:153
 msgctxt "objective text shown on scanner"
-msgid "Neutralise all Eurocorp agents"
+msgid "Neutralise all EuroCorp agents"
 msgstr ""
 
 #: scanner.objective:154
@@ -808,7 +808,7 @@ msgstr ""
 
 #: scanner.objective:158
 msgctxt "objective text shown on scanner"
-msgid "Eurocorp must choose between our faith or death"
+msgid "EuroCorp must choose between our faith or death"
 msgstr ""
 
 #: scanner.objective:159
@@ -1489,7 +1489,7 @@ msgstr ""
 
 #: mapscreen.city30:4
 msgctxt "map screen location - language"
-msgid "Eurocorp Technical Multi-State Code"
+msgid "EuroCorp Technical Multi-State Code"
 msgstr ""
 
 #: mapscreen.city30:5
