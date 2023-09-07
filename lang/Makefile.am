@@ -55,7 +55,25 @@ $(langallger_WADFILES): $(langallger_POFILES)
 	$(MKDIR_P) "$(@D)"
 	$(TEXTWAD) -t "$(word 1,$(langall_eu_ETBLS))" -m "$(word 2,$(langall_eu_ETBLS))" -w $@ -c $+
 
+langallita_WADFILES = \
+    ita/alltext.wad \
+    ita/alltext.idx
+
+langallita_POFILES = \
+	alltext_syndct_ita.po \
+	alltext_church_ita.po \
+	alltext_punks_ita.po \
+	alltext_comm_ita.po
+
+langallitadir = $(prefix)/opt/$(PACKAGE)/language/ita
+langallita_DATA = $(langallita_WADFILES)
+
+$(langallita_WADFILES): $(langallita_POFILES)
+	$(MKDIR_P) "$(@D)"
+	$(TEXTWAD) -t "$(word 1,$(langall_eu_ETBLS))" -m "$(word 2,$(langall_eu_ETBLS))" -w $@ -c $+
+
 EXTRA_DIST = \
 	langallfre \
 	langallger \
+	langallita \
 	langalleng
