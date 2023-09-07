@@ -38,6 +38,24 @@ $(langallfre_WADFILES): $(langallfre_POFILES)
 	$(MKDIR_P) "$(@D)"
 	$(TEXTWAD) -t "$(word 1,$(langall_eu_ETBLS))" -m "$(word 2,$(langall_eu_ETBLS))" -w $@ -c $+
 
+langallger_WADFILES = \
+    ger/alltext.wad \
+    ger/alltext.idx
+
+langallger_POFILES = \
+	alltext_syndct_ger.po \
+	alltext_church_ger.po \
+	alltext_punks_ger.po \
+	alltext_comm_ger.po
+
+langallgerdir = $(prefix)/opt/$(PACKAGE)/language/ger
+langallger_DATA = $(langallger_WADFILES)
+
+$(langallger_WADFILES): $(langallger_POFILES)
+	$(MKDIR_P) "$(@D)"
+	$(TEXTWAD) -t "$(word 1,$(langall_eu_ETBLS))" -m "$(word 2,$(langall_eu_ETBLS))" -w $@ -c $+
+
 EXTRA_DIST = \
 	langallfre \
+	langallger \
 	langalleng
