@@ -89,9 +89,27 @@ $(langallspa_WADFILES): $(langallspa_POFILES)
 	$(MKDIR_P) "$(@D)"
 	$(TEXTWAD) -t "$(word 1,$(langall_eu_ETBLS))" -m "$(word 2,$(langall_eu_ETBLS))" -w $@ -c $+
 
+langallswe_WADFILES = \
+    swe/alltext.wad \
+    swe/alltext.idx
+
+langallswe_POFILES = \
+	alltext_syndct_swe.po \
+	alltext_church_swe.po \
+	alltext_punks_swe.po \
+	alltext_comm_swe.po
+
+langallswedir = $(prefix)/opt/$(PACKAGE)/language/swe
+langallswe_DATA = $(langallswe_WADFILES)
+
+$(langallswe_WADFILES): $(langallswe_POFILES)
+	$(MKDIR_P) "$(@D)"
+	$(TEXTWAD) -t "$(word 1,$(langall_eu_ETBLS))" -m "$(word 2,$(langall_eu_ETBLS))" -w $@ -c $+
+
 EXTRA_DIST = \
 	langallfre \
 	langallger \
 	langallita \
 	langallspa \
+	langallswe \
 	langalleng
