@@ -72,8 +72,26 @@ $(langallita_WADFILES): $(langallita_POFILES)
 	$(MKDIR_P) "$(@D)"
 	$(TEXTWAD) -t "$(word 1,$(langall_eu_ETBLS))" -m "$(word 2,$(langall_eu_ETBLS))" -w $@ -c $+
 
+langallspa_WADFILES = \
+    spa/alltext.wad \
+    spa/alltext.idx
+
+langallspa_POFILES = \
+	alltext_syndct_spa.po \
+	alltext_church_spa.po \
+	alltext_punks_spa.po \
+	alltext_comm_spa.po
+
+langallspadir = $(prefix)/opt/$(PACKAGE)/language/spa
+langallspa_DATA = $(langallspa_WADFILES)
+
+$(langallspa_WADFILES): $(langallspa_POFILES)
+	$(MKDIR_P) "$(@D)"
+	$(TEXTWAD) -t "$(word 1,$(langall_eu_ETBLS))" -m "$(word 2,$(langall_eu_ETBLS))" -w $@ -c $+
+
 EXTRA_DIST = \
 	langallfre \
 	langallger \
 	langallita \
+	langallspa \
 	langalleng
