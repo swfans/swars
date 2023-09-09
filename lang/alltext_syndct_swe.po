@@ -21,7 +21,7 @@ msgstr ""
 "Project-Id-Version: Menu text for SW Port\n"
 "Report-Msgid-Bugs-To: https://github.com/swfans/swars/issues\n"
 "POT-Creation-Date: 2023-09-05 11:32+0200\n"
-"PO-Revision-Date: 2023-09-08 12:14+0200\n"
+"PO-Revision-Date: 2023-09-09 16:27+0200\n"
 "Last-Translator: Mefistotelis <mefistotelis@gmail.com>\n"
 "Language-Team: Syndicate Wars Fans <github.com/swfans>\n"
 "Language: sv_SE\n"
@@ -441,7 +441,6 @@ msgstr "Tekniker"
 #: mission.brief.mail6.map10.level1:4 mission.brief.mail10.map4.level1:4
 #: mission.brief.mail11b.map7.level1:3 mission.brief.mail11d.map26.level1:4
 #: mission.brief.mail11c.map44.level1:4 mission.brief.mail11a.map6.level1:4
-#: mission.brief.mail15a.map47.level1:4
 msgctxt "mission brief tactical information"
 msgid "Evac zone: IML Link"
 msgstr "Evakueringszon: IML-länk"
@@ -1298,8 +1297,8 @@ msgstr "Dropp-plats: Santiagos IML-länk"
 #: mission.brief.mail11b.map7.level1:2 mission.brief.mail11d.map26.level1:3
 #: mission.brief.mail11c.map44.level1:3 mission.brief.mail11a.map6.level1:3
 msgctxt "mission brief tactical information"
-msgid "Target"
-msgstr "Mäl"
+msgid "Target scientist"
+msgstr "Målvetenskapsman"
 
 #: mission.brief.mail11b.map7.level1:4
 msgctxt "mission brief tactical information"
@@ -1635,7 +1634,7 @@ msgstr ""
 #: mission.brief.mail14.par14.c4 mission.brief.mail15.par10.c4
 #: mission.brief.mail17.par10.c4 mission.brief.mail18.par8.c4
 #: mission.brief.mail19.par15.c4 mission.brief.mail20.par9.c4
-#: mission.brief.mail21.par10.c4
+#: mission.brief.mail21.par11.c4
 msgctxt "mission brief email sender"
 msgid "London Artificial Intelligence"
 msgstr "Londons Artificiella Intelligens"
@@ -1719,8 +1718,8 @@ msgstr ""
 
 #: mission.brief.mail15a.map47.level1:1
 msgctxt "mission brief tactical information"
-msgid "Dropsite: Tokyo IML Link"
-msgstr "Dropp-plats: Tokyos IML-länk"
+msgid "Dropsite: Tokyo IML Link A"
+msgstr "Dropp-plats: Tokyos IML-länk A"
 
 #: mission.brief.mail15a.map47.level1:2
 msgctxt "mission brief tactical information"
@@ -1731,6 +1730,11 @@ msgstr "Fäste för sektmedlemmar"
 msgctxt "mission brief tactical information"
 msgid "Professor Drennan"
 msgstr "Professor Drennan"
+
+#: mission.brief.mail15a.map47.level1:4
+msgctxt "mission brief tactical information"
+msgid "Evac zone: Tokyo IML Link B"
+msgstr "Evakueringszon: Tokyos IML-länk B"
 
 #: mission.brief.mail15a.map47.level1:5
 msgctxt "mission brief tactical information"
@@ -2248,6 +2252,23 @@ msgstr ""
 "Rapporter från andra AIs antyder en global minskning av fanatisk aktivitet, "
 "vilket kan innebära att kyrkan kanske håller på att samla en så stor "
 "attackstyrka som möjligt. En attack mot Colombo är nära förestående."
+
+#: mission.brief.mail21.par10.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Be adviced: In case of inability to solve the situation on the ground, you "
+"may need to sweep facilities across the orbital elevator. It is strongly "
+"discouraged to bring explosives - using or carrying them on the orbit risks "
+"permanently closing that path. It is also expected that The Nine has taken "
+"any new weapon prototypes and planted traps. Those might be challenging, and "
+"there's no going back."
+msgstr ""
+"Få råd: I händelse av oförmåga att lösa situationen på marken kan du behöva "
+"sopa anläggningar över orbitalhissen. Det avråds starkt från att ta med "
+"sprängämnen - att använda eller bära dem i omloppsbanan riskerar att "
+"permanent stänga den vägen. Det förväntas också att The Nine har tagit några "
+"nya vapenprototyper och planterat fällor. De kan vara utmanande, och det "
+"finns ingen återvändo."
 
 #: mission.brief.mail21a.map46.level15:1
 msgctxt "mission brief tactical information"

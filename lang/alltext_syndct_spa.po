@@ -21,7 +21,7 @@ msgstr ""
 "Project-Id-Version: Menu text for SW Port\n"
 "Report-Msgid-Bugs-To: https://github.com/swfans/swars/issues\n"
 "POT-Creation-Date: 2023-09-05 11:32+0200\n"
-"PO-Revision-Date: 2023-09-08 00:57+0200\n"
+"PO-Revision-Date: 2023-09-09 16:25+0200\n"
 "Last-Translator: Mefistotelis <mefistotelis@gmail.com>\n"
 "Language-Team: Syndicate Wars Fans <github.com/swfans>\n"
 "Language: es_ES\n"
@@ -448,7 +448,6 @@ msgstr "Técnicos"
 #: mission.brief.mail6.map10.level1:4 mission.brief.mail10.map4.level1:4
 #: mission.brief.mail11b.map7.level1:3 mission.brief.mail11d.map26.level1:4
 #: mission.brief.mail11c.map44.level1:4 mission.brief.mail11a.map6.level1:4
-#: mission.brief.mail15a.map47.level1:4
 msgctxt "mission brief tactical information"
 msgid "Evac zone: IML Link"
 msgstr "Zona de Evacuación: Enlace IML"
@@ -1106,9 +1105,9 @@ msgstr ""
 "Hemos seguido la pista de todo el tráfico de UTOPIA que hemos podido. La "
 "Iglesia de la Nueva Era ha secuestrado bastantes paquetes y del resto, la "
 "mayoría son escombros sin sentido dejados por el Harbinger. Sin embargo, I."
-"A. de Londres nos ha notificado que algún hacker más ha entrado en la red "
-"de UTOPIA, ahora que es posible. Parece ser Vissick. éltimamente, hacambiado "
-"y parece un fantasma. No hay forma de saber desde donde desde estaba "
+"A. de Londres nos ha notificado que algún hacker más ha entrado en la red de "
+"UTOPIA, ahora que es posible. Parece ser Vissick. éltimamente, hacambiado y "
+"parece un fantasma. No hay forma de saber desde donde desde estaba "
 "conectando. Pero debe haber sido Vissick. Prácticamente cualquiera del "
 "Sindicato podría haber hecho lo que él le ordenase. Sólo Dios sabe por qué "
 "está en contacto con esa canalla Descontrolada. Le seguiré buscando."
@@ -1293,8 +1292,8 @@ msgid ""
 "persuade these scientists at your discretion."
 msgstr ""
 "La última misión de Vissick fue información reservada - y UTOPIA ha estado "
-"tan afectado por el virus Harbinger - que la información de la naturaleza "
-"de su misión es incompleta. Sin embargo, nosotros sabemos que él estuvo "
+"tan afectado por el virus Harbinger - que la información de la naturaleza de "
+"su misión es incompleta. Sin embargo, nosotros sabemos que él estuvo "
 "trabajando en el equipo de los mejores investigadores de Gel Data y Hexagon "
 "Corporation en un proyecto en Islandia. Hasta ahora, ninguno de los miembros "
 "delequipo de investigación han sido localizados. Busca en todas las "
@@ -1315,8 +1314,8 @@ msgstr "Destino: Enlace IML Santiago"
 #: mission.brief.mail11b.map7.level1:2 mission.brief.mail11d.map26.level1:3
 #: mission.brief.mail11c.map44.level1:3 mission.brief.mail11a.map6.level1:3
 msgctxt "mission brief tactical information"
-msgid "Target"
-msgstr "Objetivo"
+msgid "Target scientist"
+msgstr "Objetivo científico"
 
 #: mission.brief.mail11b.map7.level1:4
 msgctxt "mission brief tactical information"
@@ -1493,8 +1492,8 @@ msgid ""
 "programme."
 msgstr ""
 "Es imprescindible que tus agentes se aprovechen inmediatamente del acceso al "
-"enlace IML transpolar. Envía a tu equipo a Reikiavik para estudiar el "
-"centro de investigación del C3. Es difícil asesorarte sobre lo que te vas a "
+"enlace IML transpolar. Envía a tu equipo a Reikiavik para estudiar el centro "
+"de investigación del C3. Es difícil asesorarte sobre lo que te vas a "
 "encontrar allí, dada la naturaleza sensitiva del lugar, tus agentes deben "
 "estar en alerta máxima.Recoge los datos que puedas sobre el estado del "
 "programa C3."
@@ -1649,16 +1648,16 @@ msgid ""
 "monitored by local police, who are now under our direct control."
 msgstr ""
 "El profesor Kurt Drennan dará a nuestro departamento un informe de "
-"estrategia inmediata, aquí en Londres. Drennan y su ayudante tienen "
-"previsto recoger una copia del Codex en la presentación en el Nuevo Hyde "
-"Park. Nuestro grupo de Jefes Ejecutivos recientemente reconstruido asistirá. "
-"El área se mantendrá limpia de ejecutivos de bajo nivel por la policía "
-"local bajo nuestro control directo."
+"estrategia inmediata, aquí en Londres. Drennan y su ayudante tienen previsto "
+"recoger una copia del Codex en la presentación en el Nuevo Hyde Park. "
+"Nuestro grupo de Jefes Ejecutivos recientemente reconstruido asistirá. El "
+"área se mantendrá limpia de ejecutivos de bajo nivel por la policía local "
+"bajo nuestro control directo."
 
 #: mission.brief.mail14.par14.c4 mission.brief.mail15.par10.c4
 #: mission.brief.mail17.par10.c4 mission.brief.mail18.par8.c4
 #: mission.brief.mail19.par15.c4 mission.brief.mail20.par9.c4
-#: mission.brief.mail21.par10.c4
+#: mission.brief.mail21.par11.c4
 msgctxt "mission brief email sender"
 msgid "London Artificial Intelligence"
 msgstr "Inteligencia Artificial de Londres"
@@ -1724,8 +1723,8 @@ msgstr ""
 "capaz de eludir mi escáner, matar al ayudante de Drennan, y ocupar su lugar "
 "durante la conferencia. El secuestro ocurrió inmediatamente después de la "
 "reunión. La costosa incursión fanática en la reunión y la consiguiente "
-"perdida de personal fueron simplemente tácticas de distracción para llevar "
-"a cabo la fase final del secuestro de Drennan."
+"perdida de personal fueron simplemente tácticas de distracción para llevar a "
+"cabo la fase final del secuestro de Drennan."
 
 #: mission.brief.mail15.par8.c5
 msgctxt "mission brief email paragraph"
@@ -1747,8 +1746,8 @@ msgstr ""
 
 #: mission.brief.mail15a.map47.level1:1
 msgctxt "mission brief tactical information"
-msgid "Dropsite: Tokyo IML Link"
-msgstr "Destino: Enlace IML Tokio"
+msgid "Dropsite: Tokyo IML Link A"
+msgstr "Destino: Enlace IML A de Tokio"
 
 #: mission.brief.mail15a.map47.level1:2
 msgctxt "mission brief tactical information"
@@ -1759,6 +1758,11 @@ msgstr "Fortaleza cultista"
 msgctxt "mission brief tactical information"
 msgid "Professor Drennan"
 msgstr "Profesor Drennan"
+
+#: mission.brief.mail15a.map47.level1:4
+msgctxt "mission brief tactical information"
+msgid "Evac zone: Tokyo IML Link B"
+msgstr "Zona Evacuación: Enlace IML B de Tokio"
 
 #: mission.brief.mail15a.map47.level1:5
 msgctxt "mission brief tactical information"
@@ -2286,6 +2290,23 @@ msgstr ""
 "actividad fanática, sugiriendo que la Iglesia puede estar reuniendo una "
 "fuerza de ataque tan grande como pueda juntar. Un ataque sobre Colombo es "
 "inminente."
+
+#: mission.brief.mail21.par10.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Be adviced: In case of inability to solve the situation on the ground, you "
+"may need to sweep facilities across the orbital elevator. It is strongly "
+"discouraged to bring explosives - using or carrying them on the orbit risks "
+"permanently closing that path. It is also expected that The Nine has taken "
+"any new weapon prototypes and planted traps. Those might be challenging, and "
+"there's no going back."
+msgstr ""
+"Tenga cuidado: en caso de que no pueda resolver la situación en tierra, es "
+"posible que deba barrer las instalaciones a través del ascensor orbital. Se "
+"desaconseja encarecidamente llevar explosivos: utilizarlos o transportarlos "
+"en órbita corre el riesgo de cerrar permanentemente ese camino. También se "
+"espera que Los Nueve hayan tomado nuevos prototipos de armas y hayan "
+"colocado trampas. Esos pueden ser un desafío y no hay vuelta atrás."
 
 #: mission.brief.mail21a.map46.level15:1
 msgctxt "mission brief tactical information"

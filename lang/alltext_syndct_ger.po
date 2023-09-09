@@ -21,7 +21,7 @@ msgstr ""
 "Project-Id-Version: Menu text for SW Port\n"
 "Report-Msgid-Bugs-To: https://github.com/swfans/swars/issues\n"
 "POT-Creation-Date: 2023-09-05 11:32+0200\n"
-"PO-Revision-Date: 2023-09-07 11:48+0200\n"
+"PO-Revision-Date: 2023-09-09 16:18+0200\n"
 "Last-Translator: Mefistotelis <mefistotelis@gmail.com>\n"
 "Language-Team: Syndicate Wars Fans <github.com/swfans>\n"
 "Language: de_DE\n"
@@ -443,7 +443,6 @@ msgstr "Techniker"
 #: mission.brief.mail6.map10.level1:4 mission.brief.mail10.map4.level1:4
 #: mission.brief.mail11b.map7.level1:3 mission.brief.mail11d.map26.level1:4
 #: mission.brief.mail11c.map44.level1:4 mission.brief.mail11a.map6.level1:4
-#: mission.brief.mail15a.map47.level1:4
 msgctxt "mission brief tactical information"
 msgid "Evac zone: IML Link"
 msgstr "Landezone: IML-Station"
@@ -1332,8 +1331,8 @@ msgstr "Absprunggebiet: Santiago, IML-Station"
 #: mission.brief.mail11b.map7.level1:2 mission.brief.mail11d.map26.level1:3
 #: mission.brief.mail11c.map44.level1:3 mission.brief.mail11a.map6.level1:3
 msgctxt "mission brief tactical information"
-msgid "Target"
-msgstr "Ziel"
+msgid "Target scientist"
+msgstr "Zielwissenschaftler"
 
 #: mission.brief.mail11b.map7.level1:4
 msgctxt "mission brief tactical information"
@@ -1685,7 +1684,7 @@ msgstr ""
 #: mission.brief.mail14.par14.c4 mission.brief.mail15.par10.c4
 #: mission.brief.mail17.par10.c4 mission.brief.mail18.par8.c4
 #: mission.brief.mail19.par15.c4 mission.brief.mail20.par9.c4
-#: mission.brief.mail21.par10.c4
+#: mission.brief.mail21.par11.c4
 msgctxt "mission brief email sender"
 msgid "London Artificial Intelligence"
 msgstr "Künstliche Intelligenz London"
@@ -1776,8 +1775,8 @@ msgstr ""
 
 #: mission.brief.mail15a.map47.level1:1
 msgctxt "mission brief tactical information"
-msgid "Dropsite: Tokyo IML Link"
-msgstr "Absprunggebiet: Tokio, IML-Station"
+msgid "Dropsite: Tokyo IML Link A"
+msgstr "Absprunggebiet: Tokio, IML-Station A"
 
 #: mission.brief.mail15a.map47.level1:2
 msgctxt "mission brief tactical information"
@@ -1789,6 +1788,11 @@ msgctxt "mission brief tactical information"
 msgid "Professor Drennan"
 msgstr "Professor Drennan"
 
+#: mission.brief.mail15a.map47.level1:4
+msgctxt "mission brief tactical information"
+msgid "Evac zone: Tokyo IML Link B"
+msgstr "Landezone: Tokio, IML-Station B"
+
 #: mission.brief.mail15a.map47.level1:5
 msgctxt "mission brief tactical information"
 msgid "Laser turrets under police control"
@@ -1797,7 +1801,7 @@ msgstr "Lasertürme unter Polizeikontrolle"
 #: mission.brief.mail15a.map47.level1:6
 msgctxt "mission brief tactical information"
 msgid "Estimated contents value of bank vault: 2.5M Cr"
-msgstr "Geschätzter Inhalt des Banktresors: 2.5MCr"
+msgstr "Geschätzter Inhalt des Banktresors: 2.5M Cr"
 
 #: mission.brief.mail15b.map3.level1:1
 msgctxt "mission brief tactical information"
@@ -2298,7 +2302,7 @@ msgstr ""
 msgctxt "mission brief email paragraph"
 msgid ""
 "Professor Drennan fears that the Nine have plans to carry into practice some "
-"of the theories set out in the Codex.Namely, to enhance the power of the "
+"of the theories set out in the Codex. Namely, to enhance the power of the "
 "experimental ionospheric re-calibration equipment being developedby "
 "scientists at the Amundsen Research Colony on the surface of the Moon, and "
 "to use it as a weapon."
@@ -2321,6 +2325,24 @@ msgstr ""
 "Kirchen-Aktivitäten nach. Das lässt vermuten, dass die Kultisten vielleicht "
 "eine möglichst grosse Angriffstruppe zusammenziehen. Ein Angriff auf Colombo "
 "steht kurz bevor."
+
+#: mission.brief.mail21.par10.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Be adviced: In case of inability to solve the situation on the ground, you "
+"may need to sweep facilities across the orbital elevator. It is strongly "
+"discouraged to bring explosives - using or carrying them on the orbit risks "
+"permanently closing that path. It is also expected that The Nine has taken "
+"any new weapon prototypes and planted traps. Those might be challenging, and "
+"there's no going back."
+msgstr ""
+"Bitte beachten Sie: Falls die Situation vor Ort nicht gelöst werden kann, "
+"müssen Sie möglicherweise die Einrichtungen über den Orbitalaufzug fegen. Es "
+"wird dringend davon abgeraten, Sprengstoffe mitzubringen – deren Verwendung "
+"oder Mitführen im Orbit birgt die Gefahr, dass dieser Weg dauerhaft "
+"blockiert wird. Es wird auch erwartet, dass die Neun neue Waffenprototypen "
+"übernommen und Fallen aufgestellt haben. Das könnte eine Herausforderung "
+"sein, und es gibt kein Zurück mehr."
 
 #: mission.brief.mail21a.map46.level15:1
 msgctxt "mission brief tactical information"
