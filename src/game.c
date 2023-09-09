@@ -84,6 +84,18 @@ struct PacketFileHead {
     ushort levelno;
 };
 
+struct UnknStru03 { // sizeof = 20
+  ushort anonymous_0;
+  ushort anonymous_1;
+  ubyte anonymous_2;
+  ushort anonymous_3;
+  ubyte anonymous_4;
+  ubyte anonymous_5[5];
+  ubyte anonymous_6;
+  ubyte anonymous_7[5];
+  ubyte field_13;
+};
+
 struct Element;
 struct Frame;
 
@@ -145,6 +157,9 @@ extern long dword_1DC36C;
 extern ubyte current_frame;
 extern long sound_heap_size;
 extern struct SampleTable *sound_heap_memory;
+
+extern struct UnknStru03 unkn_stru_03[8];
+extern ubyte unkn_stru_03_count;
 
 extern struct GamePanel *game_panel;
 extern struct GamePanel game_panel_lo[];
@@ -9331,8 +9346,92 @@ void frame_unkn_func_06(void)
 
 void load_netscan_data(ubyte city_id, ubyte a2)
 {
+#if 0
     asm volatile ("call ASM_load_netscan_data\n"
         : : "a" (city_id), "d" (a2));
+#else
+    char *p;
+    int i, k;
+    char *text;
+    TbBool found;
+
+    found = 0;
+    my_set_text_window(unkn36_box.X + 4, unkn36_box.ScrollWindowOffset + unkn36_box.Y + 4,
+      unkn36_box.Width - 20, unkn36_box.ScrollWindowHeight);
+    lbFontPtr = small_med_font;
+    unkn36_box.Lines = 0;
+    if ( load_file_wad("textdata/netscan.txt", "qdata/alltext", mem_unkn03) != -1 )
+    {
+      short cmapno, clevel;
+      char secnum_str[5];
+      int secnum_int;
+      p = mem_unkn03;
+      while ( !found )
+      {
+          // Find section
+          char c;
+          do
+              c = *p++;
+          while ((c != '[') && (c != '\0'));
+          if (c != '[') break;
+        
+          // Get section name
+          for (k = 0; k < 4; k++)
+          {
+              secnum_str[k] = *p++;
+          }
+          secnum_str[4] = 0;
+          // Go to EOLN
+          do
+              c = *p++;
+          while ((c != '\n') && (c != '\0'));
+          // Get number from section name
+          sscanf(secnum_str, "%d", &secnum_int);
+          cmapno = secnum_int / 100;
+          clevel = secnum_int % 100;
+          if ((clevel == a2) && (cmapno == cities[city_id].MapID))
+          {
+              found = 1;
+              for (i = 0; i < unkn_stru_03_count; i++)
+              {
+                unkn_stru_03[i].anonymous_1 = p - mem_unkn03;
+                do
+                  c = *p++;
+                while ((c != '\n') && (c != '\0'));
+                *(p - 1) = '\0';
+
+                my_preprocess_text(mem_unkn03 + unkn_stru_03[i].anonymous_1);
+                k = my_count_lines(mem_unkn03 + unkn_stru_03[i].anonymous_1);
+                unkn_stru_03[i].anonymous_4 = k;
+                if (!unkn_stru_03[i].anonymous_0)
+                  unkn36_box.Lines += unkn_stru_03[i].anonymous_4;
+              }
+          }
+      }
+    }
+
+    if (cities[city_id].Info == 0)
+    {
+        
+        for (i = 0; i < unkn_stru_03_count; i++)
+        {
+            if (unkn_stru_03[i].anonymous_0)
+                break;
+        }
+        cities[city_id].Info = i;
+    }
+
+    i = cities[city_id].Info;
+    if (i >= unkn_stru_03_count) {
+        brief_NETSCAN_COST_box.Text2[0] = '\0';
+        text = gui_strings[495];
+    } else {
+        k = 100 * unkn_stru_03[i].anonymous_0;
+        sprintf(brief_NETSCAN_COST_box.Text2, "%d", k);
+        text = gui_strings[442];
+    }
+    brief_NETSCAN_COST_box.Text1 = text;
+#endif
 }
 
 void load_all_text(ubyte a1)
