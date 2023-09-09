@@ -21,7 +21,7 @@ msgstr ""
 "Project-Id-Version: Menu text for SW Port\n"
 "Report-Msgid-Bugs-To: https://github.com/swfans/swars/issues\n"
 "POT-Creation-Date: 2023-09-05 11:30+0200\n"
-"PO-Revision-Date: 2023-09-08 02:06+0200\n"
+"PO-Revision-Date: 2023-09-09 17:23+0200\n"
 "Last-Translator: Mefistotelis <mefistotelis@gmail.com>\n"
 "Language-Team: Syndicate Wars Fans <github.com/swfans>\n"
 "Language: es_ES\n"
@@ -177,18 +177,10 @@ msgctxt "mission brief tactical information"
 msgid "Disposition of EuroCorp guards"
 msgstr "Disposición de guardias de EuroCorp"
 
-#: mission.brief.mail1.map35.level2:4 mission.brief.mail3.map26.level2:4
-#: mission.brief.mail4.map7.level3:3 mission.brief.mail5.map22.level3:6
-#: mission.brief.mail6c.map50.level47:3 mission.brief.mail9b.map26.level3:3
-#: mission.brief.mail9a.map7.level5:3 mission.brief.mail9d.map25.level46:4
-#: mission.brief.mail10.map45.level1:4 mission.brief.mail13.map30.level2:5
-#: mission.brief.mail14.map4.level3:7 mission.brief.mail15.map20.level16:3
-#: mission.brief.mail16.map44.level3:3 mission.brief.mail17.map32.level2:3
-#: mission.brief.mail18.map27.level1:4 mission.brief.mail19.map3.level2:4
-#: mission.brief.mail22.map44.level2:3 mission.brief.mail23.map22.level4:4
+#: mission.brief.mail1.map35.level2:4
 msgctxt "mission brief tactical information"
-msgid "Sanctuary"
-msgstr "Santuario"
+msgid "Sanctuary: Detroit IML Link"
+msgstr "Santuario: Enlace IML Detroit"
 
 #: mission.brief.mail1.map35.level2:5
 msgctxt "mission brief tactical information"
@@ -344,6 +336,11 @@ msgctxt "mission brief tactical information"
 msgid "Chico Ramirez and his gang occupy this Old Calendar high street"
 msgstr "Chico Ramírez y su banda ocupan la calle Calendario Antiguo"
 
+#: mission.brief.mail3.map26.level2:4 mission.brief.mail9b.map26.level3:3
+msgctxt "mission brief tactical information"
+msgid "Sanctuary: Buenos Aires IML Link"
+msgstr "Santuario: Enlace IML Buenos Aires"
+
 #: mission.brief.mail3.map26.level2:5
 msgctxt "mission brief tactical information"
 msgid "Eavesdrop: city vaults estimated to contain Cr 1,000,000"
@@ -426,6 +423,11 @@ msgstr "Zona Aterrizaje: APC para repartir a tus acólitos"
 msgctxt "mission brief tactical information"
 msgid "EuroCorp agent search area"
 msgstr "Buscar área de agentes EuroCorp"
+
+#: mission.brief.mail4.map7.level3:3
+msgctxt "mission brief tactical information"
+msgid "Sanctuary: Santiago monasterial complex"
+msgstr "Santuario: Conjunto monástico de Santiago"
 
 #: mission.brief.mail4.map7.level3:4
 msgctxt "mission brief tactical information"
@@ -532,6 +534,11 @@ msgstr "Vehículo objetivo"
 msgctxt "mission brief tactical information"
 msgid "Convoy's destination"
 msgstr "Destinos del convoy"
+
+#: mission.brief.mail5.map22.level3:6 mission.brief.mail23.map22.level4:4
+msgctxt "mission brief tactical information"
+msgid "Sanctuary: Johannesburg IML Link"
+msgstr "Santuario: Enlace IML Johannesburg"
 
 #: mission.title:10
 msgctxt "mission title"
@@ -665,6 +672,11 @@ msgstr "Zona Aterrizaje: Enlace IML Vancouver"
 msgctxt "mission brief tactical information"
 msgid "Dr Schweizer's laboratory"
 msgstr "Laboratorio Dr. Schweizer"
+
+#: mission.brief.mail6c.map50.level47:3
+msgctxt "mission brief tactical information"
+msgid "Sanctuary: Vancouver IML Link"
+msgstr "Santuario: Enlace IML Vancouver"
 
 #: mission.brief.mail6c.map50.level47:4
 msgctxt "mission brief tactical information"
@@ -965,6 +977,11 @@ msgctxt "mission brief tactical information"
 msgid "Our temple"
 msgstr "Nuestro Templo"
 
+#: mission.brief.mail9a.map7.level5:3
+msgctxt "mission brief tactical information"
+msgid "Sanctuary: Santiago IML Link"
+msgstr "Santuario: Enlace IML Santiago"
+
 #: mission.brief.mail9a.map7.level5:4
 msgctxt "mission brief tactical information"
 msgid ""
@@ -978,6 +995,11 @@ msgstr ""
 msgctxt "mission brief tactical information"
 msgid "Those you shall keep from harm"
 msgstr "Aquellos que guardaras del daño"
+
+#: mission.brief.mail9d.map25.level46:4
+msgctxt "mission brief tactical information"
+msgid "Sanctuary: Tripoli IML Link"
+msgstr "Santuario: Enlace IML Trípoli"
 
 #: mission.brief.mail9d.map25.level46:5
 msgctxt "mission brief tactical information"
@@ -1053,6 +1075,11 @@ msgstr "C.G. EuroCorp"
 msgctxt "mission brief tactical information"
 msgid "Executive shuttle carrying Koto Sek"
 msgstr "Lanzador llevando al Ejecutivo Koto Sek"
+
+#: mission.brief.mail10.map45.level1:4
+msgctxt "mission brief tactical information"
+msgid "Sanctuary: Cairo IML Link"
+msgstr "Santuario: Enlace IML El Cairo"
 
 #: mission.title:43
 msgctxt "mission title"
@@ -1272,8 +1299,8 @@ msgstr ""
 
 #: mission.brief.mail13.map30.level2:1
 msgctxt "mission brief tactical information"
-msgid "Landing Ground: London"
-msgstr "Zona Aterrizaje: Londres"
+msgid "Landing Ground: London IML Link"
+msgstr "Zona Aterrizaje: Enlace IML Londres"
 
 #: mission.brief.mail13.map30.level2:2
 msgctxt "mission brief tactical information"
@@ -1289,6 +1316,11 @@ msgstr "Profesor Drennan"
 msgctxt "mission brief tactical information"
 msgid "Presentation podium"
 msgstr "Podio de conferencia"
+
+#: mission.brief.mail13.map30.level2:5
+msgctxt "mission brief tactical information"
+msgid "Sanctuary: London outlet road"
+msgstr "Santuario: Outlet Road de Londres"
 
 #: mission.brief.mail13.map30.level2:6
 msgctxt "mission brief tactical information"
@@ -1416,6 +1448,11 @@ msgctxt "mission brief tactical information"
 msgid "Our temple and satellite uplink"
 msgstr "Nuestro templo y satélite acoplados"
 
+#: mission.brief.mail14.map4.level3:7
+msgctxt "mission brief tactical information"
+msgid "Sanctuary: New York IML Link"
+msgstr "Santuario: Enlace IML Nueva York"
+
 #: mission.brief.mail14.map4.level3:8
 msgctxt "mission brief tactical information"
 msgid "Eavesdrop: estimated value of vault Cr 2,000,000"
@@ -1512,6 +1549,11 @@ msgctxt "mission brief tactical information"
 msgid "Target bunkers"
 msgstr "Objetivos Bunkers"
 
+#: mission.brief.mail15.map20.level16:3
+msgctxt "mission brief tactical information"
+msgid "Sanctuary: Riyadh IML Link"
+msgstr "Santuario: Enlace IML Riyadh"
+
 #: mission.title:87
 msgctxt "mission title"
 msgid "Fallen Among Thieves"
@@ -1567,6 +1609,11 @@ msgstr "Zona Aterrizaje: Ciudad de Cabo APC"
 msgctxt "mission brief tactical information"
 msgid "De Saxo's crash site"
 msgstr "Lugar de colisión de De Saxo"
+
+#: mission.brief.mail16.map44.level3:3 mission.brief.mail22.map44.level2:3
+msgctxt "mission brief tactical information"
+msgid "Sanctuary: Cape Town IML Link"
+msgstr "Santuario: Enlace IML Ciudad del Cabo"
 
 #: mission.brief.mail16.map44.level3:4
 msgctxt "mission brief tactical information"
@@ -1636,6 +1683,11 @@ msgstr "Zona Aterrizaje: Enlace IML Beijing"
 msgctxt "mission brief tactical information"
 msgid "Hacker's location"
 msgstr "Posición de los hackers"
+
+#: mission.brief.mail17.map32.level2:3
+msgctxt "mission brief tactical information"
+msgid "Sanctuary: Beijing IML Link"
+msgstr "Santuario: Enlace IML Beijing"
 
 #: mission.brief.mail17.map32.level2:4
 msgctxt "mission brief tactical information"
@@ -1710,6 +1762,11 @@ msgstr "Fuerzas de EuroCorp en el puerto de la isla"
 msgctxt "mission brief tactical information"
 msgid "The Unguided"
 msgstr "El Descontrolado"
+
+#: mission.brief.mail18.map27.level1:4
+msgctxt "mission brief tactical information"
+msgid "Sanctuary: Delhi IML Link"
+msgstr "Santuario: Enlace IML Delhi"
 
 #: mission.title:85
 msgctxt "mission title"
@@ -1810,6 +1867,11 @@ msgstr "Perímetro de zona muerta"
 msgctxt "mission brief tactical information"
 msgid "EuroCorp outpost"
 msgstr "Puesto avanzado EuroCorp"
+
+#: mission.brief.mail19.map3.level2:4
+msgctxt "mission brief tactical information"
+msgid "Sanctuary: Bangkok IML Link"
+msgstr "Santuario: Enlace IML Bangkok"
 
 #: mission.brief.mail19.map3.level2:5
 msgctxt "mission brief tactical information"
@@ -2243,17 +2305,23 @@ msgctxt "game win message"
 msgid ""
 "So, your faith in yourself proved triumphant. You have not only thwarted the "
 "Nine's insane plan to restart the human race with clones of themselves, you "
-"have also gained possession of the most destructive weapon ever built. On "
-"Earth, the Syndicate's UTOPIA lies in ruins. Millions hear the voice of Ko-"
-"Paull Vissick calling for reason to prevail."
+"have also gained possession of the most destructive weapon ever built."
 msgstr ""
 "Así que, tu fe en ti mismo se ha probado como cierta. No sólo has frustrado "
 "el malévolo plan de los Nueve de recrear a la humanidad en base a su propia "
 "clonación, sino que además te has apoderado del arma más destructiva jamás "
-"construida. La UTOPIA de Syndicate son sálo ruinas en la Tierra. Millones "
-"oyen la llamada de Ko-Paull Vissick para que la razón prevalezca."
+"construida."
 
 #: message.win:2
+msgctxt "game win message"
+msgid ""
+"On Earth, the Syndicate's UTOPIA lies in ruins. Millions hear the voice of Ko-"
+"Paull Vissick calling for reason to prevail."
+msgstr ""
+"La UTOPIA de Syndicate son sálo ruinas en la Tierra. Millones oyen la llamada "
+"de Ko-Paull Vissick para que la razón prevalezca."
+
+#: message.win:3
 msgctxt "game win message"
 msgid "But let your will be done."
 msgstr "Pero permite que tu destino se cumpla."
@@ -2835,11 +2903,3 @@ msgstr ""
 "continua reflejando la señal de un ejecutivo civil en los escaners de UTOPIA, "
 "de esta forma se oculta una amenaza hasta que entre en el alcance visual. "
 "Nosotros mismos, Podemos usar esta técnica."
-
-#~ msgctxt "mission brief book quote"
-#~ msgid "- The Book of Cataclysm"
-#~ msgstr "- El Libro del Cataclismo"
-
-#~ msgctxt "mission brief email header"
-#~ msgid "- The Book of Cataclysm."
-#~ msgstr "- El Libro del Cataclismo."
