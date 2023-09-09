@@ -99,6 +99,7 @@ msgid "Blessed be."
 msgstr "成功を祈る。"
 
 #: mission.brief.mail1.par6.c4 mission.brief.mail2.par7.c4
+#: mission.brief.mail3.par5.c4
 #: mission.brief.mail4.par6.c4 mission.brief.mail5.par6.c4
 #: mission.brief.mail6.par9.c4 mission.brief.mail7.par7.c4
 #: mission.brief.mail8.par5.c4 mission.brief.mail9.par8.c4
@@ -226,11 +227,6 @@ msgstr ""
 msgctxt "mission brief email paragraph"
 msgid "Spread the good news."
 msgstr "祝福の知らせを広めよう。"
-
-#: mission.brief.mail3.par5.c4
-msgctxt "mission brief email sender"
-msgid "Virgil"
-msgstr "ヴィルギリ"
 
 #: mission.brief.mail3.par6.c1
 msgctxt "mission brief book quote"
@@ -576,7 +572,7 @@ msgstr "信仰の炎がおまえとともに燃えあがらんことを、祝福
 msgctxt "mission brief email orders"
 msgid ""
 "Our oracles tell us that a supremely important Syndicate official called "
-"KotoSek is visiting Cairo. He has a powerful entourage and is well-"
+"Koto Sek is visiting Cairo. He has a powerful entourage and is well-"
 "protected. However, in the name of all that is right, he must die."
 msgstr ""
 "シンジケートの最高首脳のひとりコトセックが、カイロに向かうというお告げがあった。彼には強力な護衛がついており、接近は容易でない。しかし正義の名のもとに、この者の存在は消さねばならぬ。"
@@ -584,7 +580,7 @@ msgstr ""
 #: mission.brief.mail10.par3.c5
 msgctxt "mission brief email paragraph"
 msgid ""
-"KotoSek plans to board a shuttle for parts unknown. Stop him as soon as you "
+"Koto Sek plans to board a shuttle for parts unknown. Stop him as soon as you "
 "can. Make sure that he is dead before you report back. If there are other "
 "casualties, then that is the way of things. I am sure you are used to that "
 "now."
@@ -1450,14 +1446,14 @@ msgstr "作戦内容：　ユーロコープ警備兵の排除"
 
 #: mission.brief.mail2.map35.level2:4
 msgctxt "mission brief tactical information"
-msgid "Sanctuary"
+msgid "Sanctuary: Detroit IML Link"
 msgstr "聖域（脱出地点）：　デトロイトIMLリンク"
 
 #: mission.brief.mail2.map35.level2:5
 msgctxt "mission brief tactical information"
 msgid ""
 "Eavesdrop: recommended means of gaining entry to Syndicate Ground Station"
-msgstr "イーバスドロップ：　シンジケート基地潜入の手段 "
+msgstr "イーバスドロップ：　シンジケート基地潜入の手段"
 
 #: mission.brief.mail3.map25.level16:1 mission.brief.mail9b.map25.level46:1
 msgctxt "mission brief tactical information"
@@ -1465,9 +1461,10 @@ msgid "Landing Ground: Tripoli IML Link"
 msgstr "潜入地点：　トリポリIMLリンク"
 
 #: mission.brief.mail3.map25.level16:2
+#: mission.brief.mail9b.map25.level46:2
 msgctxt "mission brief tactical information"
 msgid "Our Garden of Meditations"
-msgstr "作戦内容：　瞑想の庭を防衛せよ"
+msgstr "私たちの瞑想の庭"
 
 #: mission.brief.mail4.map26.level2:1 mission.brief.mail8b.map26.level3:1
 msgctxt "mission brief tactical information"
@@ -1485,9 +1482,10 @@ msgid "Chico Ramirez and his gang occupy this Old Calendar high street"
 msgstr "作戦目標：　チコ・ラミレスは仲間とともに「オールド・カレンダー通り」を占拠している"
 
 #: mission.brief.mail4.map26.level2:4
+#: mission.brief.mail8b.map26.level3:3
 msgctxt "mission brief tactical information"
-msgid "Sanctuary"
-msgstr "聖域：　ブエノスアイレスIMLリンク "
+msgid "Sanctuary: Buenos Aires IML Link"
+msgstr "聖域：　ブエノスアイレスIMLリンク"
 
 #: mission.brief.mail4.map26.level2:5
 msgctxt "mission brief tactical information"
@@ -1506,8 +1504,8 @@ msgstr "目標地点：　ユーロコープ・エージェントのサーチエ
 
 #: mission.brief.mail5a.map7.level3:3
 msgctxt "mission brief tactical information"
-msgid "Sanctuary"
-msgstr "聖域：　新世紀教会サンチャゴ支部 "
+msgid "Sanctuary: Santiago monasterial complex"
+msgstr "聖域：　新世紀教会サンチャゴ支部"
 
 #: mission.brief.mail5a.map7.level3:4
 msgctxt "mission brief tactical information"
@@ -1548,7 +1546,7 @@ msgstr "輸送目的地"
 #: mission.brief.mail5b.map22.level3:6 mission.brief.mail8a.map22.level2:4
 #: mission.brief.mail16b.map22.level4:4
 msgctxt "mission brief tactical information"
-msgid "Sanctuary"
+msgid "Sanctuary: Johannesburg IML Link"
 msgstr "聖域：　ヨハネスバーグIMLリンク"
 
 #: mission.brief.mail6a.map21.level46:1
@@ -1583,7 +1581,7 @@ msgstr "目標地点：　ユーロコープ研究所"
 
 #: mission.brief.mail6b.map50.level47:3
 msgctxt "mission brief tactical information"
-msgid "Sanctuary"
+msgid "Sanctuary: Vancouver IML Link"
 msgstr "聖域：　バンクーバーIMLリンク"
 
 #: mission.brief.mail6b.map50.level47:4
@@ -1651,11 +1649,6 @@ msgctxt "mission brief tactical information"
 msgid "EuroCorp militia garrisons"
 msgstr "目標地点：　ユーロコープ支配区域"
 
-#: mission.brief.mail8b.map26.level3:3
-msgctxt "mission brief tactical information"
-msgid "Sanctuary"
-msgstr "聖域：　ブエノスアイレスIMLリンク"
-
 #: mission.brief.mail9a.map7.level5:1
 msgctxt "mission brief tactical information"
 msgid "Landing Ground: Santiago IML Link"
@@ -1668,7 +1661,7 @@ msgstr "寺院"
 
 #: mission.brief.mail9a.map7.level5:3
 msgctxt "mission brief tactical information"
-msgid "Sanctuary"
+msgid "Sanctuary: Santiago IML Link"
 msgstr "聖域：　サンチャゴIMLリンク"
 
 #: mission.brief.mail9a.map7.level5:4
@@ -1678,11 +1671,6 @@ msgid ""
 "hours"
 msgstr "イーバスドロップ：　シンジケート急派部隊が48時間以内に到着 "
 
-#: mission.brief.mail9b.map25.level46:2
-msgctxt "mission brief tactical information"
-msgid "Our Garden of Meditations"
-msgstr "瞑想の庭"
-
 #: mission.brief.mail9b.map25.level46:3
 msgctxt "mission brief tactical information"
 msgid "Those you shall keep from harm"
@@ -1690,7 +1678,7 @@ msgstr "護衛目標"
 
 #: mission.brief.mail9b.map25.level46:4
 msgctxt "mission brief tactical information"
-msgid "Sanctuary"
+msgid "Sanctuary: Tripoli IML Link"
 msgstr "聖域：　トリポリIMLリンク"
 
 #: mission.brief.mail9b.map25.level46:5
@@ -1716,7 +1704,7 @@ msgstr "ユーロコープHQ"
 
 #: mission.brief.mail10a.map45.level1:3
 msgctxt "mission brief tactical information"
-msgid "Executive shuttle carrying KotoSek"
+msgid "Executive shuttle carrying Koto Sek"
 msgstr "コトセック搭乗のエグゼクティブ・シャトル"
 
 #: mission.brief.mail10a.map45.level1:4
@@ -1840,7 +1828,7 @@ msgstr "聖堂および衛星アップリンク"
 
 #: mission.brief.mail12a.map4.level3:7
 msgctxt "mission brief tactical information"
-msgid "Sanctuary"
+msgid "Sanctuary: New York IML Link"
 msgstr "聖域：　ニューヨークIMLリンク"
 
 #: mission.brief.mail12a.map4.level3:8
@@ -1860,7 +1848,7 @@ msgstr "作戦目標：　ユーロコープ武器集積所"
 
 #: mission.brief.mail12b.map20.level16:3
 msgctxt "mission brief tactical information"
-msgid "Sanctuary"
+msgid "Sanctuary: Riyadh IML Link"
 msgstr "聖域：　リヤドIMLリンク"
 
 #: mission.brief.mail13a.map44.level3:1
@@ -1875,7 +1863,7 @@ msgstr "デ・サッコの墜落した地点"
 
 #: mission.brief.mail13a.map44.level3:3 mission.brief.mail16a.map44.level2:3
 msgctxt "mission brief tactical information"
-msgid "Sanctuary"
+msgid "Sanctuary: Cape Town IML Link"
 msgstr "聖域：　ケープタウンIMLリンク"
 
 #: mission.brief.mail13b.map32.level2:1
@@ -1890,7 +1878,7 @@ msgstr "ハッカーの所在地"
 
 #: mission.brief.mail13b.map32.level2:3
 msgctxt "mission brief tactical information"
-msgid "Sanctuary"
+msgid "Sanctuary: Beijing IML Link"
 msgstr "聖域：　北京IMLリンク"
 
 #: mission.brief.mail13b.map32.level2:4
@@ -1915,7 +1903,7 @@ msgstr "アンガイデッド"
 
 #: mission.brief.mail14a.map27.level1:4
 msgctxt "mission brief tactical information"
-msgid "Sanctuary"
+msgid "Sanctuary: Delhi IML Link"
 msgstr "聖域：　デリーIMLリンク"
 
 #: mission.brief.mail14b.map3.level2:1
@@ -1935,7 +1923,7 @@ msgstr "ユーロコープ制圧地域"
 
 #: mission.brief.mail14b.map3.level2:4
 msgctxt "mission brief tactical information"
-msgid "Sanctuary"
+msgid "Sanctuary: Bangkok IML Link"
 msgstr "聖域：　バンコクIMLリンク"
 
 #: mission.brief.mail14b.map3.level2:5
@@ -2013,37 +2001,22 @@ msgctxt "church win"
 msgid ""
 "So, your faith in yourself proved triumphant. You have not only thwarted the"
 " Nine's insane plan to restart the human race with clones of themselves, you"
-" have also gained possession of the most destructive weapon ever built. On "
-"Earth, the Syndicate's UTOPIA lies in ruins. Millions hear the voice of Ko-"
-"Paull Vissick calling for reason to prevail."
+" have also gained possession of the most destructive weapon ever built."
 msgstr ""
 "おまえは自分自身を信じることで勝利をかち得たおまえは「ザ・ナイン」の狂気に満ちたクローン増殖による人類再構成計画を阻止しただけでなく歴史上最も危険な武器をその手に収めたのだ。"
 
 #: message.win:2
 msgctxt "church win"
-msgid "But let your will be done."
+msgid ""
+"On Earth, the Syndicate's UTOPIA lies in ruins. Millions hear the voice of Ko-"
+"Paull Vissick calling for reason to prevail."
 msgstr ""
 "地球ではシンジケートのUTOPIAの残骸が、廃墟に空しく立っている。そして人民たちは、コ＝パウル・ヴィシックの「解放への叫び」に心を奪われている。"
 
 #: message.win:3
 msgctxt "church win"
-msgid ""
-"So, your faith in yourself proved triumphant. You have not only thwarted the"
-" Nine's insane plan to restart the human race with clones of themselves, you"
-" have also gained possession of the most destructive weapon ever built. On "
-"Earth, the Syndicate's UTOPIA lies in ruins. Millions hear the voice of Ko-"
-"Paull Vissick calling for reason to prevail."
+msgid "But let your will be done."
 msgstr "さあ、己を信じて、最後の選択をするがよい。"
-
-#: message.win:4
-msgctxt "church win"
-msgid ""
-"So, your faith in yourself proved triumphant. You have not only thwarted the"
-" Nine's insane plan to restart the human race with clones of themselves, you"
-" have also gained possession of the most destructive weapon ever built. On "
-"Earth, the Syndicate's UTOPIA lies in ruins. Millions hear the voice of Ko-"
-"Paull Vissick calling for reason to prevail."
-msgstr ""
 
 #: weapons.UZI.description
 msgctxt "weapons description - uzi"
