@@ -1,4 +1,4 @@
-## Missions diagram of the Church campaign.
+## Missions diagram of the Church campaign
 
 ```mermaid
 stateDiagram-v2
@@ -89,7 +89,7 @@ stateDiagram-v2
     mission102 --> [*]
 ```
 
-## Interesting unused missions of the Church campaign.
+## Interesting unused missions of the Church campaign
 
 ```mermaid
 stateDiagram-v2
@@ -104,7 +104,7 @@ stateDiagram-v2
     mission108: Source x Mission x<br/>DEM02 Bangkok<br/>Overrun
 ```
 
-## Early/unfinished/test missions of the Church campaign.
+## Early/unfinished/test missions of the Church campaign
 
 ```mermaid
 stateDiagram-v2
