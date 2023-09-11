@@ -86,15 +86,15 @@ struct Objective { // sizeof=32
 };
 
 struct BriefObjective { // sizeof = 20
-  ushort anonymous_0;
-  ushort anonymous_1;
-  ubyte anonymous_2;
-  ushort anonymous_3;
-  ubyte anonymous_4;
-  ubyte anonymous_5[5];
-  ubyte anonymous_6;
-  ubyte anonymous_7[5];
-  ubyte field_13;
+  ushort CreditCost;
+  ushort TextOffset;
+  ubyte brobjfld_2;
+  ushort brobjfld_3;
+  ubyte TextLines;
+  ubyte X[5];
+  ubyte Z[5];
+  ubyte brobjfld_12;
+  ubyte brobjfld_13;
 };
 
 #pragma pack()
@@ -104,7 +104,7 @@ extern ushort next_used_objective; // = 1;
 extern struct Objective *game_objectives;
 extern ushort next_objective;
 
-extern struct BriefObjective brief_objectives[8];
+extern struct BriefObjective brief_objectives[10];
 extern ubyte brief_objectives_count;
 
 int add_used_objective(long mapno, long levelno);
