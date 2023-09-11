@@ -1853,7 +1853,7 @@ int parse_next_used_objective(const char *buf, long buflen, long pri, long mapno
     return objectv;
 }
 
-void load_brief_objectives(ubyte mapno, ubyte level)
+void load_netscan_objectives(ubyte mapno, ubyte level)
 {
     char locstr[52];
     TbFileHandle fp;
@@ -1861,11 +1861,11 @@ void load_brief_objectives(ubyte mapno, ubyte level)
     sprintf(locstr, "obj%02d%02d.dat", (int)mapno, (int)level);
     fp = open_file_from_wad(locstr, "qdata/posdefs");
     if (fp == INVALID_FILE) {
-        brief_objectives_count = 0;
+        netscan_objectives_count = 0;
         return;
     }
-    LbFileRead(fp, &brief_objectives_count, 1);
-    LbFileRead(fp, brief_objectives, 20 * brief_objectives_count);
+    LbFileRead(fp, &netscan_objectives_count, 1);
+    LbFileRead(fp, netscan_objectives, 20 * netscan_objectives_count);
     LbFileClose(fp);
 }
 

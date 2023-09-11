@@ -85,10 +85,10 @@ struct Objective { // sizeof=32
     ubyte field_1F;
 };
 
-struct BriefObjective { // sizeof = 20
+struct NetscanObjective { // sizeof = 20
   ushort CreditCost;
   ushort TextOffset;
-  ubyte brobjfld_2;
+  ubyte AnimNo;
   ushort brobjfld_3;
   ubyte TextLines;
   ubyte X[5];
@@ -104,8 +104,8 @@ extern ushort next_used_objective; // = 1;
 extern struct Objective *game_objectives;
 extern ushort next_objective;
 
-extern struct BriefObjective brief_objectives[10];
-extern ubyte brief_objectives_count;
+extern struct NetscanObjective netscan_objectives[10];
+extern ubyte netscan_objectives_count;
 
 int add_used_objective(long mapno, long levelno);
 
@@ -135,7 +135,7 @@ ubyte fix_single_objective(struct Objective *p_objectv, ushort objectv, const ch
 void save_objective_chain_conf(TbFileHandle fh, ushort objectv_head, char *buf, ulong buflen);
 int parse_next_used_objective(const char *buf, long buflen, long pri, long mapno, long levelno);
 
-void load_brief_objectives(ubyte mapno, ubyte level);
+void load_netscan_objectives(ubyte mapno, ubyte level);
 
 void snprint_objective(char *buf, ulong buflen, struct Objective *p_objectv, ushort objectv);
 /******************************************************************************/
