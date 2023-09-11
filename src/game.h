@@ -5,6 +5,7 @@
 #include <stddef.h>
 
 #include "bflib_basics.h"
+#include "bffile.h"
 #include "globals.h"
 #include "scanner.h"
 #include "people.h"
@@ -924,6 +925,8 @@ void game_reset(void);
 void host_reset(void);
 void free_texturemaps(void);
 int joy_grip_shutdown(void);
+
+TbFileHandle open_file_from_wad(const char *filename, const char *wadfile);
 
 #ifdef __cplusplus
 };

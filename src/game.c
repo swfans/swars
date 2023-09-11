@@ -84,18 +84,6 @@ struct PacketFileHead {
     ushort levelno;
 };
 
-struct UnknStru03 { // sizeof = 20
-  ushort anonymous_0;
-  ushort anonymous_1;
-  ubyte anonymous_2;
-  ushort anonymous_3;
-  ubyte anonymous_4;
-  ubyte anonymous_5[5];
-  ubyte anonymous_6;
-  ubyte anonymous_7[5];
-  ubyte field_13;
-};
-
 struct Element;
 struct Frame;
 
@@ -157,9 +145,6 @@ extern long dword_1DC36C;
 extern ubyte current_frame;
 extern long sound_heap_size;
 extern struct SampleTable *sound_heap_memory;
-
-extern struct UnknStru03 unkn_stru_03[8];
-extern ubyte unkn_stru_03_count;
 
 extern struct GamePanel *game_panel;
 extern struct GamePanel game_panel_lo[];
@@ -5188,12 +5173,20 @@ void my_preprocess_text(char *text)
         :  : "a" (text));
 }
 
-int load_file_wad(const char *textdt_fname, const char *alltext_fname, void *outbuf)
+TbFileHandle open_file_from_wad(const char *filename, const char *wadfile)
+{
+    TbFileHandle ret;
+    asm volatile ("call ASM_open_file_from_wad\n"
+        : "=r" (ret) : "a" (filename), "d" (wadfile));
+    return ret;
+}
+
+int load_file_wad(const char *filename, const char *wadfile, void *outbuf)
 {
 #if 0
     int ret;
     asm volatile ("call ASM_load_file_wad\n"
-        : "=r" (ret) : "a" (textdt_fname), "d" (alltext_fname), "b" (outbuf));
+        : "=r" (ret) : "a" (filename), "d" (wadfile), "b" (outbuf));
     return ret;
 #endif
     char locfname[64];
@@ -5204,11 +5197,11 @@ int load_file_wad(const char *textdt_fname, const char *alltext_fname, void *out
     long nread;
     int i;
 
-    only_fname = strrchr(textdt_fname, '/');
+    only_fname = strrchr(filename, '/');
     if (only_fname != NULL)
         only_fname++;
     else
-        only_fname = textdt_fname;
+        only_fname = filename;
 
     for (i = 0; only_fname[i] != '\0'; i++)
     {
@@ -5216,7 +5209,7 @@ int load_file_wad(const char *textdt_fname, const char *alltext_fname, void *out
     }
     locstr[i] = '\0';
 
-    sprintf(locfname, "%s.IDX", alltext_fname);
+    sprintf(locfname, "%s.IDX", wadfile);
     fh = LbFileOpen(locfname, Lb_FILE_MODE_READ_ONLY);
     if (fh == INVALID_FILE)
         return -1;
@@ -5229,7 +5222,7 @@ int load_file_wad(const char *textdt_fname, const char *alltext_fname, void *out
     if (nread != sizeof(struct WADIndexEntry))
         return -1;
 
-    sprintf(locfname, "%s.WAD", alltext_fname);
+    sprintf(locfname, "%s.WAD", wadfile);
     fh = LbFileOpen(locfname, Lb_FILE_MODE_READ_ONLY);
     if (fh == INVALID_FILE)
         return -1;
@@ -6526,10 +6519,10 @@ ubyte do_login_2(ubyte click)
 #endif
 }
 
-ubyte show_unkn32_box(struct ScreenBox *box)
+ubyte show_citymap_box(struct ScreenBox *box)
 {
     ubyte ret;
-    asm volatile ("call ASM_show_unkn32_box\n"
+    asm volatile ("call ASM_show_citymap_box\n"
         : "=r" (ret) : "a" (box));
     return ret;
 }
@@ -7120,7 +7113,7 @@ ubyte show_settings_controls_list(struct ScreenBox *box)
     return ret;
 }
 
-ubyte ac_show_unkn32_box(struct ScreenBox *box);
+ubyte ac_show_citymap_box(struct ScreenBox *box);
 ubyte ac_show_campaigns_list(struct ScreenBox *box);
 ubyte ac_show_login_name(struct ScreenBox *box);
 ubyte ac_show_net_benefits_box(struct ScreenBox *box);
@@ -7502,7 +7495,7 @@ void init_screen_boxes(void)
     mission_text_box.Flags |= 0x0300;
     unkn37_box.ScrollWindowOffset += 27;
     loading_INITIATING_box.X = 319 - ((w + 9) >> 1);
-    unkn32_box.SpecialDrawFn = ac_show_unkn32_box;
+    unkn32_box.SpecialDrawFn = ac_show_citymap_box;
     loading_INITIATING_box.Y = 219 - (loading_INITIATING_box.Height >> 1);
     unkn04_boxes[0].SpecialDrawFn = ac_show_unkn04;
     unkn04_boxes[1].SpecialDrawFn = ac_show_unkn04;
@@ -9392,19 +9385,19 @@ void load_netscan_data(ubyte city_id, ubyte a2)
           if ((clevel == a2) && (cmapno == cities[city_id].MapID))
           {
               found = 1;
-              for (i = 0; i < unkn_stru_03_count; i++)
+              for (i = 0; i < brief_objectives_count; i++)
               {
-                unkn_stru_03[i].anonymous_1 = p - mem_unkn03;
+                brief_objectives[i].anonymous_1 = p - mem_unkn03;
                 do
                   c = *p++;
                 while ((c != '\n') && (c != '\0'));
                 *(p - 1) = '\0';
 
-                my_preprocess_text(mem_unkn03 + unkn_stru_03[i].anonymous_1);
-                k = my_count_lines(mem_unkn03 + unkn_stru_03[i].anonymous_1);
-                unkn_stru_03[i].anonymous_4 = k;
-                if (!unkn_stru_03[i].anonymous_0)
-                  unkn36_box.Lines += unkn_stru_03[i].anonymous_4;
+                my_preprocess_text(mem_unkn03 + brief_objectives[i].anonymous_1);
+                k = my_count_lines(mem_unkn03 + brief_objectives[i].anonymous_1);
+                brief_objectives[i].anonymous_4 = k;
+                if (!brief_objectives[i].anonymous_0)
+                  unkn36_box.Lines += brief_objectives[i].anonymous_4;
               }
           }
       }
@@ -9413,20 +9406,20 @@ void load_netscan_data(ubyte city_id, ubyte a2)
     if (cities[city_id].Info == 0)
     {
         
-        for (i = 0; i < unkn_stru_03_count; i++)
+        for (i = 0; i < brief_objectives_count; i++)
         {
-            if (unkn_stru_03[i].anonymous_0)
+            if (brief_objectives[i].anonymous_0)
                 break;
         }
         cities[city_id].Info = i;
     }
 
     i = cities[city_id].Info;
-    if (i >= unkn_stru_03_count) {
+    if (i >= brief_objectives_count) {
         brief_NETSCAN_COST_box.Text2[0] = '\0';
         text = gui_strings[495];
     } else {
-        k = 100 * unkn_stru_03[i].anonymous_0;
+        k = 100 * brief_objectives[i].anonymous_0;
         sprintf(brief_NETSCAN_COST_box.Text2, "%d", k);
         text = gui_strings[442];
     }

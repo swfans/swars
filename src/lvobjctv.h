@@ -85,12 +85,27 @@ struct Objective { // sizeof=32
     ubyte field_1F;
 };
 
+struct BriefObjective { // sizeof = 20
+  ushort anonymous_0;
+  ushort anonymous_1;
+  ubyte anonymous_2;
+  ushort anonymous_3;
+  ubyte anonymous_4;
+  ubyte anonymous_5[5];
+  ubyte anonymous_6;
+  ubyte anonymous_7[5];
+  ubyte field_13;
+};
+
 #pragma pack()
 /******************************************************************************/
 extern struct Objective *game_used_objectives;
 extern ushort next_used_objective; // = 1;
 extern struct Objective *game_objectives;
 extern ushort next_objective;
+
+extern struct BriefObjective brief_objectives[8];
+extern ubyte brief_objectives_count;
 
 int add_used_objective(long mapno, long levelno);
 
@@ -119,6 +134,8 @@ ubyte fix_single_objective(struct Objective *p_objectv, ushort objectv, const ch
 
 void save_objective_chain_conf(TbFileHandle fh, ushort objectv_head, char *buf, ulong buflen);
 int parse_next_used_objective(const char *buf, long buflen, long pri, long mapno, long levelno);
+
+void load_brief_objectives(ubyte mapno, ubyte level);
 
 void snprint_objective(char *buf, ulong buflen, struct Objective *p_objectv, ushort objectv);
 /******************************************************************************/
