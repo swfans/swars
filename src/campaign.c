@@ -414,7 +414,7 @@ void read_mission_netscan_objectives_bin(void)
 {
     ushort i;
 
-    next_mission_netscan_objective = 0;
+    next_mission_netscan_objective = 1;
 
     for (i = 0; i < next_mission; i++) {
         struct Mission *p_missi;
@@ -853,7 +853,7 @@ void read_missions_conf_file(int num)
     char *conf_buf;
     struct TbIniParser parser;
     struct Campaign *p_campgn;
-    char locbuf[120];
+    char locbuf[320];
     char conf_fname[80];
     int conf_len;
     int missi;
@@ -883,6 +883,7 @@ void read_missions_conf_file(int num)
     next_used_objective = 0;
     // Add empty objective 0
     add_used_objective(0, 0);
+    next_mission_netscan_objective = 1;
 
     p_str = engine_mem_alloc_ptr + engine_mem_alloc_size - 64000 + campaign_strings_len;
     // Parse the [common] section of loaded file
@@ -1461,6 +1462,53 @@ void read_missions_conf_file(int num)
 
             LbIniSkipToNextLine(&parser);
         }
+
+        // Parse the [missnetscanN] sections of loaded file
+        n = 0;
+        done = false;
+        sprintf(sect_name, "missnetscan%d", missi);
+        if (LbIniFindSection(&parser, sect_name) != Lb_SUCCESS) {
+            CONFDBGLOG("Could not find \"[%s]\" section.", sect_name);
+        } else
+        while (!done)
+        {
+            // Get the key, it holds index
+            k = LbIniGetKey(&parser, locbuf, sizeof(locbuf));
+            // Now store the config item in correct place
+            switch (k)
+            {
+            case 0: // comment
+                break;
+            case -1: // end of buffer
+            case -3: // end of section
+                done = true;
+                break;
+            default:
+                if ((locbuf[0] != 'N') || !isdigit(locbuf[1])) {
+                    CONFWRNLOG("Unrecognized key in \"%s\" section.", sect_name);
+                    break;
+                }
+                // Netscan item number is in key name
+                i = atol(&locbuf[1]);
+                if (n < i+1) n = i+1;
+                // Now get the objective command from value
+                k = LbIniValueGetStrWhole(&parser, locbuf, sizeof(locbuf));
+                if (k <= 0) {
+                    CONFWRNLOG("Could not read the latter of key-value pair in \"%s\" section.", sect_name);
+                    break;
+                }
+                k = parse_next_netscan_objective(locbuf, sizeof(locbuf), next_mission_netscan_objective + i);
+                if (k <= 0) {
+                    CONFWRNLOG("Could parse objective command in \"%s\" section.", sect_name);
+                    break;
+                }
+            }
+
+            LbIniSkipToNextLine(&parser);
+        }
+        p_missi->NetscanObvIndex = next_mission_netscan_objective;
+        p_missi->NetscanObvCount = n;
+        next_mission_netscan_objective += n;
     }
 #undef CONFDBGLOG
 #undef CONFWRNLOG

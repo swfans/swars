@@ -143,6 +143,7 @@ int parse_next_used_objective(const char *buf, long buflen, long pri, long mapno
 
 void save_netscan_objectives_conf(TbFileHandle fh, struct NetscanObjective *nsobv_arr,
   ushort nsobv_count, char *buf, ulong buflen);
+int parse_next_netscan_objective(const char *buf, long buflen, long nsobv);
 int load_netscan_objectives_bin(struct NetscanObjective *nsobv_arr, ubyte mapno, ubyte level);
 void load_netscan_objectives(ubyte mapno, ubyte level);
 

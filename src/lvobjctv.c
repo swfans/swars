@@ -213,28 +213,23 @@ enum NetObjctvConfigParam {
     NOvP_CreditCost = 1,
     NOvP_AnimNo,
     NOvP_Fld3,
-    NOvP_Coords1,
-    NOvP_Coords2,
-    NOvP_Coords3,
-    NOvP_Coords4,
-    NOvP_Coords5,
+    NOvP_Coord,
     NOvP_Fld12,
     NOvP_Fld13,
 };
 
 const struct TbNamedEnum missions_conf_netscan_objctv_params[] = {
-  {"CreditCost",	NOvP_CreditCost},
-  {"AnimNo",		NOvP_AnimNo},
-  {"Fld3",			NOvP_Fld3},
-  {"Coords1",		NOvP_Coords1},
-  {"Coords2",		NOvP_Coords2},
-  {"Coords3",		NOvP_Coords3},
-  {"Coords4",		NOvP_Coords4},
-  {"Coords5",		NOvP_Coords5},
-  {"Fld12",			NOvP_Fld12},
-  {"Fld13",			NOvP_Fld13},
-  {NULL,			0},
+  {"Cost",		NOvP_CreditCost},
+  {"Anim",		NOvP_AnimNo},
+  {"Fld3",		NOvP_Fld3},
+  {"Coord",		NOvP_Coord},
+  {"Fld12",		NOvP_Fld12},
+  {"Fld13",		NOvP_Fld13},
+  {NULL,		0},
 };
+
+#define PARAM_TOKEN_MAX 16
+#define COMMAND_TOKEN_MAX 32
 
 struct NetscanObjective mission_netscan_objectives[MISSION_NETSCAN_OBV_COUNT];
 ushort next_mission_netscan_objective;
@@ -1781,10 +1776,17 @@ int tokenize_script_func(char *olist[], char *obuf, const char *ibuf, long ibufl
             olist[li] = &obuf[opos];
             li++;
             token_end = false;
+            if (ibuf[pos] == '\0')
+                break;
         }
         for (; pos < ibuflen; pos++)
         {
-            if (in_quotes) {
+            if (ibuf[pos] == '\0') {
+                in_quotes = false;
+                in_parath = 0;
+                token_end = true;
+                break; // there already is null char write outside the for()
+            } else if (in_quotes) {
                 if ((ibuf[pos] == '\"') ||
                      (ibuf[pos] == '\r') ||
                      (ibuf[pos] == '\n')) {
@@ -1829,6 +1831,7 @@ int tokenize_script_func(char *olist[], char *obuf, const char *ibuf, long ibufl
                     break;
                 }
             }
+
             obuf[opos] = ibuf[pos];
             opos++;
             if (pos >= ibuflen) {
@@ -1846,7 +1849,7 @@ int tokenize_script_func(char *olist[], char *obuf, const char *ibuf, long ibufl
 
 int parse_objective_param(struct Objective *p_objectv, const char *buf, long buflen)
 {
-    char *toklist[16];
+    char *toklist[PARAM_TOKEN_MAX];
     char tokbuf[128];
     int i;
 
@@ -1854,6 +1857,11 @@ int parse_objective_param(struct Objective *p_objectv, const char *buf, long buf
     i = tokenize_script_func(toklist, tokbuf, buf, buflen);
     if (i < 2) {
         LOGWARN("Objective parameter consists of less than 2 tokens.");
+        return -1;
+    }
+    if (i >= PARAM_TOKEN_MAX) {
+        // If too many params, tokbuf[] have been overwritten partially
+        LOGWARN("Objective parameter consists of too many (%d) tokens.", i);
         return -1;
     }
 
@@ -1882,7 +1890,7 @@ int parse_objective_param(struct Objective *p_objectv, const char *buf, long buf
         break;
     case ObvP_Thing:
         if (toklist[2] == NULL)  {
-            LOGWARN("Objective parameter \"%s\" requires 2 numbers.", toklist[0]);
+            LOGWARN("Objective parameter \"%s\" requires 2 numbers, got less.", toklist[0]);
             return -1;
         }
         p_objectv->Thing = atoi(toklist[1]);
@@ -1893,7 +1901,7 @@ int parse_objective_param(struct Objective *p_objectv, const char *buf, long buf
         break;
     case ObvP_Coord:
         if (toklist[3] == NULL)  {
-            LOGWARN("Objective parameter \"%s\" requires 3 numbers.", toklist[0]);
+            LOGWARN("Objective parameter \"%s\" requires 3 numbers, got less.", toklist[0]);
             return -1;
         }
         p_objectv->X = atoi(toklist[1]);
@@ -1929,11 +1937,20 @@ int parse_next_used_objective(const char *buf, long buflen, long pri, long mapno
 {
     struct ObjectiveDef *p_odef;
     struct Objective *p_objectv;
-    char *toklist[32];
+    char *toklist[COMMAND_TOKEN_MAX];
     char tokbuf[256];
-    int i, objectv;
+    int i, objectv, nret;
 
-    tokenize_script_func(toklist, tokbuf, buf, buflen);
+    i = tokenize_script_func(toklist, tokbuf, buf, buflen);
+    if (i < 1) {
+        LOGWARN("Objective consists of less than 1 token.");
+        return -1;
+    }
+    if (i >= COMMAND_TOKEN_MAX) {
+        // If too many params, tokbuf[] have been overwritten partially
+        LOGWARN("Objective consists of too many (%d) tokens.", i);
+        return -1;
+    }
 
     // Finding command number
     i = 0;
@@ -1954,12 +1971,127 @@ int parse_next_used_objective(const char *buf, long buflen, long pri, long mapno
     p_objectv->Type = i;
     p_objectv->Pri = pri;
 
+    nret = objectv;
     for (i = 1; toklist[i] != NULL; i++)
     {
-        parse_objective_param(p_objectv, toklist[i], sizeof(tokbuf) - (toklist[i] - tokbuf) );
+        int ret;
+        ret = parse_objective_param(p_objectv, toklist[i], sizeof(tokbuf) - (toklist[i] - tokbuf) );
+        if (ret != 1)
+            nret = -1;
     }
 
-    return objectv;
+    return nret;
+}
+
+int parse_netscan_obv_param(struct NetscanObjective *p_nsobv, const char *buf, long buflen)
+{
+    char *toklist[PARAM_TOKEN_MAX];
+    char tokbuf[128];
+    int i;
+    ushort n_cor;
+
+    LbMemorySet(toklist, 0, sizeof(toklist));
+    i = tokenize_script_func(toklist, tokbuf, buf, buflen);
+    if (i < 1) {
+        LOGWARN("Objective parameter consists of less than 1 token.");
+        return -1;
+    }
+    if (i >= PARAM_TOKEN_MAX) {
+        // If too many params, tokbuf[] have been overwritten partially
+        LOGWARN("Objective parameter consists of too many (%d) tokens.", i);
+        return -1;
+    }
+
+    n_cor = 0;
+    // Finding parameter number
+    i = 0;
+    while (1)
+    {
+        const struct TbNamedEnum *param;
+
+        if (missions_conf_netscan_objctv_params[i].name == NULL) {
+            i = -1;
+            break;
+        }
+        param = &missions_conf_netscan_objctv_params[i];
+        if (strcasecmp(toklist[0], param->name) == 0) {
+            i = param->num;
+            break;
+        }
+        i++;
+    }
+    switch (i)
+    {
+    case NOvP_CreditCost:
+        p_nsobv->CreditCost = atoi(toklist[1]);
+        break;
+    case NOvP_Coord:
+        if (n_cor > 4)  {
+            LOGWARN("Objective parameter \"%s\" used too many times.", toklist[0]);
+            return -1;
+        }
+        if (toklist[3] == NULL)  {
+            LOGWARN("Objective parameter \"%s\" requires 3 numbers, got less.", toklist[0]);
+            return -1;
+        }
+        p_nsobv->X[n_cor] = atoi(toklist[1]);
+        p_nsobv->Z[n_cor] = atoi(toklist[3]);
+        n_cor++;
+        break;
+    case NOvP_AnimNo:
+        p_nsobv->AnimNo = atoi(toklist[1]);
+        break;
+    case NOvP_Fld3:
+        p_nsobv->brobjfld_3 = atoi(toklist[1]);
+        break;
+    case NOvP_Fld12:
+        p_nsobv->brobjfld_12 = atoi(toklist[1]);
+        break;
+    case NOvP_Fld13:
+        p_nsobv->brobjfld_13 = atoi(toklist[1]);
+        break;
+    default:
+        LOGWARN("Objective parameter name \"%s\" not recognized.", toklist[0]);
+        return -1;
+    }
+    return 1;
+}
+
+int parse_next_netscan_objective(const char *buf, long buflen, long nsobv)
+{
+    struct NetscanObjective *p_nsobv;
+    char *toklist[COMMAND_TOKEN_MAX];
+    char tokbuf[256];
+    int i;
+    int nret;
+
+    nret = nsobv;
+    i = tokenize_script_func(toklist, tokbuf, buf, buflen);
+    if (i < 1) {
+        LOGWARN("Objective consists of less than 1 token.");
+        return -1;
+    }
+    if (i >= COMMAND_TOKEN_MAX) {
+        // If too many params, tokbuf[] have been overwritten partially
+        LOGWARN("Objective consists of too many (%d) tokens.", i);
+        return -1;
+    }
+
+    // The command name (toklist[0]) is not important currently - ignore
+
+    p_nsobv = &mission_netscan_objectives[nsobv];
+    LbMemorySet(p_nsobv, '\0', sizeof(struct NetscanObjective));
+    p_nsobv->brobjfld_3 = 0x100;
+
+    for (i = 1; toklist[i] != NULL; i++)
+    {
+        int ret;
+        ret = parse_netscan_obv_param(p_nsobv, toklist[i], sizeof(tokbuf) - (toklist[i] - tokbuf) );
+        if (ret != 1)
+            nret = -1;
+    }
+
+    return nret;
 }
 
 int load_netscan_objectives_bin(struct NetscanObjective *nsobv_arr, ubyte mapno, ubyte level)
