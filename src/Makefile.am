@@ -125,7 +125,9 @@ swars_SOURCES = \
 	weapon.c \
 	weapon.h \
 	windows.c \
-	windows.h
+	windows.h \
+	wrcities.c \
+	wrcities.h
 
 swars_CPPFLAGS = \
   -I"$(top_srcdir)/bflibrary/include" \

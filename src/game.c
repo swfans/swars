@@ -56,6 +56,7 @@
 #include "player.h"
 #include "vehicle.h"
 #include "weapon.h"
+#include "wrcities.h"
 
 #include "timer.h"
 
@@ -5231,25 +5232,6 @@ int load_file_wad(const char *filename, const char *wadfile, void *outbuf)
     nread = LbFileRead(fh, outbuf, fentry.Length);
     LbFileClose(fh);
     return nread;
-}
-
-void load_city_txt(void)
-{
-    asm volatile ("call ASM_load_city_txt\n"
-        :  :  : "eax" );
-}
-
-void load_city_data(ubyte type)
-{
-    TbFileHandle fh;
-
-    fh = LbFileOpen("data/cities.dat", Lb_FILE_MODE_READ_ONLY);
-    if (fh == INVALID_FILE) {
-        return;
-    }
-    LbFileRead(fh, &num_cities, 1);
-    LbFileRead(fh, cities, sizeof(struct City) * num_cities);
-    LbFileClose(fh);
 }
 
 void init_weapon_text(void)

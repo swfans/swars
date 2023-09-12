@@ -237,17 +237,6 @@ struct PurpleDrawItem { // sizeof=26
 	ushort Flags;
 };
 
-struct City { // sizeof=40
-    short X;
-    short Y;
-    ubyte MapID;
-    ubyte Level;
-    ubyte Flags;
-    char Info;
-    ushort TextIndex[6];
-    long Dummy2[5];
-};
-
 struct SynTime {
     ubyte Minute;
     ubyte Hour;
@@ -774,9 +763,6 @@ extern ubyte *dword_1AA280;
 extern long dword_1AA5C4;
 extern long dword_1AA5C8;
 
-extern ubyte num_cities;
-extern struct City cities[];
-extern sbyte city_id;
 extern struct SynTime global_date;
 extern struct SynTime research_curr_wep_date;
 extern struct SynTime research_curr_mod_date;
