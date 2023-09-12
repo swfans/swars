@@ -57,7 +57,6 @@ enum MissionListConfigCmd {
     MissL_SpecialEffectFailID,
     MissL_SpecialEffectSuccessID,
     MissL_StringIndex,
-    MissL_StartMap,
     MissL_StartLevel,
     MissL_SuccessMap,
     MissL_SuccessLevel,
@@ -112,7 +111,6 @@ const struct TbNamedEnum missions_conf_mission_cmds[] = {
   {"SpecialEffectFailID",	MissL_SpecialEffectFailID},
   {"SpecialEffectSuccessID",	MissL_SpecialEffectSuccessID},
   {"StringIndex",	MissL_StringIndex},
-  {"StartMap",		MissL_StartMap},
   {"StartLevel",	MissL_StartLevel},
   {"SuccessMap",	MissL_SuccessMap},
   {"SuccessLevel",	MissL_SuccessLevel},
@@ -412,6 +410,30 @@ void read_missions_bin_file(int num)
 #endif
 }
 
+void read_mission_netscan_objectives_bin(void)
+{
+    ushort i;
+
+    next_mission_netscan_objective = 0;
+
+    for (i = 0; i < next_mission; i++) {
+        struct Mission *p_missi;
+        ushort nsobv_count;
+        struct NetscanObjective *nsobv_arr;
+
+        p_missi = &mission_list[i];
+
+        nsobv_arr = &mission_netscan_objectives[next_mission_netscan_objective];
+        nsobv_count = load_netscan_objectives_bin(nsobv_arr,
+          p_missi->MapNo, p_missi->LevelNo);
+
+        p_missi->NetscanObvIndex = next_mission_netscan_objective;
+        p_missi->NetscanObvCount = nsobv_count;
+
+        next_mission_netscan_objective += nsobv_count;
+    }
+}
+
 void save_mission_single_conf(TbFileHandle fh, struct Mission *p_missi, char *buf)
 {
     if (p_missi->TextName == NULL) {
@@ -469,11 +491,6 @@ void save_mission_single_conf(TbFileHandle fh, struct Mission *p_missi, char *bu
     }
     if (p_missi->StringIndex != 0) {
         sprintf(buf, "StringIndex = %hu\n", p_missi->StringIndex);
-        LbFileWrite(fh, buf, strlen(buf));
-    }
-    if ((p_missi->StartMap[0]|p_missi->StartMap[1]|p_missi->StartMap[2]) != 0) {
-        sprintf(buf, "StartMap = %d %d %d\n",
-          (int)p_missi->StartMap[0], (int)p_missi->StartMap[1], (int)p_missi->StartMap[2]);
         LbFileWrite(fh, buf, strlen(buf));
     }
     if ((p_missi->StartLevel[0]|p_missi->StartLevel[1]|p_missi->StartLevel[2]) != 0) {
@@ -620,6 +637,19 @@ void save_missions_conf_file(int num)
             LbFileWrite(fh, locbuf, strlen(locbuf));
 
             save_objective_chain_conf(fh, p_missi->FailHead, locbuf, sizeof(locbuf));
+
+            sprintf(locbuf, "\n");
+            LbFileWrite(fh, locbuf, strlen(locbuf));
+        }
+
+        if (p_missi->FailHead != 0) {
+            struct NetscanObjective *nsobv_arr;
+            sprintf(locbuf, "[missnetscan%d]\n", i);
+            LbFileWrite(fh, locbuf, strlen(locbuf));
+
+            nsobv_arr = &mission_netscan_objectives[p_missi->NetscanObvIndex];
+            save_netscan_objectives_conf(fh, nsobv_arr, p_missi->NetscanObvCount,
+              locbuf, sizeof(locbuf));
 
             sprintf(locbuf, "\n");
             LbFileWrite(fh, locbuf, strlen(locbuf));
@@ -1115,19 +1145,6 @@ void read_missions_conf_file(int num)
                 }
                 p_missi->StringIndex = k;
                 CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)p_missi->StringIndex);
-                break;
-            case MissL_StartMap:
-                for (n=0; n < 3; n++)
-                {
-                    i = LbIniValueGetLongInt(&parser, &k);
-                    if (i <= 0) {
-                        CONFWRNLOG("Could not read \"%s\" command parameter %u.", COMMAND_TEXT(cmd_num), n);
-                        break;
-                    }
-                    p_missi->StartMap[n] = k;
-                }
-                CONFDBGLOG("%s %d %d %d", COMMAND_TEXT(cmd_num), (int)p_missi->StartMap[0],
-                  (int)p_missi->StartMap[1], (int)p_missi->StartMap[2]);
                 break;
             case MissL_StartLevel:
                 for (n=0; n < 3; n++)

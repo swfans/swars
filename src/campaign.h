@@ -107,7 +107,8 @@ struct Mission { // sizeof=76
     ushort SpecialEffectFailID;
     ushort SpecialEffectSuccessID;
     ushort StringIndex;
-    ubyte StartMap[3];
+    ushort NetscanObvIndex;
+    ubyte NetscanObvCount;
     ubyte StartLevel[3];
     ubyte SuccessMap[3];
     ubyte SuccessLevel[3];
@@ -157,6 +158,7 @@ void load_missions(int num);
 void save_missions_conf_file(int num);
 void read_missions_conf_file(int num);
 void read_missions_bin_file(int num);
+void read_mission_netscan_objectives_bin(void);
 void apply_missions_fixups(void);
 
 /******************************************************************************/

@@ -28,6 +28,9 @@ extern "C" {
 /******************************************************************************/
 #pragma pack(1)
 
+#define MISSION_NETSCAN_OBV_COUNT 1000
+#define NETSCAN_OBJECTIVES_COUNT 10
+
 /* deprecated - when callbacks are defined within objectv_defs[],
  * there will be no need to reference specific objective.
  */
@@ -104,7 +107,10 @@ extern ushort next_used_objective; // = 1;
 extern struct Objective *game_objectives;
 extern ushort next_objective;
 
-extern struct NetscanObjective netscan_objectives[10];
+extern struct NetscanObjective mission_netscan_objectives[MISSION_NETSCAN_OBV_COUNT];
+extern ushort next_mission_netscan_objective;
+
+extern struct NetscanObjective netscan_objectives[NETSCAN_OBJECTIVES_COUNT];
 extern ubyte netscan_objectives_count;
 
 int add_used_objective(long mapno, long levelno);
@@ -135,6 +141,9 @@ ubyte fix_single_objective(struct Objective *p_objectv, ushort objectv, const ch
 void save_objective_chain_conf(TbFileHandle fh, ushort objectv_head, char *buf, ulong buflen);
 int parse_next_used_objective(const char *buf, long buflen, long pri, long mapno, long levelno);
 
+void save_netscan_objectives_conf(TbFileHandle fh, struct NetscanObjective *nsobv_arr,
+  ushort nsobv_count, char *buf, ulong buflen);
+int load_netscan_objectives_bin(struct NetscanObjective *nsobv_arr, ubyte mapno, ubyte level);
 void load_netscan_objectives(ubyte mapno, ubyte level);
 
 void snprint_objective(char *buf, ulong buflen, struct Objective *p_objectv, ushort objectv);

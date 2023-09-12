@@ -209,6 +209,36 @@ const struct TbNamedEnum missions_conf_objective_params[] = {
   {NULL,			0},
 };
 
+enum NetObjctvConfigParam {
+    NOvP_CreditCost = 1,
+    NOvP_AnimNo,
+    NOvP_Fld3,
+    NOvP_Coords1,
+    NOvP_Coords2,
+    NOvP_Coords3,
+    NOvP_Coords4,
+    NOvP_Coords5,
+    NOvP_Fld12,
+    NOvP_Fld13,
+};
+
+const struct TbNamedEnum missions_conf_netscan_objctv_params[] = {
+  {"CreditCost",	NOvP_CreditCost},
+  {"AnimNo",		NOvP_AnimNo},
+  {"Fld3",			NOvP_Fld3},
+  {"Coords1",		NOvP_Coords1},
+  {"Coords2",		NOvP_Coords2},
+  {"Coords3",		NOvP_Coords3},
+  {"Coords4",		NOvP_Coords4},
+  {"Coords5",		NOvP_Coords5},
+  {"Fld12",			NOvP_Fld12},
+  {"Fld13",			NOvP_Fld13},
+  {NULL,			0},
+};
+
+struct NetscanObjective mission_netscan_objectives[MISSION_NETSCAN_OBV_COUNT];
+ushort next_mission_netscan_objective;
+
 extern ulong dword_1C8460;
 extern ulong dword_1C8464;
 extern short draw_objectv_x;
@@ -1641,6 +1671,86 @@ void save_objective_chain_conf(TbFileHandle fh, ushort objectv_head, char *buf, 
     }
 }
 
+void snprint_netscan_objctv(char *buf, ulong buflen, struct NetscanObjective *p_nsobv, ushort nsobv)
+{
+    char *s;
+    ubyte nparams;
+    int i;
+
+    s = buf;
+
+    sprintf(s, "Obv%02d = ", (int)nsobv);
+    s += strlen(s);
+    nparams = 0;
+
+    if (p_nsobv->CreditCost != 0) {
+        if (nparams) { sprintf(s, ", "); s += strlen(s); }
+        sprintf(s, "Cost(%hu)", (ushort)p_nsobv->CreditCost);
+        s += strlen(s);
+    }
+
+    for (i = 0; i < 5; i++)
+    {
+        if ((p_nsobv->X[i]|p_nsobv->Z[i]) != 0) {
+            if (nparams) { sprintf(s, ", "); s += strlen(s); }
+            sprintf(s, "Coord(%hd,%hd)", (short)p_nsobv->X[i], (short)p_nsobv->Z[i]);
+            s += strlen(s);
+            nparams++;
+        }
+    }
+
+    if (p_nsobv->AnimNo != 0) {
+        if (nparams) { sprintf(s, ", "); s += strlen(s); }
+        sprintf(s, "Anim(%hu)", (ushort)p_nsobv->AnimNo);
+        s += strlen(s);
+    }
+
+    if (p_nsobv->brobjfld_3 != 0) {
+        if (nparams) { sprintf(s, ", "); s += strlen(s); }
+        sprintf(s, "Fld3(%hu)", (ushort)p_nsobv->brobjfld_3);
+        s += strlen(s);
+    }
+
+    if (p_nsobv->brobjfld_12 != 0) {
+        if (nparams) { sprintf(s, ", "); s += strlen(s); }
+        sprintf(s, "Fld12(%hu)", (ushort)p_nsobv->brobjfld_12);
+        s += strlen(s);
+    }
+
+    if (p_nsobv->brobjfld_13 != 0) {
+        if (nparams) { sprintf(s, ", "); s += strlen(s); }
+        sprintf(s, "Fld13(%hu)", (ushort)p_nsobv->brobjfld_13);
+        s += strlen(s);
+    }
+
+    snprintf(s, buflen - (s-buf), " )");
+}
+
+void save_netscan_objectives_conf(TbFileHandle fh, struct NetscanObjective *nsobv_arr,
+  ushort nsobv_count, char *buf, ulong buflen)
+{
+    ushort nsobv;
+    ushort nfilled;
+
+    nfilled = 0;
+    for (nsobv = 0; nsobv < nsobv_count; nsobv++)
+    {
+        struct NetscanObjective *p_nsobv;
+
+        p_nsobv = &nsobv_arr[nsobv];
+		snprint_netscan_objctv(buf, buflen, p_nsobv, nsobv);
+        if (strlen(buf) < 10)
+            continue;
+        strncat(buf, "\n", buflen);
+        LbFileWrite(fh, buf, strlen(buf));
+        nfilled++;
+    }
+    if (nfilled == 0) {
+        sprintf(buf, "; no objectives defined\n");
+        LbFileWrite(fh, buf, strlen(buf));
+    }
+}
+
 int tokenize_script_func(char *olist[], char *obuf, const char *ibuf, long ibuflen)
 {
     TbBool in_quotes, token_end, parse_end;
@@ -1853,20 +1963,26 @@ int parse_next_used_objective(const char *buf, long buflen, long pri, long mapno
     return objectv;
 }
 
-void load_netscan_objectives(ubyte mapno, ubyte level)
+int load_netscan_objectives_bin(struct NetscanObjective *nsobv_arr, ubyte mapno, ubyte level)
 {
     char locstr[52];
     TbFileHandle fp;
+    ubyte nsobv_count;
 
     sprintf(locstr, "obj%02d%02d.dat", (int)mapno, (int)level);
     fp = open_file_from_wad(locstr, "qdata/posdefs");
     if (fp == INVALID_FILE) {
-        netscan_objectives_count = 0;
-        return;
+        return 0;
     }
-    LbFileRead(fp, &netscan_objectives_count, 1);
-    LbFileRead(fp, netscan_objectives, 20 * netscan_objectives_count);
+    LbFileRead(fp, &nsobv_count, 1);
+    LbFileRead(fp, nsobv_arr, 20 * nsobv_count);
     LbFileClose(fp);
+    return nsobv_count;
+}
+
+void load_netscan_objectives(ubyte mapno, ubyte level)
+{
+    netscan_objectives_count = load_netscan_objectives_bin(netscan_objectives, mapno, level);
 }
 
 /******************************************************************************/
