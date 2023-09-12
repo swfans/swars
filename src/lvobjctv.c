@@ -2024,7 +2024,7 @@ int parse_netscan_obv_param(struct NetscanObjective *p_nsobv, const char *buf, l
     switch (i)
     {
     case NOvP_CreditCost:
-        p_nsobv->CreditCost = atoi(toklist[1]);
+        p_nsobv->CreditCost = atoi(toklist[1]) / 100;
         break;
     case NOvP_Coord:
         if (n_cor > 4)  {
@@ -2035,8 +2035,8 @@ int parse_netscan_obv_param(struct NetscanObjective *p_nsobv, const char *buf, l
             LOGWARN("Objective parameter \"%s\" requires 3 numbers, got less.", toklist[0]);
             return -1;
         }
-        p_nsobv->X[n_cor] = atoi(toklist[1]);
-        p_nsobv->Z[n_cor] = atoi(toklist[3]);
+        p_nsobv->X[n_cor] = atoi(toklist[1]) >> 7;
+        p_nsobv->Z[n_cor] = atoi(toklist[3]) >> 7;
         n_cor++;
         break;
     case NOvP_AnimNo:
@@ -2114,7 +2114,7 @@ int load_netscan_objectives_bin(struct NetscanObjective *nsobv_arr, ubyte mapno,
 
 void load_netscan_objectives(ubyte mapno, ubyte level)
 {
-#if 1
+#if 0
     netscan_objectives_count = load_netscan_objectives_bin(netscan_objectives, mapno, level);
 #else
     struct Mission *p_missi;

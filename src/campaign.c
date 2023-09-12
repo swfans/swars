@@ -440,7 +440,10 @@ void read_mission_netscan_objectives_bin(void)
         nsobv_count = load_netscan_objectives_bin(nsobv_arr,
           p_missi->MapNo, p_missi->LevelNo);
 
-        p_missi->NetscanObvIndex = next_mission_netscan_objective;
+        if ((p_missi->MapNo|p_missi->LevelNo|nsobv_count) != 0)
+            p_missi->NetscanObvIndex = next_mission_netscan_objective;
+        else
+            p_missi->NetscanObvIndex = 0;
         p_missi->NetscanObvCount = nsobv_count;
 
         next_mission_netscan_objective += nsobv_count;
