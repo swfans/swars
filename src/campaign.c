@@ -225,6 +225,19 @@ void remove_mission_state_slot(ushort mslot)
     }
 }
 
+ushort find_mission_with_map_and_level(ushort mapno, ushort level)
+{
+    ushort missi;
+
+    for (missi = 1; missi < MISSIONS_MAX_COUNT; missi++) {
+        struct Mission *p_missi;
+        p_missi = &mission_list[missi];
+        if ((p_missi->MapNo == mapno) && (p_missi->LevelNo == level))
+            return missi;
+    }
+    return 0;
+}
+
 void init_mission_states(void)
 {
     struct Objective *p_objectv;
@@ -412,16 +425,16 @@ void read_missions_bin_file(int num)
 
 void read_mission_netscan_objectives_bin(void)
 {
-    ushort i;
+    ushort missi;
 
     next_mission_netscan_objective = 1;
 
-    for (i = 0; i < next_mission; i++) {
+    for (missi = 0; missi < next_mission; missi++) {
         struct Mission *p_missi;
         ushort nsobv_count;
         struct NetscanObjective *nsobv_arr;
 
-        p_missi = &mission_list[i];
+        p_missi = &mission_list[missi];
 
         nsobv_arr = &mission_netscan_objectives[next_mission_netscan_objective];
         nsobv_count = load_netscan_objectives_bin(nsobv_arr,
@@ -642,7 +655,7 @@ void save_missions_conf_file(int num)
             LbFileWrite(fh, locbuf, strlen(locbuf));
         }
 
-        if (p_missi->FailHead != 0) {
+        if (p_missi->NetscanObvIndex != 0) {
             struct NetscanObjective *nsobv_arr;
             sprintf(locbuf, "[missnetscan%d]\n", i);
             LbFileWrite(fh, locbuf, strlen(locbuf));

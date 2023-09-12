@@ -28,6 +28,7 @@ extern "C" {
 #pragma pack(1)
 
 #define CAMPAIGNS_MAX_COUNT 6
+#define MISSIONS_MAX_COUNT 120
 
 enum CampaignFlags {
     CmpgF_IsSinglePlayer = 0x0001,
@@ -142,7 +143,7 @@ struct Mission { // sizeof=76
 #pragma pack()
 /******************************************************************************/
 extern struct Campaign campaigns[CAMPAIGNS_MAX_COUNT];
-extern struct Mission mission_list[120];
+extern struct Mission mission_list[MISSIONS_MAX_COUNT];
 
 void load_campaigns(void);
 ushort selectable_campaigns_count(void);
@@ -151,6 +152,8 @@ ushort find_mission_state_slot(ushort missi);
 ushort find_empty_mission_state_slot(void);
 void remove_mission_state_slot(ushort mslot);
 void init_mission_states(void);
+
+ushort find_mission_with_map_and_level(ushort mapno, ushort level);
 void fix_mission_used_objectives(short missi);
 
 TbBool read_missions_conf_info(int num);

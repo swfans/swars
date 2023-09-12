@@ -25,6 +25,7 @@
 #include "bfmemut.h"
 #include "bfini.h"
 #include "bfkeybd.h"
+#include "campaign.h"
 #include "drawtext.h"
 #include "thing.h"
 #include "pepgroup.h"
@@ -2113,7 +2114,23 @@ int load_netscan_objectives_bin(struct NetscanObjective *nsobv_arr, ubyte mapno,
 
 void load_netscan_objectives(ubyte mapno, ubyte level)
 {
+#if 1
     netscan_objectives_count = load_netscan_objectives_bin(netscan_objectives, mapno, level);
+#else
+    struct Mission *p_missi;
+    ushort missi;
+    int remain;
+
+    missi = find_mission_with_map_and_level(mapno, level);
+    p_missi = &mission_list[missi];
+    LbMemoryCopy(netscan_objectives, &mission_netscan_objectives[p_missi->NetscanObvIndex],
+      sizeof(struct NetscanObjective) * p_missi->NetscanObvCount);
+    netscan_objectives_count = p_missi->NetscanObvCount;
+    remain = NETSCAN_OBJECTIVES_MAX_COUNT - netscan_objectives_count;
+    if (remain > 0)
+        LbMemorySet(&netscan_objectives[netscan_objectives_count], '\0',
+          sizeof(struct NetscanObjective) * remain);
+#endif
 }
 
 /******************************************************************************/

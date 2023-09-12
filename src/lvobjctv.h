@@ -29,7 +29,7 @@ extern "C" {
 #pragma pack(1)
 
 #define MISSION_NETSCAN_OBV_COUNT 1000
-#define NETSCAN_OBJECTIVES_COUNT 10
+#define NETSCAN_OBJECTIVES_MAX_COUNT 10
 
 /* deprecated - when callbacks are defined within objectv_defs[],
  * there will be no need to reference specific objective.
@@ -110,7 +110,7 @@ extern ushort next_objective;
 extern struct NetscanObjective mission_netscan_objectives[MISSION_NETSCAN_OBV_COUNT];
 extern ushort next_mission_netscan_objective;
 
-extern struct NetscanObjective netscan_objectives[NETSCAN_OBJECTIVES_COUNT];
+extern struct NetscanObjective netscan_objectives[NETSCAN_OBJECTIVES_MAX_COUNT];
 extern ubyte netscan_objectives_count;
 
 int add_used_objective(long mapno, long levelno);
