@@ -1679,21 +1679,22 @@ void snprint_netscan_objctv(char *buf, ulong buflen, struct NetscanObjective *p_
 
     s = buf;
 
-    sprintf(s, "Obv%02d = ", (int)nsobv);
+    sprintf(s, "N%02d = %s( ", (int)nsobv, p_nsobv->AnimNo ? "NETSCAN_OBJ_VIDEO" : "NETSCAN_OBJ_TARGET");
     s += strlen(s);
     nparams = 0;
 
     if (p_nsobv->CreditCost != 0) {
         if (nparams) { sprintf(s, ", "); s += strlen(s); }
-        sprintf(s, "Cost(%hu)", (ushort)p_nsobv->CreditCost);
+        sprintf(s, "Cost(%d)", (int)(p_nsobv->CreditCost * 100));
         s += strlen(s);
+        nparams++;
     }
 
     for (i = 0; i < 5; i++)
     {
         if ((p_nsobv->X[i]|p_nsobv->Z[i]) != 0) {
             if (nparams) { sprintf(s, ", "); s += strlen(s); }
-            sprintf(s, "Coord(%hd,%hd)", (short)p_nsobv->X[i], (short)p_nsobv->Z[i]);
+            sprintf(s, "Coord(%d,0,%d)", (int)(p_nsobv->X[i] << 7), (int)(p_nsobv->Z[i] << 7));
             s += strlen(s);
             nparams++;
         }
@@ -1739,8 +1740,6 @@ void save_netscan_objectives_conf(TbFileHandle fh, struct NetscanObjective *nsob
 
         p_nsobv = &nsobv_arr[nsobv];
 		snprint_netscan_objctv(buf, buflen, p_nsobv, nsobv);
-        if (strlen(buf) < 10)
-            continue;
         strncat(buf, "\n", buflen);
         LbFileWrite(fh, buf, strlen(buf));
         nfilled++;

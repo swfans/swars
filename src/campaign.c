@@ -577,7 +577,7 @@ void save_mission_single_conf(TbFileHandle fh, struct Mission *p_missi, char *bu
 void save_missions_conf_file(int num)
 {
     TbFileHandle fh;
-    char locbuf[120];
+    char locbuf[160];
     char conf_fname[80];
     int i;
 
