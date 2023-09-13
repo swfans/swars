@@ -41,6 +41,7 @@ ulong LbStringLength(const char *str);
 
 void * LbStringToLower(char *str);
 void * LbStringToLowerCopy(char *dst, const char *src, const ulong dst_buflen);
+void * LbStringToUpper(char *str);
 
 #ifdef __cplusplus
 };
