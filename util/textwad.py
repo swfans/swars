@@ -976,7 +976,7 @@ def create_lines_for_city(lines, pomdict):
         e = pomdict[('COMM','mapscreen.title','',)]
         lines.append(f"#{e.msgstr}")
 
-    for entryno in range(0,2):
+    for entryno in range(0,3):
         campgn = campaign_names[entryno]
         lines.append(f"# {campgn} map screen headings")
         for k in range(1,7):
