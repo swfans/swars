@@ -23,6 +23,7 @@
 #include "bffile.h"
 #include "bfmemory.h"
 #include "bfmemut.h"
+#include "bfstrut.h"
 #include "bfini.h"
 #include "game.h"
 #include "swlog.h"
@@ -108,7 +109,7 @@ void load_city_txt(void)
             *s = '\0';
             s += 2;
             // String ready, preprocess it
-            strupr(gui_strings[k]);
+            LbStringToUpper(gui_strings[k]);
             i++;
         }
     }
