@@ -51,8 +51,115 @@ const struct TbNamedEnum cities_conf_city_cmds[] = {
 
 void load_city_txt(void)
 {
+#if 0
     asm volatile ("call ASM_load_city_txt\n"
         :  :  : "eax" );
+#endif
+    char *s;
+    int i, n, k, city;
+
+    k = load_file_wad("textdata/city.txt", "qdata/alltext", memload);
+    if (k == -1)
+        return;
+    s = (char *)memload;
+    // Skip property names for campaigns before current
+    for (n = 0; n < background_type; n++)
+    {
+        for (i = 0; i < 6; )
+        {
+            if ((*s == '#') || (*s == '\r'))
+            {
+                char c;
+                do {
+                    c = *s;
+                    s++;
+                } while ((c != '\n') && (c != '\0'));
+                continue;
+            }
+            while ((*s != '\r') && (*s != '\0')) {
+                s++;
+            }
+            *s = '\0';
+            s += 2;
+            i++;
+        }
+    }
+    // Read property names
+    {
+        for (i = 0; i < 6; )
+        {
+            if ((*s == '#') || (*s == '\r'))
+            {
+                char c;
+                do {
+                    c = *s;
+                    s++;
+                } while ((c != '\n') && (c != '\0'));
+                continue;
+            }
+            if (i == 0)
+                k = 404;
+            else
+                k = 489+i;
+            gui_strings[k] = s;
+            while ((*s != '\r') && (*s != '\0')) {
+                s++;
+            }
+            *s = '\0';
+            s += 2;
+            // String ready, preprocess it
+            strupr(gui_strings[k]);
+            i++;
+        }
+    }
+    // Skip property names for campaigns after current
+    for (n = background_type+1; n < 3; n++)
+    {
+        for (i = 0; i < 6; )
+        {
+            if ((*s == '#') || (*s == '\r'))
+            {
+                char c;
+                do {
+                    c = *s;
+                    s++;
+                } while ((c != '\n') && (c != '\0'));
+                continue;
+            }
+            while ((*s != '\r') && (*s != '\0')) {
+                s++;
+            }
+            *s = '\0';
+            s += 2;
+            i++;
+        }
+    }
+    // Read per-city strings
+    for (city = 0; city < num_cities; city++)
+    {
+        for (i = 0; i < 6; )
+        {
+            if ((*s == '#') || (*s == '\r'))
+            {
+                char c;
+                do {
+                    c = *s;
+                    s++;
+                } while ((c != '\n') && (c != '\0'));
+                continue;
+            }
+            cities[city].TextIndex[i] = s - (char *)memload;
+            while ((*s != '\r') && (*s != '\0')) {
+                s++;
+            }
+            *s = '\0';
+            s += 2;
+            // String ready, preprocess it
+            k = cities[city].TextIndex[i];
+            my_preprocess_text((char *)&memload[k]);
+            i++;
+        }
+    }
 }
 
 void save_city_single_conf(TbFileHandle fh, struct City *p_city, char *buf)

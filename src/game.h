@@ -912,7 +912,10 @@ void host_reset(void);
 void free_texturemaps(void);
 int joy_grip_shutdown(void);
 
+void my_preprocess_text(char *text);
+
 TbFileHandle open_file_from_wad(const char *filename, const char *wadfile);
+int load_file_wad(const char *filename, const char *wadfile, void *outbuf);
 
 #ifdef __cplusplus
 };
