@@ -45,6 +45,7 @@ extern struct City cities[];
 extern sbyte city_id;
 
 void save_cities_conf_file(void);
+void read_cities_conf_file(void);
 void load_city_txt(void);
 void load_city_data(ubyte type);
 /******************************************************************************/

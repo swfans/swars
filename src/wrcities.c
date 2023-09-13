@@ -28,6 +28,27 @@
 #include "swlog.h"
 /******************************************************************************/
 
+enum CitiesConfigParam {
+    CtC_CityCount = 1,
+    CtC_Name,
+    CtC_Coord,
+    CtC_MapNo,
+    CtC_Flags,
+};
+
+const struct TbNamedEnum cities_conf_common_cmds[] = {
+  {"CityCount",	CtC_CityCount},
+  {NULL,		0},
+};
+
+const struct TbNamedEnum cities_conf_city_cmds[] = {
+  {"Name",		CtC_Name},
+  {"Coord",		CtC_Coord},
+  {"MapNo",		CtC_MapNo},
+  {"Flags",		CtC_Flags},
+  {NULL,		0},
+};
+
 void load_city_txt(void)
 {
     asm volatile ("call ASM_load_city_txt\n"
@@ -121,6 +142,7 @@ void save_cities_conf_file(void)
 
 void load_city_data(ubyte type)
 {
+#if 0
     TbFileHandle fh;
 
     fh = LbFileOpen("data/cities.dat", Lb_FILE_MODE_READ_ONLY);
@@ -130,6 +152,176 @@ void load_city_data(ubyte type)
     LbFileRead(fh, &num_cities, 1);
     LbFileRead(fh, cities, sizeof(struct City) * num_cities);
     LbFileClose(fh);
+#else
+    read_cities_conf_file();
+#endif
+}
+
+/** Reads cities file, with information on all cities included.
+ */
+void read_cities_conf_file(void)
+{
+    TbFileHandle conf_fh;
+    TbBool done;
+    int i;
+    long k;
+    char *conf_buf;
+    struct TbIniParser parser;
+    char conf_fname[80];
+    int conf_len;
+    int city_id;
+
+    sprintf(conf_fname, "%s" FS_SEP_STR "cities.ini", "conf");
+    conf_fh = LbFileOpen(conf_fname, Lb_FILE_MODE_READ_ONLY);
+    if (conf_fh != INVALID_FILE) {
+        conf_len = LbFileLengthHandle(conf_fh);
+        if (conf_len > 1024*1024)
+            conf_len = 1024*1024;
+        conf_buf = LbMemoryAlloc(conf_len+16);
+        conf_len = LbFileRead(conf_fh, conf_buf, conf_len);
+        LOGSYNC("Processing '%s' file, %d bytes", conf_fname, conf_len);
+        LbFileClose(conf_fh);
+    } else {
+        LOGERR("Could not open '%s' file, cities list empty.", conf_fname);
+        conf_buf = LbMemoryAlloc(16);
+        conf_len = 0;
+    }
+    conf_buf[conf_len] = '\0';
+    LbIniParseStart(&parser, conf_buf, conf_len);
+#define CONFWRNLOG(format,args...) LOGWARN("%s(line %lu): " format, conf_fname, parser.line_num, ## args)
+#define CONFDBGLOG(format,args...) LOGDBG("%s(line %lu): " format, conf_fname, parser.line_num, ## args)
+    num_cities = 0;
+
+    // Parse the [common] section of loaded file
+    done = false;
+    if (LbIniFindSection(&parser, "common") != Lb_SUCCESS) {
+        CONFWRNLOG("Could not find \"[%s]\" section, file skipped.", "common");
+        LbIniParseEnd(&parser);
+        LbMemoryFree(conf_buf);
+        return;
+    }
+#define COMMAND_TEXT(cmd_num) LbNamedEnumGetName(cities_conf_common_cmds,cmd_num)
+    while (!done)
+    {
+        int cmd_num;
+
+        // Finding command number in this line
+        i = 0;
+        cmd_num = LbIniRecognizeKey(&parser, cities_conf_common_cmds);
+        // Now store the config item in correct place
+        switch (cmd_num)
+        {
+        case CtC_CityCount:
+            i = LbIniValueGetLongInt(&parser, &k);
+            if (i <= 0) {
+                CONFWRNLOG("Could not read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                break;
+            }
+            num_cities = k;
+            CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)num_cities);
+            break;
+        case 0: // comment
+            break;
+        case -1: // end of buffer
+        case -3: // end of section
+            done = true;
+            break;
+        default:
+            CONFWRNLOG("Unrecognized command.");
+            break;
+        }
+        LbIniSkipToNextLine(&parser);
+    }
+#undef COMMAND_TEXT
+    for (city_id = 0; city_id < num_cities; city_id++)
+    {
+        char sect_name[16];
+        struct City *p_city;
+
+        p_city = &cities[city_id];
+        LbMemorySet(p_city, 0, sizeof(struct City));
+
+        // Parse the [cityN] sections of loaded file
+        done = false;
+        sprintf(sect_name, "city%d", city_id);
+        if (LbIniFindSection(&parser, sect_name) != Lb_SUCCESS) {
+            CONFWRNLOG("Could not find \"[%s]\" section.", sect_name);
+            continue;
+        }
+#define COMMAND_TEXT(cmd_num) LbNamedEnumGetName(cities_conf_city_cmds,cmd_num)
+        while (!done)
+        {
+            int cmd_num;
+
+            // Finding command number in this line
+            i = 0;
+            cmd_num = LbIniRecognizeKey(&parser, cities_conf_city_cmds);
+            // Now store the config item in correct place
+            switch (cmd_num)
+            {
+            case CtC_Name:
+#if 0
+                i = LbIniValueGetStrWhole(&parser, p_str, 80);
+                if (i <= 0) {
+                    CONFWRNLOG("Couldn't read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                    break;
+                }
+                p_city->TextName = p_str;
+                p_str += strlen(p_str) + 1;
+                CONFDBGLOG("%s \"%s\"", COMMAND_TEXT(cmd_num), (int)p_city->TextName);
+#endif
+                break;
+            case CtC_Coord:
+                i = LbIniValueGetLongInt(&parser, &k);
+                if (i <= 0) {
+                    CONFWRNLOG("Could not read \"%s\" command parameter X.", COMMAND_TEXT(cmd_num));
+                    break;
+                }
+                p_city->X = k;
+                i = LbIniValueGetLongInt(&parser, &k);
+                if (i <= 0) {
+                    CONFWRNLOG("Could not read \"%s\" command parameter Y.", COMMAND_TEXT(cmd_num));
+                    break;
+                }
+                p_city->Y = k;
+                CONFDBGLOG("%s %d %d", COMMAND_TEXT(cmd_num), (int)p_city->X, (int)p_city->Y);
+                break;
+            case CtC_MapNo:
+                i = LbIniValueGetLongInt(&parser, &k);
+                if (i <= 0) {
+                    CONFWRNLOG("Could not read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                    break;
+                }
+                p_city->MapID = k;
+                CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)p_city->MapID);
+                break;
+            case CtC_Flags:
+                i = LbIniValueGetLongInt(&parser, &k);
+                if (i <= 0) {
+                    CONFWRNLOG("Could not read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                    break;
+                }
+                p_city->Flags = k;
+                CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)p_city->Flags);
+                break;
+            case 0: // comment
+                break;
+            case -1: // end of buffer
+            case -3: // end of section
+                done = true;
+                break;
+            default:
+                CONFWRNLOG("Unrecognized command.");
+                break;
+            }
+            LbIniSkipToNextLine(&parser);
+        }
+#undef COMMAND_TEXT
+    }
+#undef CONFDBGLOG
+#undef CONFWRNLOG
+    LbIniParseEnd(&parser);
+    LbMemoryFree(conf_buf);
 }
 
 /******************************************************************************/
