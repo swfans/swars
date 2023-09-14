@@ -561,7 +561,7 @@ void save_mission_single_conf(TbFileHandle fh, struct Mission *p_missi, char *bu
         LbFileWrite(fh, buf, strlen(buf));
     }
     if (p_missi->CashReward != 0) {
-        sprintf(buf, "CashReward = %d\n", (int)p_missi->CashReward);
+        sprintf(buf, "CashReward = %d\n", (int)p_missi->CashReward * 1000);
         LbFileWrite(fh, buf, strlen(buf));
     }
     if (p_missi->PANStart != 0) {
@@ -1293,7 +1293,7 @@ void read_missions_conf_file(int num)
                     CONFWRNLOG("Could not read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
                     break;
                 }
-                p_missi->CashReward = k;
+                p_missi->CashReward = k / 1000;
                 CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)p_missi->CashReward);
                 break;
             case MissL_PANStart:
