@@ -92,7 +92,7 @@ struct NetscanObjective { // sizeof = 20
   ushort CreditCost;
   ushort TextOffset;
   ubyte AnimNo;
-  ushort brobjfld_3;
+  ushort CreditReward;
   ubyte TextLines;
   ubyte X[5];
   ubyte Z[5];

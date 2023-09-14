@@ -213,8 +213,8 @@ const struct TbNamedEnum missions_conf_objective_params[] = {
 enum NetObjctvConfigParam {
     NOvP_CreditCost = 1,
     NOvP_AnimNo,
-    NOvP_Fld3,
     NOvP_Coord,
+    NOvP_CreditReward,
     NOvP_Fld12,
     NOvP_Fld13,
 };
@@ -222,8 +222,8 @@ enum NetObjctvConfigParam {
 const struct TbNamedEnum missions_conf_netscan_objctv_params[] = {
   {"Cost",		NOvP_CreditCost},
   {"Anim",		NOvP_AnimNo},
-  {"Fld3",		NOvP_Fld3},
   {"Coord",		NOvP_Coord},
+  {"Reward",	NOvP_CreditReward},
   {"Fld12",		NOvP_Fld12},
   {"Fld13",		NOvP_Fld13},
   {NULL,		0},
@@ -1702,10 +1702,11 @@ void snprint_netscan_objctv(char *buf, ulong buflen, struct NetscanObjective *p_
         s += strlen(s);
     }
 
-    if (p_nsobv->brobjfld_3 != 0) {
+    if (p_nsobv->CreditReward != 0) {
         if (nparams) { sprintf(s, ", "); s += strlen(s); }
-        sprintf(s, "Fld3(%hu)", (ushort)p_nsobv->brobjfld_3);
+        sprintf(s, "Reward(%d)", (int)(p_nsobv->CreditReward * 100));
         s += strlen(s);
+        nparams++;
     }
 
     if (p_nsobv->brobjfld_12 != 0) {
@@ -2026,6 +2027,9 @@ int parse_netscan_obv_param(struct NetscanObjective *p_nsobv, const char *buf, l
     case NOvP_CreditCost:
         p_nsobv->CreditCost = atoi(toklist[1]) / 100;
         break;
+    case NOvP_CreditReward:
+        p_nsobv->CreditReward = atoi(toklist[1]) / 100;
+        break;
     case NOvP_Coord:
         if (n_cor > 4)  {
             LOGWARN("Objective parameter \"%s\" used too many times.", toklist[0]);
@@ -2041,9 +2045,6 @@ int parse_netscan_obv_param(struct NetscanObjective *p_nsobv, const char *buf, l
         break;
     case NOvP_AnimNo:
         p_nsobv->AnimNo = atoi(toklist[1]);
-        break;
-    case NOvP_Fld3:
-        p_nsobv->brobjfld_3 = atoi(toklist[1]);
         break;
     case NOvP_Fld12:
         p_nsobv->brobjfld_12 = atoi(toklist[1]);
@@ -2082,7 +2083,6 @@ int parse_next_netscan_objective(const char *buf, long buflen, long nsobv)
 
     p_nsobv = &mission_netscan_objectives[nsobv];
     LbMemorySet(p_nsobv, '\0', sizeof(struct NetscanObjective));
-    p_nsobv->brobjfld_3 = 0x100;
 
     for (i = 1; toklist[i] != NULL; i++)
     {
