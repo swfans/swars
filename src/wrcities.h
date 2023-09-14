@@ -28,14 +28,24 @@ extern "C" {
 #pragma pack(1)
 
 struct City { // sizeof=40
+    /** Coordinate of the city on mission brief map. */
     short X;
+    /** Coordinate of the city on mission brief map. */
     short Y;
+    /** Map assigned to this city by last active mission. */
     ubyte MapID;
+    /** Level assigned to this city by last active mission. */
     ubyte Level;
     ubyte Flags;
-    char Info;
+    /** Amount of additional infos in brief screen (both unlocked by default
+     * and by cash).
+     */
+    ubyte Info;
+    /** National text IDs: city name, then 5 additional properties. */
     ushort TextIndex[6];
-    long Dummy2[5];
+    /** Map numbers which can be assigned to this city by active mission. */
+    ubyte MapsNo[3];
+    ubyte Dummy2[17];
 };
 
 #pragma pack()
@@ -48,6 +58,8 @@ void save_cities_conf_file(void);
 void read_cities_conf_file(void);
 void load_city_txt(void);
 void load_city_data(ubyte type);
+
+void activate_cities(ubyte brief);
 /******************************************************************************/
 #ifdef __cplusplus
 }

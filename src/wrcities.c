@@ -25,6 +25,7 @@
 #include "bfmemut.h"
 #include "bfstrut.h"
 #include "bfini.h"
+#include "campaign.h"
 #include "game.h"
 #include "swlog.h"
 /******************************************************************************/
@@ -33,7 +34,7 @@ enum CitiesConfigParam {
     CtC_CityCount = 1,
     CtC_Name,
     CtC_Coord,
-    CtC_MapNo,
+    CtC_MapsNo,
     CtC_Flags,
 };
 
@@ -45,7 +46,7 @@ const struct TbNamedEnum cities_conf_common_cmds[] = {
 const struct TbNamedEnum cities_conf_city_cmds[] = {
   {"Name",		CtC_Name},
   {"Coord",		CtC_Coord},
-  {"MapNo",		CtC_MapNo},
+  {"MapsNo",	CtC_MapsNo},
   {"Flags",		CtC_Flags},
   {NULL,		0},
 };
@@ -184,7 +185,8 @@ void save_city_single_conf(TbFileHandle fh, struct City *p_city, char *buf)
         LbFileWrite(fh, buf, strlen(buf));
     }
     {
-        sprintf(buf, "MapNo = %hu\n", (ushort)p_city->MapID);
+        sprintf(buf, "MapsNo = %hu %hu %hu\n", (ushort)p_city->MapsNo[0],
+          (ushort)p_city->MapsNo[1], (ushort)p_city->MapsNo[2]);
         LbFileWrite(fh, buf, strlen(buf));
     }
     {
@@ -271,7 +273,7 @@ void read_cities_conf_file(void)
 {
     TbFileHandle conf_fh;
     TbBool done;
-    int i;
+    int i, n;
     long k;
     char *conf_buf;
     struct TbIniParser parser;
@@ -394,14 +396,21 @@ void read_cities_conf_file(void)
                 p_city->Y = k;
                 CONFDBGLOG("%s %d %d", COMMAND_TEXT(cmd_num), (int)p_city->X, (int)p_city->Y);
                 break;
-            case CtC_MapNo:
-                i = LbIniValueGetLongInt(&parser, &k);
-                if (i <= 0) {
-                    CONFWRNLOG("Could not read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
-                    break;
+            case CtC_MapsNo:
+                for (n=0; n < 3; n++)
+                {
+                    i = LbIniValueGetLongInt(&parser, &k);
+                    if (i <= 0) {
+                        if (n > 0)
+                            break;
+                        CONFWRNLOG("Could not read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                        break;
+                    }
+                    p_city->MapsNo[n] = k;
                 }
-                p_city->MapID = k;
-                CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)p_city->MapID);
+                p_city->MapID = p_city->MapsNo[0];
+                CONFDBGLOG("%s %d %d %d", COMMAND_TEXT(cmd_num), (int)p_city->MapsNo[0],
+                  (int)p_city->MapsNo[1], (int)p_city->MapsNo[2]);
                 break;
             case CtC_Flags:
                 i = LbIniValueGetLongInt(&parser, &k);
@@ -430,6 +439,161 @@ void read_cities_conf_file(void)
 #undef CONFWRNLOG
     LbIniParseEnd(&parser);
     LbMemoryFree(conf_buf);
+}
+
+/** Returns if there are substntial financial benefits for this mission.
+ */
+TbBool is_mission_active_in_city(ushort missi, ushort city)
+{
+    // The CashReward * 1000 indicates credits automatically gained after mission
+    if (mission_list[missi].CashReward >= 99)
+        return true;
+    // TODO info on financial benefits should be a part of netscan objectives
+    // TODO revealing them should then set benefit amount within the city data
+    if (missi == 4)
+        return cities[city].Info > 2;
+    if (missi == 5)
+        return cities[city].Info > 3;
+    if (missi == 6 || missi == 12)
+        return cities[city].Info > 4;
+    if (missi == 15)
+        return cities[city].Info > 3;
+    if (missi == 17)
+        return 1;
+    if (missi == 29)
+        return cities[city].Info > 3;
+    if (missi == 35)
+        return cities[city].Info > 2;
+    if (missi == 36)
+        return cities[city].Info > 5;
+    if (missi == 43)
+        return cities[city].Info > 2;
+    if (missi == 50 || missi == 51)
+        return cities[city].Info > 4;
+    if (missi == 58)
+        return cities[city].Info > 2;
+    if (missi == 59)
+        return cities[city].Info > 3;
+    if (missi == 72)
+        return cities[city].Info > 7;
+    if (missi == 85 || missi == 92)
+        return cities[city].Info > 4;
+    return 0;
+}
+
+TbBool mission_is_within_city(ushort city, ushort missi)
+{
+    int i;
+    for (i = 0; i < 3; i++)
+    {
+        if (cities[city].MapsNo[i] == mission_list[missi].MapNo)
+            return true;
+    }
+    return false;
+}
+
+void update_city_to_mission(ushort city, ushort missi, TbBool decorate, ushort flags)
+{
+    cities[city].MapID = mission_list[missi].MapNo;
+    cities[city].Level = mission_list[missi].LevelNo;
+    cities[city].Flags |= flags;
+    if (decorate && is_mission_active_in_city(missi, city))
+        cities[city].Flags |= 0x20;
+}
+
+void deactivate_cities(void)
+{
+    ushort city;
+
+    for (city = 0; city < num_cities; city++)
+    {
+        cities[city].Flags &= ~(0x20|0x10|0x01);
+    }
+}
+
+void update_cities_to_mission(ushort missi, TbBool decorate, ushort flags)
+{
+    ushort city;
+
+    for (city = 0; city < num_cities; city++)
+    {
+        if (mission_is_within_city(city, missi))
+            update_city_to_mission(city, missi, decorate, flags);
+    }
+}
+
+
+void activate_cities(ubyte brief)
+{
+#if 0
+    asm volatile ("call ASM_activate_cities\n"
+        : : "a" (brief));
+#endif
+    ushort missi, spmissi;
+    ubyte bri;
+
+    deactivate_cities();
+
+    if (login_control__State == 5)
+    {
+            for (missi = 1; missi < next_mission; missi++)
+            {
+                update_cities_to_mission(missi, false, 0x01);
+            }
+        return;
+    }
+
+    { // Update missions which remain until success
+        for (bri = 0; bri < next_brief; bri++)
+        {
+            missi = brief_store[bri].Mission;
+            if (!mission_remain_until_success(missi))
+                continue;
+            update_cities_to_mission(missi, true, 0x10);
+            while (1)
+            {
+                missi = mission_list[missi].SpecialTrigger[0];
+                if (missi == 0)
+                    break;
+                update_cities_to_mission(missi, true, 0x10);
+            }
+        }
+    }
+
+    if (brief == 0)
+    {
+        for (bri = 0; bri < next_brief; bri++)
+        {
+            missi = brief_store[bri].Mission;
+            if (mission_remain_until_success(missi))
+                continue;
+            spmissi = mission_list[missi].SpecialTrigger[2];
+            if ((spmissi != 0) && (spmissi != missi))
+                continue;
+            update_cities_to_mission(missi, true, 0x01);
+            while (1)
+            {
+                missi = mission_list[missi].SpecialTrigger[0];
+                if (missi == 0)
+                    break;
+                update_cities_to_mission(missi, true, 0x01);
+            }
+        }
+    }
+    else
+    {
+        {
+            missi = brief_store[brief - 1].Mission;
+            update_cities_to_mission(missi, true, 0x01);
+            while (1)
+            {
+                missi = mission_list[missi].SpecialTrigger[0];
+                if (missi == 0)
+                    break;
+                update_cities_to_mission(missi, true, 0x01);
+            }
+        }
+    }
 }
 
 /******************************************************************************/

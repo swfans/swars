@@ -156,6 +156,11 @@ void init_mission_states(void);
 ushort find_mission_with_map_and_level(ushort mapno, ushort level);
 void fix_mission_used_objectives(short missi);
 
+TbBool mission_remain_until_success(ushort missi);
+TbBool mission_has_immediate_next_on_success(ushort missi);
+TbBool mission_has_immediate_previous(ushort missi);
+TbBool mission_is_final_at_game_end(ushort missi);
+
 TbBool read_missions_conf_info(int num);
 void load_missions(int num);
 void save_missions_conf_file(int num);

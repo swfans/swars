@@ -1533,4 +1533,32 @@ void read_missions_conf_file(int num)
     mission_strings_len = p_str - (char *)(engine_mem_alloc_ptr + engine_mem_alloc_size - 64000 + campaign_strings_len);
 }
 
+TbBool mission_remain_until_success(ushort missi)
+{
+    struct Mission *p_missi;
+    p_missi = &mission_list[missi];
+    return ((p_missi->Flags &= MisF_RemainUntilSuccess) != 0);
+}
+
+TbBool mission_has_immediate_next_on_success(ushort missi)
+{
+    struct Mission *p_missi;
+    p_missi = &mission_list[missi];
+    return ((p_missi->Flags & MisF_ImmediateNextOnSuccess) != 0);
+}
+
+TbBool mission_has_immediate_previous(ushort missi)
+{
+    struct Mission *p_missi;
+    p_missi = &mission_list[missi];
+    return ((p_missi->Flags & MisF_ImmediatePrevious) != 0);
+}
+
+TbBool mission_is_final_at_game_end(ushort missi)
+{
+    struct Mission *p_missi;
+    p_missi = &mission_list[missi];
+    return ((p_missi->Flags & MisF_IsFinalMission) != 0);
+}
+
 /******************************************************************************/
