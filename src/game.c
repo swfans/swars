@@ -5096,8 +5096,9 @@ ubyte load_game(int slot, char *desc)
         int i;
         for (i = 0; i < num_cities; i++)
         {
-          cities[i].Info = save_game_buffer[gblen];
-          gblen++;
+            cities[i].Info = save_game_buffer[gblen];
+            gblen++;
+            recount_city_credit_reward(i);
         }
         ingame.fld_unk7DE = save_game_buffer[gblen];
         gblen++;
@@ -9283,18 +9284,6 @@ void frame_unkn_func_06(void)
 {
     asm volatile ("call ASM_frame_unkn_func_06\n"
         :  :  : "eax" );
-}
-
-void recount_city_credit_reward(ubyte city_id)
-{
-    int i, k;
-
-    k = 0;//mission_list[missi].CashReward; -- TODO properly compute the CreditReward(=k)
-    for (i = 0; i < cities[city_id].Info; i++)
-    {
-        k += netscan_objectives[i].CreditReward;
-    }
-    cities[city_id].CreditReward = min(k, 65535);
 }
 
 void update_netscan_cost_button(ubyte city_id)

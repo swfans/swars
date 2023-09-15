@@ -64,6 +64,7 @@ void load_city_txt(void);
 void load_city_data(ubyte type);
 
 void activate_cities(ubyte brief);
+void recount_city_credit_reward(ubyte city);
 /******************************************************************************/
 #ifdef __cplusplus
 }

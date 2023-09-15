@@ -24,9 +24,11 @@
 #include "bfmemory.h"
 #include "bfmemut.h"
 #include "bfstrut.h"
+#include "bfutility.h"
 #include "bfini.h"
 #include "campaign.h"
 #include "game.h"
+#include "lvobjctv.h"
 #include "swlog.h"
 /******************************************************************************/
 
@@ -441,44 +443,32 @@ void read_cities_conf_file(void)
     LbMemoryFree(conf_buf);
 }
 
+void recount_city_credit_reward(ubyte city)
+{
+    int i, k;
+
+    // Note that we do not include mission_list[missi].CashReward
+    k = 0;
+    for (i = 0; i < cities[city].Info; i++)
+    {
+        k += netscan_objectives[i].CreditReward;
+    }
+    cities[city].CreditReward = min(k, 65535);
+}
+
 /** Returns if there are substntial financial benefits for this mission.
  */
 TbBool is_mission_active_in_city(ushort missi, ushort city)
 {
-    // The CashReward * 1000 indicates credits automatically gained after mission
-    if (mission_list[missi].CashReward >= 99)
-        return true;
-    // TODO info on financial benefits should be a part of netscan objectives
-    // TODO revealing them should then set benefit amount within the city data
-    if (missi == 4)
-        return cities[city].Info > 2;
-    if (missi == 5)
-        return cities[city].Info > 3;
-    if (missi == 6 || missi == 12)
-        return cities[city].Info > 4;
-    if (missi == 15)
-        return cities[city].Info > 3;
-    if (missi == 17)
-        return 1;
-    if (missi == 29)
-        return cities[city].Info > 3;
-    if (missi == 35)
-        return cities[city].Info > 2;
-    if (missi == 36)
-        return cities[city].Info > 5;
-    if (missi == 43)
-        return cities[city].Info > 2;
-    if (missi == 50 || missi == 51)
-        return cities[city].Info > 4;
-    if (missi == 58)
-        return cities[city].Info > 2;
-    if (missi == 59)
-        return cities[city].Info > 3;
-    if (missi == 72)
-        return cities[city].Info > 7;
-    if (missi == 85 || missi == 92)
-        return cities[city].Info > 4;
-    return 0;
+    ulong TotalReward;
+
+    // The CashReward x1000 indicates credits automatically gained after mission
+    TotalReward = mission_list[missi].CashReward * 1000;
+    // The CreditReward x100 is a reward the player can possibly gain
+    // by fulfilling known netscan objectives
+    TotalReward += cities[city].CreditReward * 100;
+
+    return (TotalReward >= 99000);
 }
 
 TbBool mission_is_within_city(ushort city, ushort missi)
