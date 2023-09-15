@@ -45,7 +45,11 @@ struct City { // sizeof=40
     ushort TextIndex[6];
     /** Map numbers which can be assigned to this city by active mission. */
     ubyte MapsNo[3];
-    ubyte Dummy2[17];
+    /** Total cash reward expected from the active mission in this city.
+     * Multiply x100 to get the value in credits.
+     */
+    ushort CreditReward;
+    ubyte Dummy2[15];
 };
 
 #pragma pack()

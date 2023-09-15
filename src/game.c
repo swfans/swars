@@ -9285,7 +9285,36 @@ void frame_unkn_func_06(void)
         :  :  : "eax" );
 }
 
-void load_netscan_text_data(ubyte city_id, ubyte a2)
+void recount_city_credit_reward(ubyte city_id)
+{
+    int i, k;
+
+    k = 0;//mission_list[missi].CashReward; -- TODO properly compute the CreditReward(=k)
+    for (i = 0; i < cities[city_id].Info; i++)
+    {
+        k += netscan_objectives[i].CreditReward;
+    }
+    cities[city_id].CreditReward = min(k, 65535);
+}
+
+void update_netscan_cost_button(ubyte city_id)
+{
+    int i, k;
+    char *text;
+
+    i = cities[city_id].Info;
+    if (i >= netscan_objectives_count) {
+        brief_NETSCAN_COST_box.Text2[0] = '\0';
+        text = gui_strings[495];
+    } else {
+        k = 100 * netscan_objectives[i].CreditCost;
+        sprintf(brief_NETSCAN_COST_box.Text2, "%d", k);
+        text = gui_strings[442];
+    }
+    brief_NETSCAN_COST_box.Text1 = text;
+}
+
+void load_netscan_text_data(ubyte city_id, ubyte level)
 {
 #if 0
     asm volatile ("call ASM_load_netscan_text_data\n"
@@ -9293,7 +9322,6 @@ void load_netscan_text_data(ubyte city_id, ubyte a2)
 #else
     char *p;
     int i, k;
-    char *text;
     TbBool found;
 
     found = 0;
@@ -9330,22 +9358,24 @@ void load_netscan_text_data(ubyte city_id, ubyte a2)
           sscanf(secnum_str, "%d", &secnum_int);
           cmapno = secnum_int / 100;
           clevel = secnum_int % 100;
-          if ((clevel == a2) && (cmapno == cities[city_id].MapID))
+          if ((clevel == level) && (cmapno == cities[city_id].MapID))
           {
               found = 1;
               for (i = 0; i < netscan_objectives_count; i++)
               {
-                netscan_objectives[i].TextOffset = p - mem_unkn03;
-                do
-                  c = *p++;
-                while ((c != '\n') && (c != '\0'));
-                *(p - 1) = '\0';
+                  char *text;
+                  text = p;
+                  do
+                      c = *p++;
+                  while ((c != '\n') && (c != '\0'));
+                  *(p - 1) = '\0';
 
-                my_preprocess_text(mem_unkn03 + netscan_objectives[i].TextOffset);
-                k = my_count_lines(mem_unkn03 + netscan_objectives[i].TextOffset);
-                netscan_objectives[i].TextLines = k;
-                if (!netscan_objectives[i].CreditCost)
-                  unkn36_box.Lines += netscan_objectives[i].TextLines;
+                  netscan_objectives[i].TextOffset = text - mem_unkn03;
+                  my_preprocess_text(mem_unkn03 + netscan_objectives[i].TextOffset);
+                  k = my_count_lines(mem_unkn03 + netscan_objectives[i].TextOffset);
+                  netscan_objectives[i].TextLines = k;
+                  if (!netscan_objectives[i].CreditCost)
+                      unkn36_box.Lines += netscan_objectives[i].TextLines;
               }
           }
       }
@@ -9353,7 +9383,6 @@ void load_netscan_text_data(ubyte city_id, ubyte a2)
 
     if (cities[city_id].Info == 0)
     {
-        
         for (i = 0; i < netscan_objectives_count; i++)
         {
             if (netscan_objectives[i].CreditCost)
@@ -9361,17 +9390,8 @@ void load_netscan_text_data(ubyte city_id, ubyte a2)
         }
         cities[city_id].Info = i;
     }
-
-    i = cities[city_id].Info;
-    if (i >= netscan_objectives_count) {
-        brief_NETSCAN_COST_box.Text2[0] = '\0';
-        text = gui_strings[495];
-    } else {
-        k = 100 * netscan_objectives[i].CreditCost;
-        sprintf(brief_NETSCAN_COST_box.Text2, "%d", k);
-        text = gui_strings[442];
-    }
-    brief_NETSCAN_COST_box.Text1 = text;
+    recount_city_credit_reward(city_id);
+    update_netscan_cost_button(city_id);
 #endif
 }
 
