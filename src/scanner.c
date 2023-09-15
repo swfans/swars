@@ -428,6 +428,24 @@ ushort do_group_arrive_area_scanner(struct Objective *p_objectv, ushort next_sig
     return n;
 }
 
+void clear_all_scanner_signals(void)
+{
+    int i;
+
+    signal_count = 0;
+    for (i = 0; i < SCANNER_BIG_BLIP_COUNT; i++)
+        ingame.Scanner.BigBlip[i].Period = 0;
+    for (i = 0; i < SCANNER_ARC_COUNT; i++)
+        ingame.Scanner.Arc[i].Period = 0;
+}
+
+void add_blippoint_to_scanner(int x, int z, ubyte colour)
+{
+    SCANNER_init_blippoint(signal_count, x, z, colour);
+    ingame.Scanner.BigBlip[signal_count].Counter = 32;
+    signal_count++;
+}
+
 void add_signal_to_scanner(struct Objective *p_objectv, ubyte flag)
 {
 #if 0
@@ -435,15 +453,7 @@ void add_signal_to_scanner(struct Objective *p_objectv, ubyte flag)
         :  : "a" (p_objectv), "d" (flag));
 #endif
     if (flag)
-    {
-        int i;
-
-        signal_count = 0;
-        for (i = 0; i < SCANNER_BIG_BLIP_COUNT; i++)
-            ingame.Scanner.BigBlip[i].Period = 0;
-        for (i = 0; i < SCANNER_ARC_COUNT; i++)
-            ingame.Scanner.Arc[i].Period = 0;
-    }
+        clear_all_scanner_signals();
     if (gameturn != turn_last)
     {
         turn_last = gameturn;

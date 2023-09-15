@@ -173,6 +173,7 @@ extern ubyte player_unkn0C9[8];
 extern char player_unknCC9[8][128];
 extern long scanner_unkn370;
 extern long scanner_unkn3CC;
+extern sbyte unkstruct04_id;// = -1;
 
 extern ushort netgame_agent_pos_x[8][4];
 extern ushort netgame_agent_pos_y[8][4];
@@ -6233,12 +6234,71 @@ void mission_over(void)
 #endif
 }
 
+void update_netscan_cost_button(ubyte city_id)
+{
+    int k;
+    ushort ninfo;
+    char *text;
+
+    ninfo = cities[city_id].Info;
+    if (ninfo >= netscan_objectives_count) {
+        brief_NETSCAN_COST_box.Text2[0] = '\0';
+        text = gui_strings[495];
+    } else {
+        k = 100 * netscan_objectives[ninfo].CreditCost;
+        sprintf(brief_NETSCAN_COST_box.Text2, "%d", k);
+        text = gui_strings[442];
+    }
+    brief_NETSCAN_COST_box.Text1 = text;
+}
+
+void reveal_netscan_objective(ushort info)
+{
+    unkn36_box.Lines += netscan_objectives[info].TextLines;
+}
+
+TbBool player_try_spend_money(long cost)
+{
+    if (ingame.Credits - cost < 0)
+        return false;
+    ingame.Credits -= cost;
+    ingame.Expenditure += cost;
+    return true;
+}
+
 ubyte brief_do_netscan_enhance(ubyte click)
 {
+#if 0
     ubyte ret;
     asm volatile ("call ASM_brief_do_netscan_enhance\n"
         : "=r" (ret) : "a" (click));
     return ret;
+#endif
+    ushort nsobv;
+    ushort n;
+    struct NetscanObjective *p_nsobv;
+
+    nsobv = cities[city_id].Info;
+    p_nsobv = &netscan_objectives[nsobv];
+
+    if (!player_try_spend_money(100 * p_nsobv->CreditCost))
+        return 0;
+
+    cities[city_id].Info++;
+    update_netscan_cost_button(city_id);
+    unkstruct04_id = nsobv;
+    reveal_netscan_objective(unkstruct04_id);
+    unkn36_box.Flags |= 0x80;
+    recount_city_credit_reward(city_id);
+
+    clear_all_scanner_signals();
+    for (n = 0; n < 5; n++)
+    {
+        if (p_nsobv->Z[n] || p_nsobv->X[n]) {
+            add_blippoint_to_scanner(p_nsobv->X[n] << 15, p_nsobv->Z[n] << 15, 87);
+        }
+    }
+    return 1;
 }
 
 void init_variables(void)
@@ -9286,23 +9346,6 @@ void frame_unkn_func_06(void)
         :  :  : "eax" );
 }
 
-void update_netscan_cost_button(ubyte city_id)
-{
-    int i, k;
-    char *text;
-
-    i = cities[city_id].Info;
-    if (i >= netscan_objectives_count) {
-        brief_NETSCAN_COST_box.Text2[0] = '\0';
-        text = gui_strings[495];
-    } else {
-        k = 100 * netscan_objectives[i].CreditCost;
-        sprintf(brief_NETSCAN_COST_box.Text2, "%d", k);
-        text = gui_strings[442];
-    }
-    brief_NETSCAN_COST_box.Text1 = text;
-}
-
 void load_netscan_text_data(ubyte city_id, ubyte level)
 {
 #if 0
@@ -9363,8 +9406,8 @@ void load_netscan_text_data(ubyte city_id, ubyte level)
                   my_preprocess_text(mem_unkn03 + netscan_objectives[i].TextOffset);
                   k = my_count_lines(mem_unkn03 + netscan_objectives[i].TextOffset);
                   netscan_objectives[i].TextLines = k;
-                  if (!netscan_objectives[i].CreditCost)
-                      unkn36_box.Lines += netscan_objectives[i].TextLines;
+                  if (netscan_objectives[i].CreditCost == 0)
+                      reveal_netscan_objective(i);
               }
           }
       }
