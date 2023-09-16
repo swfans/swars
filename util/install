@@ -14,7 +14,7 @@ Available options:
 
   -h       print usage information
 
-Available languages: eng fre ita spa swe
+Available languages: eng fre ger ita spa swe
 EOF
 }
 
@@ -166,18 +166,22 @@ copy_data()
     install_directory "$SOURCE/$dir" "$TARGET/$dir" || return 1
   done
 
-  local ld="$SOURCE/language/$LANG"
+  # Source lang dir (original game install files)
+  local sld="$SOURCE/language/$LANG"
+  # Target lang dir (lang files being part of the port)
+  local tld="$TARGET/language/$LANG"
 
   install -v -d "$TARGET/intro" || return 1
 
-  install -v -m 0644 "$ld/text.dat" "$TARGET/data" || return 1
-  install -v -m 0644 "$ld/intro.smk" "$TARGET/intro" || return 1
-  install -v -m 0644 "$ld/syn_ele.smk" "$TARGET/data" || return 1
-  install -v -m 0644 "$ld/chu_ele.smk" "$TARGET/data" || return 1
+  install -v -m 0644 "$sld/text.dat" "$TARGET/data" || return 1
+  install -v -m 0644 "$sld/intro.smk" "$TARGET/intro" || return 1
+  install -v -m 0644 "$sld/syn_ele.smk" "$TARGET/data" || return 1
+  install -v -m 0644 "$sld/chu_ele.smk" "$TARGET/data" || return 1
 
-  install -v -m 0644 "$ld/sound.dat" "$TARGET/sound" || return 1
-  install -v -m 0644 "$ld/alltext.wad" "$TARGET/qdata" || return 1
-  install -v -m 0644 "$ld/alltext.idx" "$TARGET/qdata" || return 1
+  install -v -m 0644 "$sld/sound.dat" "$TARGET/sound" || return 1
+
+  install -v -m 0644 "$tld/alltext.wad" "$TARGET/qdata" || return 1
+  install -v -m 0644 "$tld/alltext.idx" "$TARGET/qdata" || return 1
 
   return 0
 }
@@ -200,6 +204,9 @@ check_language()
       ;;
     fre)
       LANG_NAME="French"
+      ;;
+    ger)
+      LANG_NAME="German"
       ;;
     ita)
       LANG_NAME="Italian"
