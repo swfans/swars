@@ -168,9 +168,17 @@ endif
 if TARGET_WINDOWS
 install-exec-hook:
 	mkdir -p "$(DESTDIR)${prefix}/opt/$(PACKAGE)"
+	## Find main executable dependencies
 	$(eval lib_SHARED_INSTALL := $(shell objdump -p swars$(EXEEXT) | \
 		sed -n 's/\s*\(DLL Name:\|NEEDED\)\s*\(.*\)$$/\2/p' | \
 		xargs -I {} find $(shell dirname $(shell which ${CXX})) -name '{}'))
+	## Find sub-dependencies for the previous dependencies
+	$(eval lib_SHARED_INSTALL += $(shell echo -n '$(lib_SHARED_INSTALL)' | \
+        xargs -d ' ' -I {} objdump -p '{}' | \
+		sed -n 's/\s*\(DLL Name:\|NEEDED\)\s*\(.*\)$$/\2/p' | \
+		xargs -I {} find $(shell dirname $(shell which ${CXX})) -name '{}'))
+	## Remove duplicates
+	$(eval lib_SHARED_INSTALL := $(sort $(lib_SHARED_INSTALL)))
 	cp $(lib_SHARED_INSTALL) $(DESTDIR)${prefix}/opt/$(PACKAGE)
 endif
 
