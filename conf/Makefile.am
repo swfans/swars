@@ -1,5 +1,6 @@
 confdir = $(prefix)/opt/$(PACKAGE)/conf
 conf_DATA = \
+	cities.ini \
 	cybmods.ini \
 	weapons.ini \
 	miss000.ini \
