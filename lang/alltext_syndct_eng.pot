@@ -521,7 +521,7 @@ msgstr ""
 
 #: mission.brief.mail4b.map2.level1:1
 msgctxt "mission brief tactical information"
-msgid "Dropsite: Matochkin Shar"
+msgid "Dropsite: Matochkin Shar IML Link"
 msgstr ""
 
 #: mission.brief.mail4b.map2.level1:2

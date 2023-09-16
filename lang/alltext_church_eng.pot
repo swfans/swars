@@ -788,7 +788,7 @@ msgstr ""
 #: mission.brief.mail9c.map22.level2:4
 msgctxt "mission brief tactical information"
 msgid ""
-"Eavesdrop: tinkering with UTOPIA ident signal detected - with focus around "
+"Eavesdrop: UTOPIA ident signal tampering detected - with focus around "
 "entrances to transport tubes, and detection of carrying explosive devices"
 msgstr ""
 
