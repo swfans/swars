@@ -134,7 +134,7 @@ To build **Syndicate Wars Port**, you will need the following:
 
 * GNU Autotools
 * GNU C compiler
-* Python 3
+* Python 3 (with module: polib)
 * vorbis-tools (oggenc in particular)
 * cdparanoia
 * development versions of the following libraries:
@@ -162,7 +162,8 @@ Here are specific commands required to compile the executable on Ubuntu linux.
 Install the dependencies - remember that some must be 32-bit (i386):
 
 ```
-sudo apt install gcc-multilib g++-multilib lib32z1 python3
+sudo apt install gcc-multilib g++-multilib lib32z1
+sudo apt install python3 python3-polib
 sudo apt install vorbis-tools
 sudo apt install cdparanoia
 sudo apt install libsdl1.2-dev:i386
@@ -244,6 +245,18 @@ cp wildmidi-0.4.5-win32/*.h /mingw32/include/
 cp wildmidi-0.4.5-win32/*.a /mingw32/lib/
 cp wildmidi-0.4.5-win32/*.dll /mingw32/bin/
 ```
+
+The Python interpeter needs to have an additional module installed:
+
+```
+pip install polib
+```
+
+Make sure the modules are installed on the Python version used during build - with MSYS2,
+you often get separate `i686` and `x86_64` versions of Python. For both of them, you
+can separately install `pip` package, and then add any missing modules through it.
+To select specific `python3` or `pip` at command line, alter the `PATH` variable,
+like in some commands in later part of the instructions.
 
 Now as our host is ready, we can start working on the actual `swars` sources.
 We will still have to provide paths to 32-bit configuration - MSYS will prefer
