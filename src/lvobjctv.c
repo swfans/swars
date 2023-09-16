@@ -1990,7 +1990,7 @@ int parse_netscan_obv_param(struct NetscanObjective *p_nsobv, const char *buf, l
     char *toklist[PARAM_TOKEN_MAX];
     char tokbuf[128];
     int i;
-    ushort n_cor;
+    ulong n;
 
     LbMemorySet(toklist, 0, sizeof(toklist));
     i = tokenize_script_func(toklist, tokbuf, buf, buflen);
@@ -2004,7 +2004,6 @@ int parse_netscan_obv_param(struct NetscanObjective *p_nsobv, const char *buf, l
         return -1;
     }
 
-    n_cor = 0;
     // Finding parameter number
     i = 0;
     while (1)
@@ -2031,7 +2030,12 @@ int parse_netscan_obv_param(struct NetscanObjective *p_nsobv, const char *buf, l
         p_nsobv->CreditReward = atoi(toklist[1]) / 100;
         break;
     case NOvP_Coord:
-        if (n_cor > 4)  {
+        // Find unused index
+        for (n = 0; n < 4; n++) {
+            if ((p_nsobv->X[n]|p_nsobv->Z[n]) == 0)
+                break;
+        }
+        if (n > 4)  {
             LOGWARN("Objective parameter \"%s\" used too many times.", toklist[0]);
             return -1;
         }
@@ -2039,9 +2043,8 @@ int parse_netscan_obv_param(struct NetscanObjective *p_nsobv, const char *buf, l
             LOGWARN("Objective parameter \"%s\" requires 3 numbers, got less.", toklist[0]);
             return -1;
         }
-        p_nsobv->X[n_cor] = atoi(toklist[1]) >> 7;
-        p_nsobv->Z[n_cor] = atoi(toklist[3]) >> 7;
-        n_cor++;
+        p_nsobv->X[n] = atoi(toklist[1]) >> 7;
+        p_nsobv->Z[n] = atoi(toklist[3]) >> 7;
         break;
     case NOvP_AnimNo:
         p_nsobv->AnimNo = atoi(toklist[1]);
