@@ -51,7 +51,7 @@ The steps are:
 5. do `util/install -f SOURCE -t TARGET -l LANG`, where
    * *SOURCE* is the game CD path, like `/media/cdrom`,
    * *TARGET* is the destination path, in this case `/usr/local/share/swars`,
-   * *LANG* is the installation language, and can be one of: `eng` `fre` `ita` `spa` `swe`.
+   * *LANG* is the installation language, and can be one of: `eng` `fre` `ger` `ita` `spa` `swe`.
 
 If all went well, you can now play the game.
 
@@ -109,7 +109,17 @@ If you've decided on the hand-compilation option, proceed with the following ste
 6. *[optional]* rip the game CD Audio tracks to `track_{1,2,3}.ogg` (vorbis)
 7. *[optional]* create a `SWarsLocation\music` directory and copy the
    previously encoded ogg files there
-8. copy `swars.exe` and `conf` folder to your `SWarsLocation` directory
+8. from the compilation folder, copy `swars.exe` and `conf` folder to your
+   `SWarsLocation` directory
+9. from the compilation folder, copy files from `lang\LANGUAGE\` folder to
+   appropriate places within `SWarsLocation` directory, replacing files which
+   were already there
+
+If instead ob the above points you prefer more technical description on what to
+copy and where, read the script `util/install` which is used to perform
+installation on GNU or UNIX systems. If your Windows has a Linux subsystem
+istalled, you may even use it to perform the installation automatically - see
+[GNU or UNIX chapter](#installing-on-gnu-or-unix) for details.
 
 You can now launch `swars.exe` and have fun!
 
