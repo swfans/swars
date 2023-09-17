@@ -5686,10 +5686,44 @@ void mission_over_gain_persuaded_crowd_rewards(void)
     }
 }
 
+ulong mission_over_calculate_player_cash_gain_from_items(void)
+{
+    ulong credits;
+    ushort sthing;
+    struct SimpleThing *p_sthing;
+
+    credits = 0;
+    for (sthing = sthings_used_head; sthing != 0; sthing = p_sthing->LinkChild)
+    {
+        p_sthing = &sthings[sthing];
+        if (p_sthing->Type == SmTT_CARRIED_ITEM)
+        {
+            struct Thing *p_owntng;
+            p_owntng = &things[p_sthing->U.UWeapon.Owner];
+            if (((p_owntng->Flag & 0x2000) != 0) && ((p_owntng->Flag & 0x80000) == 0))
+            {
+                if (p_sthing->U.UWeapon.WeaponType == 0)
+                    credits += 100 * p_sthing->U.UWeapon.Ammo;
+            }
+            else
+            {
+                LOGSYNC("Carried item thing %hd not under player control", sthing);
+            }
+        }
+    }
+    return credits;
+}
+
 void update_player_cash(void)
 {
+#if 0
     asm volatile ("call ASM_update_player_cash\n"
         :  :  : "eax" );
+#endif
+    ulong credits;
+
+    credits = mission_over_calculate_player_cash_gain_from_items();
+    ingame.Credits += credits;
 }
 
 void init_agents(void)
