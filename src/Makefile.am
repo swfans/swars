@@ -100,6 +100,7 @@ swars_SOURCES = \
 	people.h \
 	pepgroup.c \
 	pepgroup.h \
+	player.c \
 	player.h \
 	research.c \
 	research.h \

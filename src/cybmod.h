@@ -75,7 +75,7 @@ struct ModDefAdd {
  */
 union Mod
 {
-  short Mods;
+  ushort Mods;
 };
 
 #pragma pack()
@@ -85,6 +85,20 @@ extern struct TbNamedEnum mod_names[33];
 extern ubyte mod_tech_level[17];
 
 void read_cybmods_conf_file(void);
+
+ubyte cybmod_chest_level(union Mod *p_umod);
+void set_cybmod_chest_level(union Mod *p_umod, ubyte nmod);
+ubyte cybmod_legs_level(union Mod *p_umod);
+void set_cybmod_legs_level(union Mod *p_umod, ubyte nmod);
+ubyte cybmod_arms_level(union Mod *p_umod);
+void set_cybmod_arms_level(union Mod *p_umod, ubyte nmod);
+ubyte cybmod_brain_level(union Mod *p_umod);
+void set_cybmod_brain_level(union Mod *p_umod, ubyte nmod);
+ubyte cybmod_skin_level(union Mod *p_umod);
+void set_cybmod_skin_level(union Mod *p_umod, ubyte nmod);
+
+void sanitize_cybmods_fmtver11_flags(union Mod *p_umod);
+TbBool cybmod_fix_all(union Mod *p_umod);
 /******************************************************************************/
 #ifdef __cplusplus
 }

@@ -889,12 +889,6 @@ void load_mad_pc(ushort mapno)
         : : "a" (mapno));
 }
 
-void sanitize_cybmods_flags(short *modflg)
-{
-    asm volatile ("call ASM_sanitize_cybmods_flags\n"
-        : : "a" (modflg));
-}
-
 void unkn_object_shift_03(ushort objectno)
 {
     asm volatile ("call ASM_unkn_object_shift_03\n"
@@ -1148,7 +1142,7 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
                 init_person_thing(p_thing);
                 p_thing->Flag |= 0x0004;
                 if (fmtver < 12)
-                    sanitize_cybmods_flags(&p_thing->U.UPerson.UMod.Mods);
+                    sanitize_cybmods_fmtver11_flags(&p_thing->U.UPerson.UMod);
             }
 
             if (p_thing->Type == SmTT_DROPPED_ITEM)
@@ -4785,58 +4779,52 @@ ubyte load_game(int slot, char *desc)
     gblen = 4;
     if (fmtver <= 4)
     {
-        int agent, k;
+        int cryo_no, k;
         memcpy(&cryo_agents, &save_game_buffer[gblen], offsetof(struct AgentInfo, FourPacks));
         gblen += offsetof(struct AgentInfo, FourPacks);
         memcpy(&cryo_agents.NumAgents, &save_game_buffer[gblen], 1);
         gblen += 1;
-        for (agent = 0; agent < 32; agent++)
+        for (cryo_no = 0; cryo_no < 32; cryo_no++)
         {
             for (k = 0; k < WFRPK_COUNT; k++) {
-                if (cryo_agents.FourPacks[agent][k] > 4)
-                    cryo_agents.FourPacks[agent][k] = 1;
+                if (cryo_agents.FourPacks[cryo_no].Amount[k] > 4)
+                    cryo_agents.FourPacks[cryo_no].Amount[k] = 1;
             }
             // Remove bad mod flags
-            if (cryo_agents.Mods[agent].Mods >> 12 > 4) {
-                cryo_agents.Mods[agent].Mods &= 0x0FFF;
-                cryo_agents.Mods[agent].Mods |= 0x1000;
-            }
+            cybmod_fix_all(&cryo_agents.Mods[cryo_no]);
             // Reset bad amounts of consumable weapons
-            cryo_agents.FourPacks[agent][WFRPK_NUCLGREN] = 0;
-            cryo_agents.FourPacks[agent][WFRPK_ELEMINE] = 0;
-            cryo_agents.FourPacks[agent][WFRPK_EXPLMINE] = 0;
-            cryo_agents.FourPacks[agent][WFRPK_KOGAS] = 0;
-            cryo_agents.FourPacks[agent][WFRPK_CRAZYGAS] = 0;
-            if (cryo_agents.Weapons[agent] & (1 << 5))
-                cryo_agents.FourPacks[agent][WFRPK_NUCLGREN] = 1;
-            if (cryo_agents.Weapons[agent] & (1 << 11))
-                cryo_agents.FourPacks[agent][WFRPK_ELEMINE] = 1;
-            if (cryo_agents.Weapons[agent] & (1 << 12))
-                cryo_agents.FourPacks[agent][WFRPK_EXPLMINE] = 1;
-            if (cryo_agents.Weapons[agent] & (1 << 10))
-                cryo_agents.FourPacks[agent][WFRPK_KOGAS] = 1;
-            if (cryo_agents.Weapons[agent] & (1 << 9))
-                cryo_agents.FourPacks[agent][WFRPK_CRAZYGAS] = 1;
+            cryo_agents.FourPacks[cryo_no].Amount[WFRPK_NUCLGREN] = 0;
+            cryo_agents.FourPacks[cryo_no].Amount[WFRPK_ELEMINE] = 0;
+            cryo_agents.FourPacks[cryo_no].Amount[WFRPK_EXPLMINE] = 0;
+            cryo_agents.FourPacks[cryo_no].Amount[WFRPK_KOGAS] = 0;
+            cryo_agents.FourPacks[cryo_no].Amount[WFRPK_CRAZYGAS] = 0;
+            if (cryo_agents.Weapons[cryo_no] & (1 << (6-1)))
+                cryo_agents.FourPacks[cryo_no].Amount[WFRPK_NUCLGREN] = 1;
+            if (cryo_agents.Weapons[cryo_no] & (1 << (12-1)))
+                cryo_agents.FourPacks[cryo_no].Amount[WFRPK_ELEMINE] = 1;
+            if (cryo_agents.Weapons[cryo_no] & (1 << (13-1)))
+                cryo_agents.FourPacks[cryo_no].Amount[WFRPK_EXPLMINE] = 1;
+            if (cryo_agents.Weapons[cryo_no] & (1 << (11-1)))
+                cryo_agents.FourPacks[cryo_no].Amount[WFRPK_KOGAS] = 1;
+            if (cryo_agents.Weapons[cryo_no] & (1 << (10-1)))
+                cryo_agents.FourPacks[cryo_no].Amount[WFRPK_CRAZYGAS] = 1;
         }
     }
     else
     {
-        int agent, k;
+        int cryo_no, k;
         memcpy(&cryo_agents, &save_game_buffer[gblen], offsetof(struct AgentInfo, NumAgents));
         gblen += offsetof(struct AgentInfo, NumAgents);
         memcpy(&cryo_agents.NumAgents, &save_game_buffer[gblen], sizeof(cryo_agents.NumAgents));
         gblen += sizeof(cryo_agents.NumAgents);
-        for (agent = 0; agent < 32; agent++)
+        for (cryo_no = 0; cryo_no < 32; cryo_no++)
         {
             for (k = 0; k < WFRPK_COUNT; k++) {
-                if (cryo_agents.FourPacks[agent][k] > 4)
-                    cryo_agents.FourPacks[agent][k] = 1;
+                if (cryo_agents.FourPacks[cryo_no].Amount[k] > 4)
+                    cryo_agents.FourPacks[cryo_no].Amount[k] = 1;
             }
             // Remove bad mod flags
-            if (cryo_agents.Mods[agent].Mods >> 12 > 4) {
-                cryo_agents.Mods[agent].Mods &= 0x0FFF;
-                cryo_agents.Mods[agent].Mods |= 0x1000;
-            }
+            cybmod_fix_all(&cryo_agents.Mods[cryo_no]);
         }
     }
 
@@ -4890,20 +4878,17 @@ ubyte load_game(int slot, char *desc)
         for (i = 0; i < 4; i++)
         {
             // Remove bad mod flags
-            if (p_locplayer->Mods[i].Mods >> 12 > 4) {
-                p_locplayer->Mods[i].Mods &= 0x0FFF;
-                p_locplayer->Mods[i].Mods |= 0x1000;
-            }
+            cybmod_fix_all(&p_locplayer->Mods[i]);
             // Reset bad amounts of consumable weapons
-            if (p_locplayer->Weapons[i] & (1 << 5))
+            if (p_locplayer->Weapons[i] & (1 << (6-1)))
                 p_locplayer->FourPacks[WFRPK_NUCLGREN][i] = 1;
-            if (p_locplayer->Weapons[i] & (1 << 11))
+            if (p_locplayer->Weapons[i] & (1 << (12-1)))
                 p_locplayer->FourPacks[WFRPK_ELEMINE][i] = 1;
-            if (p_locplayer->Weapons[i] & (1 << 12))
+            if (p_locplayer->Weapons[i] & (1 << (13-1)))
                 p_locplayer->FourPacks[WFRPK_EXPLMINE][i] = 1;
-            if (p_locplayer->Weapons[i] & (1 << 10))
+            if (p_locplayer->Weapons[i] & (1 << (11-1)))
                 p_locplayer->FourPacks[WFRPK_KOGAS][i] = 1;
-            if (p_locplayer->Weapons[i] & (1 << 9))
+            if (p_locplayer->Weapons[i] & (1 << (10-1)))
                 p_locplayer->FourPacks[WFRPK_CRAZYGAS][i] = 1;
 
             p_locplayer->field_19A[i] = 0;
@@ -4934,11 +4919,7 @@ ubyte load_game(int slot, char *desc)
         // Remove bad mod flags
         for (i = 0; i < 4; i++)
         {
-            if (p_locplayer->Mods[i].Mods >> 12 > 4)
-            {
-                p_locplayer->Mods[i].Mods &= 0x0FFF;
-                p_locplayer->Mods[i].Mods |= 0x1000;
-            }
+            cybmod_fix_all(&p_locplayer->Mods[i]);
         }
     }
     else
@@ -4952,32 +4933,10 @@ ubyte load_game(int slot, char *desc)
         // Remove bad mod flags
         for (i = 0; i < 4; i++)
         {
-            if (p_locplayer->Mods[i].Mods >> 12 > 4)
-            {
-                p_locplayer->Mods[i].Mods &= 0x0FFF;
-                p_locplayer->Mods[i].Mods |= 0x1000;
-            }
+            cybmod_fix_all(&p_locplayer->Mods[i]);
         }
     }
-
-    {
-        PlayerInfo *p_locplayer;
-        int i, k;
-        p_locplayer = &players[local_player_no];
-        for (i = 0; i < 4; i++)
-        {
-            p_locplayer->Weapons[i] = cryo_agents.Weapons[i];
-            p_locplayer->Mods[i].Mods = cryo_agents.Mods[i].Mods;
-            for (k = 0; k != WFRPK_COUNT; k++) {
-                p_locplayer->FourPacks[k][i] = cryo_agents.FourPacks[i][k];
-            }
-        }
-
-        i = p_locplayer->MissionAgents;
-        if (i != 0x01 && i != 0x03 && i != 0x07 && i != 0x0F)
-            p_locplayer->MissionAgents = 0x0F;
-
-    }
+    players_sync_from_cryo();
 
     memcpy(&global_date, &save_game_buffer[gblen], sizeof(struct SynTime));
     gblen += sizeof(struct SynTime);
@@ -5701,49 +5660,12 @@ ubyte research_unkn_func_006(ushort missi)
     return ret;
 }
 
-void remove_agent(ubyte cryo_no)
-{
-    asm volatile ("call ASM_remove_agent\n"
-        : : "a" (cryo_no));
-}
-
-void add_agent(ulong weapons, ushort mods)
-{
-    asm volatile ("call ASM_add_agent\n"
-        : : "a" (weapons), "d" (mods));
-}
-
 void mission_over_update_players(void)
 {
-    ushort agent, nremoved;
     PlayerInfo *p_locplayer;
 
     p_locplayer = &players[local_player_no];
-
-    nremoved = 0;
-    for (agent = 0; agent < playable_agents; agent++)
-    {
-        struct Thing *p_agent;
-
-        p_agent = p_locplayer->MyAgent[agent];
-        if ((p_agent->Flag & 0x02) != 0) {
-            remove_agent(agent);
-            ++nremoved;
-            continue;
-        }
-        if ((p_agent->SubType == SubTT_PERS_AGENT) || (p_agent->SubType == SubTT_PERS_ZEALOT))
-        {
-            ushort cryo_no;
-            int i;
-
-            cryo_no = agent - nremoved;
-            cryo_agents.Weapons[cryo_no] = p_agent->U.UPerson.WeaponsCarried & ~0x400000;
-            cryo_agents.Mods[cryo_no].Mods = p_agent->U.UPerson.UMod.Mods;
-            for (i = 0; i < 5; i++) {
-                cryo_agents.FourPacks[cryo_no][i] = p_locplayer->FourPacks[i][agent];
-            }
-        }
-    }
+    cryo_update_agents_from_player(p_locplayer);
 }
 
 void mission_over_gain_persuaded_crowd_rewards(void)
@@ -5786,26 +5708,6 @@ void update_player_cash(void)
 {
     asm volatile ("call ASM_update_player_cash\n"
         :  :  : "eax" );
-}
-
-void player_update_agents_from_cryo(void)
-{
-    PlayerInfo *p_locplayer;
-    ushort cryo_no;
-
-    p_locplayer = &players[local_player_no];
-
-    for (cryo_no = 0; cryo_no < 4; cryo_no++)
-    {
-        int wepfp;
-
-        p_locplayer->Weapons[cryo_no] = cryo_agents.Weapons[cryo_no];
-        p_locplayer->Mods[cryo_no].Mods = cryo_agents.Mods[cryo_no].Mods;
-
-        for (wepfp = 0; wepfp < WFRPK_COUNT; wepfp++) {
-            p_locplayer->FourPacks[wepfp][cryo_no] = cryo_agents.FourPacks[cryo_no][wepfp];
-        }
-    }
 }
 
 void init_agents(void)
@@ -6168,7 +6070,7 @@ void mission_over(void)
 
     mission_over_update_players();
     mission_over_gain_persuaded_crowd_rewards();
-    player_update_agents_from_cryo();
+    players_sync_from_cryo();
 
     ushort mslot;
     ushort last_missi;
@@ -8952,7 +8854,7 @@ void net_unkn_func_33_sub1(int plyr, int netplyr)
                 int n, k;
                 for (n = 0; n < 4; n++) {
                     for (k = 0; k < 5; k++) {
-                        cryo_agents.FourPacks[n][k] = \
+                        cryo_agents.FourPacks[n].Amount[k] = \
                           p_netplyr->U.FourPacks.FourPacks[n][k];
                     }
                 }
@@ -9018,7 +8920,7 @@ void net_unkn_func_33(void)
             int k;
             for (k = 0; k < 5; k++) {
                 p_netplyr->U.FourPacks.FourPacks[i][k] =
-                  cryo_agents.FourPacks[i][k];
+                  cryo_agents.FourPacks[i].Amount[k];
             }
         }
         break;

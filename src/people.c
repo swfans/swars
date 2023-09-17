@@ -45,52 +45,57 @@ struct PeepStat peep_type_stats[] = {
 
 ubyte person_mod_chest_level(struct Thing *p_person)
 {
-    return (p_person->U.UPerson.UMod.Mods >> 6) & 7;
+    return cybmod_chest_level(&p_person->U.UPerson.UMod);
 }
 
 void set_person_mod_chest_level(struct Thing *p_person, ubyte nmod)
 {
-    p_person->U.UPerson.UMod.Mods &= ~(7 << 6);
-    p_person->U.UPerson.UMod.Mods |= (nmod << 6);
+    set_cybmod_chest_level(&p_person->U.UPerson.UMod, nmod);
 }
 
 ubyte person_mod_legs_level(struct Thing *p_person)
 {
-    return (p_person->U.UPerson.UMod.Mods) & 7;
+    return cybmod_legs_level(&p_person->U.UPerson.UMod);
 }
 
 void set_person_mod_legs_level(struct Thing *p_person, ubyte nmod)
 {
-    p_person->U.UPerson.UMod.Mods &= ~(7);
-    p_person->U.UPerson.UMod.Mods |= (nmod);
+    set_cybmod_legs_level(&p_person->U.UPerson.UMod, nmod);
 }
 
 ubyte person_mod_arms_level(struct Thing *p_person)
 {
-    return (p_person->U.UPerson.UMod.Mods >> 3) & 7;
+    return cybmod_arms_level(&p_person->U.UPerson.UMod);
 }
 
 void set_person_mod_arms_level(struct Thing *p_person, ubyte nmod)
 {
-    p_person->U.UPerson.UMod.Mods &= ~(7 << 3);
-    p_person->U.UPerson.UMod.Mods |= (nmod << 3);
+    set_cybmod_arms_level(&p_person->U.UPerson.UMod, nmod);
 }
 
 ubyte person_mod_brain_level(struct Thing *p_person)
 {
-    return (p_person->U.UPerson.UMod.Mods >> 9) & 7;
+    return cybmod_brain_level(&p_person->U.UPerson.UMod);
 }
 
 void set_person_mod_brain_level(struct Thing *p_person, ubyte nmod)
 {
-    p_person->U.UPerson.UMod.Mods &= ~(7 << 9);
-    p_person->U.UPerson.UMod.Mods |= (nmod << 9);
+    set_cybmod_brain_level(&p_person->U.UPerson.UMod, nmod);
+}
+
+ubyte person_mod_skin_level(struct Thing *p_person)
+{
+    return cybmod_skin_level(&p_person->U.UPerson.UMod);
+}
+
+void set_person_mod_skin_level(struct Thing *p_person, ubyte nmod)
+{
+    set_cybmod_skin_level(&p_person->U.UPerson.UMod, nmod);
 }
 
 TbBool person_carries_weapon(struct Thing *p_person, ubyte weapon)
 {
-    ulong wepflg = 1 << (weapon-1);
-    return (p_person->U.UPerson.WeaponsCarried & wepflg) != 0;
+    return weapons_has_weapon(p_person->U.UPerson.WeaponsCarried, weapon);
 }
 
 void person_give_best_mods(struct Thing *p_person)
