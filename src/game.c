@@ -4779,52 +4779,34 @@ ubyte load_game(int slot, char *desc)
     gblen = 4;
     if (fmtver <= 4)
     {
-        int cryo_no, k;
+        ushort cryo_no;
         memcpy(&cryo_agents, &save_game_buffer[gblen], offsetof(struct AgentInfo, FourPacks));
         gblen += offsetof(struct AgentInfo, FourPacks);
         memcpy(&cryo_agents.NumAgents, &save_game_buffer[gblen], 1);
         gblen += 1;
         for (cryo_no = 0; cryo_no < 32; cryo_no++)
         {
-            for (k = 0; k < WFRPK_COUNT; k++) {
-                if (cryo_agents.FourPacks[cryo_no].Amount[k] > 4)
-                    cryo_agents.FourPacks[cryo_no].Amount[k] = 1;
-            }
             // Remove bad mod flags
             cybmod_fix_all(&cryo_agents.Mods[cryo_no]);
-            // Reset bad amounts of consumable weapons
-            cryo_agents.FourPacks[cryo_no].Amount[WFRPK_NUCLGREN] = 0;
-            cryo_agents.FourPacks[cryo_no].Amount[WFRPK_ELEMINE] = 0;
-            cryo_agents.FourPacks[cryo_no].Amount[WFRPK_EXPLMINE] = 0;
-            cryo_agents.FourPacks[cryo_no].Amount[WFRPK_KOGAS] = 0;
-            cryo_agents.FourPacks[cryo_no].Amount[WFRPK_CRAZYGAS] = 0;
-            if (cryo_agents.Weapons[cryo_no] & (1 << (6-1)))
-                cryo_agents.FourPacks[cryo_no].Amount[WFRPK_NUCLGREN] = 1;
-            if (cryo_agents.Weapons[cryo_no] & (1 << (12-1)))
-                cryo_agents.FourPacks[cryo_no].Amount[WFRPK_ELEMINE] = 1;
-            if (cryo_agents.Weapons[cryo_no] & (1 << (13-1)))
-                cryo_agents.FourPacks[cryo_no].Amount[WFRPK_EXPLMINE] = 1;
-            if (cryo_agents.Weapons[cryo_no] & (1 << (11-1)))
-                cryo_agents.FourPacks[cryo_no].Amount[WFRPK_KOGAS] = 1;
-            if (cryo_agents.Weapons[cryo_no] & (1 << (10-1)))
-                cryo_agents.FourPacks[cryo_no].Amount[WFRPK_CRAZYGAS] = 1;
+            // Check weapons count, reset bad amounts of consumable weapons
+            sanitize_weapon_quantities(&cryo_agents.Weapons[cryo_no],
+              &cryo_agents.FourPacks[cryo_no]);
         }
     }
     else
     {
-        int cryo_no, k;
+        ushort cryo_no;
         memcpy(&cryo_agents, &save_game_buffer[gblen], offsetof(struct AgentInfo, NumAgents));
         gblen += offsetof(struct AgentInfo, NumAgents);
         memcpy(&cryo_agents.NumAgents, &save_game_buffer[gblen], sizeof(cryo_agents.NumAgents));
         gblen += sizeof(cryo_agents.NumAgents);
         for (cryo_no = 0; cryo_no < 32; cryo_no++)
         {
-            for (k = 0; k < WFRPK_COUNT; k++) {
-                if (cryo_agents.FourPacks[cryo_no].Amount[k] > 4)
-                    cryo_agents.FourPacks[cryo_no].Amount[k] = 1;
-            }
             // Remove bad mod flags
             cybmod_fix_all(&cryo_agents.Mods[cryo_no]);
+            // Check weapons count, reset bad amounts of consumable weapons
+            sanitize_weapon_quantities(&cryo_agents.Weapons[cryo_no],
+              &cryo_agents.FourPacks[cryo_no]);
         }
     }
 

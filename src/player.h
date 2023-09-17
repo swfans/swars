@@ -32,7 +32,7 @@ extern "C" {
 struct Thing;
 
 struct AgentInfo {
-    long Weapons[32];
+    ulong Weapons[32];
     union Mod Mods[32];
     long Sex;
     char RandomName[32];
