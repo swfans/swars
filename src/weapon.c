@@ -422,11 +422,11 @@ void sanitize_weapon_quantities(ulong *p_weapons, struct WeaponsFourPack *p_four
 
 void do_weapon_quantities_net_to_player(struct Thing *p_person)
 {
-    ushort plyr, cc2;
+    ushort plyr, plagent;
     ushort wtype;
 
     plyr = (p_person->U.UPerson.ComCur & 0x1C) >> 2;
-    cc2 = (p_person->U.UPerson.ComCur & 3);
+    plagent = (p_person->U.UPerson.ComCur & 3);
 
     for (wtype = WEP_TYPES_COUNT-1; wtype > 0; wtype--)
     {
@@ -437,20 +437,20 @@ void do_weapon_quantities_net_to_player(struct Thing *p_person)
             continue;
 
         if (person_carries_weapon(p_person, wtype))
-            n = net_agents__FourPacks[plyr][cc2][fp];
+            n = net_agents__FourPacks[plyr][plagent].Amount[fp];
         else
             n = 0;
-        players[plyr].FourPacks[fp][cc2] = n;
+        players[plyr].FourPacks[fp][plagent] = n;
     }
 }
 
 void do_weapon_quantities_player_to_net(struct Thing *p_person)
 {
-    ushort plyr, cc2;
+    ushort plyr, plagent;
     ushort wtype;
 
     plyr = (p_person->U.UPerson.ComCur & 0x1C) >> 2;
-    cc2 = p_person->U.UPerson.ComCur & 3;
+    plagent = p_person->U.UPerson.ComCur & 3;
 
     for (wtype = WEP_TYPES_COUNT-1; wtype > 0; wtype--)
     {
@@ -461,20 +461,20 @@ void do_weapon_quantities_player_to_net(struct Thing *p_person)
             continue;
 
         if (person_carries_weapon(p_person, wtype))
-            n = players[plyr].FourPacks[fp][cc2];
+            n = players[plyr].FourPacks[fp][plagent];
         else
             n = 0;
-        net_agents__FourPacks[plyr][cc2][fp] = n;
+        net_agents__FourPacks[plyr][plagent].Amount[fp] = n;
     }
 }
 
 void do_weapon_quantities_cryo_to_player(struct Thing *p_person)
 {
-    ushort plyr, cc2;
+    ushort plyr, plagent;
     ushort wtype;
 
     plyr = (p_person->U.UPerson.ComCur & 0x1C) >> 2;
-    cc2 = p_person->U.UPerson.ComCur & 3;
+    plagent = p_person->U.UPerson.ComCur & 3;
 
     for (wtype = WEP_TYPES_COUNT-1; wtype > 0; wtype--)
     {
@@ -485,20 +485,20 @@ void do_weapon_quantities_cryo_to_player(struct Thing *p_person)
             continue;
 
         if (person_carries_weapon(p_person, wtype))
-            n = cryo_agents.FourPacks[cc2].Amount[fp];
+            n = cryo_agents.FourPacks[plagent].Amount[fp];
         else
             n = 0;
-        players[plyr].FourPacks[fp][cc2] = n;
+        players[plyr].FourPacks[fp][plagent] = n;
     }
 }
 
 void do_weapon_quantities_max_to_player(struct Thing *p_person)
 {
-    ushort plyr, cc2;
+    ushort plyr, plagent;
     ushort wtype;
 
     plyr = (p_person->U.UPerson.ComCur & 0x1C) >> 2;
-    cc2 = p_person->U.UPerson.ComCur & 3;
+    plagent = p_person->U.UPerson.ComCur & 3;
 
     for (wtype = WEP_TYPES_COUNT-1; wtype > 0; wtype--)
     {
@@ -512,7 +512,7 @@ void do_weapon_quantities_max_to_player(struct Thing *p_person)
             n = 4;
         else
             n = 0;
-        players[plyr].FourPacks[fp][cc2] = n;
+        players[plyr].FourPacks[fp][plagent] = n;
     }
 }
 

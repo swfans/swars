@@ -8612,6 +8612,33 @@ void net_new_game_prepare(void)
     draw_flic_purple_list(purple_unkn1_data_to_screen);
 }
 
+
+void agents_copy_fourpacks_netplayer_to_player(int plyr, struct NetworkPlayer *p_netplyr)
+{
+    short plagent, fp;
+
+    for (plagent = 0; plagent < 4; plagent++)
+    {
+        for (fp = 0; fp < WFRPK_COUNT; fp++) {
+            players[plyr].FourPacks[plagent][fp] = \
+              p_netplyr->U.FourPacks.FourPacks[plagent][fp];
+        }
+    }
+}
+
+void agents_copy_fourpacks_netplayer_to_cryo(struct NetworkPlayer *p_netplyr)
+{
+    short plagent, fp;
+
+    for (plagent = 0; plagent < 4; plagent++)
+    {
+        for (fp = 0; fp < WFRPK_COUNT; fp++) {
+            cryo_agents.FourPacks[plagent].Amount[fp] = \
+              p_netplyr->U.FourPacks.FourPacks[plagent][fp];
+        }
+    }
+}
+
 void net_unkn_func_33_sub1(int plyr, int netplyr)
 {
     struct NetworkPlayer *p_netplyr;
@@ -8822,35 +8849,15 @@ void net_unkn_func_33_sub1(int plyr, int netplyr)
         {
             for (i = 0; i < 8; i++)
             {
-                int n, k;
                 if (unkn2_names[i][0] == '\0')
                     continue;
-                for (n = 0; n < 4; n++) {
-                    for (k = 0; k < 5; k++) {
-                        players[i].FourPacks[n][k] = \
-                          p_netplyr->U.FourPacks.FourPacks[n][k];
-                    }
-                }
+                agents_copy_fourpacks_netplayer_to_player(i, p_netplyr);
             }
-            {
-                int n, k;
-                for (n = 0; n < 4; n++) {
-                    for (k = 0; k < 5; k++) {
-                        cryo_agents.FourPacks[n].Amount[k] = \
-                          p_netplyr->U.FourPacks.FourPacks[n][k];
-                    }
-                }
-            }
+            agents_copy_fourpacks_netplayer_to_cryo(p_netplyr);
         }
         else if ((unkn_flags_08 & 0x08) == 0)
         {
-            int n, k;
-            for (n = 0; n < 4; n++) {
-                for (k = 0; k < 5; k++) {
-                    players[plyr].FourPacks[n][k] = \
-                      p_netplyr->U.FourPacks.FourPacks[n][k];
-                }
-            }
+            agents_copy_fourpacks_netplayer_to_player(plyr, p_netplyr);
         }
         break;
     case 16:

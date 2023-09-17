@@ -21,6 +21,7 @@
 
 #include "bftypes.h"
 #include "cybmod.h"
+#include "weapon.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -158,7 +159,7 @@ extern ulong NetTimeoutTicks;
 extern struct NetworkPlayer network_players[8];
 extern struct NetPlayer2 net_players[5];
 
-extern ubyte net_agents__FourPacks[8][4][5]; // maybe a part of larger struct, maybe not
+extern struct WeaponsFourPack net_agents__FourPacks[8][4]; // maybe a part of larger struct, maybe not
 
 TbResult LbNetworkReadConfig(const char *fname);
 TbResult LbNetworkSetSessionCreateFunction(void *func);
