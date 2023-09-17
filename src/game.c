@@ -5650,7 +5650,45 @@ void mission_over_update_players(void)
     cryo_update_agents_from_player(p_locplayer);
 }
 
-void mission_over_gain_persuaded_crowd_rewards(void)
+ulong mission_over_calculate_cash_gain_from_persuaded_crowd(ushort tgroup)
+{
+    ulong credits;
+    struct Thing *p_person;
+    short person;
+
+    credits = 0;
+    person = get_thing_same_type_head(TT_PERSON, -1);
+    for (; person > 0; person = p_person->LinkSame)
+    {
+        p_person = &things[person];
+        if ((p_person->Flag & 0x80000) == 0)
+            continue;
+        if (p_person->U.UPerson.EffectiveGroup != tgroup)
+            continue;
+        switch (p_person->SubType)
+        {
+        case SubTT_PERS_AGENT:
+            credits += 1000;
+            break;
+        case SubTT_PERS_ZEALOT:
+            credits += 1000;
+            break;
+        case SubTT_PERS_PUNK_M:
+        case SubTT_PERS_PUNK_F:
+            credits += 150;
+            break;
+        case SubTT_PERS_SCIENTIST:
+            credits += 500;
+            break;
+        default:
+            credits += 100;
+            break;
+        }
+    }
+    return credits;
+}
+
+void mission_over_gain_personnel_from_persuaded_crowd(void)
 {
     struct Thing *p_person;
     short person;
@@ -5667,23 +5705,18 @@ void mission_over_gain_persuaded_crowd_rewards(void)
         {
         case SubTT_PERS_AGENT:
             add_agent(p_person->U.UPerson.WeaponsCarried, p_person->U.UPerson.UMod.Mods);
-            ingame.Credits += 1000;
-            break;
-        case SubTT_PERS_ZEALOT:
-            ingame.Credits += 1000;
-            break;
-        case SubTT_PERS_PUNK_M:
-        case SubTT_PERS_PUNK_F:
-            ingame.Credits += 150;
             break;
         case SubTT_PERS_SCIENTIST:
             research.Scientists++;
             break;
-        default:
-            ingame.Credits += 100;
-            break;
         }
     }
+}
+
+void mission_over_gain_persuaded_crowd_rewards(void)
+{
+    ingame.Credits += mission_over_calculate_cash_gain_from_persuaded_crowd(ingame.MyGroup);
+    mission_over_gain_personnel_from_persuaded_crowd();
 }
 
 ulong mission_over_calculate_player_cash_gain_from_items(void)
@@ -6079,11 +6112,11 @@ void mission_over(void)
 #else
     ingame.DisplayMode = DpM_UNKN_37;
     LbMouseChangeSprite(0);
-    update_player_cash();
     StopCD();
     StopAllSamples();
     SetMusicVolume(100, 0);
 
+    update_player_cash();
     mission_over_update_players();
     mission_over_gain_persuaded_crowd_rewards();
     players_sync_from_cryo();
