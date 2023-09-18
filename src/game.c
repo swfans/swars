@@ -5722,7 +5722,7 @@ void mission_over_gain_persuaded_crowd_rewards(void)
 ulong mission_over_calculate_player_cash_gain_from_items(void)
 {
     ulong credits;
-    ushort sthing;
+    short sthing;
     struct SimpleThing *p_sthing;
 
     credits = 0;
@@ -5733,11 +5733,13 @@ ulong mission_over_calculate_player_cash_gain_from_items(void)
         {
             struct Thing *p_owntng;
             p_owntng = &things[p_sthing->U.UWeapon.Owner];
+            // Item carried by non-persuaded player agents
             if (((p_owntng->Flag & TngF_PlayerAgent) != 0) &&
               ((p_owntng->Flag & TngF_Persuaded) == 0))
             {
                 if (p_sthing->U.UWeapon.WeaponType == 0)
                     credits += 100 * p_sthing->U.UWeapon.Ammo;
+                LOGSYNC("Carried item thing %hd picked by the player", sthing);
             }
             else
             {

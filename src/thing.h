@@ -847,11 +847,11 @@ struct ThingOldV9 { // sizeof=216
 #pragma pack()
 /******************************************************************************/
 extern struct Thing *things;
-extern ushort things_used_head;
-extern ushort same_type_head[256+32];
+extern short things_used_head;
+extern short same_type_head[256+32];
 
 extern struct SimpleThing *sthings;
-extern ushort sthings_used_head;
+extern short sthings_used_head;
 
 void init_things(void);
 void refresh_old_thing_format(struct Thing *p_thing, struct ThingOldV9 *p_oldthing, ulong fmtver);

@@ -122,6 +122,11 @@ extern short NumberOfSongs;
 extern char CurrentAwe32SoundfontPrefix[12]; // = "Bullfrog";
 extern TbFileHandle sbkHandle; // = INVALID_FILE;
 
+/** Releases sound sample which is playing in a loop.
+ *
+ * @param thingOffset Index of the related thing; note that it is unsigned;
+ *        simple thing offsets should be just treated as unsigned here.
+ */
 void ReleaseLoopedSample(ushort thingOffset, ushort fx)
 {
 #if 0
