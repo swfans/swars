@@ -5741,6 +5741,14 @@ ulong mission_over_calculate_player_cash_gain_from_items(void)
                     credits += 100 * p_sthing->U.UWeapon.Ammo;
                 LOGSYNC("Carried item thing %hd picked by the player", sthing);
             }
+            // Item carried by people persuaded by the player
+            else if (((p_owntng->Flag & TngF_Persuaded) != 0) &&
+              (p_owntng->U.UPerson.EffectiveGroup == ingame.MyGroup))
+            {
+                if (p_sthing->U.UWeapon.WeaponType == 0)
+                    credits += 100 * p_sthing->U.UWeapon.Ammo;
+                LOGSYNC("Carried item thing %hd picked by persuadee", sthing);
+            }
             else
             {
                 LOGSYNC("Carried item thing %hd not under player control", sthing);
