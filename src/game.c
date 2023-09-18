@@ -675,7 +675,7 @@ void setup_heaps(int a1)
     long sz;
     unsigned int n;
 
-    if ((ingame.Flags & GamF_Unkn20000) == 0)
+    if ((ingame.Flags & GamF_Unkn00020000) == 0)
         return;
 
     switch (a1)
@@ -695,7 +695,7 @@ void setup_heaps(int a1)
                 sz -= 30000;
         }
         if ((sound_heap_memory == NULL) || sz < 120000) {
-            ingame.Flags &= GamF_Unkn20000;
+            ingame.Flags &= GamF_Unkn00020000;
             break;
         }
         if (sz <= 500000)
@@ -703,13 +703,13 @@ void setup_heaps(int a1)
         else
             n = 1622;
         if (!setup_heap_manager(sound_heap_memory, sz, "sound/sound.dat", n))
-            ingame.Flags &= GamF_Unkn20000;
+            ingame.Flags &= GamF_Unkn00020000;
         sound_heap_size = sz;
         break;
     case 2:
         sz = 1500000;
         if (!setup_heap_manager(sound_heap_memory, sz, "sound/sound.dat", 1622))
-            ingame.Flags &= GamF_Unkn20000;
+            ingame.Flags &= GamF_Unkn00020000;
         sound_heap_size = sz;
         break;
     case 1:
@@ -1129,7 +1129,7 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
                     p_thing->Flag2 = 0;
                 p_thing->U.UPerson.Flag3 = 0;
                 p_thing->Flag2 &= 0x21000000;
-                if ((p_thing->Flag & 0x02000000) != 0)
+                if ((p_thing->Flag & TngF_Unkn02000000) != 0)
                 {
                     p_thing->ThingOffset = p_thing - things;
                     remove_thing(new_thing);
@@ -1140,7 +1140,7 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
                 p_thing->StartFrame = person_anim - 1;
                 p_thing->Frame = nstart_ani[person_anim + p_thing->U.UPerson.Angle];
                 init_person_thing(p_thing);
-                p_thing->Flag |= 0x0004;
+                p_thing->Flag |= TngF_Unkn0004;
                 if (fmtver < 12)
                     sanitize_cybmods_fmtver11_flags(&p_thing->U.UPerson.UMod);
             }
@@ -1338,7 +1338,7 @@ void load_level_pc(short level, short missi, ubyte reload)
      * mefisto: No idea what "the" bug is, to be tested and described properly (or re-enabled)
      */
 #if 0
-    if ((ingame.Flags & GamF_Unkn8) == 0)
+    if ((ingame.Flags & GamF_Unkn0008) == 0)
     {
         if (prev_level)
             global_3d_store(1);
@@ -1450,7 +1450,7 @@ void process_tank_turret(struct Thing *p_tank)
         return;
     }
     p_turret = &things[turret];
-    if ((p_tank->Flag & 0x20000000) != 0)
+    if ((p_tank->Flag & TngF_Unkn20000000) != 0)
     {
         target_x = p_tank->U.UVehicle.TargetDX;
         target_y = p_tank->U.UVehicle.TargetDZ;
@@ -1899,7 +1899,7 @@ TbBool draw_panel_pickable_thing_below_agent(struct Thing *p_agent)
     TbBool drawn;
 
     drawn = false;
-    if (p_agent->Flag & 0x8000000)
+    if (p_agent->Flag & TngF_Unkn08000000)
     {
         ushort weptype;
         thing = p_agent->U.UPerson.Vehicle; // Seem to be weapon standing over rather than vehicle
@@ -1918,7 +1918,7 @@ TbBool draw_panel_pickable_thing_below_agent(struct Thing *p_agent)
             drawn = true;
         } else {
             // FIXME a strange place for fixing state of an agent; should be moved to game world update
-            p_agent->Flag &= ~0x8000000;
+            p_agent->Flag &= ~TngF_Unkn08000000;
         }
     }
     return drawn;
@@ -2328,7 +2328,7 @@ TbBool func_1caf8(void)
         {
             ushort curwep;
             p_agent = p_locplayer->MyAgent[nagent];
-            if ((p_agent->Flag & 0x0002) != 0) {
+            if ((p_agent->Flag & TngF_Unkn0002) != 0) {
                 cur_weapons[nagent] = 0;
                 continue;
             }
@@ -2583,7 +2583,7 @@ void draw_new_panel()
     { // If supershield is enabled for the current agent, draw energy bar in red
         struct Thing *p_agent;
         p_agent = &things[p_locplayer->DirectControl[0]];
-        if ((p_agent->Flag & 0x100) != 0)
+        if ((p_agent->Flag & TngF_Unkn0100) != 0)
         {
             game_panel[16].Spr = 99;
             if (lbDisplay.ScreenMode != 1)
@@ -2639,7 +2639,7 @@ void draw_new_panel()
                 if (panel->ID >= playable_agents)
                     continue;
                 p_agent = p_locplayer->MyAgent[panel->ID];
-                if (p_agent->Flag & 0x0002)
+                if (p_agent->Flag & TngF_Unkn0002)
                     continue;
                 draw_new_panel_sprite_std(panel->X, panel->Y, panel->Spr);
             }
@@ -2651,7 +2651,7 @@ void draw_new_panel()
                 if (panel->ID >= playable_agents)
                     continue;
                 p_agent = p_locplayer->MyAgent[panel->ID];
-                if (p_agent->Flag & 0x0002)
+                if (p_agent->Flag & TngF_Unkn0002)
                     continue;
 
                 if (panel->Type == 5) {
@@ -2681,7 +2681,7 @@ void draw_new_panel()
         x = 0;
         agent = p_locplayer->DoubleMode ? p_locplayer->DirectControl[byte_153198-1] : p_locplayer->DirectControl[0];
         p_agent = &things[agent];
-        if ((p_agent->Flag & 2) == 0 && (p_agent->Flag2 & 0x800) == 0)
+        if ((p_agent->Flag & TngF_Unkn0002) == 0 && (p_agent->Flag2 & 0x800) == 0)
         {
             cc = p_agent->U.UPerson.ComCur & 3;
             if (lbDisplay.ScreenMode == 1)
@@ -2727,7 +2727,7 @@ void draw_new_panel()
 
     if (!func_1caf8())
     {
-        if (ingame.Flags & GamF_Unkn200) {
+        if (ingame.Flags & GamF_Unkn0200) {
             ulong md, y;
             md = p_locplayer->UserInput[0].ControlMode & 0x1FFF;
             if (md == 1 && pktrec_mode != PktR_PLAYBACK) {
@@ -2766,11 +2766,11 @@ void draw_new_panel()
         int lv, lvmax, x, w;
 
         p_agent = p_locplayer->MyAgent[i];
-        if ((p_agent->Flag & 0x2000) == 0) {
+        if ((p_agent->Flag & TngF_Unkn2000) == 0) {
             LOGERR("Agent %d unexpected flags", i);
             return;
         }
-        if ((p_agent->Flag & 0x0002) == 0)
+        if ((p_agent->Flag & TngF_Unkn0002) == 0)
         {
             x = 79 * i + 27;
             // Draw health level
@@ -3160,8 +3160,8 @@ void teleport_current_agent(PlayerInfo *p_locplayer)
 void person_resurrect(struct Thing *p_person)
 {
     ulong person_anim;
-    p_person->Flag &= ~0x0002;
-    p_person->Flag &= ~0x02000000;
+    p_person->Flag &= ~TngF_Unkn0002;
+    p_person->Flag &= ~TngF_Unkn02000000;
     p_person->State = PerSt_WAIT;
     p_person->U.UPerson.AnimMode = 1;
     person_anim = people_frames[p_person->SubType][p_person->U.UPerson.AnimMode];
@@ -3182,7 +3182,7 @@ void beefup_all_agents(PlayerInfo *p_locplayer)
     {
         struct Thing *p_agent;
         p_agent = p_locplayer->MyAgent[i];
-        if (p_agent->Flag & 0x0002)
+        if (p_agent->Flag & TngF_Unkn0002)
             person_resurrect(p_agent);
         person_give_all_weapons(p_agent);
         if (lbShift & KMod_SHIFT)
@@ -3275,7 +3275,7 @@ void init_syndwars(void)
         StopMusicIfActive();
     fill_ail_sample_ids();
     if (GetSoundInstalled() && GetSoundAble() && GetSoundActive())
-        ingame.Flags |= GamF_Unkn20000;
+        ingame.Flags |= GamF_Unkn00020000;
     setup_heaps(0);
 }
 
@@ -3407,19 +3407,19 @@ void set_default_user_settings(void)
 void apply_user_settings(void)
 {
     if (unkn_gfx_option_2)
-        ingame.Flags |= GamF_Unkn2;
+        ingame.Flags |= GamF_Unkn0002;
     else
-        ingame.Flags &= ~GamF_Unkn2;
+        ingame.Flags &= ~GamF_Unkn0002;
 
     if (unkn_option_3)
-        ingame.Flags |= GamF_Unkn1;
+        ingame.Flags |= GamF_Unkn0001;
     else
-        ingame.Flags &= ~GamF_Unkn1;
+        ingame.Flags &= ~GamF_Unkn0001;
 
     if (unkn_option_4)
-        ingame.Flags |= GamF_Unkn400;
+        ingame.Flags |= GamF_Unkn0400;
     else
-        ingame.Flags &= ~GamF_Unkn400;
+        ingame.Flags &= ~GamF_Unkn0400;
 
     bang_set_detail(ingame.DetailLevel == 0);
     SetSoundMasterVolume(127 * startscr_samplevol / 322);
@@ -3648,7 +3648,7 @@ void init_player(void)
     gamep_unknval_10 = 0;
     gamep_unknval_12 = 0;
     nav_stats__ThisTurn = 0;
-    ingame.Flags &= ~GamF_Unkn100;
+    ingame.Flags &= ~GamF_Unkn0100;
     gamep_unknval_16 = 0;
     init_level_3d(0);
     init_level();
@@ -3762,21 +3762,21 @@ ushort make_group_into_players(ushort group, ushort plyr, ushort max_agent, shor
         {
             if (in_network_game && p_player->DoubleMode) {
                 p_person->State = PerSt_DEAD;
-                p_person->Flag |= 0x2000002;
+                p_person->Flag |= TngF_Unkn02000000 | TngF_Unkn0002;
             }
             p_player->DirectControl[nagents] = 0;
         }
         else
         {
             p_player->DirectControl[nagents] = p_person->ThingOffset;
-            p_person->Flag |= 0x1000;
+            p_person->Flag |= TngF_Unkn1000;
             if ((plyr == local_player_no) && (nagents == 0)) {
                 ingame.TrackX = p_person->X >> 8;
                 ingame.TrackZ = p_person->Z >> 8;
             }
         }
         players[plyr].MyAgent[nagents] = p_person;
-        p_person->Flag |= 0x2000;
+        p_person->Flag |= TngF_Unkn2000;
 #if 0 // This no longer makes sense - campaign is given with mission number
         if (!cmdln_param_bcg)
         {
@@ -3808,7 +3808,7 @@ ushort make_group_into_players(ushort group, ushort plyr, ushort max_agent, shor
             p_person->U.UPerson.Stamina = peep_type_stats[1].MaximumStamina;
             p_person->U.UPerson.MaxStamina = peep_type_stats[1].MaximumStamina;
             p_person->U.UPerson.ComCur = p_person->U.UPerson.ComHead;
-            p_person->Flag |= 0x40;
+            p_person->Flag |= TngF_Unkn0040;
         }
 
         if ((p_person->U.UPerson.ComHead != 0) &&
@@ -3820,9 +3820,9 @@ ushort make_group_into_players(ushort group, ushort plyr, ushort max_agent, shor
                 do_weapon_quantities_proper1(p_person);
             else
                 do_weapon_quantities1(p_person);
-            p_person->Flag |= 0x40;
+            p_person->Flag |= TngF_Unkn0040;
             p_person->U.UPerson.ComCur = p_person->U.UPerson.ComHead;
-            ingame.Flags |= GamF_Unkn100;
+            ingame.Flags |= GamF_Unkn0100;
         }
         else
         {
@@ -3948,7 +3948,7 @@ void place_single_player(void)
 
         p_thing = &things[n];
         n = p_thing->LinkChild;
-        if ((p_thing->U.UPerson.Group == pl_group) && (p_thing->Type == TT_PERSON) && !(p_thing->Flag & 0x2000))
+        if ((p_thing->U.UPerson.Group == pl_group) && (p_thing->Type == TT_PERSON) && !(p_thing->Flag & TngF_Unkn2000))
         {
             remove_thing(p_thing->ThingOffset);
             delete_node(p_thing);
@@ -5661,7 +5661,7 @@ ulong mission_over_calculate_cash_gain_from_persuaded_crowd(ushort tgroup)
     for (; person > 0; person = p_person->LinkSame)
     {
         p_person = &things[person];
-        if ((p_person->Flag & 0x80000) == 0)
+        if ((p_person->Flag & TngF_Unkn00080000) == 0)
             continue;
         if (p_person->U.UPerson.EffectiveGroup != tgroup)
             continue;
@@ -5697,7 +5697,7 @@ void mission_over_gain_personnel_from_persuaded_crowd(void)
     for (; person > 0; person = p_person->LinkSame)
     {
         p_person = &things[person];
-        if ((p_person->Flag & 0x80000) == 0)
+        if ((p_person->Flag & TngF_Unkn00080000) == 0)
             continue;
         if (p_person->U.UPerson.EffectiveGroup != ingame.MyGroup)
             continue;
@@ -5733,7 +5733,7 @@ ulong mission_over_calculate_player_cash_gain_from_items(void)
         {
             struct Thing *p_owntng;
             p_owntng = &things[p_sthing->U.UWeapon.Owner];
-            if (((p_owntng->Flag & 0x2000) != 0) && ((p_owntng->Flag & 0x80000) == 0))
+            if (((p_owntng->Flag & TngF_Unkn2000) != 0) && ((p_owntng->Flag & TngF_Unkn00080000) == 0))
             {
                 if (p_sthing->U.UWeapon.WeaponType == 0)
                     credits += 100 * p_sthing->U.UWeapon.Ammo;
@@ -6405,7 +6405,7 @@ ubyte do_storage_NEW_MORTAL(ubyte click)
         strcpy(login_name, "ANON");
     read_user_settings();
 
-    ingame.Flags |= GamF_Unkn10;
+    ingame.Flags |= GamF_Unkn0010;
 
     campaign_new_game_prepare();
 
@@ -6467,12 +6467,12 @@ ubyte do_login_2(ubyte click)
         return 1;
     }
 
-    if ((ingame.Flags & GamF_Unkn10) != 0)
+    if ((ingame.Flags & GamF_Unkn0010) != 0)
     {
         for (i = 2; i < 6; i++) {
             sysmnu_buttons[i].Y += 60;
         }
-        ingame.Flags &= ~GamF_Unkn10;
+        ingame.Flags &= ~GamF_Unkn0010;
     }
 
     init_weapon_text();
@@ -7279,7 +7279,7 @@ void init_screen_boxes(void)
         options_gfx_buttons[i].Radio = &unkn_gfx_option_2;
         options_gfx_buttons[i].RadioValue = val;
         options_gfx_buttons[i].Flags |= 0x0100;
-        ingame.Flags |= GamF_Unkn2;
+        ingame.Flags |= GamF_Unkn0002;
         val++;
     }
 
@@ -7289,7 +7289,7 @@ void init_screen_boxes(void)
         options_gfx_buttons[i].Radio = &unkn_option_3;
         options_gfx_buttons[i].RadioValue = val;
         options_gfx_buttons[i].Flags |= 0x0100;
-        ingame.Flags |= GamF_Unkn1;
+        ingame.Flags |= GamF_Unkn0001;
         val++;
     }
 
@@ -7299,7 +7299,7 @@ void init_screen_boxes(void)
         options_gfx_buttons[i].Radio = &unkn_option_4;
         options_gfx_buttons[i].RadioValue = val;
         options_gfx_buttons[i].Flags |= 0x0100;
-        ingame.Flags &= ~GamF_Unkn400;
+        ingame.Flags &= ~GamF_Unkn0400;
         val++;
     }
 
@@ -8072,42 +8072,42 @@ ubyte do_user_interface(void)
     if (lbKeyOn[KC_F1] && (lbShift & KMod_CONTROL))
     {
         lbKeyOn[KC_F1] = 0;
-        if (ingame.Flags & GamF_Unkn1)
-            ingame.Flags &= ~GamF_Unkn1;
+        if (ingame.Flags & GamF_Unkn0001)
+            ingame.Flags &= ~GamF_Unkn0001;
         else
-            ingame.Flags |= GamF_Unkn1;
+            ingame.Flags |= GamF_Unkn0001;
     }
     if (lbKeyOn[KC_F2] && (lbShift & KMod_CONTROL))
     {
         lbKeyOn[KC_F2] = 0;
-        if (ingame.Flags & GamF_Unkn40)
-            ingame.Flags &= ~GamF_Unkn40;
+        if (ingame.Flags & GamF_Unkn0040)
+            ingame.Flags &= ~GamF_Unkn0040;
         else
-            ingame.Flags |= GamF_Unkn40;
+            ingame.Flags |= GamF_Unkn0040;
     }
     if (lbKeyOn[KC_F3] && (lbShift & KMod_CONTROL))
     {
         lbKeyOn[KC_F3] = 0;
-        if (ingame.Flags & GamF_Unkn80)
-            ingame.Flags &= ~GamF_Unkn80;
+        if (ingame.Flags & GamF_Unkn0080)
+            ingame.Flags &= ~GamF_Unkn0080;
         else
-            ingame.Flags |= GamF_Unkn80;
+            ingame.Flags |= GamF_Unkn0080;
     }
     if (lbKeyOn[KC_F4] && (lbShift & KMod_CONTROL))
     {
         lbKeyOn[KC_F4] = 0;
-        if (ingame.Flags & GamF_Unkn2)
-            ingame.Flags &= ~GamF_Unkn2;
+        if (ingame.Flags & GamF_Unkn0002)
+            ingame.Flags &= ~GamF_Unkn0002;
         else
-            ingame.Flags |= GamF_Unkn2;
+            ingame.Flags |= GamF_Unkn0002;
     }
     if (lbKeyOn[KC_F6] && (lbShift & KMod_CONTROL))
     {
         lbKeyOn[KC_F6] = 0;
-        if (ingame.Flags & GamF_Unkn400)
-            ingame.Flags &= ~GamF_Unkn400;
+        if (ingame.Flags & GamF_Unkn0400)
+            ingame.Flags &= ~GamF_Unkn0400;
         else
-            ingame.Flags |= GamF_Unkn400;
+            ingame.Flags |= GamF_Unkn0400;
     }
     if ( lbKeyOn[KC_F10] && (lbShift & KMod_CONTROL))
     {
@@ -8150,10 +8150,10 @@ ubyte do_user_interface(void)
     // Toggle Scanner beep
     if (lbKeyOn[KC_S])
     {
-        if (ingame.Flags & GamF_Unkn200000)
-            ingame.Flags &= ~GamF_Unkn200000;
+        if (ingame.Flags & GamF_Unkn00200000)
+            ingame.Flags &= ~GamF_Unkn00200000;
         else
-            ingame.Flags |= GamF_Unkn200000;
+            ingame.Flags |= GamF_Unkn00200000;
     }
 
     // Control map area to draw
@@ -8285,7 +8285,7 @@ ubyte do_user_interface(void)
     }
 
     // Restart level
-    if (!in_network_game && !(ingame.Flags & GamF_Unkn10))
+    if (!in_network_game && !(ingame.Flags & GamF_Unkn0010))
     {
         if (lbKeyOn[KC_R])
         {
@@ -8318,7 +8318,7 @@ ubyte do_user_interface(void)
             p_agent = p_locplayer->MyAgent[n];
             if (p_agent != NULL)
             {
-                if (((p_agent->Flag & 0x02) == 0) && ((p_agent->Flag2 & 0x10) == 0) && (p_agent->State != PerSt_PERSON_BURNING))
+                if (((p_agent->Flag & TngF_Unkn0002) == 0) && ((p_agent->Flag2 & 0x10) == 0) && (p_agent->State != PerSt_PERSON_BURNING))
                 {
                   lbKeyOn[kbkeys[gkey]] = 0;
                   if (p_locplayer->DoubleMode)
@@ -8353,7 +8353,7 @@ ubyte do_user_interface(void)
         }
     }
 
-    if (ingame.Flags & GamF_Unkn100)
+    if (ingame.Flags & GamF_Unkn0100)
     {
         build_packet(&packets[local_player_no], 0, p_locplayer->DirectControl[0], 0, 0, 0);
         return 1;
@@ -9129,7 +9129,7 @@ void show_menu_screen_st2(void)
       if ( ingame.GameOver )
       {
             screentype = SCRT_MAINMENU;
-            if (ingame.Flags & GamF_Unkn10) {
+            if (ingame.Flags & GamF_Unkn0010) {
                 char fname[52];
                 get_saved_game_fname(fname, 0);
                 LbFileDelete(fname);
@@ -9139,7 +9139,7 @@ void show_menu_screen_st2(void)
       else
       {
             forward_research_progress(mission_status[open_brief].CityDays);
-            if (ingame.Flags & GamF_Unkn10)
+            if (ingame.Flags & GamF_Unkn0010)
                 save_game_write(0, save_active_desc);
             screentype = SCRT_9;
             heading_box.Text = gui_strings[374];
@@ -10040,10 +10040,10 @@ void draw_game(void)
         break;
     case DpM_UNKN_32:
         PlayCDTrack(ingame.CDTrack);
-        if ( !(ingame.Flags & GamF_Unkn20) || !(gameturn & 0xF) )
+        if ( !(ingame.Flags & GamF_Unkn0020) || !(gameturn & 0xF) )
         {
             show_game_engine();
-            if ((ingame.Flags & GamF_Unkn800) != 0)
+            if ((ingame.Flags & GamF_Unkn0800) != 0)
               gproc3_unknsub2();
             BAT_play();
             if ( execute_commands )
@@ -10132,7 +10132,7 @@ void game_process(void)
       if (ingame.DisplayMode == DpM_UNKN_37) {
           swap_wscreen();
       }
-      else if ( !(ingame.Flags & GamF_Unkn20) || ((gameturn & 0xF) == 0) ) {
+      else if ( !(ingame.Flags & GamF_Unkn0020) || ((gameturn & 0xF) == 0) ) {
           LbScreenSwapClear(0);
       }
       game_process_sub04();

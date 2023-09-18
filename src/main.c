@@ -163,7 +163,7 @@ static TbBool process_options(int *argc, char ***argv)
         case 'g':
             cmdln_param_bcg = 1;
             ingame.GameMode = GamM_Unkn3;
-            ingame.Flags |= GamF_Unkn8;
+            ingame.Flags |= GamF_Unkn0008;
             break;
 
         case 'H':
@@ -192,7 +192,7 @@ static TbBool process_options(int *argc, char ***argv)
                 return false;
             }
             ingame.GameMode = GamM_Unkn2;
-            ingame.Flags |= GamF_Unkn8;
+            ingame.Flags |= GamF_Unkn0008;
             ingame.CurrentMission = tmpint;
             ingame.Cheats |= 0x04;
             LOGDBG("Campaign %d mission index %d", (int)background_type, (int)ingame.CurrentMission);
@@ -265,7 +265,7 @@ static void fixup_options(void)
     // If game mode was not selected, set it to normal gameplay
     if (ingame.GameMode == GamM_None) {
         ingame.GameMode = GamM_Unkn3;
-        ingame.Flags |= GamF_Unkn8;
+        ingame.Flags |= GamF_Unkn0008;
     }
 }
 

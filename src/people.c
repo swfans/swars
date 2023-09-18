@@ -124,7 +124,7 @@ short calc_person_speed(struct Thing *p_person)
     if (p_person->U.UPerson.CurrentWeapon == WEP_FLAMER)
         speed >>= 1;
 
-    if (p_person->Flag & 0x80000)
+    if (p_person->Flag & TngF_Unkn00080000)
         speed += 250;
 
     if (p_person->Flag2 & 0x80000)
@@ -223,7 +223,7 @@ void init_person_thing(struct Thing *p_person)
     if (current_level != 0)
         p_person->U.UPerson.CurrentWeapon = 0;
 
-    if ((p_person->Flag & 0x0002) != 0)
+    if ((p_person->Flag & TngF_Unkn0002) != 0)
     {
         p_person->U.UPerson.AnimMode = 20;
         p_person->State = PerSt_DEAD;

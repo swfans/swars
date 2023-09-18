@@ -74,7 +74,7 @@ void cryo_update_agents_from_player(PlayerInfo *p_player)
         struct Thing *p_agent;
 
         p_agent = p_player->MyAgent[plagent];
-        if ((p_agent->Flag & 0x02) != 0) {
+        if ((p_agent->Flag & TngF_Unkn0002) != 0) {
             remove_agent(plagent);
             ++nremoved;
             continue;
