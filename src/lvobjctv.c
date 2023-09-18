@@ -424,7 +424,7 @@ void draw_objective_group_non_pers_on_engine_scene(ushort group)
     for (thing = same_type_head[256 + group]; thing != 0; thing = p_thing->LinkSameGroup)
     {
         p_thing = &things[thing];
-        if ((p_thing->Flag & TngF_Unkn00080000) == 0) {
+        if ((p_thing->Flag & TngF_Persuaded) == 0) {
             draw_objective_point(draw_objectv_x - 10, draw_objectv_y, thing, 0, colour_lookup[colk]);
         }
     }
@@ -443,7 +443,7 @@ void draw_objective_group_not_own_by_plyr_on_engine_scene(ushort group, ushort p
     for (thing = same_type_head[256 + group]; thing != 0; thing = p_thing->LinkSameGroup)
     {
         p_thing = &things[thing];
-        if (((p_thing->Flag & TngF_Unkn00080000) == 0) || things[p_thing->Owner].U.UPerson.Group != plygroup) {
+        if (((p_thing->Flag & TngF_Persuaded) == 0) || things[p_thing->Owner].U.UPerson.Group != plygroup) {
             if ((p_thing->Flag & TngF_Unkn0002) == 0)
                 draw_objective_point(draw_objectv_x - 10, draw_objectv_y, thing, 0, colour_lookup[colk]);
         }
@@ -460,7 +460,7 @@ void draw_objective_group_not_own_by_pers_on_engine_scene(ushort group, short ow
     for (thing = same_type_head[256 + group]; thing != 0; thing = p_thing->LinkSameGroup)
     {
         p_thing = &things[thing];
-        if (((p_thing->Flag & TngF_Unkn00080000) == 0) && (p_thing->Owner != owntng)) {
+        if (((p_thing->Flag & TngF_Persuaded) == 0) && (p_thing->Owner != owntng)) {
             if ((p_thing->Flag & TngF_Unkn0002) == 0)
                 draw_objective_point(draw_objectv_x - 10, draw_objectv_y, thing, 0, colour_lookup[colk]);
         }
@@ -744,51 +744,6 @@ TbBool item_is_carried_by_player(short thing, ushort weapon, ushort plyr)
             return true;
     }
     return false;
-}
-
-TbBool person_is_persuaded(short thing)
-{
-    struct Thing *p_person;
-
-    if (thing <= 0)
-        return false;
-
-    p_person = &things[thing];
-    return ((p_person->Flag & TngF_Unkn00080000) != 0);
-}
-
-TbBool person_is_persuaded_by_person(short thing, short owntng)
-{
-    struct Thing *p_person;
-
-    if (thing <= 0)
-        return false;
-
-    p_person = &things[thing];
-    if ((p_person->Flag & TngF_Unkn00080000) == 0)
-        return false;
-
-    return (p_person->Owner == owntng);
-}
-
-TbBool person_is_persuaded_by_player(short thing, ushort plyr)
-{
-    struct Thing *p_thing;
-    short plyagent, plygroup;
-    struct Thing *p_person;
-
-    if (thing <= 0)
-        return false;
-
-    p_thing = &things[thing];
-    if ((p_thing->Flag & TngF_Unkn00080000) == 0)
-        return false;
-
-    plyagent = players[plyr].DirectControl[0];
-    plygroup = things[plyagent].U.UPerson.Group;
-
-    p_person = &things[p_thing->Owner];
-    return (p_person->U.UPerson.Group == plygroup);
 }
 
 ubyte all_group_arrived(ushort group, short x, short y, short z, int radius)

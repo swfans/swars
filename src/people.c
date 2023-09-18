@@ -17,6 +17,7 @@
  */
 /******************************************************************************/
 #include "people.h"
+#include "player.h"
 #include "game.h"
 #include "thing.h"
 #include "weapon.h"
@@ -106,6 +107,51 @@ void person_give_best_mods(struct Thing *p_person)
     set_person_mod_chest_level(p_person, 3);
 }
 
+TbBool person_is_persuaded(short thing)
+{
+    struct Thing *p_person;
+
+    if (thing <= 0)
+        return false;
+
+    p_person = &things[thing];
+    return ((p_person->Flag & TngF_Persuaded) != 0);
+}
+
+TbBool person_is_persuaded_by_person(short thing, short owntng)
+{
+    struct Thing *p_person;
+
+    if (thing <= 0)
+        return false;
+
+    p_person = &things[thing];
+    if ((p_person->Flag & TngF_Persuaded) == 0)
+        return false;
+
+    return (p_person->Owner == owntng);
+}
+
+TbBool person_is_persuaded_by_player(short thing, ushort plyr)
+{
+    struct Thing *p_thing;
+    short plyagent, plygroup;
+    struct Thing *p_person;
+
+    if (thing <= 0)
+        return false;
+
+    p_thing = &things[thing];
+    if ((p_thing->Flag & TngF_Persuaded) == 0)
+        return false;
+
+    plyagent = players[plyr].DirectControl[0];
+    plygroup = things[plyagent].U.UPerson.Group;
+
+    p_person = &things[p_thing->Owner];
+    return (p_person->U.UPerson.Group == plygroup);
+}
+
 short calc_person_speed(struct Thing *p_person)
 {
     struct PeepStat *pstat;
@@ -124,7 +170,7 @@ short calc_person_speed(struct Thing *p_person)
     if (p_person->U.UPerson.CurrentWeapon == WEP_FLAMER)
         speed >>= 1;
 
-    if (p_person->Flag & TngF_Unkn00080000)
+    if (p_person->Flag & TngF_Persuaded)
         speed += 250;
 
     if (p_person->Flag2 & 0x80000)

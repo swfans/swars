@@ -2766,7 +2766,7 @@ void draw_new_panel()
         int lv, lvmax, x, w;
 
         p_agent = p_locplayer->MyAgent[i];
-        if ((p_agent->Flag & TngF_Unkn2000) == 0) {
+        if ((p_agent->Flag & TngF_PlayerAgent) == 0) {
             LOGERR("Agent %d unexpected flags", i);
             return;
         }
@@ -3776,7 +3776,7 @@ ushort make_group_into_players(ushort group, ushort plyr, ushort max_agent, shor
             }
         }
         players[plyr].MyAgent[nagents] = p_person;
-        p_person->Flag |= TngF_Unkn2000;
+        p_person->Flag |= TngF_PlayerAgent;
 #if 0 // This no longer makes sense - campaign is given with mission number
         if (!cmdln_param_bcg)
         {
@@ -3948,7 +3948,7 @@ void place_single_player(void)
 
         p_thing = &things[n];
         n = p_thing->LinkChild;
-        if ((p_thing->U.UPerson.Group == pl_group) && (p_thing->Type == TT_PERSON) && !(p_thing->Flag & TngF_Unkn2000))
+        if ((p_thing->U.UPerson.Group == pl_group) && (p_thing->Type == TT_PERSON) && !(p_thing->Flag & TngF_PlayerAgent))
         {
             remove_thing(p_thing->ThingOffset);
             delete_node(p_thing);
@@ -5661,7 +5661,7 @@ ulong mission_over_calculate_cash_gain_from_persuaded_crowd(ushort tgroup)
     for (; person > 0; person = p_person->LinkSame)
     {
         p_person = &things[person];
-        if ((p_person->Flag & TngF_Unkn00080000) == 0)
+        if ((p_person->Flag & TngF_Persuaded) == 0)
             continue;
         if (p_person->U.UPerson.EffectiveGroup != tgroup)
             continue;
@@ -5697,7 +5697,7 @@ void mission_over_gain_personnel_from_persuaded_crowd(void)
     for (; person > 0; person = p_person->LinkSame)
     {
         p_person = &things[person];
-        if ((p_person->Flag & TngF_Unkn00080000) == 0)
+        if ((p_person->Flag & TngF_Persuaded) == 0)
             continue;
         if (p_person->U.UPerson.EffectiveGroup != ingame.MyGroup)
             continue;
@@ -5733,7 +5733,8 @@ ulong mission_over_calculate_player_cash_gain_from_items(void)
         {
             struct Thing *p_owntng;
             p_owntng = &things[p_sthing->U.UWeapon.Owner];
-            if (((p_owntng->Flag & TngF_Unkn2000) != 0) && ((p_owntng->Flag & TngF_Unkn00080000) == 0))
+            if (((p_owntng->Flag & TngF_PlayerAgent) != 0) &&
+              ((p_owntng->Flag & TngF_Persuaded) == 0))
             {
                 if (p_sthing->U.UWeapon.WeaponType == 0)
                     credits += 100 * p_sthing->U.UWeapon.Ammo;

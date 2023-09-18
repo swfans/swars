@@ -141,6 +141,11 @@ TbBool person_carries_weapon(struct Thing *p_person, ubyte weapon);
 void set_person_stats_type(struct Thing *p_person, ushort type);
 void init_person_thing(struct Thing *p_person);
 void person_give_best_mods(struct Thing *p_person);
+
+TbBool person_is_persuaded(short thing);
+TbBool person_is_persuaded_by_person(short thing, short owntng);
+TbBool person_is_persuaded_by_player(short thing, ushort plyr);
+
 /******************************************************************************/
 #ifdef __cplusplus
 }
