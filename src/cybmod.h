@@ -97,6 +97,10 @@ void set_cybmod_brain_level(union Mod *p_umod, ubyte nmod);
 ubyte cybmod_skin_level(union Mod *p_umod);
 void set_cybmod_skin_level(union Mod *p_umod, ubyte nmod);
 
+ushort cybmodflags_prev_mod(ulong modflags, ushort last_mtype);
+ushort cybmod_group_type(ushort mtype);
+ushort cybmod_version(ushort mtype);
+
 void sanitize_cybmods_fmtver11_flags(union Mod *p_umod);
 TbBool cybmod_fix_all(union Mod *p_umod);
 /******************************************************************************/

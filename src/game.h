@@ -724,7 +724,7 @@ extern sbyte selected_weapon;
 extern sbyte selected_mod;
 extern ubyte group_types[8];
 extern struct UnknStruct04 unkstruct04_arr[20];
-extern ubyte data_1c4aa3;
+extern ubyte byte_1C4AA3;
 extern ubyte net_unkn_pos_02;
 extern ubyte data_1c498f;
 extern ubyte data_1c4990;

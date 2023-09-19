@@ -113,8 +113,10 @@ extern ubyte weapon_tech_level[33];
 
 void read_weapons_conf_file(void);
 
-ushort weapon_fourpack_index(ushort weapon);
 TbBool weapons_has_weapon(ulong weapons, ushort wtype);
+ushort weapons_prev_weapon(ulong weapons, ushort last_wtype);
+
+ushort weapon_fourpack_index(ushort weapon);
 void weapons_remove_weapon(ulong *p_weapons,
   struct WeaponsFourPack *p_fourpacks, ushort wtype);
 void sanitize_weapon_quantities(ulong *p_weapons,

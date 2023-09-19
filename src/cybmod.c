@@ -350,6 +350,8 @@ TbBool cybmod_fix_all(union Mod *p_umod)
     return fixed;
 }
 
+/** Converts flag-per-mod to  3bit-per-mod-type.
+ */
 void sanitize_cybmods_fmtver11_flags(union Mod *p_umod)
 {
 #if 0
@@ -411,6 +413,49 @@ void sanitize_cybmods_fmtver11_flags(union Mod *p_umod)
         set_cybmod_skin_level(p_umod, 1);
     else
         set_cybmod_skin_level(p_umod, 0);
+}
+
+/** Returns cyborg mod set in given flags with index below last.
+ *
+ * Note that it only works for mods stored as flag-per-mod. The
+ * usual way of storage within people is 3bit-per-mod-type.
+ */
+ushort cybmodflags_prev_mod(ulong modflags, ushort last_mtype)
+{
+    ushort mtype;
+
+    if (last_mtype < 2)
+        return 0;
+
+    for (mtype = last_mtype - 1; mtype > 0; mtype--)
+    {
+        ulong modflg = 1 << (mtype-1);
+        if ((modflags & modflg) != 0)
+            return mtype;
+    }
+    return 0;
+}
+
+/** Returns mod group type for given mod type.
+ */
+ushort cybmod_group_type(ushort mtype)
+{
+    if (mtype == MOD_NULL)
+        return 0;
+    if (mtype >= MOD_EPIDERM1)
+        return 4;
+    return ((mtype-1) / 3);
+}
+
+/** Returns mod version for given mod type.
+ */
+ushort cybmod_version(ushort mtype)
+{
+    if (mtype == MOD_NULL)
+        return 0;
+    if (mtype >= MOD_EPIDERM1)
+        return mtype - MOD_EPIDERM1 + 1;
+    return ((mtype-1) % 3) + 1;
 }
 
 /******************************************************************************/

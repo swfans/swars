@@ -375,6 +375,24 @@ TbBool weapons_has_weapon(ulong weapons, ushort wtype)
     return (weapons & wepflg) != 0;
 }
 
+/** Returns weapon set in given flags with index below last.
+ */
+ushort weapons_prev_weapon(ulong weapons, ushort last_wtype)
+{
+    ushort wtype;
+
+    if (last_wtype < 2)
+        return 0;
+
+    for (wtype = last_wtype - 1; wtype > 0; wtype--)
+    {
+        ulong wepflg = 1 << (wtype-1);
+        if ((weapons & wepflg) != 0)
+            return wtype;
+    }
+    return 0;
+}
+
 void weapons_remove_weapon(ulong *p_weapons, struct WeaponsFourPack *p_fourpacks, ushort wtype)
 {
     ushort fp;
