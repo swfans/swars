@@ -345,6 +345,70 @@ void set_person_animmode_walk(struct Thing *p_person)
         : : "a" (p_person));
 }
 
+void persuaded_person_add_to_stats(struct Thing *p_person, ushort brief)
+{
+    switch (p_person->SubType)
+    {
+    case SubTT_PERS_AGENT:
+          ++mission_status[brief].AgentsGained;
+          // fall through
+    case SubTT_PERS_ZEALOT:
+    case SubTT_PERS_PUNK_F:
+    case SubTT_PERS_PUNK_M:
+    case SubTT_PERS_HIGH_PRIEST:
+          ++mission_status[brief].EnemiesPersuaded;
+          break;
+    case SubTT_PERS_BRIEFCASE_M:
+    case SubTT_PERS_WHITE_BRUN_F:
+    case SubTT_PERS_SCIENTIST:
+    case SubTT_PERS_SHADY_M:
+    case SubTT_PERS_WHIT_BLOND_F:
+    case SubTT_PERS_LETH_JACKT_M:
+    case SubTT_PERS_FAST_BLOND_F:
+          ++mission_status[brief].CivsPersuaded;
+          break;
+    case SubTT_PERS_MERCENARY:
+    case SubTT_PERS_MECH_SPIDER:
+    case SubTT_PERS_POLICE:
+          ++mission_status[brief].SecurityPersuaded;
+          break;
+    default:
+          break;
+    }
+}
+
+void persuaded_person_remove_from_stats(struct Thing *p_person, ushort brief)
+{
+    switch (p_person->SubType)
+    {
+    case SubTT_PERS_AGENT:
+        --mission_status[brief].AgentsGained;
+        // fall through
+    case SubTT_PERS_ZEALOT:
+    case SubTT_PERS_PUNK_F:
+    case SubTT_PERS_PUNK_M:
+    case SubTT_PERS_HIGH_PRIEST:
+        --mission_status[brief].EnemiesPersuaded;
+        break;
+    case SubTT_PERS_BRIEFCASE_M:
+    case SubTT_PERS_WHITE_BRUN_F:
+    case SubTT_PERS_SCIENTIST:
+    case SubTT_PERS_SHADY_M:
+    case SubTT_PERS_WHIT_BLOND_F:
+    case SubTT_PERS_LETH_JACKT_M:
+    case SubTT_PERS_FAST_BLOND_F:
+        --mission_status[brief].CivsPersuaded;
+        break;
+    case SubTT_PERS_MERCENARY:
+    case SubTT_PERS_MECH_SPIDER:
+    case SubTT_PERS_POLICE:
+        --mission_status[brief].SecurityPersuaded;
+        break;
+    default:
+        break;
+    }
+}
+
 void set_person_persuaded(struct Thing *p_person, struct Thing *p_attacker, ushort energy)
 {
 #if 0
@@ -406,33 +470,7 @@ void set_person_persuaded(struct Thing *p_person, struct Thing *p_attacker, usho
     {
         short plagent;
 
-        switch (p_person->SubType)
-        {
-        case 1u:
-              ++mission_status[open_brief].AgentsGained;
-              // fall through
-        case 2u:
-        case 3u:
-        case 9u:
-        case 12u:
-              ++mission_status[open_brief].EnemiesPersuaded;
-              break;
-        case 4u:
-        case 5u:
-        case 10u:
-        case 11u:
-        case 13u:
-        case 14u:
-              ++mission_status[open_brief].CivsPersuaded;
-              break;
-        case 6u:
-        case 7u:
-        case 8u:
-              ++mission_status[open_brief].SecurityPersuaded;
-              break;
-        default:
-              break;
-        }
+        persuaded_person_add_to_stats(p_person, open_brief);
 
         for (plagent = 0; plagent < playable_agents; plagent++)
         {
@@ -476,33 +514,7 @@ void unpersuade_my_peeps(struct Thing *p_owntng)
         count--;
         if (!in_network_game && (p_owntng->U.UPerson.EffectiveGroup == ingame.MyGroup))
         {
-            switch (p_person->SubType)
-            {
-            case 1u:
-                --mission_status[open_brief].AgentsGained;
-                // fall through
-            case 2u:
-            case 3u:
-            case 9u:
-            case 12u:
-                --mission_status[open_brief].EnemiesPersuaded;
-                break;
-            case 4u:
-            case 5u:
-            case 10u:
-            case 11u:
-            case 13u:
-            case 14u:
-                --mission_status[open_brief].CivsPersuaded;
-                break;
-            case 6u:
-            case 7u:
-            case 8u:
-                --mission_status[open_brief].SecurityPersuaded;
-                break;
-            default:
-                break;
-            }
+            persuaded_person_remove_from_stats(p_person, open_brief);
         }
     }
     p_owntng->U.UPerson.PersuadePower = 0;
