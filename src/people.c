@@ -447,4 +447,66 @@ void set_person_persuaded(struct Thing *p_person, struct Thing *p_attacker, usho
     }
 }
 
+void unpersuade_my_peeps(struct Thing *p_owntng)
+{
+#if 0
+    asm volatile ("call ASM_unpersuade_my_peeps\n"
+        : : "a" (p_owntng));
+#else
+    short person;
+    struct Thing *p_person;
+    ushort count;
+    int i, k;
+
+    count = word_1531DA;
+    for (i = 1; i < count; i++)
+    {
+        person = word_17FA58[i];
+        p_person = &things[person];
+        if (p_person->Owner != p_owntng->ThingOffset)
+            continue;
+        p_person->Flag &= ~0x00080000;
+        p_person->U.UPerson.EffectiveGroup = p_owntng->U.UPerson.Group;
+        p_person->State = 0;
+        p_person->Flag |= 0x0040 | 0x0004;
+        --group_actions[p_person->U.UPerson.Group].Persuaded;
+        for (k = i; k < count - 1; k++) {
+            word_17FA58[k] = word_17FA58[k+1];
+        }
+        count--;
+        if (!in_network_game && (p_owntng->U.UPerson.EffectiveGroup == ingame.MyGroup))
+        {
+            switch (p_person->SubType)
+            {
+            case 1u:
+                --mission_status[open_brief].AgentsGained;
+                // fall through
+            case 2u:
+            case 3u:
+            case 9u:
+            case 12u:
+                --mission_status[open_brief].EnemiesPersuaded;
+                break;
+            case 4u:
+            case 5u:
+            case 10u:
+            case 11u:
+            case 13u:
+            case 14u:
+                --mission_status[open_brief].CivsPersuaded;
+                break;
+            case 6u:
+            case 7u:
+            case 8u:
+                --mission_status[open_brief].SecurityPersuaded;
+                break;
+            default:
+                break;
+            }
+        }
+    }
+    p_owntng->U.UPerson.PersuadePower = 0;
+    word_1531DA = count;
+#endif
+}
 /******************************************************************************/
