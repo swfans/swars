@@ -287,4 +287,11 @@ void init_person_thing(struct Thing *p_person)
         p_person->Speed = calc_person_speed(p_person);
     }
 }
+
+void set_person_persuaded(struct Thing *p_person, struct Thing *p_attacker, ushort energy)
+{
+    asm volatile ("call ASM_set_person_persuaded\n"
+        : : "a" (p_person), "d" (p_attacker), "b" (energy));
+}
+
 /******************************************************************************/

@@ -146,6 +146,8 @@ TbBool person_is_persuaded(short thing);
 TbBool person_is_persuaded_by_person(short thing, short owntng);
 TbBool person_is_persuaded_by_player(short thing, ushort plyr);
 
+void set_person_persuaded(struct Thing *p_person, struct Thing *p_attacker, ushort energy);
+
 /******************************************************************************/
 #ifdef __cplusplus
 }
