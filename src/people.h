@@ -107,6 +107,7 @@ enum PersonState {
   PerSt_EXIT_FERRY = 0x38,
   PerSt_AVOID_GROUP = 0x39,
   PerSt_UNUSED_3A = 0x3A,
+  PerSt_BEING_PERSUADED = 0x3B,
 };
 
 /** Max health of a person cannot safely go beyond that.
@@ -131,10 +132,27 @@ struct PeepStat
     short dum4;
 };
 
+struct MyPath {
+    ubyte Flag;
+    short X[4];
+    short Z[4];
+    ushort Next;
+};
+
 #pragma pack()
 /******************************************************************************/
 extern struct PeepStat peep_type_stats[];
 extern ushort people_frames[SubTT_PERS_COUNT][22];
+
+extern ushort word_1531DA;
+extern ushort word_17FA58[400];
+
+extern ushort head_my_path; // = 1;
+extern ulong path_count;
+extern struct MyPath my_paths[1600];
+
+void remove_path(struct Thing *p_thing);
+void set_person_animmode_walk(struct Thing *p_person);
 
 TbBool person_carries_weapon(struct Thing *p_person, ubyte weapon);
 

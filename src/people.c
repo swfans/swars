@@ -17,8 +17,11 @@
  */
 /******************************************************************************/
 #include "people.h"
+
+#include "pepgroup.h"
 #include "player.h"
 #include "game.h"
+#include "sound.h"
 #include "thing.h"
 #include "weapon.h"
 #include "swlog.h"
@@ -288,10 +291,148 @@ void init_person_thing(struct Thing *p_person)
     }
 }
 
+void remove_path(struct Thing *p_thing)
+{
+#if 1
+    asm volatile ("call ASM_remove_path\n"
+        : : "a" (p_thing));
+#else
+    ushort head, path;
+    ulong count;
+
+    head = head_my_path;
+    count = path_count;
+    p_thing->Flag2 &= ~0x0040;
+    if (p_thing->U.UPerson.PathIndex != 0)
+    {
+        if (p_thing->Type == TT_PERSON)
+            p_thing->U.UPerson.LastDist = 32000;
+        path = p_thing->U.UPerson.PathIndex;
+        p_thing->U.UPerson.PathIndex = 0;
+        while (path != 0)
+        {
+            ushort tmpath;
+            my_paths[path].Flag = 0;
+            tmpath = my_paths[path].Next;
+            my_paths[path].Next = head;
+            head = path;
+            path = tmpath;
+            count--;
+        }
+        p_thing->PathOffset = 0;
+        p_thing->Flag &= 0x020000;
+    }
+    path_count = count;
+    head_my_path = head;
+#endif
+}
+
+void set_person_animmode_walk(struct Thing *p_person)
+{
+    asm volatile ("call ASM_set_person_animmode_walk\n"
+        : : "a" (p_person));
+}
+
 void set_person_persuaded(struct Thing *p_person, struct Thing *p_attacker, ushort energy)
 {
+#if 0
     asm volatile ("call ASM_set_person_persuaded\n"
         : : "a" (p_person), "d" (p_attacker), "b" (energy));
+#endif
+    if ((p_person->Flag & 0x2000) != 0)
+        return;
+
+    if (p_person->State == PerSt_DEAD)
+        return;
+
+    play_dist_sample(p_person, 20, 127, 64, 100, 0, 3);
+    remove_path(p_person);
+    set_person_animmode_walk(p_person);
+    p_attacker->U.UPerson.Energy -= energy;
+    if (p_attacker->U.UPerson.Energy < 0)
+        p_attacker->U.UPerson.Energy = 0;
+    p_person->PTarget = NULL;
+    p_person->U.UPerson.Target2 = 0;
+    p_person->State = 0;
+
+    p_person->Flag |= TngF_Unkn40000000 | TngF_Unkn0004;
+    p_person->Owner = p_attacker->ThingOffset;
+    p_person->Flag &= ~(TngF_Unkn00800000|TngF_Unkn00040000|TngF_Unkn00020000|TngF_Unkn0800|TngF_Unkn0080);
+    set_person_animmode_walk(p_person);
+    p_person->U.UPerson.ComTimer = -1;
+    p_person->U.UPerson.ComRange = 3;
+    p_person->U.UPerson.Timer2 = 5;
+    p_person->U.UPerson.StartTimer2 = 5;
+    p_person->SubState = 0;
+
+    p_person->U.UPerson.EffectiveGroup = p_attacker->U.UPerson.EffectiveGroup;
+    p_person->U.UPerson.Within = 0;
+    {
+        struct PeepStat *pstat;
+
+        pstat = &peep_type_stats[p_person->SubType];
+        p_attacker->U.UPerson.PersuadePower += pstat->PersuadeWorth;
+    }
+    if ((p_person->Flag2 & 0x0010) == 0)
+    {
+          p_person->StartFrame = 1059;
+          p_person->Frame = nstart_ani[p_person->StartFrame + 1];
+    }
+    p_person->Timer1 = 48;
+    p_person->StartTimer1 = 48;
+    {
+        word_17FA58[word_1531DA] = p_person->ThingOffset;
+        word_1531DA++;
+    }
+    p_person->State = PerSt_BEING_PERSUADED;
+    {
+        ushort group;
+        group = p_person->U.UPerson.Group & 0x1F;
+        group_actions[group].Persuaded++;
+    }
+    if (!in_network_game && (p_attacker->Flag & 0x2000) && (p_attacker->U.UPerson.EffectiveGroup == ingame.MyGroup))
+    {
+        short plagent;
+
+        switch (p_person->SubType)
+        {
+        case 1u:
+              ++mission_status[open_brief].AgentsGained;
+              // fall through
+        case 2u:
+        case 3u:
+        case 9u:
+        case 12u:
+              ++mission_status[open_brief].EnemiesPersuaded;
+              break;
+        case 4u:
+        case 5u:
+        case 10u:
+        case 11u:
+        case 13u:
+        case 14u:
+              ++mission_status[open_brief].CivsPersuaded;
+              break;
+        case 6u:
+        case 7u:
+        case 8u:
+              ++mission_status[open_brief].SecurityPersuaded;
+              break;
+        default:
+              break;
+        }
+
+        for (plagent = 0; plagent < playable_agents; plagent++)
+        {
+            struct Thing *p_agent;
+
+            p_agent = players[local_player_no].MyAgent[plagent];
+            if (p_person == p_agent->PTarget)
+                p_agent->PTarget = NULL;
+            if (p_agent->U.UPerson.Target2 == p_person->ThingOffset)
+                p_agent->U.UObject.TurnPadOnPS = 0;
+        }
+    }
 }
 
 /******************************************************************************/
