@@ -291,17 +291,40 @@ void init_person_thing(struct Thing *p_person)
     }
 }
 
+/** Frees a linked list of paths, and adds the paths to free list.
+ */
+void path_free_linked_list(ushort first_path)
+{
+    ushort free_head, path;
+    ushort count;
+
+    free_head = head_my_path;
+    count = path_count;
+
+    path = first_path;
+    while (path != 0)
+    {
+        ushort tmpath;
+
+        tmpath = my_paths[path].Next;
+        my_paths[path].Flag = 0;
+        my_paths[path].Next = free_head;
+        free_head = path;
+        path = tmpath;
+        count--;
+    }
+    path_count = count;
+    head_my_path = free_head;
+}
+
 void remove_path(struct Thing *p_thing)
 {
-#if 1
+#if 0
     asm volatile ("call ASM_remove_path\n"
         : : "a" (p_thing));
 #else
-    ushort head, path;
-    ulong count;
+    ushort path;
 
-    head = head_my_path;
-    count = path_count;
     p_thing->Flag2 &= ~0x0040;
     if (p_thing->U.UPerson.PathIndex != 0)
     {
@@ -309,21 +332,10 @@ void remove_path(struct Thing *p_thing)
             p_thing->U.UPerson.LastDist = 32000;
         path = p_thing->U.UPerson.PathIndex;
         p_thing->U.UPerson.PathIndex = 0;
-        while (path != 0)
-        {
-            ushort tmpath;
-            my_paths[path].Flag = 0;
-            tmpath = my_paths[path].Next;
-            my_paths[path].Next = head;
-            head = path;
-            path = tmpath;
-            count--;
-        }
+        path_free_linked_list(path);
         p_thing->PathOffset = 0;
-        p_thing->Flag &= 0x020000;
+        p_thing->Flag &= ~0x00020000;
     }
-    path_count = count;
-    head_my_path = head;
 #endif
 }
 

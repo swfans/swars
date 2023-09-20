@@ -148,7 +148,7 @@ extern ushort word_1531DA;
 extern ushort word_17FA58[400];
 
 extern ushort head_my_path; // = 1;
-extern ulong path_count;
+extern ushort path_count;
 extern struct MyPath my_paths[1600];
 
 void remove_path(struct Thing *p_thing);
