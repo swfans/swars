@@ -15,6 +15,7 @@
 #include "bfmemory.h"
 #include "bfmemut.h"
 #include "bffile.h"
+#include "bffont.h"
 #include "bfgentab.h"
 #include "bfwindows.h"
 #include "bfpng.h"
@@ -180,6 +181,9 @@ extern ushort netgame_agent_pos_y[8][4];
 
 extern long dword_176D58;
 extern ubyte byte_153198;
+
+extern ushort word_1C4846[8];
+extern ushort word_1C4856[8];
 
 extern short brightness;
 extern long game_speed;
@@ -6720,45 +6724,53 @@ ubyte show_mission_stats(struct ScreenBox *box)
     int fheight, lnheight;
     int x, y;
 
-    x = 20;
     my_set_text_window(box->X + 4, box->Y + 4, box->Width - 8, box->Height - 8);
     lbFontPtr = med_font;
     fheight = font_height('A');
+    lnheight = fheight + 4;
+
     if ((box->Flags & 0x8000) == 0)
     {
-        lnheight = fheight + 4;
         lbDisplay.DrawFlags = 0;
 
         // Row with names
         x = 20;
         y = lnheight;
 
+        // Reference no
         draw_text_purple_list2(x, y, gui_strings[611], 0);
         y += lnheight;
 
+        // Status
         draw_text_purple_list2(x, y, gui_strings[612], 0);
         y += lnheight;
 
+        // City time
         draw_text_purple_list2(x, y, gui_strings[614], 0);
         y += lnheight;
 
+        // Mission time
         draw_text_purple_list2(x, y, gui_strings[615], 0);
         y += lnheight;
         y += lnheight;
 
+        // Income
         draw_text_purple_list2(x, y, gui_strings[633], 0);
         y += lnheight;
 
+        // Expenditure
         draw_text_purple_list2(x, y, gui_strings[632], 0);
         y += lnheight;
 
         if (new_weapons_researched || new_mods_researched)
         {
+            // Research completed
             draw_text_purple_list2(x, y, gui_strings[631], 0);
             y += lnheight;
         }
         if (scientists_lost > 0)
         {
+            // Scientists lost
             draw_text_purple_list2(x, y, gui_strings[537], 0);
             y += lnheight;
             load_scientist_lost_reason(LbRandomAnyShort() % 20);
@@ -6818,7 +6830,7 @@ ubyte show_mission_stats(struct ScreenBox *box)
     }
 
     x = 300;
-    y = 8 * fheight + 32;
+    y = 2 * lnheight;
     locstr[0] = '\0';
     if (new_weapons_researched)
     {
@@ -6900,12 +6912,281 @@ ubyte show_mission_stats(struct ScreenBox *box)
     return 0;
 }
 
-ubyte show_unkn31_box(struct ScreenBox *box)
+ubyte show_mission_people_stats(struct ScreenBox *box)
 {
+#if 0
     ubyte ret;
-    asm volatile ("call ASM_show_unkn31_box\n"
+    asm volatile ("call ASM_show_mission_people_stats\n"
         : "=r" (ret) : "a" (box));
     return ret;
+#endif
+    char *text;
+    char locstr[40];
+    int fheight, lnheight, textw;
+    int x, y;
+
+    my_set_text_window(box->X + 4, box->Y + 4, box->Width - 8, box->Height - 8);
+    lbFontPtr = med_font;
+    fheight = font_height('A');
+    lnheight = fheight + 4;
+
+    if ((box->Flags & 0x8000) == 0)
+    {
+        lbDisplay.DrawFlags = 0;
+
+        if (screentype == SCRT_9)
+        {
+            // Row with names
+            x = 10;
+            y = lnheight;
+
+            draw_text_purple_list2(x, y, gui_strings[618], 0);
+            y += lnheight;
+
+            draw_text_purple_list2(x, y, gui_strings[619], 0);
+            y += lnheight;
+
+            draw_text_purple_list2(x, y, gui_strings[620], 0);
+            y += lnheight;
+            y += lnheight;
+
+            draw_text_purple_list2(x, y, gui_strings[621], 0);
+            y += lnheight;
+
+            draw_text_purple_list2(x, y, gui_strings[622], 0);
+            y += lnheight;
+
+            draw_text_purple_list2(x, y, gui_strings[623], 0);
+            y += lnheight;
+            y += lnheight;
+
+            draw_text_purple_list2(x, y, gui_strings[624], 0);
+            y += lnheight;
+
+            draw_text_purple_list2(x, y, gui_strings[630], 0);
+            y += lnheight;
+        }
+        else
+        {
+            int i, k;
+            int used_num; // Player number counting existing player; starts at 1
+            int x1, x2, x3;
+
+            y = 2 * lnheight;
+            used_num = 1;
+            for (i = 0; i < 8; i++)
+            {
+                k = byte_1C5C28[i];
+                word_1C4856[k] = 0;
+            }
+
+            x1 = 20;
+            x3 = 25;
+            for (i = 0; i < 8; i++)
+            {
+                ushort plyr;
+                ushort *p_stat;
+
+                if (unkn2_names[i][0] == '\0')
+                    continue;
+
+                plyr = (players[i].MyAgent[0]->U.UPerson.ComCur & 0x1C) >> 2;
+                word_1C4846[i] = 0;
+                // The CivsKilled property should start a list of ushort stats; there are 6 of these
+                p_stat = &mission_status[plyr].CivsKilled;
+                for (k = 0; k < 8; k++, p_stat++)
+                {
+                    if (unkn2_names[k][0] == '\0')
+                        continue;
+
+                    if (k == i)
+                        word_1C4846[i] -= *p_stat;
+                    else
+                        word_1C4846[i] += *p_stat;
+                }
+
+                k = byte_1C5C28[i];
+                if (k != 0)
+                    word_1C4856[k] += word_1C4846[i];
+
+                snprintf(locstr, sizeof(locstr), "%d", used_num);
+                text = (char *)(back_buffer + text_buf_pos);
+                strcpy(text, locstr);
+                textw = my_string_width(text);
+                draw_text_purple_list2(x1 - textw, y, text, 0);
+                x2 = 140 + 40 * (used_num - 1);
+                draw_text_purple_list2(x2 - textw, lnheight, text, 0);
+                text_buf_pos += strlen(text) + 1;
+                draw_text_purple_list2(x3, y, unkn2_names[i], 0);
+                y += lnheight;
+
+                used_num++;
+            }
+        }
+        box->Flags |= 0x8000;
+        copy_box_purple_list(box->X, box->Y, box->Width, box->Height);
+    }
+
+    if (screentype == SCRT_9)
+    {
+        // Row with values
+        x = 300;
+        y = lnheight;
+
+        snprintf(locstr, sizeof(locstr), "%d", mission_status[open_brief].CivsPersuaded);
+        text = (char *)(back_buffer + text_buf_pos);
+        strcpy(text, locstr);
+        draw_text_purple_list2(x, y, text, 0);
+        text_buf_pos += strlen(text) + 1;
+        y += lnheight;
+
+        snprintf(locstr, sizeof(locstr), "%d", mission_status[open_brief].SecurityPersuaded);
+        text = (char *)(back_buffer + text_buf_pos);
+        strcpy(text, locstr);
+        draw_text_purple_list2(x, y, text, 0);
+        text_buf_pos += strlen(text) + 1;
+        y += lnheight;
+
+        snprintf(locstr, sizeof(locstr), "%d", mission_status[open_brief].EnemiesPersuaded);
+        text = (char *)(back_buffer + text_buf_pos);
+        strcpy(text, locstr);
+        draw_text_purple_list2(x, y, text, 0);
+        text_buf_pos += strlen(text) + 1;
+        y += lnheight;
+        y += lnheight;
+
+        snprintf(locstr, sizeof(locstr), "%d", mission_status[open_brief].CivsKilled);
+        text = (char *)(back_buffer + text_buf_pos);
+        strcpy(text, locstr);
+        draw_text_purple_list2(x, y, text, 0);
+        text_buf_pos += strlen(text) + 1;
+        y += lnheight;
+
+        snprintf(locstr, sizeof(locstr), "%d", mission_status[open_brief].SecurityKilled);
+        text = (char *)(back_buffer + text_buf_pos);
+        strcpy(text, locstr);
+        draw_text_purple_list2(x, y, text, 0);
+        text_buf_pos += strlen(text) + 1;
+        y += lnheight;
+
+        snprintf(locstr, sizeof(locstr), "%d", mission_status[open_brief].EnemiesKilled);
+        text = (char *)(back_buffer + text_buf_pos);
+        strcpy(text, locstr);
+        draw_text_purple_list2(x, y, text, 0);
+        text_buf_pos += strlen(text) + 1;
+        y += lnheight;
+        y += lnheight;
+
+        snprintf(locstr, sizeof(locstr), "%d", mission_status[open_brief].AgentsLost);
+        text = (char *)(back_buffer + text_buf_pos);
+        strcpy(text, locstr);
+        draw_text_purple_list2(x, y, text, 0);
+        text_buf_pos += strlen(text) + 1;
+        y += lnheight;
+
+        snprintf(locstr, sizeof(locstr), "%d", mission_status[open_brief].AgentsGained);
+        text = (char *)(back_buffer + text_buf_pos);
+        strcpy(text, locstr);
+        draw_text_purple_list2(x, y, text, 0);
+        text_buf_pos += strlen(text) + 1;
+        y += lnheight;
+    }
+    else
+    {
+        int i, k;
+
+        y = 2 * lnheight;
+        lbDisplay.DrawColour = 87;
+
+        for (i = 0; i < 8; i++)
+        {
+            ushort plyr;
+            ushort *p_stat;
+
+            if (unkn2_names[i][0] == '\0')
+                continue;
+
+            x = 140;
+
+            plyr = (players[i].MyAgent[0]->U.UPerson.ComCur & 0x1C) >> 2;
+            p_stat = &mission_status[plyr].CivsKilled;
+            for (k = 0; k < 8; k++, p_stat++)
+            {
+                if (unkn2_names[k][0] == '\0')
+                    continue;
+
+                if (k == i)
+                    lbDisplay.DrawFlags |= 0x0040;
+                snprintf(locstr, sizeof(locstr), "%d", *p_stat);
+                text = (char *)(back_buffer + text_buf_pos);
+                strcpy(text, locstr);
+                textw = my_string_width(text);
+                draw_text_purple_list2(x - textw, y, text, 0);
+                text_buf_pos += strlen(text) + 1;
+                if (k == i)
+                    lbDisplay.DrawFlags &= ~0x0040;
+                x += 40;
+            }
+            lbDisplay.DrawFlags |= 0x0040;
+
+            snprintf(locstr, sizeof(locstr), "%d", word_1C4846[i]);
+            text = (char *)(back_buffer + text_buf_pos);
+            strcpy(text, locstr);
+            textw = my_string_width(text);
+            draw_text_purple_list2(x - textw, y, text, 0);
+            text_buf_pos += strlen(text) + 1;
+
+            k = byte_1C5C28[i];
+            if (k != 0)
+            {
+                x += 1;
+                draw_text_purple_list2(x, y, "/", 0);
+                x += LbTextCharWidth('/') + 1;
+
+                snprintf(locstr, sizeof(locstr), "%d", word_1C4856[k]);
+                text = (char *)(back_buffer + text_buf_pos);
+                strcpy(text, locstr);
+                draw_text_purple_list2(x, y, text, 0);
+                text_buf_pos += strlen(text) + 1;
+            }
+            lbDisplay.DrawFlags &= ~0x0040;
+            y += lnheight;
+        }
+
+        x = 140;
+        lbDisplay.DrawFlags |= 0x0040;
+
+        for (i = 0; i != 8; i++)
+        {
+            ushort plyr;
+            ushort *p_stat;
+            int n;
+
+            if (unkn2_names[i][0] == '\0')
+                continue;
+
+            n = 0;
+            plyr = (players[k].MyAgent[0]->U.UPerson.ComCur & 0x1C) >> 2;
+            p_stat = &mission_status[plyr].CivsKilled;
+            for (k = 0; k != 8; k++, p_stat++)
+            {
+
+                if (unkn2_names[k][0] == '\0')
+                    continue;
+
+                n += *p_stat;
+            }
+            snprintf(locstr, sizeof(locstr), "%d", n);
+            text = (char *)(back_buffer + text_buf_pos);
+            strcpy(text, locstr);
+            textw = my_string_width(text);
+            draw_text_purple_list2(x - textw, y, text, 0);
+            text_buf_pos += strlen(text) + 1;
+            x += 40;
+        }
+        lbDisplay.DrawFlags &= ~0x0040;
+    }
+    return 0;
 }
 
 void draw_chartxy_axis_y_values(int x, int y, int height, int ax_min, int ax_max, int tot_values)
@@ -7335,7 +7616,7 @@ ubyte ac_show_net_team_box(struct ScreenBox *box);
 ubyte ac_show_net_groups_box(struct ScreenBox *box);
 ubyte ac_show_net_users_box(struct ScreenBox *box);
 ubyte ac_show_mission_stats(struct ScreenBox *box);
-ubyte ac_show_unkn31_box(struct ScreenBox *box);
+ubyte ac_show_mission_people_stats(struct ScreenBox *box);
 ubyte ac_show_research_graph(struct ScreenBox *box);
 ubyte ac_show_unkn21_box(struct ScreenTextBox *box);
 ubyte ac_show_unkn04(struct ScreenBox *box);
@@ -7709,7 +7990,7 @@ void init_screen_boxes(void)
     unkn04_boxes[0].SpecialDrawFn = ac_show_unkn04;
     unkn04_boxes[1].SpecialDrawFn = ac_show_unkn04;
     unkn04_boxes[2].SpecialDrawFn = ac_show_unkn04;
-    unkn31_box.SpecialDrawFn = ac_show_unkn31_box;
+    unkn31_box.SpecialDrawFn = ac_show_mission_people_stats;
     mission_text_box.Text = mission_briefing_text;
     unkn30_box.SpecialDrawFn = ac_show_mission_stats;
     unkn36_box.Flags |= 0x0300;
