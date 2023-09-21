@@ -6780,6 +6780,7 @@ ubyte show_mission_stats(struct ScreenBox *box)
         x = 300;
         y = lnheight;
 
+        // Reference no
         snprintf(locstr, sizeof(locstr), "%d", (int)byte_1C4AA3);
         text = (char *)(back_buffer + text_buf_pos);
         strcpy(text, locstr);
@@ -6794,14 +6795,16 @@ ubyte show_mission_stats(struct ScreenBox *box)
         text_buf_pos += strlen(text) + 1;
         y += lnheight;
 
-        snprint_dh_time_duration(locstr, sizeof(locstr), mission_status[open_brief].CityDays, mission_status[open_brief].CityHours);
+        snprint_dh_time_duration(locstr, sizeof(locstr),
+          mission_status[open_brief].CityDays, mission_status[open_brief].CityHours);
         text = (char *)(back_buffer + text_buf_pos);
         strcpy(text, locstr);
         draw_text_purple_list2(x, y, text, 0);
         text_buf_pos += strlen(text) + 1;
         y += lnheight;
 
-        snprint_dh_time_duration(locstr, sizeof(locstr), mission_status[open_brief].Days, mission_status[open_brief].Hours);
+        snprint_dh_time_duration(locstr, sizeof(locstr),
+          mission_status[open_brief].Days, mission_status[open_brief].Hours);
         text = (char *)(back_buffer + text_buf_pos);
         strcpy(text, locstr);
         draw_text_purple_list2(x, y, text, 0);
@@ -6809,13 +6812,16 @@ ubyte show_mission_stats(struct ScreenBox *box)
         y += lnheight;
         y += lnheight;
 
-        snprintf(locstr, sizeof(locstr), "%ld C", ingame.Expenditure + ingame.Credits - ingame.CashAtStart);
+        // Income
+        snprintf(locstr, sizeof(locstr), "%ld C",
+          (ingame.Credits + ingame.Expenditure) - ingame.CashAtStart);
         text = (char *)(back_buffer + text_buf_pos);
         strcpy(text, locstr);
         draw_text_purple_list2(x, y, text, 0);
         text_buf_pos += strlen(text) + 1;
         y += lnheight;
 
+        // Expenditure
         snprintf(locstr, sizeof(locstr), "%ld C", ingame.Expenditure);
         text = (char *)(back_buffer + text_buf_pos);
         strcpy(text, locstr);
@@ -6886,9 +6892,11 @@ ubyte show_mission_stats(struct ScreenBox *box)
 
             pos = strlen(locstr);
             if (pos == 0)
-                snprintf(locstr, sizeof(locstr), "%s %s %d", gui_strings[gt_strid], gui_strings[mv_strid], cybmod_version(mtype));
+                snprintf(locstr, sizeof(locstr), "%s %s %d",
+                  gui_strings[gt_strid], gui_strings[mv_strid], cybmod_version(mtype));
             else
-                snprintf(locstr + pos, sizeof(locstr) - pos, ", %s %s %d", gui_strings[gt_strid], gui_strings[mv_strid], cybmod_version(mtype));
+                snprintf(locstr + pos, sizeof(locstr) - pos, ", %s %s %d",
+                  gui_strings[gt_strid], gui_strings[mv_strid], cybmod_version(mtype));
         }
     }
     if (locstr[0] != '\0')
