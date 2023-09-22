@@ -6762,10 +6762,10 @@ GLOBAL_FUNC (ASM_play_smk_direct)
 		test   $0x2,%ah
 		testb  $0x1,0x4(%esp)
 		jne    jump_eb1f0
-		call   GetSoundDriver_
+		call   ac_GetSoundDriver
 		test   %eax,%eax
 		je     jump_eb1f0
-		call   GetSoundDriver_
+		call   ac_GetSoundDriver
 		push   %eax
 		push   $0x0
 		call   SMACKSOUNDUSEMSS
@@ -6942,10 +6942,10 @@ GLOBAL_FUNC (ASM_play_smk_via_buffer)
 		test   $0x2,%ah
 		testb  $0x1,0xc(%esp)
 		jne    jump_eb3c0
-		call   GetSoundDriver_
+		call   ac_GetSoundDriver
 		test   %eax,%eax
 		je     jump_eb3c0
-		call   GetSoundDriver_
+		call   ac_GetSoundDriver
 		push   %eax
 		push   $0x0
 		call   SMACKSOUNDUSEMSS
