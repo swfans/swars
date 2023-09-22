@@ -28,8 +28,6 @@ extern "C" {
 /******************************************************************************/
 #pragma pack(1)
 
-typedef void * TbSampleHandle;
-
 struct MusicBankSizes {
     ulong mbs0;
     ulong mbs1;
@@ -66,7 +64,6 @@ struct sound_timer_inf {
 #pragma pack()
 /******************************************************************************/
 void StopAllSamples(void);
-TbBool IsSamplePlaying(long tng_offs, ushort smp_id, TbSampleHandle handle);
 void ReleaseLoopedSample(unsigned short ThingOffset, unsigned short fx);
 void FreeAudio(void);
 

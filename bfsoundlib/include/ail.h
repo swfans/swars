@@ -102,8 +102,6 @@ void AIL2OAL_API_set_timer_period(HSNDTIMER timer, uint32_t usec);
 
 int32_t AIL2OAL_API_background(void);
 
-void AIL_release_timer_handle(HSNDTIMER timer);
-
 void AIL2OAL_API_release_all_timers(void);
 
 void AIL2OAL_API_start_timer(HSNDTIMER timer);
