@@ -8,6 +8,7 @@
 #include "bffile.h"
 #include "bfscd.h"
 #include "drv_oal.h"
+#include "awe32.h"
 #include "snderr.h"
 #include "oggvorbis.h"
 #include "sound.h"
@@ -40,7 +41,6 @@ extern TbBool CDAble;
 extern TbBool UseMultiMediaExtensions;
 extern TbBool AutoScanForSoundHardware;
 extern TbBool StereoSound;
-extern TbBool UseCurrentAwe32Soundfont;
 extern TbBool ive_got_an_sb16;
 extern ulong MaxNumberOfSamples;
 extern TbBool AILStartupAlreadyInitiated;

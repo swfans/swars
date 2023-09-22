@@ -55,7 +55,6 @@ extern TbBool MusicAble;
 extern TbBool MusicActive;
 extern TbBool MusicInstalled;
 extern TbBool AILStartupAlreadyInitiated;
-extern TbBool UseCurrentAwe32Soundfont;
 extern TbBool DisableLoadMusic;
 extern TbBool SoundInstalled;
 extern TbBool StreamedSoundAble;
@@ -91,15 +90,9 @@ extern TbBool DisableLoadSounds;
 extern char MusicType[6];
 extern TbBool AutoScanForSoundHardware;
 extern MDI_DRIVER *MusicDriver;
-extern uint8_t *awe_buffer;
-extern uint16_t awe_buffer_seg;
-extern uint8_t *awe_preset;
-extern uint16_t awe_preset_seg;
-extern TbBool Awe32SoundfontLoaded;
 extern uint8_t *ssnd_buffer[2];
 extern uint8_t *adpcm_source_buffer;
 extern int16_t *mixer_buffer;
-extern uint8_t sb16_mixer_set;
 
 extern struct SampleInfo sample_id[32];
 extern struct SampleInfo *end_sample_id;
@@ -120,9 +113,6 @@ extern void *SfxData;
 extern void *Sfx;
 extern void *EndSfxs;
 extern short NumberOfSongs;
-
-extern char CurrentAwe32SoundfontPrefix[12]; // = "Bullfrog";
-extern TbFileHandle sbkHandle; // = INVALID_FILE;
 
 extern struct sound_timer_inf sound_timer[5];
 
@@ -508,112 +498,6 @@ void InitSound(void)
         SetSoundMasterVolume(CurrentSoundMasterVolume);
     }
 #endif
-}
-
-void FreeAwe32Soundfont(void)
-{
-    if (UseCurrentAwe32Soundfont) {
-        return;
-    }
-    if (!MusicInstalled || !MusicAble)
-        return;
-    if (strcasecmp(MusicInstallChoice.driver_name, "SBAWE32.MDI") != 0)
-        return;
-    if (strcasecmp(MusicType, "w") != 0)
-        return;
-
-    AWEFreeMem(MusicDriver, 1);
-    FreeDOSmem(awe_buffer, awe_buffer_seg);
-    FreeDOSmem(awe_preset, awe_preset_seg);
-    Awe32SoundfontLoaded = 0;
-}
-
-void LoadAwe32Soundfont(const char *str)
-{
-#if 0
-    asm volatile ("call ASM_LoadAwe32Soundfont\n"
-        :  :  "a" (str) );
-#endif
-    char locstr[FILENAME_MAX];
-    long fsize;
-
-    if (UseCurrentAwe32Soundfont) {
-        Awe32SoundfontLoaded = 1;
-        return;
-    }
-    if (!MusicInstalled || !MusicAble)
-        return;
-    if (strcasecmp(MusicInstallChoice.driver_name, "SBAWE32.MDI") != 0)
-        return;
-    if (strcasecmp(MusicType, "w") != 0)
-        return;
-
-    if (Awe32SoundfontLoaded == 1) {
-        FreeAwe32Soundfont();
-        Awe32SoundfontLoaded = 0;
-    }
-
-    strncpy(CurrentAwe32SoundfontPrefix, str, sizeof(CurrentAwe32SoundfontPrefix));
-    sprintf(locstr, "%s/%s.sbk", SoundDataPath, CurrentAwe32SoundfontPrefix);
-    sbkHandle = LbFileOpen(locstr, Lb_FILE_MODE_READ_ONLY);
-    if (sbkHandle == INVALID_FILE) {
-        return;
-    }
-
-    fsize = LbFileLengthHandle(sbkHandle);
-
-    (void)fsize; // disable unused ver warning
-
-#if 0 // Awe32 sound bank not implemented
-    alloc = AllocDOSmem(512);
-    awe_buffer_seg = alloc.seg;
-    awe_buffer = alloc.offs;
-    if ((awe_buffer_seg == 0) && (awe_buffer == 0)) {
-        LbFileClose(sbkHandle);
-        return;
-    }
-
-    if (AWEGetTotalRAM(MusicDriver) == -1) {
-        LbFileClose(sbkHandle);
-        return;
-    }
-
-    if (AWEDefMemMap(MusicDriver, 2, awe_buffer) == 0) {
-        LbFileClose(sbkHandle);
-        return;
-    }
-
-    if (LbFileRead(sbkHandle, awe_buffer, 0x200) != 0x200) {
-        LbFileClose(sbkHandle);
-        return;
-    }
-
-    if (AWEGetSFInfo(MusicDriver, 1, awe_buffer) == 0) {
-        LbFileClose(sbkHandle);
-        return;
-    }
-
-    while (LbFileRead(sbkHandle, awe_buffer, 0x200) > 0)
-    {
-        if (AWEStreamSample(MusicDriver, 1, awe_buffer) == 0) {
-            LbFileClose(sbkHandle);
-            return;
-        }
-    }
-
-    if (LbFileRead(sbkHandle, awe_preset, preset_len) != preset_len) {
-        LbFileClose(sbkHandle);
-        return;
-    }
-
-    if (AWELoadPreset(MusicDriver, 1, awe_preset) != 0) {
-        LbFileClose(sbkHandle);
-        return;
-    }
-#endif
-
-    Awe32SoundfontLoaded = 1;
-    LbFileClose(sbkHandle);
 }
 
 sbyte AllocateMusicBankMemory(void)
