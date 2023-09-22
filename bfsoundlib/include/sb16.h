@@ -2,10 +2,10 @@
 // Bullfrog Sound Library - for use to remake classic games like
 // Syndicate Wars, Magic Carpet, Genewars or Dungeon Keeper.
 /******************************************************************************/
-/** @file awe32.c
- *     SoundBlaster AWE32 specific routines.
+/** @file sb16.h
+ *     Header file for sb16.c.
  * @par Purpose:
- *     Functions which are specific to SoundBlaster AWE32 and not part of AIL.
+ *     SoundBlaster 16 specific routines.
  * @par Comment:
  *     None.
  * @author   Tomasz Lis
@@ -17,17 +17,27 @@
  *     (at your option) any later version.
  */
 /******************************************************************************/
-#include <stdio.h>
-#include <stddef.h>
-#include <stdlib.h>
-#include <stdbool.h>
-#include <assert.h>
+#ifndef BFSOUNDLIB_SB16_H_
+#define BFSOUNDLIB_SB16_H_
 
-#include "awe32.h"
+#include <stdint.h>
+#include "bftypes.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 /******************************************************************************/
 
+extern ushort current_SB16_left_master_volume;
+extern ushort current_SB16_right_master_volume;
+extern ubyte sb16_mixer_set;
+
+void prepare_SB16_volumes(void);
+void reset_SB16_volumes(void);
 
 /******************************************************************************/
+#ifdef __cplusplus
+};
+#endif
 
-
-/******************************************************************************/
+#endif // BFSOUNDLIB_SB16_H_

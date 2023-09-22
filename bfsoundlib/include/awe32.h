@@ -5,7 +5,7 @@
 /** @file awe32.h
  *     Header file for awe32.c.
  * @par Purpose:
- *     OpenAL based reimplementation of MSS API.
+ *     SoundBlaster AWE32 specific routines.
  * @par Comment:
  *     None.
  * @author   Tomasz Lis
@@ -26,6 +26,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+/******************************************************************************/
 
 typedef struct SF_DATA SF_DATA;
 

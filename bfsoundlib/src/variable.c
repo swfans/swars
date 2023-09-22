@@ -26,6 +26,7 @@
 #include "bfsvaribl.h"
 
 #include "bfsound.h"
+#include "bfscd.h"
 /******************************************************************************/
 
 extern struct SampleInfo sample_id[32];
