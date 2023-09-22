@@ -30,7 +30,18 @@
 
 .text
 
-.global EXPORT_SYMBOL(XXX);
+.global EXPORT_SYMBOL(current_SB16_left_master_volume);
+.global EXPORT_SYMBOL(current_SB16_right_master_volume);
+.global EXPORT_SYMBOL(old_SB16_left_midi_volume);
+.global EXPORT_SYMBOL(old_SB16_right_midi_volume);
+.global EXPORT_SYMBOL(old_SB16_left_digi_volume);
+.global EXPORT_SYMBOL(old_SB16_right_digi_volume);
+.global EXPORT_SYMBOL(old_SB16_left_treble_volume);
+.global EXPORT_SYMBOL(old_SB16_right_treble_volume);
+.global EXPORT_SYMBOL(old_SB16_left_bass_volume);
+.global EXPORT_SYMBOL(old_SB16_right_bass_volume);
+.global EXPORT_SYMBOL(sb16_mixer_set);
+
 
 /*----------------------------------------------------------------*/
 GLOBAL_FUNC (ASM_InitAudio)
@@ -301,7 +312,7 @@ GLOBAL_FUNC (ASM_prepare_SB16_volumes)
 		in     (%dx),%al
 		shr    $0x3,%eax
 		mov    %ecx,%edx
-		mov    %ax,current_SB16_left_master_volume
+		mov    %ax,EXPORT_SYMBOL(current_SB16_left_master_volume)
 		mov    $0x31,%al
 		out    %al,(%dx)
 		mov    %ebx,%edx
@@ -309,15 +320,15 @@ GLOBAL_FUNC (ASM_prepare_SB16_volumes)
 		in     (%dx),%al
 		shr    $0x3,%eax
 		mov    %ecx,%edx
-		mov    %ax,current_SB16_right_master_volume
+		mov    %ax,EXPORT_SYMBOL(current_SB16_right_master_volume)
 		mov    $0x32,%al
 		out    %al,(%dx)
 		mov    %ebx,%edx
 		sub    %eax,%eax
 		in     (%dx),%al
-		mov    %ax,old_SB16_left_digi_volume
+		mov    %ax,EXPORT_SYMBOL(old_SB16_left_digi_volume)
 		xor    %eax,%eax
-		mov    current_SB16_left_master_volume,%ax
+		mov    EXPORT_SYMBOL(current_SB16_left_master_volume),%ax
 		lea    0x0(,%eax,8),%eax
 		sub    $0x18,%eax
 		out    %al,(%dx)
@@ -327,9 +338,9 @@ GLOBAL_FUNC (ASM_prepare_SB16_volumes)
 		mov    %ebx,%edx
 		sub    %eax,%eax
 		in     (%dx),%al
-		mov    %ax,old_SB16_right_digi_volume
+		mov    %ax,EXPORT_SYMBOL(old_SB16_right_digi_volume)
 		xor    %eax,%eax
-		mov    current_SB16_right_master_volume,%ax
+		mov    EXPORT_SYMBOL(current_SB16_right_master_volume),%ax
 		lea    0x0(,%eax,8),%eax
 		sub    $0x18,%eax
 		out    %al,(%dx)
@@ -339,7 +350,7 @@ GLOBAL_FUNC (ASM_prepare_SB16_volumes)
 		mov    %ebx,%edx
 		sub    %eax,%eax
 		in     (%dx),%al
-		mov    %ax,old_SB16_left_treble_volume
+		mov    %ax,EXPORT_SYMBOL(old_SB16_left_treble_volume)
 		mov    $0x60,%al
 		out    %al,(%dx)
 		mov    $0x45,%al
@@ -348,7 +359,7 @@ GLOBAL_FUNC (ASM_prepare_SB16_volumes)
 		mov    %ebx,%edx
 		sub    %eax,%eax
 		in     (%dx),%al
-		mov    %ax,old_SB16_right_treble_volume
+		mov    %ax,EXPORT_SYMBOL(old_SB16_right_treble_volume)
 		mov    $0x60,%al
 		out    %al,(%dx)
 		mov    $0x46,%al
@@ -357,7 +368,7 @@ GLOBAL_FUNC (ASM_prepare_SB16_volumes)
 		mov    %ebx,%edx
 		sub    %eax,%eax
 		in     (%dx),%al
-		mov    %ax,old_SB16_left_bass_volume
+		mov    %ax,EXPORT_SYMBOL(old_SB16_left_bass_volume)
 		mov    $0x80,%al
 		out    %al,(%dx)
 		mov    $0x47,%al
@@ -366,7 +377,7 @@ GLOBAL_FUNC (ASM_prepare_SB16_volumes)
 		mov    %ebx,%edx
 		sub    %eax,%eax
 		in     (%dx),%al
-		mov    %ax,old_SB16_right_bass_volume
+		mov    %ax,EXPORT_SYMBOL(old_SB16_right_bass_volume)
 		mov    $0x80,%al
 		out    %al,(%dx)
 		mov    $0x34,%al
@@ -375,9 +386,9 @@ GLOBAL_FUNC (ASM_prepare_SB16_volumes)
 		mov    %ebx,%edx
 		sub    %eax,%eax
 		in     (%dx),%al
-		mov    %ax,old_SB16_left_midi_volume
+		mov    %ax,EXPORT_SYMBOL(old_SB16_left_midi_volume)
 		xor    %eax,%eax
-		mov    current_SB16_left_master_volume,%ax
+		mov    EXPORT_SYMBOL(current_SB16_left_master_volume),%ax
 		lea    0x0(,%eax,8),%eax
 		sub    $0x10,%eax
 		out    %al,(%dx)
@@ -387,9 +398,9 @@ GLOBAL_FUNC (ASM_prepare_SB16_volumes)
 		mov    %ebx,%edx
 		sub    %eax,%eax
 		in     (%dx),%al
-		mov    %ax,old_SB16_right_midi_volume
+		mov    %ax,EXPORT_SYMBOL(old_SB16_right_midi_volume)
 		xor    %eax,%eax
-		mov    current_SB16_right_master_volume,%ax
+		mov    EXPORT_SYMBOL(current_SB16_right_master_volume),%ax
 		lea    0x0(,%eax,8),%eax
 		sub    $0x10,%eax
 		out    %al,(%dx)
@@ -416,49 +427,49 @@ GLOBAL_FUNC (ASM_reset_SB16_volumes)
 		mov    %ebx,%edx
 		out    %al,(%dx)
 		mov    $0x225,%edx
-		mov    old_SB16_left_digi_volume,%al
+		mov    EXPORT_SYMBOL(old_SB16_left_digi_volume),%al
 		out    %al,(%dx)
 		mov    $0x33,%al
 		mov    %ebx,%edx
 		add    $0x5,%ecx
 		out    %al,(%dx)
-		mov    old_SB16_right_digi_volume,%al
+		mov    EXPORT_SYMBOL(old_SB16_right_digi_volume),%al
 		mov    %ecx,%edx
 		out    %al,(%dx)
 		mov    $0x34,%al
 		mov    %ebx,%edx
 		out    %al,(%dx)
-		mov    old_SB16_left_midi_volume,%al
+		mov    EXPORT_SYMBOL(old_SB16_left_midi_volume),%al
 		mov    %ecx,%edx
 		out    %al,(%dx)
 		mov    $0x35,%al
 		mov    %ebx,%edx
 		out    %al,(%dx)
-		mov    old_SB16_right_midi_volume,%al
+		mov    EXPORT_SYMBOL(old_SB16_right_midi_volume),%al
 		mov    %ecx,%edx
 		out    %al,(%dx)
 		mov    $0x44,%al
 		mov    %ebx,%edx
 		out    %al,(%dx)
-		mov    old_SB16_left_treble_volume,%al
+		mov    EXPORT_SYMBOL(old_SB16_left_treble_volume),%al
 		mov    %ecx,%edx
 		out    %al,(%dx)
 		mov    $0x45,%al
 		mov    %ebx,%edx
 		out    %al,(%dx)
-		mov    old_SB16_right_treble_volume,%al
+		mov    EXPORT_SYMBOL(old_SB16_right_treble_volume),%al
 		mov    %ecx,%edx
 		out    %al,(%dx)
 		mov    $0x46,%al
 		mov    %ebx,%edx
 		out    %al,(%dx)
-		mov    old_SB16_left_bass_volume,%al
+		mov    EXPORT_SYMBOL(old_SB16_left_bass_volume),%al
 		mov    %ecx,%edx
 		out    %al,(%dx)
 		mov    $0x47,%al
 		mov    %ebx,%edx
 		out    %al,(%dx)
-		mov    old_SB16_right_bass_volume,%al
+		mov    EXPORT_SYMBOL(old_SB16_right_bass_volume),%al
 		mov    %ecx,%edx
 		out    %al,(%dx)
 	jump_ebc43:
@@ -4759,29 +4770,6 @@ GLOBAL (SoundDataPath)			/* 0x1e5b50 */
 		.fill   0x90
 GLOBAL (SoundDriverPath)		/* 0x1e5be0 */
 		.fill   0x90
-current_SB16_left_master_volume:
-		.short  0x0
-current_SB16_right_master_volume:
-		.short  0x0
-old_SB16_left_midi_volume:
-		.short  0x0
-old_SB16_right_midi_volume:
-		.short  0x0
-old_SB16_left_digi_volume:
-		.short  0x0
-old_SB16_right_digi_volume:
-		.short  0x0
-old_SB16_left_treble_volume:
-		.short  0x0
-old_SB16_right_treble_volume:
-		.short  0x0
-old_SB16_left_bass_volume:
-		.short  0x0
-old_SB16_right_bass_volume:
-		.short  0x0
-GLOBAL (sb16_mixer_set)
-		.byte	0x0
-		.fill   0x3
 
 end_time:
 		.long	0x0

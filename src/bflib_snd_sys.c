@@ -21,6 +21,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <strings.h>
+#include <assert.h>
 #include "bflib_snd_sys.h"
 
 #include "bfsvaribl.h"
@@ -123,6 +124,18 @@ extern char CurrentAwe32SoundfontPrefix[12]; // = "Bullfrog";
 extern TbFileHandle sbkHandle; // = INVALID_FILE;
 
 extern struct sound_timer_inf sound_timer[5];
+
+ushort current_SB16_left_master_volume = 0;
+ushort current_SB16_right_master_volume = 0;
+ushort old_SB16_left_midi_volume = 0;
+ushort old_SB16_right_midi_volume = 0;
+ushort old_SB16_left_digi_volume = 0;
+ushort old_SB16_right_digi_volume = 0;
+ushort old_SB16_left_treble_volume = 0;
+ushort old_SB16_right_treble_volume = 0;
+ushort old_SB16_left_bass_volume = 0;
+ushort old_SB16_right_bass_volume = 0;
+ubyte sb16_mixer_set = 0;
 
 /** Releases sound sample which is playing in a loop.
  *
@@ -1439,8 +1452,61 @@ void ReleaseBullfrogSoundTimer(ushort st)
 
 void prepare_SB16_volumes(void)
 {
+#if 0
     asm volatile ("call ASM_prepare_SB16_volumes\n"
         :  :  : "eax" );
+#endif
+    if (SoundInstallChoice.IO.IO != 0x220)
+        return;
+#if defined(DOS)||defined(GO32)
+    ubyte b;
+    // Get master volume
+    outb(0x224, 0x30); // Select master left volume register
+    b = inb(0x225);
+    current_SB16_left_master_volume = b >> 3;
+    outb(0x224, 0x31); // Select master right volume register
+    b = inb(0x225);
+    current_SB16_right_master_volume = b >> 3;
+    // Get digi voice volume, set relatively to master
+    outb(0x224, 0x32); // Select voice left volume register
+    b = inb(0x225);
+    old_SB16_left_digi_volume = b;
+    outb(0x225, 8 * current_SB16_left_master_volume - 24);
+    outb(0x224, 0x33); // Select voice right volume register
+    b = inb(0x225);
+    old_SB16_right_digi_volume = b;
+    outb(0x225, 8 * current_SB16_right_master_volume - 24);
+    // Get treble volume, set to const value
+    outb(0x224, 0x44);
+    b = inb(0x225);
+    old_SB16_left_treble_volume = b;
+    outb(0x225, 0x60);
+    outb(0x224, 0x45);
+    b = inb(0x225);
+    old_SB16_right_treble_volume = b;
+    outb(0x225, 0x60);
+    // Get bass volume, set to const value
+    outb(0x224, 0x46);
+    b = inb(0x225);
+    old_SB16_left_bass_volume = b;
+    outb(0x225, 0x80);
+    outb(0x224, 0x47);
+    b = inb(0x225);
+    old_SB16_right_bass_volume = b;
+    outb(0x225, 0x80);
+    // Get MIDI volume, set relatively to master
+    outb(0x224, 0x34); // Select midi left volume register
+    b = inb(0x225);
+    old_SB16_left_midi_volume = b;
+    outb(0x225, 8 * current_SB16_left_master_volume - 16);
+    outb(0x224, 0x35); // Select midi right volume register
+    b = inb(0x225);
+    old_SB16_right_midi_volume = b;
+    outb(0x225, 8 * current_SB16_right_master_volume - 16);
+#else
+    assert(!"SB16 support not implemented");
+#endif
+    sb16_mixer_set = 1;
 }
 
 void reset_SB16_volumes(void)
