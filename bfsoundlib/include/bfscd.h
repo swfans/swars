@@ -39,7 +39,8 @@ struct TbsCDTime { // sizeof=unknown
     int a1;
 };
 
-//void cbCDCountdown( long unsigned );
+sbyte CDSpeedTest(const char *fname);
+void cbCDCountdown(void *data);
 //int GetCDCountdown();
 TbBool GetCDAble(void);
 //ushort CDTrackPlaying();

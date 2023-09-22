@@ -45,21 +45,6 @@ struct SampleTable {
   struct HeapMgrHandle *hmhandle;
 };
 
-struct SampleInfo {
-  SNDSAMPLE *SampleHandle;
-  long SampleVolume;
-  ushort SamplePitch;
-  ushort SamplePan;
-  ushort FadeToVolume;
-  ulong SourceID;
-  short SampleNumber;
-  ubyte FadeState;
-  ubyte FadeStopFlag;
-  ubyte FadeStep;
-  ubyte UserFlag;
-  ubyte SampleType;
-};
-
 #pragma pack()
 
 extern short startscr_samplevol;

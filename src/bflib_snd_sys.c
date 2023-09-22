@@ -1456,10 +1456,11 @@ void prepare_SB16_volumes(void)
     asm volatile ("call ASM_prepare_SB16_volumes\n"
         :  :  : "eax" );
 #endif
-    if (SoundInstallChoice.IO.IO != 0x220)
-        return;
 #if defined(DOS)||defined(GO32)
     ubyte b;
+
+    if (SoundInstallChoice.IO.IO != 0x220)
+        return;
     // Get master volume
     outb(0x224, 0x30); // Select master left volume register
     b = inb(0x225);
@@ -1467,12 +1468,12 @@ void prepare_SB16_volumes(void)
     outb(0x224, 0x31); // Select master right volume register
     b = inb(0x225);
     current_SB16_right_master_volume = b >> 3;
-    // Get digi voice volume, set relatively to master
-    outb(0x224, 0x32); // Select voice left volume register
+    // Get digi/voice volume, set relatively to master
+    outb(0x224, 0x32); // Select digi/voice left volume register
     b = inb(0x225);
     old_SB16_left_digi_volume = b;
     outb(0x225, 8 * current_SB16_left_master_volume - 24);
-    outb(0x224, 0x33); // Select voice right volume register
+    outb(0x224, 0x33); // Select digi/voice right volume register
     b = inb(0x225);
     old_SB16_right_digi_volume = b;
     outb(0x225, 8 * current_SB16_right_master_volume - 24);
@@ -1503,16 +1504,40 @@ void prepare_SB16_volumes(void)
     b = inb(0x225);
     old_SB16_right_midi_volume = b;
     outb(0x225, 8 * current_SB16_right_master_volume - 16);
-#else
-    assert(!"SB16 support not implemented");
 #endif
     sb16_mixer_set = 1;
 }
 
 void reset_SB16_volumes(void)
 {
+#if 0
     asm volatile ("call ASM_reset_SB16_volumes\n"
         :  :  : "eax" );
+#endif
+#if defined(DOS)||defined(GO32)
+    if (SoundInstallChoice.IO.IO != 0x220)
+        return;
+    // Re-set digi/voice volume
+    outb(0x224, 0x32);
+    outb(0x225, old_SB16_left_digi_volume);
+    outb(0x224, 0x33);
+    outb(0x225, old_SB16_right_digi_volume);
+    // Re-set MIDI volume
+    outb(0x224, 0x34);
+    outb(0x225, old_SB16_left_midi_volume);
+    outb(0x224, 0x35);
+    outb(0x225, old_SB16_right_midi_volume);
+    // Re-set treble volume
+    outb(0x224, 0x44);
+    outb(0x225, old_SB16_left_treble_volume);
+    outb(0x224, 0x45);
+    outb(0x225, old_SB16_right_treble_volume);
+    // Re-set bass volume
+    outb(0x224, 0x46);
+    outb(0x225, old_SB16_left_bass_volume);
+    outb(0x224, 0x47);
+    outb(0x225, old_SB16_right_bass_volume);
+#endif
 }
 
 void FreeMusic(void)

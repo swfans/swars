@@ -79,7 +79,27 @@ char music_dir[FILENAME_MAX];
 
 /******************************************************************************/
 
-void ASM_cbCDCountdown(void *data);
+sbyte CDSpeedTest(const char *fname)
+{
+    // No need to really check, everything today is faster than 4x CD speed
+    return 4;
+}
+
+void cbCDCountdown(void *data)
+{
+    if (!CDCountdown)
+        return;
+
+    CDCountdown -= 5;
+    if (CDCountdown == 0)
+    {
+        CurrentCDTrack = 0;
+        AIL_release_timer_handle(CDCount_handle);
+        CDTimerActive = 0;
+    }
+}
+
+void ac_cbCDCountdown(void *data);
 
 ushort GetCDFirst(void)
 {
@@ -256,7 +276,7 @@ void PlayCDTrack(ushort trkno)
         SoundProgressLog(SoundProgressMessage);
         break;
     }
-    CDCount_handle = AIL_register_timer(ASM_cbCDCountdown);
+    CDCount_handle = AIL_register_timer(ac_cbCDCountdown);
     AIL_set_timer_period(CDCount_handle, 5000000);
     AIL_start_timer(CDCount_handle);
     CDTimerActive = true;

@@ -24,7 +24,19 @@
 #include <assert.h>
 
 #include "snderr.h"
+
+#include "bftypes.h"
 /******************************************************************************/
+
+extern TbBool DebugAudio;
+
+/******************************************************************************/
+
+void InitDebugAudio(void)
+{
+    if (getenv("DEBUG_BF_AUDIO"))
+        DebugAudio = 1;
+}
 
 void SoundProgressLog(const char *msg)
 {

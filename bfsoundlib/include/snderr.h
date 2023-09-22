@@ -26,8 +26,8 @@ extern "C" {
 /******************************************************************************/
 
 extern char SoundProgressMessage[256];
-extern long DebugAudio;
 
+void InitDebugAudio(void);
 void SoundProgressLog(const char *msg);
 
 /******************************************************************************/
