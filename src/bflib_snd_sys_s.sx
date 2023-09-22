@@ -2602,7 +2602,7 @@ GLOBAL_FUNC (ASM_InitAllBullfrogSoundTimers)
 		je     jump_1004e5
 	jump_1004d4:
 		mov    $0x19,%ebx
-		mov    $sound_timer,%eax
+		mov    $EXPORT_SYMBOL(sound_timer),%eax
 		xor    %edx,%edx
 		call   ac_memset
 	jump_1004e5:
@@ -4966,7 +4966,7 @@ GLOBAL (data_1e5edc)	/* 0x1e5edc */
 
 /* sound_timer_inf sound_timer[];
  */
-sound_timer:	/* 0x1E8D9C */
+GLOBAL (sound_timer)	/* 0x1E8D9C */
 		.long	0x0
 data_1e8da0: /* 0x1e8da0 */
 		.fill   0x15

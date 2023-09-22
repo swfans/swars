@@ -58,6 +58,11 @@ struct BfMusicInfo {
   short mifld_30;
 };
 
+struct sound_timer_inf {
+    ulong handle;
+    ubyte used;
+};
+
 #pragma pack()
 /******************************************************************************/
 void StopAllSamples(void);

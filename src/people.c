@@ -480,7 +480,7 @@ void set_person_persuaded(struct Thing *p_person, struct Thing *p_attacker, usho
             if (p_person == p_agent->PTarget)
                 p_agent->PTarget = NULL;
             if (p_agent->U.UPerson.Target2 == p_person->ThingOffset)
-                p_agent->U.UObject.TurnPadOnPS = 0;
+                p_agent->U.UPerson.Target2 = 0;
         }
     }
 }
@@ -503,10 +503,10 @@ void unpersuade_my_peeps(struct Thing *p_owntng)
         p_person = &things[person];
         if (p_person->Owner != p_owntng->ThingOffset)
             continue;
-        p_person->Flag &= ~0x00080000;
+        p_person->Flag &= ~TngF_Persuaded;
         p_person->U.UPerson.EffectiveGroup = p_owntng->U.UPerson.Group;
         p_person->State = 0;
-        p_person->Flag |= 0x0040 | 0x0004;
+        p_person->Flag |= TngF_Unkn0040 | TngF_Unkn0004;
         --group_actions[p_person->U.UPerson.Group].Persuaded;
         for (k = i; k < count - 1; k++) {
             word_17FA58[k] = word_17FA58[k+1];
