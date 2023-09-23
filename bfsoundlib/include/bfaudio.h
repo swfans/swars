@@ -2,10 +2,10 @@
 // Bullfrog Sound Library - for use to remake classic games like
 // Syndicate Wars, Magic Carpet, Genewars or Dungeon Keeper.
 /******************************************************************************/
-/** @file bfsound.h
- *     Header file for ???.
+/** @file bfaudio.h
+ *     Header file for bfaudio.c.
  * @par Purpose:
- *     Unknown.
+ *     Set of general audio-related calls.
  * @par Comment:
  *     None.
  * @author   Tomasz Lis
@@ -17,8 +17,8 @@
  *     (at your option) any later version.
  */
 /******************************************************************************/
-#ifndef BFSOUNDLIB_BFSOUND_H_
-#define BFSOUNDLIB_BFSOUND_H_
+#ifndef BFSOUNDLIB_BFAUDIO_H_
+#define BFSOUNDLIB_BFAUDIO_H_
 
 #include "bftypes.h"
 
@@ -28,33 +28,16 @@ extern "C" {
 /******************************************************************************/
 #pragma pack(1)
 
-struct SNDSAMPLE;
-
-struct SampleInfo {
-  struct SNDSAMPLE *SampleHandle;
-  long SampleVolume;
-  ushort SamplePitch;
-  ushort SamplePan;
-  ushort FadeToVolume;
-  ulong SourceID;
-  short SampleNumber;
-  ubyte FadeState;
-  ubyte FadeStopFlag;
-  ubyte FadeStep;
-  ubyte UserFlag;
-  ubyte SampleType;
-};
 
 #pragma pack()
 /******************************************************************************/
 
-void EnsureAILStartup(void);
-void InitSound(void);
-void FreeSound(void);
+void SetSoundMasterVolume(long vol);
+void SetMusicMasterVolume(long vol);
 
 /******************************************************************************/
 #ifdef __cplusplus
 };
 #endif
 
-#endif // BFSOUNDLIB_BFSOUND_H_
+#endif // BFSOUNDLIB_BFAUDIO_H_

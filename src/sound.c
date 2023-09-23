@@ -6,6 +6,7 @@
 #include "bfwindows.h"
 #include "bflib_snd_sys.h"
 #include "bffile.h"
+#include "bfsound.h"
 #include "bfscd.h"
 #include "drv_oal.h"
 #include "awe32.h"

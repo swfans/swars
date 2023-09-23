@@ -69,7 +69,6 @@ void FreeAudio(void);
 
 void SetSoundMasterVolume(long vol);
 void SetMusicMasterVolume(long vol);
-void InitSound(void);
 
 void InitMusic(void);
 void FreeMusic(void);
