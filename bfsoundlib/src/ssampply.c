@@ -46,6 +46,26 @@ TbBool IsSamplePlaying(long tng_offs, ushort smp_id, TbSampleHandle handle)
     return ret;
 }
 
+void ReleaseLoopedSample(ushort sourceId, ushort fx)
+{
+#if 0
+    asm volatile ("call ASM_ReleaseLoopedSample\n"
+        : : "a" (sourceId),  "d" (fx));
+#endif
+    struct SampleInfo *smpinfo;
+
+    if (!SoundInstalled || !SoundAble || !SoundActive)
+        return;
+
+    for (smpinfo = sample_id; smpinfo <= end_sample_id; smpinfo++)
+    {
+        if (sourceId == smpinfo->SourceID && fx == smpinfo->SampleNumber) {
+            if (AIL_sample_status(smpinfo->SampleHandle) == SNDSMP_PLAYING)
+                AIL_set_sample_loop_count(smpinfo->SampleHandle, 1);
+        }
+    }
+}
+
 void StopAllSamples(void)
 {
 #if 0

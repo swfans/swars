@@ -30,6 +30,7 @@
 #include "bffile.h"
 #include "bfendian.h"
 #include "rnc_1fm.h"
+#include "bfmusic.h"
 #include "bfscd.h"
 #include "bfsound.h"
 #include "ail.h"
@@ -103,31 +104,6 @@ extern void *BfMusicData;
 extern struct BfMusicInfo *BfMusic;
 extern struct BfMusicInfo *BfEndMusic;
 extern short NumberOfSongs;
-
-/** Releases sound sample which is playing in a loop.
- *
- * @param thingOffset Index of the related thing; note that it is unsigned;
- *        simple thing offsets should be just treated as unsigned here.
- */
-void ReleaseLoopedSample(ushort thingOffset, ushort fx)
-{
-#if 0
-    asm volatile ("call ASM_ReleaseLoopedSample\n"
-        : : "a" (thingOffset),  "d" (fx));
-#endif
-    struct SampleInfo *smpinfo;
-
-    if (!SoundInstalled || !SoundAble || !SoundActive)
-        return;
-
-    for (smpinfo = sample_id; smpinfo <= end_sample_id; smpinfo++)
-    {
-        if (thingOffset == smpinfo->SourceID && fx == smpinfo->SampleNumber) {
-            if (AIL_sample_status(smpinfo->SampleHandle) == SNDSMP_PLAYING)
-                AIL_set_sample_loop_count(smpinfo->SampleHandle, 1);
-        }
-    }
-}
 
 void SetMusicVolume(int msec, ubyte volume)
 {

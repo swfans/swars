@@ -23,6 +23,7 @@
 #include "bfsvaribl.h"
 #include "bfmath.h"
 #include "bfline.h"
+#include "bfaudio.h"
 #include "ssampply.h"
 #include "svesa.h"
 #include "swlog.h"

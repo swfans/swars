@@ -48,22 +48,12 @@ struct BfMusicInfo {
 #pragma pack()
 /******************************************************************************/
 void StopAllSamples(void);
-void ReleaseLoopedSample(unsigned short ThingOffset, unsigned short fx);
 void FreeAudio(void);
 
-void SetSoundMasterVolume(long vol);
-void SetMusicMasterVolume(long vol);
-
-void InitMusic(void);
-void FreeMusic(void);
 void SetMusicVolume(int msec, ubyte volume);
 
 void InitStreamedSound(void);
-void InitAllBullfrogSoundTimers(void);
-sbyte AllocateMusicBankMemory(void);
 int LoadMusic(ushort bankNo);
-
-void prepare_SB16_volumes(void);
 /******************************************************************************/
 #ifdef __cplusplus
 }
