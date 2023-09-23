@@ -2,14 +2,14 @@
 // Bullfrog Sound Library - for use to remake classic games like
 // Syndicate Wars, Magic Carpet, Genewars or Dungeon Keeper.
 /******************************************************************************/
-/** @file bfmusic.h
- *     Header file for ???.
+/** @file sndtimer.h
+ *     Header file for sndtimer.c.
  * @par Purpose:
- *     Unknown.
+ *     Bullfrog sound timers.
  * @par Comment:
  *     None.
  * @author   Tomasz Lis
- * @date     12 Nov 2008 - 05 Nov 2021
+ * @date     12 Jun 2022 - 05 Sep 2022
  * @par  Copying and copyrights:
  *     This program is free software; you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -17,8 +17,8 @@
  *     (at your option) any later version.
  */
 /******************************************************************************/
-#ifndef BFSOUNDLIB_BFMUSIC_H_
-#define BFSOUNDLIB_BFMUSIC_H_
+#ifndef BFSOUNDLIB_SNDTIMER_H_
+#define BFSOUNDLIB_SNDTIMER_H_
 
 #include "bftypes.h"
 
@@ -28,24 +28,21 @@ extern "C" {
 /******************************************************************************/
 #pragma pack(1)
 
-struct MusicBankSizes {
-    ulong mbs0;
-    ulong mbs1;
-    ulong mbs2;
-    ulong mbs3;
-    ulong mbs4;
-    ulong mbs5;
-    ulong mbs6;
-    ulong mbs7;
+struct sound_timer_inf {
+    ulong handle;
+    ubyte used;
 };
 
 #pragma pack()
 /******************************************************************************/
 
+void InitAllBullfrogSoundTimers(void);
+ushort SetupBullfrogSoundTimer(ushort freq, void (*cb)());
+void ReleaseBullfrogSoundTimer(ushort st);
 
 /******************************************************************************/
 #ifdef __cplusplus
 };
 #endif
 
-#endif // BFSOUNDLIB_BFMUSIC_H_
+#endif // BFSOUNDLIB_SNDTIMER_H_

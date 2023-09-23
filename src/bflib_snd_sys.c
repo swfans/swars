@@ -104,8 +104,6 @@ extern struct BfMusicInfo *BfMusic;
 extern struct BfMusicInfo *BfEndMusic;
 extern short NumberOfSongs;
 
-extern struct sound_timer_inf sound_timer[5];
-
 /** Releases sound sample which is playing in a loop.
  *
  * @param thingOffset Index of the related thing; note that it is unsigned;
@@ -538,57 +536,6 @@ void FreeStreamedSound(void)
     SwitchOffStreamedSound();
     free_buffers();
     StreamedSoundAble = false;
-}
-
-void InitAllBullfrogSoundTimers(void)
-{
-#if 0
-    asm volatile ("call ASM_InitAllBullfrogSoundTimers\n"
-        :  :  : "eax" );
-#endif
-    if (!MusicInstalled && !SoundInstalled)
-        return;
-    LbMemorySet(&sound_timer, 0, 5 * sizeof(struct sound_timer_inf));
-}
-
-ushort SetupBullfrogSoundTimer(ushort freq, void (*cb)())
-{
-    struct sound_timer_inf *stinf;
-    ushort st;
-
-    if (!MusicInstalled && !SoundInstalled)
-        return 0;
-
-    for (st = 0; st < 5; st++)
-    {
-        stinf = &sound_timer[st];
-        if (stinf->used)
-            break;
-    }
-    if (st >= 5)
-        return 0;
-
-    stinf = &sound_timer[st];
-    stinf->handle = AIL_register_timer(cb);
-    AIL_set_timer_frequency(stinf->handle, freq);
-    AIL_start_timer(stinf->handle);
-    stinf->used = 1;
-    return st+1;
-}
-
-void ReleaseBullfrogSoundTimer(ushort st)
-{
-    struct sound_timer_inf *stinf;
-
-    if (!MusicInstalled && !SoundInstalled)
-        return;
-
-    stinf = &sound_timer[st-1];
-    if (stinf->used == 1)
-    {
-        AIL_release_timer_handle(stinf->handle);
-        stinf->used = 0;
-    }
 }
 
 void FreeAudio(void)
