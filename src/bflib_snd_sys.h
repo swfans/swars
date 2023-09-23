@@ -28,17 +28,6 @@ extern "C" {
 /******************************************************************************/
 #pragma pack(1)
 
-struct MusicBankSizes {
-    ulong mbs0;
-    ulong mbs1;
-    ulong mbs2;
-    ulong mbs3;
-    ulong mbs4;
-    ulong mbs5;
-    ulong mbs6;
-    ulong mbs7;
-};
-
 struct MusicBankHead {
   long info_offset;
   long data_offset;

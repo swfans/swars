@@ -32,6 +32,8 @@ extern "C" {
 #pragma pack()
 /******************************************************************************/
 
+void EnsureAILStartup(void);
+
 void SetSoundMasterVolume(long vol);
 void SetMusicMasterVolume(long vol);
 

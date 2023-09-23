@@ -33,6 +33,7 @@
 #include "aildebug.h"
 #include "snderr.h"
 /******************************************************************************/
+
 extern TbBool AILStartupAlreadyInitiated;
 extern TbBool AutoScanForSoundHardware;
 
@@ -61,33 +62,7 @@ extern void *EndSfxs;
 extern TbBool MusicInstalled;
 extern TbBool MusicAble;
 
-
 /******************************************************************************/
-/** Wrapper for LbMemoryAlloc(), needed to make sure data sizes match.
- */
-void *LbMemoryAlloc_wrap(uint32_t size)
-{
-    return LbMemoryAlloc(size);
-}
-
-/** Wrapper for LbMemoryFree(), needed to make sure data sizes match.
- */
-void LbMemoryFree_wrap(void *ptr)
-{
-    LbMemoryFree(ptr);
-}
-
-void EnsureAILStartup(void)
-{
-    if (!AILStartupAlreadyInitiated)
-    {
-        AIL_MEM_use_malloc(LbMemoryAlloc_wrap);
-        AIL_MEM_use_free(LbMemoryFree_wrap);
-        AIL_startup();
-        AILStartupAlreadyInitiated = 1;
-    }
-}
-
 void DetermineSoundType(void)
 {
     asm volatile ("call ASM_DetermineSoundType\n"

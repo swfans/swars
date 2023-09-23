@@ -24,8 +24,12 @@
 #include <assert.h>
 
 #include "bfaudio.h"
+#include "bfmemory.h"
+#include "msssys.h"
 #include "aildebug.h"
 /******************************************************************************/
+
+extern TbBool AILStartupAlreadyInitiated;
 
 extern TbBool SoundInstalled;
 extern TbBool SoundAble;
@@ -40,6 +44,31 @@ extern MDI_DRIVER *MusicDriver;
 extern long CurrentMusicMasterVolume;
 
 /******************************************************************************/
+
+/** Wrapper for LbMemoryAlloc(), needed to make sure data sizes match.
+ */
+void *LbMemoryAlloc_wrap(uint32_t size)
+{
+    return LbMemoryAlloc(size);
+}
+
+/** Wrapper for LbMemoryFree(), needed to make sure data sizes match.
+ */
+void LbMemoryFree_wrap(void *ptr)
+{
+    LbMemoryFree(ptr);
+}
+
+void EnsureAILStartup(void)
+{
+    if (!AILStartupAlreadyInitiated)
+    {
+        AIL_MEM_use_malloc(LbMemoryAlloc_wrap);
+        AIL_MEM_use_free(LbMemoryFree_wrap);
+        AIL_startup();
+        AILStartupAlreadyInitiated = 1;
+    }
+}
 
 void SetSoundMasterVolume(long vol)
 {

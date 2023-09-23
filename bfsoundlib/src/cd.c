@@ -27,6 +27,7 @@
 
 #include "bfscd.h"
 #include "bffile.h"
+#include "bfaudio.h"
 #include "bfsvaribl.h"
 #include "bfsound.h"
 #include "aildebug.h"
