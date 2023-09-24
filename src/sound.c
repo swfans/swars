@@ -4,7 +4,6 @@
 #include <string.h>
 
 #include "bfwindows.h"
-#include "bflib_snd_sys.h"
 #include "bffile.h"
 #include "bfmusic.h"
 #include "bfsound.h"
@@ -21,39 +20,6 @@
 #include "aila.h"
 #include "game_data.h"
 #include "util.h"
-
-extern char FullDIG_INIPath[144];
-extern char FullMDI_INIPath[144];
-extern char SoundDataPath[144];
-extern char SoundDriverPath[144];
-
-extern AIL_INI MusicInstallChoice;
-extern char full_music_data_path[144];
-extern char MusicType[6];
-extern TbBool DisableLoadMusic;
-extern TbBool DisableDangerMusic;
-extern TbBool MusicInstalled;
-extern TbBool MusicAble;
-extern TbBool MusicActive;
-
-extern AIL_INI SoundInstallChoice;
-extern ushort SoundType;
-extern TbBool DisableLoadSounds;
-extern TbBool SoundAble;
-
-extern TbBool CDAble;
-
-extern TbBool UseMultiMediaExtensions;
-extern TbBool AutoScanForSoundHardware;
-extern TbBool StereoSound;
-extern TbBool ive_got_an_sb16;
-extern ulong MaxNumberOfSamples;
-extern TbBool AILStartupAlreadyInitiated;
-
-extern OggVorbisStream  sound_music_stream;
-extern MDI_DRIVER *MusicDriver;
-extern DIG_DRIVER *SoundDriver;
-
 
 struct SampleInfo *play_sample_using_heap(ulong a1, short smptbl_id, ulong a3, ulong a4, ulong a5, char a6, ubyte type)
 {

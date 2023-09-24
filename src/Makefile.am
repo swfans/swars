@@ -18,8 +18,6 @@ swars_SOURCES = \
 	bflib_render_drspr_s.sx \
 	bflib_sndlib_s.sx \
 	bflib_snd_mss_s.sx \
-	bflib_snd_sys.c \
-	bflib_snd_sys.h \
 	bflib_snd_sys_s.sx \
 	bflib_vidraw_s.sx \
 	../bfsoundlib/include/ail.h \

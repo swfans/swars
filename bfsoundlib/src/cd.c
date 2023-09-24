@@ -65,7 +65,7 @@ TbBool CDTimerActive = false;
 
 /** Handle of AIL CD Countdown Timer.
  */
-long CDCount_handle;
+HSNDTIMER CDCount_handle;
 
 ushort CurrentCDTrack;
 ulong TrackLength;
@@ -83,7 +83,7 @@ TbBool CDPlayTimerActive = false;
 
 /** Handle of AIL CD Playback Timer.
  */
-long CDPlayback_handle;
+HSNDTIMER CDPlayback_handle;
 
 /** CD device type.
  */

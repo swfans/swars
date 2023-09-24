@@ -39,11 +39,23 @@ struct MusicBankSizes {
     ulong mbs7;
 };
 
+struct BfMusicInfo {
+  char FileName[12];
+  long mifld_12;
+  short mifld_16;
+  ubyte *DataBeg;
+  long mifld_22;
+  ubyte *DataEnd;
+  short mifld_30;
+};
+
 #pragma pack()
 /******************************************************************************/
 
 void InitMusic(void);
 void FreeMusic(void);
+
+int LoadMusic(ushort bankNo);
 
 void StopMusicIfActive(void);
 void StopMusic(void);

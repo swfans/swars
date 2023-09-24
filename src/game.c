@@ -30,7 +30,6 @@
 #include "svesa.h"
 #include "swlog.h"
 #include "bflib_fmvids.h"
-#include "bflib_snd_sys.h"
 #include "bfscd.h"
 #include "bflib_joyst.h"
 #include "matrix.h"
