@@ -25,6 +25,7 @@
 #include "bfline.h"
 #include "bfaudio.h"
 #include "bfmusic.h"
+#include "bfsound.h"
 #include "ssampply.h"
 #include "svesa.h"
 #include "swlog.h"

@@ -51,6 +51,13 @@ struct SampleInfo {
 void InitSound(void);
 void FreeSound(void);
 
+int LoadSounds(ubyte bank_no);
+//int AllocateSoundBankMemory();
+//void DeInitSoundBank();
+
+//int SwitchOffSound();
+//int SwitchOnSound();
+
 /******************************************************************************/
 #ifdef __cplusplus
 };

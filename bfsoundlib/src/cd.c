@@ -58,17 +58,32 @@ const char *cd_errors[] = {
 ushort cd_total;
 ushort cd_first;
 TbBool CDAble = true;
-TbBool CDTimerActive;
+
+/** Informs whether the CD Countdown Timer is active.
+ */
+TbBool CDTimerActive = false;
+
+/** Handle of AIL CD Countdown Timer.
+ */
 long CDCount_handle;
+
 ushort CurrentCDTrack;
 ulong TrackLength;
 volatile ulong CDCountdown;
-TbBool is_da_track[99];
-ulong track_start_sector[99];
-ulong track_lengths[99];
+TbBool is_da_track[CD_TRACKS_MAX_COUNT];
+ulong track_start_sector[CD_TRACKS_MAX_COUNT];
+ulong track_lengths[CD_TRACKS_MAX_COUNT];
 sbyte InitialCDVolume = -1;
 
 OggVorbisStream sound_music_stream;
+
+/** Informs whether the CD Playback Timer is active.
+ */
+TbBool CDPlayTimerActive = false;
+
+/** Handle of AIL CD Playback Timer.
+ */
+long CDPlayback_handle;
 
 /** CD device type.
  */
@@ -86,6 +101,21 @@ sbyte CDSpeedTest(const char *fname)
     return 4;
 }
 
+void cbCDPlayback(void *data)
+{
+    if (!CDAble)
+        return;
+
+    switch (CDType)
+    {
+    case CDTYP_REAL:
+        break;
+    case CDTYP_OGG:
+        ogg_vorbis_stream_update(&sound_music_stream);
+        break;
+    }
+}
+
 void cbCDCountdown(void *data)
 {
     if (!CDCountdown)
@@ -99,8 +129,6 @@ void cbCDCountdown(void *data)
         CDTimerActive = 0;
     }
 }
-
-void ac_cbCDCountdown(void *data);
 
 ushort GetCDFirst(void)
 {
@@ -218,7 +246,7 @@ void ogg_list_music_tracks(void)
 
     trkno = 0;
     is_da_track[trkno] = false;
-    for (trkno++; trkno < 99; trkno++) {
+    for (trkno++; trkno < CD_TRACKS_MAX_COUNT; trkno++) {
         char file_name[FILENAME_MAX];
 
         snprintf(file_name, sizeof(file_name),
@@ -231,17 +259,55 @@ void ogg_list_music_tracks(void)
             break;
         }
     }
-    for (trkno++; trkno < 99; trkno++) {
+    for (trkno++; trkno < CD_TRACKS_MAX_COUNT; trkno++) {
         is_da_track[trkno] = false;
     }
 }
 
-void PlayCDTrack(ushort trkno)
+void PlayCDAudioTrack(ushort trkno)
 {
-    char file_name[FILENAME_MAX];
     ulong start_sect, len_sect;
     ushort i;
 
+    start_sect = GetCDTrackStartSector(trkno);
+    len_sect = GetCDTrackLength(trkno);
+    TrackLength = len_sect / 75;
+    CDCountdown = 5 * (len_sect / 75 / 5) + 5;
+    i = GetCDFirst();
+    cd_play(i, start_sect, len_sect);
+    sprintf(SoundProgressMessage, "BF103 - "
+        "CDA play track %d sect %lu len %lu\n", (int)trkno, start_sect, len_sect);
+    SoundProgressLog(SoundProgressMessage);
+
+    CDCount_handle = AIL_register_timer(cbCDCountdown);
+    AIL_set_timer_period(CDCount_handle, 5000000);
+    AIL_start_timer(CDCount_handle);
+    CDTimerActive = true;
+    CurrentCDTrack = trkno;
+}
+
+void PlayMusicOGGTrack(ushort trkno)
+{
+    char file_name[FILENAME_MAX];
+
+    snprintf(file_name, sizeof(file_name),
+          "%s" FS_SEP_STR "track_%i.ogg",
+          music_dir, trkno - 1);
+
+    ogg_vorbis_stream_open(&sound_music_stream, file_name);
+    ogg_vorbis_stream_play(&sound_music_stream);
+    sprintf(SoundProgressMessage, "BF103 - CDA play \"%s\"\n", file_name);
+    SoundProgressLog(SoundProgressMessage);
+
+    CDCount_handle = AIL_register_timer(cbCDCountdown);
+    AIL_set_timer_period(CDCount_handle, 5000000);
+    AIL_start_timer(CDCount_handle);
+    CDTimerActive = true;
+    CurrentCDTrack = trkno;
+}
+
+void PlayCDTrack(ushort trkno)
+{
     if (!CDAble)
         return;
     if (!is_daudio_track(trkno)) {
@@ -249,39 +315,21 @@ void PlayCDTrack(ushort trkno)
         SoundProgressLog(SoundProgressMessage);
         return;
     }
-    if (CurrentCDTrack != 0 && CurrentCDTrack == trkno)
+    if (CurrentCDTrack != 0 && CurrentCDTrack == trkno) {
+        cbCDPlayback(NULL);
         return;
+    }
     StopCD();
 
     switch (CDType)
     {
     case CDTYP_REAL:
-        start_sect = GetCDTrackStartSector(trkno);
-        len_sect = GetCDTrackLength(trkno);
-        TrackLength = len_sect / 75;
-        CDCountdown = 5 * (len_sect / 75 / 5) + 5;
-        i = GetCDFirst();
-        cd_play(i, start_sect, len_sect);
-        sprintf(SoundProgressMessage, "BF103 - "
-            "CDA play track %d sect %lu len %lu\n", (int)trkno, start_sect, len_sect);
-        SoundProgressLog(SoundProgressMessage);
+        PlayCDAudioTrack(trkno);
         break;
     case CDTYP_OGG:
-        snprintf(file_name, sizeof(file_name),
-              "%s" FS_SEP_STR "track_%i.ogg",
-              music_dir, trkno - 1);
-
-        ogg_vorbis_stream_open (&sound_music_stream, file_name);
-        ogg_vorbis_stream_play(&sound_music_stream);
-        sprintf(SoundProgressMessage, "BF103 - CDA play \"%s\"\n", file_name);
-        SoundProgressLog(SoundProgressMessage);
+        PlayMusicOGGTrack(trkno);
         break;
     }
-    CDCount_handle = AIL_register_timer(ac_cbCDCountdown);
-    AIL_set_timer_period(CDCount_handle, 5000000);
-    AIL_start_timer(CDCount_handle);
-    CDTimerActive = true;
-    CurrentCDTrack = trkno;
 }
 
 void PauseCD(void)
@@ -378,16 +426,31 @@ void InitMusicOGG(const char *nmusic_dir)
 
     strncpy(music_dir, nmusic_dir, sizeof(music_dir));
 
-    if (ogg_vorbis_stream_init(&sound_music_stream)) {
-        InitialCDVolume = GetCDVolume();
-        CDType = CDTYP_OGG;
-        ogg_list_music_tracks();
-    } else {
+    if (!ogg_vorbis_stream_init(&sound_music_stream)) {
         sprintf(SoundProgressMessage, "BF101 - "
             "ogg vorbis stream init - failed - CDA disabled\n");
         SoundProgressLog(SoundProgressMessage);
         CDAble = false;
         CDType = CDTYP_NONE;
+        return;
+    }
+    InitialCDVolume = GetCDVolume();
+    CDType = CDTYP_OGG;
+    ogg_list_music_tracks();
+
+    CDPlayback_handle = AIL_register_timer(cbCDPlayback);
+    AIL_set_timer_period(CDPlayback_handle, 40000);
+    AIL_start_timer(CDPlayback_handle);
+    CDPlayTimerActive = true;
+
+}
+
+void FreeMusicOGG(void)
+{
+    ogg_vorbis_stream_free(&sound_music_stream);
+    if (CDPlayTimerActive) {
+        AIL_release_timer_handle(CDPlayback_handle);
+        CDPlayTimerActive = false;
     }
 }
 
@@ -403,7 +466,7 @@ void FreeCD(void)
         FreeCDAudio();
         break;
     case CDTYP_OGG:
-        ogg_vorbis_stream_free(&sound_music_stream);
+        FreeMusicOGG();
         break;
     }
 }

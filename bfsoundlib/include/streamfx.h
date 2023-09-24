@@ -28,9 +28,18 @@ extern "C" {
 #endif
 /******************************************************************************/
 
+//int StreamedSampleFinished();
 void InitStreamedSound(void);
-void SwitchOffStreamedSound(void);
 void FreeStreamedSound(void);
+//int PlayStreamedSample();
+//int MonitorStreamedSoundTrack();
+//int SetStreamedSampleVolume();
+//int StopStreamedSample();
+void SwitchOffStreamedSound(void);
+//void SwitchOnStreamedSound();
+//int GetStreamedSoundPosition();
+//int SetStreamedSoundPosition();
+//int SwapStreamedSoundTrack();
 
 /******************************************************************************/
 #ifdef __cplusplus

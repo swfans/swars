@@ -28,11 +28,33 @@ extern "C" {
 /******************************************************************************/
 #pragma pack(1)
 
+typedef struct AudioInitOptions AudioInitOptions;
+
+struct AudioInitOptions {
+  const char *IniPath;
+  const char *SoundDriverPath;
+  const char *SoundDataPath;
+  ushort SoundType;
+  ushort AbleFlags;
+  short SelectedWin95MidiDevice;
+  short SelectedWin95WaveDevice;
+  ubyte MaxSamples;
+  ubyte StereoOption;
+  ubyte AutoScan;
+  ubyte DisableDangerMusic;
+  ubyte DisableLoadSounds;
+  ubyte DisableLoadMusic;
+  ubyte UseCurrentAwe32Soundfont;
+  ubyte UseMultiMediaExtensions;
+  ubyte InitStreamedSound;
+  ubyte InitRedbookAudio;
+};
 
 #pragma pack()
 /******************************************************************************/
 
 void EnsureAILStartup(void);
+void InitAudio(AudioInitOptions *audOpts);
 
 void SetSoundMasterVolume(long vol);
 void SetMusicMasterVolume(long vol);

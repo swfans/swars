@@ -24,7 +24,6 @@
 #include <assert.h>
 
 #include "awe32.h"
-
 #include "dpmi.h"
 #include "bffile.h"
 /******************************************************************************/

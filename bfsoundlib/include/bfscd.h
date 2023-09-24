@@ -27,6 +27,8 @@ extern "C" {
 #endif
 /******************************************************************************/
 
+#define CD_TRACKS_MAX_COUNT 99
+
 enum CDDeviceTypes {
     CDTYP_NONE,
     CDTYP_REAL,
@@ -46,6 +48,11 @@ TbBool GetCDAble(void);
 //ushort CDTrackPlaying();
 void InitRedbook(void);
 void InitMusicOGG(const char *nmusic_dir);
+
+/** Starts playback (or continues the playback) of given audio track.
+ *
+ * @param trkno CD Audio track number.
+ */
 void PlayCDTrack(ushort trkno);
 //int PlayCDChunk();
 //int PlayCDFromTrack();
