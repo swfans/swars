@@ -12,6 +12,7 @@
 #include "drv_oal.h"
 #include "sb16.h"
 #include "awe32.h"
+#include "streamfx.h"
 #include "sndtimer.h"
 #include "snderr.h"
 #include "oggvorbis.h"

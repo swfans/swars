@@ -52,7 +52,6 @@ void FreeAudio(void);
 
 void SetMusicVolume(int msec, ubyte volume);
 
-void InitStreamedSound(void);
 int LoadMusic(ushort bankNo);
 /******************************************************************************/
 #ifdef __cplusplus

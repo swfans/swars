@@ -68,6 +68,8 @@ swars_SOURCES = \
 	../bfsoundlib/src/init_snd.c \
 	../bfsoundlib/include/bfscd.h \
 	../bfsoundlib/src/cd.c \
+	../bfsoundlib/include/streamfx.h \
+	../bfsoundlib/src/streamfx.c \
 	../bfsoundlib/include/sndtimer.h \
 	../bfsoundlib/src/sndtimer.c \
 	../bfsoundlib/include/drv_oal.h \

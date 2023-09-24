@@ -39,6 +39,7 @@
 #include "sb16.h"
 #include "awe32.h"
 #include "dpmi.h"
+#include "streamfx.h"
 #include "snderr.h"
 #include "msssys.h"
 #include "sound.h"
@@ -60,11 +61,6 @@ extern TbBool DisableLoadMusic;
 extern TbBool SoundInstalled;
 extern TbBool StreamedSoundAble;
 extern uint16_t SongCurrentlyPlaying;
-extern int32_t sample_file;
-extern uint8_t ssnd_active;
-extern TbFileHandle adpcm_handle;
-extern long adpcm_file_open;
-extern uint8_t mixed_file_open;
 extern AIL_INI MusicInstallChoice;
 extern AIL_INI SoundInstallChoice;
 extern char FullDIG_INIPath[144];
@@ -83,7 +79,6 @@ extern HSNDTIMER DangerMusicFadeHandle;
 extern TbBool DisableDangerMusic;
 extern ubyte data_1e5edc[16];
 
-extern SNDSAMPLE *sample_handle;
 extern int32_t music_allocated;
 extern int32_t CurrentMusicMasterVolume;
 extern ushort SoundType;
@@ -91,9 +86,6 @@ extern TbBool DisableLoadSounds;
 extern char MusicType[6];
 extern TbBool AutoScanForSoundHardware;
 extern MDI_DRIVER *MusicDriver;
-extern uint8_t *ssnd_buffer[2];
-extern uint8_t *adpcm_source_buffer;
-extern int16_t *mixer_buffer;
 
 extern struct SampleInfo sample_id[32];
 extern struct SampleInfo *end_sample_id;
@@ -400,118 +392,6 @@ void StartMusic(int songNo, ubyte volume)
     AIL_start_sequence(SongHandle);
     SongCurrentlyPlaying = songNo;
     CurrentTempo = 100;
-}
-
-TbBool allocate_buffers(void)
-{
-    mixer_buffer = LbMemoryAlloc(0x8000u);
-    if (mixer_buffer == NULL)
-        return false;
-    adpcm_source_buffer = LbMemoryAlloc(0x800u);
-    if (adpcm_source_buffer == NULL)
-        return false;
-    ssnd_buffer[0] = AIL_MEM_alloc_lock(0x4000);
-    if (ssnd_buffer[0] == NULL)
-        return false;
-    ssnd_buffer[1] = AIL_MEM_alloc_lock(0x4000);
-    if (ssnd_buffer[1] == NULL)
-        return false;
-    return true;
-}
-
-void free_buffers(void)
-{
-    if (ssnd_buffer[0] != NULL) {
-        AIL_MEM_free_lock(ssnd_buffer[0], 0x4000);
-        ssnd_buffer[0] = NULL;
-    }
-    if (ssnd_buffer[1] != NULL) {
-        AIL_MEM_free_lock(ssnd_buffer[1], 0x4000);
-        ssnd_buffer[1] = NULL;
-    }
-    if (adpcm_source_buffer != NULL) {
-        LbMemoryFree(adpcm_source_buffer);
-        adpcm_source_buffer = NULL;
-    }
-    if (mixer_buffer != NULL) {
-        LbMemoryFree(mixer_buffer);
-        mixer_buffer = NULL;
-    }
-}
-
-void close_adpcm_file(void)
-{
-    if (adpcm_handle == INVALID_FILE)
-        return;
-    LbFileClose(adpcm_handle);
-    adpcm_handle = INVALID_FILE;
-}
-
-void InitStreamedSound(void)
-{
-#if 1
-    asm volatile ("call ASM_InitStreamedSound\n"
-        :  :  : "eax" );
-#else
-    if (!SoundInstalled || !SoundAble || StreamedSoundAble)
-        return;
-
-#if 0
-    flushall(); // Not a standard C func; also why?
-    setbuf(stdout, NULL); // No reason for that
-#endif
-
-    if (!allocate_buffers())
-    {
-        free_buffers();
-        sprintf(SoundProgressMessage,
-            "BF100 - Cannot allocate buffers for streamed sound\n");
-        SoundProgressLog(SoundProgressMessage);
-        return;
-    }
-
-    sample_handle = AIL_allocate_sample_handle(SoundDriver);
-    if (!sample_handle)
-    {
-        free_buffers();
-        sprintf(SoundProgressMessage,
-            "BF100 - Cannot allocate handle for streamed sound\n");
-        SoundProgressLog(SoundProgressMessage);
-        return;
-    }
-    StreamedSoundAble = true;
-#endif
-}
-
-void SwitchOffStreamedSound(void)
-{
-    if (!StreamedSoundAble || !ssnd_active)
-        return;
-    AIL_end_sample(sample_handle);
-    memset(ssnd_buffer[0], 0, 0x4000u);
-    memset(ssnd_buffer[1], 0, 0x4000u);
-    if (sample_file != -1) {
-        LbFileClose(sample_file);
-        sample_file = -1;
-    }
-    if (adpcm_file_open) {
-        close_adpcm_file();
-        adpcm_file_open = 0;
-    }
-    if (mixed_file_open)
-        mixed_file_open = 0;
-    ssnd_active = false;
-}
-
-void FreeStreamedSound(void)
-{
-    if (sample_file != -1) {
-        LbFileClose(sample_file);
-        sample_file = -1;
-    }
-    SwitchOffStreamedSound();
-    free_buffers();
-    StreamedSoundAble = false;
 }
 
 void FreeAudio(void)
