@@ -190,23 +190,6 @@ void play_dist_sample(struct Thing *p_thing, ushort smptbl_id, ushort vol, ushor
         : : "a" (p_thing), "d" (smptbl_id), "b" (vol), "c" (pan), "g" (pitch), "g" (loop), "g" (type));
 }
 
-void StopMusicIfActive(void)
-{
-    if (!MusicInstalled || !MusicAble)
-        return;
-    if (MusicActive)
-    {
-        StopMusic();
-        MusicActive = 0;
-    }
-}
-
-void StopMusic(void)
-{
-    asm volatile ("call ASM_StopMusic\n"
-        :  :  : "eax" );
-}
-
 //TODO better name?
 void fill_ail_sample_ids(void)
 {
