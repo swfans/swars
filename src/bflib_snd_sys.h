@@ -50,8 +50,6 @@ struct BfMusicInfo {
 void StopAllSamples(void);
 void FreeAudio(void);
 
-void SetMusicVolume(int msec, ubyte volume);
-
 int LoadMusic(ushort bankNo);
 /******************************************************************************/
 #ifdef __cplusplus

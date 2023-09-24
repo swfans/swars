@@ -97,23 +97,6 @@ extern struct BfMusicInfo *BfMusic;
 extern struct BfMusicInfo *BfEndMusic;
 extern short NumberOfSongs;
 
-void SetMusicVolume(int msec, ubyte volume)
-{
-    if (!MusicAble || !MusicInstalled)
-        return;
-
-    if (!MusicActive || !SongCurrentlyPlaying)
-        return;
-
-    if (volume > 127)
-        return;
-
-    if (AIL_sequence_status(SongHandle) == 2)
-        return;
-
-    AIL_set_sequence_volume(SongHandle, volume, msec);
-}
-
 void format_music(void)
 {
     short nsongs;

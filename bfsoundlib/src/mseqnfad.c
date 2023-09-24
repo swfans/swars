@@ -2,14 +2,14 @@
 // Bullfrog Sound Library - for use to remake classic games like
 // Syndicate Wars, Magic Carpet, Genewars or Dungeon Keeper.
 /******************************************************************************/
-/** @file bfmusic.h
- *     Header file for ???.
+/** @file ssamplst.c
+ *     Music Sequence List support routines.
  * @par Purpose:
- *     Unknown.
+ *     Functions for handling a list/queue of music sequences.
  * @par Comment:
  *     None.
  * @author   Tomasz Lis
- * @date     12 Nov 2008 - 05 Nov 2021
+ * @date     12 Jun 2022 - 05 Sep 2022
  * @par  Copying and copyrights:
  *     This program is free software; you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -17,42 +17,40 @@
  *     (at your option) any later version.
  */
 /******************************************************************************/
-#ifndef BFSOUNDLIB_BFMUSIC_H_
-#define BFSOUNDLIB_BFMUSIC_H_
+#include <stdio.h>
+#include <stddef.h>
+#include <stdlib.h>
+#include <assert.h>
 
-#include "bftypes.h"
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-/******************************************************************************/
-#pragma pack(1)
-
-struct MusicBankSizes {
-    ulong mbs0;
-    ulong mbs1;
-    ulong mbs2;
-    ulong mbs3;
-    ulong mbs4;
-    ulong mbs5;
-    ulong mbs6;
-    ulong mbs7;
-};
-
-#pragma pack()
+#include "bfmusic.h"
+#include "aildebug.h"
+#include "mssal.h"
 /******************************************************************************/
 
-void InitMusic(void);
-void FreeMusic(void);
+extern TbBool MusicInstalled;
+extern TbBool MusicAble;
+extern TbBool MusicActive;
 
-void StopMusicIfActive(void);
-void StopMusic(void);
-
-void SetMusicVolume(int msec, ubyte volume);
+extern ushort SongCurrentlyPlaying;
+extern SNDSEQUENCE *SongHandle;
 
 /******************************************************************************/
-#ifdef __cplusplus
-};
-#endif
 
-#endif // BFSOUNDLIB_BFMUSIC_H_
+void SetMusicVolume(int msec, ubyte volume)
+{
+    if (!MusicAble || !MusicInstalled)
+        return;
+
+    if (!MusicActive || !SongCurrentlyPlaying)
+        return;
+
+    if (volume > 127)
+        return;
+
+    if (AIL_sequence_status(SongHandle) == 2)
+        return;
+
+    AIL_set_sequence_volume(SongHandle, volume, msec);
+}
+
+/******************************************************************************/
