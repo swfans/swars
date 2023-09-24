@@ -55,6 +55,7 @@ struct AudioInitOptions {
 
 void EnsureAILStartup(void);
 void InitAudio(AudioInitOptions *audOpts);
+void FreeAudio(void);
 
 void SetSoundMasterVolume(long vol);
 void SetMusicMasterVolume(long vol);

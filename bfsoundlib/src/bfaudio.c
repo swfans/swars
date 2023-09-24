@@ -71,6 +71,7 @@ extern TbBool DisableDangerMusic;
 extern long CurrentMusicMasterVolume;
 
 extern TbBool CDAble;
+extern TbBool StreamedSoundAble;
 
 /******************************************************************************/
 
@@ -194,6 +195,25 @@ void InitAudio(AudioInitOptions *audOpts)
     SoundProgressLog(SoundProgressMessage);
     sprintf(SoundProgressMessage, "BF57 - sound driver = %s\n", SoundInstallChoice.driver_name);
     SoundProgressLog(SoundProgressMessage);
+}
+
+void FreeAudio(void)
+{
+#if 0
+    asm volatile ("call ASM_FreeAudio\n"
+        :  :  : "eax" );
+#endif
+    if (GetCDAble()) {
+        FreeCD();
+        if (!SoundAble && !MusicAble)
+            AIL_shutdown();
+    }
+    if (StreamedSoundAble)
+        FreeStreamedSound();
+    FreeMusic();
+    FreeSound();
+    if (sb16_mixer_set)
+        reset_SB16_volumes();
 }
 
 void SetSoundMasterVolume(long vol)
