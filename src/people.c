@@ -285,6 +285,33 @@ void read_people_conf_file(void)
     peep_names[i].num = 0;
 }
 
+void load_peep_type_stats_bin(void)
+{
+#if 0
+    asm volatile ("call ASM_load_peep_type_stats\n"
+        :  :  : "eax" );
+#endif
+    char locstr[52];
+    TbFileHandle fp;
+
+    sprintf(locstr, "%s" FS_SEP_STR "peepdefs.dat", "data");
+    fp = LbFileOpen(locstr, 2u);
+    if (fp != INVALID_FILE)
+    {
+        LbFileRead(fp, peep_type_stats, 12 * sizeof(struct PeepStat));
+        LbFileClose(fp);
+    }
+}
+
+void load_peep_type_stats(void)
+{
+#if 0
+    load_peep_type_stats_bin();
+#else
+    read_people_conf_file();
+#endif
+}
+
 ubyte person_mod_chest_level(struct Thing *p_person)
 {
     return cybmod_chest_level(&p_person->U.UPerson.UMod);

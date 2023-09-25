@@ -159,7 +159,7 @@ extern struct MyPath my_paths[1600];
 void remove_path(struct Thing *p_thing);
 void set_person_animmode_walk(struct Thing *p_person);
 
-void read_people_conf_file(void);
+void load_peep_type_stats(void);
 
 TbBool person_carries_weapon(struct Thing *p_person, ubyte weapon);
 

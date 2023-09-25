@@ -3581,12 +3581,6 @@ void setup_color_lookups(void)
         :  :  : "eax" );
 }
 
-void game_setup_sub8(void)
-{
-    asm volatile ("call ASM_game_setup_sub8\n"
-        :  :  : "eax" );
-}
-
 void init_engine(void)
 {
     asm volatile ("call ASM_init_engine\n"
@@ -4164,7 +4158,7 @@ void game_setup(void)
     init_things();
     debug_trace_setup(-2);
     LbSpriteSetup(small_font, small_font_end, small_font_data);
-    game_setup_sub8();
+    load_peep_type_stats();
     load_campaigns();
     players[local_player_no].MissionAgents = 0x0F;
     debug_trace_setup(-1);
