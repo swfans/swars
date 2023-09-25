@@ -19,6 +19,9 @@
 #include "people.h"
 
 #include "pepgroup.h"
+#include "bfmemory.h"
+#include "bffile.h"
+#include "bfini.h"
 #include "player.h"
 #include "game.h"
 #include "sound.h"
@@ -46,6 +49,241 @@ struct PeepStat peep_type_stats[] = {
     {   0,    0,    0,    0,   0, 0,   0, 0, 0, 0},
 };
 
+struct PeepStatAdd peep_type_stats_a[SubTT_PERS_COUNT] = {0};
+struct TbNamedEnum peep_names[SubTT_PERS_COUNT] = {0};
+
+enum PeepTypesConfigCmd {
+    PpTyp_PersonTypesCount = 1,
+    PpTyp_Name,
+    PpTyp_MaxHealth,
+    PpTyp_MaxShield,
+    PpTyp_MaximumStamina,
+    PpTyp_MaxEnergy,
+    PpTyp_PersuadeReqd,
+    PpTyp_PersuadeWorth,
+    PpTyp_Speed,
+
+};
+
+const struct TbNamedEnum people_conf_common_cmds[] = {
+  {"PersonTypesCount",	PpTyp_PersonTypesCount},
+  {NULL,		0},
+};
+
+const struct TbNamedEnum people_conf_person_cmds[] = {
+  {"Name",			PpTyp_Name},
+  {"MaxHealth",		PpTyp_MaxHealth},
+  {"MaxShield",		PpTyp_MaxShield},
+  {"MaximumStamina",PpTyp_MaximumStamina},
+  {"MaxEnergy",		PpTyp_MaxEnergy},
+  {"PersuadeRequired",PpTyp_PersuadeReqd},
+  {"PersuadeWorth",	PpTyp_PersuadeWorth},
+  {"Speed",			PpTyp_Speed},
+  {NULL,			0},
+};
+
+
+void read_people_conf_file(void)
+{
+    TbFileHandle conf_fh;
+    TbBool done;
+    int i;
+    long k;
+    int cmd_num;
+    char *conf_buf;
+    struct TbIniParser parser;
+    char *conf_fname = "conf" FS_SEP_STR "people.ini";
+    int conf_len;
+    int peep_count, ptype;
+
+    conf_fh = LbFileOpen(conf_fname, Lb_FILE_MODE_READ_ONLY);
+    if (conf_fh != INVALID_FILE) {
+        conf_len = LbFileLengthHandle(conf_fh);
+        if (conf_len > 1024*1024)
+            conf_len = 1024*1024;
+        conf_buf = LbMemoryAlloc(conf_len+16);
+        conf_len = LbFileRead(conf_fh, conf_buf, conf_len);
+        LOGSYNC("Processing '%s' file, %d bytes", conf_fname, conf_len);
+        LbFileClose(conf_fh);
+    } else {
+        LOGERR("Could not open people types config file, going with defaults.");
+        conf_buf = LbMemoryAlloc(16);
+        conf_len = 0;
+    }
+    conf_buf[conf_len] = '\0';
+    LbIniParseStart(&parser, conf_buf, conf_len);
+#define CONFWRNLOG(format,args...) LOGWARN("%s(line %lu): " format, conf_fname, parser.line_num, ## args)
+#define CONFDBGLOG(format,args...) LOGDBG("%s(line %lu): " format, conf_fname, parser.line_num, ## args)
+    peep_count = 0;
+    // Parse the [common] section of loaded file
+    if (LbIniFindSection(&parser, "common") != Lb_SUCCESS) {
+        CONFWRNLOG("Could not find \"[%s]\" section, file skipped.", "common");
+        LbIniParseEnd(&parser);
+        LbMemoryFree(conf_buf);
+        return;
+    }
+    done = false;
+#define COMMAND_TEXT(cmd_num) LbNamedEnumGetName(people_conf_common_cmds,cmd_num)
+    while (!done)
+    {
+        // Finding command number in this line
+        i = 0;
+        cmd_num = LbIniRecognizeKey(&parser, people_conf_common_cmds);
+        // Now store the config item in correct place
+        switch (cmd_num)
+        {
+        case PpTyp_PersonTypesCount:
+            i = LbIniValueGetLongInt(&parser, &k);
+            if (i <= 0) {
+                CONFWRNLOG("Could not read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                break;
+            }
+            peep_count = k;
+            CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), peep_count);
+            break;
+        case 0: // comment
+            break;
+        case -1: // end of buffer
+        case -3: // end of section
+            done = true;
+            break;
+        default:
+            CONFWRNLOG("Unrecognized command.");
+            break;
+        }
+        LbIniSkipToNextLine(&parser);
+    }
+#undef COMMAND_TEXT
+    for (ptype = 0; ptype < peep_count; ptype++)
+    {
+        char sect_name[16];
+        struct PeepStat *p_pestat;
+        struct PeepStatAdd *p_pestata;
+
+        // Parse the [personN] sections of loaded file
+        sprintf(sect_name, "person%d", ptype);
+        p_pestat = &peep_type_stats[ptype];
+        p_pestata = &peep_type_stats_a[ptype];
+        if (LbIniFindSection(&parser, sect_name) != Lb_SUCCESS) {
+            CONFWRNLOG("Could not find \"[%s]\" section.", sect_name);
+            continue;
+        }
+        done = false;
+#define COMMAND_TEXT(cmd_num) LbNamedEnumGetName(people_conf_person_cmds,cmd_num)
+        while (!done)
+        {
+            // Finding command number in this line
+            i = 0;
+            cmd_num = LbIniRecognizeKey(&parser, people_conf_person_cmds);
+            // Now store the config item in correct place
+            switch (cmd_num)
+            {
+            case PpTyp_Name:
+                i = LbIniValueGetStrWord(&parser, p_pestata->Name, sizeof(p_pestata->Name));
+                if (i <= 0) {
+                    CONFWRNLOG("Couldn't read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                    break;
+                }
+                CONFDBGLOG("%s \"%s\"", COMMAND_TEXT(cmd_num), (int)p_pestata->Name);
+                break;
+            case PpTyp_MaxHealth:
+                i = LbIniValueGetLongInt(&parser, &k);
+                if (i <= 0) {
+                    CONFWRNLOG("Could not read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                    break;
+                }
+                p_pestat->MaxHealth = k;
+                CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)p_pestat->MaxHealth);
+                break;
+            case PpTyp_MaxShield:
+                i = LbIniValueGetLongInt(&parser, &k);
+                if (i <= 0) {
+                    CONFWRNLOG("Could not read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                    break;
+                }
+                p_pestat->MaxShield = k;
+                CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)p_pestat->MaxShield);
+                break;
+            case PpTyp_MaximumStamina:
+                i = LbIniValueGetLongInt(&parser, &k);
+                if (i <= 0) {
+                    CONFWRNLOG("Could not read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                    break;
+                }
+                p_pestat->MaximumStamina = k;
+                CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)p_pestat->MaximumStamina);
+                break;
+            case PpTyp_MaxEnergy:
+                i = LbIniValueGetLongInt(&parser, &k);
+                if (i <= 0) {
+                    CONFWRNLOG("Could not read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                    break;
+                }
+                p_pestat->MaxEnergy = k;
+                CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)p_pestat->MaxEnergy);
+                break;
+            case PpTyp_PersuadeReqd:
+                i = LbIniValueGetLongInt(&parser, &k);
+                if (i <= 0) {
+                    CONFWRNLOG("Could not read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                    break;
+                }
+                p_pestat->PersuadeReqd = k;
+                CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)p_pestat->PersuadeReqd);
+                break;
+            case PpTyp_PersuadeWorth:
+                i = LbIniValueGetLongInt(&parser, &k);
+                if (i <= 0) {
+                    CONFWRNLOG("Could not read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                    break;
+                }
+                p_pestat->PersuadeWorth = k;
+                CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)p_pestat->PersuadeWorth);
+                break;
+            case PpTyp_Speed:
+                i = LbIniValueGetLongInt(&parser, &k);
+                if (i <= 0) {
+                    CONFWRNLOG("Could not read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                    break;
+                }
+                p_pestat->Speed = k;
+                CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)p_pestat->Speed);
+                break;
+
+            case 0: // comment
+                break;
+            case -1: // end of buffer
+            case -3: // end of section
+                done = true;
+                break;
+            default:
+                CONFWRNLOG("Unrecognized command.");
+                break;
+            }
+            LbIniSkipToNextLine(&parser);
+        }
+#undef COMMAND_TEXT
+    }
+#undef CONFDBGLOG
+#undef CONFWRNLOG
+    LbIniParseEnd(&parser);
+    LbMemoryFree(conf_buf);
+
+    i = 0;
+    for (ptype = 1; ptype < peep_count; ptype++)
+    {
+        struct PeepStatAdd *p_pestata;
+
+        p_pestata = &peep_type_stats_a[ptype];
+        if (strlen(p_pestata->Name) > 0) {
+            peep_names[i].name = p_pestata->Name;
+            peep_names[i].num = ptype;
+            i++;
+        }
+    }
+    peep_names[i].name = NULL;
+    peep_names[i].num = 0;
+}
 
 ubyte person_mod_chest_level(struct Thing *p_person)
 {
