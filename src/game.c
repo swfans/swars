@@ -213,7 +213,6 @@ struct TbLoadFiles unk02_load_files[] =
 };
 
 const ushort mod_group_type_strid[] = {74, 71, 72, 70, 73, };
-extern char scientist_lost_reason[60];
 
 TbBool level_deep_fix = false;
 
@@ -5121,194 +5120,6 @@ void my_preprocess_text(char *text)
         :  : "a" (text));
 }
 
-TbFileHandle open_file_from_wad(const char *filename, const char *wadfile)
-{
-    TbFileHandle ret;
-    asm volatile ("call ASM_open_file_from_wad\n"
-        : "=r" (ret) : "a" (filename), "d" (wadfile));
-    return ret;
-}
-
-int load_file_wad(const char *filename, const char *wadfile, void *outbuf)
-{
-#if 0
-    int ret;
-    asm volatile ("call ASM_load_file_wad\n"
-        : "=r" (ret) : "a" (filename), "d" (wadfile), "b" (outbuf));
-    return ret;
-#endif
-    char locfname[64];
-    char locstr[64];
-    struct WADIndexEntry fentry;
-    const char *only_fname;
-    TbFileHandle fh;
-    long nread;
-    int i;
-
-    only_fname = strrchr(filename, '/');
-    if (only_fname != NULL)
-        only_fname++;
-    else
-        only_fname = filename;
-
-    for (i = 0; only_fname[i] != '\0'; i++)
-    {
-        locstr[i] = toupper(only_fname[i]);
-    }
-    locstr[i] = '\0';
-
-    sprintf(locfname, "%s.IDX", wadfile);
-    fh = LbFileOpen(locfname, Lb_FILE_MODE_READ_ONLY);
-    if (fh == INVALID_FILE)
-        return -1;
-    do {
-        nread = LbFileRead(fh, &fentry, sizeof(struct WADIndexEntry));
-    } while ((strcmp(locstr, fentry.Filename) != 0) &&
-      (nread == sizeof(struct WADIndexEntry)));
-    LbFileClose(fh);
-
-    if (nread != sizeof(struct WADIndexEntry))
-        return -1;
-
-    sprintf(locfname, "%s.WAD", wadfile);
-    fh = LbFileOpen(locfname, Lb_FILE_MODE_READ_ONLY);
-    if (fh == INVALID_FILE)
-        return -1;
-
-    LbFileSeek(fh, fentry.Offset, 0);
-    nread = LbFileRead(fh, outbuf, fentry.Length);
-    LbFileClose(fh);
-    return nread;
-}
-
-void init_weapon_text(void)
-{
-#if 0
-    asm volatile ("call ASM_init_weapon_text\n"
-        :  :  : "eax" );
-#else
-    const char *codename;
-    char locstr[56];
-    int weptxt_pos;
-    char *s;
-    int i, n;
-
-    if (load_file_wad("textdata/wms.txt", "qdata/alltext", weapon_text) == Lb_FAIL)
-        return;
-
-    // TODO change the format to use our INI parser, and weapon codenames from config
-    s = weapon_text;
-    n = (background_type == 1) ? 1 : 0; // TODO store naming convention within INI file
-    LOGSYNC("Read names after skipping %d sets", n);
-    for (i = 0; i < n; i++)
-    {
-        if (s) s = strchr(s, ']'); // PLAYER type
-        if (s) s++;
-        if (s) s = strchr(s, ']'); // WEAPONS section
-        if (s) s++;
-        if (s) s = strchr(s, ']'); // MODS section
-        if (s) s++;
-    }
-
-    if (s) s = strchr(s, ']'); // position at start of PLAYER type
-    if (s) s++;
-    if (s) s = strchr(s, ']'); // position at start of WEAPONS section
-    if (s) s++;
-
-    // section_start = s;
-
-    weptxt_pos = 0;
-    s += 2;
-    while (1)
-    {
-        if (*s == '[')
-            break;
-
-        // Read weapon name
-        n = 0;
-        while ((*s != '\r') && (*s != '\n'))
-        {
-            locstr[n] = *s++;
-            n++;
-        }
-        locstr[n] = '\0';
-        s += 2;
-
-        // Recognize the weapon name
-        for (i = 0; i < 30; i++)
-        {
-            if (background_type == 0) {
-              codename = gui_strings[i];
-            } else if (background_type == 1) {
-              codename = gui_strings[i + 30];
-            } else if ( background_type == 2 ) {
-              codename = gui_strings[i];
-            } else {
-              codename = gui_strings[i];
-            }
-            if (strcmp(codename, locstr) == 0)
-                break;
-        }
-        if (i < 30)
-        {
-            weapon_text_index[i] = weptxt_pos;
-
-            while ((*s != '\r') && (*s != '\n')) {
-                weapon_text[weptxt_pos] = *s++;
-                weptxt_pos++;
-            }
-            weapon_text[weptxt_pos] = '\0';
-            weptxt_pos++;
-            s += 2;
-
-            n = weapon_text_index[i];
-            my_preprocess_text(&weapon_text[n]);
-        } else {
-            LOGERR("Weapon name not recognized: \"%s\"", locstr);
-            if (s) s = strpbrk(s, "\r\n");
-            if (s) s += 2;
-        }
-    }
-
-    s = strchr(s, '[');
-    s++;
-    s = strchr(s, ']'); // position at start of MODS section
-    s++;
-
-    s += 2;
-    for (i = 32; i < 32+16; i++)
-    {
-        if (*s == '[')
-            break;
-
-        // Read mod name
-        n = 0;
-        while ((*s != '\r') && (*s != '\n'))
-        {
-            locstr[n] = *s++;
-            n++;
-        }
-        locstr[n] = '\0';
-        s += 2;
-
-        // Now ignore the name and just assume mods are in order
-        // If you looked at this parser from start, you shouldn't
-        // be surprised by how lazy this is
-        weapon_text_index[i] = weptxt_pos;
-        while ((*s != '\r') && (*s != '\n')) {
-            weapon_text[weptxt_pos] = *s++;
-            weptxt_pos++;
-        }
-        weapon_text[weptxt_pos] = '\0';
-        weptxt_pos++;
-        s += 2;
-
-        n = weapon_text_index[i];
-        my_preprocess_text(&weapon_text[n]);
-    }
-#endif
-}
-
 void * memory_copy_with_skip(void *in_dst, const void *in_src, TbMemSize size, ubyte bskip)
 {
     const ubyte *s;
@@ -6662,32 +6473,6 @@ ubyte show_net_users_box(struct ScreenBox *box)
     asm volatile ("call ASM_show_net_users_box\n"
         : "=r" (ret) : "a" (box));
     return ret;
-}
-
-void load_scientist_lost_reason(ushort reason_no)
-{
-    char *s;
-    char c;
-    int i;
-
-    if (load_file_wad("lost.txt", "qdata/alltext", back_buffer + text_buf_pos) == -1) {
-        return;
-    }
-    s = (char *)(back_buffer + text_buf_pos);
-    for (i = 0; i != reason_no; i++)
-    {
-        do
-            c = *s++;
-        while (c != '\n');
-    }
-    for (i = 0; i < 120; i++,s++)
-    {
-        c = *s;
-        if ((c == '\r') || (c == '\0'))
-            break;
-        scientist_lost_reason[i] = c;
-    }
-    scientist_lost_reason[i] = '\0';
 }
 
 void snprint_dh_time_duration(char *out, ulong outlen, long ndays, short nhours)
@@ -9037,7 +8822,7 @@ void show_menu_screen_st0(void)
 
     hotspot_buffer = scratch_malloc_mem;
     mission_briefing_text = (char *)scratch_malloc_mem + 512;
-    mem_unkn03 = (char *)scratch_malloc_mem + 16896;
+    netscan_text = (char *)scratch_malloc_mem + 16896;
     weapon_text = (char *)scratch_malloc_mem + 33280;
     memload = (ubyte *)scratch_malloc_mem + 66048;
     purple_draw_list = (struct PurpleDrawItem *)((ubyte *)scratch_malloc_mem + 82432);
@@ -9833,71 +9618,24 @@ void frame_unkn_func_06(void)
         :  :  : "eax" );
 }
 
-void load_netscan_text_data(ubyte city_id, ubyte level)
+void load_netscan_data(ubyte city_id, ubyte level)
 {
 #if 0
-    asm volatile ("call ASM_load_netscan_text_data\n"
+    asm volatile ("call ASM_load_netscan_data\n"
         : : "a" (city_id), "d" (a2));
 #else
-    char *p;
-    int i, k;
-    TbBool found;
+    int i;
 
-    found = 0;
     my_set_text_window(unkn36_box.X + 4, unkn36_box.ScrollWindowOffset + unkn36_box.Y + 4,
       unkn36_box.Width - 20, unkn36_box.ScrollWindowHeight);
     lbFontPtr = small_med_font;
     unkn36_box.Lines = 0;
-    if ( load_file_wad("textdata/netscan.txt", "qdata/alltext", mem_unkn03) != -1 )
-    {
-      short cmapno, clevel;
-      char secnum_str[5];
-      int secnum_int;
-      p = mem_unkn03;
-      while ( !found )
-      {
-          // Find section
-          char c;
-          do
-              c = *p++;
-          while ((c != '[') && (c != '\0'));
-          if (c != '[') break;
-        
-          // Get section name
-          for (k = 0; k < 4; k++)
-          {
-              secnum_str[k] = *p++;
-          }
-          secnum_str[4] = 0;
-          // Go to EOLN
-          do
-              c = *p++;
-          while ((c != '\n') && (c != '\0'));
-          // Get number from section name
-          sscanf(secnum_str, "%d", &secnum_int);
-          cmapno = secnum_int / 100;
-          clevel = secnum_int % 100;
-          if ((clevel == level) && (cmapno == cities[city_id].MapID))
-          {
-              found = 1;
-              for (i = 0; i < netscan_objectives_count; i++)
-              {
-                  char *text;
-                  text = p;
-                  do
-                      c = *p++;
-                  while ((c != '\n') && (c != '\0'));
-                  *(p - 1) = '\0';
+    load_netscan_text_data(cities[city_id].MapID, level);
 
-                  netscan_objectives[i].TextOffset = text - mem_unkn03;
-                  my_preprocess_text(mem_unkn03 + netscan_objectives[i].TextOffset);
-                  k = my_count_lines(mem_unkn03 + netscan_objectives[i].TextOffset);
-                  netscan_objectives[i].TextLines = k;
-                  if (netscan_objectives[i].CreditCost == 0)
-                      reveal_netscan_objective(i);
-              }
-          }
-      }
+    for (i = 0; i < netscan_objectives_count; i++)
+    {
+        if (netscan_objectives[i].CreditCost == 0)
+            reveal_netscan_objective(i);
     }
 
     if (cities[city_id].Info == 0)

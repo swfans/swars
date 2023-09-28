@@ -29,6 +29,7 @@
 #include "campaign.h"
 #include "game.h"
 #include "lvobjctv.h"
+#include "wadfile.h"
 #include "swlog.h"
 /******************************************************************************/
 

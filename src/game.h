@@ -523,12 +523,6 @@ struct Animation {
   short field_6E;
 };
 
-struct WADIndexEntry {
-    char Filename[12];
-    ulong Offset;
-    ulong Length;
-};
-
 #pragma pack()
 
 extern char session_name[20];
@@ -698,7 +692,6 @@ extern ubyte game_high_resolution;
 extern char *mission_briefing_text;
 extern short mission_open[50];
 extern short mission_state[50];
-extern char *mem_unkn03;
 extern sbyte mission_result;
 extern char *weapon_text;
 extern struct PurpleDrawItem *purple_draw_list;
@@ -912,9 +905,7 @@ void free_texturemaps(void);
 int joy_grip_shutdown(void);
 
 void my_preprocess_text(char *text);
-
-TbFileHandle open_file_from_wad(const char *filename, const char *wadfile);
-int load_file_wad(const char *filename, const char *wadfile, void *outbuf);
+ushort my_count_lines(const char *text);
 
 #ifdef __cplusplus
 };

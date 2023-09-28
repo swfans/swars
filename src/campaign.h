@@ -144,6 +144,7 @@ struct Mission { // sizeof=76
 /******************************************************************************/
 extern struct Campaign campaigns[CAMPAIGNS_MAX_COUNT];
 extern struct Mission mission_list[MISSIONS_MAX_COUNT];
+extern char *netscan_text;
 
 void load_campaigns(void);
 ushort selectable_campaigns_count(void);
@@ -168,6 +169,8 @@ void read_missions_conf_file(int num);
 void read_missions_bin_file(int num);
 void read_mission_netscan_objectives_bin(void);
 void apply_missions_fixups(void);
+
+TbResult load_netscan_text_data(ushort mapno, ushort level);
 
 /******************************************************************************/
 #ifdef __cplusplus

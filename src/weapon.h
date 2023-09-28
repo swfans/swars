@@ -112,6 +112,7 @@ extern struct TbNamedEnum weapon_names[33];
 extern ubyte weapon_tech_level[33];
 
 void read_weapons_conf_file(void);
+void init_weapon_text(void);
 
 TbBool weapons_has_weapon(ulong weapons, ushort wtype);
 ushort weapons_prev_weapon(ulong weapons, ushort last_wtype);

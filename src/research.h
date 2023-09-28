@@ -51,6 +51,9 @@ struct ResearchInfo
 #pragma pack()
 /******************************************************************************/
 extern struct ResearchInfo research;
+extern char scientist_lost_reason[60];
+
+void load_scientist_lost_reason(ushort reason_no);
 
 int research_daily_progress_for_type(ubyte rstype);
 int research_unkn_func_004(ushort percent_per_day, int expect_funding, int real_funding);

@@ -27,6 +27,7 @@
 #include "lvobjctv.h"
 #include "game_data.h"
 #include "game.h"
+#include "wadfile.h"
 #include "swlog.h"
 /******************************************************************************/
 
@@ -1531,6 +1532,65 @@ void read_missions_conf_file(int num)
     LbIniParseEnd(&parser);
     LbMemoryFree(conf_buf);
     mission_strings_len = p_str - (char *)(engine_mem_alloc_ptr + engine_mem_alloc_size - 64000 + campaign_strings_len);
+}
+
+TbResult load_netscan_text_data(ushort mapno, ushort level)
+{
+    char *p;
+    int i, k;
+    TbBool found;
+    short cmapno, clevel;
+    char secnum_str[5];
+    int secnum_int;
+
+    found = 0;
+    if (load_file_wad("textdata/netscan.txt", "qdata/alltext", netscan_text) == -1)
+        return Lb_FAIL;
+
+    p = netscan_text;
+    while ( !found )
+    {
+        // Find section
+        char c;
+        do
+            c = *p++;
+        while ((c != '[') && (c != '\0'));
+        if (c != '[') break;
+        
+        // Get section name
+        for (k = 0; k < 4; k++)
+        {
+            secnum_str[k] = *p++;
+        }
+        secnum_str[4] = 0;
+        // Go to EOLN
+        do
+            c = *p++;
+        while ((c != '\n') && (c != '\0'));
+        // Get number from section name
+        sscanf(secnum_str, "%d", &secnum_int);
+        cmapno = secnum_int / 100;
+        clevel = secnum_int % 100;
+        if ((clevel == level) && (cmapno == mapno))
+        {
+            found = 1;
+            for (i = 0; i < netscan_objectives_count; i++)
+            {
+                char *text;
+                text = p;
+                do
+                    c = *p++;
+                while ((c != '\n') && (c != '\0'));
+                *(p - 1) = '\0';
+
+                netscan_objectives[i].TextOffset = text - netscan_text;
+                my_preprocess_text(netscan_text + netscan_objectives[i].TextOffset);
+                k = my_count_lines(netscan_text + netscan_objectives[i].TextOffset);
+                netscan_objectives[i].TextLines = k;
+            }
+        }
+    }
+    return found ? Lb_SUCCESS : Lb_OK;
 }
 
 TbBool mission_remain_until_success(ushort missi)

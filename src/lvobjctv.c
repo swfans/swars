@@ -34,6 +34,7 @@
 #include "scandraw.h"
 #include "display.h"
 #include "game.h"
+#include "wadfile.h"
 #include "swlog.h"
 /******************************************************************************/
 

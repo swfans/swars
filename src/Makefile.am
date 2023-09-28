@@ -140,6 +140,8 @@ swars_SOURCES = \
 	util.h \
 	vehicle.c \
 	vehicle.h \
+	wadfile.c \
+	wadfile.h \
 	weapon.c \
 	weapon.h \
 	windows.c \

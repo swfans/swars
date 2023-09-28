@@ -21,9 +21,37 @@
 #include "bfutility.h"
 #include "weapon.h"
 #include "cybmod.h"
+#include "display.h"
 #include "game.h"
+#include "wadfile.h"
 #include "swlog.h"
 /******************************************************************************/
+
+void load_scientist_lost_reason(ushort reason_no)
+{
+    char *s;
+    char c;
+    ushort i;
+
+    if (load_file_wad("lost.txt", "qdata/alltext", back_buffer + text_buf_pos) == -1) {
+        return;
+    }
+    s = (char *)(back_buffer + text_buf_pos);
+    for (i = 0; i != reason_no; i++)
+    {
+        do
+            c = *s++;
+        while (c != '\n');
+    }
+    for (i = 0; i < sizeof(scientist_lost_reason)-1; i++,s++)
+    {
+        c = *s;
+        if ((c == '\r') || (c == '\0'))
+            break;
+        scientist_lost_reason[i] = c;
+    }
+    scientist_lost_reason[i] = '\0';
+}
 
 void research_wep_store_daily_progress(int progress)
 {
