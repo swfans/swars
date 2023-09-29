@@ -29,11 +29,13 @@
 
 void load_scientist_lost_reason(ushort reason_no)
 {
+    int totlen;
     char *s;
     char c;
     ushort i;
 
-    if (load_file_wad("lost.txt", "qdata/alltext", back_buffer + text_buf_pos) == -1) {
+    totlen = load_file_wad("lost.txt", "qdata/alltext", back_buffer + text_buf_pos);
+    if (totlen == -1) {
         return;
     }
     s = (char *)(back_buffer + text_buf_pos);

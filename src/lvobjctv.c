@@ -2092,4 +2092,39 @@ void load_netscan_objectives(ubyte mapno, ubyte level)
 #endif
 }
 
+int load_objectives_text(void *data)
+{
+    char *p;
+    int totlen;
+    int i, n;
+    char c;
+
+    totlen = load_file_wad("textdata/obj.txt", "qdata/alltext", data);
+    if (totlen <= 0)
+      return 0;
+    p = (char *)data;
+    n = 0;
+    objective_text[n++] = NULL;
+    objective_text[n++] = p;
+    for (i = 0; i < totlen; i++, p++)
+    {
+        c = *p;
+        if (c == '\r' || c == '\n')
+        {
+            *p = '\0';
+            i++; p++;
+            c = *p;
+            if (c == '\r' || c == '\n') {
+                i++; p++;
+            }
+            objective_text[n++] = p;
+        }
+    }
+    while (n < 170)
+    {
+        objective_text[n++] = NULL;
+    }
+    return (totlen + 5) & ~0x03;
+}
+
 /******************************************************************************/

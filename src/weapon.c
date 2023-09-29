@@ -361,10 +361,12 @@ void init_weapon_text(void)
     const char *codename;
     char locstr[56];
     int weptxt_pos;
+    int totlen;
     char *s;
     int i, n;
 
-    if (load_file_wad("textdata/wms.txt", "qdata/alltext", weapon_text) == Lb_FAIL)
+    totlen = load_file_wad("textdata/wms.txt", "qdata/alltext", weapon_text);
+    if (totlen == Lb_FAIL)
         return;
 
     // TODO change the format to use our INI parser, and weapon codenames from config

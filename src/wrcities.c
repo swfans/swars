@@ -61,10 +61,11 @@ void load_city_txt(void)
         :  :  : "eax" );
 #endif
     char *s;
+    int totlen;
     int i, n, k, city;
 
-    k = load_file_wad("textdata/city.txt", "qdata/alltext", memload);
-    if (k == -1)
+    totlen = load_file_wad("textdata/city.txt", "qdata/alltext", memload);
+    if (totlen == -1)
         return;
     s = (char *)memload;
     // Skip property names for campaigns before current

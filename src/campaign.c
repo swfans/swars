@@ -1539,12 +1539,14 @@ TbResult load_netscan_text_data(ushort mapno, ushort level)
     char *p;
     int i, k;
     TbBool found;
+    int totlen;
     short cmapno, clevel;
     char secnum_str[5];
     int secnum_int;
 
     found = 0;
-    if (load_file_wad("textdata/netscan.txt", "qdata/alltext", netscan_text) == -1)
+    totlen = load_file_wad("textdata/netscan.txt", "qdata/alltext", netscan_text);
+    if (totlen == -1)
         return Lb_FAIL;
 
     p = netscan_text;
