@@ -59,6 +59,7 @@
 #include "packet.h"
 #include "player.h"
 #include "vehicle.h"
+#include "wadfile.h"
 #include "weapon.h"
 #include "wrcities.h"
 
@@ -101,6 +102,12 @@ extern char *pop_tab_fname_fmt;
 extern unsigned long unkn_buffer_04;
 
 extern ubyte *small_font_data;
+extern ubyte *small2_font_data;
+extern ubyte *small_med_font_data;
+extern ubyte *med_font_data;
+extern ubyte *med2_font_data;
+extern ubyte *big_font_data;
+
 extern ubyte *pointer_data;
 extern struct TbSprite *sprites_Icons0_0;
 extern struct TbSprite *sprites_Icons0_0_end;
@@ -745,10 +752,218 @@ void screen_dark_curtain_down(void)
         :  :  : "eax" );
 }
 
+ubyte my_char_to_upper(ubyte c)
+{
+    ubyte ret;
+    asm volatile ("call ASM_my_char_to_upper\n"
+        : "=r" (ret) : "a" (c));
+    return ret;
+}
+
+int load_outro_text(ubyte *buf)
+{
+    int totlen;
+    char *s;
+    int i;
+
+    totlen = load_file_wad("outtro.txt", "qdata/alltext", buf);
+    buf[totlen] = 0;
+    s = (char *)buf;
+    for (i = 0; i < totlen; i++) {
+        s[i] = my_char_to_upper(s[i]);
+    }
+
+    s = (char *)buf;
+    while ((*s != ']') && (*s != '\0')) {
+        s++;
+    }
+    s++;
+    outro_text_s = s;
+
+    while ((*s != ']') && (*s != '\0')) {
+        s++;
+    }
+    s++;
+    outro_text_z = s;
+
+    return totlen + 1;
+}
+
+int load_people_text(ubyte *buf)
+{
+    int totlen;
+    int peptxt_len;
+    int groupno;
+    char *name;
+    char *desc;
+    char *s;
+    int i;
+
+    totlen = LbFileLoadAt("data/people.txt", buf);
+    peptxt_len = totlen;
+
+    s = (char *)buf;
+    for (i = 0; i < peptxt_len; i++)
+    {
+        if (*s == ']')
+            *s = '\0';
+        s++;
+    }
+
+    // List of people
+    groupno = 0;
+    s = (char *)buf;
+    while ( 1 )
+    {
+        if (*s == '[')
+        {
+            s++;
+            name = s;
+            if (strcmp(name, "END") == 0) {
+              s += 4;
+              break;
+            }
+            people_credits_desc[2 * groupno + 0] = name;
+
+            while (*s != '[')
+            {
+                if (*s == '#') {
+                    groupno = strtol(s + 1, &desc, 10);
+                    s = desc;
+                }
+                s++;
+            }
+            s++;
+            desc = s;
+            people_credits_desc[2 * groupno + 1] = desc;
+            continue;
+        }
+        if (*s == '#') {
+            groupno = strtol(s + 1, &desc, 10);
+            s = desc;
+        }
+        s++;
+    }
+
+    // Assignment of people to groups
+    while ( 1 )
+    {
+        if (*s == '[')
+        {
+            ubyte *g;
+
+            s++;
+            if (strcmp(s, "END") == 0) {
+                s += 4;
+                break;
+            }
+            people_credits_groups[2 * groupno + 0] = s;
+
+            while (*s != '[')
+            {
+                if (*s == '#') {
+                    groupno = strtol(s + 1, &desc, 10);
+                    s = desc;
+                }
+                s++;
+            }
+            s++;
+            g = &buf[totlen];
+            people_credits_groups[2 * groupno + 1] = (char *)g; // TODO we should really use a struct here
+
+            // Recognize the list of integers, store them in g
+            while ( 1 )
+            {
+              *g = strtol(s, &desc, 10);
+              if (desc > s) {
+                  totlen++;
+                  s = desc;
+              }
+              if (*s == '\0')
+                  break;
+              s++;
+            }
+            g = &buf[totlen];
+            *g = 100; // end-of-list marker
+            totlen++;
+            continue;
+        }
+        if (*s == '#')
+        {
+            groupno = strtol(s + 1, &desc, 10);
+            s = desc;
+        }
+        s++;
+    }
+    people_groups_count = groupno + 1;
+
+    return totlen;
+}
+
 void load_outro_sprites(void)
 {
+#if 0
     asm volatile ("call ASM_load_outro_sprites\n"
         :  :  : "eax" );
+#endif
+    ubyte *data_buf;
+    ubyte *outtxt_ptr;
+    ubyte *peptxt_ptr;
+    int next_pos;
+    int tit_font_pos;
+    int med_font_pos;
+    int big_font_pos;
+    int big_font_end_pos;
+    int med2_font_pos;
+    int med2_font_end_pos;
+
+    next_pos = engine_mem_alloc_size - 81920;
+    data_buf = engine_mem_alloc_ptr + next_pos;
+
+    med_font_data = &data_buf[0];
+    next_pos = LbFileLoadAt("data/tit-font.dat", med_font_data);
+    next_pos += 0;
+    tit_font_pos = next_pos;
+    med_font = (struct TbSprite *)&data_buf[tit_font_pos];
+    next_pos = LbFileLoadAt("data/tit-font.tab", med_font);
+    next_pos += tit_font_pos;
+    med_font_pos = next_pos;
+    med_font_end = (struct TbSprite *)&data_buf[med_font_pos];
+
+    big_font_data = &data_buf[med_font_pos];
+    next_pos = LbFileLoadAt("data/nam-font.dat", big_font_data);
+    next_pos += med_font_pos;
+    big_font_pos = next_pos;
+    big_font = (struct TbSprite *)&data_buf[big_font_pos];
+    next_pos = LbFileLoadAt("data/nam-font.tab", big_font);
+    next_pos += big_font_pos;
+    big_font_end_pos = next_pos;
+    big_font_end = (struct TbSprite *)&data_buf[big_font_end_pos];
+
+    med2_font_data = &data_buf[big_font_end_pos];
+    next_pos = LbFileLoadAt("data/qot-font.dat", med2_font_data);
+    next_pos += big_font_end_pos;
+    med2_font_pos = next_pos;
+    med2_font = (struct TbSprite *)&data_buf[med2_font_pos];
+    next_pos = LbFileLoadAt("data/qot-font.tab", med2_font);
+    next_pos += med2_font_pos;
+    med2_font_end_pos = next_pos;
+    med2_font_end = (struct TbSprite *)&data_buf[med2_font_end_pos];
+
+    LbSpriteSetup(med_font, med_font_end, med_font_data);
+    LbSpriteSetup(med2_font, med2_font_end, med2_font_data);
+    LbSpriteSetup(big_font, big_font_end, big_font_data);
+
+    outtxt_ptr = &data_buf[med2_font_end_pos];
+    next_pos = load_outro_text(outtxt_ptr);
+    next_pos = med2_font_end_pos + next_pos;
+
+    outro_unkn01 = 1;
+    outro_unkn02 = 0;
+    outro_unkn03 = 0;
+
+    peptxt_ptr = &data_buf[next_pos];
+    next_pos = load_people_text(peptxt_ptr);
 }
 
 void fill_floor_textures(void)

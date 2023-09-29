@@ -682,7 +682,10 @@ extern long outro_unkn03;
 extern long people_groups_count;
 extern long data_1ddb68;
 extern ubyte byte_1DDC40;
+
+extern char *people_credits_desc[];
 extern char *people_credits_groups[];
+
 extern ubyte playable_agents;
 
 extern ubyte save_crypto_tables_state[3];
