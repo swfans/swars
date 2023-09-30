@@ -6001,7 +6001,8 @@ void delete_open_mission(ushort mslot, sbyte state)
 
     if (mission_has_no_special_triggers(missi))
     {
-        LOGSYNC("SpecialTriggers none, mission=%d, state=%d", (int)missi, (int)state);
+        LOGSYNC("SpecialTriggers none, mission=%d, state=%d triggers=%d",
+          (int)missi, (int)state, (int)conds_met);
         if (state == 1)
         {
             if (conds_met)
@@ -6010,6 +6011,8 @@ void delete_open_mission(ushort mslot, sbyte state)
             }
             if (mission_has_immediate_next_on_success(ingame.CurrentMission))
             {
+                LOGSYNC("Immediate start next (ST no), mission=%d, current=%d",
+                  (int)missi, (int)ingame.CurrentMission);
                 compound_mission_immediate_start_next();
                 return;
             }
@@ -6032,7 +6035,8 @@ void delete_open_mission(ushort mslot, sbyte state)
             trg_missi = mission_list[missi].SpecialTrigger[1];
         if (trg_missi != 0)
         {
-            LOGSYNC("SpecialTriggers self-owned and set, mission=%d, state=%d", (int)missi, (int)state);
+            LOGSYNC("SpecialTriggers self-owned and set, mission=%d, state=%d triggers=%d",
+              (int)missi, (int)state, (int)conds_met);
             if (state == 1)
             {
                 brief_store[open_brief - 1].Mission = trg_missi;
@@ -6061,7 +6065,8 @@ void delete_open_mission(ushort mslot, sbyte state)
         }
         else
         {
-            LOGSYNC("SpecialTriggers self-owned but unset, mission=%d, state=%d", (int)missi, (int)state);
+            LOGSYNC("SpecialTriggers self-owned but unset, mission=%d, state=%d triggers=%d",
+              (int)missi, (int)state, (int)conds_met);
             if (state == 1)
             {
                 if (conds_met)
@@ -6070,6 +6075,8 @@ void delete_open_mission(ushort mslot, sbyte state)
                 }
                 if (mission_has_immediate_next_on_success(ingame.CurrentMission))
                 {
+                    LOGSYNC("Immediate start next (ST so), mission=%d, current=%d",
+                      (int)missi, (int)ingame.CurrentMission);
                     compound_mission_immediate_start_next();
                     return;
                 }

@@ -1599,7 +1599,7 @@ TbBool mission_remain_until_success(ushort missi)
 {
     struct Mission *p_missi;
     p_missi = &mission_list[missi];
-    return ((p_missi->Flags &= MisF_RemainUntilSuccess) != 0);
+    return ((p_missi->Flags & MisF_RemainUntilSuccess) != 0);
 }
 
 TbBool mission_has_immediate_next_on_success(ushort missi)
