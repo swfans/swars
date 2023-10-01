@@ -9114,10 +9114,29 @@ void delete_mail(ushort mailnum, ubyte type)
 
 ubyte load_mail_text(const char *filename)
 {
+#if 0
     ubyte ret;
     asm volatile ("call ASM_load_mail_text\n"
         : "=r" (ret) : "a" (filename));
     return ret;
+#endif
+    int totlen;
+    char *p;
+
+    p = mission_briefing_text;
+    p[0] = '\\';
+    p[1] = 'c';
+    p[2] = '3';
+
+    totlen = load_file_wad(filename, "qdata/alltext", p + 3);
+    if (totlen == -1) {
+        return 0;
+    }
+    p = mission_briefing_text;
+    p[3 + totlen] = 0;
+    my_preprocess_text(p);
+    mission_text_box.Lines = 0;
+    return Lb_SUCCESS;
 }
 
 void brief_load_mission_info(void)
