@@ -1595,6 +1595,56 @@ TbResult load_netscan_text_data(ushort mapno, ushort level)
     return found ? Lb_SUCCESS : Lb_OK;
 }
 
+TbResult load_mission_name_text(ubyte missi)
+{
+#if 0
+    asm volatile ("call ASM_load_mission_name_text\n"
+        : : "a" (missi));
+    return Lb_SUCCESS;
+#endif
+    int totlen;
+    ushort len;
+    int cmissi;
+    char *p;
+    char c;
+
+    totlen = load_file_wad("textdata/names.txt", "qdata/alltext", memload);
+    if (totlen == -1) {
+        mission_name[0] = '\0';
+        return Lb_FAIL;
+    }
+
+    p = (char *)memload;
+    cmissi = -1;
+    while ( 1 )
+    {
+        if ((*p != '#') && (*p != '\r'))
+            sscanf(p, "%d", &cmissi);
+        if (missi == cmissi)
+            break;
+        do
+            c = *p++;
+        while ((c != '\n') && (c != '\0'));
+    }
+
+    do
+        c = *p++;
+    while ((c != '.') && (c != '\n') && (c != '\0'));
+
+    for (len = 0; len < sizeof(mission_name)-1; len++)
+    {
+        c = *p;
+        if ((c == '\r') || (c == '\0'))
+            break;
+        c = toupper(c);
+        mission_name[len] = c;
+        len++;
+    }
+    mission_name[len] = '\0';
+
+    return Lb_SUCCESS;
+}
+
 TbBool mission_remain_until_success(ushort missi)
 {
     struct Mission *p_missi;

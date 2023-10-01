@@ -65,8 +65,9 @@ void load_city_txt(void)
     int i, n, k, city;
 
     totlen = load_file_wad("textdata/city.txt", "qdata/alltext", memload);
-    if (totlen == -1)
+    if (totlen == -1) {
         return;
+    }
     s = (char *)memload;
     // Skip property names for campaigns before current
     for (n = 0; n < background_type; n++)

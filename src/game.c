@@ -9874,12 +9874,6 @@ void load_netscan_data(ubyte city_id, ubyte level)
 #endif
 }
 
-void load_all_text(ubyte a1)
-{
-    asm volatile ("call ASM_load_all_text\n"
-        : : "a" (a1));
-}
-
 void show_mission_loading_screen(void)
 {
     LbMouseChangeSprite(0);
@@ -9947,7 +9941,7 @@ void show_load_and_prep_mission(void)
             missi = brief_store[open_brief - 1].Mission;
             next_mapno = cities[unkn_city_no].MapID;
             next_level = cities[unkn_city_no].Level;
-            load_all_text(missi);
+            load_mission_name_text(missi);
         }
         LOGSYNC("Init %s mission %hu on map %hu level %hd", in_network_game ? "MP" : "SP",
           missi, next_mapno, next_level);
