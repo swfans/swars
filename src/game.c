@@ -767,7 +767,11 @@ int load_outro_text(ubyte *buf)
     int i;
 
     totlen = load_file_wad("outtro.txt", "qdata/alltext", buf);
-    buf[totlen] = 0;
+    if (totlen == -1) {
+        buf[0] = '\0';
+        return 0;
+    }
+    buf[totlen] = '\0';
     s = (char *)buf;
     for (i = 0; i < totlen; i++) {
         s[i] = my_char_to_upper(s[i]);
@@ -800,6 +804,10 @@ int load_people_text(ubyte *buf)
     int i;
 
     totlen = LbFileLoadAt("data/people.txt", buf);
+    if (totlen == -1) {
+        buf[0] = '\0';
+        return 0;
+    }
     peptxt_len = totlen;
 
     s = (char *)buf;
@@ -878,12 +886,12 @@ int load_people_text(ubyte *buf)
               if (desc > s) {
                   totlen++;
                   s = desc;
+                  g++;
               }
               if (*s == '\0')
                   break;
               s++;
             }
-            g = &buf[totlen];
             *g = 100; // end-of-list marker
             totlen++;
             continue;
@@ -9133,9 +9141,8 @@ ubyte load_mail_text(const char *filename)
         return 0;
     }
     p = mission_briefing_text;
-    p[3 + totlen] = 0;
+    p[3 + totlen] = '\0';
     my_preprocess_text(p);
-    mission_text_box.Lines = 0;
     return Lb_SUCCESS;
 }
 
@@ -9159,6 +9166,7 @@ void brief_load_mission_info(void)
             sprintf(fname, "%s/miss%03d.txt", "textdata", mission_list[missi].SourceID);
         }
         load_mail_text(fname);
+        mission_text_box.Lines = 0;
     }
 }
 

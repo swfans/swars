@@ -1546,9 +1546,9 @@ TbResult load_netscan_text_data(ushort mapno, ushort level)
 
     found = 0;
     totlen = load_file_wad("textdata/netscan.txt", "qdata/alltext", netscan_text);
-    if (totlen == -1)
+    if (totlen == -1) {
         return Lb_FAIL;
-
+    }
     p = netscan_text;
     while ( !found )
     {
