@@ -34,7 +34,11 @@ extern char ModemResponseString[80];
 extern char ModemRequestString[80];
 extern ubyte byte_1E81E0[1027];
 
+extern ulong ipx_send_packet_count[8][8];
+extern ulong ipx_got_player_send_packet_count[8];
+
 extern struct ComHandlerInfo com_dev[4];
+extern struct IPXDatagramBackup datagram_backup[8];
 
 struct ModemCommand modem_cmds[] = {
     {"ATZ"},
@@ -154,6 +158,100 @@ void setup_bullfrog_header(struct TbIPXPlayerHeader *ipxhead, int a2)
     memcpy(ipxhead->field_1C, ipxhndl->field_2E, sizeof(ipxhead->field_1C));
     memcpy(&ipxhead->field_20, &ipxhndl->field_32, sizeof(ipxhead->field_20));
     memcpy(ipxhead->field_22, &ipxhndl->field_2A, sizeof(ipxhead->field_22));
+}
+
+TbResult ipx_create_session(char *a1, ubyte *a2)
+{
+#if 0
+    int ret;
+    asm volatile ("call ASM_ipx_create_session\n"
+        : "=r" (ret) : "a" (a1), "d" (a2) );
+    return ret;
+#endif
+    struct TbIPXHandler *ipxhndl;
+    struct TbIPXPlayer *plyr;
+    ulong tm_start, tm_curr;
+    TbResult ret;
+    int i;
+
+    if (IPXHandler->SessionActive != 0) {
+        LOGERR("Already did IPX initialization");
+        return Lb_FAIL;
+    }
+
+    tm_start = clock();
+    while (1)
+    {
+        tm_curr = clock();
+#if defined(DOS)||defined(GO32)
+        CallIPX(1);
+#endif
+        for (i = 1; i < 30; i++)
+        {
+            ipxhndl = IPXHandler;
+            if (ipxhndl->field_46[i])
+            {
+                ipxhndl->field_46[i] = 0;
+                plyr = &ipxhndl->PlayerData[i];
+                if (IPXPlayerHeader.field_2 == plyr->Header.field_2)
+                {
+                    if (stricmp(plyr->Header.field_4, a1) == 0) {
+                        LOGERR("String same as remote");
+                        return Lb_FAIL;
+                    }
+                }
+            }
+        }
+
+        ret = 0;
+        if (NetworkServicePtr.F.SessionCreate != NULL)
+            ret = NetworkServicePtr.F.SessionCreate();
+        if (ret == -7) {
+          LOGERR("Service callback error %d", (int)ret);
+          return ret;
+        }
+
+        if (tm_curr - tm_start >= 300)
+            break;
+    }
+
+    for (i = 0; i < 16; i++)
+    {
+        ubyte val;
+
+        val = a2[i];
+        if (val == 0)
+        {
+              IPXHandler->field_34[i] = 0;
+              break;
+        }
+        IPXHandler->field_34[i] = val;
+    }
+
+    ipxhndl = IPXHandler;
+    IPXHandler->field_34[15] = 0;
+    setup_bullfrog_header(&IPXPlayerHeader, 1);
+    IPXHandler->field_44 = 1;
+
+    if (strlen(a1) > 7)
+            a1[7] = 0;
+    strcpy(IPXPlayerHeader.field_4, a1);
+
+    memcpy(IPXPlayerHeader.field_2D, &IPXHandler->field_2A, 0x1Cu);
+    strcpy(IPXPlayerHeader.field_C, IPXHandler->field_34);
+
+    memset(ipx_send_packet_count, 0, 0x100u);
+    memset(ipx_got_player_send_packet_count, 0, 0x20u);
+    memset(datagram_backup, 0, sizeof(struct IPXDatagramBackup) * 8);
+
+    ipxhndl = IPXHandler;
+    ipxhndl->SessionActive = 1;
+    ipxhndl->field_C = 0;
+    ipxhndl->field_D = 0;
+    IPXPlayerHeader.num_players = 1;
+    IPXPlayerHeader.field_26 = 0;
+
+    return Lb_SUCCESS;
 }
 
 int ipx_get_host_player_number(void)

@@ -31,6 +31,8 @@ extern "C" {
 
 typedef void *NSERV_HANDLE;
 
+typedef int (*NSVC_SESSIONCB) ();
+
 enum NetworkServiceType {
     NetSvc_NONE = 0x0,
     NetSvc_IPX,
@@ -42,15 +44,15 @@ enum NetworkServiceType {
 };
 
 struct NetworkServiceFunction { // sizeof=36
-    NSERV_HANDLE SessionCreate; // offset=0
-    NSERV_HANDLE SessionJoin;
-    NSERV_HANDLE SessionExchange;
-    NSERV_HANDLE SessionInit;
-    NSERV_HANDLE SessionDial; // offset=16
-    NSERV_HANDLE SessionAnswer;
-    NSERV_HANDLE SessionHangUp;
-    NSERV_HANDLE UsedSessionInit;
-    NSERV_HANDLE netsvcfunc_unkn20; // offset=32
+    NSVC_SESSIONCB SessionCreate; // offset=0
+    NSVC_SESSIONCB SessionJoin;
+    NSVC_SESSIONCB SessionExchange;
+    NSVC_SESSIONCB SessionInit;
+    NSVC_SESSIONCB SessionDial; // offset=16
+    NSVC_SESSIONCB SessionAnswer;
+    NSVC_SESSIONCB SessionHangUp;
+    NSVC_SESSIONCB UsedSessionInit;
+    NSVC_SESSIONCB netsvcfunc_unkn20; // offset=32
 };
 
 struct TbNetworkService { // sizeof=10
@@ -168,8 +170,8 @@ struct ComHandlerInfo {
 struct TbIPXPlayerHeader {
   char Magic[2];
   short field_2;
-  ubyte field_4[8];
-  ubyte field_C[16];
+  char field_4[8];
+  char field_C[16];
   ubyte field_1C[4];
   short field_20;
   ubyte field_22[4];
@@ -206,10 +208,18 @@ struct TbIPXHandler {
   long field_2A;
   ubyte field_2E[4];
   short field_32;
-  ubyte field_34[16];
+  char field_34[16];
   short field_44;
   ubyte field_46[30];
   struct TbIPXPlayer PlayerData[30];
+};
+
+struct IPXDatagramBackup {
+  long field_0;
+  long field_4;
+  short field_8;
+  ubyte field_A[538];
+  short field_224;
 };
 
 #pragma pack()
