@@ -19,6 +19,7 @@
 #include "network.h"
 
 #include "bfkeybd.h"
+#include "bfdos.h"
 #include "display.h"
 #include <assert.h>
 #include <unistd.h>
@@ -103,6 +104,42 @@ TbBool ipx_is_initialized(void)
 {
     return (IPXHandler != NULL);
 }
+
+#if defined(DOS)||defined(GO32)
+
+int CallIPX(ubyte a1)
+{
+    struct DPMI_REGS dpmi_regs;
+    union REGS regs;
+    struct SREGS sregs;
+
+    IPXHandler->field_2 = a1;
+    memset(&dpmi_regs, 0, sizeof(struct DPMI_REGS));
+    memset(&regs, 0, sizeof(union REGS));
+    /* Use DMPI call 300h to issue the DOS interrupt */
+    regs.x.eax = 0x300;
+    regs.x.ebx = IPXHandler->field_0;
+    segread(&sregs);
+    regs.x.edi = (unsigned int)&dpmi_regs;
+    return int386x(0x31, &regs, &regs, &sregs);
+}
+
+ubyte CallRealModeInterrupt(ubyte a1, struct DPMI_REGS *dpmi_regs)
+{
+    union REGS regs;
+    struct SREGS sregs;
+
+    memset(&regs, 0, sizeof(union REGS));
+    /* Use DMPI call 300h to issue the DOS interrupt */
+    regs.x.eax = 0x300;
+    regs.x.ebx = a1;
+    segread(&sregs);
+    regs.x.edi = (unsigned int)dpmi_regs;
+    int386x(49, &regs, &regs, &sregs);
+    return dpmi_regs->eax;
+}
+
+#endif
 
 int ipx_get_host_player_number(void)
 {
