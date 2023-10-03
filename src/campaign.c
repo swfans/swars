@@ -1545,7 +1545,7 @@ TbResult load_netscan_text_data(ushort mapno, ushort level)
     int secnum_int;
 
     found = 0;
-    totlen = load_file_wad("textdata/netscan.txt", "qdata/alltext", netscan_text);
+    totlen = load_file_alltext("textdata/netscan.txt", netscan_text);
     if (totlen == -1) {
         return Lb_FAIL;
     }
@@ -1608,7 +1608,7 @@ TbResult load_mission_name_text(ubyte missi)
     char *p;
     char c;
 
-    totlen = load_file_wad("textdata/names.txt", "qdata/alltext", memload);
+    totlen = load_file_alltext("textdata/names.txt", memload);
     if (totlen == -1) {
         mission_name[0] = '\0';
         return Lb_FAIL;

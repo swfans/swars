@@ -40,6 +40,8 @@ struct WADIndexEntry {
 TbFileHandle open_file_from_wad(const char *filename, const char *wadfile);
 int load_file_wad(const char *filename, const char *wadfile, void *outbuf);
 
+int load_file_alltext(const char *filename, void *outbuf);
+
 /******************************************************************************/
 #ifdef __cplusplus
 }

@@ -64,7 +64,7 @@ void load_city_txt(void)
     int totlen;
     int i, n, k, city;
 
-    totlen = load_file_wad("textdata/city.txt", "qdata/alltext", memload);
+    totlen = load_file_alltext("textdata/city.txt", memload);
     if (totlen == -1) {
         return;
     }

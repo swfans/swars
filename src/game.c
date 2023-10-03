@@ -766,7 +766,7 @@ int load_outro_text(ubyte *buf)
     char *s;
     int i;
 
-    totlen = load_file_wad("outtro.txt", "qdata/alltext", buf);
+    totlen = load_file_alltext("outtro.txt", buf);
     if (totlen == -1) {
         buf[0] = '\0';
         return 0;
@@ -9136,7 +9136,7 @@ ubyte load_mail_text(const char *filename)
     p[1] = 'c';
     p[2] = '3';
 
-    totlen = load_file_wad(filename, "qdata/alltext", p + 3);
+    totlen = load_file_alltext(filename, p + 3);
     if (totlen == -1) {
         return 0;
     }

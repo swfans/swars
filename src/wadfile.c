@@ -84,4 +84,11 @@ int load_file_wad(const char *filename, const char *wadfile, void *outbuf)
     return nread;
 }
 
+int load_file_alltext(const char *filename, void *outbuf)
+{
+    const char *alltext_fname;
+    alltext_fname = "qdata/alltext";
+    return load_file_wad(filename, alltext_fname, outbuf);
+}
+
 /******************************************************************************/

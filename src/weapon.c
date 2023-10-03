@@ -365,7 +365,7 @@ void init_weapon_text(void)
     char *s;
     int i, n;
 
-    totlen = load_file_wad("textdata/wms.txt", "qdata/alltext", weapon_text);
+    totlen = load_file_alltext("textdata/wms.txt", weapon_text);
     if (totlen == Lb_FAIL)
         return;
 

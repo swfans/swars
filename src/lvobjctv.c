@@ -2099,7 +2099,7 @@ int load_objectives_text(void *data)
     int i, n;
     char c;
 
-    totlen = load_file_wad("textdata/obj.txt", "qdata/alltext", data);
+    totlen = load_file_alltext("textdata/obj.txt", data);
     if (totlen <= 0)
       return 0;
     p = (char *)data;

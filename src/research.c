@@ -34,7 +34,7 @@ void load_scientist_lost_reason(ushort reason_no)
     char c;
     ushort i;
 
-    totlen = load_file_wad("lost.txt", "qdata/alltext", back_buffer + text_buf_pos);
+    totlen = load_file_alltext("lost.txt", back_buffer + text_buf_pos);
     if (totlen == -1) {
         return;
     }
