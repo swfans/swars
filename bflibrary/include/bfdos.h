@@ -28,6 +28,8 @@ extern "C" {
 
 #pragma pack(1)
 
+/** DOS Segment Registers.
+ */
 struct SREGS { // sizeof=12
     ushort es; // offset=0
     ushort cs; // offset=2
@@ -39,6 +41,8 @@ struct SREGS { // sizeof=12
 
 typedef struct SREGS SREGS;
 
+/** DOS 32-bit Registers.
+ */
 struct DWORDREGS { // sizeof=28
     unsigned int eax; // offset=0
     unsigned int ebx; // offset=4
@@ -51,6 +55,8 @@ struct DWORDREGS { // sizeof=28
 
 typedef struct DWORDREGS DWORDREGS;
 
+/** DOS 16-bit Registers.
+ */
 struct WORDREGS { // sizeof=28
     ushort ax; // offset=0
     ushort _1; // offset=2
@@ -69,6 +75,8 @@ struct WORDREGS { // sizeof=28
 
 typedef struct WORDREGS WORDREGS;
 
+/** DOS 8-bit Registers.
+ */
 struct BYTEREGS { // sizeof=16
     ubyte al; // offset=0
     ubyte ah; // offset=1
@@ -86,11 +94,30 @@ struct BYTEREGS { // sizeof=16
 
 typedef struct BYTEREGS BYTEREGS;
 
+/** DOS Registers.
+ */
 union REGS { // sizeof=28
     BYTEREGS h; // offset=0
     WORDREGS w; // offset=1
     DWORDREGS x; // offset=2
 };
+
+/** DOS registers for DPMI interrupts (int 0x31).
+ */
+struct DPMI_REGS {
+    unsigned int edi;
+    unsigned int esi;
+    unsigned int ebp;
+    unsigned int reserved_by_system;
+    unsigned int ebx;
+    unsigned int edx;
+    unsigned int ecx;
+    unsigned int eax;
+    ushort flags;
+    ushort es,ds,fs,gs,ip,cs,sp,ss;
+};
+
+typedef struct DPMI_REGS DPMI_REGS;
 
 #pragma pack()
 
