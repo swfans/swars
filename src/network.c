@@ -143,14 +143,29 @@ ubyte CallRealModeInterrupt(ubyte a1, struct DPMI_REGS *dpmi_regs)
 
 #endif
 
+void setup_bullfrog_header(struct TbIPXPlayerHeader *ipxhead, int a2)
+{
+    struct TbIPXHandler *ipxhndl;
+
+    ipxhndl = IPXHandler;
+    ipxhead->Magic[0] = 'B';
+    ipxhead->Magic[1] = 'U';
+    ipxhead->field_2A = a2;
+    memcpy(ipxhead->field_1C, ipxhndl->field_2E, sizeof(ipxhead->field_1C));
+    memcpy(&ipxhead->field_20, &ipxhndl->field_32, sizeof(ipxhead->field_20));
+    memcpy(ipxhead->field_22, &ipxhndl->field_2A, sizeof(ipxhead->field_22));
+}
+
 int ipx_get_host_player_number(void)
 {
     if (!ipx_is_initialized()) {
         LOGERR("Called before IPX initialization");
         return -1;
     }
-    if (IPXHandler->SessionActive == 0)
+    if (IPXHandler->SessionActive == 0) {
+        LOGERR("Called without active session");
         return -1;
+    }
     return IPXHandler->field_D;
 }
 
@@ -160,8 +175,10 @@ int ipx_get_player_number(void)
         LOGERR("Called before IPX initialization");
         return -1;
     }
-    if (IPXHandler->SessionActive == 0)
+    if (IPXHandler->SessionActive == 0) {
+        LOGERR("Called without active session");
         return -1;
+    }
     return IPXPlayerHeader.field_2B;
 }
 

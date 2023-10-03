@@ -166,8 +166,7 @@ struct ComHandlerInfo {
 };
 
 struct TbIPXPlayerHeader {
-  ubyte field_0;
-  ubyte field_1;
+  char Magic[2];
   short field_2;
   ubyte field_4[8];
   ubyte field_C[16];
