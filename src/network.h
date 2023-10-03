@@ -30,7 +30,7 @@ extern "C" {
 #pragma pack(1)
 
 typedef void *NSERV_HANDLE;
-
+typedef void *NSESS_HANDLE;
 typedef int (*NSVC_SESSIONCB) ();
 
 enum NetworkServiceType {
@@ -61,6 +61,16 @@ struct TbNetworkService { // sizeof=10
     ushort Type; // offset=6
     ushort Flags; // offset=8
     struct NetworkServiceFunction F;
+};
+
+struct TbNetworkSession { // sizeof=40
+    NSESS_HANDLE Id; // offset=0
+    ulong GameId; // offset=2
+    char Name[8]; // offset=6
+    short HostPlayerNumber; // offset=14
+    short MaxPlayers; // offset=16
+    short Flags; // offset=18
+    ubyte Reserved[20]; // offset=20
 };
 
 struct NetworkPlayerUFourPacks {
@@ -151,7 +161,7 @@ struct TbSerialDev { // sizeof=4301
   ubyte field_10AA;
   ubyte field_10AB;
   ubyte num_players;
-  ubyte field_10AD[31];
+  char field_10AD[31];
   ubyte field_10CC;
 };
 

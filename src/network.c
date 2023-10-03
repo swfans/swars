@@ -160,7 +160,7 @@ void setup_bullfrog_header(struct TbIPXPlayerHeader *ipxhead, int a2)
     memcpy(ipxhead->field_22, &ipxhndl->field_2A, sizeof(ipxhead->field_22));
 }
 
-TbResult ipx_create_session(char *a1, ubyte *a2)
+TbResult ipx_create_session(char *a1, const char *a2)
 {
 #if 0
     int ret;
@@ -175,7 +175,7 @@ TbResult ipx_create_session(char *a1, ubyte *a2)
     int i;
 
     if (IPXHandler->SessionActive != 0) {
-        LOGERR("Already did IPX initialization");
+        LOGERR("Already have IPX session");
         return Lb_FAIL;
     }
 
@@ -338,6 +338,14 @@ int netsvc6_shutdown(void)
 {
     printf("QUITTING RADICA\n");
     return net_unkn_func_352();
+}
+
+int netsvc6_create_session(struct TbNetworkSession *session, const char *a2)
+{
+    int ret;
+    asm volatile ("call ASM_netsvc6_create_session\n"
+        : "=r" (ret) : "a" (session), "d" (a2) );
+    return ret;
 }
 
 int LbCommExchange(int a1, void *a2, int a3)
@@ -717,6 +725,66 @@ TbResult LbNetworkShutDownListeners(void)
         ret = Lb_SUCCESS;
         break;
     }
+    return ret;
+}
+
+TbResult LbCommSessionCreate(struct TbSerialDev *serhead, const char *sess_name, const char *a2)
+{
+    NSVC_SESSIONCB exchange_cb_bkp;
+    char locstr[16];
+    char *s;
+    TbResult ret;
+
+    serhead->field_10A9 = 1;
+    s = serhead->field_10AD;
+    strcpy(s, a2);
+
+    exchange_cb_bkp = NetworkServicePtr.F.SessionExchange;
+    NetworkServicePtr.F.SessionExchange = NetworkServicePtr.F.SessionCreate;
+    ret = LbCommExchange(serhead->comdev_id, s, 16);
+    if (ret == Lb_SUCCESS)
+    {
+        s = locstr;
+        strcpy(s, sess_name);
+        ret = LbCommExchange(serhead->comdev_id, s, 8);
+        lbICommSessionActive = 1;
+    }
+    NetworkServicePtr.F.SessionExchange = exchange_cb_bkp;
+
+    return ret;
+}
+
+TbResult LbNetworkSessionCreate(struct TbNetworkSession *session, char *a2)
+{
+#if 0
+    TbResult ret;
+    asm volatile ("call ASM_LbNetworkSessionCreate\n"
+        : "=r" (ret) : "a" (session), "d" (a2) );
+    return ret;
+#endif
+    struct TbSerialDev *serhead;
+    TbResult ret;
+
+    ret = Lb_FAIL;
+    NetTimeoutTicks = 3000;
+    switch (NetworkServicePtr.Type)
+    {
+    case NetSvc_IPX:
+        IPXPlayerHeader.field_10E = session->MaxPlayers;
+        ret = ipx_create_session(session->Name, a2);
+        break;
+    case NetSvc_COM1:
+    case NetSvc_COM2:
+    case NetSvc_COM3:
+    case NetSvc_COM4:
+        serhead = NetworkServicePtr.Id;
+        ret = LbCommSessionCreate(serhead, session->Name, a2);
+        break;
+    case NetSvc_Unkn6:
+        ret = netsvc6_create_session(session, a2);
+        break;
+    }
+    LOGSYNC("Service %d create result=%d", (int)NetworkServicePtr.Type, (int)ret);
     return ret;
 }
 
