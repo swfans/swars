@@ -235,6 +235,7 @@ TbResult LbNetworkSetSessionHangUpFunction(void *func);
 TbResult LbNetworkSetTimeoutSec(ulong tmsec);
 
 int LbNetworkSessionNumberPlayers(void);
+TbBool LbNetworkSessionActive(void);
 TbResult LbNetworkHostPlayerNumber(void);
 TbResult LbNetworkSetupIPXAddress(ulong addr);
 TbResult LbNetworkPlayerNumber(void);

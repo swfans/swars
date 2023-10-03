@@ -183,21 +183,15 @@ int LbCommExchange(int a1, void *a2, int a3)
 
 int LbCommStopExchange(ubyte a1)
 {
-#if 0
-    int ret;
-    asm volatile ("call ASM_LbCommStopExchange\n"
-        : "=r" (ret) : "a" (a1) );
-    return ret;
-#endif
     net_unkn_func_338(byte_1E81E0);
     return 1;
 }
 
-int LbCommDeInit(void *a1)
+int LbCommDeInit(struct TbSerialDev *serhead)
 {
     int ret;
     asm volatile ("call ASM_LbCommDeInit\n"
-        : "=r" (ret) : "a" (a1) );
+        : "=r" (ret) : "a" (serhead) );
     return ret;
 }
 
@@ -221,7 +215,8 @@ int LbNetworkSessionNumberPlayers(void)
         serhead = NetworkServicePtr.Id;
         ret = serhead->num_players;
         break;
-    default:
+    case NetSvc_Unkn6:
+        ret = Lb_FAIL;
         break;
     }
     return ret;
@@ -248,7 +243,8 @@ TbResult LbNetworkSessionStop(void)
         lbICommSessionActive = 0;
         ret = Lb_SUCCESS;
         break;
-    default:
+    case NetSvc_Unkn6:
+        ret = Lb_FAIL;
         break;
     }
     return ret;
@@ -275,7 +271,8 @@ TbResult LbNetworkHostPlayerNumber(void)
         else
             ret = 1;
         break;
-    default:
+    case NetSvc_Unkn6:
+        ret = Lb_FAIL;
         break;
     }
     return ret;
@@ -370,10 +367,31 @@ TbResult LbNetworkReset(void)
     return ret;
 }
 
-#if defined(DOS)||defined(GO32)
-void write_char_ctrl(struct TbSerialDev *serdev, ubyte c)
+TbBool LbNetworkSessionActive(void)
 {
+    TbBool ret;
+
+    ret = false;
+    switch (NetworkServicePtr.Type)
+    {
+    case NetSvc_IPX:
+        if (IPXHandler != NULL)
+            ret = IPXHandler->field_A;
+        break;
+    case NetSvc_COM1:
+    case NetSvc_COM2:
+    case NetSvc_COM3:
+    case NetSvc_COM4:
+        ret = lbICommSessionActive;
+        break;
+    case NetSvc_Unkn6:
+        ret = false;
+        break;
+    }
+    return ret;
 }
+
+#if defined(DOS)||defined(GO32)
 
 void write_char_no_buff(struct TbSerialDev *serdev, ubyte c)
 {
@@ -388,6 +406,7 @@ void write_char(struct TbSerialDev *serdev, ubyte c)
 {
     write_char_no_buff(serdev, c);
 }
+
 #endif
 
 void write_string(struct TbSerialDev *serdev, const char *str)
@@ -459,12 +478,6 @@ int get_modem_response(struct TbSerialDev *serdev)
 
 TbResult LbModemHangUp(ushort dev_id)
 {
-#if 0
-    TbResult ret;
-    asm volatile ("call ASM_LbModemHangUp\n"
-        : "=r" (ret) : "a" (dev_id));
-    return ret;
-#else
     struct TbSerialDev *serdev;
     TbResult ret;
 
@@ -487,7 +500,6 @@ TbResult LbModemHangUp(ushort dev_id)
     send_string(serdev, modem_cmds[2].cmd);
 
     return ret;
-#endif
 }
 
 TbResult LbNetworkHangUp(void)
@@ -508,7 +520,8 @@ TbResult LbNetworkHangUp(void)
         serhead = NetworkServicePtr.Id;
         ret = LbModemHangUp(serhead->comdev_id);
         break;
-    default:
+    case NetSvc_Unkn6:
+        ret = Lb_FAIL;
         break;
     }
     return ret;
@@ -555,12 +568,6 @@ void read_a_line(FILE *fp, char *buf)
 
 TbResult LbModemReadConfig(const char *fname)
 {
-#if 1
-    TbResult ret;
-    asm volatile ("call ASM_LbModemReadConfig\n"
-        : "=r" (ret) : "a" (fname));
-    return ret;
-#else
     char locstr[80];
     FILE *fp;
     int i;
@@ -586,7 +593,6 @@ TbResult LbModemReadConfig(const char *fname)
     read_a_line(fp, modem_cmds[3].cmd);
     fclose(fp);
     return Lb_SUCCESS;
-#endif
 }
 
 int my_net_session_callback()
