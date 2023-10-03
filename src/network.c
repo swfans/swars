@@ -99,8 +99,15 @@ TbResult LbNetworkSetTimeoutSec(ulong tmsec)
     return Lb_SUCCESS;
 }
 
+TbBool ipx_is_initialized(void)
+{
+    return (IPXHandler != NULL);
+}
+
 int ipx_get_host_player_number(void)
 {
+    if (!ipx_is_initialized())
+        return -1;
     if (IPXHandler->field_A == 0)
         return -1;
     return IPXHandler->field_D;
@@ -108,6 +115,8 @@ int ipx_get_host_player_number(void)
 
 int ipx_get_player_number(void)
 {
+    if (!ipx_is_initialized())
+        return -1;
     if (IPXHandler->field_A == 0)
         return -1;
     return IPXPlayerHeader.field_2B;
@@ -350,8 +359,10 @@ TbResult LbNetworkReset(void)
     switch (NetworkServicePtr.Type)
     {
     case NetSvc_IPX:
-        ipx_shutdown(IPXHandler->field_8);
-        ret = Lb_SUCCESS;
+        if (ipx_is_initialized()) {
+            ipx_shutdown(IPXHandler->field_8);
+            ret = Lb_SUCCESS;
+        }
         break;
     case NetSvc_COM1:
     case NetSvc_COM2:
@@ -375,7 +386,7 @@ TbBool LbNetworkSessionActive(void)
     switch (NetworkServicePtr.Type)
     {
     case NetSvc_IPX:
-        if (IPXHandler != NULL)
+        if (ipx_is_initialized())
             ret = IPXHandler->field_A;
         break;
     case NetSvc_COM1:
