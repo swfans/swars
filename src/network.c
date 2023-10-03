@@ -24,6 +24,7 @@
 extern ubyte lbICommSessionActive;
 extern struct TbIPXHandler *IPXHandler;
 extern struct TbIPXPlayerHeader IPXPlayerHeader;
+extern ubyte byte_1E81E0[1027];
 
 TbResult LbNetworkReadConfig(const char *fname)
 {
@@ -136,6 +137,14 @@ int net_unkn_func_352(void)
     return ret;
 }
 
+int net_unkn_func_338(void *a1)
+{
+    int ret;
+    asm volatile ("call ASM_net_unkn_func_338\n"
+        : "=r" (ret) : "a" (a1) );
+    return ret;
+}
+
 int netsvc6_exchange_packets(void *a1, int a2)
 {
     int ret;
@@ -160,10 +169,14 @@ int LbCommExchange(int a1, void *a2, int a3)
 
 int LbCommStopExchange(ubyte a1)
 {
+#if 0
     int ret;
     asm volatile ("call ASM_LbCommStopExchange\n"
         : "=r" (ret) : "a" (a1) );
     return ret;
+#endif
+    net_unkn_func_338(byte_1E81E0);
+    return 1;
 }
 
 int LbCommDeInit(void *a1)
@@ -397,6 +410,21 @@ TbResult LbNetworkShutDownListeners(void)
         break;
     }
     return ret;
+}
+
+void read_a_line(FILE *fp, char *buf)
+{
+    char c;
+    char *s;
+
+    for (s = buf; ; s++)
+    {
+        c = fgetc(fp);
+        if ((c == '\r') || (c == '\n'))
+            break;
+        *s = c;
+    }
+    *s = '\0';
 }
 
 TbResult LbModemReadConfig(const char *fname)
