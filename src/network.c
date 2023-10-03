@@ -18,11 +18,13 @@
 /******************************************************************************/
 #include "network.h"
 
+#include <assert.h>
+#include <unistd.h>
+
 #include "bfkeybd.h"
 #include "bfdos.h"
 #include "display.h"
-#include <assert.h>
-#include <unistd.h>
+#include "swlog.h"
 /******************************************************************************/
 extern ubyte lbICommSessionActive;
 extern struct TbIPXHandler *IPXHandler;
@@ -143,18 +145,22 @@ ubyte CallRealModeInterrupt(ubyte a1, struct DPMI_REGS *dpmi_regs)
 
 int ipx_get_host_player_number(void)
 {
-    if (!ipx_is_initialized())
+    if (!ipx_is_initialized()) {
+        LOGERR("Called before IPX initialization");
         return -1;
-    if (IPXHandler->field_A == 0)
+    }
+    if (IPXHandler->SessionActive == 0)
         return -1;
     return IPXHandler->field_D;
 }
 
 int ipx_get_player_number(void)
 {
-    if (!ipx_is_initialized())
+    if (!ipx_is_initialized()) {
+        LOGERR("Called before IPX initialization");
         return -1;
-    if (IPXHandler->field_A == 0)
+    }
+    if (IPXHandler->SessionActive == 0)
         return -1;
     return IPXPlayerHeader.field_2B;
 }
@@ -424,7 +430,7 @@ TbBool LbNetworkSessionActive(void)
     {
     case NetSvc_IPX:
         if (ipx_is_initialized())
-            ret = IPXHandler->field_A;
+            ret = IPXHandler->SessionActive;
         break;
     case NetSvc_COM1:
     case NetSvc_COM2:

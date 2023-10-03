@@ -196,7 +196,9 @@ struct TbIPXHandler {
   short PlayerDataSize;
   short field_6;
   ushort field_8;
-  ubyte field_A;
+  /** Network session state; 0 - not ready, 1 - active, 2 - active but down
+   */
+  ubyte SessionActive;
   ubyte field_B;
   ubyte field_C;
   ubyte field_D;
