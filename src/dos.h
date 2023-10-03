@@ -5,6 +5,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+#include "bfdos.h"
 
 #define DOS_O_RDONLY    0x0000
 #define DOS_O_WRONLY    0x0001
@@ -18,72 +19,6 @@
 #define DOS_O_EXCL      0x0400
 
 #define DOS_CLOCKS_PER_SEC 100
-
-
-struct DOS_Registers32
-{
-  uint32_t eax;    /* 00 */
-  uint32_t ebx;    /* 04 */
-  uint32_t ecx;	   /* 08 */
-  uint32_t edx;	   /* 0c */
-  uint32_t esi;	   /* 10 */
-  uint32_t edi;	   /* 14 */
-  uint32_t eflags; /* 18 */
-} __attribute__ ((packed));
-
-typedef struct DOS_Registers32 DOS_Registers32;
-
-
-struct DOS_Registers16
-{
-  uint16_t ax;		uint16_t _unused_1;
-  uint16_t bx;		uint16_t _unused_2;
-  uint16_t cx;		uint16_t _unused_3;
-  uint16_t dx;		uint16_t _unused_4;
-  uint16_t si;		uint16_t _unused_5;
-  uint16_t di;		uint16_t _unused_6;
-  int16_t flags;
-} __attribute__ ((packed));
-
-typedef struct DOS_Registers16 DOS_Registers16;
-
-
-struct DOS_Registers8
-{
-  uint8_t al;
-  uint8_t ah;		uint16_t _unused_1;
-  uint8_t bl;
-  uint8_t bh;		uint16_t _unused_2;
-  uint8_t cl;
-  uint8_t ch;		uint16_t _unused_3;
-  uint8_t dl;
-  uint8_t dh;
-} __attribute__ ((packed));
-
-typedef struct DOS_Registers8 DOS_Registers8;
-
-
-union DOS_Registers
-{
-  DOS_Registers32 r32;
-  DOS_Registers16 r16;
-  DOS_Registers8  r8;
-};
-
-typedef union DOS_Registers DOS_Registers;
-
-
-struct DOS_SegmentRegisters
-{
-  uint16_t es;
-  uint16_t cs;
-  uint16_t ss;
-  uint16_t ds;
-  uint16_t fs;
-  uint16_t gs;
-};
-
-typedef struct DOS_SegmentRegisters DOS_SegmentRegisters;
 
 
 struct dostime_t
@@ -118,11 +53,11 @@ void dos_getdate (struct dosdate_t *d);
 
 void dos_free(unsigned short n);
 
-int dos_int386 (int num, DOS_Registers *regs, DOS_Registers *out_regs)
+int dos_int386 (int num, union REGS *regs, union REGS *out_regs)
       __attribute__ ((noreturn));
 
-int dos_int386x (int num, DOS_Registers *regs, DOS_Registers *out_regs,
-		 DOS_SegmentRegisters *sregs)
+int dos_int386x (int num, union REGS *regs, union REGS *out_regs,
+		 SREGS *sregs)
       __attribute__ ((noreturn));
 
 void *dos_getvect (int num) __attribute__ ((noreturn));
