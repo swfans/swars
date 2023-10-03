@@ -129,6 +129,10 @@ struct NetPlayer2 {
   char field_18;
 };
 
+struct ModemCommand {
+  char cmd[80];
+};
+
 struct TbSerialDev { // sizeof=4301
   ubyte field_0[2198];
   ubyte inbuf[2048];
@@ -147,6 +151,18 @@ struct TbSerialDev { // sizeof=4301
   ubyte num_players;
   ubyte field_10AD[31];
   ubyte field_10CC;
+};
+
+struct ComHandlerInfo {
+  struct TbSerialDev *serdev;
+  ushort field_4;
+  ushort field_6;
+  ushort field_8;
+  ushort field_A[4];
+  ulong field_12;
+  ushort field_16;
+  ushort field_18;
+  ushort field_1A;
 };
 
 struct TbIPXPlayerHeader {

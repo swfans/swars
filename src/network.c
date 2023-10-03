@@ -20,11 +20,25 @@
 
 #include "bfkeybd.h"
 #include "display.h"
+#include <assert.h>
+#include <unistd.h>
 /******************************************************************************/
 extern ubyte lbICommSessionActive;
 extern struct TbIPXHandler *IPXHandler;
 extern struct TbIPXPlayerHeader IPXPlayerHeader;
+
+extern char ModemResponseString[80];
+extern char ModemRequestString[80];
 extern ubyte byte_1E81E0[1027];
+
+extern struct ComHandlerInfo com_dev[4];
+
+struct ModemCommand modem_cmds[] = {
+    {"ATZ"},
+    {"ATD"},
+    {"ATH"},
+    {"ATS0=1"},
+};
 
 TbResult LbNetworkReadConfig(const char *fname)
 {
@@ -356,12 +370,124 @@ TbResult LbNetworkReset(void)
     return ret;
 }
 
+#if defined(DOS)||defined(GO32)
+void write_char_ctrl(struct TbSerialDev *serdev, ubyte c)
+{
+}
+
+void write_char_no_buff(struct TbSerialDev *serdev, ubyte c)
+{
+    while ( !(inp(serdev->field_1096 + 5) & 0x20) )
+        ;
+    cli();
+    outp(serdev->field_1096, c);
+    sti();
+}
+
+void write_char(struct TbSerialDev *serdev, ubyte c)
+{
+    write_char_no_buff(serdev, c);
+}
+#endif
+
+void write_string(struct TbSerialDev *serdev, const char *str)
+{
+#if defined(DOS)||defined(GO32)
+    unsigned int i;
+    char c;
+
+    for (i = 0; i < strlen(locstr); i++)
+    {
+        c = locstr[i];
+        write_char(serdev, c);
+    }
+#else
+    // On Windows, WriteFile() should be used
+    // On Linux, write the device file with standard file ops
+    assert(!"not implemented");
+#endif
+}
+
+void read_write_clear_flag(struct TbSerialDev *serdev, ushort port, ubyte c)
+{
+#if defined(DOS)||defined(GO32)
+    ubyte val;
+    val = inp(port) & ~c;
+    outp(port, val);
+#else
+    assert(!"not implemented");
+#endif
+}
+
+void read_write_set_flag(struct TbSerialDev *serdev, ushort port, ubyte c)
+{
+#if defined(DOS)||defined(GO32)
+    ubyte val;
+    val = inp(port) | c;
+    outp(port, val);
+#else
+    assert(!"not implemented");
+#endif
+}
+
+void wait(ulong msec)
+{
+#if defined(DOS)||defined(GO32)
+    delay(msec);
+#else
+    usleep(msec * 1000);
+#endif
+}
+
+void send_string(struct TbSerialDev *serdev, const char *str)
+{
+    char locstr[80];
+
+    strcpy(locstr, str);
+    strcat(locstr, "\r");
+    write_string(serdev, locstr);
+    strcpy(ModemRequestString, locstr);
+}
+
+int get_modem_response(struct TbSerialDev *serdev)
+{
+    int ret;
+    asm volatile ("call ASM_get_modem_response\n"
+        : "=r" (ret) : "a" (serdev) );
+    return ret;
+}
+
 TbResult LbModemHangUp(ushort dev_id)
 {
+#if 0
     TbResult ret;
     asm volatile ("call ASM_LbModemHangUp\n"
         : "=r" (ret) : "a" (dev_id));
     return ret;
+#else
+    struct TbSerialDev *serdev;
+    TbResult ret;
+
+    if (dev_id > 3)
+        return Lb_FAIL;
+
+    serdev = com_dev[dev_id].serdev;
+    read_write_clear_flag(serdev, serdev->field_1096 + 4, 0x01);
+    wait(1250);
+
+    read_write_set_flag(serdev, serdev->field_1096 + 4, 0x01);
+    wait(1300);
+
+    send_string(serdev, "+++");
+    wait(1300);
+
+    NetworkServicePtr.F.UsedSessionInit = NetworkServicePtr.F.SessionHangUp;
+    ret = get_modem_response(serdev);
+    NetworkServicePtr.F.UsedSessionInit = NULL;
+    send_string(serdev, modem_cmds[2].cmd);
+
+    return ret;
+#endif
 }
 
 TbResult LbNetworkHangUp(void)
