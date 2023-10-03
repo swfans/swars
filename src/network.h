@@ -149,6 +149,52 @@ struct TbSerialDev { // sizeof=4301
   ubyte field_10CC;
 };
 
+struct TbIPXPlayerHeader {
+  ubyte field_0;
+  ubyte field_1;
+  short field_2;
+  ubyte field_4[8];
+  ubyte field_C[16];
+  ubyte field_1C[4];
+  short field_20;
+  ubyte field_22[4];
+  long field_26;
+  ubyte field_2A;
+  ubyte field_2B;
+  ubyte field_2C;
+  ubyte field_2D[26];
+  short field_47[99];
+  ubyte num_players;
+  ubyte field_10E;
+};
+
+struct TbIPXPlayer {
+  struct TbIPXPlayerHeader Header;
+  ubyte field_10F[268];
+  ubyte field_21B;
+};
+
+struct TbIPXHandler {
+  short field_0;
+  short field_2;
+  short PlayerDataSize;
+  short field_6;
+  ushort field_8;
+  ubyte field_A;
+  ubyte field_B;
+  ubyte field_C;
+  ubyte field_D;
+  ubyte field_E[4];
+  ubyte field_12[24];
+  long field_2A;
+  ubyte field_2E[4];
+  short field_32;
+  ubyte field_34[16];
+  short field_44;
+  ubyte field_46[30];
+  struct TbIPXPlayer PlayerData[30];
+};
+
 #pragma pack()
 /******************************************************************************/
 extern ubyte data_1c4a70;
@@ -172,7 +218,7 @@ TbResult LbNetworkSetSessionAnswerFunction(void *func);
 TbResult LbNetworkSetSessionHangUpFunction(void *func);
 TbResult LbNetworkSetTimeoutSec(ulong tmsec);
 
-TbResult LbNetworkSessionNumberPlayers(void);
+int LbNetworkSessionNumberPlayers(void);
 TbResult LbNetworkHostPlayerNumber(void);
 TbResult LbNetworkSetupIPXAddress(ulong addr);
 TbResult LbNetworkPlayerNumber(void);

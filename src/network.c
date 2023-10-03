@@ -22,7 +22,8 @@
 #include "display.h"
 /******************************************************************************/
 extern ubyte lbICommSessionActive;
-
+extern struct TbIPXHandler *IPXHandler;
+extern struct TbIPXPlayerHeader IPXPlayerHeader;
 
 TbResult LbNetworkReadConfig(const char *fname)
 {
@@ -85,10 +86,15 @@ TbResult LbNetworkSetTimeoutSec(ulong tmsec)
 
 int ipx_get_host_player_number(void)
 {
+#if 0
     int ret;
     asm volatile ("call ASM_ipx_get_host_player_number\n"
         : "=r" (ret) : );
     return ret;
+#endif
+  if (IPXHandler->field_A == 0)
+      return -1;
+  return IPXHandler->field_D;
 }
 
 void ipx_shutdown(ushort a1)
@@ -113,6 +119,20 @@ int ipx_stop_network(void)
     return ret;
 }
 
+int net_unkn_func_352(void)
+{
+    int ret;
+    asm volatile ("call ASM_net_unkn_func_352\n"
+        : "=r" (ret) :  );
+    return ret;
+}
+
+int netsvc6_shutdown(void)
+{
+    printf("QUITTING RADICA\n");
+    return net_unkn_func_352();
+}
+
 int LbCommStopExchange(ubyte a1)
 {
     int ret;
@@ -129,19 +149,22 @@ int LbCommDeInit(void *a1)
     return ret;
 }
 
-TbResult LbNetworkSessionNumberPlayers(void)
+int LbNetworkSessionNumberPlayers(void)
 {
-#if 1
+#if 0
     TbResult ret;
     asm volatile ("call ASM_LbNetworkSessionNumberPlayers\n"
         : "=r" (ret) : );
     return ret;
 #else
     struct TbSerialDev *serhead;
+    struct TbIPXPlayerHeader *ipxhead;
+
     switch (NetworkServicePtr.Type)
     {
     case NetSvc_IPX:
-        return (ubyte)IPXPlayerHeader.field_10D;
+        ipxhead = &IPXPlayerHeader;
+        return ipxhead->num_players;
     case NetSvc_COM1:
     case NetSvc_COM2:
     case NetSvc_COM3:
@@ -233,7 +256,7 @@ TbResult LbNetworkExchange(void *a1, int a2)
 TbResult LbNetworkReset(void)
 {
     TbResult ret;
-#if 1
+#if 0
     asm volatile ("call ASM_LbNetworkReset\n"
         : "=r" (ret) : );
     return ret;
@@ -242,7 +265,8 @@ TbResult LbNetworkReset(void)
     switch (NetworkServicePtr.Type)
     {
     case NetSvc_IPX:
-        ret = ipx_shutdown(*(ushort *)(IPXHandler + 8));
+        ipx_shutdown(IPXHandler->field_8);
+        ret = Lb_SUCCESS;
         break;
     case NetSvc_COM1:
     case NetSvc_COM2:
