@@ -195,7 +195,7 @@ TbResult ipx_create_session(char *a1, const char *a2)
                 plyr = &ipxhndl->PlayerData[i];
                 if (IPXPlayerHeader.field_2 == plyr->Header.field_2)
                 {
-                    if (stricmp(plyr->Header.field_4, a1) == 0) {
+                    if (strcasecmp(plyr->Header.field_4, a1) == 0) {
                         LOGERR("String same as remote");
                         return Lb_FAIL;
                     }
