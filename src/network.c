@@ -370,6 +370,14 @@ int LbCommDeInit(struct TbSerialDev *serhead)
     return ret;
 }
 
+TbResult LbNetworkServiceStart(void *a1)
+{
+    TbResult ret;
+    asm volatile ("call ASM_LbNetworkServiceStart\n"
+        : "=r" (ret) : "a" (a1) );
+    return ret;
+}
+
 int LbNetworkSessionNumberPlayers(void)
 {
     struct TbSerialDev *serhead;
