@@ -77,6 +77,16 @@ struct ModemCommand modem_cmds[] = {
     {"ATS0=1"},
 };
 
+struct NetworkServiceInfo Network_Service_List[] = {
+    {0, 0, NetSvc_IPX, 0x02},
+    {0, 0, NetSvc_COM1, 0x01},
+    {0, 0, NetSvc_COM2, 0x01},
+    {0, 0, NetSvc_COM3, 0x01},
+    {0, 0, NetSvc_COM4, 0x01},
+    {0, 0, NetSvc_Unkn6, 0x02},
+    {0, 0, 0, 0},
+};
+
 TbResult LbNetworkReadConfig(const char *fname)
 {
     return LbModemReadConfig(fname);
@@ -631,6 +641,23 @@ int LbNetworkSessionList(struct TbNetworkSessionList *nslist, int listlen)
         break;
     }
     return ret;
+}
+
+/** Prepares Network_Service_List and returns its size.
+ */
+int LbNetworkServiceList(void)
+{
+    struct NetworkServiceInfo *nsinfo;
+    int i;
+
+    nsinfo = Network_Service_List;
+    i = 0;
+    while (nsinfo->Type != 0)
+    {
+        nsinfo++;
+        i++;
+    }
+    return i;
 }
 
 int LbNetworkSessionNumberPlayers(void)
