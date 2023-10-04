@@ -23,6 +23,7 @@
 
 #include "bfkeybd.h"
 #include "bfdos.h"
+#include "bfmemory.h"
 #include "display.h"
 #include "swlog.h"
 /******************************************************************************/
@@ -160,12 +161,30 @@ void setup_bullfrog_header(struct TbIPXPlayerHeader *ipxhead, int a2)
     memcpy(ipxhead->field_22, &ipxhndl->field_2A, sizeof(ipxhead->field_22));
 }
 
-TbResult ipx_service_init(ushort a1)
+int ipx_update(void)
 {
+    TbResult ret;
+    asm volatile ("call ASM_ipx_update\n"
+        : "=r" (ret) : );
+    return ret;
+}
+
+void ipx_service_init(ushort a1)
+{
+#if 0
     TbResult ret;
     asm volatile ("call ASM_ipx_service_init\n"
         : "=r" (ret) : "a" (a1) );
     return ret;
+#endif
+    struct TbIPXHandler *ipxhndl;
+
+    LOGDBG("Starting");
+    ipxhndl = IPXHandler;
+    ipxhndl->field_8 = a1;
+#if defined(DOS)||defined(GO32)
+    CallIPX(8);
+#endif
 }
 
 
@@ -183,6 +202,7 @@ TbResult ipx_create_session(char *a1, const char *a2)
     TbResult ret;
     int i;
 
+    LOGDBG("Starting");
     if (IPXHandler->SessionActive != 0) {
         LOGERR("Already have IPX session");
         return Lb_FAIL;
@@ -263,6 +283,14 @@ TbResult ipx_create_session(char *a1, const char *a2)
     return Lb_SUCCESS;
 }
 
+TbResult ipx_session_list(ubyte *a1, int a2)
+{
+    TbResult ret;
+    asm volatile ("call ASM_ipx_session_list\n"
+        : "=r" (ret) : "a" (a1), "d" (a2) );
+    return ret;
+}
+
 int ipx_get_host_player_number(void)
 {
     if (!ipx_is_initialized()) {
@@ -299,6 +327,7 @@ int ipx_exchange_packets(void *a1, int a2)
 
 void ipx_shutdown(ushort a1)
 {
+    LOGDBG("Starting");
     asm volatile ("call ASM_ipx_shutdown\n"
         : : "a" (a1));
 }
@@ -306,6 +335,7 @@ void ipx_shutdown(ushort a1)
 int ipx_shutdown_listeners(void)
 {
     int ret;
+    LOGDBG("Starting");
     asm volatile ("call ASM_ipx_shutdown_listeners\n"
         : "=r" (ret) : );
     return ret;
@@ -314,6 +344,7 @@ int ipx_shutdown_listeners(void)
 int ipx_stop_network(void)
 {
     int ret;
+    LOGDBG("Starting");
     asm volatile ("call ASM_ipx_stop_network\n"
         : "=r" (ret) : );
     return ret;
@@ -322,6 +353,7 @@ int ipx_stop_network(void)
 int net_unkn_func_352(void)
 {
     int ret;
+    LOGDBG("Starting");
     asm volatile ("call ASM_net_unkn_func_352\n"
         : "=r" (ret) :  );
     return ret;
@@ -330,9 +362,25 @@ int net_unkn_func_352(void)
 int net_unkn_func_338(void *a1)
 {
     int ret;
+    LOGDBG("Starting");
     asm volatile ("call ASM_net_unkn_func_338\n"
         : "=r" (ret) : "a" (a1) );
     return ret;
+}
+
+int netsvc6_create_session(struct TbNetworkSession *session, const char *a2)
+{
+    int ret;
+    LOGDBG("Starting");
+    asm volatile ("call ASM_netsvc6_create_session\n"
+        : "=r" (ret) : "a" (session), "d" (a2) );
+    return ret;
+}
+
+int netsvc6_update(void)
+{
+    assert(!"Not implemented");
+    return Lb_SUCCESS;
 }
 
 int netsvc6_exchange_packets(void *a1, int a2)
@@ -345,21 +393,14 @@ int netsvc6_exchange_packets(void *a1, int a2)
 
 int netsvc6_shutdown(void)
 {
-    printf("QUITTING RADICA\n");
+    LOGSYNC("Quitting RADICA");
     return net_unkn_func_352();
-}
-
-int netsvc6_create_session(struct TbNetworkSession *session, const char *a2)
-{
-    int ret;
-    asm volatile ("call ASM_netsvc6_create_session\n"
-        : "=r" (ret) : "a" (session), "d" (a2) );
-    return ret;
 }
 
 struct TbSerialDev *LbCommInit(int idx)
 {
     struct TbSerialDev *ret;
+    LOGDBG("Starting");
     asm volatile ("call ASM_LbCommInit\n"
         : "=r" (ret) : "a" (idx) );
     return ret;
@@ -382,6 +423,7 @@ int LbCommStopExchange(ubyte a1)
 int LbCommDeInit(struct TbSerialDev *serhead)
 {
     int ret;
+    LOGDBG("Starting");
     asm volatile ("call ASM_LbCommDeInit\n"
         : "=r" (ret) : "a" (serhead) );
     return ret;
@@ -390,6 +432,7 @@ int LbCommDeInit(struct TbSerialDev *serhead)
 TbResult netsvc6_service_init(struct NetworkServiceInfo *nsvc)
 {
     TbResult ret;
+    LOGDBG("Starting");
     asm volatile ("call ASM_netsvc6_service_init\n"
         : "=r" (ret) : "a" (nsvc) );
     return ret;
@@ -411,8 +454,13 @@ TbResult LbNetworkServiceStart(struct NetworkServiceInfo *nsvc)
     switch (NetworkServicePtr.I.Type)
     {
     case NetSvc_IPX:
-        if (!ipx_is_initialized()) {
-            LOGERR("Called before IPX initialization");
+#if 0
+        if (IPXHandler == NULL) {
+            IPXHandler = LbMemoryAlloc(sizeof(struct TbIPXHandler));
+        }
+#endif
+        if (IPXHandler == NULL) {
+            LOGERR("Allocating IPX handler failed");
             ret = Lb_FAIL;
             break;
         }
@@ -446,6 +494,39 @@ TbResult LbNetworkServiceStart(struct NetworkServiceInfo *nsvc)
         }
         break;
     }
+    return ret;
+}
+
+TbResult LbNetworkUpdate(void)
+{
+    TbResult ret;
+
+    ret = Lb_FAIL;
+    switch (NetworkServicePtr.I.Type)
+    {
+    case NetSvc_IPX:
+        ipx_update();
+        ret = Lb_SUCCESS;
+        break;
+    case NetSvc_COM1:
+    case NetSvc_COM2:
+    case NetSvc_COM3:
+    case NetSvc_COM4:
+        ret = Lb_SUCCESS;
+        break;
+    case NetSvc_Unkn6:
+        netsvc6_update();
+        ret = Lb_SUCCESS;
+        break;
+    }
+    return ret;
+}
+
+TbResult LbNetworkSessionList(struct UnknStruct04 *a1, int a2)
+{
+    TbResult ret;
+    asm volatile ("call ASM_LbNetworkSessionList\n"
+        : "=r" (ret) : "a" (a1), "d" (a2) );
     return ret;
 }
 
@@ -737,6 +818,7 @@ TbResult LbModemHangUp(ushort dev_id)
     struct TbSerialDev *serdev;
     TbResult ret;
 
+    LOGDBG("Starting");
     if (dev_id > 3)
         return Lb_FAIL;
 
@@ -814,6 +896,7 @@ TbResult LbCommSessionCreate(struct TbSerialDev *serhead, const char *sess_name,
     char *s;
     TbResult ret;
 
+    LOGDBG("Starting");
     serhead->field_10A9 = 1;
     s = serhead->field_10AD;
     strcpy(s, a2);

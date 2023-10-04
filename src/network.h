@@ -236,6 +236,9 @@ struct IPXDatagramBackup {
   short field_224;
 };
 
+// Not sure what that is, yet
+struct UnknStruct04;
+
 #pragma pack()
 /******************************************************************************/
 extern ubyte data_1c4a70;
