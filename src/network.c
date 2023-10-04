@@ -160,10 +160,19 @@ void setup_bullfrog_header(struct TbIPXPlayerHeader *ipxhead, int a2)
     memcpy(ipxhead->field_22, &ipxhndl->field_2A, sizeof(ipxhead->field_22));
 }
 
+TbResult ipx_service_init(ushort a1)
+{
+    TbResult ret;
+    asm volatile ("call ASM_ipx_service_init\n"
+        : "=r" (ret) : "a" (a1) );
+    return ret;
+}
+
+
 TbResult ipx_create_session(char *a1, const char *a2)
 {
 #if 0
-    int ret;
+    TbResult ret;
     asm volatile ("call ASM_ipx_create_session\n"
         : "=r" (ret) : "a" (a1), "d" (a2) );
     return ret;
@@ -348,6 +357,14 @@ int netsvc6_create_session(struct TbNetworkSession *session, const char *a2)
     return ret;
 }
 
+struct TbSerialDev *LbCommInit(int idx)
+{
+    struct TbSerialDev *ret;
+    asm volatile ("call ASM_LbCommInit\n"
+        : "=r" (ret) : "a" (idx) );
+    return ret;
+}
+
 int LbCommExchange(int a1, void *a2, int a3)
 {
     int ret;
@@ -370,11 +387,65 @@ int LbCommDeInit(struct TbSerialDev *serhead)
     return ret;
 }
 
-TbResult LbNetworkServiceStart(void *a1)
+TbResult netsvc6_service_init(struct NetworkServiceInfo *nsvc)
 {
     TbResult ret;
+    asm volatile ("call ASM_netsvc6_service_init\n"
+        : "=r" (ret) : "a" (nsvc) );
+    return ret;
+}
+
+TbResult LbNetworkServiceStart(struct NetworkServiceInfo *nsvc)
+{
+#if 0
+    TbResult ret;
     asm volatile ("call ASM_LbNetworkServiceStart\n"
-        : "=r" (ret) : "a" (a1) );
+        : "=r" (ret) : "a" (nsvc) );
+    return ret;
+#endif
+    TbResult ret;
+    ulong k;
+
+    ret = Lb_FAIL;
+    memcpy(&NetworkServicePtr.I, nsvc, sizeof(struct NetworkServiceInfo));
+    switch (NetworkServicePtr.I.Type)
+    {
+    case NetSvc_IPX:
+        if (!ipx_is_initialized()) {
+            LOGERR("Called before IPX initialization");
+            ret = Lb_FAIL;
+            break;
+        }
+        memset(&IPXPlayerHeader, 0, sizeof(struct TbIPXPlayerHeader));
+        IPXPlayerHeader.field_2 = nsvc->GameId;
+        k = (nsvc->Flags >> 16) + 0x4545;
+        NetworkServicePtr.I.Id = &IPXPlayerHeader;
+        if (k > 0x4FFF)
+            k = 0x4FFF;
+        ipx_service_init((k << 8) | (k >> 8));
+        ret = Lb_SUCCESS;
+        break;
+    case NetSvc_COM1:
+    case NetSvc_COM2:
+    case NetSvc_COM3:
+    case NetSvc_COM4:
+        NetworkServicePtr.I.Id = LbCommInit(NetworkServicePtr.I.Type - NetSvc_COM1);
+        if (NetworkServicePtr.I.Id == NULL) {
+            LOGERR("Serial service init failed");
+            ret = Lb_FAIL;
+            break;
+        }
+        ret = Lb_SUCCESS;
+        break;
+    case NetSvc_Unkn6:
+        ret = netsvc6_service_init(nsvc);
+        if (ret != Lb_SUCCESS) {
+            LOGERR("Unkn6 service init failed");
+            ret = Lb_FAIL;
+            NetworkServicePtr.I.Type = NetSvc_NONE; // Why only this one is reverting the type on fail?
+        }
+        break;
+    }
     return ret;
 }
 
@@ -385,7 +456,7 @@ int LbNetworkSessionNumberPlayers(void)
     int ret;
 
     ret = Lb_FAIL;
-    switch (NetworkServicePtr.Type)
+    switch (NetworkServicePtr.I.Type)
     {
     case NetSvc_IPX:
         ipxhead = &IPXPlayerHeader;
@@ -395,7 +466,7 @@ int LbNetworkSessionNumberPlayers(void)
     case NetSvc_COM2:
     case NetSvc_COM3:
     case NetSvc_COM4:
-        serhead = NetworkServicePtr.Id;
+        serhead = NetworkServicePtr.I.Id;
         ret = serhead->num_players;
         break;
     case NetSvc_Unkn6:
@@ -411,7 +482,7 @@ TbResult LbNetworkSessionStop(void)
     TbResult ret;
 
     ret = Lb_FAIL;
-    switch (NetworkServicePtr.Type)
+    switch (NetworkServicePtr.I.Type)
     {
     case NetSvc_IPX:
         ipx_stop_network();
@@ -421,7 +492,7 @@ TbResult LbNetworkSessionStop(void)
     case NetSvc_COM2:
     case NetSvc_COM3:
     case NetSvc_COM4:
-        serhead = NetworkServicePtr.Id;
+        serhead = NetworkServicePtr.I.Id;
         LbCommStopExchange(serhead->comdev_id);
         lbICommSessionActive = 0;
         ret = Lb_SUCCESS;
@@ -439,7 +510,7 @@ TbResult LbNetworkHostPlayerNumber(void)
     TbResult ret;
 
     ret = Lb_FAIL;
-    switch (NetworkServicePtr.Type)
+    switch (NetworkServicePtr.I.Type)
     {
     case NetSvc_IPX:
         ret = ipx_get_host_player_number();
@@ -448,7 +519,7 @@ TbResult LbNetworkHostPlayerNumber(void)
     case NetSvc_COM2:
     case NetSvc_COM3:
     case NetSvc_COM4:
-        serhead = NetworkServicePtr.Id;
+        serhead = NetworkServicePtr.I.Id;
         if (!serhead->field_10A9)
             ret = 0;
         else
@@ -477,7 +548,7 @@ int LbNetworkPlayerNumber(void)
     int ret;
 
     ret = Lb_FAIL;
-    switch (NetworkServicePtr.Type)
+    switch (NetworkServicePtr.I.Type)
     {
     case NetSvc_IPX:
         ret = ipx_get_player_number();
@@ -486,7 +557,7 @@ int LbNetworkPlayerNumber(void)
     case NetSvc_COM2:
     case NetSvc_COM3:
     case NetSvc_COM4:
-        serhead = NetworkServicePtr.Id;
+        serhead = NetworkServicePtr.I.Id;
         if (!serhead->field_10A9)
             ret = 0;
         else
@@ -504,7 +575,7 @@ TbResult LbNetworkExchange(void *a1, int a2)
     TbResult ret;
 
     ret = Lb_FAIL;
-    switch (NetworkServicePtr.Type)
+    switch (NetworkServicePtr.I.Type)
     {
     case NetSvc_IPX:
         ret = ipx_exchange_packets(a1, a2);
@@ -513,7 +584,7 @@ TbResult LbNetworkExchange(void *a1, int a2)
     case NetSvc_COM2:
     case NetSvc_COM3:
     case NetSvc_COM4:
-        serhead = NetworkServicePtr.Id;
+        serhead = NetworkServicePtr.I.Id;
         LbCommExchange(serhead->comdev_id, a1, a2);
         ret = Lb_SUCCESS;
         break;
@@ -530,7 +601,7 @@ TbResult LbNetworkReset(void)
     TbResult ret;
 
     ret = Lb_FAIL;
-    switch (NetworkServicePtr.Type)
+    switch (NetworkServicePtr.I.Type)
     {
     case NetSvc_IPX:
         if (ipx_is_initialized()) {
@@ -542,13 +613,13 @@ TbResult LbNetworkReset(void)
     case NetSvc_COM2:
     case NetSvc_COM3:
     case NetSvc_COM4:
-        ret = LbCommDeInit(NetworkServicePtr.Id);
+        ret = LbCommDeInit(NetworkServicePtr.I.Id);
         break;
     case NetSvc_Unkn6:
         ret = netsvc6_shutdown();
         break;
     }
-    NetworkServicePtr.Type = NetSvc_NONE;
+    NetworkServicePtr.I.Type = NetSvc_NONE;
     return ret;
 }
 
@@ -557,7 +628,7 @@ TbBool LbNetworkSessionActive(void)
     TbBool ret;
 
     ret = false;
-    switch (NetworkServicePtr.Type)
+    switch (NetworkServicePtr.I.Type)
     {
     case NetSvc_IPX:
         if (ipx_is_initialized())
@@ -693,7 +764,7 @@ TbResult LbNetworkHangUp(void)
     TbResult ret;
 
     ret = Lb_FAIL;
-    switch (NetworkServicePtr.Type)
+    switch (NetworkServicePtr.I.Type)
     {
     case NetSvc_IPX:
         ret = Lb_FAIL;
@@ -702,7 +773,7 @@ TbResult LbNetworkHangUp(void)
     case NetSvc_COM2:
     case NetSvc_COM3:
     case NetSvc_COM4:
-        serhead = NetworkServicePtr.Id;
+        serhead = NetworkServicePtr.I.Id;
         ret = LbModemHangUp(serhead->comdev_id);
         break;
     case NetSvc_Unkn6:
@@ -717,7 +788,7 @@ TbResult LbNetworkShutDownListeners(void)
     TbResult ret;
 
     ret = Lb_FAIL;
-    switch (NetworkServicePtr.Type)
+    switch (NetworkServicePtr.I.Type)
     {
     case NetSvc_IPX:
         ipx_shutdown_listeners();
@@ -775,7 +846,7 @@ TbResult LbNetworkSessionCreate(struct TbNetworkSession *session, char *a2)
 
     ret = Lb_FAIL;
     NetTimeoutTicks = 3000;
-    switch (NetworkServicePtr.Type)
+    switch (NetworkServicePtr.I.Type)
     {
     case NetSvc_IPX:
         IPXPlayerHeader.field_10E = session->MaxPlayers;
@@ -785,14 +856,14 @@ TbResult LbNetworkSessionCreate(struct TbNetworkSession *session, char *a2)
     case NetSvc_COM2:
     case NetSvc_COM3:
     case NetSvc_COM4:
-        serhead = NetworkServicePtr.Id;
+        serhead = NetworkServicePtr.I.Id;
         ret = LbCommSessionCreate(serhead, session->Name, a2);
         break;
     case NetSvc_Unkn6:
         ret = netsvc6_create_session(session, a2);
         break;
     }
-    LOGSYNC("Service %d create result=%d", (int)NetworkServicePtr.Type, (int)ret);
+    LOGSYNC("Service %d create result=%d", (int)NetworkServicePtr.I.Type, (int)ret);
     return ret;
 }
 

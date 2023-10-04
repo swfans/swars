@@ -43,6 +43,13 @@ enum NetworkServiceType {
     NetSvc_Unkn6,
 };
 
+struct NetworkServiceInfo { // sizeof=12
+    NSERV_HANDLE Id; // offset=0
+    ushort GameId; // offset=4
+    ushort Type; // offset=6
+    ulong Flags; // offset=8
+};
+
 struct NetworkServiceFunction { // sizeof=36
     NSVC_SESSIONCB SessionCreate; // offset=0
     NSVC_SESSIONCB SessionJoin;
@@ -56,11 +63,8 @@ struct NetworkServiceFunction { // sizeof=36
 };
 
 struct TbNetworkService { // sizeof=10
-    NSERV_HANDLE Id; // offset=0
-    ushort GameId; // offset=4
-    ushort Type; // offset=6
-    ushort Flags; // offset=8
-    struct NetworkServiceFunction F;
+    struct NetworkServiceInfo I; // offset=0
+    struct NetworkServiceFunction F; // offset=12
 };
 
 struct TbNetworkSession { // sizeof=40
