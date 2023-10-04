@@ -31,6 +31,7 @@ extern "C" {
 
 typedef void *NSERV_HANDLE;
 typedef void *NSESS_HANDLE;
+typedef short NPLYR_HANDLE;
 typedef int (*NSVC_SESSIONCB) ();
 
 enum NetworkServiceType {
@@ -236,8 +237,17 @@ struct IPXDatagramBackup {
   short field_224;
 };
 
-// Not sure what that is, yet
-struct UnknStruct04;
+struct TbNetworkPlayer { // sizeof=22
+    NPLYR_HANDLE Id; // offset=0
+    ulong PlayerNumber; // offset=2
+    char Name[16]; // offset=6
+};
+
+struct TbNetworkSessionList { // sizeof=218
+    struct TbNetworkSession Session; // offset=0
+    struct TbNetworkPlayer Player[8];
+    short NumberOfPlayers; // offset=216
+};
 
 #pragma pack()
 /******************************************************************************/
@@ -248,6 +258,7 @@ extern struct TbNetworkService NetworkServicePtr;
 extern ulong NetTimeoutTicks;
 extern struct NetworkPlayer network_players[8];
 extern struct NetPlayer2 net_players[5];
+extern struct TbNetworkSessionList unkstruct04_arr[20];
 
 extern struct WeaponsFourPack net_agents__FourPacks[8][4]; // maybe a part of larger struct, maybe not
 

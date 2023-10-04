@@ -522,7 +522,7 @@ TbResult LbNetworkUpdate(void)
     return ret;
 }
 
-TbResult LbNetworkSessionList(struct UnknStruct04 *a1, int a2)
+TbResult LbNetworkSessionList(struct TbNetworkSessionList *a1, int a2)
 {
     TbResult ret;
     asm volatile ("call ASM_LbNetworkSessionList\n"

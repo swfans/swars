@@ -348,19 +348,6 @@ struct ScreenTextBox {
   ubyte field_43;
 };
 
-struct UnknStruct04Sub1 { // sizeof=22
-    char field_0[6];
-    char text[15];
-    char field_15;
-};
-
-struct UnknStruct04 { // sizeof=218
-    char field_0[40];
-    struct UnknStruct04Sub1 field_28[8];
-    char field_D8;
-    char field_D9;
-};
-
 struct SingleObject { // sizeof=36
   ushort StartFace;
   ushort NumbFaces;
@@ -719,7 +706,6 @@ extern sbyte unkn_city_no;
 extern sbyte selected_weapon;
 extern sbyte selected_mod;
 extern ubyte group_types[8];
-extern struct UnknStruct04 unkstruct04_arr[20];
 extern ubyte byte_1C4AA3;
 extern ubyte net_unkn_pos_02;
 extern ubyte data_1c498f;

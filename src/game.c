@@ -9320,7 +9320,7 @@ void net_unkn_func_33_sub1(int plyr, int netplyr)
     case 2:
         login_control__State = 8;
         LbNetworkShutDownListeners();
-        LbMemorySet(unkstruct04_arr, 0, 20 * sizeof(struct UnknStruct04));
+        LbMemorySet(unkstruct04_arr, 0, 20 * sizeof(struct TbNetworkSessionList));
         byte_1C6D48 = 0;
         break;
     case 3:
@@ -9660,7 +9660,7 @@ void show_menu_screen_st2(void)
     {
         local_player_no = 0;
         net_new_game_prepare();
-        memset(unkstruct04_arr, 0, 20 * sizeof(struct UnknStruct04)); //clear 4360 bytes
+        memset(unkstruct04_arr, 0, 20 * sizeof(struct TbNetworkSessionList)); //clear 4360 bytes
         byte_1C6D48 = 0;
         selected_mod = -1;
         selected_weapon = -1;
