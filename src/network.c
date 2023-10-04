@@ -27,6 +27,35 @@
 #include "display.h"
 #include "swlog.h"
 /******************************************************************************/
+#pragma pack(1)
+
+struct IPXSession { // sizeof=45
+    NSESS_HANDLE Id; // offset=0
+    ushort GameId; // offset=2
+    char Name[8]; // offset=4
+    ubyte Reserved[31]; // offset=12
+    ubyte HostPlayerNumber; // offset=43
+    ubyte field_44; // offset=44
+};
+
+struct IPXPlayer { // sizeof=28
+    ulong Res0; // offset=0
+    ulong Res4; // offset=4
+    ushort Res8; // offset=8
+    char Name[16]; // offset=10
+    ushort Used; // offset=26
+};
+
+struct IPXSessionList { // sizeof=218
+    struct IPXSession Session; // offset=0
+    struct IPXPlayer Player[8]; // offset=45
+    ubyte NumberOfPlayers; // offset=269
+    ubyte field_270; // offset=270
+};
+
+#pragma pack()
+/******************************************************************************/
+
 extern ubyte lbICommSessionActive;
 extern struct TbIPXHandler *IPXHandler;
 extern struct TbIPXPlayerHeader IPXPlayerHeader;
@@ -283,11 +312,11 @@ TbResult ipx_create_session(char *a1, const char *a2)
     return Lb_SUCCESS;
 }
 
-TbResult ipx_session_list(ubyte *a1, int a2)
+TbResult ipx_session_list(struct IPXSessionList *ipxsess, int a2)
 {
     TbResult ret;
     asm volatile ("call ASM_ipx_session_list\n"
-        : "=r" (ret) : "a" (a1), "d" (a2) );
+        : "=r" (ret) : "a" (ipxsess), "d" (a2) );
     return ret;
 }
 
@@ -438,6 +467,15 @@ TbResult netsvc6_service_init(struct NetworkServiceInfo *nsvc)
     return ret;
 }
 
+int netsvc6_session_list(struct TbNetworkSessionList *nslist, int listlen)
+{
+    int ret;
+    LOGDBG("Starting");
+    asm volatile ("call ASM_netsvc6_session_list\n"
+        : "=r" (ret) : "a" (nslist), "d" (listlen) );
+    return ret;
+}
+
 TbResult LbNetworkServiceStart(struct NetworkServiceInfo *nsvc)
 {
 #if 0
@@ -522,11 +560,76 @@ TbResult LbNetworkUpdate(void)
     return ret;
 }
 
-TbResult LbNetworkSessionList(struct TbNetworkSessionList *a1, int a2)
+int ipx_session_list_conv(struct TbNetworkSessionList *nslist, int listlen)
 {
-    TbResult ret;
+    struct TbNetworkSessionList *nslent;
+    struct IPXSessionList ipxsess;
+    int n_ent;
+    int i, k;
+
+    memset(&ipxsess, 0, sizeof(struct IPXSessionList));
+
+    nslent = nslist;
+    for (i = 0; i < listlen; i++)
+    {
+        TbResult ret;
+
+        ret = ipx_session_list(&ipxsess, 1);
+        memset(nslent, 0, sizeof(struct TbNetworkSessionList));
+        if (ret != Lb_SUCCESS)
+            continue;
+        nslent->NumberOfPlayers = ipxsess.NumberOfPlayers;
+        nslent->Session.GameId = ipxsess.Session.GameId;
+        nslent->Session.HostPlayerNumber = ipxsess.Session.HostPlayerNumber;
+        strcpy(nslent->Session.Name, ipxsess.Session.Name);
+
+        for (k = 0; k < 8; k++)
+        {
+            if (ipxsess.Player[k].Used)
+            {
+                nslent->Player[k].Id = 1;
+                nslent->Player[k].PlayerNumber = k;
+                strcpy(nslent->Player[k].Name, ipxsess.Player[k].Name);
+
+                if (k == ipxsess.Session.HostPlayerNumber) {
+                    memcpy(&nslent->Session.Reserved[0], &ipxsess.Player[k].Res0, 4);
+                    memcpy(&nslent->Session.Reserved[4], &ipxsess.Player[k].Res4, 4);
+                    memcpy(&nslent->Session.Reserved[8], &ipxsess.Player[k].Res8, 2);
+                }
+            }
+        }
+        n_ent++;
+        nslent++;
+    }
+    return n_ent;
+}
+
+int LbNetworkSessionList(struct TbNetworkSessionList *nslist, int listlen)
+{
+#if 0
+    int ret;
     asm volatile ("call ASM_LbNetworkSessionList\n"
-        : "=r" (ret) : "a" (a1), "d" (a2) );
+        : "=r" (ret) : "a" (nslist), "d" (listlen) );
+    return ret;
+#endif
+    int ret;
+
+    ret = 0;
+    switch (NetworkServicePtr.I.Type)
+    {
+    case NetSvc_IPX:
+        ret = ipx_session_list_conv(nslist, listlen);
+        break;
+    case NetSvc_COM1:
+    case NetSvc_COM2:
+    case NetSvc_COM3:
+    case NetSvc_COM4:
+        ret = 0;
+        break;
+    case NetSvc_Unkn6:
+        ret = netsvc6_session_list(nslist, listlen);
+        break;
+    }
     return ret;
 }
 
