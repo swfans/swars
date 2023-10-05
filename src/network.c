@@ -1269,7 +1269,7 @@ TbResult LbNetworkInit(void)
     return ret;
 }
 
-TbResult LbNetworkDial(const char *a1)
+TbResult LbNetworkDial(const char *distr)
 {
     struct TbSerialDev *serhead;
     TbResult ret;
@@ -1285,7 +1285,32 @@ TbResult LbNetworkDial(const char *a1)
     case NetSvc_COM3:
     case NetSvc_COM4:
         serhead = NetworkServicePtr.I.Id;
-        ret = LbModemDial(serhead->comdev_id, a1);
+        ret = LbModemDial(serhead->comdev_id, distr);
+        break;
+    case NetSvc_Unkn6:
+        ret = Lb_FAIL;
+        break;
+    }
+    return ret;
+}
+
+TbResult LbNetworkAnswer(void)
+{
+    struct TbSerialDev *serhead;
+    TbResult ret;
+
+    ret = Lb_FAIL;
+    switch (NetworkServicePtr.I.Type)
+    {
+    case NetSvc_IPX:
+        ret = Lb_FAIL;
+        break;
+    case NetSvc_COM1:
+    case NetSvc_COM2:
+    case NetSvc_COM3:
+    case NetSvc_COM4:
+        serhead = NetworkServicePtr.I.Id;
+        ret = LbModemAnswer(serhead->comdev_id);
         break;
     case NetSvc_Unkn6:
         ret = Lb_FAIL;
