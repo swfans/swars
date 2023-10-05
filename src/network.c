@@ -725,6 +725,24 @@ int netsvc6_update(void)
     return Lb_SUCCESS;
 }
 
+TbResult netsvc6_service_init(struct NetworkServiceInfo *nsvc)
+{
+    TbResult ret;
+    LOGDBG("Starting");
+    asm volatile ("call ASM_netsvc6_service_init\n"
+        : "=r" (ret) : "a" (nsvc) );
+    return ret;
+}
+
+int netsvc6_session_list(struct TbNetworkSessionList *nslist, int listlen)
+{
+    int ret;
+    LOGDBG("Starting");
+    asm volatile ("call ASM_netsvc6_session_list\n"
+        : "=r" (ret) : "a" (nslist), "d" (listlen) );
+    return ret;
+}
+
 int netsvc6_exchange_packets(void *a1, int a2)
 {
     int ret;
@@ -878,16 +896,58 @@ int LbCommExchange(int a1, void *a2, int a3)
 int LbCommStopExchange(ubyte a1)
 {
     net_unkn_func_338(byte_1E81E0);
-    return 1;
+    return Lb_SUCCESS;
 }
 
 int LbCommDeInit(struct TbSerialDev *serhead)
 {
+#if 0
     int ret;
     LOGDBG("Starting");
     asm volatile ("call ASM_LbCommDeInit\n"
         : "=r" (ret) : "a" (serhead) );
     return ret;
+#endif
+
+#if defined(DOS)||defined(GO32)
+    struct TbSerialDev *serdev;
+    struct ComHandlerInfo *cdev;
+    union REGS regs;
+    ubyte r, n;
+
+    LOGDBG("Starting");
+    cdev = &com_dev[serhead->comdev_id];
+
+    outp(serhead->field_1096 + 1, 0);
+    outp(serhead->field_1096 + 4, 0);
+    n = 1 << serhead1->field_109A;
+    r = inp(0x21);
+    outp(0x21, r | n);
+
+    memset(&regs, 0, sizeof(union REGS));
+    regs.x.eax = 0x201;
+    regs.x.ebx = serhead1->field_1098;
+    regs.x.ecx = cdev->field_18;
+    regs.x.edx = cdev->field_1A;
+    int386(0x31, &regs, &regs);
+
+    memset(&regs, 0, sizeof(union REGS));
+    regs.x.eax = 0x205;
+    regs.x.ebx = serhead->field_1098;
+    regs.x.ecx = cdev->field_16;
+    regs.x.edx = cdev->field_12;
+    int386(0x31, &regs, &regs);
+
+    memset(&regs, 0, sizeof(union REGS));
+    regs.x.eax = 0xF3;
+    regs.x.edx = serhead->comdev_id;
+    int386(0x14, &regs, &regs);
+
+    return Lb_SUCCESS;
+#else
+    LOGDBG("Starting");
+    return Lb_FAIL;
+#endif
 }
 
 TbResult LbModemInit(ushort dev_id)
@@ -1014,24 +1074,6 @@ TbResult LbModemRingType(ushort dev_id, ubyte rtyp)
     serdev->field_10AB = rtyp;
 
     return Lb_SUCCESS;
-}
-
-TbResult netsvc6_service_init(struct NetworkServiceInfo *nsvc)
-{
-    TbResult ret;
-    LOGDBG("Starting");
-    asm volatile ("call ASM_netsvc6_service_init\n"
-        : "=r" (ret) : "a" (nsvc) );
-    return ret;
-}
-
-int netsvc6_session_list(struct TbNetworkSessionList *nslist, int listlen)
-{
-    int ret;
-    LOGDBG("Starting");
-    asm volatile ("call ASM_netsvc6_session_list\n"
-        : "=r" (ret) : "a" (nslist), "d" (listlen) );
-    return ret;
 }
 
 TbResult LbNetworkServiceStart(struct NetworkServiceInfo *nsvc)
