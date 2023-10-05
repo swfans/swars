@@ -87,11 +87,6 @@ struct NetworkServiceInfo Network_Service_List[] = {
     {0, 0, 0, 0},
 };
 
-TbResult LbNetworkReadConfig(const char *fname)
-{
-    return LbModemReadConfig(fname);
-}
-
 TbResult LbNetworkSetSessionCreateFunction(void *func)
 {
     NetworkServicePtr.F.SessionCreate = func;
@@ -562,6 +557,50 @@ TbResult ipx_receive_packet_from_player_wait(int plyr, ubyte *data, int dtlen)
     return Lb_SUCCESS;
 }
 
+int ipx_session_list_conv(struct TbNetworkSessionList *nslist, int listlen)
+{
+    struct TbNetworkSessionList *nslent;
+    struct IPXSessionList ipxsess;
+    int n_ent;
+    int i, k;
+
+    memset(&ipxsess, 0, sizeof(struct IPXSessionList));
+
+    nslent = nslist;
+    for (i = 0; i < listlen; i++)
+    {
+        TbResult ret;
+
+        ret = ipx_session_list(&ipxsess, 1);
+        memset(nslent, 0, sizeof(struct TbNetworkSessionList));
+        if (ret != Lb_SUCCESS)
+            continue;
+        nslent->NumberOfPlayers = ipxsess.NumberOfPlayers;
+        nslent->Session.GameId = ipxsess.Session.GameId;
+        nslent->Session.HostPlayerNumber = ipxsess.Session.HostPlayerNumber;
+        strcpy(nslent->Session.Name, ipxsess.Session.Name);
+
+        for (k = 0; k < 8; k++)
+        {
+            if (ipxsess.Player[k].Used)
+            {
+                nslent->Player[k].Id = 1;
+                nslent->Player[k].PlayerNumber = k;
+                strcpy(nslent->Player[k].Name, ipxsess.Player[k].Name);
+
+                if (k == ipxsess.Session.HostPlayerNumber) {
+                    memcpy(&nslent->Session.Reserved[0], &ipxsess.Player[k].Res0, 4);
+                    memcpy(&nslent->Session.Reserved[4], &ipxsess.Player[k].Res4, 4);
+                    memcpy(&nslent->Session.Reserved[8], &ipxsess.Player[k].Res8, 2);
+                }
+            }
+        }
+        n_ent++;
+        nslent++;
+    }
+    return n_ent;
+}
+
 int net_unkn_func_352(void)
 {
     int ret;
@@ -609,36 +648,22 @@ int netsvc6_shutdown(void)
     return net_unkn_func_352();
 }
 
-struct TbSerialDev *LbCommInit(int idx)
+int SetBps(struct TbSerialDev *serdev, int rate)
 {
-    struct TbSerialDev *ret;
-    LOGDBG("Starting");
-    asm volatile ("call ASM_LbCommInit\n"
-        : "=r" (ret) : "a" (idx) );
-    return ret;
-}
+    if (rate < 300)
+        rate = 300;
+    else if (rate > 115200)
+        rate = 115200;
 
-int LbCommExchange(int a1, void *a2, int a3)
-{
-    int ret;
-    asm volatile ("call ASM_LbCommExchange\n"
-        : "=r" (ret) : "a" (a1), "d" (a2), "b" (a3) );
-    return ret;
-}
-
-int LbCommStopExchange(ubyte a1)
-{
-    net_unkn_func_338(byte_1E81E0);
-    return 1;
-}
-
-int LbCommDeInit(struct TbSerialDev *serhead)
-{
-    int ret;
-    LOGDBG("Starting");
-    asm volatile ("call ASM_LbCommDeInit\n"
-        : "=r" (ret) : "a" (serhead) );
-    return ret;
+#if defined(DOS)||defined(GO32)
+    cli();
+    outp(serdev->field_1096 + 3, 131);
+    outp(serdev->field_1096 + 1, 115200 / rate >> 8);
+    outp(serdev->field_1096 + 0, (115200 / rate));
+    outp(serdev->field_1096 + 3, 3);
+    sti();
+#endif
+    return 115200 / (115200 / rate);
 }
 
 #if defined(DOS)||defined(GO32)
@@ -723,6 +748,54 @@ int get_modem_response(struct TbSerialDev *serdev)
     int ret;
     asm volatile ("call ASM_get_modem_response\n"
         : "=r" (ret) : "a" (serdev) );
+    return ret;
+}
+
+struct TbSerialDev *LbCommInit(int idx)
+{
+    struct TbSerialDev *ret;
+    LOGDBG("Starting");
+    asm volatile ("call ASM_LbCommInit\n"
+        : "=r" (ret) : "a" (idx) );
+    return ret;
+}
+
+TbResult LbCommSetBaud(int rate, ushort dev_id)
+{
+    struct TbSerialDev *serdev;
+
+    LOGDBG("Starting");
+    if (dev_id > 3)
+        return Lb_FAIL;
+
+    serdev = com_dev[dev_id].serdev;
+    if (serdev == NULL)
+        return Lb_FAIL;
+
+    serdev->baudrate = SetBps(serdev, rate);
+    return Lb_SUCCESS;
+}
+
+int LbCommExchange(int a1, void *a2, int a3)
+{
+    int ret;
+    asm volatile ("call ASM_LbCommExchange\n"
+        : "=r" (ret) : "a" (a1), "d" (a2), "b" (a3) );
+    return ret;
+}
+
+int LbCommStopExchange(ubyte a1)
+{
+    net_unkn_func_338(byte_1E81E0);
+    return 1;
+}
+
+int LbCommDeInit(struct TbSerialDev *serhead)
+{
+    int ret;
+    LOGDBG("Starting");
+    asm volatile ("call ASM_LbCommDeInit\n"
+        : "=r" (ret) : "a" (serhead) );
     return ret;
 }
 
@@ -952,50 +1025,6 @@ TbResult LbNetworkUpdate(void)
         break;
     }
     return ret;
-}
-
-int ipx_session_list_conv(struct TbNetworkSessionList *nslist, int listlen)
-{
-    struct TbNetworkSessionList *nslent;
-    struct IPXSessionList ipxsess;
-    int n_ent;
-    int i, k;
-
-    memset(&ipxsess, 0, sizeof(struct IPXSessionList));
-
-    nslent = nslist;
-    for (i = 0; i < listlen; i++)
-    {
-        TbResult ret;
-
-        ret = ipx_session_list(&ipxsess, 1);
-        memset(nslent, 0, sizeof(struct TbNetworkSessionList));
-        if (ret != Lb_SUCCESS)
-            continue;
-        nslent->NumberOfPlayers = ipxsess.NumberOfPlayers;
-        nslent->Session.GameId = ipxsess.Session.GameId;
-        nslent->Session.HostPlayerNumber = ipxsess.Session.HostPlayerNumber;
-        strcpy(nslent->Session.Name, ipxsess.Session.Name);
-
-        for (k = 0; k < 8; k++)
-        {
-            if (ipxsess.Player[k].Used)
-            {
-                nslent->Player[k].Id = 1;
-                nslent->Player[k].PlayerNumber = k;
-                strcpy(nslent->Player[k].Name, ipxsess.Player[k].Name);
-
-                if (k == ipxsess.Session.HostPlayerNumber) {
-                    memcpy(&nslent->Session.Reserved[0], &ipxsess.Player[k].Res0, 4);
-                    memcpy(&nslent->Session.Reserved[4], &ipxsess.Player[k].Res4, 4);
-                    memcpy(&nslent->Session.Reserved[8], &ipxsess.Player[k].Res8, 2);
-                }
-            }
-        }
-        n_ent++;
-        nslent++;
-    }
-    return n_ent;
 }
 
 int LbNetworkSessionList(struct TbNetworkSessionList *nslist, int listlen)
@@ -1491,6 +1520,37 @@ TbResult LbNetworkHangUp(void)
     return ret;
 }
 
+TbResult LbNetworkReadConfig(const char *fname)
+{
+    return LbModemReadConfig(fname);
+}
+
+TbResult LbNetworkSetBaud(int rate)
+{
+    struct TbSerialDev *serhead;
+    TbResult ret;
+
+    ret = Lb_FAIL;
+    switch (NetworkServicePtr.I.Type)
+    {
+    case NetSvc_IPX:
+        ret = Lb_FAIL;
+        break;
+    case NetSvc_COM1:
+    case NetSvc_COM2:
+    case NetSvc_COM3:
+    case NetSvc_COM4:
+        serhead = NetworkServicePtr.I.Id;
+        LbCommSetBaud(rate, serhead->comdev_id);
+        ret = Lb_SUCCESS;
+        break;
+    case NetSvc_Unkn6:
+        ret = Lb_FAIL;
+        break;
+    }
+    return ret;
+}
+
 TbResult LbNetworkShutDownListeners(void)
 {
     TbResult ret;
@@ -1630,6 +1690,7 @@ TbResult LbModemReadConfig(const char *fname)
     FILE *fp;
     int i;
 
+    LOGDBG("Starting");
     if (fname == NULL)
         return Lb_FAIL;
     fp = fopen(fname, "rt");
