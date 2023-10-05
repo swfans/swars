@@ -381,6 +381,14 @@ int ipx_session_list(struct IPXSessionList *sesslist, int listlen)
     return ret;
 }
 
+int ipx_join_session(struct IPXSessionList *p_ipxsess, char *a2)
+{
+    TbResult ret;
+    asm volatile ("call ASM_ipx_join_session\n"
+        : "=r" (ret) : "a" (p_ipxsess), "d" (a2) );
+    return ret;
+}
+
 int ipx_get_host_player_number(void)
 {
     if (!ipx_is_initialized()) {
@@ -698,6 +706,15 @@ int netsvc6_create_session(struct TbNetworkSession *session, const char *a2)
     int ret;
     LOGDBG("Starting");
     asm volatile ("call ASM_netsvc6_create_session\n"
+        : "=r" (ret) : "a" (session), "d" (a2) );
+    return ret;
+}
+
+int netsvc6_join_session(struct TbNetworkSession *session, char *a2)
+{
+    int ret;
+    LOGDBG("Starting");
+    asm volatile ("call ASM_netsvc6_join_session\n"
         : "=r" (ret) : "a" (session), "d" (a2) );
     return ret;
 }
@@ -1700,22 +1717,45 @@ TbResult LbCommSessionCreate(struct TbSerialDev *serhead, const char *sess_name,
 {
     NSVC_SESSIONCB exchange_cb_bkp;
     char locstr[16];
-    char *s;
     TbResult ret;
 
     LOGDBG("Starting");
     serhead->field_10A9 = 1;
-    s = serhead->field_10AD;
-    strcpy(s, a2);
+    strcpy(serhead->field_10AD, a2);
 
     exchange_cb_bkp = NetworkServicePtr.F.SessionExchange;
     NetworkServicePtr.F.SessionExchange = NetworkServicePtr.F.SessionCreate;
-    ret = LbCommExchange(serhead->comdev_id, s, 16);
+    ret = LbCommExchange(serhead->comdev_id, serhead->field_10AD, 16);
     if (ret == Lb_SUCCESS)
     {
-        s = locstr;
-        strcpy(s, sess_name);
-        ret = LbCommExchange(serhead->comdev_id, s, 8);
+        strcpy(locstr, sess_name);
+        ret = LbCommExchange(serhead->comdev_id, locstr, 8);
+        lbICommSessionActive = 1;
+    }
+    NetworkServicePtr.F.SessionExchange = exchange_cb_bkp;
+
+    return ret;
+}
+
+TbResult LbCommSessionJoin(struct TbSerialDev *serhead, char *sess_name, const char *a2)
+{
+    NSVC_SESSIONCB exchange_cb_bkp;
+    char locstr[16];
+    TbResult ret;
+
+    LOGDBG("Starting");
+    serhead->field_10A9 = 0;
+    strcpy(&serhead->field_10AD[16], a2);
+
+    exchange_cb_bkp = NetworkServicePtr.F.SessionExchange;
+    NetworkServicePtr.F.SessionExchange = NetworkServicePtr.F.SessionJoin;
+    ret = LbCommExchange(serhead->comdev_id, serhead->field_10AD, 16);
+    if (ret == Lb_SUCCESS)
+    {
+        ret = LbCommExchange(serhead->comdev_id, locstr, 8);
+        if (ret == Lb_SUCCESS) {
+            strcpy(sess_name, locstr);
+        }
         lbICommSessionActive = 1;
     }
     NetworkServicePtr.F.SessionExchange = exchange_cb_bkp;
@@ -1774,10 +1814,41 @@ void read_a_line(FILE *fp, char *buf)
 
 TbResult LbNetworkSessionJoin(struct TbNetworkSession *session, char *a2)
 {
+#if 0
     TbResult ret;
     LOGDBG("Starting");
     asm volatile ("call ASM_LbNetworkSessionJoin\n"
         : "=r" (ret) : "a" (session), "d" (a2) );
+    return ret;
+#endif
+    struct TbSerialDev *serhead;
+    struct IPXSessionList ipxsess;
+    TbResult ret;
+
+    NetTimeoutTicks = 5000;
+    ret = Lb_FAIL;
+    switch (NetworkServicePtr.I.Type)
+    {
+    case NetSvc_IPX:
+        memset(&ipxsess, 0, sizeof(struct IPXSessionList));
+        memcpy(ipxsess.Session.Name, session->Name, sizeof(ipxsess.Session.Name));
+        ipxsess.Session.Name[7] = '\0';
+        memcpy(&ipxsess.Session.Reserved[22], &session->Reserved[0], 4);
+        memcpy(&ipxsess.Session.Reserved[16], &session->Reserved[4], 4);
+        memcpy(&ipxsess.Session.Reserved[20], &session->Reserved[8], 2);
+        ret = ipx_join_session(&ipxsess, a2);
+        break;
+    case NetSvc_COM1:
+    case NetSvc_COM2:
+    case NetSvc_COM3:
+    case NetSvc_COM4:
+        serhead = NetworkServicePtr.I.Id;
+        ret = LbCommSessionJoin(serhead, session->Name, a2);
+        break;
+    case NetSvc_Unkn6:
+        ret = netsvc6_join_session(session, a2);
+        break;
+    }
     return ret;
 }
 
