@@ -371,13 +371,36 @@ void ipx_shutdown(ushort a1)
         : : "a" (a1));
 }
 
-int ipx_shutdown_listeners(void)
+void ipx_shutdown_listeners(void)
 {
-    int ret;
     LOGDBG("Starting");
+#if 0
     asm volatile ("call ASM_ipx_shutdown_listeners\n"
-        : "=r" (ret) : );
-    return ret;
+        : : );
+#endif
+    if (!ipx_is_initialized()) {
+        LOGERR("Called before IPX initialization");
+        return;
+    }
+    if (IPXHandler->SessionActive == 0) {
+        LOGERR("Called without active session");
+        return;
+    }
+    IPXHandler->SessionActive = 2;
+}
+
+void ipx_openup_listeners(void)
+{
+    LOGDBG("Starting");
+    if (!ipx_is_initialized()) {
+        LOGERR("Called before IPX initialization");
+        return;
+    }
+    if (IPXHandler->SessionActive == 0) {
+        LOGERR("Called without active session");
+        return;
+    }
+    IPXHandler->SessionActive = 1;
 }
 
 int ipx_stop_network(void)
@@ -387,6 +410,54 @@ int ipx_stop_network(void)
     asm volatile ("call ASM_ipx_stop_network\n"
         : "=r" (ret) : );
     return ret;
+}
+
+TbResult ipx_get_player_name(char *name, int plyr)
+{
+    int ret;
+    asm volatile ("call ASM_ipx_get_player_name\n"
+        : "=r" (ret) : "a" (name), "d" (plyr) );
+    return ret;
+}
+
+TbResult ipx_network_send(int plyr, ubyte *data, int dtlen)
+{
+    assert(!"Not implemented");
+    return Lb_FAIL;
+}
+
+
+TbResult ipx_send_packet_to_player_wait(int plyr, ubyte *data, int dtlen)
+{
+    ubyte *dt;
+    int i;
+    ushort pkt_count;
+
+    LOGDBG("Starting");
+    if (!IPXPlayerHeader.field_2C) {
+        LOGERR("Cond 1 not met");
+        return Lb_OK;
+    }
+    if ((plyr >= 8 && plyr != 0xFFFF)
+      || (plyr == IPXPlayerHeader.field_2B)
+      || (plyr != 0xFFFF && !IPXPlayerHeader.field_47[14 * plyr]) )
+    {
+        LOGERR("Target player invalid");
+        return Lb_OK;
+    }
+
+    dt = data;
+    pkt_count = dtlen / 400;
+    for (i = 0; i < pkt_count; i++)
+    {
+        ipx_network_send(plyr, dt, 400);
+        dt += 400;
+    }
+    if (dtlen % 400)
+    {
+        ipx_network_send(plyr, dt, dtlen % 400);
+    }
+    return Lb_SUCCESS;
 }
 
 int net_unkn_func_352(void)
@@ -687,6 +758,30 @@ int LbNetworkSessionNumberPlayers(void)
     return ret;
 }
 
+TbResult LbNetworkSend(int plyr, ubyte *data, int dtlen)
+{
+    TbResult ret;
+
+    ret = Lb_FAIL;
+    switch (NetworkServicePtr.I.Type)
+    {
+    case NetSvc_IPX:
+        ipx_send_packet_to_player_wait(plyr, data, dtlen);
+        ret = Lb_SUCCESS;
+        break;
+    case NetSvc_COM1:
+    case NetSvc_COM2:
+    case NetSvc_COM3:
+    case NetSvc_COM4:
+        ret = Lb_FAIL;
+        break;
+    case NetSvc_Unkn6:
+        ret = Lb_FAIL;
+        break;
+    }
+    return ret;
+}
+
 TbResult LbNetworkSessionStop(void)
 {
     struct TbSerialDev *serhead;
@@ -773,6 +868,36 @@ int LbNetworkPlayerNumber(void)
             ret = 0;
         else
             ret = 1;
+        break;
+    case NetSvc_Unkn6:
+        break;
+    }
+    return ret;
+}
+
+int LbNetworkPlayerName(char *name, int plyr)
+{
+    struct TbSerialDev *serhead;
+    TbResult ret;
+
+    ret = Lb_FAIL;
+    switch (NetworkServicePtr.I.Type)
+    {
+    case NetSvc_IPX:
+        ret = ipx_get_player_name(name, plyr);
+        break;
+    case NetSvc_COM1:
+    case NetSvc_COM2:
+    case NetSvc_COM3:
+    case NetSvc_COM4:
+        serhead = NetworkServicePtr.I.Id;
+        if (plyr == 0) {
+            strcpy(name, &serhead->field_10AD[0]);
+            ret = Lb_SUCCESS;
+        } else if (plyr == 1) {
+            strcpy(name, &serhead->field_10AD[16]);
+            ret = Lb_SUCCESS;
+        }
         break;
     case NetSvc_Unkn6:
         break;
@@ -1019,6 +1144,30 @@ TbResult LbNetworkShutDownListeners(void)
     return ret;
 }
 
+TbResult LbNetworkOpenUpListeners(void)
+{
+    TbResult ret;
+
+    ret = Lb_FAIL;
+    switch (NetworkServicePtr.I.Type)
+    {
+    case NetSvc_IPX:
+        ipx_openup_listeners();
+        ret = Lb_SUCCESS;
+        break;
+    case NetSvc_COM1:
+    case NetSvc_COM2:
+    case NetSvc_COM3:
+    case NetSvc_COM4:
+        ret = Lb_SUCCESS;
+        break;
+    case NetSvc_Unkn6:
+        ret = Lb_SUCCESS;
+        break;
+    }
+    return ret;
+}
+
 TbResult LbCommSessionCreate(struct TbSerialDev *serhead, const char *sess_name, const char *a2)
 {
     NSVC_SESSIONCB exchange_cb_bkp;
@@ -1093,6 +1242,15 @@ void read_a_line(FILE *fp, char *buf)
         *s = c;
     }
     *s = '\0';
+}
+
+TbResult LbNetworkSessionJoin(struct TbNetworkSession *session, char *a2)
+{
+    TbResult ret;
+    LOGDBG("Starting");
+    asm volatile ("call ASM_LbNetworkSessionJoin\n"
+        : "=r" (ret) : "a" (session), "d" (a2) );
+    return ret;
 }
 
 TbResult LbModemReadConfig(const char *fname)
