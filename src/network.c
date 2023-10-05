@@ -236,7 +236,7 @@ TbResult ipx_create_session(char *a1, const char *a2)
     return ret;
 #endif
     struct TbIPXHandler *ipxhndl;
-    struct TbIPXPlayer *plyr;
+    struct TbIPXPlayer *p_plyr;
     ulong tm_start, tm_curr;
     TbResult ret;
     int i;
@@ -260,10 +260,10 @@ TbResult ipx_create_session(char *a1, const char *a2)
             if (ipxhndl->field_46[i])
             {
                 ipxhndl->field_46[i] = 0;
-                plyr = &ipxhndl->PlayerData[i];
-                if (IPXPlayerHeader.field_2 == plyr->Header.field_2)
+                p_plyr = &ipxhndl->PlayerData[i];
+                if (IPXPlayerHeader.field_2 == p_plyr->Header.field_2)
                 {
-                    if (strcasecmp(plyr->Header.field_4, a1) == 0) {
+                    if (strcasecmp(p_plyr->Header.field_4, a1) == 0) {
                         LOGERR("String same as remote");
                         return Lb_FAIL;
                     }
@@ -426,6 +426,75 @@ TbResult ipx_network_send(int plyr, ubyte *data, int dtlen)
     return Lb_FAIL;
 }
 
+TbResult ipx_network_receive(int plyr, ubyte *data, int dtlen)
+{
+    assert(!"Not implemented");
+    return Lb_FAIL;
+}
+
+TbResult ipx_send_packet_to_player_nowait(int plyr, ubyte *data, int dtlen)
+{
+    struct TbIPXHandler *p_ipxhndl;
+    struct TbIPXPlayer *p_plyrdt;
+
+    LOGDBG("Starting");
+    if (plyr >= 8) {
+        LOGERR("Target player invalid");
+        return Lb_FAIL;
+    }
+    if (IPXPlayerHeader.field_47[14 * plyr]) {
+        LOGERR("Cond 1 triggered");
+        return Lb_FAIL;
+    }
+
+    p_ipxhndl = IPXHandler;
+    p_plyrdt = IPXHandler->PlayerData;
+
+    IPXPlayerHeader.field_2A = 4;
+    memcpy(&p_plyrdt->Header, &IPXPlayerHeader, 45);
+    memcpy(p_plyrdt->Header.field_2D, data, dtlen);
+    p_ipxhndl->PlayerDataSize = dtlen + 45;
+
+    memcpy(&p_ipxhndl->field_12[0], &IPXPlayerHeader.field_2D[14 * plyr + 4], 4u);
+    memcpy(&p_ipxhndl->field_12[4], &IPXPlayerHeader.field_2D[14 * plyr + 8], 2u);
+    memcpy(p_ipxhndl->field_E, &IPXPlayerHeader.field_2D[14 * plyr + 0], sizeof(p_ipxhndl->field_E));
+#if defined(DOS)||defined(GO32)
+    CallIPX(2);
+#endif
+    return Lb_SUCCESS;
+}
+
+TbResult ipx_receive_packet_from_player_nowait(int plyr, ubyte *data, int dtlen)
+{
+    TbResult ret;
+    int i;
+  
+    ret = Lb_OK;
+    for (i = 1; i < 30; i++)
+    {
+        struct TbIPXPlayer *p_plyrdt;
+
+        if (!IPXHandler->field_46[i])
+            continue;
+        IPXHandler->field_46[i] = 0;
+
+        p_plyrdt = &IPXHandler->PlayerData[i];
+
+        if (strncasecmp(p_plyrdt->Header.Magic, "BU", 2) != 0)
+            continue;
+        if (strcasecmp(p_plyrdt->Header.field_4, IPXPlayerHeader.field_4) != 0)
+            continue;
+        if (p_plyrdt->Header.field_2 != IPXPlayerHeader.field_2)
+            continue;
+        if ((p_plyrdt->Header.field_2A != 4) || (p_plyrdt->Header.field_2B != plyr))
+            continue;
+
+        memcpy(data, p_plyrdt->Header.field_2D, dtlen);
+        ret = Lb_SUCCESS;
+        break;
+    }
+    return ret;
+}
 
 TbResult ipx_send_packet_to_player_wait(int plyr, ubyte *data, int dtlen)
 {
@@ -456,6 +525,39 @@ TbResult ipx_send_packet_to_player_wait(int plyr, ubyte *data, int dtlen)
     if (dtlen % 400)
     {
         ipx_network_send(plyr, dt, dtlen % 400);
+    }
+    return Lb_SUCCESS;
+}
+
+TbResult ipx_receive_packet_from_player_wait(int plyr, ubyte *data, int dtlen)
+{
+    ubyte *dt;
+    int i;
+    ushort pkt_count;
+
+    LOGDBG("Starting");
+    if (!IPXPlayerHeader.field_2C) {
+        LOGERR("Cond 1 not met");
+        return Lb_OK;
+    }
+    if ((plyr >= 8)
+      || (plyr == IPXPlayerHeader.field_2B)
+      || (!IPXPlayerHeader.field_47[14 * plyr]) )
+    {
+        LOGERR("Target player invalid");
+        return Lb_OK;
+    }
+
+    dt = data;
+    pkt_count = dtlen / 400;
+    for (i = 0; i < pkt_count; i++)
+    {
+        ipx_network_receive(plyr, dt, 400);
+        dt += 400;
+    }
+    if (dtlen % 400)
+    {
+        ipx_network_receive(plyr, dt, dtlen % 400);
     }
     return Lb_SUCCESS;
 }
@@ -536,6 +638,178 @@ int LbCommDeInit(struct TbSerialDev *serhead)
     LOGDBG("Starting");
     asm volatile ("call ASM_LbCommDeInit\n"
         : "=r" (ret) : "a" (serhead) );
+    return ret;
+}
+
+#if defined(DOS)||defined(GO32)
+
+void write_char_no_buff(struct TbSerialDev *serdev, ubyte c)
+{
+    while ( !(inp(serdev->field_1096 + 5) & 0x20) )
+        ;
+    cli();
+    outp(serdev->field_1096, c);
+    sti();
+}
+
+void write_char(struct TbSerialDev *serdev, ubyte c)
+{
+    write_char_no_buff(serdev, c);
+}
+
+#endif
+
+void write_string(struct TbSerialDev *serdev, const char *str)
+{
+#if defined(DOS)||defined(GO32)
+    unsigned int i;
+    char c;
+
+    for (i = 0; i < strlen(locstr); i++)
+    {
+        c = locstr[i];
+        write_char(serdev, c);
+    }
+#else
+    // On Windows, WriteFile() should be used
+    // On Linux, write the device file with standard file ops
+    assert(!"not implemented");
+#endif
+}
+
+void read_write_clear_flag(struct TbSerialDev *serdev, ushort port, ubyte c)
+{
+#if defined(DOS)||defined(GO32)
+    ubyte val;
+    val = inp(port) & ~c;
+    outp(port, val);
+#else
+    assert(!"not implemented");
+#endif
+}
+
+void read_write_set_flag(struct TbSerialDev *serdev, ushort port, ubyte c)
+{
+#if defined(DOS)||defined(GO32)
+    ubyte val;
+    val = inp(port) | c;
+    outp(port, val);
+#else
+    assert(!"not implemented");
+#endif
+}
+
+void wait(ulong msec)
+{
+#if defined(DOS)||defined(GO32)
+    delay(msec);
+#else
+    usleep(msec * 1000);
+#endif
+}
+
+void send_string(struct TbSerialDev *serdev, const char *str)
+{
+    char locstr[80];
+
+    strcpy(locstr, str);
+    strcat(locstr, "\r");
+    write_string(serdev, locstr);
+    strcpy(ModemRequestString, locstr);
+}
+
+int get_modem_response(struct TbSerialDev *serdev)
+{
+    int ret;
+    asm volatile ("call ASM_get_modem_response\n"
+        : "=r" (ret) : "a" (serdev) );
+    return ret;
+}
+
+TbResult LbModemInit(ushort dev_id)
+{
+    struct TbSerialDev *serdev;
+    TbResult ret;
+
+    LOGDBG("Starting");
+    if (dev_id > 3)
+        return Lb_FAIL;
+
+    serdev = com_dev[dev_id].serdev;
+
+    if (serdev == NULL)
+        return Lb_FAIL;
+
+    send_string(serdev, modem_cmds[0].cmd);
+    NetworkServicePtr.F.UsedSessionInit = NetworkServicePtr.F.SessionInit;
+    ret = get_modem_response(serdev);
+    NetworkServicePtr.F.UsedSessionInit = NULL;
+
+    return ret;
+}
+
+TbResult LbModemDial(ushort dev_id, const char *distr)
+{
+    struct TbSerialDev *serdev;
+    char locstr[80];
+    TbResult ret;
+
+    LOGDBG("Starting");
+    if (dev_id > 3)
+        return Lb_FAIL;
+
+    serdev = com_dev[dev_id].serdev;
+
+    if (serdev == NULL)
+        return Lb_FAIL;
+
+    strcpy(locstr, modem_cmds[1].cmd);
+    switch(serdev->field_10AB)
+    {
+    case 1:
+        strcat(locstr, "T");
+        break;
+    case 2:
+        strcat(locstr, "P");
+        break;
+    }
+    strcat(locstr, distr);
+
+    send_string(serdev, locstr);
+    NetworkServicePtr.F.UsedSessionInit = NetworkServicePtr.F.SessionDial;
+    ret = get_modem_response(serdev);
+    NetworkServicePtr.F.UsedSessionInit = NULL;
+
+    return ret;
+}
+
+TbResult LbModemHangUp(ushort dev_id)
+{
+    struct TbSerialDev *serdev;
+    TbResult ret;
+
+    LOGDBG("Starting");
+    if (dev_id > 3)
+        return Lb_FAIL;
+
+    serdev = com_dev[dev_id].serdev;
+    if (serdev == NULL)
+        return Lb_FAIL;
+
+    read_write_clear_flag(serdev, serdev->field_1096 + 4, 0x01);
+    wait(1250);
+
+    read_write_set_flag(serdev, serdev->field_1096 + 4, 0x01);
+    wait(1300);
+
+    send_string(serdev, "+++");
+    wait(1300);
+
+    NetworkServicePtr.F.UsedSessionInit = NetworkServicePtr.F.SessionHangUp;
+    ret = get_modem_response(serdev);
+    NetworkServicePtr.F.UsedSessionInit = NULL;
+    send_string(serdev, modem_cmds[2].cmd);
+
     return ret;
 }
 
@@ -782,6 +1056,176 @@ TbResult LbNetworkSend(int plyr, ubyte *data, int dtlen)
     return ret;
 }
 
+TbResult LbNetworkReceive(int plyr, ubyte *data, int dtlen)
+{
+    TbResult ret;
+
+    ret = Lb_FAIL;
+    switch (NetworkServicePtr.I.Type)
+    {
+    case NetSvc_IPX:
+        ipx_receive_packet_from_player_wait(plyr, data, dtlen);
+        ret = Lb_SUCCESS;
+        break;
+    case NetSvc_COM1:
+    case NetSvc_COM2:
+    case NetSvc_COM3:
+    case NetSvc_COM4:
+        ret = Lb_FAIL;
+        break;
+    case NetSvc_Unkn6:
+        ret = Lb_FAIL;
+        break;
+    }
+    return ret;
+}
+
+TbResult LbNetworkMessageSend(int plyr, ubyte *data, int dtlen)
+{
+    TbResult ret;
+
+    ret = Lb_FAIL;
+    switch (NetworkServicePtr.I.Type)
+    {
+    case NetSvc_IPX:
+        ipx_send_packet_to_player_wait(plyr, data, dtlen);
+        ret = Lb_SUCCESS;
+        break;
+    case NetSvc_COM1:
+    case NetSvc_COM2:
+    case NetSvc_COM3:
+    case NetSvc_COM4:
+        ret = Lb_FAIL;
+        break;
+    case NetSvc_Unkn6:
+        ret = Lb_FAIL;
+        break;
+    }
+    return ret;
+}
+
+TbResult LbNetworkMessageReceive(int plyr, ubyte *data, int dtlen)
+{
+    TbResult ret;
+
+    ret = Lb_FAIL;
+    switch (NetworkServicePtr.I.Type)
+    {
+    case NetSvc_IPX:
+        ipx_receive_packet_from_player_wait(plyr, data, dtlen);
+        ret = Lb_SUCCESS;
+        break;
+    case NetSvc_COM1:
+    case NetSvc_COM2:
+    case NetSvc_COM3:
+    case NetSvc_COM4:
+        ret = Lb_FAIL;
+        break;
+    case NetSvc_Unkn6:
+        ret = Lb_FAIL;
+        break;
+    }
+    return ret;
+}
+
+TbResult LbNetworkSendNoWait(int plyr, ubyte *data, int dtlen)
+{
+    TbResult ret;
+
+    ret = Lb_FAIL;
+    switch (NetworkServicePtr.I.Type)
+    {
+    case NetSvc_IPX:
+        ipx_send_packet_to_player_nowait(plyr, data, dtlen);
+        ret = Lb_SUCCESS;
+        break;
+    case NetSvc_COM1:
+    case NetSvc_COM2:
+    case NetSvc_COM3:
+    case NetSvc_COM4:
+        ret = Lb_FAIL;
+        break;
+    case NetSvc_Unkn6:
+        ret = Lb_FAIL;
+        break;
+    }
+    return ret;
+}
+
+TbResult LbNetworkReceiveNoWait(int plyr, ubyte *data, int dtlen)
+{
+    TbResult ret;
+
+    ret = Lb_FAIL;
+    switch (NetworkServicePtr.I.Type)
+    {
+    case NetSvc_IPX:
+        ipx_receive_packet_from_player_nowait(plyr, data, dtlen);
+        ret = Lb_SUCCESS;
+        break;
+    case NetSvc_COM1:
+    case NetSvc_COM2:
+    case NetSvc_COM3:
+    case NetSvc_COM4:
+        ret = Lb_FAIL;
+        break;
+    case NetSvc_Unkn6:
+        ret = Lb_FAIL;
+        break;
+    }
+    return ret;
+}
+
+TbResult LbNetworkInit(void)
+{
+    struct TbSerialDev *serhead;
+    TbResult ret;
+
+    ret = Lb_FAIL;
+    switch (NetworkServicePtr.I.Type)
+    {
+    case NetSvc_IPX:
+        ret = Lb_FAIL;
+        break;
+    case NetSvc_COM1:
+    case NetSvc_COM2:
+    case NetSvc_COM3:
+    case NetSvc_COM4:
+        serhead = NetworkServicePtr.I.Id;
+        ret = LbModemInit(serhead->comdev_id);
+        break;
+    case NetSvc_Unkn6:
+        ret = Lb_FAIL;
+        break;
+    }
+    return ret;
+}
+
+TbResult LbNetworkDial(const char *a1)
+{
+    struct TbSerialDev *serhead;
+    TbResult ret;
+
+    ret = Lb_FAIL;
+    switch (NetworkServicePtr.I.Type)
+    {
+    case NetSvc_IPX:
+        ret = Lb_FAIL;
+        break;
+    case NetSvc_COM1:
+    case NetSvc_COM2:
+    case NetSvc_COM3:
+    case NetSvc_COM4:
+        serhead = NetworkServicePtr.I.Id;
+        ret = LbModemDial(serhead->comdev_id, a1);
+        break;
+    case NetSvc_Unkn6:
+        ret = Lb_FAIL;
+        break;
+    }
+    return ret;
+}
+
 TbResult LbNetworkSessionStop(void)
 {
     struct TbSerialDev *serhead;
@@ -980,118 +1424,6 @@ TbBool LbNetworkSessionActive(void)
         ret = false;
         break;
     }
-    return ret;
-}
-
-#if defined(DOS)||defined(GO32)
-
-void write_char_no_buff(struct TbSerialDev *serdev, ubyte c)
-{
-    while ( !(inp(serdev->field_1096 + 5) & 0x20) )
-        ;
-    cli();
-    outp(serdev->field_1096, c);
-    sti();
-}
-
-void write_char(struct TbSerialDev *serdev, ubyte c)
-{
-    write_char_no_buff(serdev, c);
-}
-
-#endif
-
-void write_string(struct TbSerialDev *serdev, const char *str)
-{
-#if defined(DOS)||defined(GO32)
-    unsigned int i;
-    char c;
-
-    for (i = 0; i < strlen(locstr); i++)
-    {
-        c = locstr[i];
-        write_char(serdev, c);
-    }
-#else
-    // On Windows, WriteFile() should be used
-    // On Linux, write the device file with standard file ops
-    assert(!"not implemented");
-#endif
-}
-
-void read_write_clear_flag(struct TbSerialDev *serdev, ushort port, ubyte c)
-{
-#if defined(DOS)||defined(GO32)
-    ubyte val;
-    val = inp(port) & ~c;
-    outp(port, val);
-#else
-    assert(!"not implemented");
-#endif
-}
-
-void read_write_set_flag(struct TbSerialDev *serdev, ushort port, ubyte c)
-{
-#if defined(DOS)||defined(GO32)
-    ubyte val;
-    val = inp(port) | c;
-    outp(port, val);
-#else
-    assert(!"not implemented");
-#endif
-}
-
-void wait(ulong msec)
-{
-#if defined(DOS)||defined(GO32)
-    delay(msec);
-#else
-    usleep(msec * 1000);
-#endif
-}
-
-void send_string(struct TbSerialDev *serdev, const char *str)
-{
-    char locstr[80];
-
-    strcpy(locstr, str);
-    strcat(locstr, "\r");
-    write_string(serdev, locstr);
-    strcpy(ModemRequestString, locstr);
-}
-
-int get_modem_response(struct TbSerialDev *serdev)
-{
-    int ret;
-    asm volatile ("call ASM_get_modem_response\n"
-        : "=r" (ret) : "a" (serdev) );
-    return ret;
-}
-
-TbResult LbModemHangUp(ushort dev_id)
-{
-    struct TbSerialDev *serdev;
-    TbResult ret;
-
-    LOGDBG("Starting");
-    if (dev_id > 3)
-        return Lb_FAIL;
-
-    serdev = com_dev[dev_id].serdev;
-    read_write_clear_flag(serdev, serdev->field_1096 + 4, 0x01);
-    wait(1250);
-
-    read_write_set_flag(serdev, serdev->field_1096 + 4, 0x01);
-    wait(1300);
-
-    send_string(serdev, "+++");
-    wait(1300);
-
-    NetworkServicePtr.F.UsedSessionInit = NetworkServicePtr.F.SessionHangUp;
-    ret = get_modem_response(serdev);
-    NetworkServicePtr.F.UsedSessionInit = NULL;
-    send_string(serdev, modem_cmds[2].cmd);
-
     return ret;
 }
 
