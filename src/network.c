@@ -783,6 +783,28 @@ TbResult LbModemDial(ushort dev_id, const char *distr)
     return ret;
 }
 
+TbResult LbModemAnswer(ushort dev_id)
+{
+    struct TbSerialDev *serdev;
+    TbResult ret;
+
+    LOGDBG("Starting");
+    if (dev_id > 3)
+        return Lb_FAIL;
+
+    serdev = com_dev[dev_id].serdev;
+    if (serdev == NULL)
+        return Lb_FAIL;
+
+    NetworkServicePtr.F.UsedSessionInit = NetworkServicePtr.F.SessionAnswer;
+    send_string(serdev, modem_cmds[3].cmd);
+    ret = 3;
+    while (ret == 3 || ret == 1)
+        ret = get_modem_response(serdev);
+    NetworkServicePtr.F.UsedSessionInit = NULL;
+    return ret;
+}
+
 TbResult LbModemHangUp(ushort dev_id)
 {
     struct TbSerialDev *serdev;
@@ -811,6 +833,23 @@ TbResult LbModemHangUp(ushort dev_id)
     send_string(serdev, modem_cmds[2].cmd);
 
     return ret;
+}
+
+TbResult LbModemRingType(ushort dev_id, ubyte rtyp)
+{
+    struct TbSerialDev *serdev;
+
+    LOGDBG("Starting");
+    if (dev_id > 3)
+        return Lb_FAIL;
+
+    serdev = com_dev[dev_id].serdev;
+    if (serdev == NULL)
+        return Lb_FAIL;
+
+    serdev->field_10AB = rtyp;
+
+    return Lb_SUCCESS;
 }
 
 TbResult netsvc6_service_init(struct NetworkServiceInfo *nsvc)
