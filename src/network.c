@@ -46,7 +46,7 @@ struct IPXPlayer { // sizeof=28
     ushort Used; // offset=26
 };
 
-struct IPXSessionList { // sizeof=218
+struct IPXSessionList { // sizeof=271
     struct IPXSession Session; // offset=0
     struct IPXPlayer Player[8]; // offset=45
     ubyte NumberOfPlayers; // offset=269
@@ -231,7 +231,7 @@ TbResult ipx_create_session(char *a1, const char *a2)
     return ret;
 #endif
     struct TbIPXHandler *ipxhndl;
-    struct TbIPXPlayer *p_plyr;
+    struct TbIPXPlayer *p_plyrdt;
     ulong tm_start, tm_curr;
     TbResult ret;
     int i;
@@ -255,10 +255,10 @@ TbResult ipx_create_session(char *a1, const char *a2)
             if (ipxhndl->field_46[i])
             {
                 ipxhndl->field_46[i] = 0;
-                p_plyr = &ipxhndl->PlayerData[i];
-                if (IPXPlayerHeader.field_2 == p_plyr->Header.field_2)
+                p_plyrdt = &ipxhndl->PlayerData[i];
+                if (IPXPlayerHeader.field_2 == p_plyrdt->Header.field_2)
                 {
-                    if (strcasecmp(p_plyr->Header.field_4, a1) == 0) {
+                    if (strcasecmp(p_plyrdt->Header.field_4, a1) == 0) {
                         LOGERR("String same as remote");
                         return Lb_FAIL;
                     }
@@ -317,11 +317,67 @@ TbResult ipx_create_session(char *a1, const char *a2)
     return Lb_SUCCESS;
 }
 
-TbResult ipx_session_list(struct IPXSessionList *ipxsess, int a2)
+int ipx_session_list(struct IPXSessionList *sesslist, int listlen)
 {
+#if 0
     TbResult ret;
     asm volatile ("call ASM_ipx_session_list\n"
-        : "=r" (ret) : "a" (ipxsess), "d" (a2) );
+        : "=r" (ret) : "a" (ipxsess), "d" (listlen) );
+    return ret;
+#endif
+    int ret;
+    int i, k;
+    ushort n;
+
+    if (IPXHandler->SessionActive != 0) {
+        LOGERR("Already have IPX session");
+        return Lb_FAIL;
+    }
+
+#if defined(DOS)||defined(GO32)
+    CallIPX(1);
+#endif
+
+    ret = -1;
+    n = 0;
+    for (i = 1; i < 30; i++)
+    {
+        struct IPXSessionList *p_ipxsess;
+        struct TbIPXPlayer *p_plyrdt;
+
+        if (!IPXHandler->field_46[i])
+            continue;
+        IPXHandler->field_46[i] = 0;
+
+        p_plyrdt = &IPXHandler->PlayerData[i];
+
+        if (strncasecmp(p_plyrdt->Header.Magic, "BU", 2) != 0)
+            continue;
+        if (p_plyrdt->Header.field_2 != IPXPlayerHeader.field_2)
+            continue;
+        if (p_plyrdt->Header.field_2A != 1)
+            continue;
+
+        for (k = 0; k < n; k++)
+        {
+            p_ipxsess = &sesslist[k];
+            if (memcmp(p_plyrdt->Header.field_1C, &p_ipxsess->Session.Reserved[16], 6) == 0)
+            {
+                k = -1;
+                memcpy(p_ipxsess, p_plyrdt, sizeof(struct IPXSessionList));
+                break;
+            }
+        }
+        if (k != -1)
+        {
+            p_ipxsess = &sesslist[n];
+            memcpy(p_ipxsess, p_plyrdt, sizeof(struct IPXSessionList));
+            ret = ++n;
+            if (n >= listlen)
+                break;
+        }
+    }
+
     return ret;
 }
 
@@ -959,11 +1015,9 @@ TbResult LbNetworkServiceStart(struct NetworkServiceInfo *nsvc)
     switch (NetworkServicePtr.I.Type)
     {
     case NetSvc_IPX:
-#if 0
         if (IPXHandler == NULL) {
             IPXHandler = LbMemoryAlloc(sizeof(struct TbIPXHandler));
         }
-#endif
         if (IPXHandler == NULL) {
             LOGERR("Allocating IPX handler failed");
             ret = Lb_FAIL;
