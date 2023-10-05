@@ -417,9 +417,27 @@ int ipx_exchange_packets(void *a1, int a2)
 
 void ipx_shutdown(ushort a1)
 {
-    LOGDBG("Starting");
+#if 0
     asm volatile ("call ASM_ipx_shutdown\n"
         : : "a" (a1));
+#endif
+    struct TbIPXHandler *p_ipxhndl;
+    int i;
+
+    LOGDBG("Starting");
+    p_ipxhndl = IPXHandler;
+
+    p_ipxhndl->field_8 = a1;
+#if defined(DOS)||defined(GO32)
+    CallIPX(9);
+
+    for (i = 0; i < 40; i++)
+    {
+        CallIPX(1);
+    }
+#else
+    (void)i; // unused
+#endif
 }
 
 void ipx_shutdown_listeners(void)
