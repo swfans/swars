@@ -83,7 +83,7 @@ struct NetworkServiceInfo Network_Service_List[] = {
     {0, 0, NetSvc_COM2, 0x01},
     {0, 0, NetSvc_COM3, 0x01},
     {0, 0, NetSvc_COM4, 0x01},
-    {0, 0, NetSvc_Unkn6, 0x02},
+    {0, 0, NetSvc_RADICA, 0x02},
     {0, 0, 0, 0},
 };
 
@@ -701,57 +701,57 @@ int net_unkn_func_338(void *a1)
     return ret;
 }
 
-int netsvc6_create_session(struct TbNetworkSession *session, const char *a2)
+int radica_create_session(struct TbNetworkSession *session, const char *a2)
 {
     int ret;
     LOGDBG("Starting");
-    asm volatile ("call ASM_netsvc6_create_session\n"
+    asm volatile ("call ASM_radica_create_session\n"
         : "=r" (ret) : "a" (session), "d" (a2) );
     return ret;
 }
 
-int netsvc6_join_session(struct TbNetworkSession *session, char *a2)
+int radica_join_session(struct TbNetworkSession *session, char *a2)
 {
     int ret;
     LOGDBG("Starting");
-    asm volatile ("call ASM_netsvc6_join_session\n"
+    asm volatile ("call ASM_radica_join_session\n"
         : "=r" (ret) : "a" (session), "d" (a2) );
     return ret;
 }
 
-int netsvc6_update(void)
+int radica_update(void)
 {
     assert(!"Not implemented");
     return Lb_SUCCESS;
 }
 
-TbResult netsvc6_service_init(struct NetworkServiceInfo *nsvc)
+TbResult radica_service_init(struct NetworkServiceInfo *nsvc)
 {
     TbResult ret;
     LOGDBG("Starting");
-    asm volatile ("call ASM_netsvc6_service_init\n"
+    asm volatile ("call ASM_radica_service_init\n"
         : "=r" (ret) : "a" (nsvc) );
     return ret;
 }
 
-int netsvc6_session_list(struct TbNetworkSessionList *nslist, int listlen)
+int radica_session_list(struct TbNetworkSessionList *nslist, int listlen)
 {
     int ret;
     LOGDBG("Starting");
-    asm volatile ("call ASM_netsvc6_session_list\n"
+    asm volatile ("call ASM_radica_session_list\n"
         : "=r" (ret) : "a" (nslist), "d" (listlen) );
     return ret;
 }
 
-int netsvc6_exchange_packets(void *a1, int a2)
+int radica_exchange_packets(void *a1, int a2)
 {
     int ret;
-    asm volatile ("call ASM_netsvc6_exchange_packets\n"
+    asm volatile ("call ASM_radica_exchange_packets\n"
         : "=r" (ret) : "a" (a1), "d" (a2) );
     return ret;
 }
 
-int netsvc6_shutdown(void)
+int radica_shutdown(void)
 {
     LOGSYNC("Quitting RADICA");
     return net_unkn_func_352();
@@ -1121,10 +1121,10 @@ TbResult LbNetworkServiceStart(struct NetworkServiceInfo *nsvc)
         }
         ret = Lb_SUCCESS;
         break;
-    case NetSvc_Unkn6:
-        ret = netsvc6_service_init(nsvc);
+    case NetSvc_RADICA:
+        ret = radica_service_init(nsvc);
         if (ret != Lb_SUCCESS) {
-            LOGERR("Unkn6 service init failed");
+            LOGERR("RADICA service init failed");
             ret = Lb_FAIL;
             NetworkServicePtr.I.Type = NetSvc_NONE; // Why only this one is reverting the type on fail?
         }
@@ -1150,8 +1150,8 @@ TbResult LbNetworkUpdate(void)
     case NetSvc_COM4:
         ret = Lb_SUCCESS;
         break;
-    case NetSvc_Unkn6:
-        netsvc6_update();
+    case NetSvc_RADICA:
+        radica_update();
         ret = Lb_SUCCESS;
         break;
     }
@@ -1180,8 +1180,8 @@ int LbNetworkSessionList(struct TbNetworkSessionList *nslist, int listlen)
     case NetSvc_COM4:
         ret = 0;
         break;
-    case NetSvc_Unkn6:
-        ret = netsvc6_session_list(nslist, listlen);
+    case NetSvc_RADICA:
+        ret = radica_session_list(nslist, listlen);
         break;
     }
     return ret;
@@ -1224,7 +1224,7 @@ int LbNetworkSessionNumberPlayers(void)
         serhead = NetworkServicePtr.I.Id;
         ret = serhead->num_players;
         break;
-    case NetSvc_Unkn6:
+    case NetSvc_RADICA:
         ret = Lb_FAIL;
         break;
     }
@@ -1248,7 +1248,7 @@ TbResult LbNetworkSend(int plyr, ubyte *data, int dtlen)
     case NetSvc_COM4:
         ret = Lb_FAIL;
         break;
-    case NetSvc_Unkn6:
+    case NetSvc_RADICA:
         ret = Lb_FAIL;
         break;
     }
@@ -1272,7 +1272,7 @@ TbResult LbNetworkReceive(int plyr, ubyte *data, int dtlen)
     case NetSvc_COM4:
         ret = Lb_FAIL;
         break;
-    case NetSvc_Unkn6:
+    case NetSvc_RADICA:
         ret = Lb_FAIL;
         break;
     }
@@ -1296,7 +1296,7 @@ TbResult LbNetworkMessageSend(int plyr, ubyte *data, int dtlen)
     case NetSvc_COM4:
         ret = Lb_FAIL;
         break;
-    case NetSvc_Unkn6:
+    case NetSvc_RADICA:
         ret = Lb_FAIL;
         break;
     }
@@ -1320,7 +1320,7 @@ TbResult LbNetworkMessageReceive(int plyr, ubyte *data, int dtlen)
     case NetSvc_COM4:
         ret = Lb_FAIL;
         break;
-    case NetSvc_Unkn6:
+    case NetSvc_RADICA:
         ret = Lb_FAIL;
         break;
     }
@@ -1344,7 +1344,7 @@ TbResult LbNetworkSendNoWait(int plyr, ubyte *data, int dtlen)
     case NetSvc_COM4:
         ret = Lb_FAIL;
         break;
-    case NetSvc_Unkn6:
+    case NetSvc_RADICA:
         ret = Lb_FAIL;
         break;
     }
@@ -1368,7 +1368,7 @@ TbResult LbNetworkReceiveNoWait(int plyr, ubyte *data, int dtlen)
     case NetSvc_COM4:
         ret = Lb_FAIL;
         break;
-    case NetSvc_Unkn6:
+    case NetSvc_RADICA:
         ret = Lb_FAIL;
         break;
     }
@@ -1393,7 +1393,7 @@ TbResult LbNetworkInit(void)
         serhead = NetworkServicePtr.I.Id;
         ret = LbModemInit(serhead->comdev_id);
         break;
-    case NetSvc_Unkn6:
+    case NetSvc_RADICA:
         ret = Lb_FAIL;
         break;
     }
@@ -1418,7 +1418,7 @@ TbResult LbNetworkDial(const char *distr)
         serhead = NetworkServicePtr.I.Id;
         ret = LbModemDial(serhead->comdev_id, distr);
         break;
-    case NetSvc_Unkn6:
+    case NetSvc_RADICA:
         ret = Lb_FAIL;
         break;
     }
@@ -1443,7 +1443,7 @@ TbResult LbNetworkAnswer(void)
         serhead = NetworkServicePtr.I.Id;
         ret = LbModemAnswer(serhead->comdev_id);
         break;
-    case NetSvc_Unkn6:
+    case NetSvc_RADICA:
         ret = Lb_FAIL;
         break;
     }
@@ -1471,7 +1471,7 @@ TbResult LbNetworkSessionStop(void)
         lbICommSessionActive = 0;
         ret = Lb_SUCCESS;
         break;
-    case NetSvc_Unkn6:
+    case NetSvc_RADICA:
         ret = Lb_FAIL;
         break;
     }
@@ -1499,7 +1499,7 @@ TbResult LbNetworkHostPlayerNumber(void)
         else
             ret = 1;
         break;
-    case NetSvc_Unkn6:
+    case NetSvc_RADICA:
         ret = Lb_FAIL;
         break;
     }
@@ -1537,7 +1537,7 @@ int LbNetworkPlayerNumber(void)
         else
             ret = 1;
         break;
-    case NetSvc_Unkn6:
+    case NetSvc_RADICA:
         break;
     }
     return ret;
@@ -1567,7 +1567,7 @@ int LbNetworkPlayerName(char *name, int plyr)
             ret = Lb_SUCCESS;
         }
         break;
-    case NetSvc_Unkn6:
+    case NetSvc_RADICA:
         break;
     }
     return ret;
@@ -1592,8 +1592,8 @@ TbResult LbNetworkExchange(void *a1, int a2)
         LbCommExchange(serhead->comdev_id, a1, a2);
         ret = Lb_SUCCESS;
         break;
-    case NetSvc_Unkn6:
-        netsvc6_exchange_packets(a1, a2);
+    case NetSvc_RADICA:
+        radica_exchange_packets(a1, a2);
         ret = Lb_SUCCESS;
         break;
     }
@@ -1619,8 +1619,8 @@ TbResult LbNetworkReset(void)
     case NetSvc_COM4:
         ret = LbCommDeInit(NetworkServicePtr.I.Id);
         break;
-    case NetSvc_Unkn6:
-        ret = netsvc6_shutdown();
+    case NetSvc_RADICA:
+        ret = radica_shutdown();
         break;
     }
     NetworkServicePtr.I.Type = NetSvc_NONE;
@@ -1644,7 +1644,7 @@ TbBool LbNetworkSessionActive(void)
     case NetSvc_COM4:
         ret = lbICommSessionActive;
         break;
-    case NetSvc_Unkn6:
+    case NetSvc_RADICA:
         ret = false;
         break;
     }
@@ -1669,7 +1669,7 @@ TbResult LbNetworkHangUp(void)
         serhead = NetworkServicePtr.I.Id;
         ret = LbModemHangUp(serhead->comdev_id);
         break;
-    case NetSvc_Unkn6:
+    case NetSvc_RADICA:
         ret = Lb_FAIL;
         break;
     }
@@ -1700,7 +1700,7 @@ TbResult LbNetworkSetBaud(int rate)
         LbCommSetBaud(rate, serhead->comdev_id);
         ret = Lb_SUCCESS;
         break;
-    case NetSvc_Unkn6:
+    case NetSvc_RADICA:
         ret = Lb_FAIL;
         break;
     }
@@ -1724,7 +1724,7 @@ TbResult LbNetworkShutDownListeners(void)
     case NetSvc_COM4:
         ret = Lb_SUCCESS;
         break;
-    case NetSvc_Unkn6:
+    case NetSvc_RADICA:
         ret = Lb_SUCCESS;
         break;
     }
@@ -1748,7 +1748,7 @@ TbResult LbNetworkOpenUpListeners(void)
     case NetSvc_COM4:
         ret = Lb_SUCCESS;
         break;
-    case NetSvc_Unkn6:
+    case NetSvc_RADICA:
         ret = Lb_SUCCESS;
         break;
     }
@@ -1831,8 +1831,8 @@ TbResult LbNetworkSessionCreate(struct TbNetworkSession *session, char *a2)
         serhead = NetworkServicePtr.I.Id;
         ret = LbCommSessionCreate(serhead, session->Name, a2);
         break;
-    case NetSvc_Unkn6:
-        ret = netsvc6_create_session(session, a2);
+    case NetSvc_RADICA:
+        ret = radica_create_session(session, a2);
         break;
     }
     LOGSYNC("Service %d create result=%d", (int)NetworkServicePtr.I.Type, (int)ret);
@@ -1887,8 +1887,8 @@ TbResult LbNetworkSessionJoin(struct TbNetworkSession *session, char *a2)
         serhead = NetworkServicePtr.I.Id;
         ret = LbCommSessionJoin(serhead, session->Name, a2);
         break;
-    case NetSvc_Unkn6:
-        ret = netsvc6_join_session(session, a2);
+    case NetSvc_RADICA:
+        ret = radica_join_session(session, a2);
         break;
     }
     return ret;

@@ -41,7 +41,7 @@ enum NetworkServiceType {
     NetSvc_COM2,
     NetSvc_COM3,
     NetSvc_COM4,
-    NetSvc_Unkn6,
+    NetSvc_RADICA,
 };
 
 struct NetworkServiceInfo { // sizeof=12
