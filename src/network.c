@@ -254,16 +254,16 @@ TbResult ipx_create_session(char *a1, const char *a2)
         for (i = 1; i < 30; i++)
         {
             ipxhndl = IPXHandler;
-            if (ipxhndl->field_46[i])
+            if (!ipxhndl->field_46[i])
+                continue;
+            ipxhndl->field_46[i] = 0;
+
+            p_plyrdt = &ipxhndl->PlayerData[i];
+            if (IPXPlayerHeader.field_2 == p_plyrdt->Header.field_2)
             {
-                ipxhndl->field_46[i] = 0;
-                p_plyrdt = &ipxhndl->PlayerData[i];
-                if (IPXPlayerHeader.field_2 == p_plyrdt->Header.field_2)
-                {
-                    if (strcasecmp(p_plyrdt->Header.field_4, a1) == 0) {
-                        LOGERR("String same as remote");
-                        return Lb_FAIL;
-                    }
+                if (strcasecmp(p_plyrdt->Header.field_4, a1) == 0) {
+                    LOGERR("String same as remote");
+                    return Lb_FAIL;
                 }
             }
         }
@@ -385,9 +385,121 @@ int ipx_session_list(struct IPXSessionList *sesslist, int listlen)
 
 int ipx_join_session(struct IPXSessionList *p_ipxsess, char *a2)
 {
+#if 0
     TbResult ret;
     asm volatile ("call ASM_ipx_join_session\n"
         : "=r" (ret) : "a" (p_ipxsess), "d" (a2) );
+    return ret;
+#endif
+    struct TbIPXPlayerHeader ipxhead;
+    ulong tm_start, tm_curr;
+    TbResult ret;
+    short i, k;
+
+    LOGDBG("Starting");
+    if (IPXHandler->SessionActive != 0) {
+        LOGERR("Already have IPX session");
+        return Lb_FAIL;
+    }
+
+    ret = Lb_FAIL;
+    memset(&ipxhead, 0, 45u);
+    ipxhead.Magic[0] = 'B';
+    ipxhead.Magic[1] = 'U';
+    ipxhead.field_2A = 2;
+    memcpy(ipxhead.field_1C, IPXHandler->field_2E, sizeof(ipxhead.field_1C));
+    memcpy(&ipxhead.field_20, &IPXHandler->field_32, sizeof(ipxhead.field_20));
+    memcpy(ipxhead.field_22, &IPXHandler->field_2A, sizeof(ipxhead.field_22));
+    strcpy(ipxhead.field_C, a2);
+    strcpy(ipxhead.field_4, p_ipxsess->Session.Name);
+    ipxhead.field_2 = IPXPlayerHeader.field_2;
+
+    tm_start = clock();
+    while ( 1 )
+    {
+        memcpy(IPXHandler->PlayerData, &ipxhead, sizeof(struct TbIPXPlayerHeader));
+        IPXHandler->field_B = 45;
+        memcpy(IPXHandler->field_12, &p_ipxsess->Session.Reserved[16], 6u);
+        memcpy(IPXHandler->field_E, &p_ipxsess->Session.Reserved[22], sizeof(IPXHandler->field_E));
+#if defined(DOS)||defined(GO32)
+        CallIPX(2);
+        CallIPX(1);
+#endif
+
+        for (i = 1; i < 30; i++)
+        {
+            struct TbIPXPlayer *p_plyrdt;
+
+            if (!IPXHandler->field_46[i])
+                continue;
+            IPXHandler->field_46[i] = 0;
+
+            p_plyrdt = &IPXHandler->PlayerData[i];
+
+            if (strncasecmp(p_plyrdt->Header.Magic, "BU", 2) != 0)
+                continue;
+            if (p_plyrdt->Header.field_2 != IPXPlayerHeader.field_2)
+                continue;
+            if (p_plyrdt->Header.field_2A != 1)
+                continue;
+            if (strcasecmp(p_plyrdt->Header.field_4, p_ipxsess->Session.Name) != 0)
+                continue;
+
+            for (k = 0; k < 8; k++)
+            {
+                struct TbIPXPlayerData3Sub *p_pdtsub;
+                p_pdtsub = &p_plyrdt->Data.Data3.Sub1[k];
+                if (memcmp(&p_pdtsub->field_2D[4], ipxhead.field_1C, 6) == 0)
+                {
+                    tm_start = 0;
+                    ret = 1;
+                    i = 31;
+                    break;
+                }
+            }
+        }
+
+        if (ret != 1)
+        {
+            int ret2;
+            ret2 = 0;
+            if (NetworkServicePtr.F.SessionJoin)
+                ret2 = NetworkServicePtr.F.SessionJoin();
+            if (ret2 == -7)
+                return ret2;
+        }
+        tm_curr = clock();
+        if (tm_curr - tm_start > 500)
+        {
+            break;
+        }
+    }
+    if (ret != -1)
+    {
+        struct TbIPXPlayer *p_plyrdt;
+
+        p_plyrdt = &IPXHandler->PlayerData[i];
+
+        IPXPlayerHeader.Magic[0] = 'B';
+        IPXPlayerHeader.Magic[1] = 'U';
+        IPXPlayerHeader.field_2A = 0;
+        memcpy(IPXPlayerHeader.field_1C, IPXHandler->field_2E, sizeof(IPXPlayerHeader.field_1C));
+        memcpy(&IPXPlayerHeader.field_20, IPXHandler->field_2E + 4, sizeof(IPXPlayerHeader.field_20));
+        memcpy(IPXPlayerHeader.field_22, &IPXHandler->field_2A, sizeof(IPXPlayerHeader.field_22));
+        IPXHandler->field_C = k;
+        IPXHandler->SessionActive = 1;
+        IPXHandler->field_D = p_plyrdt->Header.field_2B;
+        IPXPlayerData.num_players = p_plyrdt->Data.num_players;
+        IPXPlayerData.field_10E = p_plyrdt->Data.field_10E;
+        IPXPlayerHeader.field_26 = p_plyrdt->Header.field_26;
+        IPXPlayerHeader.field_2B = k;
+        strcpy(IPXPlayerHeader.field_C, a2);
+        strcpy(IPXPlayerHeader.field_4, p_plyrdt->Header.field_4);
+        memcpy(&IPXPlayerData, &p_plyrdt->Data, 0xE0u);
+        memset(ipx_send_packet_count, 0, 0x100u);
+        memset(ipx_got_player_send_packet_count, 0, 0x20u);
+        memset(datagram_backup, 0, 0x1130u);
+    }
     return ret;
 }
 

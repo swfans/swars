@@ -216,10 +216,19 @@ struct TbIPXPlayerData2 {
     short field_49[98];
 };
 
+struct TbIPXPlayerData3Sub {
+    ubyte field_2D[28];
+};
+
+struct TbIPXPlayerData3 {
+    struct TbIPXPlayerData3Sub Sub1[2]; // offset=45
+};
+
 struct TbIPXPlayerData {
     union {
         struct TbIPXPlayerData1 Data1;
         struct TbIPXPlayerData2 Data2;
+        struct TbIPXPlayerData3 Data3;
     };
     ubyte num_players;
     ubyte field_10E; // offset=270
