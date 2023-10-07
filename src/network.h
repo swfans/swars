@@ -194,16 +194,42 @@ struct TbIPXPlayerHeader {
   ubyte field_2A;
   ubyte field_2B;
   ubyte field_2C;
-  ubyte field_2D[26];
-  short field_47[99];
-  ubyte num_players;
-  ubyte field_10E;
+};
+
+struct TbIPXPlayerData1Sub {
+    short field_47;
+    short field_49[13];
+};
+
+struct TbIPXPlayerData1 {
+    ubyte field_2D[26]; // offset=45
+    struct TbIPXPlayerData1Sub Sub1[2]; // offset=71
+    short field_7F[71];
+};
+
+struct TbIPXPlayerData2Sub {
+    ubyte field_2D[14];
+};
+
+struct TbIPXPlayerData2 {
+    struct TbIPXPlayerData2Sub Sub1[2]; // offset=45
+    short field_49[98];
+};
+
+struct TbIPXPlayerData {
+    union {
+        struct TbIPXPlayerData1 Data1;
+        struct TbIPXPlayerData2 Data2;
+    };
+    ubyte num_players;
+    ubyte field_10E; // offset=270
+    ubyte field_10F[268];
+    ubyte field_21B;
 };
 
 struct TbIPXPlayer {
-  struct TbIPXPlayerHeader Header;
-  ubyte field_10F[268];
-  ubyte field_21B;
+    struct TbIPXPlayerHeader Header; // offset=0
+    struct TbIPXPlayerData Data; // offset=45
 };
 
 struct TbIPXHandler {
