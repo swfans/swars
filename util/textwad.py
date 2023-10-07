@@ -1383,13 +1383,21 @@ def textwad_extract(po):
 def textwad_create(po, wadfh, idxfh):
     # Load PO files
     podict = {}
-    for cidx, campgn in enumerate(campaign_names):
-        pofname = po.pofiles[cidx]
-        if campgn.lower() not in pofname:
+    #for cidx, campgn in enumerate(campaign_names):
+    #    pofname = po.pofiles[cidx]
+    for poidx, pofname in enumerate(po.pofiles):
+        campgn = None
+        for ccampgn in campaign_names:
+            if ccampgn.lower() in pofname:
+                campgn = ccampgn
+        #if campgn.lower() not in pofname:
+        if campgn is None:
             print("{}: File name lacks campaign name, is there a mistake?".format(pofname))
+            campgn = "UNKN"
         polist = polib.pofile(pofname)
         podict[campgn] = polist
-    for campgn in campaign_names:
+
+    for campgn in podict.keys():
         for e in podict[campgn]:
             if e.msgstr == "":
                 e.msgstr = e.msgid
@@ -1413,8 +1421,8 @@ def main():
     """
     parser = argparse.ArgumentParser(description=__doc__.split('.')[0])
 
-    parser.add_argument('pofiles', type=str, nargs=len(campaign_names),
-          help="List of per-campaign PO/POT file names, in proper order (sy ch pu co)")
+    parser.add_argument('pofiles', type=str, nargs=2,
+          help="List of PO/POT file names, in proper order (per-campaign, then common)")
 
     parser.add_argument('-w', '--wadfile', type=str, required=True,
           help="Name for WAD/IDX files")
