@@ -21,6 +21,10 @@
 #include <ctype.h>
 #include <stdio.h>
 #include <string.h>
+#include "bflib_basics.h"
+#include "campaign.h"
+#include "game_data.h"
+#include "game.h"
 #include "swlog.h"
 /******************************************************************************/
 
@@ -86,9 +90,15 @@ int load_file_wad(const char *filename, const char *wadfile, void *outbuf)
 
 int load_file_alltext(const char *filename, void *outbuf)
 {
-    const char *alltext_fname;
-    alltext_fname = "qdata/alltext";
-    return load_file_wad(filename, alltext_fname, outbuf);
+    char wadfile[DISKPATH_SIZE];
+    struct Campaign *p_campgn;
+    const char *campgn_mark;
+
+    p_campgn = &campaigns[background_type];
+    campgn_mark = p_campgn->ProjectorFnMk;
+
+    snprintf(wadfile, DISKPATH_SIZE, "language/%s/alltext-%s", language_3str, campgn_mark);
+    return load_file_wad(filename, wadfile, outbuf);
 }
 
 /******************************************************************************/
