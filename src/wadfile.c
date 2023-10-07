@@ -95,7 +95,7 @@ int load_file_alltext(const char *filename, void *outbuf)
     const char *campgn_mark;
 
     p_campgn = &campaigns[background_type];
-    campgn_mark = p_campgn->ProjectorFnMk;
+    campgn_mark = p_campgn->TextFnMk;
 
     snprintf(wadfile, DISKPATH_SIZE, "language/%s/alltext-%s", language_3str, campgn_mark);
     return load_file_wad(filename, wadfile, outbuf);

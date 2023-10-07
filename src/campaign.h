@@ -75,6 +75,8 @@ struct Campaign {
     ulong StandardWeapons;
     ulong ResearchMods;
     ulong StandardMods;
+    /** Char marking text translations file names for the campaign. */
+    const char *TextFnMk;
     /** Char marking projector file names for the campaign. */
     const char *ProjectorFnMk;
     /** Outro movie file name. */

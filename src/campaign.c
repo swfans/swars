@@ -42,6 +42,7 @@ enum MissionListConfigCmd {
     MissL_StandardWeapons,
     MissL_ResearchMods,
     MissL_StandardMods,
+    MissL_TextFnMk,
     MissL_ProjectorFnMk,
     MissL_OutroFMV,
     MissL_OutroBkFn,
@@ -90,6 +91,7 @@ const struct TbNamedEnum missions_conf_common_cmds[] = {
   {"StandardWeapons",MissL_StandardWeapons},
   {"ResearchMods",	MissL_ResearchMods},
   {"StandardMods",	MissL_StandardMods},
+  {"TextFnMk",		MissL_TextFnMk},
   {"ProjectorFnMk",	MissL_ProjectorFnMk},
   {"OutroFMV",		MissL_OutroFMV},
   {"OutroBkFn",		MissL_OutroBkFn},
@@ -786,6 +788,16 @@ TbBool read_missions_conf_info(int num)
         case MissL_StandardMods:
             // Not reading at this point - cannot guarantee weapons list and mods list is loaded
             break;
+        case MissL_TextFnMk:
+            i = LbIniValueGetStrWhole(&parser, p_str, 80);
+            if (i <= 0) {
+                CONFWRNLOG("Couldn't read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                break;
+            }
+            p_campgn->TextFnMk = p_str;
+            p_str += strlen(p_str) + 1;
+            CONFDBGLOG("%s \"%s\"", COMMAND_TEXT(cmd_num), (int)p_campgn->TextFnMk);
+            break;
         case MissL_ProjectorFnMk:
             i = LbIniValueGetStrWhole(&parser, p_str, 80);
             if (i <= 0) {
@@ -988,6 +1000,7 @@ void read_missions_conf_file(int num)
         case MissL_FirstTrigger:
         case MissL_NetscanTextId:
         case MissL_WeaponsTextIdShift:
+        case MissL_TextFnMk:
         case MissL_ProjectorFnMk:
         case MissL_OutroFMV:
         case MissL_OutroBkFn:
