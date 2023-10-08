@@ -34,6 +34,13 @@ Wars CD*, or digital distribution of the game. There were several physical
 versions released. The multi-lingual version was tested and will definitely
 work, other version were not tested. Only releases for PC can be used.
 
+The CD version which you use narrows the range of available languages.
+
+* Multi-lingual CD contains `eng` `fre` `ita` `spa` `swe`,
+* German release is required to use `ger`,
+* Japaneses "SW Premium" release contains `eng` `fre` `jap`, but asian fonts
+  are not supported by the port.
+
 The steps you need to take vary depending on your operating system.
 
 ### Installing on GNU or UNIX
@@ -101,19 +108,19 @@ If you've decided on the hand-compilation option, proceed with the following ste
 3. copy all the files and directories, except for the Language directory, from
    the `Game` directory within the *Syndicate Wars CD* to the location of your
    desire, say `SWarsLocation`.
-4. copy all the files, except `SOUND.DAT`, from the `Game\Language\LANGUAGE\` from
+4. copy all the files, except `sound.dat`, from the `game\language\LANGUAGE\` from
    the *Syndicate Wars CD* to the `SWarsLocation\Data` directory, where *LANGUAGE*
    stands for the appropriate subdirectory fo the language you want
-5. copy the `SOUND.DAT` file (from the directory stated above) to the
-   `SWarsLocation\Sound` directory
+5. copy the `sound.dat` file (from the directory stated above) to the
+   `SWarsLocation\sound` directory
 6. *[optional]* rip the game CD Audio tracks to `track_{1,2,3}.ogg` (vorbis)
 7. *[optional]* create a `SWarsLocation\music` directory and copy the
    previously encoded ogg files there
 8. from the compilation folder, copy `swars.exe` and `conf` folder to your
    `SWarsLocation` directory
-9. from the compilation folder, copy files from `lang\LANGUAGE\` folder to
-   appropriate places within `SWarsLocation` directory, replacing files which
-   were already there
+9. from the compilation folder, copy `lang` directory to `SWarsLocation` and
+   rename it to `language`, so that ie. files for english are within
+   `SWarsLocation\language\eng\`
 
 If instead ob the above points you prefer more technical description on what to
 copy and where, read the script `util/install` which is used to perform
