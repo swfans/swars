@@ -6573,7 +6573,7 @@ ubyte do_storage_NEW_MORTAL(ubyte click)
 #endif
 }
 
-void options_text_update(void)
+void update_options_screen_state(void)
 {
     const char *text;
     int i;
@@ -6584,6 +6584,7 @@ void options_text_update(void)
     else
         text = gui_strings[580 + i];
     options_gfx_buttons[14].Text = text;
+
     i = ingame.TrenchcoatPreference;
     options_gfx_buttons[15].Text = gui_strings[583 + i];
 }
@@ -6602,7 +6603,7 @@ ubyte do_login_2(ubyte click)
 
     read_user_settings();
 
-    options_text_update();
+    update_options_screen_state();
 
     if (in_network_game)
     {
@@ -9179,18 +9180,6 @@ void show_menu_screen_st0(void)
     save_game_buffer = unkn_buffer_05;
 
     net_system_init0();
-}
-
-void update_options_screen_state(void)
-{
-    char *text;
-    if (ingame.PanelPermutation < 0)
-      text = gui_strings[abs(ingame.PanelPermutation) + 579];
-    else
-      text = gui_strings[ingame.PanelPermutation + 580];
-    options_gfx_buttons[14].Text = text;
-    text = gui_strings[ingame.TrenchcoatPreference + 583];
-    options_gfx_buttons[15].Text = text;
 }
 
 void init_net_players(void)
