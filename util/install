@@ -168,8 +168,6 @@ copy_data()
 
   # Source lang dir (original game install files)
   local sld="$SOURCE/language/$LANG"
-  # Target lang dir (lang files being part of the port)
-  local tld="$TARGET/language/$LANG"
 
   install -v -d "$TARGET/intro" || return 1
 
@@ -179,9 +177,6 @@ copy_data()
   install -v -m 0644 "$sld/chu_ele.smk" "$TARGET/data" || return 1
 
   install -v -m 0644 "$sld/sound.dat" "$TARGET/sound" || return 1
-
-  install -v -m 0644 "$tld/alltext.wad" "$TARGET/qdata" || return 1
-  install -v -m 0644 "$tld/alltext.idx" "$TARGET/qdata" || return 1
 
   return 0
 }
