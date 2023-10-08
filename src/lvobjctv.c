@@ -2092,7 +2092,7 @@ void load_netscan_objectives(ubyte mapno, ubyte level)
 #endif
 }
 
-int load_objectives_text(void *data)
+int read_objectives_text(void *data)
 {
     char *p;
     int totlen;
@@ -2127,4 +2127,18 @@ int load_objectives_text(void *data)
     return (totlen + 5) & ~0x03;
 }
 
+TbResult load_objectives_text(void)
+{
+    int len;
+    len = read_objectives_text(engine_mem_alloc_ptr);
+    if (len < 1) {
+        LOGERR("Objective text read failed.");
+        return Lb_FAIL;
+    }
+    else if (len > 8192) {
+        LOGERR("Objective text exceeded assigned max size.");
+        return Lb_FAIL;
+    }
+    return Lb_SUCCESS;
+}
 /******************************************************************************/

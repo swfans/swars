@@ -46,10 +46,10 @@ typedef struct {
 
 typedef struct {
     char *Name;
-    void *BufferPtr;
+    void **BufferPtr;
     ushort ESize;
     long N;
-    long dum1;
+    void *PrivBuffer;
     long dum2;
     ubyte dum3;
 } MemSystem;
@@ -76,7 +76,7 @@ void get_user_settings_fname(char *fname, const char *name);
 void get_saved_game_fname(char *fname, ushort slot);
 
 void adjust_memory_use(void);
-int init_memory(MemSystem *mems);
+void init_memory(MemSystem *mem_table);
 long get_memory_ptr_allocated_count(void **mgptr);
 
 /******************************************************************************/

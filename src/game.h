@@ -567,6 +567,11 @@ extern char *gui_strings_data;
 extern char *gui_strings_data_end;
 extern char *gui_strings[STRINGS_MAX];
 
+extern ubyte *fade_data;
+
+extern void *dword_1810D1;
+extern ulong dword_1810D5;
+
 extern struct SingleFloorTexture *game_textures;
 extern struct SingleTexture *game_face_textures;
 extern struct SinglePoint *game_object_points;

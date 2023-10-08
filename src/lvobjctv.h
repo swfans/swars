@@ -146,6 +146,7 @@ void save_netscan_objectives_conf(TbFileHandle fh, struct NetscanObjective *nsob
 int parse_next_netscan_objective(const char *buf, long buflen, long nsobv);
 int load_netscan_objectives_bin(struct NetscanObjective *nsobv_arr, ubyte mapno, ubyte level);
 void load_netscan_objectives(ubyte mapno, ubyte level);
+TbResult load_objectives_text(void);
 
 void snprint_objective(char *buf, ulong buflen, struct Objective *p_objectv, ushort objectv);
 /******************************************************************************/

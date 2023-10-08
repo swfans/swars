@@ -95,7 +95,6 @@ struct Frame;
 
 #pragma pack()
 
-extern unsigned char *fade_data;
 extern char *fadedat_fname;
 extern char *pop_dat_fname_fmt;
 extern char *pop_tab_fname_fmt;
@@ -4229,6 +4228,7 @@ void unkn_lights_func_11(void)
 void prep_single_mission(void)
 {
     load_missions(background_type);
+    load_objectives_text();
     init_game(0);
     load_multicolor_sprites();
     adjust_mission_engine_to_video_mode();
@@ -5359,6 +5359,7 @@ ubyte load_game_slot(ubyte click)
 
     // Reading the save might have caused campaign switch
     reload_background_flag = 1;
+    load_objectives_text();
     init_weapon_text();
 
     unkn13_SYSTEM_button.Flags &= ~(0x8000|0x2000|0x0004);
@@ -6511,11 +6512,13 @@ void campaign_new_game_prepare(void)
     screentype = 99;
     game_system_screen = 0;
     players[local_player_no].MissionAgents = 0x0F;
+    init_weapon_text();
     load_city_data(0);
     load_city_txt();
     init_variables();
     init_agents();
     load_missions(background_type);
+    load_objectives_text();
     srm_reset_research();
 
     {
@@ -6559,8 +6562,7 @@ ubyte do_storage_NEW_MORTAL(ubyte click)
         sysmnu_button_enable(0, 5);
     }
 
-    if (true)
-    {
+    if (true) {
         sysmnu_button_disable(1,2);
     }
 
@@ -6571,22 +6573,11 @@ ubyte do_storage_NEW_MORTAL(ubyte click)
 #endif
 }
 
-ubyte do_login_2(ubyte click)
+void options_text_update(void)
 {
-#if 0
-    ubyte ret;
-    asm volatile ("call ASM_do_login_2\n"
-        : "=r" (ret) : "a" (click));
-    return ret;
-#else
-    int i;
     const char *text;
+    int i;
 
-    if (strlen(login_name) == 0)
-        return 0;
-    strtocapwords(login_name);
-
-    read_user_settings();
     i = ingame.PanelPermutation;
     if (i < 0)
         text = gui_strings[579 + abs(i)];
@@ -6595,6 +6586,23 @@ ubyte do_login_2(ubyte click)
     options_gfx_buttons[14].Text = text;
     i = ingame.TrenchcoatPreference;
     options_gfx_buttons[15].Text = gui_strings[583 + i];
+}
+
+ubyte do_login_2(ubyte click)
+{
+#if 0
+    ubyte ret;
+    asm volatile ("call ASM_do_login_2\n"
+        : "=r" (ret) : "a" (click));
+    return ret;
+#else
+    if (strlen(login_name) == 0)
+        return 0;
+    strtocapwords(login_name);
+
+    read_user_settings();
+
+    options_text_update();
 
     if (in_network_game)
     {
@@ -6611,11 +6619,10 @@ ubyte do_login_2(ubyte click)
         ingame.Flags &= ~GamF_Unkn0010;
     }
 
-    init_weapon_text();
     campaign_new_game_prepare();
 
     if (new_mail)
-      play_sample_using_heap(0, 119 + (LbRandomAnyShort() % 3), 127, 64, 100, 0, 3u);
+        play_sample_using_heap(0, 119 + (LbRandomAnyShort() % 3), 127, 64, 100, 0, 3u);
 
     return 1;
 #endif
@@ -9317,6 +9324,7 @@ void net_new_game_prepare(void)
     login_control__Money = starting_cash_amounts[0];
     init_agents();
     load_missions(background_type);
+    load_objectives_text();
     srm_reset_research();
     init_net_players();
     draw_flic_purple_list(purple_unkn1_data_to_screen);
@@ -9769,7 +9777,7 @@ void show_menu_screen_st2(void)
       {
             old_mission_brief = open_brief;
       }
-      if ( ingame.GameOver )
+      if (ingame.GameOver)
       {
             screentype = SCRT_MAINMENU;
             if (ingame.Flags & GamF_Unkn0010) {
@@ -9808,10 +9816,9 @@ void show_menu_screen_st2(void)
 
     srm_scanner_reset();
 
-    if ( new_mail )
-    {
+    if (new_mail)
         play_sample_using_heap(0, 119 + (LbRandomAnyShort() % 3), 127, 64, 100, 0, 3u);
-    }
+
     net_system_init2();
 }
 

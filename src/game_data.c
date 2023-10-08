@@ -43,46 +43,46 @@ static char game_file_text_dat[] = "data/text.dat";
 /******************************************************************************/
 
 MemSystem mem_game[] = {
-  { "my_big_map",		&game_my_big_map,		18u, 16513, 0, 0, 0 },
-  { "textures",			&game_textures,			18u, 4512, 0, 0, 0 },
-  { "face_textures",	&game_face_textures,	16u, 4000, 0, 0, 0 },
-  { "object_points",	&game_object_points,    10u, 20000, 0, 0, 0 },
-  { "object_faces",		&game_object_faces,		32u, 15000, 0, 0, 0 },
-  { "objects",			&game_objects,			36u, 2000, 0, 0, 0 },
-  { "quick_lights",		&game_quick_lights,		6u, 64000, 0, 0, 0 },
-  { "full_lights",		&game_full_lights,		32u, 4000, 0, 0, 0 },
-  { "normals",			&game_normals,			16u, 10000, 0, 0, 0 },
-  { "object_faces4",	&game_object_faces4,	40u, 10000, 0, 0, 0 },
-  { "anim_tmaps",		&game_anim_tmaps,		54u, 66, 0, 0, 0 },
-  { "traffic_nodes",	&game_traffic_nodes,	36u, 500, 0, 0, 0 },
-  { "light_commands",	&game_light_commands,	36u, 1000, 0, 0, 0 },
-  { "col_vects_list",	&game_col_vects_list,	6u, 26000, 0, 0, 0 },
-  { "col_vects",		&game_col_vects,		14u, 13000, 0, 0, 0 },
-  { "walk_headers",		&game_walk_headers,		4u, 3000, 0, 0, 0 },
-  { "walk_items",		&game_walk_items,		2u, 18000, 0, 0, 0 },
-  { "col_columns",		&game_col_columns,		16u, 6000, 0, 0, 0 },
-  { "prim4_textures",	&prim4_textures,		18u, 1200, 0, 0, 0 },
-  { "prim_face_textures", &prim_face_textures,	16u, 500, 0, 0, 0 },
-  { "prim_object_points", &prim_object_points,	10u, 2000, 0, 0, 0 },
-  { "prim_object_faces", &prim_object_faces,	32u, 800, 0, 0, 0 },
-  { "prim_object_faces4", &prim_object_faces4,	40u, 1300, 0, 0, 0 },
-  { "prim_objects",		&prim_objects,			36u, 60, 0, 0, 0 },
-  { "special_object_faces", &game_special_object_faces, 32u, 1400, 0, 0, 0 },
-  { "special_object_faces4",&game_special_object_faces4, 40u, 1400, 0, 0, 0 },
-  { "floor_tiles",		&game_floor_tiles,		39u, 18000, 0, 0, 0 },
-  { "used_objectives",	&game_used_objectives,	32u, 1200, 0, 0, 0 },
-  { "objectives",		&game_objectives,		32u, 1200, 0, 0, 0 },
-  { "user_heap",		&game_user_heap,		1u, 292228, 0, 0, 0 },
-  { "screen_point_pool",&game_screen_point_pool,8u, 45000, 0, 0, 0 },
-  { "draw_list",		&game_draw_list,		5u, 45001, 0, 0, 0 },
-  { "sort_sprites",		&game_sort_sprites,		16u, 4001, 0, 0, 0 },
-  { "sort_lines",		&game_sort_lines,		11u, 4001, 0, 0, 0 },
-  { "commands",			&game_commands,			32u, 3100, 0, 0, 0 },
-  { "bez edit",			&bez_edit,				28u, 2000, 0, 0, 0 },
-  { "spare map buffer",	&spare_map_buffer,		1u, 101, 0, 0, 1 },
-  { "used_lvl_objectives", &game_used_lvl_objectives,32u, 20, 0, 0, 0 },
-  { "level_miscs",		&game_level_miscs,		22u, 200, 0, 0, 0 },
-  { NULL,				NULL,					0u, 0, 0, 0, 0 }
+  { "my_big_map",		(void **)&game_my_big_map,		18u, 16513, 0, 0, 0 },
+  { "textures",			(void **)&game_textures,		18u, 4512, 0, 0, 0 },
+  { "face_textures",	(void **)&game_face_textures,	16u, 4000, 0, 0, 0 },
+  { "object_points",	(void **)&game_object_points,    10u, 20000, 0, 0, 0 },
+  { "object_faces",		(void **)&game_object_faces,	32u, 15000, 0, 0, 0 },
+  { "objects",			(void **)&game_objects,			36u, 2000, 0, 0, 0 },
+  { "quick_lights",		(void **)&game_quick_lights,	6u, 64000, 0, 0, 0 },
+  { "full_lights",		(void **)&game_full_lights,		32u, 4000, 0, 0, 0 },
+  { "normals",			(void **)&game_normals,			16u, 10000, 0, 0, 0 },
+  { "object_faces4",	(void **)&game_object_faces4,	40u, 10000, 0, 0, 0 },
+  { "anim_tmaps",		(void **)&game_anim_tmaps,		54u, 66, 0, 0, 0 },
+  { "traffic_nodes",	(void **)&game_traffic_nodes,	36u, 500, 0, 0, 0 },
+  { "light_commands",	(void **)&game_light_commands,	36u, 1000, 0, 0, 0 },
+  { "col_vects_list",	(void **)&game_col_vects_list,	6u, 26000, 0, 0, 0 },
+  { "col_vects",		(void **)&game_col_vects,		14u, 13000, 0, 0, 0 },
+  { "walk_headers",		(void **)&game_walk_headers,	4u, 3000, 0, 0, 0 },
+  { "walk_items",		(void **)&game_walk_items,		2u, 18000, 0, 0, 0 },
+  { "col_columns",		(void **)&game_col_columns,		16u, 6000, 0, 0, 0 },
+  { "prim4_textures",	(void **)&prim4_textures,		18u, 1200, 0, 0, 0 },
+  { "prim_face_textures", (void **)&prim_face_textures,	16u, 500, 0, 0, 0 },
+  { "prim_object_points", (void **)&prim_object_points,	10u, 2000, 0, 0, 0 },
+  { "prim_object_faces", (void **)&prim_object_faces,	32u, 800, 0, 0, 0 },
+  { "prim_object_faces4", (void **)&prim_object_faces4,	40u, 1300, 0, 0, 0 },
+  { "prim_objects",		(void **)&prim_objects,			36u, 60, 0, 0, 0 },
+  { "special_object_faces", (void **)&game_special_object_faces, 32u, 1400, 0, 0, 0 },
+  { "special_object_faces4",(void **)&game_special_object_faces4, 40u, 1400, 0, 0, 0 },
+  { "floor_tiles",		(void **)&game_floor_tiles,		39u, 18000, 0, 0, 0 },
+  { "used_objectives",	(void **)&game_used_objectives,	32u, 1200, 0, 0, 0 },
+  { "objectives",		(void **)&game_objectives,		32u, 1200, 0, 0, 0 },
+  { "user_heap",		(void **)&game_user_heap,		1u, 292228, 0, 0, 0 },
+  { "screen_point_pool",(void **)&game_screen_point_pool,8u, 45000, 0, 0, 0 },
+  { "draw_list",		(void **)&game_draw_list,		5u, 45001, 0, 0, 0 },
+  { "sort_sprites",		(void **)&game_sort_sprites,	16u, 4001, 0, 0, 0 },
+  { "sort_lines",		(void **)&game_sort_lines,		11u, 4001, 0, 0, 0 },
+  { "commands",			(void **)&game_commands,		32u, 3100, 0, 0, 0 },
+  { "bez edit",			(void **)&bez_edit,				28u, 2000, 0, 0, 0 },
+  { "spare map buffer",	(void **)&spare_map_buffer,		1u, 101, 0, 0, 1 },
+  { "used_lvl_objectives", (void **)&game_used_lvl_objectives,32u, 20, 0, 0, 0 },
+  { "level_miscs",		(void *)&game_level_miscs,		22u, 200, 0, 0, 0 },
+  { NULL,				NULL,							0u, 0, 0, 0, 0 }
 };
 
 const char *
@@ -292,12 +292,62 @@ void adjust_memory_use(void)
     }
 }
 
-int init_memory(MemSystem *mems)
+void init_memory(MemSystem *mem_table)
 {
-    int ret;
+#if 0
     asm volatile ("call ASM_init_memory\n"
-        : "=r" (ret) : "a" (mems));
-    return ret;
+        :  : "a" (mem_table));
+#endif
+    MemSystem *ment;
+    int mem_table_len;
+    ulong totlen;
+    ubyte *p;
+    int i;
+    ulong k;
+
+    i = 0;
+    totlen = 8192;
+    ment = mem_table;
+    while (ment->BufferPtr != NULL) {
+        ment++;
+        i++;
+    }
+    mem_table_len = i;
+
+    p = scratch_malloc_mem;
+    for (i = mem_table_len - 1; i >= 0; i--)
+    {
+        ment = &mem_table[i];
+        if (i == 17)
+            p = engine_mem_alloc_ptr + totlen;
+
+        if (ment->PrivBuffer == NULL)
+        {
+            if ((engine_mem_alloc_size & 0x80000000) == 0)
+              ment->PrivBuffer = engine_mem_alloc_ptr + totlen;
+            else
+              exit_game = 1;
+
+            if (ment->N * (ulong)ment->ESize >= dword_1810D5 || (i >= 18 && i <= 23))
+            {
+                k = ment->N * ment->ESize;
+                k = (k + 4) & ~0x3;
+                totlen += k;
+            }
+            else
+            {
+                ment->PrivBuffer = dword_1810D1;
+                k = ment->N * ment->ESize;
+                k = (k + 4) & ~0x3;
+                dword_1810D5 -= k;
+                dword_1810D1 += k;
+            }
+            *(ment->BufferPtr) = ment->PrivBuffer;
+        }
+    }
+    scratch_malloc_mem = p;
+    memset(game_sort_sprites, 0, 0x20u);
+    fade_data = *ment[23].BufferPtr;
 }
 
 long get_memory_ptr_allocated_count(void **mgptr)
