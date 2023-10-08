@@ -62,35 +62,13 @@ void load_city_txt(void)
 #endif
     char *s;
     int totlen;
-    int i, n, k, city;
+    int i, k, city;
 
     totlen = load_file_alltext("textdata/city.txt", memload);
     if (totlen == -1) {
         return;
     }
     s = (char *)memload;
-    // Skip property names for campaigns before current
-    for (n = 0; n < background_type; n++)
-    {
-        for (i = 0; i < 6; )
-        {
-            if ((*s == '#') || (*s == '\r'))
-            {
-                char c;
-                do {
-                    c = *s;
-                    s++;
-                } while ((c != '\n') && (c != '\0'));
-                continue;
-            }
-            while ((*s != '\r') && (*s != '\0')) {
-                s++;
-            }
-            *s = '\0';
-            s += 2;
-            i++;
-        }
-    }
     // Read property names
     {
         for (i = 0; i < 6; )
@@ -116,28 +94,6 @@ void load_city_txt(void)
             s += 2;
             // String ready, preprocess it
             LbStringToUpper(gui_strings[k]);
-            i++;
-        }
-    }
-    // Skip property names for campaigns after current
-    for (n = background_type+1; n < 3; n++)
-    {
-        for (i = 0; i < 6; )
-        {
-            if ((*s == '#') || (*s == '\r'))
-            {
-                char c;
-                do {
-                    c = *s;
-                    s++;
-                } while ((c != '\n') && (c != '\0'));
-                continue;
-            }
-            while ((*s != '\r') && (*s != '\0')) {
-                s++;
-            }
-            *s = '\0';
-            s += 2;
             i++;
         }
     }
