@@ -969,16 +969,20 @@ def textwad_extract_to_po(podict, txtfname, lines):
 
 
 def create_lines_for_city(lines, pomdict):
-    lines.append("# == syndicate & church map screen text ==")
+    lines.append("# == map screen text ==")
 
-    lines.append("# syndicate & church map screen title")
+    lines.append("# map screen title")
     if True:
         e = pomdict[('COMM','mapscreen.title','',)]
         lines.append(f"#{e.msgstr}")
 
     for entryno in range(0,3):
         campgn = campaign_names[entryno]
-        lines.append(f"# {campgn} map screen headings")
+        if (campgn,'mapscreen.heading','1',) in pomdict.keys():
+            break
+
+    if True:
+        lines.append("# map screen headings")
         for k in range(1,7):
             try:
                 e = pomdict[(campgn,'mapscreen.heading',f'{k}',)]
@@ -1102,7 +1106,7 @@ def create_lines_for_names(lines, pomdict):
     lines.append("# Contains all city drop names in the mission number order.")
     lines.append("")
     pounidict = {}
-    for (ccampgn, place, num,), e in pomdict.items():
+    for (campgn, place, num,), e in pomdict.items():
         pounidict[ (place,num,) ] = e
     n = 0
     for missi in range(1,256):
@@ -1196,8 +1200,8 @@ def create_lines_for_outro(lines, pomdict):
 def create_lines_for_wms(lines, pomdict):
     poweplist = []
     pomodlist = []
-    for (ccampgn, place, num,), e in pomdict.items():
-        if ccampgn.upper() not in campaign_names[0:3]:
+    for (campgn, place, num,), e in pomdict.items():
+        if campgn.upper() not in campaign_names[0:3]:
             continue
         match = re.match(r'^(weapons|mods)[.](.+)[.]description$', place)
         if not match:
