@@ -265,6 +265,17 @@ void read_cybmods_conf_file(void)
     mod_names[i].num = 0;
 }
 
+const char *cybmod_codename(ushort mtype)
+{
+    struct ModDefAdd *mdefa;
+
+    if (mtype >= MOD_TYPES_COUNT)
+        return "";
+
+    mdefa = &mod_defs_a[mtype];
+    return mdefa->Name;
+}
+
 ubyte cybmod_chest_level(union Mod *p_umod)
 {
     return (p_umod->Mods >> 6) & 7;

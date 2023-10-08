@@ -647,6 +647,7 @@ extern ubyte data_19ec6f;
 extern ulong save_mortal_salt;
 
 extern ushort weapon_text_index[32];
+extern ushort cybmod_text_index[16];
 extern ubyte background_type;
 extern ubyte old_screentype;
 extern ubyte screentype;

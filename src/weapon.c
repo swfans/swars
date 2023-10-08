@@ -352,13 +352,23 @@ void read_weapons_conf_file(void)
     weapon_names[i].num = 0;
 }
 
+const char *weapon_codename(ushort wtype)
+{
+    struct WeaponDefAdd *wdefa;
+
+    if (wtype >= WEP_TYPES_COUNT)
+        return "";
+
+    wdefa = &weapon_defs_a[wtype];
+    return wdefa->Name;
+}
+
 void init_weapon_text(void)
 {
 #if 0
     asm volatile ("call ASM_init_weapon_text\n"
         :  :  : "eax" );
 #else
-    const char *codename;
     char locstr[56];
     int weptxt_pos;
     int totlen;
@@ -369,28 +379,17 @@ void init_weapon_text(void)
     if (totlen == Lb_FAIL)
         return;
 
-    // TODO change the format to use our INI parser, and weapon codenames from config
+    // TODO change the format to use our INI parser
     s = weapon_text;
-    n = (background_type == 1) ? 1 : 0; // TODO store naming convention within INI file
-    LOGSYNC("Read names after skipping %d sets", n);
-    for (i = 0; i < n; i++)
-    {
-        if (s) s = strchr(s, ']'); // PLAYER type
-        if (s) s++;
-        if (s) s = strchr(s, ']'); // WEAPONS section
-        if (s) s++;
-        if (s) s = strchr(s, ']'); // MODS section
-        if (s) s++;
-    }
-
-    if (s) s = strchr(s, ']'); // position at start of PLAYER type
-    if (s) s++;
-    if (s) s = strchr(s, ']'); // position at start of WEAPONS section
-    if (s) s++;
 
     // section_start = s;
-
     weptxt_pos = 0;
+
+    s = strchr(s, '[');
+    s++;
+    s = strchr(s, ']'); // position at start of WEAPONS section
+    s++;
+
     s += 2;
     while (1)
     {
@@ -408,21 +407,16 @@ void init_weapon_text(void)
         s += 2;
 
         // Recognize the weapon name
-        for (i = 0; i < 30; i++)
+        for (i = 1; i < WEP_TYPES_COUNT; i++)
         {
-            if (background_type == 0) {
-              codename = gui_strings[i];
-            } else if (background_type == 1) {
-              codename = gui_strings[i + 30];
-            } else if ( background_type == 2 ) {
-              codename = gui_strings[i];
-            } else {
-              codename = gui_strings[i];
-            }
-            if (strcmp(codename, locstr) == 0)
+            const char *codename;
+            codename = weapon_codename(i);
+            if (strcmp(codename, locstr) == 0) {
+                i--;
                 break;
+            }
         }
-        if (i < 30)
+        if (i < WEP_TYPES_COUNT)
         {
             weapon_text_index[i] = weptxt_pos;
 
@@ -449,14 +443,14 @@ void init_weapon_text(void)
     s++;
 
     s += 2;
-    for (i = 32; i < 32+16; i++)
+    while (1)
     {
-        if (*s == '[')
+        if ((*s == '[') || (*s == '\0'))
             break;
 
         // Read mod name
         n = 0;
-        while ((*s != '\r') && (*s != '\n'))
+        while ((*s != '\r') && (*s != '\n') && (*s != '\0'))
         {
             locstr[n] = *s++;
             n++;
@@ -464,20 +458,34 @@ void init_weapon_text(void)
         locstr[n] = '\0';
         s += 2;
 
-        // Now ignore the name and just assume mods are in order
-        // If you looked at this parser from start, you shouldn't
-        // be surprised by how lazy this is
-        weapon_text_index[i] = weptxt_pos;
-        while ((*s != '\r') && (*s != '\n')) {
-            weapon_text[weptxt_pos] = *s++;
-            weptxt_pos++;
+        for (i = 1; i < MOD_TYPES_COUNT; i++)
+        {
+            const char *codename;
+            codename = cybmod_codename(i);
+            if (strcmp(codename, locstr) == 0) {
+                i--;
+                break;
+            }
         }
-        weapon_text[weptxt_pos] = '\0';
-        weptxt_pos++;
-        s += 2;
+        if (i < MOD_TYPES_COUNT)
+        {
+            cybmod_text_index[i] = weptxt_pos;
 
-        n = weapon_text_index[i];
-        my_preprocess_text(&weapon_text[n]);
+            while ((*s != '\r') && (*s != '\n') && (*s != '\0')) {
+                weapon_text[weptxt_pos] = *s++;
+                weptxt_pos++;
+            }
+            weapon_text[weptxt_pos] = '\0';
+            weptxt_pos++;
+            s += 2;
+
+            n = cybmod_text_index[i];
+            my_preprocess_text(&weapon_text[n]);
+        } else {
+            LOGERR("Cyb Mod name not recognized: \"%s\"", locstr);
+            if (s) s = strpbrk(s, "\r\n");
+            if (s) s += 2;
+        }
     }
 #endif
 }

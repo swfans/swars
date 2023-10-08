@@ -85,6 +85,7 @@ extern struct TbNamedEnum mod_names[33];
 extern ubyte mod_tech_level[17];
 
 void read_cybmods_conf_file(void);
+const char *cybmod_codename(ushort mtype);
 
 ubyte cybmod_chest_level(union Mod *p_umod);
 void set_cybmod_chest_level(union Mod *p_umod, ubyte nmod);
