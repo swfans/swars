@@ -5297,21 +5297,21 @@ ubyte load_game(int slot, char *desc)
 
 /** Re-enables a button from system menu, moving the following buttons down.
  */
-void sysmnu_button_enable(int btnno)
+void sysmnu_button_enable(int btnno, int count)
 {
     int i;
-    for (i = btnno; i < 6; i++) {
-        sysmnu_buttons[i].Y += 60;
+    for (i = btnno+count; i < 6; i++) {
+        sysmnu_buttons[i].Y += 30 * count;
     }
 }
 
 /** Disables a button from system menu, moving the buttons below to fill its space.
  */
-void sysmnu_button_disable(int btnno)
+void sysmnu_button_disable(int btnno, int count)
 {
     int i;
-    for (i = btnno; i < 6; i++) {
-        sysmnu_buttons[i].Y -= 60;
+    for (i = btnno+count; i < 6; i++) {
+        sysmnu_buttons[i].Y -= 30 * count;
     }
 }
 
@@ -5365,7 +5365,7 @@ ubyte load_game_slot(ubyte click)
     if (save_slot == 0)
     {
         ingame.Flags |= 0x10;
-        sysmnu_button_disable(2);
+        sysmnu_button_disable(1,2);
     }
     unkn_city_no = -1;
     selected_agent = 0;
@@ -5375,7 +5375,7 @@ ubyte load_game_slot(ubyte click)
     game_system_screen = 0;
     if (restore_savegame) {
         restore_savegame = 0;
-        sysmnu_buttons[5].Y += 150;
+        sysmnu_button_enable(0, 5);
     }
     return 1;
 }
@@ -6553,12 +6553,12 @@ ubyte do_storage_NEW_MORTAL(ubyte click)
 
     if (restore_savegame)  {
         restore_savegame = 0;
-        sysmnu_buttons[5].Y += 150;
+        sysmnu_button_enable(0, 5);
     }
 
     if (true)
     {
-        sysmnu_button_disable(2);
+        sysmnu_button_disable(1,2);
     }
 
     if (new_mail)
@@ -6604,7 +6604,7 @@ ubyte do_login_2(ubyte click)
 
     if ((ingame.Flags & GamF_Unkn0010) != 0)
     {
-        sysmnu_button_enable(2);
+        sysmnu_button_enable(1,2);
         ingame.Flags &= ~GamF_Unkn0010;
     }
 
