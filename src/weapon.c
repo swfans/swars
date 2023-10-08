@@ -369,7 +369,7 @@ void init_weapon_text(void)
     asm volatile ("call ASM_init_weapon_text\n"
         :  :  : "eax" );
 #else
-    char locstr[56];
+    char locstr[512];
     int weptxt_pos;
     int totlen;
     char *s;
@@ -381,6 +381,7 @@ void init_weapon_text(void)
 
     // TODO change the format to use our INI parser
     s = weapon_text;
+    weapon_text[totlen] = '\0';
 
     // section_start = s;
     weptxt_pos = 0;
