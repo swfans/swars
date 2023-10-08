@@ -150,6 +150,12 @@ extern int data_1c8428;
 extern const char *primvehobj_fname;
 extern unsigned char textwalk_data[640];
 
+extern short save_slot; // = -1;
+extern char save_slot_names[8][25];
+extern long save_slot_base;
+extern short word_1C6E08;
+extern short word_1C6E0A;
+
 extern ubyte byte_1C83D1;
 extern ubyte byte_1CAB64[];
 extern ubyte byte_1DB088[];
@@ -5289,12 +5295,89 @@ ubyte load_game(int slot, char *desc)
 #endif
 }
 
+/** Re-enables a button from system menu, moving the following buttons down.
+ */
+void sysmnu_button_enable(int btnno)
+{
+    int i;
+    for (i = btnno; i < 6; i++) {
+        sysmnu_buttons[i].Y += 60;
+    }
+}
+
+/** Disables a button from system menu, moving the buttons below to fill its space.
+ */
+void sysmnu_button_disable(int btnno)
+{
+    int i;
+    for (i = btnno; i < 6; i++) {
+        sysmnu_buttons[i].Y -= 60;
+    }
+}
+
 ubyte load_game_slot(ubyte click)
 {
+#if 0
     ubyte ret;
     asm volatile ("call ASM_load_game_slot\n"
         : "=r" (ret) : "a" (click));
     return ret;
+#endif
+    char *ldname;
+    int ldslot;
+    int ret;
+
+    if (login_control__State != 6) {
+        return 0;
+    }
+    if (save_slot == -1) {
+        show_alert = 1;
+        sprintf(alert_text, "%s", gui_strings[564]);
+        return 1;
+    }
+    if (save_slot != 0) {
+        ldname = save_slot_names[save_slot - save_slot_base - 1];
+        ldslot = save_slot;
+    } else {
+        ldname = save_active_desc;
+        ldslot = 0;
+    }
+
+    ret = load_game(ldslot, ldname);
+    if (ret == 1) {
+        show_alert = 1;
+        sprintf(alert_text, "%s", gui_strings[565]);
+        return 1;
+    } else if (ret == 2) {
+        show_alert = 1;
+        sprintf(alert_text, "%s", gui_strings[567]);
+        return 1;
+    }
+
+    show_alert = 1;
+    sprintf(alert_text, "%s", gui_strings[572]);
+
+    reload_background_flag = 1;
+    unkn13_SYSTEM_button.Flags &= ~(0x8000|0x2000|0x0004);
+    unkn35_box.Flags &= ~(0x8000|0x2000|0x0004);
+    unkn39_box.Flags &= ~(0x8000|0x2000|0x0004);
+    unkn37_box.Flags &= ~(0x8000|0x2000|0x0004);
+    if (save_slot == 0)
+    {
+        ingame.Flags |= 0x10;
+        sysmnu_button_disable(2);
+    }
+    unkn_city_no = -1;
+    selected_agent = 0;
+    word_1C6E0A = 0;
+    word_1C6E08 = 0;
+    screentype = SCRT_99;
+    game_system_screen = 0;
+    if (restore_savegame) {
+        restore_savegame = 0;
+        sysmnu_buttons[5].Y += 150;
+    }
+    return 1;
 }
 
 ubyte save_game_slot(ubyte click)
@@ -6452,8 +6535,6 @@ ubyte do_storage_NEW_MORTAL(ubyte click)
         : "=r" (ret) : "a" (click));
     return ret;
 #else
-    int i;
-
     if (login_control__State != 6)
         return 0;
 
@@ -6477,9 +6558,7 @@ ubyte do_storage_NEW_MORTAL(ubyte click)
 
     if (true)
     {
-        for (i = 2; i < 6; i++) {
-            sysmnu_buttons[i].Y -= 60;
-        }
+        sysmnu_button_disable(2);
     }
 
     if (new_mail)
@@ -6525,9 +6604,7 @@ ubyte do_login_2(ubyte click)
 
     if ((ingame.Flags & GamF_Unkn0010) != 0)
     {
-        for (i = 2; i < 6; i++) {
-            sysmnu_buttons[i].Y += 60;
-        }
+        sysmnu_button_enable(2);
         ingame.Flags &= ~GamF_Unkn0010;
     }
 
