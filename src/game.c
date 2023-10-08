@@ -5357,7 +5357,10 @@ ubyte load_game_slot(ubyte click)
     show_alert = 1;
     sprintf(alert_text, "%s", gui_strings[572]);
 
+    // Reading the save might have caused campaign switch
     reload_background_flag = 1;
+    init_weapon_text();
+
     unkn13_SYSTEM_button.Flags &= ~(0x8000|0x2000|0x0004);
     unkn35_box.Flags &= ~(0x8000|0x2000|0x0004);
     unkn39_box.Flags &= ~(0x8000|0x2000|0x0004);
