@@ -1194,40 +1194,29 @@ def create_lines_for_outro(lines, pomdict):
 
 
 def create_lines_for_wms(lines, pomdict):
-    for campgn in campaign_names[0:3]:
-        lines.append(f"[{campgn}_player]".lower())
+    poweplist = []
+    pomodlist = []
+    for (ccampgn, place, num,), e in pomdict.items():
+        if ccampgn.upper() not in campaign_names[0:3]:
+            continue
+        match = re.match(r'^(weapons|mods)[.](.+)[.]description$', place)
+        if not match:
+            continue
+        wmtype = match.group(2)
+        if match.group(1) == "weapons":
+            poweplist.append( (wmtype,e,) )
+        else:
+            pomodlist.append( (wmtype,e,) )
 
-        poweplist = []
-        pomodlist = []
-        for (ccampgn, place, num,), e in pomdict.items():
-            if ccampgn != campgn:
-                continue
-            match = re.match(r'^(weapons|mods)[.](.+)[.]description$', place)
-            if not match:
-                continue
-            wmtype = match.group(2)
-            if match.group(1) == "weapons":
-                poweplist.append( (wmtype,e,) )
-            else:
-                pomodlist.append( (wmtype,e,) )
+    lines.append(f"[weapons]".lower())
+    for wmtype,e in poweplist:
+        lines.append(wmtype.upper())
+        lines.append(e.msgstr)
 
-        lines.append(f"[{campgn}_weapons]".lower())
-        for wmtype,e in poweplist:
-            wep_name = dict_key_for_value(weapon_mod_names_to_code, wmtype)
-            if (campgn == 'CHURCH') and (wmtype == 'PERSUADER'):
-                wep_name = "indoctrinator"
-            if wep_name is None:
-                wep_name = wmtype
-            lines.append(wep_name.upper())
-            lines.append(e.msgstr)
-
-        lines.append(f"[{campgn}_mods]".lower())
-        for wmtype,e in pomodlist:
-            mod_name = dict_key_for_value(weapon_mod_names_to_code, wmtype)
-            if mod_name is None:
-                mod_name = wmtype
-            lines.append(mod_name.upper())
-            lines.append(e.msgstr)
+    lines.append(f"[mods]".lower())
+    for wmtype,e in pomodlist:
+        lines.append(wmtype.upper())
+        lines.append(e.msgstr)
     lines.append("")
     return
 
