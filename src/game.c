@@ -5901,11 +5901,34 @@ void init_agents(void)
         :  :  : "eax" );
 }
 
-void do_start_triggers(ushort missi)
+void do_start_triggers(short missi)
 {
+#if 0
     asm volatile (
       "call ASM_do_start_triggers\n"
         : : "a" (missi));
+#endif
+    short nxmissi, sptrig;
+    int mslot;
+
+    mslot = find_empty_mission_state_slot();
+    if (mslot < 1) {
+        LOGERR("No free slot found for mission %d", (int)missi);
+        return;
+    }
+
+    for (nxmissi = missi; mslot < 50; mslot++)
+    {
+        if (true)
+            sptrig = mission_list[nxmissi].SpecialTrigger[0];
+        if (sptrig == 0)
+            sptrig = mission_list[nxmissi].SpecialTrigger[1];
+        if (sptrig == 0)
+            break;
+        nxmissi = sptrig;
+        mission_open[mslot] = nxmissi;
+        mission_state[mslot] = 0;
+    }
 }
 
 void queue_up_new_mail(ubyte emtype, short missi)
