@@ -5908,14 +5908,34 @@ void do_start_triggers(ushort missi)
         : : "a" (missi));
 }
 
-void queue_up_new_mail(ubyte type, ushort missi)
+void queue_up_new_mail(ubyte emtype, short missi)
 {
+#if 0
     asm volatile (
       "call ASM_queue_up_new_mail\n"
-        : : "a" (type), "d" (missi));
+        : : "a" (emtype), "d" (missi));
+#endif
+    int i;
+
+    if ((emtype == 1) && (mission_list[missi].SourceID == 0))
+        return;
+    if (missi < 0) {
+        missi = -missi;
+        emtype = 0;
+    }
+    i = new_mail;
+    newmail_store[i].Mission = missi;
+    newmail_store[i].RecvDay = global_date.Day;
+    newmail_store[i].RecvMonth = global_date.Month;
+    newmail_store[i].RecvYear = global_date.Year;
+    if (emtype != 1)
+        newmail_store[i].Flag = 2;
+    else
+        newmail_store[i].Flag = 1;
+    new_mail++;
 }
 
-ushort open_new_mission(ushort missi)
+ushort open_new_mission(short missi)
 {
     int mslot;
 
