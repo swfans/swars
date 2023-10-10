@@ -5766,16 +5766,41 @@ void research_unkn_func_006(ushort missi)
     asm volatile ("call ASM_research_unkn_func_006\n"
         : : "a" (missi));
 #endif
+    struct Mission *p_missi;
     ushort wtype;
     ubyte val;
     int i;
 
+    p_missi = &mission_list[missi];
+
+    if (p_missi->ResearchWeapons != 0) {
+        research_weapon_flags_allow(p_missi->ResearchWeapons);
+    }
+
+    switch (p_missi->ExtraRewardType)
+    {
+    case MEReward_ResearchLab:
+        research.NumBases++;
+        // Fall through
+    case MEReward_Scientists:
+        research.Scientists += p_missi->ExtraRewardParam;
+        break;
+    case MEReward_CybModResearched:
+        research_cymod_complete(p_missi->ExtraRewardParam);
+        break;
+    case MEReward_CybModSingle:
+        LOGERR("not implemented");//TODO
+        break;
+    case MEReward_WeaponResearched:
+        research_weapon_complete(p_missi->ExtraRewardParam);
+        break;
+    case MEReward_WeaponSingle:
+        LOGERR("not implemented");//TODO
+        break;
+    }
+
     switch (missi)
     {
-    case 1:
-        research.Scientists = 4;
-        research.NumBases++;
-        break;
     case 2:
         wtype = WEP_LONGRANGE;
         if (!is_research_weapon_completed(wtype))
@@ -5951,8 +5976,6 @@ void research_unkn_func_006(ushort missi)
             research_weapon_allow(wtype);
         break;
     case 48:
-        research.Scientists = 4;
-        research.NumBases++;
         wtype = WEP_MINIGUN;
         if (!is_research_weapon_completed(wtype))
             research_weapon_allow(wtype);

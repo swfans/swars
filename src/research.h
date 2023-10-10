@@ -63,6 +63,11 @@ TbBool is_research_weapon_completed(ushort wtype);
 TbBool is_research_weapon_allowed(ushort wtype);
 void research_weapon_allow(ushort wtype);
 void research_weapon_complete(ushort wtype);
+void research_weapon_flags_allow(ulong wpflags);
+
+TbBool is_research_cymod_completed(ushort mtype);
+TbBool is_research_cymod_allowed(ushort mtype);
+void research_cymod_complete(ushort mtype);
 /******************************************************************************/
 #ifdef __cplusplus
 }

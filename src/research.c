@@ -92,34 +92,50 @@ int research_wep_get_progress(short cwep)
 
 TbBool is_research_weapon_completed(ushort wtype)
 {
-    ulong wpflag;
-    wpflag = 1 << (wtype - 1);
-    return (research.WeaponsCompleted & wpflag) != 0;
+    ulong wflag;
+    wflag = 1 << (wtype - 1);
+    return (research.WeaponsCompleted & wflag) != 0;
 }
 
 TbBool is_research_weapon_allowed(ushort wtype)
 {
-    ulong wpflag;
-    wpflag = 1 << (wtype - 1);
-    return (research.WeaponsAllowed & wpflag) != 0;
+    ulong wflag;
+    wflag = 1 << (wtype - 1);
+    return (research.WeaponsAllowed & wflag) != 0;
 }
 
 void research_weapon_allow(ushort wtype)
 {
-    ulong wpflag;
-    wpflag = 1 << (wtype - 1);
-    research.WeaponsAllowed |= wpflag;
+    ulong wflag;
+    wflag = 1 << (wtype - 1);
+    research.WeaponsAllowed |= wflag;
+}
+
+void research_weapon_flags_allow(ulong wpflags)
+{
+    ulong oneflag;
+    ushort wtype;
+
+    for (wtype = 1; wtype < WEP_TYPES_COUNT; wtype++)
+    {
+        oneflag = 1 << (wtype - 1);
+        if ((wpflags & oneflag) == 0)
+            continue;
+        if ((research.WeaponsCompleted & oneflag) != 0)
+            continue;
+        research.WeaponsAllowed |= oneflag;
+    }
 }
 
 void research_weapon_complete(ushort wtype)
 {
-    ulong wpflag;
-    wpflag = 1 << (wtype - 1);
-    research.WeaponsAllowed &= ~wpflag;
-    // If already researching this weapon, finish research
+    ulong wflag;
+    wflag = 1 << (wtype - 1);
+    research.WeaponsAllowed &= ~wflag;
+    // if already researching this weapon, finish research
     if (research.CurrentWeapon == (wtype - 1))
         research.CurrentWeapon = -1;
-    research.WeaponsCompleted |= wpflag;
+    research.WeaponsCompleted |= wflag;
 }
 
 void research_current_weapon_complete(void)
@@ -127,10 +143,10 @@ void research_current_weapon_complete(void)
     short cwep;
 
     cwep = research.CurrentWeapon;
-    research.ModsCompleted |= 1 << cwep;
+    research.WeaponsCompleted |= 1 << cwep;
     research.WeaponsAllowed &= ~(1 << cwep);
-    research_unkn21_box.Lines = 0;
     research.CurrentWeapon = -1;
+    research_unkn21_box.Lines = 0;
     refresh_equip_list = 1;
 }
 
@@ -188,19 +204,51 @@ int research_cymod_get_progress(short cmod)
     return research.ModProgress[cmod][cday];
 }
 
-void research_cymod_completed(void)
+TbBool is_research_cymod_completed(ushort mtype)
 {
-    short cmod;
+    ulong mflag;
+    mflag = 1 << (mtype - 1);
+    return (research.ModsCompleted & mflag) != 0;
+}
 
-    cmod = research.CurrentMod;
-    research.ModsCompleted |= 1 << cmod;
-    research.ModsAllowed &= ~(1 << cmod);
+TbBool is_research_cymod_allowed(ushort mtype)
+{
+    ulong mflag;
+    mflag = 1 << (mtype - 1);
+    return (research.ModsAllowed & mflag) != 0;
+}
+
+void research_cymod_allow(ushort mtype)
+{
+    ulong mflag;
+    mflag = 1 << (mtype - 1);
+    research.ModsAllowed |= mflag;
+}
+
+void research_cymod_complete(ushort mtype)
+{
+    ulong mflag;
+    mflag = 1 << (mtype - 1);
+    research.ModsAllowed &= ~mflag;
+    // if already researching this mod, finish research
+    if (research.CurrentMod == (mtype - 1))
+        research.CurrentMod = -1;
+    research.ModsCompleted |= mflag;
+}
+
+void research_current_cymod_complete(void)
+{
+    short mtype;
+
+    mtype = research.CurrentMod + 1;
+    research.ModsCompleted |= 1 << (mtype - 1);
+    research.ModsAllowed &= ~(1 << (mtype - 1));
     //TODO CONFIG store required research in mod config (and weapon config as well)
     // Allow research of next level of the mod
-    if (research.CurrentMod % 3 != 2 && cmod + 1 < MOD_EPIDERM1)
-        research.ModsAllowed |= 1 << (cmod + 1);
-    research_unkn21_box.Lines = 0;
+    if (research.CurrentMod % 3 != 2 && mtype < MOD_EPIDERM1)
+        research_cymod_allow(mtype + 1);
     research.CurrentMod = -1;
+    research_unkn21_box.Lines = 0;
     refresh_equip_list = 1;
 }
 
@@ -349,7 +397,7 @@ int research_daily_progress_for_type(ubyte rstype)
         }
         else
         {
-            research_cymod_completed();
+            research_current_cymod_complete();
             if (ingame.fld_unk7DE)
                 research_cymod_next_type();
         }
