@@ -83,6 +83,12 @@ void set_flag_byte(unsigned char *flags, unsigned char mask, short value);
  */
 void set_flag_dword(unsigned long *flags, unsigned long mask, short value);
 
+/**
+ * Returns the amount of bits set in given integer.
+ * @param i The integer which bits are to be counted.
+ */
+int number_of_set_bits(unsigned long i);
+
 #ifdef __cplusplus
 };
 #endif
