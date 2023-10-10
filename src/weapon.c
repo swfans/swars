@@ -19,6 +19,7 @@
 #include "weapon.h"
 
 #include "bfmemory.h"
+#include "bfendian.h"
 #include "bffile.h"
 #include "bfini.h"
 #include "network.h"
@@ -542,6 +543,57 @@ void weapons_remove_weapon(ulong *p_weapons, struct WeaponsFourPack *p_fourpacks
     fp = weapon_fourpack_index(wtype);
     if (fp < WFRPK_COUNT)
         p_fourpacks->Amount[fp] = 0;
+}
+
+TbBool weapons_remove_one(ulong *p_weapons, struct WeaponsFourPack *p_fourpacks, ushort wtype)
+{
+    ushort fp;
+    TbBool was_last;
+
+    if ((*p_weapons & (1 << (wtype-1))) == 0)
+        return false;
+
+    was_last = true;
+    fp = weapon_fourpack_index(wtype);
+    if (fp < WFRPK_COUNT) {
+        was_last = (p_fourpacks->Amount[fp] <= 1);
+        p_fourpacks->Amount[fp]--;
+    }
+    if (was_last)
+        *p_weapons &= ~(1 << (wtype-1));
+    return true;
+
+}
+
+TbBool weapons_add_one(ulong *p_weapons, struct WeaponsFourPack *p_fourpacks, ushort wtype)
+{
+    ushort fp;
+    TbBool is_first;
+
+    if (number_of_set_bits(*p_weapons) >= WEAPONS_CARRIED_MAX_COUNT)
+        return false;
+
+    is_first = ((*p_weapons & (1 << (wtype-1))) == 0);
+
+    fp = weapon_fourpack_index(wtype);
+    if (fp < WFRPK_COUNT) {
+        if ((!is_first) && (p_fourpacks->Amount[fp] >= 3))
+            return false;
+
+        if (is_first)
+            p_fourpacks->Amount[fp] = 1;
+        else
+            p_fourpacks->Amount[fp]++;
+    } else {
+        if (!is_first)
+            return false;
+    }
+
+    if (is_first)
+        *p_weapons |= (1 << (wtype-1));
+
+    return true;
+
 }
 
 void sanitize_weapon_quantities(ulong *p_weapons, struct WeaponsFourPack *p_fourpacks)

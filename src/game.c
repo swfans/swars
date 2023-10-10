@@ -5095,15 +5095,15 @@ ubyte load_game(int slot, char *desc)
             // Remove bad mod flags
             cybmod_fix_all(&p_locplayer->Mods[i]);
             // Reset bad amounts of consumable weapons
-            if (p_locplayer->Weapons[i] & (1 << (6-1)))
+            if (weapons_has_weapon(p_locplayer->Weapons[i], WEP_NUCLGREN))
                 p_locplayer->FourPacks[WFRPK_NUCLGREN][i] = 1;
-            if (p_locplayer->Weapons[i] & (1 << (12-1)))
+            if (weapons_has_weapon(p_locplayer->Weapons[i], WEP_ELEMINE))
                 p_locplayer->FourPacks[WFRPK_ELEMINE][i] = 1;
-            if (p_locplayer->Weapons[i] & (1 << (13-1)))
+            if (weapons_has_weapon(p_locplayer->Weapons[i], WEP_EXPLMINE))
                 p_locplayer->FourPacks[WFRPK_EXPLMINE][i] = 1;
-            if (p_locplayer->Weapons[i] & (1 << (11-1)))
+            if (weapons_has_weapon(p_locplayer->Weapons[i], WEP_KOGAS))
                 p_locplayer->FourPacks[WFRPK_KOGAS][i] = 1;
-            if (p_locplayer->Weapons[i] & (1 << (10-1)))
+            if (weapons_has_weapon(p_locplayer->Weapons[i], WEP_CRAZYGAS))
                 p_locplayer->FourPacks[WFRPK_CRAZYGAS][i] = 1;
 
             p_locplayer->field_19A[i] = 0;
@@ -5809,7 +5809,22 @@ void research_unkn_func_006(ushort missi)
         research_weapon_complete(p_missi->ExtraRewardParam);
         break;
     case MEReward_WeaponSingle:
-        LOGERR("not implemented");//TODO
+        for (i = 0; i < cryo_agents.NumAgents; i++)
+        {
+            TbBool added;
+
+            added = weapons_add_one(&cryo_agents.Weapons[i], &cryo_agents.FourPacks[i], p_missi->ExtraRewardParam);
+            if (!added)
+                continue;
+
+            /* TODO re-ebable when player->FourPacks is unified and in the same format as cryo_agents.FourPacks
+            if (i < 4) {
+                PlayerInfo *p_locplayer;
+                p_locplayer = &players[local_player_no];
+                weapons_add_one(&p_locplayer->Weapons[i], &p_player->FourPacks[i], p_missi->ExtraRewardParam);
+            }*/
+            break;
+        }
         break;
     }
 

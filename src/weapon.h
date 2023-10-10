@@ -121,6 +121,10 @@ const char *weapon_codename(ushort wtype);
 ushort weapon_fourpack_index(ushort weapon);
 void weapons_remove_weapon(ulong *p_weapons,
   struct WeaponsFourPack *p_fourpacks, ushort wtype);
+TbBool weapons_remove_one(ulong *p_weapons,
+  struct WeaponsFourPack *p_fourpacks, ushort wtype);
+TbBool weapons_add_one(ulong *p_weapons,
+  struct WeaponsFourPack *p_fourpacks, ushort wtype);
 void sanitize_weapon_quantities(ulong *p_weapons,
   struct WeaponsFourPack *p_fourpacks);
 
