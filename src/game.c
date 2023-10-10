@@ -5828,15 +5828,6 @@ void research_unkn_func_006(ushort missi)
         }
         research_unkn_var_01 = val;
         break;
-    case 9:
-    case 23:
-    case 36:
-    case 74:
-        // Give immediatelly rather than allowing research
-        wtype = WEP_PERSUADER2;
-        if (!is_research_weapon_completed(wtype))
-            research_weapon_complete(wtype);
-        break;
     case 20:
     case 24:
         val = research_unkn_var_01 + 1;
@@ -5880,20 +5871,6 @@ void research_unkn_func_006(ushort missi)
             val = 0;
         }
         research_unkn_var_01 = val;
-        break;
-    case 85:
-        for (i = 0; i < cryo_agents.NumAgents; i++)
-        {
-            PlayerInfo *p_locplayer;
-
-            p_locplayer = &players[local_player_no];
-            if (cybmod_skin_level(&p_locplayer->Mods[i]) == 0)
-            {
-                set_cybmod_skin_level(&p_locplayer->Mods[i], 3);
-                set_cybmod_skin_level(&cryo_agents.Mods[i], 3);
-                break;
-            }
-        }
         break;
     }
 }
