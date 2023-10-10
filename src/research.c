@@ -90,7 +90,39 @@ int research_wep_get_progress(short cwep)
     return research.WeaponProgress[cwep][cday];
 }
 
-void research_wep_completed(void)
+TbBool is_research_weapon_completed(ushort wtype)
+{
+    ulong wpflag;
+    wpflag = 1 << (wtype - 1);
+    return (research.WeaponsCompleted & wpflag) != 0;
+}
+
+TbBool is_research_weapon_allowed(ushort wtype)
+{
+    ulong wpflag;
+    wpflag = 1 << (wtype - 1);
+    return (research.WeaponsAllowed & wpflag) != 0;
+}
+
+void research_weapon_allow(ushort wtype)
+{
+    ulong wpflag;
+    wpflag = 1 << (wtype - 1);
+    research.WeaponsAllowed |= wpflag;
+}
+
+void research_weapon_complete(ushort wtype)
+{
+    ulong wpflag;
+    wpflag = 1 << (wtype - 1);
+    research.WeaponsAllowed &= ~wpflag;
+    // If already researching this weapon, finish research
+    if (research.CurrentWeapon == (wtype - 1))
+        research.CurrentWeapon = -1;
+    research.WeaponsCompleted |= wpflag;
+}
+
+void research_current_weapon_complete(void)
 {
     short cwep;
 
@@ -295,7 +327,7 @@ int research_daily_progress_for_type(ubyte rstype)
         }
         else
         {
-            research_wep_completed();
+            research_current_weapon_complete();
             if (ingame.fld_unk7DE)
                 research_wep_next_type();
         }

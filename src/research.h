@@ -40,12 +40,13 @@ struct ResearchInfo
     long ModFunding;
     sbyte Scientists;
     char NumBases;
+    /** Currently researched weapon index, weapon type - 1 */
     sbyte CurrentWeapon;
     sbyte CurrentMod;
-    long WeaponsAllowed;
-    long ModsAllowed;
-    long WeaponsCompleted;
-    long ModsCompleted;
+    ulong WeaponsAllowed;
+    ulong ModsAllowed;
+    ulong WeaponsCompleted;
+    ulong ModsCompleted;
 };
 
 #pragma pack()
@@ -57,6 +58,11 @@ void load_scientist_lost_reason(ushort reason_no);
 
 int research_daily_progress_for_type(ubyte rstype);
 int research_unkn_func_004(ushort percent_per_day, int expect_funding, int real_funding);
+
+TbBool is_research_weapon_completed(ushort wtype);
+TbBool is_research_weapon_allowed(ushort wtype);
+void research_weapon_allow(ushort wtype);
+void research_weapon_complete(ushort wtype);
 /******************************************************************************/
 #ifdef __cplusplus
 }
