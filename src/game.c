@@ -5789,7 +5789,21 @@ void research_unkn_func_006(ushort missi)
         research_cymod_complete(p_missi->ExtraRewardParam);
         break;
     case MEReward_CybModSingle:
-        LOGERR("not implemented");//TODO
+        for (i = 0; i < cryo_agents.NumAgents; i++)
+        {
+            TbBool added;
+
+            added = add_mod_to_flags_no_replace(&cryo_agents.Mods[i], p_missi->ExtraRewardParam);
+            if (!added)
+                continue;
+
+            if (i < 4) {
+                PlayerInfo *p_locplayer;
+                p_locplayer = &players[local_player_no];
+                add_mod_to_flags(&p_locplayer->Mods[i], p_missi->ExtraRewardParam);
+            }
+            break;
+        }
         break;
     case MEReward_WeaponResearched:
         research_weapon_complete(p_missi->ExtraRewardParam);
@@ -5801,16 +5815,6 @@ void research_unkn_func_006(ushort missi)
 
     switch (missi)
     {
-    case 2:
-        wtype = WEP_LONGRANGE;
-        if (!is_research_weapon_completed(wtype))
-            research_weapon_allow(wtype);
-        break;
-    case 3:
-        wtype = WEP_RAZORWIRE;
-        if (!is_research_weapon_completed(wtype))
-            research_weapon_allow(wtype);
-        break;
     case 4:
     case 29:
     case 37:
@@ -5823,94 +5827,15 @@ void research_unkn_func_006(ushort missi)
             val = 0;
         }
         research_unkn_var_01 = val;
-        wtype = WEP_LASER;
-        if (!is_research_weapon_completed(wtype))
-            research_weapon_allow(wtype);
-        wtype = WEP_FLAMER;
-        if (!is_research_weapon_completed(wtype))
-            research_weapon_allow(wtype);
-        break;
-    case 5:
-        wtype = WEP_H2HTASER;
-        if (!is_research_weapon_completed(wtype))
-            research_weapon_allow(wtype);
-        break;
-    case 6:
-        wtype = WEP_RAP;
-        if (!is_research_weapon_completed(wtype))
-            research_weapon_allow(wtype);
-        break;
-    case 7:
-    case 8:
-    case 28:
-        wtype = WEP_MEDI2;
-        if (!is_research_weapon_completed(wtype))
-            research_weapon_allow(wtype);
         break;
     case 9:
     case 23:
     case 36:
     case 74:
-        wtype = WEP_AIRSTRIKE;
-        if (!is_research_weapon_completed(wtype))
-            research_weapon_allow(wtype);
         // Give immediatelly rather than allowing research
         wtype = WEP_PERSUADER2;
         if (!is_research_weapon_completed(wtype))
             research_weapon_complete(wtype);
-        break;
-    case 10:
-    case 39:
-        wtype = WEP_CEREBUSIFF;
-        if (!is_research_weapon_completed(wtype))
-            research_weapon_allow(wtype);
-        break;
-    case 11:
-        wtype = WEP_CLONESHLD;
-        if (!is_research_weapon_completed(wtype))
-            research_weapon_allow(wtype);
-        break;
-    case 12:
-    case 33:
-    case 43:
-    case 44:
-    case 52:
-        wtype = WEP_MEDI2;
-        if (!is_research_weapon_completed(wtype))
-            research_weapon_allow(wtype);
-        break;
-    case 13:
-    case 72:
-    case 73:
-        wtype = WEP_NUCLGREN;
-        if (!is_research_weapon_completed(wtype))
-            research_weapon_allow(wtype);
-        break;
-    case 14:
-    case 87:
-        wtype = WEP_AIRSTRIKE;
-        if (!is_research_weapon_completed(wtype))
-            research_weapon_allow(wtype);
-        break;
-    case 15:
-        wtype = WEP_STASISFLD;
-        if (!is_research_weapon_completed(wtype))
-            research_weapon_allow(wtype);
-        break;
-    case 16:
-        wtype = WEP_EXPLWIRE;
-        if (!is_research_weapon_completed(wtype))
-            research_weapon_allow(wtype);
-        break;
-    case 17:
-        wtype = WEP_ELLASER;
-        if (!is_research_weapon_completed(wtype))
-            research_weapon_allow(wtype);
-        break;
-    case 18:
-        wtype = WEP_TIMEGUN;
-        if (!is_research_weapon_completed(wtype))
-            research_weapon_allow(wtype);
         break;
     case 20:
     case 24:
@@ -5928,16 +5853,6 @@ void research_unkn_func_006(ushort missi)
         }
         research_unkn_var_01 = val;
         break;
-    case 21:
-        wtype = WEP_ELEMINE;
-        if (!is_research_weapon_completed(wtype))
-            research_weapon_allow(wtype);
-        break;
-    case 22:
-        wtype = WEP_EXPLMINE;
-        if (!is_research_weapon_completed(wtype))
-            research_weapon_allow(wtype);
-        break;
     case 25:
     case 26:
     case 35:
@@ -5951,52 +5866,6 @@ void research_unkn_func_006(ushort missi)
             val = 0;
         }
         research_unkn_var_01 = val;
-        break;
-    case 27:
-        wtype = WEP_ELEMINE;
-        if (!is_research_weapon_completed(wtype))
-            research_weapon_allow(wtype);
-        return;
-    case 31:
-        wtype = WEP_H2HTASER;
-        if (!is_research_weapon_completed(wtype))
-            research_weapon_allow(wtype);
-        break;
-    case 34:
-        wtype = WEP_LASER;
-        if (!is_research_weapon_completed(wtype))
-            research_weapon_allow(wtype);
-        wtype = WEP_FLAMER;
-        if (!is_research_weapon_completed(wtype))
-            research_weapon_allow(wtype);
-        break;
-    case 45:
-        wtype = WEP_SOULGUN;
-        if (!is_research_weapon_completed(wtype))
-            research_weapon_allow(wtype);
-        break;
-    case 48:
-        wtype = WEP_MINIGUN;
-        if (!is_research_weapon_completed(wtype))
-            research_weapon_allow(wtype);
-        wtype = WEP_EXPLMINE;
-        if (!is_research_weapon_completed(wtype))
-            research_weapon_allow(wtype);
-        break;
-    case 49:
-        wtype = WEP_CRAZYGAS;
-        if (!is_research_weapon_completed(wtype))
-            research_weapon_allow(wtype);
-        break;
-    case 51:
-        wtype = WEP_FLAMER;
-        if (!is_research_weapon_completed(wtype))
-            research_weapon_allow(wtype);
-        break;
-    case 53:
-        wtype = WEP_BEAM;
-        if (!is_research_weapon_completed(wtype))
-            research_weapon_allow(wtype);
         break;
     case 55:
     case 56:
@@ -6012,24 +5881,6 @@ void research_unkn_func_006(ushort missi)
         }
         research_unkn_var_01 = val;
         break;
-    case 57:
-        wtype = WEP_ELLASER;
-        if (!is_research_weapon_completed(wtype))
-            research_weapon_allow(wtype);
-        break;
-    case 59:
-        wtype = WEP_NUCLGREN;
-        if (!is_research_weapon_completed(wtype))
-            research_weapon_allow(wtype);
-        wtype = WEP_CLONESHLD;
-        if (!is_research_weapon_completed(wtype))
-            research_weapon_allow(wtype);
-        break;
-    case 83:
-        wtype = WEP_EXPLWIRE;
-        if (!is_research_weapon_completed(wtype))
-            research_weapon_allow(wtype);
-        break;
     case 85:
         for (i = 0; i < cryo_agents.NumAgents; i++)
         {
@@ -6043,14 +5894,6 @@ void research_unkn_func_006(ushort missi)
                 break;
             }
         }
-        break;
-    case 92:
-        wtype = WEP_TIMEGUN;
-        if (!is_research_weapon_completed(wtype))
-            research_weapon_allow(wtype);
-        wtype = WEP_BEAM;
-        if (!is_research_weapon_completed(wtype))
-            research_weapon_allow(wtype);
         break;
     }
 }

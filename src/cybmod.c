@@ -361,6 +361,66 @@ TbBool cybmod_fix_all(union Mod *p_umod)
     return fixed;
 }
 
+void add_mod_to_flags(union Mod *p_umod, ushort mtype)
+{
+    switch (cybmod_group_type(mtype))
+    {
+    case MODGRP_LEGS:
+        set_cybmod_legs_level(p_umod, cybmod_version(mtype));
+        break;
+    case MODGRP_ARMS:
+        set_cybmod_arms_level(p_umod, cybmod_version(mtype));
+        break;
+    case MODGRP_CHEST:
+        set_cybmod_chest_level(p_umod, cybmod_version(mtype));
+        break;
+    case MODGRP_BRAIN:
+        set_cybmod_brain_level(p_umod, cybmod_version(mtype));
+        break;
+    case MODGRP_EPIDERM:
+        set_cybmod_skin_level(p_umod, cybmod_version(mtype));
+        break;
+    }
+}
+
+TbBool add_mod_to_flags_no_replace(union Mod *p_umod, ushort mtype)
+{
+    switch (cybmod_group_type(mtype))
+    {
+    case MODGRP_LEGS:
+        if (cybmod_legs_level(p_umod) == 0) {
+            set_cybmod_legs_level(p_umod, cybmod_version(mtype));
+            return true;
+        }
+        break;
+    case MODGRP_ARMS:
+        if (cybmod_arms_level(p_umod) == 0) {
+            set_cybmod_arms_level(p_umod, cybmod_version(mtype));
+            return true;
+        }
+        break;
+    case MODGRP_CHEST:
+        if (cybmod_chest_level(p_umod) == 0) {
+            set_cybmod_chest_level(p_umod, cybmod_version(mtype));
+            return true;
+        }
+        break;
+    case MODGRP_BRAIN:
+        if (cybmod_brain_level(p_umod) == 0) {
+            set_cybmod_brain_level(p_umod, cybmod_version(mtype));
+            return true;
+        }
+        break;
+    case MODGRP_EPIDERM:
+        if (cybmod_skin_level(p_umod) == 0) {
+            set_cybmod_skin_level(p_umod, cybmod_version(mtype));
+            return true;
+        }
+        break;
+    }
+    return false;
+}
+
 /** Converts flag-per-mod to  3bit-per-mod-type.
  */
 void sanitize_cybmods_fmtver11_flags(union Mod *p_umod)

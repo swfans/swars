@@ -33,18 +33,18 @@ struct Thing;
 enum CyModType
 {
   MOD_NULL = 0x0,
-  MOD_TYP01 = 0x1,
-  MOD_TYP02 = 0x2,
-  MOD_TYP03 = 0x3,
-  MOD_TYP04 = 0x4,
-  MOD_TYP05 = 0x5,
-  MOD_TYP06 = 0x6,
-  MOD_TYP07 = 0x7,
-  MOD_TYP08 = 0x8,
-  MOD_TYP09 = 0x9,
-  MOD_TYP10 = 0xA,
-  MOD_TYP11 = 0xB,
-  MOD_TYP12 = 0xC,
+  MOD_LEGS1 = 0x1,
+  MOD_LEGS2 = 0x2,
+  MOD_LEGS3 = 0x3,
+  MOD_ARMS1 = 0x4,
+  MOD_ARMS2 = 0x5,
+  MOD_ARMS3 = 0x6,
+  MOD_CHEST1 = 0x7,
+  MOD_CHEST2 = 0x8,
+  MOD_CHEST3 = 0x9,
+  MOD_BRAIN1 = 0xA,
+  MOD_BRAIN2 = 0xB,
+  MOD_BRAIN3 = 0xC,
   MOD_EPIDERM1 = 0xD,
   MOD_EPIDERM2 = 0xE,
   MOD_EPIDERM3 = 0xF,
@@ -52,6 +52,15 @@ enum CyModType
   MOD_TYPES_COUNT,
 };
 
+enum CyModGroupTypes
+{
+  MODGRP_LEGS = 0,
+  MODGRP_ARMS,
+  MODGRP_CHEST,
+  MODGRP_BRAIN,
+  MODGRP_EPIDERM,
+  MODGRP_TYPES_COUNT,
+};
 
 struct ModDef {
 	ushort PowerOutput;
@@ -101,6 +110,9 @@ void set_cybmod_skin_level(union Mod *p_umod, ubyte nmod);
 ushort cybmodflags_prev_mod(ulong modflags, ushort last_mtype);
 ushort cybmod_group_type(ushort mtype);
 ushort cybmod_version(ushort mtype);
+
+void add_mod_to_flags(union Mod *p_umod, ushort mtype);
+TbBool add_mod_to_flags_no_replace(union Mod *p_umod, ushort mtype);
 
 void sanitize_cybmods_fmtver11_flags(union Mod *p_umod);
 TbBool cybmod_fix_all(union Mod *p_umod);
