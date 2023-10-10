@@ -5767,8 +5767,6 @@ void research_unkn_func_006(ushort missi)
         : : "a" (missi));
 #endif
     struct Mission *p_missi;
-    ushort wtype;
-    ubyte val;
     int i;
 
     p_missi = &mission_list[missi];
@@ -5825,67 +5823,6 @@ void research_unkn_func_006(ushort missi)
             }*/
             break;
         }
-        break;
-    }
-
-    switch (missi)
-    {
-    case 4:
-    case 29:
-    case 37:
-        val = research_unkn_var_01 + 1;
-        if (val == 3)
-        {
-            wtype = WEP_EXPLMINE;
-            if (!is_research_weapon_completed(wtype))
-                research_weapon_allow(wtype);
-            val = 0;
-        }
-        research_unkn_var_01 = val;
-        break;
-    case 20:
-    case 24:
-        val = research_unkn_var_01 + 1;
-        if (val == 1) {
-            wtype = WEP_STASISFLD;
-            if (!is_research_weapon_completed(wtype))
-                research_weapon_allow(wtype);
-        }
-        if (val == 2) {
-            wtype = WEP_SOULGUN;
-            if (!is_research_weapon_completed(wtype))
-                research_weapon_allow(wtype);
-            val = 0;
-        }
-        research_unkn_var_01 = val;
-        break;
-    case 25:
-    case 26:
-    case 35:
-    case 38:
-    case 50:
-        val = research_unkn_var_01 + 1;
-        if (val == 4) {
-            wtype = WEP_RAP;
-            if (!is_research_weapon_completed(wtype))
-                research_weapon_allow(wtype);
-            val = 0;
-        }
-        research_unkn_var_01 = val;
-        break;
-    case 55:
-    case 56:
-    case 58:
-        val = research_unkn_var_01 + 1;
-        if (val == 2) {
-            wtype = WEP_CEREBUSIFF;
-            if (!is_research_weapon_completed(wtype))
-                research_weapon_allow(wtype);
-        }
-        if (val == 3) {
-            val = 0;
-        }
-        research_unkn_var_01 = val;
         break;
     }
 }
