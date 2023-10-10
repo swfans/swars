@@ -60,6 +60,16 @@ enum MissionFlags {
     MisF_IsFinalMission = 0x0008,
 };
 
+enum MissionExtraRewards {
+    MEReward_None = 0,
+    MEReward_Scientists,
+    MEReward_ResearchLab,
+    MEReward_CybModResearched,
+    MEReward_WeaponResearched,
+    MEReward_CybModSingle,
+    MEReward_WeaponSingle,
+};
+
 struct Campaign {
     /** Default campaign title. */
     const char *TextName;
@@ -110,11 +120,17 @@ struct Mission { // sizeof=76
     ushort SpecialEffectFailID;
     ushort SpecialEffectSuccessID;
     ushort StringIndex;
+    /** Index of first of netscan objectives (mission brief objectives) assigned to this mission. */
     ushort NetscanObvIndex;
+    /** Amount of netscan objectives (mission brief objectives) assigned to this mission. */
     ubyte NetscanObvCount;
-    ubyte StartLevel[3];
-    ubyte SuccessMap[3];
-    ubyte SuccessLevel[3];
+    /** Weapons made researchable by completing this mission. */
+    ulong ResearchWeapons;
+    /** Type of an extra, unique reward given to the player for mission complete. */
+    ubyte ExtraRewardType;
+    /** Parameter for the extra unique reward, meaning depends on its type. */
+    ushort ExtraRewardParam;
+    ubyte SuccessLevel[2];
     ubyte FailMap[3];
     ubyte FailLevel[3];
     /** Map number on which this mission takes place. */

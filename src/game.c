@@ -5797,13 +5797,13 @@ void research_unkn_func_006(ushort missi)
                 research_weapon_allow(wtype);
             val = 0;
         }
+        research_unkn_var_01 = val;
         wtype = WEP_LASER;
         if (!is_research_weapon_completed(wtype))
             research_weapon_allow(wtype);
         wtype = WEP_FLAMER;
         if (!is_research_weapon_completed(wtype))
             research_weapon_allow(wtype);
-        research_unkn_var_01 = val;
         break;
     case 5:
         wtype = WEP_H2HTASER;

@@ -59,8 +59,7 @@ enum MissionListConfigCmd {
     MissL_SpecialEffectFailID,
     MissL_SpecialEffectSuccessID,
     MissL_StringIndex,
-    MissL_StartLevel,
-    MissL_SuccessMap,
+    MissL_ExtraReward,
     MissL_SuccessLevel,
     MissL_FailMap,
     MissL_FailLevel,
@@ -111,11 +110,11 @@ const struct TbNamedEnum missions_conf_mission_cmds[] = {
   {"SuccessTrigger",	MissL_SuccessTrigger},
   {"FailTrigger",	MissL_FailTrigger},
   {"BankTest",		MissL_BankTest},
-  {"SpecialEffectFailID",	MissL_SpecialEffectFailID},
-  {"SpecialEffectSuccessID",	MissL_SpecialEffectSuccessID},
+  {"SpecialEffectFailID",MissL_SpecialEffectFailID},
+  {"SpecialEffectSuccessID",MissL_SpecialEffectSuccessID},
   {"StringIndex",	MissL_StringIndex},
-  {"StartLevel",	MissL_StartLevel},
-  {"SuccessMap",	MissL_SuccessMap},
+  {"ResearchWeapons",MissL_ResearchWeapons},
+  {"ExtraReward",	MissL_ExtraReward},
   {"SuccessLevel",	MissL_SuccessLevel},
   {"FailMap",		MissL_FailMap},
   {"FailLevel",		MissL_FailLevel},
@@ -139,6 +138,16 @@ const struct TbNamedEnum missions_conf_mission_cmds[] = {
 const struct TbNamedEnum missions_conf_common_types[] = {
   {"SP",			1},
   {"MP",			2},
+  {NULL,			0},
+};
+
+const struct TbNamedEnum missions_conf_extra_reward_types[] = {
+  {"Scientists",	MEReward_Scientists},
+  {"ResearchLab",	MEReward_ResearchLab},
+  {"CybModResearched",MEReward_CybModResearched},
+  {"WeaponResearched",MEReward_WeaponResearched},
+  {"CybModSingle",	MEReward_CybModSingle},
+  {"WeaponSingle",	MEReward_WeaponSingle},
   {NULL,			0},
 };
 
@@ -370,10 +379,6 @@ void fix_mission_used_objectives(short missi)
 
 void read_missions_bin_file(int num)
 {
-#if 0
-    asm volatile ("call ASM_load_missions\n"
-        : : "a" (num));
-#else
     TbFileHandle fh;
     char locstr[52];
     ulong fmtver;
@@ -423,7 +428,6 @@ void read_missions_bin_file(int num)
     }
     for (i = 1; i < next_mission; i++)
         mission_list[i].Complete = 0;
-#endif
 }
 
 void read_mission_netscan_objectives_bin(void)
@@ -512,19 +516,19 @@ void save_mission_single_conf(TbFileHandle fh, struct Mission *p_missi, char *bu
         sprintf(buf, "StringIndex = %hu\n", p_missi->StringIndex);
         LbFileWrite(fh, buf, strlen(buf));
     }
-    if ((p_missi->StartLevel[0]|p_missi->StartLevel[1]|p_missi->StartLevel[2]) != 0) {
-        sprintf(buf, "StartLevel = %d %d %d\n",
-          (int)p_missi->StartLevel[0], (int)p_missi->StartLevel[1], (int)p_missi->StartLevel[2]);
+    if (p_missi->ResearchWeapons != 0) {
+        sprintf(buf, "ResearchWeapons = 0x%lx\n",
+          (ulong)p_missi->ResearchWeapons);
         LbFileWrite(fh, buf, strlen(buf));
     }
-    if ((p_missi->SuccessMap[0]|p_missi->SuccessMap[1]|p_missi->SuccessMap[2]) != 0) {
-        sprintf(buf, "SuccessMap = %d %d %d\n",
-          (int)p_missi->SuccessMap[0], (int)p_missi->SuccessMap[1], (int)p_missi->SuccessMap[2]);
+    if (p_missi->ExtraRewardType != 0) {
+        sprintf(buf, "ExtraReward = %d %d\n",
+          (int)p_missi->ExtraRewardType, (int)p_missi->ExtraRewardParam);
         LbFileWrite(fh, buf, strlen(buf));
     }
     if ((p_missi->SuccessLevel[0]|p_missi->SuccessLevel[1]|p_missi->SuccessLevel[2]) != 0) {
-        sprintf(buf, "SuccessLevel = %d %d %d\n",
-          (int)p_missi->SuccessLevel[0], (int)p_missi->SuccessLevel[1], (int)p_missi->SuccessLevel[2]);
+        sprintf(buf, "SuccessLevel = %d %d\n",
+          (int)p_missi->SuccessLevel[0], (int)p_missi->SuccessLevel[1]);
         LbFileWrite(fh, buf, strlen(buf));
     }
     if ((p_missi->FailMap[0]|p_missi->FailMap[1]|p_missi->FailMap[2]) != 0) {
@@ -1177,34 +1181,53 @@ void read_missions_conf_file(int num)
                 p_missi->StringIndex = k;
                 CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)p_missi->StringIndex);
                 break;
-            case MissL_StartLevel:
-                for (n=0; n < 3; n++)
+            case MissL_ResearchWeapons:
+                n = 0;
+                while (1)
                 {
-                    i = LbIniValueGetLongInt(&parser, &k);
+                    i = LbIniValueGetNamedEnum(&parser, weapon_names);
                     if (i <= 0) {
-                        CONFWRNLOG("Could not read \"%s\" command parameter %u.", COMMAND_TEXT(cmd_num), n);
                         break;
                     }
-                    p_missi->StartLevel[n] = k;
+                    n |= (1 << (i-1));
                 }
-                CONFDBGLOG("%s %d %d %d", COMMAND_TEXT(cmd_num), (int)p_missi->StartLevel[0],
-                  (int)p_missi->StartLevel[1], (int)p_missi->StartLevel[2]);
+                p_missi->ResearchWeapons = n;
+                CONFDBGLOG("%s 0x%lx", COMMAND_TEXT(cmd_num), p_missi->ResearchWeapons);
                 break;
-            case MissL_SuccessMap:
-                for (n=0; n < 3; n++)
-                {
-                    i = LbIniValueGetLongInt(&parser, &k);
-                    if (i <= 0) {
-                        CONFWRNLOG("Could not read \"%s\" command parameter %u.", COMMAND_TEXT(cmd_num), n);
-                        break;
-                    }
-                    p_missi->SuccessMap[n] = k;
+            case MissL_ExtraReward:
+                i = LbIniValueGetNamedEnum(&parser, missions_conf_extra_reward_types);
+                if (i <= 0) {
+                    CONFWRNLOG("Could not recognize \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                    break;
                 }
-                CONFDBGLOG("%s %d %d %d", COMMAND_TEXT(cmd_num), (int)p_missi->SuccessMap[0],
-                  (int)p_missi->SuccessMap[1], (int)p_missi->SuccessMap[2]);
+                p_missi->ExtraRewardType = i;
+                i = 0;
+                switch (p_missi->ExtraRewardType)
+                {
+                case MEReward_Scientists:
+                case MEReward_ResearchLab:
+                    i = LbIniValueGetLongInt(&parser, &k);
+                    break;
+                case MEReward_CybModResearched:
+                case MEReward_CybModSingle:
+                    i = LbIniValueGetNamedEnum(&parser, mod_names);
+                    k = i;
+                    break;
+                case MEReward_WeaponResearched:
+                case MEReward_WeaponSingle:
+                    i = LbIniValueGetNamedEnum(&parser, weapon_names);
+                    k = i;
+                    break;
+                }
+                if (i <= 0) {
+                    CONFWRNLOG("Could not recognize \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                    break;
+                }
+                p_missi->ExtraRewardParam = k;
+                CONFDBGLOG("%s %d %d", COMMAND_TEXT(cmd_num), (int)p_missi->ExtraRewardType, (int)p_missi->ExtraRewardParam);
                 break;
             case MissL_SuccessLevel:
-                for (n=0; n < 3; n++)
+                for (n=0; n < 2; n++)
                 {
                     i = LbIniValueGetLongInt(&parser, &k);
                     if (i <= 0) {
@@ -1213,8 +1236,8 @@ void read_missions_conf_file(int num)
                     }
                     p_missi->SuccessLevel[n] = k;
                 }
-                CONFDBGLOG("%s %d %d %d", COMMAND_TEXT(cmd_num), (int)p_missi->SuccessLevel[0],
-                  (int)p_missi->SuccessLevel[1], (int)p_missi->SuccessLevel[2]);
+                CONFDBGLOG("%s %d %d", COMMAND_TEXT(cmd_num), (int)p_missi->SuccessLevel[0],
+                  (int)p_missi->SuccessLevel[1]);
                 break;
             case MissL_FailMap:
                 for (n=0; n < 3; n++)
