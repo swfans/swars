@@ -3,8 +3,8 @@
 ; Requires:
 ; - Simple CD-DA Audio Track ripper by j00ru//vx (rip.exe+akrip32.dll)
 ; - OGG Encoder from Vorbis-tools (oggenc.exe+accompanying DLLs)
-; - GoG ISO Ripper by Moburma (Gogisoripper.exe)
-; - SW Port executable, shared libs, lang files and config files (swars.exe+*.dll+conf/*+lang/*)
+; - Gogisoripper by Moburma (Gogisoripper.exe)
+; - SW Port executable and shared libs (swars.exe+SDL.dll,openal32.dll,libpng3.dll,libogg-0.dll,libvorbis-0.dll)
 ; If you don't have any of these, you may extract them using 7Zip on any existing SW Port Installer.
 
 
@@ -44,26 +44,10 @@ Var inst_src_root_dir
 
 InstallDir "$PROGRAMFILES\Syndicate Wars\"
 
-; Search for built files where `make install` puts them during automatic builds
-!if /FileExists "..\pkg\mingw64\opt\swars\swars.exe"
-  !define BUILDENV_PKG_DIR "..\pkg\mingw64\opt\swars"
-!else if /FileExists "..\pkg\mingw32\opt\swars\swars.exe"
-  !define BUILDENV_PKG_DIR "..\pkg\mingw32\opt\swars"
-!else
-  !define BUILDENV_PKG_DIR ".\swars"
-!endif
-
-; Search for additional utils where they are extracted during automatic builds
-!if /FileExists "..\util-nsis\oggenc.exe"
-  !define BUILDENV_UTIL_DIR "..\util-nsis"
-!else
-  !define BUILDENV_UTIL_DIR ".\util-nsis"
-!endif
-
 
 !define PRODUCT_VERSION "0.3.3.1473"
 !define MUI_ICON "swars.ico"
-!define MUI_WELCOMEFINISHPAGE_BITMAP "${BUILDENV_UTIL_DIR}\win.bmp"
+!define MUI_WELCOMEFINISHPAGE_BITMAP "$PLUGINSDIR\win.bmp"
 !define MUI_WELCOMEPAGE_TITLE "Welcome To The Syndicate Wars Port Setup"
 !define MUI_WELCOMEPAGE_TEXT "This fan port requires the original Syndicate Wars game files. Installation is supported from the following versions of Syndicate Wars:$\r$\n$\r$\n * GOG Download version$\r$\n * Original European/USA DOS release CD$\r$\n * German DOS release CD$\r$\n * Japanese Windows release CD$\r$\n$\r$\nNote: While the Japanese version is supported, only English and French languages from this release are supported, Japanese text is not yet supported.$\r$\n$\r$\n$\r$\n$\r$\nBuild ${PRODUCT_VERSION}"
 
@@ -114,22 +98,25 @@ Section "Syndicate Wars Game" Section_0
   IfErrors inst_game_fail
   Call InstallRegistry
   IfErrors inst_game_fail
-  File "${BUILDENV_PKG_DIR}\swars.exe"
-  File "${BUILDENV_PKG_DIR}\libgcc_s_dw2-1.dll"
-  File "${BUILDENV_PKG_DIR}\libstdc++-6.dll"
-  File "${BUILDENV_PKG_DIR}\libwinpthread-1.dll"
-  File "${BUILDENV_PKG_DIR}\libopenal-1.dll"
-  File "${BUILDENV_PKG_DIR}\libpng16-16.dll"
-  File "${BUILDENV_PKG_DIR}\zlib1.dll"
-  File "${BUILDENV_PKG_DIR}\SDL.dll"
-  File "${BUILDENV_PKG_DIR}\libogg-0.dll"
-  File "${BUILDENV_PKG_DIR}\libvorbis-0.dll"
-  File "${BUILDENV_PKG_DIR}\libvorbisfile-3.dll"
-  File "${BUILDENV_PKG_DIR}\libWildMidi.dll"
+  File swars.exe
+  File libgcc_s_dw2-1.dll
+  File libstdc++-6.dll
+  File libwinpthread-1.dll
+  File libopenal-1.dll
+  File libpng16-16.dll
+  File zlib1.dll
+  File SDL.dll
+  File libogg-0.dll
+  File libvorbis-0.dll
+  File libvorbisfile-3.dll
+  File libpng3.dll
+  File libWildMidi.dll
+  File openal32.dll
+  File wrap_oal.dll
   SetOutPath $INSTDIR\conf
-  File /r "${BUILDENV_PKG_DIR}\conf\"
+  File /r "conf\"
   SetOutPath $INSTDIR\language
-  File /r "${BUILDENV_PKG_DIR}\language\"
+  File /r "language\"
   WriteUninstaller $INSTDIR\Uninstall.exe
   StrCmp $selected_menu_shortcut 1 0 inst_game_menu_end
   CreateDirectory "$SMPROGRAMS\Vexillium"
@@ -154,15 +141,15 @@ Section "Game music"  Section_1
   Goto inst_music_done
 inst_music_go:
   SetOutPath $PLUGINSDIR
-  File "${BUILDENV_UTIL_DIR}\rip.exe"
-  File "${BUILDENV_UTIL_DIR}\akrip32.dll"
-  File "${BUILDENV_UTIL_DIR}\oggenc.exe"
-  File "${BUILDENV_UTIL_DIR}\libogg.dll"
-  File "${BUILDENV_UTIL_DIR}\libvorbis.dll"
-  File "${BUILDENV_UTIL_DIR}\libvorbisfile.dll"
-  File "${BUILDENV_UTIL_DIR}\libFLAC_dynamic.dll"
-  File "${BUILDENV_UTIL_DIR}\oggenc_LICENSE"
-  CreateDirectory "$INSTDIR\music"
+  File $PLUGINSDIR\rip.exe
+  File $PLUGINSDIR\akrip32.dll
+  File $PLUGINSDIR\oggenc.exe
+  File $PLUGINSDIR\libogg.dll
+  File $PLUGINSDIR\libvorbis.dll
+  File $PLUGINSDIR\libvorbisfile.dll
+  File $PLUGINSDIR\libFLAC_dynamic.dll
+  File $PLUGINSDIR\oggenc_LICENSE
+  CreateDirectory $INSTDIR\music
   ExecWait "$PLUGINSDIR\rip.exe $inst_src_root_dir $\"$INSTDIR\music$\""
   ExecWait "$PLUGINSDIR\oggenc.exe -b 192 --output=$\"$INSTDIR\music\track_1.ogg$\" $\"$INSTDIR\music\track1.wav$\""
   ExecWait "$PLUGINSDIR\oggenc.exe -b 192 --output=$\"$INSTDIR\music\track_2.ogg$\" $\"$INSTDIR\music\track2.wav$\""
@@ -387,8 +374,10 @@ langcd_lng_spa:
 langcd_lng_swe:
   StrCpy $selected_lang_abbr swe
   Goto langncd_store
+  Goto langncd_store
 langcd_lng_jap:
   StrCpy $selected_lang_abbr jap
+  Goto langncd_store
   Goto langncd_store
 langcd_lngswitch:
   StrCmp $selected_lang_text "English" langcd_lng_eng
@@ -461,13 +450,13 @@ Function CopyGameFilesFromCD
     StrCpy $selected_music "1"
     CreateDirectory $INSTDIR\music
     SetOutPath $PLUGINSDIR
-    File "${BUILDENV_UTIL_DIR}\Gogisoripper.exe"
-    File "${BUILDENV_UTIL_DIR}\oggenc.exe"
-    File "${BUILDENV_UTIL_DIR}\libogg.dll"
-    File "${BUILDENV_UTIL_DIR}\libvorbis.dll"
-    File "${BUILDENV_UTIL_DIR}\libvorbisfile.dll"
-    File "${BUILDENV_UTIL_DIR}\libFLAC_dynamic.dll"
-    File "${BUILDENV_UTIL_DIR}\oggenc_LICENSE"
+    File $PLUGINSDIR\Gogisoripper.exe
+    File $PLUGINSDIR\oggenc.exe
+    File $PLUGINSDIR\libogg.dll
+    File $PLUGINSDIR\libvorbis.dll
+    File $PLUGINSDIR\libvorbisfile.dll
+    File $PLUGINSDIR\libFLAC_dynamic.dll
+    File $PLUGINSDIR\oggenc_LICENSE
     DetailPrint "Ripping audio tracks from GOG iso"
     nsExec::ExecToLog "Gogisoripper.exe $\"$gog_path\SWARS\game.gog$\" $\"$INSTDIR\music\track_1.wav$\" 456262128 556118288"
     nsExec::ExecToLog "Gogisoripper.exe $\"$gog_path\SWARS\game.gog$\" $\"$INSTDIR\music\track_2.wav$\" 556118288 661238576"
@@ -517,14 +506,17 @@ Delete '$INSTDIR\libgcc_s_dw2-1.dll'
 Delete '$INSTDIR\libogg-0.dll'
 Delete '$INSTDIR\libopenal-1.dll'
 Delete '$INSTDIR\libpng16-16.dll'
+Delete '$INSTDIR\libpng3.dll'
 Delete '$INSTDIR\libstdc++-6.dll'
 Delete '$INSTDIR\libvorbis-0.dll'
 Delete '$INSTDIR\libvorbisfile-3.dll'
 Delete '$INSTDIR\libWildMidi.dll'
 Delete '$INSTDIR\libwinpthread-1.dll'
+Delete '$INSTDIR\openal32.dll'
 Delete '$INSTDIR\SDL.dll'
 Delete '$INSTDIR\swars.exe'
 Delete '$INSTDIR\Uninstall.exe'
+Delete '$INSTDIR\wrap_oal.dll'
 Delete '$INSTDIR\zlib1.dll'
 
 Delete '$INSTDIR\conf\cities.ini'
