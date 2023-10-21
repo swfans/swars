@@ -27,33 +27,46 @@ extern "C" {
 #endif
 /******************************************************************************/
 
-//int GetNumberOfSamples();
+#pragma pack(1)
+
+struct DIG_DRIVER;
+struct MDI_DRIVER;
+struct SNDSAMPLE;
+struct SNDSEQUENCE;
+struct SampleInfo;
+
+#pragma pack()
+
+/******************************************************************************/
+
+ushort GetNumberOfSamples(void);
+
 TbBool GetSoundAble(void);
 TbBool GetMusicAble(void);
 
 TbBool GetSoundActive(void);
-//int GetMusicActive();
+TbBool GetMusicActive(void);
 
 TbBool GetSoundInstalled(void);
-//int GetMusicInstalled();
+TbBool GetMusicInstalled(void);
 
-//int GetStereoSound();
-//int GetNumberOfSongs();
+TbBool GetStereoSound(void);
+ushort GetNumberOfSongs(void);
 
-//int GetCurrentSoundMasterVolume();
-//int GetCurrentMusicMasterVolume();
+int GetCurrentSoundMasterVolume(void);
+int GetCurrentMusicMasterVolume(void);
 
-//int GetSoundDriver();
-//int GetMusicDriver();
+struct DIG_DRIVER *GetSoundDriver(void);
+struct MDI_DRIVER *GetMusicDriver(void);
 
-//int GetSelected95MidiDevice();
-//int GetSelected95WaveDevice();
+int GetSelected95MidiDevice(void);
+int GetSelected95WaveDevice(void);
 
-//int GetFirstSampleInfoStructure();
-//int GetLastSampleInfoStructure();
+struct SampleInfo *GetFirstSampleInfoStructure(void);
+struct SampleInfo *GetLastSampleInfoStructure(void);
 
-//int GetSongHandle();
-//int GetCDSpeed();
+struct SNDSEQUENCE *GetSongHandle(void);
+sbyte GetCDSpeed(ubyte n);
 
 /******************************************************************************/
 #ifdef __cplusplus

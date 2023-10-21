@@ -4,10 +4,15 @@
 #include <string.h>
 
 #include "bfwindows.h"
-#include "bflib_snd_sys.h"
 #include "bffile.h"
+#include "bfmusic.h"
+#include "bfsound.h"
 #include "bfscd.h"
 #include "drv_oal.h"
+#include "sb16.h"
+#include "awe32.h"
+#include "streamfx.h"
+#include "sndtimer.h"
 #include "snderr.h"
 #include "oggvorbis.h"
 #include "sound.h"
@@ -15,148 +20,6 @@
 #include "aila.h"
 #include "game_data.h"
 #include "util.h"
-
-extern char FullDIG_INIPath[144];
-extern char FullMDI_INIPath[144];
-extern char SoundDataPath[144];
-extern char SoundDriverPath[144];
-
-extern AIL_INI MusicInstallChoice;
-extern char full_music_data_path[144];
-extern char MusicType[6];
-extern TbBool DisableLoadMusic;
-extern TbBool DisableDangerMusic;
-extern TbBool MusicInstalled;
-extern TbBool MusicAble;
-extern TbBool MusicActive;
-
-extern AIL_INI SoundInstallChoice;
-extern ushort SoundType;
-extern TbBool DisableLoadSounds;
-extern TbBool SoundAble;
-
-extern TbBool CDAble;
-
-extern TbBool UseMultiMediaExtensions;
-extern TbBool AutoScanForSoundHardware;
-extern TbBool StereoSound;
-extern TbBool UseCurrentAwe32Soundfont;
-extern TbBool ive_got_an_sb16;
-extern ulong MaxNumberOfSamples;
-extern TbBool AILStartupAlreadyInitiated;
-
-extern OggVorbisStream  sound_music_stream;
-extern MDI_DRIVER *MusicDriver;
-extern DIG_DRIVER *SoundDriver;
-
-
-TbBool sound_update(void)
-{
-    if (AILStartupAlreadyInitiated)
-        AIL_API_timer();
-
-    if (!SoundDriver)
-        return false;
-    if (!SoundDriver->drvr->initialized)
-        return false;
-
-    ogg_vorbis_stream_update(&sound_music_stream);
-    return true;
-}
-
-int32_t sound_fake_timer_initialize(void)
-{
-    if (LbRegisterIdleHandler(sound_update) != Lb_SUCCESS)
-        return 0;
-    return 1;
-}
-
-void InitAudio(AudioInitOptions *audOpts)
-{
-#if 0
-    asm volatile (
-      "call ASM_InitAudio\n"
-        : : "a" (audOpts));
-#endif
-    if (getenv("DEBUG_BF_AUDIO"))
-        DebugAudio = 1;
-
-    sprintf(FullDIG_INIPath, "sound/DIG.INI");
-    sprintf(FullMDI_INIPath, "sound/MDI.INI");
-    strcpy(SoundDataPath, "sound");
-    strcpy(SoundDriverPath, "sound");
-    if (audOpts->IniPath) {
-        sprintf(FullDIG_INIPath, "%s/DIG.INI", audOpts->IniPath);
-        sprintf(FullMDI_INIPath, "%s/MDI.INI", audOpts->IniPath);
-    }
-    if (audOpts->SoundDataPath != NULL) {
-        strcpy(SoundDataPath, audOpts->SoundDataPath);
-    }
-    if (audOpts->SoundDriverPath != NULL) {
-        strcpy(SoundDriverPath, audOpts->SoundDriverPath);
-    }
-
-    MaxNumberOfSamples = audOpts->MaxSamples;
-    SoundType = audOpts->SoundType;
-    if (!audOpts->AutoScan)
-        AutoScanForSoundHardware = 0;
-    if (!audOpts->StereoOption)
-        StereoSound = 0;
-    if (audOpts->DisableDangerMusic == 1)
-        DisableDangerMusic = 1;
-    if (audOpts->DisableLoadSounds == 1)
-        DisableLoadSounds = 1;
-    if (audOpts->DisableLoadMusic == 1)
-        DisableLoadMusic = 1;
-    if (audOpts->UseCurrentAwe32Soundfont == 1)
-        UseCurrentAwe32Soundfont = 1;
-    if (audOpts->UseMultiMediaExtensions == 1)
-        UseMultiMediaExtensions = 1;
-    sprintf(SoundProgressMessage, "BF1  - MA   %d\n", MusicAble);
-    SoundProgressLog(SoundProgressMessage);
-    sprintf(SoundProgressMessage, "BF2  - SA   %d\n", SoundAble);
-    SoundProgressLog(SoundProgressMessage);
-    sprintf(SoundProgressMessage, "BF3  - CDA  %d\n", CDAble);
-    SoundProgressLog(SoundProgressMessage);
-    if (!(audOpts->AbleFlags & 0x01))
-        MusicAble = 0;
-    if (!(audOpts->AbleFlags & 0x02))
-        SoundAble = 0;
-
-    InitSound();
-    InitMusic();
-    InitAllBullfrogSoundTimers();
-
-    if (audOpts->InitStreamedSound == 1)
-        InitStreamedSound();
-
-    if (audOpts->InitRedbookAudio == 1) {
-        InitRedbook();
-    } else if (audOpts->InitRedbookAudio == 2) {
-        char mdir[FILENAME_MAX];
-        snprintf(mdir, sizeof(mdir),
-              "%s" FS_SEP_STR "music", GetDirectoryHdd());
-        InitMusicOGG(mdir);
-    } else {
-        sprintf(SoundProgressMessage, "BF101 - cd init - disabled\n");
-        SoundProgressLog(SoundProgressMessage);
-        CDAble = false;
-    }
-
-    if (ive_got_an_sb16)
-        prepare_SB16_volumes();
-
-    sprintf(SoundProgressMessage, "BF54 - MA   %d\n", MusicAble);
-    SoundProgressLog(SoundProgressMessage);
-    sprintf(SoundProgressMessage, "BF55 - SA   %d\n", SoundAble);
-    SoundProgressLog(SoundProgressMessage);
-    sprintf(SoundProgressMessage, "BF55 - CDA  %d\n", CDAble);
-    SoundProgressLog(SoundProgressMessage);
-    sprintf(SoundProgressMessage, "BF56 - music driver = %s\n", MusicInstallChoice.driver_name);
-    SoundProgressLog(SoundProgressMessage);
-    sprintf(SoundProgressMessage, "BF57 - sound driver = %s\n", SoundInstallChoice.driver_name);
-    SoundProgressLog(SoundProgressMessage);
-}
 
 struct SampleInfo *play_sample_using_heap(ulong a1, short smptbl_id, ulong a3, ulong a4, ulong a5, char a6, ubyte type)
 {
@@ -187,23 +50,6 @@ void play_dist_sample(struct Thing *p_thing, ushort smptbl_id, ushort vol, ushor
         : : "a" (p_thing), "d" (smptbl_id), "b" (vol), "c" (pan), "g" (pitch), "g" (loop), "g" (type));
 }
 
-void StopMusicIfActive(void)
-{
-    if (!MusicInstalled || !MusicAble)
-        return;
-    if (MusicActive)
-    {
-        StopMusic();
-        MusicActive = 0;
-    }
-}
-
-void StopMusic(void)
-{
-    asm volatile ("call ASM_StopMusic\n"
-        :  :  : "eax" );
-}
-
 //TODO better name?
 void fill_ail_sample_ids(void)
 {
@@ -211,10 +57,3 @@ void fill_ail_sample_ids(void)
         :  :  : "eax" );
 }
 
-int LoadSounds(unsigned char a1)
-{
-    int ret;
-    asm volatile ("call ASM_LoadSounds\n"
-        : "=r" (ret) : "a" (a1));
-    return ret;
-}

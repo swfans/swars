@@ -74,6 +74,20 @@ void * LbStringToLower(char *str)
     return str;
 }
 
+void * LbStringToUpper(char *str)
+{
+    ulong i;
+    char chr;
+    for (i=0; true; i++)
+    {
+        chr = toupper(str[i]);
+        str[i] = chr;
+        if (chr == '\0')
+            break;
+    }
+    return str;
+}
+
 ulong LbStringLength(const char *str)
 {
     if (str == NULL) return 0;

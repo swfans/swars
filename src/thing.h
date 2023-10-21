@@ -91,6 +91,40 @@ enum ThingType {
     TT_UNKN56 = 0x38,
 };
 
+enum ThingFlags {
+    TngF_Unkn0001     = 0x0001,
+    TngF_Unkn0002     = 0x0002,
+    TngF_Unkn0004     = 0x0004,
+    TngF_Unkn0008     = 0x0008,
+    TngF_Unkn0010     = 0x0010,
+    TngF_Unkn0020     = 0x0020,
+    TngF_Unkn0040     = 0x0040,
+    TngF_Unkn0080     = 0x0080,
+    TngF_Unkn0100     = 0x0100,
+    TngF_Unkn0200     = 0x0200,
+    TngF_Unkn0400     = 0x0400,
+    TngF_Unkn0800     = 0x0800,
+    TngF_Unkn1000     = 0x1000,
+    TngF_PlayerAgent  = 0x2000,
+    TngF_Unkn4000     = 0x4000,
+    TngF_Unkn8000     = 0x8000,
+    TngF_Unkn00010000 = 0x00010000,
+    TngF_Unkn00020000 = 0x00020000,
+    TngF_Unkn00040000 = 0x00040000,
+    TngF_Persuaded = 0x00080000,
+    TngF_Unkn00100000 = 0x00100000,
+    TngF_Unkn00200000 = 0x00200000,
+    TngF_Unkn00400000 = 0x00400000,
+    TngF_Unkn00800000 = 0x00800000,
+    TngF_Unkn01000000 = 0x01000000,
+    TngF_Unkn02000000 = 0x02000000,
+    TngF_Unkn04000000 = 0x04000000,
+    TngF_Unkn08000000 = 0x08000000,
+    TngF_Unkn10000000 = 0x10000000,
+    TngF_Unkn20000000 = 0x20000000,
+    TngF_Unkn40000000 = 0x40000000,
+};
+
 /** State of Thing of type Object/Building.
  */
 struct TngUObject
@@ -813,11 +847,11 @@ struct ThingOldV9 { // sizeof=216
 #pragma pack()
 /******************************************************************************/
 extern struct Thing *things;
-extern ushort things_used_head;
-extern ushort same_type_head[256+32];
+extern short things_used_head;
+extern short same_type_head[256+32];
 
 extern struct SimpleThing *sthings;
-extern ushort sthings_used_head;
+extern short sthings_used_head;
 
 void init_things(void);
 void refresh_old_thing_format(struct Thing *p_thing, struct ThingOldV9 *p_oldthing, ulong fmtver);

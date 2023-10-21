@@ -16,11 +16,12 @@
 #      (at your option) any later version.
 #
 # *****************************************************************************
+#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: Menu text for SW Port\n"
 "Report-Msgid-Bugs-To: https://github.com/swfans/swars/issues\n"
-"POT-Creation-Date: 2023-08-20 01:12+0200\n"
+"POT-Creation-Date: 2023-09-10 23:59+0200\n"
 "PO-Revision-Date: 2023-09-02 12:00+0100\n"
 "Last-Translator: Mefistotelis <mefistotelis@gmail.com>\n"
 "Language-Team: Syndicate Wars Fans <github.com/swfans>\n"
@@ -29,3 +30,721 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-SourceCharset: utf-8\n"
+"X-Generator: Poedit 3.0.1\n"
+
+#: mapscreen.heading:1
+msgctxt "map screen headings - name"
+msgid "Dropsite"
+msgstr ""
+
+#: mapscreen.heading:2
+msgctxt "map screen headings - population size"
+msgid "UTOPIA Identkeys"
+msgstr ""
+
+#: mapscreen.heading:3
+msgctxt "map screen headings - landscape"
+msgid "Infra-structure"
+msgstr ""
+
+#: mapscreen.heading:4
+msgctxt "map screen headings - language"
+msgid "Dialect"
+msgstr ""
+
+#: mapscreen.heading:5
+msgctxt "map screen headings - industry"
+msgid "Commerce"
+msgstr ""
+
+#: mapscreen.heading:6
+msgctxt "map screen headings - toxicity"
+msgid "Toxicity"
+msgstr ""
+
+#: mission.title:68
+msgctxt "mission title"
+msgid "Zealot Attack"
+msgstr ""
+
+#: mission.brief.mail1.par1.h mission.brief.mail2.par1.h
+#: mission.brief.mail3.par1.h mission.brief.mail4.par1.h
+#: mission.brief.mail5.par1.h mission.brief.mail6.par1.h
+#: mission.brief.mail7.par1.h mission.brief.mail12.par1.h
+#: mission.brief.mail13.par1.h mission.brief.mail14.par1.h
+#: mission.brief.mail15.par1.h mission.brief.mail17.par1.h
+#: mission.brief.mail19.par1.h mission.brief.mail21.par1.h
+#: mission.brief.mail23.par1.h mission.brief.mail25.par1.h
+#: mission.brief.mail27.par1.h mission.brief.mail30.par1.h
+msgctxt "mission brief email header"
+msgid "Message Type: KPV1-encrypted"
+msgstr ""
+
+#: mission.brief.mail1.par2.h mission.brief.mail2.par2.h
+#: mission.brief.mail3.par2.h mission.brief.mail4.par2.h
+#: mission.brief.mail5.par2.h mission.brief.mail6.par2.h
+#: mission.brief.mail7.par2.h mission.brief.mail12.par2.h
+#: mission.brief.mail13.par2.h mission.brief.mail14.par2.h
+#: mission.brief.mail15.par2.h mission.brief.mail17.par2.h
+#: mission.brief.mail19.par2.h mission.brief.mail21.par2.h
+#: mission.brief.mail23.par2.h mission.brief.mail25.par2.h
+#: mission.brief.mail27.par2.h mission.brief.mail30.par2.h
+msgctxt "mission brief email header"
+msgid "Plaintext begins:"
+msgstr ""
+
+#: mission.brief.mail1.par3.c2
+msgctxt "mission brief email orders"
+msgid ""
+"Very simple level (maybe too simple), but shows shortcomings of the follow "
+"command for the punk followers - a winning strategy is getting into the "
+"zealot's car, but if this is done your followers can't get in in and just "
+"get run over.."
+msgstr ""
+
+#: mission.brief.mail1.par4.c4 mission.brief.mail2.par4.c4
+#: mission.brief.mail3.par4.c4 mission.brief.mail4.par4.c4
+#: mission.brief.mail5.par4.c4 mission.brief.mail6.par4.c4
+#: mission.brief.mail7.par4.c4 mission.brief.mail12.par4.c4
+#: mission.brief.mail13.par4.c4 mission.brief.mail14.par4.c4
+#: mission.brief.mail15.par4.c4 mission.brief.mail17.par4.c4
+#: mission.brief.mail19.par4.c4 mission.brief.mail21.par4.c4
+#: mission.brief.mail23.par4.c4 mission.brief.mail25.par4.c4
+#: mission.brief.mail27.par4.c4 mission.brief.mail30.par4.c4
+msgctxt "mission brief email sender"
+msgid "Paul"
+msgstr ""
+
+#: mission.title:80
+msgctxt "mission title"
+msgid "Clean-Up"
+msgstr ""
+
+#: mission.brief.mail2.par3.c2
+msgctxt "mission brief email orders"
+msgid ""
+" A lot of effort has been put into it and it seems finished. It's seemingly "
+"a simple kill everything mission, but it's very challenging, which is fun "
+"and the kind of thing I think the campaign should be angled towards. "
+msgstr ""
+
+#: mission.title:77
+msgctxt "mission title"
+msgid "Guns Guns Guns"
+msgstr ""
+
+#: mission.brief.mail3.par3.c2
+msgctxt "mission brief email orders"
+msgid ""
+"Seems impossibly hard, and also a bit boring in comparison to the early one. "
+"The later one could be interesting with some tweaks, it needs more weapons "
+"or something."
+msgstr ""
+
+#: mission.title:60
+msgctxt "mission title"
+msgid "Guns Guns Guns alt1"
+msgstr ""
+
+#: mission.brief.mail4.par3.c2
+msgctxt "mission brief email orders"
+msgid ""
+"Has bugs with some of the follower punks not joining the player, but I'm not "
+"sure if this is just a bug with my pre-alpha convertor, need to check again "
+"now early level support is in. The early version is also missing objectives, "
+"but it's quite obvious what they would be. Oddly killing the final scientist "
+"gives the player a sniper rifle, much like the level below - this could be a "
+"sign there WAS progression in the campaign."
+msgstr ""
+
+#: mission.title:64
+msgctxt "mission title"
+msgid "Serve And Shoot"
+msgstr ""
+
+#: mission.brief.mail5.par3.c2
+msgctxt "mission brief email orders"
+msgid ""
+"The final version also grants a sniper rifle for killing the scientist, like "
+"the level above, some kind of thematic idea between the two."
+msgstr ""
+
+# #: mission.title:3
+# msgctxt "mission title"
+# msgid "Need Some Prep"
+# msgstr ""
+
+#: mission.brief.mail6.par3.c2
+msgctxt "mission brief email orders"
+msgid ""
+"Totally cut level that is quite polished but a little light on things to do "
+"do. That said there is quite a bit setup in this level, so could be "
+"stretched out to be more interesting. As it's totally cut has no mission "
+"objectives, but seems to just be an assassinate mission against Eurocorp."
+msgstr ""
+
+# #: mission.title:1
+# msgctxt "mission title"
+# msgid "General Takeout"
+# msgstr ""
+
+#: mission.brief.mail7.par3.c2
+msgctxt "mission brief email orders"
+msgid ""
+"The objectives here seem quite obvious - there is a group of soldiers by a "
+"bank. Attacking them causes some of them to break off and flee in vehicles. "
+"They ride to the top of the freeway and head to a getaway flying car. This "
+"then flies to the edge of the map and then stops. Therefore it's a an "
+"assassinate mission with a twist to take out the baddies before they escape "
+"off the map. Works well, but it's a bit too simple once you understand what "
+"to do. "
+msgstr ""
+
+#: mission.title:78
+msgctxt "mission title"
+msgid "Communications"
+msgstr ""
+
+#: mission.brief.mail12.par3.c2
+msgctxt "mission brief email orders"
+msgid ""
+"Two versions of this one as well. I am pretty sure these are set to the "
+"wrong map file. Experimentation has shown that there doesn't actually seem "
+"to be a matching map for this level. If they are renamed to use map 79 "
+"Reykjavik, they just about work. If this is done they are quite interesting "
+"complex and very difficult (but doable) levels. Could be something really "
+"good, but needs a lot of work to make them playable. Finished levels(?) but "
+"for a missing map, needs a lot of work to be coherent in the final game."
+msgstr ""
+
+#: mission.title:61
+msgctxt "mission title"
+msgid "Get The Power"
+msgstr ""
+
+#: mission.brief.mail13.par3.c2
+msgctxt "mission brief email orders"
+msgid ""
+"This is a simple and quite fun early level. Works perfectly, but could "
+"perhaps be improved by using flag1/2 objectives to draw the player's "
+"attention to the chemical plant where the essential grenade is (although a "
+"briefing could explain this as well)."
+msgstr ""
+
+#: mission.brief.mail14.par3.c2
+msgctxt "mission brief email orders"
+msgid ""
+"This is an early level that is a good idea, but seems a bit rough. Odd stuff "
+"like the player starting with a useless persuadertron - was the idea to "
+"gather the other unguided together? Feels like it needs something else added "
+"to really shine. There's an older version of this, but it's the same only "
+"clearly more unfinished."
+msgstr ""
+
+#: mission.brief.mail15.par3.c2
+msgctxt "mission brief email orders"
+msgid ""
+"Interesting and quite polished level, but not that much to it, which lets it "
+"down a little."
+msgstr ""
+
+#: mission.brief.mail17.par3.c2
+msgctxt "mission brief email orders"
+msgid ""
+"This is a weird one. Doesn't make much sense to play, either needs a "
+"briefing to hint at what to actually do, or needs changing. "
+msgstr ""
+
+#: mission.brief.mail19.par3.c2
+msgctxt "mission brief email orders"
+msgid ""
+"Seems pretty finished, but either I'm missing something or it needs "
+"rebalancing as it's brutally hard (think it MIGHT be possible if you're "
+"really good/lucky though). Also seems to have had a wacky plot originally. "
+"The thing with the cars at the start blocking each other needs fixing."
+msgstr ""
+
+#: mission.brief.mail21.par3.c2
+msgctxt "mission brief email orders"
+msgid ""
+"This seems good on paper, but it's actually too simplistic to really be fun. "
+"While it's marked as a late game level, some of the earlier .miss files have "
+"it as an early level (even the first!) and it seems to fit in better there. "
+"There's a bug where the wrong group is targetted that is trivial to fix, but "
+"it's just a boring easy kill everyone level. In the older files there are "
+"other objectives to get a weapon and take it to a location, but this is "
+"hardly thrilling stuff either. Either use as early filler, or needs radical "
+"rework."
+msgstr ""
+
+#: mission.brief.mail23.par3.c2
+msgctxt "mission brief email orders"
+msgid ""
+"Important level that concludes the trilogy of similar levels in the other "
+"two campaigns. Feels a little rough in comparison, but works quite well."
+msgstr ""
+
+#: mission.brief.mail25.par3.c2
+msgctxt "mission brief email orders"
+msgid ""
+"I really like the idea of this one. It's very glitchy though, something "
+"about the collect item objectives is wrong and causes an overflow to random "
+"parts of the map. It's also clear that there is supposed to be some kind of "
+"counter-ambush from the unguided hiding in the buildings near the weapons "
+"cache, but they don't do anything, it seems this was never finished."
+msgstr ""
+
+#: mission.brief.mail27.par3.c2
+msgctxt "mission brief email orders"
+msgid ""
+"An intriguing but barely even started level. Doesn't work in the final "
+"executable due to no player characters in the level. There is only even one "
+"enemy to kill. An all out war to blow up a zealot church sounds like an "
+"exciting idea for a level though."
+msgstr ""
+
+#: mission.brief.mail30.par3.c2
+msgctxt "mission brief email orders"
+msgid ""
+"This was clearly going to be a demo for the Unguided campaign. Very polished "
+"and clever level full of surprises. Also lots of interesting stuff unused in "
+"the actual mission that could be spun off to another one."
+msgstr ""
+
+#: message.win:1
+msgctxt "game win message"
+msgid "You won. The message is TODO."
+msgstr ""
+
+#: weapons.UZI.description
+msgctxt "weapons description - uzi"
+msgid ""
+"Forged from the chaos of mid 20th century street-fighting, the energy pellet "
+"modified Uzi 9mm machine gun is still the basis of EuroCorp operations tech. "
+"It's an inexpensive and lightweight backup for agents dealing with cases of "
+"dropout psychosis."
+msgstr ""
+
+#: weapons.MINIGUN.description
+msgctxt "weapons description - minigun"
+msgid ""
+"Throughout the New Calendar syndicate deployment of inertia-damped chain "
+"gunners has become more commonplace. This 20mm plasma powered, torque "
+"stabilised version has foam alloy barrels to reduce mass and production "
+"costs."
+msgstr ""
+
+#: weapons.ELLASER.description
+msgctxt "weapons description - electron mace"
+msgid ""
+"This is proof of the Church's revolutionary scientific thinking. Simply put, "
+"it's a kind of lightning whip. We've never made such devices practical; the "
+"energy input required was always prohibitive. This device uses a "
+"sophisticated system of subatomic levers to ensure the absolute minimum "
+"possible drain on a personal power pack, yet it can still be overcharged. "
+"Impressive technology indeed."
+msgstr ""
+
+#: weapons.LASER.description
+msgctxt "weapons description - pulse laser"
+msgid ""
+"This laser makes use of the base TriSodium 89 gas (developed circa -20 NC). "
+"The weapon can be overcharged by delaying trigger release. In critical close "
+"quarters situations, a single overcharged burst of laser fire may be hot "
+"enough to disintegrate its target."
+msgstr ""
+
+#: weapons.BEAM.description
+msgctxt "weapons description - plasma lance"
+msgid ""
+"Electron annihilation techniques have led to the development of this "
+"powerful weapon. It uses a monopolar focus to project a beam-structured "
+"field which converts atmospheric molecules into plasma. Solid matter is "
+"vapourised on contact with the plasma, releasing even more energy. The field "
+"can wreak utter devastation over a considerable distance. Pull back the "
+"monopolar focus by delaying trigger release for more effective results "
+"against dense or tempered materials."
+msgstr ""
+
+#: weapons.RAP.description
+msgctxt "weapons description - launcher"
+msgid ""
+"Designed to face the challenge of New Calendar cyber-proliferation, this "
+"rocket launcher fires a homing grenade which releases a spray of cluster-"
+"bomblets on impact. Rocket guidance features target-seek gyro-stabilization."
+msgstr ""
+
+#: weapons.NUCLGREN.description
+msgctxt "weapons description - nuclear grenade"
+msgid ""
+"Stressed Techium in this thermonuclear device's casing dampens blast "
+"products, keeping the chain reaction within a tightly contained area. A "
+"custom isotope core ensures radiation levels drop to within tolerance levels "
+"moments after the explosion. These advancements enable a detonator to be "
+"enclosed in a hand-held casing for the first time. Nevertheless, the blast's "
+"effective radius demands attention be paid to safety."
+msgstr ""
+
+#: weapons.PERSUADER.description
+msgctxt "weapons description - persuadertron"
+msgid ""
+"A standard issue utility for seizing the higher level brain functions of "
+"citizens equipped with UTOPIA CHIPs. Although very low power and "
+"lightweight, the Persuadertron's historical significance should not be under-"
+"estimated, as it was instrumental in bringing about EuroCorp's global "
+"domination. Persuaded subjects follow the controlling agent without "
+"question, to the extent of equipping themselves for combat and engaging in "
+"hostilities without fear."
+msgstr ""
+
+#: weapons.FLAMER.description
+msgctxt "weapons description - flamer"
+msgid ""
+"Retro-research recommends this short-range, hand-held napalm jet. When "
+"activated, the weapon squirts ignited petroleum jelly. In contact with "
+"organic matter, the napalm sticks and burns fiercely. A highly effective "
+"crowd control solution."
+msgstr ""
+
+#: weapons.H2HTASER.description
+msgctxt "weapons description - disrupter"
+msgid ""
+"This close-proximity device activates a resonant ion wave which interferes "
+"with CHIP programming of those caught in the wavefront. Put simply, this has "
+"the effect of rendering persuaded individuals un-persuaded once more. The "
+"disrupter would prove most effective against a persuadertron user, where the "
+"ion wave would attack the signal at source, reverting all the targets "
+"persuaded followers to their previously un-persuaded state."
+msgstr ""
+
+#: weapons.CRAZYGAS.description
+msgctxt "weapons description - psycho gas"
+msgid ""
+"Research into the narcotic properties of the Creation planet fungus have "
+"yielded the active ingredient of this dangerous hallucinogenic. The hand-"
+"held canister contains a mixture of fungal spores and an oxidising agent "
+"which is released in a cloud, causing psychotic behaviour in anyone within "
+"it. This weapon provides a useful diversionary tactic when the number of "
+"hostiles is too great for other forms of neutralization, though results are "
+"unpredictable."
+msgstr ""
+
+#: weapons.KOGAS.description
+msgctxt "weapons description - knockout gas"
+msgid ""
+"This hand grenade contains an asphyxiating nerve agent. The cloud emitted on "
+"detonation renders all personnel in the area unconscious for a limited time."
+msgstr ""
+
+#: weapons.ELEMINE.description
+msgctxt "weapons description - ion mine"
+msgid ""
+"A proximity triggered, electromagnetic pulse mine. Equipment caught in the "
+"pulse's field is temporarily, or even permanently, disabled and the "
+"electrical mechanisms of organic tissue are burned out. Conductors such as "
+"vehicles, street furniture and cyborgs take most of the charge. Can affect "
+"persuaded status of anyone caught in its area of effect."
+msgstr ""
+
+#: weapons.EXPLMINE.description
+msgctxt "weapons description - high explosive"
+msgid ""
+"With an impressive area of effect and enough explosive power to inflict "
+"terminal damage on vehicles and do serious damage to buildings, this is a "
+"basic but effective weapon. Place at will in a strategic position in the "
+"mission zone and withdraw your agents to a safe distance. High Explosive's "
+"detonation is triggered by a timer."
+msgstr ""
+
+#: weapons.LONGRANGE.description
+msgctxt "weapons description - long range rifle"
+msgid ""
+"The new LR Rifle uses monopolar sled technology to accelerate high calibre "
+"depleted uranium ammunition to Mach 5.2. The sled's capacitors completely "
+"discharge in a single shot and must be fully recharged before firing again "
+"but accuracy and operational range are unequalled by other delivery systems. "
+"In keeping with the design spec, the rate-of-fire sacrifice buys on-the-fly "
+"re-calibration, making this the optimal sniper's weapon."
+msgstr ""
+
+#: weapons.AIRSTRIKE.description
+msgctxt "weapons description - satellite rain"
+msgid ""
+"Every satellite in UTOPIA's network of geo-synchronous orbital platforms is "
+"equipped with a stockpile of tungsten-uranium alloy rods on a steerable "
+"mounting. When these rods are launched, the process of atmospheric re-entry "
+"heats them to the point at which they liquefy, producing a plasma rain with "
+"true battlefield potential. We can now successfully over-ride the system "
+"lockouts triggered by Harbinger. By transmitting re-initialisation "
+"protocols, the system can be placed at your agents' disposal. This can be "
+"done using a hand-held activator but caution should be exercised; the cost "
+"of firing this system is extremely high."
+msgstr ""
+
+#: weapons.QDEVASTATOR.description
+msgctxt "weapons description - graviton gun"
+msgid ""
+"Twin graviton prisms in a Noxon-filled chamber act as a catalyst for a chain "
+"reaction which inverts the strong molecular force along a path defined by "
+"gravitic polarisation. The chain reaction begins when the trigger is pressed "
+"and is contained in the Noxon chamber, where it builds up until the trigger "
+"is released. Targeted matter is ripped apart molecule by molecule. The "
+"weapon may cause collateral damage as it emits tendrils of excess energy."
+msgstr ""
+
+#: weapons.RAZORWIRE.description
+msgctxt "weapons description - razor wire"
+msgid ""
+"This titanium-steel alloy wire is fashioned into a very long, very thin and "
+"very sharp spiked coil. Its use prevents access to secure areas by "
+"unauthorised civilians and presents a considerable obstacle for even "
+"cybernetically enhanced intruders to overcome. Its lethal nature is enhanced "
+"by its near invisibility to unmodified eyes."
+msgstr ""
+
+#: weapons.PERSUADER2.description
+msgctxt "weapons description - persuadertron ii"
+msgid ""
+"Drennan's on-going research into Church technology has paid off with the "
+"development of the Persuadertron II. This device is capable of infiltrating "
+"the minds of even the most battle-hardened zealot. Once exposed to its "
+"influence, cultists will obey your orders as doggedly as they followed the "
+"Church's twisted teachings."
+msgstr ""
+
+#: weapons.STASISFLD.description
+msgctxt "weapons description - stasis field"
+msgid ""
+"This portable field generator actually alters the rate at which time passes "
+"within the field. Held in near-suspended animation, the reaction speed of "
+"anyone or anything in the field is negligible, thus making the target much "
+"more vulnerable to other forms of attack. The energy required to activate "
+"the field is considerable and the timing of its operation should be chosen "
+"with care."
+msgstr ""
+
+#: weapons.SOULGUN.description
+msgctxt "weapons description - chromotap"
+msgid ""
+"In one of the Nine's most esoteric breakthroughs, they have learned how to "
+"unlock the electrochemical forces still locked away in the bodies of "
+"terminated organisms. The understanding of these mechanisms we now have "
+"gives us complete power over them. The Chromotap is based on this "
+"technology. It extracts energy from organic matter at the cellular level and "
+"transfers it to the device's controller. The Chromotap is especially useful "
+"for recharging agents after a firefight, as it can still utilise the "
+"cellular energy of casualties."
+msgstr ""
+
+#: weapons.TIMEGUN.description
+msgctxt "weapons description - displacertron"
+msgid ""
+"Professor Drennan has come up with the goods again. The Displacertron uses a "
+"core of ultra-dense matter surrounded by a stroboscopic stasis shell to "
+"provide limited access to higher dimensional time. This causes the target to "
+"vanish entirely and reappear at a point in the near future. Never has the "
+"saboteur been given a more powerful tool."
+msgstr ""
+
+#: weapons.CEREBUSIFF.description
+msgctxt "weapons description - cerberus iff"
+msgid ""
+"This electronic guardian can make a big difference to your agents' defensive "
+"actions and attacks. Positioned in an appropriate area and armed with a "
+"pulse laser, it takes on sentry duty and will open fire on any unsuspecting "
+"hostile target that comes in range until it exhausts its power pack or is "
+"destroyed."
+msgstr ""
+
+#: weapons.MEDI1.description
+msgctxt "weapons description - medikit"
+msgid ""
+"This multifunction pack can be used to quickly repair the kinds of wounds "
+"and damage sustained in combat. The kit comprises a toughened skin graft "
+"patch impregnated with anaesthetic and surgical nanobots. Can be used once "
+"only."
+msgstr ""
+
+#: weapons.MEDI2.description
+msgctxt "weapons description - automedikit"
+msgid ""
+"Like the Medikit, except that this upgraded version is worn by the user, so "
+"that it can automatically detect the level of damage sustained. If it drops "
+"below a critical level, the AutoMedikit activates itself and conducts "
+"accelerated surgical repairs. The AutoMedikit takes a few moments to start "
+"working, so a user who is continually sustaining damage might perish before "
+"the kit has a chance to work."
+msgstr ""
+
+#: weapons.EXPLWIRE.description
+msgctxt "weapons description - trigger wire"
+msgid ""
+"Similar to Razor Wire, Trigger Wire is an excellent tool for access-"
+"prevention. Just a few molecules thick, Trigger Wire is very difficult to "
+"see with even the later modification eyes, yet when touched activates "
+"multiple explosions along its length."
+msgstr ""
+
+#: weapons.CLONESHLD.description
+msgctxt "weapons description - clone shield"
+msgid ""
+"Produces a disguise so effective it fools even UTOPIA scanner readouts. The "
+"Clone Shield organically alters clothing and an agent's features, turning "
+"the user into an ordinary executive for a time. This can be extremely useful "
+"to agents on infiltration assignments, as they blend into any executive zone."
+msgstr ""
+
+#: mods.LEGS1.description
+msgctxt "mods description - legs 1"
+msgid ""
+"Constructed of a lightweight plasteel core with vat-grown organic outer "
+"coating, these artificial legs provide immediate improvement to both an "
+"agent's health and top speed. Stamina is also improved, thereby increasing "
+"the range an agent fitted with these legs can cover at maximum speed."
+msgstr ""
+
+#: mods.LEGS2.description
+msgctxt "mods description - legs 2"
+msgid ""
+"Advances in foam-metal technologies have produced this cybernetic limb "
+"system. Legs 2 deliver an impressive boost to speed, stamina and health, "
+"which prolongs an agent's maximum operational capacity still further."
+msgstr ""
+
+#: mods.LEGS3.description
+msgctxt "mods description - legs 3"
+msgid ""
+"Level 3 legs replace the fibre-optic nervous transmission found at lower "
+"levels with Super-Synapse memory plastic. The deployment of agents modified "
+"with level 3 legs is likely to have a profound impact on combat zone "
+"performance."
+msgstr ""
+
+#: mods.ARMS1.description
+msgctxt "mods description - arms 1"
+msgid ""
+"With the tungsten tendons and steel sinews of cybernetic arms, your agents "
+"will experience an immediate improvement in accuracy when shooting, and a "
+"subsequent saving in energy. The operational lifespan of an agent equipped "
+"with these arms is also lengthened by the characteristic health boost which "
+"accompanies cybernetic enhancement."
+msgstr ""
+
+#: mods.ARMS2.description
+msgctxt "mods description - arms 2"
+msgid ""
+"The foam-metal manufacturing process is now being successfully applied to "
+"precision cybernetics. With less inertia to overcome, these lightweight arms "
+"not only deliver a demonstrable improvement to accuracy but to range of "
+"throw as well."
+msgstr ""
+
+#: mods.ARMS3.description
+msgctxt "mods description - arms 3"
+msgid ""
+"The ultimate in forelimb technology is at your disposal. As our agents are "
+"facing increasingly well-equipped punks and cultists, the tangible "
+"improvements to combat proficiency these limbs provide will help to sustain "
+"our mission objective success rate."
+msgstr ""
+
+#: mods.CHEST1.description
+msgctxt "mods description - body 1"
+msgid ""
+"For significantly increased survivability in hostile environments, encase an "
+"agent's vital organs in triple-plate titanium alloy. An enhanced body "
+"modification provides the single biggest protection from punishment you can "
+"give a cyborg. Note that this modification must be fitted in order for the "
+"cyborg to support any other mods."
+msgstr ""
+
+#: mods.CHEST2.description
+msgctxt "mods description - body 2"
+msgid ""
+"This enhancement uses the honeycombed superstructure of foam-metal, forged "
+"in the microgravity of low orbit, to make it lighter than the body "
+"prosthetic currently in use and a higher tensile strength. Improved energy "
+"reserve is just one of the advantages of a level 2 body upgrade. "
+"Operationally, this translates into having more power and there being less "
+"risk of critical damage. With a level 2 body, the way is clear for you to "
+"upgrade to level 3 modifications in all other categories."
+msgstr ""
+
+#: mods.CHEST3.description
+msgctxt "mods description - body 3"
+msgid ""
+"Memory plastic tendons replace the steel micro-fibres of earlier mods, "
+"making the cyborg now significantly tougher than any with lower tech "
+"upgrades. Most notably, this enhancement protects an agent from all known "
+"nerve gas weapons."
+msgstr ""
+
+#: mods.BRAIN1.description
+msgctxt "mods description - brain 1"
+msgid ""
+"It's the ability to make decisions independently of Executive control that "
+"differentiates a decisive agent from a dead agent. This unit contains "
+"diamond processors in a 3D matrix integrated with the cyborg's conventional "
+"cognitive biomass. It increases basic perceptions and contains trauma "
+"management software to improve the cyborg's ability to withstand otherwise "
+"critical damage."
+msgstr ""
+
+#: mods.BRAIN2.description
+msgctxt "mods description - brain 2"
+msgid ""
+"Holographic core memory decreases reaction lag and boosts persuadertron "
+"range and signal strength. It also increases the cyborg's resistance to "
+"attempts to persuade it. This brain model brings perceptual enhancements "
+"across the board and further improvements to the trauma software, increasing "
+"the cyborg's survivability margin."
+msgstr ""
+
+#: mods.BRAIN3.description
+msgctxt "mods description - brain 3"
+msgid ""
+"The apogee of portable artificial intelligence technology. At level 3 a "
+"modified brain not only delivers increased health but also guarantees "
+"improved targeting accuracy; hit rate and energy efficiency benefits. The "
+"cyborg can be exposed to environments which would destroy the biological "
+"brain almost instantly; this unit can completely backup the biological data "
+"and enable the agent to continue to function."
+msgstr ""
+
+#: mods.SKIN1.description
+msgctxt "mods description - hard skin"
+msgid ""
+"This is complex cellular cyberskin, weaved to provide a bullet-resistant "
+"epidermis that radically reduces damage from projectile weapons. Development "
+"of a pachyderm/steel mesh hybrid and careful cosmetic enhancement has "
+"produced a substance that is extraordinarily tough but just as flexible as "
+"normal, vat-grown cyborg flesh."
+msgstr ""
+
+#: mods.SKIN2.description
+msgctxt "mods description - flame skin"
+msgid ""
+"This cyberskin takes advantage of the latest form of non-toxic asbestos "
+"designed for use in spacecraft re-entry. When carrying out operations during "
+"firestorm conditions, an agent wearing this skin would suffer far less from "
+"incendiary damage than an unprotected counterpart."
+msgstr ""
+
+#: mods.SKIN3.description
+msgctxt "mods description - energy skin"
+msgid ""
+"This is a cyberskin variant based on hydrocarbon polymer augmented by fibre-"
+"optic micro-filaments. It should absorb much of the destructive power of "
+"energy-based weapon systems. The energy is dispersed from the point of "
+"impact around the modified agent's body, and recycled to sustain the skin's "
+"protective properties."
+msgstr ""
+
+#: mods.SKIN4.description
+msgctxt "mods description - stealth skin"
+msgid ""
+"This is cutting edge cyberskin technology. The skin uses asynchronous "
+"temporal phase-shifting cells to confuse targetting systems, making weapon "
+"lock very hard to get. An agent wearing this skin would be almost invisible "
+"to his opponents' firepower."
+msgstr ""

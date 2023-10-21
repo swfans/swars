@@ -21,6 +21,7 @@
 
 #include "bftypes.h"
 #include "cybmod.h"
+#include "weapon.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -29,6 +30,9 @@ extern "C" {
 #pragma pack(1)
 
 typedef void *NSERV_HANDLE;
+typedef void *NSESS_HANDLE;
+typedef short NPLYR_HANDLE;
+typedef int (*NSVC_SESSIONCB) ();
 
 enum NetworkServiceType {
     NetSvc_NONE = 0x0,
@@ -37,27 +41,41 @@ enum NetworkServiceType {
     NetSvc_COM2,
     NetSvc_COM3,
     NetSvc_COM4,
-    NetSvc_Unkn6,
+    NetSvc_RADICA,
 };
 
-struct NetworkServiceFunction { // sizeof=36
-    NSERV_HANDLE SessionCreate; // offset=0
-    NSERV_HANDLE SessionJoin;
-    NSERV_HANDLE SessionExchange;
-    NSERV_HANDLE SessionInit;
-    NSERV_HANDLE SessionDial; // offset=16
-    NSERV_HANDLE SessionAnswer;
-    NSERV_HANDLE SessionHangUp;
-    NSERV_HANDLE UsedSessionInit;
-    NSERV_HANDLE netsvcfunc_unkn20; // offset=32
-};
-
-struct TbNetworkService { // sizeof=10
+struct NetworkServiceInfo { // sizeof=12
     NSERV_HANDLE Id; // offset=0
     ushort GameId; // offset=4
     ushort Type; // offset=6
-    ushort Flags; // offset=8
-    struct NetworkServiceFunction F;
+    ulong Flags; // offset=8
+};
+
+struct NetworkServiceFunction { // sizeof=36
+    NSVC_SESSIONCB SessionCreate; // offset=0
+    NSVC_SESSIONCB SessionJoin;
+    NSVC_SESSIONCB SessionExchange;
+    NSVC_SESSIONCB SessionInit;
+    NSVC_SESSIONCB SessionDial; // offset=16
+    NSVC_SESSIONCB SessionAnswer;
+    NSVC_SESSIONCB SessionHangUp;
+    NSVC_SESSIONCB UsedSessionInit;
+    NSVC_SESSIONCB netsvcfunc_unkn20; // offset=32
+};
+
+struct TbNetworkService { // sizeof=10
+    struct NetworkServiceInfo I; // offset=0
+    struct NetworkServiceFunction F; // offset=12
+};
+
+struct TbNetworkSession { // sizeof=40
+    NSESS_HANDLE Id; // offset=0
+    ulong GameId; // offset=2
+    char Name[8]; // offset=6
+    short HostPlayerNumber; // offset=14
+    short MaxPlayers; // offset=16
+    short Flags; // offset=18
+    ubyte Reserved[20]; // offset=20
 };
 
 struct NetworkPlayerUFourPacks {
@@ -128,6 +146,10 @@ struct NetPlayer2 {
   char field_18;
 };
 
+struct ModemCommand {
+  char cmd[80];
+};
+
 struct TbSerialDev { // sizeof=4301
   ubyte field_0[2198];
   ubyte inbuf[2048];
@@ -144,8 +166,122 @@ struct TbSerialDev { // sizeof=4301
   ubyte field_10AA;
   ubyte field_10AB;
   ubyte num_players;
-  ubyte field_10AD[31];
+  char field_10AD[31];
   ubyte field_10CC;
+};
+
+struct ComHandlerInfo {
+  struct TbSerialDev *serdev;
+  ushort field_4;
+  ushort field_6;
+  ushort field_8;
+  ushort field_A[4];
+  ulong field_12;
+  ushort field_16;
+  ushort field_18;
+  ushort field_1A;
+};
+
+struct TbIPXPlayerHeader {
+  char Magic[2];
+  short field_2;
+  char field_4[8];
+  char field_C[16];
+  ubyte field_1C[4];
+  short field_20;
+  ubyte field_22[4];
+  long field_26;
+  ubyte field_2A;
+  ubyte field_2B;
+  ubyte field_2C;
+};
+
+struct TbIPXPlayerData1Sub {
+    short field_47;
+    short field_49[13];
+};
+
+struct TbIPXPlayerData1 {
+    ubyte field_2D[26]; // offset=45
+    struct TbIPXPlayerData1Sub Sub1[2]; // offset=71
+    short field_7F[71];
+};
+
+struct TbIPXPlayerData2Sub {
+    ubyte field_2D[14];
+};
+
+struct TbIPXPlayerData2 {
+    struct TbIPXPlayerData2Sub Sub1[2]; // offset=45
+    short field_49[98];
+};
+
+struct TbIPXPlayerData3Sub {
+    ubyte field_2D[28];
+};
+
+struct TbIPXPlayerData3 {
+    struct TbIPXPlayerData3Sub Sub1[2]; // offset=45
+};
+
+struct TbIPXPlayerData {
+    union {
+        struct TbIPXPlayerData1 Data1;
+        struct TbIPXPlayerData2 Data2;
+        struct TbIPXPlayerData3 Data3;
+    };
+    ubyte num_players;
+    ubyte field_10E; // offset=270
+    ubyte field_10F[268];
+    ubyte field_21B;
+};
+
+struct TbIPXPlayer {
+    struct TbIPXPlayerHeader Header; // offset=0
+    struct TbIPXPlayerData Data; // offset=45
+};
+
+struct TbIPXHandler {
+  short field_0;
+  short field_2;
+  short PlayerDataSize;
+  short field_6;
+  ushort field_8;
+  /** Network session state; 0 - not ready, 1 - active, 2 - active but down
+   */
+  ubyte SessionActive;
+  ubyte field_B;
+  ubyte field_C;
+  ubyte field_D;
+  ubyte field_E[4];
+  ubyte field_12[24];
+  long field_2A;
+  ubyte field_2E[4];
+  short field_32;
+  char field_34[16];
+  short field_44;
+  ubyte field_46[30];
+  struct TbIPXPlayer PlayerData[30];
+};
+
+struct IPXDatagramBackup {
+  long field_0;
+  long field_4;
+  short field_8;
+  ubyte field_A[538];
+  short field_224;
+};
+
+struct TbNetworkPlayer { // sizeof=22
+    NPLYR_HANDLE Id; // offset=0
+    ulong PlayerNumber; // offset=2
+    char Name[16]; // offset=6
+};
+
+struct TbNetworkSessionList { // sizeof=218
+    struct TbNetworkSession Session; // offset=0
+    struct TbNetworkPlayer Player[8];
+    short NumberOfPlayers; // offset=216
 };
 
 #pragma pack()
@@ -157,6 +293,9 @@ extern struct TbNetworkService NetworkServicePtr;
 extern ulong NetTimeoutTicks;
 extern struct NetworkPlayer network_players[8];
 extern struct NetPlayer2 net_players[5];
+extern struct TbNetworkSessionList unkstruct04_arr[20];
+
+extern struct WeaponsFourPack net_agents__FourPacks[8][4]; // maybe a part of larger struct, maybe not
 
 TbResult LbNetworkReadConfig(const char *fname);
 TbResult LbNetworkSetSessionCreateFunction(void *func);
@@ -169,7 +308,8 @@ TbResult LbNetworkSetSessionAnswerFunction(void *func);
 TbResult LbNetworkSetSessionHangUpFunction(void *func);
 TbResult LbNetworkSetTimeoutSec(ulong tmsec);
 
-TbResult LbNetworkSessionNumberPlayers(void);
+int LbNetworkSessionNumberPlayers(void);
+TbBool LbNetworkSessionActive(void);
 TbResult LbNetworkHostPlayerNumber(void);
 TbResult LbNetworkSetupIPXAddress(ulong addr);
 TbResult LbNetworkPlayerNumber(void);

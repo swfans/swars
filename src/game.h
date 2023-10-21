@@ -5,6 +5,7 @@
 #include <stddef.h>
 
 #include "bflib_basics.h"
+#include "bffile.h"
 #include "globals.h"
 #include "scanner.h"
 #include "people.h"
@@ -26,34 +27,34 @@ enum GameModes {
 };
 
 enum GameFlags {
-    GamF_Unkn1       = 0x0001,
-    GamF_Unkn2       = 0x0002,
-    GamF_Unkn4       = 0x0004,
-    GamF_Unkn8       = 0x0008,
-    GamF_Unkn10      = 0x0010,
-    GamF_Unkn20      = 0x0020,
-    GamF_Unkn40      = 0x0040,
-    GamF_Unkn80      = 0x0080,
-    GamF_Unkn100     = 0x0100,
-    GamF_Unkn200     = 0x0200,
-    GamF_Unkn400     = 0x0400,
-    GamF_Unkn800     = 0x0800,
-    GamF_Unkn1000    = 0x1000,
-    GamF_Unkn2000    = 0x2000,
-    GamF_Unkn4000    = 0x4000,
-    GamF_Unkn8000    = 0x8000,
-    GamF_Unkn10000   = 0x010000,
-    GamF_Unkn20000   = 0x020000,
-    GamF_Unkn40000   = 0x040000,
-    GamF_SkipIntro   = 0x080000,
-    GamF_Unkn100000  = 0x00100000,
-    GamF_Unkn200000  = 0x00200000,
-    GamF_Unkn400000  = 0x00400000,
-    GamF_Unkn800000  = 0x00800000,
-    GamF_Unkn1000000  = 0x1000000,
-    GamF_Unkn2000000  = 0x2000000,
-    GamF_Unkn4000000  = 0x4000000,
-    GamF_Unkn8000000  = 0x8000000,
+    GamF_Unkn0001     = 0x0001,
+    GamF_Unkn0002     = 0x0002,
+    GamF_Unkn0004     = 0x0004,
+    GamF_Unkn0008     = 0x0008,
+    GamF_Unkn0010     = 0x0010,
+    GamF_Unkn0020     = 0x0020,
+    GamF_Unkn0040     = 0x0040,
+    GamF_Unkn0080     = 0x0080,
+    GamF_Unkn0100     = 0x0100,
+    GamF_Unkn0200     = 0x0200,
+    GamF_Unkn0400     = 0x0400,
+    GamF_Unkn0800     = 0x0800,
+    GamF_Unkn1000     = 0x1000,
+    GamF_Unkn2000     = 0x2000,
+    GamF_Unkn4000     = 0x4000,
+    GamF_Unkn8000     = 0x8000,
+    GamF_Unkn00010000 = 0x00010000,
+    GamF_Unkn00020000 = 0x00020000,
+    GamF_Unkn00040000 = 0x00040000,
+    GamF_SkipIntro    = 0x00080000,
+    GamF_Unkn00100000 = 0x00100000,
+    GamF_Unkn00200000 = 0x00200000,
+    GamF_Unkn00400000 = 0x00400000,
+    GamF_Unkn00800000 = 0x00800000,
+    GamF_Unkn01000000 = 0x01000000,
+    GamF_Unkn02000000 = 0x02000000,
+    GamF_Unkn04000000 = 0x04000000,
+    GamF_Unkn08000000 = 0x08000000,
     GamF_Unkn10000000 = 0x10000000,
 };
 
@@ -236,17 +237,6 @@ struct PurpleDrawItem { // sizeof=26
 	ushort Flags;
 };
 
-struct City { // sizeof=40
-    short X;
-    short Y;
-    ubyte MapID;
-    ubyte Level;
-    ubyte Flags;
-    char Info;
-    ushort TextIndex[6];
-    long Dummy2[5];
-};
-
 struct SynTime {
     ubyte Minute;
     ubyte Hour;
@@ -356,19 +346,6 @@ struct ScreenTextBox {
   ubyte LineHeight;
   ubyte field_42;
   ubyte field_43;
-};
-
-struct UnknStruct04Sub1 { // sizeof=22
-    char field_0[6];
-    char text[15];
-    char field_15;
-};
-
-struct UnknStruct04 { // sizeof=218
-    char field_0[40];
-    struct UnknStruct04Sub1 field_28[8];
-    char field_D8;
-    char field_D9;
 };
 
 struct SingleObject { // sizeof=36
@@ -533,12 +510,6 @@ struct Animation {
   short field_6E;
 };
 
-struct WADIndexEntry {
-    char Filename[12];
-    ulong Offset;
-    ulong Length;
-};
-
 #pragma pack()
 
 extern char session_name[20];
@@ -595,6 +566,11 @@ extern struct Animation animations[2];
 extern char *gui_strings_data;
 extern char *gui_strings_data_end;
 extern char *gui_strings[STRINGS_MAX];
+
+extern ubyte *fade_data;
+
+extern void *dword_1810D1;
+extern ulong dword_1810D5;
 
 extern struct SingleFloorTexture *game_textures;
 extern struct SingleTexture *game_face_textures;
@@ -676,6 +652,7 @@ extern ubyte data_19ec6f;
 extern ulong save_mortal_salt;
 
 extern ushort weapon_text_index[32];
+extern ushort cybmod_text_index[16];
 extern ubyte background_type;
 extern ubyte old_screentype;
 extern ubyte screentype;
@@ -698,9 +675,11 @@ extern long outro_unkn03;
 extern long people_groups_count;
 extern long data_1ddb68;
 extern ubyte byte_1DDC40;
+
+extern char *people_credits_desc[];
 extern char *people_credits_groups[];
+
 extern ubyte playable_agents;
-extern ubyte net_agents__FourPacks[8][4][5]; // maybe a part of larger struct, maybe not
 
 extern ubyte save_crypto_tables_state[3];
 extern ubyte save_crypto_data_state[3];
@@ -709,7 +688,6 @@ extern ubyte game_high_resolution;
 extern char *mission_briefing_text;
 extern short mission_open[50];
 extern short mission_state[50];
-extern char *mem_unkn03;
 extern sbyte mission_result;
 extern char *weapon_text;
 extern struct PurpleDrawItem *purple_draw_list;
@@ -734,8 +712,7 @@ extern sbyte unkn_city_no;
 extern sbyte selected_weapon;
 extern sbyte selected_mod;
 extern ubyte group_types[8];
-extern struct UnknStruct04 unkstruct04_arr[20];
-extern ubyte data_1c4aa3;
+extern ubyte byte_1C4AA3;
 extern ubyte net_unkn_pos_02;
 extern ubyte data_1c498f;
 extern ubyte data_1c4990;
@@ -773,9 +750,6 @@ extern ubyte *dword_1AA280;
 extern long dword_1AA5C4;
 extern long dword_1AA5C8;
 
-extern ubyte num_cities;
-extern struct City cities[];
-extern sbyte city_id;
 extern struct SynTime global_date;
 extern struct SynTime research_curr_wep_date;
 extern struct SynTime research_curr_mod_date;
@@ -924,6 +898,9 @@ void game_reset(void);
 void host_reset(void);
 void free_texturemaps(void);
 int joy_grip_shutdown(void);
+
+void my_preprocess_text(char *text);
+ushort my_count_lines(const char *text);
 
 #ifdef __cplusplus
 };

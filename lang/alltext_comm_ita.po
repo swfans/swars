@@ -1,0 +1,1959 @@
+# *****************************************************************************
+#  Syndicate Wars Port, source port of the classic strategy game from Bullfrog.
+# *****************************************************************************
+#   @file alltext_comm_ita.po
+#      Menu text for SW Port translation file
+#  @par Purpose:
+#      Contains translation of the national text in the game.
+#  @par Comment:
+#      Use this file to improve the translation for specific language.
+#  @author   Syndicate Wars Fans
+#  @date     20 Aug 2023 - 02 Sep 2023
+#  @par  Copying and copyrights:
+#      This program is free software; you can redistribute it and/or modify
+#      it under the terms of the GNU General Public License as published by
+#      the Free Software Foundation; either version 2 of the License, or
+#      (at your option) any later version.
+#
+# *****************************************************************************
+msgid ""
+msgstr ""
+"Project-Id-Version: Menu text for SW Port\n"
+"Report-Msgid-Bugs-To: https://github.com/swfans/swars/issues\n"
+"POT-Creation-Date: 2023-09-05 11:43+0200\n"
+"PO-Revision-Date: 2023-09-07 19:33+0200\n"
+"Last-Translator: Mefistotelis <mefistotelis@gmail.com>\n"
+"Language-Team: Syndicate Wars Fans <github.com/swfans>\n"
+"Language: it_IT\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-SourceCharset: utf-8\n"
+"X-Generator: Poedit 3.0.1\n"
+
+#: scanner.objective:1
+msgctxt "objective text shown on scanner"
+msgid "Eliminate the Unguided"
+msgstr "Elimina i Non Guidati"
+
+#: scanner.objective:2
+msgctxt "objective text shown on scanner"
+msgid "Return to HQ"
+msgstr "Torna al Quartier Generale"
+
+#: scanner.objective:3
+msgctxt "objective text shown on scanner"
+msgid "Persuade Yamaguchi technicians"
+msgstr "Persuadi i tecnici di Yamaguchi"
+
+#: scanner.objective:4
+msgctxt "objective text shown on scanner"
+msgid "Evacuate"
+msgstr "Evacua"
+
+#: scanner.objective:5
+msgctxt "objective text shown on scanner"
+msgid "Technician fatality"
+msgstr "Morte di un tecnico"
+
+#: scanner.objective:6
+msgctxt "objective text shown on scanner"
+msgid "Persuade Yamaguchi executives"
+msgstr "Persuadi i dirigenti di Yamaguchi"
+
+#: scanner.objective:7
+msgctxt "objective text shown on scanner"
+msgid "Executive fatality"
+msgstr "Morte di un dirigente"
+
+#: scanner.objective:8
+msgctxt "objective text shown on scanner"
+msgid "Neutralise Yamaguchi agents"
+msgstr "Neutralizza gli agenti di Yamaguchi"
+
+#: scanner.objective:9
+msgctxt "objective text shown on scanner"
+msgid "Agent fatality"
+msgstr "Morte di un agente"
+
+#: scanner.objective:10
+msgctxt "objective text shown on scanner"
+msgid "Persuade Bluesky scientists"
+msgstr "Persuadi gli scienziati di Bluesky"
+
+#: scanner.objective:11 scanner.objective:161
+msgctxt "objective text shown on scanner"
+msgid "Persuade Bluesky scientist"
+msgstr "Persuadi lo scienziato di Bluesky"
+
+#: scanner.objective:12
+msgctxt "objective text shown on scanner"
+msgid "Mission update: eliminate Unguided threat"
+msgstr "Aggiornamento: elimina la minaccia dei Non Guidati"
+
+#: scanner.objective:13 scanner.objective:38
+msgctxt "objective text shown on scanner"
+msgid "Escort scientists to IML link"
+msgstr "Scorta gli scienziati al collegamento IML"
+
+#: scanner.objective:14
+msgctxt "objective text shown on scanner"
+msgid "Steal bullion car"
+msgstr "Ruba la macchina d'oro"
+
+#: scanner.objective:15 scanner.objective:100
+msgctxt "objective text shown on scanner"
+msgid "The bullion car has been destroyed"
+msgstr "La macchina d'oro stata distrutta"
+
+#: scanner.objective:16
+msgctxt "objective text shown on scanner"
+msgid "The bullion car has reached Tang HQ"
+msgstr "La macchina d'oro ha raggiungo il Quartier Generale Tang"
+
+#: scanner.objective:17
+msgctxt "objective text shown on scanner"
+msgid "Deliver car to evac zone"
+msgstr "Porta la macchina alla zona di evacuazione"
+
+#: scanner.objective:18
+msgctxt "objective text shown on scanner"
+msgid "Steal cult technology from temple"
+msgstr "Ruba il manufatto dal tempio"
+
+#: scanner.objective:19
+msgctxt "objective text shown on scanner"
+msgid "Deliver cult artefact to evac zone"
+msgstr "Porta il manufatto alla zona di evacuazione"
+
+#: scanner.objective:20
+msgctxt "objective text shown on scanner"
+msgid "Remove Unguided stronghold"
+msgstr "Rimuovi la roccaforte dei Non Guidati"
+
+#: scanner.objective:21
+msgctxt "objective text shown on scanner"
+msgid "Eliminate rioters"
+msgstr "Elimina i manifestanti"
+
+#: scanner.objective:22
+msgctxt "objective text shown on scanner"
+msgid "Sterilise sector"
+msgstr "Sterilizza il settore"
+
+#: scanner.objective:23
+msgctxt "objective text shown on scanner"
+msgid "Eliminate guards"
+msgstr "Elimina le guardie"
+
+#: scanner.objective:24
+msgctxt "objective text shown on scanner"
+msgid "Eliminate agent"
+msgstr "Elimina l'agente"
+
+#: scanner.objective:25
+msgctxt "objective text shown on scanner"
+msgid "Persuade agent"
+msgstr "Persuadi l'agente"
+
+#: scanner.objective:26
+msgctxt "objective text shown on scanner"
+msgid "Target agent has died"
+msgstr "L'agente bersaglio morto"
+
+#: scanner.objective:27
+msgctxt "objective text shown on scanner"
+msgid "Target agent has escaped"
+msgstr "L'agente bersaglio fuggito"
+
+#: scanner.objective:28
+msgctxt "objective text shown on scanner"
+msgid "Persuade NAA employee"
+msgstr "Persuadi il dipendente NAA"
+
+#: scanner.objective:29
+msgctxt "objective text shown on scanner"
+msgid "Persuade Jennifer Taks"
+msgstr "Persuadi Jennifer Taks"
+
+#: scanner.objective:30
+msgctxt "objective text shown on scanner"
+msgid "Escort Taks to IML link"
+msgstr "Scorta Taks al collegamento IML"
+
+#: scanner.objective:31
+msgctxt "objective text shown on scanner"
+msgid "Jennifer Taks is dead"
+msgstr "Jennifer Taks morta"
+
+#: scanner.objective:32
+msgctxt "objective text shown on scanner"
+msgid "Eliminate Zealots"
+msgstr "Elimina i fanatici"
+
+#: scanner.objective:33
+msgctxt "objective text shown on scanner"
+msgid "Persuade Gel Data scientist"
+msgstr "Persuadi lo scienziato di Gel Data"
+
+#: scanner.objective:34
+msgctxt "objective text shown on scanner"
+msgid "Persuade Gel Data scientists"
+msgstr "Persuadi gli scienziati di Gel Data"
+
+#: scanner.objective:35
+msgctxt "objective text shown on scanner"
+msgid "Persuade Hexagon scientist"
+msgstr "Persuadi lo scienziato di Hexagon"
+
+#: scanner.objective:36
+msgctxt "objective text shown on scanner"
+msgid "Persuade Hexagon scientists"
+msgstr "Persuadi gli scienziati di Hexagon"
+
+#: scanner.objective:37
+msgctxt "objective text shown on scanner"
+msgid "Escort scientist to IML link"
+msgstr "Scorta lo scienziato al collegamento IML"
+
+#: scanner.objective:39
+msgctxt "objective text shown on scanner"
+msgid "Update: eliminate Zealot threat"
+msgstr "Aggiornamento: elimina la minaccia dei fanatici"
+
+#: scanner.objective:40
+msgctxt "objective text shown on scanner"
+msgid "Vehicle destroyed: agents stranded"
+msgstr "Veicolo distrutto: agenti appiedati"
+
+#: scanner.objective:41
+msgctxt "objective text shown on scanner"
+msgid "Scientist lost"
+msgstr "Scienziato perso"
+
+#: scanner.objective:42
+msgctxt "objective text shown on scanner"
+msgid "Persuade C3 scientists"
+msgstr "Persuadi scienziati C3"
+
+#: scanner.objective:43
+msgctxt "objective text shown on scanner"
+msgid "C3 scientists eliminated"
+msgstr "Scienziati C3 eliminati"
+
+#: scanner.objective:44
+msgctxt "objective text shown on scanner"
+msgid "Laboratory destroyed"
+msgstr "Laboratorio distrutto"
+
+#: scanner.objective:45
+msgctxt "objective text shown on scanner"
+msgid "Facility destroyed"
+msgstr "Base distrutta"
+
+#: scanner.objective:46
+msgctxt "objective text shown on scanner"
+msgid "Sterilise city"
+msgstr "Sterilizza citt"
+
+#: scanner.objective:47
+msgctxt "objective text shown on scanner"
+msgid "Protect Drennan"
+msgstr "Proteggi Drennan"
+
+#: scanner.objective:48
+msgctxt "objective text shown on scanner"
+msgid "Protect Professor's assistant"
+msgstr "Proteggi l'assistente del professore"
+
+#: scanner.objective:49
+msgctxt "objective text shown on scanner"
+msgid "Protect executives"
+msgstr "Proteggi i dirigenti"
+
+#: scanner.objective:50
+msgctxt "objective text shown on scanner"
+msgid "Professor Drennan is dead"
+msgstr "Il professor Drennan morto"
+
+#: scanner.objective:51
+msgctxt "objective text shown on scanner"
+msgid "Professor Drennan's aide is dead"
+msgstr "L'aiuto del professor Drennan morto"
+
+#: scanner.objective:52
+msgctxt "objective text shown on scanner"
+msgid "EuroCorp executives have been wiped out"
+msgstr "I dirigenti EuroCorp sono stati eliminati"
+
+#: scanner.objective:53
+msgctxt "objective text shown on scanner"
+msgid "Rescue professor Drennan"
+msgstr "Salva il professor Drennan"
+
+#: scanner.objective:54
+msgctxt "objective text shown on scanner"
+msgid "Escort professor Drennan to EuroCorp facility"
+msgstr "Scorta il professor Drennan alla base EuroCorp"
+
+#: scanner.objective:55
+msgctxt "objective text shown on scanner"
+msgid "Mission update: evacuate all personnel"
+msgstr "Aggiornamento: evacua tutto il personale"
+
+#: scanner.objective:56
+msgctxt "objective text shown on scanner"
+msgid "Evacuation failed"
+msgstr "Evacuazione fallita"
+
+#: scanner.objective:57
+msgctxt "objective text shown on scanner"
+msgid "Persuade Mirabelle Lucy De Saxo"
+msgstr "Persuadi Mirabelle Lucy De Saxo"
+
+#: scanner.objective:58
+msgctxt "objective text shown on scanner"
+msgid "De Saxo has fled: new orders available"
+msgstr "La De Saxo fuggita: nuovi ordini disponibili"
+
+#: scanner.objective:59
+msgctxt "objective text shown on scanner"
+msgid "Eliminate Mirabelle Lucy De Saxo"
+msgstr "Elimina Nirabelle Lucy De Saxo"
+
+#: scanner.objective:60
+msgctxt "objective text shown on scanner"
+msgid "Crush the uprising"
+msgstr "Soffoca la rivolta"
+
+#: scanner.objective:61
+msgctxt "objective text shown on scanner"
+msgid "Eliminate Unguided rebels"
+msgstr "Elimina i ribelli Non Guidati"
+
+#: scanner.objective:62
+msgctxt "objective text shown on scanner"
+msgid "Protect the Bahrain AI"
+msgstr "Proteggi l'AI del Bahrain"
+
+#: scanner.objective:63
+msgctxt "objective text shown on scanner"
+msgid "Bahrain AI has been destroyed"
+msgstr "L'AI del Bahrain stata distrutta"
+
+#: scanner.objective:64
+msgctxt "objective text shown on scanner"
+msgid "Secure orbital elevator"
+msgstr "Proteggi l'ascensore orbitale"
+
+#: scanner.objective:65
+msgctxt "objective text shown on scanner"
+msgid "Insufficient agents to complete mission"
+msgstr "Agenti insufficienti per completare la missione"
+
+#: scanner.objective:66
+msgctxt "objective text shown on scanner"
+msgid "The orbital elevator has been destroyed"
+msgstr "L'ascensore orbitale stato distrutto"
+
+#: scanner.objective:67
+msgctxt "objective text shown on scanner"
+msgid "The space station has been destroyed"
+msgstr "La stazione spaziale stata distrutta"
+
+#: scanner.objective:68
+msgctxt "objective text shown on scanner"
+msgid "Get shuttle nav computer"
+msgstr "Prendi il computer di navigazione della navetta"
+
+#: scanner.objective:69
+msgctxt "objective text shown on scanner"
+msgid "Station self-destruct armed: de-activate"
+msgstr "Dispositivo autodistruzione stazione attivato: disattivalo"
+
+#: scanner.objective:70
+msgctxt "objective text shown on scanner"
+msgid "Get shuttle life support module"
+msgstr "Prendi il modulo di supporto vitale della navetta"
+
+#: scanner.objective:71
+msgctxt "objective text shown on scanner"
+msgid "Access lunar shuttle craft"
+msgstr "Vai nel navicella lunare"
+
+#: scanner.objective:72
+msgctxt "objective text shown on scanner"
+msgid "Eliminate The Nine"
+msgstr "Elimina i Novi"
+
+#: scanner.objective:73
+msgctxt "objective text shown on scanner"
+msgid "The Nine have activated the ion gate. you have been defeated."
+msgstr "I Novi hanno attivato la barriera a ioni. Sei stato sconfitto."
+
+#: scanner.objective:74
+msgctxt "objective text shown on scanner"
+msgid "Eliminate the Unguided heathens"
+msgstr "Elimina i pagani Non Guidati"
+
+#: scanner.objective:75
+msgctxt "objective text shown on scanner"
+msgid "Our garden of meditations has been destroyed"
+msgstr "Il nostro giardino della meditazione stato distrutto"
+
+#: scanner.objective:76
+msgctxt "objective text shown on scanner"
+msgid "Convert EuroCorp agent"
+msgstr "Converti l'agente EuroCorp"
+
+#: scanner.objective:77
+msgctxt "objective text shown on scanner"
+msgid "Escort agent to IML link"
+msgstr "Scorta l'agente al collegamento IML"
+
+#: scanner.objective:78
+msgctxt "objective text shown on scanner"
+msgid "Your target has been eliminated"
+msgstr "Il tuo bersaglio stato eliminato"
+
+#: scanner.objective:79 scanner.objective:162
+msgctxt "objective text shown on scanner"
+msgid "Your target has escaped"
+msgstr "Il tuo bersaglio fuggito"
+
+#: scanner.objective:80
+msgctxt "objective text shown on scanner"
+msgid "Acquire funds"
+msgstr "Acquisisci fondi"
+
+#: scanner.objective:81
+msgctxt "objective text shown on scanner"
+msgid "You have lost your quarry"
+msgstr "La tua cava andata perduta"
+
+#: scanner.objective:82
+msgctxt "objective text shown on scanner"
+msgid "Take dr Schweizer to see father Black"
+msgstr "Porta il dr. Schweizer da padre black"
+
+#: scanner.objective:83
+msgctxt "objective text shown on scanner"
+msgid "Dr Schweizer is dead"
+msgstr "Il dr Schweizer morto"
+
+#: scanner.objective:84
+msgctxt "objective text shown on scanner"
+msgid "Father Black is dead"
+msgstr "Padre Black morto"
+
+#: scanner.objective:85
+msgctxt "objective text shown on scanner"
+msgid "Protect your brethren and the temple"
+msgstr "Proteggi i tuoi confratelli e il tempio"
+
+#: scanner.objective:86
+msgctxt "objective text shown on scanner"
+msgid "Your brethren are all dead"
+msgstr "I tuoi confratelli sono tutti morti"
+
+#: scanner.objective:87
+msgctxt "objective text shown on scanner"
+msgid "The temple has been destroyed"
+msgstr "Il tempio stato distrutto"
+
+#: scanner.objective:88
+msgctxt "objective text shown on scanner"
+msgid "Vanquish the unbelievers"
+msgstr "Disperdi i miscredenti"
+
+#: scanner.objective:89
+msgctxt "objective text shown on scanner"
+msgid "Punish the rioters"
+msgstr "Punisci i dimostranti"
+
+#: scanner.objective:90
+msgctxt "objective text shown on scanner"
+msgid "Annihilate the forces of chaos"
+msgstr "Annienta le forze del caos"
+
+#: scanner.objective:91
+msgctxt "objective text shown on scanner"
+msgid "Destroy the Unguided vermin"
+msgstr "Distruggi i parassiti Non Guidati"
+
+#: scanner.objective:92
+msgctxt "objective text shown on scanner"
+msgid "Wipe out EuroCorp personnel"
+msgstr "Spazza via il personale EuroCorp"
+
+#: scanner.objective:93
+msgctxt "objective text shown on scanner"
+msgid "Eliminate EuroCorp agents"
+msgstr "Elimina gli agenti EuroCorp"
+
+#: scanner.objective:94
+msgctxt "objective text shown on scanner"
+msgid "Assist Acolytes"
+msgstr "Aiuta gli accoliti"
+
+#: scanner.objective:95
+msgctxt "objective text shown on scanner"
+msgid "Assassinate the saboteur"
+msgstr "Assassina il sabotatore"
+
+#: scanner.objective:96
+msgctxt "objective text shown on scanner"
+msgid "Vanquish the desecrators"
+msgstr "Sgomina i dissacratori"
+
+#: scanner.objective:97
+msgctxt "objective text shown on scanner"
+msgid "Protect the order of Acolytes"
+msgstr "Proteggi l'ordine degli accoliti"
+
+#: scanner.objective:98
+msgctxt "objective text shown on scanner"
+msgid "The order of Acolytes has been completely eliminated"
+msgstr "L'ordine degli accoliti stato completamente eliminato"
+
+#: scanner.objective:99
+msgctxt "objective text shown on scanner"
+msgid "Deliver bullion car to collection point"
+msgstr "Porta la macchina d'oro al punto di raccolta"
+
+#: scanner.objective:101
+msgctxt "objective text shown on scanner"
+msgid "Assassinate the professor's assistant"
+msgstr "Assassina l'assistente del professore"
+
+#: scanner.objective:102
+msgctxt "objective text shown on scanner"
+msgid "Take the assistant's place by the professor's side"
+msgstr "Prendi il posto dell'assistente a fianco del professore"
+
+#: scanner.objective:103
+msgctxt "objective text shown on scanner"
+msgid "Collect video data for lecture"
+msgstr "Raccogli dati video per la lezione"
+
+#: scanner.objective:104
+msgctxt "objective text shown on scanner"
+msgid "Go to podium"
+msgstr "Recati al podio"
+
+#: scanner.objective:105
+msgctxt "objective text shown on scanner"
+msgid "Attend lecture"
+msgstr "Presenzia alla lezione"
+
+#: scanner.objective:106
+msgctxt "objective text shown on scanner"
+msgid "Escort professor Drennan"
+msgstr "Scorta il professor Drennan"
+
+#: scanner.objective:107
+msgctxt "objective text shown on scanner"
+msgid "The professor has met his assistant"
+msgstr "Il professore ha incontrato il suo assistente"
+
+#: scanner.objective:108
+msgctxt "objective text shown on scanner"
+msgid "The professor is dead"
+msgstr "Il professore morto"
+
+#: scanner.objective:109
+msgctxt "objective text shown on scanner"
+msgid "Mirabelle Lucy De Saxo is dead"
+msgstr "Mirabelle Lucy De Saxo morta"
+
+#: scanner.objective:110
+msgctxt "objective text shown on scanner"
+msgid "Destroy EuroCorp weapons bunker"
+msgstr "Distruggi il bunker delle armi dell'EuroCorp"
+
+#: scanner.objective:111
+msgctxt "objective text shown on scanner"
+msgid "Steal EuroCorp weapon design"
+msgstr "Ruba il progetto dell'arma EuroCorp"
+
+#: scanner.objective:112
+msgctxt "objective text shown on scanner"
+msgid "Upload weapon design"
+msgstr "Trasmetti il progetto dell'arma"
+
+#: scanner.objective:113
+msgctxt "objective text shown on scanner"
+msgid "Return"
+msgstr "Ritorna"
+
+#: scanner.objective:114
+msgctxt "objective text shown on scanner"
+msgid "Acolytes stranded: cannot complete mission"
+msgstr "Accoliti appiedati: impossibile completare la missione"
+
+#: scanner.objective:115
+msgctxt "objective text shown on scanner"
+msgid "Assassinate hacker"
+msgstr "Assassina l'hacker"
+
+#: scanner.objective:116
+msgctxt "objective text shown on scanner"
+msgid "Eliminate EuroCorp personnel controlling river port"
+msgstr "Elimina le forze che controllano il porto fluviale"
+
+#: scanner.objective:117
+msgctxt "objective text shown on scanner"
+msgid "Return to IML link"
+msgstr "Torna al collegamento IML"
+
+#: scanner.objective:118
+msgctxt "objective text shown on scanner"
+msgid "Abduct EuroCorp captive"
+msgstr "Rapisci il prigioniero EuroCorp"
+
+#: scanner.objective:119
+msgctxt "objective text shown on scanner"
+msgid "The target has been eliminated"
+msgstr "Il bersaglio stato eliminato"
+
+#: scanner.objective:120
+msgctxt "objective text shown on scanner"
+msgid "Destroy R&D facilities"
+msgstr "Distruggi il laboratorio di ricerca e sviluppo"
+
+#: scanner.objective:121
+msgctxt "objective text shown on scanner"
+msgid "Eliminate agents of EuroCorp"
+msgstr "Elimina gli agenti di EuroCorp"
+
+#: scanner.objective:122
+msgctxt "objective text shown on scanner"
+msgid "De Saxo must perish"
+msgstr "La De Saxo deve morire"
+
+#: scanner.objective:123
+msgctxt "objective text shown on scanner"
+msgid "Leave this place"
+msgstr "Vattene da qui"
+
+#: scanner.objective:124
+msgctxt "objective text shown on scanner"
+msgid "Subdue the Unguided"
+msgstr "Sottometti i Non Guidati"
+
+#: scanner.objective:125
+msgctxt "objective text shown on scanner"
+msgid "Seek and destroy the leader of the uprising"
+msgstr "Cerca e distruggi il capo della rivolta"
+
+#: scanner.objective:126
+msgctxt "objective text shown on scanner"
+msgid "Rescue IX and guide him to rendezvous"
+msgstr "Salva IX e conducilo al punto di ritrovo"
+
+#: scanner.objective:127
+msgctxt "objective text shown on scanner"
+msgid "Protect IX"
+msgstr "Proteggi IX"
+
+#: scanner.objective:128
+msgctxt "objective text shown on scanner"
+msgid "You have allowed IX to perish"
+msgstr "Hai consentito la morte di IX"
+
+#: scanner.objective:129
+msgctxt "objective text shown on scanner"
+msgid "Nothing can stop The Nine now. You have been defeated."
+msgstr "Niente puê fermare i Novi ora. Sei stato sconfitto."
+
+#: scanner.objective:130
+msgctxt "objective text shown on scanner"
+msgid "Do nothing: obey The Nine"
+msgstr "Non fare nulla: obbedisci ai Novi"
+
+#: scanner.objective:131
+msgctxt "objective text shown on scanner"
+msgid "All citizens converted by Zealots"
+msgstr "Controllo citt perduto: i fanatici della chiesa hanno convertito tutti"
+
+#: scanner.objective:132
+msgctxt "objective text shown on scanner"
+msgid "Eliminate intruder"
+msgstr "Elimina l'intrusore"
+
+#: scanner.objective:133
+msgctxt "objective text shown on scanner"
+msgid "Eliminate intruders"
+msgstr "Elimina gli intrusori"
+
+#: scanner.objective:134
+msgctxt "objective text shown on scanner"
+msgid "Persuade infiltrator"
+msgstr "Persuadi l'infiltrato"
+
+#: scanner.objective:135
+msgctxt "objective text shown on scanner"
+msgid "Proceed to IML link"
+msgstr "Procedi al collegamento IML"
+
+#: scanner.objective:136
+msgctxt "objective text shown on scanner"
+msgid "Target eliminated"
+msgstr "Bersaglio eliminato"
+
+#: scanner.objective:137
+msgctxt "objective text shown on scanner"
+msgid "Activate IML link"
+msgstr "Attiva collegamento IML"
+
+#: scanner.objective:138
+msgctxt "objective text shown on scanner"
+msgid "IML link destroyed"
+msgstr "Collegamento IML distrutto"
+
+#: scanner.objective:139
+msgctxt "objective text shown on scanner"
+msgid "Eliminate agents"
+msgstr "Elimina gli agenti"
+
+#: scanner.objective:140
+msgctxt "objective text shown on scanner"
+msgid "Penetrate bunker: release virus"
+msgstr "Penetra il bunker: rilascia il virus"
+
+#: scanner.objective:141
+msgctxt "objective text shown on scanner"
+msgid "Depart"
+msgstr "Parti"
+
+#: scanner.objective:142
+msgctxt "objective text shown on scanner"
+msgid "Retreat"
+msgstr "Ritirati"
+
+#: scanner.objective:143
+msgctxt "objective text shown on scanner"
+msgid "Convert Ormandoz"
+msgstr "Converti Ormandoz"
+
+#: scanner.objective:144
+msgctxt "objective text shown on scanner"
+msgid "Convert Ramirez"
+msgstr "Converti Ramirez"
+
+#: scanner.objective:145
+msgctxt "objective text shown on scanner"
+msgid "Bring them to us"
+msgstr "Portali a noi"
+
+#: scanner.objective:146
+msgctxt "objective text shown on scanner"
+msgid "You have allowed Ormandoz to perish"
+msgstr "Hai consentito la morte di Ormandoz"
+
+#: scanner.objective:147
+msgctxt "objective text shown on scanner"
+msgid "You have allowed Ramirez to perish"
+msgstr "Hai consentito la morte di Ramirez"
+
+#: scanner.objective:148
+msgctxt "objective text shown on scanner"
+msgid "Steal dr Schweizer's work"
+msgstr "Ruba il lavoro del dr. Schweizer"
+
+#: scanner.objective:149
+msgctxt "objective text shown on scanner"
+msgid "Return to us"
+msgstr "Torna da noi"
+
+#: scanner.objective:150
+msgctxt "objective text shown on scanner"
+msgid "EuroCorp agents must join us or die"
+msgstr "Gli agenti EuroCorp devono unirsi a noi o morire"
+
+#: scanner.objective:151
+msgctxt "objective text shown on scanner"
+msgid "Neutralise EuroCorp agents"
+msgstr "Neutralizza gli agenti EuroCorp"
+
+#: scanner.objective:152
+msgctxt "objective text shown on scanner"
+msgid "Assassinate Koto Sek"
+msgstr "Assassina Koto Sek"
+
+#: scanner.objective:153
+msgctxt "objective text shown on scanner"
+msgid "Neutralise all EuroCorp agents"
+msgstr "Neutralizza tutti gli agenti EuroCorp"
+
+#: scanner.objective:154
+msgctxt "objective text shown on scanner"
+msgid "Let no harm come to De Saxo"
+msgstr "Fa in modo che non accada nulla alla De Saxo"
+
+#: scanner.objective:155
+msgctxt "objective text shown on scanner"
+msgid "Take control of the IML link"
+msgstr "Assumi il controllo del collegamento IML"
+
+#: scanner.objective:156
+msgctxt "objective text shown on scanner"
+msgid "Our blessed daughter is dead"
+msgstr "La nostra amata figlia morta"
+
+#: scanner.objective:157
+msgctxt "objective text shown on scanner"
+msgid "You will die for this heresy!"
+msgstr "Morirai per questa eresia!"
+
+#: scanner.objective:158
+msgctxt "objective text shown on scanner"
+msgid "EuroCorp must choose between our faith or death"
+msgstr "EuroCorp deve scegliere tra la nostra fede e la morte"
+
+#: scanner.objective:159
+msgctxt "objective text shown on scanner"
+msgid "Seek sanctuary"
+msgstr "Cerca riparo"
+
+#: scanner.objective:160
+msgctxt "objective text shown on scanner"
+msgid "Get in"
+msgstr "Entra"
+
+#: scanner.objective:163
+msgctxt "objective text shown on scanner"
+msgid "Target persuaded"
+msgstr "Bersaglio persuaso"
+
+#: scanner.objective:164
+msgctxt "objective text shown on scanner"
+msgid "Neutralise agent"
+msgstr "Neutralizza l'agente"
+
+#: mapscreen.title
+msgctxt "syndicate & church map screen title"
+msgid "UTOPIA"
+msgstr "UTOPIA"
+
+#: mapscreen.city1:1
+msgctxt "map screen location - name"
+msgid "London"
+msgstr "Londra"
+
+#: mapscreen.city1:2
+msgctxt "map screen location - population size"
+msgid "21.13 M"
+msgstr "21,13 M"
+
+#: mapscreen.city1:3
+msgctxt "map screen location - landscape"
+msgid "Post-industrial"
+msgstr "Postindustriale"
+
+#: mapscreen.city1:4
+msgctxt "map screen location - language"
+msgid "Low English"
+msgstr "Basso inglese"
+
+#: mapscreen.city1:5
+msgctxt "map screen location - industry"
+msgid "Software Engineering, Financial Services"
+msgstr "Progettaz. software, Servizi finanziari"
+
+#: mapscreen.city1:6 mapscreen.city21:6 mapscreen.city34:6
+msgctxt "map screen location - toxicity"
+msgid "Chemical Waste, Human Effluent"
+msgstr "Rifiuti chimici, Scarico umano"
+
+#: mapscreen.city2:1
+msgctxt "map screen location - name"
+msgid "Detroit"
+msgstr "Detroit"
+
+#: mapscreen.city2:2 mapscreen.city11:2
+msgctxt "map screen location - population size"
+msgid "10.98 M"
+msgstr "10,98 M"
+
+#: mapscreen.city2:3 mapscreen.city3:3 mapscreen.city7:3 mapscreen.city9:3
+#: mapscreen.city11:3 mapscreen.city13:3 mapscreen.city15:3 mapscreen.city19:3
+#: mapscreen.city23:3 mapscreen.city26:3 mapscreen.city27:3 mapscreen.city36:3
+#: mapscreen.city38:3 mapscreen.city45:3 mapscreen.city48:3
+msgctxt "map screen location - landscape"
+msgid "Complex Urban"
+msgstr "Complesso urbano"
+
+#: mapscreen.city2:4 mapscreen.city22:4
+msgctxt "map screen location - language"
+msgid "New American"
+msgstr "Nuovo americano"
+
+#: mapscreen.city2:5
+msgctxt "map screen location - industry"
+msgid "Vehicle Manufacture"
+msgstr "Industria automobile"
+
+#: mapscreen.city2:6
+msgctxt "map screen location - toxicity"
+msgid "Heavy Industrial, Radioactive Waste"
+msgstr "Industria pesante, Scorie radioatt."
+
+#: mapscreen.city3:1
+msgctxt "map screen location - name"
+msgid "Hong Kong"
+msgstr "Hong Kong"
+
+#: mapscreen.city3:2
+msgctxt "map screen location - population size"
+msgid "17.55 M"
+msgstr "17,55 M"
+
+#: mapscreen.city3:4
+msgctxt "map screen location - language"
+msgid "Indo-Chinese"
+msgstr "Indo-cinese"
+
+#: mapscreen.city3:5
+msgctxt "map screen location - industry"
+msgid "Memory Plastics"
+msgstr "Memorie in plastica"
+
+#: mapscreen.city3:6 mapscreen.city5:6 mapscreen.city7:6 mapscreen.city22:6
+#: mapscreen.city31:6 mapscreen.city32:6 mapscreen.city38:6 mapscreen.city39:6
+#: mapscreen.city40:6 mapscreen.city42:6
+msgctxt "map screen location - toxicity"
+msgid "Light Industrial"
+msgstr "Industria leggera"
+
+#: mapscreen.city4:1
+msgctxt "map screen location - name"
+msgid "Beijing"
+msgstr "Pechino"
+
+#: mapscreen.city4:2
+msgctxt "map screen location - population size"
+msgid "38.89 M"
+msgstr "38,89 M"
+
+#: mapscreen.city4:3 mapscreen.city8:3 mapscreen.city20:3 mapscreen.city21:3
+#: mapscreen.city25:3 mapscreen.city49:3
+msgctxt "map screen location - landscape"
+msgid "Ultra-Metropolitan"
+msgstr "Ultra-metropoli"
+
+#: mapscreen.city4:4
+msgctxt "map screen location - language"
+msgid "Proto-Mandarin"
+msgstr "Proto-mandarino"
+
+#: mapscreen.city4:5
+msgctxt "map screen location - industry"
+msgid "Plastics Fabrication, Hardware Manufacture"
+msgstr "Produz. plastica, Produz. hardware"
+
+#: mapscreen.city4:6
+msgctxt "map screen location - toxicity"
+msgid "Radioactive Waste, Human Effluent"
+msgstr "Scorie radioatt., Scarico umano"
+
+#: mapscreen.city5:1
+msgctxt "map screen location - name"
+msgid "Vienna"
+msgstr "Vienna"
+
+#: mapscreen.city5:2
+msgctxt "map screen location - population size"
+msgid "6.99 M"
+msgstr "6,99 M"
+
+#: mapscreen.city5:3 mapscreen.city6:3 mapscreen.city16:3 mapscreen.city17:3
+#: mapscreen.city18:3 mapscreen.city22:3 mapscreen.city24:3 mapscreen.city28:3
+#: mapscreen.city29:3 mapscreen.city31:3 mapscreen.city33:3 mapscreen.city37:3
+#: mapscreen.city41:3 mapscreen.city42:3 mapscreen.city44:3
+msgctxt "map screen location - landscape"
+msgid "Simple Urban"
+msgstr "Urbano semplice"
+
+#: mapscreen.city5:4 mapscreen.city6:4
+msgctxt "map screen location - language"
+msgid "C.C.E. (Common Central European)"
+msgstr "C.E.C. (Centro-europeo comune)"
+
+#: mapscreen.city5:5
+msgctxt "map screen location - industry"
+msgid "Mineral Re-processing"
+msgstr "Rilavoraz. minerali"
+
+#: mapscreen.city6:1
+msgctxt "map screen location - name"
+msgid "Geneva"
+msgstr "Ginevra"
+
+#: mapscreen.city6:2
+msgctxt "map screen location - population size"
+msgid "7.65 M"
+msgstr "7,65 M"
+
+#: mapscreen.city6:5 mapscreen.city18:5 mapscreen.city22:5 mapscreen.city29:5
+msgctxt "map screen location - industry"
+msgid "Water Detoxification, Air Re-processing"
+msgstr "Depurazione delle acque e dell'aria"
+
+#: mapscreen.city6:6 mapscreen.city9:6 mapscreen.city18:6 mapscreen.city29:6
+msgctxt "map screen location - toxicity"
+msgid "Radioactive Waste"
+msgstr "Scorie radioattive"
+
+#: mapscreen.city7:1
+msgctxt "map screen location - name"
+msgid "Salzburg"
+msgstr "Salisburgo"
+
+#: mapscreen.city7:2
+msgctxt "map screen location - population size"
+msgid "9.27 M"
+msgstr "9,27 M"
+
+#: mapscreen.city7:4
+msgctxt "map screen location - language"
+msgid "Neu-Slavik"
+msgstr "Neo-slavo"
+
+#: mapscreen.city7:5
+msgctxt "map screen location - industry"
+msgid "Vegetative Regeneration"
+msgstr "Rigeneraz. vegetativa"
+
+#: mapscreen.city8:1
+msgctxt "map screen location - name"
+msgid "Singapore"
+msgstr "Singapore"
+
+#: mapscreen.city8:2
+msgctxt "map screen location - population size"
+msgid "21.71 M"
+msgstr "21,71 M"
+
+#: mapscreen.city8:4
+msgctxt "map screen location - language"
+msgid "Pseudo-Malay"
+msgstr "Pseudo-malese"
+
+#: mapscreen.city8:5
+msgctxt "map screen location - industry"
+msgid "Water Detoxification, Hardware Manufacture"
+msgstr "Depuraz. delle acque, Produz. hardware"
+
+#: mapscreen.city8:6
+msgctxt "map screen location - toxicity"
+msgid "Human Effluent, Heavy Industrial"
+msgstr "Scarico umano, Industria pesante"
+
+#: mapscreen.city9:1
+msgctxt "map screen location - name"
+msgid "Phoenix"
+msgstr "Phoenix"
+
+#: mapscreen.city9:2
+msgctxt "map screen location - population size"
+msgid "13.26 M"
+msgstr "13,26 M"
+
+#: mapscreen.city9:4
+msgctxt "map screen location - language"
+msgid "American Continental Interior"
+msgstr "Continente americano interno"
+
+#: mapscreen.city9:5
+msgctxt "map screen location - industry"
+msgid "Power Generation"
+msgstr "Produz. energia"
+
+#: mapscreen.city10:1
+msgctxt "map screen location - name"
+msgid "Rome"
+msgstr "Roma"
+
+#: mapscreen.city10:2
+msgctxt "map screen location - population size"
+msgid "10.92 M"
+msgstr "10,92 M"
+
+#: mapscreen.city10:3
+msgctxt "map screen location - landscape"
+msgid "Post-Industrial"
+msgstr "Postindustriale"
+
+#: mapscreen.city10:4
+msgctxt "map screen location - language"
+msgid "Low Latin"
+msgstr "Basso latino"
+
+#: mapscreen.city10:5
+msgctxt "map screen location - industry"
+msgid "Consumer Durables"
+msgstr "Beni di consumo durevoli"
+
+#: mapscreen.city10:6 mapscreen.city15:6 mapscreen.city20:6 mapscreen.city23:6
+#: mapscreen.city28:6 mapscreen.city41:6 mapscreen.city45:6
+msgctxt "map screen location - toxicity"
+msgid "Heavy Industrial"
+msgstr "Industria pesante"
+
+#: mapscreen.city11:1
+msgctxt "map screen location - name"
+msgid "Al Manamah"
+msgstr "Al Manamah"
+
+#: mapscreen.city11:4 mapscreen.city24:4 mapscreen.city28:4 mapscreen.city34:4
+msgctxt "map screen location - language"
+msgid "New Arabic"
+msgstr "Nuovo arabo"
+
+#: mapscreen.city11:5
+msgctxt "map screen location - industry"
+msgid "Fuel Refining, Mineral Processing"
+msgstr "Raffinaz. petrolio, Lavoraz. minerali"
+
+#: mapscreen.city11:6 mapscreen.city13:6 mapscreen.city17:6 mapscreen.city24:6
+#: mapscreen.city43:6 mapscreen.city47:6
+msgctxt "map screen location - toxicity"
+msgid "Chemical Waste"
+msgstr "Rifiuti chimici"
+
+#: mapscreen.city12:1
+msgctxt "map screen location - name"
+msgid "New York"
+msgstr "New York"
+
+#: mapscreen.city12:2
+msgctxt "map screen location - population size"
+msgid "25.24 M"
+msgstr "25,24 M"
+
+#: mapscreen.city12:3
+msgctxt "map screen location - landscape"
+msgid "Post Industrial"
+msgstr "Postind."
+
+#: mapscreen.city12:4
+msgctxt "map screen location - language"
+msgid "High English"
+msgstr "Alto inglese"
+
+#: mapscreen.city12:5 mapscreen.city34:5 mapscreen.city48:5
+msgctxt "map screen location - industry"
+msgid "Weaponry Manufacture"
+msgstr "Produzione di armi"
+
+#: mapscreen.city12:6
+msgctxt "map screen location - toxicity"
+msgid "Ultra-Heavy Industrial, Radioactive Waste, Human Effluent"
+msgstr "Industria ultra-pesante, Scorie radioatt., Scarico umano"
+
+#: mapscreen.city13:1
+msgctxt "map screen location - name"
+msgid "Santiago"
+msgstr "Santiago"
+
+#: mapscreen.city13:2
+msgctxt "map screen location - population size"
+msgid "7.81 M"
+msgstr "7,81 M"
+
+#: mapscreen.city13:4
+msgctxt "map screen location - language"
+msgid "Neu-Spanish"
+msgstr "Neo-ispanico"
+
+#: mapscreen.city13:5
+msgctxt "map screen location - industry"
+msgid "Rubber Production"
+msgstr "Produzione di gomma"
+
+#: mapscreen.city14:1
+msgctxt "map screen location - name"
+msgid "Buenos Aires"
+msgstr "Buenos Aires"
+
+#: mapscreen.city14:2
+msgctxt "map screen location - population size"
+msgid "15.71 M"
+msgstr "15,71 M"
+
+#: mapscreen.city14:3
+msgctxt "map screen location - landscape"
+msgid "Ultra Metropolitan"
+msgstr "Ultra-metropoli"
+
+#: mapscreen.city14:4
+msgctxt "map screen location - language"
+msgid "Modul"
+msgstr "Modul"
+
+#: mapscreen.city14:5
+msgctxt "map screen location - industry"
+msgid "Foodstuff Manufacture"
+msgstr "Produzione alimentare"
+
+#: mapscreen.city14:6
+msgctxt "map screen location - toxicity"
+msgid "Heavy Industrial, Human Effluent"
+msgstr "Industria pesante, Scarico umano"
+
+#: mapscreen.city15:1
+msgctxt "map screen location - name"
+msgid "Cape Town"
+msgstr "Città del Capo"
+
+#: mapscreen.city15:2
+msgctxt "map screen location - population size"
+msgid "10.27 M"
+msgstr "10,27 M"
+
+#: mapscreen.city15:4 mapscreen.city23:4
+msgctxt "map screen location - language"
+msgid "Afrikaans (Ancient)"
+msgstr "Afrikaans (Antico)"
+
+#: mapscreen.city15:5 mapscreen.city23:5
+msgctxt "map screen location - industry"
+msgid "Mineral Processing"
+msgstr "Lavoraz. minerali"
+
+#: mapscreen.city16:1
+msgctxt "map screen location - name"
+msgid "Adelaide"
+msgstr "Adelaide"
+
+#: mapscreen.city16:2
+msgctxt "map screen location - population size"
+msgid "8.7 M"
+msgstr "8,7 M"
+
+#: mapscreen.city16:4
+msgctxt "map screen location - language"
+msgid "Sub English"
+msgstr "Sotto-inglese"
+
+#: mapscreen.city16:5
+msgctxt "map screen location - industry"
+msgid "Brewing, Animal Husbandry"
+msgstr "Fabbricaz. della birra, Zootecnia"
+
+#: mapscreen.city16:6
+msgctxt "map screen location - toxicity"
+msgid "Chemical Waste, Animal Effluent"
+msgstr "Rifiuti chimici, Scarico animale"
+
+#: mapscreen.city17:1
+msgctxt "map screen location - name"
+msgid "Christchurch"
+msgstr "Christchurch"
+
+#: mapscreen.city17:2
+msgctxt "map screen location - population size"
+msgid "4.9 M"
+msgstr "4,9 M"
+
+#: mapscreen.city17:4 mapscreen.city43:4
+msgctxt "map screen location - language"
+msgid "Idiom Bahasa"
+msgstr "Idioma Bahasa"
+
+#: mapscreen.city17:5
+msgctxt "map screen location - industry"
+msgid "Clothing Fabrication, Foodstuff Preparation"
+msgstr "Fabbrica vestiti, Preparaz. alimentari"
+
+#: mapscreen.city18:1
+msgctxt "map screen location - name"
+msgid "Reykjavik"
+msgstr "Reykjavik"
+
+#: mapscreen.city18:2
+msgctxt "map screen location - population size"
+msgid "4.37 M"
+msgstr "4,37 M"
+
+#: mapscreen.city18:4 mapscreen.city46:4
+msgctxt "map screen location - language"
+msgid "Demi-Scando"
+msgstr "Demi-scandinavo"
+
+#: mapscreen.city19:1
+msgctxt "map screen location - name"
+msgid "Moscow"
+msgstr "Mosca"
+
+#: mapscreen.city19:2
+msgctxt "map screen location - population size"
+msgid "16.54 M"
+msgstr "16,54 M"
+
+#: mapscreen.city19:4 mapscreen.city26:4
+msgctxt "map screen location - language"
+msgid "Moldav"
+msgstr "Moldavo"
+
+#: mapscreen.city19:5
+msgctxt "map screen location - industry"
+msgid "Clothing Fabrication, Distilling"
+msgstr "Fabbrica di vestiti, Alcolici"
+
+#: mapscreen.city19:6
+msgctxt "map screen location - toxicity"
+msgid "Radioactive Fallout, Human Effluent"
+msgstr "Fallout radioatt., Scarico umano"
+
+#: mapscreen.city20:1
+msgctxt "map screen location - name"
+msgid "Tokyo"
+msgstr "Tokyo"
+
+#: mapscreen.city20:2
+msgctxt "map screen location - population size"
+msgid "16.70 M"
+msgstr "16,70 M"
+
+#: mapscreen.city20:4
+msgctxt "map screen location - language"
+msgid "Neo-Japanese"
+msgstr "Neo-giapponese"
+
+#: mapscreen.city20:5
+msgctxt "map screen location - industry"
+msgid "Hi-Tech Manufacture, Financial Services"
+msgstr "Produz. hi-tech, Servizi finanz."
+
+#: mapscreen.city21:1
+msgctxt "map screen location - name"
+msgid "Bangkok"
+msgstr "Bangkok"
+
+#: mapscreen.city21:2
+msgctxt "map screen location - population size"
+msgid "24.37 M"
+msgstr "24,37 M"
+
+#: mapscreen.city21:4
+msgctxt "map screen location - language"
+msgid "Pseudo-Thai"
+msgstr "Pseudo-Thai"
+
+#: mapscreen.city21:5
+msgctxt "map screen location - industry"
+msgid "Simulant Manufacture, Tourism"
+msgstr "Produz. simulante, Turismo"
+
+#: mapscreen.city22:1
+msgctxt "map screen location - name"
+msgid "Honolulu"
+msgstr "Honolulu"
+
+#: mapscreen.city22:2
+msgctxt "map screen location - population size"
+msgid "7.01 M"
+msgstr "7,01 M"
+
+#: mapscreen.city23:1
+msgctxt "map screen location - name"
+msgid "Johannesburg"
+msgstr "Johannesburg"
+
+#: mapscreen.city23:2
+msgctxt "map screen location - population size"
+msgid "15.64 M"
+msgstr "15,64 M"
+
+#: mapscreen.city24:1
+msgctxt "map screen location - name"
+msgid "Cairo"
+msgstr "Il Cairo"
+
+#: mapscreen.city24:2
+msgctxt "map screen location - population size"
+msgid "3.16 M"
+msgstr "3,16 M"
+
+#: mapscreen.city24:5
+msgctxt "map screen location - industry"
+msgid "Historical Artefacts, Tourism"
+msgstr "Manufatti storici, Turismo"
+
+#: mapscreen.city25:1
+msgctxt "map screen location - name"
+msgid "New Delhi"
+msgstr "Nuova Delhi"
+
+#: mapscreen.city25:2
+msgctxt "map screen location - population size"
+msgid "28.73 M"
+msgstr "28,73 M"
+
+#: mapscreen.city25:4
+msgctxt "map screen location - language"
+msgid "Proto-Hindustani"
+msgstr "Proto-Hindustani"
+
+#: mapscreen.city25:5
+msgctxt "map screen location - industry"
+msgid "Intelligent Clothing"
+msgstr "Abbigliam. intellig."
+
+#: mapscreen.city25:6
+msgctxt "map screen location - toxicity"
+msgid "Heavy Industrial, Chemical Waste, Human Effluent"
+msgstr "Industria pesante, Rifiuti chimici, Scarico umano"
+
+#: mapscreen.city26:1
+msgctxt "map screen location - name"
+msgid "Sevastopol"
+msgstr "Sebastopoli"
+
+#: mapscreen.city26:2
+msgctxt "map screen location - population size"
+msgid "9.26 M"
+msgstr "9,26 M"
+
+#: mapscreen.city26:5 mapscreen.city33:5 mapscreen.city40:5
+msgctxt "map screen location - industry"
+msgid "Distilling"
+msgstr "Alcolici"
+
+#: mapscreen.city26:6 mapscreen.city27:6 mapscreen.city33:6 mapscreen.city35:6
+msgctxt "map screen location - toxicity"
+msgid "Radioactive Fallout"
+msgstr "Fallout radioattivo"
+
+#: mapscreen.city27:1
+msgctxt "map screen location - name"
+msgid "Tripoli"
+msgstr "Tripoli"
+
+#: mapscreen.city27:2
+msgctxt "map screen location - population size"
+msgid "8.73 M"
+msgstr "8,73 M"
+
+#: mapscreen.city27:4
+msgctxt "map screen location - language"
+msgid "Arabic (Ancient)"
+msgstr "Arabo (Antico)"
+
+#: mapscreen.city27:5 mapscreen.city28:5
+msgctxt "map screen location - industry"
+msgid "Fuel Refining"
+msgstr "Raffinaz. petrolio"
+
+#: mapscreen.city28:1
+msgctxt "map screen location - name"
+msgid "Riyadh"
+msgstr "Riyadh"
+
+#: mapscreen.city28:2
+msgctxt "map screen location - population size"
+msgid "2.03 M"
+msgstr "2.03 M"
+
+#: mapscreen.city29:1
+msgctxt "map screen location - name"
+msgid "Colombo"
+msgstr "Colombo"
+
+#: mapscreen.city29:2
+msgctxt "map screen location - population size"
+msgid "3.35 M"
+msgstr "3,35 M"
+
+#: mapscreen.city29:4
+msgctxt "map screen location - language"
+msgid "New Sinhalese"
+msgstr "Neo Singalese"
+
+#: mapscreen.city30:1
+msgctxt "map screen location - name"
+msgid "Colombo Orbit Station"
+msgstr "Stazione Orbitale Colombo"
+
+#: mapscreen.city30:2
+msgctxt "map screen location - population size"
+msgid "0.0001 M"
+msgstr "0,0001 M"
+
+#: mapscreen.city30:3
+msgctxt "map screen location - landscape"
+msgid "Experimental"
+msgstr "Speriment."
+
+#: mapscreen.city30:4
+msgctxt "map screen location - language"
+msgid "EuroCorp Technical Multi-State Code"
+msgstr "Codice multi-stato tec. EuroCorp"
+
+#: mapscreen.city30:5
+msgctxt "map screen location - industry"
+msgid "Interstellar Transport, Microgravitic Manufacture"
+msgstr "Trasporto interstel., Produz. in microgravità"
+
+#: mapscreen.city30:6
+msgctxt "map screen location - toxicity"
+msgid "Nil"
+msgstr "Nessuno"
+
+#: mapscreen.city31:1
+msgctxt "map screen location - name"
+msgid "Matochkin Shar"
+msgstr "Matochkin Shar"
+
+#: mapscreen.city31:2
+msgctxt "map screen location - population size"
+msgid "0.017 M"
+msgstr "0,017 M"
+
+#: mapscreen.city31:4
+msgctxt "map screen location - language"
+msgid "Proto-Moldav"
+msgstr "Proto-moldavo"
+
+#: mapscreen.city31:5
+msgctxt "map screen location - industry"
+msgid "Air Re-processing"
+msgstr "Depurazione dell'aria"
+
+#: mapscreen.city32:1
+msgctxt "map screen location - name"
+msgid "Voss"
+msgstr "Voss"
+
+#: mapscreen.city32:2
+msgctxt "map screen location - population size"
+msgid "0.023 M"
+msgstr "0,023 M"
+
+#: mapscreen.city32:3 mapscreen.city35:3 mapscreen.city39:3 mapscreen.city40:3
+#: mapscreen.city43:3 mapscreen.city47:3
+msgctxt "map screen location - landscape"
+msgid "Sub-Simple Urban"
+msgstr "Sub-urbano semplice"
+
+#: mapscreen.city32:4
+msgctxt "map screen location - language"
+msgid "Omni Scando"
+msgstr "Scandinavo totale"
+
+#: mapscreen.city32:5
+msgctxt "map screen location - industry"
+msgid "Forestry"
+msgstr "Silvi-coltura"
+
+#: mapscreen.city33:1
+msgctxt "map screen location - name"
+msgid "Omsk"
+msgstr "Omsk"
+
+#: mapscreen.city33:2
+msgctxt "map screen location - population size"
+msgid "0.48 M"
+msgstr "0,48 M"
+
+#: mapscreen.city33:4
+msgctxt "map screen location - language"
+msgid "Russian (Ancient)"
+msgstr "Russo (Antico)"
+
+#: mapscreen.city34:1
+msgctxt "map screen location - name"
+msgid "Beirut"
+msgstr "Beirut"
+
+#: mapscreen.city34:2
+msgctxt "map screen location - population size"
+msgid "0.75 M"
+msgstr "0,75 M"
+
+#: mapscreen.city34:3
+msgctxt "map screen location - landscape"
+msgid "Sub-Sub-Simple Urban"
+msgstr "Sub-sub-urbano semplice"
+
+#: mapscreen.city35:1
+msgctxt "map screen location - name"
+msgid "Ulan Bator"
+msgstr "Ulan Bator"
+
+#: mapscreen.city35:2
+msgctxt "map screen location - population size"
+msgid "0.274 M"
+msgstr "0,274 M"
+
+#: mapscreen.city35:4
+msgctxt "map screen location - language"
+msgid "Mongol-Chinese"
+msgstr "Mongolo-cinese"
+
+#: mapscreen.city35:5 mapscreen.city41:5 mapscreen.city43:5
+msgctxt "map screen location - industry"
+msgid "Ore Extraction"
+msgstr "Estraz. di minerali"
+
+#: mapscreen.city36:1
+msgctxt "map screen location - name"
+msgid "Seoul"
+msgstr "Seul"
+
+#: mapscreen.city36:2
+msgctxt "map screen location - population size"
+msgid "6.5 M"
+msgstr "6,5 M"
+
+#: mapscreen.city36:4
+msgctxt "map screen location - language"
+msgid "United Korean"
+msgstr "Coreano Unito"
+
+#: mapscreen.city36:5
+msgctxt "map screen location - industry"
+msgid "Chemical Processing, Vehicle Manufacture"
+msgstr "Lavoraz. chimiche, Industria automobile"
+
+#: mapscreen.city36:6
+msgctxt "map screen location - toxicity"
+msgid "Chemical Waste, Heavy Industrial"
+msgstr "Rifiuti chimici, Industria pesante"
+
+#: mapscreen.city37:1
+msgctxt "map screen location - name"
+msgid "Hanoi"
+msgstr "Hanoi"
+
+#: mapscreen.city37:2
+msgctxt "map screen location - population size"
+msgid "3.3 M"
+msgstr "3,3 M"
+
+#: mapscreen.city37:4 mapscreen.city38:4
+msgctxt "map screen location - language"
+msgid "Zonal Mandarin"
+msgstr "Mandarino locale"
+
+#: mapscreen.city37:5
+msgctxt "map screen location - industry"
+msgid "Animal Husbandry, Vegetative Re-processing"
+msgstr "Zootecnia, Rigeneraz. vegetativa"
+
+#: mapscreen.city37:6
+msgctxt "map screen location - toxicity"
+msgid "Animal Effluent, Chemical Waste"
+msgstr "Scarico animale, Rifiuti chimici"
+
+#: mapscreen.city38:1
+msgctxt "map screen location - name"
+msgid "Manila"
+msgstr "Manila"
+
+#: mapscreen.city38:2
+msgctxt "map screen location - population size"
+msgid "8.5 M"
+msgstr "8,5 M"
+
+#: mapscreen.city38:5
+msgctxt "map screen location - industry"
+msgid "Furniture Manufacture"
+msgstr "Produz. di mobilio"
+
+#: mapscreen.city39:1
+msgctxt "map screen location - name"
+msgid "Freetown"
+msgstr "Freetown"
+
+#: mapscreen.city39:2
+msgctxt "map screen location - population size"
+msgid "0.18 M"
+msgstr "0,18 M"
+
+#: mapscreen.city39:4 mapscreen.city40:4 mapscreen.city41:4
+msgctxt "map screen location - language"
+msgid "Idiom Afrikaans"
+msgstr "Idioma Afrikaans"
+
+#: mapscreen.city39:5
+msgctxt "map screen location - industry"
+msgid "Ore Processing"
+msgstr "Lavoraz. minerali"
+
+#: mapscreen.city40:1
+msgctxt "map screen location - name"
+msgid "Monrovia"
+msgstr "Monrovia"
+
+#: mapscreen.city40:2
+msgctxt "map screen location - population size"
+msgid "0.65 M"
+msgstr "0,65 M"
+
+#: mapscreen.city41:1
+msgctxt "map screen location - name"
+msgid "Lagos"
+msgstr "Lagos"
+
+#: mapscreen.city41:2
+msgctxt "map screen location - population size"
+msgid "1.25 M"
+msgstr "1,25 M"
+
+#: mapscreen.city42:1
+msgctxt "map screen location - name"
+msgid "Nairobi"
+msgstr "Nairobi"
+
+#: mapscreen.city42:2
+msgctxt "map screen location - population size"
+msgid "2.3 M"
+msgstr "2,3 M"
+
+#: mapscreen.city42:4
+msgctxt "map screen location - language"
+msgid "Neutral Somali"
+msgstr "Somalo neutrale"
+
+#: mapscreen.city42:5
+msgctxt "map screen location - industry"
+msgid "Animal Husbandry, Tanning"
+msgstr "Zootecnia, Concia"
+
+#: mapscreen.city43:1
+msgctxt "map screen location - name"
+msgid "Port Moresby"
+msgstr "Port Moresby"
+
+#: mapscreen.city43:2
+msgctxt "map screen location - population size"
+msgid "0.93 M"
+msgstr "0,93 M"
+
+#: mapscreen.city44:1
+msgctxt "map screen location - name"
+msgid "Anchorage"
+msgstr "Anchorage"
+
+#: mapscreen.city44:2
+msgctxt "map screen location - population size"
+msgid "0.86 M"
+msgstr "2,2 M"
+
+#: mapscreen.city44:4
+msgctxt "map screen location - language"
+msgid "Anglo-Cyrillic"
+msgstr "Amer-eskimo"
+
+#: mapscreen.city44:5
+msgctxt "map screen location - industry"
+msgid "Weather Manipulation"
+msgstr "Depuraz. delle acque"
+
+#: mapscreen.city44:6
+msgctxt "map screen location - toxicity"
+msgid "High Radioactive, Light Industrial"
+msgstr "Rifiuti chimici"
+
+#: mapscreen.city45:1
+msgctxt "map screen location - name"
+msgid "Vancouver"
+msgstr "Vancouver"
+
+#: mapscreen.city45:2
+msgctxt "map screen location - population size"
+msgid "3.5 M"
+msgstr "3,5 M"
+
+#: mapscreen.city45:4
+msgctxt "map screen location - language"
+msgid "Lingvo Pseud"
+msgstr "Pseudo lingua"
+
+#: mapscreen.city45:5
+msgctxt "map screen location - industry"
+msgid "Magnetic Processing"
+msgstr "Lavoraz. magnetica"
+
+#: mapscreen.city46:1
+msgctxt "map screen location - name"
+msgid "Nuuk"
+msgstr "Nuuk"
+
+#: mapscreen.city46:2
+msgctxt "map screen location - population size"
+msgid "0.065 M"
+msgstr "0,065 M"
+
+#: mapscreen.city46:3
+msgctxt "map screen location - landscape"
+msgid "Municipality"
+msgstr "Comune"
+
+#: mapscreen.city46:5
+msgctxt "map screen location - industry"
+msgid "Air"
+msgstr "Aria"
+
+#: mapscreen.city46:6
+msgctxt "map screen location - toxicity"
+msgid "Low Radioactive"
+msgstr "Bassa radio-attività"
+
+#: mapscreen.city47:1
+msgctxt "map screen location - name"
+msgid "Georgetown"
+msgstr "George-town"
+
+#: mapscreen.city47:2
+msgctxt "map screen location - population size"
+msgid "0.08 M"
+msgstr "0,08 M"
+
+#: mapscreen.city47:4 mapscreen.city48:4
+msgctxt "map screen location - language"
+msgid "Idiom Spania"
+msgstr "Idioma Spania"
+
+#: mapscreen.city47:5 mapscreen.city49:5
+msgctxt "map screen location - industry"
+msgid "Mineral Extraction"
+msgstr "Estraz. di minerali"
+
+#: mapscreen.city48:1
+msgctxt "map screen location - name"
+msgid "Lima"
+msgstr "Lima"
+
+#: mapscreen.city48:2
+msgctxt "map screen location - population size"
+msgid "3.4 M"
+msgstr "3,4 M"
+
+#: mapscreen.city48:6
+msgctxt "map screen location - toxicity"
+msgid "High Radioactive Waste, Heavy Industrial"
+msgstr "Scorie radioatt., Industria pesante"
+
+#: mapscreen.city49:1
+msgctxt "map screen location - name"
+msgid "Sao Paulo"
+msgstr "San Paulo"
+
+#: mapscreen.city49:2
+msgctxt "map screen location - population size"
+msgid "18.9 M"
+msgstr "18,9 M"
+
+#: mapscreen.city49:4
+msgctxt "map screen location - language"
+msgid "Portuguese (Ancient)"
+msgstr "Portoghese (Antico)"
+
+#: mapscreen.city49:6
+msgctxt "map screen location - toxicity"
+msgid "Radioactive Waste, Light Industrial"
+msgstr "Scorie radioatt., Industria leggera"
+
+#: sci.death.reason:1
+msgctxt "scientists death reason"
+msgid "Laboratory accident"
+msgstr "Incidente nel laboratorio"
+
+#: sci.death.reason:2
+msgctxt "scientists death reason"
+msgid "Natural causes"
+msgstr "Cause naturali"
+
+#: sci.death.reason:3
+msgctxt "scientists death reason"
+msgid "Time-delay virus"
+msgstr "Virus a tempo"
+
+#: sci.death.reason:4
+msgctxt "scientists death reason"
+msgid "Experimental error"
+msgstr "Sperimentazione errata"
+
+#: sci.death.reason:5
+msgctxt "scientists death reason"
+msgid "Fatal miscalculation"
+msgstr "Fatale errore di calcolo"
+
+#: sci.death.reason:6
+msgctxt "scientists death reason"
+msgid "Illogical deduction"
+msgstr "Deduzione illogica"
+
+#: sci.death.reason:7
+msgctxt "scientists death reason"
+msgid "Terminal delusion"
+msgstr "Delusione eterna"
+
+#: sci.death.reason:8
+msgctxt "scientists death reason"
+msgid "Rash judgement"
+msgstr "Giudizio affrettato"
+
+#: sci.death.reason:9
+msgctxt "scientists death reason"
+msgid "Flawed reasoning"
+msgstr "Ragionamento insensato"
+
+#: sci.death.reason:10
+msgctxt "scientists death reason"
+msgid "Insanity"
+msgstr "Pazzia"
+
+#: sci.death.reason:11
+msgctxt "scientists death reason"
+msgid "Negligence"
+msgstr "Negligenza"
+
+#: sci.death.reason:12
+msgctxt "scientists death reason"
+msgid "Unsafe procedure"
+msgstr "Procedura insicura"
+
+#: sci.death.reason:13
+msgctxt "scientists death reason"
+msgid "Mental collapse"
+msgstr "Esaurimento mentale"
+
+#: sci.death.reason:14
+msgctxt "scientists death reason"
+msgid "Equipment malfunction"
+msgstr "Malfunzionamento"
+
+#: sci.death.reason:15
+msgctxt "scientists death reason"
+msgid "Unsuccessful test"
+msgstr "Test fallito"
+
+#: sci.death.reason:16
+msgctxt "scientists death reason"
+msgid "Cardiac arrest"
+msgstr "Arresto cardiaco"
+
+#: sci.death.reason:17
+msgctxt "scientists death reason"
+msgid "Incorrect assumption"
+msgstr "Conclusione errata"
+
+#: sci.death.reason:18
+msgctxt "scientists death reason"
+msgid "Electrocution"
+msgstr "Folgorazione"
+
+#: sci.death.reason:19
+msgctxt "scientists death reason"
+msgid "Disintegration"
+msgstr "Disintegrazione"
+
+#: sci.death.reason:20
+msgctxt "scientists death reason"
+msgid "Misadventure"
+msgstr "Disavventura"

@@ -25,6 +25,7 @@
 #include "bfmemut.h"
 #include "bfini.h"
 #include "bfkeybd.h"
+#include "campaign.h"
 #include "drawtext.h"
 #include "thing.h"
 #include "pepgroup.h"
@@ -33,6 +34,7 @@
 #include "scandraw.h"
 #include "display.h"
 #include "game.h"
+#include "wadfile.h"
 #include "swlog.h"
 /******************************************************************************/
 
@@ -209,6 +211,31 @@ const struct TbNamedEnum missions_conf_objective_params[] = {
   {NULL,			0},
 };
 
+enum NetObjctvConfigParam {
+    NOvP_CreditCost = 1,
+    NOvP_AnimNo,
+    NOvP_Coord,
+    NOvP_CreditReward,
+    NOvP_Fld12,
+    NOvP_Fld13,
+};
+
+const struct TbNamedEnum missions_conf_netscan_objctv_params[] = {
+  {"Cost",		NOvP_CreditCost},
+  {"Anim",		NOvP_AnimNo},
+  {"Coord",		NOvP_Coord},
+  {"Reward",	NOvP_CreditReward},
+  {"Fld12",		NOvP_Fld12},
+  {"Fld13",		NOvP_Fld13},
+  {NULL,		0},
+};
+
+#define PARAM_TOKEN_MAX 16
+#define COMMAND_TOKEN_MAX 32
+
+struct NetscanObjective mission_netscan_objectives[MISSION_NETSCAN_OBV_COUNT];
+ushort next_mission_netscan_objective;
+
 extern ulong dword_1C8460;
 extern ulong dword_1C8464;
 extern short draw_objectv_x;
@@ -382,7 +409,7 @@ void draw_objective_group_non_flag2_on_engine_scene(ushort group)
     for (thing = same_type_head[256 + group]; thing != 0; thing = p_thing->LinkSameGroup)
     {
         p_thing = &things[thing];
-        if ((p_thing->Flag & 0x02) == 0) {
+        if ((p_thing->Flag & TngF_Unkn0002) == 0) {
             draw_objective_point(draw_objectv_x - 10, draw_objectv_y, thing, 0, colour_lookup[colk]);
         }
     }
@@ -398,7 +425,7 @@ void draw_objective_group_non_pers_on_engine_scene(ushort group)
     for (thing = same_type_head[256 + group]; thing != 0; thing = p_thing->LinkSameGroup)
     {
         p_thing = &things[thing];
-        if ((p_thing->Flag & 0x80000) == 0) {
+        if ((p_thing->Flag & TngF_Persuaded) == 0) {
             draw_objective_point(draw_objectv_x - 10, draw_objectv_y, thing, 0, colour_lookup[colk]);
         }
     }
@@ -417,8 +444,8 @@ void draw_objective_group_not_own_by_plyr_on_engine_scene(ushort group, ushort p
     for (thing = same_type_head[256 + group]; thing != 0; thing = p_thing->LinkSameGroup)
     {
         p_thing = &things[thing];
-        if (((p_thing->Flag & 0x80000) == 0) || things[p_thing->Owner].U.UPerson.Group != plygroup) {
-            if ((p_thing->Flag & 0x02) == 0)
+        if (((p_thing->Flag & TngF_Persuaded) == 0) || things[p_thing->Owner].U.UPerson.Group != plygroup) {
+            if ((p_thing->Flag & TngF_Unkn0002) == 0)
                 draw_objective_point(draw_objectv_x - 10, draw_objectv_y, thing, 0, colour_lookup[colk]);
         }
     }
@@ -434,8 +461,8 @@ void draw_objective_group_not_own_by_pers_on_engine_scene(ushort group, short ow
     for (thing = same_type_head[256 + group]; thing != 0; thing = p_thing->LinkSameGroup)
     {
         p_thing = &things[thing];
-        if (((p_thing->Flag & 0x80000) == 0) && (p_thing->Owner != owntng)) {
-            if ((p_thing->Flag & 0x02) == 0)
+        if (((p_thing->Flag & TngF_Persuaded) == 0) && (p_thing->Owner != owntng)) {
+            if ((p_thing->Flag & TngF_Unkn0002) == 0)
                 draw_objective_point(draw_objectv_x - 10, draw_objectv_y, thing, 0, colour_lookup[colk]);
         }
     }
@@ -622,7 +649,7 @@ TbBool thing_is_destroyed(short thing)
 {
     struct Thing *p_thing;
     p_thing = &things[thing];
-    return ((p_thing->Flag & 0x0002) != 0);
+    return ((p_thing->Flag & TngF_Unkn0002) != 0);
 }
 
 TbBool person_is_dead(short thing)
@@ -718,51 +745,6 @@ TbBool item_is_carried_by_player(short thing, ushort weapon, ushort plyr)
             return true;
     }
     return false;
-}
-
-TbBool person_is_persuaded(short thing)
-{
-    struct Thing *p_person;
-
-    if (thing <= 0)
-        return false;
-
-    p_person = &things[thing];
-    return ((p_person->Flag & 0x80000) != 0);
-}
-
-TbBool person_is_persuaded_by_person(short thing, short owntng)
-{
-    struct Thing *p_person;
-
-    if (thing <= 0)
-        return false;
-
-    p_person = &things[thing];
-    if ((p_person->Flag & 0x80000) == 0)
-        return false;
-
-    return (p_person->Owner == owntng);
-}
-
-TbBool person_is_persuaded_by_player(short thing, ushort plyr)
-{
-    struct Thing *p_thing;
-    short plyagent, plygroup;
-    struct Thing *p_person;
-
-    if (thing <= 0)
-        return false;
-
-    p_thing = &things[thing];
-    if ((p_thing->Flag & 0x80000) == 0)
-        return false;
-
-    plyagent = players[plyr].DirectControl[0];
-    plygroup = things[plyagent].U.UPerson.Group;
-
-    p_person = &things[p_thing->Owner];
-    return (p_person->U.UPerson.Group == plygroup);
 }
 
 ubyte all_group_arrived(ushort group, short x, short y, short z, int radius)
@@ -1641,6 +1623,86 @@ void save_objective_chain_conf(TbFileHandle fh, ushort objectv_head, char *buf, 
     }
 }
 
+void snprint_netscan_objctv(char *buf, ulong buflen, struct NetscanObjective *p_nsobv, ushort nsobv)
+{
+    char *s;
+    ubyte nparams;
+    int i;
+
+    s = buf;
+
+    sprintf(s, "N%02d = %s( ", (int)nsobv, p_nsobv->AnimNo ? "NETSCAN_OBJ_VIDEO" : "NETSCAN_OBJ_TARGET");
+    s += strlen(s);
+    nparams = 0;
+
+    if (p_nsobv->CreditCost != 0) {
+        if (nparams) { sprintf(s, ", "); s += strlen(s); }
+        sprintf(s, "Cost(%d)", (int)(p_nsobv->CreditCost * 100));
+        s += strlen(s);
+        nparams++;
+    }
+
+    for (i = 0; i < 5; i++)
+    {
+        if ((p_nsobv->X[i]|p_nsobv->Z[i]) != 0) {
+            if (nparams) { sprintf(s, ", "); s += strlen(s); }
+            sprintf(s, "Coord(%d,0,%d)", (int)(p_nsobv->X[i] << 7), (int)(p_nsobv->Z[i] << 7));
+            s += strlen(s);
+            nparams++;
+        }
+    }
+
+    if (p_nsobv->AnimNo != 0) {
+        if (nparams) { sprintf(s, ", "); s += strlen(s); }
+        sprintf(s, "Anim(%hu)", (ushort)p_nsobv->AnimNo);
+        s += strlen(s);
+    }
+
+    if (p_nsobv->CreditReward != 0) {
+        if (nparams) { sprintf(s, ", "); s += strlen(s); }
+        sprintf(s, "Reward(%d)", (int)(p_nsobv->CreditReward * 100));
+        s += strlen(s);
+        nparams++;
+    }
+
+    if (p_nsobv->brobjfld_12 != 0) {
+        if (nparams) { sprintf(s, ", "); s += strlen(s); }
+        sprintf(s, "Fld12(%hu)", (ushort)p_nsobv->brobjfld_12);
+        s += strlen(s);
+    }
+
+    if (p_nsobv->brobjfld_13 != 0) {
+        if (nparams) { sprintf(s, ", "); s += strlen(s); }
+        sprintf(s, "Fld13(%hu)", (ushort)p_nsobv->brobjfld_13);
+        s += strlen(s);
+    }
+
+    snprintf(s, buflen - (s-buf), " )");
+}
+
+void save_netscan_objectives_conf(TbFileHandle fh, struct NetscanObjective *nsobv_arr,
+  ushort nsobv_count, char *buf, ulong buflen)
+{
+    ushort nsobv;
+    ushort nfilled;
+
+    nfilled = 0;
+    for (nsobv = 0; nsobv < nsobv_count; nsobv++)
+    {
+        struct NetscanObjective *p_nsobv;
+
+        p_nsobv = &nsobv_arr[nsobv];
+		snprint_netscan_objctv(buf, buflen, p_nsobv, nsobv);
+        strncat(buf, "\n", buflen);
+        LbFileWrite(fh, buf, strlen(buf));
+        nfilled++;
+    }
+    if (nfilled == 0) {
+        sprintf(buf, "; no objectives defined\n");
+        LbFileWrite(fh, buf, strlen(buf));
+    }
+}
+
 int tokenize_script_func(char *olist[], char *obuf, const char *ibuf, long ibuflen)
 {
     TbBool in_quotes, token_end, parse_end;
@@ -1672,10 +1734,17 @@ int tokenize_script_func(char *olist[], char *obuf, const char *ibuf, long ibufl
             olist[li] = &obuf[opos];
             li++;
             token_end = false;
+            if (ibuf[pos] == '\0')
+                break;
         }
         for (; pos < ibuflen; pos++)
         {
-            if (in_quotes) {
+            if (ibuf[pos] == '\0') {
+                in_quotes = false;
+                in_parath = 0;
+                token_end = true;
+                break; // there already is null char write outside the for()
+            } else if (in_quotes) {
                 if ((ibuf[pos] == '\"') ||
                      (ibuf[pos] == '\r') ||
                      (ibuf[pos] == '\n')) {
@@ -1720,6 +1789,7 @@ int tokenize_script_func(char *olist[], char *obuf, const char *ibuf, long ibufl
                     break;
                 }
             }
+
             obuf[opos] = ibuf[pos];
             opos++;
             if (pos >= ibuflen) {
@@ -1737,7 +1807,7 @@ int tokenize_script_func(char *olist[], char *obuf, const char *ibuf, long ibufl
 
 int parse_objective_param(struct Objective *p_objectv, const char *buf, long buflen)
 {
-    char *toklist[16];
+    char *toklist[PARAM_TOKEN_MAX];
     char tokbuf[128];
     int i;
 
@@ -1745,6 +1815,11 @@ int parse_objective_param(struct Objective *p_objectv, const char *buf, long buf
     i = tokenize_script_func(toklist, tokbuf, buf, buflen);
     if (i < 2) {
         LOGWARN("Objective parameter consists of less than 2 tokens.");
+        return -1;
+    }
+    if (i >= PARAM_TOKEN_MAX) {
+        // If too many params, tokbuf[] have been overwritten partially
+        LOGWARN("Objective parameter consists of too many (%d) tokens.", i);
         return -1;
     }
 
@@ -1773,7 +1848,7 @@ int parse_objective_param(struct Objective *p_objectv, const char *buf, long buf
         break;
     case ObvP_Thing:
         if (toklist[2] == NULL)  {
-            LOGWARN("Objective parameter \"%s\" requires 2 numbers.", toklist[0]);
+            LOGWARN("Objective parameter \"%s\" requires 2 numbers, got less.", toklist[0]);
             return -1;
         }
         p_objectv->Thing = atoi(toklist[1]);
@@ -1784,7 +1859,7 @@ int parse_objective_param(struct Objective *p_objectv, const char *buf, long buf
         break;
     case ObvP_Coord:
         if (toklist[3] == NULL)  {
-            LOGWARN("Objective parameter \"%s\" requires 3 numbers.", toklist[0]);
+            LOGWARN("Objective parameter \"%s\" requires 3 numbers, got less.", toklist[0]);
             return -1;
         }
         p_objectv->X = atoi(toklist[1]);
@@ -1820,11 +1895,20 @@ int parse_next_used_objective(const char *buf, long buflen, long pri, long mapno
 {
     struct ObjectiveDef *p_odef;
     struct Objective *p_objectv;
-    char *toklist[32];
+    char *toklist[COMMAND_TOKEN_MAX];
     char tokbuf[256];
-    int i, objectv;
+    int i, objectv, nret;
 
-    tokenize_script_func(toklist, tokbuf, buf, buflen);
+    i = tokenize_script_func(toklist, tokbuf, buf, buflen);
+    if (i < 1) {
+        LOGWARN("Objective consists of less than 1 token.");
+        return -1;
+    }
+    if (i >= COMMAND_TOKEN_MAX) {
+        // If too many params, tokbuf[] have been overwritten partially
+        LOGWARN("Objective consists of too many (%d) tokens.", i);
+        return -1;
+    }
 
     // Finding command number
     i = 0;
@@ -1845,12 +1929,216 @@ int parse_next_used_objective(const char *buf, long buflen, long pri, long mapno
     p_objectv->Type = i;
     p_objectv->Pri = pri;
 
+    nret = objectv;
     for (i = 1; toklist[i] != NULL; i++)
     {
-        parse_objective_param(p_objectv, toklist[i], sizeof(tokbuf) - (toklist[i] - tokbuf) );
+        int ret;
+        ret = parse_objective_param(p_objectv, toklist[i], sizeof(tokbuf) - (toklist[i] - tokbuf) );
+        if (ret != 1)
+            nret = -1;
     }
 
-    return objectv;
+    return nret;
 }
 
+int parse_netscan_obv_param(struct NetscanObjective *p_nsobv, const char *buf, long buflen)
+{
+    char *toklist[PARAM_TOKEN_MAX];
+    char tokbuf[128];
+    int i;
+    ulong n;
+
+    LbMemorySet(toklist, 0, sizeof(toklist));
+    i = tokenize_script_func(toklist, tokbuf, buf, buflen);
+    if (i < 1) {
+        LOGWARN("Objective parameter consists of less than 1 token.");
+        return -1;
+    }
+    if (i >= PARAM_TOKEN_MAX) {
+        // If too many params, tokbuf[] have been overwritten partially
+        LOGWARN("Objective parameter consists of too many (%d) tokens.", i);
+        return -1;
+    }
+
+    // Finding parameter number
+    i = 0;
+    while (1)
+    {
+        const struct TbNamedEnum *param;
+
+        if (missions_conf_netscan_objctv_params[i].name == NULL) {
+            i = -1;
+            break;
+        }
+        param = &missions_conf_netscan_objctv_params[i];
+        if (strcasecmp(toklist[0], param->name) == 0) {
+            i = param->num;
+            break;
+        }
+        i++;
+    }
+    switch (i)
+    {
+    case NOvP_CreditCost:
+        p_nsobv->CreditCost = atoi(toklist[1]) / 100;
+        break;
+    case NOvP_CreditReward:
+        p_nsobv->CreditReward = atoi(toklist[1]) / 100;
+        break;
+    case NOvP_Coord:
+        // Find unused index
+        for (n = 0; n < 4; n++) {
+            if ((p_nsobv->X[n]|p_nsobv->Z[n]) == 0)
+                break;
+        }
+        if (n > 4)  {
+            LOGWARN("Objective parameter \"%s\" used too many times.", toklist[0]);
+            return -1;
+        }
+        if (toklist[3] == NULL)  {
+            LOGWARN("Objective parameter \"%s\" requires 3 numbers, got less.", toklist[0]);
+            return -1;
+        }
+        p_nsobv->X[n] = atoi(toklist[1]) >> 7;
+        p_nsobv->Z[n] = atoi(toklist[3]) >> 7;
+        break;
+    case NOvP_AnimNo:
+        p_nsobv->AnimNo = atoi(toklist[1]);
+        break;
+    case NOvP_Fld12:
+        p_nsobv->brobjfld_12 = atoi(toklist[1]);
+        break;
+    case NOvP_Fld13:
+        p_nsobv->brobjfld_13 = atoi(toklist[1]);
+        break;
+    default:
+        LOGWARN("Objective parameter name \"%s\" not recognized.", toklist[0]);
+        return -1;
+    }
+    return 1;
+}
+
+int parse_next_netscan_objective(const char *buf, long buflen, long nsobv)
+{
+    struct NetscanObjective *p_nsobv;
+    char *toklist[COMMAND_TOKEN_MAX];
+    char tokbuf[256];
+    int i;
+    int nret;
+
+    nret = nsobv;
+    i = tokenize_script_func(toklist, tokbuf, buf, buflen);
+    if (i < 1) {
+        LOGWARN("Objective consists of less than 1 token.");
+        return -1;
+    }
+    if (i >= COMMAND_TOKEN_MAX) {
+        // If too many params, tokbuf[] have been overwritten partially
+        LOGWARN("Objective consists of too many (%d) tokens.", i);
+        return -1;
+    }
+
+    // The command name (toklist[0]) is not important currently - ignore
+
+    p_nsobv = &mission_netscan_objectives[nsobv];
+    LbMemorySet(p_nsobv, '\0', sizeof(struct NetscanObjective));
+
+    for (i = 1; toklist[i] != NULL; i++)
+    {
+        int ret;
+        ret = parse_netscan_obv_param(p_nsobv, toklist[i], sizeof(tokbuf) - (toklist[i] - tokbuf) );
+        if (ret != 1)
+            nret = -1;
+    }
+
+    return nret;
+}
+
+int load_netscan_objectives_bin(struct NetscanObjective *nsobv_arr, ubyte mapno, ubyte level)
+{
+    char locstr[52];
+    TbFileHandle fp;
+    ubyte nsobv_count;
+
+    sprintf(locstr, "obj%02d%02d.dat", (int)mapno, (int)level);
+    fp = open_file_from_wad(locstr, "qdata/posdefs");
+    if (fp == INVALID_FILE) {
+        return 0;
+    }
+    LbFileRead(fp, &nsobv_count, 1);
+    LbFileRead(fp, nsobv_arr, 20 * nsobv_count);
+    LbFileClose(fp);
+    return nsobv_count;
+}
+
+void load_netscan_objectives(ubyte mapno, ubyte level)
+{
+#if 0
+    netscan_objectives_count = load_netscan_objectives_bin(netscan_objectives, mapno, level);
+#else
+    struct Mission *p_missi;
+    ushort missi;
+    int remain;
+
+    missi = find_mission_with_map_and_level(mapno, level);
+    p_missi = &mission_list[missi];
+    LbMemoryCopy(netscan_objectives, &mission_netscan_objectives[p_missi->NetscanObvIndex],
+      sizeof(struct NetscanObjective) * p_missi->NetscanObvCount);
+    netscan_objectives_count = p_missi->NetscanObvCount;
+    remain = NETSCAN_OBJECTIVES_MAX_COUNT - netscan_objectives_count;
+    if (remain > 0)
+        LbMemorySet(&netscan_objectives[netscan_objectives_count], '\0',
+          sizeof(struct NetscanObjective) * remain);
+#endif
+}
+
+int read_objectives_text(void *data)
+{
+    char *p;
+    int totlen;
+    int i, n;
+    char c;
+
+    totlen = load_file_alltext("textdata/obj.txt", data);
+    if (totlen <= 0)
+      return 0;
+    p = (char *)data;
+    n = 0;
+    objective_text[n++] = NULL;
+    objective_text[n++] = p;
+    for (i = 0; i < totlen; i++, p++)
+    {
+        c = *p;
+        if (c == '\r' || c == '\n')
+        {
+            *p = '\0';
+            i++; p++;
+            c = *p;
+            if (c == '\r' || c == '\n') {
+                i++; p++;
+            }
+            objective_text[n++] = p;
+        }
+    }
+    while (n < 170)
+    {
+        objective_text[n++] = NULL;
+    }
+    return (totlen + 5) & ~0x03;
+}
+
+TbResult load_objectives_text(void)
+{
+    int len;
+    len = read_objectives_text(engine_mem_alloc_ptr);
+    if (len < 1) {
+        LOGERR("Objective text read failed.");
+        return Lb_FAIL;
+    }
+    else if (len > 8192) {
+        LOGERR("Objective text exceeded assigned max size.");
+        return Lb_FAIL;
+    }
+    return Lb_SUCCESS;
+}
 /******************************************************************************/

@@ -19,11 +19,14 @@
 #include "weapon.h"
 
 #include "bfmemory.h"
+#include "bfendian.h"
 #include "bffile.h"
 #include "bfini.h"
+#include "network.h"
 #include "thing.h"
 #include "player.h"
 #include "game.h"
+#include "wadfile.h"
 #include "swlog.h"
 /******************************************************************************/
 struct WeaponDef weapon_defs[] = {
@@ -350,42 +353,377 @@ void read_weapons_conf_file(void)
     weapon_names[i].num = 0;
 }
 
+const char *weapon_codename(ushort wtype)
+{
+    struct WeaponDefAdd *wdefa;
+
+    if (wtype >= WEP_TYPES_COUNT)
+        return "";
+
+    wdefa = &weapon_defs_a[wtype];
+    return wdefa->Name;
+}
+
+void init_weapon_text(void)
+{
+#if 0
+    asm volatile ("call ASM_init_weapon_text\n"
+        :  :  : "eax" );
+#else
+    char locstr[512];
+    int weptxt_pos;
+    int totlen;
+    char *s;
+    int i, n;
+
+    totlen = load_file_alltext("textdata/wms.txt", weapon_text);
+    if (totlen == Lb_FAIL)
+        return;
+
+    // TODO change the format to use our INI parser
+    s = weapon_text;
+    weapon_text[totlen] = '\0';
+
+    // section_start = s;
+    weptxt_pos = 0;
+
+    s = strchr(s, '[');
+    s++;
+    s = strchr(s, ']'); // position at start of WEAPONS section
+    s++;
+
+    s += 2;
+    while (1)
+    {
+        if (*s == '[')
+            break;
+
+        // Read weapon name
+        n = 0;
+        while ((*s != '\r') && (*s != '\n'))
+        {
+            locstr[n] = *s++;
+            n++;
+        }
+        locstr[n] = '\0';
+        s += 2;
+
+        // Recognize the weapon name
+        for (i = 1; i < WEP_TYPES_COUNT; i++)
+        {
+            const char *codename;
+            codename = weapon_codename(i);
+            if (strcmp(codename, locstr) == 0) {
+                i--;
+                break;
+            }
+        }
+        if (i < WEP_TYPES_COUNT)
+        {
+            weapon_text_index[i] = weptxt_pos;
+
+            while ((*s != '\r') && (*s != '\n')) {
+                weapon_text[weptxt_pos] = *s++;
+                weptxt_pos++;
+            }
+            weapon_text[weptxt_pos] = '\0';
+            weptxt_pos++;
+            s += 2;
+
+            n = weapon_text_index[i];
+            my_preprocess_text(&weapon_text[n]);
+        } else {
+            LOGERR("Weapon name not recognized: \"%s\"", locstr);
+            if (s) s = strpbrk(s, "\r\n");
+            if (s) s += 2;
+        }
+    }
+
+    s = strchr(s, '[');
+    s++;
+    s = strchr(s, ']'); // position at start of MODS section
+    s++;
+
+    s += 2;
+    while (1)
+    {
+        if ((*s == '[') || (*s == '\0'))
+            break;
+
+        // Read mod name
+        n = 0;
+        while ((*s != '\r') && (*s != '\n') && (*s != '\0'))
+        {
+            locstr[n] = *s++;
+            n++;
+        }
+        locstr[n] = '\0';
+        s += 2;
+
+        for (i = 1; i < MOD_TYPES_COUNT; i++)
+        {
+            const char *codename;
+            codename = cybmod_codename(i);
+            if (strcmp(codename, locstr) == 0) {
+                i--;
+                break;
+            }
+        }
+        if (i < MOD_TYPES_COUNT)
+        {
+            cybmod_text_index[i] = weptxt_pos;
+
+            while ((*s != '\r') && (*s != '\n') && (*s != '\0')) {
+                weapon_text[weptxt_pos] = *s++;
+                weptxt_pos++;
+            }
+            weapon_text[weptxt_pos] = '\0';
+            weptxt_pos++;
+            s += 2;
+
+            n = cybmod_text_index[i];
+            my_preprocess_text(&weapon_text[n]);
+        } else {
+            LOGERR("Cyb Mod name not recognized: \"%s\"", locstr);
+            if (s) s = strpbrk(s, "\r\n");
+            if (s) s += 2;
+        }
+    }
+#endif
+}
+
+ushort weapon_fourpack_index(ushort wtype)
+{
+    switch (wtype)
+    {
+    case WEP_NUCLGREN:
+        return WFRPK_NUCLGREN;
+    case WEP_ELEMINE:
+        return WFRPK_ELEMINE;
+    case WEP_EXPLMINE:
+        return WFRPK_EXPLMINE;
+    case WEP_KOGAS:
+        return WFRPK_KOGAS;
+    case WEP_CRAZYGAS:
+        return WFRPK_CRAZYGAS;
+    }
+    return WFRPK_COUNT;
+}
+
+TbBool weapons_has_weapon(ulong weapons, ushort wtype)
+{
+    ulong wepflg = 1 << (wtype-1);
+    return (weapons & wepflg) != 0;
+}
+
+/** Returns weapon set in given flags with index below last.
+ */
+ushort weapons_prev_weapon(ulong weapons, ushort last_wtype)
+{
+    ushort wtype;
+
+    if (last_wtype < 2)
+        return 0;
+
+    for (wtype = last_wtype - 1; wtype > 0; wtype--)
+    {
+        ulong wepflg = 1 << (wtype-1);
+        if ((weapons & wepflg) != 0)
+            return wtype;
+    }
+    return 0;
+}
+
+void weapons_remove_weapon(ulong *p_weapons, struct WeaponsFourPack *p_fourpacks, ushort wtype)
+{
+    ushort fp;
+
+    *p_weapons &= ~(1 << (wtype-1));
+
+    fp = weapon_fourpack_index(wtype);
+    if (fp < WFRPK_COUNT)
+        p_fourpacks->Amount[fp] = 0;
+}
+
+TbBool weapons_remove_one(ulong *p_weapons, struct WeaponsFourPack *p_fourpacks, ushort wtype)
+{
+    ushort fp;
+    TbBool was_last;
+
+    if ((*p_weapons & (1 << (wtype-1))) == 0)
+        return false;
+
+    was_last = true;
+    fp = weapon_fourpack_index(wtype);
+    if (fp < WFRPK_COUNT) {
+        was_last = (p_fourpacks->Amount[fp] <= 1);
+        p_fourpacks->Amount[fp]--;
+    }
+    if (was_last)
+        *p_weapons &= ~(1 << (wtype-1));
+    return true;
+
+}
+
+TbBool weapons_add_one(ulong *p_weapons, struct WeaponsFourPack *p_fourpacks, ushort wtype)
+{
+    ushort fp;
+    TbBool is_first;
+
+    if (number_of_set_bits(*p_weapons) >= WEAPONS_CARRIED_MAX_COUNT)
+        return false;
+
+    is_first = ((*p_weapons & (1 << (wtype-1))) == 0);
+
+    fp = weapon_fourpack_index(wtype);
+    if (fp < WFRPK_COUNT) {
+        if ((!is_first) && (p_fourpacks->Amount[fp] >= 3))
+            return false;
+
+        if (is_first)
+            p_fourpacks->Amount[fp] = 1;
+        else
+            p_fourpacks->Amount[fp]++;
+    } else {
+        if (!is_first)
+            return false;
+    }
+
+    if (is_first)
+        *p_weapons |= (1 << (wtype-1));
+
+    return true;
+
+}
+
+void sanitize_weapon_quantities(ulong *p_weapons, struct WeaponsFourPack *p_fourpacks)
+{
+    ushort wtype;
+    ushort n_weapons;
+
+    n_weapons = 0;
+    for (wtype = WEP_TYPES_COUNT-1; wtype > 0; wtype--)
+    {
+        ushort fp, n;
+        TbBool has_weapon;
+
+        has_weapon = weapons_has_weapon(*p_weapons, wtype);
+
+        if (has_weapon && (n_weapons > WEAPONS_CARRIED_MAX_COUNT)) {
+            weapons_remove_weapon(p_weapons, p_fourpacks, wtype);
+            has_weapon = false;
+        }
+
+        fp = weapon_fourpack_index(wtype);
+        if (fp >= WFRPK_COUNT)
+            continue;
+
+        n = p_fourpacks->Amount[fp];
+
+        if (!has_weapon)
+            n = 0;
+        else if (n < 1)
+            n = 1;
+        else if (n > 4)
+            n = 4;
+        p_fourpacks->Amount[fp] = n;
+    }
+}
+
 void do_weapon_quantities_net_to_player(struct Thing *p_person)
 {
-    ushort plyr, cc2, n;
+    ushort plyr, plagent;
+    ushort wtype;
 
     plyr = (p_person->U.UPerson.ComCur & 0x1C) >> 2;
-    cc2 = (p_person->U.UPerson.ComCur & 3);
+    plagent = (p_person->U.UPerson.ComCur & 3);
 
-    if (person_carries_weapon(p_person, WEP_NUCLGREN))
-        n = net_agents__FourPacks[plyr][cc2][WFRPK_NUCLGREN];
-    else
-        n = 0;
-    players[plyr].FourPacks[WFRPK_NUCLGREN][cc2] = n;
+    for (wtype = WEP_TYPES_COUNT-1; wtype > 0; wtype--)
+    {
+        ushort fp, n;
 
-    if (person_carries_weapon(p_person, WEP_ELEMINE))
-        n = net_agents__FourPacks[plyr][cc2][WFRPK_ELEMINE];
-    else
-        n = 0;
-    players[plyr].FourPacks[WFRPK_ELEMINE][cc2] = n;
+        fp = weapon_fourpack_index(wtype);
+        if (fp >= WFRPK_COUNT)
+            continue;
 
-    if (person_carries_weapon(p_person, WEP_EXPLMINE))
-        n = net_agents__FourPacks[plyr][cc2][WFRPK_EXPLMINE];
-    else
-        n = 0;
-    players[plyr].FourPacks[WFRPK_EXPLMINE][cc2] = n;
+        if (person_carries_weapon(p_person, wtype))
+            n = net_agents__FourPacks[plyr][plagent].Amount[fp];
+        else
+            n = 0;
+        players[plyr].FourPacks[fp][plagent] = n;
+    }
+}
 
-    if (person_carries_weapon(p_person, WEP_KOGAS))
-        n = net_agents__FourPacks[plyr][cc2][WFRPK_KOGAS];
-    else
-        n = 0;
-    players[plyr].FourPacks[WFRPK_KOGAS][cc2] = n;
+void do_weapon_quantities_player_to_net(struct Thing *p_person)
+{
+    ushort plyr, plagent;
+    ushort wtype;
 
-    if (person_carries_weapon(p_person, WEP_CRAZYGAS))
-        n = net_agents__FourPacks[plyr][cc2][WFRPK_CRAZYGAS];
-    else
-        n = 0;
-    players[plyr].FourPacks[WFRPK_CRAZYGAS][cc2] = n;
+    plyr = (p_person->U.UPerson.ComCur & 0x1C) >> 2;
+    plagent = p_person->U.UPerson.ComCur & 3;
+
+    for (wtype = WEP_TYPES_COUNT-1; wtype > 0; wtype--)
+    {
+        ushort fp, n;
+
+        fp = weapon_fourpack_index(wtype);
+        if (fp >= WFRPK_COUNT)
+            continue;
+
+        if (person_carries_weapon(p_person, wtype))
+            n = players[plyr].FourPacks[fp][plagent];
+        else
+            n = 0;
+        net_agents__FourPacks[plyr][plagent].Amount[fp] = n;
+    }
+}
+
+void do_weapon_quantities_cryo_to_player(struct Thing *p_person)
+{
+    ushort plyr, plagent;
+    ushort wtype;
+
+    plyr = (p_person->U.UPerson.ComCur & 0x1C) >> 2;
+    plagent = p_person->U.UPerson.ComCur & 3;
+
+    for (wtype = WEP_TYPES_COUNT-1; wtype > 0; wtype--)
+    {
+        ushort fp, n;
+
+        fp = weapon_fourpack_index(wtype);
+        if (fp >= WFRPK_COUNT)
+            continue;
+
+        if (person_carries_weapon(p_person, wtype))
+            n = cryo_agents.FourPacks[plagent].Amount[fp];
+        else
+            n = 0;
+        players[plyr].FourPacks[fp][plagent] = n;
+    }
+}
+
+void do_weapon_quantities_max_to_player(struct Thing *p_person)
+{
+    ushort plyr, plagent;
+    ushort wtype;
+
+    plyr = (p_person->U.UPerson.ComCur & 0x1C) >> 2;
+    plagent = p_person->U.UPerson.ComCur & 3;
+
+    for (wtype = WEP_TYPES_COUNT-1; wtype > 0; wtype--)
+    {
+        ushort fp, n;
+
+        fp = weapon_fourpack_index(wtype);
+        if (fp >= WFRPK_COUNT)
+            continue;
+
+        if (person_carries_weapon(p_person, wtype))
+            n = 4;
+        else
+            n = 0;
+        players[plyr].FourPacks[fp][plagent] = n;
+    }
 }
 
 void do_weapon_quantities1(struct Thing *p_person)
@@ -394,42 +732,14 @@ void do_weapon_quantities1(struct Thing *p_person)
     asm volatile ("call ASM_do_weapon_quantities1\n"
         : : "a" (p_person));
 #endif
-    ushort plyr, cc2, n;
-
-    plyr = (p_person->U.UPerson.ComCur & 0x1C) >> 2;
-    cc2 = p_person->U.UPerson.ComCur & 3;
     if (in_network_game)
-        return;
-
-    if (person_carries_weapon(p_person, WEP_NUCLGREN))
-        n= 4;
+    {
+        // No action
+    }
     else
-        n = 0;
-    players[plyr].FourPacks[WFRPK_NUCLGREN][cc2] = n;
-
-    if (person_carries_weapon(p_person, WEP_ELEMINE))
-        n = 4;
-    else
-        n = 0;
-    players[plyr].FourPacks[WFRPK_ELEMINE][cc2] = n;
-
-    if (person_carries_weapon(p_person, WEP_EXPLMINE))
-        n = 4;
-    else
-        n = 0;
-    players[plyr].FourPacks[WFRPK_EXPLMINE][cc2] = n;
-
-    if (person_carries_weapon(p_person, WEP_KOGAS))
-        n = 4;
-    else
-        n = 0;
-    players[plyr].FourPacks[WFRPK_KOGAS][cc2] = n;
-
-    if (person_carries_weapon(p_person, WEP_CRAZYGAS))
-        n = 4;
-    else
-        n = 0;
-    players[plyr].FourPacks[WFRPK_CRAZYGAS][cc2] = n;
+    {
+        do_weapon_quantities_max_to_player(p_person);
+    }
 }
 
 void do_weapon_quantities_proper1(struct Thing *p_person)
@@ -438,74 +748,13 @@ void do_weapon_quantities_proper1(struct Thing *p_person)
     asm volatile ("call ASM_do_weapon_quantities_proper1\n"
         : : "a" (p_person));
 #endif
-    ushort plyr, cc2, n;
-
-    plyr = (p_person->U.UPerson.ComCur & 0x1C) >> 2;
-    cc2 = p_person->U.UPerson.ComCur & 3;
-
     if (in_network_game)
     {
-        if (person_carries_weapon(p_person, WEP_NUCLGREN))
-            n = players[plyr].FourPacks[WFRPK_NUCLGREN][cc2];
-        else
-            n = 0;
-        net_agents__FourPacks[plyr][cc2][2] = n;
-
-        if (person_carries_weapon(p_person, WEP_ELEMINE))
-            n = players[plyr].FourPacks[WFRPK_ELEMINE][cc2];
-        else
-            n = 0;
-        net_agents__FourPacks[plyr][cc2][WFRPK_ELEMINE] = n;
-
-        if (person_carries_weapon(p_person, WEP_EXPLMINE))
-            n = players[plyr].FourPacks[WFRPK_EXPLMINE][cc2];
-        else
-            n = 0;
-        net_agents__FourPacks[plyr][cc2][WFRPK_EXPLMINE] = n;
-
-        if (person_carries_weapon(p_person, WEP_KOGAS))
-            n = players[plyr].FourPacks[WFRPK_KOGAS][cc2];
-        else
-            n = 0;
-        net_agents__FourPacks[plyr][cc2][WFRPK_KOGAS] = n;
-
-        if (person_carries_weapon(p_person, WEP_CRAZYGAS))
-            n = players[plyr].FourPacks[WFRPK_CRAZYGAS][cc2];
-        else
-            n = 0;
-        net_agents__FourPacks[plyr][cc2][WFRPK_CRAZYGAS] = n;
+        do_weapon_quantities_player_to_net(p_person);
     }
     else
     {
-        if (person_carries_weapon(p_person, WEP_NUCLGREN))
-            n = cryo_agents.FourPacks[cc2][WFRPK_NUCLGREN];
-        else
-            n = 0;
-        players[plyr].FourPacks[WFRPK_NUCLGREN][cc2] = n;
-
-        if (person_carries_weapon(p_person, WEP_ELEMINE))
-            n = cryo_agents.FourPacks[cc2][WFRPK_ELEMINE];
-        else
-            n = 0;
-        players[plyr].FourPacks[WFRPK_ELEMINE][cc2] = n;
-
-        if (person_carries_weapon(p_person, WEP_EXPLMINE))
-            n = cryo_agents.FourPacks[cc2][WFRPK_EXPLMINE];
-        else
-            n = 0;
-        players[plyr].FourPacks[WFRPK_EXPLMINE][cc2] = n;
-
-        if (person_carries_weapon(p_person, WEP_KOGAS))
-            n = cryo_agents.FourPacks[cc2][WFRPK_KOGAS];
-        else
-            n = 0;
-        players[plyr].FourPacks[WFRPK_KOGAS][cc2] = n;
-
-        if (person_carries_weapon(p_person, WEP_CRAZYGAS))
-            n = cryo_agents.FourPacks[cc2][WFRPK_CRAZYGAS];
-        else
-            n = 0;
-        players[plyr].FourPacks[WFRPK_CRAZYGAS][cc2] = n;
+        do_weapon_quantities_cryo_to_player(p_person);
     }
 }
 

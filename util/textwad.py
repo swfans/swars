@@ -33,6 +33,7 @@ import re
 import io
 import polib
 import textwrap
+import unicodedata
 
 from ctypes import c_char, c_int, c_ubyte, c_ushort, c_uint, c_ulonglong, c_float
 from ctypes import memmove, addressof, sizeof, Array, LittleEndianStructure
@@ -361,11 +362,11 @@ def find_occurence_in_polist(polist, occur):
 
 
 def read_enctable(po, fname):
-    po.chartable_decode = [''] * 256
-    po.chartable_encode = {}
+    chartable_decode = [''] * 256
+    chartable_encode = {}
     # Fill initial data
-    ctd = po.chartable_decode
-    cte = po.chartable_encode
+    ctd = chartable_decode
+    cte = chartable_encode
     for n in range(32):
         c = n.to_bytes(1, 'big').decode('utf-8', errors='ignore')
         ctd[n] = c
@@ -374,37 +375,64 @@ def read_enctable(po, fname):
     # Read char table
     with open(fname, 'r', encoding='utf-8') as fh:
         lines = fh.readlines()
-    for ln in lines:
+    for i,ln in enumerate(lines):
         ln = ln.lstrip()
         if len(ln) < 2:
             continue
         if ln[0] == '#':
             continue
         match = re.match(r'^([0-9]+|0x[0-9a-fA-F]+)[\t](.)$', ln)
-        assert match, f"{fname}: Invalid entry"
+        assert match, f"{fname} line {i}: Invalid entry"
         n = int(match.group(1),0)
         c = match.group(2)
         if ctd[n] == '':
             ctd[n] = c
         cte[c] = n.to_bytes(1, 'big')
+    return chartable_decode, chartable_encode
 
 
-def enctable_bytes_to_string(po, b):
-    #return b.decode('utf-8')
-    ctd = po.chartable_decode
+def enctable_bytes_to_string(ctd, b):
     s = ""
     for c in b:
         s = s + ctd[c]
     return s
 
 
-def enctable_string_to_bytes(po, s):
-    #return s.encode('utf-8')
-    cte = po.chartable_encode
+def enctable_string_to_bytes(cte, s):
     b = b""
-    for c in s:
+    for i,c in enumerate(s):
+        assert c in cte, f"Encode table lacks '{c}'at {i} from '{s}'"
         b = b + cte[c]
     return b
+
+
+def waditem_string_national_to_upper(stri):
+    stro = ""
+    for c in stri:
+        if c in "êô":
+            stro = stro + unicodedata.normalize('NFKD', c).encode('ascii', 'ignore').decode('ascii', errors='ignore')
+        elif c in "ìäåéöüñáàèíòúù":
+            stro = stro + c.upper()
+        else:
+            stro = stro + c
+    return stro
+
+
+def waditem_string_to_bytes(po, fname, s):
+    if fname.startswith("miss"):
+        b = enctable_string_to_bytes(po.chartable_m_encode, s)
+    else:
+        s = waditem_string_national_to_upper(s)
+        b = enctable_string_to_bytes(po.chartable_d_encode, s)
+    return b
+
+
+def waditem_bytes_to_string(po, fname, b):
+    if fname.startswith("miss"):
+        s = enctable_bytes_to_string(po.chartable_m_decode, b)
+    else:
+        s = enctable_bytes_to_string(po.chartable_d_decode, b)
+    return s
 
 
 def pofile_store_entry(po, pofh, e):
@@ -692,13 +720,46 @@ def prep_po_entries_wms(podict, lines):
     return
 
 
+def source_linear_number_to_sourceid(sourceno):
+    sourceid = sourceno
+    if sourceno > 34 + 30:
+        mailid_sub = ""
+        mailno = sourceno - 34 - 30;
+        # 20 Eurocorp mails, 24 Church mails
+        sourceid = mailno + 24 + 25
+    elif sourceno > 34:
+        mailid_sub = ""
+        mailno = sourceno - 34
+        if mailno >= 4:
+            i = mailno - 4
+            if i % 2 == 0:
+                mailid_sub = "a"
+            else:
+                mailid_sub = "b"
+            mailno = (i // 2) + 4
+        sourceid = mailno + 24
+    else:
+        mailid_sub = ""
+        mailno = sourceno
+        if mailno >= 4:
+            i = mailno - 4
+            if i % 2 == 0:
+                mailid_sub = "a"
+            else:
+                mailid_sub = "b"
+            mailno = (i // 2) + 4
+        sourceid = mailno
+    return sourceid, mailid_sub
+
+
 def prep_po_entries_netscan(podict, lines):
     comment = "outro message"
     n = 0
     k = 0
     level = 0
     mapno = 0
-    sourceid = 0
+    # note that sourceno is not sourceid - sometimes one sourceid has several missions
+    sourceno = 0
     for ln in lines[n:]:
         if len(ln) < 1:
             n += 1
@@ -711,34 +772,27 @@ def prep_po_entries_netscan(podict, lines):
             compnum = int(match.group(1), 10)
             level = compnum % 100
             mapno = compnum // 100
-            sourceid += 1
+            sourceno += 1
             n += 1
             k = 0
             continue
         if True:
+            mailid_sub = ""
+            (sourceid, mailid_sub) = source_linear_number_to_sourceid(sourceno)
             if sourceid < 24:
                 campgn = campaign_names[0]
                 mailid = sourceid
-            else:
+            elif sourceid < 50:
                 campgn = campaign_names[1]
                 mailid = sourceid - 23
+            else:
+                campgn = campaign_names[2]
+                mailid = sourceid - 49
 
             ctxt = "mission brief tactical information"
             e = polib.POEntry(msgstr=ln, msgctxt=ctxt)
-            # No need to have mission number
-            #missi = None
-            #if missi is None:
-            #    missi = dict_key_for_value(church_missions, (mapno,level,))
-            #    if missi is not None:
-            #        campgn = campaign_names[1]
-            #if missi is None:
-            #    missi = dict_key_for_value(syndct_missions, (mapno,level,))
-            #    if missi is not None:
-            #        campgn = campaign_names[0]
-            #if missi is None:
-            #    campgn = campaign_names[2]
 
-            e.occurrences.append( (f'mission.brief.mail{mailid}.map{mapno}.level{level}',f'{k+1}',) )
+            e.occurrences.append( (f'mission.brief.mail{mailid}{mailid_sub}.map{mapno}.level{level}',f'{k+1}',) )
             podict[campgn].append(e)
             n += 1
             k += 1
@@ -753,9 +807,12 @@ def prep_po_entries_miss(podict, lines, sourceid):
     if sourceid < 24:
         campgn = campaign_names[0]
         mailid = sourceid
-    else:
+    elif sourceid < 50:
         campgn = campaign_names[1]
         mailid = sourceid - 23
+    else:
+        campgn = campaign_names[2]
+        mailid = sourceid - 49
     entryno = 0
     msgstr = ""
     fmtchar = "c5"
@@ -844,7 +901,7 @@ def po_occurrence_to_fname(campgn, place, num):
     match = re.match(r'^mission[.]title$', place)
     if match:
         return "names.txt"
-    match = re.match(r'^mission[.]brief[.]mail([0-9]+)[.]map([0-9]+)[.]level([0-9]+)$', place)
+    match = re.match(r'^mission[.]brief[.]mail([0-9]+)([a-z]?)[.]map([0-9]+)[.]level([0-9]+)$', place)
     if match:
         return "netscan.txt"
     match = re.match(r'^scanner[.]objective$', place)
@@ -912,16 +969,20 @@ def textwad_extract_to_po(podict, txtfname, lines):
 
 
 def create_lines_for_city(lines, pomdict):
-    lines.append("# == syndicate & church map screen text ==")
+    lines.append("# == map screen text ==")
 
-    lines.append("# syndicate & church map screen title")
+    lines.append("# map screen title")
     if True:
         e = pomdict[('COMM','mapscreen.title','',)]
         lines.append(f"#{e.msgstr}")
 
-    for entryno in range(0,2):
+    for entryno in range(0,3):
         campgn = campaign_names[entryno]
-        lines.append(f"# {campgn} map screen headings")
+        if (campgn,'mapscreen.heading','1',) in pomdict.keys():
+            break
+
+    if True:
+        lines.append("# map screen headings")
         for k in range(1,7):
             try:
                 e = pomdict[(campgn,'mapscreen.heading',f'{k}',)]
@@ -1045,7 +1106,7 @@ def create_lines_for_names(lines, pomdict):
     lines.append("# Contains all city drop names in the mission number order.")
     lines.append("")
     pounidict = {}
-    for (ccampgn, place, num,), e in pomdict.items():
+    for (campgn, place, num,), e in pomdict.items():
         pounidict[ (place,num,) ] = e
     n = 0
     for missi in range(1,256):
@@ -1066,51 +1127,51 @@ def create_lines_for_netscan(lines, pomdict):
     lines.append("# Master file containing all OBJ****.txt files.")
     lines.append("# Files indexed Sn and Cn in Miss***.txt order.")
     lines.append("# Scan entries listed by Points Of Significance (POS).")
-    pounilist = []
+    pounilist = {}
     for (campgn, place, num,), e in pomdict.items():
-        match = re.match(r'^mission[.]brief[.]mail([0-9]+)[.]map([0-9]+)[.]level([0-9]+)$', place)
-        assert match, "Invalid netscan mission.brief.mailN.map occurrence"
+        match = re.match(r'^mission[.]brief[.]mail([0-9]+)([a-z]?)[.]map([0-9]+)[.]level([0-9]+)$', place)
+        assert match, "Invalid netscan mission.brief.mailN.mapM.levelL occurrence"
         mailid = int(match.group(1), 10)
+        mailid_sub = match.group(2)
         if campgn == campaign_names[1]:
             sourceid = mailid + 23
         elif campgn == campaign_names[2]:
             sourceid = mailid + 50
         else:
             sourceid = mailid
-        mapno = int(match.group(2), 10)
-        level = int(match.group(3), 10)
+        mapno = int(match.group(3), 10)
+        level = int(match.group(4), 10)
         num = int(num, 10) - 1
-        while sourceid >= len(pounilist):
-            pounilist.append( (None,None,None,) )
-        if pounilist[sourceid] == (None,None,None,):
-            pounilist[sourceid] = (mapno,level,[],)
-        (cmapno,clevel,clist,) = pounilist[sourceid]
+        ssourceid = f"{sourceid}{mailid_sub}"
+        if ssourceid not in pounilist.keys():
+            pounilist[ssourceid] = (mapno,level,[],)
+        (cmapno,clevel,clist,) = pounilist[ssourceid]
         assert cmapno == mapno
         assert clevel == level
         while num >= len(clist):
             clist.append(None)
         clist[num] = e
     # Some hard-coded values; not really needed, but make the file more like original
-    pounilist.append( (65,3,[],) )
-    if pounilist[21] == (None,None,None,):
-        pounilist[21] = (79,31,[],)
-    if pounilist[22] == (None,None,None,):
-        pounilist[22] = (8,1,[],)
-    if pounilist[33] == (None,None,None,):
-        pounilist[33] = (11,1,[],)
-    if pounilist[34] == (None,None,None,):
-        pounilist[34] = (65,2,[],)
-    if pounilist[59] == (None,None,None,):
-        pounilist[59] = (79,2,[],)
+    if "255" not in pounilist.keys():
+        pounilist["255"] = (65,3,[],)
+    if "21" not in pounilist.keys():
+        pounilist["21"] = (79,31,[],)
+    if "22" not in pounilist.keys():
+        pounilist["22"] = (8,1,[],)
+    if "33" not in pounilist.keys():
+        pounilist["33"] = (11,1,[],)
+    if "34" not in pounilist.keys():
+        pounilist["34"] = (65,2,[],)
+    if "59" not in pounilist.keys():
+        pounilist["59"] = (79,2,[],)
     # Now generate the lines
-    for sourceid, (mapno,level,clist,) in enumerate(pounilist):
+    for ssourceid, (mapno,level,clist,) in pounilist.items():
         if mapno is None:
-            if sourceid == 0:
-                continue
-            (mapno,level,) = (99,sourceid,)
+            (mapno,level,) = (99,ssourceid,)
             clist = []
         lines.append(f"[{mapno:02d}{level:02d}]")
-        for e in clist:
+        for i, e in enumerate(clist):
+           assert e is not None, f"Missing netscan entry mission.brief.mailN.map{mapno}.level{level}:{i+1}"
            lines.append(e.msgstr)
     lines.append("")
     return
@@ -1137,40 +1198,29 @@ def create_lines_for_outro(lines, pomdict):
 
 
 def create_lines_for_wms(lines, pomdict):
-    for campgn in campaign_names[0:3]:
-        lines.append(f"[{campgn}_player]".lower())
+    poweplist = []
+    pomodlist = []
+    for (campgn, place, num,), e in pomdict.items():
+        if campgn.upper() not in campaign_names[0:3]:
+            continue
+        match = re.match(r'^(weapons|mods)[.](.+)[.]description$', place)
+        if not match:
+            continue
+        wmtype = match.group(2)
+        if match.group(1) == "weapons":
+            poweplist.append( (wmtype,e,) )
+        else:
+            pomodlist.append( (wmtype,e,) )
 
-        poweplist = []
-        pomodlist = []
-        for (ccampgn, place, num,), e in pomdict.items():
-            if ccampgn != campgn:
-                continue
-            match = re.match(r'^(weapons|mods)[.](.+)[.]description$', place)
-            if not match:
-                continue
-            wmtype = match.group(2)
-            if match.group(1) == "weapons":
-                poweplist.append( (wmtype,e,) )
-            else:
-                pomodlist.append( (wmtype,e,) )
+    lines.append(f"[weapons]".lower())
+    for wmtype,e in poweplist:
+        lines.append(wmtype.upper())
+        lines.append(e.msgstr)
 
-        lines.append(f"[{campgn}_weapons]".lower())
-        for wmtype,e in poweplist:
-            wep_name = dict_key_for_value(weapon_mod_names_to_code, wmtype)
-            if (campgn == 'CHURCH') and (wmtype == 'PERSUADER'):
-                wep_name = "indoctrinator"
-            if wep_name is None:
-                wep_name = wmtype
-            lines.append(wep_name.upper())
-            lines.append(e.msgstr)
-
-        lines.append(f"[{campgn}_mods]".lower())
-        for wmtype,e in pomodlist:
-            mod_name = dict_key_for_value(weapon_mod_names_to_code, wmtype)
-            if mod_name is None:
-                mod_name = wmtype
-            lines.append(mod_name.upper())
-            lines.append(e.msgstr)
+    lines.append(f"[mods]".lower())
+    for wmtype,e in pomodlist:
+        lines.append(wmtype.upper())
+        lines.append(e.msgstr)
     lines.append("")
     return
 
@@ -1280,7 +1330,7 @@ def textwad_read_to_podict(po, podict,  wadfh, idxfh):
         wadfh.seek(e.Offset, os.SEEK_SET)
         txt_buffer = wadfh.read(e.Length)
         lines = txt_buffer.split(b'\n')
-        lines = [enctable_bytes_to_string(po, ln).rstrip("\r\n") for ln in lines]
+        lines = [waditem_bytes_to_string(po, txtfname, ln).rstrip("\r\n") for ln in lines]
         textwad_extract_to_po(podict, txtfname, lines)
     return
 
@@ -1326,13 +1376,21 @@ def textwad_extract(po):
 def textwad_create(po, wadfh, idxfh):
     # Load PO files
     podict = {}
-    for cidx, campgn in enumerate(campaign_names):
-        pofname = po.pofiles[cidx]
-        if campgn.lower() not in pofname:
+    #for cidx, campgn in enumerate(campaign_names):
+    #    pofname = po.pofiles[cidx]
+    for poidx, pofname in enumerate(po.pofiles):
+        campgn = None
+        for ccampgn in campaign_names:
+            if ccampgn.lower() in pofname:
+                campgn = ccampgn
+        #if campgn.lower() not in pofname:
+        if campgn is None:
             print("{}: File name lacks campaign name, is there a mistake?".format(pofname))
+            campgn = "UNKN"
         polist = polib.pofile(pofname)
         podict[campgn] = polist
-    for campgn in campaign_names:
+
+    for campgn in podict.keys():
         for e in podict[campgn]:
             if e.msgstr == "":
                 e.msgstr = e.msgid
@@ -1343,7 +1401,7 @@ def textwad_create(po, wadfh, idxfh):
         e.Filename = txtfname.upper().encode('utf-8')
         e.Offset = wadfh.tell()
         textwad_create_from_po(lines, podict, txtfname)
-        lines = [enctable_string_to_bytes(po, ln) for ln in lines]
+        lines = [waditem_string_to_bytes(po, txtfname, ln) for ln in lines]
         wadfh.write(b'\r\n'.join(lines))
         e.Length = wadfh.tell() - e.Offset
         idxfh.write((c_ubyte * sizeof(e)).from_buffer_copy(e))
@@ -1356,8 +1414,8 @@ def main():
     """
     parser = argparse.ArgumentParser(description=__doc__.split('.')[0])
 
-    parser.add_argument('pofiles', type=str, nargs=len(campaign_names),
-          help="List of per-campaign PO/POT file names, in proper order (sy ch pu co)")
+    parser.add_argument('pofiles', type=str, nargs=2,
+          help="List of PO/POT file names, in proper order (per-campaign, then common)")
 
     parser.add_argument('-w', '--wadfile', type=str, required=True,
           help="Name for WAD/IDX files")
@@ -1377,7 +1435,10 @@ def main():
           help="Import or export raw files (TXT) rather than .PO/POT")
 
     subparser.add_argument('-t', '--enctable', type=str,
-          help="Character encoding table file name")
+          help="Character encoding table file name for directly converted strings")
+
+    parser.add_argument('-m', '--menctable', type=str,
+          help="Character encoding table file name for mission briefing strings")
 
     subparser = parser.add_mutually_exclusive_group(required=True)
 
@@ -1393,25 +1454,26 @@ def main():
 
     po = parser.parse_args()
 
-    if po.wadfile.lower().endswith(".wad"):
-        po.wadbase = os.path.splitext(po.wadfile)[0]
-    else:
-        po.wadbase = po.wadfile
-    assert len(po.wadbase) > 0, "Provided WAD file name base is too short"
-    po.wadfile = po.wadbase + ".wad"
-    po.idxfile = po.wadbase + ".idx"
+    if True:
+        if po.wadfile.lower().endswith(".wad"):
+            po.wadbase = os.path.splitext(po.wadfile)[0]
+        else:
+            po.wadbase = po.wadfile
+        assert len(po.wadbase) > 0, "Provided WAD file name base is too short"
+        po.wadfile = po.wadbase + ".wad"
+        po.idxfile = po.wadbase + ".idx"
 
-    if len(po.engwadfile) > 0:
-        po.engwadbase = os.path.splitext(os.path.basename(po.engwadfile))[0]
+    if po.extract and not po.raw:
+        if po.engwadfile.lower().endswith(".wad"):
+            po.engwadbase = os.path.splitext(po.engwadfile)[0]
+        else:
+            po.engwadbase = po.engwadfile
         po.engwadfile = po.engwadbase + ".wad"
         po.engidxfile = po.engwadbase + ".idx"
-    else:
-        po.engwadbase = ""
-        po.engwadfile = ""
-        po.engidxfile = ""
 
     if not po.raw:
-        read_enctable(po, po.enctable)
+        (po.chartable_d_decode, po.chartable_d_encode) = read_enctable(po, po.enctable)
+        (po.chartable_m_decode, po.chartable_m_encode) = read_enctable(po, po.menctable)
 
     if po.extract:
         if (po.verbose > 0):

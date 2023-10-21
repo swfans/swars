@@ -34,6 +34,13 @@ Wars CD*, or digital distribution of the game. There were several physical
 versions released. The multi-lingual version was tested and will definitely
 work, other version were not tested. Only releases for PC can be used.
 
+The CD version which you use narrows the range of available languages.
+
+* Multi-lingual CD contains `eng` `fre` `ita` `spa` `swe`,
+* German release is required to use `ger`,
+* Japaneses "SW Premium" release contains `eng` `fre` `jap`, but asian fonts
+  are not supported by the port.
+
 The steps you need to take vary depending on your operating system.
 
 ### Installing on GNU or UNIX
@@ -51,7 +58,7 @@ The steps are:
 5. do `util/install -f SOURCE -t TARGET -l LANG`, where
    * *SOURCE* is the game CD path, like `/media/cdrom`,
    * *TARGET* is the destination path, in this case `/usr/local/share/swars`,
-   * *LANG* is the installation language, and can be one of: `eng` `fre` `ita` `spa` `swe`.
+   * *LANG* is the installation language, and can be one of: `eng` `fre` `ger` `ita` `spa` `swe`.
 
 If all went well, you can now play the game.
 
@@ -101,15 +108,25 @@ If you've decided on the hand-compilation option, proceed with the following ste
 3. copy all the files and directories, except for the Language directory, from
    the `Game` directory within the *Syndicate Wars CD* to the location of your
    desire, say `SWarsLocation`.
-4. copy all the files, except `SOUND.DAT`, from the `Game\Language\LANGUAGE\` from
+4. copy all the files, except `sound.dat`, from the `game\language\LANGUAGE\` from
    the *Syndicate Wars CD* to the `SWarsLocation\Data` directory, where *LANGUAGE*
    stands for the appropriate subdirectory fo the language you want
-5. copy the `SOUND.DAT` file (from the directory stated above) to the
-   `SWarsLocation\Sound` directory
+5. copy the `sound.dat` file (from the directory stated above) to the
+   `SWarsLocation\sound` directory
 6. *[optional]* rip the game CD Audio tracks to `track_{1,2,3}.ogg` (vorbis)
 7. *[optional]* create a `SWarsLocation\music` directory and copy the
    previously encoded ogg files there
-8. copy `swars.exe` and `conf` folder to your `SWarsLocation` directory
+8. from the compilation folder, copy `swars.exe` and `conf` folder to your
+   `SWarsLocation` directory
+9. from the compilation folder, copy `lang` directory to `SWarsLocation` and
+   rename it to `language`, so that ie. files for english are within
+   `SWarsLocation\language\eng\`
+
+If instead ob the above points you prefer more technical description on what to
+copy and where, read the script `util/install` which is used to perform
+installation on GNU or UNIX systems. If your Windows has a Linux subsystem
+istalled, you may even use it to perform the installation automatically - see
+[GNU or UNIX chapter](#installing-on-gnu-or-unix) for details.
 
 You can now launch `swars.exe` and have fun!
 
@@ -124,7 +141,7 @@ To build **Syndicate Wars Port**, you will need the following:
 
 * GNU Autotools
 * GNU C compiler
-* Python 3
+* Python 3 (with module: polib)
 * vorbis-tools (oggenc in particular)
 * cdparanoia
 * development versions of the following libraries:
@@ -152,7 +169,8 @@ Here are specific commands required to compile the executable on Ubuntu linux.
 Install the dependencies - remember that some must be 32-bit (i386):
 
 ```
-sudo apt install gcc-multilib g++-multilib lib32z1 python3
+sudo apt install gcc-multilib g++-multilib lib32z1
+sudo apt install python3 python3-polib
 sudo apt install vorbis-tools
 sudo apt install cdparanoia
 sudo apt install libsdl1.2-dev:i386
@@ -234,6 +252,18 @@ cp wildmidi-0.4.5-win32/*.h /mingw32/include/
 cp wildmidi-0.4.5-win32/*.a /mingw32/lib/
 cp wildmidi-0.4.5-win32/*.dll /mingw32/bin/
 ```
+
+The Python interpeter needs to have an additional module installed:
+
+```
+pip install polib
+```
+
+Make sure the modules are installed on the Python version used during build - with MSYS2,
+you often get separate `i686` and `x86_64` versions of Python. For both of them, you
+can separately install `pip` package, and then add any missing modules through it.
+To select specific `python3` or `pip` at command line, alter the `PATH` variable,
+like in some commands in later part of the instructions.
 
 Now as our host is ready, we can start working on the actual `swars` sources.
 We will still have to provide paths to 32-bit configuration - MSYS will prefer

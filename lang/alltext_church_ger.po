@@ -1,0 +1,3002 @@
+# *****************************************************************************
+#  Syndicate Wars Port, source port of the classic strategy game from Bullfrog.
+# *****************************************************************************
+#   @file alltext_church_ger.po
+#      Menu text for SW Port translation file
+#  @par Purpose:
+#      Contains translation of the national text in the game.
+#  @par Comment:
+#      Use this file to improve the translation for specific language.
+#  @author   Syndicate Wars Fans
+#  @date     20 Aug 2023 - 02 Sep 2023
+#  @par  Copying and copyrights:
+#      This program is free software; you can redistribute it and/or modify
+#      it under the terms of the GNU General Public License as published by
+#      the Free Software Foundation; either version 2 of the License, or
+#      (at your option) any later version.
+#
+# *****************************************************************************
+msgid ""
+msgstr ""
+"Project-Id-Version: Menu text for SW Port\n"
+"Report-Msgid-Bugs-To: https://github.com/swfans/swars/issues\n"
+"POT-Creation-Date: 2023-09-05 11:30+0200\n"
+"PO-Revision-Date: 2023-09-09 17:01+0200\n"
+"Last-Translator: Mefistotelis <mefistotelis@gmail.com>\n"
+"Language-Team: Syndicate Wars Fans <github.com/swfans>\n"
+"Language: de_DE\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-SourceCharset: utf-8\n"
+"X-Generator: Poedit 3.0.1\n"
+
+#: mapscreen.heading:1
+msgctxt "church maps screen headings - name"
+msgid "Pilgrimage"
+msgstr "Pilgerort"
+
+#: mapscreen.heading:2
+msgctxt "church maps screen headings - population size"
+msgid "Heathens"
+msgstr "Heiden"
+
+#: mapscreen.heading:3
+msgctxt "church maps screen headings - landscape"
+msgid "Geography"
+msgstr "Geografie"
+
+#: mapscreen.heading:4
+msgctxt "church maps screen headings - language"
+msgid "Tongue"
+msgstr "Sprache"
+
+#: mapscreen.heading:5
+msgctxt "church maps screen headings - industry"
+msgid "Material Riches"
+msgstr "Gter"
+
+#: mapscreen.heading:6
+msgctxt "church maps screen headings - toxicity"
+msgid "Legacy"
+msgstr "Erbe"
+
+#: mission.title:48
+msgctxt "mission title"
+msgid "Harbinger"
+msgstr "Verkünder"
+
+#: mission.brief.mail1.par1.h
+msgctxt "mission brief email header"
+msgid "Blessings, Disciple."
+msgstr "Gesegnet seid Ihr, Klosterschüler."
+
+#: mission.brief.mail1.par2.c2
+msgctxt "mission brief email orders"
+msgid ""
+"Your mission is to take control of a substation belonging to EuroCorp's "
+"UTOPIA network. It is situated in Detroit. When we have it, the Cataclysm "
+"will begin."
+msgstr ""
+"Euer Auftrag ist es, einen Knotenpunkt von EuroCorps UTOPIA-Netzwerk zu "
+"erobern. Er liegt in Detroit. Wenn wir ihn kontrollieren, kann die Katharsis "
+"beginnen."
+
+#: mission.brief.mail1.par3.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Delivered unto you this day is the automorphic computer virus which will end "
+"the tyranny the Syndicate calls UTOPIA. We have named this virus Harbinger "
+"and it will snatch control from the Syndicate, computer by computer, "
+"preparing the way for the enlightenment to follow."
+msgstr ""
+"Mit Gottes Segen sei Euch an diesem Tage der Automorph-Computer-Virus "
+"gegeben, der die Tyrannei beenden wird, die das Syndikat UTOPIA nennt. Wir "
+"haben ihm den Namen \"Verkünder\" gegeben, und er wird dem Syndikat die "
+"Kontrolle entreissen, Computer für Computer, und der Weg wird bereit sein "
+"für die Erleuchtung, die da kommen soll."
+
+#: mission.brief.mail1.par4.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Lead your Acolytes into the Detroit UTOPIA ground station, in order that we "
+"may release the virus. The Syndicate operatives who guard the station will "
+"not be expecting force, because none has been used for years. This is our "
+"advantage."
+msgstr ""
+"Führt Eure Kriegermönche in die Detroiter Bodenstation des UTOPIA-Netzwerks, "
+"auf dass wir den Virus freisetzen mögen. Die Syndikatsangehörigen, die den "
+"Knoten bewachen, werden keine Gewalt erwarten, weil seit Jahren keine mehr "
+"angewendet wurde. Das ist unser Vorteil."
+
+#: mission.brief.mail1.par5.c5
+msgctxt "mission brief email paragraph"
+msgid "Blessed be."
+msgstr "Meinen Segen."
+
+#: mission.brief.mail1.par6.c4 mission.brief.mail2.par7.c4
+#: mission.brief.mail3.par5.c4 mission.brief.mail5.par6.c4
+#: mission.brief.mail4.par6.c4 mission.brief.mail6.par9.c4
+#: mission.brief.mail7.par7.c4 mission.brief.mail8.par5.c4
+#: mission.brief.mail9.par8.c4 mission.brief.mail10.par5.c4
+#: mission.brief.mail11.par5.c4 mission.brief.mail12.par5.c4
+#: mission.brief.mail13.par6.c4 mission.brief.mail14.par6.c4
+#: mission.brief.mail15.par7.c4 mission.brief.mail16.par4.c4
+#: mission.brief.mail17.par6.c4 mission.brief.mail18.par6.c4
+#: mission.brief.mail19.par7.c4 mission.brief.mail20.par6.c4
+#: mission.brief.mail21.par6.c4 mission.brief.mail22.par7.c4
+#: mission.brief.mail23.par5.c4 mission.brief.mail24.par5.c4
+#: mission.brief.mail25.par5.c4
+msgctxt "mission brief email sender"
+msgid "Virgil"
+msgstr "Virgil"
+
+#: mission.brief.mail1.par7.c1
+msgctxt "mission brief book quote"
+msgid ""
+"The non-believers climbed for days to confront the master in the mountains. "
+"\"Where do you get your so-called faith?\" they asked."
+msgstr ""
+"Die Ungläubigen waren tagelang geklettert, um den Meister in den Bergen zu "
+"besuchen. \"Woher bekommst Du Deinen sogenannten Glauben?\", fragten sie ihn."
+
+#: mission.brief.mail1.par8.c1
+msgctxt "mission brief book quote"
+msgid "\"You brought it,\" the master replied. \"You've all climbed so high.\""
+msgstr ""
+"\"Ihr habt ihn mitgebracht,\" erwiderte darauf der Meister. \"Ihr seid alle "
+"so hoch geklettert.\""
+
+#: mission.brief.mail1.par9.c1 mission.brief.mail2.par9.c1
+#: mission.brief.mail3.par7.c1 mission.brief.mail4.par8.c1
+#: mission.brief.mail5.par8.c1 mission.brief.mail6.par11.c1
+#: mission.brief.mail7.par9.c1 mission.brief.mail8.par7.c1
+#: mission.brief.mail9.par10.c1 mission.brief.mail10.par7.c1
+#: mission.brief.mail11.par7.c1 mission.brief.mail12.par7.c1
+#: mission.brief.mail13.par8.c1 mission.brief.mail14.par8.c1
+#: mission.brief.mail15.par10.c1 mission.brief.mail16.par6.c1
+#: mission.brief.mail17.par8.c1 mission.brief.mail18.par8.c1
+#: mission.brief.mail19.par9.c1 mission.brief.mail20.par8.c1
+#: mission.brief.mail21.par10.c1 mission.brief.mail22.par9.c1
+#: mission.brief.mail23.par7.c1 mission.brief.mail24.par7.c1
+#: mission.brief.mail25.par8.c1
+msgctxt "mission brief book quote"
+msgid "- The Book of Cataclysm."
+msgstr "- Das Buch des Kataklysmus."
+
+#: mission.brief.mail1.map35.level2:1
+msgctxt "mission brief tactical information"
+msgid "Landing Ground: Detroit IML Link"
+msgstr "Landebereich: Detroit, IML-Station"
+
+#: mission.brief.mail1.map35.level2:2
+msgctxt "mission brief tactical information"
+msgid "Target building: EuroCorp AI Ground Station"
+msgstr "Zielgebäude: K.I.-Bodenstation von EuroCorp"
+
+#: mission.brief.mail1.map35.level2:3
+msgctxt "mission brief tactical information"
+msgid "Disposition of EuroCorp guards"
+msgstr "Aufstellung der Wachen von EuroCorp"
+
+#: mission.brief.mail1.map35.level2:4
+msgctxt "mission brief tactical information"
+msgid "Sanctuary: Detroit IML Link"
+msgstr "Zufluchtsort: Detroit, IML-Station"
+
+#: mission.brief.mail1.map35.level2:5
+msgctxt "mission brief tactical information"
+msgid ""
+"Eavesdrop: recommended means of gaining entry to Syndicate Ground Station"
+msgstr ""
+"Abhörinformation: Empfohlene Methode, um in die Bodenstation des Syndikats "
+"zu gelangen"
+
+#: mission.title:2
+msgctxt "mission title"
+msgid "Missionary"
+msgstr "Missionar"
+
+#: mission.brief.mail2.par1.h
+msgctxt "mission brief email header"
+msgid "Congratulations, Disciple."
+msgstr "Gratuliere, mein Klosterschüler."
+
+#: mission.brief.mail2.par2.c2
+msgctxt "mission brief email orders"
+msgid ""
+"Your acolytes' firm guidance is required in Tripoli, where the emergent "
+"chaos brought by the Cataclysm threatens our Garden of Meditations. Defend "
+"our faith with maximum force."
+msgstr ""
+"Die feste Hand Eurer Kriegermönche wird in Tripolis gebraucht, wo das Chaos, "
+"das die nahende Katharsis begleitet, unseren neuen Garten der Meditation "
+"bedroht. Verteidigt unseren Glauben mit maximaler Kraft."
+
+#: mission.brief.mail2.par3.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Harbinger, our holy virus, has begun working to free the population. "
+"However, not all those released from the yoke of repression immediately "
+"embrace the way of enlightenment our Church offers. Indeed, without our "
+"guidance, many will be lost. Soon there will be a Day of Reckoning and every "
+"soul will count."
+msgstr ""
+"Der Verkünder, unser heiliger Virus, hat sein Werk begonnen, das Volk zu "
+"befreien. Doch nicht alle, die er aus dem Joch der Unterdrückung befreit, "
+"betreten sofort den Weg der Erleuchtung, den unsere Kirche bietet. Und ohne "
+"unsere spirituelle Leitung werden viele verloren sein. Bald wird der Tag der "
+"Abrechnung kommen, und jede Seele wird zählen!"
+
+#: mission.brief.mail2.par4.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Our Garden of Meditations in Tripoli is besieged by lost souls the Syndicate "
+"call the Unguided. Sadly, we must protect each other with maximum force, for "
+"this is the lesson of all religions. Equip your acolytes appropriately and "
+"send them to Tripoli to impose some tranquillity there."
+msgstr ""
+"Unser Garten der Meditation in Tripolis wird von armen Seelen belagert, die "
+"das Syndikat \"Ungeleitete\" nennt. Bedauerlicherweise müssen wir einander "
+"mit maximaler Kraft beschützen, denn das ist die Botschaft aller Religionen. "
+"Rüstet Eure Mönche entsprechend aus und schickt sie nach Tripolis, damit sie "
+"dort für Ruhe sorgen."
+
+#: mission.brief.mail2.par5.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"We have plans for Earth, Acolyte. The Church must change the whole world. "
+"This is our time. We will save only the chosen. Enough for now."
+msgstr ""
+"Wir haben grosse Pläne für die Erde, mein Schüler. Die Kirche muss das "
+"Antlitz der gesamten Welt verändern. Dies ist unsere Zeit. Wir werden nur "
+"die Auserwählten erretten. Doch nun genug für heute."
+
+#: mission.brief.mail2.par6.c5
+msgctxt "mission brief email paragraph"
+msgid "The Nine have said this."
+msgstr "Dies sind die Worte der Neun."
+
+#: mission.brief.mail2.par8.c1
+msgctxt "mission brief book quote"
+msgid ""
+"The Master told his pupils, \"Forget being taught and concentrate on "
+"learning. When you're sure, question everything.\""
+msgstr ""
+"Und der Meister sprach zu seinen Schülern: \"Vergesst, dass man Euch etwas "
+"beibringen will, und konzentriert Euch aufs Lernen. Und wenn Ihr sicher "
+"seid, stellt alles in Frage.\""
+
+#: mission.brief.mail2.map25.level16:1 mission.brief.mail9d.map25.level46:1
+msgctxt "mission brief tactical information"
+msgid "Landing Ground: Tripoli IML Link"
+msgstr "Landebereich: Tripolis, IML-Station"
+
+#: mission.brief.mail2.map25.level16:2 mission.brief.mail9d.map25.level46:2
+msgctxt "mission brief tactical information"
+msgid "Our Garden of Meditations"
+msgstr "Unser Meditationsgarten"
+
+#: mission.title:51
+msgctxt "mission title"
+msgid "Conversions"
+msgstr "Bekehrungen"
+
+#: mission.brief.mail3.par1.h
+msgctxt "mission brief email header"
+msgid "Harbinger is about its work. Let us pray."
+msgstr "Der Verkünder ist unter den Menschen. Lasset uns beten."
+
+#: mission.brief.mail3.par2.c2
+msgctxt "mission brief email orders"
+msgid ""
+"We must stir this brew in Buenos Aires. By converting two mutual enemies, "
+"our Church will assume control of the whole of the city."
+msgstr ""
+"Wir müssen diese Unruhen in Buenos Aires ausnutzen. Indem wir zwei Erzfeinde "
+"bekehren, wird die Kirche ihren Frieden und ihre Kontrolle über die ganze "
+"Stadt ausdehnen."
+
+#: mission.brief.mail3.par3.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Our brothers and sisters in South America have gathered intelligence useful "
+"to our cause. They have identified Juan Ormandoz, a senior EuroCorp lackey "
+"from Buenos Aires, who is attempting to maintain the city's stability in "
+"spite of the activities of the Unguided. The leader of this group, Chico "
+"Ramirez, foolishly believes he can take and keep control of a commercial "
+"district. Convert them both and we will succeed where EuroCorp has so far "
+"failed."
+msgstr ""
+"Unsere Brüder und Schwestern in Südamerika haben uns nützliche Informationen "
+"zukommen lassen. Sie haben uns auf einen gewissen Juan Ormandoz aufmerksam "
+"gemacht, einen ranghohen Lakai von EuroCorp, der in Buenos Aires trotz aller "
+"Aktivitäten der Ungeleiteten die Stabilität der Stadt aufrecht erhalten "
+"will. Der Anführer der Ungeleiteten hingegen, Chico Ramirez, glaubt "
+"närrischerweise, er könne ein grösseres Gewerbegebiet von EuroCorp erobern "
+"und halten. Bekehrt sie beide, und wir werden Erfolge verzeichnen, wo "
+"EuroCorp bislang versagt hat."
+
+#: mission.brief.mail3.par4.c5
+msgctxt "mission brief email paragraph"
+msgid "Spread the good news."
+msgstr "Verbreitetet die Frohe Botschaft."
+
+#: mission.brief.mail3.par6.c1
+msgctxt "mission brief book quote"
+msgid "Faithful minds are not enough. Deliver unto us brains also."
+msgstr "Ein gläubiger Verstand genügt nicht. Gebt uns auch das Gehirn selbst."
+
+#: mission.brief.mail3.map26.level2:1 mission.brief.mail9b.map26.level3:1
+msgctxt "mission brief tactical information"
+msgid "Landing Ground: Buenos Aires IML Link"
+msgstr "Landebereich: Buenos Aires, IML-Station"
+
+#: mission.brief.mail3.map26.level2:2
+msgctxt "mission brief tactical information"
+msgid "Juan Ormandoz works in this executive office estate"
+msgstr "Juan Ormandoz arbeitet in dieser Anlage für leitende Angestellte"
+
+#: mission.brief.mail3.map26.level2:3
+msgctxt "mission brief tactical information"
+msgid "Chico Ramirez and his gang occupy this Old Calendar high street"
+msgstr ""
+"Chico Ramirez und seine Bande besetzen diese Hauptstrasse von Old Calendar"
+
+#: mission.brief.mail3.map26.level2:4 mission.brief.mail9b.map26.level3:3
+msgctxt "mission brief tactical information"
+msgid "Sanctuary: Buenos Aires IML Link"
+msgstr "Zufluchtsort: Buenos Aires, IML-Station"
+
+#: mission.brief.mail3.map26.level2:5
+msgctxt "mission brief tactical information"
+msgid "Eavesdrop: city vaults estimated to contain Cr 1,000,000"
+msgstr ""
+"Abhörinformation: Die Tresore der Stadt sind schätzungsweise mit 1.000.000 "
+"Cr gefüllt"
+
+#: mission.title:27
+msgctxt "mission title"
+msgid "Test Of Faith"
+msgstr "Glaubensprüfung"
+
+#: mission.brief.mail4.par1.h
+msgctxt "mission brief email header"
+msgid "Our prayers are with you, <login>."
+msgstr "Unsere Gebete geleiten Euch, <login>."
+
+#: mission.brief.mail4.par2.c2
+msgctxt "mission brief email orders"
+msgid ""
+"The time has come to test the strength of our faith. A lone agent of the "
+"Syndicate has been seen lurking in the shadows of Santiago. Convert him."
+msgstr ""
+"Wahrlich, die Zeit ist gekommen, die Stärke unseres Glaubens auf die Probe "
+"zu stellen. In Santiago wandelt ein einzelner Agent des Syndikats im "
+"Schatten - bekehrt ihn zum Lichte."
+
+#: mission.brief.mail4.par3.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"What better place to find those with the strength we seek than in the ranks "
+"of our enemy, the Syndicate? Its agents are our Acolytes in waiting. Just as "
+"you were one of their number, before we showed you the light, so shall you "
+"soon lead EuroCorp's elite from the dark path they tread. A EuroCorp agent "
+"has been sent to Santiago to undermine our work there. You will not allow "
+"this to happen."
+msgstr ""
+"Welch' besseren Ort gibt es, um nach der Stärke Ausschau zu halten, die wir "
+"brauchen, als in den Reihen unseres Feindes, des Syndikates? Seine Agenten "
+"sind unsere künftigen Klosterschüler und Mönche. So wie Ihr einer der Ihren "
+"wart, bevor wir Euch den Weg zum Licht zeigten, so sollt auch Ihr selbst "
+"bald EuroCorps Elite von den dunklen Pfaden abbringen, auf denen sie "
+"wandeln. Ein Agent des Syndikats wurde nach Santiago entsandt, um unser Werk "
+"dort zu erschweren. Ihr werdet das nicht zulassen."
+
+#: mission.brief.mail4.par4.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Before you commit your Acolytes to Santiago, ensure they carry the "
+"Indoctrinator and use it, so that others may see its light. When the "
+"Indoctrinator is used, UTOPIA's cruel illusion is shattered by our Truth. "
+"Those who see then gather and follow where the Acolyte leads. And when their "
+"numbers are sufficient, even the agent of EuroCorp will hear their chorus "
+"and gladly join it."
+msgstr ""
+"Doch bevor Ihr Eure Kriegermönche nach Santiago entlasst, vergewissert Euch, "
+"dass sie den Indoktrinator bei sich tragen, auf dass sie damit verirrten "
+"Seelen den Weg ins Licht zeigen mögen. Wenn ein wahrhaftiger Jünger den "
+"Indoktrinator anwendet, wird die grausame Illusion UTOPIAs von unserer "
+"Wahrheit zerschmettert. Und alle, die dann sehend werden, scharen sich um "
+"den Jünger und folgen seinem Worte. Und wenn ihre Zahl gross genug ist, "
+"werden selbst die verstockten Agenten von EuroCorp ihren Chor hören und "
+"freudig einstimmen."
+
+#: mission.brief.mail4.par5.c5
+msgctxt "mission brief email paragraph"
+msgid "Peace be with you afterwards."
+msgstr "Der Friede sei danach mit Euch."
+
+#: mission.brief.mail4.par7.c1
+msgctxt "mission brief book quote"
+msgid ""
+"Mark thine enemy, for all that separates the damned from the chosen is a dot "
+"of monochrome light, projected onto the back of a neck."
+msgstr ""
+"Erkennt Eure Feinde, denn alles, was die Verdammten von den Auserwählten "
+"unterscheidet, ist ein winziger monochromer Lichtpunkt, der ins Genick "
+"projiziert wird."
+
+#: mission.brief.mail4.map7.level3:1
+msgctxt "mission brief tactical information"
+msgid "Landing Ground: APC to deliver your acolytes"
+msgstr "Landebereich: Gepanzerter Truppentransporter liefert Ihre Mönche ab"
+
+#: mission.brief.mail4.map7.level3:2
+msgctxt "mission brief tactical information"
+msgid "EuroCorp agent search area"
+msgstr "Agenten von EuroCorp durchsuchen den Bereich"
+
+#: mission.brief.mail4.map7.level3:3
+msgctxt "mission brief tactical information"
+msgid "Sanctuary: Santiago monasterial complex"
+msgstr "Zufluchtsort: Klosterkomplex Santiago"
+
+#: mission.brief.mail4.map7.level3:4
+msgctxt "mission brief tactical information"
+msgid "Bridges have been destroyed in a Syndicate attack"
+msgstr "Brücken wurden bei einem Angriff des Syndikats zerstört"
+
+#: mission.brief.mail4.map7.level3:5
+msgctxt "mission brief tactical information"
+msgid "Eavesdrop: IML route to target is guarded by EuroCorp forces"
+msgstr ""
+"Abhörinformation: Die IML-Route zum Ziel wird von EuroCorp-Truppen bewacht"
+
+#: mission.title:17
+msgctxt "mission title"
+msgid "Foundations"
+msgstr "Grundlagenforschung"
+
+#: mission.brief.mail5.par1.h
+msgctxt "mission brief email header"
+msgid "You are blessed, <login>."
+msgstr "Gesegnet seid Ihr, <login>."
+
+#: mission.brief.mail5.par2.c2
+msgctxt "mission brief email orders"
+msgid ""
+"Our foundations are strong and expensive. The two gold-laden armoured cars "
+"which we are tracking in Johannesburg will feed our hungry coffers. Take "
+"them. Your cause is righteous."
+msgstr ""
+"Unser Glaube ist stark, unser Kreuzzug kostspielig. Die beiden goldbeladenen "
+"Panzerwagen, die wir in Johannesburg auf dem Scanner haben, werden unsere "
+"hungrigen Säckel füttern. Schnappt sie Euch. Eure Sache ist gerecht."
+
+#: mission.brief.mail5.par3.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Our cause proceeds apace. The mind-warpers of the Syndicate will soon answer "
+"for their crimes. We seek to bring this day of judgment forward but we "
+"require funds in order to match the worldly might of EuroCorp."
+msgstr ""
+"Unser Kreuzzug schreitet stetig voran. Die Hirnverblender des Syndikates "
+"werden sich bald schon für ihre Missetaten rechtfertigen müssen. Wir "
+"kämpfen, auf dass dieser Tag des Jüngsten Gerichtes bald kommen möge, doch "
+"wir benötigen finanzielle Mittel, um die weltliche Macht von EuroCorp "
+"niederzuringen."
+
+#: mission.brief.mail5.par4.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"The Nine have given us the Codex. This holy book is the blueprint of our "
+"salvation. Yet we must pay a price for each chapter we turn into reality. "
+"This we call research. So it is that the more material wealth we acquire, "
+"the closer we are to possessing the minds of gods."
+msgstr ""
+"Die Neun haben uns den Kodex gegeben. Er ist der Bauplan unserer Erlösung. "
+"Doch wir müssen einen hohen Preis zahlen für jedes Kapitel, das wir "
+"verwirklichen. Das nennen wir Forschung. Und so ergibt sich die heilige "
+"Schlussfolgerung: Je mehr materielle Güter wir einsammeln, desto näher "
+"kommen wir unserem Ziel, selbst zu Göttern zu werden."
+
+#: mission.brief.mail5.par5.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Go to Johannesburg, where EuroCorp's logistical bottleneck has resulted in a "
+"backlog of bullion shipments. The bullion is delivered in armoured cars, to "
+"vaults which are kept under constant guard. It takes two armoured cars to "
+"deliver a shipment. Hijack them both and take them to the designated pick-up "
+"point. We urge that you do not enter or attack the heavily guarded "
+"stronghold. You will find other ways to lay your palms on the money. Use "
+"your mind and not just your firepower."
+msgstr ""
+"Begebt Euch nach Johannesburg, wo ein logistisches Nadelöhr zu einem Stau "
+"von Goldbarren-Ladungen geführt hat. Dieses Edelmetall wird unserer Sache "
+"sehr förderlich sein. Die Barren werden in Panzerwagen zu Tresoren "
+"geschafft, die unter ständiger Bewachung stehen. Für jede Ladung sind zwei "
+"Panzerwagen erforderlich. Leitet die Panzerwagen auf den rechten Weg um und "
+"führt sie zum vereinbarten Sammelpunkt. Wir empfehlen Euch dringend, die "
+"schwerbewachte Basis weder zu betreten noch anzugreifen. Es gibt andere "
+"Wege, das Gold des Herrn einzusammeln. Benutzt Euren Verstand, nicht nur "
+"Eure Feuerkraft."
+
+#: mission.brief.mail5.par7.c1
+msgctxt "mission brief book quote"
+msgid "Remember, the meek shall inherit nothing."
+msgstr "Bedenket, selig sind die Starken, denn ihrer ist die Macht auf Erden."
+
+#: mission.brief.mail5.map22.level3:1 mission.brief.mail9c.map22.level2:1
+#: mission.brief.mail23.map22.level4:1
+msgctxt "mission brief tactical information"
+msgid "Landing Ground: Johannesburg IML Link"
+msgstr "Landebereich: Johannesburg, IML-Station"
+
+#: mission.brief.mail5.map22.level3:2
+msgctxt "mission brief tactical information"
+msgid "EuroCorp vault"
+msgstr "Tresor von EuroCorp"
+
+#: mission.brief.mail5.map22.level3:3
+msgctxt "mission brief tactical information"
+msgid "Bullion convoy"
+msgstr "Goldbarrentransport"
+
+#: mission.brief.mail5.map22.level3:4
+msgctxt "mission brief tactical information"
+msgid "Target vehicle"
+msgstr "Zielfahrzeug"
+
+#: mission.brief.mail5.map22.level3:5
+msgctxt "mission brief tactical information"
+msgid "Convoy's destination"
+msgstr "Ziel des Konvois"
+
+#: mission.brief.mail5.map22.level3:6 mission.brief.mail23.map22.level4:4
+msgctxt "mission brief tactical information"
+msgid "Sanctuary: Johannesburg IML Link"
+msgstr "Zufluchtsort: Johannesburg, IML-Station"
+
+#: mission.title:10
+msgctxt "mission title"
+msgid "A Meeting Of Minds"
+msgstr "Ein Treffen verwandter Geister"
+
+#: mission.title:39
+msgctxt "mission title"
+msgid "Soul Crusader"
+msgstr "Seelenkreuzzug"
+
+#: mission.brief.mail6.par1.h
+msgctxt "mission brief email header"
+msgid "Be at peace, <login>."
+msgstr "Der Friede sei mit Euch, <login>."
+
+#: mission.brief.mail6.par2.c2
+msgctxt "mission brief email orders"
+msgid ""
+"Chosen disciple Mirabelle Lucy De Saxo has been anointed by the Nine. Lead "
+"her into the heart of a EuroCorp laboratory so that she can indoctrinate a "
+"scientist there whose research complements our own."
+msgstr ""
+"Unsere auserwählte Jüngerin Mirabelle Lucy De Saxo ist von den Neun gesalbt "
+"worden. Geleitet sie ins Herz eines EuroCorp-Labors, auf dass sie mit ihrem "
+"starken Glauben einen Wissenschaftler bekehre, dessen Forschung unser "
+"eigenes Werk ergänzt."
+
+#: mission.brief.mail6.par3.c2
+msgctxt "mission brief email orders"
+msgid ""
+"Take this scientist to our nearest temple, where Father Black will hear his "
+"confession."
+msgstr ""
+"Bringt diesen Wissenschaftler in unseren nahegelegenen Tempel, wo Pater "
+"Black ihm die Beichte abnehmen wird."
+
+#: mission.brief.mail6.par4.c2
+msgctxt "mission brief email orders"
+msgid "Send De Saxo where the scientist tells you and bring his secrets to us."
+msgstr ""
+"Schickt De Saxo an den Ort, den der Wissenschaftler Euch nennen wird, und "
+"bring uns seine Geheimnisse."
+
+#: mission.brief.mail6.par5.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Hear the Nine. There are those with great brains but lost minds. They wander "
+"in the dark wilderness, not yet able to see the light of our faith. One such "
+"man currently wages the war against Harbinger for EuroCorp. The Nine intend "
+"to save his soul by applying his intellect to the divine cause of turning "
+"the Codex into new technology."
+msgstr ""
+"Hört das Wort der Neun. Wahrlich, es gibt jene, die grosse Gehirne besitzen, "
+"doch den Verstand verloren haben. Sie wandeln in der finsteren Wildnis und "
+"können das strahlende Licht unseres Glaubens nicht sehen. Ein solches "
+"verirrtes Schaf führt für EuroCorp gerade Krieg gegen den Verkünder. Die "
+"Neun wollen seine Seele retten, indem sie seinen Verstand für die grosse "
+"Sache einsetzen, den Kodex in neue Technologien zu verwandeln."
+
+#: mission.brief.mail6.par6.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Your target, Dr Schweizer, works in a EuroCorp lab in Geneva. It is too "
+"heavily guarded for Acolytes to penetrate, so you will direct our special "
+"infiltration agent - Mirabelle Lucy De Saxo - through the security cordon. "
+"When she has converted Schweizer, she must see to it that he is given "
+"sanctuary in the old temple we have taken over. Stealth is Mirabelle's most "
+"powerful weapon. Take care of her for us."
+msgstr ""
+"Euer Ziel ist Dr. Schweizer. Er arbeitet in einem EuroCorp-Labor in Genf. Es "
+"ist zu schwer bewacht, als dass unsere Kampfmönche sich Zutritt verschaffen "
+"könnten, also werdet Ihr unsere spezielle Infiltrationsagentin Mirabelle "
+"Lucy De Saxo durch den Sicherheitskordon geleiten. Wenn sie Schweizer "
+"bekehrt hat, muss sie dafür sorgen, dass ihm in dem alten Tempel, den wir "
+"übernommen haben, Asyl gewährt wird. Heimlichkeit ist Mirabelles stärkste "
+"Waffe. Passt gut auf sie auf."
+
+#: mission.brief.mail6.par7.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Father Black, our local minister, will hear the doctor's confession, as soon "
+"as Schweizer enters the temple. This will provide Mirabelle with the "
+"information she needs, in order to track down the doctor's works. Send her "
+"to this place and direct our daughter to harvest the fruits of the doctor's "
+"labours. See that she delivers them to us."
+msgstr ""
+"Pater Black, unser Weihepriester vor Ort, wird dem Doktor die Beichte "
+"abnehmen, sobald Schweizer den Tempel betritt. Dadurch wird Mirabelle die "
+"Informationen bekommen, die sie braucht, um die Forschungsdokumente des "
+"Doktors zu finden. Schickt sie dorthin und führt unsere Tochter, auf dass "
+"sie die Früchte von Schweizers Arbeit ernten möge. Und sorgt dafür, dass sie "
+"sie uns übergibt."
+
+#: mission.brief.mail6.par8.c5
+msgctxt "mission brief email paragraph"
+msgid "Your soul is more blessed with each deed you do."
+msgstr "Eure Seele wird gesegneter mit jeder Tat, die Ihr vollbringt."
+
+#: mission.brief.mail6.par10.c1
+msgctxt "mission brief book quote"
+msgid ""
+"All knowledge is stored somewhere. Be it in books, heads or deep under "
+"glaciers. And when we find it, we make it ours. Faith is bricks; knowledge "
+"is mortar."
+msgstr ""
+"Alles Wissen ist irgendwo gespeichert, sei es in Büchern, Köpfen oder unter "
+"massiven Gletschern. Und wenn wir es finden, nehmen wir es an uns. Der "
+"Glaube ist der Ziegel, das Wissen der Mörtel."
+
+#: mission.brief.mail6a.map21.level46:1
+msgctxt "mission brief tactical information"
+msgid "Landing Ground: Geneva IML Link"
+msgstr "Landebereich: Genf, IML-Station"
+
+#: mission.brief.mail6a.map21.level46:2
+msgctxt "mission brief tactical information"
+msgid "EuroCorp conference centre"
+msgstr "Konferenzzentrum von EuroCorp"
+
+#: mission.brief.mail6a.map21.level46:3
+msgctxt "mission brief tactical information"
+msgid "Dr Schweizer"
+msgstr "Dr. Schweizer"
+
+#: mission.brief.mail6a.map21.level46:4
+msgctxt "mission brief tactical information"
+msgid "Father Black's temple"
+msgstr "Tempel von Pater Black"
+
+#: mission.brief.mail6c.map50.level47:1
+msgctxt "mission brief tactical information"
+msgid "Landing Ground: Vancouver IML Link"
+msgstr "Landebereich: Vancouver, IML-Station"
+
+#: mission.brief.mail6c.map50.level47:2
+msgctxt "mission brief tactical information"
+msgid "Dr Schweizer's laboratory"
+msgstr "Dr. Schweizers Labor"
+
+#: mission.brief.mail6c.map50.level47:3
+msgctxt "mission brief tactical information"
+msgid "Sanctuary: Vancouver IML Link"
+msgstr "Zufluchtsort: Vancouver, IML-Station"
+
+#: mission.brief.mail6c.map50.level47:4
+msgctxt "mission brief tactical information"
+msgid "Eavesdrop: Syndicate agents detected"
+msgstr "Abhörinformation: Agenten des Syndikats entdeckt"
+
+#: mission.title:31
+msgctxt "mission title"
+msgid "Heretics"
+msgstr "Häretiker"
+
+#: mission.brief.mail7.par1.h
+msgctxt "mission brief email header"
+msgid "Bless you, Disciple."
+msgstr "Gottes Segen über Euch, Klosterschüler."
+
+#: mission.brief.mail7.par2.c2
+msgctxt "mission brief email orders"
+msgid ""
+"When the Cataclysm's winds of chaos howl in our faces we must stand firm. "
+"Protect our temple in Hong Kong from the Unguided storm which approaches the "
+"island."
+msgstr ""
+"Wenn der Chaossturm des Kataklysmus uns ins Gesicht bläst, müssen wir "
+"standhaft sein. Beschützt unseren Tempel in Hongkong vor dem Sturm der "
+"Ungeleiteten, der sich der Insel nähert."
+
+#: mission.brief.mail7.par3.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"The Nine have had a vision. The Unguided seek to undermine our plans for the "
+"Pacific Rim. A heretic, known to us as Ko-Paull Vissick, perverts our "
+"message. He subjects the Unguided rabble to a travesty of the eldritch "
+"knowledge revealed to us by the Nine. Such wilful recklessness can only harm "
+"the unprepared mind and, by this sedition, Vissick creates greater enmity "
+"towards our Church."
+msgstr ""
+"Die Neun hatten eine Vision. Die Ungeleiteten versuchen, unsere Pläne für "
+"die asiatische Pazifikküste zu vereiteln. Ein Ketzer, der uns namentlich als "
+"Ko-Paull Vissick bekannt ist, pervertiert unsere Botschaft, indem er dem "
+"Pöbel das geheiligste Wissen preisgibt, das uns die Neun enthüllt haben. "
+"Solche Überforderung kann den unvorbereiteten Verstand nur schädigen, und so "
+"fördert Vissick mit diesem Unsinn nur Feindschaft gegenüber der Kirche."
+
+#: mission.brief.mail7.par4.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Now reports reach us of landings by large numbers of Unguided in Hong Kong. "
+"We believe they are heading for our temple. It falls to you and your "
+"Acolytes to reach the temple before the Unguided and defend against the "
+"inevitable onslaught."
+msgstr ""
+"Jetzt erreichen uns Berichte aus Hongkong über Landungen von Ungeleiteten in "
+"grösserer Anzahl. Wir glauben, dass sie unsere Kirche als Ziel haben. Es ist "
+"an Euch und Euren Mönchen, die Kirche vor dem Pöbel zu erreichen und sie "
+"gegen den unvermeidlichen Ansturm zu verteidigen."
+
+#: mission.brief.mail7.par5.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Faithful servant, here is more. We will be gods. A machine promises to "
+"remake the world. Keep the faith and you buy your place of safety. All "
+"others will be lost."
+msgstr ""
+"Getreuer Diener, da ist noch mehr. Wir werden wie Götter sein. Eine Maschine "
+"wird die Welt erschüttern. Seid stark im Glauben, und Ihr werdet Euch einen "
+"sicheren Platz erringen. Alle anderen sind verloren."
+
+#: mission.brief.mail7.par6.c5
+msgctxt "mission brief email paragraph"
+msgid "The day of righteousness draws near."
+msgstr "Der Tag der Rechtschaffenheit ist nahe."
+
+#: mission.brief.mail7.par8.c1
+msgctxt "mission brief book quote"
+msgid ""
+"He who shouts loudest can only hear his own voice. Those with true knowledge "
+"listen to those with true faith. And those with closed ears never hear the "
+"swing of the reaper's blade."
+msgstr ""
+"Der am lautesten schreit, kann nur seine eigene Stimme hören. Diejenigen, "
+"die wahres Wissen besitzen, hören denen zu, die wahren Glaubens sind. Und "
+"diejenigen, die ihre Ohren verschliessen, werden nie die Sichel des "
+"Sensenmanns rauschen hören."
+
+#: mission.brief.mail7.map1.level3:1
+msgctxt "mission brief tactical information"
+msgid "Landing Ground: Hong Kong IML Link"
+msgstr "Landebereich: Hongkong, IML-Station"
+
+#: mission.brief.mail7.map1.level3:2
+msgctxt "mission brief tactical information"
+msgid "Our temple and brethren"
+msgstr "Unser Tempel und unsere Brüder"
+
+#: mission.brief.mail7.map1.level3:3
+msgctxt "mission brief tactical information"
+msgid "Unguided landing zones"
+msgstr "Landezonen der Ungeleiteten"
+
+#: mission.brief.mail7.map1.level3:4
+msgctxt "mission brief tactical information"
+msgid "Eavesdrop: EuroCorp special agents (sappers) despatched to Hong Kong"
+msgstr ""
+"Abhörinformation: Sonderagenten (Pioniere) von EuroCorp nach Hongkong "
+"entsandt"
+
+#: mission.title:6
+msgctxt "mission title"
+msgid "Sack Of Rome"
+msgstr "Brennen muss Rom"
+
+#: mission.brief.mail8.par1.h
+msgctxt "mission brief email header"
+msgid "Hear me, Disciple."
+msgstr "Hört meine Worte, Jünger des Lichts."
+
+#: mission.brief.mail8.par2.c2
+msgctxt "mission brief email orders"
+msgid ""
+"Fate tests us, <login>. We wish to see an end to the Unguided blight on the "
+"city of Rome. Cleanse this place of unbelievers."
+msgstr ""
+"Das Schicksal stellt uns auf die Probe, <login>. Wir wollen die ungeleitete "
+"Plage in Rom beendet wissen. Reinigt diese Stadt von Ungläubigen."
+
+#: mission.brief.mail8.par3.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"The presence of this mob has been useful to us until now, as it has sapped "
+"EuroCorp resources in the region, but it is no longer required. Eliminate "
+"the mob on sight."
+msgstr ""
+"Dieser Mob war uns bis jetzt ganz nützlich, da er die Kräfte von EuroCorp in "
+"dieser Region gebunden hat, aber nun ist das nicht mehr nötig. Eliminiert "
+"den Pöbel."
+
+#: mission.brief.mail8.par4.c5
+msgctxt "mission brief email paragraph"
+msgid "Truly, you are chosen."
+msgstr "Denn wahrlich, Ihr seid auserwählt."
+
+#: mission.brief.mail8.par6.c1
+msgctxt "mission brief book quote"
+msgid ""
+"Poor workers blame their tools. Good workers build better tools. The best "
+"workers get their tools to do the work for them."
+msgstr ""
+"Schlechte Handwerker geben ihren Werkzeugen die Schuld. Gute Handwerker "
+"bauen sich bessere Werkzeuge. Die besten Handwerker lassen ihre Arbeit ganz "
+"von den Werkzeugen erledigen."
+
+#: mission.brief.mail8.map28.level31:1
+msgctxt "mission brief tactical information"
+msgid "Landing Ground: Rome IML Link"
+msgstr "Landebereich: Rom, IML-Station"
+
+#: mission.brief.mail8.map28.level31:2
+msgctxt "mission brief tactical information"
+msgid "Domicile zones overrun by the Unguided"
+msgstr "Niederrangige Wohnviertel wurden von Ungeleiteten überrannt"
+
+#: mission.brief.mail8.map28.level31:3
+msgctxt "mission brief tactical information"
+msgid "EuroCorp garrison"
+msgstr "Garnison von EuroCorp"
+
+#: mission.brief.mail8.map28.level31:4
+msgctxt "mission brief tactical information"
+msgid "EuroCorp agents"
+msgstr "Agenten von EuroCorp"
+
+#: mission.brief.mail8.map28.level31:5
+msgctxt "mission brief tactical information"
+msgid "Eavesdrop: estimated contents of vault Cr 400,000"
+msgstr "Abhörinformation: Geschätzter Tresorinhalt von 400.000 Cr"
+
+#: mission.title:33
+msgctxt "mission title"
+msgid "Not One Of Us"
+msgstr "Keiner von uns"
+
+#: mission.title:52
+msgctxt "mission title"
+msgid "Watcher"
+msgstr "Beobachter"
+
+#: mission.title:11
+msgctxt "mission title"
+msgid "Serpent's Egg"
+msgstr "Schlangennest"
+
+#: mission.title:12
+msgctxt "mission title"
+msgid "A Mote In God's Eye"
+msgstr "Ein Splitter im Auge Gottes"
+
+#: mission.brief.mail9.par1.h
+msgctxt "mission brief email header"
+msgid "Receive our blessings, Son of Light."
+msgstr "Empfangt unseren Segen, Sohn des Lichts."
+
+#: mission.brief.mail9.par2.c2
+msgctxt "mission brief email orders"
+msgid ""
+"By working where our foe is weakest, we have begun to establish our Church. "
+"The Syndicate is therefore attempting to regain control in a number of "
+"vulnerable cities."
+msgstr ""
+"Wir haben unsere Kirche etabliert, indem wir dort zu Werke gingen, wo unsere "
+"Gegner am schwächsten waren. Nun prophezeihen die Neun Gegenangriffe von "
+"EuroCorp in Städten, in denen wir jetzt die Kontrolle haben."
+
+#: mission.brief.mail9.par3.c2
+msgctxt "mission brief email orders"
+msgid ""
+"Already, the Syndicate has begun to undertake covert operations in "
+"Johannesburg, Buenos Aires, Santiago and Tripoli. Those who challenge the "
+"Church of the New Epoch must join us or perish."
+msgstr ""
+"Das Syndikat hat - bestätigten Berichten zufolge - bereits mit "
+"Aufklärungsoperationen in Johannesburg, Buenos Aires, Santiago und Tripolis "
+"begonnen. Dies kann keinesfalls so hingenommen werden. Wer unsere Städte "
+"infiltriert, muss sich uns anschliessen oder sterben."
+
+#: mission.brief.mail9.par4.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Syndicate agents have been sighted in Santiago and Tripoli. In Buenos Aires, "
+"the Syndicate has regained control of its garrison in an action which "
+"spilled the precious blood of your brothers and sisters stationed there. The "
+"Nine also believe that EuroCorp has planted a saboteur in our mission in "
+"Johannesburg."
+msgstr ""
+"Aber unsere dort stationierten Kräfte sind zu schwach, um mehr zu tun, als "
+"die Schritte der gegnerischen Agenten zu überwachen."
+
+#: mission.brief.mail9.par5.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Your Acolytes must ensure that no EuroCorp operative succeeds or ever "
+"returns to the Syndicate. Do not rest until you have cleansed these places "
+"of the Syndicate's sickness."
+msgstr ""
+"Eure Kriegermönche müssen dafür sorgen, dass kein EuroCorp-Spion jemals "
+"wieder zum Syndikat zurückkehrt. Rastet und ruht nicht, bevor nicht alle "
+"Cyborg-Eindringlinge im Schosse der Kirche ruhen - auf die eine oder andere "
+"Weise."
+
+#: mission.brief.mail9.par6.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"The day of reckoning draws closer with every new mind we recruit. And those "
+"who wish to survive the Cataclysm must believe."
+msgstr ""
+"Der Tag der Abrechnung rückt mit jeder Seele näher, die wir für unsere Sache "
+"rekrutieren. Die Gottesmaschine braucht Gläubige. Und wer die Katharsis "
+"überleben will, muss glauben."
+
+#: mission.brief.mail9.par7.c5
+msgctxt "mission brief email paragraph"
+msgid "Be brave, Acolyte. And be brutal. It is the only way."
+msgstr ""
+"Seid tapfer, Jünger des Lichts. Und seid brutal. Das ist der einzige Weg."
+
+#: mission.brief.mail9.par9.c1
+msgctxt "mission brief book quote"
+msgid "There is pleasure in stealing the souls of machines."
+msgstr "Es birgt ein seltenes Vergnügen, die Seelen von Maschinen zu stehlen."
+
+#: mission.brief.mail9c.map22.level2:2
+msgctxt "mission brief tactical information"
+msgid "City district under our control"
+msgstr "Stadtteil unter Kontrolle"
+
+#: mission.brief.mail9c.map22.level2:3
+msgctxt "mission brief tactical information"
+msgid "Your brethren"
+msgstr "Ihre Brüder"
+
+#: mission.brief.mail9c.map22.level2:4
+msgctxt "mission brief tactical information"
+msgid ""
+"Eavesdrop: tinkering with UTOPIA ident signal detected - with focus around "
+"entrances to transport tubes, and detection of carrying explosive devices"
+msgstr ""
+"Abhören: Bastelei mit UTOPIA-Identsignal entdeckt - mit Schwerpunkt auf "
+"Eingängen zu Transportröhren und Erkennung von mitgeführten Sprengkörpern"
+
+#: mission.brief.mail9b.map26.level3:2
+msgctxt "mission brief tactical information"
+msgid "EuroCorp militia garrisons"
+msgstr "Militärgarnison von EuroCorp"
+
+#: mission.brief.mail9a.map7.level5:1
+msgctxt "mission brief tactical information"
+msgid "Landing Ground: Santiago IML Link"
+msgstr "Landebereich: Santiago, IML-Station"
+
+#: mission.brief.mail9a.map7.level5:2
+msgctxt "mission brief tactical information"
+msgid "Our temple"
+msgstr "Unser Tempel"
+
+#: mission.brief.mail9a.map7.level5:3
+msgctxt "mission brief tactical information"
+msgid "Sanctuary: Santiago IML Link"
+msgstr "Zufluchtsort: Santiago, IML-Station"
+
+#: mission.brief.mail9a.map7.level5:4
+msgctxt "mission brief tactical information"
+msgid ""
+"Eavesdrop: Syndicate strike team scheduled to arrive at garrisons within 48 "
+"hours"
+msgstr ""
+"Abhörinformation: Einsatzkommando des Syndikats erreicht die Garnison "
+"plangemäss innerhalb von 48 Stunden"
+
+#: mission.brief.mail9d.map25.level46:3
+msgctxt "mission brief tactical information"
+msgid "Those you shall keep from harm"
+msgstr "Diejenigen, welche Sie beschützen müssen"
+
+#: mission.brief.mail9d.map25.level46:4
+msgctxt "mission brief tactical information"
+msgid "Sanctuary: Tripoli IML Link"
+msgstr "Zufluchtsort: Tripolis, IML-Station"
+
+#: mission.brief.mail9d.map25.level46:5
+msgctxt "mission brief tactical information"
+msgid "Vault: estimated worth Cr 800,000"
+msgstr "Tresor: geschätzter Wert von 800.000 Cr"
+
+#: mission.brief.mail9d.map25.level46:6
+msgctxt "mission brief tactical information"
+msgid ""
+"Satellite alert: EuroCorp agent type identkeys detected, tracks unstable"
+msgstr ""
+"Satellitenwarnung: Identifikationsschlüssel von EuroCorp-Agenten entdeckt, "
+"Signal instabil"
+
+#: mission.title:44
+msgctxt "mission title"
+msgid "Powermonger"
+msgstr "Powermonger"
+
+#: mission.brief.mail10.par1.h
+msgctxt "mission brief email header"
+msgid "May faith burn within you, Favourite One."
+msgstr "Möge der Glaube ewig in Euch brennen, Champion des Lichts."
+
+#: mission.brief.mail10.par2.c2
+msgctxt "mission brief email orders"
+msgid ""
+"Our oracles tell us that a supremely important Syndicate official called "
+"Koto Sek is visiting Cairo. He has a powerful entourage and is well-"
+"protected. However, in the name of all that is right, he must die."
+msgstr ""
+"Unsere Orakel sagen voraus, dass ein höchst wichtiger Syndikatsmanager "
+"namens Koto Sek bald Kairo besuchen wird. Er hat mächtige Begleiter und wird "
+"gut beschützt. Doch im Namen von allem, was Recht ist, muss er sterben."
+
+#: mission.brief.mail10.par3.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Koto Sek plans to board a shuttle for parts unknown. Stop him as soon as you "
+"can. Make sure that he is dead before you report back. If there are other "
+"casualties, then that is the way of things. I am sure you are used to that "
+"now."
+msgstr ""
+"Koto Sek will an Bord eines Shuttles gehen - mit unbekanntem Ziel. Haltet "
+"ihn auf, so früh Ihr könnt. Vergewissert Euch, dass er wirklich tot ist, "
+"bevor Ihr Euch zurückmeldet. Wenn es andere Todesfälle zu beklagen gibt, "
+"nun, das ist der gottgewollte Lauf der Dinge. Ich bin sicher, Ihr habt Euch "
+"inzwischen daran gewöhnt."
+
+#: mission.brief.mail10.par4.c5
+msgctxt "mission brief email paragraph"
+msgid "Go forth."
+msgstr "Geht in Frieden."
+
+#: mission.brief.mail10.par6.c1
+msgctxt "mission brief book quote"
+msgid ""
+"Not only will all eyes be on the leaders of men, but all combat sights as "
+"well."
+msgstr ""
+"Nicht nur alle Augen sind auf die Anführer der Menschen gerichtet, auch alle "
+"Zielfernrohre."
+
+#: mission.brief.mail10.map45.level1:1 mission.brief.mail22.map44.level2:1
+msgctxt "mission brief tactical information"
+msgid "Landing Ground: APC destination"
+msgstr "Landebereich: Ziel des Gepanzerten Truppentransporters"
+
+#: mission.brief.mail10.map45.level1:2
+msgctxt "mission brief tactical information"
+msgid "EuroCorp HQ"
+msgstr "HQ von EuroCorp"
+
+#: mission.brief.mail10.map45.level1:3
+msgctxt "mission brief tactical information"
+msgid "Executive shuttle carrying Koto Sek"
+msgstr "Managershuttle mit Koto Sek an Bord"
+
+#: mission.brief.mail10.map45.level1:4
+msgctxt "mission brief tactical information"
+msgid "Sanctuary: Cairo IML Link"
+msgstr "Zufluchtsort: Kairo IML-Station"
+
+#: mission.title:43
+msgctxt "mission title"
+msgid "Deadly Harvest"
+msgstr "Tödliche Ernte"
+
+#: mission.brief.mail11.par1.h
+msgctxt "mission brief email header"
+msgid "You shine strong, Apostle."
+msgstr "Euer Licht erstrahlt hell, Apostel."
+
+#: mission.brief.mail11.par2.c2
+msgctxt "mission brief email orders"
+msgid ""
+"In Bahrain, EuroCorp prepares for an assault on our way of enlightenment. It "
+"shall come to pass that you are the toll by which they are stopped."
+msgstr ""
+"In Bahrain bereitet sich EuroCorp auf einen Angriff auf unseren Weg der "
+"Erleuchtung vor. So soll es geschehen, dass Ihr die Schranke sein mögt, die "
+"ihren Vormarsch stoppt."
+
+#: mission.brief.mail11.par3.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"By the bounty of our faith, we have provided you with many targets here. And "
+"for your use is a battle-tank. Be wise, Acolyte. Always use equipment well. "
+"And make sure that you silence the voice of EuroCorp here. It must be so if "
+"we are to triumph and free the world."
+msgstr ""
+"Durch die Kraft unseres Glaubens haben wir Euch hier mit einer reichlichen "
+"Auswahl an Zielen versorgt. Und Euch sei ein Kampfpanzer gegeben. Geht weise "
+"vor, Kriegermönch. Nutzt Eure Ausrüstung gut. Stellt sicher, dass Ihr die "
+"Stimme von EuroCorp hier zum Schweigen bringt, und jeden seiner Handlanger. "
+"So muss es sein, auf dass wir triumphieren und die Welt befreien."
+
+#: mission.brief.mail11.par4.c5
+msgctxt "mission brief email paragraph"
+msgid "The light of your being grows ever brighter."
+msgstr "Das Licht in Eurem Wesen strahle noch stärker."
+
+#: mission.brief.mail11.par6.c1
+msgctxt "mission brief book quote"
+msgid ""
+"The people stood like corn in the high fields and listened to the Master. As "
+"the reaper's blade scythed them all, the Master fell silent. The lesson "
+"would be learned by others."
+msgstr ""
+"Wie Kornähren standen die Menschen auf dem Feld und lauschten den Worten des "
+"Meisters. Als die Sense des Schnitters sie alle hinwegfegte, verstummte der "
+"Meister. Diese Lektion würden andere sich zu Herzen nehmen."
+
+#: mission.brief.mail11.map41.level47:1
+msgctxt "mission brief tactical information"
+msgid "Landing Ground: Bahrain IML Link"
+msgstr "Landebereich: Bahrain, IML-Station"
+
+#: mission.brief.mail11.map41.level47:2
+msgctxt "mission brief tactical information"
+msgid "EuroCorp reforger zone"
+msgstr "Rückzugsgebiet von EuroCorp"
+
+#: mission.brief.mail11.map41.level47:3
+msgctxt "mission brief tactical information"
+msgid ""
+"Eavesdrop: police have been assigned to escort a EuroCorp finance executive "
+"on business in the north-east of the city"
+msgstr ""
+"Abhörinformation: Die Polizei wird eingesetzt, um einen Finanzmanager von "
+"EuroCorp zu eskortieren, welcher im nordöstlichen Bereich der Stadt seinen "
+"Geschäften nachgeht"
+
+#: mission.title:73
+msgctxt "mission title"
+msgid "Donation"
+msgstr "Spende mit Quittung"
+
+#: mission.brief.mail12.par1.h
+msgctxt "mission brief email header"
+msgid "Congratulations on your progress, Disciple."
+msgstr "Gratuliere zu Euren Fortschritten, Jünger des Lichtes."
+
+#: mission.brief.mail12.par2.c2
+msgctxt "mission brief email orders"
+msgid ""
+"You are assigned the holy task of appropriating hard credits from two "
+"bullion vehicles which our sources tell us will be making deliveries to the "
+"headquarters of Singapore Central Bank."
+msgstr ""
+"Wir haben Euch die heilige Pflicht auferlegt, irdische Güter aus zwei "
+"Geldtransportern herbeizuschaffen, die Goldbarren zum Hauptquartier der "
+"Zentralbank von Singapur liefern."
+
+#: mission.brief.mail12.par3.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Of course, EuroCorp will be on red alert, and guards will be everywhere. We "
+"feel an outright assault to be unwise, as this is what the Syndicate will be "
+"expecting. We have prayed for another way to get hold of these funds, and "
+"our prayers will be answered. The rest is up to you, Acolyte."
+msgstr ""
+"Natürlich wird EuroCorp die höchste Alarmstufe ausrufen und überall Wachen "
+"postieren. Wir glauben daher, dass ein direkter Angriff unklug wäre, da das "
+"Syndikat genau das erwartet. So beteten wir um einen anderen Weg, um an "
+"dieses Gold zu kommen, und unsere Gebete werden erhört werden. Der Rest ist "
+"Eure Sache, Jünger des Lichts."
+
+#: mission.brief.mail12.par4.c5
+msgctxt "mission brief email paragraph"
+msgid "Remember the wonders money works."
+msgstr "Bedenkt die Wunder, die Geld bewirken kann."
+
+#: mission.brief.mail12.par6.c1
+msgctxt "mission brief book quote"
+msgid ""
+"The Master has no need for money. But still he sits and counts it. As a "
+"meditation."
+msgstr ""
+"Der Meister braucht kein Geld. Aber dennoch sitzt er da und zählt es. Als "
+"Meditationsübung."
+
+#: mission.brief.mail12.map9.level3:1
+msgctxt "mission brief tactical information"
+msgid "Landing Ground: Singapore IML Link"
+msgstr "Landebereich: Singapur, IML-Station"
+
+#: mission.brief.mail12.map9.level3:2
+msgctxt "mission brief tactical information"
+msgid "Vault (empty)"
+msgstr "Tresor (leer)"
+
+#: mission.brief.mail12.map9.level3:3
+msgctxt "mission brief tactical information"
+msgid "Target vehicles A and B"
+msgstr "Zielfahrzeuge A und B"
+
+#: mission.brief.mail12.map9.level3:4
+msgctxt "mission brief tactical information"
+msgid "Rendezvous"
+msgstr "Treffen"
+
+#: mission.brief.mail12.map9.level3:5
+msgctxt "mission brief tactical information"
+msgid "Eavesdrop: Vehicle A's destination"
+msgstr "Abhörinformation: Ziel von Fahrzeug A"
+
+#: mission.brief.mail12.map9.level3:6
+msgctxt "mission brief tactical information"
+msgid "Eavesdrop: Vehicle B's destination"
+msgstr "Abhörinformation: Ziel von Fahrzeug B"
+
+#: mission.title:13
+msgctxt "mission title"
+msgid "Audacity"
+msgstr "Kühnheit"
+
+#: mission.brief.mail13.par1.h
+msgctxt "mission brief email header"
+msgid "Greetings, Acolyte."
+msgstr "Seid gegrüsst, Jünger des Lichts."
+
+#: mission.brief.mail13.par2.c2
+msgctxt "mission brief email orders"
+msgid ""
+"We have a daring plan for you. We want you to abduct a high-ranking "
+"Syndicate executive, under the nose of EuroCorp security, from their London "
+"headquarters."
+msgstr ""
+"Wir haben einen waghalsigen Plan für Euch. Wir wollen, dass Ihr einen "
+"hochrangigen Syndikatsmanager entführt, direkt vor der Nase der EuroCorp-"
+"Sicherheitsbeamten aus ihrem Londoner Hauptquartier."
+
+#: mission.brief.mail13.par3.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Professor Kurt Drennan is a key member of EuroCorp's research and "
+"development programme. EuroCorp agents have learned of our Reykjavik "
+"discoveries. Drennan is scheduled to brief chief EuroCorp executives at a "
+"meeting in London. At the same time, he is due to be assigned a new "
+"assistant. Deal firmly with this replacement. Direct the blessed Mirabelle "
+"to take her place at the proper time and Drennan will be delivered into our "
+"hands."
+msgstr ""
+"Professor Kurt Drennan ist eines der wichtigsten Mitglieder von EuroCorps "
+"Forschungs- und Entwicklungsprogramm. Die EuroCorp-Agenten haben etwas über "
+"unsere Entdeckungen in Reykjavik herausgefunden, und Drennan soll darüber in "
+"London einen Vortrag vor wichtigen EuroCorp-Managern halten. Zur gleichen "
+"Zeit soll er eine neue Assistentin zugewiesen bekommen. Geht hart mit diesem "
+"Neuzugang ins Gericht, und führt die gesegnete Mirabelle, auf dass sie zur "
+"rechten Zeit ihren Platz einnehme. Dann wird uns Drennan in die Hände "
+"gespielt werden."
+
+#: mission.brief.mail13.par4.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Once Mirabelle has successfully taken the real assistant's place, she will "
+"have to remain incognito and act appropriately while Drennan delivers his "
+"presentation. Immediately afterwards, the professor is due to leave by car "
+"for another engagement. As long as you ensure that Mirabelle leaves in the "
+"same car, Drennan will never make that next appointment. With our prayers, "
+"Drennan should prove most willing to make his confession."
+msgstr ""
+"Sobald Mirabelle erfolgreich den Platz der Assistentin eingenommen hat, muss "
+"sie incognito bleiben und sich unauffällig benehmen, während Drennan seinen "
+"Vortrag hält. Sofort danach soll der Professor von einem Auto abgeholt "
+"werden, das ihn zu seinem nächsten Termin bringt. Solange Ihr dafür sorgt, "
+"dass Mirabelle im gleichen Auto mitfährt, wird Drennan nie dort ankommen. "
+"Mit Hilfe unserer Gebete dürfte sich Drennan als äusserst willig erweisen, "
+"seine Beichte abzulegen."
+
+#: mission.brief.mail13.par5.c5
+msgctxt "mission brief email paragraph"
+msgid "Your spirit shall walk with the Nine for eternity."
+msgstr "Euer Geist wird auf ewig mit den Neun wandeln."
+
+#: mission.brief.mail13.par7.c1
+msgctxt "mission brief book quote"
+msgid ""
+"A hundred elephants can wreck the outer walls of a fortress. One diseased "
+"rat can kill all those inside."
+msgstr ""
+"Hundert Elefanten können die Wälle einer Festung niederreissen. Eine einzige "
+"verseuchte Ratte aber kann alle Menschen darin töten."
+
+#: mission.brief.mail13.map30.level2:1
+msgctxt "mission brief tactical information"
+msgid "Landing Ground: London IML Link"
+msgstr "Landebereich: London, IML-Station"
+
+#: mission.brief.mail13.map30.level2:2
+msgctxt "mission brief tactical information"
+msgid "Professor Drennan's assistant"
+msgstr "Professor Drennans Assistent"
+
+#: mission.brief.mail13.map30.level2:3
+msgctxt "mission brief tactical information"
+msgid "Professor Drennan"
+msgstr "Professor Drennan"
+
+#: mission.brief.mail13.map30.level2:4
+msgctxt "mission brief tactical information"
+msgid "Presentation podium"
+msgstr "Vortragspodium"
+
+#: mission.brief.mail13.map30.level2:5
+msgctxt "mission brief tactical information"
+msgid "Sanctuary: London outlet road"
+msgstr "Zufluchtsort: Londoner Outlet-Straße"
+
+#: mission.brief.mail13.map30.level2:6
+msgctxt "mission brief tactical information"
+msgid ""
+"Eavesdrop: the professor's itinary includes collection of data from this "
+"building"
+msgstr ""
+"Abhörinformation: Auf dem Plan des Professors stehn auch Daten über dieses "
+"Gebäude"
+
+#: mission.brief.mail13.map30.level2:7
+msgctxt "mission brief tactical information"
+msgid "Eavesdrop: Unguided invasion of North Side imminent"
+msgstr ""
+"Abhörinformation: Eine Invasion der Ungeleiteten an der Nordseite steht bevor"
+
+#: mission.title:72
+msgctxt "mission title"
+msgid "Divine Light"
+msgstr "Göttliches Licht"
+
+#: mission.brief.mail14.par1.h
+msgctxt "mission brief email header"
+msgid "Meditate with us, Disciple."
+msgstr "Meditiert mit uns, Jünger des Lichts."
+
+#: mission.brief.mail14.par2.c2
+msgctxt "mission brief email orders"
+msgid ""
+"Steal plans for a new Syndicate weapon from the EuroCorp installation in New "
+"York."
+msgstr ""
+"Entwendet die Pläne einer neuen Syndikatswaffe aus dem EuroCorp-Gebäude in "
+"New York."
+
+#: mission.brief.mail14.par3.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Professor Drennan is dead. His resistance to our neural inquisitors caused "
+"him to suffer a massive haemorrhage. Disappointing. Nevertheless, through "
+"our prayers, he survived long enough to furnish us with reliable information "
+"that the Syndicate is planning a major counter-offensive against our "
+"hallowed Church. Preparations for the counter-strike are being made in "
+"EuroCorp bases in New York."
+msgstr ""
+"Professor Drennan ist tot. Sein Widerstand gegen unsere Neuralinquisitoren "
+"führte zu einer heftigen Hirnblutung. Sehr enttäuschend. Doch durch unsere "
+"intensiven Gebete überlebte er lange genug, um uns mit verlässlichen "
+"Informationen zu versorgen, dass EuroCorp einen grösseren Gegenangriff auf "
+"unsere Heilige Kirche plant. Die Vorbereitungen für diesen Gegenschlag "
+"laufen in Syndikatsbasen in New York."
+
+#: mission.brief.mail14.par4.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"In New York, guarded Syndicate technicians have been testing a thermonuclear "
+"hand weapon we ourselves foresee a use for. Two days ago our brothers and "
+"sisters - who occupy the city's Cathedral in defiance of EuroCorp's presence "
+"- witnessed a terrible blast inside the enemy's compound. It is from within "
+"this compound that Drennan said we would find experimental data regarding "
+"these devices. However, the compound is heavily defended. A diversion is "
+"probably required."
+msgstr ""
+"Unter strenger Bewachung haben Techniker des Syndikats in New York eine "
+"Thermonukleare Handfeuerwaffe getestet, für die wir selbst Verwendung "
+"hätten. Vor zwei Tagen haben unsere Brüder und Schwestern, die trotz der "
+"EuroCorp-Präsenz die Kathedrale dort besetzt halten, eine verheerende "
+"Explosion in einer der Basen des Gegners beobachtet. Und in genau dieser "
+"Basis sollen wir nach Drennans Worten experimentelle Daten über diese Geräte "
+"finden. Doch die Basis ist schwer bewacht. Ein Ablenkungsmanöver dürfte "
+"vonnöten sein."
+
+#: mission.brief.mail14.par5.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Brother Methuselah will forsake the sanctuary the cathedral provides and "
+"meet you at the IML. He will lead you to a residential and commercial sector "
+"where he will incite a riot, by administering a censer cloud of psycho gas "
+"in the midst of the civilian population. During this time you should find "
+"some means of entering the compound. The Syndicate's response to the riot "
+"should occupy some of the guards for a while."
+msgstr ""
+"Bruder Methuselah wird die Sicherheit der Kathedrale verlassen und Euch an "
+"der IML treffen. Er wird Euch in ein Wohn- und Gewerbegebiet führen und dort "
+"einen Aufruhr verursachen, indem er eine Wolke Psychogas unter der "
+"Zivilbevölkerung freisetzt. Während dieser Zeit solltet Ihr ein Mittel "
+"finden, um in die Basis einzudringen. Die Reaktion des Syndikats auf den "
+"Aufruhr sollte einige der Wachen eine Zeitlang beschäftigen."
+
+#: mission.brief.mail14.par7.c1
+msgctxt "mission brief book quote"
+msgid ""
+"The courageous enter dark caves alone. The clever send in the courageous "
+"first. The cleverest wait behind the clever."
+msgstr ""
+"Die Mutigen gehen alleine in dunkle Höhlen. Die Schlauen schicken erst mal "
+"die Mutigen rein. Die Schlauesten aber warten hinter den Schlauen."
+
+#: mission.brief.mail14.map4.level3:1
+msgctxt "mission brief tactical information"
+msgid "Landing Ground: New York IML Link"
+msgstr "Landebereich: New York, IML-Station"
+
+#: mission.brief.mail14.map4.level3:2
+msgctxt "mission brief tactical information"
+msgid "EuroCorp installation gateways"
+msgstr "Tore der EuroCorp-Anlage"
+
+#: mission.brief.mail14.map4.level3:3
+msgctxt "mission brief tactical information"
+msgid "Site of blast"
+msgstr "Schauplatz der Explosion"
+
+#: mission.brief.mail14.map4.level3:4
+msgctxt "mission brief tactical information"
+msgid "Target building"
+msgstr "Zielgebäude"
+
+#: mission.brief.mail14.map4.level3:5
+msgctxt "mission brief tactical information"
+msgid "Diversion will be created in this commercial zone"
+msgstr "Eine Umleitung wird in dieser Handelszone eingerichtet"
+
+#: mission.brief.mail14.map4.level3:6
+msgctxt "mission brief tactical information"
+msgid "Our temple and satellite uplink"
+msgstr "Unser Tempel und unsere Satellitenzentrale"
+
+#: mission.brief.mail14.map4.level3:7
+msgctxt "mission brief tactical information"
+msgid "Sanctuary: New York IML Link"
+msgstr "Zufluchtsort: New York, IML-Station"
+
+#: mission.brief.mail14.map4.level3:8
+msgctxt "mission brief tactical information"
+msgid "Eavesdrop: estimated value of vault Cr 2,000,000"
+msgstr "Abhörinformation: Geschätzter Tresorinhalt von 2.000.000 Cr"
+
+#: mission.title:14
+msgctxt "mission title"
+msgid "The Levellers"
+msgstr "Auf gleichem Niveau"
+
+#: mission.brief.mail15.par1.h
+msgctxt "mission brief email header"
+msgid "Precious Believer,"
+msgstr "Wertvoller Anhänger des Lichts,"
+
+#: mission.brief.mail15.par2.c2
+msgctxt "mission brief email orders"
+msgid ""
+"Destroy EuroCorp weapons bunkers in Riyadh. In wreaking such devastation do "
+"we celebrate the Cataclysm."
+msgstr ""
+"Zerstört die Waffenbunker von EuroCorp in Riyad. Indem wir solche Zerstörung "
+"anrichten, zelebrieren wir den Kataklysmus."
+
+#: mission.brief.mail15.par3.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Harbinger has brought UTOPIA to its knees. EuroCorp's continuing quest to "
+"build a new army continues to prove the effectiveness of our strikes against "
+"it. Many of the Syndicate's arms are being stockpiled, to give the depleted "
+"cryovats time to repair their dwindling cadre of agents. Drennan confessed "
+"to us of the largest such repository of firepower. It lies within the "
+"ancient city walls of Riyadh."
+msgstr ""
+"Der Verkünder hat UTOPIA in die Knie gezwungen. EuroCorps ständiges Bemühen, "
+"eine neue Armee aufzubauen, bestätigt die Wirksamkeit unserer Schläge gegen "
+"sie. Viele Waffenvorräte des Syndikats werden eingelagert, um den leeren "
+"Kälteschlafkammern Zeit zum Wiederauffüllen des schwindenden Vorrats an "
+"Cyborgagenten zu geben. Drennan beichtete uns den Standort des grössten "
+"dieser Waffenlager. Es liegt innerhalb der alten Stadtmauern von Riyad."
+
+#: mission.brief.mail15.par4.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"It is the Nine's holy wish that this arsenal is buried forever beneath the "
+"desert sands. Locate the target bunkers and destroy them. Convert or "
+"obliterate any agents who dare to stand in your way. Use your own judgment "
+"in this matter. When the Syndicate's stockpile is no more than a memory, "
+"your name shall be sung by the faithful."
+msgstr ""
+"Es ist der heilige Wunsch der Neun, dass dieses Arsenal für ewige Zeiten "
+"unter dem Wüstensand vergraben bleibt. Findet die Zielbunker und zerstört "
+"sie. Bekehrt oder vernichtet jeden Agenten, der sich Euch in den Weg stellt, "
+"diese Entscheidung überlassen wir Eurem Urteil vor Ort. Wenn dann die "
+"Waffenvorräte des Syndikats nur noch eine schwache Erinnerung sind, werden "
+"die Gläubigen Euren Namen lobpreisen."
+
+#: mission.brief.mail15.par5.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Our machines will remake the world, Acolyte. They will plunge the planet "
+"into turmoil. Most of the population will die, but it is the renewal of life "
+"that calls us. Imagine a world with no syndicates, no mind-control, no "
+"violence. It will happen, Disciple. It will happen. More minds are needed."
+msgstr ""
+"Unsere Maschinen werden die Welt neu erschaffen, Jünger des Lichts. Sie "
+"werden den Planeten ins Chaos stürzen. Die meisten Menschen werden sterben, "
+"aber die Erneuerung des Lebens ist unsere heilige Pflicht. Stellt Euch eine "
+"Welt ohne Syndikat vor, ohne Gedankenkontrolle oder Gewalt. Es wird "
+"geschehen, Bruder, es wird so geschehen. Mehr Seelen sind vonnöten."
+
+#: mission.brief.mail15.par6.c5
+msgctxt "mission brief email paragraph"
+msgid "Tempus fugit."
+msgstr "Tempus fugit."
+
+#: mission.brief.mail15.par8.c1
+msgctxt "mission brief book quote"
+msgid ""
+"The apprentices asked the Master. \"When shall we achieve immortality?\""
+msgstr ""
+"Und die Klosterschüler fragten den Meister: \"Wann werden wir die "
+"Unsterblichkeit erlangen?\""
+
+#: mission.brief.mail15.par9.c1
+msgctxt "mission brief book quote"
+msgid "And the Master answered, \"Not in this life.\""
+msgstr "Und der Meister erwiderte: \"In diesem Leben nicht mehr.\""
+
+#: mission.brief.mail15.map20.level16:1
+msgctxt "mission brief tactical information"
+msgid "Landing Ground: Riyadh IML Link"
+msgstr "Landebereich: Riyad, IML-Station"
+
+#: mission.brief.mail15.map20.level16:2
+msgctxt "mission brief tactical information"
+msgid "Target bunkers"
+msgstr "Zielbunker"
+
+#: mission.brief.mail15.map20.level16:3
+msgctxt "mission brief tactical information"
+msgid "Sanctuary: Riyadh IML Link"
+msgstr "Zufluchtsort: Riyad, IML-Station"
+
+#: mission.title:87
+msgctxt "mission title"
+msgid "Fallen Among Thieves"
+msgstr "Unter die Diebe geraten"
+
+#: mission.brief.mail16.par1.h
+msgctxt "mission brief email header"
+msgid "Brave Apostle."
+msgstr "Tapferer Apostel."
+
+#: mission.brief.mail16.par2.c2
+msgctxt "mission brief email orders"
+msgid ""
+"Our daughter of the New Epoch, Mirabelle Lucy De Saxo, has crash-landed in "
+"Unguided territory, near her Cape Town sanctuary. Your acolytes must hasten "
+"to her side. She must live if she is to fulfil her destiny, as the first to "
+"tread the path to salvation."
+msgstr ""
+"Unsere Tochter der Neuen Epoche, Mirabelle Lucy De Saxo, ist über dem "
+"Territorium der Ungeleiteten abgestürzt, ganz in der Nähe ihres "
+"Zufluchtsortes bei Kapstadt. Eure Kriegermönche müssen ihr zu Hilfe eilen. "
+"Sie muss am Leben bleiben, wenn sich ihr Schicksal erfüllen soll, die Erste "
+"auf dem Pfad der Erlösung zu sein."
+
+#: mission.brief.mail16.par3.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"We know she is still alive, but she is in urgent need of rescue. You are of "
+"course our first choice for this hazardous calling. Enter the Unguided zone "
+"and find De Saxo. Evacuate her with all haste. She may be in mortal danger. "
+"Be decisive with those who would stand in your way."
+msgstr ""
+"Wir wissen, dass sie noch lebt, aber sie braucht dringend Beistand. Ihr seid "
+"selbstverständlich unsere erste Wahl für diese riskante Mission. Begebt Euch "
+"in das Gebiet der Heiden und findet De Saxo. Bringt sie eiligst da heraus. "
+"Sie könnte in tödlicher Gefahr sein. Handelt entschlossen, wenn sich Euch "
+"jemand in den Weg zu stellen versucht."
+
+#: mission.brief.mail16.par5.c1
+msgctxt "mission brief book quote"
+msgid ""
+"Bravery will take you into the most dangerous of places. Overwhelming "
+"firepower will see you safely through them."
+msgstr ""
+"Mut bringt Euch an die gefährlichsten Orte. Überlegene Feuerkraft bringt "
+"Euch sicher hindurch."
+
+#: mission.brief.mail16.map44.level3:1
+msgctxt "mission brief tactical information"
+msgid "Landing Ground: Cape Town APC destination"
+msgstr "Landebereich: Kapstadt, Ziel des gepanzerten Truppentransporters"
+
+#: mission.brief.mail16.map44.level3:2
+msgctxt "mission brief tactical information"
+msgid "De Saxo's crash site"
+msgstr "Unglücksstelle von De Saxo"
+
+#: mission.brief.mail16.map44.level3:3 mission.brief.mail22.map44.level2:3
+msgctxt "mission brief tactical information"
+msgid "Sanctuary: Cape Town IML Link"
+msgstr "Zufluchtsort: Kapstadt IML-Station"
+
+#: mission.brief.mail16.map44.level3:4
+msgctxt "mission brief tactical information"
+msgid "Eavesdrop: EuroCorp squad scheduled arrival -36 hours"
+msgstr ""
+"Abhörinformation: Geplante Zeit bis zum Eintreffen der Truppe von EuroCorp "
+"-36 Stunden"
+
+#: mission.title:15
+msgctxt "mission title"
+msgid "Rain Of Terror"
+msgstr "Regen des Terrors"
+
+#: mission.brief.mail17.par1.h
+msgctxt "mission brief email header"
+msgid "May faith be with you, <login>."
+msgstr "Möge der Glaube mit Euch sein, <login>."
+
+#: mission.brief.mail17.par2.c2
+msgctxt "mission brief email orders"
+msgid ""
+"Seek and obliterate a dangerous, meddling hacker who hides among the "
+"Unguided, for he has gained control of a strategic weapons satellite above "
+"Beijing."
+msgstr ""
+"Sucht und vernichtet einen gefährlichen Hacker, der sich unter den "
+"Ungeleiteten verbirgt, denn er hat sich die Kontrolle über einen "
+"strategischen Waffensatelliten über Peking verschafft."
+
+#: mission.brief.mail17.par3.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"An outcast hacker with access to UTOPIA satellite defences is bringing steel "
+"rain from heaven where and whenever he chooses. He must be stopped. He must "
+"be found and eliminated."
+msgstr ""
+"Ein heidnischer Hacker mit Zugang zur UTOPIA-Satellitenverteidigung lässt "
+"Stahlregen vom Himmel fallen, wo und wann immer er mag. Er muss gestoppt "
+"werden. Ihr müsst ihn finden und eliminieren."
+
+#: mission.brief.mail17.par4.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Be wary, Disciple. Beijing is a faithless place, ridden with the Unguided, "
+"who see only through the sights of their guns."
+msgstr ""
+"Seid wachsam, Jünger des Lichts. Denn Peking ist ein Ort ohne wahren "
+"Glauben, voller Heiden, die nicht weiter vorausschauen können als bis zur "
+"Kimme ihrer Zieloptik."
+
+#: mission.brief.mail17.par5.c5
+msgctxt "mission brief email paragraph"
+msgid "Go with spirit."
+msgstr "Geht hin im Geiste."
+
+#: mission.brief.mail17.par7.c1
+msgctxt "mission brief book quote"
+msgid ""
+"He who lives in the eye of the storm is a mote in the eye of an angry god."
+msgstr ""
+"Wer im Auge des Sturmes lebt, ist ein Splitter im Auge eines ärgerlichen "
+"Gottes."
+
+#: mission.brief.mail17.map32.level2:1
+msgctxt "mission brief tactical information"
+msgid "Landing Ground: Beijing IML Link"
+msgstr "Landebereich: Peking, IML-Station"
+
+#: mission.brief.mail17.map32.level2:2
+msgctxt "mission brief tactical information"
+msgid "Hacker's location"
+msgstr "Aufenthaltsort des Hackers"
+
+#: mission.brief.mail17.map32.level2:3
+msgctxt "mission brief tactical information"
+msgid "Sanctuary: Beijing IML Link"
+msgstr "Zufluchtsort: Peking, IML-Station"
+
+#: mission.brief.mail17.map32.level2:4
+msgctxt "mission brief tactical information"
+msgid "Eavesdrop: city vault estimated to contain Cr 1,500,000"
+msgstr ""
+"Abhörinformation: Der Inhalt des Stadttresors wird auf 1.500.000 Cr geschätzt"
+
+#: mission.title:16
+msgctxt "mission title"
+msgid "Armour Of The Gods"
+msgstr "Rüstung der Götter"
+
+#: mission.brief.mail18.par1.h
+msgctxt "mission brief email header"
+msgid "Disciple, your aura feeds our strength."
+msgstr "Oh Jünger des Lichts, Eure Aura nährt unsere Kraft."
+
+#: mission.brief.mail18.par2.c2
+msgctxt "mission brief email orders"
+msgid ""
+"The Syndicate has lost control of Delhi to the Unguided. Riding armour "
+"stolen from their vanquished foes, the heretic unbelievers bring desolation "
+"to every quarter. They are false prophets, all of them. Send them to the "
+"Cataclysm."
+msgstr ""
+"Das Syndikat hat die Kontrolle über Neu Delhi an die Ungeleiteten verloren. "
+"Mit den Panzern ihrer besiegten Feinde bringen die Ungläubigen Vernichtung "
+"in alle Teile der Stadt. Sie sind falsche Propheten, sie alle. Schickt sie "
+"in die Katharsis."
+
+#: mission.brief.mail18.par3.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Those who use such infernal weaponry against us must pay the ultimate price. "
+"There is no honour in destroying machines, and there is considerable danger."
+msgstr ""
+"Wer solch infernalische Waffen gegen uns einsetzt, muss dafür den höchsten "
+"Preis bezahlen. Es hat nichts mit Ehre zu tun, Maschinen zu besiegen, nur "
+"mit beträchtlicher Gefahr."
+
+#: mission.brief.mail18.par4.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Tread carefully as you make your way towards the island. Secure that first."
+msgstr ""
+"Seid vorsichtig, während Ihr Euch auf die Insel zu bewegt. Nehmt diese als "
+"erstes ein."
+
+#: mission.brief.mail18.par5.c5
+msgctxt "mission brief email paragraph"
+msgid "Be full of spirit."
+msgstr "Möge der Geist Euch erfüllen."
+
+#: mission.brief.mail18.par7.c1
+msgctxt "mission brief book quote"
+msgid ""
+"The brave hide behind technology. The stupid hide from it. But the clever "
+"have technology, and hide it."
+msgstr ""
+"Die Tapferen verstecken sich hinter Technologie. Die Dummen verstecken sich "
+"vor ihr. Die Schlauen aber besitzen Technologie - und verstecken sie."
+
+#: mission.brief.mail18.map27.level1:1
+msgctxt "mission brief tactical information"
+msgid "Landing Ground: Delhi IML Link"
+msgstr "Landebereich: Delhi, IML-Station"
+
+#: mission.brief.mail18.map27.level1:2
+msgctxt "mission brief tactical information"
+msgid "EuroCorp forces in river port island"
+msgstr "Truppen von EuroCorp auf der Flusshafeninsel"
+
+#: mission.brief.mail18.map27.level1:3 mission.brief.mail23.map22.level4:2
+msgctxt "mission brief tactical information"
+msgid "The Unguided"
+msgstr "Die Ungeleiteten"
+
+#: mission.brief.mail18.map27.level1:4
+msgctxt "mission brief tactical information"
+msgid "Sanctuary: Delhi IML Link"
+msgstr "Zufluchtsort: Delhi, IML-Station"
+
+#: mission.title:85
+msgctxt "mission title"
+msgid "The Dead Zone"
+msgstr "Todeszone"
+
+#: mission.brief.mail19.par1.h
+msgctxt "mission brief email header"
+msgid "Blessings, Chosen One."
+msgstr "Unseren Segen für Euch, Auserwählter."
+
+#: mission.brief.mail19.par2.c2
+msgctxt "mission brief email orders"
+msgid ""
+"Bring us the secret EuroCorp is protecting in Bangkok and we will pray for "
+"your salvation."
+msgstr ""
+"Bringt uns das Geheimnis, das EuroCorp in Bangkok verbirgt, und wir werden "
+"für Eure Erlösung beten."
+
+#: mission.brief.mail19.par3.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"The stink of chaos spreads to every street corner as UTOPIA forsakes the "
+"populace at large and takes its favoured children deeper underground. In "
+"Bangkok the Syndicate has abandoned all attempts to restore their regime. "
+"Instead, it has imposed a dead zone there. What goes on there we do not know "
+"for certain."
+msgstr ""
+"Der Gestank des Chaos zieht um jede Ecke, während UTOPIA die Bevölkerung im "
+"Stich lässt und sich nur mit einigen Bevorzugten in den Untergrund "
+"zurückzieht. In Bangkok hat das Syndikat alle Versuche drangegeben, die "
+"Regierungsgewalt wiederherzustellen, und hat statt dessen eine Todeszone "
+"eingerichtet. Was genau dort vorgeht, wissen wir nicht."
+
+#: mission.brief.mail19.par4.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"One of our brothers recently attempted to find out what EuroCorp is going to "
+"such lengths to hide. He learned that the enemy's agents occasionally "
+"venture through the dead zone, in order to abduct Unguided, many of whom "
+"still cling to their forlorn hopes among the shattered remains. The agents "
+"then return to their stronghold with their captives. The Nine do not "
+"understand why the Syndicate should do this when it eliminates the Unguided "
+"on sight everywhere else."
+msgstr ""
+"Einer unserer Brüder hat vor kurzem versucht herauszufinden, was EuroCorp "
+"mit so viel Aufwand verstecken will. Er hat nur erfahren, dass die Agenten "
+"des Gegners gelegentlich die Todeszone durchqueren, um andere Heiden zu "
+"entführen, die sich zwischen den Ruinen immer noch an ihre vergeblichen "
+"Hoffnungen klammern. Die Agenten kehren dann mit ihren Gefangenen in die "
+"Festung zurück. Die Neun verstehen dieses Verhalten nicht, da das Syndikat "
+"doch sonst überall die Ungeleiteten eliminiert, wo es nur kann."
+
+#: mission.brief.mail19.par5.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"We seek enlightenment in this matter. Direct your Acolytes through the "
+"city's hostile outskirts and into the dead zone. Find out what EuroCorp is "
+"up to and take any steps you consider necessary to deal with the situation "
+"you find. Then return and confess to us everything you have learned, so that "
+"we may cleanse you of the evil to which you have been exposed."
+msgstr ""
+"Wir suchen in dieser Angelegenheit nach Erleuchtung. Führt Eure "
+"Kriegermönche durch die tödlichen Aussenbezirke und in die Todeszone hinein. "
+"Findet heraus, was EuroCorp dort tut, und ergreift alle Euch notwendig "
+"erscheinenden Schritte, um mit der Situation fertigzuwerden, die Ihr dort "
+"vorfindet. Kehrt dann zurück und beichtet uns alles, was Ihr herausgefunden "
+"habt, auf dass wir Euch von dem Bösen reinigen können, dem Ihr ausgesetzt "
+"wart."
+
+#: mission.brief.mail19.par6.c5
+msgctxt "mission brief email paragraph"
+msgid "Forgive nothing."
+msgstr "Vergebt nichts."
+
+#: mission.brief.mail19.par8.c1
+msgctxt "mission brief book quote"
+msgid ""
+"A war refugee sought the Master. He said, \"You are wise and serene. Teach "
+"me to escape the horrors of this world.\" And the Master blinded him with "
+"fire-irons."
+msgstr ""
+"Ein Kriegsflüchtling suchte den Meister auf. \"Du bist weise und gelehrt\", "
+"sprach er. \"Lehre mich, den Schrecken dieser Welt zu entgehen.\" Und der "
+"Meister blendete ihn mit glühenden Eisen."
+
+#: mission.brief.mail19.map3.level2:1
+msgctxt "mission brief tactical information"
+msgid "Landing Ground: Bangkok IML Link"
+msgstr "Landebereich: Bangkok, IML-Station"
+
+#: mission.brief.mail19.map3.level2:2
+msgctxt "mission brief tactical information"
+msgid "Dead zone perimeter"
+msgstr "Grenze der Todeszone"
+
+#: mission.brief.mail19.map3.level2:3
+msgctxt "mission brief tactical information"
+msgid "EuroCorp outpost"
+msgstr "Vorposten von EuroCorp"
+
+#: mission.brief.mail19.map3.level2:4
+msgctxt "mission brief tactical information"
+msgid "Sanctuary: Bangkok IML Link"
+msgstr "Zufluchtsort: Bangkok, IML-Station"
+
+#: mission.brief.mail19.map3.level2:5
+msgctxt "mission brief tactical information"
+msgid "A commercial vault still stands here"
+msgstr "Hier befindet sich immer noch ein Geschäftstresor"
+
+#: mission.brief.mail19.map3.level2:6
+msgctxt "mission brief tactical information"
+msgid "Satellite alert: evidence of weapons testing at outpost"
+msgstr "Satellitenwarnung: Beweis für Waffentests im Bereich des Vorpostens"
+
+#: mission.title:53
+msgctxt "mission title"
+msgid "Establish The Link"
+msgstr "Verbindung aufnehmen"
+
+#: mission.brief.mail20.par1.h
+msgctxt "mission brief email header"
+msgid "Listen strong, Acolyte."
+msgstr "Lauscht meinen Worten, Jünger des Lichts.."
+
+#: mission.brief.mail20.par2.c2
+msgctxt "mission brief email orders"
+msgid ""
+"We need an IML link to Reykjavik, where the sacraments of our founding "
+"religion are in danger. Our favoured daughter, Mirabelle Lucy De Saxo, must "
+"reactivate this path. It is up to you to clear a route to the IML station in "
+"the north-east of Christchurch. Purest Mirabelle will take the place "
+"normally occupied by your fourth Acolyte."
+msgstr ""
+"Wir brauchen eine IML-Verbindung nach Reykjavik, wo unsere geheiligten "
+"Sakramente in Gefahr sind. Unsere gesalbte Tochter, Mirabelle Lucy De Saxo, "
+"soll diese Route für uns reaktivieren. Es ist Eure Aufgabe, ihr einen "
+"sicheren Pfad zur IML-Station im Nordosten von Christchurch zu schaffen."
+
+#: mission.brief.mail20.par3.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Tread with care, pilgrim. Traps and ambushes abound, and you must bring the "
+"firepower of our faith to bear against any who stand in the way. De Saxo is "
+"special, and must not be harmed. Pray for this and do your utmost to see "
+"that it should be so."
+msgstr ""
+"Wandelt mit Vorsicht auf den Pfaden des Herrn, Pilger. Fallen und "
+"Hinterhalte lauern überall, und Ihr müsst die geballte Feuerkraft unseres "
+"Glaubens denen entgegenschleudern, die sich Euch in den Weg stellen wollen. "
+"De Saxo ist etwas Besonderes, und ihr darf kein Leid geschehen. Betet darum "
+"und sorgt dafür."
+
+#: mission.brief.mail20.par4.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"When enough people are of our faith, we shall open a gate in the Earth's "
+"ionosphere. The effects of unfettered cosmic rays on any part of the planet "
+"exposed to the ion gate will destroy nearly everything. Only those in the "
+"cause will be saved. We shall reset the world and it shall rise, safe in our "
+"religion."
+msgstr ""
+"Wenn genug Menschen unseren Glauben teilen, werden wir mit einer "
+"Strahlungslinse auf ultratiefer Frequenz ein Tor in der Ionosphäre der Erde "
+"öffnen. Die Einwirkung von ungefilterter kosmischer Strahlung durch das "
+"Ionentor wird auf der Erdoberfläche so gut wie alles abtöten. Nur wer fest "
+"im Glauben ist, wird errettet. Wir werden sozusagen einen weltweiten Reset "
+"fahren, und die Erde wird neu gebootet, besser und sicherer im Schosse "
+"unserer Religion."
+
+#: mission.brief.mail20.par5.c5
+msgctxt "mission brief email paragraph"
+msgid "Toil for our cause."
+msgstr "Arbeitet für unsere heilige Sache."
+
+#: mission.brief.mail20.par7.c1
+msgctxt "mission brief book quote"
+msgid "Follow the more successful thief and steal his ideas."
+msgstr "Folgt dem erfolgreicheren Dieb und stiehl seine Ideen."
+
+#: mission.brief.mail20a.map36.level2:1
+msgctxt "mission brief tactical information"
+msgid "Landing Ground: Christchurch IML Link A"
+msgstr "Landebereich: Christchurch, IML-Station A"
+
+#: mission.brief.mail20a.map36.level2:2
+msgctxt "mission brief tactical information"
+msgid "Christchurch IML Link B"
+msgstr "Christchurch, IML-Station B"
+
+#: mission.title:18
+msgctxt "mission title"
+msgid "Deconstruction"
+msgstr "Demontage"
+
+#: mission.brief.mail21.par1.h
+msgctxt "mission brief email header"
+msgid "Blessed One,"
+msgstr "Gesegneter,"
+
+#: mission.brief.mail21.par2.c2
+msgctxt "mission brief email orders"
+msgid ""
+"Destroy the EuroCorp Advanced R&D Facility near Reykjavik. Eliminate "
+"EuroCorp agents on sight."
+msgstr ""
+"Vernichtet die ausgebaute Forschungseinrichtung von EuroCorp in der Nähe von "
+"Reykjavik. Eliminiert alle EuroCorp-Agenten, die Ihr zu sehen bekommt."
+
+#: mission.brief.mail21.par3.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"The history of this place is the very structure of the Church of the New "
+"Epoch. Here you will see the raw essence that lead us all to believe. And "
+"EuroCorp is defiling it. You must eradicate with extreme force any agents "
+"you find here."
+msgstr ""
+"Die Geschichte dieses Ortes ist zugleich die hehre Basis der Kirche der "
+"Neuen Epoche. Dort werdet Ihr die reine Essenz dessen sehen, was uns alle "
+"zum Glauben bekehrt hat. Und EuroCorp entweiht es schamlos. Löscht mit "
+"grösster Strenge alle Ungläubigen aus, die Ihr antrefft."
+
+#: mission.brief.mail21.par4.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"You must also destroy all the places where the Nine prepared their minds for "
+"the seed of wisdom. It is only material substance, and our faith lives and "
+"beats in our hearts. Do not falter. Destroy. No harm will come to the Church "
+"now, for the Codex dwells deep inside the minds of the Nine. Only shadows of "
+"its wisdom remain in Reykjavik. Be thorough in your work, for the sake of "
+"precision."
+msgstr ""
+"Auch müsst Ihr all die Orte zerstören, an denen die Neun ihren Geist auf die "
+"Aufnahme der Weisheit vorbereitet haben. Es ist nur Materie, Substanz, wo "
+"doch unser Glaube in unseren Herzen schlägt und lebt. Zaudert nicht. "
+"Zerstört. Kein Schaden wird der Kirche daraus entstehen, denn der Kodex ruht "
+"tief in den Seelen der Neun. Nur Schatten seiner Weisheit huschen noch durch "
+"die Labors von Reykjavik. Seid gründlich in Eurem Streben, zum Wohle des "
+"Ganzen."
+
+#: mission.brief.mail21.par5.c5
+msgctxt "mission brief email paragraph"
+msgid "In holy footsteps."
+msgstr "Wandelt in heiligen Fussstapfen."
+
+#: mission.brief.mail21.par7.c1
+msgctxt "mission brief book quote"
+msgid ""
+"\"Here!\" said the Master. \"Build me a great tomb in this place.\" His "
+"apprentices did. It glittered in the sun. \"Now go inside,\" said he. They "
+"entered. An earthquake then destroyed the tomb, burying those within."
+msgstr ""
+"\"Genau hier!\" sagte der Meister. \"Baut mir ein grosses Grabmal genau an "
+"diesem Ort.\" Und seine Jünger taten, wie man sie geheissen hatte. Bald "
+"strahlte das Grabmal in der Sonne. \"Nun gehet hinein.\" Sie betraten es. "
+"Und ein Erdbeben zerstörte das Grabmal, begrub alle im Inneren unter sich."
+
+#: mission.brief.mail21.par8.c1
+msgctxt "mission brief book quote"
+msgid "The Master smiled. \"Even the faithful are not always chosen."
+msgstr "Der Meister lächelte. \"Nicht alle Gläubigen sind auch auserwählt.\""
+
+#: mission.brief.mail21.par9.c1
+msgctxt "mission brief book quote"
+msgid "\"This is called sacrifice.\""
+msgstr "\"Das nennt man Opfer.\""
+
+#: mission.title:45
+msgctxt "mission title"
+msgid "Retribution"
+msgstr "Vergeltung"
+
+#: mission.brief.mail22.par1.h
+msgctxt "mission brief email header"
+msgid "Walk in Light, Disciple."
+msgstr "Wandelt im Licht, Schüler des Herrn."
+
+#: mission.brief.mail22.par2.c2
+msgctxt "mission brief email orders"
+msgid ""
+"Eliminate Mirabelle Lucy De Saxo immediately. You will find her at the Cape "
+"Town sanctuary we gave her, and which we now take away."
+msgstr ""
+"Eliminiert Mirabelle Lucy De Saxo unverzüglich. Ihr findet sie in Kapstadt, "
+"in dem Zufluchtsort, den wir ihr gaben. Und den wir ihr jetzt wieder nehmen."
+
+#: mission.brief.mail22.par3.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Your heart beats only for us. Do not question the faith when it requires "
+"action you do not yet understand. De Saxo has trespassed against us. The "
+"Nine have exposed her as our enemy incarnate. She is an agent of the "
+"Syndicate. Travel to Cape Town with vengeance in your breast, and terminate "
+"her."
+msgstr ""
+"Euer Herz schlägt nur für uns. Zweifelt nicht am Glauben, wenn er Dinge von "
+"Euch verlangt, die Ihr noch nicht verstehen könnt. De Saxo hat sich gegen "
+"uns vergangen. Die Neun haben sie als unseren Erzfeind entlarvt. Sie ist ein "
+"Agent des Syndikates. Geht hin mit Rache in Eurer Brust, und eliminiert sie."
+
+#: mission.brief.mail22.par4.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"The weak-minded will side with her. Let them feel the force of the true way."
+msgstr ""
+"Die Schwachen im Geiste werden mit ihr paktieren. Lasst sie die Kraft des "
+"Rechten Weges fühlen."
+
+#: mission.brief.mail22.par5.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"We have nearly done enough to begin the final stage of the Cataclysm and "
+"change this world beyond all measure. Fight for it, Acolyte. You are chosen "
+"and will be saved. Millions of non-believers will perish. We will cleanse "
+"this planet."
+msgstr ""
+"Wir haben fast genug getan, um die letzte Phase des Kataklysmus einzuleiten "
+"und diese Welt über alle Masse zu verändern. Kämpft dafür, Schüler des "
+"Herrn. Ihr seid auserwählt und werdet gerettet werden. Millionen von "
+"Ungläubigen werden elend verdorren. Wir werden diesen Planeten reinigen."
+
+#: mission.brief.mail22.par6.c5
+msgctxt "mission brief email paragraph"
+msgid "Keep the faith."
+msgstr "Seid fest im Glauben an die Katharsis."
+
+#: mission.brief.mail22.par8.c1
+msgctxt "mission brief book quote"
+msgid "Even the salamander sometimes burns."
+msgstr "Selbst Salamander brennen manchmal."
+
+#: mission.brief.mail22.map44.level2:2
+msgctxt "mission brief tactical information"
+msgid "The blasphemer Mirabelle Lucy De Saxo"
+msgstr "Der Gotteslästerer Mirabelle Lucy De Saxo"
+
+#: mission.title:19
+msgctxt "mission title"
+msgid "Day Of The Damned"
+msgstr "Tag der Verdammten"
+
+#: mission.brief.mail23.par1.h
+msgctxt "mission brief email header"
+msgid "Hark these words, Apostle."
+msgstr "Hört meine Worte, Apostel."
+
+#: mission.brief.mail23.par2.c2
+msgctxt "mission brief email orders"
+msgid ""
+"The Great Church at Johannesburg has been desecrated by a swarm of Unguided "
+"ones. One of their number, Rene Galact, is visibly directing the throng. He "
+"must be destroyed in the name of all that is holy."
+msgstr ""
+"Die Grosse Kirche von Johannesburg ist von einem Schwarm Ungeleiteter "
+"entweiht worden. Einer von ihnen ist ganz klar als Anführer zu erkennen, ein "
+"gewisser Rene Galact. Er muss vernichtet werden, im Namen all dessen, was "
+"Recht ist."
+
+#: mission.brief.mail23.par3.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"There is an unforgivably large Unguided presence in the city. The raised "
+"mall and concourse in the south-west of the city is now the outcasts' "
+"fortress. A great victory will be born from the destruction of all those who "
+"would hide behind its irrelevant walls, and the Church will roll ever closer "
+"to the Final Day. It is written in the Codex, Disciple."
+msgstr ""
+"Es gibt eine unentschuldbar hohe Zahl von Ungeleiteten in der Stadt. Der "
+"leicht erhöht liegende Bereich im Südwesten der Stadt ist nun die Festung "
+"der Vogelfreien. Ein grosser Sieg wartet auf den Überwinder all derer, die "
+"sich hinter ihre unbedeutenden Mauern verkrochen haben, und die Kirche kommt "
+"dem Letzten Tag wieder ein Stückchen näher. So steht es geschrieben im "
+"Kodex, Schüler des Lichts."
+
+#: mission.brief.mail23.par4.c5
+msgctxt "mission brief email paragraph"
+msgid "Go with fire and serenity."
+msgstr "Geht hin mit Feuer und Strenge."
+
+#: mission.brief.mail23.par6.c1
+msgctxt "mission brief book quote"
+msgid "To take one life is sin. To take a thousand is religion."
+msgstr ""
+"Ein Leben zu nehmen ist ein Verbrechen. Eintausend zu nehmen ist eine "
+"Religion."
+
+#: mission.brief.mail23.map22.level4:3
+msgctxt "mission brief tactical information"
+msgid "Rene Galact"
+msgstr "Rene Galact"
+
+#: mission.title:71
+msgctxt "mission title"
+msgid "Recapture"
+msgstr "Wiederbeschaffungsmassnahme"
+
+#: mission.brief.mail24.par1.h
+msgctxt "mission brief email header"
+msgid "Blessings, Acolyte."
+msgstr "Unseren Segen über Euch, Apostel."
+
+#: mission.brief.mail24.par2.c2
+msgctxt "mission brief email orders"
+msgid ""
+"An emergency has arisen, to try us. One of the Nine has been captured. He is "
+"being held in a detention centre in Adelaide. You must release him and "
+"escort him to sanctuary."
+msgstr ""
+"Ein Notfall hat sich ergeben, um unsere Standhaftigkeit auf die Probe zu "
+"stellen. Einer der Neun wurde gefangengenommen. Er wird in einem "
+"Hochsicherheitstrakt in Adelaide festgehalten. Ihr müsst ihn befreien und in "
+"Sicherheit bringen."
+
+#: mission.brief.mail24.par3.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"You must pray for a way into the centre and must carry arms to beat off "
+"those unbelievers who would cut you down in your tracks. This is where your "
+"faith is tested, Disciple. Do not fail. Remain alert. Trust the true way "
+"and, if it is willed, you shall succeed."
+msgstr ""
+"Ihr müsst um einen Weg ins Herz der Anlage beten, und Ihr müsst genug Waffen "
+"dabei haben, um alle Ungläubigen abzuwehren, die sich Euch in den Weg "
+"stellen wollen. Dies ist eine Prüfung Eures Glaubens, Jünger des Lichts. "
+"Versagt nicht. Bleibt wachsam. Vertraut dem wahren Weg, und wenn er es will, "
+"werdet Ihr Erfolg haben."
+
+#: mission.brief.mail24.par4.c5
+msgctxt "mission brief email paragraph"
+msgid "Travel on holy paths."
+msgstr "Reist auf heiligen Pfaden."
+
+#: mission.brief.mail24.par6.c1
+msgctxt "mission brief book quote"
+msgid "In the darkest times, the true believer hones his combat skills."
+msgstr ""
+"In den dunkelsten aller Zeiten wird der wahre Gläubige üben, um seine "
+"Kampfkunst zu verbessern."
+
+#: mission.brief.mail24.map6.level3:1
+msgctxt "mission brief tactical information"
+msgid "Landing Ground: Adelaide IML Link"
+msgstr "Landebereich: Adelaide, IML-Station"
+
+#: mission.brief.mail24.map6.level3:2
+msgctxt "mission brief tactical information"
+msgid "The compound holding Brother Ix"
+msgstr "Der gefangengehaltene Bruder Ix"
+
+#: mission.brief.mail24.map6.level3:3
+msgctxt "mission brief tactical information"
+msgid "Rendezvous point"
+msgstr "Treffpunkt"
+
+#: mission.brief.mail24.map6.level3:4
+msgctxt "mission brief tactical information"
+msgid "Syndicate MBT deployment"
+msgstr "MBT-Stationierung durch das Syndikat"
+
+#: mission.title:100
+msgctxt "mission title"
+msgid "Revelations"
+msgstr "Enthüllungen"
+
+#: mission.title:102
+msgctxt "mission title"
+msgid "Cataclysm"
+msgstr "Kataklysmus"
+
+#: mission.brief.mail25.par1.h
+msgctxt "mission brief email header"
+msgid "Disciple."
+msgstr "Jünger des Lichts."
+
+#: mission.brief.mail25.par2.c2
+msgctxt "mission brief email orders"
+msgid ""
+"You have served us well. Now the moment is ours. Remain where you are and do "
+"not follow us. We will proceed to the Moon alone. When we activate our Ion "
+"Gate, those who remain on Earth will perish. Fear not - your name will "
+"forever be remembered and we shall call you a Saint of the New Epoch."
+msgstr ""
+"Ihr habt uns gut gedient. Nun ist unser Moment gekommen. Bleibt, wo Ihr "
+"seid, und folgt uns nicht. Wir werden uns alleine zur Ionentor-Linse "
+"begeben. Wenn wir sie aktivieren, werden alle, die auf der Erde "
+"zurückbleiben, vergehen. Doch fürchtet Euch nicht - Euer Name wird auf immer "
+"mit uns sein, und wahrlich, wir werden Euch einen Heiligen nennen."
+
+#: mission.brief.mail25.par3.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Human life on this planet will be virtually eradicated and we shall return "
+"to repopulate the globe with our likenesses. This has been our faith, and we "
+"shall carry it forward alone."
+msgstr ""
+"Das menschliche Leben auf diesem Planeten wird ausradiert, und wir werden "
+"die Erde mit unseren Ebenbildern neu besiedeln. Das war immer unser Glaube, "
+"und wir werden ihn verwirklichen - alleine."
+
+#: mission.brief.mail25.par4.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Anyone who now tries to stop us will be exterminated by the elite Sanctum "
+"Protectorate Guards. Accept your fate - do not be foolish and interfere. The "
+"power of the Sanctum Protectorate is immense. Remain where you are and lay "
+"down your weapons, for it is over and we have won."
+msgstr ""
+"Wer immer uns jetzt noch zu stoppen versucht, wird von der Sanctum-"
+"Protektorats-Garde ausgelöscht werden. Akzeptiert Euer Schicksal - seid "
+"nicht so närrisch, es ändern zu wollen. Die Macht der Protektorats-Garde ist "
+"immens. Bleibt, wo Ihr seid, und legt Eure Waffen nieder, denn es ist "
+"vorbei, und wir haben gewonnen."
+
+#: mission.brief.mail25.par6.c1
+msgctxt "mission brief book quote"
+msgid "The world shall turn and the human race shall pass."
+msgstr "Die Welt wird sich drehen, und die menschliche Rasse wird vergehen."
+
+#: mission.brief.mail25.par7.c1
+msgctxt "mission brief book quote"
+msgid "Everything begins anew. The faith has run its course and it is over."
+msgstr ""
+"Alles beginnt von neuem. Der Glaube hat seinen Weg vollendet, es ist vorbei."
+
+#: mission.brief.mail25.map46.level2:1
+msgctxt "mission brief tactical information"
+msgid "Landing Site: Colombo Executive Shuttle Pad"
+msgstr "Landegebiet: Colombo, Managershuttlerampe"
+
+#: mission.brief.mail25.map46.level2:2
+msgctxt "mission brief tactical information"
+msgid "Your proper place"
+msgstr "Der Platz, wo Sie hingehören"
+
+#: mission.brief.mail25.map46.level2:3
+msgctxt "mission brief tactical information"
+msgid "Colombo Orbital Elevator"
+msgstr "Colombo-Orbitallift"
+
+#: mission.brief.mail25.map46.level2:4
+msgctxt "mission brief tactical information"
+msgid "Elevator anti-missile missile system"
+msgstr "Anti-Satelliten-Raketensystem des Orbitalliftes"
+
+#: message.win:1
+msgctxt "game win message"
+msgid ""
+"So, your faith in yourself proved triumphant. You have not only thwarted the "
+"Nine's insane plan to restart the human race with clones of themselves, you "
+"have also gained possession of the most destructive weapon ever built."
+msgstr ""
+"Der Glaube an Euch selbst hat gesiegt. Ihr habt nicht nur den verrückten "
+"Plan der Neun durchkreuzt, die menschliche Rasse wieder aufleben zu lassen, "
+"indem sie sich selbst klont, Ihr habt sogar die fürchterlichste Waffe in "
+"Besitz genommen, die jemals erschaffen wurde."
+
+#: message.win:2
+msgctxt "game win message"
+msgid ""
+"On Earth, the Syndicate's UTOPIA lies in ruins. Millions hear the voice of "
+"Ko-Paull Vissick calling for reason to prevail."
+msgstr ""
+"Auf der Erde liegt das UTOPIA des Syndikats in Schutt und Asche. Millionen "
+"können die Klagerufe des Ko-Paull Vissick hören."
+
+#: message.win:3
+msgctxt "game win message"
+msgid "But let your will be done."
+msgstr "Aber Euer Wille geschehe."
+
+#: weapons.UZI.description
+msgctxt "weapons description - uzi"
+msgid ""
+"Old-fashioned personal defence weapon. The original fired chemically "
+"propelled kinetic ammunition. This updated version is more reliable as it "
+"draws on a personal energy cell to release each round. Nevertheless, the Uzi "
+"is a throwback to another time, and as such we regard it as virtually "
+"obsolete. The Church of the New Epoch is working on many vastly superior "
+"weapons to offer its Disciples."
+msgstr ""
+"Eine fast altmodische Abwehrwaffe. Das Original feuerte noch mit chemisch "
+"angetriebener kinetischer Munition. Diese verbesserte Version ist etwas "
+"zuverlässiger, weil sie auf die Energiezelle des Gegners abzielt. "
+"Nichtsdestoweniger ist die UZI ein Rückfall in längst überwunden geglaubte "
+"Zeiten, wir gehen davon aus, dass sie bald ihre Bedeutung verlieren wird. "
+"Die Kirche der Neuen Epoche arbeitet schon an der Entwicklung einer weit "
+"wirkungsvolleren Alternative und hofft, sie Ihren Jüngern bald präsentieren "
+"zu können."
+
+#: weapons.MINIGUN.description
+msgctxt "weapons description - minigun"
+msgid ""
+"Despite being something of a museum piece, this kinetic-round firing rotary "
+"cannon is considerably superior to the Uzi and more effective against the "
+"enemies of our faith. Like the Uzi, it has been upgraded to draw personal "
+"cell energy. Its shortcomings are bulk and noise but these are outweighed by "
+"its range and destructive power. When used in multiples, miniguns are "
+"effective against vehicles."
+msgstr ""
+"Obwohl fast schon ein Museumsstück, ist diese kinetisch feuernde "
+"Rotationskanone der UZI überlegen, weil sie sich effektiver gegen die Feinde "
+"unseres Glaubens einsetzen lässt. Die neueste Version ist nach dem gleichen "
+"Prinzip wie die Uzi aufgerüstet. Ihre Nachteile, hohes Gewicht und grosse "
+"Lärmbelästigung, gleicht sie mit ihrer Reichweite und grossen "
+"Zerstörungskraft wieder aus. Im Pulk eingesetzt, ist sie nach wie vor ein "
+"wirkungsvolles Instrument gegen Fahrzeuge aller Art."
+
+#: weapons.ELLASER.description
+msgctxt "weapons description - electron mace"
+msgid ""
+"The Nine have seen the sub-photon structure of light and they have unlocked "
+"its secrets. Their holy research has developed an ionic focus which "
+"transfers bolts of lightning onto a target. The weapon's range is superior "
+"to kinetic energy weapons and it works particularly well on conductive steel."
+msgstr ""
+"Die Neun haben die Sub-Photon-Struktur des Lichts entdeckt und die ihr "
+"innewohnenden Geheimnisse enträtselt. Diese geheiligte und segensbringende "
+"Forschungsarbeit hat zu der Entwicklung eines Ionen-Fokus geführt, der "
+"gebündelte Blitze auf ein Ziel schleudert. Seine Reichweite ist den "
+"althergebrachten Waffen mit kinetischer Energie überlegen. Die Elektrokeule "
+"entfaltet ihre ganze Kraft auf leitfähigem Stahl."
+
+#: weapons.LASER.description
+msgctxt "weapons description - pulse laser"
+msgid ""
+"Our scribes have developed an effective weapon based on the conventional "
+"laser. TriSodium 89 is injected in the pulse laser's firing chamber where it "
+"is lased electrically. The pressure of the gas in the firing chamber can be "
+"raised by holding down the trigger, overcharging the weapon and making it "
+"more effective in the process."
+msgstr ""
+"Unsere Gelehrten haben eine effektive Waffe entwickelt, die auf der Basis "
+"eines konventionellen Lasers arbeitet. In die Feuerkammer des Pulslasers "
+"wird TriSodium 89 injiziert und aufgeladen. Der Gasdruck in der Kammer kann "
+"durch langes Anhalten des Auslösers noch erhöht werden. Die daraus "
+"resultierende berhitzung zeitigt wahrhaft anbetungswürdige Ergebnisse."
+
+#: weapons.BEAM.description
+msgctxt "weapons description - plasma lance"
+msgid ""
+"This uses the combined energy of accelerated electrons to fire a stream of "
+"unstable energy along a magnetic carrier wave. A significant advance for the "
+"Church, and one that proves the value of the teachings held by the Nine."
+msgstr ""
+"Die Plasmalanze verwendet die kombinierte Energie beschleunigter "
+"Elektronenteilchen und produziert einen Strahl instabiler Energie, der "
+"entlang einer magnetischen Transportwelle verläuft. Eine für den Feind "
+"spürbare Demonstration der berlegenheit unserer Kirche und ein weiterer "
+"Beweis für die Gültigkeit unserer Glaubenssätze."
+
+#: weapons.RAP.description
+msgctxt "weapons description - launcher"
+msgid ""
+"An implosion grenade is fired towards the target, and uses its own guidance "
+"to ensure detonation on impact. Launchers use monopolar accelerator sleds to "
+"ensure an impressive range, and those who are targeted can seldom evade the "
+"gyro-homing system. This superb weapon is also useful for creating area "
+"fire. The auto-reload time does leave our holy Acolytes temporarily "
+"vulnerable."
+msgstr ""
+"Eine Implosionsgranate wird auf das Ziel abgefeuert, und die systemeigene "
+"Zielführung garantiert den Einschlag an der gewünschten Stelle. "
+"Raketenwerfer verwenden monopolare Beschleunigungsschlitten, um die "
+"Reichweite auf ein beeindruckendes Mass zu erhöhen. Einmal anvisierte Ziele "
+"können dem Gyro-Suchsystem kaum entkommen. Eine wundervolles Gerät, wie "
+"geschaffen für ein Abschnittsfeuer. Der Prozess des Wiederaufladens braucht "
+"allerdings seine Zeit, und hinterlässt, zumindest vorübergehend, die "
+"heiligen Jünger ungeschützt."
+
+#: weapons.NUCLGREN.description
+msgctxt "weapons description - nuclear grenade"
+msgid ""
+"The light of faith will be seen for miles when a nuclear grenade is "
+"detonated in the Church's name. Use with care, Apostle - the devastation "
+"this weapon creates is considerable. Be sure to retreat from the area in "
+"which it falls. Also, note its effectiveness against structures and groups. "
+"To use this device against a single enemy would be tantamount to blasphemy."
+msgstr ""
+"Die Explosion einer Atomgranate, abgefeuert im Namen der Kirche, verbreitet "
+"das Licht unseres Glaubens meilenweit. Doch benutzt sie mit Vorsicht, Bruder "
+"Apostel. Ihre Zerstörungskraft ist beträchtlich. Sorgt dafür, dass Ihr Euch "
+"rechtzeitig vom Ort des Geschehens entfernt und beachtet ihre Wirkung auf "
+"Gebäude und Gruppen. Wer die Atomgranate gegen Einzelpersonen einsetzt, der "
+"macht sich des Vergehens der Blasphemie schuldig."
+
+#: weapons.PERSUADER.description
+msgctxt "weapons description - indoctrinator"
+msgid ""
+"Our congregation grows with every day. Some souls, though, resist the path "
+"of truth we offer. Thus we have the Indoctrinator. It seeds in the minds of "
+"those disbelievers everything we know to be true in an instant. How could "
+"any resist this avalanche of knowledge and wisdom?"
+msgstr ""
+"Unsere Glaubensgemeinschaft wächst von Tag zu Tag. Und dennoch gibt es "
+"einige renitente Geister, die partout nicht dem Weg folgen wollen, den wir "
+"ihnen anbieten. Doch für solche Fälle haben wir den Indoktrinator. Alle uns "
+"wohlbekannten Wahrheiten werden von einem Moment auf den anderen in die "
+"Köpfe der Ungläubigen gesät. Denn, seien wir ehrlich, liebe Brüder: Wer kann "
+"sich dieser Lawine von Wissen und Weisheit dauerhaft entziehen?"
+
+#: weapons.FLAMER.description
+msgctxt "weapons description - flamer"
+msgid ""
+"Those who oppose the path of righteousness can expect to burn for all "
+"eternity. These magnox flame-throwers are their first taste of that. They "
+"don't have anything like the range of energy or even kinetic weapons, but "
+"they have their uses, in crowds for example. They also inspire the fear and "
+"submission that we seek."
+msgstr ""
+"Diejenigen, die dem Pfad der Rechtschaffenheit nicht folgen wollen, haben "
+"ein Recht auf Ewigkeit. Und mit diesem Gerät verschaffen wir ihnen das "
+"Recht. Der Flammenwerfer verfügt nicht mal über die Reichweite von "
+"kinetischen Waffen, aber er hat durchaus seine Daseinsberechtigung. "
+"Ausserdem verbreitet er Angst und Schrecken, Reaktionen also, die durchaus "
+"in unserem Interesse liegen."
+
+#: weapons.H2HTASER.description
+msgctxt "weapons description - disrupter"
+msgid ""
+"This small, convenient unit de-persuades its target or the target's "
+"persuaded followers with the minimum of fuss. Although the Disrupter is not "
+"a real alternative to the weapons of destruction provided by our scientists "
+"and benefactors, it is magnificently subversive."
+msgstr ""
+"Ohne grossen Aufwand erlöst diese kleine, leicht zu handhabende Einheit vom "
+"berzeugstrahler getroffene Ziele von ihrer Fremdbestimmung. Auch wenn der "
+"Trenner keine Alternative zu den Zerstörungswaffen darstellt, die uns von "
+"unseren Wissenschaftlern und Wohltätern zur Verfügung gestellt werden, so "
+"ist er dennoch ein herrlich subversives Mittel, die Ungläubigen auf den Pfad "
+"der Weisheit zurückzubringen."
+
+#: weapons.CRAZYGAS.description
+msgctxt "weapons description - psycho gas"
+msgid ""
+"Distilled from an alien fungoid narcotic, Psycho Gas is the ideal weapon for "
+"causing large-scale havoc. Fired into a group of civilians, it will "
+"instantly provoke an uncontrollable riot. This will force the authorities to "
+"expend their energies regaining control, leaving your holy Acolytes to get "
+"on their mission."
+msgstr ""
+"Das aus den Sporen eines fremden Pilzes gewonnene Psychogas ist ein "
+"hocheffektives Mittel, die Herrschaft der Ungläubigen zu destabilisieren. "
+"Feuert es in eine Gruppe von Zivilisten, und Ihr werdet in kürzester Zeit "
+"den schönsten Aufstand erleben. Die herrschende Clique ist gezwungen, all "
+"ihre Energie auf die Wiedergewinnung ihrer Kontrollfunktionen zu legen, und "
+"muss tatenlos zusehen, wie unsere Jünger ihren Aufgaben nachgehen."
+
+#: weapons.KOGAS.description
+msgctxt "weapons description - knockout gas"
+msgid ""
+"This censer produces a cloud which lays low any unprotected targets who are "
+"touched by it. Simplicity is welcome wherever it can be effective."
+msgstr ""
+"Ein kleines Weihrauchfässchen produziert eine Wolke, die alles ausser "
+"Gefecht setzt, was ungeschützt mit ihr in Berührung kommt. Sei willkommen, "
+"Einfachheit, wo immer Du Dich effektiv einsetzen lässt."
+
+#: weapons.ELEMINE.description
+msgctxt "weapons description - ion mine"
+msgid ""
+"Triggered by enemy activity in the vicinity, the Ion Mine sends out tendrils "
+"of electrical energy in all directions and is extremely effective against "
+"enemies of the faith in a vehicle or on foot. This device is triggered by "
+"target proximity. Its discharge will also affect the CHIP status of those "
+"caught by it."
+msgstr ""
+"Abgefeuert auf feindliche Aktivitäten in unmittelbarer Umgebung, sendet die "
+"Ionenmine ganze Bündel elektrischer Energie aus. Sie entfaltet ihre volle "
+"Kraft gegen alle Glaubensgegner, die sich in Fahrzeugen befinden oder zu "
+"Fuss unterwegs sind. Die Entladung beeinflusst darüber hinaus den CHIP-"
+"Status der Getroffenen."
+
+#: weapons.EXPLMINE.description
+msgctxt "weapons description - high explosive"
+msgid ""
+"A conventional mine which uses a time delay fuse embedded in a directed "
+"detonation charge. A handy weapon to use against tanks or other armoured "
+"vehicles."
+msgstr ""
+"Eine konventionelle Mine mit Zeitzünder, eingebettet in eine lenkbare "
+"Explosionsladung. Eine handliche und wirksame Waffe gegen Panzer oder andere "
+"stark geschützte Fahrzeuge."
+
+#: weapons.LONGRANGE.description
+msgctxt "weapons description - long range rifle"
+msgid ""
+"Our divine work will sometimes call for the elimination of individuals "
+"rather than the liquidation of larger groups. The Long Range Rifle fires "
+"uranium-depleted kinetic rounds with great accuracy long distances. Few body "
+"armour components can withstand the pressure-shock of these advanced shells. "
+"Usually one shot will drop a target, and you can make good your escape "
+"unseen."
+msgstr ""
+"Unser göttliches Werk verlangt zuweilen nach der Ausschaltung einzelner "
+"Cyborgs und nicht gleich grösserer Gruppen. Die Fernwaffe feuert mit hoher "
+"Präzision kinetische Munition aus verbrauchtem Uran und überwindet dabei "
+"grosse Entfernungen. Nur wenige Panzerungselemente können ihrem hohen "
+"Aufpralldruck widerstehen. Im Allgemeinen genügt ein einzelner Schuss, und "
+"Ihr habt Zeit genug, unerkannt zu entkommen."
+
+#: weapons.AIRSTRIKE.description
+msgctxt "weapons description - satellite rain"
+msgid ""
+"We can acquire launch codes for many of the geo-stationary satellites which "
+"hang above our planet but the computing costs involved in cracking the "
+"Syndicate's encrypted security lock-outs are high. When you activate a "
+"strike, within a few seconds, the nearest satellite will target your "
+"designated position and fire down bolts of tungsten-uranium alloy which "
+"superheat in the atmosphere and cause massive destruction throughout the "
+"area."
+msgstr ""
+"Wir sind in der Lage, die Abschusscodes der meisten geostationären "
+"Satelliten, mit denen das Syndikat unseren Planeten umgeben hat, zu knacken. "
+"Der Kostenaufwand ist allerdings beträchtlich. Wenn Sie einen Schlag "
+"aktivieren, dann wird der nächstgelegene Satellit in wenigen Sekunden die "
+"angegebene Position anvisieren und ein Bündel speziallegierter Metallstäbe "
+"abfeuern, die sich bei Eintritt in die Atmosphäre erhitzen und in dem "
+"betroffenen Gebiet beträchtliche Schäden anrichten."
+
+#: weapons.QDEVASTATOR.description
+msgctxt "weapons description - graviton gun"
+msgid ""
+"This device is the most destructively powerful the Nine could make mobile. "
+"The graviton gun can unleash enough energy to reduce a mountain to boulders. "
+"Behold, the wrath of the Nine!"
+msgstr ""
+"Die wohl mächtigste Waffe, die die Neun mobilisieren konnten. Die "
+"Gravitonkanone bläst genügend Energie aus, um einen mächtigen Berg auf ein "
+"paar Kieselsteine zu reduzieren. Schaut auf den Zorn der Neun!"
+
+#: weapons.RAZORWIRE.description
+msgctxt "weapons description - razor wire"
+msgid ""
+"A coil of high-tensile wire with counter-spun barbs. Razor Wire is hard to "
+"detect, especially in combat situations. Place it at strategic points and "
+"the opposition will do themselves great harm as they blunder into the wire "
+"strands. A weapon which has stood the test of time well."
+msgstr ""
+"Eine Spule aus hochdehnbarem monomolekularem Draht mit Widerhaken. Der "
+"Monomoldraht ist nur schwer aufzuspüren, besonders in Kampfsituationen. "
+"Plaziert ihn an strategisch wichtigen Punkten, und der Gegner wird sich "
+"wundern, wenn er durch die Sperre tappt. Eine zeitgemässe Waffe, die ihre "
+"Tauglichkeit längst unter Beweis gestellt hat."
+
+#: weapons.STASISFLD.description
+msgctxt "weapons description - stasis field"
+msgid ""
+"Only true deities could bring such a device as this into being. As you "
+"activate it, a dome of atomically stable sub-temporal space is created. "
+"Known through the centuries as witch-time when it naturally occurs, this has "
+"the effect of slowing dramatically any one or anything caught in the dome. "
+"It is a sight to pray for."
+msgstr ""
+"Nur ein richtiger Gott kann eine derartige Vorrichtung ins Leben rufen. Nach "
+"seiner Aktivierung entsteht eine Kuppel aus subtemporärem, atomar stabilem "
+"Raum. Ein Phänomen, das zuweilen auch in der Natur vorkommt; in früheren "
+"Jahrhunderten nannte man es auch die 'Stunde der Geister'. Der Effekt ist "
+"der gleiche: Jedes Wesen, jedes Objekt, das sich innerhalb der Kuppel "
+"befindet, wird in seinen Bewegungen oder Reaktionen geradezu dramatisch "
+"abgebremst. Eine Aussicht zum Anbeten."
+
+#: weapons.SOULGUN.description
+msgctxt "weapons description - chromotap"
+msgid ""
+"Our scientists have unravelled more of the arcane secrets of the Codex and "
+"built a device which will export the natural electrochemical forces "
+"contained within the cells of any organic structure which has recently died. "
+"This saps the residual cellular energy of the corpse, as long as its "
+"cellular structure has not been destroyed. Praise the Nine for their vision, "
+"Acolyte."
+msgstr ""
+"Unsere Gelehrten haben die esoterischen Geheimnisse des Kodex weiter "
+"entschlüsselt und eine Apparatur geschaffen, die die elektrochemische Kraft "
+"einer organischen Zellstruktur exportieren kann. Mit der Vampirette lässt "
+"sich die Energie jeder Zelle, sei sie tot oder lebendig, abzapfen, "
+"vorausgesetzt, die Zellstruktur ist noch intakt. Preist die Neun für diese "
+"visionäre Tat, Ihr Jünger."
+
+#: weapons.TIMEGUN.description
+msgctxt "weapons description - displacertron"
+msgid ""
+"The Codex has given us this. Using witch-time still further, you can now "
+"transport enemies to other temporal planes. Effectively a time-slip, this is "
+"perfect for vanishing a target. It can be used on your own team, but caution "
+"is advised; the effects are not fully understood."
+msgstr ""
+"Wurde uns vom Kodex mitgegeben. Basierend auf dem Prinzip der Geisterstunde, "
+"kann das ZR-Tron den Feind in eine andere Zeitebene transportieren. Euch "
+"selbst allerdings auch. Seid also vorsichtig, Ihr Jünger: Die Wirkungsweise "
+"des ZR-Trons ist noch nicht vollständig erforscht."
+
+#: weapons.CEREBUSIFF.description
+msgctxt "weapons description - cerberus iff"
+msgid ""
+"A sentry drone upon which a high-powered laser is fitted. A thermo-motion "
+"detector built into the base is connected to an identkey reader, and any non-"
+"recognised movement it picks up is fired upon. These sentry units are most "
+"effective in open areas with a wide field of view."
+msgstr ""
+"Der Zerberus ist eine Wachdrohne, an der ein Hochleistungslaser angebracht "
+"ist. Der integrierte Thermo-Bewegungsmelder ist an ein Lesegerät "
+"angeschlossen. Jede unautorisierte Bewegung wird unter Feuer genommen. "
+"Besonders effektiv sind diese Wacheinheiten in offen zugänglichen Bereichen "
+"mit freiem Blickfeld."
+
+#: weapons.MEDI1.description
+msgctxt "weapons description - medikit"
+msgid ""
+"Believe in the Church and it will take care of you. When one or more of your "
+"Disciples is injured in the holy war against EuroCorp, using this unit will "
+"restore health and fitness. Such a device demonstrates the care and "
+"understanding on which the Church of the New Epoch is founded."
+msgstr ""
+"Glaubt an die Kirche, und sie wird sich um Euch sorgen. Der Gebrauch dieses "
+"Päckchens wirkt sich positiv auf die Gesundheit der Jünger aus, die im "
+"heiligen Kampf gegen EuroCorp verwundet wurden. Diese Einrichtung ist der "
+"sichtbare Beweis der Fürsorge und des Verständnisses, den zwei tragenden "
+"Säulen der Kirche der Neuen Epoche."
+
+#: weapons.MEDI2.description
+msgctxt "weapons description - automedikit"
+msgid ""
+"An advanced restoration unit which will take care of your wounds and "
+"injuries without distracting a member of your team. An invaluable addition "
+"to any equipment pack for operatives spreading the word of faith in the "
+"Cataclysm."
+msgstr ""
+"Der Medipack für Fortgeschrittene. Heilt Wunden und Verletzungen, ohne unter "
+"den eigenen Leuten Verwirrung zu stiften. Ein Päckchen von unschätzbarem "
+"Wert für die Jünger, die auch in Zeiten der Umwälzung frohgemut das Wort des "
+"Glaubens verkünden."
+
+#: weapons.EXPLWIRE.description
+msgctxt "weapons description - trigger wire"
+msgid ""
+"A booby-trap which, when set in the required place, will destroy any who "
+"venture through the molecular cable spread between two points. Unwittingly, "
+"the foe will set off a blast which will render them no further impediment to "
+"the cause of our spreading religion."
+msgstr ""
+"Eine Falle für all die Trottel, die das Molekularkabel auf ihrem Spaziergang "
+"zerreissen. Plaziert den Zünder im gewünschten Bereich und spannt den Draht "
+"zwischen zwei Punkten. Der Feind tappt unwissentlich in die Falle, und der "
+"darauf folgende Knall räumt mögliche Hindernisse des sich ausbreitenden "
+"Glaubens zuverlässig aus dem Weg."
+
+#: weapons.CLONESHLD.description
+msgctxt "weapons description - clone shield"
+msgid ""
+"This device will render one of your team invisible to detection. They will "
+"look to EuroCorp and others just like a harmless executive, and will be able "
+"to walk through fire-control zones where our Acolytes would surely be unable "
+"to tread. The perfect disguise, and extremely useful for covert operations "
+"in the name of the Church."
+msgstr ""
+"Der Tarnschild schützt einen Eurer Schüler wirksam vor Entdeckung. Er wird "
+"EuroCorp (und anderen) als harmloser Feldagent erscheinen und kann "
+"unbehelligt selbst durch solche Zonen marschieren, die unsere Kriegermönche "
+"unter normalen Umständen nie und nimmer betreten dürften. Kurzum, es ist die "
+"perfekte Verkleidung und das ideale Hilfsmittel bei verdeckt durchgeführten "
+"Operationen im Namen der Kirche der Neuen Epoche."
+
+#: mods.LEGS1.description
+msgctxt "mods description - legs 1"
+msgid ""
+"Our time is upon us. We must not squander it. Every nanosecond is sacred. "
+"Your Acolytes must act with haste and vigour. By removing their mortal flesh "
+"and replacing it with this wondrous work of technology, as described in the "
+"teachings of the Codex, you give them more of both."
+msgstr ""
+"Die Zeit ist mit uns, meine Brüder. Aber das heisst noch lange nicht, dass "
+"wir sie verschwenden dürfen. Jede Nanosekunde ist heilig. Eure Kriegermönche "
+"sind angehalten, schnell und durchschlagskräftig vorzugehen. Das erreicht "
+"man nur durch den Einsatz unserer technologischen Wunderwerke. Aber diese "
+"Erkenntnis ist Euch allen ja aus den Glaubenssätzen des Kodex bekannt."
+
+#: mods.LEGS2.description
+msgctxt "mods description - legs 2"
+msgid ""
+"May the lessons of the fractal psalms always enlighten us. Secrets of the "
+"cosmos have been unlocked to create materials in ways denied within the well "
+"of gravity. By judicious use of your funds, we have used such rare "
+"substances to create these superior leg prosthetics."
+msgstr ""
+"Mögen die Fraktalpsalme uns immer den rechten Weg zeigen. Wir haben dem "
+"Kosmos die Geheimnisse entlockt und produzieren Materialien auf eine Weise, "
+"die im Widerspruch zu den Gesetzen der Schwerkraft zu stehen scheinen. Der "
+"weise Umgang mit Eurer Kirchensteuer ermöglicht den Einsatz solch seltener "
+"Substanzen bei der Produktion dieser 1a-Qualitäts-Beinprothesen."
+
+#: mods.LEGS3.description
+msgctxt "mods description - legs 3"
+msgid ""
+"To save a soul, one must first invest the highest technology in it. Blessed "
+"are those then who walk on terra firma with the holy purpose in their "
+"stride. Let them embody everything the Church stands for; outfit your "
+"Acolytes with the finest works of the Nine."
+msgstr ""
+"Um eine Seele zu retten, muss man erst in sie investieren, und zwar auf "
+"höchstem Technologiestandard. Gesegnet sind diejenigen, die beseelt von "
+"heiligen Absichten auf der terra firma einherschreiten. Lasst sie das "
+"verkörpern, für das die Kirche der Neuen Epoche steht. Bestückt Eure Jünger "
+"mit den allerfeinsten Arbeiten der Neun."
+
+#: mods.ARMS1.description
+msgctxt "mods description - arm 1"
+msgid ""
+"May your aim always be true. To this end, cybernetic arm enhancements are a "
+"significant aid to accuracy. The extra armour it provides your Acolytes also "
+"contributes to their survivability. Acolytes with arm prosthetics can also "
+"throw objects further."
+msgstr ""
+"Mögen Eure Ziel stets klar und lauter sein. Gerade deshalb ist die "
+"kybernetische Gliedmassenaufrüstung so wichtig: Sie erhöht die "
+"Zielgenauigkeit. Der Zusatzpanzer erhöht die berlebensfähigkeit des "
+"glaubensfesten Kriegermönchs; ausserdem kann er mit der Prothese weiter "
+"werfen."
+
+#: mods.ARMS2.description
+msgctxt "mods description - arm 2"
+msgid ""
+"It is our way to bind machine and man. If one improves the man then one "
+"should also improve the machine. The new construction techniques these arm "
+"mods employ improve on all the benefits cybernetic arms bring to your "
+"Acolytes. Give thanks to the Nine."
+msgstr ""
+"Es ist unser Prinzip, Mann und Maschine miteinander zu verbinden. Wenn einer "
+"den Mann verbessert, sollte auch die Maschine verbessert werden. Die neuen "
+"Konstruktionstechniken der Arm-Modifikationen bringen Euren Jüngern alle "
+"Segnungen der Kybernetik. Danke den Neun."
+
+#: mods.ARMS3.description
+msgctxt "mods description - arm 3"
+msgid ""
+"Now the Cataclysm is nigh, only the strongest speak. The massive weapons we "
+"use require massive strength to operate. With these arms your Acolytes will "
+"wield the means to our victory and possess the might to lay low all who "
+"would seek to prevent the Cataclysm."
+msgstr ""
+"Der Kataklysmus ist nah und nur der Stärkste spricht. Massive Bewaffnung "
+"erfordert massiven Krafteinsatz. Mit diesen Armen erhalten Eure "
+"Kriegermönche den Schlüssel zu unserem Sieg. Nun besitzen sie die Kraft, "
+"alles aus dem Weg zu räumen, das sich der grossen Umwälzung in den Weg "
+"stellen könnte."
+
+#: mods.CHEST1.description
+msgctxt "mods description - body 1"
+msgid ""
+"The path of the faithful is marked by continual cybernetic enhancement. Thus "
+"the journey to salvation begins here. This sophisticated artificial torso, "
+"which increases the stamina and health of a disciple, also serves as the "
+"anchor for other prosthetics."
+msgstr ""
+"Der Pfad der Gläubigen wird von zahllosen kybernetischen Verbesserungen "
+"gesäumt. Die Reise zum Heil entspringt hier. Dieser ausgeklügelte künstliche "
+"Torso erhöht die Widerstandskraft und die Gesundheit Eures Jüngers. Zudem "
+"dient er als Anker für andere prothetische Formen."
+
+#: mods.CHEST2.description
+msgctxt "mods description - body 2"
+msgid ""
+"The soul may be indestructible but the body is not. If too many of your "
+"Acolytes are making the ultimate sacrifice, bless them with these "
+"lightweight, foam-metal clad, chest and respiratory systems."
+msgstr ""
+"Die Seele mag unzerstörbar sein, der Körper ist es nicht. Wenn zuviele Eurer "
+"Schüler das Letzte Opfer bringen, segnet sie mit diesen leichten Brust- und "
+"Atmungssystemen in einem Kleid aus geschäumten Metall."
+
+#: mods.CHEST3.description
+msgctxt "mods description - body 3"
+msgid ""
+"A time of great change is coming; such a time as demands that great forces "
+"are brought to bear. A disciple modified with this sophisticated, holy "
+"fabric fears no evil. Your enhanced brethren will even be able to venture "
+"through clouds of nerve gas and remain unharmed."
+msgstr ""
+"Die Zeit der grossen Wende ist gekommen. Eine solche Zeit verlangt nach "
+"grosser Kraft. Ein Kriegermönch, ausgerüstet mit dieser ausgefeilten, "
+"heiligen Konstruktion, wird das Böse nicht länger fürchten. Ein derart "
+"aufgerüsteter Glaubensbruder kann durch eine Wolke von Nervengas "
+"lustwandeln, ohne davon berührt zu werden. Fürchtet den Panzer derjenigen, "
+"die den Kataklysmus bringen!"
+
+#: mods.BRAIN1.description
+msgctxt "mods description - brain 1"
+msgid ""
+"As our mission continues, the challenge to our activities becomes greater. "
+"Increase your Acolyte's perception and health and the masses will prostrate "
+"themselves. Thus shall the Church of the New Epoch be known."
+msgstr ""
+"Mit dem Fortschreiten unserer Mission wachsen auch die Herausforderungen. "
+"Erhöhe Wahrnehmungsfähigkeit und Gesundheit Eures Schülers, und die Massen "
+"werden uns zu Füssen liegen. So soll die Kirche der Neuen Epoche überall "
+"bekannt werden."
+
+#: mods.BRAIN2.description
+msgctxt "mods description - brain 2"
+msgid ""
+"Know thine enemy disciple, and know him at extreme range, so that you may "
+"prepare the cleansing of him. The Nine have turned their attention to the "
+"demands on our Acolytes, as they prepare the way for the Catclysm. Improve "
+"your Acolytes' minds with new brains."
+msgstr ""
+"Lernt, Euren Feind zu studieren so genau Ihr es vermögt, mein Schüler. Erst "
+"dann könnt Ihr darauf hoffen, ihn möglicherweise zu beseitigen. Die Neun "
+"haben ihre Forschungen ganz auf die Bedürfnisse unserer Kriegermönche "
+"ausgerichtet, weil sie es sind, die die grosse Wende herbeiführen müssen. "
+"Rüstet auch Ihr Eure Jünger mit den neuen Gehirnen aus."
+
+#: mods.BRAIN3.description
+msgctxt "mods description - brain 3"
+msgid ""
+"The mind of god is the mind of a machine. For heightened awareness beyond "
+"the limits of biological means alone, equip your Acolytes with the ultimate "
+"in mobile Artificial Intelligence. With understanding comes great power. "
+"Embody this understanding and embrace the power."
+msgstr ""
+"Der Wille Gottes ist auch der Wille der Maschine. Ein erhöhtes Bewusstsein "
+"jenseits aller Beschränkung durch die Biologie verlangt nach der Aufrüstung "
+"mit dem ussersten an künstlicher Intelligenz. Mit dem Verständnis wächst die "
+"Leistung. Fügt das Verständnis ein und holt Euch die Leistung!"
+
+#: mods.SKIN1.description
+msgctxt "mods description - hard skin"
+msgid ""
+"On occasion, our EuroCorp foe does create some innovative technology. This "
+"cyberskin is a better epidermis than traditional plaskin. A lining of "
+"molecule weave suspended in anti-shock microfoam will make Acolytes who wear "
+"it almost invincible to kinetic energy rounds."
+msgstr ""
+"Unser Gegner, EuroCorp, arbeitet an einigen innovativen Techniken. Doch auch "
+"wir können anhand dieser Blaupause nun eine bessere Epidermis bauen als die "
+"bisher bekannte Plasthaut. Ein feines Molekulargewebe, eingebettet in Anti-"
+"Schock-Mikroschaum, macht Euren Schüler für fast alle Arten kinetischer "
+"Gewaltanwendung unempfänglich."
+
+#: mods.SKIN2.description
+msgctxt "mods description - flame skin"
+msgid ""
+"Heat is one enemy of the combatant. Our foe has found the solution with this "
+"experimental cyverskin. Using space industry fabrics, they have developed a "
+"cyberskin which can make our Acolytes resistant to flame and thermal energy."
+msgstr ""
+"Hitze ist ein grosser Feind des tapferen Glaubenskämpfers. Der Feind hat "
+"sich seine eigenen Gedanken zu diesem Problem gemacht und eine Lösung "
+"gefunden, die in diesen Dokumenten beschrieben ist. Unter Verwendung von "
+"Industrieanlagen im Weltall haben sie eine Cyberhaut entwickelt, die auch "
+"unsere Jünger wirksam vor Hitzeschäden bewahren kann."
+
+#: mods.SKIN3.description
+msgctxt "mods description - energy skin"
+msgid ""
+"Even the Nine were impressed with the concept behind this magnificent "
+"treasure you have recovered. Using some Codex technology - perverted by "
+"their inferior understanding - EuroCorp weaved spectral sink technology into "
+"a cyberskin, thus providing shielding from the full effects of "
+"electromagnetic weapons. Interesting. We can now take advantage of their "
+"work and employ this knowledge for ourselves."
+msgstr ""
+"Selbst die Neun waren von den neuen Forschungsergebnissen beeindruckt. Unter "
+"Zuhilfenahme einiger Elemente der Kodex-Technologie - welch eine Entweihung "
+"- und mit einer bestimmten Form der Spectralsynchronisation ist es EuroCorp "
+"gelungen, ihre Agenten vor den Folgen elektromagnetischer Waffen nachhaltig "
+"zu schützen. Nicht uninteressant. Wir werden ihre Arbeit fortsetzen und "
+"dieses Wissen für unsere eigenen Zwecke verwenden."
+
+#: mods.SKIN4.description
+msgctxt "mods description - stealth skin"
+msgid ""
+"Ever more accursed, EuroCorp do not give up trying to compete with our "
+"vastly superior technology. Nevertheless, they have come up with something "
+"special. This cyberskin reflects UTOPIA sensor scans, thereby making weapon "
+"lock on a target contained in this substance extremely difficult to achieve."
+msgstr ""
+"Auch wenn ihre Motive mehr als schändlich sind: EuroCorp gibt nicht auf, "
+"sich mit unserem weit überlegenen Technologieverständnis messen zu wollen. "
+"Trotz dieser erkennbaren Unterlegenheit deuten gewisse Dokumente darauf hin, "
+"dass man sich mit etwas Besonderem beschäftigt. Es sind dies Anweisungen "
+"über die Verbindung von Cyberhaut mit den Eigenschaften eines bestimmten "
+"Tarnschildes. Genauer ausgedrückt: Diese Spezialhaut reflektiert auf dem "
+"UTOPIA-Scanner lediglich die Signalwerte eines zivilen Feldagenten. Ein mit "
+"Tarnhaut ausgestatteter Agent stellt bis zu seiner Enttarnung natürlich eine "
+"gewisse Gefahr dar. Wir werden alles daran setzen, diese Technik für uns "
+"selbst zu nutzen."

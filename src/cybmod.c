@@ -265,4 +265,268 @@ void read_cybmods_conf_file(void)
     mod_names[i].num = 0;
 }
 
+const char *cybmod_codename(ushort mtype)
+{
+    struct ModDefAdd *mdefa;
+
+    if (mtype >= MOD_TYPES_COUNT)
+        return "";
+
+    mdefa = &mod_defs_a[mtype];
+    return mdefa->Name;
+}
+
+ubyte cybmod_chest_level(union Mod *p_umod)
+{
+    return (p_umod->Mods >> 6) & 7;
+}
+
+void set_cybmod_chest_level(union Mod *p_umod, ubyte nmod)
+{
+    p_umod->Mods &= ~(7 << 6);
+    p_umod->Mods |= (nmod << 6);
+}
+
+ubyte cybmod_legs_level(union Mod *p_umod)
+{
+    return (p_umod->Mods) & 7;
+}
+
+void set_cybmod_legs_level(union Mod *p_umod, ubyte nmod)
+{
+    p_umod->Mods &= ~(7);
+    p_umod->Mods |= (nmod);
+}
+
+ubyte cybmod_arms_level(union Mod *p_umod)
+{
+    return (p_umod->Mods >> 3) & 7;
+}
+
+void set_cybmod_arms_level(union Mod *p_umod, ubyte nmod)
+{
+    p_umod->Mods &= ~(7 << 3);
+    p_umod->Mods |= (nmod << 3);
+}
+
+ubyte cybmod_brain_level(union Mod *p_umod)
+{
+    return (p_umod->Mods >> 9) & 7;
+}
+
+void set_cybmod_brain_level(union Mod *p_umod, ubyte nmod)
+{
+    p_umod->Mods &= ~(7 << 9);
+    p_umod->Mods |= (nmod << 9);
+}
+
+ubyte cybmod_skin_level(union Mod *p_umod)
+{
+    return (p_umod->Mods >> 12) & 7;
+}
+
+void set_cybmod_skin_level(union Mod *p_umod, ubyte nmod)
+{
+    p_umod->Mods &= ~(7 << 12);
+    p_umod->Mods |= (nmod << 12);
+}
+
+TbBool cybmod_fix_all(union Mod *p_umod)
+{
+    TbBool fixed = false;
+    if (p_umod->Mods >> 15 > 0) {
+        p_umod->Mods &= ~(7 << 15);
+        fixed = true;
+    }
+    if (cybmod_skin_level(p_umod) > 4) {
+        set_cybmod_skin_level(p_umod, 1);
+        fixed = true;
+    }
+    if (cybmod_brain_level(p_umod) > 3) {
+        set_cybmod_brain_level(p_umod, 1);
+        fixed = true;
+    }
+    if (cybmod_arms_level(p_umod) > 3) {
+        set_cybmod_arms_level(p_umod, 1);
+        fixed = true;
+    }
+    if (cybmod_legs_level(p_umod) > 3) {
+        set_cybmod_legs_level(p_umod, 1);
+        fixed = true;
+    }
+    if (cybmod_chest_level(p_umod) > 3) {
+        set_cybmod_chest_level(p_umod, 1);
+        fixed = true;
+    }
+    return fixed;
+}
+
+void add_mod_to_flags(union Mod *p_umod, ushort mtype)
+{
+    switch (cybmod_group_type(mtype))
+    {
+    case MODGRP_LEGS:
+        set_cybmod_legs_level(p_umod, cybmod_version(mtype));
+        break;
+    case MODGRP_ARMS:
+        set_cybmod_arms_level(p_umod, cybmod_version(mtype));
+        break;
+    case MODGRP_CHEST:
+        set_cybmod_chest_level(p_umod, cybmod_version(mtype));
+        break;
+    case MODGRP_BRAIN:
+        set_cybmod_brain_level(p_umod, cybmod_version(mtype));
+        break;
+    case MODGRP_EPIDERM:
+        set_cybmod_skin_level(p_umod, cybmod_version(mtype));
+        break;
+    }
+}
+
+TbBool add_mod_to_flags_no_replace(union Mod *p_umod, ushort mtype)
+{
+    switch (cybmod_group_type(mtype))
+    {
+    case MODGRP_LEGS:
+        if (cybmod_legs_level(p_umod) == 0) {
+            set_cybmod_legs_level(p_umod, cybmod_version(mtype));
+            return true;
+        }
+        break;
+    case MODGRP_ARMS:
+        if (cybmod_arms_level(p_umod) == 0) {
+            set_cybmod_arms_level(p_umod, cybmod_version(mtype));
+            return true;
+        }
+        break;
+    case MODGRP_CHEST:
+        if (cybmod_chest_level(p_umod) == 0) {
+            set_cybmod_chest_level(p_umod, cybmod_version(mtype));
+            return true;
+        }
+        break;
+    case MODGRP_BRAIN:
+        if (cybmod_brain_level(p_umod) == 0) {
+            set_cybmod_brain_level(p_umod, cybmod_version(mtype));
+            return true;
+        }
+        break;
+    case MODGRP_EPIDERM:
+        if (cybmod_skin_level(p_umod) == 0) {
+            set_cybmod_skin_level(p_umod, cybmod_version(mtype));
+            return true;
+        }
+        break;
+    }
+    return false;
+}
+
+/** Converts flag-per-mod to  3bit-per-mod-type.
+ */
+void sanitize_cybmods_fmtver11_flags(union Mod *p_umod)
+{
+#if 0
+    asm volatile ("call ASM_sanitize_cybmods_flags\n"
+        : : "a" (&p_umod->Mods));
+#endif
+    ushort modflg, f;
+
+    modflg = p_umod->Mods;
+
+    f = modflg & 0x0007;
+    if (f & 0x04)
+        set_cybmod_legs_level(p_umod, 3);
+    else if (f & 0x02)
+        set_cybmod_legs_level(p_umod, 2);
+    else if (f & 0x01)
+        set_cybmod_legs_level(p_umod, 1);
+    else
+        set_cybmod_legs_level(p_umod, 0);
+
+    f = modflg & 0x0038;
+    if (f & 0x20)
+        set_cybmod_arms_level(p_umod, 3);
+    else if (f & 0x10)
+        set_cybmod_arms_level(p_umod, 2);
+    else if (f & 0x08)
+        set_cybmod_arms_level(p_umod, 1);
+    else
+        set_cybmod_arms_level(p_umod, 0);
+
+    f = modflg & 0x01C0;
+    if (f & 0x0100)
+        set_cybmod_chest_level(p_umod, 3);
+    else if (f & 0x0080)
+        set_cybmod_chest_level(p_umod, 2);
+    else if (f & 0x0040)
+        set_cybmod_chest_level(p_umod, 1);
+    else
+        set_cybmod_chest_level(p_umod, 0);
+
+    f = modflg & 0x0E00;
+    if (f & 0x0800)
+        set_cybmod_brain_level(p_umod, 3);
+    else if (f & 0x0400)
+        set_cybmod_brain_level(p_umod, 2);
+    else if (f & 0x0200)
+        set_cybmod_brain_level(p_umod, 1);
+    else
+        set_cybmod_brain_level(p_umod, 0);
+
+    f = modflg & 0xF000;
+    if (f & 0x8000)
+        set_cybmod_skin_level(p_umod, 4);
+    else if (f & 0x4000)
+        set_cybmod_skin_level(p_umod, 3);
+    else if (f & 0x2000)
+        set_cybmod_skin_level(p_umod, 2);
+    else if (f & 0x1000)
+        set_cybmod_skin_level(p_umod, 1);
+    else
+        set_cybmod_skin_level(p_umod, 0);
+}
+
+/** Returns cyborg mod set in given flags with index below last.
+ *
+ * Note that it only works for mods stored as flag-per-mod. The
+ * usual way of storage within people is 3bit-per-mod-type.
+ */
+ushort cybmodflags_prev_mod(ulong modflags, ushort last_mtype)
+{
+    ushort mtype;
+
+    if (last_mtype < 2)
+        return 0;
+
+    for (mtype = last_mtype - 1; mtype > 0; mtype--)
+    {
+        ulong modflg = 1 << (mtype-1);
+        if ((modflags & modflg) != 0)
+            return mtype;
+    }
+    return 0;
+}
+
+/** Returns mod group type for given mod type.
+ */
+ushort cybmod_group_type(ushort mtype)
+{
+    if (mtype == MOD_NULL)
+        return 0;
+    if (mtype >= MOD_EPIDERM1)
+        return 4;
+    return ((mtype-1) / 3);
+}
+
+/** Returns mod version for given mod type.
+ */
+ushort cybmod_version(ushort mtype)
+{
+    if (mtype == MOD_NULL)
+        return 0;
+    if (mtype >= MOD_EPIDERM1)
+        return mtype - MOD_EPIDERM1 + 1;
+    return ((mtype-1) % 3) + 1;
+}
+
 /******************************************************************************/

@@ -28,6 +28,8 @@ extern "C" {
 /******************************************************************************/
 #pragma pack(1)
 
+#define WEAPONS_CARRIED_MAX_COUNT 6
+
 enum WeaponType
 {
   WEP_NULL = 0x0,
@@ -65,7 +67,7 @@ enum WeaponType
   WEP_TYPES_COUNT,
 };
 
-enum WeaponFourPack
+enum WeaponFourPackIndex
 {
     WFRPK_ELEMINE = 0,
     WFRPK_EXPLMINE,
@@ -74,7 +76,6 @@ enum WeaponFourPack
     WFRPK_KOGAS,
     WFRPK_COUNT,
 };
-
 
 struct Thing;
 
@@ -100,6 +101,10 @@ struct WeaponDefAdd {
   char Name[12];
 };
 
+struct WeaponsFourPack {
+  ubyte Amount[WFRPK_COUNT];
+};
+
 #pragma pack()
 /******************************************************************************/
 extern struct WeaponDef weapon_defs[33];
@@ -107,6 +112,21 @@ extern struct TbNamedEnum weapon_names[33];
 extern ubyte weapon_tech_level[33];
 
 void read_weapons_conf_file(void);
+void init_weapon_text(void);
+
+TbBool weapons_has_weapon(ulong weapons, ushort wtype);
+ushort weapons_prev_weapon(ulong weapons, ushort last_wtype);
+const char *weapon_codename(ushort wtype);
+
+ushort weapon_fourpack_index(ushort weapon);
+void weapons_remove_weapon(ulong *p_weapons,
+  struct WeaponsFourPack *p_fourpacks, ushort wtype);
+TbBool weapons_remove_one(ulong *p_weapons,
+  struct WeaponsFourPack *p_fourpacks, ushort wtype);
+TbBool weapons_add_one(ulong *p_weapons,
+  struct WeaponsFourPack *p_fourpacks, ushort wtype);
+void sanitize_weapon_quantities(ulong *p_weapons,
+  struct WeaponsFourPack *p_fourpacks);
 
 void do_weapon_quantities_net_to_player(struct Thing *p_person);
 void do_weapon_quantities1(struct Thing *p_person);

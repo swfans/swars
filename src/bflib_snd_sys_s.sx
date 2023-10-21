@@ -30,513 +30,7 @@
 
 .text
 
-.global EXPORT_SYMBOL(XXX);
-
-/*----------------------------------------------------------------*/
-GLOBAL_FUNC (ASM_InitAudio)
-/*----------------------------------------------------------------*/
-		push   %ebx
-		push   %ecx
-		push   %edx
-		push   %esi
-		push   %edi
-		push   %ebp
-		mov    %eax,%edx
-		mov    $aDebug_bf_audio,%eax
-		call   ac_getenv
-		test   %eax,%eax
-		je     jump_eb7dd
-		movb   $0x1,EXPORT_SYMBOL(DebugAudio)
-	jump_eb7dd:
-		push   $aSoundDig_ini
-		push   $FullDIG_INIPath
-		call   ac_sprintf
-		add    $0x8,%esp
-		push   $aSoundMdi_ini
-		push   $FullMDI_INIPath
-		call   ac_sprintf
-		add    $0x8,%esp
-		mov    $aSound_2,%esi
-		mov    $SoundDataPath,%edi
-		push   %edi
-	jump_eb80c:
-		mov    (%esi),%al
-		mov    %al,(%edi)
-		cmp    $0x0,%al
-		je     jump_eb824
-		mov    0x1(%esi),%al
-		add    $0x2,%esi
-		mov    %al,0x1(%edi)
-		add    $0x2,%edi
-		cmp    $0x0,%al
-		jne    jump_eb80c
-	jump_eb824:
-		pop    %edi
-		mov    $aSound_3,%esi
-		mov    $SoundDriverPath,%edi
-		push   %edi
-	jump_eb830:
-		mov    (%esi),%al
-		mov    %al,(%edi)
-		cmp    $0x0,%al
-		je     jump_eb848
-		mov    0x1(%esi),%al
-		add    $0x2,%esi
-		mov    %al,0x1(%edi)
-		add    $0x2,%edi
-		cmp    $0x0,%al
-		jne    jump_eb830
-	jump_eb848:
-		pop    %edi
-		mov    (%edx),%ebx
-		test   %ebx,%ebx
-		je     jump_eb877
-		push   %ebx
-		push   $aSDig_ini
-		push   $FullDIG_INIPath
-		call   ac_sprintf
-		add    $0xc,%esp
-		mov    (%edx),%esi
-		push   %esi
-		push   $aSMdi_ini
-		push   $FullMDI_INIPath
-		call   ac_sprintf
-		add    $0xc,%esp
-	jump_eb877:
-		mov    0x8(%edx),%edi
-		test   %edi,%edi
-		je     jump_eb89f
-		mov    %edi,%esi
-		mov    $SoundDataPath,%edi
-		push   %edi
-	jump_eb886:
-		mov    (%esi),%al
-		mov    %al,(%edi)
-		cmp    $0x0,%al
-		je     jump_eb89e
-		mov    0x1(%esi),%al
-		add    $0x2,%esi
-		mov    %al,0x1(%edi)
-		add    $0x2,%edi
-		cmp    $0x0,%al
-		jne    jump_eb886
-	jump_eb89e:
-		pop    %edi
-	jump_eb89f:
-		mov    0x4(%edx),%ebp
-		test   %ebp,%ebp
-		je     jump_eb8c7
-		mov    $SoundDriverPath,%edi
-		mov    %ebp,%esi
-		push   %edi
-	jump_eb8ae:
-		mov    (%esi),%al
-		mov    %al,(%edi)
-		cmp    $0x0,%al
-		je     jump_eb8c6
-		mov    0x1(%esi),%al
-		add    $0x2,%esi
-		mov    %al,0x1(%edi)
-		add    $0x2,%edi
-		cmp    $0x0,%al
-		jne    jump_eb8ae
-	jump_eb8c6:
-		pop    %edi
-	jump_eb8c7:
-		xor    %eax,%eax
-		mov    0x14(%edx),%al
-		mov    %eax,MaxNumberOfSamples
-		mov    0xc(%edx),%ax
-		mov    0x16(%edx),%bl
-		mov    %ax,SoundType
-		test   %bl,%bl
-		jne    jump_eb8e8
-		mov    %bl,AutoScanForSoundHardware
-	jump_eb8e8:
-		mov    0x15(%edx),%cl
-		test   %cl,%cl
-		jne    jump_eb8f5
-		mov    %cl,StereoSound
-	jump_eb8f5:
-		xor    %eax,%eax
-		mov    0x17(%edx),%al
-		cmp    $0x1,%eax
-		jne    jump_eb906
-		movb   $0x1,EXPORT_SYMBOL(DisableDangerMusic)
-	jump_eb906:
-		xor    %eax,%eax
-		mov    0x18(%edx),%al
-		cmp    $0x1,%eax
-		jne    jump_eb917
-		movb   $0x1,DisableLoadSounds
-	jump_eb917:
-		xor    %eax,%eax
-		mov    0x19(%edx),%al
-		cmp    $0x1,%eax
-		jne    jump_eb928
-		movb   $0x1,EXPORT_SYMBOL(DisableLoadMusic)
-	jump_eb928:
-		xor    %eax,%eax
-		mov    0x1a(%edx),%al
-		cmp    $0x1,%eax
-		jne    jump_eb939
-		movb   $0x1,UseCurrentAwe32Soundfont
-	jump_eb939:
-		xor    %eax,%eax
-		mov    0x1b(%edx),%al
-		cmp    $0x1,%eax
-		jne    jump_eb94a
-		movb   $0x1,UseMultiMediaExtensions
-	jump_eb94a:
-		xor    %eax,%eax
-		mov    EXPORT_SYMBOL(MusicAble),%al
-		push   %eax
-		push   $aBf1MaD
-		push   $SoundProgressMessage
-		call   ac_sprintf
-		add    $0xc,%esp
-		mov    $SoundProgressMessage,%eax
-		call   ac_SoundProgressLog
-		xor    %eax,%eax
-		mov    SoundAble,%al
-		push   %eax
-		push   $aBf2SaD
-		push   $SoundProgressMessage
-		call   ac_sprintf
-		add    $0xc,%esp
-		mov    $SoundProgressMessage,%eax
-		call   ac_SoundProgressLog
-		testb  $0x1,0xe(%edx)
-		jne    jump_eb99f
-		xor    %al,%al
-		mov    %al,EXPORT_SYMBOL(MusicAble)
-	jump_eb99f:
-		testb  $0x2,0xe(%edx)
-		jne    jump_eb9ad
-		xor    %bl,%bl
-		mov    %bl,SoundAble
-	jump_eb9ad:
-		call   ac_InitSound
-		call   ac_InitMusic
-		call   ac_InitAllBullfrogSoundTimers
-		xor    %eax,%eax
-		mov    0x1c(%edx),%al
-		cmp    $0x1,%eax
-		jne    jump_eb9cb
-		call   ac_InitStreamedSound
-	jump_eb9cb:
-		xor    %eax,%eax
-		mov    0x1d(%edx),%al
-		cmp    $0x1,%eax
-		jne    jump_eb9dc
-		call   ac_InitRedbook
-		jmp    jump_eb9e4
-	jump_eb9dc:
-		xor    %bh,%bh
-		mov    %bh,EXPORT_SYMBOL(CDAble)
-	jump_eb9e4:
-		cmpb   $0x0,ive_got_an_sb16
-		je     jump_eb9f2
-		call   ac_prepare_SB16_volumes
-	jump_eb9f2:
-		xor    %eax,%eax
-		mov    EXPORT_SYMBOL(MusicAble),%al
-		push   %eax
-		push   $aBf54MaD
-		push   $SoundProgressMessage
-		call   ac_sprintf
-		add    $0xc,%esp
-		mov    $SoundProgressMessage,%eax
-		call   ac_SoundProgressLog
-		xor    %eax,%eax
-		mov    SoundAble,%al
-		push   %eax
-		push   $aBf55SaD
-		push   $SoundProgressMessage
-		call   ac_sprintf
-		add    $0xc,%esp
-		mov    $SoundProgressMessage,%eax
-		call   ac_SoundProgressLog
-		push   $MusicInstallChoice_str2
-		push   $aBf56MusicDrive
-		push   $SoundProgressMessage
-		call   ac_sprintf
-		add    $0xc,%esp
-		mov    $SoundProgressMessage,%eax
-		call   ac_SoundProgressLog
-		push   $SoundInstallChoice__Field1
-		push   $aBf57SoundDrive
-		push   $SoundProgressMessage
-		call   ac_sprintf
-		add    $0xc,%esp
-		mov    $SoundProgressMessage,%eax
-		call   ac_SoundProgressLog
-		pop    %ebp
-		pop    %edi
-		pop    %esi
-		pop    %edx
-		pop    %ecx
-		pop    %ebx
-		ret
-
-
-/*----------------------------------------------------------------*/
-/* void prepare_SB16_volumes(void)
- */
-GLOBAL_FUNC (ASM_prepare_SB16_volumes)
-/*----------------------------------------------------------------*/
-		push   %ebx
-		push   %ecx
-		push   %edx
-		movswl SoundInstallChoice__Field2,%ebx
-		cmp    $0x220,%ebx
-		jne    jump_ebbb1
-		lea    0x4(%ebx),%ecx
-		mov    $0x30,%al
-		mov    %ecx,%edx
-		add    $0x5,%ebx
-		out    %al,(%dx)
-		mov    %ebx,%edx
-		sub    %eax,%eax
-		in     (%dx),%al
-		shr    $0x3,%eax
-		mov    %ecx,%edx
-		mov    %ax,current_SB16_left_master_volume
-		mov    $0x31,%al
-		out    %al,(%dx)
-		mov    %ebx,%edx
-		sub    %eax,%eax
-		in     (%dx),%al
-		shr    $0x3,%eax
-		mov    %ecx,%edx
-		mov    %ax,current_SB16_right_master_volume
-		mov    $0x32,%al
-		out    %al,(%dx)
-		mov    %ebx,%edx
-		sub    %eax,%eax
-		in     (%dx),%al
-		mov    %ax,old_SB16_left_digi_volume
-		xor    %eax,%eax
-		mov    current_SB16_left_master_volume,%ax
-		lea    0x0(,%eax,8),%eax
-		sub    $0x18,%eax
-		out    %al,(%dx)
-		mov    $0x33,%al
-		mov    %ecx,%edx
-		out    %al,(%dx)
-		mov    %ebx,%edx
-		sub    %eax,%eax
-		in     (%dx),%al
-		mov    %ax,old_SB16_right_digi_volume
-		xor    %eax,%eax
-		mov    current_SB16_right_master_volume,%ax
-		lea    0x0(,%eax,8),%eax
-		sub    $0x18,%eax
-		out    %al,(%dx)
-		mov    $0x44,%al
-		mov    %ecx,%edx
-		out    %al,(%dx)
-		mov    %ebx,%edx
-		sub    %eax,%eax
-		in     (%dx),%al
-		mov    %ax,old_SB16_left_treble_volume
-		mov    $0x60,%al
-		out    %al,(%dx)
-		mov    $0x45,%al
-		mov    %ecx,%edx
-		out    %al,(%dx)
-		mov    %ebx,%edx
-		sub    %eax,%eax
-		in     (%dx),%al
-		mov    %ax,old_SB16_right_treble_volume
-		mov    $0x60,%al
-		out    %al,(%dx)
-		mov    $0x46,%al
-		mov    %ecx,%edx
-		out    %al,(%dx)
-		mov    %ebx,%edx
-		sub    %eax,%eax
-		in     (%dx),%al
-		mov    %ax,old_SB16_left_bass_volume
-		mov    $0x80,%al
-		out    %al,(%dx)
-		mov    $0x47,%al
-		mov    %ecx,%edx
-		out    %al,(%dx)
-		mov    %ebx,%edx
-		sub    %eax,%eax
-		in     (%dx),%al
-		mov    %ax,old_SB16_right_bass_volume
-		mov    $0x80,%al
-		out    %al,(%dx)
-		mov    $0x34,%al
-		mov    %ecx,%edx
-		out    %al,(%dx)
-		mov    %ebx,%edx
-		sub    %eax,%eax
-		in     (%dx),%al
-		mov    %ax,old_SB16_left_midi_volume
-		xor    %eax,%eax
-		mov    current_SB16_left_master_volume,%ax
-		lea    0x0(,%eax,8),%eax
-		sub    $0x10,%eax
-		out    %al,(%dx)
-		mov    $0x35,%al
-		mov    %ecx,%edx
-		out    %al,(%dx)
-		mov    %ebx,%edx
-		sub    %eax,%eax
-		in     (%dx),%al
-		mov    %ax,old_SB16_right_midi_volume
-		xor    %eax,%eax
-		mov    current_SB16_right_master_volume,%ax
-		lea    0x0(,%eax,8),%eax
-		sub    $0x10,%eax
-		out    %al,(%dx)
-		movb   $0x1,EXPORT_SYMBOL(sb16_mixer_set)
-	jump_ebbb1:
-		pop    %edx
-		pop    %ecx
-		pop    %ebx
-		ret
-
-
-/*----------------------------------------------------------------*/
-/* void reset_SB16_volumes(void) */
-GLOBAL_FUNC (ASM_reset_SB16_volumes)
-/*----------------------------------------------------------------*/
-		push   %ebx
-		push   %ecx
-		push   %edx
-		movswl SoundInstallChoice__Field2,%ecx
-		cmp    $0x220,%ecx
-		jne    jump_ebc43
-		lea    0x4(%ecx),%ebx
-		mov    $0x32,%al
-		mov    %ebx,%edx
-		out    %al,(%dx)
-		mov    $0x225,%edx
-		mov    old_SB16_left_digi_volume,%al
-		out    %al,(%dx)
-		mov    $0x33,%al
-		mov    %ebx,%edx
-		add    $0x5,%ecx
-		out    %al,(%dx)
-		mov    old_SB16_right_digi_volume,%al
-		mov    %ecx,%edx
-		out    %al,(%dx)
-		mov    $0x34,%al
-		mov    %ebx,%edx
-		out    %al,(%dx)
-		mov    old_SB16_left_midi_volume,%al
-		mov    %ecx,%edx
-		out    %al,(%dx)
-		mov    $0x35,%al
-		mov    %ebx,%edx
-		out    %al,(%dx)
-		mov    old_SB16_right_midi_volume,%al
-		mov    %ecx,%edx
-		out    %al,(%dx)
-		mov    $0x44,%al
-		mov    %ebx,%edx
-		out    %al,(%dx)
-		mov    old_SB16_left_treble_volume,%al
-		mov    %ecx,%edx
-		out    %al,(%dx)
-		mov    $0x45,%al
-		mov    %ebx,%edx
-		out    %al,(%dx)
-		mov    old_SB16_right_treble_volume,%al
-		mov    %ecx,%edx
-		out    %al,(%dx)
-		mov    $0x46,%al
-		mov    %ebx,%edx
-		out    %al,(%dx)
-		mov    old_SB16_left_bass_volume,%al
-		mov    %ecx,%edx
-		out    %al,(%dx)
-		mov    $0x47,%al
-		mov    %ebx,%edx
-		out    %al,(%dx)
-		mov    old_SB16_right_bass_volume,%al
-		mov    %ecx,%edx
-		out    %al,(%dx)
-	jump_ebc43:
-		pop    %edx
-		pop    %ecx
-		pop    %ebx
-		ret
-
-
-/*----------------------------------------------------------------*/
-GLOBAL_FUNC (ASM_cbCDCountdown)
-/*----------------------------------------------------------------*/
-		push   %esi
-		cmpl   $0x0,EXPORT_SYMBOL(CDCountdown)
-		jbe    jump_ebc8a
-		subl   $0x5,EXPORT_SYMBOL(CDCountdown)
-		cmpl   $0x0,EXPORT_SYMBOL(CDCountdown)
-		jne    jump_ebc8a
-		mov    EXPORT_SYMBOL(CDCount_handle),%esi
-		xor    %edx,%edx
-		push   %esi
-		mov    %dx,EXPORT_SYMBOL(CurrentCDTrack)
-		call   ac_AIL_release_timer_handle
-		add    $0x4,%esp
-		xor    %ah,%ah
-		mov    %ah,EXPORT_SYMBOL(CDTimerActive)
-	jump_ebc8a:
-		pop    %esi
-		ret
-
-
-/*----------------------------------------------------------------*/
-GLOBAL_FUNC (ASM_GetSoundAble)
-/*----------------------------------------------------------------*/
-		mov    SoundAble,%al
-		ret
-
-
-/*----------------------------------------------------------------*/
-GLOBAL_FUNC (ASM_GetMusicAble)
-/*----------------------------------------------------------------*/
-		mov    EXPORT_SYMBOL(MusicAble),%al
-		ret
-
-
-/*----------------------------------------------------------------*/
-GLOBAL_FUNC (ASM_GetSoundActive)
-/*----------------------------------------------------------------*/
-		mov    SoundActive,%al
-		ret
-
-
-/*----------------------------------------------------------------*/
-GLOBAL_FUNC (ASM_GetSoundInstalled)
-/*----------------------------------------------------------------*/
-		mov    SoundInstalled,%al
-		ret
-
-
-/*----------------------------------------------------------------*/
-GLOBAL_FUNC (GetSoundDriver_)
-/*----------------------------------------------------------------*/
-		mov    EXPORT_SYMBOL(SoundDriver),%eax
-		ret
-
-
-/*----------------------------------------------------------------*/
-GLOBAL_FUNC (GetFirstSampleInfoStructure_)
-/*----------------------------------------------------------------*/
-		mov    $EXPORT_SYMBOL(sample_id),%eax
-		ret
-
-
-/*----------------------------------------------------------------*/
-GLOBAL_FUNC (GetLastSampleInfoStructure_)
-/*----------------------------------------------------------------*/
-		mov    EXPORT_SYMBOL(end_sample_id),%eax
-		ret
+.global EXPORT_SYMBOL(sb16_mixer_set);
 
 
 /*----------------------------------------------------------------*/
@@ -750,7 +244,7 @@ format_sounds:
 		push   %edx
 		push   %esi
 		push   %edi
-		mov    NumberOfSamples,%bx
+		mov    EXPORT_SYMBOL(NumberOfSamples),%bx
 		mov    EXPORT_SYMBOL(EndSfxs),%ecx
 		mov    EXPORT_SYMBOL(SfxData),%esi
 		mov    EXPORT_SYMBOL(Sfx),%edx
@@ -773,7 +267,7 @@ format_sounds:
 	jump_ec94f:
 		mov    %esi,EXPORT_SYMBOL(SfxData)
 		mov    %ecx,EXPORT_SYMBOL(EndSfxs)
-		mov    %bx,NumberOfSamples
+		mov    %bx,EXPORT_SYMBOL(NumberOfSamples)
 		pop    %edi
 		pop    %esi
 		pop    %edx
@@ -2602,7 +2096,7 @@ GLOBAL_FUNC (ASM_InitAllBullfrogSoundTimers)
 		je     jump_1004e5
 	jump_1004d4:
 		mov    $0x19,%ebx
-		mov    $sound_timer,%eax
+		mov    $EXPORT_SYMBOL(sound_timer),%eax
 		xor    %edx,%edx
 		call   ac_memset
 	jump_1004e5:
@@ -4759,29 +4253,6 @@ GLOBAL (SoundDataPath)			/* 0x1e5b50 */
 		.fill   0x90
 GLOBAL (SoundDriverPath)		/* 0x1e5be0 */
 		.fill   0x90
-current_SB16_left_master_volume:
-		.short  0x0
-current_SB16_right_master_volume:
-		.short  0x0
-old_SB16_left_midi_volume:
-		.short  0x0
-old_SB16_right_midi_volume:
-		.short  0x0
-old_SB16_left_digi_volume:
-		.short  0x0
-old_SB16_right_digi_volume:
-		.short  0x0
-old_SB16_left_treble_volume:
-		.short  0x0
-old_SB16_right_treble_volume:
-		.short  0x0
-old_SB16_left_bass_volume:
-		.short  0x0
-old_SB16_right_bass_volume:
-		.short  0x0
-GLOBAL (sb16_mixer_set)
-		.byte	0x0
-		.fill   0x3
 
 end_time:
 		.long	0x0
@@ -4874,7 +4345,7 @@ GLOBAL (SoundInstalled)
 		.byte	0x0
 GLOBAL (DisableLoadSounds)
 		.byte	0x0
-NumberOfSamples:
+GLOBAL (NumberOfSamples)
 		.short  0x0
 GLOBAL (Sfx)
 		.long	0x0
@@ -4966,7 +4437,7 @@ GLOBAL (data_1e5edc)	/* 0x1e5edc */
 
 /* sound_timer_inf sound_timer[];
  */
-sound_timer:	/* 0x1E8D9C */
+GLOBAL (sound_timer)	/* 0x1E8D9C */
 		.long	0x0
 data_1e8da0: /* 0x1e8da0 */
 		.fill   0x15
@@ -4977,7 +4448,7 @@ data_1e8db8:
 
 GLOBAL (StreamedSoundAble)	/* 0x1E8E48 */
 		.byte	0x0
-_CDSpeed:	/* 0x1E8E49 */
+GLOBAL (CDSpeed)	/* 0x1E8E49 */
 		.ascii  "\x00\x00\x00"
 GLOBAL (sample_handle)	/* 0x1E8E4C */
 		.long	0x0

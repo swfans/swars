@@ -393,7 +393,7 @@ dos_path_to_native (const char *path, char *buffer, size_t size)
 }
 
 static void __attribute__ ((noreturn))
-print_interrupt_info_and_abort (int num, DOS_Registers *regs, void *caller)
+print_interrupt_info_and_abort (int num, union REGS *regs, void *caller)
 {
   fprintf (stderr,
 	   "DOS Interrupt via int386/int386x ()\n"
@@ -402,34 +402,34 @@ print_interrupt_info_and_abort (int num, DOS_Registers *regs, void *caller)
 	   "  eax: %08x  ebx: %08x  ecx: %08x  edx: %08x\n"
 	   "  esi: %08x  edi: %08x  eflags: %08x\n",
 	   caller, num,
-	   regs->r32.eax, regs->r32.ebx, regs->r32.ecx, regs->r32.edx,
-	   regs->r32.esi, regs->r32.edi, regs->r32.eflags);
+	   regs->x.eax, regs->x.ebx, regs->x.ecx, regs->x.edx,
+	   regs->x.esi, regs->x.edi, regs->x.cflag);
   fflush (stderr);
   abort ();
 }
 
 void dos_free(unsigned short n)
 {
-    DOS_Registers32 out_regs;
-    DOS_Registers32 regs;
+    DWORDREGS out_regs;
+    DWORDREGS regs;
 
     if (n == 0)
         return;
     regs.eax = 257;
     regs.edx = n;
-    dos_int386(49, (DOS_Registers *)&regs, (DOS_Registers *)&out_regs);
+    dos_int386(49, (union REGS *)&regs, (union REGS *)&out_regs);
 }
 
 int
-dos_int386 (int num, DOS_Registers *regs, DOS_Registers *out_regs)
+dos_int386 (int num, union REGS *regs, union REGS *out_regs)
 {
   void *eip_caller = *(&eip_caller + 8);
   print_interrupt_info_and_abort (num, regs, eip_caller);
 }
 
 int
-dos_int386x (int num, DOS_Registers *regs, DOS_Registers *out_regs,
-	     DOS_SegmentRegisters *sregs)
+dos_int386x (int num, union REGS *regs, union REGS *out_regs,
+	     SREGS *sregs)
 {
   void *eip_caller = *(&eip_caller + 9);
   print_interrupt_info_and_abort (num, regs, eip_caller);

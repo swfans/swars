@@ -1,0 +1,2795 @@
+# *****************************************************************************
+#  Syndicate Wars Port, source port of the classic strategy game from Bullfrog.
+# *****************************************************************************
+#   @file alltext_church_jap.po
+#      Menu text for SW Port translation file
+#  @par Purpose:
+#      Contains translation of the national text in the game.
+#  @par Comment:
+#      Use this file to improve the translation for specific language.
+#  @author   Syndicate Wars Fans
+#  @date     20 Aug 2023 - 02 Sep 2023
+#  @par  Copying and copyrights:
+#      This program is free software; you can redistribute it and/or modify
+#      it under the terms of the GNU General Public License as published by
+#      the Free Software Foundation; either version 2 of the License, or
+#      (at your option) any later version.
+#
+# *****************************************************************************
+msgid ""
+msgstr ""
+"Project-Id-Version: Menu text for SW Port\n"
+"Report-Msgid-Bugs-To: https://github.com/swfans/swars/issues\n"
+"POT-Creation-Date: 2023-09-05 11:30+0200\n"
+"PO-Revision-Date: 2023-09-09 17:16+0200\n"
+"Last-Translator: Mefistotelis <mefistotelis@gmail.com>\n"
+"Language-Team: Syndicate Wars Fans <github.com/swfans>\n"
+"Language: ja_JP\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-SourceCharset: utf-8\n"
+"X-Generator: Poedit 3.0.1\n"
+
+#: mapscreen.heading:1
+msgctxt "church maps screen headings - name"
+msgid "Pilgrimage"
+msgstr "Pilgrimage"
+
+#: mapscreen.heading:2
+msgctxt "church maps screen headings - population size"
+msgid "Heathens"
+msgstr "Heathens"
+
+#: mapscreen.heading:3
+msgctxt "church maps screen headings - landscape"
+msgid "Geography"
+msgstr "Geography"
+
+#: mapscreen.heading:4
+msgctxt "church maps screen headings - language"
+msgid "Tongue"
+msgstr "Tongue"
+
+#: mapscreen.heading:5
+msgctxt "church maps screen headings - industry"
+msgid "Material Riches"
+msgstr "Material Riches"
+
+#: mapscreen.heading:6
+msgctxt "church maps screen headings - toxicity"
+msgid "Legacy"
+msgstr "Legacy"
+
+#: mission.title:48
+msgctxt "mission title"
+msgid "Harbinger"
+msgstr "Harbinger"
+
+#: mission.brief.mail1.par1.h
+msgctxt "mission brief email header"
+msgid "Blessings, Disciple."
+msgstr "わが子よ、おまえに祝福を。"
+
+#: mission.brief.mail1.par2.c2
+msgctxt "mission brief email orders"
+msgid ""
+"Your mission is to take control of a substation belonging to EuroCorp's "
+"UTOPIA network. It is situated in Detroit. When we have it, the Cataclysm "
+"will begin."
+msgstr ""
+"おまえの使命はユーロコープのUTOPIAネットワーク拠点を占拠することだ。場所はデ"
+"トロイト。そこを手に入れたとき、終末は始まるのだ。"
+
+#: mission.brief.mail1.par3.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Delivered unto you this day is the automorphic computer virus which will end "
+"the tyranny the Syndicate calls UTOPIA. We have named this virus Harbinger "
+"and it will snatch control from the Syndicate, computer by computer, "
+"preparing the way for the enlightenment to follow."
+msgstr ""
+"きょう私がおまえに渡すのは、シンジケートがUTOPIAと呼ぶ独裁を打ち砕くためのコ"
+"ンピューター・ウィルスだ。私たちはこのウィルスを「前兆」(Harbinger)と名づけ"
+"た。このウィルスはコンピューターからコンピューターへと転移し、シンジケートの"
+"支配を突き崩しながら、私たちが進むべき信仰の道すじを照らし出してゆくであろ"
+"う。"
+
+#: mission.brief.mail1.par4.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Lead your Acolytes into the Detroit UTOPIA ground station, in order that we "
+"may release the virus. The Syndicate operatives who guard the station will "
+"not be expecting force, because none has been used for years. This is our "
+"advantage."
+msgstr ""
+"「同志」をデトロイトのUTOPIAステーションに導き、ウィルスを解放するのだ。その"
+"地を守るシンジケートの者たちは長年の支配にあぐらをかき、外からの攻撃など予"
+"\\想もしていないはずだ。"
+
+#: mission.brief.mail1.par5.c5
+msgctxt "mission brief email paragraph"
+msgid "Blessed be."
+msgstr "成功を祈る。"
+
+#: mission.brief.mail1.par6.c4 mission.brief.mail2.par7.c4
+#: mission.brief.mail3.par5.c4 mission.brief.mail5.par6.c4
+#: mission.brief.mail4.par6.c4 mission.brief.mail6.par9.c4
+#: mission.brief.mail7.par7.c4 mission.brief.mail8.par5.c4
+#: mission.brief.mail9.par8.c4 mission.brief.mail10.par5.c4
+#: mission.brief.mail11.par5.c4 mission.brief.mail12.par5.c4
+#: mission.brief.mail13.par6.c4 mission.brief.mail14.par6.c4
+#: mission.brief.mail15.par7.c4 mission.brief.mail16.par4.c4
+#: mission.brief.mail17.par6.c4 mission.brief.mail18.par6.c4
+#: mission.brief.mail19.par7.c4 mission.brief.mail20.par6.c4
+#: mission.brief.mail21.par6.c4 mission.brief.mail22.par7.c4
+#: mission.brief.mail23.par5.c4 mission.brief.mail24.par5.c4
+#: mission.brief.mail25.par5.c4
+msgctxt "mission brief email sender"
+msgid "Virgil"
+msgstr "ヴィルギル"
+
+#: mission.brief.mail1.par7.c1
+msgctxt "mission brief book quote"
+msgid ""
+"The non-believers climbed for days to confront the master in the mountains. "
+"\"Where do you get your so-called faith?\" they asked."
+msgstr ""
+"不信心者たちが、山の頂きに棲む賢者と対決するために幾日もかけて山を登ってき"
+"た。そして尋ねた。「汝は如何にして信仰を得たのか」"
+
+#: mission.brief.mail1.par8.c1
+msgctxt "mission brief book quote"
+msgid "\"You brought it,\" the master replied. \"You've all climbed so high.\""
+msgstr ""
+"「あなたたちが持ってきてくれたのです」賢者は答えていった。「あなたがたは皆こ"
+"の高みまで登ってきたではないか」"
+
+#: mission.brief.mail1.par9.c1 mission.brief.mail2.par9.c1
+#: mission.brief.mail3.par7.c1 mission.brief.mail4.par8.c1
+#: mission.brief.mail5.par8.c1 mission.brief.mail6.par11.c1
+#: mission.brief.mail7.par9.c1 mission.brief.mail8.par7.c1
+#: mission.brief.mail9.par10.c1 mission.brief.mail10.par7.c1
+#: mission.brief.mail11.par7.c1 mission.brief.mail12.par7.c1
+#: mission.brief.mail13.par8.c1 mission.brief.mail14.par8.c1
+#: mission.brief.mail15.par10.c1 mission.brief.mail16.par6.c1
+#: mission.brief.mail17.par8.c1 mission.brief.mail18.par8.c1
+#: mission.brief.mail19.par9.c1 mission.brief.mail20.par8.c1
+#: mission.brief.mail21.par10.c1 mission.brief.mail22.par9.c1
+#: mission.brief.mail23.par7.c1 mission.brief.mail24.par7.c1
+#: mission.brief.mail25.par8.c1
+msgctxt "mission brief book quote"
+msgid "- The Book of Cataclysm."
+msgstr "－終末の書"
+
+#: mission.brief.mail1.map35.level2:1
+msgctxt "mission brief tactical information"
+msgid "Landing Ground: Detroit IML Link"
+msgstr "潜入地点：　デトロイトIMLリンク"
+
+#: mission.brief.mail1.map35.level2:2
+msgctxt "mission brief tactical information"
+msgid "Target building: EuroCorp AI Ground Station"
+msgstr "目標地点：　ユーロコープAI地上ステーション"
+
+#: mission.brief.mail1.map35.level2:3
+msgctxt "mission brief tactical information"
+msgid "Disposition of EuroCorp guards"
+msgstr "作戦内容：　ユーロコープ警備兵の排除"
+
+#: mission.brief.mail1.map35.level2:4
+msgctxt "mission brief tactical information"
+msgid "Sanctuary: Detroit IML Link"
+msgstr "聖域（脱出地点）：　デトロイトIMLリンク"
+
+#: mission.brief.mail1.map35.level2:5
+msgctxt "mission brief tactical information"
+msgid ""
+"Eavesdrop: recommended means of gaining entry to Syndicate Ground Station"
+msgstr "イーバスドロップ：　シンジケート基地潜入の手段"
+
+#: mission.title:2
+msgctxt "mission title"
+msgid "Missionary"
+msgstr "Missionary"
+
+#: mission.brief.mail2.par1.h
+msgctxt "mission brief email header"
+msgid "Congratulations, Disciple."
+msgstr "おめでとうわが子よ。"
+
+#: mission.brief.mail2.par2.c2
+msgctxt "mission brief email orders"
+msgid ""
+"Your acolytes' firm guidance is required in Tripoli, where the emergent "
+"chaos brought by the Cataclysm threatens our Garden of Meditations. Defend "
+"our faith with maximum force."
+msgstr ""
+"トリポリでおまえと「同志」たちの堅実な働きが必要だ。私たちの引き起こした混沌"
+"の一部が、わが「瞑想の庭」の安全を脅かす結果となっている。信仰の場を全力で守"
+"らねばならない。"
+
+#: mission.brief.mail2.par3.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Harbinger, our holy virus, has begun working to free the population. "
+"However, not all those released from the yoke of repression immediately "
+"embrace the way of enlightenment our Church offers. Indeed, without our "
+"guidance, many will be lost. Soon there will be a Day of Reckoning and every "
+"soul will count."
+msgstr ""
+"「前兆」、わが聖なるウィルスが地上の民を束縛から解き放つために動きだした。し"
+"かし抑圧のくびきから逃れた人民の全てが、わが「新世紀教会」の指し示す光の道を"
+"歩むとは限らない。私たちの導きなしには、さまよえる魂の多くは失われることとな"
+"るだろう。裁きの日はすぐ先にあり、全ての魂はそこへたどりつかなくてはならな"
+"い。"
+
+#: mission.brief.mail2.par4.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Our Garden of Meditations in Tripoli is besieged by lost souls the Syndicate "
+"call the Unguided. Sadly, we must protect each other with maximum force, for "
+"this is the lesson of all religions. Equip your acolytes appropriately and "
+"send them to Tripoli to impose some tranquillity there."
+msgstr ""
+"トリポリにある私たちの「瞑想の庭」が、シンジケートが「アンガイデッド」と呼ぶ"
+"迷える魂たちに取り囲まれている。悲しいことだが、私たちは全力を尽くしてお互い"
+"を守らなければならない。これはどんな信仰もが直面する試練なのだ。「同志」に適"
+"切な装備を施し、トリポリの静穏を取り戻すべく行動させるのだ。"
+
+#: mission.brief.mail2.par5.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"We have plans for Earth, Acolyte. The Church must change the whole world. "
+"This is our time. We will save only the chosen. Enough for now."
+msgstr ""
+"「あまたの使徒よ。私たちはこの惑星の将来を考えている。新世紀教会は全世界を変"
+"えなければならない。時はきた。選ばれた者のみが救われる。それで十\\分なのだ」"
+
+#: mission.brief.mail2.par6.c5
+msgctxt "mission brief email paragraph"
+msgid "The Nine have said this."
+msgstr "「ザ・ナイン」はそう語っている。"
+
+#: mission.brief.mail2.par8.c1
+msgctxt "mission brief book quote"
+msgid ""
+"The Master told his pupils, \"Forget being taught and concentrate on "
+"learning. When you're sure, question everything.\""
+msgstr ""
+"賢者が教え子に説いた。「教わることはやめよ。学ぶことこそ尊いのだ。それがわ"
+"かったら、今度は全てを疑ってみるがよい」"
+
+#: mission.brief.mail2.map25.level16:1 mission.brief.mail9d.map25.level46:1
+msgctxt "mission brief tactical information"
+msgid "Landing Ground: Tripoli IML Link"
+msgstr "潜入地点：　トリポリIMLリンク"
+
+#: mission.brief.mail2.map25.level16:2 mission.brief.mail9d.map25.level46:2
+msgctxt "mission brief tactical information"
+msgid "Our Garden of Meditations"
+msgstr "私たちの瞑想の庭"
+
+#: mission.title:51
+msgctxt "mission title"
+msgid "Conversions"
+msgstr "Conversions"
+
+#: mission.brief.mail3.par1.h
+msgctxt "mission brief email header"
+msgid "Harbinger is about its work. Let us pray."
+msgstr "「前兆」が活動を始めた。われらの祈りを。"
+
+#: mission.brief.mail3.par2.c2
+msgctxt "mission brief email orders"
+msgid ""
+"We must stir this brew in Buenos Aires. By converting two mutual enemies, "
+"our Church will assume control of the whole of the city."
+msgstr ""
+"ブエノスアイレスでささやかな布教活動が必要だ。２人の敵を「改宗」させれば、市"
+"全域を掌握できる。"
+
+#: mission.brief.mail3.par3.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Our brothers and sisters in South America have gathered intelligence useful "
+"to our cause. They have identified Juan Ormandoz, a senior EuroCorp lackey "
+"from Buenos Aires, who is attempting to maintain the city's stability in "
+"spite of the activities of the Unguided. The leader of this group, Chico "
+"Ramirez, foolishly believes he can take and keep control of a commercial "
+"district. Convert them both and we will succeed where EuroCorp has so far "
+"failed."
+msgstr ""
+"南米の兄弟らから有用な情報がもたらされた。ブエノスアイレスのユーロコープの管"
+"理人ジョアン・オーマンドが、アンガイデッドの活動から市の治安を守る試みを続け"
+"ていることが確認された。またアンガイデッドのリーダーはチコ・ラミレス、この男"
+"は愚かにも自分がこの土地を支配できると信じているようだ。ふたりとも「改宗」さ"
+"せ、街をわが教会の信仰に導こう。"
+
+#: mission.brief.mail3.par4.c5
+msgctxt "mission brief email paragraph"
+msgid "Spread the good news."
+msgstr "祝福の知らせを広めよう。"
+
+#: mission.brief.mail3.par6.c1
+msgctxt "mission brief book quote"
+msgid "Faithful minds are not enough. Deliver unto us brains also."
+msgstr "信仰を持った心だけでなく、その脳みそもわれらの元に。"
+
+#: mission.brief.mail3.map26.level2:1 mission.brief.mail9b.map26.level3:1
+msgctxt "mission brief tactical information"
+msgid "Landing Ground: Buenos Aires IML Link"
+msgstr "潜入地点：　ブエノスアイレスIMLリンク"
+
+#: mission.brief.mail3.map26.level2:2
+msgctxt "mission brief tactical information"
+msgid "Juan Ormandoz works in this executive office estate"
+msgstr ""
+"作戦目標：　ジョアン・オーマンドはこのオフィス・エステート内で働いている"
+
+#: mission.brief.mail3.map26.level2:3
+msgctxt "mission brief tactical information"
+msgid "Chico Ramirez and his gang occupy this Old Calendar high street"
+msgstr ""
+"作戦目標：　チコ・ラミレスは仲間とともに「オールド・カレンダー通り」を占拠し"
+"ている"
+
+#: mission.brief.mail3.map26.level2:4 mission.brief.mail9b.map26.level3:3
+msgctxt "mission brief tactical information"
+msgid "Sanctuary: Buenos Aires IML Link"
+msgstr "聖域：　ブエノスアイレスIMLリンク"
+
+#: mission.brief.mail3.map26.level2:5
+msgctxt "mission brief tactical information"
+msgid "Eavesdrop: city vaults estimated to contain Cr 1,000,000"
+msgstr ""
+"イーバスドロップ：　市の金庫には1,000,000クレジット相当の金が溢れている"
+
+#: mission.title:27
+msgctxt "mission title"
+msgid "Test Of Faith"
+msgstr "Test Of Faith"
+
+#: mission.brief.mail4.par1.h
+msgctxt "mission brief email header"
+msgid "Our prayers are with you, <login>."
+msgstr "われらの祈りはわが子<login>よ、おまえとともにある。"
+
+#: mission.brief.mail4.par2.c2
+msgctxt "mission brief email orders"
+msgid ""
+"The time has come to test the strength of our faith. A lone agent of the "
+"Syndicate has been seen lurking in the shadows of Santiago. Convert him."
+msgstr ""
+"私たちの信仰を証明する時がきた。シンジケートのエージェントがひとり、サンチャ"
+"ゴの闇にうごめいている。この男を改宗させ、この機会に応えよう。"
+
+#: mission.brief.mail4.par3.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"What better place to find those with the strength we seek than in the ranks "
+"of our enemy, the Syndicate? Its agents are our Acolytes in waiting. Just as "
+"you were one of their number, before we showed you the light, so shall you "
+"soon lead EuroCorp's elite from the dark path they tread. A EuroCorp agent "
+"has been sent to Santiago to undermine our work there. You will not allow "
+"this to happen."
+msgstr ""
+"私たちが求める強さを持った者を探すとき、シンジケート以上に適当な場所があるだ"
+"ろうか？　シンジケートのエージェントらは、私たちの未来の同志だ。ちょうどおま"
+"えが私たちによって光り輝く道を歩み始められたように、闇の中をさまようユーロ"
+"コープの精鋭を今度はお前が目覚めさせてやるのだ。私たちの仕事を妨害するため"
+"に、ユーロコープのエージェントがひとり送り込まれてきた。このエージェントに光"
+"を見せてやるがよい。"
+
+#: mission.brief.mail4.par4.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Before you commit your Acolytes to Santiago, ensure they carry the "
+"Indoctrinator and use it, so that others may see its light. When the "
+"Indoctrinator is used, UTOPIA's cruel illusion is shattered by our Truth. "
+"Those who see then gather and follow where the Acolyte leads. And when their "
+"numbers are sufficient, even the agent of EuroCorp will hear their chorus "
+"and gladly join it."
+msgstr ""
+"サンチャゴに「同志」らを赴かせるまえに、「インドクトリネーター」"
+"(INDOCTRINATOR)を携えていることを確認するのだ。この聖なる錫杖を用いるとき、人"
+"民はUTOPIAの造り出したみじめな幻を振り払い、私たちのもたらす真実に眼を開くで"
+"あろう。そして「同志」が指し示す導きに続々とつき従うのだ。慕い続く者が十\\分"
+"な数になったときには、ユーロコープのエージェントといえども、その歌声の前に喜"
+"んで身を投げ出すはずだ。"
+
+#: mission.brief.mail4.par5.c5
+msgctxt "mission brief email paragraph"
+msgid "Peace be with you afterwards."
+msgstr "おまえに平穏が訪れることを。"
+
+#: mission.brief.mail4.par7.c1
+msgctxt "mission brief book quote"
+msgid ""
+"Mark thine enemy, for all that separates the damned from the chosen is a dot "
+"of monochrome light, projected onto the back of a neck."
+msgstr ""
+"汝の敵を見つけだせ。選ばれた者と呪われた者を分けるのは、首の後ろに照射される"
+"モノクロームの光。"
+
+#: mission.brief.mail4.map7.level3:1
+msgctxt "mission brief tactical information"
+msgid "Landing Ground: APC to deliver your acolytes"
+msgstr "潜入地点：　新世紀教会サンチャゴ支部"
+
+#: mission.brief.mail4.map7.level3:2
+msgctxt "mission brief tactical information"
+msgid "EuroCorp agent search area"
+msgstr "目標地点：　ユーロコープ・エージェントのサーチエリア"
+
+#: mission.brief.mail4.map7.level3:3
+msgctxt "mission brief tactical information"
+msgid "Sanctuary: Santiago monasterial complex"
+msgstr "聖域：　新世紀教会サンチャゴ支部"
+
+#: mission.brief.mail4.map7.level3:4
+msgctxt "mission brief tactical information"
+msgid "Bridges have been destroyed in a Syndicate attack"
+msgstr "補足内容：　シンジケートの攻撃で橋が破壊されている"
+
+#: mission.brief.mail4.map7.level3:5
+msgctxt "mission brief tactical information"
+msgid "Eavesdrop: IML route to target is guarded by EuroCorp forces"
+msgstr ""
+"イーバスドロップ：　目標へのIMLルートはユーロコープにより掌握されている"
+
+#: mission.title:17
+msgctxt "mission title"
+msgid "Foundations"
+msgstr "Foundations"
+
+#: mission.brief.mail5.par1.h
+msgctxt "mission brief email header"
+msgid "You are blessed, <login>."
+msgstr "祝福されし者<login>よ。"
+
+#: mission.brief.mail5.par2.c2
+msgctxt "mission brief email orders"
+msgid ""
+"Our foundations are strong and expensive. The two gold-laden armoured cars "
+"which we are tracking in Johannesburg will feed our hungry coffers. Take "
+"them. Your cause is righteous."
+msgstr ""
+"わが教団は強くそして高価だ。ヨハネスバーグで確認された２台の金塊輸送車を、わ"
+"が教団の金庫が待っている。奪うのだ。おまえの行動は正義から生まれる。"
+
+#: mission.brief.mail5.par3.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Our cause proceeds apace. The mind-warpers of the Syndicate will soon answer "
+"for their crimes. We seek to bring this day of judgment forward but we "
+"require funds in order to match the worldly might of EuroCorp."
+msgstr ""
+"私たちの引き起こす流れは予\\想以上に速い。人々の心をねじ曲げるユーロコープ"
+"は、じきに自らの罪を償うことになる。私たちの手で審判の日の訪れを一日でも早め"
+"るためには、世界中に蔓延するユーロコープに対抗できるだけの資金が必要だ。"
+
+#: mission.brief.mail5.par4.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"The Nine have given us the Codex. This holy book is the blueprint of our "
+"salvation. Yet we must pay a price for each chapter we turn into reality. "
+"This we call research. So it is that the more material wealth we acquire, "
+"the closer we are to possessing the minds of gods."
+msgstr ""
+"「ザ・ナイン」は私たちに「法典」(The Codex)を与えてくれた。この聖なる書は私た"
+"ちの救済の青写真である。しかし各章に記されたことを実現するには莫大な資金が必"
+"要となる。これは私たちがいうところの「研究」である。物質的な富が集まれば集ま"
+"るほど、私たちは神の心に近づく。"
+
+#: mission.brief.mail5.par5.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Go to Johannesburg, where EuroCorp's logistical bottleneck has resulted in a "
+"backlog of bullion shipments. The bullion is delivered in armoured cars, to "
+"vaults which are kept under constant guard. It takes two armoured cars to "
+"deliver a shipment. Hijack them both and take them to the designated pick-up "
+"point. We urge that you do not enter or attack the heavily guarded "
+"stronghold. You will find other ways to lay your palms on the money. Use "
+"your mind and not just your firepower."
+msgstr ""
+"ユーロコープの物流が集中するヨハネスバーグに赴き、金塊の輸送を襲え。金塊は装"
+"甲車に積み込まれ、その後厳重に警備された地下金庫へと移送される。２台の装甲車"
+"が用いられるもようである。金塊を奪取し、別途指示する回収地点へ向かえ。厚く防"
+"御された地下金庫へ攻撃を加えたり、侵入を試みるべきではない。別の方法で金塊へ"
+"たどりつくのだ。火力のみに頼らず知恵を使うがいい。"
+
+#: mission.brief.mail5.par7.c1
+msgctxt "mission brief book quote"
+msgid "Remember, the meek shall inherit nothing."
+msgstr "肝に銘じよ。無気力な者、力のない者は何も手に入れることができない。"
+
+#: mission.brief.mail5.map22.level3:1 mission.brief.mail9c.map22.level2:1
+#: mission.brief.mail23.map22.level4:1
+msgctxt "mission brief tactical information"
+msgid "Landing Ground: Johannesburg IML Link"
+msgstr "潜入地点：　ヨハネスバーグIMLリンク"
+
+#: mission.brief.mail5.map22.level3:2
+msgctxt "mission brief tactical information"
+msgid "EuroCorp vault"
+msgstr "ユーロコープ保管施設"
+
+#: mission.brief.mail5.map22.level3:3
+msgctxt "mission brief tactical information"
+msgid "Bullion convoy"
+msgstr "金塊輸送車"
+
+#: mission.brief.mail5.map22.level3:4
+msgctxt "mission brief tactical information"
+msgid "Target vehicle"
+msgstr "目標地点"
+
+#: mission.brief.mail5.map22.level3:5
+msgctxt "mission brief tactical information"
+msgid "Convoy's destination"
+msgstr "輸送目的地"
+
+#: mission.brief.mail5.map22.level3:6 mission.brief.mail23.map22.level4:4
+msgctxt "mission brief tactical information"
+msgid "Sanctuary: Johannesburg IML Link"
+msgstr "聖域：　ヨハネスバーグIMLリンク"
+
+#: mission.title:10
+msgctxt "mission title"
+msgid "A Meeting Of Minds"
+msgstr "A Meeting Of Minds"
+
+#: mission.title:39
+msgctxt "mission title"
+msgid "Soul Crusader"
+msgstr "Soul Crusader"
+
+#: mission.brief.mail6.par1.h
+msgctxt "mission brief email header"
+msgid "Be at peace, <login>."
+msgstr "<login>が心安らけしことを。"
+
+#: mission.brief.mail6.par2.c2
+msgctxt "mission brief email orders"
+msgid ""
+"Chosen disciple Mirabelle Lucy De Saxo has been anointed by the Nine. Lead "
+"her into the heart of a EuroCorp laboratory so that she can indoctrinate a "
+"scientist there whose research complements our own."
+msgstr ""
+"選ばれし信徒ミラベル・ルーシー・デ・サッコは、「ザ・ナイン」の祝福をうける。"
+"彼女がユーロコープ研究所に潜入する手引きをし、私たちの研究を補完するために、"
+"ひとりの科学者を改宗させる手助けをするのだ。"
+
+#: mission.brief.mail6.par3.c2
+msgctxt "mission brief email orders"
+msgid ""
+"Take this scientist to our nearest temple, where Father Black will hear his "
+"confession."
+msgstr ""
+"科学者を近在の寺院にお連れするのだ。ブラック神父が懺悔を聞いてくれることだろ"
+"う。"
+
+#: mission.brief.mail6.par4.c2
+msgctxt "mission brief email orders"
+msgid "Send De Saxo where the scientist tells you and bring his secrets to us."
+msgstr "科学者が示した場所にデ・サッコを送り込み、秘密をわがもとに。"
+
+#: mission.brief.mail6.par5.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Hear the Nine. There are those with great brains but lost minds. They wander "
+"in the dark wilderness, not yet able to see the light of our faith. One such "
+"man currently wages the war against Harbinger for EuroCorp. The Nine intend "
+"to save his soul by applying his intellect to the divine cause of turning "
+"the Codex into new technology."
+msgstr ""
+"「ザ・ナイン」に耳を傾けよ。この地上には偉大な知能\\を持ちながら、その魂は闇"
+"の中をさまよう哀れな者がいる。信仰の光を見ることができずにいるひとりの男が、"
+"ユーロコープに従い「前兆」に無意味な戦いを挑んでいる。「ザ・ナイン」はその男"
+"の魂を救済し、その優れた知能\\を信仰の発展と、「法典」に記された技術の具現化"
+"に供することを決定した。"
+
+#: mission.brief.mail6.par6.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Your target, Dr Schweizer, works in a EuroCorp lab in Geneva. It is too "
+"heavily guarded for Acolytes to penetrate, so you will direct our special "
+"infiltration agent - Mirabelle Lucy De Saxo - through the security cordon. "
+"When she has converted Schweizer, she must see to it that he is given "
+"sanctuary in the old temple we have taken over. Stealth is Mirabelle's most "
+"powerful weapon. Take care of her for us."
+msgstr ""
+"目標のシュワイザー博士は、ジュネーブのユーロコープ研究所で働いている。そこに"
+"はわが信徒の侵入を想定した厳重な警備体制が敷かれている。潜入破壊活動のスペ"
+"シャリストである同志ミラベル・ルーシー・デ・サッコを使うのだ。シュワイザー博"
+"士の「改宗」に成功したら、わが教会の支配する古い寺院までエスコートさせよ。そ"
+"こは安全だ。"
+
+#: mission.brief.mail6.par7.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Father Black, our local minister, will hear the doctor's confession, as soon "
+"as Schweizer enters the temple. This will provide Mirabelle with the "
+"information she needs, in order to track down the doctor's works. Send her "
+"to this place and direct our daughter to harvest the fruits of the doctor's "
+"labours. See that she delivers them to us."
+msgstr ""
+"寺院ではブラック神父が博士を待っている。博士はすぐさま神父にあらいざらい懺悔"
+"するであろう。博士の研究成果のありかもだ。その情報をすべてミラベルに伝えよ。"
+"あとは彼女をその場所に送り込み、研究の成果を回収させるのだ。"
+
+#: mission.brief.mail6.par8.c5
+msgctxt "mission brief email paragraph"
+msgid "Your soul is more blessed with each deed you do."
+msgstr "おまえの魂は功績が積み上げられるほどに救われてゆく。"
+
+#: mission.brief.mail6.par10.c1
+msgctxt "mission brief book quote"
+msgid ""
+"All knowledge is stored somewhere. Be it in books, heads or deep under "
+"glaciers. And when we find it, we make it ours. Faith is bricks; knowledge "
+"is mortar."
+msgstr ""
+"全ての知識はいずこかにあり。書物の中か、頭脳の綾か、それとも氷河のはるか底に"
+"か。すべてを求め、われらが財とせよ。信仰は煉瓦。知識はそれをつなぐ漆喰。"
+
+#: mission.brief.mail6a.map21.level46:1
+msgctxt "mission brief tactical information"
+msgid "Landing Ground: Geneva IML Link"
+msgstr "潜入地点：　ジュネーブIMLリンク"
+
+#: mission.brief.mail6a.map21.level46:2
+msgctxt "mission brief tactical information"
+msgid "EuroCorp conference centre"
+msgstr "目標地点：　ユーロコープ研究所"
+
+#: mission.brief.mail6a.map21.level46:3
+msgctxt "mission brief tactical information"
+msgid "Dr Schweizer"
+msgstr "作戦目標：　シュワイザー博士"
+
+#: mission.brief.mail6a.map21.level46:4
+msgctxt "mission brief tactical information"
+msgid "Father Black's temple"
+msgstr "目標地点：　ブラック神父の寺院"
+
+#: mission.brief.mail6c.map50.level47:1
+msgctxt "mission brief tactical information"
+msgid "Landing Ground: Vancouver IML Link"
+msgstr "潜入地点：　バンクーバーIMLリンク"
+
+#: mission.brief.mail6c.map50.level47:2
+msgctxt "mission brief tactical information"
+msgid "Dr Schweizer's laboratory"
+msgstr "目標地点：　ユーロコープ研究所"
+
+#: mission.brief.mail6c.map50.level47:3
+msgctxt "mission brief tactical information"
+msgid "Sanctuary: Vancouver IML Link"
+msgstr "聖域：　バンクーバーIMLリンク"
+
+#: mission.brief.mail6c.map50.level47:4
+msgctxt "mission brief tactical information"
+msgid "Eavesdrop: Syndicate agents detected"
+msgstr "イーバスドロップ：　シンジケートのエージェントを確認"
+
+#: mission.title:31
+msgctxt "mission title"
+msgid "Heretics"
+msgstr "Heretics"
+
+#: mission.brief.mail7.par1.h
+msgctxt "mission brief email header"
+msgid "Bless you, Disciple."
+msgstr "同志に祝福を。"
+
+#: mission.brief.mail7.par2.c2
+msgctxt "mission brief email orders"
+msgid ""
+"When the Cataclysm's winds of chaos howl in our faces we must stand firm. "
+"Protect our temple in Hong Kong from the Unguided storm which approaches the "
+"island."
+msgstr ""
+"世界の激震が巻きおこす混沌の風が、私たちに向けて吹きすさむときも、常にそれに"
+"立ち向かわなくてはならない。香港の私たちの寺院をアンガイデッドの波から守って"
+"ほしい。"
+
+#: mission.brief.mail7.par3.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"The Nine have had a vision. The Unguided seek to undermine our plans for the "
+"Pacific Rim. A heretic, known to us as Ko-Paull Vissick, perverts our "
+"message. He subjects the Unguided rabble to a travesty of the eldritch "
+"knowledge revealed to us by the Nine. Such wilful recklessness can only harm "
+"the unprepared mind and, by this sedition, Vissick creates greater enmity "
+"towards our Church."
+msgstr ""
+"「ザ・ナイン」は予\\知した。アンガイデッドが私たちの環太平洋地域における計画"
+"を妨害しようと企んでいる。背教者コ＝パウル・ヴィシックが私たちの教義を邪にね"
+"じ曲げているのだ。ヴィシックはアンガイデッドの群衆を扇動し、私たちが「ザ・ナ"
+"イン」から与えられた知識を奪い取ろうというのである。このような向こう見ずで大"
+"それた悪事を働かんとする者は、新世紀教会の敵として厳しく罰されなければならな"
+"い。"
+
+#: mission.brief.mail7.par4.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Now reports reach us of landings by large numbers of Unguided in Hong Kong. "
+"We believe they are heading for our temple. It falls to you and your "
+"Acolytes to reach the temple before the Unguided and defend against the "
+"inevitable onslaught."
+msgstr ""
+"多数のアンガイデッドが香港に上陸したとの知らせが入った。それらどもの目標がわ"
+"が寺院であることは間違いない。命を下す、おまえと「同志」はアンガイデッドの突"
+"撃に先んじて寺院に到着し、猛攻を迎え撃つのだ。"
+
+#: mission.brief.mail7.par5.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Faithful servant, here is more. We will be gods. A machine promises to "
+"remake the world. Keep the faith and you buy your place of safety. All "
+"others will be lost."
+msgstr ""
+"忠実なしもべよ。新たな知らせだ。私たちはついに神になる。「機械」が新世界の創"
+"造をわれらに約束した。信仰を続けよ。されば安息の地が与えられん。信仰を持たぬ"
+"者は全て滅びる。"
+
+#: mission.brief.mail7.par6.c5
+msgctxt "mission brief email paragraph"
+msgid "The day of righteousness draws near."
+msgstr "真の光を見る日は近い。"
+
+#: mission.brief.mail7.par8.c1
+msgctxt "mission brief book quote"
+msgid ""
+"He who shouts loudest can only hear his own voice. Those with true knowledge "
+"listen to those with true faith. And those with closed ears never hear the "
+"swing of the reaper's blade."
+msgstr ""
+"最も大きな声で叫んだ者だけが、自らの声を聞くことができる。真実を知る者のみ"
+"が、真の信仰を持つ者に耳を傾ける。耳を塞いだままの者たちは、死神の大鎌が振り"
+"おろされる音すらも聞くことはない。"
+
+#: mission.brief.mail7.map1.level3:1
+msgctxt "mission brief tactical information"
+msgid "Landing Ground: Hong Kong IML Link"
+msgstr "潜入地点：　香港IMLリンク"
+
+#: mission.brief.mail7.map1.level3:2
+msgctxt "mission brief tactical information"
+msgid "Our temple and brethren"
+msgstr "防衛地点：　わが寺院と同志"
+
+#: mission.brief.mail7.map1.level3:3
+msgctxt "mission brief tactical information"
+msgid "Unguided landing zones"
+msgstr "アンガイデッド侵入地点"
+
+#: mission.brief.mail7.map1.level3:4
+msgctxt "mission brief tactical information"
+msgid "Eavesdrop: EuroCorp special agents (sappers) despatched to Hong Kong"
+msgstr "イーバスドロップ：　ユーロコープの特別工作エージェントが香港に潜入"
+
+#: mission.title:6
+msgctxt "mission title"
+msgid "Sack Of Rome"
+msgstr "Sack Of Rome"
+
+#: mission.brief.mail8.par1.h
+msgctxt "mission brief email header"
+msgid "Hear me, Disciple."
+msgstr "聞こえるか同志よ。"
+
+#: mission.brief.mail8.par2.c2
+msgctxt "mission brief email orders"
+msgid ""
+"Fate tests us, <login>. We wish to see an end to the Unguided blight on the "
+"city of Rome. Cleanse this place of unbelievers."
+msgstr ""
+"<login>よ、運命が私たちに試練を与えている。ローマでのアンガイデッドの跳梁に終"
+"止符を打て。信仰を持たぬ群衆をこの地から駆逐するのだ。"
+
+#: mission.brief.mail8.par3.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"The presence of this mob has been useful to us until now, as it has sapped "
+"EuroCorp resources in the region, but it is no longer required. Eliminate "
+"the mob on sight."
+msgstr ""
+"アンガイデッドは、ユーロコープの支配を崩すためには有用であった。しかし今と"
+"なってはただ邪魔なだけだ。見つけしだいすべて抹殺せよ。"
+
+#: mission.brief.mail8.par4.c5
+msgctxt "mission brief email paragraph"
+msgid "Truly, you are chosen."
+msgstr "忘れるな、おまえは選ばれた者なのだ。"
+
+#: mission.brief.mail8.par6.c1
+msgctxt "mission brief book quote"
+msgid ""
+"Poor workers blame their tools. Good workers build better tools. The best "
+"workers get their tools to do the work for them."
+msgstr ""
+"腕のない職人はそれを道具のせいにする。腕のある職人は、より優れた道具を自分で"
+"作る。最高の職人は、自分の道具に仕事をやらせる。"
+
+#: mission.brief.mail8.map28.level31:1
+msgctxt "mission brief tactical information"
+msgid "Landing Ground: Rome IML Link"
+msgstr "潜入地点：　ローマIMLリンク"
+
+#: mission.brief.mail8.map28.level31:2
+msgctxt "mission brief tactical information"
+msgid "Domicile zones overrun by the Unguided"
+msgstr "作戦内容：　アンガイデッドを殲滅"
+
+#: mission.brief.mail8.map28.level31:3
+msgctxt "mission brief tactical information"
+msgid "EuroCorp garrison"
+msgstr "ユーロコープ駐屯基地"
+
+#: mission.brief.mail8.map28.level31:4
+msgctxt "mission brief tactical information"
+msgid "EuroCorp agents"
+msgstr "ユーロコープ・エージェント"
+
+#: mission.brief.mail8.map28.level31:5
+msgctxt "mission brief tactical information"
+msgid "Eavesdrop: estimated contents of vault Cr 400,000"
+msgstr "イーバスドロップ：　金庫に400,000クレジット程度が保管されている"
+
+#: mission.title:33
+msgctxt "mission title"
+msgid "Not One Of Us"
+msgstr "Not One Of Us"
+
+#: mission.title:52
+msgctxt "mission title"
+msgid "Watcher"
+msgstr "Watcher"
+
+#: mission.title:11
+msgctxt "mission title"
+msgid "Serpent's Egg"
+msgstr "Serpent's Egg"
+
+#: mission.title:12
+msgctxt "mission title"
+msgid "A Mote In God's Eye"
+msgstr "A Mote In God's Eye"
+
+#: mission.brief.mail9.par1.h
+msgctxt "mission brief email header"
+msgid "Receive our blessings, Son of Light."
+msgstr "祝福を受けるがよい、光の子よ。"
+
+#: mission.brief.mail9.par2.c2
+msgctxt "mission brief email orders"
+msgid ""
+"By working where our foe is weakest, we have begun to establish our Church. "
+"The Syndicate is therefore attempting to regain control in a number of "
+"vulnerable cities."
+msgstr ""
+"敵のひ弱な地に力を集中することで、私たちは新世紀教会を成長させてきた。シンジ"
+"ケートはいくつかの都市で反攻を始めている。"
+
+#: mission.brief.mail9.par3.c2
+msgctxt "mission brief email orders"
+msgid ""
+"Already, the Syndicate has begun to undertake covert operations in "
+"Johannesburg, Buenos Aires, Santiago and Tripoli. Those who challenge the "
+"Church of the New Epoch must join us or perish."
+msgstr ""
+"すでにシンジケートはヨハネスバーグ・ブエノスアイレス・サンチャゴ・トリポリの"
+"４都市で隠密作戦を遂行中だ。新世紀教会に挑戦する者には二つの道が与えられる。"
+"われらに従い神に仕えるか、原子となって消滅するかだ。"
+
+#: mission.brief.mail9.par4.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Syndicate agents have been sighted in Santiago and Tripoli. In Buenos Aires, "
+"the Syndicate has regained control of its garrison in an action which "
+"spilled the precious blood of your brothers and sisters stationed there. The "
+"Nine also believe that EuroCorp has planted a saboteur in our mission in "
+"Johannesburg."
+msgstr ""
+"シンジケートのエージェントがサンチャゴとトリポリで目撃されている。またブエノ"
+"スアイレスでは当地のわが兄弟の尊い血が流され、シンジケートに拠点をふたたび占"
+"領されてしまった。さらに「ザ・ナイン」は、シンジケートがヨハネスバーグでのわ"
+"れらの事業に破壊活動要員を送り込んだと考えている。"
+
+#: mission.brief.mail9.par5.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Your Acolytes must ensure that no EuroCorp operative succeeds or ever "
+"returns to the Syndicate. Do not rest until you have cleansed these places "
+"of the Syndicate's sickness."
+msgstr ""
+"ユーロコープの作戦を成功させたり、敵の要員が基地に無傷で帰還することがないよ"
+"う、万全を期してほしい。シンジケートの持ち込む病原菌を根絶やしにするまで、休"
+"息は許されない。"
+
+#: mission.brief.mail9.par6.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"The day of reckoning draws closer with every new mind we recruit. And those "
+"who wish to survive the Cataclysm must believe."
+msgstr ""
+"裁きの日の訪れは、われらが心を同じくする魂が集うにつれて早まる。終末の日を生"
+"き延びるの唯一の手段は、信じることだ。"
+
+#: mission.brief.mail9.par7.c5
+msgctxt "mission brief email paragraph"
+msgid "Be brave, Acolyte. And be brutal. It is the only way."
+msgstr "同志よ、勇気を持て。そして冷酷になれ。道は一つだ。"
+
+#: mission.brief.mail9.par9.c1
+msgctxt "mission brief book quote"
+msgid "There is pleasure in stealing the souls of machines."
+msgstr "機械の魂を奪い去る行為には、喜びが伴う。"
+
+#: mission.brief.mail9c.map22.level2:2
+msgctxt "mission brief tactical information"
+msgid "City district under our control"
+msgstr "新世紀教会施設"
+
+#: mission.brief.mail9c.map22.level2:3
+msgctxt "mission brief tactical information"
+msgid "Your brethren"
+msgstr "同胞"
+
+#: mission.brief.mail9c.map22.level2:4
+msgctxt "mission brief tactical information"
+msgid ""
+"Eavesdrop: tinkering with UTOPIA ident signal detected - with focus around "
+"entrances to transport tubes, and detection of carrying explosive devices"
+msgstr ""
+"イーバスドロップ：　UTOPIA 識別信号の改ざんが検出されました - 輸送管への入り"
+"口付近に焦点を当て、爆発物の携行を検出"
+
+#: mission.brief.mail9b.map26.level3:2
+msgctxt "mission brief tactical information"
+msgid "EuroCorp militia garrisons"
+msgstr "目標地点：　ユーロコープ支配区域"
+
+#: mission.brief.mail9a.map7.level5:1
+msgctxt "mission brief tactical information"
+msgid "Landing Ground: Santiago IML Link"
+msgstr "潜入地点：　サンチャゴIMLリンク"
+
+#: mission.brief.mail9a.map7.level5:2
+msgctxt "mission brief tactical information"
+msgid "Our temple"
+msgstr "寺院"
+
+#: mission.brief.mail9a.map7.level5:3
+msgctxt "mission brief tactical information"
+msgid "Sanctuary: Santiago IML Link"
+msgstr "聖域：　サンチャゴIMLリンク"
+
+#: mission.brief.mail9a.map7.level5:4
+msgctxt "mission brief tactical information"
+msgid ""
+"Eavesdrop: Syndicate strike team scheduled to arrive at garrisons within 48 "
+"hours"
+msgstr "イーバスドロップ：　シンジケート急派部隊が48時間以内に到着"
+
+#: mission.brief.mail9d.map25.level46:3
+msgctxt "mission brief tactical information"
+msgid "Those you shall keep from harm"
+msgstr "護衛目標"
+
+#: mission.brief.mail9d.map25.level46:4
+msgctxt "mission brief tactical information"
+msgid "Sanctuary: Tripoli IML Link"
+msgstr "聖域：　トリポリIMLリンク"
+
+#: mission.brief.mail9d.map25.level46:5
+msgctxt "mission brief tactical information"
+msgid "Vault: estimated worth Cr 800,000"
+msgstr "銀行：　推定保管額800,000クレジット"
+
+#: mission.brief.mail9d.map25.level46:6
+msgctxt "mission brief tactical information"
+msgid ""
+"Satellite alert: EuroCorp agent type identkeys detected, tracks unstable"
+msgstr "軌道衛星情報：　ユーロコープのエージェントを確認"
+
+#: mission.title:44
+msgctxt "mission title"
+msgid "Powermonger"
+msgstr "Powermonger"
+
+#: mission.brief.mail10.par1.h
+msgctxt "mission brief email header"
+msgid "May faith burn within you, Favourite One."
+msgstr "信仰の炎がおまえとともに燃えあがらんことを、祝福された子よ。"
+
+#: mission.brief.mail10.par2.c2
+msgctxt "mission brief email orders"
+msgid ""
+"Our oracles tell us that a supremely important Syndicate official called "
+"Koto Sek is visiting Cairo. He has a powerful entourage and is well-"
+"protected. However, in the name of all that is right, he must die."
+msgstr ""
+"シンジケートの最高首脳のひとりコトセックが、カイロに向かうというお告げがあっ"
+"た。彼には強力な護衛がついており、接近は容易でない。しかし正義の名のもとに、"
+"この者の存在は消さねばならぬ。"
+
+#: mission.brief.mail10.par3.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Koto Sek plans to board a shuttle for parts unknown. Stop him as soon as you "
+"can. Make sure that he is dead before you report back. If there are other "
+"casualties, then that is the way of things. I am sure you are used to that "
+"now."
+msgstr ""
+"コトセックはシャトルに搭乗する予\\定だがその位置は不明である。可能\\な限り迅"
+"速にけりをつけよ。コトセックの死亡を完全に確認してから撤収せよ。ある程度の犠"
+"牲はやむを得ない。ここまでくる間に、おまえも犠牲には慣れているはずだ。"
+
+#: mission.brief.mail10.par4.c5
+msgctxt "mission brief email paragraph"
+msgid "Go forth."
+msgstr "前進あるのみ。"
+
+#: mission.brief.mail10.par6.c1
+msgctxt "mission brief book quote"
+msgid ""
+"Not only will all eyes be on the leaders of men, but all combat sights as "
+"well."
+msgstr "人々の視線はいつも指導者に注がれる。銃の照準もしかり。"
+
+#: mission.brief.mail10.map45.level1:1 mission.brief.mail22.map44.level2:1
+msgctxt "mission brief tactical information"
+msgid "Landing Ground: APC destination"
+msgstr "潜入地点：　APC目的地"
+
+#: mission.brief.mail10.map45.level1:2
+msgctxt "mission brief tactical information"
+msgid "EuroCorp HQ"
+msgstr "ユーロコープHQ"
+
+#: mission.brief.mail10.map45.level1:3
+msgctxt "mission brief tactical information"
+msgid "Executive shuttle carrying Koto Sek"
+msgstr "コトセック搭乗のエグゼクティブ・シャトル"
+
+#: mission.brief.mail10.map45.level1:4
+msgctxt "mission brief tactical information"
+msgid "Sanctuary: Cairo IML Link"
+msgstr "聖域：　カイロIMLリンク"
+
+#: mission.title:43
+msgctxt "mission title"
+msgid "Deadly Harvest"
+msgstr "Deadly Harvest"
+
+#: mission.brief.mail11.par1.h
+msgctxt "mission brief email header"
+msgid "You shine strong, Apostle."
+msgstr "同志よ、おまえの輝きは増すばかりだ。"
+
+#: mission.brief.mail11.par2.c2
+msgctxt "mission brief email orders"
+msgid ""
+"In Bahrain, EuroCorp prepares for an assault on our way of enlightenment. It "
+"shall come to pass that you are the toll by which they are stopped."
+msgstr ""
+"ユーロコープがバーレーンにおいて、われらが光の道を汚すべく攻撃を準備している"
+"という。かの者どもの前に立ちふさがる鉄壁、それは同志、おまえしかいない。"
+
+#: mission.brief.mail11.par3.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"By the bounty of our faith, we have provided you with many targets here. And "
+"for your use is a battle-tank. Be wise, Acolyte. Always use equipment well. "
+"And make sure that you silence the voice of EuroCorp here. It must be so if "
+"we are to triumph and free the world."
+msgstr ""
+"信仰の道を歩むおまえに、私たちは幾多の目標を与えてきた。今回はおまえに戦車を"
+"授ける。知恵を用いて装備を有効に使え。そしてユーロコープの息の根を止め、静寂"
+"を取り戻せ。われらが勝利のため、世界の自由のための道はひとつ。"
+
+#: mission.brief.mail11.par4.c5
+msgctxt "mission brief email paragraph"
+msgid "The light of your being grows ever brighter."
+msgstr "おまえの存在はますます光り輝く。"
+
+#: mission.brief.mail11.par6.c1
+msgctxt "mission brief book quote"
+msgid ""
+"The people stood like corn in the high fields and listened to the Master. As "
+"the reaper's blade scythed them all, the Master fell silent. The lesson "
+"would be learned by others."
+msgstr ""
+"人々は畑に生えたトウモロコシのように指導者の話に聞き入った。大鎌が彼らの首を"
+"いっぺんになぎ払い、皆殺しにした。指導者は沈黙した。指導者の話を聞かなかった"
+"ものは、多くを学ぶだろう。"
+
+#: mission.brief.mail11.map41.level47:1
+msgctxt "mission brief tactical information"
+msgid "Landing Ground: Bahrain IML Link"
+msgstr "潜入地点：　バーレーンIMLリンク"
+
+#: mission.brief.mail11.map41.level47:2
+msgctxt "mission brief tactical information"
+msgid "EuroCorp reforger zone"
+msgstr "ユーロコープ造幣所"
+
+#: mission.brief.mail11.map41.level47:3
+msgctxt "mission brief tactical information"
+msgid ""
+"Eavesdrop: police have been assigned to escort a EuroCorp finance executive "
+"on business in the north-east of the city"
+msgstr "イーバスドロップ：　ユーロコープの金融取り引きが行われるもよう"
+
+#: mission.title:73
+msgctxt "mission title"
+msgid "Donation"
+msgstr "Donation"
+
+#: mission.brief.mail12.par1.h
+msgctxt "mission brief email header"
+msgid "Congratulations on your progress, Disciple."
+msgstr "わが子よ、よくぞまたもやり遂げた。"
+
+#: mission.brief.mail12.par2.c2
+msgctxt "mission brief email orders"
+msgid ""
+"You are assigned the holy task of appropriating hard credits from two "
+"bullion vehicles which our sources tell us will be making deliveries to the "
+"headquarters of Singapore Central Bank."
+msgstr ""
+"２台の輸送車がシンガポール中央銀行に金塊を移送するという情報がもたらされた。"
+"教会の聖なる使命のために、この金に生命を与えよう。"
+
+#: mission.brief.mail12.par3.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Of course, EuroCorp will be on red alert, and guards will be everywhere. We "
+"feel an outright assault to be unwise, as this is what the Syndicate will be "
+"expecting. We have prayed for another way to get hold of these funds, and "
+"our prayers will be answered. The rest is up to you, Acolyte."
+msgstr ""
+"むろんユーロコープは厳戒態勢をとり、警備員がそこかしこに溢れていることであろ"
+"う。かの者たちが想定するような正面攻撃は賢い選択ではない。他のより聡き手段で"
+"この金を得ることを期待している。すべてはおまえにかかっている。"
+
+#: mission.brief.mail12.par4.c5
+msgctxt "mission brief email paragraph"
+msgid "Remember the wonders money works."
+msgstr "金のもたらす奇跡を考えてみよ。"
+
+#: mission.brief.mail12.par6.c1
+msgctxt "mission brief book quote"
+msgid ""
+"The Master has no need for money. But still he sits and counts it. As a "
+"meditation."
+msgstr ""
+"指導者は金など必要としない。それでも指導者は座って金を数える。瞑想のために。"
+
+#: mission.brief.mail12.map9.level3:1
+msgctxt "mission brief tactical information"
+msgid "Landing Ground: Singapore IML Link"
+msgstr "潜入地点：　シンガポールIMLリンク"
+
+#: mission.brief.mail12.map9.level3:2
+msgctxt "mission brief tactical information"
+msgid "Vault (empty)"
+msgstr "銀行（空）"
+
+#: mission.brief.mail12.map9.level3:3
+msgctxt "mission brief tactical information"
+msgid "Target vehicles A and B"
+msgstr "目標車両ＡおよびＢ"
+
+#: mission.brief.mail12.map9.level3:4
+msgctxt "mission brief tactical information"
+msgid "Rendezvous"
+msgstr "合流地点"
+
+#: mission.brief.mail12.map9.level3:5
+msgctxt "mission brief tactical information"
+msgid "Eavesdrop: Vehicle A's destination"
+msgstr "イーバスドロップ：　車両Ａの目的地"
+
+#: mission.brief.mail12.map9.level3:6
+msgctxt "mission brief tactical information"
+msgid "Eavesdrop: Vehicle B's destination"
+msgstr "イーバスドロップ：　車両Ｂの目的地"
+
+#: mission.title:13
+msgctxt "mission title"
+msgid "Audacity"
+msgstr "Audacity"
+
+#: mission.brief.mail13.par1.h
+msgctxt "mission brief email header"
+msgid "Greetings, Acolyte."
+msgstr "おめでとう信徒よ。"
+
+#: mission.brief.mail13.par2.c2
+msgctxt "mission brief email orders"
+msgid ""
+"We have a daring plan for you. We want you to abduct a high-ranking "
+"Syndicate executive, under the nose of EuroCorp security, from their London "
+"headquarters."
+msgstr ""
+"おまえに新たな計画を話そう。ユーロコープの最重要拠点、もっとも警戒厳重なロン"
+"ドンHQから高級幹部を誘拐し、かの者どもの鼻をあかしてやるのだ。"
+
+#: mission.brief.mail13.par3.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Professor Kurt Drennan is a key member of EuroCorp's research and "
+"development programme. EuroCorp agents have learned of our Reykjavik "
+"discoveries. Drennan is scheduled to brief chief EuroCorp executives at a "
+"meeting in London. At the same time, he is due to be assigned a new "
+"assistant. Deal firmly with this replacement. Direct the blessed Mirabelle "
+"to take her place at the proper time and Drennan will be delivered into our "
+"hands."
+msgstr ""
+"カート・ドレナン教授はユーロコープの研究開発部門の重要メンバーである。ユーロ"
+"コープのエージェントが、私たちのレイキャビクでの重要な発見の事実に気づいたよ"
+"うだ。ドレナンはこれについて、ユーロコープの最高首脳を集め状況説明をおこな"
+"う。同時に彼には新しい助手が配属されることになっているので、このチャンスを生"
+"かすのだ。同志ミラベル・ルーシー・デ・サッコに的確な指示を与え、助手とすり替"
+"わらせよ。それができれば教授は私たちの手に落ちたも同然だ。"
+
+#: mission.brief.mail13.par4.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Once Mirabelle has successfully taken the real assistant's place, she will "
+"have to remain incognito and act appropriately while Drennan delivers his "
+"presentation. Immediately afterwards, the professor is due to leave by car "
+"for another engagement. As long as you ensure that Mirabelle leaves in the "
+"same car, Drennan will never make that next appointment. With our prayers, "
+"Drennan should prove most willing to make his confession."
+msgstr ""
+"本物の助手とミラベルが入れ替わったら、ドレナンの講演中はミラベルを極力目立た"
+"ないよう行動させよ。講演が終わったら、教授は直ちに別の仕事に向かうため車で移"
+"動する。ミラベルをその車に同乗させることに成功すれば、教授の以降の約束はすべ"
+"てキャンセルだ。わが信徒らの前に引きだされたドレナンは、懺悔の衝動に震えるこ"
+"とであろう。"
+
+#: mission.brief.mail13.par5.c5
+msgctxt "mission brief email paragraph"
+msgid "Your spirit shall walk with the Nine for eternity."
+msgstr "おまえの魂が「ザ・ナイン」と永遠にともにあらんことを。"
+
+#: mission.brief.mail13.par7.c1
+msgctxt "mission brief book quote"
+msgid ""
+"A hundred elephants can wreck the outer walls of a fortress. One diseased "
+"rat can kill all those inside."
+msgstr ""
+"100頭の象は要塞の壁を壊すことができる｡１匹の病んだネズミは要塞内の全ての生命"
+"を奪うことができる。"
+
+#: mission.brief.mail13.map30.level2:1
+msgctxt "mission brief tactical information"
+msgid "Landing Ground: London IML Link"
+msgstr "潜入地点：　ロンドンIMLリンク"
+
+#: mission.brief.mail13.map30.level2:2
+msgctxt "mission brief tactical information"
+msgid "Professor Drennan's assistant"
+msgstr "ドレナン教授の助手"
+
+#: mission.brief.mail13.map30.level2:3
+msgctxt "mission brief tactical information"
+msgid "Professor Drennan"
+msgstr "ドレナン教授"
+
+#: mission.brief.mail13.map30.level2:4
+msgctxt "mission brief tactical information"
+msgid "Presentation podium"
+msgstr "講演会場"
+
+#: mission.brief.mail13.map30.level2:5
+msgctxt "mission brief tactical information"
+msgid "Sanctuary: London outlet road"
+msgstr "聖域: ロンドン アウトレット ロード"
+
+#: mission.brief.mail13.map30.level2:6
+msgctxt "mission brief tactical information"
+msgid ""
+"Eavesdrop: the professor's itinary includes collection of data from this "
+"building"
+msgstr "イーバスドロップ：　教授のデータが保管されている"
+
+#: mission.brief.mail13.map30.level2:7
+msgctxt "mission brief tactical information"
+msgid "Eavesdrop: Unguided invasion of North Side imminent"
+msgstr "イーバスドロップ：　アンガイデッドが北側から急速に接近中"
+
+#: mission.title:72
+msgctxt "mission title"
+msgid "Divine Light"
+msgstr "Divine Light"
+
+#: mission.brief.mail14.par1.h
+msgctxt "mission brief email header"
+msgid "Meditate with us, Disciple."
+msgstr "ともに瞑想を。"
+
+#: mission.brief.mail14.par2.c2
+msgctxt "mission brief email orders"
+msgid ""
+"Steal plans for a new Syndicate weapon from the EuroCorp installation in New "
+"York."
+msgstr "ニューヨークのユーロコープ施設から、新兵器の設計図を奪え。"
+
+#: mission.brief.mail14.par3.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Professor Drennan is dead. His resistance to our neural inquisitors caused "
+"him to suffer a massive haemorrhage. Disappointing. Nevertheless, through "
+"our prayers, he survived long enough to furnish us with reliable information "
+"that the Syndicate is planning a major counter-offensive against our "
+"hallowed Church. Preparations for the counter-strike are being made in "
+"EuroCorp bases in New York."
+msgstr ""
+"ドレナン教授は死んだ。神経尋問システムに対する抵抗が、彼に重度の失血をひきお"
+"こした結果だ。残念である。しかし私たちは彼の最後の短い懺悔から、シンジケート"
+"が聖なる教会に反攻を開始するという確かな情報を得た。反撃の準備は、ニューヨー"
+"クのシンジケート施設で進められているらしい。"
+
+#: mission.brief.mail14.par4.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"In New York, guarded Syndicate technicians have been testing a thermonuclear "
+"hand weapon we ourselves foresee a use for. Two days ago our brothers and "
+"sisters - who occupy the city's Cathedral in defiance of EuroCorp's presence "
+"- witnessed a terrible blast inside the enemy's compound. It is from within "
+"this compound that Drennan said we would find experimental data regarding "
+"these devices. However, the compound is heavily defended. A diversion is "
+"probably required."
+msgstr ""
+"そこでは技術者たちが厳重な警備のもと、ポータブル熱核兵器の試験を進めていると"
+"いう。この兵器の有用性は私たちも認めるところである。われらの兄弟が２日前に当"
+"地の聖堂を勇敢にも突入占拠したが、その際にユーロコープの敷地内で、激しい閃光"
+"と爆発があったことを報告している。その場所こそ、ドレナンが設計図の保管場所だ"
+"と語っていた所なのだ。だがその施設は強固に守られている。陽動作戦が必要となろ"
+"う。"
+
+#: mission.brief.mail14.par5.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Brother Methuselah will forsake the sanctuary the cathedral provides and "
+"meet you at the IML. He will lead you to a residential and commercial sector "
+"where he will incite a riot, by administering a censer cloud of psycho gas "
+"in the midst of the civilian population. During this time you should find "
+"some means of entering the compound. The Syndicate's response to the riot "
+"should occupy some of the guards for a while."
+msgstr ""
+"聖堂を占拠する同志のひとりメスーセラが、危険を冒して外へ出る。IMLエントリーで"
+"彼と落ちあえ。メスーセラがおまえを市街地に案内したあと、密集地でサイコガスを"
+"焚いて暴\\動を引きおこす手はずとなっている。この騒ぎを利用して施設に侵入する"
+"のだ。シンジケート側は暴\\動鎮圧のために、施設の警備兵をさし向けねばならなく"
+"なるはずだ。"
+
+#: mission.brief.mail14.par7.c1
+msgctxt "mission brief book quote"
+msgid ""
+"The courageous enter dark caves alone. The clever send in the courageous "
+"first. The cleverest wait behind the clever."
+msgstr ""
+"勇気ある者は暗い洞窟に一人で足を踏み入れる。賢い者は勇気ある者を先に送り込"
+"む。最も賢い者は皆の後ろで待つ。"
+
+#: mission.brief.mail14.map4.level3:1
+msgctxt "mission brief tactical information"
+msgid "Landing Ground: New York IML Link"
+msgstr "潜入地点：　ニューヨークIMLリンク"
+
+#: mission.brief.mail14.map4.level3:2
+msgctxt "mission brief tactical information"
+msgid "EuroCorp installation gateways"
+msgstr "ユーロコープ施設への入口"
+
+#: mission.brief.mail14.map4.level3:3
+msgctxt "mission brief tactical information"
+msgid "Site of blast"
+msgstr "爆発現場"
+
+#: mission.brief.mail14.map4.level3:4
+msgctxt "mission brief tactical information"
+msgid "Target building"
+msgstr "作戦目標：　新兵器開発資料"
+
+#: mission.brief.mail14.map4.level3:5
+msgctxt "mission brief tactical information"
+msgid "Diversion will be created in this commercial zone"
+msgstr "陽動作戦が市街地のこの地点で行われる"
+
+#: mission.brief.mail14.map4.level3:6
+msgctxt "mission brief tactical information"
+msgid "Our temple and satellite uplink"
+msgstr "聖堂および衛星アップリンク"
+
+#: mission.brief.mail14.map4.level3:7
+msgctxt "mission brief tactical information"
+msgid "Sanctuary: New York IML Link"
+msgstr "聖域：　ニューヨークIMLリンク"
+
+#: mission.brief.mail14.map4.level3:8
+msgctxt "mission brief tactical information"
+msgid "Eavesdrop: estimated value of vault Cr 2,000,000"
+msgstr "イーバスドロップ：　銀行の推定保管額2,000,000クレジット"
+
+#: mission.title:14
+msgctxt "mission title"
+msgid "The Levellers"
+msgstr "The Levellers"
+
+#: mission.brief.mail15.par1.h
+msgctxt "mission brief email header"
+msgid "Precious Believer,"
+msgstr "尊き信徒に祝福を。"
+
+#: mission.brief.mail15.par2.c2
+msgctxt "mission brief email orders"
+msgid ""
+"Destroy EuroCorp weapons bunkers in Riyadh. In wreaking such devastation do "
+"we celebrate the Cataclysm."
+msgstr ""
+"リヤドのユーロコープ武器集積所を叩け。かくのごとき天罰はきたるべき終末に花を"
+"そえるであろう。"
+
+#: mission.brief.mail15.par3.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Harbinger has brought UTOPIA to its knees. EuroCorp's continuing quest to "
+"build a new army continues to prove the effectiveness of our strikes against "
+"it. Many of the Syndicate's arms are being stockpiled, to give the depleted "
+"cryovats time to repair their dwindling cadre of agents. Drennan confessed "
+"to us of the largest such repository of firepower. It lies within the "
+"ancient city walls of Riyadh."
+msgstr ""
+"ついに「前兆」がUTOPIAを完全にうち破った。ユーロコープ側の兵団再編成の動き"
+"は、私たちの攻撃の有効性を証明するようなものである。エージェントの損耗に備"
+"え、シンジケートは大量の兵器やサイボーグ・コンポーネントを武器集積所にストッ"
+"クしている。ドレナン教授は懺悔の中で、最大規模の集積所のひとつを明らかにし"
+"た。それはリヤドの古代都市壁の中にある。"
+
+#: mission.brief.mail15.par4.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"It is the Nine's holy wish that this arsenal is buried forever beneath the "
+"desert sands. Locate the target bunkers and destroy them. Convert or "
+"obliterate any agents who dare to stand in your way. Use your own judgment "
+"in this matter. When the Syndicate's stockpile is no more than a memory, "
+"your name shall be sung by the faithful."
+msgstr ""
+"「ザ・ナイン」はすべての兵器を砂漠に埋葬することを望んでいる。集積所を発見し"
+"完全に破壊せよ。立ちふさがる敵エージェントは殺すか服従させよ。これはおまえの"
+"判断にまかせる。シンジケートの備蓄がビス１本まで失われたとき、おまえの名は信"
+"徒の間で歌い継がれることになるだろう。"
+
+#: mission.brief.mail15.par5.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Our machines will remake the world, Acolyte. They will plunge the planet "
+"into turmoil. Most of the population will die, but it is the renewal of life "
+"that calls us. Imagine a world with no syndicates, no mind-control, no "
+"violence. It will happen, Disciple. It will happen. More minds are needed."
+msgstr ""
+"われらの「機械」が世界を再び創造する。それはこの惑星の混沌を攪拌する。ほとん"
+"どの人間は死に絶えるだろう。そして私たちがもたらす新たな生命が再び地上にあふ"
+"れる。シンジケートもない、暴\\力もない、独裁もない、そんな世界を想像してみる"
+"のだ。それは現実なのだ。それは現実に起こるのだ。そしてそれにはもっと多くの魂"
+"が必要だ。"
+
+#: mission.brief.mail15.par6.c5
+msgctxt "mission brief email paragraph"
+msgid "Tempus fugit."
+msgstr "時の流れはすべてを破壊する。"
+
+#: mission.brief.mail15.par8.c1
+msgctxt "mission brief book quote"
+msgid ""
+"The apprentices asked the Master. \"When shall we achieve immortality?\""
+msgstr ""
+"弟子が指導者に尋ねた。「私たちはいつ永遠の命を手に入れられるのですか？」"
+
+#: mission.brief.mail15.par9.c1
+msgctxt "mission brief book quote"
+msgid "And the Master answered, \"Not in this life.\""
+msgstr "指導者が答えた。「現世ではまだだ。来世を待て」"
+
+#: mission.brief.mail15.map20.level16:1
+msgctxt "mission brief tactical information"
+msgid "Landing Ground: Riyadh IML Link"
+msgstr "潜入地点：　リヤドIMLリンク"
+
+#: mission.brief.mail15.map20.level16:2
+msgctxt "mission brief tactical information"
+msgid "Target bunkers"
+msgstr "作戦目標：　ユーロコープ武器集積所"
+
+#: mission.brief.mail15.map20.level16:3
+msgctxt "mission brief tactical information"
+msgid "Sanctuary: Riyadh IML Link"
+msgstr "聖域：　リヤドIMLリンク"
+
+#: mission.title:87
+msgctxt "mission title"
+msgid "Fallen Among Thieves"
+msgstr "Fallen Among Thieves"
+
+#: mission.brief.mail16.par1.h
+msgctxt "mission brief email header"
+msgid "Brave Apostle."
+msgstr "勇気ある信徒よ。"
+
+#: mission.brief.mail16.par2.c2
+msgctxt "mission brief email orders"
+msgid ""
+"Our daughter of the New Epoch, Mirabelle Lucy De Saxo, has crash-landed in "
+"Unguided territory, near her Cape Town sanctuary. Your acolytes must hasten "
+"to her side. She must live if she is to fulfil her destiny, as the first to "
+"tread the path to salvation."
+msgstr ""
+"新世紀教会の娘、ミラベル・ルーシー・デ・サッコがケープタウン近郊のアンガイ"
+"デッド支配地域に不時着した。「同志」を直ちに救出に向かわせるのだ。彼女には救"
+"済の道を拓く幾多の使命がまだ残されている。まだ死ぬことは許されぬ。"
+
+#: mission.brief.mail16.par3.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"We know she is still alive, but she is in urgent need of rescue. You are of "
+"course our first choice for this hazardous calling. Enter the Unguided zone "
+"and find De Saxo. Evacuate her with all haste. She may be in mortal danger. "
+"Be decisive with those who would stand in your way."
+msgstr ""
+"ミラベルが生きていることは間違いない。一刻も早い救出を要する。この難しい作戦"
+"には、おまえこそが頼みの綱だ。アンガイデッドの巣窟に乗り込み彼女を見つけ出し"
+"て、可及的速やかに救出するのだ。ミラベルはおまえの助けを必要としている。手向"
+"かう者に容赦はいらない。"
+
+#: mission.brief.mail16.par5.c1
+msgctxt "mission brief book quote"
+msgid ""
+"Bravery will take you into the most dangerous of places. Overwhelming "
+"firepower will see you safely through them."
+msgstr ""
+"勇気がおまえを最も危険な場所へと導く。圧倒的な火力がそこからおまえを救いだ"
+"す。"
+
+#: mission.brief.mail16.map44.level3:1
+msgctxt "mission brief tactical information"
+msgid "Landing Ground: Cape Town APC destination"
+msgstr "潜入地点：　ケープタウンAPC目的地"
+
+#: mission.brief.mail16.map44.level3:2
+msgctxt "mission brief tactical information"
+msgid "De Saxo's crash site"
+msgstr "デ・サッコの墜落した地点"
+
+#: mission.brief.mail16.map44.level3:3 mission.brief.mail22.map44.level2:3
+msgctxt "mission brief tactical information"
+msgid "Sanctuary: Cape Town IML Link"
+msgstr "聖域：　ケープタウンIMLリンク"
+
+#: mission.brief.mail16.map44.level3:4
+msgctxt "mission brief tactical information"
+msgid "Eavesdrop: EuroCorp squad scheduled arrival -36 hours"
+msgstr "イーバスドロップ：　ユーロコープチーム到着予定 - 36 時間"
+
+#: mission.title:15
+msgctxt "mission title"
+msgid "Rain Of Terror"
+msgstr "Rain Of Terror"
+
+#: mission.brief.mail17.par1.h
+msgctxt "mission brief email header"
+msgid "May faith be with you, <login>."
+msgstr "<login>よ、信仰がおまえとともにあらんことを。"
+
+#: mission.brief.mail17.par2.c2
+msgctxt "mission brief email orders"
+msgid ""
+"Seek and obliterate a dangerous, meddling hacker who hides among the "
+"Unguided, for he has gained control of a strategic weapons satellite above "
+"Beijing."
+msgstr ""
+"憎むべきハッカーがアンガイデッドの群れに紛れ隠れている。見つけだし排除せよ。"
+"この男は北京上空の戦略衛星のコントロールを握ってしまった。"
+
+#: mission.brief.mail17.par3.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"An outcast hacker with access to UTOPIA satellite defences is bringing steel "
+"rain from heaven where and whenever he chooses. He must be stopped. He must "
+"be found and eliminated."
+msgstr ""
+"愚かなハッカーがUTOPIA衛星防衛システムのアクセスを手に入れ、望むとき、望むと"
+"ころに天から鋼鉄の雨を降らせている。愚行をやめさせ、この男を抹消するのだ。"
+
+#: mission.brief.mail17.par4.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Be wary, Disciple. Beijing is a faithless place, ridden with the Unguided, "
+"who see only through the sights of their guns."
+msgstr ""
+"わが子よ、油断をするな。北京は信仰なき土地だ。アンガイデッドで溢れかえってい"
+"る。奴らは銃の照準からしか世界を見ない。"
+
+#: mission.brief.mail17.par5.c5
+msgctxt "mission brief email paragraph"
+msgid "Go with spirit."
+msgstr "気高い精神とともに歩むのだ。"
+
+#: mission.brief.mail17.par7.c1
+msgctxt "mission brief book quote"
+msgid ""
+"He who lives in the eye of the storm is a mote in the eye of an angry god."
+msgstr "嵐の目の中に潜む者は、怒れる神の眼の中の塵だ。"
+
+#: mission.brief.mail17.map32.level2:1
+msgctxt "mission brief tactical information"
+msgid "Landing Ground: Beijing IML Link"
+msgstr "潜入地点：　北京IMLリンク"
+
+#: mission.brief.mail17.map32.level2:2
+msgctxt "mission brief tactical information"
+msgid "Hacker's location"
+msgstr "ハッカーの所在地"
+
+#: mission.brief.mail17.map32.level2:3
+msgctxt "mission brief tactical information"
+msgid "Sanctuary: Beijing IML Link"
+msgstr "聖域：　北京IMLリンク"
+
+#: mission.brief.mail17.map32.level2:4
+msgctxt "mission brief tactical information"
+msgid "Eavesdrop: city vault estimated to contain Cr 1,500,000"
+msgstr "イーバスドロップ：　銀行の推定保管額1,500,000クレジット"
+
+#: mission.title:16
+msgctxt "mission title"
+msgid "Armour Of The Gods"
+msgstr "Armour Of The Gods"
+
+#: mission.brief.mail18.par1.h
+msgctxt "mission brief email header"
+msgid "Disciple, your aura feeds our strength."
+msgstr "選ばれしものよ、その霊気をわれらが糧に。"
+
+#: mission.brief.mail18.par2.c2
+msgctxt "mission brief email orders"
+msgid ""
+"The Syndicate has lost control of Delhi to the Unguided. Riding armour "
+"stolen from their vanquished foes, the heretic unbelievers bring desolation "
+"to every quarter. They are false prophets, all of them. Send them to the "
+"Cataclysm."
+msgstr ""
+"シンジケートがデリーの支配権をアンガイデッドに奪われた。アンガイデッドの暴"
+"\\徒は敗者から奪った機動兵器を乗り回し、荒廃の輪をいっそう拡げている。結局ど"
+"ちらも愚かな背教者どもである。まとめてノアの洪水で押し流してしまうのだ。"
+
+#: mission.brief.mail18.par3.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Those who use such infernal weaponry against us must pay the ultimate price. "
+"There is no honour in destroying machines, and there is considerable danger."
+msgstr ""
+"このようないまいましい兵器をわが教会に向ける者は、究極の代償を払うこととな"
+"る。"
+
+#: mission.brief.mail18.par4.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Tread carefully as you make your way towards the island. Secure that first."
+msgstr "われらが道は最後まで正しい。"
+
+#: mission.brief.mail18.par5.c5
+msgctxt "mission brief email paragraph"
+msgid "Be full of spirit."
+msgstr "気高き魂を抱いて歩め。"
+
+#: mission.brief.mail18.par7.c1
+msgctxt "mission brief book quote"
+msgid ""
+"The brave hide behind technology. The stupid hide from it. But the clever "
+"have technology, and hide it."
+msgstr ""
+"勇気ある者はテクノロジーで身を隠す。愚か者はテクノロジーから隠れる。そして賢"
+"い者はテクノロジーを擁しそれを隠す。"
+
+#: mission.brief.mail18.map27.level1:1
+msgctxt "mission brief tactical information"
+msgid "Landing Ground: Delhi IML Link"
+msgstr "潜入地点：　デリーIMLリンク"
+
+#: mission.brief.mail18.map27.level1:2
+msgctxt "mission brief tactical information"
+msgid "EuroCorp forces in river port island"
+msgstr "ユーロコープ勢力"
+
+#: mission.brief.mail18.map27.level1:3 mission.brief.mail23.map22.level4:2
+msgctxt "mission brief tactical information"
+msgid "The Unguided"
+msgstr "アンガイデッド"
+
+#: mission.brief.mail18.map27.level1:4
+msgctxt "mission brief tactical information"
+msgid "Sanctuary: Delhi IML Link"
+msgstr "聖域：　デリーIMLリンク"
+
+#: mission.title:85
+msgctxt "mission title"
+msgid "The Dead Zone"
+msgstr "The Dead Zone"
+
+#: mission.brief.mail19.par1.h
+msgctxt "mission brief email header"
+msgid "Blessings, Chosen One."
+msgstr "われらが使徒に天の恵みを。"
+
+#: mission.brief.mail19.par2.c2
+msgctxt "mission brief email orders"
+msgid ""
+"Bring us the secret EuroCorp is protecting in Bangkok and we will pray for "
+"your salvation."
+msgstr ""
+"バンコクでのユーロコープの不可解な行動を解明してもらいたい。おまえの救済を祈"
+"る私たちのために。"
+
+#: mission.brief.mail19.par3.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"The stink of chaos spreads to every street corner as UTOPIA forsakes the "
+"populace at large and takes its favoured children deeper underground. In "
+"Bangkok the Syndicate has abandoned all attempts to restore their regime. "
+"Instead, it has imposed a dead zone there. What goes on there we do not know "
+"for certain."
+msgstr ""
+"UTOPIAが大衆を見放し熱心な追従者のみを囲い始めた今、混沌の悪臭が街を包み込も"
+"うとしている。シンジケートはバンコクの掌握をあきらめたようだ。そしてかわりに"
+"ここをデッドゾーン（死地域）に指定した。そこで何が行われているか、私たちには"
+"知るよしもない。"
+
+#: mission.brief.mail19.par4.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"One of our brothers recently attempted to find out what EuroCorp is going to "
+"such lengths to hide. He learned that the enemy's agents occasionally "
+"venture through the dead zone, in order to abduct Unguided, many of whom "
+"still cling to their forlorn hopes among the shattered remains. The agents "
+"then return to their stronghold with their captives. The Nine do not "
+"understand why the Syndicate should do this when it eliminates the Unguided "
+"on sight everywhere else."
+msgstr ""
+"最近、わが「同志」がユーロコープの行動の謎を探ろうと試みた。分かったことは、"
+"敵のエージェントがたびたびデッドゾーンに侵入し、廃墟の中でわずかな希望にすが"
+"りついて生きているアンガイデッドらを誘拐しているらしいという事実だ。エージェ"
+"ントはアンガイデッドを捕らえると、つねに獲物とともに速やかに基地に引き揚げる"
+"という。他の地域ではアンガイデッドを見つけしだい射殺しているシンジケートが、"
+"なぜバンコクではこのような行動をとるのか、「ザ・ナイン」にも見当がつかない。"
+
+#: mission.brief.mail19.par5.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"We seek enlightenment in this matter. Direct your Acolytes through the "
+"city's hostile outskirts and into the dead zone. Find out what EuroCorp is "
+"up to and take any steps you consider necessary to deal with the situation "
+"you find. Then return and confess to us everything you have learned, so that "
+"we may cleanse you of the evil to which you have been exposed."
+msgstr ""
+"私たちはこの謎を真実の光のもとに解き明かしたい。「同志」を指揮し、郊外のシン"
+"ジケート支配地域を突破してデッドゾーンに潜入するのだ。ユーロコープの企みを解"
+"明するには、状況に応じた的確な判断が必要となろう。私たちの元へ戻ったら、そこ"
+"で見たもの聞いたものを残らず告白するのだ。デッドゾーンでおまえが浴びた邪悪な"
+"瘴気は、「ザ・ナイン」がすべて浄化すると約束しよう。"
+
+#: mission.brief.mail19.par6.c5
+msgctxt "mission brief email paragraph"
+msgid "Forgive nothing."
+msgstr "妥協は最大の悪であることを忘れるな。"
+
+#: mission.brief.mail19.par8.c1
+msgctxt "mission brief book quote"
+msgid ""
+"A war refugee sought the Master. He said, \"You are wise and serene. Teach "
+"me to escape the horrors of this world.\" And the Master blinded him with "
+"fire-irons."
+msgstr ""
+"難民が指導者に問うた。「高貴で賢いあなたにお尋ねします。どうすればこの世の恐"
+"怖から逃れられるのでしょう？」　指導者は答えるかわりに焼け火箸を難民の眼に突"
+"き刺した。"
+
+#: mission.brief.mail19.map3.level2:1
+msgctxt "mission brief tactical information"
+msgid "Landing Ground: Bangkok IML Link"
+msgstr "潜入地点：　バンコクIMLリンク"
+
+#: mission.brief.mail19.map3.level2:2
+msgctxt "mission brief tactical information"
+msgid "Dead zone perimeter"
+msgstr "デッドゾーン（死地域）境界線"
+
+#: mission.brief.mail19.map3.level2:3
+msgctxt "mission brief tactical information"
+msgid "EuroCorp outpost"
+msgstr "ユーロコープ制圧地域"
+
+#: mission.brief.mail19.map3.level2:4
+msgctxt "mission brief tactical information"
+msgid "Sanctuary: Bangkok IML Link"
+msgstr "聖域：　バンコクIMLリンク"
+
+#: mission.brief.mail19.map3.level2:5
+msgctxt "mission brief tactical information"
+msgid "A commercial vault still stands here"
+msgstr "銀行"
+
+#: mission.brief.mail19.map3.level2:6
+msgctxt "mission brief tactical information"
+msgid "Satellite alert: evidence of weapons testing at outpost"
+msgstr "軌道衛星情報：　バンコクにて兵器の試験らしき形跡あり"
+
+#: mission.title:53
+msgctxt "mission title"
+msgid "Establish The Link"
+msgstr "Establish The Link"
+
+#: mission.brief.mail20.par1.h
+msgctxt "mission brief email header"
+msgid "Listen strong, Acolyte."
+msgstr "わが子よよく聞くのだ。"
+
+#: mission.brief.mail20.par2.c2
+msgctxt "mission brief email orders"
+msgid ""
+"We need an IML link to Reykjavik, where the sacraments of our founding "
+"religion are in danger. Our favoured daughter, Mirabelle Lucy De Saxo, must "
+"reactivate this path. It is up to you to clear a route to the IML station in "
+"the north-east of Christchurch. Purest Mirabelle will take the place "
+"normally occupied by your fourth Acolyte."
+msgstr ""
+"わが教会が聖餐式をおこなう汚れなき土地レイキャビクが、いま危険にさらされてい"
+"る。至急レイキャビクへのIMLリンクを確保してもらいたい。IMLリンクの起動は私た"
+"ちの大切な娘ミラベル・ルーシー・デ・サッコにしかできない。おまえの使命はクラ"
+"イストチャーチ北東のIMLエントリーまでの道を切り開くことである。ミラベルを４番"
+"目の「同志」として隊伍に加えるのだ。"
+
+#: mission.brief.mail20.par3.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Tread with care, pilgrim. Traps and ambushes abound, and you must bring the "
+"firepower of our faith to bear against any who stand in the way. De Saxo is "
+"special, and must not be harmed. Pray for this and do your utmost to see "
+"that it should be so."
+msgstr ""
+"巡礼の徒よ、細心の注意を払い歩を進めよ。罠や伏兵がおまえたちを待ち受けている"
+"だろうが、信仰の前に立ちふさがる者には灼熱の炎で応えるがよい。デ・サッコは特"
+"別な存在、われらが娘は決して傷つけられてはならない。そのことを忘れず、全力を"
+"尽くして信仰の道を歩むのだ。"
+
+#: mission.brief.mail20.par4.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"When enough people are of our faith, we shall open a gate in the Earth's "
+"ionosphere. The effects of unfettered cosmic rays on any part of the planet "
+"exposed to the ion gate will destroy nearly everything. Only those in the "
+"cause will be saved. We shall reset the world and it shall rise, safe in our "
+"religion."
+msgstr ""
+"光り輝く道に帰依する者が十\\分な数に達したとき、私たちは地球のイオン電離層の"
+"門を開くであろう。イオンゲートから降り注ぐ汚れなき宇宙の光線が、地上のすべて"
+"を焼き尽くし消毒する。正しき信仰を持つ者のみが、この真実の光のもとで救済され"
+"る。私たちはこの星をリセットし、信仰のもとにあらたな世界を築く。"
+
+#: mission.brief.mail20.par5.c5
+msgctxt "mission brief email paragraph"
+msgid "Toil for our cause."
+msgstr "われらが目的のために汗して働くのだ。"
+
+#: mission.brief.mail20.par7.c1
+msgctxt "mission brief book quote"
+msgid "Follow the more successful thief and steal his ideas."
+msgstr "より賢い盗人につき、より高度な技を盗むのだ。"
+
+#: mission.brief.mail20a.map36.level2:1
+msgctxt "mission brief tactical information"
+msgid "Landing Ground: Christchurch IML Link A"
+msgstr "潜入地点：　クライストチャーチIMLリンクＡ"
+
+#: mission.brief.mail20a.map36.level2:2
+msgctxt "mission brief tactical information"
+msgid "Christchurch IML Link B"
+msgstr "クライストチャーチIMLリンクＢ"
+
+#: mission.title:18
+msgctxt "mission title"
+msgid "Deconstruction"
+msgstr "Deconstruction"
+
+#: mission.brief.mail21.par1.h
+msgctxt "mission brief email header"
+msgid "Blessed One,"
+msgstr "光の子よ。"
+
+#: mission.brief.mail21.par2.c2
+msgctxt "mission brief email orders"
+msgid ""
+"Destroy the EuroCorp Advanced R&D Facility near Reykjavik. Eliminate "
+"EuroCorp agents on sight."
+msgstr ""
+"レイキャビク近郊のユーロコープ高度研究開発施設を破壊せよ。ユーロコープのエー"
+"ジェントは見つけしだい皆殺しにするのだ。"
+
+#: mission.brief.mail21.par3.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"The history of this place is the very structure of the Church of the New "
+"Epoch. Here you will see the raw essence that lead us all to believe. And "
+"EuroCorp is defiling it. You must eradicate with extreme force any agents "
+"you find here."
+msgstr ""
+"この場所の歴史は、わが「新世紀教会」の成り立ちそのものである。おまえはここ"
+"で、私たちが信仰を持つに至った動機と理由をまのあたりにするであろう。だがユー"
+"ロコープがこの聖地を汚そうとしている。許してはならぬ。視界に入るエージェント"
+"すべてを全力で撲滅せよ。"
+
+#: mission.brief.mail21.par4.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"You must also destroy all the places where the Nine prepared their minds for "
+"the seed of wisdom. It is only material substance, and our faith lives and "
+"beats in our hearts. Do not falter. Destroy. No harm will come to the Church "
+"now, for the Codex dwells deep inside the minds of the Nine. Only shadows of "
+"its wisdom remain in Reykjavik. Be thorough in your work, for the sake of "
+"precision."
+msgstr ""
+"かって「ザ・ナイン」が真実を追求するための「研究」をおこなった全ての施設・装"
+"置も同時に破壊するのだ。もはや私たちがより所とするのはこの場所ではなく、私た"
+"ちの心の中にある信仰だ。ひるむことはない。破壊せよ。もう何者もわが教会を傷つ"
+"けることはできない。われらが「ザ・ナイン」は「法典」を意識体として完全に吸"
+"収・包含することに成功したのだ。レイキャビクに残るのはわれらの持つ知識の影の"
+"み。そんなものはもはや必要ない。破壊せよ。完璧をめざして勤めをはたせ。"
+
+#: mission.brief.mail21.par5.c5
+msgctxt "mission brief email paragraph"
+msgid "In holy footsteps."
+msgstr "聖なる道を歩め。"
+
+#: mission.brief.mail21.par7.c1
+msgctxt "mission brief book quote"
+msgid ""
+"\"Here!\" said the Master. \"Build me a great tomb in this place.\" His "
+"apprentices did. It glittered in the sun. \"Now go inside,\" said he. They "
+"entered. An earthquake then destroyed the tomb, burying those within."
+msgstr ""
+"「ここだ」指導者は言った。「ここに巨大な墓を造れ」弟子たちはその通りにした。"
+"墓は太陽の下で燦然と輝いた。「中に入れ」指導者は言った。弟子たちは従った。そ"
+"して地震が起こり、中にいる者を生き埋めにした。"
+
+#: mission.brief.mail21.par8.c1
+msgctxt "mission brief book quote"
+msgid "The Master smiled. \"Even the faithful are not always chosen."
+msgstr "指導者は微笑みながら言った。「忠実な者と、選ばれた者は違う」"
+
+#: mission.brief.mail21.par9.c1
+msgctxt "mission brief book quote"
+msgid "\"This is called sacrifice.\""
+msgstr "「これが生け贄だ」"
+
+#: mission.title:45
+msgctxt "mission title"
+msgid "Retribution"
+msgstr "Retribution"
+
+#: mission.brief.mail22.par1.h
+msgctxt "mission brief email header"
+msgid "Walk in Light, Disciple."
+msgstr "光の中を歩め、同志よ。"
+
+#: mission.brief.mail22.par2.c2
+msgctxt "mission brief email orders"
+msgid ""
+"Eliminate Mirabelle Lucy De Saxo immediately. You will find her at the Cape "
+"Town sanctuary we gave her, and which we now take away."
+msgstr ""
+"ミラベル・ルーシー・デ・サッコを直ちに抹殺せよ。デ・サッコはケープタウンにま"
+"だいるはずだ。"
+
+#: mission.brief.mail22.par3.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Your heart beats only for us. Do not question the faith when it requires "
+"action you do not yet understand. De Saxo has trespassed against us. The "
+"Nine have exposed her as our enemy incarnate. She is an agent of the "
+"Syndicate. Travel to Cape Town with vengeance in your breast, and terminate "
+"her."
+msgstr ""
+"おまえの心は私たちのもの。おまえにはまだ理解できないだろうが、信仰の道を決し"
+"て疑うな。デ・サッコは私たちを裏切ったのだ。「ザ・ナイン」は彼女が悪の化身で"
+"あることを見破った。デ・サッコはシンジケートのエージェントだったのだ。神の怒"
+"りを胸にケープタウンへ向かえ。そこで裏切者に鉄槌を下すのだ。"
+
+#: mission.brief.mail22.par4.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"The weak-minded will side with her. Let them feel the force of the true way."
+msgstr ""
+"心弱き者どもが、デ・サッコのまわりを固めているに違いない。正義の力を見せてや"
+"るがいい。"
+
+#: mission.brief.mail22.par5.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"We have nearly done enough to begin the final stage of the Cataclysm and "
+"change this world beyond all measure. Fight for it, Acolyte. You are chosen "
+"and will be saved. Millions of non-believers will perish. We will cleanse "
+"this planet."
+msgstr ""
+"この世の全てを変える終末の時まであと一歩だ。戦うのだ同志よ。おまえは選ばれし"
+"者、救われる者。何億もの信仰なき者が裁きを受けるであろう。私たちがこの惑星を"
+"浄化するのだ。"
+
+#: mission.brief.mail22.par6.c5
+msgctxt "mission brief email paragraph"
+msgid "Keep the faith."
+msgstr "信仰に生きよ。"
+
+#: mission.brief.mail22.par8.c1
+msgctxt "mission brief book quote"
+msgid "Even the salamander sometimes burns."
+msgstr "火龍サラマンダーといえども燃えることはある。"
+
+#: mission.brief.mail22.map44.level2:2
+msgctxt "mission brief tactical information"
+msgid "The blasphemer Mirabelle Lucy De Saxo"
+msgstr "ミラベル・ルーシー・デ・サッコ"
+
+#: mission.title:19
+msgctxt "mission title"
+msgid "Day Of The Damned"
+msgstr "Day Of The Damned"
+
+#: mission.brief.mail23.par1.h
+msgctxt "mission brief email header"
+msgid "Hark these words, Apostle."
+msgstr "使徒よ、わが言葉に従え。"
+
+#: mission.brief.mail23.par2.c2
+msgctxt "mission brief email orders"
+msgid ""
+"The Great Church at Johannesburg has been desecrated by a swarm of Unguided "
+"ones. One of their number, Rene Galact, is visibly directing the throng. He "
+"must be destroyed in the name of all that is holy."
+msgstr ""
+"ヨハネスバーグの大教会が、アンガイデッドの群れによって汚されている。群衆のひ"
+"とりルネ・ガラクトが指揮をとっている。全ての聖なる名において、ガラクトは粛清"
+"されなければならない。"
+
+#: mission.brief.mail23.par3.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"There is an unforgivably large Unguided presence in the city. The raised "
+"mall and concourse in the south-west of the city is now the outcasts' "
+"fortress. A great victory will be born from the destruction of all those who "
+"would hide behind its irrelevant walls, and the Church will roll ever closer "
+"to the Final Day. It is written in the Codex, Disciple."
+msgstr ""
+"容認できぬ数のアンガイデッドが街にあふれている。市南西部の商店街と広場がアン"
+"ガイデッドらの要塞と化している。壁の陰に隠れた何千もの敵をすべて駆逐したと"
+"き、輝かしい勝利が訪れるであろう。われらが教会の、終末の時への歩みは止まるこ"
+"とがない。すべては「法典」に記された通り実行される。"
+
+#: mission.brief.mail23.par4.c5
+msgctxt "mission brief email paragraph"
+msgid "Go with fire and serenity."
+msgstr "火と正義で道を開け。"
+
+#: mission.brief.mail23.par6.c1
+msgctxt "mission brief book quote"
+msgid "To take one life is sin. To take a thousand is religion."
+msgstr "ひとつの命を奪えば罪となるが、千の命を奪えば宗教となる。"
+
+#: mission.brief.mail23.map22.level4:3
+msgctxt "mission brief tactical information"
+msgid "Rene Galact"
+msgstr "ルネ・ガラクト"
+
+#: mission.title:71
+msgctxt "mission title"
+msgid "Recapture"
+msgstr "Recapture"
+
+#: mission.brief.mail24.par1.h
+msgctxt "mission brief email header"
+msgid "Blessings, Acolyte."
+msgstr "祈りを、同志よ。"
+
+#: mission.brief.mail24.par2.c2
+msgctxt "mission brief email orders"
+msgid ""
+"An emergency has arisen, to try us. One of the Nine has been captured. He is "
+"being held in a detention centre in Adelaide. You must release him and "
+"escort him to sanctuary."
+msgstr ""
+"緊急事態が発生した。これはわれらへの試練だ。「ザ・ナイン」のひとりが捕らえら"
+"れた。現在アデレードの拘留施設に閉じこめられている。尊い指導者を救い出し、安"
+"全な聖域まで連れ帰ってもらいたい。"
+
+#: mission.brief.mail24.par3.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"You must pray for a way into the centre and must carry arms to beat off "
+"those unbelievers who would cut you down in your tracks. This is where your "
+"faith is tested, Disciple. Do not fail. Remain alert. Trust the true way "
+"and, if it is willed, you shall succeed."
+msgstr ""
+"施設に突入し、邪魔者を蹴散らして使命を達成するのだ。おまえの信仰が試されると"
+"きだ。失敗は許されない。わが子よ、警戒を怠ってはならない。真実の道を信じるの"
+"だ。信じれば行く手は開ける。"
+
+#: mission.brief.mail24.par4.c5
+msgctxt "mission brief email paragraph"
+msgid "Travel on holy paths."
+msgstr "聖なる道を。"
+
+#: mission.brief.mail24.par6.c1
+msgctxt "mission brief book quote"
+msgid "In the darkest times, the true believer hones his combat skills."
+msgstr "暗黒の時、真の信仰者は研ぎ澄まされる。"
+
+#: mission.brief.mail24.map6.level3:1
+msgctxt "mission brief tactical information"
+msgid "Landing Ground: Adelaide IML Link"
+msgstr "潜入地点：　アデレードIMLリンク"
+
+#: mission.brief.mail24.map6.level3:2
+msgctxt "mission brief tactical information"
+msgid "The compound holding Brother Ix"
+msgstr "作戦目標：　「ザ・ナイン」"
+
+#: mission.brief.mail24.map6.level3:3
+msgctxt "mission brief tactical information"
+msgid "Rendezvous point"
+msgstr "合流地点"
+
+#: mission.brief.mail24.map6.level3:4
+msgctxt "mission brief tactical information"
+msgid "Syndicate MBT deployment"
+msgstr "シンジケートMBT展開中"
+
+#: mission.title:100
+msgctxt "mission title"
+msgid "Revelations"
+msgstr "Revelations"
+
+#: mission.title:102
+msgctxt "mission title"
+msgid "Cataclysm"
+msgstr "Cataclysm"
+
+#: mission.brief.mail25.par1.h
+msgctxt "mission brief email header"
+msgid "Disciple."
+msgstr "わが子よ。"
+
+#: mission.brief.mail25.par2.c2
+msgctxt "mission brief email orders"
+msgid ""
+"You have served us well. Now the moment is ours. Remain where you are and do "
+"not follow us. We will proceed to the Moon alone. When we activate our Ion "
+"Gate, those who remain on Earth will perish. Fear not - your name will "
+"forever be remembered and we shall call you a Saint of the New Epoch."
+msgstr ""
+"おまえは今までよく私たちに仕えてきた。ついに時は訪れた。おまえはここに残り、"
+"私たちを追ってはならぬ。私たち「ザ・ナイン」だけが月へと赴く。私たちがイオン"
+"ゲートを開くとき、地球上の全ての生物は死に絶える。恐れるな。おまえの名は永遠"
+"に語り継がれる。「新世紀の聖人」に列せられるのだ。"
+
+#: mission.brief.mail25.par3.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Human life on this planet will be virtually eradicated and we shall return "
+"to repopulate the globe with our likenesses. This has been our faith, and we "
+"shall carry it forward alone."
+msgstr ""
+"この惑星上の生命は一旦すべて清算される。私たちは人類の再興を担って、この星へ"
+"と還りくる。これがわれらの信仰の究極の目的。私たちだけで行わなければならぬ。"
+
+#: mission.brief.mail25.par4.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Anyone who now tries to stop us will be exterminated by the elite Sanctum "
+"Protectorate Guards. Accept your fate - do not be foolish and interfere. The "
+"power of the Sanctum Protectorate is immense. Remain where you are and lay "
+"down your weapons, for it is over and we have won."
+msgstr ""
+"私たちの邪魔をする者は、高度に武装した聖所警備隊に射殺される。運命を受け入れ"
+"る時だ。無駄な抵抗をするな。聖所警備隊の武力は想像を絶する強大なものだ。武器"
+"を置き、そこで私たちの勝利を祝うのだ。"
+
+#: mission.brief.mail25.par6.c1
+msgctxt "mission brief book quote"
+msgid "The world shall turn and the human race shall pass."
+msgstr "世界に変化が訪れ、ここに人類は淘汰される。"
+
+#: mission.brief.mail25.par7.c1
+msgctxt "mission brief book quote"
+msgid "Everything begins anew. The faith has run its course and it is over."
+msgstr "すべてがここから新たに始まる。旧き信仰の道はいま終わりをつげた。"
+
+#: mission.brief.mail25.map46.level2:1
+msgctxt "mission brief tactical information"
+msgid "Landing Site: Colombo Executive Shuttle Pad"
+msgstr "潜入地点：　コロンボ・エグゼクティブシャトル発着場"
+
+#: mission.brief.mail25.map46.level2:2
+msgctxt "mission brief tactical information"
+msgid "Your proper place"
+msgstr "会合地点"
+
+#: mission.brief.mail25.map46.level2:3
+msgctxt "mission brief tactical information"
+msgid "Colombo Orbital Elevator"
+msgstr "軌道エレベーター"
+
+#: mission.brief.mail25.map46.level2:4
+msgctxt "mission brief tactical information"
+msgid "Elevator anti-missile missile system"
+msgstr "対衛星ミサイルシステム"
+
+#: message.win:1
+msgctxt "game win message"
+msgid ""
+"So, your faith in yourself proved triumphant. You have not only thwarted the "
+"Nine's insane plan to restart the human race with clones of themselves, you "
+"have also gained possession of the most destructive weapon ever built."
+msgstr ""
+"おまえは自分自身を信じることで勝利をかち得たおまえは「ザ・ナイン」の狂気に満"
+"ちたクローン増殖による人類再構成計画を阻止しただけでなく歴史上最も危険な武器"
+"をその手に収めたのだ。"
+
+#: message.win:2
+msgctxt "game win message"
+msgid ""
+"On Earth, the Syndicate's UTOPIA lies in ruins. Millions hear the voice of "
+"Ko-Paull Vissick calling for reason to prevail."
+msgstr ""
+"地球ではシンジケートのUTOPIAの残骸が、廃墟に空しく立っている。そして人民たち"
+"は、コ＝パウル・ヴィシックの「解放への叫び」に心を奪われている。"
+
+#: message.win:3
+msgctxt "game win message"
+msgid "But let your will be done."
+msgstr "さあ、己を信じて、最後の選択をするがよい。"
+
+#: weapons.UZI.description
+msgctxt "weapons description - uzi"
+msgid ""
+"Old-fashioned personal defence weapon. The original fired chemically "
+"propelled kinetic ammunition. This updated version is more reliable as it "
+"draws on a personal energy cell to release each round. Nevertheless, the Uzi "
+"is a throwback to another time, and as such we regard it as virtually "
+"obsolete. The Church of the New Epoch is working on many vastly superior "
+"weapons to offer its Disciples."
+msgstr ""
+"非常に旧式な兵器である。オリジナルのモデルは、火薬を爆発させた反動で弾丸を発"
+"射する方式をとっていた。現在のUZIは火薬のかわりにエネルギーパックを利用し、安"
+"定した動作を得ている。とはいえわれわれは、この武器は過去の遺物であり実用に耐"
+"えないと認識している。わが新世紀教会は信徒らのために、これよりもはるかに先進"
+"的な兵器を数多く開発中である。"
+
+#: weapons.MINIGUN.description
+msgctxt "weapons description - minigun"
+msgid ""
+"Despite being something of a museum piece, this kinetic-round firing rotary "
+"cannon is considerably superior to the Uzi and more effective against the "
+"enemies of our faith. Like the Uzi, it has been upgraded to draw personal "
+"cell energy. Its shortcomings are bulk and noise but these are outweighed by "
+"its range and destructive power. When used in multiples, miniguns are "
+"effective against vehicles."
+msgstr ""
+"戦場よりは博物館にあるほうがふさわしいような武器である。UZI等の軽火器に比較す"
+"れば有効性が高い、といった程度の存在でしかない。UZIと同様、この武器も動力には"
+"エネルギーパックを利用する。短所である重量と騒音は、射程距離と破壊力により補"
+"われている。多数のミニガンの一斉射撃は、車両に対してある程度有効な攻撃手段と"
+"なる。"
+
+#: weapons.ELLASER.description
+msgctxt "weapons description - electron mace"
+msgid ""
+"The Nine have seen the sub-photon structure of light and they have unlocked "
+"its secrets. Their holy research has developed an ionic focus which "
+"transfers bolts of lightning onto a target. The weapon's range is superior "
+"to kinetic energy weapons and it works particularly well on conductive steel."
+msgstr ""
+"「ザ・ナイン」は、光の粒子の構\\造を解明しその秘密を手に入れている。「ザ・ナ"
+"イン」の聖なる研究により、雷状の電撃を一点に集中して放射することが可能\\な、"
+"イオン照射装置が開発された。火薬使用の武器に比べ射程距離が長く、特に導電性の"
+"標的に対して威力を発揮する。"
+
+#: weapons.LASER.description
+msgctxt "weapons description - pulse laser"
+msgid ""
+"Our scribes have developed an effective weapon based on the conventional "
+"laser. TriSodium 89 is injected in the pulse laser's firing chamber where it "
+"is lased electrically. The pressure of the gas in the firing chamber can be "
+"raised by holding down the trigger, overcharging the weapon and making it "
+"more effective in the process."
+msgstr ""
+"われわれの優秀な研究者たちは、従来のレーザー技術を基に有効な兵器を開発した。"
+"トリソ\\ジウム89がチェンバー内に充填され高速に励起される。トリガーを引いたま"
+"まホールドすればチェンバー内のガス圧が上昇し、より大きな威力を得る事ができ"
+"る。"
+
+#: weapons.BEAM.description
+msgctxt "weapons description - plasma lance"
+msgid ""
+"This uses the combined energy of accelerated electrons to fire a stream of "
+"unstable energy along a magnetic carrier wave. A significant advance for the "
+"Church, and one that proves the value of the teachings held by the Nine."
+msgstr ""
+"この兵器は、２種類のエネルギー波を利用して対象物を攻撃する。電磁誘導波にガイ"
+"ドされた高速電子流が目標を確実に破壊する。この武器はわが教会の技術力の高さ"
+"と、「ザ・ナイン」の教えの正しさを証明するものである。"
+
+#: weapons.RAP.description
+msgctxt "weapons description - launcher"
+msgid ""
+"An implosion grenade is fired towards the target, and uses its own guidance "
+"to ensure detonation on impact. Launchers use monopolar accelerator sleds to "
+"ensure an impressive range, and those who are targeted can seldom evade the "
+"gyro-homing system. This superb weapon is also useful for creating area "
+"fire. The auto-reload time does leave our holy Acolytes temporarily "
+"vulnerable."
+msgstr ""
+"すさまじい爆発力を持つAI榴弾が、目標までの道のりを自ら追い求める。それは信仰"
+"にも通じる。榴弾の航続距離は非常に長く、飛翔中は完全自立航法を用いる。わが教"
+"会の敵が、このジャイロホーミング装置の呪いから逃れることはまれである。またこ"
+"の兵器は遠隔地の焼夷攻撃に使用することもできる。唯一の弱点は、再装填の間にわ"
+"が聖なる信徒の身が危険にさらされる事である。"
+
+#: weapons.NUCLGREN.description
+msgctxt "weapons description - nuclear grenade"
+msgid ""
+"The light of faith will be seen for miles when a nuclear grenade is "
+"detonated in the Church's name. Use with care, Apostle - the devastation "
+"this weapon creates is considerable. Be sure to retreat from the area in "
+"which it falls. Also, note its effectiveness against structures and groups. "
+"To use this device against a single enemy would be tantamount to blasphemy."
+msgstr ""
+"わが教会の名においてこの核榴弾を使用する時、信仰の光が彼方からも確認できるで"
+"あろう。だが信徒たちよ、心得るべきはこの兵器の威力の大きさである。着弾地点か"
+"ら十\\分距離を確保して攻撃を行わなければならない。建造物や群衆を攻撃する際に"
+"は特に注意が必要である。この武器をわずかな敵に対して使用することは、神の名を"
+"みだりに口にするのと同じである。"
+
+#: weapons.PERSUADER.description
+msgctxt "weapons description - indoctrinator"
+msgid ""
+"Our congregation grows with every day. Some souls, though, resist the path "
+"of truth we offer. Thus we have the Indoctrinator. It seeds in the minds of "
+"those disbelievers everything we know to be true in an instant. How could "
+"any resist this avalanche of knowledge and wisdom?"
+msgstr ""
+"わが教会の勢力は日増しに強大となっている。しかし少数の魂はわれわれの差し出す"
+"真理を拒んでいる。それがこの装置の存在する理由である。この装置は、われわれの"
+"みが知る真理の種を、不信心者の心に瞬時に植えつける事ができる。なんびとが、こ"
+"の知恵と真理のほとばしりに抵抗できるだろうか？"
+
+#: weapons.FLAMER.description
+msgctxt "weapons description - flamer"
+msgid ""
+"Those who oppose the path of righteousness can expect to burn for all "
+"eternity. These magnox flame-throwers are their first taste of that. They "
+"don't have anything like the range of energy or even kinetic weapons, but "
+"they have their uses, in crowds for example. They also inspire the fear and "
+"submission that we seek."
+msgstr ""
+"真理の道に立ち塞がる者は、永遠の業火によって焼かれるがよい。この兵器を使用す"
+"ればわが教会の敵に、地獄の炎を簡単に浴びせかけることができる。威力の点ではエ"
+"ネルギー兵器や火薬使用兵器に一歩譲るが、ある特定の状況下、例えば群集をター"
+"ゲットにした場合などには、心理的に絶大な威力を持つ。この兵器が創造する恐れ、"
+"混乱、そして服従こそがわれわれの真の武器である。"
+
+#: weapons.H2HTASER.description
+msgctxt "weapons description - disrupter"
+msgid ""
+"This small, convenient unit de-persuades its target or the target's "
+"persuaded followers with the minimum of fuss. Although the Disrupter is not "
+"a real alternative to the weapons of destruction provided by our scientists "
+"and benefactors, it is magnificently subversive."
+msgstr ""
+"この小型で便利な装置は、誤った道を歩く者たち、即ち敵によって「洗脳」された者"
+"たちを真理の国に連れ戻すために使用される。だがこの装置は決して、わが科学者が"
+"開発中の「聖なる兵器」の代わりにはならないだろう。"
+
+#: weapons.CRAZYGAS.description
+msgctxt "weapons description - psycho gas"
+msgid ""
+"Distilled from an alien fungoid narcotic, Psycho Gas is the ideal weapon for "
+"causing large-scale havoc. Fired into a group of civilians, it will "
+"instantly provoke an uncontrollable riot. This will force the authorities to "
+"expend their energies regaining control, leaving your holy Acolytes to get "
+"on their mission."
+msgstr ""
+"未知の麻薬性細菌から生まれたガスであり、秩序の混乱を起こすのに適している。群"
+"衆の中に投げ込めば、一瞬にして暴\\動をひき起こすことができる。混乱に対処すべ"
+"く当局がエネルギーを無駄遣いしている間に、わが信徒が聖なる使命を無事遂行する"
+"ことができる。"
+
+#: weapons.KOGAS.description
+msgctxt "weapons description - knockout gas"
+msgid ""
+"This censer produces a cloud which lays low any unprotected targets who are "
+"touched by it. Simplicity is welcome wherever it can be effective."
+msgstr ""
+"この芳しい香は、全ての反抗者を地面にひれ伏させる事ができる。物事を滞りなく進"
+"めるには、単純な力関係を築くことが重要だ。"
+
+#: weapons.ELEMINE.description
+msgctxt "weapons description - ion mine"
+msgid ""
+"Triggered by enemy activity in the vicinity, the Ion Mine sends out tendrils "
+"of electrical energy in all directions and is extremely effective against "
+"enemies of the faith in a vehicle or on foot. This device is triggered by "
+"target proximity. Its discharge will also affect the CHIP status of those "
+"caught by it."
+msgstr ""
+"静かに佇み、敵の活動を察知するや即起爆する。そして電磁波の「蔓」を撒き散ら"
+"し、周囲の電子装置を破壊する。特に歩行中や車両内の敵に有効である。この兵器の"
+"爆発の際に有効範囲内に存在するチップは、その動作に影響を受ける。"
+
+#: weapons.EXPLMINE.description
+msgctxt "weapons description - high explosive"
+msgid ""
+"A conventional mine which uses a time delay fuse embedded in a directed "
+"detonation charge. A handy weapon to use against tanks or other armoured "
+"vehicles."
+msgstr ""
+"時限起爆装置を内蔵する通常爆弾。戦車や装甲車に対して有効。その威力は旧式の爆"
+"薬とは比べものにならない。"
+
+#: weapons.LONGRANGE.description
+msgctxt "weapons description - long range rifle"
+msgid ""
+"Our divine work will sometimes call for the elimination of individuals "
+"rather than the liquidation of larger groups. The Long Range Rifle fires "
+"uranium-depleted kinetic rounds with great accuracy long distances. Few body "
+"armour components can withstand the pressure-shock of these advanced shells. "
+"Usually one shot will drop a target, and you can make good your escape "
+"unseen."
+msgstr ""
+"われわれの奉仕活動には、大衆を正しく教え導くことだけでなく、心のねじれた者を"
+"地獄へと案内することも含まれる。この銃は、濃縮ウラニウム弾を驚異的な長射程と"
+"命中精度をもって目標まで送り届ける。ウラニウム弾の衝撃に耐えられる強度を持つ"
+"ボディーは希である。ほとんどの状況下においては、静穏に目的を遂行し、全く姿を"
+"見られずに去ることが可能\\である。"
+
+#: weapons.AIRSTRIKE.description
+msgctxt "weapons description - satellite rain"
+msgid ""
+"We can acquire launch codes for many of the geo-stationary satellites which "
+"hang above our planet but the computing costs involved in cracking the "
+"Syndicate's encrypted security lock-outs are high. When you activate a "
+"strike, within a few seconds, the nearest satellite will target your "
+"designated position and fire down bolts of tungsten-uranium alloy which "
+"superheat in the atmosphere and cause massive destruction throughout the "
+"area."
+msgstr ""
+"この惑星の軌道を巡る無数の人工衛星のコントロールをわれわれは手に入れた。しか"
+"し敵シンジケートのセキュリティをクラックするためにかかる、人的コストもまた天"
+"文学的である。攻撃を指示した地点には、最寄りの衛星からチタニウムの嵐が降り注"
+"ぐ。"
+
+#: weapons.QDEVASTATOR.description
+msgctxt "weapons description - graviton gun"
+msgid ""
+"This device is the most destructively powerful the Nine could make mobile. "
+"The graviton gun can unleash enough energy to reduce a mountain to boulders. "
+"Behold, the wrath of the Nine!"
+msgstr ""
+"これは「ザ・ナイン」が創造した中で、もっとも威力の強い携帯兵器である。この装"
+"置は、文字通り山を窪みに変えてしまうほどのエネルギーを放射できる。見よ。これ"
+"が「ザ・ナイン」の怒りだ。"
+
+#: weapons.RAZORWIRE.description
+msgctxt "weapons description - razor wire"
+msgid ""
+"A coil of high-tensile wire with counter-spun barbs. Razor Wire is hard to "
+"detect, especially in combat situations. Place it at strategic points and "
+"the opposition will do themselves great harm as they blunder into the wire "
+"strands. A weapon which has stood the test of time well."
+msgstr ""
+"鋭い棘を持った炭素の茨である。特に戦闘時においては発見が困難である。置き場所"
+"を工夫すれば、敵は自らその罪深い体を傷つけるであろう。時の流れを超えて愛用さ"
+"れる兵器である。"
+
+#: weapons.STASISFLD.description
+msgctxt "weapons description - stasis field"
+msgid ""
+"Only true deities could bring such a device as this into being. As you "
+"activate it, a dome of atomically stable sub-temporal space is created. "
+"Known through the centuries as witch-time when it naturally occurs, this has "
+"the effect of slowing dramatically any one or anything caught in the dome. "
+"It is a sight to pray for."
+msgstr ""
+"真の神の化身のみが、このような兵器を現実に手にすることができる。この装置を発"
+"動させると、異なる時の流れを持つ別世界がそこに現れる。これは昔から「魔女の時"
+"間」と呼ばれ恐れられている現象である。この時間軸に捕らえられた敵は、われわれ"
+"からはスローモーションのように見えるだろう。祈りを捧げるに相応しい光景ではな"
+"いか。"
+
+#: weapons.SOULGUN.description
+msgctxt "weapons description - chromotap"
+msgid ""
+"Our scientists have unravelled more of the arcane secrets of the Codex and "
+"built a device which will export the natural electrochemical forces "
+"contained within the cells of any organic structure which has recently died. "
+"This saps the residual cellular energy of the corpse, as long as its "
+"cellular structure has not been destroyed. Praise the Nine for their vision, "
+"Acolyte."
+msgstr ""
+"われわれの科学者は「法典」の秘密を解き明かし、死者の骸の細胞のひとつひとつか"
+"らエネルギーを取り出す方法を発見した。「ザ・ナイン」の偉大さを称えよう。"
+
+#: weapons.TIMEGUN.description
+msgctxt "weapons description - displacertron"
+msgid ""
+"The Codex has given us this. Using witch-time still further, you can now "
+"transport enemies to other temporal planes. Effectively a time-slip, this is "
+"perfect for vanishing a target. It can be used on your own team, but caution "
+"is advised; the effects are not fully understood."
+msgstr ""
+"「法典」の研究がこれを生み出した。「魔女の時間」を効果的に使うことにより、敵"
+"を未来へと消し飛ばすことができる。この魔術は自らのチームに対しても有効だが、"
+"その影響については未知の部分が多すぎるため、危険が伴うことを忘れてはならぬ。"
+
+#: weapons.CEREBUSIFF.description
+msgctxt "weapons description - cerberus iff"
+msgid ""
+"A sentry drone upon which a high-powered laser is fitted. A thermo-motion "
+"detector built into the base is connected to an identkey reader, and any non-"
+"recognised movement it picks up is fired upon. These sentry units are most "
+"effective in open areas with a wide field of view."
+msgstr ""
+"高出力レーザー装備の警備機器。微小熱源監視装置と敵味方識別装置が連携し、招か"
+"れざる者を発見しだい全自動攻撃を実行する。この機器は、見通しのよい場所に設置"
+"することで一層の効果を発揮する。"
+
+#: weapons.MEDI1.description
+msgctxt "weapons description - medikit"
+msgid ""
+"Believe in the Church and it will take care of you. When one or more of your "
+"Disciples is injured in the holy war against EuroCorp, using this unit will "
+"restore health and fitness. Such a device demonstrates the care and "
+"understanding on which the Church of the New Epoch is founded."
+msgstr ""
+"信じよ。そうすれば教会はその者を保護する。聖なる戦いにおいて、傷を負ったとき"
+"にはこのキットを使うがよい。新世紀教会の根本である信徒への愛が、手負いの体を"
+"たちどころに癒すだろう。"
+
+#: weapons.MEDI2.description
+msgctxt "weapons description - automedikit"
+msgid ""
+"An advanced restoration unit which will take care of your wounds and "
+"injuries without distracting a member of your team. An invaluable addition "
+"to any equipment pack for operatives spreading the word of faith in the "
+"Cataclysm."
+msgstr ""
+"メディキットの進化したバージョンで、自動的に傷の回復ができる。神の言葉を広め"
+"るための装備には欠かせない。"
+
+#: weapons.EXPLWIRE.description
+msgctxt "weapons description - trigger wire"
+msgid ""
+"A booby-trap which, when set in the required place, will destroy any who "
+"venture through the molecular cable spread between two points. Unwittingly, "
+"the foe will set off a blast which will render them no further impediment to "
+"the cause of our spreading religion."
+msgstr ""
+"望みの場所に置くことで、近づく敵の肉体を切り刻む。侵入者はこのトラップから発"
+"せられる爆発と閃光で、自分が神の国へは立ち入れないことを悟るであろう。"
+
+#: weapons.CLONESHLD.description
+msgctxt "weapons description - clone shield"
+msgid ""
+"This device will render one of your team invisible to detection. They will "
+"look to EuroCorp and others just like a harmless executive, and will be able "
+"to walk through fire-control zones where our Acolytes would surely be unable "
+"to tread. The perfect disguise, and extremely useful for covert operations "
+"in the name of the Church."
+msgstr ""
+"この装置を装備すると、その外見を欺\\くことができる。ユーロコープの者には、こ"
+"れを装備した同志は一般市民として知覚される。教会の名のもとにおいて行われる秘"
+"密作戦には非常に有用である。"
+
+#: mods.LEGS1.description
+msgctxt "mods description - legs 1"
+msgid ""
+"Our time is upon us. We must not squander it. Every nanosecond is sacred. "
+"Your Acolytes must act with haste and vigour. By removing their mortal flesh "
+"and replacing it with this wondrous work of technology, as described in the "
+"teachings of the Codex, you give them more of both."
+msgstr ""
+"時はわれらの味方である。しかしそれを無駄遣いしてはならない。一秒一秒が神聖な"
+"のだ。すべての信者たちは機敏に行動しなければいけない。よりよい奉仕活動のため"
+"に、寿命に限りある肉体を捨てよ。「法典」の教えにのっとり、より強健な体で神に"
+"仕えるのだ。"
+
+#: mods.LEGS2.description
+msgctxt "mods description - legs 2"
+msgid ""
+"May the lessons of the fractal psalms always enlighten us. Secrets of the "
+"cosmos have been unlocked to create materials in ways denied within the well "
+"of gravity. By judicious use of your funds, we have used such rare "
+"substances to create these superior leg prosthetics."
+msgstr ""
+"聖なる詩はわれわれを祝福している。遂にわれわれは重力の呪いから解放された物質"
+"を発見した。尊い寄付金を正しく使うことにより、われわれはこれを手に入れた。こ"
+"の部品が効果的に使用されることを祈る。"
+
+#: mods.LEGS3.description
+msgctxt "mods description - legs 3"
+msgid ""
+"To save a soul, one must first invest the highest technology in it. Blessed "
+"are those then who walk on terra firma with the holy purpose in their "
+"stride. Let them embody everything the Church stands for; outfit your "
+"Acolytes with the finest works of the Nine."
+msgstr ""
+"魂を救うためには、まず最高の技術に投資することが必要である。聖なる目的を持っ"
+"て地を踏みしめ歩む者は、祝福を受ける。「ザ・ナイン」が与えたもう最高の技術で"
+"武装するがよい。"
+
+#: mods.ARMS1.description
+msgctxt "mods description - arm 1"
+msgid ""
+"May your aim always be true. To this end, cybernetic arm enhancements are a "
+"significant aid to accuracy. The extra armour it provides your Acolytes also "
+"contributes to their survivability. Acolytes with arm prosthetics can also "
+"throw objects further."
+msgstr ""
+"あなたの目標が常に正しいことを。サイボーグ化された腕の最大の利点は、正確な射"
+"撃能\\力である。この腕によって得られる体力もまた、信徒の生存率の向上につなが"
+"るだろう。またこれを装着することで、榴弾などの投擲能\\力も上がる。"
+
+#: mods.ARMS2.description
+msgctxt "mods description - arm 2"
+msgid ""
+"It is our way to bind machine and man. If one improves the man then one "
+"should also improve the machine. The new construction techniques these arm "
+"mods employ improve on all the benefits cybernetic arms bring to your "
+"Acolytes. Give thanks to the Nine."
+msgstr ""
+"機械と人間の相互協力は教会の目指すところである。人間性の向上を遂げたならば、"
+"機械のアップグレードも必須である。最新の技術を全て盛り込んだ腕がここに完成し"
+"た。「ザ・ナイン」に感謝の祈りを。"
+
+#: mods.ARMS3.description
+msgctxt "mods description - arm 3"
+msgid ""
+"Now the Cataclysm is nigh, only the strongest speak. The massive weapons we "
+"use require massive strength to operate. With these arms your Acolytes will "
+"wield the means to our victory and possess the might to lay low all who "
+"would seek to prevent the Cataclysm."
+msgstr ""
+"われわれを取り囲む世界は厳しい。常に最強の者のみが、人々に語りかけることがで"
+"きる。強力な火力を扱うには、強力な腕力が必要である。この腕によって信徒は、わ"
+"れわれの天地創造の事業を阻む者をことごとくなぎ倒すことができるであろう。"
+
+#: mods.CHEST1.description
+msgctxt "mods description - body 1"
+msgid ""
+"The path of the faithful is marked by continual cybernetic enhancement. Thus "
+"the journey to salvation begins here. This sophisticated artificial torso, "
+"which increases the stamina and health of a disciple, also serves as the "
+"anchor for other prosthetics."
+msgstr ""
+"信仰の道は、常に技術の進歩によって示される。救済への道はここから始まる。この"
+"洗練された胴部モジュールは、スタミナと体力の向上をもたらし、他の部品を支える"
+"強固な礎となる。"
+
+#: mods.CHEST2.description
+msgctxt "mods description - body 2"
+msgid ""
+"The soul may be indestructible but the body is not. If too many of your "
+"Acolytes are making the ultimate sacrifice, bless them with these "
+"lightweight, foam-metal clad, chest and respiratory systems."
+msgstr ""
+"魂は不滅だが、肉体はそうではない。もしも数多くの同志が究極の犠牲を払いはじめ"
+"たら、この胴部の装着を検討するべきだ。"
+
+#: mods.CHEST3.description
+msgctxt "mods description - body 3"
+msgid ""
+"A time of great change is coming; such a time as demands that great forces "
+"are brought to bear. A disciple modified with this sophisticated, holy "
+"fabric fears no evil. Your enhanced brethren will even be able to venture "
+"through clouds of nerve gas and remain unharmed."
+msgstr ""
+"変革の時が近づいている。真の力を手に入れるときが来た。聖別された素材で作られ"
+"たこの胴部を装着する限り、何ものも恐れることはない。改良された呼吸システムに"
+"より、いかなる種類の神経ガスもその効果を失う。"
+
+#: mods.BRAIN1.description
+msgctxt "mods description - brain 1"
+msgid ""
+"As our mission continues, the challenge to our activities becomes greater. "
+"Increase your Acolyte's perception and health and the masses will prostrate "
+"themselves. Thus shall the Church of the New Epoch be known."
+msgstr ""
+"われわれの使命を果たすための犠牲は大きくなるばかりだ。信徒の感覚を研ぎ澄ま"
+"せ。その精神を不屈のものとせよ。群衆はみなひれ伏すであろう。そして新世紀教会"
+"の名は轟くのだ。"
+
+#: mods.BRAIN2.description
+msgctxt "mods description - brain 2"
+msgid ""
+"Know thine enemy disciple, and know him at extreme range, so that you may "
+"prepare the cleansing of him. The Nine have turned their attention to the "
+"demands on our Acolytes, as they prepare the way for the Catclysm. Improve "
+"your Acolytes' minds with new brains."
+msgstr ""
+"敵を知り、彼らの全てを解き明かす。そうすれば自らに必要なものが見えてくる。"
+"「ザ・ナイン」は、より高い知性を信徒に与える。"
+
+#: mods.BRAIN3.description
+msgctxt "mods description - brain 3"
+msgid ""
+"The mind of god is the mind of a machine. For heightened awareness beyond "
+"the limits of biological means alone, equip your Acolytes with the ultimate "
+"in mobile Artificial Intelligence. With understanding comes great power. "
+"Embody this understanding and embrace the power."
+msgstr ""
+"神の心は機械の心である。生物の限界を超越した知性を持て。悟りとともに巨大な力"
+"を手に入れるのだ。"
+
+#: mods.SKIN1.description
+msgctxt "mods description - hard skin"
+msgid ""
+"On occasion, our EuroCorp foe does create some innovative technology. This "
+"cyberskin is a better epidermis than traditional plaskin. A lining of "
+"molecule weave suspended in anti-shock microfoam will make Acolytes who wear "
+"it almost invincible to kinetic energy rounds."
+msgstr ""
+"希なことだが敵も革新的な技術を発明する。プラスチック皮膚に比べ、この人工皮膚"
+"は遥かに優れている。衝撃吸収パターンで織られた繊維細胞が、これを装着する信徒"
+"を物理兵器に対して文字通りの不死身にしてくれる。"
+
+#: mods.SKIN2.description
+msgctxt "mods description - flame skin"
+msgid ""
+"Heat is one enemy of the combatant. Our foe has found the solution with this "
+"experimental cyverskin. Using space industry fabrics, they have developed a "
+"cyberskin which can make our Acolytes resistant to flame and thermal energy."
+msgstr ""
+"戦闘時における熱は大きな障害である。敵は熱対策を施した人工皮膚を開発した。宇"
+"宙工学の応用により、耐熱性・耐火性に優れた人工皮膚が生まれたようだ。"
+
+#: mods.SKIN3.description
+msgctxt "mods description - energy skin"
+msgid ""
+"Even the Nine were impressed with the concept behind this magnificent "
+"treasure you have recovered. Using some Codex technology - perverted by "
+"their inferior understanding - EuroCorp weaved spectral sink technology into "
+"a cyberskin, thus providing shielding from the full effects of "
+"electromagnetic weapons. Interesting. We can now take advantage of their "
+"work and employ this knowledge for ourselves."
+msgstr ""
+"「ザ・ナイン」でさえもこの皮膚の技術には驚いている。彼らの知能\\レベルで精一"
+"杯努力し「法典」を解読した結果、ユーロコープはエネルギー吸収能\\力を持つ人工"
+"皮膚を造ることができた。非常に興味深い。"
+
+#: mods.SKIN4.description
+msgctxt "mods description - stealth skin"
+msgid ""
+"Ever more accursed, EuroCorp do not give up trying to compete with our "
+"vastly superior technology. Nevertheless, they have come up with something "
+"special. This cyberskin reflects UTOPIA sensor scans, thereby making weapon "
+"lock on a target contained in this substance extremely difficult to achieve."
+msgstr ""
+"馬鹿げたことではあるが、ユーロコープは依然われわれに技術力で追いつこうとして"
+"いる。その過程でかの者たちは興味深い発見をしたようだ。この皮膚は、UTOPIAのセ"
+"ンサーやスキャナーを攪乱し、捕捉を非常に困難にしている。"

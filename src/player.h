@@ -21,6 +21,7 @@
 
 #include "bftypes.h"
 #include "cybmod.h"
+#include "weapon.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -31,11 +32,11 @@ extern "C" {
 struct Thing;
 
 struct AgentInfo {
-    long Weapons[32];
+    ulong Weapons[32];
     union Mod Mods[32];
     long Sex;
     char RandomName[32];
-    ubyte FourPacks[32][5];
+    struct WeaponsFourPack FourPacks[32];
     ubyte NumAgents;
 };
 
@@ -103,6 +104,13 @@ extern ubyte local_player_no;
 extern struct AgentInfo cryo_agents;
 
 void place_single_player(void);
+
+void player_update_agents_from_cryo(PlayerInfo *p_player);
+void cryo_update_agents_from_player(PlayerInfo *p_player);
+void players_sync_from_cryo(void);
+void remove_agent(ubyte cryo_no);
+void add_agent(ulong weapons, ushort mods);
+
 /******************************************************************************/
 #ifdef __cplusplus
 }

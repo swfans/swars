@@ -27,6 +27,7 @@
 #include "lvobjctv.h"
 #include "game_data.h"
 #include "game.h"
+#include "wadfile.h"
 #include "swlog.h"
 /******************************************************************************/
 
@@ -41,6 +42,7 @@ enum MissionListConfigCmd {
     MissL_StandardWeapons,
     MissL_ResearchMods,
     MissL_StandardMods,
+    MissL_TextFnMk,
     MissL_ProjectorFnMk,
     MissL_OutroFMV,
     MissL_OutroBkFn,
@@ -57,9 +59,7 @@ enum MissionListConfigCmd {
     MissL_SpecialEffectFailID,
     MissL_SpecialEffectSuccessID,
     MissL_StringIndex,
-    MissL_StartMap,
-    MissL_StartLevel,
-    MissL_SuccessMap,
+    MissL_ExtraReward,
     MissL_SuccessLevel,
     MissL_FailMap,
     MissL_FailLevel,
@@ -90,6 +90,7 @@ const struct TbNamedEnum missions_conf_common_cmds[] = {
   {"StandardWeapons",MissL_StandardWeapons},
   {"ResearchMods",	MissL_ResearchMods},
   {"StandardMods",	MissL_StandardMods},
+  {"TextFnMk",		MissL_TextFnMk},
   {"ProjectorFnMk",	MissL_ProjectorFnMk},
   {"OutroFMV",		MissL_OutroFMV},
   {"OutroBkFn",		MissL_OutroBkFn},
@@ -109,12 +110,11 @@ const struct TbNamedEnum missions_conf_mission_cmds[] = {
   {"SuccessTrigger",	MissL_SuccessTrigger},
   {"FailTrigger",	MissL_FailTrigger},
   {"BankTest",		MissL_BankTest},
-  {"SpecialEffectFailID",	MissL_SpecialEffectFailID},
-  {"SpecialEffectSuccessID",	MissL_SpecialEffectSuccessID},
+  {"SpecialEffectFailID",MissL_SpecialEffectFailID},
+  {"SpecialEffectSuccessID",MissL_SpecialEffectSuccessID},
   {"StringIndex",	MissL_StringIndex},
-  {"StartMap",		MissL_StartMap},
-  {"StartLevel",	MissL_StartLevel},
-  {"SuccessMap",	MissL_SuccessMap},
+  {"ResearchWeapons",MissL_ResearchWeapons},
+  {"ExtraReward",	MissL_ExtraReward},
   {"SuccessLevel",	MissL_SuccessLevel},
   {"FailMap",		MissL_FailMap},
   {"FailLevel",		MissL_FailLevel},
@@ -138,6 +138,16 @@ const struct TbNamedEnum missions_conf_mission_cmds[] = {
 const struct TbNamedEnum missions_conf_common_types[] = {
   {"SP",			1},
   {"MP",			2},
+  {NULL,			0},
+};
+
+const struct TbNamedEnum missions_conf_extra_reward_types[] = {
+  {"Scientists",	MEReward_Scientists},
+  {"ResearchLab",	MEReward_ResearchLab},
+  {"CybModResearched",MEReward_CybModResearched},
+  {"WeaponResearched",MEReward_WeaponResearched},
+  {"CybModSingle",	MEReward_CybModSingle},
+  {"WeaponSingle",	MEReward_WeaponSingle},
   {NULL,			0},
 };
 
@@ -225,6 +235,19 @@ void remove_mission_state_slot(ushort mslot)
         mission_open[i] = mission_open[i + 1];
         mission_state[i] = mission_state[i + 1];
     }
+}
+
+ushort find_mission_with_map_and_level(ushort mapno, ushort level)
+{
+    ushort missi;
+
+    for (missi = 1; missi < MISSIONS_MAX_COUNT; missi++) {
+        struct Mission *p_missi;
+        p_missi = &mission_list[missi];
+        if ((p_missi->MapNo == mapno) && (p_missi->LevelNo == level))
+            return missi;
+    }
+    return 0;
 }
 
 void init_mission_states(void)
@@ -356,10 +379,6 @@ void fix_mission_used_objectives(short missi)
 
 void read_missions_bin_file(int num)
 {
-#if 0
-    asm volatile ("call ASM_load_missions\n"
-        : : "a" (num));
-#else
     TbFileHandle fh;
     char locstr[52];
     ulong fmtver;
@@ -409,7 +428,33 @@ void read_missions_bin_file(int num)
     }
     for (i = 1; i < next_mission; i++)
         mission_list[i].Complete = 0;
-#endif
+}
+
+void read_mission_netscan_objectives_bin(void)
+{
+    ushort missi;
+
+    next_mission_netscan_objective = 1;
+
+    for (missi = 0; missi < next_mission; missi++) {
+        struct Mission *p_missi;
+        ushort nsobv_count;
+        struct NetscanObjective *nsobv_arr;
+
+        p_missi = &mission_list[missi];
+
+        nsobv_arr = &mission_netscan_objectives[next_mission_netscan_objective];
+        nsobv_count = load_netscan_objectives_bin(nsobv_arr,
+          p_missi->MapNo, p_missi->LevelNo);
+
+        if ((p_missi->MapNo|p_missi->LevelNo|nsobv_count) != 0)
+            p_missi->NetscanObvIndex = next_mission_netscan_objective;
+        else
+            p_missi->NetscanObvIndex = 0;
+        p_missi->NetscanObvCount = nsobv_count;
+
+        next_mission_netscan_objective += nsobv_count;
+    }
 }
 
 void save_mission_single_conf(TbFileHandle fh, struct Mission *p_missi, char *buf)
@@ -471,24 +516,19 @@ void save_mission_single_conf(TbFileHandle fh, struct Mission *p_missi, char *bu
         sprintf(buf, "StringIndex = %hu\n", p_missi->StringIndex);
         LbFileWrite(fh, buf, strlen(buf));
     }
-    if ((p_missi->StartMap[0]|p_missi->StartMap[1]|p_missi->StartMap[2]) != 0) {
-        sprintf(buf, "StartMap = %d %d %d\n",
-          (int)p_missi->StartMap[0], (int)p_missi->StartMap[1], (int)p_missi->StartMap[2]);
+    if (p_missi->ResearchWeapons != 0) {
+        sprintf(buf, "ResearchWeapons = 0x%lx\n",
+          (ulong)p_missi->ResearchWeapons);
         LbFileWrite(fh, buf, strlen(buf));
     }
-    if ((p_missi->StartLevel[0]|p_missi->StartLevel[1]|p_missi->StartLevel[2]) != 0) {
-        sprintf(buf, "StartLevel = %d %d %d\n",
-          (int)p_missi->StartLevel[0], (int)p_missi->StartLevel[1], (int)p_missi->StartLevel[2]);
-        LbFileWrite(fh, buf, strlen(buf));
-    }
-    if ((p_missi->SuccessMap[0]|p_missi->SuccessMap[1]|p_missi->SuccessMap[2]) != 0) {
-        sprintf(buf, "SuccessMap = %d %d %d\n",
-          (int)p_missi->SuccessMap[0], (int)p_missi->SuccessMap[1], (int)p_missi->SuccessMap[2]);
+    if (p_missi->ExtraRewardType != 0) {
+        sprintf(buf, "ExtraReward = %d %d\n",
+          (int)p_missi->ExtraRewardType, (int)p_missi->ExtraRewardParam);
         LbFileWrite(fh, buf, strlen(buf));
     }
     if ((p_missi->SuccessLevel[0]|p_missi->SuccessLevel[1]|p_missi->SuccessLevel[2]) != 0) {
-        sprintf(buf, "SuccessLevel = %d %d %d\n",
-          (int)p_missi->SuccessLevel[0], (int)p_missi->SuccessLevel[1], (int)p_missi->SuccessLevel[2]);
+        sprintf(buf, "SuccessLevel = %d %d\n",
+          (int)p_missi->SuccessLevel[0], (int)p_missi->SuccessLevel[1]);
         LbFileWrite(fh, buf, strlen(buf));
     }
     if ((p_missi->FailMap[0]|p_missi->FailMap[1]|p_missi->FailMap[2]) != 0) {
@@ -528,7 +568,7 @@ void save_mission_single_conf(TbFileHandle fh, struct Mission *p_missi, char *bu
         LbFileWrite(fh, buf, strlen(buf));
     }
     if (p_missi->CashReward != 0) {
-        sprintf(buf, "CashReward = %d\n", (int)p_missi->CashReward);
+        sprintf(buf, "CashReward = %d\n", (int)p_missi->CashReward * 1000);
         LbFileWrite(fh, buf, strlen(buf));
     }
     if (p_missi->PANStart != 0) {
@@ -560,7 +600,7 @@ void save_mission_single_conf(TbFileHandle fh, struct Mission *p_missi, char *bu
 void save_missions_conf_file(int num)
 {
     TbFileHandle fh;
-    char locbuf[120];
+    char locbuf[160];
     char conf_fname[80];
     int i;
 
@@ -620,6 +660,19 @@ void save_missions_conf_file(int num)
             LbFileWrite(fh, locbuf, strlen(locbuf));
 
             save_objective_chain_conf(fh, p_missi->FailHead, locbuf, sizeof(locbuf));
+
+            sprintf(locbuf, "\n");
+            LbFileWrite(fh, locbuf, strlen(locbuf));
+        }
+
+        if (p_missi->NetscanObvIndex != 0) {
+            struct NetscanObjective *nsobv_arr;
+            sprintf(locbuf, "[missnetscan%d]\n", i);
+            LbFileWrite(fh, locbuf, strlen(locbuf));
+
+            nsobv_arr = &mission_netscan_objectives[p_missi->NetscanObvIndex];
+            save_netscan_objectives_conf(fh, nsobv_arr, p_missi->NetscanObvCount,
+              locbuf, sizeof(locbuf));
 
             sprintf(locbuf, "\n");
             LbFileWrite(fh, locbuf, strlen(locbuf));
@@ -739,6 +792,16 @@ TbBool read_missions_conf_info(int num)
         case MissL_StandardMods:
             // Not reading at this point - cannot guarantee weapons list and mods list is loaded
             break;
+        case MissL_TextFnMk:
+            i = LbIniValueGetStrWhole(&parser, p_str, 80);
+            if (i <= 0) {
+                CONFWRNLOG("Couldn't read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                break;
+            }
+            p_campgn->TextFnMk = p_str;
+            p_str += strlen(p_str) + 1;
+            CONFDBGLOG("%s \"%s\"", COMMAND_TEXT(cmd_num), (int)p_campgn->TextFnMk);
+            break;
         case MissL_ProjectorFnMk:
             i = LbIniValueGetStrWhole(&parser, p_str, 80);
             if (i <= 0) {
@@ -823,7 +886,7 @@ void read_missions_conf_file(int num)
     char *conf_buf;
     struct TbIniParser parser;
     struct Campaign *p_campgn;
-    char locbuf[120];
+    char locbuf[320];
     char conf_fname[80];
     int conf_len;
     int missi;
@@ -853,6 +916,7 @@ void read_missions_conf_file(int num)
     next_used_objective = 0;
     // Add empty objective 0
     add_used_objective(0, 0);
+    next_mission_netscan_objective = 1;
 
     p_str = engine_mem_alloc_ptr + engine_mem_alloc_size - 64000 + campaign_strings_len;
     // Parse the [common] section of loaded file
@@ -940,6 +1004,7 @@ void read_missions_conf_file(int num)
         case MissL_FirstTrigger:
         case MissL_NetscanTextId:
         case MissL_WeaponsTextIdShift:
+        case MissL_TextFnMk:
         case MissL_ProjectorFnMk:
         case MissL_OutroFMV:
         case MissL_OutroBkFn:
@@ -1116,47 +1181,53 @@ void read_missions_conf_file(int num)
                 p_missi->StringIndex = k;
                 CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)p_missi->StringIndex);
                 break;
-            case MissL_StartMap:
-                for (n=0; n < 3; n++)
+            case MissL_ResearchWeapons:
+                n = 0;
+                while (1)
                 {
-                    i = LbIniValueGetLongInt(&parser, &k);
+                    i = LbIniValueGetNamedEnum(&parser, weapon_names);
                     if (i <= 0) {
-                        CONFWRNLOG("Could not read \"%s\" command parameter %u.", COMMAND_TEXT(cmd_num), n);
                         break;
                     }
-                    p_missi->StartMap[n] = k;
+                    n |= (1 << (i-1));
                 }
-                CONFDBGLOG("%s %d %d %d", COMMAND_TEXT(cmd_num), (int)p_missi->StartMap[0],
-                  (int)p_missi->StartMap[1], (int)p_missi->StartMap[2]);
+                p_missi->ResearchWeapons = n;
+                CONFDBGLOG("%s 0x%lx", COMMAND_TEXT(cmd_num), p_missi->ResearchWeapons);
                 break;
-            case MissL_StartLevel:
-                for (n=0; n < 3; n++)
-                {
-                    i = LbIniValueGetLongInt(&parser, &k);
-                    if (i <= 0) {
-                        CONFWRNLOG("Could not read \"%s\" command parameter %u.", COMMAND_TEXT(cmd_num), n);
-                        break;
-                    }
-                    p_missi->StartLevel[n] = k;
+            case MissL_ExtraReward:
+                i = LbIniValueGetNamedEnum(&parser, missions_conf_extra_reward_types);
+                if (i <= 0) {
+                    CONFWRNLOG("Could not recognize \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                    break;
                 }
-                CONFDBGLOG("%s %d %d %d", COMMAND_TEXT(cmd_num), (int)p_missi->StartLevel[0],
-                  (int)p_missi->StartLevel[1], (int)p_missi->StartLevel[2]);
-                break;
-            case MissL_SuccessMap:
-                for (n=0; n < 3; n++)
+                p_missi->ExtraRewardType = i;
+                i = 0;
+                switch (p_missi->ExtraRewardType)
                 {
+                case MEReward_Scientists:
+                case MEReward_ResearchLab:
                     i = LbIniValueGetLongInt(&parser, &k);
-                    if (i <= 0) {
-                        CONFWRNLOG("Could not read \"%s\" command parameter %u.", COMMAND_TEXT(cmd_num), n);
-                        break;
-                    }
-                    p_missi->SuccessMap[n] = k;
+                    break;
+                case MEReward_CybModResearched:
+                case MEReward_CybModSingle:
+                    i = LbIniValueGetNamedEnum(&parser, mod_names);
+                    k = i;
+                    break;
+                case MEReward_WeaponResearched:
+                case MEReward_WeaponSingle:
+                    i = LbIniValueGetNamedEnum(&parser, weapon_names);
+                    k = i;
+                    break;
                 }
-                CONFDBGLOG("%s %d %d %d", COMMAND_TEXT(cmd_num), (int)p_missi->SuccessMap[0],
-                  (int)p_missi->SuccessMap[1], (int)p_missi->SuccessMap[2]);
+                if (i <= 0) {
+                    CONFWRNLOG("Could not recognize \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                    break;
+                }
+                p_missi->ExtraRewardParam = k;
+                CONFDBGLOG("%s %d %d", COMMAND_TEXT(cmd_num), (int)p_missi->ExtraRewardType, (int)p_missi->ExtraRewardParam);
                 break;
             case MissL_SuccessLevel:
-                for (n=0; n < 3; n++)
+                for (n=0; n < 2; n++)
                 {
                     i = LbIniValueGetLongInt(&parser, &k);
                     if (i <= 0) {
@@ -1165,8 +1236,8 @@ void read_missions_conf_file(int num)
                     }
                     p_missi->SuccessLevel[n] = k;
                 }
-                CONFDBGLOG("%s %d %d %d", COMMAND_TEXT(cmd_num), (int)p_missi->SuccessLevel[0],
-                  (int)p_missi->SuccessLevel[1], (int)p_missi->SuccessLevel[2]);
+                CONFDBGLOG("%s %d %d", COMMAND_TEXT(cmd_num), (int)p_missi->SuccessLevel[0],
+                  (int)p_missi->SuccessLevel[1]);
                 break;
             case MissL_FailMap:
                 for (n=0; n < 3; n++)
@@ -1259,7 +1330,7 @@ void read_missions_conf_file(int num)
                     CONFWRNLOG("Could not read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
                     break;
                 }
-                p_missi->CashReward = k;
+                p_missi->CashReward = k / 1000;
                 CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)p_missi->CashReward);
                 break;
             case MissL_PANStart:
@@ -1444,12 +1515,198 @@ void read_missions_conf_file(int num)
 
             LbIniSkipToNextLine(&parser);
         }
+
+        // Parse the [missnetscanN] sections of loaded file
+        n = 0;
+        done = false;
+        sprintf(sect_name, "missnetscan%d", missi);
+        if (LbIniFindSection(&parser, sect_name) != Lb_SUCCESS) {
+            CONFDBGLOG("Could not find \"[%s]\" section.", sect_name);
+        } else
+        while (!done)
+        {
+            // Get the key, it holds index
+            k = LbIniGetKey(&parser, locbuf, sizeof(locbuf));
+            // Now store the config item in correct place
+            switch (k)
+            {
+            case 0: // comment
+                break;
+            case -1: // end of buffer
+            case -3: // end of section
+                done = true;
+                break;
+            default:
+                if ((locbuf[0] != 'N') || !isdigit(locbuf[1])) {
+                    CONFWRNLOG("Unrecognized key in \"%s\" section.", sect_name);
+                    break;
+                }
+                // Netscan item number is in key name
+                i = atol(&locbuf[1]);
+                if (n < i+1) n = i+1;
+                // Now get the objective command from value
+                k = LbIniValueGetStrWhole(&parser, locbuf, sizeof(locbuf));
+                if (k <= 0) {
+                    CONFWRNLOG("Could not read the latter of key-value pair in \"%s\" section.", sect_name);
+                    break;
+                }
+                k = parse_next_netscan_objective(locbuf, sizeof(locbuf), next_mission_netscan_objective + i);
+                if (k <= 0) {
+                    CONFWRNLOG("Could parse objective command in \"%s\" section.", sect_name);
+                    break;
+                }
+            }
+
+            LbIniSkipToNextLine(&parser);
+        }
+        p_missi->NetscanObvIndex = next_mission_netscan_objective;
+        p_missi->NetscanObvCount = n;
+        next_mission_netscan_objective += n;
     }
 #undef CONFDBGLOG
 #undef CONFWRNLOG
     LbIniParseEnd(&parser);
     LbMemoryFree(conf_buf);
     mission_strings_len = p_str - (char *)(engine_mem_alloc_ptr + engine_mem_alloc_size - 64000 + campaign_strings_len);
+}
+
+TbResult load_netscan_text_data(ushort mapno, ushort level)
+{
+    char *p;
+    int i, k;
+    TbBool found;
+    int totlen;
+    short cmapno, clevel;
+    char secnum_str[5];
+    int secnum_int;
+
+    found = 0;
+    totlen = load_file_alltext("textdata/netscan.txt", netscan_text);
+    if (totlen == -1) {
+        return Lb_FAIL;
+    }
+    p = netscan_text;
+    while ( !found )
+    {
+        // Find section
+        char c;
+        do
+            c = *p++;
+        while ((c != '[') && (c != '\0'));
+        if (c != '[') break;
+        
+        // Get section name
+        for (k = 0; k < 4; k++)
+        {
+            secnum_str[k] = *p++;
+        }
+        secnum_str[4] = 0;
+        // Go to EOLN
+        do
+            c = *p++;
+        while ((c != '\n') && (c != '\0'));
+        // Get number from section name
+        sscanf(secnum_str, "%d", &secnum_int);
+        cmapno = secnum_int / 100;
+        clevel = secnum_int % 100;
+        if ((clevel == level) && (cmapno == mapno))
+        {
+            found = 1;
+            for (i = 0; i < netscan_objectives_count; i++)
+            {
+                char *text;
+                text = p;
+                do
+                    c = *p++;
+                while ((c != '\n') && (c != '\0'));
+                *(p - 1) = '\0';
+
+                netscan_objectives[i].TextOffset = text - netscan_text;
+                my_preprocess_text(netscan_text + netscan_objectives[i].TextOffset);
+                k = my_count_lines(netscan_text + netscan_objectives[i].TextOffset);
+                netscan_objectives[i].TextLines = k;
+            }
+        }
+    }
+    return found ? Lb_SUCCESS : Lb_OK;
+}
+
+TbResult load_mission_name_text(ubyte missi)
+{
+#if 0
+    asm volatile ("call ASM_load_mission_name_text\n"
+        : : "a" (missi));
+    return Lb_SUCCESS;
+#endif
+    int totlen;
+    ushort len;
+    int cmissi;
+    char *p;
+    char c;
+
+    totlen = load_file_alltext("textdata/names.txt", memload);
+    if (totlen == -1) {
+        mission_name[0] = '\0';
+        return Lb_FAIL;
+    }
+
+    p = (char *)memload;
+    cmissi = -1;
+    while ( 1 )
+    {
+        if ((*p != '#') && (*p != '\r'))
+            sscanf(p, "%d", &cmissi);
+        if (missi == cmissi)
+            break;
+        do
+            c = *p++;
+        while ((c != '\n') && (c != '\0'));
+    }
+
+    do
+        c = *p++;
+    while ((c != '.') && (c != '\n') && (c != '\0'));
+
+    for (len = 0; len < sizeof(mission_name)-1; len++)
+    {
+        c = *p;
+        if ((c == '\r') || (c == '\0'))
+            break;
+        c = toupper(c);
+        mission_name[len] = c;
+        len++;
+    }
+    mission_name[len] = '\0';
+
+    return Lb_SUCCESS;
+}
+
+TbBool mission_remain_until_success(ushort missi)
+{
+    struct Mission *p_missi;
+    p_missi = &mission_list[missi];
+    return ((p_missi->Flags & MisF_RemainUntilSuccess) != 0);
+}
+
+TbBool mission_has_immediate_next_on_success(ushort missi)
+{
+    struct Mission *p_missi;
+    p_missi = &mission_list[missi];
+    return ((p_missi->Flags & MisF_ImmediateNextOnSuccess) != 0);
+}
+
+TbBool mission_has_immediate_previous(ushort missi)
+{
+    struct Mission *p_missi;
+    p_missi = &mission_list[missi];
+    return ((p_missi->Flags & MisF_ImmediatePrevious) != 0);
+}
+
+TbBool mission_is_final_at_game_end(ushort missi)
+{
+    struct Mission *p_missi;
+    p_missi = &mission_list[missi];
+    return ((p_missi->Flags & MisF_IsFinalMission) != 0);
 }
 
 /******************************************************************************/

@@ -18,8 +18,6 @@ swars_SOURCES = \
 	bflib_render_drspr_s.sx \
 	bflib_sndlib_s.sx \
 	bflib_snd_mss_s.sx \
-	bflib_snd_sys.c \
-	bflib_snd_sys.h \
 	bflib_snd_sys_s.sx \
 	bflib_vidraw_s.sx \
 	../bfsoundlib/include/ail.h \
@@ -36,13 +34,23 @@ swars_SOURCES = \
 	../bfsoundlib/src/msssys.c \
 	../bfsoundlib/include/mssxmidi.h \
 	../bfsoundlib/src/mssxmidi.c \
+	../bfsoundlib/include/bfaudio.h \
+	../bfsoundlib/src/bfaudio.c \
 	../bfsoundlib/include/bfsvaribl.h \
 	../bfsoundlib/src/variable.c \
 	../bfsoundlib/src/dpmi.c \
 	../bfsoundlib/include/dpmi.h \
+	../bfsoundlib/src/sb16.c \
+	../bfsoundlib/include/sb16.h \
 	../bfsoundlib/src/awe32.c \
 	../bfsoundlib/src/awe32use.c \
 	../bfsoundlib/include/awe32.h \
+	../bfsoundlib/include/ssampfad.h \
+	../bfsoundlib/src/ssampfad.c \
+	../bfsoundlib/include/ssamplst.h \
+	../bfsoundlib/src/ssamplst.c \
+	../bfsoundlib/include/ssampply.h \
+	../bfsoundlib/src/ssampply.c \
 	../bfsoundlib/include/dllload.h \
 	../bfsoundlib/src/dllload.c \
 	../bfsoundlib/include/memfile.h \
@@ -51,10 +59,19 @@ swars_SOURCES = \
 	../bfsoundlib/src/miscutil.c \
 	../bfsoundlib/include/snderr.h \
 	../bfsoundlib/src/snderr.c \
-	../bfsoundlib/include/init_snd.h \
+	../bfsoundlib/include/bfmusic.h \
+	../bfsoundlib/src/init_mus.c \
+	../bfsoundlib/src/mseqnply.c \
+	../bfsoundlib/src/mseqnfad.c \
+	../bfsoundlib/src/mseqnlst.c \
+	../bfsoundlib/include/bfsound.h \
 	../bfsoundlib/src/init_snd.c \
 	../bfsoundlib/include/bfscd.h \
 	../bfsoundlib/src/cd.c \
+	../bfsoundlib/include/streamfx.h \
+	../bfsoundlib/src/streamfx.c \
+	../bfsoundlib/include/sndtimer.h \
+	../bfsoundlib/src/sndtimer.c \
 	../bfsoundlib/include/drv_oal.h \
 	../bfsoundlib/src/drv_oal.c \
 	../bfsoundlib/include/oggvorbis.h \
@@ -100,6 +117,7 @@ swars_SOURCES = \
 	people.h \
 	pepgroup.c \
 	pepgroup.h \
+	player.c \
 	player.h \
 	research.c \
 	research.h \
@@ -122,10 +140,14 @@ swars_SOURCES = \
 	util.h \
 	vehicle.c \
 	vehicle.h \
+	wadfile.c \
+	wadfile.h \
 	weapon.c \
 	weapon.h \
 	windows.c \
-	windows.h
+	windows.h \
+	wrcities.c \
+	wrcities.h
 
 swars_CPPFLAGS = \
   -I"$(top_srcdir)/bflibrary/include" \
@@ -166,9 +188,17 @@ endif
 if TARGET_WINDOWS
 install-exec-hook:
 	mkdir -p "$(DESTDIR)${prefix}/opt/$(PACKAGE)"
+	## Find main executable dependencies
 	$(eval lib_SHARED_INSTALL := $(shell objdump -p swars$(EXEEXT) | \
 		sed -n 's/\s*\(DLL Name:\|NEEDED\)\s*\(.*\)$$/\2/p' | \
 		xargs -I {} find $(shell dirname $(shell which ${CXX})) -name '{}'))
+	## Find sub-dependencies for the previous dependencies
+	$(eval lib_SHARED_INSTALL += $(shell echo -n '$(lib_SHARED_INSTALL)' | \
+        xargs -d ' ' -I {} objdump -p '{}' | \
+		sed -n 's/\s*\(DLL Name:\|NEEDED\)\s*\(.*\)$$/\2/p' | \
+		xargs -I {} find $(shell dirname $(shell which ${CXX})) -name '{}'))
+	## Remove duplicates
+	$(eval lib_SHARED_INSTALL := $(sort $(lib_SHARED_INSTALL)))
 	cp $(lib_SHARED_INSTALL) $(DESTDIR)${prefix}/opt/$(PACKAGE)
 endif
 

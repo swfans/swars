@@ -205,7 +205,7 @@ ushort do_group_near_thing_scanner(struct Objective *p_objectv, ushort next_sign
         {
             struct Thing *p_thing;
             p_thing = &things[ingame.TrackThing];
-            if (((ingame.TrackThing == 0) || p_thing->Flag & 0x2000) && (ingame.Flags & 0x2000))
+            if (((ingame.TrackThing == 0) || p_thing->Flag & TngF_PlayerAgent) && (ingame.Flags & 0x2000))
                 SCANNER_init_arcpoint(Z2, X2, Z1, X1, 1);
         }
         SCANNER_keep_arcs = 1;
@@ -345,7 +345,7 @@ ushort do_thing_arrive_area_scanner(struct Objective *p_objectv, ushort next_sig
     {
         struct Thing *p_thing;
         p_thing = &things[ingame.TrackThing];
-        if (((ingame.TrackThing == 0) || p_thing->Flag & 0x2000) && (ingame.Flags & 0x2000))
+        if (((ingame.TrackThing == 0) || p_thing->Flag & TngF_PlayerAgent) && (ingame.Flags & 0x2000))
             SCANNER_init_arcpoint(Z, X, p_objectv->Z << 8, p_objectv->X << 8, 1);
     }
     SCANNER_keep_arcs = 1;
@@ -403,7 +403,7 @@ ushort do_thing_near_thing_scanner(struct Objective *p_objectv, ushort next_sign
     {
         struct Thing *p_thing;
         p_thing = &things[ingame.TrackThing];
-        if (((ingame.TrackThing == 0) || p_thing->Flag & 0x2000) && (ingame.Flags & 0x2000))
+        if (((ingame.TrackThing == 0) || p_thing->Flag & TngF_PlayerAgent) && (ingame.Flags & 0x2000))
             SCANNER_init_arcpoint(Z2, X2, Z1, X1, 1);
     }
     SCANNER_keep_arcs = 1;
@@ -428,6 +428,24 @@ ushort do_group_arrive_area_scanner(struct Objective *p_objectv, ushort next_sig
     return n;
 }
 
+void clear_all_scanner_signals(void)
+{
+    int i;
+
+    signal_count = 0;
+    for (i = 0; i < SCANNER_BIG_BLIP_COUNT; i++)
+        ingame.Scanner.BigBlip[i].Period = 0;
+    for (i = 0; i < SCANNER_ARC_COUNT; i++)
+        ingame.Scanner.Arc[i].Period = 0;
+}
+
+void add_blippoint_to_scanner(int x, int z, ubyte colour)
+{
+    SCANNER_init_blippoint(signal_count, x, z, colour);
+    ingame.Scanner.BigBlip[signal_count].Counter = 32;
+    signal_count++;
+}
+
 void add_signal_to_scanner(struct Objective *p_objectv, ubyte flag)
 {
 #if 0
@@ -435,15 +453,7 @@ void add_signal_to_scanner(struct Objective *p_objectv, ubyte flag)
         :  : "a" (p_objectv), "d" (flag));
 #endif
     if (flag)
-    {
-        int i;
-
-        signal_count = 0;
-        for (i = 0; i < SCANNER_BIG_BLIP_COUNT; i++)
-            ingame.Scanner.BigBlip[i].Period = 0;
-        for (i = 0; i < SCANNER_ARC_COUNT; i++)
-            ingame.Scanner.Arc[i].Period = 0;
-    }
+        clear_all_scanner_signals();
     if (gameturn != turn_last)
     {
         turn_last = gameturn;

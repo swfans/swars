@@ -28,6 +28,7 @@ extern "C" {
 #pragma pack(1)
 
 #define CAMPAIGNS_MAX_COUNT 6
+#define MISSIONS_MAX_COUNT 120
 
 enum CampaignFlags {
     CmpgF_IsSinglePlayer = 0x0001,
@@ -59,6 +60,16 @@ enum MissionFlags {
     MisF_IsFinalMission = 0x0008,
 };
 
+enum MissionExtraRewards {
+    MEReward_None = 0,
+    MEReward_Scientists,
+    MEReward_ResearchLab,
+    MEReward_CybModResearched,
+    MEReward_WeaponResearched,
+    MEReward_CybModSingle,
+    MEReward_WeaponSingle,
+};
+
 struct Campaign {
     /** Default campaign title. */
     const char *TextName;
@@ -74,6 +85,8 @@ struct Campaign {
     ulong StandardWeapons;
     ulong ResearchMods;
     ulong StandardMods;
+    /** Char marking text translations file names for the campaign. */
+    const char *TextFnMk;
     /** Char marking projector file names for the campaign. */
     const char *ProjectorFnMk;
     /** Outro movie file name. */
@@ -107,10 +120,17 @@ struct Mission { // sizeof=76
     ushort SpecialEffectFailID;
     ushort SpecialEffectSuccessID;
     ushort StringIndex;
-    ubyte StartMap[3];
-    ubyte StartLevel[3];
-    ubyte SuccessMap[3];
-    ubyte SuccessLevel[3];
+    /** Index of first of netscan objectives (mission brief objectives) assigned to this mission. */
+    ushort NetscanObvIndex;
+    /** Amount of netscan objectives (mission brief objectives) assigned to this mission. */
+    ubyte NetscanObvCount;
+    /** Weapons made researchable by completing this mission. */
+    ulong ResearchWeapons;
+    /** Type of an extra, unique reward given to the player for mission complete. */
+    ubyte ExtraRewardType;
+    /** Parameter for the extra unique reward, meaning depends on its type. */
+    ushort ExtraRewardParam;
+    ubyte SuccessLevel[2];
     ubyte FailMap[3];
     ubyte FailLevel[3];
     /** Map number on which this mission takes place. */
@@ -141,7 +161,9 @@ struct Mission { // sizeof=76
 #pragma pack()
 /******************************************************************************/
 extern struct Campaign campaigns[CAMPAIGNS_MAX_COUNT];
-extern struct Mission mission_list[120];
+extern struct Mission mission_list[MISSIONS_MAX_COUNT];
+extern char mission_name[50];
+extern char *netscan_text;
 
 void load_campaigns(void);
 ushort selectable_campaigns_count(void);
@@ -150,14 +172,25 @@ ushort find_mission_state_slot(ushort missi);
 ushort find_empty_mission_state_slot(void);
 void remove_mission_state_slot(ushort mslot);
 void init_mission_states(void);
+
+ushort find_mission_with_map_and_level(ushort mapno, ushort level);
 void fix_mission_used_objectives(short missi);
+
+TbBool mission_remain_until_success(ushort missi);
+TbBool mission_has_immediate_next_on_success(ushort missi);
+TbBool mission_has_immediate_previous(ushort missi);
+TbBool mission_is_final_at_game_end(ushort missi);
 
 TbBool read_missions_conf_info(int num);
 void load_missions(int num);
 void save_missions_conf_file(int num);
 void read_missions_conf_file(int num);
 void read_missions_bin_file(int num);
+void read_mission_netscan_objectives_bin(void);
 void apply_missions_fixups(void);
+
+TbResult load_netscan_text_data(ushort mapno, ushort level);
+TbResult load_mission_name_text(ubyte missi);
 
 /******************************************************************************/
 #ifdef __cplusplus

@@ -12,28 +12,6 @@
 
 struct Thing;
 
-typedef struct AudioInitOptions AudioInitOptions;
-
-struct AudioInitOptions {
-  const char *IniPath;
-  const char *SoundDriverPath;
-  const char *SoundDataPath;
-  ushort SoundType;
-  ushort AbleFlags;
-  short SelectedWin95MidiDevice;
-  short SelectedWin95WaveDevice;
-  ubyte MaxSamples;
-  ubyte StereoOption;
-  ubyte AutoScan;
-  ubyte DisableDangerMusic;
-  ubyte DisableLoadSounds;
-  ubyte DisableLoadMusic;
-  ubyte UseCurrentAwe32Soundfont;
-  ubyte UseMultiMediaExtensions;
-  ubyte InitStreamedSound;
-  ubyte InitRedbookAudio;
-};
-
 struct HeapMgrHandle {
   ubyte field_0[14];
   ubyte field_E;
@@ -45,35 +23,13 @@ struct SampleTable {
   struct HeapMgrHandle *hmhandle;
 };
 
-struct SampleInfo {
-  SNDSAMPLE *SampleHandle;
-  long SampleVolume;
-  ushort SamplePitch;
-  ushort SamplePan;
-  ushort FadeToVolume;
-  ulong SourceID;
-  short SampleNumber;
-  ubyte FadeState;
-  ubyte FadeStopFlag;
-  ubyte FadeStep;
-  ubyte UserFlag;
-  ubyte SampleType;
-};
-
 #pragma pack()
 
 extern short startscr_samplevol;
 extern short startscr_midivol;
 extern short startscr_cdvolume;
 
-void InitAudio(AudioInitOptions *audOpts);
-
-void StopMusicIfActive(void);
-void StopMusic(void);
-
 void fill_ail_sample_ids(void);
-
-int LoadSounds(unsigned char a1);
 
 struct SNDSEQUENCE;
 
