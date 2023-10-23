@@ -240,6 +240,7 @@ AC_CONFIG_LINKS([
   res/license-eng.txt:res/license-eng.txt
   res/swars.ico:res/swars.ico
 ])
+AC_CONFIG_FILES([res/swars-config.nsh])
 
 # Done - generate and execute `config.status`
 AC_OUTPUT
