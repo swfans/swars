@@ -387,10 +387,8 @@ langcd_lng_spa:
 langcd_lng_swe:
   StrCpy $selected_lang_abbr swe
   Goto langncd_store
-  Goto langncd_store
 langcd_lng_jap:
   StrCpy $selected_lang_abbr jap
-  Goto langncd_store
   Goto langncd_store
 langcd_lngswitch:
   StrCmp $selected_lang_text "English" langcd_lng_eng
