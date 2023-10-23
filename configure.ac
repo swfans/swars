@@ -230,7 +230,18 @@ LIBS="$LIBS $WILDMIDI_LIBS"
 AC_SUBST([MKWFLAGS])
 AC_SUBST([WINDRES])
 
+# Prepare makefiles from `.in` templates
 AC_CONFIG_FILES([Makefile conf/Makefile lang/Makefile src/Makefile util/Makefile])
+
+# Prepare files for Windows installer
+AC_CONFIG_LINKS([
+  res/swars-setup.nsi:res/swars-setup.nsi
+  res/lang_n_cdrom.ini:res/lang_n_cdrom.ini
+  res/license-eng.txt:res/license-eng.txt
+  res/swars.ico:res/swars.ico
+])
+
+# Done - generate and execute `config.status`
 AC_OUTPUT
 
 echo
