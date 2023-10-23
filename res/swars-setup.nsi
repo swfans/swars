@@ -3,8 +3,8 @@
 ; Requires:
 ; - Simple CD-DA Audio Track ripper by j00ru//vx (rip.exe+akrip32.dll)
 ; - OGG Encoder from Vorbis-tools (oggenc.exe+accompanying DLLs)
-; - Gogisoripper by Moburma (Gogisoripper.exe)
-; - SW Port executable and shared libs (swars.exe+SDL.dll,openal32.dll,libpng3.dll,libogg-0.dll,libvorbis-0.dll)
+; - GoG ISO Ripper by Moburma (Gogisoripper.exe)
+; - SW Port executable, shared libs, lang files and config files (swars.exe+*.dll+conf/*+lang/*)
 ; If you don't have any of these, you may extract them using 7Zip on any existing SW Port Installer.
 
 
@@ -109,10 +109,7 @@ Section "Syndicate Wars Game" Section_0
   File libogg-0.dll
   File libvorbis-0.dll
   File libvorbisfile-3.dll
-  File libpng3.dll
   File libWildMidi.dll
-  File openal32.dll
-  File wrap_oal.dll
   SetOutPath $INSTDIR\conf
   File /r "conf\"
   SetOutPath $INSTDIR\language
@@ -506,17 +503,14 @@ Delete '$INSTDIR\libgcc_s_dw2-1.dll'
 Delete '$INSTDIR\libogg-0.dll'
 Delete '$INSTDIR\libopenal-1.dll'
 Delete '$INSTDIR\libpng16-16.dll'
-Delete '$INSTDIR\libpng3.dll'
 Delete '$INSTDIR\libstdc++-6.dll'
 Delete '$INSTDIR\libvorbis-0.dll'
 Delete '$INSTDIR\libvorbisfile-3.dll'
 Delete '$INSTDIR\libWildMidi.dll'
 Delete '$INSTDIR\libwinpthread-1.dll'
-Delete '$INSTDIR\openal32.dll'
 Delete '$INSTDIR\SDL.dll'
 Delete '$INSTDIR\swars.exe'
 Delete '$INSTDIR\Uninstall.exe'
-Delete '$INSTDIR\wrap_oal.dll'
 Delete '$INSTDIR\zlib1.dll'
 
 Delete '$INSTDIR\conf\cities.ini'
