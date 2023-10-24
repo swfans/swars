@@ -150,9 +150,53 @@ jobs:
           PKG_VERSION=$(sed -n 's/^#define[ ]\+PACKAGE_VERSION "\([^"]\+\)"$/\1/p' src/config.h | head -n 1 | tr '.' '_')
           make V=1 DESTDIR=$PWD/pkg install
           echo "PKG_NAME=swars-$PKG_VERSION-win32-patch" >> $GITHUB_ENV
+          echo "INSTLR_NAME=swars-$PKG_VERSION-win32-setup" >> $GITHUB_ENV
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
           name: ${{ env.PKG_NAME }}
           path: release/pkg/**
+
+      - name: Prepare for downloading from MEGA - wget
+        env:
+          DL_WORKSPACE: ${{ runner.workspace }}\dl
+        working-directory: ${{ runner.workspace }}
+        run: |
+          mkdir -p "${DL_WORKSPACE}"
+          wget -O "${DL_WORKSPACE}\\MEGAcmdSetup.exe" "https://mega.nz/MEGAcmdSetup.exe"
+
+      - name: Prepare for downloading from MEGA - install
+        working-directory: ${{ runner.workspace }}
+        shell: cmd
+        run: |
+          "${{ runner.workspace }}\dl\MEGAcmdSetup.exe" /S
+          echo %LOCALAPPDATA%\MEGAcmd>> %GITHUB_PATH%
+
+      - name: Download installer utils
+        # Instead of the usual actions/download-artifact, we are downloading from Mega
+        env:
+          DL_WORKSPACE: ${{ github.workspace }}
+        # We are calling batch script here, so cmd is needed as shell
+        shell: cmd
+        run: |
+          mega-get "https://mega.nz/file/YYVGzByB#MmtXTAsuvFQ6TW6T62NxU2YCEHUVp_I_Z30miqjXtv4" "${{ env.DL_WORKSPACE }}"
+
+      - name: Installer utils unpack
+        run: |
+          mkdir -p release/util-nsis
+          cd release
+          unzip -q ../util-nsis.zip -d util-nsis
+          rm ../util-nsis.zip
+
+      - name: Build installer
+        uses: joncloud/makensis-action@v4
+        with:
+          script-file: "release/res/swars-setup.nsi"
+          arguments: "-V3"
+
+      - name: Upload installer
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ env.INSTLR_NAME }}
+          path: release/res/swars-setup.exe
