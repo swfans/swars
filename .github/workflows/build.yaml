@@ -73,10 +73,11 @@ jobs:
 
       - name: Copy for package
         run: |
-          VER_BUILD=$(git rev-list --count HEAD)
           cd release
+          # Get version marking from C header
+          PKG_VERSION=$(sed -n 's/^#define[ ]\+PACKAGE_VERSION "\([^"]\+\)"$/\1/p' src/config.h | head -n 1 | tr '.' '_')
           make V=1 DESTDIR=$PWD/pkg install
-          echo "PKG_NAME=swars-0_3_3_$VER_BUILD-ubuntu-patch" >> $GITHUB_ENV
+          echo "PKG_NAME=swars-$PKG_VERSION-ubuntu-patch" >> $GITHUB_ENV
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
@@ -144,10 +145,11 @@ jobs:
 
       - name: Copy for package
         run: |
-          VER_BUILD=$(git rev-list --count HEAD)
           cd release
+          # Get version marking from C header
+          PKG_VERSION=$(sed -n 's/^#define[ ]\+PACKAGE_VERSION "\([^"]\+\)"$/\1/p' src/config.h | head -n 1 | tr '.' '_')
           make V=1 DESTDIR=$PWD/pkg install
-          echo "PKG_NAME=swars-0_3_3_$VER_BUILD-win32-patch" >> $GITHUB_ENV
+          echo "PKG_NAME=swars-$PKG_VERSION-win32-patch" >> $GITHUB_ENV
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
