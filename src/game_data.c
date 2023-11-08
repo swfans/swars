@@ -260,6 +260,36 @@ void get_saved_game_fname(char *fname, ushort slot)
         sprintf(fname, "%s/swars%03d.sav", game_dir_savegame, (int)slot - 1);
 }
 
+int get_memory_ptr_index(void **mgptr)
+{
+    int i;
+    for (i = 0; mem_game[i].Name != NULL; i++)
+    {
+        if (mem_game[i].BufferPtr == mgptr)
+            return i;
+    }
+    return -1;
+}
+
+long get_memory_ptr_allocated_count(void **mgptr)
+{
+    int i;
+    for (i = 0; mem_game[i].Name != NULL; i++)
+    {
+        if (mem_game[i].BufferPtr == mgptr)
+            return mem_game[i].N;
+    }
+    return -1;
+}
+
+TbBool mem_game_index_is_prim(int index)
+{
+    static int prim_first = 18;
+    static int prim_last = 23;
+
+    return (index >= prim_first && index <= prim_last);
+}
+
 /** Decrease the size of some arrays to reduce memory usage.
  */
 void adjust_memory_use(void)
@@ -328,7 +358,7 @@ void init_memory(MemSystem *mem_table)
             else
               exit_game = 1;
 
-            if (ment->N * (ulong)ment->ESize >= dword_1810D5 || (i >= 18 && i <= 23))
+            if (ment->N * (ulong)ment->ESize >= dword_1810D5 || mem_game_index_is_prim(i))
             {
                 k = ment->N * ment->ESize;
                 k = (k + 4) & ~0x3;
@@ -348,17 +378,6 @@ void init_memory(MemSystem *mem_table)
     scratch_malloc_mem = p;
     memset(game_sort_sprites, 0, 0x20u);
     fade_data = *ment[23].BufferPtr;
-}
-
-long get_memory_ptr_allocated_count(void **mgptr)
-{
-    int i;
-    for (i = 0; mem_game[i].Name != NULL; i++)
-    {
-        if (mem_game[i].BufferPtr == mgptr)
-            return mem_game[i].N;
-    }
-    return -1;
 }
 
 /******************************************************************************/
