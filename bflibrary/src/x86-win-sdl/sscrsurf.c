@@ -37,7 +37,7 @@ void LbScreenSurfaceInit(struct SSurface *surf)
     surf->locks_count = 0;
 }
 
-TbResult LbScreenSurfaceCreate(struct SSurface *surf, ulong w, ulong h)
+TbResult LbScreenSurfaceCreate(struct SSurface *surf, u32 w, u32 h)
 {
     const SDL_PixelFormat * format;
 
@@ -75,8 +75,8 @@ TbResult LbScreenSurfaceRelease(struct SSurface *surf)
     return Lb_SUCCESS;
 }
 
-TbResult LbScreenSurfaceBlit(struct SSurface *surf, ulong x, ulong y,
-    struct TbRect *rect, ulong blflags)
+TbResult LbScreenSurfaceBlit(struct SSurface *surf, u32 x, u32 y,
+    struct TbRect *rect, u32 blflags)
 {
     // Convert TbRect to SDL rectangles
     SDL_Rect srcRect;

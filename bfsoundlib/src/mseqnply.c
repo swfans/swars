@@ -32,21 +32,21 @@ extern TbBool MusicInstalled;
 extern TbBool MusicAble;
 extern TbBool MusicActive;
 
-extern uint16_t SongCurrentlyPlaying;
+extern u16 SongCurrentlyPlaying;
 extern SNDSEQUENCE *SongHandle;
-extern ushort CurrentTempo;
-extern short NumberOfSongs;
+extern u16 CurrentTempo;
+extern i16 NumberOfSongs;
 
-extern ubyte DangerMusicVolume;
-extern sbyte DangerMusicVolumeChange; // = -1;
-extern sbyte CurrentDangerMusicFadeDirection;
-extern ubyte DangerMusicFadeActive;
+extern u8 DangerMusicVolume;
+extern i8 DangerMusicVolumeChange; // = -1;
+extern i8 CurrentDangerMusicFadeDirection;
+extern u8 DangerMusicFadeActive;
 extern HSNDTIMER DangerMusicFadeHandle;
-extern ubyte DangerMusicAble;
+extern u8 DangerMusicAble;
 extern TbBool DisableDangerMusic;
 
 extern struct BfMusicInfo *BfMusic;
-extern ubyte data_1e5edc[16];
+extern u8 data_1e5edc[16];
 
 /******************************************************************************/
 
@@ -74,7 +74,7 @@ void cb_get_trigger_info(SNDSEQUENCE *seq, int32_t log, int32_t data)
     }
 }
 
-void StartMusic(int songNo, ubyte volume)
+void StartMusic(int songNo, u8 volume)
 {
     int i;
 

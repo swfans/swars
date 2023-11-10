@@ -29,16 +29,16 @@ extern "C" {
 
 #define LB_VESA_DATA_SIZE 0x100
 
-extern ubyte *lbVesaData;
+extern u8 *lbVesaData;
 
-TbResult LbVesaGetGran(long mode);
-TbResult LbVesaSetMode(long mode);
-TbResult LbVesaSetPage(ushort pageNo);
+TbResult LbVesaGetGran(i32 mode);
+TbResult LbVesaSetMode(i32 mode);
+TbResult LbVesaSetPage(u16 pageNo);
 TbResult LbVesaGetInfo(void);
 
 /** Checks if a VESA mode with given flags is available.
  */
-TbBool LbVesaIsModeAvailable(long mode);
+TbBool LbVesaIsModeAvailable(i32 mode);
 
 #ifdef __cplusplus
 };

@@ -34,8 +34,8 @@ extern "C" {
  * should not overlap.
  */
 void LbScreenCopyBox(TbPixel *sourceBuf, TbPixel *destBuf,
-  long sourceX, long sourceY, long destX, long destY,
-  ulong width, ulong height);
+  i32 sourceX, i32 sourceY, i32 destX, i32 destY,
+  u32 width, u32 height);
 
 /** Copies buffer of size equal to GraphicsWindow to one of GraphicsScreen.
  *
@@ -43,7 +43,7 @@ void LbScreenCopyBox(TbPixel *sourceBuf, TbPixel *destBuf,
  * buffer with width equal to GraphicsScreen, and the height,
  * it copies given amount of lines of one buffer to the other.
  */
-void LbScreenCopy(TbPixel *sourceBuf, TbPixel *destBuf, ulong height);
+void LbScreenCopy(TbPixel *sourceBuf, TbPixel *destBuf, u32 height);
 
 #ifdef __cplusplus
 };

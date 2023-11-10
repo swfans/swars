@@ -19,8 +19,8 @@
 /******************************************************************************/
 #include "bfutility.h"
 
-ulong lbSeed = 0xD15C1234;
-ulong lbSeed_ps = 0xD15C1234;
+u32 lbSeed = 0xD15C1234;
+u32 lbSeed_ps = 0xD15C1234;
 
 ushort LbRandomAnyShort(void)
 {

@@ -24,12 +24,12 @@
 #include "bfmath.h"
 #include "privbflog.h"
 
-TbResult LbCrossPaletteLutGen(ubyte *cross_lut, const ubyte *src_palette,
-  const ubyte *dst_palette)
+TbResult LbCrossPaletteLutGen(u8 *cross_lut, const u8 *src_palette,
+  const u8 *dst_palette)
 {
-    long i;
-    ubyte *o;
-    const ubyte *s;
+    i32 i;
+    u8 *o;
+    const u8 *s;
 
     s = src_palette;
     o = cross_lut;
@@ -42,12 +42,12 @@ TbResult LbCrossPaletteLutGen(ubyte *cross_lut, const ubyte *src_palette,
     return Lb_SUCCESS;
 }
 
-TbResult LbBufferHistogram(ulong *hist, const TbPixel *buf, ulong buf_len)
+TbResult LbBufferHistogram(u32 *hist, const TbPixel *buf, u32 buf_len)
 {
-    ulong i;
-    const ubyte *b;
+    u32 i;
+    const u8 *b;
 
-    LbMemorySet(hist, 0, sizeof(ulong) * 256);
+    LbMemorySet(hist, 0, sizeof(u32) * 256);
     b = buf;
     for (i = 0; i < buf_len; i++)
     {
@@ -57,23 +57,23 @@ TbResult LbBufferHistogram(ulong *hist, const TbPixel *buf, ulong buf_len)
     return Lb_SUCCESS;
 }
 
-short LbImageBuffersMaxDifference(const TbPixel *buf1, const ubyte *pal1,
-  const TbPixel *buf2, const ubyte *pal2, ulong buf_len, ulong *pos)
+short LbImageBuffersMaxDifference(const TbPixel *buf1, const u8 *pal1,
+  const TbPixel *buf2, const u8 *pal2, u32 buf_len, u32 *pos)
 {
-    ulong i;
+    u32 i;
     TbBool *already_map;
-    long maxdiff = 0;
-    ulong maxpos = 0;
+    i32 maxdiff = 0;
+    u32 maxpos = 0;
 
     already_map = LbMemoryAlloc(256 * 256 * sizeof(TbBool));
     LbMemorySet(already_map, 0, 256 * 256 * sizeof(TbBool));
 
     for (i = 0; i < buf_len; i++)
     {
-        ulong k;
-        long curdiff;
-        const ubyte *p1;
-        const ubyte *p2;
+        u32 k;
+        i32 curdiff;
+        const u8 *p1;
+        const u8 *p2;
 
         k = buf1[i] * 256 + buf2[i];
         if (already_map[k]) continue;

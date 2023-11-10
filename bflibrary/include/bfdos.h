@@ -31,12 +31,12 @@ extern "C" {
 /** DOS Segment Registers.
  */
 struct SREGS { // sizeof=12
-    ushort es; // offset=0
-    ushort cs; // offset=2
-    ushort ss; // offset=4
-    ushort ds; // offset=6
-    ushort fs; // offset=8
-    ushort gs; // offset=10
+    u16 es; // offset=0
+    u16 cs; // offset=2
+    u16 ss; // offset=4
+    u16 ds; // offset=6
+    u16 fs; // offset=8
+    u16 gs; // offset=10
 };
 
 typedef struct SREGS SREGS;
@@ -44,13 +44,13 @@ typedef struct SREGS SREGS;
 /** DOS 32-bit Registers.
  */
 struct DWORDREGS { // sizeof=28
-    unsigned int eax; // offset=0
-    unsigned int ebx; // offset=4
-    unsigned int ecx; // offset=8
-    unsigned int edx; // offset=12
-    unsigned int esi; // offset=16
-    unsigned int edi; // offset=20
-    unsigned int cflag; // offset=24
+    u32 eax; // offset=0
+    u32 ebx; // offset=4
+    u32 ecx; // offset=8
+    u32 edx; // offset=12
+    u32 esi; // offset=16
+    u32 edi; // offset=20
+    u32 cflag; // offset=24
 };
 
 typedef struct DWORDREGS DWORDREGS;
@@ -58,19 +58,19 @@ typedef struct DWORDREGS DWORDREGS;
 /** DOS 16-bit Registers.
  */
 struct WORDREGS { // sizeof=28
-    ushort ax; // offset=0
-    ushort _1; // offset=2
-    ushort bx; // offset=4
-    ushort _2; // offset=6
-    ushort cx; // offset=8
-    ushort _3; // offset=10
-    ushort dx; // offset=12
-    ushort _4; // offset=14
-    ushort si; // offset=16
-    ushort _5; // offset=18
-    ushort di; // offset=20
-    ushort _6; // offset=22
-    unsigned int cflag; // offset=24
+    u16 ax; // offset=0
+    u16 _1; // offset=2
+    u16 bx; // offset=4
+    u16 _2; // offset=6
+    u16 cx; // offset=8
+    u16 _3; // offset=10
+    u16 dx; // offset=12
+    u16 _4; // offset=14
+    u16 si; // offset=16
+    u16 _5; // offset=18
+    u16 di; // offset=20
+    u16 _6; // offset=22
+    u32 cflag; // offset=24
 };
 
 typedef struct WORDREGS WORDREGS;
@@ -78,18 +78,18 @@ typedef struct WORDREGS WORDREGS;
 /** DOS 8-bit Registers.
  */
 struct BYTEREGS { // sizeof=16
-    ubyte al; // offset=0
-    ubyte ah; // offset=1
-    ushort _1; // offset=2
-    ubyte bl; // offset=4
-    ubyte bh; // offset=5
-    ushort _2; // offset=6
-    ubyte cl; // offset=8
-    ubyte ch; // offset=9
-    ushort _3; // offset=10
-    ubyte dl; // offset=12
-    ubyte dh; // offset=13
-    ushort _4; // offset=14
+    u8 al; // offset=0
+    u8 ah; // offset=1
+    u16 _1; // offset=2
+    u8 bl; // offset=4
+    u8 bh; // offset=5
+    u16 _2; // offset=6
+    u8 cl; // offset=8
+    u8 ch; // offset=9
+    u16 _3; // offset=10
+    u8 dl; // offset=12
+    u8 dh; // offset=13
+    u16 _4; // offset=14
 };
 
 typedef struct BYTEREGS BYTEREGS;
@@ -105,16 +105,16 @@ union REGS { // sizeof=28
 /** DOS registers for DPMI interrupts (int 0x31).
  */
 struct DPMI_REGS {
-    unsigned int edi;
-    unsigned int esi;
-    unsigned int ebp;
-    unsigned int reserved_by_system;
-    unsigned int ebx;
-    unsigned int edx;
-    unsigned int ecx;
-    unsigned int eax;
-    ushort flags;
-    ushort es,ds,fs,gs,ip,cs,sp,ss;
+    u32 edi;
+    u32 esi;
+    u32 ebp;
+    u32 reserved_by_system;
+    u32 ebx;
+    u32 edx;
+    u32 ecx;
+    u32 eax;
+    u16 flags;
+    u16 es,ds,fs,gs,ip,cs,sp,ss;
 };
 
 typedef struct DPMI_REGS DPMI_REGS;

@@ -34,7 +34,7 @@ extern "C" {
 /** Computes square root of given 32-bit integer.
  * Works like sqrt(x), but is way faster. The input value is treated as unsigned.
  */
-long LbSqrL(ulong x);
+i32 LbSqrL(u32 x);
 
 /** Computes angle between negative Y axis and the line that crosses (0,0) and given (x,y).
  *  Uses arctan(x/y) with proper shift to get the angle.
@@ -47,9 +47,9 @@ long LbSqrL(ulong x);
  * @param y
  * @return
  */
-long LbArcTanAngle(long x,long n);
+i32 LbArcTanAngle(i32 x,i32 n);
 
-extern long lbSinTable[];
+extern i32 lbSinTable[];
 
 #ifdef __cplusplus
 };

@@ -20,7 +20,6 @@
 #include <string.h>
 #include <stdarg.h>
 #include "bflog.h"
-
 #include "bffile.h"
 /******************************************************************************/
 TbBool error_log_initialised = false;
@@ -82,11 +81,11 @@ int LbDbgLog(const char *format, ...)
     return result;
 }
 
-TbResult LbErrorLogSetup(const char *directory, const char *filename, ubyte flag)
+TbResult LbErrorLogSetup(const char *directory, const char *filename, u8 flag)
 {
     const char *fixed_fname;
     char log_filename[FILENAME_MAX];
-    ulong flags;
+    u32 flags;
 
     if (error_log_initialised)
         return Lb_FAIL;

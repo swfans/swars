@@ -30,7 +30,7 @@ extern "C" {
 
 struct TbIffPalette { // sizeof=4
     long Loaded; // offset=0
-    ubyte Palette[256]; // offset=4
+    u8 Palette[256]; // offset=4
 };
 
 typedef struct TbIffPalette TbIffPalette;
@@ -38,12 +38,12 @@ typedef struct TbIffPalette TbIffPalette;
 struct TbIff { // sizeof=18
     ushort Width; // offset=0
     ushort Height; // offset=2
-    ulong FileSize; // offset=4
+    u32 FileSize; // offset=4
     TbIffPalette *Palette; // offset=8
     ushort XOffset; // offset=12
     ushort YOffset; // offset=14
-    ubyte XAspect; // offset=16
-    ubyte YAspect; // offset=17
+    u8 XAspect; // offset=16
+    u8 YAspect; // offset=17
 };
 
 typedef struct TbIff TbIff;
@@ -57,7 +57,7 @@ typedef struct TbIff TbIff;
  * @param iff Pointer image information structure.
  * @return Lb_* error code.
  */
-TbResult LbIffLoad(const char *fname, ubyte *buf, struct TbIff *iff);
+TbResult LbIffLoad(const char *fname, u8 *buf, struct TbIff *iff);
 
 /** Save "ILBM" IFF Interleaved Bitmap.
  *
@@ -74,7 +74,7 @@ TbResult LbIffLoad(const char *fname, ubyte *buf, struct TbIff *iff);
  * @return
  */
 TbResult LbIffSave(const char *fname, const TbPixel *inp_buffer,
-  ulong width, ulong height, const ubyte *pal, TbBool force_fname);
+  u32 width, u32 height, const u8 *pal, TbBool force_fname);
 
 /** Save "ILBM" IFF Interleaved Bitmap from screen sized buffer.
  *
@@ -85,7 +85,7 @@ TbResult LbIffSave(const char *fname, const TbPixel *inp_buffer,
  * @return
  */
 TbResult LbIffSaveScreen(const char *fname, const TbPixel *inp_buffer,
-  const ubyte *pal, TbBool force_fname);
+  const u8 *pal, TbBool force_fname);
 
 #ifdef __cplusplus
 };

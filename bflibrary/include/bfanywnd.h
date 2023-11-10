@@ -29,10 +29,10 @@ extern "C" {
 #pragma pack(1)
 
 struct TbAnyWindow { // sizeof=20
-    long x; // offset=0
-    long y; // offset=4
-    ulong width; // offset=8
-    ulong height; // offset=12
+    i32 x; // offset=0
+    i32 y; // offset=4
+    u32 width; // offset=8
+    u32 height; // offset=12
     TbPixel *ptr; // offset=16
 };
 
@@ -58,9 +58,9 @@ TbResult LbScreenStoreGraphicsWindow(struct TbAnyWindow *wnd);
  */
 TbResult LbScreenLoadGraphicsWindow(struct TbAnyWindow *wnd);
 
-TbResult LbTextSetJustifyWindow(long x, long y, ulong width);
-TbResult LbTextSetClipWindow(long x, long y, ulong width, ulong height);
-TbResult LbTextSetWindow(long x, long y, ulong width, ulong height);
+TbResult LbTextSetJustifyWindow(i32 x, i32 y, u32 width);
+TbResult LbTextSetClipWindow(i32 x, i32 y, u32 width, u32 height);
+TbResult LbTextSetWindow(i32 x, i32 y, u32 width, u32 height);
 
 #ifdef __cplusplus
 };

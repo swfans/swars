@@ -32,7 +32,7 @@ extern "C" {
 #pragma pack()
 /******************************************************************************/
 
-void draw_text(short x, short y, const char *text, ubyte colour);
+void draw_text(short x, short y, const char *text, u8 colour);
 
 /******************************************************************************/
 #ifdef __cplusplus

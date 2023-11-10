@@ -33,7 +33,7 @@ int LbMouseRemove()
 // code at 0001:000a6968
 }
 
-int LbMouseChangeSpriteOffset(long hsX, long hsY)
+int LbMouseChangeSpriteOffset(i32 hsX, i32 hsY)
 {
 // code at 0001:000a6a44
 }

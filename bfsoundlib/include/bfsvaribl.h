@@ -39,7 +39,7 @@ struct SampleInfo;
 
 /******************************************************************************/
 
-ushort GetNumberOfSamples(void);
+u16 GetNumberOfSamples(void);
 
 TbBool GetSoundAble(void);
 TbBool GetMusicAble(void);
@@ -51,7 +51,7 @@ TbBool GetSoundInstalled(void);
 TbBool GetMusicInstalled(void);
 
 TbBool GetStereoSound(void);
-ushort GetNumberOfSongs(void);
+u16 GetNumberOfSongs(void);
 
 int GetCurrentSoundMasterVolume(void);
 int GetCurrentMusicMasterVolume(void);
@@ -66,7 +66,7 @@ struct SampleInfo *GetFirstSampleInfoStructure(void);
 struct SampleInfo *GetLastSampleInfoStructure(void);
 
 struct SNDSEQUENCE *GetSongHandle(void);
-sbyte GetCDSpeed(ubyte n);
+i8 GetCDSpeed(u8 n);
 
 /******************************************************************************/
 #ifdef __cplusplus

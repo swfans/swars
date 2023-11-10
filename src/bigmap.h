@@ -38,23 +38,23 @@ extern "C" {
 #define SPIRAL_STEPS_COUNT   1700
 
 struct MyMapElement {
-  ushort Texture;
-  ushort Alt;
-  ushort field_4;
-  ushort field_6;
-  short Child;
-  ushort ColHead;
-  ubyte field_C;
-  ubyte Flags2;
-  ubyte Zip;
-  ubyte field_F;
-  ushort field_10;
+  u16 Texture;
+  u16 Alt;
+  u16 field_4;
+  u16 field_6;
+  i16 Child;
+  u16 ColHead;
+  u8 field_C;
+  u8 Flags2;
+  u8 Zip;
+  u8 field_F;
+  u16 field_10;
 };
 
 struct MapOffset {
-  sbyte v;
-  sbyte h;
-  short both;
+  i8 v;
+  i8 h;
+  i16 both;
 };
 
 #pragma pack()
@@ -62,10 +62,10 @@ struct MapOffset {
 extern struct MyMapElement *game_my_big_map;
 
 extern struct MapOffset spiral_step[SPIRAL_STEPS_COUNT];
-extern ushort dist_tiles_to_spiral_step[MAP_TILE_WIDTH];
-extern ushort spiral_dist_tiles_limit;
+extern u16 dist_tiles_to_spiral_step[MAP_TILE_WIDTH];
+extern u16 spiral_dist_tiles_limit;
 
-short get_mapwho_thing_index(short tile_x, short tile_y);
+i16 get_mapwho_thing_index(i16 tile_x, i16 tile_y);
 void init_search_spiral(void);
 /******************************************************************************/
 #ifdef __cplusplus

@@ -44,8 +44,8 @@ enum AweSoundFontFunctions {
 };
 
 struct SF_DATA {
-    int16_t parm;
-    uint16_t data_seg;
+    i16 parm;
+    u16 data_seg;
 };
 
 /******************************************************************************/

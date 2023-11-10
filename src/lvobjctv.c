@@ -241,7 +241,7 @@ extern ulong dword_1C8464;
 extern short draw_objectv_x;
 extern short draw_objectv_y;
 extern const char *scroll_text;
-extern ubyte byte_1C844F;
+extern u8 byte_1C844F;
 extern char *objective_text[170];
 
 int add_used_objective(long mapno, long levelno)
@@ -389,7 +389,7 @@ void draw_objective_group_whole_on_engine_scene(ushort group)
 {
     short thing;
     struct Thing *p_thing;
-    ubyte colk;
+    u8 colk;
 
     colk = dword_1C8460 & 7;
     for (thing = same_type_head[256 + group]; thing != 0; thing = p_thing->LinkSameGroup)
@@ -403,7 +403,7 @@ void draw_objective_group_non_flag2_on_engine_scene(ushort group)
 {
     short thing;
     struct Thing *p_thing;
-    ubyte colk;
+    u8 colk;
 
     colk = dword_1C8460 & 7;
     for (thing = same_type_head[256 + group]; thing != 0; thing = p_thing->LinkSameGroup)
@@ -419,7 +419,7 @@ void draw_objective_group_non_pers_on_engine_scene(ushort group)
 {
     short thing;
     struct Thing *p_thing;
-    ubyte colk;
+    u8 colk;
 
     colk = dword_1C8460 & 7;
     for (thing = same_type_head[256 + group]; thing != 0; thing = p_thing->LinkSameGroup)
@@ -436,7 +436,7 @@ void draw_objective_group_not_own_by_plyr_on_engine_scene(ushort group, ushort p
     short plyagent, plygroup;
     short thing;
     struct Thing *p_thing;
-    ubyte colk;
+    u8 colk;
 
     colk = dword_1C8460 & 7;
     plyagent = players[plyr].DirectControl[0];
@@ -455,7 +455,7 @@ void draw_objective_group_not_own_by_pers_on_engine_scene(ushort group, short ow
 {
     short thing;
     struct Thing *p_thing;
-    ubyte colk;
+    u8 colk;
 
     colk = dword_1C8460 & 7;
     for (thing = same_type_head[256 + group]; thing != 0; thing = p_thing->LinkSameGroup)
@@ -472,7 +472,7 @@ void draw_objective_dirctly_on_engine_scene(ushort objectv)
 {
     struct Objective *p_objectv;
     short thing, group;
-    ubyte colk;
+    u8 colk;
 
     p_objectv = &game_used_objectives[objectv];
 
@@ -556,7 +556,7 @@ void draw_objective_dirctly_on_engine_scene(ushort objectv)
 
 /** Prepares objective text. Can also draw objective data and additional info directly on 3D scene.
  */
-void draw_objective(ushort objectv, ubyte flag)
+void draw_objective(ushort objectv, u8 flag)
 {
 #if 0
     struct Objective *p_objectv;
@@ -583,7 +583,7 @@ void draw_objective(ushort objectv, ubyte flag)
 #else
     struct Objective *p_objectv;
     struct ObjectiveDef *p_odef;
-    ubyte colk;
+    u8 colk;
 
     p_objectv = &game_used_objectives[objectv];
     if (flag == 1)
@@ -637,7 +637,7 @@ void draw_objective(ushort objectv, ubyte flag)
 TbBool thing_arrived_at_obj(short thing, struct Objective *p_objectv)
 {
 #if 0
-    ubyte ret;
+    u8 ret;
     asm volatile ("call ASM_thing_arrived_at_obj\n"
         : "=r" (ret) : "a" (thing), "d" (p_objectv));
     return ret;
@@ -747,9 +747,9 @@ TbBool item_is_carried_by_player(short thing, ushort weapon, ushort plyr)
     return false;
 }
 
-ubyte all_group_arrived(ushort group, short x, short y, short z, int radius)
+u8 all_group_arrived(ushort group, short x, short y, short z, int radius)
 {
-    ubyte ret;
+    u8 ret;
     asm volatile (
       "push %5\n"
       "call ASM_all_group_arrived\n"
@@ -991,17 +991,17 @@ TbBool group_members_arrived_at_objectv(ushort group, struct Objective *p_object
     return false;
 }
 
-ubyte fix_single_objective(struct Objective *p_objectv, ushort objectv, const char *srctext)
+u8 fix_single_objective(struct Objective *p_objectv, ushort objectv, const char *srctext)
 {
 #if 0
-    ubyte ret;
+    u8 ret;
     asm volatile ("call ASM_fix_single_objective\n"
         : "=r" (ret) : "a" (p_objectv));
     return ret;
 #else
     struct ObjectiveDef *p_odef;
     short thing;
-    ubyte ret;
+    u8 ret;
 
     // Skip objectives for other levels
     if (p_objectv->Level != (current_level - 1) % 15 + 1)
@@ -1493,7 +1493,7 @@ void snprint_objective(char *buf, ulong buflen, struct Objective *p_objectv, ush
 {
     struct ObjectiveDef *p_odef;
     char *s;
-    ubyte nparams;
+    u8 nparams;
 
     p_odef = &objectv_defs[p_objectv->Type];
 
@@ -1626,7 +1626,7 @@ void save_objective_chain_conf(TbFileHandle fh, ushort objectv_head, char *buf, 
 void snprint_netscan_objctv(char *buf, ulong buflen, struct NetscanObjective *p_nsobv, ushort nsobv)
 {
     char *s;
-    ubyte nparams;
+    u8 nparams;
     int i;
 
     s = buf;
@@ -1778,7 +1778,7 @@ int tokenize_script_func(char *olist[], char *obuf, const char *ibuf, long ibufl
                     continue;
                 } else if ((ibuf[pos] == ' ') ||
                      (ibuf[pos] == '\t') ||
-                     ((uchar)ibuf[pos] < 7)) {
+                     ((u8)ibuf[pos] < 7)) {
                     continue;
                 } else if ((ibuf[pos] == '\r') ||
                      (ibuf[pos] == '\n')) {
@@ -2054,11 +2054,11 @@ int parse_next_netscan_objective(const char *buf, long buflen, long nsobv)
     return nret;
 }
 
-int load_netscan_objectives_bin(struct NetscanObjective *nsobv_arr, ubyte mapno, ubyte level)
+int load_netscan_objectives_bin(struct NetscanObjective *nsobv_arr, u8 mapno, u8 level)
 {
     char locstr[52];
     TbFileHandle fp;
-    ubyte nsobv_count;
+    u8 nsobv_count;
 
     sprintf(locstr, "obj%02d%02d.dat", (int)mapno, (int)level);
     fp = open_file_from_wad(locstr, "qdata/posdefs");
@@ -2071,7 +2071,7 @@ int load_netscan_objectives_bin(struct NetscanObjective *nsobv_arr, ubyte mapno,
     return nsobv_count;
 }
 
-void load_netscan_objectives(ubyte mapno, ubyte level)
+void load_netscan_objectives(u8 mapno, u8 level)
 {
 #if 0
     netscan_objectives_count = load_netscan_objectives_bin(netscan_objectives, mapno, level);

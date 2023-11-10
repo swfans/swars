@@ -78,7 +78,7 @@ ushort count_people_in_group(ushort group, short subtype)
     return count;
 }
 
-void thing_group_copy(short pv_group, short nx_group, ubyte allow_kill)
+void thing_group_copy(short pv_group, short nx_group, u8 allow_kill)
 {
     int i;
 

@@ -58,7 +58,7 @@ extern "C" {
 
 typedef char *PCHAR,*LPCH,*PCH,*NPSTR,*LPSTR,*PSTR;
 typedef const char *LPCCH,*PCSTR,*LPCSTR;
-typedef unsigned long DWORD;
+typedef u32 DWORD;
 typedef int WINBOOL,*PWINBOOL,*LPWINBOOL;
 #define BOOL WINBOOL
 typedef void *PVOID,*LPVOID;
@@ -94,9 +94,9 @@ TbBool LbFileExists(const char *fname)
     return access(fname,F_OK) == 0;
 }
 
-long LbFilePosition(TbFileHandle fhandle)
+i32 LbFilePosition(TbFileHandle fhandle)
 {
-    long result;
+    i32 result;
 #if defined(WIN32)||defined(DOS)||defined(GO32)
     result = tell(fhandle);
 #else
@@ -184,7 +184,7 @@ TbBool LbFileEof(TbFileHandle fhandle)
     return false;
 }
 
-TbResult LbFileSeek(TbFileHandle fhandle, long offset, TbFileSeekMode origin)
+TbResult LbFileSeek(TbFileHandle fhandle, i32 offset, TbFileSeekMode origin)
 {
   int rc;
   switch (origin)
@@ -205,7 +205,7 @@ TbResult LbFileSeek(TbFileHandle fhandle, long offset, TbFileSeekMode origin)
   return rc;
 }
 
-long LbFileRead(TbFileHandle fhandle, void *buffer, unsigned long len)
+i32 LbFileRead(TbFileHandle fhandle, void *buffer, u32 len)
 {
   int result;
   //'read' returns (-1) on error
@@ -213,9 +213,9 @@ long LbFileRead(TbFileHandle fhandle, void *buffer, unsigned long len)
   return result;
 }
 
-long LbFileWrite(TbFileHandle fhandle, const void *buffer, const unsigned long len)
+i32 LbFileWrite(TbFileHandle fhandle, const void *buffer, const u32 len)
 {
-  long result;
+  i32 result;
   result = write(fhandle, buffer, len);
   return result;
 }
@@ -242,9 +242,9 @@ TbBool LbFileFlush(TbFileHandle fhandle)
 #endif
 }
 
-long LbFileLengthHandle(TbFileHandle fhandle)
+i32 LbFileLengthHandle(TbFileHandle fhandle)
 {
-    long result;
+    i32 result;
 #if defined(WIN32)||defined(DOS)||defined(GO32)
     result = filelength(fhandle);
 #else
@@ -255,9 +255,9 @@ long LbFileLengthHandle(TbFileHandle fhandle)
     return result;
 }
 
-long LbFileLength(const char *fname)
+i32 LbFileLength(const char *fname)
 {
-    long result;
+    i32 result;
 #if defined(WIN32)||defined(DOS)||defined(GO32)
     TbFileHandle fhandle;
 

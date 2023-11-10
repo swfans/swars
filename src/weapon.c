@@ -112,7 +112,7 @@ void read_weapons_conf_file(void)
     TbFileHandle conf_fh;
     TbBool done;
     int i;
-    long k;
+    i32 k;
     int cmd_num;
     char *conf_buf;
     struct TbIniParser parser;
@@ -514,15 +514,15 @@ ushort weapon_fourpack_index(ushort wtype)
     return WFRPK_COUNT;
 }
 
-TbBool weapons_has_weapon(ulong weapons, ushort wtype)
+TbBool weapons_has_weapon(u32 weapons, ushort wtype)
 {
-    ulong wepflg = 1 << (wtype-1);
+    u32 wepflg = 1 << (wtype-1);
     return (weapons & wepflg) != 0;
 }
 
 /** Returns weapon set in given flags with index below last.
  */
-ushort weapons_prev_weapon(ulong weapons, ushort last_wtype)
+ushort weapons_prev_weapon(u32 weapons, ushort last_wtype)
 {
     ushort wtype;
 
@@ -531,14 +531,14 @@ ushort weapons_prev_weapon(ulong weapons, ushort last_wtype)
 
     for (wtype = last_wtype - 1; wtype > 0; wtype--)
     {
-        ulong wepflg = 1 << (wtype-1);
+        u32 wepflg = 1 << (wtype-1);
         if ((weapons & wepflg) != 0)
             return wtype;
     }
     return 0;
 }
 
-void weapons_remove_weapon(ulong *p_weapons, struct WeaponsFourPack *p_fourpacks, ushort wtype)
+void weapons_remove_weapon(u32 *p_weapons, struct WeaponsFourPack *p_fourpacks, ushort wtype)
 {
     ushort fp;
 
@@ -549,7 +549,7 @@ void weapons_remove_weapon(ulong *p_weapons, struct WeaponsFourPack *p_fourpacks
         p_fourpacks->Amount[fp] = 0;
 }
 
-TbBool weapons_remove_one(ulong *p_weapons, struct WeaponsFourPack *p_fourpacks, ushort wtype)
+TbBool weapons_remove_one(u32 *p_weapons, struct WeaponsFourPack *p_fourpacks, ushort wtype)
 {
     ushort fp;
     TbBool was_last;
@@ -569,7 +569,7 @@ TbBool weapons_remove_one(ulong *p_weapons, struct WeaponsFourPack *p_fourpacks,
 
 }
 
-TbBool weapons_add_one(ulong *p_weapons, struct WeaponsFourPack *p_fourpacks, ushort wtype)
+TbBool weapons_add_one(u32 *p_weapons, struct WeaponsFourPack *p_fourpacks, ushort wtype)
 {
     ushort fp;
     TbBool is_first;
@@ -600,7 +600,7 @@ TbBool weapons_add_one(ulong *p_weapons, struct WeaponsFourPack *p_fourpacks, us
 
 }
 
-void sanitize_weapon_quantities(ulong *p_weapons, struct WeaponsFourPack *p_fourpacks)
+void sanitize_weapon_quantities(u32 *p_weapons, struct WeaponsFourPack *p_fourpacks)
 {
     ushort wtype;
     ushort n_weapons;

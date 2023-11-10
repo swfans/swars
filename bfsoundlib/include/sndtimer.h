@@ -29,16 +29,16 @@ extern "C" {
 #pragma pack(1)
 
 struct sound_timer_inf {
-    ulong handle;
-    ubyte used;
+    u32 handle;
+    u8 used;
 };
 
 #pragma pack()
 /******************************************************************************/
 
 void InitAllBullfrogSoundTimers(void);
-ushort SetupBullfrogSoundTimer(ushort freq, void (*cb)());
-void ReleaseBullfrogSoundTimer(ushort st);
+u16 SetupBullfrogSoundTimer(u16 freq, void (*cb)());
+void ReleaseBullfrogSoundTimer(u16 st);
 
 /******************************************************************************/
 #ifdef __cplusplus

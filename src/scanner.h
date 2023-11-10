@@ -35,62 +35,62 @@ struct Objective;
 
 struct BigBlip
 {
-  long X;
-  long Z;
-  ubyte Colour;
-  ubyte Period;
-  ubyte Speed;
-  ubyte Counter;
+  i32 X;
+  i32 Z;
+  u8 Colour;
+  u8 Period;
+  u8 Speed;
+  u8 Counter;
 };
 
 struct Arc
 {
-  long X1;
-  long Z1;
-  long X2;
-  long Z2;
-  ubyte ColourIsUnused;
-  ubyte Period;
-  ubyte SpeedIsUnused;
-  ubyte Counter;
+  i32 X1;
+  i32 Z1;
+  i32 X2;
+  i32 Z2;
+  u8 ColourIsUnused;
+  u8 Period;
+  u8 SpeedIsUnused;
+  u8 Counter;
 };
 
 struct Scanner
 {
-  long X1;
-  long Y1;
-  long X2;
-  long Y2;
-  long MX;
-  long MZ;
-  long Zoom;
-  long Angle;
-  long Contrast;
-  long Brightness;
-  long Width[200];
+  i32 X1;
+  i32 Y1;
+  i32 X2;
+  i32 Y2;
+  i32 MX;
+  i32 MZ;
+  i32 Zoom;
+  i32 Angle;
+  i32 Contrast;
+  i32 Brightness;
+  i32 Width[200];
   struct BigBlip BigBlip[SCANNER_BIG_BLIP_COUNT];
   struct Arc Arc[SCANNER_ARC_COUNT];
-  ubyte Group[SCANNER_GROUP_COUNT];
-  ubyte GroupCol[SCANNER_GROUP_COUNT];
-  ubyte GroupCount;
+  u8 Group[SCANNER_GROUP_COUNT];
+  u8 GroupCol[SCANNER_GROUP_COUNT];
+  u8 GroupCount;
   short NearThing1;
 };
 
 #pragma pack()
 /******************************************************************************/
-extern long *SCANNER_width;
+extern i32 *SCANNER_width;
 
 extern short waft_table2[32];
 extern short waft_table[32];
 
 void SCANNER_init(void);
 void SCANNER_fill_in(void);
-void SCANNER_set_colour(ubyte col);
+void SCANNER_set_colour(u8 col);
 
-void add_blippoint_to_scanner(int x, int z, ubyte colour);
+void add_blippoint_to_scanner(int x, int z, u8 colour);
 
 void clear_all_scanner_signals(void);
-void add_signal_to_scanner(struct Objective *p_objectv, ubyte flag);
+void add_signal_to_scanner(struct Objective *p_objectv, u8 flag);
 /******************************************************************************/
 #ifdef __cplusplus
 }

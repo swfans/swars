@@ -33,8 +33,8 @@ extern struct SampleInfo *end_sample_id;
 
 extern long sample_fade_handle;
 
-extern ubyte volatile samples_currently_fading;
-extern ubyte volatile switch_off_sample_fade_timer;
+extern u8 volatile samples_currently_fading;
+extern u8 volatile switch_off_sample_fade_timer;
 
 /******************************************************************************/
 

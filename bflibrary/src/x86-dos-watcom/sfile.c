@@ -38,7 +38,7 @@ TbBool LbFileExists(const char *fname)
   return access(fname,F_OK) == 0;
 }
 
-long LbFilePosition(TbFileHandle handle)
+i32 LbFilePosition(TbFileHandle handle)
 {
   int result = tell(handle);
   return result;
@@ -102,7 +102,7 @@ TbBool LbFileEof(TbFileHandle handle)
   return false;
 }
 
-TbResult LbFileSeek(TbFileHandle handle, long offset, TbFileSeekMode origin)
+TbResult LbFileSeek(TbFileHandle handle, i32 offset, TbFileSeekMode origin)
 {
   // code at 0001:000a1424
   int rc;
@@ -124,7 +124,7 @@ TbResult LbFileSeek(TbFileHandle handle, long offset, TbFileSeekMode origin)
   return rc;
 }
 
-long LbFileRead(TbFileHandle handle, void *buffer, unsigned long len)
+i32 LbFileRead(TbFileHandle handle, void *buffer, unsigned i32 len)
 {
   int result;
   //'read' returns (-1) on error
@@ -132,32 +132,32 @@ long LbFileRead(TbFileHandle handle, void *buffer, unsigned long len)
   return result;
 }
 
-long LbFileWrite(TbFileHandle handle, const void *buffer, const unsigned long len)
+i32 LbFileWrite(TbFileHandle handle, const void *buffer, const unsigned i32 len)
 {
-  long result;
+  i32 result;
   result = write(handle, buffer, len);
   return result;
 }
 
 TbBool LbFileFlush(TbFileHandle handle)
 {
-  long result;
+  i32 result;
   result = fsync(handle);
   return result;
 }
 
-long LbFileLengthHandle(TbFileHandle handle)
+i32 LbFileLengthHandle(TbFileHandle handle)
 {
-  long result;
+  i32 result;
   result = filelength(handle);
   return result;
 }
 
-long LbFileLength(const char *fname)
+i32 LbFileLength(const char *fname)
 {
   TbFileHandle handle;
   handle = LbFileOpen(fname, Lb_FILE_MODE_READ_ONLY);
-  long result = handle;
+  i32 result = handle;
   if ( handle != -1 )
   {
     result = filelength(handle);

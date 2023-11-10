@@ -22,7 +22,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <assert.h>
-
+#include <string.h>
 #include "awe32.h"
 #include "dpmi.h"
 #include "bffile.h"
@@ -37,10 +37,10 @@ extern char SoundDataPath[144];
 extern char CurrentAwe32SoundfontPrefix[12]; // = "Bullfrog";
 extern TbFileHandle sbkHandle; // = INVALID_FILE;
 
-extern uint8_t *awe_buffer;
-extern uint16_t awe_buffer_seg;
-extern uint8_t *awe_preset;
-extern uint16_t awe_preset_seg;
+extern u8 *awe_buffer;
+extern u16 awe_buffer_seg;
+extern u8 *awe_preset;
+extern u16 awe_preset_seg;
 /******************************************************************************/
 
 void FreeAwe32Soundfont(void)

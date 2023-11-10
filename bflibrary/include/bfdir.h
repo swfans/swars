@@ -48,7 +48,7 @@ TbResult LbDirectoryMake(const char *path, TbBool recursive);
  *
  * @return Returns the directory, without drive letter and without '/' at end.
  */
-TbResult LbDirectoryCurrent(char *buf, unsigned long buflen);
+TbResult LbDirectoryCurrent(char *buf, u32 buflen);
 
 /** Checks if a given file entry exist and is a directory.
  */

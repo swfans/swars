@@ -168,7 +168,7 @@ enum KeyCodes {
         KC_WAKE        = 0xE3,    // System Wake
 };
 
-typedef unsigned char TbKeyCode;
+typedef uc8 TbKeyCode;
 
 /** Enumeration of Key Modifiers.
  *
@@ -190,7 +190,7 @@ enum KeyModifiers {
 };
 #define KMod_DONTCARE -1
 
-typedef signed char TbKeyMods;
+typedef c8 TbKeyMods;
 
 enum KeyAction {
         KActn_NONE = 0,
@@ -198,27 +198,27 @@ enum KeyAction {
         KActn_KEYUP,
 };
 
-typedef ubyte TbKeyAction;
+typedef u8 TbKeyAction;
 
 typedef TbResult (*KeyboardEventHandler)(TbKeyAction action, TbKeyCode code);
 
-extern char lbInkeyToAscii[];
-extern char lbInkeyToAsciiShift[];
-extern const ubyte lbAsciiToInkey[];
-extern const char *lbKeyNames[];
+extern c8 lbInkeyToAscii[];
+extern c8 lbInkeyToAsciiShift[];
+extern const u8 lbAsciiToInkey[];
+extern const c8 *lbKeyNames[];
 
-extern unsigned char lbExtendedKeyPress;
-extern unsigned char lbKeyOn[256];
+extern uc8 lbExtendedKeyPress;
+extern uc8 lbKeyOn[256];
 
-extern unsigned char lbInkey;
-extern unsigned char lbInkeyFlags;
-extern ulong lbInkey_prefixed;
+extern uc8 lbInkey;
+extern uc8 lbInkeyFlags;
+extern u32 lbInkey_prefixed;
 
 /** Key modifier flags for lbInkey. */
-extern unsigned char lbShift;
+extern uc8 lbShift;
 
-extern unsigned char lbIInkey;
-extern unsigned char lbIInkeyFlags;
+extern uc8 lbIInkey;
+extern uc8 lbIInkeyFlags;
 
 void LbKeyboardSetLanguage(int lngnum);
 void LbKeyboardCustomHandler(KeyboardEventHandler handler);

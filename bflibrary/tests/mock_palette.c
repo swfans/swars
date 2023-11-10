@@ -23,9 +23,9 @@
 #include "bfscreen.h"
 #include "bftstlog.h"
 
-extern ubyte lbPalette[PALETTE_8b_SIZE];
+extern u8 lbPalette[PALETTE_8b_SIZE];
 
-TbResult MockPaletteSet(const ubyte *palette)
+TbResult MockPaletteSet(const u8 *palette)
 {
     if (!lbScreenInitialised)
       return Lb_FAIL;
@@ -35,10 +35,10 @@ TbResult MockPaletteSet(const ubyte *palette)
     return Lb_SUCCESS;
 }
 
-void make_general_palette(ubyte *pal)
+void make_general_palette(u8 *pal)
 {
     short i, k;
-    ubyte *p;
+    u8 *p;
 
     p = pal;
     k = 0;

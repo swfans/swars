@@ -36,7 +36,7 @@ extern SNDSEQUENCE *SongHandle;
 
 /******************************************************************************/
 
-void SetMusicVolume(int msec, ubyte volume)
+void SetMusicVolume(int msec, u8 volume)
 {
     if (!MusicAble || !MusicInstalled)
         return;

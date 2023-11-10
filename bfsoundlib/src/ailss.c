@@ -23,7 +23,7 @@
 #include <stdbool.h>
 #include <limits.h>
 #include <assert.h>
-
+#include <string.h>
 #include "ailss.h"
 #include "aildebug.h"
 #include "ail.h"
@@ -168,7 +168,7 @@ int32_t SS_configure_buffers(DIG_DRIVER *digdrv)
             digdrv->DDT->format_data[digdrv->hw_format].nominal_physical_sample_rate;
         pref[2] =
             digdrv->DDT->format_data[digdrv->hw_format].maximum_physical_sample_rate;
-        delta = LONG_MAX;
+        delta = INT_MAX;
         for (i = 0; i < 3; i++)
         {
             if (abs(n - pref[i]) <= delta) {
@@ -217,7 +217,7 @@ int32_t SS_configure_buffers(DIG_DRIVER *digdrv)
 
     // Round half-buffer size to nearest binary power between 8 and
     // DIG_DMA_RESERVE / 2; ensure result within driver limits
-    delta = LONG_MAX;
+    delta = INT_MAX;
 
     for (n = 8; n <= (AIL_preference[DIG_DMA_RESERVE] / 2); n <<= 1)
     {

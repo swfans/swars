@@ -22,7 +22,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <assert.h>
-
+#include <string.h>
 #include "bfaudio.h"
 #include "bfmemory.h"
 #include "bffile.h"

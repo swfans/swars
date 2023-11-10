@@ -42,33 +42,33 @@
             cor2 = corlimit; \
     }
 
-static inline void *LbI_XMemCopy(void *dest, void *source, ulong len)
+static inline void *LbI_XMemCopy(void *dest, void *source, u32 len)
 {
-    ulong remain;
+    u32 remain;
     ubyte *s;
     ubyte *d;
     s = (ubyte *)source;
     d = (ubyte *)dest;
     for (remain = len >> 2; remain != 0; remain--)
     {
-        *(ulong *)d = *(ulong *)s;
+        *(u32 *)d = *(u32 *)s;
         d += 4;
         s += 4;
     }
     return dest;
 }
 
-static inline void *LbI_XMemCopyAndSet(void *dest, void *source, ulong val, ulong len)
+static inline void *LbI_XMemCopyAndSet(void *dest, void *source, u32 val, u32 len)
 {
-    ulong remain;
+    u32 remain;
     ubyte *s;
     ubyte *d;
     s = (ubyte *)source;
     d = (ubyte *)dest;
     for (remain = len >> 2; remain != 0; remain--)
     {
-        *(ulong *)d = *(ulong *)s;
-        *(ulong *)s = val;
+        *(u32 *)d = *(u32 *)s;
+        *(u32 *)s = val;
         d += 4;
         s += 4;
     }
@@ -84,7 +84,7 @@ TbResult LbScreenSetupAnyMode(TbScreenMode mode, TbScreenCoord width,
 TbResult LbScreenClearGraphicsWindow(TbPixel colour)
 {
     TbPixel *ptr;
-    long h;
+    i32 h;
 
     ptr = lbDisplay.GraphicsWindowPtr;
     if (ptr == NULL)
@@ -138,10 +138,10 @@ int LbScreenSetDoubleBuffering()
 // code at 0001:000957b8
 }
 
-ulong LbScreenSetWScreenInVideo(ulong flag)
+u32 LbScreenSetWScreenInVideo(u32 flag)
 {
-    static ulong cur_flag = 0;
-    ulong prev_flag;
+    static u32 cur_flag = 0;
+    u32 prev_flag;
 
     prev_flag = cur_flag;
     cur_flag = flag;
@@ -174,7 +174,7 @@ TbResult LbScreenSwap(void)
     LbMousePlace();
     if (lbDisplay.VesaIsSetUp)
     {
-        ulong block_id, blshift, blremain;
+        u32 block_id, blshift, blremain;
         ubyte *srcbuf;
         blremain = lbDisplay.GraphicsScreenHeight * lbDisplay.GraphicsScreenWidth;
         srcbuf = lbDisplay.WScreen;
@@ -193,7 +193,7 @@ TbResult LbScreenSwap(void)
         }
     } else
     {
-        ulong blremain;
+        u32 blremain;
         blremain = lbDisplay.GraphicsScreenHeight * lbDisplay.GraphicsScreenWidth;
         LbI_XMemCopy(lbDisplay.PhysicalScreen, lbDisplay.WScreen, blremain);
     }
@@ -211,7 +211,7 @@ TbResult LbScreenSwapClear(TbPixel colour)
     LbMousePlace();
     if (lbDisplay.VesaIsSetUp)
     {
-        ulong block_id, pagelen, blremain;
+        u32 block_id, pagelen, blremain;
         ubyte *blsrcbuf;
         blremain = lbDisplay.GraphicsScreenHeight * lbDisplay.GraphicsScreenWidth;
         blsrcbuf = lbDisplay.WScreen;
@@ -239,13 +239,13 @@ TbResult LbScreenSwapClear(TbPixel colour)
     return Lb_SUCCESS;
 }
 
-TbResult LbScreenSwapBox(ubyte *sourceBuf, long sourceX, long sourceY,
-  long destX, long destY, ulong width, ulong height)
+TbResult LbScreenSwapBox(ubyte *sourceBuf, i32 sourceX, i32 sourceY,
+  i32 destX, i32 destY, u32 width, u32 height)
 {
     ushort h;
     ushort page1, page2;
     ubyte *destBuf;
-    ulong outPos1, outPos2, pageAddr;
+    u32 outPos1, outPos2, pageAddr;
 
     LbMousePlace();
     outPos1 = lbDisplay.PhysicalScreenWidth * destY + destX;
@@ -284,12 +284,12 @@ TbResult LbScreenSwapBox(ubyte *sourceBuf, long sourceX, long sourceY,
     return Lb_SUCCESS;
 }
 
-static TbResult LbI_ScreenDrawHLineDirect(long X1, long Y1, long X2, long Y2)
+static TbResult LbI_ScreenDrawHLineDirect(i32 X1, i32 Y1, i32 X2, i32 Y2)
 {
     ubyte *ptr;
     ubyte *ptrEnd;
-    long xBeg, xEnd;
-    long width, shiftX, shiftY;
+    i32 xBeg, xEnd;
+    i32 width, shiftX, shiftY;
 
     if (X1 <= X2) {
         width = X2 - X1;
@@ -304,7 +304,7 @@ static TbResult LbI_ScreenDrawHLineDirect(long X1, long Y1, long X2, long Y2)
     xEnd = width + shiftY + shiftX;
     if (lbDisplay.VesaIsSetUp)
     {
-        ulong page1, page2;
+        u32 page1, page2;
 
         page1 = xBeg >> 16;
         page2 = xEnd >> 16;
@@ -342,13 +342,13 @@ static TbResult LbI_ScreenDrawHLineDirect(long X1, long Y1, long X2, long Y2)
     }
 }
 
-static TbResult LbI_ScreenDrawVLineDirect(long X1, long Y1, long X2, long Y2)
+static TbResult LbI_ScreenDrawVLineDirect(i32 X1, i32 Y1, i32 X2, i32 Y2)
 {
     ubyte *ptr;
     ubyte *ptrEnd;
-    long yBeg, yEnd;
-    long height, shiftX, shiftY;
-    long delta;
+    i32 yBeg, yEnd;
+    i32 height, shiftX, shiftY;
+    i32 delta;
 
     if (Y1 <= Y2) {
         height = Y2 - Y1;
@@ -361,8 +361,8 @@ static TbResult LbI_ScreenDrawVLineDirect(long X1, long Y1, long X2, long Y2)
     yEnd = height * lbDisplay.GraphicsScreenWidth + yBeg;
     if (lbDisplay.VesaIsSetUp)
     {
-        ulong page1, page2, i;
-        ulong begFirstPg, endLastPg, endMidPg;
+        u32 page1, page2, i;
+        u32 begFirstPg, endLastPg, endMidPg;
         ubyte *ptrPrev;
 
         page1 = yBeg >> 16;
@@ -405,7 +405,7 @@ static TbResult LbI_ScreenDrawVLineDirect(long X1, long Y1, long X2, long Y2)
     }
 }
 
-TbResult LbScreenDrawHVLineDirect(long X1, long Y1, long X2, long Y2)
+TbResult LbScreenDrawHVLineDirect(i32 X1, i32 Y1, i32 X2, i32 Y2)
 {
     CLIP_START_END_COORDS(X1, X2, lbDisplay.GraphicsWindowWidth);
     CLIP_START_END_COORDS(Y1, Y2, lbDisplay.GraphicsWindowHeight);

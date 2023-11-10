@@ -25,24 +25,24 @@
 #include "sb16.h"
 /******************************************************************************/
 
-ushort current_SB16_left_master_volume = 0;
-ushort current_SB16_right_master_volume = 0;
-ushort old_SB16_left_midi_volume = 0;
-ushort old_SB16_right_midi_volume = 0;
-ushort old_SB16_left_digi_volume = 0;
-ushort old_SB16_right_digi_volume = 0;
-ushort old_SB16_left_treble_volume = 0;
-ushort old_SB16_right_treble_volume = 0;
-ushort old_SB16_left_bass_volume = 0;
-ushort old_SB16_right_bass_volume = 0;
-ubyte sb16_mixer_set = 0;
+u16 current_SB16_left_master_volume = 0;
+u16 current_SB16_right_master_volume = 0;
+u16 old_SB16_left_midi_volume = 0;
+u16 old_SB16_right_midi_volume = 0;
+u16 old_SB16_left_digi_volume = 0;
+u16 old_SB16_right_digi_volume = 0;
+u16 old_SB16_left_treble_volume = 0;
+u16 old_SB16_right_treble_volume = 0;
+u16 old_SB16_left_bass_volume = 0;
+u16 old_SB16_right_bass_volume = 0;
+u8 sb16_mixer_set = 0;
 
 /******************************************************************************/
 
 void prepare_SB16_volumes(void)
 {
 #if defined(DOS)||defined(GO32)
-    ubyte b;
+    u8 b;
 
     if (SoundInstallChoice.IO.IO != 0x220)
         return;

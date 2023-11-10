@@ -29,10 +29,10 @@ extern "C" {
 #pragma pack(1)
 
 struct TbDriveInfo {
-    ulong TotalClusters;
-    ulong FreeClusters;
-    ulong SectorsPerCluster;
-    ulong BytesPerSector;
+    u32 TotalClusters;
+    u32 FreeClusters;
+    u32 SectorsPerCluster;
+    u32 BytesPerSector;
 };
 
 typedef struct TbDriveInfo TbDriveInfo;
@@ -44,28 +44,28 @@ typedef struct TbDriveInfo TbDriveInfo;
  * @param drive
  * @return
  */
-TbResult LbDriveCurrent(ulong *drive);
+TbResult LbDriveCurrent(u32 *drive);
 
 /** Changes the current disk drive into given one.
  *
  * @param drive
  * @return
  */
-TbResult LbDriveChange(const ulong drive);
+TbResult LbDriveChange(const u32 drive);
 
 /** Returns if a given drive exists.
  *
  * @param drive
  * @return
  */
-TbResult LbDriveExists(const ulong drive);
+TbResult LbDriveExists(const u32 drive);
 
 /** Acquires info on the drive geometry and free clusters.
  *
  * @param drive
  * @return
  */
-TbResult LbDriveFreeSpace(const ulong drive, TbDriveInfo *drvinfo);
+TbResult LbDriveFreeSpace(const u32 drive, TbDriveInfo *drvinfo);
 
 #ifdef __cplusplus
 };

@@ -34,9 +34,9 @@ extern "C" {
 
 
 struct Palette { // sizeof=3
-    ubyte Red;
-    ubyte Green;
-    ubyte Blue;
+    u8 Red;
+    u8 Green;
+    u8 Blue;
 };
 
 typedef struct Palette Palette;
@@ -53,7 +53,7 @@ typedef struct Palette Palette;
  *        fading can be done in one call, and the function will return
  *        only when the fading has completed.
  */
-TbResult LbPaletteFade(ubyte *from_pal, ubyte fade_to, ubyte fade_steps);
+TbResult LbPaletteFade(u8 *from_pal, u8 fade_to, u8 fade_steps);
 
 /** Stops any fading currently in progress.
  */
@@ -62,36 +62,36 @@ TbResult LbPaletteStopOpenFade(void);
 /** Finds a colour index in given palette best matching given RGB values.
  * Uses linear colour distance algorithm.
  */
-TbPixel LbPaletteFindColour(const ubyte *pal, ubyte r, ubyte g, ubyte b);
+TbPixel LbPaletteFindColour(const u8 *pal, u8 r, u8 g, u8 b);
 
 /** Finds a colour index in given palette best matching given RGB values.
  * Uses linear RGB colour distance algorithm.
  */
-TbPixel LbPaletteFindColourLinear(const ubyte *pal, ubyte r, ubyte g, ubyte b);
+TbPixel LbPaletteFindColourLinear(const u8 *pal, u8 r, u8 g, u8 b);
 
 /** Finds a colour index in given palette best matching given RGB values.
  * Uses waged linear RGB colour distance algorithm, with non-squared wages.
  */
-TbPixel LbPaletteFindColourHalfWaged(const ubyte *pal, ubyte r, ubyte g, ubyte b);
+TbPixel LbPaletteFindColourHalfWaged(const u8 *pal, u8 r, u8 g, u8 b);
 
 /** Draw the current palette on screen, in form ot 16x16 table.
  */
-TbResult LbPaletteDraw(long X, long Y,
-  ulong Width, ulong Height, ushort Flags);
+TbResult LbPaletteDraw(i32 X, i32 Y,
+  u32 Width, u32 Height, ushort Flags);
 
 /** Retrieves the indexed colour video palette.
  *
  * @param palette Pointer to target palette colors buffer.
  * @return Lb_SUCCESS, or error code.
  */
-TbResult LbPaletteGet(ubyte *palette);
+TbResult LbPaletteGet(u8 *palette);
 
 /** Sets the indexed colour video palette.
  *
  * @param palette Pointer to the palette colors data.
  * @return Lb_SUCCESS, or error code.
  */
-TbResult LbPaletteSet(const ubyte *palette);
+TbResult LbPaletteSet(const u8 *palette);
 
 /** Clears the indexed colour video palette with black colour.
  * Only writes values to given palette bufer - does no screen operations.
@@ -99,19 +99,19 @@ TbResult LbPaletteSet(const ubyte *palette);
  * @param palette Pointer to the palette colors data.
  * @return Lb_SUCCESS, or error code.
  */
-TbResult LbPaletteDataFillBlack(ubyte *palette);
+TbResult LbPaletteDataFillBlack(u8 *palette);
 
 /** Clears the indexed colour video palette with white colour.
  *
  * @param palette Pointer to the palette colors data.
  * @return Lb_SUCCESS, or error code.
  */
-TbResult LbPaletteDataFillWhite(ubyte *palette);
+TbResult LbPaletteDataFillWhite(u8 *palette);
 
 /** Get colour distance by computing squares of coordinates.
  */
-long LbColourDistanceLinearSq(ubyte r1, ubyte g1, ubyte b1,
-  ubyte r2, ubyte g2, ubyte b2);
+i32 LbColourDistanceLinearSq(u8 r1, u8 g1, u8 b1,
+  u8 r2, u8 g2, u8 b2);
 
 #ifdef __cplusplus
 };

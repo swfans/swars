@@ -16,8 +16,8 @@
  *     (at your option) any later version.
  */
 /******************************************************************************/
+#include <string.h>
 #include "cybmod.h"
-
 #include "bfmemory.h"
 #include "bffile.h"
 #include "bfini.h"
@@ -78,7 +78,7 @@ void read_cybmods_conf_file(void)
     TbFileHandle conf_fh;
     TbBool done;
     int i;
-    long k;
+    i32 k;
     int cmd_num;
     char *conf_buf;
     struct TbIniParser parser;
@@ -265,7 +265,7 @@ void read_cybmods_conf_file(void)
     mod_names[i].num = 0;
 }
 
-const char *cybmod_codename(ushort mtype)
+const char *cybmod_codename(u16 mtype)
 {
     struct ModDefAdd *mdefa;
 
@@ -276,56 +276,56 @@ const char *cybmod_codename(ushort mtype)
     return mdefa->Name;
 }
 
-ubyte cybmod_chest_level(union Mod *p_umod)
+u8 cybmod_chest_level(union Mod *p_umod)
 {
     return (p_umod->Mods >> 6) & 7;
 }
 
-void set_cybmod_chest_level(union Mod *p_umod, ubyte nmod)
+void set_cybmod_chest_level(union Mod *p_umod, u8 nmod)
 {
     p_umod->Mods &= ~(7 << 6);
     p_umod->Mods |= (nmod << 6);
 }
 
-ubyte cybmod_legs_level(union Mod *p_umod)
+u8 cybmod_legs_level(union Mod *p_umod)
 {
     return (p_umod->Mods) & 7;
 }
 
-void set_cybmod_legs_level(union Mod *p_umod, ubyte nmod)
+void set_cybmod_legs_level(union Mod *p_umod, u8 nmod)
 {
     p_umod->Mods &= ~(7);
     p_umod->Mods |= (nmod);
 }
 
-ubyte cybmod_arms_level(union Mod *p_umod)
+u8 cybmod_arms_level(union Mod *p_umod)
 {
     return (p_umod->Mods >> 3) & 7;
 }
 
-void set_cybmod_arms_level(union Mod *p_umod, ubyte nmod)
+void set_cybmod_arms_level(union Mod *p_umod, u8 nmod)
 {
     p_umod->Mods &= ~(7 << 3);
     p_umod->Mods |= (nmod << 3);
 }
 
-ubyte cybmod_brain_level(union Mod *p_umod)
+u8 cybmod_brain_level(union Mod *p_umod)
 {
     return (p_umod->Mods >> 9) & 7;
 }
 
-void set_cybmod_brain_level(union Mod *p_umod, ubyte nmod)
+void set_cybmod_brain_level(union Mod *p_umod, u8 nmod)
 {
     p_umod->Mods &= ~(7 << 9);
     p_umod->Mods |= (nmod << 9);
 }
 
-ubyte cybmod_skin_level(union Mod *p_umod)
+u8 cybmod_skin_level(union Mod *p_umod)
 {
     return (p_umod->Mods >> 12) & 7;
 }
 
-void set_cybmod_skin_level(union Mod *p_umod, ubyte nmod)
+void set_cybmod_skin_level(union Mod *p_umod, u8 nmod)
 {
     p_umod->Mods &= ~(7 << 12);
     p_umod->Mods |= (nmod << 12);
@@ -361,7 +361,7 @@ TbBool cybmod_fix_all(union Mod *p_umod)
     return fixed;
 }
 
-void add_mod_to_flags(union Mod *p_umod, ushort mtype)
+void add_mod_to_flags(union Mod *p_umod, u16 mtype)
 {
     switch (cybmod_group_type(mtype))
     {
@@ -383,7 +383,7 @@ void add_mod_to_flags(union Mod *p_umod, ushort mtype)
     }
 }
 
-TbBool add_mod_to_flags_no_replace(union Mod *p_umod, ushort mtype)
+TbBool add_mod_to_flags_no_replace(union Mod *p_umod, u16 mtype)
 {
     switch (cybmod_group_type(mtype))
     {
@@ -429,7 +429,7 @@ void sanitize_cybmods_fmtver11_flags(union Mod *p_umod)
     asm volatile ("call ASM_sanitize_cybmods_flags\n"
         : : "a" (&p_umod->Mods));
 #endif
-    ushort modflg, f;
+    u16 modflg, f;
 
     modflg = p_umod->Mods;
 
@@ -491,16 +491,16 @@ void sanitize_cybmods_fmtver11_flags(union Mod *p_umod)
  * Note that it only works for mods stored as flag-per-mod. The
  * usual way of storage within people is 3bit-per-mod-type.
  */
-ushort cybmodflags_prev_mod(ulong modflags, ushort last_mtype)
+u16 cybmodflags_prev_mod(u32 modflags, u16 last_mtype)
 {
-    ushort mtype;
+    u16 mtype;
 
     if (last_mtype < 2)
         return 0;
 
     for (mtype = last_mtype - 1; mtype > 0; mtype--)
     {
-        ulong modflg = 1 << (mtype-1);
+        u32 modflg = 1 << (mtype-1);
         if ((modflags & modflg) != 0)
             return mtype;
     }
@@ -509,7 +509,7 @@ ushort cybmodflags_prev_mod(ulong modflags, ushort last_mtype)
 
 /** Returns mod group type for given mod type.
  */
-ushort cybmod_group_type(ushort mtype)
+u16 cybmod_group_type(u16 mtype)
 {
     if (mtype == MOD_NULL)
         return 0;
@@ -520,7 +520,7 @@ ushort cybmod_group_type(ushort mtype)
 
 /** Returns mod version for given mod type.
  */
-ushort cybmod_version(ushort mtype)
+u16 cybmod_version(u16 mtype)
 {
     if (mtype == MOD_NULL)
         return 0;

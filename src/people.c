@@ -88,7 +88,7 @@ void read_people_conf_file(void)
     TbFileHandle conf_fh;
     TbBool done;
     int i;
-    long k;
+    i32 k;
     int cmd_num;
     char *conf_buf;
     struct TbIniParser parser;
@@ -312,57 +312,57 @@ void load_peep_type_stats(void)
 #endif
 }
 
-ubyte person_mod_chest_level(struct Thing *p_person)
+u8 person_mod_chest_level(struct Thing *p_person)
 {
     return cybmod_chest_level(&p_person->U.UPerson.UMod);
 }
 
-void set_person_mod_chest_level(struct Thing *p_person, ubyte nmod)
+void set_person_mod_chest_level(struct Thing *p_person, u8 nmod)
 {
     set_cybmod_chest_level(&p_person->U.UPerson.UMod, nmod);
 }
 
-ubyte person_mod_legs_level(struct Thing *p_person)
+u8 person_mod_legs_level(struct Thing *p_person)
 {
     return cybmod_legs_level(&p_person->U.UPerson.UMod);
 }
 
-void set_person_mod_legs_level(struct Thing *p_person, ubyte nmod)
+void set_person_mod_legs_level(struct Thing *p_person, u8 nmod)
 {
     set_cybmod_legs_level(&p_person->U.UPerson.UMod, nmod);
 }
 
-ubyte person_mod_arms_level(struct Thing *p_person)
+u8 person_mod_arms_level(struct Thing *p_person)
 {
     return cybmod_arms_level(&p_person->U.UPerson.UMod);
 }
 
-void set_person_mod_arms_level(struct Thing *p_person, ubyte nmod)
+void set_person_mod_arms_level(struct Thing *p_person, u8 nmod)
 {
     set_cybmod_arms_level(&p_person->U.UPerson.UMod, nmod);
 }
 
-ubyte person_mod_brain_level(struct Thing *p_person)
+u8 person_mod_brain_level(struct Thing *p_person)
 {
     return cybmod_brain_level(&p_person->U.UPerson.UMod);
 }
 
-void set_person_mod_brain_level(struct Thing *p_person, ubyte nmod)
+void set_person_mod_brain_level(struct Thing *p_person, u8 nmod)
 {
     set_cybmod_brain_level(&p_person->U.UPerson.UMod, nmod);
 }
 
-ubyte person_mod_skin_level(struct Thing *p_person)
+u8 person_mod_skin_level(struct Thing *p_person)
 {
     return cybmod_skin_level(&p_person->U.UPerson.UMod);
 }
 
-void set_person_mod_skin_level(struct Thing *p_person, ubyte nmod)
+void set_person_mod_skin_level(struct Thing *p_person, u8 nmod)
 {
     set_cybmod_skin_level(&p_person->U.UPerson.UMod, nmod);
 }
 
-TbBool person_carries_weapon(struct Thing *p_person, ubyte weapon)
+TbBool person_carries_weapon(struct Thing *p_person, u8 weapon)
 {
     return weapons_has_weapon(p_person->U.UPerson.WeaponsCarried, weapon);
 }

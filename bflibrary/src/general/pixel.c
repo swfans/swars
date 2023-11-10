@@ -21,9 +21,9 @@
 #include "bfpixel.h"
 #include "bfscreen.h"
 
-TbResult LbDrawPixelClip(long x, long y, TbPixel colour)
+TbResult LbDrawPixelClip(i32 x, i32 y, TbPixel colour)
 {
-    ubyte *ptr;
+    u8 *ptr;
 
     if ((x < 0) || (x >= lbDisplay.GraphicsWindowWidth))
         return Lb_FAIL;
@@ -46,9 +46,9 @@ TbResult LbDrawPixelClip(long x, long y, TbPixel colour)
     return Lb_SUCCESS;
 }
 
-TbResult LbDrawPixel(long x, long y, TbPixel colour)
+TbResult LbDrawPixel(i32 x, i32 y, TbPixel colour)
 {
-    ubyte *ptr;
+    u8 *ptr;
     ptr = &lbDisplay.GraphicsWindowPtr[x + lbDisplay.GraphicsScreenWidth * y];
     *ptr = colour;
     return Lb_SUCCESS;
