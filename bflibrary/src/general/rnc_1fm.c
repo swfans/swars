@@ -18,11 +18,11 @@
  */
 /******************************************************************************/
 #include "rnc_1fm.h"
-#include <stdio.h>
 #include "bftypes.h"
 #include "bfendian.h"
 #include "bfmemory.h"
 #include "bfmemut.h"
+#include "privbflog.h"
 
 typedef struct {
     u32 bitbuf;           /* holds between 16 and 32 bits */
@@ -439,7 +439,7 @@ i32 rnc_unpack(void *packed, void *unpacked, u32 flags
 
 i32 UnpackM1(unsigned char *buffer, u32 bufsize)
 {
-    fprintf(stdout, "%u\n", bufsize);
+    LOGWARN("UnpackM1: (expected size %zu)", bufsize);
     //If file isn't compressed - return zero
     if (blong(buffer+0) != RNC_SIGNATURE)
         return 0;

@@ -71,10 +71,10 @@ i32 LbFileLoadAt(const char *fname, void *buffer)
     }
     if (read_status == -1)
     {
-        LOGERR("%s: could not read (expected size %ld): %s", fname, filelength, strerror(errno));
+        LOGERR("%s: could not read (expected size %zu): %s", fname, filelength, strerror(errno));
         return -1;
     }
-    fprintf(stdout, "%s\n", fname);
+    LOGWARN("%s: trying to read (expected size %zu)", fname, filelength);
     i32 unp_length = UnpackM1((unsigned char *)buffer, filelength);
     i32 result;
     if ( unp_length >= 0 )
