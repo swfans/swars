@@ -32,8 +32,8 @@ extern "C" {
  * @param src_palette Source palette.
  * @param dst_palette Destination palette.
  */
-TbResult LbCrossPaletteLutGen(ubyte *cross_lut, const ubyte *src_palette,
-  const ubyte *dst_palette);
+TbResult LbCrossPaletteLutGen(u8 *cross_lut, const u8 *src_palette,
+  const u8 *dst_palette);
 
 /** Computes histogram for given memory buffer.
  *
@@ -41,10 +41,10 @@ TbResult LbCrossPaletteLutGen(ubyte *cross_lut, const ubyte *src_palette,
  * @param buf Input data.
  * @param buf_len Length of the input data.
  */
-TbResult LbBufferHistogram(ulong *hist, const TbPixel *buf, ulong buf_len);
+TbResult LbBufferHistogram(u32 *hist, const TbPixel *buf, u32 buf_len);
 
-short LbImageBuffersMaxDifference(const TbPixel *buf1, const ubyte *pal1,
-  const TbPixel *buf2, const ubyte *pal2, ulong buf_len, ulong *pos);
+short LbImageBuffersMaxDifference(const TbPixel *buf1, const u8 *pal1,
+  const TbPixel *buf2, const u8 *pal2, u32 buf_len, u32 *pos);
 
 #ifdef __cplusplus
 };

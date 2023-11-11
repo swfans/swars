@@ -18,45 +18,45 @@
  */
 /******************************************************************************/
 #include "rnc_1fm.h"
-
 #include "bftypes.h"
 #include "bfendian.h"
 #include "bfmemory.h"
 #include "bfmemut.h"
+#include "privbflog.h"
 
 typedef struct {
-    unsigned long bitbuf;           /* holds between 16 and 32 bits */
-    int bitcount;               /* how many bits does bitbuf hold? */
+    u32 bitbuf;           /* holds between 16 and 32 bits */
+    i32 bitcount;               /* how many bits does bitbuf hold? */
 } bit_stream;
 
 typedef struct {
-    int num;                   /* number of nodes in the tree */
+    i32 num;                   /* number of nodes in the tree */
     struct {
-    unsigned long code;
-    int codelen;
-    int value;
+    u32 code;
+    i32 codelen;
+    i32 value;
     } table[32];
 } huf_table;
 
 static void read_huftable (huf_table *h, bit_stream *bs,
-                   unsigned char **p, unsigned char *pend);
-static long huf_read (huf_table *h, bit_stream *bs,
-                   unsigned char **p,unsigned char *pend);
+                   uc8 **p, uc8 *pend);
+static i32 huf_read (huf_table *h, bit_stream *bs,
+                   uc8 **p,uc8 *pend);
 
-static void bitread_init (bit_stream *bs, unsigned char **p, unsigned char *pend);
-static void bitread_fix (bit_stream *bs, unsigned char **p, unsigned char *pend);
-static unsigned long bit_peek (bit_stream *bs, unsigned long mask);
+static void bitread_init (bit_stream *bs, uc8 **p, uc8 *pend);
+static void bitread_fix (bit_stream *bs, uc8 **p, uc8 *pend);
+static u32 bit_peek (bit_stream *bs,  u32 mask);
 static void bit_advance (bit_stream *bs, int n,
-                   unsigned char **p, unsigned char *pend);
-static unsigned long bit_read (bit_stream *bs, unsigned long mask,
-                   int n, unsigned char **p, unsigned char *pend);
+                   uc8 **p, uc8 *pend);
+static u32 bit_read (bit_stream *bs, u32 mask,
+                   int n, uc8 **p, uc8 *pend);
 
-static unsigned long mirror(unsigned long x, int n);
+static u32 mirror(u32 x, int n);
 
 /*
  * Return an error string corresponding to an error return code.
  */
-const char *rnc_error (long errcode) {
+const char *rnc_error (i32 errcode) {
     static const char *const errors[] = {
         "No error",
         "File is not RNC-1 format",
@@ -68,7 +68,7 @@ const char *rnc_error (long errcode) {
         "Huffman decode leads outside buffers",
         "Unknown error"
     };
-    long errlimit;
+    i32 errlimit;
     errlimit = sizeof(errors)/sizeof(*errors) - 1;
     errcode = -errcode;
     if (errcode < 0)
@@ -82,12 +82,12 @@ const char *rnc_error (long errcode) {
  * Read a Huffman table out of the bit stream and data stream given.
  */
 static void read_huftable (huf_table *h, bit_stream *bs,
-                          unsigned char **p, unsigned char *pend)
+                          uc8 **p, uc8 *pend)
 {
     int i, j, k, num;
     int leaflen[32];
     int leafmax;
-    unsigned long codeb;           // big-endian form of code
+    u32 codeb;           // big-endian form of code
 
     num = bit_read (bs, 0x1F, 5, p, pend);
     if (!num)
@@ -123,15 +123,15 @@ static void read_huftable (huf_table *h, bit_stream *bs,
 /** @internal
  * Read a value out of the bit stream using the given Huffman table.
  */
-static long huf_read (huf_table *h, bit_stream *bs,
-                   unsigned char **p,unsigned char *pend)
+static i32 huf_read (huf_table *h, bit_stream *bs,
+                   u8 **p, u8 *pend)
 {
     int i;
-    unsigned long val;
+    u32 val;
 
     for (i=0; i<h->num; i++)
     {
-        unsigned long mask = (1 << h->table[i].codelen) - 1;
+        u32 mask = (1 << h->table[i].codelen) - 1;
         if (bit_peek(bs, mask) == h->table[i].code)
             break;
     }
@@ -154,7 +154,7 @@ static long huf_read (huf_table *h, bit_stream *bs,
  * data.
  * Checks pend for proper buffer pointers range.
  */
-static void bitread_init (bit_stream *bs, unsigned char **p, unsigned char *pend)
+static void bitread_init (bit_stream *bs, uc8 **p, uc8 *pend)
 {
     if (pend-(*p) >= 0)
         bs->bitbuf = lword (*p);
@@ -168,7 +168,7 @@ static void bitread_init (bit_stream *bs, unsigned char **p, unsigned char *pend
  * data stream.
  * Checks pend for proper buffer pointers range.
  */
-static void bitread_fix (bit_stream *bs, unsigned char **p, unsigned char *pend)
+static void bitread_fix (bit_stream *bs, uc8 **p, uc8 *pend)
 {
     bs->bitcount -= 16;
     bs->bitbuf &= (1<<bs->bitcount)-1; // remove the top 16 bits
@@ -180,7 +180,7 @@ static void bitread_fix (bit_stream *bs, unsigned char **p, unsigned char *pend)
 /** @internal
  * Returns some bits.
  */
-static unsigned long bit_peek (bit_stream *bs, unsigned long mask)
+static u32 bit_peek (bit_stream *bs, u32 mask)
 {
     return bs->bitbuf & mask;
 }
@@ -189,7 +189,7 @@ static unsigned long bit_peek (bit_stream *bs, unsigned long mask)
  * Advances the bit stream.
  * Checks pend for proper buffer pointers range.
  */
-static void bit_advance (bit_stream *bs, int n, unsigned char **p, unsigned char *pend)
+static void bit_advance (bit_stream *bs, int n, uc8 **p, uc8 *pend)
 {
     bs->bitbuf >>= n;
     bs->bitcount -= n;
@@ -205,10 +205,10 @@ static void bit_advance (bit_stream *bs, int n, unsigned char **p, unsigned char
 /** @internal
  * Reads some bits in one go (ie the above two routines combined).
  */
-static unsigned long bit_read (bit_stream *bs, unsigned long mask,
-                   int n, unsigned char **p, unsigned char *pend)
+static u32 bit_read (bit_stream *bs, u32 mask,
+                   int n, uc8 **p, uc8 *pend)
 {
-    unsigned long result = bit_peek (bs, mask);
+    u32 result = bit_peek (bs, mask);
     bit_advance (bs, n, p, pend);
     return result;
 }
@@ -216,12 +216,12 @@ static unsigned long bit_read (bit_stream *bs, unsigned long mask,
 /** @internal
  * Mirror the bottom n bits of x.
  */
-static unsigned long mirror (unsigned long x, int n) {
-    unsigned long top = 1 << (n-1), bottom = 1;
+static u32 mirror (u32 x, int n) {
+    u32 top = 1 << (n-1), bottom = 1;
     while (top > bottom)
     {
-        unsigned long mask = top | bottom;
-        unsigned long masked = x & mask;
+        u32 mask = top | bottom;
+        u32 masked = x & mask;
         if (masked != 0 && masked != mask)
             x ^= mask;
         top >>= 1;
@@ -230,17 +230,17 @@ static unsigned long mirror (unsigned long x, int n) {
     return x;
 }
 
-unsigned short crctab[256];
-short crctab_ready=false;
+u16 crctab[256];
+i16 crctab_ready=false;
 
 /** @internal
  * Calculate a CRC, the RNC way
  */
-long rnc_crc(void *data, unsigned long len)
+i32 rnc_crc(void *data, u32 len)
 {
-    unsigned short val;
+    u16 val;
     int i, j;
-    unsigned char *p = (unsigned char *)data;
+    uc8 *p = (uc8 *)data;
     //computing CRC table
     if (!crctab_ready)
     {
@@ -277,22 +277,22 @@ long rnc_crc(void *data, unsigned long len)
  * (which gets stored at offset 16 into the compressed-file header)
  * in `*leeway', if `leeway' isn't NULL.
  */
-long rnc_unpack(void *packed, void *unpacked, unsigned int flags
+i32 rnc_unpack(void *packed, void *unpacked, u32 flags
 #ifdef COMPRESSOR
-         , long *leeway
+         , i32 *leeway
 #endif
          )
 {
-    unsigned char *input = (unsigned char *)packed;
-    unsigned char *output = (unsigned char *)unpacked;
-    unsigned char *inputend, *outputend;
+    uc8 *input = (uc8 *)packed;
+    uc8 *output = (uc8 *)unpacked;
+    uc8 *inputend, *outputend;
     bit_stream bs;
     huf_table raw, dist, len;
-    unsigned long ch_count;
-    unsigned long ret_len, inp_len;
-    long out_crc;
+    u32 ch_count;
+    u32 ret_len, inp_len;
+    i32 out_crc;
 #ifdef COMPRESSOR
-    long lee = 0;
+    i32 lee = 0;
 #endif
     if (blong(input) != RNC_SIGNATURE)
         if (!(flags & RNC_IGNORE_HEADER_VAL_ERROR)) return RNC_HEADER_VAL_ERROR;
@@ -309,7 +309,7 @@ long rnc_unpack(void *packed, void *unpacked, unsigned int flags
     // Check the packed-data CRC. Also save the unpacked-data CRC
     // for later.
 
-    if (rnc_crc(input, inputend-input) != (long)bword(input-4))
+    if (rnc_crc(input, inputend-input) != (i32)bword(input-4))
         if (!(flags&RNC_IGNORE_PACKED_CRC_ERROR)) return RNC_PACKED_CRC_ERROR;
     out_crc = bword(input-6);
 
@@ -321,7 +321,7 @@ long rnc_unpack(void *packed, void *unpacked, unsigned int flags
     while (output < outputend)
     {
 #ifdef COMPRESSOR
-      long this_lee;
+      i32 this_lee;
 #endif
       if (inputend-input < 6)
       {
@@ -340,7 +340,7 @@ long rnc_unpack(void *packed, void *unpacked, unsigned int flags
 
       while (1)
       {
-        long length, posn;
+        i32 length, posn;
 
         length = huf_read (&raw, &bs, &input,inputend);
         if (length == -1)
@@ -391,10 +391,10 @@ long rnc_unpack(void *packed, void *unpacked, unsigned int flags
         length += 2;
         while (length--)
         {
-            if (((output-posn) < (unsigned char *)unpacked)
-             || ((output-posn) > (unsigned char *)outputend)
-             || ((output) < (unsigned char *)unpacked)
-             || ((output) > (unsigned char *)outputend))
+            if (((output-posn) < (uc8 *)unpacked)
+             || ((output-posn) > (uc8 *)outputend)
+             || ((output) < (uc8 *)unpacked)
+             || ((output) > (uc8 *)outputend))
             {
                    if (!(flags & RNC_IGNORE_HUF_EXCEEDS_RANGE))
                        return RNC_HUF_EXCEEDS_RANGE;
@@ -437,14 +437,15 @@ long rnc_unpack(void *packed, void *unpacked, unsigned int flags
     return ret_len;
 }
 
-long UnpackM1(unsigned char *buffer, ulong bufsize)
+i32 UnpackM1(unsigned char *buffer, u32 bufsize)
 {
+    LOGWARN("UnpackM1: (expected size %zu)", bufsize);
     //If file isn't compressed - return zero
     if (blong(buffer+0) != RNC_SIGNATURE)
         return 0;
     // Originally this function was able do decompress data without additional buffer.
     // If you know how to decompress the data this way, please correct this.
-    ulong packedsize = blong(buffer+4);
+    u32 packedsize = blong(buffer+4);
     if (packedsize > bufsize)
         packedsize = bufsize;
     void *packed = LbMemoryAlloc(packedsize);

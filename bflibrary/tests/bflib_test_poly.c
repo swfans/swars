@@ -41,14 +41,14 @@
 
 /******************************************************************************/
 
-void test_trig_draw_random_triangles(const ubyte *pal)
+void test_trig_draw_random_triangles(const u8 *pal)
 {
     int i;
 
     for (i = 0; i < 27*40; i++)
     {
         struct PolyPoint point_a, point_b, point_c;
-        ushort rnd;
+        u16 rnd;
 
         rnd = LbRandomAnyShort();
         vec_mode = i % 27;
@@ -139,14 +139,14 @@ void test_trig_draw_random_triangles(const ubyte *pal)
 
 TbBool test_trig(void)
 {
-    static ulong seeds[] = {0x0, 0xD15C1234, 0xD15C0000, 0xD15C0005, 0xD15C000F, 0xD15C03DC,
+    static u32 seeds[] = {0x0, 0xD15C1234, 0xD15C0000, 0xD15C0005, 0xD15C000F, 0xD15C03DC,
       0xD15C07DF, 0xD15CE896, 0xB00710FA, };
-    ubyte pal[PALETTE_8b_SIZE];
-    ubyte ref_pal[PALETTE_8b_SIZE];
+    u8 pal[PALETTE_8b_SIZE];
+    u8 ref_pal[PALETTE_8b_SIZE];
     TbPixel unaffected_colours[] = {0,};
-    ubyte *texmap;
+    u8 *texmap;
     TbPixel *ref_buffer;
-    ulong picno;
+    u32 picno;
 
     if (LbErrorLogSetup(NULL, "tst_trig.log", Lb_ERROR_LOG_NEW) != Lb_SUCCESS) {
         LOGERR("execution log setup failed");
@@ -191,9 +191,9 @@ TbBool test_trig(void)
     for (picno = 1; picno < sizeof(seeds)/sizeof(seeds[0]); picno++)
     {
         char loc_fname[64];
-        ulong ref_width, ref_height;
-        long maxdiff;
-        ulong maxpos;
+        u32 ref_width, ref_height;
+        i32 maxdiff;
+        u32 maxpos;
 
         LbScreenClear(0);
         lbSeed = seeds[picno];

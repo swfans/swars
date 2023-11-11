@@ -27,20 +27,20 @@
 #include "privbflog.h"
 
 // The functions below are from standard version of the routine - reused here
-TbResult LbSpriteDrawUsingScalingUpDataTrans1RL(ubyte *outbuf, int scanline, int outheight,
-  long *xstep, long *ystep, const TbSprite *sprite, const unsigned char *transmap);
-TbResult LbSpriteDrawUsingScalingUpDataTrans1LR(ubyte *outbuf, int scanline, int outheight,
-  long *xstep, long *ystep, const TbSprite *sprite, const unsigned char *transmap);
-TbResult LbSpriteDrawUsingScalingDownDataTrans1RL(ubyte *outbuf, int scanline, int outheight,
-  long *xstep, long *ystep, const TbSprite *sprite, const unsigned char *transmap);
-TbResult LbSpriteDrawUsingScalingDownDataTrans1LR(ubyte *outbuf, int scanline, int outheight,
-  long *xstep, long *ystep, const TbSprite *sprite, const unsigned char *transmap);
+TbResult LbSpriteDrawUsingScalingUpDataTrans1RL(u8 *outbuf, int scanline, int outheight,
+  i32 *xstep, i32 *ystep, const TbSprite *sprite, const unsigned char *transmap);
+TbResult LbSpriteDrawUsingScalingUpDataTrans1LR(u8 *outbuf, int scanline, int outheight,
+  i32 *xstep, i32 *ystep, const TbSprite *sprite, const unsigned char *transmap);
+TbResult LbSpriteDrawUsingScalingDownDataTrans1RL(u8 *outbuf, int scanline, int outheight,
+  i32 *xstep, i32 *ystep, const TbSprite *sprite, const unsigned char *transmap);
+TbResult LbSpriteDrawUsingScalingDownDataTrans1LR(u8 *outbuf, int scanline, int outheight,
+  i32 *xstep, i32 *ystep, const TbSprite *sprite, const unsigned char *transmap);
 
 
-TbResult DrawAlphaSpriteUsingScalingData(long posx, long posy, const TbSprite *sprite)
+TbResult DrawAlphaSpriteUsingScalingData(i32 posx, i32 posy, const TbSprite *sprite)
 {
-    long *xstep;
-    long *ystep;
+    i32 *xstep;
+    i32 *ystep;
     int scanline;
 
     LOGNO("at (%ld,%ld): drawing", posx, posy);
@@ -48,7 +48,7 @@ TbResult DrawAlphaSpriteUsingScalingData(long posx, long posy, const TbSprite *s
     render_alpha = lbSpriteReMapPtr;
     assert(render_alpha != NULL);
     {
-        long sposx, sposy;
+        i32 sposx, sposy;
         sposx = posx;
         sposy = posy;
         scanline = lbDisplay.GraphicsScreenWidth;
@@ -62,7 +62,7 @@ TbResult DrawAlphaSpriteUsingScalingData(long posx, long posy, const TbSprite *s
         xstep = &alpha_xsteps_array[2 * sposx];
         ystep = &alpha_ysteps_array[2 * sposy];
     }
-    uchar *outbuf;
+    uc8 *outbuf;
     int outheight;
     {
         int gspos_x,gspos_y;

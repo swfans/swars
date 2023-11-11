@@ -13,28 +13,28 @@
 struct Thing;
 
 struct HeapMgrHandle {
-  ubyte field_0[14];
-  ubyte field_E;
+  u8 field_0[14];
+  u8 field_E;
 };
 
 struct SampleTable {
-  long field_0;
-  long field_4;
+  i32 field_0;
+  i32 field_4;
   struct HeapMgrHandle *hmhandle;
 };
 
 #pragma pack()
 
-extern short startscr_samplevol;
-extern short startscr_midivol;
-extern short startscr_cdvolume;
+extern i16 startscr_samplevol;
+extern i16 startscr_midivol;
+extern i16 startscr_cdvolume;
 
 void fill_ail_sample_ids(void);
 
 struct SNDSEQUENCE;
 
-struct SampleInfo *play_sample_using_heap(ulong a1, short smptbl_id, ulong a3, ulong a4, ulong a5, char a6, ubyte type);
-void stop_sample_using_heap(struct SNDSEQUENCE *source, ulong sample_number);
-void play_dist_sample(struct Thing *p_thing, ushort smptbl_id, ushort vol, ushort pan, int pitch, int loop, ubyte type);
+struct SampleInfo *play_sample_using_heap(u32 a1, i16 smptbl_id, u32 a3, u32 a4, u32 a5, char a6, u8 type);
+void stop_sample_using_heap(struct SNDSEQUENCE *source, u32 sample_number);
+void play_dist_sample(struct Thing *p_thing, u16 smptbl_id, u16 vol, u16 pan, int pitch, int loop, u8 type);
 
 #endif

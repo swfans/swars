@@ -26,10 +26,10 @@
 extern "C" {
 #endif
 
-TbResult LbDrawCircle(long x, long y, ulong radius, TbPixel colour);
+TbResult LbDrawCircle(i32 x, i32 y, u32 radius, TbPixel colour);
 
-TbResult LbDrawCircleOutline(long x, long y, ulong radius, TbPixel colour);
-TbResult LbDrawCircleFilled(long x, long y, ulong radius, TbPixel colour);
+TbResult LbDrawCircleOutline(i32 x, i32 y, u32 radius, TbPixel colour);
+TbResult LbDrawCircleFilled(i32 x, i32 y, u32 radius, TbPixel colour);
 
 #ifdef __cplusplus
 };

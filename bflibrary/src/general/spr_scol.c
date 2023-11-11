@@ -39,13 +39,13 @@
  * @param transmap The transparency mapping table to be used.
  * @return Gives 0 on success.
  */
-TbResult LbSpriteDrawOneColourUsingScalingUpDataTrans1RL(uchar *outbuf, int scanline,
-  int outheight, long *xstep, long *ystep, const TbSprite *sprite,
+TbResult LbSpriteDrawOneColourUsingScalingUpDataTrans1RL(uc8 *outbuf, int scanline,
+  int outheight, i32 *xstep, i32 *ystep, const TbSprite *sprite,
   TbPixel colour, const TbPixel *transmap)
 {
     int ystep_delta;
     unsigned char *sprdata;
-    long *ycurstep;
+    i32 *ycurstep;
 
     LOGDBG("drawing");
     ystep_delta = 2;
@@ -62,7 +62,7 @@ TbResult LbSpriteDrawOneColourUsingScalingUpDataTrans1RL(uchar *outbuf, int scan
         {
             unsigned char *prevdata;
             int xdup, ydup;
-            long *xcurstep;
+            i32 *xcurstep;
             ydup = ycurstep[1];
             if (ycurstep[0]+ydup > outheight)
                 ydup = outheight-ycurstep[0];
@@ -75,7 +75,7 @@ TbResult LbSpriteDrawOneColourUsingScalingUpDataTrans1RL(uchar *outbuf, int scan
                 out_end = outbuf;
                 while ( 1 )
                 {
-                    long pxlen;
+                    i32 pxlen;
                     pxlen = (signed char)*sprdata;
                     sprdata++;
                     if (pxlen == 0)
@@ -118,7 +118,7 @@ TbResult LbSpriteDrawOneColourUsingScalingUpDataTrans1RL(uchar *outbuf, int scan
         {
             while ( 1 )
             {
-                long pxlen;
+                i32 pxlen;
                 pxlen = (signed char)*sprdata;
                 sprdata++;
                 if (pxlen == 0)
@@ -147,13 +147,13 @@ TbResult LbSpriteDrawOneColourUsingScalingUpDataTrans1RL(uchar *outbuf, int scan
  * @param transmap The transparency mapping table to be used. Should have a size of 256x256 to avoid invalid memory reads.
  * @return Gives 0 on success.
  */
-TbResult LbSpriteDrawOneColourUsingScalingUpDataTrans1LR(uchar *outbuf, int scanline,
-  int outheight, long *xstep, long *ystep, const TbSprite *sprite,
+TbResult LbSpriteDrawOneColourUsingScalingUpDataTrans1LR(uc8 *outbuf, int scanline,
+  int outheight, i32 *xstep, i32 *ystep, const TbSprite *sprite,
   TbPixel colour, const TbPixel *transmap)
 {
     int ystep_delta;
     unsigned char *sprdata;
-    long *ycurstep;
+    i32 *ycurstep;
 
     LOGDBG("drawing");
     ystep_delta = 2;
@@ -170,7 +170,7 @@ TbResult LbSpriteDrawOneColourUsingScalingUpDataTrans1LR(uchar *outbuf, int scan
         {
             unsigned char *prevdata;
             int xdup, ydup;
-            long *xcurstep;
+            i32 *xcurstep;
             ydup = ycurstep[1];
             if (ycurstep[0]+ydup > outheight)
                 ydup = outheight-ycurstep[0];
@@ -183,7 +183,7 @@ TbResult LbSpriteDrawOneColourUsingScalingUpDataTrans1LR(uchar *outbuf, int scan
                 out_end = outbuf;
                 while ( 1 )
                 {
-                    long pxlen;
+                    i32 pxlen;
                     pxlen = (signed char)*sprdata;
                     sprdata++;
                     if (pxlen == 0)
@@ -226,7 +226,7 @@ TbResult LbSpriteDrawOneColourUsingScalingUpDataTrans1LR(uchar *outbuf, int scan
         {
             while ( 1 )
             {
-                long pxlen;
+                i32 pxlen;
                 pxlen = (signed char)*sprdata;
                 sprdata++;
                 if (pxlen == 0)
@@ -255,13 +255,13 @@ TbResult LbSpriteDrawOneColourUsingScalingUpDataTrans1LR(uchar *outbuf, int scan
  * @param transmap The transparency mapping table to be used.
  * @return Gives 0 on success.
  */
-TbResult LbSpriteDrawOneColourUsingScalingUpDataTrans2RL(uchar *outbuf, int scanline,
-  int outheight, long *xstep, long *ystep, const TbSprite *sprite,
+TbResult LbSpriteDrawOneColourUsingScalingUpDataTrans2RL(uc8 *outbuf, int scanline,
+  int outheight, i32 *xstep, i32 *ystep, const TbSprite *sprite,
   TbPixel colour, const TbPixel *transmap)
 {
     int ystep_delta;
     unsigned char *sprdata;
-    long *ycurstep;
+    i32 *ycurstep;
 
     LOGDBG("drawing");
     ystep_delta = 2;
@@ -278,7 +278,7 @@ TbResult LbSpriteDrawOneColourUsingScalingUpDataTrans2RL(uchar *outbuf, int scan
         {
             unsigned char *prevdata;
             int xdup, ydup;
-            long *xcurstep;
+            i32 *xcurstep;
             ydup = ycurstep[1];
             if (ycurstep[0]+ydup > outheight)
                 ydup = outheight-ycurstep[0];
@@ -291,7 +291,7 @@ TbResult LbSpriteDrawOneColourUsingScalingUpDataTrans2RL(uchar *outbuf, int scan
                 out_end = outbuf;
                 while ( 1 )
                 {
-                    long pxlen;
+                    i32 pxlen;
                     pxlen = (signed char)*sprdata;
                     sprdata++;
                     if (pxlen == 0)
@@ -334,7 +334,7 @@ TbResult LbSpriteDrawOneColourUsingScalingUpDataTrans2RL(uchar *outbuf, int scan
         {
             while ( 1 )
             {
-                long pxlen;
+                i32 pxlen;
                 pxlen = (signed char)*sprdata;
                 sprdata++;
                 if (pxlen == 0)
@@ -363,13 +363,13 @@ TbResult LbSpriteDrawOneColourUsingScalingUpDataTrans2RL(uchar *outbuf, int scan
  * @param transmap The transparency mapping table to be used.
  * @return Gives 0 on success.
  */
-TbResult LbSpriteDrawOneColourUsingScalingUpDataTrans2LR(uchar *outbuf, int scanline,
-  int outheight, long *xstep, long *ystep, const TbSprite *sprite,
+TbResult LbSpriteDrawOneColourUsingScalingUpDataTrans2LR(uc8 *outbuf, int scanline,
+  int outheight, i32 *xstep, i32 *ystep, const TbSprite *sprite,
   TbPixel colour, const TbPixel *transmap)
 {
     int ystep_delta;
     unsigned char *sprdata;
-    long *ycurstep;
+    i32 *ycurstep;
 
     LOGDBG("drawing");
     ystep_delta = 2;
@@ -386,7 +386,7 @@ TbResult LbSpriteDrawOneColourUsingScalingUpDataTrans2LR(uchar *outbuf, int scan
         {
             unsigned char *prevdata;
             int xdup, ydup;
-            long *xcurstep;
+            i32 *xcurstep;
             ydup = ycurstep[1];
             if (ycurstep[0]+ydup > outheight)
                 ydup = outheight-ycurstep[0];
@@ -399,7 +399,7 @@ TbResult LbSpriteDrawOneColourUsingScalingUpDataTrans2LR(uchar *outbuf, int scan
                 out_end = outbuf;
                 while ( 1 )
                 {
-                    long pxlen;
+                    i32 pxlen;
                     pxlen = (signed char)*sprdata;
                     sprdata++;
                     if (pxlen == 0)
@@ -442,7 +442,7 @@ TbResult LbSpriteDrawOneColourUsingScalingUpDataTrans2LR(uchar *outbuf, int scan
         {
             while ( 1 )
             {
-                long pxlen;
+                i32 pxlen;
                 pxlen = (signed char)*sprdata;
                 sprdata++;
                 if (pxlen == 0)
@@ -470,12 +470,12 @@ TbResult LbSpriteDrawOneColourUsingScalingUpDataTrans2LR(uchar *outbuf, int scan
  * @param colour The colour to be used for drawing.
  * @return Gives 0 on success.
  */
-TbResult LbSpriteDrawOneColourUsingScalingUpDataSolidRL(uchar *outbuf, int scanline,
-  int outheight, long *xstep, long *ystep, const TbSprite *sprite, TbPixel colour)
+TbResult LbSpriteDrawOneColourUsingScalingUpDataSolidRL(uc8 *outbuf, int scanline,
+  int outheight, i32 *xstep, i32 *ystep, const TbSprite *sprite, TbPixel colour)
 {
     int ystep_delta;
     unsigned char *sprdata;
-    long *ycurstep;
+    i32 *ycurstep;
 
     LOGDBG("drawing");
     ystep_delta = 2;
@@ -494,7 +494,7 @@ TbResult LbSpriteDrawOneColourUsingScalingUpDataSolidRL(uchar *outbuf, int scanl
             int solid_len;
             TbPixel * out_line;
             int xdup, ydup;
-            long *xcurstep;
+            i32 *xcurstep;
             ydup = ycurstep[1];
             if (ycurstep[0]+ydup > outheight)
                 ydup = outheight-ycurstep[0];
@@ -503,7 +503,7 @@ TbResult LbSpriteDrawOneColourUsingScalingUpDataSolidRL(uchar *outbuf, int scanl
             out_end = outbuf;
             while ( 1 )
             {
-                long pxlen;
+                i32 pxlen;
                 pxlen = (signed char)*sprdata;
                 sprdata++;
                 if (pxlen == 0)
@@ -565,7 +565,7 @@ TbResult LbSpriteDrawOneColourUsingScalingUpDataSolidRL(uchar *outbuf, int scanl
         {
             while ( 1 )
             {
-                long pxlen;
+                i32 pxlen;
                 pxlen = (signed char)*sprdata;
                 sprdata++;
                 if (pxlen == 0)
@@ -593,12 +593,12 @@ TbResult LbSpriteDrawOneColourUsingScalingUpDataSolidRL(uchar *outbuf, int scanl
  * @param colour The colour to be used for drawing.
  * @return Gives 0 on success.
  */
-TbResult LbSpriteDrawOneColourUsingScalingUpDataSolidLR(uchar *outbuf, int scanline,
-  int outheight, long *xstep, long *ystep, const TbSprite *sprite, TbPixel colour)
+TbResult LbSpriteDrawOneColourUsingScalingUpDataSolidLR(uc8 *outbuf, int scanline,
+  int outheight, i32 *xstep, i32 *ystep, const TbSprite *sprite, TbPixel colour)
 {
     int ystep_delta;
     unsigned char *sprdata;
-    long *ycurstep;
+    i32 *ycurstep;
 
     LOGDBG("drawing");
     ystep_delta = 2;
@@ -617,7 +617,7 @@ TbResult LbSpriteDrawOneColourUsingScalingUpDataSolidLR(uchar *outbuf, int scanl
             int solid_len;
             TbPixel * out_line;
             int xdup, ydup;
-            long *xcurstep;
+            i32 *xcurstep;
             ydup = ycurstep[1];
             if (ycurstep[0]+ydup > outheight)
                 ydup = outheight-ycurstep[0];
@@ -626,7 +626,7 @@ TbResult LbSpriteDrawOneColourUsingScalingUpDataSolidLR(uchar *outbuf, int scanl
             out_end = outbuf;
             while ( 1 )
             {
-                long pxlen;
+                i32 pxlen;
                 pxlen = (signed char)*sprdata;
                 sprdata++;
                 if (pxlen == 0)
@@ -686,7 +686,7 @@ TbResult LbSpriteDrawOneColourUsingScalingUpDataSolidLR(uchar *outbuf, int scanl
         {
             while ( 1 )
             {
-                long pxlen;
+                i32 pxlen;
                 pxlen = (signed char)*sprdata;
                 sprdata++;
                 if (pxlen == 0)
@@ -715,13 +715,13 @@ TbResult LbSpriteDrawOneColourUsingScalingUpDataSolidLR(uchar *outbuf, int scanl
  * @param transmap The transparency mapping table to be used.
  * @return Gives 0 on success.
  */
-TbResult LbSpriteDrawOneColourUsingScalingDownDataTrans1RL(uchar *outbuf, int scanline,
-  int outheight, long *xstep, long *ystep, const TbSprite *sprite,
+TbResult LbSpriteDrawOneColourUsingScalingDownDataTrans1RL(uc8 *outbuf, int scanline,
+  int outheight, i32 *xstep, i32 *ystep, const TbSprite *sprite,
   TbPixel colour, const TbPixel *transmap)
 {
     int ystep_delta;
     unsigned char *sprdata;
-    long *ycurstep;
+    i32 *ycurstep;
 
     LOGDBG("drawing");
     ystep_delta = 2;
@@ -736,13 +736,13 @@ TbResult LbSpriteDrawOneColourUsingScalingDownDataTrans1RL(uchar *outbuf, int sc
     {
         if (ycurstep[1] != 0)
         {
-            long *xcurstep;
+            i32 *xcurstep;
             xcurstep = xstep;
             TbPixel *out_end;
             out_end = outbuf;
             while ( 1 )
             {
-                long pxlen;
+                i32 pxlen;
                 pxlen = (signed char)*sprdata;
                 sprdata++;
                 if (pxlen == 0)
@@ -779,7 +779,7 @@ TbResult LbSpriteDrawOneColourUsingScalingDownDataTrans1RL(uchar *outbuf, int sc
         {
             while ( 1 )
             {
-                long pxlen;
+                i32 pxlen;
                 pxlen = (signed char)*sprdata;
                 sprdata++;
                 if (pxlen == 0)
@@ -808,13 +808,13 @@ TbResult LbSpriteDrawOneColourUsingScalingDownDataTrans1RL(uchar *outbuf, int sc
  * @param transmap The transparency mapping table to be used.
  * @return Gives 0 on success.
  */
-TbResult LbSpriteDrawOneColourUsingScalingDownDataTrans1LR(uchar *outbuf, int scanline,
-  int outheight, long *xstep, long *ystep, const TbSprite *sprite,
+TbResult LbSpriteDrawOneColourUsingScalingDownDataTrans1LR(uc8 *outbuf, int scanline,
+  int outheight, i32 *xstep, i32 *ystep, const TbSprite *sprite,
   TbPixel colour, const TbPixel *transmap)
 {
     int ystep_delta;
     unsigned char *sprdata;
-    long *ycurstep;
+    i32 *ycurstep;
 
     LOGDBG("drawing");
     ystep_delta = 2;
@@ -829,13 +829,13 @@ TbResult LbSpriteDrawOneColourUsingScalingDownDataTrans1LR(uchar *outbuf, int sc
     {
         if (ycurstep[1] != 0)
         {
-            long *xcurstep;
+            i32 *xcurstep;
             xcurstep = xstep;
             TbPixel *out_end;
             out_end = outbuf;
             while ( 1 )
             {
-                long pxlen;
+                i32 pxlen;
                 pxlen = (signed char)*sprdata;
                 sprdata++;
                 if (pxlen == 0)
@@ -872,7 +872,7 @@ TbResult LbSpriteDrawOneColourUsingScalingDownDataTrans1LR(uchar *outbuf, int sc
         {
             while ( 1 )
             {
-                long pxlen;
+                i32 pxlen;
                 pxlen = (signed char)*sprdata;
                 sprdata++;
                 if (pxlen == 0)
@@ -901,13 +901,13 @@ TbResult LbSpriteDrawOneColourUsingScalingDownDataTrans1LR(uchar *outbuf, int sc
  * @param transmap The transparency mapping table to be used.
  * @return Gives 0 on success.
  */
-TbResult LbSpriteDrawOneColourUsingScalingDownDataTrans2RL(uchar *outbuf, int scanline,
-  int outheight, long *xstep, long *ystep, const TbSprite *sprite,
+TbResult LbSpriteDrawOneColourUsingScalingDownDataTrans2RL(uc8 *outbuf, int scanline,
+  int outheight, i32 *xstep, i32 *ystep, const TbSprite *sprite,
   TbPixel colour, const TbPixel *transmap)
 {
     int ystep_delta;
     unsigned char *sprdata;
-    long *ycurstep;
+    i32 *ycurstep;
 
     LOGDBG("drawing");
     ystep_delta = 2;
@@ -922,13 +922,13 @@ TbResult LbSpriteDrawOneColourUsingScalingDownDataTrans2RL(uchar *outbuf, int sc
     {
         if (ycurstep[1] != 0)
         {
-            long *xcurstep;
+            i32 *xcurstep;
             xcurstep = xstep;
             TbPixel *out_end;
             out_end = outbuf;
             while ( 1 )
             {
-                long pxlen;
+                i32 pxlen;
                 pxlen = (signed char)*sprdata;
                 sprdata++;
                 if (pxlen == 0)
@@ -965,7 +965,7 @@ TbResult LbSpriteDrawOneColourUsingScalingDownDataTrans2RL(uchar *outbuf, int sc
         {
             while ( 1 )
             {
-                long pxlen;
+                i32 pxlen;
                 pxlen = (signed char)*sprdata;
                 sprdata++;
                 if (pxlen == 0)
@@ -994,13 +994,13 @@ TbResult LbSpriteDrawOneColourUsingScalingDownDataTrans2RL(uchar *outbuf, int sc
  * @param transmap The transparency mapping table to be used.
  * @return Gives 0 on success.
  */
-TbResult LbSpriteDrawOneColourUsingScalingDownDataTrans2LR(uchar *outbuf, int scanline,
-  int outheight, long *xstep, long *ystep, const TbSprite *sprite,
+TbResult LbSpriteDrawOneColourUsingScalingDownDataTrans2LR(uc8 *outbuf, int scanline,
+  int outheight, i32 *xstep, i32 *ystep, const TbSprite *sprite,
   TbPixel colour, const TbPixel *transmap)
 {
     int ystep_delta;
     unsigned char *sprdata;
-    long *ycurstep;
+    i32 *ycurstep;
 
     LOGDBG("drawing");
     ystep_delta = 2;
@@ -1015,13 +1015,13 @@ TbResult LbSpriteDrawOneColourUsingScalingDownDataTrans2LR(uchar *outbuf, int sc
     {
         if (ycurstep[1] != 0)
         {
-            long *xcurstep;
+            i32 *xcurstep;
             xcurstep = xstep;
             TbPixel *out_end;
             out_end = outbuf;
             while ( 1 )
             {
-                long pxlen;
+                i32 pxlen;
                 pxlen = (signed char)*sprdata;
                 sprdata++;
                 if (pxlen == 0)
@@ -1058,7 +1058,7 @@ TbResult LbSpriteDrawOneColourUsingScalingDownDataTrans2LR(uchar *outbuf, int sc
         {
             while ( 1 )
             {
-                long pxlen;
+                i32 pxlen;
                 pxlen = (signed char)*sprdata;
                 sprdata++;
                 if (pxlen == 0)
@@ -1086,12 +1086,12 @@ TbResult LbSpriteDrawOneColourUsingScalingDownDataTrans2LR(uchar *outbuf, int sc
  * @param colour The colour to be used for drawing.
  * @return Gives 0 on success.
  */
-TbResult LbSpriteDrawOneColourUsingScalingDownDataSolidRL(uchar *outbuf, int scanline,
-  int outheight, long *xstep, long *ystep, const TbSprite *sprite, TbPixel colour)
+TbResult LbSpriteDrawOneColourUsingScalingDownDataSolidRL(uc8 *outbuf, int scanline,
+  int outheight, i32 *xstep, i32 *ystep, const TbSprite *sprite, TbPixel colour)
 {
     int ystep_delta;
     unsigned char *sprdata;
-    long *ycurstep;
+    i32 *ycurstep;
 
     LOGDBG("drawing");
     ystep_delta = 2;
@@ -1106,13 +1106,13 @@ TbResult LbSpriteDrawOneColourUsingScalingDownDataSolidRL(uchar *outbuf, int sca
     {
         if (ycurstep[1] != 0)
         {
-            long *xcurstep;
+            i32 *xcurstep;
             xcurstep = xstep;
             TbPixel *out_end;
             out_end = outbuf;
             while ( 1 )
             {
-                long pxlen;
+                i32 pxlen;
                 pxlen = (signed char)*sprdata;
                 sprdata++;
                 if (pxlen == 0)
@@ -1148,7 +1148,7 @@ TbResult LbSpriteDrawOneColourUsingScalingDownDataSolidRL(uchar *outbuf, int sca
         {
             while ( 1 )
             {
-                long pxlen;
+                i32 pxlen;
                 pxlen = (signed char)*sprdata;
                 sprdata++;
                 if (pxlen == 0)
@@ -1176,12 +1176,12 @@ TbResult LbSpriteDrawOneColourUsingScalingDownDataSolidRL(uchar *outbuf, int sca
  * @param colour The colour to be used for drawing.
  * @return Gives 0 on success.
  */
-TbResult LbSpriteDrawOneColourUsingScalingDownDataSolidLR(uchar *outbuf, int scanline,
-  int outheight, long *xstep, long *ystep, const TbSprite *sprite, TbPixel colour)
+TbResult LbSpriteDrawOneColourUsingScalingDownDataSolidLR(uc8 *outbuf, int scanline,
+  int outheight, i32 *xstep, i32 *ystep, const TbSprite *sprite, TbPixel colour)
 {
     int ystep_delta;
     unsigned char *sprdata;
-    long *ycurstep;
+    i32 *ycurstep;
 
     LOGDBG("drawing");
     ystep_delta = 2;
@@ -1196,13 +1196,13 @@ TbResult LbSpriteDrawOneColourUsingScalingDownDataSolidLR(uchar *outbuf, int sca
     {
         if (ycurstep[1] != 0)
         {
-            long *xcurstep;
+            i32 *xcurstep;
             xcurstep = xstep;
             TbPixel *out_end;
             out_end = outbuf;
             while ( 1 )
             {
-                long pxlen;
+                i32 pxlen;
                 pxlen = (signed char)*sprdata;
                 sprdata++;
                 if (pxlen == 0)
@@ -1238,7 +1238,7 @@ TbResult LbSpriteDrawOneColourUsingScalingDownDataSolidLR(uchar *outbuf, int sca
         {
             while ( 1 )
             {
-                long pxlen;
+                i32 pxlen;
                 pxlen = (signed char)*sprdata;
                 sprdata++;
                 if (pxlen == 0)
@@ -1265,15 +1265,15 @@ TbResult LbSpriteDrawOneColourUsingScalingDownDataSolidLR(uchar *outbuf, int sca
  * @return Gives 0 on success.
  * @see LbSpriteSetScalingData()
  */
-TbResult LbSpriteDrawOneColourUsingScalingData(long posx, long posy, const TbSprite *sprite, TbPixel colour)
+TbResult LbSpriteDrawOneColourUsingScalingData(i32 posx, i32 posy, const TbSprite *sprite, TbPixel colour)
 {
-    long *xstep;
-    long *ystep;
+    i32 *xstep;
+    i32 *ystep;
     int scanline;
 
     LOGDBG("at (%ld,%ld): drawing", posx, posy);
     {
-        long sposx, sposy;
+        i32 sposx, sposy;
         sposx = posx;
         sposy = posy;
         scanline = lbDisplay.GraphicsScreenWidth;
@@ -1287,7 +1287,7 @@ TbResult LbSpriteDrawOneColourUsingScalingData(long posx, long posy, const TbSpr
         xstep = &xsteps_array[2 * sposx];
         ystep = &ysteps_array[2 * sposy];
     }
-    uchar *outbuf;
+    uc8 *outbuf;
     int outheight;
     {
         int gspos_x,gspos_y;
@@ -1376,8 +1376,8 @@ TbResult LbSpriteDrawOneColourUsingScalingData(long posx, long posy, const TbSpr
     }
 }
 
-TbResult LbSpriteDrawScaledOneColour(long xpos, long ypos, const TbSprite *sprite,
-  long dest_width, long dest_height, const TbPixel colour)
+TbResult LbSpriteDrawScaledOneColour(i32 xpos, i32 ypos, const TbSprite *sprite,
+  i32 dest_width, i32 dest_height, const TbPixel colour)
 {
     LOGNO("at (%ld,%ld) size (%ld,%ld)", xpos, ypos, dest_width, dest_height);
     if ((dest_width <= 0) || (dest_height <= 0))

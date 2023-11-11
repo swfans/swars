@@ -29,7 +29,7 @@ unsigned short const lbSqrTable[] = {
 /** Returns position of most significant set bit in the non-zero value x.
  * TODO: For GCC, can be implemented as (untested!): *y = 31 - __builtin_clz(x).
  */
-static inline void _BitScanReverse(ulong *y, ulong x)
+static inline void _BitScanReverse(u32 *y, u32 x)
 {
     asm ("bsrl     %1, %%eax;\n"
        "movl %%eax, (%0);\n"
@@ -39,9 +39,9 @@ static inline void _BitScanReverse(ulong *y, ulong x)
        );
 }
 
-long LbSqrL(ulong x)
+i32 LbSqrL(u32 x)
 {
-  ulong y;
+  u32 y;
 
   if (x <= 0)
     return 0;

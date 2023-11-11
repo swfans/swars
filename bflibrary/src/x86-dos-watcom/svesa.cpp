@@ -24,26 +24,26 @@
 struct VbeInfoBlock {
     char signature[4];	/*< must be "VESA" to indicate valid VBE support */
     ushort version;		/*< VBE version; high byte is major ver, low byte is minor ver */
-    ulong oem;			/*< segment:offset pointer to OEM */
-    ulong capabilities;	/*< bitfield that describes card capabilities */
-    ulong video_modes;	/*< segment:offset pointer to list of supported video modes */
+    u32 oem;			/*< segment:offset pointer to OEM */
+    u32 capabilities;	/*< bitfield that describes card capabilities */
+    u32 video_modes;	/*< segment:offset pointer to list of supported video modes */
     ushort video_memory;	/*< amount of video memory in 64KB blocks */
     ushort software_rev;	/*< software revision */
-    ulong vendor;		/*< segment:offset to card vendor string */
-    ulong product_name;	/*< segment:offset to card model name */
-    ulong product_rev;	/*< segment:offset pointer to product revision */
+    u32 vendor;		/*< segment:offset to card vendor string */
+    u32 product_name;	/*< segment:offset to card model name */
+    u32 product_rev;	/*< segment:offset pointer to product revision */
     char reserved[222];	/*< reserved for future expansion */
 };
 
 struct TbRMREGS2 { // sizeof=50
-    ulong MyEDI; // offset=0
-    ulong MyESI; // offset=4
-    ulong MyEBP; // offset=8
-    ulong MyReserved; // offset=12
-    ulong MyEBX; // offset=16
-    ulong MyEDX; // offset=20
-    ulong MyECX; // offset=24
-    ulong MyEAX; // offset=28
+    u32 MyEDI; // offset=0
+    u32 MyESI; // offset=4
+    u32 MyEBP; // offset=8
+    u32 MyReserved; // offset=12
+    u32 MyEBX; // offset=16
+    u32 MyEDX; // offset=20
+    u32 MyECX; // offset=24
+    u32 MyEAX; // offset=28
     ushort MyFlags; // offset=32
     ushort MyES; // offset=34
     ushort MyDS; // offset=36
@@ -63,7 +63,7 @@ ushort lbVesaBytesPerLine;
 ushort lbVesaHRes;
 ushort lbVesaVRes;
 ubyte *lbVesaData;
-ulong lbVesaPage;
+u32 lbVesaPage;
 int lbVesaGran;
 
 
@@ -72,7 +72,7 @@ int LbVesaGetGran()
 // code at 0001:000b2730
 }
 
-TbResult LbVesaSetMode(long mode)
+TbResult LbVesaSetMode(i32 mode)
 {
     DOS_Registers regs;
     DOS_Registers out_regs;
@@ -104,18 +104,18 @@ TbResult LbVesaGetInfo(void)
     char ptr4[12];
 
     memset(ptr1, 0, 0x32u);
-    *(ushort *)&ptr1[34] = (ulong)lbVesaData >> 4;
-    *(ushort *)&ptr1[36] = (ulong)lbVesaData >> 4;
-    *(ulong *)ptr1 = 0;
-    *(ulong *)&ptr1[28] = 20224;
-    *(ulong *)&ptr1[16] = 257;
+    *(ushort *)&ptr1[34] = (u32)lbVesaData >> 4;
+    *(ushort *)&ptr1[36] = (u32)lbVesaData >> 4;
+    *(u32 *)ptr1 = 0;
+    *(u32 *)&ptr1[28] = 20224;
+    *(u32 *)&ptr1[16] = 257;
     memset(ptr2, 0, 28u);
     memset(ptr3, 0, 28u);
     memset(ptr4, 0, 12u);
     segread(ptr4);
-    *(ulong *)ptr2 = 768;
-    *(ulong *)&ptr2[4] = 16;
-    *(ulong *)&ptr2[20] = ptr1;
+    *(u32 *)ptr2 = 768;
+    *(u32 *)&ptr2[4] = 16;
+    *(u32 *)&ptr2[20] = ptr1;
     int386x(49, (int)ptr2, (int)ptr3, (int)ptr4);
 
     if (strncmp(lbVesaData, "VESA", 4) != 0)
@@ -123,11 +123,11 @@ TbResult LbVesaGetInfo(void)
     return Lb_SUCCESS;
 }
 
-TbBool LbVesaIsModeAvailable(long mode)
+TbBool LbVesaIsModeAvailable(i32 mode)
 {
     ushort *md;
 	struct VbeInfoBlock *vbeInfo;
-    ulong md_seg, md_off;
+    u32 md_seg, md_off;
 
     if (LbVesaGetInfo() != Lb_SUCCESS)
         return false;

@@ -21,12 +21,12 @@
 #include "bfline.h"
 #include "bfscreen.h"
 
-TbResult LbDrawHVLine(long X1, long Y1, long X2, long Y2, TbPixel colour)
+TbResult LbDrawHVLine(i32 X1, i32 Y1, i32 X2, i32 Y2, TbPixel colour)
 {
-    long clipX1, clipX2, clipY1, clipY2;
-    long maxX, maxY, x, y;
-    ubyte *ptr;
-    ubyte *m;
+    i32 clipX1, clipX2, clipY1, clipY2;
+    i32 maxX, maxY, x, y;
+    u8 *ptr;
+    u8 *m;
 
     maxX = lbDisplay.GraphicsWindowWidth - 1;
     clipX1 = X1;

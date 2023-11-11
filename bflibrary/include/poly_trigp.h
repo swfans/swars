@@ -41,37 +41,37 @@ enum RenderingStartType {
  * when everything is remade in C.
  */
 struct TrigLocalPrep {
-    long var_28;
-    long var_2C;
-    long var_30;
-    long var_34;
-    long var_38;
-    long var_3C;
-    long var_40;
-    long var_4C;
-    long var_50;
-    long var_58;
-    long var_5C;
-    long var_64;
-    long var_68;
-    long var_6C;
-    long var_78;
-    ubyte var_8A;
-    ubyte var_8B;
-    ubyte var_8C;
+    i32 var_28;
+    i32 var_2C;
+    i32 var_30;
+    i32 var_34;
+    i32 var_38;
+    i32 var_3C;
+    i32 var_40;
+    i32 var_4C;
+    i32 var_50;
+    i32 var_58;
+    i32 var_5C;
+    i32 var_64;
+    i32 var_68;
+    i32 var_6C;
+    i32 var_78;
+    u8 var_8A;
+    u8 var_8B;
+    u8 var_8C;
 };
 
 struct TrigLocalRend {
-    ubyte *var_24;
-    long var_44;
-    long var_48;
-    long var_54;
-    long var_60;
+    u8 *var_24;
+    i32 var_44;
+    i32 var_48;
+    i32 var_54;
+    i32 var_60;
 };
 
 #pragma pack()
 
-ubyte trig_reorder_input_points(struct PolyPoint **opt_a,
+u8 trig_reorder_input_points(struct PolyPoint **opt_a,
   struct PolyPoint **opt_b, struct PolyPoint **opt_c);
 int trig_ll_start(struct TrigLocalPrep *tlp, struct TrigLocalRend *tlr, const struct PolyPoint *opt_a,
   const struct PolyPoint *opt_b, const struct PolyPoint *opt_c);

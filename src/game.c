@@ -74,20 +74,20 @@ struct GamePanel
   short X;
   short Y;
   short Spr;
-  ushort Width;
-  ushort Height;
-  ushort Use;
-  ushort Flags;
-  ubyte ID;
-  ubyte Type;
+  u16 Width;
+  u16 Height;
+  u16 Use;
+  u16 Flags;
+  u8 ID;
+  u8 Type;
 };
 
 struct PacketFileHead {
-    ulong magic;
-    ushort campgn;
-    ushort missi;
-    ushort mapno;
-    ushort levelno;
+    u32 magic;
+    u16 campgn;
+    u16 missi;
+    u16 mapno;
+    u16 levelno;
 };
 
 struct Element;
@@ -98,48 +98,48 @@ struct Frame;
 extern char *fadedat_fname;
 extern char *pop_dat_fname_fmt;
 extern char *pop_tab_fname_fmt;
-extern unsigned long unkn_buffer_04;
+extern u32 unkn_buffer_04;
 
-extern ubyte *small_font_data;
-extern ubyte *small2_font_data;
-extern ubyte *small_med_font_data;
-extern ubyte *med_font_data;
-extern ubyte *med2_font_data;
-extern ubyte *big_font_data;
+extern u8 *small_font_data;
+extern u8 *small2_font_data;
+extern u8 *small_med_font_data;
+extern u8 *med_font_data;
+extern u8 *med2_font_data;
+extern u8 *big_font_data;
 
-extern ubyte *pointer_data;
+extern u8 *pointer_data;
 extern struct TbSprite *sprites_Icons0_0;
 extern struct TbSprite *sprites_Icons0_0_end;
 extern struct TbSprite *pop1_sprites;
 extern struct TbSprite *pop1_sprites_end;
-extern ubyte *pop1_data;
+extern u8 *pop1_data;
 
 extern struct TbSprite *unk2_sprites;
 extern struct TbSprite *unk2_sprites_end;
-extern ubyte *m_spr_data;
-extern ubyte *m_spr_data_end;
+extern u8 *m_spr_data;
+extern u8 *m_spr_data_end;
 extern struct TbSprite *m_sprites;
 extern struct TbSprite *m_sprites_end;
 
-extern ulong stored_l3d_next_object[1];
-extern ulong stored_l3d_next_object_face[1];
-extern ulong stored_l3d_next_object_face4[1];
-extern ulong stored_l3d_next_object_point[1];
-extern ulong stored_l3d_next_normal[1];
-extern ulong stored_l3d_next_face_texture[1];
-extern ulong stored_l3d_next_floor_texture[1];
-extern ulong stored_l3d_next_local_mat[1];
-extern ulong stored_level3d_inuse;
+extern u32 stored_l3d_next_object[1];
+extern u32 stored_l3d_next_object_face[1];
+extern u32 stored_l3d_next_object_face4[1];
+extern u32 stored_l3d_next_object_point[1];
+extern u32 stored_l3d_next_normal[1];
+extern u32 stored_l3d_next_face_texture[1];
+extern u32 stored_l3d_next_floor_texture[1];
+extern u32 stored_l3d_next_local_mat[1];
+extern u32 stored_level3d_inuse;
 
-extern ulong stored_g3d_next_object[1];
-extern ulong stored_g3d_next_object_face[1];
-extern ulong stored_g3d_next_object_face4[1];
-extern ulong stored_g3d_next_object_point[1];
-extern ulong stored_g3d_next_normal[1];
-extern ulong stored_g3d_next_face_texture[1];
-extern ulong stored_g3d_next_floor_texture[1];
-extern ulong stored_g3d_next_local_mat[1];
-extern ulong stored_global3d_inuse[1];
+extern u32 stored_g3d_next_object[1];
+extern u32 stored_g3d_next_object_face[1];
+extern u32 stored_g3d_next_object_face4[1];
+extern u32 stored_g3d_next_object_point[1];
+extern u32 stored_g3d_next_normal[1];
+extern u32 stored_g3d_next_face_texture[1];
+extern u32 stored_g3d_next_floor_texture[1];
+extern u32 stored_g3d_next_local_mat[1];
+extern u32 stored_global3d_inuse[1];
 
 extern unsigned char *display_palette;
 extern unsigned short unkn2_pos_x;
@@ -151,58 +151,58 @@ extern unsigned char textwalk_data[640];
 
 extern short save_slot; // = -1;
 extern char save_slot_names[8][25];
-extern long save_slot_base;
+extern i32 save_slot_base;
 extern short word_1C6E08;
 extern short word_1C6E0A;
 
-extern ubyte byte_1C83D1;
-extern ubyte byte_1CAB64[];
-extern ubyte byte_1DB088[];
-extern long dword_1DC36C;
-extern ubyte current_frame;
-extern long sound_heap_size;
+extern u8 byte_1C83D1;
+extern u8 byte_1CAB64[];
+extern u8 byte_1DB088[];
+extern i32 dword_1DC36C;
+extern u8 current_frame;
+extern i32 sound_heap_size;
 extern struct SampleTable *sound_heap_memory;
 
 extern struct GamePanel *game_panel;
 extern struct GamePanel game_panel_lo[];
 extern struct GamePanel unknstrct7_arr2[];
 
-extern ushort word_1810E4;
-extern ubyte byte_1810E6[40];
-extern ubyte byte_18110E[40];
+extern u16 word_1810E4;
+extern u8 byte_1810E6[40];
+extern u8 byte_18110E[40];
 
-extern ubyte research_on_weapons;// = true;
-extern ubyte research_unkn_var_01;
+extern u8 research_on_weapons;// = true;
+extern u8 research_unkn_var_01;
 
-extern ushort unkn3de_len;
+extern u16 unkn3de_len;
 extern void *dword_177750;
 
-extern ubyte execute_commands;
-extern long gamep_unknval_10;
-extern long gamep_unknval_11;
-extern long gamep_unknval_12;
-extern long nav_stats__ThisTurn;
-extern long gamep_unknval_14;
-extern long gamep_unknval_15;
-extern long gamep_unknval_16;
+extern u8 execute_commands;
+extern i32 gamep_unknval_10;
+extern i32 gamep_unknval_11;
+extern i32 gamep_unknval_12;
+extern i32 nav_stats__ThisTurn;
+extern i32 gamep_unknval_14;
+extern i32 gamep_unknval_15;
+extern i32 gamep_unknval_16;
 
-extern ubyte player_unkn0C9[8];
+extern u8 player_unkn0C9[8];
 extern char player_unknCC9[8][128];
-extern long scanner_unkn370;
-extern long scanner_unkn3CC;
-extern sbyte unkstruct04_id;// = -1;
+extern i32 scanner_unkn370;
+extern i32 scanner_unkn3CC;
+extern i8 unkstruct04_id;// = -1;
 
-extern ushort netgame_agent_pos_x[8][4];
-extern ushort netgame_agent_pos_y[8][4];
+extern u16 netgame_agent_pos_x[8][4];
+extern u16 netgame_agent_pos_y[8][4];
 
-extern long dword_176D58;
-extern ubyte byte_153198;
+extern i32 dword_176D58;
+extern u8 byte_153198;
 
-extern ushort word_1C4846[8];
-extern ushort word_1C4856[8];
+extern u16 word_1C4846[8];
+extern u16 word_1C4856[8];
 
 extern short brightness;
-extern long game_speed;
+extern i32 game_speed;
 
 struct TbLoadFiles unk02_load_files[] =
 {
@@ -225,12 +225,12 @@ struct TbLoadFiles unk02_load_files[] =
   { "",					(void **)NULL, 				(void **)NULL,			0, 0, 0 }
 };
 
-const ushort mod_group_type_strid[] = {74, 71, 72, 70, 73, };
+const u16 mod_group_type_strid[] = {74, 71, 72, 70, 73, };
 
 TbBool level_deep_fix = false;
 
 extern TbFileHandle packet_rec_fh;
-ushort packet_rec_no = 0;
+u16 packet_rec_no = 0;
 
 char unk_credits_text_s[] = "";
 char unk_credits_text_z[] = "";
@@ -239,9 +239,9 @@ char unk_credits_text_p[] = "";
 // Original sizes of scanner in low res 64x62, high res 129x119
 
 /** Width of the scanner map area, in percentage of screen. */
-ubyte scanner_width_pct = 20;
+u8 scanner_width_pct = 20;
 /** Height of the scanner map area, in percentage of screen. */
-ubyte scanner_height_pct = 25;
+u8 scanner_height_pct = 25;
 
 void PacketRecord_Close(void)
 {
@@ -376,9 +376,9 @@ void test_open(int num)
     // Empty for production version
 }
 
-ushort my_count_lines(const char *text)
+u16 my_count_lines(const char *text)
 {
-    ushort ret;
+    u16 ret;
     asm volatile ("call ASM_my_count_lines\n"
         : "=r" (ret) : "a" (text));
     return ret;
@@ -397,22 +397,22 @@ void read_textwalk(void)
 
 void read_primveh_obj(const char *fname, int a2)
 {
-    long firstval;
+    i32 firstval;
     TbFileHandle fh;
 
     fh = LbFileOpen(fname, Lb_FILE_MODE_READ_ONLY);
     if ( fh == INVALID_FILE )
         return;
-    LbFileRead(fh, &firstval, sizeof(long));
+    LbFileRead(fh, &firstval, sizeof(i32));
     if ( firstval != 1 )
     {
-      LbFileRead(fh, &prim_object_points_count, sizeof(ushort));
-      LbFileRead(fh, &prim_object_faces_count, sizeof(ushort));
-      LbFileRead(fh, &prim_object_faces4_count, sizeof(ushort));
-      LbFileRead(fh, &prim_objects_count, sizeof(ushort));
-      LbFileRead(fh, &prim4_textures_count, sizeof(ushort));
-      LbFileRead(fh, &prim_face_textures_count, sizeof(ushort));
-      LbFileRead(fh, &prim_unknprop01, sizeof(ushort));
+      LbFileRead(fh, &prim_object_points_count, sizeof(u16));
+      LbFileRead(fh, &prim_object_faces_count, sizeof(u16));
+      LbFileRead(fh, &prim_object_faces4_count, sizeof(u16));
+      LbFileRead(fh, &prim_objects_count, sizeof(u16));
+      LbFileRead(fh, &prim4_textures_count, sizeof(u16));
+      LbFileRead(fh, &prim_face_textures_count, sizeof(u16));
+      LbFileRead(fh, &prim_unknprop01, sizeof(u16));
       LbFileRead(fh, prim_object_points, sizeof(PrimObjectPoint) * prim_object_points_count);
       LbFileRead(fh, prim_object_faces, sizeof(PrimObjectFace) * prim_object_faces_count);
       LbFileRead(fh, prim_object_faces4, sizeof(PrimObjectFace4) * prim_object_faces4_count);
@@ -473,7 +473,7 @@ void debug_trace_setup(int place)
 
 /** Remains of some Bf debug stuff.
  */
-void debug_trace_turn_bound(ulong turn)
+void debug_trace_turn_bound(u32 turn)
 {
     LOGDBG("turn %lu", turn);
 }
@@ -515,13 +515,13 @@ void smack_malloc_free_all(void)
     smack_malloc_used_tot = 0;
 }
 
-void flic_unkn03(ubyte a1)
+void flic_unkn03(u8 a1)
 {
     asm volatile ("call ASM_flic_unkn03\n"
         : : "a" (a1));
 }
 
-void person_func_unknown_310(ubyte a1)
+void person_func_unknown_310(u8 a1)
 {
     asm volatile ("call ASM_person_func_unknown_310\n"
         :  : "a" (a1));
@@ -694,7 +694,7 @@ void setup_heaps(int a1)
         : "=r" (ret) : "a" (a1));
     return ret;
 #endif
-    long sz;
+    i32 sz;
     unsigned int n;
 
     if ((ingame.Flags & GamF_Unkn00020000) == 0)
@@ -758,15 +758,15 @@ void screen_dark_curtain_down(void)
         :  :  : "eax" );
 }
 
-ubyte my_char_to_upper(ubyte c)
+u8 my_char_to_upper(u8 c)
 {
-    ubyte ret;
+    u8 ret;
     asm volatile ("call ASM_my_char_to_upper\n"
         : "=r" (ret) : "a" (c));
     return ret;
 }
 
-int load_outro_text(ubyte *buf)
+int load_outro_text(u8 *buf)
 {
     int totlen;
     char *s;
@@ -799,7 +799,7 @@ int load_outro_text(ubyte *buf)
     return totlen + 1;
 }
 
-int load_people_text(ubyte *buf)
+int load_people_text(u8 *buf)
 {
     int totlen;
     int peptxt_len;
@@ -864,7 +864,7 @@ int load_people_text(ubyte *buf)
     {
         if (*s == '[')
         {
-            ubyte *g;
+            u8 *g;
 
             s++;
             if (strcmp(s, "END") == 0) {
@@ -920,9 +920,9 @@ void load_outro_sprites(void)
     asm volatile ("call ASM_load_outro_sprites\n"
         :  :  : "eax" );
 #endif
-    ubyte *data_buf;
-    ubyte *outtxt_ptr;
-    ubyte *peptxt_ptr;
+    u8 *data_buf;
+    u8 *outtxt_ptr;
+    u8 *peptxt_ptr;
     int next_pos;
     int tit_font_pos;
     int med_font_pos;
@@ -1035,8 +1035,8 @@ void unkn_f_pressed_func(void)
     for (i = 0; thing != 0; i++)
     {
         struct Thing *p_thing;
-        ushort cmd;
-        ushort prev_cmd;
+        u16 cmd;
+        u16 prev_cmd;
 
         if (i >= max(STHINGS_LIMIT,THINGS_LIMIT)) {
             LOGERR("Infinite loop in same type things list");
@@ -1061,13 +1061,13 @@ void unkn_f_pressed_func(void)
     game_commands = gcmds;
 }
 
-void fix_level_indexes(short missi, ulong fmtver, ubyte reload)
+void fix_level_indexes(short missi, u32 fmtver, u8 reload)
 {
 #if 0
     asm volatile ("call ASM_fix_level_indexes\n"
         :  :  : "eax" );
 #endif
-    ushort objectv;
+    u16 objectv;
     short thing;
 
     fix_thing_commands_indexes();
@@ -1121,19 +1121,19 @@ void level_misc_update(void)
         :  :  : "eax" );
 }
 
-void load_mad_pc(ushort mapno)
+void load_mad_pc(u16 mapno)
 {
     asm volatile ("call ASM_load_mad_pc\n"
         : : "a" (mapno));
 }
 
-void unkn_object_shift_03(ushort objectno)
+void unkn_object_shift_03(u16 objectno)
 {
     asm volatile ("call ASM_unkn_object_shift_03\n"
         : : "a" (objectno));
 }
 
-void unkn_object_shift_02(int norm1, int norm2, ushort objectno)
+void unkn_object_shift_02(int norm1, int norm2, u16 objectno)
 {
     asm volatile ("call ASM_unkn_object_shift_02\n"
         : : "a" (norm1), "d" (norm2), "b" (objectno));
@@ -1297,11 +1297,11 @@ void level_perform_deep_fix(void)
     }
 }
 
-ulong load_level_pc_handle(TbFileHandle lev_fh)
+u32 load_level_pc_handle(TbFileHandle lev_fh)
 {
-    ulong fmtver;
+    u32 fmtver;
     TbBool mech_initialized;
-    long limit;
+    i32 limit;
     int i, k, n;
 
     mech_initialized = 0;
@@ -1310,7 +1310,7 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
 
     if (fmtver >= 1)
     {
-        ushort count;
+        u16 count;
         short new_thing;
         struct Thing loc_thing;
         struct Thing *p_thing;
@@ -1360,7 +1360,7 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
 
             if (p_thing->Type == TT_PERSON)
             {
-                ushort person_anim;
+                u16 person_anim;
 
                 if (fmtver < 15)
                     // Causes invisible NPCs when non-zero
@@ -1435,7 +1435,7 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
             }
         }
     }
-    LbFileRead(lev_fh, &next_command, sizeof(ushort));
+    LbFileRead(lev_fh, &next_command, sizeof(u16));
     limit = get_memory_ptr_allocated_count((void **)&game_commands);
     if ((limit >= 0) && (next_command > limit)) {
         LOGERR("Restricting \"%s\", wanted %d, limit %ld", "game_commands", (int)next_command, limit);
@@ -1453,7 +1453,7 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
 
     LbFileRead(lev_fh, engine_mem_alloc_ptr + engine_mem_alloc_size - 1353, 1320);
     LbFileRead(lev_fh, war_flags, 32 * sizeof(struct WarFlag));
-    LbFileRead(lev_fh, &word_1531E0, sizeof(ushort));
+    LbFileRead(lev_fh, &word_1531E0, sizeof(u16));
     LOGSYNC("Level fmtver=%lu n_command=%hu word_1531E0=%hu", fmtver, next_command, word_1531E0);
     for (k = 0; k < PEOPLE_GROUPS_COUNT; k++)
     {
@@ -1464,12 +1464,12 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
         }
     }
     LbFileRead(lev_fh, engine_mem_alloc_ptr + engine_mem_alloc_size - 32000, 15 * word_1531E0);
-    LbFileRead(lev_fh, &unkn3de_len, sizeof(ushort));
+    LbFileRead(lev_fh, &unkn3de_len, sizeof(u16));
     LbFileRead(lev_fh, engine_mem_alloc_ptr + engine_mem_alloc_size - 32000, unkn3de_len);
 
     if (fmtver >= 4)
     {
-        ulong count;
+        u32 count;
         short thing;
 
         count = 0;
@@ -1518,7 +1518,7 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
     if (fmtver <= 6) {
         next_used_lvl_objective = 1;
     } else {
-        LbFileRead(lev_fh, &next_used_lvl_objective, sizeof(ushort));
+        LbFileRead(lev_fh, &next_used_lvl_objective, sizeof(u16));
         LbFileRead(lev_fh, game_used_lvl_objectives, 32 * next_used_lvl_objective);
     }
 
@@ -1536,7 +1536,7 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
     return fmtver;
 }
 
-void load_level_pc(short level, short missi, ubyte reload)
+void load_level_pc(short level, short missi, u8 reload)
 {
     short next_level, prev_level;
     TbFileHandle lev_fh;
@@ -1590,7 +1590,7 @@ void load_level_pc(short level, short missi, ubyte reload)
     lev_fh = LbFileOpen(lev_fname, Lb_FILE_MODE_READ_ONLY);
     if (lev_fh != INVALID_FILE)
     {
-        ulong fmtver;
+        u32 fmtver;
         int i;
 
         word_1C8446 = 1;
@@ -1642,7 +1642,7 @@ TbBool is_unkn_current_player(void)
     return ret;
 }
 
-void change_current_map(ushort mapno)
+void change_current_map(u16 mapno)
 {
     current_map = mapno;
     init_things();
@@ -1650,13 +1650,13 @@ void change_current_map(ushort mapno)
     fill_floor_textures();
 }
 
-void change_brightness(ushort val)
+void change_brightness(u16 val)
 {
     asm volatile ("call ASM_change_brightness\n"
         : : "a" (val));
 }
 
-int alt_at_point(ushort x, ushort z)
+int alt_at_point(u16 x, u16 z)
 {
     int ret;
     asm volatile ("call ASM_alt_at_point\n"
@@ -1780,7 +1780,7 @@ void draw_hud(int thing)
         : : "a" (thing));
 }
 
-void SCANNER_unkn_func_200(struct TbSprite *spr, int x, int y, ubyte col)
+void SCANNER_unkn_func_200(struct TbSprite *spr, int x, int y, u8 col)
 {
 #if 0
     asm volatile (
@@ -1790,8 +1790,8 @@ void SCANNER_unkn_func_200(struct TbSprite *spr, int x, int y, ubyte col)
     int xwind_beg;
     int xwind_end;
     int xwind_start;
-    sbyte *inp;
-    ubyte *oline;
+    i8 *inp;
+    u8 *oline;
     int opitch;
     int h;
     TbBool needs_window_bounding;
@@ -1799,7 +1799,7 @@ void SCANNER_unkn_func_200(struct TbSprite *spr, int x, int y, ubyte col)
     xwind_beg = lbDisplay.GraphicsWindowX;
     xwind_end = lbDisplay.GraphicsWindowX + lbDisplay.GraphicsWindowWidth;
     xwind_start = lbDisplay.GraphicsWindowX + x;
-    inp = (sbyte *)spr->Data;
+    inp = (i8 *)spr->Data;
     opitch = lbDisplay.GraphicsScreenWidth;
     oline = &lbDisplay.WScreen[opitch * (lbDisplay.GraphicsWindowY + y) + lbDisplay.GraphicsWindowX + x];
     if (xwind_start < lbDisplay.GraphicsWindowX) {
@@ -1817,7 +1817,7 @@ void SCANNER_unkn_func_200(struct TbSprite *spr, int x, int y, ubyte col)
         // Simplified and faster drawing when we do not have to check bounds
         for (h = 0; h < spr->SHeight; h++)
         {
-            ubyte *o;
+            u8 *o;
 
             o = oline;
             while (*inp)
@@ -1850,7 +1850,7 @@ void SCANNER_unkn_func_200(struct TbSprite *spr, int x, int y, ubyte col)
     {
         for (h = 0; h < spr->SHeight; h++)
         {
-            ubyte *o;
+            u8 *o;
             int xwind_curr;
 
             o = oline;
@@ -1893,17 +1893,17 @@ void SCANNER_unkn_func_200(struct TbSprite *spr, int x, int y, ubyte col)
 }
 
 
-void SCANNER_unkn_func_201(struct TbSprite *spr, int x, int y, ubyte *fade)
+void SCANNER_unkn_func_201(struct TbSprite *spr, int x, int y, u8 *fade)
 {
 #if 0
     asm volatile (
       "call ASM_SCANNER_unkn_func_201\n"
         : : "a" (spr), "d" (x), "b" (y), "c" (fade));
 #endif
-    ubyte *oline;
-    ubyte *dt;
+    u8 *oline;
+    u8 *dt;
     int ich;
-    ubyte *o;
+    u8 *o;
 
     oline = &lbDisplay.WScreen[lbDisplay.GraphicsScreenWidth * y + x];
     dt = spr->Data;
@@ -1912,8 +1912,8 @@ void SCANNER_unkn_func_201(struct TbSprite *spr, int x, int y, ubyte *fade)
         o = oline;
         while (1)
         {
-            ushort ftidx;
-            sbyte len;
+            u16 ftidx;
+            i8 len;
 
             len = *dt;
             if (!len)
@@ -1950,10 +1950,10 @@ void SCANNER_unkn_func_202(struct TbSprite *spr, int x, int y, int ctr, int bri)
       "call ASM_SCANNER_unkn_func_202\n"
         : : "a" (spr), "d" (x), "b" (y), "c" (ctr), "g" (bri));
 #endif
-    ubyte *oline;
-    ubyte *dt;
+    u8 *oline;
+    u8 *dt;
     int ich;
-    ubyte *o;
+    u8 *o;
 
     if ((x < 0) || (x > lbDisplay.PhysicalScreenWidth))
         return;
@@ -1972,8 +1972,8 @@ void SCANNER_unkn_func_202(struct TbSprite *spr, int x, int y, int ctr, int bri)
         o = oline;
         while (1)
         {
-            ushort ftsub, ftidx;
-            sbyte len;
+            u16 ftsub, ftidx;
+            i8 len;
 
             len = *dt;
             if (!len)
@@ -2002,7 +2002,7 @@ void SCANNER_unkn_func_202(struct TbSprite *spr, int x, int y, int ctr, int bri)
     }
 }
 
-void SCANNER_unkn_func_203(int a1, int a2, int a3, int a4, ubyte a5, int a6, int a7)
+void SCANNER_unkn_func_203(int a1, int a2, int a3, int a4, u8 a5, int a6, int a7)
 {
     asm volatile (
       "push %6\n"
@@ -2051,7 +2051,7 @@ void SCANNER_unkn_func_205(void)
  * @param py
  * @param spr_id
  */
-void draw_new_panel_sprite_std(int px, int py, ulong spr_id)
+void draw_new_panel_sprite_std(int px, int py, u32 spr_id)
 {
     struct TbSprite *spr;
     int x, y;
@@ -2076,7 +2076,7 @@ void draw_new_panel_sprite_std(int px, int py, ulong spr_id)
  * @param py
  * @param spr_id
  */
-void draw_new_panel_sprite_dark(int px, int py, ulong spr_id)
+void draw_new_panel_sprite_dark(int px, int py, u32 spr_id)
 {
     struct TbSprite *spr;
     int x, y;
@@ -2103,7 +2103,7 @@ void draw_new_panel_sprite_dark(int px, int py, ulong spr_id)
  * @param a3
  * @param a4
  */
-void draw_fourpack_items(int a1, ushort a2, short a3, short a4)
+void draw_fourpack_items(int a1, u16 a2, short a3, short a4)
 {
     asm volatile (
       "call ASM_draw_fourpack_items\n"
@@ -2122,7 +2122,7 @@ TbBool in_box_coords(short x, short y, short box_x1, short box_y1, short box_x2,
         && y > box_y1 && y < box_y2;
 }
 
-sbyte find_nth_weapon_held(ushort index, ubyte n)
+i8 find_nth_weapon_held(u16 index, u8 n)
 {
     char ret;
     asm volatile ("call ASM_find_nth_weapon_held\n"
@@ -2139,7 +2139,7 @@ TbBool draw_panel_pickable_thing_below_agent(struct Thing *p_agent)
     drawn = false;
     if (p_agent->Flag & TngF_Unkn08000000)
     {
-        ushort weptype;
+        u16 weptype;
         thing = p_agent->U.UPerson.Vehicle; // Seem to be weapon standing over rather than vehicle
         if (thing != 0)
             p_pickup = &sthings[thing];
@@ -2172,7 +2172,7 @@ TbBool draw_panel_pickable_thing_player_targeted(PlayerInfo *p_locplayer)
     drawn = false;
     if (p_locplayer->TargetType == 5)
     {
-        ushort weptype;
+        u16 weptype;
         thing = p_locplayer->field_102;
         if (thing < 0)
         {
@@ -2200,11 +2200,11 @@ TbBool draw_panel_pickable_thing_player_targeted(PlayerInfo *p_locplayer)
  * @param current_weapon
  * @return
  */
-int count_weapons_in_flags(int *p_ncarr_below, int *p_ncarr_above, ulong weapons_carried, short current_weapon)
+int count_weapons_in_flags(int *p_ncarr_below, int *p_ncarr_above, u32 weapons_carried, short current_weapon)
 {
     int ncarried, ncarr_below, ncarr_above;
-    ulong wepflags;
-    ushort nweptype;
+    u32 wepflags;
+    u16 nweptype;
 
     ncarried = 0;
     ncarr_above = 0;
@@ -2231,12 +2231,12 @@ int count_weapons_in_flags(int *p_ncarr_below, int *p_ncarr_above, ulong weapons
     return ncarried;
 }
 
-TbBool draw_weapons_list_single(PlayerInfo *p_locplayer, ushort comcur, ulong weapons_carried, short current_weapon)
+TbBool draw_weapons_list_single(PlayerInfo *p_locplayer, u16 comcur, u32 weapons_carried, short current_weapon)
 {
-    ushort nshown;
+    u16 nshown;
     int weptype;
     int nchecked;
-    ulong wepflags;
+    u32 wepflags;
     int cy;
     int ncarried;
     int ncarr_below;
@@ -2313,7 +2313,7 @@ TbBool draw_weapons_list_single(PlayerInfo *p_locplayer, ushort comcur, ulong we
 short draw_current_weapon_button(PlayerInfo *p_locplayer, short nagent)
 {
     struct Thing *p_agent;
-    ushort curwep, prevwep;
+    u16 curwep, prevwep;
     short cx, cy;
 
     if (lbDisplay.ScreenMode == 1) {
@@ -2418,15 +2418,15 @@ short draw_current_weapon_button(PlayerInfo *p_locplayer, short nagent)
     return curwep;
 }
 
-TbBool draw_agent_weapons_selection(PlayerInfo *p_locplayer, struct Thing *p_agent, ubyte *cur_weapons, int nagent)
+TbBool draw_agent_weapons_selection(PlayerInfo *p_locplayer, struct Thing *p_agent, u8 *cur_weapons, int nagent)
 {
     int cx, cy;
     int weptype;
     int dcx, dcy;
     int nunk1;
-    ulong wepflags;
-    ushort comcur;
-    ushort nshown;
+    u32 wepflags;
+    u16 comcur;
+    u16 nshown;
     int nchecked;
     TbBool wep_highlight;
     TbBool ret;
@@ -2538,7 +2538,7 @@ TbBool func_1caf8(void)
     TbBool ret;
     PlayerInfo *p_locplayer;
     struct Thing *p_agent;
-    ubyte cur_weapons[4];
+    u8 cur_weapons[4];
     int nagent;
     int panstate;
 
@@ -2555,7 +2555,7 @@ TbBool func_1caf8(void)
 
     if (ingame.PanelPermutation >= 0)
     {
-        ushort comcur;
+        u16 comcur;
         comcur = p_agent->U.UPerson.ComCur & 3;
         ret = draw_weapons_list_single(p_locplayer, comcur,
             p_agent->U.UPerson.WeaponsCarried, p_agent->U.UPerson.CurrentWeapon);
@@ -2564,7 +2564,7 @@ TbBool func_1caf8(void)
     {
         for (nagent = 0; nagent < playable_agents; nagent++)
         {
-            ushort curwep;
+            u16 curwep;
             p_agent = p_locplayer->MyAgent[nagent];
             if ((p_agent->Flag & TngF_Unkn0002) != 0) {
                 cur_weapons[nagent] = 0;
@@ -2596,7 +2596,7 @@ void func_1efb8(void)
         :  :  : "eax" );
 }
 
-void func_702c0(int a1, int a2, int a3, int a4, int a5, ubyte a6)
+void func_702c0(int a1, int a2, int a3, int a4, int a5, u8 a6)
 {
     asm volatile (
       "push %5\n"
@@ -2605,16 +2605,16 @@ void func_702c0(int a1, int a2, int a3, int a4, int a5, ubyte a6)
         : : "a" (a1), "d" (a2), "b" (a3), "c" (a4), "g" (a5), "g" (a6));
 }
 
-void draw_shield_level(short x, short y, ushort w, ushort h)
+void draw_shield_level(short x, short y, u16 w, u16 h)
 {
 #if 0
     asm volatile (
       "call ASM_draw_shield_level\n"
         : : "a" (x), "d" (y), "b" (w), "c" (h));
 #else
-    ubyte m;
-    long waftx, wafty;
-    ushort tmx, tmy;
+    u8 m;
+    i32 waftx, wafty;
+    u16 tmx, tmy;
     struct EnginePoint point4;
     struct EnginePoint point2;
     struct EnginePoint point1;
@@ -2660,7 +2660,7 @@ void draw_shield_level(short x, short y, ushort w, ushort h)
 #endif
 }
 
-void draw_health_level(short x, short y, ushort w, ushort h, short lv, ushort lvmax, ubyte col, ubyte a8)
+void draw_health_level(short x, short y, u16 w, u16 h, short lv, u16 lvmax, u8 col, u8 a8)
 {
 #if 0
     asm volatile (
@@ -2715,9 +2715,8 @@ void draw_health_level(short x, short y, ushort w, ushort h, short lv, ushort lv
 #endif
 }
 
-void func_1eae4(int x, short y, int w, ushort h, short lv, ushort lvmax, ubyte col, int a8)
+void func_1eae4(int x, short y, int w, u16 h, short lv, u16 lvmax, u8 col, int a8)
 {
-#if 0
     asm volatile (
       "push %7\n"
       "push %6\n"
@@ -2725,7 +2724,7 @@ void func_1eae4(int x, short y, int w, ushort h, short lv, ushort lvmax, ubyte c
       "push %4\n"
       "call ASM_func_1eae4\n"
         : : "a" (x), "d" (y), "b" (w), "c" (h), "g" (lv), "g" (lvmax), "g" (col), "g" (a8));
-#else
+#if 0
     short cw, ch;
 
     if ((lv <= 0) || (lvmax == 0))
@@ -2773,7 +2772,7 @@ void func_1eae4(int x, short y, int w, ushort h, short lv, ushort lvmax, ubyte c
 #endif
 }
 
-void func_1ec68(short a1, short a2, ushort a3, int a4, int a5)
+void func_1ec68(short a1, short a2, u16 a3, int a4, int a5)
 {
     asm volatile (
       "push %4\n"
@@ -2858,7 +2857,7 @@ void draw_new_panel()
             if (panel->Type == 5 && panel->ID < playable_agents)
             {
                 struct Thing *p_agent;
-                ubyte weapon;
+                u8 weapon;
 
                 p_agent = p_locplayer->MyAgent[panel->ID];
                 if (p_agent < &things[0] || p_agent > &things[THINGS_LIMIT])
@@ -2893,7 +2892,7 @@ void draw_new_panel()
                     continue;
 
                 if (panel->Type == 5) {
-                    ubyte weapon;
+                    u8 weapon;
 
                     weapon = p_agent->U.UPerson.CurrentWeapon;
                     if (weapon == 0)
@@ -2966,7 +2965,7 @@ void draw_new_panel()
     if (!func_1caf8())
     {
         if (ingame.Flags & GamF_Unkn0200) {
-            ulong md, y;
+            u32 md, y;
             md = p_locplayer->UserInput[0].ControlMode & 0x1FFF;
             if (md == 1 && pktrec_mode != PktR_PLAYBACK) {
                 y = alt_at_point(mouse_map_x, mouse_map_z);
@@ -3147,7 +3146,7 @@ void init_outro(void)
     {
         for (i = 24; i != 24+150; i++)
         {
-            ubyte *buf;
+            u8 *buf;
             buf = &lbDisplay.WScreen[i*lbDisplay.GraphicsScreenWidth + 10];
             LbFileRead(fh, buf, 300);
         }
@@ -3327,7 +3326,7 @@ void srm_scanner_size_update(void)
 
 void init_scanner(void)
 {
-    ubyte col;
+    u8 col;
 
     if (ingame.PanelPermutation != 2 && ingame.PanelPermutation != -3)
         col = 2;
@@ -3397,7 +3396,7 @@ void teleport_current_agent(PlayerInfo *p_locplayer)
 
 void person_resurrect(struct Thing *p_person)
 {
-    ulong person_anim;
+    u32 person_anim;
     p_person->Flag &= ~TngF_Unkn0002;
     p_person->Flag &= ~TngF_Unkn02000000;
     p_person->State = PerSt_WAIT;
@@ -3496,9 +3495,9 @@ void init_syndwars(void)
     LOGSYNC("Starting");
     //sprintf(locstr, "%sSound", cd_drive); -- unused
 
-    audOpts.SoundDataPath = "Sound";
-    audOpts.SoundDriverPath = "Sound";
-    audOpts.IniPath = "Sound";
+    audOpts.SoundDataPath = "sound";
+    audOpts.SoundDriverPath = "sound";
+    audOpts.IniPath = "sound";
     audOpts.AutoScan = 1;
     audOpts.StereoOption = 1;
     audOpts.DisableLoadSounds = 1;
@@ -3526,7 +3525,7 @@ void setup_host_sub6(void)
 void setup_debug_obj_trace(void)
 {
     // Code for setting memory ranges was here
-    // Removed, as we no longer have such tracking/profiling mechanism
+    // Removed, as we no i32er have such tracking/profiling mechanism
     debug_trace_place(0);
 }
 
@@ -3540,7 +3539,7 @@ void set_smack_free(void (*cb)(void *ptr))
     smack_free = cb;
 }
 
-void BAT_unknsub_20(int a1, int a2, int a3, int a4, unsigned long a5)
+void BAT_unknsub_20(int a1, int a2, int a3, int a4, u32 a5)
 {
     asm volatile (
       "push %4\n"
@@ -3561,7 +3560,7 @@ void setup_host(void)
     BAT_unknsub_20(0, 0, 0, 0, unkn_buffer_04 + 41024);
     set_smack_malloc(ASM_smack_malloc);
     set_smack_free(ASM_smack_mfree);
-    LOGDBG("&setup_host() = 0x%lx", (ulong)setup_host);
+    LOGDBG("&setup_host() = 0x%lx", (u32)setup_host);
     {
         TbScreenModeInfo *mdinfo;
 
@@ -3695,10 +3694,10 @@ void read_user_settings(void)
         read_mortal_salt_backup = true;
     } else
     {
-        ushort cheats;
+        u16 cheats;
 
-        LbFileRead(fh, kbkeys, 23 * sizeof(ushort));
-        LbFileRead(fh, jskeys, 23 * sizeof(ushort));
+        LbFileRead(fh, kbkeys, 23 * sizeof(u16));
+        LbFileRead(fh, jskeys, 23 * sizeof(u16));
         LbFileRead(fh, &byte_1C4A9F, 1);
         LbFileRead(fh, &players[local_player_no].DoubleMode,
           sizeof(players[local_player_no].DoubleMode));
@@ -3752,7 +3751,7 @@ void read_user_settings(void)
 #endif
 }
 
-ubyte save_user_settings(void)
+u8 save_user_settings(void)
 {
 #if 0
     TbBool ret;
@@ -3770,8 +3769,8 @@ ubyte save_user_settings(void)
     if (fh == INVALID_FILE)
         return 1;
 
-    LbFileWrite(fh, kbkeys, 23 * sizeof(ushort));
-    LbFileWrite(fh, jskeys, 23 * sizeof(ushort));
+    LbFileWrite(fh, kbkeys, 23 * sizeof(u16));
+    LbFileWrite(fh, jskeys, 23 * sizeof(u16));
     LbFileWrite(fh, &byte_1C4A9F, sizeof(byte_1C4A9F));
     LbFileWrite(fh, &players[local_player_no].DoubleMode,
       sizeof(players[local_player_no].DoubleMode));
@@ -3821,9 +3820,9 @@ void unkn_truce_groups(void)
         :  :  : "eax" );
 }
 
-void blind_progress_game(ulong nturns)
+void blind_progress_game(u32 nturns)
 {
-    ulong n;
+    u32 n;
 
     for (n = 0; n < nturns; n++)
     {
@@ -3838,7 +3837,7 @@ void init_level(void)
         :  :  : "eax" );
 }
 
-void init_level_3d(ubyte flag)
+void init_level_3d(u8 flag)
 {
     asm volatile ("call ASM_init_level_3d\n"
         : : "a" (flag));
@@ -3938,7 +3937,7 @@ void init_player(void)
     for (i = 0; i < playable_agents; i++)
     {
         struct Thing *p_agent;
-        ulong wep;
+        u32 wep;
         p_agent = p_locplayer->MyAgent[i];
         if (p_agent != NULL)
             wep = find_nth_weapon_held(p_agent->ThingOffset, 1);
@@ -3958,7 +3957,7 @@ void init_player(void)
     }
 }
 
-struct Thing *new_sim_person(int x, int y, int z, ubyte subtype)
+struct Thing *new_sim_person(int x, int y, int z, u8 subtype)
 {
     struct Thing *p_person;
     asm volatile ("call ASM_new_sim_person\n"
@@ -3967,16 +3966,16 @@ struct Thing *new_sim_person(int x, int y, int z, ubyte subtype)
 }
 
 
-ushort make_group_into_players(ushort group, ushort plyr, ushort max_agent, short new_type)
+u16 make_group_into_players(u16 group, u16 plyr, u16 max_agent, short new_type)
 {
 #if 0
-    ushort ret;
+    u16 ret;
     asm volatile ("call ASM_make_group_into_players\n"
         : "=r" (ret) : "a" (group), "d" (plyr), "b" (max_agent), "c" (new_type));
     return ret;
 #endif
-    ulong n, nframe;
-    ushort nagents, high_tier;
+    u32 n, nframe;
+    u16 nagents, high_tier;
     PlayerInfo *p_player;
     struct Thing *p_person;
 
@@ -4009,7 +4008,7 @@ ushort make_group_into_players(ushort group, ushort plyr, ushort max_agent, shor
         }
         players[plyr].MyAgent[nagents] = p_person;
         p_person->Flag |= TngF_PlayerAgent;
-#if 0 // This no longer makes sense - campaign is given with mission number
+#if 0 // This no i32er makes sense - campaign is given with mission number
         if (!cmdln_param_bcg)
         {
             if (p_person->SubType == SubTT_PERS_ZEALOT)
@@ -4117,7 +4116,7 @@ ushort make_group_into_players(ushort group, ushort plyr, ushort max_agent, shor
     return nagents;
 }
 
-int place_default_player(ushort player_id, TbBool replace)
+int place_default_player(u16 player_id, TbBool replace)
 {
     int ret;
     asm volatile ("call ASM_place_default_player\n"
@@ -4132,8 +4131,8 @@ void place_single_player(void)
         :  :  : "eax" );
 #endif
     PlayerInfo *p_locplayer;
-    ulong n;
-    ushort nagents, pl_agents, pl_group;
+    u32 n;
+    u16 nagents, pl_agents, pl_group;
 
     p_locplayer = &players[local_player_no];
 
@@ -4191,9 +4190,9 @@ void place_single_player(void)
       place_default_player(0, 1);
 }
 
-void init_game(ubyte reload)
+void init_game(u8 reload)
 {
-    ushort missi, next_mapno;
+    u16 missi, next_mapno;
     short next_level;
 
     missi = ingame.CurrentMission;
@@ -4235,9 +4234,9 @@ void prep_single_mission(void)
     adjust_mission_engine_to_video_mode();
 }
 
-void restart_back_into_mission(ushort missi)
+void restart_back_into_mission(u16 missi)
 {
-    ushort mapno;
+    u16 mapno;
 
     mapno = mission_list[missi].MapNo;
     mission_result = 0;
@@ -4260,7 +4259,7 @@ void restart_back_into_mission(ushort missi)
 void compound_mission_immediate_start_next(void)
 {
     short i;
-    ushort missi;
+    u16 missi;
 
     show_black_screen();
     LbFileLoadAt("qdata/pal.pal", display_palette);
@@ -4278,7 +4277,7 @@ void compound_mission_immediate_start_next(void)
     // TODO MISSI specific missions hard-coded - remove
     if (ingame.CurrentMission == 84)
     {
-        ushort bkpmode;
+        u16 bkpmode;
 
         bkpmode = lbDisplay.ScreenMode;
         play_smacker(MPly_MPartComplete);
@@ -4299,7 +4298,7 @@ void tweak_for_compound_mission_m84(void)
     compound_mission_immediate_start_next();
 }
 
-short test_missions(ubyte flag)
+short test_missions(u8 flag)
 {
     short ret;
     asm volatile ("call ASM_test_missions\n"
@@ -4336,7 +4335,7 @@ TbBool create_strings_list(char **strings, char *strings_data, char *strings_dat
 
 void create_tables_file_from_fade(void)
 {
-    long len;
+    i32 len;
     int i, k;
     unsigned char *curbuf;
     // Note that the input file is not normally available with the game
@@ -4425,12 +4424,12 @@ void game_setup(void)
 
 void game_process_sub01(void)
 {
-    unsigned long tick_time = clock();
+    u32 tick_time = clock();
     tick_time = tick_time / 100;
     curr_tick_time = tick_time;
     if (tick_time != prev_tick_time)
     {
-        unsigned long tmp;
+        u32 tmp;
         tmp = gameturn - prev_gameturn;
         prev_gameturn = gameturn;
         turns_delta = tmp;
@@ -4459,8 +4458,8 @@ void game_process_sub09(void)
         break;
     case 2:
         for (i = 0; i < 10; i++) {
-            ushort pos;
-            ubyte *ptr;
+            u16 pos;
+            u8 *ptr;
             pos = LbRandomAnyShort() + (gameturn >> 2);
             ptr = &vec_tmap[pos];
             *ptr = pixmap.fade_table[40*PALETTE_8b_COLORS + *ptr];
@@ -4471,19 +4470,19 @@ void game_process_sub09(void)
 
 void load_multicolor_sprites(void)
 {
-    ulong sz;
+    u32 sz;
     char fname[100];
 
     sprintf(fname, "data/mspr-%d.dat", ingame.TrenchcoatPreference);
     LbFileLoadAt(fname, m_spr_data);
     sprintf(fname, "data/mspr-%d.tab", ingame.TrenchcoatPreference);
     sz = LbFileLoadAt(fname, m_sprites);
-    m_sprites_end = (struct TbSprite *)((ubyte *)m_sprites + sz);
+    m_sprites_end = (struct TbSprite *)((u8 *)m_sprites + sz);
     LbSpriteSetup(m_sprites, m_sprites_end, m_spr_data);
     //unknown_unused(); -- nop function, not sure what was its purpose
 }
 
-int func_6edb8(ubyte a1)
+int func_6edb8(u8 a1)
 {
     int ret;
     asm volatile ("call ASM_func_6edb8\n"
@@ -4500,8 +4499,8 @@ void debug_m_sprite(int idx)
     unsigned char *ptr;
     spr = &m_sprites[idx];
     str = strdata;
-    sprintf(str, "spr %d width %d height %d ptr 0x%lx data",
-      idx, (int)spr->SWidth, (int)spr->SHeight, (ulong)spr->Data);
+    sprintf(str, "spr %d width %d height %d ptr 0x%x data",
+      idx, (int)spr->SWidth, (int)spr->SHeight, (u32)spr->Data);
     ptr = spr->Data;
     for (i = 0; i < 10; i++)
     {
@@ -4564,7 +4563,7 @@ void draw_line_purple_list(int x1, int y1, int x2, int y2, int colour)
         : : "a" (x1), "d" (y1), "b" (x2), "c" (y2), "g" (colour));
 }
 
-void draw_box_purple_list(int x, int y, ulong width, ulong height, int colour)
+void draw_box_purple_list(int x, int y, u32 width, u32 height, int colour)
 {
     asm volatile (
       "push %4\n"
@@ -4572,7 +4571,7 @@ void draw_box_purple_list(int x, int y, ulong width, ulong height, int colour)
         : : "a" (x), "d" (y), "b" (width), "c" (height), "g" (colour));
 }
 
-void draw_text_purple_list2(int x, int y, const char *text, ushort line)
+void draw_text_purple_list2(int x, int y, const char *text, u16 line)
 {
     asm volatile (
       "call ASM_draw_text_purple_list2\n"
@@ -4586,14 +4585,14 @@ void draw_sprite_purple_list(int x, int y, struct TbSprite *sprite)
         : : "a" (x), "d" (y), "b" (sprite));
 }
 
-void copy_box_purple_list(long x, long y, ulong width, ulong height)
+void copy_box_purple_list(i32 x, i32 y, u32 width, u32 height)
 {
     asm volatile (
       "call ASM_copy_box_purple_list\n"
         : : "a" (x), "d" (y), "b" (width), "c" (height));
 }
 
-void draw_unkn20_subfunc_01(int x, int y, char *text, ubyte a4)
+void draw_unkn20_subfunc_01(int x, int y, char *text, u8 a4)
 {
     asm volatile (
       "call ASM_draw_unkn20_subfunc_01\n"
@@ -4646,7 +4645,7 @@ TbResult init_read_all_sprite_files(void)
 }
 
 #if 0
-TbPixel LbPaletteFindColour(ubyte *pal, ubyte rval, ubyte gval, ubyte bval)
+TbPixel LbPaletteFindColour(u8 *pal, u8 rval, u8 gval, u8 bval)
 {
     TbResult ret;
     asm volatile ("call ASM_LbPaletteFindColour\n"
@@ -4655,7 +4654,7 @@ TbPixel LbPaletteFindColour(ubyte *pal, ubyte rval, ubyte gval, ubyte bval)
 }
 #endif
 
-void init_screen_box(struct ScreenBox *box, ushort x, ushort y, ushort width, ushort height, int drawspeed)
+void init_screen_box(struct ScreenBox *box, u16 x, u16 y, u16 width, u16 height, int drawspeed)
 {
     asm volatile (
       "push %5\n"
@@ -4664,7 +4663,7 @@ void init_screen_box(struct ScreenBox *box, ushort x, ushort y, ushort width, us
         : : "a" (box), "d" (x), "b" (y), "c" (width), "g" (height), "g" (drawspeed));
 }
 
-void init_screen_text_box(struct ScreenTextBox *box, ushort x, ushort y, ushort width, ushort height, int drawspeed, struct TbSprite *font, int textspeed)
+void init_screen_text_box(struct ScreenTextBox *box, u16 x, u16 y, u16 width, u16 height, int drawspeed, struct TbSprite *font, int textspeed)
 {
     asm volatile (
       "push %7\n"
@@ -4675,7 +4674,7 @@ void init_screen_text_box(struct ScreenTextBox *box, ushort x, ushort y, ushort 
         : : "a" (box), "d" (x), "b" (y), "c" (width), "g" (height), "g" (drawspeed), "g" (font), "g" (textspeed));
 }
 
-void init_screen_button(struct ScreenButton *box, ushort x, ushort y, const char *text, int drawspeed, struct TbSprite *font, int textspeed, int flags)
+void init_screen_button(struct ScreenButton *box, u16 x, u16 y, const char *text, int drawspeed, struct TbSprite *font, int textspeed, int flags)
 {
     asm volatile (
       "push %7\n"
@@ -4686,7 +4685,7 @@ void init_screen_button(struct ScreenButton *box, ushort x, ushort y, const char
         : : "a" (box), "d" (x), "b" (y), "c" (text), "g" (drawspeed), "g" (font), "g" (textspeed), "g" (flags));
 }
 
-void init_screen_info_box(struct ScreenInfoBox *box, ushort x, ushort y, ushort width, const char *text1, const char *text2, int drawspeed, struct TbSprite *font1, struct TbSprite *font2, int textspeed)
+void init_screen_info_box(struct ScreenInfoBox *box, u16 x, u16 y, u16 width, const char *text1, const char *text2, int drawspeed, struct TbSprite *font1, struct TbSprite *font2, int textspeed)
 {
     asm volatile (
       "push %9\n"
@@ -4699,24 +4698,24 @@ void init_screen_info_box(struct ScreenInfoBox *box, ushort x, ushort y, ushort 
         : : "a" (box), "d" (x), "b" (y), "c" (width), "g" (text1), "g" (text2), "g" (drawspeed), "g" (font1), "g" (font2), "g" (textspeed));
 }
 
-ubyte show_title_box(struct ScreenTextBox *box)
+u8 show_title_box(struct ScreenTextBox *box)
 {
-    ubyte ret;
+    u8 ret;
     asm volatile ("call ASM_show_title_box\n"
         : "=r" (ret) : "a" (box));
     return ret;
 }
 
-ubyte show_unkn38_box(struct ScreenTextBox *box)
+u8 show_unkn38_box(struct ScreenTextBox *box)
 {
-    ubyte ret;
+    u8 ret;
     asm volatile ("call ASM_show_unkn38_box\n"
         : "=r" (ret) : "a" (box));
     return ret;
 }
 
-ubyte ac_show_title_box(struct ScreenTextBox *box);
-ubyte ac_show_unkn38_box(struct ScreenTextBox *box);
+u8 ac_show_title_box(struct ScreenTextBox *box);
+u8 ac_show_unkn38_box(struct ScreenTextBox *box);
 
 void check_buy_sell_button(void)
 {
@@ -4724,205 +4723,205 @@ void check_buy_sell_button(void)
         :  :  : "eax" );
 }
 
-ubyte select_all_agents(ubyte click)
+u8 select_all_agents(u8 click)
 {
     selected_agent = 4;
     check_buy_sell_button();
     return 1;
 }
 
-ubyte do_net_protocol_option(ubyte click)
+u8 do_net_protocol_option(u8 click)
 {
-    ubyte ret;
+    u8 ret;
     asm volatile ("call ASM_do_net_protocol_option\n"
         : "=r" (ret) : "a" (click));
     return ret;
 }
 
-ubyte do_net_unkn40(ubyte click)
+u8 do_net_unkn40(u8 click)
 {
-    ubyte ret;
+    u8 ret;
     asm volatile ("call ASM_do_net_unkn40\n"
         : "=r" (ret) : "a" (click));
     return ret;
 }
 
-ubyte do_serial_speed_switch(ubyte click)
+u8 do_serial_speed_switch(u8 click)
 {
-    ubyte ret;
+    u8 ret;
     asm volatile ("call ASM_do_serial_speed_switch\n"
         : "=r" (ret) : "a" (click));
     return ret;
 }
 
-ubyte change_panel_permutation(ubyte click)
+u8 change_panel_permutation(u8 click)
 {
-    ubyte ret;
+    u8 ret;
     asm volatile ("call ASM_change_panel_permutation\n"
         : "=r" (ret) : "a" (click));
     return ret;
 }
 
-ubyte change_trenchcoat_preference(ubyte click)
+u8 change_trenchcoat_preference(u8 click)
 {
-    ubyte ret;
+    u8 ret;
     asm volatile ("call ASM_change_trenchcoat_preference\n"
         : "=r" (ret) : "a" (click));
     return ret;
 }
 
-ubyte do_unkn10_CALIBRATE(ubyte click)
+u8 do_unkn10_CALIBRATE(u8 click)
 {
-    ubyte ret;
+    u8 ret;
     asm volatile ("call ASM_do_unkn10_CALIBRATE\n"
         : "=r" (ret) : "a" (click));
     return ret;
 }
 
-ubyte do_unkn10_SAVE(ubyte click)
+u8 do_unkn10_SAVE(u8 click)
 {
-    ubyte ret;
+    u8 ret;
     asm volatile ("call ASM_do_unkn10_SAVE\n"
         : "=r" (ret) : "a" (click));
     return ret;
 }
 
-ubyte do_unkn10_CONTROLS(ubyte click)
+u8 do_unkn10_CONTROLS(u8 click)
 {
-    ubyte ret;
+    u8 ret;
     asm volatile ("call ASM_do_unkn10_CONTROLS\n"
         : "=r" (ret) : "a" (click));
     return ret;
 }
 
-ubyte alert_OK(ubyte click)
+u8 alert_OK(u8 click)
 {
-    ubyte ret;
+    u8 ret;
     asm volatile ("call ASM_alert_OK\n"
         : "=r" (ret) : "a" (click));
     return ret;
 }
 
-ubyte do_net_SET2(ubyte click)
+u8 do_net_SET2(u8 click)
 {
-    ubyte ret;
+    u8 ret;
     asm volatile ("call ASM_do_net_SET2\n"
         : "=r" (ret) : "a" (click));
     return ret;
 }
 
-ubyte do_net_SET(ubyte click)
+u8 do_net_SET(u8 click)
 {
-    ubyte ret;
+    u8 ret;
     asm volatile ("call ASM_do_net_SET\n"
         : "=r" (ret) : "a" (click));
     return ret;
 }
 
-ubyte do_net_INITIATE(ubyte click)
+u8 do_net_INITIATE(u8 click)
 {
-    ubyte ret;
+    u8 ret;
     asm volatile ("call ASM_do_net_INITIATE\n"
         : "=r" (ret) : "a" (click));
     return ret;
 }
 
-ubyte do_net_groups_LOGON(ubyte click)
+u8 do_net_groups_LOGON(u8 click)
 {
-    ubyte ret;
+    u8 ret;
     asm volatile ("call ASM_do_net_groups_LOGON\n"
         : "=r" (ret) : "a" (click));
     return ret;
 }
 
-ubyte do_unkn8_EJECT(ubyte click)
+u8 do_unkn8_EJECT(u8 click)
 {
-    ubyte ret;
+    u8 ret;
     asm volatile ("call ASM_do_unkn8_EJECT\n"
         : "=r" (ret) : "a" (click));
     return ret;
 }
 
-ubyte accept_mission(ubyte click)
+u8 accept_mission(u8 click)
 {
-    ubyte ret;
+    u8 ret;
     asm volatile ("call ASM_accept_mission\n"
         : "=r" (ret) : "a" (click));
     return ret;
 }
 
-ubyte do_unkn1_CANCEL(ubyte click)
+u8 do_unkn1_CANCEL(u8 click)
 {
-    ubyte ret;
+    u8 ret;
     asm volatile ("call ASM_do_unkn1_CANCEL\n"
         : "=r" (ret) : "a" (click));
     return ret;
 }
 
-ubyte do_unkn2_CANCEL(ubyte click)
+u8 do_unkn2_CANCEL(u8 click)
 {
-    ubyte ret;
+    u8 ret;
     asm volatile ("call ASM_do_unkn2_CANCEL\n"
         : "=r" (ret) : "a" (click));
     return ret;
 }
 
-ubyte do_unkn2_ACCEPT(ubyte click)
+u8 do_unkn2_ACCEPT(u8 click)
 {
-    ubyte ret;
+    u8 ret;
     asm volatile ("call ASM_do_unkn2_ACCEPT\n"
         : "=r" (ret) : "a" (click));
     return ret;
 }
 
-ubyte do_sysmnu_button(ubyte click)
+u8 do_sysmnu_button(u8 click)
 {
-    ubyte ret;
+    u8 ret;
     asm volatile ("call ASM_do_sysmnu_button\n"
         : "=r" (ret) : "a" (click));
     return ret;
 }
 
-void save_crypto_make_hashtable(ubyte simple_salt)
+void save_crypto_make_hashtable(u8 simple_salt)
 {
     asm volatile ("call ASM_save_crypto_make_hashtable\n"
         :  : "a" (simple_salt));
 }
 
-ulong save_crypto_transform1(ubyte a1)
+u32 save_crypto_transform1(u8 a1)
 {
-    ulong ret;
+    u32 ret;
     asm volatile ("call ASM_save_crypto_transform1\n"
         : "=r" (ret) : "a" (a1));
     return ret;
 }
 
-ulong save_crypto_transform2(ubyte a1)
+u32 save_crypto_transform2(u8 a1)
 {
-    ulong ret;
+    u32 ret;
     asm volatile ("call ASM_save_crypto_transform2\n"
         : "=r" (ret) : "a" (a1));
     return ret;
 }
 
-ulong save_crypto_transform3(ubyte a1)
+u32 save_crypto_transform3(u8 a1)
 {
-    ulong ret;
+    u32 ret;
     asm volatile ("call ASM_save_crypto_transform3\n"
         : "=r" (ret) : "a" (a1));
     return ret;
 }
 
-ubyte load_game(int slot, char *desc)
+u8 load_game(int slot, char *desc)
 {
 #if 0
-    ubyte ret;
+    u8 ret;
     asm volatile ("call ASM_load_game\n"
         : "=r" (ret) : "a" (slot), "d" (desc));
     return ret;
 #else
     char str[52];
-    ulong gblen, fmtver, decrypt_verify;
+    u32 gblen, fmtver, decrypt_verify;
     TbFileHandle fh;
 
     get_saved_game_fname(str, slot);
@@ -4940,17 +4939,17 @@ ubyte load_game(int slot, char *desc)
     if (fmtver > 8)
     {
         // Decrypt the file
-        ubyte *gbpos;
-        ubyte *gbend;
+        u8 *gbpos;
+        u8 *gbend;
         save_crypto_make_hashtable(slot);
         gbpos = save_game_buffer;
         gbend = &save_game_buffer[4 * (gblen >> 2)];
         while (gbpos < gbend)
         {
-            ulong key, keysel;
-            ulong *cryptpos;
+            u32 key, keysel;
+            u32 *cryptpos;
             keysel = (save_crypto_data_state[1] << 8) | (save_crypto_data_state[0] << 16) | save_crypto_data_state[2];
-            cryptpos = (ulong *)gbpos;
+            cryptpos = (u32 *)gbpos;
             switch (keysel)
             {
             case 0x00001:
@@ -4987,16 +4986,16 @@ ubyte load_game(int slot, char *desc)
     }
 
     { // Verify data
-        ulong *cpos;
-        ulong clen, hash;
-        ulong i;
+        u32 *cpos;
+        u32 clen, hash;
+        u32 i;
 
         if (gblen & 3)
             clen = gblen + 4;
         else
             clen = gblen;
         clen >>= 2;
-        cpos = (ulong *)save_game_buffer;
+        cpos = (u32 *)save_game_buffer;
 
         hash = *cpos;
         for (i = 1; i < clen; i++) {
@@ -5012,7 +5011,7 @@ ubyte load_game(int slot, char *desc)
     gblen = 4;
     if (fmtver <= 4)
     {
-        ushort cryo_no;
+        u16 cryo_no;
         memcpy(&cryo_agents, &save_game_buffer[gblen], offsetof(struct AgentInfo, FourPacks));
         gblen += offsetof(struct AgentInfo, FourPacks);
         memcpy(&cryo_agents.NumAgents, &save_game_buffer[gblen], 1);
@@ -5028,7 +5027,7 @@ ubyte load_game(int slot, char *desc)
     }
     else
     {
-        ushort cryo_no;
+        u16 cryo_no;
         memcpy(&cryo_agents, &save_game_buffer[gblen], offsetof(struct AgentInfo, NumAgents));
         gblen += offsetof(struct AgentInfo, NumAgents);
         memcpy(&cryo_agents.NumAgents, &save_game_buffer[gblen], sizeof(cryo_agents.NumAgents));
@@ -5316,10 +5315,10 @@ void sysmnu_button_disable(int btnno, int count)
     }
 }
 
-ubyte load_game_slot(ubyte click)
+u8 load_game_slot(u8 click)
 {
 #if 0
-    ubyte ret;
+    u8 ret;
     asm volatile ("call ASM_load_game_slot\n"
         : "=r" (ret) : "a" (click));
     return ret;
@@ -5385,41 +5384,41 @@ ubyte load_game_slot(ubyte click)
     return 1;
 }
 
-ubyte save_game_slot(ubyte click)
+u8 save_game_slot(u8 click)
 {
-    ubyte ret;
+    u8 ret;
     asm volatile ("call ASM_save_game_slot\n"
         : "=r" (ret) : "a" (click));
     return ret;
 }
 
-ubyte main_do_my_quit(ubyte click)
+u8 main_do_my_quit(u8 click)
 {
-    ubyte ret;
+    u8 ret;
     asm volatile ("call ASM_main_do_my_quit\n"
         : "=r" (ret) : "a" (click));
     return ret;
 }
 
-ubyte main_do_login_1(ubyte click)
+u8 main_do_login_1(u8 click)
 {
-    ubyte ret;
+    u8 ret;
     asm volatile ("call ASM_main_do_login_1\n"
         : "=r" (ret) : "a" (click));
     return ret;
 }
 
-ubyte goto_savegame(ubyte click)
+u8 goto_savegame(u8 click)
 {
-    ubyte ret;
+    u8 ret;
     asm volatile ("call ASM_goto_savegame\n"
         : "=r" (ret) : "a" (click));
     return ret;
 }
 
-ubyte do_abort_2(ubyte click)
+u8 do_abort_2(u8 click)
 {
-    ubyte ret;
+    u8 ret;
     asm volatile ("call ASM_do_abort_2\n"
         : "=r" (ret) : "a" (click));
     return ret;
@@ -5431,10 +5430,10 @@ void my_preprocess_text(char *text)
         :  : "a" (text));
 }
 
-void * memory_copy_with_skip(void *in_dst, const void *in_src, TbMemSize size, ubyte bskip)
+void * memory_copy_with_skip(void *in_dst, const void *in_src, TbMemSize size, u8 bskip)
 {
-    const ubyte *s;
-    ubyte *d;
+    const u8 *s;
+    u8 *d;
     d = in_dst;
     s = in_src;
     for (; size > 0; size--)
@@ -5449,10 +5448,10 @@ void * memory_copy_with_skip(void *in_dst, const void *in_src, TbMemSize size, u
 
 /** Copy given rect buffer to the same position at two larger buffers.
  */
-void copy_buffer_to_double_bufs(ubyte *ibuf, ushort iwidth, ushort iheight,
-    ubyte *obufs[2], short x, short y, ushort owidth, ushort oheight)
+void copy_buffer_to_double_bufs(u8 *ibuf, u16 iwidth, u16 iheight,
+    u8 *obufs[2], short x, short y, u16 owidth, u16 oheight)
 {
-    long pos;
+    i32 pos;
     short h;
 
     pos = y * owidth + x;
@@ -5468,10 +5467,10 @@ void copy_buffer_to_double_bufs(ubyte *ibuf, ushort iwidth, ushort iheight,
 /** Copy given rect buffer to the same position at two larger buffers, skipping
  * pixels with transparency color.
  */
-void copy_buffer_to_double_bufs_with_trans(ubyte *ibuf, ushort iwidth, ushort iheight,
-    ubyte *obufs[2], short x, short y, ushort owidth, ushort oheight, ubyte trans_col)
+void copy_buffer_to_double_bufs_with_trans(u8 *ibuf, u16 iwidth, u16 iheight,
+    u8 *obufs[2], short x, short y, u16 owidth, u16 oheight, u8 trans_col)
 {
-    long pos;
+    i32 pos;
     short h;
 
     pos = y * owidth + x;
@@ -5496,7 +5495,7 @@ void init_next_blokey_flic(void)
     struct Campaign *p_campgn;
     const char *campgn_mark;
     const char *flic_dir;
-    ushort cmod, stage;
+    u16 cmod, stage;
     int k;
 
     p_campgn = &campaigns[background_type];
@@ -5641,8 +5640,8 @@ void purple_mods_data_to_screen(void)
     const char *campgn_mark;
     const char *flic_dir;
     char str[52];
-    ubyte *buf;
-    ubyte *o[2];
+    u8 *buf;
+    u8 *o[2];
 
     p_campgn = &campaigns[background_type];
     campgn_mark = p_campgn->ProjectorFnMk;
@@ -5676,8 +5675,8 @@ void blokey_static_flic_data_to_screen(void)
     const char *campgn_mark;
     const char *flic_dir;
     char str[52];
-    ubyte *buf;
-    ubyte *o[2];
+    u8 *buf;
+    u8 *o[2];
     int k;
 
     p_campgn = &campaigns[background_type];
@@ -5693,7 +5692,7 @@ void blokey_static_flic_data_to_screen(void)
 
     for (k = 0; k < 4; k++)
     {
-        long len;
+        i32 len;
 
         if (flic_mods[k] == 0)
             continue;
@@ -5760,7 +5759,7 @@ void srm_reset_research(void)
 #endif
 }
 
-void research_unkn_func_006(ushort missi)
+void research_unkn_func_006(u16 missi)
 {
 #if 0
     asm volatile ("call ASM_research_unkn_func_006\n"
@@ -5835,9 +5834,9 @@ void mission_over_update_players(void)
     cryo_update_agents_from_player(p_locplayer);
 }
 
-ulong mission_over_calculate_cash_gain_from_persuaded_crowd(ushort tgroup)
+u32 mission_over_calculate_cash_gain_from_persuaded_crowd(u16 tgroup)
 {
-    ulong credits;
+    u32 credits;
     struct Thing *p_person;
     short person;
 
@@ -5904,9 +5903,9 @@ void mission_over_gain_persuaded_crowd_rewards(void)
     mission_over_gain_personnel_from_persuaded_crowd();
 }
 
-ulong mission_over_calculate_player_cash_gain_from_items(void)
+u32 mission_over_calculate_player_cash_gain_from_items(void)
 {
-    ulong credits;
+    u32 credits;
     short sthing;
     struct SimpleThing *p_sthing;
 
@@ -5949,7 +5948,7 @@ void update_player_cash(void)
     asm volatile ("call ASM_update_player_cash\n"
         :  :  : "eax" );
 #endif
-    ulong credits;
+    u32 credits;
 
     credits = mission_over_calculate_player_cash_gain_from_items();
     ingame.Credits += credits;
@@ -5991,7 +5990,7 @@ void do_start_triggers(short missi)
     }
 }
 
-void queue_up_new_mail(ubyte emtype, short missi)
+void queue_up_new_mail(u8 emtype, short missi)
 {
 #if 0
     asm volatile (
@@ -6018,7 +6017,7 @@ void queue_up_new_mail(ubyte emtype, short missi)
     new_mail++;
 }
 
-ushort open_new_mission(short missi)
+u16 open_new_mission(short missi)
 {
     int mslot;
 
@@ -6040,10 +6039,10 @@ ushort open_new_mission(short missi)
     return 0;
 }
 
-TbBool check_mission_conds(ushort missi)
+TbBool check_mission_conds(u16 missi)
 {
     int i;
-    ushort cmissi;
+    u16 cmissi;
 
     cmissi = missi;
     for (i = 0; i < 5; i++)
@@ -6055,7 +6054,7 @@ TbBool check_mission_conds(ushort missi)
     return true;
 }
 
-TbBool mission_has_no_special_triggers(ushort missi)
+TbBool mission_has_no_special_triggers(u16 missi)
 {
     struct Mission *p_missi;
     int i;
@@ -6070,7 +6069,7 @@ TbBool mission_has_no_special_triggers(ushort missi)
     return true;
 }
 
-TbBool mission_special_triggers_2_is_self(ushort missi)
+TbBool mission_special_triggers_2_is_self(u16 missi)
 {
     struct Mission *p_missi;
 
@@ -6079,14 +6078,14 @@ TbBool mission_special_triggers_2_is_self(ushort missi)
     return (p_missi->SpecialTrigger[2] == missi);
 }
 
-void mission_reset_spec_triggers_2_chain(ushort missi)
+void mission_reset_spec_triggers_2_chain(u16 missi)
 {
-    ushort next_missi;
+    u16 next_missi;
 
     next_missi = missi;
     while (next_missi != 0)
     {
-        ushort tmp_missi;
+        u16 tmp_missi;
 
         LOGSYNC("Setting mission=%d owner to mission=%d", (int)next_missi, (int)missi);
         mission_list[next_missi].SpecialTrigger[2] = missi;
@@ -6099,14 +6098,14 @@ void mission_reset_spec_triggers_2_chain(ushort missi)
     }
 }
 
-void mission_special_triggers_0_1_set_fail(ushort missi)
+void mission_special_triggers_0_1_set_fail(u16 missi)
 {
-    ushort next_missi;
+    u16 next_missi;
 
     next_missi = missi;
     while (next_missi > 0)
     {
-        ushort tmp_missi;
+        u16 tmp_missi;
 
         mission_list[next_missi].Complete = -1;
 
@@ -6118,7 +6117,7 @@ void mission_special_triggers_0_1_set_fail(ushort missi)
     }
 }
 
-void mission_copy_conds_and_succ_fail_triggers(ushort dst_missi, ushort src_missi)
+void mission_copy_conds_and_succ_fail_triggers(u16 dst_missi, u16 src_missi)
 {
     int i;
 
@@ -6132,10 +6131,10 @@ void mission_copy_conds_and_succ_fail_triggers(ushort dst_missi, ushort src_miss
     }
 }
 
-ushort mission_fire_success_triggers(ushort missi)
+u16 mission_fire_success_triggers(u16 missi)
 {
     struct Mission *p_missi;
-    ushort n;
+    u16 n;
     int i;
 
     p_missi = &mission_list[missi];
@@ -6143,7 +6142,7 @@ ushort mission_fire_success_triggers(ushort missi)
     n = 0;
     for (i = 0; i < 3; i++)
     {
-        ushort new_missi;
+        u16 new_missi;
         new_missi = p_missi->SuccessTrigger[i];
         if (new_missi != 0) {
             open_new_mission(new_missi);
@@ -6153,10 +6152,10 @@ ushort mission_fire_success_triggers(ushort missi)
     return n;
 }
 
-ushort mission_fire_fail_triggers(ushort missi)
+u16 mission_fire_fail_triggers(u16 missi)
 {
     struct Mission *p_missi;
-    ushort n;
+    u16 n;
     int i;
 
     p_missi = &mission_list[missi];
@@ -6164,7 +6163,7 @@ ushort mission_fire_fail_triggers(ushort missi)
     n = 0;
     for (i = 0; i < 3; i++)
     {
-        ushort new_missi;
+        u16 new_missi;
         new_missi = p_missi->FailTrigger[i];
         if (new_missi != 0) {
             open_new_mission(new_missi);
@@ -6174,13 +6173,13 @@ ushort mission_fire_fail_triggers(ushort missi)
     return n;
 }
 
-void delete_open_mission(ushort mslot, sbyte state)
+void delete_open_mission(u16 mslot, i8 state)
 {
 #if 0
     asm volatile ("call ASM_delete_open_mission\n"
         : : "a" (mslot), "d" (state));
 #else
-    ushort missi;
+    u16 missi;
     TbBool conds_met;
 
     missi = mission_open[mslot];
@@ -6226,7 +6225,7 @@ void delete_open_mission(ushort mslot, sbyte state)
     }
     else if (mission_special_triggers_2_is_self(missi))
     {
-        ushort trg_missi;
+        u16 trg_missi;
 
         trg_missi = mission_list[missi].SpecialTrigger[0];
         if (trg_missi == 0)
@@ -6298,14 +6297,14 @@ void delete_open_mission(ushort mslot, sbyte state)
     }
     else
     {
-        ushort trg_missi;
+        u16 trg_missi;
 
         trg_missi = mission_list[missi].SpecialTrigger[2];
 
         LOGSYNC("SpecialTriggers owner=%d, mission=%d, state=%d", (int)trg_missi, (int)missi, (int)state);
         if (state == 1)
         {
-            ushort tmp_missi, tmp2_missi, next_missi;
+            u16 tmp_missi, tmp2_missi, next_missi;
 
             next_missi = trg_missi;
             while (1)
@@ -6367,8 +6366,8 @@ void mission_over(void)
     mission_over_gain_persuaded_crowd_rewards();
     players_sync_from_cryo();
 
-    ushort mslot;
-    ushort last_missi;
+    u16 mslot;
+    u16 last_missi;
     short lstate;
 
     last_missi = ingame.CurrentMission;
@@ -6385,9 +6384,9 @@ void mission_over(void)
     lstate = 0;
     if (mission_state[mslot] == 1)
     {
-        long cr_award;
+        i32 cr_award;
         short email;
-        ushort missi;
+        u16 missi;
 
         lstate = 1;
         missi = mission_open[mslot];
@@ -6402,7 +6401,7 @@ void mission_over(void)
     else if (mission_state[mslot] == -1)
     {
         short email;
-        ushort missi;
+        u16 missi;
 
         lstate = -1;
         missi = mission_open[mslot];
@@ -6431,10 +6430,10 @@ void mission_over(void)
 #endif
 }
 
-void update_netscan_cost_button(ubyte city_id)
+void update_netscan_cost_button(u8 city_id)
 {
     int k;
-    ushort ninfo;
+    u16 ninfo;
     char *text;
 
     ninfo = cities[city_id].Info;
@@ -6449,12 +6448,12 @@ void update_netscan_cost_button(ubyte city_id)
     brief_NETSCAN_COST_box.Text1 = text;
 }
 
-void reveal_netscan_objective(ushort info)
+void reveal_netscan_objective(u16 info)
 {
     unkn36_box.Lines += netscan_objectives[info].TextLines;
 }
 
-TbBool player_try_spend_money(long cost)
+TbBool player_try_spend_money(i32 cost)
 {
     if (ingame.Credits - cost < 0)
         return false;
@@ -6463,16 +6462,16 @@ TbBool player_try_spend_money(long cost)
     return true;
 }
 
-ubyte brief_do_netscan_enhance(ubyte click)
+u8 brief_do_netscan_enhance(u8 click)
 {
 #if 0
-    ubyte ret;
+    u8 ret;
     asm volatile ("call ASM_brief_do_netscan_enhance\n"
         : "=r" (ret) : "a" (click));
     return ret;
 #endif
-    ushort nsobv;
-    ushort n;
+    u16 nsobv;
+    u16 n;
     struct NetscanObjective *p_nsobv;
 
     nsobv = cities[city_id].Info;
@@ -6504,15 +6503,15 @@ void init_variables(void)
         :  :  : "eax" );
 }
 
-ubyte main_do_map_editor(ubyte click)
+u8 main_do_map_editor(u8 click)
 {
-    ubyte ret;
+    u8 ret;
     asm volatile ("call ASM_main_do_map_editor\n"
         : "=r" (ret) : "a" (click));
     return ret;
 }
 
-int save_game_write(ubyte slot, char *desc)
+int save_game_write(u8 slot, char *desc)
 {
     int ret;
     asm volatile ("call ASM_save_game_write\n"
@@ -6520,90 +6519,90 @@ int save_game_write(ubyte slot, char *desc)
     return ret;
 }
 
-ubyte do_unkn11_CANCEL(ubyte click)
+u8 do_unkn11_CANCEL(u8 click)
 {
-    ubyte ret;
+    u8 ret;
     asm volatile ("call ASM_do_unkn11_CANCEL\n"
         : "=r" (ret) : "a" (click));
     return ret;
 }
 
-ubyte do_buy_equip(ubyte click)
+u8 do_buy_equip(u8 click)
 {
-    ubyte ret;
+    u8 ret;
     asm volatile ("call ASM_do_buy_equip\n"
         : "=r" (ret) : "a" (click));
     return ret;
 }
 
-ubyte sell_equipment(ubyte click)
+u8 sell_equipment(u8 click)
 {
-    ubyte ret;
+    u8 ret;
     asm volatile ("call ASM_sell_equipment\n"
         : "=r" (ret) : "a" (click));
     return ret;
 }
 
-ubyte do_research_submit(ubyte click)
+u8 do_research_submit(u8 click)
 {
-    ubyte ret;
+    u8 ret;
     asm volatile ("call ASM_do_research_submit\n"
         : "=r" (ret) : "a" (click));
     return ret;
 }
 
-ubyte do_research_suspend(ubyte click)
+u8 do_research_suspend(u8 click)
 {
-    ubyte ret;
+    u8 ret;
     asm volatile ("call ASM_do_research_suspend\n"
         : "=r" (ret) : "a" (click));
     return ret;
 }
 
-ubyte do_unkn12_WEAPONS_MODS(ubyte click)
+u8 do_unkn12_WEAPONS_MODS(u8 click)
 {
-    ubyte ret;
+    u8 ret;
     asm volatile ("call ASM_do_unkn12_WEAPONS_MODS\n"
         : "=r" (ret) : "a" (click));
     return ret;
 }
 
-ubyte ac_select_all_agents(ubyte click);
-ubyte ac_do_net_protocol_option(ubyte click);
-ubyte ac_do_net_unkn40(ubyte click);
-ubyte ac_do_serial_speed_switch(ubyte click);
-ubyte ac_change_panel_permutation(ubyte click);
-ubyte ac_change_trenchcoat_preference(ubyte click);
-ubyte ac_do_unkn10_CALIBRATE(ubyte click);
-ubyte ac_do_unkn10_SAVE(ubyte click);
-ubyte ac_do_unkn10_CONTROLS(ubyte click);
-ubyte ac_alert_OK(ubyte click);
-ubyte ac_do_net_SET2(ubyte click);
-ubyte ac_do_net_SET(ubyte click);
-ubyte ac_do_net_INITIATE(ubyte click);
-ubyte ac_do_net_groups_LOGON(ubyte click);
-ubyte ac_do_unkn8_EJECT(ubyte click);
-ubyte ac_accept_mission(ubyte click);
-ubyte ac_do_unkn1_CANCEL(ubyte click);
-ubyte ac_do_unkn2_CANCEL(ubyte click);
-ubyte ac_do_unkn2_ACCEPT(ubyte click);
-ubyte ac_do_sysmnu_button(ubyte click);
-ubyte ac_do_storage_NEW_MORTAL(ubyte click);
-ubyte ac_load_game_slot(ubyte click);
-ubyte ac_save_game_slot(ubyte click);
-ubyte ac_main_do_my_quit(ubyte click);
-ubyte ac_main_do_login_1(ubyte click);
-ubyte ac_goto_savegame(ubyte click);
-ubyte ac_do_abort_2(ubyte click);
-ubyte ac_do_login_2(ubyte click);
-ubyte ac_main_do_map_editor(ubyte click);
-ubyte ac_brief_do_netscan_enhance(ubyte click);
-ubyte ac_do_unkn11_CANCEL(ubyte click);
-ubyte ac_do_buy_equip(ubyte click);
-ubyte ac_sell_equipment(ubyte click);
-ubyte ac_do_research_submit(ubyte click);
-ubyte ac_do_research_suspend(ubyte click);
-ubyte ac_do_unkn12_WEAPONS_MODS(ubyte click);
+u8 ac_select_all_agents(u8 click);
+u8 ac_do_net_protocol_option(u8 click);
+u8 ac_do_net_unkn40(u8 click);
+u8 ac_do_serial_speed_switch(u8 click);
+u8 ac_change_panel_permutation(u8 click);
+u8 ac_change_trenchcoat_preference(u8 click);
+u8 ac_do_unkn10_CALIBRATE(u8 click);
+u8 ac_do_unkn10_SAVE(u8 click);
+u8 ac_do_unkn10_CONTROLS(u8 click);
+u8 ac_alert_OK(u8 click);
+u8 ac_do_net_SET2(u8 click);
+u8 ac_do_net_SET(u8 click);
+u8 ac_do_net_INITIATE(u8 click);
+u8 ac_do_net_groups_LOGON(u8 click);
+u8 ac_do_unkn8_EJECT(u8 click);
+u8 ac_accept_mission(u8 click);
+u8 ac_do_unkn1_CANCEL(u8 click);
+u8 ac_do_unkn2_CANCEL(u8 click);
+u8 ac_do_unkn2_ACCEPT(u8 click);
+u8 ac_do_sysmnu_button(u8 click);
+u8 ac_do_storage_NEW_MORTAL(u8 click);
+u8 ac_load_game_slot(u8 click);
+u8 ac_save_game_slot(u8 click);
+u8 ac_main_do_my_quit(u8 click);
+u8 ac_main_do_login_1(u8 click);
+u8 ac_goto_savegame(u8 click);
+u8 ac_do_abort_2(u8 click);
+u8 ac_do_login_2(u8 click);
+u8 ac_main_do_map_editor(u8 click);
+u8 ac_brief_do_netscan_enhance(u8 click);
+u8 ac_do_unkn11_CANCEL(u8 click);
+u8 ac_do_buy_equip(u8 click);
+u8 ac_sell_equipment(u8 click);
+u8 ac_do_research_submit(u8 click);
+u8 ac_do_research_suspend(u8 click);
+u8 ac_do_unkn12_WEAPONS_MODS(u8 click);
 
 void campaign_new_game_prepare(void)
 {
@@ -6636,10 +6635,10 @@ void campaign_new_game_prepare(void)
     edit_flag = 0;
 }
 
-ubyte do_storage_NEW_MORTAL(ubyte click)
+u8 do_storage_NEW_MORTAL(u8 click)
 {
 #if 0
-    ubyte ret;
+    u8 ret;
     asm volatile ("call ASM_do_storage_NEW_MORTAL\n"
         : "=r" (ret) : "a" (click));
     return ret;
@@ -6692,10 +6691,10 @@ void update_options_screen_state(void)
     options_gfx_buttons[15].Text = gui_strings[583 + i];
 }
 
-ubyte do_login_2(ubyte click)
+u8 do_login_2(u8 click)
 {
 #if 0
-    ubyte ret;
+    u8 ret;
     asm volatile ("call ASM_do_login_2\n"
         : "=r" (ret) : "a" (click));
     return ret;
@@ -6732,18 +6731,18 @@ ubyte do_login_2(ubyte click)
 #endif
 }
 
-ubyte show_citymap_box(struct ScreenBox *box)
+u8 show_citymap_box(struct ScreenBox *box)
 {
-    ubyte ret;
+    u8 ret;
     asm volatile ("call ASM_show_citymap_box\n"
         : "=r" (ret) : "a" (box));
     return ret;
 }
 
-ubyte show_campaigns_list(struct ScreenBox *box)
+u8 show_campaigns_list(struct ScreenBox *box)
 {
 #if 0
-    ubyte ret;
+    u8 ret;
     asm volatile ("call ASM_show_campaigns_list\n"
         : "=r" (ret) : "a" (box));
     return ret;
@@ -6816,90 +6815,90 @@ ubyte show_campaigns_list(struct ScreenBox *box)
 #endif
 }
 
-ubyte show_login_name(struct ScreenBox *box)
+u8 show_login_name(struct ScreenBox *box)
 {
-    ubyte ret;
+    u8 ret;
     asm volatile ("call ASM_show_login_name\n"
         : "=r" (ret) : "a" (box));
     return ret;
 }
 
-ubyte show_net_benefits_box(struct ScreenBox *box)
+u8 show_net_benefits_box(struct ScreenBox *box)
 {
-    ubyte ret;
+    u8 ret;
     asm volatile ("call ASM_show_net_benefits_box\n"
         : "=r" (ret) : "a" (box));
     return ret;
 }
 
-ubyte show_net_unkn21(struct ScreenBox *box)
+u8 show_net_unkn21(struct ScreenBox *box)
 {
-    ubyte ret;
+    u8 ret;
     asm volatile ("call ASM_show_net_unkn21\n"
         : "=r" (ret) : "a" (box));
     return ret;
 }
 
-ubyte show_net_comms_box(struct ScreenBox *box)
+u8 show_net_comms_box(struct ScreenBox *box)
 {
-    ubyte ret;
+    u8 ret;
     asm volatile ("call ASM_show_net_comms_box\n"
         : "=r" (ret) : "a" (box));
     return ret;
 }
 
-ubyte do_net_protocol_select(ubyte click)
+u8 do_net_protocol_select(u8 click)
 {
-    ubyte ret;
+    u8 ret;
     asm volatile ("call ASM_do_net_protocol_select\n"
         : "=r" (ret) : "a" (click));
     return ret;
 }
 
-ubyte show_net_protocol_box(struct ScreenBox *box)
+u8 show_net_protocol_box(struct ScreenBox *box)
 {
-    ubyte ret;
+    u8 ret;
     asm volatile ("call ASM_show_net_protocol_box\n"
         : "=r" (ret) : "a" (box));
     return ret;
 }
 
-ubyte show_net_faction_box(struct ScreenBox *box)
+u8 show_net_faction_box(struct ScreenBox *box)
 {
-    ubyte ret;
+    u8 ret;
     asm volatile ("call ASM_show_net_faction_box\n"
         : "=r" (ret) : "a" (box));
     return ret;
 }
 
-ubyte show_net_team_box(struct ScreenBox *box)
+u8 show_net_team_box(struct ScreenBox *box)
 {
-    ubyte ret;
+    u8 ret;
     asm volatile ("call ASM_show_net_team_box\n"
         : "=r" (ret) : "a" (box));
     return ret;
 }
 
-ubyte show_net_groups_box(struct ScreenBox *box)
+u8 show_net_groups_box(struct ScreenBox *box)
 {
-    ubyte ret;
+    u8 ret;
     asm volatile ("call ASM_show_net_groups_box\n"
         : "=r" (ret) : "a" (box));
     return ret;
 }
 
-ubyte show_net_users_box(struct ScreenBox *box)
+u8 show_net_users_box(struct ScreenBox *box)
 {
-    ubyte ret;
+    u8 ret;
     asm volatile ("call ASM_show_net_users_box\n"
         : "=r" (ret) : "a" (box));
     return ret;
 }
 
-void snprint_dh_time_duration(char *out, ulong outlen, long ndays, short nhours)
+void snprint_dh_time_duration(char *out, u32 outlen, i32 ndays, short nhours)
 {
-    ulong days_strid;
-    ulong hours_strid;
+    u32 days_strid;
+    u32 hours_strid;
     if (ndays == 1) {
         days_strid = 625;
     } else {
@@ -6911,13 +6910,13 @@ void snprint_dh_time_duration(char *out, ulong outlen, long ndays, short nhours)
         hours_strid = 628;
     }
 
-    snprintf(out, outlen, "%ld %s %hd %s", ndays, gui_strings[days_strid], nhours, gui_strings[hours_strid]);
+    snprintf(out, outlen, "%d %s %hd %s", ndays, gui_strings[days_strid], nhours, gui_strings[hours_strid]);
 }
 
-ubyte show_mission_stats(struct ScreenBox *box)
+u8 show_mission_stats(struct ScreenBox *box)
 {
 #if 0
-    ubyte ret;
+    u8 ret;
     asm volatile ("call ASM_show_mission_stats\n"
         : "=r" (ret) : "a" (box));
     return ret;
@@ -7043,9 +7042,9 @@ ubyte show_mission_stats(struct ScreenBox *box)
     locstr[0] = '\0';
     if (new_weapons_researched)
     {
-        ushort wtype;
-        ushort strid;
-        ushort pos;
+        u16 wtype;
+        u16 strid;
+        u16 pos;
 
         wtype = WEP_TYPES_COUNT;
         while (1)
@@ -7071,10 +7070,10 @@ ubyte show_mission_stats(struct ScreenBox *box)
     }
     if (new_mods_researched)
     {
-        ushort mtype, mgrouptype;
-        ushort gt_strid;
-        ushort mv_strid;
-        ushort pos;
+        u16 mtype, mgrouptype;
+        u16 gt_strid;
+        u16 mv_strid;
+        u16 pos;
 
         mtype = MOD_TYPES_COUNT;
         while (1)
@@ -7123,10 +7122,10 @@ ubyte show_mission_stats(struct ScreenBox *box)
     return 0;
 }
 
-ubyte show_mission_people_stats(struct ScreenBox *box)
+u8 show_mission_people_stats(struct ScreenBox *box)
 {
 #if 0
-    ubyte ret;
+    u8 ret;
     asm volatile ("call ASM_show_mission_people_stats\n"
         : "=r" (ret) : "a" (box));
     return ret;
@@ -7195,15 +7194,15 @@ ubyte show_mission_people_stats(struct ScreenBox *box)
             x3 = 25;
             for (i = 0; i < 8; i++)
             {
-                ushort plyr;
-                ushort *p_stat;
+                u16 plyr;
+                u16 *p_stat;
 
                 if (unkn2_names[i][0] == '\0')
                     continue;
 
                 plyr = (players[i].MyAgent[0]->U.UPerson.ComCur & 0x1C) >> 2;
                 word_1C4846[i] = 0;
-                // The CivsKilled property should start a list of ushort stats; there are 6 of these
+                // The CivsKilled property should start a list of u16 stats; there are 6 of these
                 p_stat = &mission_status[plyr].CivsKilled;
                 for (k = 0; k < 8; k++, p_stat++)
                 {
@@ -7311,8 +7310,8 @@ ubyte show_mission_people_stats(struct ScreenBox *box)
 
         for (i = 0; i < 8; i++)
         {
-            ushort plyr;
-            ushort *p_stat;
+            u16 plyr;
+            u16 *p_stat;
 
             if (unkn2_names[i][0] == '\0')
                 continue;
@@ -7369,8 +7368,8 @@ ubyte show_mission_people_stats(struct ScreenBox *box)
 
         for (i = 0; i != 8; i++)
         {
-            ushort plyr;
-            ushort *p_stat;
+            u16 plyr;
+            u16 *p_stat;
             int n;
 
             if (unkn2_names[i][0] == '\0')
@@ -7413,7 +7412,7 @@ void draw_chartxy_axis_y_values(int x, int y, int height, int ax_min, int ax_max
     {
         int twidth;
         char *text;
-        ulong spr_id;
+        u32 spr_id;
         struct TbSprite *spr;
 
         lbDisplay.DrawFlags = 0;
@@ -7446,7 +7445,7 @@ void draw_chartxy_axis_x_values(int x, int y, int width, int ax_min, int ax_max,
     {
         int twidth;
         char *text;
-        ulong spr_id;
+        u32 spr_id;
         struct TbSprite *spr;
         int final_x;
 
@@ -7479,7 +7478,7 @@ void draw_chartxy_axis_y_grid(int x, int y, int width, int height, int tot_value
     cy = y;
     for (i = 0; i < tot_values; i++)
     {
-        ulong spr_id;
+        u32 spr_id;
         struct TbSprite *spr;
 
         lbDisplay.DrawFlags = 0x0004;
@@ -7503,7 +7502,7 @@ void draw_chartxy_axis_x_grid(int x, int y, int width, int height, int tot_value
     cx = x;
     for (i = 0; i < tot_values; i++)
     {
-        ulong spr_id;
+        u32 spr_id;
         struct TbSprite *spr;
 
         lbDisplay.DrawFlags = 0x0004;
@@ -7519,7 +7518,7 @@ void draw_chartxy_axis_x_grid(int x, int y, int width, int height, int tot_value
     }
 }
 
-void draw_line_purple_thick(int x1, int y1, int x2, int y2, ubyte colour, ubyte bkcolor)
+void draw_line_purple_thick(int x1, int y1, int x2, int y2, u8 colour, u8 bkcolor)
 {
     draw_line_purple_list(x1, y1, x2, y2, 87);
     if (y1 - y2 <= x2 - x1)
@@ -7540,7 +7539,7 @@ void draw_line_purple_thick(int x1, int y1, int x2, int y2, ubyte colour, ubyte 
     }
 }
 
-void draw_chartxy_curve(int x, int y, int width, int height, ushort *y_vals, int n_y_vals, int y_scale, ushort y_trend_delta, int tot_values)
+void draw_chartxy_curve(int x, int y, int width, int height, u16 *y_vals, int n_y_vals, int y_scale, u16 y_trend_delta, int tot_values)
 {
     int cday, progress, prev_progress, progress_scale;
     int cx, cy, mcy;
@@ -7594,18 +7593,18 @@ void draw_chartxy_curve(int x, int y, int width, int height, ushort *y_vals, int
     lbDisplay.DrawFlags = 0;
 }
 
-ubyte show_research_graph(struct ScreenBox *box)
+u8 show_research_graph(struct ScreenBox *box)
 {
 #if 0
-    ubyte ret;
+    u8 ret;
     asm volatile ("call ASM_show_research_graph\n"
         : "=r" (ret) : "a" (box));
     return ret;
 #endif
     struct TbSprite *spr;
     char *text;
-    ushort *y_vals;
-    ushort y_trend_delta;
+    u16 *y_vals;
+    u16 y_trend_delta;
     int n_y_vals;
     int graph_days, done_days;
 
@@ -7686,165 +7685,165 @@ ubyte show_research_graph(struct ScreenBox *box)
     return 0;
 }
 
-ubyte show_unkn21_box(struct ScreenTextBox *box)
+u8 show_unkn21_box(struct ScreenTextBox *box)
 {
-    ubyte ret;
+    u8 ret;
     asm volatile ("call ASM_show_unkn21_box\n"
         : "=r" (ret) : "a" (box));
     return ret;
 }
 
-ubyte show_unkn04(struct ScreenBox *box)
+u8 show_unkn04(struct ScreenBox *box)
 {
-    ubyte ret;
+    u8 ret;
     asm volatile ("call ASM_show_unkn04\n"
         : "=r" (ret) : "a" (box));
     return ret;
 }
 
-ubyte show_unkn33_box(struct ScreenBox *box)
+u8 show_unkn33_box(struct ScreenBox *box)
 {
-    ubyte ret;
+    u8 ret;
     asm volatile ("call ASM_show_unkn33_box\n"
         : "=r" (ret) : "a" (box));
     return ret;
 }
 
-ubyte show_netgame_unkn1(struct ScreenBox *box)
+u8 show_netgame_unkn1(struct ScreenBox *box)
 {
-    ubyte ret;
+    u8 ret;
     asm volatile ("call ASM_show_netgame_unkn1\n"
         : "=r" (ret) : "a" (box));
     return ret;
 }
 
-ubyte show_menu_storage_unkn37_box(struct ScreenTextBox *box)
+u8 show_menu_storage_unkn37_box(struct ScreenTextBox *box)
 {
-    ubyte ret;
+    u8 ret;
     asm volatile ("call ASM_show_menu_storage_unkn37_box\n"
         : "=r" (ret) : "a" (box));
     return ret;
 }
 
-ubyte show_unkn29_box(struct ScreenBox *box)
+u8 show_unkn29_box(struct ScreenBox *box)
 {
-    ubyte ret;
+    u8 ret;
     asm volatile ("call ASM_show_unkn29_box\n"
         : "=r" (ret) : "a" (box));
     return ret;
 }
 
-ubyte display_weapon_info(struct ScreenTextBox *box)
+u8 display_weapon_info(struct ScreenTextBox *box)
 {
-    ubyte ret;
+    u8 ret;
     asm volatile ("call ASM_display_weapon_info\n"
         : "=r" (ret) : "a" (box));
     return ret;
 }
 
-ubyte show_weapon_name(struct ScreenTextBox *box)
+u8 show_weapon_name(struct ScreenTextBox *box)
 {
-    ubyte ret;
+    u8 ret;
     asm volatile ("call ASM_show_weapon_name\n"
         : "=r" (ret) : "a" (box));
     return ret;
 }
 
-ubyte show_weapon_list(struct ScreenTextBox *box)
+u8 show_weapon_list(struct ScreenTextBox *box)
 {
-    ubyte ret;
+    u8 ret;
     asm volatile ("call ASM_show_weapon_list\n"
         : "=r" (ret) : "a" (box));
     return ret;
 }
 
-ubyte show_weapon_slots(struct ScreenBox *box)
+u8 show_weapon_slots(struct ScreenBox *box)
 {
-    ubyte ret;
+    u8 ret;
     asm volatile ("call ASM_show_weapon_slots\n"
         : "=r" (ret) : "a" (box));
     return ret;
 }
 
-ubyte show_agent_list(struct ScreenTextBox *box)
+u8 show_agent_list(struct ScreenTextBox *box)
 {
-    ubyte ret;
+    u8 ret;
     asm volatile ("call ASM_show_agent_list\n"
         : "=r" (ret) : "a" (box));
     return ret;
 }
 
-ubyte show_blokey(struct ScreenBox *box)
+u8 show_blokey(struct ScreenBox *box)
 {
-    ubyte ret;
+    u8 ret;
     asm volatile ("call ASM_show_blokey\n"
         : "=r" (ret) : "a" (box));
     return ret;
 }
 
-ubyte show_unkn18_box(struct ScreenTextBox *box)
+u8 show_unkn18_box(struct ScreenTextBox *box)
 {
-    ubyte ret;
+    u8 ret;
     asm volatile ("call ASM_show_unkn18_box\n"
         : "=r" (ret) : "a" (box));
     return ret;
 }
 
-ubyte show_unkn36_box(struct ScreenTextBox *box)
+u8 show_unkn36_box(struct ScreenTextBox *box)
 {
-    ubyte ret;
+    u8 ret;
     asm volatile ("call ASM_show_unkn36_box\n"
         : "=r" (ret) : "a" (box));
     return ret;
 }
 
-ubyte show_unkn34_box(struct ScreenBox *box)
+u8 show_unkn34_box(struct ScreenBox *box)
 {
-    ubyte ret;
+    u8 ret;
     asm volatile ("call ASM_show_unkn34_box\n"
         : "=r" (ret) : "a" (box));
     return ret;
 }
 
-ubyte show_settings_controls_list(struct ScreenBox *box)
+u8 show_settings_controls_list(struct ScreenBox *box)
 {
-    ubyte ret;
+    u8 ret;
     asm volatile ("call ASM_show_settings_controls_list\n"
         : "=r" (ret) : "a" (box));
     return ret;
 }
 
-ubyte ac_show_citymap_box(struct ScreenBox *box);
-ubyte ac_show_campaigns_list(struct ScreenBox *box);
-ubyte ac_show_login_name(struct ScreenBox *box);
-ubyte ac_show_net_benefits_box(struct ScreenBox *box);
-ubyte ac_show_net_unkn21(struct ScreenBox *box);
-ubyte ac_show_net_comms_box(struct ScreenBox *box);
-ubyte ac_do_net_protocol_select(ubyte click);
-ubyte ac_show_net_protocol_box(struct ScreenBox *box);
-ubyte ac_show_net_faction_box(struct ScreenBox *box);
-ubyte ac_show_net_team_box(struct ScreenBox *box);
-ubyte ac_show_net_groups_box(struct ScreenBox *box);
-ubyte ac_show_net_users_box(struct ScreenBox *box);
-ubyte ac_show_mission_stats(struct ScreenBox *box);
-ubyte ac_show_mission_people_stats(struct ScreenBox *box);
-ubyte ac_show_research_graph(struct ScreenBox *box);
-ubyte ac_show_unkn21_box(struct ScreenTextBox *box);
-ubyte ac_show_unkn04(struct ScreenBox *box);
-ubyte ac_show_unkn33_box(struct ScreenBox *box);
-ubyte ac_show_netgame_unkn1(struct ScreenBox *box);
-ubyte ac_show_menu_storage_unkn37_box(struct ScreenTextBox *box);
-ubyte ac_show_unkn29_box(struct ScreenBox *box);
-ubyte ac_display_weapon_info(struct ScreenTextBox *box);
-ubyte ac_show_weapon_name(struct ScreenTextBox *box);
-ubyte ac_show_weapon_list(struct ScreenTextBox *box);
-ubyte ac_show_weapon_slots(struct ScreenBox *box);
-ubyte ac_show_agent_list(struct ScreenTextBox *box);
-ubyte ac_show_blokey(struct ScreenBox *box);
-ubyte ac_show_unkn18_box(struct ScreenTextBox *box);
-ubyte ac_show_unkn36_box(struct ScreenTextBox *box);
-ubyte ac_show_unkn34_box(struct ScreenBox *box);
-ubyte ac_show_settings_controls_list(struct ScreenBox *box);
+u8 ac_show_citymap_box(struct ScreenBox *box);
+u8 ac_show_campaigns_list(struct ScreenBox *box);
+u8 ac_show_login_name(struct ScreenBox *box);
+u8 ac_show_net_benefits_box(struct ScreenBox *box);
+u8 ac_show_net_unkn21(struct ScreenBox *box);
+u8 ac_show_net_comms_box(struct ScreenBox *box);
+u8 ac_do_net_protocol_select(u8 click);
+u8 ac_show_net_protocol_box(struct ScreenBox *box);
+u8 ac_show_net_faction_box(struct ScreenBox *box);
+u8 ac_show_net_team_box(struct ScreenBox *box);
+u8 ac_show_net_groups_box(struct ScreenBox *box);
+u8 ac_show_net_users_box(struct ScreenBox *box);
+u8 ac_show_mission_stats(struct ScreenBox *box);
+u8 ac_show_mission_people_stats(struct ScreenBox *box);
+u8 ac_show_research_graph(struct ScreenBox *box);
+u8 ac_show_unkn21_box(struct ScreenTextBox *box);
+u8 ac_show_unkn04(struct ScreenBox *box);
+u8 ac_show_unkn33_box(struct ScreenBox *box);
+u8 ac_show_netgame_unkn1(struct ScreenBox *box);
+u8 ac_show_menu_storage_unkn37_box(struct ScreenTextBox *box);
+u8 ac_show_unkn29_box(struct ScreenBox *box);
+u8 ac_display_weapon_info(struct ScreenTextBox *box);
+u8 ac_show_weapon_name(struct ScreenTextBox *box);
+u8 ac_show_weapon_list(struct ScreenTextBox *box);
+u8 ac_show_weapon_slots(struct ScreenBox *box);
+u8 ac_show_agent_list(struct ScreenTextBox *box);
+u8 ac_show_blokey(struct ScreenBox *box);
+u8 ac_show_unkn18_box(struct ScreenTextBox *box);
+u8 ac_show_unkn36_box(struct ScreenTextBox *box);
+u8 ac_show_unkn34_box(struct ScreenBox *box);
+u8 ac_show_settings_controls_list(struct ScreenBox *box);
 
 
 void init_screen_boxes(void)
@@ -8341,7 +8340,7 @@ void update_menus(void)
         :  :  : "eax" );
 }
 
-void init_weapon_anim(ubyte weapon)
+void init_weapon_anim(u8 weapon)
 {
 #if 0
     asm volatile ("call ASM_init_weapon_anim\n"
@@ -8350,7 +8349,7 @@ void init_weapon_anim(ubyte weapon)
     struct Campaign *p_campgn;
     const char *campgn_mark;
     const char *flic_dir;
-    ulong k;
+    u32 k;
 
     p_campgn = &campaigns[background_type];
     campgn_mark = p_campgn->ProjectorFnMk;
@@ -8383,7 +8382,7 @@ void reload_background(void)
     if (screentype == 6 || screentype == 10 || restore_savegame)
     {
         struct TbSprite *spr;
-        ubyte *scr_bkp;
+        u8 *scr_bkp;
         int x, y;
 
         scr_bkp = lbDisplay.WScreen;
@@ -8494,9 +8493,9 @@ void do_scroll_map(void)
         :  :  : "eax" );
 #else
     PlayerInfo *p_locplayer;
-    long engn_xc_orig, engn_zc_orig;
-    ushort md;
-    long abase, angle;
+    i32 engn_xc_orig, engn_zc_orig;
+    u16 md;
+    i32 abase, angle;
     int dx, dy;
     int dampr;
 
@@ -8508,7 +8507,7 @@ void do_scroll_map(void)
     p_locplayer = &players[local_player_no];
     if (p_locplayer->State[0] == 1)
     {
-        ushort bitx, bity;
+        u16 bitx, bity;
         int dz;
         // TODO check if this makes sense
         bitx = (p_locplayer->UserInput[0].Bits >> 0);
@@ -8521,7 +8520,7 @@ void do_scroll_map(void)
     }
     else
     {
-        ulong dcthing;
+        u32 dcthing;
         if (p_locplayer->DoubleMode)
         {
             if (byte_153198)
@@ -8550,7 +8549,7 @@ void do_scroll_map(void)
     {
         if (!p_locplayer->PanelState[mouser])
         {
-            long cumm_alt;
+            i32 cumm_alt;
             int mv_border;
 
             // Define a move border, getting the mouse beyond it causes map scroll
@@ -8685,7 +8684,7 @@ TbBool pause_screen_handle(void)
     return ret;
 }
 
-ubyte do_user_interface(void)
+u8 do_user_interface(void)
 {
     PlayerInfo *p_locplayer;
     int n;
@@ -8740,7 +8739,7 @@ ubyte do_user_interface(void)
     // change panel style
     if (lbKeyOn[KC_F9] && (lbShift == KMod_NONE))
     {
-        sbyte panperm;
+        i8 panperm;
 
         lbKeyOn[KC_F9] = 0;
         StopCD();
@@ -8869,7 +8868,7 @@ ubyte do_user_interface(void)
 #if 0 // What was that supposed to do?
     for (n = 1; n < game_speed; n++)
     {
-        ulong k;
+        u32 k;
 
         k = n;
         while (k > 1)
@@ -9039,13 +9038,13 @@ ubyte do_user_interface(void)
         return 1;
     }
 
-    static ushort sel_agent_gkeys[] = {
+    static u16 sel_agent_gkeys[] = {
         GKey_SEL_AGENT_1, GKey_SEL_AGENT_2, GKey_SEL_AGENT_3, GKey_SEL_AGENT_4
     };
-    static ulong last_sel_agent_turn[4] = {0};
+    static u32 last_sel_agent_turn[4] = {0};
     for (n = 0; n < (int)(sizeof(sel_agent_gkeys)/sizeof(sel_agent_gkeys[0])); n++)
     {
-        ulong gkey = sel_agent_gkeys[n];
+        u32 gkey = sel_agent_gkeys[n];
         if (lbKeyOn[kbkeys[gkey]] && (lbShift == KMod_NONE))
         {
             struct Thing *p_agent;
@@ -9106,7 +9105,7 @@ ubyte do_user_interface(void)
 
     // Final part of this function is left in ASM, for now. It requires updating
     // definition of SpecialUserInput for the rewrting to make sense.
-    ubyte ret;
+    u8 ret;
     asm volatile ("call ASM_do_user_interface\n"
         : "=r" (ret));
     return ret;
@@ -9242,8 +9241,8 @@ void show_menu_screen_st0(void)
     sprintf(net_unkn2_text, "01234567890");
 
     {
-        long pos = 0;
-        hotspot_buffer = (struct StartScreenPoint *)((ubyte *)scratch_malloc_mem + pos);
+        i32 pos = 0;
+        hotspot_buffer = (struct StartScreenPoint *)((u8 *)scratch_malloc_mem + pos);
         pos += hotspot_buffer_len;
 
         mission_briefing_text = (char *)scratch_malloc_mem + pos;
@@ -9255,10 +9254,10 @@ void show_menu_screen_st0(void)
         weapon_text = (char *)scratch_malloc_mem + pos;
         pos += weapon_text_len;
 
-        memload = (ubyte *)scratch_malloc_mem + pos;
+        memload = (u8 *)scratch_malloc_mem + pos;
         pos += memload_len;
 
-        purple_draw_list = (struct PurpleDrawItem *)((ubyte *)scratch_malloc_mem + pos);
+        purple_draw_list = (struct PurpleDrawItem *)((u8 *)scratch_malloc_mem + pos);
     }
 
     init_read_all_sprite_files();
@@ -9306,16 +9305,16 @@ void init_net_players(void)
     }
 }
 
-void delete_mail(ushort mailnum, ubyte type)
+void delete_mail(u16 mailnum, u8 type)
 {
     asm volatile ("call ASM_delete_mail\n"
         : : "a" (mailnum), "d" (type));
 }
 
-ubyte load_mail_text(const char *filename)
+u8 load_mail_text(const char *filename)
 {
 #if 0
-    ubyte ret;
+    u8 ret;
     asm volatile ("call ASM_load_mail_text\n"
         : "=r" (ret) : "a" (filename));
     return ret;
@@ -9357,7 +9356,7 @@ void brief_load_mission_info(void)
             email = -open_brief - 1;
             sprintf(fname, "%s/mail%03d.txt", "textdata", email_store[email].Mission);
         } else if (open_brief > 0) {
-            ushort missi;
+            u16 missi;
             missi = brief_store[open_brief - 1].Mission;
             sprintf(fname, "%s/miss%03d.txt", "textdata", mission_list[missi].SourceID);
         }
@@ -9401,7 +9400,7 @@ void unkn_research_func_006(void)
         :  :  : "eax" );
 }
 
-void net_unkn_func_29(short a1, short a2, ubyte a3, sbyte a4, ubyte a5)
+void net_unkn_func_29(short a1, short a2, u8 a3, i8 a4, u8 a5)
 {
     asm volatile (
       "push %4\n"
@@ -9409,7 +9408,7 @@ void net_unkn_func_29(short a1, short a2, ubyte a3, sbyte a4, ubyte a5)
         : : "a" (a1), "d" (a2), "b" (a3), "c" (a4), "g" (a5));
 }
 
-void update_flic_mods(ubyte *mods)
+void update_flic_mods(u8 *mods)
 {
     asm volatile ("call ASM_update_flic_mods\n"
         : : "a" (mods));
@@ -9469,7 +9468,7 @@ void agents_copy_fourpacks_netplayer_to_cryo(struct NetworkPlayer *p_netplyr)
 void net_unkn_func_33_sub1(int plyr, int netplyr)
 {
     struct NetworkPlayer *p_netplyr;
-    ushort nptype;
+    u16 nptype;
     int i;
 
     p_netplyr = &network_players[plyr];
@@ -9492,7 +9491,7 @@ void net_unkn_func_33_sub1(int plyr, int netplyr)
             }
             if ((unkn_flags_08 & 0x08) != 0)
             {
-                long credits;
+                i32 credits;
 
               credits = p_netplyr->U.Progress.Credits;
               if (credits >= 0) {
@@ -9837,7 +9836,7 @@ void draw_purple_screen(void)
         :  :  : "eax" );
 }
 
-void clear_mission_status(ulong id)
+void clear_mission_status(u32 id)
 {
     mission_status[id].CivsKilled = 0;
     mission_status[id].EnemiesKilled = 0;
@@ -9960,9 +9959,9 @@ void init_random_seed(void)
     srand(lbSeed);
 }
 
-ushort find_mission_with_mapid(short mapID, short mission_limit)
+u16 find_mission_with_mapid(short mapID, short mission_limit)
 {
-    ushort i;
+    u16 i;
     for (i = 1; i < mission_limit; i++)
     {
         if (mission_list[i].MapNo == mapID) {
@@ -10008,7 +10007,7 @@ void update_open_brief(void)
  */
 #define array_elements_in_random_order(out_nubers, in_nubers, elem_type, count) \
 { \
-    ushort pos, remain, next; \
+    u16 pos, remain, next; \
     elem_type nums[count]; \
     memcpy(nums, in_nubers, sizeof(elem_type)*count); \
     remain = count; \
@@ -10026,11 +10025,11 @@ void update_open_brief(void)
 
 void randomize_playable_groups_order(void)
 {
-    static long incrementing_nubers[] = {0, 1, 2, 3, 4, 5, 6, 7,};
-    array_elements_in_random_order(level_def.PlayableGroups, incrementing_nubers, long, 8);
+    static i32 incrementing_nubers[] = {0, 1, 2, 3, 4, 5, 6, 7,};
+    array_elements_in_random_order(level_def.PlayableGroups, incrementing_nubers, i32, 8);
 }
 
-void wait_for_sound_sample_finish(ushort smpl_id)
+void wait_for_sound_sample_finish(u16 smpl_id)
 {
     TbClockMSec last_loop_time = LbTimerClock();
     while (IsSamplePlaying(0, smpl_id, NULL)) {
@@ -10041,11 +10040,11 @@ void wait_for_sound_sample_finish(ushort smpl_id)
     }
 }
 
-void copy_to_screen_ani(ubyte *buf)
+void copy_to_screen_ani(u8 *buf)
 {
     int y;
-    const ubyte *inp;
-    ubyte *o;
+    const u8 *inp;
+    u8 *o;
 
     inp = buf;
     o = lbDisplay.WScreen;
@@ -10063,7 +10062,7 @@ void frame_unkn_func_06(void)
         :  :  : "eax" );
 }
 
-void load_netscan_data(ubyte city_id, ubyte level)
+void load_netscan_data(u8 city_id, u8 level)
 {
 #if 0
     asm volatile ("call ASM_load_netscan_data\n"
@@ -10137,7 +10136,7 @@ void show_load_and_prep_mission(void)
 
     if ( start_into_mission )
     {
-        ushort missi, next_mapno;
+        u16 missi, next_mapno;
         short next_level;
 
         if (!in_network_game) {
@@ -10754,7 +10753,7 @@ void draw_game(void)
             BAT_play();
             if ( execute_commands )
             {
-                long tmp;
+                i32 tmp;
                 gamep_unknval_16 = nav_stats__ThisTurn;
                 nav_stats__ThisTurn = 0;
                 ++gamep_unknval_12;
@@ -10796,7 +10795,7 @@ void game_process_sub04(void);
 void game_process(void)
 {
     debug_m_sprite(193);
-    LOGDBG("WSCREEN 0x%lx", (ulong)lbDisplay.WScreen);
+    LOGDBG("WSCREEN 0x%lx", (u32)lbDisplay.WScreen);
     while ( !exit_game )
     {
       process_sound_heap();
@@ -10918,7 +10917,7 @@ game_update_full(bool wait)
         TbClockMSec sleep_end = last_loop_time + 1000/GAME_FPS;
         // If we missed the normal sleep target (ie. there was a slowdown), reset the value and do not sleep
         if ((sleep_end < curr_time) || (sleep_end > curr_time + 1000/GAME_FPS)) {
-            LOGNO("missed FPS target, last frame time %ld too far from current %ld", (ulong)sleep_end, (ulong)curr_time);
+            LOGNO("missed FPS target, last frame time %ld too far from current %ld", (u32)sleep_end, (u32)curr_time);
             sleep_end = curr_time;
         }
         LbSleepUntil(sleep_end);

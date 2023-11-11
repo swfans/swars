@@ -92,28 +92,28 @@ int research_wep_get_progress(short cwep)
 
 TbBool is_research_weapon_completed(ushort wtype)
 {
-    ulong wflag;
+    u32 wflag;
     wflag = 1 << (wtype - 1);
     return (research.WeaponsCompleted & wflag) != 0;
 }
 
 TbBool is_research_weapon_allowed(ushort wtype)
 {
-    ulong wflag;
+    u32 wflag;
     wflag = 1 << (wtype - 1);
     return (research.WeaponsAllowed & wflag) != 0;
 }
 
 void research_weapon_allow(ushort wtype)
 {
-    ulong wflag;
+    u32 wflag;
     wflag = 1 << (wtype - 1);
     research.WeaponsAllowed |= wflag;
 }
 
-void research_weapon_flags_allow(ulong wpflags)
+void research_weapon_flags_allow(u32 wpflags)
 {
-    ulong oneflag;
+    u32 oneflag;
     ushort wtype;
 
     for (wtype = 1; wtype < WEP_TYPES_COUNT; wtype++)
@@ -129,7 +129,7 @@ void research_weapon_flags_allow(ulong wpflags)
 
 void research_weapon_complete(ushort wtype)
 {
-    ulong wflag;
+    u32 wflag;
     wflag = 1 << (wtype - 1);
     research.WeaponsAllowed &= ~wflag;
     // if already researching this weapon, finish research
@@ -206,28 +206,28 @@ int research_cymod_get_progress(short cmod)
 
 TbBool is_research_cymod_completed(ushort mtype)
 {
-    ulong mflag;
+    u32 mflag;
     mflag = 1 << (mtype - 1);
     return (research.ModsCompleted & mflag) != 0;
 }
 
 TbBool is_research_cymod_allowed(ushort mtype)
 {
-    ulong mflag;
+    u32 mflag;
     mflag = 1 << (mtype - 1);
     return (research.ModsAllowed & mflag) != 0;
 }
 
 void research_cymod_allow(ushort mtype)
 {
-    ulong mflag;
+    u32 mflag;
     mflag = 1 << (mtype - 1);
     research.ModsAllowed |= mflag;
 }
 
 void research_cymod_complete(ushort mtype)
 {
-    ulong mflag;
+    u32 mflag;
     mflag = 1 << (mtype - 1);
     research.ModsAllowed &= ~mflag;
     // if already researching this mod, finish research
@@ -341,7 +341,7 @@ int research_unkn_func_004(ushort percent_per_day, int expect_funding, int real_
 #endif
 }
 
-int research_daily_progress_for_type(ubyte rstype)
+int research_daily_progress_for_type(u8 rstype)
 {
 #if 0
     int ret;

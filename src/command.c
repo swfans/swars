@@ -77,7 +77,7 @@ enum CommandDefFlags {
 struct CommandDef {
     const char *CmdName;
     void *vefify;
-    ulong Flags;
+    u32 Flags;
 };
 
 struct CommandDef command_defs[] = {
@@ -235,13 +235,13 @@ struct CommandDef command_defs[] = {
     {NULL,							NULL,				CmDF_None },
 };
 
-void snprint_command(char *buf, ulong buflen, ushort cmd)
+void snprint_command(char *buf, u32 buflen, u16 cmd)
 {
     struct Command *p_cmd;
     struct CommandDef *p_cdef;
 
     char *s;
-    ubyte nparams;
+    u8 nparams;
 
     p_cmd = &game_commands[cmd];
 
@@ -315,14 +315,14 @@ void snprint_command(char *buf, ulong buflen, ushort cmd)
 
     {
         if (nparams) { sprintf(s, ", "); s += strlen(s); }
-        sprintf(s, "Flags(0x%02lX)", p_cmd->Flags);
+        sprintf(s, "Flags(0x%02X)", p_cmd->Flags);
         s += strlen(s);
         nparams++;
     }
 
     if ((p_cmd->field_1A != 0) || (p_cmd->field_1E != 0)) {
         if (nparams) { sprintf(s, ", "); s += strlen(s); }
-        sprintf(s, "Padding(%ld,%hd)", p_cmd->field_1A, p_cmd->field_1E);
+        sprintf(s, "Padding(%d,%hd)", p_cmd->field_1A, p_cmd->field_1E);
         s += strlen(s);
         nparams++;
     }
@@ -362,12 +362,12 @@ TbBool is_command_any_until(struct Command *p_cmd)
  *
  * @return Gives 2 if a parameter was updated, 1 if no update was neccessary, 0 if update failed.
  */
-ubyte fix_thing_command_indexes(ushort cmd)
+u8 fix_thing_command_indexes(u16 cmd)
 {
     struct Command *p_cmd;
     struct CommandDef *p_cdef;
-    short thing;
-    ubyte ret;
+    i16 thing;
+    u8 ret;
 
     p_cmd = &game_commands[cmd];
     p_cdef = &command_defs[p_cmd->Type];
@@ -385,7 +385,7 @@ ubyte fix_thing_command_indexes(ushort cmd)
     else if ((p_cdef->Flags & CmDF_ReqStationCoord) != 0)
     {
         struct Thing *p_secthing;
-        short secthing;
+        i16 secthing;
         secthing = search_for_station(p_cmd->X, p_cmd->Z);
         p_secthing = &things[secthing];
         thing = search_object_for_qface(p_secthing->U.UPerson.ComHead, 4u, 2u, 0);
@@ -659,7 +659,7 @@ ubyte fix_thing_command_indexes(ushort cmd)
 
 void fix_thing_commands_indexes(void)
 {
-    ushort cmd;
+    u16 cmd;
 
     for (cmd = 1; cmd < next_command; cmd++)
     {
@@ -669,7 +669,7 @@ void fix_thing_commands_indexes(void)
 
 void check_and_fix_commands(void)
 {
-    ushort cmd;
+    u16 cmd;
 
     for (cmd = 1; cmd < next_command ; cmd++)
     {
@@ -694,9 +694,9 @@ void check_and_fix_commands(void)
 
 void check_and_fix_thing_commands(void)
 {
-    short thing;
-    short i;
-    ushort cmd;
+    i16 thing;
+    i16 i;
+    u16 cmd;
 
     thing = same_type_head[1];
     for (i = 0; thing != 0; i++)

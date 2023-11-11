@@ -36,7 +36,7 @@ extern "C" {
  *  The default buffer has size of 4 kbytes; this function shall be used only if
  *  the buffer size needed is larger.
  */
-TbResult LbBufferSet(void *ptr, ulong size);
+TbResult LbBufferSet(void *ptr, u32 size);
 
 /** Releases/resets a lockable buffer singleton.
  *
@@ -47,7 +47,7 @@ TbResult LbBufferRelease(void);
 
 /** Locks the buffer, and returns pointer and size required to its access.
  */
-TbResult LbBufferLock(void **ptr, ulong *size);
+TbResult LbBufferLock(void **ptr, u32 *size);
 
 /** Unlocks the previously locked buffer.
  */
@@ -72,7 +72,7 @@ short LbBufferFileReadByte(void);
 
 /** Skip reading given amount of byte in associated file and buffer.
  */
-TbResult LbBufferFileSkip(ulong len);
+TbResult LbBufferFileSkip(u32 len);
 
 #ifdef __cplusplus
 };

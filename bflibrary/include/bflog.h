@@ -51,18 +51,18 @@ enum TbLogFlags {
 struct TbLog {
     char Filename[FILENAME_MAX];
     char Prefix[LOG_PREFIX_LEN];
-    ulong Flags;
+    u32 Flags;
     TbBool Initialised;
     TbBool Created;
     TbBool Suspended;
-    ulong Position;
+    u32 Position;
 };
 
 #if 0 // original bullfrog structure
 struct TbLog { // sizeof=194
     char Filename[144]; // offset=0
     char Prefix[32]; // offset=145
-    ulong Flags; // offset=178
+    u32 Flags; // offset=178
     DwBool Initialised; // offset=182
     DwBool Created; // offset=186
     DwBool Suspended; // offset=190
@@ -95,7 +95,7 @@ int LbDbgLog(const char *format, ...);
 TbResult LbLog(struct TbLog *log, const char *fmt_str, va_list arg);
 TbResult LbLogSetPrefix(struct TbLog *log, const char *prefix);
 TbResult LbLogSetPrefixFmt(struct TbLog *log, const char *format, ...);
-TbResult LbLogSetup(struct TbLog *log, const char *filename, ulong flags);
+TbResult LbLogSetup(struct TbLog *log, const char *filename, u32 flags);
 TbResult LbLogClose(struct TbLog *log);
 
 TbResult LbLogSuspend(struct TbLog *log);
@@ -105,7 +105,7 @@ TbResult LbLogDelete(struct TbLog *log);
 /**
  * Set up logging subsystem and begin writing program execution log at given location.
  */
-TbResult LbErrorLogSetup(const char *directory, const char *filename, ubyte flag);
+TbResult LbErrorLogSetup(const char *directory, const char *filename, u8 flag);
 
 /**
  * Close log file and finalize the logging subsystem.

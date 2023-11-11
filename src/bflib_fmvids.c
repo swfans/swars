@@ -23,7 +23,7 @@
 /******************************************************************************/
 //SmackDrawCallback smack_draw_callback = NULL;
 
-TbResult play_smk_direct(const char *fname, ulong smkflags, ushort plyflags, ushort mode)
+TbResult play_smk_direct(const char *fname, u32 smkflags, u16 plyflags, u16 mode)
 {
     TbResult ret;
     asm volatile ("call ASM_play_smk_direct\n"
@@ -31,7 +31,7 @@ TbResult play_smk_direct(const char *fname, ulong smkflags, ushort plyflags, ush
     return ret;
 }
 
-TbResult play_smk_via_buffer(const char *fname, ulong smkflags, ushort plyflags, SmackDrawCallback callback)
+TbResult play_smk_via_buffer(const char *fname, u32 smkflags, u16 plyflags, SmackDrawCallback callback)
 {
     TbResult ret;
     asm volatile ("call ASM_play_smk_via_buffer\n"
@@ -39,7 +39,7 @@ TbResult play_smk_via_buffer(const char *fname, ulong smkflags, ushort plyflags,
     return ret;
 }
 
-TbResult play_smk(const char *fname, ulong smkflags, ushort plyflags)
+TbResult play_smk(const char *fname, u32 smkflags, u16 plyflags)
 {
     TbResult ret;
 #if 0

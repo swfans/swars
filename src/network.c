@@ -33,14 +33,14 @@ struct IPXSession { // sizeof=45
     NSESS_HANDLE Id; // offset=0
     ushort GameId; // offset=2
     char Name[8]; // offset=4
-    ubyte Reserved[31]; // offset=12
-    ubyte HostPlayerNumber; // offset=43
-    ubyte field_44; // offset=44
+    u8 Reserved[31]; // offset=12
+    u8 HostPlayerNumber; // offset=43
+    u8 field_44; // offset=44
 };
 
 struct IPXPlayer { // sizeof=28
-    ulong Res0; // offset=0
-    ulong Res4; // offset=4
+    u32 Res0; // offset=0
+    u32 Res4; // offset=4
     ushort Res8; // offset=8
     char Name[16]; // offset=10
     ushort Used; // offset=26
@@ -49,14 +49,14 @@ struct IPXPlayer { // sizeof=28
 struct IPXSessionList { // sizeof=271
     struct IPXSession Session; // offset=0
     struct IPXPlayer Player[8]; // offset=45
-    ubyte NumberOfPlayers; // offset=269
-    ubyte field_270; // offset=270
+    u8 NumberOfPlayers; // offset=269
+    u8 field_270; // offset=270
 };
 
 #pragma pack()
 /******************************************************************************/
 
-extern ubyte lbICommSessionActive;
+extern u8 lbICommSessionActive;
 extern struct TbIPXHandler *IPXHandler;
 // The two below may be closed within one struct, not sure
 extern struct TbIPXPlayerHeader IPXPlayerHeader;
@@ -64,10 +64,10 @@ extern struct TbIPXPlayerData IPXPlayerData;
 
 extern char ModemResponseString[80];
 extern char ModemRequestString[80];
-extern ubyte byte_1E81E0[1027];
+extern u8 byte_1E81E0[1027];
 
-extern ulong ipx_send_packet_count[8][8];
-extern ulong ipx_got_player_send_packet_count[8];
+extern u32 ipx_send_packet_count[8][8];
+extern u32 ipx_got_player_send_packet_count[8];
 
 extern struct ComHandlerInfo com_dev[4];
 extern struct IPXDatagramBackup datagram_backup[8];
@@ -137,7 +137,7 @@ TbResult LbNetworkSetSessionHangUpFunction(void *func)
     return Lb_SUCCESS;
 }
 
-TbResult LbNetworkSetTimeoutSec(ulong tmsec)
+TbResult LbNetworkSetTimeoutSec(u32 tmsec)
 {
     NetTimeoutTicks = 100 * tmsec;
     return Lb_SUCCESS;
@@ -150,7 +150,7 @@ TbBool ipx_is_initialized(void)
 
 #if defined(DOS)||defined(GO32)
 
-int CallIPX(ubyte a1)
+int CallIPX(u8 a1)
 {
     struct DPMI_REGS dpmi_regs;
     union REGS regs;
@@ -167,7 +167,7 @@ int CallIPX(ubyte a1)
     return int386x(0x31, &regs, &regs, &sregs);
 }
 
-ubyte CallRealModeInterrupt(ubyte a1, struct DPMI_REGS *dpmi_regs)
+u8 CallRealModeInterrupt(u8 a1, struct DPMI_REGS *dpmi_regs)
 {
     union REGS regs;
     struct SREGS sregs;
@@ -234,7 +234,7 @@ TbResult ipx_create_session(char *a1, const char *a2)
 #endif
     struct TbIPXHandler *ipxhndl;
     struct TbIPXPlayer *p_plyrdt;
-    ulong tm_start, tm_curr;
+    u32 tm_start, tm_curr;
     TbResult ret;
     int i;
 
@@ -282,7 +282,7 @@ TbResult ipx_create_session(char *a1, const char *a2)
 
     for (i = 0; i < 16; i++)
     {
-        ubyte val;
+        u8 val;
 
         val = a2[i];
         if (val == 0)
@@ -392,7 +392,7 @@ int ipx_join_session(struct IPXSessionList *p_ipxsess, char *a2)
     return ret;
 #endif
     struct TbIPXPlayerHeader ipxhead;
-    ulong tm_start, tm_curr;
+    u32 tm_start, tm_curr;
     TbResult ret;
     short i, k;
 
@@ -611,19 +611,19 @@ TbResult ipx_get_player_name(char *name, int plyr)
     return ret;
 }
 
-TbResult ipx_network_send(int plyr, ubyte *data, int dtlen)
+TbResult ipx_network_send(int plyr, u8 *data, int dtlen)
 {
     assert(!"Not implemented");
     return Lb_FAIL;
 }
 
-TbResult ipx_network_receive(int plyr, ubyte *data, int dtlen)
+TbResult ipx_network_receive(int plyr, u8 *data, int dtlen)
 {
     assert(!"Not implemented");
     return Lb_FAIL;
 }
 
-TbResult ipx_send_packet_to_player_nowait(int plyr, ubyte *data, int dtlen)
+TbResult ipx_send_packet_to_player_nowait(int plyr, u8 *data, int dtlen)
 {
     struct TbIPXHandler *p_ipxhndl;
     struct TbIPXPlayer *p_plyrdt;
@@ -654,7 +654,7 @@ TbResult ipx_send_packet_to_player_nowait(int plyr, ubyte *data, int dtlen)
     return Lb_SUCCESS;
 }
 
-TbResult ipx_receive_packet_from_player_nowait(int plyr, ubyte *data, int dtlen)
+TbResult ipx_receive_packet_from_player_nowait(int plyr, u8 *data, int dtlen)
 {
     TbResult ret;
     int i;
@@ -686,9 +686,9 @@ TbResult ipx_receive_packet_from_player_nowait(int plyr, ubyte *data, int dtlen)
     return ret;
 }
 
-TbResult ipx_send_packet_to_player_wait(int plyr, ubyte *data, int dtlen)
+TbResult ipx_send_packet_to_player_wait(int plyr, u8 *data, int dtlen)
 {
-    ubyte *dt;
+    u8 *dt;
     int i;
     ushort pkt_count;
 
@@ -719,9 +719,9 @@ TbResult ipx_send_packet_to_player_wait(int plyr, ubyte *data, int dtlen)
     return Lb_SUCCESS;
 }
 
-TbResult ipx_receive_packet_from_player_wait(int plyr, ubyte *data, int dtlen)
+TbResult ipx_receive_packet_from_player_wait(int plyr, u8 *data, int dtlen)
 {
-    ubyte *dt;
+    u8 *dt;
     int i;
     ushort pkt_count;
 
@@ -890,7 +890,7 @@ int SetBps(struct TbSerialDev *serdev, int rate)
 
 #if defined(DOS)||defined(GO32)
 
-void write_char_no_buff(struct TbSerialDev *serdev, ubyte c)
+void write_char_no_buff(struct TbSerialDev *serdev, u8 c)
 {
     while ( !(inp(serdev->field_1096 + 5) & 0x20) )
         ;
@@ -899,7 +899,7 @@ void write_char_no_buff(struct TbSerialDev *serdev, ubyte c)
     sti();
 }
 
-void write_char(struct TbSerialDev *serdev, ubyte c)
+void write_char(struct TbSerialDev *serdev, u8 c)
 {
     write_char_no_buff(serdev, c);
 }
@@ -924,10 +924,10 @@ void write_string(struct TbSerialDev *serdev, const char *str)
 #endif
 }
 
-void read_write_clear_flag(struct TbSerialDev *serdev, ushort port, ubyte c)
+void read_write_clear_flag(struct TbSerialDev *serdev, ushort port, u8 c)
 {
 #if defined(DOS)||defined(GO32)
-    ubyte val;
+    u8 val;
     val = inp(port) & ~c;
     outp(port, val);
 #else
@@ -935,10 +935,10 @@ void read_write_clear_flag(struct TbSerialDev *serdev, ushort port, ubyte c)
 #endif
 }
 
-void read_write_set_flag(struct TbSerialDev *serdev, ushort port, ubyte c)
+void read_write_set_flag(struct TbSerialDev *serdev, ushort port, u8 c)
 {
 #if defined(DOS)||defined(GO32)
-    ubyte val;
+    u8 val;
     val = inp(port) | c;
     outp(port, val);
 #else
@@ -946,7 +946,7 @@ void read_write_set_flag(struct TbSerialDev *serdev, ushort port, ubyte c)
 #endif
 }
 
-void wait(ulong msec)
+void wait(u32 msec)
 {
 #if defined(DOS)||defined(GO32)
     delay(msec);
@@ -1006,7 +1006,7 @@ int LbCommExchange(int a1, void *a2, int a3)
     return ret;
 }
 
-int LbCommStopExchange(ubyte a1)
+int LbCommStopExchange(u8 a1)
 {
     net_unkn_func_338(byte_1E81E0);
     return Lb_SUCCESS;
@@ -1026,7 +1026,7 @@ int LbCommDeInit(struct TbSerialDev *serhead)
     struct TbSerialDev *serdev;
     struct ComHandlerInfo *cdev;
     union REGS regs;
-    ubyte r, n;
+    u8 r, n;
 
     LOGDBG("Starting");
     cdev = &com_dev[serhead->comdev_id];
@@ -1172,7 +1172,7 @@ TbResult LbModemHangUp(ushort dev_id)
     return ret;
 }
 
-TbResult LbModemRingType(ushort dev_id, ubyte rtyp)
+TbResult LbModemRingType(ushort dev_id, u8 rtyp)
 {
     struct TbSerialDev *serdev;
 
@@ -1198,7 +1198,7 @@ TbResult LbNetworkServiceStart(struct NetworkServiceInfo *nsvc)
     return ret;
 #endif
     TbResult ret;
-    ulong k;
+    u32 k;
 
     ret = Lb_FAIL;
     memcpy(&NetworkServicePtr.I, nsvc, sizeof(struct NetworkServiceInfo));
@@ -1345,7 +1345,7 @@ int LbNetworkSessionNumberPlayers(void)
     return ret;
 }
 
-TbResult LbNetworkSend(int plyr, ubyte *data, int dtlen)
+TbResult LbNetworkSend(int plyr, u8 *data, int dtlen)
 {
     TbResult ret;
 
@@ -1369,7 +1369,7 @@ TbResult LbNetworkSend(int plyr, ubyte *data, int dtlen)
     return ret;
 }
 
-TbResult LbNetworkReceive(int plyr, ubyte *data, int dtlen)
+TbResult LbNetworkReceive(int plyr, u8 *data, int dtlen)
 {
     TbResult ret;
 
@@ -1393,7 +1393,7 @@ TbResult LbNetworkReceive(int plyr, ubyte *data, int dtlen)
     return ret;
 }
 
-TbResult LbNetworkMessageSend(int plyr, ubyte *data, int dtlen)
+TbResult LbNetworkMessageSend(int plyr, u8 *data, int dtlen)
 {
     TbResult ret;
 
@@ -1417,7 +1417,7 @@ TbResult LbNetworkMessageSend(int plyr, ubyte *data, int dtlen)
     return ret;
 }
 
-TbResult LbNetworkMessageReceive(int plyr, ubyte *data, int dtlen)
+TbResult LbNetworkMessageReceive(int plyr, u8 *data, int dtlen)
 {
     TbResult ret;
 
@@ -1441,7 +1441,7 @@ TbResult LbNetworkMessageReceive(int plyr, ubyte *data, int dtlen)
     return ret;
 }
 
-TbResult LbNetworkSendNoWait(int plyr, ubyte *data, int dtlen)
+TbResult LbNetworkSendNoWait(int plyr, u8 *data, int dtlen)
 {
     TbResult ret;
 
@@ -1465,7 +1465,7 @@ TbResult LbNetworkSendNoWait(int plyr, ubyte *data, int dtlen)
     return ret;
 }
 
-TbResult LbNetworkReceiveNoWait(int plyr, ubyte *data, int dtlen)
+TbResult LbNetworkReceiveNoWait(int plyr, u8 *data, int dtlen)
 {
     TbResult ret;
 
@@ -1620,7 +1620,7 @@ TbResult LbNetworkHostPlayerNumber(void)
     return ret;
 }
 
-TbResult LbNetworkSetupIPXAddress(ulong addr)
+TbResult LbNetworkSetupIPXAddress(u32 addr)
 {
     if (addr == 0)
         return Lb_FAIL;

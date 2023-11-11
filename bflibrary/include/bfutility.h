@@ -38,12 +38,12 @@ extern "C" {
 /**
  * Seed for LbRandomAnyShort() function; originally named just `seed`.
  */
-extern ulong lbSeed;
+extern u32 lbSeed;
 
 /**
  * Seed for LbRandomPosShort() function; originally named `seed_ps`.
  */
-extern ulong lbSeed_ps;
+extern u32 lbSeed_ps;
 
 /**
  * Generates a random number, by using just a simple multiplication

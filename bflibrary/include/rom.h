@@ -28,16 +28,16 @@ extern "C" {
 
 /** Width of tab character in pixels while drawing simple 5x6 font.
  */
-extern long tabwidth;
+extern i32 tabwidth;
 
 /** Draw text on screen using simple built-in 5x6 font.
  */
-void prop_text(const char *text, TbPixel *out, long scanline, TbPixel colour);
+void prop_text(const c8 *text, TbPixel *out, i32 scanline, TbPixel colour);
 
 /** Generate table for fading to and from given colour.
  */
-void make_fade_table(const ubyte *pal, ubyte *out, ubyte cr, ubyte cg, ubyte cb,
-  ubyte ir, ubyte ig, ubyte ib);
+void make_fade_table(const u8 *pal, u8 *out, u8 cr, u8 cg, u8 cb,
+  u8 ir, u8 ig, u8 ib);
 
 #ifdef __cplusplus
 };

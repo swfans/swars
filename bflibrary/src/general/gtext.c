@@ -33,23 +33,23 @@
 #  define SHADOW_COLOUR 0x00
 #endif
 
-ubyte lbSpacesPerTab;
+u8 lbSpacesPerTab;
 struct TbSprite *lbFontPtr;
 
 /** @internal
  * Returns if the given char starts a wide charcode.
  * @param chr the 8-bit char to check
  */
-TbBool is_wide_charcode(ulong chr)
+TbBool is_wide_charcode(u32 chr)
 {
     return false;
 }
 
 TbBool LbIApplyControlCharToDrawSettings(const char **c)
 {
-    ubyte chr;
+    u8 chr;
 
-    chr = (ubyte)(**c);
+    chr = (u8)(**c);
     switch (chr)
     {
       case 1:
@@ -75,7 +75,7 @@ TbBool LbIApplyControlCharToDrawSettings(const char **c)
         break;
       case 14:
         (*c)++;
-        lbDisplay.DrawColour = (ubyte)(**c);
+        lbDisplay.DrawColour = (u8)(**c);
         break;
       default:
         return false;
@@ -91,15 +91,15 @@ TbBool LbIApplyControlCharToDrawSettings(const char **c)
  * @param y
  * @param len
  */
-void put_down_simpletext_sprites(const char *sbuf, const char *ebuf, long x, long y, long len)
+void put_down_simpletext_sprites(const char *sbuf, const char *ebuf, i32 x, i32 y, i32 len)
 {
   const char *c;
   const struct TbSprite *spr;
-  ubyte chr;
-  long w,h;
+  u8 chr;
+  i32 w,h;
   for (c=sbuf; c < ebuf; c++)
   {
-    chr = (ubyte)(*c);
+    chr = (u8)(*c);
     if (chr > 32)
     {
       spr = LbFontCharSprite(lbFontPtr,chr);
@@ -130,7 +130,7 @@ void put_down_simpletext_sprites(const char *sbuf, const char *ebuf, long x, lon
     } else
     if (chr == '\t')
     {
-        w = len*(long)lbSpacesPerTab;
+        w = len*(i32)lbSpacesPerTab;
         if ((lbDisplay.DrawFlags & Lb_TEXT_UNDERLINE) != 0)
         {
             h = LbTextLineHeight();
@@ -153,15 +153,15 @@ void put_down_simpletext_sprites(const char *sbuf, const char *ebuf, long x, lon
  * @param len
  */
 void put_down_simpletext_sprites_resized(const char *sbuf, const char *ebuf,
-  long x, long y, long space_len, int units_per_px)
+  i32 x, i32 y, i32 space_len, int units_per_px)
 {
   const char *c;
   const struct TbSprite *spr;
-  ubyte chr;
-  long w,h;
+  u8 chr;
+  i32 w,h;
   for (c=sbuf; c < ebuf; c++)
   {
-    chr = (ubyte)(*c);
+    chr = (u8)(*c);
     if (chr > 32)
     {
       spr = LbFontCharSprite(lbFontPtr,chr);
@@ -193,7 +193,7 @@ void put_down_simpletext_sprites_resized(const char *sbuf, const char *ebuf,
     } else
     if (chr == '\t')
     {
-        w = space_len*(long)lbSpacesPerTab;
+        w = space_len*(i32)lbSpacesPerTab;
         if ((lbDisplay.DrawFlags & Lb_TEXT_UNDERLINE) != 0)
         {
             h = LbTextLineHeight() * units_per_px / 16;
@@ -208,7 +208,7 @@ void put_down_simpletext_sprites_resized(const char *sbuf, const char *ebuf,
 }
 
 void put_down_sprites(const char *sbuf, const char *ebuf,
-  long x, long y, long len, int units_per_px)
+  i32 x, i32 y, i32 len, int units_per_px)
 {
     if (units_per_px == 16)
     {
@@ -232,10 +232,10 @@ TbBool LbIAlignMethodSet(ushort fdflags)
     return false;
 }
 
-long LbTextStringPartWidth(const char *text, long part)
+i32 LbTextStringPartWidth(const char *text, i32 part)
 {
     const char *ebuf;
-    long chr;
+    i32 chr;
     int len;
     int max_len;
 
@@ -247,12 +247,12 @@ long LbTextStringPartWidth(const char *text, long part)
     {
         if (part <= 0) break;
         part--;
-        chr = (ubyte)*ebuf;
+        chr = (u8)*ebuf;
         if (is_wide_charcode(chr))
         {
             ebuf++;
             if (*ebuf == '\0') break;
-            chr = (chr << 8) + (ubyte)*ebuf;
+            chr = (chr << 8) + (u8)*ebuf;
         }
         if (chr > 31)
         {
@@ -280,15 +280,15 @@ long LbTextStringPartWidth(const char *text, long part)
     return max_len;
 }
 
-long LbTextStringWidth(const char *text)
+i32 LbTextStringWidth(const char *text)
 {
-    return LbTextStringPartWidth(text, LONG_MAX);
+    return LbTextStringPartWidth(text, INT_MAX);
 }
 
 
-long LbSprFontWordWidth(const struct TbSprite *font, const char *text)
+i32 LbSprFontWordWidth(const struct TbSprite *font, const char *text)
 {
-    long len;
+    i32 len;
     const char *c;
     if ((font == NULL) || (text == NULL))
         return 0;
@@ -296,21 +296,21 @@ long LbSprFontWordWidth(const struct TbSprite *font, const char *text)
     len = 0;
     while ((*c != ' ') && (*c != '\t') && (*c != '\0') && (*c != '\r') && (*c != '\n'))
     {
-      if ((ubyte)(*c) > 32)
-        len += LbSprFontCharWidth(font, (ubyte)*c);
+      if ((u8)(*c) > 32)
+        len += LbSprFontCharWidth(font, (u8)*c);
       c++;
     }
     return len;
 }
 
-long LbTextWordWidth(const char *text)
+i32 LbTextWordWidth(const char *text)
 {
     return LbSprFontWordWidth(lbFontPtr, text);
 }
 
-long LbTextStringHeight(const char *text)
+i32 LbTextStringHeight(const char *text)
 {
-    long i, h, lines;
+    i32 i, h, lines;
     lines = 1;
     if ((lbFontPtr == NULL) || (text == NULL))
         return 0;
@@ -330,15 +330,15 @@ TbBool LbTextDrawResized(int posx, int posy, int units_per_px, const char *text)
 {
     struct TbAnyWindow grwnd;
     // Counter for amount of blank characters in a line
-    long count;
-    long justifyx,justifyy;
-    long startx,starty;
+    i32 count;
+    i32 justifyx,justifyy;
+    i32 startx,starty;
     const char *sbuf;
     const char *ebuf;
     const char *prev_ebuf;
-    long chr;
-    long x, y, len;
-    long w, h;
+    i32 chr;
+    i32 x, y, len;
+    i32 w, h;
 
     if ((lbFontPtr == NULL) || (text == NULL))
         return true;
@@ -356,12 +356,12 @@ TbBool LbTextDrawResized(int posx, int posy, int units_per_px, const char *text)
     for (ebuf=text; *ebuf != '\0'; ebuf++)
     {
         prev_ebuf=ebuf-1;
-        chr = (ubyte)*ebuf;
+        chr = (u8)*ebuf;
         if (is_wide_charcode(chr))
         {
             ebuf++;
             if (*ebuf == '\0') break;
-            chr = (chr<<8) + (ubyte)*ebuf;
+            chr = (chr<<8) + (u8)*ebuf;
         }
 
         if (chr > 32)

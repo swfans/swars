@@ -80,19 +80,19 @@ enum WeaponFourPackIndex
 struct Thing;
 
 struct WeaponDef {
-  ushort RangeBlocks;
-  ushort HitDamage;
-  ushort ReFireDelay;
-  ushort Weight;
-  short EnergyUsed;
-  ushort Accuracy;
-  ushort TargetType;
-  ushort TargetMode;
-  ushort Flags;
-  ushort Sprite;
-  ushort Cost;
-  ushort Funding;
-  ubyte PercentPerDay;
+  u16 RangeBlocks;
+  u16 HitDamage;
+  u16 ReFireDelay;
+  u16 Weight;
+  i16 EnergyUsed;
+  u16 Accuracy;
+  u16 TargetType;
+  u16 TargetMode;
+  u16 Flags;
+  u16 Sprite;
+  u16 Cost;
+  u16 Funding;
+  u8 PercentPerDay;
 };
 
 /* Additional WeaponDef fields, to be later merged with that struct.
@@ -102,30 +102,30 @@ struct WeaponDefAdd {
 };
 
 struct WeaponsFourPack {
-  ubyte Amount[WFRPK_COUNT];
+  u8 Amount[WFRPK_COUNT];
 };
 
 #pragma pack()
 /******************************************************************************/
 extern struct WeaponDef weapon_defs[33];
 extern struct TbNamedEnum weapon_names[33];
-extern ubyte weapon_tech_level[33];
+extern u8 weapon_tech_level[33];
 
 void read_weapons_conf_file(void);
 void init_weapon_text(void);
 
-TbBool weapons_has_weapon(ulong weapons, ushort wtype);
-ushort weapons_prev_weapon(ulong weapons, ushort last_wtype);
-const char *weapon_codename(ushort wtype);
+TbBool weapons_has_weapon(u32 weapons, u16 wtype);
+u16 weapons_prev_weapon(u32 weapons, u16 last_wtype);
+const char *weapon_codename(u16 wtype);
 
-ushort weapon_fourpack_index(ushort weapon);
-void weapons_remove_weapon(ulong *p_weapons,
-  struct WeaponsFourPack *p_fourpacks, ushort wtype);
-TbBool weapons_remove_one(ulong *p_weapons,
-  struct WeaponsFourPack *p_fourpacks, ushort wtype);
-TbBool weapons_add_one(ulong *p_weapons,
-  struct WeaponsFourPack *p_fourpacks, ushort wtype);
-void sanitize_weapon_quantities(ulong *p_weapons,
+u16 weapon_fourpack_index(u16 weapon);
+void weapons_remove_weapon(u32 *p_weapons,
+  struct WeaponsFourPack *p_fourpacks, u16 wtype);
+TbBool weapons_remove_one(u32 *p_weapons,
+  struct WeaponsFourPack *p_fourpacks, u16 wtype);
+TbBool weapons_add_one(u32 *p_weapons,
+  struct WeaponsFourPack *p_fourpacks, u16 wtype);
+void sanitize_weapon_quantities(u32 *p_weapons,
   struct WeaponsFourPack *p_fourpacks);
 
 void do_weapon_quantities_net_to_player(struct Thing *p_person);

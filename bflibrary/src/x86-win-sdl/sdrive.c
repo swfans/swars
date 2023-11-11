@@ -23,7 +23,7 @@
 #include <direct.h>
 #endif
 
-TbResult LbDriveCurrent(ulong *drive)
+TbResult LbDriveCurrent(u32 *drive)
 {
 #if defined(WIN32)||defined(DOS)||defined(GO32)
     *drive = _getdrive();
@@ -34,7 +34,7 @@ TbResult LbDriveCurrent(ulong *drive)
     return 1;
 }
 
-TbResult LbDriveChange(const ulong drive)
+TbResult LbDriveChange(const u32 drive)
 {
     int result;
 #if defined(WIN32)||defined(DOS)||defined(GO32)
@@ -55,7 +55,7 @@ TbResult LbDriveChange(const ulong drive)
     return result;
 }
 
-TbResult LbDriveExists(const ulong drive)
+TbResult LbDriveExists(const u32 drive)
 {
     int result;
 #if defined(WIN32)||defined(DOS)||defined(GO32)
@@ -77,7 +77,7 @@ TbResult LbDriveExists(const ulong drive)
     return result;
 }
 
-TbResult LbDriveFreeSpace(const ulong drive, TbDriveInfo *drvinfo)
+TbResult LbDriveFreeSpace(const u32 drive, TbDriveInfo *drvinfo)
 {
   int result;
 #if defined(WIN32)||defined(DOS)||defined(GO32)

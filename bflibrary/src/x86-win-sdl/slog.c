@@ -63,7 +63,7 @@ TbResult LbLogSetPrefixFmt(struct TbLog *log, const char *format, ...)
     return Lb_SUCCESS;
 }
 
-TbResult LbLogSetup(struct TbLog *log, const char *filename, ulong flags)
+TbResult LbLogSetup(struct TbLog *log, const char *filename, u32 flags)
 {
     log->Initialised = false;
     LbMemorySet(log->Filename, 0, FILENAME_MAX);
@@ -120,7 +120,7 @@ TbResult LbLogDelete(struct TbLog *log)
     return Lb_SUCCESS;
 }
 
-void LbI_LogHeader(struct TbLog *log, FILE *file, ubyte header)
+void LbI_LogHeader(struct TbLog *log, FILE *file, u8 header)
 {
     const char *actn;
     short at_used;
@@ -170,7 +170,7 @@ void LbI_LogHeader(struct TbLog *log, FILE *file, ubyte header)
 TbResult LbLog(struct TbLog *log, const char *fmt_str, va_list arg)
 {
     FILE *file;
-    ubyte header;
+    u8 header;
     const char *accmode;
 
     if (!log->Initialised)

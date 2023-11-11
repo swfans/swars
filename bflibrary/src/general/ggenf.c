@@ -44,12 +44,12 @@ struct TbColorTables pixmap;
  * @param table The output table pointer. Needs to have size
  *        PALETTE_FADE_LEVELS * PALETTE_8b_COLORS.
  */
-static void LbFadeTableToRGBGenerate(const ubyte *pal, ubyte r, ubyte g, ubyte b,
+static void LbFadeTableToRGBGenerate(const u8 *pal, u8 r, u8 g, u8 b,
   short intens, const TbPixel *unaffected, TbPixel *table)
 {
     TbPixel *t;
-    long i, k;
-    ulong unaffected_bits[(PALETTE_8b_COLORS+7)/8];
+    i32 i, k;
+    u32 unaffected_bits[(PALETTE_8b_COLORS+7)/8];
 
     // Convert unaffected list to bit mask
     LbMemorySet(unaffected_bits, 0, sizeof(unaffected_bits));
@@ -64,8 +64,8 @@ static void LbFadeTableToRGBGenerate(const ubyte *pal, ubyte r, ubyte g, ubyte b
     t = table;
     for (i = 0; i < PALETTE_FADE_LEVELS; i++)
     {
-        const ubyte *p;
-        ubyte rd, gd, bd;
+        const u8 *p;
+        u8 rd, gd, bd;
 
         rd = ((PALETTE_FADE_LEVELS - i) * r) / PALETTE_FADE_LEVELS;
         gd = ((PALETTE_FADE_LEVELS - i) * g) / PALETTE_FADE_LEVELS;
@@ -89,7 +89,7 @@ static void LbFadeTableToRGBGenerate(const ubyte *pal, ubyte r, ubyte g, ubyte b
     }
 }
 
-TbResult LbFadeTableGenerate(const ubyte *palette, const TbPixel *unaffected,
+TbResult LbFadeTableGenerate(const u8 *palette, const TbPixel *unaffected,
   const char *fname)
 {
     TbBool generate = false;
@@ -119,9 +119,9 @@ TbResult LbFadeTableGenerate(const ubyte *palette, const TbPixel *unaffected,
     return Lb_SUCCESS;
 }
 
-TbResult LbFadeTableLoad(const ubyte *palette, const char *fname)
+TbResult LbFadeTableLoad(const u8 *palette, const char *fname)
 {
-    long len;
+    i32 len;
 
     len = LbFileLoadAt(fname, pixmap.fade_table);
     lbDisplay.FadeTable = pixmap.fade_table;
@@ -137,7 +137,7 @@ TbResult LbFadeTableLoad(const ubyte *palette, const char *fname)
     return Lb_SUCCESS;
 }
 
-TbResult LbColourTablesGenerate(const ubyte *palette, const TbPixel *unaffected,
+TbResult LbColourTablesGenerate(const u8 *palette, const TbPixel *unaffected,
   const char *fname)
 {
     TbResult retf, retg;
@@ -154,9 +154,9 @@ TbResult LbColourTablesGenerate(const ubyte *palette, const TbPixel *unaffected,
     return Lb_SUCCESS;
 }
 
-TbResult LbColourTablesLoad(const ubyte *palette, const char *fname)
+TbResult LbColourTablesLoad(const u8 *palette, const char *fname)
 {
-    long len;
+    i32 len;
 
     len = LbFileLoadAt(fname, &pixmap);
     lbDisplay.FadeTable = pixmap.fade_table;

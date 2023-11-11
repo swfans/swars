@@ -38,13 +38,13 @@
  * @param transmap The transparency mapping table to be used.
  * @return Gives 0 on success.
  */
-TbResult LbSpriteDrawRemapUsingScalingUpDataTrans1RL(uchar *outbuf, int scanline,
-  int outheight, long *xstep, long *ystep, const TbSprite *sprite,
+TbResult LbSpriteDrawRemapUsingScalingUpDataTrans1RL(uc8 *outbuf, int scanline,
+  int outheight, i32 *xstep, i32 *ystep, const TbSprite *sprite,
   const TbPixel *cmap, const TbPixel *transmap)
 {
     int ystep_delta;
     unsigned char *sprdata;
-    long *ycurstep;
+    i32 *ycurstep;
 
     LOGDBG("drawing");
     ystep_delta = 2;
@@ -61,7 +61,7 @@ TbResult LbSpriteDrawRemapUsingScalingUpDataTrans1RL(uchar *outbuf, int scanline
         {
             unsigned char *prevdata;
             int xdup, ydup;
-            long *xcurstep;
+            i32 *xcurstep;
             ydup = ycurstep[1];
             if (ycurstep[0]+ydup > outheight)
                 ydup = outheight-ycurstep[0];
@@ -74,7 +74,7 @@ TbResult LbSpriteDrawRemapUsingScalingUpDataTrans1RL(uchar *outbuf, int scanline
                 out_end = outbuf;
                 while ( 1 )
                 {
-                    long pxlen;
+                    i32 pxlen;
                     pxlen = (signed char)*sprdata;
                     sprdata++;
                     if (pxlen == 0)
@@ -117,7 +117,7 @@ TbResult LbSpriteDrawRemapUsingScalingUpDataTrans1RL(uchar *outbuf, int scanline
         {
             while ( 1 )
             {
-                long pxlen;
+                i32 pxlen;
                 pxlen = (signed char)*sprdata;
                 sprdata++;
                 if (pxlen == 0)
@@ -146,13 +146,13 @@ TbResult LbSpriteDrawRemapUsingScalingUpDataTrans1RL(uchar *outbuf, int scanline
  * @param transmap The transparency mapping table to be used. Should have a size of 256x256 to avoid invalid memory reads.
  * @return Gives 0 on success.
  */
-TbResult LbSpriteDrawRemapUsingScalingUpDataTrans1LR(uchar *outbuf, int scanline,
-  int outheight, long *xstep, long *ystep, const TbSprite *sprite,
+TbResult LbSpriteDrawRemapUsingScalingUpDataTrans1LR(uc8 *outbuf, int scanline,
+  int outheight, i32 *xstep, i32 *ystep, const TbSprite *sprite,
   const TbPixel *cmap, const TbPixel *transmap)
 {
     int ystep_delta;
     unsigned char *sprdata;
-    long *ycurstep;
+    i32 *ycurstep;
 
     LOGDBG("drawing");
     ystep_delta = 2;
@@ -169,7 +169,7 @@ TbResult LbSpriteDrawRemapUsingScalingUpDataTrans1LR(uchar *outbuf, int scanline
         {
             unsigned char *prevdata;
             int xdup, ydup;
-            long *xcurstep;
+            i32 *xcurstep;
             ydup = ycurstep[1];
             if (ycurstep[0]+ydup > outheight)
                 ydup = outheight-ycurstep[0];
@@ -182,7 +182,7 @@ TbResult LbSpriteDrawRemapUsingScalingUpDataTrans1LR(uchar *outbuf, int scanline
                 out_end = outbuf;
                 while ( 1 )
                 {
-                    long pxlen;
+                    i32 pxlen;
                     pxlen = (signed char)*sprdata;
                     sprdata++;
                     if (pxlen == 0)
@@ -225,7 +225,7 @@ TbResult LbSpriteDrawRemapUsingScalingUpDataTrans1LR(uchar *outbuf, int scanline
         {
             while ( 1 )
             {
-                long pxlen;
+                i32 pxlen;
                 pxlen = (signed char)*sprdata;
                 sprdata++;
                 if (pxlen == 0)
@@ -254,13 +254,13 @@ TbResult LbSpriteDrawRemapUsingScalingUpDataTrans1LR(uchar *outbuf, int scanline
  * @param transmap The transparency mapping table to be used.
  * @return Gives 0 on success.
  */
-TbResult LbSpriteDrawRemapUsingScalingUpDataTrans2RL(uchar *outbuf, int scanline,
-  int outheight, long *xstep, long *ystep, const TbSprite *sprite,
+TbResult LbSpriteDrawRemapUsingScalingUpDataTrans2RL(uc8 *outbuf, int scanline,
+  int outheight, i32 *xstep, i32 *ystep, const TbSprite *sprite,
   const TbPixel *cmap, const TbPixel *transmap)
 {
     int ystep_delta;
     unsigned char *sprdata;
-    long *ycurstep;
+    i32 *ycurstep;
 
     LOGDBG("drawing");
     ystep_delta = 2;
@@ -277,7 +277,7 @@ TbResult LbSpriteDrawRemapUsingScalingUpDataTrans2RL(uchar *outbuf, int scanline
         {
             unsigned char *prevdata;
             int xdup, ydup;
-            long *xcurstep;
+            i32 *xcurstep;
             ydup = ycurstep[1];
             if (ycurstep[0]+ydup > outheight)
                 ydup = outheight-ycurstep[0];
@@ -290,7 +290,7 @@ TbResult LbSpriteDrawRemapUsingScalingUpDataTrans2RL(uchar *outbuf, int scanline
                 out_end = outbuf;
                 while ( 1 )
                 {
-                    long pxlen;
+                    i32 pxlen;
                     pxlen = (signed char)*sprdata;
                     sprdata++;
                     if (pxlen == 0)
@@ -333,7 +333,7 @@ TbResult LbSpriteDrawRemapUsingScalingUpDataTrans2RL(uchar *outbuf, int scanline
         {
             while ( 1 )
             {
-                long pxlen;
+                i32 pxlen;
                 pxlen = (signed char)*sprdata;
                 sprdata++;
                 if (pxlen == 0)
@@ -362,13 +362,13 @@ TbResult LbSpriteDrawRemapUsingScalingUpDataTrans2RL(uchar *outbuf, int scanline
  * @param transmap The transparency mapping table to be used.
  * @return Gives 0 on success.
  */
-TbResult LbSpriteDrawRemapUsingScalingUpDataTrans2LR(uchar *outbuf, int scanline,
-  int outheight, long *xstep, long *ystep, const TbSprite *sprite,
+TbResult LbSpriteDrawRemapUsingScalingUpDataTrans2LR(uc8 *outbuf, int scanline,
+  int outheight, i32 *xstep, i32 *ystep, const TbSprite *sprite,
   const TbPixel *cmap, const TbPixel *transmap)
 {
     int ystep_delta;
     unsigned char *sprdata;
-    long *ycurstep;
+    i32 *ycurstep;
 
     LOGDBG("drawing");
     ystep_delta = 2;
@@ -385,7 +385,7 @@ TbResult LbSpriteDrawRemapUsingScalingUpDataTrans2LR(uchar *outbuf, int scanline
         {
             unsigned char *prevdata;
             int xdup, ydup;
-            long *xcurstep;
+            i32 *xcurstep;
             ydup = ycurstep[1];
             if (ycurstep[0]+ydup > outheight)
                 ydup = outheight-ycurstep[0];
@@ -398,7 +398,7 @@ TbResult LbSpriteDrawRemapUsingScalingUpDataTrans2LR(uchar *outbuf, int scanline
                 out_end = outbuf;
                 while ( 1 )
                 {
-                    long pxlen;
+                    i32 pxlen;
                     pxlen = (signed char)*sprdata;
                     sprdata++;
                     if (pxlen == 0)
@@ -441,7 +441,7 @@ TbResult LbSpriteDrawRemapUsingScalingUpDataTrans2LR(uchar *outbuf, int scanline
         {
             while ( 1 )
             {
-                long pxlen;
+                i32 pxlen;
                 pxlen = (signed char)*sprdata;
                 sprdata++;
                 if (pxlen == 0)
@@ -469,12 +469,12 @@ TbResult LbSpriteDrawRemapUsingScalingUpDataTrans2LR(uchar *outbuf, int scanline
  * @param cmap The colour remap table to be used.
  * @return Gives 0 on success.
  */
-TbResult LbSpriteDrawRemapUsingScalingUpDataSolidRL(uchar *outbuf, int scanline,
-  int outheight, long *xstep, long *ystep, const TbSprite *sprite, const TbPixel *cmap)
+TbResult LbSpriteDrawRemapUsingScalingUpDataSolidRL(uc8 *outbuf, int scanline,
+  int outheight, i32 *xstep, i32 *ystep, const TbSprite *sprite, const TbPixel *cmap)
 {
     int ystep_delta;
     unsigned char *sprdata;
-    long *ycurstep;
+    i32 *ycurstep;
 
     LOGDBG("drawing");
     ystep_delta = 2;
@@ -493,7 +493,7 @@ TbResult LbSpriteDrawRemapUsingScalingUpDataSolidRL(uchar *outbuf, int scanline,
             int solid_len;
             TbPixel * out_line;
             int xdup, ydup;
-            long *xcurstep;
+            i32 *xcurstep;
             ydup = ycurstep[1];
             if (ycurstep[0]+ydup > outheight)
                 ydup = outheight-ycurstep[0];
@@ -502,7 +502,7 @@ TbResult LbSpriteDrawRemapUsingScalingUpDataSolidRL(uchar *outbuf, int scanline,
             out_end = outbuf;
             while ( 1 )
             {
-                long pxlen;
+                i32 pxlen;
                 pxlen = (signed char)*sprdata;
                 sprdata++;
                 if (pxlen == 0)
@@ -564,7 +564,7 @@ TbResult LbSpriteDrawRemapUsingScalingUpDataSolidRL(uchar *outbuf, int scanline,
         {
             while ( 1 )
             {
-                long pxlen;
+                i32 pxlen;
                 pxlen = (signed char)*sprdata;
                 sprdata++;
                 if (pxlen == 0)
@@ -592,12 +592,12 @@ TbResult LbSpriteDrawRemapUsingScalingUpDataSolidRL(uchar *outbuf, int scanline,
  * @param cmap The colour remap table to be used.
  * @return Gives 0 on success.
  */
-TbResult LbSpriteDrawRemapUsingScalingUpDataSolidLR(uchar *outbuf, int scanline,
-  int outheight, long *xstep, long *ystep, const TbSprite *sprite, const TbPixel *cmap)
+TbResult LbSpriteDrawRemapUsingScalingUpDataSolidLR(uc8 *outbuf, int scanline,
+  int outheight, i32 *xstep, i32 *ystep, const TbSprite *sprite, const TbPixel *cmap)
 {
     int ystep_delta;
     unsigned char *sprdata;
-    long *ycurstep;
+    i32 *ycurstep;
 
     LOGDBG("drawing");
     ystep_delta = 2;
@@ -616,7 +616,7 @@ TbResult LbSpriteDrawRemapUsingScalingUpDataSolidLR(uchar *outbuf, int scanline,
             int solid_len;
             TbPixel * out_line;
             int xdup, ydup;
-            long *xcurstep;
+            i32 *xcurstep;
             ydup = ycurstep[1];
             if (ycurstep[0]+ydup > outheight)
                 ydup = outheight-ycurstep[0];
@@ -625,7 +625,7 @@ TbResult LbSpriteDrawRemapUsingScalingUpDataSolidLR(uchar *outbuf, int scanline,
             out_end = outbuf;
             while ( 1 )
             {
-                long pxlen;
+                i32 pxlen;
                 pxlen = (signed char)*sprdata;
                 sprdata++;
                 if (pxlen == 0)
@@ -685,7 +685,7 @@ TbResult LbSpriteDrawRemapUsingScalingUpDataSolidLR(uchar *outbuf, int scanline,
         {
             while ( 1 )
             {
-                long pxlen;
+                i32 pxlen;
                 pxlen = (signed char)*sprdata;
                 sprdata++;
                 if (pxlen == 0)
@@ -714,13 +714,13 @@ TbResult LbSpriteDrawRemapUsingScalingUpDataSolidLR(uchar *outbuf, int scanline,
  * @param transmap The transparency mapping table to be used.
  * @return Gives 0 on success.
  */
-TbResult LbSpriteDrawRemapUsingScalingDownDataTrans1RL(uchar *outbuf, int scanline,
-  int outheight, long *xstep, long *ystep, const TbSprite *sprite,
+TbResult LbSpriteDrawRemapUsingScalingDownDataTrans1RL(uc8 *outbuf, int scanline,
+  int outheight, i32 *xstep, i32 *ystep, const TbSprite *sprite,
   const TbPixel *cmap, const TbPixel *transmap)
 {
     int ystep_delta;
     unsigned char *sprdata;
-    long *ycurstep;
+    i32 *ycurstep;
 
     LOGDBG("drawing");
     ystep_delta = 2;
@@ -735,13 +735,13 @@ TbResult LbSpriteDrawRemapUsingScalingDownDataTrans1RL(uchar *outbuf, int scanli
     {
         if (ycurstep[1] != 0)
         {
-            long *xcurstep;
+            i32 *xcurstep;
             xcurstep = xstep;
             TbPixel *out_end;
             out_end = outbuf;
             while ( 1 )
             {
-                long pxlen;
+                i32 pxlen;
                 pxlen = (signed char)*sprdata;
                 sprdata++;
                 if (pxlen == 0)
@@ -778,7 +778,7 @@ TbResult LbSpriteDrawRemapUsingScalingDownDataTrans1RL(uchar *outbuf, int scanli
         {
             while ( 1 )
             {
-                long pxlen;
+                i32 pxlen;
                 pxlen = (signed char)*sprdata;
                 sprdata++;
                 if (pxlen == 0)
@@ -807,13 +807,13 @@ TbResult LbSpriteDrawRemapUsingScalingDownDataTrans1RL(uchar *outbuf, int scanli
  * @param transmap The transparency mapping table to be used.
  * @return Gives 0 on success.
  */
-TbResult LbSpriteDrawRemapUsingScalingDownDataTrans1LR(uchar *outbuf, int scanline,
-  int outheight, long *xstep, long *ystep, const TbSprite *sprite,
+TbResult LbSpriteDrawRemapUsingScalingDownDataTrans1LR(uc8 *outbuf, int scanline,
+  int outheight, i32 *xstep, i32 *ystep, const TbSprite *sprite,
   const TbPixel *cmap, const TbPixel *transmap)
 {
     int ystep_delta;
     unsigned char *sprdata;
-    long *ycurstep;
+    i32 *ycurstep;
 
     LOGDBG("drawing");
     ystep_delta = 2;
@@ -828,13 +828,13 @@ TbResult LbSpriteDrawRemapUsingScalingDownDataTrans1LR(uchar *outbuf, int scanli
     {
         if (ycurstep[1] != 0)
         {
-            long *xcurstep;
+            i32 *xcurstep;
             xcurstep = xstep;
             TbPixel *out_end;
             out_end = outbuf;
             while ( 1 )
             {
-                long pxlen;
+                i32 pxlen;
                 pxlen = (signed char)*sprdata;
                 sprdata++;
                 if (pxlen == 0)
@@ -871,7 +871,7 @@ TbResult LbSpriteDrawRemapUsingScalingDownDataTrans1LR(uchar *outbuf, int scanli
         {
             while ( 1 )
             {
-                long pxlen;
+                i32 pxlen;
                 pxlen = (signed char)*sprdata;
                 sprdata++;
                 if (pxlen == 0)
@@ -900,13 +900,13 @@ TbResult LbSpriteDrawRemapUsingScalingDownDataTrans1LR(uchar *outbuf, int scanli
  * @param transmap The transparency mapping table to be used.
  * @return Gives 0 on success.
  */
-TbResult LbSpriteDrawRemapUsingScalingDownDataTrans2RL(uchar *outbuf, int scanline,
-  int outheight, long *xstep, long *ystep, const TbSprite *sprite,
+TbResult LbSpriteDrawRemapUsingScalingDownDataTrans2RL(uc8 *outbuf, int scanline,
+  int outheight, i32 *xstep, i32 *ystep, const TbSprite *sprite,
   const TbPixel *cmap, const TbPixel *transmap)
 {
     int ystep_delta;
     unsigned char *sprdata;
-    long *ycurstep;
+    i32 *ycurstep;
 
     LOGDBG("drawing");
     ystep_delta = 2;
@@ -921,13 +921,13 @@ TbResult LbSpriteDrawRemapUsingScalingDownDataTrans2RL(uchar *outbuf, int scanli
     {
         if (ycurstep[1] != 0)
         {
-            long *xcurstep;
+            i32 *xcurstep;
             xcurstep = xstep;
             TbPixel *out_end;
             out_end = outbuf;
             while ( 1 )
             {
-                long pxlen;
+                i32 pxlen;
                 pxlen = (signed char)*sprdata;
                 sprdata++;
                 if (pxlen == 0)
@@ -964,7 +964,7 @@ TbResult LbSpriteDrawRemapUsingScalingDownDataTrans2RL(uchar *outbuf, int scanli
         {
             while ( 1 )
             {
-                long pxlen;
+                i32 pxlen;
                 pxlen = (signed char)*sprdata;
                 sprdata++;
                 if (pxlen == 0)
@@ -993,13 +993,13 @@ TbResult LbSpriteDrawRemapUsingScalingDownDataTrans2RL(uchar *outbuf, int scanli
  * @param transmap The transparency mapping table to be used.
  * @return Gives 0 on success.
  */
-TbResult LbSpriteDrawRemapUsingScalingDownDataTrans2LR(uchar *outbuf, int scanline,
-  int outheight, long *xstep, long *ystep, const TbSprite *sprite,
+TbResult LbSpriteDrawRemapUsingScalingDownDataTrans2LR(uc8 *outbuf, int scanline,
+  int outheight, i32 *xstep, i32 *ystep, const TbSprite *sprite,
   const TbPixel *cmap, const TbPixel *transmap)
 {
     int ystep_delta;
     unsigned char *sprdata;
-    long *ycurstep;
+    i32 *ycurstep;
 
     LOGDBG("drawing");
     ystep_delta = 2;
@@ -1014,13 +1014,13 @@ TbResult LbSpriteDrawRemapUsingScalingDownDataTrans2LR(uchar *outbuf, int scanli
     {
         if (ycurstep[1] != 0)
         {
-            long *xcurstep;
+            i32 *xcurstep;
             xcurstep = xstep;
             TbPixel *out_end;
             out_end = outbuf;
             while ( 1 )
             {
-                long pxlen;
+                i32 pxlen;
                 pxlen = (signed char)*sprdata;
                 sprdata++;
                 if (pxlen == 0)
@@ -1057,7 +1057,7 @@ TbResult LbSpriteDrawRemapUsingScalingDownDataTrans2LR(uchar *outbuf, int scanli
         {
             while ( 1 )
             {
-                long pxlen;
+                i32 pxlen;
                 pxlen = (signed char)*sprdata;
                 sprdata++;
                 if (pxlen == 0)
@@ -1085,12 +1085,12 @@ TbResult LbSpriteDrawRemapUsingScalingDownDataTrans2LR(uchar *outbuf, int scanli
  * @param cmap The colour remap table to be used.
  * @return Gives 0 on success.
  */
-TbResult LbSpriteDrawRemapUsingScalingDownDataSolidRL(uchar *outbuf, int scanline,
-  int outheight, long *xstep, long *ystep, const TbSprite *sprite, const TbPixel *cmap)
+TbResult LbSpriteDrawRemapUsingScalingDownDataSolidRL(uc8 *outbuf, int scanline,
+  int outheight, i32 *xstep, i32 *ystep, const TbSprite *sprite, const TbPixel *cmap)
 {
     int ystep_delta;
     unsigned char *sprdata;
-    long *ycurstep;
+    i32 *ycurstep;
 
     LOGDBG("drawing");
     ystep_delta = 2;
@@ -1105,13 +1105,13 @@ TbResult LbSpriteDrawRemapUsingScalingDownDataSolidRL(uchar *outbuf, int scanlin
     {
         if (ycurstep[1] != 0)
         {
-            long *xcurstep;
+            i32 *xcurstep;
             xcurstep = xstep;
             TbPixel *out_end;
             out_end = outbuf;
             while ( 1 )
             {
-                long pxlen;
+                i32 pxlen;
                 pxlen = (signed char)*sprdata;
                 sprdata++;
                 if (pxlen == 0)
@@ -1147,7 +1147,7 @@ TbResult LbSpriteDrawRemapUsingScalingDownDataSolidRL(uchar *outbuf, int scanlin
         {
             while ( 1 )
             {
-                long pxlen;
+                i32 pxlen;
                 pxlen = (signed char)*sprdata;
                 sprdata++;
                 if (pxlen == 0)
@@ -1175,12 +1175,12 @@ TbResult LbSpriteDrawRemapUsingScalingDownDataSolidRL(uchar *outbuf, int scanlin
  * @param cmap The colour remap table to be used.
  * @return Gives 0 on success.
  */
-TbResult LbSpriteDrawRemapUsingScalingDownDataSolidLR(uchar *outbuf, int scanline,
-  int outheight, long *xstep, long *ystep, const TbSprite *sprite, const TbPixel *cmap)
+TbResult LbSpriteDrawRemapUsingScalingDownDataSolidLR(uc8 *outbuf, int scanline,
+  int outheight, i32 *xstep, i32 *ystep, const TbSprite *sprite, const TbPixel *cmap)
 {
     int ystep_delta;
     unsigned char *sprdata;
-    long *ycurstep;
+    i32 *ycurstep;
 
     LOGDBG("drawing");
     ystep_delta = 2;
@@ -1195,13 +1195,13 @@ TbResult LbSpriteDrawRemapUsingScalingDownDataSolidLR(uchar *outbuf, int scanlin
     {
         if (ycurstep[1] != 0)
         {
-            long *xcurstep;
+            i32 *xcurstep;
             xcurstep = xstep;
             TbPixel *out_end;
             out_end = outbuf;
             while ( 1 )
             {
-                long pxlen;
+                i32 pxlen;
                 pxlen = (signed char)*sprdata;
                 sprdata++;
                 if (pxlen == 0)
@@ -1237,7 +1237,7 @@ TbResult LbSpriteDrawRemapUsingScalingDownDataSolidLR(uchar *outbuf, int scanlin
         {
             while ( 1 )
             {
-                long pxlen;
+                i32 pxlen;
                 pxlen = (signed char)*sprdata;
                 sprdata++;
                 if (pxlen == 0)
@@ -1264,15 +1264,15 @@ TbResult LbSpriteDrawRemapUsingScalingDownDataSolidLR(uchar *outbuf, int scanlin
  * @return Gives 0 on success.
  * @see LbSpriteSetScalingData()
  */
-TbResult LbSpriteDrawRemapUsingScalingData(long posx, long posy, const TbSprite *sprite, const TbPixel *cmap)
+TbResult LbSpriteDrawRemapUsingScalingData(i32 posx, i32 posy, const TbSprite *sprite, const TbPixel *cmap)
 {
-    long *xstep;
-    long *ystep;
+    i32 *xstep;
+    i32 *ystep;
     int scanline;
 
     LOGDBG("at (%ld,%ld): drawing", posx, posy);
     {
-        long sposx, sposy;
+        i32 sposx, sposy;
         sposx = posx;
         sposy = posy;
         scanline = lbDisplay.GraphicsScreenWidth;
@@ -1286,7 +1286,7 @@ TbResult LbSpriteDrawRemapUsingScalingData(long posx, long posy, const TbSprite 
         xstep = &xsteps_array[2 * sposx];
         ystep = &ysteps_array[2 * sposy];
     }
-    uchar *outbuf;
+    uc8 *outbuf;
     int outheight;
     {
         int gspos_x,gspos_y;
@@ -1387,8 +1387,8 @@ TbResult LbSpriteDrawRemapUsingScalingData(long posx, long posy, const TbSprite 
     }
 }
 
-TbResult LbSpriteDrawScaledRemap(long xpos, long ypos, const TbSprite *sprite,
-    long dest_width, long dest_height, const ubyte *cmap)
+TbResult LbSpriteDrawScaledRemap(i32 xpos, i32 ypos, const TbSprite *sprite,
+    i32 dest_width, i32 dest_height, const u8 *cmap)
 {
     LOGNO("at (%ld,%ld) size (%ld,%ld)", xpos, ypos, dest_width, dest_height);
     if ((dest_width <= 0) || (dest_height <= 0))

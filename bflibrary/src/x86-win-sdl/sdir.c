@@ -143,7 +143,7 @@ TbResult LbDirectoryMake(const char *path, TbBool recursive)
     return Lb_SUCCESS;
 }
 
-TbResult LbDirectoryCurrent(char *buf, unsigned long buflen)
+TbResult LbDirectoryCurrent(char *buf, u32 buflen)
 {
     if ( getcwd(buf,buflen) == NULL )
         return Lb_FAIL;

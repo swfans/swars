@@ -26,7 +26,7 @@
 #include "swlog.h"
 /******************************************************************************/
 
-void unkn_draw_transformed_point(short x, short y, long ptX, long ptY, long ptZ, ubyte colour)
+void unkn_draw_transformed_point(short x, short y, long ptX, long ptY, long ptZ, u8 colour)
 {
     struct EnginePoint ep;
 
@@ -37,7 +37,7 @@ void unkn_draw_transformed_point(short x, short y, long ptX, long ptY, long ptZ,
     LbDrawLine(x, y, ep.pp.X, ep.pp.Y, colour);
 }
 
-void draw_objective_point(long x, long y, short thing, short a4, ubyte colour)
+void draw_objective_point(long x, long y, short thing, short a4, u8 colour)
 {
     long ptX, ptY, ptZ;
 
@@ -60,7 +60,7 @@ void draw_objective_point(long x, long y, short thing, short a4, ubyte colour)
     unkn_draw_transformed_point(x, y, ptX, ptY, ptZ, colour);
 }
 
-void func_711F4(short a1, short a2, short a3, short a4, ubyte colour)
+void func_711F4(short a1, short a2, short a3, short a4, u8 colour)
 {
     asm volatile (
       "push %4\n"

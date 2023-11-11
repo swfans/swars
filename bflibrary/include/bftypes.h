@@ -24,25 +24,55 @@
 extern "C" {
 #endif
 
+#include <stdint.h>
 #include <stddef.h>
+#include <stdbool.h>
 #include <time.h>
+#include <sys/types.h>
+#include <sys/time.h>
 
-#ifndef false
-# define false 0
-#endif
-#ifndef true
-# define true 1
-#endif
-#ifndef NULL
-# define NULL 0
+#ifdef GLCOREARB
+#include <GL/glcorearb.h>
+#else
+typedef char          GLchar;
+typedef unsigned char GLuchar;
+typedef int8_t        GLbyte;
+typedef uint8_t       GLubyte;
+typedef int16_t       GLshort;
+typedef uint16_t      GLushort;
+typedef int32_t       GLint;
+typedef uint32_t      GLuint;
+typedef int64_t       GLint64;
+typedef uint64_t      GLuint64;
+typedef int           GLsizei;
+typedef unsigned int  GLbitfield;
+typedef unsigned char GLboolean;
+typedef float         GLfloat;
+typedef double        GLdouble;
+typedef ssize_t       khronos_ssize_t;
+typedef size_t        khronos_usize_t;
+typedef intptr_t      khronos_intptr_t;
+typedef uintptr_t     khronos_uintptr_t;
+typedef GLint64       khronos_stime_nanoseconds_t;
+typedef GLuint64      khronos_utime_nanoseconds_t;
+typedef GLint64       khronos_stime_microseconds_t;
+typedef GLuint64      khronos_utime_microseconds_t;
+typedef time_t        khronos_time_t;
 #endif
 
-typedef unsigned long ulong;
-typedef unsigned int uint;
-typedef unsigned short ushort;
-typedef unsigned char uchar;
-typedef unsigned char ubyte;
-typedef signed char sbyte;
+typedef GLuint64 u64;
+typedef GLuint   u32;
+typedef GLushort u16;
+typedef GLubyte  u8;
+typedef GLuchar  uc8;
+typedef GLchar   c8;
+typedef GLint64  i64;
+typedef GLint    i32;
+typedef GLshort  i16;
+typedef GLbyte   i8;
+
+/** Command function result, valid values are of TbErrorCode enumeration. */
+typedef int TbResult;
 
 enum TbErrorCode {
     Lb_FAIL                 = -1,
@@ -50,25 +80,24 @@ enum TbErrorCode {
     Lb_SUCCESS              =  1,
 };
 
-/** Command function result, valid values are of TbErrorCode enumeration. */
-typedef int TbResult;
 /** Small, single byte boolean. */
-typedef unsigned char TbBool;
+typedef GLboolean TbBool;
+
 /** Large boolean. */
-typedef unsigned long DwBool;
+typedef u32    DwBool;
 
 typedef size_t TbMemSize;
 
 /** Coordinate on screen. */
-typedef short TbScreenCoord;
+typedef i16 TbScreenCoord;
 
 /** 8-bit pixel definition.
  * Represents value of one point on the graphics screen.
  */
-typedef unsigned char TbPixel;
+typedef u8 TbPixel;
 
-typedef long long TbClockMSec;
-typedef time_t TbTimeSec;
+typedef khronos_stime_microseconds_t TbClockMSec;
+typedef khronos_time_t TbTimeSec;
 
 #ifdef __cplusplus
 };

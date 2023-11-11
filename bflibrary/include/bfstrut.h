@@ -30,17 +30,17 @@ extern "C" {
 extern char lbEmptyString[];
 
 
-void * LbStringCopy(char *dst, const char *src, const ulong dst_buflen);
+void * LbStringCopy(char *dst, const char *src, const u32 dst_buflen);
 
 /** Appends characters of source to destination, plus a terminating null-character.
  * Prevents string in dst of getting bigger than dst_buflen characters.
  */
-void * LbStringConcat(char *dst, const char *src, const ulong dst_buflen);
+void * LbStringConcat(char *dst, const char *src, const u32 dst_buflen);
 
-ulong LbStringLength(const char *str);
+u32 LbStringLength(const char *str);
 
 void * LbStringToLower(char *str);
-void * LbStringToLowerCopy(char *dst, const char *src, const ulong dst_buflen);
+void * LbStringToLowerCopy(char *dst, const char *src, const u32 dst_buflen);
 void * LbStringToUpper(char *str);
 
 #ifdef __cplusplus

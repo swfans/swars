@@ -24,7 +24,7 @@
 
 TbScreenModeInfo lbScreenModeInfo[LB_MAX_SCREEN_MODES_COUNT];
 
-long lbScreenModeInfoNum = 0;
+i32 lbScreenModeInfoNum = 0;
 
 /** Application title for target OS. */
 char lbDrawAreaTitle[128] = "Bullfrog Shell";
@@ -96,7 +96,7 @@ TbScreenMode LbRecogniseVideoModeString(const char *desc)
 }
 
 TbScreenMode LbRegisterVideoMode(const char *desc, TbScreenCoord width,
-  TbScreenCoord height, ushort bpp, ulong flags)
+  TbScreenCoord height, ushort bpp, u32 flags)
 {
     TbScreenModeInfo *mdinfo;
     TbScreenMode mode;
@@ -180,15 +180,15 @@ TbScreenCoord LbScreenHeight(void)
 }
 
 TbResult LbScreenSetup(TbScreenMode mode, TbScreenCoord width, TbScreenCoord height,
-    ubyte *palette)
+    u8 *palette)
 {
     return LbScreenSetupAnyMode(mode, width, height, palette);
 }
 
-TbResult LbScreenSetGraphicsWindow(ulong x, ulong y, ulong width, ulong height)
+TbResult LbScreenSetGraphicsWindow(u32 x, u32 y, u32 width, u32 height)
 {
-    long x2,y2;
-    long i;
+    i32 x2,y2;
+    i32 i;
     x2 = x + width;
     y2 = y + height;
     if (x2 < x)

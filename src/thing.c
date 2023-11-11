@@ -112,7 +112,7 @@ short find_thing_on_mapwho_tile_within_circle_with_filter(short tile_x, short ti
   short ttype, short subtype, ThingBoolFilter filter, ThingFilterParams *params)
 {
     short thing;
-    ulong k;
+    u32 k;
 
     k = 0;
     thing = get_mapwho_thing_index(tile_x, tile_z);
@@ -250,7 +250,7 @@ static short find_thing_type_on_same_type_list_within_circle(short X, short Z, u
   short ttype, short subtype, ThingBoolFilter filter, ThingFilterParams *params)
 {
     short thing;
-    ulong k;
+    u32 k;
 
     k = 0;
     thing = get_thing_same_type_head(ttype, subtype);
@@ -311,7 +311,7 @@ static short find_thing_type_on_same_type_list(short ttype, short subtype,
   ThingBoolFilter filter, ThingFilterParams *params)
 {
     short thing;
-    ulong k;
+    u32 k;
 
     k = 0;
     thing = get_thing_same_type_head(ttype, subtype);
@@ -487,7 +487,7 @@ short find_person_carrying_weapon_within_circle(short X, short Z, ushort R, shor
     return thing;
 }
 
-short find_nearest_from_group(struct Thing *p_person, ushort group, ubyte no_persuaded)
+short find_nearest_from_group(struct Thing *p_person, ushort group, u8 no_persuaded)
 {
     short ret;
     asm volatile ("call ASM_find_nearest_from_group\n"
@@ -541,7 +541,7 @@ short search_things_for_index(short index)
     return 0;
 }
 
-short search_things_for_uniqueid(short index, ubyte flag)
+short search_things_for_uniqueid(short index, u8 flag)
 {
     short ret;
     asm volatile ("call ASM_search_things_for_uniqueid\n"
@@ -557,7 +557,7 @@ short find_nearest_object2(short mx, short mz, ushort sub_type)
     return ret;
 }
 
-short search_object_for_qface(ushort object, ubyte gflag, ubyte flag, ushort after)
+short search_object_for_qface(ushort object, u8 gflag, u8 flag, ushort after)
 {
     short ret;
     asm volatile ("call ASM_search_object_for_qface\n"
@@ -575,7 +575,7 @@ short search_for_station(short x, short z)
 
 /** Maps fields from old Thing struct to the current one.
  */
-void refresh_old_thing_format(struct Thing *p_thing, struct ThingOldV9 *p_oldthing, ulong fmtver)
+void refresh_old_thing_format(struct Thing *p_thing, struct ThingOldV9 *p_oldthing, u32 fmtver)
 {
     ushort len;
 

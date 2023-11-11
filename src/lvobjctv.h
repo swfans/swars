@@ -68,50 +68,50 @@ enum GameObjectiveTypes {
 };
 
 struct Objective { // sizeof=32
-    ushort Next;
-    ubyte Map;
-    ubyte Level;
-    ushort Status;
-    ushort Type;
-    ushort Flags;
-    short Thing;
-    short X;
-    short Y;
-    short Z;
-    short Radius;
-    ubyte Pri;
-    ubyte Arg2;
-    ushort StringIndex;
-    ushort UniqueID;
-    ubyte ObjText;
-    ubyte field_1B[4];
-    ubyte field_1F;
+    u16 Next;
+    u8 Map;
+    u8 Level;
+    u16 Status;
+    u16 Type;
+    u16 Flags;
+    i16 Thing;
+    i16 X;
+    i16 Y;
+    i16 Z;
+    i16 Radius;
+    u8 Pri;
+    u8 Arg2;
+    u16 StringIndex;
+    u16 UniqueID;
+    u8 ObjText;
+    u8 field_1B[4];
+    u8 field_1F;
 };
 
 struct NetscanObjective { // sizeof = 20
-  ushort CreditCost;
-  ushort TextOffset;
-  ubyte AnimNo;
-  ushort CreditReward;
-  ubyte TextLines;
-  ubyte X[5];
-  ubyte Z[5];
-  ubyte brobjfld_12;
-  ubyte brobjfld_13;
+  u16 CreditCost;
+  u16 TextOffset;
+  u8 AnimNo;
+  u16 CreditReward;
+  u8 TextLines;
+  u8 X[5];
+  u8 Z[5];
+  u8 brobjfld_12;
+  u8 brobjfld_13;
 };
 
 #pragma pack()
 /******************************************************************************/
 extern struct Objective *game_used_objectives;
-extern ushort next_used_objective; // = 1;
+extern u16 next_used_objective; // = 1;
 extern struct Objective *game_objectives;
-extern ushort next_objective;
+extern u16 next_objective;
 
 extern struct NetscanObjective mission_netscan_objectives[MISSION_NETSCAN_OBV_COUNT];
-extern ushort next_mission_netscan_objective;
+extern u16 next_mission_netscan_objective;
 
 extern struct NetscanObjective netscan_objectives[NETSCAN_OBJECTIVES_MAX_COUNT];
-extern ubyte netscan_objectives_count;
+extern u8 netscan_objectives_count;
 
 int add_used_objective(long mapno, long levelno);
 
@@ -136,19 +136,19 @@ TbBool objective_target_is_any_thing(struct Objective *p_objectv);
  *
  * @return Gives 2 if a parameter was updated, 1 if no update was neccessary, 0 if update failed.
  */
-ubyte fix_single_objective(struct Objective *p_objectv, ushort objectv, const char *srctext);
+u8 fix_single_objective(struct Objective *p_objectv, u16 objectv, const char *srctext);
 
-void save_objective_chain_conf(TbFileHandle fh, ushort objectv_head, char *buf, ulong buflen);
+void save_objective_chain_conf(TbFileHandle fh, u16 objectv_head, char *buf, ulong buflen);
 int parse_next_used_objective(const char *buf, long buflen, long pri, long mapno, long levelno);
 
 void save_netscan_objectives_conf(TbFileHandle fh, struct NetscanObjective *nsobv_arr,
-  ushort nsobv_count, char *buf, ulong buflen);
+  u16 nsobv_count, char *buf, ulong buflen);
 int parse_next_netscan_objective(const char *buf, long buflen, long nsobv);
-int load_netscan_objectives_bin(struct NetscanObjective *nsobv_arr, ubyte mapno, ubyte level);
-void load_netscan_objectives(ubyte mapno, ubyte level);
+int load_netscan_objectives_bin(struct NetscanObjective *nsobv_arr, u8 mapno, u8 level);
+void load_netscan_objectives(u8 mapno, u8 level);
 TbResult load_objectives_text(void);
 
-void snprint_objective(char *buf, ulong buflen, struct Objective *p_objectv, ushort objectv);
+void snprint_objective(char *buf, ulong buflen, struct Objective *p_objectv, u16 objectv);
 /******************************************************************************/
 #ifdef __cplusplus
 }

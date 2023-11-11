@@ -106,23 +106,23 @@ struct DisplayStruct { // sizeof=118
      * a standard application buffer, the one handed to OS for further
      * compositing and display.
      */
-    ubyte *PhysicalScreen; // offset=0
+    u8 *PhysicalScreen; // offset=0
 
     /** Pointer to graphics screen working buffer.
      * As a working buffer, this can be read and modified to draw the next frame.
      * This pointer can be accessed only when the screen is locked. It is not
      * guaranteed that the pointer will remain unchanged after each locking.
      */
-    ubyte *WScreen; // offset=4
+    u8 *WScreen; // offset=4
 
     /** Pointer to glass map, used for indexed color video transparency. */
-    ubyte *GlassMap; // offset=8
+    u8 *GlassMap; // offset=8
 
     /** Pointer to fade table, used for indexed color video fading. */
-    ubyte *FadeTable; // offset=12
+    u8 *FadeTable; // offset=12
 
     /** Pointer to graphics window buffer, if locked. */
-    ubyte *GraphicsWindowPtr; // offset=16
+    u8 *GraphicsWindowPtr; // offset=16
 
     /** Sprite used as mouse cursor. */
     const struct TbSprite *MouseSprite;
@@ -131,104 +131,104 @@ struct DisplayStruct { // sizeof=118
      *  Note that it's not always "physical" size.
      *  It is the part of screen buffer which is being drawn
      *  on physical screen (WScreen X visible pixel number). */
-    long PhysicalScreenWidth; // offset=24
+    i32 PhysicalScreenWidth; // offset=24
 
     /** Resolution in height of the current video mode.
      *  Note that it's not always "physical" size.
      *  It is the part of screen buffer which is being drawn
      *  on physical screen (WScreen Y visible pixel number). */
-    long PhysicalScreenHeight; // offset=28
+    i32 PhysicalScreenHeight; // offset=28
 
     /** Width of the screen buffer (WScreen X pitch).
      *  Note that only part of this width may be drawn on real screen. */
-    long GraphicsScreenWidth; // offset=32
+    i32 GraphicsScreenWidth; // offset=32
 
     /** Height of the screen buffer (WScreen Y pitch).
     *  Note that only part of this height may be drawn on real screen. */
-    long GraphicsScreenHeight; // offset=36
+    i32 GraphicsScreenHeight; // offset=36
 
     /** Current drawing area beginning X coordinate. */
-    long GraphicsWindowX; // offset=40
+    i32 GraphicsWindowX; // offset=40
 
     /** Current drawing area beginning Y coordinate. */
-    long GraphicsWindowY; // offset=44
+    i32 GraphicsWindowY; // offset=44
 
     /** Current drawing area width (size in X axis). */
-    long GraphicsWindowWidth; // offset=48
+    i32 GraphicsWindowWidth; // offset=48
 
     /** Current drawing area height (size in Y axis). */
-    long GraphicsWindowHeight; // offset=52
+    i32 GraphicsWindowHeight; // offset=52
 
     /** Current mouse clipping window start X coordinate. */
-    long MouseWindowX; // offset=56
+    i32 MouseWindowX; // offset=56
 
     /** Current mouse clipping window start Y coordinate. */
-    long MouseWindowY; // offset=60
+    i32 MouseWindowY; // offset=60
 
     /** Current mouse clipping window width (in pixels). */
-    long MouseWindowWidth; // offset=64
+    i32 MouseWindowWidth; // offset=64
 
     /** Current mouse clipping window height (in pixels). */
-    long MouseWindowHeight; // offset=68
+    i32 MouseWindowHeight; // offset=68
 
     /** Mouse position during button "down" event, X coordinate. */
-    long MouseX; // offset=72
+    i32 MouseX; // offset=72
 
     /** Mouse position during button "down" event, Y coordinate. */
-    long MouseY; // offset=76
+    i32 MouseY; // offset=76
 
     /** Mouse position during move, X coordinate. */
-    long MMouseX; // offset=80
+    i32 MMouseX; // offset=80
 
     /** Mouse position during move, Y coordinate. */
-    long MMouseY; // offset=84
+    i32 MMouseY; // offset=84
 
     /** Mouse position during button release, X coordinate. */
-    long RMouseX; // offset=88
+    i32 RMouseX; // offset=88
 
     /** Mouse position during button release, Y coordinate. */
-    long RMouseY; // offset=92
-    ushort DrawFlags; // offset=96
+    i32 RMouseY; // offset=92
+    u16 DrawFlags; // offset=96
 
     /** Graphic mode at the start of the app.
      * At exit, the app goes back to this mode. */
-    ushort OldVideoMode; // offset=98
+    u16 OldVideoMode; // offset=98
 
     /** Actual Screen Mode of the lbDrawTexture, can be same
      * as mode in setting, or lower res when playing a movie. */
-    ushort ScreenMode; // offset=100
+    u16 ScreenMode; // offset=100
 
     /** VESA set-up flag, used only with VBE video modes. */
-    ubyte VesaIsSetUp; // offset=102
-    ubyte LeftButton; // offset=103
-    ubyte RightButton; // offset=104
-    ubyte MiddleButton; // offset=105
-    ubyte MLeftButton; // offset=106
-    ubyte MRightButton; // offset=107
-    ubyte MMiddleButton; // offset=108
-    ubyte RLeftButton; // offset=109
-    ubyte RMiddleButton; // offset=110
-    ubyte RRightButton; // offset=111
-    ubyte FadeStep; // offset=112
+    u8 VesaIsSetUp; // offset=102
+    u8 LeftButton; // offset=103
+    u8 RightButton; // offset=104
+    u8 MiddleButton; // offset=105
+    u8 MLeftButton; // offset=106
+    u8 MRightButton; // offset=107
+    u8 MMiddleButton; // offset=108
+    u8 RLeftButton; // offset=109
+    u8 RMiddleButton; // offset=110
+    u8 RRightButton; // offset=111
+    u8 FadeStep; // offset=112
 
     /** Selected drawing colour index. */
-    ubyte DrawColour; // offset=113
+    u8 DrawColour; // offset=113
 
     /** Currently active colour palette.
      *  LbPaletteGet() should be used to retrieve a copy of the palette. */
-    ubyte *Palette; // offset=114
+    u8 *Palette; // offset=114
 #if defined(ENABLE_MOUSE_WHEEL)
-    short WheelPosition;
-    ushort WheelMoveUp;
-    ushort WheelMoveDown;
+    i16 WheelPosition;
+    u16 WheelMoveUp;
+    u16 WheelMoveDown;
 #endif
 #if defined(ENABLE_MOUSE_MOVE_RATIO)
-    short MouseMoveRatioX;
-    short MouseMoveRatioY;
+    i16 MouseMoveRatioX;
+    i16 MouseMoveRatioY;
 #endif
 #if defined(ENABLE_SHADOW_COLOUR)
     /** Colour index used for drawing shadow. */
-    uchar ShadowColour;
+    uc8 ShadowColour;
 #endif
 };
 
@@ -236,21 +236,21 @@ typedef struct ScreenModeInfo TbScreenModeInfo;
 
 struct ScreenModeInfo { // sizeof=38
     /** Hardware driver screen width. */
-    ushort Width; // offset=0
+    u16 Width; // offset=0
 
     /** Hardware driver screen height. */
-    ushort Height; // offset=2
+    u16 Height; // offset=2
 
     /** OS driver color depth. */
-    ushort BitsPerPixel; // offset=4
+    u16 BitsPerPixel; // offset=4
 
     /** Is the mode currently available for use. */
     DwBool Available; // offset=6
 
     /** Video mode flags. Can be combination of Lb_VF_* flags.
-     * Lowest byte can be used for OS-specific data.
+     * Lowest i8 can be used for OS-specific data.
      */
-    ulong VideoMode; // offset=10
+    u32 VideoMode; // offset=10
 
     /** Text description of the mode. */
     char Desc[24]; // offset=14
@@ -259,10 +259,10 @@ struct ScreenModeInfo { // sizeof=38
 typedef struct SurfaceDimensions TbSurfaceDimensions;
 
 struct SurfaceDimensions {
-    long Width, Height;
+    i32 Width, Height;
 };
 
-typedef const char *(*ResourceMappingFunc)(short);
+typedef const char *(*ResourceMappingFunc)(i16);
 
 #pragma pack()
 
@@ -274,7 +274,7 @@ typedef const char *(*ResourceMappingFunc)(short);
 extern TbScreenModeInfo lbScreenModeInfo[LB_MAX_SCREEN_MODES_COUNT];
 
 /** Count of used entries in registered video modes list. */
-extern long lbScreenModeInfoNum;
+extern i32 lbScreenModeInfoNum;
 
 extern TbDisplayStruct lbDisplay;
 extern DwBool lbScreenInitialised;
@@ -289,12 +289,12 @@ extern TbBool lbHasSecondSurface;
  * For VGA resolution (width=640), the value is 16. It is smaller for lower resolutinons,
  * and larger for higher resolutions.
  */
-extern ushort lbUnitsPerPixel;
+extern u16 lbUnitsPerPixel;
 
 /** Amount of bits per pixel for which the engine is compiled.
  * Basically, it is always 8.
  */
-extern ushort lbEngineBPP;
+extern u16 lbEngineBPP;
 
 /** True when in a code block where PhysicalScreen is being accessed.
  */
@@ -313,7 +313,7 @@ TbScreenModeInfo *LbScreenGetModeInfo(TbScreenMode mode);
  */
 TbScreenMode LbRegisterVideoMode(const char *desc,
     TbScreenCoord width, TbScreenCoord height,
-    ushort bpp, ulong flags);
+    u16 bpp, u32 flags);
 
 /** Set minimal value of screen surface width and height
  *
@@ -331,7 +331,7 @@ TbScreenMode LbRegisterVideoMode(const char *desc,
  *
  *  If the values is 1, screen surface scaling is always disabled.
  */
-TbResult LbScreenSetMinScreenSurfaceDimension(long dim);
+TbResult LbScreenSetMinScreenSurfaceDimension(i32 dim);
 
 /** Set title of the application to be used in target OS.
  */
@@ -341,7 +341,7 @@ TbResult LbSetTitle(const char *title);
  *
  * This is the resource index which will be requested in userResourceMapping() call.
  */
-TbResult LbSetIcon(short nicon);
+TbResult LbSetIcon(i16 nicon);
 
 TbResult LbSetUserResourceMapping(ResourceMappingFunc func);
 
@@ -354,7 +354,7 @@ TbResult LbSetUserResourceMapping(ResourceMappingFunc func);
 TbResult LbScreenUpdateIcon(void);
 
 TbResult LbScreenSetup(TbScreenMode mode, TbScreenCoord width, TbScreenCoord height,
-    ubyte *palette);
+    u8 *palette);
 
 /** Graphics screen buffer (WScreen) width.
  * Gives whole buffer dimension, not only the visible part.
@@ -394,16 +394,16 @@ TbBool LbScreenIsModeAvailable(TbScreenMode mode);
  * if not found, register the new mode and return its number.
  */
 TbScreenMode LbRegisterVideoMode(const char *desc, TbScreenCoord width,
-  TbScreenCoord height, ushort bpp, ulong flags);
+  TbScreenCoord height, u16 bpp, u32 flags);
 
 /** Get number of a video mode with given string name.
  */
 TbScreenMode LbRecogniseVideoModeString(const char *desc);
 
-TbResult LbScreenSetGraphicsWindow(ulong x, ulong y, ulong width, ulong height);
+TbResult LbScreenSetGraphicsWindow(u32 x, u32 y, u32 width, u32 height);
 
 TbResult LbScreenSetupAnyMode(TbScreenMode mode, TbScreenCoord width,
-    TbScreenCoord height, ubyte *palette);
+    TbScreenCoord height, u8 *palette);
 
 /** Fill current graphics window with given colour.
  *
@@ -473,7 +473,7 @@ TbBool LbScreenIsDoubleBufferred(void);
  *
  * @return Value of the flag which was given to previous call.
  */
-ulong LbScreenSetWScreenInVideo(ulong flag);
+u32 LbScreenSetWScreenInVideo(u32 flag);
 
 /** Updates video modes info, setting availability of each mode.
  * @return Lb_SUCCESS if there is at least one mode available.
@@ -505,11 +505,11 @@ TbResult LbScreenSwapClear(TbPixel colour);
  * mouse cursor was not part of the update, so this implementation does
  * update WScreen first.
  */
-TbResult LbScreenSwapBox(ubyte *sourceBuf, long sourceX, long sourceY,
-  long destX, long destY, ulong width, ulong height);
+TbResult LbScreenSwapBox(u8 *sourceBuf, i32 sourceX, i32 sourceY,
+  i32 destX, i32 destY, u32 width, u32 height);
 
-TbResult LbScreenSwapBoxClear(ubyte *sourceBuf, long sourceX, long sourceY,
-  long destX, long destY, ulong width, ulong height, ubyte colour);
+TbResult LbScreenSwapBoxClear(u8 *sourceBuf, i32 sourceX, i32 sourceY,
+  i32 destX, i32 destY, u32 width, u32 height, u8 colour);
 
 /** Draws either horizonal or vertical line directly on physical screen.
  * The line colour is previous colour of each pixel shifted by 128.
@@ -517,7 +517,7 @@ TbResult LbScreenSwapBoxClear(ubyte *sourceBuf, long sourceX, long sourceY,
  * Allows draw a line without changing WScreen.
  * A bit wierd functionality, rarely (never?) used in games.
  */
-TbResult LbScreenDrawHVLineDirect(long X1, long Y1, long X2, long Y2);
+TbResult LbScreenDrawHVLineDirect(i32 X1, i32 Y1, i32 X2, i32 Y2);
 
 /** Wait for vertical blank interrupt.
  *
