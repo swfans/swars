@@ -3495,9 +3495,9 @@ void init_syndwars(void)
     LOGSYNC("Starting");
     //sprintf(locstr, "%sSound", cd_drive); -- unused
 
-    audOpts.SoundDataPath = "Sound";
-    audOpts.SoundDriverPath = "Sound";
-    audOpts.IniPath = "Sound";
+    audOpts.SoundDataPath = "sound";
+    audOpts.SoundDriverPath = "sound";
+    audOpts.IniPath = "sound";
     audOpts.AutoScan = 1;
     audOpts.StereoOption = 1;
     audOpts.DisableLoadSounds = 1;
