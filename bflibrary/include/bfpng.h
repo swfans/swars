@@ -36,7 +36,7 @@ extern "C" {
  * @return Lb_* error code.
  */
 TbResult LbPngLoad(const char *fname, TbPixel *out_buffer,
-  ulong *width, ulong *height, ubyte *pal);
+  u32 *width, u32 *height, u8 *pal);
 
 /** Save PNG Portable Network Graphics Bitmap.
  *
@@ -49,7 +49,7 @@ TbResult LbPngLoad(const char *fname, TbPixel *out_buffer,
  * @return
  */
 TbResult LbPngSave(const char *fname, const TbPixel *inp_buffer,
-  ulong width, ulong height, const ubyte *pal, TbBool force_fname);
+  u32 width, u32 height, const u8 *pal, TbBool force_fname);
 
 /** Save PNG Portable Network Graphics Bitmap from screen sized buffer.
  *
@@ -60,7 +60,7 @@ TbResult LbPngSave(const char *fname, const TbPixel *inp_buffer,
  * @return
  */
 TbResult LbPngSaveScreen(const char *fname, const TbPixel *inp_buffer,
-  const ubyte *pal, TbBool force_fname);
+  const u8 *pal, TbBool force_fname);
 
 #ifdef __cplusplus
 };

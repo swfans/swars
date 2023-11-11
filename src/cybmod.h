@@ -63,15 +63,15 @@ enum CyModGroupTypes
 };
 
 struct ModDef {
-	ushort PowerOutput;
-	ushort Resilience;
-	ushort Funding;
-	ushort Flags;
+	u16 PowerOutput;
+	u16 Resilience;
+	u16 Funding;
+	u16 Flags;
     char field_8[10];
-    short Sprite;
-	ushort Cost;
-	uchar PercentPerDay;
-	uchar Pad1;
+    i16 Sprite;
+	u16 Cost;
+	uc8 PercentPerDay;
+	uc8 Pad1;
 };
 
 /* Additional ModDef fields, to be later merged with that struct.
@@ -84,35 +84,35 @@ struct ModDefAdd {
  */
 union Mod
 {
-  ushort Mods;
+  u16 Mods;
 };
 
 #pragma pack()
 /******************************************************************************/
 extern struct ModDef mod_defs[];
 extern struct TbNamedEnum mod_names[33];
-extern ubyte mod_tech_level[17];
+extern u8 mod_tech_level[17];
 
 void read_cybmods_conf_file(void);
-const char *cybmod_codename(ushort mtype);
+const char *cybmod_codename(u16 mtype);
 
-ubyte cybmod_chest_level(union Mod *p_umod);
-void set_cybmod_chest_level(union Mod *p_umod, ubyte nmod);
-ubyte cybmod_legs_level(union Mod *p_umod);
-void set_cybmod_legs_level(union Mod *p_umod, ubyte nmod);
-ubyte cybmod_arms_level(union Mod *p_umod);
-void set_cybmod_arms_level(union Mod *p_umod, ubyte nmod);
-ubyte cybmod_brain_level(union Mod *p_umod);
-void set_cybmod_brain_level(union Mod *p_umod, ubyte nmod);
-ubyte cybmod_skin_level(union Mod *p_umod);
-void set_cybmod_skin_level(union Mod *p_umod, ubyte nmod);
+u8 cybmod_chest_level(union Mod *p_umod);
+void set_cybmod_chest_level(union Mod *p_umod, u8 nmod);
+u8 cybmod_legs_level(union Mod *p_umod);
+void set_cybmod_legs_level(union Mod *p_umod, u8 nmod);
+u8 cybmod_arms_level(union Mod *p_umod);
+void set_cybmod_arms_level(union Mod *p_umod, u8 nmod);
+u8 cybmod_brain_level(union Mod *p_umod);
+void set_cybmod_brain_level(union Mod *p_umod, u8 nmod);
+u8 cybmod_skin_level(union Mod *p_umod);
+void set_cybmod_skin_level(union Mod *p_umod, u8 nmod);
 
-ushort cybmodflags_prev_mod(ulong modflags, ushort last_mtype);
-ushort cybmod_group_type(ushort mtype);
-ushort cybmod_version(ushort mtype);
+u16 cybmodflags_prev_mod(u32 modflags, u16 last_mtype);
+u16 cybmod_group_type(u16 mtype);
+u16 cybmod_version(u16 mtype);
 
-void add_mod_to_flags(union Mod *p_umod, ushort mtype);
-TbBool add_mod_to_flags_no_replace(union Mod *p_umod, ushort mtype);
+void add_mod_to_flags(union Mod *p_umod, u16 mtype);
+TbBool add_mod_to_flags_no_replace(union Mod *p_umod, u16 mtype);
 
 void sanitize_cybmods_fmtver11_flags(union Mod *p_umod);
 TbBool cybmod_fix_all(union Mod *p_umod);

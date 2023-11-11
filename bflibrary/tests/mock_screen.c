@@ -52,7 +52,7 @@ TbBool MockScreenIsModeAvailable(TbScreenMode mode)
 }
 
 TbResult MockScreenSetupAnyMode(TbScreenMode mode, TbScreenCoord width,
-    TbScreenCoord height, ubyte *palette)
+    TbScreenCoord height, u8 *palette)
 {
     long hot_x, hot_y;
     long mdWidth, mdHeight;
@@ -173,7 +173,7 @@ TbResult MockScreenLock(void)
     if (!lbScreenInitialised)
         return Lb_FAIL;
 
-    lbDisplay.WScreen = (ubyte *) lbDrawSurface;
+    lbDisplay.WScreen = (u8 *) lbDrawSurface;
     lbDisplay.GraphicsWindowPtr = &lbDisplay.WScreen[lbDisplay.GraphicsWindowX +
         lbDisplay.GraphicsScreenWidth * lbDisplay.GraphicsWindowY];
 

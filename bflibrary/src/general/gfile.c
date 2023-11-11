@@ -28,7 +28,7 @@
 #include "rnc_1fm.h"
 #include "privbflog.h"
 
-long LbFileLengthRnc(const char *fname)
+i32 LbFileLengthRnc(const char *fname)
 {
     TbFileHandle handle = LbFileOpen(fname, Lb_FILE_MODE_READ_ONLY);
     if ( handle == -1 )
@@ -41,7 +41,7 @@ long LbFileLengthRnc(const char *fname)
         LbFileClose(handle);
         return -1;
     }
-    long flength;
+    i32 flength;
     if (blong(buffer+0) == RNC_SIGNATURE)
     {
         flength = blong(buffer+4);
@@ -55,9 +55,9 @@ long LbFileLengthRnc(const char *fname)
     return flength;
 }
 
-long LbFileLoadAt(const char *fname, void *buffer)
+i32 LbFileLoadAt(const char *fname, void *buffer)
 {
-    long filelength = LbFileLengthRnc(fname);
+    i32 filelength = LbFileLengthRnc(fname);
     TbFileHandle handle = -1;
     if (filelength != -1)
     {
@@ -74,8 +74,9 @@ long LbFileLoadAt(const char *fname, void *buffer)
         LOGERR("%s: could not read (expected size %ld): %s", fname, filelength, strerror(errno));
         return -1;
     }
-    long unp_length = UnpackM1((unsigned char *)buffer, filelength);
-    long result;
+    fprintf(stdout, "%s\n", fname);
+    i32 unp_length = UnpackM1((unsigned char *)buffer, filelength);
+    i32 result;
     if ( unp_length >= 0 )
     {
         if (unp_length != 0)
@@ -90,7 +91,7 @@ long LbFileLoadAt(const char *fname, void *buffer)
     return result;
 }
 
-long LbFileSaveAt(const char *fname, const void *buffer, ulong len)
+i32 LbFileSaveAt(const char *fname, const void *buffer, u32 len)
 {
     TbFileHandle handle;
     int result;
@@ -106,7 +107,7 @@ long LbFileSaveAt(const char *fname, const void *buffer, ulong len)
 /** @internal
  *  Compares stings and returns if they are equal.
  */
-static TbBool compare(const char *str1, const char *str2, ulong len, ushort flags)
+static TbBool compare(const char *str1, const char *str2, u32 len, ushort flags)
 {
   if (flags & 0x01)
       return strncasecmp(str1, str2, len) == 0;
@@ -114,16 +115,16 @@ static TbBool compare(const char *str1, const char *str2, ulong len, ushort flag
       return strncmp(str1, str2, len) == 0;
 }
 
-long LbFileStringSearch(TbFileHandle handle, const char *sstr, ubyte *buf, ulong buflen, ushort flags)
+i32 LbFileStringSearch(TbFileHandle handle, const char *sstr, u8 *buf, u32 buflen, ushort flags)
 {
     TbResult ret;
-    long prevpos, sslen;
+    i32 prevpos, sslen;
     char locbuf[132];
-    ulong cmpflag;
-    long rdlen;
-    long n;
-    long bufstart;
-    long found;
+    u32 cmpflag;
+    i32 rdlen;
+    i32 n;
+    i32 bufstart;
+    i32 found;
 
 
     if (buflen < 0x100)
@@ -132,7 +133,7 @@ long LbFileStringSearch(TbFileHandle handle, const char *sstr, ubyte *buf, ulong
     if (sslen > 128)
         return -4;
     prevpos = LbFilePosition(handle);
-    if (prevpos == (long)Lb_FAIL)
+    if (prevpos == (i32)Lb_FAIL)
         return -1;
     if (flags & 0x02) {
         locbuf[0] = '\x0a';
@@ -145,7 +146,7 @@ long LbFileStringSearch(TbFileHandle handle, const char *sstr, ubyte *buf, ulong
 
     cmpflag = (flags & 0x01) != 0;
     n = LbFileRead(handle, buf, buflen);
-    if (n == (long)Lb_FAIL)
+    if (n == (i32)Lb_FAIL)
         return -1;
     rdlen = n;
     bufstart = 0;
@@ -169,7 +170,7 @@ long LbFileStringSearch(TbFileHandle handle, const char *sstr, ubyte *buf, ulong
           bufstart += i;
           rdlen -= i;
           n = LbFileRead(handle, &buf[rdlen], buflen - rdlen);
-          if (n == (long)Lb_FAIL)
+          if (n == (i32)Lb_FAIL)
               return -1;
           rdlen += n;
       }
@@ -182,13 +183,13 @@ long LbFileStringSearch(TbFileHandle handle, const char *sstr, ubyte *buf, ulong
 }
 
 TbResult LbFileMakeFullPath(const TbBool append_cur_dir,
-  const char *directory, const char *filename, char *buf, const ulong len)
+  const char *directory, const char *filename, char *buf, const u32 len)
 {
   if (filename == NULL) {
       buf[0]='\0';
       return Lb_FAIL;
   }
-  unsigned long namestart;
+  u32 namestart;
   if (append_cur_dir)
   {
     if (LbDirectoryCurrent(buf, len-2) == -1) {
@@ -254,13 +255,13 @@ TbResult LbFileMakeFullPath(const TbBool append_cur_dir,
 
 TbResult LbFileCopy(const char *filename1, const char *filename2)
 {
-    ulong len, block, remain;
+    u32 len, block, remain;
     TbFileHandle handle1, handle2;
-    ubyte buf[0x400];
+    u8 buf[0x400];
 
     len = LbFileLength(filename1);
     remain = len;
-    if (len == (ulong)Lb_FAIL) {
+    if (len == (u32)Lb_FAIL) {
         return Lb_FAIL;
     }
     handle1 = LbFileOpen(filename1, Lb_FILE_MODE_READ_ONLY);

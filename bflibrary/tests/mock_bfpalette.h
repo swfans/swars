@@ -26,11 +26,11 @@
 extern "C" {
 #endif
 
-TbResult MockPaletteSet(const ubyte *palette);
+TbResult MockPaletteSet(const u8 *palette);
 
 /** Make simple and fairly universal palette.
  */
-void make_general_palette(ubyte *pal);
+void make_general_palette(u8 *pal);
 
 #ifdef __cplusplus
 };

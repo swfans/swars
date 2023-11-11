@@ -74,13 +74,13 @@ struct Campaign {
     /** Default campaign title. */
     const char *TextName;
     /** Translated campaign title text ID. */
-    ushort TextId;
+    u16 TextId;
     /** Index of first mission in the campaign. */
-    ushort FirstTrigger;
+    u16 FirstTrigger;
     /** Translated text ID for netscan button. */
-    ushort NetscanTextId;
+    u16 NetscanTextId;
     /** Shift for translated text IDs for all weapon names. */
-    ushort WeaponsTextIdShift;
+    u16 WeaponsTextIdShift;
     ulong ResearchWeapons;
     ulong StandardWeapons;
     ulong ResearchMods;
@@ -94,68 +94,68 @@ struct Campaign {
     /** Outro background after the FMV ends. */
     const char *OutroBkFn;
     /** Flag switches for the campaign. */
-    ushort Flags;
+    u16 Flags;
 };
 
 struct Mission { // sizeof=76
     /** Mission code name from developers. */
     char *TextName;
     /** Translated mission title text ID. */
-    ushort TextId;
-    ushort StartHead;
-    ushort SpecialEffectID;
+    u16 TextId;
+    u16 StartHead;
+    u16 SpecialEffectID;
     /** Head of mission objective chain which indicates success in achieving goals. */
-    ushort SuccessHead;
+    u16 SuccessHead;
     /** Head of mission objective chain which indicates failure to achieve goals. */
-    ushort FailHead;
-    ushort SourceID;
-    ushort SuccessID;
-    ushort FailID;
+    u16 FailHead;
+    u16 SourceID;
+    u16 SuccessID;
+    u16 FailID;
     /** Special triggers; replaced by load game. */
-    ubyte SpecialTrigger[3];
-    ubyte SuccessTrigger[3];
-    ubyte FailTrigger[3];
+    u8 SpecialTrigger[3];
+    u8 SuccessTrigger[3];
+    u8 FailTrigger[3];
     /** Objective priority number reached for chain within SuccessHead. */
-    ubyte BankTest;
-    ushort SpecialEffectFailID;
-    ushort SpecialEffectSuccessID;
-    ushort StringIndex;
+    u8 BankTest;
+    u16 SpecialEffectFailID;
+    u16 SpecialEffectSuccessID;
+    u16 StringIndex;
     /** Index of first of netscan objectives (mission brief objectives) assigned to this mission. */
-    ushort NetscanObvIndex;
+    u16 NetscanObvIndex;
     /** Amount of netscan objectives (mission brief objectives) assigned to this mission. */
-    ubyte NetscanObvCount;
+    u8 NetscanObvCount;
     /** Weapons made researchable by completing this mission. */
     ulong ResearchWeapons;
     /** Type of an extra, unique reward given to the player for mission complete. */
-    ubyte ExtraRewardType;
+    u8 ExtraRewardType;
     /** Parameter for the extra unique reward, meaning depends on its type. */
-    ushort ExtraRewardParam;
-    ubyte SuccessLevel[2];
-    ubyte FailMap[3];
-    ubyte FailLevel[3];
+    u16 ExtraRewardParam;
+    u8 SuccessLevel[2];
+    u8 FailMap[3];
+    u8 FailLevel[3];
     /** Map number on which this mission takes place. */
-    ubyte MapNo;
+    u8 MapNo;
     /** Level number identifying level file to play. */
-    ubyte LevelNo;
+    u8 LevelNo;
     /** Objective priority number reached for chain within FailHead. */
-    ubyte BankTestFail;
+    u8 BankTestFail;
     /** Whether the mission was completed by the current player; replaced by load game. */
-    sbyte Complete;
-    ubyte MissionCond[5];
+    i8 Complete;
+    u8 MissionCond[5];
     /** Level number when replaying the mission, if it's different than the first LevelNo (ie. skips cutscene). */
-    ubyte ReLevelNo;
+    u8 ReLevelNo;
     /** Lump sum cash reward for mission complete, added to the rewards from briefcases and persuasion. */
-    ushort CashReward;
-    ubyte PANStart;
-    ubyte PANEnd;
+    u16 CashReward;
+    u8 PANStart;
+    u8 PANEnd;
     /** When fade to black is expected at end of mission, sets how many game turns that will take. */
-    ushort WaitToFade;
+    u16 WaitToFade;
     /** Amount of game turns to blindly process before the level starts. */
-	ushort PreProcess;
+	u16 PreProcess;
     /** Flag switches for the mission. */
-    ushort Flags;
-    ubyte field_4A;
-    ubyte field_4B;
+    u16 Flags;
+    u8 field_4A;
+    u8 field_4B;
 };
 
 #pragma pack()
@@ -168,20 +168,20 @@ extern char *netscan_text;
 #define netscan_text_len 16384
 
 void load_campaigns(void);
-ushort selectable_campaigns_count(void);
+u16 selectable_campaigns_count(void);
 
-ushort find_mission_state_slot(ushort missi);
-ushort find_empty_mission_state_slot(void);
-void remove_mission_state_slot(ushort mslot);
+u16 find_mission_state_slot(u16 missi);
+u16 find_empty_mission_state_slot(void);
+void remove_mission_state_slot(u16 mslot);
 void init_mission_states(void);
 
-ushort find_mission_with_map_and_level(ushort mapno, ushort level);
-void fix_mission_used_objectives(short missi);
+u16 find_mission_with_map_and_level(u16 mapno, u16 level);
+void fix_mission_used_objectives(i16 missi);
 
-TbBool mission_remain_until_success(ushort missi);
-TbBool mission_has_immediate_next_on_success(ushort missi);
-TbBool mission_has_immediate_previous(ushort missi);
-TbBool mission_is_final_at_game_end(ushort missi);
+TbBool mission_remain_until_success(u16 missi);
+TbBool mission_has_immediate_next_on_success(u16 missi);
+TbBool mission_has_immediate_previous(u16 missi);
+TbBool mission_is_final_at_game_end(u16 missi);
 
 TbBool read_missions_conf_info(int num);
 void load_missions(int num);
@@ -191,8 +191,8 @@ void read_missions_bin_file(int num);
 void read_mission_netscan_objectives_bin(void);
 void apply_missions_fixups(void);
 
-TbResult load_netscan_text_data(ushort mapno, ushort level);
-TbResult load_mission_name_text(ubyte missi);
+TbResult load_netscan_text_data(u16 mapno, u16 level);
+TbResult load_mission_name_text(u8 missi);
 
 /******************************************************************************/
 #ifdef __cplusplus

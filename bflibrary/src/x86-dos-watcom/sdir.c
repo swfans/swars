@@ -37,7 +37,7 @@ TbResult LbDirectoryCreate(const char *path)
   return 1;
 }
 
-TbResult LbDirectoryCurrent(char *buf, unsigned long buflen)
+TbResult LbDirectoryCurrent(char *buf, unsigned i32 buflen)
 {
     if ( getcwd(buf,buflen) == NULL )
       return -1;

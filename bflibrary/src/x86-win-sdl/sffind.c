@@ -58,7 +58,7 @@ extern "C" {
 
 typedef char *PCHAR,*LPCH,*PCH,*NPSTR,*LPSTR,*PSTR;
 typedef const char *LPCCH,*PCSTR,*LPCSTR;
-typedef unsigned long DWORD;
+typedef unsigned i32 DWORD;
 typedef int WINBOOL,*PWINBOOL,*LPWINBOOL;
 #define BOOL WINBOOL
 typedef void *PVOID,*LPVOID;
@@ -97,16 +97,16 @@ static void convert_find_info(struct TbFileFind *ffind)
 #endif
     ffind->AlternateFilename[sizeof(ffind->AlternateFilename)-1] = '\0';
 #if defined(LB_FILE_FIND_SIMULATED)
-    if (fdata->st.st_size > ULONG_MAX)
-        ffind->Length = ULONG_MAX;
+    if (fdata->st.st_size > UINT_MAX)
+        ffind->Length = UINT_MAX;
     else
         ffind->Length = fdata->st.st_size;
     ffind->Attributes = S_ISDIR(fdata->st.st_mode) ? Lb_FILE_ATTR_SUBDIR : Lb_FILE_ATTR_NORMAL;
     LbDateTimeDecode(&fdata->st.st_ctime, &ffind->CreationDate, &ffind->CreationTime);
     LbDateTimeDecode(&fdata->st.st_mtime, &ffind->LastWriteDate, &ffind->LastWriteTime);
 #else
-    if (fdata->size > ULONG_MAX)
-        ffind->Length = ULONG_MAX;
+    if (fdata->size > UINT_MAX)
+        ffind->Length = UINT_MAX;
     else
         ffind->Length = fdata->size;
     ffind->Attributes = fdata->attrib; /* our Lb_FILE_ATTR_* flags are compatible with Windows definitions */
@@ -394,7 +394,7 @@ int _findclose(intptr_t fhandle) {
 #endif
 
 TbResult LbFileFindFirst(const char *filespec, struct TbFileFind *ffind,
-  ulong attributes)
+  u32 attributes)
 {
     int result;
 #if LB_FILENAME_TRANSFORM

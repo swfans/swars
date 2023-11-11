@@ -21,20 +21,20 @@
 #include "poly.h"
 
 /**
- * whether the subtraction (x-y) of two long ints would overflow
+ * whether the subtraction (x-y) of two i32 ints would overflow
  */
-static inline ubyte __OFSUBL__(long x, long y)
+static inline u8 __OFSUBL__(i32 x, i32 y)
 {
     return ((x < 0) ^ (y < 0)) & ((x < 0) ^ (x-y < 0));
 }
 
-ubyte trig_reorder_input_points(struct PolyPoint **opt_a,
+u8 trig_reorder_input_points(struct PolyPoint **opt_a,
   struct PolyPoint **opt_b, struct PolyPoint **opt_c)
 {
     struct PolyPoint *ordpt_a;
     struct PolyPoint *ordpt_b;
     struct PolyPoint *ordpt_c;
-    ubyte start_type;
+    u8 start_type;
 
     asm volatile (" \
             mov    %%eax,%%esi\n \

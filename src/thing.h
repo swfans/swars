@@ -131,13 +131,13 @@ struct TngUObject
 {
     short NextThing;
     short PrevThing;
-    ubyte Group;
-    ubyte EffectiveGroup;
+    u8 Group;
+    u8 EffectiveGroup;
     short Object;
     short MatrixIndex;
-    ubyte NumbObjects;
-    ubyte Angle;
-    ubyte Token;
+    u8 NumbObjects;
+    u8 Angle;
+    u8 Token;
     char TokenDir;
     char OffX;
     char OffZ;
@@ -146,7 +146,7 @@ struct TngUObject
     short TargetDZ;
     ushort BuildStartVect;
     ushort BuildNumbVect;
-    ushort ZZ_unused_but_pads_to_long_ObjectNo;
+    ushort ZZ_unused_but_pads_to_i32_ObjectNo;
     ushort ComHead;
     short ComCur;
     short Mood;
@@ -162,9 +162,9 @@ struct TngUObject
     ushort Turn;
     ushort TurnPadOnPS;
     short tnode[4];
-    ubyte player_in_me;
-    ubyte unkn_4D;
-    ulong DrawTurn; // set within draw_thing_object() for a building
+    u8 player_in_me;
+    u8 unkn_4D;
+    u32 DrawTurn; // set within draw_thing_object() for a building
 };
 
 /** State of Thing of type Mounted Gun.
@@ -173,17 +173,17 @@ struct TngUMGun
 {
     short PathIndex;
     ushort UniqueID;
-    ubyte Group;
-    ubyte EffectiveGroup;
+    u8 Group;
+    u8 EffectiveGroup;
     short Object;
     short MatrixIndex;
-    ubyte NumbObjects;
-    ubyte ShotTurn;
+    u8 NumbObjects;
+    u8 ShotTurn;
     short WeaponTurn;
     ushort ObjectNo;
     short PrevThing; // within Thing, pos=92
     short NextThing;
-    ubyte Token;
+    u8 Token;
     char TokenDir;
     short AngleDY;
     short AngleX;
@@ -195,9 +195,9 @@ struct TngUMGun
     int Dummy11[5];
     short RecoilTimer;
     ushort MaxHealth;
-    ubyte CurrentWeapon;
-    ubyte Dummy12;
-    ubyte Dummy13[6];
+    u8 CurrentWeapon;
+    u8 Dummy12;
+    u8 Dummy13[6];
 };
 
 /** State of Thing of type Vehicle.
@@ -206,12 +206,12 @@ struct TngUVehicle
 {
   short PathIndex;
   ushort UniqueID;
-  ubyte Group;
-  ubyte EffectiveGroup;
+  u8 Group;
+  u8 EffectiveGroup;
   short Object;
   short MatrixIndex;
-  ubyte NumbObjects;
-  ubyte Dummy2;
+  u8 NumbObjects;
+  u8 Dummy2;
   short WeaponTurn;
   short ReqdSpeed;
   ushort MaxSpeed; // within Thing, pos=92
@@ -243,8 +243,8 @@ struct TngUVehicle
   short Agok;
   int WobbleZP;
   int WobbleZV;
-  ubyte Armour;
-  ubyte PissedOffWithWaiting;
+  u8 Armour;
+  u8 PissedOffWithWaiting;
   short ZebraOldHealth;
   ushort destx;
   ushort destz;
@@ -256,12 +256,12 @@ struct TngUEffect
 {
   ushort MaxSpeed;
   short ReqdSpeed;
-  ubyte Group;
-  ubyte EffectiveGroup;
+  u8 Group;
+  u8 EffectiveGroup;
   short Object;
   short WeaponTurn;
-  ubyte NumbObjects;
-  ubyte Angle;
+  u8 NumbObjects;
+  u8 Angle;
   ushort PassengerHead;
   short TNode;
   short AngleDY; // within Thing, pos=92
@@ -280,7 +280,7 @@ struct TngUEffect
  */
 struct DrawFrameId
 {
-  ubyte Version[5];
+  u8 Version[5];
 };
 
 /** State of Thing of type Person.
@@ -292,20 +292,20 @@ struct TngUPerson
   /** Normal GroupId assignment of a thing.
    * Used to reset `EffectiveGroup` when neccessary.
    */
-  ubyte Group;
+  u8 Group;
   /** Effective group is the GroupId of a thing which is actually in effect.
    * It may diverge from normal `Group` ie when a Person is persuaded.
    */
-  ubyte EffectiveGroup;
+  u8 EffectiveGroup;
   ushort ComHead;
   ushort ComCur;
   char SpecialTimer;
-  ubyte Angle;
+  u8 Angle;
   short WeaponTurn;
-  ubyte Brightness;
-  ubyte ComRange;
-  ubyte BumpMode; // within Thing, pos=92
-  ubyte BumpCount;
+  u8 Brightness;
+  u8 ComRange;
+  u8 BumpMode; // within Thing, pos=92
+  u8 BumpCount;
   short Vehicle;
   short LinkPassenger;
   ushort Within;
@@ -313,20 +313,20 @@ struct TngUPerson
   short ComTimer;
   short Timer2;
   short StartTimer2;
-  ubyte AnimMode;
-  ubyte OldAnimMode;
+  u8 AnimMode;
+  u8 OldAnimMode;
   short OnFace;
   union Mod UMod;
   short Mood;
   struct DrawFrameId FrameId;
-  ubyte Shadows[4];
-  ubyte RecoilTimer;
+  u8 Shadows[4];
+  u8 RecoilTimer;
   ushort MaxHealth;
-  ubyte Flag3;
-  ubyte OldSubType;
+  u8 Flag3;
+  u8 OldSubType;
   short ShieldEnergy;
-  ubyte ShieldGlowTimer;
-  ubyte WeaponDir;
+  u8 ShieldGlowTimer;
+  u8 WeaponDir;
   ushort SpecialOwner;
   ushort WorkPlace;
   ushort LeisurePlace;
@@ -336,14 +336,14 @@ struct TngUPerson
   short PersuadePower;
   short MaxEnergy;
   short Energy;
-  ubyte RecoilDir;
-  ubyte CurrentWeapon;
+  u8 RecoilDir;
+  u8 CurrentWeapon;
   short GotoX;
   short GotoZ;
   short TempWeapon;
   short Stamina;
   short MaxStamina;
-  ulong WeaponsCarried;
+  u32 WeaponsCarried;
 };
 
 /** Structure for storing State of any Thing.
@@ -358,31 +358,31 @@ struct Thing { // sizeof=168
     short Next;
     short LinkParent;
     short LinkChild;
-    ubyte SubType;
-    ubyte Type;
+    u8 SubType;
+    u8 Type;
     short State;
-    ulong Flag;
+    u32 Flag;
     short LinkSame;
     short LinkSameGroup;
     short Radius;
     ushort ThingOffset;
-    long X;
-    long Y;
-    long Z;
+    i32 X;
+    i32 Y;
+    i32 Z;
     short Frame;
     ushort StartFrame;
     short Timer1;
     short StartTimer1;
-    long VX;
-    long VY;
-    long VZ;
+    i32 VX;
+    i32 VY;
+    i32 VZ;
     short Speed;
     short Health;
     short Owner;
-    ubyte PathOffset;
-    ubyte SubState;
+    u8 PathOffset;
+    u8 SubState;
     struct Thing *PTarget;
-    long Flag2;
+    i32 Flag2;
     short GotoThingIndex;
     short OldTarget;
     union { // pos=76
@@ -422,7 +422,7 @@ struct STngUWeapon {
 
 struct STngUTraffic {
     short Link[4];
-    ubyte Flags[4];
+    u8 Flags[4];
 };
 
 struct STngULight {
@@ -445,17 +445,17 @@ struct SimpleThing
     short Next;
     short LinkParent;
     short LinkChild;
-    ubyte SubType;
-    ubyte Type;
+    u8 SubType;
+    u8 Type;
     short State;
-    ulong Flag;
+    u32 Flag;
     short LinkSame;
     short Object;
     short Radius;
     short ThingOffset;
-    long X;
-    long Y;
-    long Z;
+    i32 X;
+    i32 Y;
+    i32 Z;
     short Frame;
     short StartFrame;
     short Timer1;
@@ -478,7 +478,7 @@ typedef struct {
     short Arg2;
     short Arg3;
     short Arg4;
-    long Arg5;
+    i32 Arg5;
 } ThingFilterParams;
 
 /** Definition of a simple callback type which can only return true/false and has no memory of previous checks. */
@@ -492,10 +492,10 @@ struct ThingOldV9 { // sizeof=216
     short Next;
     short LinkParent;
     short LinkChild;
-    ubyte SubType;
-    ubyte Type;
+    u8 SubType;
+    u8 Type;
     short State; // pos=10
-    ulong Flag;
+    u32 Flag;
     /* Since fmtver=4, this and all previous fields confirmed to match
      * file layout in final release (from Pre-Alpha Demo code analysis
      * and from comparative analysis of binary data in level files).
@@ -518,15 +518,15 @@ struct ThingOldV9 { // sizeof=216
      * and it is at the same place (from Pre-Alpha Demo code analysis).
      */
     union {
-        ubyte ObjectNumbObjects;
-        ubyte VehicleNumbObjects;
-        ubyte MGunNumbObjects;
-        ubyte EffectNumbObjects;
+        u8 ObjectNumbObjects;
+        u8 VehicleNumbObjects;
+        u8 MGunNumbObjects;
+        u8 EffectNumbObjects;
     };
-    ubyte TngUnkn23;
-    long X;
-    long Y;
-    long Z;
+    u8 TngUnkn23;
+    i32 X;
+    i32 Y;
+    i32 Z;
     /* Since fmtver=4, most types have `Frame`, only Object type GATE reuses it
      * for `MinY[0]` (from Pre-Alpha Demo code analysis).
      */
@@ -561,10 +561,10 @@ struct ThingOldV9 { // sizeof=216
      * Confirmed to be low value used against Person in fmtver=8-11 files
      * (from comparative analysis of binary data in level files).
      */
-    ubyte PersonAnimMode; // pos=48
+    u8 PersonAnimMode; // pos=48
     /* Since fmtver=4, Person `OldAnimMode` (from Pre-Alpha Demo code analysis).
      */
-    ubyte PersonOldAnimMode;
+    u8 PersonOldAnimMode;
     ushort ThingOffset; // pos=50
     /* Since fmtver=4, usually `VX`, but Object type GATE reuses it for
      * `RaiseDY[]` (from Pre-Alpha Demo code analysis).
@@ -572,11 +572,11 @@ struct ThingOldV9 { // sizeof=216
      * of binary data in level files).
      */
     union {
-        long VX;
+        i32 VX;
         short ObjectRaiseDY[2];
     };
-    long VY;
-    long VZ;
+    i32 VY;
+    i32 VZ;
     /* Since fmtver=4, `AngleX` for Vehicle and MGun (from Pre-Alpha Demo code
      * analysis). Stamina is only here in fmtver=12 files - does not seem to
      * exist in 9-11 (from comparative analysis of binary data in level files).
@@ -612,8 +612,8 @@ struct ThingOldV9 { // sizeof=216
      * comparative analysis of binary data in level files).
      */
     union {
-        ubyte PersonAngle;
-        ubyte ObjectAngle;
+        u8 PersonAngle;
+        u8 ObjectAngle;
     };
     /** Effective group is the GroupId of a thing which is actually in effect.
      * Configrmed to be  Person `EffectiveGroup` since fmtver=4 (from Pre-Alpha
@@ -622,10 +622,10 @@ struct ThingOldV9 { // sizeof=216
      * definite proof about which group field is effective and which the default.
      */
     union { // pos=75
-        ubyte PersonEffectiveGroup;
-        ubyte VehicleEffectiveGroup;
-        ubyte ObjectEffectiveGroup;
-        ubyte MGunEffectiveGroup;
+        u8 PersonEffectiveGroup;
+        u8 VehicleEffectiveGroup;
+        u8 ObjectEffectiveGroup;
+        u8 MGunEffectiveGroup;
     };
     /* Since fmtver=4, `Speed` for Vehicle (from Pre-Alpha Demo code analysis).
      */
@@ -666,11 +666,11 @@ struct ThingOldV9 { // sizeof=216
     union {  // pos=86
         short VehicleUnknTng86;
         struct {
-            ubyte PersonGroup;
-            ubyte TngUnkn87;
+            u8 PersonGroup;
+            u8 TngUnkn87;
         };
     };
-    ulong PersonWeaponsCarried; // pos=88
+    u32 PersonWeaponsCarried; // pos=88
     /** Next command assigned to the Person.
      * Confirmed since fmtver=4 (from Pre-Alpha Demo code analysis).
      */
@@ -703,11 +703,11 @@ struct ThingOldV9 { // sizeof=216
     /* Confirmed to be Person `Brightness` since fmtver=4 (from Pre-Alpha
      * Demo code analysis).
      */
-    ubyte PersonBrightness; // pos=110
+    u8 PersonBrightness; // pos=110
     /* Confirmed to be Person `PathOffset` since fmtver=4 (from
      * Pre-Alpha Demo code analysis).
      */
-    ubyte PathOffset;
+    u8 PathOffset;
     /* Since fmtver=4, Person sprite frame of some kind (from Pre-Alpha
      * Demo code analysis).
      */
@@ -721,7 +721,7 @@ struct ThingOldV9 { // sizeof=216
      */
     short PersonMaxShieldEnergy;
     short TngUnkn118;
-    long  TngUnkn120;
+    i32  TngUnkn120;
     short TngUnkn124; // pos=124
     ushort TngUnkn126;
     union { // pos=128
@@ -731,11 +731,11 @@ struct ThingOldV9 { // sizeof=216
     ushort TngUnkn130; // pos=130
     short PersonShieldEnergy; // pos=132
     char PersonSpecialTimer;
-    ubyte TngUnkn135;
+    u8 TngUnkn135;
     short TngUnkn136;
     short TngUnkn138; // pos=138
-    ubyte PersonBumpMode;
-    ubyte PersonBumpCount;
+    u8 PersonBumpMode;
+    u8 PersonBumpCount;
     short PersonVehicle;
     short PersonLinkPassenger;
     /* Since fmtver=4, `TargetDX` for Object type GATE; Person sets it
@@ -763,14 +763,14 @@ struct ThingOldV9 { // sizeof=216
     /** Pointer to a Thing being targeted by this one; cleared during load.
      * Confirmed since fmtver=4 (from Pre-Alpha Demo code analysis).
      */
-    ulong PTarget; // pos=152
+    u32 PTarget; // pos=152
     short TngUnkn156; // pos=156
     /* Assumed to be `OnFace` for Person, no proof.
      */
     short PersonOnFace;
     ushort PersonUnkn160; // pos=160
-    ubyte SubState;
-    ubyte PersonComRange;
+    u8 SubState;
+    u8 PersonComRange;
     /* Vehicle `ReqdSpeed`, confirmed since fmtver=4 (from Pre-Alpha Demo
      * code analysis). In that version there was no MaxSpeed, so this counted
      * for both.
@@ -808,21 +808,21 @@ struct ThingOldV9 { // sizeof=216
     ushort PersonEnergy;
     ushort TngUnkn180; // pos=180
     ushort TngUnkn182;
-    ubyte TngUnkn184; // pos=184
+    u8 TngUnkn184; // pos=184
     /** Used by lights processing routine.
      * Confirmed since fmtver=4 (from Pre-Alpha Demo code analysis).
      */
-    ubyte PersonShadows[4]; // pos=185
+    u8 PersonShadows[4]; // pos=185
     /* `RecoilTimer` at the same position for People and Vehicle.
      * Confirmed since fmtver=4 (from Pre-Alpha Demo code analysis).
      */
     union { // pos=189
-        ubyte VehicleRecoilTimer;
-        ubyte PersonRecoilTimer;
+        u8 VehicleRecoilTimer;
+        u8 PersonRecoilTimer;
     };
     ushort PersonMaxHealth; // pos=190
-    ubyte PersonRecoilDir; // pos=192
-    ubyte TngUnkn193; // pos=193
+    u8 PersonRecoilDir; // pos=192
+    u8 TngUnkn193; // pos=193
     short GotoThingIndex; // pos=194
     short TngUnkn196;
     short TngUnkn198;
@@ -854,7 +854,7 @@ extern struct SimpleThing *sthings;
 extern short sthings_used_head;
 
 void init_things(void);
-void refresh_old_thing_format(struct Thing *p_thing, struct ThingOldV9 *p_oldthing, ulong fmtver);
+void refresh_old_thing_format(struct Thing *p_thing, struct ThingOldV9 *p_oldthing, u32 fmtver);
 void process_things(void);
 
 /** Delete the thing from `mapwho` chain.
@@ -892,12 +892,12 @@ short find_dropped_weapon_within_circle(short X, short Z, ushort R, short weapon
 short find_person_carrying_weapon_within_circle(short X, short Z, ushort R, short weapon);
 short find_person_carrying_weapon(short weapon);
 
-short find_nearest_from_group(struct Thing *p_person, ushort group, ubyte no_persuaded);
+short find_nearest_from_group(struct Thing *p_person, ushort group, u8 no_persuaded);
 short search_things_for_index(short index);
 short find_nearest_object2(short mx, short mz, ushort sub_type);
-short search_object_for_qface(ushort object, ubyte gflag, ubyte flag, ushort after);
+short search_object_for_qface(ushort object, u8 gflag, u8 flag, ushort after);
 short search_for_station(short x, short z);
-short search_things_for_uniqueid(short index, ubyte flag);
+short search_things_for_uniqueid(short index, u8 flag);
 
 /******************************************************************************/
 #ifdef __cplusplus

@@ -28,9 +28,9 @@ extern "C" {
 #endif
 /******************************************************************************/
 
-extern ushort current_SB16_left_master_volume;
-extern ushort current_SB16_right_master_volume;
-extern ubyte sb16_mixer_set;
+extern u16 current_SB16_left_master_volume;
+extern u16 current_SB16_right_master_volume;
+extern u8 sb16_mixer_set;
 
 void prepare_SB16_volumes(void);
 void reset_SB16_volumes(void);

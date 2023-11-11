@@ -71,7 +71,7 @@ TbResult LbMouseOnEndSwap(void)
     return Lb_SUCCESS;
 }
 
-TbResult LbMouseChangeSpriteOffset(long hot_x, long hot_y)
+TbResult LbMouseChangeSpriteOffset(i32 hot_x, i32 hot_y)
 {
     if (!lbMouseInstalled)
         return Lb_FAIL;
@@ -83,7 +83,7 @@ TbResult LbMouseChangeSpriteOffset(long hot_x, long hot_y)
     return Lb_SUCCESS;
 }
 
-TbResult LbMouseGetSpriteOffset(long *hot_x, long *hot_y)
+TbResult LbMouseGetSpriteOffset(i32 *hot_x, i32 *hot_y)
 {
     struct TbPoint *hotspot;
 
@@ -113,7 +113,7 @@ TbResult LbMouseChangeSprite(const struct TbSprite *pointer_spr)
     return Lb_SUCCESS;
 }
 
-TbResult LbMouseChangeMoveRatio(long ratio_x, long ratio_y)
+TbResult LbMouseChangeMoveRatio(i32 ratio_x, i32 ratio_y)
 {
     if ((ratio_x < -8192) || (ratio_x > 8192) || (ratio_x == 0))
         return Lb_FAIL;
@@ -143,7 +143,7 @@ TbBool LbMouseIsInstalled(void)
 
 TbResult LbMouseSetup(const struct TbSprite *pointer_spr, int ratio_x, int ratio_y)
 {
-    long x,y;
+    i32 x,y;
 
     if (lbMouseInstalled)
         LbMouseSuspend();
@@ -212,7 +212,7 @@ TbResult LbMouseSuspend(void)
     return Lb_SUCCESS;
 }
 
-TbResult LbMouseSetWindow(long x, long y, long width, long height)
+TbResult LbMouseSetWindow(i32 x, i32 y, i32 width, i32 height)
 {
     if (!lbMouseInstalled)
         return Lb_FAIL;
@@ -223,7 +223,7 @@ TbResult LbMouseSetWindow(long x, long y, long width, long height)
     return Lb_SUCCESS;
 }
 
-TbResult LbMouseSetPosition(long x, long y)
+TbResult LbMouseSetPosition(i32 x, i32 y)
 {
     if (!lbMouseInstalled)
         return Lb_FAIL;
@@ -253,8 +253,8 @@ void MouseToScreen(struct TbPoint *pos)
 {
     // Static variables for storing last mouse coordinated; needed
     // because lbDisplay.MMouseX/MMouseY coords are scaled
-    static long mx = 0;
-    static long my = 0;
+    static i32 mx = 0;
+    static i32 my = 0;
     struct TbRect clip;
     struct TbPoint orig;
     if (lbMouseAutoReset)
@@ -264,8 +264,8 @@ void MouseToScreen(struct TbPoint *pos)
       orig.x = pos->x;
       orig.y = pos->y;
 #if defined(ENABLE_MOUSE_MOVE_RATIO)
-      pos->x = mx + ((pos->x - mx) * (long)lbDisplay.MouseMoveRatioX)/256;
-      pos->y = mx + ((pos->y - my) * (long)lbDisplay.MouseMoveRatioY)/256;
+      pos->x = mx + ((pos->x - mx) * (i32)lbDisplay.MouseMoveRatioX)/256;
+      pos->y = mx + ((pos->y - my) * (i32)lbDisplay.MouseMoveRatioY)/256;
 #endif
       mx = orig.x;
       my = orig.y;
@@ -283,8 +283,8 @@ void MouseToScreen(struct TbPoint *pos)
       orig.x = pos->x;
       orig.y = pos->y;
 #if defined(ENABLE_MOUSE_MOVE_RATIO)
-      pos->x = mx + ((pos->x - mx) * (long)lbDisplay.MouseMoveRatioX)/256;
-      pos->y = mx + ((pos->y - my) * (long)lbDisplay.MouseMoveRatioY)/256;
+      pos->x = mx + ((pos->x - mx) * (i32)lbDisplay.MouseMoveRatioX)/256;
+      pos->y = mx + ((pos->y - my) * (i32)lbDisplay.MouseMoveRatioY)/256;
 #endif
       mx = orig.x;
       my = orig.y;

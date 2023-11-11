@@ -41,7 +41,7 @@ char lbInkeyToAsciiShift[] = {
   '\x00',   '.','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00',
 };
 
-const ubyte lbAsciiToInkey[] = {
+const u8 lbAsciiToInkey[] = {
   KC_UNASSIGNED,KC_UNASSIGNED,KC_UNASSIGNED,KC_UNASSIGNED,KC_UNASSIGNED,KC_UNASSIGNED,KC_UNASSIGNED,KC_UNASSIGNED,
   KC_UNASSIGNED,KC_UNASSIGNED,KC_UNASSIGNED,KC_UNASSIGNED,KC_UNASSIGNED,KC_UNASSIGNED,KC_UNASSIGNED,KC_UNASSIGNED,
   KC_UNASSIGNED,KC_UNASSIGNED,KC_UNASSIGNED,KC_UNASSIGNED,KC_UNASSIGNED,KC_UNASSIGNED,KC_UNASSIGNED,KC_UNASSIGNED,
@@ -105,7 +105,7 @@ unsigned char lbIInkey;
 
 unsigned char lbIInkeyFlags;
 
-ulong lbInkey_prefixed;
+u32 lbInkey_prefixed;
 
 KeyboardEventHandler lbKEventCustomHandler = NULL;
 

@@ -30,7 +30,7 @@ extern "C" {
 TbResult MockScreenFindVideoModes(void);
 TbBool MockScreenIsModeAvailable(TbScreenMode mode);
 TbResult MockScreenSetupAnyMode(TbScreenMode mode, TbScreenCoord width,
-    TbScreenCoord height, ubyte *palette);
+    TbScreenCoord height, u8 *palette);
 TbResult MockScreenReset(void);
 TbBool MockScreenIsLocked(void);
 TbResult MockScreenLock(void);

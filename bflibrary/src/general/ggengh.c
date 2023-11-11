@@ -24,12 +24,12 @@
 #include "bfscreen.h"
 #include "privbflog.h"
 
-static void ghost_table_generate(const ubyte *pal, short intens, ubyte *table)
+static void ghost_table_generate(const u8 *pal, short intens, u8 *table)
 {
     int i, k;
-    const ubyte *colr_i;
-    const ubyte *colr_k;
-    ubyte *tbl_o;
+    const u8 *colr_i;
+    const u8 *colr_k;
+    u8 *tbl_o;
 
     tbl_o = pixmap.ghost_table;
     colr_i = pal;
@@ -55,7 +55,7 @@ static void ghost_table_generate(const ubyte *pal, short intens, ubyte *table)
     }
 }
 
-static void ghost_table_symmetrize(const ubyte *pal, short intens, ubyte *table)
+static void ghost_table_symmetrize(const u8 *pal, short intens, u8 *table)
 {
     int i, k;
 
@@ -71,7 +71,7 @@ static void ghost_table_symmetrize(const ubyte *pal, short intens, ubyte *table)
     }
 }
 
-TbResult LbGhostTableGenerate(const ubyte *pal, short intens, const char *fname)
+TbResult LbGhostTableGenerate(const u8 *pal, short intens, const char *fname)
 {
     TbBool generate = false;
 
@@ -100,7 +100,7 @@ TbResult LbGhostTableGenerate(const ubyte *pal, short intens, const char *fname)
     return Lb_SUCCESS;
 }
 
-TbResult LbGhostTableLoad(const ubyte *pal, short intens, const char *fname)
+TbResult LbGhostTableLoad(const u8 *pal, short intens, const char *fname)
 {
     long len;
 

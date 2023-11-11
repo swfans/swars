@@ -31,9 +31,9 @@ extern "C" {
  * Truncates the coordinates if they go off the window. Requires the screen
  * to be locked.
  */
-TbResult LbDrawLine(long X1, long Y1, long X2, long Y2, TbPixel colour);
+TbResult LbDrawLine(i32 X1, i32 Y1, i32 X2, i32 Y2, TbPixel colour);
 
-TbResult LbDrawHVLine(long X1, long Y1, long X2, long Y2, TbPixel colour);
+TbResult LbDrawHVLine(i32 X1, i32 Y1, i32 X2, i32 Y2, TbPixel colour);
 
 #ifdef __cplusplus
 };

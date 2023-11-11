@@ -21,7 +21,7 @@ TbScreenMode screen_mode_fmvid = Lb_SCREEN_MODE_320_200_8;
 
 extern ushort data_1aa330;
 extern ushort data_1aa332;
-extern ubyte *vec_tmap;
+extern u8 *vec_tmap;
 extern unsigned char *display_palette;
 
 TbPixel fade_unaffected_colours[] = {
@@ -173,7 +173,7 @@ void my_set_text_window(ushort x1, ushort y1, ushort w, ushort h)
         : : "a" (x1), "d" (y1), "b" (w), "c" (h));
 }
 
-ubyte font_height(uchar c)
+u8 font_height(uc8 c)
 {
     int ret;
     asm volatile ("call ASM_font_height\n"
@@ -181,7 +181,7 @@ ubyte font_height(uchar c)
     return ret;
 }
 
-ulong my_string_width(const char *text)
+u32 my_string_width(const char *text)
 {
     int ret;
     asm volatile ("call ASM_my_string_width\n"

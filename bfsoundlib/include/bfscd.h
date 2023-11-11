@@ -41,7 +41,7 @@ struct TbsCDTime { // sizeof=unknown
     int a1;
 };
 
-sbyte CDSpeedTest(const char *fname);
+i8 CDSpeedTest(const char *fname);
 void cbCDCountdown(void *data);
 //int GetCDCountdown();
 TbBool GetCDAble(void);
@@ -63,9 +63,9 @@ void StopCD(void);
 //int CDTrackInfo();
 //int CDAudioStatus();
 void SetCDVolume(short vol);
-sbyte GetCDVolume(void);
-//long unsigned ConvertCDTime( TbsCDTime );
-//TbsCDTime ConvertDOSCDTime( long unsigned );
+i8 GetCDVolume(void);
+//i32 unsigned ConvertCDTime( TbsCDTime );
+//TbsCDTime ConvertDOSCDTime( i32 unsigned );
 //int IsCDPlaying();
 //TbsCDTime CDHeadPosition();
 void FreeCD(void);

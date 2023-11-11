@@ -38,11 +38,11 @@ unsigned short const lbArcTanFactors[] = {
    245,246,246,247,248,248,249,250,250,251,252,252,253,254,254,255,
    256 };
 
-long LbArcTanAngle(long x,long y)
+i32 LbArcTanAngle(i32 x,i32 y)
 {
     // code at 0001:000a329c
-    long ux,uy;
-    unsigned long index;
+    i32 ux,uy;
+    u32 index;
     if ((x == 0) && (y == 0))
         return 0;
     if (x < 0)
@@ -55,10 +55,10 @@ long LbArcTanAngle(long x,long y)
             // This way we won't exceed factors array bounds (which is 256 elements).
             if (ux < uy) {
                 index = (ux << 8)/uy;
-                return 2*LbFPMath_PI   - (long)lbArcTanFactors[index];
+                return 2*LbFPMath_PI   - (i32)lbArcTanFactors[index];
             } else {
                 index = (uy << 8)/ux;
-                return 3*LbFPMath_PI/2 + (long)lbArcTanFactors[index];
+                return 3*LbFPMath_PI/2 + (i32)lbArcTanFactors[index];
             }
         } else
         {
@@ -66,10 +66,10 @@ long LbArcTanAngle(long x,long y)
             // Make sure we'll have smaller value * 256 / greater value.
             if (ux < uy) {
                 index = (ux << 8)/uy;
-                return   LbFPMath_PI   + (long)lbArcTanFactors[index];
+                return   LbFPMath_PI   + (i32)lbArcTanFactors[index];
             } else {
                 index = (uy << 8)/ux;
-                return 3*LbFPMath_PI/2 - (long)lbArcTanFactors[index];
+                return 3*LbFPMath_PI/2 - (i32)lbArcTanFactors[index];
             }
         }
     } else
@@ -81,10 +81,10 @@ long LbArcTanAngle(long x,long y)
             // Make sure we'll have smaller value * 256 / greater value.
             if (ux < uy) {
                 index = (ux << 8)/uy;
-                return                 (long)lbArcTanFactors[index];
+                return                 (i32)lbArcTanFactors[index];
             } else {
                 index = (uy << 8)/ux;
-                return LbFPMath_PI/2 - (long)lbArcTanFactors[index];
+                return LbFPMath_PI/2 - (i32)lbArcTanFactors[index];
             }
         } else
         {
@@ -92,10 +92,10 @@ long LbArcTanAngle(long x,long y)
             // Make sure we'll have smaller value * 256 / greater value.
             if (ux < uy) {
                 index = (ux << 8)/uy;
-                return LbFPMath_PI   - (long)lbArcTanFactors[index];
+                return LbFPMath_PI   - (i32)lbArcTanFactors[index];
             } else {
                 index = (uy << 8)/ux;
-                return LbFPMath_PI/2 + (long)lbArcTanFactors[index];
+                return LbFPMath_PI/2 + (i32)lbArcTanFactors[index];
             }
         }
     }

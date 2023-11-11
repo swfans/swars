@@ -23,10 +23,10 @@
 #include "bfline.h"
 #include "bfpixel.h"
 
-TbResult LbDrawCircleOutline(long x, long y, ulong radius, TbPixel colour)
+TbResult LbDrawCircleOutline(i32 x, i32 y, u32 radius, TbPixel colour)
 {
-  ubyte *p;
-  long radM, radP, where1;
+  u8 *p;
+  i32 radM, radP, where1;
 
   if (lbDisplay.DrawFlags & Lb_SPRITE_TRANSPAR4)
   {
@@ -357,9 +357,9 @@ TbResult LbDrawCircleOutline(long x, long y, ulong radius, TbPixel colour)
   return Lb_SUCCESS;
 }
 
-TbResult LbDrawCircleFilled(long x, long y, ulong radius, TbPixel colour)
+TbResult LbDrawCircleFilled(i32 x, i32 y, u32 radius, TbPixel colour)
 {
-    long where1, r1, r2;
+    i32 where1, r1, r2;
 
     if (radius < 1)
     {
@@ -406,7 +406,7 @@ TbResult LbDrawCircleFilled(long x, long y, ulong radius, TbPixel colour)
     return Lb_SUCCESS;
 }
 
-TbResult LbDrawCircle(long x, long y, ulong radius, TbPixel colour)
+TbResult LbDrawCircle(i32 x, i32 y, u32 radius, TbPixel colour)
 {
     TbResult ret;
 

@@ -11,7 +11,7 @@ extern TbScreenMode screen_mode_game_lo;
 extern TbScreenMode screen_mode_menu;
 extern TbScreenMode screen_mode_fmvid;
 
-extern ubyte *back_buffer;
+extern u8 *back_buffer;
 extern struct TbSprite *unk3_sprites;
 extern TbPixel fade_unaffected_colours[];
 extern TbPixel colour_lookup[];
@@ -45,7 +45,7 @@ void swap_wscreen(void);
 void screen_buffer_fill_black(void);
 void show_black_screen(void);
 void my_set_text_window(ushort x1, ushort y1, ushort w, ushort h);
-ulong my_string_width(const char *text);
-ubyte font_height(uchar c);
+u32 my_string_width(const char *text);
+u8 font_height(uc8 c);
 
 #endif

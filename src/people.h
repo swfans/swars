@@ -120,16 +120,16 @@ struct Thing;
 
 struct PeepStat
 {
-    short MaxHealth;
-    short MaxShield;
-    short MaximumStamina;
-    short MaxEnergy;
-    short PersuadeReqd;
-    short PersuadeWorth;
-    short Speed;
-    short dum2;
-    short dum3;
-    short dum4;
+    i16 MaxHealth;
+    i16 MaxShield;
+    i16 MaximumStamina;
+    i16 MaxEnergy;
+    i16 PersuadeReqd;
+    i16 PersuadeWorth;
+    i16 Speed;
+    i16 dum2;
+    i16 dum3;
+    i16 dum4;
 };
 
 struct PeepStatAdd
@@ -138,22 +138,22 @@ struct PeepStatAdd
 };
 
 struct MyPath {
-    ubyte Flag;
-    short X[4];
-    short Z[4];
-    ushort Next;
+    u8 Flag;
+    i16 X[4];
+    i16 Z[4];
+    u16 Next;
 };
 
 #pragma pack()
 /******************************************************************************/
 extern struct PeepStat peep_type_stats[];
-extern ushort people_frames[SubTT_PERS_COUNT][22];
+extern u16 people_frames[SubTT_PERS_COUNT][22];
 
-extern ushort word_1531DA;
-extern ushort word_17FA58[400];
+extern u16 word_1531DA;
+extern u16 word_17FA58[400];
 
-extern ushort head_my_path; // = 1;
-extern ushort path_count;
+extern u16 head_my_path; // = 1;
+extern u16 path_count;
 extern struct MyPath my_paths[1600];
 
 void remove_path(struct Thing *p_thing);
@@ -161,17 +161,17 @@ void set_person_animmode_walk(struct Thing *p_person);
 
 void load_peep_type_stats(void);
 
-TbBool person_carries_weapon(struct Thing *p_person, ubyte weapon);
+TbBool person_carries_weapon(struct Thing *p_person, u8 weapon);
 
-void set_person_stats_type(struct Thing *p_person, ushort type);
+void set_person_stats_type(struct Thing *p_person, u16 type);
 void init_person_thing(struct Thing *p_person);
 void person_give_best_mods(struct Thing *p_person);
 
-TbBool person_is_persuaded(short thing);
-TbBool person_is_persuaded_by_person(short thing, short owntng);
-TbBool person_is_persuaded_by_player(short thing, ushort plyr);
+TbBool person_is_persuaded(i16 thing);
+TbBool person_is_persuaded_by_person(i16 thing, i16 owntng);
+TbBool person_is_persuaded_by_player(i16 thing, u16 plyr);
 
-void set_person_persuaded(struct Thing *p_person, struct Thing *p_attacker, ushort energy);
+void set_person_persuaded(struct Thing *p_person, struct Thing *p_attacker, u16 energy);
 
 /******************************************************************************/
 #ifdef __cplusplus

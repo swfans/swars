@@ -6,6 +6,6 @@
 
 struct TbPoint;
 
-ubyte process_mouse_imputs(void);
+u8 process_mouse_imputs(void);
 
 #endif

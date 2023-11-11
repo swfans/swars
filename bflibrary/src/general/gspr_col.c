@@ -181,7 +181,7 @@ static inline TbResult LbSpriteDrawTrOneColour(const char *sp,short sprWd,short 
         unsigned char *r,TbPixel colour,int nextRowDelta,short left,const TbBool mirror)
 {
     unsigned char *nextRow;
-    long htIndex;
+    i32 htIndex;
     nextRow = &(r[nextRowDelta]);
     htIndex = sprHt;
     // For all lines of the sprite
@@ -269,7 +269,7 @@ static inline TbResult LbSpriteDrawSlOneColour(const char *sp,short sprWd,short 
         unsigned char *r,TbPixel colour,int nextRowDelta,short left,const TbBool mirror)
 {
     unsigned char *nextRow;
-    long htIndex;
+    i32 htIndex;
     nextRow = &(r[nextRowDelta]);
     htIndex = sprHt;
     // For all lines of the sprite
@@ -365,7 +365,7 @@ static inline TbResult LbSpriteDrawFCOneColour(const char *sp,short sprWd,short 
     TbPixel colour,int nextRowDelta,short left,const TbBool mirror)
 {
     unsigned char *nextRow;
-    long htIndex;
+    i32 htIndex;
     nextRow = &(r[nextRowDelta]);
     htIndex = sprHt;
     // For all lines of the sprite
@@ -389,7 +389,7 @@ static inline TbResult LbSpriteDrawFCOneColour(const char *sp,short sprWd,short 
     return Lb_SUCCESS;
 }
 
-TbResult LbSpriteDrawOneColour(long x, long y, const TbSprite *spr, const TbPixel colour)
+TbResult LbSpriteDrawOneColour(i32 x, i32 y, const TbSprite *spr, const TbPixel colour)
 {
     TbSpriteDrawData spd;
     TbResult ret;

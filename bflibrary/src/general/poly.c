@@ -24,27 +24,27 @@
 #include "bfpalette.h"
 #include "privbflog.h"
 
-ubyte *poly_screen;
+u8 *poly_screen;
 
-ubyte *vec_screen;
+u8 *vec_screen;
 
-ubyte *vec_map;
-ubyte *vec_pal;
+u8 *vec_map;
+u8 *vec_pal;
 
-long vec_screen_width;
+i32 vec_screen_width;
 
-long vec_window_width;
-long vec_window_height;
+i32 vec_window_width;
+i32 vec_window_height;
 
-ubyte *dither_map;
-ubyte *dither_end;
+u8 *dither_map;
+u8 *dither_end;
 
 struct PolyPoint polyscans[POLY_SCANS_COUNT];
 
 TbPixel vec_colour = 112;
-ubyte vec_mode;
+u8 vec_mode;
 
-const long add_to_edi[] = {
+const i32 add_to_edi[] = {
   0,-15,-14,-13,-12,-11,-10, -9, -8, -7, -6, -5, -4, -3, -2, -1,
 };
 
@@ -65,7 +65,7 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b,
     struct PolyPoint *opt_a;
     struct PolyPoint *opt_b;
     struct PolyPoint *opt_c;
-    ubyte start_type;
+    u8 start_type;
     struct TrigLocalPrep tlp;
     struct TrigLocalRend tlr;
 
@@ -222,8 +222,8 @@ void trig(struct PolyPoint *point_a, struct PolyPoint *point_b,
     LOGNO("end");
 }
 
-void setup_vecs(ubyte *screenbuf, ubyte *nvec_map,
-  ulong line_len, ulong width, ulong height)
+void setup_vecs(u8 *screenbuf, u8 *nvec_map,
+  u32 line_len, u32 width, u32 height)
 {
     if (line_len > 0)
         vec_screen_width = line_len;

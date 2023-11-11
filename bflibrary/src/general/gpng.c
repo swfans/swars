@@ -32,7 +32,7 @@
 #include "bfscreen.h"
 #include "privbflog.h"
 
-static void palette_to_png(png_color *pngpal, const ubyte *pal, ushort num)
+static void palette_to_png(png_color *pngpal, const u8 *pal, u16 num)
 {
     int i;
     for (i = 0; i < num; i++) {
@@ -42,7 +42,7 @@ static void palette_to_png(png_color *pngpal, const ubyte *pal, ushort num)
     }
 }
 
-static void palette_from_png(ubyte *pal, const png_color *pngpal, ushort num)
+static void palette_from_png(u8 *pal, const png_color *pngpal, u16 num)
 {
     int i;
     for (i = 0; i < num; i++) {
@@ -52,8 +52,8 @@ static void palette_from_png(ubyte *pal, const png_color *pngpal, ushort num)
     }
 }
 
-TbResult LbPngRead(FILE *img_fh, ubyte *out_buffer,
-  ulong *width, ulong *height, ubyte *pal)
+TbResult LbPngRead(FILE *img_fh, u8 *out_buffer,
+  u32 *width, u32 *height, u8 *pal)
 {
     png_structp png = NULL;
     png_infop info = NULL;
@@ -143,7 +143,7 @@ err: // handle error and cleanup heap allocation
 }
 
 TbResult LbPngLoad(const char *fname, TbPixel *out_buffer,
-  ulong *width, ulong *height, ubyte *pal)
+  u32 *width, u32 *height, u8 *pal)
 {
     FILE *img_fh;
     TbResult ret;
@@ -160,8 +160,8 @@ TbResult LbPngLoad(const char *fname, TbPixel *out_buffer,
     return ret;
 }
 
-TbResult LbPngWrite(FILE *img_fh, const ubyte *inp_buffer,
-  ulong width, ulong height, const ubyte *pal)
+TbResult LbPngWrite(FILE *img_fh, const u8 *inp_buffer,
+  u32 width, u32 height, const u8 *pal)
 {
     png_structp png = NULL;
     png_infop info = NULL;
@@ -230,7 +230,7 @@ err: // handle error and cleanup heap allocation
 }
 
 TbResult LbPngSave(const char *fname, const TbPixel *inp_buffer,
-  ulong width, ulong height, const ubyte *pal, TbBool force_fname)
+  u32 width, u32 height, const u8 *pal, TbBool force_fname)
 {
     char full_fname[FILENAME_MAX];
     FILE *img_fh;
@@ -252,7 +252,7 @@ TbResult LbPngSave(const char *fname, const TbPixel *inp_buffer,
 }
 
 TbResult LbPngSaveScreen(const char *fname, const TbPixel *inp_buffer,
-  const ubyte *pal, TbBool force_fname)
+  const u8 *pal, TbBool force_fname)
 {
     return LbPngSave(fname, inp_buffer, lbDisplay.PhysicalScreenWidth,
       lbDisplay.PhysicalScreenHeight, pal, force_fname);

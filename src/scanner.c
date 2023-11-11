@@ -38,7 +38,7 @@ void SCANNER_init(void)
         :  :  : "eax" );
 }
 
-void SCANNER_set_colour(ubyte col)
+void SCANNER_set_colour(u8 col)
 {
     asm volatile ("call ASM_SCANNER_set_colour\n"
         :  : "a" ((long)col));
@@ -88,7 +88,7 @@ ushort do_group_scanner(struct Objective *p_objectv, ushort next_signal)
     return ret;
 #else
     ushort n;
-    ubyte colr;
+    u8 colr;
     short dcthing;
     short nearthing;
     ushort group;
@@ -143,7 +143,7 @@ ushort do_group_scanner(struct Objective *p_objectv, ushort next_signal)
 ushort do_group_near_thing_scanner(struct Objective *p_objectv, ushort next_signal)
 {
     ushort n;
-    ubyte colr;
+    u8 colr;
     short tgthing;
     short nearthing;
     ushort group;
@@ -228,7 +228,7 @@ ushort do_target_thing_scanner(struct Objective *p_objectv, ushort next_signal)
 {
     long X, Z;
     ushort n;
-    ubyte colr;
+    u8 colr;
     short thing;
 
     thing = p_objectv->Thing;
@@ -262,7 +262,7 @@ ushort do_target_item_scanner(struct Objective *p_objectv, ushort next_signal)
     long X, Z;
     ushort n;
     ushort weapon;
-    ubyte colr;
+    u8 colr;
     short thing;
 
     thing = p_objectv->Thing;
@@ -311,7 +311,7 @@ ushort do_thing_arrive_area_scanner(struct Objective *p_objectv, ushort next_sig
 {
     long X, Z;
     ushort n;
-    ubyte colr;
+    u8 colr;
     short thing;
 
     thing = p_objectv->Thing;
@@ -357,7 +357,7 @@ ushort do_thing_near_thing_scanner(struct Objective *p_objectv, ushort next_sign
     long X1, Z1;
     long X2, Z2;
     ushort n;
-    ubyte colr;
+    u8 colr;
     short thing1, thing2;
 
     thing1 = p_objectv->Thing;
@@ -413,7 +413,7 @@ ushort do_thing_near_thing_scanner(struct Objective *p_objectv, ushort next_sign
 ushort do_group_arrive_area_scanner(struct Objective *p_objectv, ushort next_signal)
 {
     ushort n;
-    ubyte colr;
+    u8 colr;
 
     if (objective_target_is_ally(p_objectv))
         colr = colour_lookup[1];
@@ -439,14 +439,14 @@ void clear_all_scanner_signals(void)
         ingame.Scanner.Arc[i].Period = 0;
 }
 
-void add_blippoint_to_scanner(int x, int z, ubyte colour)
+void add_blippoint_to_scanner(int x, int z, u8 colour)
 {
     SCANNER_init_blippoint(signal_count, x, z, colour);
     ingame.Scanner.BigBlip[signal_count].Counter = 32;
     signal_count++;
 }
 
-void add_signal_to_scanner(struct Objective *p_objectv, ubyte flag)
+void add_signal_to_scanner(struct Objective *p_objectv, u8 flag)
 {
 #if 0
     asm volatile ("call ASM_add_signal_to_scanner\n"

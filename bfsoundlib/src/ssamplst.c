@@ -48,7 +48,7 @@ void StopSampleQueueList(void)
         AIL_set_sample_user_data(sample_queue_handle, i, 0);
 }
 
-int LoadSounds(ubyte bank_no)
+int LoadSounds(u8 bank_no)
 {
     int ret;
     asm volatile ("call ASM_LoadSounds\n"

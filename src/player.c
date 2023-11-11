@@ -97,13 +97,13 @@ void players_sync_from_cryo(void)
     player_update_agents_from_cryo(p_locplayer);
 }
 
-void remove_agent(ubyte cryo_no)
+void remove_agent(u8 cryo_no)
 {
     asm volatile ("call ASM_remove_agent\n"
         : : "a" (cryo_no));
 }
 
-void add_agent(ulong weapons, ushort mods)
+void add_agent(u32 weapons, ushort mods)
 {
     asm volatile ("call ASM_add_agent\n"
         : : "a" (weapons), "d" (mods));

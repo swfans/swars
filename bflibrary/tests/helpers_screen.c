@@ -23,18 +23,18 @@
 #include "bfutility.h"
 #include "bftstlog.h"
 
-void generate_xor_textute(ubyte *Tex, ushort Width, ushort Height, ushort FillW,
-  ushort FillH, const ubyte *Pal, short FactorsX[], short FactorsY[])
+void generate_xor_textute(u8 *Tex, ushort Width, ushort Height, ushort FillW,
+  ushort FillH, const u8 *Pal, short FactorsX[], short FactorsY[])
 {
     short x, y;
-    ubyte *t;
+    u8 *t;
 
     t = Tex;
     for (y = 0; y < FillH; y++)
     {
         for (x = 0; x < FillW; x++)
         {
-            ubyte r, g, b;
+            u8 r, g, b;
             r = ((x * FactorsX[0]) >> 10) ^ ((y * FactorsY[0]) >> 10);
             g = ((x * FactorsX[1]) >> 10) ^ ((y * FactorsY[1]) >> 10);
             b = ((x * FactorsX[2]) >> 10) ^ ((y * FactorsY[2]) >> 10);
@@ -44,9 +44,9 @@ void generate_xor_textute(ubyte *Tex, ushort Width, ushort Height, ushort FillW,
     }
 }
 
-void generate_example_texture_map_xor_based(const ubyte *pal, ubyte *texmap)
+void generate_example_texture_map_xor_based(const u8 *pal, u8 *texmap)
 {
-    ubyte *tmap;
+    u8 *tmap;
     short factors0[] = {256, 256, 256};
     tmap = texmap;
     generate_xor_textute(tmap, 256, 256, 256,  64, pal, factors0, factors0);
@@ -70,12 +70,12 @@ void generate_example_texture_map_xor_based(const ubyte *pal, ubyte *texmap)
     generate_xor_textute(tmap, 256, 256, 128,  64, pal, factors6, factors6);
 }
 
-void raw_to_wscreen(short X, short Y, ushort Width, ushort Height, ubyte *Raw)
+void raw_to_wscreen(short X, short Y, ushort Width, ushort Height, u8 *Raw)
 {
     short y;
     ushort w, h;
-    ubyte *r;
-    ubyte *o;
+    u8 *r;
+    u8 *o;
 
     r = Raw;
 

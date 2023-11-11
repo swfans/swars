@@ -37,13 +37,13 @@ struct TbNamedEnum {
 /** State of an INI buffer parsing. */
 struct TbIniParser {
     /** Current position of parsing within the buf. */
-    long pos;
+    i32 pos;
     /** Line number, used when loading text files. */
-    ulong line_num;
+    u32 line_num;
     /** Parsed input string buffer. */
     const char *buf;
     /** Parsed input string buffer length. */
-    long buflen;
+    i32 buflen;
 };
 
 #pragma pack()
@@ -56,7 +56,7 @@ struct TbIniParser {
  * @param buflen Length of the input string buffer.
  * @return Gives Lb_SUCCESS on proper initialization.
  */
-TbResult LbIniParseStart(struct TbIniParser *parser, const char *buf, long buflen);
+TbResult LbIniParseStart(struct TbIniParser *parser, const char *buf, i32 buflen);
 
 /**
  * Marks end of use of state structure for parsing INI buffer.
@@ -114,7 +114,7 @@ int LbIniRecognizeKey(struct TbIniParser *parser, const struct TbNamedEnum keyli
  * If -1 is returned, that means we have reached end of file.
  * If -3 is returned, that means we have reached end of the INI section.
  */
-int LbIniGetKey(struct TbIniParser *parser, char *dst, long dstlen);
+int LbIniGetKey(struct TbIniParser *parser, char *dst, i32 dstlen);
 
 /**
  * Parses INI value and fills destination buffer with the whole string, that is until EOLN.
@@ -124,7 +124,7 @@ int LbIniGetKey(struct TbIniParser *parser, char *dst, long dstlen);
  * @param dstlen Length of the destination string buffer.
  * @return Gives length of the string written to dst, or 0 if nothing got written.
  */
-int LbIniValueGetStrWhole(struct TbIniParser *parser, char *dst, long dstlen);
+int LbIniValueGetStrWhole(struct TbIniParser *parser, char *dst, i32 dstlen);
 
 /**
  * Parses INI value and fills destination buffer with the next word string.
@@ -134,18 +134,18 @@ int LbIniValueGetStrWhole(struct TbIniParser *parser, char *dst, long dstlen);
  * @param dstlen Length of the destination string buffer.
  * @return Gives length of the string written to dst, or 0 if nothing got written.
  */
-int LbIniValueGetStrWord(struct TbIniParser *parser, char *dst, long dstlen);
+int LbIniValueGetStrWord(struct TbIniParser *parser, char *dst, i32 dstlen);
 
 /**
- * Parses INI value and fills destination buffer with the next long integer.
+ * Parses INI value and fills destination buffer with the next i32 integer.
  *
  * The value parsed is contained in one word. Binary and hex strings are supported.
  *
  * @param parser The parser state defining input buffer and current position.
- * @param dst Reference to the destination long value.
+ * @param dst Reference to the destination i32 value.
  * @return Gives amount of number characters parsed, possibly 0 if there was no number.
  */
-int LbIniValueGetLongInt(struct TbIniParser *parser, long *dst);
+int LbIniValueGetLongInt(struct TbIniParser *parser, i32 *dst);
 
 /**
  * Parses INI value and if it stores enum item name, returns the enumeration item number.

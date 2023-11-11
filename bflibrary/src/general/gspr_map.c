@@ -199,7 +199,7 @@ static inline TbResult LbSpriteDrawTrRemap(const char *sp,short sprWd,short sprH
         unsigned char *r,const unsigned char *cmap,int nextRowDelta,short left,const TbBool mirror)
 {
     unsigned char *nextRow;
-    long htIndex;
+    i32 htIndex;
     nextRow = &(r[nextRowDelta]);
     htIndex = sprHt;
     // For all lines of the sprite
@@ -287,7 +287,7 @@ static inline TbResult LbSpriteDrawSlRemap(const char *sp,short sprWd,short sprH
         unsigned char *r,const unsigned char *cmap,int nextRowDelta,short left,const TbBool mirror)
 {
     unsigned char *nextRow;
-    long htIndex;
+    i32 htIndex;
     nextRow = &(r[nextRowDelta]);
     htIndex = sprHt;
     // For all lines of the sprite
@@ -391,7 +391,7 @@ static inline TbResult LbSpriteDrawFCRemap(const char *sp,short sprWd,short sprH
     const unsigned char *cmap,int nextRowDelta,short left,const TbBool mirror)
 {
     unsigned char *nextRow;
-    long htIndex;
+    i32 htIndex;
     nextRow = &(r[nextRowDelta]);
     htIndex = sprHt;
     // For all lines of the sprite
@@ -415,7 +415,7 @@ static inline TbResult LbSpriteDrawFCRemap(const char *sp,short sprWd,short sprH
     return Lb_SUCCESS;
 }
 
-TbResult LbSpriteDrawRemap(long x, long y, const TbSprite *spr, const ubyte *cmap)
+TbResult LbSpriteDrawRemap(i32 x, i32 y, const TbSprite *spr, const u8 *cmap)
 {
     TbSpriteDrawData spd;
     TbResult ret;

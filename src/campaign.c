@@ -161,16 +161,16 @@ struct Campaign campaigns[CAMPAIGNS_MAX_COUNT];
 
 /** Size of campaign strings within the engine buffer.
  */
-ushort campaign_strings_len = 0;
+u16 campaign_strings_len = 0;
 
 /** Size of mission strings after campaign strings.
  */
-extern ushort mission_strings_len; // = 0;
-extern ushort display_mode;
+extern u16 mission_strings_len; // = 0;
+extern u16 display_mode;
 
 void load_campaigns(void)
 {
-    ushort campgn;
+    u16 campgn;
 
     campaign_strings_len = 0;
     mission_strings_len = 0;
@@ -181,10 +181,10 @@ void load_campaigns(void)
     }
 }
 
-ushort selectable_campaigns_count(void)
+u16 selectable_campaigns_count(void)
 {
-    ushort matches;
-    ushort campgn;
+    u16 matches;
+    u16 campgn;
 
     matches = 0;
     for (campgn = 0; campgn < CAMPAIGNS_MAX_COUNT; campgn++) {
@@ -198,9 +198,9 @@ ushort selectable_campaigns_count(void)
     return matches;
 }
 
-ushort find_mission_state_slot(ushort missi)
+u16 find_mission_state_slot(u16 missi)
 {
-    ushort i;
+    u16 i;
 
     if (missi < 1)
         return 0;
@@ -213,9 +213,9 @@ ushort find_mission_state_slot(ushort missi)
     return i;
 }
 
-ushort find_empty_mission_state_slot(void)
+u16 find_empty_mission_state_slot(void)
 {
-    ushort i;
+    u16 i;
 
     for (i = 1; i < 50; i++) {
         if (mission_open[i] == 0)
@@ -226,9 +226,9 @@ ushort find_empty_mission_state_slot(void)
     return i;
 }
 
-void remove_mission_state_slot(ushort mslot)
+void remove_mission_state_slot(u16 mslot)
 {
-    ushort i;
+    u16 i;
 
     for (i = mslot; i < 50-1; i++)
     {
@@ -237,9 +237,9 @@ void remove_mission_state_slot(ushort mslot)
     }
 }
 
-ushort find_mission_with_map_and_level(ushort mapno, ushort level)
+u16 find_mission_with_map_and_level(u16 mapno, u16 level)
 {
-    ushort missi;
+    u16 missi;
 
     for (missi = 1; missi < MISSIONS_MAX_COUNT; missi++) {
         struct Mission *p_missi;
@@ -253,8 +253,8 @@ ushort find_mission_with_map_and_level(ushort mapno, ushort level)
 void init_mission_states(void)
 {
     struct Objective *p_objectv;
-    ushort missi, mslot;
-    ushort objectv;
+    u16 missi, mslot;
+    u16 objectv;
     int i;
 
     mslot = find_mission_state_slot(ingame.CurrentMission);
@@ -301,7 +301,7 @@ void load_missions(int num)
 
 void apply_missions_fixups(void)
 {
-    ushort missi;
+    u16 missi;
 
     for (missi = 0; missi < next_mission; missi++)
     {
@@ -347,11 +347,11 @@ void apply_missions_fixups(void)
     }
 }
 
-void fix_mission_used_objectives(short missi)
+void fix_mission_used_objectives(i16 missi)
 {
     struct Mission *p_missi;
     struct Objective *p_objectv;
-    ushort objectv;
+    u16 objectv;
     int i;
 
     p_missi = &mission_list[missi];
@@ -381,7 +381,7 @@ void read_missions_bin_file(int num)
 {
     TbFileHandle fh;
     char locstr[52];
-    ulong fmtver;
+    u32 fmtver;
     char *p_str;
     int i;
 
@@ -391,12 +391,12 @@ void read_missions_bin_file(int num)
     fh = LbFileOpen(locstr, Lb_FILE_MODE_READ_ONLY);
     if (fh != INVALID_FILE)
     {
-        LbFileRead(fh, &fmtver, sizeof(ulong));
-        LbFileRead(fh, &mission_strings_len, sizeof(ushort));
+        LbFileRead(fh, &fmtver, sizeof(u32));
+        LbFileRead(fh, &mission_strings_len, sizeof(u16));
         LbFileRead(fh, p_str, mission_strings_len);
-        LbFileRead(fh, &next_mission, sizeof(ushort));
+        LbFileRead(fh, &next_mission, sizeof(u16));
         LbFileRead(fh, mission_list, sizeof(struct Mission) * next_mission);
-        LbFileRead(fh, &next_used_objective, sizeof(ushort));
+        LbFileRead(fh, &next_used_objective, sizeof(u16));
         LbFileRead(fh, game_used_objectives, sizeof(struct Objective) * next_used_objective);
         if (fmtver > 30)
             LbFileRead(fh, engine_mem_alloc_ptr + engine_mem_alloc_size - 1320 - 33, 1320);
@@ -432,13 +432,13 @@ void read_missions_bin_file(int num)
 
 void read_mission_netscan_objectives_bin(void)
 {
-    ushort missi;
+    u16 missi;
 
     next_mission_netscan_objective = 1;
 
     for (missi = 0; missi < next_mission; missi++) {
         struct Mission *p_missi;
-        ushort nsobv_count;
+        u16 nsobv_count;
         struct NetscanObjective *nsobv_arr;
 
         p_missi = &mission_list[missi];
@@ -517,8 +517,8 @@ void save_mission_single_conf(TbFileHandle fh, struct Mission *p_missi, char *bu
         LbFileWrite(fh, buf, strlen(buf));
     }
     if (p_missi->ResearchWeapons != 0) {
-        sprintf(buf, "ResearchWeapons = 0x%lx\n",
-          (ulong)p_missi->ResearchWeapons);
+        sprintf(buf, "ResearchWeapons = 0x%x\n",
+          (u32)p_missi->ResearchWeapons);
         LbFileWrite(fh, buf, strlen(buf));
     }
     if (p_missi->ExtraRewardType != 0) {
@@ -688,7 +688,7 @@ TbBool read_missions_conf_info(int num)
     TbFileHandle conf_fh;
     TbBool done;
     unsigned int i;
-    long k;
+    i32 k;
     char *conf_buf;
     struct TbIniParser parser;
     char conf_fname[80];
@@ -882,7 +882,7 @@ void read_missions_conf_file(int num)
     TbFileHandle conf_fh;
     TbBool done;
     int i, n;
-    long k;
+    i32 k;
     char *conf_buf;
     struct TbIniParser parser;
     struct Campaign *p_campgn;
@@ -1428,7 +1428,7 @@ void read_missions_conf_file(int num)
         } else
         while (!done)
         {
-            long pri;
+            i32 pri;
             struct Objective *p_objectv;
 
             // Get the key, as it holds priority
@@ -1476,7 +1476,7 @@ void read_missions_conf_file(int num)
         } else
         while (!done)
         {
-            long pri;
+            i32 pri;
             struct Objective *p_objectv;
 
             // Get the key, as it holds priority
@@ -1570,13 +1570,13 @@ void read_missions_conf_file(int num)
     mission_strings_len = p_str - (char *)(engine_mem_alloc_ptr + engine_mem_alloc_size - 64000 + campaign_strings_len);
 }
 
-TbResult load_netscan_text_data(ushort mapno, ushort level)
+TbResult load_netscan_text_data(u16 mapno, u16 level)
 {
     char *p;
     int i, k;
     TbBool found;
     int totlen;
-    short cmapno, clevel;
+    i16 cmapno, clevel;
     char secnum_str[5];
     int secnum_int;
 
@@ -1635,7 +1635,7 @@ TbResult load_netscan_text_data(ushort mapno, ushort level)
     return found ? Lb_SUCCESS : Lb_OK;
 }
 
-TbResult load_mission_name_text(ubyte missi)
+TbResult load_mission_name_text(u8 missi)
 {
 #if 0
     asm volatile ("call ASM_load_mission_name_text\n"
@@ -1643,7 +1643,7 @@ TbResult load_mission_name_text(ubyte missi)
     return Lb_SUCCESS;
 #endif
     int totlen;
-    ushort len;
+    u16 len;
     int cmissi;
     char *p;
     char c;
@@ -1692,28 +1692,28 @@ TbResult load_mission_name_text(ubyte missi)
     return Lb_SUCCESS;
 }
 
-TbBool mission_remain_until_success(ushort missi)
+TbBool mission_remain_until_success(u16 missi)
 {
     struct Mission *p_missi;
     p_missi = &mission_list[missi];
     return ((p_missi->Flags & MisF_RemainUntilSuccess) != 0);
 }
 
-TbBool mission_has_immediate_next_on_success(ushort missi)
+TbBool mission_has_immediate_next_on_success(u16 missi)
 {
     struct Mission *p_missi;
     p_missi = &mission_list[missi];
     return ((p_missi->Flags & MisF_ImmediateNextOnSuccess) != 0);
 }
 
-TbBool mission_has_immediate_previous(ushort missi)
+TbBool mission_has_immediate_previous(u16 missi)
 {
     struct Mission *p_missi;
     p_missi = &mission_list[missi];
     return ((p_missi->Flags & MisF_ImmediatePrevious) != 0);
 }
 
-TbBool mission_is_final_at_game_end(ushort missi)
+TbBool mission_is_final_at_game_end(u16 missi)
 {
     struct Mission *p_missi;
     p_missi = &mission_list[missi];
