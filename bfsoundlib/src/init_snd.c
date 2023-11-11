@@ -105,6 +105,67 @@ ubyte GetSoundTpNo(ushort snd_type)
     return 255;
 }
 
+ushort GetSoundTypeFromTpNo(ubyte tpno)
+{
+    switch (tpno)
+    {
+    case 8:
+        return 800;
+    case 7:
+        return 811;
+    case 6:
+        return 822;
+    case 5:
+        return 1610;
+    case 4:
+        return 1611;
+    case 3:
+        return 1620;
+    case 2:
+        return 1622;
+    case 1:
+        return 1640;
+    case 0:
+        return 1644;
+    }
+    return 0;
+}
+
+int SetSoundBitsAndRate(ushort snd_type)
+{
+    switch (snd_type)
+    {
+    case 800:
+    case 811:
+        SampleRate = 11025;
+        SixteenBit = 0;
+        break;
+    case 822:
+        SampleRate = 22050;
+        SixteenBit = 0;
+        break;
+    case 1610:
+    case 1611:
+        SampleRate = 11025;
+        SixteenBit = 1;
+        break;
+    case 1620:
+    case 1622:
+        SampleRate = 22050;
+        SixteenBit = 1;
+        break;
+    case 1640:
+    case 1644:
+        SampleRate = 44100;
+        SixteenBit = 1;
+        break;
+    case 0:
+    default:
+        return 0;
+    }
+    return 1;
+}
+
 int AllocateSoundBankMemory(ushort snd_type)
 {
     TbFileHandle fh;
@@ -156,8 +217,50 @@ int AllocateSoundBankMemory(ushort snd_type)
 
 void DetermineSoundType(void)
 {
+#if 0
     asm volatile ("call ASM_DetermineSoundType\n"
         :  :  : "eax" );
+#else
+    int ret;
+    ubyte tpno;
+
+    while ( 1 )
+    {
+        sprintf(SoundProgressMessage, "BF19 - %d", SoundType);
+        SoundProgressLog(SoundProgressMessage);
+
+        ret = AllocateSoundBankMemory(SoundType);
+        if (ret > 0) {
+            // Success - accept the current SoundType
+            sprintf(SoundProgressMessage, " - allocation successful\n");
+            SoundProgressLog(SoundProgressMessage);
+            return;
+        }
+        else if (ret == -1) {
+            // If bank file is missing, no need to check anything further - all SoundTypes would fail
+            sprintf(SoundProgressMessage, " - no sound.dat\n");
+            SoundProgressLog(SoundProgressMessage);
+            SoundType = 0;
+            return;
+        }
+        else if (ret == -2) {
+            sprintf(SoundProgressMessage, " - not present in sound.dat\n");
+            SoundProgressLog(SoundProgressMessage);
+        }
+        else if (ret == 0) {
+            sprintf(SoundProgressMessage, " - cannot allocate\n");
+            SoundProgressLog(SoundProgressMessage);
+        }
+        // Selected SoundType failed to load - try lower quality
+        tpno = GetSoundTpNo(SoundType);
+        if (tpno >= 255)
+            break;
+        SoundType = GetSoundTypeFromTpNo(tpno + 1);
+        if (SoundType == 0)
+            break;
+    }
+    SoundType = 0;
+#endif
 }
 
 static void DoFreeSound(void)
@@ -362,38 +465,13 @@ void InitSound(void)
         return;
     }
 
-    switch (SoundType)
+    ret = SetSoundBitsAndRate(SoundType);
+    if (ret != 1)
     {
-    case 800:
-    case 811:
-        SampleRate = 11025;
-        SixteenBit = 0;
-        break;
-    case 822:
-        SampleRate = 22050;
-        SixteenBit = 0;
-        break;
-    case 1610:
-    case 1611:
-        SampleRate = 11025;
-        SixteenBit = 1;
-        break;
-    case 1620:
-    case 1622:
-        SampleRate = 22050;
-        SixteenBit = 1;
-        break;
-    case 1640:
-    case 1644:
-        SampleRate = 44100;
-        SixteenBit = 1;
-        break;
-    case 0:
-    default:
         sprintf(SoundProgressMessage, "BF19 - Unexpected SoundType - disabling sound\n");
         SoundAble = 0;
         SoundActive = 0;
-        break;
+        return;
     }
 
     if (SoundAble)
