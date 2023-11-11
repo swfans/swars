@@ -26,6 +26,7 @@
 
 #include "bfsound.h"
 #include "bfmemory.h"
+#include "bffile.h"
 #include "bfaudio.h"
 #include "msssys.h"
 #include "ssampply.h"
@@ -33,6 +34,15 @@
 #include "aildebug.h"
 #include "snderr.h"
 /******************************************************************************/
+
+#pragma pack(1)
+
+struct SoundBankSizes {
+    long DatSize;
+    long TabSize;
+};
+
+#pragma pack()
 
 extern TbBool AILStartupAlreadyInitiated;
 extern TbBool AutoScanForSoundHardware;
@@ -44,6 +54,7 @@ extern TbBool SoundInstalled;
 extern TbBool SoundAble;
 extern TbBool SoundActive;
 extern ushort SoundType;
+extern char SoundDataPath[144];
 
 extern ulong MaxNumberOfSamples;
 extern TbBool StereoSound;
@@ -59,10 +70,90 @@ extern void *SfxData;
 extern void *Sfx;
 extern void *EndSfxs;
 
+extern long largest_dat_size;
+extern long largest_tab_size;
+extern char full_sound_data_path[224];
+extern struct SoundBankSizes sound_bank_size_info[9];
+
 extern TbBool MusicInstalled;
 extern TbBool MusicAble;
 
 /******************************************************************************/
+ubyte GetSoundTpNo(ushort snd_type)
+{
+    switch (snd_type)
+    {
+    case 800:
+        return 8;
+    case 811:
+        return 7;
+    case 822:
+        return 6;
+    case 1610:
+        return 5;
+    case 1611:
+        return 4;
+    case 1620:
+        return 3;
+    case 1622:
+        return 2;
+    case 1640:
+        return 1;
+    case 1644:
+        return 0;
+    }
+    return 255;
+}
+
+int AllocateSoundBankMemory(ushort snd_type)
+{
+    TbFileHandle fh;
+    long len;
+    ushort tpno;
+    long dat_size, tab_size;
+
+    sprintf(full_sound_data_path, "%s/SOUND.DAT", SoundDataPath);
+    fh = LbFileOpen(full_sound_data_path, Lb_FILE_MODE_READ_ONLY);
+    if (fh == INVALID_FILE) {
+        return -1;
+    }
+    len = LbFileLength(full_sound_data_path);
+    memset(sound_bank_size_info, 0, 72);
+    LbFileSeek(fh, len - 76, Lb_FILE_SEEK_BEGINNING);
+    LbFileRead(fh, sound_bank_size_info, 72);
+    LbFileClose(fh);
+
+    tpno = GetSoundTpNo(SoundType);
+    if (tpno < 255) {
+        dat_size = sound_bank_size_info[tpno].DatSize;
+        tab_size = sound_bank_size_info[tpno].TabSize;
+    } else {
+        tab_size = 0;
+        dat_size = 0;
+    }
+
+    if ((dat_size <= 0) || (tab_size <= 0)) {
+        return -2;
+    }
+
+    SfxData = LbMemoryAlloc(dat_size + 256);
+    sprintf(SoundProgressMessage, "  Sound Data size = %ld  ", dat_size + 256);
+    SoundProgressLog(SoundProgressMessage);
+    Sfx = LbMemoryAlloc(tab_size + 256);
+
+    if ((SfxData == NULL) ||  (Sfx == NULL)) {
+        LbMemoryFree(SfxData);
+        LbMemoryFree(Sfx);
+        return 0;
+    }
+
+    largest_dat_size = dat_size;
+    largest_tab_size = tab_size;
+    memset(SfxData, 0, dat_size);
+    memset(Sfx, 0, largest_tab_size);
+    return 1;
+}
+
 void DetermineSoundType(void)
 {
     asm volatile ("call ASM_DetermineSoundType\n"

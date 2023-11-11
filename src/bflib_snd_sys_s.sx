@@ -305,11 +305,11 @@ GLOBAL_FUNC (ASM_load_sound_bank)
 		je     jump_ecb73
 		cmpl   $0x0,EXPORT_SYMBOL(Sfx)
 		je     jump_ecb73
-		mov    largest_dat_size,%ebx
+		mov    EXPORT_SYMBOL(largest_dat_size),%ebx
 		mov    EXPORT_SYMBOL(SfxData),%eax
 		xor    %edx,%edx
 		call   ac_memset
-		mov    largest_tab_size,%ebx
+		mov    EXPORT_SYMBOL(largest_tab_size),%ebx
 		mov    EXPORT_SYMBOL(Sfx),%eax
 		xor    %edx,%edx
 		call   ac_memset
@@ -452,7 +452,7 @@ GLOBAL_FUNC (ASM_load_sound_bank)
 
 
 /*----------------------------------------------------------------*/
-AllocateSoundBankMemory_:
+GLOBAL_FUNC (ASM_AllocateSoundBankMemory)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -610,13 +610,13 @@ AllocateSoundBankMemory_:
 		pop    %ebx
 		ret
 	jump_ecdb6:
-		mov    %esi,largest_dat_size
+		mov    %esi,EXPORT_SYMBOL(largest_dat_size)
 		mov    %edx,%eax
 		mov    %esi,%ebx
 		xor    %edx,%edx
-		mov    %edi,largest_tab_size
+		mov    %edi,EXPORT_SYMBOL(largest_tab_size)
 		call   ac_memset
-		mov    largest_tab_size,%ebx
+		mov    EXPORT_SYMBOL(largest_tab_size),%ebx
 		mov    EXPORT_SYMBOL(Sfx),%eax
 		xor    %edx,%edx
 		call   ac_memset
@@ -1931,7 +1931,7 @@ GLOBAL_FUNC (ASM_DetermineSoundType)
 		call   ac_SoundProgressLog
 		xor    %eax,%eax
 		mov    SoundType,%ax
-		call   AllocateSoundBankMemory_
+		call   ac_AllocateSoundBankMemory
 		mov    %eax,%edx
 		test   %eax,%eax
 		jg     jump_ffc40
@@ -4261,8 +4261,9 @@ OldInt2:	/* 0x1E5CA4 */
 		.long	0x0
 data_1e5ca8:
 		.long	0x0
-/* SoundBankSizes sound_bank_size_info;
+/* SoundBankSizes sound_bank_size_info[9];
  */
+GLOBAL (sound_bank_size_info)
 sound_bank_size_info_Bnk0Fld0:
 		.long	0x0
 sound_bank_size_info_Bnk0Fld1:
@@ -4301,11 +4302,11 @@ sound_bank_size_info_Bnk8Fld1:
 		.long	0x0
 /* long largest_dat_size;
  */
-largest_dat_size:
+GLOBAL (largest_dat_size)
 		.long	0x0
 /* long largest_tab_size;
  */
-largest_tab_size:
+GLOBAL (largest_tab_size)
 		.long	0x0
 GLOBAL (full_sound_data_path)
 		.fill   0xe0

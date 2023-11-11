@@ -27,6 +27,7 @@
 #include "mssal.h"
 #include "snderr.h"
 #include "ssampply.h"
+#include "bfsound.h"
 #include "bfsvaribl.h"
 #include "bffile.h"
 /******************************************************************************/
@@ -113,35 +114,12 @@ int LoadSounds(ubyte bank_no)
     LbFileSeek(fh, banks_offs, 0);
     LbFileRead(fh, banks_per_tpno, sizeof(banks_per_tpno));
 
-    switch (SoundType)
-    {
-    case 800:
-        tpno = 8;
-        break;
-    case 811:
-        tpno = 7;
-        break;
-    case 822:
-        tpno = 6;
-        break;
-    case 1610:
-        tpno = 5;
-        break;
-    case 1611:
-        tpno = 4;
-        break;
-    case 1620:
-        tpno = 3;
-        break;
-    case 1622:
-        tpno = 2;
-        break;
-    case 1640:
-        tpno = 1;
-        break;
-    case 1644:
-        tpno = 0;
-        break;
+    tpno = GetSoundTpNo(SoundType);
+    if (tpno >= 255) {
+        LbFileClose(fh);
+        sprintf(SoundProgressMessage, "BF43 - load sound bank - failed - bad sound type\n");
+        SoundProgressLog(SoundProgressMessage);
+        return 1;
     }
 
     if (bank_no + 1 > banks_per_tpno[tpno]) {
