@@ -55,7 +55,8 @@ typedef intptr_t      khronos_intptr_t;
 typedef uintptr_t     khronos_uintptr_t;
 typedef GLint64       khronos_stime_nanoseconds_t;
 typedef GLuint64      khronos_utime_nanoseconds_t;
-typedef suseconds_t   khronos_stime_microseconds_t;
+typedef GLint64       khronos_stime_microseconds_t;
+typedef GLuint64      khronos_utime_microseconds_t;
 typedef time_t        khronos_time_t;
 #endif
 
@@ -96,7 +97,7 @@ typedef i16 TbScreenCoord;
 typedef u8 TbPixel;
 
 typedef khronos_stime_microseconds_t TbClockMSec;
-typedef time_t TbTimeSec;
+typedef khronos_time_t TbTimeSec;
 
 #ifdef __cplusplus
 };
