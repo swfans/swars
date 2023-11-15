@@ -194,12 +194,23 @@ HAILPROVIDER AIL_set_sample_processor(SNDSAMPLE *s,
  */
 void AIL_set_sample_address(SNDSAMPLE *s, const void *start, uint32_t len);
 
+/** Set sample data format and flags.
+ *
+ * Byte order for multi-byte samples is not changeable, must be little-endian.
+ *
+ * @param s Target Sound Sample struct instance.
+ * @param format Valid format values are DIG_F_* enum members.
+ * @param flag Valid flags are DIG_PCM_* enum members.
+ */
+void AIL_set_sample_type(SNDSAMPLE *s, int32_t format, uint32_t flags);
+
 /** Set sample loop count.
  *
- * Count values:
- *    1: Single iteration, no looping
- *    0: Loop indefinitely
- *    n: Play sample n times
+ * @param s Target Sound SAMPLE struct instance.
+ * @param loop_count Count values:
+ *    1: Single iteration, no looping;
+ *    0: Loop indefinitely;
+ *    n: Play sample n times.
  */
 void AIL_set_sample_loop_count(SNDSAMPLE *s, int32_t loop_count);
 
@@ -214,8 +225,12 @@ void AIL_release_sample_handle(SNDSAMPLE *s);
 /** Initialize a SEQUENCE structure to prepare for playback of desired
  * XMIDI sequence file image.
  *
- * Sequence has to be allocated (not free), done playing, and stopped.
  * Should not be called from callback function.
+ *
+ * @param seq Target Sound SEQUENCE struct instance.
+ *   Sequence has to be allocated (not free), done playing, and stopped.
+ * @param start Source file image buffer.
+ * @param sequence_num
  *
  * @result Gives 0 if sequence initialization failed,
  *        -1 if initialized OK but timbre was missing,

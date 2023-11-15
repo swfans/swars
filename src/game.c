@@ -9241,12 +9241,25 @@ void show_menu_screen_st0(void)
     login_control__State = 6;
     sprintf(net_unkn2_text, "01234567890");
 
-    hotspot_buffer = scratch_malloc_mem;
-    mission_briefing_text = (char *)scratch_malloc_mem + 512;
-    netscan_text = (char *)scratch_malloc_mem + 16896;
-    weapon_text = (char *)scratch_malloc_mem + 33280;
-    memload = (ubyte *)scratch_malloc_mem + 66048;
-    purple_draw_list = (struct PurpleDrawItem *)((ubyte *)scratch_malloc_mem + 82432);
+    {
+        long pos = 0;
+        hotspot_buffer = (struct StartScreenPoint *)((ubyte *)scratch_malloc_mem + pos);
+        pos += hotspot_buffer_len;
+
+        mission_briefing_text = (char *)scratch_malloc_mem + pos;
+        pos += mission_briefing_text_len;
+
+        netscan_text = (char *)scratch_malloc_mem + pos;
+        pos += netscan_text_len;
+
+        weapon_text = (char *)scratch_malloc_mem + pos;
+        pos += weapon_text_len;
+
+        memload = (ubyte *)scratch_malloc_mem + pos;
+        pos += memload_len;
+
+        purple_draw_list = (struct PurpleDrawItem *)((ubyte *)scratch_malloc_mem + pos);
+    }
 
     init_read_all_sprite_files();
     ingame.Credits = 50000;
@@ -9316,8 +9329,12 @@ ubyte load_mail_text(const char *filename)
     p[2] = '3';
 
     totlen = load_file_alltext(filename, p + 3);
-    if (totlen == -1) {
+    if (totlen == Lb_FAIL) {
         return 0;
+    }
+    if (3+totlen >= mission_briefing_text_len) {
+        LOGERR("Insufficient memory for mission_briefing_text - %d instead of %d", mission_briefing_text_len, 3+totlen);
+        totlen = mission_briefing_text_len - 3 - 1;
     }
     p = mission_briefing_text;
     p[3 + totlen] = '\0';

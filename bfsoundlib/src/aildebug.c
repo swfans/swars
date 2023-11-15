@@ -482,6 +482,19 @@ void AIL_set_sample_address(SNDSAMPLE *s, const void *start, uint32_t len)
     AIL_indent--;
 }
 
+void AIL_set_sample_type(SNDSAMPLE *s, int32_t format, uint32_t flags)
+{
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s(0x%p, %u, 0x%x)\n", __func__, s, format, flags);
+
+    AIL2OAL_API_set_sample_type(s, format, flags);
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Finished\n");
+    AIL_indent--;
+}
+
 void AIL_set_sample_loop_count(SNDSAMPLE *s, int32_t loop_count)
 {
     AIL_indent++;

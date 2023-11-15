@@ -643,7 +643,10 @@ extern ulong turns_delta;
 extern ushort fifties_per_gameturn;
 extern ushort gamep_unknval_01;
 extern ubyte *vec_tmap;
+
 extern ubyte *memload;
+#define memload_len 16384
+
 extern ubyte net_host_player_no;
 extern ubyte byte_1C6D4A;
 extern ubyte byte_1C6DDC[5];
@@ -685,11 +688,17 @@ extern ubyte save_crypto_tables_state[3];
 extern ubyte save_crypto_data_state[3];
 
 extern ubyte game_high_resolution;
+
 extern char *mission_briefing_text;
+#define mission_briefing_text_len 16384
+
 extern short mission_open[50];
 extern short mission_state[50];
 extern sbyte mission_result;
+
 extern char *weapon_text;
+#define weapon_text_len 32768
+
 extern struct PurpleDrawItem *purple_draw_list;
 extern ubyte *save_game_buffer;
 extern char save_active_desc[28];
@@ -777,7 +786,9 @@ extern ushort mouse_map_z;
 extern ushort render_area_a;
 extern ushort render_area_b;
 extern void *scratch_malloc_mem;
+
 extern struct StartScreenPoint *hotspot_buffer;
+#define hotspot_buffer_len 512
 
 extern ubyte unkn_gfx_option_2;
 extern ubyte unkn_option_3;

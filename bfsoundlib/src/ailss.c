@@ -576,6 +576,20 @@ void AIL2OAL_API_set_sample_address(SNDSAMPLE *s, const void *start, uint32_t le
     s->len[1]   = 0;
 }
 
+void AIL2OAL_API_set_sample_type(SNDSAMPLE *s, int32_t format, uint32_t flags)
+{
+    if (s == NULL)
+        return;
+
+    if ((format == s->format) && (flags == s->flags))
+        return;
+
+    s->format = format;
+    s->flags  = flags;
+
+    SS_build_amplitude_tables(s);
+}
+
 void AIL2OAL_API_set_sample_user_data(SNDSAMPLE *s, uint32_t index, intptr_t value)
 {
     if (s == NULL)

@@ -68,43 +68,51 @@ msgid "Zealot Attack"
 msgstr ""
 
 #: mission.brief.mail1.par1.h mission.brief.mail2.par1.h
-#: mission.brief.mail1.par1.h mission.brief.mail3.par1.h
 #: mission.brief.mail3.par1.h mission.brief.mail4.par1.h
-#: mission.brief.mail3.par1.h mission.brief.mail5.par1.h
 #: mission.brief.mail5.par1.h mission.brief.mail6.par1.h
-#: mission.brief.mail5.par1.h mission.brief.mail7.par1.h
-#: mission.brief.mail5.par1.h mission.brief.mail8.par1.h
 #: mission.brief.mail7.par1.h mission.brief.mail12.par1.h
-#: mission.brief.mail13.par1.h mission.brief.mail13.par1.h
 #: mission.brief.mail13.par1.h mission.brief.mail14.par1.h
-#: mission.brief.mail13.par1.h mission.brief.mail15.par1.h
 #: mission.brief.mail15.par1.h mission.brief.mail17.par1.h
-#: mission.brief.mail19.par1.h mission.brief.mail18.par1.h
-#: mission.brief.mail19.par1.h mission.brief.mail19.par1.h
 #: mission.brief.mail19.par1.h mission.brief.mail21.par1.h
-#: mission.brief.mail19.par1.h mission.brief.mail23.par1.h
 #: mission.brief.mail23.par1.h mission.brief.mail25.par1.h
-#: mission.brief.mail23.par1.h mission.brief.mail27.par1.h
 #: mission.brief.mail27.par1.h mission.brief.mail30.par1.h
 msgctxt "mission brief email header"
-msgid "Mission Objectives:"
+msgid "Message Type: KPV1-encrypted"
 msgstr ""
 
-#: mission.brief.mail1.par2.c2
-msgctxt "mission brief email orders"
-msgid ""
-"1. Kill the Zealots "
+#: mission.brief.mail1.par2.h mission.brief.mail2.par2.h
+#: mission.brief.mail3.par2.h mission.brief.mail4.par2.h
+#: mission.brief.mail5.par2.h mission.brief.mail6.par2.h
+#: mission.brief.mail7.par2.h mission.brief.mail12.par2.h
+#: mission.brief.mail13.par2.h mission.brief.mail14.par2.h
+#: mission.brief.mail15.par2.h mission.brief.mail17.par2.h
+#: mission.brief.mail19.par2.h mission.brief.mail21.par2.h
+#: mission.brief.mail23.par2.h mission.brief.mail25.par2.h
+#: mission.brief.mail27.par2.h mission.brief.mail30.par2.h
+msgctxt "mission brief email header"
+msgid "Plaintext begins:"
 msgstr ""
 
 #: mission.brief.mail1.par3.c2
 msgctxt "mission brief email orders"
 msgid ""
-"2. Return to the IML link "
+"Very simple level (maybe too simple), but shows shortcomings of the follow "
+"command for the punk followers - a winning strategy is getting into the "
+"zealot's car, but if this is done your followers can't get in in and just "
+"get run over.."
 msgstr ""
 
-#: mission.brief.mail1.map35.level4:1
-msgctxt "mission brief tactical information"
-msgid "Zealots leaving Detroit AI base"
+#: mission.brief.mail1.par4.c4 mission.brief.mail2.par4.c4
+#: mission.brief.mail3.par4.c4 mission.brief.mail4.par4.c4
+#: mission.brief.mail5.par4.c4 mission.brief.mail6.par4.c4
+#: mission.brief.mail7.par4.c4 mission.brief.mail12.par4.c4
+#: mission.brief.mail13.par4.c4 mission.brief.mail14.par4.c4
+#: mission.brief.mail15.par4.c4 mission.brief.mail17.par4.c4
+#: mission.brief.mail19.par4.c4 mission.brief.mail21.par4.c4
+#: mission.brief.mail23.par4.c4 mission.brief.mail25.par4.c4
+#: mission.brief.mail27.par4.c4 mission.brief.mail30.par4.c4
+msgctxt "mission brief email sender"
+msgid "Paul"
 msgstr ""
 
 #: mission.title:80
@@ -112,42 +120,12 @@ msgctxt "mission title"
 msgid "Clean-Up"
 msgstr ""
 
-#: mission.brief.mail2.par2.c2
-msgctxt "mission brief email orders"
-msgid ""
-"1. Protect civilian groups from Eurocorp agents"
-msgstr ""
-
 #: mission.brief.mail2.par3.c2
 msgctxt "mission brief email orders"
 msgid ""
-"2. Kill remaining defending agents"
-msgstr ""
-
-#: mission.brief.mail2.map35.level7:1
-msgctxt "mission brief tactical information"
-msgid "Protest groups"
-msgstr ""
-
-#: mission.brief.mail2.map35.level7:2
-msgctxt "mission brief tactical information"
-msgid "Eurocorp Compound"
-msgstr ""
-
-#: mission.title:4
-msgctxt "mission title"
-msgid "Clean Up"
-msgstr ""
-
-#: mission.brief.mail3.par2.c2
-msgctxt "mission brief email orders"
-msgid ""
-"1. Kill Eurocorp agents"
-msgstr ""
-
-#: mission.brief.mail3.map7.level22:1
-msgctxt "mission brief tactical information"
-msgid "Eurocorp Patrols"
+" A lot of effort has been put into it and it seems finished. It's seemingly "
+"a simple kill everything mission, but it's very challenging, which is fun "
+"and the kind of thing I think the campaign should be angled towards. "
 msgstr ""
 
 #: mission.title:77
@@ -155,21 +133,12 @@ msgctxt "mission title"
 msgid "Guns Guns Guns"
 msgstr ""
 
-#: mission.brief.mail4.par2.c2
+#: mission.brief.mail3.par3.c2
 msgctxt "mission brief email orders"
 msgid ""
-"1. Kill the zealot scientist"
-msgstr ""
-
-#: mission.brief.mail4.par3.c2
-msgctxt "mission brief email orders"
-msgid ""
-"2. Return to the IML link "
-msgstr ""
-
-#: mission.brief.mail4.map20.level7:1
-msgctxt "mission brief tactical information"
-msgid "Scientist Location"
+"Seems impossibly hard, and also a bit boring in comparison to the early one. "
+"The later one could be interesting with some tweaks, it needs more weapons "
+"or something."
 msgstr ""
 
 #: mission.title:60
@@ -177,60 +146,27 @@ msgctxt "mission title"
 msgid "Guns Guns Guns alt1"
 msgstr ""
 
-#: mission.brief.mail5.par2.c2
+#: mission.brief.mail4.par3.c2
 msgctxt "mission brief email orders"
 msgid ""
-"1. Raid Eurocorp armoury"
+"Has bugs with some of the follower punks not joining the player, but I'm not "
+"sure if this is just a bug with my pre-alpha convertor, need to check again "
+"now early level support is in. The early version is also missing objectives, "
+"but it's quite obvious what they would be. Oddly killing the final scientist "
+"gives the player a sniper rifle, much like the level below - this could be a "
+"sign there WAS progression in the campaign."
 msgstr ""
-
-#: mission.brief.mail5.par3.c2
-msgctxt "mission brief email orders"
-msgid ""
-"2. Kill all Eurocorp Agents"
-msgstr ""
-
-#: mission.brief.mail5.map20.level2:1
-msgctxt "mission brief tactical information"
-msgid "Eurocorp Armoury"
-msgstr ""
-
 
 #: mission.title:64
 msgctxt "mission title"
 msgid "Serve And Shoot"
 msgstr ""
 
-#: mission.brief.mail6.par2.c2
+#: mission.brief.mail5.par3.c2
 msgctxt "mission brief email orders"
 msgid ""
-"1. Kill the Church of the New Epoch scientist"
-msgstr ""
-
-#: mission.brief.mail6.par3.c2
-msgctxt "mission brief email orders"
-msgid ""
-"2. Eliminate all Zealots "
-msgstr ""
-
-#: mission.brief.mail6.par4.c2
-msgctxt "mission brief email orders"
-msgid ""
-"3. Evacuate via the IML link "
-msgstr ""
-
-#: mission.brief.mail6.map3.level22:1
-msgctxt "mission brief tactical information"
-msgid "Scientist Location"
-msgstr ""
-
-#: mission.brief.mail6.map3.level22:2
-msgctxt "mission brief tactical information"
-msgid "Zealot Congregation"
-msgstr ""
-
-#: mission.brief.mail6.map3.level22:3
-msgctxt "mission brief tactical information"
-msgid "Exit IML link"
+"The final version also grants a sniper rifle for killing the scientist, like "
+"the level above, some kind of thematic idea between the two."
 msgstr ""
 
 # #: mission.title:3
@@ -238,15 +174,13 @@ msgstr ""
 # msgid "Need Some Prep"
 # msgstr ""
 
-#: mission.brief.mail7.par2.c2
+#: mission.brief.mail6.par3.c2
 msgctxt "mission brief email orders"
 msgid ""
-"1. Eliminate Eurocorp agents"
-msgstr ""
-
-#: mission.brief.mail7.map47.level30:1
-msgctxt "mission brief tactical information"
-msgid "Eurocorp Compound"
+"Totally cut level that is quite polished but a little light on things to do "
+"do. That said there is quite a bit setup in this level, so could be "
+"stretched out to be more interesting. As it's totally cut has no mission "
+"objectives, but seems to just be an assassinate mission against Eurocorp."
 msgstr ""
 
 # #: mission.title:1
@@ -254,15 +188,16 @@ msgstr ""
 # msgid "General Takeout"
 # msgstr ""
 
-#: mission.brief.mail8.par2.c2
+#: mission.brief.mail7.par3.c2
 msgctxt "mission brief email orders"
 msgid ""
-"1. Kill the soldiers before they escape"
-msgstr ""
-
-#: mission.brief.mail8.map4.level7:1
-msgctxt "mission brief tactical information"
-msgid "Military Convoy"
+"The objectives here seem quite obvious - there is a group of soldiers by a "
+"bank. Attacking them causes some of them to break off and flee in vehicles. "
+"They ride to the top of the freeway and head to a getaway flying car. This "
+"then flies to the edge of the map and then stops. Therefore it's a an "
+"assassinate mission with a twist to take out the baddies before they escape "
+"off the map. Works well, but it's a bit too simple once you understand what "
+"to do. "
 msgstr ""
 
 #: mission.title:78
@@ -270,262 +205,110 @@ msgctxt "mission title"
 msgid "Communications"
 msgstr ""
 
-#: mission.brief.mail12.par2.c2
-msgctxt "mission brief email orders"
-msgid ""
-"1. Kill Eurocorp agents"
-msgstr ""
-
 #: mission.brief.mail12.par3.c2
 msgctxt "mission brief email orders"
 msgid ""
-"2. Collect Explosives"
+"Two versions of this one as well. I am pretty sure these are set to the "
+"wrong map file. Experimentation has shown that there doesn't actually seem "
+"to be a matching map for this level. If they are renamed to use map 79 "
+"Reykjavik, they just about work. If this is done they are quite interesting "
+"complex and very difficult (but doable) levels. Could be something really "
+"good, but needs a lot of work to make them playable. Finished levels(?) but "
+"for a missing map, needs a lot of work to be coherent in the final game."
 msgstr ""
 
-#: mission.brief.mail12.par4.c2
-msgctxt "mission brief email orders"
-msgid ""
-"3. Destroy building"
-msgstr ""
-
-#: mission.brief.mail12.par5.c2
-msgctxt "mission brief email orders"
-msgid ""
-"4. Evacuate"
-msgstr ""
-
-#: mission.title:70
+#: mission.title:61
 msgctxt "mission title"
-msgid "Art Attack"
-msgstr ""
-
-#: mission.brief.mail13.par2.c2
-msgctxt "mission brief email orders"
-msgid ""
-"1. Destroy the statue"
+msgid "Get The Power"
 msgstr ""
 
 #: mission.brief.mail13.par3.c2
 msgctxt "mission brief email orders"
 msgid ""
-" Hint: Explosives are hidden somewhere in the level "
+"This is a simple and quite fun early level. Works perfectly, but could "
+"perhaps be improved by using flag1/2 objectives to draw the player's "
+"attention to the chemical plant where the essential grenade is (although a "
+"briefing could explain this as well)."
 msgstr ""
 
-#: mission.brief.mail13.map1.level7:1
-msgctxt "mission brief tactical information"
-msgid "Statue location"
-msgstr ""
-
-#: mission.title:66
-msgctxt "mission title"
-msgid "The Purge"
-msgstr ""
-
-#: mission.brief.mail14.par2.c2
+#: mission.brief.mail14.par3.c2
 msgctxt "mission brief email orders"
 msgid ""
-"1. Kill Eurocorp agents"
+"This is an early level that is a good idea, but seems a bit rough. Odd stuff "
+"like the player starting with a useless persuadertron - was the idea to "
+"gather the other unguided together? Feels like it needs something else added "
+"to really shine. There's an older version of this, but it's the same only "
+"clearly more unfinished."
 msgstr ""
 
-#: mission.brief.mail14.map44.level30:1
-msgctxt "mission brief tactical information"
-msgid "Eurocorp Compound"
-msgstr ""
-
-#: mission.title:81
-msgctxt "mission title"
-msgid "Godfather"
-msgstr ""
-
-#: mission.brief.mail15.par2.c2
+#: mission.brief.mail15.par3.c2
 msgctxt "mission brief email orders"
 msgid ""
-"1. Kill the Godfather"
-msgstr ""
-
-#: mission.brief.mail15.map9.level7:1
-msgctxt "mission brief tactical information"
-msgid "Godfather's Compound"
-msgstr ""
-
-#: mission.title:62
-msgctxt "mission title"
-msgid "The Rescue"
-msgstr ""
-
-#: mission.brief.mail17.par2.c2
-msgctxt "mission brief email orders"
-msgid ""
-"1. Kill Eurocorp scientist and recover briefcase"
+"Interesting and quite polished level, but not that much to it, which lets it "
+"down a little."
 msgstr ""
 
 #: mission.brief.mail17.par3.c2
 msgctxt "mission brief email orders"
 msgid ""
-"2. Rescue imprisoned scientist and evacuate with him"
+"This is a weird one. Doesn't make much sense to play, either needs a "
+"briefing to hint at what to actually do, or needs changing. "
 msgstr ""
 
-#: mission.brief.mail17.par4.c2
+#: mission.brief.mail19.par3.c2
 msgctxt "mission brief email orders"
 msgid ""
-"Hint: Eurocorp will lock the scientists' prison if under attack"
-msgstr ""
-
-#: mission.brief.mail17.par5.c2
-msgctxt "mission brief email orders"
-msgid ""
-"Try saving the scientist first"
-msgstr ""
-
-#: mission.brief.mail17.map28.level2:1
-msgctxt "mission brief tactical information"
-msgid "Scientist with Briefcase"
-msgstr ""
-
-#: mission.brief.mail17.map28.level2:2
-msgctxt "mission brief tactical information"
-msgid "Eurocorp Prison"
-msgstr ""
-
-#: mission.brief.mail17.map28.level2:3
-msgctxt "mission brief tactical information"
-msgid "Safehouse"
-msgstr ""
-
-#: mission.title:61
-msgctxt "mission title"
-msgid "Dumped"
-msgstr ""
-
-#: mission.brief.mail19.par2.c2
-msgctxt "mission brief email orders"
-msgid ""
-"1. Destroy Zealot Vehicles"
-msgstr ""
-
-#: mission.brief.mail19.map2.level7:1
-msgctxt "mission brief tactical information"
-msgid "Industrial Depot"
-msgstr ""
-
-#: mission.brief.mail19.map2.level7:2
-msgctxt "mission brief tactical information"
-msgid "Zealot Temple"
-msgstr ""
-
-#: mission.brief.mail21.par2.c2
-msgctxt "mission brief email orders"
-msgid ""
-"1. Kill all Eurocorp agents"
+"Seems pretty finished, but either I'm missing something or it needs "
+"rebalancing as it's brutally hard (think it MIGHT be possible if you're "
+"really good/lucky though). Also seems to have had a wacky plot originally. "
+"The thing with the cars at the start blocking each other needs fixing."
 msgstr ""
 
 #: mission.brief.mail21.par3.c2
 msgctxt "mission brief email orders"
 msgid ""
-"2. Recover weapon"
+"This seems good on paper, but it's actually too simplistic to really be fun. "
+"While it's marked as a late game level, some of the earlier .miss files have "
+"it as an early level (even the first!) and it seems to fit in better there. "
+"There's a bug where the wrong group is targetted that is trivial to fix, but "
+"it's just a boring easy kill everyone level. In the older files there are "
+"other objectives to get a weapon and take it to a location, but this is "
+"hardly thrilling stuff either. Either use as early filler, or needs radical "
+"rework."
 msgstr ""
 
-#: mission.brief.mail21.par4.c2
+#: mission.brief.mail23.par3.c2
 msgctxt "mission brief email orders"
 msgid ""
-"3. Evacuate"
-msgstr ""
-
-#: mission.brief.mail21.map40.level15:1
-msgctxt "mission brief tactical information"
-msgid "Eurocorp Armoury"
-msgstr ""
-
-#: mission.brief.mail21.map40.level15:2
-msgctxt "mission brief tactical information"
-msgid "Evac point"
-msgstr ""
-
-#: mission.title:75
-msgctxt "mission title"
-msgid "Ferocity"
-msgstr ""
-
-#: mission.brief.mail23.par2.c2
-msgctxt "mission brief email orders"
-msgid ""
-"1. Assassinate Eurocorp Executives"
-msgstr ""
-
-#: mission.brief.mail23.map30.level23:1
-msgctxt "mission brief tactical information"
-msgid "Target Locations"
-msgstr ""
-
-#: mission.brief.mail23.map30.level23:2
-msgctxt "mission brief tactical information"
-msgid "Friendly contact"
-msgstr ""
-
-#: mission.title:67
-msgctxt "mission title"
-msgid "Talks Ambush"
-msgstr ""
-
-#: mission.brief.mail25.par2.c2
-msgctxt "mission brief email orders"
-msgid ""
-"1. Attend the peace talks"
+"Important level that concludes the trilogy of similar levels in the other "
+"two campaigns. Feels a little rough in comparison, but works quite well."
 msgstr ""
 
 #: mission.brief.mail25.par3.c2
 msgctxt "mission brief email orders"
 msgid ""
-"2. Re-arm from weapons cache"
-msgstr ""
-
-#: mission.brief.mail25.par4.c2
-msgctxt "mission brief email orders"
-msgid ""
-"3. Eliminate all Eurocorp agents"
-msgstr ""
-
-#: mission.brief.mail25.map26.level4:1
-msgctxt "mission brief tactical information"
-msgid "Talks Location"
-msgstr ""
-
-#: mission.brief.mail25.map26.level4:2
-msgctxt "mission brief tactical information"
-msgid "Safe Haven"
-msgstr ""
-
-#: mission.title:69
-msgctxt "mission title"
-msgid "Trash Church"
-msgstr ""
-
-#: mission.brief.mail27.par2.c2
-msgctxt "mission brief email orders"
-msgid ""
-"1. Kill All Zealots"
+"I really like the idea of this one. It's very glitchy though, something "
+"about the collect item objectives is wrong and causes an overflow to random "
+"parts of the map. It's also clear that there is supposed to be some kind of "
+"counter-ambush from the unguided hiding in the buildings near the weapons "
+"cache, but they don't do anything, it seems this was never finished."
 msgstr ""
 
 #: mission.brief.mail27.par3.c2
 msgctxt "mission brief email orders"
 msgid ""
-"2. Destroy Building"
+"An intriguing but barely even started level. Doesn't work in the final "
+"executable due to no player characters in the level. There is only even one "
+"enemy to kill. An all out war to blow up a zealot church sounds like an "
+"exciting idea for a level though."
 msgstr ""
 
-#: mission.title:103
-msgctxt "mission title"
-msgid "A Tale of Two Cities"
-msgstr ""
-
-#: mission.brief.mail30.par2.c2
+#: mission.brief.mail30.par3.c2
 msgctxt "mission brief email orders"
 msgid ""
-"1. Destroy Buildings"
-msgstr ""
-
-#: mission.brief.mail30.map60.level15:1
-msgctxt "mission brief tactical information"
-msgid "Building Targets"
+"This was clearly going to be a demo for the Unguided campaign. Very polished "
+"and clever level full of surprises. Also lots of interesting stuff unused in "
+"the actual mission that could be spun off to another one."
 msgstr ""
 
 #: message.win:1

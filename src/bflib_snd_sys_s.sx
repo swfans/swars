@@ -58,7 +58,7 @@ GLOBAL_FUNC (ASM_LoadSounds)
 		cmpb   $0x0,SoundAble
 		je     jump_ec8ae
 		xor    %eax,%eax
-		movsbl CurrentSoundBank,%edx
+		movsbl EXPORT_SYMBOL(CurrentSoundBank),%edx
 		mov    %di,%ax
 		cmp    %eax,%edx
 		je     jump_ec8ae
@@ -66,7 +66,7 @@ GLOBAL_FUNC (ASM_LoadSounds)
 		jne    jump_ec8ae
 		call   ac_StopAllSamples
 		mov    $0x2,%edx
-		mov    $full_sound_data_path,%eax
+		mov    $EXPORT_SYMBOL(full_sound_data_path),%eax
 		call   ac_LbFileOpen
 		mov    %eax,%ecx
 		mov    %eax,%esi
@@ -102,7 +102,7 @@ GLOBAL_FUNC (ASM_LoadSounds)
 		movl   $0x8,0x18(%esp)
 		jmp    jump_ec815
 	jump_ec763:
-		mov    $full_sound_data_path,%eax
+		mov    $EXPORT_SYMBOL(full_sound_data_path),%eax
 		call   ac_LbFileLength
 		lea    -0x4(%eax),%edx
 		xor    %ebx,%ebx
@@ -172,7 +172,7 @@ GLOBAL_FUNC (ASM_LoadSounds)
 		xor    %edx,%edx
 		mov    %esi,%eax
 		mov    0x18(%esp),%dl
-		call   load_sound_bank
+		call   ac_load_sound_bank
 		test   %al,%al
 		jne    jump_ec870
 		mov    %esi,%eax
@@ -181,7 +181,7 @@ GLOBAL_FUNC (ASM_LoadSounds)
 		jmp    jump_ec8e3
 	jump_ec870:
 		mov    0x1c(%esp),%al
-		mov    %al,CurrentSoundBank
+		mov    %al,EXPORT_SYMBOL(CurrentSoundBank)
 		mov    %esi,%eax
 		call   ac_LbFileClose
 		push   $aBf45LoadSoundB
@@ -279,7 +279,7 @@ format_sounds:
 /*----------------------------------------------------------------*/
 /* unsigned char load_sound_bank(long, unsigned char)
  */
-load_sound_bank:
+GLOBAL_FUNC (ASM_load_sound_bank)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -305,11 +305,11 @@ load_sound_bank:
 		je     jump_ecb73
 		cmpl   $0x0,EXPORT_SYMBOL(Sfx)
 		je     jump_ecb73
-		mov    largest_dat_size,%ebx
+		mov    EXPORT_SYMBOL(largest_dat_size),%ebx
 		mov    EXPORT_SYMBOL(SfxData),%eax
 		xor    %edx,%edx
 		call   ac_memset
-		mov    largest_tab_size,%ebx
+		mov    EXPORT_SYMBOL(largest_tab_size),%ebx
 		mov    EXPORT_SYMBOL(Sfx),%eax
 		xor    %edx,%edx
 		call   ac_memset
@@ -452,7 +452,7 @@ load_sound_bank:
 
 
 /*----------------------------------------------------------------*/
-AllocateSoundBankMemory_:
+GLOBAL_FUNC (ASM_AllocateSoundBankMemory)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -464,11 +464,11 @@ AllocateSoundBankMemory_:
 		mov    %eax,%ecx
 		push   $SoundDataPath
 		push   $aSSound_dat
-		push   $full_sound_data_path
+		push   $EXPORT_SYMBOL(full_sound_data_path)
 		call   ac_sprintf
 		add    $0xc,%esp
 		mov    $0x2,%edx
-		mov    $full_sound_data_path,%eax
+		mov    $EXPORT_SYMBOL(full_sound_data_path),%eax
 		call   ac_LbFileOpen
 		mov    %eax,%ebp
 		cmp    $0xffffffff,%eax
@@ -518,7 +518,7 @@ AllocateSoundBankMemory_:
 		mov    sound_bank_size_info_Bnk8Fld1,%edi
 		jmp    jump_ecd39
 	jump_ecc6f:
-		mov    $full_sound_data_path,%eax
+		mov    $EXPORT_SYMBOL(full_sound_data_path),%eax
 		mov    $0x48,%ebx
 		call   ac_LbFileLength
 		xor    %edx,%edx
@@ -610,13 +610,13 @@ AllocateSoundBankMemory_:
 		pop    %ebx
 		ret
 	jump_ecdb6:
-		mov    %esi,largest_dat_size
+		mov    %esi,EXPORT_SYMBOL(largest_dat_size)
 		mov    %edx,%eax
 		mov    %esi,%ebx
 		xor    %edx,%edx
-		mov    %edi,largest_tab_size
+		mov    %edi,EXPORT_SYMBOL(largest_tab_size)
 		call   ac_memset
-		mov    largest_tab_size,%ebx
+		mov    EXPORT_SYMBOL(largest_tab_size),%ebx
 		mov    EXPORT_SYMBOL(Sfx),%eax
 		xor    %edx,%edx
 		call   ac_memset
@@ -1931,7 +1931,7 @@ GLOBAL_FUNC (ASM_DetermineSoundType)
 		call   ac_SoundProgressLog
 		xor    %eax,%eax
 		mov    SoundType,%ax
-		call   AllocateSoundBankMemory_
+		call   ac_AllocateSoundBankMemory
 		mov    %eax,%edx
 		test   %eax,%eax
 		jg     jump_ffc40
@@ -4261,8 +4261,9 @@ OldInt2:	/* 0x1E5CA4 */
 		.long	0x0
 data_1e5ca8:
 		.long	0x0
-/* SoundBankSizes sound_bank_size_info;
+/* SoundBankSizes sound_bank_size_info[9];
  */
+GLOBAL (sound_bank_size_info)
 sound_bank_size_info_Bnk0Fld0:
 		.long	0x0
 sound_bank_size_info_Bnk0Fld1:
@@ -4301,13 +4302,13 @@ sound_bank_size_info_Bnk8Fld1:
 		.long	0x0
 /* long largest_dat_size;
  */
-largest_dat_size:
+GLOBAL (largest_dat_size)
 		.long	0x0
 /* long largest_tab_size;
  */
-largest_tab_size:
+GLOBAL (largest_tab_size)
 		.long	0x0
-full_sound_data_path:
+GLOBAL (full_sound_data_path)
 		.fill   0xe0
 /* MusicBankSizes music_bank_size_info;
  */

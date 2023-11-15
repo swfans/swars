@@ -379,6 +379,10 @@ void init_weapon_text(void)
     totlen = load_file_alltext("textdata/wms.txt", weapon_text);
     if (totlen == Lb_FAIL)
         return;
+    if (totlen >= weapon_text_len) {
+        LOGERR("Insufficient memory for weapon_text - %d instead of %d", weapon_text_len, totlen);
+        totlen = weapon_text_len - 1;
+    }
 
     // TODO change the format to use our INI parser
     s = weapon_text;

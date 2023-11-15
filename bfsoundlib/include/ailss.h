@@ -77,6 +77,8 @@ HAILPROVIDER AIL2OAL_API_set_sample_processor(SNDSAMPLE *s,
 
 void AIL2OAL_API_set_sample_address(SNDSAMPLE *s, const void *start, uint32_t len);
 
+void AIL2OAL_API_set_sample_type(SNDSAMPLE *s, int32_t format, uint32_t flags);
+
 void AIL2OAL_API_set_sample_user_data(SNDSAMPLE *s, uint32_t index, intptr_t value);
 
 void AIL2OAL_API_set_sample_loop_count(SNDSAMPLE *s, int32_t loop_count);
