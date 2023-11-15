@@ -217,7 +217,7 @@ void save_cities_conf_file(void)
     LbFileClose(fh);
 }
 
-void load_city_data(ubyte type)
+void load_city_data(u8 type)
 {
 #if 0
     TbFileHandle fh;
@@ -241,7 +241,7 @@ void read_cities_conf_file(void)
     TbFileHandle conf_fh;
     TbBool done;
     int i, n;
-    long k;
+    i32 k;
     char *conf_buf;
     struct TbIniParser parser;
     char conf_fname[80];
@@ -408,7 +408,7 @@ void read_cities_conf_file(void)
     LbMemoryFree(conf_buf);
 }
 
-void recount_city_credit_reward(ubyte city)
+void recount_city_credit_reward(u8 city)
 {
     int i, k;
 
@@ -425,7 +425,7 @@ void recount_city_credit_reward(ubyte city)
  */
 TbBool is_mission_active_in_city(ushort missi, ushort city)
 {
-    ulong TotalReward;
+    u32 TotalReward;
 
     // The CashReward x1000 indicates credits automatically gained after mission
     TotalReward = mission_list[missi].CashReward * 1000;
@@ -478,14 +478,14 @@ void update_cities_to_mission(ushort missi, TbBool decorate, ushort flags)
 }
 
 
-void activate_cities(ubyte brief)
+void activate_cities(u8 brief)
 {
 #if 0
     asm volatile ("call ASM_activate_cities\n"
         : : "a" (brief));
 #endif
     ushort missi, spmissi;
-    ubyte bri;
+    u8 bri;
 
     deactivate_cities();
 

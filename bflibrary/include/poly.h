@@ -61,11 +61,11 @@ enum RenderingVectorMode {
 };
 
 struct PolyPoint { // sizeof=20
-    long X; //< offset=0, Horizonal coordinate within screen buffer
-    long Y; //< offset=4, Vertical coordinate within screen buffer
-    long U; //< offset=8, Texture UV mapping, U coordinate
-    long V; //< offset=12, Texture UV mapping, V coordinate
-    long S; //< offset=16, Shiness / brighness of the point
+    i32 X; //< offset=0, Horizonal coordinate within screen buffer
+    i32 Y; //< offset=4, Vertical coordinate within screen buffer
+    i32 U; //< offset=8, Texture UV mapping, U coordinate
+    i32 V; //< offset=12, Texture UV mapping, V coordinate
+    i32 S; //< offset=16, Shiness / brighness of the point
 };
 
 #pragma pack()
@@ -73,24 +73,24 @@ struct PolyPoint { // sizeof=20
 extern struct PolyPoint polyscans[POLY_SCANS_COUNT];
 
 extern TbPixel vec_colour;
-extern ubyte vec_mode;
+extern u8 vec_mode;
 
-extern ubyte *poly_screen;
+extern u8 *poly_screen;
 
-extern long vec_window_width;
-extern long vec_window_height;
+extern i32 vec_window_width;
+extern i32 vec_window_height;
 
-extern long vec_screen_width;
-extern ubyte *vec_screen;
+extern i32 vec_screen_width;
+extern u8 *vec_screen;
 
-extern ubyte *vec_map;
-extern ubyte *vec_pal;
+extern u8 *vec_map;
+extern u8 *vec_pal;
 
-extern ubyte *dither_map;
-extern ubyte *dither_end;
+extern u8 *dither_map;
+extern u8 *dither_end;
 
-void setup_vecs(ubyte *screenbuf, ubyte *nvec_map,
-  ulong line_len, ulong width, ulong height);
+void setup_vecs(u8 *screenbuf, u8 *nvec_map,
+  u32 line_len, u32 width, u32 height);
 
 void trig(struct PolyPoint *point_a, struct PolyPoint *point_b,
   struct PolyPoint *point_c);

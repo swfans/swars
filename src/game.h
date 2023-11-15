@@ -146,21 +146,21 @@ typedef struct {
 } PrimObjectPoint;
 
 struct StartScreenPoint {
-	short X;
-	short Y;
+	i16 X;
+	i16 Y;
 };
 
 struct SRect {
-	short x;
-	short y;
-	short w;
-	short h;
+	i16 x;
+	i16 y;
+	i16 w;
+	i16 h;
 };
 
 struct DITrig { // sizeof=48
-	ulong *vlcbuf[2];
+	u32 *vlcbuf[2];
 	long vlcid;
-	ushort *imgbuf;
+	u16 *imgbuf;
 	struct SRect rect[2];
 	long rectid; // offs=0x20
 	struct SRect slice;
@@ -168,49 +168,49 @@ struct DITrig { // sizeof=48
 };
 
 struct DITriangle {
-	short X1;
-	short Y1;
-	short X2;
-	short Y2;
-	short X3;
-	short Y3;
-	ubyte Colour;
+	i16 X1;
+	i16 Y1;
+	i16 X2;
+	i16 Y2;
+	i16 X3;
+	i16 Y3;
+	u8 Colour;
 };
 
 struct DIBox {
-	short X;
-	short Y;
-	short Width;
-	short Height;
-	ubyte Colour;
+	i16 X;
+	i16 Y;
+	i16 Width;
+	i16 Height;
+	u8 Colour;
 };
 
 struct DILine {
-	short X1;
-	short Y1;
-	short X2;
-	short Y2;
-	ubyte Colour;
+	i16 X1;
+	i16 Y1;
+	i16 X2;
+	i16 Y2;
+	u8 Colour;
 };
 
 struct DISprite { // sizeof=12
-	short X;
-	short Y;
+	i16 X;
+	i16 Y;
 	struct Sprite *Sprite;
-	ubyte Colour;
+	u8 Colour;
 };
 
 struct DIText { // sizeof=23
-	short WindowX;
-	short WindowY;
-	short Width;
-	short Height;
-	short X;
-	short Y; // offs=0x0A
+	i16 WindowX;
+	i16 WindowY;
+	i16 Width;
+	i16 Height;
+	i16 X;
+	i16 Y; // offs=0x0A
 	char *Text;
 	struct Sprite *Font;
-	ushort Line;
-	ubyte Colour; // offs=0x16
+	u16 Line;
+	u8 Colour; // offs=0x16
 };
 
 struct DIFlic {
@@ -218,8 +218,8 @@ struct DIFlic {
 };
 
 struct DIHotspot {
-	short X;
-	short Y;
+	i16 X;
+	i16 Y;
 };
 
 struct PurpleDrawItem { // sizeof=26
@@ -233,58 +233,58 @@ struct PurpleDrawItem { // sizeof=26
 		struct DIFlic Flic;
 		struct DIHotspot Hotspot;
 	} U;
-	ubyte Type;
-	ushort Flags;
+	u8 Type;
+	u16 Flags;
 };
 
 struct SynTime {
-    ubyte Minute;
-    ubyte Hour;
-    ubyte Day;
-    ubyte Month;
-    ubyte Year;
+    u8 Minute;
+    u8 Hour;
+    u8 Day;
+    u8 Month;
+    u8 Year;
 };
 
 struct ScreenButton;
 
 struct ScreenButton {
-    short X;
-    short Y;
-    ushort Width;
-    ushort Height;
+    i16 X;
+    i16 Y;
+    u16 Width;
+    u16 Height;
     const char *Text;
     struct TbSprite *Font;
-    ubyte (*DrawFn)(struct ScreenButton *btn);
-    ubyte (*DrawTextFn)();
-    ubyte (*CallBackFn)(ubyte click);
-    ubyte *Radio;
-    ushort TextTopLine;
-    ushort TextFadePos;
-    ushort Flags;
-    ubyte DrawSpeed;
-    ubyte Timer;
-    ubyte TextSpeed;
-    ubyte Border;
-    ubyte Colour;
-    ubyte BGColour;
-    ubyte AccelKey;
-    ubyte RadioValue;
+    u8 (*DrawFn)(struct ScreenButton *btn);
+    u8 (*DrawTextFn)();
+    u8 (*CallBackFn)(u8 click);
+    u8 *Radio;
+    u16 TextTopLine;
+    u16 TextFadePos;
+    u16 Flags;
+    u8 DrawSpeed;
+    u8 Timer;
+    u8 TextSpeed;
+    u8 Border;
+    u8 Colour;
+    u8 BGColour;
+    u8 AccelKey;
+    u8 RadioValue;
 };
 
 struct ScreenBox;
 
 struct ScreenBox
 {
-    short X;
-    short Y;
-    ushort Width;
-    ushort Height;
-    ubyte DrawSpeed;
-    ubyte Timer;
-    ushort Flags;
-    ubyte (*DrawFn)(struct ScreenBox *box);
-    ubyte (*SpecialDrawFn)(struct ScreenBox *box);
-    ushort Timer2;
+    i16 X;
+    i16 Y;
+    u16 Width;
+    u16 Height;
+    u8 DrawSpeed;
+    u8 Timer;
+    u16 Flags;
+    u8 (*DrawFn)(struct ScreenBox *box);
+    u8 (*SpecialDrawFn)(struct ScreenBox *box);
+    u16 Timer2;
     char field_16;
     char field_17;
 };
@@ -292,222 +292,222 @@ struct ScreenBox
 struct ScreenInfoBox;
 
 struct ScreenInfoBox { // sizeof=43
-    short X;
-    short Y;
-    ushort Width;
-    ushort Height;
+    i16 X;
+    i16 Y;
+    u16 Width;
+    u16 Height;
     char *Text1;
     char *Text2;
 	struct TbSprite *Font1;
 	struct TbSprite *Font2;
-	ubyte (*DrawFn)();
-	ubyte (*DrawTextFn)();
-    short TextFadePos1;
-    short TextFadePos2;
-    ushort Flags;
-    ubyte DrawSpeed;
-    ubyte Timer;
-    ubyte TextSpeed;
-    ubyte Colour;
-    ubyte BGColour;
+	u8 (*DrawFn)();
+	u8 (*DrawTextFn)();
+    i16 TextFadePos1;
+    i16 TextFadePos2;
+    u16 Flags;
+    u8 DrawSpeed;
+    u8 Timer;
+    u8 TextSpeed;
+    u8 Colour;
+    u8 BGColour;
 };
 
 struct ScreenTextBox;
 
 struct ScreenTextBox {
-  short X;
-  short Y;
-  ushort Width;
-  ushort Height;
-  ubyte DrawSpeed;
-  ubyte Timer;
-  ubyte TextSpeed;
-  ubyte LineSpacing;
-  short ScrollBarPos;
-  ushort ScrollBarSize;
-  short ScrollWindowHeight;
-  short ScrollWindowOffset;
-  ushort GrabPos;
-  ushort Lines;
+  i16 X;
+  i16 Y;
+  u16 Width;
+  u16 Height;
+  u8 DrawSpeed;
+  u8 Timer;
+  u8 TextSpeed;
+  u8 LineSpacing;
+  i16 ScrollBarPos;
+  u16 ScrollBarSize;
+  i16 ScrollWindowHeight;
+  i16 ScrollWindowOffset;
+  u16 GrabPos;
+  u16 Lines;
   const char *Text;
   struct TbSprite *Font;
-  ubyte (*DrawFn)(struct ScreenTextBox *box);
-  ubyte (*DrawTextFn)(struct ScreenTextBox *box);
+  u8 (*DrawFn)(struct ScreenTextBox *box);
+  u8 (*DrawTextFn)(struct ScreenTextBox *box);
   struct ScreenButton *Buttons[2];
-  short Infos[2];
+  i16 Infos[2];
   //struct ScreenInfoBox *Infos[2];
-  ushort TextTopLine;
-  ushort field_36;
-  ushort field_38;
-  short TextFadePos;
-  ushort Flags;
-  ushort field_3E;
-  ubyte BGColour;
-  ubyte LineHeight;
-  ubyte field_42;
-  ubyte field_43;
+  u16 TextTopLine;
+  u16 field_36;
+  u16 field_38;
+  i16 TextFadePos;
+  u16 Flags;
+  u16 field_3E;
+  u8 BGColour;
+  u8 LineHeight;
+  u8 field_42;
+  u8 field_43;
 };
 
 struct SingleObject { // sizeof=36
-  ushort StartFace;
-  ushort NumbFaces;
-  ushort NextObject;
-  ushort StartFace4;
-  ushort NumbFaces4;
-  ushort ZScale;
-  short OffsetX;
-  short OffsetY;
-  short OffsetZ;
-  short ObjectNo;
-  short MapX;
-  short MapZ;
-  ushort StartPoint;
-  ushort EndPoint;
-  ubyte field_1C[7];
-  ubyte field_23;
+  u16 StartFace;
+  u16 NumbFaces;
+  u16 NextObject;
+  u16 StartFace4;
+  u16 NumbFaces4;
+  u16 ZScale;
+  i16 OffsetX;
+  i16 OffsetY;
+  i16 OffsetZ;
+  i16 ObjectNo;
+  i16 MapX;
+  i16 MapZ;
+  u16 StartPoint;
+  u16 EndPoint;
+  u8 field_1C[7];
+  u8 field_23;
 };
 
 struct MissionStatus { // sizeof=40
-    ulong CityDays;
-    ulong CityHours;
-    ulong Days;
-    ulong Hours;
-    ushort CivsKilled;
-    ushort CivsPersuaded;
-    ushort SecurityKilled;
-    ushort SecurityPersuaded;
-    ushort EnemiesKilled;
-    ushort EnemiesPersuaded;
-    ulong CashAtStart;
-    ulong Expenditure;
-    ubyte HitAccuracy;
-    ubyte ObjectivesComplete;
-    ubyte AgentsLost;
-    ubyte AgentsGained;
+    u32 CityDays;
+    u32 CityHours;
+    u32 Days;
+    u32 Hours;
+    u16 CivsKilled;
+    u16 CivsPersuaded;
+    u16 SecurityKilled;
+    u16 SecurityPersuaded;
+    u16 EnemiesKilled;
+    u16 EnemiesPersuaded;
+    u32 CashAtStart;
+    u32 Expenditure;
+    u8 HitAccuracy;
+    u8 ObjectivesComplete;
+    u8 AgentsLost;
+    u8 AgentsGained;
 };
 
 struct EmailItem { // sizeof=5
-	ubyte RefNum;
-	ubyte RecvDay;
-	ubyte RecvMonth;
-	ubyte RecvYear;
-	ubyte Mission;
+	u8 RefNum;
+	u8 RecvDay;
+	u8 RecvMonth;
+	u8 RecvYear;
+	u8 Mission;
 };
 
 struct NewMailItem { // sizeof=5
-	ubyte RecvDay;
-	ubyte RecvMonth;
-	ubyte RecvYear;
-	ubyte Mission;
-	ubyte Flag;
+	u8 RecvDay;
+	u8 RecvMonth;
+	u8 RecvYear;
+	u8 Mission;
+	u8 Flag;
 };
 
 struct ScreenMenuBox { // sizeof=42
-  ubyte field_0;
+  u8 field_0;
   char field_1[8];
   char field_9[8];
-  ubyte field_11[2];
+  u8 field_11[2];
   char field_13[8];
   char field_1B[8];
   char field_23[2];
-  ubyte field_25;
-  ubyte field_26;
-  ushort Flags;
-  sbyte field_29;
+  u8 field_25;
+  u8 field_26;
+  u16 Flags;
+  i8 field_29;
 };
 
 struct LevelDef {
-  ubyte PlayableGroups[8];
-  ubyte field_8[33];
-  ubyte field_29;
-  ubyte field_2A;
-  ubyte field_2B;
+  u8 PlayableGroups[8];
+  u8 field_8[33];
+  u8 field_29;
+  u8 field_2A;
+  u8 field_2B;
 };
 
 struct InGame {
-    short GameMode;
-    short DisplayMode;
-    short fld_unk7D8;
-    ubyte fld_unk7DA;
-    ubyte CDTrack;
-    ubyte DangerTrack;
-    ubyte UseMultiMedia;
-    ubyte fld_unk7DE;
-    ubyte GameOver;
+    i16 GameMode;
+    i16 DisplayMode;
+    i16 fld_unk7D8;
+    u8 fld_unk7DA;
+    u8 CDTrack;
+    u8 DangerTrack;
+    u8 UseMultiMedia;
+    u8 fld_unk7DE;
+    u8 GameOver;
     struct Scanner Scanner;
     long Credits;
-    short fld_unkC4B;
-    short fld_unkC4D;
-    short fld_unkC4F;
-    short MissionStatus;
+    i16 fld_unkC4B;
+    i16 fld_unkC4D;
+    i16 fld_unkC4F;
+    i16 MissionStatus;
     long Flags;
-    ushort fld_unkC57;
-    short fld_unkC59;
-    short draw_unknprop_01;
-    short Rocket1[15];
-    short NextRocket;
-    short TrainMode;
-    short MyGroup;
-    short CurrentMission;
-    ubyte fld_unk4AF;
-    ubyte DetailLevel;
-    short UserZoom;
-    short cmdln_param_a;
-    short LowerMemoryUse;
-    short fld_unkC8B[3];
+    u16 fld_unkC57;
+    i16 fld_unkC59;
+    i16 draw_unknprop_01;
+    i16 Rocket1[15];
+    i16 NextRocket;
+    i16 TrainMode;
+    i16 MyGroup;
+    i16 CurrentMission;
+    u8 fld_unk4AF;
+    u8 DetailLevel;
+    i16 UserZoom;
+    i16 cmdln_param_a;
+    i16 LowerMemoryUse;
+    i16 fld_unkC8B[3];
     long fld_unkC91;
-    ushort TrackX;
-    ushort TrackZ;
-    short TrackThing;
-    ubyte fld_unkC98[5];
-    short fld_unkCA0;
-    ubyte fld_unkCA2;
-    sbyte PanelPermutation;
-    ubyte TrenchcoatPreference;
-    ubyte MissionNo;
-    short fld_unkCA6;
-    short fld_unkCA8;
-    ubyte fld_unkCAA;
-    ubyte PalType;
-    short FlameCount;
-    ubyte LastTmap;
-    short SoundThing;
-    ubyte fld_unkCB1;
-    ubyte fld_unkCB2;
-    short fld_unkCB3;
-    short fld_unkCB5;
-    short fld_unkCB7;
+    u16 TrackX;
+    u16 TrackZ;
+    i16 TrackThing;
+    u8 fld_unkC98[5];
+    i16 fld_unkCA0;
+    u8 fld_unkCA2;
+    i8 PanelPermutation;
+    u8 TrenchcoatPreference;
+    u8 MissionNo;
+    i16 fld_unkCA6;
+    i16 fld_unkCA8;
+    u8 fld_unkCAA;
+    u8 PalType;
+    i16 FlameCount;
+    u8 LastTmap;
+    i16 SoundThing;
+    u8 fld_unkCB1;
+    u8 fld_unkCB2;
+    i16 fld_unkCB3;
+    i16 fld_unkCB5;
+    i16 fld_unkCB7;
     /** Flags representing active human players, in both net and local games. */
-    ubyte InNetGame_UNSURE;
-    ubyte fld_unkCBA[5];
-    ubyte Cheats;
-    ubyte fld_unkCC0;
+    u8 InNetGame_UNSURE;
+    u8 fld_unkCBA[5];
+    u8 Cheats;
+    u8 fld_unkCC0;
     long CashAtStart;
     long Expenditure;
 };
 
 struct Animation {
-  ubyte *OutBuf;
+  u8 *OutBuf;
   long field_4;
-  short PosX;
-  short PosY;
-  short field_C;
-  ushort Flags;
+  i16 PosX;
+  i16 PosY;
+  i16 field_C;
+  u16 Flags;
   long field_10;
   long field_14;
-  short field_18;
-  short field_1A[1];
-  short field_1C[1];
-  short field_1E[1];
+  i16 field_18;
+  i16 field_1A[1];
+  i16 field_1C[1];
+  i16 field_1E[1];
   long field_20;
-  short field_24;
-  short field_26[5];
+  i16 field_24;
+  i16 field_26[5];
   long field_30;
   long field_34;
   long FileHandle;
   char Filename[48];
-  short anonymous_15;
-  short field_6E;
+  i16 anonymous_15;
+  i16 field_6E;
 };
 
 #pragma pack()
@@ -517,48 +517,48 @@ extern char user_name[50];
 extern char unkn2_names[8][16];
 extern char login_name[16];
 
-extern ubyte in_network_game;
-extern ubyte is_single_game;
-extern ubyte cmdln_colour_tables;
-extern ubyte cmdln_param_bcg;
-extern ubyte keyboard_mode_direct;
-extern ubyte unkn01_maskarr[28];
+extern u8 in_network_game;
+extern u8 is_single_game;
+extern u8 cmdln_colour_tables;
+extern u8 cmdln_param_bcg;
+extern u8 keyboard_mode_direct;
+extern u8 unkn01_maskarr[28];
 extern long map_editor;
 
 extern struct InGame ingame;
 
-extern ubyte login_control__State;
-extern ulong login_control__Money;
-extern sbyte login_control__City;
-extern ubyte login_control__TechLevel;
-extern ubyte byte_181183;
-extern ubyte byte_181189;
+extern u8 login_control__State;
+extern u32 login_control__Money;
+extern i8 login_control__City;
+extern u8 login_control__TechLevel;
+extern u8 byte_181183;
+extern u8 byte_181189;
 
-extern ubyte cmdln_param_n;
-extern ubyte pktrec_mode;
-extern ushort packet_rec_no;
-extern ubyte game_perspective;
-extern ubyte exit_game;
-extern ubyte input_char;
+extern u8 cmdln_param_n;
+extern u8 pktrec_mode;
+extern u16 packet_rec_no;
+extern u8 game_perspective;
+extern u8 exit_game;
+extern u8 input_char;
 
-extern ulong active_flags_general_unkn01;
+extern u32 active_flags_general_unkn01;
 
 extern long unkn01_downcount;
 extern long unkn01_pos_x;
 extern long unkn01_pos_y;
 
-extern ushort current_map;
-extern short current_level;
+extern u16 current_map;
+extern i16 current_level;
 
-extern ulong engine_mem_alloc_size;
+extern u32 engine_mem_alloc_size;
 extern void *engine_mem_alloc_ptr;
 
 extern long navi2_unkn_counter;
 extern long navi2_unkn_counter_max;
-extern ulong triangulation;
+extern u32 triangulation;
 
-extern ulong smack_malloc_used_tot;
-extern ubyte anim_slots[];
+extern u32 smack_malloc_used_tot;
+extern u8 anim_slots[];
 extern struct Animation animations[2];
 
 #define STRINGS_MAX 652
@@ -567,32 +567,32 @@ extern char *gui_strings_data;
 extern char *gui_strings_data_end;
 extern char *gui_strings[STRINGS_MAX];
 
-extern ubyte *fade_data;
+extern u8 *fade_data;
 
 extern void *dword_1810D1;
-extern ulong dword_1810D5;
+extern u32 dword_1810D5;
 
 extern struct SingleFloorTexture *game_textures;
 extern struct SingleTexture *game_face_textures;
 extern struct SinglePoint *game_object_points;
-extern ushort next_normal;
-extern ushort next_quick_light;
-extern ushort next_full_light;
-extern ushort word_1531E0;
-extern ushort next_face_texture;
-extern ushort next_floor_texture;
-extern ushort next_object_point;
-extern ushort next_object_face;
-extern ushort next_object_face4;
-extern ushort next_object;
+extern u16 next_normal;
+extern u16 next_quick_light;
+extern u16 next_full_light;
+extern u16 word_1531E0;
+extern u16 next_face_texture;
+extern u16 next_floor_texture;
+extern u16 next_object_point;
+extern u16 next_object_face;
+extern u16 next_object_face4;
+extern u16 next_object;
 extern struct SingleObjectFace3 *game_object_faces;
 extern struct SingleObject *game_objects;
 extern struct QuickLight *game_quick_lights;
 extern struct FullLight *game_full_lights;
 extern struct Normal *game_normals;
-extern ushort next_local_mat;
-extern ushort next_special_face;
-extern ushort next_special_face4;
+extern u16 next_local_mat;
+extern u16 next_special_face;
+extern u16 next_special_face4;
 extern struct SingleObjectFace4 *game_object_faces4;
 extern struct AnimTmap *game_anim_tmaps;
 extern struct TrafficNode *game_traffic_nodes;
@@ -600,23 +600,23 @@ extern struct LightCommand *game_light_commands;
 extern struct ColVectList *game_col_vects_list;
 extern struct ColVect *game_col_vects;
 extern struct WalkHeader *game_walk_headers;
-extern short *game_walk_items;
+extern i16 *game_walk_items;
 extern struct ColColumn *game_col_columns;
 extern struct SingleObjectFace3 *game_special_object_faces;
 extern struct SingleObjectFace4 *game_special_object_faces4;
 extern struct FloorTile *game_floor_tiles;
-extern ushort next_col_vect;
-extern ubyte *game_user_heap;
+extern u16 next_col_vect;
+extern u8 *game_user_heap;
 extern struct SpecialPoint *game_screen_point_pool;
 extern struct DrawItem *game_draw_list;
 extern struct SortSprite *game_sort_sprites;
 extern struct SortLine *game_sort_lines;
 extern struct UnknBezEdit *bez_edit;
-extern ubyte *spare_map_buffer;
+extern u8 *spare_map_buffer;
 extern struct Objective *game_used_lvl_objectives;
-extern ushort next_used_lvl_objective;
+extern u16 next_used_lvl_objective;
 extern struct LevelMisc *game_level_miscs;
-extern ushort word_176E38;
+extern u16 word_176E38;
 
 extern PrimObjectPoint *prim_object_points;
 extern PrimObjectFace *prim_object_faces;
@@ -625,137 +625,137 @@ extern PrimObject *prim_objects;
 extern Prim4Texture *prim4_textures;
 extern PrimFaceTexture *prim_face_textures;
 
-extern ushort prim_object_points_count;
-extern ushort prim_object_faces_count;
-extern ushort prim_object_faces4_count;
-extern ushort prim_objects_count;
-extern ushort prim4_textures_count;
-extern ushort prim_face_textures_count;
-extern ushort prim_unknprop01;
+extern u16 prim_object_points_count;
+extern u16 prim_object_faces_count;
+extern u16 prim_object_faces4_count;
+extern u16 prim_objects_count;
+extern u16 prim4_textures_count;
+extern u16 prim_face_textures_count;
+extern u16 prim_unknprop01;
 
-extern ubyte byte_1C4A7C;
-extern ubyte byte_1C4A9F;
-extern ulong curr_tick_time;
-extern ulong prev_tick_time;
+extern u8 byte_1C4A7C;
+extern u8 byte_1C4A9F;
+extern u32 curr_tick_time;
+extern u32 prev_tick_time;
 extern GameTurn gameturn;
 extern GameTurn prev_gameturn;
-extern ulong turns_delta;
-extern ushort fifties_per_gameturn;
-extern ushort gamep_unknval_01;
-extern ubyte *vec_tmap;
+extern u32 turns_delta;
+extern u16 fifties_per_gameturn;
+extern u16 gamep_unknval_01;
+extern u8 *vec_tmap;
 
-extern ubyte *memload;
+extern u8 *memload;
 #define memload_len 16384
 
-extern ubyte net_host_player_no;
-extern ubyte byte_1C6D4A;
-extern ubyte byte_1C6DDC[5];
-extern ushort word_1C8446;
-extern ubyte data_19ec6f;
-extern ulong save_mortal_salt;
+extern u8 net_host_player_no;
+extern u8 byte_1C6D4A;
+extern u8 byte_1C6DDC[5];
+extern u16 word_1C8446;
+extern u8 data_19ec6f;
+extern u32 save_mortal_salt;
 
-extern ushort weapon_text_index[32];
-extern ushort cybmod_text_index[16];
-extern ubyte background_type;
-extern ubyte old_screentype;
-extern ubyte screentype;
+extern u16 weapon_text_index[32];
+extern u16 cybmod_text_index[16];
+extern u8 background_type;
+extern u8 old_screentype;
+extern u8 screentype;
 extern long data_155704;
-extern short flic_mod_coords_b[8];
-extern ubyte flic_mod_heights[4];
-extern ubyte flic_mod_widths[4];
-extern ubyte data_1c498d;
-extern ubyte data_1c498e;
+extern i16 flic_mod_coords_b[8];
+extern u8 flic_mod_heights[4];
+extern u8 flic_mod_widths[4];
+extern u8 data_1c498d;
+extern u8 data_1c498e;
 extern char *outro_text_s;
 extern char *outro_text_z;
 extern long data_197150;
 extern long data_1dd91c;
-extern ushort overall_scale;
-extern ubyte unkn_flags_01;
-extern ushort palette_brightness;
+extern u16 overall_scale;
+extern u8 unkn_flags_01;
+extern u16 palette_brightness;
 extern long outro_unkn01;
 extern long outro_unkn02;
 extern long outro_unkn03;
 extern long people_groups_count;
 extern long data_1ddb68;
-extern ubyte byte_1DDC40;
+extern u8 byte_1DDC40;
 
 extern char *people_credits_desc[];
 extern char *people_credits_groups[];
 
-extern ubyte playable_agents;
+extern u8 playable_agents;
 
-extern ubyte save_crypto_tables_state[3];
-extern ubyte save_crypto_data_state[3];
+extern u8 save_crypto_tables_state[3];
+extern u8 save_crypto_data_state[3];
 
-extern ubyte game_high_resolution;
+extern u8 game_high_resolution;
 
 extern char *mission_briefing_text;
 #define mission_briefing_text_len 16384
 
-extern short mission_open[50];
-extern short mission_state[50];
-extern sbyte mission_result;
+extern i16 mission_open[50];
+extern i16 mission_state[50];
+extern i8 mission_result;
 
 extern char *weapon_text;
 #define weapon_text_len 32768
 
 extern struct PurpleDrawItem *purple_draw_list;
-extern ubyte *save_game_buffer;
+extern u8 *save_game_buffer;
 extern char save_active_desc[28];
-extern ubyte *unkn_buffer_05;
-extern ubyte *data_1c6de4;
-extern ubyte *data_1c6de8;
-extern ubyte scientists_lost;
-extern ulong new_mods_researched;
-extern ulong new_weapons_researched;
-extern ubyte redraw_screen_flag;
+extern u8 *unkn_buffer_05;
+extern u8 *data_1c6de4;
+extern u8 *data_1c6de8;
+extern u8 scientists_lost;
+extern u32 new_mods_researched;
+extern u32 new_weapons_researched;
+extern u8 redraw_screen_flag;
 
-extern sbyte byte_15516C;
-extern sbyte byte_15516D;
-extern ubyte byte_1C5C28[8];
-extern ubyte byte_1C6D48;
-extern ubyte unkn_flags_08;
+extern i8 byte_15516C;
+extern i8 byte_15516D;
+extern u8 byte_1C5C28[8];
+extern u8 byte_1C6D48;
+extern u8 unkn_flags_08;
 extern long dword_153194;
-extern ulong starting_cash_amounts[4];
-extern sbyte unkn_city_no;
-extern sbyte selected_weapon;
-extern sbyte selected_mod;
-extern ubyte group_types[8];
-extern ubyte byte_1C4AA3;
-extern ubyte net_unkn_pos_02;
-extern ubyte data_1c498f;
-extern ubyte data_1c4990;
-extern ubyte data_1c4991;
-extern ubyte data_1c4aa2;
-extern ubyte start_into_mission;
-extern ulong text_buf_pos;
-extern ubyte edit_flag;
-extern ubyte change_screen;
-extern ubyte restore_savegame;
-extern ubyte game_projector_speed;
-extern ubyte current_drawing_mod;
-extern ubyte mod_draw_states[4];
+extern u32 starting_cash_amounts[4];
+extern i8 unkn_city_no;
+extern i8 selected_weapon;
+extern i8 selected_mod;
+extern u8 group_types[8];
+extern u8 byte_1C4AA3;
+extern u8 net_unkn_pos_02;
+extern u8 data_1c498f;
+extern u8 data_1c4990;
+extern u8 data_1c4991;
+extern u8 data_1c4aa2;
+extern u8 start_into_mission;
+extern u32 text_buf_pos;
+extern u8 edit_flag;
+extern u8 change_screen;
+extern u8 restore_savegame;
+extern u8 game_projector_speed;
+extern u8 current_drawing_mod;
+extern u8 mod_draw_states[4];
 extern char equip_cost_text[20];
-extern ubyte new_current_drawing_mod;
-extern ubyte refresh_equip_list;
-extern ubyte flic_mods[5];
-extern ubyte old_flic_mods[5];
-extern ubyte reload_background_flag;
-extern ushort word_1811AE;
+extern u8 new_current_drawing_mod;
+extern u8 refresh_equip_list;
+extern u8 flic_mods[5];
+extern u8 old_flic_mods[5];
+extern u8 reload_background_flag;
+extern u16 word_1811AE;
 
 extern struct LevelDef level_def;
 
 extern struct Element *melement_ani;
 extern struct Element *mele_ani_end;
-extern ushort *nstart_ani;
-extern ushort *nstart_ani_end;
+extern u16 *nstart_ani;
+extern u16 *nstart_ani_end;
 extern struct Frame *frame;
 extern struct Frame *frame_end;
 
 extern long dword_17710C;
 extern long dword_177110;
-extern ubyte mouser;
-extern ubyte *dword_1AA280;
+extern u8 mouser;
+extern u8 *dword_1AA280;
 extern long dword_1AA5C4;
 extern long dword_1AA5C8;
 
@@ -764,36 +764,36 @@ extern struct SynTime research_curr_wep_date;
 extern struct SynTime research_curr_mod_date;
 
 extern struct MissionStatus mission_status[120];
-extern ubyte new_mail;
+extern u8 new_mail;
 extern struct NewMailItem newmail_store[29];
-extern ushort next_email;
-extern short old_mission_brief;
-extern short open_brief;
-extern short next_brief;
-extern short next_ref;
-extern ushort next_mission;
-extern ushort replay_intro_timer;
+extern u16 next_email;
+extern i16 old_mission_brief;
+extern i16 open_brief;
+extern i16 next_brief;
+extern i16 next_ref;
+extern u16 next_mission;
+extern u16 replay_intro_timer;
 extern struct EmailItem email_store[20];
 extern struct EmailItem brief_store[10];
-extern ubyte show_alert;
-extern sbyte mo_weapon;
-extern ubyte reload_background_flag;
+extern u8 show_alert;
+extern i8 mo_weapon;
+extern u8 reload_background_flag;
 
-extern ubyte selected_agent;
+extern u8 selected_agent;
 
-extern ushort mouse_map_x;
-extern ushort mouse_map_z;
-extern ushort render_area_a;
-extern ushort render_area_b;
+extern u16 mouse_map_x;
+extern u16 mouse_map_z;
+extern u16 render_area_a;
+extern u16 render_area_b;
 extern void *scratch_malloc_mem;
 
 extern struct StartScreenPoint *hotspot_buffer;
 #define hotspot_buffer_len 512
 
-extern ubyte unkn_gfx_option_2;
-extern ubyte unkn_option_3;
-extern ubyte unkn_option_4;
-extern ubyte byte_1C4A6F;
+extern u8 unkn_gfx_option_2;
+extern u8 unkn_option_3;
+extern u8 unkn_option_4;
+extern u8 byte_1C4A6F;
 
 extern char unkn39_text[];
 extern char net_unkn40_text[];
@@ -805,13 +805,13 @@ extern char options_title_text[];
 extern char brief_netscan_cost_text[];
 extern const char *misc_text[5];
 
-extern ubyte game_system_screen;
+extern u8 game_system_screen;
 extern char alert_text[200];
-extern ubyte byte_197160;
-extern ushort text_window_x1;
-extern ushort text_window_y1;
-extern ushort text_window_x2;
-extern ushort text_window_y2;
+extern u8 byte_197160;
+extern u16 text_window_x1;
+extern u16 text_window_y1;
+extern u16 text_window_x2;
+extern u16 text_window_y2;
 
 extern struct ScreenTextBox heading_box;
 extern struct ScreenTextBox loading_INITIATING_box;
@@ -911,7 +911,7 @@ void free_texturemaps(void);
 int joy_grip_shutdown(void);
 
 void my_preprocess_text(char *text);
-ushort my_count_lines(const char *text);
+u16 my_count_lines(const char *text);
 
 #ifdef __cplusplus
 };

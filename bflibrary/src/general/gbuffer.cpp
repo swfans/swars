@@ -23,19 +23,19 @@
 
 #define DEFAULT_BUFFER_SIZE 0x1000
 
-ubyte default_buffer[DEFAULT_BUFFER_SIZE];
+u8 default_buffer[DEFAULT_BUFFER_SIZE];
 void *buffer_ptr = default_buffer;
-ulong buffer_size = DEFAULT_BUFFER_SIZE;
+u32 buffer_size = DEFAULT_BUFFER_SIZE;
 TbBool buffer_locked = false;
 
 TbFileHandle bf_file_handle = INVALID_FILE;
-ubyte *bf_buffer = NULL;
-ubyte *bf_buffer_ptr = NULL;
-ubyte *bf_end_buffer_ptr = NULL;
-ulong bf_buffer_size = 0;
+u8 *bf_buffer = NULL;
+u8 *bf_buffer_ptr = NULL;
+u8 *bf_end_buffer_ptr = NULL;
+u32 bf_buffer_size = 0;
 TbBool bf_finished = false;
 
-TbResult LbBufferSet(void *ptr, ulong size)
+TbResult LbBufferSet(void *ptr, u32 size)
 {
     if (buffer_locked)
         return Lb_FAIL;
@@ -61,7 +61,7 @@ TbResult LbBufferRelease(void)
     return Lb_SUCCESS;
 }
 
-TbResult LbBufferLock(void **ptr, ulong *size)
+TbResult LbBufferLock(void **ptr, u32 *size)
 {
     *ptr = NULL;
     if (buffer_locked)
@@ -84,7 +84,7 @@ TbResult LbBufferUnlock(void)
 
 static TbResult fill_buffer(void)
 {
-    long len;
+    i32 len;
 
     if (bf_buffer_ptr == bf_end_buffer_ptr) {
         bf_finished = true;
@@ -139,15 +139,15 @@ TbResult LbBufferFileReset(void)
 
 TbResult LbBufferFileRead(void *buf, int size)
 {
-    ulong chunk_len, remain;
-    ubyte *p;
+    u32 chunk_len, remain;
+    u8 *p;
 
     if (!bf_buffer)
         return Lb_FAIL;
     if (bf_finished)
         return Lb_FAIL;
 
-    p = (ubyte *)buf;
+    p = (u8 *)buf;
     remain = size;
     while (remain)
     {
@@ -170,7 +170,7 @@ TbResult LbBufferFileRead(void *buf, int size)
 
 short LbBufferFileReadByte(void)
 {
-    ubyte *p;
+    u8 *p;
 
     if (!bf_buffer)
         return Lb_FAIL;
@@ -187,9 +187,9 @@ short LbBufferFileReadByte(void)
     return *p;
 }
 
-TbResult LbBufferFileSkip(ulong len)
+TbResult LbBufferFileSkip(u32 len)
 {
-    ulong chunk_len, remain;
+    u32 chunk_len, remain;
 
     if (!bf_buffer)
         return Lb_FAIL;
@@ -200,7 +200,7 @@ TbResult LbBufferFileSkip(ulong len)
     chunk_len = bf_end_buffer_ptr - bf_buffer_ptr;
     if (remain > chunk_len)
     {
-        ulong needed;
+        u32 needed;
         TbResult ret;
 
         needed = remain - chunk_len;

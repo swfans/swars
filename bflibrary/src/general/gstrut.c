@@ -25,7 +25,7 @@
 char lbEmptyString[] = "";
 /******************************************************************************/
 
-void * LbStringConcat(char *dst, const char *src, const ulong dst_buflen)
+void * LbStringConcat(char *dst, const char *src, const u32 dst_buflen)
 {
     int max_num = dst_buflen - strlen(dst);
     if (max_num <= 0) return dst;
@@ -34,7 +34,7 @@ void * LbStringConcat(char *dst, const char *src, const ulong dst_buflen)
     return dst;
 }
 
-void * LbStringCopy(char *dst, const char *src, const ulong dst_buflen)
+void * LbStringCopy(char *dst, const char *src, const u32 dst_buflen)
 {
     if (dst_buflen < 1)
         return dst;
@@ -43,9 +43,9 @@ void * LbStringCopy(char *dst, const char *src, const ulong dst_buflen)
     return dst;
 }
 
-void * LbStringToLowerCopy(char *dst, const char *src, const ulong dst_buflen)
+void * LbStringToLowerCopy(char *dst, const char *src, const u32 dst_buflen)
 {
-    ulong i;
+    u32 i;
     char chr;
     if (dst_buflen < 1)
         return dst;
@@ -62,7 +62,7 @@ void * LbStringToLowerCopy(char *dst, const char *src, const ulong dst_buflen)
 
 void * LbStringToLower(char *str)
 {
-    ulong i;
+    u32 i;
     char chr;
     for (i=0; true; i++)
     {
@@ -76,7 +76,7 @@ void * LbStringToLower(char *str)
 
 void * LbStringToUpper(char *str)
 {
-    ulong i;
+    u32 i;
     char chr;
     for (i=0; true; i++)
     {
@@ -88,7 +88,7 @@ void * LbStringToUpper(char *str)
     return str;
 }
 
-ulong LbStringLength(const char *str)
+u32 LbStringLength(const char *str)
 {
     if (str == NULL) return 0;
     return strlen(str);

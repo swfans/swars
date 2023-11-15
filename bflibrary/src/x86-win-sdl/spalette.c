@@ -29,11 +29,11 @@
 #define to_SDLSurf(h) ((SDL_Surface  *)h)
 
 /** Colour palette buffer, to be used inside lbDisplay. */
-ubyte lbPalette[PALETTE_8b_SIZE];
+u8 lbPalette[PALETTE_8b_SIZE];
 /** Driver-specific colour palette buffer. */
 SDL_Color lbPaletteColors[PALETTE_8b_COLORS];
 
-TbResult LbPaletteGet(ubyte *palette)
+TbResult LbPaletteGet(u8 *palette)
 {
     LOGDBG("starting");
     if ((!lbScreenInitialised) || (lbDrawSurface == NULL))
@@ -47,13 +47,13 @@ TbResult LbPaletteGet(ubyte *palette)
     return Lb_SUCCESS;
 }
 
-TbResult LbPaletteSet(const ubyte *palette)
+TbResult LbPaletteSet(const u8 *palette)
 {
-    unsigned char * bufColors;
+    uc8 * bufColors;
     SDL_Color * destColors;
-    const unsigned char * srcColors;
+    const uc8 * srcColors;
     TbScreenModeInfo *mdinfo;
-    unsigned long i;
+    u32 i;
     TbResult ret;
 
     LOGDBG("starting");

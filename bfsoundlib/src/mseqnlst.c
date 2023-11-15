@@ -59,7 +59,7 @@ extern struct BfMusicInfo *BfEndMusic;
 void format_music(void)
 {
     short nsongs;
-    ubyte *dt;
+    u8 *dt;
     struct BfMusicInfo *musinf;
     struct BfMusicInfo *musinfend;
     ulong offs;
@@ -89,16 +89,16 @@ void init_music_bank_songs(void)
     // No action needed, song will be initiated by StartMusic()
 }
 
-ubyte load_music_bank(TbFileHandle fh, ubyte bankId)
+u8 load_music_bank(TbFileHandle fh, u8 bankId)
 {
 #if 0
-    ubyte ret;
+    u8 ret;
     asm volatile ("call ASM_load_music_bank\n"
         : "=r" (ret) : "a" (fh),  "d" (bankId));
     return ret;
 #endif
-    ubyte *m;
-    ubyte *dt;
+    u8 *m;
+    u8 *dt;
     struct MusicBankHead mbhead[4];
 
     LbFilePosition(fh);
@@ -109,7 +109,7 @@ ubyte load_music_bank(TbFileHandle fh, ubyte bankId)
     dt = BfMusicData;
     if (dt == NULL)
         return 0;
-    m = (ubyte *)BfMusic;
+    m = (u8 *)BfMusic;
     if (m == NULL)
         return 0;
     // Read songs data
@@ -165,7 +165,7 @@ int LoadMusic(ushort bankNo)
     long fsize;
     ulong nbanks_offs;
     ushort nbanks[4];
-    ubyte bankId;
+    u8 bankId;
 
     sprintf(SoundProgressMessage, "BF48 - load music bank %d\n", bankNo);
     SoundProgressLog(SoundProgressMessage);

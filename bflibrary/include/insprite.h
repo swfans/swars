@@ -57,7 +57,7 @@ struct TbSpriteDrawData {
  * @param spr Sprite to be drawn.
  * @return Gives Lb_SUCCESS if the data was prepared.
  */
-TbResult LbSpriteDrawPrepare(TbSpriteDrawData *spd, long x, long y, const TbSprite *spr);
+TbResult LbSpriteDrawPrepare(TbSpriteDrawData *spd, i32 x, i32 y, const TbSprite *spr);
 
 /** @internal
  *  Skip some of sprite data before drawing is started.

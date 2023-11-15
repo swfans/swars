@@ -29,19 +29,19 @@ extern "C" {
 #pragma pack(1)
 
 struct TbDate { // sizeof=5
-    ubyte Day; // offset=0
-    ubyte Month; // offset=1
+    u8 Day; // offset=0
+    u8 Month; // offset=1
     ushort Year; // offset=2
-    ubyte DayOfWeek; // offset=4
+    u8 DayOfWeek; // offset=4
 };
 
 typedef struct TbDate TbDate;
 
 struct TbTime { // sizeof=4
-    ubyte Hour; // offset=0
-    ubyte Minute; // offset=1
-    ubyte Second; // offset=2
-    ubyte HSecond; // offset=3
+    u8 Hour; // offset=0
+    u8 Minute; // offset=1
+    u8 Second; // offset=2
+    u8 HSecond; // offset=3
 };
 
 typedef struct TbTime TbTime;

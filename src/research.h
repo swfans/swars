@@ -34,19 +34,19 @@ struct ResearchInfo
 {
     ushort WeaponProgress[32][RESEARCH_DAYS_STORED];
     ushort ModProgress[32][RESEARCH_DAYS_STORED];
-    ubyte WeaponDaysDone[32];
-    ubyte ModDaysDone[32];
-    long WeaponFunding;
-    long ModFunding;
-    sbyte Scientists;
+    u8 WeaponDaysDone[32];
+    u8 ModDaysDone[32];
+    i32 WeaponFunding;
+    i32 ModFunding;
+    i8 Scientists;
     char NumBases;
     /** Currently researched weapon index, weapon type - 1 */
-    sbyte CurrentWeapon;
-    sbyte CurrentMod;
-    ulong WeaponsAllowed;
-    ulong ModsAllowed;
-    ulong WeaponsCompleted;
-    ulong ModsCompleted;
+    i8 CurrentWeapon;
+    i8 CurrentMod;
+    u32 WeaponsAllowed;
+    u32 ModsAllowed;
+    u32 WeaponsCompleted;
+    u32 ModsCompleted;
 };
 
 #pragma pack()
@@ -56,14 +56,14 @@ extern char scientist_lost_reason[60];
 
 void load_scientist_lost_reason(ushort reason_no);
 
-int research_daily_progress_for_type(ubyte rstype);
+int research_daily_progress_for_type(u8 rstype);
 int research_unkn_func_004(ushort percent_per_day, int expect_funding, int real_funding);
 
 TbBool is_research_weapon_completed(ushort wtype);
 TbBool is_research_weapon_allowed(ushort wtype);
 void research_weapon_allow(ushort wtype);
 void research_weapon_complete(ushort wtype);
-void research_weapon_flags_allow(ulong wpflags);
+void research_weapon_flags_allow(u32 wpflags);
 
 TbBool is_research_cymod_completed(ushort mtype);
 TbBool is_research_cymod_allowed(ushort mtype);

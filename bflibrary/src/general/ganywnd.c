@@ -50,7 +50,7 @@ TbResult LbScreenLoadGraphicsWindow(struct TbAnyWindow *wnd)
   return Lb_SUCCESS;
 }
 
-TbResult LbTextSetJustifyWindow(long x, long y, ulong width)
+TbResult LbTextSetJustifyWindow(i32 x, i32 y, u32 width)
 {
     lbTextJustifyWindow.x = x;
     lbTextJustifyWindow.y = y;
@@ -59,11 +59,11 @@ TbResult LbTextSetJustifyWindow(long x, long y, ulong width)
     return Lb_SUCCESS;
 }
 
-TbResult LbTextSetClipWindow(long x, long y, ulong width, ulong height)
+TbResult LbTextSetClipWindow(i32 x, i32 y, u32 width, u32 height)
 {
-    long start_x,start_y;
-    long end_x,end_y;
-    long i;
+    i32 start_x,start_y;
+    i32 end_x,end_y;
+    i32 i;
     start_x = x;
     start_y = y;
     end_x = x + width;
@@ -104,7 +104,7 @@ TbResult LbTextSetClipWindow(long x, long y, ulong width, ulong height)
     return Lb_SUCCESS;
 }
 
-TbResult LbTextSetWindow(long x, long y, ulong width, ulong height)
+TbResult LbTextSetWindow(i32 x, i32 y, u32 width, u32 height)
 {
     LbTextSetJustifyWindow(x, y, width);
     LbTextSetClipWindow(x, y, width, height);

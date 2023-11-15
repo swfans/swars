@@ -35,14 +35,14 @@ extern TbBool SoundInstalled;
 extern TbBool DisableLoadSounds;
 
 extern TbBool SoundAble;
-extern ushort SoundType;
+extern u16 SoundType;
 
 extern TbBool sample_queue_handle_initiated;
 extern TbBool sample_queue_handle_stopped;
 extern SNDSAMPLE *sample_queue_handle;
 
 extern char full_sound_data_path[224];
-extern ubyte CurrentSoundBank; // = -1;
+extern u8 CurrentSoundBank; // = -1;
 
 /******************************************************************************/
 
@@ -61,15 +61,15 @@ void StopSampleQueueList(void)
         AIL_set_sample_user_data(sample_queue_handle, i, 0);
 }
 
-ubyte load_sound_bank(TbFileHandle fh, ubyte bank_tpno)
+u8 load_sound_bank(TbFileHandle fh, u8 bank_tpno)
 {
-    ubyte ret;
+    u8 ret;
     asm volatile ("call ASM_load_sound_bank\n"
         : "=r" (ret) : "a" (fh),  "d" (bank_tpno));
     return ret;
 }
 
-int LoadSounds(ubyte bank_no)
+int LoadSounds(u8 bank_no)
 {
 #if 0
     int ret;
@@ -79,8 +79,8 @@ int LoadSounds(ubyte bank_no)
 #else
     TbFileHandle fh;
     long len, banks_offs;
-    ushort tpno;
-    ushort banks_per_tpno[9];
+    u16 tpno;
+    u16 banks_per_tpno[9];
 
     sprintf(SoundProgressMessage, "BF42 - load sound bank %d\n", bank_no);
     SoundProgressLog(SoundProgressMessage);

@@ -31,7 +31,7 @@
 #include "bfstrut.h"
 #include "privbflog.h"
 
-TbResult LbIniParseStart(struct TbIniParser *parser, const char *buf, long buflen)
+TbResult LbIniParseStart(struct TbIniParser *parser, const char *buf, i32 buflen)
 {
     parser->pos = 0;
     parser->line_num = 1;
@@ -59,7 +59,7 @@ TbBool LbIniSkipToNextLine(struct TbIniParser *parser)
     // Go to start of next line
     while (parser->pos < parser->buflen)
     {
-        if ((uchar)parser->buf[parser->pos] > 32)
+        if ((uc8)parser->buf[parser->pos] > 32)
             break;
         if (parser->buf[parser->pos] == '\n')
             parser->line_num++;
@@ -75,7 +75,7 @@ static TbBool IniSkipSpaces(struct TbIniParser *parser)
         if ((parser->buf[parser->pos] != ' ') &&
             (parser->buf[parser->pos] != '\t') &&
             (parser->buf[parser->pos] != 26) &&
-            ((uchar)parser->buf[parser->pos] >= 7))
+            ((uc8)parser->buf[parser->pos] >= 7))
             break;
         parser->pos++;
     }
@@ -89,7 +89,7 @@ static TbBool IniSkipKeyEndToValue(struct TbIniParser *parser)
         if ((parser->buf[parser->pos] != ' ') &&
             (parser->buf[parser->pos] != '\t') &&
             (parser->buf[parser->pos] != '=') &&
-            ((uchar)parser->buf[parser->pos] >= 7))
+            ((uc8)parser->buf[parser->pos] >= 7))
             break;
         parser->pos++;
     }
@@ -151,7 +151,7 @@ int LbIniRecognizeKey(struct TbIniParser *parser, const struct TbNamedEnum keyli
            (parser->buf[parser->pos] == '\n') ||
            (parser->buf[parser->pos] == '\r') ||
            (parser->buf[parser->pos] == 26) ||
-           ((uchar)parser->buf[parser->pos] < 7))
+           ((uc8)parser->buf[parser->pos] < 7))
     {
         parser->pos++;
         if (parser->pos >= parser->buflen) return -1;
@@ -182,7 +182,7 @@ int LbIniRecognizeKey(struct TbIniParser *parser, const struct TbNamedEnum keyli
                if ((parser->buf[parser->pos] != ' ') &&
                    (parser->buf[parser->pos] != '\t') &&
                    (parser->buf[parser->pos] != '=')  &&
-                   ((uchar)parser->buf[parser->pos] >= 7))
+                   ((uc8)parser->buf[parser->pos] >= 7))
                {
                    parser->pos -= cmdname_len;
                    i++;
@@ -199,7 +199,7 @@ int LbIniRecognizeKey(struct TbIniParser *parser, const struct TbNamedEnum keyli
     return -2;
 }
 
-int LbIniGetKey(struct TbIniParser *parser, char *dst, long dstlen)
+int LbIniGetKey(struct TbIniParser *parser, char *dst, i32 dstlen)
 {
     int i;
     TbBool in_quotes;
@@ -213,7 +213,7 @@ int LbIniGetKey(struct TbIniParser *parser, char *dst, long dstlen)
            (parser->buf[parser->pos] == '\n') ||
            (parser->buf[parser->pos] == '\r') ||
            (parser->buf[parser->pos] == 26) ||
-           ((uchar)parser->buf[parser->pos] < 7))
+           ((uc8)parser->buf[parser->pos] < 7))
     {
         parser->pos++;
         if (parser->pos >= parser->buflen) return -1;
@@ -258,7 +258,7 @@ int LbIniGetKey(struct TbIniParser *parser, char *dst, long dstlen)
         while (i > 0) {
             if ((parser->buf[p] != ' ') &&
                  (parser->buf[p] != '\t') &&
-                 ((uchar)parser->buf[p] >= 7))
+                 ((uc8)parser->buf[p] >= 7))
                 break;
             i--;
             p--;
@@ -270,7 +270,7 @@ int LbIniGetKey(struct TbIniParser *parser, char *dst, long dstlen)
     return i;
 }
 
-int LbIniValueGetStrWhole(struct TbIniParser *parser, char *dst, long dstlen)
+int LbIniValueGetStrWhole(struct TbIniParser *parser, char *dst, i32 dstlen)
 {
     int i;
     TbBool in_quotes;
@@ -297,7 +297,7 @@ int LbIniValueGetStrWhole(struct TbIniParser *parser, char *dst, long dstlen)
         } else {
             if ((parser->buf[parser->pos] == '\r') ||
                 (parser->buf[parser->pos] == '\n') ||
-                ((uchar)parser->buf[parser->pos] < 7))
+                ((uc8)parser->buf[parser->pos] < 7))
               break;
         }
         dst[i] = parser->buf[parser->pos];
@@ -308,7 +308,7 @@ int LbIniValueGetStrWhole(struct TbIniParser *parser, char *dst, long dstlen)
     return i;
 }
 
-int LbIniValueGetStrWord(struct TbIniParser *parser, char *dst, long dstlen)
+int LbIniValueGetStrWord(struct TbIniParser *parser, char *dst, i32 dstlen)
 {
     int i;
     TbBool in_quotes;
@@ -337,7 +337,7 @@ int LbIniValueGetStrWord(struct TbIniParser *parser, char *dst, long dstlen)
                  (parser->buf[parser->pos] == '\t') ||
                  (parser->buf[parser->pos] == '\r') ||
                  (parser->buf[parser->pos] == '\n') ||
-                 ((uchar)parser->buf[parser->pos] < 7))
+                 ((uc8)parser->buf[parser->pos] < 7))
                 break;
         }
         dst[i] = parser->buf[parser->pos];
@@ -351,7 +351,7 @@ int LbIniValueGetStrWord(struct TbIniParser *parser, char *dst, long dstlen)
     return i;
 }
 
-int LbIniValueGetLongInt(struct TbIniParser *parser, long *dst)
+int LbIniValueGetLongInt(struct TbIniParser *parser, i32 *dst)
 {
     char buf[32];
     char *bend;
@@ -406,7 +406,7 @@ int LbIniValueGetNamedEnum(struct TbIniParser *parser, const struct TbNamedEnum 
                 // If non-EOLN blank char, finish and return position after the char
                 if ((parser->buf[parser->pos + par_len] == ' ') ||
                     (parser->buf[parser->pos + par_len] == '\t') ||
-                    ((uchar)parser->buf[parser->pos + par_len] < 7))
+                    ((uc8)parser->buf[parser->pos + par_len] < 7))
                 {
                     parser->pos += par_len + 1;
                     return vallist[i].num;

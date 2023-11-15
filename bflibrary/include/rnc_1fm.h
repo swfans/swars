@@ -20,6 +20,8 @@
 #ifndef RNC_1FM_H_
 #define RNC_1FM_H_
 
+#include "bftypes.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -53,14 +55,14 @@ extern "C" {
 #define RNC_HEADER_LEN 18
 
 #ifndef COMPRESSOR
-long rnc_unpack(void *packed, void *unpacked, unsigned int flags);
+i32 rnc_unpack(void *packed, void *unpacked, u32 flags);
 #else
-long rnc_unpack(void *packed, void *unpacked, unsigned int flags, long *leeway);
+i32 rnc_unpack(void *packed, void *unpacked, u32 flags, i32 *leeway);
 #endif
-const char *rnc_error(long errcode);
-long rnc_crc(void *data, unsigned long len);
+const char *rnc_error(i32 errcode);
+i32 rnc_crc(void *data, u32 len);
 
-long UnpackM1(unsigned char *buffer, unsigned long bufsize);
+i32 UnpackM1(uc8 *buffer, u32 bufsize);
 
 #ifdef __cplusplus
 }

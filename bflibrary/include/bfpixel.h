@@ -29,13 +29,13 @@ extern "C" {
 /** Draw pixel on graphics window, with clipping.
  *
  */
-TbResult LbDrawPixelClip(long x, long y, TbPixel colour);
+TbResult LbDrawPixelClip(i32 x, i32 y, TbPixel colour);
 
 /** Draw pixel on graphics window, without checking coords.
  *
  * This function just sets the pixel to given colour, ignoring DrawFlags.
  */
-TbResult LbDrawPixel(long x, long y, TbPixel colour);
+TbResult LbDrawPixel(i32 x, i32 y, TbPixel colour);
 
 #ifdef __cplusplus
 };

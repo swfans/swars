@@ -185,30 +185,30 @@ enum PersonCommandType
 
 struct Command
 {
-  short Next;
-  short OtherThing;
-  short X;
-  short Y;
-  short Z;
-  ubyte Type;
-  ubyte SubType;
-  short Arg1;
-  short Arg2;
-  short Time;
-  short MyThing;
-  short Parent;
-  ulong Flags;
-  ulong field_1A;
-  short field_1E;
+  i16 Next;
+  i16 OtherThing;
+  i16 X;
+  i16 Y;
+  i16 Z;
+  u8 Type;
+  u8 SubType;
+  i16 Arg1;
+  i16 Arg2;
+  i16 Time;
+  i16 MyThing;
+  i16 Parent;
+  u32 Flags;
+  u32 field_1A;
+  i16 field_1E;
 };
 
 
 #pragma pack()
 /******************************************************************************/
 extern struct Command *game_commands;
-extern ushort next_command;
+extern u16 next_command;
 
-void snprint_command(char *buf, ulong buflen, ushort cmd);
+void snprint_command(char *buf, u32 buflen, u16 cmd);
 TbBool is_command_any_until(struct Command *p_cmd);
 
 /** For Commands which rely on searching Things on map, find the Things

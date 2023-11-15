@@ -11,9 +11,9 @@
 #pragma pack(1)
 
 struct PointerHotspot {
-    sbyte x;
-    sbyte y;
-    sbyte z;
+    i8 x;
+    i8 y;
+    i8 z;
 };
 
 struct PointerHotspot pointer_hotspot[] = {
@@ -41,7 +41,7 @@ void do_change_mouse(ushort mouse)
   LbMouseChangeSpriteOffset(pointer_hotspot[mouse].x, pointer_hotspot[mouse].y);
 }
 
-ubyte process_mouse_imputs(void)
+u8 process_mouse_imputs(void)
 {
     int ret;
     asm volatile ("call ASM_process_mouse_imputs\n"

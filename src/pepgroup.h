@@ -34,30 +34,30 @@ extern "C" {
 struct WarFlag { // sizeof=40
  /** Bitfields of groups whose members are attacked  on sight.
   */
-  ulong KillOnSight;
+  u32 KillOnSight;
  /** Bitfields of groups whose members are attacked if wielding visible weapons.
   */
-  ulong KillIfWeaponOut;
+  u32 KillIfWeaponOut;
  /** Bitfields of groups whose members are attacked if have any weapons, even concealed.
   */
-  ulong KillIfArmed;
+  u32 KillIfArmed;
  /** Bitfields of groups whose members are not attacked.
   */
-  ulong Truce;
-  ubyte Guardians[8];
-  long ugfld_24;
-  long ugfld_28;
-  long ugfld_32;
-  long ugfld_36;
+  u32 Truce;
+  u8 Guardians[8];
+  i32 ugfld_24;
+  i32 ugfld_28;
+  i32 ugfld_32;
+  i32 ugfld_36;
 };
 
 struct GroupAction {
-  ulong FiredOn;
-  ulong Hit;
-  short Dead;
-  short Alive;
-  short Persuaded;
-  short Storming;
+  u32 FiredOn;
+  u32 Hit;
+  i16 Dead;
+  i16 Alive;
+  i16 Persuaded;
+  i16 Storming;
 };
 
 #pragma pack()
@@ -67,17 +67,17 @@ extern struct GroupAction group_actions[PEOPLE_GROUPS_COUNT];
 
 /** Finds Group ID for which there are no things created.
  */
-short find_unused_group_id(TbBool largest);
+i16 find_unused_group_id(TbBool largest);
 
 /** Count how many people of given kind are in given group.
  *
  * This can be called during level load, as it does not use per-type linked lists.
  */
-ushort count_people_in_group(ushort group, short subtype);
+u16 count_people_in_group(u16 group, i16 subtype);
 
 /** Copy all properties of one group into another group.
  */
-void thing_group_copy(short pv_group, short nx_group, ubyte allow_kill);
+void thing_group_copy(i16 pv_group, i16 nx_group, u8 allow_kill);
 
 /******************************************************************************/
 #ifdef __cplusplus

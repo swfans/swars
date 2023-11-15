@@ -23,10 +23,10 @@
 #include "swlog.h"
 /******************************************************************************/
 
-void draw_text(short x, short y, const char *text, ubyte colour)
+void draw_text(short x, short y, const char *text, u8 colour)
 {
     long scrn_w, scrn_h;
-    ubyte *scr;
+    u8 *scr;
 
     if (x < 0 || y < 0)
         return;

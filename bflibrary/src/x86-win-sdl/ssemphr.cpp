@@ -43,8 +43,8 @@ extern "C" {
 #define CONST const
 #endif
 
-typedef unsigned long DWORD;
-typedef long LONG;
+typedef unsigned i32 DWORD;
+typedef i32 LONG;
 typedef char CHAR;
 typedef int WINBOOL,*PWINBOOL,*LPWINBOOL;
 typedef CONST CHAR *LPCCH,*PCSTR,*LPCSTR;
@@ -53,7 +53,7 @@ typedef PVOID HANDLE;
 #define BOOL WINBOOL
 #define DECLARE_HANDLE(n) typedef HANDLE n
 typedef HANDLE *PHANDLE,*LPHANDLE;
-typedef long *LPLONG;
+typedef i32 *LPLONG;
 typedef struct _SECURITY_ATTRIBUTES {
     DWORD nLength;
     LPVOID lpSecurityDescriptor;

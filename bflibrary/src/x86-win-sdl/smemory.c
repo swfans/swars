@@ -101,9 +101,9 @@ struct mem_arena
     ulong Size;
     mem_arena *Child;
     mem_arena *Parent;
-    ubyte  Used;
+    u8  Used;
     /** Index in memory_blocks[] of the section containing this areana. */
-    ubyte  Section;
+    u8  Section;
 };
 
 mem_block memory_blocks[TABLE_SIZE];
@@ -166,7 +166,7 @@ static void initialise_block_nodes(void)
 TbBool split_arena(mem_arena *arena, size_t size)
 {
     mem_arena *curarena;
-    ubyte sect;
+    u8 sect;
     mem_arena *charena;
     ulong n;
 

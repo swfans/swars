@@ -73,7 +73,7 @@ volatile ulong CDCountdown;
 TbBool is_da_track[CD_TRACKS_MAX_COUNT];
 ulong track_start_sector[CD_TRACKS_MAX_COUNT];
 ulong track_lengths[CD_TRACKS_MAX_COUNT];
-sbyte InitialCDVolume = -1;
+i8 InitialCDVolume = -1;
 
 OggVorbisStream sound_music_stream;
 
@@ -87,7 +87,7 @@ HSNDTIMER CDPlayback_handle;
 
 /** CD device type.
  */
-ubyte CDType = CDTYP_NONE;
+u8 CDType = CDTYP_NONE;
 
 /** Directory with music files.
  */
@@ -95,7 +95,7 @@ char music_dir[FILENAME_MAX];
 
 /******************************************************************************/
 
-sbyte CDSpeedTest(const char *fname)
+i8 CDSpeedTest(const char *fname)
 {
     // No need to really check, everything today is faster than 4x CD speed
     return 4;
@@ -185,7 +185,7 @@ ushort cd_play(ushort cd, ulong start, ulong len)
     return 0;
 }
 
-sbyte GetCDAudioVolume(void)
+i8 GetCDAudioVolume(void)
 {
     assert(!"not implemented");
     return 0;
@@ -201,9 +201,9 @@ void FreeCDAudio(void)
     assert(!"not implemented");
 }
 
-sbyte GetCDVolume(void)
+i8 GetCDVolume(void)
 {
-    sbyte vol;
+    i8 vol;
     float fvol;
 
     if (!CDAble)

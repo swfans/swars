@@ -34,20 +34,20 @@ struct AudioInitOptions {
   const char *IniPath;
   const char *SoundDriverPath;
   const char *SoundDataPath;
-  ushort SoundType;
-  ushort AbleFlags;
-  short SelectedWin95MidiDevice;
-  short SelectedWin95WaveDevice;
-  ubyte MaxSamples;
-  ubyte StereoOption;
-  ubyte AutoScan;
-  ubyte DisableDangerMusic;
-  ubyte DisableLoadSounds;
-  ubyte DisableLoadMusic;
-  ubyte UseCurrentAwe32Soundfont;
-  ubyte UseMultiMediaExtensions;
-  ubyte InitStreamedSound;
-  ubyte InitRedbookAudio;
+  u16 SoundType;
+  u16 AbleFlags;
+  i16 SelectedWin95MidiDevice;
+  i16 SelectedWin95WaveDevice;
+  u8 MaxSamples;
+  u8 StereoOption;
+  u8 AutoScan;
+  u8 DisableDangerMusic;
+  u8 DisableLoadSounds;
+  u8 DisableLoadMusic;
+  u8 UseCurrentAwe32Soundfont;
+  u8 UseMultiMediaExtensions;
+  u8 InitStreamedSound;
+  u8 InitRedbookAudio;
 };
 
 #pragma pack()

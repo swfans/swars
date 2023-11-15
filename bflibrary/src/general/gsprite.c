@@ -22,7 +22,7 @@
 
 #include "privbflog.h"
 
-ubyte * lbSpriteReMapPtr;
+u8 * lbSpriteReMapPtr;
 
 TbResult LbSpriteSetup(TbSprite *start, const TbSprite *end, const unsigned char *data)
 {

@@ -36,7 +36,7 @@ struct TbLoadFiles { // sizeof=44
     char FName[28]; // offset=0
     void **Start; // offset=28
     void **SEnd; // offset=32
-    ulong SLength; // offset=36
+    u32 SLength; // offset=36
     ushort Flags; // offset=40
     ushort Spare; // offset=42
 };

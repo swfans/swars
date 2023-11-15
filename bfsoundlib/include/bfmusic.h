@@ -29,24 +29,24 @@ extern "C" {
 #pragma pack(1)
 
 struct MusicBankSizes {
-    ulong mbs0;
-    ulong mbs1;
-    ulong mbs2;
-    ulong mbs3;
-    ulong mbs4;
-    ulong mbs5;
-    ulong mbs6;
-    ulong mbs7;
+    i32 mbs0;
+    i32 mbs1;
+    i32 mbs2;
+    i32 mbs3;
+    i32 mbs4;
+    i32 mbs5;
+    i32 mbs6;
+    i32 mbs7;
 };
 
 struct BfMusicInfo {
   char FileName[12];
-  long mifld_12;
-  short mifld_16;
-  ubyte *DataBeg;
-  long mifld_22;
-  ubyte *DataEnd;
-  short mifld_30;
+  i32 mifld_12;
+  i16 mifld_16;
+  u8 *DataBeg;
+  i32 mifld_22;
+  u8 *DataEnd;
+  i16 mifld_30;
 };
 
 #pragma pack()
@@ -55,12 +55,12 @@ struct BfMusicInfo {
 void InitMusic(void);
 void FreeMusic(void);
 
-int LoadMusic(ushort bankNo);
+int LoadMusic(u16 bankNo);
 
 void StopMusicIfActive(void);
 void StopMusic(void);
 
-void SetMusicVolume(int msec, ubyte volume);
+void SetMusicVolume(int msec, u8 volume);
 
 /******************************************************************************/
 #ifdef __cplusplus

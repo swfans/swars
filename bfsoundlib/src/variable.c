@@ -35,7 +35,7 @@ extern struct SampleInfo *end_sample_id;
 extern TbBool SoundInstalled;
 extern TbBool DisableLoadSounds;
 
-extern ushort NumberOfSamples;
+extern u16 NumberOfSamples;
 extern struct DIG_DRIVER *SoundDriver;
 
 extern int CurrentSoundMasterVolume; // = 127;
@@ -45,7 +45,7 @@ extern TbBool MusicInstalled;
 extern TbBool MusicAble;
 extern TbBool MusicActive;
 
-extern ushort NumberOfSongs;
+extern u16 NumberOfSongs;
 extern struct MDI_DRIVER *MusicDriver;
 extern struct SNDSEQUENCE *SongHandle;
 
@@ -53,11 +53,11 @@ extern TbBool SoundAble;
 extern TbBool SoundActive;
 extern TbBool StereoSound;
 
-extern sbyte CDSpeed;
+extern i8 CDSpeed;
 
 /******************************************************************************/
 
-ushort GetNumberOfSamples(void)
+u16 GetNumberOfSamples(void)
 {
   return NumberOfSamples;
 }
@@ -97,7 +97,7 @@ TbBool GetStereoSound(void)
     return StereoSound;
 }
 
-ushort GetNumberOfSongs(void)
+u16 GetNumberOfSongs(void)
 {
     return NumberOfSongs;
 }
@@ -147,9 +147,9 @@ struct SNDSEQUENCE *GetSongHandle(void)
   return SongHandle;
 }
 
-sbyte GetCDSpeed(ubyte n)
+i8 GetCDSpeed(u8 n)
 {
-    ubyte speed;
+    u8 speed;
 
     if (n)
         speed = CDSpeedTest(0);

@@ -21,9 +21,9 @@
 #include "bftypes.h"
 #include "bfpalette.h"
 
-long tabwidth = 46;
+i32 tabwidth = 46;
 
-const ubyte font[] = {
+const u8 font[] = {
     0b00000000,
     0b00000000,
     0b00000000,
@@ -761,7 +761,7 @@ const ubyte font[] = {
     0, 0,
 };
 
-static void prop_text_qaz(ubyte *o, ubyte chtype, ushort colr)
+static void prop_text_qaz(u8 *o, u8 chtype, ushort colr)
 {
     switch (chtype)
     {
@@ -894,9 +894,9 @@ static void prop_text_qaz(ubyte *o, ubyte chtype, ushort colr)
     }
 }
 
-static inline short prop_text_draw_char(ubyte *o, ubyte c, long scanline, ushort colr)
+static inline short prop_text_draw_char(u8 *o, u8 c, i32 scanline, ushort colr)
 {
-    ulong fpos; // pos within font data
+    u32 fpos; // pos within font data
     short fln; // line within font data
 
     fpos = 8 * ((c - 32) & 0xFF);
@@ -908,24 +908,24 @@ static inline short prop_text_draw_char(ubyte *o, ubyte c, long scanline, ushort
     return font[fpos];
 }
 
-void prop_text(const char *text, TbPixel *out, long scanline, TbPixel colour)
+void prop_text(const char *text, TbPixel *out, i32 scanline, TbPixel colour)
 {
     TbPixel *obeg; // current line begin in output buffer
     TbPixel *o; // current pos in output buffer
     ushort colr; // Colour expanded to 16 bits
-    const ubyte *pch; // Pointer to currently drawn character
-    ulong linesize; // size of one line within the output buffer
+    const u8 *pch; // Pointer to currently drawn character
+    u32 linesize; // size of one line within the output buffer
 
     linesize = 6 * scanline;
     colr = (colour << 8) + colour;
-    pch = (const ubyte *)text;
+    pch = (const u8 *)text;
     obeg = out;
     o = obeg;
 
     while (true)
     {
-        ulong w;
-        ubyte c;
+        u32 w;
+        u8 c;
         TbPixel *otmp;
         short chshift;
 
@@ -956,18 +956,18 @@ void prop_text(const char *text, TbPixel *out, long scanline, TbPixel colour)
     }
 }
 
-void make_fade_table(const ubyte *pal, ubyte *out, ubyte cr, ubyte cg, ubyte cb,
-  ubyte ir, ubyte ig, ubyte ib)
+void make_fade_table(const u8 *pal, u8 *out, u8 cr, u8 cg, u8 cb,
+  u8 ir, u8 ig, u8 ib)
 {
-    const ubyte *p;
-    ubyte *t;
+    const u8 *p;
+    u8 *t;
     short k;
 
     p = pal;
     t = out;
     for (k = 256; k > 0; k--)
     {
-        ubyte r, g, b;
+        u8 r, g, b;
 
         r = ((ushort)(ir * (short)(cr - p[0])) >> 8) + p[0];
         g = ((ushort)(ig * (short)(cg - p[1])) >> 8) + p[1];

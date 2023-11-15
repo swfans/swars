@@ -32,17 +32,17 @@ struct SNDSAMPLE;
 
 struct SampleInfo {
   struct SNDSAMPLE *SampleHandle;
-  long SampleVolume;
-  ushort SamplePitch;
-  ushort SamplePan;
-  ushort FadeToVolume;
-  ulong SourceID;
-  short SampleNumber;
-  ubyte FadeState;
-  ubyte FadeStopFlag;
-  ubyte FadeStep;
-  ubyte UserFlag;
-  ubyte SampleType;
+  i32 SampleVolume;
+  u16 SamplePitch;
+  u16 SamplePan;
+  u16 FadeToVolume;
+  u32 SourceID;
+  i16 SampleNumber;
+  u8 FadeState;
+  u8 FadeStopFlag;
+  u8 FadeStep;
+  u8 UserFlag;
+  u8 SampleType;
 };
 
 #pragma pack()
@@ -51,11 +51,11 @@ struct SampleInfo {
 void InitSound(void);
 void FreeSound(void);
 
-int LoadSounds(ubyte bank_no);
-int AllocateSoundBankMemory(ushort snd_type);
+int LoadSounds(u8 bank_no);
+int AllocateSoundBankMemory(u16 snd_type);
 //void DeInitSoundBank();
 
-ubyte GetSoundTpNo(ushort snd_type);
+u8 GetSoundTpNo(u16 snd_type);
 //int SwitchOffSound();
 //int SwitchOnSound();
 

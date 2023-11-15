@@ -27,8 +27,8 @@
 extern "C" {
 #endif
 
-void generate_example_texture_map_xor_based(const ubyte *pal, ubyte *texmap);
-void raw_to_wscreen(short X, short Y, ushort Width, ushort Height, ubyte *Raw);
+void generate_example_texture_map_xor_based(const u8 *pal, u8 *texmap);
+void raw_to_wscreen(i16 X, i16 Y, u16 Width, u16 Height, u8 *Raw);
 
 #ifdef __cplusplus
 };

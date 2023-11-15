@@ -47,11 +47,11 @@ typedef struct {
 typedef struct {
     char *Name;
     void **BufferPtr;
-    ushort ESize;
-    long N;
+    u16 ESize;
+    i32 N;
     void *PrivBuffer;
-    long dum2;
-    ubyte dum3;
+    i32 dum2;
+    u8 dum3;
 } MemSystem;
 
 #pragma pack()
@@ -73,11 +73,11 @@ void setup_file_names(void);
 int get_highest_used_packet_record_no(int campgn, int missi);
 void get_packet_record_fname(char *fname, int campgn, int missi, int file_no);
 void get_user_settings_fname(char *fname, const char *name);
-void get_saved_game_fname(char *fname, ushort slot);
+void get_saved_game_fname(char *fname, u16 slot);
 
 void adjust_memory_use(void);
 void init_memory(MemSystem *mem_table);
-long get_memory_ptr_allocated_count(void **mgptr);
+i32 get_memory_ptr_allocated_count(void **mgptr);
 
 /******************************************************************************/
 #ifdef __cplusplus

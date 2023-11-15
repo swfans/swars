@@ -21,7 +21,7 @@
 #include "game_data.h"
 #include "util.h"
 
-struct SampleInfo *play_sample_using_heap(ulong a1, short smptbl_id, ulong a3, ulong a4, ulong a5, char a6, ubyte type)
+struct SampleInfo *play_sample_using_heap(u32 a1, short smptbl_id, u32 a3, u32 a4, u32 a5, char a6, u8 type)
 {
     struct SampleInfo *ret;
     asm volatile (
@@ -33,14 +33,14 @@ struct SampleInfo *play_sample_using_heap(ulong a1, short smptbl_id, ulong a3, u
     return ret;
 }
 
-void stop_sample_using_heap(struct SNDSEQUENCE *source, ulong sample_number)
+void stop_sample_using_heap(struct SNDSEQUENCE *source, u32 sample_number)
 {
     asm volatile (
       "call ASM_stop_sample_using_heap\n"
         : : "a" (source), "d" (sample_number));
 }
 
-void play_dist_sample(struct Thing *p_thing, ushort smptbl_id, ushort vol, ushort pan, int pitch, int loop, ubyte type)
+void play_dist_sample(struct Thing *p_thing, ushort smptbl_id, ushort vol, ushort pan, int pitch, int loop, u8 type)
 {
     asm volatile (
       "push %6\n"

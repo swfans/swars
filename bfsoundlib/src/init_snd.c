@@ -23,7 +23,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <assert.h>
-
+#include <string.h>
 #include "bfsound.h"
 #include "bfmemory.h"
 #include "bffile.h"
@@ -38,8 +38,8 @@
 #pragma pack(1)
 
 struct SoundBankSizes {
-    long DatSize;
-    long TabSize;
+    i32 DatSize;
+    i32 TabSize;
 };
 
 #pragma pack()
@@ -53,14 +53,14 @@ extern DIG_DRIVER *SoundDriver;
 extern TbBool SoundInstalled;
 extern TbBool SoundAble;
 extern TbBool SoundActive;
-extern ushort SoundType;
+extern u16 SoundType;
 extern char SoundDataPath[144];
 
-extern ulong MaxNumberOfSamples;
+extern u32 MaxNumberOfSamples;
 extern TbBool StereoSound;
 extern TbBool SixteenBit;
-extern ulong SampleRate;
-extern long CurrentSoundMasterVolume;
+extern u32 SampleRate;
+extern i32 CurrentSoundMasterVolume;
 
 extern struct SampleInfo sample_id[32];
 extern struct SampleInfo *end_sample_id;
@@ -70,8 +70,8 @@ extern void *SfxData;
 extern void *Sfx;
 extern void *EndSfxs;
 
-extern long largest_dat_size;
-extern long largest_tab_size;
+extern i32 largest_dat_size;
+extern i32 largest_tab_size;
 extern char full_sound_data_path[224];
 extern struct SoundBankSizes sound_bank_size_info[9];
 
@@ -79,7 +79,7 @@ extern TbBool MusicInstalled;
 extern TbBool MusicAble;
 
 /******************************************************************************/
-ubyte GetSoundTpNo(ushort snd_type)
+u8 GetSoundTpNo(u16 snd_type)
 {
     switch (snd_type)
     {
@@ -105,7 +105,7 @@ ubyte GetSoundTpNo(ushort snd_type)
     return 255;
 }
 
-ushort GetSoundTypeFromTpNo(ubyte tpno)
+u16 GetSoundTypeFromTpNo(u8 tpno)
 {
     switch (tpno)
     {
@@ -131,7 +131,7 @@ ushort GetSoundTypeFromTpNo(ubyte tpno)
     return 0;
 }
 
-int SetSoundBitsAndRate(ushort snd_type)
+int SetSoundBitsAndRate(u16 snd_type)
 {
     switch (snd_type)
     {
@@ -166,12 +166,12 @@ int SetSoundBitsAndRate(ushort snd_type)
     return 1;
 }
 
-int AllocateSoundBankMemory(ushort snd_type)
+int AllocateSoundBankMemory(u16 snd_type)
 {
     TbFileHandle fh;
-    long len;
-    ushort tpno;
-    long dat_size, tab_size;
+    i32 len;
+    u16 tpno;
+    i32 dat_size, tab_size;
 
     sprintf(full_sound_data_path, "%s/SOUND.DAT", SoundDataPath);
     fh = LbFileOpen(full_sound_data_path, Lb_FILE_MODE_READ_ONLY);
@@ -222,7 +222,7 @@ void DetermineSoundType(void)
         :  :  : "eax" );
 #else
     int ret;
-    ubyte tpno;
+    u8 tpno;
 
     while ( 1 )
     {

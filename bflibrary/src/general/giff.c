@@ -32,61 +32,61 @@
 #pragma pack(1)
 
 struct iff_header { // sizeof=40
-    ubyte Id[4]; // offset=0
-    ulong FileLength; // offset=4
-    ubyte FileType[8]; // offset=8
-    ulong HeaderLength; // offset=16
-    ushort Width; // offset=20
-    ushort Height; // offset=22
-    short XOffset; // offset=24
-    short YOffset; // offset=26
-    ubyte NumberOfPlanes; // offset=28
-    ubyte Mask; // offset=29
-    ubyte Encoding; // offset=30
-    ubyte Padding; // offset=31
-    ushort Transparent; // offset=32
-    ubyte XAspectRatio; // offset=34
-    ubyte YAspectRatio; // offset=35
-    ushort PageWidth; // offset=36
-    ushort PageHeight; // offset=38
+    u8 Id[4]; // offset=0
+    u32 FileLength; // offset=4
+    u8 FileType[8]; // offset=8
+    u32 HeaderLength; // offset=16
+    u16 Width; // offset=20
+    u16 Height; // offset=22
+    i16 XOffset; // offset=24
+    i16 YOffset; // offset=26
+    u8 NumberOfPlanes; // offset=28
+    u8 Mask; // offset=29
+    u8 Encoding; // offset=30
+    u8 Padding; // offset=31
+    u16 Transparent; // offset=32
+    u8 XAspectRatio; // offset=34
+    u8 YAspectRatio; // offset=35
+    u16 PageWidth; // offset=36
+    u16 PageHeight; // offset=38
 };
 
 typedef struct iff_header iff_header;
 
 struct ChunkHeader { // sizeof=8
-    ubyte Id[4]; // offset=0
-    ulong ChunkLength; // offset=4
+    u8 Id[4]; // offset=0
+    u32 ChunkLength; // offset=4
 };
 
 typedef struct ChunkHeader ChunkHeader;
 
 #pragma pack()
 
-ulong swap_long_bytes(ulong v)
+u32 swap_long_bytes(u32 v)
 {
     return ((v & 0xFF00) << 8) | ((v & 0xFF0000) >> 8) | ((v & 0xFF000000) >> 24) | ((v & 0xFF) << 24);
 }
 
-ushort swap_word_bytes(ushort v)
+u16 swap_word_bytes(u16 v)
 {
     return ((v & 0x00FF) << 8) | ((v & 0xFF00) >> 8);
 }
 
-static TbResult read_body(struct iff_header *iffhead, struct ChunkHeader *chead, ubyte *buf)
+static TbResult read_body(struct iff_header *iffhead, struct ChunkHeader *chead, u8 *buf)
 {
     assert(!"Not implemented");
     return Lb_FAIL;
 }
 
-static TbResult read_cmap(struct ChunkHeader *chead, ubyte *pal)
+static TbResult read_cmap(struct ChunkHeader *chead, u8 *pal)
 {
     assert(!"Not implemented");
     return Lb_FAIL;
 }
 
-static TbResult read_iff(struct TbIff *iff, ubyte *buf)
+static TbResult read_iff(struct TbIff *iff, u8 *buf)
 {
-    ulong fourcc;
+    u32 fourcc;
     struct iff_header iffhead;
     struct ChunkHeader chead;
 
@@ -162,7 +162,7 @@ static TbResult read_iff(struct TbIff *iff, ubyte *buf)
     return Lb_SUCCESS;
 }
 
-TbResult LbIffLoad(const char *fname, ubyte *buf, struct TbIff *iff)
+TbResult LbIffLoad(const char *fname, u8 *buf, struct TbIff *iff)
 {
     TbFileHandle handle;
     TbResult ret;
@@ -181,16 +181,16 @@ TbResult LbIffLoad(const char *fname, ubyte *buf, struct TbIff *iff)
 }
 
 TbResult LbIffWrite(FILE *img_fh, const TbPixel *inp_buffer,
-    ulong width, ulong height, const ubyte *pal)
+    u32 width, u32 height, const u8 *pal)
 {
-    ubyte pxcol;
-    ushort img_w;
-    ushort img_h;
-    ulong i, k;
-    const ubyte *palptr;
-    ubyte transClr;
-    ulong lenChunk;
-    ulong pxpos;
+    u8 pxcol;
+    u16 img_w;
+    u16 img_h;
+    u32 i, k;
+    const u8 *palptr;
+    u8 transClr;
+    u32 lenChunk;
+    u32 pxpos;
     const TbPixel *inp;
 
     palptr = pal;
@@ -205,11 +205,11 @@ TbResult LbIffWrite(FILE *img_fh, const TbPixel *inp_buffer,
 
     img_w = width;
     img_h = height;
-    unsigned long lenCmapChunk, lenTinyChunk, lenBodyChunk;
-    unsigned int algn_w = (img_w + 3) & ~0x3;
-    unsigned int algn_h = (img_h + 3) & ~0x3;
-    unsigned int tiny_w = algn_w >> 2;
-    unsigned int tiny_h = algn_h >> 2;
+    u32 lenCmapChunk, lenTinyChunk, lenBodyChunk;
+    u32 algn_w = (img_w + 3) & ~0x3;
+    u32 algn_h = (img_h + 3) & ~0x3;
+    u32 tiny_w = algn_w >> 2;
+    u32 tiny_h = algn_h >> 2;
     lenCmapChunk = 3 * 256;
     lenTinyChunk = 4 + tiny_w * tiny_h;
     lenBodyChunk = img_h * img_w;
@@ -339,7 +339,7 @@ TbResult LbIffWrite(FILE *img_fh, const TbPixel *inp_buffer,
 }
 
 TbResult LbIffSave(const char *fname, const TbPixel *inp_buffer,
-  ulong width, ulong height, const ubyte *pal, TbBool force_fname)
+  u32 width, u32 height, const u8 *pal, TbBool force_fname)
 {
     char full_fname[FILENAME_MAX];
     FILE *img_fh;
@@ -361,7 +361,7 @@ TbResult LbIffSave(const char *fname, const TbPixel *inp_buffer,
 }
 
 TbResult LbIffSaveScreen(const char *fname, const TbPixel *inp_buffer,
-  const ubyte *pal, TbBool force_fname)
+  const u8 *pal, TbBool force_fname)
 {
     return LbIffSave(fname, inp_buffer, lbDisplay.PhysicalScreenWidth,
       lbDisplay.PhysicalScreenHeight, pal, force_fname);
