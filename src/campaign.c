@@ -1582,12 +1582,8 @@ TbResult load_netscan_text_data(ushort mapno, ushort level)
 
     found = 0;
     totlen = load_file_alltext("textdata/netscan.txt", netscan_text);
-    if (totlen == Lb_FAIL) {
+    if (totlen == -1) {
         return Lb_FAIL;
-    }
-    if (totlen >= netscan_text_len) {
-        LOGERR("Insufficient memory for netscan_text - %d instead of %d", netscan_text_len, totlen);
-        totlen = netscan_text_len - 1;
     }
     p = netscan_text;
     while ( !found )
@@ -1649,22 +1645,15 @@ TbResult load_mission_name_text(ubyte missi)
     char c;
 
     totlen = load_file_alltext("textdata/names.txt", memload);
-    if (totlen == Lb_FAIL) {
+    if (totlen == -1) {
         mission_name[0] = '\0';
         return Lb_FAIL;
     }
-    if (totlen >= memload_len) {
-        LOGERR("Insufficient memory for memload - %d instead of %d", memload_len, totlen);
-        totlen = memload_len - 1;
-    }
-    memload[totlen] = '\0';
 
     p = (char *)memload;
     cmissi = -1;
     while ( 1 )
     {
-        if (*p == '\0')
-            break;
         if ((*p != '#') && (*p != '\r'))
             sscanf(p, "%d", &cmissi);
         if (missi == cmissi)

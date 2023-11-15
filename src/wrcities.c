@@ -65,15 +65,9 @@ void load_city_txt(void)
     int i, k, city;
 
     totlen = load_file_alltext("textdata/city.txt", memload);
-    if (totlen == Lb_FAIL) {
+    if (totlen == -1) {
         return;
     }
-    if (totlen >= memload_len) {
-        LOGERR("Insufficient memory for memload - %d instead of %d", memload_len, totlen);
-        totlen = memload_len - 1;
-    }
-    memload[totlen] = '\0';
-
     s = (char *)memload;
     // Read property names
     {

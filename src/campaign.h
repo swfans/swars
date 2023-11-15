@@ -163,9 +163,7 @@ struct Mission { // sizeof=76
 extern struct Campaign campaigns[CAMPAIGNS_MAX_COUNT];
 extern struct Mission mission_list[MISSIONS_MAX_COUNT];
 extern char mission_name[50];
-
 extern char *netscan_text;
-#define netscan_text_len 16384
 
 void load_campaigns(void);
 ushort selectable_campaigns_count(void);

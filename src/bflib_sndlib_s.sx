@@ -102,7 +102,7 @@ TIME_write_:
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (ASM_AIL_set_sample_type)	/* 1036a0 */
+GLOBAL_FUNC (AIL_set_sample_type)	/* 1036a0 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %esi
@@ -150,7 +150,7 @@ GLOBAL_FUNC (ASM_AIL_set_sample_type)	/* 1036a0 */
 		push   %ecx
 		mov    0x1c(%esp),%esi
 		push   %esi
-		call   ASM_AIL_API_set_sample_type
+		call   AIL_API_set_sample_type
 		mov    AIL_indent,%edi
 		dec    %edi
 		add    $0xc,%esp
@@ -4373,7 +4373,7 @@ ASM_AIL_API_set_sample_address:
 
 
 /*----------------------------------------------------------------*/
-ASM_AIL_API_set_sample_type:
+AIL_API_set_sample_type:
 /*----------------------------------------------------------------*/
 		push   %ebx
 		mov    0x8(%esp),%eax
@@ -4939,7 +4939,7 @@ func_114059:
 		push   $0x0
 		push   $0x0
 		push   %ebx
-		call   ac_AIL_set_sample_type
+		call   AIL_set_sample_type
 		add    $0xc,%esp
 		test   %ebp,%ebp
 		je     jump_11426c
@@ -5001,7 +5001,7 @@ func_114138:
 		push   $0x0
 		push   $0x2
 		push   %ebx
-		call   ac_AIL_set_sample_type
+		call   AIL_set_sample_type
 		xor    %eax,%eax
 		mov    $0x10000,%edi
 		mov    0x4(%esi),%ax
@@ -5013,7 +5013,7 @@ func_114138:
 		push   $0x0
 		push   $0x0
 		push   %ebx
-		call   ac_AIL_set_sample_type
+		call   AIL_set_sample_type
 		xor    %eax,%eax
 		mov    $0x10000,%edi
 		mov    0x4(%esi),%ax
@@ -5103,7 +5103,7 @@ func_1141d6:
 		push   $0x3
 	jump_114256:
 		push   %ebx
-		call   ac_AIL_set_sample_type
+		call   AIL_set_sample_type
 		add    $0xc,%esp
 	jump_11425f:
 		test   %ebp,%ebp
@@ -5201,7 +5201,7 @@ GLOBAL_FUNC (ASM_AIL_process_WAV_image)
 		push   $0x3
 	jump_114333:
 		push   %edi
-		call   ac_AIL_set_sample_type
+		call   AIL_set_sample_type
 		add    $0xc,%esp
 	jump_11433c:
 		mov    0xc(%esi),%edx
@@ -10250,7 +10250,7 @@ _XDIG_MIDI_trap:
 		push   %ecx
 		mov    0x4d4(%esi,%ebx,4),%ebp
 		push   %ebp
-		call   ac_AIL_set_sample_type
+		call   AIL_set_sample_type
 		mov    0x494(%esi,%edi,4),%eax
 		add    $0xc,%esp
 		mov    0x10(%eax),%edx

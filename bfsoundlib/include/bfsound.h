@@ -52,10 +52,9 @@ void InitSound(void);
 void FreeSound(void);
 
 int LoadSounds(ubyte bank_no);
-int AllocateSoundBankMemory(ushort snd_type);
+//int AllocateSoundBankMemory();
 //void DeInitSoundBank();
 
-ubyte GetSoundTpNo(ushort snd_type);
 //int SwitchOffSound();
 //int SwitchOnSound();
 

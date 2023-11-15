@@ -477,7 +477,7 @@ doinit_:
 		push   %eax
 		mov    0x38(%esi),%edx
 		push   %edx
-		call   ac_AIL_set_sample_type
+		call   AIL_set_sample_type
 		add    $0xc,%esp
 		mov    0x40(%esi),%ebx
 		push   %ebx
