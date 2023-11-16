@@ -17,6 +17,7 @@ OutFile swars-setup.exe
 !insertmacro GetDrives
 !include "MUI2.nsh"
 !include x64.nsh
+!include swars-config.nsh
 
 ShowInstDetails show
 
@@ -61,7 +62,7 @@ InstallDir "$PROGRAMFILES\Syndicate Wars\"
 !endif
 
 
-!define PRODUCT_VERSION "0.3.3.1473"
+;!define PRODUCT_VERSION "0.3.3.1473"
 !define MUI_ICON "swars.ico"
 !define MUI_WELCOMEFINISHPAGE_BITMAP "${BUILDENV_UTIL_DIR}\win.bmp"
 !define MUI_WELCOMEPAGE_TITLE "Welcome To The Syndicate Wars Port Setup"
@@ -138,13 +139,13 @@ Section "Syndicate Wars Game" Section_0
 inst_game_menu_end:
   StrCmp $selected_desk_shortcut 1 0 inst_game_done
   CreateShortCut "$DESKTOP\Syndicate Wars.lnk" $INSTDIR\swars.exe "" $INSTDIR\swars.exe "" SW_SHOWNORMAL
-inst_game_done:
-  Return
-
+  Goto inst_game_done
 inst_game_fail:
   DetailPrint "An unexpected error has occured during the installation process"
   RMDir /r $INSTDIR
   IntOp $selected_music 1 | ""
+inst_game_done:
+  nop 
 SectionEnd
 
 
