@@ -198,7 +198,19 @@ void XMI_MIDI_message(MDI_DRIVER *mdidrv, int32_t status,
 void XMI_sysex_message(MDI_DRIVER *mdidrv, uint8_t const *message,
         int32_t size)
 {
-    // Not implemented in this wrapper
+    int32_t bound_size;
+
+    XMI_flush_buffer(mdidrv);
+
+    bound_size = sizeof(mdidrv->DST->MIDI_data);
+    if (bound_size > size)
+        bound_size = size;
+
+    memmove(mdidrv->DST->MIDI_data, message, bound_size);
+
+    mdidrv->message_count++;
+
+    XMI_flush_buffer(mdidrv);
 }
 
 /** Write control log value.
@@ -1577,6 +1589,13 @@ int32_t AIL2OAL_API_init_sequence(SNDSEQUENCE *seq, const void *start,  int32_t 
     const uint8_t *end;
     uint32_t len;
     int32_t i;
+#if ENABLE_TIMBRE
+    TIMB_chunk *T;
+    static uint8_t TIMB[sizeof(seq->driver->DST->MIDI_data)];
+    uint32_t bank, patch;
+    VDI_CALL VDI;
+    int32_t j;
+#endif
 
     if (seq == NULL)
         return 0;
@@ -1671,7 +1690,87 @@ int32_t AIL2OAL_API_init_sequence(SNDSEQUENCE *seq, const void *start,  int32_t 
     if (seq->TIMB == NULL)
         return 1;
 
-    //TODO do we need the TIMB support?
+#if ENABLE_TIMBRE
+    // Make modifiable copy of TIMB chunk
+    len = 8 + XMI_swap32(*((uint32_t*)seq->TIMB + 1));
+    if (len > sizeof(seq->driver->DST->MIDI_data))
+        len = sizeof(seq->driver->DST->MIDI_data);
+    memcpy(TIMB, seq->TIMB, len);
+
+    T = (TIMB_chunk*)TIMB;
+
+    // If timbre-request callback function registered, pass each bank/patch
+    // pair to the function to see if it has to be requested from the driver
+    //
+    // Remove references to any timbres handled by the callback function
+    if (seq->driver->timbre_trap != NULL)
+    {
+        i = 0;
+
+        while (i < T->n_entries)
+        {
+            patch = ((uint32_t) T->timbre[i]) & 0xff;
+            bank = (((uint32_t) T->timbre[i]) & 0xff00) >> 8;
+
+            if (!seq->driver->timbre_trap(seq->driver, bank, patch))
+            {
+                // Timbre request was not handled by the callback - check next timbre
+                ++i;
+            }
+            else
+            {
+                // Timbre request was handled - excise from TIMB chunk and test next timbre
+                for (j = i + 1; j < T->n_entries; j++)
+                    T->timbre[j - 1] = T->timbre[j];
+
+                T->n_entries--;
+
+                if (T->lsb < 2) {
+                    T->lsb -= 2;
+                    T->msb--;
+                } else {
+                    T->lsb -= 2;
+                }
+            }
+        }
+    }
+
+    // If all timbre requests have been handled, or the sequence contains no
+    // timbre references, return success
+    //
+    // Otherwise, call driver to request timbre set installation
+    if (T->n_entries == 0)
+        return 1;
+
+    // If called from background function (not recommended), return without
+    // attempting to load timbres from disk
+    if (AIL_background()) {
+        AIL_set_error("No timbres loaded.");
+        return -1;
+    }
+
+    // Disable XMIDI service while accessing MIDI_data[] buffer
+    seq->driver->disable++;
+
+    // Copy TIMB chunk to driver's XMIDI buffer, and call driver
+    // MDI_INSTALL_T_SET function
+    XMI_flush_buffer(seq->driver);
+
+    memcpy(seq->driver->DST->MIDI_data, T, sizeof(seq->driver->DST->MIDI_data));
+
+    AIL_call_driver(seq->driver->drvr, MDI_INSTALL_T_SET, NULL, &VDI);
+
+    // Re-enable XMIDI service and check for errors
+    seq->driver->disable--;
+
+    if (!VDI.AX) {
+        set_timbre_error(VDI.BX >> 8, VDI.BX & 0xff);
+        return -1;
+    }
+#else
+    AIL_set_error("Timbres not supported, ignoring.");
+#endif
+
     return 1;
 }
 
