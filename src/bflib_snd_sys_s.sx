@@ -1757,7 +1757,7 @@ GLOBAL_FUNC (SetSamplePitch_)
 		push   %eax
 		mov    (%ebx),%ecx
 		push   %ecx
-		call   AIL_set_sample_playback_rate
+		call   ac_AIL_set_sample_playback_rate
 		add    $0x8,%esp
 		mov    %si,0x8(%ebx)
 	jump_ef451:

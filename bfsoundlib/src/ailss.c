@@ -598,6 +598,25 @@ void AIL2OAL_API_set_sample_address(SNDSAMPLE *s, const void *start, uint32_t le
     s->len[1]   = 0;
 }
 
+int32_t AIL2OAL_API_sample_playback_rate(SNDSAMPLE *s)
+{
+    if (s == NULL)
+        return 0;
+
+    return s->playback_rate;
+}
+
+void AIL2OAL_API_set_sample_playback_rate(SNDSAMPLE *s, int32_t playback_rate)
+{
+    if (s == NULL)
+        return;
+
+    if (playback_rate < 1)
+        return;
+
+    s->playback_rate = playback_rate;
+}
+
 void AIL2OAL_API_set_sample_type(SNDSAMPLE *s, int32_t format, uint32_t flags)
 {
     if (s == NULL)

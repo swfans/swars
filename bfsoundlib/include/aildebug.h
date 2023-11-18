@@ -194,6 +194,14 @@ HAILPROVIDER AIL_set_sample_processor(SNDSAMPLE *s,
  */
 void AIL_set_sample_address(SNDSAMPLE *s, const void *start, uint32_t len);
 
+/** Get sample playback rate in hertz.
+ */
+int32_t AIL_sample_playback_rate(SNDSAMPLE *s);
+
+/** Set sample playback rate in hertz.
+ */
+void AIL_set_sample_playback_rate(SNDSAMPLE *s, int32_t playback_rate);
+
 /** Set sample data format and flags.
  *
  * Byte order for multi-byte samples is not changeable, must be little-endian.
