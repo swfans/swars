@@ -477,6 +477,26 @@ void update_cities_to_mission(ushort missi, TbBool decorate, ushort flags)
     }
 }
 
+void update_cities_decor_to_brief(short brief, ushort flags)
+{
+    ushort missi;
+
+    for (missi = brief_store[brief].Mission; missi != 0;
+      missi = mission_list[missi].SpecialTrigger[0])
+    {
+        update_cities_to_mission(missi, true, flags);
+    }
+}
+
+void clear_cities_decor(ushort flags)
+{
+    ushort missi;
+
+    for (missi = 1; missi < next_mission; missi++)
+    {
+        update_cities_to_mission(missi, false, flags);
+    }
+}
 
 void activate_cities(ubyte brief)
 {
@@ -491,10 +511,7 @@ void activate_cities(ubyte brief)
 
     if (login_control__State == 5)
     {
-            for (missi = 1; missi < next_mission; missi++)
-            {
-                update_cities_to_mission(missi, false, 0x01);
-            }
+        clear_cities_decor(0x01);
         return;
     }
 
@@ -504,14 +521,7 @@ void activate_cities(ubyte brief)
             missi = brief_store[bri].Mission;
             if (!mission_remain_until_success(missi))
                 continue;
-            update_cities_to_mission(missi, true, 0x10);
-            while (1)
-            {
-                missi = mission_list[missi].SpecialTrigger[0];
-                if (missi == 0)
-                    break;
-                update_cities_to_mission(missi, true, 0x10);
-            }
+            update_cities_decor_to_brief(bri, 0x10);
         }
     }
 
@@ -525,28 +535,13 @@ void activate_cities(ubyte brief)
             spmissi = mission_list[missi].SpecialTrigger[2];
             if ((spmissi != 0) && (spmissi != missi))
                 continue;
-            update_cities_to_mission(missi, true, 0x01);
-            while (1)
-            {
-                missi = mission_list[missi].SpecialTrigger[0];
-                if (missi == 0)
-                    break;
-                update_cities_to_mission(missi, true, 0x01);
-            }
+            update_cities_decor_to_brief(bri, 0x01);
         }
     }
     else
     {
         {
-            missi = brief_store[brief - 1].Mission;
-            update_cities_to_mission(missi, true, 0x01);
-            while (1)
-            {
-                missi = mission_list[missi].SpecialTrigger[0];
-                if (missi == 0)
-                    break;
-                update_cities_to_mission(missi, true, 0x01);
-            }
+            update_cities_decor_to_brief(brief - 1, 0x01);
         }
     }
 }
