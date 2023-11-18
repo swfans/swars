@@ -9972,32 +9972,34 @@ ushort find_mission_with_mapid(short mapID, short mission_limit)
     return 0;
 }
 
+/** Searches for mission taking place in given city, within mission chain specified by the brief.
+ */
+ushort find_mission_for_city_in_brief(short brief, sbyte city_no)
+{
+    ushort missi;
+
+    for (missi = brief_store[brief].Mission; missi != 0;
+      missi = mission_list[missi].SpecialTrigger[0])
+    {
+        if (mission_list[missi].MapNo == cities[city_no].MapID)
+            break;
+    }
+    return missi;
+}
+
 void update_open_brief(void)
 {
-    int i;
+    short brief;
     open_brief = 0;
-    for (i = 0; i < next_brief; i++)
+    for (brief = 0; brief < next_brief; brief++)
     {
-      int k = brief_store[i].Mission;
-      if (cities[unkn_city_no].MapID == mission_list[k].MapNo)
-      {
-          open_brief = i + 1;
-      }
-      else
-      {
-          while ( 1 )
-          {
-            k = mission_list[k].SpecialTrigger[0];
-            if (k == 0)
-                break;
-            if (cities[unkn_city_no].MapID == mission_list[k].MapNo) {
-                open_brief = i + 1;
-                break;
-            }
-          }
-      }
-      if (open_brief != 0)
-          break;
+        ushort missi;
+
+        missi = find_mission_for_city_in_brief(brief, unkn_city_no);
+        if (missi != 0) {
+            open_brief = brief + 1;
+            break;
+        }
     }
 }
 
@@ -10161,7 +10163,7 @@ void show_load_and_prep_mission(void)
         }
         else
         {
-            missi = brief_store[open_brief - 1].Mission;
+            missi = find_mission_for_city_in_brief(open_brief - 1, unkn_city_no);
             next_mapno = cities[unkn_city_no].MapID;
             next_level = cities[unkn_city_no].Level;
             load_mission_name_text(missi);
@@ -10243,12 +10245,7 @@ void show_load_and_prep_mission(void)
             cities[unkn_city_no].Info = 0;
             debug_trace_place(14);
 
-            for (i = brief_store[open_brief - 1].Mission; i != 0;
-              i = mission_list[i].SpecialTrigger[0])
-            {
-                if (mission_list[i].MapNo == cities[unkn_city_no].MapID)
-                    break;
-            }
+            i = find_mission_for_city_in_brief(open_brief - 1, unkn_city_no);
             ingame.CurrentMission = i;
             mission_result = 0;
             debug_trace_place(15);
