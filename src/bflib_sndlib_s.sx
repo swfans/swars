@@ -102,7 +102,7 @@ TIME_write_:
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (ail_set_digital_master_volume)	/* 1040d0 */
+GLOBAL_FUNC (ASM_AIL_set_digital_master_volume)	/* 1040d0 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %edi
@@ -145,7 +145,7 @@ GLOBAL_FUNC (ail_set_digital_master_volume)	/* 1040d0 */
 		push   %edx
 		mov    0x14(%esp),%ebx
 		push   %ebx
-		call   AIL_API_set_digital_master_volume
+		call   ASM_AIL_API_set_digital_master_volume
 		mov    AIL_indent,%ecx
 		dec    %ecx
 		add    $0x8,%esp
@@ -415,108 +415,6 @@ GLOBAL_FUNC (AIL_load_sample_buffer)	/* 1045c0 */
 		dec    %eax
 		add    $0x10,%esp
 		mov    %eax,AIL_indent
-		pop    %ebp
-		pop    %edi
-		pop    %esi
-		pop    %ebx
-		ret
-
-
-/*----------------------------------------------------------------*/
-GLOBAL_FUNC (ail_func_104d20)
-/*----------------------------------------------------------------*/
-		push   %ebx
-		push   %esi
-		push   %edi
-		push   %ebp
-		mov    0x14(%esp),%ebx
-		mov    AIL_indent,%edx
-		inc    %edx
-		mov    AIL_debug,%ecx
-		mov    %edx,AIL_indent
-		test   %ecx,%ecx
-		je     jump_104d66
-		cmp    $0x1,%edx
-		je     jump_104d4d
-		cmpl   $0x0,AIL_sys_debug
-		je     jump_104d66
-	jump_104d4d:
-		call   ac_AIL2OAL_API_background
-		test   %eax,%eax
-		jne    jump_104d66
-		call   TIME_write_
-		test   %eax,%eax
-		je     jump_104d66
-		mov    $0x1,%edx
-		jmp    jump_104d68
-	jump_104d66:
-		xor    %edx,%edx
-	jump_104d68:
-		test   %edx,%edx
-		je     jump_104d85
-		mov    0x18(%esp),%ebp
-		push   %ebp
-		push   %ebx
-		push   $aAil_sample_use
-		mov    AIL_debugfile,%eax
-		push   %eax
-		call   ac_fprintf
-		add    $0x10,%esp
-	jump_104d85:
-		mov    0x18(%esp),%edx
-		push   %edx
-		push   %ebx
-		call   AIL_API_sample_user_data
-		mov    AIL_debug,%ecx
-		mov    %eax,%ebx
-		add    $0x8,%esp
-		test   %ecx,%ecx
-		je     jump_104e2b
-		cmpl   $0x1,AIL_indent
-		je     jump_104db9
-		cmpl   $0x0,AIL_sys_debug
-		je     jump_104e2b
-	jump_104db9:
-		call   ac_AIL2OAL_API_background
-		test   %eax,%eax
-		jne    jump_104e2b
-		xor    %edx,%edx
-		lea    0x0(%eax),%eax
-		lea    0x0(%edx),%edx
-	jump_104dd0:
-		push   $data_160110
-		mov    AIL_debugfile,%ebp
-		push   %ebp
-		inc    %edx
-		call   ac_fprintf
-		add    $0x8,%esp
-		cmp    $0xe,%edx
-		jb     jump_104dd0
-		mov    $0x1,%edx
-		cmp    AIL_indent,%edx
-		jae    jump_104e16
-	jump_104df7:
-		push   $data_160114
-		mov    AIL_debugfile,%ecx
-		push   %ecx
-		inc    %edx
-		call   ac_fprintf
-		mov    AIL_indent,%esi
-		add    $0x8,%esp
-		cmp    %esi,%edx
-		jb     jump_104df7
-	jump_104e16:
-		push   %ebx
-		push   $data_16027c_result_decimal
-		mov    AIL_debugfile,%edi
-		push   %edi
-		call   ac_fprintf
-		add    $0xc,%esp
-	jump_104e2b:
-		mov    AIL_indent,%ebp
-		dec    %ebp
-		mov    %ebx,%eax
-		mov    %ebp,AIL_indent
 		pop    %ebp
 		pop    %edi
 		pop    %esi
@@ -3905,7 +3803,7 @@ AIL_API_allocate_sample_handle:	/* 1138c0 */
 		ret
 
 /*----------------------------------------------------------------*/
-AIL_API_set_digital_master_volume:
+ASM_AIL_API_set_digital_master_volume:
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %esi

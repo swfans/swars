@@ -162,13 +162,17 @@ DIG_DRIVER *AIL_install_DIG_driver_file(char const *fname, SNDCARD_IO_PARMS *iop
  */
 void AIL_uninstall_DIG_driver(DIG_DRIVER *digdrv);
 
+/** Get current master digital volume.
+ */
+int32_t AIL_digital_master_volume(DIG_DRIVER *digdrv);
+
 /** Set master volume for all samples.
  */
 void AIL_set_digital_master_volume(DIG_DRIVER *digdrv, int32_t master_volume);
 
 /** Allocate a SNDSAMPLE structure for use with a given driver.
  */
-SNDSAMPLE *AIL_allocate_sample_handle(DIG_DRIVER *dig);
+SNDSAMPLE *AIL_allocate_sample_handle(DIG_DRIVER *digdrv);
 
 /** Initialize a SNDSAMPLE structure to baseline values.
  *

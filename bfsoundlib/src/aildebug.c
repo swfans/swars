@@ -391,15 +391,15 @@ int32_t AIL_sample_buffer_ready(SNDSAMPLE *s)
     return bufstat;
 }
 
-SNDSAMPLE *AIL_allocate_sample_handle(DIG_DRIVER *dig)
+SNDSAMPLE *AIL_allocate_sample_handle(DIG_DRIVER *digdrv)
 {
     SNDSAMPLE *s;
 
     AIL_indent++;
     if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
-        fprintf(AIL_debugfile, "%s(0x%p)\n", __func__, dig);
+        fprintf(AIL_debugfile, "%s(0x%p)\n", __func__, digdrv);
 
-    s = AIL2OAL_API_allocate_sample_handle(dig);
+    s = AIL2OAL_API_allocate_sample_handle(digdrv);
 
     if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
         fprintf(AIL_debugfile, "Result = 0x%p\n", s);
@@ -1142,6 +1142,23 @@ void AIL_uninstall_DIG_driver(DIG_DRIVER *digdrv)
     if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
         fprintf(AIL_debugfile, "Finished\n");
     AIL_indent--;
+}
+
+int32_t AIL_digital_master_volume(DIG_DRIVER *digdrv)
+{
+    int32_t result;
+
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s(0x%p)\n", __func__, digdrv);
+
+    result = AIL2OAL_API_digital_master_volume(digdrv);
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Result = %d\n", (int)result);
+    AIL_indent--;
+
+    return result;
 }
 
 void AIL_set_digital_master_volume(DIG_DRIVER *digdrv, int32_t master_volume)

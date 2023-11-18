@@ -1275,7 +1275,7 @@ GLOBAL_FUNC (ASM_SetSoundMasterVolume)	/* 0xEE700 */
 		push   %ebx
 		mov    EXPORT_SYMBOL(SoundDriver),%ecx
 		push   %ecx
-		call   ail_set_digital_master_volume
+		call   ac_AIL_set_digital_master_volume
 		add    $0x8,%esp
 		mov    %ebx,EXPORT_SYMBOL(CurrentSoundMasterVolume)
 	jump_ee73e:
@@ -3750,7 +3750,7 @@ cb_sample_queue_callback:	/* 0x1095A0 */
 		push   %eax
 		mov    EXPORT_SYMBOL(sample_queue_handle),%edx
 		push   %edx
-		call   ail_func_104d20
+		call   ac_AIL_sample_user_data
 		add    $0x8,%esp
 		test   %eax,%eax
 		je     jump_10964f
@@ -3770,7 +3770,7 @@ cb_sample_queue_callback:	/* 0x1095A0 */
 		push   %eax
 		mov    EXPORT_SYMBOL(sample_queue_handle),%edi
 		push   %edi
-		call   ail_func_104d20
+		call   ac_AIL_sample_user_data
 		mov    %eax,%edx
 		mov    EXPORT_SYMBOL(Sfx),%eax
 		shl    $0x5,%edx

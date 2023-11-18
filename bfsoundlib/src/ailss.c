@@ -368,6 +368,14 @@ void set_master_hardware_volume(DIG_DRIVER *digdrv)
     }
 }
 
+int32_t AIL2OAL_API_digital_master_volume(DIG_DRIVER *digdrv)
+{
+    if (digdrv == NULL)
+        return 0;
+
+    return digdrv->master_volume;
+}
+
 void AIL2OAL_API_set_digital_master_volume(DIG_DRIVER *digdrv, int32_t master_volume)
 {
     if (digdrv == NULL)

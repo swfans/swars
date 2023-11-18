@@ -60,6 +60,8 @@ void SS_stream_to_buffer(SNDSAMPLE *s);
 
 SNDSAMPLE *AIL2OAL_API_allocate_sample_handle(DIG_DRIVER *digdrv);
 
+int32_t AIL2OAL_API_digital_master_volume(DIG_DRIVER *digdrv);
+
 void AIL2OAL_API_set_digital_master_volume(DIG_DRIVER *digdrv, int32_t master_volume);
 
 void AIL2OAL_API_init_sample(SNDSAMPLE *s);
