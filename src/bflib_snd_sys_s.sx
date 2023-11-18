@@ -2867,7 +2867,7 @@ GLOBAL_FUNC (PlaySampleFromAddress_)
 		add    $0x8,%esp
 		mov    0x0(%ebp),%eax
 		push   %eax
-		call   AIL_start_sample
+		call   ac_AIL_start_sample
 		mov    %esi,0xe(%ebp)
 		add    $0x4,%esp
 		mov    %di,0x12(%ebp)
@@ -3787,7 +3787,7 @@ cb_sample_queue_callback:	/* 0x1095A0 */
 		inc    %ebx
 		push   %edx
 		mov    %ebx,current_sample_queue_count
-		call   AIL_start_sample
+		call   ac_AIL_start_sample
 		add    $0x4,%esp
 	jump_10964f:
 		pop    %ebp

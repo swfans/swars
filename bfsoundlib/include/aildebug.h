@@ -214,6 +214,16 @@ void AIL_set_sample_type(SNDSAMPLE *s, int32_t format, uint32_t flags);
  */
 void AIL_set_sample_loop_count(SNDSAMPLE *s, int32_t loop_count);
 
+/** Start playback of sample from beginning.
+ *
+ * Sample must first have been initialized with
+ * AIL_init_sample() and then AIL_set_sample_address() or
+ * AIL_load_sample_buffer().
+ *
+ * Playback will begin at the next DMA half-buffer transition.
+ */
+void AIL_start_sample(SNDSAMPLE *s);
+
 /** Terminate playback of sample, setting sample status to SNDSMP_DONE.
  */
 void AIL_end_sample(SNDSAMPLE *s);

@@ -163,7 +163,7 @@ GLOBAL_FUNC (ASM_AIL_set_sample_type)	/* 1036a0 */
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (AIL_start_sample)	/* 103740 */
+GLOBAL_FUNC (ASM_AIL_start_sample)	/* 103740 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %edi
@@ -202,7 +202,7 @@ GLOBAL_FUNC (AIL_start_sample)	/* 103740 */
 	jump_1037a0:
 		mov    0x10(%esp),%eax
 		push   %eax
-		call   AIL_API_start_sample
+		call   ASM_AIL_API_start_sample
 		mov    AIL_indent,%edx
 		dec    %edx
 		add    $0x4,%esp
@@ -4456,7 +4456,7 @@ ASM_AIL_API_set_sample_loop_count:	/* 113b60 */
 
 
 /*----------------------------------------------------------------*/
-AIL_API_start_sample:	/* 0x113b70 */
+ASM_AIL_API_start_sample:	/* 0x113b70 */
 /*----------------------------------------------------------------*/
 		push   %esi
 		mov    0x8(%esp),%eax
@@ -4479,38 +4479,6 @@ AIL_API_start_sample:	/* 0x113b70 */
 		add    $0x4,%esp
 	jump_113bb0:
 		pop    %esi
-		ret
-
-
-/*----------------------------------------------------------------*/
-AIL_API_end_sample:
-/*----------------------------------------------------------------*/
-		push   %ebx
-		push   %esi
-		mov    0xc(%esp),%ebx
-		test   %ebx,%ebx
-		je     jump_113c55
-		mov    0x4(%ebx),%edx
-		cmp    $0x1,%edx
-		je     jump_113c55
-		cmp    $0x2,%edx
-		je     jump_113c55
-		mov    0x84c(%ebx),%esi
-		movl   $0x2,0x4(%ebx)
-		test   %esi,%esi
-		je     jump_113c42
-		push   %ebx
-		call   *0x84c(%ebx)
-		add    $0x4,%esp
-	jump_113c42:
-		cmpl   $0x0,0x850(%ebx)
-		je     jump_113c55
-		push   %ebx
-		call   *0x850(%ebx)
-		add    $0x4,%esp
-	jump_113c55:
-		pop    %esi
-		pop    %ebx
 		ret
 
 
@@ -4944,7 +4912,7 @@ func_114059:
 		test   %ebp,%ebp
 		je     jump_11426c
 		push   %ebx
-		call   AIL_start_sample
+		call   ac_AIL_start_sample
 		add    $0x4,%esp
 		jmp    jump_11426c
 
@@ -5045,7 +5013,7 @@ func_114138:
 		test   %ebp,%ebp
 		je     jump_11426c
 		push   %ebx
-		call   AIL_start_sample
+		call   ac_AIL_start_sample
 		add    $0x4,%esp
 		jmp    jump_11426c
 
@@ -5109,7 +5077,7 @@ func_1141d6:
 		test   %ebp,%ebp
 		je     jump_11426c
 		push   %ebx
-		call   AIL_start_sample
+		call   ac_AIL_start_sample
 		add    $0x4,%esp
 	jump_11426c:
 		mov    $0x1,%edi
@@ -10271,7 +10239,7 @@ _XDIG_MIDI_trap:
 		call   XDIG_set_volume_
 		mov    0x4d4(%esi,%ebx,4),%edi
 		push   %edi
-		call   AIL_start_sample
+		call   ac_AIL_start_sample
 		mov    $0x1,%eax
 		add    $0x4,%esp
 		pop    %ebp

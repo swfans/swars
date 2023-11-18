@@ -83,6 +83,8 @@ void AIL2OAL_API_set_sample_user_data(SNDSAMPLE *s, uint32_t index, intptr_t val
 
 void AIL2OAL_API_set_sample_loop_count(SNDSAMPLE *s, int32_t loop_count);
 
+void AIL2OAL_API_start_sample(SNDSAMPLE *s);
+
 void AIL2OAL_API_end_sample(SNDSAMPLE *s);
 
 void AIL2OAL_API_release_sample_handle(SNDSAMPLE *s);

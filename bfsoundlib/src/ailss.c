@@ -378,6 +378,28 @@ void AIL2OAL_API_set_digital_master_volume(DIG_DRIVER *digdrv, int32_t master_vo
     set_master_hardware_volume(digdrv);
 }
 
+void AIL2OAL_API_start_sample(SNDSAMPLE *s)
+{
+    if (s == NULL)
+        return;
+
+    if (s->status == SNDSMP_FREE)
+        return;
+
+    // Make sure valid sample data exists
+    if ((s->len[s->current_buffer] == 0) ||
+     (s->start[s->current_buffer] == NULL))
+        return;
+
+    // Rewind sample to beginning
+    s->pos[s->current_buffer] = 0;
+
+    s->status = SNDSMP_PLAYING;
+
+    // If sample's driver is not already transmitting data, start it
+    SS_start_DIG_driver_playback(s->driver);
+}
+
 void AIL2OAL_API_end_sample(SNDSAMPLE *s)
 {
     if (s == NULL)
