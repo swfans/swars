@@ -2553,7 +2553,7 @@ GLOBAL_FUNC (SetSampleVolume_)	/* 0xf0a20 */
 		push   %eax
 		mov    (%ebx),%edi
 		push   %edi
-		call   AIL_set_sample_volume
+		call   ac_AIL_set_sample_volume
 		add    $0x8,%esp
 		movswl %si,%eax
 		mov    %eax,0x4(%ebx)
@@ -2846,7 +2846,7 @@ GLOBAL_FUNC (PlaySampleFromAddress_)
 		push   %ecx
 		mov    0x0(%ebp),%eax
 		push   %eax
-		call   AIL_set_sample_volume
+		call   ac_AIL_set_sample_volume
 		mov    StereoSound,%bl
 		add    $0x8,%esp
 		test   %bl,%bl
@@ -3523,7 +3523,7 @@ cbfadesample:
 		push   %eax
 		mov    (%ebx),%ecx
 		push   %ecx
-		call   AIL_set_sample_volume
+		call   ac_AIL_set_sample_volume
 		add    $0x8,%esp
 		jmp    jump_10938a
 	jump_109295:
@@ -3539,7 +3539,7 @@ cbfadesample:
 		push   %eax
 		mov    (%ebx),%ecx
 		push   %ecx
-		call   AIL_set_sample_volume
+		call   ac_AIL_set_sample_volume
 		add    $0x8,%esp
 		jmp    jump_10938a
 	jump_1092bd:
@@ -3591,7 +3591,7 @@ cbfadesample:
 		push   %eax
 		mov    (%ebx),%esi
 		push   %esi
-		call   AIL_set_sample_volume
+		call   ac_AIL_set_sample_volume
 		add    $0x8,%esp
 		jmp    jump_10938a
 	jump_109350:
@@ -3607,7 +3607,7 @@ cbfadesample:
 		push   %eax
 		mov    (%ebx),%esi
 		push   %esi
-		call   AIL_set_sample_volume
+		call   ac_AIL_set_sample_volume
 		add    $0x8,%esp
 		jmp    jump_10938a
 	jump_109375:

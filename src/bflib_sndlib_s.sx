@@ -269,7 +269,7 @@ GLOBAL_FUNC (ASM_AIL_set_sample_playback_rate)	/* 103940 */
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (AIL_set_sample_volume)	/* 1039d0 */
+GLOBAL_FUNC (ASM_AIL_set_sample_volume)	/* 1039d0 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %edi
@@ -312,7 +312,7 @@ GLOBAL_FUNC (AIL_set_sample_volume)	/* 1039d0 */
 		push   %edx
 		mov    0x14(%esp),%ebx
 		push   %ebx
-		call   AIL_API_set_sample_volume
+		call   ASM_AIL_API_set_sample_volume
 		mov    AIL_indent,%ecx
 		dec    %ecx
 		add    $0x8,%esp
@@ -4410,7 +4410,7 @@ ASM_AIL_API_sample_playback_rate:
 
 
 /*----------------------------------------------------------------*/
-AIL_API_set_sample_volume:
+ASM_AIL_API_set_sample_volume:
 /*----------------------------------------------------------------*/
 		mov    0x4(%esp),%eax
 		mov    0x8(%esp),%edx
@@ -9814,7 +9814,7 @@ XDIG_set_volume_:
 		push   %eax
 		mov    0x4d4(%ebx),%edi
 		push   %edi
-		call   AIL_set_sample_volume
+		call   ac_AIL_set_sample_volume
 		add    $0x8,%esp
 		mov    0x314(%esi),%ebp
 		push   %ebp

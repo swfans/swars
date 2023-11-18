@@ -202,6 +202,14 @@ int32_t AIL_sample_playback_rate(SNDSAMPLE *s);
  */
 void AIL_set_sample_playback_rate(SNDSAMPLE *s, int32_t playback_rate);
 
+/** Get sample volume level.
+ */
+int32_t AIL_sample_volume(SNDSAMPLE *s);
+
+/** Set sample volume level.
+ */
+void AIL_set_sample_volume(SNDSAMPLE *s, int32_t level);
+
 /** Set sample data format and flags.
  *
  * Byte order for multi-byte samples is not changeable, must be little-endian.

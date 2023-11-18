@@ -617,6 +617,26 @@ void AIL2OAL_API_set_sample_playback_rate(SNDSAMPLE *s, int32_t playback_rate)
     s->playback_rate = playback_rate;
 }
 
+int32_t AIL2OAL_API_sample_volume(SNDSAMPLE *s)
+{
+    if (s == NULL)
+        return 0;
+
+    return s->volume;
+}
+
+void AIL2OAL_API_set_sample_volume(SNDSAMPLE *s, int32_t level)
+{
+    if (s == NULL)
+        return;
+
+    if (level == s->volume)
+        return;
+
+    s->volume = level;
+    SS_build_amplitude_tables(s);
+}
+
 void AIL2OAL_API_set_sample_type(SNDSAMPLE *s, int32_t format, uint32_t flags)
 {
     if (s == NULL)

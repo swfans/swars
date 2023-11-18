@@ -50,7 +50,7 @@ GLOBAL_FUNC (MSSLOWSOUNDVOLPAN)
 		mov    0x10(%esp),%eax
 		mov    0x38(%eax),%edx
 		push   %edx
-		call   AIL_set_sample_volume
+		call   ac_AIL_set_sample_volume
 		add    $0x8,%esp
 		mov    $0x4f6,%ecx
 		mov    $0x10000,%ebx
@@ -494,7 +494,7 @@ doinit_:
 		push   $0x7f
 		mov    0x38(%esi),%eax
 		push   %eax
-		call   AIL_set_sample_volume
+		call   ac_AIL_set_sample_volume
 		add    $0x8,%esp
 		pop    %edi
 		pop    %esi
