@@ -637,6 +637,26 @@ void AIL2OAL_API_set_sample_volume(SNDSAMPLE *s, int32_t level)
     SS_build_amplitude_tables(s);
 }
 
+int32_t AIL2OAL_API_sample_pan(SNDSAMPLE *s)
+{
+    if (s == NULL)
+        return 0;
+
+    return s->pan;
+}
+
+void AIL2OAL_API_set_sample_pan(SNDSAMPLE *s, int32_t level)
+{
+    if (s == NULL)
+        return;
+
+    if (level == s->pan)
+        return;
+
+    s->pan = level;
+    SS_build_amplitude_tables(s);
+}
+
 void AIL2OAL_API_set_sample_type(SNDSAMPLE *s, int32_t format, uint32_t flags)
 {
     if (s == NULL)

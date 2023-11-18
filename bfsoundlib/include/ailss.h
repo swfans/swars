@@ -85,6 +85,10 @@ int32_t AIL2OAL_API_sample_volume(SNDSAMPLE *s);
 
 void AIL2OAL_API_set_sample_volume(SNDSAMPLE *s, int32_t level);
 
+int32_t AIL2OAL_API_sample_pan(SNDSAMPLE *s);
+
+void AIL2OAL_API_set_sample_pan(SNDSAMPLE *s, int32_t level);
+
 void AIL2OAL_API_set_sample_type(SNDSAMPLE *s, int32_t format, uint32_t flags);
 
 void AIL2OAL_API_set_sample_user_data(SNDSAMPLE *s, uint32_t index, intptr_t value);

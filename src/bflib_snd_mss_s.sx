@@ -65,7 +65,7 @@ GLOBAL_FUNC (MSSLOWSOUNDVOLPAN)
 		mov    0x10(%esp),%eax
 		mov    0x38(%eax),%ebx
 		push   %ebx
-		call   AIL_set_sample_pan
+		call   ac_AIL_set_sample_pan
 		add    $0x8,%esp
 		ret    $0xc
 

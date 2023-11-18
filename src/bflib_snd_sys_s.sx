@@ -2609,7 +2609,7 @@ GLOBAL_FUNC (SetSamplePan_)	/* 0xF0AB0 */
 		push   %eax
 		mov    (%ebx),%edx
 		push   %edx
-		call   AIL_set_sample_pan
+		call   ac_AIL_set_sample_pan
 		add    $0x8,%esp
 		mov    %si,0xa(%ebx)
 	jump_f0b31:
@@ -2855,7 +2855,7 @@ GLOBAL_FUNC (PlaySampleFromAddress_)
 		push   %edx
 		mov    0x0(%ebp),%ebx
 		push   %ebx
-		call   AIL_set_sample_pan
+		call   ac_AIL_set_sample_pan
 		add    $0x8,%esp
 	jump_f1999:
 		movsbl 0x20(%esp),%eax

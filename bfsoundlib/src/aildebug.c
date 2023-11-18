@@ -542,6 +542,36 @@ void AIL_set_sample_volume(SNDSAMPLE *s, int32_t level)
     AIL_indent--;
 }
 
+int32_t AIL_sample_pan(SNDSAMPLE *s)
+{
+   int32_t result;
+
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s(0x%p)\n", __func__, s);
+
+    result = AIL2OAL_API_sample_pan(s);
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Result = %d\n", (int)result);
+    AIL_indent--;
+
+    return result;
+}
+
+void AIL_set_sample_pan(SNDSAMPLE *s, int32_t level)
+{
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s(0x%p, %u)\n", __func__, s, level);
+
+    AIL2OAL_API_set_sample_pan(s, level);
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Finished\n");
+    AIL_indent--;
+}
+
 void AIL_set_sample_type(SNDSAMPLE *s, int32_t format, uint32_t flags)
 {
     AIL_indent++;

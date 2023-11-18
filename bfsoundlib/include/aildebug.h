@@ -210,6 +210,14 @@ int32_t AIL_sample_volume(SNDSAMPLE *s);
  */
 void AIL_set_sample_volume(SNDSAMPLE *s, int32_t level);
 
+/** Get sample channels panning level.
+ */
+int32_t AIL_sample_pan(SNDSAMPLE *s);
+
+/** Set sample channels panning level.
+ */
+void AIL_set_sample_pan(SNDSAMPLE *s, int32_t level);
+
 /** Set sample data format and flags.
  *
  * Byte order for multi-byte samples is not changeable, must be little-endian.

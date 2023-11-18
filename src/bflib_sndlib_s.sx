@@ -324,7 +324,7 @@ GLOBAL_FUNC (ASM_AIL_set_sample_volume)	/* 1039d0 */
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (AIL_set_sample_pan)	/* 103a60 */
+GLOBAL_FUNC (ASM_AIL_set_sample_pan)	/* 103a60 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %edi
@@ -367,7 +367,7 @@ GLOBAL_FUNC (AIL_set_sample_pan)	/* 103a60 */
 		push   %edx
 		mov    0x14(%esp),%ebx
 		push   %ebx
-		call   AIL_API_set_sample_pan
+		call   ASM_AIL_API_set_sample_pan
 		mov    AIL_indent,%ecx
 		dec    %ecx
 		add    $0x8,%esp
@@ -4427,7 +4427,7 @@ ASM_AIL_API_set_sample_volume:
 
 
 /*----------------------------------------------------------------*/
-AIL_API_set_sample_pan:
+ASM_AIL_API_set_sample_pan:
 /*----------------------------------------------------------------*/
 		mov    0x4(%esp),%eax
 		mov    0x8(%esp),%edx
@@ -9820,7 +9820,7 @@ XDIG_set_volume_:
 		push   %ebp
 		mov    0x4d4(%ebx),%eax
 		push   %eax
-		call   AIL_set_sample_pan
+		call   ac_AIL_set_sample_pan
 		add    $0x8,%esp
 		pop    %ebp
 		pop    %edi
