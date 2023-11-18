@@ -157,7 +157,7 @@ GLOBAL_FUNC (ASM_AIL_set_digital_master_volume)	/* 1040d0 */
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (ail_minimum_sample_buffer_size)	/* 104390 */
+GLOBAL_FUNC (ASM_AIL_minimum_sample_buffer_size)	/* 104390 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %esi
@@ -204,7 +204,7 @@ GLOBAL_FUNC (ail_minimum_sample_buffer_size)	/* 104390 */
 		mov    0x1c(%esp),%esi
 		push   %esi
 		push   %ebx
-		call   AIL_API_minimum_sample_buffer_size
+		call   ASM_AIL_API_minimum_sample_buffer_size
 		mov    AIL_debug,%edi
 		mov    %eax,%ebx
 		add    $0xc,%esp
@@ -3844,7 +3844,7 @@ vtable_113d48:
 
 
 /*----------------------------------------------------------------*/
-AIL_API_minimum_sample_buffer_size:	/* 113d60 */
+ASM_AIL_API_minimum_sample_buffer_size:	/* 113d60 */
 /*----------------------------------------------------------------*/
 		mov    $2048,%eax /* XXX: sound */
 		ret

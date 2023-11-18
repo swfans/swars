@@ -215,6 +215,11 @@ int32_t AIL_sample_playback_rate(SNDSAMPLE *s);
  */
 void AIL_set_sample_playback_rate(SNDSAMPLE *s, int32_t playback_rate);
 
+/** Get minimum buffer size for dual-buffer playback.
+ */
+int32_t AIL_minimum_sample_buffer_size(DIG_DRIVER *digdrv,
+  int32_t playback_rate, int32_t format);
+
 /** Get sample volume level.
  */
 int32_t AIL_sample_volume(SNDSAMPLE *s);

@@ -370,7 +370,7 @@ GLOBAL_FUNC (MSSLOWSOUNDOPEN)
 		push   %eax
 		mov    SmackMSSDigDriver,%edx
 		push   %edx
-		call   ail_minimum_sample_buffer_size
+		call   ac_AIL_minimum_sample_buffer_size
 		add    $0x3,%eax
 		and    $0xfc,%al
 		add    $0xc,%esp

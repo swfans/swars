@@ -694,6 +694,51 @@ void AIL2OAL_API_set_sample_user_data(SNDSAMPLE *s, uint32_t index, intptr_t val
     s->user_data[index] = value;
 }
 
+static int32_t nibbles_per_sample(int32_t format)
+{
+    switch (format)
+    {
+    case DIG_F_MONO_8:
+        return 1;
+    case DIG_F_MONO_16:
+    case DIG_F_STEREO_8:
+        return 2;
+    case DIG_F_STEREO_16:
+        return 4;
+    default:
+        return 8;
+    }
+}
+
+int32_t AIL2OAL_API_minimum_sample_buffer_size(DIG_DRIVER *digdrv,
+  int32_t playback_rate, int32_t format)
+{
+    int32_t app_nibbles_per_sample;
+    int32_t hw_nibbles_per_sample;
+    int32_t n;
+
+    // Get # of nibbles per sample unit
+    app_nibbles_per_sample = nibbles_per_sample(format);
+    hw_nibbles_per_sample = digdrv->bytes_per_channel * digdrv->channels_per_sample;
+
+    n = digdrv->half_buffer_size * app_nibbles_per_sample / hw_nibbles_per_sample;
+
+    n = (playback_rate * n) / digdrv->DMA_rate;
+
+    // Scale n by 2X resampling tolerance to provide safety margin
+    n = n + ( (n * AIL_preference[DIG_RESAMPLING_TOLERANCE]) / 32768);
+
+    // If DMA rate is not 1X, 2X, or 4X times playback rate, round buffer
+    // size up 1 sample to avoid possible truncation errors
+    if ((digdrv->DMA_rate != 1 * playback_rate) &&
+      (digdrv->DMA_rate != 2 * playback_rate) &&
+      (digdrv->DMA_rate != 4 * playback_rate))
+        n += 4;
+
+    // Round n up to nearest multiple of 256 bytes
+    return (n + 255) & ~255;
+}
+
 void AIL2OAL_API_set_sample_loop_count(SNDSAMPLE *s, int32_t loop_count)
 {
     if (s == NULL)

@@ -950,6 +950,24 @@ intptr_t AIL_sequence_user_data(SNDSEQUENCE *seq, uint32_t index)
     return result;
 }
 
+int32_t AIL_minimum_sample_buffer_size(DIG_DRIVER *digdrv,
+  int32_t playback_rate, int32_t format)
+{
+    int32_t result;
+
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s(0x%p, %d, %d)\n", __func__, digdrv, playback_rate, format);
+
+    result = AIL2OAL_API_minimum_sample_buffer_size(digdrv, playback_rate, format);
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Result = %d\n", result);
+    AIL_indent--;
+
+    return result;
+}
+
 void AIL_delay(int32_t intervals)
 {
     AIL_indent++;
