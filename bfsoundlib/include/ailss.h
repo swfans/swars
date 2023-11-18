@@ -100,6 +100,9 @@ void AIL2OAL_API_set_sample_user_data(SNDSAMPLE *s, uint32_t index, intptr_t val
 int32_t AIL2OAL_API_minimum_sample_buffer_size(DIG_DRIVER *digdrv,
   int32_t playback_rate, int32_t format);
 
+void AIL2OAL_API_load_sample_buffer(SNDSAMPLE *s, int32_t buff_num,
+  void *buffer, uint32_t len);
+
 void AIL2OAL_API_set_sample_loop_count(SNDSAMPLE *s, int32_t loop_count);
 
 void AIL2OAL_API_start_sample(SNDSAMPLE *s);

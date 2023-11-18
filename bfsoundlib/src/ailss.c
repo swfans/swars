@@ -739,6 +739,25 @@ int32_t AIL2OAL_API_minimum_sample_buffer_size(DIG_DRIVER *digdrv,
     return (n + 255) & ~255;
 }
 
+void AIL2OAL_API_load_sample_buffer(SNDSAMPLE *s, int32_t buff_num, void *buffer, uint32_t len)
+{
+    if (s == NULL)
+        return;
+
+    s->done[buff_num] = (len == 0);
+    s->start[buff_num] = buffer;
+    s->len[buff_num] = len;
+    s->pos[buff_num] = 0;
+
+    if (len)
+    {
+        if (s->status != SNDSMP_PLAYING) {
+            s->status = SNDSMP_PLAYING;
+            SS_start_DIG_driver_playback(s->driver);
+        }
+    }
+}
+
 void AIL2OAL_API_set_sample_loop_count(SNDSAMPLE *s, int32_t loop_count)
 {
     if (s == NULL)

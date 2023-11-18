@@ -358,7 +358,7 @@ GLOBAL_FUNC (ASM_AIL_sample_buffer_ready)	/* 1044b0 */
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (AIL_load_sample_buffer)	/* 1045c0 */
+GLOBAL_FUNC (ASM_AIL_load_sample_buffer)	/* 1045c0 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %esi
@@ -410,7 +410,7 @@ GLOBAL_FUNC (AIL_load_sample_buffer)	/* 1045c0 */
 		push   %edi
 		mov    0x20(%esp),%ebp
 		push   %ebp
-		call   AIL_API_load_sample_buffer
+		call   ASM_AIL_API_load_sample_buffer
 		mov    AIL_indent,%eax
 		dec    %eax
 		add    $0x10,%esp
@@ -3923,7 +3923,7 @@ func_113d8b:
 
 
 /*----------------------------------------------------------------*/
-AIL_API_load_sample_buffer:
+ASM_AIL_API_load_sample_buffer:
 /*----------------------------------------------------------------*/
 		push   %ebx
 		mov    0x8(%esp),%edx

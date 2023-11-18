@@ -968,6 +968,20 @@ int32_t AIL_minimum_sample_buffer_size(DIG_DRIVER *digdrv,
     return result;
 }
 
+void AIL_load_sample_buffer(SNDSAMPLE *s, int32_t buff_num,
+  void *buffer, uint32_t len)
+{
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s(0x%p, %d, 0x%p, %u)\n", __func__, s, buff_num, buffer, len);
+
+    AIL2OAL_API_load_sample_buffer(s, buff_num, buffer, len);
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Finished\n");
+    AIL_indent--;
+}
+
 void AIL_delay(int32_t intervals)
 {
     AIL_indent++;

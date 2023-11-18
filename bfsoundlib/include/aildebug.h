@@ -220,6 +220,13 @@ void AIL_set_sample_playback_rate(SNDSAMPLE *s, int32_t playback_rate);
 int32_t AIL_minimum_sample_buffer_size(DIG_DRIVER *digdrv,
   int32_t playback_rate, int32_t format);
 
+/** Set address and length for one of two double-buffered sample buffers.
+ *
+ * Start playback of sample if not already in progress.
+ */
+void AIL_load_sample_buffer(SNDSAMPLE *s, int32_t buff_num,
+  void *buffer, uint32_t len);
+
 /** Get sample volume level.
  */
 int32_t AIL_sample_volume(SNDSAMPLE *s);

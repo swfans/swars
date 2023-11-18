@@ -601,7 +601,7 @@ GLOBAL_FUNC (MSSLOWSOUNDCHECK)	/* 0xfc210 */
 		push   %ebp
 		mov    0x38(%esi),%edx
 		push   %edx
-		call   AIL_load_sample_buffer
+		call   ac_AIL_load_sample_buffer
 		add    $0x10,%esp
 		mov    0x68(%esi),%ebx
 		mov    0x10(%esi),%ecx
