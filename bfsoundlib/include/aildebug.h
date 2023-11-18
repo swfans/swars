@@ -176,6 +176,15 @@ SNDSAMPLE *AIL_allocate_sample_handle(DIG_DRIVER *dig);
  */
 void AIL_init_sample(SNDSAMPLE *s);
 
+/** Get sample user data value at specified index.
+ *
+ * Any desired value may be stored at one of eight user data words
+ * associated with a given SNDSAMPLE.
+ *
+ * Callback functions may access the user data array at interrupt time.
+ */
+intptr_t AIL_sample_user_data(SNDSAMPLE *s, uint32_t index);
+
 /** Set sample user data value at specified index.
  *
  * Any desired value may be stored at one of eight user data words

@@ -671,6 +671,14 @@ void AIL2OAL_API_set_sample_type(SNDSAMPLE *s, int32_t format, uint32_t flags)
     SS_build_amplitude_tables(s);
 }
 
+intptr_t AIL2OAL_API_sample_user_data(SNDSAMPLE *s, uint32_t index)
+{
+    if (s == NULL)
+        return 0;
+
+    return s->user_data[index];
+}
+
 void AIL2OAL_API_set_sample_user_data(SNDSAMPLE *s, uint32_t index, intptr_t value)
 {
     if (s == NULL)

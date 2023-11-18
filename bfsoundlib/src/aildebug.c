@@ -438,6 +438,23 @@ void AIL_init_sample(SNDSAMPLE *s)
     AIL_indent--;
 }
 
+intptr_t AIL_sample_user_data(SNDSAMPLE *s, uint32_t index)
+{
+   intptr_t result;
+
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s(0x%p, %u)\n", __func__, s, index);
+
+    result = AIL2OAL_API_sample_user_data(s, index);
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Result = %d\n", (int)result);
+    AIL_indent--;
+
+    return result;
+}
+
 void AIL_set_sample_user_data(SNDSAMPLE *s, uint32_t index, intptr_t value)
 {
     AIL_indent++;

@@ -91,6 +91,8 @@ void AIL2OAL_API_set_sample_pan(SNDSAMPLE *s, int32_t level);
 
 void AIL2OAL_API_set_sample_type(SNDSAMPLE *s, int32_t format, uint32_t flags);
 
+intptr_t AIL2OAL_API_sample_user_data(SNDSAMPLE *s, uint32_t index);
+
 void AIL2OAL_API_set_sample_user_data(SNDSAMPLE *s, uint32_t index, intptr_t value);
 
 void AIL2OAL_API_set_sample_loop_count(SNDSAMPLE *s, int32_t loop_count);
