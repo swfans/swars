@@ -504,16 +504,28 @@ void player_debug(const char *text)
     // TODO place debug/verification code
 }
 
+void colour_tables_ghost_fixup(void)
+{
+    TbPixel *ipal;
+    TbPixel *opal;
+    ushort i;
+
+    ipal = &pixmap.fade_table[63*PALETTE_8b_COLORS];
+    opal = &pixmap.ghost_table[0*PALETTE_8b_COLORS];
+    for (i = 0; i < PALETTE_8b_COLORS; i++)
+        opal[i] = ipal[i];
+}
+
 void game_setup_stuff(void)
 {
-#if 1
+#if 0
     asm volatile ("call ASM_game_setup_stuff\n"
         :  :  : "eax" );
 #else
     TbFileHandle fh;
     ushort i;
 
-    for (i = 0; i < 256; i++)
+    for (i = 0; i < PALETTE_8b_COLORS; i++)
         linear_vec_pal[i] = i;
     vec_pal = linear_vec_pal;
 
@@ -527,11 +539,11 @@ void game_setup_stuff(void)
     colour_grey2 = LbPaletteFindColour(display_palette, 32, 32, 32);
     colour_grey1 = LbPaletteFindColour(display_palette, 16, 16, 16);
 
-    LbFileLoadAt(tables_fname, fade_table);
+    // TODO is there a reason to simplify the load here?
+    //LbColourTablesLoad(display_palette, "data/tables.dat");
+    LbFileLoadAt("data/tables.dat", &pixmap);
 
-    for (i = 0; i < 256; i++)
-        // byte_166180 = pixmap.ghost_table - 0x100 = &pixmap.fade_table[62*PALETTE_8b_COLORS]
-        pixmap.ghost_table[0+i] = byte_166180[i];
+    colour_tables_ghost_fixup();
 #endif
 }
 

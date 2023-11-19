@@ -645,6 +645,9 @@ extern ushort gamep_unknval_01;
 extern ubyte *vec_tmap;
 extern ubyte linear_vec_pal[256];
 extern ulong nsta_size;
+extern TbPixel colour_grey1;
+extern TbPixel colour_grey2;
+extern TbPixel colour_brown2;
 
 extern ubyte *memload;
 #define memload_len 16384
