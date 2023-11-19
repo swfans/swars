@@ -506,8 +506,33 @@ void player_debug(const char *text)
 
 void game_setup_stuff(void)
 {
+#if 1
     asm volatile ("call ASM_game_setup_stuff\n"
         :  :  : "eax" );
+#else
+    TbFileHandle fh;
+    ushort i;
+
+    for (i = 0; i < 256; i++)
+        linear_vec_pal[i] = i;
+    vec_pal = linear_vec_pal;
+
+    fh = LbFileOpen("data/nsta-0.ani", Lb_FILE_MODE_READ_ONLY);
+    if (fh != INVALID_FILE) {
+        nsta_size = LbFileSeek(fh, 0, Lb_FILE_SEEK_END);
+        LbFileClose(fh);
+    }
+
+    colour_brown2 = LbPaletteFindColour(display_palette, 42, 37, 30);
+    colour_grey2 = LbPaletteFindColour(display_palette, 32, 32, 32);
+    colour_grey1 = LbPaletteFindColour(display_palette, 16, 16, 16);
+
+    LbFileLoadAt(tables_fname, fade_table);
+
+    for (i = 0; i < 256; i++)
+        // byte_166180 = pixmap.ghost_table - 0x100 = &pixmap.fade_table[62*PALETTE_8b_COLORS]
+        pixmap.ghost_table[0+i] = byte_166180[i];
+#endif
 }
 
 void smack_malloc_free_all(void)
