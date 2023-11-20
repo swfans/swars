@@ -76,6 +76,7 @@ swars_SOURCES = \
 	../bfsoundlib/src/drv_oal.c \
 	../bfsoundlib/include/oggvorbis.h \
 	../bfsoundlib/src/oggvorbis.c \
+	../bfsoundlib/src/ailssa.sx \
 	config.h \
 	bigmap.c \
 	bigmap.h \
