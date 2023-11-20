@@ -1435,9 +1435,43 @@ void AIL2OAL_API_set_XMIDI_master_volume(MDI_DRIVER *mdidrv, int32_t master_volu
 
 void AIL2OAL_API_sequence_position(SNDSEQUENCE *seq, int32_t *beat, int32_t *measure)
 {
-    // Not implemented
-    *beat = 0;
-    *measure = 0;
+    int32_t nbeat, nmeas, nbfrac;
+    int i;
+
+    if (seq == NULL)
+        return;
+
+    seq->driver->disable++;
+
+    // Advance beat/measure count
+    nbeat = seq->beat_count;
+    nmeas = seq->measure_count;
+    nbfrac = seq->beat_fraction;
+    for (i = 0; i < AIL_preference[MDI_QUANT_ADVANCE]; i++)
+    {
+        int32_t tpbeat;
+
+        tpbeat = seq->time_per_beat;
+        nbfrac += seq->time_fraction;
+        if (nbfrac >= tpbeat)
+        {
+            nbeat++;
+            nbfrac -= tpbeat;
+            if (nbeat >= seq->time_numerator) {
+                nmeas++;
+                nbeat = 0;
+            }
+        }
+    }
+    if (nmeas < 0)
+      nmeas = 0;
+
+    if (measure != NULL)
+      *measure = nmeas;
+    if (beat != NULL)
+      *beat = nbeat;
+
+    seq->driver->disable--;
 }
 
 

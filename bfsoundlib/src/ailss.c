@@ -42,13 +42,6 @@ extern uint8_t byte_15AA50[128];
 
 void SS_build_amplitude_tables(SNDSAMPLE *s)
 {
-#if 0
-    asm volatile (
-      "push %0\n"
-      "call ASM_SS_build_amplitude_tables\n"
-      "add $0x4, %%esp\n"
-        :  : "g" (s) : "eax" );
-#else
     int hwfmt, smfmt;
     int32_t final_volume;
     int32_t i;
@@ -169,7 +162,6 @@ void SS_build_amplitude_tables(SNDSAMPLE *s)
             }
         }
     }
-#endif
 }
 
 void SS_flush(DIG_DRIVER *digdrv)
