@@ -37,17 +37,17 @@
 /******************************************************************************/
 extern char GTL_prefix[128];
 extern char SoundDriverPath[144];
-extern char AIL_error[256];
-extern int32_t AIL_preference[AIL_N_PREFS];
 
 extern MDI_DRIVER *MDI_first;
 extern uint32_t MDI_entry;
-extern SNDSEQUENCE *MDI_S;
-extern int32_t MDI_i,MDI_j,MDI_n,MDI_sequence_done;
-extern int32_t MDI_q,MDI_t;
-extern uint32_t MDI_channel,MDI_status,MDI_type,MDI_len;
-extern const uint8_t *MDI_ptr;
-extern const uint8_t *MDI_event;
+const uint8_t *MDI_ptr;
+const uint8_t *MDI_event;
+uint32_t MDI_status, MDI_len;
+uint32_t MDI_type, MDI_channel;
+SNDSEQUENCE *MDI_S;
+int32_t MDI_i, MDI_j, MDI_n;
+int32_t MDI_q, MDI_t;
+int32_t MDI_sequence_done;
 
 extern int32_t MDI_locked;
 static uint32_t XMI_serve_entry = 0;

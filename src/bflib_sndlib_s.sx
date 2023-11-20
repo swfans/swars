@@ -30,10 +30,21 @@
 
 .text
 
-.global EXPORT_SYMBOL(disk_err);
-.global EXPORT_SYMBOL(_IsTable);
-.global EXPORT_SYMBOL(FullDIG_INIPath);
-.global EXPORT_SYMBOL(FullMDI_INIPath);
+.global EXPORT_SYMBOL(AIL_error);
+
+.global EXPORT_SYMBOL(MDI_ptr);
+.global EXPORT_SYMBOL(MDI_event);
+.global EXPORT_SYMBOL(MDI_status);
+.global EXPORT_SYMBOL(MDI_len);
+.global EXPORT_SYMBOL(MDI_type);
+.global EXPORT_SYMBOL(MDI_channel);
+.global EXPORT_SYMBOL(MDI_S);
+.global EXPORT_SYMBOL(MDI_i);
+.global EXPORT_SYMBOL(MDI_j);
+.global EXPORT_SYMBOL(MDI_n);
+.global EXPORT_SYMBOL(MDI_q);
+.global EXPORT_SYMBOL(MDI_t);
+.global EXPORT_SYMBOL(MDI_sequence_done);
 
 /*----------------------------------------------------------------*/
 AILSFILE_start_:
@@ -484,89 +495,6 @@ AIL_WAV_EOS:
 
 
 /*----------------------------------------------------------------*/
-ASM_AIL_API_set_sample_file:
-/*----------------------------------------------------------------*/
-		push   %ebx
-		push   %esi
-		push   %edi
-		mov    0x10(%esp),%esi
-		mov    0x14(%esp),%ecx
-		mov    $0x8,%ebx
-		mov    $ascCreative,%edx
-		mov    %ecx,%eax
-		call   ac_strnicmp
-		test   %eax,%eax
-		je     jump_114554
-		mov    $0x4,%ebx
-		mov    $ascWave,%edx
-		lea    0x8(%ecx),%eax
-		call   ac_strnicmp
-		test   %eax,%eax
-		je     jump_11454f
-		mov    $0x9,%ecx
-		mov    $AIL_error,%edi
-		mov    $aUnrecognizedDi,%esi
-		xor    %eax,%eax
-		rep movsl %ds:(%esi),%es:(%edi)
-		movsw  %ds:(%esi),%es:(%edi)
-		pop    %edi
-		pop    %esi
-		pop    %ebx
-		ret
-	jump_11454f:
-		mov    $0x1,%eax
-	jump_114554:
-		test   %eax,%eax
-		jbe    jump_11455f
-		cmp    $0x1,%eax
-		je     jump_11459c
-		jmp    jump_1145b0
-	jump_11455f:
-		xor    %eax,%eax
-		mov    0x14(%ecx),%ax
-		add    %eax,%ecx
-		mov    0x18(%esp),%eax
-		mov    %ecx,0x878(%esi)
-		mov    %eax,0x884(%esi)
-		cmp    $0xffffffff,%eax
-		sete   %al
-		push   $0x0
-		and    $0xff,%eax
-		movl   $0x0,0x88c(%esi)
-		push   %esi
-		mov    %eax,0x888(%esi)
-		call   ac_AIL_process_VOC_block
-		jmp    jump_1145ad
-	jump_11459c:
-		push   %esi
-		push   %ecx
-		movl   $0x0,0x88c(%esi)
-		call   ac_AIL_process_WAV_image
-	jump_1145ad:
-		add    $0x8,%esp
-	jump_1145b0:
-		cmpl   $0xffffffff,0x88c(%esi)
-		jne    jump_1145d3
-		mov    $0x7,%ecx
-		mov    $AIL_error,%edi
-		mov    $aInvalidOrMissi,%esi
-		xor    %eax,%eax
-		rep movsl %ds:(%esi),%es:(%edi)
-		movsw  %ds:(%esi),%es:(%edi)
-		movsb  %ds:(%esi),%es:(%edi)
-		pop    %edi
-		pop    %esi
-		pop    %ebx
-		ret
-	jump_1145d3:
-		mov    $0x1,%eax
-		pop    %edi
-		pop    %esi
-		pop    %ebx
-		ret
-
-
-/*----------------------------------------------------------------*/
 AILSFILE_end_:
 /*----------------------------------------------------------------*/
 		push   %ebx
@@ -608,55 +536,55 @@ AILXMIDI_start_:
 		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
 		push   $0x4
-		push   $MDI_S
+		push   $EXPORT_SYMBOL(MDI_S)
 		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
 		push   $0x4
-		push   $MDI_i
+		push   $EXPORT_SYMBOL(MDI_i)
 		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
 		push   $0x4
-		push   $MDI_j
+		push   $EXPORT_SYMBOL(MDI_j)
 		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
 		push   $0x4
-		push   $MDI_n
+		push   $EXPORT_SYMBOL(MDI_n)
 		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
 		push   $0x4
-		push   $MDI_sequence_done
+		push   $EXPORT_SYMBOL(MDI_sequence_done)
 		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
 		push   $0x4
-		push   $MDI_q
+		push   $EXPORT_SYMBOL(MDI_q)
 		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
 		push   $0x4
-		push   $MDI_t
+		push   $EXPORT_SYMBOL(MDI_t)
 		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
 		push   $0x4
-		push   $MDI_channel
+		push   $EXPORT_SYMBOL(MDI_channel)
 		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
 		push   $0x4
-		push   $MDI_status
+		push   $EXPORT_SYMBOL(MDI_status)
 		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
 		push   $0x4
-		push   $MDI_type
+		push   $EXPORT_SYMBOL(MDI_type)
 		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
 		push   $0x4
-		push   $MDI_len
+		push   $EXPORT_SYMBOL(MDI_len)
 		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
 		push   $0x4
-		push   $MDI_ptr
+		push   $EXPORT_SYMBOL(MDI_ptr)
 		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
 		push   $0x4
-		push   $MDI_event
+		push   $EXPORT_SYMBOL(MDI_event)
 		mov    $0x1,%ebx
 		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
@@ -751,51 +679,51 @@ AILXMIDI_end_:
 		call   ac_AIL_vmm_unlock
 		add    $0x8,%esp
 		push   $0x4
-		push   $MDI_S
+		push   $EXPORT_SYMBOL(MDI_S)
 		call   ac_AIL_vmm_unlock
 		add    $0x8,%esp
 		push   $0x4
-		push   $MDI_i
+		push   $EXPORT_SYMBOL(MDI_i)
 		call   ac_AIL_vmm_unlock
 		add    $0x8,%esp
 		push   $0x4
-		push   $MDI_n
+		push   $EXPORT_SYMBOL(MDI_n)
 		call   ac_AIL_vmm_unlock
 		add    $0x8,%esp
 		push   $0x4
-		push   $MDI_sequence_done
+		push   $EXPORT_SYMBOL(MDI_sequence_done)
 		call   ac_AIL_vmm_unlock
 		add    $0x8,%esp
 		push   $0x4
-		push   $MDI_q
+		push   $EXPORT_SYMBOL(MDI_q)
 		call   ac_AIL_vmm_unlock
 		add    $0x8,%esp
 		push   $0x4
-		push   $MDI_t
+		push   $EXPORT_SYMBOL(MDI_t)
 		call   ac_AIL_vmm_unlock
 		add    $0x8,%esp
 		push   $0x4
-		push   $MDI_channel
+		push   $EXPORT_SYMBOL(MDI_channel)
 		call   ac_AIL_vmm_unlock
 		add    $0x8,%esp
 		push   $0x4
-		push   $MDI_status
+		push   $EXPORT_SYMBOL(MDI_status)
 		call   ac_AIL_vmm_unlock
 		add    $0x8,%esp
 		push   $0x4
-		push   $MDI_type
+		push   $EXPORT_SYMBOL(MDI_type)
 		call   ac_AIL_vmm_unlock
 		add    $0x8,%esp
 		push   $0x4
-		push   $MDI_len
+		push   $EXPORT_SYMBOL(MDI_len)
 		call   ac_AIL_vmm_unlock
 		add    $0x8,%esp
 		push   $0x4
-		push   $MDI_ptr
+		push   $EXPORT_SYMBOL(MDI_ptr)
 		call   ac_AIL_vmm_unlock
 		add    $0x8,%esp
 		push   $0x4
-		push   $MDI_event
+		push   $EXPORT_SYMBOL(MDI_event)
 		xor    %ebx,%ebx
 		call   ac_AIL_vmm_unlock
 		add    $0x8,%esp
@@ -1685,10 +1613,6 @@ AILXDIG_end_:
 .data
 
 
-GLOBAL (AIL_entry)				/* 0x15aa48 */
-		.long	0x0
-GLOBAL (AIL_use_locked)			/* 0x15AA4C */
-		.long	0x0
 GLOBAL (byte_15AA50)	/* 0x15AA50 */
 		.ascii  "\x00\x02\x04\x06\x08\x0a\x0c\x0e"
 		.ascii  "\x10\x12\x14\x16\x18\x1a\x1c\x1e"
@@ -1726,21 +1650,6 @@ _locked_AILXDIG:				/* 0x15AB70 */
 		.long	0x0
 
 
-aOutOfTimerHa_0:	/* 0x161A20 */
-		.string "Out of timer handles\n"
-		.align 4
-ascSS_3:	/* 0x161A38 */
-		.string "%s/%s"
-		.align 4
-aDriverFileNotF:	/* 0x161A40 */
-		.string "Driver file not found\n"
-		.align 4
-aUnableToOpenFi:	/* 0x161A58 */
-		.string "Unable to open file DIG.INI\n"
-		.align 4
-aOutOfSampleHan:	/* 0x161A78 */
-		.string "Out of sample handles\n"
-		.byte	0x0
 ascFmt:	/* 0x161A90 */
 		.string "fmt "
 		.ascii  "\x00\x00\x00"
@@ -1765,205 +1674,4 @@ aUnrecognizedDi:	/* 0x161AFC */
 aInvalidOrMissi:	/* 0x161B24 */
 		.string "Invalid or missing data block\n"
 		.byte	0x0
-ascForm:	/* 0x161B44 */
-		.string "FORM"
-		.ascii  "\x00\x00\x00"
-ascCat:	/* 0x161B4C */
-		.string "CAT "
-		.ascii  "\x00\x00\x00"
-ascXmid:	/* 0x161B54 */
-		.string "XMID"
-		.ascii  "\x00\x00\x00"
-aInternalNoteQu:	/* 0x161B5C */
-		.string "Internal note queue overflow\n"
-		.short  0x0
-aCouldNotAllo_4:	/* 0x161B7C */
-		.string "Could not allocate memory for driver\n"
-		.short  0x0
-a_mdiDriverRequ:	/* 0x161BA4 */
-		.string ".MDI driver required\n"
-		.short  0x0
-aXmidiSoundHard:	/* 0x161BBC */
-		.string "XMIDI sound hardware not found\n"
-aCouldNotInitia:	/* 0x161BDC */
-		.string "Could not initialize instrument manager\n"
-		.ascii  "\x00\x00\x00"
-aCouldNotAllo_5:	/* 0x161C08 */
-		.string "Could not allocate SEQUENCE structures\n"
-aOutOfTimerHa_1:	/* 0x161C30 */
-		.string "Out of timer handles\n"
-		.short  0x0
-ascSS_4:	/* 0x161C48 */
-		.string "%s/%s"
-		.short  0x0
-aDriverFileNo_0:	/* 0x161C50 */
-		.string "Driver file not found\n"
-		.byte	0x0
-aUnableToOpen_0:	/* 0x161C68 */
-		.string "Unable to open file MDI.INI\n"
-		.ascii  "\x00\x00\x00"
-aTandy3VoiceMus:	/* 0x161C88 */
-		.string "Tandy 3-voice music"
-aIbmInternalSpe:	/* 0x161C9C */
-		.string "IBM internal speaker music"
-		.byte	0x0
-asc_ad:	/* 0x161CB8 */
-		.ascii  "\x2e\x41\x44\x00"
-asc_opl:	/* 0x161CBC */
-		.string ".OPL"
-		.ascii  "\x00\x00\x00"
-aOutOfSequenceH:	/* 0x161CC4 */
-		.string "Out of sequence handles\n"
-		.ascii  "\x00\x00\x00"
-aInvalidXmidiSe:	/* 0x161CE0 */
-		.string "Invalid XMIDI sequence\n"
-ascTimb:	/* 0x161CF8 */
-		.string "TIMB"
-		.ascii  "\x00\x00\x00"
-ascRbrn:	/* 0x161D00 */
-		.string "RBRN"
-		.ascii  "\x00\x00\x00"
-ascEvnt:	/* 0x161D08 */
-		.string "EVNT"
-		.ascii  "\x00\x00\x00"
-aNoTimbresLoade:	/* 0x161D10 */
-		.string "No timbres loaded\n"
-		.byte	0x0
-aDriverCouldNot:	/* 0x161D24 */
-		.string "Driver could not install timbre bank %u, patch %u\n"
-		.byte	0x0
-aDriverCouldN_0:	/* 0x161D58 */
-		.string "Driver could not install timbre bank %u, patch %u\n"
-		.byte	0x0
-aInsufficient_0:	/* 0x161D8C */
-		.string "Insufficient memory for HWAVE descriptor\n"
-		.short  0x0
-
-
-data_1621e0:
-		.ascii  "JFMAMJJASOND"
-data_1621ec:
-		.ascii  "aeapauuuecoe"
-data_1621f8:
-		.ascii  "nbrrynlgptvc"
-data_162204:
-		.ascii  "SMTWTFS"
-data_16220b:
-		.ascii  "uouehra"
-data_162212:
-		.string "nneduit"
-		.short  0x0
-
-
-/* FILE * */
-GLOBAL (AIL_debugfile)		/* 0x1e8fa0 */
-		.long	0x0
-
-GLOBAL (AIL_debug)
-		.long	0x0
-
-/* 32-bit bool */
-GLOBAL (AIL_sys_debug)		/* 0x1e8fa8 */
-		.long	0x0
-
-data_1e8fac:
-		.long	0x0
-data_1e8fb0:
-		.long	0x0
-GLOBAL (AIL_indent)
-		.long	0x0
-data_1e8fb8:
-		.long	0x0
-data_1e8fbc:
-		.long	0x0
-data_1e8fc0:
-		.long	0x0
-data_1e8fc4:
-		.fill   0x18
-data_1e8fdc:
-		.fill   0x110
-
-data_1ed6ac:
-		.long	0x0
-GLOBAL (AIL_driver)	/* 0x1ed6b0 */
-		.fill   0x40
-GLOBAL (AIL_error)	/* 0x1ED6F0 */
-		.fill   0x100
-GLOBAL (AIL_last_IO_attempt)	/* 0x1ed7f0 */
-		.fill   0x18
-GLOBAL (AIL_flags) /* 0x1ed808 */
-		.long	0x0
-
-GLOBAL (AIL_preference)	/* 0x1ed80c */
-		.long	0x0
-		.long	0x0
-		.long	0x0
-		.long	0x0
-		.long	0x0
-		.long	0x0
-		.long	0x0
-		.long	0x0
-		.long	0x0
-		.long	0x0
-		.long	0x0
-		.long	0x0
-		.long	0x0
-		.long	0x0
-		.long	0x0
-		.long	0x0
-		.long	0x0
-		.long	0x0
-		.long	0x0
-		.fill   0x18
-
-loctm_var1:	/* 0x1ED870 */
-		.fill   0x24
-asciitm_var1:			/* 0x1ED894 */
-		.fill   0x1c
-data_1ed8b0:
-		.long	0x0
-data_1ed8b4:
-		.long	0x0
-data_1ed8b8:
-		.short  0x0
-data_1ed8ba:
-		.fill   0x6
-data_1ed8c0:
-		.long	0x0
-data_1ed8c4:
-		.long	0x0
-data_1ed8c8:
-		.long	0x0
-data_1ed8cc:
-		.long	0x0
-data_1ed8d0:
-		.fill   0x10
-GLOBAL (MDI_ptr)		/* 0x1ED8E0 */
-		.long	0x0
-GLOBAL (MDI_event)
-		.long	0x0
-GLOBAL (MDI_status)
-		.long	0x0
-GLOBAL (MDI_len)
-		.long	0x0
-GLOBAL (MDI_type)		/* 0x1ED8F0 */
-		.long	0x0
-GLOBAL (MDI_channel)
-		.long	0x0
-GLOBAL (MDI_S)			/* 0x1ED8F8 */
-		.long	0x0
-GLOBAL (MDI_i)
-		.long	0x0
-GLOBAL (MDI_j)			/* 0x1ed900 */
-		.long	0x0
-GLOBAL (MDI_n)
-		.long	0x0
-GLOBAL (MDI_q)
-		.long	0x0
-GLOBAL (MDI_t)
-		.long	0x0
-GLOBAL (MDI_sequence_done)	/* 0x1ED910 */
-		.long	0x0
-data_1ed914:
-		.fill   0x218
 

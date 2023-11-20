@@ -32,7 +32,7 @@
 
 /** List of installed AIL drivers.
  */
-extern AIL_DRIVER * AIL_driver[AIL_MAX_DRVRS];
+AIL_DRIVER * AIL_driver[AIL_MAX_DRVRS];
 
 /** DIG_DRIVER list head.
  */
@@ -42,13 +42,20 @@ DIG_DRIVER *DIG_first = NULL;
  */
 MDI_DRIVER *MDI_first = NULL;
 
+int32_t AIL_preference[AIL_N_PREFS];
+
 /** ASCII error type string.
  */
-extern char AIL_error[256];
+char AIL_error[256];
+
+SNDCARD_IO_PARMS AIL_last_IO_attempt;
+
+uint32_t AIL_flags;
 
 static uint32_t AIL_serve_entry = 0;
 static int32_t AIL_serve_flags = 0;
-extern int32_t AIL_use_locked;
+static int32_t AIL_use_locked;
+
 extern uint32_t AIL_bkgnd_flag;
 
 extern int32_t timer_cb_periods[AIL_N_TIMERS];
