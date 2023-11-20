@@ -38,13 +38,138 @@ enum SampleFileTypes {
     SMP_FTYP_ASI = 2,
 };
 
+extern uint8_t byte_15AA50[128];
+
 void SS_build_amplitude_tables(SNDSAMPLE *s)
 {
+#if 0
     asm volatile (
       "push %0\n"
       "call ASM_SS_build_amplitude_tables\n"
       "add $0x4, %%esp\n"
         :  : "g" (s) : "eax" );
+#else
+    int hwfmt, smfmt;
+    int32_t final_volume;
+    int32_t i;
+
+    if (s->volume > 127)
+        s->volume = 127;
+    else if (s->volume < 0)
+        s->volume = 0;
+
+    if (s->pan > 127)
+        s->pan = 127;
+    else if (s->pan < 0)
+        s->pan = 0;
+
+    final_volume = s->driver->master_volume * s->volume / 127;
+    if (final_volume > 127)
+        final_volume = 127;
+    else if (final_volume < 0)
+        final_volume = 0;
+
+    if (s->format == DIG_F_MONO_16 && s->format == DIG_F_STEREO_16)
+    {
+        int32_t *vscale0, *vscale1;
+        int32_t vamp0, vamp1;
+
+        vscale0 = s->vol_scale[0];
+        vscale1 = s->vol_scale[1];
+        vamp1 = byte_15AA50[s->pan];
+        vamp0 = byte_15AA50[127 - s->pan];
+
+        vscale0[0] = final_volume * vamp0 / 127;
+        vscale1[0] = final_volume * vamp1 / 127;
+        return;
+    }
+
+    if (final_volume)
+        final_volume++;
+
+    hwfmt = s->driver->hw_format;
+    smfmt = s->format;
+    if (hwfmt != DIG_F_STEREO_8 && hwfmt != DIG_F_STEREO_16 &&
+      ((hwfmt != DIG_F_MONO_8 && hwfmt != DIG_F_MONO_16) ||
+        (smfmt != DIG_F_STEREO_8 && smfmt != DIG_F_STEREO_16)) )
+    {
+        int32_t *vscale;
+        int32_t nxval;
+
+        vscale = s->vol_scale[0];
+        if (s->flags & DIG_PCM_SIGN)
+        {
+            nxval = 0;
+            for (i = 0; i < 0x8000; i += 0x100)
+            {
+              *(vscale) = nxval >> 7;
+              nxval += final_volume << 8;
+              vscale++;
+            }
+            nxval = -0x8000 * final_volume;
+            for (i = -0x8000; i < 0; i += 0x100)
+            {
+              *(vscale) = nxval >> 7;
+              nxval += final_volume << 8;
+              vscale++;
+            }
+        }
+        else
+        {
+            nxval = -0x8000 * final_volume;
+            for (i = -0x8000; i < 0x8000; i += 0x100)
+            {
+              *(vscale) = nxval >> 7;
+              nxval += final_volume << 8;
+              vscale++;
+            }
+        }
+    }
+    else
+    {
+        int32_t *vscale0, *vscale1;
+        int32_t vamp0, vamp1;
+        int32_t nxval;
+
+        vscale0 = s->vol_scale[0];
+        vscale1 = s->vol_scale[1];
+        vamp1 = byte_15AA50[s->pan];
+        vamp0 = byte_15AA50[127 - s->pan];
+        if (s->flags & DIG_PCM_SIGN)
+        {
+            nxval = 0;
+            for (i = 0; i < 0x8000; i += 256)
+            {
+              *vscale0 = vamp0 * (nxval >> 7) >> 7;
+              *vscale1 = vamp1 * (nxval >> 7) >> 7;
+              nxval += final_volume << 8;
+              vscale0++;
+              vscale1++;
+            }
+            nxval = -0x8000 * final_volume;
+            for (i = -0x8000; i < 0; i += 256)
+            {
+              *vscale0 = vamp0 * (nxval >> 7) >> 7;
+              *vscale1 = vamp1 * (nxval >> 7) >> 7;
+              nxval += final_volume << 8;
+              vscale0++;
+              vscale1++;
+            }
+        }
+        else
+        {
+            nxval = -0x8000 * final_volume;
+            for (i = -0x8000; i < 0x8000; i += 256)
+            {
+              *vscale0 = vamp0 * (nxval >> 7) >> 7;
+              *vscale1 = vamp1 * (nxval >> 7) >> 7;
+              nxval += final_volume << 8;
+              vscale0++;
+              vscale1++;
+            }
+        }
+    }
+#endif
 }
 
 void SS_flush(DIG_DRIVER *digdrv)

@@ -48,7 +48,7 @@ AILSS_start_:
 		call   ac_AIL_VMM_lock_range
 		add    $0x8,%esp
 		push   $0x80
-		push   $data_15aa50
+		push   $EXPORT_SYMBOL(byte_15AA50)
 		call   ac_AIL_vmm_lock
 		add    $0x8,%esp
 		push   $0x4
@@ -151,7 +151,7 @@ GLOBAL_FUNC (ASM_SS_build_amplitude_tables)
 		mov    $0x7f,%eax
 		sub    %edi,%eax
 		xor    %edx,%edx
-		mov    data_15aa50(%eax),%dl
+		mov    EXPORT_SYMBOL(byte_15AA50)(%eax),%dl
 		imul   0x18(%esp),%edx
 		mov    $0x7f,%ebx
 		mov    %edx,%eax
@@ -160,7 +160,7 @@ GLOBAL_FUNC (ASM_SS_build_amplitude_tables)
 		xor    %edx,%edx
 		mov    %eax,0x48(%ecx)
 		mov    0x18(%esp),%ebx
-		mov    data_15aa50(%edi),%dl
+		mov    EXPORT_SYMBOL(byte_15AA50)(%edi),%dl
 		imul   %ebx,%edx
 		mov    $0x7f,%ebx
 		mov    %edx,%eax
@@ -196,8 +196,8 @@ GLOBAL_FUNC (ASM_SS_build_amplitude_tables)
 		lea    0x48(%ecx),%eax
 		sub    %edi,%ebx
 		lea    0x448(%ecx),%edx
-		mov    data_15aa50(%ebx),%bl
-		movzbl data_15aa50(%edi),%esi
+		mov    EXPORT_SYMBOL(byte_15AA50)(%ebx),%bl
+		movzbl EXPORT_SYMBOL(byte_15AA50)(%edi),%esi
 		mov    0x18(%esp),%edi
 		shl    $0x8,%edi
 		and    $0xff,%ebx
@@ -372,7 +372,7 @@ AILSS_end_:
 		call   ac_AIL_VMM_unlock_range
 		add    $0x8,%esp
 		push   $0x80
-		push   $data_15aa50
+		push   $EXPORT_SYMBOL(byte_15AA50)
 		call   ac_AIL_vmm_unlock
 		add    $0x8,%esp
 		push   $0x4
@@ -2156,7 +2156,7 @@ GLOBAL (AIL_entry)				/* 0x15aa48 */
 		.long	0x0
 GLOBAL (AIL_use_locked)			/* 0x15AA4C */
 		.long	0x0
-data_15aa50:
+GLOBAL (byte_15AA50)	/* 0x15AA50 */
 		.ascii  "\x00\x02\x04\x06\x08\x0a\x0c\x0e"
 		.ascii  "\x10\x12\x14\x16\x18\x1a\x1c\x1e"
 		.ascii  " \"$&(*,.02468:<>@BDFHJLNPRTVXZ\\^`bdfhjlnprtvxz|"
