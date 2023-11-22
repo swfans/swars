@@ -198,6 +198,10 @@ extern ushort netgame_agent_pos_y[8][4];
 extern long dword_176D58;
 extern ubyte byte_153198;
 
+extern ubyte unkn_changing_color_1;
+extern ubyte unkn_changing_color_2;
+extern ulong unkn_changing_color_counter1;
+
 extern ushort word_1C4846[8];
 extern ushort word_1C4856[8];
 
@@ -10824,8 +10828,58 @@ void process_packets(void)
         :  :  : "eax" );
 }
 
-void joy_input(void);
-void game_process_sub04(void);
+void joy_input(void)
+{
+    asm volatile ("call ASM_joy_input\n"
+        :  :  : "eax" );
+}
+
+void update_unkn_changing_colors(void)
+{
+#if 0
+    asm volatile ("call ASM_update_unkn_changing_colors\n"
+        :  :  : "eax" );
+#else
+    ubyte col1, col2;
+
+    unkn_changing_color_counter1++;
+    if (unkn_changing_color_counter1 & 0x01)
+        col1 = colour_lookup[5];
+    else
+        col1 = colour_lookup[0];
+    unkn_changing_color_1 = col1;
+
+    if (unkn_changing_color_counter1 & 0x01)
+        col2 = colour_lookup[2];
+    else
+        col2 = colour_lookup[1];
+    unkn_changing_color_2 = col2;
+#endif
+}
+
+/** Orbital station explosion code.
+ */
+void game_process_orbital_station_explode(void)
+{
+    if (unkn01_downcount > 0)
+    {
+        unkn01_downcount--;
+        LOGDBG("unkn01_downcount = %ld", unkn01_downcount);
+        if ( unkn01_downcount == 40 ) {
+            mapwho_unkn01(unkn01_pos_x, unkn01_pos_y);
+        }
+        else if (unkn01_downcount < 40) {
+            ushort stl_x, stl_y;
+
+            stl_y = unkn01_pos_y + (LbRandomAnyShort() & 0xF) - 7;
+            stl_x = unkn01_pos_x + (LbRandomAnyShort() & 0xF) - 7;
+            new_bang_3(stl_x << 16, 0, stl_y << 16, 95);
+            stl_y = unkn01_pos_y + (LbRandomAnyShort() & 0xF) - 7;
+            stl_x = unkn01_pos_x + (LbRandomAnyShort() & 0xF) - 7;
+            new_bang_3(stl_x << 16, 0, stl_y << 16, 95);
+        }
+    }
+}
 
 void game_process(void)
 {
@@ -10834,6 +10888,7 @@ void game_process(void)
     while ( !exit_game )
     {
       process_sound_heap();
+      // TODO Why resolution control here? Isn't it already handled in game_graphics_inputs()?
       if ( lbKeyOn[KC_F8] && (lbShift & KMod_CONTROL))
       {
           lbKeyOn[KC_F8] = 0;
@@ -10875,25 +10930,8 @@ void game_process(void)
       else if ( !(ingame.Flags & GamF_Unkn0020) || ((gameturn & 0xF) == 0) ) {
           LbScreenSwapClear(0);
       }
-      game_process_sub04();
-      if (unkn01_downcount > 0) /* orbital station explosion code */
-      {
-        unkn01_downcount--;
-        LOGDBG("unkn01_downcount = %ld", unkn01_downcount);
-        if ( unkn01_downcount == 40 ) {
-            mapwho_unkn01(unkn01_pos_x, unkn01_pos_y);
-        }
-        else if (unkn01_downcount < 40) {
-            unsigned short stl_y;
-            unsigned short stl_x;
-            stl_y = unkn01_pos_y + (LbRandomAnyShort() & 0xF) - 7;
-            stl_x = unkn01_pos_x + (LbRandomAnyShort() & 0xF) - 7;
-            new_bang_3(stl_x << 16, 0, stl_y << 16, 95);
-            stl_y = unkn01_pos_y + (LbRandomAnyShort() & 0xF) - 7;
-            stl_x = unkn01_pos_x + (LbRandomAnyShort() & 0xF) - 7;
-            new_bang_3(stl_x << 16, 0, stl_y << 16, 95);
-        }
-      }
+      update_unkn_changing_colors();
+      game_process_orbital_station_explode();
       gameturn++;
       game_process_sub09();
     }
