@@ -96,6 +96,10 @@ swars_SOURCES = \
 	drawtext.h \
 	engintrns.c \
 	engintrns.h \
+	feoptions.c \
+	feoptions.h \
+	guiboxes.c \
+	guiboxes.h \
 	game.c \
 	game_data.c \
 	game_data.h \

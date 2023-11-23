@@ -9,6 +9,7 @@
 #include "globals.h"
 #include "scanner.h"
 #include "people.h"
+#include "guiboxes.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -245,109 +246,6 @@ struct SynTime {
     ubyte Day;
     ubyte Month;
     ubyte Year;
-};
-
-struct ScreenButton;
-
-struct ScreenButton {
-    short X;
-    short Y;
-    ushort Width;
-    ushort Height;
-    const char *Text;
-    struct TbSprite *Font;
-    ubyte (*DrawFn)(struct ScreenButton *btn);
-    ubyte (*DrawTextFn)();
-    ubyte (*CallBackFn)(ubyte click);
-    ubyte *Radio;
-    ushort TextTopLine;
-    ushort TextFadePos;
-    ushort Flags;
-    ubyte DrawSpeed;
-    ubyte Timer;
-    ubyte TextSpeed;
-    ubyte Border;
-    ubyte Colour;
-    ubyte BGColour;
-    ubyte AccelKey;
-    ubyte RadioValue;
-};
-
-struct ScreenBox;
-
-struct ScreenBox
-{
-    short X;
-    short Y;
-    ushort Width;
-    ushort Height;
-    ubyte DrawSpeed;
-    ubyte Timer;
-    ushort Flags;
-    ubyte (*DrawFn)(struct ScreenBox *box);
-    ubyte (*SpecialDrawFn)(struct ScreenBox *box);
-    ushort Timer2;
-    char field_16;
-    char field_17;
-};
-
-struct ScreenInfoBox;
-
-struct ScreenInfoBox { // sizeof=43
-    short X;
-    short Y;
-    ushort Width;
-    ushort Height;
-    char *Text1;
-    char *Text2;
-	struct TbSprite *Font1;
-	struct TbSprite *Font2;
-	ubyte (*DrawFn)();
-	ubyte (*DrawTextFn)();
-    short TextFadePos1;
-    short TextFadePos2;
-    ushort Flags;
-    ubyte DrawSpeed;
-    ubyte Timer;
-    ubyte TextSpeed;
-    ubyte Colour;
-    ubyte BGColour;
-};
-
-struct ScreenTextBox;
-
-struct ScreenTextBox {
-  short X;
-  short Y;
-  ushort Width;
-  ushort Height;
-  ubyte DrawSpeed;
-  ubyte Timer;
-  ubyte TextSpeed;
-  ubyte LineSpacing;
-  short ScrollBarPos;
-  ushort ScrollBarSize;
-  short ScrollWindowHeight;
-  short ScrollWindowOffset;
-  ushort GrabPos;
-  ushort Lines;
-  const char *Text;
-  struct TbSprite *Font;
-  ubyte (*DrawFn)(struct ScreenTextBox *box);
-  ubyte (*DrawTextFn)(struct ScreenTextBox *box);
-  struct ScreenButton *Buttons[2];
-  short Infos[2];
-  //struct ScreenInfoBox *Infos[2];
-  ushort TextTopLine;
-  ushort field_36;
-  ushort field_38;
-  short TextFadePos;
-  ushort Flags;
-  ushort field_3E;
-  ubyte BGColour;
-  ubyte LineHeight;
-  ubyte field_42;
-  ubyte field_43;
 };
 
 struct SingleObject { // sizeof=36
@@ -808,7 +706,6 @@ extern char unkn41_text[];
 extern char net_unkn2_text[];
 extern char equip_name_text[];
 extern char unkn_opt_number_text[];
-extern char options_title_text[];
 extern char brief_netscan_cost_text[];
 extern const char *misc_text[5];
 
@@ -825,7 +722,7 @@ extern struct ScreenTextBox loading_INITIATING_box;
 extern struct ScreenTextBox unkn13_SYSTEM_button;
 extern struct ScreenTextBox unkn35_box;
 extern struct ScreenBox unkn39_box;
-extern struct ScreenTextBox unkn37_box;
+extern struct ScreenTextBox storage_slots_box;
 extern struct ScreenButton sysmnu_buttons[6];
 extern struct ScreenButton storage_LOAD_button;
 extern struct ScreenButton storage_SAVE_button;
@@ -833,8 +730,6 @@ extern struct ScreenButton storage_NEW_MORTAL_button;
 extern struct ScreenBox unkn34_box;
 extern struct ScreenBox unkn04_boxes[3];
 extern struct ScreenBox unkn33_box;
-extern struct ScreenButton options_audio_buttons[7];
-extern struct ScreenButton options_gfx_buttons[16];
 extern struct ScreenButton net_protocol_option_button;
 extern struct ScreenBox unkn32_box;
 extern struct ScreenTextBox unkn36_box;

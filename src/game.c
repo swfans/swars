@@ -36,6 +36,8 @@
 #include "drawtext.h"
 #include "engintrns.h"
 #include "game_data.h"
+#include "guiboxes.h"
+#include "feoptions.h"
 #include "building.h"
 #include "campaign.h"
 #include "cybmod.h"
@@ -4735,50 +4737,6 @@ TbPixel LbPaletteFindColour(ubyte *pal, ubyte rval, ubyte gval, ubyte bval)
 }
 #endif
 
-void init_screen_box(struct ScreenBox *box, ushort x, ushort y, ushort width, ushort height, int drawspeed)
-{
-    asm volatile (
-      "push %5\n"
-      "push %4\n"
-      "call ASM_init_screen_box\n"
-        : : "a" (box), "d" (x), "b" (y), "c" (width), "g" (height), "g" (drawspeed));
-}
-
-void init_screen_text_box(struct ScreenTextBox *box, ushort x, ushort y, ushort width, ushort height, int drawspeed, struct TbSprite *font, int textspeed)
-{
-    asm volatile (
-      "push %7\n"
-      "push %6\n"
-      "push %5\n"
-      "push %4\n"
-      "call ASM_init_screen_text_box\n"
-        : : "a" (box), "d" (x), "b" (y), "c" (width), "g" (height), "g" (drawspeed), "g" (font), "g" (textspeed));
-}
-
-void init_screen_button(struct ScreenButton *box, ushort x, ushort y, const char *text, int drawspeed, struct TbSprite *font, int textspeed, int flags)
-{
-    asm volatile (
-      "push %7\n"
-      "push %6\n"
-      "push %5\n"
-      "push %4\n"
-      "call ASM_init_screen_button\n"
-        : : "a" (box), "d" (x), "b" (y), "c" (text), "g" (drawspeed), "g" (font), "g" (textspeed), "g" (flags));
-}
-
-void init_screen_info_box(struct ScreenInfoBox *box, ushort x, ushort y, ushort width, const char *text1, const char *text2, int drawspeed, struct TbSprite *font1, struct TbSprite *font2, int textspeed)
-{
-    asm volatile (
-      "push %9\n"
-      "push %8\n"
-      "push %7\n"
-      "push %6\n"
-      "push %5\n"
-      "push %4\n"
-      "call ASM_init_screen_info_box\n"
-        : : "a" (box), "d" (x), "b" (y), "c" (width), "g" (text1), "g" (text2), "g" (drawspeed), "g" (font1), "g" (font2), "g" (textspeed));
-}
-
 ubyte show_title_box(struct ScreenTextBox *box)
 {
     ubyte ret;
@@ -5446,7 +5404,7 @@ ubyte load_game_slot(ubyte click)
     unkn13_SYSTEM_button.Flags &= ~(0x8000|0x2000|0x0004);
     unkn35_box.Flags &= ~(0x8000|0x2000|0x0004);
     unkn39_box.Flags &= ~(0x8000|0x2000|0x0004);
-    unkn37_box.Flags &= ~(0x8000|0x2000|0x0004);
+    storage_slots_box.Flags &= ~(0x8000|0x2000|0x0004);
     if (save_slot == 0)
     {
         ingame.Flags |= 0x10;
@@ -6652,8 +6610,6 @@ ubyte ac_select_all_agents(ubyte click);
 ubyte ac_do_net_protocol_option(ubyte click);
 ubyte ac_do_net_unkn40(ubyte click);
 ubyte ac_do_serial_speed_switch(ubyte click);
-ubyte ac_change_panel_permutation(ubyte click);
-ubyte ac_change_trenchcoat_preference(ubyte click);
 ubyte ac_do_unkn10_CALIBRATE(ubyte click);
 ubyte ac_do_unkn10_SAVE(ubyte click);
 ubyte ac_do_unkn10_CONTROLS(ubyte click);
@@ -6754,22 +6710,6 @@ ubyte do_storage_NEW_MORTAL(ubyte click)
 
     return 1;
 #endif
-}
-
-void update_options_screen_state(void)
-{
-    const char *text;
-    int i;
-
-    i = ingame.PanelPermutation;
-    if (i < 0)
-        text = gui_strings[579 + abs(i)];
-    else
-        text = gui_strings[580 + i];
-    options_gfx_buttons[14].Text = text;
-
-    i = ingame.TrenchcoatPreference;
-    options_gfx_buttons[15].Text = gui_strings[583 + i];
 }
 
 ubyte do_login_2(ubyte click)
@@ -7798,10 +7738,10 @@ ubyte show_netgame_unkn1(struct ScreenBox *box)
     return ret;
 }
 
-ubyte show_menu_storage_unkn37_box(struct ScreenTextBox *box)
+ubyte show_menu_storage_slots_box(struct ScreenTextBox *box)
 {
     ubyte ret;
-    asm volatile ("call ASM_show_menu_storage_unkn37_box\n"
+    asm volatile ("call ASM_show_menu_storage_slots_box\n"
         : "=r" (ret) : "a" (box));
     return ret;
 }
@@ -7913,7 +7853,7 @@ ubyte ac_show_unkn21_box(struct ScreenTextBox *box);
 ubyte ac_show_unkn04(struct ScreenBox *box);
 ubyte ac_show_unkn33_box(struct ScreenBox *box);
 ubyte ac_show_netgame_unkn1(struct ScreenBox *box);
-ubyte ac_show_menu_storage_unkn37_box(struct ScreenTextBox *box);
+ubyte ac_show_menu_storage_slots_box(struct ScreenTextBox *box);
 ubyte ac_show_unkn29_box(struct ScreenBox *box);
 ubyte ac_display_weapon_info(struct ScreenTextBox *box);
 ubyte ac_show_weapon_name(struct ScreenTextBox *box);
@@ -7970,155 +7910,9 @@ void init_screen_boxes(void)
         h += 71;
     }
 
-    init_screen_box(&unkn33_box, 213u, 285u, 420u, 62, 6);
-    init_screen_button(&options_audio_buttons[0], 393u, 289u, gui_strings[531], 6,
-        med2_font, 1, 0);
-    init_screen_button(&options_audio_buttons[1], 458u, 289u, gui_strings[532],
-        6, med2_font, 1, 0);
-    init_screen_button(&options_audio_buttons[2], 523u, 289u, gui_strings[533],
-        6, med2_font, 1, 0);
-    init_screen_button(&options_audio_buttons[3], 458u, 307u, gui_strings[531],
-        6, med2_font, 1, 0);
-    init_screen_button(&options_audio_buttons[4], 523u, 307u, gui_strings[532],
-        6, med2_font, 1, 0);
-    init_screen_button(&options_audio_buttons[5], 458u, 325u, gui_strings[478],
-        6, med2_font, 1, 0);
-    init_screen_button(&options_audio_buttons[6], 523u, 325u, gui_strings[479],
-        6, med2_font, 1, 0);
+    init_options_screen_boxes();
 
-    val = 2;
-    for (i = 0; i < 3; i++)
-    {
-        options_audio_buttons[i].Radio = &ingame.CDTrack;
-        options_audio_buttons[i].RadioValue = val++;
-        options_audio_buttons[i].Flags |= 0x0100;
-    }
-
-    val = 1;
-    for (i = 3; i < 5; i++)
-    {
-        options_audio_buttons[i].Radio = &ingame.DangerTrack;
-        options_audio_buttons[i].RadioValue = val++;
-        options_audio_buttons[i].Flags |= 0x0100;
-    }
-
-    val = 0;
-    for (i = 5; i < 7; i++)
-    {
-        options_audio_buttons[i].Radio = &ingame.UseMultiMedia;
-        options_audio_buttons[i].RadioValue = val++;
-        options_audio_buttons[i].Flags |= 0x0100;
-    }
-
-    init_screen_button(&options_gfx_buttons[0], 456u, 94u, gui_strings[465], 6,
-        med2_font, 1, 0);
-    init_screen_button(&options_gfx_buttons[1], 544u, 94u, gui_strings[466], 6,
-        med2_font, 1, 0);
-    init_screen_button(&options_gfx_buttons[2], 456u, 112u, gui_strings[473], 6,
-        med2_font, 1, 0);
-    init_screen_button(&options_gfx_buttons[3], 544u, 112u, gui_strings[474], 6,
-        med2_font, 1, 0);
-    init_screen_button(&options_gfx_buttons[4], 456u, 130u, gui_strings[475], 6,
-        med2_font, 1, 0);
-    init_screen_button(&options_gfx_buttons[5], 544u, 130u, gui_strings[477], 6,
-        med2_font, 1, 0);
-    init_screen_button(&options_gfx_buttons[6], 456u, 148u, gui_strings[478], 6,
-        med2_font, 1, 0);
-    init_screen_button(&options_gfx_buttons[7], 544u, 148u, gui_strings[479], 6,
-        med2_font, 1, 0);
-    init_screen_button(&options_gfx_buttons[8], 456u, 166u, gui_strings[478], 6,
-        med2_font, 1, 0);
-    init_screen_button(&options_gfx_buttons[9], 544u, 166u, gui_strings[479], 6,
-        med2_font, 1, 0);
-    init_screen_button(&options_gfx_buttons[10], 456u, 184u, gui_strings[478],
-        6, med2_font, 1, 0);
-    init_screen_button(&options_gfx_buttons[11], 544u, 184u, gui_strings[479],
-        6, med2_font, 1, 0);
-    init_screen_button(&options_gfx_buttons[12], 456u, 202u, gui_strings[478],
-        6, med2_font, 1, 0);
-    init_screen_button(&options_gfx_buttons[13], 544u, 202u, gui_strings[479],
-        6, med2_font, 1, 0);
-
-    val = abs(ingame.PanelPermutation);
-    init_screen_button(&options_gfx_buttons[14], 320u, 274u,
-        gui_strings[579 + val], 6, med2_font, 1, 0);
-
-    val = ingame.TrenchcoatPreference;
-    init_screen_button(&options_gfx_buttons[15], 320u, 310u,
-        gui_strings[583 + val], 6, med2_font, 1, 0);
-
-    options_gfx_buttons[14].CallBackFn = ac_change_panel_permutation;
-    options_gfx_buttons[15].CallBackFn = ac_change_trenchcoat_preference;
-    options_gfx_buttons[14].Width += 60;
-    options_gfx_buttons[15].Width = options_gfx_buttons[14].Width;
-
-    val = 0;
-    for (i = 0; i < 2; i++)
-    {
-        options_gfx_buttons[i].Radio = &game_projector_speed;
-        options_gfx_buttons[i].RadioValue = val;
-        options_gfx_buttons[i].Flags |= 0x0100;
-        val++;
-    }
-
-    val = 0;
-    for (i = 2; i < 4; i++)
-    {
-        options_gfx_buttons[i].Radio = &game_high_resolution;
-        options_gfx_buttons[i].RadioValue = val;
-        options_gfx_buttons[i].Flags |= 0x0100;
-        val++;
-    }
-
-    val = 0;
-    for (i = 4; i < 6; i++)
-    {
-        options_gfx_buttons[i].Radio = &ingame.DetailLevel;
-        options_gfx_buttons[i].RadioValue = val;
-        options_gfx_buttons[i].Flags |= 0x0100;
-        val++;
-    }
-
-    val = 0;
-    for (i = 6; i < 8; i++)
-    {
-        options_gfx_buttons[i].Radio = &game_perspective;
-        options_gfx_buttons[i].RadioValue = val;
-        options_gfx_buttons[i].Flags |= 0x0100;
-        val += 5;
-    }
-
-    val = 0;
-    for (i = 8; i < 10; i++)
-    {
-        options_gfx_buttons[i].Radio = &unkn_gfx_option_2;
-        options_gfx_buttons[i].RadioValue = val;
-        options_gfx_buttons[i].Flags |= 0x0100;
-        ingame.Flags |= GamF_Unkn0002;
-        val++;
-    }
-
-    val = 0;
-    for (i = 10; i < 12; i++)
-    {
-        options_gfx_buttons[i].Radio = &unkn_option_3;
-        options_gfx_buttons[i].RadioValue = val;
-        options_gfx_buttons[i].Flags |= 0x0100;
-        ingame.Flags |= GamF_Unkn0001;
-        val++;
-    }
-
-    val = 0;
-    for (i = 12; i < 14; i++)
-    {
-        options_gfx_buttons[i].Radio = &unkn_option_4;
-        options_gfx_buttons[i].RadioValue = val;
-        options_gfx_buttons[i].Flags |= 0x0100;
-        ingame.Flags &= ~GamF_Unkn0400;
-        val++;
-    }
-
-    init_screen_text_box(&unkn37_box, 213u, 72u, 420u, 354, 6, med2_font, 1);
+    init_screen_text_box(&storage_slots_box, 213u, 72u, 420u, 354, 6, med2_font, 1);
 
     val = 0;
     h = 72;
@@ -8262,19 +8056,19 @@ void init_screen_boxes(void)
     alert_OK_button.X = 319 - (alert_OK_button.Width >> 1);
     loading_INITIATING_box.Height = font_height(0x41u) + 8;
     w = my_string_width(gui_strings[376]);
-    unkn37_box.DrawTextFn = ac_show_menu_storage_unkn37_box;
-    unkn37_box.ScrollWindowHeight = 208;
-    unkn37_box.Lines = 99;
+    storage_slots_box.DrawTextFn = ac_show_menu_storage_slots_box;
+    storage_slots_box.ScrollWindowHeight = 208;
+    storage_slots_box.Lines = 99;
     unkn34_box.SpecialDrawFn = ac_show_unkn34_box;
     loading_INITIATING_box.Width = w + 9;
-    unkn37_box.Flags |= 0x0300;
+    storage_slots_box.Flags |= 0x0300;
     unkn33_box.SpecialDrawFn = ac_show_unkn33_box;
     mission_text_box.Buttons[0] = &unkn1_ACCEPT_button;
     mission_text_box.Buttons[1] = &unkn1_CANCEL_button;
     brief_NETSCAN_COST_box.Text2 = brief_netscan_cost_text;
-    unkn37_box.BGColour = 26;
+    storage_slots_box.BGColour = 26;
     mission_text_box.Flags |= 0x0300;
-    unkn37_box.ScrollWindowOffset += 27;
+    storage_slots_box.ScrollWindowOffset += 27;
     loading_INITIATING_box.X = 319 - ((w + 9) >> 1);
     unkn32_box.SpecialDrawFn = ac_show_citymap_box;
     loading_INITIATING_box.Y = 219 - (loading_INITIATING_box.Height >> 1);
@@ -10719,7 +10513,7 @@ void show_menu_screen(void)
         pause_unkn11_box.Flags = 0x0001;
         equip_cost_box.Flags = 0x0001;
         unkn34_box.Flags = 0x0001;
-        unkn37_box.Flags = 0x0001 | 0x0100 | 0x0200;
+        storage_slots_box.Flags = 0x0001 | 0x0100 | 0x0200;
         mod_list_box.Flags = 0x0001 | 0x0100 | 0x0200;
         agent_list_box.Flags = 0x0001 | 0x0100 | 0x0200;
         equip_list_box.Flags = 0x0001 | 0x0100 | 0x0200;
@@ -10738,15 +10532,7 @@ void show_menu_screen(void)
         for (i = 0; i < 4; i++) {
             unkn04_boxes[i].Flags = 0x0001;
         }
-        for (i = 0; i < 7; i++) {
-            options_audio_buttons[i].Flags = 0x0101;
-        }
-        for (i = 0; i < 14; i++) {
-          options_gfx_buttons[i].Flags = 0x0101;
-        }
-        for (; i < 16; i++) {
-          options_gfx_buttons[i].Flags = 0x0001;
-        }
+        reset_options_screen_boxes_flags();
 
         storage_LOAD_button.Flags |= 0x0001;
         storage_SAVE_button.Flags |= 0x0001;
