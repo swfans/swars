@@ -568,14 +568,113 @@ void person_func_unknown_310(ubyte a1)
         :  : "a" (a1));
 }
 
-void play_smacker(int vid_type)
+void sprint_fmv_filename(ushort vid_type, char *fnbuf, ulong buflen)
+{
+    const char *fname;
+    struct Campaign *p_campgn;
+
+    fname = NULL;
+    switch (vid_type)
+    {
+    case MPly_Intro:
+        // Intro name is hard-coded, as it is played before any campaign is loaded
+        fname = "intro.smk";
+        if (game_dirs[DirPlace_Sound].use_cd == 1)
+            sprintf(fnbuf, "%slanguage/%s/%s", cd_drive, language_3str, fname);
+        else
+            sprintf(fnbuf, "intro/%s", fname);
+        break;
+    case MPly_MissiComplete:
+    case MPly_MPartComplete:
+        switch (background_type)
+        {
+        case 0:
+            // TODO MAPNO case for a specific map, remove
+            if (current_map == 46)
+            {
+                fname = "syn_ele.smk";
+                if (game_dirs[DirPlace_Data].use_cd == 1)
+                    sprintf(fnbuf, "%slanguage/%s/%s", cd_drive, language_3str, fname);
+                else
+                    sprintf(fnbuf, "data/%s", fname);
+            }
+            else
+            {
+                fname = "syn_mc.smk";
+                sprintf(fnbuf, "qdata/%s", fname);
+            }
+            break;
+        case 1:
+            // TODO MAPNO case for a specific map, remove
+            if (current_map == 46)
+            {
+                fname = "chu_ele.smk";
+                if (game_dirs[DirPlace_Data].use_cd == 1)
+                    sprintf(fnbuf, "%slanguage/%s/%s", cd_drive, language_3str, fname);
+                else
+                    sprintf(fnbuf, "data/%s", fname);
+            }
+            else
+            {
+                fname = "zel-mc.smk";
+                sprintf(fnbuf, "qdata/%s", fname);
+            }
+            break;
+        default:
+            fnbuf[0] = '\0';
+            break;
+        }
+        break;
+    case MPly_MissiFail:
+        switch (background_type)
+        {
+        case 0:
+            fname = "syn_fail.smk";
+            sprintf(fnbuf, "qdata/%s", fname);
+            break;
+        case 1:
+            fname = "syn_fail.smk";
+            sprintf(fnbuf, "qdata/%s", fname);
+            break;
+        default:
+            fnbuf[0] = '\0';
+            break;
+        }
+        break;
+    case MPly_GameOver:
+        switch (background_type)
+        {
+        case 0:
+            fname = "syn_go.smk";
+            sprintf(fnbuf, "qdata/%s", fname);
+            break;
+        case 1:
+            fname = "zel-go.smk";
+            sprintf(fnbuf, "qdata/%s", fname);
+            break;
+        default:
+            fnbuf[0] = '\0';
+            break;
+        }
+        break;
+    case MPly_Outro:
+        p_campgn = &campaigns[background_type];
+        //TODO should support use_cd like intro
+        sprintf(fnbuf, "%s", p_campgn->OutroFMV);
+        break;
+    default:
+        fnbuf[0] = '\0';
+        break;
+    }
+}
+
+void play_smacker(ushort vid_type)
 {
 #if 0
     asm volatile ("call ASM_play_smacker\n"
-        : : "a" (vid_type));
+        : : "a" ((int)vid_type));
 #else
-    char str[52];
-    const char *fname;
+    char fname[FILENAME_MAX];
 
     // TODO MAPNO case for a specific map, remove
     if (current_map == 51)
@@ -590,73 +689,8 @@ void play_smacker(int vid_type)
     LbMouseChangeSprite(0);
     show_black_screen();
 
-    switch (background_type)
-    {
-    case 0:
-        switch (vid_type)
-        {
-        case MPly_MissiComplete:
-        case MPly_MPartComplete:
-            // TODO MAPNO case for a specific map, remove
-            if (current_map == 46)
-            {
-                if (game_dirs[0].use_cd == 1)
-                    sprintf(str, "%slanguage/%s/syn_ele.smk", cd_drive, language_3str);
-                else
-                    sprintf(str, "data/syn_ele.smk");
-                fname = str;
-            }
-            else
-            {
-                fname = "qdata/syn_mc.smk";
-            }
-            break;
-        case MPly_MissiFail:
-            fname = "qdata/syn_fail.smk";
-            break;
-        case MPly_GameOver:
-            fname = "qdata/syn_go.smk";
-            break;
-        }
-        break;
-    case 1:
-        switch (vid_type)
-        {
-        case MPly_MissiComplete:
-        case MPly_MPartComplete:
-            // TODO MAPNO case for a specific map, remove
-            if (current_map == 46)
-            {
-              if (game_dirs[0].use_cd == 1)
-                sprintf(str, "%slanguage/%s/chu_ele.smk", cd_drive, language_3str);
-              else
-                sprintf(str, "data/chu_ele.smk");
-              fname = str;
-            }
-            else
-            {
-              fname = "qdata/zel-mc.smk";
-            }
-            break;
-        case MPly_MissiFail:
-            fname = "qdata/syn_fail.smk";
-            break;
-        case MPly_GameOver:
-            fname = "qdata/zel-go.smk";
-            break;
-        default:
-            fname = NULL;
-            break;
-        }
-        break;
-    case 2:
-        fname = NULL;
-        break;
-    default:
-        fname = NULL;
-        break;
-    }
-    if (fname != NULL) {
+    sprint_fmv_filename(vid_type, fname, sizeof(fname));
+    if (fname[0] != '\0') {
         play_smk(fname, 13, 0);
         smack_malloc_free_all();
     }
@@ -675,11 +709,10 @@ void play_intro(void)
     {
         setup_screen_mode(screen_mode_fmvid);
         LbMouseChangeSprite(NULL);
-        if (game_dirs[DirPlace_Sound].use_cd == 1)
-            sprintf(fname, "%slanguage/%s/intro.smk", cd_drive, language_3str);
-        else
-            sprintf(fname, "intro/intro.smk");
-        play_smk(fname, 13, 0);
+        sprint_fmv_filename(MPly_Intro, fname, sizeof(fname));
+        if (fname[0] != '\0') {
+            play_smk(fname, 13, 0);
+        }
         LbMouseChangeSprite(&pointer_sprites[1]);
         smack_malloc_used_tot = 0;
     }
@@ -704,11 +737,10 @@ void replay_intro(void)
     show_black_screen();
     stop_sample_using_heap(0, 122);
     stop_sample_using_heap(0, 122);
-    if ( game_dirs[DirPlace_Sound].use_cd == 1 )
-        sprintf(fname, "%slanguage/%s/intro.smk", cd_drive, language_3str);
-    else
-        sprintf(fname, "intro/intro.smk");
-    play_smk(fname, 13, 0);
+    sprint_fmv_filename(MPly_Intro, fname, sizeof(fname));
+    if (fname[0] != '\0') {
+        play_smk(fname, 13, 0);
+    }
     smack_malloc_free_all();
     play_sample_using_heap(0, 122, 127, 64, 100, -1, 3);
     show_black_screen();
@@ -3179,7 +3211,14 @@ void init_outro(void)
 
     p_campgn = &campaigns[background_type];
 
-    play_smk(p_campgn->OutroFMV, 13, 0);
+    {
+        char fname[FILENAME_MAX];
+
+        sprint_fmv_filename(MPly_Outro, fname, sizeof(fname));
+        if (fname[0] != '\0') {
+            play_smk(fname, 13, 0);
+        }
+    }
     data_155704 = -1;
     screen_buffer_fill_black();
 

@@ -107,10 +107,12 @@ enum PacketRecordMode {
 };
 
 enum MissionFMVPlay {
+    MPly_Intro,
     MPly_MissiComplete,
     MPly_MissiFail,
     MPly_MPartComplete,
     MPly_GameOver,
+    MPly_Outro,
 };
 
 struct Thing;
