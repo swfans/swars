@@ -684,8 +684,8 @@ void play_smacker(ushort vid_type)
         return;
     }
     person_func_unknown_310(2);
-    if (lbDisplay.ScreenMode != 13)
-        setup_screen_mode(13);
+    if (lbDisplay.ScreenMode != screen_mode_fmvid_hi)
+        setup_screen_mode(screen_mode_fmvid_hi);
     LbMouseChangeSprite(0);
     show_black_screen();
 
@@ -707,7 +707,7 @@ void play_intro(void)
     lbKeyOn[KC_ESCAPE] = 0;
     if ( (cmdln_param_bcg || is_single_game) && ((ingame.Flags & GamF_SkipIntro) == 0))
     {
-        setup_screen_mode(screen_mode_fmvid);
+        setup_screen_mode(screen_mode_fmvid_lo);
         LbMouseChangeSprite(NULL);
         sprint_fmv_filename(MPly_Intro, fname, sizeof(fname));
         if (fname[0] != '\0') {
@@ -727,12 +727,12 @@ void replay_intro(void)
     TbScreenModeInfo *mdinfo;
 
     LOGSYNC("Starting");
-    mdinfo = LbScreenGetModeInfo(screen_mode_fmvid);
+    mdinfo = LbScreenGetModeInfo(screen_mode_fmvid_lo);
     if (mdinfo->Width == 0) {
-        LOGERR("Movies video mode %d is invalid", (int)screen_mode_fmvid);
+        LOGERR("Movies video mode %d is invalid", (int)screen_mode_fmvid_lo);
         return;
     }
-    LbScreenSetup(screen_mode_fmvid, mdinfo->Width, mdinfo->Height, display_palette);
+    LbScreenSetup(screen_mode_fmvid_lo, mdinfo->Width, mdinfo->Height, display_palette);
     LbMouseSetup(0, 2, 2);
     show_black_screen();
     stop_sample_using_heap(0, 122);
@@ -3203,7 +3203,7 @@ void init_outro(void)
     StopCD();
     show_black_screen();
     swap_wscreen();
-    setup_screen_mode(screen_mode_fmvid);
+    setup_screen_mode(screen_mode_fmvid_lo);
     LbMouseChangeSprite(0);
     lbKeyOn[KC_SPACE] = 0;
     lbKeyOn[KC_RETURN] = 0;

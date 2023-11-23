@@ -17,7 +17,8 @@
 TbScreenMode screen_mode_game_hi = Lb_SCREEN_MODE_640_480_8;
 TbScreenMode screen_mode_game_lo = Lb_SCREEN_MODE_320_200_8;
 TbScreenMode screen_mode_menu = Lb_SCREEN_MODE_640_480_8;
-TbScreenMode screen_mode_fmvid = Lb_SCREEN_MODE_320_200_8;
+TbScreenMode screen_mode_fmvid_lo = Lb_SCREEN_MODE_320_200_8;
+TbScreenMode screen_mode_fmvid_hi = Lb_SCREEN_MODE_640_480_8;
 
 extern ushort data_1aa330;
 extern ushort data_1aa332;
