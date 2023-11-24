@@ -38,6 +38,7 @@
 #include "game_data.h"
 #include "guiboxes.h"
 #include "febrief.h"
+#include "fecntrls.h"
 #include "fenet.h"
 #include "feoptions.h"
 #include "feworld.h"
@@ -7570,14 +7571,6 @@ ubyte show_unkn18_box(struct ScreenTextBox *box)
     return ret;
 }
 
-ubyte show_controls_joystick_box(struct ScreenBox *box)
-{
-    ubyte ret;
-    asm volatile ("call ASM_show_controls_joystick_box\n"
-        : "=r" (ret) : "a" (box));
-    return ret;
-}
-
 ubyte show_settings_controls_list(struct ScreenBox *box)
 {
     ubyte ret;
@@ -7604,7 +7597,6 @@ ubyte ac_show_weapon_slots(struct ScreenBox *box);
 ubyte ac_show_agent_list(struct ScreenTextBox *box);
 ubyte ac_show_blokey(struct ScreenBox *box);
 ubyte ac_show_unkn18_box(struct ScreenTextBox *box);
-ubyte ac_show_controls_joystick_box(struct ScreenBox *box);
 ubyte ac_show_settings_controls_list(struct ScreenBox *box);
 
 
@@ -7660,7 +7652,7 @@ void init_screen_boxes(void)
         h += 30;
     }
 
-    init_screen_box(&controls_joystick_box, 7u, 252u, 197u, 174, 6);
+    init_controls_screen_boxes();
     init_screen_button(&storage_LOAD_button, 219u, 405u, gui_strings[438], 6,
         med2_font, 1, 0);
     init_screen_button(&storage_SAVE_button, storage_LOAD_button.Width + 223,
@@ -7756,7 +7748,6 @@ void init_screen_boxes(void)
     storage_slots_box.DrawTextFn = ac_show_menu_storage_slots_box;
     storage_slots_box.ScrollWindowHeight = 208;
     storage_slots_box.Lines = 99;
-    controls_joystick_box.SpecialDrawFn = ac_show_controls_joystick_box;
     loading_INITIATING_box.Width = w + 9;
     storage_slots_box.Flags |= 0x0300;
     unkn33_box.SpecialDrawFn = ac_show_unkn33_box;
@@ -10056,7 +10047,7 @@ void show_menu_screen(void)
         pause_unkn12_box.Flags = 0x0001;
         pause_unkn11_box.Flags = 0x0001;
         equip_cost_box.Flags = 0x0001;
-        controls_joystick_box.Flags = 0x0001;
+        reset_controls_screen_boxes_flags();
         storage_slots_box.Flags = 0x0001 | 0x0100 | 0x0200;
         mod_list_box.Flags = 0x0001 | 0x0100 | 0x0200;
         agent_list_box.Flags = 0x0001 | 0x0100 | 0x0200;

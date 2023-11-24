@@ -98,6 +98,8 @@ swars_SOURCES = \
 	engintrns.h \
 	febrief.c \
 	febrief.h \
+	fecntrls.c \
+	fecntrls.h \
 	feoptions.c \
 	feoptions.h \
 	fenet.c \
