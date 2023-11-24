@@ -37,6 +37,7 @@
 #include "engintrns.h"
 #include "game_data.h"
 #include "guiboxes.h"
+#include "fenet.h"
 #include "feoptions.h"
 #include "building.h"
 #include "campaign.h"
@@ -4769,30 +4770,6 @@ ubyte select_all_agents(ubyte click)
     return 1;
 }
 
-ubyte do_net_protocol_option(ubyte click)
-{
-    ubyte ret;
-    asm volatile ("call ASM_do_net_protocol_option\n"
-        : "=r" (ret) : "a" (click));
-    return ret;
-}
-
-ubyte do_net_unkn40(ubyte click)
-{
-    ubyte ret;
-    asm volatile ("call ASM_do_net_unkn40\n"
-        : "=r" (ret) : "a" (click));
-    return ret;
-}
-
-ubyte do_serial_speed_switch(ubyte click)
-{
-    ubyte ret;
-    asm volatile ("call ASM_do_serial_speed_switch\n"
-        : "=r" (ret) : "a" (click));
-    return ret;
-}
-
 ubyte change_panel_permutation(ubyte click)
 {
     ubyte ret;
@@ -4837,46 +4814,6 @@ ubyte alert_OK(ubyte click)
 {
     ubyte ret;
     asm volatile ("call ASM_alert_OK\n"
-        : "=r" (ret) : "a" (click));
-    return ret;
-}
-
-ubyte do_net_SET2(ubyte click)
-{
-    ubyte ret;
-    asm volatile ("call ASM_do_net_SET2\n"
-        : "=r" (ret) : "a" (click));
-    return ret;
-}
-
-ubyte do_net_SET(ubyte click)
-{
-    ubyte ret;
-    asm volatile ("call ASM_do_net_SET\n"
-        : "=r" (ret) : "a" (click));
-    return ret;
-}
-
-ubyte do_net_INITIATE(ubyte click)
-{
-    ubyte ret;
-    asm volatile ("call ASM_do_net_INITIATE\n"
-        : "=r" (ret) : "a" (click));
-    return ret;
-}
-
-ubyte do_net_groups_LOGON(ubyte click)
-{
-    ubyte ret;
-    asm volatile ("call ASM_do_net_groups_LOGON\n"
-        : "=r" (ret) : "a" (click));
-    return ret;
-}
-
-ubyte do_unkn8_EJECT(ubyte click)
-{
-    ubyte ret;
-    asm volatile ("call ASM_do_unkn8_EJECT\n"
         : "=r" (ret) : "a" (click));
     return ret;
 }
@@ -6607,18 +6544,10 @@ ubyte do_unkn12_WEAPONS_MODS(ubyte click)
 }
 
 ubyte ac_select_all_agents(ubyte click);
-ubyte ac_do_net_protocol_option(ubyte click);
-ubyte ac_do_net_unkn40(ubyte click);
-ubyte ac_do_serial_speed_switch(ubyte click);
 ubyte ac_do_unkn10_CALIBRATE(ubyte click);
 ubyte ac_do_unkn10_SAVE(ubyte click);
 ubyte ac_do_unkn10_CONTROLS(ubyte click);
 ubyte ac_alert_OK(ubyte click);
-ubyte ac_do_net_SET2(ubyte click);
-ubyte ac_do_net_SET(ubyte click);
-ubyte ac_do_net_INITIATE(ubyte click);
-ubyte ac_do_net_groups_LOGON(ubyte click);
-ubyte ac_do_unkn8_EJECT(ubyte click);
 ubyte ac_accept_mission(ubyte click);
 ubyte ac_do_unkn1_CANCEL(ubyte click);
 ubyte ac_do_unkn2_CANCEL(ubyte click);
@@ -6840,78 +6769,6 @@ ubyte show_login_name(struct ScreenBox *box)
 {
     ubyte ret;
     asm volatile ("call ASM_show_login_name\n"
-        : "=r" (ret) : "a" (box));
-    return ret;
-}
-
-ubyte show_net_benefits_box(struct ScreenBox *box)
-{
-    ubyte ret;
-    asm volatile ("call ASM_show_net_benefits_box\n"
-        : "=r" (ret) : "a" (box));
-    return ret;
-}
-
-ubyte show_net_unkn21(struct ScreenBox *box)
-{
-    ubyte ret;
-    asm volatile ("call ASM_show_net_unkn21\n"
-        : "=r" (ret) : "a" (box));
-    return ret;
-}
-
-ubyte show_net_comms_box(struct ScreenBox *box)
-{
-    ubyte ret;
-    asm volatile ("call ASM_show_net_comms_box\n"
-        : "=r" (ret) : "a" (box));
-    return ret;
-}
-
-ubyte do_net_protocol_select(ubyte click)
-{
-    ubyte ret;
-    asm volatile ("call ASM_do_net_protocol_select\n"
-        : "=r" (ret) : "a" (click));
-    return ret;
-}
-
-ubyte show_net_protocol_box(struct ScreenBox *box)
-{
-    ubyte ret;
-    asm volatile ("call ASM_show_net_protocol_box\n"
-        : "=r" (ret) : "a" (box));
-    return ret;
-}
-
-ubyte show_net_faction_box(struct ScreenBox *box)
-{
-    ubyte ret;
-    asm volatile ("call ASM_show_net_faction_box\n"
-        : "=r" (ret) : "a" (box));
-    return ret;
-}
-
-ubyte show_net_team_box(struct ScreenBox *box)
-{
-    ubyte ret;
-    asm volatile ("call ASM_show_net_team_box\n"
-        : "=r" (ret) : "a" (box));
-    return ret;
-}
-
-ubyte show_net_groups_box(struct ScreenBox *box)
-{
-    ubyte ret;
-    asm volatile ("call ASM_show_net_groups_box\n"
-        : "=r" (ret) : "a" (box));
-    return ret;
-}
-
-ubyte show_net_users_box(struct ScreenBox *box)
-{
-    ubyte ret;
-    asm volatile ("call ASM_show_net_users_box\n"
         : "=r" (ret) : "a" (box));
     return ret;
 }
@@ -7837,15 +7694,6 @@ ubyte show_settings_controls_list(struct ScreenBox *box)
 ubyte ac_show_citymap_box(struct ScreenBox *box);
 ubyte ac_show_campaigns_list(struct ScreenBox *box);
 ubyte ac_show_login_name(struct ScreenBox *box);
-ubyte ac_show_net_benefits_box(struct ScreenBox *box);
-ubyte ac_show_net_unkn21(struct ScreenBox *box);
-ubyte ac_show_net_comms_box(struct ScreenBox *box);
-ubyte ac_do_net_protocol_select(ubyte click);
-ubyte ac_show_net_protocol_box(struct ScreenBox *box);
-ubyte ac_show_net_faction_box(struct ScreenBox *box);
-ubyte ac_show_net_team_box(struct ScreenBox *box);
-ubyte ac_show_net_groups_box(struct ScreenBox *box);
-ubyte ac_show_net_users_box(struct ScreenBox *box);
 ubyte ac_show_mission_stats(struct ScreenBox *box);
 ubyte ac_show_mission_people_stats(struct ScreenBox *box);
 ubyte ac_show_research_graph(struct ScreenBox *box);
@@ -7937,43 +7785,8 @@ void init_screen_boxes(void)
     init_screen_button(&storage_NEW_MORTAL_button, 627u, 405u, gui_strings[482],
         6, med2_font, 1, 128);
 
-    init_screen_button(&net_INITIATE_button, 218u, 185u, gui_strings[385], 6,
-        med2_font, 1, 0);
-    init_screen_button(&net_groups_LOGON_button, 218u, 206u, gui_strings[386],
-        6, med2_font, 1, 0);
-    init_screen_button(&unkn8_EJECT_button, 308u, 206u, gui_strings[403], 6,
-        med2_font, 1, 0);
-    init_screen_button(&net_SET2_button, 562u, 251u, gui_strings[440], 6,
-        med2_font, 1, 0);
-    init_screen_button(&net_SET_button, 562u, 284u, gui_strings[440], 6,
-        med2_font, 1, 0);
-    init_screen_button(&net_protocol_select_button, 37u, 256u, gui_strings[498],
-        6, med2_font, 1, 0);
-    init_screen_button(&net_unkn40_button, 37u, 256u, net_unkn40_text, 6,
-        med2_font, 1, 0);
-    net_groups_LOGON_button.Width = 85;
-    net_INITIATE_button.Width = 85;
-    net_unkn40_button.Width = 21;
-    net_protocol_select_button.Width = 157;
-    init_screen_box(&net_groups_box, 213u, 72u, 171u, 155, 6);
-    init_screen_box(&net_users_box, 393u, 72u, 240u, 155, 6);
-    init_screen_box(&net_faction_box, 213u, 236u, 73u, 67, 6);
-    init_screen_box(&net_team_box, 295u, 236u, 72u, 67, 6);
-    init_screen_box(&net_benefits_box, 376u, 236u, 257u, 67, 6);
-    init_screen_box(&net_comms_box, 295u, 312u, 336u, 104, 6);
-    init_screen_box(&net_unkn21, 7u, 312u, 279u, 104, 6);
-    init_screen_box(&net_protocol_box, 7u, 252u, 197u, 51, 6);
-    init_screen_button(&net_protocol_option_button, 7u, 275u,
-        unkn_opt_number_text, 6, med2_font, 1, 0);
-    net_protocol_option_button.Width = net_protocol_select_button.Width;
-    net_protocol_select_button.X = ((net_protocol_box.Width
-        - net_protocol_select_button.Width) >> 1) + 7;
-    net_protocol_option_button.X = ((net_protocol_box.Width
-        - net_protocol_select_button.Width) >> 1) + 7;
-    net_unkn40_button.X = net_protocol_select_button.Width
-        + ((net_protocol_box.Width - net_protocol_select_button.Width) >> 1) + 7
-        + 4;
-    net_protocol_option_button.CallBackFn = ac_do_net_protocol_option;
+    init_net_screen_boxes();
+
     init_screen_button(&unkn10_CALIBRATE_button, 219u, 405u, gui_strings[484],
         6, med2_font, 1, 0);
     init_screen_button(&unkn10_CONTROLS_button, 57u, 405u, gui_strings[485], 6,
@@ -8139,35 +7952,20 @@ void init_screen_boxes(void)
 
     mod_list_box.DrawTextFn = ac_show_unkn18_box;
     agent_list_box.BGColour = 25;
-    net_groups_box.SpecialDrawFn = ac_show_net_groups_box;
-    net_users_box.SpecialDrawFn = ac_show_net_users_box;
     equip_cost_box.X = buy_equip_button.Width + buy_equip_button.X + 4;
-    net_INITIATE_button.CallBackFn = ac_do_net_INITIATE;
-    net_faction_box.SpecialDrawFn = ac_show_net_faction_box;
-    net_team_box.SpecialDrawFn = ac_show_net_team_box;
-    net_groups_box.Flags |= 0x0300;
     equip_cost_box.Width = 208 - buy_equip_button.Width - 14;
     agent_list_box.DrawTextFn = ac_show_agent_list;
-    net_benefits_box.SpecialDrawFn = ac_show_net_benefits_box;
-    net_unkn40_button.CallBackFn = ac_do_net_unkn40;
     unkn1_ACCEPT_button.CallBackFn = ac_accept_mission;
     mod_list_box.Flags |= 0x0300;
-    net_SET_button.CallBackFn = ac_do_net_SET;
     blokey_box.SpecialDrawFn = ac_show_blokey;
-    unkn8_EJECT_button.CallBackFn = ac_do_unkn8_EJECT;
     unkn1_CANCEL_button.CallBackFn = ac_do_unkn1_CANCEL;
     storage_SAVE_button.CallBackFn = ac_save_game_slot;
     storage_NEW_MORTAL_button.CallBackFn = ac_do_storage_NEW_MORTAL;
     mod_list_box.ScrollWindowHeight = 117;
-    net_protocol_select_button.CallBackFn = ac_do_net_protocol_select;
     unkn13_SYSTEM_button.Text = gui_strings[366];
-    net_comms_box.SpecialDrawFn = ac_show_net_comms_box;
     buy_equip_button.CallBackFn = ac_do_buy_equip;
     storage_LOAD_button.CallBackFn = ac_load_game_slot;
-    net_users_box.Flags |= 0x0300;
     agent_list_box.ScrollWindowOffset += 27;
-    net_groups_LOGON_button.CallBackFn = ac_do_net_groups_LOGON;
-    net_unkn21.SpecialDrawFn = ac_show_net_unkn21;
     unkn2_CANCEL_button.CallBackFn = ac_do_unkn2_CANCEL;
     unkn2_ACCEPT_button.CallBackFn = ac_do_unkn2_ACCEPT;
     unkn11_CANCEL_button.CallBackFn = ac_do_unkn11_CANCEL;
@@ -8178,10 +7976,8 @@ void init_screen_boxes(void)
     unkn13_SYSTEM_button.DrawTextFn = ac_show_title_box;
     unkn35_box.DrawTextFn = ac_show_title_box;
     main_login_button.X = 319 - (main_login_button.Width >> 1);
-    net_SET2_button.CallBackFn = ac_do_net_SET2;
     pause_continue_button.X = 319 - (pause_continue_button.Width >> 1);
     agent_list_box.ScrollWindowHeight -= 27;
-    net_protocol_box.SpecialDrawFn = ac_show_net_protocol_box;
     pause_abort_button.X = 319 - (pause_abort_button.Width >> 1);
     brief_NETSCAN_button.CallBackFn = ac_brief_do_netscan_enhance;
     main_quit_button.X = 319 - (main_quit_button.Width >> 1);
@@ -9292,9 +9088,8 @@ void update_flic_mods(ubyte *mods)
 
 void net_new_game_prepare(void)
 {
-    net_INITIATE_button.Flags = 1;
+    switch_net_screen_boxes_to_initiate();
     login_control__State = 6;
-    net_INITIATE_button.Text = gui_strings[385];
     byte_15516D = -1;
     byte_15516C = -1;
     ingame.Credits = 50000;
@@ -9303,7 +9098,6 @@ void net_new_game_prepare(void)
     unkn_city_no = -1;
     login_control__City = -1;
     ingame.Expenditure = 0;
-    net_groups_LOGON_button.Text = gui_strings[386];
     unkn_flags_08 = 60;
     login_control__Money = starting_cash_amounts[0];
     init_agents();
@@ -9449,7 +9243,7 @@ void net_unkn_func_33_sub1(int plyr, int netplyr)
         break;
     case 12:
         byte_15516D = -1;
-        unkn8_EJECT_button.Flags = 1;
+        reset_net_screen_EJECT_flags();
         LbNetworkSessionStop();
         if (word_1811AE == 1)
         {
@@ -10298,8 +10092,7 @@ void show_menu_screen(void)
         redraw_screen_flag = 1;
         local_player_no = LbNetworkPlayerNumber();
         net_players_num = LbNetworkSessionNumberPlayers();
-        net_INITIATE_button.Text = gui_strings[385];
-        net_groups_LOGON_button.Text = gui_strings[386];
+        switch_net_screen_boxes_to_initiate();
         network_players[local_player_no].Type = 14;
         net_unkn_func_33();
         network_players[local_player_no].Type = 15;
@@ -10498,14 +10291,9 @@ void show_menu_screen(void)
         research_unkn20_box.Flags = 0x0001;
         research_progress_button.Flags = 0x0001;
         unkn30_box.Flags = 0x0001;
-        net_users_box.Flags = 0x0001;
-        net_groups_box.Flags = 0x0001;
-        net_benefits_box.Flags = 0x0001;
-        net_team_box.Flags = 0x0001;
-        net_faction_box.Flags = 0x0001;
-        net_comms_box.Flags = 0x0001;
-        net_unkn21.Flags = 0x0001;
-        net_protocol_box.Flags = 0x0001;
+
+        reset_net_screen_boxes_flags();
+
         weapon_slots.Flags = 0x0001;
         equip_name_box.Flags = 0x0001;
         slots_box.Flags = 0x0001;
@@ -10550,21 +10338,16 @@ void show_menu_screen(void)
         unkn11_CANCEL_button.Flags |= 0x0001;
         research_list_buttons[0].Flags |= 0x0001;
         unkn12_WEAPONS_MODS_button.Flags |= 0x0001;
-        net_SET2_button.Flags |= 0x0001;
-        net_SET_button.Flags |= 0x0001;
-        net_INITIATE_button.Flags |= 0x0001;
-        unkn8_EJECT_button.Flags |= 0x0001;
+
+        set_flag01_net_screen_boxes();
+
         unkn10_SAVE_button.Flags |= 0x0001;
-        net_groups_LOGON_button.Flags |= 0x0001;
         unkn10_CALIBRATE_button.Flags |= 0x0001;
         unkn10_CONTROLS_button.Flags |= 0x0001;
         brief_NETSCAN_button.Flags |= 0x0001;
         unkn2_ACCEPT_button.Flags |= 0x0001;
         unkn2_CANCEL_button.Flags |= 0x0001;
-        net_protocol_option_button.Flags |= 0x0001;
         all_agents_button.Flags |= 0x0001;
-        net_protocol_select_button.Flags |= 0x0001;
-        net_unkn40_button.Flags |= 0x0001;
         if (screentype == SCRT_CRYO)
             equip_cost_box.Flags |= 0x0008;
         if (!game_projector_speed && screentype != SCRT_99)

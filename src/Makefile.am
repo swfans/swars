@@ -98,6 +98,8 @@ swars_SOURCES = \
 	engintrns.h \
 	feoptions.c \
 	feoptions.h \
+	fenet.c \
+	fenet.h \
 	guiboxes.c \
 	guiboxes.h \
 	game.c \
