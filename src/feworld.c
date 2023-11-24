@@ -25,12 +25,12 @@
 #include "swlog.h"
 /******************************************************************************/
 extern struct ScreenTextBox world_city_info_box;
-extern struct ScreenButton unkn2_ACCEPT_button;
-extern struct ScreenButton unkn2_CANCEL_button;
-extern struct ScreenBox unkn29_box;
+extern struct ScreenButton world_info_ACCEPT_button;
+extern struct ScreenButton world_info_CANCEL_button;
+extern struct ScreenBox world_landmap_box;
 
 ubyte ac_show_world_city_info_box(struct ScreenTextBox *box);
-ubyte ac_show_unkn29_box(struct ScreenBox *box);
+ubyte ac_show_world_landmap_box(struct ScreenBox *box);
 ubyte ac_do_unkn2_CANCEL(ubyte click);
 ubyte ac_do_unkn2_ACCEPT(ubyte click);
 
@@ -58,10 +58,10 @@ ubyte show_world_city_info_box(struct ScreenTextBox *box)
     return ret;
 }
 
-ubyte show_unkn29_box(struct ScreenBox *box)
+ubyte show_world_landmap_box(struct ScreenBox *box)
 {
     ubyte ret;
-    asm volatile ("call ASM_show_unkn29_box\n"
+    asm volatile ("call ASM_show_world_landmap_box\n"
         : "=r" (ret) : "a" (box));
     return ret;
 }
@@ -81,9 +81,9 @@ void show_worldmap_screen(void)
             : "=r" (ret) : "a" (&heading_box), "g" (heading_box.DrawFn));
     }
     if (ret) {
-        //ret = unkn29_box.DrawFn(&unkn29_box); -- incompatible calling convention
+        //ret = world_landmap_box.DrawFn(&world_landmap_box); -- incompatible calling convention
         asm volatile ("call *%2\n"
-            : "=r" (ret) : "a" (&unkn29_box), "g" (unkn29_box.DrawFn));
+            : "=r" (ret) : "a" (&world_landmap_box), "g" (world_landmap_box.DrawFn));
     }
     if (ret) {
         //ret = world_city_info_box.DrawFn(&world_city_info_box); -- incompatible calling convention
@@ -94,38 +94,38 @@ void show_worldmap_screen(void)
 
 void init_world_screen_boxes(void)
 {
-    init_screen_box(&unkn29_box, 7u, 72u, 518u, 354, 6);
+    init_screen_box(&world_landmap_box, 7u, 72u, 518u, 354, 6);
     init_screen_text_box(&world_city_info_box, 534u, 72u, 99u, 354, 6, small_med_font, 3);
-    init_screen_button(&unkn2_ACCEPT_button, 548u, 384u, gui_strings[436], 6,
+    init_screen_button(&world_info_ACCEPT_button, 548u, 384u, gui_strings[436], 6,
         med2_font, 1, 0);
-    init_screen_button(&unkn2_CANCEL_button, 548u, 405u, gui_strings[437], 6,
+    init_screen_button(&world_info_CANCEL_button, 548u, 405u, gui_strings[437], 6,
         med2_font, 1, 0);
-    unkn2_ACCEPT_button.X = world_city_info_box.X
-        + ((world_city_info_box.Width - unkn2_ACCEPT_button.Width) >> 1);
-    unkn2_CANCEL_button.X =
-        ((world_city_info_box.Width - unkn2_CANCEL_button.Width) >> 1) + world_city_info_box.X;
+    world_info_ACCEPT_button.X = world_city_info_box.X
+        + ((world_city_info_box.Width - world_info_ACCEPT_button.Width) >> 1);
+    world_info_CANCEL_button.X =
+        ((world_city_info_box.Width - world_info_CANCEL_button.Width) >> 1) + world_city_info_box.X;
     world_city_info_box.DrawTextFn = ac_show_world_city_info_box;
     world_city_info_box.Flags |= 0x4000;
-    unkn2_CANCEL_button.CallBackFn = ac_do_unkn2_CANCEL;
-    unkn2_ACCEPT_button.CallBackFn = ac_do_unkn2_ACCEPT;
-    unkn29_box.SpecialDrawFn = ac_show_unkn29_box;
+    world_info_CANCEL_button.CallBackFn = ac_do_unkn2_CANCEL;
+    world_info_ACCEPT_button.CallBackFn = ac_do_unkn2_ACCEPT;
+    world_landmap_box.SpecialDrawFn = ac_show_world_landmap_box;
 }
 
 void reset_world_screen_boxes_flags(void)
 {
-    unkn29_box.Flags = 0x0001;
+    world_landmap_box.Flags = 0x0001;
     world_city_info_box.Flags = 0x0001 | 0x4000;
 }
 
 void set_flag01_world_screen_boxes(void)
 {
-    unkn2_ACCEPT_button.Flags |= 0x0001;
-    unkn2_CANCEL_button.Flags |= 0x0001;
+    world_info_ACCEPT_button.Flags |= 0x0001;
+    world_info_CANCEL_button.Flags |= 0x0001;
 }
 
 void set_flag02_world_screen_boxes(void)
 {
-    unkn29_box.Flags |= 0x0002;
+    world_landmap_box.Flags |= 0x0002;
     heading_box.Flags |= 0x0002;
     world_city_info_box.Flags |= 0x0002;
 }
