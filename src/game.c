@@ -7818,10 +7818,10 @@ ubyte show_unkn36_box(struct ScreenTextBox *box)
     return ret;
 }
 
-ubyte show_unkn34_box(struct ScreenBox *box)
+ubyte show_controls_joystick_box(struct ScreenBox *box)
 {
     ubyte ret;
-    asm volatile ("call ASM_show_unkn34_box\n"
+    asm volatile ("call ASM_show_controls_joystick_box\n"
         : "=r" (ret) : "a" (box));
     return ret;
 }
@@ -7863,7 +7863,7 @@ ubyte ac_show_agent_list(struct ScreenTextBox *box);
 ubyte ac_show_blokey(struct ScreenBox *box);
 ubyte ac_show_unkn18_box(struct ScreenTextBox *box);
 ubyte ac_show_unkn36_box(struct ScreenTextBox *box);
-ubyte ac_show_unkn34_box(struct ScreenBox *box);
+ubyte ac_show_controls_joystick_box(struct ScreenBox *box);
 ubyte ac_show_settings_controls_list(struct ScreenBox *box);
 
 
@@ -7929,13 +7929,14 @@ void init_screen_boxes(void)
         h += 30;
     }
 
-    init_screen_box(&unkn34_box, 7u, 252u, 197u, 174, 6);
+    init_screen_box(&controls_joystick_box, 7u, 252u, 197u, 174, 6);
     init_screen_button(&storage_LOAD_button, 219u, 405u, gui_strings[438], 6,
         med2_font, 1, 0);
     init_screen_button(&storage_SAVE_button, storage_LOAD_button.Width + 223,
         405u, gui_strings[439], 6, med2_font, 1, 0);
     init_screen_button(&storage_NEW_MORTAL_button, 627u, 405u, gui_strings[482],
         6, med2_font, 1, 128);
+
     init_screen_button(&net_INITIATE_button, 218u, 185u, gui_strings[385], 6,
         med2_font, 1, 0);
     init_screen_button(&net_groups_LOGON_button, 218u, 206u, gui_strings[386],
@@ -8059,7 +8060,7 @@ void init_screen_boxes(void)
     storage_slots_box.DrawTextFn = ac_show_menu_storage_slots_box;
     storage_slots_box.ScrollWindowHeight = 208;
     storage_slots_box.Lines = 99;
-    unkn34_box.SpecialDrawFn = ac_show_unkn34_box;
+    controls_joystick_box.SpecialDrawFn = ac_show_controls_joystick_box;
     loading_INITIATING_box.Width = w + 9;
     storage_slots_box.Flags |= 0x0300;
     unkn33_box.SpecialDrawFn = ac_show_unkn33_box;
@@ -10512,7 +10513,7 @@ void show_menu_screen(void)
         pause_unkn12_box.Flags = 0x0001;
         pause_unkn11_box.Flags = 0x0001;
         equip_cost_box.Flags = 0x0001;
-        unkn34_box.Flags = 0x0001;
+        controls_joystick_box.Flags = 0x0001;
         storage_slots_box.Flags = 0x0001 | 0x0100 | 0x0200;
         mod_list_box.Flags = 0x0001 | 0x0100 | 0x0200;
         agent_list_box.Flags = 0x0001 | 0x0100 | 0x0200;

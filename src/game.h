@@ -727,7 +727,7 @@ extern struct ScreenButton sysmnu_buttons[6];
 extern struct ScreenButton storage_LOAD_button;
 extern struct ScreenButton storage_SAVE_button;
 extern struct ScreenButton storage_NEW_MORTAL_button;
-extern struct ScreenBox unkn34_box;
+extern struct ScreenBox controls_joystick_box;
 extern struct ScreenBox unkn04_boxes[3];
 extern struct ScreenBox unkn33_box;
 extern struct ScreenButton net_protocol_option_button;
