@@ -6467,8 +6467,6 @@ ubyte ac_do_unkn10_CALIBRATE(ubyte click);
 ubyte ac_do_unkn10_SAVE(ubyte click);
 ubyte ac_do_unkn10_CONTROLS(ubyte click);
 ubyte ac_alert_OK(ubyte click);
-ubyte ac_accept_mission(ubyte click);
-ubyte ac_do_unkn1_CANCEL(ubyte click);
 ubyte ac_do_sysmnu_button(ubyte click);
 ubyte ac_do_storage_NEW_MORTAL(ubyte click);
 ubyte ac_load_game_slot(ubyte click);
@@ -6591,14 +6589,6 @@ ubyte do_login_2(ubyte click)
 
     return 1;
 #endif
-}
-
-ubyte show_citymap_box(struct ScreenBox *box)
-{
-    ubyte ret;
-    asm volatile ("call ASM_show_citymap_box\n"
-        : "=r" (ret) : "a" (box));
-    return ret;
 }
 
 ubyte show_campaigns_list(struct ScreenBox *box)
@@ -7579,7 +7569,6 @@ ubyte show_settings_controls_list(struct ScreenBox *box)
     return ret;
 }
 
-ubyte ac_show_citymap_box(struct ScreenBox *box);
 ubyte ac_show_campaigns_list(struct ScreenBox *box);
 ubyte ac_show_login_name(struct ScreenBox *box);
 ubyte ac_show_mission_stats(struct ScreenBox *box);
@@ -7608,13 +7597,6 @@ void init_screen_boxes(void)
     init_screen_text_box(&heading_box, 7u, 25u, 626u, 38, 6, big_font, 1);
     init_screen_text_box(&loading_INITIATING_box, 210u, 230u, 220u, 20, 6,
         med_font, 1);
-    init_screen_box(&unkn32_box, 7u, 72u, 322u, 200, 6);
-    init_screen_text_box(&mission_text_box, 338u, 72u, 295u, 354, 6, small_font,
-        3);
-    init_screen_button(&unkn1_ACCEPT_button, 343u, 405u, gui_strings[436], 6,
-        med2_font, 1, 0);
-    init_screen_button(&unkn1_CANCEL_button, 616u, 405u, gui_strings[437], 6,
-        med2_font, 1, 128);
 
     init_brief_screen_boxes();
     init_world_screen_boxes();
@@ -7751,19 +7733,14 @@ void init_screen_boxes(void)
     loading_INITIATING_box.Width = w + 9;
     storage_slots_box.Flags |= 0x0300;
     unkn33_box.SpecialDrawFn = ac_show_unkn33_box;
-    mission_text_box.Buttons[0] = &unkn1_ACCEPT_button;
-    mission_text_box.Buttons[1] = &unkn1_CANCEL_button;
     storage_slots_box.BGColour = 26;
-    mission_text_box.Flags |= 0x0300;
     storage_slots_box.ScrollWindowOffset += 27;
     loading_INITIATING_box.X = 319 - ((w + 9) >> 1);
-    unkn32_box.SpecialDrawFn = ac_show_citymap_box;
     loading_INITIATING_box.Y = 219 - (loading_INITIATING_box.Height >> 1);
     unkn04_boxes[0].SpecialDrawFn = ac_show_unkn04;
     unkn04_boxes[1].SpecialDrawFn = ac_show_unkn04;
     unkn04_boxes[2].SpecialDrawFn = ac_show_unkn04;
     unkn31_box.SpecialDrawFn = ac_show_mission_people_stats;
-    mission_text_box.Text = mission_briefing_text;
     unkn30_box.SpecialDrawFn = ac_show_mission_stats;
     slots_box.DrawTextFn = ac_show_title_box;
     equip_display_box.DrawTextFn = ac_display_weapon_info;
@@ -7819,10 +7796,8 @@ void init_screen_boxes(void)
     equip_cost_box.X = buy_equip_button.Width + buy_equip_button.X + 4;
     equip_cost_box.Width = 208 - buy_equip_button.Width - 14;
     agent_list_box.DrawTextFn = ac_show_agent_list;
-    unkn1_ACCEPT_button.CallBackFn = ac_accept_mission;
     mod_list_box.Flags |= 0x0300;
     blokey_box.SpecialDrawFn = ac_show_blokey;
-    unkn1_CANCEL_button.CallBackFn = ac_do_unkn1_CANCEL;
     storage_SAVE_button.CallBackFn = ac_save_game_slot;
     storage_NEW_MORTAL_button.CallBackFn = ac_do_storage_NEW_MORTAL;
     mod_list_box.ScrollWindowHeight = 117;
@@ -10027,7 +10002,6 @@ void show_menu_screen(void)
 
         reset_brief_screen_boxes_flags();
 
-        unkn32_box.Flags = 0x0001;
         heading_box.Flags = 0x0001;
         unkn35_box.Flags = 0x0001;
         unkn13_SYSTEM_button.Flags = 0x0001;
@@ -10054,7 +10028,6 @@ void show_menu_screen(void)
         equip_list_box.Flags = 0x0001 | 0x0100 | 0x0200;
         equip_display_box.Flags = 0x0001 | 0x0100 | 0x0200;
         research_unkn21_box.Flags = 0x0001 | 0x0100 | 0x0200;
-        mission_text_box.Flags = 0x0001 | 0x0100 | 0x0200;
         int i;
         for (i = 0; i < 6; i++) {
             sysmnu_buttons[i].Flags = 0x0011;

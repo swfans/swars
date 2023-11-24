@@ -33,11 +33,20 @@ extern struct ScreenButton brief_NETSCAN_button;
 extern struct ScreenInfoBox brief_NETSCAN_COST_box;
 extern struct ScreenTextBox unkn36_box;
 
+extern struct ScreenTextBox brief_mission_text_box;
+extern struct ScreenButton unkn1_ACCEPT_button;
+extern struct ScreenButton unkn1_CANCEL_button;
+
+extern struct ScreenBox brief_graphical_box;
+
 extern sbyte unkstruct04_id;// = -1;
 extern char unkn39_text[];
 
 ubyte ac_brief_do_netscan_enhance(ubyte click);
 ubyte ac_show_unkn36_box(struct ScreenTextBox *box);
+ubyte ac_show_citymap_box(struct ScreenBox *box);
+ubyte ac_accept_mission(ubyte click);
+ubyte ac_do_unkn1_CANCEL(ubyte click);
 
 void update_netscan_cost_button(ubyte city_id)
 {
@@ -105,6 +114,14 @@ ubyte show_unkn36_box(struct ScreenTextBox *box)
     return ret;
 }
 
+ubyte show_citymap_box(struct ScreenBox *box)
+{
+    ubyte ret;
+    asm volatile ("call ASM_show_citymap_box\n"
+        : "=r" (ret) : "a" (box));
+    return ret;
+}
+
 ubyte load_mail_text(const char *filename)
 {
 #if 0
@@ -155,7 +172,7 @@ void brief_load_mission_info(void)
             sprintf(fname, "%s/miss%03d.txt", "textdata", mission_list[missi].SourceID);
         }
         load_mail_text(fname);
-        mission_text_box.Lines = 0;
+        brief_mission_text_box.Lines = 0;
     }
 }
 
@@ -196,15 +213,30 @@ void load_netscan_data(ubyte city_id, ubyte level)
 void init_brief_screen_boxes(void)
 {
     init_screen_text_box(&unkn36_box, 7u, 281u, 322u, 145, 6, small_med_font, 3);
-    init_screen_button(&brief_NETSCAN_button, 312u, 405u, gui_strings[441], 6,
-        med2_font, 1, 128);
+    init_screen_button(&brief_NETSCAN_button, 312u, 405u,
+      gui_strings[441], 6, med2_font, 1, 128);
     init_screen_info_box(&brief_NETSCAN_COST_box, 12u, 405u, 213u,
-        gui_strings[442], unkn39_text, 6, med_font, small_med_font, 1);
+      gui_strings[442], unkn39_text, 6, med_font, small_med_font, 1);
     brief_NETSCAN_COST_box.Width = 312 - brief_NETSCAN_button.Width - 17;
     brief_NETSCAN_COST_box.Text2 = brief_netscan_cost_text;
     brief_NETSCAN_button.CallBackFn = ac_brief_do_netscan_enhance;
     unkn36_box.Flags |= 0x0300;
     unkn36_box.DrawTextFn = ac_show_unkn36_box;
+
+    init_screen_text_box(&brief_mission_text_box, 338u, 72u, 295u, 354, 6, small_font, 3);
+    init_screen_button(&unkn1_ACCEPT_button, 343u, 405u,
+      gui_strings[436], 6, med2_font, 1, 0);
+    init_screen_button(&unkn1_CANCEL_button, 616u, 405u,
+      gui_strings[437], 6, med2_font, 1, 128);
+    brief_mission_text_box.Buttons[0] = &unkn1_ACCEPT_button;
+    brief_mission_text_box.Buttons[1] = &unkn1_CANCEL_button;
+    brief_mission_text_box.Flags |= 0x0300;
+    brief_mission_text_box.Text = mission_briefing_text;
+    unkn1_ACCEPT_button.CallBackFn = ac_accept_mission;
+    unkn1_CANCEL_button.CallBackFn = ac_do_unkn1_CANCEL;
+
+    init_screen_box(&brief_graphical_box, 7u, 72u, 322u, 200, 6);
+    brief_graphical_box.SpecialDrawFn = ac_show_citymap_box;
 }
 
 void update_brief_screen_netscan_button(ushort text_id)
@@ -212,7 +244,8 @@ void update_brief_screen_netscan_button(ushort text_id)
     const char *text;
 
     text = gui_strings[text_id];
-    init_screen_button(&brief_NETSCAN_button, 312, 405, text, 6, med2_font, 1, 128);
+    init_screen_button(&brief_NETSCAN_button, 312, 405,
+      text, 6, med2_font, 1, 128);
     brief_NETSCAN_COST_box.Width = 312 - brief_NETSCAN_button.Width - 17;
     brief_NETSCAN_button.CallBackFn = ac_brief_do_netscan_enhance;
 }
@@ -221,6 +254,8 @@ void reset_brief_screen_boxes_flags(void)
 {
     brief_NETSCAN_COST_box.Flags = 0x0001;
     unkn36_box.Flags = 0x0001 | 0x0100 | 0x0200;
+    brief_graphical_box.Flags = 0x0001;
+    brief_mission_text_box.Flags = 0x0001 | 0x0100 | 0x0200;
 }
 
 void set_flag01_brief_screen_boxes(void)
