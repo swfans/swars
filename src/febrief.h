@@ -1,0 +1,45 @@
+/******************************************************************************/
+// Syndicate Wars Port, source port of the classic strategy game from Bullfrog.
+/******************************************************************************/
+/** @file febrief.h
+ *     Header file for febrief.c.
+ * @par Purpose:
+ *     Front-end desktop and menu system, e-mail mission brief screen.
+ * @par Comment:
+ *     Just a header file - #defines, typedefs, function prototypes etc.
+ * @author   Tomasz Lis
+ * @date     22 Apr 2023 - 22 Oct 2023
+ * @par  Copying and copyrights:
+ *     This program is free software; you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation; either version 2 of the License, or
+ *     (at your option) any later version.
+ */
+/******************************************************************************/
+#ifndef FEBRIEF_H
+#define FEBRIEF_H
+
+#include "bftypes.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+/******************************************************************************/
+#pragma pack(1)
+
+#pragma pack()
+/******************************************************************************/
+void reveal_netscan_objective(ushort info);
+void brief_load_mission_info(void);
+void load_netscan_data(ubyte city_id, ubyte level);
+
+void init_brief_screen_boxes(void);
+void update_brief_screen_netscan_button(ushort text_id);
+void reset_brief_screen_boxes_flags(void);
+void set_flag01_brief_screen_boxes(void);
+
+/******************************************************************************/
+#ifdef __cplusplus
+}
+#endif
+#endif

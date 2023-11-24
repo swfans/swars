@@ -700,7 +700,6 @@ extern ubyte unkn_option_3;
 extern ubyte unkn_option_4;
 extern ubyte byte_1C4A6F;
 
-extern char unkn39_text[];
 extern char unkn41_text[];
 extern char net_unkn2_text[];
 extern char equip_name_text[];
@@ -729,18 +728,11 @@ extern struct ScreenBox controls_joystick_box;
 extern struct ScreenBox unkn04_boxes[3];
 extern struct ScreenBox unkn33_box;
 extern struct ScreenBox unkn32_box;
-extern struct ScreenTextBox unkn36_box;
 extern struct ScreenTextBox mission_text_box;
 extern struct ScreenButton unkn1_ACCEPT_button;
 extern struct ScreenButton unkn1_CANCEL_button;
-extern struct ScreenButton brief_NETSCAN_button;
-extern struct ScreenInfoBox brief_NETSCAN_COST_box;
 extern struct ScreenBox unkn30_box;
 extern struct ScreenBox unkn31_box;
-extern struct ScreenBox unkn29_box;
-extern struct ScreenTextBox unkn38_box;
-extern struct ScreenButton unkn2_ACCEPT_button;
-extern struct ScreenButton unkn2_CANCEL_button;
 extern struct ScreenButton main_quit_button;
 extern struct ScreenButton main_login_button;
 extern struct ScreenButton pause_continue_button;
@@ -796,6 +788,8 @@ int joy_grip_shutdown(void);
 
 void my_preprocess_text(char *text);
 ushort my_count_lines(const char *text);
+
+TbBool player_try_spend_money(long cost);
 
 #ifdef __cplusplus
 };

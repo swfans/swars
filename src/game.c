@@ -37,8 +37,10 @@
 #include "engintrns.h"
 #include "game_data.h"
 #include "guiboxes.h"
+#include "febrief.h"
 #include "fenet.h"
 #include "feoptions.h"
+#include "feworld.h"
 #include "building.h"
 #include "campaign.h"
 #include "cybmod.h"
@@ -193,7 +195,6 @@ extern ubyte player_unkn0C9[8];
 extern char player_unknCC9[8][128];
 extern long scanner_unkn370;
 extern long scanner_unkn3CC;
-extern sbyte unkstruct04_id;// = -1;
 
 extern ushort netgame_agent_pos_x[8][4];
 extern ushort netgame_agent_pos_y[8][4];
@@ -4746,16 +4747,7 @@ ubyte show_title_box(struct ScreenTextBox *box)
     return ret;
 }
 
-ubyte show_unkn38_box(struct ScreenTextBox *box)
-{
-    ubyte ret;
-    asm volatile ("call ASM_show_unkn38_box\n"
-        : "=r" (ret) : "a" (box));
-    return ret;
-}
-
 ubyte ac_show_title_box(struct ScreenTextBox *box);
-ubyte ac_show_unkn38_box(struct ScreenTextBox *box);
 
 void check_buy_sell_button(void)
 {
@@ -4830,22 +4822,6 @@ ubyte do_unkn1_CANCEL(ubyte click)
 {
     ubyte ret;
     asm volatile ("call ASM_do_unkn1_CANCEL\n"
-        : "=r" (ret) : "a" (click));
-    return ret;
-}
-
-ubyte do_unkn2_CANCEL(ubyte click)
-{
-    ubyte ret;
-    asm volatile ("call ASM_do_unkn2_CANCEL\n"
-        : "=r" (ret) : "a" (click));
-    return ret;
-}
-
-ubyte do_unkn2_ACCEPT(ubyte click)
-{
-    ubyte ret;
-    asm volatile ("call ASM_do_unkn2_ACCEPT\n"
         : "=r" (ret) : "a" (click));
     return ret;
 }
@@ -6406,29 +6382,6 @@ void mission_over(void)
 #endif
 }
 
-void update_netscan_cost_button(ubyte city_id)
-{
-    int k;
-    ushort ninfo;
-    char *text;
-
-    ninfo = cities[city_id].Info;
-    if (ninfo >= netscan_objectives_count) {
-        brief_NETSCAN_COST_box.Text2[0] = '\0';
-        text = gui_strings[495];
-    } else {
-        k = 100 * netscan_objectives[ninfo].CreditCost;
-        sprintf(brief_NETSCAN_COST_box.Text2, "%d", k);
-        text = gui_strings[442];
-    }
-    brief_NETSCAN_COST_box.Text1 = text;
-}
-
-void reveal_netscan_objective(ushort info)
-{
-    unkn36_box.Lines += netscan_objectives[info].TextLines;
-}
-
 TbBool player_try_spend_money(long cost)
 {
     if (ingame.Credits - cost < 0)
@@ -6436,41 +6389,6 @@ TbBool player_try_spend_money(long cost)
     ingame.Credits -= cost;
     ingame.Expenditure += cost;
     return true;
-}
-
-ubyte brief_do_netscan_enhance(ubyte click)
-{
-#if 0
-    ubyte ret;
-    asm volatile ("call ASM_brief_do_netscan_enhance\n"
-        : "=r" (ret) : "a" (click));
-    return ret;
-#endif
-    ushort nsobv;
-    ushort n;
-    struct NetscanObjective *p_nsobv;
-
-    nsobv = cities[city_id].Info;
-    p_nsobv = &netscan_objectives[nsobv];
-
-    if (!player_try_spend_money(100 * p_nsobv->CreditCost))
-        return 0;
-
-    cities[city_id].Info++;
-    update_netscan_cost_button(city_id);
-    unkstruct04_id = nsobv;
-    reveal_netscan_objective(unkstruct04_id);
-    unkn36_box.Flags |= 0x80;
-    recount_city_credit_reward(city_id);
-
-    clear_all_scanner_signals();
-    for (n = 0; n < 5; n++)
-    {
-        if (p_nsobv->Z[n] || p_nsobv->X[n]) {
-            add_blippoint_to_scanner(p_nsobv->X[n] << 15, p_nsobv->Z[n] << 15, 87);
-        }
-    }
-    return 1;
 }
 
 void init_variables(void)
@@ -6550,8 +6468,6 @@ ubyte ac_do_unkn10_CONTROLS(ubyte click);
 ubyte ac_alert_OK(ubyte click);
 ubyte ac_accept_mission(ubyte click);
 ubyte ac_do_unkn1_CANCEL(ubyte click);
-ubyte ac_do_unkn2_CANCEL(ubyte click);
-ubyte ac_do_unkn2_ACCEPT(ubyte click);
 ubyte ac_do_sysmnu_button(ubyte click);
 ubyte ac_do_storage_NEW_MORTAL(ubyte click);
 ubyte ac_load_game_slot(ubyte click);
@@ -6562,7 +6478,6 @@ ubyte ac_goto_savegame(ubyte click);
 ubyte ac_do_abort_2(ubyte click);
 ubyte ac_do_login_2(ubyte click);
 ubyte ac_main_do_map_editor(ubyte click);
-ubyte ac_brief_do_netscan_enhance(ubyte click);
 ubyte ac_do_unkn11_CANCEL(ubyte click);
 ubyte ac_do_buy_equip(ubyte click);
 ubyte ac_sell_equipment(ubyte click);
@@ -6572,7 +6487,6 @@ ubyte ac_do_unkn12_WEAPONS_MODS(ubyte click);
 
 void campaign_new_game_prepare(void)
 {
-    const char *text;
     struct Campaign *p_campgn;
 
     p_campgn = &campaigns[background_type];
@@ -6591,10 +6505,7 @@ void campaign_new_game_prepare(void)
 
     {
         open_new_mission(p_campgn->FirstTrigger);
-        text = gui_strings[p_campgn->NetscanTextId];
-        init_screen_button(&brief_NETSCAN_button, 312, 405, text, 6, med2_font, 1, 128);
-        brief_NETSCAN_COST_box.Width = 312 - brief_NETSCAN_button.Width - 17;
-        brief_NETSCAN_button.CallBackFn = ac_brief_do_netscan_enhance;
+        update_brief_screen_netscan_button(p_campgn->NetscanTextId);
     }
 
     reload_background_flag = 1;
@@ -7603,14 +7514,6 @@ ubyte show_menu_storage_slots_box(struct ScreenTextBox *box)
     return ret;
 }
 
-ubyte show_unkn29_box(struct ScreenBox *box)
-{
-    ubyte ret;
-    asm volatile ("call ASM_show_unkn29_box\n"
-        : "=r" (ret) : "a" (box));
-    return ret;
-}
-
 ubyte display_weapon_info(struct ScreenTextBox *box)
 {
     ubyte ret;
@@ -7667,14 +7570,6 @@ ubyte show_unkn18_box(struct ScreenTextBox *box)
     return ret;
 }
 
-ubyte show_unkn36_box(struct ScreenTextBox *box)
-{
-    ubyte ret;
-    asm volatile ("call ASM_show_unkn36_box\n"
-        : "=r" (ret) : "a" (box));
-    return ret;
-}
-
 ubyte show_controls_joystick_box(struct ScreenBox *box)
 {
     ubyte ret;
@@ -7702,7 +7597,6 @@ ubyte ac_show_unkn04(struct ScreenBox *box);
 ubyte ac_show_unkn33_box(struct ScreenBox *box);
 ubyte ac_show_netgame_unkn1(struct ScreenBox *box);
 ubyte ac_show_menu_storage_slots_box(struct ScreenTextBox *box);
-ubyte ac_show_unkn29_box(struct ScreenBox *box);
 ubyte ac_display_weapon_info(struct ScreenTextBox *box);
 ubyte ac_show_weapon_name(struct ScreenTextBox *box);
 ubyte ac_show_weapon_list(struct ScreenTextBox *box);
@@ -7710,7 +7604,6 @@ ubyte ac_show_weapon_slots(struct ScreenBox *box);
 ubyte ac_show_agent_list(struct ScreenTextBox *box);
 ubyte ac_show_blokey(struct ScreenBox *box);
 ubyte ac_show_unkn18_box(struct ScreenTextBox *box);
-ubyte ac_show_unkn36_box(struct ScreenTextBox *box);
 ubyte ac_show_controls_joystick_box(struct ScreenBox *box);
 ubyte ac_show_settings_controls_list(struct ScreenBox *box);
 
@@ -7724,28 +7617,18 @@ void init_screen_boxes(void)
     init_screen_text_box(&loading_INITIATING_box, 210u, 230u, 220u, 20, 6,
         med_font, 1);
     init_screen_box(&unkn32_box, 7u, 72u, 322u, 200, 6);
-    init_screen_text_box(&unkn36_box, 7u, 281u, 322u, 145, 6, small_med_font,
-        3);
     init_screen_text_box(&mission_text_box, 338u, 72u, 295u, 354, 6, small_font,
         3);
     init_screen_button(&unkn1_ACCEPT_button, 343u, 405u, gui_strings[436], 6,
         med2_font, 1, 0);
     init_screen_button(&unkn1_CANCEL_button, 616u, 405u, gui_strings[437], 6,
         med2_font, 1, 128);
-    init_screen_button(&brief_NETSCAN_button, 312u, 405u, gui_strings[441], 6,
-        med2_font, 1, 128);
-    init_screen_info_box(&brief_NETSCAN_COST_box, 12u, 405u, 213u,
-        gui_strings[442], unkn39_text, 6, med_font, small_med_font, 1);
-    brief_NETSCAN_COST_box.Width = 312 - brief_NETSCAN_button.Width - 17;
+
+    init_brief_screen_boxes();
+    init_world_screen_boxes();
+
     init_screen_box(&unkn30_box, 7u, 72u, 518u, 172, 6);
     init_screen_box(&unkn31_box, 7u, 253u, 518u, 173, 6);
-    init_screen_box(&unkn29_box, 7u, 72u, 518u, 354, 6);
-    init_screen_text_box(&unkn38_box, 534u, 72u, 99u, 354, 6, small_med_font,
-        3);
-    init_screen_button(&unkn2_ACCEPT_button, 548u, 384u, gui_strings[436], 6,
-        med2_font, 1, 0);
-    init_screen_button(&unkn2_CANCEL_button, 548u, 405u, gui_strings[437], 6,
-        med2_font, 1, 0);
     init_screen_text_box(&unkn13_SYSTEM_button, 7u, 25u, 197u, 38, 6, big_font,
         1);
     init_screen_text_box(&unkn35_box, 213u, 25u, 420u, 38, 6, big_font, 1);
@@ -7879,7 +7762,6 @@ void init_screen_boxes(void)
     unkn33_box.SpecialDrawFn = ac_show_unkn33_box;
     mission_text_box.Buttons[0] = &unkn1_ACCEPT_button;
     mission_text_box.Buttons[1] = &unkn1_CANCEL_button;
-    brief_NETSCAN_COST_box.Text2 = brief_netscan_cost_text;
     storage_slots_box.BGColour = 26;
     mission_text_box.Flags |= 0x0300;
     storage_slots_box.ScrollWindowOffset += 27;
@@ -7892,12 +7774,6 @@ void init_screen_boxes(void)
     unkn31_box.SpecialDrawFn = ac_show_mission_people_stats;
     mission_text_box.Text = mission_briefing_text;
     unkn30_box.SpecialDrawFn = ac_show_mission_stats;
-    unkn36_box.Flags |= 0x0300;
-    unkn36_box.DrawTextFn = ac_show_unkn36_box;
-    unkn2_ACCEPT_button.X = unkn38_box.X
-        + ((unkn38_box.Width - unkn2_ACCEPT_button.Width) >> 1);
-    unkn29_box.SpecialDrawFn = ac_show_unkn29_box;
-    unkn38_box.DrawTextFn = ac_show_unkn38_box;
     slots_box.DrawTextFn = ac_show_title_box;
     equip_display_box.DrawTextFn = ac_display_weapon_info;
     equip_list_box.DrawTextFn = ac_show_weapon_list;
@@ -7908,10 +7784,7 @@ void init_screen_boxes(void)
     research_unkn21_box.ScrollWindowHeight = 180;
     research_unkn21_box.Buttons[0] = &research_submit_button;
     research_unkn21_box.Buttons[1] = &unkn12_WEAPONS_MODS_button;
-    unkn2_CANCEL_button.X =
-        ((unkn38_box.Width - unkn2_CANCEL_button.Width) >> 1) + unkn38_box.X;
     equip_name_box.DrawTextFn = ac_show_weapon_name;
-    unkn38_box.Flags |= 0x4000;
     slots_box.Text = gui_strings[408];
     slots_box.Font = med_font;
     equip_name_box.Text = unkn41_text;
@@ -7966,8 +7839,6 @@ void init_screen_boxes(void)
     buy_equip_button.CallBackFn = ac_do_buy_equip;
     storage_LOAD_button.CallBackFn = ac_load_game_slot;
     agent_list_box.ScrollWindowOffset += 27;
-    unkn2_CANCEL_button.CallBackFn = ac_do_unkn2_CANCEL;
-    unkn2_ACCEPT_button.CallBackFn = ac_do_unkn2_ACCEPT;
     unkn11_CANCEL_button.CallBackFn = ac_do_unkn11_CANCEL;
     unkn10_CALIBRATE_button.CallBackFn = ac_do_unkn10_CALIBRATE;
     agent_list_box.Flags |= 0x0300;
@@ -7979,7 +7850,6 @@ void init_screen_boxes(void)
     pause_continue_button.X = 319 - (pause_continue_button.Width >> 1);
     agent_list_box.ScrollWindowHeight -= 27;
     pause_abort_button.X = 319 - (pause_abort_button.Width >> 1);
-    brief_NETSCAN_button.CallBackFn = ac_brief_do_netscan_enhance;
     main_quit_button.X = 319 - (main_quit_button.Width >> 1);
     unkn10_SAVE_button.CallBackFn = ac_do_unkn10_SAVE;
     main_load_button.X = 319 - (main_load_button.Width >> 1);
@@ -8830,34 +8700,6 @@ void show_pause_screen(void)
         : : "a" (&pause_abort_button), "g" (pause_abort_button.DrawFn));
 }
 
-void show_worldmap_screen(void)
-{
-    if ((game_projector_speed && (heading_box.Flags & 0x01)) ||
-      (lbKeyOn[KC_SPACE] && !edit_flag))
-    {
-        lbKeyOn[KC_SPACE] = 0;
-        unkn29_box.Flags |= 0x0002;
-        heading_box.Flags |= 0x0002;
-        unkn38_box.Flags |= 0x0002;
-    }
-    int ret = 1;
-    if (ret) {
-        //ret = heading_box.DrawFn(&heading_box); -- incompatible calling convention
-        asm volatile ("call *%2\n"
-            : "=r" (ret) : "a" (&heading_box), "g" (heading_box.DrawFn));
-    }
-    if (ret) {
-        //ret = unkn29_box.DrawFn(&unkn29_box); -- incompatible calling convention
-        asm volatile ("call *%2\n"
-            : "=r" (ret) : "a" (&unkn29_box), "g" (unkn29_box.DrawFn));
-    }
-    if (ret) {
-        //ret = unkn38_box.DrawFn(&unkn38_box); -- incompatible calling convention
-        asm volatile ("call *%2\n"
-            : "=r" (ret) : "a" (&unkn38_box), "g" (unkn38_box.DrawFn));
-    }
-}
-
 void show_alert_box(void)
 {
     asm volatile ("call ASM_show_alert_box\n"
@@ -8981,60 +8823,6 @@ void delete_mail(ushort mailnum, ubyte type)
 {
     asm volatile ("call ASM_delete_mail\n"
         : : "a" (mailnum), "d" (type));
-}
-
-ubyte load_mail_text(const char *filename)
-{
-#if 0
-    ubyte ret;
-    asm volatile ("call ASM_load_mail_text\n"
-        : "=r" (ret) : "a" (filename));
-    return ret;
-#endif
-    int totlen;
-    char *p;
-
-    p = mission_briefing_text;
-    p[0] = '\\';
-    p[1] = 'c';
-    p[2] = '3';
-
-    totlen = load_file_alltext(filename, p + 3);
-    if (totlen == Lb_FAIL) {
-        return 0;
-    }
-    if (3+totlen >= mission_briefing_text_len) {
-        LOGERR("Insufficient memory for mission_briefing_text - %d instead of %d", mission_briefing_text_len, 3+totlen);
-        totlen = mission_briefing_text_len - 3 - 1;
-    }
-    p = mission_briefing_text;
-    p[3 + totlen] = '\0';
-    my_preprocess_text(p);
-    return Lb_SUCCESS;
-}
-
-void brief_load_mission_info(void)
-{
-    char fname[FILENAME_MAX];
-
-    heading_box.Text = gui_strings[372];
-    data_1c4aa2 = 0;
-    unkn36_box.Lines = 0;
-
-    if (open_brief != 0)
-    {
-        if (open_brief < 0) {
-            short email;
-            email = -open_brief - 1;
-            sprintf(fname, "%s/mail%03d.txt", "textdata", email_store[email].Mission);
-        } else if (open_brief > 0) {
-            ushort missi;
-            missi = brief_store[open_brief - 1].Mission;
-            sprintf(fname, "%s/miss%03d.txt", "textdata", mission_list[missi].SourceID);
-        }
-        load_mail_text(fname);
-        mission_text_box.Lines = 0;
-    }
 }
 
 void draw_flic_purple_list(void (*fn)())
@@ -9734,40 +9522,6 @@ void frame_unkn_func_06(void)
         :  :  : "eax" );
 }
 
-void load_netscan_data(ubyte city_id, ubyte level)
-{
-#if 0
-    asm volatile ("call ASM_load_netscan_data\n"
-        : : "a" (city_id), "d" (a2));
-#else
-    int i;
-
-    my_set_text_window(unkn36_box.X + 4, unkn36_box.ScrollWindowOffset + unkn36_box.Y + 4,
-      unkn36_box.Width - 20, unkn36_box.ScrollWindowHeight);
-    lbFontPtr = small_med_font;
-    unkn36_box.Lines = 0;
-    load_netscan_text_data(cities[city_id].MapID, level);
-
-    for (i = 0; i < netscan_objectives_count; i++)
-    {
-        if (netscan_objectives[i].CreditCost == 0)
-            reveal_netscan_objective(i);
-    }
-
-    if (cities[city_id].Info == 0)
-    {
-        for (i = 0; i < netscan_objectives_count; i++)
-        {
-            if (netscan_objectives[i].CreditCost)
-                break;
-        }
-        cities[city_id].Info = i;
-    }
-    recount_city_credit_reward(city_id);
-    update_netscan_cost_button(city_id);
-#endif
-}
-
 void show_mission_loading_screen(void)
 {
     LbMouseChangeSprite(0);
@@ -10280,19 +10034,20 @@ void show_menu_screen(void)
             activate_cities(open_brief);
         }
 
-        brief_NETSCAN_COST_box.Flags = 0x0001;
+        reset_brief_screen_boxes_flags();
+
         unkn32_box.Flags = 0x0001;
         heading_box.Flags = 0x0001;
         unkn35_box.Flags = 0x0001;
         unkn13_SYSTEM_button.Flags = 0x0001;
         unkn39_box.Flags = 0x0001;
-        unkn29_box.Flags = 0x0001;
         unkn31_box.Flags = 0x0001;
         research_unkn20_box.Flags = 0x0001;
         research_progress_button.Flags = 0x0001;
         unkn30_box.Flags = 0x0001;
 
         reset_net_screen_boxes_flags();
+        reset_world_screen_boxes_flags();
 
         weapon_slots.Flags = 0x0001;
         equip_name_box.Flags = 0x0001;
@@ -10308,9 +10063,7 @@ void show_menu_screen(void)
         equip_list_box.Flags = 0x0001 | 0x0100 | 0x0200;
         equip_display_box.Flags = 0x0001 | 0x0100 | 0x0200;
         research_unkn21_box.Flags = 0x0001 | 0x0100 | 0x0200;
-        unkn36_box.Flags = 0x0001 | 0x0100 | 0x0200;
         mission_text_box.Flags = 0x0001 | 0x0100 | 0x0200;
-        unkn38_box.Flags = 0x0001 | 0x4000;
         int i;
         for (i = 0; i < 6; i++) {
             sysmnu_buttons[i].Flags = 0x0011;
@@ -10344,9 +10097,10 @@ void show_menu_screen(void)
         unkn10_SAVE_button.Flags |= 0x0001;
         unkn10_CALIBRATE_button.Flags |= 0x0001;
         unkn10_CONTROLS_button.Flags |= 0x0001;
-        brief_NETSCAN_button.Flags |= 0x0001;
-        unkn2_ACCEPT_button.Flags |= 0x0001;
-        unkn2_CANCEL_button.Flags |= 0x0001;
+
+        set_flag01_brief_screen_boxes();
+        set_flag01_world_screen_boxes();
+
         all_agents_button.Flags |= 0x0001;
         if (screentype == SCRT_CRYO)
             equip_cost_box.Flags |= 0x0008;
