@@ -104,6 +104,8 @@ swars_SOURCES = \
 	feoptions.h \
 	fenet.c \
 	fenet.h \
+	festorage.c \
+	festorage.h \
 	feworld.c \
 	feworld.h \
 	guiboxes.c \

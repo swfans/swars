@@ -41,6 +41,7 @@
 #include "fecntrls.h"
 #include "fenet.h"
 #include "feoptions.h"
+#include "festorage.h"
 #include "feworld.h"
 #include "building.h"
 #include "campaign.h"
@@ -6468,9 +6469,6 @@ ubyte ac_do_unkn10_SAVE(ubyte click);
 ubyte ac_do_unkn10_CONTROLS(ubyte click);
 ubyte ac_alert_OK(ubyte click);
 ubyte ac_do_sysmnu_button(ubyte click);
-ubyte ac_do_storage_NEW_MORTAL(ubyte click);
-ubyte ac_load_game_slot(ubyte click);
-ubyte ac_save_game_slot(ubyte click);
 ubyte ac_main_do_my_quit(ubyte click);
 ubyte ac_main_do_login_1(ubyte click);
 ubyte ac_goto_savegame(ubyte click);
@@ -7635,33 +7633,27 @@ void init_screen_boxes(void)
     }
 
     init_controls_screen_boxes();
-    init_screen_button(&storage_LOAD_button, 219u, 405u, gui_strings[438], 6,
-        med2_font, 1, 0);
-    init_screen_button(&storage_SAVE_button, storage_LOAD_button.Width + 223,
-        405u, gui_strings[439], 6, med2_font, 1, 0);
-    init_screen_button(&storage_NEW_MORTAL_button, 627u, 405u, gui_strings[482],
-        6, med2_font, 1, 128);
-
+    init_storage_screen_boxes();
     init_net_screen_boxes();
 
-    init_screen_button(&unkn10_CALIBRATE_button, 219u, 405u, gui_strings[484],
-        6, med2_font, 1, 0);
-    init_screen_button(&unkn10_CONTROLS_button, 57u, 405u, gui_strings[485], 6,
-        med2_font, 1, 0);
-    init_screen_button(&unkn10_SAVE_button, 627u, 405u, gui_strings[439], 6,
-        med2_font, 1, 128);
-    init_screen_button(&main_map_editor_button, 260u, 387u, gui_strings[443], 6,
-        med2_font, 1, 0);
-    init_screen_button(&main_login_button, 260u, 300u, gui_strings[444], 6,
-        med2_font, 1, 0);
-    init_screen_button(&pause_continue_button, 260u, 300u, gui_strings[455], 6,
-        med2_font, 1, 0);
-    init_screen_button(&pause_abort_button, 260u, 329u, gui_strings[388], 6,
-        med2_font, 1, 0);
-    init_screen_button(&main_quit_button, 260u, 329u, gui_strings[445], 6,
-        med2_font, 1, 0);
-    init_screen_button(&main_load_button, 260u, 358u, gui_strings[496], 6,
-        med2_font, 1, 0);
+    init_screen_button(&unkn10_CALIBRATE_button, 219u, 405u,
+      gui_strings[484], 6, med2_font, 1, 0);
+    init_screen_button(&unkn10_CONTROLS_button, 57u, 405u,
+      gui_strings[485], 6, med2_font, 1, 0);
+    init_screen_button(&unkn10_SAVE_button, 627u, 405u,
+      gui_strings[439], 6, med2_font, 1, 128);
+    init_screen_button(&main_map_editor_button, 260u, 387u,
+      gui_strings[443], 6, med2_font, 1, 0);
+    init_screen_button(&main_login_button, 260u, 300u,
+      gui_strings[444], 6, med2_font, 1, 0);
+    init_screen_button(&pause_continue_button, 260u, 300u,
+      gui_strings[455], 6, med2_font, 1, 0);
+    init_screen_button(&pause_abort_button, 260u, 329u,
+      gui_strings[388], 6, med2_font, 1, 0);
+    init_screen_button(&main_quit_button, 260u, 329u,
+      gui_strings[445], 6, med2_font, 1, 0);
+    init_screen_button(&main_load_button, 260u, 358u,
+      gui_strings[496], 6, med2_font, 1, 0);
     init_screen_box(&pause_unkn11_box, 219u, 159u, 200u, 100, 6);
     init_screen_box(&pause_unkn12_box, 150u, 128u, 337u, 22, 6);
     init_screen_text_box(&slots_box, 7u, 122u, 191u, 22, 6, small_med_font, 1);
@@ -7798,12 +7790,9 @@ void init_screen_boxes(void)
     agent_list_box.DrawTextFn = ac_show_agent_list;
     mod_list_box.Flags |= 0x0300;
     blokey_box.SpecialDrawFn = ac_show_blokey;
-    storage_SAVE_button.CallBackFn = ac_save_game_slot;
-    storage_NEW_MORTAL_button.CallBackFn = ac_do_storage_NEW_MORTAL;
     mod_list_box.ScrollWindowHeight = 117;
     unkn13_SYSTEM_button.Text = gui_strings[366];
     buy_equip_button.CallBackFn = ac_do_buy_equip;
-    storage_LOAD_button.CallBackFn = ac_load_game_slot;
     agent_list_box.ScrollWindowOffset += 27;
     unkn11_CANCEL_button.CallBackFn = ac_do_unkn11_CANCEL;
     unkn10_CALIBRATE_button.CallBackFn = ac_do_unkn10_CALIBRATE;
@@ -10040,11 +10029,10 @@ void show_menu_screen(void)
         }
         reset_options_screen_boxes_flags();
 
-        storage_LOAD_button.Flags |= 0x0001;
-        storage_SAVE_button.Flags |= 0x0001;
+        set_flag01_storage_screen_boxes();
+
         main_quit_button.Flags |= 0x0001;
         pause_continue_button.Flags |= 0x0001;
-        storage_NEW_MORTAL_button.Flags |= 0x0001;
         main_login_button.Flags |= 0x0001;
         pause_abort_button.Flags |= 0x0001;
         main_load_button.Flags |= 0x0001;
