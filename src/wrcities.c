@@ -27,6 +27,7 @@
 #include "bfutility.h"
 #include "bfini.h"
 #include "campaign.h"
+#include "guitext.h"
 #include "game.h"
 #include "lvobjctv.h"
 #include "wadfile.h"

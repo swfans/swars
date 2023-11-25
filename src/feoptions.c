@@ -19,6 +19,7 @@
 #include "feoptions.h"
 
 #include "guiboxes.h"
+#include "guitext.h"
 #include "display.h"
 #include "game.h"
 #include "swlog.h"

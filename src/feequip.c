@@ -21,6 +21,7 @@
 #include "bftext.h"
 #include "bfsprite.h"
 #include "guiboxes.h"
+#include "guitext.h"
 #include "display.h"
 #include "campaign.h"
 #include "game.h"

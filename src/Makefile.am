@@ -98,6 +98,8 @@ swars_SOURCES = \
 	engintrns.h \
 	febrief.c \
 	febrief.h \
+	fedebrief.c \
+	fedebrief.h \
 	fecntrls.c \
 	fecntrls.h \
 	fecryo.c \
@@ -118,6 +120,8 @@ swars_SOURCES = \
 	feworld.h \
 	guiboxes.c \
 	guiboxes.h \
+	guitext.c \
+	guitext.h \
 	game.c \
 	game_data.c \
 	game_data.h \

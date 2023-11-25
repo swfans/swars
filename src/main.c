@@ -10,6 +10,7 @@
 #include "swlog.h"
 #include "bflib_joyst.h"
 #include "display.h"
+#include "guitext.h"
 #include "game.h"
 #include "game_data.h"
 #include "network.h"
@@ -399,21 +400,6 @@ void read_conf_file(void)
 #undef CONFWRNLOG
 #undef COMMAND_TEXT
     LbIniParseEnd(&parser);
-}
-
-/** Read file with all the language-specific texts.
- */
-void read_strings_file(void)
-{
-    char *text_fname = "data/text.dat";
-    int text_len;
-
-    text_len = LbFileLength(text_fname);
-    gui_strings_data = (char *)LbMemoryAlloc(text_len);
-    if (gui_strings_data != NULL) {
-        gui_strings_data_end = gui_strings_data + text_len;
-        LbFileLoadAt(text_fname, gui_strings_data);
-    }
 }
 
 int

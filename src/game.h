@@ -461,12 +461,6 @@ extern ulong smack_malloc_used_tot;
 extern ubyte anim_slots[];
 extern struct Animation animations[2];
 
-#define STRINGS_MAX 652
-
-extern char *gui_strings_data;
-extern char *gui_strings_data_end;
-extern char *gui_strings[STRINGS_MAX];
-
 extern ubyte *fade_data;
 
 extern void *dword_1810D1;
@@ -716,8 +710,6 @@ extern struct ScreenTextBox heading_box;
 extern struct ScreenTextBox loading_INITIATING_box;
 extern struct ScreenTextBox unkn13_SYSTEM_button;
 extern struct ScreenButton sysmnu_buttons[6];
-extern struct ScreenBox unkn30_box;
-extern struct ScreenBox unkn31_box;
 extern struct ScreenButton main_quit_button;
 extern struct ScreenButton main_login_button;
 extern struct ScreenButton main_map_editor_button;
@@ -757,6 +749,7 @@ void flic_unkn03(ubyte a1);
 
 ubyte ac_show_title_box(struct ScreenTextBox *box);
 void draw_text_purple_list2(int x, int y, const char *text, ushort line);
+void copy_box_purple_list(long x, long y, ulong width, ulong height);
 
 void my_preprocess_text(char *text);
 ushort my_count_lines(const char *text);

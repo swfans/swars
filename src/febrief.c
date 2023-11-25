@@ -21,6 +21,7 @@
 #include "bftext.h"
 #include "campaign.h"
 #include "guiboxes.h"
+#include "guitext.h"
 #include "display.h"
 #include "game.h"
 #include "lvobjctv.h"

@@ -22,6 +22,7 @@
 #include "bftext.h"
 #include "bfutility.h"
 #include "guiboxes.h"
+#include "guitext.h"
 #include "campaign.h"
 #include "display.h"
 #include "feoptions.h"
