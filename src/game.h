@@ -737,9 +737,6 @@ extern struct ScreenButton research_list_buttons[2];
 extern struct ScreenTextBox agent_list_box;
 extern struct ScreenBox blokey_box;
 extern struct ScreenTextBox mod_list_box;
-extern struct ScreenButton unkn10_CALIBRATE_button;
-extern struct ScreenButton unkn10_SAVE_button;
-extern struct ScreenButton unkn10_CONTROLS_button;
 
 extern struct ScreenBox alert_box;
 extern struct ScreenButton alert_OK_button;

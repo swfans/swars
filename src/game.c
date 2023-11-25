@@ -4778,30 +4778,6 @@ ubyte change_trenchcoat_preference(ubyte click)
     return ret;
 }
 
-ubyte do_unkn10_CALIBRATE(ubyte click)
-{
-    ubyte ret;
-    asm volatile ("call ASM_do_unkn10_CALIBRATE\n"
-        : "=r" (ret) : "a" (click));
-    return ret;
-}
-
-ubyte do_unkn10_SAVE(ubyte click)
-{
-    ubyte ret;
-    asm volatile ("call ASM_do_unkn10_SAVE\n"
-        : "=r" (ret) : "a" (click));
-    return ret;
-}
-
-ubyte do_unkn10_CONTROLS(ubyte click)
-{
-    ubyte ret;
-    asm volatile ("call ASM_do_unkn10_CONTROLS\n"
-        : "=r" (ret) : "a" (click));
-    return ret;
-}
-
 ubyte alert_OK(ubyte click)
 {
     ubyte ret;
@@ -6437,9 +6413,6 @@ ubyte do_unkn12_WEAPONS_MODS(ubyte click)
 }
 
 ubyte ac_select_all_agents(ubyte click);
-ubyte ac_do_unkn10_CALIBRATE(ubyte click);
-ubyte ac_do_unkn10_SAVE(ubyte click);
-ubyte ac_do_unkn10_CONTROLS(ubyte click);
 ubyte ac_alert_OK(ubyte click);
 ubyte ac_do_sysmnu_button(ubyte click);
 ubyte ac_main_do_my_quit(ubyte click);
@@ -7491,12 +7464,6 @@ void init_screen_boxes(void)
     init_storage_screen_boxes();
     init_net_screen_boxes();
 
-    init_screen_button(&unkn10_CALIBRATE_button, 219u, 405u,
-      gui_strings[484], 6, med2_font, 1, 0);
-    init_screen_button(&unkn10_CONTROLS_button, 57u, 405u,
-      gui_strings[485], 6, med2_font, 1, 0);
-    init_screen_button(&unkn10_SAVE_button, 627u, 405u,
-      gui_strings[439], 6, med2_font, 1, 128);
     init_screen_button(&main_map_editor_button, 260u, 387u,
       gui_strings[443], 6, med2_font, 1, 0);
     init_screen_button(&main_login_button, 260u, 300u,
@@ -7611,15 +7578,12 @@ void init_screen_boxes(void)
     unkn13_SYSTEM_button.Text = gui_strings[366];
     agent_list_box.ScrollWindowOffset += 27;
     unkn11_CANCEL_button.CallBackFn = ac_do_unkn11_CANCEL;
-    unkn10_CALIBRATE_button.CallBackFn = ac_do_unkn10_CALIBRATE;
     agent_list_box.Flags |= 0x0300;
-    unkn10_CONTROLS_button.CallBackFn = ac_do_unkn10_CONTROLS;
     main_map_editor_button.X = 319 - (main_map_editor_button.Width >> 1);
     unkn13_SYSTEM_button.DrawTextFn = ac_show_title_box;
     main_login_button.X = 319 - (main_login_button.Width >> 1);
     agent_list_box.ScrollWindowHeight -= 27;
     main_quit_button.X = 319 - (main_quit_button.Width >> 1);
-    unkn10_SAVE_button.CallBackFn = ac_do_unkn10_SAVE;
     main_load_button.X = 319 - (main_load_button.Width >> 1);
     main_map_editor_button.Border = 3;
     main_login_button.Border = 3;
@@ -9754,9 +9718,7 @@ void show_menu_screen(void)
         set_flag01_net_screen_boxes();
         set_flag01_equip_screen_boxes();
 
-        unkn10_SAVE_button.Flags |= 0x0001;
-        unkn10_CALIBRATE_button.Flags |= 0x0001;
-        unkn10_CONTROLS_button.Flags |= 0x0001;
+        set_flag01_controls_screen_boxes();
 
         set_flag01_brief_screen_boxes();
         set_flag01_world_screen_boxes();
