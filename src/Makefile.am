@@ -100,6 +100,8 @@ swars_SOURCES = \
 	febrief.h \
 	fecntrls.c \
 	fecntrls.h \
+	feequip.c \
+	feequip.h \
 	feoptions.c \
 	feoptions.h \
 	fenet.c \

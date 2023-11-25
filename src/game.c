@@ -39,6 +39,7 @@
 #include "guiboxes.h"
 #include "febrief.h"
 #include "fecntrls.h"
+#include "feequip.h"
 #include "fenet.h"
 #include "feoptions.h"
 #include "fepause.h"
@@ -122,8 +123,6 @@ extern struct TbSprite *pop1_sprites;
 extern struct TbSprite *pop1_sprites_end;
 extern ubyte *pop1_data;
 
-extern struct TbSprite *unk2_sprites;
-extern struct TbSprite *unk2_sprites_end;
 extern ubyte *m_spr_data;
 extern ubyte *m_spr_data_end;
 extern struct TbSprite *m_sprites;
@@ -6413,22 +6412,6 @@ ubyte do_unkn11_CANCEL(ubyte click)
     return ret;
 }
 
-ubyte do_buy_equip(ubyte click)
-{
-    ubyte ret;
-    asm volatile ("call ASM_do_buy_equip\n"
-        : "=r" (ret) : "a" (click));
-    return ret;
-}
-
-ubyte sell_equipment(ubyte click)
-{
-    ubyte ret;
-    asm volatile ("call ASM_sell_equipment\n"
-        : "=r" (ret) : "a" (click));
-    return ret;
-}
-
 ubyte do_research_submit(ubyte click)
 {
     ubyte ret;
@@ -6464,8 +6447,6 @@ ubyte ac_main_do_login_1(ubyte click);
 ubyte ac_goto_savegame(ubyte click);
 ubyte ac_main_do_map_editor(ubyte click);
 ubyte ac_do_unkn11_CANCEL(ubyte click);
-ubyte ac_do_buy_equip(ubyte click);
-ubyte ac_sell_equipment(ubyte click);
 ubyte ac_do_research_submit(ubyte click);
 ubyte ac_do_research_suspend(ubyte click);
 ubyte ac_do_unkn12_WEAPONS_MODS(ubyte click);
@@ -7443,38 +7424,6 @@ ubyte show_netgame_unkn1(struct ScreenBox *box)
     return ret;
 }
 
-ubyte display_weapon_info(struct ScreenTextBox *box)
-{
-    ubyte ret;
-    asm volatile ("call ASM_display_weapon_info\n"
-        : "=r" (ret) : "a" (box));
-    return ret;
-}
-
-ubyte show_weapon_name(struct ScreenTextBox *box)
-{
-    ubyte ret;
-    asm volatile ("call ASM_show_weapon_name\n"
-        : "=r" (ret) : "a" (box));
-    return ret;
-}
-
-ubyte show_weapon_list(struct ScreenTextBox *box)
-{
-    ubyte ret;
-    asm volatile ("call ASM_show_weapon_list\n"
-        : "=r" (ret) : "a" (box));
-    return ret;
-}
-
-ubyte show_weapon_slots(struct ScreenBox *box)
-{
-    ubyte ret;
-    asm volatile ("call ASM_show_weapon_slots\n"
-        : "=r" (ret) : "a" (box));
-    return ret;
-}
-
 ubyte show_agent_list(struct ScreenTextBox *box)
 {
     ubyte ret;
@@ -7516,10 +7465,6 @@ ubyte ac_show_unkn21_box(struct ScreenTextBox *box);
 ubyte ac_show_unkn04(struct ScreenBox *box);
 ubyte ac_show_unkn33_box(struct ScreenBox *box);
 ubyte ac_show_netgame_unkn1(struct ScreenBox *box);
-ubyte ac_display_weapon_info(struct ScreenTextBox *box);
-ubyte ac_show_weapon_name(struct ScreenTextBox *box);
-ubyte ac_show_weapon_list(struct ScreenTextBox *box);
-ubyte ac_show_weapon_slots(struct ScreenBox *box);
 ubyte ac_show_agent_list(struct ScreenTextBox *box);
 ubyte ac_show_blokey(struct ScreenBox *box);
 ubyte ac_show_unkn18_box(struct ScreenTextBox *box);
@@ -7591,19 +7536,11 @@ void init_screen_boxes(void)
     init_screen_box(&pause_unkn11_box, 219u, 159u, 200u, 100, 6);
     init_screen_box(&pause_unkn12_box, 150u, 128u, 337u, 22, 6);
     init_screen_text_box(&slots_box, 7u, 122u, 191u, 22, 6, small_med_font, 1);
-    init_screen_text_box(&equip_name_box, 425u, 122u, 208u, 22, 6,
-        small_med_font, 1);
-    init_screen_box(&weapon_slots, 7u, 153u, 191u, 272, 6);
-    init_screen_text_box(&equip_list_box, 207u, 122u, 209u, 303, 6,
-        small_med_font, 1);
-    init_screen_text_box(&equip_display_box, 425u, 153u, 208u, 272, 6,
-        small_font, 3);
-    init_screen_button(&buy_equip_button, 430u, 404u,
-      gui_strings[436], 6, med2_font, 1, 0);
+
+    init_equip_screen_boxes();
+
     init_screen_button(&unkn11_CANCEL_button, 628u, 404u,
       gui_strings[437], 6, med2_font, 1, 128);
-    init_screen_info_box(&equip_cost_box, 504u, 404u, 124u,
-      gui_strings[442], misc_text[0], 6, med_font, small_med_font, 1);
     init_screen_text_box(&agent_list_box, 7u, 122u, 196u, 303, 6,
         small_med_font, 1);
     init_screen_text_box(&mod_list_box, 425u, 153u, 208u, 272, 6,
@@ -7624,7 +7561,7 @@ void init_screen_boxes(void)
       gui_strings[418], 6, med2_font, 1, 0);
     init_screen_button(&unkn12_WEAPONS_MODS_button, 616u, 302u,
         gui_strings[450], 6, med2_font, 1, 128);
-    init_screen_button(research_list_buttons, 425u, 404u,
+    init_screen_button(&research_list_buttons[0], 425u, 404u,
      gui_strings[478], 6, med2_font, 1, 0);
     init_screen_button(&research_list_buttons[1], 425u, 404u,
       gui_strings[479], 6, med2_font, 1, 0);
@@ -7663,28 +7600,15 @@ void init_screen_boxes(void)
     unkn31_box.SpecialDrawFn = ac_show_mission_people_stats;
     unkn30_box.SpecialDrawFn = ac_show_mission_stats;
     slots_box.DrawTextFn = ac_show_title_box;
-    equip_display_box.DrawTextFn = ac_display_weapon_info;
-    equip_list_box.DrawTextFn = ac_show_weapon_list;
-    equip_cost_box.Text2 = equip_cost_text;
     research_unkn21_box.DrawTextFn = ac_show_unkn21_box;
     unkn12_WEAPONS_MODS_button.CallBackFn = ac_do_unkn12_WEAPONS_MODS;
-    weapon_slots.SpecialDrawFn = ac_show_weapon_slots;
     research_unkn21_box.ScrollWindowHeight = 180;
     research_unkn21_box.Buttons[0] = &research_submit_button;
     research_unkn21_box.Buttons[1] = &unkn12_WEAPONS_MODS_button;
-    equip_name_box.DrawTextFn = ac_show_weapon_name;
     slots_box.Text = gui_strings[408];
     slots_box.Font = med_font;
-    equip_name_box.Text = unkn41_text;
-    equip_list_box.ScrollWindowOffset += 27;
-    equip_name_box.Font = med_font;
     research_unkn21_box.ScrollWindowOffset += 41;
-    equip_display_box.Flags |= 0x0300;
-    equip_display_box.ScrollWindowHeight = 117;
-    equip_list_box.Flags |= 0x0300;
     research_submit_button.CallBackFn = ac_do_research_submit;
-    equip_list_box.BGColour = unk2_sprites[15].SHeight + 3;
-    equip_list_box.ScrollWindowHeight -= 27;
     research_progress_button.DrawTextFn = ac_show_title_box;
     research_submit_button.Text = gui_strings[417];
     research_progress_button.Text = gui_strings[449];
@@ -7706,22 +7630,13 @@ void init_screen_boxes(void)
         s = gui_strings[451];
     unkn12_WEAPONS_MODS_button.Width = my_string_width(s) + 4;
 
-    if (my_string_width(gui_strings[436]) <= my_string_width(gui_strings[407]))
-        s = gui_strings[407];
-    else
-        s = gui_strings[436];
-    buy_equip_button.Width = my_string_width(s) + 4;
-
     mod_list_box.DrawTextFn = ac_show_unkn18_box;
     agent_list_box.BGColour = 25;
-    equip_cost_box.X = buy_equip_button.Width + buy_equip_button.X + 4;
-    equip_cost_box.Width = 208 - buy_equip_button.Width - 14;
     agent_list_box.DrawTextFn = ac_show_agent_list;
     mod_list_box.Flags |= 0x0300;
     blokey_box.SpecialDrawFn = ac_show_blokey;
     mod_list_box.ScrollWindowHeight = 117;
     unkn13_SYSTEM_button.Text = gui_strings[366];
-    buy_equip_button.CallBackFn = ac_do_buy_equip;
     agent_list_box.ScrollWindowOffset += 27;
     unkn11_CANCEL_button.CallBackFn = ac_do_unkn11_CANCEL;
     unkn10_CALIBRATE_button.CallBackFn = ac_do_unkn10_CALIBRATE;
@@ -7755,39 +7670,6 @@ void update_menus(void)
 {
     asm volatile ("call ASM_update_menus\n"
         :  :  : "eax" );
-}
-
-void init_weapon_anim(ubyte weapon)
-{
-#if 0
-    asm volatile ("call ASM_init_weapon_anim\n"
-        : : "a" (weapon));
-#else
-    struct Campaign *p_campgn;
-    const char *campgn_mark;
-    const char *flic_dir;
-    ulong k;
-
-    p_campgn = &campaigns[background_type];
-    campgn_mark = p_campgn->ProjectorFnMk;
-    // TODO FNAMES the convention with mark char is broken for "s"
-    if (strcmp(campgn_mark, "s") == 0)
-        campgn_mark = "";
-
-    flic_dir = "data/equip";
-
-    if (weapon >= 32)
-    {
-        k = anim_slots[2];
-        sprintf(animations[k].Filename, "%s/mod-%02d%s.fli", flic_dir, (int)weapon - 32, campgn_mark);
-    }
-    else
-    {
-        k = anim_slots[2];
-        sprintf(animations[k].Filename, "%s/wep-%02d%s.fli", flic_dir, (int)weapon, campgn_mark);
-    }
-    flic_unkn03(2);
-#endif
 }
 
 void reload_background(void)
@@ -9780,19 +9662,9 @@ void show_menu_screen(void)
     if (change_screen == 4)
     {
         screentype = SCRT_CRYO;
-        heading_box.Text = gui_strings[369];
-        equip_cost_box.X = 430;
-        equip_cost_box.Width = 198;
-        equip_cost_box.Y = 383;
-        equip_name_box.Text = equip_name_text;
-        if ( selected_mod < 0 )
-            equip_name_text[0] = '\0';
-        else
-            init_weapon_anim(selected_mod + 32);
-        buy_equip_button.Text = gui_strings[436];
-        buy_equip_button.CallBackFn = do_buy_equip;
+        switch_shared_equip_screen_buttons_to_cybmod();
 
-        sprintf(equip_cost_text, "%d", 10 * (int)mod_defs[selected_mod + 1].Cost);
+        update_cybmod_cost_text();
         redraw_screen_flag = 1;
         int i;
         for (i = 0; i < 4; i++)
@@ -9809,33 +9681,8 @@ void show_menu_screen(void)
     if (change_screen == 5)
     {
         screentype = SCRT_EQUIP;
-        heading_box.Text = gui_strings[370];
-        equip_cost_box.X = buy_equip_button.Width + buy_equip_button.X + 4;
-        refresh_equip_list = 1;
-        equip_cost_box.Width = 208 - buy_equip_button.Width - 14;
-        equip_cost_box.Y = 404;
-        if ( selected_weapon < 0 )
-        {
-            equip_name_box.Text = 0;
-        }
-        else
-        {
-            init_weapon_anim(selected_weapon);
-            if ((research.WeaponsCompleted & (1 << selected_weapon)) || (login_control__State != 6))
-            {
-                struct Campaign *p_campgn;
-                p_campgn = &campaigns[background_type];
-                equip_name_box.Text = gui_strings[p_campgn->WeaponsTextIdShift + selected_weapon];
-            }
-            else
-            {
-                equip_name_box.Text = gui_strings[65];
-            }
-        }
-        if (buy_equip_button.CallBackFn == do_buy_equip)
-            sprintf(equip_cost_text, "%d", 100 * weapon_defs[selected_weapon + 1].Cost);
-        else
-            sprintf(equip_cost_text, "%d", 100 * weapon_defs[selected_weapon + 1].Cost >> 1);
+        switch_shared_equip_screen_buttons_to_equip();
+        update_equip_cost_text();
         redraw_screen_flag = 1;
         edit_flag = 0;
         change_screen = 0;
@@ -9896,21 +9743,19 @@ void show_menu_screen(void)
         reset_net_screen_boxes_flags();
         reset_world_screen_boxes_flags();
 
-        weapon_slots.Flags = 0x0001;
-        equip_name_box.Flags = 0x0001;
         slots_box.Flags = 0x0001;
         blokey_box.Flags = 0x0001;
         pause_unkn12_box.Flags = 0x0001;
         pause_unkn11_box.Flags = 0x0001;
-        equip_cost_box.Flags = 0x0001;
 
         reset_controls_screen_boxes_flags();
         reset_storage_screen_boxes_flags();
 
         mod_list_box.Flags = 0x0001 | 0x0100 | 0x0200;
         agent_list_box.Flags = 0x0001 | 0x0100 | 0x0200;
-        equip_list_box.Flags = 0x0001 | 0x0100 | 0x0200;
-        equip_display_box.Flags = 0x0001 | 0x0100 | 0x0200;
+
+        reset_equip_screen_boxes_flags();
+
         research_unkn21_box.Flags = 0x0001 | 0x0100 | 0x0200;
         int i;
         for (i = 0; i < 6; i++) {
@@ -9931,7 +9776,6 @@ void show_menu_screen(void)
         main_login_button.Flags |= 0x0001;
         main_load_button.Flags |= 0x0001;
         main_map_editor_button.Flags |= 0x0001;
-        buy_equip_button.Flags |= 0x0001;
         research_submit_button.Flags |= 0x0001;
         research_list_buttons[1].Flags |= 0x0001;
         unkn11_CANCEL_button.Flags |= 0x0001;
@@ -9939,6 +9783,7 @@ void show_menu_screen(void)
         unkn12_WEAPONS_MODS_button.Flags |= 0x0001;
 
         set_flag01_net_screen_boxes();
+        set_flag01_equip_screen_boxes();
 
         unkn10_SAVE_button.Flags |= 0x0001;
         unkn10_CALIBRATE_button.Flags |= 0x0001;
@@ -9948,8 +9793,6 @@ void show_menu_screen(void)
         set_flag01_world_screen_boxes();
 
         all_agents_button.Flags |= 0x0001;
-        if (screentype == SCRT_CRYO)
-            equip_cost_box.Flags |= 0x0008;
         if (!game_projector_speed && screentype != SCRT_99)
             play_sample_using_heap(0, 113, 127, 64, 100, 0, 3u);
     }

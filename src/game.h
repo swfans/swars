@@ -518,6 +518,9 @@ extern ushort next_used_lvl_objective;
 extern struct LevelMisc *game_level_miscs;
 extern ushort word_176E38;
 
+extern struct TbSprite *unk2_sprites;
+extern struct TbSprite *unk2_sprites_end;
+
 extern PrimObjectPoint *prim_object_points;
 extern PrimObjectFace *prim_object_faces;
 extern PrimObjectFace4 *prim_object_faces4;
@@ -623,8 +626,6 @@ extern ubyte unkn_flags_08;
 extern long dword_153194;
 extern ulong starting_cash_amounts[4];
 extern sbyte unkn_city_no;
-extern sbyte selected_weapon;
-extern sbyte selected_mod;
 extern ubyte group_types[8];
 extern ubyte byte_1C4AA3;
 extern ubyte net_unkn_pos_02;
@@ -640,7 +641,6 @@ extern ubyte restore_savegame;
 extern ubyte game_projector_speed;
 extern ubyte current_drawing_mod;
 extern ubyte mod_draw_states[4];
-extern char equip_cost_text[20];
 extern ubyte new_current_drawing_mod;
 extern ubyte refresh_equip_list;
 extern ubyte flic_mods[5];
@@ -700,9 +700,7 @@ extern ubyte unkn_option_3;
 extern ubyte unkn_option_4;
 extern ubyte byte_1C4A6F;
 
-extern char unkn41_text[];
 extern char net_unkn2_text[];
-extern char equip_name_text[];
 extern char brief_netscan_cost_text[];
 extern const char *misc_text[5];
 
@@ -729,13 +727,7 @@ extern struct ScreenButton main_load_button;
 extern struct ScreenBox pause_unkn11_box;
 extern struct ScreenBox pause_unkn12_box;
 extern struct ScreenTextBox slots_box;
-extern struct ScreenTextBox equip_name_box;
-extern struct ScreenBox weapon_slots;
-extern struct ScreenTextBox equip_list_box;
-extern struct ScreenTextBox equip_display_box;
-extern struct ScreenButton buy_equip_button;
 extern struct ScreenButton unkn11_CANCEL_button;
-extern struct ScreenInfoBox equip_cost_box;
 extern struct ScreenMenuBox unk11_menu[5];
 extern struct ScreenButton all_agents_button;
 extern struct ScreenTextBox research_unkn21_box;
@@ -772,6 +764,8 @@ void game_reset(void);
 void host_reset(void);
 void free_texturemaps(void);
 int joy_grip_shutdown(void);
+
+void flic_unkn03(ubyte a1);
 
 ubyte ac_show_title_box(struct ScreenTextBox *box);
 
