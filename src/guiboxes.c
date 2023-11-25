@@ -21,6 +21,18 @@
 #include "swlog.h"
 /******************************************************************************/
 
+TbBool in_box(short x, short y, short box_x, short box_y, short box_w, short box_h)
+{
+    return x > box_x && x < box_x + box_w
+        && y > box_y && y < box_y + box_h;
+}
+
+TbBool in_box_coords(short x, short y, short box_x1, short box_y1, short box_x2, short box_y2)
+{
+    return x > box_x1 && x < box_x2
+        && y > box_y1 && y < box_y2;
+}
+
 void init_screen_box(struct ScreenBox *box, ushort x, ushort y, ushort width, ushort height, int drawspeed)
 {
     asm volatile (

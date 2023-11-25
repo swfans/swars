@@ -31,10 +31,6 @@ extern "C" {
 #pragma pack()
 /******************************************************************************/
 
-void show_pause_screen(void);
-void init_pause_screen_boxes(void);
-void set_flag01_pause_screen_boxes(void);
-
 /******************************************************************************/
 #ifdef __cplusplus
 }

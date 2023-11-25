@@ -722,8 +722,6 @@ extern struct ScreenButton main_quit_button;
 extern struct ScreenButton main_login_button;
 extern struct ScreenButton main_map_editor_button;
 extern struct ScreenButton main_load_button;
-extern struct ScreenBox pause_unkn11_box;
-extern struct ScreenBox pause_unkn12_box;
 extern struct ScreenTextBox slots_box;
 extern struct ScreenButton unkn11_CANCEL_button;
 extern struct ScreenMenuBox unk11_menu[5];
@@ -763,6 +761,7 @@ int joy_grip_shutdown(void);
 void flic_unkn03(ubyte a1);
 
 ubyte ac_show_title_box(struct ScreenTextBox *box);
+void draw_text_purple_list2(int x, int y, const char *text, ushort line);
 
 void my_preprocess_text(char *text);
 ushort my_count_lines(const char *text);

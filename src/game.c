@@ -40,6 +40,7 @@
 #include "febrief.h"
 #include "fecntrls.h"
 #include "feequip.h"
+#include "felogin.h"
 #include "fenet.h"
 #include "feoptions.h"
 #include "fepause.h"
@@ -2187,18 +2188,6 @@ void draw_fourpack_items(int a1, ushort a2, short a3, short a4)
     asm volatile (
       "call ASM_draw_fourpack_items\n"
         : : "a" (a1), "d" (a2), "b" (a3), "c" (a4));
-}
-
-TbBool in_box(short x, short y, short box_x, short box_y, short box_w, short box_h)
-{
-    return x > box_x && x < box_x + box_w
-        && y > box_y && y < box_y + box_h;
-}
-
-TbBool in_box_coords(short x, short y, short box_x1, short box_y1, short box_x2, short box_y2)
-{
-    return x > box_x1 && x < box_x2
-        && y > box_y1 && y < box_y2;
 }
 
 sbyte find_nth_weapon_held(ushort index, ubyte n)
@@ -6491,90 +6480,6 @@ ubyte do_storage_NEW_MORTAL(ubyte click)
 #endif
 }
 
-ubyte show_campaigns_list(struct ScreenBox *box)
-{
-#if 0
-    ubyte ret;
-    asm volatile ("call ASM_show_campaigns_list\n"
-        : "=r" (ret) : "a" (box));
-    return ret;
-#else
-    int campgn, ncampgns;
-    struct Campaign *p_campgn;
-    const char *text;
-    int campgn_height, line_height, nlines;
-    int box_width, box_height;
-    int cy;
-
-    lbFontPtr = small_med_font;
-    box_width = box->Width - 8;
-    box_height = box->Height - 8;
-    my_set_text_window(box->X + 4, box->Y + 4, box_width, box_height);
-    byte_197160 = 4;
-    ncampgns = selectable_campaigns_count();
-    campgn_height = box_height / (ncampgns + 1);
-    cy = box_height / (ncampgns + 1);
-    line_height = font_height('A');
-    lbDisplay.DrawColour = 87;
-
-    for (campgn = 0; campgn < ncampgns; campgn++)
-    {
-        int hbeg;
-
-        p_campgn = &campaigns[campgn];
-        text = gui_strings[p_campgn->TextId];
-        nlines = my_count_lines(text);
-        if (background_type == campgn)
-            lbDisplay.DrawFlags = 0x140;
-        else
-            lbDisplay.DrawFlags = 0x100;
-        hbeg = cy - (4 * nlines - 4 + nlines * line_height) / 2;
-        lbDisplay.DrawFlags |= 0x8000;
-        text = gui_strings[642 + campgn];
-        draw_text_purple_list2(0, hbeg, text, 0);
-        lbDisplay.DrawFlags &= ~0x8000;
-        cy += campgn_height;
-    }
-
-    cy = box_height / (ncampgns + 1);
-    for (campgn = 0; campgn < ncampgns; campgn++)
-    {
-        int hbeg, hend;
-
-        p_campgn = &campaigns[campgn];
-        text = gui_strings[p_campgn->TextId];
-        nlines = my_count_lines(text);
-        hbeg = cy - (4 * nlines - 4 + nlines * line_height) / 2;
-        hend = hbeg + (line_height + 4) * (nlines - 1) + line_height;
-        if (lbDisplay.LeftButton)
-        {
-            short msy, msx;
-            short y1, y2;
-            msy = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MouseY : lbDisplay.MouseY;
-            msx = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MouseX : lbDisplay.MouseX;
-
-            y1 = text_window_y1 + hbeg;
-            y2 = text_window_y1 + hend;
-            if (in_box_coords(msx, msy, text_window_x1, y1, text_window_x2, y2))
-            {
-                lbDisplay.LeftButton = 0;
-                background_type = campgn;
-            }
-        }
-        cy += campgn_height;
-    }
-    return 0;
-#endif
-}
-
-ubyte show_login_name(struct ScreenBox *box)
-{
-    ubyte ret;
-    asm volatile ("call ASM_show_login_name\n"
-        : "=r" (ret) : "a" (box));
-    return ret;
-}
-
 void snprint_dh_time_duration(char *out, ulong outlen, long ndays, short nhours)
 {
     ulong days_strid;
@@ -7413,8 +7318,6 @@ ubyte show_settings_controls_list(struct ScreenBox *box)
     return ret;
 }
 
-ubyte ac_show_campaigns_list(struct ScreenBox *box);
-ubyte ac_show_login_name(struct ScreenBox *box);
 ubyte ac_show_mission_stats(struct ScreenBox *box);
 ubyte ac_show_mission_people_stats(struct ScreenBox *box);
 ubyte ac_show_research_graph(struct ScreenBox *box);
@@ -7425,16 +7328,62 @@ ubyte ac_show_blokey(struct ScreenBox *box);
 ubyte ac_show_unkn18_box(struct ScreenTextBox *box);
 ubyte ac_show_settings_controls_list(struct ScreenBox *box);
 
+void init_main_screen_boxes(void)
+{
+    init_screen_button(&main_map_editor_button, 260, 387,
+      gui_strings[443], 6, med2_font, 1, 0);
+    init_screen_button(&main_load_button, 260, 358,
+      gui_strings[496], 6, med2_font, 1, 0);
+    init_screen_button(&main_quit_button, 260, 329,
+      gui_strings[445], 6, med2_font, 1, 0);
+    init_screen_button(&main_login_button, 260, 300,
+      gui_strings[444], 6, med2_font, 1, 0);
+    main_map_editor_button.X = 319 - (main_map_editor_button.Width >> 1);
+    main_login_button.X = 319 - (main_login_button.Width >> 1);
+    main_quit_button.X = 319 - (main_quit_button.Width >> 1);
+    main_load_button.X = 319 - (main_load_button.Width >> 1);
+    main_map_editor_button.Border = 3;
+    main_login_button.Border = 3;
+    main_quit_button.Border = 3;
+    main_load_button.Border = 3;
+    main_map_editor_button.CallBackFn = ac_main_do_map_editor;
+    main_login_button.CallBackFn = ac_main_do_login_1;
+    main_quit_button.CallBackFn = ac_main_do_my_quit;
+    main_load_button.CallBackFn = ac_goto_savegame;
+    main_login_button.AccelKey = 28;
+    main_quit_button.AccelKey = 1;
+}
+
+void init_alert_screen_boxes(void)
+{
+    int w;
+
+    init_screen_text_box(&loading_INITIATING_box, 210u, 230u, 220u, 20, 6,
+        med_font, 1);
+    loading_INITIATING_box.Text = gui_strings[376];
+    lbFontPtr = med_font;
+    loading_INITIATING_box.Height = font_height(0x41u) + 8;
+    w = my_string_width(gui_strings[376]);
+    loading_INITIATING_box.Width = w + 9;
+    loading_INITIATING_box.X = 319 - ((w + 9) >> 1);
+    loading_INITIATING_box.Y = 219 - (loading_INITIATING_box.Height >> 1);
+
+    init_screen_box(&alert_box, 219u, 189u, 200u, 100, 6);
+    init_screen_button(&alert_OK_button, 10u, 269u,
+      gui_strings[458], 6, med2_font, 1, 0);
+    alert_OK_button.CallBackFn = ac_alert_OK;
+    alert_OK_button.X = 319 - (alert_OK_button.Width >> 1);
+}
 
 void init_screen_boxes(void)
 {
-    int i, w, h, val;
+    int i, h, val;
     const char *s;
 
     init_screen_text_box(&heading_box, 7u, 25u, 626u, 38, 6, big_font, 1);
-    init_screen_text_box(&loading_INITIATING_box, 210u, 230u, 220u, 20, 6,
-        med_font, 1);
+    init_alert_screen_boxes();
 
+    init_main_screen_boxes();
     init_brief_screen_boxes();
     init_world_screen_boxes();
 
@@ -7463,20 +7412,8 @@ void init_screen_boxes(void)
     init_controls_screen_boxes();
     init_storage_screen_boxes();
     init_net_screen_boxes();
+    init_login_screen_boxes();
 
-    init_screen_button(&main_map_editor_button, 260u, 387u,
-      gui_strings[443], 6, med2_font, 1, 0);
-    init_screen_button(&main_login_button, 260u, 300u,
-      gui_strings[444], 6, med2_font, 1, 0);
-
-    init_pause_screen_boxes();
-
-    init_screen_button(&main_quit_button, 260u, 329u,
-      gui_strings[445], 6, med2_font, 1, 0);
-    init_screen_button(&main_load_button, 260u, 358u,
-      gui_strings[496], 6, med2_font, 1, 0);
-    init_screen_box(&pause_unkn11_box, 219u, 159u, 200u, 100, 6);
-    init_screen_box(&pause_unkn12_box, 150u, 128u, 337u, 22, 6);
     init_screen_text_box(&slots_box, 7u, 122u, 191u, 22, 6, small_med_font, 1);
 
     init_equip_screen_boxes();
@@ -7521,38 +7458,27 @@ void init_screen_boxes(void)
         val++;
     }
 
-    init_screen_box(&alert_box, 219u, 189u, 200u, 100, 6);
-    init_screen_button(&alert_OK_button, 10u, 269u,
-      gui_strings[458], 6, med2_font, 1, 0);
     heading_box.DrawTextFn = ac_show_title_box;
-    alert_OK_button.CallBackFn = ac_alert_OK;
-    loading_INITIATING_box.Text = gui_strings[376];
     heading_box.Text = options_title_text;
 
-    lbFontPtr = med_font;
-    alert_OK_button.X = 319 - (alert_OK_button.Width >> 1);
-    loading_INITIATING_box.Height = font_height(0x41u) + 8;
-    w = my_string_width(gui_strings[376]);
-    loading_INITIATING_box.Width = w + 9;
-    loading_INITIATING_box.X = 319 - ((w + 9) >> 1);
-    loading_INITIATING_box.Y = 219 - (loading_INITIATING_box.Height >> 1);
     unkn31_box.SpecialDrawFn = ac_show_mission_people_stats;
     unkn30_box.SpecialDrawFn = ac_show_mission_stats;
     slots_box.DrawTextFn = ac_show_title_box;
-    research_unkn21_box.DrawTextFn = ac_show_unkn21_box;
     unkn12_WEAPONS_MODS_button.CallBackFn = ac_do_unkn12_WEAPONS_MODS;
+    unkn12_WEAPONS_MODS_button.Text = gui_strings[451];
+    slots_box.Text = gui_strings[408];
+    slots_box.Font = med_font;
+
+    research_unkn21_box.DrawTextFn = ac_show_unkn21_box;
     research_unkn21_box.ScrollWindowHeight = 180;
     research_unkn21_box.Buttons[0] = &research_submit_button;
     research_unkn21_box.Buttons[1] = &unkn12_WEAPONS_MODS_button;
-    slots_box.Text = gui_strings[408];
-    slots_box.Font = med_font;
     research_unkn21_box.ScrollWindowOffset += 41;
     research_submit_button.CallBackFn = ac_do_research_submit;
     research_progress_button.DrawTextFn = ac_show_title_box;
     research_submit_button.Text = gui_strings[417];
     research_progress_button.Text = gui_strings[449];
     research_unkn21_box.Flags |= 0x0300;
-    unkn12_WEAPONS_MODS_button.Text = gui_strings[451];
 
     lbFontPtr = med2_font;
     research_unkn20_box.SpecialDrawFn = ac_show_research_graph;
@@ -7576,30 +7502,12 @@ void init_screen_boxes(void)
     blokey_box.SpecialDrawFn = ac_show_blokey;
     mod_list_box.ScrollWindowHeight = 117;
     unkn13_SYSTEM_button.Text = gui_strings[366];
-    agent_list_box.ScrollWindowOffset += 27;
-    unkn11_CANCEL_button.CallBackFn = ac_do_unkn11_CANCEL;
-    agent_list_box.Flags |= 0x0300;
-    main_map_editor_button.X = 319 - (main_map_editor_button.Width >> 1);
     unkn13_SYSTEM_button.DrawTextFn = ac_show_title_box;
-    main_login_button.X = 319 - (main_login_button.Width >> 1);
+    unkn11_CANCEL_button.CallBackFn = ac_do_unkn11_CANCEL;
+    agent_list_box.ScrollWindowOffset += 27;
+    agent_list_box.Flags |= 0x0300;
     agent_list_box.ScrollWindowHeight -= 27;
-    main_quit_button.X = 319 - (main_quit_button.Width >> 1);
-    main_load_button.X = 319 - (main_load_button.Width >> 1);
-    main_map_editor_button.Border = 3;
-    main_login_button.Border = 3;
-    main_quit_button.Border = 3;
-    main_load_button.Border = 3;
-    main_map_editor_button.CallBackFn = ac_main_do_map_editor;
-    main_login_button.CallBackFn = ac_main_do_login_1;
-    main_quit_button.CallBackFn = ac_main_do_my_quit;
-    pause_unkn11_box.SpecialDrawFn = ac_show_campaigns_list;
-    pause_unkn12_box.SpecialDrawFn = ac_show_login_name;
-    main_load_button.CallBackFn = ac_goto_savegame;
-    pause_unkn12_box.Width = my_string_width(gui_strings[454]) + 254;
-    main_login_button.AccelKey = 28;
     alert_OK_button.AccelKey = 28;
-    pause_unkn12_box.X = 319 - (pause_unkn12_box.Width >> 1);
-    main_quit_button.AccelKey = 1;
 }
 
 void update_menus(void)
@@ -9493,7 +9401,7 @@ void show_menu_screen(void)
         show_type11_screen();
         break;
     case SCRT_PAUSE:
-        show_pause_screen();
+        show_login_screen();
         break;
     case SCRT_B:
         show_type11_screen();
@@ -9681,9 +9589,8 @@ void show_menu_screen(void)
 
         slots_box.Flags = 0x0001;
         blokey_box.Flags = 0x0001;
-        pause_unkn12_box.Flags = 0x0001;
-        pause_unkn11_box.Flags = 0x0001;
 
+        reset_login_screen_boxes_flags();
         reset_controls_screen_boxes_flags();
         reset_storage_screen_boxes_flags();
 
@@ -9703,7 +9610,7 @@ void show_menu_screen(void)
         reset_options_screen_boxes_flags();
 
         set_flag01_storage_screen_boxes();
-        set_flag01_pause_screen_boxes();
+        set_flag01_login_screen_boxes();
 
         main_quit_button.Flags |= 0x0001;
         main_login_button.Flags |= 0x0001;

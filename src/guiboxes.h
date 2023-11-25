@@ -133,6 +133,9 @@ struct ScreenTextBox {
 #pragma pack()
 /******************************************************************************/
 
+TbBool in_box(short x, short y, short box_x, short box_y, short box_w, short box_h);
+TbBool in_box_coords(short x, short y, short box_x1, short box_y1, short box_x2, short box_y2);
+
 void init_screen_box(struct ScreenBox *box, ushort x, ushort y,
   ushort width, ushort height, int drawspeed);
 void init_screen_text_box(struct ScreenTextBox *box, ushort x, ushort y,
