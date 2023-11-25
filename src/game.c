@@ -41,6 +41,7 @@
 #include "fecntrls.h"
 #include "fenet.h"
 #include "feoptions.h"
+#include "fepause.h"
 #include "festorage.h"
 #include "feworld.h"
 #include "building.h"
@@ -4749,8 +4750,6 @@ ubyte show_title_box(struct ScreenTextBox *box)
     return ret;
 }
 
-ubyte ac_show_title_box(struct ScreenTextBox *box);
-
 void check_buy_sell_button(void)
 {
     asm volatile ("call ASM_check_buy_sell_button\n"
@@ -5317,9 +5316,8 @@ ubyte load_game_slot(ubyte click)
     init_weapon_text();
 
     unkn13_SYSTEM_button.Flags &= ~(0x8000|0x2000|0x0004);
-    unkn35_box.Flags &= ~(0x8000|0x2000|0x0004);
-    unkn39_box.Flags &= ~(0x8000|0x2000|0x0004);
-    storage_slots_box.Flags &= ~(0x8000|0x2000|0x0004);
+    clear_someflags_controls_screen_boxes();
+    clear_someflags_storage_screen_boxes();
     if (save_slot == 0)
     {
         ingame.Flags |= 0x10;
@@ -5366,14 +5364,6 @@ ubyte goto_savegame(ubyte click)
 {
     ubyte ret;
     asm volatile ("call ASM_goto_savegame\n"
-        : "=r" (ret) : "a" (click));
-    return ret;
-}
-
-ubyte do_abort_2(ubyte click)
-{
-    ubyte ret;
-    asm volatile ("call ASM_do_abort_2\n"
         : "=r" (ret) : "a" (click));
     return ret;
 }
@@ -6472,8 +6462,6 @@ ubyte ac_do_sysmnu_button(ubyte click);
 ubyte ac_main_do_my_quit(ubyte click);
 ubyte ac_main_do_login_1(ubyte click);
 ubyte ac_goto_savegame(ubyte click);
-ubyte ac_do_abort_2(ubyte click);
-ubyte ac_do_login_2(ubyte click);
 ubyte ac_main_do_map_editor(ubyte click);
 ubyte ac_do_unkn11_CANCEL(ubyte click);
 ubyte ac_do_buy_equip(ubyte click);
@@ -6544,46 +6532,6 @@ ubyte do_storage_NEW_MORTAL(ubyte click)
 
     if (new_mail)
       play_sample_using_heap(0, 119 + (LbRandomAnyShort() % 3), 127, 64, 100, 0, 3u);
-
-    return 1;
-#endif
-}
-
-ubyte do_login_2(ubyte click)
-{
-#if 0
-    ubyte ret;
-    asm volatile ("call ASM_do_login_2\n"
-        : "=r" (ret) : "a" (click));
-    return ret;
-#else
-    if (strlen(login_name) == 0)
-        return 0;
-    strtocapwords(login_name);
-
-    read_user_settings();
-
-    update_options_screen_state();
-
-    if (in_network_game)
-    {
-        screentype = 7;
-        game_system_screen = 3;
-        reload_background_flag = 1;
-        edit_flag = 0;
-        return 1;
-    }
-
-    if ((ingame.Flags & GamF_Unkn0010) != 0)
-    {
-        sysmnu_button_enable(1,2);
-        ingame.Flags &= ~GamF_Unkn0010;
-    }
-
-    campaign_new_game_prepare();
-
-    if (new_mail)
-        play_sample_using_heap(0, 119 + (LbRandomAnyShort() % 3), 127, 64, 100, 0, 3u);
 
     return 1;
 #endif
@@ -7495,14 +7443,6 @@ ubyte show_netgame_unkn1(struct ScreenBox *box)
     return ret;
 }
 
-ubyte show_menu_storage_slots_box(struct ScreenTextBox *box)
-{
-    ubyte ret;
-    asm volatile ("call ASM_show_menu_storage_slots_box\n"
-        : "=r" (ret) : "a" (box));
-    return ret;
-}
-
 ubyte display_weapon_info(struct ScreenTextBox *box)
 {
     ubyte ret;
@@ -7576,7 +7516,6 @@ ubyte ac_show_unkn21_box(struct ScreenTextBox *box);
 ubyte ac_show_unkn04(struct ScreenBox *box);
 ubyte ac_show_unkn33_box(struct ScreenBox *box);
 ubyte ac_show_netgame_unkn1(struct ScreenBox *box);
-ubyte ac_show_menu_storage_slots_box(struct ScreenTextBox *box);
 ubyte ac_display_weapon_info(struct ScreenTextBox *box);
 ubyte ac_show_weapon_name(struct ScreenTextBox *box);
 ubyte ac_show_weapon_list(struct ScreenTextBox *box);
@@ -7601,10 +7540,8 @@ void init_screen_boxes(void)
 
     init_screen_box(&unkn30_box, 7u, 72u, 518u, 172, 6);
     init_screen_box(&unkn31_box, 7u, 253u, 518u, 173, 6);
-    init_screen_text_box(&unkn13_SYSTEM_button, 7u, 25u, 197u, 38, 6, big_font,
-        1);
-    init_screen_text_box(&unkn35_box, 213u, 25u, 420u, 38, 6, big_font, 1);
-    init_screen_box(&unkn39_box, 213u, 72u, 420u, 354, 6);
+    init_screen_text_box(&unkn13_SYSTEM_button, 7u, 25u, 197u, 38, 6,
+      big_font, 1);
 
     h = 72;
     for (i = 0; i < 3; i++)
@@ -7614,8 +7551,6 @@ void init_screen_boxes(void)
     }
 
     init_options_screen_boxes();
-
-    init_screen_text_box(&storage_slots_box, 213u, 72u, 420u, 354, 6, med2_font, 1);
 
     val = 0;
     h = 72;
@@ -7646,10 +7581,9 @@ void init_screen_boxes(void)
       gui_strings[443], 6, med2_font, 1, 0);
     init_screen_button(&main_login_button, 260u, 300u,
       gui_strings[444], 6, med2_font, 1, 0);
-    init_screen_button(&pause_continue_button, 260u, 300u,
-      gui_strings[455], 6, med2_font, 1, 0);
-    init_screen_button(&pause_abort_button, 260u, 329u,
-      gui_strings[388], 6, med2_font, 1, 0);
+
+    init_pause_screen_boxes();
+
     init_screen_button(&main_quit_button, 260u, 329u,
       gui_strings[445], 6, med2_font, 1, 0);
     init_screen_button(&main_load_button, 260u, 358u,
@@ -7664,19 +7598,19 @@ void init_screen_boxes(void)
         small_med_font, 1);
     init_screen_text_box(&equip_display_box, 425u, 153u, 208u, 272, 6,
         small_font, 3);
-    init_screen_button(&buy_equip_button, 430u, 404u, gui_strings[436], 6,
-        med2_font, 1, 0);
-    init_screen_button(&unkn11_CANCEL_button, 628u, 404u, gui_strings[437], 6,
-        med2_font, 1, 128);
-    init_screen_info_box(&equip_cost_box, 504u, 404u, 124u, gui_strings[442],
-        misc_text[0], 6, med_font, small_med_font, 1);
+    init_screen_button(&buy_equip_button, 430u, 404u,
+      gui_strings[436], 6, med2_font, 1, 0);
+    init_screen_button(&unkn11_CANCEL_button, 628u, 404u,
+      gui_strings[437], 6, med2_font, 1, 128);
+    init_screen_info_box(&equip_cost_box, 504u, 404u, 124u,
+      gui_strings[442], misc_text[0], 6, med_font, small_med_font, 1);
     init_screen_text_box(&agent_list_box, 7u, 122u, 196u, 303, 6,
         small_med_font, 1);
     init_screen_text_box(&mod_list_box, 425u, 153u, 208u, 272, 6,
         small_med_font, 1);
     init_screen_box(&blokey_box, 212u, 122u, 203u, 303, 6);
-    init_screen_button(&all_agents_button, 7u, 96u, gui_strings[534], 6,
-        med2_font, 1, 0);
+    init_screen_button(&all_agents_button, 7u, 96u,
+      gui_strings[534], 6, med2_font, 1, 0);
     all_agents_button.Width = 165;
     all_agents_button.RadioValue = 4;
     all_agents_button.Flags |= 0x0100;
@@ -7686,14 +7620,14 @@ void init_screen_boxes(void)
         med_font, 1);
     init_screen_text_box(&research_unkn21_box, 425u, 72u, 208u, 353, 6,
         small_med_font, 3);
-    init_screen_button(&research_submit_button, 430u, 302u, gui_strings[418], 6,
-        med2_font, 1, 0);
+    init_screen_button(&research_submit_button, 430u, 302u,
+      gui_strings[418], 6, med2_font, 1, 0);
     init_screen_button(&unkn12_WEAPONS_MODS_button, 616u, 302u,
         gui_strings[450], 6, med2_font, 1, 128);
-    init_screen_button(research_list_buttons, 425u, 404u, gui_strings[478], 6,
-        med2_font, 1, 0);
-    init_screen_button(&research_list_buttons[1], 425u, 404u, gui_strings[479],
-        6, med2_font, 1, 0);
+    init_screen_button(research_list_buttons, 425u, 404u,
+     gui_strings[478], 6, med2_font, 1, 0);
+    init_screen_button(&research_list_buttons[1], 425u, 404u,
+      gui_strings[479], 6, med2_font, 1, 0);
     research_list_buttons[0].X = ((104 - research_list_buttons[0].Width) >> 1)
         + 425;
     research_list_buttons[1].X = ((104 - research_list_buttons[1].Width) >> 1)
@@ -7709,8 +7643,8 @@ void init_screen_boxes(void)
     }
 
     init_screen_box(&alert_box, 219u, 189u, 200u, 100, 6);
-    init_screen_button(&alert_OK_button, 10u, 269u, gui_strings[458], 6,
-        med2_font, 1, 0);
+    init_screen_button(&alert_OK_button, 10u, 269u,
+      gui_strings[458], 6, med2_font, 1, 0);
     heading_box.DrawTextFn = ac_show_title_box;
     alert_OK_button.CallBackFn = ac_alert_OK;
     loading_INITIATING_box.Text = gui_strings[376];
@@ -7719,14 +7653,8 @@ void init_screen_boxes(void)
     alert_OK_button.X = 319 - (alert_OK_button.Width >> 1);
     loading_INITIATING_box.Height = font_height(0x41u) + 8;
     w = my_string_width(gui_strings[376]);
-    storage_slots_box.DrawTextFn = ac_show_menu_storage_slots_box;
-    storage_slots_box.ScrollWindowHeight = 208;
-    storage_slots_box.Lines = 99;
     loading_INITIATING_box.Width = w + 9;
-    storage_slots_box.Flags |= 0x0300;
     unkn33_box.SpecialDrawFn = ac_show_unkn33_box;
-    storage_slots_box.BGColour = 26;
-    storage_slots_box.ScrollWindowOffset += 27;
     loading_INITIATING_box.X = 319 - ((w + 9) >> 1);
     loading_INITIATING_box.Y = 219 - (loading_INITIATING_box.Height >> 1);
     unkn04_boxes[0].SpecialDrawFn = ac_show_unkn04;
@@ -7762,6 +7690,7 @@ void init_screen_boxes(void)
     research_progress_button.Text = gui_strings[449];
     research_unkn21_box.Flags |= 0x0300;
     unkn12_WEAPONS_MODS_button.Text = gui_strings[451];
+
     lbFontPtr = med2_font;
     research_unkn20_box.SpecialDrawFn = ac_show_research_graph;
 
@@ -7800,17 +7729,12 @@ void init_screen_boxes(void)
     unkn10_CONTROLS_button.CallBackFn = ac_do_unkn10_CONTROLS;
     main_map_editor_button.X = 319 - (main_map_editor_button.Width >> 1);
     unkn13_SYSTEM_button.DrawTextFn = ac_show_title_box;
-    unkn35_box.DrawTextFn = ac_show_title_box;
     main_login_button.X = 319 - (main_login_button.Width >> 1);
-    pause_continue_button.X = 319 - (pause_continue_button.Width >> 1);
     agent_list_box.ScrollWindowHeight -= 27;
-    pause_abort_button.X = 319 - (pause_abort_button.Width >> 1);
     main_quit_button.X = 319 - (main_quit_button.Width >> 1);
     unkn10_SAVE_button.CallBackFn = ac_do_unkn10_SAVE;
     main_load_button.X = 319 - (main_load_button.Width >> 1);
     main_map_editor_button.Border = 3;
-    pause_abort_button.Border = 3;
-    pause_continue_button.Border = 3;
     main_login_button.Border = 3;
     main_quit_button.Border = 3;
     main_load_button.Border = 3;
@@ -7819,15 +7743,11 @@ void init_screen_boxes(void)
     main_quit_button.CallBackFn = ac_main_do_my_quit;
     pause_unkn11_box.SpecialDrawFn = ac_show_campaigns_list;
     pause_unkn12_box.SpecialDrawFn = ac_show_login_name;
-    pause_continue_button.CallBackFn = ac_do_login_2;
     main_load_button.CallBackFn = ac_goto_savegame;
-    pause_abort_button.CallBackFn = ac_do_abort_2;
     pause_unkn12_box.Width = my_string_width(gui_strings[454]) + 254;
-    pause_continue_button.AccelKey = 28;
     main_login_button.AccelKey = 28;
     alert_OK_button.AccelKey = 28;
     pause_unkn12_box.X = 319 - (pause_unkn12_box.Width >> 1);
-    pause_abort_button.AccelKey = 1;
     main_quit_button.AccelKey = 1;
 }
 
@@ -8628,31 +8548,6 @@ void show_main_screen(void)
     //main_login_button.DrawFn(&main_login_button); -- incompatible calling convention
     asm volatile ("call *%1\n"
         : : "a" (&main_login_button), "g" (main_login_button.DrawFn));
-}
-
-void show_pause_screen(void)
-{
-    if ((game_projector_speed && (pause_unkn12_box.Flags & 0x01)) ||
-      (lbKeyOn[KC_SPACE] && !edit_flag))
-    {
-        lbKeyOn[KC_SPACE] = 0;
-        pause_unkn11_box.Flags |= 0x0002;
-        pause_unkn12_box.Flags |= 0x0002;
-        pause_abort_button.Flags |= 0x0002;
-        pause_continue_button.Flags |= 0x0002;
-    }
-    //pause_unkn12_box.DrawFn(&pause_unkn12_box); -- incompatible calling convention
-    asm volatile ("call *%1\n"
-        : : "a" (&pause_unkn12_box), "g" (pause_unkn12_box.DrawFn));
-    //pause_unkn11_box.DrawFn(&pause_unkn11_box); -- incompatible calling convention
-    asm volatile ("call *%1\n"
-        : : "a" (&pause_unkn11_box), "g" (pause_unkn11_box.DrawFn));
-    //pause_continue_button.DrawFn(&pause_continue_button); -- incompatible calling convention
-    asm volatile ("call *%1\n"
-        : : "a" (&pause_continue_button), "g" (pause_continue_button.DrawFn));
-    //pause_abort_button.DrawFn(&pause_abort_button); -- incompatible calling convention
-    asm volatile ("call *%1\n"
-        : : "a" (&pause_abort_button), "g" (pause_abort_button.DrawFn));
 }
 
 void show_alert_box(void)
@@ -9992,9 +9887,7 @@ void show_menu_screen(void)
         reset_brief_screen_boxes_flags();
 
         heading_box.Flags = 0x0001;
-        unkn35_box.Flags = 0x0001;
         unkn13_SYSTEM_button.Flags = 0x0001;
-        unkn39_box.Flags = 0x0001;
         unkn31_box.Flags = 0x0001;
         research_unkn20_box.Flags = 0x0001;
         research_progress_button.Flags = 0x0001;
@@ -10010,8 +9903,10 @@ void show_menu_screen(void)
         pause_unkn12_box.Flags = 0x0001;
         pause_unkn11_box.Flags = 0x0001;
         equip_cost_box.Flags = 0x0001;
+
         reset_controls_screen_boxes_flags();
-        storage_slots_box.Flags = 0x0001 | 0x0100 | 0x0200;
+        reset_storage_screen_boxes_flags();
+
         mod_list_box.Flags = 0x0001 | 0x0100 | 0x0200;
         agent_list_box.Flags = 0x0001 | 0x0100 | 0x0200;
         equip_list_box.Flags = 0x0001 | 0x0100 | 0x0200;
@@ -10030,11 +9925,10 @@ void show_menu_screen(void)
         reset_options_screen_boxes_flags();
 
         set_flag01_storage_screen_boxes();
+        set_flag01_pause_screen_boxes();
 
         main_quit_button.Flags |= 0x0001;
-        pause_continue_button.Flags |= 0x0001;
         main_login_button.Flags |= 0x0001;
-        pause_abort_button.Flags |= 0x0001;
         main_load_button.Flags |= 0x0001;
         main_map_editor_button.Flags |= 0x0001;
         buy_equip_button.Flags |= 0x0001;

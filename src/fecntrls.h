@@ -33,6 +33,7 @@ extern "C" {
 
 void init_controls_screen_boxes(void);
 void reset_controls_screen_boxes_flags(void);
+void clear_someflags_controls_screen_boxes(void);
 
 /******************************************************************************/
 #ifdef __cplusplus

@@ -717,9 +717,6 @@ extern ushort text_window_y2;
 extern struct ScreenTextBox heading_box;
 extern struct ScreenTextBox loading_INITIATING_box;
 extern struct ScreenTextBox unkn13_SYSTEM_button;
-extern struct ScreenTextBox unkn35_box;
-extern struct ScreenBox unkn39_box;
-extern struct ScreenTextBox storage_slots_box;
 extern struct ScreenButton sysmnu_buttons[6];
 extern struct ScreenBox unkn04_boxes[3];
 extern struct ScreenBox unkn33_box;
@@ -727,8 +724,6 @@ extern struct ScreenBox unkn30_box;
 extern struct ScreenBox unkn31_box;
 extern struct ScreenButton main_quit_button;
 extern struct ScreenButton main_login_button;
-extern struct ScreenButton pause_continue_button;
-extern struct ScreenButton pause_abort_button;
 extern struct ScreenButton main_map_editor_button;
 extern struct ScreenButton main_load_button;
 extern struct ScreenBox pause_unkn11_box;
@@ -778,10 +773,16 @@ void host_reset(void);
 void free_texturemaps(void);
 int joy_grip_shutdown(void);
 
+ubyte ac_show_title_box(struct ScreenTextBox *box);
+
 void my_preprocess_text(char *text);
 ushort my_count_lines(const char *text);
+void read_user_settings(void);
+void sysmnu_button_enable(int btnno, int count);
+void sysmnu_button_disable(int btnno, int count);
 
 TbBool player_try_spend_money(long cost);
+void campaign_new_game_prepare(void);
 
 #ifdef __cplusplus
 };

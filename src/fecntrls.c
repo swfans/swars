@@ -21,6 +21,7 @@
 #include "guiboxes.h"
 #include "swlog.h"
 /******************************************************************************/
+extern struct ScreenBox controls_keylist_box;
 extern struct ScreenBox controls_joystick_box;
 
 ubyte ac_show_controls_joystick_box(struct ScreenBox *box);
@@ -35,13 +36,21 @@ ubyte show_controls_joystick_box(struct ScreenBox *box)
 
 void init_controls_screen_boxes(void)
 {
+    init_screen_box(&controls_keylist_box, 213u, 72u, 420u, 354, 6);
+
     init_screen_box(&controls_joystick_box, 7u, 252u, 197u, 174, 6);
     controls_joystick_box.SpecialDrawFn = ac_show_controls_joystick_box;
 }
 
 void reset_controls_screen_boxes_flags(void)
 {
+    controls_keylist_box.Flags = 0x0001;
     controls_joystick_box.Flags = 0x0001;
+}
+
+void clear_someflags_controls_screen_boxes(void)
+{
+    controls_keylist_box.Flags &= ~(0x8000|0x2000|0x0004);
 }
 
 /******************************************************************************/
