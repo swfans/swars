@@ -31,6 +31,7 @@
 /******************************************************************************/
 extern struct ScreenTextBox equip_name_box;
 extern struct ScreenBox weapon_slots;
+extern struct ScreenTextBox equip_list_head_box;
 extern struct ScreenTextBox equip_list_box;
 extern struct ScreenTextBox equip_display_box;
 extern struct ScreenButton buy_equip_button;
@@ -193,13 +194,15 @@ void init_equip_screen_boxes(void)
 {
     const char *s;
 
-    init_screen_text_box(&equip_name_box, 425u, 122u, 208u, 22, 6,
-        small_med_font, 1);
+    init_screen_text_box(&equip_list_head_box, 7u, 122u, 191u, 22,
+      6, small_med_font, 1);
+    init_screen_text_box(&equip_name_box, 425u, 122u, 208u, 22,
+      6, small_med_font, 1);
     init_screen_box(&weapon_slots, 7u, 153u, 191u, 272, 6);
-    init_screen_text_box(&equip_list_box, 207u, 122u, 209u, 303, 6,
-        small_med_font, 1);
-    init_screen_text_box(&equip_display_box, 425u, 153u, 208u, 272, 6,
-        small_font, 3);
+    init_screen_text_box(&equip_list_box, 207u, 122u, 209u, 303,
+      6, small_med_font, 1);
+    init_screen_text_box(&equip_display_box, 425u, 153u, 208u, 272,
+      6, small_font, 3);
     init_screen_button(&buy_equip_button, 430u, 404u,
       gui_strings[436], 6, med2_font, 1, 0);
     init_screen_info_box(&equip_cost_box, 504u, 404u, 124u,
@@ -216,6 +219,9 @@ void init_equip_screen_boxes(void)
     equip_display_box.ScrollWindowHeight = 117;
     equip_cost_box.X = buy_equip_button.Width + buy_equip_button.X + 4;
     equip_cost_box.Width = 208 - buy_equip_button.Width - 14;
+    equip_list_head_box.DrawTextFn = ac_show_title_box;
+    equip_list_head_box.Text = gui_strings[408];
+    equip_list_head_box.Font = med_font;
     equip_list_box.Flags |= 0x0300;
     equip_list_box.BGColour = unk2_sprites[15].SHeight + 3;
     equip_list_box.ScrollWindowHeight -= 27;
@@ -231,6 +237,7 @@ void init_equip_screen_boxes(void)
 
 void reset_equip_screen_boxes_flags(void)
 {
+    equip_list_head_box.Flags = 0x0001;
     weapon_slots.Flags = 0x0001;
     equip_name_box.Flags = 0x0001;
     equip_cost_box.Flags = 0x0001;

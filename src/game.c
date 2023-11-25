@@ -7373,6 +7373,7 @@ void init_alert_screen_boxes(void)
       gui_strings[458], 6, med2_font, 1, 0);
     alert_OK_button.CallBackFn = ac_alert_OK;
     alert_OK_button.X = 319 - (alert_OK_button.Width >> 1);
+    alert_OK_button.AccelKey = 28;
 }
 
 void init_screen_boxes(void)
@@ -7413,9 +7414,6 @@ void init_screen_boxes(void)
     init_storage_screen_boxes();
     init_net_screen_boxes();
     init_login_screen_boxes();
-
-    init_screen_text_box(&slots_box, 7u, 122u, 191u, 22, 6, small_med_font, 1);
-
     init_equip_screen_boxes();
 
     init_screen_button(&unkn11_CANCEL_button, 628u, 404u,
@@ -7463,11 +7461,8 @@ void init_screen_boxes(void)
 
     unkn31_box.SpecialDrawFn = ac_show_mission_people_stats;
     unkn30_box.SpecialDrawFn = ac_show_mission_stats;
-    slots_box.DrawTextFn = ac_show_title_box;
     unkn12_WEAPONS_MODS_button.CallBackFn = ac_do_unkn12_WEAPONS_MODS;
     unkn12_WEAPONS_MODS_button.Text = gui_strings[451];
-    slots_box.Text = gui_strings[408];
-    slots_box.Font = med_font;
 
     research_unkn21_box.DrawTextFn = ac_show_unkn21_box;
     research_unkn21_box.ScrollWindowHeight = 180;
@@ -7507,7 +7502,6 @@ void init_screen_boxes(void)
     agent_list_box.ScrollWindowOffset += 27;
     agent_list_box.Flags |= 0x0300;
     agent_list_box.ScrollWindowHeight -= 27;
-    alert_OK_button.AccelKey = 28;
 }
 
 void update_menus(void)
@@ -9587,7 +9581,6 @@ void show_menu_screen(void)
         reset_net_screen_boxes_flags();
         reset_world_screen_boxes_flags();
 
-        slots_box.Flags = 0x0001;
         blokey_box.Flags = 0x0001;
 
         reset_login_screen_boxes_flags();

@@ -722,7 +722,6 @@ extern struct ScreenButton main_quit_button;
 extern struct ScreenButton main_login_button;
 extern struct ScreenButton main_map_editor_button;
 extern struct ScreenButton main_load_button;
-extern struct ScreenTextBox slots_box;
 extern struct ScreenButton unkn11_CANCEL_button;
 extern struct ScreenMenuBox unk11_menu[5];
 extern struct ScreenButton all_agents_button;
