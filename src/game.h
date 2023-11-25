@@ -716,8 +716,6 @@ extern struct ScreenTextBox heading_box;
 extern struct ScreenTextBox loading_INITIATING_box;
 extern struct ScreenTextBox unkn13_SYSTEM_button;
 extern struct ScreenButton sysmnu_buttons[6];
-extern struct ScreenBox unkn04_boxes[3];
-extern struct ScreenBox unkn33_box;
 extern struct ScreenBox unkn30_box;
 extern struct ScreenBox unkn31_box;
 extern struct ScreenButton main_quit_button;

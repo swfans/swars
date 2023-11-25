@@ -23,33 +23,62 @@
 #include "game.h"
 #include "swlog.h"
 /******************************************************************************/
-extern char options_title_text[];
+extern struct ScreenBox audio_tracks_box;
+extern struct ScreenBox audio_volume_boxes[3];
 extern struct ScreenButton options_audio_buttons[7];
+
 extern struct ScreenButton options_gfx_buttons[16];
+
+extern char options_title_text[];
 
 ubyte ac_change_panel_permutation(ubyte click);
 ubyte ac_change_trenchcoat_preference(ubyte click);
+ubyte ac_show_audio_tracks_box(struct ScreenBox *box);
+ubyte ac_show_audio_volume_box(struct ScreenBox *box);
+
+ubyte show_audio_volume_box(struct ScreenBox *box)
+{
+    ubyte ret;
+    asm volatile ("call ASM_show_audio_volume_box\n"
+        : "=r" (ret) : "a" (box));
+    return ret;
+}
+
+ubyte show_audio_tracks_box(struct ScreenBox *box)
+{
+    ubyte ret;
+    asm volatile ("call ASM_show_audio_tracks_box\n"
+        : "=r" (ret) : "a" (box));
+    return ret;
+}
 
 void init_options_screen_boxes(void)
 {
-    int i;
+    int i, h;
     int val;
 
-    init_screen_box(&unkn33_box, 213u, 285u, 420u, 62, 6);
-    init_screen_button(&options_audio_buttons[0], 393u, 289u, gui_strings[531], 6,
-        med2_font, 1, 0);
-    init_screen_button(&options_audio_buttons[1], 458u, 289u, gui_strings[532],
-        6, med2_font, 1, 0);
-    init_screen_button(&options_audio_buttons[2], 523u, 289u, gui_strings[533],
-        6, med2_font, 1, 0);
-    init_screen_button(&options_audio_buttons[3], 458u, 307u, gui_strings[531],
-        6, med2_font, 1, 0);
-    init_screen_button(&options_audio_buttons[4], 523u, 307u, gui_strings[532],
-        6, med2_font, 1, 0);
-    init_screen_button(&options_audio_buttons[5], 458u, 325u, gui_strings[478],
-        6, med2_font, 1, 0);
-    init_screen_button(&options_audio_buttons[6], 523u, 325u, gui_strings[479],
-        6, med2_font, 1, 0);
+    h = 72;
+    for (i = 0; i < 3; i++)
+    {
+        init_screen_box(&audio_volume_boxes[i], 213, h, 420, 62, 6);
+        h += 71;
+    }
+    init_screen_box(&audio_tracks_box, 213, h, 420, 62, 6);
+
+    init_screen_button(&options_audio_buttons[0], 393u, 289u,
+      gui_strings[531], 6, med2_font, 1, 0);
+    init_screen_button(&options_audio_buttons[1], 458u, 289u,
+      gui_strings[532], 6, med2_font, 1, 0);
+    init_screen_button(&options_audio_buttons[2], 523u, 289u,
+      gui_strings[533], 6, med2_font, 1, 0);
+    init_screen_button(&options_audio_buttons[3], 458u, 307u,
+      gui_strings[531], 6, med2_font, 1, 0);
+    init_screen_button(&options_audio_buttons[4], 523u, 307u,
+      gui_strings[532], 6, med2_font, 1, 0);
+    init_screen_button(&options_audio_buttons[5], 458u, 325u,
+      gui_strings[478], 6, med2_font, 1, 0);
+    init_screen_button(&options_audio_buttons[6], 523u, 325u,
+      gui_strings[479], 6, med2_font, 1, 0);
 
     val = 2;
     for (i = 0; i < 3; i++)
@@ -74,35 +103,39 @@ void init_options_screen_boxes(void)
         options_audio_buttons[i].RadioValue = val++;
         options_audio_buttons[i].Flags |= 0x0100;
     }
+    audio_volume_boxes[0].SpecialDrawFn = ac_show_audio_volume_box;
+    audio_volume_boxes[1].SpecialDrawFn = ac_show_audio_volume_box;
+    audio_volume_boxes[2].SpecialDrawFn = ac_show_audio_volume_box;
+    audio_tracks_box.SpecialDrawFn = ac_show_audio_tracks_box;
 
-    init_screen_button(&options_gfx_buttons[0], 456u, 94u, gui_strings[465], 6,
-        med2_font, 1, 0);
-    init_screen_button(&options_gfx_buttons[1], 544u, 94u, gui_strings[466], 6,
-        med2_font, 1, 0);
-    init_screen_button(&options_gfx_buttons[2], 456u, 112u, gui_strings[473], 6,
-        med2_font, 1, 0);
-    init_screen_button(&options_gfx_buttons[3], 544u, 112u, gui_strings[474], 6,
-        med2_font, 1, 0);
-    init_screen_button(&options_gfx_buttons[4], 456u, 130u, gui_strings[475], 6,
-        med2_font, 1, 0);
-    init_screen_button(&options_gfx_buttons[5], 544u, 130u, gui_strings[477], 6,
-        med2_font, 1, 0);
-    init_screen_button(&options_gfx_buttons[6], 456u, 148u, gui_strings[478], 6,
-        med2_font, 1, 0);
-    init_screen_button(&options_gfx_buttons[7], 544u, 148u, gui_strings[479], 6,
-        med2_font, 1, 0);
-    init_screen_button(&options_gfx_buttons[8], 456u, 166u, gui_strings[478], 6,
-        med2_font, 1, 0);
-    init_screen_button(&options_gfx_buttons[9], 544u, 166u, gui_strings[479], 6,
-        med2_font, 1, 0);
-    init_screen_button(&options_gfx_buttons[10], 456u, 184u, gui_strings[478],
-        6, med2_font, 1, 0);
-    init_screen_button(&options_gfx_buttons[11], 544u, 184u, gui_strings[479],
-        6, med2_font, 1, 0);
-    init_screen_button(&options_gfx_buttons[12], 456u, 202u, gui_strings[478],
-        6, med2_font, 1, 0);
-    init_screen_button(&options_gfx_buttons[13], 544u, 202u, gui_strings[479],
-        6, med2_font, 1, 0);
+    init_screen_button(&options_gfx_buttons[0], 456u, 94u,
+      gui_strings[465], 6, med2_font, 1, 0);
+    init_screen_button(&options_gfx_buttons[1], 544u, 94u,
+      gui_strings[466], 6, med2_font, 1, 0);
+    init_screen_button(&options_gfx_buttons[2], 456u, 112u,
+      gui_strings[473], 6, med2_font, 1, 0);
+    init_screen_button(&options_gfx_buttons[3], 544u, 112u,
+      gui_strings[474], 6, med2_font, 1, 0);
+    init_screen_button(&options_gfx_buttons[4], 456u, 130u,
+      gui_strings[475], 6, med2_font, 1, 0);
+    init_screen_button(&options_gfx_buttons[5], 544u, 130u,
+      gui_strings[477], 6, med2_font, 1, 0);
+    init_screen_button(&options_gfx_buttons[6], 456u, 148u,
+      gui_strings[478], 6, med2_font, 1, 0);
+    init_screen_button(&options_gfx_buttons[7], 544u, 148u,
+      gui_strings[479], 6, med2_font, 1, 0);
+    init_screen_button(&options_gfx_buttons[8], 456u, 166u,
+      gui_strings[478], 6, med2_font, 1, 0);
+    init_screen_button(&options_gfx_buttons[9], 544u, 166u,
+      gui_strings[479], 6, med2_font, 1, 0);
+    init_screen_button(&options_gfx_buttons[10], 456u, 184u,
+      gui_strings[478], 6, med2_font, 1, 0);
+    init_screen_button(&options_gfx_buttons[11], 544u, 184u,
+      gui_strings[479], 6, med2_font, 1, 0);
+    init_screen_button(&options_gfx_buttons[12], 456u, 202u,
+      gui_strings[478], 6, med2_font, 1, 0);
+    init_screen_button(&options_gfx_buttons[13], 544u, 202u,
+      gui_strings[479], 6, med2_font, 1, 0);
 
     val = abs(ingame.PanelPermutation);
     init_screen_button(&options_gfx_buttons[14], 320u, 274u,
@@ -188,6 +221,9 @@ void reset_options_screen_boxes_flags(void)
 {
     int i;
 
+    for (i = 0; i < 4; i++) {
+        audio_volume_boxes[i].Flags = 0x0001;
+    }
     for (i = 0; i < 7; i++) {
         options_audio_buttons[i].Flags = 0x0101;
     }

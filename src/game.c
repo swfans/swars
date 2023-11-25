@@ -7400,22 +7400,6 @@ ubyte show_unkn21_box(struct ScreenTextBox *box)
     return ret;
 }
 
-ubyte show_unkn04(struct ScreenBox *box)
-{
-    ubyte ret;
-    asm volatile ("call ASM_show_unkn04\n"
-        : "=r" (ret) : "a" (box));
-    return ret;
-}
-
-ubyte show_unkn33_box(struct ScreenBox *box)
-{
-    ubyte ret;
-    asm volatile ("call ASM_show_unkn33_box\n"
-        : "=r" (ret) : "a" (box));
-    return ret;
-}
-
 ubyte show_netgame_unkn1(struct ScreenBox *box)
 {
     ubyte ret;
@@ -7462,8 +7446,6 @@ ubyte ac_show_mission_stats(struct ScreenBox *box);
 ubyte ac_show_mission_people_stats(struct ScreenBox *box);
 ubyte ac_show_research_graph(struct ScreenBox *box);
 ubyte ac_show_unkn21_box(struct ScreenTextBox *box);
-ubyte ac_show_unkn04(struct ScreenBox *box);
-ubyte ac_show_unkn33_box(struct ScreenBox *box);
 ubyte ac_show_netgame_unkn1(struct ScreenBox *box);
 ubyte ac_show_agent_list(struct ScreenTextBox *box);
 ubyte ac_show_blokey(struct ScreenBox *box);
@@ -7488,21 +7470,14 @@ void init_screen_boxes(void)
     init_screen_text_box(&unkn13_SYSTEM_button, 7u, 25u, 197u, 38, 6,
       big_font, 1);
 
-    h = 72;
-    for (i = 0; i < 3; i++)
-    {
-        init_screen_box(&unkn04_boxes[i], 213, h, 420, 62, 6);
-        h += 71;
-    }
-
     init_options_screen_boxes();
 
     val = 0;
     h = 72;
     for (i = 0; i < 6; i++)
     {
-        init_screen_button(&sysmnu_buttons[i], 7, h, gui_strings[378 + val], 6,
-            med2_font, 1, 0);
+        init_screen_button(&sysmnu_buttons[i], 7, h,
+          gui_strings[378 + val], 6, med2_font, 1, 0);
         sysmnu_buttons[i].Width = 197;
         sysmnu_buttons[i].Height = 21;
         sysmnu_buttons[i].CallBackFn = ac_do_sysmnu_button;
@@ -7586,17 +7561,14 @@ void init_screen_boxes(void)
     alert_OK_button.CallBackFn = ac_alert_OK;
     loading_INITIATING_box.Text = gui_strings[376];
     heading_box.Text = options_title_text;
+
     lbFontPtr = med_font;
     alert_OK_button.X = 319 - (alert_OK_button.Width >> 1);
     loading_INITIATING_box.Height = font_height(0x41u) + 8;
     w = my_string_width(gui_strings[376]);
     loading_INITIATING_box.Width = w + 9;
-    unkn33_box.SpecialDrawFn = ac_show_unkn33_box;
     loading_INITIATING_box.X = 319 - ((w + 9) >> 1);
     loading_INITIATING_box.Y = 219 - (loading_INITIATING_box.Height >> 1);
-    unkn04_boxes[0].SpecialDrawFn = ac_show_unkn04;
-    unkn04_boxes[1].SpecialDrawFn = ac_show_unkn04;
-    unkn04_boxes[2].SpecialDrawFn = ac_show_unkn04;
     unkn31_box.SpecialDrawFn = ac_show_mission_people_stats;
     unkn30_box.SpecialDrawFn = ac_show_mission_stats;
     slots_box.DrawTextFn = ac_show_title_box;
@@ -9763,9 +9735,6 @@ void show_menu_screen(void)
         }
         for (i = 0; i < 5; i++) {
             unk11_menu[i].Flags = 0x0001;
-        }
-        for (i = 0; i < 4; i++) {
-            unkn04_boxes[i].Flags = 0x0001;
         }
         reset_options_screen_boxes_flags();
 
