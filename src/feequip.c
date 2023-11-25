@@ -34,8 +34,9 @@ extern struct ScreenBox weapon_slots;
 extern struct ScreenTextBox equip_list_head_box;
 extern struct ScreenTextBox equip_list_box;
 extern struct ScreenTextBox equip_display_box;
-extern struct ScreenButton buy_equip_button;
+extern struct ScreenButton equip_offer_buy_button;
 extern struct ScreenInfoBox equip_cost_box;
+extern struct ScreenButton equip_all_agents_button;
 
 extern char unkn41_text[];
 extern char equip_name_text[];
@@ -45,13 +46,13 @@ ubyte ac_display_weapon_info(struct ScreenTextBox *box);
 ubyte ac_show_weapon_name(struct ScreenTextBox *box);
 ubyte ac_show_weapon_list(struct ScreenTextBox *box);
 ubyte ac_show_weapon_slots(struct ScreenBox *box);
-ubyte ac_do_buy_equip(ubyte click);
+ubyte ac_do_equip_offer_buy(ubyte click);
 ubyte ac_sell_equipment(ubyte click);
 
-ubyte do_buy_equip(ubyte click)
+ubyte do_equip_offer_buy(ubyte click)
 {
     ubyte ret;
-    asm volatile ("call ASM_do_buy_equip\n"
+    asm volatile ("call ASM_do_equip_offer_buy\n"
         : "=r" (ret) : "a" (click));
     return ret;
 }
@@ -69,7 +70,7 @@ void update_equip_cost_text(void)
     int cost;
 
     cost = 100 * weapon_defs[selected_weapon + 1].Cost;
-    if (buy_equip_button.CallBackFn == do_buy_equip)
+    if (equip_offer_buy_button.CallBackFn == do_equip_offer_buy)
         sprintf(equip_cost_text, "%d", cost);
     else
         sprintf(equip_cost_text, "%d", cost >> 1);
@@ -119,9 +120,9 @@ void init_weapon_anim(ubyte weapon)
 void switch_shared_equip_screen_buttons_to_equip(void)
 {
     heading_box.Text = gui_strings[370];
-    equip_cost_box.X = buy_equip_button.Width + buy_equip_button.X + 4;
+    equip_cost_box.X = equip_offer_buy_button.Width + equip_offer_buy_button.X + 4;
     refresh_equip_list = 1;
-    equip_cost_box.Width = 208 - buy_equip_button.Width - 14;
+    equip_cost_box.Width = 208 - equip_offer_buy_button.Width - 14;
     equip_cost_box.Y = 404;
     if (selected_weapon < 0)
     {
@@ -154,8 +155,8 @@ void switch_shared_equip_screen_buttons_to_cybmod(void)
         equip_name_text[0] = '\0';
     else
         init_weapon_anim(selected_mod + 32);
-    buy_equip_button.Text = gui_strings[436];
-    buy_equip_button.CallBackFn = do_buy_equip;
+    equip_offer_buy_button.Text = gui_strings[436];
+    equip_offer_buy_button.CallBackFn = do_equip_offer_buy;
 }
 
 ubyte display_weapon_info(struct ScreenTextBox *box)
@@ -203,7 +204,7 @@ void init_equip_screen_boxes(void)
       6, small_med_font, 1);
     init_screen_text_box(&equip_display_box, 425u, 153u, 208u, 272,
       6, small_font, 3);
-    init_screen_button(&buy_equip_button, 430u, 404u,
+    init_screen_button(&equip_offer_buy_button, 430u, 404u,
       gui_strings[436], 6, med2_font, 1, 0);
     init_screen_info_box(&equip_cost_box, 504u, 404u, 124u,
       gui_strings[442], misc_text[0], 6, med_font, small_med_font, 1);
@@ -217,8 +218,8 @@ void init_equip_screen_boxes(void)
     equip_cost_box.Text2 = equip_cost_text;
     equip_display_box.Flags |= 0x0300;
     equip_display_box.ScrollWindowHeight = 117;
-    equip_cost_box.X = buy_equip_button.Width + buy_equip_button.X + 4;
-    equip_cost_box.Width = 208 - buy_equip_button.Width - 14;
+    equip_cost_box.X = equip_offer_buy_button.Width + equip_offer_buy_button.X + 4;
+    equip_cost_box.Width = 208 - equip_offer_buy_button.Width - 14;
     equip_list_head_box.DrawTextFn = ac_show_title_box;
     equip_list_head_box.Text = gui_strings[408];
     equip_list_head_box.Font = med_font;
@@ -231,8 +232,15 @@ void init_equip_screen_boxes(void)
         s = gui_strings[407];
     else
         s = gui_strings[436];
-    buy_equip_button.Width = my_string_width(s) + 4;
-    buy_equip_button.CallBackFn = ac_do_buy_equip;
+    equip_offer_buy_button.Width = my_string_width(s) + 4;
+    equip_offer_buy_button.CallBackFn = ac_do_equip_offer_buy;
+
+    init_screen_button(&equip_all_agents_button, 7u, 96u,
+      gui_strings[534], 6, med2_font, 1, 0);
+    equip_all_agents_button.Width = 165;
+    equip_all_agents_button.RadioValue = 4;
+    equip_all_agents_button.Flags |= 0x0100;
+    equip_all_agents_button.Radio = &selected_agent;
 }
 
 void reset_equip_screen_boxes_flags(void)
@@ -247,7 +255,8 @@ void reset_equip_screen_boxes_flags(void)
 
 void set_flag01_equip_screen_boxes(void)
 {
-    buy_equip_button.Flags |= 0x0001;
+    equip_all_agents_button.Flags |= 0x0001;
+    equip_offer_buy_button.Flags |= 0x0001;
     if (screentype == SCRT_CRYO)
         equip_cost_box.Flags |= 0x0008;
 }

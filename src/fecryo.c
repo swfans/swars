@@ -24,10 +24,12 @@
 #include "swlog.h"
 /******************************************************************************/
 extern struct ScreenTextBox cryo_agent_list_box;
+extern struct ScreenTextBox cryo_cybmod_list_box;
 extern struct ScreenButton cryo_offer_cancel_button;
 
 ubyte ac_do_cryo_offer_cancel(ubyte click);
 ubyte ac_show_cryo_agent_list(struct ScreenTextBox *box);
+ubyte ac_show_cryo_cybmod_list_box(struct ScreenTextBox *box);
 
 ubyte do_cryo_offer_cancel(ubyte click)
 {
@@ -45,18 +47,33 @@ ubyte show_cryo_agent_list(struct ScreenTextBox *box)
     return ret;
 }
 
+ubyte show_cryo_cybmod_list_box(struct ScreenTextBox *box)
+{
+    ubyte ret;
+    asm volatile ("call ASM_show_cryo_cybmod_list_box\n"
+        : "=r" (ret) : "a" (box));
+    return ret;
+}
+
 void init_cryo_screen_boxes(void)
 {
     init_screen_text_box(&cryo_agent_list_box, 7u, 122u, 196u, 303, 6,
         small_med_font, 1);
-    init_screen_button(&cryo_offer_cancel_button, 628u, 404u,
-      gui_strings[437], 6, med2_font, 1, 128);
     cryo_agent_list_box.BGColour = 25;
     cryo_agent_list_box.DrawTextFn = ac_show_cryo_agent_list;
-    cryo_offer_cancel_button.CallBackFn = ac_do_cryo_offer_cancel;
     cryo_agent_list_box.ScrollWindowOffset += 27;
     cryo_agent_list_box.Flags |= 0x0300;
     cryo_agent_list_box.ScrollWindowHeight -= 27;
+
+    init_screen_text_box(&cryo_cybmod_list_box, 425u, 153u, 208u, 272,
+      6, small_med_font, 1);
+    cryo_cybmod_list_box.DrawTextFn = ac_show_cryo_cybmod_list_box;
+    cryo_cybmod_list_box.Flags |= 0x0300;
+    cryo_cybmod_list_box.ScrollWindowHeight = 117;
+
+    init_screen_button(&cryo_offer_cancel_button, 628u, 404u,
+      gui_strings[437], 6, med2_font, 1, 128);
+    cryo_offer_cancel_button.CallBackFn = ac_do_cryo_offer_cancel;
 }
 
 void set_flag01_cryo_screen_boxes(void)
@@ -66,6 +83,7 @@ void set_flag01_cryo_screen_boxes(void)
 
 void reset_cryo_screen_boxes_flags(void)
 {
+    cryo_cybmod_list_box.Flags = 0x0001 | 0x0100 | 0x0200;
     cryo_agent_list_box.Flags = 0x0001 | 0x0100 | 0x0200;
 }
 

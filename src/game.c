@@ -7286,14 +7286,6 @@ ubyte show_blokey(struct ScreenBox *box)
     return ret;
 }
 
-ubyte show_unkn18_box(struct ScreenTextBox *box)
-{
-    ubyte ret;
-    asm volatile ("call ASM_show_unkn18_box\n"
-        : "=r" (ret) : "a" (box));
-    return ret;
-}
-
 ubyte show_settings_controls_list(struct ScreenBox *box)
 {
     ubyte ret;
@@ -7308,7 +7300,6 @@ ubyte ac_show_research_graph(struct ScreenBox *box);
 ubyte ac_show_unkn21_box(struct ScreenTextBox *box);
 ubyte ac_show_netgame_unkn1(struct ScreenBox *box);
 ubyte ac_show_blokey(struct ScreenBox *box);
-ubyte ac_show_unkn18_box(struct ScreenTextBox *box);
 ubyte ac_show_settings_controls_list(struct ScreenBox *box);
 
 void init_main_screen_boxes(void)
@@ -7400,20 +7391,12 @@ void init_screen_boxes(void)
     init_equip_screen_boxes();
     init_cryo_screen_boxes();
 
-    init_screen_text_box(&mod_list_box, 425u, 153u, 208u, 272, 6,
-        small_med_font, 1);
     init_screen_box(&blokey_box, 212u, 122u, 203u, 303, 6);
-    init_screen_button(&all_agents_button, 7u, 96u,
-      gui_strings[534], 6, med2_font, 1, 0);
-    all_agents_button.Width = 165;
-    all_agents_button.RadioValue = 4;
-    all_agents_button.Flags |= 0x0100;
-    all_agents_button.Radio = &selected_agent;
     init_screen_box(&research_unkn20_box, 7u, 103u, 409u, 322, 6);
-    init_screen_text_box(&research_progress_button, 7u, 72u, 409u, 23, 6,
-        med_font, 1);
-    init_screen_text_box(&research_unkn21_box, 425u, 72u, 208u, 353, 6,
-        small_med_font, 3);
+    init_screen_text_box(&research_progress_button, 7u, 72u, 409u, 23,
+      6, med_font, 1);
+    init_screen_text_box(&research_unkn21_box, 425u, 72u, 208u, 353,
+      6, small_med_font, 3);
     init_screen_button(&research_submit_button, 430u, 302u,
       gui_strings[418], 6, med2_font, 1, 0);
     init_screen_button(&unkn12_WEAPONS_MODS_button, 616u, 302u,
@@ -7470,10 +7453,7 @@ void init_screen_boxes(void)
         s = gui_strings[451];
     unkn12_WEAPONS_MODS_button.Width = my_string_width(s) + 4;
 
-    mod_list_box.DrawTextFn = ac_show_unkn18_box;
-    mod_list_box.Flags |= 0x0300;
     blokey_box.SpecialDrawFn = ac_show_blokey;
-    mod_list_box.ScrollWindowHeight = 117;
     unkn13_SYSTEM_button.Text = gui_strings[366];
     unkn13_SYSTEM_button.DrawTextFn = ac_show_title_box;
 }
@@ -9560,9 +9540,6 @@ void show_menu_screen(void)
         reset_login_screen_boxes_flags();
         reset_controls_screen_boxes_flags();
         reset_storage_screen_boxes_flags();
-
-        mod_list_box.Flags = 0x0001 | 0x0100 | 0x0200;
-
         reset_cryo_screen_boxes_flags();
         reset_equip_screen_boxes_flags();
 
@@ -9593,13 +9570,10 @@ void show_menu_screen(void)
 
         set_flag01_net_screen_boxes();
         set_flag01_equip_screen_boxes();
-
         set_flag01_controls_screen_boxes();
-
         set_flag01_brief_screen_boxes();
         set_flag01_world_screen_boxes();
 
-        all_agents_button.Flags |= 0x0001;
         if (!game_projector_speed && screentype != SCRT_99)
             play_sample_using_heap(0, 113, 127, 64, 100, 0, 3u);
     }
