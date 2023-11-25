@@ -47,6 +47,7 @@
 #include "fenet.h"
 #include "feoptions.h"
 #include "fepause.h"
+#include "feresearch.h"
 #include "festorage.h"
 #include "feworld.h"
 #include "building.h"
@@ -181,9 +182,6 @@ extern struct GamePanel unknstrct7_arr2[];
 extern ushort word_1810E4;
 extern ubyte byte_1810E6[40];
 extern ubyte byte_18110E[40];
-
-extern ubyte research_on_weapons;// = true;
-extern ubyte research_unkn_var_01;
 
 extern ushort unkn3de_len;
 extern void *dword_177750;
@@ -4639,13 +4637,6 @@ void copy_box_purple_list(long x, long y, ulong width, ulong height)
         : : "a" (x), "d" (y), "b" (width), "c" (height));
 }
 
-void draw_unkn20_subfunc_01(int x, int y, char *text, ubyte a4)
-{
-    asm volatile (
-      "call ASM_draw_unkn20_subfunc_01\n"
-        : : "a" (x), "d" (y), "b" (text), "c" (a4));
-}
-
 void ASM_show_game_engine(void);
 void show_game_engine(void)
 {
@@ -6340,30 +6331,6 @@ int save_game_write(ubyte slot, char *desc)
     return ret;
 }
 
-ubyte do_research_submit(ubyte click)
-{
-    ubyte ret;
-    asm volatile ("call ASM_do_research_submit\n"
-        : "=r" (ret) : "a" (click));
-    return ret;
-}
-
-ubyte do_research_suspend(ubyte click)
-{
-    ubyte ret;
-    asm volatile ("call ASM_do_research_suspend\n"
-        : "=r" (ret) : "a" (click));
-    return ret;
-}
-
-ubyte do_unkn12_WEAPONS_MODS(ubyte click)
-{
-    ubyte ret;
-    asm volatile ("call ASM_do_unkn12_WEAPONS_MODS\n"
-        : "=r" (ret) : "a" (click));
-    return ret;
-}
-
 ubyte ac_select_all_agents(ubyte click);
 ubyte ac_alert_OK(ubyte click);
 ubyte ac_do_sysmnu_button(ubyte click);
@@ -6371,9 +6338,6 @@ ubyte ac_main_do_my_quit(ubyte click);
 ubyte ac_main_do_login_1(ubyte click);
 ubyte ac_goto_savegame(ubyte click);
 ubyte ac_main_do_map_editor(ubyte click);
-ubyte ac_do_research_submit(ubyte click);
-ubyte ac_do_research_suspend(ubyte click);
-ubyte ac_do_unkn12_WEAPONS_MODS(ubyte click);
 
 void campaign_new_game_prepare(void)
 {
@@ -6442,300 +6406,6 @@ ubyte do_storage_NEW_MORTAL(ubyte click)
 #endif
 }
 
-void draw_chartxy_axis_y_values(int x, int y, int height, int ax_min, int ax_max, int tot_values)
-{
-    char str[8];
-    int i;
-    int ax_val;
-    int cy;
-
-    ax_val = ax_max;
-    cy = y;
-    for (i = 0; i < tot_values; i++)
-    {
-        int twidth;
-        char *text;
-        ulong spr_id;
-        struct TbSprite *spr;
-
-        lbDisplay.DrawFlags = 0;
-        if (i != tot_values/2 && i != 0)
-            spr_id = 146;
-        else
-            spr_id = 145;
-        spr = &sprites_Icons0_0[spr_id];
-        sprintf(str, "%d", ax_val);
-        twidth = LbTextStringWidth(str) + spr->SWidth;
-        strcpy((char *)(back_buffer + text_buf_pos), str);
-        text = (char *)(back_buffer + text_buf_pos);
-        text_buf_pos += strlen(str) + 1;
-        draw_text_purple_list2(x - twidth - 1, cy, text, 0);
-        cy += height / tot_values;
-        ax_val -= (ax_max - ax_min) / tot_values;
-    }
-}
-
-void draw_chartxy_axis_x_values(int x, int y, int width, int ax_min, int ax_max, int tot_values)
-{
-    char str[8];
-    int i;
-    int ax_val;
-    int cx;
-
-    ax_val = ax_min;
-    cx = x + 32;
-    for (i = 0; i < tot_values; i++)
-    {
-        int twidth;
-        char *text;
-        ulong spr_id;
-        struct TbSprite *spr;
-        int final_x;
-
-        lbDisplay.DrawFlags = 0;
-        if (i != tot_values / 2 - 1 && i != tot_values - 1)
-            spr_id = 146;
-        else
-            spr_id = 147;
-        spr = &sprites_Icons0_0[spr_id];
-        sprintf(str, "%d", ax_val);
-        twidth = LbTextStringWidth(str);
-        strcpy((char *)(back_buffer + text_buf_pos), str);
-        text = (char *)(back_buffer + text_buf_pos);
-        text_buf_pos += strlen(str) + 1;
-        if (ax_val == 1)
-            final_x = cx - (twidth - 2) + 3;
-        else
-            final_x = cx - (twidth - 2) + 1;
-        draw_text_purple_list2(final_x, y + 4 + spr->SHeight, text, 0);
-        cx += width / tot_values;
-        ax_val += (ax_max - ax_min) / tot_values;
-    }
-}
-
-void draw_chartxy_axis_y_grid(int x, int y, int width, int height, int tot_values)
-{
-    int i;
-    int cy;
-
-    cy = y;
-    for (i = 0; i < tot_values; i++)
-    {
-        ulong spr_id;
-        struct TbSprite *spr;
-
-        lbDisplay.DrawFlags = 0x0004;
-        draw_line_purple_list(x + 1, cy, x + width, cy, height + 7);
-        lbDisplay.DrawFlags = 0;
-        if (i != tot_values/2 && i != 0)
-            spr_id = 146;
-        else
-            spr_id = 145;
-        spr = &sprites_Icons0_0[spr_id];
-        draw_sprite_purple_list(x - spr->SWidth - 1, cy, spr);
-        cy += height / tot_values;
-    }
-}
-
-void draw_chartxy_axis_x_grid(int x, int y, int width, int height, int tot_values)
-{
-    int i;
-    int cx;
-
-    cx = x;
-    for (i = 0; i < tot_values; i++)
-    {
-        ulong spr_id;
-        struct TbSprite *spr;
-
-        lbDisplay.DrawFlags = 0x0004;
-        draw_line_purple_list(cx, 128, cx, y + height - 1, height + 7);
-        lbDisplay.DrawFlags = 0;
-        if (i != tot_values / 2 - 1 && i != tot_values - 1)
-            spr_id = 146;
-        else
-            spr_id = 147;
-        spr = &sprites_Icons0_0[spr_id];
-        draw_sprite_purple_list(cx - spr->SWidth + 1, y + height + 2, spr);
-        cx += width / tot_values;
-    }
-}
-
-void draw_line_purple_thick(int x1, int y1, int x2, int y2, ubyte colour, ubyte bkcolor)
-{
-    draw_line_purple_list(x1, y1, x2, y2, 87);
-    if (y1 - y2 <= x2 - x1)
-    {
-        draw_line_purple_list(x1, y1 + 1, x2, y2 + 1, colour);
-        draw_line_purple_list(x1, y1 - 1, x2, y2 - 1, colour);
-        draw_line_purple_list(x1, y1 + 2, x2, y2 + 2, bkcolor);
-        draw_line_purple_list(x1, y1 + 3, x2, y2 + 3, bkcolor);
-        draw_line_purple_list(x1, y1 + 4, x2, y2 + 4, bkcolor);
-    }
-    else
-    {
-        draw_line_purple_list(x1 + 1, y1, x2 + 1, y2, colour);
-        draw_line_purple_list(x1 - 1, y1, x2 - 1, y2, colour);
-        draw_line_purple_list(x1 + 2, y1, x2 + 2, y2, bkcolor);
-        draw_line_purple_list(x1 + 3, y1, x2 + 3, y2, bkcolor);
-        draw_line_purple_list(x1 + 4, y1, x2 + 4, y2, bkcolor);
-    }
-}
-
-void draw_chartxy_curve(int x, int y, int width, int height, ushort *y_vals, int n_y_vals, int y_scale, ushort y_trend_delta, int tot_values)
-{
-    int cday, progress, prev_progress, progress_scale;
-    int cx, cy, mcy;
-    int next_cx, next_cy, next_mcy;
-    int delta_x, delta_y, delta_u;
-    int remain_day;
-
-    // Draw existing points curve
-    delta_x = width / tot_values;
-    delta_y = height / tot_values;
-    delta_u = delta_x;
-    progress_scale = y_scale / tot_values;
-    cday = 0;
-    progress = y_vals[cday];
-    cx = x;
-    // To increase accuracy, we keep y value multiplied by progress_scale
-    mcy = (y + height) * progress_scale - (delta_y * progress);
-    for (cday++; cday < n_y_vals; cday++)
-    {
-        progress = y_vals[cday];
-        prev_progress = y_vals[cday-1];
-        next_mcy = mcy - delta_y * (progress - prev_progress);
-        next_cx = cx + delta_x;
-        cy = mcy / progress_scale;
-        next_cy = next_mcy / progress_scale;
-        draw_line_purple_thick(cx, cy, next_cx, next_cy, 87, 0);
-        cx = next_cx;
-        mcy = next_mcy;
-    }
-    // Draw trend curve
-    lbDisplay.DrawFlags = 0x0004;
-    remain_day = 11 - cday;
-    {
-        progress = y_trend_delta;
-        next_mcy = mcy - (delta_y * progress * remain_day);
-        cy = mcy / progress_scale;
-        next_cy = next_mcy / progress_scale;
-        delta_u = delta_x * remain_day;
-        if (next_cy >= y) {
-            // Everything fits on the chart
-            next_cx = cx + delta_u;
-        } else {
-            // Cap cy, and adjust cx accordingly
-            next_cx = cx + cy * delta_u / (cy - next_cy);
-            if (next_cx > width)
-                next_cx = width;
-            next_cy = y;
-        }
-        draw_line_purple_thick(cx, cy, next_cx, next_cy, 87, 0);
-    }
-    lbDisplay.DrawFlags = 0;
-}
-
-ubyte show_research_graph(struct ScreenBox *box)
-{
-#if 0
-    ubyte ret;
-    asm volatile ("call ASM_show_research_graph\n"
-        : "=r" (ret) : "a" (box));
-    return ret;
-#endif
-    struct TbSprite *spr;
-    char *text;
-    ushort *y_vals;
-    ushort y_trend_delta;
-    int n_y_vals;
-    int graph_days, done_days;
-
-    if ((box->Flags & 0x8000) == 0)
-    {
-        int twidth;
-
-        lbFontPtr = small_med_font;
-        my_set_text_window(0, 0, 640, 480);
-
-        draw_chartxy_axis_y_values(64, 128, 240, 0, 100, 10);
-
-        draw_chartxy_axis_y_grid(64, 128, 320, 240, 10);
-        draw_chartxy_axis_x_grid(96, 128, 320, 240, 10);
-
-        spr = &sprites_Icons0_0[145];
-        draw_sprite_purple_list(66 - spr->SWidth - 1, 368, spr);
-        spr = &sprites_Icons0_0[147];
-        draw_sprite_purple_list(61, 368, spr);
-        draw_text_purple_list2(52, 374, misc_text[0], 0);
-        lbFontPtr = med_font;
-        my_set_text_window(box->X + 4, box->Y + 4, box->Width - 8,  box->Height - 8);
-        text = gui_strings[453];
-        twidth = my_string_width(text);
-        draw_text_purple_list2((box->Width - 8 - twidth) >> 1, 290, text, 0);
-        text = gui_strings[452];
-        draw_unkn20_subfunc_01(10, 31, text, 2);
-        box->Flags |= 0x8000;
-        copy_box_purple_list(box->X, box->Y, box->Width, box->Height);
-    }
-
-    graph_days = 0;
-    if (research_on_weapons)
-        done_days = research.WeaponDaysDone[research.CurrentWeapon];
-    else
-        done_days = research.ModDaysDone[research.CurrentMod];
-    if (done_days >= 10) {
-        graph_days = done_days - 9;
-        n_y_vals = 10;
-    } else {
-        n_y_vals = done_days + 1;
-    }
-    lbFontPtr = small_med_font;
-    my_set_text_window(0, 0, 640, 480);
-    draw_chartxy_axis_x_values(64, 128 + 240, 320, graph_days+1, graph_days+11, 10);
-
-    LbScreenSetGraphicsWindow(64 - 1, 128, 320 + 3, 240 + 2);
-    if (research_on_weapons)
-    {
-        if (research.CurrentWeapon != -1)
-        {
-            struct WeaponDef *wdef;
-
-            y_vals = &research.WeaponProgress[research.CurrentWeapon][0];
-            wdef = &weapon_defs[research.CurrentWeapon + 1];
-            y_trend_delta = research_unkn_func_004(wdef->PercentPerDay, wdef->Funding, research.WeaponFunding);
-
-            draw_chartxy_curve(1, 0, 320, 240, y_vals, n_y_vals, RESEARCH_COMPLETE_POINTS, y_trend_delta, 10);
-        }
-    }
-    else
-    {
-        if (research.CurrentMod != -1)
-        {
-            struct ModDef *mdef;
-
-            y_vals = &research.ModProgress[research.CurrentMod][0];
-            mdef = &mod_defs[research.CurrentMod + 1];
-            y_trend_delta = research_unkn_func_004(mdef->PercentPerDay, mdef->Funding, research.ModFunding);
-
-            draw_chartxy_curve(1, 0, 320, 240, y_vals, n_y_vals, RESEARCH_COMPLETE_POINTS, y_trend_delta, 10);
-        }
-    }
-
-    LbScreenSetGraphicsWindow(0, 0, 640, 480);
-    draw_box_purple_list(64, 368, 321,   2, 247);
-    draw_box_purple_list(63, 128,   2, 241, 247);
-    return 0;
-}
-
-ubyte show_unkn21_box(struct ScreenTextBox *box)
-{
-    ubyte ret;
-    asm volatile ("call ASM_show_unkn21_box\n"
-        : "=r" (ret) : "a" (box));
-    return ret;
-}
-
 ubyte show_netgame_unkn1(struct ScreenBox *box)
 {
     ubyte ret;
@@ -6760,8 +6430,6 @@ ubyte show_settings_controls_list(struct ScreenBox *box)
     return ret;
 }
 
-ubyte ac_show_research_graph(struct ScreenBox *box);
-ubyte ac_show_unkn21_box(struct ScreenTextBox *box);
 ubyte ac_show_netgame_unkn1(struct ScreenBox *box);
 ubyte ac_show_blokey(struct ScreenBox *box);
 ubyte ac_show_settings_controls_list(struct ScreenBox *box);
@@ -6817,7 +6485,6 @@ void init_alert_screen_boxes(void)
 void init_screen_boxes(void)
 {
     int i, h, val;
-    const char *s;
 
     init_screen_text_box(&heading_box, 7u, 25u, 626u, 38, 6, big_font, 1);
     init_alert_screen_boxes();
@@ -6855,64 +6522,11 @@ void init_screen_boxes(void)
     init_cryo_screen_boxes();
 
     init_screen_box(&blokey_box, 212u, 122u, 203u, 303, 6);
-    init_screen_box(&research_unkn20_box, 7u, 103u, 409u, 322, 6);
-    init_screen_text_box(&research_progress_button, 7u, 72u, 409u, 23,
-      6, med_font, 1);
-    init_screen_text_box(&research_unkn21_box, 425u, 72u, 208u, 353,
-      6, small_med_font, 3);
-    init_screen_button(&research_submit_button, 430u, 302u,
-      gui_strings[418], 6, med2_font, 1, 0);
-    init_screen_button(&unkn12_WEAPONS_MODS_button, 616u, 302u,
-        gui_strings[450], 6, med2_font, 1, 128);
-    init_screen_button(&research_list_buttons[0], 425u, 404u,
-     gui_strings[478], 6, med2_font, 1, 0);
-    init_screen_button(&research_list_buttons[1], 425u, 404u,
-      gui_strings[479], 6, med2_font, 1, 0);
-    research_list_buttons[0].X = ((104 - research_list_buttons[0].Width) >> 1)
-        + 425;
-    research_list_buttons[1].X = ((104 - research_list_buttons[1].Width) >> 1)
-        + 529;
 
-    val = 0;
-    for (i = 0; i < 2; i++)
-    {
-        research_list_buttons[i].Radio = &ingame.fld_unk7DE;
-        research_list_buttons[i].RadioValue = val;
-        research_list_buttons[i].Flags |= 0x0100;
-        val++;
-    }
+    init_research_screen_boxes();
 
     heading_box.DrawTextFn = ac_show_title_box;
     heading_box.Text = options_title_text;
-
-    unkn12_WEAPONS_MODS_button.CallBackFn = ac_do_unkn12_WEAPONS_MODS;
-    unkn12_WEAPONS_MODS_button.Text = gui_strings[451];
-
-    research_unkn21_box.DrawTextFn = ac_show_unkn21_box;
-    research_unkn21_box.ScrollWindowHeight = 180;
-    research_unkn21_box.Buttons[0] = &research_submit_button;
-    research_unkn21_box.Buttons[1] = &unkn12_WEAPONS_MODS_button;
-    research_unkn21_box.ScrollWindowOffset += 41;
-    research_submit_button.CallBackFn = ac_do_research_submit;
-    research_progress_button.DrawTextFn = ac_show_title_box;
-    research_submit_button.Text = gui_strings[417];
-    research_progress_button.Text = gui_strings[449];
-    research_unkn21_box.Flags |= 0x0300;
-
-    lbFontPtr = med2_font;
-    research_unkn20_box.SpecialDrawFn = ac_show_research_graph;
-
-    if (my_string_width(gui_strings[418]) <= my_string_width(gui_strings[417]))
-        s = gui_strings[417];
-    else
-        s = gui_strings[418];
-    research_submit_button.Width = my_string_width(s) + 4;
-
-    if (my_string_width(gui_strings[451]) <= my_string_width(gui_strings[450]))
-        s = gui_strings[450];
-    else
-        s = gui_strings[451];
-    unkn12_WEAPONS_MODS_button.Width = my_string_width(s) + 4;
 
     blokey_box.SpecialDrawFn = ac_show_blokey;
     unkn13_SYSTEM_button.Text = gui_strings[366];
@@ -8944,7 +8558,7 @@ void show_menu_screen(void)
     {
         screentype = SCRT_RESEARCH;
         heading_box.Text = gui_strings[371];
-        research_unkn21_box.Lines = 0;
+        clear_research_screen();
         edit_flag = 0;
         change_screen = 0;
         redraw_screen_flag = 1;
@@ -8989,8 +8603,6 @@ void show_menu_screen(void)
         heading_box.Flags = 0x0001;
         unkn13_SYSTEM_button.Flags = 0x0001;
         set_flag01_debrief_screen_boxes();
-        research_unkn20_box.Flags = 0x0001;
-        research_progress_button.Flags = 0x0001;
 
         reset_net_screen_boxes_flags();
         reset_world_screen_boxes_flags();
@@ -9002,8 +8614,8 @@ void show_menu_screen(void)
         reset_storage_screen_boxes_flags();
         reset_cryo_screen_boxes_flags();
         reset_equip_screen_boxes_flags();
+        reset_research_screen_boxes_flags();
 
-        research_unkn21_box.Flags = 0x0001 | 0x0100 | 0x0200;
         int i;
         for (i = 0; i < 6; i++) {
             sysmnu_buttons[i].Flags = 0x0011;
@@ -9022,11 +8634,7 @@ void show_menu_screen(void)
         main_map_editor_button.Flags |= 0x0001;
 
         set_flag01_cryo_screen_boxes();
-
-        research_submit_button.Flags |= 0x0001;
-        research_list_buttons[1].Flags |= 0x0001;
-        research_list_buttons[0].Flags |= 0x0001;
-        unkn12_WEAPONS_MODS_button.Flags |= 0x0001;
+        set_flag01_research_screen_boxes();
 
         set_flag01_net_screen_boxes();
         set_flag01_equip_screen_boxes();

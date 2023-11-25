@@ -114,12 +114,16 @@ swars_SOURCES = \
 	fenet.h \
 	fepause.c \
 	fepause.h \
+	feresearch.c \
+	feresearch.h \
 	festorage.c \
 	festorage.h \
 	feworld.c \
 	feworld.h \
 	guiboxes.c \
 	guiboxes.h \
+	guigraph.c \
+	guigraph.h \
 	guitext.c \
 	guitext.h \
 	game.c \

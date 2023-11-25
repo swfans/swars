@@ -715,12 +715,6 @@ extern struct ScreenButton main_login_button;
 extern struct ScreenButton main_map_editor_button;
 extern struct ScreenButton main_load_button;
 extern struct ScreenMenuBox unk11_menu[5];
-extern struct ScreenTextBox research_unkn21_box;
-extern struct ScreenButton research_submit_button;
-extern struct ScreenButton unkn12_WEAPONS_MODS_button;
-extern struct ScreenTextBox research_progress_button;
-extern struct ScreenBox research_unkn20_box;
-extern struct ScreenButton research_list_buttons[2];
 extern struct ScreenBox blokey_box;
 
 extern struct ScreenBox alert_box;
@@ -749,7 +743,10 @@ void flic_unkn03(ubyte a1);
 
 ubyte ac_show_title_box(struct ScreenTextBox *box);
 void draw_text_purple_list2(int x, int y, const char *text, ushort line);
+void draw_sprite_purple_list(int x, int y, struct TbSprite *sprite);
 void copy_box_purple_list(long x, long y, ulong width, ulong height);
+void draw_box_purple_list(int x, int y, ulong width, ulong height, int colour);
+void draw_line_purple_list(int x1, int y1, int x2, int y2, int colour);
 
 void my_preprocess_text(char *text);
 ushort my_count_lines(const char *text);
