@@ -39,6 +39,7 @@
 #include "guiboxes.h"
 #include "febrief.h"
 #include "fecntrls.h"
+#include "fecryo.h"
 #include "feequip.h"
 #include "felogin.h"
 #include "fenet.h"
@@ -6369,14 +6370,6 @@ int save_game_write(ubyte slot, char *desc)
     return ret;
 }
 
-ubyte do_unkn11_CANCEL(ubyte click)
-{
-    ubyte ret;
-    asm volatile ("call ASM_do_unkn11_CANCEL\n"
-        : "=r" (ret) : "a" (click));
-    return ret;
-}
-
 ubyte do_research_submit(ubyte click)
 {
     ubyte ret;
@@ -6408,7 +6401,6 @@ ubyte ac_main_do_my_quit(ubyte click);
 ubyte ac_main_do_login_1(ubyte click);
 ubyte ac_goto_savegame(ubyte click);
 ubyte ac_main_do_map_editor(ubyte click);
-ubyte ac_do_unkn11_CANCEL(ubyte click);
 ubyte ac_do_research_submit(ubyte click);
 ubyte ac_do_research_suspend(ubyte click);
 ubyte ac_do_unkn12_WEAPONS_MODS(ubyte click);
@@ -7286,14 +7278,6 @@ ubyte show_netgame_unkn1(struct ScreenBox *box)
     return ret;
 }
 
-ubyte show_agent_list(struct ScreenTextBox *box)
-{
-    ubyte ret;
-    asm volatile ("call ASM_show_agent_list\n"
-        : "=r" (ret) : "a" (box));
-    return ret;
-}
-
 ubyte show_blokey(struct ScreenBox *box)
 {
     ubyte ret;
@@ -7323,7 +7307,6 @@ ubyte ac_show_mission_people_stats(struct ScreenBox *box);
 ubyte ac_show_research_graph(struct ScreenBox *box);
 ubyte ac_show_unkn21_box(struct ScreenTextBox *box);
 ubyte ac_show_netgame_unkn1(struct ScreenBox *box);
-ubyte ac_show_agent_list(struct ScreenTextBox *box);
 ubyte ac_show_blokey(struct ScreenBox *box);
 ubyte ac_show_unkn18_box(struct ScreenTextBox *box);
 ubyte ac_show_settings_controls_list(struct ScreenBox *box);
@@ -7358,8 +7341,8 @@ void init_alert_screen_boxes(void)
 {
     int w;
 
-    init_screen_text_box(&loading_INITIATING_box, 210u, 230u, 220u, 20, 6,
-        med_font, 1);
+    init_screen_text_box(&loading_INITIATING_box, 210u, 230u, 220u, 20,
+      6, med_font, 1);
     loading_INITIATING_box.Text = gui_strings[376];
     lbFontPtr = med_font;
     loading_INITIATING_box.Height = font_height(0x41u) + 8;
@@ -7415,11 +7398,8 @@ void init_screen_boxes(void)
     init_net_screen_boxes();
     init_login_screen_boxes();
     init_equip_screen_boxes();
+    init_cryo_screen_boxes();
 
-    init_screen_button(&unkn11_CANCEL_button, 628u, 404u,
-      gui_strings[437], 6, med2_font, 1, 128);
-    init_screen_text_box(&agent_list_box, 7u, 122u, 196u, 303, 6,
-        small_med_font, 1);
     init_screen_text_box(&mod_list_box, 425u, 153u, 208u, 272, 6,
         small_med_font, 1);
     init_screen_box(&blokey_box, 212u, 122u, 203u, 303, 6);
@@ -7491,17 +7471,11 @@ void init_screen_boxes(void)
     unkn12_WEAPONS_MODS_button.Width = my_string_width(s) + 4;
 
     mod_list_box.DrawTextFn = ac_show_unkn18_box;
-    agent_list_box.BGColour = 25;
-    agent_list_box.DrawTextFn = ac_show_agent_list;
     mod_list_box.Flags |= 0x0300;
     blokey_box.SpecialDrawFn = ac_show_blokey;
     mod_list_box.ScrollWindowHeight = 117;
     unkn13_SYSTEM_button.Text = gui_strings[366];
     unkn13_SYSTEM_button.DrawTextFn = ac_show_title_box;
-    unkn11_CANCEL_button.CallBackFn = ac_do_unkn11_CANCEL;
-    agent_list_box.ScrollWindowOffset += 27;
-    agent_list_box.Flags |= 0x0300;
-    agent_list_box.ScrollWindowHeight -= 27;
 }
 
 void update_menus(void)
@@ -9588,8 +9562,8 @@ void show_menu_screen(void)
         reset_storage_screen_boxes_flags();
 
         mod_list_box.Flags = 0x0001 | 0x0100 | 0x0200;
-        agent_list_box.Flags = 0x0001 | 0x0100 | 0x0200;
 
+        reset_cryo_screen_boxes_flags();
         reset_equip_screen_boxes_flags();
 
         research_unkn21_box.Flags = 0x0001 | 0x0100 | 0x0200;
@@ -9609,9 +9583,11 @@ void show_menu_screen(void)
         main_login_button.Flags |= 0x0001;
         main_load_button.Flags |= 0x0001;
         main_map_editor_button.Flags |= 0x0001;
+
+        set_flag01_cryo_screen_boxes();
+
         research_submit_button.Flags |= 0x0001;
         research_list_buttons[1].Flags |= 0x0001;
-        unkn11_CANCEL_button.Flags |= 0x0001;
         research_list_buttons[0].Flags |= 0x0001;
         unkn12_WEAPONS_MODS_button.Flags |= 0x0001;
 
