@@ -6152,6 +6152,14 @@ void init_main_screen_boxes(void)
     main_quit_button.AccelKey = 1;
 }
 
+void set_flag01_main_screen_boxes(void)
+{
+        main_quit_button.Flags |= 0x0001;
+        main_login_button.Flags |= 0x0001;
+        main_load_button.Flags |= 0x0001;
+        main_map_editor_button.Flags |= 0x0001;
+}
+
 void init_alert_screen_boxes(void)
 {
     int w;
@@ -6174,22 +6182,18 @@ void init_alert_screen_boxes(void)
     alert_OK_button.AccelKey = 28;
 }
 
-void init_screen_boxes(void)
+void init_system_menu_boxes(void)
 {
     int i, h, val;
 
     init_screen_text_box(&heading_box, 7u, 25u, 626u, 38, 6, big_font, 1);
-    init_alert_screen_boxes();
-
-    init_main_screen_boxes();
-    init_brief_screen_boxes();
-    init_debrief_screen_boxes();
-    init_world_screen_boxes();
+    heading_box.DrawTextFn = ac_show_title_box;
+    heading_box.Text = options_title_text;
 
     init_screen_text_box(&unkn13_SYSTEM_button, 7u, 25u, 197u, 38, 6,
       big_font, 1);
-
-    init_options_screen_boxes();
+    unkn13_SYSTEM_button.Text = gui_strings[366];
+    unkn13_SYSTEM_button.DrawTextFn = ac_show_title_box;
 
     val = 0;
     h = 72;
@@ -6205,7 +6209,28 @@ void init_screen_boxes(void)
         val++;
         h += 30;
     }
+}
 
+void reset_system_menu_boxes_flags(void)
+{
+    int i;
+
+    unkn13_SYSTEM_button.Flags = 0x0001;
+
+    for (i = 0; i < 6; i++) {
+        sysmnu_buttons[i].Flags = 0x0011;
+    }
+}
+
+void init_screen_boxes(void)
+{
+    init_alert_screen_boxes();
+    init_main_screen_boxes();
+    init_system_menu_boxes();
+    init_brief_screen_boxes();
+    init_debrief_screen_boxes();
+    init_world_screen_boxes();
+    init_options_screen_boxes();
     init_controls_screen_boxes();
     init_storage_screen_boxes();
     init_net_screen_boxes();
@@ -6213,12 +6238,6 @@ void init_screen_boxes(void)
     init_equip_screen_boxes();
     init_cryo_screen_boxes();
     init_research_screen_boxes();
-
-    heading_box.DrawTextFn = ac_show_title_box;
-    heading_box.Text = options_title_text;
-
-    unkn13_SYSTEM_button.Text = gui_strings[366];
-    unkn13_SYSTEM_button.DrawTextFn = ac_show_title_box;
 }
 
 void update_menus(void)
@@ -8289,7 +8308,6 @@ void show_menu_screen(void)
         reset_brief_screen_boxes_flags();
 
         heading_box.Flags = 0x0001;
-        unkn13_SYSTEM_button.Flags = 0x0001;
         set_flag01_debrief_screen_boxes();
 
         reset_net_screen_boxes_flags();
@@ -8300,11 +8318,9 @@ void show_menu_screen(void)
         reset_cryo_screen_boxes_flags();
         reset_equip_screen_boxes_flags();
         reset_research_screen_boxes_flags();
+        reset_system_menu_boxes_flags();
 
         int i;
-        for (i = 0; i < 6; i++) {
-            sysmnu_buttons[i].Flags = 0x0011;
-        }
         for (i = 0; i < 5; i++) {
             unk11_menu[i].Flags = 0x0001;
         }
@@ -8312,12 +8328,7 @@ void show_menu_screen(void)
 
         set_flag01_storage_screen_boxes();
         set_flag01_login_screen_boxes();
-
-        main_quit_button.Flags |= 0x0001;
-        main_login_button.Flags |= 0x0001;
-        main_load_button.Flags |= 0x0001;
-        main_map_editor_button.Flags |= 0x0001;
-
+        set_flag01_main_screen_boxes();
         set_flag01_cryo_screen_boxes();
         set_flag01_research_screen_boxes();
 
@@ -8362,7 +8373,11 @@ void show_menu_screen(void)
 
 void draw_game(void)
 {
-    //ASM_draw_game(); return;
+#if 0
+    asm volatile ("call ASM_draw_game\n"
+        :  :  : "eax" );
+    return;
+#endif
     switch (ingame.DisplayMode)
     {
     case DpM_UNKN_1:
