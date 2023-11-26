@@ -68,10 +68,6 @@ void ReleaseLoopedSample(ushort sourceId, ushort fx)
 
 void StopAllSamples(void)
 {
-#if 0
-    asm volatile ("call ASM_StopAllSamples\n"
-        :  :  : "eax" );
-#endif
     struct SampleInfo *smpinfo;
 
     if (!SoundInstalled || !SoundAble || !SoundActive)
