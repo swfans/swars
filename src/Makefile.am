@@ -158,6 +158,8 @@ swars_SOURCES = \
 	scandraw.h \
 	sound.c \
 	sound.h \
+	specblit.c \
+	specblit.h \
 	swars.sx \
 	swlog.h \
 	thing.c \
