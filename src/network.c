@@ -24,6 +24,7 @@
 #include "bfkeybd.h"
 #include "bfdos.h"
 #include "bfmemory.h"
+#include "bftime.h"
 #include "display.h"
 #include "swlog.h"
 /******************************************************************************/
@@ -53,6 +54,11 @@ struct IPXSessionList { // sizeof=271
     ubyte field_270; // offset=270
 };
 
+struct ModemResponse { // sizeof=0x2C
+    char msg[40];
+    ulong code;
+};
+
 #pragma pack()
 /******************************************************************************/
 
@@ -71,6 +77,17 @@ extern ulong ipx_got_player_send_packet_count[8];
 
 extern struct ComHandlerInfo com_dev[4];
 extern struct IPXDatagramBackup datagram_backup[8];
+
+const struct ModemResponse modem_response[] = {
+    {"OK", 1},
+    {"CONNECT", 2},
+    {"RING", 3},
+    {"BUSY", 4},
+    {"ERROR", 5},
+    {"NO CARRIER", 6},
+    {"NO DIALTONE", 7},
+    {"", 0},
+};
 
 struct ModemCommand modem_cmds[] = {
     {"ATZ"},
@@ -965,12 +982,98 @@ void send_string(struct TbSerialDev *serdev, const char *str)
     strcpy(ModemRequestString, locstr);
 }
 
+void inbuf_pos_inc(struct TbSerialDev *serdev)
+{
+    int pos;
+    pos = ++serdev->inbuf_pos;
+    if (pos > 2047)
+        serdev->inbuf_pos = 0;
+}
+
+int read_char(struct TbSerialDev *serdev)
+{
+    ubyte chr;
+    if (serdev->inbuf_pos == serdev->field_109E)
+        return -1;
+    chr = serdev->inbuf[serdev->inbuf_pos];
+    inbuf_pos_inc(serdev);
+    return chr;
+}
+
 int get_modem_response(struct TbSerialDev *serdev)
 {
+#if 0
     int ret;
     asm volatile ("call ASM_get_modem_response\n"
         : "=r" (ret) : "a" (serdev) );
     return ret;
+#else
+    const struct ModemResponse *resp;
+    char locstr[80];
+    TbClockMSec start_time;
+    int ret;
+    int chr;
+    ushort lspos, mrpos;
+    TbBool done;
+
+    ret = -1;
+    done = false;
+    mrpos = 0;
+    start_time = LbTimerClock();
+    memset(locstr, 0, sizeof(locstr));
+    lspos = 0;
+    while (!done)
+    {
+        if (LbTimerClock() - start_time > 4000)
+            return -1;
+        chr = read_char(serdev);
+        if (mrpos >= strlen(ModemRequestString)) {
+            mrpos = 0;
+        } else if (chr == ModemRequestString[mrpos]) {
+            chr = -1;
+            mrpos++;
+        }
+        if (chr == -1)
+        {
+            if (NetworkServicePtr.F.UsedSessionInit) {
+                // TODO not sure if UsedSessionInit gets the chr as parameter
+                if (NetworkServicePtr.F.UsedSessionInit() == -7)
+                    return -7;
+            }
+            continue;
+        }
+        if ((chr == 10 && lspos == 0) || (lspos >= sizeof(locstr)))
+        {
+            for (resp = modem_response; resp->code != 0; resp++)
+            {
+                if (strncasecmp(locstr, resp->msg, strlen(resp->msg)) == 0)
+                {
+                    ret = resp->code;
+                    strcpy(ModemResponseString, locstr);
+                    done = true;
+                    break;
+                }
+            }
+            if (done)
+                break; // break the main loop
+            lspos = 0;
+            memset(locstr, 0, sizeof(locstr));
+        }
+
+        if (chr >= 32)
+        {
+            locstr[lspos] = chr;
+            lspos++;
+        }
+        // Periodically trigger user callback, if set
+        if (NetworkServicePtr.F.UsedSessionInit != NULL)
+        {
+            if (NetworkServicePtr.F.UsedSessionInit() == -7)
+                return -7;
+        }
+    }
+    return ret;
+#endif
 }
 
 struct TbSerialDev *LbCommInit(int idx)
