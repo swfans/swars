@@ -18,10 +18,17 @@
 /******************************************************************************/
 #include "feoptions.h"
 
+#include "bftext.h"
+#include "bfsprite.h"
+#include "bfkeybd.h"
+#include "bfaudio.h"
+#include "bfscd.h"
+#include "bflib_joyst.h"
 #include "guiboxes.h"
 #include "guitext.h"
 #include "display.h"
 #include "game.h"
+#include "sound.h"
 #include "swlog.h"
 /******************************************************************************/
 extern struct ScreenBox audio_tracks_box;
@@ -32,17 +39,214 @@ extern struct ScreenButton options_gfx_buttons[16];
 
 extern char options_title_text[];
 
+extern short word_1C4866[3];
+
+extern struct TbSprite *sprites_Icons0_0;
+
 ubyte ac_change_panel_permutation(ubyte click);
 ubyte ac_change_trenchcoat_preference(ubyte click);
 ubyte ac_show_audio_tracks_box(struct ScreenBox *box);
 ubyte ac_show_audio_volume_box(struct ScreenBox *box);
 
+void show_audio_volume_box_func_02(short a1, short a2, short a3, short a4, TbPixel colour)
+{
+    asm volatile (
+      "push %4\n"
+      "call ASM_show_audio_volume_box_func_02\n"
+        : : "a" (a1), "d" (a2), "b" (a3), "c" (a4), "g" (colour));
+}
+
 ubyte show_audio_volume_box(struct ScreenBox *box)
 {
+#if 1
     ubyte ret;
     asm volatile ("call ASM_show_audio_volume_box\n"
         : "=r" (ret) : "a" (box));
     return ret;
+#endif
+    short *target_ptr;
+    char *s;
+    ushort w;
+    int ms_x, ms_y;
+    short x2a, x2c;
+    short x1a, x1b;
+    short wtext1, wtext2;
+    ubyte target_var;
+    TbBool target_affected;
+
+    target_affected = false;
+    if (box->Flags & 0x8000)
+    {
+        box->Flags &= ~0x0080;
+        word_1C4866[0] = -5;
+        word_1C4866[1] = -5;
+        word_1C4866[2] = -5;
+    }
+    if (box->Timer == 255)
+    {
+        word_1C4866[0] = 99;
+        word_1C4866[1] = 99;
+        word_1C4866[2] = 99;
+    }
+    my_set_text_window(box->X + 4, box->Y + 4, box->Width - 6, 480);
+
+    if (box == &audio_volume_boxes[0])
+    {
+        target_ptr = &startscr_samplevol;
+        s = gui_strings[419];
+        target_var = 0;
+    }
+    else if (box == &audio_volume_boxes[1])
+    {
+        target_ptr = &startscr_midivol;
+        s = gui_strings[420];
+        target_var = 1;
+    }
+    else
+    {
+        target_ptr = &startscr_cdvolume;
+        s = gui_strings[516];
+        target_var = 2;
+    }
+
+    lbFontPtr = med_font;
+    w = (box->Width - my_string_width(s)) >> 1;
+    if (flashy_draw_text(1 + w, 1, s, 1, 0, &word_1C4866[target_var], 0))
+    {
+        lbFontPtr = small_med_font;
+        lbDisplay.DrawFlags = 0;
+
+        wtext2 = my_string_width(gui_strings[422]) + 2;
+        wtext1 = my_string_width(gui_strings[421]) + 2;
+        x1a = wtext1 + 277;
+        x2a = 599 - wtext2;
+        x1b = 350 - wtext1 - wtext2 - 28;
+        if (*target_ptr < wtext1)
+        {
+            show_audio_volume_box_func_02(266, box->Y + 37, *target_ptr, 17, 174);
+            lbDisplay.DrawFlags = 0x0004;
+            show_audio_volume_box_func_02(*target_ptr + 266, box->Y + 37, wtext1 - *target_ptr, 17, 174);
+            show_audio_volume_box_func_02(x1a, box->Y + 26, x1b, 28, 174);
+            show_audio_volume_box_func_02(x2a, box->Y + 26, wtext2, 17, 174);
+        }
+        else if (*target_ptr >= 322 - wtext2)
+        {
+            x2c = *target_ptr - (322 - wtext2);
+            show_audio_volume_box_func_02(266, box->Y + 37, wtext1, 17, 174);
+            show_audio_volume_box_func_02(x1a, box->Y + 26, x1b, 28, 174);
+            show_audio_volume_box_func_02(x2a, box->Y + 26, x2c, 17, 174);
+            lbDisplay.DrawFlags = 0x0004;
+            show_audio_volume_box_func_02(x2c + x2a, box->Y + 26, wtext2 - x2c, 17, 174);
+        }
+        else
+        {
+            x2c = *target_ptr - wtext1;
+            show_audio_volume_box_func_02(266, box->Y + 37, wtext1, 17, 174);
+            show_audio_volume_box_func_02(x1a, box->Y + 26, x2c, 28, 174);
+            lbDisplay.DrawFlags = 0x0004;
+            show_audio_volume_box_func_02(x2c + x1a, box->Y + 26, x1b - x2c, 28, 174);
+            show_audio_volume_box_func_02(x2a, box->Y + 26, wtext2, 17, 174);
+        }
+
+        struct ScreenBox box0;
+        box0.X = 257;
+        box0.Y = box->Y + 26;
+        box0.Width = 36;
+        box0.Height = 28;
+
+        ms_x = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
+        ms_y = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
+        if ((ms_x >= box0.X) && (ms_x <= box0.X + box0.Width) && (ms_y >= box0.Y) && (ms_y <= box0.Y + box0.Height))
+        {
+            if (lbDisplay.MLeftButton)
+            {
+                short delta_y, delta_x;
+                lbDisplay.LeftButton = 0;
+                delta_y = ms_y - (box0.Y + 14);
+                delta_x = ms_x - (box0.X + 9);
+                (*target_ptr) = delta_y + delta_x;
+                if ((*target_ptr) < 0)
+                    *target_ptr = 0;
+                else if ((*target_ptr) > 322)
+                    (*target_ptr) = 322;
+                target_affected = 1;
+            }
+        }
+        lbDisplay.DrawFlags |= 0x8000;
+
+        struct ScreenBox box1;
+        box1.X = 246;
+        box1.Y = box->Y + 38;
+        box1.Width = 9;
+        box1.Height = 14;
+
+        ms_x = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
+        ms_y = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
+        if ((ms_x >= box1.X) && (ms_x <= box1.X + box1.Width) && (ms_y >= box1.Y) && (ms_y <= box1.Y + box1.Height))
+        {
+            if (lbDisplay.MLeftButton || joy.Buttons[0])
+            {
+                lbDisplay.LeftButton = 0;
+                box->Flags |= 0x0800;
+                if ((lbShift & 0x01) != 0)
+                    (*target_ptr)--;
+                else
+                    (*target_ptr) -= 10;
+                if ((*target_ptr) < 0)
+                    (*target_ptr) = 0;
+                target_affected = 1;
+            }
+            lbDisplay.DrawFlags = 0x8000;
+            draw_sprite_purple_list(box1.X, box1.Y, &sprites_Icons0_0[108]);
+            lbDisplay.DrawFlags |= 0x0004;
+        }
+        else
+        {
+            draw_sprite_purple_list(box1.X, box1.Y, &sprites_Icons0_0[108]);
+        }
+
+        struct ScreenBox box2;
+        box2.X = 594;
+        box2.Y = box->Y + 27;
+        box2.Width = 9;
+        box2.Height = 14;
+
+        ms_x = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
+        ms_y = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
+        if ((ms_x >= box2.X) && (ms_x <= box2.X+box2.Width) && (ms_y >= box2.Y) && (ms_y <= box2.Y + box2.Height))
+        {
+            if (lbDisplay.MLeftButton || joy.Buttons[0])
+            {
+                lbDisplay.LeftButton = 0;
+                box->Flags |= 0x0800;
+                if ((lbShift & 0x01) != 0)
+                    (*target_ptr)++;
+                else
+                    (*target_ptr) += 10;
+                if ((*target_ptr) > 322)
+                    (*target_ptr) = 322;
+                target_affected = 1;
+            }
+            lbDisplay.DrawFlags = 0x8000;
+        }
+        draw_sprite_purple_list(box2.X - 7, box2.Y, &sprites_Icons0_0[109]);
+
+        lbDisplay.DrawFlags = 0;
+        draw_text_purple_list2(266 - box->X, 24, gui_strings[421], 0);
+        draw_text_purple_list2(582 - wtext2 - 2 - box->X, 41, gui_strings[422], 0);
+    }
+    lbDisplay.DrawFlags = 0;
+    if (!target_affected)
+        return 0;
+
+    if (target_var == 0)
+        SetSoundMasterVolume(127 * (*target_ptr) / 322);
+    else if (target_var == 1)
+        SetMusicMasterVolume(127 * (*target_ptr) / 322);
+    else if (target_var == 2)
+      SetCDVolume((70 * (127 * (*target_ptr) / 322) / 100));
+
+    return 0;
 }
 
 ubyte show_audio_tracks_box(struct ScreenBox *box)
