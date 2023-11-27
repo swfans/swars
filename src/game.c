@@ -6572,7 +6572,7 @@ TbResult read_palette_file(void)
 
 TbBool pause_screen_handle(void)
 {
-#if 1
+#if 0
     TbBool ret;
     asm volatile ("call ASM_pause_screen_handle\n"
         : "=r" (ret) : );
@@ -6581,7 +6581,6 @@ TbBool pause_screen_handle(void)
     int w;
     const char *s;
     int x1, x2, y1;
-    uint v33, v34;
     int ms_x, ms_y, i;
     TbBool is_unkn1;
     TbPixel colr1, colr2;
@@ -6600,7 +6599,7 @@ TbBool pause_screen_handle(void)
     }
     do_change_mouse(8);
 
-    lbDisplay.DrawFlags = 0x0004;
+    lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
     if (lbDisplay.ScreenMode == 1)
         LbDrawBox(43, 27, 208, 97, colr1);
     else
@@ -6739,14 +6738,17 @@ TbBool pause_screen_handle(void)
 
     is_unkn1 = 0;
     while (!lbKeyOn[kbkeys[GKey_PAUSE]]
-        && (!jskeys[GKey_PAUSE] || lbKeyOn[kbkeys[GKey_PAUSE]] != joy.Buttons[0]) && !is_unkn1)
+        && (!jskeys[GKey_PAUSE] || jskeys[GKey_PAUSE] != joy.Buttons[0])
+        && !is_unkn1)
     {
+        game_update();
         joy_func_065(&joy);
         PlayCDTrack(ingame.CDTrack);
+
         x2 = 442;
         y1 = 122;
         x1 = 204;
-        while (y1 != 140)
+        while (y1 < 140)
         {
             if (lbDisplay.ScreenMode == 1)
                 LbDrawLine(x1 >> 1, y1 >> 1, x2 >> 1, y1 >> 1, colr2);
@@ -6760,7 +6762,7 @@ TbBool pause_screen_handle(void)
         x2 = 442;
         y1 = 166;
         x1 = 204;
-        while (y1 != 184)
+        while (y1 < 184)
         {
             if (lbDisplay.ScreenMode == 1)
                 LbDrawLine(x1 >> 1, y1 >> 1, x2 >> 1, y1 >> 1, colr2);
@@ -6774,7 +6776,7 @@ TbBool pause_screen_handle(void)
         x2 = 442;
         y1 = 210;
         x1 = 204;
-        while (y1 != 228)
+        while (y1 < 228)
         {
             if (lbDisplay.ScreenMode == 1)
                 LbDrawLine(x1 >> 1, y1 >> 1, x2 >> 1, y1 >> 1, colr2);
@@ -6787,24 +6789,24 @@ TbBool pause_screen_handle(void)
 
         if (lbDisplay.ScreenMode != 1)
         {
-            v33 = 123;
-            v34 = 441;
+            y1 = 123;
+            x2 = 441;
             x1 = 203;
-            while (v33 != 141)
+            while (y1 < 141)
             {
                 if (lbDisplay.ScreenMode == 1)
-                    LbDrawLine(x1 >> 1, v33 >> 1, v34 >> 1, v33 >> 1, colr2);
+                    LbDrawLine(x1 >> 1, y1 >> 1, x2 >> 1, y1 >> 1, colr2);
                 else
-                    LbDrawLine(x1, v33, v34, v33, colr2);
-                v33 += 2;
-                v34 -= 2;
+                    LbDrawLine(x1, y1, x2, y1, colr2);
+                y1 += 2;
+                x2 -= 2;
                 x1 -= 2;
             }
 
             x2 = 441;
             y1 = 167;
             x1 = 203;
-            while (y1 != 185)
+            while (y1 < 185)
             {
                 if (lbDisplay.ScreenMode == 1)
                     LbDrawLine(x1 >> 1, y1 >> 1, x2 >> 1, y1 >> 1, colr2);
@@ -6818,7 +6820,7 @@ TbBool pause_screen_handle(void)
             y1 = 211;
             x2 = 441;
             x1 = 203;
-            while (y1 != 229)
+            while (y1 < 229)
             {
                 if (lbDisplay.ScreenMode == 1)
                     LbDrawLine(x1 >> 1, y1 >> 1, x2 >> 1, y1 >> 1, colr2);
@@ -6838,18 +6840,7 @@ TbBool pause_screen_handle(void)
             ms_y = 2 * lbDisplay.MMouseY;
         else
             ms_y = lbDisplay.MMouseY;
-        if ((ms_x >> 1 < 88) || (ms_x >> 1 > 92) || (ms_y >> 1 < 62) || (ms_y >> 1 > 70))
-        {
-            if (lbDisplay.ScreenMode == 1)
-            {
-                LbSpriteDraw(88, 60, &pop1_sprites[100]);
-            }
-            else
-            {
-                LbSpriteDraw(176, 120, &pop1_sprites[100]);
-            }
-        }
-        else
+        if ((ms_x >> 1 >= 88) && (ms_x >> 1 <= 92) && (ms_y >> 1 >= 62) && (ms_y >> 1 <= 70))
         {
             if (lbDisplay.ScreenMode == 1)
             {
@@ -6872,6 +6863,17 @@ TbBool pause_screen_handle(void)
                     play_sample_using_heap(0, 80, 127, 64, 100, 0, 1u);
             }
         }
+        else
+        {
+            if (lbDisplay.ScreenMode == 1)
+            {
+                LbSpriteDraw(88, 60, &pop1_sprites[100]);
+            }
+            else
+            {
+                LbSpriteDraw(176, 120, &pop1_sprites[100]);
+            }
+        }
 
         if (lbDisplay.ScreenMode == 1)
             ms_x = 2 * lbDisplay.MMouseX;
@@ -6881,18 +6883,7 @@ TbBool pause_screen_handle(void)
             ms_y = 2 * lbDisplay.MMouseY;
         else
             ms_y = lbDisplay.MMouseY;
-        if ((ms_x >> 1 < 88) || (ms_x >> 1 > 92) || (ms_y >> 1 < 84) || (ms_y >> 1 > 92))
-        {
-            if (lbDisplay.ScreenMode == 1)
-            {
-                LbSpriteDraw(88, 82, &pop1_sprites[100]);
-            }
-            else
-            {
-                LbSpriteDraw(176, 164, &pop1_sprites[100]);
-            }
-        }
-        else
+        if ((ms_x >> 1 >= 88) && (ms_x >> 1 <= 92) && (ms_y >> 1 >= 84) && (ms_y >> 1 <= 92))
         {
             if (lbDisplay.ScreenMode == 1)
             {
@@ -6913,6 +6904,17 @@ TbBool pause_screen_handle(void)
                 SetMusicMasterVolume(127 * startscr_midivol / 322);
             }
         }
+        else
+        {
+            if (lbDisplay.ScreenMode == 1)
+            {
+                LbSpriteDraw(88, 82, &pop1_sprites[100]);
+            }
+            else
+            {
+                LbSpriteDraw(176, 164, &pop1_sprites[100]);
+            }
+        }
 
         if (lbDisplay.ScreenMode == 1)
             ms_x = 2 * lbDisplay.MMouseX;
@@ -6922,18 +6924,7 @@ TbBool pause_screen_handle(void)
             ms_y = 2 * lbDisplay.MMouseY;
         else
             ms_y = lbDisplay.MMouseY;
-        if ((ms_x >> 1 < 88) || (ms_x >> 1 > 92) || (ms_y >> 1 < 106) || (ms_y >> 1 > 114))
-        {
-            if (lbDisplay.ScreenMode == 1)
-            {
-                LbSpriteDraw(88, 104, &pop1_sprites[100]);
-            }
-            else
-            {
-                LbSpriteDraw(176, 208, &pop1_sprites[100]);
-            }
-        }
-        else
+        if ((ms_x >> 1 >= 88) && (ms_x >> 1 <= 92) && (ms_y >> 1 >= 106) && (ms_y >> 1 <= 114))
         {
             if (lbDisplay.ScreenMode == 1)
             {
@@ -6954,6 +6945,17 @@ TbBool pause_screen_handle(void)
                 SetCDVolume(70 * (127 * startscr_cdvolume / 322) / 100);
             }
         }
+        else
+        {
+            if (lbDisplay.ScreenMode == 1)
+            {
+                LbSpriteDraw(88, 104, &pop1_sprites[100]);
+            }
+            else
+            {
+                LbSpriteDraw(176, 208, &pop1_sprites[100]);
+            }
+        }
 
         if (lbDisplay.ScreenMode == 1)
             ms_x = 2 * lbDisplay.MMouseX;
@@ -6963,18 +6965,7 @@ TbBool pause_screen_handle(void)
             ms_y = 2 * lbDisplay.MMouseY;
         else
             ms_y = lbDisplay.MMouseY;
-        if ((ms_x >> 1 < 222) || (ms_x >> 1 > 226) || (ms_y >> 1 < 60) || (ms_y >> 1 > 68))
-        {
-            if (lbDisplay.ScreenMode == 1)
-            {
-                LbSpriteDraw(215, 60, &pop1_sprites[101]);
-            }
-            else
-            {
-                LbSpriteDraw(430, 120, &pop1_sprites[101]);
-            }
-        }
-        else
+        if ((ms_x >> 1 >= 222) && (ms_x >> 1 <= 226) && (ms_y >> 1 >= 60) && (ms_y >> 1 <= 68))
         {
             if (lbDisplay.ScreenMode == 1)
             {
@@ -6997,6 +6988,17 @@ TbBool pause_screen_handle(void)
                     play_sample_using_heap(0, 80, 127, 64, 100, 0, 1u);
             }
         }
+        else
+        {
+            if (lbDisplay.ScreenMode == 1)
+            {
+                LbSpriteDraw(215, 60, &pop1_sprites[101]);
+            }
+            else
+            {
+                LbSpriteDraw(430, 120, &pop1_sprites[101]);
+            }
+        }
 
         if (lbDisplay.ScreenMode == 1)
             ms_x = 2 * lbDisplay.MMouseX;
@@ -7006,18 +7008,7 @@ TbBool pause_screen_handle(void)
             ms_y = 2 * lbDisplay.MMouseY;
         else
             ms_y = lbDisplay.MMouseY;
-        if ((ms_x >> 1 < 222) || (ms_x >> 1 > 226) || (ms_y >> 1 < 82) || (ms_y >> 1 > 90))
-        {
-            if (lbDisplay.ScreenMode == 1)
-            {
-                LbSpriteDraw(215, 82, &pop1_sprites[101]);
-            }
-            else
-            {
-                LbSpriteDraw(430, 164, &pop1_sprites[101]);
-            }
-        }
-        else
+        if ((ms_x >> 1 >= 222) && (ms_x >> 1 <= 226) && (ms_y >> 1 >= 82) && (ms_y >> 1 <= 90))
         {
             if (lbDisplay.ScreenMode == 1)
             {
@@ -7038,6 +7029,18 @@ TbBool pause_screen_handle(void)
                 SetMusicMasterVolume(127 * startscr_midivol / 322);
             }
         }
+        else
+        {
+            if (lbDisplay.ScreenMode == 1)
+            {
+                LbSpriteDraw(215, 82, &pop1_sprites[101]);
+            }
+            else
+            {
+                LbSpriteDraw(430, 164, &pop1_sprites[101]);
+            }
+        }
+
         if (lbDisplay.ScreenMode == 1)
             ms_x = 2 * lbDisplay.MMouseX;
         else
@@ -7046,18 +7049,7 @@ TbBool pause_screen_handle(void)
             ms_y = 2 * lbDisplay.MMouseY;
         else
             ms_y = lbDisplay.MMouseY;
-        if ((ms_x >> 1 < 222) || (ms_x >> 1 > 226) || (ms_y >> 1 < 104) || (ms_y >> 1 > 112))
-        {
-            if (lbDisplay.ScreenMode == 1)
-            {
-                LbSpriteDraw(215, 104, &pop1_sprites[101]);
-            }
-            else
-            {
-                LbSpriteDraw(430, 208, &pop1_sprites[101]);
-            }
-        }
-        else
+        if ((ms_x >> 1 >= 222) && (ms_x >> 1 <= 226) && (ms_y >> 1 >= 104) && (ms_y >> 1 <= 112))
         {
             if (lbDisplay.ScreenMode == 1)
             {
@@ -7078,12 +7070,23 @@ TbBool pause_screen_handle(void)
                 SetCDVolume(70 * (127 * startscr_cdvolume / 322) / 100);
             }
         }
+        else
+        {
+            if (lbDisplay.ScreenMode == 1)
+            {
+                LbSpriteDraw(215, 104, &pop1_sprites[101]);
+            }
+            else
+            {
+                LbSpriteDraw(430, 208, &pop1_sprites[101]);
+            }
+        }
 
         if (lbDisplay.MLeftButton)
         {
             ms_x = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
             ms_y = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
-            if ((ms_x >> 1 >= 62) && (ms_x >> 1 <= 68))
+            if ((ms_y >> 1 >= 62) && (ms_y >> 1 <= 68))
             {
                 int ms_delta;
                 ms_delta = (ms_y >> 1) + (ms_x >> 1) - 62;
@@ -7101,7 +7104,7 @@ TbBool pause_screen_handle(void)
         {
             ms_x = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
             ms_y = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
-            if ((ms_y >> 1 >= 84) || (ms_y >> 1 <= 90))
+            if ((ms_y >> 1 >= 84) && (ms_y >> 1 <= 90))
             {
                 int ms_delta;
                 ms_delta = (ms_y >> 1) + (ms_x >> 1) - 84;
@@ -7131,126 +7134,123 @@ TbBool pause_screen_handle(void)
 
         if (startscr_samplevol)
         {
-            int val5, val6, val7;
-            int val8, val9;
-            val5 = 206;
-            val6 = 124;
+            int val7;
+            x1 = 206;
+            y1 = 124;
             for (i = 0; i < 7; i++)
             {
                 val7 = 103 - i;
                 if (lbDisplay.ScreenMode == 1)
-                    LbDrawLine(val5 >> 1, val6 >> 1,
+                    LbDrawLine(x1 >> 1, y1 >> 1,
                         (2 * (116 * startscr_samplevol / 322 + val7))
-                            >> 1, val6 >> 1, colour_lookup[1]);
+                            >> 1, y1 >> 1, colour_lookup[1]);
                 else
-                    LbDrawLine(val5, val6,
+                    LbDrawLine(x1, y1,
                         2 * (116 * startscr_samplevol / 322 + val7),
-                        val6, colour_lookup[1]);
-                val5 -= 2;
-                val6 += 2;
+                        y1, colour_lookup[1]);
+                x1 -= 2;
+                y1 += 2;
             }
             if (lbDisplay.ScreenMode != 1)
             {
-                val8 = 205;
-                val9 = 125;
+                x1 = 205;
+                y1 = 125;
                 for (i = 0; i < 7; i++)
                 {
                     val7 = 103 - i;
                     if (lbDisplay.ScreenMode == 1)
-                        LbDrawLine(val8 >> 1, val9 >> 1,
+                        LbDrawLine(x1 >> 1, y1 >> 1,
                             (2 * (116 * startscr_samplevol / 322 + val7)
-                                - 1) >> 1, val9 >> 1, colour_lookup[1]);
+                                - 1) >> 1, y1 >> 1, colour_lookup[1]);
                     else
-                        LbDrawLine(val8, val9,
+                        LbDrawLine(x1, y1,
                             2 * (val7 + 116 * startscr_samplevol / 322)
-                                - 1, val9, colour_lookup[1]);
-                    val8 -= 2;
-                    val9 += 2;
+                                - 1, y1, colour_lookup[1]);
+                    x1 -= 2;
+                    y1 += 2;
                 }
             }
         }
 
         if (startscr_midivol)
         {
-            int val5, val6, val7;
-            int val8, val9;
-            val5 = 206;
-            val6 = 168;
+            int val7;
+            x1 = 206;
+            y1 = 168;
             for (i = 0; i < 7; i++)
             {
                 val7 = 103 - i;
                 if (lbDisplay.ScreenMode == 1)
-                    LbDrawLine(val5 >> 1, val6 >> 1,
+                    LbDrawLine(x1 >> 1, y1 >> 1,
                         (2 * (116 * startscr_midivol / 322 + val7))
-                            >> 1, val6 >> 1, colour_lookup[1]);
+                            >> 1, y1 >> 1, colour_lookup[1]);
                 else
-                    LbDrawLine(val5, val6,
+                    LbDrawLine(x1, y1,
                         2 * (116 * startscr_midivol / 322 + val7),
-                        val6, colour_lookup[1]);
-                val5 -= 2;
-                val6 += 2;
+                        y1, colour_lookup[1]);
+                x1 -= 2;
+                y1 += 2;
             }
             if (lbDisplay.ScreenMode != 1)
             {
-                val8 = 205;
-                val9 = 169;
+                x1 = 205;
+                y1 = 169;
                 for (i = 0; i < 7; i++)
                 {
                     val7 = 103 - i;
                     if (lbDisplay.ScreenMode == 1)
-                        LbDrawLine(val8 >> 1, val9 >> 1,
+                        LbDrawLine(x1 >> 1, y1 >> 1,
                             (2
                                 * (116 * startscr_midivol / 322
-                                    + val7) - 1) >> 1, val9 >> 1,
+                                    + val7) - 1) >> 1, y1 >> 1,
                             colour_lookup[1]);
                     else
-                        LbDrawLine(val8, val9,
+                        LbDrawLine(x1, y1,
                             2
                                 * (116 * startscr_midivol / 322
-                                    + val7) - 1, val9, colour_lookup[1]);
-                    val8 -= 2;
-                    val9 += 2;
+                                    + val7) - 1, y1, colour_lookup[1]);
+                    x1 -= 2;
+                    y1 += 2;
                 }
             }
         }
 
         if (startscr_cdvolume)
         {
-            int val5, val6, val7;
-            int val8, val9;
-            val5 = 206;
-            val6 = 212;
+            int val7;
+            x1 = 206;
+            y1 = 212;
             for (i = 0; i < 7; i++)
             {
                 val7 = 103 - i;
                 if (lbDisplay.ScreenMode == 1)
-                    LbDrawLine(val5 >> 1, val6 >> 1,
+                    LbDrawLine(x1 >> 1, y1 >> 1,
                         (2 * (116 * startscr_cdvolume / 322 + val7))
-                            >> 1, val6 >> 1, colour_lookup[1]);
+                            >> 1, y1 >> 1, colour_lookup[1]);
                 else
-                    LbDrawLine(val5, val6,
+                    LbDrawLine(x1, y1,
                         2 * (116 * startscr_cdvolume / 322 + val7),
-                        val6, colour_lookup[1]);
-                val5 -= 2;
-                val6 += 2;
+                        y1, colour_lookup[1]);
+                x1 -= 2;
+                y1 += 2;
             }
             if (lbDisplay.ScreenMode != 1)
             {
-                val8 = 205;
-                val9 = 213;
+                x1 = 205;
+                y1 = 213;
                 for (i = 0; i < 7; i++)
                 {
                     val7 = 103 - i;
                     if (lbDisplay.ScreenMode == 1)
-                        LbDrawLine(val8 >> 1, val9 >> 1,
+                        LbDrawLine(x1 >> 1, y1 >> 1,
                             (2 * (val7 + 116 * startscr_cdvolume / 322)
-                                - 1) >> 1, val9 >> 1, colour_lookup[1]);
+                                - 1) >> 1, y1 >> 1, colour_lookup[1]);
                     else
-                        LbDrawLine(val8, val9,
+                        LbDrawLine(x1, y1,
                             2 * (val7 + 116 * startscr_cdvolume / 322)
-                                - 1, val9, colour_lookup[1]);
-                    val8 -= 2;
-                    val9 += 2;
+                                - 1, y1, colour_lookup[1]);
+                    x1 -= 2;
+                    y1 += 2;
                 }
             }
         }
@@ -7280,9 +7280,10 @@ TbBool pause_screen_handle(void)
         swap_wscreen();
     }
 
-    while ((0 != lbKeyOn[kbkeys[GKey_PAUSE]])
-        || (0 != jskeys[GKey_PAUSE] && jskeys[GKey_PAUSE] == joy.Buttons[0]))
+    while ((lbKeyOn[kbkeys[GKey_PAUSE]])
+        || (jskeys[GKey_PAUSE] && jskeys[GKey_PAUSE] == joy.Buttons[0]))
     {
+        game_update();
         joy_func_065(&joy);
         PlayCDTrack(ingame.CDTrack);
         swap_wscreen();
