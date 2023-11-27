@@ -58,7 +58,7 @@ void show_audio_volume_box_func_02(short a1, short a2, short a3, short a4, TbPix
 
 ubyte show_audio_volume_box(struct ScreenBox *box)
 {
-#if 1
+#if 0
     ubyte ret;
     asm volatile ("call ASM_show_audio_volume_box\n"
         : "=r" (ret) : "a" (box));
@@ -68,8 +68,7 @@ ubyte show_audio_volume_box(struct ScreenBox *box)
     char *s;
     ushort w;
     int ms_x, ms_y;
-    short x2a, x2c;
-    short x1a, x1b;
+    short x1b, x2c;
     short wtext1, wtext2;
     ubyte target_var;
     TbBool target_affected;
@@ -116,43 +115,56 @@ ubyte show_audio_volume_box(struct ScreenBox *box)
         lbFontPtr = small_med_font;
         lbDisplay.DrawFlags = 0;
 
+        struct ScreenBox box1; // Left triangle
+        box1.Width = 9;
+        box1.Height = 14;
+
+        struct ScreenBox box0; // Main bar
+        box0.Width = 336;
+        box0.Height = 28;
+
+        struct ScreenBox box2; // Right triangle
+        box2.Width = 9;
+        box2.Height = 14;
+
+        box0.Y = box->Y + 26;
+        box1.Y = box->Y + 26 + 12;
+        box2.Y = box->Y + 26 + 1;
+
+        box1.X = box->X + 33;
+        box0.X = box->X + 33 + 9 + 2;
+        box2.X = box->X + 33 + 9 + 2 + 336 + 1;
+
         wtext2 = my_string_width(gui_strings[422]) + 2;
         wtext1 = my_string_width(gui_strings[421]) + 2;
-        x1a = wtext1 + 277;
-        x2a = 599 - wtext2;
-        x1b = 350 - wtext1 - wtext2 - 28;
+        x1b = box0.Width - wtext1 - wtext2 - 14;
         if (*target_ptr < wtext1)
         {
-            show_audio_volume_box_func_02(266, box->Y + 37, *target_ptr, 17, 174);
+            x2c = *target_ptr;
+            show_audio_volume_box_func_02(box1.X + 20, box0.Y + 11, x2c, 17, 174);
             lbDisplay.DrawFlags = 0x0004;
-            show_audio_volume_box_func_02(*target_ptr + 266, box->Y + 37, wtext1 - *target_ptr, 17, 174);
-            show_audio_volume_box_func_02(x1a, box->Y + 26, x1b, 28, 174);
-            show_audio_volume_box_func_02(x2a, box->Y + 26, wtext2, 17, 174);
+            show_audio_volume_box_func_02(box1.X + 20 + x2c, box0.Y + 11, wtext1 - x2c, 17, 174);
+            show_audio_volume_box_func_02(box0.X + 20 + wtext1, box0.Y, x1b, 28, 174);
+            show_audio_volume_box_func_02(box2.X + 5 - wtext2, box0.Y, wtext2, 17, 174);
         }
         else if (*target_ptr >= 322 - wtext2)
         {
-            x2c = *target_ptr - (322 - wtext2);
-            show_audio_volume_box_func_02(266, box->Y + 37, wtext1, 17, 174);
-            show_audio_volume_box_func_02(x1a, box->Y + 26, x1b, 28, 174);
-            show_audio_volume_box_func_02(x2a, box->Y + 26, x2c, 17, 174);
+            x2c = (*target_ptr) - (322 - wtext2);
+            show_audio_volume_box_func_02(box1.X + 20, box0.Y + 11, wtext1, 17, 174);
+            show_audio_volume_box_func_02(box0.X + 20 + wtext1, box0.Y, x1b, 28, 174);
+            show_audio_volume_box_func_02(box2.X + 5 - wtext2, box0.Y, x2c, 17, 174);
             lbDisplay.DrawFlags = 0x0004;
-            show_audio_volume_box_func_02(x2c + x2a, box->Y + 26, wtext2 - x2c, 17, 174);
+            show_audio_volume_box_func_02(box2.X + 5 + x2c - wtext2, box0.Y, wtext2 - x2c, 17, 174);
         }
         else
         {
-            x2c = *target_ptr - wtext1;
-            show_audio_volume_box_func_02(266, box->Y + 37, wtext1, 17, 174);
-            show_audio_volume_box_func_02(x1a, box->Y + 26, x2c, 28, 174);
+            x2c = (*target_ptr) - wtext1;
+            show_audio_volume_box_func_02(box1.X + 20, box0.Y + 11, wtext1, 17, 174);
+            show_audio_volume_box_func_02(box0.X + 20 + wtext1, box0.Y, x2c, 28, 174);
             lbDisplay.DrawFlags = 0x0004;
-            show_audio_volume_box_func_02(x2c + x1a, box->Y + 26, x1b - x2c, 28, 174);
-            show_audio_volume_box_func_02(x2a, box->Y + 26, wtext2, 17, 174);
+            show_audio_volume_box_func_02(box0.X + 20 + x2c + wtext1, box0.Y, x1b - x2c, 28, 174);
+            show_audio_volume_box_func_02(box2.X + 5 - wtext2, box0.Y, wtext2, 17, 174);
         }
-
-        struct ScreenBox box0;
-        box0.X = 257;
-        box0.Y = box->Y + 26;
-        box0.Width = 36;
-        box0.Height = 28;
 
         ms_x = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
         ms_y = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
@@ -173,12 +185,6 @@ ubyte show_audio_volume_box(struct ScreenBox *box)
             }
         }
         lbDisplay.DrawFlags |= 0x8000;
-
-        struct ScreenBox box1;
-        box1.X = 246;
-        box1.Y = box->Y + 38;
-        box1.Width = 9;
-        box1.Height = 14;
 
         ms_x = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
         ms_y = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
@@ -204,12 +210,6 @@ ubyte show_audio_volume_box(struct ScreenBox *box)
         {
             draw_sprite_purple_list(box1.X, box1.Y, &sprites_Icons0_0[108]);
         }
-
-        struct ScreenBox box2;
-        box2.X = 594;
-        box2.Y = box->Y + 27;
-        box2.Width = 9;
-        box2.Height = 14;
 
         ms_x = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
         ms_y = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
