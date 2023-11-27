@@ -11,6 +11,7 @@
 #include "bfkeybd.h"
 #include "bfmouse.h"
 #include "bftext.h"
+#include "bfbox.h"
 #include "bfpalette.h"
 #include "bfmemory.h"
 #include "bfmemut.h"
@@ -30,6 +31,7 @@
 #include "svesa.h"
 #include "swlog.h"
 #include "bflib_fmvids.h"
+#include "bflib_vidraw.h"
 #include "bfscd.h"
 #include "bflib_joyst.h"
 #include "matrix.h"
@@ -6357,6 +6359,25 @@ void local_to_worldr(int *dx, int *dy, int *dz)
     asm volatile (
       "call ASM_local_to_worldr\n"
         : : "a" (dx), "d" (dy), "b" (dz));
+}
+
+ushort my_draw_text(short x, short y, const char *text, ushort startline)
+{
+    ushort ret;
+    asm volatile ("call ASM_my_draw_text\n"
+        : "=r" (ret) : "a" (x), "d" (y), "b" (text), "c" (startline));
+    return ret;
+}
+
+ubyte sub_71694(int a1, int a2, char *text, int a4, ubyte a5, ubyte a6)
+{
+    ubyte ret;
+    asm volatile (
+      "push %6\n"
+      "push %5\n"
+      "call ASM_sub_71694\n"
+        : "=r" (ret) : "a" (a1), "d" (a2), "b" (text), "c" (a4), "g" (a5), "g" (a6));
+    return ret;
 }
 
 void do_scroll_map(void)

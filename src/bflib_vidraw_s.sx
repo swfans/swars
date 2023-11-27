@@ -1183,7 +1183,7 @@ LbDrawBoxClip_:	/* 0x0FADD0 */
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (LbDrawTriangle_)
+GLOBAL_FUNC (ASM_LbDrawTriangle)
 /*----------------------------------------------------------------*/
 		push   %ebp
 		mov    %esp,%ebp

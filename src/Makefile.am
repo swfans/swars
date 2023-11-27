@@ -19,6 +19,8 @@ swars_SOURCES = \
 	bflib_sndlib_s.sx \
 	bflib_snd_mss_s.sx \
 	bflib_snd_sys_s.sx \
+	bflib_vidraw.c \
+	bflib_vidraw.h \
 	bflib_vidraw_s.sx \
 	../bfsoundlib/include/ail.h \
 	../bfsoundlib/src/ail.c \
