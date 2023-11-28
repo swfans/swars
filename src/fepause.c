@@ -53,6 +53,37 @@ ubyte sub_71694(int a1, int a2, char *text, int a4, ubyte a5, ubyte a6)
     return ret;
 }
 
+void draw_box_cutedge(struct ScreenBox *box, TbPixel colr1)
+{
+    short cut, stp;
+    if (lbDisplay.ScreenMode == 1) {
+        stp = 1;
+        cut = 25;
+    } else {
+        stp = 2;
+        cut = 50;
+    }
+
+    lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
+    LbDrawBox(box->X + 0, box->Y + 0, box->Width - cut, box->Height - cut, colr1);
+    LbDrawBox(box->X + box->Width - cut, box->Y +  cut, cut, box->Height - 2*cut, colr1);
+    LbDrawBox(box->X + cut, box->Y + box->Height - cut, box->Width - cut, cut, colr1);
+    LbDrawTriangle(box->X + box->Width - cut, box->Y + 0,
+      box->X + box->Width, box->Y + cut,
+      box->X + box->Width - cut, box->Y + cut, colr1);
+    LbDrawTriangle(box->X + stp, box->Y + box->Height - cut,
+      box->X + cut, box->Y + box->Height - cut,
+      box->X + cut, box->Y + box->Height - stp, colr1);
+
+    lbDisplay.DrawFlags = 0;
+    LbDrawLine(box->X + 0, box->Y + 0, box->X + box->Width - cut, box->Y + 0, colr1);
+    LbDrawLine(box->X + 0, box->Y + 0, box->X + 0, box->Y + box->Height - cut - stp, colr1);
+    LbDrawLine(box->X + box->Width, box->Y + cut, box->X + box->Width, box->Y + box->Height - stp, colr1);
+    LbDrawLine(box->X + cut, box->Y + box->Height - stp, box->X + box->Width, box->Y + box->Height - stp, colr1);
+    LbDrawLine(box->X + box->Width - cut, box->Y + 0, box->X + box->Width, box->Y + cut, colr1);
+    LbDrawLine(box->X + stp, box->Y + box->Height - cut, box->X + cut, box->Height + cut + stp, colr1);
+}
+
 TbBool pause_screen_handle(void)
 {
 #if 0
@@ -67,6 +98,19 @@ TbBool pause_screen_handle(void)
     int ms_x, ms_y, i;
     TbBool is_unkn1;
     TbPixel colr1, colr2;
+    struct ScreenBox main_box;
+
+    if (lbDisplay.ScreenMode == 1) {
+        main_box.X = 43;
+        main_box.Width = 233;
+        main_box.Y = 27;
+        main_box.Height = 122;
+    } else {
+        main_box.X = 86;
+        main_box.Width = 466;
+        main_box.Y = 54;
+        main_box.Height = 244;
+    }
 
     if ((ingame.PanelPermutation != 2) && (ingame.PanelPermutation != -3))
         colr1 = 20;
@@ -82,57 +126,7 @@ TbBool pause_screen_handle(void)
     }
     do_change_mouse(8);
 
-    lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
-    if (lbDisplay.ScreenMode == 1)
-        LbDrawBox(43, 27, 208, 97, colr1);
-    else
-        LbDrawBox(86, 54, 416, 194, colr1);
-    if (lbDisplay.ScreenMode == 1)
-        LbDrawBox(251, 52, 25, 72, colr1);
-    else
-        LbDrawBox(502, 104, 50, 144, colr1);
-    if (lbDisplay.ScreenMode == 1)
-        LbDrawBox(68, 124, 208, 25, colr1);
-    else
-        LbDrawBox(136, 248, 416, 50, colr1);
-    if (lbDisplay.ScreenMode == 1)
-    {
-        LbDrawTriangle(251, 27, 276, 52, 251, 52, colr1);
-        LbDrawTriangle(44, 124, 68, 124, 68, 148, colr1);
-    }
-    else
-    {
-        LbDrawTriangle(502, 54, 552, 104, 502, 104, colr1);
-        LbDrawTriangle(88, 248, 136, 248, 136, 296, colr1);
-    }
-
-    lbDisplay.DrawFlags = 0;
-    if (lbDisplay.ScreenMode == 1)
-        LbDrawLine(43, 27, 251, 27, colr1);
-    else
-        LbDrawLine(86, 54, 502, 54, colr1);
-    if (lbDisplay.ScreenMode == 1)
-        LbDrawLine(43, 27, 43, 123, colr1);
-    else
-        LbDrawLine(86, 54, 86, 246, colr1);
-    if (lbDisplay.ScreenMode == 1)
-        LbDrawLine(276, 52, 276, 148, colr1);
-    else
-        LbDrawLine(552, 104, 552, 296, colr1);
-    if (lbDisplay.ScreenMode == 1)
-        LbDrawLine(68, 148, 276, 148, colr1);
-    else
-        LbDrawLine(136, 296, 552, 296, colr1);
-    if (lbDisplay.ScreenMode == 1)
-    {
-        LbDrawLine(251, 27, 276, 52, colr1);
-        LbDrawLine(44, 124, 68, 148, colr1);
-    }
-    else
-    {
-        LbDrawLine(502, 54, 552, 104, colr1);
-        LbDrawLine(88, 248, 136, 296, colr1);
-    }
+    draw_box_cutedge(&main_box, colr1);
 
     if ((ingame.PanelPermutation != 2) && (ingame.PanelPermutation != -3))
         colr2 = 15;
