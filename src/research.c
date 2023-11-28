@@ -22,6 +22,7 @@
 #include "weapon.h"
 #include "cybmod.h"
 #include "display.h"
+#include "feresearch.h"
 #include "game.h"
 #include "wadfile.h"
 #include "swlog.h"
@@ -146,7 +147,7 @@ void research_current_weapon_complete(void)
     research.WeaponsCompleted |= 1 << cwep;
     research.WeaponsAllowed &= ~(1 << cwep);
     research.CurrentWeapon = -1;
-    research_unkn21_box.Lines = 0;
+    clear_research_screen();
     refresh_equip_list = 1;
 }
 
@@ -248,7 +249,7 @@ void research_current_cymod_complete(void)
     if (research.CurrentMod % 3 != 2 && mtype < MOD_EPIDERM1)
         research_cymod_allow(mtype + 1);
     research.CurrentMod = -1;
-    research_unkn21_box.Lines = 0;
+    clear_research_screen();
     refresh_equip_list = 1;
 }
 

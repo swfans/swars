@@ -19,6 +19,8 @@ swars_SOURCES = \
 	bflib_sndlib_s.sx \
 	bflib_snd_mss_s.sx \
 	bflib_snd_sys_s.sx \
+	bflib_vidraw.c \
+	bflib_vidraw.h \
 	bflib_vidraw_s.sx \
 	../bfsoundlib/include/ail.h \
 	../bfsoundlib/src/ail.c \
@@ -76,6 +78,7 @@ swars_SOURCES = \
 	../bfsoundlib/src/drv_oal.c \
 	../bfsoundlib/include/oggvorbis.h \
 	../bfsoundlib/src/oggvorbis.c \
+	../bfsoundlib/src/ailssa.sx \
 	config.h \
 	bigmap.c \
 	bigmap.h \
@@ -95,6 +98,36 @@ swars_SOURCES = \
 	drawtext.h \
 	engintrns.c \
 	engintrns.h \
+	febrief.c \
+	febrief.h \
+	fedebrief.c \
+	fedebrief.h \
+	fecntrls.c \
+	fecntrls.h \
+	fecryo.c \
+	fecryo.h \
+	feequip.c \
+	feequip.h \
+	feoptions.c \
+	feoptions.h \
+	felogin.c \
+	felogin.h \
+	fenet.c \
+	fenet.h \
+	fepause.c \
+	fepause.h \
+	feresearch.c \
+	feresearch.h \
+	festorage.c \
+	festorage.h \
+	feworld.c \
+	feworld.h \
+	guiboxes.c \
+	guiboxes.h \
+	guigraph.c \
+	guigraph.h \
+	guitext.c \
+	guitext.h \
 	game.c \
 	game_data.c \
 	game_data.h \
@@ -127,6 +160,8 @@ swars_SOURCES = \
 	scandraw.h \
 	sound.c \
 	sound.h \
+	specblit.c \
+	specblit.h \
 	swars.sx \
 	swlog.h \
 	thing.c \

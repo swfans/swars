@@ -119,9 +119,9 @@ TbResult LbDrawBoxClip(long destX, long destY, ulong width, ulong height,
     if (lbDisplay.DrawFlags & Lb_SPRITE_TRANSPAR4)
     {
         m = lbDisplay.GlassMap;
-        for (h = clpheight; h >= 0; h--)
+        for (h = clpheight; h > 0; h--)
         {
-            for (w = clpwidth; w >= 0; w--)
+            for (w = clpwidth; w > 0; w--)
             {
                 *d = m[(colour << 8) + (*d)];
                 d++;
@@ -132,9 +132,9 @@ TbResult LbDrawBoxClip(long destX, long destY, ulong width, ulong height,
     else if (lbDisplay.DrawFlags & Lb_SPRITE_TRANSPAR8)
     {
         m = lbDisplay.GlassMap;
-        for (h = clpheight; h >= 0; h--)
+        for (h = clpheight; h > 0; h--)
         {
-            for (w = clpwidth; w >= 0; w--)
+            for (w = clpwidth; w > 0; w--)
             {
                 *d = m[((*d) << 8) + colour];
                 d++;
@@ -144,10 +144,10 @@ TbResult LbDrawBoxClip(long destX, long destY, ulong width, ulong height,
     }
     else
     {
-        for (h = clpheight; h >= 0; h--)
+        for (h = clpheight; h > 0; h--)
         {
             memset(d, colour, clpwidth);
-            d += width;
+            d += clpwidth;
             d += shift;
         }
     }

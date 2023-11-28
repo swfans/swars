@@ -7,5 +7,6 @@
 struct TbPoint;
 
 ubyte process_mouse_imputs(void);
+void do_change_mouse(ushort mouse);
 
 #endif

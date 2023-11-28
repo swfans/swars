@@ -36,6 +36,11 @@
 /******************************************************************************/
 static long long tmcount_start = 0;
 
+FILE *AIL_debugfile;
+uint16_t AIL_debug;
+uint16_t AIL_sys_debug;
+uint32_t AIL_indent;
+
 int32_t AIL_startup(void)
 {
     const char *logfname;
@@ -391,15 +396,15 @@ int32_t AIL_sample_buffer_ready(SNDSAMPLE *s)
     return bufstat;
 }
 
-SNDSAMPLE *AIL_allocate_sample_handle(DIG_DRIVER *dig)
+SNDSAMPLE *AIL_allocate_sample_handle(DIG_DRIVER *digdrv)
 {
     SNDSAMPLE *s;
 
     AIL_indent++;
     if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
-        fprintf(AIL_debugfile, "%s(0x%p)\n", __func__, dig);
+        fprintf(AIL_debugfile, "%s(0x%p)\n", __func__, digdrv);
 
-    s = AIL2OAL_API_allocate_sample_handle(dig);
+    s = AIL2OAL_API_allocate_sample_handle(digdrv);
 
     if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
         fprintf(AIL_debugfile, "Result = 0x%p\n", s);
@@ -436,6 +441,23 @@ void AIL_init_sample(SNDSAMPLE *s)
     if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
         fprintf(AIL_debugfile, "Finished\n");
     AIL_indent--;
+}
+
+intptr_t AIL_sample_user_data(SNDSAMPLE *s, uint32_t index)
+{
+   intptr_t result;
+
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s(0x%p, %u)\n", __func__, s, index);
+
+    result = AIL2OAL_API_sample_user_data(s, index);
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Result = %d\n", (int)result);
+    AIL_indent--;
+
+    return result;
 }
 
 void AIL_set_sample_user_data(SNDSAMPLE *s, uint32_t index, intptr_t value)
@@ -482,6 +504,96 @@ void AIL_set_sample_address(SNDSAMPLE *s, const void *start, uint32_t len)
     AIL_indent--;
 }
 
+int32_t AIL_sample_playback_rate(SNDSAMPLE *s)
+{
+   int32_t result;
+
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s(0x%p)\n", __func__, s);
+
+    result = AIL2OAL_API_sample_playback_rate(s);
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Result = %d\n", (int)result);
+    AIL_indent--;
+
+    return result;
+}
+
+void AIL_set_sample_playback_rate(SNDSAMPLE *s, int32_t playback_rate)
+{
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s(0x%p, %u)\n", __func__, s, playback_rate);
+
+    AIL2OAL_API_set_sample_playback_rate(s, playback_rate);
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Finished\n");
+    AIL_indent--;
+}
+
+int32_t AIL_sample_volume(SNDSAMPLE *s)
+{
+   int32_t result;
+
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s(0x%p)\n", __func__, s);
+
+    result = AIL2OAL_API_sample_volume(s);
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Result = %d\n", (int)result);
+    AIL_indent--;
+
+    return result;
+}
+
+void AIL_set_sample_volume(SNDSAMPLE *s, int32_t level)
+{
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s(0x%p, %u)\n", __func__, s, level);
+
+    AIL2OAL_API_set_sample_volume(s, level);
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Finished\n");
+    AIL_indent--;
+}
+
+int32_t AIL_sample_pan(SNDSAMPLE *s)
+{
+   int32_t result;
+
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s(0x%p)\n", __func__, s);
+
+    result = AIL2OAL_API_sample_pan(s);
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Result = %d\n", (int)result);
+    AIL_indent--;
+
+    return result;
+}
+
+void AIL_set_sample_pan(SNDSAMPLE *s, int32_t level)
+{
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s(0x%p, %u)\n", __func__, s, level);
+
+    AIL2OAL_API_set_sample_pan(s, level);
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Finished\n");
+    AIL_indent--;
+}
+
 void AIL_set_sample_type(SNDSAMPLE *s, int32_t format, uint32_t flags)
 {
     AIL_indent++;
@@ -502,6 +614,19 @@ void AIL_set_sample_loop_count(SNDSAMPLE *s, int32_t loop_count)
         fprintf(AIL_debugfile, "%s(0x%p, %d)\n", __func__, s, loop_count);
 
     AIL2OAL_API_set_sample_loop_count(s, loop_count);
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Finished\n");
+    AIL_indent--;
+}
+
+void AIL_start_sample(SNDSAMPLE *s)
+{
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s(0x%p)\n", __func__, s);
+
+    AIL2OAL_API_start_sample(s);
 
     if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
         fprintf(AIL_debugfile, "Finished\n");
@@ -830,6 +955,38 @@ intptr_t AIL_sequence_user_data(SNDSEQUENCE *seq, uint32_t index)
     return result;
 }
 
+int32_t AIL_minimum_sample_buffer_size(DIG_DRIVER *digdrv,
+  int32_t playback_rate, int32_t format)
+{
+    int32_t result;
+
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s(0x%p, %d, %d)\n", __func__, digdrv, playback_rate, format);
+
+    result = AIL2OAL_API_minimum_sample_buffer_size(digdrv, playback_rate, format);
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Result = %d\n", result);
+    AIL_indent--;
+
+    return result;
+}
+
+void AIL_load_sample_buffer(SNDSAMPLE *s, int32_t buff_num,
+  void *buffer, uint32_t len)
+{
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s(0x%p, %d, 0x%p, %u)\n", __func__, s, buff_num, buffer, len);
+
+    AIL2OAL_API_load_sample_buffer(s, buff_num, buffer, len);
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Finished\n");
+    AIL_indent--;
+}
+
 void AIL_delay(int32_t intervals)
 {
     AIL_indent++;
@@ -1022,6 +1179,23 @@ void AIL_uninstall_DIG_driver(DIG_DRIVER *digdrv)
     if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
         fprintf(AIL_debugfile, "Finished\n");
     AIL_indent--;
+}
+
+int32_t AIL_digital_master_volume(DIG_DRIVER *digdrv)
+{
+    int32_t result;
+
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s(0x%p)\n", __func__, digdrv);
+
+    result = AIL2OAL_API_digital_master_volume(digdrv);
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Result = %d\n", (int)result);
+    AIL_indent--;
+
+    return result;
 }
 
 void AIL_set_digital_master_volume(DIG_DRIVER *digdrv, int32_t master_volume)

@@ -34,16 +34,16 @@ extern uint16_t awe_data_seg;
 
 int AWEFreeMem(MDI_DRIVER *mdidrv, short bank_no)
 {
-  VDI_CALL regs;
+    VDI_CALL regs;
 
-  FreeDOSmem(awe_data, awe_data_seg);
-  awe_data = NULL;
-  awe_data_seg = 0;
+    FreeDOSmem(awe_data, awe_data_seg);
+    awe_data = NULL;
+    awe_data_seg = 0;
 
-  regs.CX = AWESF_FREEBANK;
-  regs.DX = bank_no;
-  AIL_call_driver(mdidrv->drvr, MDI_VSE, &regs, &regs);
-  return regs.AX;
+    regs.CX = AWESF_FREEBANK;
+    regs.DX = bank_no;
+    AIL_call_driver(mdidrv->drvr, MDI_VSE, &regs, &regs);
+    return regs.AX;
 }
 
 /******************************************************************************/

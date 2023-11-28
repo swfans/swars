@@ -9,7 +9,8 @@
 extern TbScreenMode screen_mode_game_hi;
 extern TbScreenMode screen_mode_game_lo;
 extern TbScreenMode screen_mode_menu;
-extern TbScreenMode screen_mode_fmvid;
+extern TbScreenMode screen_mode_fmvid_lo;
+extern TbScreenMode screen_mode_fmvid_hi;
 
 extern ubyte *back_buffer;
 extern struct TbSprite *unk3_sprites;

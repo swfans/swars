@@ -162,19 +162,32 @@ DIG_DRIVER *AIL_install_DIG_driver_file(char const *fname, SNDCARD_IO_PARMS *iop
  */
 void AIL_uninstall_DIG_driver(DIG_DRIVER *digdrv);
 
+/** Get current master digital volume.
+ */
+int32_t AIL_digital_master_volume(DIG_DRIVER *digdrv);
+
 /** Set master volume for all samples.
  */
 void AIL_set_digital_master_volume(DIG_DRIVER *digdrv, int32_t master_volume);
 
 /** Allocate a SNDSAMPLE structure for use with a given driver.
  */
-SNDSAMPLE *AIL_allocate_sample_handle(DIG_DRIVER *dig);
+SNDSAMPLE *AIL_allocate_sample_handle(DIG_DRIVER *digdrv);
 
 /** Initialize a SNDSAMPLE structure to baseline values.
  *
  * Sample must be allocated (not free), done playing, and stopped.
  */
 void AIL_init_sample(SNDSAMPLE *s);
+
+/** Get sample user data value at specified index.
+ *
+ * Any desired value may be stored at one of eight user data words
+ * associated with a given SNDSAMPLE.
+ *
+ * Callback functions may access the user data array at interrupt time.
+ */
+intptr_t AIL_sample_user_data(SNDSAMPLE *s, uint32_t index);
 
 /** Set sample user data value at specified index.
  *
@@ -193,6 +206,42 @@ HAILPROVIDER AIL_set_sample_processor(SNDSAMPLE *s,
 /** Set starting address and length of sample.
  */
 void AIL_set_sample_address(SNDSAMPLE *s, const void *start, uint32_t len);
+
+/** Get sample playback rate in hertz.
+ */
+int32_t AIL_sample_playback_rate(SNDSAMPLE *s);
+
+/** Set sample playback rate in hertz.
+ */
+void AIL_set_sample_playback_rate(SNDSAMPLE *s, int32_t playback_rate);
+
+/** Get minimum buffer size for dual-buffer playback.
+ */
+int32_t AIL_minimum_sample_buffer_size(DIG_DRIVER *digdrv,
+  int32_t playback_rate, int32_t format);
+
+/** Set address and length for one of two double-buffered sample buffers.
+ *
+ * Start playback of sample if not already in progress.
+ */
+void AIL_load_sample_buffer(SNDSAMPLE *s, int32_t buff_num,
+  void *buffer, uint32_t len);
+
+/** Get sample volume level.
+ */
+int32_t AIL_sample_volume(SNDSAMPLE *s);
+
+/** Set sample volume level.
+ */
+void AIL_set_sample_volume(SNDSAMPLE *s, int32_t level);
+
+/** Get sample channels panning level.
+ */
+int32_t AIL_sample_pan(SNDSAMPLE *s);
+
+/** Set sample channels panning level.
+ */
+void AIL_set_sample_pan(SNDSAMPLE *s, int32_t level);
 
 /** Set sample data format and flags.
  *
@@ -213,6 +262,16 @@ void AIL_set_sample_type(SNDSAMPLE *s, int32_t format, uint32_t flags);
  *    n: Play sample n times.
  */
 void AIL_set_sample_loop_count(SNDSAMPLE *s, int32_t loop_count);
+
+/** Start playback of sample from beginning.
+ *
+ * Sample must first have been initialized with
+ * AIL_init_sample() and then AIL_set_sample_address() or
+ * AIL_load_sample_buffer().
+ *
+ * Playback will begin at the next DMA half-buffer transition.
+ */
+void AIL_start_sample(SNDSAMPLE *s);
 
 /** Terminate playback of sample, setting sample status to SNDSMP_DONE.
  */

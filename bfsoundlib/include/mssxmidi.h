@@ -27,6 +27,9 @@ extern "C" {
 #endif
 /******************************************************************************/
 
+// The support is not fully implemented in this library
+#define ENABLE_TIMBRE 0
+
 void AIL2OAL_API_set_GTL_filename_prefix(char const *prefix);
 
 int32_t AIL2OAL_API_MDI_driver_type(MDI_DRIVER *mdidrv);

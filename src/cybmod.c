@@ -18,6 +18,7 @@
 /******************************************************************************/
 #include "cybmod.h"
 
+#include <string.h>
 #include "bfmemory.h"
 #include "bffile.h"
 #include "bfini.h"

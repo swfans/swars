@@ -1680,12 +1680,11 @@ TbResult load_mission_name_text(ubyte missi)
 
     for (len = 0; len < sizeof(mission_name)-1; len++)
     {
-        c = *p;
+        c = *p++;
         if ((c == '\r') || (c == '\0'))
             break;
         c = toupper(c);
         mission_name[len] = c;
-        len++;
     }
     mission_name[len] = '\0';
 

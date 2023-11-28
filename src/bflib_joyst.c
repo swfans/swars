@@ -35,4 +35,13 @@ int joy_grip_unknsub_08(int val)
   grip_unkvar080 = val;
   return 1;
 }
+
+int joy_func_065(struct DevInput *dinp)
+{
+    struct SampleInfo *ret;
+    asm volatile (
+      "call ASM_joy_func_065\n"
+        : "=r" (ret) : "a" (dinp));
+    return ret;
+}
 /******************************************************************************/

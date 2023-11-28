@@ -9,6 +9,7 @@
 #include "globals.h"
 #include "scanner.h"
 #include "people.h"
+#include "guiboxes.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -107,10 +108,12 @@ enum PacketRecordMode {
 };
 
 enum MissionFMVPlay {
+    MPly_Intro,
     MPly_MissiComplete,
     MPly_MissiFail,
     MPly_MPartComplete,
     MPly_GameOver,
+    MPly_Outro,
 };
 
 struct Thing;
@@ -243,109 +246,6 @@ struct SynTime {
     ubyte Day;
     ubyte Month;
     ubyte Year;
-};
-
-struct ScreenButton;
-
-struct ScreenButton {
-    short X;
-    short Y;
-    ushort Width;
-    ushort Height;
-    const char *Text;
-    struct TbSprite *Font;
-    ubyte (*DrawFn)(struct ScreenButton *btn);
-    ubyte (*DrawTextFn)();
-    ubyte (*CallBackFn)(ubyte click);
-    ubyte *Radio;
-    ushort TextTopLine;
-    ushort TextFadePos;
-    ushort Flags;
-    ubyte DrawSpeed;
-    ubyte Timer;
-    ubyte TextSpeed;
-    ubyte Border;
-    ubyte Colour;
-    ubyte BGColour;
-    ubyte AccelKey;
-    ubyte RadioValue;
-};
-
-struct ScreenBox;
-
-struct ScreenBox
-{
-    short X;
-    short Y;
-    ushort Width;
-    ushort Height;
-    ubyte DrawSpeed;
-    ubyte Timer;
-    ushort Flags;
-    ubyte (*DrawFn)(struct ScreenBox *box);
-    ubyte (*SpecialDrawFn)(struct ScreenBox *box);
-    ushort Timer2;
-    char field_16;
-    char field_17;
-};
-
-struct ScreenInfoBox;
-
-struct ScreenInfoBox { // sizeof=43
-    short X;
-    short Y;
-    ushort Width;
-    ushort Height;
-    char *Text1;
-    char *Text2;
-	struct TbSprite *Font1;
-	struct TbSprite *Font2;
-	ubyte (*DrawFn)();
-	ubyte (*DrawTextFn)();
-    short TextFadePos1;
-    short TextFadePos2;
-    ushort Flags;
-    ubyte DrawSpeed;
-    ubyte Timer;
-    ubyte TextSpeed;
-    ubyte Colour;
-    ubyte BGColour;
-};
-
-struct ScreenTextBox;
-
-struct ScreenTextBox {
-  short X;
-  short Y;
-  ushort Width;
-  ushort Height;
-  ubyte DrawSpeed;
-  ubyte Timer;
-  ubyte TextSpeed;
-  ubyte LineSpacing;
-  short ScrollBarPos;
-  ushort ScrollBarSize;
-  short ScrollWindowHeight;
-  short ScrollWindowOffset;
-  ushort GrabPos;
-  ushort Lines;
-  const char *Text;
-  struct TbSprite *Font;
-  ubyte (*DrawFn)(struct ScreenTextBox *box);
-  ubyte (*DrawTextFn)(struct ScreenTextBox *box);
-  struct ScreenButton *Buttons[2];
-  short Infos[2];
-  //struct ScreenInfoBox *Infos[2];
-  ushort TextTopLine;
-  ushort field_36;
-  ushort field_38;
-  short TextFadePos;
-  ushort Flags;
-  ushort field_3E;
-  ubyte BGColour;
-  ubyte LineHeight;
-  ubyte field_42;
-  ubyte field_43;
 };
 
 struct SingleObject { // sizeof=36
@@ -561,12 +461,6 @@ extern ulong smack_malloc_used_tot;
 extern ubyte anim_slots[];
 extern struct Animation animations[2];
 
-#define STRINGS_MAX 652
-
-extern char *gui_strings_data;
-extern char *gui_strings_data_end;
-extern char *gui_strings[STRINGS_MAX];
-
 extern ubyte *fade_data;
 
 extern void *dword_1810D1;
@@ -618,6 +512,11 @@ extern ushort next_used_lvl_objective;
 extern struct LevelMisc *game_level_miscs;
 extern ushort word_176E38;
 
+extern struct TbSprite *pop1_sprites;
+
+extern struct TbSprite *unk2_sprites;
+extern struct TbSprite *unk2_sprites_end;
+
 extern PrimObjectPoint *prim_object_points;
 extern PrimObjectFace *prim_object_faces;
 extern PrimObjectFace4 *prim_object_faces4;
@@ -643,6 +542,11 @@ extern ulong turns_delta;
 extern ushort fifties_per_gameturn;
 extern ushort gamep_unknval_01;
 extern ubyte *vec_tmap;
+extern ubyte linear_vec_pal[256];
+extern ulong nsta_size;
+extern TbPixel colour_grey1;
+extern TbPixel colour_grey2;
+extern TbPixel colour_brown2;
 
 extern ubyte *memload;
 #define memload_len 16384
@@ -718,8 +622,6 @@ extern ubyte unkn_flags_08;
 extern long dword_153194;
 extern ulong starting_cash_amounts[4];
 extern sbyte unkn_city_no;
-extern sbyte selected_weapon;
-extern sbyte selected_mod;
 extern ubyte group_types[8];
 extern ubyte byte_1C4AA3;
 extern ubyte net_unkn_pos_02;
@@ -735,7 +637,6 @@ extern ubyte restore_savegame;
 extern ubyte game_projector_speed;
 extern ubyte current_drawing_mod;
 extern ubyte mod_draw_states[4];
-extern char equip_cost_text[20];
 extern ubyte new_current_drawing_mod;
 extern ubyte refresh_equip_list;
 extern ubyte flic_mods[5];
@@ -795,13 +696,7 @@ extern ubyte unkn_option_3;
 extern ubyte unkn_option_4;
 extern ubyte byte_1C4A6F;
 
-extern char unkn39_text[];
-extern char net_unkn40_text[];
-extern char unkn41_text[];
 extern char net_unkn2_text[];
-extern char equip_name_text[];
-extern char unkn_opt_number_text[];
-extern char options_title_text[];
 extern char brief_netscan_cost_text[];
 extern const char *misc_text[5];
 
@@ -816,77 +711,12 @@ extern ushort text_window_y2;
 extern struct ScreenTextBox heading_box;
 extern struct ScreenTextBox loading_INITIATING_box;
 extern struct ScreenTextBox unkn13_SYSTEM_button;
-extern struct ScreenTextBox unkn35_box;
-extern struct ScreenBox unkn39_box;
-extern struct ScreenTextBox unkn37_box;
 extern struct ScreenButton sysmnu_buttons[6];
-extern struct ScreenButton storage_LOAD_button;
-extern struct ScreenButton storage_SAVE_button;
-extern struct ScreenButton storage_NEW_MORTAL_button;
-extern struct ScreenBox unkn34_box;
-extern struct ScreenBox unkn04_boxes[3];
-extern struct ScreenBox unkn33_box;
-extern struct ScreenButton options_audio_buttons[7];
-extern struct ScreenButton options_gfx_buttons[16];
-extern struct ScreenButton net_protocol_option_button;
-extern struct ScreenBox unkn32_box;
-extern struct ScreenTextBox unkn36_box;
-extern struct ScreenTextBox mission_text_box;
-extern struct ScreenButton unkn1_ACCEPT_button;
-extern struct ScreenButton unkn1_CANCEL_button;
-extern struct ScreenButton brief_NETSCAN_button;
-extern struct ScreenInfoBox brief_NETSCAN_COST_box;
-extern struct ScreenBox unkn30_box;
-extern struct ScreenBox unkn31_box;
-extern struct ScreenBox unkn29_box;
-extern struct ScreenTextBox unkn38_box;
-extern struct ScreenButton unkn2_ACCEPT_button;
-extern struct ScreenButton unkn2_CANCEL_button;
 extern struct ScreenButton main_quit_button;
 extern struct ScreenButton main_login_button;
-extern struct ScreenButton pause_continue_button;
-extern struct ScreenButton pause_abort_button;
 extern struct ScreenButton main_map_editor_button;
 extern struct ScreenButton main_load_button;
-extern struct ScreenBox pause_unkn11_box;
-extern struct ScreenBox pause_unkn12_box;
-extern struct ScreenTextBox slots_box;
-extern struct ScreenTextBox equip_name_box;
-extern struct ScreenBox weapon_slots;
-extern struct ScreenTextBox equip_list_box;
-extern struct ScreenTextBox equip_display_box;
-extern struct ScreenButton buy_equip_button;
-extern struct ScreenButton unkn11_CANCEL_button;
-extern struct ScreenInfoBox equip_cost_box;
 extern struct ScreenMenuBox unk11_menu[5];
-extern struct ScreenButton all_agents_button;
-extern struct ScreenTextBox research_unkn21_box;
-extern struct ScreenButton research_submit_button;
-extern struct ScreenButton unkn12_WEAPONS_MODS_button;
-extern struct ScreenTextBox research_progress_button;
-extern struct ScreenBox research_unkn20_box;
-extern struct ScreenButton research_list_buttons[2];
-extern struct ScreenTextBox agent_list_box;
-extern struct ScreenBox blokey_box;
-extern struct ScreenTextBox mod_list_box;
-extern struct ScreenButton net_INITIATE_button;
-extern struct ScreenButton net_groups_LOGON_button;
-extern struct ScreenButton unkn8_EJECT_button;
-extern struct ScreenButton net_protocol_select_button;
-extern struct ScreenButton net_unkn40_button;
-extern struct ScreenButton net_SET2_button;
-extern struct ScreenButton net_SET_button;
-extern struct ScreenBox net_groups_box;
-extern struct ScreenBox net_users_box;
-extern struct ScreenBox net_faction_box;
-extern struct ScreenBox net_team_box;
-extern struct ScreenBox net_benefits_box;
-extern struct ScreenBox net_comms_box;
-extern struct ScreenBox net_unkn21;
-extern struct ScreenBox net_protocol_box;
-extern struct ScreenButton unkn10_CALIBRATE_button;
-extern struct ScreenButton unkn10_SAVE_button;
-extern struct ScreenButton unkn10_CONTROLS_button;
 
 extern struct ScreenBox alert_box;
 extern struct ScreenButton alert_OK_button;
@@ -910,8 +740,28 @@ void host_reset(void);
 void free_texturemaps(void);
 int joy_grip_shutdown(void);
 
+void flic_unkn03(ubyte a1);
+
+ubyte ac_show_title_box(struct ScreenTextBox *box);
+void draw_text_purple_list2(int x, int y, const char *text, ushort line);
+void draw_sprite_purple_list(int x, int y, struct TbSprite *sprite);
+void copy_box_purple_list(long x, long y, ulong width, ulong height);
+void draw_box_purple_list(int x, int y, ulong width, ulong height, int colour);
+void draw_line_purple_list(int x1, int y1, int x2, int y2, int colour);
+
 void my_preprocess_text(char *text);
 ushort my_count_lines(const char *text);
+void read_user_settings(void);
+void sysmnu_button_enable(int btnno, int count);
+void sysmnu_button_disable(int btnno, int count);
+
+TbBool player_try_spend_money(long cost);
+void campaign_new_game_prepare(void);
+
+void process_sound_heap(void);
+void person_func_unknown_310(ubyte a1);
+ushort my_draw_text(short x, short y, const char *text, ushort startline);
+void bang_set_detail(int a1);
 
 #ifdef __cplusplus
 };

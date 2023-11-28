@@ -38,13 +38,130 @@ enum SampleFileTypes {
     SMP_FTYP_ASI = 2,
 };
 
+extern uint8_t byte_15AA50[128];
+
 void SS_build_amplitude_tables(SNDSAMPLE *s)
 {
-    asm volatile (
-      "push %0\n"
-      "call ASM_SS_build_amplitude_tables\n"
-      "add $0x4, %%esp\n"
-        :  : "g" (s) : "eax" );
+    int hwfmt, smfmt;
+    int32_t final_volume;
+    int32_t i;
+
+    if (s->volume > 127)
+        s->volume = 127;
+    else if (s->volume < 0)
+        s->volume = 0;
+
+    if (s->pan > 127)
+        s->pan = 127;
+    else if (s->pan < 0)
+        s->pan = 0;
+
+    final_volume = s->driver->master_volume * s->volume / 127;
+    if (final_volume > 127)
+        final_volume = 127;
+    else if (final_volume < 0)
+        final_volume = 0;
+
+    if (s->format == DIG_F_MONO_16 && s->format == DIG_F_STEREO_16)
+    {
+        int32_t *vscale0, *vscale1;
+        int32_t vamp0, vamp1;
+
+        vscale0 = s->vol_scale[0];
+        vscale1 = s->vol_scale[1];
+        vamp1 = byte_15AA50[s->pan];
+        vamp0 = byte_15AA50[127 - s->pan];
+
+        vscale0[0] = final_volume * vamp0 / 127;
+        vscale1[0] = final_volume * vamp1 / 127;
+        return;
+    }
+
+    if (final_volume)
+        final_volume++;
+
+    hwfmt = s->driver->hw_format;
+    smfmt = s->format;
+    if (hwfmt != DIG_F_STEREO_8 && hwfmt != DIG_F_STEREO_16 &&
+      ((hwfmt != DIG_F_MONO_8 && hwfmt != DIG_F_MONO_16) ||
+        (smfmt != DIG_F_STEREO_8 && smfmt != DIG_F_STEREO_16)) )
+    {
+        int32_t *vscale;
+        int32_t nxval;
+
+        vscale = s->vol_scale[0];
+        if (s->flags & DIG_PCM_SIGN)
+        {
+            nxval = 0;
+            for (i = 0; i < 0x8000; i += 0x100)
+            {
+              *(vscale) = nxval >> 7;
+              nxval += final_volume << 8;
+              vscale++;
+            }
+            nxval = -0x8000 * final_volume;
+            for (i = -0x8000; i < 0; i += 0x100)
+            {
+              *(vscale) = nxval >> 7;
+              nxval += final_volume << 8;
+              vscale++;
+            }
+        }
+        else
+        {
+            nxval = -0x8000 * final_volume;
+            for (i = -0x8000; i < 0x8000; i += 0x100)
+            {
+              *(vscale) = nxval >> 7;
+              nxval += final_volume << 8;
+              vscale++;
+            }
+        }
+    }
+    else
+    {
+        int32_t *vscale0, *vscale1;
+        int32_t vamp0, vamp1;
+        int32_t nxval;
+
+        vscale0 = s->vol_scale[0];
+        vscale1 = s->vol_scale[1];
+        vamp1 = byte_15AA50[s->pan];
+        vamp0 = byte_15AA50[127 - s->pan];
+        if (s->flags & DIG_PCM_SIGN)
+        {
+            nxval = 0;
+            for (i = 0; i < 0x8000; i += 256)
+            {
+              *vscale0 = vamp0 * (nxval >> 7) >> 7;
+              *vscale1 = vamp1 * (nxval >> 7) >> 7;
+              nxval += final_volume << 8;
+              vscale0++;
+              vscale1++;
+            }
+            nxval = -0x8000 * final_volume;
+            for (i = -0x8000; i < 0; i += 256)
+            {
+              *vscale0 = vamp0 * (nxval >> 7) >> 7;
+              *vscale1 = vamp1 * (nxval >> 7) >> 7;
+              nxval += final_volume << 8;
+              vscale0++;
+              vscale1++;
+            }
+        }
+        else
+        {
+            nxval = -0x8000 * final_volume;
+            for (i = -0x8000; i < 0x8000; i += 256)
+            {
+              *vscale0 = vamp0 * (nxval >> 7) >> 7;
+              *vscale1 = vamp1 * (nxval >> 7) >> 7;
+              nxval += final_volume << 8;
+              vscale0++;
+              vscale1++;
+            }
+        }
+    }
 }
 
 void SS_flush(DIG_DRIVER *digdrv)
@@ -368,6 +485,14 @@ void set_master_hardware_volume(DIG_DRIVER *digdrv)
     }
 }
 
+int32_t AIL2OAL_API_digital_master_volume(DIG_DRIVER *digdrv)
+{
+    if (digdrv == NULL)
+        return 0;
+
+    return digdrv->master_volume;
+}
+
 void AIL2OAL_API_set_digital_master_volume(DIG_DRIVER *digdrv, int32_t master_volume)
 {
     if (digdrv == NULL)
@@ -376,6 +501,28 @@ void AIL2OAL_API_set_digital_master_volume(DIG_DRIVER *digdrv, int32_t master_vo
     digdrv->master_volume = master_volume;
 
     set_master_hardware_volume(digdrv);
+}
+
+void AIL2OAL_API_start_sample(SNDSAMPLE *s)
+{
+    if (s == NULL)
+        return;
+
+    if (s->status == SNDSMP_FREE)
+        return;
+
+    // Make sure valid sample data exists
+    if ((s->len[s->current_buffer] == 0) ||
+     (s->start[s->current_buffer] == NULL))
+        return;
+
+    // Rewind sample to beginning
+    s->pos[s->current_buffer] = 0;
+
+    s->status = SNDSMP_PLAYING;
+
+    // If sample's driver is not already transmitting data, start it
+    SS_start_DIG_driver_playback(s->driver);
 }
 
 void AIL2OAL_API_end_sample(SNDSAMPLE *s)
@@ -576,6 +723,65 @@ void AIL2OAL_API_set_sample_address(SNDSAMPLE *s, const void *start, uint32_t le
     s->len[1]   = 0;
 }
 
+int32_t AIL2OAL_API_sample_playback_rate(SNDSAMPLE *s)
+{
+    if (s == NULL)
+        return 0;
+
+    return s->playback_rate;
+}
+
+void AIL2OAL_API_set_sample_playback_rate(SNDSAMPLE *s, int32_t playback_rate)
+{
+    if (s == NULL)
+        return;
+
+    if (playback_rate < 1)
+        return;
+
+    s->playback_rate = playback_rate;
+}
+
+int32_t AIL2OAL_API_sample_volume(SNDSAMPLE *s)
+{
+    if (s == NULL)
+        return 0;
+
+    return s->volume;
+}
+
+void AIL2OAL_API_set_sample_volume(SNDSAMPLE *s, int32_t level)
+{
+    if (s == NULL)
+        return;
+
+    if (level == s->volume)
+        return;
+
+    s->volume = level;
+    SS_build_amplitude_tables(s);
+}
+
+int32_t AIL2OAL_API_sample_pan(SNDSAMPLE *s)
+{
+    if (s == NULL)
+        return 0;
+
+    return s->pan;
+}
+
+void AIL2OAL_API_set_sample_pan(SNDSAMPLE *s, int32_t level)
+{
+    if (s == NULL)
+        return;
+
+    if (level == s->pan)
+        return;
+
+    s->pan = level;
+    SS_build_amplitude_tables(s);
+}
+
 void AIL2OAL_API_set_sample_type(SNDSAMPLE *s, int32_t format, uint32_t flags)
 {
     if (s == NULL)
@@ -590,11 +796,83 @@ void AIL2OAL_API_set_sample_type(SNDSAMPLE *s, int32_t format, uint32_t flags)
     SS_build_amplitude_tables(s);
 }
 
+intptr_t AIL2OAL_API_sample_user_data(SNDSAMPLE *s, uint32_t index)
+{
+    if (s == NULL)
+        return 0;
+
+    return s->user_data[index];
+}
+
 void AIL2OAL_API_set_sample_user_data(SNDSAMPLE *s, uint32_t index, intptr_t value)
 {
     if (s == NULL)
         return;
     s->user_data[index] = value;
+}
+
+static int32_t nibbles_per_sample(int32_t format)
+{
+    switch (format)
+    {
+    case DIG_F_MONO_8:
+        return 1;
+    case DIG_F_MONO_16:
+    case DIG_F_STEREO_8:
+        return 2;
+    case DIG_F_STEREO_16:
+        return 4;
+    default:
+        return 8;
+    }
+}
+
+int32_t AIL2OAL_API_minimum_sample_buffer_size(DIG_DRIVER *digdrv,
+  int32_t playback_rate, int32_t format)
+{
+    int32_t app_nibbles_per_sample;
+    int32_t hw_nibbles_per_sample;
+    int32_t n;
+
+    // Get # of nibbles per sample unit
+    app_nibbles_per_sample = nibbles_per_sample(format);
+    hw_nibbles_per_sample = digdrv->bytes_per_channel * digdrv->channels_per_sample;
+
+    n = digdrv->half_buffer_size * app_nibbles_per_sample / hw_nibbles_per_sample;
+
+    n = (playback_rate * n) / digdrv->DMA_rate;
+
+    // Scale n by 2X resampling tolerance to provide safety margin
+    n = n + ( (n * AIL_preference[DIG_RESAMPLING_TOLERANCE]) / 32768);
+
+    // If DMA rate is not 1X, 2X, or 4X times playback rate, round buffer
+    // size up 1 sample to avoid possible truncation errors
+    if ((digdrv->DMA_rate != 1 * playback_rate) &&
+      (digdrv->DMA_rate != 2 * playback_rate) &&
+      (digdrv->DMA_rate != 4 * playback_rate))
+        n += 4;
+
+    // Round n up to nearest multiple of 256 bytes
+    return (n + 255) & ~255;
+}
+
+void AIL2OAL_API_load_sample_buffer(SNDSAMPLE *s, int32_t buff_num, void *buffer, uint32_t len)
+{
+    if (s == NULL)
+        return;
+
+    s->done[buff_num] = (len == 0);
+    s->start[buff_num] = buffer;
+    s->len[buff_num] = len;
+    s->pos[buff_num] = 0;
+
+    if (len)
+    {
+        if (s->status != SNDSMP_PLAYING) {
+            s->status = SNDSMP_PLAYING;
+            SS_start_DIG_driver_playback(s->driver);
+        }
+    }
 }
 
 void AIL2OAL_API_set_sample_loop_count(SNDSAMPLE *s, int32_t loop_count)

@@ -20,6 +20,7 @@
 #include <stdio.h>
 #include <stddef.h>
 #include <stdlib.h>
+#include <string.h>
 #include <stdbool.h>
 #include <assert.h>
 
@@ -48,12 +49,15 @@ void FreeAwe32Soundfont(void)
     if (UseCurrentAwe32Soundfont) {
         return;
     }
-    if (!MusicInstalled || !MusicAble)
+    if (!MusicInstalled || !MusicAble) {
         return;
-    if (strcasecmp(MusicInstallChoice.driver_name, "SBAWE32.MDI") != 0)
+    }
+    if (strcasecmp(MusicInstallChoice.driver_name, "SBAWE32.MDI") != 0) {
         return;
-    if (strcasecmp(MusicType, "w") != 0)
+    }
+    if (strcasecmp(MusicType, "w") != 0) {
         return;
+    }
 
     AWEFreeMem(MusicDriver, 1);
     FreeDOSmem(awe_buffer, awe_buffer_seg);
@@ -70,12 +74,15 @@ void LoadAwe32Soundfont(const char *str)
         Awe32SoundfontLoaded = 1;
         return;
     }
-    if (!MusicInstalled || !MusicAble)
+    if (!MusicInstalled || !MusicAble) {
         return;
-    if (strcasecmp(MusicInstallChoice.driver_name, "SBAWE32.MDI") != 0)
+    }
+    if (strcasecmp(MusicInstallChoice.driver_name, "SBAWE32.MDI") != 0) {
         return;
-    if (strcasecmp(MusicType, "w") != 0)
+    }
+    if (strcasecmp(MusicType, "w") != 0) {
         return;
+    }
 
     if (Awe32SoundfontLoaded == 1) {
         FreeAwe32Soundfont();
