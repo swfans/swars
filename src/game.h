@@ -512,6 +512,8 @@ extern ushort next_used_lvl_objective;
 extern struct LevelMisc *game_level_miscs;
 extern ushort word_176E38;
 
+extern struct TbSprite *pop1_sprites;
+
 extern struct TbSprite *unk2_sprites;
 extern struct TbSprite *unk2_sprites_end;
 
@@ -755,6 +757,11 @@ void sysmnu_button_disable(int btnno, int count);
 
 TbBool player_try_spend_money(long cost);
 void campaign_new_game_prepare(void);
+
+void process_sound_heap(void);
+void person_func_unknown_310(ubyte a1);
+ushort my_draw_text(short x, short y, const char *text, ushort startline);
+void bang_set_detail(int a1);
 
 #ifdef __cplusplus
 };
