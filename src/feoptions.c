@@ -56,6 +56,143 @@ void show_audio_volume_box_func_02(short a1, short a2, short a3, short a4, TbPix
         : : "a" (a1), "d" (a2), "b" (a3), "c" (a4), "g" (colour));
 }
 
+void draw_vert_slider_main_body(struct ScreenBox *box, short *target_ptr)
+{
+    short x1b, x2c;
+    short wtext1, wtext2;
+
+    lbDisplay.DrawFlags = 0;
+    // text in cut-ins at start and at end of slider
+    // TODO cut-in sizes should be stored somewhere, so that text drawing func has access to it
+    wtext2 = my_string_width(gui_strings[422]) + 2;
+    wtext1 = my_string_width(gui_strings[421]) + 2;
+    x1b = box->Width - wtext1 - wtext2 - 14;
+    if (*target_ptr < wtext1)
+    {
+        x2c = *target_ptr;
+        show_audio_volume_box_func_02(box->X + 9, box->Y + 11, x2c, 17, 174);
+        lbDisplay.DrawFlags = 0x0004;
+        show_audio_volume_box_func_02(box->X + 9 + x2c, box->Y + 11, wtext1 - x2c, 17, 174);
+        show_audio_volume_box_func_02(box->X + 20 + wtext1, box->Y, x1b, 28, 174);
+        show_audio_volume_box_func_02(box->X + box->Width + 6 - wtext2, box->Y, wtext2, 17, 174);
+    }
+    else if (*target_ptr >= 322 - wtext2)
+    {
+        x2c = (*target_ptr) - (322 - wtext2);
+        show_audio_volume_box_func_02(box->X + 9, box->Y + 11, wtext1, 17, 174);
+        show_audio_volume_box_func_02(box->X + 20 + wtext1, box->Y, x1b, 28, 174);
+        show_audio_volume_box_func_02(box->X + box->Width + 6 - wtext2, box->Y, x2c, 17, 174);
+        lbDisplay.DrawFlags = 0x0004;
+        show_audio_volume_box_func_02(box->X + box->Width + 6 + x2c - wtext2, box->Y, wtext2 - x2c, 17, 174);
+    }
+    else
+    {
+        x2c = (*target_ptr) - wtext1;
+        show_audio_volume_box_func_02(box->X + 9, box->Y + 11, wtext1, 17, 174);
+        show_audio_volume_box_func_02(box->X + 20 + wtext1, box->Y, x2c, 28, 174);
+        lbDisplay.DrawFlags = 0x0004;
+        show_audio_volume_box_func_02(box->X + 20 + x2c + wtext1, box->Y, x1b - x2c, 28, 174);
+        show_audio_volume_box_func_02(box->X + box->Width + 6 - wtext2, box->Y, wtext2, 17, 174);
+    }
+}
+
+void draw_vert_slider_main_body_text(struct ScreenBox *box, struct ScreenBox *tbox, short *target_ptr)
+{
+    short wtext2;
+
+    lbDisplay.DrawFlags = 0;
+    wtext2 = my_string_width(gui_strings[422]) + 2; // TODO reuse from main body rather than re-compute
+    draw_text_purple_list2(box->X + 9 - tbox->X, 24, gui_strings[421], 0);
+    draw_text_purple_list2(box->X + box->Width - 13 - wtext2 - tbox->X, 41, gui_strings[422], 0);
+}
+
+TbBool input_vert_slider_main_body(struct ScreenBox *box, short *target_ptr)
+{
+    int ms_x, ms_y;
+    TbBool target_affected;
+
+    target_affected = false;
+    ms_x = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
+    ms_y = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
+    if ((ms_x >= box->X) && (ms_x <= box->X + box->Width) && (ms_y >= box->Y) && (ms_y <= box->Y + box->Height))
+    {
+        if (lbDisplay.MLeftButton)
+        {
+            short delta_y, delta_x;
+            lbDisplay.LeftButton = 0;
+            delta_y = ms_y - (box->Y + 14);
+            delta_x = ms_x - (box->X + 9);
+            (*target_ptr) = delta_y + delta_x;
+            if ((*target_ptr) < 0)
+                *target_ptr = 0;
+            else if ((*target_ptr) > 322)
+                (*target_ptr) = 322;
+            target_affected = 1;
+        }
+    }
+    return target_affected;
+}
+
+TbBool show_vert_slider_left_arrow(struct ScreenBox *box, short *target_ptr)
+{
+    int ms_x, ms_y;
+    TbBool target_affected;
+
+    target_affected = false;
+    lbDisplay.DrawFlags |= 0x8000;
+    lbDisplay.DrawFlags |= Lb_SPRITE_TRANSPAR4;
+    ms_x = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
+    ms_y = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
+    if ((ms_x >= box->X) && (ms_x <= box->X + box->Width) && (ms_y >= box->Y) && (ms_y <= box->Y + box->Height))
+    {
+        if (lbDisplay.MLeftButton || joy.Buttons[0])
+        {
+            lbDisplay.LeftButton = 0;
+            box->Flags |= 0x0800;
+            if ((lbShift & 0x01) != 0)
+                (*target_ptr)--;
+            else
+                (*target_ptr) -= 10;
+            if ((*target_ptr) < 0)
+                (*target_ptr) = 0;
+            target_affected = 1;
+        }
+        lbDisplay.DrawFlags &= ~Lb_SPRITE_TRANSPAR4;
+    }
+    draw_sprite_purple_list(box->X, box->Y, &sprites_Icons0_0[108]);
+    return target_affected;
+}
+
+TbBool show_vert_slider_right_arrow(struct ScreenBox *box, short *target_ptr)
+{
+    int ms_x, ms_y;
+    TbBool target_affected;
+
+    target_affected = false;
+    lbDisplay.DrawFlags |= 0x8000;
+    lbDisplay.DrawFlags |= Lb_SPRITE_TRANSPAR4;
+    ms_x = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
+    ms_y = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
+    if ((ms_x >= box->X) && (ms_x <= box->X+box->Width) && (ms_y >= box->Y) && (ms_y <= box->Y + box->Height))
+    {
+        if (lbDisplay.MLeftButton || joy.Buttons[0])
+        {
+            lbDisplay.LeftButton = 0;
+            box->Flags |= 0x0800;
+            if ((lbShift & 0x01) != 0)
+                (*target_ptr)++;
+            else
+                (*target_ptr) += 10;
+            if ((*target_ptr) > 322)
+                (*target_ptr) = 322;
+            target_affected = 1;
+        }
+        lbDisplay.DrawFlags &= ~Lb_SPRITE_TRANSPAR4;
+    }
+    draw_sprite_purple_list(box->X - 7, box->Y, &sprites_Icons0_0[109]);
+    return target_affected;
+}
+
 ubyte show_audio_volume_box(struct ScreenBox *box)
 {
 #if 0
@@ -67,14 +204,11 @@ ubyte show_audio_volume_box(struct ScreenBox *box)
     short *target_ptr;
     char *s;
     ushort w;
-    int ms_x, ms_y;
-    short x1b, x2c;
-    short wtext1, wtext2;
     ubyte target_var;
-    TbBool target_affected;
+    TbBool change;
 
-    target_affected = false;
-    if (box->Flags & 0x8000)
+    change = false;
+    if (box->Flags & 0x0080)
     {
         box->Flags &= ~0x0080;
         word_1C4866[0] = -5;
@@ -113,7 +247,6 @@ ubyte show_audio_volume_box(struct ScreenBox *box)
     if (flashy_draw_text(1 + w, 1, s, 1, 0, &word_1C4866[target_var], 0))
     {
         lbFontPtr = small_med_font;
-        lbDisplay.DrawFlags = 0;
 
         struct ScreenBox box1; // Left triangle
         box1.Width = 9;
@@ -135,108 +268,15 @@ ubyte show_audio_volume_box(struct ScreenBox *box)
         box0.X = box->X + 33 + 9 + 2;
         box2.X = box->X + 33 + 9 + 2 + 336 + 1;
 
-        wtext2 = my_string_width(gui_strings[422]) + 2;
-        wtext1 = my_string_width(gui_strings[421]) + 2;
-        x1b = box0.Width - wtext1 - wtext2 - 14;
-        if (*target_ptr < wtext1)
-        {
-            x2c = *target_ptr;
-            show_audio_volume_box_func_02(box1.X + 20, box0.Y + 11, x2c, 17, 174);
-            lbDisplay.DrawFlags = 0x0004;
-            show_audio_volume_box_func_02(box1.X + 20 + x2c, box0.Y + 11, wtext1 - x2c, 17, 174);
-            show_audio_volume_box_func_02(box0.X + 20 + wtext1, box0.Y, x1b, 28, 174);
-            show_audio_volume_box_func_02(box2.X + 5 - wtext2, box0.Y, wtext2, 17, 174);
-        }
-        else if (*target_ptr >= 322 - wtext2)
-        {
-            x2c = (*target_ptr) - (322 - wtext2);
-            show_audio_volume_box_func_02(box1.X + 20, box0.Y + 11, wtext1, 17, 174);
-            show_audio_volume_box_func_02(box0.X + 20 + wtext1, box0.Y, x1b, 28, 174);
-            show_audio_volume_box_func_02(box2.X + 5 - wtext2, box0.Y, x2c, 17, 174);
-            lbDisplay.DrawFlags = 0x0004;
-            show_audio_volume_box_func_02(box2.X + 5 + x2c - wtext2, box0.Y, wtext2 - x2c, 17, 174);
-        }
-        else
-        {
-            x2c = (*target_ptr) - wtext1;
-            show_audio_volume_box_func_02(box1.X + 20, box0.Y + 11, wtext1, 17, 174);
-            show_audio_volume_box_func_02(box0.X + 20 + wtext1, box0.Y, x2c, 28, 174);
-            lbDisplay.DrawFlags = 0x0004;
-            show_audio_volume_box_func_02(box0.X + 20 + x2c + wtext1, box0.Y, x1b - x2c, 28, 174);
-            show_audio_volume_box_func_02(box2.X + 5 - wtext2, box0.Y, wtext2, 17, 174);
-        }
+        draw_vert_slider_main_body(&box0, target_ptr);
+        change |= input_vert_slider_main_body(&box0, target_ptr);
+        change |= show_vert_slider_left_arrow(&box1, target_ptr);
+        change |= show_vert_slider_right_arrow(&box2, target_ptr);
+        draw_vert_slider_main_body_text(&box0, box, target_ptr);
 
-        ms_x = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
-        ms_y = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
-        if ((ms_x >= box0.X) && (ms_x <= box0.X + box0.Width) && (ms_y >= box0.Y) && (ms_y <= box0.Y + box0.Height))
-        {
-            if (lbDisplay.MLeftButton)
-            {
-                short delta_y, delta_x;
-                lbDisplay.LeftButton = 0;
-                delta_y = ms_y - (box0.Y + 14);
-                delta_x = ms_x - (box0.X + 9);
-                (*target_ptr) = delta_y + delta_x;
-                if ((*target_ptr) < 0)
-                    *target_ptr = 0;
-                else if ((*target_ptr) > 322)
-                    (*target_ptr) = 322;
-                target_affected = 1;
-            }
-        }
-        lbDisplay.DrawFlags |= 0x8000;
-
-        ms_x = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
-        ms_y = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
-        if ((ms_x >= box1.X) && (ms_x <= box1.X + box1.Width) && (ms_y >= box1.Y) && (ms_y <= box1.Y + box1.Height))
-        {
-            if (lbDisplay.MLeftButton || joy.Buttons[0])
-            {
-                lbDisplay.LeftButton = 0;
-                box->Flags |= 0x0800;
-                if ((lbShift & 0x01) != 0)
-                    (*target_ptr)--;
-                else
-                    (*target_ptr) -= 10;
-                if ((*target_ptr) < 0)
-                    (*target_ptr) = 0;
-                target_affected = 1;
-            }
-            lbDisplay.DrawFlags = 0x8000;
-            draw_sprite_purple_list(box1.X, box1.Y, &sprites_Icons0_0[108]);
-            lbDisplay.DrawFlags |= 0x0004;
-        }
-        else
-        {
-            draw_sprite_purple_list(box1.X, box1.Y, &sprites_Icons0_0[108]);
-        }
-
-        ms_x = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
-        ms_y = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
-        if ((ms_x >= box2.X) && (ms_x <= box2.X+box2.Width) && (ms_y >= box2.Y) && (ms_y <= box2.Y + box2.Height))
-        {
-            if (lbDisplay.MLeftButton || joy.Buttons[0])
-            {
-                lbDisplay.LeftButton = 0;
-                box->Flags |= 0x0800;
-                if ((lbShift & 0x01) != 0)
-                    (*target_ptr)++;
-                else
-                    (*target_ptr) += 10;
-                if ((*target_ptr) > 322)
-                    (*target_ptr) = 322;
-                target_affected = 1;
-            }
-            lbDisplay.DrawFlags = 0x8000;
-        }
-        draw_sprite_purple_list(box2.X - 7, box2.Y, &sprites_Icons0_0[109]);
-
-        lbDisplay.DrawFlags = 0;
-        draw_text_purple_list2(266 - box->X, 24, gui_strings[421], 0);
-        draw_text_purple_list2(582 - wtext2 - 2 - box->X, 41, gui_strings[422], 0);
     }
     lbDisplay.DrawFlags = 0;
-    if (!target_affected)
+    if (!change)
         return 0;
 
     if (target_var == 0)
