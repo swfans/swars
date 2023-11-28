@@ -108,20 +108,18 @@ void draw_vert_slider_main_body_text(struct ScreenBox *box, struct ScreenBox *tb
 
 TbBool input_vert_slider_main_body(struct ScreenBox *box, short *target_ptr)
 {
-    int ms_x, ms_y;
     TbBool target_affected;
 
     target_affected = false;
-    ms_x = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
-    ms_y = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
-    if ((ms_x >= box->X) && (ms_x <= box->X + box->Width) && (ms_y >= box->Y) && (ms_y <= box->Y + box->Height))
+    if (mouse_move_over_box(box))
     {
         if (lbDisplay.MLeftButton)
         {
             short delta_y, delta_x;
+
             lbDisplay.LeftButton = 0;
-            delta_y = ms_y - (box->Y + 14);
-            delta_x = ms_x - (box->X + 9);
+            delta_y = mouse_move_y_coord_over_box(box) - 14;
+            delta_x = mouse_move_x_coord_over_box(box) - 9;
             (*target_ptr) = delta_y + delta_x;
             if ((*target_ptr) < 0)
                 *target_ptr = 0;
@@ -133,17 +131,23 @@ TbBool input_vert_slider_main_body(struct ScreenBox *box, short *target_ptr)
     return target_affected;
 }
 
-TbBool show_vert_slider_left_arrow(struct ScreenBox *box, short *target_ptr)
+void draw_vert_slider_left_arrow(struct ScreenBox *box)
 {
-    int ms_x, ms_y;
+    lbDisplay.DrawFlags |= 0x8000;
+    lbDisplay.DrawFlags |= Lb_SPRITE_TRANSPAR4;
+    if (mouse_move_over_box(box))
+    {
+        lbDisplay.DrawFlags &= ~Lb_SPRITE_TRANSPAR4;
+    }
+    draw_sprite_purple_list(box->X, box->Y, &sprites_Icons0_0[108]);
+}
+
+TbBool input_vert_slider_left_arrow(struct ScreenBox *box, short *target_ptr)
+{
     TbBool target_affected;
 
     target_affected = false;
-    lbDisplay.DrawFlags |= 0x8000;
-    lbDisplay.DrawFlags |= Lb_SPRITE_TRANSPAR4;
-    ms_x = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
-    ms_y = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
-    if ((ms_x >= box->X) && (ms_x <= box->X + box->Width) && (ms_y >= box->Y) && (ms_y <= box->Y + box->Height))
+    if (mouse_move_over_box(box))
     {
         if (lbDisplay.MLeftButton || joy.Buttons[0])
         {
@@ -157,23 +161,27 @@ TbBool show_vert_slider_left_arrow(struct ScreenBox *box, short *target_ptr)
                 (*target_ptr) = 0;
             target_affected = 1;
         }
-        lbDisplay.DrawFlags &= ~Lb_SPRITE_TRANSPAR4;
     }
-    draw_sprite_purple_list(box->X, box->Y, &sprites_Icons0_0[108]);
     return target_affected;
 }
 
-TbBool show_vert_slider_right_arrow(struct ScreenBox *box, short *target_ptr)
+void draw_vert_slider_right_arrow(struct ScreenBox *box)
 {
-    int ms_x, ms_y;
+    lbDisplay.DrawFlags |= 0x8000;
+    lbDisplay.DrawFlags |= Lb_SPRITE_TRANSPAR4;
+    if (mouse_move_over_box(box))
+    {
+        lbDisplay.DrawFlags &= ~Lb_SPRITE_TRANSPAR4;
+    }
+    draw_sprite_purple_list(box->X - 7, box->Y, &sprites_Icons0_0[109]);
+}
+
+TbBool input_vert_slider_right_arrow(struct ScreenBox *box, short *target_ptr)
+{
     TbBool target_affected;
 
     target_affected = false;
-    lbDisplay.DrawFlags |= 0x8000;
-    lbDisplay.DrawFlags |= Lb_SPRITE_TRANSPAR4;
-    ms_x = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
-    ms_y = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
-    if ((ms_x >= box->X) && (ms_x <= box->X+box->Width) && (ms_y >= box->Y) && (ms_y <= box->Y + box->Height))
+    if (mouse_move_over_box(box))
     {
         if (lbDisplay.MLeftButton || joy.Buttons[0])
         {
@@ -187,9 +195,7 @@ TbBool show_vert_slider_right_arrow(struct ScreenBox *box, short *target_ptr)
                 (*target_ptr) = 322;
             target_affected = 1;
         }
-        lbDisplay.DrawFlags &= ~Lb_SPRITE_TRANSPAR4;
     }
-    draw_sprite_purple_list(box->X - 7, box->Y, &sprites_Icons0_0[109]);
     return target_affected;
 }
 
@@ -270,8 +276,13 @@ ubyte show_audio_volume_box(struct ScreenBox *box)
 
         draw_vert_slider_main_body(&box0, target_ptr);
         change |= input_vert_slider_main_body(&box0, target_ptr);
-        change |= show_vert_slider_left_arrow(&box1, target_ptr);
-        change |= show_vert_slider_right_arrow(&box2, target_ptr);
+
+        draw_vert_slider_left_arrow(&box1);
+        change |= input_vert_slider_left_arrow(&box1, target_ptr);
+
+        draw_vert_slider_right_arrow(&box2);
+        change |= input_vert_slider_right_arrow(&box2, target_ptr);
+
         draw_vert_slider_main_body_text(&box0, box, target_ptr);
 
     }

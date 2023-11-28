@@ -18,6 +18,7 @@
 /******************************************************************************/
 #include "guiboxes.h"
 
+#include "bfscreen.h"
 #include "swlog.h"
 /******************************************************************************/
 
@@ -31,6 +32,37 @@ TbBool in_box_coords(short x, short y, short box_x1, short box_y1, short box_x2,
 {
     return x > box_x1 && x < box_x2
         && y > box_y1 && y < box_y2;
+}
+
+TbBool is_over_box_base(short x, short y, struct ScreenBoxBase *box)
+{
+    return (x >= box->X) && (x <= box->X + box->Width)
+        && (y >= box->Y) && (y <= box->Y + box->Height);
+}
+
+TbBool mouse_move_over_box_base(struct ScreenBoxBase *box)
+{
+    short ms_x, ms_y;
+
+    ms_x = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
+    ms_y = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
+    return is_over_box_base(ms_x, ms_y, box);
+}
+
+short mouse_move_x_coord_over_box_base(struct ScreenBoxBase *box)
+{
+    short ms_x;
+
+    ms_x = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
+    return ms_x - box->X;
+}
+
+short mouse_move_y_coord_over_box_base(struct ScreenBoxBase *box)
+{
+    short ms_y;
+
+    ms_y = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
+    return ms_y - box->Y;
 }
 
 void init_screen_box(struct ScreenBox *box, ushort x, ushort y, ushort width, ushort height, int drawspeed)

@@ -27,6 +27,15 @@ extern "C" {
 /******************************************************************************/
 #pragma pack(1)
 
+/** Base to which every Screen Box/Button/Text can be casted.
+ */
+struct ScreenBoxBase {
+    short X;
+    short Y;
+    ushort Width;
+    ushort Height;
+};
+
 struct ScreenButton;
 
 struct ScreenButton {
@@ -133,8 +142,33 @@ struct ScreenTextBox {
 #pragma pack()
 /******************************************************************************/
 
+/** Returns if given position is over given box with size (excl. borders).
+ */
 TbBool in_box(short x, short y, short box_x, short box_y, short box_w, short box_h);
+
+/** Returns if given position is over given box with coords (excl. borders).
+ */
 TbBool in_box_coords(short x, short y, short box_x1, short box_y1, short box_x2, short box_y2);
+
+/** Returns if given position is over given box (incl. borders).
+ */
+#define is_over_box(x, y, box) is_over_box_base(x, y, (struct ScreenBoxBase *)box)
+TbBool is_over_box_base(short x, short y, struct ScreenBoxBase *box);
+
+/** Returns if current mouse move position is over given box (incl. borders).
+ */
+#define mouse_move_over_box(box) mouse_move_over_box_base((struct ScreenBoxBase *)box)
+TbBool mouse_move_over_box_base(struct ScreenBoxBase *box);
+
+/** Returns X coord of current mouse move position relative to given box.
+ */
+#define mouse_move_x_coord_over_box(box) mouse_move_x_coord_over_box_base((struct ScreenBoxBase *)box)
+short mouse_move_x_coord_over_box_base(struct ScreenBoxBase *box);
+
+/** Returns Y coord of current mouse move position relative to given box.
+ */
+#define mouse_move_y_coord_over_box(box) mouse_move_y_coord_over_box_base((struct ScreenBoxBase *)box)
+short mouse_move_y_coord_over_box_base(struct ScreenBoxBase *box);
 
 void init_screen_box(struct ScreenBox *box, ushort x, ushort y,
   ushort width, ushort height, int drawspeed);
