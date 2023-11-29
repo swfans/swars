@@ -53,6 +53,61 @@ ubyte sub_71694(int a1, int a2, char *text, int a4, ubyte a5, ubyte a6)
     return ret;
 }
 
+TbBool input_kicked_left_arrow(struct ScreenBox *box, short *target)
+{
+    if (mouse_move_over_kicked_box(box))
+    {
+        if (lbDisplay.MLeftButton)
+        {
+            lbDisplay.LeftButton = 0;
+            (*target)--;
+            if ((*target) < 0)
+                (*target) = 0;
+            return true;
+        }
+    }
+    return false;
+}
+
+TbBool input_kicked_right_arrow(struct ScreenBox *box, short *target)
+{
+    if (mouse_move_over_kicked_box(box))
+    {
+        if (lbDisplay.MLeftButton)
+        {
+            lbDisplay.LeftButton = 0;
+            (*target)++;
+            if ((*target) > 322)
+                (*target) = 322;
+            return true;
+        }
+    }
+    return false;
+}
+
+TbBool input_kicked_box(struct ScreenBox *box, short *target)
+{
+    int ms_x, ms_y;
+
+    if (lbDisplay.MLeftButton)
+    {
+        ms_x = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
+        ms_y = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
+        if ((ms_y >= box->Y + 2) && (ms_y <= box->Y + box->Height - 4))
+        {
+            int dx, dy;
+            dx = ms_x - box->X - 2;
+            dy = ms_y - box->Y - 2;
+            if (dx + dy >= 0 && dx + dy <= box->Width - 4 - 2)
+            {
+                (*target) = 322 * (dx + dy) / (box->Width - 4 - 2);
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 void draw_box_cutedge(struct ScreenBox *box, TbPixel colr1)
 {
     short cut, stp;
@@ -171,7 +226,7 @@ TbBool pause_screen_handle(void)
     int w;
     const char *s;
     int x1, y1;
-    int ms_x, ms_y, i;
+    int i;
     TbBool is_unkn1;
     TbPixel colr1, colr2;
     struct ScreenBox main_box;
@@ -325,45 +380,12 @@ TbBool pause_screen_handle(void)
         draw_kicked_left_arrow(&box2, colr2);
         draw_kicked_right_arrow(&box3, colr2);
 
-        if (mouse_move_over_kicked_box(&box2))
-        {
-            if (lbDisplay.MLeftButton)
-            {
-                lbDisplay.LeftButton = 0;
-                (*target)--;
-                if ((*target) < 0)
-                    (*target) = 0;
-                affected = target;
-            }
-        }
-        if (mouse_move_over_kicked_box(&box3))
-        {
-            if (lbDisplay.MLeftButton)
-            {
-                lbDisplay.LeftButton = 0;
-                (*target)++;
-                if ((*target) > 322)
-                    (*target) = 322;
-                affected = target;
-            }
-        }
-        if (lbDisplay.MLeftButton)
-        {
-            ms_x = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
-            ms_y = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
-            if ((ms_y >> 1 >= 62) && (ms_y >> 1 <= 68))
-            {
-                int ms_delta;
-                ms_delta = (ms_y >> 1) + (ms_x >> 1) - 62;
-                if (ms_delta >= 103 && ms_delta <= 219)
-                {
-                    (*target) = 322 * (ms_delta - 103) / 116;
-                    affected = target;
-                }
-            }
-        }
-
-
+        if (input_kicked_left_arrow(&box2, target))
+            affected = target;
+        if (input_kicked_right_arrow(&box3, target))
+            affected = target;
+        if (input_kicked_box(&box1, target))
+            affected = target;
         }
         {
         target = &startscr_midivol;
@@ -389,45 +411,12 @@ TbBool pause_screen_handle(void)
         draw_kicked_left_arrow(&box2, colr2);
         draw_kicked_right_arrow(&box3, colr2);
 
-        if (mouse_move_over_kicked_box(&box2))
-        {
-            if (lbDisplay.MLeftButton)
-            {
-                lbDisplay.LeftButton = 0;
-                (*target)--;
-                if ((*target) < 0)
-                    (*target) = 0;
-                affected = target;
-            }
-        }
-        if (mouse_move_over_kicked_box(&box3))
-        {
-            if (lbDisplay.MLeftButton)
-            {
-                lbDisplay.LeftButton = 0;
-                (*target)++;
-                if ((*target) > 322)
-                    (*target) = 322;
-                affected = target;
-            }
-        }
-        if (lbDisplay.MLeftButton)
-        {
-            ms_x = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
-            ms_y = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
-            if ((ms_y >> 1 >= 84) && (ms_y >> 1 <= 90))
-            {
-                int ms_delta;
-                ms_delta = (ms_y >> 1) + (ms_x >> 1) - 84;
-                if (ms_delta >= 103 && ms_delta <= 219)
-                {
-                    (*target) = 322 * (ms_delta - 103) / 116;
-                    affected = target;
-                }
-            }
-        }
-
-
+        if (input_kicked_left_arrow(&box2, target))
+            affected = target;
+        if (input_kicked_right_arrow(&box3, target))
+            affected = target;
+        if (input_kicked_box(&box1, target))
+            affected = target;
         }
         {
         target = &startscr_cdvolume;
@@ -453,44 +442,12 @@ TbBool pause_screen_handle(void)
         draw_kicked_left_arrow(&box2, colr2);
         draw_kicked_right_arrow(&box3, colr2);
 
-        if (mouse_move_over_kicked_box(&box2))
-        {
-            if (lbDisplay.MLeftButton)
-            {
-                lbDisplay.LeftButton = 0;
-                (*target)--;
-                if ((*target) < 0)
-                    (*target) = 0;
-                affected = target;
-            }
-        }
-        if (mouse_move_over_kicked_box(&box3))
-        {
-            if (lbDisplay.MLeftButton)
-            {
-                lbDisplay.LeftButton = 0;
-                (*target)++;
-                if ((*target) > 322)
-                    (*target) = 322;
-                affected = target;
-            }
-        }
-        if (lbDisplay.MLeftButton)
-        {
-            ms_x = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
-            ms_y = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
-            if ((ms_y >> 1 >= 106) && (ms_y >> 1 <= 112))
-            {
-                int ms_delta;
-                ms_delta = (ms_y >> 1) + (ms_x >> 1) - 106;
-                if (ms_delta >= 103 && ms_delta <= 219)
-                {
-                    (*target) = 322 * (ms_delta - 103) / 116;
-                    affected = target;
-                }
-            }
-        }
-
+        if (input_kicked_left_arrow(&box2, target))
+            affected = target;
+        if (input_kicked_right_arrow(&box3, target))
+            affected = target;
+        if (input_kicked_box(&box1, target))
+            affected = target;
         }
 
         if (affected == &startscr_samplevol)
