@@ -376,7 +376,9 @@ TbBool pause_screen_handle(void)
         box3.Width = 8;
         box3.Height = 18;
 
+        // Draw the main slider box
         draw_kicked_box(&box1, colr2);
+        // Draw the side arrows
         draw_kicked_left_arrow(&box2, colr2);
         draw_kicked_right_arrow(&box3, colr2);
 
@@ -386,7 +388,18 @@ TbBool pause_screen_handle(void)
             affected = target;
         if (input_kicked_box(&box1, target))
             affected = target;
+
+        if (*target) // Draw slider box filling
+        {
+            struct ScreenBox box4;
+            box4.X = box1.X + 2;
+            box4.Y = box1.Y + 2;
+            box4.Width = (box1.Width - 6) * (*target) / 322;
+            box4.Height = box1.Height - 4;
+            draw_kicked_box(&box4, colour_lookup[1]);
         }
+        }
+
         {
         target = &startscr_midivol;
         struct ScreenBox box1;
@@ -417,7 +430,18 @@ TbBool pause_screen_handle(void)
             affected = target;
         if (input_kicked_box(&box1, target))
             affected = target;
+
+        if (*target)
+        {
+            struct ScreenBox box4;
+            box4.X = box1.X + 2;
+            box4.Y = box1.Y + 2;
+            box4.Width = (box1.Width - 6) * (*target) / 322;
+            box4.Height = box1.Height - 4;
+            draw_kicked_box(&box4, colour_lookup[1]);
         }
+        }
+
         {
         target = &startscr_cdvolume;
         struct ScreenBox box1;
@@ -448,6 +472,16 @@ TbBool pause_screen_handle(void)
             affected = target;
         if (input_kicked_box(&box1, target))
             affected = target;
+
+        if (*target)
+        {
+            struct ScreenBox box4;
+            box4.X = box1.X + 2;
+            box4.Y = box1.Y + 2;
+            box4.Width = (box1.Width - 6) * (*target) / 322;
+            box4.Height = box1.Height - 4;
+            draw_kicked_box(&box4, colour_lookup[1]);
+        }
         }
 
         if (affected == &startscr_samplevol)
@@ -465,129 +499,6 @@ TbBool pause_screen_handle(void)
             SetCDVolume(70 * (127 * (*affected) / 322) / 100);
         }
 
-        if (startscr_samplevol)
-        {
-            int val7;
-            x1 = 206;
-            y1 = 124;
-            for (i = 0; i < 7; i++)
-            {
-                val7 = 103 - i;
-                if (lbDisplay.ScreenMode == 1)
-                    LbDrawLine(x1 >> 1, y1 >> 1,
-                        (2 * (116 * startscr_samplevol / 322 + val7))
-                            >> 1, y1 >> 1, colour_lookup[1]);
-                else
-                    LbDrawLine(x1, y1,
-                        2 * (116 * startscr_samplevol / 322 + val7),
-                        y1, colour_lookup[1]);
-                x1 -= 2;
-                y1 += 2;
-            }
-            if (lbDisplay.ScreenMode != 1)
-            {
-                x1 = 205;
-                y1 = 125;
-                for (i = 0; i < 7; i++)
-                {
-                    val7 = 103 - i;
-                    if (lbDisplay.ScreenMode == 1)
-                        LbDrawLine(x1 >> 1, y1 >> 1,
-                            (2 * (116 * startscr_samplevol / 322 + val7)
-                                - 1) >> 1, y1 >> 1, colour_lookup[1]);
-                    else
-                        LbDrawLine(x1, y1,
-                            2 * (val7 + 116 * startscr_samplevol / 322)
-                                - 1, y1, colour_lookup[1]);
-                    x1 -= 2;
-                    y1 += 2;
-                }
-            }
-        }
-
-        if (startscr_midivol)
-        {
-            int val7;
-            x1 = 206;
-            y1 = 168;
-            for (i = 0; i < 7; i++)
-            {
-                val7 = 103 - i;
-                if (lbDisplay.ScreenMode == 1)
-                    LbDrawLine(x1 >> 1, y1 >> 1,
-                        (2 * (116 * startscr_midivol / 322 + val7))
-                            >> 1, y1 >> 1, colour_lookup[1]);
-                else
-                    LbDrawLine(x1, y1,
-                        2 * (116 * startscr_midivol / 322 + val7),
-                        y1, colour_lookup[1]);
-                x1 -= 2;
-                y1 += 2;
-            }
-            if (lbDisplay.ScreenMode != 1)
-            {
-                x1 = 205;
-                y1 = 169;
-                for (i = 0; i < 7; i++)
-                {
-                    val7 = 103 - i;
-                    if (lbDisplay.ScreenMode == 1)
-                        LbDrawLine(x1 >> 1, y1 >> 1,
-                            (2
-                                * (116 * startscr_midivol / 322
-                                    + val7) - 1) >> 1, y1 >> 1,
-                            colour_lookup[1]);
-                    else
-                        LbDrawLine(x1, y1,
-                            2
-                                * (116 * startscr_midivol / 322
-                                    + val7) - 1, y1, colour_lookup[1]);
-                    x1 -= 2;
-                    y1 += 2;
-                }
-            }
-        }
-
-        if (startscr_cdvolume)
-        {
-            int val7;
-            x1 = 206;
-            y1 = 212;
-            for (i = 0; i < 7; i++)
-            {
-                val7 = 103 - i;
-                if (lbDisplay.ScreenMode == 1)
-                    LbDrawLine(x1 >> 1, y1 >> 1,
-                        (2 * (116 * startscr_cdvolume / 322 + val7))
-                            >> 1, y1 >> 1, colour_lookup[1]);
-                else
-                    LbDrawLine(x1, y1,
-                        2 * (116 * startscr_cdvolume / 322 + val7),
-                        y1, colour_lookup[1]);
-                x1 -= 2;
-                y1 += 2;
-            }
-            if (lbDisplay.ScreenMode != 1)
-            {
-                x1 = 205;
-                y1 = 213;
-                for (i = 0; i < 7; i++)
-                {
-                    val7 = 103 - i;
-                    if (lbDisplay.ScreenMode == 1)
-                        LbDrawLine(x1 >> 1, y1 >> 1,
-                            (2 * (val7 + 116 * startscr_cdvolume / 322)
-                                - 1) >> 1, y1 >> 1, colour_lookup[1]);
-                    else
-                        LbDrawLine(x1, y1,
-                            2 * (val7 + 116 * startscr_cdvolume / 322)
-                                - 1, y1, colour_lookup[1]);
-                    x1 -= 2;
-                    y1 += 2;
-                }
-            }
-        }
-
         if (sub_71694(180, 120, gui_strings[477], colr1, colr2, ingame.DetailLevel == 1))
         {
             ingame.DetailLevel = 1;
@@ -598,6 +509,7 @@ TbBool pause_screen_handle(void)
             ingame.DetailLevel = 0;
             bang_set_detail(1);
         }
+
         if (sub_71694(140, 134, gui_strings[455], colr1, colr2, 0))
             is_unkn1 = 1;
         if (sub_71694(197, 134, gui_strings[445], colr1, colr2, 0))
