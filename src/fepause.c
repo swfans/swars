@@ -175,6 +175,8 @@ TbBool pause_screen_handle(void)
     TbBool is_unkn1;
     TbPixel colr1, colr2;
     struct ScreenBox main_box;
+    short *target;
+    short *affected;
 
     if (lbDisplay.ScreenMode == 1) {
         main_box.X = 43;
@@ -297,7 +299,10 @@ TbBool pause_screen_handle(void)
         game_update();
         joy_func_065(&joy);
         PlayCDTrack(ingame.CDTrack);
+        affected = NULL;
+
         {
+        target = &startscr_samplevol;
         struct ScreenBox box1;
         box1.X = 204;
         box1.Y = 122;
@@ -325,12 +330,10 @@ TbBool pause_screen_handle(void)
             if (lbDisplay.MLeftButton)
             {
                 lbDisplay.LeftButton = 0;
-                --startscr_samplevol;
-                if (startscr_samplevol < 0)
-                    startscr_samplevol = 0;
-                SetSoundMasterVolume(127 * startscr_samplevol / 322);
-                if (!IsSamplePlaying(0, 80, 0))
-                    play_sample_using_heap(0, 80, 127, 64, 100, 0, 1u);
+                (*target)--;
+                if ((*target) < 0)
+                    (*target) = 0;
+                affected = target;
             }
         }
         if (mouse_move_over_kicked_box(&box3))
@@ -338,17 +341,32 @@ TbBool pause_screen_handle(void)
             if (lbDisplay.MLeftButton)
             {
                 lbDisplay.LeftButton = 0;
-                ++startscr_samplevol;
-                if (startscr_samplevol > 322)
-                    startscr_samplevol = 322;
-                SetSoundMasterVolume(127 * startscr_samplevol / 322);
-                if (!IsSamplePlaying(0, 80, 0))
-                    play_sample_using_heap(0, 80, 127, 64, 100, 0, 1u);
+                (*target)++;
+                if ((*target) > 322)
+                    (*target) = 322;
+                affected = target;
+            }
+        }
+        if (lbDisplay.MLeftButton)
+        {
+            ms_x = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
+            ms_y = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
+            if ((ms_y >> 1 >= 62) && (ms_y >> 1 <= 68))
+            {
+                int ms_delta;
+                ms_delta = (ms_y >> 1) + (ms_x >> 1) - 62;
+                if (ms_delta >= 103 && ms_delta <= 219)
+                {
+                    (*target) = 322 * (ms_delta - 103) / 116;
+                    affected = target;
+                }
             }
         }
 
+
         }
         {
+        target = &startscr_midivol;
         struct ScreenBox box1;
         box1.X = 204;
         box1.Y = 166;
@@ -376,10 +394,10 @@ TbBool pause_screen_handle(void)
             if (lbDisplay.MLeftButton)
             {
                 lbDisplay.LeftButton = 0;
-                --startscr_midivol;
-                if (startscr_midivol < 0)
-                    startscr_midivol = 0;
-                SetMusicMasterVolume(127 * startscr_midivol / 322);
+                (*target)--;
+                if ((*target) < 0)
+                    (*target) = 0;
+                affected = target;
             }
         }
         if (mouse_move_over_kicked_box(&box3))
@@ -387,15 +405,32 @@ TbBool pause_screen_handle(void)
             if (lbDisplay.MLeftButton)
             {
                 lbDisplay.LeftButton = 0;
-                ++startscr_midivol;
-                if (startscr_midivol > 322)
-                    startscr_midivol = 322;
-                SetMusicMasterVolume(127 * startscr_midivol / 322);
+                (*target)++;
+                if ((*target) > 322)
+                    (*target) = 322;
+                affected = target;
+            }
+        }
+        if (lbDisplay.MLeftButton)
+        {
+            ms_x = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
+            ms_y = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
+            if ((ms_y >> 1 >= 84) && (ms_y >> 1 <= 90))
+            {
+                int ms_delta;
+                ms_delta = (ms_y >> 1) + (ms_x >> 1) - 84;
+                if (ms_delta >= 103 && ms_delta <= 219)
+                {
+                    (*target) = 322 * (ms_delta - 103) / 116;
+                    affected = target;
+                }
             }
         }
 
+
         }
         {
+        target = &startscr_cdvolume;
         struct ScreenBox box1;
         box1.X = 204;
         box1.Y = 210;
@@ -423,10 +458,10 @@ TbBool pause_screen_handle(void)
             if (lbDisplay.MLeftButton)
             {
                 lbDisplay.LeftButton = 0;
-                --startscr_cdvolume;
-                if (startscr_cdvolume < 0)
-                    startscr_cdvolume = 0;
-                SetCDVolume(70 * (127 * startscr_cdvolume / 322) / 100);
+                (*target)--;
+                if ((*target) < 0)
+                    (*target) = 0;
+                affected = target;
             }
         }
         if (mouse_move_over_kicked_box(&box3))
@@ -434,48 +469,12 @@ TbBool pause_screen_handle(void)
             if (lbDisplay.MLeftButton)
             {
                 lbDisplay.LeftButton = 0;
-                ++startscr_cdvolume;
-                if (startscr_cdvolume > 322)
-                    startscr_cdvolume = 322;
-                SetCDVolume(70 * (127 * startscr_cdvolume / 322) / 100);
+                (*target)++;
+                if ((*target) > 322)
+                    (*target) = 322;
+                affected = target;
             }
         }
-        }
-
-        if (lbDisplay.MLeftButton)
-        {
-            ms_x = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
-            ms_y = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
-            if ((ms_y >> 1 >= 62) && (ms_y >> 1 <= 68))
-            {
-                int ms_delta;
-                ms_delta = (ms_y >> 1) + (ms_x >> 1) - 62;
-                if (ms_delta >= 103 && ms_delta <= 219)
-                {
-                    startscr_samplevol = 322 * (ms_delta - 103) / 116;
-                    SetSoundMasterVolume(127 * startscr_samplevol / 322);
-                    if (!IsSamplePlaying(0, 80, 0))
-                        play_sample_using_heap(0, 80, 127, 64, 100, 0, 1u);
-                }
-            }
-        }
-
-        if (lbDisplay.MLeftButton)
-        {
-            ms_x = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
-            ms_y = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
-            if ((ms_y >> 1 >= 84) && (ms_y >> 1 <= 90))
-            {
-                int ms_delta;
-                ms_delta = (ms_y >> 1) + (ms_x >> 1) - 84;
-                if (ms_delta >= 103 && ms_delta <= 219)
-                {
-                    startscr_midivol = 322 * (ms_delta - 103) / 116;
-                    SetMusicMasterVolume(127 * startscr_midivol / 322);
-                }
-            }
-        }
-
         if (lbDisplay.MLeftButton)
         {
             ms_x = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
@@ -486,10 +485,27 @@ TbBool pause_screen_handle(void)
                 ms_delta = (ms_y >> 1) + (ms_x >> 1) - 106;
                 if (ms_delta >= 103 && ms_delta <= 219)
                 {
-                    startscr_cdvolume = 322 * (ms_delta - 103) / 116;
-                    SetCDVolume(70 * (127 * startscr_cdvolume / 322) / 100);
+                    (*target) = 322 * (ms_delta - 103) / 116;
+                    affected = target;
                 }
             }
+        }
+
+        }
+
+        if (affected == &startscr_samplevol)
+        {
+            SetSoundMasterVolume(127 * (*affected) / 322);
+            if (!IsSamplePlaying(0, 80, 0))
+                play_sample_using_heap(0, 80, 127, 64, 100, 0, 1u);
+        }
+        else if (affected == &startscr_midivol)
+        {
+            SetMusicMasterVolume(127 * (*affected) / 322);
+        }
+        else if (affected == &startscr_cdvolume)
+        {
+            SetCDVolume(70 * (127 * (*affected) / 322) / 100);
         }
 
         if (startscr_samplevol)
