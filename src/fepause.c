@@ -225,9 +225,7 @@ TbBool pause_screen_handle(void)
 #endif
     int w;
     const char *s;
-    int x1, y1;
-    int i;
-    TbBool is_unkn1;
+    TbBool resume_game;
     TbPixel colr1, colr2;
     struct ScreenBox main_box;
     short *target;
@@ -251,12 +249,16 @@ TbBool pause_screen_handle(void)
         colr1 = 40;
     snd_unkn1_volume_all_samples();
     person_func_unknown_310(2u);
+
+    // Wait for the pause key to be released
     lbKeyOn[kbkeys[GKey_PAUSE]] = 0;
     while ((jskeys[GKey_PAUSE] != 0) &&
       (jskeys[GKey_PAUSE] != joy.Buttons[0]))
     {
+        game_update();
         joy_func_065(&joy);
     }
+
     do_change_mouse(8);
 
     draw_box_cutedge(&main_box, colr1);
@@ -346,10 +348,8 @@ TbBool pause_screen_handle(void)
     if (!ingame.fld_unk7DA)
         SetMusicVolume(100, 0x7F);
 
-    is_unkn1 = 0;
-    while (!lbKeyOn[kbkeys[GKey_PAUSE]]
-        && (!jskeys[GKey_PAUSE] || jskeys[GKey_PAUSE] != joy.Buttons[0])
-        && !is_unkn1)
+    resume_game = false;
+    while (!resume_game)
     {
         game_update();
         joy_func_065(&joy);
@@ -511,7 +511,7 @@ TbBool pause_screen_handle(void)
         }
 
         if (sub_71694(140, 134, gui_strings[455], colr1, colr2, 0))
-            is_unkn1 = 1;
+            resume_game = true;
         if (sub_71694(197, 134, gui_strings[445], colr1, colr2, 0))
         {
             swap_wscreen();
@@ -523,6 +523,10 @@ TbBool pause_screen_handle(void)
         lbDisplay.DrawFlags = 0;
         process_sound_heap();
         swap_wscreen();
+
+        if (lbKeyOn[kbkeys[GKey_PAUSE]]
+          || (jskeys[GKey_PAUSE] && jskeys[GKey_PAUSE] == joy.Buttons[0]))
+            resume_game = true;
     }
 
     while ((lbKeyOn[kbkeys[GKey_PAUSE]])
