@@ -155,10 +155,20 @@ TbBool in_box_coords(short x, short y, short box_x1, short box_y1, short box_x2,
 #define is_over_box(x, y, box) is_over_box_base(x, y, (struct ScreenBoxBase *)box)
 TbBool is_over_box_base(short x, short y, struct ScreenBoxBase *box);
 
+/** Returns if given position is over given kicked (leaning right) box (incl. borders).
+ */
+#define is_over_kicked_box(x, y, box) is_over_kicked_box_base(x, y, (struct ScreenBoxBase *)box)
+TbBool is_over_kicked_box_base(short x, short y, struct ScreenBoxBase *box);
+
 /** Returns if current mouse move position is over given box (incl. borders).
  */
 #define mouse_move_over_box(box) mouse_move_over_box_base((struct ScreenBoxBase *)box)
 TbBool mouse_move_over_box_base(struct ScreenBoxBase *box);
+
+/** Returns if current mouse move position is over given kicked (leaning right) box (incl. borders).
+ */
+#define mouse_move_over_kicked_box(box) mouse_move_over_kicked_box_base((struct ScreenBoxBase *)box)
+TbBool mouse_move_over_kicked_box_base(struct ScreenBoxBase *box);
 
 /** Returns X coord of current mouse move position relative to given box.
  */
