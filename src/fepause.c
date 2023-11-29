@@ -418,7 +418,7 @@ TbBool pause_screen_handle(void)
         draw_kicked_left_arrow(&box2, colr2);
         draw_kicked_right_arrow(&box3, colr2);
 
-        if (mouse_move_over_box(&box2))
+        if (mouse_move_over_kicked_box(&box2))
         {
             if (lbDisplay.MLeftButton)
             {
@@ -429,7 +429,7 @@ TbBool pause_screen_handle(void)
                 SetCDVolume(70 * (127 * startscr_cdvolume / 322) / 100);
             }
         }
-        if (mouse_move_over_box(&box3))
+        if (mouse_move_over_kicked_box(&box3))
         {
             if (lbDisplay.MLeftButton)
             {
