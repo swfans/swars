@@ -166,7 +166,7 @@ ubyte show_mission_stats(struct ScreenBox *box)
     }
 
     x = 300;
-    y = 2 * lnheight;
+    y = 8 * lnheight;
     locstr[0] = '\0';
     if (new_weapons_researched)
     {
