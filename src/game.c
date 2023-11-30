@@ -4469,7 +4469,11 @@ void game_process_sub01(void)
     prev_tick_time = curr_tick_time;
 }
 
-void game_process_sub08(void);
+void game_process_sub08(void)
+{
+    asm volatile ("call ASM_game_process_sub08\n"
+        :  : );
+}
 
 void game_process_sub09(void)
 {
