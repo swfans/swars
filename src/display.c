@@ -13,6 +13,7 @@
 #include "poly.h"
 #include "util.h"
 #include "bflib_basics.h"
+#include "swlog.h"
 
 TbScreenMode screen_mode_game_hi = Lb_SCREEN_MODE_640_480_8;
 TbScreenMode screen_mode_game_lo = Lb_SCREEN_MODE_320_200_8;
@@ -119,6 +120,19 @@ display_unlock (void)
   LbScreenUnlock();
 }
 
+void setup_simple_screen_mode(TbScreenMode mode)
+{
+    TbScreenModeInfo *mdinfo;
+
+    printf("%s %d\n", __func__, (int)mode);
+    mdinfo = LbScreenGetModeInfo(mode);
+    if (mdinfo->Width == 0) {
+        LOGERR("Video mode %d is invalid", (int)mode);
+        return;
+    }
+    LbScreenSetup(mode, mdinfo->Width, mdinfo->Height, display_palette);
+}
+
 void setup_screen_mode(TbScreenMode mode)
 {
     TbBool was_locked;
@@ -127,6 +141,7 @@ void setup_screen_mode(TbScreenMode mode)
     printf("%s %d\n", __func__, (int)mode);
     mdinfo = LbScreenGetModeInfo(mode);
     if (mdinfo->Width == 0) {
+        LOGERR("Game video mode %d is invalid", (int)mode);
         mode = 1;
         mdinfo = LbScreenGetModeInfo(mode);
     }
@@ -145,6 +160,37 @@ void setup_screen_mode(TbScreenMode mode)
     LbMouseSetup(&pointer_sprites[1], 2, 2);
     setup_vecs(lbDisplay.WScreen, vec_tmap, lbDisplay.PhysicalScreenWidth,
         lbDisplay.PhysicalScreenWidth, lbDisplay.PhysicalScreenHeight);
+}
+
+void setup_menu_screen_mode(TbScreenMode mode)
+{
+    TbScreenModeInfo *mdinfo;
+
+    LbMouseReset();
+    screen_buffer_fill_black();
+    mdinfo = LbScreenGetModeInfo(mode);
+    if (mdinfo->Width == 0) {
+        LOGERR("Menu video mode %d is invalid", (int)mode);
+        return;
+    }
+    LbScreenSetup(mode, mdinfo->Width, mdinfo->Height, display_palette);
+    LbMouseSetup(&pointer_sprites[1], 1, 1);
+    setup_vecs(lbDisplay.WScreen, vec_tmap, lbDisplay.PhysicalScreenWidth,
+        lbDisplay.PhysicalScreenWidth, lbDisplay.PhysicalScreenHeight);
+}
+
+void setup_fmv_screen_mode(TbScreenMode mode)
+{
+    TbScreenModeInfo *mdinfo;
+
+    mdinfo = LbScreenGetModeInfo(mode);
+    if (mdinfo->Width == 0) {
+        LOGERR("Movies video mode %d is invalid", (int)mode);
+        return;
+    }
+    LbScreenSetup(mode, mdinfo->Width, mdinfo->Height, display_palette);
+    LbMouseSetup(NULL, 2, 2);
+    show_black_screen();
 }
 
 void screen_buffer_fill_black(void)

@@ -727,17 +727,10 @@ void play_intro(void)
 void replay_intro(void)
 {
     char fname[FILENAME_MAX];
-    TbScreenModeInfo *mdinfo;
 
     LOGSYNC("Starting");
-    mdinfo = LbScreenGetModeInfo(screen_mode_fmvid_lo);
-    if (mdinfo->Width == 0) {
-        LOGERR("Movies video mode %d is invalid", (int)screen_mode_fmvid_lo);
-        return;
-    }
-    LbScreenSetup(screen_mode_fmvid_lo, mdinfo->Width, mdinfo->Height, display_palette);
-    LbMouseSetup(0, 2, 2);
-    show_black_screen();
+    setup_fmv_screen_mode(screen_mode_fmvid_lo);
+
     stop_sample_using_heap(0, 122);
     stop_sample_using_heap(0, 122);
     sprint_fmv_filename(MPly_Intro, fname, sizeof(fname));
@@ -3634,14 +3627,11 @@ void setup_host(void)
     set_smack_free(ASM_smack_mfree);
     LOGDBG("&setup_host() = 0x%lx", (ulong)setup_host);
     {
-        TbScreenModeInfo *mdinfo;
-
         if (game_high_resolution)
             lbDisplay.ScreenMode = screen_mode_game_hi;
         else
             lbDisplay.ScreenMode = screen_mode_game_lo;
-        mdinfo = LbScreenGetModeInfo(lbDisplay.ScreenMode);
-        LbScreenSetup(lbDisplay.ScreenMode, mdinfo->Width, mdinfo->Height, display_palette);
+        setup_simple_screen_mode(lbDisplay.ScreenMode);
     }
     LbSpriteSetup(pointer_sprites, pointer_sprites_end, pointer_data);
     { // Make mouse pointer sprite 1 an empty (zero size) sprite
@@ -3693,18 +3683,6 @@ void setup_host(void)
         PacketRecord_OpenRead();
     }
     play_intro();
-    if ( cmdln_param_bcg )
-    {
-        TbScreenModeInfo *mdinfo;
-
-        lbDisplay.ScreenMode = screen_mode_menu;
-        mdinfo = LbScreenGetModeInfo(lbDisplay.ScreenMode);
-        LbScreenSetup(lbDisplay.ScreenMode, mdinfo->Width, mdinfo->Height, display_palette);
-        LOGDBG("Video mode %dx%d", mdinfo->Width, mdinfo->Height);
-    }
-    LbMouseSetup(&pointer_sprites[1], 2, 2);
-    if (cmdln_param_bcg)
-        LbMouseChangeSprite(NULL);
 }
 
 void set_default_user_settings(void)
@@ -8014,21 +7992,6 @@ void show_load_and_prep_mission(void)
     stop_sample_using_heap(0, 122);
 }
 
-void setup_menu_screen_mode(void)
-{
-    TbScreenModeInfo *mdinfo;
-
-    game_high_resolution = 0;
-    LbMouseReset();
-    screen_buffer_fill_black();
-    mdinfo = LbScreenGetModeInfo(screen_mode_menu);
-    if (mdinfo->Width == 0) return;
-    LbScreenSetup(screen_mode_menu, mdinfo->Width, mdinfo->Height, display_palette);
-    LbMouseSetup(&pointer_sprites[1], 1, 1);
-    setup_vecs(lbDisplay.WScreen, vec_tmap, lbDisplay.PhysicalScreenWidth,
-        lbDisplay.PhysicalScreenWidth, lbDisplay.PhysicalScreenHeight);
-}
-
 void show_menu_screen(void)
 {
     switch (data_1c498d)
@@ -8046,7 +8009,8 @@ void show_menu_screen(void)
     }
     if (lbDisplay.ScreenMode != screen_mode_menu)
     {
-        setup_menu_screen_mode();
+        game_high_resolution = 0;
+        setup_menu_screen_mode(screen_mode_menu);
         reload_background();
         my_set_text_window(0, 0, lbDisplay.GraphicsScreenWidth, lbDisplay.GraphicsScreenHeight);
     }
@@ -8490,12 +8454,6 @@ void game_process(void)
     while ( !exit_game )
     {
       process_sound_heap();
-      // TODO Why resolution control here? Isn't it already handled in game_graphics_inputs()?
-      if ( lbKeyOn[KC_F8] && (lbShift & KMod_CONTROL))
-      {
-          lbKeyOn[KC_F8] = 0;
-          LbScreenSetup(lbDisplay.ScreenMode, 640, 480, display_palette);
-      }
       navi2_unkn_counter -= 2;
       if (navi2_unkn_counter < 0)
           navi2_unkn_counter = 0;
