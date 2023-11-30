@@ -5553,6 +5553,8 @@ void queue_up_new_mail(ubyte emtype, short missi)
 #endif
     int i;
 
+    LOGSYNC("New email type %d after mission %d, source %d", (int)emtype,
+      (int)missi, (int)mission_list[missi].SourceID);
     if ((emtype == 1) && (mission_list[missi].SourceID == 0))
         return;
     if (missi < 0) {
@@ -5598,10 +5600,9 @@ TbBool check_mission_conds(ushort missi)
     int i;
     ushort cmissi;
 
-    cmissi = missi;
     for (i = 0; i < 5; i++)
     {
-        cmissi = mission_list[cmissi].MissionCond[i];
+        cmissi = mission_list[missi].MissionCond[i];
         if ((cmissi > 0) && (mission_list[cmissi].Complete != 1))
           return false;
     }
@@ -5727,12 +5728,8 @@ ushort mission_fire_fail_triggers(ushort missi)
     return n;
 }
 
-void delete_open_mission(ushort mslot, sbyte state)
+void check_open_next_mission(ushort mslot, sbyte state)
 {
-#if 0
-    asm volatile ("call ASM_delete_open_mission\n"
-        : : "a" (mslot), "d" (state));
-#else
     ushort missi;
     TbBool conds_met;
 
@@ -5895,12 +5892,26 @@ void delete_open_mission(ushort mslot, sbyte state)
             }
         }
     }
+}
 
-    if (!mission_remain_until_success(missi) || (state == 1))
-    {
+void check_delete_open_mission(ushort mslot, sbyte state)
+{
+    ushort missi;
+
+    //TODO place this call one level higher
+    check_open_next_mission(mslot, state);
+
+    missi = mission_open[mslot];
+
+    if (mission_has_immediate_next_on_success(missi))
+        return;
+
+    if (mission_remain_until_success(missi))
+        return;
+
+    if (state == 1) {
         remove_mission_state_slot(mslot);
     }
-#endif
 }
 
 void mission_over(void)
@@ -5915,6 +5926,8 @@ void mission_over(void)
     StopAllSamples();
     SetMusicVolume(100, 0);
 
+    // Some updates take place no matter whether the mission
+    // was finished with success or fail
     update_player_cash();
     mission_over_update_players();
     mission_over_gain_persuaded_crowd_rewards();
@@ -5950,7 +5963,7 @@ void mission_over(void)
         ingame.Credits += cr_award;
         if (email != 0)
             queue_up_new_mail(0, -email);
-        delete_open_mission(mslot, 1);
+        check_delete_open_mission(mslot, 1);
     }
     else if (mission_state[mslot] == -1)
     {
@@ -5963,7 +5976,7 @@ void mission_over(void)
         ingame.fld_unkC57++;
         if (email != 0)
             queue_up_new_mail(0, -email);
-        delete_open_mission(mslot, -1);
+        check_delete_open_mission(mslot, -1);
         play_smacker(MPly_MissiFail);
     }
 
