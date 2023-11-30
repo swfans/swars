@@ -125,18 +125,18 @@ void switch_shared_equip_screen_buttons_to_equip(void)
     refresh_equip_list = 1;
     equip_cost_box.Width = 208 - equip_offer_buy_button.Width - 14;
     equip_cost_box.Y = 404;
-    if (selected_weapon < 0)
+    if (selected_weapon + 1 < 1)
     {
         equip_name_box.Text = 0;
     }
     else
     {
-        init_weapon_anim(selected_weapon);
+        init_weapon_anim(selected_weapon + 1 - 1);
         if (is_research_weapon_completed(selected_weapon + 1) || (login_control__State != 6))
         {
             struct Campaign *p_campgn;
             p_campgn = &campaigns[background_type];
-            equip_name_box.Text = gui_strings[p_campgn->WeaponsTextIdShift + selected_weapon];
+            equip_name_box.Text = gui_strings[p_campgn->WeaponsTextIdShift + selected_weapon + 1 - 1];
         }
         else
         {

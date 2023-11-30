@@ -30,6 +30,8 @@ extern "C" {
 
 #pragma pack()
 /******************************************************************************/
+// TODO for this variable the first weapon is 0 instead of 1
+// to be fixed to define variables in the same way everywhere
 extern sbyte selected_weapon;
 extern sbyte selected_mod;
 

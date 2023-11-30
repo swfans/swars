@@ -6265,7 +6265,7 @@ void reload_background(void)
 
     if (screentype == 5 && selected_weapon != -1)
     {
-        init_weapon_anim(selected_weapon);
+        init_weapon_anim(selected_weapon + 1 - 1);
     }
     if (screentype == 4 && selected_mod != -1)
     {

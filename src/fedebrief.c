@@ -21,6 +21,7 @@
 #include "bftext.h"
 #include "bffont.h"
 #include "bfutility.h"
+#include "campaign.h"
 #include "display.h"
 #include "guiboxes.h"
 #include "guitext.h"
@@ -94,7 +95,7 @@ ubyte show_mission_stats(struct ScreenBox *box)
 
         if (new_weapons_researched || new_mods_researched)
         {
-            // Research completed
+            LOGSYNC("Research completed wep=0x%lx mod=0x%lx", new_weapons_researched, new_mods_researched);
             draw_text_purple_list2(x, y, gui_strings[631], 0);
             y += lnheight;
         }
@@ -177,6 +178,8 @@ ubyte show_mission_stats(struct ScreenBox *box)
         wtype = WEP_TYPES_COUNT;
         while (1)
         {
+            struct Campaign *p_campgn;
+
             wtype = weapons_prev_weapon(new_weapons_researched, wtype);
             if (wtype == 0)
                 break;
@@ -184,10 +187,8 @@ ubyte show_mission_stats(struct ScreenBox *box)
             if (strlen(locstr) > sizeof(locstr) - 4)
                 break;
 
-            if (background_type == 1)
-                strid = 30 + wtype;
-            else
-                strid = 0 + wtype;
+            p_campgn = &campaigns[background_type];
+            strid = p_campgn->WeaponsTextIdShift + wtype - 1;
 
             pos = strlen(locstr);
             if (pos == 0)
