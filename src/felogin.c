@@ -200,25 +200,33 @@ void show_login_screen(void)
 
 void init_login_screen_boxes(void)
 {
+    short scr_w;
+
+    // TODO update when the graphics window set during drawing is fixed
+    scr_w = 640; //lbDisplay.GraphicsWindowWidth;
+
     init_screen_box(&login_campaigns_box, 219u, 159u, 200u, 100, 6);
     init_screen_box(&login_name_box, 150u, 128u, 337u, 22, 6);
     init_screen_button(&login_continue_button, 260u, 300u,
       gui_strings[455], 6, med2_font, 1, 0);
     init_screen_button(&login_abort_button, 260u, 329u,
       gui_strings[388], 6, med2_font, 1, 0);
-    login_continue_button.X = 319 - (login_continue_button.Width >> 1);
-    login_abort_button.X = 319 - (login_abort_button.Width >> 1);
     login_abort_button.Border = 3;
     login_continue_button.Border = 3;
+
+    lbFontPtr = med2_font;
+    login_name_box.Width = my_string_width(gui_strings[454]) + 254;
+    login_campaigns_box.X = (scr_w - login_campaigns_box.Width) / 2 - 1;
+    login_name_box.X = (scr_w - login_name_box.Width) / 2 - 1;
+    login_continue_button.X = (scr_w - login_continue_button.Width) / 2 - 1;
+    login_abort_button.X = (scr_w - login_abort_button.Width) / 2  - 1;
+
     login_continue_button.AccelKey = 28;
     login_abort_button.AccelKey = 1;
     login_continue_button.CallBackFn = ac_do_login_2;
     login_abort_button.CallBackFn = ac_do_abort_2;
     login_campaigns_box.SpecialDrawFn = ac_show_campaigns_list;
     login_name_box.SpecialDrawFn = ac_show_login_name;
-    lbFontPtr = med2_font;
-    login_name_box.Width = my_string_width(gui_strings[454]) + 254;
-    login_name_box.X = 319 - (login_name_box.Width >> 1);
 }
 
 void reset_login_screen_boxes_flags(void)

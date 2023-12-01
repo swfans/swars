@@ -115,7 +115,7 @@ ubyte show_research_graph(struct ScreenBox *box)
         int twidth;
 
         lbFontPtr = small_med_font;
-        my_set_text_window(0, 0, 640, 480);
+        my_set_text_window(0, 0, lbDisplay.GraphicsScreenWidth, lbDisplay.GraphicsScreenHeight);
 
         draw_chartxy_axis_y_values(x, y, h, 0, 100, 10);
 
@@ -147,7 +147,7 @@ ubyte show_research_graph(struct ScreenBox *box)
         n_y_vals = done_days + 1;
     }
     lbFontPtr = small_med_font;
-    my_set_text_window(0, 0, 640, 480);
+    my_set_text_window(0, 0, lbDisplay.GraphicsScreenWidth, lbDisplay.GraphicsScreenHeight);
     draw_chartxy_axis_x_values(x, y + h, w, graph_days+1, graph_days+11, 10);
 
     LbScreenSetGraphicsWindow(x - 1, y, w + 3, h + 2);
@@ -178,7 +178,7 @@ ubyte show_research_graph(struct ScreenBox *box)
         }
     }
 
-    LbScreenSetGraphicsWindow(0, 0, 640, 480);
+    LbScreenSetGraphicsWindow(0, 0, lbDisplay.GraphicsScreenWidth, lbDisplay.GraphicsScreenHeight);
     draw_chartxy_axis_x_main(x, y + h, w);
     draw_chartxy_axis_y_main(x, y, h);
     return 0;

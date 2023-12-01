@@ -6124,6 +6124,11 @@ ubyte ac_show_settings_controls_list(struct ScreenBox *box);
 
 void init_main_screen_boxes(void)
 {
+    short scr_w;
+
+    // TODO update when the graphics window set during drawing is fixed
+    scr_w = 640; //lbDisplay.GraphicsWindowWidth;
+
     init_screen_button(&main_map_editor_button, 260, 387,
       gui_strings[443], 6, med2_font, 1, 0);
     init_screen_button(&main_load_button, 260, 358,
@@ -6132,18 +6137,22 @@ void init_main_screen_boxes(void)
       gui_strings[445], 6, med2_font, 1, 0);
     init_screen_button(&main_login_button, 260, 300,
       gui_strings[444], 6, med2_font, 1, 0);
-    main_map_editor_button.X = 319 - (main_map_editor_button.Width >> 1);
-    main_login_button.X = 319 - (main_login_button.Width >> 1);
-    main_quit_button.X = 319 - (main_quit_button.Width >> 1);
-    main_load_button.X = 319 - (main_load_button.Width >> 1);
+
+    main_map_editor_button.X = (scr_w - main_map_editor_button.Width) / 2 - 1;
+    main_login_button.X = (scr_w - main_login_button.Width) / 2 - 1;
+    main_quit_button.X = (scr_w - main_quit_button.Width) / 2 - 1;
+    main_load_button.X = (scr_w - main_load_button.Width) / 2 - 1;
+
     main_map_editor_button.Border = 3;
     main_login_button.Border = 3;
     main_quit_button.Border = 3;
     main_load_button.Border = 3;
+
     main_map_editor_button.CallBackFn = ac_main_do_map_editor;
     main_login_button.CallBackFn = ac_main_do_login_1;
     main_quit_button.CallBackFn = ac_main_do_my_quit;
     main_load_button.CallBackFn = ac_goto_savegame;
+
     main_login_button.AccelKey = 28;
     main_quit_button.AccelKey = 1;
 }
