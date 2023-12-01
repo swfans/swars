@@ -315,6 +315,14 @@ TbScreenMode LbRegisterVideoMode(const char *desc,
     TbScreenCoord width, TbScreenCoord height,
     ushort bpp, ulong flags);
 
+/**
+ * Parses video mode description string and registers new mode.
+ *
+ * @param desc Mode description string, in form of WIDTHxHEIGHTxBPP or WIDTHxHEIGHTwBPP.
+ * @return Mode number assigned to the newly created video mode.
+ */
+TbScreenMode LbRegisterVideoModeString(const char *desc);
+
 /** Set minimal value of screen surface width and height
  *
  *  If an application requests a lower resolution, the library will use

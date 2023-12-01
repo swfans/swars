@@ -136,6 +136,40 @@ TbScreenMode LbRegisterVideoMode(const char *desc, TbScreenCoord width,
     return mode;
 }
 
+TbScreenMode LbRegisterVideoModeString(const char *desc)
+{
+    int width, height;
+    int bpp;
+    ulong flags;
+    int ret;
+    {
+        width = 0; height = 0; bpp = 0; flags = Lb_VF_DEFAULT;
+        ret = sscanf(desc," %d x %d x %d", &width, &height, &bpp);
+    }
+    if (ret != 3)
+    {
+        // pattern not matched - maybe it's windowed mode
+        width = 0; height = 0; bpp = 0; flags = Lb_VF_DEFAULT;
+        ret = sscanf(desc," %d x %d w %d", &width, &height, &bpp);
+        flags |= Lb_VF_WINDOWED;
+    }
+    if (ret != 3)
+    {
+        LOGDBG("cannot recognize parameters in mode, got %dx%dx%d\n", width, height, bpp);
+        return Lb_SCREEN_MODE_INVALID;
+    }
+    if (bpp < 9) {
+        flags |= Lb_VF_PALETTE;
+    } else
+    if ((bpp == 24) || (bpp = 32)) {
+        flags |= Lb_VF_RGBCOLOUR;
+    } else
+    {
+        flags |= Lb_VF_HICOLOUR;
+    }
+    return LbRegisterVideoMode(desc, width, height, bpp, flags);
+}
+
 TbResult LbSetTitle(const char *title)
 {
     strncpy(lbDrawAreaTitle, title, sizeof(lbDrawAreaTitle)-1);
