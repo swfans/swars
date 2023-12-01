@@ -6257,9 +6257,9 @@ void reload_background(void)
         scr_bkp = lbDisplay.WScreen;
         lbDisplay.WScreen = back_buffer;
         spr = &sprites_Icons0_0[168];
-        for (y = 0; y < 480; y += spr->SHeight)
+        for (y = 0; y < lbDisplay.GraphicsScreenHeight; y += spr->SHeight)
         {
-            for (x = 0; x < 640; x += spr->SWidth) {
+            for (x = 0; x < lbDisplay.GraphicsScreenWidth; x += spr->SWidth) {
                 LbSpriteDraw(x, y, spr);
             }
         }
@@ -6277,6 +6277,7 @@ void reload_background(void)
         bkdata_dir = "qdata";
 
         sprintf(str, "%s/%s-proj.dat", bkdata_dir, campgn_mark);
+        // TODO load somewhere else and blit to proper size
         LbFileLoadAt(str, back_buffer);
     }
 
