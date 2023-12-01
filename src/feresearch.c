@@ -203,6 +203,7 @@ void init_research_screen_boxes(void)
      gui_strings[478], 6, med2_font, 1, 0);
     init_screen_button(&research_list_buttons[1], 425u, 404u,
       gui_strings[479], 6, med2_font, 1, 0);
+
     research_list_buttons[0].X = ((104 - research_list_buttons[0].Width) >> 1)
         + 425;
     research_list_buttons[1].X = ((104 - research_list_buttons[1].Width) >> 1)

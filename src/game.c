@@ -2126,7 +2126,7 @@ void draw_new_panel_sprite_std(int px, int py, ulong spr_id)
     int x, y;
 
     spr = &pop1_sprites[spr_id];
-    if (lbDisplay.ScreenMode != 1) {
+    if (lbDisplay.GraphicsScreenHeight >= 400) {
         x = px;
         y = py;
     } else {
@@ -2151,7 +2151,7 @@ void draw_new_panel_sprite_dark(int px, int py, ulong spr_id)
     int x, y;
 
     spr = &pop1_sprites[spr_id];
-    if (lbDisplay.ScreenMode != 1) {
+    if (lbDisplay.GraphicsScreenHeight >= 400) {
         x = px;
         y = py;
     } else {
@@ -2373,7 +2373,7 @@ short draw_current_weapon_button(PlayerInfo *p_locplayer, short nagent)
     ushort curwep, prevwep;
     short cx, cy;
 
-    if (lbDisplay.ScreenMode == 1) {
+    if (lbDisplay.GraphicsScreenHeight < 400) {
         cy = 28;
         cx = 158 * nagent + 66;
     } else {
@@ -2431,7 +2431,7 @@ short draw_current_weapon_button(PlayerInfo *p_locplayer, short nagent)
                 if (ingame.PanelPermutation == -1)
                 {
                     spr = &pop1_sprites[14];
-                    if (lbDisplay.ScreenMode == 1)
+                    if (lbDisplay.GraphicsScreenHeight < 400)
                         SCANNER_unkn_func_202(spr, cx >> 1, cy >> 1,
                             ingame.Scanner.Contrast, ingame.Scanner.Brightness);
                     else
@@ -2446,7 +2446,7 @@ short draw_current_weapon_button(PlayerInfo *p_locplayer, short nagent)
                 if (ingame.PanelPermutation == -1)
                 {
                     spr = &pop1_sprites[14];
-                    if (lbDisplay.ScreenMode == 1)
+                    if (lbDisplay.GraphicsScreenHeight < 400)
                         SCANNER_unkn_func_202(spr, cx >> 1, cy >> 1,
                             ingame.Scanner.Contrast, ingame.Scanner.Brightness);
                     else
@@ -2678,7 +2678,7 @@ void draw_shield_level(short x, short y, ushort w, ushort h)
     struct EnginePoint point3;
 
     m = 1;
-    if (lbDisplay.ScreenMode == 1)
+    if (lbDisplay.GraphicsScreenHeight < 400)
         m = 0;
     point1.pp.X = x << m;
     point1.pp.Y = y << m;
@@ -2738,14 +2738,14 @@ void draw_health_level(short x, short y, ushort w, ushort h, short lv, ushort lv
     {
         draw_shield_level(x, y, cw, h);
     }
-    else if (lbDisplay.ScreenMode == 1)
+    else if (lbDisplay.GraphicsScreenHeight < 400)
     {
         short cx, cy;
         cx = x;
         cy = y;
         for (ch = h; ch > 0; ch--)
         {
-            if (lbDisplay.ScreenMode == 1)
+            if (lbDisplay.GraphicsScreenHeight < 400)
                 LbDrawLine(2 * cx >> 1, 2 * cy >> 1, 2 * (cx + cw) >> 1, 2 * cy >> 1, col);
             else
                 LbDrawLine(2 * cx, 2 * cy, 2 * (cx + cw), 2 * cy, col);
@@ -2761,7 +2761,7 @@ void draw_health_level(short x, short y, ushort w, ushort h, short lv, ushort lv
         cw *= 2;
         for (ch = 2 * h; ch > 0; ch--)
         {
-            if (lbDisplay.ScreenMode == 1)
+            if (lbDisplay.GraphicsScreenHeight < 400)
                 LbDrawLine(cx >> 1, cy >> 1, (cx + cw) >> 1, cy >> 1, col);
             else
                 LbDrawLine(cx, cy, cx + cw, cy, col);
@@ -2789,7 +2789,7 @@ void func_1eae4(int x, short y, int w, ushort h, short lv, ushort lvmax, ubyte c
         return;
 
     ch = h * lv / lvmax;
-    if (lbDisplay.ScreenMode == 1)
+    if (lbDisplay.GraphicsScreenHeight < 400)
     {
         short cx, cy;
         cx = x;
@@ -2799,7 +2799,7 @@ void func_1eae4(int x, short y, int w, ushort h, short lv, ushort lvmax, ubyte c
             short cy1, cy2;
             cy1 = cy + h;
             cy2 = cy + h - ch;
-            if (lbDisplay.ScreenMode == 1)
+            if (lbDisplay.GraphicsScreenHeight < 400)
                 SCANNER_unkn_func_203(2 * cx >> 1, 2 * cy1 >> 1, 2 * cx >> 1, 2 * cy2 >> 1, col,
                     ingame.Scanner.Contrast, ingame.Scanner.Brightness);
             else
@@ -2819,7 +2819,7 @@ void func_1eae4(int x, short y, int w, ushort h, short lv, ushort lvmax, ubyte c
             short cy1, cy2;
             cy1 = 2*h + cy;
             cy2 = 2*h + cy - 2*ch;
-            if (lbDisplay.ScreenMode == 1)
+            if (lbDisplay.GraphicsScreenHeight < 400)
                 LbDrawLine(cx >> 1, cy1 >> 1, cx >> 1, cy2 >> 1, col);
             else
                 LbDrawLine(cx, cy1, cx, cy2, col);
@@ -2881,13 +2881,13 @@ void draw_new_panel()
         if ((p_agent->Flag & TngF_Unkn0100) != 0)
         {
             game_panel[16].Spr = 99;
-            if (lbDisplay.ScreenMode != 1)
+            if (lbDisplay.GraphicsScreenHeight >= 400)
                 game_panel[17].Spr = 106;
         }
         else
         {
             game_panel[16].Spr = 10;
-            if (lbDisplay.ScreenMode != 1)
+            if (lbDisplay.GraphicsScreenHeight >= 400)
                 game_panel[17].Spr = 105;
         }
     }
@@ -2979,7 +2979,7 @@ void draw_new_panel()
         if ((p_agent->Flag & TngF_Unkn0002) == 0 && (p_agent->Flag2 & 0x800) == 0)
         {
             cc = p_agent->U.UPerson.ComCur & 3;
-            if (lbDisplay.ScreenMode == 1)
+            if (lbDisplay.GraphicsScreenHeight < 400)
             {
                 switch (cc)
                 {
@@ -3047,7 +3047,7 @@ void draw_new_panel()
             col = 1;
         lvmax = p_agent->U.UPerson.MaxEnergy;
         lv = p_agent->U.UPerson.Energy;
-        if (lbDisplay.ScreenMode == 1)
+        if (lbDisplay.GraphicsScreenHeight < 400)
             w = 0;
         else
             w = 45;
@@ -3088,7 +3088,7 @@ void draw_new_panel()
             lv = p_agent->U.UPerson.Stamina;
             lvmax = p_agent->U.UPerson.MaxStamina;
             func_1ee14(x, 6, w, 2, lv, lvmax);
-            if (lbDisplay.ScreenMode == 1)
+            if (lbDisplay.GraphicsScreenHeight < 400)
                 x = 158 * i + 54;
             else
                 x = 157 * i + 54;
@@ -3127,7 +3127,7 @@ void draw_new_panel()
     if ((ingame.Flags & GamF_Unkn8000) != 0) {
         int x;
         x = 238;
-        if (lbDisplay.ScreenMode != 1)
+        if (lbDisplay.GraphicsScreenHeight >= 400)
             x += 89;
         draw_new_panel_sprite_std(4, x, 91);
     }
@@ -3416,7 +3416,7 @@ void init_scanner(void)
 void adjust_mission_engine_to_video_mode(void)
 {
     game_high_resolution = (lbDisplay.ScreenMode == screen_mode_game_hi);
-    if (lbDisplay.GraphicsScreenWidth >= 640)
+    if (lbDisplay.GraphicsScreenHeight >= 400)
     {
         overall_scale = 400;
         load_pop_sprites_hi();
@@ -6645,7 +6645,7 @@ ubyte do_user_interface(void)
             SCANNER_set_colour(2);
             SCANNER_fill_in();
         }
-        if (lbDisplay.ScreenMode == 1)
+        if (lbDisplay.GraphicsScreenHeight < 400)
             load_pop_sprites_lo();
         else
             load_pop_sprites_hi();

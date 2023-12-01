@@ -431,7 +431,6 @@ void read_conf_file(void)
                 screen_mode_fmvid_lo = i;
                 break;
             }
-                screen_mode_game_hi = i;
             break;
         case 0: // comment
             break;

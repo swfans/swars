@@ -111,7 +111,7 @@ TbBool input_kicked_box(struct ScreenBox *box, short *target)
 void draw_box_cutedge(struct ScreenBox *box, TbPixel colr1)
 {
     short cut, stp;
-    if (lbDisplay.ScreenMode == 1) {
+    if (lbDisplay.GraphicsScreenHeight < 400) {
         stp = 1;
         cut = 25;
     } else {
@@ -146,7 +146,7 @@ void draw_parallelogram_45degi(short x, short y, short w, short h, TbPixel colr2
     cx = x;
     for (i = 0; i < h; i += 2)
     {
-        if (lbDisplay.ScreenMode == 1)
+        if (lbDisplay.GraphicsScreenHeight < 400)
             LbDrawLine((cx) >> 1, (y+i) >> 1, (cx+w) >> 1, (y+i) >> 1, colr2);
         else
             LbDrawLine((cx), (y+i), (cx+w), (y+i), colr2);
@@ -157,7 +157,7 @@ void draw_parallelogram_45degi(short x, short y, short w, short h, TbPixel colr2
 void draw_kicked_box(struct ScreenBox *box, TbPixel colr2)
 {
     draw_parallelogram_45degi(box->X, box->Y, box->Width, box->Height, colr2);
-    if (lbDisplay.ScreenMode != 1)
+    if (lbDisplay.GraphicsScreenHeight >= 400)
         draw_parallelogram_45degi(box->X - 1, box->Y + 1, box->Width, box->Height, colr2);
 }
 
@@ -165,14 +165,14 @@ void draw_kicked_left_arrow(struct ScreenBox *box, TbPixel colr2)
 {
     short stp;
 
-    if (lbDisplay.ScreenMode == 1)
+    if (lbDisplay.GraphicsScreenHeight < 400)
         stp = 1;
     else
         stp = 2;
 
     if (mouse_move_over_kicked_box(box))
     {
-        if (lbDisplay.ScreenMode == 1)
+        if (lbDisplay.GraphicsScreenHeight < 400)
             LbSpriteDrawOneColour(box->X >> 1, (box->Y >> 1) - stp, &pop1_sprites[100],
               colour_lookup[1]);
         else
@@ -181,7 +181,7 @@ void draw_kicked_left_arrow(struct ScreenBox *box, TbPixel colr2)
     }
     else
     {
-        if (lbDisplay.ScreenMode == 1)
+        if (lbDisplay.GraphicsScreenHeight < 400)
             LbSpriteDraw(box->X >> 1, (box->Y >> 1) - stp, &pop1_sprites[100]);
         else
             LbSpriteDraw(box->X, box->Y - stp, &pop1_sprites[100]);
@@ -192,14 +192,14 @@ void draw_kicked_right_arrow(struct ScreenBox *box, TbPixel colr2)
 {
     short stp;
 
-    if (lbDisplay.ScreenMode == 1)
+    if (lbDisplay.GraphicsScreenHeight < 400)
         stp = 1;
     else
         stp = 2;
 
     if (mouse_move_over_kicked_box(box))
     {
-        if (lbDisplay.ScreenMode == 1)
+        if (lbDisplay.GraphicsScreenHeight < 400)
             LbSpriteDrawOneColour((box->X >> 1) - stp, (box->Y >> 1) - stp,
               &pop1_sprites[101], colour_lookup[1]);
         else
@@ -208,7 +208,7 @@ void draw_kicked_right_arrow(struct ScreenBox *box, TbPixel colr2)
     }
     else
     {
-        if (lbDisplay.ScreenMode == 1)
+        if (lbDisplay.GraphicsScreenHeight < 400)
             LbSpriteDraw((box->X >> 1) - stp, (box->Y >> 1) - stp, &pop1_sprites[101]);
         else
             LbSpriteDraw(box->X - stp, box->Y - stp, &pop1_sprites[101]);
@@ -231,7 +231,7 @@ TbBool pause_screen_handle(void)
     short *target;
     short *affected;
 
-    if (lbDisplay.ScreenMode == 1) {
+    if (lbDisplay.GraphicsScreenHeight < 400) {
         main_box.X = 43;
         main_box.Width = 233;
         main_box.Y = 27;
@@ -275,7 +275,7 @@ TbBool pause_screen_handle(void)
         lbDisplay.DrawFlags |= Lb_TEXT_ONE_COLOR;
         lbDisplay.DrawColour = colr2;
     }
-    if (lbDisplay.ScreenMode == 1)
+    if (lbDisplay.GraphicsScreenHeight < 400)
     {
         s = mission_name;
         w = my_string_width(s);
@@ -310,7 +310,7 @@ TbBool pause_screen_handle(void)
 
     if (language_3str[0] == 'e')
     {
-        if (lbDisplay.ScreenMode == 1)
+        if (lbDisplay.GraphicsScreenHeight < 400)
         {
             LbSpriteDraw(89, 31, &pop1_sprites[102]);
             LbSpriteDraw(83, 120, &pop1_sprites[103]);
@@ -325,7 +325,7 @@ TbBool pause_screen_handle(void)
     }
     else
     {
-        if (lbDisplay.ScreenMode == 1)
+        if (lbDisplay.GraphicsScreenHeight < 400)
         {
             s = gui_strings[606];
             w = my_string_width(s);
