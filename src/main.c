@@ -32,6 +32,11 @@ enum ConfigCmd {
     ConfCmd_Levels,
     ConfCmd_Sound,
     ConfCmd_DOS,
+    ConfCmd_ResGameHi,
+    ConfCmd_ResGameLo,
+    ConfCmd_ResMenu,
+    ConfCmd_ResFMVVidHi,
+    ConfCmd_ResFMVidLo,
 };
 
 const struct TbNamedEnum conf_file_cmnds[] = {
@@ -45,6 +50,11 @@ const struct TbNamedEnum conf_file_cmnds[] = {
   {"Levels",	ConfCmd_Levels},
   {"Sound",		ConfCmd_Sound},
   {"DOS",		ConfCmd_DOS},
+  {"ResGameHi",	ConfCmd_ResGameHi},
+  {"ResGameLo",	ConfCmd_ResGameLo},
+  {"ResMenu",	ConfCmd_ResMenu},
+  {"ResFMVVidHi",ConfCmd_ResFMVVidHi},
+  {"ResFMVidLo",ConfCmd_ResFMVidLo},
   {NULL,		0},
 };
 
@@ -273,9 +283,10 @@ static void fixup_options(void)
 void read_conf_file(void)
 {
     TbFileHandle conf_fh;
-    unsigned int i;
+    int i;
     int cmd_num;
     char locbuf[1024];
+    char locstr[40];
     struct TbIniParser parser;
     char *conf_fname = "config.ini";
     int conf_len;
@@ -386,6 +397,42 @@ void read_conf_file(void)
             }
             //game_dirs[DirPlace_?].use_cd = (i != 2);// option ignored
             break;
+        case ConfCmd_ResGameHi:
+        case ConfCmd_ResGameLo:
+        case ConfCmd_ResMenu:
+        case ConfCmd_ResFMVVidHi:
+        case ConfCmd_ResFMVidLo:
+            i = LbIniValueGetStrWhole(&parser, locstr, sizeof(locstr));
+            if (i <= 0) {
+                CONFWRNLOG("Couldn't read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                break;
+            }
+            i = LbRegisterVideoModeString(locstr);
+            if (i == Lb_SCREEN_MODE_INVALID) {
+                CONFWRNLOG("Couldn't register \"%s\" mode \"%s\".", COMMAND_TEXT(cmd_num), locstr);
+                break;
+            }
+            CONFDBGLOG("Resolution %s set to '%s' mode %d", COMMAND_TEXT(cmd_num), locstr, i);
+            switch (cmd_num)
+            {
+            case ConfCmd_ResGameHi:
+                screen_mode_game_hi = i;
+                break;
+            case ConfCmd_ResGameLo:
+                screen_mode_game_lo = i;
+                break;
+            case ConfCmd_ResMenu:
+                screen_mode_menu = i;
+                break;
+            case ConfCmd_ResFMVVidHi:
+                screen_mode_fmvid_hi = i;
+                break;
+            case ConfCmd_ResFMVidLo:
+                screen_mode_fmvid_lo = i;
+                break;
+            }
+                screen_mode_game_hi = i;
+            break;
         case 0: // comment
             break;
         case -1: // end of buffer
@@ -431,10 +478,11 @@ main (int argc, char **argv)
     if (!game_initialise())
         return 1;
 
+    read_conf_file();
+
     display_set_full_screen(cmdln_fullscreen);
     display_set_lowres_stretch(cmdln_lores_stretch);
 
-    read_conf_file();
     read_strings_file();
     game_setup();
 
