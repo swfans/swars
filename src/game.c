@@ -7762,7 +7762,7 @@ void draw_purple_screen_hotspots(ushort hsnext)
 
 void draw_purple_screen(void)
 {
-#if 1
+#if 0
     asm volatile ("call ASM_draw_purple_screen\n"
         :  :  : "eax" );
 #else
