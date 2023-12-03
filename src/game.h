@@ -116,6 +116,22 @@ enum MissionFMVPlay {
     MPly_Outro,
 };
 
+enum PurpleDrawType {
+  PuDT_NONE = 0,
+  PuDT_BOX = 1,
+  PuDT_TEXT = 2,
+  PuDT_UNK03 = 3,
+  PuDT_COPYBOX = 4,
+  PuDT_SPRITE = 5,
+  PuDT_POTRIG = 6, /* Textured triangle from projector origin point to given line */
+  PuDT_FLIC = 7,
+  PuDT_SLANTBOX = 8,
+  PuDT_LINE = 9,
+  PuDT_HVLINE = 10,
+  PuDT_TRIANGLE = 11,
+  PuDT_HOTSPOT = 12,
+};
+
 struct Thing;
 
 typedef struct {
@@ -199,7 +215,7 @@ struct DILine {
 struct DISprite { // sizeof=12
 	short X;
 	short Y;
-	struct Sprite *Sprite;
+	struct TbSprite *Sprite;
 	ubyte Colour;
 };
 
@@ -211,7 +227,7 @@ struct DIText { // sizeof=23
 	short X;
 	short Y; // offs=0x0A
 	char *Text;
-	struct Sprite *Font;
+	struct TbSprite *Font;
 	ushort Line;
 	ubyte Colour; // offs=0x16
 };
