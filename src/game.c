@@ -693,7 +693,7 @@ void play_smacker(ushort vid_type)
     person_func_unknown_310(2);
     if (lbDisplay.ScreenMode != screen_mode_fmvid_hi)
         setup_screen_mode(screen_mode_fmvid_hi);
-    LbMouseChangeSprite(0);
+    LbMouseChangeSprite(NULL);
     show_black_screen();
 
     sprint_fmv_filename(vid_type, fname, sizeof(fname));
@@ -733,7 +733,7 @@ void replay_intro(void)
     char fname[FILENAME_MAX];
 
     LOGSYNC("Starting");
-    setup_fmv_screen_mode(screen_mode_fmvid_lo);
+    setup_simple_screen_mode(screen_mode_fmvid_lo);
 
     stop_sample_using_heap(0, 122);
     stop_sample_using_heap(0, 122);
@@ -3192,7 +3192,7 @@ void init_outro(void)
     show_black_screen();
     swap_wscreen();
     setup_screen_mode(screen_mode_fmvid_lo);
-    LbMouseChangeSprite(0);
+    LbMouseChangeSprite(NULL);
     lbKeyOn[KC_SPACE] = 0;
     lbKeyOn[KC_RETURN] = 0;
     lbKeyOn[KC_ESCAPE] = 0;
@@ -8338,7 +8338,9 @@ void show_menu_screen(void)
     if (lbDisplay.ScreenMode != screen_mode_menu)
     {
         game_high_resolution = 0;
-        setup_menu_screen_mode(screen_mode_menu);
+        LbMouseReset();
+        screen_buffer_fill_black();
+        setup_screen_mode(screen_mode_menu);
         reload_background();
         my_set_text_window(0, 0, lbDisplay.GraphicsScreenWidth, lbDisplay.GraphicsScreenHeight);
     }
