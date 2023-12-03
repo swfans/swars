@@ -21,22 +21,22 @@
 #include "bfscreen.h"
 #include "bfline.h"
 
-TbResult LbDrawBox(long X1, long Y1, long X2, long Y2, TbPixel colour)
+TbResult LbDrawBox(long X, long Y, long Width, long Height, TbPixel colour)
 {
     if (lbDisplay.DrawFlags & Lb_SPRITE_OUTLINE)
     {
-        if (X2 < 1 || Y2 < 1)
+        if (Width < 1 || Height < 1)
             return Lb_FAIL;
-        LbDrawHVLine(X1, Y1, X2 + X1 - 1, Y1, colour);
-        LbDrawHVLine(X1, Y2 + Y1 - 1, X2 + X1 - 1, Y2 + Y1 - 1, colour);
-        if (Y2 > 2)
+        LbDrawHVLine(X, Y, X + Width - 1, Y, colour);
+        LbDrawHVLine(X, Y + Height - 1, X + Width - 1, Y + Height - 1, colour);
+        if (Height > 2)
         {
-            LbDrawHVLine(X1, Y1 + 1, X1, Y2 + Y1 - 2, colour);
-            LbDrawHVLine(X2 + X1 - 1, Y1 + 1, X2 + X1 - 1, Y2 + Y1 - 2, colour);
+            LbDrawHVLine(X, Y + 1, X, Y + Height - 2, colour);
+            LbDrawHVLine(X + Width - 1, Y + 1, X + Width - 1, Y + Height - 2, colour);
         }
     } else
     {
-        LbDrawBoxClip(X1, Y1, X2, Y2, colour);
+        LbDrawBoxClip(X, Y, Width, Height, colour);
     }
     return Lb_SUCCESS;
 }

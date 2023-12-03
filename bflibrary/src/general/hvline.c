@@ -18,6 +18,7 @@
  */
 /******************************************************************************/
 #include <string.h>
+#include <assert.h>
 #include "bfline.h"
 #include "bfscreen.h"
 
@@ -28,62 +29,55 @@ TbResult LbDrawHVLine(long X1, long Y1, long X2, long Y2, TbPixel colour)
     ubyte *ptr;
     ubyte *m;
 
+    // Sort the points on X axis
+    if (X1 > X2)
+    {
+        clipX1 = X2;
+        clipX2 = X1;
+    }
+    else
+    {
+        clipX1 = X1;
+        clipX2 = X2;
+    }
+    // Clip them
     maxX = lbDisplay.GraphicsWindowWidth - 1;
-    clipX1 = X1;
-    clipX2 = X2;
-    if (clipX1 > clipX2)
+    if (clipX2 < 0)
+        return Lb_FAIL;
+    if (clipX1 > maxX)
+        return Lb_FAIL;
+    if (clipX1 < 0)
+        clipX1 = 0;
+    if (clipX2 > maxX)
+        clipX2 = maxX;
+
+    // Sort the points on Y axis
+    if (Y1 > Y2)
     {
-        if (clipX1 < 0)
-            return Lb_FAIL;
-        if (clipX2 > maxX)
-            return Lb_FAIL;
-        if (clipX2 < 0)
-            clipX1 = 0;
-        if (clipX1 > maxX)
-            clipX2 = maxX;
+        clipY1 = Y2;
+        clipY2 = Y1;
     }
     else
     {
-        if (clipX2 < 0)
-            return Lb_FAIL;
-        if (clipX1 > maxX)
-            return Lb_FAIL;
-        if (clipX1 < 0)
-            clipX1 = 0;
-        if (clipX2 > maxX)
-            clipX2 = maxX;
+        clipY1 = Y1;
+        clipY2 = Y2;
     }
-
+    // Clip them
     maxY = lbDisplay.GraphicsWindowHeight - 1;
-    clipY1 = Y1;
-    clipY2 = Y2;
-    if (clipY1 > clipY2)
-    {
-        if (Y1 < 0)
-            return Lb_FAIL;
-        if (Y2 > maxY)
-            return Lb_FAIL;
-        if (Y2 < 0)
-            clipY2 = 0;
-        if (Y1 > maxY)
-            clipY1 = maxY;
-    }
-    else
-    {
-        if (Y2 < 0)
-            return Lb_FAIL;
-        if (Y1 > maxY)
-            return Lb_FAIL;
-        if (Y1 < 0)
-            clipY2 = 0;
-        if (Y2 > maxY)
-            clipY1 = maxY;
-    }
+    if (clipY2 < 0)
+        return Lb_FAIL;
+    if (clipY1 > maxY)
+        return Lb_FAIL;
+    if (clipY1 < 0)
+        clipY1 = 0;
+    if (clipY2 > maxY)
+        clipY2 = maxY;
 
-    ptr = &lbDisplay.GraphicsWindowPtr[clipX1 + lbDisplay.GraphicsScreenWidth * clipY2];
+    ptr = &lbDisplay.GraphicsWindowPtr[clipX1 + lbDisplay.GraphicsScreenWidth * clipY1];
     if (clipX2 == clipX1)
-    {
-        y = clipY1 - clipY2 + 1;
+    { // Vertical line
+        y = clipY2 - clipY1 + 1;
+        assert(y > 0);
         if (lbDisplay.DrawFlags & Lb_SPRITE_TRANSPAR4)
         {
             m = lbDisplay.GlassMap;
@@ -112,8 +106,9 @@ TbResult LbDrawHVLine(long X1, long Y1, long X2, long Y2, TbPixel colour)
         }
     }
     else
-    {
+    { // Horizonal line
         x = clipX2 - clipX1 + 1;
+        assert(x > 0);
         if (lbDisplay.DrawFlags & Lb_SPRITE_TRANSPAR4)
         {
             m = lbDisplay.GlassMap;
