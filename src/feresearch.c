@@ -34,7 +34,7 @@ extern struct ScreenTextBox research_unkn21_box;
 extern struct ScreenButton research_submit_button;
 extern struct ScreenButton unkn12_WEAPONS_MODS_button;
 extern struct ScreenTextBox research_progress_button;
-extern struct ScreenBox research_unkn20_box;
+extern struct ScreenBox research_graph_box;
 extern struct ScreenButton research_list_buttons[2];
 
 extern ubyte research_on_weapons;// = true;
@@ -189,7 +189,7 @@ void init_research_screen_boxes(void)
     int i, val;
     const char *s;
 
-    init_screen_box(&research_unkn20_box, 7u, 103u, 409u, 322, 6);
+    init_screen_box(&research_graph_box, 7u, 103u, 409u, 322, 6);
     init_screen_text_box(&research_progress_button, 7u, 72u, 409u, 23,
       6, med_font, 1);
     init_screen_text_box(&research_unkn21_box, 425u, 72u, 208u, 353,
@@ -233,7 +233,7 @@ void init_research_screen_boxes(void)
     research_unkn21_box.Flags |= 0x0300;
 
     lbFontPtr = med2_font;
-    research_unkn20_box.SpecialDrawFn = ac_show_research_graph;
+    research_graph_box.SpecialDrawFn = ac_show_research_graph;
 
     if (my_string_width(gui_strings[418]) <= my_string_width(gui_strings[417]))
         s = gui_strings[417];
@@ -251,7 +251,7 @@ void init_research_screen_boxes(void)
 void reset_research_screen_boxes_flags(void)
 {
     research_unkn21_box.Flags = 0x0001 | 0x0100 | 0x0200;
-    research_unkn20_box.Flags = 0x0001;
+    research_graph_box.Flags = 0x0001;
     research_progress_button.Flags = 0x0001;
 }
 

@@ -547,4 +547,13 @@ void activate_cities(ubyte brief)
     }
 }
 
+sbyte find_closest_city(ushort x, ushort y)
+{
+    sbyte ret;
+    asm volatile (
+      "call ASM_find_closest_city\n"
+        : "=r" (ret) : "a" (x), "d" (y));
+    return ret;
+}
+
 /******************************************************************************/

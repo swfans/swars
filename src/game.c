@@ -4612,11 +4612,25 @@ void draw_sprite_purple_list(int x, int y, struct TbSprite *sprite)
         : : "a" (x), "d" (y), "b" (sprite));
 }
 
+void draw_trig_purple_list(long x2, long y2, long x3, long y3)
+{
+    asm volatile (
+      "call ASM_draw_trig_purple_list\n"
+        : : "a" (x2), "d" (y2), "b" (x3), "c" (y3));
+}
+
 void copy_box_purple_list(long x, long y, ulong width, ulong height)
 {
     asm volatile (
       "call ASM_copy_box_purple_list\n"
         : : "a" (x), "d" (y), "b" (width), "c" (height));
+}
+
+void draw_hotspot_purple_list(int x, int y)
+{
+    asm volatile (
+      "call ASM_draw_hotspot_purple_list\n"
+        : : "a" (x), "d" (y));
 }
 
 void ASM_show_game_engine(void);

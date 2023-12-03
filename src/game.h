@@ -743,9 +743,11 @@ void flic_unkn03(ubyte a1);
 ubyte ac_show_title_box(struct ScreenTextBox *box);
 void draw_text_purple_list2(int x, int y, const char *text, ushort line);
 void draw_sprite_purple_list(int x, int y, struct TbSprite *sprite);
+void draw_trig_purple_list(long x2, long y2, long x3, long y3);
 void copy_box_purple_list(long x, long y, ulong width, ulong height);
 void draw_box_purple_list(int x, int y, ulong width, ulong height, int colour);
 void draw_line_purple_list(int x1, int y1, int x2, int y2, int colour);
+void draw_hotspot_purple_list(int x, int y);
 
 void my_preprocess_text(char *text);
 ushort my_count_lines(const char *text);
