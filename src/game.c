@@ -6269,6 +6269,8 @@ void update_menus(void)
         :  :  : "eax" );
 }
 
+#include "bfplanar.h"
+#include "bfscrsurf.h"
 void reload_background(void)
 {
 #if 0
@@ -6304,8 +6306,36 @@ void reload_background(void)
         bkdata_dir = "qdata";
 
         sprintf(str, "%s/%s-proj.dat", bkdata_dir, campgn_mark);
-        // TODO load somewhere else and blit to proper size
-        LbFileLoadAt(str, back_buffer);
+
+        if ((lbDisplay.GraphicsScreenWidth == 640) &&
+          (lbDisplay.GraphicsScreenHeight == 480))
+        {
+            // If resolution matches, load the background in a simplified way
+            LbFileLoadAt(str, back_buffer);
+        }
+        else
+        {
+            struct SSurface surf;
+            struct TbRect srect;
+            ubyte *scr_bkp;
+            ubyte *inp_buf;
+
+            scr_bkp = lbDisplay.WScreen;
+            lbDisplay.WScreen = back_buffer;
+            screen_buffer_fill_black();
+            // TODO menu scaling, maybe?
+            LbSetRect(&srect, 0, 0, 640, 480);
+            LbScreenSurfaceInit(&surf);
+            LbScreenSurfaceCreate(&surf, 640, 480);
+            inp_buf = LbScreenSurfaceLock(&surf);
+            LbFileLoadAt(str, inp_buf);
+            LbScreenSurfaceUnlock(&surf);
+            LbScreenUnlock();
+            LbScreenSurfaceBlit(&surf, 0, 0, &srect, SSBlt_FLAG8 | SSBlt_FLAG4);
+            LbScreenSurfaceRelease(&surf);
+            LbScreenLock();
+            lbDisplay.WScreen = scr_bkp;
+        }
     }
 
     if (screentype == 5 && selected_weapon != -1)
