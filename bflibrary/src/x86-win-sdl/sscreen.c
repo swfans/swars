@@ -273,9 +273,22 @@ void LbRegisterStandardVideoModes(void)
  */
 TbResult LbIScreenDrawSurfaceCreate(TbBool set_palette)
 {
-    lbDrawSurface = SDL_CreateRGBSurface(SDL_SWSURFACE,
-      lbDisplay.GraphicsScreenWidth, lbDisplay.GraphicsScreenHeight,
-      lbEngineBPP, 0, 0, 0, 0);
+#if !defined(BFLIB_WSCREEN_CONTROL)
+    // If app has WScreen control, then we want to try create the surface
+    // around the WScreen buffer comming from the app
+    if (lbDisplay.WScreen != NULL)
+    {
+        lbDrawSurface = SDL_CreateRGBSurfaceFrom(lbDisplay.WScreen,
+          lbDisplay.GraphicsScreenWidth, lbDisplay.GraphicsScreenHeight,
+          lbEngineBPP, lbDisplay.GraphicsScreenWidth, 0, 0, 0, 0);
+    }
+    else
+#endif
+    {
+        lbDrawSurface = SDL_CreateRGBSurface(SDL_SWSURFACE,
+          lbDisplay.GraphicsScreenWidth, lbDisplay.GraphicsScreenHeight,
+          lbEngineBPP, 0, 0, 0, 0);
+    }
 
     if (lbDrawSurface == NULL) {
         LOGERR("secondary surface creation error: %s", SDL_GetError());
@@ -789,6 +802,47 @@ int LbI_SDL_BlitScaled(SDL_Surface *src, SDL_Surface *dst)
     return 0;
 }
 
+/** Check if the lbDrawSurface is linked to WScreen buffer; fix if neccessary.
+ *
+ * This call is required to handle WScreen pointer changes by the app side.
+ * If the app has no WScreen control, then it does nothing.
+ */
+TbResult LbIScreenDrawSurfaceCheck(void)
+{
+#if defined(BFLIB_WSCREEN_CONTROL)
+    return Lb_OK;
+#else
+    OSSurfaceHandle oldDrawSurf;
+    TbBool match;
+    TbResult ret;
+
+    oldDrawSurf = lbDrawSurface;
+
+    if (SDL_MUSTLOCK(to_SDLSurf(oldDrawSurf)))
+        if (SDL_LockSurface(to_SDLSurf(oldDrawSurf)) < 0)
+            LOGERR("cannot lock destination Surface: %s", SDL_GetError());
+
+    match = to_SDLSurf(oldDrawSurf)->pixels == lbDisplay.WScreen;
+
+    if (SDL_MUSTLOCK(to_SDLSurf(oldDrawSurf)))
+        SDL_UnlockSurface(to_SDLSurf(oldDrawSurf));
+
+    if (match)
+        return Lb_OK;
+
+    LOGDBG("detected WScreen change");
+
+    ret = LbIScreenDrawSurfaceCreate(true);
+    if (ret != Lb_SUCCESS) {
+        lbDrawSurface = oldDrawSurf;
+        return Lb_FAIL;
+    }
+
+    SDL_FreeSurface(to_SDLSurf(oldDrawSurf));
+    return Lb_SUCCESS;
+#endif
+}
+
 TbResult LbScreenSwap(void)
 {
     TbResult ret;
@@ -796,23 +850,11 @@ TbResult LbScreenSwap(void)
 
     LOGDBG("starting");
     assert(!lbDisplay.VesaIsSetUp); // video mem paging not supported with SDL
+    LbIScreenDrawSurfaceCheck();
 
     // Cursor needs to be drawn on WScreen pixels
     LbMouseOnBeginSwap();
-
-#if defined(BFLIB_WSCREEN_CONTROL)
     ret = Lb_SUCCESS;
-#else
-    ret = LbScreenLock();
-    // If WScreen is application-controlled buffer, copy it to SDL surface
-    if (ret == Lb_SUCCESS) {
-        ulong blsize;
-        blsize = lbDisplay.GraphicsScreenHeight * lbDisplay.GraphicsScreenWidth;
-        LbI_XMemCopy(to_SDLSurf(lbDrawSurface)->pixels, lbDisplay.WScreen, blsize);
-        ret = Lb_SUCCESS;
-    }
-    LbScreenUnlock();
-#endif
 
     // Put the data from Draw Surface onto Screen Surface
     if ((ret == Lb_SUCCESS) && (lbHasSecondSurface))
@@ -848,23 +890,7 @@ TbResult LbScreenSwapClear(TbPixel colour)
 
     // Cursor needs to be drawn on WScreen pixels
     LbMouseOnBeginSwap();
-
-#if defined(BFLIB_WSCREEN_CONTROL)
     ret = Lb_SUCCESS;
-#else
-    ret = LbScreenLock();
-    // If WScreen is application-controlled buffer, copy it to SDL surface
-    if (ret == Lb_SUCCESS) {
-        ulong blsize;
-        ubyte *blsrcbuf;
-        blsrcbuf = lbDisplay.WScreen;
-        blsize = lbDisplay.GraphicsScreenHeight * lbDisplay.GraphicsScreenWidth;
-        LbI_XMemCopyAndSet(to_SDLSurf(lbDrawSurface)->pixels,
-          blsrcbuf, 0x01010101 * colour, blsize);
-        ret = Lb_SUCCESS;
-    }
-    LbScreenUnlock();
-#endif
 
     // Put the data from Draw Surface onto Screen Surface
     if ((ret == Lb_SUCCESS) && (lbHasSecondSurface))
@@ -887,9 +913,7 @@ TbResult LbScreenSwapClear(TbPixel colour)
         }
     }
     LbMouseOnEndSwap();
-#if defined(BFLIB_WSCREEN_CONTROL)
     SDL_FillRect(lbDrawSurface, NULL, colour);
-#endif
     return ret;
 }
 
@@ -901,6 +925,7 @@ TbResult LbScreenSwapBox(ubyte *sourceBuf, long sourceX, long sourceY,
 
     LOGDBG("starting");
     assert(!lbDisplay.VesaIsSetUp); // video mem paging not supported with SDL
+    LbIScreenDrawSurfaceCheck();
 
     // First, copy the input buffer rect to our WScreen
     ret = LbScreenLock();
@@ -917,20 +942,7 @@ TbResult LbScreenSwapBox(ubyte *sourceBuf, long sourceX, long sourceY,
 
     // Cursor needs to be drawn on WScreen pixels
     LbMouseOnBeginSwap();
-
-#if defined(BFLIB_WSCREEN_CONTROL)
     ret = Lb_SUCCESS;
-#else
-    ret = LbScreenLock();
-    // If WScreen is application-controlled buffer, copy it to SDL surface
-    if (ret == Lb_SUCCESS) {
-        ulong blsize;
-        blsize = lbDisplay.GraphicsScreenHeight * lbDisplay.GraphicsScreenWidth;
-        LbI_XMemCopy(to_SDLSurf(lbDrawSurface)->pixels, lbDisplay.WScreen, blsize);
-        ret = Lb_SUCCESS;
-    }
-    LbScreenUnlock();
-#endif
 
     // Put the data from Draw Surface onto Screen Surface
     if ((ret == Lb_SUCCESS) && (lbHasSecondSurface))
