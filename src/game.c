@@ -2834,12 +2834,55 @@ void func_1eae4(int x, short y, int w, ushort h, short lv, ushort lvmax, ubyte c
 #endif
 }
 
-void func_1ec68(short a1, short a2, ushort a3, int a4, int a5)
+void draw_mood_level(short x, short y, ushort w, int h, short value)
 {
+#if 0
     asm volatile (
       "push %4\n"
-      "call ASM_func_1ec68\n"
-        : : "a" (a1), "d" (a2), "b" (a3), "c" (a4), "g" (a5));
+      "call ASM_draw_mood_level\n"
+        : : "a" (x), "d" (y), "b" (w), "c" (h), "g" (value));
+#else
+    short cent_x;
+    short cur_x, cur_y;
+    ubyte col;
+    short fade;
+    short i;
+
+    fade = value >> 2;
+    if (value >= 0)
+        col = pixmap.fade_table[PALETTE_8b_COLORS * (63 - fade) + colour_lookup[2]];
+    else
+        col = pixmap.fade_table[PALETTE_8b_COLORS * (63 + fade) + colour_lookup[4]];
+
+    cent_x = x + (w >> 1);
+    if (lbDisplay.GraphicsScreenHeight < 400)
+    {
+        cur_x = cent_x;
+        cur_y = y;
+
+        for (i = h; i > 0; i--)
+        {
+            SCANNER_unkn_func_203(2 * cur_x >> 1, 2 * cur_y >> 1,
+                2 * (cur_x + (value >> 2)) >> 1, 2 * cur_y >> 1,
+                col, ingame.Scanner.Contrast, ingame.Scanner.Brightness);
+            cur_x--;
+            cur_y++;
+        }
+    }
+    else
+    {
+        cur_x = 2 * cent_x;
+        cur_y = 2 * y;
+
+        for (i = 2 * h; i > 0; i--)
+        {
+            SCANNER_unkn_func_203(cur_x, cur_y, cur_x + (value >> 1), cur_y,
+                col, ingame.Scanner.Contrast, ingame.Scanner.Brightness);
+            cur_x--;
+            cur_y++;
+        }
+    }
+#endif
 }
 
 void func_1ee14(short a1, short a2, short a3, short a4, int a5, int a6)
@@ -3087,7 +3130,7 @@ void draw_new_panel()
             // Draw drug level aka mood (or just a red line if no drugs)
             w = game_panel[4+i].Width;
             x = game_panel[4+i].X >> 1;
-            func_1ec68(x, 6, w, 3, p_agent->U.UPerson.Mood);
+            draw_mood_level(x, 6, w, 3, p_agent->U.UPerson.Mood);
             // Draw stamina level which caps the mood level
             lv = p_agent->U.UPerson.Stamina;
             lvmax = p_agent->U.UPerson.MaxStamina;
