@@ -63,7 +63,6 @@
 extern char lbDrawAreaTitle[128];
 extern short lbIconIndex;
 extern ResourceMappingFunc userResourceMapping;
-extern volatile TbBool lbPointerAdvancedDraw;
 
 volatile TbBool lbScreenDirectAccessActive = false;
 
@@ -765,15 +764,12 @@ TbResult LbScreenSwap(void)
     LOGDBG("starting");
     assert(!lbDisplay.VesaIsSetUp); // video mem paging not supported with SDL
 
-#if defined(BFLIB_WSCREEN_CONTROL)
-    // Blit the cursor on Draw Surface; simple if we have WScreen control
+    // Cursor needs to be drawn on WScreen pixels
     LbMouseOnBeginSwap();
+
+#if defined(BFLIB_WSCREEN_CONTROL)
     ret = Lb_SUCCESS;
 #else
-    // Non-advanced cursor is drawn on WScreen pixels, so should be drawn here
-    if (!lbPointerAdvancedDraw)
-        LbMouseOnBeginSwap();
-
     ret = LbScreenLock();
     // If WScreen is application-controlled buffer, copy it to SDL surface
     if (ret == Lb_SUCCESS) {
@@ -783,10 +779,6 @@ TbResult LbScreenSwap(void)
         ret = Lb_SUCCESS;
     }
     LbScreenUnlock();
-
-    // Advanced cursor is blitted on lbDrawSurface, so should be drawn here
-    if (lbPointerAdvancedDraw)
-        LbMouseOnBeginSwap();
 #endif
 
     // Put the data from Draw Surface onto Screen Surface
@@ -821,15 +813,12 @@ TbResult LbScreenSwapClear(TbPixel colour)
     LOGDBG("starting");
     assert(!lbDisplay.VesaIsSetUp); // video mem paging not supported with SDL
 
-#if defined(BFLIB_WSCREEN_CONTROL)
-    // Blit the cursor on Draw Surface; simple if we have WScreen control
+    // Cursor needs to be drawn on WScreen pixels
     LbMouseOnBeginSwap();
+
+#if defined(BFLIB_WSCREEN_CONTROL)
     ret = Lb_SUCCESS;
 #else
-    // Non-advanced cursor is drawn on WScreen pixels, so should be drawn here
-    if (!lbPointerAdvancedDraw)
-        LbMouseOnBeginSwap();
-
     ret = LbScreenLock();
     // If WScreen is application-controlled buffer, copy it to SDL surface
     if (ret == Lb_SUCCESS) {
@@ -842,10 +831,6 @@ TbResult LbScreenSwapClear(TbPixel colour)
         ret = Lb_SUCCESS;
     }
     LbScreenUnlock();
-
-    // Advanced cursor is blitted on lbDrawSurface, so should be drawn here
-    if (lbPointerAdvancedDraw)
-        LbMouseOnBeginSwap();
 #endif
 
     // Put the data from Draw Surface onto Screen Surface
@@ -897,15 +882,12 @@ TbResult LbScreenSwapBox(ubyte *sourceBuf, long sourceX, long sourceY,
     }
     LbScreenUnlock();
 
-#if defined(BFLIB_WSCREEN_CONTROL)
-    // Blit the cursor on Draw Surface; simple if we have WScreen control
+    // Cursor needs to be drawn on WScreen pixels
     LbMouseOnBeginSwap();
+
+#if defined(BFLIB_WSCREEN_CONTROL)
     ret = Lb_SUCCESS;
 #else
-    // Non-advanced cursor is drawn on WScreen pixels, so should be drawn here
-    if (!lbPointerAdvancedDraw)
-        LbMouseOnBeginSwap();
-
     ret = LbScreenLock();
     // If WScreen is application-controlled buffer, copy it to SDL surface
     if (ret == Lb_SUCCESS) {
@@ -915,10 +897,6 @@ TbResult LbScreenSwapBox(ubyte *sourceBuf, long sourceX, long sourceY,
         ret = Lb_SUCCESS;
     }
     LbScreenUnlock();
-
-    // Advanced cursor is blitted on lbDrawSurface, so should be drawn here
-    if (lbPointerAdvancedDraw)
-        LbMouseOnBeginSwap();
 #endif
 
     // Put the data from Draw Surface onto Screen Surface

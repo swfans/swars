@@ -21,14 +21,16 @@
 #include "bfscrsurf.h"
 
 #include "bfplanar.h"
+#include "bfscreen.h"
 #include "privbflog.h"
 
 /******************************************************************************/
-#define to_SDLSurf(h) ((SDL_Surface  *)h)
+#define to_SDLSurf(h) ((SDL_Surface *)h)
 
 OSSurfaceHandle lbScreenSurface;
 OSSurfaceHandle lbDrawSurface;
 
+extern SDL_Color lbPaletteColors[256];
 /******************************************************************************/
 void LbScreenSurfaceInit(struct SSurface *surf)
 {
@@ -130,6 +132,32 @@ TbResult LbScreenSurfaceBlit(struct SSurface *surf, ulong x, ulong y,
         to_SDLSurf(surf->surf_data)->format->palette = to_SDLSurf(lbDrawSurface)->format->palette;
     }
 
+#if !defined(BFLIB_WSCREEN_CONTROL)
+    //TODO: This is a workaround - instead, a refresh func for lbDrawSurface is nessessary
+    const SDL_PixelFormat *format;
+    OSSurfaceHandle drawSurfBackup;
+
+    format = to_SDLSurf(lbDrawSurface)->format;
+    drawSurfBackup = lbDrawSurface;
+
+    lbDrawSurface = SDL_CreateRGBSurfaceFrom(lbDisplay.WScreen,
+      lbDisplay.PhysicalScreenWidth, lbDisplay.PhysicalScreenHeight,
+      format->BitsPerPixel, lbDisplay.GraphicsScreenWidth,
+      format->Rmask, format->Gmask, format->Bmask, format->Amask);
+    if (lbDrawSurface == NULL) {
+        LOGERR("Create WScreen surface failed: %s", SDL_GetError());
+        lbDrawSurface = drawSurfBackup;
+        return Lb_FAIL;
+    }
+    if (format->BitsPerPixel == 8) {
+        if (SDL_SetColors(lbDrawSurface, lbPaletteColors, 0, 256) != 1) {
+            LOGERR("XXX SetPalette failed: %s", SDL_GetError());
+            lbDrawSurface = drawSurfBackup;
+            return Lb_FAIL;
+        }
+    }
+#endif
+
     int blresult;
     // the blit
     if ((blflags & SSBlt_FLAG8) != 0) {
@@ -147,6 +175,12 @@ TbResult LbScreenSurfaceBlit(struct SSurface *surf, ulong x, ulong y,
     if (to_SDLSurf(surf->surf_data)->format->BitsPerPixel == 8) {
         to_SDLSurf(surf->surf_data)->format->palette = paletteBackup;
     }
+
+#if !defined(BFLIB_WSCREEN_CONTROL)
+    //TODO: This is a workaround
+    SDL_FreeSurface(to_SDLSurf(lbDrawSurface));
+    lbDrawSurface = drawSurfBackup;
+#endif
 
     if (blresult == -1) {
         // Blitting mouse cursor will occasionally fail, so there's no point in logging this
