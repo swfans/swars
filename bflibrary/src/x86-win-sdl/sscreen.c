@@ -63,6 +63,7 @@
 extern char lbDrawAreaTitle[128];
 extern short lbIconIndex;
 extern ResourceMappingFunc userResourceMapping;
+extern SDL_Color lbPaletteColors[256];
 
 volatile TbBool lbScreenDirectAccessActive = false;
 
@@ -264,6 +265,36 @@ void LbRegisterStandardVideoModes(void)
     LbRegisterVideoMode("1600x1200x24",1600,1200, 24, Lb_VF_RGBCOLOUR);
 }
 
+/** Creates secondary draw surface stored in lbDrawSurface.
+ *
+ * @param set_palette If false, the newly created draw surface is left
+ *     with default (zero-filled) palette. If true, palette last set
+ *     by the app with LbPaletteSet() is copied to the surface.
+ */
+TbResult LbIScreenDrawSurfaceCreate(TbBool set_palette)
+{
+    lbDrawSurface = SDL_CreateRGBSurface(SDL_SWSURFACE,
+      lbDisplay.GraphicsScreenWidth, lbDisplay.GraphicsScreenHeight,
+      lbEngineBPP, 0, 0, 0, 0);
+
+    if (lbDrawSurface == NULL) {
+        LOGERR("secondary surface creation error: %s", SDL_GetError());
+        return Lb_FAIL;
+    }
+    lbHasSecondSurface = true;
+
+    if ((lbEngineBPP == 8) && set_palette)
+    {
+        if (SDL_SetColors(lbDrawSurface, lbPaletteColors, 0, PALETTE_8b_COLORS) != 1) {
+            LOGERR("WScreen Surface SetPalette failed: %s", SDL_GetError());
+            SDL_FreeSurface(to_SDLSurf(lbDrawSurface));
+            lbDrawSurface = NULL;
+            return Lb_FAIL;
+        }
+    }
+    return Lb_SUCCESS;
+}
+
 TbResult LbScreenSetupAnyMode(TbScreenMode mode, TbScreenCoord width,
     TbScreenCoord height, ubyte *palette)
 {
@@ -354,19 +385,24 @@ TbResult LbScreenSetupAnyMode(TbScreenMode mode, TbScreenCoord width,
     SDL_WM_SetCaption(lbDrawAreaTitle, lbDrawAreaTitle);
     LbScreenUpdateIcon();
 
+    // The graphics screen size is required for DrawSurface creation
+    lbDisplay.GraphicsScreenWidth  = width;
+    lbDisplay.GraphicsScreenHeight = height;
+
     // Create secondary surface if necessary,
-    // that is if BPP or dimensions do not match.
+    // that is if BPP or dimensions do not match,
+    // or if we need it due to no WScreen control
+#if defined(BFLIB_WSCREEN_CONTROL)
     if ((mdinfo->BitsPerPixel != lbEngineBPP) ||
         (mdWidth != width) || (mdHeight != height))
+#endif
     {
-        lbDrawSurface = SDL_CreateRGBSurface(SDL_SWSURFACE,
-          width, height, lbEngineBPP, 0, 0, 0, 0);
-        if (lbDrawSurface == NULL) {
-            LOGERR("secondary surface creation error: %s", SDL_GetError());
+        TbResult ret;
+        ret = LbIScreenDrawSurfaceCreate(palette == NULL);
+        if (ret == Lb_FAIL) {
             LbScreenReset();
             return Lb_FAIL;
         }
-        lbHasSecondSurface = true;
     }
 
     lbDisplay.DrawFlags = 0;
@@ -378,9 +414,6 @@ TbResult LbScreenSetupAnyMode(TbScreenMode mode, TbScreenCoord width,
     lbDisplay.PhysicalScreenHeight = mdinfo->Height;
     lbDisplay.ScreenMode = mode;
     lbDisplay.PhysicalScreen = NULL;
-    // The graphics screen size should be really taken after screen is locked
-    lbDisplay.GraphicsScreenWidth  = width;
-    lbDisplay.GraphicsScreenHeight = height;
 
 #if defined(BFLIB_WSCREEN_CONTROL)
     lbDisplay.WScreen = NULL;
