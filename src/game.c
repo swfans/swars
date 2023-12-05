@@ -2885,13 +2885,37 @@ void draw_mood_level(short x, short y, ushort w, int h, short value)
 #endif
 }
 
-void func_1ee14(short a1, short a2, short a3, short a4, int a5, int a6)
+void draw_mood_limits(short x, short y, short w, short h, short value, short maxval)
 {
+#if 0
     asm volatile (
       "push %5\n"
       "push %4\n"
-      "call ASM_func_1ee14\n"
-        : : "a" (a1), "d" (a2), "b" (a3), "c" (a4), "g" (a5), "g" (a6));
+      "call ASM_draw_mood_limits\n"
+        : : "a" (x), "d" (y), "b" (w), "c" (h), "g" (value), "g" (maxval));
+#else
+    short scaled_val;
+    short curr_x;
+    TbPixel col;
+
+    if (value <= 0)
+        return;
+
+    col = colour_lookup[1];
+    scaled_val = (w * value / maxval) >> 1;
+
+    curr_x = 2 * (x + (w >> 1) - scaled_val);
+    if (lbDisplay.GraphicsScreenHeight < 400)
+        LbDrawLine(curr_x >> 1, 2 * y >> 1, (curr_x - 4) >> 1, 2 * (y + h) >> 1, col);
+    else
+        LbDrawLine(curr_x, 2 * y, curr_x - 4, 2 * (y + h), col);
+
+    curr_x = 2 * (x + (w >> 1) + scaled_val);
+    if (lbDisplay.GraphicsScreenHeight < 400)
+        LbDrawLine(curr_x >> 1, 2 * y >> 1, (curr_x - 4) >> 1, 2 * (y + h) >> 1, col);
+    else
+        LbDrawLine(curr_x, 2 * y, curr_x - 4, 2 * (y + h), col);
+#endif
 }
 
 void draw_unkn1_rect(int x1, int y1, int len_mul, int len_div)
@@ -3134,7 +3158,7 @@ void draw_new_panel()
             // Draw stamina level which caps the mood level
             lv = p_agent->U.UPerson.Stamina;
             lvmax = p_agent->U.UPerson.MaxStamina;
-            func_1ee14(x, 6, w, 2, lv, lvmax);
+            draw_mood_limits(x, 6, w, 2, lv, lvmax);
             if (lbDisplay.GraphicsScreenHeight < 400)
                 x = 158 * i + 54;
             else
