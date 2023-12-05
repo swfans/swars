@@ -2844,7 +2844,7 @@ void draw_mood_level(short x, short y, ushort w, int h, short value)
 #else
     short cent_x;
     short cur_x, cur_y;
-    ubyte col;
+    TbPixel col;
     short fade;
     short i;
 
@@ -2918,11 +2918,46 @@ void draw_mood_limits(short x, short y, short w, short h, short value, short max
 #endif
 }
 
-void draw_unkn1_rect(int x1, int y1, int len_mul, int len_div)
+void draw_energy_bar(int x1, int y1, int len_mul, int len_div)
 {
+#if 0
     asm volatile (
-      "call ASM_draw_unkn1_rect\n"
+      "call ASM_draw_energy_bar\n"
         : : "a" (x1), "d" (y1), "b" (len_mul), "c" (len_div));
+#else
+    short scaled_val;
+    short w, h;
+    TbPixel col;
+
+    if (len_div == 0)
+        return;
+
+    col = colour_lookup[1];
+    scaled_val = 2 * (7 * len_mul / len_div);
+
+    w = x1 + scaled_val;
+    h = y1 - scaled_val;
+    if (lbDisplay.GraphicsScreenHeight < 400)
+        LbDrawLine((x1 + 0) >> 1, y1 >> 1, w >> 1, h >> 1, col);
+    else
+        LbDrawLine(x1 + 0, y1, w, h, col);
+    w = x1 + 2 + scaled_val;
+    h = y1 - scaled_val;
+    if (lbDisplay.GraphicsScreenHeight < 400)
+        LbDrawLine((x1 + 2) >> 1, y1 >> 1, w >> 1, h >> 1, col);
+    else
+        LbDrawLine(x1 + 2, y1, w, h, col);
+
+    if (lbDisplay.GraphicsScreenHeight >= 400)
+    {
+        w = x1 + 1 + scaled_val;
+        h = y1 - scaled_val;
+        LbDrawLine(x1 + 1, y1, w, h, col);
+        w = x1 + 3 + scaled_val;
+        h = y1 - scaled_val;
+        LbDrawLine(x1 + 3, y1, w, h, col);
+    }
+#endif
 }
 
 void draw_new_panel()
@@ -3165,7 +3200,7 @@ void draw_new_panel()
                 x = 157 * i + 54;
             lv = p_agent->U.UPerson.Energy;
             lvmax = p_agent->U.UPerson.MaxEnergy;
-            draw_unkn1_rect(x + 80, 18, lv, lvmax);
+            draw_energy_bar(x + 80, 18, lv, lvmax);
         }
     }
 
