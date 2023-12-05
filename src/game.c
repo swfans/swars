@@ -2651,10 +2651,48 @@ TbBool func_1caf8(void)
 #endif
 }
 
-void func_1efb8(void)
+void draw_agent_grouping_bars(void)
 {
-    asm volatile ("call ASM_func_1efb8\n"
+#if 0
+    asm volatile ("call ASM_draw_agent_grouping_bars\n"
         :  :  : "eax" );
+#else
+    struct Thing *p_thing;
+    short plyagent;
+    short i, n;
+
+    n = 0;
+    for (i = 0; i < playable_agents; i++)
+    {
+        p_thing = players[local_player_no].MyAgent[i];
+        plyagent = players[local_player_no].DirectControl[byte_153198-1];
+        if ((p_thing->State != PerSt_PROTECT_PERSON) || (p_thing->GotoThingIndex != plyagent)) {
+            if (((p_thing->Flag2 & 0x10000000) == 0) || (p_thing->Owner != plyagent))
+                continue;
+        }
+        n++;
+    }
+
+    for (n--; n >= 0; n--)
+    {
+        if (lbDisplay.GraphicsScreenHeight < 400)
+        {
+            if (ingame.PanelPermutation == -1)
+                SCANNER_unkn_func_202(&pop1_sprites[69], 2, 2 * (107 - 6 * n) >> 1,
+                  ingame.Scanner.Contrast, ingame.Scanner.Brightness);
+            else
+                LbSpriteDraw_1(2, 2 * (107 - 6 * n) >> 1, &pop1_sprites[69]);
+        }
+        else
+        {
+            if (ingame.PanelPermutation == -1)
+                SCANNER_unkn_func_202(&pop1_sprites[69], 4, 89 + 2 * (107 - 6 * n),
+                  ingame.Scanner.Contrast, ingame.Scanner.Brightness);
+            else
+                LbSpriteDraw_1(4, 89 + 2 * (107 - 6 * n), &pop1_sprites[69]);
+        }
+    }
+#endif
 }
 
 void func_702c0(int a1, int a2, int a3, int a4, int a5, ubyte a6)
@@ -3137,7 +3175,7 @@ void draw_new_panel()
             }
         }
     }
-    func_1efb8();
+    draw_agent_grouping_bars();
 
     // Fill the left energy bar
     {
