@@ -6737,6 +6737,14 @@ void do_scroll_map(void)
 #endif
 }
 
+ubyte weapon_select_input(void)
+{
+    ubyte ret;
+    asm volatile ("call ASM_weapon_select_input\n"
+        : "=r" (ret) : );
+    return ret;
+}
+
 void do_rotate_map(void)
 {
     asm volatile ("call ASM_do_rotate_map\n"
@@ -7160,7 +7168,7 @@ ubyte do_user_interface(void)
         return 1;
     }
 
-    // Resurrection and bes equipment cheat
+    // Resurrection and best equipment cheat
     if (p_locplayer->DoubleMode && (ingame.Cheats & 0x04) && !in_network_game)
     {
         if (lbKeyOn[KC_Q] && ((lbShift == KMod_SHIFT) || (lbShift == KMod_NONE)))
@@ -7168,6 +7176,104 @@ ubyte do_user_interface(void)
             lbKeyOn[KC_Q] = 0;
             beefup_all_agents(p_locplayer);
         }
+    }
+
+    if (p_locplayer->DoubleMode)
+    {
+        for (n = 0; n < p_locplayer->DoubleMode + 1; n++)
+        {
+            struct SpecialUserInput *usrinp;
+            short ctlmode;
+
+            usrinp = &p_locplayer->UserInput[n];
+            usrinp->Bits &= 0x8000FFFF;
+            ctlmode = usrinp->ControlMode & 0x1FFF;
+            if (ctlmode == 1)
+            {
+                usrinp->Bits &= 0x0000FFFF;
+                process_mouse_imputs();
+            }
+            else if (ctlmode < 1)
+            {
+                struct Thing *p_agent;
+
+                p_agent = &things[p_locplayer->DirectControl[n]];
+                if ((p_agent->State != 36) && ((p_agent->Flag & 0x02) == 0)
+                        && !weapon_select_input())
+                {
+                    sbyte k;
+                    k = (lbKeyOn[kbkeys[GKey_RIGHT]] & 1) - (lbKeyOn[kbkeys[GKey_LEFT]] & 1);
+                    usrinp->Bits &= ~(0xFF << 0);
+                    usrinp->Bits |= (k & 0xFF) << 0;
+                    k = (lbKeyOn[kbkeys[GKey_UP]] & 1) - (lbKeyOn[kbkeys[GKey_DOWN]] & 1);
+                    usrinp->Bits &= ~(0xFF << 8);
+                    usrinp->Bits |= (k & 0xFF) << 8;
+                    if (lbKeyOn[kbkeys[GKey_FIRE]])
+                        usrinp->Bits |= 0x010000;
+                    if (lbKeyOn[kbkeys[GKey_CHANGE_MD_WP]])
+                        usrinp->Bits |= 0x020000;
+                    if (lbKeyOn[kbkeys[GKey_CHANGE_AGENT]])
+                        usrinp->Bits |= 0x100000;
+                    if (lbKeyOn[kbkeys[GKey_DROP_WEAPON]]) {
+                        lbKeyOn[kbkeys[GKey_DROP_WEAPON]] = 0;
+                        usrinp->Bits |= 0x40000000;
+                    }
+                    if (lbKeyOn[kbkeys[GKey_SELF_DESTRUCT]] && lbShift == 2) {
+                        lbKeyOn[kbkeys[GKey_SELF_DESTRUCT]] = 0;
+                        usrinp->Bits |= 0x20000000;
+                    }
+                }
+            }
+            else
+            {
+                struct Thing *p_agent;
+                ubyte jch;
+
+                p_agent = &things[p_locplayer->DirectControl[n]];
+                if ((p_agent->State == 36) || ((p_agent->Flag & 0x02) == 0))
+                    return 0;
+                jch = ctlmode - 2;
+                usrinp->Bits &= ~(0xFF << 0);
+                usrinp->Bits |= (joy.DigitalX[jch] & 0xFF) << 0;
+                usrinp->Bits &= ~(0xFF << 8);
+                usrinp->Bits |= ((-joy.DigitalY[jch]) & 0xFF) << 8;
+                if (jskeys[GKey_FIRE]
+                  && (jskeys[GKey_FIRE] & joy.Buttons[jch]) == jskeys[GKey_FIRE])
+                    usrinp->Bits |= 0x010000;
+                if (jskeys[GKey_CHANGE_MD_WP]
+                  && (jskeys[GKey_CHANGE_MD_WP] & joy.Buttons[jch]) == jskeys[GKey_CHANGE_MD_WP])
+                    usrinp->Bits |= 0x020000;
+                if (jskeys[GKey_DROP_WEAPON]
+                  && (jskeys[GKey_DROP_WEAPON] & joy.Buttons[jch]) == jskeys[GKey_DROP_WEAPON])
+                    usrinp->Bits |= 0x40000000;
+                if (jskeys[GKey_SELF_DESTRUCT]
+                  && (jskeys[GKey_SELF_DESTRUCT] & joy.Buttons[jch]) == jskeys[GKey_SELF_DESTRUCT])
+                    usrinp->Bits |= 0x20000000;
+            }
+            ctlmode = usrinp->ControlMode & 0x1FFF;
+            if (ctlmode != 1)
+            {
+                ushort ax1, ax2, delta;
+                ax2 = ((usrinp->Bits >> 8) & 0xFF);
+                ax1 = ((usrinp->Bits >> 0) & 0xFF);
+                delta = 4 * (ax2 + 1) + (ax1 + 1);
+                if (usrinp->DtZ == delta && (gameturn & 0x7FFF) - usrinp->Turn < 7) {
+                    usrinp->Turn = 0;
+                    usrinp->Bits |= 0x80000000;
+                } else {
+                    usrinp->DtZ = delta;
+                }
+                if (ax1 || ax2) {
+                    usrinp->Turn = 0;
+                    usrinp->DtX = delta;
+                } else {
+                    if (usrinp->Turn == 0)
+                        usrinp->Turn = gameturn & 0x7FFF;
+                    usrinp->Bits &= ~0x80000000;
+                }
+            }
+        }
+        return 0;
     }
 
     // Final part of this function is left in ASM, for now. It requires updating
