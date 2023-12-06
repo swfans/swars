@@ -7338,7 +7338,7 @@ ubyte do_user_interface(void)
             else if (ctlmode < 1)
             {
                 p_agent = &things[p_locplayer->DirectControl[n]];
-                if ((p_agent->State != 36) && ((p_agent->Flag & 0x02) == 0)
+                if ((p_agent->State != PerSt_PERSON_BURNING) && ((p_agent->Flag & 0x02) == 0)
                         && !weapon_select_input())
                 {
                     do_user_input_bits_direction_clear(p_usrinp);
@@ -7349,7 +7349,7 @@ ubyte do_user_interface(void)
             else
             {
                 p_agent = &things[p_locplayer->DirectControl[n]];
-                if ((p_agent->State == 36) || ((p_agent->Flag & 0x02) == 0))
+                if ((p_agent->State == PerSt_PERSON_BURNING) || ((p_agent->Flag & 0x02) != 0))
                     return 0;
 
                 do_user_input_bits_direction_clear(p_usrinp);
@@ -7362,39 +7362,39 @@ ubyte do_user_interface(void)
                 update_agent_move_direction_deltas(p_usrinp);
             }
         }
-        return 0;
     }
-
-    p_usrinp = &p_locplayer->UserInput[0];
-    ctlmode = p_usrinp->ControlMode & 0x1FFF;
-
-    if ((ctlmode == 1) && lbKeyOn[kbkeys[GKey_KEY_CONTROL]])
+    else
     {
-        lbKeyOn[kbkeys[GKey_KEY_CONTROL]] = 0;
-        p_usrinp->ControlMode &= 0xE000;
-        do_change_mouse(8);
-        p_locplayer->State[0] = 0;
-    }
-    p_usrinp->Bits &= 0x0000FFFF;
-    p_usrinp->Bits &= 0xFFFF0000;
-
-    if (process_mouse_imputs())
-        return 1;
-    if (weapon_select_input())
-        return 1;
-
-    p_agent = &things[p_locplayer->DirectControl[0]];
-    if (p_agent->State != PerSt_PERSON_BURNING && ((p_agent->Flag & 0x02) == 0))
-    {
-        do_user_input_bits_actions_from_joy_and_kbd(p_usrinp);
-
+        p_usrinp = &p_locplayer->UserInput[0];
         ctlmode = p_usrinp->ControlMode & 0x1FFF;
-        if (ctlmode != 1)
+        if ((ctlmode == 1) && lbKeyOn[kbkeys[GKey_KEY_CONTROL]])
         {
-            do_user_input_bits_direction_clear(p_usrinp);
-            do_user_input_bits_direction_from_kbd(p_usrinp);
-            do_user_input_bits_direction_from_joy(p_usrinp, 0);
-            update_agent_move_direction_deltas(p_usrinp);
+            lbKeyOn[kbkeys[GKey_KEY_CONTROL]] = 0;
+            p_usrinp->ControlMode &= 0xE000;
+            do_change_mouse(8);
+            p_locplayer->State[0] = 0;
+        }
+        p_usrinp->Bits &= 0x0000FFFF;
+        p_usrinp->Bits &= 0xFFFF0000;
+
+        if (process_mouse_imputs())
+            return 1;
+        if (weapon_select_input())
+            return 1;
+
+        p_agent = &things[p_locplayer->DirectControl[0]];
+        if ((p_agent->State != PerSt_PERSON_BURNING) && ((p_agent->Flag & 0x02) == 0))
+        {
+            do_user_input_bits_actions_from_joy_and_kbd(p_usrinp);
+
+            ctlmode = p_usrinp->ControlMode & 0x1FFF;
+            if (ctlmode != 1)
+            {
+                do_user_input_bits_direction_clear(p_usrinp);
+                do_user_input_bits_direction_from_kbd(p_usrinp);
+                do_user_input_bits_direction_from_joy(p_usrinp, 0);
+                update_agent_move_direction_deltas(p_usrinp);
+            }
         }
     }
     return 0;
