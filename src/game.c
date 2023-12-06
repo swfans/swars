@@ -6759,6 +6759,28 @@ TbResult read_palette_file(void)
     return ret;
 }
 
+void update_agent_move_direction_deltas(struct SpecialUserInput *p_usrinp)
+{
+    ushort ax1, ax2, delta;
+    ax2 = ((p_usrinp->Bits >> 8) & 0xFF);
+    ax1 = ((p_usrinp->Bits >> 0) & 0xFF);
+    delta = 4 * (ax2 + 1) + (ax1 + 1);
+
+    p_usrinp->DtZ = delta;
+    if ((p_usrinp->DtX == delta) && ((gameturn & 0x7FFF) - p_usrinp->Turn < 7)) {
+        p_usrinp->Turn = 0;
+        p_usrinp->Bits |= 0x80000000;
+    }
+    if (ax1 || ax2) {
+        p_usrinp->Turn = 0;
+        p_usrinp->DtX = delta;
+    } else {
+        if (p_usrinp->Turn == 0)
+            p_usrinp->Turn = gameturn & 0x7FFF;
+        p_usrinp->Bits &= ~0x80000000;
+    }
+}
+
 ubyte do_user_interface(void)
 {
     PlayerInfo *p_locplayer;
@@ -7178,110 +7200,167 @@ ubyte do_user_interface(void)
         }
     }
 
+    struct SpecialUserInput *p_usrinp;
+    struct Thing *p_agent;
+    short ctlmode;
+
     if (p_locplayer->DoubleMode)
     {
         for (n = 0; n < p_locplayer->DoubleMode + 1; n++)
         {
-            struct SpecialUserInput *usrinp;
-            short ctlmode;
-
-            usrinp = &p_locplayer->UserInput[n];
-            usrinp->Bits &= 0x8000FFFF;
-            ctlmode = usrinp->ControlMode & 0x1FFF;
+            p_usrinp = &p_locplayer->UserInput[n];
+            p_usrinp->Bits &= 0x8000FFFF;
+            ctlmode = p_usrinp->ControlMode & 0x1FFF;
             if (ctlmode == 1)
             {
-                usrinp->Bits &= 0x0000FFFF;
+                p_usrinp->Bits &= 0x0000FFFF;
                 process_mouse_imputs();
             }
             else if (ctlmode < 1)
             {
-                struct Thing *p_agent;
-
                 p_agent = &things[p_locplayer->DirectControl[n]];
                 if ((p_agent->State != 36) && ((p_agent->Flag & 0x02) == 0)
                         && !weapon_select_input())
                 {
                     sbyte k;
                     k = (lbKeyOn[kbkeys[GKey_RIGHT]] & 1) - (lbKeyOn[kbkeys[GKey_LEFT]] & 1);
-                    usrinp->Bits &= ~(0xFF << 0);
-                    usrinp->Bits |= (k & 0xFF) << 0;
+                    p_usrinp->Bits &= ~(0xFF << 0);
+                    p_usrinp->Bits |= (k & 0xFF) << 0;
                     k = (lbKeyOn[kbkeys[GKey_UP]] & 1) - (lbKeyOn[kbkeys[GKey_DOWN]] & 1);
-                    usrinp->Bits &= ~(0xFF << 8);
-                    usrinp->Bits |= (k & 0xFF) << 8;
+                    p_usrinp->Bits &= ~(0xFF << 8);
+                    p_usrinp->Bits |= (k & 0xFF) << 8;
                     if (lbKeyOn[kbkeys[GKey_FIRE]])
-                        usrinp->Bits |= 0x010000;
+                        p_usrinp->Bits |= 0x010000;
                     if (lbKeyOn[kbkeys[GKey_CHANGE_MD_WP]])
-                        usrinp->Bits |= 0x020000;
+                        p_usrinp->Bits |= 0x020000;
                     if (lbKeyOn[kbkeys[GKey_CHANGE_AGENT]])
-                        usrinp->Bits |= 0x100000;
+                        p_usrinp->Bits |= 0x100000;
                     if (lbKeyOn[kbkeys[GKey_DROP_WEAPON]]) {
                         lbKeyOn[kbkeys[GKey_DROP_WEAPON]] = 0;
-                        usrinp->Bits |= 0x40000000;
+                        p_usrinp->Bits |= 0x40000000;
                     }
                     if (lbKeyOn[kbkeys[GKey_SELF_DESTRUCT]] && lbShift == 2) {
                         lbKeyOn[kbkeys[GKey_SELF_DESTRUCT]] = 0;
-                        usrinp->Bits |= 0x20000000;
+                        p_usrinp->Bits |= 0x20000000;
                     }
                 }
             }
             else
             {
-                struct Thing *p_agent;
                 ubyte jch;
 
                 p_agent = &things[p_locplayer->DirectControl[n]];
                 if ((p_agent->State == 36) || ((p_agent->Flag & 0x02) == 0))
                     return 0;
                 jch = ctlmode - 2;
-                usrinp->Bits &= ~(0xFF << 0);
-                usrinp->Bits |= (joy.DigitalX[jch] & 0xFF) << 0;
-                usrinp->Bits &= ~(0xFF << 8);
-                usrinp->Bits |= ((-joy.DigitalY[jch]) & 0xFF) << 8;
+                p_usrinp->Bits &= ~(0xFF << 0);
+                p_usrinp->Bits |= (joy.DigitalX[jch] & 0xFF) << 0;
+                p_usrinp->Bits &= ~(0xFF << 8);
+                p_usrinp->Bits |= ((-joy.DigitalY[jch]) & 0xFF) << 8;
                 if (jskeys[GKey_FIRE]
                   && (jskeys[GKey_FIRE] & joy.Buttons[jch]) == jskeys[GKey_FIRE])
-                    usrinp->Bits |= 0x010000;
+                    p_usrinp->Bits |= 0x010000;
                 if (jskeys[GKey_CHANGE_MD_WP]
                   && (jskeys[GKey_CHANGE_MD_WP] & joy.Buttons[jch]) == jskeys[GKey_CHANGE_MD_WP])
-                    usrinp->Bits |= 0x020000;
+                    p_usrinp->Bits |= 0x020000;
                 if (jskeys[GKey_DROP_WEAPON]
                   && (jskeys[GKey_DROP_WEAPON] & joy.Buttons[jch]) == jskeys[GKey_DROP_WEAPON])
-                    usrinp->Bits |= 0x40000000;
+                    p_usrinp->Bits |= 0x40000000;
                 if (jskeys[GKey_SELF_DESTRUCT]
                   && (jskeys[GKey_SELF_DESTRUCT] & joy.Buttons[jch]) == jskeys[GKey_SELF_DESTRUCT])
-                    usrinp->Bits |= 0x20000000;
+                    p_usrinp->Bits |= 0x20000000;
             }
-            ctlmode = usrinp->ControlMode & 0x1FFF;
+            ctlmode = p_usrinp->ControlMode & 0x1FFF;
             if (ctlmode != 1)
             {
-                ushort ax1, ax2, delta;
-                ax2 = ((usrinp->Bits >> 8) & 0xFF);
-                ax1 = ((usrinp->Bits >> 0) & 0xFF);
-                delta = 4 * (ax2 + 1) + (ax1 + 1);
-                if (usrinp->DtZ == delta && (gameturn & 0x7FFF) - usrinp->Turn < 7) {
-                    usrinp->Turn = 0;
-                    usrinp->Bits |= 0x80000000;
-                } else {
-                    usrinp->DtZ = delta;
-                }
-                if (ax1 || ax2) {
-                    usrinp->Turn = 0;
-                    usrinp->DtX = delta;
-                } else {
-                    if (usrinp->Turn == 0)
-                        usrinp->Turn = gameturn & 0x7FFF;
-                    usrinp->Bits &= ~0x80000000;
-                }
+                update_agent_move_direction_deltas(p_usrinp);
             }
         }
         return 0;
     }
 
-    // Final part of this function is left in ASM, for now. It requires updating
-    // definition of SpecialUserInput for the rewrting to make sense.
-    ubyte ret;
-    asm volatile ("call ASM_do_user_interface\n"
-        : "=r" (ret));
-    return ret;
+    p_usrinp = &p_locplayer->UserInput[0];
+    ctlmode = p_usrinp->ControlMode & 0x1FFF;
+
+    if ((ctlmode == 1) && lbKeyOn[kbkeys[GKey_KEY_CONTROL]])
+    {
+        lbKeyOn[kbkeys[GKey_KEY_CONTROL]] = 0;
+        p_usrinp->ControlMode &= 0xE000;
+        do_change_mouse(8);
+        p_locplayer->State[0] = 0;
+    }
+    p_usrinp->Bits &= 0x0000FFFF;
+    p_usrinp->Bits &= 0xFFFF0000;
+
+    if (process_mouse_imputs())
+        return 1;
+    if (weapon_select_input())
+        return 1;
+
+    p_agent = &things[p_locplayer->DirectControl[0]];
+    if (p_agent->State != PerSt_PERSON_BURNING && ((p_agent->Flag & 0x02) == 0))
+    {
+        if (lbKeyOn[kbkeys[GKey_FIRE]] || (jskeys[GKey_FIRE]
+          && (jskeys[GKey_FIRE] & joy.Buttons[0]) == jskeys[GKey_FIRE]))
+            p_usrinp->Bits |= 0x010000;
+        if (lbKeyOn[kbkeys[GKey_CHANGE_MD_WP]] || (jskeys[GKey_CHANGE_MD_WP]
+          && (jskeys[GKey_CHANGE_MD_WP] & joy.Buttons[0]) == jskeys[GKey_CHANGE_MD_WP]))
+            p_usrinp->Bits |= 0x020000;
+        if (lbKeyOn[kbkeys[GKey_CHANGE_AGENT]] || (jskeys[GKey_CHANGE_AGENT]
+          && (jskeys[GKey_CHANGE_AGENT] & joy.Buttons[0]) == jskeys[GKey_CHANGE_AGENT]))
+            p_usrinp->Bits |= 0x100000;
+        if (lbKeyOn[kbkeys[GKey_GOTO_POINT]] || (jskeys[GKey_GOTO_POINT]
+          && (jskeys[GKey_GOTO_POINT] & joy.Buttons[0]) == jskeys[GKey_GOTO_POINT]))
+        {
+            if (lbKeyOn[kbkeys[GKey_GOTO_POINT]])
+                lbKeyOn[kbkeys[GKey_GOTO_POINT]] = 0;
+            p_usrinp->Bits |= 0x400000;
+        }
+        if (lbKeyOn[KC_BACKSLASH] || lbKeyOn[kbkeys[GKey_GROUP]] || (jskeys[GKey_GROUP]
+          && (jskeys[GKey_GROUP] & joy.Buttons[0]) == jskeys[GKey_GROUP]))
+        {
+            if (lbKeyOn[KC_BACKSLASH])
+                lbKeyOn[KC_BACKSLASH] = 0;
+            if (lbKeyOn[kbkeys[GKey_GROUP]])
+                lbKeyOn[kbkeys[GKey_GROUP]] = 0;
+            p_usrinp->Bits |= 0x800000;
+        }
+        if (lbKeyOn[kbkeys[GKey_DROP_WEAPON]] || (jskeys[GKey_DROP_WEAPON]
+          && (jskeys[GKey_DROP_WEAPON] & joy.Buttons[0]) == jskeys[GKey_DROP_WEAPON]))
+        {
+            if (lbKeyOn[kbkeys[GKey_DROP_WEAPON]])
+                lbKeyOn[kbkeys[GKey_DROP_WEAPON]] = 0;
+            p_usrinp->Bits |= 0x40000000;
+        }
+        if (jskeys[GKey_SELF_DESTRUCT]
+          && (jskeys[GKey_SELF_DESTRUCT] & joy.Buttons[0]) == jskeys[GKey_SELF_DESTRUCT])
+            p_usrinp->Bits |= 0x20000000;
+        if (lbKeyOn[kbkeys[GKey_SELF_DESTRUCT]] && lbShift == 4)
+        {
+            lbKeyOn[kbkeys[GKey_SELF_DESTRUCT]] = 0;
+            p_usrinp->Bits |= 0x20000000;
+        }
+
+        ctlmode = p_usrinp->ControlMode & 0x1FFF;
+        if (ctlmode != 1)
+        {
+            sbyte k;
+            k = (lbKeyOn[kbkeys[GKey_RIGHT]] & 1) - (lbKeyOn[kbkeys[GKey_LEFT]] & 1);
+            p_usrinp->Bits &= ~(0xFF << 0);
+            p_usrinp->Bits |= (k & 0xFF) << 0;
+            k = (lbKeyOn[kbkeys[GKey_UP]] & 1) - (lbKeyOn[kbkeys[GKey_DOWN]] & 1);
+            p_usrinp->Bits &= ~(0xFF << 8);
+            p_usrinp->Bits |= (k & 0xFF) << 8;
+
+            if (((p_usrinp->Bits >> 0) & 0xFF) == 0)
+                p_usrinp->Bits |= (joy.DigitalX[0] & 0xFF) << 0;
+            if (((p_usrinp->Bits >> 8) & 0xFF) == 0)
+                p_usrinp->Bits |= ((-joy.DigitalY[0]) & 0xFF) << 8;
+
+            update_agent_move_direction_deltas(p_usrinp);
+        }
+    }
+    return 0;
 }
 
 void show_main_screen(void)
