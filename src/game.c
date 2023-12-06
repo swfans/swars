@@ -7400,6 +7400,14 @@ ubyte do_user_interface(void)
     return 0;
 }
 
+ubyte check_panel_button(void)
+{
+    ubyte ret;
+    asm volatile ("call ASM_check_panel_button\n"
+        : "=r" (ret) : );
+    return ret;
+}
+
 void show_main_screen(void)
 {
     if ((game_projector_speed && (main_quit_button.Flags & 0x01)) ||
