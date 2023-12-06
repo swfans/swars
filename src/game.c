@@ -6759,6 +6759,203 @@ TbResult read_palette_file(void)
     return ret;
 }
 
+void do_music_user_input(void)
+{
+    // MIDI Music (tension) volume control
+    if (lbKeyOn[KC_NUMPAD8])
+    {
+        if (lbShift & KMod_SHIFT)
+            startscr_midivol += 1;
+        else
+            startscr_midivol += 10;
+        if (startscr_midivol > 322)
+            startscr_midivol = 322;
+        SetMusicMasterVolume(127 * startscr_midivol / 322);
+    }
+    if (lbKeyOn[KC_NUMPAD2])
+    {
+        if (lbShift & KMod_SHIFT)
+            startscr_midivol -= 1;
+        else
+            startscr_midivol -= 10;
+        if (startscr_midivol < 0)
+            startscr_midivol = 0;
+        SetMusicMasterVolume(127 * startscr_midivol / 322);
+    }
+
+    // Sample volume control
+    if (lbKeyOn[KC_NUMPAD7])
+    {
+        if (lbShift & KMod_SHIFT)
+            startscr_samplevol += 1;
+        else
+            startscr_samplevol += 10;
+        if (startscr_samplevol > 322)
+            startscr_samplevol = 322;
+        SetSoundMasterVolume(127 * startscr_samplevol / 322);
+    }
+    if (lbKeyOn[KC_NUMPAD1])
+    {
+        if (lbShift & KMod_SHIFT)
+            startscr_samplevol -= 1;
+        else
+            startscr_samplevol -= 10;
+        if (startscr_samplevol < 0)
+            startscr_samplevol = 0;
+        SetSoundMasterVolume(127 * startscr_samplevol / 322);
+    }
+
+    // CD Music volume control
+    if (lbKeyOn[KC_NUMPAD9])
+    {
+        if (lbShift & KMod_SHIFT)
+            startscr_cdvolume += 1;
+        else
+            startscr_cdvolume += 10;
+        if (startscr_cdvolume > 322)
+            startscr_cdvolume = 322;
+        SetCDVolume(70 * (127 * startscr_cdvolume / 322) / 100);
+    }
+    if (lbKeyOn[KC_NUMPAD3])
+    {
+        if (lbShift & KMod_SHIFT)
+            startscr_cdvolume -= 1;
+        else
+            startscr_cdvolume -= 10;
+        if (startscr_cdvolume < 0)
+            startscr_cdvolume = 0;
+        SetCDVolume(70 * (127 * startscr_cdvolume / 322) / 100);
+    }
+
+    // Music track control
+    if (lbKeyOn[KC_NUMPAD5])
+    {
+        lbKeyOn[KC_NUMPAD5] = 0;
+        if (++ingame.CDTrack > 4)
+            ingame.CDTrack = 2;
+    }
+    if (lbKeyOn[KC_NUMPAD0])
+    {
+        lbKeyOn[KC_NUMPAD0] = 0;
+        ingame.DangerTrack = 2 - ingame.DangerTrack + 1;
+    }
+
+}
+
+void do_user_input_bits_direction_clear(struct SpecialUserInput *p_usrinp)
+{
+    p_usrinp->Bits &= ~(0xFF << 0);
+    p_usrinp->Bits &= ~(0xFF << 8);
+}
+
+void do_user_input_bits_direction_from_kbd(struct SpecialUserInput *p_usrinp)
+{
+    sbyte k;
+
+    k = (lbKeyOn[kbkeys[GKey_RIGHT]] & 1) - (lbKeyOn[kbkeys[GKey_LEFT]] & 1);
+    p_usrinp->Bits |= (k & 0xFF) << 0;
+    k = (lbKeyOn[kbkeys[GKey_UP]] & 1) - (lbKeyOn[kbkeys[GKey_DOWN]] & 1);
+    p_usrinp->Bits |= (k & 0xFF) << 8;
+}
+
+void do_user_input_bits_direction_from_joy(struct SpecialUserInput *p_usrinp, ubyte channel)
+{
+    if (((p_usrinp->Bits >> 0) & 0xFF) == 0)
+        p_usrinp->Bits |= (joy.DigitalX[channel] & 0xFF) << 0;
+    if (((p_usrinp->Bits >> 8) & 0xFF) == 0)
+        p_usrinp->Bits |= ((-joy.DigitalY[channel]) & 0xFF) << 8;
+}
+
+void do_user_input_bits_actions_from_kbd(struct SpecialUserInput *p_usrinp)
+{
+    if (lbKeyOn[kbkeys[GKey_FIRE]])
+        p_usrinp->Bits |= 0x010000;
+    if (lbKeyOn[kbkeys[GKey_CHANGE_MD_WP]])
+        p_usrinp->Bits |= 0x020000;
+    if (lbKeyOn[kbkeys[GKey_CHANGE_AGENT]])
+        p_usrinp->Bits |= 0x100000;
+    if (lbKeyOn[kbkeys[GKey_DROP_WEAPON]]) {
+        lbKeyOn[kbkeys[GKey_DROP_WEAPON]] = 0;
+        p_usrinp->Bits |= 0x40000000;
+    }
+    if (lbKeyOn[kbkeys[GKey_SELF_DESTRUCT]] && lbShift == 2) {
+        lbKeyOn[kbkeys[GKey_SELF_DESTRUCT]] = 0;
+        p_usrinp->Bits |= 0x20000000;
+    }
+}
+
+void do_user_input_bits_actions_from_joy(struct SpecialUserInput *p_usrinp, ubyte channel)
+{
+    if (jskeys[GKey_FIRE]
+      && (jskeys[GKey_FIRE] & joy.Buttons[channel]) == jskeys[GKey_FIRE])
+        p_usrinp->Bits |= 0x010000;
+    if (jskeys[GKey_CHANGE_MD_WP]
+      && (jskeys[GKey_CHANGE_MD_WP] & joy.Buttons[channel]) == jskeys[GKey_CHANGE_MD_WP])
+        p_usrinp->Bits |= 0x020000;
+    if (jskeys[GKey_DROP_WEAPON]
+      && (jskeys[GKey_DROP_WEAPON] & joy.Buttons[channel]) == jskeys[GKey_DROP_WEAPON])
+        p_usrinp->Bits |= 0x40000000;
+    if (jskeys[GKey_SELF_DESTRUCT]
+      && (jskeys[GKey_SELF_DESTRUCT] & joy.Buttons[channel]) == jskeys[GKey_SELF_DESTRUCT])
+        p_usrinp->Bits |= 0x20000000;
+}
+
+void do_user_input_bits_actions_from_joy_and_kbd(struct SpecialUserInput *p_usrinp)
+{
+    //TODO can we get rid of this funtion, using the two separate functs instead?
+    //do_user_input_bits_actions_from_kbd(p_usrinp);
+    //do_user_input_bits_actions_from_joy(p_usrinp);
+
+    if (lbKeyOn[kbkeys[GKey_FIRE]])
+        p_usrinp->Bits |= 0x010000;
+    if (lbKeyOn[kbkeys[GKey_CHANGE_MD_WP]])
+        p_usrinp->Bits |= 0x020000;
+    if (lbKeyOn[kbkeys[GKey_CHANGE_AGENT]])
+        p_usrinp->Bits |= 0x100000;
+    if (lbKeyOn[kbkeys[GKey_GOTO_POINT]]) {
+        lbKeyOn[kbkeys[GKey_GOTO_POINT]] = 0;
+        p_usrinp->Bits |= 0x400000;
+    }
+    if (lbKeyOn[KC_BACKSLASH] || lbKeyOn[kbkeys[GKey_GROUP]]) {
+        if (lbKeyOn[KC_BACKSLASH])
+            lbKeyOn[KC_BACKSLASH] = 0;
+        if (lbKeyOn[kbkeys[GKey_GROUP]])
+            lbKeyOn[kbkeys[GKey_GROUP]] = 0;
+        p_usrinp->Bits |= 0x800000;
+    }
+    if (lbKeyOn[kbkeys[GKey_DROP_WEAPON]]) {
+        lbKeyOn[kbkeys[GKey_DROP_WEAPON]] = 0;
+        p_usrinp->Bits |= 0x40000000;
+    }
+    //TODO why different self destruct?
+    if (lbKeyOn[kbkeys[GKey_SELF_DESTRUCT]] && lbShift == 4) {
+        lbKeyOn[kbkeys[GKey_SELF_DESTRUCT]] = 0;
+        p_usrinp->Bits |= 0x20000000;
+    }
+
+    if (jskeys[GKey_FIRE]
+      && (jskeys[GKey_FIRE] & joy.Buttons[0]) == jskeys[GKey_FIRE])
+        p_usrinp->Bits |= 0x010000;
+    if (jskeys[GKey_CHANGE_MD_WP]
+      && (jskeys[GKey_CHANGE_MD_WP] & joy.Buttons[0]) == jskeys[GKey_CHANGE_MD_WP])
+        p_usrinp->Bits |= 0x020000;
+    if (jskeys[GKey_CHANGE_AGENT]
+      && (jskeys[GKey_CHANGE_AGENT] & joy.Buttons[0]) == jskeys[GKey_CHANGE_AGENT])
+        p_usrinp->Bits |= 0x100000;
+    if (jskeys[GKey_GOTO_POINT]
+      && (jskeys[GKey_GOTO_POINT] & joy.Buttons[0]) == jskeys[GKey_GOTO_POINT])
+        p_usrinp->Bits |= 0x400000;
+    if (jskeys[GKey_GROUP]
+      && (jskeys[GKey_GROUP] & joy.Buttons[0]) == jskeys[GKey_GROUP])
+        p_usrinp->Bits |= 0x800000;
+    if (jskeys[GKey_DROP_WEAPON]
+      && (jskeys[GKey_DROP_WEAPON] & joy.Buttons[0]) == jskeys[GKey_DROP_WEAPON])
+        p_usrinp->Bits |= 0x40000000;
+    if (jskeys[GKey_SELF_DESTRUCT]
+      && (jskeys[GKey_SELF_DESTRUCT] & joy.Buttons[0]) == jskeys[GKey_SELF_DESTRUCT])
+        p_usrinp->Bits |= 0x20000000;
+}
+
 void update_agent_move_direction_deltas(struct SpecialUserInput *p_usrinp)
 {
     ushort ax1, ax2, delta;
@@ -7036,85 +7233,7 @@ ubyte do_user_interface(void)
     if (ingame.Scanner.Brightness > 64)
         ingame.Scanner.Brightness = 64;
 
-    // MIDI Music (tension) volume control
-    if (lbKeyOn[KC_NUMPAD8])
-    {
-        if (lbShift & KMod_SHIFT)
-            startscr_midivol += 1;
-        else
-            startscr_midivol += 10;
-        if (startscr_midivol > 322)
-            startscr_midivol = 322;
-        SetMusicMasterVolume(127 * startscr_midivol / 322);
-    }
-    if (lbKeyOn[KC_NUMPAD2])
-    {
-        if (lbShift & KMod_SHIFT)
-            startscr_midivol -= 1;
-        else
-            startscr_midivol -= 10;
-        if (startscr_midivol < 0)
-            startscr_midivol = 0;
-        SetMusicMasterVolume(127 * startscr_midivol / 322);
-    }
-
-    // Sample volume control
-    if (lbKeyOn[KC_NUMPAD7])
-    {
-        if (lbShift & KMod_SHIFT)
-            startscr_samplevol += 1;
-        else
-            startscr_samplevol += 10;
-        if (startscr_samplevol > 322)
-            startscr_samplevol = 322;
-        SetSoundMasterVolume(127 * startscr_samplevol / 322);
-    }
-    if (lbKeyOn[KC_NUMPAD1])
-    {
-        if (lbShift & KMod_SHIFT)
-            startscr_samplevol -= 1;
-        else
-            startscr_samplevol -= 10;
-        if (startscr_samplevol < 0)
-            startscr_samplevol = 0;
-        SetSoundMasterVolume(127 * startscr_samplevol / 322);
-    }
-
-    // CD Music volume control
-    if (lbKeyOn[KC_NUMPAD9])
-    {
-        if (lbShift & KMod_SHIFT)
-            startscr_cdvolume += 1;
-        else
-            startscr_cdvolume += 10;
-        if (startscr_cdvolume > 322)
-            startscr_cdvolume = 322;
-        SetCDVolume(70 * (127 * startscr_cdvolume / 322) / 100);
-    }
-    if (lbKeyOn[KC_NUMPAD3])
-    {
-        if (lbShift & KMod_SHIFT)
-            startscr_cdvolume -= 1;
-        else
-            startscr_cdvolume -= 10;
-        if (startscr_cdvolume < 0)
-            startscr_cdvolume = 0;
-        SetCDVolume(70 * (127 * startscr_cdvolume / 322) / 100);
-    }
-
-    // Music track control
-    if (lbKeyOn[KC_NUMPAD5])
-    {
-        lbKeyOn[KC_NUMPAD5] = 0;
-        if (++ingame.CDTrack > 4)
-            ingame.CDTrack = 2;
-    }
-    if (lbKeyOn[KC_NUMPAD0])
-    {
-        lbKeyOn[KC_NUMPAD0] = 0;
-        ingame.DangerTrack = 2 - ingame.DangerTrack + 1;
-    }
-
+    do_music_user_input();
     // Restart level
     if (!in_network_game && !(ingame.Flags & GamF_Unkn0010))
     {
@@ -7222,53 +7341,20 @@ ubyte do_user_interface(void)
                 if ((p_agent->State != 36) && ((p_agent->Flag & 0x02) == 0)
                         && !weapon_select_input())
                 {
-                    sbyte k;
-                    k = (lbKeyOn[kbkeys[GKey_RIGHT]] & 1) - (lbKeyOn[kbkeys[GKey_LEFT]] & 1);
-                    p_usrinp->Bits &= ~(0xFF << 0);
-                    p_usrinp->Bits |= (k & 0xFF) << 0;
-                    k = (lbKeyOn[kbkeys[GKey_UP]] & 1) - (lbKeyOn[kbkeys[GKey_DOWN]] & 1);
-                    p_usrinp->Bits &= ~(0xFF << 8);
-                    p_usrinp->Bits |= (k & 0xFF) << 8;
-                    if (lbKeyOn[kbkeys[GKey_FIRE]])
-                        p_usrinp->Bits |= 0x010000;
-                    if (lbKeyOn[kbkeys[GKey_CHANGE_MD_WP]])
-                        p_usrinp->Bits |= 0x020000;
-                    if (lbKeyOn[kbkeys[GKey_CHANGE_AGENT]])
-                        p_usrinp->Bits |= 0x100000;
-                    if (lbKeyOn[kbkeys[GKey_DROP_WEAPON]]) {
-                        lbKeyOn[kbkeys[GKey_DROP_WEAPON]] = 0;
-                        p_usrinp->Bits |= 0x40000000;
-                    }
-                    if (lbKeyOn[kbkeys[GKey_SELF_DESTRUCT]] && lbShift == 2) {
-                        lbKeyOn[kbkeys[GKey_SELF_DESTRUCT]] = 0;
-                        p_usrinp->Bits |= 0x20000000;
-                    }
+                    do_user_input_bits_direction_clear(p_usrinp);
+                    do_user_input_bits_direction_from_kbd(p_usrinp);
+                    do_user_input_bits_actions_from_kbd(p_usrinp);
                 }
             }
             else
             {
-                ubyte jch;
-
                 p_agent = &things[p_locplayer->DirectControl[n]];
                 if ((p_agent->State == 36) || ((p_agent->Flag & 0x02) == 0))
                     return 0;
-                jch = ctlmode - 2;
-                p_usrinp->Bits &= ~(0xFF << 0);
-                p_usrinp->Bits |= (joy.DigitalX[jch] & 0xFF) << 0;
-                p_usrinp->Bits &= ~(0xFF << 8);
-                p_usrinp->Bits |= ((-joy.DigitalY[jch]) & 0xFF) << 8;
-                if (jskeys[GKey_FIRE]
-                  && (jskeys[GKey_FIRE] & joy.Buttons[jch]) == jskeys[GKey_FIRE])
-                    p_usrinp->Bits |= 0x010000;
-                if (jskeys[GKey_CHANGE_MD_WP]
-                  && (jskeys[GKey_CHANGE_MD_WP] & joy.Buttons[jch]) == jskeys[GKey_CHANGE_MD_WP])
-                    p_usrinp->Bits |= 0x020000;
-                if (jskeys[GKey_DROP_WEAPON]
-                  && (jskeys[GKey_DROP_WEAPON] & joy.Buttons[jch]) == jskeys[GKey_DROP_WEAPON])
-                    p_usrinp->Bits |= 0x40000000;
-                if (jskeys[GKey_SELF_DESTRUCT]
-                  && (jskeys[GKey_SELF_DESTRUCT] & joy.Buttons[jch]) == jskeys[GKey_SELF_DESTRUCT])
-                    p_usrinp->Bits |= 0x20000000;
+
+                do_user_input_bits_direction_clear(p_usrinp);
+                do_user_input_bits_direction_from_joy(p_usrinp, ctlmode - 2);
+                do_user_input_bits_actions_from_joy(p_usrinp, ctlmode - 2);
             }
             ctlmode = p_usrinp->ControlMode & 0x1FFF;
             if (ctlmode != 1)
@@ -7300,63 +7386,14 @@ ubyte do_user_interface(void)
     p_agent = &things[p_locplayer->DirectControl[0]];
     if (p_agent->State != PerSt_PERSON_BURNING && ((p_agent->Flag & 0x02) == 0))
     {
-        if (lbKeyOn[kbkeys[GKey_FIRE]] || (jskeys[GKey_FIRE]
-          && (jskeys[GKey_FIRE] & joy.Buttons[0]) == jskeys[GKey_FIRE]))
-            p_usrinp->Bits |= 0x010000;
-        if (lbKeyOn[kbkeys[GKey_CHANGE_MD_WP]] || (jskeys[GKey_CHANGE_MD_WP]
-          && (jskeys[GKey_CHANGE_MD_WP] & joy.Buttons[0]) == jskeys[GKey_CHANGE_MD_WP]))
-            p_usrinp->Bits |= 0x020000;
-        if (lbKeyOn[kbkeys[GKey_CHANGE_AGENT]] || (jskeys[GKey_CHANGE_AGENT]
-          && (jskeys[GKey_CHANGE_AGENT] & joy.Buttons[0]) == jskeys[GKey_CHANGE_AGENT]))
-            p_usrinp->Bits |= 0x100000;
-        if (lbKeyOn[kbkeys[GKey_GOTO_POINT]] || (jskeys[GKey_GOTO_POINT]
-          && (jskeys[GKey_GOTO_POINT] & joy.Buttons[0]) == jskeys[GKey_GOTO_POINT]))
-        {
-            if (lbKeyOn[kbkeys[GKey_GOTO_POINT]])
-                lbKeyOn[kbkeys[GKey_GOTO_POINT]] = 0;
-            p_usrinp->Bits |= 0x400000;
-        }
-        if (lbKeyOn[KC_BACKSLASH] || lbKeyOn[kbkeys[GKey_GROUP]] || (jskeys[GKey_GROUP]
-          && (jskeys[GKey_GROUP] & joy.Buttons[0]) == jskeys[GKey_GROUP]))
-        {
-            if (lbKeyOn[KC_BACKSLASH])
-                lbKeyOn[KC_BACKSLASH] = 0;
-            if (lbKeyOn[kbkeys[GKey_GROUP]])
-                lbKeyOn[kbkeys[GKey_GROUP]] = 0;
-            p_usrinp->Bits |= 0x800000;
-        }
-        if (lbKeyOn[kbkeys[GKey_DROP_WEAPON]] || (jskeys[GKey_DROP_WEAPON]
-          && (jskeys[GKey_DROP_WEAPON] & joy.Buttons[0]) == jskeys[GKey_DROP_WEAPON]))
-        {
-            if (lbKeyOn[kbkeys[GKey_DROP_WEAPON]])
-                lbKeyOn[kbkeys[GKey_DROP_WEAPON]] = 0;
-            p_usrinp->Bits |= 0x40000000;
-        }
-        if (jskeys[GKey_SELF_DESTRUCT]
-          && (jskeys[GKey_SELF_DESTRUCT] & joy.Buttons[0]) == jskeys[GKey_SELF_DESTRUCT])
-            p_usrinp->Bits |= 0x20000000;
-        if (lbKeyOn[kbkeys[GKey_SELF_DESTRUCT]] && lbShift == 4)
-        {
-            lbKeyOn[kbkeys[GKey_SELF_DESTRUCT]] = 0;
-            p_usrinp->Bits |= 0x20000000;
-        }
+        do_user_input_bits_actions_from_joy_and_kbd(p_usrinp);
 
         ctlmode = p_usrinp->ControlMode & 0x1FFF;
         if (ctlmode != 1)
         {
-            sbyte k;
-            k = (lbKeyOn[kbkeys[GKey_RIGHT]] & 1) - (lbKeyOn[kbkeys[GKey_LEFT]] & 1);
-            p_usrinp->Bits &= ~(0xFF << 0);
-            p_usrinp->Bits |= (k & 0xFF) << 0;
-            k = (lbKeyOn[kbkeys[GKey_UP]] & 1) - (lbKeyOn[kbkeys[GKey_DOWN]] & 1);
-            p_usrinp->Bits &= ~(0xFF << 8);
-            p_usrinp->Bits |= (k & 0xFF) << 8;
-
-            if (((p_usrinp->Bits >> 0) & 0xFF) == 0)
-                p_usrinp->Bits |= (joy.DigitalX[0] & 0xFF) << 0;
-            if (((p_usrinp->Bits >> 8) & 0xFF) == 0)
-                p_usrinp->Bits |= ((-joy.DigitalY[0]) & 0xFF) << 8;
-
+            do_user_input_bits_direction_clear(p_usrinp);
+            do_user_input_bits_direction_from_kbd(p_usrinp);
+            do_user_input_bits_direction_from_joy(p_usrinp, 0);
             update_agent_move_direction_deltas(p_usrinp);
         }
     }
