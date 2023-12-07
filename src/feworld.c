@@ -348,8 +348,8 @@ void draw_world_cities_names(struct ScreenBox *box)
         short px, py;
         int k;
 
-        ms_x = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
-        ms_y = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
+        ms_x = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
+        ms_y = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
 
         k = cities[city].TextIndex[0];
         strncpy(locstr, (char *)&memload[k], sizeof(locstr));
@@ -431,8 +431,8 @@ void input_world_cities(struct ScreenBox *box)
         short ms_x, ms_y;
 
         lbDisplay.LeftButton = 0;
-        ms_x = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
-        ms_y = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
+        ms_x = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
+        ms_y = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
         landmap_8C4 = find_closest_city(ms_x - box->X, ms_y - box->Y);
         if (unkn_city_no != landmap_8C4)
         {

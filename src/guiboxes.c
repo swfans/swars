@@ -59,8 +59,8 @@ TbBool mouse_move_over_box_base(struct ScreenBoxBase *box)
 {
     short ms_x, ms_y;
 
-    ms_x = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
-    ms_y = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
+    ms_x = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
+    ms_y = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
     return is_over_box_base(ms_x, ms_y, box);
 }
 
@@ -68,8 +68,8 @@ TbBool mouse_move_over_kicked_box_base(struct ScreenBoxBase *box)
 {
     short ms_x, ms_y;
 
-    ms_x = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
-    ms_y = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
+    ms_x = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
+    ms_y = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
     return is_over_kicked_box_base(ms_x, ms_y, box);
 }
 
@@ -77,7 +77,7 @@ short mouse_move_x_coord_over_box_base(struct ScreenBoxBase *box)
 {
     short ms_x;
 
-    ms_x = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
+    ms_x = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
     return ms_x - box->X;
 }
 
@@ -85,7 +85,7 @@ short mouse_move_y_coord_over_box_base(struct ScreenBoxBase *box)
 {
     short ms_y;
 
-    ms_y = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
+    ms_y = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
     return ms_y - box->Y;
 }
 

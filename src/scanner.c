@@ -79,6 +79,23 @@ void SCANNER_init_blippoint(ushort blip_no, int x, int z, int colour)
     ingame.Scanner.BigBlip[blip_no].Period = 32;
 }
 
+void SCANNER_find_position(int x, int y, int *U, int *V)
+{
+    asm volatile (
+      "call ASM_SCANNER_find_position\n"
+        : : "a" (x), "d" (y), "b" (U), "c" (V));
+}
+
+TbBool mouse_move_over_scanner(void)
+{
+    short dx, dy;
+    dx = lbDisplay.MMouseX - ingame.Scanner.X1;
+    dy = lbDisplay.MMouseY - ingame.Scanner.Y1;
+
+    return (dy >= 0) && (ingame.Scanner.Y1 + dy <= ingame.Scanner.Y2)
+        && (dx >= 0) && (dx <= SCANNER_width[dy]);
+}
+
 ushort do_group_scanner(struct Objective *p_objectv, ushort next_signal)
 {
 #if 0

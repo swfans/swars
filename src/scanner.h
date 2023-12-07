@@ -86,9 +86,11 @@ extern short waft_table[32];
 void SCANNER_init(void);
 void SCANNER_fill_in(void);
 void SCANNER_set_colour(ubyte col);
+void SCANNER_find_position(int x, int y, int *U, int *V);
 
 void add_blippoint_to_scanner(int x, int z, ubyte colour);
 
+TbBool mouse_move_over_scanner(void);
 void clear_all_scanner_signals(void);
 void add_signal_to_scanner(struct Objective *p_objectv, ubyte flag);
 /******************************************************************************/

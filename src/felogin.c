@@ -148,8 +148,8 @@ ubyte show_campaigns_list(struct ScreenBox *box)
         {
             short msy, msx;
             short y1, y2;
-            msy = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MouseY : lbDisplay.MouseY;
-            msx = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MouseX : lbDisplay.MouseX;
+            msy = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MouseY : lbDisplay.MouseY;
+            msx = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MouseX : lbDisplay.MouseX;
 
             y1 = text_window_y1 + hbeg;
             y2 = text_window_y1 + hend;

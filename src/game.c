@@ -2350,8 +2350,9 @@ TbBool draw_weapons_list_single(PlayerInfo *p_locplayer, ushort comcur, ulong we
             if (!lbDisplay.MRightButton)
             {
                 short msy, msx;
-                msy = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.RMouseY : lbDisplay.RMouseY;
-                msx = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.RMouseX : lbDisplay.RMouseX;
+
+                msy = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.RMouseY : lbDisplay.RMouseY;
+                msx = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.RMouseX : lbDisplay.RMouseX;
                 if (in_box(msx, msy, 22, cy, 76, 22))
                 {
                     lbDisplay.DrawFlags = 0;
@@ -2403,14 +2404,14 @@ short draw_current_weapon_button(PlayerInfo *p_locplayer, short nagent)
         short msx, msy;
         wep_highlight = false;
         if (!lbDisplay.MRightButton) {
-            msx = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.RMouseX : lbDisplay.RMouseX;
-            msy = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.RMouseY : lbDisplay.RMouseY;
+            msx = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.RMouseX : lbDisplay.RMouseX;
+            msy = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.RMouseY : lbDisplay.RMouseY;
             if (in_box(msx, msy, cx - 4, cy - 4, 76, 24))
                 wep_highlight = true;
         }
         {
-            msx = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
-            msy = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
+            msx = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
+            msy = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
             if (in_box(msx, msy, cx - 4, cy - 4, 76, 24))
                 wep_highlight = true;
         }
@@ -2545,8 +2546,8 @@ TbBool draw_agent_weapons_selection(PlayerInfo *p_locplayer, struct Thing *p_age
             short dch;
             short msx, msy;
             dch = nchecked ? 0 : 8;
-            msx = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.RMouseX : lbDisplay.RMouseX;
-            msy = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.RMouseY : lbDisplay.RMouseY;
+            msx = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.RMouseX : lbDisplay.RMouseX;
+            msy = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.RMouseY : lbDisplay.RMouseY;
             if (in_box(msx, msy, cx + dcx, cy + dcy, 76, 30 - dch))
                 wep_highlight = true;
         }
@@ -2554,8 +2555,8 @@ TbBool draw_agent_weapons_selection(PlayerInfo *p_locplayer, struct Thing *p_age
             short dch;
             short msx, msy;
             dch = nchecked ? 0 : 8;
-            msx = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
-            msy = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
+            msx = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
+            msy = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
             if (in_box(msx, msy, cx + dcx, cy + dcy, 76, 30 - dch))
                 wep_highlight = true;
         }
@@ -8038,8 +8039,8 @@ void draw_purple_screen_hotspots(ushort hsnext)
             short ms_x, ms_y;
             short shift_w, shift_h;
 
-            ms_x = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
-            ms_y = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
+            ms_x = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
+            ms_y = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
             shift_w = hotspot_buffer[i].X - ms_x;
             shift_h = hotspot_buffer[i].Y - ms_y;
             if ((shift_h > 0) && (shift_h > abs(shift_w)))
@@ -8071,8 +8072,8 @@ void draw_purple_screen_hotspots(ushort hsnext)
             short ms_x, ms_y;
             short shift_w, shift_h;
 
-            ms_x = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
-            ms_y = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
+            ms_x = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
+            ms_y = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
             shift_w = hotspot_buffer[i].X - ms_x;
             shift_h = ms_y - hotspot_buffer[i].Y;
             if ((shift_h > 0) && (shift_h > abs(shift_w)))
@@ -8104,8 +8105,8 @@ void draw_purple_screen_hotspots(ushort hsnext)
             short ms_x, ms_y;
             short shift_w, shift_h;
 
-            ms_x = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
-            ms_y = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
+            ms_x = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
+            ms_y = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
             shift_w = hotspot_buffer[i].X - ms_x;
             shift_h = hotspot_buffer[i].Y - ms_y;
             if ((shift_w > 0) && (shift_w > abs(shift_h)))
@@ -8137,8 +8138,8 @@ void draw_purple_screen_hotspots(ushort hsnext)
             short ms_x, ms_y;
             short shift_w, shift_h;
 
-            ms_x = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
-            ms_y = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
+            ms_x = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
+            ms_y = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
             shift_w = ms_x - hotspot_buffer[i].X;
             shift_h = hotspot_buffer[i].Y - ms_y;
             if ((shift_w > 0) && (shift_w > abs(shift_h)))

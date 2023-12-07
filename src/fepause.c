@@ -91,8 +91,8 @@ TbBool input_kicked_box(struct ScreenBox *box, short *target)
 
     if (lbDisplay.MLeftButton)
     {
-        ms_x = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
-        ms_y = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
+        ms_x = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
+        ms_y = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
         if ((ms_y >= box->Y + 2) && (ms_y <= box->Y + box->Height - 4))
         {
             int dx, dy;
