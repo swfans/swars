@@ -2601,14 +2601,13 @@ TbBool func_1caf8(void)
     PlayerInfo *p_locplayer;
     struct Thing *p_agent;
     ubyte cur_weapons[4];
+    short dcthing;
     int nagent;
     int panstate;
 
     p_locplayer = &players[local_player_no];
-    if (p_locplayer->DoubleMode)
-        p_agent = &things[p_locplayer->DirectControl[byte_153198-1]];
-    else
-        p_agent = &things[p_locplayer->DirectControl[0]];
+    dcthing = p_locplayer->DoubleMode ? p_locplayer->DirectControl[byte_153198-1] : p_locplayer->DirectControl[0];
+    p_agent = &things[dcthing];
 
     p_locplayer->PanelItem[mouser] = 0;
     ret = draw_panel_pickable_thing_below_agent(p_agent);
@@ -2659,16 +2658,16 @@ void draw_agent_grouping_bars(void)
         :  :  : "eax" );
 #else
     struct Thing *p_thing;
-    short plyagent;
+    short dcthing;
     short i, n;
 
     n = 0;
     for (i = 0; i < playable_agents; i++)
     {
         p_thing = players[local_player_no].MyAgent[i];
-        plyagent = players[local_player_no].DirectControl[byte_153198-1];
-        if ((p_thing->State != PerSt_PROTECT_PERSON) || (p_thing->GotoThingIndex != plyagent)) {
-            if (((p_thing->Flag2 & 0x10000000) == 0) || (p_thing->Owner != plyagent))
+        dcthing = players[local_player_no].DirectControl[byte_153198-1];
+        if ((p_thing->State != PerSt_PROTECT_PERSON) || (p_thing->GotoThingIndex != dcthing)) {
+            if (((p_thing->Flag2 & 0x10000000) == 0) || (p_thing->Owner != dcthing))
                 continue;
         }
         n++;
@@ -3115,12 +3114,12 @@ void draw_new_panel()
     if (gameturn & 4)
     {
         int x, cc;
-        int agent;
+        short dcthing;
         struct Thing *p_agent;
 
         x = 0;
-        agent = p_locplayer->DoubleMode ? p_locplayer->DirectControl[byte_153198-1] : p_locplayer->DirectControl[0];
-        p_agent = &things[agent];
+        dcthing = p_locplayer->DoubleMode ? p_locplayer->DirectControl[byte_153198-1] : p_locplayer->DirectControl[0];
+        p_agent = &things[dcthing];
         if ((p_agent->Flag & TngF_Unkn0002) == 0 && (p_agent->Flag2 & 0x800) == 0)
         {
             cc = p_agent->U.UPerson.ComCur & 3;
@@ -3180,12 +3179,12 @@ void draw_new_panel()
 
     // Fill the left energy bar
     {
-        int agent;
+        short dcthing;
         struct Thing *p_agent;
         int lv, lvmax, col, w;
 
-        agent = p_locplayer->DoubleMode ? p_locplayer->DirectControl[byte_153198-1] : p_locplayer->DirectControl[0];
-        p_agent = &things[agent];
+        dcthing = p_locplayer->DoubleMode ? p_locplayer->DirectControl[byte_153198-1] : p_locplayer->DirectControl[0];
+        p_agent = &things[dcthing];
         if ((p_agent->U.UPerson.Energy < 50) && (gameturn & 1))
             col = 2;
         else
@@ -3595,13 +3594,13 @@ void video_mode_switch_to_next(void)
 
 void teleport_current_agent(PlayerInfo *p_locplayer)
 {
-    int dctrl_thing;
-    dctrl_thing = p_locplayer->DirectControl[mouser];
-    delete_node(&things[dctrl_thing]);
-    things[dctrl_thing].X = mouse_map_x << 8;
-    things[dctrl_thing].Z = mouse_map_z << 8;
-    things[dctrl_thing].Y = alt_at_point(mouse_map_x, mouse_map_z);
-    add_node_thing(dctrl_thing);
+    short dcthing;
+    dcthing = p_locplayer->DirectControl[mouser];
+    delete_node(&things[dcthing]);
+    things[dcthing].X = mouse_map_x << 8;
+    things[dcthing].Z = mouse_map_z << 8;
+    things[dcthing].Y = alt_at_point(mouse_map_x, mouse_map_z);
+    add_node_thing(dcthing);
 }
 
 void person_resurrect(struct Thing *p_person)
@@ -4785,10 +4784,10 @@ void show_game_engine(void)
     ASM_show_game_engine();
 #endif
     int zoom;
-    int dctrl_thing;
+    short dcthing;
 
-    dctrl_thing = players[local_player_no].DirectControl[0];
-    process_view_inputs(dctrl_thing);// inlined call gengine_ctrl
+    dcthing = players[local_player_no].DirectControl[0];
+    process_view_inputs(dcthing);// inlined call gengine_ctrl
 
     zoom = (900 - overall_scale) >> 1;
     if (zoom < 50)
@@ -7256,7 +7255,9 @@ ubyte do_user_interface(void)
 
     if (ingame.TrackThing)
     {
-        build_packet(&packets[local_player_no], 0, p_locplayer->DirectControl[0], 0, 0, 0);
+        short dcthing;
+        dcthing = p_locplayer->DirectControl[0];
+        build_packet(&packets[local_player_no], 0, dcthing, 0, 0, 0);
         return 1;
     }
 
@@ -7283,18 +7284,23 @@ ubyte do_user_interface(void)
                   }
                   else
                   {
-                    my_build_packet(&packets[local_player_no], PAct_17,
-                        p_locplayer->DirectControl[n], p_agent->ThingOffset, 0, 0);
-                    p_locplayer->UserInput[0].ControlMode |= 0x8000u;
+                    short dcthing;
+                    dcthing = p_locplayer->DirectControl[n];
+                    my_build_packet(&packets[local_player_no], PAct_17, dcthing, p_agent->ThingOffset, 0, 0);
+                    p_locplayer->UserInput[0].ControlMode |= 0x8000;
                     // Double tapping - center view on the agent
                     if (gameturn - last_sel_agent_turn[n] < 7)
                     {
+                      struct Packet *p_pckt;
+
                       p_agent = p_locplayer->MyAgent[n];
+                      p_pckt = &packets[local_player_no];
+
                       ingame.TrackX = p_agent->X >> 8;
                       engn_yc = p_agent->Y >> 8;
                       ingame.TrackZ = p_agent->Z >> 8;
-                      build_packet(&packets[local_player_no], PAct_17,
-                          p_locplayer->DirectControl[mouser], p_agent->ThingOffset, 0, 0);
+                      dcthing = p_locplayer->DirectControl[mouser];
+                      build_packet(p_pckt, PAct_17, dcthing, p_agent->ThingOffset, 0, 0);
                       if (p_agent->ThingOffset == p_locplayer->DirectControl[mouser])
                       {
                           engn_xc = p_agent->X >> 8;
@@ -7311,7 +7317,9 @@ ubyte do_user_interface(void)
 
     if (ingame.Flags & GamF_Unkn0100)
     {
-        build_packet(&packets[local_player_no], 0, p_locplayer->DirectControl[0], 0, 0, 0);
+        short dcthing;
+        dcthing = p_locplayer->DirectControl[0];
+        build_packet(&packets[local_player_no], 0, dcthing, 0, 0, 0);
         return 1;
     }
 
@@ -7333,7 +7341,7 @@ ubyte do_user_interface(void)
     {
         for (n = 0; n < p_locplayer->DoubleMode + 1; n++)
         {
-            short agent;
+            short dcthing;
 
             p_usrinp = &p_locplayer->UserInput[n];
             p_usrinp->Bits &= 0x8000FFFF;
@@ -7345,8 +7353,8 @@ ubyte do_user_interface(void)
             }
             else if (ctlmode < 1)
             {
-                agent = p_locplayer->DirectControl[n];
-                if (person_can_accept_control(&things[agent])  && !weapon_select_input())
+                dcthing = p_locplayer->DirectControl[n];
+                if (person_can_accept_control(&things[dcthing])  && !weapon_select_input())
                 {
                     do_user_input_bits_direction_clear(p_usrinp);
                     do_user_input_bits_direction_from_kbd(p_usrinp);
@@ -7355,8 +7363,8 @@ ubyte do_user_interface(void)
             }
             else
             {
-                agent = p_locplayer->DirectControl[n];
-                if (!person_can_accept_control(&things[agent]))
+                dcthing = p_locplayer->DirectControl[n];
+                if (!person_can_accept_control(&things[dcthing]))
                     return 0;
 
                 do_user_input_bits_direction_clear(p_usrinp);
@@ -7372,6 +7380,8 @@ ubyte do_user_interface(void)
     }
     else
     {
+        short dcthing;
+
         p_usrinp = &p_locplayer->UserInput[0];
         ctlmode = p_usrinp->ControlMode & 0x1FFF;
         if ((ctlmode == 1) && lbKeyOn[kbkeys[GKey_KEY_CONTROL]])
@@ -7389,7 +7399,8 @@ ubyte do_user_interface(void)
         if (weapon_select_input())
             return 1;
 
-        p_agent = &things[p_locplayer->DirectControl[0]];
+        dcthing = p_locplayer->DirectControl[0];
+        p_agent = &things[dcthing];
         if (person_can_accept_control(p_agent))
         {
             do_user_input_bits_actions_from_joy_and_kbd(p_usrinp);
@@ -7405,6 +7416,25 @@ ubyte do_user_interface(void)
         }
     }
     return 0;
+}
+
+TbBool panel_linked_person_is_alive(short panel)
+{
+    struct GamePanel *p_panel;
+    PlayerInfo *p_locplayer;
+    struct Thing *p_agent;
+
+    p_panel = &game_panel[panel];
+
+    if (p_panel->Type == 8 || p_panel->Type == 10)
+        return false;
+    if (p_panel->ID >= playable_agents)
+        return false;
+
+    p_locplayer = &players[local_player_no];
+    p_agent = p_locplayer->MyAgent[p_panel->ID];
+
+    return ((p_agent->Flag & TngF_Unkn0002) == 0);
 }
 
 TbBool mouse_move_over_panel(short panel)
@@ -7428,19 +7458,8 @@ TbBool mouse_move_over_panel(short panel)
         h = 2 * p_panel->Height;
     }
 
-    if (p_panel->Type != 8 && p_panel->Type != 10)
-    {
-        if (p_panel->ID < playable_agents) {
-            struct Thing *p_agent;
-            PlayerInfo *p_locplayer;
-
-            p_locplayer = &players[local_player_no];
-            p_agent = p_locplayer->MyAgent[p_panel->ID];
-
-            if ((p_agent->Flag & 0x02) != 0)
-                return false;
-        }
-    }
+    if (!panel_linked_person_is_alive(panel))
+        return false;
 
     if (p_panel->ID >= playable_agents)
         return false;
@@ -7449,6 +7468,30 @@ TbBool mouse_move_over_panel(short panel)
     ms_x = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
     ms_y = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
     return in_box(ms_x, ms_y, x, y, w, h);
+}
+
+TbBool mouse_over_infrared_slant_box(void)
+{
+    short ms_x, ms_y;
+    short delta_x, delta_y;
+    short y;
+
+    y = lbDisplay.GraphicsScreenHeight < 400 ? 222 : 315;
+
+    ms_x = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MouseX : lbDisplay.MouseX;
+    ms_y = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MouseY : lbDisplay.MouseY;
+    delta_x = ms_x + 22;
+    delta_y = ms_y - 222;
+
+    return (ms_y > y) && (delta_x - delta_y < 22);
+}
+
+short mouse_position_over_horizonal_bar(short x, short w)
+{
+    short ms_x;
+
+    ms_x = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MouseX : lbDisplay.MouseX;
+    return (ms_x - x);
 }
 
 TbBool check_scanner_input(void)
@@ -7465,42 +7508,37 @@ TbBool check_scanner_input(void)
         if (lbDisplay.LeftButton)
         {
             struct SpecialUserInput *p_usrinp;
-            struct Packet *pckt;
+            struct Packet *p_pckt;
             TbBool can_control;
-            short agent;
+            short dcthing;
 
-            agent = p_locplayer->DirectControl[mouser];
-            can_control = person_can_accept_control(&things[agent]);
+            dcthing = p_locplayer->DirectControl[mouser];
+            can_control = person_can_accept_control(&things[dcthing]);
             p_usrinp = &p_locplayer->UserInput[mouser];
+            p_pckt = &packets[local_player_no];
 
             lbDisplay.LeftButton = 0;
             p_usrinp->ControlMode |= 0x8000;
             if ((p_locplayer->DoubleMode) || ((p_usrinp->ControlMode & 0x1FFF) == 1))
             {
                 map_y = (alt_at_point(map_x, map_z) >> 8) + 20;
-                pckt = &packets[local_player_no];
                 if ((gameturn & 0x7FFF) - p_usrinp->Turn >= 7)
                 {
                     p_usrinp->Turn = gameturn & 0x7FFF;
                     if (can_control)
-                        my_build_packet(pckt, PAct_B,
-                            p_locplayer->DirectControl[mouser],
-                            map_x, map_y, map_z);
+                        my_build_packet(p_pckt, PAct_B, dcthing, map_x, map_y, map_z);
                 }
                 else
                 {
                     p_usrinp->Turn = 0;
                     if (can_control)
-                        my_build_packet(pckt, PAct_GOTO_POINT_FAST,
-                            p_locplayer->DirectControl[mouser],
-                            map_x, map_y, map_z);
+                        my_build_packet(p_pckt, PAct_GOTO_POINT_FAST, dcthing, map_x, map_y, map_z);
                 }
             }
             else
             {
                 do_change_mouse(8);
-                build_packet(&packets[local_player_no], PAct_CONTROL_MODE,
-                    1, 0, 0, 0);
+                build_packet(p_pckt, PAct_CONTROL_MODE, 1, 0, 0, 0);
             }
             return true;
         }
@@ -7508,13 +7546,13 @@ TbBool check_scanner_input(void)
         if (lbDisplay.RightButton)
         {
             struct SpecialUserInput *p_usrinp;
-            struct Packet *pckt;
+            struct Packet *p_pckt;
             TbBool can_control;
-            short agent;
+            short dcthing;
             short cwep;
 
-            agent = p_locplayer->DirectControl[mouser];
-            can_control = person_can_accept_control(&things[agent]);
+            dcthing = p_locplayer->DirectControl[mouser];
+            can_control = person_can_accept_control(&things[dcthing]);
             p_usrinp = &p_locplayer->UserInput[mouser];
 
             lbDisplay.RightButton = 0;
@@ -7522,9 +7560,9 @@ TbBool check_scanner_input(void)
             if (!p_locplayer->DoubleMode)
             {
                 map_y = (alt_at_point(map_x, map_z) >> 8) + 20;
-                agent = p_locplayer->DirectControl[mouser];
-                cwep = things[agent].U.UPerson.CurrentWeapon;
-                pckt = &packets[local_player_no];
+                dcthing = p_locplayer->DirectControl[mouser];
+                cwep = things[dcthing].U.UPerson.CurrentWeapon;
+                p_pckt = &packets[local_player_no];
 
                 if ((cwep == WEP_ELEMINE) || (cwep == WEP_EXPLMINE))
                 {
@@ -7534,13 +7572,9 @@ TbBool check_scanner_input(void)
                         if (can_control)
                         {
                             if (p_locplayer->TargetType == 3)
-                                my_build_packet(pckt, PAct_3A,
-                                    p_locplayer->DirectControl[mouser],
-                                    map_x, p_locplayer->Target, map_z);
+                                my_build_packet(p_pckt, PAct_3A, dcthing, map_x, p_locplayer->Target, map_z);
                             else
-                                my_build_packet(pckt, 0x20u,
-                                    p_locplayer->DirectControl[mouser],
-                                    map_x, map_y, map_z);
+                                my_build_packet(p_pckt, PAct_PLANT_MINE, dcthing, map_x, map_y, map_z);
                         }
                     }
                     else
@@ -7549,13 +7583,9 @@ TbBool check_scanner_input(void)
                         if (can_control)
                         {
                             if (p_locplayer->TargetType == 3)
-                                my_build_packet(pckt, PAct_3B,
-                                    p_locplayer->DirectControl[mouser],
-                                    map_x, p_locplayer->Target, map_z);
+                                my_build_packet(p_pckt, PAct_3B, dcthing, map_x, p_locplayer->Target, map_z);
                             else
-                                my_build_packet(pckt, 0x2Eu,
-                                    p_locplayer->DirectControl[mouser],
-                                    map_x, map_y, map_z);
+                                my_build_packet(p_pckt, PAct_PLANT_MINE_FAST, dcthing, map_x, map_y, map_z);
                         }
                     }
                 }
@@ -7567,13 +7597,9 @@ TbBool check_scanner_input(void)
                         if (can_control)
                         {
                             if (p_locplayer->TargetType == 3)
-                                my_build_packet(pckt, PAct_38,
-                                    p_locplayer->DirectControl[mouser],
-                                    map_x, p_locplayer->Target, map_z);
+                                my_build_packet(p_pckt, PAct_38, dcthing, map_x, p_locplayer->Target, map_z);
                             else
-                                my_build_packet(pckt, 0x1Au,
-                                    p_locplayer->DirectControl[mouser],
-                                    map_x, map_y, map_z);
+                                my_build_packet(p_pckt, PAct_SHOOT_AT_POINT, dcthing, map_x, map_y, map_z);
                         }
                     }
                     else
@@ -7582,13 +7608,9 @@ TbBool check_scanner_input(void)
                         if (can_control)
                         {
                             if (p_locplayer->TargetType == 3)
-                                my_build_packet(pckt, PAct_39,
-                                    p_locplayer->DirectControl[mouser],
-                                    map_x, p_locplayer->Target, map_z);
+                                my_build_packet(p_pckt, PAct_39, dcthing, map_x, p_locplayer->Target, map_z);
                             else
-                                my_build_packet(pckt, PAct_2F,
-                                    p_locplayer->DirectControl[mouser],
-                                    map_x, map_y, map_z);
+                                my_build_packet(p_pckt, PAct_2F, dcthing, map_x, map_y, map_z);
                         }
                     }
                 }
@@ -7597,13 +7619,9 @@ TbBool check_scanner_input(void)
                     if (can_control)
                     {
                         if (p_locplayer->TargetType == 3)
-                            my_build_packet(pckt, PAct_38,
-                                p_locplayer->DirectControl[mouser],
-                                map_x, p_locplayer->Target, map_z);
+                            my_build_packet(p_pckt, PAct_38, dcthing, map_x, p_locplayer->Target, map_z);
                         else
-                            my_build_packet(pckt, PAct_SHOOT_AT_POINT,
-                                p_locplayer->DirectControl[mouser],
-                                map_x, map_y, map_z);
+                            my_build_packet(p_pckt, PAct_SHOOT_AT_POINT, dcthing, map_x, map_y, map_z);
                     }
                 }
             }
@@ -7613,7 +7631,7 @@ TbBool check_scanner_input(void)
     return false;
 }
 
-ubyte check_panel_button(void)
+TbBool check_panel_button(void)
 {
 #if 0
     ubyte ret;
@@ -7621,20 +7639,18 @@ ubyte check_panel_button(void)
         : "=r" (ret) : );
     return ret;
 #else
-    PlayerInfo *p_locplayer;
-
-    p_locplayer = &players[local_player_no];
-
     if (lbDisplay.LeftButton && lbDisplay.RightButton)
     {
-        struct Packet *pckt;
-        short agent;
+        struct Packet *p_pckt;
+        PlayerInfo *p_locplayer;
+        short dcthing;
 
         lbDisplay.LeftButton = 0;
         lbDisplay.RightButton = 0;
-        pckt = &packets[local_player_no];
-        agent = p_locplayer->DirectControl[mouser];
-        my_build_packet(pckt, PAct_PEEPS_SCATTER, agent,
+        p_locplayer = &players[local_player_no];
+        p_pckt = &packets[local_player_no];
+        dcthing = p_locplayer->DirectControl[mouser];
+        my_build_packet(p_pckt, PAct_PEEPS_SCATTER, dcthing,
             mouse_map_x, 0, mouse_map_z);
         return 1;
     }
