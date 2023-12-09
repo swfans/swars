@@ -844,15 +844,8 @@ jump_f38b9:
 
 .section .rodata
 
-aGrip_gll:	/* 0x158B5C */
-		.string "GRIP.GLL"
-		.ascii  "\x00\x00\x00"
-aGrip:	/* 0x158B68 */
-		.string "GRIP"
-		.ascii  "\x00\x00\x00"
-aCGrip:	/* 0x158B70 */
-		.string "C:\\GRIP\\"
-		.ascii  "\x00\x00\x00\x50\x01\x00\x00\x40"
+data_158b7c:
+		.ascii  "\x50\x01\x00\x00\x40"
 		.ascii  "\x00\x00\x00\x20\x03\x00\x00\x00"
 		.ascii  "\x04\x00\x00\x20\x05\x00\x00\x80"
 		.ascii  "\x03\x00\x00\x20\x02\x00\x00\x70"
@@ -953,11 +946,6 @@ data_158dce:
 		.long	0x0
 data_158dd2:
 		.fill   0x6
-
-ascPath:	/* 0x15ED1C */
-		.string "PATH"
-ascRb:	/* 0x15ED21 */
-		.string "rb"
 
 aSpacetecCopyrght:	/* 0x15F1B0 */
 		.string "(C) 1994 Spacetec IMC Corporation.  All rights reserved.  The computer codes included in this file, including source code and object code, constitutes the proprietary and confidential information of Spacetec IMC Corporation and are provided pursuant to a license agreement. These computer codes are protected by international, federal and state law, including United States Copyright Law and international treaty provisions.  Except as expressly authorized by the license agreement, or as expressly permitted under applicable laws of member states of the European Union and then only to the extent so permitted, no part of these computer codes may be reproduced or transmitted in any form or by any means, electronic or mechanical, modified, decompiled, disassembled, reverse engineered, sold, transferred, rented or utilized for any unauthorized purpose without the express written permission of Spacetec IMC Corporation."
