@@ -155,7 +155,7 @@ GLOBAL_FUNC (ASM_joy_driver_init)
 	jump_e116e:
 		cmp    $0x1,%eax
 		jne    jump_e117a
-		movb   $0x1,joy_grip_initialized
+		movb   $0x1,EXPORT_SYMBOL(joy_grip_initialized)
 	jump_e117a:
 		cmpb   $0x0,EXPORT_SYMBOL(joy_spbal_initialized)
 		jne    jump_e1196
@@ -178,9 +178,9 @@ GLOBAL_FUNC (ASM_joy_driver_init)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (joy_grip_shutdown)
+GLOBAL_FUNC (ASM_joy_driver_shutdown)
 /*----------------------------------------------------------------*/
-		cmpb   $0x0,joy_grip_initialized
+		cmpb   $0x0,EXPORT_SYMBOL(joy_grip_initialized)
 		je     jump_e11c9
 		cmpb   $0x0,data_1e2f36
 		je     jump_e11c4

@@ -491,7 +491,7 @@ main (int argc, char **argv)
     if ( in_network_game ) {
         LbNetworkReset();
     }
-    joy_grip_shutdown();
+    joy_driver_shutdown();
     LbErrorLogReset();
     LbMemoryReset();
     game_quit();

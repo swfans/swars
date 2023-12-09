@@ -133,6 +133,20 @@ int joy_grip_init(void)
 #endif
 }
 
+int joy_grip_shutdown(void)
+{
+#if defined(DOS)||defined(GO32)
+    // Shutdown the GrIP system
+    GrShutdown();
+    // Disconnect from the GrIP library
+    GrUnlink();
+    return 1;
+#else
+    // No joystick support lib required for modern OSes
+    return 0;
+#endif
+}
+
 /** SpaceBall from Spacetec IMC game controller driver initialization.
  */
 int joy_spaceball_init(void)
@@ -141,6 +155,18 @@ int joy_spaceball_init(void)
     // Requires declarations from "joy_splib.h"
     short ret;
     ret = SpwSimpleOpen(0);
+    return (ret != 0);
+#else
+    // No joystick support lib required for modern OSes
+    return 0;
+#endif
+}
+
+int joy_spaceball_shutdown(void)
+{
+#if defined(DOS)||defined(GO32)
+    short ret;
+    ret = SpwSimpleClose(0);
     return (ret != 0);
 #else
     // No joystick support lib required for modern OSes
@@ -169,11 +195,27 @@ int joy_driver_init(void)
     if (!joy_spbal_initialized)
     {
         ret = joy_spaceball_init();
-        if (ret)
+        if (ret == 1)
             joy_spbal_initialized = 1;
     }
     return 1;
 #endif
 }
 
+/** Joystick drivers shutdown.
+ */
+int joy_driver_shutdown(void)
+{
+    if (joy_grip_initialized)
+    {
+        joy_grip_shutdown();
+        joy_grip_initialized = 0;
+    }
+    if (joy_spbal_initialized)
+    {
+        joy_spaceball_shutdown();
+        joy_spbal_initialized = 0;
+    }
+    return 1;
+}
 /******************************************************************************/

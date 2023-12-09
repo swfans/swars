@@ -752,7 +752,6 @@ void game_process(void);
 void game_reset(void);
 void host_reset(void);
 void free_texturemaps(void);
-int joy_grip_shutdown(void);
 
 void flic_unkn03(ubyte a1);
 
