@@ -7670,18 +7670,21 @@ TbBool check_panel_input(short panel)
             }
             return 1;
         case 2:
+            // Change mood / drugs level
             p_agent = p_locplayer->MyAgent[p_panel->ID];
-            if ((p_agent == NULL) || (p_agent->State == 13))
-                break;
-            p_locplayer->UserInput[mouser].ControlMode |= 0x8000;
-            i = 2 * (mouse_position_over_horizonal_bar(p_panel->X, p_panel->Width)) - 88;
-            if (panel_active_based_on_target(panel))
-                my_build_packet(p_pckt, PAct_SET_MOOD, p_agent->ThingOffset, i, 0, 0);
-            p_locplayer->PanelState[mouser] = game_panel[panel].ID + 9;
-            if (!IsSamplePlaying(0, 21, 0))
-                play_sample_using_heap(0, 21, 127, 64, 100, -1, 1u);
-            ingame.Flags |= 0x100000;
-            return 1;
+            if ((p_agent != NULL) && (p_agent->State != 13))
+            {
+                p_locplayer->UserInput[mouser].ControlMode |= 0x8000;
+                i = 2 * (mouse_position_over_horizonal_bar(p_panel->X, p_panel->Width)) - 88;
+                if (panel_active_based_on_target(panel))
+                    my_build_packet(p_pckt, PAct_SET_MOOD, p_agent->ThingOffset, i, 0, 0);
+                p_locplayer->PanelState[mouser] = p_panel->ID + 9;
+                if (!IsSamplePlaying(0, 21, 0))
+                    play_sample_using_heap(0, 21, 127, 64, 100, -1, 1u);
+                ingame.Flags |= 0x100000;
+                return 1;
+            }
+            break;
         case 5:
             p_agent = p_locplayer->MyAgent[p_panel->ID];
             if (p_agent == NULL)
@@ -7697,9 +7700,10 @@ TbBool check_panel_input(short panel)
                 break;
             if ((p_agent->U.UPerson.WeaponsCarried & 0xC000000) == 0)
                 break;
-            my_build_packet(p_pckt, 0x32u, p_agent->ThingOffset, 0, 0, 0);
+            my_build_packet(p_pckt, PAct_32, p_agent->ThingOffset, 0, 0, 0);
             return 1;
         case 8:
+            // Enable supershield
             if (p_locplayer->DoubleMode && byte_153198 - 1 != mouser)
                 break;
             if (p_locplayer->DoubleMode)
@@ -7810,10 +7814,11 @@ TbBool check_panel_input(short panel)
         switch (p_panel->Type)
         {
         case 1:
+            // Center view on the selected agent
             if (!p_locplayer->DoubleMode)
             {
                 p_agent = p_locplayer->MyAgent[p_panel->ID];
-                if ((p_agent != NULL) && ((p_agent->Flag & 0x02) != 0))
+                if ((p_agent != NULL) && ((p_agent->Flag & 0x02) == 0))
                 {
                     ushort dcthing;
 
