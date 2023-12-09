@@ -35,7 +35,7 @@
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (joy_grip_init)
+GLOBAL_FUNC (ASM_joy_driver_init)
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -44,7 +44,7 @@ GLOBAL_FUNC (joy_grip_init)
 		push   %edi
 		push   %ebp
 		sub    $0x84,%esp
-		cmpb   $0x0,data_1e2f35
+		cmpb   $0x0,joy_grip_initialized
 		jne    jump_e117a
 		mov    %esp,%ebx
 		mov    $aGrip,%edx
@@ -143,7 +143,7 @@ GLOBAL_FUNC (joy_grip_init)
 		call   ac_fclose
 		mov    0x80(%esp),%dx
 		mov    %edi,%eax
-		call   joy_func_f2680
+		call   GrLink
 		test   %ax,%ax
 		jne    jump_e1162
 		mov    $0xffffffff,%eax
@@ -155,15 +155,15 @@ GLOBAL_FUNC (joy_grip_init)
 	jump_e116e:
 		cmp    $0x1,%eax
 		jne    jump_e117a
-		movb   $0x1,data_1e2f35
+		movb   $0x1,joy_grip_initialized
 	jump_e117a:
-		cmpb   $0x0,data_1e2f37
+		cmpb   $0x0,EXPORT_SYMBOL(joy_spbal_initialized)
 		jne    jump_e1196
 		xor    %eax,%eax
 		call   SpwSimpleOpen_
 		test   %ax,%ax
 		je     jump_e1196
-		movb   $0x1,data_1e2f37
+		movb   $0x1,EXPORT_SYMBOL(joy_spbal_initialized)
 	jump_e1196:
 		mov    $0x1,%eax
 		add    $0x84,%esp
@@ -180,7 +180,7 @@ GLOBAL_FUNC (joy_grip_init)
 /*----------------------------------------------------------------*/
 GLOBAL_FUNC (joy_grip_shutdown)
 /*----------------------------------------------------------------*/
-		cmpb   $0x0,data_1e2f35
+		cmpb   $0x0,joy_grip_initialized
 		je     jump_e11c9
 		cmpb   $0x0,data_1e2f36
 		je     jump_e11c4
@@ -189,13 +189,13 @@ GLOBAL_FUNC (joy_grip_shutdown)
 	jump_e11c4:
 		call   GrUnlink
 	jump_e11c9:
-		cmpb   $0x0,data_1e2f37
+		cmpb   $0x0,EXPORT_SYMBOL(joy_spbal_initialized)
 		je     jump_e11a7
 		xor    %eax,%eax
 		jmp    jump_f38b9
 
 /*----------------------------------------------------------------*/
-joy_func_f2680:
+GrLink:
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -1501,11 +1501,11 @@ aSpacetecCopyrght:	/* 0x15F1B0 */
 aSpaceballName:	/* 0x15F54B */
 		.string "SpaceWare(R) Spaceball(R)"
 
-GLOBAL (data_1e2f35)
+GLOBAL (joy_grip_initialized)	/* 0x1e2f35 */
 		.byte	0x0
 GLOBAL (data_1e2f36)
 		.byte	0x0
-GLOBAL (data_1e2f37)
+GLOBAL (joy_spbal_initialized)	/* 0x1E2F37 */
 		.byte	0x0
 
 data_1e5eef:

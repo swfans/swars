@@ -460,7 +460,7 @@ main (int argc, char **argv)
     if (LbErrorLogSetup(NULL, NULL, Lb_ERROR_LOG_NEW) != Lb_SUCCESS)
             printf("Execution log setup failed\n");
     /* Gravis Grip joystick driver initialization */
-    /* joy_grip_init(); */
+    joy_driver_init();
 
     if (!process_options(&argc, &argv))
         return 1;

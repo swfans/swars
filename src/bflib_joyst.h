@@ -79,6 +79,7 @@ extern struct DevInput joy;
 
 int joy_grip_unknsub_08(int val);
 int joy_func_065(struct DevInput *dinp);
+int joy_driver_init(void);
 
 /******************************************************************************/
 #ifdef __cplusplus
