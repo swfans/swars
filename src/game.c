@@ -7637,6 +7637,14 @@ TbBool check_scanner_input(void)
     return false;
 }
 
+short process_panel_state(void)
+{
+    short ret;
+    asm volatile ("call ASM_process_panel_state\n"
+        : "=r" (ret) : );
+    return ret;
+}
+
 TbBool check_panel_input(short panel)
 {
     PlayerInfo *p_locplayer;
