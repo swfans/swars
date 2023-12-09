@@ -177,10 +177,10 @@ struct DisplayStruct { // sizeof=118
     /** Mouse position during button "down" event, Y coordinate. */
     long MouseY; // offset=76
 
-    /** Mouse position during move, X coordinate. */
+    /** Momentary mouse position during move, X coordinate. */
     long MMouseX; // offset=80
 
-    /** Mouse position during move, Y coordinate. */
+    /** Momentary mouse position during move, Y coordinate. */
     long MMouseY; // offset=84
 
     /** Mouse position during button release, X coordinate. */
@@ -200,14 +200,23 @@ struct DisplayStruct { // sizeof=118
 
     /** VESA set-up flag, used only with VBE video modes. */
     ubyte VesaIsSetUp; // offset=102
+    /** Press mouse left button happened, Mouse coords recorded. */
     ubyte LeftButton; // offset=103
+    /** Press mouse right button happened, Mouse coords recorded. */
     ubyte RightButton; // offset=104
+    /** Press mouse middle button happened, Mouse coords recorded. */
     ubyte MiddleButton; // offset=105
+    /** Momentary state of left mouse button. */
     ubyte MLeftButton; // offset=106
+    /** Momentary state of right mouse button. */
     ubyte MRightButton; // offset=107
+    /** Momentary state of middle mouse button. */
     ubyte MMiddleButton; // offset=108
+    /** Release mouse left button happened, RMouse coords recorded. */
     ubyte RLeftButton; // offset=109
+    /** Release mouse middle button happened, RMouse coords recorded. */
     ubyte RMiddleButton; // offset=110
+    /** Release mouse right button happened, RMouse coords recorded. */
     ubyte RRightButton; // offset=111
     ubyte FadeStep; // offset=112
 
