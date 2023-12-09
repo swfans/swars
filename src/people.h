@@ -162,6 +162,7 @@ void set_person_animmode_walk(struct Thing *p_person);
 void load_peep_type_stats(void);
 
 TbBool person_carries_weapon(struct Thing *p_person, ubyte weapon);
+TbBool person_carries_any_medikit(struct Thing *p_person);
 
 void set_person_stats_type(struct Thing *p_person, ushort type);
 void init_person_thing(struct Thing *p_person);

@@ -367,6 +367,11 @@ TbBool person_carries_weapon(struct Thing *p_person, ubyte weapon)
     return weapons_has_weapon(p_person->U.UPerson.WeaponsCarried, weapon);
 }
 
+TbBool person_carries_any_medikit(struct Thing *p_person)
+{
+    return person_carries_weapon(p_person, WEP_MEDI2) || person_carries_weapon(p_person, WEP_MEDI1);
+}
+
 void person_give_best_mods(struct Thing *p_person)
 {
     set_person_mod_legs_level(p_person, 3);

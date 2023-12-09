@@ -3013,7 +3013,7 @@ void draw_new_panel()
     {
         struct Thing *p_agent;
         p_agent = p_locplayer->MyAgent[i];
-        if (person_carries_weapon(p_agent, WEP_MEDI2) || person_carries_weapon(p_agent, WEP_MEDI1))
+        if (person_carries_any_medikit(p_agent))
             game_panel[8+i].Spr = 96;
         else
             game_panel[8+i].Spr = 95;
@@ -7658,8 +7658,9 @@ TbBool check_panel_input(short panel)
         switch (p_panel->Type)
         {
         case 1:
+            // Select controlled agent
             p_agent = p_locplayer->MyAgent[p_panel->ID];
-            if ((p_agent == NULL) || (p_agent->Flag & 0x02) || (p_agent->Flag2 & 0x10))
+            if ((p_agent == NULL) || ((p_agent->Flag & 0x02) != 0) || ((p_agent->Flag2 & 0x10) != 0))
                 return 0;
             if (p_locplayer->DoubleMode) {
                 byte_153198 = p_panel->ID + 1;
@@ -7672,7 +7673,7 @@ TbBool check_panel_input(short panel)
         case 2:
             // Change mood / drugs level
             p_agent = p_locplayer->MyAgent[p_panel->ID];
-            if ((p_agent != NULL) && (p_agent->State != 13))
+            if ((p_agent != NULL) && (p_agent->State != PerSt_DEAD))
             {
                 p_locplayer->UserInput[mouser].ControlMode |= 0x8000;
                 i = 2 * (mouse_position_over_horizonal_bar(p_panel->X, p_panel->Width)) - 88;
@@ -7686,22 +7687,24 @@ TbBool check_panel_input(short panel)
             }
             break;
         case 5:
+            // Weapon selection for single agent
             p_agent = p_locplayer->MyAgent[p_panel->ID];
-            if (p_agent == NULL)
-                break;
-            if (p_agent->State == 13 || !person_can_accept_control(p_agent))
-                break;
-            p_locplayer->UserInput[mouser].ControlMode |= 0x8000;
-            p_locplayer->PanelState[mouser] = p_panel->ID + 1;
-            return 1;
+            if ((p_agent != NULL) && (p_agent->State != PerSt_DEAD) && person_can_accept_control(p_agent))
+            {
+                p_locplayer->UserInput[mouser].ControlMode |= 0x8000;
+                p_locplayer->PanelState[mouser] = p_panel->ID + 1;
+                return 1;
+            }
+            break;
         case 6:
+            // Use medikit
             p_agent = p_locplayer->MyAgent[p_panel->ID];
-            if (p_agent == NULL)
-                break;
-            if ((p_agent->U.UPerson.WeaponsCarried & 0xC000000) == 0)
-                break;
-            my_build_packet(p_pckt, PAct_32, p_agent->ThingOffset, 0, 0, 0);
-            return 1;
+            if ((p_agent != NULL) && person_carries_any_medikit(p_agent))
+            {
+                my_build_packet(p_pckt, PAct_32, p_agent->ThingOffset, 0, 0, 0);
+                return 1;
+            }
+            break;
         case 8:
             // Enable supershield
             if (p_locplayer->DoubleMode && byte_153198 - 1 != mouser)
@@ -7718,6 +7721,7 @@ TbBool check_panel_input(short panel)
         case 10:
             if (mouse_over_infrared_slant_box(panel))
             {
+                // Toggle infrared view
                 if ((ingame.Flags & 0x8000) == 0)
                 {
                     dcthing = p_locplayer->DirectControl[mouser];
@@ -7738,10 +7742,11 @@ TbBool check_panel_input(short panel)
             }
             else
             {
+                // Increase agent grouping
                 dcthing = p_locplayer->DirectControl[mouser];
                 p_locplayer->UserInput[mouser].ControlMode |= 0x8000;
                 if (panel_active_based_on_target(panel))
-                    my_build_packet(p_pckt, PAct_PROTECT, dcthing, 0, 0, 0);
+                    my_build_packet(p_pckt, PAct_PROTECT_INC, dcthing, 0, 0, 0);
             }
             return 1;
         default:
@@ -7762,8 +7767,9 @@ TbBool check_panel_input(short panel)
         switch (p_panel->Type)
         {
         case 2:
+            // Change mood / drugs level
             p_agent = p_locplayer->MyAgent[p_panel->ID];
-            if ((p_agent != NULL) && (p_agent->State != 13))
+            if ((p_agent != NULL) && (p_agent->State != PerSt_DEAD))
             {
                 p_locplayer->UserInput[mouser].ControlMode |= 0x4000;
                 i = 2 * (mouse_position_over_horizonal_bar(p_panel->X, p_panel->Width)) - 88;
@@ -7777,24 +7783,23 @@ TbBool check_panel_input(short panel)
             }
             break;
         case 5:
+            // Weapon selection for all grouped agent
             p_agent = p_locplayer->MyAgent[p_panel->ID];
-            if (p_agent != NULL)
+            if ((p_agent != NULL) && person_can_accept_control(p_agent))
             {
-                if (!person_can_accept_control(p_agent))
-                {
-                    p_locplayer->UserInput[mouser].ControlMode |= 0x4000;
-                    p_locplayer->PanelState[mouser] = p_panel->ID + 5;
-                    return 1;
-                }
+                p_locplayer->UserInput[mouser].ControlMode |= 0x4000;
+                p_locplayer->PanelState[mouser] = p_panel->ID + 5;
+                return 1;
             }
             break;
         case 10:
+            // Switch grouping fully on or fully off
             p_locplayer->UserInput[mouser].ControlMode |= 0x4000;
             if (panel_active_based_on_target(panel))
             {
                 short dcthing;
                 dcthing = p_locplayer->DirectControl[mouser];
-                my_build_packet(p_pckt, PAct_UNPROTECT, dcthing, 0, 0, 0);
+                my_build_packet(p_pckt, PAct_PROTECT_TOGGLE, dcthing, 0, 0, 0);
             }
             return 1;
         default:
