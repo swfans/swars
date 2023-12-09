@@ -7418,7 +7418,9 @@ ubyte do_user_interface(void)
     return 0;
 }
 
-TbBool panel_linked_person_is_alive(short panel)
+/** Returns if a game panel is active, considering the target which it controls.
+ */
+TbBool panel_active_based_on_target(short panel)
 {
     struct GamePanel *p_panel;
     PlayerInfo *p_locplayer;
@@ -7427,9 +7429,10 @@ TbBool panel_linked_person_is_alive(short panel)
     p_panel = &game_panel[panel];
 
     if (p_panel->Type == 8 || p_panel->Type == 10)
-        return false;
+        return true;
+
     if (p_panel->ID >= playable_agents)
-        return false;
+        return true;
 
     p_locplayer = &players[local_player_no];
     p_agent = p_locplayer->MyAgent[p_panel->ID];
@@ -7458,32 +7461,35 @@ TbBool mouse_move_over_panel(short panel)
         h = 2 * p_panel->Height;
     }
 
-    if (!panel_linked_person_is_alive(panel))
+    if (!panel_active_based_on_target(panel))
         return false;
 
     if (p_panel->ID >= playable_agents)
         return false;
-
 
     ms_x = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
     ms_y = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
     return in_box(ms_x, ms_y, x, y, w, h);
 }
 
-TbBool mouse_over_infrared_slant_box(void)
+TbBool mouse_over_infrared_slant_box(short panel)
 {
+    struct GamePanel *p_panel;
+    short x, y;
     short ms_x, ms_y;
     short delta_x, delta_y;
-    short y;
 
-    y = lbDisplay.GraphicsScreenHeight < 400 ? 222 : 315;
+    p_panel = &game_panel[panel];
+
+    x = p_panel->X;
+    y = lbDisplay.GraphicsScreenHeight < 400 ? (p_panel->Y + 44) : (p_panel->Y + 48);
 
     ms_x = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MouseX : lbDisplay.MouseX;
     ms_y = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MouseY : lbDisplay.MouseY;
-    delta_x = ms_x + 22;
-    delta_y = ms_y - 222;
+    delta_x = (ms_x - x);
+    delta_y = (ms_y - y);
 
-    return (ms_y > y) && (delta_x - delta_y < 22);
+    return (ms_y > y) && (delta_x + 22 - delta_y < 22);
 }
 
 short mouse_position_over_horizonal_bar(short x, short w)
@@ -7631,6 +7637,210 @@ TbBool check_scanner_input(void)
     return false;
 }
 
+TbBool check_panel_input(short panel)
+{
+    PlayerInfo *p_locplayer;
+    int i;
+
+    p_locplayer = &players[local_player_no];
+
+    if (lbDisplay.LeftButton)
+    {
+        struct Packet *p_pckt;
+        struct Thing *p_agent;
+        struct GamePanel *p_panel;
+        short dcthing;
+
+        lbDisplay.LeftButton = 0;
+        p_panel = &game_panel[panel];
+        p_pckt = &packets[local_player_no];
+
+        switch (p_panel->Type)
+        {
+        case 1:
+            p_agent = p_locplayer->MyAgent[p_panel->ID];
+            if ((p_agent == NULL) || (p_agent->Flag & 0x02) || (p_agent->Flag2 & 0x10))
+                return 0;
+            if (p_locplayer->DoubleMode) {
+                byte_153198 = p_panel->ID + 1;
+            } else {
+                dcthing = p_locplayer->DirectControl[0];
+                build_packet(p_pckt, PAct_17, dcthing, p_agent->ThingOffset, 0, 0);
+                p_locplayer->UserInput[0].ControlMode |= 0x8000;
+            }
+            return 1;
+        case 2:
+            p_agent = p_locplayer->MyAgent[p_panel->ID];
+            if ((p_agent == NULL) || (p_agent->State == 13))
+                break;
+            p_locplayer->UserInput[mouser].ControlMode |= 0x8000;
+            i = 2 * (mouse_position_over_horizonal_bar(p_panel->X, p_panel->Width)) - 88;
+            if (panel_active_based_on_target(panel))
+                my_build_packet(p_pckt, PAct_SET_MOOD, p_agent->ThingOffset, i, 0, 0);
+            p_locplayer->PanelState[mouser] = game_panel[panel].ID + 9;
+            if (!IsSamplePlaying(0, 21, 0))
+                play_sample_using_heap(0, 21, 127, 64, 100, -1, 1u);
+            ingame.Flags |= 0x100000;
+            return 1;
+        case 5:
+            p_agent = p_locplayer->MyAgent[p_panel->ID];
+            if (p_agent == NULL)
+                break;
+            if (p_agent->State == 13 || !person_can_accept_control(p_agent))
+                break;
+            p_locplayer->UserInput[mouser].ControlMode |= 0x8000;
+            p_locplayer->PanelState[mouser] = p_panel->ID + 1;
+            return 1;
+        case 6:
+            p_agent = p_locplayer->MyAgent[p_panel->ID];
+            if (p_agent == NULL)
+                break;
+            if ((p_agent->U.UPerson.WeaponsCarried & 0xC000000) == 0)
+                break;
+            my_build_packet(p_pckt, 0x32u, p_agent->ThingOffset, 0, 0, 0);
+            return 1;
+        case 8:
+            if (p_locplayer->DoubleMode && byte_153198 - 1 != mouser)
+                break;
+            if (p_locplayer->DoubleMode)
+                break;
+            dcthing = p_locplayer->DirectControl[mouser];
+            if (things[dcthing].Flag & 0x02)
+                break;
+            p_agent = p_locplayer->MyAgent[p_panel->ID];
+            build_packet(p_pckt, PAct_SHIELD_TOGGLE, dcthing, p_agent->ThingOffset, 0, 0);
+            p_locplayer->UserInput[mouser].ControlMode |= 0x8000;
+            return 1;
+        case 10:
+            if (mouse_over_infrared_slant_box(panel))
+            {
+                if ((ingame.Flags & 0x8000) == 0)
+                {
+                    dcthing = p_locplayer->DirectControl[mouser];
+                    if (things[dcthing].U.UPerson.Energy > 100)
+                    {
+                        char locstr[52];
+                        sprintf(locstr, "qdata/pal%d.dat", 3);
+                        ingame.Flags |= 0x8000;
+                        play_sample_using_heap(0, 35, 127, 64, 100, 0, 1);
+                        LbFileLoadAt(locstr, display_palette);
+                    }
+                }
+                else
+                {
+                    ingame.Flags &= ~0x8000;
+                    change_brightness(0);
+                }
+            }
+            else
+            {
+                dcthing = p_locplayer->DirectControl[mouser];
+                p_locplayer->UserInput[mouser].ControlMode |= 0x8000;
+                if (panel_active_based_on_target(panel))
+                    my_build_packet(p_pckt, PAct_PROTECT, dcthing, 0, 0, 0);
+            }
+            return 1;
+        default:
+            break;
+        }
+    }
+
+    if (lbDisplay.RightButton)
+    {
+        struct Packet *p_pckt;
+        struct Thing *p_agent;
+        struct GamePanel *p_panel;
+
+        lbDisplay.RightButton = 0;
+        p_panel = &game_panel[panel];
+        p_pckt = &packets[local_player_no];
+
+        switch (p_panel->Type)
+        {
+        case 2:
+            p_agent = p_locplayer->MyAgent[p_panel->ID];
+            if ((p_agent != NULL) && (p_agent->State != 13))
+            {
+                p_locplayer->UserInput[mouser].ControlMode |= 0x4000;
+                i = 2 * (mouse_position_over_horizonal_bar(p_panel->X, p_panel->Width)) - 88;
+                if (panel_active_based_on_target(panel))
+                    my_build_packet(p_pckt, PAct_34, p_agent->ThingOffset, i, 0, 0);
+                p_locplayer->PanelState[mouser] = p_panel->ID + 13;
+                if (!IsSamplePlaying(0, 21, 0))
+                    play_sample_using_heap(0, 21, 127, 64, 100, -1, 1u);
+                ingame.Flags |= 0x100000;
+                return 1;
+            }
+            break;
+        case 5:
+            p_agent = p_locplayer->MyAgent[p_panel->ID];
+            if (p_agent != NULL)
+            {
+                if (!person_can_accept_control(p_agent))
+                {
+                    p_locplayer->UserInput[mouser].ControlMode |= 0x4000;
+                    p_locplayer->PanelState[mouser] = p_panel->ID + 5;
+                    return 1;
+                }
+            }
+            break;
+        case 10:
+            p_locplayer->UserInput[mouser].ControlMode |= 0x4000;
+            if (panel_active_based_on_target(panel))
+            {
+                short dcthing;
+                dcthing = p_locplayer->DirectControl[mouser];
+                my_build_packet(p_pckt, PAct_UNPROTECT, dcthing, 0, 0, 0);
+            }
+            return 1;
+        default:
+            break;
+        }
+    }
+
+    if (lbDisplay.MRightButton)
+    {
+        struct Packet *p_pckt;
+        struct Thing *p_agent;
+        struct GamePanel *p_panel;
+
+        p_panel = &game_panel[panel];
+        p_pckt = &packets[local_player_no];
+
+        switch (p_panel->Type)
+        {
+        case 1:
+            if (!p_locplayer->DoubleMode)
+            {
+                p_agent = p_locplayer->MyAgent[p_panel->ID];
+                if ((p_agent != NULL) && ((p_agent->Flag & 0x02) != 0))
+                {
+                    ushort dcthing;
+
+                    dcthing = p_locplayer->DirectControl[mouser];
+                    if ((things[dcthing].Flag & 0x0400) == 0)
+                    {
+                        ingame.TrackX = p_agent->X >> 8;
+                        engn_yc = p_agent->Y >> 8;
+                        ingame.TrackZ = p_agent->Z >> 8;
+                        build_packet(p_pckt, PAct_17, dcthing, p_agent->ThingOffset, 0, 0);
+                        if (p_agent->ThingOffset == dcthing)
+                        {
+                            engn_xc = p_agent->X >> 8;
+                            engn_zc = p_agent->Z >> 8;
+                        }
+                        return 1;
+                    }
+                }
+            }
+            break;
+        default:
+            break;
+        }
+    }
+    return 0;
+}
+
 TbBool check_panel_button(void)
 {
 #if 0
@@ -7639,6 +7849,8 @@ TbBool check_panel_button(void)
         : "=r" (ret) : );
     return ret;
 #else
+    short panel, tot_panels;
+
     if (lbDisplay.LeftButton && lbDisplay.RightButton)
     {
         struct Packet *p_pckt;
@@ -7661,11 +7873,16 @@ TbBool check_panel_button(void)
             return 1;
     }
 
-    // The rest of this function is not remade yet
-    ubyte ret;
-    asm volatile ("call ASM_check_panel_button\n"
-        : "=r" (ret) : );
-    return ret;
+    tot_panels = lbDisplay.GraphicsScreenHeight < 400 ? 17 : 18;
+    for (panel = tot_panels; panel >= 0; panel--)
+    {
+        if (mouse_move_over_panel(panel))
+        {
+            if (check_panel_input(panel))
+                return 1;
+        }
+    }
+    return 0;
 #endif
 }
 
