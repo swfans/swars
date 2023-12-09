@@ -55,7 +55,7 @@ ubyte sub_71694(int a1, int a2, char *text, int a4, ubyte a5, ubyte a6)
 
 TbBool input_kicked_left_arrow(struct ScreenBox *box, short *target)
 {
-    if (mouse_move_over_kicked_box(box))
+    if (mouse_move_over_slant_box(box))
     {
         if (lbDisplay.MLeftButton)
         {
@@ -71,7 +71,7 @@ TbBool input_kicked_left_arrow(struct ScreenBox *box, short *target)
 
 TbBool input_kicked_right_arrow(struct ScreenBox *box, short *target)
 {
-    if (mouse_move_over_kicked_box(box))
+    if (mouse_move_over_slant_box(box))
     {
         if (lbDisplay.MLeftButton)
         {
@@ -85,7 +85,7 @@ TbBool input_kicked_right_arrow(struct ScreenBox *box, short *target)
     return false;
 }
 
-TbBool input_kicked_box(struct ScreenBox *box, short *target)
+TbBool input_slant_box(struct ScreenBox *box, short *target)
 {
     int ms_x, ms_y;
 
@@ -154,7 +154,7 @@ void draw_parallelogram_45degi(short x, short y, short w, short h, TbPixel colr2
     }
 }
 
-void draw_kicked_box(struct ScreenBox *box, TbPixel colr2)
+void draw_slant_box(struct ScreenBox *box, TbPixel colr2)
 {
     draw_parallelogram_45degi(box->X, box->Y, box->Width, box->Height, colr2);
     if (lbDisplay.GraphicsScreenHeight >= 400)
@@ -170,7 +170,7 @@ void draw_kicked_left_arrow(struct ScreenBox *box, TbPixel colr2)
     else
         stp = 2;
 
-    if (mouse_move_over_kicked_box(box))
+    if (mouse_move_over_slant_box(box))
     {
         if (lbDisplay.GraphicsScreenHeight < 400)
             LbSpriteDrawOneColour(box->X >> 1, (box->Y >> 1) - stp, &pop1_sprites[100],
@@ -197,7 +197,7 @@ void draw_kicked_right_arrow(struct ScreenBox *box, TbPixel colr2)
     else
         stp = 2;
 
-    if (mouse_move_over_kicked_box(box))
+    if (mouse_move_over_slant_box(box))
     {
         if (lbDisplay.GraphicsScreenHeight < 400)
             LbSpriteDrawOneColour((box->X >> 1) - stp, (box->Y >> 1) - stp,
@@ -377,7 +377,7 @@ TbBool pause_screen_handle(void)
         box3.Height = 18;
 
         // Draw the main slider box
-        draw_kicked_box(&box1, colr2);
+        draw_slant_box(&box1, colr2);
         // Draw the side arrows
         draw_kicked_left_arrow(&box2, colr2);
         draw_kicked_right_arrow(&box3, colr2);
@@ -386,7 +386,7 @@ TbBool pause_screen_handle(void)
             affected = target;
         if (input_kicked_right_arrow(&box3, target))
             affected = target;
-        if (input_kicked_box(&box1, target))
+        if (input_slant_box(&box1, target))
             affected = target;
 
         if (*target) // Draw slider box filling
@@ -396,7 +396,7 @@ TbBool pause_screen_handle(void)
             box4.Y = box1.Y + 2;
             box4.Width = (box1.Width - 6) * (*target) / 322;
             box4.Height = box1.Height - 4;
-            draw_kicked_box(&box4, colour_lookup[1]);
+            draw_slant_box(&box4, colour_lookup[1]);
         }
         }
 
@@ -420,7 +420,7 @@ TbBool pause_screen_handle(void)
         box3.Width = 8;
         box3.Height = 18;
 
-        draw_kicked_box(&box1, colr2);
+        draw_slant_box(&box1, colr2);
         draw_kicked_left_arrow(&box2, colr2);
         draw_kicked_right_arrow(&box3, colr2);
 
@@ -428,7 +428,7 @@ TbBool pause_screen_handle(void)
             affected = target;
         if (input_kicked_right_arrow(&box3, target))
             affected = target;
-        if (input_kicked_box(&box1, target))
+        if (input_slant_box(&box1, target))
             affected = target;
 
         if (*target)
@@ -438,7 +438,7 @@ TbBool pause_screen_handle(void)
             box4.Y = box1.Y + 2;
             box4.Width = (box1.Width - 6) * (*target) / 322;
             box4.Height = box1.Height - 4;
-            draw_kicked_box(&box4, colour_lookup[1]);
+            draw_slant_box(&box4, colour_lookup[1]);
         }
         }
 
@@ -462,7 +462,7 @@ TbBool pause_screen_handle(void)
         box3.Width = 8;
         box3.Height = 18;
 
-        draw_kicked_box(&box1, colr2);
+        draw_slant_box(&box1, colr2);
         draw_kicked_left_arrow(&box2, colr2);
         draw_kicked_right_arrow(&box3, colr2);
 
@@ -470,7 +470,7 @@ TbBool pause_screen_handle(void)
             affected = target;
         if (input_kicked_right_arrow(&box3, target))
             affected = target;
-        if (input_kicked_box(&box1, target))
+        if (input_slant_box(&box1, target))
             affected = target;
 
         if (*target)
@@ -480,7 +480,7 @@ TbBool pause_screen_handle(void)
             box4.Y = box1.Y + 2;
             box4.Width = (box1.Width - 6) * (*target) / 322;
             box4.Height = box1.Height - 4;
-            draw_kicked_box(&box4, colour_lookup[1]);
+            draw_slant_box(&box4, colour_lookup[1]);
         }
         }
 
