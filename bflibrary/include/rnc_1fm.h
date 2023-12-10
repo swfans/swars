@@ -60,6 +60,12 @@ long rnc_unpack(void *packed, void *unpacked, unsigned int flags, long *leeway);
 const char *rnc_error(long errcode);
 long rnc_crc(void *data, unsigned long len);
 
+/** Decompresses RNC memory buffer, writing in place of compressed data.
+ *
+ * @param buffer The buffer with compressed RNC file, and also output buffer.
+ * @param bufsize Size of the output buffer; in most cases you want it
+ *   to be large enough to fit the whole decompressed file.
+ */
 long UnpackM1(unsigned char *buffer, unsigned long bufsize);
 
 #ifdef __cplusplus
