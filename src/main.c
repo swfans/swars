@@ -163,7 +163,7 @@ static TbBool process_options(int *argc, char ***argv)
 
         case 'E':
             tmpint = atoi(optarg);
-            if ( joy_grip_unknsub_08(tmpint) != -1 )
+            if ( JoySetInterrupt(tmpint) != -1 )
               unkn01_maskarr[17] = 17;
             break;
 

@@ -178,13 +178,13 @@ int CallIPX(ubyte a1)
     memset(&regs, 0, sizeof(union REGS));
     /* Use DMPI call 300h to issue the DOS interrupt */
     regs.x.eax = 0x300;
-    regs.x.ebx = IPXHandler->field_0;
+    regs.x.ebx = IPXHandler->InterruptNo;
     segread(&sregs);
     regs.x.edi = (unsigned int)&dpmi_regs;
     return int386x(0x31, &regs, &regs, &sregs);
 }
 
-ubyte CallRealModeInterrupt(ubyte a1, struct DPMI_REGS *dpmi_regs)
+static ubyte CallRealModeInterrupt(ubyte intno, struct DPMI_REGS *dpmi_regs)
 {
     union REGS regs;
     struct SREGS sregs;
@@ -192,7 +192,7 @@ ubyte CallRealModeInterrupt(ubyte a1, struct DPMI_REGS *dpmi_regs)
     memset(&regs, 0, sizeof(union REGS));
     /* Use DMPI call 300h to issue the DOS interrupt */
     regs.x.eax = 0x300;
-    regs.x.ebx = a1;
+    regs.x.ebx = intno;
     segread(&sregs);
     regs.x.edi = (unsigned int)dpmi_regs;
     int386x(49, &regs, &regs, &sregs);

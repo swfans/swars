@@ -33,7 +33,7 @@
 #endif
 
 /******************************************************************************/
-extern uint32_t grip_unkvar080;
+extern struct TbInputHandler *InputHandler;
 extern uint8_t joy_grip_initialized;
 extern uint8_t joy_spbal_initialized;
 
@@ -43,11 +43,11 @@ extern int32_t dword_1E2F2C;
 extern int32_t dword_1E2F30;
 extern uint8_t byte_1E2F34;
 /******************************************************************************/
-int joy_grip_unknsub_08(int val)
+int JoySetInterrupt(short val)
 {
     if (!val)
         return -1;
-    grip_unkvar080 = val;
+    InputHandler->InterruptNo = val;
     return 1;
 }
 
@@ -202,6 +202,48 @@ void joy_func_065_lab93(struct DevInput *dinp, short ipos)
     }
 }
 
+#if defined(DOS)||defined(GO32)
+
+static int CallRealModeInterrupt(ushort intno, struct DPMI_REGS *dpmi_regs)
+{
+    union REGS regs;
+    struct SREGS sregs;
+
+    memset(&regs, 0, sizeof(union REGS));
+    /* Use DMPI call 300h to issue the DOS interrupt */
+    regs.x.eax = 0x300;
+    regs.x.ebx = intno;
+    segread(&sregs);
+    regs.x.edi = (unsigned int)dpmi_regs;
+    int386x(49, &regs, &regs, &sregs);
+    return dpmi_regs->eax;
+}
+
+int CallJoy(ushort a1)
+{
+    struct DPMI_REGS dpmi_regs;
+
+    InputHandler->field_2 = a1;
+    memset(&dpmi_regs, 0, sizeof(struct DPMI_REGS));
+    return CallRealModeInterrupt(InputHandler->InterruptNo, &dpmi_regs);
+}
+
+#endif
+
+int joy_func_065_sub6(struct DevInput *dinp, short ipos)
+{
+    if (InputHandler == NULL) {
+        dinp->Type = 17;
+        return -1;
+    }
+#if defined(DOS)||defined(GO32)
+    CallJoy(2);
+    memcpy(dinp, &InputHandler->Input, sizeof(struct DevInput));
+#endif
+    dinp->Type = 17;
+    return 1;
+}
+
 int joy_func_065_sub8(struct DevInput *dinp, short ipos)
 {
     long val, thresh;
@@ -284,6 +326,57 @@ int joy_func_065_sub8(struct DevInput *dinp, short ipos)
     val = joy_func_251(dinp->AnalogueV[ipos], dinp->VCentre[ipos], dinp->MinVAxis[ipos], dinp->MaxVAxis[ipos]);
     dinp->AnalogueV[ipos] = val;
     return 0;
+}
+
+int joy_func_065_sub7(struct DevInput *dinp, short ipos)
+{
+#if defined(DOS)||defined(GO32)
+    short gridx, i;
+    ushort classmap;
+    short val;
+    long lval;
+
+    GrRefresh(0);
+    for (gridx = 1, i = 0; gridx < 5; gridx++, i++)
+    {
+        classmap = GrGetClassMap(gridx);
+        if ((classmap & 0x02) == 0) {
+            dinp->DeviceType[i] = 0;
+            continue;
+        }
+        dinp->Init[i] = 1;
+
+        val = GrGetValue(gridx, 2, 0) - 1;
+        dinp->DigitalX[i] = val;
+        val = 1 - GrGetValue(gridx, 2, 1);
+        dinp->DigitalY[i] = val;
+
+        val = GrGetPackedValues(gridx, 1, 0, 9);
+        lval = val >> 2;
+        if (val & 0x01)
+            lval |= 0x80;
+        if (val & 0x02)
+            lval |= 0x40;
+        dinp->Buttons[i] = lval;
+
+        val = dinp->DigitalX[i];
+        if (val == -1)
+            dinp->AnalogueX[i] = -0x7FFF;
+        else if (val == 1)
+            dinp->AnalogueX[i] = 0x7FFF;
+
+        val = dinp->DigitalY[i];
+        if (val == -1)
+            dinp->AnalogueY[i] = -0x7FFF;
+        else if (val == 1)
+            dinp->AnalogueY[i] = 0x7FFF;
+
+        dinp->DeviceType[i] = 112;
+    }
+#endif
+    if (dinp->NumberOfDevices == 0)
+        return -1;
+    return 1;
 }
 
 int joy_func_065_sub9(struct DevInput *dinp, short ipos)

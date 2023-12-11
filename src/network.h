@@ -242,7 +242,7 @@ struct TbIPXPlayer {
 };
 
 struct TbIPXHandler {
-  short field_0;
+  short InterruptNo;
   short field_2;
   short PlayerDataSize;
   short field_6;
