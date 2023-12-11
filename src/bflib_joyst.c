@@ -37,13 +37,169 @@ extern uint32_t grip_unkvar080;
 extern uint8_t joy_grip_initialized;
 extern uint8_t joy_spbal_initialized;
 
+extern int32_t dword_1E2F24;
+extern int32_t dword_1E2F28;
+extern int32_t dword_1E2F2C;
+extern int32_t dword_1E2F30;
+extern uint8_t byte_1E2F34;
 /******************************************************************************/
 int joy_grip_unknsub_08(int val)
 {
-  if ( !val )
-    return -1;
-  grip_unkvar080 = val;
-  return 1;
+    if (!val)
+        return -1;
+    grip_unkvar080 = val;
+    return 1;
+}
+
+int joy_func_251(int val, int acen, int amin, int amax)
+{
+    int ret;
+    asm volatile (
+      "call ASM_joy_func_251\n"
+        : "=r" (ret) : "a" (val), "d" (acen), "b" (amin), "c" (amax));
+    return ret;
+}
+
+void joy_func_065_lab93(struct DevInput *dinp, short ipos)
+{
+    long val, thresh;
+
+    switch (dinp->ConfigType[ipos])
+    {
+    case 1:
+    case 3:
+    case 12:
+        byte_1E2F34 = ~(byte_1E2F34 >> 4) & 0xF;
+        dinp->Buttons[ipos] = (byte_1E2F34 | dinp->Buttons[ipos]) & 3;
+        break;
+    case 2:
+    case 4:
+    case 5:
+    case 7:
+    case 9:
+    case 13:
+    case 21:
+        byte_1E2F34 = ~(byte_1E2F34 >> 4) & 0xF;
+        dinp->Buttons[ipos] |= byte_1E2F34;
+        if (dinp->ConfigType[ipos] == 9)
+        {
+            if (dword_1E2F2C < dinp->HatMax[ipos])
+                dinp->Buttons[ipos] |= 0x10;
+            if (dword_1E2F30 < dinp->HatMax[ipos])
+                dinp->Buttons[ipos] |= 0x20;
+        }
+        break;
+    case 6:
+    case 8:
+    case 10:
+    case 11:
+    case 14:
+    case 15:
+    case 16:
+    case 17:
+    case 18:
+    case 19:
+        break;
+    case 20:
+        byte_1E2F34 = ~(byte_1E2F34 >> 4) & 0xF;
+        dinp->Buttons[ipos] = 0;
+        dinp->HatY[ipos] = 0;
+        dinp->HatX[ipos] = dinp->HatY[ipos];
+        switch (byte_1E2F34)
+        {
+        case 15:
+            dinp->HatY[ipos] = -1;
+            break;
+        case 11:
+            dinp->HatX[ipos] = 1;
+            break;
+        case 7:
+            dinp->HatY[ipos] = 1;
+            break;
+        case 3:
+            dinp->HatX[ipos] = -1;
+            break;
+        default:
+            dinp->Buttons[ipos] = byte_1E2F34;
+            break;
+        }
+        break;
+    default:
+        break;
+    }
+
+    {
+        if (dinp->MinXAxis[ipos] > dword_1E2F24)
+            dinp->MinXAxis[ipos] = dword_1E2F24;
+        if (dinp->MaxXAxis[ipos] < dword_1E2F24)
+            dinp->MaxXAxis[ipos] = dword_1E2F24;
+    }
+    {
+        if (dinp->MinYAxis[ipos] > dword_1E2F28)
+            dinp->MinYAxis[ipos] = dword_1E2F28;
+        if (dinp->MaxYAxis[ipos] < dword_1E2F28)
+            dinp->MaxYAxis[ipos] = dword_1E2F28;
+    }
+    if ((dinp->DeviceType[ipos] & 0x80) != 0)
+    {
+        if (dinp->MinZAxis[ipos] > dword_1E2F30)
+            dinp->MinZAxis[ipos] = dword_1E2F30;
+        if (dinp->MaxZAxis[ipos] < dword_1E2F30)
+            dinp->MaxZAxis[ipos] = dword_1E2F30;
+    }
+
+    {
+        dinp->XCentre[ipos] = dinp->MinXAxis[ipos] + ((dinp->MaxXAxis[ipos] - dinp->MinXAxis[ipos]) >> 1);
+    }
+    {
+        dinp->YCentre[ipos] = dinp->MinYAxis[ipos] + ((dinp->MaxYAxis[ipos] - dinp->MinYAxis[ipos]) >> 1);
+    }
+    if ((dinp->DeviceType[ipos] & 0x80) != 0) {
+        dinp->ZCentre[ipos] = dinp->MinZAxis[ipos] + ((dinp->MaxZAxis[ipos] - dinp->MinZAxis[ipos]) >> 1);
+    }
+
+    {
+        thresh = dinp->XCentre[ipos] >> 1;
+        val = 0;
+        if (dinp->MinXAxis[ipos] + thresh > dword_1E2F24)
+            val = -1;
+        if (dinp->MaxXAxis[ipos] - thresh < dword_1E2F24)
+            val = 1;
+        dinp->DigitalX[ipos] = val;
+    }
+    {
+        thresh = dinp->YCentre[ipos] >> 1;
+        val = 0;
+        if (dinp->MinYAxis[ipos] + thresh > dword_1E2F28)
+            val = -1;
+        if (dinp->MaxYAxis[ipos] - thresh < dword_1E2F28)
+            val = 1;
+        dinp->DigitalY[ipos] = val;
+    }
+    if ((dinp->DeviceType[ipos] & 0x80) != 0)
+    {
+        thresh = dinp->ZCentre[ipos] >> 1;
+        val = 0;
+        if (dinp->MinZAxis[ipos] + thresh > dword_1E2F30)
+            val = -1;
+        if (dinp->MaxZAxis[ipos] - thresh < dword_1E2F30)
+            val = 1;
+        dinp->DigitalZ[ipos] = val;
+    }
+
+    {
+      val = joy_func_251(dword_1E2F24, dinp->XCentre[ipos], dinp->MinXAxis[ipos], dinp->MaxXAxis[ipos]);
+      dinp->AnalogueX[ipos] = val;
+    }
+    {
+      val = joy_func_251(dword_1E2F28, dinp->YCentre[ipos], dinp->MinYAxis[ipos], dinp->MaxYAxis[ipos]);
+      dinp->AnalogueY[ipos] = val;
+    }
+    if ((dinp->DeviceType[ipos] & 0x80) != 0)
+    {
+        val = joy_func_251(dword_1E2F30, dinp->ZCentre[ipos], dinp->MinZAxis[ipos], dinp->MaxZAxis[ipos]);
+        dinp->AnalogueZ[ipos] = val;
+    }
 }
 
 int joy_func_065(struct DevInput *dinp)
