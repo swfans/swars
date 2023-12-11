@@ -202,6 +202,120 @@ void joy_func_065_lab93(struct DevInput *dinp, short ipos)
     }
 }
 
+int joy_func_065_sub8(struct DevInput *dinp, short ipos)
+{
+    long val, thresh;
+
+#if defined(DOS)||defined(GO32)
+    {
+        struct SpwRawData spla;
+
+        SpwSimpleGet(0, &spla);
+        dinp->Init[ipos] = 1;
+
+        dinp->AnalogueX[ipos] = spla.anx + 512;
+        dinp->AnalogueY[ipos] = spla.any + 512;
+        dinp->AnalogueZ[ipos] = spla.anz + 512;
+        dinp->AnalogueR[ipos] = spla.anr + 512;
+        dinp->AnalogueU[ipos] = spla.anu + 512;
+        dinp->AnalogueV[ipos] = spla.anv + 512;
+        dinp->Buttons[ipos] = spla.butn;
+    }
+#endif
+
+    thresh = dinp->XCentre[ipos] >> 1;
+    val = 0;
+    if (dinp->AnalogueX[ipos] < dinp->MinXAxis[ipos] + thresh)
+        val = -1;
+    if (dinp->AnalogueX[ipos] > dinp->MaxXAxis[ipos] - thresh)
+        val = 1;
+    dinp->DigitalX[ipos] = val;
+
+    thresh = dinp->YCentre[ipos] >> 1;
+    val = 0;
+    if (dinp->AnalogueY[ipos] < dinp->MinYAxis[ipos] + thresh)
+        val = -1;
+    if (dinp->AnalogueY[ipos] > dinp->MaxYAxis[ipos] - thresh)
+        val = 1;
+    dinp->DigitalY[ipos] = val;
+
+    thresh = dinp->ZCentre[ipos] >> 1;
+    val = 0;
+    if (dinp->AnalogueZ[ipos] < dinp->MinZAxis[ipos] + thresh)
+        val = -1;
+    if (dinp->AnalogueZ[ipos] > dinp->MaxZAxis[ipos] - thresh)
+        val = 1;
+    dinp->DigitalZ[ipos] = val;
+
+    thresh = dinp->RCentre[ipos] >> 1;
+    val = 0;
+    if (dinp->AnalogueR[ipos] < dinp->MinRAxis[ipos] + thresh)
+        val = -1;
+    if (dinp->AnalogueR[ipos] > dinp->MaxRAxis[ipos] - thresh)
+        val = 1;
+    dinp->DigitalR[ipos] = val;
+
+    thresh = dinp->UCentre[ipos] >> 1;
+    val = 0;
+    if (dinp->AnalogueU[ipos] < dinp->MinUAxis[ipos] + thresh)
+        val = -1;
+    if (dinp->AnalogueU[ipos] > dinp->MaxUAxis[ipos] - thresh)
+        val = 1;
+    dinp->DigitalU[ipos] = val;
+
+    thresh = dinp->VCentre[ipos] >> 1;
+    val = 0;
+    if (dinp->AnalogueV[ipos] < dinp->MinVAxis[ipos] + thresh)
+        val = -1;
+    if (dinp->AnalogueV[ipos] > dinp->MaxVAxis[ipos] - thresh)
+        val = 1;
+    dinp->DigitalV[ipos] = val;
+
+    val = joy_func_251(dinp->AnalogueX[ipos], dinp->XCentre[ipos], dinp->MinXAxis[ipos], dinp->MaxXAxis[ipos]);
+    dinp->AnalogueX[ipos] = val;
+    val = joy_func_251(dinp->AnalogueY[ipos], dinp->YCentre[ipos], dinp->MinYAxis[ipos], dinp->MaxYAxis[ipos]);
+    dinp->AnalogueY[ipos] = val;
+    val = joy_func_251(dinp->AnalogueZ[ipos], dinp->ZCentre[ipos], dinp->MinZAxis[ipos], dinp->MaxZAxis[ipos]);
+    dinp->AnalogueZ[ipos] = val;
+    val = joy_func_251(dinp->AnalogueR[ipos], dinp->RCentre[ipos], dinp->MinRAxis[ipos], dinp->MaxRAxis[ipos]);
+    dinp->AnalogueR[ipos] = val;
+    val = joy_func_251(dinp->AnalogueU[ipos], dinp->UCentre[ipos], dinp->MinUAxis[ipos], dinp->MaxUAxis[ipos]);
+    dinp->AnalogueU[ipos] = val;
+    val = joy_func_251(dinp->AnalogueV[ipos], dinp->VCentre[ipos], dinp->MinVAxis[ipos], dinp->MaxVAxis[ipos]);
+    dinp->AnalogueV[ipos] = val;
+    return 0;
+}
+
+int joy_func_065_sub9(struct DevInput *dinp, short ipos)
+{
+#if defined(DOS)||defined(GO32)
+    int i;
+    ubyte val;
+
+    val = dinp->ConfigType[ipos] - 1;
+    _disable();
+    __outbyte(0x201, val);
+    for (i = 10000; i > 0; i--)
+    {
+        val = __inbyte(0x201);
+        if ((val & 0xB) == 0)
+          break;
+        if ((val & 1) == 0)
+          ++dword_1E2F24;
+        if ((val & 2) == 0)
+          ++dword_1E2F28;
+        if ((val & 8) == 0)
+          ++dword_1E2F30;
+    }
+    _enable();
+    byte_1E2F34 = val;
+    if (i == 0)
+        return 0;
+#endif
+    joy_func_065_lab93(dinp, ipos);
+    return 0;
+}
+
 int joy_func_065(struct DevInput *dinp)
 {
     int ret;
