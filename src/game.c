@@ -3375,6 +3375,7 @@ void init_outro(void)
     swap_wscreen();
     screen_dark_curtain_down();
     init_things();
+    //TODO hard-coded map ID
     change_current_map(51);
     load_outro_sprites();
 
@@ -4391,16 +4392,19 @@ void init_game(ubyte reload)
 
     missi = ingame.CurrentMission;
     next_mapno = mission_list[missi].MapNo;
-    LOGSYNC("Init mission %hu on map %hu", missi, next_mapno);
-    if (current_map != next_mapno)
-        change_current_map(next_mapno);
-    debug_trace_setup(0);
 
     if ((reload) && (mission_list[missi].ReLevelNo != 0)) {
         next_level = mission_list[missi].ReLevelNo;
     } else {
         next_level = mission_list[missi].LevelNo;
     }
+
+    LOGSYNC("Init %s mission %hu on map %hu level %hd", in_network_game ? "MP" : "SP",
+      missi, next_mapno, next_level);
+
+    if (current_map != next_mapno)
+        change_current_map(next_mapno);
+    debug_trace_setup(0);
 
     load_level_pc(-next_level, missi, reload);
     if (ingame.GameMode == GamM_None)
@@ -9282,7 +9286,6 @@ void show_load_and_prep_mission(void)
             update_open_brief();
         }
 
-        ingame.DisplayMode = DpM_UNKN_32;
         debug_trace_place(6);
         if ( in_network_game )
         {
@@ -9304,15 +9307,17 @@ void show_load_and_prep_mission(void)
             next_level = cities[unkn_city_no].Level;
             load_mission_name_text(missi);
         }
-        LOGSYNC("Init %s mission %hu on map %hu level %hd", in_network_game ? "MP" : "SP",
-          missi, next_mapno, next_level);
-        change_current_map(next_mapno);
-        debug_trace_place(7);
         // The file name is formatted in original code, but doesn't seem to be used
         //sprintf(fname, "maps/map%03d.scn", next_mapno);
         ingame.fld_unkC4F = 0;
         data_19ec6f = 1;
+
+        LOGSYNC("Init %s mission %hu on map %hu level %hd", in_network_game ? "MP" : "SP",
+          missi, next_mapno, next_level);
+        change_current_map(next_mapno);
+        debug_trace_place(7);
         execute_commands = 1;
+        ingame.DisplayMode = DpM_UNKN_32;
         if (next_level != 0)
             load_level_pc(-next_level, missi, 0);
         else
@@ -9358,14 +9363,31 @@ void show_load_and_prep_mission(void)
     LbGhostTableLoad(display_palette, 50, "data/synghost.tab");
     debug_trace_place(13);
 
+    if ( start_into_mission )
+    {
+        if (!in_network_game)
+        {
+            int i;
+            i = find_mission_for_city_in_brief(open_brief - 1, unkn_city_no);
+            ingame.CurrentMission = i;
+            debug_trace_place(15);
+        }
+        if (ingame.GameMode == GamM_None)
+            ingame.GameMode = GamM_Unkn2;
+        init_player();
+    }
+
     // Update game progress and prepare level to play
     if ( start_into_mission )
     {
         if ( in_network_game )
         {
+            int i;
             update_mission_time(1);
-            // why clear only 0x140 bytes?? the array is much larger
-            memset(mission_status, 0, sizeof(struct MissionStatus) * 8);
+            // In network game, mission status is per-player rather than per-mission
+            for (i = 0; i < 8; i++) {
+                clear_mission_status(i);
+            }
             gameturn = 0;
         }
         else
@@ -9376,17 +9398,13 @@ void show_load_and_prep_mission(void)
             }
             strncpy(unkn2_names[0], login_name, 16);
 
+            // Each mission has its status (unless in network game)
             clear_mission_status(open_brief);
             update_mission_time(1);
             cities[unkn_city_no].Info = 0;
-            debug_trace_place(14);
-
-            i = find_mission_for_city_in_brief(open_brief - 1, unkn_city_no);
-            ingame.CurrentMission = i;
             mission_result = 0;
-            debug_trace_place(15);
+            debug_trace_place(14);
         }
-        init_player();
     }
 
     // Set up remaining graphics data and controls
@@ -9394,9 +9412,6 @@ void show_load_and_prep_mission(void)
     {
         load_multicolor_sprites();
         adjust_mission_engine_to_video_mode();
-
-        if (ingame.GameMode == GamM_None)
-            ingame.GameMode = GamM_Unkn2;
 
         flic_unkn03(1);
         func_6edb8(1);
