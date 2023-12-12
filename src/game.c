@@ -9208,20 +9208,25 @@ void wait_for_sound_sample_finish(ushort smpl_id)
     }
 }
 
-void copy_to_screen_ani(ubyte *buf)
+void copy_from_screen_ani(ubyte *buf)
 {
+#if 0
+    asm volatile ("call ASM_copy_from_screen_ani\n"
+        : : "a" (buf));
+#else
     int y;
-    const ubyte *inp;
     ubyte *o;
+    const ubyte *inp;
 
-    inp = buf;
-    o = lbDisplay.WScreen;
+    o = buf;
+    inp = lbDisplay.WScreen;
     for (y = 0; y < 256; y++)
     {
         memcpy(o, inp, 256);
-        inp += 256;
-        o += lbDisplay.GraphicsScreenWidth;
+        o += 256;
+        inp += lbDisplay.GraphicsScreenWidth;
     }
+#endif
 }
 
 void frame_unkn_func_06(void)
