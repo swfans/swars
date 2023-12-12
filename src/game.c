@@ -4385,11 +4385,41 @@ void place_single_player(void)
       place_default_player(0, 1);
 }
 
+/** Macro for returning given array of elements in random order.
+ *
+ * Provided input and output arrays, type of element and count of elements,
+ * this routine will randomize the order of elements.
+ */
+#define array_elements_in_random_order(out_nubers, in_nubers, elem_type, count) \
+{ \
+    ushort pos, remain, next; \
+    elem_type nums[count]; \
+    memcpy(nums, in_nubers, sizeof(elem_type)*count); \
+    remain = count; \
+    for (pos = 0; pos < count; pos++) \
+    { \
+        elem_type nbak; \
+        next = LbRandomAnyShort() % remain; \
+        remain--; \
+        out_nubers[pos] = nums[next]; \
+        nbak = nums[remain]; \
+        nums[remain] = nums[next]; \
+        nums[next] = nbak; \
+    } \
+}
+
+void randomize_playable_groups_order(void)
+{
+    static long incrementing_nubers[] = {0, 1, 2, 3, 4, 5, 6, 7,};
+    array_elements_in_random_order(level_def.PlayableGroups, incrementing_nubers, long, 8);
+}
+
 void init_game(ubyte reload)
 {
     ushort missi, next_mapno;
     short next_level;
 
+    debug_trace_setup(1);
     missi = ingame.CurrentMission;
     next_mapno = mission_list[missi].MapNo;
 
@@ -4406,15 +4436,25 @@ void init_game(ubyte reload)
         change_current_map(next_mapno);
     debug_trace_setup(0);
 
-    load_level_pc(-next_level, missi, reload);
+    if (next_level != 0)
+        load_level_pc(-next_level, missi, reload);
+    else
+        LOGWARN("Requested level %hd; load skipped", next_level);
+    // The file name is formatted in original code, but doesn't seem to be used
+    //sprintf(fname, "maps/map%03d.scn", next_mapno);
+    debug_trace_setup(2);
+
     if (ingame.GameMode == GamM_None)
         ingame.GameMode = GamM_Unkn2;
-    debug_trace_setup(1);
+    if (in_network_game) {
+        randomize_playable_groups_order();
+    }
+    debug_trace_setup(3);
     init_player();
-    debug_trace_setup(2);
+    debug_trace_setup(4);
     execute_commands = 1;
     ingame.DisplayMode = DpM_UNKN_32;
-    debug_trace_setup(3);
+    debug_trace_setup(5);
 }
 
 void unkn_lights_func_11(void)
@@ -9172,35 +9212,6 @@ void update_open_brief(void)
     }
 }
 
-/** Macro for returning given array of elements in random order.
- *
- * Provided input and output arrays, type of element and count of elements,
- * this routine will randomize the order of elements.
- */
-#define array_elements_in_random_order(out_nubers, in_nubers, elem_type, count) \
-{ \
-    ushort pos, remain, next; \
-    elem_type nums[count]; \
-    memcpy(nums, in_nubers, sizeof(elem_type)*count); \
-    remain = count; \
-    for (pos = 0; pos < count; pos++) \
-    { \
-        elem_type nbak; \
-        next = LbRandomAnyShort() % remain; \
-        remain--; \
-        out_nubers[pos] = nums[next]; \
-        nbak = nums[remain]; \
-        nums[remain] = nums[next]; \
-        nums[next] = nbak; \
-    } \
-}
-
-void randomize_playable_groups_order(void)
-{
-    static long incrementing_nubers[] = {0, 1, 2, 3, 4, 5, 6, 7,};
-    array_elements_in_random_order(level_def.PlayableGroups, incrementing_nubers, long, 8);
-}
-
 void wait_for_sound_sample_finish(ushort smpl_id)
 {
     TbClockMSec last_loop_time = LbTimerClock();
@@ -9279,43 +9290,62 @@ void show_load_and_prep_mission(void)
 
     if ( start_into_mission )
     {
-        ushort missi, next_mapno;
-        short next_level;
+        ushort missi;
 
         if (!in_network_game) {
             update_open_brief();
         }
 
-        debug_trace_place(6);
+        ingame.fld_unkC4F = 0;
+        data_19ec6f = 1;
+
+        debug_trace_place(10);
         if ( in_network_game )
         {
             ingame.MissionNo = 1;
             missi = find_mission_with_mapid(cities[login_control__City].MapID, next_mission);
             if (missi > 0) {
                 ingame.MissionNo = missi;
-                ingame.CurrentMission = missi;
             }
-
             missi = ingame.MissionNo;
+            ingame.CurrentMission = missi;
+            debug_trace_place(11);
+        }
+        else
+        {
+            missi = find_mission_for_city_in_brief(open_brief - 1, unkn_city_no);
+            load_mission_name_text(missi);
+            ingame.CurrentMission = missi;
+            debug_trace_place(12);
+        }
+    }
+    else
+    {
+        LbMouseChangeSprite(&pointer_sprites[1]);
+        ingame.DisplayMode = DpM_UNKN_1;
+    }
+
+    if ( start_into_mission )
+    {
+        ushort missi, next_mapno;
+        short next_level;
+
+        missi = ingame.CurrentMission;
+        if ( in_network_game )
+        {
             next_mapno = mission_list[missi].MapNo;
             next_level = mission_list[missi].LevelNo;
         }
         else
         {
-            missi = find_mission_for_city_in_brief(open_brief - 1, unkn_city_no);
             next_mapno = cities[unkn_city_no].MapID;
             next_level = cities[unkn_city_no].Level;
-            load_mission_name_text(missi);
         }
-        // The file name is formatted in original code, but doesn't seem to be used
-        //sprintf(fname, "maps/map%03d.scn", next_mapno);
-        ingame.fld_unkC4F = 0;
-        data_19ec6f = 1;
 
         LOGSYNC("Init %s mission %hu on map %hu level %hd", in_network_game ? "MP" : "SP",
           missi, next_mapno, next_level);
         change_current_map(next_mapno);
-        debug_trace_place(7);
+        debug_trace_place(13);
         execute_commands = 1;
         ingame.DisplayMode = DpM_UNKN_32;
         if (next_level != 0)
@@ -9327,16 +9357,9 @@ void show_load_and_prep_mission(void)
         }
         debug_trace_place(8);
     }
-    else
-    {
-        LbMouseChangeSprite(&pointer_sprites[1]);
-        ingame.DisplayMode = DpM_UNKN_1;
-    }
 
-    debug_trace_place(9);
     data_1c498d = 2;
     reload_background_flag = 1;
-    debug_trace_place(10);
     {
         screen_buffer_fill_black();
         frame_unkn_func_06();
@@ -9344,9 +9367,10 @@ void show_load_and_prep_mission(void)
         show_black_screen();
         swap_wscreen();
     }
+    debug_trace_place(13);
     LbFileLoadAt("qdata/pal.pal", display_palette);
     LbPaletteSet(display_palette);
-    debug_trace_place(11);
+    debug_trace_place(15);
     if (game_high_resolution)
     {
         if (lbDisplay.ScreenMode != screen_mode_game_hi)
@@ -9358,23 +9382,17 @@ void show_load_and_prep_mission(void)
             setup_screen_mode(screen_mode_game_lo);
     }
 
-    debug_trace_place(12);
+    debug_trace_place(16);
     LbColourTablesLoad(display_palette, "data/tables.dat");
     LbGhostTableLoad(display_palette, 50, "data/synghost.tab");
-    debug_trace_place(13);
+    debug_trace_place(17);
 
     if ( start_into_mission )
     {
-        if (!in_network_game)
-        {
-            int i;
-            i = find_mission_for_city_in_brief(open_brief - 1, unkn_city_no);
-            ingame.CurrentMission = i;
-            debug_trace_place(15);
-        }
         if (ingame.GameMode == GamM_None)
             ingame.GameMode = GamM_Unkn2;
         init_player();
+        debug_trace_place(4);
     }
 
     // Update game progress and prepare level to play
@@ -9403,8 +9421,8 @@ void show_load_and_prep_mission(void)
             update_mission_time(1);
             cities[unkn_city_no].Info = 0;
             mission_result = 0;
-            debug_trace_place(14);
         }
+        debug_trace_place(19);
     }
 
     // Set up remaining graphics data and controls
