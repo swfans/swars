@@ -5,6 +5,12 @@ on:
   push:
     branches:
       - master
+  workflow_dispatch:
+    inputs:
+      refToBuild:
+        description: 'Branch, tag or commit SHA1 to build'
+        required: true
+        type: string
 
 jobs:
   ubuntu-gcc:
@@ -23,9 +29,17 @@ jobs:
           apt install -y \
             git
 
-      - name: Checkout
+      - name: Checkout code at latest head
+        if: "${{ inputs.refToBuild == '' }}"
         uses: actions/checkout@v3
         with:
+          fetch-depth: 0
+
+      - name: Checkout code at requested ref
+        if: "${{ inputs.refToBuild != '' }}"
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ inputs.refToBuild }}
           fetch-depth: 0
 
       - name: Set ownership
@@ -92,9 +106,17 @@ jobs:
       run:
         shell: msys2 {0}
     steps:
-      - name: Checkout
+      - name: Checkout code at latest head
+        if: "${{ inputs.refToBuild == '' }}"
         uses: actions/checkout@v3
         with:
+          fetch-depth: 0
+
+      - name: Checkout code at requested ref
+        if: "${{ inputs.refToBuild != '' }}"
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ inputs.refToBuild }}
           fetch-depth: 0
 
       - name: Install MSYS2
