@@ -42,6 +42,12 @@ extern int32_t dword_1E2F28;
 extern int32_t dword_1E2F2C;
 extern int32_t dword_1E2F30;
 extern uint8_t byte_1E2F34;
+
+extern int16_t word_1E6078;
+extern int16_t word_1E607A;
+extern int16_t word_1E607C;
+
+extern struct UnkVFXStruct1 vfxunk1;
 /******************************************************************************/
 int JoySetInterrupt(short val)
 {
@@ -49,6 +55,24 @@ int JoySetInterrupt(short val)
         return -1;
     InputHandler->InterruptNo = val;
     return 1;
+}
+
+int vfx1_unkn_func_03(void)
+{
+    int ret;
+    asm volatile (
+      "call ASM_vfx1_unkn_func_03\n"
+        : "=r" (ret) : );
+    return ret;
+}
+
+int vfx1_unkn_func_12(struct UnkVFXStruct1 *a1, short a2)
+{
+    int ret;
+    asm volatile (
+      "call ASM_vfx1_unkn_func_12\n"
+        : "=r" (ret) : "a" (a1), "d" (a2));
+    return ret;
 }
 
 int joy_func_251(int val, int acen, int amin, int amax)
@@ -409,13 +433,292 @@ int joy_func_065_sub9(struct DevInput *dinp, short ipos)
     return 0;
 }
 
+int joy_func_065_sub4(struct DevInput *dinp, short ipos)
+{
+#if defined(DOS)||defined(GO32)
+    int i;
+    ubyte val;
+
+    val = dinp->ConfigType[ipos] - 1;
+    _disable();
+    __outbyte(0x201, val);
+    for (i = 10000; i > 0; i--)
+    {
+        val = __inbyte(0x201);
+        if ((val & 0xF) == 0)
+          break;
+        if (val & 0x01)
+          ++dword_1E2F24;
+        if (val & 0x02)
+          ++dword_1E2F28;
+        if (val & 0x04)
+          ++dword_1E2F2C;
+        if (val & 0x08)
+          ++dword_1E2F30;
+    }
+    _enable();
+    byte_1E2F34 = val;
+    if (i == 0)
+        return -1;
+#endif
+    dinp->HatMax[ipos] = (dword_1E2F30 + dword_1E2F2C) >> 2;
+    joy_func_065_lab93(dinp, ipos);
+    return 0;
+}
+
+int joy_func_065_sub1(struct DevInput *dinp, short ipos)
+{
+#if defined(DOS)||defined(GO32)
+    int i;
+    ubyte val;
+
+    val = dinp->ConfigType[ipos] - 1;
+    _disable();
+    __outbyte(0x201, val);
+    for (i = 10000; i > 0; i--)
+    {
+        val = __inbyte(0x201);
+        if ((val & 3) == 0)
+          break;
+        if (val & 0x01)
+          ++dword_1E2F24;
+        if (val & 0x02)
+          ++dword_1E2F28;
+    }
+    _enable();
+    byte_1E2F34 = val;
+    if (i == 0)
+        return -1;
+#endif
+    joy_func_065_lab93(dinp, ipos);
+    return 0;
+}
+
+int joy_func_065_sub2(struct DevInput *dinp, short ipos)
+{
+    int i;
+#if defined(DOS)||defined(GO32)
+    ubyte val;
+
+    val = dinp->ConfigType[ipos] - 1;
+    _disable();
+    __outbyte(0x201, val);
+    for (i = 10000; i > 0; i--)
+    {
+        val = __inbyte(0x201);
+        if ((val & 0xB) == 0)
+          break;
+        if (val & 0x01)
+          ++dword_1E2F24;
+        if (val & 0x02)
+          ++dword_1E2F28;
+        if (val & 0x08)
+          ++dword_1E2F30;
+    }
+    _enable();
+    byte_1E2F34 = val;
+    if (i == 0)
+        return -1;
+#endif
+    if (dword_1E2F30 > dinp->HatMax[ipos])
+        dinp->HatMax[ipos] = dword_1E2F30;
+    if (!dinp->HatMax[0])
+        dinp->HatMax[0] = 1;
+    i = 8 * dword_1E2F30 / dinp->HatMax[0];
+    switch (i)
+    {
+    case 0:
+        dinp->HatX[0] = 0;
+        dinp->HatY[0] = -1;
+        break;
+    case 1:
+    case 2:
+        dinp->HatX[0] = 1;
+        dinp->HatY[0] = 0;
+        break;
+    case 3:
+    case 4:
+        dinp->HatX[0] = 0;
+        dinp->HatY[0] = 1;
+        break;
+    case 5:
+    case 6:
+        dinp->HatX[0] = -1;
+        dinp->HatY[0] = 0;
+        break;
+    default:
+        dinp->HatX[0] = 0;
+        dinp->HatY[0] = 0;
+        break;
+    }
+    joy_func_065_lab93(dinp, ipos);
+    return 0;
+}
+
+void joy_func_065_sub3(struct DevInput *dinp, short ipos, ubyte v115)
+{
+    int ret;
+
+    if (!dinp->Init[ipos])
+        return;
+    ret = vfx1_unkn_func_12(&vfxunk1, v115 + 1);
+    if (ret == -1)
+        return;
+
+    if (vfxunk1.field_0 & 0x08) {
+        dinp->DigitalY[ipos] = -1;
+        dinp->AnalogueY[ipos] = -0x7FFF;
+    } else if (vfxunk1.field_0 & 0x04) {
+        dinp->DigitalY[ipos] = 1;
+        dinp->AnalogueY[ipos] = 0x7FFF;
+    } else {
+        dinp->DigitalY[ipos] = 0;
+        dinp->AnalogueY[ipos] = 0;
+    }
+
+    if (vfxunk1.field_0 & 0x02) {
+        dinp->DigitalX[ipos] = -1;
+        dinp->AnalogueX[ipos] = -0x7FFF;
+    } else if (vfxunk1.field_0 & 0x01) {
+        dinp->DigitalX[ipos] = 1;
+        dinp->AnalogueX[ipos] = 0x7FFF;
+    } else {
+        dinp->DigitalX[ipos] = 0;
+        dinp->AnalogueX[ipos] = 0;
+    }
+
+    dinp->Buttons[ipos] = vfxunk1.field_4;
+    if (vfxunk1.field_2 & 0x01) {
+        dinp->MenuButtons[ipos] |= 0x04;
+        dinp->MenuButtons[ipos] |= 0x0200;
+    }
+    if (vfxunk1.field_2 & 0x02) {
+        dinp->MenuButtons[ipos] |= 0x01;
+        dinp->Buttons[ipos] |= 0x0100;
+    }
+}
+
+int joy_func_065_sub5(struct DevInput *dinp, short ipos)
+{
+    vfx1_unkn_func_03();
+    dword_1E2F24 = word_1E6078;
+    dinp->AnalogueX[ipos] = dword_1E2F24;
+    dword_1E2F28 = word_1E607A;
+     dinp->AnalogueY[ipos] = dword_1E2F28;
+    dword_1E2F30 = word_1E607C;
+    dinp->AnalogueZ[ipos] = dword_1E2F30;
+    joy_func_065_lab93(dinp, ipos);
+    return 0;
+}
+
 int joy_func_065(struct DevInput *dinp)
 {
+#if 0
     int ret;
     asm volatile (
       "call ASM_joy_func_065\n"
         : "=r" (ret) : "a" (dinp));
     return ret;
+#else
+    short i, ipos;
+    ubyte v115;
+    int ret;
+
+    v115 = 0;
+    if (dinp->Type == -1)
+        return -1;
+
+    for (i = 0; i < 16; i++)
+    {
+        dinp->NumberOfButtons[i] = 0;
+        dinp->Buttons[i] = 0;
+        dinp->HatMax[i] = 0;
+        dinp->HatY[i] = 0;
+        dinp->HatX[i] = 0;
+        dinp->AnalogueZ[i] = 0;
+        dinp->AnalogueY[i] = 0;
+        dinp->AnalogueY[i] = 0;
+        dinp->DigitalZ[i] = 0;
+        dinp->DigitalY[i] = 0;
+        dinp->DigitalX[i] = 0;
+        dinp->AnalogueR[i] = 0;
+        dinp->AnalogueV[i] = 0;
+        dinp->AnalogueU[i] = 0;
+        dinp->DigitalR[i] = 0;
+        dinp->DigitalV[i] = 0;
+        dinp->DigitalU[i] = 0;
+    }
+    dword_1E2F28 = 0;
+    dword_1E2F24 = 0;
+    dword_1E2F2C = 0;
+    dword_1E2F30 = 0;
+
+    for (ipos = 0; ipos < 16; ipos++)
+    {
+        if (dinp->Init[ipos] == 0)
+            continue;
+        switch (dinp->ConfigType[ipos])
+        {
+        case 1:
+        case 2:
+        case 5:
+        case 0xC:
+        case 0xD:
+            ret = joy_func_065_sub1(dinp, ipos);
+            if (ret != 0)
+                return ret;
+            break;
+        case 3:
+        case 4:
+        case 7:
+            ret = joy_func_065_sub2(dinp, ipos);
+            if (ret != 0)
+                return ret;
+            break;
+        case 6:
+            joy_func_065_sub3(dinp, ipos, v115);
+            ++v115;
+            break;
+        case 9:
+        case 0xE:
+        case 0xF:
+            ret = joy_func_065_sub4(dinp, ipos);
+            if (ret != 0)
+                return ret;
+            break;
+        case 0xB:
+        case 0x16:
+            ret = joy_func_065_sub5(dinp, ipos);
+            if (ret != 0)
+                return ret;
+            break;
+        case 0x11:
+            joy_func_065_sub6(dinp, ipos);
+            return ret;
+            break;
+        case 0x12:
+            ret = joy_func_065_sub7(dinp, ipos);
+            if (ret != 0)
+                return ret;
+            break;
+        case 0x13:
+            ret = joy_func_065_sub8(dinp, ipos);
+            if (ret != 0)
+                return ret;
+            break;
+        case 0x14:
+        case 0x15:
+            ret = joy_func_065_sub9(dinp, ipos);
+            if (ret != 0)
+                return ret;
+            break;
+        default:
+            joy_func_065_lab93(dinp, ipos);
+            break;
+        }
+    }
+    return 1;
+#endif
 }
 
 /** Gravis Grip joystick driver initialization.
