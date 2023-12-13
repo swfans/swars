@@ -2272,19 +2272,37 @@ void draw_new_panel_sprite_dark(int px, int py, ulong spr_id)
         SCANNER_unkn_func_201(spr, x, y, &pixmap.fade_table[4096]);
 }
 
+void draw_unkn_func_077(short a1, ushort a2, ushort a3)
+{
+    asm volatile (
+      "call ASM_draw_unkn_func_077\n"
+        : : "a" (a1), "d" (a2), "b" (a3));
+}
+
 /**
  * For weapons which contain up to four itemized parts, draw the items.
  *
  * @param a1
- * @param a2
- * @param a3
- * @param a4
+ * @param y
+ * @param plagent
+ * @param wtype
  */
-void draw_fourpack_items(int a1, ushort a2, short a3, short a4)
+void draw_fourpack_items(int a1, ushort y, short plagent, short wtype)
 {
+#if 0
     asm volatile (
       "call ASM_draw_fourpack_items\n"
-        : : "a" (a1), "d" (a2), "b" (a3), "c" (a4));
+        : : "a" (a1), "d" (y), "b" (plagent), "c" (wtype));
+#else
+    ushort fp;
+
+    fp = weapon_fourpack_index(wtype);
+    if (fp < WFRPK_COUNT) {
+        PlayerInfo *p_locplayer;
+        p_locplayer = &players[local_player_no];
+        draw_unkn_func_077(a1, y, p_locplayer->FourPacks[fp][plagent]);
+    }
+#endif
 }
 
 sbyte find_nth_weapon_held(ushort index, ubyte n)
