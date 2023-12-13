@@ -256,6 +256,11 @@ ubyte scanner_width_pct = 20;
 /** Height of the scanner map area, in percentage of screen. */
 ubyte scanner_height_pct = 25;
 
+/** Minimum user zoom (when most area is visible). */
+short user_zoom_min = 127;
+/** Maxumum user zoom (largest magnification). */
+short user_zoom_max = 260;
+
 void PacketRecord_Close(void)
 {
     if (in_network_game)
@@ -529,6 +534,27 @@ void colour_tables_ghost_fixup(void)
         opal[i] = ipal[i];
 }
 
+ushort get_scaled_zoom(ushort zoom)
+{
+    short h;
+
+    h = min(lbDisplay.GraphicsScreenWidth, lbDisplay.GraphicsScreenHeight);
+    if (h < 400)
+        return zoom;
+    else
+        return  h * zoom / 240;
+}
+
+short get_overall_scale_min(void)
+{
+    return get_scaled_zoom(user_zoom_min);
+}
+
+short get_overall_scale_max(void)
+{
+    return get_scaled_zoom(user_zoom_max);
+}
+
 void game_setup_stuff(void)
 {
 #if 0
@@ -685,7 +711,7 @@ void play_smacker(ushort vid_type)
     // TODO MAPNO case for a specific map, remove
     if (current_map == 51)
     {
-        overall_scale = 256;
+        overall_scale = get_overall_scale_max();
         unkn_flags_01 &= ~0x01;
         return;
     }
@@ -1838,25 +1864,22 @@ void process_view_inputs(int thing)
     struct WeaponDef *wdef;
     int zoom;
     int zdelta, sdelta;
-    short scale;
-    short h;
-
-    h = min(lbDisplay.GraphicsScreenWidth, lbDisplay.GraphicsScreenHeight);
+    short scmin, scmax, scale;
 
     p_person = &things[thing];
     wdef = &weapon_defs[p_person->U.UPerson.CurrentWeapon];
     zoom = zoom_levels[wdef->RangeBlocks];
-    if (zoom > 256)
-        zoom = 256;
-    if (zoom < 130)
-        zoom = 130;
+    if (zoom > user_zoom_max)
+        zoom = user_zoom_max;
+    if (zoom < user_zoom_min)
+        zoom = user_zoom_min;
+    // User zoom is not scaled to resolution
     if (zoom >= ingame.UserZoom)
         ingame.UserZoom = zoom;
     else
         zoom = ingame.UserZoom;
-    if (h >= 400)
-        // For h=480, we want to achieve circa 2.03 increase of zoom
-        zoom = h * zoom / 236;
+
+    zoom = get_scaled_zoom(zoom);
 
     zdelta = zoom - overall_scale;
     if ((zdelta > 0) && (zdelta < 8))
@@ -1866,21 +1889,14 @@ void process_view_inputs(int thing)
     else
         sdelta = zdelta >> 3;
 
+    scmin = get_overall_scale_min();
+    scmax = get_overall_scale_max();
+
     scale = sdelta + overall_scale;
-    if (lbDisplay.GraphicsScreenHeight < 400)
-    {
-        if (scale < 130)
-            scale = 130;
-        else if (scale >= 256)
-            scale = 256;
-    }
-    else
-    {
-        if (scale < h * 130 / 236)
-            scale = h * 130 / 236;
-        else if (scale >= h * 256 / 236)
-            scale = h * 256 / 236;
-    }
+    if (scale < scmin)
+        scale = scmin;
+    else if (scale > scmax)
+        scale = scmax;
     overall_scale = scale;
 #endif
 }
@@ -3611,16 +3627,16 @@ void init_scanner(void)
 void adjust_mission_engine_to_video_mode(void)
 {
     game_high_resolution = (lbDisplay.ScreenMode == screen_mode_game_hi);
+    // Set scale 15% over the min, to create a nice pan effect
+    overall_scale = (get_overall_scale_min() * 295) >> 8;
     if (lbDisplay.GraphicsScreenHeight >= 400)
     {
-        overall_scale = 400;
         load_pop_sprites_hi();
         render_area_a = 30;
         render_area_b = 30;
     }
     else
     {
-        overall_scale = 150;
         load_pop_sprites_lo();
         render_area_a = 24;
         render_area_b = 24;
