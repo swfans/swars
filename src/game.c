@@ -9357,39 +9357,7 @@ void show_load_and_prep_mission(void)
     // (though we should at some point separate the part linked to current video settings)
     if ( start_into_mission )
     {
-        ushort missi, next_mapno;
-        short next_level;
-
-        missi = ingame.CurrentMission;
-        if ( in_network_game )
-        {
-            next_mapno = mission_list[missi].MapNo;
-            next_level = mission_list[missi].LevelNo;
-        }
-        else
-        {
-            next_mapno = cities[unkn_city_no].MapID;
-            next_level = cities[unkn_city_no].Level;
-        }
-
-        LOGSYNC("Init %s mission %hu on map %hu level %hd", in_network_game ? "MP" : "SP",
-          missi, next_mapno, next_level);
-        change_current_map(next_mapno);
-        debug_trace_place(13);
-        execute_commands = 1;
-        ingame.DisplayMode = DpM_UNKN_32;
-        if (next_level != 0)
-            load_level_pc(-next_level, missi, 0);
-        else
-            LOGWARN("Requested level %hd; load skipped", next_level);
-        if (in_network_game) {
-            randomize_playable_groups_order();
-        }
-        debug_trace_place(8);
-        if (ingame.GameMode == GamM_None)
-            ingame.GameMode = GamM_Unkn2;
-        init_player();
-        debug_trace_place(4);
+        init_game(0);
     }
 
     // Update game progress and prepare level to play
