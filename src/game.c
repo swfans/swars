@@ -217,8 +217,6 @@ extern ulong unkn_changing_color_counter1;
 extern short brightness;
 extern long game_speed;
 
-extern ushort zoom_levels[28];
-
 struct TbLoadFiles unk02_load_files[] =
 {
   { "*VESA",			(void **)&lbVesaData,		(void **)NULL,LB_VESA_DATA_SIZE, 1, 0 },
@@ -260,6 +258,38 @@ ubyte scanner_height_pct = 25;
 short user_zoom_min = 127;
 /** Maxumum user zoom (largest magnification). */
 short user_zoom_max = 260;
+
+ushort zoom_levels[] = {
+    256, 256, 256, 256, 256, 256, 240, 230,
+    220, 210, 200, 190, 180, 170, 170, 170,
+    170, 170, 170, 170, 170, 165, 160, 155,
+    150, 145, 140, 135,
+};
+
+void zoom_update(short zoom_min, short zoom_max)
+{
+    int i, dt;
+    int zoom_arr_min, zoom_arr_max;
+
+    dt = (zoom_max - zoom_min);
+    zoom_arr_min = zoom_min + ((dt * 16) >> 8);
+    zoom_arr_max = zoom_max - ((dt * 8) >> 8);
+    for (i = 0; i < 28; i++)
+    {
+        int n, val;
+        // The curve is steeper in 2nd half than in first half
+        if (i > 14)
+            n = 15;
+        else
+            n = 8;
+        val = zoom_arr_min + ((dt * n * i) >> 8);
+        if (val > zoom_arr_max)
+            val = zoom_arr_max;
+        zoom_levels[27-i] = val;
+    }
+    user_zoom_min = zoom_min;
+    user_zoom_max = zoom_max;
+}
 
 void PacketRecord_Close(void)
 {
@@ -554,6 +584,14 @@ short get_overall_scale_max(void)
 {
     return get_scaled_zoom(user_zoom_max);
 }
+
+short get_render_area_for_zoom(short zoom)
+{
+    if (lbDisplay.GraphicsScreenHeight < 400)
+        return 24;
+    return 30; // for zoom=127 and screen proportion 4:3
+}
+
 
 void game_setup_stuff(void)
 {
@@ -3632,15 +3670,13 @@ void adjust_mission_engine_to_video_mode(void)
     if (lbDisplay.GraphicsScreenHeight >= 400)
     {
         load_pop_sprites_hi();
-        render_area_a = 30;
-        render_area_b = 30;
     }
     else
     {
         load_pop_sprites_lo();
-        render_area_a = 24;
-        render_area_b = 24;
     }
+    render_area_a = render_area_b = \
+      get_render_area_for_zoom(user_zoom_min);
     srm_scanner_size_update();
 }
 
