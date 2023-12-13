@@ -9290,8 +9290,6 @@ void show_load_and_prep_mission(void)
 
     if ( start_into_mission )
     {
-        ushort missi;
-
         if (!in_network_game) {
             update_open_brief();
         }
@@ -9302,6 +9300,7 @@ void show_load_and_prep_mission(void)
         debug_trace_place(10);
         if ( in_network_game )
         {
+            ushort missi;
             ingame.MissionNo = 1;
             missi = find_mission_with_mapid(cities[login_control__City].MapID, next_mission);
             if (missi > 0) {
@@ -9313,6 +9312,7 @@ void show_load_and_prep_mission(void)
         }
         else
         {
+            ushort missi;
             missi = find_mission_for_city_in_brief(open_brief - 1, unkn_city_no);
             load_mission_name_text(missi);
             ingame.CurrentMission = missi;
@@ -9325,6 +9325,36 @@ void show_load_and_prep_mission(void)
         ingame.DisplayMode = DpM_UNKN_1;
     }
 
+    data_1c498d = 2;
+    reload_background_flag = 1;
+    // Setup screen and palette
+    debug_trace_place(13);
+    LbFileLoadAt("qdata/pal.pal", display_palette);
+    LbPaletteSet(display_palette);
+    debug_trace_place(15);
+    if (game_high_resolution)
+    {
+        if (lbDisplay.ScreenMode != screen_mode_game_hi)
+            setup_screen_mode(screen_mode_game_hi);
+    }
+    else
+    {
+        if (lbDisplay.ScreenMode != screen_mode_game_lo)
+            setup_screen_mode(screen_mode_game_lo);
+    }
+    // Setup colour conversion tables
+    debug_trace_place(16);
+    LbColourTablesLoad(display_palette, "data/tables.dat");
+    LbGhostTableLoad(display_palette, 50, "data/synghost.tab");
+    debug_trace_place(17);
+    // Prepare shadow buffer
+    screen_buffer_fill_black();
+    frame_unkn_func_06();
+    // TODO draw empty GUI instead of black screen?
+    show_black_screen();
+    // Now we can call the init; it uses current video mode and colour tables
+    // to scale correctly, so has to be done after video setup
+    // (though we should at some point separate the part linked to current video settings)
     if ( start_into_mission )
     {
         ushort missi, next_mapno;
@@ -9356,39 +9386,6 @@ void show_load_and_prep_mission(void)
             randomize_playable_groups_order();
         }
         debug_trace_place(8);
-    }
-
-    data_1c498d = 2;
-    reload_background_flag = 1;
-    {
-        screen_buffer_fill_black();
-        frame_unkn_func_06();
-        screen_buffer_fill_black();
-        show_black_screen();
-        swap_wscreen();
-    }
-    debug_trace_place(13);
-    LbFileLoadAt("qdata/pal.pal", display_palette);
-    LbPaletteSet(display_palette);
-    debug_trace_place(15);
-    if (game_high_resolution)
-    {
-        if (lbDisplay.ScreenMode != screen_mode_game_hi)
-            setup_screen_mode(screen_mode_game_hi);
-    }
-    else
-    {
-        if (lbDisplay.ScreenMode != screen_mode_game_lo)
-            setup_screen_mode(screen_mode_game_lo);
-    }
-
-    debug_trace_place(16);
-    LbColourTablesLoad(display_palette, "data/tables.dat");
-    LbGhostTableLoad(display_palette, 50, "data/synghost.tab");
-    debug_trace_place(17);
-
-    if ( start_into_mission )
-    {
         if (ingame.GameMode == GamM_None)
             ingame.GameMode = GamM_Unkn2;
         init_player();
