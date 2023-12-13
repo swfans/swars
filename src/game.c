@@ -217,6 +217,8 @@ extern ulong unkn_changing_color_counter1;
 extern short brightness;
 extern long game_speed;
 
+extern ushort zoom_levels[28];
+
 struct TbLoadFiles unk02_load_files[] =
 {
   { "*VESA",			(void **)&lbVesaData,		(void **)NULL,LB_VESA_DATA_SIZE, 1, 0 },
@@ -1828,8 +1830,55 @@ void process_tank_turret(struct Thing *p_tank)
 
 void process_view_inputs(int thing)
 {
+#if 0
     asm volatile ("call ASM_process_view_inputs\n"
         : : "a" (thing));
+#else
+    struct Thing *p_person;
+    struct WeaponDef *wdef;
+    int zoom;
+    int zdelta, sdelta;
+    short scale;
+
+    p_person = &things[thing];
+    wdef = &weapon_defs[p_person->U.UPerson.CurrentWeapon];
+    zoom = zoom_levels[wdef->RangeBlocks];
+    if (zoom > 256)
+        zoom = 256;
+    if (zoom < 130)
+        zoom = 130;
+    if (zoom >= ingame.UserZoom)
+        ingame.UserZoom = zoom;
+    else
+        zoom = ingame.UserZoom;
+    if (lbDisplay.GraphicsScreenHeight >= 400)
+        zoom = 520 * zoom >> 8;
+
+    zdelta = zoom - overall_scale;
+    if ((zdelta > 0) && (zdelta < 8))
+        sdelta = 1;
+    else if ((zdelta < 0) && (zdelta > -8))
+        sdelta = -1;
+    else
+        sdelta = zdelta >> 3;
+
+    scale = sdelta + overall_scale;
+    if (lbDisplay.GraphicsScreenHeight < 400)
+    {
+        if (scale < 130)
+            scale = 130;
+        else if (scale >= 256)
+            scale = 256;
+    }
+    else
+    {
+        if (scale < 254)
+            scale = 254;
+        else if (scale >= 520)
+            scale = 520;
+    }
+    overall_scale = scale;
+#endif
 }
 
 void process_engine_unk1(void)
