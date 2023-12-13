@@ -1839,6 +1839,9 @@ void process_view_inputs(int thing)
     int zoom;
     int zdelta, sdelta;
     short scale;
+    short h;
+
+    h = min(lbDisplay.GraphicsScreenWidth, lbDisplay.GraphicsScreenHeight);
 
     p_person = &things[thing];
     wdef = &weapon_defs[p_person->U.UPerson.CurrentWeapon];
@@ -1851,8 +1854,9 @@ void process_view_inputs(int thing)
         ingame.UserZoom = zoom;
     else
         zoom = ingame.UserZoom;
-    if (lbDisplay.GraphicsScreenHeight >= 400)
-        zoom = 520 * zoom >> 8;
+    if (h >= 400)
+        // For h=480, we want to achieve circa 2.03 increase of zoom
+        zoom = h * zoom / 236;
 
     zdelta = zoom - overall_scale;
     if ((zdelta > 0) && (zdelta < 8))
@@ -1872,10 +1876,10 @@ void process_view_inputs(int thing)
     }
     else
     {
-        if (scale < 254)
-            scale = 254;
-        else if (scale >= 520)
-            scale = 520;
+        if (scale < h * 130 / 236)
+            scale = h * 130 / 236;
+        else if (scale >= h * 256 / 236)
+            scale = h * 256 / 236;
     }
     overall_scale = scale;
 #endif
