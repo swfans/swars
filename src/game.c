@@ -550,10 +550,7 @@ void game_setup_stuff(void)
     colour_grey2 = LbPaletteFindColour(display_palette, 32, 32, 32);
     colour_grey1 = LbPaletteFindColour(display_palette, 16, 16, 16);
 
-    // TODO is there a reason to simplify the load here?
-    //LbColourTablesLoad(display_palette, "data/tables.dat");
-    LbFileLoadAt("data/tables.dat", &pixmap);
-
+    LbColourTablesLoad(display_palette, "data/tables.dat");
     colour_tables_ghost_fixup();
 #endif
 }
