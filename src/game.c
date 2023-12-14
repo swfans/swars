@@ -2272,11 +2272,39 @@ void draw_new_panel_sprite_dark(int px, int py, ulong spr_id)
         SCANNER_unkn_func_201(spr, x, y, &pixmap.fade_table[4096]);
 }
 
-void draw_unkn_func_077(short a1, ushort a2, ushort a3)
+/**
+ * Draws squares for fourpacks, given specific screen coords and amount to fill.
+ *
+ * @param x
+ * @param y
+ * @param amount
+ */
+void draw_fourpack_amount(short x, ushort y, ushort amount)
 {
+#if 0
     asm volatile (
-      "call ASM_draw_unkn_func_077\n"
-        : : "a" (a1), "d" (a2), "b" (a3));
+      "call ASM_draw_fourpack_amount\n"
+        : : "a" (x), "d" (y), "b" (amount));
+#else
+    // We're expecting to draw 4 items; 8 are supported mostly to signal an issue
+    static short dtx[] = {0+10, 0+10, 72-10, 72-10, 0+16, 0+16, 72-16, 72-16,};
+    static short dty[] = {0+4, 22-4, 0+4, 22-4, 0+4, 22-4, 0+4, 22-4,};
+    int i;
+    TbPixel col;
+
+    if (ingame.PanelPermutation == -3)
+        col = 26;
+    else
+        col = 247;
+
+    for (i = 0; i < min(amount,8); i++)
+    {
+      if (lbDisplay.GraphicsScreenHeight < 400)
+          LbDrawBox((x + dtx[i]) >> 1, (y + dty[i]) >> 1, 2, 2, col);
+      else
+          LbDrawBox(x + dtx[i], y + dty[i], 4, 4, col);
+    }
+#endif
 }
 
 /**
@@ -2300,7 +2328,7 @@ void draw_fourpack_items(int a1, ushort y, short plagent, short wtype)
     if (fp < WFRPK_COUNT) {
         PlayerInfo *p_locplayer;
         p_locplayer = &players[local_player_no];
-        draw_unkn_func_077(a1, y, p_locplayer->FourPacks[fp][plagent]);
+        draw_fourpack_amount(a1, y, p_locplayer->FourPacks[fp][plagent]);
     }
 #endif
 }
