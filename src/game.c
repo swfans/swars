@@ -3703,9 +3703,12 @@ void init_scanner(void)
     SCANNER_init();
 }
 
-void frame_unkn_func_06(void)
+/** Prepare buffer with sprite shadows.
+ * Clear the wscreen buffer before this call. Also make sure m_sprites are loaded.
+ */
+void generate_shadows_for_multicolor_sprites(void)
 {
-    asm volatile ("call ASM_frame_unkn_func_06\n"
+    asm volatile ("call ASM_generate_shadows_for_multicolor_sprites\n"
         :  :  : "eax" );
 }
 
@@ -3763,12 +3766,24 @@ void setup_engine_screen_mode(void)
     // Setup colour conversion tables
     LbColourTablesLoad(display_palette, "data/tables.dat");
     LbGhostTableLoad(display_palette, 50, "data/synghost.tab");
+}
 
-    // Prepare shadow buffer
-    screen_buffer_fill_black();
-    frame_unkn_func_06();
-    // Show something on screen until the load finishes
-    show_simple_load_screen();
+void setup_initial_screen_mode(void)
+{
+    if (game_high_resolution)
+    {
+        lbDisplay.ScreenMode = screen_mode_game_hi;
+        setup_simple_screen_mode(lbDisplay.ScreenMode);
+    }
+    else
+    {
+        lbDisplay.ScreenMode = screen_mode_game_lo;
+        setup_simple_screen_mode(lbDisplay.ScreenMode);
+    }
+    // Setup colour conversion tables, allowing generation
+    LbColourTablesLoad(display_palette, "data/tables.dat");
+    LbGhostTableGenerate(display_palette, 50, "data/synghost.tab");
+    colour_tables_ghost_fixup();
 }
 
 void screen_mode_switch_to_next(void)
@@ -3973,6 +3988,9 @@ void reset_mouse_pointers(void)
     LbSpriteReset(pointer_sprites, pointer_sprites_end, pointer_data);
 }
 
+/** Sets up initially loaded multicolor sprites.
+ * Use load_multicolor_sprites() for forther reloads.
+ */
 void setup_multicolor_sprites(void)
 {
     LbSpriteSetup(m_sprites, m_sprites_end, m_spr_data);
@@ -4039,16 +4057,7 @@ void setup_host(void)
     set_smack_malloc(ASM_smack_malloc);
     set_smack_free(ASM_smack_mfree);
     LOGDBG("&setup_host() = 0x%lx", (ulong)setup_host);
-    {
-        if (game_high_resolution)
-            lbDisplay.ScreenMode = screen_mode_game_hi;
-        else
-            lbDisplay.ScreenMode = screen_mode_game_lo;
-        setup_simple_screen_mode(lbDisplay.ScreenMode);
-    }
-    LbColourTablesLoad(display_palette, "data/tables.dat");
-    LbGhostTableGenerate(display_palette, 50, "data/synghost.tab");
-    colour_tables_ghost_fixup();
+    setup_initial_screen_mode();
 
     if ( keyboard_mode_direct )
         LbKeyboardOpen();
@@ -4061,6 +4070,7 @@ void setup_host(void)
     LbMouseSetup(&pointer_sprites[1], 2, 2);
 
     setup_debug_obj_trace();
+
     // Default Trenchcoat color loaded from unk02_load_files[]
     ingame.TrenchcoatPreference = 0;
     setup_multicolor_sprites();
@@ -4727,6 +4737,8 @@ void prep_single_mission(void)
     load_objectives_text();
     init_game(0);
     load_multicolor_sprites();
+    screen_buffer_fill_black();
+    generate_shadows_for_multicolor_sprites();
     adjust_mission_engine_to_video_mode();
 }
 
@@ -9321,6 +9333,8 @@ void show_load_and_prep_mission(void)
     // Setup screen, palette and colour tables
     debug_trace_place(13);
     setup_engine_screen_mode();
+    // Show something on screen until the load finishes
+    show_simple_load_screen();
     // Now we can call the init; it uses current video mode and colour tables
     // to scale correctly, so has to be done after video setup
     // (though we should at some point separate the part linked to current video settings)
@@ -9363,6 +9377,8 @@ void show_load_and_prep_mission(void)
     if ( start_into_mission )
     {
         load_multicolor_sprites();
+        screen_buffer_fill_black();
+        generate_shadows_for_multicolor_sprites();
         adjust_mission_engine_to_video_mode();
 
         flic_unkn03(1);
