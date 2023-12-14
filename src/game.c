@@ -3877,13 +3877,13 @@ void game_graphics_inputs(void)
             game_perspective = 5;
     }
 
-    if ((ingame.Cheats & 0x04) && lbKeyOn[KC_T] && (lbShift & KMod_ALT))
+    if ((ingame.UserFlags & UsrF_Cheats) && lbKeyOn[KC_T] && (lbShift & KMod_ALT))
     {
         lbKeyOn[KC_T] = 0;
         teleport_current_agent(p_locplayer);
     }
 
-    if ((ingame.Cheats & 0x04) && !in_network_game)
+    if ((ingame.UserFlags & UsrF_Cheats) && !in_network_game)
     {
         if (lbKeyOn[KC_Q] && (lbShift == KMod_SHIFT || lbShift == KMod_NONE))
         {
@@ -4157,7 +4157,9 @@ void read_user_settings(void)
         read_mortal_salt_backup = true;
     } else
     {
-        ushort cheats;
+        ushort locflags;
+
+        assert(sizeof(locflags) == sizeof(ingame.UserFlags));
 
         LbFileRead(fh, kbkeys, 23 * sizeof(ushort));
         LbFileRead(fh, jskeys, 23 * sizeof(ushort));
@@ -4186,7 +4188,8 @@ void read_user_settings(void)
         LbFileRead(fh, &ingame.CDTrack, sizeof(ingame.CDTrack));
         LbFileRead(fh, &ingame.DangerTrack, sizeof(ingame.DangerTrack));
         LbFileRead(fh, &ingame.UseMultiMedia, sizeof(ingame.UseMultiMedia));
-        LbFileRead(fh, &cheats, sizeof(cheats));
+        LbFileRead(fh, &locflags, sizeof(locflags));
+        ingame.UserFlags |= locflags; // Do not replace these, add to them
         LbFileRead(fh, &save_mortal_salt, sizeof(save_mortal_salt));
         LbFileClose(fh);
 
@@ -4259,7 +4262,7 @@ ubyte save_user_settings(void)
     LbFileWrite(fh, &ingame.CDTrack, sizeof(ingame.CDTrack));
     LbFileWrite(fh, &ingame.DangerTrack, sizeof(ingame.DangerTrack));
     LbFileWrite(fh, &ingame.UseMultiMedia, sizeof(ingame.UseMultiMedia));
-    LbFileWrite(fh, &ingame.Cheats, sizeof(ingame.Cheats));
+    LbFileWrite(fh, &ingame.UserFlags, sizeof(ingame.UserFlags));
     LbFileWrite(fh, &save_mortal_salt, sizeof(save_mortal_salt));
     LbFileClose(fh);
     return 0;
@@ -7449,7 +7452,7 @@ ubyte do_user_interface(void)
     }
 
     // Resurrection and best equipment cheat
-    if (p_locplayer->DoubleMode && (ingame.Cheats & 0x04) && !in_network_game)
+    if (p_locplayer->DoubleMode && (ingame.UserFlags & UsrF_Cheats) && !in_network_game)
     {
         if (lbKeyOn[KC_Q] && ((lbShift == KMod_SHIFT) || (lbShift == KMod_NONE)))
         {
@@ -9550,35 +9553,36 @@ void show_menu_screen(void)
     memcpy(lbDisplay.WScreen, back_buffer, lbDisplay.GraphicsScreenWidth * lbDisplay.GraphicsScreenHeight);
     draw_purple_screen();
 
-    if ( screentype != SCRT_MAINMENU && screentype != SCRT_LOGIN && !restore_savegame )
+    if ((screentype != SCRT_MAINMENU) && (screentype != SCRT_LOGIN) && !restore_savegame &&
+      (screentype != SCRT_ALERTBOX) && !net_unkn_pos_01b)
     {
-        if ( lbKeyOn[KC_F1] && screentype != SCRT_ALERTBOX && !net_unkn_pos_01b)
+        if (lbKeyOn[KC_F1])
         {
             lbKeyOn[KC_F1] = 0;
             change_screen = 1;
         }
-        if ( lbKeyOn[KC_F2] && screentype != SCRT_ALERTBOX && !net_unkn_pos_01b)
+        if (lbKeyOn[KC_F2])
         {
             lbKeyOn[KC_F2] = 0;
             change_screen = 3;
         }
-        if ( lbKeyOn[KC_F3] && screentype != SCRT_ALERTBOX && !net_unkn_pos_01b)
+        if (lbKeyOn[KC_F3])
         {
             lbKeyOn[KC_F3] = 0;
             change_screen = 4;
         }
-        if ( lbKeyOn[KC_F4] && screentype != SCRT_ALERTBOX && !net_unkn_pos_01b)
+        if (lbKeyOn[KC_F4])
         {
             lbKeyOn[KC_F4] = 0;
             change_screen = 5;
         }
-        if ( lbKeyOn[KC_F5] && screentype != SCRT_ALERTBOX && !net_unkn_pos_01b)
+        if (lbKeyOn[KC_F5])
         {
             lbKeyOn[KC_F5] = 0;
             if (research.NumBases > 0)
                 change_screen = 6;
         }
-        if ( lbKeyOn[KC_F6] && screentype != SCRT_ALERTBOX && !net_unkn_pos_01b)
+        if (lbKeyOn[KC_F6])
         {
             lbKeyOn[KC_F6] = 0;
             if (open_brief != 0)
@@ -9707,7 +9711,6 @@ void show_menu_screen(void)
         set_flag01_main_screen_boxes();
         set_flag01_cryo_screen_boxes();
         set_flag01_research_screen_boxes();
-
         set_flag01_net_screen_boxes();
         set_flag01_equip_screen_boxes();
         set_flag01_controls_screen_boxes();

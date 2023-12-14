@@ -205,7 +205,7 @@ static TbBool process_options(int *argc, char ***argv)
             ingame.GameMode = GamM_Unkn2;
             ingame.Flags |= GamF_Unkn0008;
             ingame.CurrentMission = tmpint;
-            ingame.Cheats |= 0x04;
+            ingame.UserFlags |= UsrF_Cheats;
             LOGDBG("Campaign %d mission index %d", (int)background_type, (int)ingame.CurrentMission);
             break;
 

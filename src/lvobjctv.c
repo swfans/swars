@@ -1259,7 +1259,7 @@ short test_objective(ushort objectv, ushort show_obj)
     if (show_obj == 2)
     {
         p_objectv = &game_used_lvl_objectives[objectv];
-        if (((ingame.Cheats & 0x04) != 0) &&
+        if (((ingame.UserFlags & UsrF_Cheats) != 0) &&
           (p_objectv->Status != 2) && lbKeyOn[KC_BACKSLASH])
         {
             lbKeyOn[KC_BACKSLASH] = 0;
@@ -1273,7 +1273,7 @@ short test_objective(ushort objectv, ushort show_obj)
     else
     {
         p_objectv = &game_used_objectives[objectv];
-        if (((ingame.Cheats & 0x04) != 0) &&
+        if (((ingame.UserFlags & 0x04) != 0) &&
           (p_objectv->Status != 2) && lbKeyOn[KC_BACKSLASH])
         {
             lbKeyOn[KC_BACKSLASH] = 0;

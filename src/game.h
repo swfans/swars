@@ -59,6 +59,10 @@ enum GameFlags {
     GamF_Unkn10000000 = 0x10000000,
 };
 
+enum UserFlags {
+    UsrF_Cheats       =  0x0004,
+};
+
 enum ScreenType {
   SCRT_NONE = 0x0,
   SCRT_MISSION,
@@ -396,8 +400,7 @@ struct InGame {
     /** Flags representing active human players, in both net and local games. */
     ubyte InNetGame_UNSURE;
     ubyte fld_unkCBA[5];
-    ubyte Cheats;
-    ubyte fld_unkCC0;
+    ushort UserFlags;
     long CashAtStart;
     long Expenditure;
 };
