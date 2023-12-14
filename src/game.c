@@ -27,6 +27,8 @@
 #include "bfaudio.h"
 #include "bfmusic.h"
 #include "bfsound.h"
+#include "bfplanar.h"
+#include "bfscrsurf.h"
 #include "ssampply.h"
 #include "svesa.h"
 #include "swlog.h"
@@ -6481,8 +6483,36 @@ void update_menus(void)
         :  :  : "eax" );
 }
 
-#include "bfplanar.h"
-#include "bfscrsurf.h"
+void cover_screen_rect_with_sprite(short x, short y, ushort w, ushort h, struct TbSprite *spr)
+{
+    short cx, cy;
+
+    for (cy = y; cy < y+h; cy += spr->SHeight)
+    {
+        for (cx = x; cx < x+w; cx += spr->SWidth) {
+            LbSpriteDraw(cx, cy, spr);
+        }
+    }
+}
+
+void cover_screen_rect_with_raw_file(short x, short y, ushort w, ushort h, const char *fname)
+{
+    struct SSurface surf;
+    struct TbRect srect;
+    ubyte *inp_buf;
+
+    LbSetRect(&srect, x, y, w, h);
+    LbScreenSurfaceInit(&surf);
+    LbScreenSurfaceCreate(&surf, w, h);
+    inp_buf = LbScreenSurfaceLock(&surf);
+    LbFileLoadAt(fname, inp_buf);
+    LbScreenSurfaceUnlock(&surf);
+    LbScreenUnlock();
+    LbScreenSurfaceBlit(&surf, 0, 0, &srect, SSBlt_FLAG8 | SSBlt_FLAG4);
+    LbScreenSurfaceRelease(&surf);
+    LbScreenLock();
+}
+
 void reload_background(void)
 {
 #if 0
@@ -6491,19 +6521,12 @@ void reload_background(void)
 #else
     if (screentype == 6 || screentype == 10 || restore_savegame)
     {
-        struct TbSprite *spr;
         ubyte *scr_bkp;
-        int x, y;
 
         scr_bkp = lbDisplay.WScreen;
         lbDisplay.WScreen = back_buffer;
-        spr = &sprites_Icons0_0[168];
-        for (y = 0; y < lbDisplay.GraphicsScreenHeight; y += spr->SHeight)
-        {
-            for (x = 0; x < lbDisplay.GraphicsScreenWidth; x += spr->SWidth) {
-                LbSpriteDraw(x, y, spr);
-            }
-        }
+        cover_screen_rect_with_sprite(0, 0, lbDisplay.GraphicsScreenWidth,
+         lbDisplay.GraphicsScreenHeight, &sprites_Icons0_0[168]);
         lbDisplay.WScreen = scr_bkp;
     }
     else
@@ -6527,25 +6550,13 @@ void reload_background(void)
         }
         else
         {
-            struct SSurface surf;
-            struct TbRect srect;
             ubyte *scr_bkp;
-            ubyte *inp_buf;
 
             scr_bkp = lbDisplay.WScreen;
             lbDisplay.WScreen = back_buffer;
             screen_buffer_fill_black();
             // TODO menu scaling, maybe?
-            LbSetRect(&srect, 0, 0, 640, 480);
-            LbScreenSurfaceInit(&surf);
-            LbScreenSurfaceCreate(&surf, 640, 480);
-            inp_buf = LbScreenSurfaceLock(&surf);
-            LbFileLoadAt(str, inp_buf);
-            LbScreenSurfaceUnlock(&surf);
-            LbScreenUnlock();
-            LbScreenSurfaceBlit(&surf, 0, 0, &srect, SSBlt_FLAG8 | SSBlt_FLAG4);
-            LbScreenSurfaceRelease(&surf);
-            LbScreenLock();
+            cover_screen_rect_with_raw_file(0, 0, 640, 480, str);
             lbDisplay.WScreen = scr_bkp;
         }
     }
