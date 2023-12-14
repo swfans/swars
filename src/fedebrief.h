@@ -32,7 +32,7 @@ extern "C" {
 /******************************************************************************/
 
 void init_debrief_screen_boxes(void);
-void set_flag01_debrief_screen_boxes(void);
+void reset_debrief_screen_boxes_flags(void);
 
 /******************************************************************************/
 #ifdef __cplusplus

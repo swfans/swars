@@ -692,7 +692,6 @@ extern struct EmailItem email_store[20];
 extern struct EmailItem brief_store[10];
 extern ubyte show_alert;
 extern sbyte mo_weapon;
-extern ubyte reload_background_flag;
 
 extern ubyte selected_agent;
 
@@ -722,18 +721,7 @@ extern ushort text_window_y1;
 extern ushort text_window_x2;
 extern ushort text_window_y2;
 
-extern struct ScreenTextBox heading_box;
-extern struct ScreenTextBox loading_INITIATING_box;
-extern struct ScreenTextBox unkn13_SYSTEM_button;
-extern struct ScreenButton sysmnu_buttons[6];
-extern struct ScreenButton main_quit_button;
-extern struct ScreenButton main_login_button;
-extern struct ScreenButton main_map_editor_button;
-extern struct ScreenButton main_load_button;
 extern struct ScreenMenuBox unk11_menu[5];
-
-extern struct ScreenBox alert_box;
-extern struct ScreenButton alert_OK_button;
 
 bool game_initialise (void);
 void game_handle_sdl_events (void);
@@ -755,7 +743,6 @@ void free_texturemaps(void);
 
 void flic_unkn03(ubyte a1);
 
-ubyte ac_show_title_box(struct ScreenTextBox *box);
 void draw_text_purple_list2(int x, int y, const char *text, ushort line);
 void draw_sprite_purple_list(int x, int y, struct TbSprite *sprite);
 void draw_trig_purple_list(long x2, long y2, long x3, long y3);
@@ -763,6 +750,9 @@ void copy_box_purple_list(long x, long y, ulong width, ulong height);
 void draw_box_purple_list(int x, int y, ulong width, ulong height, int colour);
 void draw_line_purple_list(int x1, int y1, int x2, int y2, int colour);
 void draw_hotspot_purple_list(int x, int y);
+void draw_purple_screen(void);
+
+void reload_background(void);
 
 void my_preprocess_text(char *text);
 ushort my_count_lines(const char *text);

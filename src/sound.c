@@ -14,11 +14,13 @@
 #include "streamfx.h"
 #include "sndtimer.h"
 #include "snderr.h"
+#include "ssampply.h"
 #include "oggvorbis.h"
 #include "sound.h"
 #include "ailss.h"
 #include "aila.h"
 #include "game_data.h"
+#include "game.h"
 #include "util.h"
 
 struct SampleInfo *play_sample_using_heap(ulong a1, short smptbl_id, ulong a3, ulong a4, ulong a5, char a6, ubyte type)
@@ -61,5 +63,16 @@ void snd_unkn1_volume_all_samples(void)
 {
     asm volatile ("call ASM_snd_unkn1_volume_all_samples\n"
         :  :  : "eax" );
+}
+
+void wait_for_sound_sample_finish(ushort smpl_id)
+{
+    TbClockMSec last_loop_time = LbTimerClock();
+    while (IsSamplePlaying(0, smpl_id, NULL)) {
+        game_update();
+        TbClockMSec sleep_end = last_loop_time + 1000/GAME_FPS;
+        LbSleepUntil(sleep_end);
+        last_loop_time = LbTimerClock();
+    }
 }
 

@@ -37,8 +37,6 @@ extern struct ScreenButton options_audio_buttons[7];
 
 extern struct ScreenButton options_gfx_buttons[16];
 
-extern char options_title_text[];
-
 extern short word_1C4866[3];
 
 extern struct TbSprite *sprites_Icons0_0;

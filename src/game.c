@@ -40,6 +40,7 @@
 #include "game_data.h"
 #include "guiboxes.h"
 #include "guitext.h"
+#include "femain.h"
 #include "febrief.h"
 #include "fedebrief.h"
 #include "fecntrls.h"
@@ -5066,14 +5067,6 @@ TbPixel LbPaletteFindColour(ubyte *pal, ubyte rval, ubyte gval, ubyte bval)
 }
 #endif
 
-ubyte show_title_box(struct ScreenTextBox *box)
-{
-    ubyte ret;
-    asm volatile ("call ASM_show_title_box\n"
-        : "=r" (ret) : "a" (box));
-    return ret;
-}
-
 void check_buy_sell_button(void)
 {
     asm volatile ("call ASM_check_buy_sell_button\n"
@@ -5103,14 +5096,6 @@ ubyte change_trenchcoat_preference(ubyte click)
     return ret;
 }
 
-ubyte alert_OK(ubyte click)
-{
-    ubyte ret;
-    asm volatile ("call ASM_alert_OK\n"
-        : "=r" (ret) : "a" (click));
-    return ret;
-}
-
 ubyte accept_mission(ubyte click)
 {
     ubyte ret;
@@ -5123,14 +5108,6 @@ ubyte do_unkn1_CANCEL(ubyte click)
 {
     ubyte ret;
     asm volatile ("call ASM_do_unkn1_CANCEL\n"
-        : "=r" (ret) : "a" (click));
-    return ret;
-}
-
-ubyte do_sysmnu_button(ubyte click)
-{
-    ubyte ret;
-    asm volatile ("call ASM_do_sysmnu_button\n"
         : "=r" (ret) : "a" (click));
     return ret;
 }
@@ -5548,26 +5525,6 @@ ubyte load_game(int slot, char *desc)
 #endif
 }
 
-/** Re-enables a button from system menu, moving the following buttons down.
- */
-void sysmnu_button_enable(int btnno, int count)
-{
-    int i;
-    for (i = btnno+count; i < 6; i++) {
-        sysmnu_buttons[i].Y += 30 * count;
-    }
-}
-
-/** Disables a button from system menu, moving the buttons below to fill its space.
- */
-void sysmnu_button_disable(int btnno, int count)
-{
-    int i;
-    for (i = btnno+count; i < 6; i++) {
-        sysmnu_buttons[i].Y -= 30 * count;
-    }
-}
-
 ubyte load_game_slot(ubyte click)
 {
 #if 0
@@ -5615,7 +5572,7 @@ ubyte load_game_slot(ubyte click)
     load_objectives_text();
     init_weapon_text();
 
-    unkn13_SYSTEM_button.Flags &= ~(0x8000|0x2000|0x0004);
+    clear_someflags_system_menu_screen_boxes();
     clear_someflags_controls_screen_boxes();
     clear_someflags_storage_screen_boxes();
     if (save_slot == 0)
@@ -6404,14 +6361,6 @@ void init_variables(void)
         :  :  : "eax" );
 }
 
-ubyte main_do_map_editor(ubyte click)
-{
-    ubyte ret;
-    asm volatile ("call ASM_main_do_map_editor\n"
-        : "=r" (ret) : "a" (click));
-    return ret;
-}
-
 int save_game_write(ubyte slot, char *desc)
 {
     int ret;
@@ -6421,12 +6370,6 @@ int save_game_write(ubyte slot, char *desc)
 }
 
 ubyte ac_select_all_agents(ubyte click);
-ubyte ac_alert_OK(ubyte click);
-ubyte ac_do_sysmnu_button(ubyte click);
-ubyte ac_main_do_my_quit(ubyte click);
-ubyte ac_main_do_login_1(ubyte click);
-ubyte ac_goto_savegame(ubyte click);
-ubyte ac_main_do_map_editor(ubyte click);
 
 void campaign_new_game_prepare(void)
 {
@@ -6513,111 +6456,6 @@ ubyte show_settings_controls_list(struct ScreenBox *box)
 
 ubyte ac_show_netgame_unkn1(struct ScreenBox *box);
 ubyte ac_show_settings_controls_list(struct ScreenBox *box);
-
-void init_main_screen_boxes(void)
-{
-    short scr_w;
-
-    // TODO update when the graphics window set during drawing is fixed
-    scr_w = 640; //lbDisplay.GraphicsWindowWidth;
-
-    init_screen_button(&main_map_editor_button, 260, 387,
-      gui_strings[443], 6, med2_font, 1, 0);
-    init_screen_button(&main_load_button, 260, 358,
-      gui_strings[496], 6, med2_font, 1, 0);
-    init_screen_button(&main_quit_button, 260, 329,
-      gui_strings[445], 6, med2_font, 1, 0);
-    init_screen_button(&main_login_button, 260, 300,
-      gui_strings[444], 6, med2_font, 1, 0);
-
-    main_map_editor_button.X = (scr_w - main_map_editor_button.Width) / 2 - 1;
-    main_login_button.X = (scr_w - main_login_button.Width) / 2 - 1;
-    main_quit_button.X = (scr_w - main_quit_button.Width) / 2 - 1;
-    main_load_button.X = (scr_w - main_load_button.Width) / 2 - 1;
-
-    main_map_editor_button.Border = 3;
-    main_login_button.Border = 3;
-    main_quit_button.Border = 3;
-    main_load_button.Border = 3;
-
-    main_map_editor_button.CallBackFn = ac_main_do_map_editor;
-    main_login_button.CallBackFn = ac_main_do_login_1;
-    main_quit_button.CallBackFn = ac_main_do_my_quit;
-    main_load_button.CallBackFn = ac_goto_savegame;
-
-    main_login_button.AccelKey = 28;
-    main_quit_button.AccelKey = 1;
-}
-
-void set_flag01_main_screen_boxes(void)
-{
-        main_quit_button.Flags |= 0x0001;
-        main_login_button.Flags |= 0x0001;
-        main_load_button.Flags |= 0x0001;
-        main_map_editor_button.Flags |= 0x0001;
-}
-
-void init_alert_screen_boxes(void)
-{
-    int w;
-
-    init_screen_text_box(&loading_INITIATING_box, 210u, 230u, 220u, 20,
-      6, med_font, 1);
-    loading_INITIATING_box.Text = gui_strings[376];
-    lbFontPtr = med_font;
-    loading_INITIATING_box.Height = font_height(0x41u) + 8;
-    w = my_string_width(gui_strings[376]);
-    loading_INITIATING_box.Width = w + 9;
-    loading_INITIATING_box.X = 319 - ((w + 9) >> 1);
-    loading_INITIATING_box.Y = 219 - (loading_INITIATING_box.Height >> 1);
-
-    init_screen_box(&alert_box, 219u, 189u, 200u, 100, 6);
-    init_screen_button(&alert_OK_button, 10u, 269u,
-      gui_strings[458], 6, med2_font, 1, 0);
-    alert_OK_button.CallBackFn = ac_alert_OK;
-    alert_OK_button.X = 319 - (alert_OK_button.Width >> 1);
-    alert_OK_button.AccelKey = 28;
-}
-
-void init_system_menu_boxes(void)
-{
-    int i, h, val;
-
-    init_screen_text_box(&heading_box, 7u, 25u, 626u, 38, 6, big_font, 1);
-    heading_box.DrawTextFn = ac_show_title_box;
-    heading_box.Text = options_title_text;
-
-    init_screen_text_box(&unkn13_SYSTEM_button, 7u, 25u, 197u, 38, 6,
-      big_font, 1);
-    unkn13_SYSTEM_button.Text = gui_strings[366];
-    unkn13_SYSTEM_button.DrawTextFn = ac_show_title_box;
-
-    val = 0;
-    h = 72;
-    for (i = 0; i < 6; i++)
-    {
-        init_screen_button(&sysmnu_buttons[i], 7, h,
-          gui_strings[378 + val], 6, med2_font, 1, 0);
-        sysmnu_buttons[i].Width = 197;
-        sysmnu_buttons[i].Height = 21;
-        sysmnu_buttons[i].CallBackFn = ac_do_sysmnu_button;
-        sysmnu_buttons[i].Flags |= 0x10;
-        sysmnu_buttons[i].Border = 3;
-        val++;
-        h += 30;
-    }
-}
-
-void reset_system_menu_boxes_flags(void)
-{
-    int i;
-
-    unkn13_SYSTEM_button.Flags = 0x0001;
-
-    for (i = 0; i < 6; i++) {
-        sysmnu_buttons[i].Flags = 0x0011;
-    }
-}
 
 void init_screen_boxes(void)
 {
@@ -8337,34 +8175,6 @@ TbBool check_panel_button(void)
 #endif
 }
 
-void show_main_screen(void)
-{
-    if ((game_projector_speed && (main_quit_button.Flags & 0x01)) ||
-      (lbKeyOn[KC_SPACE] && !edit_flag))
-    {
-        lbKeyOn[KC_SPACE] = 0;
-        main_quit_button.Flags |= 0x0002;
-        main_load_button.Flags |= 0x0002;
-        main_login_button.Flags |= 0x0002;
-        main_map_editor_button.Flags |= 0x0002;
-    }
-    //main_quit_button.DrawFn(&main_quit_button); -- incompatible calling convention
-    asm volatile ("call *%1\n"
-        : : "a" (&main_quit_button), "g" (main_quit_button.DrawFn));
-    //main_load_button.DrawFn(&main_load_button); -- incompatible calling convention
-    asm volatile ("call *%1\n"
-        : : "a" (&main_load_button), "g" (main_load_button.DrawFn));
-    //main_login_button.DrawFn(&main_login_button); -- incompatible calling convention
-    asm volatile ("call *%1\n"
-        : : "a" (&main_login_button), "g" (main_login_button.DrawFn));
-}
-
-void show_alert_box(void)
-{
-    asm volatile ("call ASM_show_alert_box\n"
-        :  :  : "eax" );
-}
-
 void show_type11_screen(void)
 {
     asm volatile ("call ASM_show_type11_screen\n"
@@ -9265,7 +9075,7 @@ void show_menu_screen_st2(void)
         in_network_game = 0;
         screentype = SCRT_B;
         redraw_screen_flag = 1;
-        heading_box.Text = gui_strings[374];
+        set_heading_box_text(gui_strings[374]);
     }
     else
     {
@@ -9301,7 +9111,7 @@ void show_menu_screen_st2(void)
             if (ingame.Flags & GamF_Unkn0010)
                 save_game_write(0, save_active_desc);
             screentype = SCRT_9;
-            heading_box.Text = gui_strings[374];
+            set_heading_box_text(gui_strings[374]);
             redraw_screen_flag = 1;
       }
     }
@@ -9402,17 +9212,6 @@ void update_open_brief(void)
     }
 }
 
-void wait_for_sound_sample_finish(ushort smpl_id)
-{
-    TbClockMSec last_loop_time = LbTimerClock();
-    while (IsSamplePlaying(0, smpl_id, NULL)) {
-        game_update();
-        TbClockMSec sleep_end = last_loop_time + 1000/GAME_FPS;
-        LbSleepUntil(sleep_end);
-        last_loop_time = LbTimerClock();
-    }
-}
-
 void copy_from_screen_ani(ubyte *buf)
 {
 #if 0
@@ -9432,39 +9231,6 @@ void copy_from_screen_ani(ubyte *buf)
         inp += lbDisplay.GraphicsScreenWidth;
     }
 #endif
-}
-
-void show_mission_loading_screen(void)
-{
-    LbMouseChangeSprite(0);
-    reload_background();
-    play_sample_using_heap(0, 118, 127, 64, 100, 0, 3);
-
-    DwBool stop;
-    TbClockMSec last_loop_time = LbTimerClock();
-    do
-    {
-        memcpy(lbDisplay.WScreen, back_buffer, lbDisplay.GraphicsScreenWidth * lbDisplay.GraphicsScreenHeight);
-        text_buf_pos = lbDisplay.GraphicsScreenWidth * lbDisplay.GraphicsScreenHeight;
-        if ((0 != game_projector_speed && (loading_INITIATING_box.Flags & 0x0001))
-          || (0 != lbKeyOn[KC_SPACE] && 0 == edit_flag))
-            loading_INITIATING_box.Flags |= 0x0002;
-        //loading_INITIATING_box.DrawFn(&loading_INITIATING_box); -- incompatible calling convention
-        asm volatile ("call *%1\n"
-            : : "a" (&loading_INITIATING_box), "g" (loading_INITIATING_box.DrawFn));
-        stop = loading_INITIATING_box.Flags & 0x1000;
-        draw_purple_screen();
-        swap_wscreen();
-
-        game_update();
-        TbClockMSec sleep_end = last_loop_time + 1000/GAME_FPS;
-        LbSleepUntil(sleep_end);
-        last_loop_time = LbTimerClock();
-    }
-    while (!stop);
-
-    loading_INITIATING_box.Flags = 0x0001;
-    wait_for_sound_sample_finish(118);
 }
 
 void show_load_and_prep_mission(void)
@@ -9766,7 +9532,7 @@ void show_menu_screen(void)
     {
         screentype = SCRT_NETGAME;
         redraw_screen_flag = 1;
-        heading_box.Text = "";
+        set_heading_box_text("");
         edit_flag = 0;
         change_screen = 0;
     }
@@ -9774,13 +9540,13 @@ void show_menu_screen(void)
     {
         screentype = SCRT_2;
         redraw_screen_flag = 1;
-        heading_box.Text = gui_strings[367];
+        set_heading_box_text(gui_strings[367]);
         edit_flag = 0;
         change_screen = 0;
     }
     if (change_screen == 3)
     {
-        heading_box.Text = gui_strings[368];
+        set_heading_box_text(gui_strings[368]);
         redraw_screen_flag = 1;
         edit_flag = 0;
         change_screen = 0;
@@ -9819,7 +9585,7 @@ void show_menu_screen(void)
     if (change_screen == 6)
     {
         screentype = SCRT_RESEARCH;
-        heading_box.Text = gui_strings[371];
+        set_heading_box_text(gui_strings[371]);
         clear_research_screen();
         edit_flag = 0;
         change_screen = 0;
@@ -9836,12 +9602,12 @@ void show_menu_screen(void)
     }
     if (show_alert)
     {
-        alert_box.Flags = 1;
+        reset_alert_screen_boxes_flags();
         edit_flag = 0;
         old_screentype = screentype;
         show_alert = 0;
         screentype = SCRT_ALERTBOX;
-        alert_OK_button.Flags |= 0x0001;
+        set_flag01_alert_screen_boxes();
         redraw_screen_flag = 1;
     }
 
@@ -9861,10 +9627,8 @@ void show_menu_screen(void)
         }
 
         reset_brief_screen_boxes_flags();
-
-        heading_box.Flags = 0x0001;
-        set_flag01_debrief_screen_boxes();
-
+        reset_heading_screen_boxes_flags();
+        reset_debrief_screen_boxes_flags();
         reset_net_screen_boxes_flags();
         reset_world_screen_boxes_flags();
         reset_login_screen_boxes_flags();

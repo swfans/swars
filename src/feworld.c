@@ -24,6 +24,7 @@
 #include "bfstrut.h"
 #include "poly.h"
 #include "ssampply.h"
+#include "femain.h"
 #include "guiboxes.h"
 #include "guitext.h"
 #include "display.h"
@@ -625,7 +626,7 @@ ubyte show_world_landmap_box(struct ScreenBox *box)
 
 void show_worldmap_screen(void)
 {
-    if ((game_projector_speed && (heading_box.Flags & 0x01)) ||
+    if ((game_projector_speed && is_heading_flag01()) ||
       (lbKeyOn[KC_SPACE] && !edit_flag))
     {
         lbKeyOn[KC_SPACE] = 0;
@@ -633,9 +634,7 @@ void show_worldmap_screen(void)
     }
     int ret = 1;
     if (ret) {
-        //ret = heading_box.DrawFn(&heading_box); -- incompatible calling convention
-        asm volatile ("call *%2\n"
-            : "=r" (ret) : "a" (&heading_box), "g" (heading_box.DrawFn));
+        ret = draw_heading_box();
     }
     if (ret) {
         //ret = world_landmap_box.DrawFn(&world_landmap_box); -- incompatible calling convention
@@ -682,8 +681,8 @@ void set_flag01_world_screen_boxes(void)
 
 void set_flag02_world_screen_boxes(void)
 {
+    set_flag02_heading_screen_boxes();
     world_landmap_box.Flags |= 0x0002;
-    heading_box.Flags |= 0x0002;
     world_city_info_box.Flags |= 0x0002;
 }
 /******************************************************************************/

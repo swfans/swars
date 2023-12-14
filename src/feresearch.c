@@ -20,6 +20,7 @@
 
 #include "bftext.h"
 #include "bfsprite.h"
+#include "femain.h"
 #include "guiboxes.h"
 #include "guigraph.h"
 #include "guitext.h"

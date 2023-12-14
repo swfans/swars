@@ -20,6 +20,7 @@
 
 #include "bftext.h"
 #include "campaign.h"
+#include "femain.h"
 #include "guiboxes.h"
 #include "guitext.h"
 #include "display.h"
@@ -157,7 +158,7 @@ void brief_load_mission_info(void)
 {
     char fname[FILENAME_MAX];
 
-    heading_box.Text = gui_strings[372];
+    set_heading_box_text(gui_strings[372]);
     data_1c4aa2 = 0;
     brief_netscan_box.Lines = 0;
 

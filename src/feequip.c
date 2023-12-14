@@ -20,6 +20,7 @@
 
 #include "bftext.h"
 #include "bfsprite.h"
+#include "femain.h"
 #include "guiboxes.h"
 #include "guitext.h"
 #include "display.h"
@@ -120,7 +121,7 @@ void init_weapon_anim(ubyte weapon)
 
 void switch_shared_equip_screen_buttons_to_equip(void)
 {
-    heading_box.Text = gui_strings[370];
+    set_heading_box_text(gui_strings[370]);
     equip_cost_box.X = equip_offer_buy_button.Width + equip_offer_buy_button.X + 4;
     refresh_equip_list = 1;
     equip_cost_box.Width = 208 - equip_offer_buy_button.Width - 14;
@@ -147,7 +148,7 @@ void switch_shared_equip_screen_buttons_to_equip(void)
 
 void switch_shared_equip_screen_buttons_to_cybmod(void)
 {
-    heading_box.Text = gui_strings[369];
+    set_heading_box_text(gui_strings[369]);
     equip_cost_box.X = 430;
     equip_cost_box.Width = 198;
     equip_cost_box.Y = 383;
