@@ -3705,6 +3705,12 @@ void init_scanner(void)
     SCANNER_init();
 }
 
+void frame_unkn_func_06(void)
+{
+    asm volatile ("call ASM_frame_unkn_func_06\n"
+        :  :  : "eax" );
+}
+
 /**
  * Updates engine parameters for best display for current video mode within the tactical mission.
  */
@@ -3726,7 +3732,44 @@ void adjust_mission_engine_to_video_mode(void)
     srm_scanner_size_update();
 }
 
-void video_mode_switch_to_next(void)
+void setup_engine_screen_mode(void)
+{
+    LbFileLoadAt("qdata/pal.pal", display_palette);
+    LbPaletteSet(display_palette);
+
+    if (game_high_resolution)
+    {
+        if (lbDisplay.ScreenMode != screen_mode_game_hi)
+            setup_screen_mode(screen_mode_game_hi);
+    }
+    else
+    {
+        if (lbDisplay.ScreenMode != screen_mode_game_lo)
+            setup_screen_mode(screen_mode_game_lo);
+    }
+    // Setup colour conversion tables
+    LbColourTablesLoad(display_palette, "data/tables.dat");
+    LbGhostTableLoad(display_palette, 50, "data/synghost.tab");
+
+    // Prepare shadow buffer
+    screen_buffer_fill_black();
+    frame_unkn_func_06();
+    screen_buffer_fill_black();
+    { // Show something on screen until the load finishes
+        // TODO TEXT instead of repeating "Initiating.." show "Established"
+        char *text = gui_strings[376];
+        int w,h;
+
+        lbFontPtr = small_font;
+        w = LbTextStringWidth(text);
+        h = LbTextStringHeight(text);
+        LbTextDraw((lbDisplay.GraphicsScreenWidth - w) >> 1,
+          (lbDisplay.GraphicsScreenHeight - h) >> 1, text);
+    }
+    swap_wscreen();
+}
+
+void screen_mode_switch_to_next(void)
 {
     TbScreenMode nmode;
 
@@ -3835,7 +3878,7 @@ void game_graphics_inputs(void)
     if (lbKeyOn[KC_F8])
     {
         lbKeyOn[KC_F8] = 0;
-        video_mode_switch_to_next();
+        screen_mode_switch_to_next();
     }
 #endif
 }
@@ -9391,12 +9434,6 @@ void copy_from_screen_ani(ubyte *buf)
 #endif
 }
 
-void frame_unkn_func_06(void)
-{
-    asm volatile ("call ASM_frame_unkn_func_06\n"
-        :  :  : "eax" );
-}
-
 void show_mission_loading_screen(void)
 {
     LbMouseChangeSprite(0);
@@ -9474,31 +9511,9 @@ void show_load_and_prep_mission(void)
 
     data_1c498d = 2;
     reload_background_flag = 1;
-    // Setup screen and palette
+    // Setup screen, palette and colour tables
     debug_trace_place(13);
-    LbFileLoadAt("qdata/pal.pal", display_palette);
-    LbPaletteSet(display_palette);
-    debug_trace_place(15);
-    if (game_high_resolution)
-    {
-        if (lbDisplay.ScreenMode != screen_mode_game_hi)
-            setup_screen_mode(screen_mode_game_hi);
-    }
-    else
-    {
-        if (lbDisplay.ScreenMode != screen_mode_game_lo)
-            setup_screen_mode(screen_mode_game_lo);
-    }
-    // Setup colour conversion tables
-    debug_trace_place(16);
-    LbColourTablesLoad(display_palette, "data/tables.dat");
-    LbGhostTableLoad(display_palette, 50, "data/synghost.tab");
-    debug_trace_place(17);
-    // Prepare shadow buffer
-    screen_buffer_fill_black();
-    frame_unkn_func_06();
-    // TODO draw empty GUI instead of black screen?
-    show_black_screen();
+    setup_engine_screen_mode();
     // Now we can call the init; it uses current video mode and colour tables
     // to scale correctly, so has to be done after video setup
     // (though we should at some point separate the part linked to current video settings)
