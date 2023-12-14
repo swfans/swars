@@ -115,8 +115,6 @@ struct Frame;
 #pragma pack()
 
 extern char *fadedat_fname;
-extern char *pop_dat_fname_fmt;
-extern char *pop_tab_fname_fmt;
 extern unsigned long unkn_buffer_04;
 
 extern ubyte *small_font_data;
@@ -618,9 +616,6 @@ void game_setup_stuff(void)
     colour_brown2 = LbPaletteFindColour(display_palette, 42, 37, 30);
     colour_grey2 = LbPaletteFindColour(display_palette, 32, 32, 32);
     colour_grey1 = LbPaletteFindColour(display_palette, 16, 16, 16);
-
-    LbColourTablesLoad(display_palette, "data/tables.dat");
-    colour_tables_ghost_fixup();
 #endif
 }
 
@@ -3735,6 +3730,21 @@ void adjust_mission_engine_to_video_mode(void)
     srm_scanner_size_update();
 }
 
+void show_simple_load_screen(void)
+{
+    // TODO TEXT instead of repeating "Initiating.." show "Established"
+    char *text = gui_strings[376];
+    int w,h;
+
+    screen_buffer_fill_black();
+    lbFontPtr = small_font;
+    w = LbTextStringWidth(text);
+    h = LbTextStringHeight(text);
+    LbTextDraw((lbDisplay.GraphicsScreenWidth - w) >> 1,
+      (lbDisplay.GraphicsScreenHeight - h) >> 1, text);
+    swap_wscreen();
+}
+
 void setup_engine_screen_mode(void)
 {
     LbFileLoadAt("qdata/pal.pal", display_palette);
@@ -3757,19 +3767,8 @@ void setup_engine_screen_mode(void)
     // Prepare shadow buffer
     screen_buffer_fill_black();
     frame_unkn_func_06();
-    screen_buffer_fill_black();
-    { // Show something on screen until the load finishes
-        // TODO TEXT instead of repeating "Initiating.." show "Established"
-        char *text = gui_strings[376];
-        int w,h;
-
-        lbFontPtr = small_font;
-        w = LbTextStringWidth(text);
-        h = LbTextStringHeight(text);
-        LbTextDraw((lbDisplay.GraphicsScreenWidth - w) >> 1,
-          (lbDisplay.GraphicsScreenHeight - h) >> 1, text);
-    }
-    swap_wscreen();
+    // Show something on screen until the load finishes
+    show_simple_load_screen();
 }
 
 void screen_mode_switch_to_next(void)
@@ -3958,6 +3957,82 @@ int joy_func_067(struct DevInput *dinp, int a2)
     return ret;
 }
 
+void setup_mouse_pointers(void)
+{
+    struct TbSprite *spr;
+
+    LbSpriteSetup(pointer_sprites, pointer_sprites_end, pointer_data);
+    // Make mouse pointer sprite 1 an empty (zero size) sprite
+    spr = &pointer_sprites[1];
+    spr->SWidth = 0;
+    spr->SHeight = 0;
+}
+
+void reset_mouse_pointers(void)
+{
+    LbSpriteReset(pointer_sprites, pointer_sprites_end, pointer_data);
+}
+
+void setup_multicolor_sprites(void)
+{
+    LbSpriteSetup(m_sprites, m_sprites_end, m_spr_data);
+}
+
+/** Loads and sets up multicolor sprites for currently set TrenchcoatPreference.
+ */
+void load_multicolor_sprites(void)
+{
+    ulong sz;
+    char fname[100];
+
+    sprintf(fname, "data/mspr-%d.dat", ingame.TrenchcoatPreference);
+    LbFileLoadAt(fname, m_spr_data);
+    sprintf(fname, "data/mspr-%d.tab", ingame.TrenchcoatPreference);
+    sz = LbFileLoadAt(fname, m_sprites);
+    m_sprites_end = (struct TbSprite *)((ubyte *)m_sprites + sz);
+    LbSpriteSetup(m_sprites, m_sprites_end, m_spr_data);
+}
+
+void reset_multicolor_sprites(void)
+{
+    LbSpriteReset(m_sprites, m_sprites_end, m_spr_data);
+}
+
+void debug_multicolor_sprite(int idx)
+{
+    int i;
+    char strdata[100];
+    char *str;
+    struct TbSprite *spr;
+    unsigned char *ptr;
+    spr = &m_sprites[idx];
+    str = strdata;
+    sprintf(str, "spr %d width %d height %d ptr 0x%lx data",
+      idx, (int)spr->SWidth, (int)spr->SHeight, (ulong)spr->Data);
+    ptr = spr->Data;
+    for (i = 0; i < 10; i++)
+    {
+        str = strdata + strlen(strdata);
+        sprintf(str, " %02x", (int)*ptr);
+        ptr++;
+    }
+    LOGDBG("m_sprites: %s", strdata);
+}
+
+/** Loads and sets up panel sprites for currently set PanelPermutation.
+ */
+void load_pop_sprites(void)
+{
+    char fname[DISKPATH_SIZE];
+    int file_len;
+    sprintf(fname, "data/pop%d-0.dat", -ingame.PanelPermutation - 1);
+    LbFileLoadAt(fname, pop1_data);
+    sprintf(fname, "data/pop%d-0.tab", -ingame.PanelPermutation - 1);
+    file_len = LbFileLoadAt(fname, pop1_sprites);
+    pop1_sprites_end = &pop1_sprites[file_len/sizeof(struct TbSprite)];
+    LbSpriteSetup(pop1_sprites, pop1_sprites_end, pop1_data);
+}
+
 void setup_host(void)
 {
     BAT_unknsub_20(0, 0, 0, 0, unkn_buffer_04 + 41024);
@@ -3971,37 +4046,27 @@ void setup_host(void)
             lbDisplay.ScreenMode = screen_mode_game_lo;
         setup_simple_screen_mode(lbDisplay.ScreenMode);
     }
-    LbSpriteSetup(pointer_sprites, pointer_sprites_end, pointer_data);
-    { // Make mouse pointer sprite 1 an empty (zero size) sprite
-        struct TbSprite *spr;
-        spr = &pointer_sprites[1];
-        spr->SWidth = 0;
-        spr->SHeight = 0;
-    }
+    LbColourTablesLoad(display_palette, "data/tables.dat");
+    LbGhostTableGenerate(display_palette, 50, "data/synghost.tab");
+    colour_tables_ghost_fixup();
+
     if ( keyboard_mode_direct )
         LbKeyboardOpen();
     else
         LbIKeyboardOpen();
     init_buffered_keys();
+
+    setup_mouse_pointers();
     lbMouseAutoReset = false;
     LbMouseSetup(&pointer_sprites[1], 2, 2);
 
     setup_debug_obj_trace();
-    LbSpriteSetup(m_sprites, m_sprites_end, m_spr_data);
-    ingame.PanelPermutation = -2;
-    {
-        char fname[DISKPATH_SIZE];
-        int file_len;
-        sprintf(fname, pop_dat_fname_fmt, 1);
-        LbFileLoadAt(fname, pop1_data);
-        sprintf(fname, pop_tab_fname_fmt, -ingame.PanelPermutation - 1);
-        file_len = LbFileLoadAt(fname, pop1_sprites);
-        pop1_sprites_end = &pop1_sprites[file_len/sizeof(struct TbSprite)];
-        LbSpriteSetup(pop1_sprites, pop1_sprites_end, pop1_data);
-    }
+    // Default Trenchcoat color loaded from unk02_load_files[]
     ingame.TrenchcoatPreference = 0;
+    setup_multicolor_sprites();
+    ingame.PanelPermutation = -2;
+    load_pop_sprites();
     game_panel = game_panel_lo;
-    LbGhostTableGenerate(display_palette, 50, "data/synghost.tab");
     init_memory(mem_game);
 
     init_syndwars();
@@ -4876,47 +4941,12 @@ void game_process_sub09(void)
     }
 }
 
-void load_multicolor_sprites(void)
-{
-    ulong sz;
-    char fname[100];
-
-    sprintf(fname, "data/mspr-%d.dat", ingame.TrenchcoatPreference);
-    LbFileLoadAt(fname, m_spr_data);
-    sprintf(fname, "data/mspr-%d.tab", ingame.TrenchcoatPreference);
-    sz = LbFileLoadAt(fname, m_sprites);
-    m_sprites_end = (struct TbSprite *)((ubyte *)m_sprites + sz);
-    LbSpriteSetup(m_sprites, m_sprites_end, m_spr_data);
-    //unknown_unused(); -- nop function, not sure what was its purpose
-}
-
 int func_6edb8(ubyte a1)
 {
     int ret;
     asm volatile ("call ASM_func_6edb8\n"
         : "=r" (ret) : "a" (a1));
     return ret;
-}
-
-void debug_m_sprite(int idx)
-{
-    int i;
-    char strdata[100];
-    char *str;
-    struct TbSprite *spr;
-    unsigned char *ptr;
-    spr = &m_sprites[idx];
-    str = strdata;
-    sprintf(str, "spr %d width %d height %d ptr 0x%lx data",
-      idx, (int)spr->SWidth, (int)spr->SHeight, (ulong)spr->Data);
-    ptr = spr->Data;
-    for (i = 0; i < 10; i++)
-    {
-        str = strdata + strlen(strdata);
-        sprintf(str, " %02x", (int)*ptr);
-        ptr++;
-    }
-    LOGDBG("m_sprites: %s", strdata);
 }
 
 void mapwho_unkn01(int a1, int a2)
@@ -8268,7 +8298,7 @@ void show_menu_screen_st0(void)
 
     debug_trace_place(18);
     if ( in_network_game )
-        screentype = SCRT_PAUSE;
+        screentype = SCRT_LOGIN;
     else
         screentype = SCRT_MAINMENU;
     data_1c498d = 1;
@@ -9425,7 +9455,7 @@ void show_menu_screen(void)
     data_1c498f = lbDisplay.LeftButton;
     data_1c4990 = lbDisplay.RightButton;
     show_date_time();
-    if ((screentype != SCRT_MAINMENU) && (screentype != SCRT_PAUSE) && !restore_savegame)
+    if ((screentype != SCRT_MAINMENU) && (screentype != SCRT_LOGIN) && !restore_savegame)
           unkn_research_func_006();
     if ((screentype == SCRT_9 || screentype == SCRT_B) && change_screen == 7)
     {
@@ -9462,7 +9492,7 @@ void show_menu_screen(void)
     case SCRT_9:
         show_type11_screen();
         break;
-    case SCRT_PAUSE:
+    case SCRT_LOGIN:
         show_login_screen();
         break;
     case SCRT_B:
@@ -9504,7 +9534,7 @@ void show_menu_screen(void)
     memcpy(lbDisplay.WScreen, back_buffer, lbDisplay.GraphicsScreenWidth * lbDisplay.GraphicsScreenHeight);
     draw_purple_screen();
 
-    if ( screentype != SCRT_MAINMENU && screentype != SCRT_PAUSE && !restore_savegame )
+    if ( screentype != SCRT_MAINMENU && screentype != SCRT_LOGIN && !restore_savegame )
     {
         if ( lbKeyOn[KC_F1] && screentype != SCRT_ALERTBOX && !net_unkn_pos_01b)
         {
@@ -9814,7 +9844,7 @@ void game_process_orbital_station_explode(void)
 
 void game_process(void)
 {
-    debug_m_sprite(193);
+    debug_multicolor_sprite(193);
     LOGDBG("WSCREEN 0x%lx", (ulong)lbDisplay.WScreen);
     while ( !exit_game )
     {
@@ -9952,8 +9982,8 @@ void host_reset(void)
     setup_heaps(1);
     FreeAudio();
     engine_reset();
-    LbSpriteReset(m_sprites, m_sprites_end, m_spr_data);
-    LbSpriteReset(pointer_sprites, pointer_sprites_end, pointer_data);
+    reset_multicolor_sprites();
+    reset_mouse_pointers();
     LbMouseReset();
     LbKeyboardClose();
     LbScreenReset();

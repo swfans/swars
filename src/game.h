@@ -70,7 +70,7 @@ enum ScreenType {
   SCRT_NETGAME,
   SCRT_RESEARCH,
   SCRT_9,
-  SCRT_PAUSE,
+  SCRT_LOGIN,
   SCRT_B,
   SCRT_ALERTBOX,
   SCRT_D,
