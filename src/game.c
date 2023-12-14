@@ -3736,7 +3736,6 @@ void video_mode_switch_to_next(void)
         nmode = screen_mode_game_lo;
     LOGSYNC("Switching to mode %d", (int)nmode);
 
-    StopCD();
     setup_screen_mode(nmode);
     adjust_mission_engine_to_video_mode();
 }
