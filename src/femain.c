@@ -85,8 +85,7 @@ void init_main_screen_boxes(void)
 {
     short scr_w;
 
-    // TODO update when the graphics window set during drawing is fixed
-    scr_w = 640; //lbDisplay.GraphicsWindowWidth;
+    scr_w = lbDisplay.GraphicsWindowWidth;
 
     init_screen_button(&main_map_editor_button, 260, 387,
       gui_strings[443], 6, med2_font, 1, 0);
@@ -140,23 +139,29 @@ void show_alert_box(void)
 
 void init_alert_screen_boxes(void)
 {
+    short scr_w;
     int w;
+
+    scr_w = lbDisplay.GraphicsWindowWidth;
 
     init_screen_text_box(&loading_INITIATING_box, 210u, 230u, 220u, 20,
       6, med_font, 1);
     loading_INITIATING_box.Text = gui_strings[376];
+
     lbFontPtr = med_font;
-    loading_INITIATING_box.Height = font_height(0x41u) + 8;
+    loading_INITIATING_box.Height = font_height('A') + 8;
     w = my_string_width(gui_strings[376]);
     loading_INITIATING_box.Width = w + 9;
-    loading_INITIATING_box.X = 319 - ((w + 9) >> 1);
+    loading_INITIATING_box.X = (scr_w - (w + 9)) / 2 - 1;
     loading_INITIATING_box.Y = 219 - (loading_INITIATING_box.Height >> 1);
 
     init_screen_box(&alert_box, 219u, 189u, 200u, 100, 6);
     init_screen_button(&alert_OK_button, 10u, 269u,
       gui_strings[458], 6, med2_font, 1, 0);
     alert_OK_button.CallBackFn = ac_alert_OK;
-    alert_OK_button.X = 319 - (alert_OK_button.Width >> 1);
+
+    alert_box.X = (scr_w - alert_box.Width) / 2 - 1;
+    alert_OK_button.X = (scr_w - alert_OK_button.Width) / 2 - 1;
     alert_OK_button.AccelKey = 28;
 }
 

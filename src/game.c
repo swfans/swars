@@ -6546,14 +6546,14 @@ void cover_screen_rect_with_raw_file(short x, short y, ushort w, ushort h, const
     struct TbRect srect;
     ubyte *inp_buf;
 
-    LbSetRect(&srect, x, y, w, h);
+    LbSetRect(&srect, 0, 0, w, h);
     LbScreenSurfaceInit(&surf);
     LbScreenSurfaceCreate(&surf, w, h);
     inp_buf = LbScreenSurfaceLock(&surf);
     LbFileLoadAt(fname, inp_buf);
     LbScreenSurfaceUnlock(&surf);
     LbScreenUnlock();
-    LbScreenSurfaceBlit(&surf, 0, 0, &srect, SSBlt_FLAG8 | SSBlt_FLAG4);
+    LbScreenSurfaceBlit(&surf, x, y, &srect, SSBlt_FLAG8 | SSBlt_FLAG4);
     LbScreenSurfaceRelease(&surf);
     LbScreenLock();
 }
@@ -6564,6 +6564,8 @@ void reload_background(void)
     asm volatile ("call ASM_reload_background\n"
         :  :  : "eax" );
 #else
+    proj_origin.X = lbDisplay.GraphicsScreenWidth / 2 - 1;
+    proj_origin.Y = ((480 * 143) >> 8) + 1;
     if (screentype == 6 || screentype == 10 || restore_savegame)
     {
         ubyte *scr_bkp;
@@ -6596,12 +6598,18 @@ void reload_background(void)
         else
         {
             ubyte *scr_bkp;
+            short raw_w, raw_h;
+            short x, y;
+            raw_w = 640;
+            raw_h = 480;
+            x = (lbDisplay.GraphicsScreenWidth - raw_w) / 2;
+            y = 0;
 
             scr_bkp = lbDisplay.WScreen;
             lbDisplay.WScreen = back_buffer;
             screen_buffer_fill_black();
             // TODO menu scaling, maybe?
-            cover_screen_rect_with_raw_file(0, 0, 640, 480, str);
+            cover_screen_rect_with_raw_file(x, y, raw_w, raw_h, str);
             lbDisplay.WScreen = scr_bkp;
         }
     }

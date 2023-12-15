@@ -202,8 +202,7 @@ void init_login_screen_boxes(void)
 {
     short scr_w;
 
-    // TODO update when the graphics window set during drawing is fixed
-    scr_w = 640; //lbDisplay.GraphicsWindowWidth;
+    scr_w = lbDisplay.GraphicsWindowWidth;
 
     init_screen_box(&login_campaigns_box, 219u, 159u, 200u, 100, 6);
     init_screen_box(&login_name_box, 150u, 128u, 337u, 22, 6);
