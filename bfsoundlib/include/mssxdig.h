@@ -32,8 +32,6 @@ extern "C" {
 
 typedef struct WAVE_ENTRY WAVE_ENTRY;
 
-typedef int32_t (*AILTIMBRECB) (MDI_DRIVER *mdidrv, int32_t bank, int32_t patch);
-
 /** Wave synth library entry.
  */
 struct WAVE_ENTRY {
@@ -72,6 +70,7 @@ struct WAVE_SYNTH {
 WAVE_SYNTH *AIL2OAL_API_create_wave_synthesizer(DIG_DRIVER *digdrv,
   MDI_DRIVER *mdidrv, void const *wave_lib, int32_t polyphony);
 
+void AIL2OAL_API_destroy_wave_synthesizer(WAVE_SYNTH *ws);
 /******************************************************************************/
 #ifdef __cplusplus
 };

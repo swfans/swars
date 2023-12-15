@@ -17,6 +17,7 @@
  *     (at your option) any later version.
  */
 /******************************************************************************/
+#include <limits.h>
 #include <stdio.h>
 #include <stddef.h>
 #include <stdlib.h>
@@ -26,6 +27,7 @@
 
 #include "mssxdig.h"
 #include "mssxmidi.h"
+#include "memfile.h"
 #include "miscutil.h"
 #include "ail.h"
 #include "aildebug.h"
@@ -210,6 +212,25 @@ WAVE_SYNTH *AIL2OAL_API_create_wave_synthesizer(DIG_DRIVER *digdrv,
 {
     // TODO - function not remade
     return NULL;
+}
+
+void AIL2OAL_API_destroy_wave_synthesizer(WAVE_SYNTH *ws)
+{
+    int32_t i;
+
+    if (ws == NULL)
+        return;
+
+    // Release allocated sample handles
+    for (i=0; i < ws->n_voices; i++) {
+        AIL_release_sample_handle(ws->s[i]);
+    }
+
+    // Restore previous trap callback functions
+    AIL_register_event_callback(ws->mdidrv, ws->prev_event_fn);
+    AIL_register_timbre_callback(ws->mdidrv, ws->prev_timb_fn);
+
+    AIL_MEM_free_lock(ws, sizeof(WAVE_SYNTH));
 }
 
 /******************************************************************************/

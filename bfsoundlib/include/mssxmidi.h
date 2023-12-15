@@ -74,6 +74,7 @@ AILTRIGGERCB AIL2OAL_API_register_trigger_callback(SNDSEQUENCE *seq, AILTRIGGERC
 AILSEQUENCECB AIL2OAL_API_register_sequence_callback(SNDSEQUENCE *seq, AILSEQUENCECB callback);
 AILBEATCB AIL2OAL_API_register_beat_callback(SNDSEQUENCE *seq, AILBEATCB callback);
 AILEVENTCB AIL2OAL_API_register_event_callback(MDI_DRIVER *mdidrv, AILEVENTCB callback);
+AILTIMBRECB AIL2OAL_API_register_timbre_callback(MDI_DRIVER *mdidrv, AILTIMBRECB callback);
 
 void AIL2OAL_API_set_sequence_user_data(SNDSEQUENCE *seq, uint32_t index, intptr_t value);
 intptr_t AIL2OAL_API_sequence_user_data(SNDSEQUENCE *seq, uint32_t index);

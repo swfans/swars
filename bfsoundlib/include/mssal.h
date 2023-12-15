@@ -364,6 +364,10 @@ typedef int32_t (*AILPREFIXCB) (SNDSEQUENCE *, int32_t, int32_t);
  */
 typedef void (*AILTRIGGERCB) (SNDSEQUENCE *, int32_t, int32_t);
 
+/** XMIDI Timbre request callback function type.
+ */
+typedef int32_t (*AILTIMBRECB) (MDI_DRIVER *mdidrv, int32_t, int32_t);
+
 /** Sound card hardware I/O parameters structure.
  *
  * Originally named `IO_PARMS`. This less generic name helps when analyzing old code.
@@ -459,7 +463,7 @@ struct MDI_DRIVER {
     int32_t state[16];                       /**< offs=288 Lock state prior to being locked */
     int32_t notes[16];                       /**< offs=352 # of active notes in channel */
     AILEVENTCB event_trap;                   /**< offs=416 MIDI event trap callback function */
-    void *timbre_trap;                       /**< offs=420 Timbre request callback function */
+    AILTIMBRECB timbre_trap;                 /**< offs=420 Timbre request callback function */
     int32_t message_count;                   /**< offs=424 MIDI message count; specific to DOS implementation */
     int32_t offset;                          /**< offs=428 MIDI buffer offset; specific to DOS implementation  */
     int32_t master_volume;                   /**< offs=432 Master XMIDI note volume 0-127 */

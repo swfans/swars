@@ -436,6 +436,13 @@ AILBEATCB AIL_register_beat_callback(SNDSEQUENCE *seq, AILBEATCB callback);
  */
 AILEVENTCB AIL_register_event_callback(MDI_DRIVER *mdidrv, AILEVENTCB callback);
 
+/** Install callback function handler for MIDI/XMIDI timbre loading.
+ *
+ *  MSS doesn't support GTL access - this function is primarily
+ *  for use by WAILXDIG.
+ */
+AILTIMBRECB AIL_register_timbre_callback(MDI_DRIVER *mdidrv, AILTIMBRECB callback);
+
 /** Set sequence user data value at specified index.
  *
  * Any desired value may be stored at one of eight user data words
@@ -485,6 +492,10 @@ void AIL_close_XMIDI_driver(MDI_DRIVER *mdidrv);
  */
 WAVE_SYNTH *AIL_create_wave_synthesizer(DIG_DRIVER *digdrv,
   MDI_DRIVER *mdidrv, void const *wave_lib, int32_t polyphony);
+
+/** Disable MIDI wave services.
+ */
+void AIL_destroy_wave_synthesizer(WAVE_SYNTH *ws);
 
 /******************************************************************************/
 #ifdef __cplusplus
