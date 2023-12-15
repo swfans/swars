@@ -481,6 +481,11 @@ MDI_DRIVER *AIL_open_XMIDI_driver(uint32_t flags);
  */
 void AIL_close_XMIDI_driver(MDI_DRIVER *mdidrv);
 
+/** Install a MIDI wave library and enable digital MIDI services.
+ */
+WAVE_SYNTH *AIL_create_wave_synthesizer(DIG_DRIVER *digdrv,
+  MDI_DRIVER *mdidrv, void const *wave_lib, int32_t polyphony);
+
 /******************************************************************************/
 #ifdef __cplusplus
 };

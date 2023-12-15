@@ -36,6 +36,8 @@ swars_SOURCES = \
 	../bfsoundlib/src/msssys.c \
 	../bfsoundlib/include/mssxmidi.h \
 	../bfsoundlib/src/mssxmidi.c \
+	../bfsoundlib/include/mssxdig.h \
+	../bfsoundlib/src/mssxdig.c \
 	../bfsoundlib/include/bfaudio.h \
 	../bfsoundlib/src/bfaudio.c \
 	../bfsoundlib/include/bfsvaribl.h \

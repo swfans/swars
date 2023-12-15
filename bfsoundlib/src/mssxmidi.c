@@ -213,8 +213,6 @@ void XMI_sysex_message(MDI_DRIVER *mdidrv, uint8_t const *message,
     XMI_flush_buffer(mdidrv);
 }
 
-/** Write control log value.
- */
 void XMI_write_log(MDI_CTRL_LOG *log, int32_t status, int32_t data_1, int32_t data_2)
 {
     int32_t st;

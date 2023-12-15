@@ -61,6 +61,7 @@ typedef struct DIG_DST DIG_DST;
 typedef struct MDI_DDT MDI_DDT;
 typedef struct MDI_DST MDI_DST;
 typedef struct MIDIOUT MIDIOUT;
+typedef struct WAVE_SYNTH WAVE_SYNTH;
 
 /** There are two types of AIL drivers.
  */

@@ -97,6 +97,10 @@ void AIL2OAL_API_release_channel(MDI_DRIVER *mdidrv, int32_t channel);
 void XMI_send_channel_voice_message(SNDSEQUENCE *seq, int32_t status,
         int32_t data_1, int32_t data_2, int32_t ICA_enable);
 
+/** Write control log value.
+ */
+void XMI_write_log(MDI_CTRL_LOG *log, int32_t status, int32_t data_1, int32_t data_2);
+
 /** Timer interrupt routine for XMIDI sequencing.
  *
  * Has anything to do with interrupts and DMA channels only on bare metal systems

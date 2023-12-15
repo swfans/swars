@@ -1424,4 +1424,23 @@ void AIL_uninstall_MDI_driver(MDI_DRIVER *mdidrv)
     AIL_indent--;
 }
 
+WAVE_SYNTH *AIL_create_wave_synthesizer(DIG_DRIVER *digdrv,
+  MDI_DRIVER *mdidrv, void const *wave_lib, int32_t polyphony)
+{
+    WAVE_SYNTH *ws;
+
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s(0x%p,0x%p,0x%p,%d)\n", __func__,
+          digdrv, mdidrv, wave_lib, polyphony);
+
+    ws = AIL2OAL_API_create_wave_synthesizer(
+      digdrv, mdidrv, wave_lib, polyphony);
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Result = 0x%p\n", ws);
+    AIL_indent--;
+
+    return ws;
+}
 /******************************************************************************/
