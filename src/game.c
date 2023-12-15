@@ -4703,7 +4703,7 @@ void init_game(ubyte reload)
     LOGSYNC("Init %s mission %hu on map %hu level %hd", in_network_game ? "MP" : "SP",
       missi, next_mapno, next_level);
 
-    if (current_map != next_mapno)
+    if ((current_map != next_mapno) || !reload)
         change_current_map(next_mapno);
     debug_trace_setup(0);
 
