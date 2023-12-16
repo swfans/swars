@@ -9144,7 +9144,7 @@ void show_menu_screen_st2(void)
     else
     {
       update_mission_time(0);
-      city_id = -1;
+      selected_city_id = -1;
       byte_1C4AA3 = brief_store[open_brief - 1].RefNum;
       if ((ingame.MissionStatus != 0) && (ingame.MissionStatus != 2))
       {
@@ -9620,8 +9620,8 @@ void show_menu_screen(void)
         edit_flag = 0;
         change_screen = 0;
         screentype = SCRT_WORLDMAP;
-        if (city_id != -1)
-          unkn_city_no = city_id;
+        if (selected_city_id != -1)
+          unkn_city_no = selected_city_id;
     }
     if (change_screen == 4)
     {
@@ -9662,7 +9662,7 @@ void show_menu_screen(void)
     }
     if (change_screen == 7)
     {
-        city_id = -1;
+        selected_city_id = -1;
         screentype = SCRT_MISSION;
         brief_load_mission_info();
         redraw_screen_flag = 1;

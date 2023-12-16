@@ -154,9 +154,11 @@ TbBool in_box_coords(short x, short y, short box_x1, short box_y1, short box_x2,
  */
 TbBool over_box_coords(short x, short y, short box_x1, short box_y1, short box_x2, short box_y2);
 
-// TODO fix order of arguments when this is no longer used from within ASM
 /** Returns if current mouse move position is over given box with coords (incl. borders).
  */
+TbBool mouse_move_over_box_coords(short box_x1, short box_y1, short box_x2, short box_y2);
+
+// TODO switch order of arguments and to above function, remove when this is no longer used
 TbBool mouse_move_over_rect(short box_x1, short box_x2, short box_y1, short box_y2);
 
 /** Returns if given position is over given box (incl. borders).

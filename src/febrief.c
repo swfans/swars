@@ -21,6 +21,7 @@
 #include "bfkeybd.h"
 #include "bftext.h"
 #include "bfmath.h"
+#include "bfmemut.h"
 #include "campaign.h"
 #include "femain.h"
 #include "guiboxes.h"
@@ -44,12 +45,16 @@ extern struct ScreenButton unkn1_CANCEL_button;
 
 extern struct ScreenBox brief_graphical_box;
 
-extern sbyte unkstruct04_id;// = -1;
+extern sbyte selected_netscan_objective;// = -1;
 extern char unkn39_text[];
 
-extern ubyte byte_1C47D8;
+extern ubyte brief_state_city_selected;
 extern ubyte byte_1C47D9;
-extern long dword_1C47DC;
+
+/** Amount of cities available in brief of a selected mail message.
+ */
+extern long mail_num_active_cities;
+
 extern long dword_1C47E0;
 extern ubyte byte_1C47E4;
 extern short word_1C47E6;
@@ -79,9 +84,27 @@ void update_netscan_cost_button(ubyte city_id)
     brief_NETSCAN_COST_box.Text1 = text;
 }
 
-void reveal_netscan_objective(ushort info)
+void reveal_netscan_objective(short nsobv)
 {
-    brief_netscan_box.Lines += netscan_objectives[info].TextLines;
+    struct NetscanObjective *p_nsobv;
+
+    p_nsobv = &netscan_objectives[nsobv];
+    brief_netscan_box.Lines += p_nsobv->TextLines;
+}
+
+void brief_citymap_readd_scanner_signals(short nsobv)
+{
+    struct NetscanObjective *p_nsobv;
+    short i;
+
+    p_nsobv = &netscan_objectives[nsobv];
+    clear_all_scanner_signals();
+    for (i = 0; i < 5; i++)
+    {
+        if (p_nsobv->Z[i] || p_nsobv->X[i]) {
+            add_blippoint_to_scanner(p_nsobv->X[i] << 15, p_nsobv->Z[i] << 15, 87);
+        }
+    }
 }
 
 ubyte brief_do_netscan_enhance(ubyte click)
@@ -92,30 +115,22 @@ ubyte brief_do_netscan_enhance(ubyte click)
         : "=r" (ret) : "a" (click));
     return ret;
 #endif
-    ushort nsobv;
-    ushort n;
+    short nsobv;
     struct NetscanObjective *p_nsobv;
 
-    nsobv = cities[city_id].Info;
+    nsobv = cities[selected_city_id].Info;
     p_nsobv = &netscan_objectives[nsobv];
 
     if (!player_try_spend_money(100 * p_nsobv->CreditCost))
         return 0;
 
-    cities[city_id].Info++;
-    update_netscan_cost_button(city_id);
-    unkstruct04_id = nsobv;
-    reveal_netscan_objective(unkstruct04_id);
+    cities[selected_city_id].Info++;
+    update_netscan_cost_button(selected_city_id);
+    selected_netscan_objective = nsobv;
+    reveal_netscan_objective(selected_netscan_objective);
     brief_netscan_box.Flags |= 0x80;
-    recount_city_credit_reward(city_id);
-
-    clear_all_scanner_signals();
-    for (n = 0; n < 5; n++)
-    {
-        if (p_nsobv->Z[n] || p_nsobv->X[n]) {
-            add_blippoint_to_scanner(p_nsobv->X[n] << 15, p_nsobv->Z[n] << 15, 87);
-        }
-    }
+    recount_city_credit_reward(selected_city_id);
+    brief_citymap_readd_scanner_signals(selected_netscan_objective);
     return 1;
 }
 
@@ -152,214 +167,252 @@ void purple_unkn2_data_to_screen(void)
     }
 }
 
+void load_netscan_map(ushort mapno)
+{
+    TbFileHandle fh;
+    char locstr[52];
+
+    sprintf(locstr, "maps/map%03d.scn", mapno);
+    fh = LbFileOpen(locstr, Lb_FILE_MODE_READ_ONLY);
+    if (fh != INVALID_FILE) {
+        LbFileRead(fh, SCANNER_data, 0x10000);
+        LbFileClose(fh);
+    } else {
+        LbMemorySet(SCANNER_data, 0, 0x10000);
+    }
+}
+
+/** Counts amount of selectable cities, sets selected if single found.
+ */
+void count_selectable_cities(void)
+{
+    short city_id, last_city_id;
+
+    mail_num_active_cities = 0;
+    for (city_id = 0; city_id < num_cities; city_id++)
+    {
+        if (cities[city_id].Flags & 0x01) {
+            last_city_id = city_id;
+            mail_num_active_cities++;
+        }
+    }
+    // If found only one city, set it as selected
+    if (mail_num_active_cities == 1)
+        selected_city_id = last_city_id;
+}
+
+void show_citymap_city_selection(struct ScreenBox *box)
+{
+    short city_id;
+    short text_h;
+    short dy;
+    ulong bufpos;
+
+    text_h = font_height('A');
+    dy = text_h + 4;
+    for (city_id = 0; city_id < num_cities; city_id++)
+    {
+        if ((cities[city_id].Flags & 0x01) == 0)
+            continue;
+
+        dy += text_h + 4;
+        lbDisplay.DrawFlags |= 0x8000;
+        bufpos = cities[city_id].TextIndex[0];
+        draw_text_purple_list2(0, dy, (char*) &memload[bufpos], 0);
+        lbDisplay.DrawFlags &= ~0x8000;
+    }
+}
+
+ubyte input_citymap_city_selection(struct ScreenBox *box)
+{
+    short city_id;
+    short text_h;
+    short dy;
+
+    text_h = font_height('A');
+    dy = text_h + 4;
+    for (city_id = 0; city_id < num_cities; city_id++)
+    {
+        if ((cities[city_id].Flags & 0x01) == 0)
+            continue;
+
+        dy += text_h + 4;
+        if (lbDisplay.LeftButton)
+        {
+            if (mouse_move_over_box_coords(text_window_x1, text_window_y1 + dy,
+              text_window_x2, text_window_y1 + dy + text_h))
+            {
+                lbDisplay.LeftButton = 0;
+                selected_city_id = city_id;
+                play_sample_using_heap(0, 111, 127, 64, 100, 0, 2u);
+                return 1;
+            }
+        }
+    }
+    return 0;
+}
+
+ubyte input_citymap_scanner(struct ScreenBox *box)
+{
+    int dx, dy;
+    short sdx, sdy;
+    ubyte ret;
+
+    ret = 0;
+    if (lbDisplay.RightButton)
+    {
+        short ms_x, ms_y;
+        lbDisplay.RightButton = 0;
+        ms_x = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MouseX : lbDisplay.MouseX;
+        ms_y = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MouseY : lbDisplay.MouseY;
+        word_1C47E6 = ms_x;
+        word_1C47E8 = ms_y;
+        ret = 1;
+    }
+    if (lbKeyOn[KC_PGDOWN])
+    {
+        if (dword_1C47E0 > 0)
+            dword_1C47E0 = -dword_1C47E0;
+        dword_1C47E0--;
+        dword_1C47E0 += dword_1C47E0 >> 2;
+        if (dword_1C47E0 < -256)
+            dword_1C47E0 = -256;
+        ret = 1;
+    }
+    else if (lbKeyOn[KC_DELETE])
+    {
+        if (dword_1C47E0 < 0)
+            dword_1C47E0 = -dword_1C47E0;
+        dword_1C47E0++;
+        dword_1C47E0 += dword_1C47E0 >> 2;
+        if (dword_1C47E0 > 256)
+            dword_1C47E0 = 256;
+        ret = 1;
+    }
+    else
+    {
+        dword_1C47E0 -= dword_1C47E0 >> 2;
+        if ((dword_1C47E0 >= 0) && (dword_1C47E0 <= 4))
+            dword_1C47E0--;
+        if ((dword_1C47E0 <= 0) && (dword_1C47E0 >= -4))
+            dword_1C47E0++;
+    }
+    dx = 0;
+    dy = 0;
+    ingame.Scanner.Angle = ((dword_1C47E0 >> 2) + ingame.Scanner.Angle) & 0x7FF;
+    if (lbKeyOn[KC_RIGHT]) {
+        dx++;
+        ret = 1;
+    }
+    if (lbKeyOn[KC_LEFT]) {
+        dx--;
+        ret = 1;
+    }
+    if (lbKeyOn[KC_UP]) {
+        dy--;
+        ret = 1;
+    }
+    if (lbKeyOn[KC_DOWN]) {
+        dy++;
+        ret = 1;
+    }
+    ingame.Scanner.MX += dx * lbSinTable[ingame.Scanner.Angle + 512] >> 13;
+    ingame.Scanner.MX += dy * lbSinTable[ingame.Scanner.Angle] >> 13;
+    sdx = dx * lbSinTable[ingame.Scanner.Angle] >> 13;
+    sdy = dy * lbSinTable[ingame.Scanner.Angle + 512] >> 13;
+    ingame.Scanner.MZ += sdx - sdy;
+    if (ingame.Scanner.MX < 0)
+        ingame.Scanner.MX = 0;
+    if (ingame.Scanner.MZ < 0)
+        ingame.Scanner.MZ = 0;
+    if (ingame.Scanner.MX > 256)
+        ingame.Scanner.MX = 256;
+    if (ingame.Scanner.MZ > 256)
+        ingame.Scanner.MZ = 256;
+    return ret;
+}
+
 ubyte show_citymap_box(struct ScreenBox *box)
 {
-#if 1
+#if 0
     ubyte ret;
     asm volatile ("call ASM_show_citymap_box\n"
         : "=r" (ret) : "a" (box));
     return ret;
 #else
-    short text_h;
-    short ms_x, ms_y;
     ubyte anim_no;
-    ushort i;
-    int n;
 
-    if (city_id == -1)
+    if (selected_city_id == -1)
     {
-        byte_1C47D8 = 0;
+        brief_state_city_selected = 0;
         byte_1C47D9 = 0;
-        unkstruct04_id = -1;
+        selected_netscan_objective = -1;
     }
-    if (unkstruct04_id != byte_1C47E4)
+    if (selected_netscan_objective != byte_1C47E4)
         byte_1C47D9 = 0;
-    byte_1C47E4 = unkstruct04_id;
-    if (!byte_1C47D9 && (unkstruct04_id != -1))
+    byte_1C47E4 = selected_netscan_objective;
+    if (!byte_1C47D9 && (selected_netscan_objective != -1))
     {
-        anim_no = netscan_objectives[unkstruct04_id].AnimNo;
+        anim_no = netscan_objectives[selected_netscan_objective].AnimNo;
         if (anim_no) {
             byte_1C47D9 = 1;
             flic_netscan_open_anim(anim_no);
         }
     }
-    if (!byte_1C47D8)
+    if (!brief_state_city_selected)
     {
-        short dy;
         lbFontPtr = small_med_font;
-        text_h = font_height('A');
         my_set_text_window(box->X + 4, box->Y + 4,
             box->Width - 8, box->Height - 8);
         lbDisplay.DrawFlags = 0x0100;
         draw_text_purple_list2(0, 0, gui_strings[483], 0);
-        dy = text_h + 4;
-        city_id = -1;
-        dword_1C47DC = 0;
         *brief_NETSCAN_COST_box.Text2 = 0;
         brief_NETSCAN_COST_box.Text1 = gui_strings[495];
-        for (i = 0; i < num_cities; i++)
+        mail_num_active_cities = 0;
+        selected_city_id = -1;
+        count_selectable_cities();
+        if (mail_num_active_cities != 1)
         {
-            if (cities[i].Flags & 0x01) {
-                city_id = i;
-                ++dword_1C47DC;
-            }
+            show_citymap_city_selection(box);
+            input_citymap_city_selection(box);
         }
-        if (dword_1C47DC != 1)
+        if (selected_city_id != -1)
         {
-            city_id = -1;
-            for (i = 0; i < num_cities; i++)
+            selected_netscan_objective = -1;
+            load_netscan_map(cities[selected_city_id].MapID);
+            load_netscan_objectives(cities[selected_city_id].MapID, cities[selected_city_id].Level);
+            load_netscan_data(selected_city_id, cities[selected_city_id].Level);
+            if (cities[selected_city_id].Info != 0)
             {
-                if ((cities[i].Flags & 0x01) == 0)
-                    continue;
-
-                dy += text_h + 4;
-                lbDisplay.DrawFlags |= 0x8000;
-                draw_text_purple_list2(0, dy, (char*) &memload[cities[i].TextIndex[0]], 0);
-                lbDisplay.DrawFlags &= ~0x8000;
-                if (lbDisplay.LeftButton)
-                {
-                    ms_x = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MouseX : lbDisplay.MouseX;
-                    ms_y = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MouseY : lbDisplay.MouseY;
-                    if ((ms_x >= text_window_x1) && (ms_x < text_window_x2) &&
-                      (ms_y >= dy + text_window_y1) && (ms_y < text_h + text_window_y1 + dy))
-                    {
-                        lbDisplay.LeftButton = 0;
-                        city_id = i;
-                        play_sample_using_heap(0, 111, 127, 64, 100, 0, 2u);
-                    }
-                }
+                selected_netscan_objective = 0;
+                brief_citymap_readd_scanner_signals(selected_netscan_objective);
             }
-        }
-        if (city_id != -1)
-        {
-            TbFileHandle fh;
-            char locstr[52];
-
-            unkstruct04_id = -1;
-            for (i = 0; i < 16; i++)
-            {
-                ingame.Scanner.BigBlip[i].Period = 0;
-            }
-            sprintf(locstr, "maps/map%03d.scn", cities[city_id].MapID);
-            fh = LbFileOpen(locstr, Lb_FILE_MODE_READ_ONLY);
-            if (fh != INVALID_FILE)
-            {
-                LbFileRead(fh, SCANNER_data, 0x10000);
-                LbFileClose(fh);
-                load_netscan_objectives(cities[city_id].MapID, cities[city_id].Level);
-                load_netscan_text_data(city_id, cities[city_id].Level);
-                if (cities[city_id].Info)
-                {
-                    ushort nsobv = 0;
-                    n = 0;
-                    unkstruct04_id = 0;
-                    for (i = 0; i < 5; i++)
-                    {
-                        if (netscan_objectives[nsobv].Z[i] || netscan_objectives[nsobv].X[i])
-                        {
-                            short x, z;
-                            ingame.Scanner.BigBlip[n].Colour = 87;
-                            x = netscan_objectives[nsobv].X[i];
-                            ingame.Scanner.BigBlip[n].Period = 32;
-                            ingame.Scanner.BigBlip[n].X = x << 15;
-                            ingame.Scanner.BigBlip[n].Counter = 32;
-                            z = netscan_objectives[nsobv].Z[i];
-                            ingame.Scanner.BigBlip[n].Speed = 4;
-                            ingame.Scanner.BigBlip[n].Z = z << 15;
-                            n++;
-                        }
-                    }
-                }
-            }
-            byte_1C47D8 = 1;
+            brief_state_city_selected = 1;
         }
     }
 
     if (byte_1C47D9)
     {
-        if (!netscan_objectives[unkstruct04_id].AnimNo)
+        if (!netscan_objectives[selected_netscan_objective].AnimNo)
             byte_1C47D9 = 0;
         if (xdo_next_frame(9))
             byte_1C47D9 = 0;
         draw_flic_purple_list(purple_unkn2_data_to_screen);
     }
-    else if (byte_1C47D8)
+    else if (brief_state_city_selected)
     {
-        if (mouse_move_over_rect(box->X, box->X + box->Width, box->Y, box->Y + box->Height))
+        if (mouse_move_over_box(box))
         {
-            int dx, dy;
-            short sdx, sdy;
-
-            if (lbDisplay.RightButton)
-            {
-                lbDisplay.RightButton = 0;
-                ms_x = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MouseX : lbDisplay.MouseX;
-                ms_y = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MouseY : lbDisplay.MouseY;
-                word_1C47E6 = ms_x;
-                word_1C47E8 = ms_y;
-            }
-            if (lbKeyOn[KC_PGDOWN])
-            {
-                if (dword_1C47E0 > 0)
-                    dword_1C47E0 = -dword_1C47E0;
-                dword_1C47E0--;
-                dword_1C47E0 += dword_1C47E0 >> 2;
-                if (dword_1C47E0 < -256)
-                    dword_1C47E0 = -256;
-            }
-            else if (lbKeyOn[KC_DELETE])
-            {
-                if (dword_1C47E0 < 0)
-                    dword_1C47E0 = -dword_1C47E0;
-                dword_1C47E0++;
-                dword_1C47E0 += dword_1C47E0 >> 2;
-                if (dword_1C47E0 > 256)
-                    dword_1C47E0 = 256;
-            }
-            else
-            {
-                dword_1C47E0 -= dword_1C47E0 >> 2;
-                if ((dword_1C47E0 >= 0) && (dword_1C47E0 <= 4))
-                    dword_1C47E0--;
-                if ((dword_1C47E0 <= 0) && (dword_1C47E0 >= -4))
-                    dword_1C47E0++;
-            }
-            dx = 0;
-            dy = 0;
-            ingame.Scanner.Angle = ((dword_1C47E0 >> 2) + ingame.Scanner.Angle) & 0x7FF;
-            if (lbKeyOn[KC_RIGHT])
-                dx++;
-            if (lbKeyOn[KC_LEFT])
-                dx--;
-            if (lbKeyOn[KC_UP])
-                dy--;
-            if (lbKeyOn[KC_DOWN])
-                dy++;
-            ingame.Scanner.MX += dx * lbSinTable[ingame.Scanner.Angle + 512] >> 13;
-            ingame.Scanner.MX += dy * lbSinTable[ingame.Scanner.Angle] >> 13;
-            sdx = dx * lbSinTable[ingame.Scanner.Angle] >> 13;
-            sdy = dy * lbSinTable[ingame.Scanner.Angle + 512] >> 13;
-            ingame.Scanner.MZ += sdx - sdy;
-            if (ingame.Scanner.MX < 0)
-                ingame.Scanner.MX = 0;
-            if (ingame.Scanner.MZ < 0)
-                ingame.Scanner.MZ = 0;
-            if (ingame.Scanner.MX > 256)
-                ingame.Scanner.MX = 256;
-            if (ingame.Scanner.MZ > 256)
-                ingame.Scanner.MZ = 256;
+            input_citymap_scanner(box);
         }
         draw_flic_purple_list(SCANNER_data_to_screen);
-        if (dword_1C47DC != 1)
+        if (mail_num_active_cities != 1)
             draw_hotspot_purple_list(box->X + (box->Width >> 1), box->Y + (box->Height >> 1));
-        ms_x = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MouseX : lbDisplay.MouseX;
-        ms_y = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MouseY : lbDisplay.MouseY;
-        if ((ms_x >= box->X) && (ms_x < box->X + box->Width) &&
-          (ms_y >= box->Y) && (ms_y < box->Height + box->Y))
+        if (mouse_move_over_box(box))
         {
-            if (lbDisplay.LeftButton && (dword_1C47DC != 1))
+            if (lbDisplay.LeftButton && (mail_num_active_cities != 1))
             {
-                byte_1C47D8 = 0;
+                brief_state_city_selected = 0;
             }
         }
     }

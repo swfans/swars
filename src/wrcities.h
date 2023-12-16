@@ -56,7 +56,7 @@ struct City { // sizeof=40
 /******************************************************************************/
 extern ubyte num_cities;
 extern struct City cities[];
-extern sbyte city_id;
+extern sbyte selected_city_id;
 
 void save_cities_conf_file(void);
 void read_cities_conf_file(void);
