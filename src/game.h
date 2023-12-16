@@ -743,6 +743,7 @@ void game_process(void);
 void game_reset(void);
 void host_reset(void);
 void free_texturemaps(void);
+int xdo_next_frame(ubyte a1);
 
 void flic_unkn03(ubyte a1);
 
@@ -754,6 +755,7 @@ void draw_box_purple_list(int x, int y, ulong width, ulong height, int colour);
 void draw_line_purple_list(int x1, int y1, int x2, int y2, int colour);
 void draw_hotspot_purple_list(int x, int y);
 void draw_purple_screen(void);
+void draw_flic_purple_list(void (*fn)());
 
 void reload_background(void);
 

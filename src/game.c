@@ -4956,10 +4956,10 @@ void game_process_sub09(void)
     }
 }
 
-int func_6edb8(ubyte a1)
+int xdo_next_frame(ubyte a1)
 {
     int ret;
-    asm volatile ("call ASM_func_6edb8\n"
+    asm volatile ("call ASM_xdo_next_frame\n"
         : "=r" (ret) : "a" (a1));
     return ret;
 }
@@ -9393,7 +9393,7 @@ void show_load_and_prep_mission(void)
         adjust_mission_engine_to_video_mode();
 
         flic_unkn03(1);
-        func_6edb8(1);
+        xdo_next_frame(1);
 
         if ( in_network_game )
         {

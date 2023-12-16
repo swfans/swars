@@ -18,7 +18,9 @@
 /******************************************************************************/
 #include "febrief.h"
 
+#include "bfkeybd.h"
 #include "bftext.h"
+#include "bfmath.h"
 #include "campaign.h"
 #include "femain.h"
 #include "guiboxes.h"
@@ -27,6 +29,7 @@
 #include "game.h"
 #include "lvobjctv.h"
 #include "scanner.h"
+#include "sound.h"
 #include "wadfile.h"
 #include "wrcities.h"
 #include "swlog.h"
@@ -43,6 +46,14 @@ extern struct ScreenBox brief_graphical_box;
 
 extern sbyte unkstruct04_id;// = -1;
 extern char unkn39_text[];
+
+extern ubyte byte_1C47D8;
+extern ubyte byte_1C47D9;
+extern long dword_1C47DC;
+extern long dword_1C47E0;
+extern ubyte byte_1C47E4;
+extern short word_1C47E6;
+extern short word_1C47E8;
 
 ubyte ac_brief_do_netscan_enhance(ubyte click);
 ubyte ac_show_brief_netscan_box(struct ScreenTextBox *box);
@@ -114,6 +125,15 @@ ubyte show_brief_netscan_box(struct ScreenTextBox *box)
     asm volatile ("call ASM_show_brief_netscan_box\n"
         : "=r" (ret) : "a" (box));
     return ret;
+}
+
+void flic_netscan_open_anim(ubyte anim_no)
+{
+    ulong k;
+
+    k = anim_slots[9];
+    sprintf(animations[k].Filename, "data/equip/net%02d.fli", anim_no);
+    flic_unkn03(9);
 }
 
 ubyte show_citymap_box(struct ScreenBox *box)

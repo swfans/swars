@@ -79,6 +79,7 @@ struct Scanner
 #pragma pack()
 /******************************************************************************/
 extern long *SCANNER_width;
+extern ubyte SCANNER_data[256][256];
 
 extern short waft_table2[32];
 extern short waft_table[32];
