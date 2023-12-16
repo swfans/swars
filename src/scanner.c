@@ -18,6 +18,7 @@
 /******************************************************************************/
 #include "scanner.h"
 
+#include "bfutility.h"
 #include "campaign.h"
 #include "thing.h"
 #include "player.h"
@@ -67,6 +68,34 @@ void SCANNER_unkn_func_196(void)
 void SCANNER_data_to_screen(void)
 {
     SCANNER_unkn_func_196();
+}
+
+void SCANNER_set_screen_box(short x, short y, short width, short height, short cutout)
+{
+    short i;
+    short hlimit;
+
+    hlimit = sizeof(ingame.Scanner.Width)/sizeof(ingame.Scanner.Width[0]);
+    if (height >= hlimit)
+        height = hlimit - 1;
+
+    ingame.Scanner.X1 = x;
+    ingame.Scanner.Y1 = y;
+    ingame.Scanner.X2 = ingame.Scanner.X1 + width;
+    ingame.Scanner.Y2 = ingame.Scanner.Y1 + height;
+
+    if (cutout != 0)
+    {
+        for (i = 0; i + ingame.Scanner.Y1 <= ingame.Scanner.Y2; i++) {
+            ingame.Scanner.Width[i] = min(width - cutout + i, width);
+        }
+    }
+    else
+    {
+        for (i = 0; i + ingame.Scanner.Y1 <= ingame.Scanner.Y2; i++) {
+            ingame.Scanner.Width[i] = width;
+        }
+    }
 }
 
 void SCANNER_update_arcpoint(ushort arc_no, short fromX, short fromZ, short toX, short toZ)

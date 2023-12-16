@@ -29,6 +29,7 @@
 #include "bfsound.h"
 #include "bfplanar.h"
 #include "bfscrsurf.h"
+#include "bfscrcopy.h"
 #include "ssampply.h"
 #include "svesa.h"
 #include "swlog.h"
@@ -3644,24 +3645,17 @@ void load_pop_sprites_hi(void)
         :  :  : "eax" );
 }
 
-void srm_scanner_set_size_at_bottom_left(int margin, int width, int height)
+void srm_scanner_set_size_at_bottom_left(short margin, short width, short height)
 {
-    int i;
-    int hlimit, cutout;
+    short hlimit;
 
+    // Limit the height here, to make sure reduced rectangle is still put at bottom
     hlimit = sizeof(ingame.Scanner.Width)/sizeof(ingame.Scanner.Width[0]);
     if (height >= hlimit)
         height = hlimit - 1;
-    cutout = 24;
 
-    ingame.Scanner.X1 = 1;
-    ingame.Scanner.Y1 = lbDisplay.GraphicsScreenHeight - margin - height;
-    ingame.Scanner.X2 = ingame.Scanner.X1 + width;
-    ingame.Scanner.Y2 = ingame.Scanner.Y1 + height;
-
-    for (i = 0; i + ingame.Scanner.Y1 <= ingame.Scanner.Y2; i++) {
-        ingame.Scanner.Width[i] = min(width - cutout + i, width);
-    }
+    SCANNER_set_screen_box(1, lbDisplay.GraphicsScreenHeight - margin - height,
+        width, height, 24);
 }
 
 void srm_scanner_size_update(void)
@@ -6633,31 +6627,6 @@ void players_init_control_mode(void)
     }
 }
 
-void srm_scanner_reset(void)
-{
-    int i;
-
-    ingame.Scanner.X1 = 8;
-    ingame.Scanner.Y2 = 270;
-    ingame.Scanner.MX = 127;
-    ingame.Scanner.MZ = 127;
-    ingame.Scanner.Angle = 0;
-    ingame.Scanner.X2 = 325;
-    ingame.Scanner.Zoom = 256;
-    ingame.Scanner.Y1 = 73;
-
-    for (i = 0; i + ingame.Scanner.Y1 <= ingame.Scanner.Y2; i++)
-    {
-        ingame.Scanner.Width[i] = 318;
-    }
-    for (i = 0; i != 16; i++)
-    {
-        ingame.Scanner.BigBlip[i].Period = 0;
-    }
-    SCANNER_width = ingame.Scanner.Width;
-    SCANNER_init();
-}
-
 void move_camera(int x, int y, int z)
 {
     asm volatile (
@@ -8337,7 +8306,7 @@ void show_menu_screen_st0(void)
     global_date.Year = 74;
     global_date.Month = 6;
 
-    srm_scanner_reset();
+    init_brief_screen_scanner();
 
     save_game_buffer = unkn_buffer_05;
 
@@ -9041,13 +9010,8 @@ void draw_purple_screen(void)
             y = pditem->U.Box.Y;
             shift_w = pditem->U.Box.Width;
             shift_h = pditem->U.Box.Height;
-            for (h = 0; h < shift_h; h++)
-            {
-                long pos;
-
-                pos = x + lbDisplay.GraphicsScreenWidth * (y + h);
-                memcpy(back_buffer + pos, &lbDisplay.WScreen[pos], shift_w);
-            }
+            LbScreenCopyBox(lbDisplay.WScreen, back_buffer,
+                x, y, x, y, shift_w, shift_h);
             break;
         case PuDT_SPRITE:
             lbDisplay.DrawColour = pditem->U.Box.Colour;
@@ -9196,7 +9160,7 @@ void show_menu_screen_st2(void)
     LbPaletteSet(display_palette);
     reload_background();
 
-    srm_scanner_reset();
+    init_brief_screen_scanner();
 
     if (new_mail)
         play_sample_using_heap(0, 119 + (LbRandomAnyShort() % 3), 127, 64, 100, 0, 3u);

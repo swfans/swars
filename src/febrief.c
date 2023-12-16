@@ -22,6 +22,7 @@
 #include "bftext.h"
 #include "bfmath.h"
 #include "bfmemut.h"
+#include "bfscrcopy.h"
 #include "campaign.h"
 #include "femain.h"
 #include "guiboxes.h"
@@ -153,18 +154,11 @@ void flic_netscan_open_anim(ubyte anim_no)
 
 void purple_unkn2_data_to_screen(void)
 {
-    ubyte *o;
-    ubyte *inp;
-    ubyte dy;
-
-    o = &lbDisplay.WScreen[73 * lbDisplay.PhysicalScreenWidth + 8];
-    inp = unkn_buffer_05;
-    for (dy = 0; dy < 198; dy++)
-    {
-        memcpy(o, inp, 320);
-        o += lbDisplay.PhysicalScreenWidth;
-        inp += 320;
-    }
+    LbScreenSetGraphicsWindow(brief_graphical_box.X + 1, brief_graphical_box.Y + 1,
+      brief_graphical_box.Width - 2, brief_graphical_box.Height - 2);
+    LbScreenCopy(unkn_buffer_05, lbDisplay.GraphicsWindowPtr, lbDisplay.GraphicsWindowHeight);
+    LbScreenSetGraphicsWindow(0, 0, lbDisplay.GraphicsScreenWidth,
+        lbDisplay.GraphicsScreenHeight);
 }
 
 void load_netscan_map(ushort mapno)
@@ -508,11 +502,25 @@ void load_netscan_data(ubyte city_id, ubyte level)
 #endif
 }
 
+void init_brief_screen_scanner(void)
+{
+    ingame.Scanner.MX = 127;
+    ingame.Scanner.MZ = 127;
+    ingame.Scanner.Angle = 0;
+    ingame.Scanner.Zoom = 256;
+
+    SCANNER_set_screen_box(brief_graphical_box.X + 1, brief_graphical_box.Y + 1,
+      brief_graphical_box.Width - 4, brief_graphical_box.Height - 3, 0);
+    clear_all_scanner_signals();
+    SCANNER_width = ingame.Scanner.Width;
+    SCANNER_init();
+}
+
 void init_brief_screen_boxes(void)
 {
     short scr_w, start_x;
 
-    scr_w = 640;//lbDisplay.GraphicsWindowWidth;
+    scr_w = lbDisplay.GraphicsWindowWidth;
 
     init_screen_text_box(&brief_netscan_box, 7u, 281u, 322u, 145, 6, small_med_font, 3);
     init_screen_button(&brief_NETSCAN_button, 312u, 405u,

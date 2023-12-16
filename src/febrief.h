@@ -34,6 +34,7 @@ void brief_load_mission_info(void);
 void load_netscan_data(ubyte city_id, ubyte level);
 
 void init_brief_screen_boxes(void);
+void init_brief_screen_scanner(void);
 void update_brief_screen_netscan_button(ushort text_id);
 void reset_brief_screen_boxes_flags(void);
 void set_flag01_brief_screen_boxes(void);

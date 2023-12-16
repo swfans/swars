@@ -90,6 +90,16 @@ void SCANNER_set_colour(ubyte col);
 void SCANNER_find_position(int x, int y, int *U, int *V);
 void SCANNER_data_to_screen(void);
 
+/** Set screen location box coordinates of the scanner view.
+ *
+ * @param x Screen buffer location X coordinate.
+ * @param y Screen buffer location Y coordinate.
+ * @param width Screen rectangle width.
+ * @param height Screen rectangle height.
+ * @param cutout Depth of bottom right cutout of the screen rectangle.
+ */
+void SCANNER_set_screen_box(short x, short y, short width, short height, short cutout);
+
 void add_blippoint_to_scanner(int x, int z, ubyte colour);
 
 TbBool mouse_move_over_scanner(void);
