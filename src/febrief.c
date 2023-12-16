@@ -214,12 +214,15 @@ void load_netscan_data(ubyte city_id, ubyte level)
 
 void init_brief_screen_boxes(void)
 {
+    short scr_w, start_x;
+
+    scr_w = 640;//lbDisplay.GraphicsWindowWidth;
+
     init_screen_text_box(&brief_netscan_box, 7u, 281u, 322u, 145, 6, small_med_font, 3);
     init_screen_button(&brief_NETSCAN_button, 312u, 405u,
-      gui_strings[441], 6, med2_font, 1, 128);
+      gui_strings[441], 6, med2_font, 1, 0x80);
     init_screen_info_box(&brief_NETSCAN_COST_box, 12u, 405u, 213u,
       gui_strings[442], unkn39_text, 6, med_font, small_med_font, 1);
-    brief_NETSCAN_COST_box.Width = 312 - brief_NETSCAN_button.Width - 17;
     brief_NETSCAN_COST_box.Text2 = brief_netscan_cost_text;
     brief_NETSCAN_button.CallBackFn = ac_brief_do_netscan_enhance;
     brief_netscan_box.Flags |= 0x0300;
@@ -229,7 +232,7 @@ void init_brief_screen_boxes(void)
     init_screen_button(&unkn1_ACCEPT_button, 343u, 405u,
       gui_strings[436], 6, med2_font, 1, 0);
     init_screen_button(&unkn1_CANCEL_button, 616u, 405u,
-      gui_strings[437], 6, med2_font, 1, 128);
+      gui_strings[437], 6, med2_font, 1, 0x80);
     brief_mission_text_box.Buttons[0] = &unkn1_ACCEPT_button;
     brief_mission_text_box.Buttons[1] = &unkn1_CANCEL_button;
     brief_mission_text_box.Flags |= 0x0300;
@@ -239,6 +242,17 @@ void init_brief_screen_boxes(void)
 
     init_screen_box(&brief_graphical_box, 7u, 72u, 322u, 200, 6);
     brief_graphical_box.SpecialDrawFn = ac_show_citymap_box;
+
+    start_x = (scr_w - brief_graphical_box.Width - brief_mission_text_box.Width - 23) / 2;
+    brief_graphical_box.X = start_x + 7;
+
+    brief_netscan_box.X = start_x + 7;
+    brief_NETSCAN_button.X = brief_netscan_box.X + brief_netscan_box.Width - brief_NETSCAN_button.Width - 17;
+    brief_NETSCAN_COST_box.X = brief_netscan_box.X + 5;
+
+    brief_mission_text_box.X = brief_graphical_box.X + brief_graphical_box.Width + 9;
+    unkn1_ACCEPT_button.X = brief_mission_text_box.X + 5;
+    unkn1_CANCEL_button.X = brief_mission_text_box.X + brief_mission_text_box.Width - unkn1_CANCEL_button.Width - 17;
 }
 
 void update_brief_screen_netscan_button(ushort text_id)
@@ -246,9 +260,9 @@ void update_brief_screen_netscan_button(ushort text_id)
     const char *text;
 
     text = gui_strings[text_id];
-    init_screen_button(&brief_NETSCAN_button, 312, 405,
+    init_screen_button(&brief_NETSCAN_button, brief_netscan_box.X + brief_netscan_box.Width - 17, 405,
       text, 6, med2_font, 1, 128);
-    brief_NETSCAN_COST_box.Width = 312 - brief_NETSCAN_button.Width - 17;
+    brief_NETSCAN_COST_box.Width = brief_netscan_box.Width - 10 - brief_NETSCAN_button.Width - 17;
     brief_NETSCAN_button.CallBackFn = ac_brief_do_netscan_enhance;
 }
 

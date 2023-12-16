@@ -193,11 +193,17 @@ ubyte do_sysmnu_button(ubyte click)
 
 void init_system_menu_boxes(void)
 {
+    short scr_w, start_x;
     int i, h, val;
 
-    init_screen_text_box(&heading_box, 7u, 25u, 626u, 38, 6, big_font, 1);
+    scr_w = 640;//lbDisplay.GraphicsWindowWidth;
+
+    init_screen_text_box(&heading_box, 7u, 25, 626, 38, 6, big_font, 1);
     heading_box.DrawTextFn = ac_show_title_box;
     heading_box.Text = options_title_text;
+
+    start_x = (scr_w - heading_box.Width) / 2;
+    heading_box.X = start_x;
 
     init_screen_text_box(&unkn13_SYSTEM_button, 7u, 25u, 197u, 38, 6,
       big_font, 1);
@@ -217,6 +223,12 @@ void init_system_menu_boxes(void)
         sysmnu_buttons[i].Border = 3;
         val++;
         h += 30;
+    }
+
+    unkn13_SYSTEM_button.X = start_x;
+    for (i = 0; i < 6; i++)
+    {
+        sysmnu_buttons[i].X = start_x;
     }
 }
 
