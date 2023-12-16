@@ -34,6 +34,22 @@ TbBool in_box_coords(short x, short y, short box_x1, short box_y1, short box_x2,
         && y > box_y1 && y < box_y2;
 }
 
+TbBool over_box_coords(short x, short y, short box_x1, short box_y1, short box_x2, short box_y2)
+{
+    return x >= box_x1 && x <= box_x2
+        && y >= box_y1 && y <= box_y2;
+}
+
+// TODO fix order of arguments when this is no longer used from within ASM
+TbBool mouse_move_over_rect(short box_x1, short box_x2, short box_y1, short box_y2)
+{
+    short ms_x, ms_y;
+
+    ms_x = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
+    ms_y = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
+    return over_box_coords(ms_x, ms_y, box_x1, box_y1, box_x2, box_y2);
+}
+
 TbBool is_over_box_base(short x, short y, struct ScreenBoxBase *box)
 {
     return (x >= box->X) && (x <= box->X + box->Width)

@@ -136,12 +136,235 @@ void flic_netscan_open_anim(ubyte anim_no)
     flic_unkn03(9);
 }
 
+void purple_unkn2_data_to_screen(void)
+{
+    ubyte *o;
+    ubyte *inp;
+    ubyte dy;
+
+    o = &lbDisplay.WScreen[73 * lbDisplay.PhysicalScreenWidth + 8];
+    inp = unkn_buffer_05;
+    for (dy = 0; dy < 198; dy++)
+    {
+        memcpy(o, inp, 320);
+        o += lbDisplay.PhysicalScreenWidth;
+        inp += 320;
+    }
+}
+
 ubyte show_citymap_box(struct ScreenBox *box)
 {
+#if 1
     ubyte ret;
     asm volatile ("call ASM_show_citymap_box\n"
         : "=r" (ret) : "a" (box));
     return ret;
+#else
+    short text_h;
+    short ms_x, ms_y;
+    ubyte anim_no;
+    ushort i;
+    int n;
+
+    if (city_id == -1)
+    {
+        byte_1C47D8 = 0;
+        byte_1C47D9 = 0;
+        unkstruct04_id = -1;
+    }
+    if (unkstruct04_id != byte_1C47E4)
+        byte_1C47D9 = 0;
+    byte_1C47E4 = unkstruct04_id;
+    if (!byte_1C47D9 && (unkstruct04_id != -1))
+    {
+        anim_no = netscan_objectives[unkstruct04_id].AnimNo;
+        if (anim_no) {
+            byte_1C47D9 = 1;
+            flic_netscan_open_anim(anim_no);
+        }
+    }
+    if (!byte_1C47D8)
+    {
+        short dy;
+        lbFontPtr = small_med_font;
+        text_h = font_height('A');
+        my_set_text_window(box->X + 4, box->Y + 4,
+            box->Width - 8, box->Height - 8);
+        lbDisplay.DrawFlags = 0x0100;
+        draw_text_purple_list2(0, 0, gui_strings[483], 0);
+        dy = text_h + 4;
+        city_id = -1;
+        dword_1C47DC = 0;
+        *brief_NETSCAN_COST_box.Text2 = 0;
+        brief_NETSCAN_COST_box.Text1 = gui_strings[495];
+        for (i = 0; i < num_cities; i++)
+        {
+            if (cities[i].Flags & 0x01) {
+                city_id = i;
+                ++dword_1C47DC;
+            }
+        }
+        if (dword_1C47DC != 1)
+        {
+            city_id = -1;
+            for (i = 0; i < num_cities; i++)
+            {
+                if ((cities[i].Flags & 0x01) == 0)
+                    continue;
+
+                dy += text_h + 4;
+                lbDisplay.DrawFlags |= 0x8000;
+                draw_text_purple_list2(0, dy, (char*) &memload[cities[i].TextIndex[0]], 0);
+                lbDisplay.DrawFlags &= ~0x8000;
+                if (lbDisplay.LeftButton)
+                {
+                    ms_x = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MouseX : lbDisplay.MouseX;
+                    ms_y = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MouseY : lbDisplay.MouseY;
+                    if ((ms_x >= text_window_x1) && (ms_x < text_window_x2) &&
+                      (ms_y >= dy + text_window_y1) && (ms_y < text_h + text_window_y1 + dy))
+                    {
+                        lbDisplay.LeftButton = 0;
+                        city_id = i;
+                        play_sample_using_heap(0, 111, 127, 64, 100, 0, 2u);
+                    }
+                }
+            }
+        }
+        if (city_id != -1)
+        {
+            TbFileHandle fh;
+            char locstr[52];
+
+            unkstruct04_id = -1;
+            for (i = 0; i < 16; i++)
+            {
+                ingame.Scanner.BigBlip[i].Period = 0;
+            }
+            sprintf(locstr, "maps/map%03d.scn", cities[city_id].MapID);
+            fh = LbFileOpen(locstr, Lb_FILE_MODE_READ_ONLY);
+            if (fh != INVALID_FILE)
+            {
+                LbFileRead(fh, SCANNER_data, 0x10000);
+                LbFileClose(fh);
+                load_netscan_objectives(cities[city_id].MapID, cities[city_id].Level);
+                load_netscan_text_data(city_id, cities[city_id].Level);
+                if (cities[city_id].Info)
+                {
+                    ushort nsobv = 0;
+                    n = 0;
+                    unkstruct04_id = 0;
+                    for (i = 0; i < 5; i++)
+                    {
+                        if (netscan_objectives[nsobv].Z[i] || netscan_objectives[nsobv].X[i])
+                        {
+                            short x, z;
+                            ingame.Scanner.BigBlip[n].Colour = 87;
+                            x = netscan_objectives[nsobv].X[i];
+                            ingame.Scanner.BigBlip[n].Period = 32;
+                            ingame.Scanner.BigBlip[n].X = x << 15;
+                            ingame.Scanner.BigBlip[n].Counter = 32;
+                            z = netscan_objectives[nsobv].Z[i];
+                            ingame.Scanner.BigBlip[n].Speed = 4;
+                            ingame.Scanner.BigBlip[n].Z = z << 15;
+                            n++;
+                        }
+                    }
+                }
+            }
+            byte_1C47D8 = 1;
+        }
+    }
+
+    if (byte_1C47D9)
+    {
+        if (!netscan_objectives[unkstruct04_id].AnimNo)
+            byte_1C47D9 = 0;
+        if (xdo_next_frame(9))
+            byte_1C47D9 = 0;
+        draw_flic_purple_list(purple_unkn2_data_to_screen);
+    }
+    else if (byte_1C47D8)
+    {
+        if (mouse_move_over_rect(box->X, box->X + box->Width, box->Y, box->Y + box->Height))
+        {
+            int dx, dy;
+            short sdx, sdy;
+
+            if (lbDisplay.RightButton)
+            {
+                lbDisplay.RightButton = 0;
+                ms_x = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MouseX : lbDisplay.MouseX;
+                ms_y = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MouseY : lbDisplay.MouseY;
+                word_1C47E6 = ms_x;
+                word_1C47E8 = ms_y;
+            }
+            if (lbKeyOn[KC_PGDOWN])
+            {
+                if (dword_1C47E0 > 0)
+                    dword_1C47E0 = -dword_1C47E0;
+                dword_1C47E0--;
+                dword_1C47E0 += dword_1C47E0 >> 2;
+                if (dword_1C47E0 < -256)
+                    dword_1C47E0 = -256;
+            }
+            else if (lbKeyOn[KC_DELETE])
+            {
+                if (dword_1C47E0 < 0)
+                    dword_1C47E0 = -dword_1C47E0;
+                dword_1C47E0++;
+                dword_1C47E0 += dword_1C47E0 >> 2;
+                if (dword_1C47E0 > 256)
+                    dword_1C47E0 = 256;
+            }
+            else
+            {
+                dword_1C47E0 -= dword_1C47E0 >> 2;
+                if ((dword_1C47E0 >= 0) && (dword_1C47E0 <= 4))
+                    dword_1C47E0--;
+                if ((dword_1C47E0 <= 0) && (dword_1C47E0 >= -4))
+                    dword_1C47E0++;
+            }
+            dx = 0;
+            dy = 0;
+            ingame.Scanner.Angle = ((dword_1C47E0 >> 2) + ingame.Scanner.Angle) & 0x7FF;
+            if (lbKeyOn[KC_RIGHT])
+                dx++;
+            if (lbKeyOn[KC_LEFT])
+                dx--;
+            if (lbKeyOn[KC_UP])
+                dy--;
+            if (lbKeyOn[KC_DOWN])
+                dy++;
+            ingame.Scanner.MX += dx * lbSinTable[ingame.Scanner.Angle + 512] >> 13;
+            ingame.Scanner.MX += dy * lbSinTable[ingame.Scanner.Angle] >> 13;
+            sdx = dx * lbSinTable[ingame.Scanner.Angle] >> 13;
+            sdy = dy * lbSinTable[ingame.Scanner.Angle + 512] >> 13;
+            ingame.Scanner.MZ += sdx - sdy;
+            if (ingame.Scanner.MX < 0)
+                ingame.Scanner.MX = 0;
+            if (ingame.Scanner.MZ < 0)
+                ingame.Scanner.MZ = 0;
+            if (ingame.Scanner.MX > 256)
+                ingame.Scanner.MX = 256;
+            if (ingame.Scanner.MZ > 256)
+                ingame.Scanner.MZ = 256;
+        }
+        draw_flic_purple_list(SCANNER_data_to_screen);
+        if (dword_1C47DC != 1)
+            draw_hotspot_purple_list(box->X + (box->Width >> 1), box->Y + (box->Height >> 1));
+        ms_x = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MouseX : lbDisplay.MouseX;
+        ms_y = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MouseY : lbDisplay.MouseY;
+        if ((ms_x >= box->X) && (ms_x < box->X + box->Width) &&
+          (ms_y >= box->Y) && (ms_y < box->Height + box->Y))
+        {
+            if (lbDisplay.LeftButton && (dword_1C47DC != 1))
+            {
+                byte_1C47D8 = 0;
+            }
+        }
+    }
+    return 0;
+#endif
 }
 
 ubyte load_mail_text(const char *filename)

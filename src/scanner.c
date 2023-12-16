@@ -58,6 +58,17 @@ void SCANNER_init_arcpoint(int x1, int z1, int x2, int z2, int c)
         : : "a" (x1), "d" (z1), "b" (x2), "c" (z2), "g" (c));
 }
 
+void SCANNER_unkn_func_196(void)
+{
+    asm volatile ("call ASM_SCANNER_unkn_func_196\n"
+        :  :  : "eax" );
+}
+
+void SCANNER_data_to_screen(void)
+{
+    SCANNER_unkn_func_196();
+}
+
 void SCANNER_update_arcpoint(ushort arc_no, short fromX, short fromZ, short toX, short toZ)
 {
     if (arc_no >= SCANNER_ARC_COUNT)
