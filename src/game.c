@@ -8226,18 +8226,6 @@ void show_netgame_screen(void)
         :  :  : "eax" );
 }
 
-void show_equipment_screen(void)
-{
-    asm volatile ("call ASM_show_equipment_screen\n"
-        :  :  : "eax" );
-}
-
-void show_cryo_chamber_screen(void)
-{
-    asm volatile ("call ASM_show_cryo_chamber_screen\n"
-        :  :  : "eax" );
-}
-
 void show_mission_screen(void)
 {
     asm volatile ("call ASM_show_mission_screen\n"

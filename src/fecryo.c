@@ -23,6 +23,9 @@
 #include "ssampply.h"
 #include "specblit.h"
 #include "campaign.h"
+#include "cybmod.h"
+#include "femain.h"
+#include "feequip.h"
 #include "guiboxes.h"
 #include "guitext.h"
 #include "display.h"
@@ -35,7 +38,16 @@ extern struct ScreenTextBox cryo_agent_list_box;
 extern struct ScreenTextBox cryo_cybmod_list_box;
 extern struct ScreenButton cryo_offer_cancel_button;
 
+extern char cybmod_name_text[];
+
 extern ubyte current_frame;
+
+// Shared with equip screen
+extern char equip_cost_text[20];
+extern struct ScreenTextBox equip_name_box;
+extern struct ScreenTextBox equip_list_box;
+extern struct ScreenInfoBox equip_cost_box;
+extern struct ScreenButton equip_offer_buy_button;
 
 ubyte ac_do_cryo_offer_cancel(ubyte click);
 ubyte ac_show_cryo_agent_list(struct ScreenTextBox *box);
@@ -295,6 +307,14 @@ void blokey_static_flic_data_to_screen(void)
 #endif
 }
 
+void update_cybmod_cost_text(void)
+{
+    int cost;
+
+    cost = 10 * (int)mod_defs[selected_mod + 1].Cost;
+    sprintf(equip_cost_text, "%d", cost);
+}
+
 ubyte show_cryo_blokey(struct ScreenBox *box)
 {
     ubyte ret;
@@ -319,8 +339,18 @@ ubyte show_cryo_cybmod_list_box(struct ScreenTextBox *box)
     return ret;
 }
 
+void show_cryo_chamber_screen(void)
+{
+    asm volatile ("call ASM_show_cryo_chamber_screen\n"
+        :  :  : "eax" );
+}
+
 void init_cryo_screen_boxes(void)
 {
+    short scr_w, start_x;
+
+    scr_w = lbDisplay.GraphicsWindowWidth;
+
     init_screen_text_box(&cryo_agent_list_box, 7u, 122u, 196u, 303, 6,
         small_med_font, 1);
     cryo_agent_list_box.BGColour = 25;
@@ -329,18 +359,39 @@ void init_cryo_screen_boxes(void)
     cryo_agent_list_box.Flags |= 0x0300;
     cryo_agent_list_box.ScrollWindowHeight -= 27;
 
+    init_screen_box(&cryo_blokey_box, 212u, 122u, 203u, 303, 6);
+    cryo_blokey_box.SpecialDrawFn = ac_show_cryo_blokey;
+
     init_screen_text_box(&cryo_cybmod_list_box, 425u, 153u, 208u, 272,
       6, small_med_font, 1);
     cryo_cybmod_list_box.DrawTextFn = ac_show_cryo_cybmod_list_box;
     cryo_cybmod_list_box.Flags |= 0x0300;
     cryo_cybmod_list_box.ScrollWindowHeight = 117;
 
-    init_screen_box(&cryo_blokey_box, 212u, 122u, 203u, 303, 6);
-    cryo_blokey_box.SpecialDrawFn = ac_show_cryo_blokey;
-
     init_screen_button(&cryo_offer_cancel_button, 628u, 404u,
-      gui_strings[437], 6, med2_font, 1, 128);
+      gui_strings[437], 6, med2_font, 1, 0x80);
     cryo_offer_cancel_button.CallBackFn = ac_do_cryo_offer_cancel;
+
+    start_x = (scr_w - cryo_agent_list_box.Width - cryo_blokey_box.Width - cryo_cybmod_list_box.Width - 33) / 2;
+
+    cryo_agent_list_box.X = start_x + 7;
+    cryo_blokey_box.X = cryo_agent_list_box.X + cryo_agent_list_box.Width + 9;
+    cryo_cybmod_list_box.X = cryo_blokey_box.X + cryo_blokey_box.Width + 10;
+    cryo_offer_cancel_button.X = cryo_cybmod_list_box.X + cryo_cybmod_list_box.Width - cryo_offer_cancel_button.Width - 5;
+}
+
+void switch_shared_equip_screen_buttons_to_cybmod(void)
+{
+    set_heading_box_text(gui_strings[369]);
+    equip_cost_box.X = cryo_cybmod_list_box.X + 5;
+    equip_cost_box.Width = cryo_cybmod_list_box.Width - 10;
+    equip_cost_box.Y = 383;
+    equip_name_box.Text = cybmod_name_text;
+    if (selected_mod < 0)
+        cybmod_name_text[0] = '\0';
+    else
+        init_weapon_anim(selected_mod + 32);
+    switch_equip_offer_to_buy();
 }
 
 void set_flag01_cryo_screen_boxes(void)

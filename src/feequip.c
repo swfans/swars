@@ -41,7 +41,6 @@ extern struct ScreenInfoBox equip_cost_box;
 extern struct ScreenButton equip_all_agents_button;
 
 extern char unkn41_text[];
-extern char equip_name_text[];
 extern char equip_cost_text[20];
 
 ubyte ac_display_weapon_info(struct ScreenTextBox *box);
@@ -72,18 +71,22 @@ void update_equip_cost_text(void)
     int cost;
 
     cost = 100 * weapon_defs[selected_weapon + 1].Cost;
-    if (equip_offer_buy_button.CallBackFn == do_equip_offer_buy)
+    if (equip_offer_buy_button.CallBackFn == ac_do_equip_offer_buy)
         sprintf(equip_cost_text, "%d", cost);
     else
         sprintf(equip_cost_text, "%d", cost >> 1);
 }
 
-void update_cybmod_cost_text(void)
+void switch_equip_offer_to_buy(void)
 {
-    int cost;
+    equip_offer_buy_button.Text = gui_strings[436];
+    equip_offer_buy_button.CallBackFn = ac_do_equip_offer_buy;
+}
 
-    cost = 10 * (int)mod_defs[selected_mod + 1].Cost;
-    sprintf(equip_cost_text, "%d", cost);
+void show_equipment_screen(void)
+{
+    asm volatile ("call ASM_show_equipment_screen\n"
+        :  :  : "eax" );
 }
 
 void init_weapon_anim(ubyte weapon)
@@ -122,9 +125,9 @@ void init_weapon_anim(ubyte weapon)
 void switch_shared_equip_screen_buttons_to_equip(void)
 {
     set_heading_box_text(gui_strings[370]);
-    equip_cost_box.X = equip_offer_buy_button.Width + equip_offer_buy_button.X + 4;
     refresh_equip_list = 1;
-    equip_cost_box.Width = 208 - equip_offer_buy_button.Width - 14;
+    equip_cost_box.X = equip_offer_buy_button.X + equip_offer_buy_button.Width + 4;
+    equip_cost_box.Width = equip_list_box.Width - 2 - equip_offer_buy_button.Width - 14;
     equip_cost_box.Y = 404;
     if (selected_weapon + 1 < 1)
     {
@@ -144,21 +147,6 @@ void switch_shared_equip_screen_buttons_to_equip(void)
             equip_name_box.Text = gui_strings[65];
         }
     }
-}
-
-void switch_shared_equip_screen_buttons_to_cybmod(void)
-{
-    set_heading_box_text(gui_strings[369]);
-    equip_cost_box.X = 430;
-    equip_cost_box.Width = 198;
-    equip_cost_box.Y = 383;
-    equip_name_box.Text = equip_name_text;
-    if (selected_mod < 0)
-        equip_name_text[0] = '\0';
-    else
-        init_weapon_anim(selected_mod + 32);
-    equip_offer_buy_button.Text = gui_strings[436];
-    equip_offer_buy_button.CallBackFn = do_equip_offer_buy;
 }
 
 ubyte display_weapon_info(struct ScreenTextBox *box)
@@ -196,6 +184,9 @@ ubyte show_weapon_slots(struct ScreenBox *box)
 void init_equip_screen_boxes(void)
 {
     const char *s;
+    short scr_w, start_x;
+
+    scr_w = lbDisplay.GraphicsWindowWidth;
 
     init_screen_text_box(&equip_list_head_box, 7u, 122u, 191u, 22,
       6, small_med_font, 1);
@@ -220,8 +211,6 @@ void init_equip_screen_boxes(void)
     equip_cost_box.Text2 = equip_cost_text;
     equip_display_box.Flags |= 0x0300;
     equip_display_box.ScrollWindowHeight = 117;
-    equip_cost_box.X = equip_offer_buy_button.Width + equip_offer_buy_button.X + 4;
-    equip_cost_box.Width = 208 - equip_offer_buy_button.Width - 14;
     equip_list_head_box.DrawTextFn = ac_show_title_box;
     equip_list_head_box.Text = gui_strings[408];
     equip_list_head_box.Font = med_font;
@@ -243,6 +232,18 @@ void init_equip_screen_boxes(void)
     equip_all_agents_button.RadioValue = 4;
     equip_all_agents_button.Flags |= 0x0100;
     equip_all_agents_button.Radio = &selected_agent;
+
+    start_x = (scr_w - weapon_slots.Width - equip_list_box.Width - equip_name_box.Width - 32) / 2;
+
+    equip_all_agents_button.X = start_x + 7;
+    equip_list_head_box.X = start_x + 7;
+    weapon_slots.X = start_x + 7;
+    equip_list_box.X = weapon_slots.X + weapon_slots.Width + 9;
+    equip_name_box.X = equip_list_box.X + equip_list_box.Width + 9;
+    equip_display_box.X = equip_name_box.X;
+    equip_offer_buy_button.X = equip_display_box.X + 5;
+    equip_cost_box.X = equip_offer_buy_button.X + equip_offer_buy_button.Width + 4;
+    equip_cost_box.Width = equip_list_box.Width - 2 - equip_offer_buy_button.Width - 14;
 }
 
 void reset_equip_screen_boxes_flags(void)

@@ -30,10 +30,15 @@ extern "C" {
 
 #pragma pack()
 /******************************************************************************/
+extern sbyte selected_mod;
+
+void show_cryo_chamber_screen(void);
 
 void init_cryo_screen_boxes(void);
 void reset_cryo_screen_boxes_flags(void);
 void set_flag01_cryo_screen_boxes(void);
+
+void switch_shared_equip_screen_buttons_to_cybmod(void);
 
 /******************************************************************************/
 #ifdef __cplusplus

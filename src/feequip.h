@@ -33,13 +33,14 @@ extern "C" {
 // TODO for this variable the first weapon is 0 instead of 1
 // to be fixed to define variables in the same way everywhere
 extern sbyte selected_weapon;
-extern sbyte selected_mod;
+
+void show_equipment_screen(void);
 
 void update_equip_cost_text(void);
 void update_cybmod_cost_text(void);
 
 void switch_shared_equip_screen_buttons_to_equip(void);
-void switch_shared_equip_screen_buttons_to_cybmod(void);
+void switch_equip_offer_to_buy(void);
 void init_weapon_anim(ubyte weapon);
 
 void init_equip_screen_boxes(void);
