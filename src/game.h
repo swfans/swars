@@ -322,18 +322,14 @@ struct NewMailItem { // sizeof=5
 	ubyte Flag;
 };
 
-struct ScreenMenuBox { // sizeof=42
-  ubyte field_0;
-  char field_1[8];
-  char field_9[8];
-  ubyte field_11[2];
-  char field_13[8];
-  char field_1B[8];
-  char field_23[2];
-  ubyte field_25;
-  ubyte field_26;
-  ushort Flags;
-  sbyte field_29;
+struct ScreenShape { // sizeof=42
+    ushort field_0[9];
+    ushort field_12[9];
+    ubyte field_24;
+    ubyte field_25;
+    ushort Flags;
+    sbyte field_28;
+    ubyte field_29;
 };
 
 struct LevelDef {
@@ -724,7 +720,7 @@ extern ushort text_window_y1;
 extern ushort text_window_x2;
 extern ushort text_window_y2;
 
-extern struct ScreenMenuBox unk11_menu[5];
+extern struct ScreenShape unk11_menu[5];
 
 bool game_initialise (void);
 void game_handle_sdl_events (void);
@@ -753,8 +749,10 @@ void draw_trig_purple_list(long x2, long y2, long x3, long y3);
 void copy_box_purple_list(long x, long y, ulong width, ulong height);
 void draw_box_purple_list(int x, int y, ulong width, ulong height, int colour);
 void draw_line_purple_list(int x1, int y1, int x2, int y2, int colour);
+void draw_triangle_purple_list(int x1, int y1, int x2, int y2, int x3, int y3, TbPixel colour);
 void draw_hotspot_purple_list(int x, int y);
 void draw_purple_screen(void);
+ubyte flashy_draw_purple_shape(struct ScreenShape *shape);
 void draw_flic_purple_list(void (*fn)());
 
 void reload_background(void);

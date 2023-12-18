@@ -59,6 +59,37 @@ TbBool mouse_move_over_rect(short box_x1, short box_x2, short box_y1, short box_
     return over_box_coords(ms_x, ms_y, box_x1, box_y1, box_x2, box_y2);
 }
 
+TbBool mouse_move_over_rect_adv(short x1, short y1, short width, short height, TbBool a5)
+{
+    short ms_x, ms_y;
+    short dx, dy;
+
+    ms_x = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
+    ms_y = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
+
+    if (a5)
+    {
+        if ((ms_y >= y1) && (ms_y < y1 + height))
+        {
+            dx = ms_x - x1;
+            dy = ms_y - y1;
+            if ((dx >= dy) && (dx - dy < width))
+                return 1;
+        }
+    }
+    else
+    {
+        if ((ms_y >= y1) && (ms_y < y1 + height))
+        {
+            dx = ms_x - x1;
+            dy = ms_y - y1;
+            if ((dx >= -dy) && (dx + dy < width))
+                return 1;
+        }
+    }
+    return 0;
+}
+
 TbBool is_over_box_base(short x, short y, struct ScreenBoxBase *box)
 {
     return (x >= box->X) && (x <= box->X + box->Width)

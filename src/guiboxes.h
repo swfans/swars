@@ -161,6 +161,8 @@ TbBool mouse_move_over_box_coords(short box_x1, short box_y1, short box_x2, shor
 // TODO switch order of arguments and to above function, remove when this is no longer used
 TbBool mouse_move_over_rect(short box_x1, short box_x2, short box_y1, short box_y2);
 
+TbBool mouse_move_over_rect_adv(short x1, short y1, short width, short height, TbBool a5);
+
 /** Returns if given position is over given box (incl. borders).
  */
 #define is_over_box(x, y, box) is_over_box_base(x, y, (struct ScreenBoxBase *)box)

@@ -20,6 +20,8 @@
 
 #include "bftext.h"
 #include "bfsprite.h"
+#include "bfkeybd.h"
+#include "bflib_joyst.h"
 #include "femain.h"
 #include "guiboxes.h"
 #include "guitext.h"
@@ -27,8 +29,10 @@
 #include "campaign.h"
 #include "game.h"
 #include "cybmod.h"
+#include "player.h"
 #include "research.h"
 #include "weapon.h"
+#include "sound.h"
 #include "swlog.h"
 /******************************************************************************/
 extern struct ScreenTextBox equip_name_box;
@@ -40,6 +44,11 @@ extern struct ScreenButton equip_offer_buy_button;
 extern struct ScreenInfoBox equip_cost_box;
 extern struct ScreenButton equip_all_agents_button;
 
+extern ubyte cheat_research_weapon;
+extern ubyte byte_1C4975;
+extern ubyte byte_1C4976;
+extern struct TbSprite *sprites_Icons0_0;
+
 extern char unkn41_text[];
 extern char equip_cost_text[20];
 
@@ -49,6 +58,7 @@ ubyte ac_show_weapon_list(struct ScreenTextBox *box);
 ubyte ac_show_weapon_slots(struct ScreenBox *box);
 ubyte ac_do_equip_offer_buy(ubyte click);
 ubyte ac_sell_equipment(ubyte click);
+ubyte ac_select_all_agents(ubyte click);
 
 ubyte do_equip_offer_buy(ubyte click)
 {
@@ -64,6 +74,19 @@ ubyte sell_equipment(ubyte click)
     asm volatile ("call ASM_sell_equipment\n"
         : "=r" (ret) : "a" (click));
     return ret;
+}
+
+void check_buy_sell_button(void)
+{
+    asm volatile ("call ASM_check_buy_sell_button\n"
+        :  :  : "eax" );
+}
+
+ubyte select_all_agents(ubyte click)
+{
+    selected_agent = 4;
+    check_buy_sell_button();
+    return 1;
 }
 
 void update_equip_cost_text(void)

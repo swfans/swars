@@ -5053,6 +5053,24 @@ void draw_hotspot_purple_list(int x, int y)
         : : "a" (x), "d" (y));
 }
 
+ubyte flashy_draw_purple_shape(struct ScreenShape *shape)
+{
+    TbResult ret;
+    asm volatile ("call ASM_flashy_draw_purple_shape\n"
+        : "=r" (ret) : "a" (shape));
+    return ret;
+}
+
+void draw_triangle_purple_list(int x1, int y1, int x2, int y2, int x3, int y3, TbPixel colour)
+{
+    asm volatile (
+      "push %6\n"
+      "push %5\n"
+      "push %4\n"
+      "call ASM_draw_triangle_purple_list\n"
+        : : "a" (x1), "d" (y1), "b" (x2), "c" (y2), "g" (x3), "g" (y3), "g" (colour));
+}
+
 void ASM_show_game_engine(void);
 void show_game_engine(void)
 {
@@ -5107,19 +5125,6 @@ TbPixel LbPaletteFindColour(ubyte *pal, ubyte rval, ubyte gval, ubyte bval)
     return ret;
 }
 #endif
-
-void check_buy_sell_button(void)
-{
-    asm volatile ("call ASM_check_buy_sell_button\n"
-        :  :  : "eax" );
-}
-
-ubyte select_all_agents(ubyte click)
-{
-    selected_agent = 4;
-    check_buy_sell_button();
-    return 1;
-}
 
 ubyte change_panel_permutation(ubyte click)
 {
@@ -6409,8 +6414,6 @@ int save_game_write(ubyte slot, char *desc)
         : "=r" (ret) : "a" (slot), "d" (desc));
     return ret;
 }
-
-ubyte ac_select_all_agents(ubyte click);
 
 void campaign_new_game_prepare(void)
 {
