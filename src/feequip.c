@@ -133,6 +133,44 @@ TbBool weapon_available_for_purchase(short weapon)
             || (login_control__State == 5 && login_control__TechLevel >= weapon_tech_level[weapon]);
 }
 
+ubyte draw_agent_panel_shape(struct ScreenShape *shape, ushort spridx, ubyte gbstate)
+{
+    ubyte drawn;
+    if (byte_1C4975 == 0)
+    {
+        if ((gbstate == GBxSta_NORMAL) || (gbstate == GBxSta_HLIGHT1)) {
+            lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
+        } else {
+            lbDisplay.DrawFlags = 0;
+        }
+        drawn = flashy_draw_purple_shape(shape);
+    }
+    else
+    {
+        if ((gbstate == GBxSta_NORMAL) || (gbstate == GBxSta_HLIGHT1) || (gbstate == GBxSta_HLIGHT2)) {
+            lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
+        } else {
+            lbDisplay.DrawFlags = 0;
+        }
+        draw_sprite_purple_list(shape->field_0[0] - 59, shape->field_12[2] - 3,
+          &sprites_Icons0_0[139]);
+        if ((gbstate == GBxSta_HLIGHT2) || (gbstate == GBxSta_HLIGHT1)) {
+            lbDisplay.DrawFlags = 0;
+        }
+        if (gbstate == GBxSta_HLIGHT2) {
+            draw_sprite_purple_list(shape->field_0[0] - 59, shape->field_12[2] - 3,
+              &sprites_Icons0_0[144]);
+        }
+        lbDisplay.DrawFlags |= 0x8000;
+        draw_sprite_purple_list(shape->field_0[1] - 16, shape->field_12[1] + 8,
+          &sprites_Icons0_0[spridx]);
+        lbDisplay.DrawFlags &= ~0x8000;
+        drawn = 3;
+    }
+    lbDisplay.DrawFlags = 0;
+    return drawn;
+}
+
 void show_equipment_screen(void)
 {
 #if 0
@@ -188,10 +226,8 @@ void show_equipment_screen(void)
         for (nagent = 4; nagent >= 0; nagent--)
         {
             struct ScreenShape *shape;
-            ushort spridx;
 
             shape = &unk11_menu[nagent];
-            spridx = 140 + nagent;
             if (nagent == 4) // agent name box
             {
                 if (byte_1C4976 == 0)
@@ -200,7 +236,7 @@ void show_equipment_screen(void)
                 }
                 else if (byte_1C4976 == 1)
                 {
-                    lbDisplay.DrawFlags = 0x0004;
+                    lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
                     draw_box_purple_list(shape->field_0[0] - 3, shape->field_12[0] - 3,
                       168, 24, 56);
                     draw_triangle_purple_list(shape->field_0[1] + 7, shape->field_12[1] - 3,
@@ -220,17 +256,19 @@ void show_equipment_screen(void)
             }
             else
             {
-                agnt[nagent] = 0;
+                ubyte gbstate, drawn;
+                ushort spridx;
+
                 if (lbKeyOn[KC_1 + nagent])
                 {
                     lbKeyOn[KC_1 + nagent] = 0;
-                    if (cryo_agents.NumAgents > nagent)
+                    if (nagent < cryo_agents.NumAgents)
                     {
                         selected_agent = nagent;
                         check_buy_sell_button();
                     }
                 }
-                if (mouse_move_over_rect_adv(224 + delta_h * nagent, 89, 30, 15, 0) ||
+                if (mouse_move_over_rect_adv(184 + delta_h * nagent, 89, 30, 15, 0) ||
                   mouse_move_over_rect_adv(201 + delta_h * nagent, 72, 98, 18, 0))
                 {
                     if ((shape->Flags & 0x0200) == 0) {
@@ -241,20 +279,7 @@ void show_equipment_screen(void)
                     {
                         lbDisplay.LeftButton = 0;
                         shape->Flags |= 0x0400;
-                        if (byte_1C4975 == 0)
-                        {
-                            boxes_drawn = flashy_draw_purple_shape(shape);
-                            agnt[nagent] = (boxes_drawn == 3);
-                        }
-                        else
-                        {
-                            draw_sprite_purple_list(shape->field_0[0] - 59, shape->field_12[2] - 3,
-                              &sprites_Icons0_0[139]);
-                            lbDisplay.DrawFlags |= 0x8000;
-                            draw_sprite_purple_list(shape->field_0[1] - 16, shape->field_12[1] + 8,
-                              &sprites_Icons0_0[spridx]);
-                            lbDisplay.DrawFlags &= ~0x8000;
-                        }
+                        gbstate = GBxSta_PUSHED;
                     }
                     else
                     {
@@ -284,24 +309,7 @@ void show_equipment_screen(void)
                             mo_weapon = -1;
                             shape->Flags &= ~0x0400;
                         }
-                        if (byte_1C4975 == 0)
-                        {
-                            boxes_drawn = flashy_draw_purple_shape(shape);
-                            agnt[nagent] = (boxes_drawn == 3);
-                        }
-                        else
-                        {
-                            lbDisplay.DrawFlags = 0x0004;
-                            draw_sprite_purple_list(shape->field_0[0] - 59, shape->field_12[2] - 3,
-                              &sprites_Icons0_0[139]);
-                            lbDisplay.DrawFlags = 0;
-                            draw_sprite_purple_list(shape->field_0[0] - 59, shape->field_12[2] - 3,
-                              &sprites_Icons0_0[144]);
-                            lbDisplay.DrawFlags |= 0x8000;
-                            draw_sprite_purple_list(shape->field_0[1] - 16, shape->field_12[1] + 8,
-                              &sprites_Icons0_0[spridx]);
-                            lbDisplay.DrawFlags &= ~0x8000;
-                        }
+                        gbstate = GBxSta_HLIGHT2;
                     }
                 }
                 else
@@ -310,27 +318,21 @@ void show_equipment_screen(void)
                         shape->Flags &= ~0x0200;
                     if (shape->Flags & 0x0400)
                         shape->Flags &= ~0x0400;
-                    if (byte_1C4975 == 0)
+                    if ((selected_agent == nagent) || (selected_agent == 4))
                     {
-                        lbDisplay.DrawFlags = 0x0004;
-                        boxes_drawn = flashy_draw_purple_shape(shape);
-                        agnt[nagent] = (boxes_drawn == 3);
-                        lbDisplay.DrawFlags = 0;
+                        gbstate = GBxSta_HLIGHT1;
                     }
                     else
                     {
-                        lbDisplay.DrawFlags = 0x0004;
-                        draw_sprite_purple_list(shape->field_0[0] - 59, shape->field_12[2] - 3,
-                          &sprites_Icons0_0[139]);
-                        if ((selected_agent == nagent) || (selected_agent == 4))
-                            lbDisplay.DrawFlags = 0;
-                        lbDisplay.DrawFlags |= 0x8000;
-                        draw_sprite_purple_list(shape->field_0[1] - 16, shape->field_12[1] + 8,
-                          &sprites_Icons0_0[spridx]);
-                        lbDisplay.DrawFlags &= ~0x8000;
-                        lbDisplay.DrawFlags = 0;
+                        gbstate = GBxSta_NORMAL;
                     }
                 }
+                spridx = 140 + nagent;
+                drawn = draw_agent_panel_shape(shape, spridx, gbstate);
+                // Is the flashy draw finished for current button
+                agnt[nagent] = (drawn == 3);
+                // When all buttons started actually drawing, we can begin flashy draw of the panels below
+                boxes_drawn &= (drawn > 1);
             }
         }
 

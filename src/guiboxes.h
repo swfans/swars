@@ -27,6 +27,25 @@ extern "C" {
 /******************************************************************************/
 #pragma pack(1)
 
+enum GUIBoxState {
+  /** The box is disabled and does react to input. Should draw
+   *  as mostly transparent, greyed out or darkened.
+   */
+  GBxSta_DISABLED = 0,
+  /** The box is in normal, non-highlited state.
+   */
+  GBxSta_NORMAL,
+  /** Highlight level 1 - toggled on, but without mouse over.
+   */
+  GBxSta_HLIGHT1,
+  /** Highlight level 2 - mouse is over the box.
+   */
+  GBxSta_HLIGHT2,
+  /** The box is pushed - either by holding a key or mouse button.
+   */
+  GBxSta_PUSHED,
+};
+
 /** Base to which every Screen Box/Button/Text can be casted.
  */
 struct ScreenBoxBase {
