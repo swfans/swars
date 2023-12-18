@@ -9663,10 +9663,6 @@ void show_menu_screen(void)
         reset_research_screen_boxes_flags();
         reset_system_menu_boxes_flags();
 
-        int i;
-        for (i = 0; i < 5; i++) {
-            unk11_menu[i].Flags = 0x0001;
-        }
         reset_options_screen_boxes_flags();
 
         set_flag01_storage_screen_boxes();

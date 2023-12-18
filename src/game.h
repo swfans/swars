@@ -720,8 +720,6 @@ extern ushort text_window_y1;
 extern ushort text_window_x2;
 extern ushort text_window_y2;
 
-extern struct ScreenShape unk11_menu[5];
-
 bool game_initialise (void);
 void game_handle_sdl_events (void);
 void game_update (void);

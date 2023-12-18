@@ -43,6 +43,7 @@ extern struct ScreenTextBox equip_display_box;
 extern struct ScreenButton equip_offer_buy_button;
 extern struct ScreenInfoBox equip_cost_box;
 extern struct ScreenButton equip_all_agents_button;
+extern struct ScreenShape unk11_menu[5];
 
 extern ubyte cheat_research_weapon;
 extern ubyte byte_1C4975;
@@ -107,9 +108,34 @@ void switch_equip_offer_to_buy(void)
     equip_offer_buy_button.CallBackFn = ac_do_equip_offer_buy;
 }
 
+void set_flag02_equipment_screen_boxes(void)
+{
+    short i;
+
+    equip_list_head_box.Flags |= 0x02;
+    weapon_slots.Flags |= 0x02;
+    equip_display_box.Flags |= 0x02;
+    equip_name_box.Flags |= 0x02;
+    equip_list_box.Flags |= 0x02;
+    equip_offer_buy_button.Flags |= 0x02;
+    equip_cost_box.Flags |= 0x02;
+    equip_all_agents_button.Flags |= 0x02;
+    for (i = 0; i < 5; i++) {
+        unk11_menu[i].Flags = 0x02;
+    }
+}
+
+TbBool weapon_available_for_purchase(short weapon)
+{
+    return ((weapon != WEP_NULL) && (weapon != WEP_ENERGYSHLD) && (weapon != WEP_NAPALMMINE)
+            && (weapon != WEP_SONICBLAST) && ((weapon != WEP_PERSUADER2) || (background_type != 1))
+            && (research.WeaponsCompleted & (1 << (weapon-1))))
+            || (login_control__State == 5 && login_control__TechLevel >= weapon_tech_level[weapon]);
+}
+
 void show_equipment_screen(void)
 {
-#if 1
+#if 0
     asm volatile ("call ASM_show_equipment_screen\n"
         :  :  : "eax" );
 #else
@@ -121,24 +147,13 @@ void show_equipment_screen(void)
     if (((game_projector_speed != 0) && is_heading_flag01()) ||
       (lbKeyOn[KC_SPACE] && !edit_flag))
     {
-        short i;
         lbKeyOn[KC_SPACE] = 0;
         set_flag02_heading_screen_boxes();
-        equip_list_head_box.Flags |= 0x02;
-        weapon_slots.Flags |= 0x02;
-        equip_display_box.Flags |= 0x02;
-        equip_name_box.Flags |= 0x02;
-        equip_list_box.Flags |= 0x02;
-        equip_offer_buy_button.Flags |= 0x02;
-        equip_cost_box.Flags |= 0x02;
-        equip_all_agents_button.Flags |= 0x02;
-        for (i = 0; i < 5; i++) {
-            unk11_menu[i].Flags = 0x02;
-        }
+        set_flag02_equipment_screen_boxes();
         byte_1C4975 = 1;
         byte_1C4976 = 1;
     }
-    if ((ingame.UserFlags & 0x04) != 0)
+    if ((ingame.UserFlags & UsrF_Cheats) != 0)
     {
         if ( lbKeyOn[KC_0] )
         {
@@ -152,17 +167,13 @@ void show_equipment_screen(void)
     }
     if (refresh_equip_list)
     {
-        short wtype;
+        short weapon;
         equip_list_box.Lines = 0;
-        for (wtype = 1; wtype < WEP_TYPES_COUNT; wtype++)
+        for (weapon = 1; weapon < WEP_TYPES_COUNT; weapon++)
         {
-          if (((wtype != WEP_ENERGYSHLD) && (wtype != WEP_NAPALMMINE) && (wtype != WEP_SONICBLAST)
-            && ((wtype != WEP_PERSUADER2) || (background_type != 1))
-            && (research.WeaponsCompleted & (1 << (wtype-1))))
-            || (login_control__State == 5 && login_control__TechLevel >= weapon_tech_level[wtype]))
-          {
-            equip_list_box.Lines++;
-          }
+            if (weapon_available_for_purchase(weapon)) {
+                equip_list_box.Lines++;
+            }
         }
         equip_list_box.Flags |= 0x0080;
         refresh_equip_list = 0;
@@ -171,7 +182,7 @@ void show_equipment_screen(void)
     {
         short delta_h = 110;
         sbyte nagent;
-        ubyte v45[4];
+        ubyte agnt[4];
         ubyte boxes_drawn;
         boxes_drawn = 1;
         for (nagent = 4; nagent >= 0; nagent--)
@@ -181,7 +192,7 @@ void show_equipment_screen(void)
 
             shape = &unk11_menu[nagent];
             spridx = 140 + nagent;
-            if (nagent == 4)
+            if (nagent == 4) // agent name box
             {
                 if (byte_1C4976 == 0)
                 {
@@ -199,27 +210,17 @@ void show_equipment_screen(void)
                     flashy_draw_purple_shape(shape);
                     if (/*(selected_agent >= 0) && */(selected_agent < 4))
                     {
-                        ushort rndname;
+                        const char *name;
                         lbFontPtr = med_font;
                         my_set_text_window(11, 76, 163, 18);
-                        rndname = cryo_agents.RandomName[selected_agent];
-                        if (background_type == 1)
-                        {
-                            if (cryo_agents.Sex & (1 << selected_agent))
-                                draw_text_purple_list2(0, 0, gui_strings[227 + rndname], 0);
-                            else
-                                draw_text_purple_list2(0, 0, gui_strings[177 + rndname], 0);
-                        }
-                        else
-                        {
-                            draw_text_purple_list2(0, 0, gui_strings[77 + rndname], 0);
-                        }
+                        name = get_cryo_agent_name(selected_agent);
+                        draw_text_purple_list2(0, 0, name, 0);
                     }
                 }
             }
             else
             {
-                v45[nagent] = 0;
+                agnt[nagent] = 0;
                 if (lbKeyOn[KC_1 + nagent])
                 {
                     lbKeyOn[KC_1 + nagent] = 0;
@@ -232,7 +233,7 @@ void show_equipment_screen(void)
                 if (mouse_move_over_rect_adv(224 + delta_h * nagent, 89, 30, 15, 0) ||
                   mouse_move_over_rect_adv(201 + delta_h * nagent, 72, 98, 18, 0))
                 {
-                    if ((shape->Flags & 0x200) == 0) {
+                    if ((shape->Flags & 0x0200) == 0) {
                         play_sample_using_heap(0, 123, 127, 64, 100, 0, 1u);
                         shape->Flags |= 0x0200;
                     }
@@ -243,7 +244,7 @@ void show_equipment_screen(void)
                         if (byte_1C4975 == 0)
                         {
                             boxes_drawn = flashy_draw_purple_shape(shape);
-                            v45[nagent] = boxes_drawn == 3;
+                            agnt[nagent] = (boxes_drawn == 3);
                         }
                         else
                         {
@@ -271,14 +272,14 @@ void show_equipment_screen(void)
                                 {
                                     play_sample_using_heap(0, 129, 127, 64, 100, 0, 2u);
                                 }
-                                shape->Flags &= 0x0400;
+                                shape->Flags &= ~0x0400;
                             }
                         }
                         else
                         {
                             if (free_slot(nagent, mo_weapon))
                             {
-                                player_transfer_weapon_between_agents(mo_from_agent, nagent, mo_weapon+1);
+                                player_cryo_transfer_weapon_between_agents(mo_from_agent, nagent, mo_weapon+1);
                             }
                             mo_weapon = -1;
                             shape->Flags &= ~0x0400;
@@ -286,7 +287,7 @@ void show_equipment_screen(void)
                         if (byte_1C4975 == 0)
                         {
                             boxes_drawn = flashy_draw_purple_shape(shape);
-                            v45[nagent] = boxes_drawn == 3;
+                            agnt[nagent] = (boxes_drawn == 3);
                         }
                         else
                         {
@@ -309,32 +310,32 @@ void show_equipment_screen(void)
                         shape->Flags &= ~0x0200;
                     if (shape->Flags & 0x0400)
                         shape->Flags &= ~0x0400;
-                    lbDisplay.DrawFlags = 0x0004;
-                    if (byte_1C4975)
+                    if (byte_1C4975 == 0)
                     {
-                        draw_sprite_purple_list(
-                          shape->field_0[0] - 59,
-                          shape->field_12[2] - 3,
-                          sprites_Icons0_0 + 139);
+                        lbDisplay.DrawFlags = 0x0004;
+                        boxes_drawn = flashy_draw_purple_shape(shape);
+                        agnt[nagent] = (boxes_drawn == 3);
+                        lbDisplay.DrawFlags = 0;
+                    }
+                    else
+                    {
+                        lbDisplay.DrawFlags = 0x0004;
+                        draw_sprite_purple_list(shape->field_0[0] - 59, shape->field_12[2] - 3,
+                          &sprites_Icons0_0[139]);
                         if ((selected_agent == nagent) || (selected_agent == 4))
                             lbDisplay.DrawFlags = 0;
                         lbDisplay.DrawFlags |= 0x8000;
                         draw_sprite_purple_list(shape->field_0[1] - 16, shape->field_12[1] + 8,
                           &sprites_Icons0_0[spridx]);
                         lbDisplay.DrawFlags &= ~0x8000;
+                        lbDisplay.DrawFlags = 0;
                     }
-                    else
-                    {
-                        boxes_drawn = flashy_draw_purple_shape(shape);
-                        v45[nagent] = boxes_drawn == 3;
-                    }
-                    lbDisplay.DrawFlags = 0;
                 }
             }
         }
 
         if (!byte_1C4975) {
-            byte_1C4975 = v45[0] && v45[1] && v45[2] && v45[3];
+            byte_1C4975 = agnt[0] && agnt[1] && agnt[2] && agnt[3];
         }
         if (boxes_drawn)
         {
@@ -536,12 +537,17 @@ void init_equip_screen_boxes(void)
 
 void reset_equip_screen_boxes_flags(void)
 {
+    short i;
+
     equip_list_head_box.Flags = 0x0001;
     weapon_slots.Flags = 0x0001;
     equip_name_box.Flags = 0x0001;
     equip_cost_box.Flags = 0x0001;
     equip_list_box.Flags = 0x0001 | 0x0100 | 0x0200;
     equip_display_box.Flags = 0x0001 | 0x0100 | 0x0200;
+    for (i = 0; i < 5; i++) {
+        unk11_menu[i].Flags = 0x0001;
+    }
 }
 
 void set_flag01_equip_screen_boxes(void)
