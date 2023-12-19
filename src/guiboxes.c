@@ -49,6 +49,15 @@ TbBool mouse_move_over_box_coords(short box_x1, short box_y1, short box_x2, shor
     return over_box_coords(ms_x, ms_y, box_x1, box_y1, box_x2, box_y2);
 }
 
+TbBool mouse_down_over_box_coords(short box_x1, short box_y1, short box_x2, short box_y2)
+{
+    short ms_x, ms_y;
+
+    ms_x = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MouseX : lbDisplay.MouseX;
+    ms_y = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MouseY : lbDisplay.MouseY;
+    return over_box_coords(ms_x, ms_y, box_x1, box_y1, box_x2, box_y2);
+}
+
 // TODO switch order of arguments and to above function, remove when this is no longer used
 TbBool mouse_move_over_rect(short box_x1, short box_x2, short box_y1, short box_y2)
 {

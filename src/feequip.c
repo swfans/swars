@@ -46,14 +46,23 @@ extern struct ScreenInfoBox equip_cost_box;
 extern struct ScreenButton equip_all_agents_button;
 extern struct ScreenShape unk11_menu[5];
 
+extern ubyte byte_155174; // = 166;
+extern ubyte byte_155180; // = 109;
+extern ubyte byte_1C4AA0;
 extern ubyte cheat_research_weapon;
 extern ubyte byte_1C4975;
 extern ubyte byte_1C4976;
+
 extern ubyte mo_from_agent;
 extern struct TbSprite *sprites_Icons0_0;
 
 extern char unkn41_text[];
 extern char equip_cost_text[20];
+extern ubyte byte_155175[];
+extern ubyte byte_155181[];
+extern ubyte weapon_nrg[31];
+extern ubyte weapon_range[31];
+extern ubyte weapon_damage[31];
 
 short agent_panel_shape_points_x[] = {
       0,  23, 120, 103,  35,  22,   7,   0,   0,
@@ -272,7 +281,8 @@ void show_equipment_screen(void)
                     {
                         const char *name;
                         lbFontPtr = med_font;
-                        my_set_text_window(11, 76, 163, 18);
+                        my_set_text_window(shape->PtX[0] + 4, shape->PtY[0] + 4,
+                          shape->PtX[2] - shape->PtX[0] - 1, shape->PtY[2] - shape->PtY[0] + 1);
                         name = get_cryo_agent_name(selected_agent);
                         draw_text_purple_list2(0, 0, name, 0);
                     }
@@ -436,6 +446,15 @@ void init_weapon_anim(ubyte weapon)
 #endif
 }
 
+void weapon_flic_data_to_screen(void)
+{
+#if 1
+    asm volatile ("call ASM_weapon_flic_data_to_screen\n"
+        :  :  : "eax" );
+#else
+#endif
+}
+
 void switch_shared_equip_screen_buttons_to_equip(void)
 {
     set_heading_box_text(gui_strings[370]);
@@ -463,12 +482,173 @@ void switch_shared_equip_screen_buttons_to_equip(void)
     }
 }
 
+/** Determines if buy or sell should be available in the equip weapon offer.
+ *
+ * @return Gives 0 if button unavailable, 1 for buy, 2 for sell.
+ */
+ubyte equip_offer_can_buy_or_sell(ubyte weapon)
+{
+    if (selected_agent == 4) // All agents selected
+    {
+        short i;
+
+        if (is_research_weapon_completed(weapon) ||
+          (login_control__State != 6))
+            return 1;
+
+        for (i = 0; i < 4; i++)
+        {
+            if (!player_agent_has_weapon(i, weapon))
+              break;
+        }
+        if (i == 4) // all agents have that weapon
+            return 2;
+
+        return 0;
+    }
+
+    if (player_agent_has_weapon(selected_agent, weapon))
+        return 2;
+
+    if (is_research_weapon_completed(weapon) ||
+      (login_control__State != 6))
+        return 1;
+
+    return 0;
+}
+
 ubyte display_weapon_info(struct ScreenTextBox *box)
 {
+#if 0
     ubyte ret;
     asm volatile ("call ASM_display_weapon_info\n"
         : "=r" (ret) : "a" (box));
     return ret;
+#else
+    short cx, cy;
+    short i, k;
+    const char *text;
+
+    if ((box->Flags & 0x8000) == 0)
+    {
+        lbDisplay.DrawFlags = 0x0004;
+        my_set_text_window(box->X + 4, box->Y + 4,
+            box->Width - 8, box->Height - 8);
+        draw_box_purple_list(box->X + 4, box->Y + 158,
+            box->Width - 8, 13, 56);
+        draw_box_purple_list(box->X + 4, box->Y + 174,
+            box->Width - 8, 73, 56);
+        lbDisplay.DrawFlags = 0x0100;
+        lbFontPtr = small_med_font;
+        draw_text_purple_list2(0, 144, gui_strings[426], 0);
+        draw_text_purple_list2(0, 173, gui_strings[427], 0);
+        draw_text_purple_list2(0, 198, gui_strings[428], 0);
+        draw_text_purple_list2(0, 223, gui_strings[429], 0);
+        cy = box->Y + 187;
+        for (i = 0; i < 3; i++)
+        {
+            cx = box->X + 8;
+            for (k = 0; k < 8; k++)
+            {
+                if (i == 1)
+                    draw_box_purple_list(cx, cy, 22, 7, byte_155180);
+                else
+                    draw_box_purple_list(cx, cy, 22, 7, byte_155174);
+                cx += 24;
+            }
+            cy += 25;
+        }
+        lbDisplay.DrawFlags = 0;
+        box->Flags |= 0x8000;
+        copy_box_purple_list(box->X + 4, box->Y + 146, box->Width - 8, box->Height - 143);
+    }
+    my_set_text_window(box->X + 4, box->Y + 4, box->Width - 8, box->Height - 8);
+    if (selected_weapon == -1)
+        return 0;
+    lbDisplay.DrawFlags = 0x0100;
+    lbFontPtr = small_med_font;
+
+    if (is_research_weapon_completed(selected_weapon + 1) || (login_control__State != 6))
+        text = gui_strings[59 + (weapon_defs[selected_weapon + 1].Sprite >> 8)];
+    else
+        text = gui_strings[65];
+    draw_text_purple_list2(0, 157, text, 0);
+
+    cy = box->Y + 187;
+    cx = box->X + 8;
+    for (i = 0; i < 8; i++)
+    {
+        if (i < weapon_damage[selected_weapon])
+        draw_box_purple_list(cx, cy, 22, 7, byte_155175[i]);
+        cx += 24;
+    }
+
+    cy = cy + 25;
+    cx = box->X + 8;
+    for (i = 0; i < 8; i++)
+    {
+        if (i < weapon_range[selected_weapon])
+            draw_box_purple_list(cx, cy, 22, 7, byte_155181[i]);
+        cx += 24;
+    }
+
+    cy = cy + 25;
+    cx = box->X + 8;
+    for (i = 0; i < 8; i++)
+    {
+        if (i < weapon_nrg[selected_weapon])
+            draw_box_purple_list(cx, cy, 22, 7, byte_155175[i]);
+        cx += 24;
+    }
+
+    if (equip_offer_can_buy_or_sell(selected_weapon + 1))
+    {
+        //equip_offer_buy_button.DrawFn(&equip_offer_buy_button); -- incompatible calling convention
+        asm volatile ("call *%1\n"
+            : : "a" (&equip_offer_buy_button), "g" (equip_offer_buy_button.DrawFn));
+    }
+
+    //equip_cost_box.DrawFn(&equip_cost_box); -- incompatible calling convention
+    asm volatile ("call *%1\n"
+        : : "a" (&equip_cost_box), "g" (equip_cost_box.DrawFn));
+
+    draw_hotspot_purple_list(529, 257);
+
+    if (byte_1C4AA0)
+    {
+        lbFontPtr = box->Font;
+        my_set_text_window(box->X + 4, box->ScrollWindowOffset + box->Y + 4,
+          box->Width - 20, box->ScrollWindowHeight + 23);
+        flashy_draw_text(0, 0, box->Text, box->TextSpeed, box->field_38,
+          &box->TextFadePos, 0);
+    }
+    else
+    {
+        xdo_next_frame(2);
+        draw_flic_purple_list(weapon_flic_data_to_screen);
+    }
+
+    if (lbDisplay.LeftButton && mouse_down_over_box_coords(429, 157, 629, 297))
+    {
+        lbDisplay.LeftButton = 0;
+        byte_1C4AA0 = (byte_1C4AA0 == 0);
+        if (!byte_1C4AA0)
+        {
+            init_weapon_anim(selected_weapon);
+            return 0;
+        }
+        equip_display_box.Flags |= 0x0080;
+        equip_display_box.Lines = 0;
+        if (is_research_weapon_completed(selected_weapon + 1) ||
+          (login_control__State != 6))
+            box->Text = &weapon_text[weapon_text_index[selected_weapon]];
+        else
+            box->Text = gui_strings[536];
+        box->TextFadePos = -5;
+    }
+
+    return 0;
+#endif
 }
 
 ubyte show_weapon_name(struct ScreenTextBox *box)

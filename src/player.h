@@ -110,6 +110,8 @@ void place_single_player(void);
 void player_update_agents_from_cryo(PlayerInfo *p_player);
 void cryo_update_agents_from_player(PlayerInfo *p_player);
 void players_sync_from_cryo(void);
+
+TbBool player_agent_has_weapon(ushort plagent, ubyte weapon);
 TbBool free_slot(ushort plagent, ubyte weapon);
 TbBool player_cryo_add_weapon_one(ushort cryo_no, ubyte weapon);
 TbBool player_cryo_remove_weapon_one(ushort cryo_no, ubyte weapon);

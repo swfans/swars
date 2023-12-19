@@ -98,6 +98,14 @@ void players_sync_from_cryo(void)
     player_update_agents_from_cryo(p_locplayer);
 }
 
+TbBool player_agent_has_weapon(ushort plagent, ubyte weapon)
+{
+    PlayerInfo *p_locplayer;
+
+    p_locplayer = &players[local_player_no];
+    return weapons_has_weapon(p_locplayer->Weapons[plagent], weapon);
+}
+
 TbBool free_slot(ushort plagent, ubyte weapon)
 {
     TbBool ret;

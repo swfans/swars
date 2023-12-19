@@ -189,6 +189,10 @@ TbBool over_box_coords(short x, short y, short box_x1, short box_y1, short box_x
  */
 TbBool mouse_move_over_box_coords(short box_x1, short box_y1, short box_x2, short box_y2);
 
+/** Returns if mouse position when button wes pressed down is over given box with coords (incl. borders).
+ */
+TbBool mouse_down_over_box_coords(short box_x1, short box_y1, short box_x2, short box_y2);
+
 // TODO switch order of arguments and to above function, remove when this is no longer used
 TbBool mouse_move_over_rect(short box_x1, short box_x2, short box_y1, short box_y2);
 
