@@ -177,7 +177,7 @@ extern long dword_1DC36C;
 extern long sound_heap_size;
 extern struct SampleTable *sound_heap_memory;
 
-extern struct StartScreenPoint proj_origin;
+extern struct ScreenPoint proj_origin;
 extern ubyte purple_joy_move;
 extern ushort purple_draw_index;
 
@@ -8246,7 +8246,7 @@ void show_menu_screen_st0(void)
 
     {
         long pos = 0;
-        hotspot_buffer = (struct StartScreenPoint *)((ubyte *)scratch_malloc_mem + pos);
+        hotspot_buffer = (struct ScreenPoint *)((ubyte *)scratch_malloc_mem + pos);
         pos += hotspot_buffer_len;
 
         mission_briefing_text = (char *)scratch_malloc_mem + pos;
@@ -8335,12 +8335,6 @@ void show_date_time(void)
 void purple_unkn1_data_to_screen(void)
 {
     memcpy(data_1c6de4, data_1c6de8, 0x5FA0u);
-}
-
-void purple_unkn3_data_to_screen(void)
-{
-    asm volatile ("call ASM_purple_unkn3_data_to_screen\n"
-        :  :  : "eax" );
 }
 
 void research_unkn_func_002(void)

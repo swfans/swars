@@ -168,7 +168,7 @@ typedef struct {
   char field_9;
 } PrimObjectPoint;
 
-struct StartScreenPoint {
+struct ScreenPoint {
 	short X;
 	short Y;
 };
@@ -690,7 +690,7 @@ extern ushort render_area_a;
 extern ushort render_area_b;
 extern void *scratch_malloc_mem;
 
-extern struct StartScreenPoint *hotspot_buffer;
+extern struct ScreenPoint *hotspot_buffer;
 #define hotspot_buffer_len 512
 
 extern ubyte unkn_gfx_option_2;

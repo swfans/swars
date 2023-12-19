@@ -35,7 +35,7 @@
 #include "swlog.h"
 /******************************************************************************/
 //TODO move to its own gui projector file
-extern struct StartScreenPoint proj_origin;
+extern struct ScreenPoint proj_origin;
 
 extern struct ScreenTextBox world_city_info_box;
 extern struct ScreenButton world_info_ACCEPT_button;

@@ -54,6 +54,22 @@ ubyte ac_show_cryo_agent_list(struct ScreenTextBox *box);
 ubyte ac_show_cryo_cybmod_list_box(struct ScreenTextBox *box);
 ubyte ac_show_cryo_blokey(struct ScreenBox *box);
 
+struct ScreenPoint equip_blokey_pos[] = {
+    {23,  0},
+    {46,  0},
+    { 0, 49},
+    {23, 98},
+    { 0,  0},
+};
+
+ubyte equip_blokey_height[] = {
+    197,  50, 148, 197, 197,
+};
+
+ubyte equip_blokey_width[] = {
+    93, 47, 139, 93, 139,
+};
+
 ubyte do_cryo_offer_cancel(ubyte click)
 {
     ubyte ret;
@@ -246,10 +262,37 @@ void purple_mods_data_to_screen(void)
 
 void blokey_flic_data_to_screen(void)
 {
-#if 1
+#if 0
     asm volatile ("call ASM_blokey_flic_data_to_screen\n"
         :  :  : "eax" );
 #else
+    ubyte cdm;
+    ubyte *iline;
+    ubyte *oline;
+    ubyte *inp;
+    ubyte *o;
+    ushort dy, dx;
+
+    cdm = current_drawing_mod;
+    iline = unkn_buffer_05 + 0x8000;
+    dx = cryo_blokey_box.X + 63 + equip_blokey_pos[cdm].X;
+    dy = cryo_blokey_box.Y + 1 + equip_blokey_pos[cdm].Y;
+    oline = &lbDisplay.WScreen[dx + lbDisplay.GraphicsScreenWidth * dy];
+
+    for (dy = 0; dy < equip_blokey_height[cdm]; dy++)
+    {
+        inp = iline;
+        o = oline;
+        for (dx = 0; dx < equip_blokey_width[cdm]; dx++)
+        {
+            if (*inp != '\0')
+                *o = *inp;
+            inp++;
+            o++;
+        }
+        oline += lbDisplay.GraphicsScreenWidth;
+        iline += equip_blokey_width[cdm];
+    }
 #endif
 }
 
