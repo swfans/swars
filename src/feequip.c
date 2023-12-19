@@ -21,6 +21,7 @@
 #include "bftext.h"
 #include "bfsprite.h"
 #include "bfkeybd.h"
+#include "bfmemut.h"
 #include "bflib_joyst.h"
 #include "femain.h"
 #include "guiboxes.h"
@@ -53,6 +54,19 @@ extern struct TbSprite *sprites_Icons0_0;
 
 extern char unkn41_text[];
 extern char equip_cost_text[20];
+
+short agent_panel_shape_points_x[] = {
+      0,  23, 120, 103,  35,  22,   7,   0,   0,
+};
+short agent_panel_shape_points_y[] = {
+     23,   0,   0,  17,  17,  30,  30,  23,  23,
+};
+short agent_name_shape_points_x[] = {
+      0, 181, 164,   0,   0,
+};
+short agent_name_shape_points_y[] = {
+      0,   0,  17,  17,   0,
+};
 
 ubyte ac_display_weapon_info(struct ScreenTextBox *box);
 ubyte ac_show_weapon_name(struct ScreenTextBox *box);
@@ -152,23 +166,34 @@ ubyte draw_agent_panel_shape(struct ScreenShape *shape, ushort spridx, ubyte gbs
         } else {
             lbDisplay.DrawFlags = 0;
         }
-        draw_sprite_purple_list(shape->field_0[0] - 59, shape->field_12[2] - 3,
+        draw_sprite_purple_list(shape->PtX[0] - 59, shape->PtY[2] - 3,
           &sprites_Icons0_0[139]);
         if ((gbstate == GBxSta_HLIGHT2) || (gbstate == GBxSta_HLIGHT1)) {
             lbDisplay.DrawFlags = 0;
         }
         if (gbstate == GBxSta_HLIGHT2) {
-            draw_sprite_purple_list(shape->field_0[0] - 59, shape->field_12[2] - 3,
+            draw_sprite_purple_list(shape->PtX[0] - 59, shape->PtY[2] - 3,
               &sprites_Icons0_0[144]);
         }
         lbDisplay.DrawFlags |= 0x8000;
-        draw_sprite_purple_list(shape->field_0[1] - 16, shape->field_12[1] + 8,
+        draw_sprite_purple_list(shape->PtX[1] - 16, shape->PtY[1] + 8,
           &sprites_Icons0_0[spridx]);
         lbDisplay.DrawFlags &= ~0x8000;
         drawn = 3;
     }
     lbDisplay.DrawFlags = 0;
     return drawn;
+}
+
+/** Checks if mouse is over the shape which is agent panel.
+ *
+ * This will work properly on a shape which represents agent panel. It is optimized
+ * for it by checking two slant boxes rather than any shape.
+ */
+TbBool mouse_over_agent_panel_shape(struct ScreenShape *shape)
+{
+    return (mouse_move_over_rect_adv(shape->PtX[0] + 6, shape->PtY[0] - 6, 30, 15, 0) ||
+      mouse_move_over_rect_adv(shape->PtX[1], shape->PtY[1], 98, 18, 0));
 }
 
 void show_equipment_screen(void)
@@ -218,7 +243,6 @@ void show_equipment_screen(void)
     }
     if (draw_heading_box())
     {
-        short delta_h = 110;
         sbyte nagent;
         ubyte agnt[4];
         ubyte boxes_drawn;
@@ -237,11 +261,11 @@ void show_equipment_screen(void)
                 else if (byte_1C4976 == 1)
                 {
                     lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
-                    draw_box_purple_list(shape->field_0[0] - 3, shape->field_12[0] - 3,
+                    draw_box_purple_list(shape->PtX[0] - 3, shape->PtY[0] - 3,
                       168, 24, 56);
-                    draw_triangle_purple_list(shape->field_0[1] + 7, shape->field_12[1] - 3,
-                      shape->field_0[2] + 1, shape->field_12[2] + 3,
-                      shape->field_0[2] + 1, shape->field_12[1] - 3, 56);
+                    draw_triangle_purple_list(shape->PtX[1] + 7, shape->PtY[1] - 3,
+                      shape->PtX[2] + 1, shape->PtY[2] + 3,
+                      shape->PtX[2] + 1, shape->PtY[1] - 3, 56);
                     lbDisplay.DrawFlags = 0;
                     flashy_draw_purple_shape(shape);
                     if (/*(selected_agent >= 0) && */(selected_agent < 4))
@@ -268,8 +292,7 @@ void show_equipment_screen(void)
                         check_buy_sell_button();
                     }
                 }
-                if (mouse_move_over_rect_adv(184 + delta_h * nagent, 89, 30, 15, 0) ||
-                  mouse_move_over_rect_adv(201 + delta_h * nagent, 72, 98, 18, 0))
+                if (mouse_over_agent_panel_shape(shape))
                 {
                     if ((shape->Flags & 0x0200) == 0) {
                         play_sample_using_heap(0, 123, 127, 64, 100, 0, 1u);
@@ -535,6 +558,72 @@ void init_equip_screen_boxes(void)
     equip_offer_buy_button.X = equip_display_box.X + 5;
     equip_cost_box.X = equip_offer_buy_button.X + equip_offer_buy_button.Width + 4;
     equip_cost_box.Width = equip_list_box.Width - 2 - equip_offer_buy_button.Width - 14;
+}
+
+void init_equip_screen_shapes(void)
+{
+#if 0
+    asm volatile ("call ASM_init_equip_screen_shapes\n"
+        :  :  : "eax" );
+#else
+    ushort i, k;
+    short x, y;
+    short scr_w, start_x;
+
+    scr_w = lbDisplay.GraphicsWindowWidth;
+
+    start_x = (scr_w - 640) / 2;
+
+    x = 178 + start_x;
+    y = 72;
+    for (i = 0; i < 4; i++)
+    {
+        LbMemoryCopy(unk11_menu[i].PtX, agent_panel_shape_points_x, sizeof(agent_panel_shape_points_x));
+        LbMemoryCopy(unk11_menu[i].PtY, agent_panel_shape_points_y, sizeof(agent_panel_shape_points_y));
+        for (k = 0; k < 9; k++)
+        {
+            if (k < sizeof(agent_panel_shape_points_x)/sizeof(agent_panel_shape_points_x[0]))
+            {
+                unk11_menu[i].PtX[k] = agent_panel_shape_points_x[k] + x;
+                unk11_menu[i].PtY[k] = agent_panel_shape_points_y[k] + y;
+            }
+            else
+            {
+                unk11_menu[i].PtX[k] = 0;
+                unk11_menu[i].PtY[k] = 0;
+            }
+        }
+        unk11_menu[i].field_24 = 6;
+        unk11_menu[i].field_25 = 0;
+        unk11_menu[i].Flags = 0x01;
+        unk11_menu[i].Colour = 174;
+        unk11_menu[i].BGColour = 8;
+        x += 110;
+    }
+    x = 7 + start_x;
+    y = 72;
+    i = 4;
+    {
+        for (k = 0; k < 9; k++)
+        {
+            if (k < sizeof(agent_name_shape_points_x)/sizeof(agent_name_shape_points_x[0]))
+            {
+                unk11_menu[i].PtX[k] = agent_name_shape_points_x[k] + x;
+                unk11_menu[i].PtY[k] = agent_name_shape_points_y[k] + y;
+            }
+            else
+            {
+                unk11_menu[i].PtX[k] = 0;
+                unk11_menu[i].PtY[k] = 0;
+            }
+        }
+        unk11_menu[i].field_24 = 6;
+        unk11_menu[i].field_25 = 0;
+        unk11_menu[i].Flags = 0x01;
+        unk11_menu[i].Colour = 247;
+        unk11_menu[i].BGColour = 4;
+    }
+#endif
 }
 
 void reset_equip_screen_boxes_flags(void)

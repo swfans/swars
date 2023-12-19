@@ -47,6 +47,8 @@ void init_equip_screen_boxes(void);
 void reset_equip_screen_boxes_flags(void);
 void set_flag01_equip_screen_boxes(void);
 
+void init_equip_screen_shapes(void);
+
 /******************************************************************************/
 #ifdef __cplusplus
 }

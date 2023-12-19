@@ -6517,12 +6517,7 @@ void init_screen_boxes(void)
     init_equip_screen_boxes();
     init_cryo_screen_boxes();
     init_research_screen_boxes();
-}
-
-void update_menus(void)
-{
-    asm volatile ("call ASM_update_menus\n"
-        :  :  : "eax" );
+    init_equip_screen_shapes();
 }
 
 void cover_screen_rect_with_sprite(short x, short y, ushort w, ushort h, struct TbSprite *spr)
@@ -8274,7 +8269,6 @@ void show_menu_screen_st0(void)
     LbColourTablesLoad(display_palette, "data/bgtables.dat");
     LbGhostTableGenerate(display_palette, 66, "data/startgho.dat");
     init_screen_boxes();
-    update_menus();
     players[local_player_no].MissionAgents = 0x0f;
     load_city_data(0);
     load_city_txt();

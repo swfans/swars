@@ -322,16 +322,6 @@ struct NewMailItem { // sizeof=5
 	ubyte Flag;
 };
 
-struct ScreenShape { // sizeof=42
-    ushort field_0[9];
-    ushort field_12[9];
-    ubyte field_24;
-    ubyte field_25;
-    ushort Flags;
-    sbyte field_28;
-    ubyte field_29;
-};
-
 struct LevelDef {
   ubyte PlayableGroups[8];
   ubyte field_8[33];

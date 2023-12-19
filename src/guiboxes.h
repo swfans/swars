@@ -158,6 +158,18 @@ struct ScreenTextBox {
   ubyte field_43;
 };
 
+struct ScreenShape { // sizeof=42
+    /** Positions of points making the shape, X coord. */
+    ushort PtX[9];
+    /** Positions of points making the shape, Y coord. */
+    ushort PtY[9];
+    ubyte field_24;
+    ubyte field_25;
+    ushort Flags;
+    ubyte Colour;
+    ubyte BGColour;
+};
+
 #pragma pack()
 /******************************************************************************/
 
