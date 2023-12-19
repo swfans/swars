@@ -22,6 +22,7 @@
 #include "bfsprite.h"
 #include "bfkeybd.h"
 #include "bfmemut.h"
+#include "bfscrcopy.h"
 #include "bflib_joyst.h"
 #include "femain.h"
 #include "guiboxes.h"
@@ -448,10 +449,18 @@ void init_weapon_anim(ubyte weapon)
 
 void weapon_flic_data_to_screen(void)
 {
-#if 1
+#if 0
     asm volatile ("call ASM_weapon_flic_data_to_screen\n"
         :  :  : "eax" );
 #else
+    short w, h;
+
+    w = equip_display_box.Width - 8;
+    h = w * 7 / 10;
+    LbScreenSetGraphicsWindow(equip_display_box.X + 4, equip_display_box.Y + 4, w, h);
+    LbScreenCopy(unkn_buffer_05, lbDisplay.GraphicsWindowPtr, lbDisplay.GraphicsWindowHeight);
+    LbScreenSetGraphicsWindow(0, 0, lbDisplay.GraphicsScreenWidth,
+        lbDisplay.GraphicsScreenHeight);
 #endif
 }
 
