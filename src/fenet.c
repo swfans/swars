@@ -18,6 +18,7 @@
 /******************************************************************************/
 #include "fenet.h"
 
+#include "bfscrcopy.h"
 #include "guiboxes.h"
 #include "guitext.h"
 #include "display.h"
@@ -125,6 +126,20 @@ ubyte show_net_benefits_box(struct ScreenBox *box)
     asm volatile ("call ASM_show_net_benefits_box\n"
         : "=r" (ret) : "a" (box));
     return ret;
+}
+
+void purple_unkn4_data_to_screen(void)
+{
+#if 0
+    asm volatile ("call ASM_purple_unkn4_data_to_screen\n"
+        :  :  : "eax" );
+#else
+    LbScreenSetGraphicsWindow(net_unkn21.X + 4, net_unkn21.Y + 4,
+      255, 96);
+    LbScreenCopy(data_1c6de4, lbDisplay.GraphicsWindowPtr, lbDisplay.GraphicsWindowHeight);
+    LbScreenSetGraphicsWindow(0, 0, lbDisplay.GraphicsScreenWidth,
+        lbDisplay.GraphicsScreenHeight);
+#endif
 }
 
 ubyte show_net_unkn21(struct ScreenBox *box)

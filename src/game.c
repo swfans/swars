@@ -268,6 +268,8 @@ ushort zoom_levels[] = {
     150, 145, 140, 135,
 };
 
+void ac_purple_unkn1_data_to_screen(void);
+
 void zoom_update(short zoom_min, short zoom_max)
 {
     int i, dt;
@@ -8335,6 +8337,12 @@ void purple_unkn1_data_to_screen(void)
     memcpy(data_1c6de4, data_1c6de8, 0x5FA0u);
 }
 
+void purple_unkn3_data_to_screen(void)
+{
+    asm volatile ("call ASM_purple_unkn3_data_to_screen\n"
+        :  :  : "eax" );
+}
+
 void research_unkn_func_002(void)
 {
     asm volatile ("call ASM_research_unkn_func_002\n"
@@ -8380,7 +8388,7 @@ void net_new_game_prepare(void)
     load_objectives_text();
     srm_reset_research();
     init_net_players();
-    draw_flic_purple_list(purple_unkn1_data_to_screen);
+    draw_flic_purple_list(ac_purple_unkn1_data_to_screen);
 }
 
 
@@ -8465,7 +8473,7 @@ void net_unkn_func_33_sub1(int plyr, int netplyr)
         byte_1C6D48 = 0;
         break;
     case 3:
-        draw_flic_purple_list(purple_unkn1_data_to_screen);
+        draw_flic_purple_list(ac_purple_unkn1_data_to_screen);
         break;
     case 4:
         login_control__TechLevel = p_netplyr->U.Progress.TechLevel;

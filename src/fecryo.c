@@ -244,6 +244,15 @@ void purple_mods_data_to_screen(void)
 #endif
 }
 
+void blokey_flic_data_to_screen(void)
+{
+#if 1
+    asm volatile ("call ASM_blokey_flic_data_to_screen\n"
+        :  :  : "eax" );
+#else
+#endif
+}
+
 void blokey_static_flic_data_to_screen(void)
 {
 #if 0

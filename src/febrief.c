@@ -66,6 +66,8 @@ ubyte ac_show_brief_netscan_box(struct ScreenTextBox *box);
 ubyte ac_show_citymap_box(struct ScreenBox *box);
 ubyte ac_accept_mission(ubyte click);
 ubyte ac_do_unkn1_CANCEL(ubyte click);
+void ac_purple_unkn2_data_to_screen(void);
+void ac_SCANNER_data_to_screen(void);
 
 void update_netscan_cost_button(ubyte city_id)
 {
@@ -391,7 +393,7 @@ ubyte show_citymap_box(struct ScreenBox *box)
             byte_1C47D9 = 0;
         if (xdo_next_frame(9))
             byte_1C47D9 = 0;
-        draw_flic_purple_list(purple_unkn2_data_to_screen);
+        draw_flic_purple_list(ac_purple_unkn2_data_to_screen);
     }
     else if (brief_state_city_selected)
     {
@@ -399,7 +401,7 @@ ubyte show_citymap_box(struct ScreenBox *box)
         {
             input_citymap_scanner(box);
         }
-        draw_flic_purple_list(SCANNER_data_to_screen);
+        draw_flic_purple_list(ac_SCANNER_data_to_screen);
         if (mail_num_active_cities != 1)
             draw_hotspot_purple_list(box->X + (box->Width >> 1), box->Y + (box->Height >> 1));
         if (mouse_move_over_box(box))

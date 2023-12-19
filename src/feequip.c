@@ -85,6 +85,7 @@ ubyte ac_show_weapon_slots(struct ScreenBox *box);
 ubyte ac_do_equip_offer_buy(ubyte click);
 ubyte ac_sell_equipment(ubyte click);
 ubyte ac_select_all_agents(ubyte click);
+void ac_weapon_flic_data_to_screen(void);
 
 ubyte do_equip_offer_buy(ubyte click)
 {
@@ -634,7 +635,7 @@ ubyte display_weapon_info(struct ScreenTextBox *box)
     else
     {
         xdo_next_frame(2);
-        draw_flic_purple_list(weapon_flic_data_to_screen);
+        draw_flic_purple_list(ac_weapon_flic_data_to_screen);
     }
 
     if (lbDisplay.LeftButton && mouse_down_over_box_coords(429, 157, 629, 297))
