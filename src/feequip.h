@@ -27,6 +27,7 @@ extern "C" {
 /******************************************************************************/
 #pragma pack(1)
 
+struct ScreenShape;
 
 #pragma pack()
 /******************************************************************************/
@@ -36,11 +37,19 @@ extern sbyte selected_weapon;
 
 void show_equipment_screen(void);
 
+ubyte flashy_draw_draw_equip_agent_name_shape(struct ScreenShape *shape, ubyte gbstate);
+void draw_equip_agent_name_shape(struct ScreenShape *shape, ubyte gbstate);
+
+TbBool mouse_over_agent_panel_shape(struct ScreenShape *shape);
+ubyte flashy_draw_agent_panel_shape(struct ScreenShape *shape, ubyte gbstate);
+void draw_agent_panel_shape(struct ScreenShape *shape, ushort spridx, ubyte gbstate);
+
 void update_equip_cost_text(void);
 void update_cybmod_cost_text(void);
 
 void switch_shared_equip_screen_buttons_to_equip(void);
 void switch_equip_offer_to_buy(void);
+void check_buy_sell_button(void);
 void init_weapon_anim(ubyte weapon);
 
 void init_equip_screen_boxes(void);

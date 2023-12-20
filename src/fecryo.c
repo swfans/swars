@@ -23,6 +23,7 @@
 #include "bfmemut.h"
 #include "bfsprite.h"
 #include "bftext.h"
+#include "bflib_joyst.h"
 #include "ssampply.h"
 #include "specblit.h"
 #include "campaign.h"
@@ -612,6 +613,29 @@ void set_flag02_cryo_screen_boxes(void)
     }
 }
 
+ubyte input_cryo_all_agents_button(struct ScreenButton *button)
+{
+    ubyte gbstate;
+    sbyte nagent = 4;
+
+    gbstate = GBxSta_NORMAL;
+    if (lbKeyOn[KC_1 + nagent])
+    {
+        short i;
+        lbKeyOn[KC_1 + nagent] = 0;
+        selected_agent = nagent;
+        check_buy_sell_button();
+        update_flic_mods(flic_mods);
+        for (i = 0; i < 4; i++)
+        {
+            if (old_flic_mods[i] != flic_mods[i])
+                mod_draw_states[i] |= 0x08;
+        }
+        gbstate = GBxSta_HLIGHT2;
+    }
+    return gbstate;
+}
+
 void show_cryo_chamber_screen(void)
 {
 #if 1
@@ -662,7 +686,38 @@ void show_cryo_chamber_screen(void)
 
     if (draw_heading_box())
     {
-        //TODO: remake the inside
+        for (nagent = 4; nagent >= 0; nagent--)
+        {
+            //TODO: remake the inside
+        }
+        if ( !byte_1C4978 )
+        {
+            byte_1C4978 = agnt[0] && agnt[1] && agnt[2] && agnt[3];
+        }
+        if (boxes_drawn)
+        {
+            ubyte ret;
+            //equip_all_agents_button.DrawFn(&equip_all_agents_button); -- incompatible calling convention
+            asm volatile ("call *%2\n"
+                : "=r" (ret) : "a" (&equip_all_agents_button), "g" (equip_all_agents_button.DrawFn));
+            //cryo_agent_list_box.DrawFn(&cryo_agent_list_box); -- incompatible calling convention
+            asm volatile ("call *%2\n"
+                : "=r" (ret) : "a" (&cryo_agent_list_box), "g" (cryo_agent_list_box.DrawFn));
+            if (ret)
+            {
+                //if (cryo_blokey_box.DrawFn(&cryo_blokey_box)) { -- incompatible calling convention
+                asm volatile ("call *%2\n"
+                    : "=r" (ret) : "a" (&cryo_blokey_box), "g" (cryo_blokey_box.DrawFn));
+                if (ret) {
+                    //cryo_cybmod_list_box.DrawFn(&cryo_cybmod_list_box); { -- incompatible calling convention
+                    asm volatile ("call *%2\n"
+                        : "=r" (ret) : "a" (&cryo_cybmod_list_box), "g" (cryo_cybmod_list_box.DrawFn));
+                    //equip_name_box.DrawFn(&equip_name_box); { -- incompatible calling convention
+                    asm volatile ("call *%2\n"
+                        : "=r" (ret) : "a" (&equip_name_box), "g" (equip_name_box.DrawFn));
+                }
+            }
+        }
     }
 #endif
 }
