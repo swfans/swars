@@ -6519,8 +6519,9 @@ void init_screen_boxes(void)
     init_brief_screen_boxes();
     init_debrief_screen_boxes();
     init_world_screen_boxes();
-    init_options_screen_boxes();
     init_controls_screen_boxes();
+    init_options_audio_screen_boxes();
+    init_options_visual_screen_boxes();
     init_storage_screen_boxes();
     init_net_screen_boxes();
     init_login_screen_boxes();

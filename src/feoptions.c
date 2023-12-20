@@ -41,6 +41,9 @@ extern short word_1C4866[3];
 
 extern struct TbSprite *sprites_Icons0_0;
 
+// Shared with other screens
+extern struct ScreenBox controls_keylist_box;
+
 ubyte ac_change_panel_permutation(ubyte click);
 ubyte ac_change_trenchcoat_preference(ubyte click);
 ubyte ac_show_audio_tracks_box(struct ScreenBox *box);
@@ -306,7 +309,7 @@ ubyte show_audio_tracks_box(struct ScreenBox *box)
     return ret;
 }
 
-void init_options_screen_boxes(void)
+void init_options_audio_screen_boxes(void)
 {
     int i, h;
     int val;
@@ -361,6 +364,12 @@ void init_options_screen_boxes(void)
     audio_volume_boxes[1].SpecialDrawFn = ac_show_audio_volume_box;
     audio_volume_boxes[2].SpecialDrawFn = ac_show_audio_volume_box;
     audio_tracks_box.SpecialDrawFn = ac_show_audio_tracks_box;
+}
+
+void init_options_visual_screen_boxes(void)
+{
+    int i;
+    int val;
 
     init_screen_button(&options_gfx_buttons[0], 456u, 94u,
       gui_strings[465], 6, med2_font, 1, 0);
@@ -468,6 +477,24 @@ void init_options_screen_boxes(void)
         options_gfx_buttons[i].Flags |= 0x0100;
         ingame.Flags &= ~GamF_Unkn0400;
         val++;
+    }
+
+    // Reposition the components to current resolution
+
+    for (i = 0; i < 14; i+=2)
+    {
+        options_gfx_buttons[i+0].X = controls_keylist_box.X +
+          controls_keylist_box.Width - 177;
+        options_gfx_buttons[i+1].X = controls_keylist_box.X +
+          controls_keylist_box.Width - 89;
+    }
+
+    for (i = 14; i < 16; i++)
+    {
+        val = (controls_keylist_box.Width -
+          options_gfx_buttons[i].Width) / 2;
+        options_gfx_buttons[i].X = controls_keylist_box.X +
+          val + 9;
     }
 }
 

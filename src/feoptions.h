@@ -32,7 +32,8 @@ extern "C" {
 /******************************************************************************/
 extern char options_title_text[];
 
-void init_options_screen_boxes(void);
+void init_options_audio_screen_boxes(void);
+void init_options_visual_screen_boxes(void);
 void update_options_screen_state(void);
 void reset_options_screen_boxes_flags(void);
 

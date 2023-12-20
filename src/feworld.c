@@ -331,10 +331,14 @@ TbBool draw_world_country_borders(struct ScreenBox *box)
 void draw_world_detached_city_square(struct ScreenBox *box, short city)
 {
     lbDisplay.DrawFlags = 0;
-    draw_line_purple_list(cities[city].X - 8, cities[city].Y - 8, cities[city].X + 8, cities[city].Y - 8, 174);
-    draw_line_purple_list(cities[city].X + 8, cities[city].Y - 8, cities[city].X + 8, cities[city].Y + 8, 174);
-    draw_line_purple_list(cities[city].X + 8, cities[city].Y + 8, cities[city].X - 8, cities[city].Y + 8, 174);
-    draw_line_purple_list(cities[city].X - 8, cities[city].Y + 8, cities[city].X - 8, cities[city].Y - 8, 174);
+    draw_line_purple_list(cities[city].X - 8, cities[city].Y - 8,
+      cities[city].X + 8, cities[city].Y - 8, 174);
+    draw_line_purple_list(cities[city].X + 8, cities[city].Y - 8,
+      cities[city].X + 8, cities[city].Y + 8, 174);
+    draw_line_purple_list(cities[city].X + 8, cities[city].Y + 8,
+      cities[city].X - 8, cities[city].Y + 8, 174);
+    draw_line_purple_list(cities[city].X - 8, cities[city].Y + 8,
+      cities[city].X - 8, cities[city].Y - 8, 174);
 }
 
 void draw_world_cities_names(struct ScreenBox *box)
