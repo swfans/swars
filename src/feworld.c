@@ -109,25 +109,25 @@ TbBool draw_world_landmass_projector_startup(struct ScreenBox *box)
         short tx, ty;
         short x2, y2;
 
-        lbDisplay.DrawFlags = 0x0004;
         tx = box->Timer2 * (word_1C488A[i] + box->X - proj_origin.X);
         ty = box->Timer2 * (word_1C4896[i] + box->Y - proj_origin.Y);
         x2 = proj_origin.X + (tx / 24);
         y2 = proj_origin.Y + (ty / 24);
-        draw_line_purple_list(proj_origin.X, proj_origin.Y, x2, y2, 174);
 
+        lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
+        draw_line_purple_list(proj_origin.X, proj_origin.Y, x2, y2, 174);
         lbDisplay.DrawFlags = 0;
         draw_sprite_purple_list(x2 - 1, y2 - 1, &unk3_sprites[12]);
+
         tx = box->Timer2 * (word_1C48A2[i] + box->X - proj_origin.X);
         ty = box->Timer2 * (word_1C48AE[i] + box->Y - proj_origin.Y);
-        x2 = proj_origin.X + tx / 24;
-        x2 = proj_origin.Y + ty / 24;
+        x2 = proj_origin.X + (tx / 24);
+        y2 = proj_origin.Y + (ty / 24);
 
-        lbDisplay.DrawFlags = 0x0004;
-        draw_line_purple_list(proj_origin.X, proj_origin.Y, x2, x2, 174);
-
+        lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
+        draw_line_purple_list(proj_origin.X, proj_origin.Y, x2, y2, 174);
         lbDisplay.DrawFlags = 0;
-        draw_sprite_purple_list(x2 - 1, x2 - 1, &unk3_sprites[12]);
+        draw_sprite_purple_list(x2 - 1, y2 - 1, &unk3_sprites[12]);
     }
     box->Timer2 += box->DrawSpeed;
     return (box->Timer2 >= 24);
@@ -650,21 +650,32 @@ void show_worldmap_screen(void)
 
 void init_world_screen_boxes(void)
 {
+    short scr_w, start_x;
+
+    scr_w = lbDisplay.GraphicsWindowWidth;
+
     init_screen_box(&world_landmap_box, 7u, 72u, 518u, 354, 6);
     init_screen_text_box(&world_city_info_box, 534u, 72u, 99u, 354, 6, small_med_font, 3);
     init_screen_button(&world_info_ACCEPT_button, 548u, 384u, gui_strings[436], 6,
         med2_font, 1, 0);
     init_screen_button(&world_info_CANCEL_button, 548u, 405u, gui_strings[437], 6,
         med2_font, 1, 0);
-    world_info_ACCEPT_button.X = world_city_info_box.X
-        + ((world_city_info_box.Width - world_info_ACCEPT_button.Width) >> 1);
-    world_info_CANCEL_button.X =
-        ((world_city_info_box.Width - world_info_CANCEL_button.Width) >> 1) + world_city_info_box.X;
+
     world_city_info_box.DrawTextFn = ac_show_world_city_info_box;
     world_city_info_box.Flags |= 0x4000;
     world_info_CANCEL_button.CallBackFn = ac_do_unkn2_CANCEL;
     world_info_ACCEPT_button.CallBackFn = ac_do_unkn2_ACCEPT;
     world_landmap_box.SpecialDrawFn = ac_show_world_landmap_box;
+
+    start_x = (scr_w - world_landmap_box.Width - world_city_info_box.Width - 23) / 2;
+
+    world_landmap_box.X = start_x + 7;
+    world_city_info_box.X = world_landmap_box.X + world_landmap_box.Width + 9;
+
+    world_info_ACCEPT_button.X = world_city_info_box.X
+        + ((world_city_info_box.Width - world_info_ACCEPT_button.Width) >> 1);
+    world_info_CANCEL_button.X = world_city_info_box.X
+        + ((world_city_info_box.Width - world_info_CANCEL_button.Width) >> 1);
 }
 
 void reset_world_screen_boxes_flags(void)
