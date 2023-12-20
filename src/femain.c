@@ -30,7 +30,6 @@
 #include "swlog.h"
 /******************************************************************************/
 extern struct ScreenTextBox heading_box;
-extern struct ScreenTextBox unkn13_SYSTEM_button;
 extern struct ScreenButton sysmnu_buttons[6];
 extern char options_title_text[];
 

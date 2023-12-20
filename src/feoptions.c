@@ -24,6 +24,7 @@
 #include "bfaudio.h"
 #include "bfscd.h"
 #include "bflib_joyst.h"
+#include "femain.h"
 #include "guiboxes.h"
 #include "guitext.h"
 #include "display.h"
@@ -313,6 +314,9 @@ void init_options_audio_screen_boxes(void)
 {
     int i, h;
     int val;
+    short scr_w, start_x;
+
+    scr_w = lbDisplay.GraphicsWindowWidth;
 
     h = 72;
     for (i = 0; i < 3; i++)
@@ -364,6 +368,33 @@ void init_options_audio_screen_boxes(void)
     audio_volume_boxes[1].SpecialDrawFn = ac_show_audio_volume_box;
     audio_volume_boxes[2].SpecialDrawFn = ac_show_audio_volume_box;
     audio_tracks_box.SpecialDrawFn = ac_show_audio_tracks_box;
+
+    start_x = (scr_w - unkn13_SYSTEM_button.Width - 16 - audio_volume_boxes[0].Width - 7) / 2;
+    start_x += unkn13_SYSTEM_button.X + unkn13_SYSTEM_button.Width;
+
+    for (i = 0; i < 3; i++)
+    {
+        audio_volume_boxes[i].X = start_x + 9;
+    }
+    audio_tracks_box.X = start_x + 9;
+
+    for (i = 0; i < 3; i++)
+    {
+        options_audio_buttons[0+i].X = audio_tracks_box.X +
+          audio_tracks_box.Width - 45 - 65 * (3-i);
+    }
+
+    for (i = 0; i < 2; i++)
+    {
+        options_audio_buttons[3+i].X = audio_tracks_box.X +
+          audio_tracks_box.Width - 45 - 65 * (2-i);
+    }
+
+    for (i = 0; i < 2; i++)
+    {
+        options_audio_buttons[5+i].X = audio_tracks_box.X +
+          audio_tracks_box.Width - 45 - 65 * (2-i);
+    }
 }
 
 void init_options_visual_screen_boxes(void)

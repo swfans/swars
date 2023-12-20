@@ -31,6 +31,7 @@ struct ScreenTextBox;
 
 #pragma pack()
 /******************************************************************************/
+extern struct ScreenTextBox unkn13_SYSTEM_button;
 
 void show_main_screen(void);
 void init_main_screen_boxes(void);
