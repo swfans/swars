@@ -387,7 +387,7 @@ void blokey_static_flic_data_to_screen(void)
         copy_buffer_to_double_bufs_with_trans(buf, equip_blokey_static_width[cdm], equip_blokey_static_height[cdm],
           o, x, y, lbDisplay.GraphicsScreenWidth, lbDisplay.GraphicsScreenHeight, 0);
 
-        mod_draw_states[cdm] = 4;
+        mod_draw_states[cdm] = 0x04;
     }
 #endif
 }
@@ -452,6 +452,27 @@ void draw_body_mods(void)
         :  :  : "eax" );
 }
 
+void reset_mod_draw_states_flag08(void)
+{
+    ushort cdm;
+    for (cdm = 0; cdm < 4; cdm++)
+    {
+        mod_draw_states[cdm] = 0;
+        if (flic_mods[cdm] != 0)
+            mod_draw_states[cdm] |= 0x08;
+    }
+}
+
+void set_mod_draw_states_flag08(void)
+{
+    ushort cdm;
+    for (cdm = 0; cdm < 4; cdm++)
+    {
+        if (old_flic_mods[cdm] != flic_mods[cdm])
+            mod_draw_states[cdm] |= 0x08;
+    }
+}
+
 ubyte show_cryo_blokey(struct ScreenBox *box)
 {
 #if 0
@@ -462,7 +483,6 @@ ubyte show_cryo_blokey(struct ScreenBox *box)
 #else
     short cx, cy;
     short hline;
-    ubyte cdm;
 
     if ((box->Flags & 0x8000) == 0)
     {
@@ -470,12 +490,7 @@ ubyte show_cryo_blokey(struct ScreenBox *box)
         box->Flags |= 0x8000;
         update_flic_mods(old_flic_mods);
         update_flic_mods(flic_mods);
-        for (cdm = 0; cdm < 4; cdm++)
-        {
-            mod_draw_states[cdm] = 0;
-            if (flic_mods[cdm] != 0)
-                mod_draw_states[cdm] = 8;
-        }
+        reset_mod_draw_states_flag08();
         current_drawing_mod = 0;
     }
 
@@ -490,6 +505,8 @@ ubyte show_cryo_blokey(struct ScreenBox *box)
     hline = font_height('A');
     //if (selected_agent != -1) -- this is always set to 0..4
     {
+        ubyte cdm;
+
         draw_body_mods();
         for (cdm = 0; cdm < 5; cdm++)
         {
@@ -613,6 +630,83 @@ void set_flag02_cryo_screen_boxes(void)
     }
 }
 
+ubyte input_cryo_agent_panel_shape(struct ScreenShape *shape, sbyte nagent)
+{
+    ubyte gbstate;
+
+    if (lbKeyOn[KC_1 + nagent])
+    {
+        lbKeyOn[KC_1 + nagent] = 0;
+        if (nagent < cryo_agents.NumAgents)
+        {
+            selected_agent = nagent;
+            check_buy_sell_button();
+            update_flic_mods(flic_mods);
+            set_mod_draw_states_flag08();
+        }
+    }
+
+    if (mouse_over_agent_panel_shape(shape))
+    {
+        if ((shape->Flags & 0x0200) == 0) {
+            play_sample_using_heap(0, 123, 127, 64, 100, 0, 1u);
+            shape->Flags |= 0x0200;
+        }
+        if (lbDisplay.MLeftButton || (joy.Buttons[0] != 0))
+        {
+            lbDisplay.LeftButton = 0;
+            shape->Flags |= 0x0400;
+            gbstate = GBxSta_PUSHED;
+        }
+        else
+        {
+            if ((nagent >= cryo_agents.NumAgents) || (mo_weapon == -1))
+            {
+                if ((shape->Flags & 0x0400) != 0)
+                {
+                    if (nagent < cryo_agents.NumAgents)
+                    {
+                        play_sample_using_heap(0, 111, 127, 64, 100, 0, 2u);
+                        selected_agent = nagent;
+                        check_buy_sell_button();
+                        update_flic_mods(flic_mods);
+                        set_mod_draw_states_flag08();
+                    }
+                    else
+                    {
+                        play_sample_using_heap(0, 129, 127, 64, 100, 0, 2u);
+                    }
+                    shape->Flags &= ~0x0400;
+                }
+            }
+            else
+            {
+                // No drag and drop ability in mods screen
+                mo_weapon = -1;
+                shape->Flags &= ~0x0400;
+            }
+            gbstate = GBxSta_HLIGHT2;
+        }
+    }
+    else
+    {
+        if (shape->Flags & 0x0200)
+            shape->Flags &= ~0x0200;
+        if (shape->Flags & 0x0400)
+            shape->Flags &= ~0x0400;
+        if ((selected_agent == nagent) || (selected_agent == 4))
+        {
+            gbstate = GBxSta_HLIGHT1;
+        }
+        else
+        {
+            gbstate = GBxSta_NORMAL;
+        }
+    }
+
+    return gbstate;
+}
+
 ubyte input_cryo_all_agents_button(struct ScreenButton *button)
 {
     ubyte gbstate;
@@ -621,16 +715,11 @@ ubyte input_cryo_all_agents_button(struct ScreenButton *button)
     gbstate = GBxSta_NORMAL;
     if (lbKeyOn[KC_1 + nagent])
     {
-        short i;
         lbKeyOn[KC_1 + nagent] = 0;
         selected_agent = nagent;
         check_buy_sell_button();
         update_flic_mods(flic_mods);
-        for (i = 0; i < 4; i++)
-        {
-            if (old_flic_mods[i] != flic_mods[i])
-                mod_draw_states[i] |= 0x08;
-        }
+        set_mod_draw_states_flag08();
         gbstate = GBxSta_HLIGHT2;
     }
     return gbstate;
@@ -638,7 +727,7 @@ ubyte input_cryo_all_agents_button(struct ScreenButton *button)
 
 void show_cryo_chamber_screen(void)
 {
-#if 1
+#if 0
     asm volatile ("call ASM_show_cryo_chamber_screen\n"
         :  :  : "eax" );
 #else
@@ -686,11 +775,59 @@ void show_cryo_chamber_screen(void)
 
     if (draw_heading_box())
     {
+        sbyte nagent;
+        ubyte agnt[4];
+        ubyte boxes_drawn;
+        boxes_drawn = 1;
         for (nagent = 4; nagent >= 0; nagent--)
         {
-            //TODO: remake the inside
+            struct ScreenShape *shape;
+            ubyte gbstate;
+
+            shape = &unk11_menu[nagent];
+
+            if (nagent == 4) // agent name box
+            {
+                ubyte drawn;
+
+                // Agents grouping has little to do with name box, but it's convienient to put here
+                gbstate = input_cryo_all_agents_button(&equip_all_agents_button);
+
+                if (byte_1C4979 == 0)
+                {
+                    drawn = flashy_draw_draw_equip_agent_name_shape(shape, gbstate);
+                }
+                else if (byte_1C4979 == 1)
+                {
+                    draw_equip_agent_name_shape(shape, gbstate);
+                    drawn = 3;
+                }
+                byte_1C4979 = (drawn == 3);
+            }
+            else
+            {
+                ubyte drawn;
+                ushort spridx;
+
+                gbstate = input_cryo_agent_panel_shape(shape, nagent);
+
+                if (byte_1C4978 == 0)
+                {
+                    drawn = flashy_draw_agent_panel_shape(shape, gbstate);
+                }
+                else
+                {
+                    spridx = 140 + nagent;
+                    draw_agent_panel_shape(shape, spridx, gbstate);
+                    drawn = 3;
+                }
+                // Is the flashy draw finished for current button
+                agnt[nagent] = (drawn == 3);
+                // When all buttons started actually drawing, we can begin flashy draw of the panels below
+                boxes_drawn &= (drawn > 1);
+            }
         }
-        if ( !byte_1C4978 )
+        if (byte_1C4978 == 0)
         {
             byte_1C4978 = agnt[0] && agnt[1] && agnt[2] && agnt[3];
         }

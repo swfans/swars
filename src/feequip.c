@@ -384,17 +384,21 @@ void show_equipment_screen(void)
 
             if (nagent == 4) // agent name box
             {
+                ubyte drawn;
+
                 // Agents grouping has little to do with name box, but it's convienient to put here
                 gbstate = input_equip_all_agents_button(&equip_all_agents_button);
 
                 if (byte_1C4976 == 0)
                 {
-                    byte_1C4976 = flashy_draw_draw_equip_agent_name_shape(shape, gbstate) == 3;
+                    drawn = flashy_draw_draw_equip_agent_name_shape(shape, gbstate);
                 }
                 else if (byte_1C4976 == 1)
                 {
                     draw_equip_agent_name_shape(shape, gbstate);
+                    drawn = 3;
                 }
+                byte_1C4976 = (drawn == 3);
             }
             else
             {
@@ -420,7 +424,7 @@ void show_equipment_screen(void)
             }
         }
 
-        if (!byte_1C4975) {
+        if (byte_1C4975 == 0) {
             byte_1C4975 = agnt[0] && agnt[1] && agnt[2] && agnt[3];
         }
         if (boxes_drawn)
