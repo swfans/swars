@@ -33,6 +33,7 @@ extern "C" {
 extern sbyte selected_mod;
 
 void show_cryo_chamber_screen(void);
+void update_flic_mods(ubyte *mods);
 
 void init_cryo_screen_boxes(void);
 void reset_cryo_screen_boxes_flags(void);

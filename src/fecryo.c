@@ -20,6 +20,8 @@
 
 #include <assert.h>
 #include "bfmemut.h"
+#include "bfsprite.h"
+#include "bftext.h"
 #include "ssampply.h"
 #include "specblit.h"
 #include "campaign.h"
@@ -30,6 +32,7 @@
 #include "guitext.h"
 #include "display.h"
 #include "game.h"
+#include "player.h"
 #include "sound.h"
 #include "swlog.h"
 /******************************************************************************/
@@ -41,6 +44,7 @@ extern struct ScreenButton cryo_offer_cancel_button;
 extern char cybmod_name_text[];
 
 extern ubyte current_frame;
+extern short word_15511E; // = -1;
 
 // Shared with equip screen
 extern char equip_cost_text[20];
@@ -48,6 +52,8 @@ extern struct ScreenTextBox equip_name_box;
 extern struct ScreenTextBox equip_list_box;
 extern struct ScreenInfoBox equip_cost_box;
 extern struct ScreenButton equip_offer_buy_button;
+
+extern struct TbSprite *sprites_Icons0_0;
 
 ubyte ac_do_cryo_offer_cancel(ubyte click);
 ubyte ac_show_cryo_agent_list(struct ScreenTextBox *box);
@@ -386,12 +392,142 @@ void update_cybmod_cost_text(void)
     sprintf(equip_cost_text, "%d", cost);
 }
 
+ubyte cryo_blokey_mod_level(ubyte cdm)
+{
+    PlayerInfo *p_locplayer;
+    ubyte cybmod_lv;
+
+    switch (cdm)
+    {
+    case 0:
+        cybmod_lv = flic_mods[1];
+        break;
+    case 1:
+        cybmod_lv = flic_mods[2];
+        break;
+    case 2:
+        cybmod_lv = flic_mods[0];
+        break;
+    case 3:
+        p_locplayer = &players[local_player_no];
+        if (selected_agent == 4)
+        {
+            cybmod_lv = cybmod_skin_level(&p_locplayer->Mods[0]);
+            if ((cybmod_skin_level(&p_locplayer->Mods[1]) != cybmod_lv)
+              || (cybmod_skin_level(&p_locplayer->Mods[2]) != cybmod_lv)
+              || (cybmod_skin_level(&p_locplayer->Mods[3]) != cybmod_lv))
+            {
+              cybmod_lv = 0;
+            }
+        }
+        else
+        {
+            cybmod_lv = cybmod_skin_level(&p_locplayer->Mods[selected_agent]);
+        }
+        break;
+    case 4:
+        cybmod_lv = flic_mods[3];
+        break;
+    }
+    return cybmod_lv;
+}
+
+void update_flic_mods(ubyte *mods)
+{
+    asm volatile ("call ASM_update_flic_mods\n"
+        : : "a" (mods));
+}
+
+void draw_body_mods(void)
+{
+    asm volatile ("call ASM_draw_body_mods\n"
+        :  :  : "eax" );
+}
+
 ubyte show_cryo_blokey(struct ScreenBox *box)
 {
+#if 0
     ubyte ret;
     asm volatile ("call ASM_show_cryo_blokey\n"
         : "=r" (ret) : "a" (box));
     return ret;
+#else
+    short cx, cy;
+    short hline;
+    ubyte cdm;
+
+    if ((box->Flags & 0x8000) == 0)
+    {
+        draw_flic_purple_list(purple_mods_data_to_screen);
+        box->Flags |= 0x8000;
+        update_flic_mods(old_flic_mods);
+        update_flic_mods(flic_mods);
+        for (cdm = 0; cdm < 4; cdm++)
+        {
+            mod_draw_states[cdm] = 0;
+            if (flic_mods[cdm] != 0)
+                mod_draw_states[cdm] = 8;
+        }
+        current_drawing_mod = 0;
+    }
+
+    if (word_15511E != selected_agent)
+        box->Flags &= ~0x0100;
+    word_15511E = selected_agent;
+    lbFontPtr = small_med_font;
+    my_set_text_window(0, 0, lbDisplay.GraphicsScreenWidth,
+        lbDisplay.GraphicsScreenHeight);
+    cx = box->X + 4;
+    cy = box->Y + 20;
+    hline = font_height('A');
+    //if (selected_agent != -1) -- this is always set to 0..4
+    {
+        draw_body_mods();
+        for (cdm = 0; cdm < 5; cdm++)
+        {
+            ubyte cybmod_lv;
+            char locstr[54];
+            char *text;
+
+            cybmod_lv = cryo_blokey_mod_level(cdm);
+
+            if (cybmod_lv == 0)
+            {
+                if (cdm == 3)
+                    cy += 2 * hline + 70;
+                else
+                    cy += 2 * hline + 37;
+                continue;
+            }
+
+            lbDisplay.DrawColour = 247;
+            draw_text_purple_list2(cx, cy, gui_strings[70 + cdm], 0);
+            cy += hline + 3;
+            if (cdm == 3)
+                snprintf(locstr, sizeof(locstr), "%s %d", gui_strings[75], cybmod_lv);
+            else
+                snprintf(locstr, sizeof(locstr), "%s %d", gui_strings[76], cybmod_lv);
+            text = (char *)back_buffer + text_buf_pos;
+            strcpy(text, locstr);
+            draw_text_purple_list2(cx, cy, text, 0);
+            lbDisplay.DrawFlags = 0;
+            text_buf_pos += strlen(locstr) + 1;
+            if (cdm == 3)
+            {
+                lbDisplay.DrawFlags = 0x0010;
+                draw_box_purple_list(cx, cy + hline + 3, 40, 40, lbDisplay.DrawColour);
+                draw_sprite_purple_list(cx + 1, cy + hline + 4, &sprites_Icons0_0[163 + cybmod_lv]);
+                lbDisplay.DrawFlags = 0;
+                cy += hline + 67;
+            }
+            else
+            {
+                cy += hline + 34;
+            }
+        }
+    }
+    return 0;
+#endif
 }
 
 ubyte show_cryo_agent_list(struct ScreenTextBox *box)

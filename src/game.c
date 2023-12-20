@@ -8357,12 +8357,6 @@ void net_unkn_func_29(short a1, short a2, ubyte a3, sbyte a4, ubyte a5)
         : : "a" (a1), "d" (a2), "b" (a3), "c" (a4), "g" (a5));
 }
 
-void update_flic_mods(ubyte *mods)
-{
-    asm volatile ("call ASM_update_flic_mods\n"
-        : : "a" (mods));
-}
-
 void net_new_game_prepare(void)
 {
     switch_net_screen_boxes_to_initiate();
