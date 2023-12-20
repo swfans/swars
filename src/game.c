@@ -5057,9 +5057,17 @@ void draw_hotspot_purple_list(int x, int y)
 
 ubyte flashy_draw_purple_shape(struct ScreenShape *shape)
 {
-    TbResult ret;
+    ubyte ret;
     asm volatile ("call ASM_flashy_draw_purple_shape\n"
         : "=r" (ret) : "a" (shape));
+    return ret;
+}
+
+ubyte flashy_draw_purple_button(struct ScreenButton *button)
+{
+    ubyte ret;
+    asm volatile ("call ASM_flashy_draw_purple_button\n"
+        : "=r" (ret) : "a" (button));
     return ret;
 }
 

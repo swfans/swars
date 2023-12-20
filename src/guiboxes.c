@@ -129,6 +129,15 @@ TbBool mouse_move_over_box_base(struct ScreenBoxBase *box)
     return is_over_box_base(ms_x, ms_y, box);
 }
 
+TbBool mouse_down_over_box_base(struct ScreenBoxBase *box)
+{
+    short ms_x, ms_y;
+
+    ms_x = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MouseX : lbDisplay.MouseX;
+    ms_y = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MouseY : lbDisplay.MouseY;
+    return is_over_box_base(ms_x, ms_y, box);
+}
+
 TbBool mouse_move_over_slant_box_base(struct ScreenBoxBase *box)
 {
     short ms_x, ms_y;

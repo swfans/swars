@@ -189,7 +189,7 @@ TbBool over_box_coords(short x, short y, short box_x1, short box_y1, short box_x
  */
 TbBool mouse_move_over_box_coords(short box_x1, short box_y1, short box_x2, short box_y2);
 
-/** Returns if mouse position when button wes pressed down is over given box with coords (incl. borders).
+/** Returns if mouse position when button was pressed down is over given box with coords (incl. borders).
  */
 TbBool mouse_down_over_box_coords(short box_x1, short box_y1, short box_x2, short box_y2);
 
@@ -212,6 +212,11 @@ TbBool is_over_slant_box_base(short x, short y, struct ScreenBoxBase *box);
  */
 #define mouse_move_over_box(box) mouse_move_over_box_base((struct ScreenBoxBase *)box)
 TbBool mouse_move_over_box_base(struct ScreenBoxBase *box);
+
+/** Returns if mouse position when button was pressed down is over given box (incl. borders).
+ */
+#define mouse_down_over_box(box) mouse_move_over_box_base((struct ScreenBoxBase *)box)
+TbBool mouse_down_over_box_base(struct ScreenBoxBase *box);
 
 /** Returns if current mouse move position is over given slant (leaning right) box (incl. borders).
  */

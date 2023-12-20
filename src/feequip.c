@@ -86,6 +86,7 @@ ubyte ac_do_equip_offer_buy(ubyte click);
 ubyte ac_sell_equipment(ubyte click);
 ubyte ac_select_all_agents(ubyte click);
 void ac_weapon_flic_data_to_screen(void);
+ubyte ac_do_equip_all_agents_set(ubyte click);
 
 ubyte do_equip_offer_buy(ubyte click)
 {
@@ -280,6 +281,14 @@ ubyte input_equip_agent_panel_shape(struct ScreenShape *shape, sbyte nagent)
         }
     }
     return gbstate;
+}
+
+ubyte do_equip_all_agents_set(ubyte click)
+{
+    struct ScreenButton *button = &equip_all_agents_button;
+    *(button->Radio) = button->RadioValue;
+    check_buy_sell_button();
+    return 1;
 }
 
 ubyte input_equip_all_agents_button(struct ScreenButton *button)
@@ -525,6 +534,7 @@ void switch_shared_equip_screen_buttons_to_equip(void)
     equip_cost_box.X = equip_offer_buy_button.X + equip_offer_buy_button.Width + 4;
     equip_cost_box.Width = equip_list_box.Width - 2 - equip_offer_buy_button.Width - 14;
     equip_cost_box.Y = 404;
+    equip_all_agents_button.CallBackFn = ac_do_equip_all_agents_set;
     if (selected_weapon + 1 < 1)
     {
         equip_name_box.Text = 0;

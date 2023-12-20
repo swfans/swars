@@ -67,6 +67,7 @@ ubyte ac_do_cryo_offer_cancel(ubyte click);
 ubyte ac_show_cryo_agent_list(struct ScreenTextBox *box);
 ubyte ac_show_cryo_cybmod_list_box(struct ScreenTextBox *box);
 ubyte ac_show_cryo_blokey(struct ScreenBox *box);
+ubyte ac_do_cryo_all_agents_set(ubyte click);
 
 struct ScreenPoint equip_blokey_pos[] = {
     {23,  0},
@@ -630,6 +631,16 @@ void set_flag02_cryo_screen_boxes(void)
     }
 }
 
+ubyte do_cryo_all_agents_set(ubyte click)
+{
+    struct ScreenButton *button = &equip_all_agents_button;
+    *(button->Radio) = button->RadioValue;
+    check_buy_sell_button();
+    update_flic_mods(flic_mods);
+    set_mod_draw_states_flag08();
+    return 1;
+}
+
 ubyte input_cryo_agent_panel_shape(struct ScreenShape *shape, sbyte nagent)
 {
     ubyte gbstate;
@@ -901,6 +912,7 @@ void switch_shared_equip_screen_buttons_to_cybmod(void)
     equip_cost_box.Width = cryo_cybmod_list_box.Width - 10;
     equip_cost_box.Y = 383;
     equip_name_box.Text = cybmod_name_text;
+    equip_all_agents_button.CallBackFn = ac_do_cryo_all_agents_set;
     if (selected_mod < 0)
         cybmod_name_text[0] = '\0';
     else
