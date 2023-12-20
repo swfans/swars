@@ -70,6 +70,21 @@ ubyte equip_blokey_width[] = {
     93, 47, 139, 93, 139,
 };
 
+struct ScreenPoint equip_blokey_static_pos[] = {
+    {23,  0},
+    {46,  0},
+    { 0, 49},
+    {23, 98},
+};
+
+ubyte equip_blokey_static_height[] = {
+    197, 50, 148, 197,
+};
+
+ubyte equip_blokey_static_width[] = {
+     93, 47, 139, 93,
+};
+
 ubyte do_cryo_offer_cancel(ubyte click)
 {
     ubyte ret;
@@ -235,6 +250,7 @@ void purple_mods_data_to_screen(void)
     const char *campgn_mark;
     const char *flic_dir;
     char str[52];
+    short x, y;
     ubyte *buf;
     ubyte *o[2];
 
@@ -254,9 +270,10 @@ void purple_mods_data_to_screen(void)
     o[1] = back_buffer;
     o[0] = lbDisplay.WScreen;
 
+    x = cryo_blokey_box.X + 63;
+    y = cryo_blokey_box.Y + 1;
     copy_buffer_to_double_bufs(buf, PURPLE_MOD_AREA_WIDTH, PURPLE_MOD_AREA_HEIGHT,
-        o, 275, 123,
-        lbDisplay.GraphicsScreenWidth, lbDisplay.GraphicsScreenHeight);
+        o, x, y, lbDisplay.GraphicsScreenWidth, lbDisplay.GraphicsScreenHeight);
 #endif
 }
 
@@ -308,7 +325,7 @@ void blokey_static_flic_data_to_screen(void)
     char str[52];
     ubyte *buf;
     ubyte *o[2];
-    int k;
+    ubyte cdm;
 
     p_campgn = &campaigns[background_type];
     campgn_mark = p_campgn->ProjectorFnMk;
@@ -321,14 +338,15 @@ void blokey_static_flic_data_to_screen(void)
     o[1] = back_buffer;
     o[0] = lbDisplay.WScreen;
 
-    for (k = 0; k < 4; k++)
+    for (cdm = 0; cdm < 4; cdm++)
     {
         long len;
+        short x, y;
 
-        if (flic_mods[k] == 0)
+        if (flic_mods[cdm] == 0)
             continue;
 
-        switch (k)
+        switch (cdm)
         {
         case 0:
             sprintf(str, "%s/%s%db.dat", flic_dir, campgn_mark, flic_mods[0]);
@@ -347,14 +365,15 @@ void blokey_static_flic_data_to_screen(void)
         buf = unkn_buffer_05 + 0x8000;
         len = LbFileLoadAt(str, buf);
         if (len < 4) {
-            LbMemorySet(buf, 0, flic_mod_widths[k] * flic_mod_heights[k]);
+            LbMemorySet(buf, 0, equip_blokey_static_width[cdm] * equip_blokey_static_height[cdm]);
         }
 
-        copy_buffer_to_double_bufs_with_trans(buf, flic_mod_widths[k], flic_mod_heights[k],
-          o, flic_mod_coords_b[2*k], flic_mod_coords_b[2*k+1],
-          lbDisplay.GraphicsScreenWidth, lbDisplay.GraphicsScreenHeight, 0);
+        x = cryo_blokey_box.X + 63 + equip_blokey_static_pos[cdm].X;
+        y = cryo_blokey_box.Y + 1 + equip_blokey_static_pos[cdm].Y;
+        copy_buffer_to_double_bufs_with_trans(buf, equip_blokey_static_width[cdm], equip_blokey_static_height[cdm],
+          o, x, y, lbDisplay.GraphicsScreenWidth, lbDisplay.GraphicsScreenHeight, 0);
 
-        mod_draw_states[k] = 4;
+        mod_draw_states[cdm] = 4;
     }
 #endif
 }
