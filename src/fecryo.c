@@ -19,6 +19,7 @@
 #include "fecryo.h"
 
 #include <assert.h>
+#include "bfkeybd.h"
 #include "bfmemut.h"
 #include "bfsprite.h"
 #include "bftext.h"
@@ -33,6 +34,7 @@
 #include "display.h"
 #include "game.h"
 #include "player.h"
+#include "research.h"
 #include "sound.h"
 #include "swlog.h"
 /******************************************************************************/
@@ -45,6 +47,9 @@ extern char cybmod_name_text[];
 
 extern ubyte current_frame;
 extern short word_15511E; // = -1;
+extern ubyte cheat_research_cybmods;
+extern ubyte byte_1C4978;
+extern ubyte byte_1C4979;
 
 // Shared with equip screen
 extern char equip_cost_text[20];
@@ -52,6 +57,8 @@ extern struct ScreenTextBox equip_name_box;
 extern struct ScreenTextBox equip_list_box;
 extern struct ScreenInfoBox equip_cost_box;
 extern struct ScreenButton equip_offer_buy_button;
+extern struct ScreenButton equip_all_agents_button;
+extern struct ScreenShape unk11_menu[5];
 
 extern struct TbSprite *sprites_Icons0_0;
 
@@ -546,10 +553,118 @@ ubyte show_cryo_cybmod_list_box(struct ScreenTextBox *box)
     return ret;
 }
 
+TbBool cybmod_available_for_purchase(short mtype)
+{
+    PlayerInfo *p_locplayer;
+    union Mod sgumod;
+
+    p_locplayer = &players[local_player_no];
+
+    if (!is_research_cymod_completed(mtype)
+      && (login_control__State != 5 || mod_tech_level[mtype] > login_control__TechLevel))
+        return false;
+
+    //if (selected_agent != -1) -- this is always set to 0..4
+    sgumod.Mods = 0;
+    add_mod_to_flags(&sgumod, mtype);
+    if (selected_agent == 4)
+    {
+        ushort plagent;
+
+        // If not purcheasing chest mods, require chest mods on all agents
+        if (!cybmod_chest_level(&sgumod))
+        {
+            for (plagent = 0; plagent < 4; plagent++)
+            {
+                if (!cybmod_chest_level(&p_locplayer->Mods[plagent]))
+                    break;
+            }
+        }
+        if (plagent < 4)
+            return false;
+        return true;
+    }
+    {
+        // If not purcheasing chest mod, require chest mod
+        if (!cybmod_chest_level(&sgumod))
+        {
+            if (!cybmod_chest_level(&p_locplayer->Mods[selected_agent]))
+                return false;
+        }
+    }
+    return true;
+}
+
+void set_flag02_cryo_screen_boxes(void)
+{
+    short i;
+
+    cryo_agent_list_box.Flags |= 0x0002;
+    cryo_blokey_box.Flags |= 0x0002;
+    equip_offer_buy_button.Flags |= 0x0002;
+    equip_name_box.Flags |= 0x0002;
+    cryo_cybmod_list_box.Flags |= 0x0002;
+    equip_cost_box.Flags |= 0x0002;
+    cryo_offer_cancel_button.Flags |= 0x0002;
+    equip_all_agents_button.Flags |= 0x0002;
+    for (i = 0; i < 5; i++) {
+        unk11_menu[i].Flags = 0x02;
+    }
+}
+
 void show_cryo_chamber_screen(void)
 {
+#if 1
     asm volatile ("call ASM_show_cryo_chamber_screen\n"
         :  :  : "eax" );
+#else
+    if ((unk11_menu[0].Flags & 0x01) != 0)
+    {
+        byte_1C4978 = 0;
+        byte_1C4979 = 0;
+    }
+    if (cryo_agent_list_box.Lines == 0)
+        cryo_agent_list_box.Lines = cryo_agents.NumAgents;
+    if (((game_projector_speed != 0) && is_heading_flag01()) ||
+      (lbKeyOn[KC_SPACE] && !edit_flag))
+    {
+        set_flag02_heading_screen_boxes();
+        set_flag02_cryo_screen_boxes();
+        byte_1C4978 = 1;
+        byte_1C4979 = 1;
+    }
+    if ((ingame.UserFlags & UsrF_Cheats) != 0)
+    {
+        if (lbKeyOn[KC_0])
+        {
+            lbKeyOn[KC_0] = 0;
+            refresh_equip_list = 1;
+            research_cymod_complete(cheat_research_cybmods + 1);
+            cheat_research_cybmods++;
+        }
+    }
+
+    if (refresh_equip_list && selected_mod == -1)
+    {
+        ushort mtype;
+
+        cryo_cybmod_list_box.Lines = 0;
+        for (mtype = 1; mtype < MOD_TYPES_COUNT; mtype++)
+        {
+            if (cybmod_available_for_purchase(mtype)) {
+                cryo_cybmod_list_box.Lines++;
+            }
+        }
+        cryo_cybmod_list_box.Flags |= 0x0080;
+        cryo_cybmod_list_box.BGColour = 0;
+        refresh_equip_list = 0;
+    }
+
+    if (draw_heading_box())
+    {
+        //TODO: remake the inside
+    }
+#endif
 }
 
 void init_cryo_screen_boxes(void)

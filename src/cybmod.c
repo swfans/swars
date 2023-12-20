@@ -362,6 +362,34 @@ TbBool cybmod_fix_all(union Mod *p_umod)
     return fixed;
 }
 
+ubyte cybmod_level(union Mod *p_umod, ubyte mgroup)
+{
+    ubyte lv;
+
+    switch (mgroup)
+    {
+    case MODGRP_LEGS:
+        lv = cybmod_legs_level(p_umod);
+        break;
+    case MODGRP_ARMS:
+        lv = cybmod_arms_level(p_umod);
+        break;
+    case MODGRP_CHEST:
+        lv = cybmod_chest_level(p_umod);
+        break;
+    case MODGRP_BRAIN:
+        lv = cybmod_brain_level(p_umod);
+        break;
+    case MODGRP_EPIDERM:
+        lv = cybmod_skin_level(p_umod);
+        break;
+    default:
+        lv = 0;
+        break;
+    }
+    return lv;
+}
+
 void add_mod_to_flags(union Mod *p_umod, ushort mtype)
 {
     switch (cybmod_group_type(mtype))

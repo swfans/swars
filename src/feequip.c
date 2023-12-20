@@ -234,7 +234,7 @@ void show_equipment_screen(void)
             lbKeyOn[KC_0] = 0;
             if (cheat_research_weapon < WEP_TYPES_COUNT) {
                 refresh_equip_list = 1;
-                research.WeaponsCompleted |= 1 << cheat_research_weapon;
+                research_weapon_complete(cheat_research_weapon + 1);
                 cheat_research_weapon++;
             }
         }

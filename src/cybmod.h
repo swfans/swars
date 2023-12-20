@@ -106,6 +106,7 @@ ubyte cybmod_brain_level(union Mod *p_umod);
 void set_cybmod_brain_level(union Mod *p_umod, ubyte nmod);
 ubyte cybmod_skin_level(union Mod *p_umod);
 void set_cybmod_skin_level(union Mod *p_umod, ubyte nmod);
+ubyte cybmod_level(union Mod *p_umod, ubyte mgroup);
 
 ushort cybmodflags_prev_mod(ulong modflags, ushort last_mtype);
 ushort cybmod_group_type(ushort mtype);
