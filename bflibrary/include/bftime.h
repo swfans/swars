@@ -26,28 +26,6 @@
 extern "C" {
 #endif
 
-#pragma pack(1)
-
-struct TbDate { // sizeof=5
-    ubyte Day; // offset=0
-    ubyte Month; // offset=1
-    ushort Year; // offset=2
-    ubyte DayOfWeek; // offset=4
-};
-
-typedef struct TbDate TbDate;
-
-struct TbTime { // sizeof=4
-    ubyte Hour; // offset=0
-    ubyte Minute; // offset=1
-    ubyte Second; // offset=2
-    ubyte HSecond; // offset=3
-};
-
-typedef struct TbTime TbTime;
-
-#pragma pack()
-
 /** Fills structure with current time.
  *
  * @param curr_time The structure to be filled.
