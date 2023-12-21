@@ -27,6 +27,17 @@ extern "C" {
 /******************************************************************************/
 #pragma pack(1)
 
+struct DebriefReport {
+    short RefNo;
+    short BriefNo;
+    short Status;
+    ulong Income;
+    ulong Expenditure;
+    ulong WeaponsResearched;
+    ulong ModsResearched;
+    ubyte ScientistsLost;
+    ubyte SciLostReason;
+};
 
 #pragma pack()
 /******************************************************************************/

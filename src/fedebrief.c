@@ -31,6 +31,10 @@
 #include "research.h"
 #include "swlog.h"
 /******************************************************************************/
+#define SCIENTIST_LOST_REASONS_COUNT 20
+
+struct DebriefReport curr_report;
+
 extern struct ScreenBox debrief_mission_box;
 extern struct ScreenBox debrief_people_box;
 
@@ -45,6 +49,240 @@ extern ushort word_1C4856[8];
 ubyte ac_show_mission_stats(struct ScreenBox *box);
 ubyte ac_show_mission_people_stats(struct ScreenBox *box);
 
+void draw_mission_stats_names_row(struct ScreenBox *box,
+  ubyte research_ln, ubyte scilost_ln)
+{
+    short fheight, lnheight;
+    short x, y;
+
+    lbFontPtr = med_font;
+    fheight = font_height('A');
+    lnheight = fheight + 4;
+
+    // Row with names
+    x = 20;
+    y = lnheight;
+
+    // Reference no
+    draw_text_purple_list2(x, y, gui_strings[611], 0);
+    y += lnheight;
+
+    // Status
+    draw_text_purple_list2(x, y, gui_strings[612], 0);
+    y += lnheight;
+
+    // City time
+    draw_text_purple_list2(x, y, gui_strings[614], 0);
+    y += lnheight;
+
+    // Mission time
+    draw_text_purple_list2(x, y, gui_strings[615], 0);
+    y += lnheight;
+    y += lnheight;
+
+    // Income
+    draw_text_purple_list2(x, y, gui_strings[633], 0);
+    y += lnheight;
+
+    // Expenditure
+    draw_text_purple_list2(x, y, gui_strings[632], 0);
+    y += lnheight;
+
+    if (research_ln > 0)
+    {
+        draw_text_purple_list2(x, y, gui_strings[631], 0);
+        y += lnheight * research_ln;
+    }
+    if (scilost_ln > 0)
+    {
+        // Scientists lost
+        draw_text_purple_list2(x, y, gui_strings[537], 0);
+        y += lnheight * scilost_ln;
+    }
+}
+
+void draw_mission_stats_vals_static(struct ScreenBox *box,
+  struct DebriefReport *p_rep, ubyte research_ln, ubyte scilost_ln)
+{
+    short fheight, lnheight;
+    short x, y;
+    char *text;
+    char locstr[40];
+
+    lbFontPtr = med_font;
+    fheight = font_height('A');
+    lnheight = fheight + 4;
+
+    // Row with values
+    x = 300;
+    y = lnheight;
+
+    // Reference no
+    snprintf(locstr, sizeof(locstr), "%hd", p_rep->RefNo);
+    text = (char *)(back_buffer + text_buf_pos);
+    strcpy(text, locstr);
+    draw_text_purple_list2(x, y, text, 0);
+    text_buf_pos += strlen(text) + 1;
+    y += lnheight;
+
+    snprintf(locstr, sizeof(locstr), "%s", gui_strings[635 + p_rep->Status]);
+    text = (char *)(back_buffer + text_buf_pos);
+    strcpy(text, locstr);
+    draw_text_purple_list2(x, y, text, 0);
+    text_buf_pos += strlen(text) + 1;
+    y += lnheight;
+
+    snprint_dh_time_duration(locstr, sizeof(locstr),
+      mission_status[open_brief].CityDays, mission_status[p_rep->BriefNo].CityHours);
+    text = (char *)(back_buffer + text_buf_pos);
+    strcpy(text, locstr);
+    draw_text_purple_list2(x, y, text, 0);
+    text_buf_pos += strlen(text) + 1;
+    y += lnheight;
+
+    snprint_dh_time_duration(locstr, sizeof(locstr),
+      mission_status[open_brief].Days, mission_status[p_rep->BriefNo].Hours);
+    text = (char *)(back_buffer + text_buf_pos);
+    strcpy(text, locstr);
+    draw_text_purple_list2(x, y, text, 0);
+    text_buf_pos += strlen(text) + 1;
+    y += lnheight;
+    y += lnheight;
+
+    // Income
+    snprintf(locstr, sizeof(locstr), "%ld C", p_rep->Income);
+    text = (char *)(back_buffer + text_buf_pos);
+    strcpy(text, locstr);
+    draw_text_purple_list2(x, y, text, 0);
+    text_buf_pos += strlen(text) + 1;
+    y += lnheight;
+
+    // Expenditure
+    snprintf(locstr, sizeof(locstr), "%ld C", p_rep->Expenditure);
+    text = (char *)(back_buffer + text_buf_pos);
+    strcpy(text, locstr);
+    draw_text_purple_list2(x, y, text, 0);
+    text_buf_pos += strlen(text) + 1;
+    y += lnheight;
+}
+
+void snprint_concat_comma_separated_weapons_list(char *out, ushort outlen, ulong weapons)
+{
+    ushort wtype;
+    ushort strid;
+    ushort pos;
+
+    wtype = WEP_TYPES_COUNT;
+    while (1)
+    {
+        struct Campaign *p_campgn;
+
+        wtype = weapons_prev_weapon(weapons, wtype);
+        if (wtype == 0)
+            break;
+
+        if (strlen(out) > outlen - 4u)
+            break;
+
+        p_campgn = &campaigns[background_type];
+        strid = p_campgn->WeaponsTextIdShift + wtype - 1;
+
+        pos = strlen(out);
+        if (pos == 0)
+            snprintf(out, outlen, "%s", gui_strings[strid]);
+        else
+            snprintf(out + pos, outlen - pos, ", %s", gui_strings[strid]);
+    }
+}
+
+void snprint_concat_comma_separated_vybmods_list(char *out, ushort outlen, ulong cybmods)
+{
+    ushort mtype, mgrouptype;
+    ushort gt_strid;
+    ushort mv_strid;
+    ushort pos;
+
+    mtype = MOD_TYPES_COUNT;
+    while (1)
+    {
+        mtype = cybmodflags_prev_mod(cybmods, mtype);
+        if (mtype == 0)
+            break;
+
+        if (strlen(out) > outlen - 4u)
+            break;
+
+        mgrouptype = cybmod_group_type(mtype);
+        gt_strid = mod_group_type_strid[mgrouptype];
+        if (mgrouptype == 4)
+            mv_strid = 75;
+        else
+            mv_strid = 76;
+
+        pos = strlen(out);
+        if (pos == 0)
+            snprintf(out, outlen, "%s %s %d",
+              gui_strings[gt_strid], gui_strings[mv_strid], cybmod_version(mtype));
+        else
+            snprintf(out + pos, outlen - pos, ", %s %s %d",
+              gui_strings[gt_strid], gui_strings[mv_strid], cybmod_version(mtype));
+    }
+}
+
+
+void draw_mission_stats_vals_dynamic(struct ScreenBox *box,
+  struct DebriefReport *p_rep, ubyte research_ln, ubyte scilost_ln)
+{
+    short fheight, lnheight;
+    short x, y;
+    char *text;
+    char locstr[40];
+
+    lbFontPtr = med_font;
+    fheight = font_height('A');
+    lnheight = fheight + 4;
+
+    x = 300;
+    y = 8 * lnheight;
+
+    if (research_ln > 0)
+    {
+        locstr[0] = '\0';
+        snprint_concat_comma_separated_weapons_list(locstr, sizeof(locstr), p_rep->WeaponsResearched);
+        snprint_concat_comma_separated_vybmods_list(locstr, sizeof(locstr), p_rep->ModsResearched);
+
+        text = (char *)(back_buffer + text_buf_pos);
+        strcpy(text, locstr);
+        draw_text_purple_list2(x, y, text, 0);
+        text_buf_pos += strlen(text) + 1;
+        y += lnheight * research_ln;
+    }
+
+    if (scilost_ln > 0)
+    {
+        snprintf(locstr, sizeof(locstr), "%d: %s", p_rep->ScientistsLost, scientist_lost_reason);
+        text = (char *)(back_buffer + text_buf_pos);
+        strcpy(text, locstr);
+        draw_text_purple_list2(x, y, text, 0);
+        text_buf_pos += strlen(text) + 1;
+        y += lnheight * scilost_ln;
+    }
+}
+
+void debrief_report_fill(struct DebriefReport *p_rep)
+{
+    p_rep->RefNo = byte_1C4AA3;
+    p_rep->BriefNo = open_brief;
+    p_rep->Status = ingame.MissionStatus;
+    p_rep->Income = (ingame.Credits + ingame.Expenditure) - ingame.CashAtStart;
+    p_rep->Expenditure = ingame.Expenditure;
+    LOGSYNC("Research completed wep=0x%lx mod=0x%lx", new_weapons_researched, new_mods_researched);
+    p_rep->WeaponsResearched = new_weapons_researched;
+    p_rep->ModsResearched = new_mods_researched;
+    p_rep->ScientistsLost = scientists_lost;
+    p_rep->SciLostReason = LbRandomAnyShort() % SCIENTIST_LOST_REASONS_COUNT;
+}
+
 ubyte show_mission_stats(struct ScreenBox *box)
 {
 #if 0
@@ -53,204 +291,46 @@ ubyte show_mission_stats(struct ScreenBox *box)
         : "=r" (ret) : "a" (box));
     return ret;
 #endif
-    char *text;
-    char locstr[40];
-    int fheight, lnheight;
-    int x, y;
+    struct DebriefReport *p_rep;
+    ubyte research_ln, scilost_ln;
+
+    p_rep = &curr_report;
+    research_ln = 0;
+    scilost_ln = 0;
+
+    // TODO maybe fill the report at higher level?
+    if ((box->Flags & 0x8000) == 0) {
+        debrief_report_fill(p_rep);
+        ingame.CashAtStart = ingame.Credits;
+        ingame.Expenditure = 0;
+    }
 
     my_set_text_window(box->X + 4, box->Y + 4, box->Width - 8, box->Height - 8);
-    lbFontPtr = med_font;
-    fheight = font_height('A');
-    lnheight = fheight + 4;
+
+    if ((p_rep->WeaponsResearched != 0) || (p_rep->ModsResearched != 0)) {
+        research_ln += 1;
+    }
+    if (p_rep->ScientistsLost > 0) {
+        scilost_ln += 1;
+    }
 
     if ((box->Flags & 0x8000) == 0)
     {
         lbDisplay.DrawFlags = 0;
 
-        // Row with names
-        x = 20;
-        y = lnheight;
+        draw_mission_stats_names_row(box, research_ln, scilost_ln);
 
-        // Reference no
-        draw_text_purple_list2(x, y, gui_strings[611], 0);
-        y += lnheight;
-
-        // Status
-        draw_text_purple_list2(x, y, gui_strings[612], 0);
-        y += lnheight;
-
-        // City time
-        draw_text_purple_list2(x, y, gui_strings[614], 0);
-        y += lnheight;
-
-        // Mission time
-        draw_text_purple_list2(x, y, gui_strings[615], 0);
-        y += lnheight;
-        y += lnheight;
-
-        // Income
-        draw_text_purple_list2(x, y, gui_strings[633], 0);
-        y += lnheight;
-
-        // Expenditure
-        draw_text_purple_list2(x, y, gui_strings[632], 0);
-        y += lnheight;
-
-        if (new_weapons_researched || new_mods_researched)
-        {
-            LOGSYNC("Research completed wep=0x%lx mod=0x%lx", new_weapons_researched, new_mods_researched);
-            draw_text_purple_list2(x, y, gui_strings[631], 0);
-            y += lnheight;
-        }
-        if (scientists_lost > 0)
-        {
-            // Scientists lost
-            draw_text_purple_list2(x, y, gui_strings[537], 0);
-            y += lnheight;
-            load_scientist_lost_reason(LbRandomAnyShort() % 20);
+        if (scilost_ln > 0) {
+            load_scientist_lost_reason(p_rep->SciLostReason);
         }
 
-        // Row with values
-        x = 300;
-        y = lnheight;
+        draw_mission_stats_vals_static(box, p_rep, research_ln, scilost_ln);
 
-        // Reference no
-        snprintf(locstr, sizeof(locstr), "%d", (int)byte_1C4AA3);
-        text = (char *)(back_buffer + text_buf_pos);
-        strcpy(text, locstr);
-        draw_text_purple_list2(x, y, text, 0);
-        text_buf_pos += strlen(text) + 1;
-        y += lnheight;
-
-        snprintf(locstr, sizeof(locstr), "%s", gui_strings[635 + ingame.MissionStatus]);
-        text = (char *)(back_buffer + text_buf_pos);
-        strcpy(text, locstr);
-        draw_text_purple_list2(x, y, text, 0);
-        text_buf_pos += strlen(text) + 1;
-        y += lnheight;
-
-        snprint_dh_time_duration(locstr, sizeof(locstr),
-          mission_status[open_brief].CityDays, mission_status[open_brief].CityHours);
-        text = (char *)(back_buffer + text_buf_pos);
-        strcpy(text, locstr);
-        draw_text_purple_list2(x, y, text, 0);
-        text_buf_pos += strlen(text) + 1;
-        y += lnheight;
-
-        snprint_dh_time_duration(locstr, sizeof(locstr),
-          mission_status[open_brief].Days, mission_status[open_brief].Hours);
-        text = (char *)(back_buffer + text_buf_pos);
-        strcpy(text, locstr);
-        draw_text_purple_list2(x, y, text, 0);
-        text_buf_pos += strlen(text) + 1;
-        y += lnheight;
-        y += lnheight;
-
-        // Income
-        snprintf(locstr, sizeof(locstr), "%ld C",
-          (ingame.Credits + ingame.Expenditure) - ingame.CashAtStart);
-        text = (char *)(back_buffer + text_buf_pos);
-        strcpy(text, locstr);
-        draw_text_purple_list2(x, y, text, 0);
-        text_buf_pos += strlen(text) + 1;
-        y += lnheight;
-
-        // Expenditure
-        snprintf(locstr, sizeof(locstr), "%ld C", ingame.Expenditure);
-        text = (char *)(back_buffer + text_buf_pos);
-        strcpy(text, locstr);
-        draw_text_purple_list2(x, y, text, 0);
-        text_buf_pos += strlen(text) + 1;
-        y += lnheight;
-
-        ingame.CashAtStart = ingame.Credits;
-        ingame.Expenditure = 0;
         box->Flags |= 0x8000;
         copy_box_purple_list(box->X, box->Y, box->Width, box->Height);
     }
 
-    x = 300;
-    y = 8 * lnheight;
-    locstr[0] = '\0';
-    if (new_weapons_researched)
-    {
-        ushort wtype;
-        ushort strid;
-        ushort pos;
-
-        wtype = WEP_TYPES_COUNT;
-        while (1)
-        {
-            struct Campaign *p_campgn;
-
-            wtype = weapons_prev_weapon(new_weapons_researched, wtype);
-            if (wtype == 0)
-                break;
-
-            if (strlen(locstr) > sizeof(locstr) - 4)
-                break;
-
-            p_campgn = &campaigns[background_type];
-            strid = p_campgn->WeaponsTextIdShift + wtype - 1;
-
-            pos = strlen(locstr);
-            if (pos == 0)
-                snprintf(locstr, sizeof(locstr), "%s", gui_strings[strid]);
-            else
-                snprintf(locstr + pos, sizeof(locstr) - pos, ", %s", gui_strings[strid]);
-        }
-    }
-    if (new_mods_researched)
-    {
-        ushort mtype, mgrouptype;
-        ushort gt_strid;
-        ushort mv_strid;
-        ushort pos;
-
-        mtype = MOD_TYPES_COUNT;
-        while (1)
-        {
-            mtype = cybmodflags_prev_mod(new_mods_researched, mtype);
-            if (mtype == 0)
-                break;
-
-            if (strlen(locstr) > sizeof(locstr) - 4)
-                break;
-
-            mgrouptype = cybmod_group_type(mtype);
-            gt_strid = mod_group_type_strid[mgrouptype];
-            if (mgrouptype == 4)
-                mv_strid = 75;
-            else
-                mv_strid = 76;
-
-            pos = strlen(locstr);
-            if (pos == 0)
-                snprintf(locstr, sizeof(locstr), "%s %s %d",
-                  gui_strings[gt_strid], gui_strings[mv_strid], cybmod_version(mtype));
-            else
-                snprintf(locstr + pos, sizeof(locstr) - pos, ", %s %s %d",
-                  gui_strings[gt_strid], gui_strings[mv_strid], cybmod_version(mtype));
-        }
-    }
-    if (locstr[0] != '\0')
-    {
-        text = (char *)(back_buffer + text_buf_pos);
-        strcpy(text, locstr);
-        draw_text_purple_list2(x, y, text, 0);
-        text_buf_pos += strlen(text) + 1;
-        y += lnheight;
-    }
-
-    if (scientists_lost > 0)
-    {
-        snprintf(locstr, sizeof(locstr), "%d: %s", scientists_lost, scientist_lost_reason);
-        text = (char *)(back_buffer + text_buf_pos);
-        strcpy(text, locstr);
-        draw_text_purple_list2(x, y, text, 0);
-        text_buf_pos += strlen(text) + 1;
-        y += lnheight;
-    }
+    draw_mission_stats_vals_dynamic(box, p_rep, research_ln, scilost_ln);
     return 0;
 }
 
