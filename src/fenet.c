@@ -22,6 +22,7 @@
 #include "guiboxes.h"
 #include "guitext.h"
 #include "display.h"
+#include "femain.h"
 #include "game.h"
 #include "swlog.h"
 /******************************************************************************/
@@ -230,6 +231,19 @@ ubyte do_unkn8_EJECT(ubyte click)
 
 void init_net_screen_boxes(void)
 {
+    short scr_w, start_x;
+
+    scr_w = lbDisplay.GraphicsWindowWidth;
+
+    init_screen_box(&net_groups_box, 213u, 72u, 171u, 155, 6);
+    init_screen_box(&net_users_box, 393u, 72u, 240u, 155, 6);
+    init_screen_box(&net_faction_box, 213u, 236u, 73u, 67, 6);
+    init_screen_box(&net_team_box, 295u, 236u, 72u, 67, 6);
+    init_screen_box(&net_benefits_box, 376u, 236u, 257u, 67, 6);
+    init_screen_box(&net_comms_box, 295u, 312u, 336u, 104, 6);
+    init_screen_box(&net_unkn21, 7u, 312u, 279u, 104, 6);
+    init_screen_box(&net_protocol_box, 7u, 252u, 197u, 51, 6);
+
     init_screen_button(&net_INITIATE_button, 218u, 185u, gui_strings[385], 6,
         med2_font, 1, 0);
     init_screen_button(&net_groups_LOGON_button, 218u, 206u, gui_strings[386],
@@ -244,28 +258,14 @@ void init_net_screen_boxes(void)
         6, med2_font, 1, 0);
     init_screen_button(&net_unkn40_button, 37u, 256u, net_unkn40_text, 6,
         med2_font, 1, 0);
+    init_screen_button(&net_protocol_option_button, 7u, 275u,
+        unkn_opt_number_text, 6, med2_font, 1, 0);
+
     net_groups_LOGON_button.Width = 85;
     net_INITIATE_button.Width = 85;
     net_unkn40_button.Width = 21;
     net_protocol_select_button.Width = 157;
-    init_screen_box(&net_groups_box, 213u, 72u, 171u, 155, 6);
-    init_screen_box(&net_users_box, 393u, 72u, 240u, 155, 6);
-    init_screen_box(&net_faction_box, 213u, 236u, 73u, 67, 6);
-    init_screen_box(&net_team_box, 295u, 236u, 72u, 67, 6);
-    init_screen_box(&net_benefits_box, 376u, 236u, 257u, 67, 6);
-    init_screen_box(&net_comms_box, 295u, 312u, 336u, 104, 6);
-    init_screen_box(&net_unkn21, 7u, 312u, 279u, 104, 6);
-    init_screen_box(&net_protocol_box, 7u, 252u, 197u, 51, 6);
-    init_screen_button(&net_protocol_option_button, 7u, 275u,
-        unkn_opt_number_text, 6, med2_font, 1, 0);
     net_protocol_option_button.Width = net_protocol_select_button.Width;
-    net_protocol_select_button.X = ((net_protocol_box.Width
-        - net_protocol_select_button.Width) >> 1) + 7;
-    net_protocol_option_button.X = ((net_protocol_box.Width
-        - net_protocol_select_button.Width) >> 1) + 7;
-    net_unkn40_button.X = net_protocol_select_button.Width
-        + ((net_protocol_box.Width - net_protocol_select_button.Width) >> 1) + 7
-        + 4;
     net_protocol_option_button.CallBackFn = ac_do_net_protocol_option;
     net_INITIATE_button.CallBackFn = ac_do_net_INITIATE;
     net_faction_box.SpecialDrawFn = ac_show_net_faction_box;
@@ -285,6 +285,33 @@ void init_net_screen_boxes(void)
     net_unkn21.SpecialDrawFn = ac_show_net_unkn21;
     net_SET2_button.CallBackFn = ac_do_net_SET2;
     net_protocol_box.SpecialDrawFn = ac_show_net_protocol_box;
+
+    start_x = (scr_w - unkn13_SYSTEM_button.Width - 16 - net_groups_box.Width - 9 - net_users_box.Width - 7) / 2;
+
+    net_groups_box.X = start_x + unkn13_SYSTEM_button.Width + 16;
+    net_users_box.X = net_groups_box.X + net_groups_box.Width + 9;
+    net_faction_box.X = start_x + unkn13_SYSTEM_button.Width + 16;;
+    net_team_box.X = net_faction_box.X + net_faction_box.Width + 9;
+    net_benefits_box.X = net_team_box.X + net_team_box.Width + 9;
+    net_protocol_box.X = start_x + 7;
+    net_unkn21.X = start_x + 7;
+    net_comms_box.X = net_unkn21.X + net_unkn21.Width + 9;
+
+    // Two buttons on top of each other
+    net_protocol_select_button.X = net_protocol_box.X +
+      (net_protocol_box.Width - net_protocol_select_button.Width) / 2;
+    net_unkn40_button.X = net_protocol_box.X +
+      (net_protocol_box.Width - net_unkn40_button.Width) / 2;
+
+    net_protocol_option_button.X = net_protocol_box.X +
+      (net_protocol_box.Width - net_protocol_option_button.Width) / 2;
+
+    net_INITIATE_button.X = net_groups_box.X + 5;
+    net_groups_LOGON_button.X = net_groups_box.X + 5;
+
+    unkn8_EJECT_button.X = net_groups_box.X + net_groups_box.Width - 76;
+    net_SET2_button.X = net_benefits_box.X + net_benefits_box.Width - 71;
+    net_SET_button.X = net_benefits_box.X + net_benefits_box.Width - 71;
 }
 
 void reset_net_screen_boxes_flags(void)
