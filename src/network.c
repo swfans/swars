@@ -64,9 +64,7 @@ struct ModemResponse { // sizeof=0x2C
 
 extern ubyte lbICommSessionActive;
 extern struct TbIPXHandler *IPXHandler;
-// The two below may be closed within one struct, not sure
-extern struct TbIPXPlayerHeader IPXPlayerHeader;
-extern struct TbIPXPlayerData IPXPlayerData;
+extern struct TbIPXPlayer IPXPlayer;
 
 extern char ModemResponseString[80];
 extern char ModemRequestString[80];
@@ -74,6 +72,8 @@ extern ubyte byte_1E81E0[1027];
 
 extern ulong ipx_send_packet_count[8][8];
 extern ulong ipx_got_player_send_packet_count[8];
+extern struct TbIPXPlayerHeader loggon_header;
+extern ubyte player_loggon;
 
 extern struct ComHandlerInfo com_dev[4];
 extern struct IPXDatagramBackup datagram_backup[8];
@@ -214,10 +214,10 @@ void setup_bullfrog_header(struct TbIPXPlayerHeader *ipxhead, int a2)
     memcpy(ipxhead->field_22, &ipxhndl->field_2A, sizeof(ipxhead->field_22));
 }
 
-void ipx_add_new_player(char *a1)
+void ipx_add_new_player(struct TbIPXPlayerHeader *p_ipxhead)
 {
     asm volatile ("call ASM_ipx_add_new_player\n"
-        : : "a" (a1) );
+        : : "a" (p_ipxhead) );
 }
 
 void ipx_log_on_new_players(void)
@@ -228,34 +228,68 @@ void ipx_log_on_new_players(void)
 #endif
     for (i = 0; i < 30; i++)
     {
-        struct TbIPXPlayer *p_plyrdt;
-        struct TbIPXPlayerHeader *p_ipxhead;
+        struct TbIPXPlayer *p_ipxplyr;
 
         if (IPXHandler->field_46[i] == 0)
             continue;
 
         IPXHandler->field_46[i] = 0;
-        p_plyrdt = IPXHandler->PlayerData;
-        p_ipxhead = &p_plyrdt[i].Header;
+        p_ipxplyr = (struct TbIPXPlayer *)&IPXHandler->PlayerData[i];
 
-        if (strncasecmp(p_ipxhead->Magic, "BU", 2) != 0)
+        if (strncasecmp(p_ipxplyr->Header.Magic, "BU", 2) != 0)
             continue;
-        if (p_ipxhead->field_2A == 2)
+        if (p_ipxplyr->Header.field_2A == 2)
             continue;
 
-        if (IPXPlayerData.num_players < 8)
-        {
-            ipx_add_new_player(p_ipxhead->Magic);
+        if (IPXPlayer.Data.num_players < 8) {
+            ipx_add_new_player(&p_ipxplyr->Header);
         }
     }
 }
 
-int ipx_update(void)
+void ipx_update(void)
 {
+#if 0
     TbResult ret;
     asm volatile ("call ASM_ipx_update\n"
         : "=r" (ret) : );
     return ret;
+#else
+    static TbClockMSec start_time = 0;
+    TbClockMSec curr_time;
+
+    if (IPXHandler->SessionActive != 1) {
+        return;
+    }
+    if (IPXHandler->field_C != IPXHandler->field_D) {
+        return;
+    }
+    if (start_time == 0)
+        start_time = LbTimerClock();
+    curr_time = LbTimerClock();
+    if (curr_time - start_time > 100)
+    {
+        start_time = curr_time;
+        IPXPlayer.Header.field_2A = 1;
+        memcpy(&IPXHandler->PlayerData[0], &IPXPlayer, sizeof(struct TbIPXPlayer));
+        IPXHandler->PlayerDataSize = sizeof(struct TbIPXPlayer);
+#if defined(DOS)||defined(GO32)
+        CallIPX(3);
+#endif
+    }
+
+    if (IPXPlayer.Data.num_players == 1)
+    {
+        ipx_log_on_new_players();
+    }
+    else if (IPXPlayer.Data.num_players > 1)
+    {
+        if (player_loggon) {
+            player_loggon = 0;
+            ipx_add_new_player(&loggon_header);
+        }
+    }
+#endif
 }
 
 void ipx_service_init(ushort a1)
@@ -311,8 +345,8 @@ TbResult ipx_create_session(char *a1, const char *a2)
                 continue;
             ipxhndl->field_46[i] = 0;
 
-            p_plyrdt = &ipxhndl->PlayerData[i];
-            if (IPXPlayerHeader.field_2 == p_plyrdt->Header.field_2)
+            p_plyrdt = (struct TbIPXPlayer *)&ipxhndl->PlayerData[i];
+            if (IPXPlayer.Header.field_2 == p_plyrdt->Header.field_2)
             {
                 if (strcasecmp(p_plyrdt->Header.field_4, a1) == 0) {
                     LOGERR("String same as remote");
@@ -348,15 +382,15 @@ TbResult ipx_create_session(char *a1, const char *a2)
 
     ipxhndl = IPXHandler;
     IPXHandler->field_34[15] = 0;
-    setup_bullfrog_header(&IPXPlayerHeader, 1);
+    setup_bullfrog_header(&IPXPlayer.Header, 1);
     IPXHandler->field_44 = 1;
 
     if (strlen(a1) > 7)
             a1[7] = 0;
-    strcpy(IPXPlayerHeader.field_4, a1);
+    strcpy(IPXPlayer.Header.field_4, a1);
 
-    memcpy(&IPXPlayerData, &IPXHandler->field_2A, 0x1Cu);
-    strcpy(IPXPlayerHeader.field_C, IPXHandler->field_34);
+    memcpy(&IPXPlayer.Data, &IPXHandler->field_2A, 0x1Cu);
+    strcpy(IPXPlayer.Header.field_C, IPXHandler->field_34);
 
     memset(ipx_send_packet_count, 0, 0x100u);
     memset(ipx_got_player_send_packet_count, 0, 0x20u);
@@ -366,8 +400,8 @@ TbResult ipx_create_session(char *a1, const char *a2)
     ipxhndl->SessionActive = 1;
     ipxhndl->field_C = 0;
     ipxhndl->field_D = 0;
-    IPXPlayerData.num_players = 1;
-    IPXPlayerHeader.field_26 = 0;
+    IPXPlayer.Data.num_players = 1;
+    IPXPlayer.Header.field_26 = 0;
 
     return Lb_SUCCESS;
 }
@@ -404,11 +438,11 @@ int ipx_session_list(struct IPXSessionList *sesslist, int listlen)
             continue;
         IPXHandler->field_46[i] = 0;
 
-        p_plyrdt = &IPXHandler->PlayerData[i];
+        p_plyrdt = (struct TbIPXPlayer *)&IPXHandler->PlayerData[i];
 
         if (strncasecmp(p_plyrdt->Header.Magic, "BU", 2) != 0)
             continue;
-        if (p_plyrdt->Header.field_2 != IPXPlayerHeader.field_2)
+        if (p_plyrdt->Header.field_2 != IPXPlayer.Header.field_2)
             continue;
         if (p_plyrdt->Header.field_2A != 1)
             continue;
@@ -465,7 +499,7 @@ int ipx_join_session(struct IPXSessionList *p_ipxsess, char *a2)
     memcpy(ipxhead.field_22, &IPXHandler->field_2A, sizeof(ipxhead.field_22));
     strcpy(ipxhead.field_C, a2);
     strcpy(ipxhead.field_4, p_ipxsess->Session.Name);
-    ipxhead.field_2 = IPXPlayerHeader.field_2;
+    ipxhead.field_2 = IPXPlayer.Header.field_2;
 
     tm_start = clock();
     while ( 1 )
@@ -487,11 +521,11 @@ int ipx_join_session(struct IPXSessionList *p_ipxsess, char *a2)
                 continue;
             IPXHandler->field_46[i] = 0;
 
-            p_plyrdt = &IPXHandler->PlayerData[i];
+            p_plyrdt = (struct TbIPXPlayer *)&IPXHandler->PlayerData[i];
 
             if (strncasecmp(p_plyrdt->Header.Magic, "BU", 2) != 0)
                 continue;
-            if (p_plyrdt->Header.field_2 != IPXPlayerHeader.field_2)
+            if (p_plyrdt->Header.field_2 != IPXPlayer.Header.field_2)
                 continue;
             if (p_plyrdt->Header.field_2A != 1)
                 continue;
@@ -531,24 +565,24 @@ int ipx_join_session(struct IPXSessionList *p_ipxsess, char *a2)
     {
         struct TbIPXPlayer *p_plyrdt;
 
-        p_plyrdt = &IPXHandler->PlayerData[i];
+        p_plyrdt = (struct TbIPXPlayer *)&IPXHandler->PlayerData[i];
 
-        IPXPlayerHeader.Magic[0] = 'B';
-        IPXPlayerHeader.Magic[1] = 'U';
-        IPXPlayerHeader.field_2A = 0;
-        memcpy(IPXPlayerHeader.field_1C, IPXHandler->field_2E, sizeof(IPXPlayerHeader.field_1C));
-        memcpy(&IPXPlayerHeader.field_20, IPXHandler->field_2E + 4, sizeof(IPXPlayerHeader.field_20));
-        memcpy(IPXPlayerHeader.field_22, &IPXHandler->field_2A, sizeof(IPXPlayerHeader.field_22));
+        IPXPlayer.Header.Magic[0] = 'B';
+        IPXPlayer.Header.Magic[1] = 'U';
+        IPXPlayer.Header.field_2A = 0;
+        memcpy(IPXPlayer.Header.field_1C, IPXHandler->field_2E, sizeof(IPXPlayer.Header.field_1C));
+        memcpy(&IPXPlayer.Header.field_20, IPXHandler->field_2E + 4, sizeof(IPXPlayer.Header.field_20));
+        memcpy(IPXPlayer.Header.field_22, &IPXHandler->field_2A, sizeof(IPXPlayer.Header.field_22));
         IPXHandler->field_C = k;
         IPXHandler->SessionActive = 1;
         IPXHandler->field_D = p_plyrdt->Header.field_2B;
-        IPXPlayerData.num_players = p_plyrdt->Data.num_players;
-        IPXPlayerData.field_10E = p_plyrdt->Data.field_10E;
-        IPXPlayerHeader.field_26 = p_plyrdt->Header.field_26;
-        IPXPlayerHeader.field_2B = k;
-        strcpy(IPXPlayerHeader.field_C, a2);
-        strcpy(IPXPlayerHeader.field_4, p_plyrdt->Header.field_4);
-        memcpy(&IPXPlayerData, &p_plyrdt->Data, 0xE0u);
+        IPXPlayer.Data.num_players = p_plyrdt->Data.num_players;
+        IPXPlayer.Data.field_10E = p_plyrdt->Data.field_10E;
+        IPXPlayer.Header.field_26 = p_plyrdt->Header.field_26;
+        IPXPlayer.Header.field_2B = k;
+        strcpy(IPXPlayer.Header.field_C, a2);
+        strcpy(IPXPlayer.Header.field_4, p_plyrdt->Header.field_4);
+        memcpy(&IPXPlayer.Data, &p_plyrdt->Data, 0xE0u);
         memset(ipx_send_packet_count, 0, 0x100u);
         memset(ipx_got_player_send_packet_count, 0, 0x20u);
         memset(datagram_backup, 0, 0x1130u);
@@ -579,7 +613,7 @@ int ipx_get_player_number(void)
         LOGERR("Called without active session");
         return -1;
     }
-    return IPXPlayerHeader.field_2B;
+    return IPXPlayer.Header.field_2B;
 }
 
 int ipx_exchange_packets(void *a1, int a2)
@@ -686,21 +720,21 @@ TbResult ipx_send_packet_to_player_nowait(int plyr, ubyte *data, int dtlen)
         LOGERR("Target player invalid");
         return Lb_FAIL;
     }
-    if (IPXPlayerData.Data1.Sub1[plyr].field_47) {
+    if (IPXPlayer.Data.Data1.Sub1[plyr].field_47) {
         LOGERR("Cond 1 triggered");
         return Lb_FAIL;
     }
 
     p_ipxhndl = IPXHandler;
-    p_plyrdt = IPXHandler->PlayerData;
+    p_plyrdt = (struct TbIPXPlayer *)&IPXHandler->PlayerData[0];
 
-    IPXPlayerHeader.field_2A = 4;
-    memcpy(&p_plyrdt->Header, &IPXPlayerHeader, sizeof(struct TbIPXPlayerHeader));
+    IPXPlayer.Header.field_2A = 4;
+    memcpy(&p_plyrdt->Header, &IPXPlayer.Header, sizeof(struct TbIPXPlayerHeader));
     memcpy(&p_plyrdt->Data, data, dtlen);
     p_ipxhndl->PlayerDataSize = sizeof(struct TbIPXPlayerHeader) + dtlen;
 
-    memcpy(&p_ipxhndl->field_12[0], &IPXPlayerData.Data2.Sub1[plyr].field_2D[4], 6);
-    memcpy(p_ipxhndl->field_E, &IPXPlayerData.Data2.Sub1[plyr].field_2D[0], sizeof(p_ipxhndl->field_E));
+    memcpy(&p_ipxhndl->field_12[0], &IPXPlayer.Data.Data2.Sub1[plyr].field_2D[4], 6);
+    memcpy(p_ipxhndl->field_E, &IPXPlayer.Data.Data2.Sub1[plyr].field_2D[0], sizeof(p_ipxhndl->field_E));
 #if defined(DOS)||defined(GO32)
     CallIPX(2);
 #endif
@@ -721,13 +755,13 @@ TbResult ipx_receive_packet_from_player_nowait(int plyr, ubyte *data, int dtlen)
             continue;
         IPXHandler->field_46[i] = 0;
 
-        p_plyrdt = &IPXHandler->PlayerData[i];
+        p_plyrdt = (struct TbIPXPlayer *)&IPXHandler->PlayerData[i];
 
         if (strncasecmp(p_plyrdt->Header.Magic, "BU", 2) != 0)
             continue;
-        if (strcasecmp(p_plyrdt->Header.field_4, IPXPlayerHeader.field_4) != 0)
+        if (strcasecmp(p_plyrdt->Header.field_4, IPXPlayer.Header.field_4) != 0)
             continue;
-        if (p_plyrdt->Header.field_2 != IPXPlayerHeader.field_2)
+        if (p_plyrdt->Header.field_2 != IPXPlayer.Header.field_2)
             continue;
         if ((p_plyrdt->Header.field_2A != 4) || (p_plyrdt->Header.field_2B != plyr))
             continue;
@@ -746,13 +780,13 @@ TbResult ipx_send_packet_to_player_wait(int plyr, ubyte *data, int dtlen)
     ushort pkt_count;
 
     LOGDBG("Starting");
-    if (!IPXPlayerHeader.field_2C) {
+    if (!IPXPlayer.Header.field_2C) {
         LOGERR("Cond 1 not met");
         return Lb_OK;
     }
     if ((plyr >= 8 && plyr != 0xFFFF)
-      || (plyr == IPXPlayerHeader.field_2B)
-      || (plyr != 0xFFFF && !IPXPlayerData.Data1.Sub1[plyr].field_47) )
+      || (plyr == IPXPlayer.Header.field_2B)
+      || (plyr != 0xFFFF && !IPXPlayer.Data.Data1.Sub1[plyr].field_47) )
     {
         LOGERR("Target player invalid");
         return Lb_OK;
@@ -779,13 +813,13 @@ TbResult ipx_receive_packet_from_player_wait(int plyr, ubyte *data, int dtlen)
     ushort pkt_count;
 
     LOGDBG("Starting");
-    if (!IPXPlayerHeader.field_2C) {
+    if (!IPXPlayer.Header.field_2C) {
         LOGERR("Cond 1 not met");
         return Lb_OK;
     }
     if ((plyr >= 8)
-      || (plyr == IPXPlayerHeader.field_2B)
-      || (!IPXPlayerData.Data1.Sub1[plyr].field_47) )
+      || (plyr == IPXPlayer.Header.field_2B)
+      || (!IPXPlayer.Data.Data1.Sub1[plyr].field_47) )
     {
         LOGERR("Target player invalid");
         return Lb_OK;
@@ -1352,11 +1386,11 @@ TbResult LbNetworkServiceStart(struct NetworkServiceInfo *nsvc)
             ret = Lb_FAIL;
             break;
         }
-        memset(&IPXPlayerHeader, 0, sizeof(struct TbIPXPlayerHeader));
-        memset(&IPXPlayerData, 0, sizeof(struct TbIPXPlayerData));
-        IPXPlayerHeader.field_2 = nsvc->GameId;
+        memset(&IPXPlayer.Header, 0, sizeof(struct TbIPXPlayerHeader));
+        memset(&IPXPlayer.Data, 0, sizeof(struct TbIPXPlayerData));
+        IPXPlayer.Header.field_2 = nsvc->GameId;
         k = (nsvc->Flags >> 16) + 0x4545;
-        NetworkServicePtr.I.Id = &IPXPlayerHeader;
+        NetworkServicePtr.I.Id = &IPXPlayer.Header;
         if (k > 0x4FFF)
             k = 0x4FFF;
         ipx_service_init((k << 8) | (k >> 8));
@@ -1467,7 +1501,7 @@ int LbNetworkSessionNumberPlayers(void)
     switch (NetworkServicePtr.I.Type)
     {
     case NetSvc_IPX:
-        ipxdata = &IPXPlayerData;
+        ipxdata = &IPXPlayer.Data;
         ret = ipxdata->num_players;
         break;
     case NetSvc_COM1:
@@ -2074,7 +2108,7 @@ TbResult LbNetworkSessionCreate(struct TbNetworkSession *session, char *a2)
     switch (NetworkServicePtr.I.Type)
     {
     case NetSvc_IPX:
-        IPXPlayerData.field_10E = session->MaxPlayers;
+        IPXPlayer.Data.field_10E = session->MaxPlayers;
         ret = ipx_create_session(session->Name, a2);
         break;
     case NetSvc_COM1:
