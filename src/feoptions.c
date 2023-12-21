@@ -370,13 +370,12 @@ void init_options_audio_screen_boxes(void)
     audio_tracks_box.SpecialDrawFn = ac_show_audio_tracks_box;
 
     start_x = (scr_w - unkn13_SYSTEM_button.Width - 16 - audio_volume_boxes[0].Width - 7) / 2;
-    start_x += unkn13_SYSTEM_button.X + unkn13_SYSTEM_button.Width;
 
     for (i = 0; i < 3; i++)
     {
-        audio_volume_boxes[i].X = start_x + 9;
+        audio_volume_boxes[i].X = start_x + 7 + unkn13_SYSTEM_button.Width + 9;
     }
-    audio_tracks_box.X = start_x + 9;
+    audio_tracks_box.X = start_x + 7 + unkn13_SYSTEM_button.Width + 9;
 
     for (i = 0; i < 3; i++)
     {

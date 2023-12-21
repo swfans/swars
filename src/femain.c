@@ -195,7 +195,7 @@ void init_system_menu_boxes(void)
     short scr_w, start_x;
     int i, h, val;
 
-    scr_w = 640;//lbDisplay.GraphicsWindowWidth;
+    scr_w = lbDisplay.GraphicsWindowWidth;
 
     init_screen_text_box(&heading_box, 7u, 25, 626, 38, 6, big_font, 1);
     heading_box.DrawTextFn = ac_show_title_box;

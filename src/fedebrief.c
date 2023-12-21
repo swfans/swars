@@ -36,6 +36,9 @@ extern struct ScreenBox debrief_people_box;
 
 const ushort mod_group_type_strid[] = {74, 71, 72, 70, 73, };
 
+// Shared boxes
+extern struct ScreenTextBox world_city_info_box;
+
 extern ushort word_1C4846[8];
 extern ushort word_1C4856[8];
 
@@ -530,11 +533,20 @@ ubyte show_mission_people_stats(struct ScreenBox *box)
 
 void init_debrief_screen_boxes(void)
 {
+    short scr_w, start_x;
+
+    scr_w = lbDisplay.GraphicsWindowWidth;
+
     init_screen_box(&debrief_mission_box, 7u, 72u, 518u, 172, 6);
     debrief_mission_box.SpecialDrawFn = ac_show_mission_stats;
 
     init_screen_box(&debrief_people_box, 7u, 253u, 518u, 173, 6);
     debrief_people_box.SpecialDrawFn = ac_show_mission_people_stats;
+
+    start_x = (scr_w - debrief_mission_box.Width - world_city_info_box.Width - 23) / 2;
+
+    debrief_mission_box.X = start_x + 7;
+    debrief_people_box.X = start_x + 7;
 }
 
 void reset_debrief_screen_boxes_flags(void)

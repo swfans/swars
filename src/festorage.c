@@ -46,18 +46,12 @@ ubyte show_menu_storage_slots_box(struct ScreenTextBox *box)
 
 void init_storage_screen_boxes(void)
 {
+    short scr_w, start_x;
+
+    scr_w = lbDisplay.GraphicsWindowWidth;
+
     init_screen_text_box(&storage_header_box, 213u, 25u, 420u, 38, 6, big_font, 1);
     storage_header_box.DrawTextFn = ac_show_title_box;
-
-    init_screen_button(&storage_LOAD_button, 219u, 405u,
-      gui_strings[438], 6, med2_font, 1, 0);
-    init_screen_button(&storage_SAVE_button, storage_LOAD_button.Width + 223, 405u,
-      gui_strings[439], 6, med2_font, 1, 0);
-    init_screen_button(&storage_NEW_MORTAL_button, 627u, 405u,
-      gui_strings[482], 6, med2_font, 1, 128);
-    storage_LOAD_button.CallBackFn = ac_load_game_slot;
-    storage_SAVE_button.CallBackFn = ac_save_game_slot;
-    storage_NEW_MORTAL_button.CallBackFn = ac_do_storage_NEW_MORTAL;
 
     init_screen_text_box(&storage_slots_box, 213u, 72u, 420u, 354, 6, med2_font, 1);
     storage_slots_box.DrawTextFn = ac_show_menu_storage_slots_box;
@@ -66,6 +60,26 @@ void init_storage_screen_boxes(void)
     storage_slots_box.Flags |= 0x0300;
     storage_slots_box.BGColour = 26;
     storage_slots_box.ScrollWindowOffset += 27;
+
+    init_screen_button(&storage_LOAD_button, 219u, 405u,
+      gui_strings[438], 6, med2_font, 1, 0);
+    init_screen_button(&storage_SAVE_button, 219 + storage_LOAD_button.Width + 4, 405u,
+      gui_strings[439], 6, med2_font, 1, 0);
+    init_screen_button(&storage_NEW_MORTAL_button, 627u, 405u,
+      gui_strings[482], 6, med2_font, 1, 128);
+    storage_LOAD_button.CallBackFn = ac_load_game_slot;
+    storage_SAVE_button.CallBackFn = ac_save_game_slot;
+    storage_NEW_MORTAL_button.CallBackFn = ac_do_storage_NEW_MORTAL;
+
+    start_x = (scr_w - unkn13_SYSTEM_button.Width - 16 - storage_slots_box.Width - 7) / 2;
+
+    storage_header_box.X = start_x + 7 + unkn13_SYSTEM_button.Width + 9;
+    storage_slots_box.X = start_x + 7 + unkn13_SYSTEM_button.Width + 9;
+
+    storage_LOAD_button.X = storage_slots_box.X + 6;
+    storage_SAVE_button.X = storage_LOAD_button.X + storage_LOAD_button.Width + 4;
+    storage_NEW_MORTAL_button.X = storage_slots_box.X + storage_slots_box.Width -
+      storage_NEW_MORTAL_button.Width - 6;
 }
 
 void reset_storage_screen_boxes_flags(void)

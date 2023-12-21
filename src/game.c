@@ -6517,8 +6517,8 @@ void init_screen_boxes(void)
     init_main_screen_boxes();
     init_system_menu_boxes();
     init_brief_screen_boxes();
-    init_debrief_screen_boxes();
     init_world_screen_boxes();
+    init_debrief_screen_boxes();
     init_controls_screen_boxes();
     init_options_audio_screen_boxes();
     init_options_visual_screen_boxes();
