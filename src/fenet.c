@@ -233,7 +233,7 @@ void show_net_benefits_sub2(short x0, short y0, TbPixel *colours)
 
 void show_net_benefits_sub3(struct ScreenBox *box)
 {
-    struct ScreenBoxBase box1 = {381, 252, 9, 14};
+    struct ScreenBoxBase box1 = {box->X + 5, box->Y + 16, 9, 14};
 
     lbDisplay.DrawFlags = 0x8004;
     if (mouse_move_over_box(&box1))
@@ -259,7 +259,7 @@ void show_net_benefits_sub3(struct ScreenBox *box)
 
 void show_net_benefits_sub4(struct ScreenBox *box)
 {
-    struct ScreenBoxBase box2 = {618, 241, 9, 14};
+    struct ScreenBoxBase box2 = {box->X + 242, box->Y + 5, 9, 14};
 
     lbDisplay.DrawFlags = 0x8004;
     if (mouse_move_over_box(&box2))
@@ -346,7 +346,7 @@ void show_net_benefits_sub5(short x0, short y0, TbPixel *colours)
 
 void show_net_benefits_sub6(struct ScreenBox *box)
 {
-    struct ScreenBoxBase box1 = {381, 283, 9, 14};
+    struct ScreenBoxBase box1 = {box->X + 5, box->Y + 47, 9, 14};
 
     lbDisplay.DrawFlags = 0x8004;
     if (mouse_move_over_box(&box1))
@@ -372,7 +372,7 @@ void show_net_benefits_sub6(struct ScreenBox *box)
 
 void show_net_benefits_sub7(struct ScreenBox *box)
 {
-    struct ScreenBoxBase box2 = {618, 272, 9, 14};
+    struct ScreenBoxBase box2 = {box->X + 242, box->Y + 36, 9, 14};
 
     lbDisplay.DrawFlags = 0x8004;
     if (mouse_move_over_box(&box2))
