@@ -214,6 +214,42 @@ void setup_bullfrog_header(struct TbIPXPlayerHeader *ipxhead, int a2)
     memcpy(ipxhead->field_22, &ipxhndl->field_2A, sizeof(ipxhead->field_22));
 }
 
+void ipx_add_new_player(char *a1)
+{
+    asm volatile ("call ASM_ipx_add_new_player\n"
+        : : "a" (a1) );
+}
+
+void ipx_log_on_new_players(void)
+{
+    short i;
+#if defined(DOS)||defined(GO32)
+    CallIPX(1);
+#endif
+    for (i = 0; i < 30; i++)
+    {
+        struct TbIPXPlayer *p_plyrdt;
+        struct TbIPXPlayerHeader *p_ipxhead;
+
+        if (IPXHandler->field_46[i] == 0)
+            continue;
+
+        IPXHandler->field_46[i] = 0;
+        p_plyrdt = IPXHandler->PlayerData;
+        p_ipxhead = &p_plyrdt[i].Header;
+
+        if (strncasecmp(p_ipxhead->Magic, "BU", 2) != 0)
+            continue;
+        if (p_ipxhead->field_2A == 2)
+            continue;
+
+        if (IPXPlayerData.num_players < 8)
+        {
+            ipx_add_new_player(p_ipxhead->Magic);
+        }
+    }
+}
+
 int ipx_update(void)
 {
     TbResult ret;
