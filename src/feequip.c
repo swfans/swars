@@ -48,7 +48,9 @@ extern struct ScreenButton equip_all_agents_button;
 extern struct ScreenShape unk11_menu[5];
 
 extern ubyte byte_155174; // = 166;
+extern ubyte byte_155175[];
 extern ubyte byte_155180; // = 109;
+extern ubyte byte_155181[];
 extern ubyte byte_1C4AA0;
 extern ubyte cheat_research_weapon;
 extern ubyte byte_1C4975;
@@ -59,8 +61,6 @@ extern struct TbSprite *sprites_Icons0_0;
 
 extern char unkn41_text[];
 extern char equip_cost_text[20];
-extern ubyte byte_155175[];
-extern ubyte byte_155181[];
 extern ubyte weapon_nrg[31];
 extern ubyte weapon_range[31];
 extern ubyte weapon_damage[31];

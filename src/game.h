@@ -749,6 +749,7 @@ void sysmnu_button_enable(int btnno, int count);
 void sysmnu_button_disable(int btnno, int count);
 
 TbBool player_try_spend_money(long cost);
+TbBool is_unkn_current_player(void);
 void campaign_new_game_prepare(void);
 
 void process_sound_heap(void);
