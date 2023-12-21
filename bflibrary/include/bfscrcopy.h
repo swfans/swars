@@ -43,7 +43,7 @@ void LbScreenCopyBox(TbPixel *sourceBuf, TbPixel *destBuf,
  * buffer with width equal to GraphicsScreen, and the height,
  * it copies given amount of lines of one buffer to the other.
  */
-void LbScreenCopy(TbPixel *sourceBuf, TbPixel *destBuf, ulong height);
+void LbScreenCopy(TbPixel *sourceBuf, TbPixel *destBuf, ushort height);
 
 #ifdef __cplusplus
 };

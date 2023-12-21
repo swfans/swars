@@ -41,23 +41,22 @@ void LbScreenCopyBox(TbPixel *sourceBuf, TbPixel *destBuf,
       width & ~0x3, height);
 }
 
-void LbScreenCopy(TbPixel *sourceBuf, TbPixel *destBuf, ulong height)
+void LbScreenCopy(TbPixel *sourceBuf, TbPixel *destBuf, ushort height)
 {
     ubyte *s;
     ubyte *d;
-    long dwwidth, shift;
-    long h;
+    short shift;
+    short h;
 
     s = sourceBuf;
     d = destBuf;
     shift = lbDisplay.GraphicsScreenWidth - lbDisplay.GraphicsWindowWidth;
-    dwwidth = lbDisplay.GraphicsWindowWidth >> 2;
     // Note that source and destination buffers have different line lengths
     for (h = height; h > 0; h--)
     {
-        LbI_XMemCopy(d, s, 4 * dwwidth);
-        s += 4 * dwwidth;
-        d += 4 * dwwidth + shift;
+        LbI_XMemCopy(d, s, lbDisplay.GraphicsWindowWidth);
+        s += lbDisplay.GraphicsWindowWidth;
+        d += lbDisplay.GraphicsWindowWidth + shift;
     }
 }
 
