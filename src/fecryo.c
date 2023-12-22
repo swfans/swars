@@ -48,9 +48,16 @@ extern char cybmod_name_text[];
 
 extern ubyte current_frame;
 extern short word_15511E; // = -1;
+extern ubyte byte_155174; // = 166;
+extern ubyte byte_155175[];
+extern ubyte byte_155180; // = 109;
+extern ubyte byte_155181[];
+extern ubyte byte_1551F4[5];
 extern ubyte cheat_research_cybmods;
+extern char byte_1C495C[20];
 extern ubyte byte_1C4978;
 extern ubyte byte_1C4979;
+extern ubyte byte_1C4AA0;
 
 // Shared with equip screen
 extern char equip_cost_text[20];
@@ -68,6 +75,8 @@ ubyte ac_show_cryo_agent_list(struct ScreenTextBox *box);
 ubyte ac_show_cryo_cybmod_list_box(struct ScreenTextBox *box);
 ubyte ac_show_cryo_blokey(struct ScreenBox *box);
 ubyte ac_do_cryo_all_agents_set(ubyte click);
+void ac_weapon_flic_data_to_screen(void);
+ubyte ac_do_equip_offer_buy(ubyte click);
 
 struct ScreenPoint equip_blokey_pos[] = {
     {23,  0},
@@ -564,34 +573,23 @@ ubyte show_cryo_agent_list(struct ScreenTextBox *box)
     return ret;
 }
 
-ubyte show_cryo_cybmod_list_box(struct ScreenTextBox *box)
-{
-    ubyte ret;
-    asm volatile ("call ASM_show_cryo_cybmod_list_box\n"
-        : "=r" (ret) : "a" (box));
-    return ret;
-}
-
 TbBool cybmod_available_for_purchase(short mtype)
 {
     PlayerInfo *p_locplayer;
-    union Mod sgumod;
 
     p_locplayer = &players[local_player_no];
 
     if (!is_research_cymod_completed(mtype)
-      && (login_control__State != 5 || mod_tech_level[mtype] > login_control__TechLevel))
+      && ((login_control__State != 5) || mod_tech_level[mtype] > login_control__TechLevel))
         return false;
 
     //if (selected_agent != -1) -- this is always set to 0..4
-    sgumod.Mods = 0;
-    add_mod_to_flags(&sgumod, mtype);
     if (selected_agent == 4)
     {
         ushort plagent;
 
         // If not purcheasing chest mods, require chest mods on all agents
-        if (!cybmod_chest_level(&sgumod))
+        if (cybmod_group_type(mtype) != MODGRP_CHEST)
         {
             for (plagent = 0; plagent < 4; plagent++)
             {
@@ -605,13 +603,232 @@ TbBool cybmod_available_for_purchase(short mtype)
     }
     {
         // If not purcheasing chest mod, require chest mod
-        if (!cybmod_chest_level(&sgumod))
+        if (cybmod_group_type(mtype) != MODGRP_CHEST)
         {
             if (!cybmod_chest_level(&p_locplayer->Mods[selected_agent]))
                 return false;
         }
     }
     return true;
+}
+
+ubyte show_cryo_cybmod_list_box(struct ScreenTextBox *box)
+{
+#if 1
+    ubyte ret;
+    asm volatile ("call ASM_show_cryo_cybmod_list_box\n"
+        : "=r" (ret) : "a" (box));
+    return ret;
+#else
+    ubyte modstrings[5];
+
+    memcpy(modstrings, byte_1551F4, 5);
+    if ((box->Flags & 0x8000) == 0)
+    {
+        short cx, cy;
+        int i, k;
+
+        lbDisplay.DrawFlags = 0x0004;
+        draw_box_purple_list(text_window_x1, text_window_y1,
+          text_window_x2 - text_window_x1 + 1, text_window_y2 - text_window_y1 + 1, 56);
+        draw_box_purple_list(box->X + 4, box->Y + 149, box->Width - 8, 48, 56);
+        draw_box_purple_list(box->X + 4, box->Y + 210, box->Width - 8, 13, 56);
+        my_set_text_window(box->X + 4, box->Y + 4, box->Width - 8, box->Height - 8);
+        lbDisplay.DrawFlags = 0x0100;
+        lbFontPtr = small_med_font;
+        draw_text_purple_list2(0, 148, gui_strings[432], 0);
+        draw_text_purple_list2(0, 173, gui_strings[433], 0);
+        draw_text_purple_list2(0, 196, gui_strings[434], 0);
+
+        cy = box->Y + 162;
+        for (i = 0; i < 2; i++)
+        {
+            cx = box->X + 8;
+            for (k = 0; k < 8; k++)
+            {
+                if (i == 0)
+                    draw_box_purple_list(cx, cy, 22, 7, byte_155174);
+                else if (i == 1)
+                    draw_box_purple_list(cx, cy, 22, 7, byte_155180);
+                cx += 24;
+            }
+            cy += 25;
+        }
+        lbDisplay.DrawFlags = 0;
+
+        box->Flags |= 0x8000;
+        copy_box_purple_list(box->X + 4, box->Y + 4 + box->ScrollWindowOffset,
+          box->Width - 20, box->ScrollWindowHeight + 23);
+        copy_box_purple_list(box->X + 4, box->Y + 149, box->Width - 8, box->Height - 146);
+        my_set_text_window(box->X + 4, box->ScrollWindowOffset + box->Y + 4,
+          box->Width - 20, box->ScrollWindowHeight + 23);
+        lbFontPtr = small_med_font;
+    }
+
+    if (selected_mod == -1)
+    {
+        ushort mtype;
+        short text_h;
+        short cy;
+
+        cy = 3;
+        text_h = font_height('A');
+        for (mtype = box->field_38+1; mtype < MOD_TYPES_COUNT; mtype++)
+        {
+            if (text_h + cy >= box->ScrollWindowHeight + 23)
+                return 0;
+            if (cybmod_available_for_purchase(mtype))
+            {
+                  char *text;
+                  ubyte modgrp, modlv;
+                  ushort mdstr_id, lvstr_id;
+
+                  if (mouse_down_over_box_coords(text_window_x1, cy + text_window_y1 - 1,
+                    text_window_x2, cy + text_window_y1 + 1 + text_h) && lbDisplay.LeftButton)
+                  {
+                        lbDisplay.LeftButton = 0;
+                        selected_mod = mtype - 1;
+                        equip_name_box.TextFadePos = -5;
+                        modgrp = cybmod_group_type(mtype);
+                        modlv = cybmod_version(mtype);
+                        mdstr_id = 70 + modstrings[modgrp];
+                        if (cybmod_group_type(mtype) != MODGRP_EPIDERM)
+                           lvstr_id = 76;
+                        else
+                           lvstr_id = 75;
+                        sprintf(cybmod_name_text, "%s %s %d", gui_strings[mdstr_id], gui_strings[lvstr_id], modlv);
+                        sprintf(equip_cost_text, "%d", 10 * mod_defs[mtype].Cost);
+                        equip_offer_buy_button.Text = gui_strings[436];
+                        equip_offer_buy_button.CallBackFn = ac_do_equip_offer_buy;
+                        if (byte_1C4AA0 || (1 << selected_mod >= 0x1000))
+                        {
+                            box->TextFadePos = -5;
+                            box->field_38 = 0;
+                            box->Text = &weapon_text[cybmod_text_index[selected_mod]];
+                            box->Lines = 0;
+                            box->Flags |= 0x80;
+                            lbFontPtr = small_font;
+                            box->BGColour = byte_197160 + font_height('A');
+                            lbFontPtr = box->Font;
+                        }
+                        else
+                        {
+                          init_weapon_anim(selected_mod + 32);
+                        }
+                  }
+                  if (selected_mod == mtype - 1) {
+                      lbDisplay.DrawFlags = 0x0040;
+                      lbDisplay.DrawColour = 87;
+                  } else {
+                      lbDisplay.DrawFlags = 0;
+                  }
+                  lbDisplay.DrawFlags |= 0x8000;
+                  modgrp = cybmod_group_type(mtype);
+                  modlv = cybmod_version(mtype);
+                  mdstr_id = 70 + modstrings[modgrp];
+                  draw_text_purple_list2(3, cy + 1, gui_strings[mdstr_id], 0);
+                  lbDisplay.DrawFlags &= ~0x8080;
+
+                  lbDisplay.DrawFlags |= 0x0080;
+                  if (cybmod_group_type(mtype) != MODGRP_EPIDERM)
+                      lvstr_id = 76;
+                  else
+                      lvstr_id = 75;
+                  sprintf(byte_1C495C, "%s %d", gui_strings[lvstr_id], modlv);
+                  text = (char *)back_buffer + text_buf_pos;
+                  strcpy(text, byte_1C495C);
+                  draw_text_purple_list2(-1, cy + 1, text, 0);
+                  text_buf_pos += strlen(byte_1C495C) + 1;
+                  lbDisplay.DrawFlags = 0;
+
+                  cy += text_h + box->LineSpacing;
+            }
+        }
+    }
+    else
+    {
+        short cx, cy;
+        int i;
+
+        lbDisplay.DrawFlags = 0x0100;
+        lbFontPtr = small_med_font;
+        my_set_text_window(box->X + 4, box->Y + 4, box->Width - 8, box->Height - 8);
+        draw_text_purple_list2(0, 208, gui_strings[645 + (mod_defs[selected_mod + 1].Sprite >> 8)], 0);
+
+        cy = box->Y + 162;
+        cx = box->X + 8;
+        for (i = 0; i < 8; i++)
+        {
+            if (i < mod_defs[selected_mod + 1].PowerOutput)
+                draw_box_purple_list(cx, cy, 22, 7, byte_155175[i]);
+            cx += 24;
+        }
+        cy += 25;
+        cx = box->X + 8;
+        for (i = 0; i < 8; i++)
+        {
+            if (i < mod_defs[selected_mod + 1].Resilience)
+                draw_box_purple_list(cx, cy, 22, 7, byte_155181[i]);
+            cx += 24;
+        }
+        lbDisplay.DrawFlags = 0;
+
+        draw_hotspot_purple_list(529, 257);
+
+        if (byte_1C4AA0 || (1 << selected_mod >= 0x1000))
+        {
+            lbFontPtr = small_font;
+            my_set_text_window(box->X + 4, box->ScrollWindowOffset + box->Y + 4,
+              box->Width - 20, box->ScrollWindowHeight + 23);
+            flashy_draw_text(0, 0, box->Text, box->TextSpeed, box->field_38, &box->TextFadePos, 0);
+        }
+        else
+        {
+            xdo_next_frame(2);
+            draw_flic_purple_list(ac_weapon_flic_data_to_screen);
+        }
+        if (lbDisplay.LeftButton)
+        {
+            if (mouse_down_over_box_coords(429, 157, 62, 297))
+            {
+                lbDisplay.LeftButton = 0;
+                byte_1C4AA0 = byte_1C4AA0 == 0;
+                if (byte_1C4AA0 || (1 << selected_mod >= 0x1000))
+                {
+                    box->TextFadePos = -5;
+                    box->Text = &weapon_text[cybmod_text_index[selected_mod]];
+                    box->field_38 = 0;
+                    box->Lines = 0;
+                    box->Flags |= 0x80;
+                    lbFontPtr = small_font;
+                    box->BGColour = byte_197160 + font_height('A');
+                    lbFontPtr = box->Font;
+                }
+                else
+                {
+                    init_weapon_anim(selected_mod + 32);
+                }
+            }
+        }
+        //equip_offer_buy_button.DrawFn(&equip_offer_buy_button); -- incompatible calling convention
+        asm volatile ("call *%1\n"
+            : : "a" (&equip_offer_buy_button), "g" (equip_offer_buy_button.DrawFn));
+        //cryo_offer_cancel_button.DrawFn(&cryo_offer_cancel_button); -- incompatible calling convention
+        asm volatile ("call *%1\n"
+            : : "a" (&cryo_offer_cancel_button), "g" (cryo_offer_cancel_button.DrawFn));
+        //equip_cost_box.DrawFn(&equip_cost_box); -- incompatible calling convention
+        asm volatile ("call *%1\n"
+            : : "a" (&equip_cost_box), "g" (equip_cost_box.DrawFn));
+
+        if (selected_mod == -1)
+        {
+            equip_cost_box.Flags = 9;
+            equip_offer_buy_button.Flags |= 0x0001;
+            cryo_offer_cancel_button.Flags |= 0x0001;
+        }
+    }
+    return 0;
+#endif
 }
 
 void set_flag02_cryo_screen_boxes(void)
