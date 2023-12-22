@@ -252,7 +252,7 @@ void draw_mission_stats_vals_dynamic(struct ScreenBox *box,
     short fheight, lnheight;
     short x, y;
     char *text;
-    char locstr[40];
+    char locstr[80];
 
     lbDisplay.DrawFlags = 0;
     lbFontPtr = med_font;
@@ -270,8 +270,12 @@ void draw_mission_stats_vals_dynamic(struct ScreenBox *box,
 
         text = (char *)(back_buffer + text_buf_pos);
         strcpy(text, locstr);
-        draw_text_purple_list2(x, y, text, 0);
         text_buf_pos += strlen(text) + 1;
+
+        if (LbTextStringWidth(text) > research_ln * (box->Width - 8 - MISSION_STATS_SECOND_COLUMN_X))
+            lbFontPtr = small_med_font;
+        draw_text_purple_list2(x, y, text, 0);
+        lbFontPtr = med_font;
         y += lnheight * research_ln;
     }
 
@@ -280,8 +284,24 @@ void draw_mission_stats_vals_dynamic(struct ScreenBox *box,
         snprintf(locstr, sizeof(locstr), "%d: %s", p_rep->ScientistsLost, scientist_lost_reason);
         text = (char *)(back_buffer + text_buf_pos);
         strcpy(text, locstr);
-        draw_text_purple_list2(x, y, text, 0);
         text_buf_pos += strlen(text) + 1;
+
+        if (LbTextStringWidth(text) > scilost_ln * (box->Width - 8 - MISSION_STATS_SECOND_COLUMN_X)) {
+            char *text2;
+            short dx, dy;
+
+            text2 = strchr(text, ' ');
+            text2[0] = '\0';
+            text2++;
+            draw_text_purple_list2(x, y, text, 0);
+            dx = LbTextStringWidth(text) + 4;
+            lbFontPtr = small_med_font;
+            dy = lnheight - font_height('A') - 4;
+            draw_text_purple_list2(x + dx, y + dy, text2, 0);
+            lbFontPtr = med_font;
+        } else {
+            draw_text_purple_list2(x, y, text, 0);
+        }
         y += lnheight * scilost_ln;
     }
 }
