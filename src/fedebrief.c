@@ -54,17 +54,21 @@ ubyte ac_show_mission_people_stats(struct ScreenBox *box);
 void draw_mission_stats_names_column(struct ScreenBox *box,
   ubyte research_ln, ubyte scilost_ln)
 {
-    short fheight, lnheight;
+    short fheight, lnheight, sepheight;
     short x, y;
 
     lbDisplay.DrawFlags = 0;
     lbFontPtr = med_font;
     fheight = font_height('A');
     lnheight = fheight + 4;
+    sepheight = fheight + 4;
+
+    if (research_ln + scilost_ln >= 4) // compact mode
+        sepheight /= 2;
 
     // Row with names
     x = 20;
-    y = lnheight;
+    y = sepheight;
 
     // Reference no
     draw_text_purple_list2(x, y, gui_strings[611], 0);
@@ -81,7 +85,7 @@ void draw_mission_stats_names_column(struct ScreenBox *box,
     // Mission time
     draw_text_purple_list2(x, y, gui_strings[615], 0);
     y += lnheight;
-    y += lnheight;
+    y += sepheight;
 
     // Income
     draw_text_purple_list2(x, y, gui_strings[633], 0);
@@ -107,7 +111,7 @@ void draw_mission_stats_names_column(struct ScreenBox *box,
 void draw_mission_stats_vals_static(struct ScreenBox *box,
   struct DebriefReport *p_rep, ubyte research_ln, ubyte scilost_ln)
 {
-    short fheight, lnheight;
+    short fheight, lnheight, sepheight;
     short x, y;
     char *text;
     char locstr[40];
@@ -116,10 +120,14 @@ void draw_mission_stats_vals_static(struct ScreenBox *box,
     lbFontPtr = med_font;
     fheight = font_height('A');
     lnheight = fheight + 4;
+    sepheight = fheight + 4;
+
+    if (research_ln + scilost_ln >= 4) // compact mode
+        sepheight /= 2;
 
     // Row with values
     x = MISSION_STATS_SECOND_COLUMN_X;
-    y = lnheight;
+    y = sepheight;
 
     // Reference no
     snprintf(locstr, sizeof(locstr), "%hd", p_rep->RefNo);
@@ -151,7 +159,7 @@ void draw_mission_stats_vals_static(struct ScreenBox *box,
     draw_text_purple_list2(x, y, text, 0);
     text_buf_pos += strlen(text) + 1;
     y += lnheight;
-    y += lnheight;
+    y += sepheight;
 
     // Income
     snprintf(locstr, sizeof(locstr), "%ld C", p_rep->Income);
@@ -235,7 +243,7 @@ void snprint_concat_comma_separated_cybmods_list(char *out, ushort outlen, ulong
 
 short new_weapomn_mods_text_width(struct DebriefReport *p_rep)
 {
-    char locstr[40];
+    char locstr[80];
 
     lbFontPtr = med_font;
 
@@ -249,7 +257,7 @@ short new_weapomn_mods_text_width(struct DebriefReport *p_rep)
 void draw_mission_stats_vals_dynamic(struct ScreenBox *box,
   struct DebriefReport *p_rep, ubyte research_ln, ubyte scilost_ln)
 {
-    short fheight, lnheight;
+    short fheight, lnheight, sepheight;
     short x, y;
     char *text;
     char locstr[80];
@@ -258,9 +266,13 @@ void draw_mission_stats_vals_dynamic(struct ScreenBox *box,
     lbFontPtr = med_font;
     fheight = font_height('A');
     lnheight = fheight + 4;
+    sepheight = fheight + 4;
+
+    if (research_ln + scilost_ln >= 4) // compact mode
+        sepheight /= 2;
 
     x = MISSION_STATS_SECOND_COLUMN_X;
-    y = 8 * lnheight;
+    y = sepheight + 4 * lnheight + sepheight + 2 * lnheight;
 
     if (research_ln > 0)
     {
@@ -272,6 +284,7 @@ void draw_mission_stats_vals_dynamic(struct ScreenBox *box,
         strcpy(text, locstr);
         text_buf_pos += strlen(text) + 1;
 
+        // If cannot fit in expected num of lines, use smaller font
         if (LbTextStringWidth(text) > research_ln * (box->Width - 8 - MISSION_STATS_SECOND_COLUMN_X))
             lbFontPtr = small_med_font;
         draw_text_purple_list2(x, y, text, 0);
@@ -287,6 +300,8 @@ void draw_mission_stats_vals_dynamic(struct ScreenBox *box,
         text_buf_pos += strlen(text) + 1;
 
         if (LbTextStringWidth(text) > scilost_ln * (box->Width - 8 - MISSION_STATS_SECOND_COLUMN_X)) {
+            // Cannot fit in expected num of lines - divide the text into
+            // amount and reason, and print the latter small
             char *text2;
             short dx, dy;
 
@@ -296,7 +311,7 @@ void draw_mission_stats_vals_dynamic(struct ScreenBox *box,
             draw_text_purple_list2(x, y, text, 0);
             dx = LbTextStringWidth(text) + 4;
             lbFontPtr = small_med_font;
-            dy = lnheight - font_height('A') - 4;
+            dy = fheight - font_height('A'); // print at same level as previous test
             draw_text_purple_list2(x + dx, y + dy, text2, 0);
             lbFontPtr = med_font;
         } else {
@@ -345,8 +360,12 @@ ubyte show_mission_stats(struct ScreenBox *box)
     my_set_text_window(box->X + 4, box->Y + 4, box->Width - 8, box->Height - 8);
 
     if ((p_rep->WeaponsResearched != 0) || (p_rep->ModsResearched != 0)) {
+        short textw;
         research_ln += 1;
-        if (new_weapomn_mods_text_width(p_rep) > box->Width - 8 - MISSION_STATS_SECOND_COLUMN_X)
+        textw = new_weapomn_mods_text_width(p_rep);
+        if (textw > box->Width - 8 - MISSION_STATS_SECOND_COLUMN_X)
+            research_ln += 1;
+        if (textw > 2 * (box->Width - 8 - MISSION_STATS_SECOND_COLUMN_X) + 8)
             research_ln += 1;
     }
     if (p_rep->ScientistsLost > 0) {
