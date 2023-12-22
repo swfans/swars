@@ -524,7 +524,8 @@ void init_brief_screen_boxes(void)
 
     scr_w = lbDisplay.GraphicsWindowWidth;
 
-    init_screen_text_box(&brief_netscan_box, 7u, 281u, 322u, 145, 6, small_med_font, 3);
+    init_screen_text_box(&brief_netscan_box, 7, 281, 322, 145,
+      6, small_med_font, 3);
     init_screen_button(&brief_NETSCAN_button, 312u, 405u,
       gui_strings[441], 6, med2_font, 1, 0x80);
     init_screen_info_box(&brief_NETSCAN_COST_box, 12u, 405u, 213u,
@@ -553,8 +554,9 @@ void init_brief_screen_boxes(void)
     brief_graphical_box.X = start_x + 7;
 
     brief_netscan_box.X = start_x + 7;
-    brief_NETSCAN_button.X = brief_netscan_box.X + brief_netscan_box.Width - brief_NETSCAN_button.Width - 17;
     brief_NETSCAN_COST_box.X = brief_netscan_box.X + 5;
+    //no need to update brief_NETSCAN_button.X - it will happen on the update below
+    update_brief_screen_netscan_button(441);
 
     brief_mission_text_box.X = brief_graphical_box.X + brief_graphical_box.Width + 9;
     unkn1_ACCEPT_button.X = brief_mission_text_box.X + 5;
@@ -567,7 +569,7 @@ void update_brief_screen_netscan_button(ushort text_id)
 
     text = gui_strings[text_id];
     init_screen_button(&brief_NETSCAN_button, brief_netscan_box.X + brief_netscan_box.Width - 17, 405,
-      text, 6, med2_font, 1, 128);
+      text, 6, med2_font, 1, 0x80);
     brief_NETSCAN_COST_box.Width = brief_netscan_box.Width - 10 - brief_NETSCAN_button.Width - 17;
     brief_NETSCAN_button.CallBackFn = ac_brief_do_netscan_enhance;
 }
