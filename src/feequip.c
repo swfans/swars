@@ -641,6 +641,7 @@ ubyte display_weapon_info(struct ScreenTextBox *box)
     lbDisplay.DrawFlags = 0x0100;
     lbFontPtr = small_med_font;
 
+    // Weapon category
     if (is_research_weapon_completed(selected_weapon + 1) || (login_control__State != 6))
         text = gui_strings[59 + (weapon_defs[selected_weapon + 1].Sprite >> 8)];
     else
@@ -685,7 +686,8 @@ ubyte display_weapon_info(struct ScreenTextBox *box)
     asm volatile ("call *%1\n"
         : : "a" (&equip_cost_box), "g" (equip_cost_box.DrawFn));
 
-    draw_hotspot_purple_list(529, 257);
+    // Add control hotspot for the view / description switch
+    draw_hotspot_purple_list(box->X + box->Width / 2, box->Y + 104);
 
     if (byte_1C4AA0)
     {
@@ -701,7 +703,8 @@ ubyte display_weapon_info(struct ScreenTextBox *box)
         draw_flic_purple_list(ac_weapon_flic_data_to_screen);
     }
 
-    if (lbDisplay.LeftButton && mouse_down_over_box_coords(429, 157, 629, 297))
+    if (lbDisplay.LeftButton && mouse_down_over_box_coords(box->X + 4,
+      box->Y + 4, box->X + box->Width - 4, box->Y + 4 + 140))
     {
         lbDisplay.LeftButton = 0;
         byte_1C4AA0 = (byte_1C4AA0 == 0);
