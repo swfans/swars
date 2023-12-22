@@ -32,6 +32,8 @@
 #include "swlog.h"
 /******************************************************************************/
 #define SCIENTIST_LOST_REASONS_COUNT 20
+#define MISSION_STATS_SECOND_COLUMN_X 300
+#define PEOPLE_STATS_SECOND_COLUMN_X 300
 
 struct DebriefReport curr_report;
 
@@ -49,7 +51,7 @@ extern ushort word_1C4856[8];
 ubyte ac_show_mission_stats(struct ScreenBox *box);
 ubyte ac_show_mission_people_stats(struct ScreenBox *box);
 
-void draw_mission_stats_names_row(struct ScreenBox *box,
+void draw_mission_stats_names_column(struct ScreenBox *box,
   ubyte research_ln, ubyte scilost_ln)
 {
     short fheight, lnheight;
@@ -116,7 +118,7 @@ void draw_mission_stats_vals_static(struct ScreenBox *box,
     lnheight = fheight + 4;
 
     // Row with values
-    x = 300;
+    x = MISSION_STATS_SECOND_COLUMN_X;
     y = lnheight;
 
     // Reference no
@@ -197,7 +199,7 @@ void snprint_concat_comma_separated_weapons_list(char *out, ushort outlen, ulong
     }
 }
 
-void snprint_concat_comma_separated_vybmods_list(char *out, ushort outlen, ulong cybmods)
+void snprint_concat_comma_separated_cybmods_list(char *out, ushort outlen, ulong cybmods)
 {
     ushort mtype, mgrouptype;
     ushort gt_strid;
@@ -231,6 +233,18 @@ void snprint_concat_comma_separated_vybmods_list(char *out, ushort outlen, ulong
     }
 }
 
+short new_weapomn_mods_text_width(struct DebriefReport *p_rep)
+{
+    char locstr[40];
+
+    lbFontPtr = med_font;
+
+    locstr[0] = '\0';
+    snprint_concat_comma_separated_weapons_list(locstr, sizeof(locstr), p_rep->WeaponsResearched);
+    snprint_concat_comma_separated_cybmods_list(locstr, sizeof(locstr), p_rep->ModsResearched);
+
+    return LbTextStringWidth(locstr);
+}
 
 void draw_mission_stats_vals_dynamic(struct ScreenBox *box,
   struct DebriefReport *p_rep, ubyte research_ln, ubyte scilost_ln)
@@ -245,14 +259,14 @@ void draw_mission_stats_vals_dynamic(struct ScreenBox *box,
     fheight = font_height('A');
     lnheight = fheight + 4;
 
-    x = 300;
+    x = MISSION_STATS_SECOND_COLUMN_X;
     y = 8 * lnheight;
 
     if (research_ln > 0)
     {
         locstr[0] = '\0';
         snprint_concat_comma_separated_weapons_list(locstr, sizeof(locstr), p_rep->WeaponsResearched);
-        snprint_concat_comma_separated_vybmods_list(locstr, sizeof(locstr), p_rep->ModsResearched);
+        snprint_concat_comma_separated_cybmods_list(locstr, sizeof(locstr), p_rep->ModsResearched);
 
         text = (char *)(back_buffer + text_buf_pos);
         strcpy(text, locstr);
@@ -312,6 +326,8 @@ ubyte show_mission_stats(struct ScreenBox *box)
 
     if ((p_rep->WeaponsResearched != 0) || (p_rep->ModsResearched != 0)) {
         research_ln += 1;
+        if (new_weapomn_mods_text_width(p_rep) > box->Width - 8 - MISSION_STATS_SECOND_COLUMN_X)
+            research_ln += 1;
     }
     if (p_rep->ScientistsLost > 0) {
         scilost_ln += 1;
@@ -319,7 +335,7 @@ ubyte show_mission_stats(struct ScreenBox *box)
 
     if ((box->Flags & 0x8000) == 0)
     {
-        draw_mission_stats_names_row(box, research_ln, scilost_ln);
+        draw_mission_stats_names_column(box, research_ln, scilost_ln);
 
         if (scilost_ln > 0) {
             load_scientist_lost_reason(p_rep->SciLostReason);
@@ -335,7 +351,7 @@ ubyte show_mission_stats(struct ScreenBox *box)
     return 0;
 }
 
-void draw_mission_people_stats_names_row(struct ScreenBox *box,
+void draw_mission_people_stats_names_column(struct ScreenBox *box,
   struct DebriefReport *p_rep)
 {
     int fheight, lnheight;
@@ -377,7 +393,7 @@ void draw_mission_people_stats_names_row(struct ScreenBox *box,
     y += lnheight;
 }
 
-void draw_mission_people_stats_vals_row(struct ScreenBox *box,
+void draw_mission_people_stats_vals_column(struct ScreenBox *box,
   struct DebriefReport *p_rep)
 {
     char *text;
@@ -391,7 +407,7 @@ void draw_mission_people_stats_vals_row(struct ScreenBox *box,
     lnheight = fheight + 4;
 
     // Row with values
-    x = 300;
+    x = PEOPLE_STATS_SECOND_COLUMN_X;
     y = lnheight;
 
     snprintf(locstr, sizeof(locstr), "%d", mission_status[p_rep->BriefNo].CivsPersuaded);
@@ -453,7 +469,7 @@ void draw_mission_people_stats_vals_row(struct ScreenBox *box,
     y += lnheight;
 }
 
-void draw_mission_mp_players_names_row(struct ScreenBox *box,
+void draw_mission_mp_players_names_column(struct ScreenBox *box,
   struct DebriefReport *p_rep)
 {
     char *text;
@@ -522,7 +538,7 @@ void draw_mission_mp_players_names_row(struct ScreenBox *box,
     }
 }
 
-void draw_mission_mp_players_vals_row(struct ScreenBox *box,
+void draw_mission_mp_players_vals_column(struct ScreenBox *box,
   struct DebriefReport *p_rep)
 {
     char *text;
@@ -648,11 +664,11 @@ ubyte show_mission_people_stats(struct ScreenBox *box)
     {
         if (screentype == SCRT_9)
         {
-            draw_mission_people_stats_names_row(box, p_rep);
+            draw_mission_people_stats_names_column(box, p_rep);
         }
         else
         {
-            draw_mission_mp_players_names_row(box, p_rep);
+            draw_mission_mp_players_names_column(box, p_rep);
         }
         box->Flags |= 0x8000;
         copy_box_purple_list(box->X, box->Y, box->Width, box->Height);
@@ -660,11 +676,11 @@ ubyte show_mission_people_stats(struct ScreenBox *box)
 
     if (screentype == SCRT_9)
     {
-        draw_mission_people_stats_vals_row(box, p_rep);
+        draw_mission_people_stats_vals_column(box, p_rep);
     }
     else
     {
-        draw_mission_mp_players_vals_row(box, p_rep);
+        draw_mission_mp_players_vals_column(box, p_rep);
     }
     return 0;
 }
