@@ -189,6 +189,9 @@ void init_research_screen_boxes(void)
 {
     int i, val;
     const char *s;
+    short scr_w, start_x;
+
+    scr_w = lbDisplay.GraphicsWindowWidth;
 
     init_screen_box(&research_graph_box, 7u, 103u, 409u, 322, 6);
     init_screen_text_box(&research_progress_button, 7u, 72u, 409u, 23,
@@ -199,16 +202,11 @@ void init_research_screen_boxes(void)
       gui_strings[418], 6, med2_font, 1, 0);
 
     init_screen_button(&unkn12_WEAPONS_MODS_button, 616u, 302u,
-        gui_strings[450], 6, med2_font, 1, 128);
+        gui_strings[450], 6, med2_font, 1, 0x80);
     init_screen_button(&research_list_buttons[0], 425u, 404u,
      gui_strings[478], 6, med2_font, 1, 0);
     init_screen_button(&research_list_buttons[1], 425u, 404u,
       gui_strings[479], 6, med2_font, 1, 0);
-
-    research_list_buttons[0].X = ((104 - research_list_buttons[0].Width) >> 1)
-        + 425;
-    research_list_buttons[1].X = ((104 - research_list_buttons[1].Width) >> 1)
-        + 529;
 
     val = 0;
     for (i = 0; i < 2; i++)
@@ -247,6 +245,22 @@ void init_research_screen_boxes(void)
     else
         s = gui_strings[451];
     unkn12_WEAPONS_MODS_button.Width = my_string_width(s) + 4;
+
+    start_x = (scr_w - research_graph_box.Width - research_unkn21_box.Width - 23) / 2;
+
+    research_graph_box.X = start_x + 7;
+    research_progress_button.X = start_x + 7;
+    research_unkn21_box.X = research_graph_box.X + research_graph_box.Width + 9;
+    research_submit_button.X = research_unkn21_box.X + 5;
+    unkn12_WEAPONS_MODS_button.X = research_unkn21_box.X + research_unkn21_box.Width -
+      17 - unkn12_WEAPONS_MODS_button.Width;
+
+    // Middle of first half od the panel
+    research_list_buttons[0].X = research_unkn21_box.X +
+      (research_unkn21_box.Width / 2 - research_list_buttons[0].Width) / 2;
+    // Middle of 2nd half od the panel
+    research_list_buttons[1].X = research_unkn21_box.X + research_unkn21_box.Width -
+      research_unkn21_box.Width / 2 + (research_unkn21_box.Width / 2 - research_list_buttons[1].Width) / 2;
 }
 
 void reset_research_screen_boxes_flags(void)
