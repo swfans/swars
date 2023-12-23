@@ -612,69 +612,6 @@ TbBool cybmod_available_for_purchase(short mtype)
     return true;
 }
 
-void draw_text_property_bk(struct ScreenBoxBase *box, const char *text)
-{
-    my_set_text_window(box->X, box->Y, box->Width, box->Height);
-    lbDisplay.DrawFlags = Lb_TEXT_HALIGN_CENTER;
-    lbFontPtr = small_med_font;
-    draw_text_purple_list2(0, 0, text, 0);
-}
-
-void draw_text_property_lv(struct ScreenBoxBase *box, const char *text)
-{
-    short cy;
-    my_set_text_window(box->X, box->Y, box->Width, box->Height);
-    lbDisplay.DrawFlags = Lb_TEXT_HALIGN_CENTER;
-    lbFontPtr = small_med_font;
-    cy = box->Height - font_height('A');
-    draw_text_purple_list2(0, cy, text, 0);
-}
-
-void draw_discrete_rects_bar_bk(struct ScreenBoxBase *box, const char *text, TbPixel color)
-{
-    short n;
-    short n_rects = 8;
-    short rect_w, rect_h;
-    short cx, cy;
-
-    // Dimensions of one rectangle on the bar
-    rect_w = 9 * box->Width / (n_rects * 10);
-    rect_h = 7;
-
-    my_set_text_window(box->X, box->Y, box->Width, box->Height);
-    lbDisplay.DrawFlags = Lb_TEXT_HALIGN_CENTER;
-        lbFontPtr = small_med_font;
-    draw_text_purple_list2(0, 0, text, 0);
-
-    cy = box->Y + box->Height - rect_h;
-    for (n = 0; n < n_rects; n++)
-    {
-        cx = box->X + n * box->Width / n_rects;
-        draw_box_purple_list(cx, cy, rect_w, rect_h, color);
-    }
-}
-
-void draw_discrete_rects_bar_lv(struct ScreenBoxBase *box, int lv, int lv_max, TbPixel *colors)
-{
-    short n;
-    short n_rects = 8;
-    short rect_w, rect_h;
-    short cx, cy;
-
-    // Dimensions of one rectangle on the bar
-    rect_w = 9 * box->Width / (n_rects * 10);
-    rect_h = 7;
-
-    cy = box->Y + box->Height - rect_h;
-    for (n = 0; n < n_rects; n++)
-    {
-        if (lv_max * n / n_rects >= lv)
-            break;
-        cx = box->X + n * box->Width / n_rects;
-        draw_box_purple_list(cx, cy, rect_w, rect_h, colors[n]);
-    }
-}
-
 ubyte show_cryo_cybmod_list_box(struct ScreenTextBox *box)
 {
 #if 0

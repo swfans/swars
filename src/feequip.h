@@ -28,6 +28,7 @@ extern "C" {
 #pragma pack(1)
 
 struct ScreenShape;
+struct ScreenBoxBase;
 
 #pragma pack()
 /******************************************************************************/
@@ -39,6 +40,11 @@ void show_equipment_screen(void);
 
 ubyte flashy_draw_draw_equip_agent_name_shape(struct ScreenShape *shape, ubyte gbstate);
 void draw_equip_agent_name_shape(struct ScreenShape *shape, ubyte gbstate);
+
+void draw_text_property_bk(struct ScreenBoxBase *box, const char *text);
+void draw_text_property_lv(struct ScreenBoxBase *box, const char *text);
+void draw_discrete_rects_bar_bk(struct ScreenBoxBase *box, const char *text, TbPixel color);
+void draw_discrete_rects_bar_lv(struct ScreenBoxBase *box, int lv, int lv_max, TbPixel *colors);
 
 TbBool mouse_over_agent_panel_shape(struct ScreenShape *shape);
 ubyte flashy_draw_agent_panel_shape(struct ScreenShape *shape, ubyte gbstate);

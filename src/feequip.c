@@ -333,6 +333,69 @@ void draw_equip_agent_name_shape(struct ScreenShape *shape, ubyte gbstate)
     }
 }
 
+void draw_text_property_bk(struct ScreenBoxBase *box, const char *text)
+{
+    my_set_text_window(box->X, box->Y, box->Width, box->Height);
+    lbDisplay.DrawFlags = Lb_TEXT_HALIGN_CENTER;
+    lbFontPtr = small_med_font;
+    draw_text_purple_list2(0, 0, text, 0);
+}
+
+void draw_text_property_lv(struct ScreenBoxBase *box, const char *text)
+{
+    short cy;
+    my_set_text_window(box->X, box->Y, box->Width, box->Height);
+    lbDisplay.DrawFlags = Lb_TEXT_HALIGN_CENTER;
+    lbFontPtr = small_med_font;
+    cy = box->Height - font_height('A');
+    draw_text_purple_list2(0, cy, text, 0);
+}
+
+void draw_discrete_rects_bar_bk(struct ScreenBoxBase *box, const char *text, TbPixel color)
+{
+    short n;
+    short n_rects = 8;
+    short rect_w, rect_h;
+    short cx, cy;
+
+    // Dimensions of one rectangle on the bar
+    rect_w = 9 * box->Width / (n_rects * 10);
+    rect_h = 7;
+
+    my_set_text_window(box->X, box->Y, box->Width, box->Height);
+    lbDisplay.DrawFlags = Lb_TEXT_HALIGN_CENTER;
+        lbFontPtr = small_med_font;
+    draw_text_purple_list2(0, 0, text, 0);
+
+    cy = box->Y + box->Height - rect_h;
+    for (n = 0; n < n_rects; n++)
+    {
+        cx = box->X + n * box->Width / n_rects;
+        draw_box_purple_list(cx, cy, rect_w, rect_h, color);
+    }
+}
+
+void draw_discrete_rects_bar_lv(struct ScreenBoxBase *box, int lv, int lv_max, TbPixel *colors)
+{
+    short n;
+    short n_rects = 8;
+    short rect_w, rect_h;
+    short cx, cy;
+
+    // Dimensions of one rectangle on the bar
+    rect_w = 9 * box->Width / (n_rects * 10);
+    rect_h = 7;
+
+    cy = box->Y + box->Height - rect_h;
+    for (n = 0; n < n_rects; n++)
+    {
+        if (lv_max * n / n_rects >= lv)
+            break;
+        cx = box->X + n * box->Width / n_rects;
+        draw_box_purple_list(cx, cy, rect_w, rect_h, colors[n]);
+    }
+}
+
 void show_equipment_screen(void)
 {
 #if 0
@@ -598,44 +661,31 @@ ubyte display_weapon_info(struct ScreenTextBox *box)
         : "=r" (ret) : "a" (box));
     return ret;
 #else
-    short cx, cy;
-    short i, k;
-    const char *text;
+    short stridx;
+    struct ScreenBoxBase categ_box = {box->X + 8, box->Y + 148, 192, 17};
+    struct ScreenBoxBase power_box = {box->X + 8, box->Y + 177, 192, 17};
+    struct ScreenBoxBase range_box = {box->X + 8, box->Y + 202, 192, 17};
+    struct ScreenBoxBase energ_box = {box->X + 8, box->Y + 227, 192, 17};
 
     if ((box->Flags & 0x8000) == 0)
     {
-        lbDisplay.DrawFlags = 0x0004;
-        my_set_text_window(box->X + 4, box->Y + 4,
-            box->Width - 8, box->Height - 8);
+        lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
         draw_box_purple_list(box->X + 4, box->Y + 158,
             box->Width - 8, 13, 56);
         draw_box_purple_list(box->X + 4, box->Y + 174,
             box->Width - 8, 73, 56);
-        lbDisplay.DrawFlags = 0x0100;
-        lbFontPtr = small_med_font;
-        draw_text_purple_list2(0, 144, gui_strings[426], 0);
-        draw_text_purple_list2(0, 173, gui_strings[427], 0);
-        draw_text_purple_list2(0, 198, gui_strings[428], 0);
-        draw_text_purple_list2(0, 223, gui_strings[429], 0);
-        cy = box->Y + 187;
-        for (i = 0; i < 3; i++)
-        {
-            cx = box->X + 8;
-            for (k = 0; k < 8; k++)
-            {
-                if (i == 1)
-                    draw_box_purple_list(cx, cy, 22, 7, byte_155180);
-                else
-                    draw_box_purple_list(cx, cy, 22, 7, byte_155174);
-                cx += 24;
-            }
-            cy += 25;
-        }
+
+        draw_text_property_bk(&categ_box, gui_strings[426]);
+        draw_discrete_rects_bar_bk(&power_box, gui_strings[427], byte_155174);
+        draw_discrete_rects_bar_bk(&range_box, gui_strings[428], byte_155180);
+        draw_discrete_rects_bar_bk(&energ_box, gui_strings[429], byte_155174);
+
         lbDisplay.DrawFlags = 0;
         box->Flags |= 0x8000;
         copy_box_purple_list(box->X + 4, box->Y + 146, box->Width - 8, box->Height - 143);
     }
     my_set_text_window(box->X + 4, box->Y + 4, box->Width - 8, box->Height - 8);
+
     if (selected_weapon == -1)
         return 0;
     lbDisplay.DrawFlags = 0x0100;
@@ -643,37 +693,15 @@ ubyte display_weapon_info(struct ScreenTextBox *box)
 
     // Weapon category
     if (is_research_weapon_completed(selected_weapon + 1) || (login_control__State != 6))
-        text = gui_strings[59 + (weapon_defs[selected_weapon + 1].Sprite >> 8)];
+        stridx = 59 + (weapon_defs[selected_weapon + 1].Sprite >> 8);
     else
-        text = gui_strings[65];
-    draw_text_purple_list2(0, 157, text, 0);
+        stridx = 65;
+    draw_text_property_lv(&categ_box, gui_strings[stridx]);
 
-    cy = box->Y + 187;
-    cx = box->X + 8;
-    for (i = 0; i < 8; i++)
-    {
-        if (i < weapon_damage[selected_weapon])
-        draw_box_purple_list(cx, cy, 22, 7, byte_155175[i]);
-        cx += 24;
-    }
 
-    cy = cy + 25;
-    cx = box->X + 8;
-    for (i = 0; i < 8; i++)
-    {
-        if (i < weapon_range[selected_weapon])
-            draw_box_purple_list(cx, cy, 22, 7, byte_155181[i]);
-        cx += 24;
-    }
-
-    cy = cy + 25;
-    cx = box->X + 8;
-    for (i = 0; i < 8; i++)
-    {
-        if (i < weapon_nrg[selected_weapon])
-            draw_box_purple_list(cx, cy, 22, 7, byte_155175[i]);
-        cx += 24;
-    }
+    draw_discrete_rects_bar_lv(&power_box, weapon_damage[selected_weapon], 8, byte_155175);
+    draw_discrete_rects_bar_lv(&range_box, weapon_range[selected_weapon], 8, byte_155181);
+    draw_discrete_rects_bar_lv(&energ_box, weapon_nrg[selected_weapon], 8, byte_155175);
 
     if (equip_offer_can_buy_or_sell(selected_weapon + 1))
     {
