@@ -612,9 +612,72 @@ TbBool cybmod_available_for_purchase(short mtype)
     return true;
 }
 
+void draw_text_property_bk(struct ScreenBoxBase *box, const char *text)
+{
+    my_set_text_window(box->X, box->Y, box->Width, box->Height);
+    lbDisplay.DrawFlags = Lb_TEXT_HALIGN_CENTER;
+    lbFontPtr = small_med_font;
+    draw_text_purple_list2(0, 0, text, 0);
+}
+
+void draw_text_property_lv(struct ScreenBoxBase *box, const char *text)
+{
+    short cy;
+    my_set_text_window(box->X, box->Y, box->Width, box->Height);
+    lbDisplay.DrawFlags = Lb_TEXT_HALIGN_CENTER;
+    lbFontPtr = small_med_font;
+    cy = box->Height - font_height('A');
+    draw_text_purple_list2(0, cy, text, 0);
+}
+
+void draw_discrete_rects_bar_bk(struct ScreenBoxBase *box, const char *text, TbPixel color)
+{
+    short n;
+    short n_rects = 8;
+    short rect_w, rect_h;
+    short cx, cy;
+
+    // Dimensions of one rectangle on the bar
+    rect_w = 9 * box->Width / (n_rects * 10);
+    rect_h = 7;
+
+    my_set_text_window(box->X, box->Y, box->Width, box->Height);
+    lbDisplay.DrawFlags = Lb_TEXT_HALIGN_CENTER;
+        lbFontPtr = small_med_font;
+    draw_text_purple_list2(0, 0, text, 0);
+
+    cy = box->Y + box->Height - rect_h;
+    for (n = 0; n < n_rects; n++)
+    {
+        cx = box->X + n * box->Width / n_rects;
+        draw_box_purple_list(cx, cy, rect_w, rect_h, color);
+    }
+}
+
+void draw_discrete_rects_bar_lv(struct ScreenBoxBase *box, int lv, int lv_max, TbPixel *colors)
+{
+    short n;
+    short n_rects = 8;
+    short rect_w, rect_h;
+    short cx, cy;
+
+    // Dimensions of one rectangle on the bar
+    rect_w = 9 * box->Width / (n_rects * 10);
+    rect_h = 7;
+
+    cy = box->Y + box->Height - rect_h;
+    for (n = 0; n < n_rects; n++)
+    {
+        if (lv_max * n / n_rects >= lv)
+            break;
+        cx = box->X + n * box->Width / n_rects;
+        draw_box_purple_list(cx, cy, rect_w, rect_h, colors[n]);
+    }
+}
+
 ubyte show_cryo_cybmod_list_box(struct ScreenTextBox *box)
 {
-#if 1
+#if 0
     ubyte ret;
     asm volatile ("call ASM_show_cryo_cybmod_list_box\n"
         : "=r" (ret) : "a" (box));
@@ -623,49 +686,35 @@ ubyte show_cryo_cybmod_list_box(struct ScreenTextBox *box)
     ubyte modstrings[5];
 
     memcpy(modstrings, byte_1551F4, 5);
+    struct ScreenBoxBase power_box = {box->X + 8, box->Y + 152, 192, 17};
+    struct ScreenBoxBase resil_box = {box->X + 8, box->Y + 177, 192, 17};
+    struct ScreenBoxBase addit_box = {box->X + 8, box->Y + 200, 192, 19};
+
     if ((box->Flags & 0x8000) == 0)
     {
-        short cx, cy;
-        int i, k;
-
         lbDisplay.DrawFlags = 0x0004;
         draw_box_purple_list(text_window_x1, text_window_y1,
           text_window_x2 - text_window_x1 + 1, text_window_y2 - text_window_y1 + 1, 56);
         draw_box_purple_list(box->X + 4, box->Y + 149, box->Width - 8, 48, 56);
         draw_box_purple_list(box->X + 4, box->Y + 210, box->Width - 8, 13, 56);
-        my_set_text_window(box->X + 4, box->Y + 4, box->Width - 8, box->Height - 8);
-        lbDisplay.DrawFlags = 0x0100;
-        lbFontPtr = small_med_font;
-        draw_text_purple_list2(0, 148, gui_strings[432], 0);
-        draw_text_purple_list2(0, 173, gui_strings[433], 0);
-        draw_text_purple_list2(0, 196, gui_strings[434], 0);
 
-        cy = box->Y + 162;
-        for (i = 0; i < 2; i++)
-        {
-            cx = box->X + 8;
-            for (k = 0; k < 8; k++)
-            {
-                if (i == 0)
-                    draw_box_purple_list(cx, cy, 22, 7, byte_155174);
-                else if (i == 1)
-                    draw_box_purple_list(cx, cy, 22, 7, byte_155180);
-                cx += 24;
-            }
-            cy += 25;
-        }
+        draw_discrete_rects_bar_bk(&power_box, gui_strings[432], byte_155174);
+        draw_discrete_rects_bar_bk(&resil_box, gui_strings[433], byte_155180);
+        draw_text_property_bk(&addit_box, gui_strings[434]);
+
         lbDisplay.DrawFlags = 0;
-
         box->Flags |= 0x8000;
         copy_box_purple_list(box->X + 4, box->Y + 4 + box->ScrollWindowOffset,
           box->Width - 20, box->ScrollWindowHeight + 23);
+
         copy_box_purple_list(box->X + 4, box->Y + 149, box->Width - 8, box->Height - 146);
+
         my_set_text_window(box->X + 4, box->ScrollWindowOffset + box->Y + 4,
           box->Width - 20, box->ScrollWindowHeight + 23);
         lbFontPtr = small_med_font;
     }
 
-    if (selected_mod == -1)
+    if (selected_mod == -1) // No mod selected - show list of available ones
     {
         ushort mtype;
         short text_h;
@@ -747,33 +796,17 @@ ubyte show_cryo_cybmod_list_box(struct ScreenTextBox *box)
     }
     else
     {
-        short cx, cy;
-        int i;
+        struct ModDef *mdef;
 
-        lbDisplay.DrawFlags = 0x0100;
-        lbFontPtr = small_med_font;
-        my_set_text_window(box->X + 4, box->Y + 4, box->Width - 8, box->Height - 8);
-        draw_text_purple_list2(0, 208, gui_strings[645 + (mod_defs[selected_mod + 1].Sprite >> 8)], 0);
+        mdef = &mod_defs[selected_mod + 1];
 
-        cy = box->Y + 162;
-        cx = box->X + 8;
-        for (i = 0; i < 8; i++)
-        {
-            if (i < mod_defs[selected_mod + 1].PowerOutput)
-                draw_box_purple_list(cx, cy, 22, 7, byte_155175[i]);
-            cx += 24;
-        }
-        cy += 25;
-        cx = box->X + 8;
-        for (i = 0; i < 8; i++)
-        {
-            if (i < mod_defs[selected_mod + 1].Resilience)
-                draw_box_purple_list(cx, cy, 22, 7, byte_155181[i]);
-            cx += 24;
-        }
+        draw_discrete_rects_bar_lv(&power_box, mdef->PowerOutput, 8, byte_155175);
+        draw_discrete_rects_bar_lv(&resil_box, mdef->Resilience, 8, byte_155181);
+        draw_text_property_lv(&addit_box, gui_strings[645 + mdef->AdditProp]);
         lbDisplay.DrawFlags = 0;
 
-        draw_hotspot_purple_list(529, 257);
+        // Add control hotspot for the view / description switch
+        draw_hotspot_purple_list(box->X + box->Width / 2, box->Y + 104);
 
         if (byte_1C4AA0 || (1 << selected_mod >= 0x1000))
         {
@@ -789,7 +822,8 @@ ubyte show_cryo_cybmod_list_box(struct ScreenTextBox *box)
         }
         if (lbDisplay.LeftButton)
         {
-            if (mouse_down_over_box_coords(429, 157, 62, 297))
+            if (mouse_down_over_box_coords(box->X + 4,
+              box->Y + 4, box->X + box->Width - 4, box->Y + 4 + 140))
             {
                 lbDisplay.LeftButton = 0;
                 byte_1C4AA0 = byte_1C4AA0 == 0;

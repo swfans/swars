@@ -703,24 +703,27 @@ ubyte display_weapon_info(struct ScreenTextBox *box)
         draw_flic_purple_list(ac_weapon_flic_data_to_screen);
     }
 
-    if (lbDisplay.LeftButton && mouse_down_over_box_coords(box->X + 4,
+    if (mouse_down_over_box_coords(box->X + 4,
       box->Y + 4, box->X + box->Width - 4, box->Y + 4 + 140))
     {
-        lbDisplay.LeftButton = 0;
-        byte_1C4AA0 = (byte_1C4AA0 == 0);
-        if (!byte_1C4AA0)
+        if (lbDisplay.LeftButton)
         {
-            init_weapon_anim(selected_weapon);
-            return 0;
+            lbDisplay.LeftButton = 0;
+            byte_1C4AA0 = (byte_1C4AA0 == 0);
+            if (!byte_1C4AA0)
+            {
+                init_weapon_anim(selected_weapon);
+                return 0;
+            }
+            equip_display_box.Flags |= 0x0080;
+            equip_display_box.Lines = 0;
+            if (is_research_weapon_completed(selected_weapon + 1) ||
+              (login_control__State != 6))
+                box->Text = &weapon_text[weapon_text_index[selected_weapon]];
+            else
+                box->Text = gui_strings[536];
+            box->TextFadePos = -5;
         }
-        equip_display_box.Flags |= 0x0080;
-        equip_display_box.Lines = 0;
-        if (is_research_weapon_completed(selected_weapon + 1) ||
-          (login_control__State != 6))
-            box->Text = &weapon_text[weapon_text_index[selected_weapon]];
-        else
-            box->Text = gui_strings[536];
-        box->TextFadePos = -5;
     }
 
     return 0;
