@@ -6138,11 +6138,12 @@ ushort mission_fire_fail_triggers(ushort missi)
     return n;
 }
 
-void check_open_next_mission(ushort mslot, sbyte state)
+void check_delete_open_mission(ushort mslot, sbyte state)
 {
     ushort missi;
     TbBool conds_met;
 
+    // TODO close the part below into check_open_next_mission()
     missi = mission_open[mslot];
     if (state == 1) {
         mission_list[missi].Complete = state;
@@ -6302,14 +6303,10 @@ void check_open_next_mission(ushort mslot, sbyte state)
             }
         }
     }
-}
-
-void check_delete_open_mission(ushort mslot, sbyte state)
-{
-    ushort missi;
+    // TODO check_open_next_mission end
 
     //TODO place this call one level higher
-    check_open_next_mission(mslot, state);
+    //check_open_next_mission(mslot, state);
 
     missi = mission_open[mslot];
 
