@@ -1709,6 +1709,9 @@ void load_level_pc(short level, short missi, ubyte reload)
         LOGERR("Next level index is not positive, load skipped");
         return;
     }
+    LOGSYNC("Next level %hd prev level %hd mission %hd reload 0x%x",
+      next_level, prev_level, missi, (uint)reload);
+
     /* XXX: This fixes the inter-mission memory corruption bug
      * mefisto: No idea what "the" bug is, to be tested and described properly (or re-enabled)
      */
@@ -4744,7 +4747,9 @@ void prep_single_mission(void)
 void restart_back_into_mission(ushort missi)
 {
     ushort mapno;
+    ubyte reload;
 
+    reload = (missi == ingame.CurrentMission);
     mapno = mission_list[missi].MapNo;
     mission_result = 0;
     ingame.CurrentMission = missi;
@@ -4754,7 +4759,7 @@ void restart_back_into_mission(ushort missi)
     if (ingame.GameMode == GamM_Unkn2)
         execute_commands = 0;
     engn_yc = 0;
-    init_game(1);
+    init_game(reload);
     lbSeed = 0xD15C1234;
     if (pktrec_mode == PktR_RECORD)
     {
