@@ -6311,11 +6311,11 @@ void check_delete_open_mission(ushort mslot, sbyte state)
 
     missi = mission_open[mslot];
 
+    update_mission_list_to_mission_state(mslot, state);
+
     conds_met = check_mission_conds(missi);
 
     research_unkn_func_006(missi);
-
-    update_mission_list_to_mission_state(mslot, state);
 
     misend = check_open_next_mission(mslot, state);
 
