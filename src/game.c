@@ -228,6 +228,16 @@ extern ulong unkn_changing_color_counter1;
 extern short brightness;
 extern long game_speed;
 
+const char *miss_end_sta_names[] = {
+  "undecided state",
+  "ending success",
+  "ending fail",
+  "non-ending part success",
+  "non-ending part fail",
+  "imm. next after success",
+  "",
+};
+
 struct TbLoadFiles unk02_load_files[] =
 {
   { "*VESA",			(void **)&lbVesaData,		(void **)NULL,LB_VESA_DATA_SIZE, 1, 0 },
@@ -6309,6 +6319,10 @@ void check_delete_open_mission(ushort mslot, sbyte state)
 
     misend = check_open_next_mission(mslot, state);
 
+    LOGSYNC("Reached %s, mission=%d, current=%d, conds_met=%d",
+      miss_end_sta_names[misend], (int)missi,
+      (int)ingame.CurrentMission, (int)conds_met);
+
     switch (misend)
     {
     case OMiSta_EndSuccess:
@@ -6322,8 +6336,6 @@ void check_delete_open_mission(ushort mslot, sbyte state)
         if (conds_met) {
             mission_fire_success_triggers(missi);
         }
-        LOGSYNC("Immediate start next, mission=%d, current=%d",
-          (int)missi, (int)ingame.CurrentMission);
         compound_mission_immediate_start_next();
         break;
     case OMiSta_EndFailed:
