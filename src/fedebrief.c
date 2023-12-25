@@ -402,7 +402,7 @@ void draw_mission_people_stats_names_column(struct ScreenBox *box,
     lnheight = fheight + 4;
 
     // Row with names
-    x = 10;
+    x = 20;
     y = lnheight;
 
     draw_text_purple_list2(x, y, gui_strings[618], 0);
