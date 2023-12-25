@@ -111,6 +111,20 @@ enum PacketRecordMode {
   PktR_PLAYBACK = 0x2,
 };
 
+enum OpenMissionEndStatus {
+  OMiSta_NONE,
+  /** Mission completed successfully, and ended - no continuation exists */
+  OMiSta_EndSuccess,
+  /** Mission failed, and ended - no continuation allowed */
+  OMiSta_EndFailed,
+  /** Mission completed successfully, but is a part of unfinished multi-mission chain - requires continuation */
+  OMiSta_ContSuccess,
+  /** Mission failed, but non-failable - is left active and can be repeated later */
+  OMiSta_ContFailed,
+  /** Mission completed successfully, but is a part of multi-mission chain with immediately starting next mission */
+  OMiSta_ContImmSuccess,
+};
+
 enum MissionFMVPlay {
     MPly_Intro,
     MPly_MissiComplete,

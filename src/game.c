@@ -6138,12 +6138,10 @@ ushort mission_fire_fail_triggers(ushort missi)
     return n;
 }
 
-void check_delete_open_mission(ushort mslot, sbyte state)
+void update_mission_list_to_mission_state(ushort mslot, sbyte state)
 {
     ushort missi;
-    TbBool conds_met;
 
-    // TODO close the part below into check_open_next_mission()
     missi = mission_open[mslot];
     if (state == 1) {
         mission_list[missi].Complete = state;
@@ -6153,36 +6151,28 @@ void check_delete_open_mission(ushort mslot, sbyte state)
     } else {
           mission_list[missi].Complete = state;
     }
+}
 
-    conds_met = check_mission_conds(missi);
+ubyte check_open_next_mission(ushort mslot, sbyte state)
+{
+    ushort missi;
 
-    research_unkn_func_006(missi);
+    missi = mission_open[mslot];
 
     if (mission_has_no_special_triggers(missi))
     {
-        LOGSYNC("SpecialTriggers none, mission=%d, state=%d triggers=%d",
-          (int)missi, (int)state, (int)conds_met);
+        LOGSYNC("SpecialTriggers none, mission=%d, state=%d",
+          (int)missi, (int)state);
         if (state == 1)
         {
-            if (conds_met)
-            {
-                mission_fire_success_triggers(missi);
-            }
-            if (mission_has_immediate_next_on_success(ingame.CurrentMission))
-            {
-                LOGSYNC("Immediate start next (ST no), mission=%d, current=%d",
-                  (int)missi, (int)ingame.CurrentMission);
-                compound_mission_immediate_start_next();
-                return;
-            }
-            play_smacker(MPly_MissiComplete);
+            if (mission_has_immediate_next_on_success(missi))
+                return OMiSta_ContImmSuccess;
+            else
+                return OMiSta_EndSuccess;
         }
         else if (state == -1)
         {
-            if (conds_met)
-            {
-                mission_fire_fail_triggers(missi);
-            }
+            return OMiSta_EndFailed;
         }
     }
     else if (mission_special_triggers_2_is_self(missi))
@@ -6194,8 +6184,8 @@ void check_delete_open_mission(ushort mslot, sbyte state)
             trg_missi = mission_list[missi].SpecialTrigger[1];
         if (trg_missi != 0)
         {
-            LOGSYNC("SpecialTriggers self-owned and set, mission=%d, state=%d triggers=%d",
-              (int)missi, (int)state, (int)conds_met);
+            LOGSYNC("SpecialTriggers self-owned and set, mission=%d, state=%d",
+              (int)missi, (int)state);
             if (state == 1)
             {
                 brief_store[open_brief - 1].Mission = trg_missi;
@@ -6204,55 +6194,47 @@ void check_delete_open_mission(ushort mslot, sbyte state)
                 mission_reset_spec_triggers_2_chain(trg_missi);
 
                 ingame.MissionStatus = 0;
+
+                return OMiSta_ContSuccess;
             }
             else if (state == -1)
             {
                 if (mission_remain_until_success(missi))
                 {
                     ingame.MissionStatus = 0;
+
+                    return OMiSta_ContFailed;
                 }
                 else
                 {
-                    if (conds_met)
-                    {
-                        mission_fire_fail_triggers(missi);
-                    }
-
                     mission_special_triggers_0_1_set_fail(trg_missi);
+
+                    return OMiSta_EndFailed;
                 }
             }
         }
         else
         {
-            LOGSYNC("SpecialTriggers self-owned but unset, mission=%d, state=%d triggers=%d",
-              (int)missi, (int)state, (int)conds_met);
+            LOGSYNC("SpecialTriggers self-owned but unset, mission=%d, state=%d",
+              (int)missi, (int)state);
             if (state == 1)
             {
-                if (conds_met)
-                {
-                    mission_fire_success_triggers(missi);
-                }
-                if (mission_has_immediate_next_on_success(ingame.CurrentMission))
-                {
-                    LOGSYNC("Immediate start next (ST so), mission=%d, current=%d",
-                      (int)missi, (int)ingame.CurrentMission);
-                    compound_mission_immediate_start_next();
-                    return;
-                }
-                play_smacker(MPly_MissiComplete);
+                if (mission_has_immediate_next_on_success(missi))
+                    return OMiSta_ContImmSuccess;
+                else
+                    return OMiSta_EndSuccess;
             }
             else if (state == -1)
             {
                 if (mission_remain_until_success(missi))
                 {
                     ingame.MissionStatus = 0;
+
+                    return OMiSta_ContFailed;
                 }
                 else
                 {
-                    if (conds_met)
-                    {
-                        mission_fire_fail_triggers(missi);
-                    }
+                    return OMiSta_EndFailed;
                 }
             }
         }
@@ -6286,38 +6268,71 @@ void check_delete_open_mission(ushort mslot, sbyte state)
                     mission_list[next_missi].SpecialTrigger[0] = mission_list[tmp_missi].SpecialTrigger[1];
             }
             ingame.MissionStatus = 0;
+
+            return OMiSta_ContSuccess;
         }
         else if (state == -1)
         {
             if (mission_remain_until_success(missi))
             {
                 ingame.MissionStatus = 0;
+
+                return OMiSta_ContFailed;
             }
             else
             {
-                if (conds_met)
-                {
-                    mission_fire_fail_triggers(trg_missi);
-                }
                 mission_special_triggers_0_1_set_fail(trg_missi);
+
+                return OMiSta_EndFailed;
             }
         }
     }
-    // TODO check_open_next_mission end
+    return OMiSta_NONE;
+}
 
-    //TODO place this call one level higher
-    //check_open_next_mission(mslot, state);
+// TODO it does more than the delete; rename or divide
+void check_delete_open_mission(ushort mslot, sbyte state)
+{
+    ushort missi;
+    TbBool conds_met;
+    ubyte misend;
 
     missi = mission_open[mslot];
 
-    if (mission_has_immediate_next_on_success(missi))
-        return;
+    conds_met = check_mission_conds(missi);
 
-    if (mission_remain_until_success(missi))
-        return;
+    research_unkn_func_006(missi);
 
-    if (state == 1) {
+    update_mission_list_to_mission_state(mslot, state);
+
+    misend = check_open_next_mission(mslot, state);
+
+    switch (misend)
+    {
+    case OMiSta_EndSuccess:
+        if (conds_met) {
+            mission_fire_success_triggers(missi);
+        }
+        play_smacker(MPly_MissiComplete);
         remove_mission_state_slot(mslot);
+        break;
+    case OMiSta_ContImmSuccess:
+        if (conds_met) {
+            mission_fire_success_triggers(missi);
+        }
+        LOGSYNC("Immediate start next, mission=%d, current=%d",
+          (int)missi, (int)ingame.CurrentMission);
+        compound_mission_immediate_start_next();
+        break;
+    case OMiSta_EndFailed:
+        if (conds_met) {
+            mission_fire_fail_triggers(missi);
+        }
+        break;
+    case OMiSta_ContSuccess:
+        break;
+    case OMiSta_ContFailed:
+        break;
     }
 }
 
