@@ -55,7 +55,7 @@ enum ObjectiveDefFlags {
     /** Any Thing reference in Thing and UniqueID fields */
     ObDF_ReqThing = 0x0020,
     /** Count/Amount in Thing field */
-    ObDF_ReqCount = 0x0020,
+    ObDF_ReqCount = 0x0040,
     /* === What to place in Coord/Radius === */
     /** Coordinates in X/Y/Z fields (or only X/Z, if the Y is reused) */
     ObDF_ReqCoord = 0x0100,
