@@ -1260,9 +1260,9 @@ short test_objective(ushort objectv, ushort show_obj)
     {
         p_objectv = &game_used_lvl_objectives[objectv];
         if (((ingame.UserFlags & UsrF_Cheats) != 0) &&
-          (p_objectv->Status != 2) && lbKeyOn[KC_BACKSLASH])
+          (p_objectv->Status != 2) && lbKeyOn[KC_SLASH] && (lbShift & KMod_ALT))
         {
-            lbKeyOn[KC_BACKSLASH] = 0;
+            lbKeyOn[KC_SLASH] = 0;
             p_objectv->Status = 2;
         }
         if (p_objectv->Status == 2)
@@ -1274,9 +1274,9 @@ short test_objective(ushort objectv, ushort show_obj)
     {
         p_objectv = &game_used_objectives[objectv];
         if (((ingame.UserFlags & 0x04) != 0) &&
-          (p_objectv->Status != 2) && lbKeyOn[KC_BACKSLASH])
+          (p_objectv->Status != 2) && lbKeyOn[KC_SLASH] && (lbShift & KMod_ALT))
         {
-            lbKeyOn[KC_BACKSLASH] = 0;
+            lbKeyOn[KC_SLASH] = 0;
             p_objectv->Status = 2;
         }
         if (p_objectv->Status == 2)
