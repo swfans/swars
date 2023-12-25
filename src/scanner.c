@@ -516,7 +516,7 @@ void add_signal_to_scanner(struct Objective *p_objectv, ubyte flag)
         turn_last = gameturn;
         ingame.Scanner.GroupCount = 0;
     }
-    if ((p_objectv == NULL) || ((p_objectv->Flags & 0x01) != 0))
+    if ((p_objectv == NULL) || ((p_objectv->Flags & GObjF_HIDDEN) != 0))
         return;
 
     if (signal_count >= SCANNER_BIG_BLIP_COUNT) {

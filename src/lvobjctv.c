@@ -602,7 +602,7 @@ void draw_objective(ushort objectv, ubyte flag)
 
     if (!byte_1C844F)
     {
-        if ((p_objectv->Flags & 0x01) != 0)
+        if ((p_objectv->Flags & GObjF_HIDDEN) != 0)
             scroll_text = "-";
         else if (p_objectv->ObjText != 0)
             scroll_text = objective_text[p_objectv->ObjText];
@@ -1273,7 +1273,7 @@ short test_objective(ushort objectv, ushort show_obj)
     else
     {
         p_objectv = &game_used_objectives[objectv];
-        if (((ingame.UserFlags & 0x04) != 0) &&
+        if (((ingame.UserFlags & UsrF_Cheats) != 0) &&
           (p_objectv->Status != 2) && lbKeyOn[KC_SLASH] && (lbShift & KMod_ALT))
         {
             lbKeyOn[KC_SLASH] = 0;
@@ -1281,11 +1281,11 @@ short test_objective(ushort objectv, ushort show_obj)
         }
         if (p_objectv->Status == 2)
             return 1;
-        if (((p_objectv->Flags & 0x01) == 0) && word_1C8446 && (show_obj != 0))
+        if (((p_objectv->Flags & GObjF_HIDDEN) == 0) && word_1C8446 && (show_obj != 0))
             draw_objective(objectv, 0);
         if (show_obj != 0)
             add_signal_to_scanner(p_objectv, 0);
-        if ((p_objectv->Flags & 0x02) != 0)
+        if ((p_objectv->Flags & GObjF_CANT_MET) != 0)
             return 1;
         if (p_objectv->Status == 1)
             return -1;
