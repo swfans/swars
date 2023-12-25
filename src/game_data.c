@@ -18,6 +18,7 @@
 /******************************************************************************/
 #include "game_data.h"
 
+#include <assert.h>
 #include "globals.h"
 #include "bflib_basics.h"
 #include "bffile.h"
@@ -322,6 +323,20 @@ void adjust_memory_use(void)
     }
 }
 
+uint memory_table_entries(MemSystem *mem_table)
+{
+    MemSystem *ment;
+    uint i;
+
+    i = 0;
+    ment = mem_table;
+    while (ment->BufferPtr != NULL) {
+        ment++;
+        i++;
+    }
+    return i;
+}
+
 void init_memory(MemSystem *mem_table)
 {
 #if 0
@@ -335,14 +350,8 @@ void init_memory(MemSystem *mem_table)
     int i;
     ulong k;
 
-    i = 0;
     totlen = 8192;
-    ment = mem_table;
-    while (ment->BufferPtr != NULL) {
-        ment++;
-        i++;
-    }
-    mem_table_len = i;
+    mem_table_len = memory_table_entries(mem_table);
 
     p = scratch_malloc_mem;
     for (i = mem_table_len - 1; i >= 0; i--)
@@ -363,6 +372,7 @@ void init_memory(MemSystem *mem_table)
                 k = ment->N * ment->ESize;
                 k = (k + 4) & ~0x3;
                 totlen += k;
+                assert(totlen <= engine_mem_alloc_size);
             }
             else
             {

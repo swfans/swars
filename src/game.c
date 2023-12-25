@@ -87,6 +87,15 @@
 
 #define SAVEGAME_PATH "qdata/savegame/"
 
+/** Expected sizes for font DAT/TAB files for resolution 320x200.
+ * Each file has 205 sprites, TAB has 6 bytes per entry, DAT varies to use empirical value.
+ */
+#define EXPECTED_FONT_DAT_TAB_SIZE_8 (205 * 6 + 205 * 34)
+
+/** Expected sizes for translation strings TXT files.
+ */
+#define EXPECTED_LANG_TXT_SIZE 8000
+
 #pragma pack(1)
 
 struct GamePanel
@@ -1060,61 +1069,57 @@ void load_outro_sprites(void)
     ubyte *data_buf;
     ubyte *outtxt_ptr;
     ubyte *peptxt_ptr;
-    int next_pos;
-    int tit_font_pos;
-    int med_font_pos;
-    int big_font_pos;
-    int big_font_end_pos;
-    int med2_font_pos;
-    int med2_font_end_pos;
+    int next_pos, next_len;
+    int total_allocs;
 
-    next_pos = engine_mem_alloc_size - 81920;
+    total_allocs = 3 * EXPECTED_FONT_DAT_TAB_SIZE_8 + 2 * EXPECTED_LANG_TXT_SIZE;
+    next_pos = engine_mem_alloc_size - 64000 - total_allocs;
+
+    assert(next_pos >= 0);
     data_buf = engine_mem_alloc_ptr + next_pos;
 
-    med_font_data = &data_buf[0];
-    next_pos = LbFileLoadAt("data/tit-font.dat", med_font_data);
-    next_pos += 0;
-    tit_font_pos = next_pos;
-    med_font = (struct TbSprite *)&data_buf[tit_font_pos];
-    next_pos = LbFileLoadAt("data/tit-font.tab", med_font);
-    next_pos += tit_font_pos;
-    med_font_pos = next_pos;
-    med_font_end = (struct TbSprite *)&data_buf[med_font_pos];
+    next_pos = 0;
+    med_font_data = &data_buf[next_pos];
+    next_len = LbFileLoadAt("data/tit-font.dat", med_font_data);
+    next_pos += next_len;
+    med_font = (struct TbSprite *)&data_buf[next_pos];
+    next_len = LbFileLoadAt("data/tit-font.tab", med_font);
+    next_pos += next_len;
+    med_font_end = (struct TbSprite *)&data_buf[next_pos];
 
-    big_font_data = &data_buf[med_font_pos];
-    next_pos = LbFileLoadAt("data/nam-font.dat", big_font_data);
-    next_pos += med_font_pos;
-    big_font_pos = next_pos;
-    big_font = (struct TbSprite *)&data_buf[big_font_pos];
-    next_pos = LbFileLoadAt("data/nam-font.tab", big_font);
-    next_pos += big_font_pos;
-    big_font_end_pos = next_pos;
-    big_font_end = (struct TbSprite *)&data_buf[big_font_end_pos];
+    big_font_data = &data_buf[next_pos];
+    next_len = LbFileLoadAt("data/nam-font.dat", big_font_data);
+    next_pos += next_len;
+    big_font = (struct TbSprite *)&data_buf[next_pos];
+    next_len = LbFileLoadAt("data/nam-font.tab", big_font);
+    next_pos += next_len;
+    big_font_end = (struct TbSprite *)&data_buf[next_pos];
 
-    med2_font_data = &data_buf[big_font_end_pos];
-    next_pos = LbFileLoadAt("data/qot-font.dat", med2_font_data);
-    next_pos += big_font_end_pos;
-    med2_font_pos = next_pos;
-    med2_font = (struct TbSprite *)&data_buf[med2_font_pos];
-    next_pos = LbFileLoadAt("data/qot-font.tab", med2_font);
-    next_pos += med2_font_pos;
-    med2_font_end_pos = next_pos;
-    med2_font_end = (struct TbSprite *)&data_buf[med2_font_end_pos];
+    med2_font_data = &data_buf[next_pos];
+    next_len = LbFileLoadAt("data/qot-font.dat", med2_font_data);
+    next_pos += next_len;
+    med2_font = (struct TbSprite *)&data_buf[next_pos];
+    next_len = LbFileLoadAt("data/qot-font.tab", med2_font);
+    next_pos += next_len;
+    med2_font_end = (struct TbSprite *)&data_buf[next_pos];
 
     LbSpriteSetup(med_font, med_font_end, med_font_data);
     LbSpriteSetup(med2_font, med2_font_end, med2_font_data);
     LbSpriteSetup(big_font, big_font_end, big_font_data);
 
-    outtxt_ptr = &data_buf[med2_font_end_pos];
-    next_pos = load_outro_text(outtxt_ptr);
-    next_pos = med2_font_end_pos + next_pos;
+    outtxt_ptr = &data_buf[next_pos];
+    next_len = load_outro_text(outtxt_ptr);
+    next_pos += next_len;
 
     outro_unkn01 = 1;
     outro_unkn02 = 0;
     outro_unkn03 = 0;
 
     peptxt_ptr = &data_buf[next_pos];
-    next_pos = load_people_text(peptxt_ptr);
+    next_len = load_people_text(peptxt_ptr);
+    next_pos += next_len;
+
+    assert(next_pos <= total_allocs);
 }
 
 void fill_floor_textures(void)
@@ -1588,7 +1593,7 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
             level_def.PlayableGroups[i] = 0;
     }
 
-    LbFileRead(lev_fh, engine_mem_alloc_ptr + engine_mem_alloc_size - 1353, 1320);
+    LbFileRead(lev_fh, engine_mem_alloc_ptr + engine_mem_alloc_size - 1320 - 33, 1320);
     LbFileRead(lev_fh, war_flags, 32 * sizeof(struct WarFlag));
     LbFileRead(lev_fh, &word_1531E0, sizeof(ushort));
     LOGSYNC("Level fmtver=%lu n_command=%hu word_1531E0=%hu", fmtver, next_command, word_1531E0);
