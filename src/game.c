@@ -734,6 +734,21 @@ void sprint_fmv_filename(ushort vid_type, char *fnbuf, ulong buflen)
             sprintf(fnbuf, "intro/%s", fname);
         break;
     case MPly_MissiComplete:
+        switch (background_type)
+        {
+        case 0:
+            fname = "syn_mc.smk";
+            sprintf(fnbuf, "qdata/%s", fname);
+            break;
+        case 1:
+            fname = "zel-mc.smk";
+            sprintf(fnbuf, "qdata/%s", fname);
+            break;
+        default:
+            fnbuf[0] = '\0';
+            break;
+        }
+        break;
     case MPly_MPartComplete:
         switch (background_type)
         {
@@ -749,8 +764,7 @@ void sprint_fmv_filename(ushort vid_type, char *fnbuf, ulong buflen)
             }
             else
             {
-                fname = "syn_mc.smk";
-                sprintf(fnbuf, "qdata/%s", fname);
+                fnbuf[0] = '\0';
             }
             break;
         case 1:
@@ -765,8 +779,7 @@ void sprint_fmv_filename(ushort vid_type, char *fnbuf, ulong buflen)
             }
             else
             {
-                fname = "zel-mc.smk";
-                sprintf(fnbuf, "qdata/%s", fname);
+                fnbuf[0] = '\0';
             }
             break;
         default:
@@ -6385,7 +6398,8 @@ void check_delete_open_mission(ushort mslot, sbyte state)
         }
         show_black_screen();
         LbFileLoadAt("qdata/pal.pal", display_palette);
-        // The setup_screen_mode() will automatically switch to display_palette
+        // The setup_screen_mode() within play_smacker() will
+        // automatically switch current pal to display_palette
         play_smacker_then_back_to_engine(MPly_MPartComplete);
         compound_mission_immediate_start_next();
         break;
