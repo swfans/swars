@@ -42,6 +42,16 @@ struct BfSoundBankHead {
   long DatSize;
 };
 
+struct BfSfxInfo { // sizeof=32
+  char FileName[12];
+  long sffld_12;
+  short sffld_16;
+  ubyte *DataBeg;
+  long sffld_22;
+  ubyte *DataEnd;
+  short sffld_30;
+};
+
 #pragma pack()
 
 
@@ -50,6 +60,8 @@ extern TbBool DisableLoadSounds;
 
 extern TbBool SoundAble;
 extern ushort SoundType;
+
+extern ushort NumberOfSamples;
 
 extern TbBool sample_queue_handle_initiated;
 extern TbBool sample_queue_handle_stopped;
@@ -83,8 +95,34 @@ void StopSampleQueueList(void)
 
 void format_sounds(void)
 {
+#if 0
     asm volatile ("call ASM_format_sounds\n"
         :  : );
+#else
+    short n;
+    struct BfSfxInfo *sfiend;
+    ubyte *dt;
+    struct BfSfxInfo *sfi;
+
+    n = NumberOfSamples;
+    sfiend = (struct BfSfxInfo *)EndSfxs;
+    sfi = (struct BfSfxInfo *)Sfx;
+    dt = SfxData;
+    if ((Sfx != NULL) && (dt != NULL))
+    {
+        n = 0;
+        for (sfi++; sfi < sfiend; sfi++)
+        {
+            ulong offs;
+            offs = (ulong)sfi->DataBeg;
+            sfi->DataBeg = &dt[offs];
+            n++;
+        }
+    }
+    SfxData = dt;
+    EndSfxs = sfiend;
+    NumberOfSamples = n;
+#endif
 }
 
 ubyte load_sound_bank(TbFileHandle fh, ubyte bank_tpno)

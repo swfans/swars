@@ -280,7 +280,7 @@ static void DoFreeSound(void)
     sprintf(SoundInstallChoice.driver_name, "none");
     if (Sfx != NULL) {
         LbMemoryFree(Sfx);
-        EndSfxs = 0;
+        EndSfxs = NULL;
     }
     if (SfxData != NULL)
         LbMemoryFree(SfxData);
