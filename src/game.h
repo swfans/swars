@@ -768,7 +768,7 @@ TbBool is_unkn_current_player(void);
 void campaign_new_game_prepare(void);
 
 void process_sound_heap(void);
-void person_func_unknown_310(ubyte a1);
+void update_danger_music(ubyte a1);
 ushort my_draw_text(short x, short y, const char *text, ushort startline);
 void bang_set_detail(int a1);
 

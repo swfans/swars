@@ -183,6 +183,7 @@ extern ubyte byte_1C83D1;
 extern ubyte byte_1CAB64[];
 extern ubyte byte_1DB088[];
 extern long dword_1DC36C;
+extern long dword_1DDECC;
 extern long sound_heap_size;
 extern struct SampleTable *sound_heap_memory;
 
@@ -652,10 +653,68 @@ void flic_unkn03(ubyte a1)
         : : "a" (a1));
 }
 
-void person_func_unknown_310(ubyte a1)
+void update_danger_music(ubyte a1)
 {
-    asm volatile ("call ASM_person_func_unknown_310\n"
+#if 0
+    asm volatile ("call ASM_update_danger_music\n"
         :  : "a" (a1));
+#else
+    short hurt_agents;
+    struct Thing *p_agent;
+
+    switch (a1)
+    {
+    case 1: // force start danger music
+        dword_1DDECC = 101;
+        ingame.fld_unkC8B = 1;
+        break;
+    case 2: // stop danger music
+        ingame.fld_unkC8B = 0;
+        dword_1DDECC = 0;
+        SetMusicVolume(3000, 0);
+        break;
+    case 0: // standard ingame check for the music
+        dword_1DDECC++;
+        break;
+    }
+    if (dword_1DDECC > 100)
+    {
+        hurt_agents = ingame.fld_unkC8B;
+        if (hurt_agents == 0)
+        {
+            short i;
+            for (i = 0; i < playable_agents; i++)
+            {
+                p_agent = players[local_player_no].MyAgent[i];
+                if (((p_agent->Flag & 0x02) == 0) &&
+                  (p_agent->Health < p_agent->U.UPerson.MaxHealth / 2)) {
+                    dword_1DDECC = -100;
+                    hurt_agents++;
+                }
+            }
+        }
+        if (ingame.fld_unk7DA == 1)
+        {
+            if (hurt_agents) {
+                dword_1DDECC = 101;
+            } else {
+                SetMusicVolume(3000, 0);
+                ingame.fld_unk7DA = 0;
+            }
+        }
+        if (ingame.fld_unk7DA == 0)
+        {
+            if (hurt_agents) {
+                SetMusicVolume(300, 127);
+                dword_1DDECC = -40;
+                ingame.fld_unk7DA = 1;
+            } else {
+                dword_1DDECC = 101;
+            }
+        }
+    }
+    ingame.fld_unkC8B = 0;
+#endif
 }
 
 void sprint_fmv_filename(ushort vid_type, char *fnbuf, ulong buflen)
@@ -774,20 +833,21 @@ void play_smacker(ushort vid_type)
         unkn_flags_01 &= ~0x01;
         return;
     }
-    person_func_unknown_310(2);
+    update_danger_music(2);
+
+    sprint_fmv_filename(vid_type, fname, sizeof(fname));
 
     if (vid_type == MPly_Intro) {
         scr_md_fmvid = screen_mode_fmvid_lo;
     } else {
         scr_md_fmvid = screen_mode_fmvid_hi;
     }
-    if (lbDisplay.ScreenMode != scr_md_fmvid)
+    if ((lbDisplay.ScreenMode != scr_md_fmvid) && (fname[0] != '\0'))
         setup_simple_screen_mode(scr_md_fmvid);
     LbMouseChangeSprite(NULL);
-    show_black_screen();
 
-    sprint_fmv_filename(vid_type, fname, sizeof(fname));
     if (fname[0] != '\0') {
+        show_black_screen();
         play_smk(fname, 13, 0);
         smack_malloc_free_all();
     }
@@ -801,8 +861,6 @@ void play_smacker_then_back_to_engine(ushort vid_type)
 
     bkpmode = lbDisplay.ScreenMode;
     play_smacker(vid_type);
-    LbFileLoadAt("qdata/pal.pal", display_palette);
-    // The setup_screen_mode() will automatically switch to display_palette
     setup_screen_mode(bkpmode);
 }
 
@@ -838,7 +896,6 @@ void play_intro(void)
     }
     if (cmdln_param_bcg)
         setup_screen_mode(screen_mode_menu);
-    flic_unkn03(1u);
 }
 
 int setup_heap_manager(struct SampleTable *smptable, size_t a2, const char *fname, unsigned int a4)
@@ -4114,6 +4171,7 @@ void setup_host(void)
         PacketRecord_OpenRead();
     }
     play_intro();
+    flic_unkn03(1u);
 }
 
 void set_default_user_settings(void)
@@ -4791,20 +4849,10 @@ void compound_mission_immediate_start_next(void)
 {
     ushort old_missi, new_missi;
 
-    show_black_screen();
-    LbFileLoadAt("qdata/pal.pal", display_palette);
-    LbPaletteSet(display_palette);
-
     old_missi = ingame.CurrentMission;
     new_missi = mission_list[old_missi].SuccessTrigger[0];
     brief_store[open_brief - 1].Mission = new_missi;
     replace_mission_state_slot(old_missi, new_missi);
-
-    // TODO MISSI specific missions hard-coded - remove
-    if (ingame.CurrentMission == 84)
-    {
-        play_smacker_then_back_to_engine(MPly_MPartComplete);
-    }
 
     restart_back_into_mission(new_missi);
 }
@@ -6335,6 +6383,10 @@ void check_delete_open_mission(ushort mslot, sbyte state)
         if (conds_met) {
             mission_fire_success_triggers(missi);
         }
+        show_black_screen();
+        LbFileLoadAt("qdata/pal.pal", display_palette);
+        // The setup_screen_mode() will automatically switch to display_palette
+        play_smacker_then_back_to_engine(MPly_MPartComplete);
         compound_mission_immediate_start_next();
         break;
     case OMiSta_EndFailed:
@@ -7133,7 +7185,7 @@ ubyte do_user_interface(void)
     int n;
 
     p_locplayer = &players[local_player_no];
-    person_func_unknown_310(0);
+    update_danger_music(0);
     do_scroll_map();
     do_rotate_map();
     if (in_network_game)

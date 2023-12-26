@@ -248,7 +248,7 @@ TbBool pause_screen_handle(void)
     else
         colr1 = 40;
     snd_unkn1_volume_all_samples();
-    person_func_unknown_310(2u);
+    update_danger_music(2);
 
     // Wait for the pause key to be released
     lbKeyOn[kbkeys[GKey_PAUSE]] = 0;
