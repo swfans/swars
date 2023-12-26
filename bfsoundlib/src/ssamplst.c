@@ -95,10 +95,6 @@ void StopSampleQueueList(void)
 
 void format_sounds(void)
 {
-#if 0
-    asm volatile ("call ASM_format_sounds\n"
-        :  : );
-#else
     short n;
     struct BfSfxInfo *sfiend;
     ubyte *dt;
@@ -122,17 +118,10 @@ void format_sounds(void)
     SfxData = dt;
     EndSfxs = sfiend;
     NumberOfSamples = n;
-#endif
 }
 
 ubyte load_sound_bank(TbFileHandle fh, ubyte bank_tpno)
 {
-#if 0
-    ubyte ret;
-    asm volatile ("call ASM_load_sound_bank\n"
-        : "=r" (ret) : "a" (fh),  "d" (bank_tpno));
-    return ret;
-#else
     struct BfSoundBankHead head[9];
 
     LbFileRead(fh, head, 9 * sizeof(struct BfSoundBankHead));
@@ -175,7 +164,6 @@ ubyte load_sound_bank(TbFileHandle fh, ubyte bank_tpno)
 
     SoundAble = 1;
     return 1;
-#endif
 }
 
 int LoadSounds(ubyte bank_no)

@@ -217,10 +217,6 @@ int AllocateSoundBankMemory(ushort snd_type)
 
 void DetermineSoundType(void)
 {
-#if 0
-    asm volatile ("call ASM_DetermineSoundType\n"
-        :  :  : "eax" );
-#else
     int ret;
     ubyte tpno;
 
@@ -260,7 +256,6 @@ void DetermineSoundType(void)
             break;
     }
     SoundType = 0;
-#endif
 }
 
 static void DoFreeSound(void)
