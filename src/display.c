@@ -138,7 +138,6 @@ void setup_simple_screen_mode(TbScreenMode mode)
     else
         ratio = 1;
     LbMouseSetup(NULL, ratio, ratio);
-    show_black_screen();
 }
 
 void setup_screen_mode(TbScreenMode mode)

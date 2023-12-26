@@ -374,7 +374,8 @@ struct InGame {
     short UserZoom;
     short cmdln_param_a;
     short LowerMemoryUse;
-    short fld_unkC8B[3];
+    short fld_unkC8B;
+    short fld_unkC8D[2];
     long fld_unkC91;
     ushort TrackX;
     ushort TrackZ;

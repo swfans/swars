@@ -782,7 +782,7 @@ void play_smacker(ushort vid_type)
         scr_md_fmvid = screen_mode_fmvid_hi;
     }
     if (lbDisplay.ScreenMode != scr_md_fmvid)
-        setup_screen_mode(scr_md_fmvid);
+        setup_simple_screen_mode(scr_md_fmvid);
     LbMouseChangeSprite(NULL);
     show_black_screen();
 
@@ -793,6 +793,29 @@ void play_smacker(ushort vid_type)
     }
     show_black_screen();
 #endif
+}
+
+void play_smacker_then_back_to_engine(ushort vid_type)
+{
+    TbScreenMode bkpmode;
+
+    bkpmode = lbDisplay.ScreenMode;
+    play_smacker(vid_type);
+    LbFileLoadAt("qdata/pal.pal", display_palette);
+    // The setup_screen_mode() will automatically switch to display_palette
+    setup_screen_mode(bkpmode);
+}
+
+void play_smacker_then_back_to_menu(ushort vid_type)
+{
+    stop_sample_using_heap(0, 122);
+    stop_sample_using_heap(0, 122);
+
+    play_smacker(vid_type);
+    setup_screen_mode(screen_mode_menu);
+
+    play_sample_using_heap(0, 122, 127, 64, 100, -1, 3);
+    play_sample_using_heap(0, 122, 127, 64, 100, -1, 3);
 }
 
 void play_intro(void)
@@ -809,43 +832,13 @@ void play_intro(void)
         sprint_fmv_filename(MPly_Intro, fname, sizeof(fname));
         if (fname[0] != '\0') {
             play_smk(fname, 13, 0);
+            smack_malloc_free_all();
         }
         LbMouseChangeSprite(&pointer_sprites[1]);
-        smack_malloc_used_tot = 0;
     }
     if (cmdln_param_bcg)
         setup_screen_mode(screen_mode_menu);
     flic_unkn03(1u);
-}
-
-void replay_intro(void)
-{
-    char fname[FILENAME_MAX];
-
-    LOGSYNC("Starting");
-    setup_simple_screen_mode(screen_mode_fmvid_lo);
-
-    stop_sample_using_heap(0, 122);
-    stop_sample_using_heap(0, 122);
-    sprint_fmv_filename(MPly_Intro, fname, sizeof(fname));
-    if (fname[0] != '\0') {
-        play_smk(fname, 13, 0);
-    }
-    smack_malloc_free_all();
-    play_sample_using_heap(0, 122, 127, 64, 100, -1, 3);
-    show_black_screen();
-    play_sample_using_heap(0, 122, 127, 64, 100, -1, 3);
-}
-
-void play_smacker_then_back_to_engine(ushort vid_type)
-{
-    ushort bkpmode;
-
-    bkpmode = lbDisplay.ScreenMode;
-    play_smacker(vid_type);
-    LbFileLoadAt("qdata/pal.pal", display_palette);
-    // The setup_screen_mode() will automatically switch to display_palette
-    setup_screen_mode(bkpmode);
 }
 
 int setup_heap_manager(struct SampleTable *smptable, size_t a2, const char *fname, unsigned int a4)
@@ -3800,15 +3793,11 @@ void setup_engine_screen_mode(void)
 void setup_initial_screen_mode(void)
 {
     if (game_high_resolution)
-    {
         lbDisplay.ScreenMode = screen_mode_game_hi;
-        setup_simple_screen_mode(lbDisplay.ScreenMode);
-    }
     else
-    {
         lbDisplay.ScreenMode = screen_mode_game_lo;
-        setup_simple_screen_mode(lbDisplay.ScreenMode);
-    }
+    setup_simple_screen_mode(lbDisplay.ScreenMode);
+    show_black_screen();
     // Setup colour conversion tables, allowing generation
     LbColourTablesLoad(display_palette, "data/tables.dat");
     LbGhostTableGenerate(display_palette, 50, "data/synghost.tab");
@@ -5960,7 +5949,7 @@ void do_start_triggers(short missi)
         return;
     }
 
-    for (nxmissi = missi; mslot < 50; mslot++)
+    for (nxmissi = missi; mslot < MISSION_STATES_COUNT; mslot++)
     {
         if (true)
             sptrig = mission_list[nxmissi].SpecialTrigger[0];
@@ -9439,7 +9428,7 @@ void show_menu_screen(void)
         replay_intro_timer++;
         if (replay_intro_timer > 1100)
         {
-            replay_intro();
+            play_smacker_then_back_to_menu(MPly_Intro);
             replay_intro_timer = 0;
             data_1c498d = 0;
             return;
