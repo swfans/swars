@@ -765,6 +765,7 @@ void play_smacker(ushort vid_type)
         : : "a" ((int)vid_type));
 #else
     char fname[FILENAME_MAX];
+    TbScreenMode scr_md_fmvid;
 
     // TODO MAPNO case for a specific map, remove
     if (current_map == 51)
@@ -774,8 +775,14 @@ void play_smacker(ushort vid_type)
         return;
     }
     person_func_unknown_310(2);
-    if (lbDisplay.ScreenMode != screen_mode_fmvid_hi)
-        setup_screen_mode(screen_mode_fmvid_hi);
+
+    if (vid_type == MPly_Intro) {
+        scr_md_fmvid = screen_mode_fmvid_lo;
+    } else {
+        scr_md_fmvid = screen_mode_fmvid_hi;
+    }
+    if (lbDisplay.ScreenMode != scr_md_fmvid)
+        setup_screen_mode(scr_md_fmvid);
     LbMouseChangeSprite(NULL);
     show_black_screen();
 
@@ -828,6 +835,17 @@ void replay_intro(void)
     play_sample_using_heap(0, 122, 127, 64, 100, -1, 3);
     show_black_screen();
     play_sample_using_heap(0, 122, 127, 64, 100, -1, 3);
+}
+
+void play_smacker_then_back_to_engine(ushort vid_type)
+{
+    ushort bkpmode;
+
+    bkpmode = lbDisplay.ScreenMode;
+    play_smacker(vid_type);
+    LbFileLoadAt("qdata/pal.pal", display_palette);
+    // The setup_screen_mode() will automatically switch to display_palette
+    setup_screen_mode(bkpmode);
 }
 
 int setup_heap_manager(struct SampleTable *smptable, size_t a2, const char *fname, unsigned int a4)
@@ -4782,34 +4800,24 @@ void restart_back_into_mission(ushort missi)
 
 void compound_mission_immediate_start_next(void)
 {
-    short i;
-    ushort missi;
+    ushort old_missi, new_missi;
 
     show_black_screen();
     LbFileLoadAt("qdata/pal.pal", display_palette);
     LbPaletteSet(display_palette);
 
-    i = find_mission_state_slot(ingame.CurrentMission);
-
-    missi = ingame.CurrentMission;
-    missi = mission_list[missi].SuccessTrigger[0];
-
-    brief_store[open_brief - 1].Mission = missi;
-    mission_open[i] = missi;
-    mission_state[i] = 0;
+    old_missi = ingame.CurrentMission;
+    new_missi = mission_list[old_missi].SuccessTrigger[0];
+    brief_store[open_brief - 1].Mission = new_missi;
+    replace_mission_state_slot(old_missi, new_missi);
 
     // TODO MISSI specific missions hard-coded - remove
     if (ingame.CurrentMission == 84)
     {
-        ushort bkpmode;
-
-        bkpmode = lbDisplay.ScreenMode;
-        play_smacker(MPly_MPartComplete);
-        LbFileLoadAt("qdata/pal.pal", display_palette);
-        setup_screen_mode(bkpmode);
+        play_smacker_then_back_to_engine(MPly_MPartComplete);
     }
 
-    restart_back_into_mission(missi);
+    restart_back_into_mission(new_missi);
 }
 
 // deprecated - use compound_mission_immediate_start_next()
@@ -5944,7 +5952,7 @@ void do_start_triggers(short missi)
         : : "a" (missi));
 #endif
     short nxmissi, sptrig;
-    int mslot;
+    short mslot;
 
     mslot = find_empty_mission_state_slot();
     if (mslot < 1) {
@@ -6005,6 +6013,7 @@ ushort open_new_mission(short missi)
     }
 
     mslot = find_empty_mission_state_slot();
+
     if (mslot > 0) {
         mission_open[mslot] = missi;
         mission_state[mslot] = 0;
@@ -6155,6 +6164,7 @@ void update_mission_list_to_mission_state(ushort mslot, sbyte state)
     ushort missi;
 
     missi = mission_open[mslot];
+
     if (state == 1) {
         mission_list[missi].Complete = state;
     } else if (mission_remain_until_success(missi)) {
