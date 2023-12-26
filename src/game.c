@@ -839,13 +839,6 @@ void play_smacker(ushort vid_type)
     char fname[FILENAME_MAX];
     TbScreenMode scr_md_fmvid;
 
-    // TODO MAPNO case for a specific map, remove
-    if (current_map == 51)
-    {
-        overall_scale = get_overall_scale_max();
-        unkn_flags_01 &= ~0x01;
-        return;
-    }
     update_danger_music(2);
 
     sprint_fmv_filename(vid_type, fname, sizeof(fname));
@@ -4858,7 +4851,7 @@ void restart_back_into_mission(ushort missi)
     }
 }
 
-void compound_mission_immediate_start_next(void)
+void compound_mission_brief_store_next(void)
 {
     ushort old_missi, new_missi;
 
@@ -4866,18 +4859,13 @@ void compound_mission_immediate_start_next(void)
     new_missi = mission_list[old_missi].SuccessTrigger[0];
     brief_store[open_brief - 1].Mission = new_missi;
     replace_mission_state_slot(old_missi, new_missi);
-
-    restart_back_into_mission(new_missi);
 }
 
-// deprecated - use compound_mission_immediate_start_next()
-void tweak_for_compound_mission_m84(void)
+void compound_mission_immediate_start_next(void)
 {
-#if 0
-    asm volatile ("call ASM_tweak_for_compound_mission_m84\n"
-        :  :  : "eax" );
-#endif
-    compound_mission_immediate_start_next();
+    ushort missi;
+    missi = brief_store[open_brief - 1].Mission;
+    restart_back_into_mission(missi);
 }
 
 short test_missions(ubyte flag)
@@ -6362,8 +6350,37 @@ ubyte check_open_next_mission(ushort mslot, sbyte state)
     return OMiSta_NONE;
 }
 
-// TODO it does more than the delete; rename or divide
-void check_delete_open_mission(ushort mslot, sbyte state)
+void play_post_mission_fmv(ubyte misend)
+{
+    switch (misend)
+    {
+    case OMiSta_EndSuccess:
+        play_smacker(MPly_MissiComplete);
+        break;
+    case OMiSta_ContImmSuccess:
+        // Reload the palette, potentially damaged by fading
+        show_black_screen();
+        LbFileLoadAt("qdata/pal.pal", display_palette);
+        // The setup_screen_mode() within play_smacker() will
+        // automatically switch current pal to display_palette
+        play_smacker_then_back_to_engine(MPly_MPartComplete);
+        break;
+    case OMiSta_EndFailed:
+        play_smacker(MPly_MissiFail);
+        break;
+    case OMiSta_ContSuccess:
+        break;
+    case OMiSta_ContFailed:
+        break;
+    case OMiSta_CampaignDone:
+        init_outro();
+        overall_scale = get_overall_scale_max();
+        unkn_flags_01 &= ~0x01;
+        break;
+    }
+}
+
+ubyte check_delete_open_mission(ushort mslot, sbyte state)
 {
     ushort missi;
     TbBool conds_met;
@@ -6389,19 +6406,13 @@ void check_delete_open_mission(ushort mslot, sbyte state)
         if (conds_met) {
             mission_fire_success_triggers(missi);
         }
-        play_smacker(MPly_MissiComplete);
         remove_mission_state_slot(mslot);
         break;
     case OMiSta_ContImmSuccess:
         if (conds_met) {
             mission_fire_success_triggers(missi);
         }
-        show_black_screen();
-        LbFileLoadAt("qdata/pal.pal", display_palette);
-        // The setup_screen_mode() within play_smacker() will
-        // automatically switch current pal to display_palette
-        play_smacker_then_back_to_engine(MPly_MPartComplete);
-        compound_mission_immediate_start_next();
+        compound_mission_brief_store_next();
         break;
     case OMiSta_EndFailed:
         if (conds_met) {
@@ -6413,6 +6424,7 @@ void check_delete_open_mission(ushort mslot, sbyte state)
     case OMiSta_ContFailed:
         break;
     }
+    return misend;
 }
 
 void mission_over(void)
@@ -6421,6 +6433,8 @@ void mission_over(void)
     asm volatile ("call ASM_mission_over\n"
         :  :  : "eax" );
 #else
+    ubyte misend;
+
     ingame.DisplayMode = DpM_UNKN_37;
     LbMouseChangeSprite(0);
     StopCD();
@@ -6443,12 +6457,6 @@ void mission_over(void)
     if (mission_state[mslot] == 0)
         mission_state[mslot] = ingame.MissionStatus;
 
-    if (mission_state[mslot] == 1)
-    {
-        if (mission_is_final_at_game_end(last_missi))
-            init_outro();
-    }
-
     lstate = 0;
     if (mission_state[mslot] == 1)
     {
@@ -6464,7 +6472,7 @@ void mission_over(void)
         ingame.Credits += cr_award;
         if (email != 0)
             queue_up_new_mail(0, -email);
-        check_delete_open_mission(mslot, 1);
+        misend = check_delete_open_mission(mslot, 1);
     }
     else if (mission_state[mslot] == -1)
     {
@@ -6477,8 +6485,18 @@ void mission_over(void)
         ingame.fld_unkC57++;
         if (email != 0)
             queue_up_new_mail(0, -email);
-        check_delete_open_mission(mslot, -1);
-        play_smacker(MPly_MissiFail);
+        misend = check_delete_open_mission(mslot, -1);
+    }
+
+    if (misend == OMiSta_EndSuccess) {
+        if (mission_is_final_at_game_end(last_missi))
+            misend = OMiSta_CampaignDone;
+    }
+
+    play_post_mission_fmv(misend);
+
+    if (misend == OMiSta_ContImmSuccess) {
+        compound_mission_immediate_start_next();
     }
 
     ingame.GameOver = 0;

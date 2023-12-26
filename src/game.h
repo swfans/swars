@@ -123,6 +123,8 @@ enum OpenMissionEndStatus {
   OMiSta_ContFailed,
   /** Mission completed successfully, but is a part of multi-mission chain with immediately starting next mission */
   OMiSta_ContImmSuccess,
+  /** Final mission completed successfully, campaign finished. */
+  OMiSta_CampaignDone,
 };
 
 enum MissionFMVPlay {
