@@ -533,7 +533,7 @@ TbBool LbScreenIsLocked(void)
 
 TbResult LbScreenLock(void)
 {
-    LOGDBG("starting");
+    LOGNO("starting");
     if (!lbScreenInitialised)
         return Lb_FAIL;
 
@@ -560,7 +560,7 @@ TbResult LbScreenLock(void)
 
 TbResult LbScreenUnlock(void)
 {
-    LOGDBG("starting");
+    LOGNO("starting");
     if (!lbScreenInitialised)
         return Lb_FAIL;
 
