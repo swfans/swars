@@ -18,6 +18,8 @@
  */
 /******************************************************************************/
 #include "poly_trigp.h"
+
+#include <assert.h>
 #include "poly.h"
 #include "privbflog.h"
 
@@ -234,6 +236,7 @@ static inline int trig_ll_md00(struct TrigLocalPrep *tlp, struct TrigLocalRend *
             ++pp;
         }
     }
+    assert(pp < &polyscans[POLY_SCANS_COUNT]);
     return 1;
 }
 
@@ -362,6 +365,7 @@ static inline int trig_ll_md01(struct TrigLocalPrep *tlp, struct TrigLocalRend *
           ++pp;
       }
     }
+    assert(pp < &polyscans[POLY_SCANS_COUNT]);
     return 1;
 }
 
@@ -500,6 +504,7 @@ static inline int trig_ll_md02(struct TrigLocalPrep *tlp, struct TrigLocalRend *
             ++pp;
         }
     }
+    assert(pp < &polyscans[POLY_SCANS_COUNT]);
     return 1;
 }
 
@@ -650,6 +655,7 @@ static inline int trig_ll_md05(struct TrigLocalPrep *tlp, struct TrigLocalRend *
           ++pp;
         }
     }
+    assert(pp < &polyscans[POLY_SCANS_COUNT]);
     return 1;
 }
 
@@ -831,6 +837,7 @@ static inline int trig_rl_md00(struct TrigLocalPrep *tlp, struct TrigLocalRend *
             ++pp;
         }
     }
+    assert(pp < &polyscans[POLY_SCANS_COUNT]);
     return 1;
 }
 
@@ -960,6 +967,7 @@ static inline int trig_rl_md01(struct TrigLocalPrep *tlp, struct TrigLocalRend *
             ++pp;
         }
     }
+    assert(pp < &polyscans[POLY_SCANS_COUNT]);
     return 1;
 }
 
@@ -1099,6 +1107,7 @@ static inline int trig_rl_md02(struct TrigLocalPrep *tlp, struct TrigLocalRend *
             ++pp;
         }
     }
+    assert(pp < &polyscans[POLY_SCANS_COUNT]);
     return 1;
 }
 
@@ -1250,6 +1259,7 @@ static inline int trig_rl_md05(struct TrigLocalPrep *tlp, struct TrigLocalRend *
           ++pp;
         }
     }
+    assert(pp < &polyscans[POLY_SCANS_COUNT]);
     return 1;
 }
 
@@ -1382,6 +1392,7 @@ static inline int trig_fb_md00(struct TrigLocalPrep *tlp, struct TrigLocalRend *
         pY += tlp->var_2C;
         ++pp;
     }
+    assert(pp < &polyscans[POLY_SCANS_COUNT]);
     return 1;
 }
 
@@ -1441,6 +1452,7 @@ static inline int trig_fb_md01(struct TrigLocalPrep *tlp, struct TrigLocalRend *
         pS += tlp->var_64;
         ++pp;
     }
+    assert(pp < &polyscans[POLY_SCANS_COUNT]);
     return 1;
 }
 
@@ -1506,6 +1518,7 @@ static inline int trig_fb_md02(struct TrigLocalPrep *tlp, struct TrigLocalRend *
         pV += tlp->var_58;
         ++pp;
     }
+    assert(pp < &polyscans[POLY_SCANS_COUNT]);
     return 1;
 }
 
@@ -1577,6 +1590,7 @@ static inline int trig_fb_md05(struct TrigLocalPrep *tlp, struct TrigLocalRend *
         pS += tlp->var_64;
         ++pp;
     }
+    assert(pp < &polyscans[POLY_SCANS_COUNT]);
     return 1;
 }
 
@@ -1694,6 +1708,7 @@ static inline int trig_ft_md00(struct TrigLocalPrep *tlp, struct TrigLocalRend *
         pY += tlp->var_2C;
         ++pp;
     }
+    assert(pp < &polyscans[POLY_SCANS_COUNT]);
     return 1;
 }
 
@@ -1753,6 +1768,7 @@ static inline int trig_ft_md01(struct TrigLocalPrep *tlp, struct TrigLocalRend *
         pS += tlp->var_64;
         ++pp;
     }
+    assert(pp < &polyscans[POLY_SCANS_COUNT]);
     return 1;
 }
 
@@ -1817,6 +1833,7 @@ static inline int trig_ft_md02(struct TrigLocalPrep *tlp, struct TrigLocalRend *
         pV += tlp->var_58;
         ++pp;
     }
+    assert(pp < &polyscans[POLY_SCANS_COUNT]);
     return 1;
 }
 
@@ -1888,6 +1905,7 @@ static inline int trig_ft_md05(struct TrigLocalPrep *tlp, struct TrigLocalRend *
         pS += tlp->var_64;
         ++pp;
     }
+    assert(pp < &polyscans[POLY_SCANS_COUNT]);
     return 1;
 }
 
