@@ -41,6 +41,8 @@
 
 /******************************************************************************/
 
+/** Test drawing random triangles using the trig() function.
+ */
 void test_trig_draw_random_triangles(const ubyte *pal)
 {
     int i;
