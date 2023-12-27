@@ -717,6 +717,36 @@ void update_danger_music(ubyte a1)
 #endif
 }
 
+void cover_screen_rect_with_sprite(short x, short y, ushort w, ushort h, struct TbSprite *spr)
+{
+    short cx, cy;
+
+    for (cy = y; cy < y+h; cy += spr->SHeight)
+    {
+        for (cx = x; cx < x+w; cx += spr->SWidth) {
+            LbSpriteDraw(cx, cy, spr);
+        }
+    }
+}
+
+void cover_screen_rect_with_raw_file(short x, short y, ushort w, ushort h, const char *fname)
+{
+    struct SSurface surf;
+    struct TbRect srect;
+    ubyte *inp_buf;
+
+    LbSetRect(&srect, 0, 0, w, h);
+    LbScreenSurfaceInit(&surf);
+    LbScreenSurfaceCreate(&surf, w, h);
+    inp_buf = LbScreenSurfaceLock(&surf);
+    LbFileLoadAt(fname, inp_buf);
+    LbScreenSurfaceUnlock(&surf);
+    LbScreenUnlock();
+    LbScreenSurfaceBlit(&surf, x, y, &srect, SSBlt_FLAG8 | SSBlt_FLAG4);
+    LbScreenSurfaceRelease(&surf);
+    LbScreenLock();
+}
+
 void sprint_fmv_filename(ushort vid_type, char *fnbuf, ulong buflen)
 {
     const char *fname;
@@ -830,6 +860,13 @@ void sprint_fmv_filename(ushort vid_type, char *fnbuf, ulong buflen)
     }
 }
 
+static void clear_smacker_skip_keys(void)
+{
+    lbKeyOn[KC_SPACE] = 0;
+    lbKeyOn[KC_RETURN] = 0;
+    lbKeyOn[KC_ESCAPE] = 0;
+}
+
 void play_smacker(ushort vid_type)
 {
 #if 0
@@ -838,26 +875,64 @@ void play_smacker(ushort vid_type)
 #else
     char fname[FILENAME_MAX];
     TbScreenMode scr_md_fmvid;
+    TbBool prepare_draw_on_last_frame;
 
     update_danger_music(2);
 
     sprint_fmv_filename(vid_type, fname, sizeof(fname));
 
-    if (vid_type == MPly_Intro) {
+    // For outro, last frame of the video should stay on screen
+    // and the screen should be prepared for further drawing
+    prepare_draw_on_last_frame = (vid_type == MPly_Outro);
+
+    if ((vid_type == MPly_Intro) || (vid_type == MPly_Outro)) {
         scr_md_fmvid = screen_mode_fmvid_lo;
     } else {
         scr_md_fmvid = screen_mode_fmvid_hi;
     }
-    if ((lbDisplay.ScreenMode != scr_md_fmvid) && (fname[0] != '\0'))
-        setup_simple_screen_mode(scr_md_fmvid);
+
+    if (prepare_draw_on_last_frame) {
+        // If we need to prepare drawing after, do a full mode change
+        if (lbDisplay.ScreenMode != scr_md_fmvid)
+            setup_screen_mode(scr_md_fmvid);
+    } else {
+        // Do simple mode change, we will switch again after the video
+        // also skip the mode change entirely if no video to play
+        if ((lbDisplay.ScreenMode != scr_md_fmvid) && (fname[0] != '\0'))
+            setup_simple_screen_mode(scr_md_fmvid);
+    }
     LbMouseChangeSprite(NULL);
 
     if (fname[0] != '\0') {
         show_black_screen();
+        clear_smacker_skip_keys();
         play_smk(fname, 13, 0);
         smack_malloc_free_all();
     }
-    show_black_screen();
+
+    if (prepare_draw_on_last_frame) {
+            struct Campaign *p_campgn;
+            short raw_w, raw_h;
+            short x, y;
+            raw_w = 300;
+            raw_h = 150;
+            x = (lbDisplay.GraphicsScreenWidth - raw_w) / 2;
+            y = (lbDisplay.GraphicsScreenHeight - raw_h) / 2 - 1;
+
+            p_campgn = &campaigns[background_type];
+            screen_buffer_fill_black();
+            cover_screen_rect_with_raw_file(x, y, raw_w, raw_h, p_campgn->OutroBkFn);
+
+            sprintf(fname, "qdata/pal%d.dat", 0);
+            LbFileLoadAt(fname, display_palette);
+            LbScreenWaitVbi();
+            LbPaletteSet(display_palette);
+            swap_wscreen();
+    } else {
+        show_black_screen();
+    }
+    game_hacky_update();
+    clear_smacker_skip_keys();
 #endif
 }
 
@@ -3563,60 +3638,19 @@ void init_outro(void)
     return;
 #else
     TbClockMSec last_loop_time;
-    struct Campaign *p_campgn;
     const char *text1;
     const char *text2;
-    TbFileHandle fh;
     int i;
 
     gamep_unknval_01 = 0;
     StopAllSamples();
     StopCD();
-    show_black_screen();
-    swap_wscreen();
-    setup_screen_mode(screen_mode_fmvid_lo);
-    LbMouseChangeSprite(NULL);
-    lbKeyOn[KC_SPACE] = 0;
-    lbKeyOn[KC_RETURN] = 0;
-    lbKeyOn[KC_ESCAPE] = 0;
 
-    p_campgn = &campaigns[background_type];
+    play_smacker(MPly_Outro);
 
-    {
-        char fname[FILENAME_MAX];
-
-        sprint_fmv_filename(MPly_Outro, fname, sizeof(fname));
-        if (fname[0] != '\0') {
-            play_smk(fname, 13, 0);
-        }
-    }
-    data_155704 = -1;
-    screen_buffer_fill_black();
-
-    fh = LbFileOpen(p_campgn->OutroBkFn, Lb_FILE_MODE_READ_ONLY);
-    if (fh != INVALID_FILE)
-    {
-        for (i = 24; i != 24+150; i++)
-        {
-            ubyte *buf;
-            buf = &lbDisplay.WScreen[i*lbDisplay.GraphicsScreenWidth + 10];
-            LbFileRead(fh, buf, 300);
-        }
-    }
-    LbFileClose(fh);
-
-    LbFileLoadAt("qdata/pal.pal", display_palette);
-    LbScreenWaitVbi();
-	game_hacky_update();
-
-    {
-        char str[FILENAME_MAX];
-        sprintf(str, "qdata/pal%d.dat", 0);
-        LbFileLoadAt(str, display_palette);
-        LbPaletteSet(display_palette);
-    }
-    swap_wscreen();
     screen_dark_curtain_down();
+
+    data_155704 = -1;
     init_things();
     //TODO hard-coded map ID
     change_current_map(51);
@@ -6643,36 +6677,6 @@ void init_screen_boxes(void)
     init_cryo_screen_boxes();
     init_research_screen_boxes();
     init_equip_screen_shapes();
-}
-
-void cover_screen_rect_with_sprite(short x, short y, ushort w, ushort h, struct TbSprite *spr)
-{
-    short cx, cy;
-
-    for (cy = y; cy < y+h; cy += spr->SHeight)
-    {
-        for (cx = x; cx < x+w; cx += spr->SWidth) {
-            LbSpriteDraw(cx, cy, spr);
-        }
-    }
-}
-
-void cover_screen_rect_with_raw_file(short x, short y, ushort w, ushort h, const char *fname)
-{
-    struct SSurface surf;
-    struct TbRect srect;
-    ubyte *inp_buf;
-
-    LbSetRect(&srect, 0, 0, w, h);
-    LbScreenSurfaceInit(&surf);
-    LbScreenSurfaceCreate(&surf, w, h);
-    inp_buf = LbScreenSurfaceLock(&surf);
-    LbFileLoadAt(fname, inp_buf);
-    LbScreenSurfaceUnlock(&surf);
-    LbScreenUnlock();
-    LbScreenSurfaceBlit(&surf, x, y, &srect, SSBlt_FLAG8 | SSBlt_FLAG4);
-    LbScreenSurfaceRelease(&surf);
-    LbScreenLock();
 }
 
 void reload_background(void)
