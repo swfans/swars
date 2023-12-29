@@ -602,62 +602,62 @@ msgid "Eliminate EuroCorp personnel controlling river port"
 msgstr ""
 
 #: scanner.objective:117
-msgctxt "objective text shown on scanner"
+msgctxt "objective text shown on scanner, uses across campaigns"
 msgid "Return to IML link"
 msgstr ""
 
 #: scanner.objective:118
-msgctxt "objective text shown on scanner"
+msgctxt "objective text shown on scanner, Church, mission The Dead Zone"
 msgid "Abduct EuroCorp captive"
 msgstr ""
 
 #: scanner.objective:119
-msgctxt "objective text shown on scanner"
+msgctxt "objective text shown on scanner, Church, mission The Dead Zone"
 msgid "The target has been eliminated"
 msgstr ""
 
 #: scanner.objective:120
-msgctxt "objective text shown on scanner"
+msgctxt "objective text shown on scanner, Church, mission Deconstruction"
 msgid "Destroy R&D facilities"
 msgstr ""
 
 #: scanner.objective:121
-msgctxt "objective text shown on scanner"
+msgctxt "objective text shown on scanner, Church, mission Deconstruction"
 msgid "Eliminate agents of EuroCorp"
 msgstr ""
 
 #: scanner.objective:122
-msgctxt "objective text shown on scanner"
+msgctxt "objective text shown on scanner, Church, mission Friendly Fire"
 msgid "De Saxo must perish"
 msgstr ""
 
 #: scanner.objective:123
-msgctxt "objective text shown on scanner"
+msgctxt "objective text shown on scanner, Church, few missions"
 msgid "Leave this place"
 msgstr ""
 
 #: scanner.objective:124
-msgctxt "objective text shown on scanner"
+msgctxt "objective text shown on scanner, Church, mission Armour Of The Gods"
 msgid "Subdue the Unguided"
 msgstr ""
 
 #: scanner.objective:125
-msgctxt "objective text shown on scanner"
+msgctxt "objective text shown on scanner, Church, mission Vissick Hunt"
 msgid "Seek and destroy the leader of the uprising"
 msgstr ""
 
 #: scanner.objective:126
-msgctxt "objective text shown on scanner"
+msgctxt "objective text shown on scanner, Church, mission Recapture"
 msgid "Rescue IX and guide him to rendezvous"
 msgstr ""
 
 #: scanner.objective:127
-msgctxt "objective text shown on scanner"
+msgctxt "objective text shown on scanner, Church, mission Recapture"
 msgid "Protect IX"
 msgstr ""
 
 #: scanner.objective:128
-msgctxt "objective text shown on scanner"
+msgctxt "objective text shown on scanner, Church, mission Recapture"
 msgid "You have allowed IX to perish"
 msgstr ""
 
@@ -667,12 +667,12 @@ msgid "Nothing can stop The Nine now. You have been defeated."
 msgstr ""
 
 #: scanner.objective:130
-msgctxt "objective text shown on scanner"
+msgctxt "objective text shown on scanner, Church, mission Deliver The Ninth"
 msgid "Do nothing: obey The Nine"
 msgstr ""
 
 #: scanner.objective:131
-msgctxt "objective text shown on scanner"
+msgctxt "objective text shown on scanner, EuroCorp, mission The Unguided"
 msgid "All citizens converted by Zealots"
 msgstr ""
 
@@ -692,7 +692,7 @@ msgid "Persuade infiltrator"
 msgstr ""
 
 #: scanner.objective:135
-msgctxt "objective text shown on scanner"
+msgctxt "objective text shown on scanner, uses across campaigns"
 msgid "Proceed to IML link"
 msgstr ""
 
@@ -702,12 +702,12 @@ msgid "Target eliminated"
 msgstr ""
 
 #: scanner.objective:137
-msgctxt "objective text shown on scanner"
+msgctxt "objective text shown on scanner, Church, mission Free Passage"
 msgid "Activate IML link"
 msgstr ""
 
 #: scanner.objective:138
-msgctxt "objective text shown on scanner"
+msgctxt "objective text shown on scanner, uses across campaigns"
 msgid "IML link destroyed"
 msgstr ""
 
@@ -717,77 +717,77 @@ msgid "Eliminate agents"
 msgstr ""
 
 #: scanner.objective:140
-msgctxt "objective text shown on scanner"
+msgctxt "objective text shown on scanner, Church, mission Harbinger"
 msgid "Penetrate bunker: release virus"
 msgstr ""
 
 #: scanner.objective:141
-msgctxt "objective text shown on scanner"
+msgctxt "objective text shown on scanner, Church, few missions"
 msgid "Depart"
 msgstr ""
 
 #: scanner.objective:142
-msgctxt "objective text shown on scanner"
+msgctxt "objective text shown on scanner, Church, few missions"
 msgid "Retreat"
 msgstr ""
 
 #: scanner.objective:143
-msgctxt "objective text shown on scanner"
+msgctxt "objective text shown on scanner, Church, mission The Knowledge"
 msgid "Convert Ormandoz"
 msgstr ""
 
 #: scanner.objective:144
-msgctxt "objective text shown on scanner"
+msgctxt "objective text shown on scanner, Church, mission The Knowledge"
 msgid "Convert Ramirez"
 msgstr ""
 
 #: scanner.objective:145
-msgctxt "objective text shown on scanner"
+msgctxt "objective text shown on scanner, Church, mission The Knowledge"
 msgid "Bring them to us"
 msgstr ""
 
 #: scanner.objective:146
-msgctxt "objective text shown on scanner"
+msgctxt "objective text shown on scanner, Church, mission The Knowledge"
 msgid "You have allowed Ormandoz to perish"
 msgstr ""
 
 #: scanner.objective:147
-msgctxt "objective text shown on scanner"
+msgctxt "objective text shown on scanner, Church, mission The Knowledge"
 msgid "You have allowed Ramirez to perish"
 msgstr ""
 
 #: scanner.objective:148
-msgctxt "objective text shown on scanner"
+msgctxt "objective text shown on scanner, Church, mission Soul Crusader"
 msgid "Steal dr Schweizer's work"
 msgstr ""
 
 #: scanner.objective:149
-msgctxt "objective text shown on scanner"
+msgctxt "objective text shown on scanner, Church, few missions"
 msgid "Return to us"
 msgstr ""
 
 #: scanner.objective:150
-msgctxt "objective text shown on scanner"
+msgctxt "objective text shown on scanner, Church"
 msgid "EuroCorp agents must join us or die"
 msgstr ""
 
 #: scanner.objective:151
-msgctxt "objective text shown on scanner"
+msgctxt "objective text shown on scanner, Church, mission Spies Like Us"
 msgid "Neutralise EuroCorp agents"
 msgstr ""
 
 #: scanner.objective:152
-msgctxt "objective text shown on scanner"
+msgctxt "objective text shown on scanner, Church, mission Powermonger"
 msgid "Assassinate Koto Sek"
 msgstr ""
 
 #: scanner.objective:153
-msgctxt "objective text shown on scanner"
+msgctxt "objective text shown on scanner, Church, few missions"
 msgid "Neutralise all EuroCorp agents"
 msgstr ""
 
 #: scanner.objective:154
-msgctxt "objective text shown on scanner"
+msgctxt "objective text shown on scanner, Church, mission Fall Among Thieves"
 msgid "Let no harm come to De Saxo"
 msgstr ""
 
@@ -797,27 +797,27 @@ msgid "Take control of the IML link"
 msgstr ""
 
 #: scanner.objective:156
-msgctxt "objective text shown on scanner"
+msgctxt "objective text shown on scanner, Church, missions with De Saxo"
 msgid "Our blessed daughter is dead"
 msgstr ""
 
 #: scanner.objective:157
-msgctxt "objective text shown on scanner"
+msgctxt "objective text shown on scanner, Church"
 msgid "You will die for this heresy!"
 msgstr ""
 
 #: scanner.objective:158
-msgctxt "objective text shown on scanner"
+msgctxt "objective text shown on scanner, Church, mission Spies Like Us"
 msgid "EuroCorp must choose between our faith or death"
 msgstr ""
 
 #: scanner.objective:159
-msgctxt "objective text shown on scanner"
+msgctxt "objective text shown on scanner, Church, few missions"
 msgid "Seek sanctuary"
 msgstr ""
 
 #: scanner.objective:160
-msgctxt "objective text shown on scanner"
+msgctxt "objective text shown on scanner, Church, mission Recapture"
 msgid "Get in"
 msgstr ""
 
@@ -827,7 +827,7 @@ msgid "Target persuaded"
 msgstr ""
 
 #: scanner.objective:164
-msgctxt "objective text shown on scanner"
+msgctxt "objective text shown on scanner, EuroCorp, few missions"
 msgid "Neutralise agent"
 msgstr ""
 
