@@ -18,6 +18,7 @@
 /******************************************************************************/
 #include "lvobjctv.h"
 
+#include <assert.h>
 #include <string.h>
 #include <stdlib.h>
 #include "bffile.h"
@@ -232,6 +233,7 @@ const struct TbNamedEnum missions_conf_netscan_objctv_params[] = {
 
 #define PARAM_TOKEN_MAX 16
 #define COMMAND_TOKEN_MAX 32
+#define OBJECTIVE_TEXT_MAX 300
 
 struct NetscanObjective mission_netscan_objectives[MISSION_NETSCAN_OBV_COUNT];
 ushort next_mission_netscan_objective;
@@ -242,7 +244,8 @@ extern short draw_objectv_x;
 extern short draw_objectv_y;
 extern const char *scroll_text;
 extern ubyte byte_1C844F;
-extern char *objective_text[170];
+
+char *objective_text[OBJECTIVE_TEXT_MAX];
 
 int add_used_objective(long mapno, long levelno)
 {
@@ -604,10 +607,12 @@ void draw_objective(ushort objectv, ubyte flag)
     {
         if ((p_objectv->Flags & GObjF_HIDDEN) != 0)
             scroll_text = "-";
-        else if (p_objectv->ObjText != 0)
+        else if (p_objectv->ObjText != 0) {
+            assert(p_objectv->ObjText < OBJECTIVE_TEXT_MAX);
             scroll_text = objective_text[p_objectv->ObjText];
-        else
+        } else {
             scroll_text = p_odef->DefText;
+        }
         ++dword_1C8464;
     }
     else
@@ -2120,7 +2125,10 @@ int read_objectives_text(void *data)
             objective_text[n++] = p;
         }
     }
-    while (n < 170)
+
+    assert(n <= OBJECTIVE_TEXT_MAX);
+
+    while (n < OBJECTIVE_TEXT_MAX)
     {
         objective_text[n++] = NULL;
     }
