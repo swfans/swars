@@ -2252,7 +2252,7 @@ msgstr ""
 msgctxt "mods description - flame skin"
 msgid ""
 "Heat is one enemy of the combatant. Our foe has found the solution with this "
-"experimental cyverskin. Using space industry fabrics, they have developed a cyberskin "
+"experimental cyberskin. Using space industry fabrics, they have developed a cyberskin "
 "which can make our Acolytes resistant to flame and thermal energy."
 msgstr ""
 
