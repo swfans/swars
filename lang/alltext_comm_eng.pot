@@ -831,6 +831,41 @@ msgctxt "objective text shown on scanner, EuroCorp, few missions"
 msgid "Neutralise agent"
 msgstr ""
 
+#: scanner.objective:165
+msgctxt "objective text shown on scanner, EuroCorp, mission Tokyo Fuseki"
+msgid "Seek and destroy - category U - Unguided citizens"
+msgstr ""
+
+#: scanner.objective:166
+msgctxt "objective text shown on scanner, EuroCorp, mission Tokyo Fuseki"
+msgid "Mission update: eliminate cultists"
+msgstr ""
+
+#: scanner.objective:167
+msgctxt "objective text shown on scanner, EuroCorp, mission Tokyo Fuseki"
+msgid "Professor Klein detected - persuade the Professor"
+msgstr ""
+
+#: scanner.objective:168
+msgctxt "objective text shown on scanner, EuroCorp, mission Tokyo Fuseki"
+msgid "Protect Professor Klein - evacuate"
+msgstr ""
+
+#: scanner.objective:169
+msgctxt "objective text shown on scanner, EuroCorp, mission Tokyo Fuseki"
+msgid "Professor Klein is dead"
+msgstr ""
+
+#: scanner.objective:170
+msgctxt "objective text shown on scanner, Church, mission The Shining"
+msgid "Destroy ground station"
+msgstr ""
+
+#: scanner.objective:171
+msgctxt "objective text shown on scanner, Church, mission The Shining"
+msgid "Smite our enemy"
+msgstr ""
+
 #: mapscreen.title
 msgctxt "syndicate & church map screen title"
 msgid "UTOPIA"

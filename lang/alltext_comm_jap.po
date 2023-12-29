@@ -21,7 +21,7 @@ msgstr ""
 "Project-Id-Version: Menu text for SW Port\n"
 "Report-Msgid-Bugs-To: https://github.com/swfans/swars/issues\n"
 "POT-Creation-Date: 2023-09-05 11:43+0200\n"
-"PO-Revision-Date: 2023-12-29 17:18+0100\n"
+"PO-Revision-Date: 2023-12-29 20:10+0100\n"
 "Last-Translator: Mefistotelis <mefistotelis@gmail.com>\n"
 "Language-Team: Syndicate Wars Fans <github.com/swfans>\n"
 "Language: ja_JP\n"
@@ -830,6 +830,41 @@ msgstr "目標は洗脳された"
 msgctxt "objective text shown on scanner, EuroCorp, few missions"
 msgid "Neutralise agent"
 msgstr "エージェントを抹殺せよ"
+
+#: scanner.objective:165
+msgctxt "objective text shown on scanner, EuroCorp, mission Tokyo Fuseki"
+msgid "Seek and destroy - category U - Unguided citizens"
+msgstr ""
+
+#: scanner.objective:166
+msgctxt "objective text shown on scanner, EuroCorp, mission Tokyo Fuseki"
+msgid "Mission update: eliminate cultists"
+msgstr ""
+
+#: scanner.objective:167
+msgctxt "objective text shown on scanner, EuroCorp, mission Tokyo Fuseki"
+msgid "Professor Klein detected - persuade the Professor"
+msgstr ""
+
+#: scanner.objective:168
+msgctxt "objective text shown on scanner, EuroCorp, mission Tokyo Fuseki"
+msgid "Protect Professor Klein - evacuate"
+msgstr ""
+
+#: scanner.objective:169
+msgctxt "objective text shown on scanner, EuroCorp, mission Tokyo Fuseki"
+msgid "Professor Klein is dead"
+msgstr ""
+
+#: scanner.objective:170
+msgctxt "objective text shown on scanner, Church, mission The Shining"
+msgid "Destroy ground station"
+msgstr ""
+
+#: scanner.objective:171
+msgctxt "objective text shown on scanner, Church, mission The Shining"
+msgid "Smite our enemy"
+msgstr ""
 
 #: mapscreen.title
 msgctxt "syndicate & church map screen title"
