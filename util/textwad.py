@@ -338,7 +338,6 @@ weapon_mod_names_to_code = {
     "smygarskinn" : 'SKIN4',
 }
 
-
 def dict_key_for_value(d, v):
     try:
         idx = list(d.values()).index(v)
@@ -433,6 +432,61 @@ def waditem_bytes_to_string(po, fname, b):
     else:
         s = enctable_bytes_to_string(po.chartable_d_decode, b)
     return s
+
+
+def sourceid_encode(mailid, campgn):
+    if campgn == campaign_names[1]:
+        sourceid = mailid + 23
+    elif campgn == campaign_names[2]:
+        sourceid = mailid + 200
+    else:
+        sourceid = mailid
+    return sourceid
+
+
+def sourceid_decode(sourceid):
+    if sourceid < 24:
+        campgn = campaign_names[0]
+        mailid = sourceid
+    elif sourceid < 200:
+        campgn = campaign_names[1]
+        mailid = sourceid - 23
+    else:
+        campgn = campaign_names[2]
+        mailid = sourceid - 200
+    return mailid, campgn
+
+
+def source_linear_number_to_sourceid(sourceno):
+    sourceid = sourceno
+    if sourceno > 34 + 30:
+        mailid_sub = ""
+        mailno = sourceno - 34 - 30;
+        campgn = campaign_names[2]
+    elif sourceno > 34:
+        mailid_sub = ""
+        mailno = sourceno - 34
+        if mailno >= 4:
+            i = mailno - 4
+            if i % 2 == 0:
+                mailid_sub = "a"
+            else:
+                mailid_sub = "b"
+            mailno = (i // 2) + 4
+        campgn = campaign_names[1]
+    else:
+        mailid_sub = ""
+        mailno = sourceno
+        if mailno >= 4:
+            i = mailno - 4
+            if i % 2 == 0:
+                mailid_sub = "a"
+            else:
+                mailid_sub = "b"
+            mailno = (i // 2) + 4
+        campgn = campaign_names[0]
+    sourceid = sourceid_encode(mailno, campgn)
+    return sourceid, mailid_sub
 
 
 def pofile_store_entry(po, pofh, e):
@@ -720,38 +774,6 @@ def prep_po_entries_wms(podict, lines):
     return
 
 
-def source_linear_number_to_sourceid(sourceno):
-    sourceid = sourceno
-    if sourceno > 34 + 30:
-        mailid_sub = ""
-        mailno = sourceno - 34 - 30;
-        # 20 Eurocorp mails, 24 Church mails
-        sourceid = mailno + 24 + 25
-    elif sourceno > 34:
-        mailid_sub = ""
-        mailno = sourceno - 34
-        if mailno >= 4:
-            i = mailno - 4
-            if i % 2 == 0:
-                mailid_sub = "a"
-            else:
-                mailid_sub = "b"
-            mailno = (i // 2) + 4
-        sourceid = mailno + 24
-    else:
-        mailid_sub = ""
-        mailno = sourceno
-        if mailno >= 4:
-            i = mailno - 4
-            if i % 2 == 0:
-                mailid_sub = "a"
-            else:
-                mailid_sub = "b"
-            mailno = (i // 2) + 4
-        sourceid = mailno
-    return sourceid, mailid_sub
-
-
 def prep_po_entries_netscan(podict, lines):
     comment = "outro message"
     n = 0
@@ -779,15 +801,7 @@ def prep_po_entries_netscan(podict, lines):
         if True:
             mailid_sub = ""
             (sourceid, mailid_sub) = source_linear_number_to_sourceid(sourceno)
-            if sourceid < 24:
-                campgn = campaign_names[0]
-                mailid = sourceid
-            elif sourceid < 50:
-                campgn = campaign_names[1]
-                mailid = sourceid - 23
-            else:
-                campgn = campaign_names[2]
-                mailid = sourceid - 49
+            mailid, campgn = sourceid_decode(sourceid)
 
             ctxt = "mission brief tactical information"
             e = polib.POEntry(msgstr=ln, msgctxt=ctxt)
@@ -804,15 +818,7 @@ def prep_po_entries_netscan(podict, lines):
 def prep_po_entries_miss(podict, lines, sourceid):
     n = 0
     k = 0
-    if sourceid < 24:
-        campgn = campaign_names[0]
-        mailid = sourceid
-    elif sourceid < 50:
-        campgn = campaign_names[1]
-        mailid = sourceid - 23
-    else:
-        campgn = campaign_names[2]
-        mailid = sourceid - 49
+    mailid, campgn = sourceid_decode(sourceid)
     entryno = 0
     msgstr = ""
     fmtchar = "c5"
@@ -891,12 +897,7 @@ def po_occurrence_to_fname(campgn, place, num):
     match = re.match(r'^mission[.]brief[.]mail([0-9]+)[.]par[0-9]+[.].*$', place)
     if match:
         mailid = int(match.group(1),10)
-        if campgn == campaign_names[1]:
-            sourceid = mailid + 23
-        elif campgn == campaign_names[2]:
-            sourceid = mailid + 50
-        else:
-            sourceid = mailid
+        sourceid = sourceid_encode(mailid, campgn)
         return f"miss{sourceid:03d}.txt"
     match = re.match(r'^mission[.]title$', place)
     if match:
@@ -1028,15 +1029,7 @@ def create_lines_for_per_line(lines, pomdict, refstart):
 
 
 def create_lines_for_miss(lines, pomdict, sourceid):
-    if sourceid < 24:
-        campgn = campaign_names[0]
-        mailid = sourceid
-    elif sourceid < 51:
-        campgn = campaign_names[1]
-        mailid = sourceid - 23
-    else:
-        campgn = campaign_names[2]
-        mailid = sourceid - 50
+    mailid, campgn = sourceid_decode(sourceid)
 
     paragraphs = []
     if True:
@@ -1133,12 +1126,7 @@ def create_lines_for_netscan(lines, pomdict):
         assert match, "Invalid netscan mission.brief.mailN.mapM.levelL occurrence"
         mailid = int(match.group(1), 10)
         mailid_sub = match.group(2)
-        if campgn == campaign_names[1]:
-            sourceid = mailid + 23
-        elif campgn == campaign_names[2]:
-            sourceid = mailid + 50
-        else:
-            sourceid = mailid
+        sourceid = sourceid_encode(mailid, campgn)
         mapno = int(match.group(3), 10)
         level = int(match.group(4), 10)
         num = int(num, 10) - 1
