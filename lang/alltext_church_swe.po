@@ -21,7 +21,7 @@ msgstr ""
 "Project-Id-Version: Menu text for SW Port\n"
 "Report-Msgid-Bugs-To: https://github.com/swfans/swars/issues\n"
 "POT-Creation-Date: 2023-09-05 11:30+0200\n"
-"PO-Revision-Date: 2023-09-09 17:35+0200\n"
+"PO-Revision-Date: 2023-12-30 13:51+0100\n"
 "Last-Translator: Mefistotelis <mefistotelis@gmail.com>\n"
 "Language-Team: Syndicate Wars Fans <github.com/swfans>\n"
 "Language: sv_SE\n"
@@ -124,7 +124,7 @@ msgstr "Var välsignad."
 #: mission.brief.mail19.par7.c4 mission.brief.mail20.par6.c4
 #: mission.brief.mail21.par6.c4 mission.brief.mail22.par7.c4
 #: mission.brief.mail23.par5.c4 mission.brief.mail24.par5.c4
-#: mission.brief.mail25.par5.c4
+#: mission.brief.mail25.par5.c4 mission.brief.mail31.par7.c4
 msgctxt "mission brief email sender"
 msgid "Virgil"
 msgstr "Virgil"
@@ -155,7 +155,7 @@ msgstr "\"Från er,\" svarade herren. \"Ni har alla klättrat så högt.\""
 #: mission.brief.mail19.par9.c1 mission.brief.mail20.par8.c1
 #: mission.brief.mail21.par10.c1 mission.brief.mail22.par9.c1
 #: mission.brief.mail23.par7.c1 mission.brief.mail24.par7.c1
-#: mission.brief.mail25.par8.c1
+#: mission.brief.mail25.par8.c1 mission.brief.mail31.par10.c1
 msgctxt "mission brief book quote"
 msgid "- The Book of Cataclysm."
 msgstr "- Kataklysmens bok."
@@ -170,7 +170,7 @@ msgctxt "mission brief tactical information"
 msgid "Target building: EuroCorp AI Ground Station"
 msgstr "Mälbyggnad: EuroCorps AI-markstation"
 
-#: mission.brief.mail1.map35.level2:3
+#: mission.brief.mail1.map35.level2:3 mission.brief.mail31.map3.level10:5
 msgctxt "mission brief tactical information"
 msgid "Disposition of EuroCorp guards"
 msgstr "Tgärder mot EuroCorp vakter"
@@ -946,7 +946,7 @@ msgstr "Dina bröder"
 #: mission.brief.mail9c.map22.level2:4
 msgctxt "mission brief tactical information"
 msgid ""
-"Eavesdrop: tinkering with UTOPIA ident signal detected - with focus around "
+"Eavesdrop: UTOPIA ident signal tampering detected - with focus around "
 "entrances to transport tubes, and detection of carrying explosive devices"
 msgstr ""
 "Avlyssning: mixtra med UTOPIA-identitetssignalen upptäckt - med fokus kring "
@@ -2281,6 +2281,87 @@ msgctxt "mission brief tactical information"
 msgid "Elevator anti-missile missile system"
 msgstr "Anti-missil system för hiss"
 
+#: mission.title:108
+msgctxt "mission title"
+msgid "The Shining"
+msgstr ""
+
+#: mission.brief.mail31.par1.h
+msgctxt "mission brief email header"
+msgid "Shine, Selfless One."
+msgstr ""
+
+#: mission.brief.mail31.par2.c2
+msgctxt "mission brief email orders"
+msgid "Demolish a UTOPIA ground station and wipe out its security garrison."
+msgstr ""
+
+#: mission.brief.mail31.par3.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Your guidance is required in Bangkok, which we shall soon save from the "
+"Syndicate."
+msgstr ""
+
+#: mission.brief.mail31.par4.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"EuroCorp's presence has been contained to a UTOPIA ground station and its "
+"security garrison. Already, your brother and sisters gather on the other "
+"side of the river, in preparation for making the greatest sacrifice."
+msgstr ""
+
+#: mission.brief.mail31.par5.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Lead the way. Destroy the buildings which link the chain of slavery EuroCorp "
+"calls UTOPIA. Show our followers the way of the Cataclysm by eliminating the "
+"security personnel."
+msgstr ""
+
+#: mission.brief.mail31.par6.c5
+msgctxt "mission brief email paragraph"
+msgid "Do this for the Nine."
+msgstr ""
+
+#: mission.brief.mail31.par8.c1
+msgctxt "mission brief book quote"
+msgid ""
+"The Master held his palms aloft. \"Behold my wounds,\" said He. The "
+"onlookers observed the cauterization and the sunlight that shone through His "
+"great hands."
+msgstr ""
+
+#: mission.brief.mail31.par9.c1
+msgctxt "mission brief book quote"
+msgid "\"Let there be pain.\""
+msgstr ""
+
+#: mission.brief.mail31.map3.level10:1
+msgctxt "mission brief tactical information"
+msgid "Landing Ground: Bangkok Cathedral"
+msgstr ""
+
+#: mission.brief.mail31.map3.level10:2
+msgctxt "mission brief tactical information"
+msgid "Support acolytes in A-grav APC"
+msgstr ""
+
+#: mission.brief.mail31.map3.level10:3
+msgctxt "mission brief tactical information"
+msgid "Target installations"
+msgstr ""
+
+#: mission.brief.mail31.map3.level10:4
+msgctxt "mission brief tactical information"
+msgid "IML branch connections"
+msgstr ""
+
+#: mission.brief.mail31.map3.level10:6
+msgctxt "mission brief tactical information"
+msgid "Local police have recently escorted armoured cars to the city vault"
+msgstr ""
+
 #: message.win:1
 msgctxt "game win message"
 msgid ""
@@ -2841,7 +2922,7 @@ msgstr ""
 msgctxt "mods description - flame skin"
 msgid ""
 "Heat is one enemy of the combatant. Our foe has found the solution with this "
-"experimental cyverskin. Using space industry fabrics, they have developed a "
+"experimental cyberskin. Using space industry fabrics, they have developed a "
 "cyberskin which can make our Acolytes resistant to flame and thermal energy."
 msgstr ""
 "Hetta är en av de stridandes fiender. Vär fiender har anstängt sig och "

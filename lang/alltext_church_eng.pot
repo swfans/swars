@@ -108,7 +108,7 @@ msgstr ""
 #: mission.brief.mail16.par4.c4 mission.brief.mail17.par6.c4 mission.brief.mail18.par6.c4
 #: mission.brief.mail19.par7.c4 mission.brief.mail20.par6.c4 mission.brief.mail21.par6.c4
 #: mission.brief.mail22.par7.c4 mission.brief.mail23.par5.c4 mission.brief.mail24.par5.c4
-#: mission.brief.mail25.par5.c4
+#: mission.brief.mail25.par5.c4 mission.brief.mail31.par7.c4
 msgctxt "mission brief email sender"
 msgid "Virgil"
 msgstr ""
@@ -134,7 +134,7 @@ msgstr ""
 #: mission.brief.mail17.par8.c1 mission.brief.mail18.par8.c1 mission.brief.mail19.par9.c1
 #: mission.brief.mail20.par8.c1 mission.brief.mail21.par10.c1
 #: mission.brief.mail22.par9.c1 mission.brief.mail23.par7.c1 mission.brief.mail24.par7.c1
-#: mission.brief.mail25.par8.c1
+#: mission.brief.mail25.par8.c1 mission.brief.mail31.par10.c1
 msgctxt "mission brief book quote"
 msgid "- The Book of Cataclysm."
 msgstr ""
@@ -149,7 +149,7 @@ msgctxt "mission brief tactical information"
 msgid "Target building: EuroCorp AI Ground Station"
 msgstr ""
 
-#: mission.brief.mail1.map35.level2:3
+#: mission.brief.mail1.map35.level2:3 mission.brief.mail31.map3.level10:5
 msgctxt "mission brief tactical information"
 msgid "Disposition of EuroCorp guards"
 msgstr ""
@@ -1885,6 +1885,57 @@ msgctxt "mission title"
 msgid "The Shining"
 msgstr ""
 
+#: mission.brief.mail31.par1.h
+msgctxt "mission brief email header"
+msgid "Shine, Selfless One."
+msgstr ""
+
+#: mission.brief.mail31.par2.c2
+msgctxt "mission brief email orders"
+msgid "Demolish a UTOPIA ground station and wipe out its security garrison."
+msgstr ""
+
+#: mission.brief.mail31.par3.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Your guidance is required in Bangkok, which we shall soon save from the "
+"Syndicate."
+msgstr ""
+
+#: mission.brief.mail31.par4.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"EuroCorp's presence has been contained to a UTOPIA ground station and its "
+"security garrison. Already, your brother and sisters gather on the other "
+"side of the river, in preparation for making the greatest sacrifice."
+msgstr ""
+
+#: mission.brief.mail31.par5.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Lead the way. Destroy the buildings which link the chain of slavery EuroCorp"
+" calls UTOPIA. Show our followers the way of the Cataclysm by eliminating "
+"the security personnel."
+msgstr ""
+
+#: mission.brief.mail31.par6.c5
+msgctxt "mission brief email paragraph"
+msgid "Do this for the Nine."
+msgstr ""
+
+#: mission.brief.mail31.par8.c1
+msgctxt "mission brief book quote"
+msgid ""
+"The Master held his palms aloft. \"Behold my wounds,\" said He. The "
+"onlookers observed the cauterization and the sunlight that shone through His"
+" great hands."
+msgstr ""
+
+#: mission.brief.mail31.par9.c1
+msgctxt "mission brief book quote"
+msgid "\"Let there be pain.\""
+msgstr ""
+
 #: mission.brief.mail31.map3.level10:1
 msgctxt "mission brief tactical information"
 msgid "Landing Ground: Bangkok Cathedral"
@@ -1903,11 +1954,6 @@ msgstr ""
 #: mission.brief.mail31.map3.level10:4
 msgctxt "mission brief tactical information"
 msgid "IML branch connections"
-msgstr ""
-
-#: mission.brief.mail31.map3.level10:5
-msgctxt "mission brief tactical information"
-msgid "Disposition of EuroCorp guards"
 msgstr ""
 
 #: mission.brief.mail31.map3.level10:6
