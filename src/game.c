@@ -3538,6 +3538,69 @@ void draw_sort_sprite1a(ushort a1)
         : : "a" (a1));
 }
 
+void draw_floor_tile1a(ushort a1)
+{
+    asm volatile (
+      "call ASM_draw_floor_tile1a\n"
+        : : "a" (a1));
+}
+
+void draw_ex_face(ushort a1)
+{
+    asm volatile (
+      "call ASM_draw_ex_face\n"
+        : : "a" (a1));
+}
+
+void draw_floor_tile1b(ushort a1)
+{
+    asm volatile (
+      "call ASM_draw_floor_tile1b\n"
+        : : "a" (a1));
+}
+
+void draw_object_face1b(ushort a1)
+{
+    asm volatile (
+      "call ASM_draw_object_face1b\n"
+        : : "a" (a1));
+}
+
+void draw_object_face4a(ushort a1)
+{
+    asm volatile (
+      "call ASM_draw_object_face4a\n"
+        : : "a" (a1));
+}
+
+void draw_sort_line(struct SortLine *sline)
+{
+    asm volatile (
+      "call ASM_draw_sort_line\n"
+        : : "a" (sline));
+}
+
+void draw_object_face4b(ushort a1)
+{
+    asm volatile (
+      "call ASM_draw_object_face4b\n"
+        : : "a" (a1));
+}
+
+void draw_sort_sprite1b(int a1)
+{
+    asm volatile (
+      "call ASM_draw_sort_sprite1b\n"
+        : : "a" (a1));
+}
+
+void draw_object_face4c(ushort a1)
+{
+    asm volatile (
+      "call ASM_draw_object_face4c\n"
+        : : "a" (a1));
+}
+
 void draw_screen(void)
 {
     asm volatile ("call ASM_draw_screen\n"
