@@ -436,7 +436,7 @@ def waditem_bytes_to_string(po, fname, b):
 
 def sourceid_encode(mailid, campgn):
     if campgn == campaign_names[1]:
-        sourceid = mailid + 23
+        sourceid = mailid + 100
     elif campgn == campaign_names[2]:
         sourceid = mailid + 200
     else:
@@ -445,12 +445,12 @@ def sourceid_encode(mailid, campgn):
 
 
 def sourceid_decode(sourceid):
-    if sourceid < 24:
+    if sourceid < 100:
         campgn = campaign_names[0]
         mailid = sourceid
     elif sourceid < 200:
         campgn = campaign_names[1]
-        mailid = sourceid - 23
+        mailid = sourceid - 100
     else:
         campgn = campaign_names[2]
         mailid = sourceid - 200
