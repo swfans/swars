@@ -3524,6 +3524,20 @@ void draw_new_panel()
 #endif
 }
 
+void draw_object_face1a(ushort a1)
+{
+    asm volatile (
+      "call ASM_draw_object_face1a\n"
+        : : "a" (a1));
+}
+
+void draw_sort_sprite1a(ushort a1)
+{
+    asm volatile (
+      "call ASM_draw_sort_sprite1a\n"
+        : : "a" (a1));
+}
+
 void draw_screen(void)
 {
     asm volatile ("call ASM_draw_screen\n"
