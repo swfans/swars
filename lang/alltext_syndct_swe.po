@@ -21,7 +21,7 @@ msgstr ""
 "Project-Id-Version: Menu text for SW Port\n"
 "Report-Msgid-Bugs-To: https://github.com/swfans/swars/issues\n"
 "POT-Creation-Date: 2023-09-05 11:32+0200\n"
-"PO-Revision-Date: 2023-09-09 16:27+0200\n"
+"PO-Revision-Date: 2023-12-30 12:58+0100\n"
 "Last-Translator: Mefistotelis <mefistotelis@gmail.com>\n"
 "Language-Team: Syndicate Wars Fans <github.com/swfans>\n"
 "Language: sv_SE\n"
@@ -70,11 +70,13 @@ msgstr "Ledningsvarning"
 #: mission.brief.mail15.par1.h mission.brief.mail17.par1.h
 #: mission.brief.mail18.par1.h mission.brief.mail19.par1.h
 #: mission.brief.mail20.par1.h mission.brief.mail21.par1.h
+#: mission.brief.mail31.par1.h mission.brief.mail32.par1.h
 msgctxt "mission brief email header"
 msgid "Message Type: DIRECT"
 msgstr "Meddelandetyp: DIREKT"
 
-#: mission.brief.mail1.par2.h
+#: mission.brief.mail1.par2.h mission.brief.mail31.par2.h
+#: mission.brief.mail32.par2.h
 msgctxt "mission brief email header"
 msgid "Priority: 3"
 msgstr "Prioritet: 3"
@@ -90,6 +92,7 @@ msgstr "Prioritet: 3"
 #: mission.brief.mail18.par3.h mission.brief.mail19.par3.h
 #: mission.brief.mail20.par3.h mission.brief.mail21.par3.h
 #: mission.brief.mail5.par3.h mission.brief.mail8.par13.c3
+#: mission.brief.mail31.par3.h mission.brief.mail32.par3.h
 msgctxt "mission brief email header"
 msgid "Message begins:"
 msgstr "Meddelandet börjar:"
@@ -104,7 +107,8 @@ msgstr "Meddelandet börjar:"
 #: mission.brief.mail15.par4.c2 mission.brief.mail16.par4.c2
 #: mission.brief.mail17.par4.c2 mission.brief.mail18.par4.c2
 #: mission.brief.mail19.par4.c2 mission.brief.mail20.par4.c2
-#: mission.brief.mail21.par4.c2
+#: mission.brief.mail21.par4.c2 mission.brief.mail31.par4.c2
+#: mission.brief.mail32.par4.c2
 msgctxt "mission brief email orders"
 msgid "Orders"
 msgstr "Order"
@@ -128,13 +132,15 @@ msgstr ""
 "tekniska felen är totala utsläckningar, fullständiga CHIP-fel. Följande "
 "kategori av medborgare är O: Ostyrda."
 
-#: mission.brief.mail1.par7.c4
+#: mission.brief.mail1.par7.c4 mission.brief.mail31.par9.c4
+#: mission.brief.mail32.par9.c4
 msgctxt "mission brief email sender"
 msgid "EuroCorp Core 0-1-0/171261/26D: London Artificial Intelligence, UTOPIA"
 msgstr ""
 "EuroCorp Kärna 0-1-0/171261/26D: Londons Artificiella Intelligens, UTOPIA"
 
-#: mission.brief.mail1.par8.expansion
+#: mission.brief.mail1.par8.expansion mission.brief.mail31.par10.expansion
+#: mission.brief.mail32.par10.expansion
 msgctxt "mission brief email sender"
 msgid "Universal Transferred Organic Processing Interface Architecture"
 msgstr "Universal Transferred Organic Processing Interface Architecture"
@@ -606,8 +612,8 @@ msgstr ""
 
 #: mission.brief.mail4b.map2.level1:1
 msgctxt "mission brief tactical information"
-msgid "Dropsite: Matochkin Shar"
-msgstr "Dropp-plats: Matochkin Shar"
+msgid "Dropsite: Matochkin Shar IML Link"
+msgstr "Dropp-plats: Matochkin Shars IML-länk"
 
 #: mission.brief.mail4b.map2.level1:2
 msgctxt "mission brief tactical information"
@@ -1716,7 +1722,8 @@ msgstr ""
 "När du fritagit professorn, för honom i säkerhet. Vårt operationscenter i "
 "Bangkok är säkert; för honom dit."
 
-#: mission.brief.mail15a.map47.level1:1
+#: mission.brief.mail15a.map47.level1:1 mission.brief.mail31.map70.level11:1
+#: mission.brief.mail32.map47.level11:1
 msgctxt "mission brief tactical information"
 msgid "Dropsite: Tokyo IML Link A"
 msgstr "Dropp-plats: Tokyos IML-länk A"
@@ -2289,6 +2296,60 @@ msgstr "Anti-missilsystem för omloppsbanans hiss"
 msgctxt "mission title"
 msgid "Tokyo Fuseki"
 msgstr "Tokyo Fuseki"
+
+#: mission.brief.mail31.par5.c2 mission.brief.mail32.par5.c2
+msgctxt "mission brief email orders"
+msgid ""
+"Tokyo: Armed Category U - Unguided citizens reported in violation of "
+"behaviour codes. Quell disorder."
+msgstr ""
+"Tokyo: Beväpnad kategori O - Ostyrda medborgare rapporterade i strid med "
+"beteendekoder. Källstörning."
+
+#: mission.brief.mail31.par6.h mission.brief.mail32.par6.h
+msgctxt "mission brief email header"
+msgid ""
+"UTOPIA architect Professor Klein has been traced by Netscan. Re-persuade the "
+"professor to come and work for us once more."
+msgstr ""
+"UTOPIA-arkitekten Professor Klein har spårats av Netscan. Övertala "
+"professorn igen att komma och arbeta för oss en gång till."
+
+#: mission.brief.mail31.par7.c5 mission.brief.mail32.par7.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"Additional: zealot members of the New Epoch cult have been detected in this "
+"area. As our inventory does not include a persuadertron, it will be "
+"necessary to relieve the zealots of theirs."
+msgstr ""
+"Ytterligare: ivriga medlemmar av New Epoch-kulten har upptäckts i detta "
+"område. Eftersom vårt lager inte innehåller en övertalningstron kommer det "
+"att bli nödvändigt att avlasta deras eldsjälar."
+
+#: mission.brief.mail31.par8.h mission.brief.mail32.par8.h
+msgctxt "mission brief email header"
+msgid ""
+"The effects of the cult's Harbinger virus on the Tokyo's UTOPIA node are "
+"making continuous Netscan feed impossible. No further information is "
+"available."
+msgstr ""
+"Effekterna av sektens Harbinger-virus på Tokyos UTOPIA-nod gör kontinuerligt "
+"Netscan-flöde omöjligt. Ingen ytterligare information finns tillgänglig."
+
+#: mission.brief.mail31.map70.level11:2 mission.brief.mail32.map47.level11:2
+msgctxt "mission brief tactical information"
+msgid "Category U - Unguided citizens traced to these locations"
+msgstr "Kategori O - Ostyrda medborgare spårade till dessa platser"
+
+#: mission.brief.mail31.map70.level11:3 mission.brief.mail32.map47.level11:3
+msgctxt "mission brief tactical information"
+msgid "Cult 'temple'"
+msgstr "Kult \"tempel\""
+
+#: mission.brief.mail31.map70.level11:4 mission.brief.mail32.map47.level11:4
+msgctxt "mission brief tactical information"
+msgid "Professor Klein's current location"
+msgstr "Professor Kleins nuvarande plats"
 
 #: message.win:1
 msgctxt "game win message"
