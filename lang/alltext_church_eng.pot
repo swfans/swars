@@ -1880,6 +1880,41 @@ msgctxt "mission brief tactical information"
 msgid "Elevator anti-missile missile system"
 msgstr ""
 
+#: mission.title:108
+msgctxt "mission title"
+msgid "The Shining"
+msgstr ""
+
+#: mission.brief.mail31.map3.level10:1
+msgctxt "mission brief tactical information"
+msgid "Landing Ground: Bangkok Cathedral"
+msgstr ""
+
+#: mission.brief.mail31.map3.level10:2
+msgctxt "mission brief tactical information"
+msgid "Support acolytes in A-grav APC"
+msgstr ""
+
+#: mission.brief.mail31.map3.level10:3
+msgctxt "mission brief tactical information"
+msgid "Target installations"
+msgstr ""
+
+#: mission.brief.mail31.map3.level10:4
+msgctxt "mission brief tactical information"
+msgid "IML branch connections"
+msgstr ""
+
+#: mission.brief.mail31.map3.level10:5
+msgctxt "mission brief tactical information"
+msgid "Disposition of EuroCorp guards"
+msgstr ""
+
+#: mission.brief.mail31.map3.level10:6
+msgctxt "mission brief tactical information"
+msgid "Local police have recently escorted armoured cars to the city vault"
+msgstr ""
+
 #: message.win:1
 msgctxt "game win message"
 msgid ""
