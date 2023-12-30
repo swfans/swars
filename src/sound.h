@@ -40,4 +40,7 @@ void play_dist_sample(struct Thing *p_thing, ushort smptbl_id, ushort vol, ushor
 void snd_unkn1_volume_all_samples(void);
 void wait_for_sound_sample_finish(ushort smpl_id);
 
+void setup_heaps(int a1);
+void reset_heaps(void);
+
 #endif
