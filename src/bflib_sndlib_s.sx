@@ -68,7 +68,7 @@ AILSFILE_start_:
 
 
 /*----------------------------------------------------------------*/
-AIL_VOC_block_len:
+ASM_AIL_VOC_block_len:
 /*----------------------------------------------------------------*/
 		mov    0x4(%esp),%eax
 		mov    (%eax),%eax
@@ -77,7 +77,7 @@ AIL_VOC_block_len:
 
 
 /*----------------------------------------------------------------*/
-AIL_VOC_terminate:
+ASM_AIL_VOC_terminate:
 /*----------------------------------------------------------------*/
 		push   %ebx
 		mov    0x8(%esp),%ebx
@@ -133,7 +133,7 @@ GLOBAL_FUNC (ASM_AIL_process_VOC_block)
 func_11404b:
 /*----------------------------------------------------------------*/
 		push   %ebx
-		call   AIL_VOC_terminate
+		call   ac_AIL_VOC_terminate
 		add    $0x4,%esp
 		pop    %ebp
 		pop    %edi
@@ -148,7 +148,7 @@ func_114059:
 		cmpl   $0x0,0x888(%ebx)
 		je     func_114271
 		push   %esi
-		call   AIL_VOC_block_len
+		call   ac_AIL_VOC_block_len
 		add    $0x4,%esp
 		sub    $0x2,%eax
 		push   %eax
@@ -260,12 +260,12 @@ func_114138:
 		call   ac_AIL_set_sample_playback_rate
 		add    $0x8,%esp
 		push   %esi
-		call   AIL_VOC_block_len
+		call   ac_AIL_VOC_block_len
 		add    %eax,%esi
 		add    $0x4,%esp
 		add    $0x4,%esi
 		push   %esi
-		call   AIL_VOC_block_len
+		call   ac_AIL_VOC_block_len
 		add    $0x4,%esp
 		sub    $0x2,%eax
 		push   %eax
@@ -288,7 +288,7 @@ func_1141d6:
 		cmpl   $0x0,0x888(%ebx)
 		je     func_114271
 		push   %esi
-		call   AIL_VOC_block_len
+		call   ac_AIL_VOC_block_len
 		add    $0x4,%esp
 		sub    $0xc,%eax
 		push   %eax
@@ -351,7 +351,7 @@ func_1141d6:
 func_114271:
 /*----------------------------------------------------------------*/
 		push   %esi
-		call   AIL_VOC_block_len
+		call   ac_AIL_VOC_block_len
 		add    %esi,%eax
 		add    $0x4,%eax
 		add    $0x4,%esp

@@ -22,6 +22,8 @@
 
 #include "mssal.h"
 
+#include <stdio.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif

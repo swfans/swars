@@ -20,7 +20,34 @@
 #include <assert.h>
 
 #include "ailss.h"
+#include "aildebug.h"
 /******************************************************************************/
+
+/** Get length of .VOC block.
+ */
+uint32_t AIL_VOC_block_len(void *block)
+{
+    return (*(uint32_t *)block) >> 8;
+}
+
+/** Terminate playback of .VOC file.
+ *
+ * Invoke application callback function, if any, and release the sample
+ * allocated to play this file.
+ */
+void AIL_VOC_terminate(SNDSAMPLE *s)
+{
+    AILSAMPLECB cb;
+
+    cb = (AILSAMPLECB)s->system_data[0];
+    if (cb != NULL)
+        cb(s);
+
+    if (s->system_data[6] > 0)
+        AIL_release_sample_handle(s);
+
+    s->system_data[6] = -1;
+}
 
 void AIL_process_VOC_block(SNDSAMPLE *s, int32_t play_flag)
 {
