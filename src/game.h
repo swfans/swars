@@ -459,6 +459,44 @@ struct SortSprite {
     short Scale;
 };
 
+struct QuickLoad {
+    ushort *Numb;
+    void **Ptr;
+    ushort Size;
+    ushort Extra;
+};
+
+struct TrTriangle {
+    ushort point[3];
+    short tri[3];
+    short jump;
+    ubyte solid;
+    ubyte enter;
+};
+
+struct TrPoint {
+    int x;
+    int y;
+};
+
+struct Triangulation {
+    int tri_allocated;
+    int tri_initialised;
+    int last_tri;
+    int ix_Triangles;
+    int count_Triangles;
+    int free_Triangles;
+    int triangle_top;
+    int max_Triangles;
+    struct TrTriangle *Triangles;
+    int ix_Points;
+    int count_Points;
+    int free_Points;
+    int point_top;
+    int max_Points;
+    struct TrPoint *Points;
+};
+
 #pragma pack()
 
 extern char session_name[20];
@@ -504,7 +542,7 @@ extern void *engine_mem_alloc_ptr;
 
 extern long navi2_unkn_counter;
 extern long navi2_unkn_counter_max;
-extern ulong triangulation;
+extern struct Triangulation triangulation[10];
 
 extern ulong smack_malloc_used_tot;
 extern ubyte anim_slots[];

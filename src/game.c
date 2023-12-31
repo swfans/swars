@@ -230,6 +230,9 @@ extern long gamep_unknval_14;
 extern long gamep_unknval_15;
 extern long gamep_unknval_16;
 
+extern long selected_triangulation_no; // = -1;
+extern long tri_module_init;
+
 extern ubyte player_unkn0C9[8];
 extern char player_unknCC9[8][128];
 extern long scanner_unkn370;
@@ -257,6 +260,8 @@ const char *miss_end_sta_names[] = {
   "imm. next after success",
   "",
 };
+
+extern struct QuickLoad quick_load_pc[19];
 
 struct TbLoadFiles unk02_load_files[] =
 {
@@ -537,9 +542,9 @@ void bang_init(void)
         :  :  : "eax" );
 }
 
-void init_arrays_1(void)
+void init_free_explode_faces(void)
 {
-    asm volatile ("call ASM_init_arrays_1\n"
+    asm volatile ("call ASM_init_free_explode_faces\n"
         :  :  : "eax" );
 }
 
@@ -1369,6 +1374,18 @@ void level_misc_update(void)
 {
     asm volatile ("call ASM_level_misc_update\n"
         :  :  : "eax" );
+}
+
+void load_map_bnb(int a1)
+{
+    asm volatile ("call ASM_load_map_bnb\n"
+        : : "a" (a1));
+}
+
+void triangulation_select(int tgnNo)
+{
+    asm volatile ("call ASM_triangulation_select\n"
+        : : "a" (tgnNo));
 }
 
 void load_mad_pc(ushort mapno)
@@ -5337,7 +5354,7 @@ void game_setup(void)
     read_weapons_conf_file();
     read_cybmods_conf_file();
     bang_init();
-    init_arrays_1();
+    init_free_explode_faces();
     init_search_spiral();
     bang_set_detail(0);
     game_setup_sub3();
