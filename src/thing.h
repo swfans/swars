@@ -869,6 +869,8 @@ void add_node_sthing(ushort new_thing);
 short get_new_sthing(void);
 void remove_sthing(short tngno);
 
+short add_static(int x, int y, int z, ushort frame, int timer);
+
 short get_thing_same_type_head(short ttype, short subtype);
 
 TbBool thing_is_within_circle(short thing, short X, short Z, ushort R);

@@ -86,6 +86,16 @@ void remove_sthing(short tngno)
         : : "a" (tngno));
 }
 
+short add_static(int x, int y, int z, ushort frame, int timer)
+{
+    short ret;
+    asm volatile (
+      "push %5\n"
+      "call ASM_add_static\n"
+        : "=r" (ret) : "a" (x), "d" (y), "b" (z), "c" (frame), "g" (timer));
+    return ret;
+}
+
 TbBool thing_is_within_circle(short thing, short X, short Z, ushort R)
 {
     long dtX, dtZ, r2;

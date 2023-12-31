@@ -200,6 +200,7 @@ extern ubyte byte_18110E[40];
 extern long dword_176CC4;
 extern ushort unkn3de_len;
 extern void *dword_177750;
+extern void *unkn_mech_arr7;
 
 extern long dword_19F4F8;
 
@@ -1388,10 +1389,314 @@ void triangulation_select(int tgnNo)
         : : "a" (tgnNo));
 }
 
+void new_thing_type10_clone(struct SimpleThing *p_clsthing)
+{
+    asm volatile ("call ASM_new_thing_type10_clone\n"
+        : : "a" (p_clsthing));
+}
+
+short new_thing_smoke_gen_clone(struct SimpleThing *p_clsthing)
+{
+    struct SimpleThing *p_sthing;
+    short thing;
+
+    thing = add_static(p_clsthing->X >> 8, p_clsthing->Y, p_clsthing->Z >> 8,
+      0, p_clsthing->Timer1);
+    p_sthing = &sthings[thing];
+    p_sthing->Type = SmTT_SMOKE_GENERATOR;
+    p_sthing->U.UEffect.VX = p_clsthing->U.UEffect.VX;
+    p_sthing->U.UEffect.VY = p_clsthing->U.UEffect.VY;
+    p_sthing->U.UEffect.VZ = p_clsthing->U.UEffect.VZ;
+    p_sthing->StartTimer1 = p_clsthing->StartTimer1;
+    p_sthing->U.UEffect.OX = p_clsthing->U.UEffect.OX;
+    p_sthing->U.UEffect.OY = p_clsthing->U.UEffect.OY;
+    p_sthing->U.UEffect.OZ = p_clsthing->U.UEffect.OZ;
+    return thing;
+}
+
+short new_thing_static_clone(struct SimpleThing *p_clsthing)
+{
+    struct SimpleThing *p_sthing;
+    short thing;
+    ushort frame;
+
+    thing = add_static(p_clsthing->X >> 8, p_clsthing->Y, p_clsthing->Z >> 8,
+      p_clsthing->StartFrame + 1, p_clsthing->Timer1);
+    p_sthing = &sthings[thing];
+    p_sthing->U.UEffect.VZ = p_clsthing->U.UEffect.VZ;
+    frame = p_sthing->StartFrame;
+    if (frame != 999 && frame != 1002 && frame != 1004 && frame != 1008 &&
+      frame != 1032 && frame != 1037 && frame != 1038 && frame != 1050) {
+        p_sthing->SubType = 2;
+    } else {
+        p_sthing->SubType = 1;
+        p_sthing->Radius = 128;
+    }
+    return thing;
+}
+
+short new_thing_building_clone(struct Thing *p_clthing, struct M33 *p_clmat, short shut_h)
+{
+    struct Thing *p_thing;
+    struct SingleObject *p_sobj;
+    int i;
+
+    p_thing = create_building_thing(p_clthing->X >> 8, p_clthing->Y, p_clthing->Z >> 8,
+            p_clthing->U.UObject.Object, p_clthing->U.UObject.NumbObjects, p_clthing->ThingOffset);
+
+    p_thing->U.UObject.Token = p_clthing->U.UObject.Token;
+    p_thing->U.UObject.TokenDir = p_clthing->U.UObject.TokenDir;
+    p_thing->U.UObject.NextThing = p_clthing->U.UObject.NextThing;
+    p_thing->U.UObject.PrevThing = p_clthing->U.UObject.PrevThing;
+    p_thing->U.UObject.OffX = p_clthing->U.UObject.OffX;
+    p_thing->U.UObject.OffZ = p_clthing->U.UObject.OffZ;
+    p_thing->ThingOffset = p_clthing->ThingOffset;
+    p_thing->Flag = p_clthing->Flag;
+    p_thing->VX = p_clthing->VX;
+    p_thing->VY = p_clthing->VY;
+    p_thing->VZ = p_clthing->VZ;
+    p_thing->SubType = p_clthing->SubType;
+
+    // Copy 8 bytes _after_ UObject.DrawTurn (is anything really there?)
+    for (i = 1; i < 3; i++) {
+        *(&p_thing->U.UObject.DrawTurn + i) = *(&p_clthing->U.UObject.DrawTurn + i);
+    }
+    p_sobj = &game_objects[p_clthing->U.UObject.Object];
+    p_thing->U.UObject.MinY[0] = p_sobj->OffsetY - 500;
+    p_thing->U.UObject.MaxY[0] = p_sobj->OffsetY;
+    
+    // Copy 20 bytes from UObject.Turn (why in a loop instead of assigning separate fields? is there an array?)
+    for (i = 0; i < 10; i++) {
+        *(&p_thing->U.UObject.Turn + i) = *(&p_clthing->U.UObject.Turn + i);
+    }
+
+    ubyte styp;
+    styp = p_thing->SubType;
+    if (styp == SubTT_BLD_SHUTLDR)
+    {
+        if (((p_thing->Flag & 0x0001) == 0)
+          && (p_thing->U.UObject.PrevThing == 0 || p_thing->U.UObject.NextThing == 0))
+        {
+            p_thing->VX = p_thing->X >> 16;
+            p_thing->VZ = p_thing->Z >> 16;
+            p_thing->Flag |= 0x01;
+        }
+        if (shut_h < 15)
+            p_thing->Y >>= 3;
+    }
+    else if (styp == SubTT_BLD_MGUN)
+    {
+        p_thing->U.UMGun.MatrixIndex = next_local_mat;
+        next_local_mat++;
+        if (p_clmat != NULL)
+            memcpy(&local_mats[p_thing->U.UMGun.MatrixIndex], p_clmat, sizeof(struct M33));
+        else
+            matrix_identity_fill(&local_mats[p_thing->U.UMGun.MatrixIndex]);
+        p_thing->U.UMGun.AngleX = 1024;
+        p_thing->U.UMGun.AngleY = 0;
+        p_thing->Radius = 256;
+        p_thing->U.UMGun.RecoilTimer = 0;
+        p_thing->U.UMGun.MaxHealth = 6000;
+        p_thing->U.UMGun.RecoilTimer = 0;
+        p_thing->Health = p_thing->U.UMGun.MaxHealth;
+    }
+    else if (styp >= SubTT_BLD_36 && styp <= SubTT_BLD_37)
+    {
+        p_thing->U.UObject.MatrixIndex = next_local_mat;
+        next_local_mat++;
+        if (p_clmat != NULL)
+            memcpy(&local_mats[p_thing->U.UObject.MatrixIndex], p_clmat, sizeof(struct M33));
+        else
+            matrix_identity_fill(&local_mats[p_thing->U.UObject.MatrixIndex]);
+        p_thing->Flag |= 0x1000;
+    }
+    p_thing->SubState = p_clthing->SubState;
+    p_thing->Timer1 = p_clthing->Timer1;
+
+    // Should be have a separate UGate struct?
+    if (styp >= SubTT_BLD_GATE && styp <= SubTT_BLD_26
+      && p_thing->U.UObject.MinY[0] == *(ushort *)&p_thing->U.UObject.Group )
+    {
+        p_thing->U.UObject.MinY[0] = -500;
+        p_thing->U.UObject.MaxY[0] = 0;
+    }
+    p_thing->State = p_clthing->State;
+    if (p_thing->State == 9)
+        p_thing->State = 0;
+    p_thing->Frame = p_clthing->Frame;
+
+    return p_thing->ThingOffset;
+}
+
+int sub_73C64(char *a1, ubyte a2)
+{
+    char ret;
+    asm volatile ("call ASM_sub_73C64\n"
+        : "=r" (ret) : "a" (a1), "d" (a2));
+    return ret;
+}
+
+void unkn_buildings_processing(void)
+{
+    asm volatile ("call ASM_unkn_buildings_processing\n"
+        :  :  : "eax" );
+}
+
+void unkn_lights_processing(void)
+{
+    asm volatile ("call ASM_unkn_lights_processing\n"
+        :  :  : "eax" );
+}
+
 void load_mad_pc(ushort mapno)
 {
+#if 1
     asm volatile ("call ASM_load_mad_pc\n"
         : : "a" (mapno));
+#else
+    LbMouseChangeSprite(NULL);
+    ingame.Flags |= 0x010000;
+    init_free_explode_faces();
+    next_local_mat = 1;
+    if (mapno > 0)
+    {
+        short shut_h;
+        char mad_fname[52];
+
+        shut_h = 100;
+        load_map_bnb(mapno);
+        sprintf(mad_fname, "%s/map%03d.mad", "maps", mapno);
+        if (LbFileLoadAt(mad_fname, scratch_malloc_mem) != -1)
+        {
+          short i;
+          ubyte *mad_ptr;
+
+          mad_ptr = (ubyte *)scratch_malloc_mem + 4;
+          for (i = 0; quick_load_pc[i].Size != 0; i++)
+          {
+              ushort *p_numb;
+              p_numb = quick_load_pc[i].Numb;
+              if (p_numb != NULL) {
+                  *p_numb = *(ushort *)mad_ptr;
+                  mad_ptr += 2;
+              }
+          }
+          for (i = 0; quick_load_pc[i].Size != 0; i++)
+          {
+              int entsize, nentries;
+              ushort *p_numb;
+              *quick_load_pc[i].Ptr = mad_ptr;
+              p_numb = quick_load_pc[i].Numb;
+              if (p_numb != NULL) {
+                  entsize = quick_load_pc[i].Size;
+                  nentries = quick_load_pc[i].Extra + *p_numb;
+              } else {
+                  nentries = quick_load_pc[i].Size;
+                  entsize = quick_load_pc[i].Extra;
+              }
+              mad_ptr += nentries * entsize + 2;
+          }
+          for (i = 1; i < 17; i++)
+          {
+              ushort *p_numb;
+              p_numb = quick_load_pc[i].Numb;
+              mem_game[i].N = quick_load_pc[i].Extra + *p_numb;
+          }
+          memcpy(&selected_triangulation_no, mad_ptr, sizeof(selected_triangulation_no));
+          mad_ptr += sizeof(selected_triangulation_no);
+          memcpy(&tri_module_init, mad_ptr, sizeof(tri_module_init));
+          mad_ptr += sizeof(tri_module_init);
+          memcpy(triangulation, mad_ptr, sizeof(struct Triangulation) * 4);
+          mad_ptr += sizeof(struct Triangulation) * 4;
+          triangulation[0].Triangles = (struct TrTriangle *)mad_ptr;
+          mad_ptr += sizeof(struct TrTriangle) * triangulation[0].max_Triangles;
+          triangulation[1].Triangles = (struct TrTriangle *)mad_ptr;
+          mad_ptr += sizeof(struct TrTriangle) * triangulation[1].max_Triangles;
+          triangulation[2].Triangles = (struct TrTriangle *)mad_ptr;
+          mad_ptr += sizeof(struct TrTriangle) * triangulation[2].max_Triangles;
+          triangulation[3].Triangles = (struct TrTriangle *)mad_ptr;
+          mad_ptr += sizeof(struct TrTriangle) * triangulation[3].max_Triangles;
+          triangulation[0].Points = (struct TrPoint *)mad_ptr;
+          mad_ptr += sizeof(struct TrPoint) * triangulation[0].max_Points;
+          triangulation[1].Points = (struct TrPoint *)mad_ptr;
+          mad_ptr += sizeof(struct TrPoint) * triangulation[1].max_Points;
+          triangulation[2].Points = (struct TrPoint *)mad_ptr;
+          mad_ptr += sizeof(struct TrPoint) * triangulation[2].max_Points;
+          triangulation[3].Points = (struct TrPoint *)mad_ptr;
+          mad_ptr += sizeof(struct TrPoint) * triangulation[3].max_Points;
+
+          short tile_x, tile_y;
+          for (tile_x = 0; tile_x < MAP_TILE_WIDTH; tile_x++)
+          {
+              for (tile_y = 0; tile_y < MAP_TILE_HEIGHT; tile_y++)
+              {
+                  ulong cellno;
+                  cellno = tile_y * MAP_TILE_WIDTH + tile_x;
+                  game_my_big_map[cellno].Child = 0;
+              }
+          }
+
+          ushort num_sthings;
+          struct SimpleThing *p_clsthing;
+
+          dword_177750 = mad_ptr;
+          num_sthings = *(ushort *)mad_ptr;
+          mad_ptr += 2;
+          for (i = num_sthings - 1; i > -1; i--)
+          {
+              p_clsthing = (struct SimpleThing *)mad_ptr;
+              mad_ptr += sizeof(struct SimpleThing);
+              switch (p_clsthing->Type)
+              {
+              case TT_UNKN10:
+                  new_thing_type10_clone(p_clsthing);
+                  break;
+              case SmTT_SMOKE_GENERATOR:
+                  new_thing_smoke_gen_clone(p_clsthing);
+                  break;
+              case SmTT_STATIC:
+                  new_thing_static_clone(p_clsthing);
+                  break;
+              default:
+                    break;
+              }
+          }
+
+          ushort num_things;
+          struct Thing *p_clthing;
+
+          num_things = *(ushort *)mad_ptr;
+          mad_ptr += 2;
+          for (i = num_things - 1; i > -1; i--)
+          {
+              p_clthing = (struct Thing *)mad_ptr;
+              mad_ptr += sizeof(struct Thing);
+              if (p_clthing->U.UObject.Object <= 0)
+                  continue;
+              switch (p_clthing->SubType)
+              {
+              case SubTT_BLD_36:
+              case SubTT_BLD_37:
+                  new_thing_building_clone(p_clthing, (struct M33 *)mad_ptr, shut_h);
+                  mad_ptr += sizeof(struct M33);
+                  break;
+              default:
+                  new_thing_building_clone(p_clthing, NULL, shut_h);
+                  break;
+              }
+          }
+
+          if (mad_ptr - (ubyte *)dword_177750 >= 100000)
+              unkn_mech_arr7 = mad_ptr;
+          else
+              unkn_mech_arr7 = dword_177750 + 100000;
+          unkn_buildings_processing();
+          unkn_lights_processing();
+          triangulation_select(1);
+        }
+    }
+    sub_73C64("", 1);
+#endif
 }
 
 void unkn_object_shift_03(ushort objectno)
