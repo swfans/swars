@@ -3819,11 +3819,11 @@ void draw_screen(void)
         {
           iidx = *p_bucket;
           *p_bucket = 0;
-          if (((n & 7) == 0) && gamep_unknval_01)
+          if (((n & 7) == 0) && gamep_scene_effect)
           {
-            if (gamep_unknval_01 == 1)
+            if (gamep_scene_effect == 1)
                 sub_2A798(n);
-            else if (gamep_unknval_01 == 2)
+            else if (gamep_scene_effect == 2)
                 sub_2AAA0(n);
           }
           for (i = 0; iidx != 0; iidx = itm->Child)
@@ -3978,7 +3978,7 @@ void init_outro(void)
     const char *text2;
     int i;
 
-    gamep_unknval_01 = 0;
+    gamep_scene_effect = 0;
     StopAllSamples();
     StopCD();
 
@@ -5368,7 +5368,7 @@ void game_process_sub08(void)
 void game_process_sub09(void)
 {
     int i;
-    switch ( gamep_unknval_01 )
+    switch (gamep_scene_effect)
     {
     case 1:
         game_process_sub08();

@@ -589,7 +589,7 @@ extern GameTurn gameturn;
 extern GameTurn prev_gameturn;
 extern ulong turns_delta;
 extern ushort fifties_per_gameturn;
-extern ushort gamep_unknval_01;
+extern ushort gamep_scene_effect;
 extern ubyte *vec_tmap;
 extern ubyte linear_vec_pal[256];
 extern ulong nsta_size;
