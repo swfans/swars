@@ -3601,6 +3601,112 @@ void draw_object_face4c(ushort a1)
         : : "a" (a1));
 }
 
+void draw_sort_sprite1c_sub(ushort a1, short a2, short a3, ubyte a4, ushort a5)
+{
+    asm volatile (
+      "push %4\n"
+      "call ASM_draw_sort_sprite1c_sub\n"
+        : : "a" (a1), "d" (a2), "b" (a3), "c" (a4), "g" (a5));
+}
+
+void sub_2A798(int a1)
+{
+    asm volatile (
+      "call ASM_sub_2A798\n"
+        : : "a" (a1));
+}
+
+void sub_2AAA0(int a1)
+{
+    asm volatile (
+      "call ASM_sub_2AAA0\n"
+        : : "a" (a1));
+}
+
+void draw_object_face1c(ushort a1)
+{
+    asm volatile (
+      "call ASM_draw_object_face1c\n"
+        : : "a" (a1));
+}
+
+void draw_object_face4d(ushort a1)
+{
+    asm volatile (
+      "call ASM_draw_object_face4d\n"
+        : : "a" (a1));
+}
+
+void draw_object_face4g(ushort a1)
+{
+    asm volatile (
+      "call ASM_draw_object_face4g\n"
+        : : "a" (a1));
+}
+
+void draw_object_face1e(ushort a1)
+{
+    asm volatile (
+      "call ASM_draw_object_face1e\n"
+        : : "a" (a1));
+}
+
+void draw_object_face4f(ushort a1)
+{
+    asm volatile (
+      "call ASM_draw_object_face4f\n"
+        : : "a" (a1));
+}
+
+void draw_effect_object_face(ushort face)
+{
+    asm volatile (
+      "call ASM_draw_effect_object_face\n"
+        : : "a" (face));
+}
+
+void draw_shrapnel(ushort shrap)
+{
+    asm volatile (
+      "call ASM_draw_shrapnel\n"
+        : : "a" (shrap));
+}
+
+void draw_phwoar(ushort ph)
+{
+    asm volatile (
+      "call ASM_draw_phwoar\n"
+        : : "a" (ph));
+}
+
+void draw_sort_sprite_tng(short a1)
+{
+    asm volatile (
+      "call ASM_draw_sort_sprite_tng\n"
+        : : "a" (a1));
+}
+
+void draw_object_face4e(ushort a1)
+{
+    asm volatile (
+      "call ASM_draw_object_face4e\n"
+        : : "a" (a1));
+}
+
+void draw_object_face1d(ushort a1)
+{
+    asm volatile (
+      "call ASM_draw_object_face1d\n"
+        : : "a" (a1));
+}
+
+void draw_ssample_screen_point(ushort a1)
+{
+    asm volatile (
+      "call ASM_draw_ssample_screen_point\n"
+        : : "a" (a1));
+}
+
 void draw_screen(void)
 {
     asm volatile ("call ASM_draw_screen\n"
