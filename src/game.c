@@ -3827,7 +3827,7 @@ void draw_screen(void)
                   break;
               case 2:
               case 8:
-                  continue;
+                  break;
               case 3:
                   draw_sort_sprite1a(itm->Offset);
                   break;
@@ -3870,23 +3870,23 @@ void draw_screen(void)
     {
         for (n = 9999; n >= 0; n--)
         {
-          iidx = *p_bucket;
-          *p_bucket = 0;
-          if (((n & 7) == 0) && gamep_scene_effect)
-          {
-            if (gamep_scene_effect == 1)
-                draw_falling_rain(n);
-            else if (gamep_scene_effect == 2)
-                sub_2AAA0(n);
-          }
-          for (i = 0; iidx != 0; iidx = itm->Child)
-          {
-            i++;
-            if (i > 2000)
-              break;
-            itm = &game_draw_list[iidx];
-            switch (itm->Type)
+            iidx = *p_bucket;
+            *p_bucket = 0;
+            if (((n & 7) == 0) && gamep_scene_effect)
             {
+              if (gamep_scene_effect == 1)
+                  draw_falling_rain(n);
+              else if (gamep_scene_effect == 2)
+                  sub_2AAA0(n);
+            }
+            for (i = 0; iidx != 0; iidx = itm->Child)
+            {
+              i++;
+              if (i > 2000)
+                  break;
+              itm = &game_draw_list[iidx];
+              switch (itm->Type)
+              {
               case 1:
               case 10:
                   draw_object_face1c(itm->Offset);
@@ -3958,13 +3958,14 @@ void draw_screen(void)
                   draw_screen_number(itm->Offset);
                   break;
               default:
-                  continue;
+                  break;
+              }
             }
-          }
-          p_bucket--;
+            p_bucket--;
         }
     }
 #if 0
+    //TODO Setting first palette colour was often used as debug helper; to be removed
     __outbyte(0x3C8u, 0);
     __outbyte(0x3C9u, byte_1C83E0);
     __outbyte(0x3C9u, 0);
