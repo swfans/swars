@@ -58,6 +58,21 @@ int32_t SS_configure_buffers(DIG_DRIVER *digdrv);
 void SS_stream_to_buffer(SNDSAMPLE *s);
 
 
+/** Process .VOC file block.
+ *
+ * Called by .VOC initialization code and as end-of-sample callback
+ * function (interrupt-based).
+ *
+ * If play_flag clear, search for first block after desired marker (if
+ * any) and return without playing it.
+ */
+void AIL_process_VOC_block(SNDSAMPLE *s, int32_t play_flag);
+
+/** Create sample instance by parsing .WAV file.
+ */
+void AIL_process_WAV_image(const AILSOUNDINFO *info, SNDSAMPLE *s);
+
+
 SNDSAMPLE *AIL2OAL_API_allocate_sample_handle(DIG_DRIVER *digdrv);
 
 int32_t AIL2OAL_API_digital_master_volume(DIG_DRIVER *digdrv);
