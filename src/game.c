@@ -197,8 +197,29 @@ extern ushort word_1810E4;
 extern ubyte byte_1810E6[40];
 extern ubyte byte_18110E[40];
 
+extern long dword_176CC4;
 extern ushort unkn3de_len;
 extern void *dword_177750;
+
+extern long dword_19F4F8;
+
+extern ushort buckets[10000];
+extern struct SortSprite *p_current_sort_sprite;
+extern struct SortLine *p_current_sort_line;
+extern struct DrawItem *p_current_draw_item;
+
+extern ushort next_screen_point;
+extern ushort next_draw_item;
+extern ushort next_sort_sprite;
+extern ushort next_sort_line;
+
+extern ushort tnext_screen_point;
+extern ushort tnext_draw_item;
+extern ushort tnext_sort_sprite;
+//extern ushort tnext_sort_line; -- no such var?
+//extern ushort tnext_special_face;
+extern ushort tnext_special_face4;
+extern ushort tnext_floor_texture;
 
 extern ubyte execute_commands;
 extern long gamep_unknval_10;
@@ -3609,6 +3630,13 @@ void draw_sort_sprite1c_sub(ushort a1, short a2, short a3, ubyte a4, ushort a5)
         : : "a" (a1), "d" (a2), "b" (a3), "c" (a4), "g" (a5));
 }
 
+void draw_sort_sprite1c(ushort a1)
+{
+    struct SortSprite *sspr;
+    sspr = &game_sort_sprites[a1];
+    draw_sort_sprite1c_sub(sspr->Frame, sspr->X, sspr->Y, sspr->Brightness, sspr->Scale);
+}
+
 void sub_2A798(int a1)
 {
     asm volatile (
@@ -3707,10 +3735,207 @@ void draw_ssample_screen_point(ushort a1)
         : : "a" (a1));
 }
 
+void draw_screen_number(ushort a1)
+{
+    char locstr[50];
+    struct SortSprite *sspr;
+    sspr = &game_sort_sprites[a1];
+    sprintf(locstr, "%d", (int)sspr->PThing);
+    draw_text(2 * sspr->X,2 * sspr->Y, locstr, colour_lookup[2]);
+}
+
 void draw_screen(void)
 {
+#if 0
     asm volatile ("call ASM_draw_screen\n"
         :  :  : "eax" );
+#endif
+    ushort *p_bucket;
+    ushort iidx;
+    struct DrawItem *itm;
+    short n;
+    ushort i;
+
+    p_bucket = &buckets[9999];
+    if (dword_19F4F8)
+    {
+        for (n = 9999; n >= 0; n--)
+        {
+            iidx = *p_bucket;
+            *p_bucket = 0;
+            for (; iidx != 0; iidx = itm->Child)
+            {
+              itm = &game_draw_list[iidx];
+              switch (itm->Type)
+              {
+              case 1:
+              case 10:
+                  draw_object_face1a(itm->Offset);
+                  break;
+              case 2:
+              case 8:
+                  continue;
+              case 3:
+                  draw_sort_sprite1a(itm->Offset);
+                  break;
+              case 4:
+                  draw_floor_tile1a(itm->Offset);
+                  break;
+              case 5:
+                  draw_ex_face(itm->Offset);
+                  break;
+              case 6:
+                  draw_floor_tile1b(itm->Offset);
+                  break;
+              case 7:
+                  draw_object_face1b(itm->Offset);
+                  break;
+              case 9:
+                  draw_object_face4a(itm->Offset);
+                  break;
+              case 11:
+                  draw_sort_line(&game_sort_lines[itm->Offset]);
+                  break;
+              case 12:
+                  draw_object_face4b(itm->Offset);
+                  break;
+              case 13:
+                  draw_sort_sprite1b(itm->Offset);
+                  break;
+              case 14:
+                  draw_object_face4c(itm->Offset);
+                  break;
+              case 15:
+                  draw_sort_sprite1c(itm->Offset);
+                  break;
+              }
+          }
+          p_bucket--;
+        }
+    }
+    else
+    {
+        for (n = 9999; n >= 0; n--)
+        {
+          iidx = *p_bucket;
+          *p_bucket = 0;
+          if (((n & 7) == 0) && gamep_unknval_01)
+          {
+            if (gamep_unknval_01 == 1)
+                sub_2A798(n);
+            else if (gamep_unknval_01 == 2)
+                sub_2AAA0(n);
+          }
+          for (i = 0; iidx != 0; iidx = itm->Child)
+          {
+            i++;
+            if (i > 2000)
+              break;
+            itm = &game_draw_list[iidx];
+            switch (itm->Type)
+            {
+              case 1:
+              case 10:
+                  draw_object_face1c(itm->Offset);
+                  break;
+              case 3:
+                  draw_sort_sprite1a(itm->Offset);
+                  break;
+              case 4:
+                  draw_floor_tile1a(itm->Offset);
+                  break;
+              case 5:
+                  draw_ex_face(itm->Offset);
+                  break;
+              case 6:
+                  draw_floor_tile1b(itm->Offset);
+                  break;
+              case 7:
+                  draw_object_face1b(itm->Offset);
+                  break;
+              case 9:
+                  draw_object_face4d(itm->Offset);
+                  break;
+              case 11:
+                  draw_sort_line(&game_sort_lines[itm->Offset]);
+                  break;
+              case 12:
+                  draw_object_face4b(itm->Offset);
+                  break;
+              case 13:
+                  draw_sort_sprite1b(itm->Offset);
+                  break;
+              case 14:
+                  draw_object_face4c(itm->Offset);
+                  break;
+              case 15:
+                  draw_sort_sprite1c(itm->Offset);
+                  break;
+              case 16:
+                  draw_object_face4g(itm->Offset);
+                  break;
+              case 17:
+                  draw_object_face1e(itm->Offset);
+                  break;
+              case 18:
+                  draw_object_face4f(itm->Offset);
+                  break;
+              case 19:
+                  draw_effect_object_face(itm->Offset);
+                  break;
+              case 20:
+                  draw_shrapnel(itm->Offset);
+                  break;
+              case 21:
+                  draw_phwoar(itm->Offset);
+                  break;
+              case 22:
+                  draw_sort_sprite_tng(itm->Offset);
+                  break;
+              case 23:
+                  draw_object_face4e(itm->Offset);
+                  break;
+              case 24:
+                  draw_object_face1d(itm->Offset);
+                  break;
+              case 25:
+                  draw_ssample_screen_point(itm->Offset);
+                  break;
+              case 26:
+                  draw_screen_number(itm->Offset);
+                  break;
+              default:
+                  continue;
+            }
+          }
+          p_bucket--;
+        }
+    }
+#if 0
+    __outbyte(0x3C8u, 0);
+    __outbyte(0x3C9u, byte_1C83E0);
+    __outbyte(0x3C9u, 0);
+    __outbyte(0x3C9u, 0);
+#endif
+    //TODO a very strange place to inject the update - find somewhere better!
+    game_update();
+
+    tnext_screen_point = next_screen_point;
+    next_sort_line = 0;
+    tnext_draw_item = next_draw_item;
+    next_special_face = 1;
+    tnext_sort_sprite = next_sort_sprite;
+    ingame.NextRocket = 0;
+    tnext_special_face4 = next_special_face4;
+    next_screen_point = 0;
+    tnext_floor_texture = next_floor_texture;
+    dword_176CC4 = 0;
+    p_current_sort_line = game_sort_lines;
+    next_draw_item = 1;
+    p_current_sort_sprite = game_sort_sprites;
+    next_sort_sprite = 0;
+    next_special_face4 = 1;
+    p_current_draw_item = &game_draw_list[1];
 }
 
 void process_engine_unk3(void)

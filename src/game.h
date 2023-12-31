@@ -261,6 +261,12 @@ struct DIHotspot {
 	short Y;
 };
 
+struct DrawItem {
+    ubyte Type;
+    ushort Offset;
+    ushort Child;
+};
+
 struct PurpleDrawItem { // sizeof=26
 	union {
 		//struct DITrig Trig; // unused? too large to be here
@@ -430,6 +436,27 @@ struct Animation {
   char Filename[48];
   short anonymous_15;
   short field_6E;
+};
+
+struct SortLine {
+    short X1;
+    short Y1;
+    short X2;
+    short Y2;
+    ubyte Col;
+    ubyte Shade;
+    ubyte Flags;
+};
+
+struct SortSprite {
+    short X;
+    short Y;
+    short Z;
+    ushort Frame;
+    struct Thing *PThing;
+    ubyte Brightness;
+    ubyte Angle;
+    short Scale;
 };
 
 #pragma pack()
