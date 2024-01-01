@@ -79,7 +79,7 @@ MemSystem mem_game[] = {
   { "sort_sprites",		(void **)&game_sort_sprites,	16u, 4001, 0, 0, 0 },
   { "sort_lines",		(void **)&game_sort_lines,		11u, 4001, 0, 0, 0 },
   { "commands",			(void **)&game_commands,		32u, 3100, 0, 0, 0 },
-  { "bez edit",			(void **)&bez_edit,				28u, 2000, 0, 0, 0 },
+  { "bez edit",			(void **)&bezier_pts,			28u, 2000, 0, 0, 0 },
   { "spare map buffer",	(void **)&spare_map_buffer,		1u, 101, 0, 0, 1 },
   { "used_lvl_objectives", (void **)&game_used_lvl_objectives,32u, 20, 0, 0, 0 },
   { "level_miscs",		(void *)&game_level_miscs,		22u, 200, 0, 0, 0 },

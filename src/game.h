@@ -435,6 +435,19 @@ struct AnimTmap { // sizeof=54
     ubyte field_35;
 };
 
+struct BezierPt {
+    ubyte field_0[26];
+    ushort field_2A;
+};
+
+struct TrafficNode { // sizeof=36
+    ubyte field_0[18];
+    ubyte field_12;
+    ubyte field_13;
+    ubyte field_14[15];
+    ubyte field_23;
+};
+
 struct MissionStatus { // sizeof=40
     ulong CityDays;
     ulong CityHours;
@@ -693,6 +706,8 @@ extern ushort next_object_point;
 extern ushort next_object_face;
 extern ushort next_object_face4;
 extern ushort next_object;
+extern ushort next_traffic_node;
+extern ushort next_light_command;
 extern struct SingleObjectFace3 *game_object_faces;
 extern struct SingleObject *game_objects;
 extern struct QuickLight *game_quick_lights;
@@ -719,7 +734,7 @@ extern struct SpecialPoint *game_screen_point_pool;
 extern struct DrawItem *game_draw_list;
 extern struct SortSprite *game_sort_sprites;
 extern struct SortLine *game_sort_lines;
-extern struct UnknBezEdit *bez_edit;
+extern struct UnknBezEdit *bezier_pts;
 extern ubyte *spare_map_buffer;
 extern struct Objective *game_used_lvl_objectives;
 extern ushort next_used_lvl_objective;

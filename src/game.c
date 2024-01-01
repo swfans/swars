@@ -252,6 +252,9 @@ extern ulong unkn_changing_color_counter1;
 extern short brightness;
 extern long game_speed;
 
+//TODO this is not an extern only because I was unable to locate it in asm
+ushort next_bezier_pt = 1;
+
 const char *miss_end_sta_names[] = {
   "undecided state",
   "ending success",
@@ -1697,7 +1700,97 @@ void load_map_dat_pc_handle(TbFileHandle fh)
         next_anim_tmap = 1;
         game_anim_tmaps[1].Texture = 0;
     }
-    //TODO load things and the rest
+
+    if (fmtver >= 19)
+    {
+        ushort num_things;
+        struct Thing loc_thing;
+        struct M33 loc_mat;
+        short shut_h;
+
+        shut_h = 100;
+        LbFileRead(fh, &num_things, sizeof(num_things));
+        assert(sizeof(struct Thing) == 168);
+        for (i = num_things - 1; i > -1; i--)
+        {
+            LbFileRead(fh, &loc_thing, sizeof(struct Thing));
+            if (loc_thing.U.UObject.Object <= 0) {
+                LOGWARN("object <=0 %d  c0 %hd x %hd z %hd",
+                  (int)loc_thing.U.UObject.Object, i,
+                  loc_thing.X, loc_thing.Z);
+                continue;
+            }
+            switch (loc_thing.SubType)
+            {
+            case SubTT_BLD_36:
+            case SubTT_BLD_37:
+                LbFileRead(fh, &loc_mat, sizeof(struct M33));
+                new_thing_building_clone(&loc_thing, &loc_mat, shut_h);
+                break;
+            default:
+                new_thing_building_clone(&loc_thing, NULL, shut_h);
+                break;
+            }
+        }
+    }
+    else if (fmtver >= 8)
+    {
+        ushort num_things;
+        struct Thing loc_thing;
+        struct ThingOldV9 old_thing;
+
+        LbFileRead(fh, &num_things, sizeof(num_things));
+        assert(sizeof(old_thing) == 216);
+        for (i = num_things - 1; i > -1; i--)
+        {
+            struct SingleObject *p_sobj;
+
+            LbFileRead(fh, &old_thing, sizeof(old_thing));
+            //TODO map fmtver is unlikely to match level fmtver
+            refresh_old_thing_format(&loc_thing, &old_thing, fmtver);
+            if (loc_thing.U.UObject.Object <= 0) {
+                LOGWARN("object <=0 %d  c0 %hd x %hd z %hd",
+                  (int)loc_thing.U.UObject.Object, i,
+                  loc_thing.X, loc_thing.Z);
+                continue;
+            }
+            p_sobj = &game_objects[loc_thing.U.UObject.Object];
+            if (p_sobj->OffsetY == 32000) {
+                continue;
+            }
+            new_thing_building_clone(&loc_thing, NULL, 100);
+        }
+    }
+
+    if (fmtver >= 6)
+    {
+        LbFileRead(fh, &next_traffic_node, sizeof(next_traffic_node));
+        assert(sizeof(struct TrafficNode) == 36);
+        LbFileRead(fh, game_traffic_nodes, sizeof(struct TrafficNode) * next_traffic_node);
+    }
+    else
+    {
+        next_traffic_node = 1;
+    }
+
+    if (fmtver >= 12)
+    {
+        LbFileRead(fh, &next_light_command, sizeof(next_light_command));
+        LbFileRead(fh, game_light_commands, 36 * next_light_command);
+    }
+    else
+    {
+       next_light_command = 1;
+    }
+    if ( fmtver >= 13)
+    {
+        LbFileRead(fh, &next_bezier_pt, sizeof(next_bezier_pt));
+        LbFileRead(fh, bezier_pts, sizeof(struct BezierPt) * next_bezier_pt);
+    }
+    else
+    {
+        next_bezier_pt = 1;
+    }
 }
 
 void load_mad_pc_buffer(ubyte *mad_ptr)
