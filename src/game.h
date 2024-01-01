@@ -309,6 +309,132 @@ struct SingleObject { // sizeof=36
   ubyte field_23;
 };
 
+struct SingleFloorTexture { // sizeof=18
+    ubyte TMapX1;
+    ubyte TMapY1;
+    ubyte TMapX2;
+    ubyte TMapY2;
+    ubyte TMapX3;
+    ubyte TMapY3;
+    ubyte TMapX4;
+    ubyte TMapY4;
+    ubyte Page;
+    ubyte field_9[3];
+    ubyte field_C[5];
+    ubyte field_11;
+};
+
+struct SingleTexture { // sizeof=16
+    ubyte TMapX1;
+    ubyte TMapY1;
+    ubyte TMapX2;
+    ubyte TMapY2;
+    ubyte TMapX3;
+    ubyte TMapY3;
+    ubyte Page;
+    ubyte padding1;
+    short pal;
+    ubyte field_A[6];
+};
+
+struct SinglePoint { // sizeof=10
+    ushort PointOffset;
+    short X;
+    short Y;
+    short Z;
+    ubyte Pad1;
+    ubyte Flags;
+};
+
+struct SingleObjectFace3 { // sizeof=32
+    short PointNo[3];
+    ushort Texture;
+    ubyte GFlags;
+    ubyte Flags;
+    ushort Object;
+    ubyte field_C;
+    ubyte field_D;
+    short Shade0;
+    short Shade1;
+    short Shade2;
+    ushort Light0;
+    ushort Light1;
+    ushort Light2;
+    ushort FaceNormal;
+    ubyte field_1C[3];
+    ubyte field_1F;
+};
+
+struct SingleObjectFace4 { // sizeof=40
+    short PointNo[4];
+    ushort Texture;
+    ubyte GFlags;
+    ubyte Flags;
+    ushort Object;
+    ubyte field_E[2];
+    short Shade0;
+    short Shade1;
+    short Shade2;
+    short Shade3;
+    short Light0;
+    short Light1;
+    short Light2;
+    short Light3;
+    ubyte FaceNormal;
+    ubyte field_22[5];
+    ubyte field_27;
+};
+
+struct QuickLight { // sizeof=6
+    ushort Ratio;
+    ushort Light;
+    ushort NextQuick;
+};
+
+struct FullLight { // sizeof=32
+    short Intensity;
+    short TrueIntensity;
+    short Command;
+    short NextFull;
+    short X;
+    short Y;
+    short Z;
+    short lgtfld_E;
+    short lgtfld_10;
+    short lgtfld_12;
+    ubyte lgtfld_14[10];
+    ushort Flags;
+};
+
+struct FullLightV12 { // sizeof=20
+    short Intensity;
+    short TrueIntensity;
+    short Command;
+    short NextFull;
+    short X;
+    short Y;
+    short Z;
+    short lgtfld_E;
+    short lgtfld_10;
+    short lgtfld_12;
+};
+
+struct Normal { // sizeof=16
+    int NX;
+    int NY;
+    int NZ;
+    int LightRatio;
+};
+
+struct AnimTmap { // sizeof=54
+    ushort Texture;
+    ushort TMap[10];
+    ubyte Delay[10];
+    ushort Flags;
+    ubyte field_22[19];
+    ubyte field_35;
+};
+
 struct MissionStatus { // sizeof=40
     ulong CityDays;
     ulong CityHours;
@@ -556,6 +682,7 @@ extern ulong dword_1810D5;
 extern struct SingleFloorTexture *game_textures;
 extern struct SingleTexture *game_face_textures;
 extern struct SinglePoint *game_object_points;
+extern ushort next_anim_tmap;
 extern ushort next_normal;
 extern ushort next_quick_light;
 extern ushort next_full_light;

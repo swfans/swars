@@ -1548,6 +1548,295 @@ void unkn_lights_processing(void)
         :  :  : "eax" );
 }
 
+void load_map_dat_pc_handle(TbFileHandle fh)
+{
+    ulong fmtver;
+    short x, y;
+    short i;
+
+    LbFileRead(fh, &fmtver, sizeof(fmtver));
+    if (fmtver >= 19)
+    {
+        assert(sizeof(struct MyMapElement) == 18);
+        LbFileRead(fh, game_my_big_map, sizeof(struct MyMapElement) * 128 * 128);
+    }
+    else
+    {
+        ubyte locbuf[24];
+        for (i = 0; i < 128 * 128; i++) {
+            LbFileRead(fh, locbuf, sizeof(locbuf));
+            LbMemoryCopy(&game_my_big_map[i], locbuf, 18);
+        }
+    }
+    LbFileRead(fh, &next_floor_texture, sizeof(next_floor_texture));
+    LbFileRead(fh, game_textures, sizeof(struct SingleFloorTexture) * next_floor_texture);
+    LbFileRead(fh, &next_face_texture, sizeof(next_face_texture));
+    LbFileRead(fh, game_face_textures, sizeof(struct SingleTexture) * next_face_texture);
+    LbFileRead(fh, &next_object_point, sizeof(next_object_point));
+    LbFileRead(fh, game_object_points, sizeof(struct SinglePoint) * next_object_point);
+    LbFileRead(fh, &next_object_face, sizeof(next_object_face));
+    if (fmtver >= 19)
+    {
+        assert(sizeof(struct SingleObjectFace3) == 32);
+        LbFileRead(fh, game_object_faces, sizeof(struct SingleObjectFace3) * next_object_face);
+    }
+    else
+    {
+        ubyte locbuf[48];
+        for (i = 0; i < next_object_face; i++) {
+            LbFileRead(fh, locbuf, sizeof(locbuf));
+            LbMemoryCopy(&game_object_faces[i], locbuf, 32);
+        }
+    }
+    LbFileRead(fh, &next_object, sizeof(next_object));
+    LbFileRead(fh, game_objects, sizeof(struct SingleObject) * next_object);
+    LbFileRead(fh, &next_quick_light, sizeof(next_quick_light));
+    LbFileRead(fh, game_quick_lights, sizeof(struct QuickLight) * next_quick_light);
+    LbFileRead(fh, &next_full_light, sizeof(next_full_light));
+    if (fmtver >= 14)
+    {
+        LbFileRead(fh, game_full_lights, sizeof(struct FullLight) * next_full_light);
+    }
+    else
+    {
+        struct FullLightV12 old_full_light;
+        for (i = 0; i < next_full_light; i++)
+        {
+            LbFileRead(fh, &old_full_light, sizeof(struct FullLightV12));
+            LbMemorySet(&game_full_lights[i], 0, sizeof(struct FullLight));
+            game_full_lights[i].Intensity = old_full_light.Intensity;
+            game_full_lights[i].TrueIntensity = old_full_light.TrueIntensity;
+            game_full_lights[i].Command = old_full_light.Command;
+            game_full_lights[i].NextFull = old_full_light.NextFull;
+            game_full_lights[i].X = old_full_light.X;
+            game_full_lights[i].Y = old_full_light.Y;
+            game_full_lights[i].Z = old_full_light.Z;
+            game_full_lights[i].lgtfld_E = old_full_light.lgtfld_E;
+            game_full_lights[i].lgtfld_10 = old_full_light.lgtfld_10;
+            game_full_lights[i].lgtfld_12 = old_full_light.lgtfld_12;
+        }
+    }
+    if (fmtver <= 11)
+    {
+        for (i = 1; i < next_full_light; i++) {
+            game_full_lights[i].TrueIntensity = game_full_lights[i].Intensity;
+        }
+    }
+    LbFileRead(fh, &next_normal, sizeof(next_normal));
+    LbFileRead(fh, game_normals, sizeof(struct Normal) * next_normal);
+    if (fmtver >= 19)
+    {
+        assert(sizeof(struct SingleObjectFace4) == 40);
+        LbFileRead(fh, &next_object_face4, sizeof(next_object_face4));
+        LbFileRead(fh, game_object_faces4, sizeof(struct SingleObjectFace4) * next_object_face4);
+    }
+    else if (fmtver >= 7)
+    {
+        ubyte locbuf[60];
+        LbFileRead(fh, &next_object_face4, sizeof(next_object_face4));
+        for (i = 0; i < next_object_face4; i++) {
+            LbFileRead(fh, locbuf, sizeof(locbuf));
+            LbMemoryCopy(&game_object_faces4[i], locbuf, 40);
+        }
+    }
+    else
+    {
+        next_object_face4 = 1;
+    }
+    for (x = 0; x < 128; x++)
+    {
+      for (y = 0; y < 128; y++)
+      {
+        struct MyMapElement *mapel;
+
+        mapel = &game_my_big_map[y * 128 + x];
+        //mapel->field_E = 0; // TODO how this 16-bit field from 26-byte struct maps to 18-byte struct?
+        if (fmtver <= 9 && mapel->Texture & 0x8000)
+        {
+            short k;
+            k = mapel->Texture;
+            k = -k;
+            k = (k & 0xFF) | ((k - (128 << 8)) & 0xFF00);
+            mapel->Texture = k;
+        }
+      }
+    }
+    if (fmtver >= 5)
+    {
+        ushort num_sthings;
+        struct SimpleThing loc_sthing;
+
+        LbFileRead(fh, &num_sthings, sizeof(num_sthings));
+        assert(sizeof(struct SimpleThing) == 60);
+        for (i = num_sthings - 1; i != -1; i--)
+        {
+          LbFileRead(fh, &loc_sthing, sizeof(struct SimpleThing));
+          switch (loc_sthing.Type)
+          {
+          case TT_UNKN10:
+              new_thing_type10_clone(&loc_sthing);
+              break;
+          case SmTT_SMOKE_GENERATOR:
+              new_thing_smoke_gen_clone(&loc_sthing);
+              break;
+          case SmTT_STATIC:
+              new_thing_static_clone(&loc_sthing);
+              break;
+          default:
+                break;
+          }
+        }
+    }
+    if (fmtver >= 6)
+    {
+        LbFileRead(fh, &next_anim_tmap, sizeof(next_anim_tmap));
+        LbFileRead(fh, game_anim_tmaps, sizeof(struct AnimTmap) * next_anim_tmap);
+    }
+    else
+    {
+        next_anim_tmap = 1;
+        game_anim_tmaps[1].Texture = 0;
+    }
+    //TODO load things and the rest
+}
+
+void load_mad_pc_buffer(ubyte *mad_ptr)
+{
+    short shut_h;
+    ulong fmtver;
+    short i;
+
+    shut_h = 100;
+    fmtver = *(ulong *)mad_ptr;
+    mad_ptr += 4;
+
+    if (fmtver != 1) {
+        LOGWARN("Unexpected MAD version %lu", fmtver);
+    }
+
+    // Set amounts of quick_load array items
+    for (i = 0; quick_load_pc[i].Size != 0; i++)
+    {
+        ushort *p_numb;
+        p_numb = quick_load_pc[i].Numb;
+        if (p_numb != NULL) {
+            *p_numb = *(ushort *)mad_ptr;
+            mad_ptr += 2;
+        }
+    }
+    // Set data pointers within the quick_load items
+    for (i = 0; quick_load_pc[i].Size != 0; i++)
+    {
+        int entsize, nentries;
+        ushort *p_numb;
+        *quick_load_pc[i].Ptr = mad_ptr;
+        p_numb = quick_load_pc[i].Numb;
+        if (p_numb != NULL) {
+            entsize = quick_load_pc[i].Size;
+            nentries = quick_load_pc[i].Extra + *p_numb;
+        } else {
+            nentries = quick_load_pc[i].Size;
+            entsize = quick_load_pc[i].Extra;
+        }
+        mad_ptr += nentries * entsize + 2;
+    }
+    // Update mem_game[] to the new amounts
+    for (i = 1; i < 17; i++)
+    {
+        ushort *p_numb;
+        p_numb = quick_load_pc[i].Numb;
+        mem_game[i].N = quick_load_pc[i].Extra + *p_numb;
+    }
+    memcpy(&selected_triangulation_no, mad_ptr, sizeof(selected_triangulation_no));
+    mad_ptr += sizeof(selected_triangulation_no);
+    memcpy(&tri_module_init, mad_ptr, sizeof(tri_module_init));
+    mad_ptr += sizeof(tri_module_init);
+    memcpy(triangulation, mad_ptr, sizeof(struct Triangulation) * 4);
+    mad_ptr += sizeof(struct Triangulation) * 4;
+    triangulation[0].Triangles = (struct TrTriangle *)mad_ptr;
+    mad_ptr += sizeof(struct TrTriangle) * triangulation[0].max_Triangles;
+    triangulation[1].Triangles = (struct TrTriangle *)mad_ptr;
+    mad_ptr += sizeof(struct TrTriangle) * triangulation[1].max_Triangles;
+    triangulation[2].Triangles = (struct TrTriangle *)mad_ptr;
+    mad_ptr += sizeof(struct TrTriangle) * triangulation[2].max_Triangles;
+    triangulation[3].Triangles = (struct TrTriangle *)mad_ptr;
+    mad_ptr += sizeof(struct TrTriangle) * triangulation[3].max_Triangles;
+    triangulation[0].Points = (struct TrPoint *)mad_ptr;
+    mad_ptr += sizeof(struct TrPoint) * triangulation[0].max_Points;
+    triangulation[1].Points = (struct TrPoint *)mad_ptr;
+    mad_ptr += sizeof(struct TrPoint) * triangulation[1].max_Points;
+    triangulation[2].Points = (struct TrPoint *)mad_ptr;
+    mad_ptr += sizeof(struct TrPoint) * triangulation[2].max_Points;
+    triangulation[3].Points = (struct TrPoint *)mad_ptr;
+    mad_ptr += sizeof(struct TrPoint) * triangulation[3].max_Points;
+
+    short tile_x, tile_y;
+    for (tile_x = 0; tile_x < MAP_TILE_WIDTH; tile_x++)
+    {
+        for (tile_y = 0; tile_y < MAP_TILE_HEIGHT; tile_y++)
+        {
+            ulong cellno;
+            cellno = tile_y * MAP_TILE_WIDTH + tile_x;
+            game_my_big_map[cellno].Child = 0;
+        }
+    }
+
+    ushort num_sthings;
+    struct SimpleThing *p_clsthing;
+
+    dword_177750 = mad_ptr;
+    num_sthings = *(ushort *)mad_ptr;
+    mad_ptr += 2;
+    for (i = num_sthings - 1; i > -1; i--)
+    {
+        p_clsthing = (struct SimpleThing *)mad_ptr;
+        mad_ptr += sizeof(struct SimpleThing);
+        switch (p_clsthing->Type)
+        {
+        case TT_UNKN10:
+            new_thing_type10_clone(p_clsthing);
+            break;
+        case SmTT_SMOKE_GENERATOR:
+            new_thing_smoke_gen_clone(p_clsthing);
+            break;
+        case SmTT_STATIC:
+            new_thing_static_clone(p_clsthing);
+            break;
+        default:
+              break;
+        }
+    }
+
+    ushort num_things;
+    struct Thing *p_clthing;
+
+    num_things = *(ushort *)mad_ptr;
+    mad_ptr += 2;
+    for (i = num_things - 1; i > -1; i--)
+    {
+        p_clthing = (struct Thing *)mad_ptr;
+        mad_ptr += sizeof(struct Thing);
+        if (p_clthing->U.UObject.Object <= 0)
+            continue;
+        switch (p_clthing->SubType)
+        {
+        case SubTT_BLD_36:
+        case SubTT_BLD_37:
+            new_thing_building_clone(p_clthing, (struct M33 *)mad_ptr, shut_h);
+            mad_ptr += sizeof(struct M33);
+            break;
+        default:
+            new_thing_building_clone(p_clthing, NULL, shut_h);
+            break;
+        }
+    }
+
+    if (mad_ptr - (ubyte *)dword_177750 >= 100000)
+        unkn_mech_arr7 = mad_ptr;
+    else
+        unkn_mech_arr7 = dword_177750 + 100000;
+}
+
 void load_mad_pc(ushort mapno)
 {
 #if 0
@@ -1560,139 +1849,16 @@ void load_mad_pc(ushort mapno)
     next_local_mat = 1;
     if (mapno > 0)
     {
-        short shut_h;
         char mad_fname[52];
 
-        shut_h = 100;
         load_map_bnb(mapno);
         sprintf(mad_fname, "%s/map%03d.mad", "maps", mapno);
         if (LbFileLoadAt(mad_fname, scratch_malloc_mem) != -1)
         {
-          short i;
-          ubyte *mad_ptr;
-
-          mad_ptr = (ubyte *)scratch_malloc_mem + 4;
-          for (i = 0; quick_load_pc[i].Size != 0; i++)
-          {
-              ushort *p_numb;
-              p_numb = quick_load_pc[i].Numb;
-              if (p_numb != NULL) {
-                  *p_numb = *(ushort *)mad_ptr;
-                  mad_ptr += 2;
-              }
-          }
-          for (i = 0; quick_load_pc[i].Size != 0; i++)
-          {
-              int entsize, nentries;
-              ushort *p_numb;
-              *quick_load_pc[i].Ptr = mad_ptr;
-              p_numb = quick_load_pc[i].Numb;
-              if (p_numb != NULL) {
-                  entsize = quick_load_pc[i].Size;
-                  nentries = quick_load_pc[i].Extra + *p_numb;
-              } else {
-                  nentries = quick_load_pc[i].Size;
-                  entsize = quick_load_pc[i].Extra;
-              }
-              mad_ptr += nentries * entsize + 2;
-          }
-          for (i = 1; i < 17; i++)
-          {
-              ushort *p_numb;
-              p_numb = quick_load_pc[i].Numb;
-              mem_game[i].N = quick_load_pc[i].Extra + *p_numb;
-          }
-          memcpy(&selected_triangulation_no, mad_ptr, sizeof(selected_triangulation_no));
-          mad_ptr += sizeof(selected_triangulation_no);
-          memcpy(&tri_module_init, mad_ptr, sizeof(tri_module_init));
-          mad_ptr += sizeof(tri_module_init);
-          memcpy(triangulation, mad_ptr, sizeof(struct Triangulation) * 4);
-          mad_ptr += sizeof(struct Triangulation) * 4;
-          triangulation[0].Triangles = (struct TrTriangle *)mad_ptr;
-          mad_ptr += sizeof(struct TrTriangle) * triangulation[0].max_Triangles;
-          triangulation[1].Triangles = (struct TrTriangle *)mad_ptr;
-          mad_ptr += sizeof(struct TrTriangle) * triangulation[1].max_Triangles;
-          triangulation[2].Triangles = (struct TrTriangle *)mad_ptr;
-          mad_ptr += sizeof(struct TrTriangle) * triangulation[2].max_Triangles;
-          triangulation[3].Triangles = (struct TrTriangle *)mad_ptr;
-          mad_ptr += sizeof(struct TrTriangle) * triangulation[3].max_Triangles;
-          triangulation[0].Points = (struct TrPoint *)mad_ptr;
-          mad_ptr += sizeof(struct TrPoint) * triangulation[0].max_Points;
-          triangulation[1].Points = (struct TrPoint *)mad_ptr;
-          mad_ptr += sizeof(struct TrPoint) * triangulation[1].max_Points;
-          triangulation[2].Points = (struct TrPoint *)mad_ptr;
-          mad_ptr += sizeof(struct TrPoint) * triangulation[2].max_Points;
-          triangulation[3].Points = (struct TrPoint *)mad_ptr;
-          mad_ptr += sizeof(struct TrPoint) * triangulation[3].max_Points;
-
-          short tile_x, tile_y;
-          for (tile_x = 0; tile_x < MAP_TILE_WIDTH; tile_x++)
-          {
-              for (tile_y = 0; tile_y < MAP_TILE_HEIGHT; tile_y++)
-              {
-                  ulong cellno;
-                  cellno = tile_y * MAP_TILE_WIDTH + tile_x;
-                  game_my_big_map[cellno].Child = 0;
-              }
-          }
-
-          ushort num_sthings;
-          struct SimpleThing *p_clsthing;
-
-          dword_177750 = mad_ptr;
-          num_sthings = *(ushort *)mad_ptr;
-          mad_ptr += 2;
-          for (i = num_sthings - 1; i > -1; i--)
-          {
-              p_clsthing = (struct SimpleThing *)mad_ptr;
-              mad_ptr += sizeof(struct SimpleThing);
-              switch (p_clsthing->Type)
-              {
-              case TT_UNKN10:
-                  new_thing_type10_clone(p_clsthing);
-                  break;
-              case SmTT_SMOKE_GENERATOR:
-                  new_thing_smoke_gen_clone(p_clsthing);
-                  break;
-              case SmTT_STATIC:
-                  new_thing_static_clone(p_clsthing);
-                  break;
-              default:
-                    break;
-              }
-          }
-
-          ushort num_things;
-          struct Thing *p_clthing;
-
-          num_things = *(ushort *)mad_ptr;
-          mad_ptr += 2;
-          for (i = num_things - 1; i > -1; i--)
-          {
-              p_clthing = (struct Thing *)mad_ptr;
-              mad_ptr += sizeof(struct Thing);
-              if (p_clthing->U.UObject.Object <= 0)
-                  continue;
-              switch (p_clthing->SubType)
-              {
-              case SubTT_BLD_36:
-              case SubTT_BLD_37:
-                  new_thing_building_clone(p_clthing, (struct M33 *)mad_ptr, shut_h);
-                  mad_ptr += sizeof(struct M33);
-                  break;
-              default:
-                  new_thing_building_clone(p_clthing, NULL, shut_h);
-                  break;
-              }
-          }
-
-          if (mad_ptr - (ubyte *)dword_177750 >= 100000)
-              unkn_mech_arr7 = mad_ptr;
-          else
-              unkn_mech_arr7 = dword_177750 + 100000;
-          unkn_buildings_processing();
-          unkn_lights_processing();
-          triangulation_select(1);
+            load_mad_pc_buffer(scratch_malloc_mem);
+            unkn_buildings_processing();
+            unkn_lights_processing();
+            triangulation_select(1);
         }
     }
     sub_73C64("", 1);
