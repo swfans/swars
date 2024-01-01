@@ -380,7 +380,7 @@ struct SingleObjectFace4 { // sizeof=40
     short Light1;
     short Light2;
     short Light3;
-    ubyte FaceNormal;
+    ushort FaceNormal;
     ubyte field_22[5];
     ubyte field_27;
 };

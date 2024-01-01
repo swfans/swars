@@ -1554,6 +1554,7 @@ void unkn_lights_processing(void)
 void load_map_dat_pc_handle(TbFileHandle fh)
 {
     ulong fmtver;
+    ushort num_sthings, num_things;
     short x, y;
     short i;
 
@@ -1646,6 +1647,9 @@ void load_map_dat_pc_handle(TbFileHandle fh)
     {
         next_object_face4 = 1;
     }
+    LOGSYNC("stats: object_faces=%hu objects=%hu quick_lights=%hu full_lights=%hu normals=%hu object_faces4=%hu",
+      next_object_face, next_object, next_quick_light, next_full_light, next_normal, next_object_face4);
+
     for (x = 0; x < 128; x++)
     {
       for (y = 0; y < 128; y++)
@@ -1653,6 +1657,7 @@ void load_map_dat_pc_handle(TbFileHandle fh)
         struct MyMapElement *mapel;
 
         mapel = &game_my_big_map[y * 128 + x];
+        mapel->Child = 0; // TODO is this correct?? is this field_E ?? Sounds correct to clear before things creation.
         //mapel->field_E = 0; // TODO how this 16-bit field from 26-byte struct maps to 18-byte struct?
         if (fmtver <= 9 && mapel->Texture & 0x8000)
         {
@@ -1664,9 +1669,9 @@ void load_map_dat_pc_handle(TbFileHandle fh)
         }
       }
     }
+
     if (fmtver >= 5)
     {
-        ushort num_sthings;
         struct SimpleThing loc_sthing;
 
         LbFileRead(fh, &num_sthings, sizeof(num_sthings));
@@ -1690,6 +1695,11 @@ void load_map_dat_pc_handle(TbFileHandle fh)
           }
         }
     }
+    else
+    {
+        num_sthings = 0;
+    }
+
     if (fmtver >= 6)
     {
         LbFileRead(fh, &next_anim_tmap, sizeof(next_anim_tmap));
@@ -1735,7 +1745,6 @@ void load_map_dat_pc_handle(TbFileHandle fh)
     }
     else if (fmtver >= 8)
     {
-        ushort num_things;
         struct Thing loc_thing;
         struct ThingOldV9 old_thing;
 
@@ -1761,6 +1770,10 @@ void load_map_dat_pc_handle(TbFileHandle fh)
             new_thing_building_clone(&loc_thing, NULL, 100);
         }
     }
+    else
+    {
+        num_things = 0;
+    }
 
     if (fmtver >= 6)
     {
@@ -1782,7 +1795,7 @@ void load_map_dat_pc_handle(TbFileHandle fh)
     {
        next_light_command = 1;
     }
-    if ( fmtver >= 13)
+    if (fmtver >= 13)
     {
         LbFileRead(fh, &next_bezier_pt, sizeof(next_bezier_pt));
         LbFileRead(fh, bezier_pts, sizeof(struct BezierPt) * next_bezier_pt);
@@ -1791,9 +1804,11 @@ void load_map_dat_pc_handle(TbFileHandle fh)
     {
         next_bezier_pt = 1;
     }
+    LOGSYNC("stats: sthings=%hu things=%hu traffic_nodes=%hu light_commands=%hu bezier_pts=%hu",
+      num_sthings, num_things, next_traffic_node, next_light_command, next_bezier_pt);
 }
 
-void load_mad_pc_buffer(ubyte *mad_ptr)
+void load_mad_pc_buffer(ubyte *mad_ptr, long rdsize)
 {
     short shut_h;
     ulong fmtver;
@@ -1930,31 +1945,65 @@ void load_mad_pc_buffer(ubyte *mad_ptr)
         unkn_mech_arr7 = dword_177750 + 100000;
 }
 
-void load_mad_pc(ushort mapno)
+TbResult load_map_dat(ushort mapno)
+{
+    char dat_fname[52];
+    TbFileHandle fh;
+
+    next_local_mat = 1;
+
+    sprintf(dat_fname, "%s/map%03d.dat", "maps", mapno);
+    fh = LbFileOpen(dat_fname, Lb_FILE_MODE_READ_ONLY);
+    if (fh == INVALID_FILE) {
+        return Lb_FAIL;
+    }
+    load_map_dat_pc_handle(fh);
+    LbFileClose(fh);
+
+    return Lb_SUCCESS;
+}
+
+TbResult load_map_mad(ushort mapno)
+{
+    char mad_fname[52];
+    long fsize;
+
+    next_local_mat = 1;
+
+    sprintf(mad_fname, "%s/map%03d.mad", "maps", mapno);
+    fsize = LbFileLoadAt(mad_fname, scratch_malloc_mem);
+    if (fsize == Lb_FAIL)
+        return Lb_FAIL;
+
+    load_mad_pc_buffer(scratch_malloc_mem, fsize);
+
+    unkn_buildings_processing();
+    unkn_lights_processing();
+    triangulation_select(1);
+
+    return Lb_SUCCESS;
+}
+
+TbResult load_mad_pc(ushort mapno)
 {
 #if 0
     asm volatile ("call ASM_load_mad_pc\n"
         : : "a" (mapno));
+    return Lb_SUCCESS;
 #else
+    TbResult ret;
+
     LbMouseChangeSprite(NULL);
     ingame.Flags |= 0x010000;
     init_free_explode_faces();
-    next_local_mat = 1;
-    if (mapno > 0)
-    {
-        char mad_fname[52];
-
+    if (mapno != 0) {
         load_map_bnb(mapno);
-        sprintf(mad_fname, "%s/map%03d.mad", "maps", mapno);
-        if (LbFileLoadAt(mad_fname, scratch_malloc_mem) != -1)
-        {
-            load_mad_pc_buffer(scratch_malloc_mem);
-            unkn_buildings_processing();
-            unkn_lights_processing();
-            triangulation_select(1);
-        }
+        ret = load_map_mad(mapno);
+    } else {
+        ret = Lb_OK;
     }
     sub_73C64("", 1);
+    return ret;
 #endif
 }
 
