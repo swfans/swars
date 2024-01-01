@@ -121,6 +121,7 @@ struct PacketFileHead {
 
 struct Element;
 struct Frame;
+struct Path;
 
 #pragma pack()
 
@@ -1384,6 +1385,23 @@ void load_map_bnb(int a1)
 {
     asm volatile ("call ASM_load_map_bnb\n"
         : : "a" (a1));
+}
+
+void path_init8_unkn3(struct Path *path, int ax8, int ay8, int bx8, int by8, int a6)
+{
+    asm volatile (
+      "push %5\n"
+      "push %4\n"
+      "call ASM_path_init8_unkn3\n"
+        : : "a" (path), "d" (ax8), "b" (ay8), "c" (bx8), "g" (by8), "g" (a6));
+}
+
+int triangle_findSE8(int x, int y)
+{
+    int ret;
+    asm volatile ("call ASM_triangle_findSE8\n"
+        : "=r" (ret) : "a" (x), "d" (y));
+    return ret;
 }
 
 void triangulation_select(int tgnNo)
