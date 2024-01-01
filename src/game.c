@@ -1550,7 +1550,7 @@ void unkn_lights_processing(void)
 
 void load_mad_pc(ushort mapno)
 {
-#if 1
+#if 0
     asm volatile ("call ASM_load_mad_pc\n"
         : : "a" (mapno));
 #else
