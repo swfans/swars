@@ -596,9 +596,9 @@ TbBool cybmod_available_for_purchase(short mtype)
                 if (!cybmod_chest_level(&p_locplayer->Mods[plagent]))
                     break;
             }
+            if (plagent < 4)
+                return false;
         }
-        if (plagent < 4)
-            return false;
         return true;
     }
     {
