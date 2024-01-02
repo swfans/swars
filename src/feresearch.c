@@ -111,7 +111,7 @@ ubyte show_research_graph(struct ScreenBox *box)
     x = box->X + (box->Width - w) * 65 / 100; // for original res 7 + 57
     y = box->Y + (box->Height - h) * 31 / 100; // for original res 103 + 25
 
-    if ((box->Flags & GBxFlg_Unkn8000) == 0)
+    if ((box->Flags & GBxFlg_BkgndDrawn) == 0)
     {
         int twidth;
 
@@ -132,7 +132,7 @@ ubyte show_research_graph(struct ScreenBox *box)
         text = gui_strings[452];
         draw_unkn20_subfunc_01(10, 31, text, 2);
 
-        box->Flags |= GBxFlg_Unkn8000;
+        box->Flags |= GBxFlg_BkgndDrawn;
         copy_box_purple_list(box->X, box->Y, box->Width, box->Height);
     }
 
@@ -213,7 +213,7 @@ void init_research_screen_boxes(void)
     {
         research_list_buttons[i].Radio = &ingame.fld_unk7DE;
         research_list_buttons[i].RadioValue = val;
-        research_list_buttons[i].Flags |= GBxFlg_Unkn0100;
+        research_list_buttons[i].Flags |= GBxFlg_RadioBtn;
         val++;
     }
 
@@ -229,7 +229,7 @@ void init_research_screen_boxes(void)
     research_progress_button.DrawTextFn = ac_show_title_box;
     research_submit_button.Text = gui_strings[417];
     research_progress_button.Text = gui_strings[449];
-    research_unkn21_box.Flags |= GBxFlg_Unkn0100|GBxFlg_Unkn0200;
+    research_unkn21_box.Flags |= GBxFlg_RadioBtn|GBxFlg_IsMouseOver;
 
     lbFontPtr = med2_font;
     research_graph_box.SpecialDrawFn = ac_show_research_graph;
@@ -265,7 +265,7 @@ void init_research_screen_boxes(void)
 
 void reset_research_screen_boxes_flags(void)
 {
-    research_unkn21_box.Flags = GBxFlg_Unkn0001 | GBxFlg_Unkn0100 | GBxFlg_Unkn0200;
+    research_unkn21_box.Flags = GBxFlg_Unkn0001 | GBxFlg_RadioBtn | GBxFlg_IsMouseOver;
     research_graph_box.Flags = GBxFlg_Unkn0001;
     research_progress_button.Flags = GBxFlg_Unkn0001;
 }

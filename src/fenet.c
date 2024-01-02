@@ -585,7 +585,7 @@ void init_net_screen_boxes(void)
     net_INITIATE_button.CallBackFn = ac_do_net_INITIATE;
     net_faction_box.SpecialDrawFn = ac_show_net_faction_box;
     net_team_box.SpecialDrawFn = ac_show_net_team_box;
-    net_groups_box.Flags |= GBxFlg_Unkn0100|GBxFlg_Unkn0200;
+    net_groups_box.Flags |= GBxFlg_RadioBtn|GBxFlg_IsMouseOver;
 
     net_groups_box.SpecialDrawFn = ac_show_net_groups_box;
     net_users_box.SpecialDrawFn = ac_show_net_users_box;
@@ -595,7 +595,7 @@ void init_net_screen_boxes(void)
     net_protocol_select_button.CallBackFn = ac_do_net_protocol_select;
     unkn8_EJECT_button.CallBackFn = ac_do_unkn8_EJECT;
     net_comms_box.SpecialDrawFn = ac_show_net_comms_box;
-    net_users_box.Flags |= GBxFlg_Unkn0100|GBxFlg_Unkn0200;
+    net_users_box.Flags |= GBxFlg_RadioBtn|GBxFlg_IsMouseOver;
     net_groups_LOGON_button.CallBackFn = ac_do_net_groups_LOGON;
     net_unkn21.SpecialDrawFn = ac_show_net_unkn21;
     net_SET2_button.CallBackFn = ac_do_net_SET2;

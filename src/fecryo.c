@@ -225,7 +225,7 @@ void init_next_blokey_flic(void)
         flic_unkn03(3);
         new_current_drawing_mod = cmod;
         mod_draw_states[cmod] |= 0x02;
-        cryo_blokey_box.Flags &= ~GBxFlg_Unkn0100;
+        cryo_blokey_box.Flags &= ~GBxFlg_RadioBtn;
         play_sample_using_heap(0, 132, 127, 64, 100, 0, 3);
         byte_1DDC40 = 0;
         break;
@@ -254,7 +254,7 @@ void init_next_blokey_flic(void)
         mod_draw_states[cmod] |= 0x01;
         mod_draw_states[cmod] &= ~0x08;
         old_flic_mods[cmod] = flic_mods[cmod];
-        cryo_blokey_box.Flags &= ~GBxFlg_Unkn0100;
+        cryo_blokey_box.Flags &= ~GBxFlg_RadioBtn;
         byte_1DDC40 = 0;
         break;
     case 3:
@@ -494,10 +494,10 @@ ubyte show_cryo_blokey(struct ScreenBox *box)
     short cx, cy;
     short hline;
 
-    if ((box->Flags & GBxFlg_Unkn8000) == 0)
+    if ((box->Flags & GBxFlg_BkgndDrawn) == 0)
     {
         draw_flic_purple_list(purple_mods_data_to_screen);
-        box->Flags |= GBxFlg_Unkn8000;
+        box->Flags |= GBxFlg_BkgndDrawn;
         update_flic_mods(old_flic_mods);
         update_flic_mods(flic_mods);
         reset_mod_draw_states_flag08();
@@ -505,7 +505,7 @@ ubyte show_cryo_blokey(struct ScreenBox *box)
     }
 
     if (word_15511E != selected_agent)
-        box->Flags &= ~GBxFlg_Unkn0100;
+        box->Flags &= ~GBxFlg_RadioBtn;
     word_15511E = selected_agent;
     lbFontPtr = small_med_font;
     my_set_text_window(0, 0, lbDisplay.GraphicsScreenWidth,
@@ -627,7 +627,7 @@ ubyte show_cryo_cybmod_list_box(struct ScreenTextBox *box)
     struct ScreenBoxBase resil_box = {box->X + 8, box->Y + 177, 192, 17};
     struct ScreenBoxBase addit_box = {box->X + 8, box->Y + 200, 192, 19};
 
-    if ((box->Flags & GBxFlg_Unkn8000) == 0)
+    if ((box->Flags & GBxFlg_BkgndDrawn) == 0)
     {
         lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
         draw_box_purple_list(text_window_x1, text_window_y1,
@@ -640,7 +640,7 @@ ubyte show_cryo_cybmod_list_box(struct ScreenTextBox *box)
         draw_text_property_bk(&addit_box, gui_strings[434]);
 
         lbDisplay.DrawFlags = 0;
-        box->Flags |= GBxFlg_Unkn8000;
+        box->Flags |= GBxFlg_BkgndDrawn;
         copy_box_purple_list(box->X + 4, box->Y + 4 + box->ScrollWindowOffset,
           box->Width - 20, box->ScrollWindowHeight + 23);
 
@@ -1069,7 +1069,7 @@ void init_cryo_screen_boxes(void)
     cryo_agent_list_box.BGColour = 25;
     cryo_agent_list_box.DrawTextFn = ac_show_cryo_agent_list;
     cryo_agent_list_box.ScrollWindowOffset += 27;
-    cryo_agent_list_box.Flags |= (GBxFlg_Unkn0100|GBxFlg_Unkn0200);
+    cryo_agent_list_box.Flags |= (GBxFlg_RadioBtn|GBxFlg_IsMouseOver);
     cryo_agent_list_box.ScrollWindowHeight -= 27;
 
     init_screen_box(&cryo_blokey_box, 212u, 122u, 203u, 303, 6);
@@ -1078,7 +1078,7 @@ void init_cryo_screen_boxes(void)
     init_screen_text_box(&cryo_cybmod_list_box, 425u, 153u, 208u, 272,
       6, small_med_font, 1);
     cryo_cybmod_list_box.DrawTextFn = ac_show_cryo_cybmod_list_box;
-    cryo_cybmod_list_box.Flags |= (GBxFlg_Unkn0100|GBxFlg_Unkn0200);
+    cryo_cybmod_list_box.Flags |= (GBxFlg_RadioBtn|GBxFlg_IsMouseOver);
     cryo_cybmod_list_box.ScrollWindowHeight = 117;
 
     init_screen_button(&cryo_offer_cancel_button, 628u, 404u,
@@ -1115,8 +1115,8 @@ void set_flag01_cryo_screen_boxes(void)
 
 void reset_cryo_screen_boxes_flags(void)
 {
-    cryo_cybmod_list_box.Flags = GBxFlg_Unkn0001 | GBxFlg_Unkn0100 | GBxFlg_Unkn0200;
-    cryo_agent_list_box.Flags = GBxFlg_Unkn0001 | GBxFlg_Unkn0100 | GBxFlg_Unkn0200;
+    cryo_cybmod_list_box.Flags = GBxFlg_Unkn0001 | GBxFlg_RadioBtn | GBxFlg_IsMouseOver;
+    cryo_agent_list_box.Flags = GBxFlg_Unkn0001 | GBxFlg_RadioBtn | GBxFlg_IsMouseOver;
     cryo_blokey_box.Flags = GBxFlg_Unkn0001;
 }
 

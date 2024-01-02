@@ -351,7 +351,7 @@ ubyte show_mission_stats(struct ScreenBox *box)
     scilost_ln = 0;
 
     // TODO maybe fill the report at higher level?
-    if ((box->Flags & GBxFlg_Unkn8000) == 0) {
+    if ((box->Flags & GBxFlg_BkgndDrawn) == 0) {
         debrief_report_fill(p_rep);
         ingame.CashAtStart = ingame.Credits;
         ingame.Expenditure = 0;
@@ -372,7 +372,7 @@ ubyte show_mission_stats(struct ScreenBox *box)
         scilost_ln += 1;
     }
 
-    if ((box->Flags & GBxFlg_Unkn8000) == 0)
+    if ((box->Flags & GBxFlg_BkgndDrawn) == 0)
     {
         draw_mission_stats_names_column(box, research_ln, scilost_ln);
 
@@ -382,7 +382,7 @@ ubyte show_mission_stats(struct ScreenBox *box)
 
         draw_mission_stats_vals_static(box, p_rep, research_ln, scilost_ln);
 
-        box->Flags |= GBxFlg_Unkn8000;
+        box->Flags |= GBxFlg_BkgndDrawn;
         copy_box_purple_list(box->X, box->Y, box->Width, box->Height);
     }
 
@@ -699,7 +699,7 @@ ubyte show_mission_people_stats(struct ScreenBox *box)
 
     my_set_text_window(box->X + 4, box->Y + 4, box->Width - 8, box->Height - 8);
 
-    if ((box->Flags & GBxFlg_Unkn8000) == 0)
+    if ((box->Flags & GBxFlg_BkgndDrawn) == 0)
     {
         if (screentype == SCRT_9)
         {
@@ -709,7 +709,7 @@ ubyte show_mission_people_stats(struct ScreenBox *box)
         {
             draw_mission_mp_players_names_column(box, p_rep);
         }
-        box->Flags |= GBxFlg_Unkn8000;
+        box->Flags |= GBxFlg_BkgndDrawn;
         copy_box_purple_list(box->X, box->Y, box->Width, box->Height);
     }
 

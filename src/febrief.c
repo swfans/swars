@@ -532,7 +532,7 @@ void init_brief_screen_boxes(void)
       gui_strings[442], unkn39_text, 6, med_font, small_med_font, 1);
     brief_NETSCAN_COST_box.Text2 = brief_netscan_cost_text;
     brief_NETSCAN_button.CallBackFn = ac_brief_do_netscan_enhance;
-    brief_netscan_box.Flags |= (GBxFlg_Unkn0100|GBxFlg_Unkn0200);
+    brief_netscan_box.Flags |= (GBxFlg_RadioBtn|GBxFlg_IsMouseOver);
     brief_netscan_box.DrawTextFn = ac_show_brief_netscan_box;
 
     init_screen_text_box(&brief_mission_text_box, 338u, 72u, 295u, 354, 6, small_font, 3);
@@ -542,7 +542,7 @@ void init_brief_screen_boxes(void)
       gui_strings[437], 6, med2_font, 1, 0x80);
     brief_mission_text_box.Buttons[0] = &unkn1_ACCEPT_button;
     brief_mission_text_box.Buttons[1] = &unkn1_CANCEL_button;
-    brief_mission_text_box.Flags |= (GBxFlg_Unkn0100|GBxFlg_Unkn0200);
+    brief_mission_text_box.Flags |= (GBxFlg_RadioBtn|GBxFlg_IsMouseOver);
     brief_mission_text_box.Text = mission_briefing_text;
     unkn1_ACCEPT_button.CallBackFn = ac_accept_mission;
     unkn1_CANCEL_button.CallBackFn = ac_do_unkn1_CANCEL;
@@ -577,9 +577,9 @@ void update_brief_screen_netscan_button(ushort text_id)
 void reset_brief_screen_boxes_flags(void)
 {
     brief_NETSCAN_COST_box.Flags = GBxFlg_Unkn0001;
-    brief_netscan_box.Flags = GBxFlg_Unkn0001 | GBxFlg_Unkn0100 | GBxFlg_Unkn0200;
+    brief_netscan_box.Flags = GBxFlg_Unkn0001 | GBxFlg_RadioBtn | GBxFlg_IsMouseOver;
     brief_graphical_box.Flags = GBxFlg_Unkn0001;
-    brief_mission_text_box.Flags = GBxFlg_Unkn0001 | GBxFlg_Unkn0100 | GBxFlg_Unkn0200;
+    brief_mission_text_box.Flags = GBxFlg_Unkn0001 | GBxFlg_RadioBtn | GBxFlg_IsMouseOver;
 }
 
 void set_flag01_brief_screen_boxes(void)

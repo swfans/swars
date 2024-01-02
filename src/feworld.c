@@ -666,7 +666,7 @@ void init_world_screen_boxes(void)
         med2_font, 1, 0);
 
     world_city_info_box.DrawTextFn = ac_show_world_city_info_box;
-    world_city_info_box.Flags |= GBxFlg_Unkn4000;
+    world_city_info_box.Flags |= GBxFlg_TextCenter;
     world_info_CANCEL_button.CallBackFn = ac_do_unkn2_CANCEL;
     world_info_ACCEPT_button.CallBackFn = ac_do_unkn2_ACCEPT;
     world_landmap_box.SpecialDrawFn = ac_show_world_landmap_box;
@@ -685,7 +685,7 @@ void init_world_screen_boxes(void)
 void reset_world_screen_boxes_flags(void)
 {
     world_landmap_box.Flags = GBxFlg_Unkn0001;
-    world_city_info_box.Flags = GBxFlg_Unkn0001 | GBxFlg_Unkn4000;
+    world_city_info_box.Flags = GBxFlg_Unkn0001 | GBxFlg_TextCenter;
 }
 
 void set_flag01_world_screen_boxes(void)

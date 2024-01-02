@@ -301,7 +301,7 @@ void reset_system_menu_boxes_flags(void)
 
 void clear_someflags_system_menu_screen_boxes(void)
 {
-    unkn13_SYSTEM_button.Flags &= ~(GBxFlg_Unkn8000|GBxFlg_Unkn2000|GBxFlg_Unkn0004);
+    unkn13_SYSTEM_button.Flags &= ~(GBxFlg_BkgndDrawn|GBxFlg_TextRight|GBxFlg_Unkn0004);
 }
 
 void show_mission_loading_screen(void)

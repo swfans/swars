@@ -667,7 +667,7 @@ ubyte display_weapon_info(struct ScreenTextBox *box)
     struct ScreenBoxBase range_box = {box->X + 8, box->Y + 202, 192, 17};
     struct ScreenBoxBase energ_box = {box->X + 8, box->Y + 227, 192, 17};
 
-    if ((box->Flags & GBxFlg_Unkn8000) == 0)
+    if ((box->Flags & GBxFlg_BkgndDrawn) == 0)
     {
         lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
         draw_box_purple_list(box->X + 4, box->Y + 158,
@@ -681,7 +681,7 @@ ubyte display_weapon_info(struct ScreenTextBox *box)
         draw_discrete_rects_bar_bk(&energ_box, gui_strings[429], byte_155174);
 
         lbDisplay.DrawFlags = 0;
-        box->Flags |= GBxFlg_Unkn8000;
+        box->Flags |= GBxFlg_BkgndDrawn;
         copy_box_purple_list(box->X + 4, box->Y + 146, box->Width - 8, box->Height - 143);
     }
     my_set_text_window(box->X + 4, box->Y + 4, box->Width - 8, box->Height - 8);
@@ -810,12 +810,12 @@ void init_equip_screen_boxes(void)
     equip_display_box.DrawTextFn = ac_display_weapon_info;
     equip_list_box.DrawTextFn = ac_show_weapon_list;
     equip_cost_box.Text2 = equip_cost_text;
-    equip_display_box.Flags |= (GBxFlg_Unkn0100|GBxFlg_Unkn0200);
+    equip_display_box.Flags |= (GBxFlg_RadioBtn|GBxFlg_IsMouseOver);
     equip_display_box.ScrollWindowHeight = 117;
     equip_list_head_box.DrawTextFn = ac_show_title_box;
     equip_list_head_box.Text = gui_strings[408];
     equip_list_head_box.Font = med_font;
-    equip_list_box.Flags |= (GBxFlg_Unkn0100|GBxFlg_Unkn0200);
+    equip_list_box.Flags |= (GBxFlg_RadioBtn|GBxFlg_IsMouseOver);
     equip_list_box.BGColour = unk2_sprites[15].SHeight + 3;
     equip_list_box.ScrollWindowHeight -= 27;
 
@@ -831,7 +831,7 @@ void init_equip_screen_boxes(void)
       gui_strings[534], 6, med2_font, 1, 0);
     equip_all_agents_button.Width = 165;
     equip_all_agents_button.RadioValue = 4;
-    equip_all_agents_button.Flags |= GBxFlg_Unkn0100;
+    equip_all_agents_button.Flags |= GBxFlg_RadioBtn;
     equip_all_agents_button.Radio = &selected_agent;
 
     start_x = (scr_w - weapon_slots.Width - equip_list_box.Width - equip_name_box.Width - 32) / 2;
@@ -921,8 +921,8 @@ void reset_equip_screen_boxes_flags(void)
     weapon_slots.Flags = GBxFlg_Unkn0001;
     equip_name_box.Flags = GBxFlg_Unkn0001;
     equip_cost_box.Flags = GBxFlg_Unkn0001;
-    equip_list_box.Flags = GBxFlg_Unkn0001 | GBxFlg_Unkn0100 | GBxFlg_Unkn0200;
-    equip_display_box.Flags = GBxFlg_Unkn0001 | GBxFlg_Unkn0100 | GBxFlg_Unkn0200;
+    equip_list_box.Flags = GBxFlg_Unkn0001 | GBxFlg_RadioBtn | GBxFlg_IsMouseOver;
+    equip_display_box.Flags = GBxFlg_Unkn0001 | GBxFlg_RadioBtn | GBxFlg_IsMouseOver;
     for (i = 0; i < 5; i++) {
         unk11_menu[i].Flags = GBxFlg_Unkn0001;
     }
