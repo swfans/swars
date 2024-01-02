@@ -254,6 +254,20 @@ short new_weapomn_mods_text_width(struct DebriefReport *p_rep)
     return LbTextStringWidth(locstr);
 }
 
+/** Returns width of the scientists died line in debriefing.
+ * Requires scientist_lost_reason to be filled before the call.
+ */
+short scientists_died_text_width(struct DebriefReport *p_rep)
+{
+    char locstr[80];
+
+    lbFontPtr = med_font;
+
+    snprintf(locstr, sizeof(locstr), "%d: %s", p_rep->ScientistsLost, scientist_lost_reason);
+
+    return LbTextStringWidth(locstr);
+}
+
 void draw_mission_stats_vals_dynamic(struct ScreenBox *box,
   struct DebriefReport *p_rep, ubyte research_ln, ubyte scilost_ln)
 {
@@ -355,6 +369,10 @@ ubyte show_mission_stats(struct ScreenBox *box)
         debrief_report_fill(p_rep);
         ingame.CashAtStart = ingame.Credits;
         ingame.Expenditure = 0;
+
+        if (p_rep->ScientistsLost > 0) {
+            load_scientist_lost_reason(p_rep->SciLostReason);
+        }
     }
 
     my_set_text_window(box->X + 4, box->Y + 4, box->Width - 8, box->Height - 8);
@@ -369,16 +387,19 @@ ubyte show_mission_stats(struct ScreenBox *box)
             research_ln += 1;
     }
     if (p_rep->ScientistsLost > 0) {
+        short textw;
         scilost_ln += 1;
+        // use two lines for death reason only if we have unused space
+        if (research_ln <= 2) {
+            textw = scientists_died_text_width(p_rep);
+            if (textw > box->Width - 8 - MISSION_STATS_SECOND_COLUMN_X)
+                scilost_ln += 1;
+        }
     }
 
     if ((box->Flags & GBxFlg_BkgndDrawn) == 0)
     {
         draw_mission_stats_names_column(box, research_ln, scilost_ln);
-
-        if (scilost_ln > 0) {
-            load_scientist_lost_reason(p_rep->SciLostReason);
-        }
 
         draw_mission_stats_vals_static(box, p_rep, research_ln, scilost_ln);
 
