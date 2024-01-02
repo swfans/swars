@@ -585,7 +585,7 @@ void init_net_screen_boxes(void)
     net_INITIATE_button.CallBackFn = ac_do_net_INITIATE;
     net_faction_box.SpecialDrawFn = ac_show_net_faction_box;
     net_team_box.SpecialDrawFn = ac_show_net_team_box;
-    net_groups_box.Flags |= 0x0300;
+    net_groups_box.Flags |= GBxFlg_Unkn0100|GBxFlg_Unkn0200;
 
     net_groups_box.SpecialDrawFn = ac_show_net_groups_box;
     net_users_box.SpecialDrawFn = ac_show_net_users_box;
@@ -595,7 +595,7 @@ void init_net_screen_boxes(void)
     net_protocol_select_button.CallBackFn = ac_do_net_protocol_select;
     unkn8_EJECT_button.CallBackFn = ac_do_unkn8_EJECT;
     net_comms_box.SpecialDrawFn = ac_show_net_comms_box;
-    net_users_box.Flags |= 0x0300;
+    net_users_box.Flags |= GBxFlg_Unkn0100|GBxFlg_Unkn0200;
     net_groups_LOGON_button.CallBackFn = ac_do_net_groups_LOGON;
     net_unkn21.SpecialDrawFn = ac_show_net_unkn21;
     net_SET2_button.CallBackFn = ac_do_net_SET2;
@@ -631,36 +631,36 @@ void init_net_screen_boxes(void)
 
 void reset_net_screen_boxes_flags(void)
 {
-    net_users_box.Flags = 0x0001;
-    net_groups_box.Flags = 0x0001;
-    net_benefits_box.Flags = 0x0001;
-    net_team_box.Flags = 0x0001;
-    net_faction_box.Flags = 0x0001;
-    net_comms_box.Flags = 0x0001;
-    net_unkn21.Flags = 0x0001;
-    net_protocol_box.Flags = 0x0001;
+    net_users_box.Flags = GBxFlg_Unkn0001;
+    net_groups_box.Flags = GBxFlg_Unkn0001;
+    net_benefits_box.Flags = GBxFlg_Unkn0001;
+    net_team_box.Flags = GBxFlg_Unkn0001;
+    net_faction_box.Flags = GBxFlg_Unkn0001;
+    net_comms_box.Flags = GBxFlg_Unkn0001;
+    net_unkn21.Flags = GBxFlg_Unkn0001;
+    net_protocol_box.Flags = GBxFlg_Unkn0001;
 }
 
 void reset_net_screen_EJECT_flags(void)
 {
-    unkn8_EJECT_button.Flags = 0x0001;
+    unkn8_EJECT_button.Flags = GBxFlg_Unkn0001;
 }
 
 void set_flag01_net_screen_boxes(void)
 {
-    net_SET2_button.Flags |= 0x0001;
-    net_SET_button.Flags |= 0x0001;
-    net_INITIATE_button.Flags |= 0x0001;
-    net_protocol_option_button.Flags |= 0x0001;
-    net_protocol_select_button.Flags |= 0x0001;
-    net_unkn40_button.Flags |= 0x0001;
-    unkn8_EJECT_button.Flags |= 0x0001;
-    net_groups_LOGON_button.Flags |= 0x0001;
+    net_SET2_button.Flags |= GBxFlg_Unkn0001;
+    net_SET_button.Flags |= GBxFlg_Unkn0001;
+    net_INITIATE_button.Flags |= GBxFlg_Unkn0001;
+    net_protocol_option_button.Flags |= GBxFlg_Unkn0001;
+    net_protocol_select_button.Flags |= GBxFlg_Unkn0001;
+    net_unkn40_button.Flags |= GBxFlg_Unkn0001;
+    unkn8_EJECT_button.Flags |= GBxFlg_Unkn0001;
+    net_groups_LOGON_button.Flags |= GBxFlg_Unkn0001;
 }
 
 void switch_net_screen_boxes_to_initiate(void)
 {
-    net_INITIATE_button.Flags = 1;
+    net_INITIATE_button.Flags = GBxFlg_Unkn0001;
     net_INITIATE_button.Text = gui_strings[385];
     net_groups_LOGON_button.Text = gui_strings[386];
 }

@@ -138,16 +138,16 @@ void set_flag02_equipment_screen_boxes(void)
 {
     short i;
 
-    equip_list_head_box.Flags |= 0x02;
-    weapon_slots.Flags |= 0x02;
-    equip_display_box.Flags |= 0x02;
-    equip_name_box.Flags |= 0x02;
-    equip_list_box.Flags |= 0x02;
-    equip_offer_buy_button.Flags |= 0x02;
-    equip_cost_box.Flags |= 0x02;
-    equip_all_agents_button.Flags |= 0x02;
+    equip_list_head_box.Flags |= GBxFlg_Unkn0002;
+    weapon_slots.Flags |= GBxFlg_Unkn0002;
+    equip_display_box.Flags |= GBxFlg_Unkn0002;
+    equip_name_box.Flags |= GBxFlg_Unkn0002;
+    equip_list_box.Flags |= GBxFlg_Unkn0002;
+    equip_offer_buy_button.Flags |= GBxFlg_Unkn0002;
+    equip_cost_box.Flags |= GBxFlg_Unkn0002;
+    equip_all_agents_button.Flags |= GBxFlg_Unkn0002;
     for (i = 0; i < 5; i++) {
-        unk11_menu[i].Flags = 0x02;
+        unk11_menu[i].Flags = GBxFlg_Unkn0002;
     }
 }
 
@@ -438,7 +438,7 @@ void show_equipment_screen(void)
                 equip_list_box.Lines++;
             }
         }
-        equip_list_box.Flags |= 0x0080;
+        equip_list_box.Flags |= GBxFlg_Unkn0080;
         refresh_equip_list = 0;
     }
     if (draw_heading_box())
@@ -743,7 +743,7 @@ ubyte display_weapon_info(struct ScreenTextBox *box)
                 init_weapon_anim(selected_weapon);
                 return 0;
             }
-            equip_display_box.Flags |= 0x0080;
+            equip_display_box.Flags |= GBxFlg_Unkn0080;
             equip_display_box.Lines = 0;
             if (is_research_weapon_completed(selected_weapon + 1) ||
               (login_control__State != 6))
@@ -810,12 +810,12 @@ void init_equip_screen_boxes(void)
     equip_display_box.DrawTextFn = ac_display_weapon_info;
     equip_list_box.DrawTextFn = ac_show_weapon_list;
     equip_cost_box.Text2 = equip_cost_text;
-    equip_display_box.Flags |= 0x0300;
+    equip_display_box.Flags |= (GBxFlg_Unkn0100|GBxFlg_Unkn0200);
     equip_display_box.ScrollWindowHeight = 117;
     equip_list_head_box.DrawTextFn = ac_show_title_box;
     equip_list_head_box.Text = gui_strings[408];
     equip_list_head_box.Font = med_font;
-    equip_list_box.Flags |= 0x0300;
+    equip_list_box.Flags |= (GBxFlg_Unkn0100|GBxFlg_Unkn0200);
     equip_list_box.BGColour = unk2_sprites[15].SHeight + 3;
     equip_list_box.ScrollWindowHeight -= 27;
 
@@ -917,22 +917,22 @@ void reset_equip_screen_boxes_flags(void)
 {
     short i;
 
-    equip_list_head_box.Flags = 0x0001;
-    weapon_slots.Flags = 0x0001;
-    equip_name_box.Flags = 0x0001;
-    equip_cost_box.Flags = 0x0001;
-    equip_list_box.Flags = 0x0001 | 0x0100 | 0x0200;
-    equip_display_box.Flags = 0x0001 | 0x0100 | 0x0200;
+    equip_list_head_box.Flags = GBxFlg_Unkn0001;
+    weapon_slots.Flags = GBxFlg_Unkn0001;
+    equip_name_box.Flags = GBxFlg_Unkn0001;
+    equip_cost_box.Flags = GBxFlg_Unkn0001;
+    equip_list_box.Flags = GBxFlg_Unkn0001 | GBxFlg_Unkn0100 | GBxFlg_Unkn0200;
+    equip_display_box.Flags = GBxFlg_Unkn0001 | GBxFlg_Unkn0100 | GBxFlg_Unkn0200;
     for (i = 0; i < 5; i++) {
-        unk11_menu[i].Flags = 0x0001;
+        unk11_menu[i].Flags = GBxFlg_Unkn0001;
     }
 }
 
 void set_flag01_equip_screen_boxes(void)
 {
-    equip_all_agents_button.Flags |= 0x0001;
-    equip_offer_buy_button.Flags |= 0x0001;
+    equip_all_agents_button.Flags |= GBxFlg_Unkn0001;
+    equip_offer_buy_button.Flags |= GBxFlg_Unkn0001;
     if (screentype == SCRT_CRYO)
-        equip_cost_box.Flags |= 0x0008;
+        equip_cost_box.Flags |= GBxFlg_Unkn0008;
 }
 /******************************************************************************/

@@ -46,6 +46,26 @@ enum GUIBoxState {
   GBxSta_PUSHED,
 };
 
+enum GUIBoxFlags {
+  GBxFlg_NONE = 0x0000,
+  GBxFlg_Unkn0001 = 0x0001,
+  GBxFlg_Unkn0002 = 0x0002,
+  GBxFlg_Unkn0004 = 0x0004,
+  GBxFlg_Unkn0008 = 0x0008,
+  GBxFlg_Unkn0010 = 0x0010,
+  GBxFlg_Unkn0020 = 0x0020,
+  GBxFlg_Unkn0040 = 0x0040,
+  GBxFlg_Unkn0080 = 0x0080,
+  GBxFlg_Unkn0100 = 0x0100,
+  GBxFlg_Unkn0200 = 0x0200,
+  GBxFlg_Unkn0400 = 0x0400,
+  GBxFlg_Unkn0800 = 0x0800,
+  GBxFlg_Unkn1000 = 0x1000,
+  GBxFlg_Unkn2000 = 0x2000,
+  GBxFlg_Unkn4000 = 0x4000,
+  GBxFlg_Unkn8000 = 0x8000,
+};
+
 /** Base to which every Screen Box/Button/Text can be casted.
  */
 struct ScreenBoxBase {

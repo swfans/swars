@@ -99,20 +99,20 @@ void init_controls_screen_boxes(void)
 
 void reset_controls_screen_boxes_flags(void)
 {
-    controls_keylist_box.Flags = 0x0001;
-    controls_joystick_box.Flags = 0x0001;
+    controls_keylist_box.Flags = GBxFlg_Unkn0001;
+    controls_joystick_box.Flags = GBxFlg_Unkn0001;
 }
 
 void set_flag01_controls_screen_boxes(void)
 {
-    controls_save_button.Flags |= 0x0001;
-    controls_defaults_button.Flags |= 0x0001;
-    controls_calibrate_button.Flags |= 0x0001;
+    controls_save_button.Flags |= GBxFlg_Unkn0001;
+    controls_defaults_button.Flags |= GBxFlg_Unkn0001;
+    controls_calibrate_button.Flags |= GBxFlg_Unkn0001;
 }
 
 void clear_someflags_controls_screen_boxes(void)
 {
-    controls_keylist_box.Flags &= ~(0x8000|0x2000|0x0004);
+    controls_keylist_box.Flags &= ~(GBxFlg_Unkn8000|GBxFlg_Unkn2000|GBxFlg_Unkn0004);
 }
 
 /******************************************************************************/

@@ -290,7 +290,7 @@ TbBool draw_world_country_borders(struct ScreenBox *box)
         landmap_8BC = landmap_2B4[i + 0];
         landmap_8C0 = landmap_2B4[i + 1];
         if (byte_1C4888 == 2)
-            lbDisplay.DrawFlags = 0x0004;
+            lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
         for (i = 2; i < 418; i += 2)
         {
             short px, py;
@@ -306,7 +306,7 @@ TbBool draw_world_country_borders(struct ScreenBox *box)
             landmap_8C0 = landmap_2B4[i + 1];
         }
 
-        lbDisplay.DrawFlags = 0x0004;
+        lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
         draw_line_purple_list(box->X + 1, box->Y + 181,
           box->X + 70, box->Y + 181, 247);
         draw_line_purple_list(box->X + 109, box->Y + 181,
@@ -371,17 +371,17 @@ void draw_world_cities_names(struct ScreenBox *box)
             dim = 2 * w + 1;
             if ((cities[city].Flags & 0x01) != 0)
             {
-                lbDisplay.DrawFlags |= 0x8010;
+                lbDisplay.DrawFlags |= (0x8000|Lb_SPRITE_OUTLINE);
                 draw_box_purple_list(cities[city].X - w, cities[city].Y - w, dim, dim, 174);
-                lbDisplay.DrawFlags &= ~0x8010;
+                lbDisplay.DrawFlags &= ~(0x8000|Lb_SPRITE_OUTLINE);
                 draw_hotspot_purple_list(cities[city].X, cities[city].Y);
             }
             else if ((cities[city].Flags & 0x10) != 0)
             {
-                lbDisplay.DrawFlags |= 0x8010;
+                lbDisplay.DrawFlags |= (0x8000|Lb_SPRITE_OUTLINE);
                 if (gameturn & 8)
                     draw_box_purple_list(cities[city].X - w, cities[city].Y - w, dim, dim, 87);
-                lbDisplay.DrawFlags &= ~0x8010;
+                lbDisplay.DrawFlags &= ~(0x8000|Lb_SPRITE_OUTLINE);
                 draw_hotspot_purple_list(cities[city].X, cities[city].Y);
             }
         }
@@ -407,7 +407,7 @@ void draw_world_cities_names(struct ScreenBox *box)
             else if ((cities[city].Flags & 0x10) != 0)
                 lbDisplay.DrawColour = 87;
 
-            lbDisplay.DrawFlags = 0x0040;
+            lbDisplay.DrawFlags = Lb_TEXT_ONE_COLOR;
             landmap_8BC = my_string_width(locstr);
             strcpy((char *)back_buffer + text_buf_pos, locstr);
 
@@ -447,7 +447,7 @@ void input_world_cities(struct ScreenBox *box)
                 network_players[LbNetworkPlayerNumber()].Type = 9;
             }
             word_1C48CC = 0;
-            world_city_info_box.Flags |= 0x0080;
+            world_city_info_box.Flags |= GBxFlg_Unkn0080;
         }
     }
 }
@@ -609,7 +609,7 @@ ubyte show_world_landmap_box(struct ScreenBox *box)
             }
         }
 
-        lbDisplay.DrawFlags = 0x0004;
+        lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
         draw_line_purple_list(0, word_1C6E0A, box->Width - 3, word_1C6E0A, 87);
         draw_line_purple_list(word_1C6E08, 0, word_1C6E08, box->Height - 3, 87);
 
@@ -666,7 +666,7 @@ void init_world_screen_boxes(void)
         med2_font, 1, 0);
 
     world_city_info_box.DrawTextFn = ac_show_world_city_info_box;
-    world_city_info_box.Flags |= 0x4000;
+    world_city_info_box.Flags |= GBxFlg_Unkn4000;
     world_info_CANCEL_button.CallBackFn = ac_do_unkn2_CANCEL;
     world_info_ACCEPT_button.CallBackFn = ac_do_unkn2_ACCEPT;
     world_landmap_box.SpecialDrawFn = ac_show_world_landmap_box;
@@ -684,20 +684,20 @@ void init_world_screen_boxes(void)
 
 void reset_world_screen_boxes_flags(void)
 {
-    world_landmap_box.Flags = 0x0001;
-    world_city_info_box.Flags = 0x0001 | 0x4000;
+    world_landmap_box.Flags = GBxFlg_Unkn0001;
+    world_city_info_box.Flags = GBxFlg_Unkn0001 | GBxFlg_Unkn4000;
 }
 
 void set_flag01_world_screen_boxes(void)
 {
-    world_info_ACCEPT_button.Flags |= 0x0001;
-    world_info_CANCEL_button.Flags |= 0x0001;
+    world_info_ACCEPT_button.Flags |= GBxFlg_Unkn0001;
+    world_info_CANCEL_button.Flags |= GBxFlg_Unkn0001;
 }
 
 void set_flag02_world_screen_boxes(void)
 {
     set_flag02_heading_screen_boxes();
-    world_landmap_box.Flags |= 0x0002;
-    world_city_info_box.Flags |= 0x0002;
+    world_landmap_box.Flags |= GBxFlg_Unkn0002;
+    world_city_info_box.Flags |= GBxFlg_Unkn0002;
 }
 /******************************************************************************/

@@ -57,7 +57,7 @@ void init_storage_screen_boxes(void)
     storage_slots_box.DrawTextFn = ac_show_menu_storage_slots_box;
     storage_slots_box.ScrollWindowHeight = 208;
     storage_slots_box.Lines = 99;
-    storage_slots_box.Flags |= 0x0300;
+    storage_slots_box.Flags |= GBxFlg_Unkn0100|GBxFlg_Unkn0200;
     storage_slots_box.BGColour = 26;
     storage_slots_box.ScrollWindowOffset += 27;
 
@@ -84,21 +84,21 @@ void init_storage_screen_boxes(void)
 
 void reset_storage_screen_boxes_flags(void)
 {
-    storage_header_box.Flags = 0x0001;
-    storage_slots_box.Flags = 0x0001 | 0x0100 | 0x0200;
+    storage_header_box.Flags = GBxFlg_Unkn0001;
+    storage_slots_box.Flags = GBxFlg_Unkn0001 | GBxFlg_Unkn0100 | GBxFlg_Unkn0200;
 }
 
 void set_flag01_storage_screen_boxes(void)
 {
-    storage_LOAD_button.Flags |= 0x0001;
-    storage_SAVE_button.Flags |= 0x0001;
-    storage_NEW_MORTAL_button.Flags |= 0x0001;
+    storage_LOAD_button.Flags |= GBxFlg_Unkn0001;
+    storage_SAVE_button.Flags |= GBxFlg_Unkn0001;
+    storage_NEW_MORTAL_button.Flags |= GBxFlg_Unkn0001;
 }
 
 void clear_someflags_storage_screen_boxes(void)
 {
-    storage_header_box.Flags &= ~(0x8000|0x2000|0x0004);
-    storage_slots_box.Flags &= ~(0x8000|0x2000|0x0004);
+    storage_header_box.Flags &= ~(GBxFlg_Unkn8000|GBxFlg_Unkn2000|GBxFlg_Unkn0004);
+    storage_slots_box.Flags &= ~(GBxFlg_Unkn8000|GBxFlg_Unkn2000|GBxFlg_Unkn0004);
 }
 
 /******************************************************************************/

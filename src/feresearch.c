@@ -213,7 +213,7 @@ void init_research_screen_boxes(void)
     {
         research_list_buttons[i].Radio = &ingame.fld_unk7DE;
         research_list_buttons[i].RadioValue = val;
-        research_list_buttons[i].Flags |= 0x0100;
+        research_list_buttons[i].Flags |= GBxFlg_Unkn0100;
         val++;
     }
 
@@ -229,7 +229,7 @@ void init_research_screen_boxes(void)
     research_progress_button.DrawTextFn = ac_show_title_box;
     research_submit_button.Text = gui_strings[417];
     research_progress_button.Text = gui_strings[449];
-    research_unkn21_box.Flags |= 0x0300;
+    research_unkn21_box.Flags |= GBxFlg_Unkn0100|GBxFlg_Unkn0200;
 
     lbFontPtr = med2_font;
     research_graph_box.SpecialDrawFn = ac_show_research_graph;
@@ -265,17 +265,17 @@ void init_research_screen_boxes(void)
 
 void reset_research_screen_boxes_flags(void)
 {
-    research_unkn21_box.Flags = 0x0001 | 0x0100 | 0x0200;
-    research_graph_box.Flags = 0x0001;
-    research_progress_button.Flags = 0x0001;
+    research_unkn21_box.Flags = GBxFlg_Unkn0001 | GBxFlg_Unkn0100 | GBxFlg_Unkn0200;
+    research_graph_box.Flags = GBxFlg_Unkn0001;
+    research_progress_button.Flags = GBxFlg_Unkn0001;
 }
 
 void set_flag01_research_screen_boxes(void)
 {
-    research_submit_button.Flags |= 0x0001;
-    research_list_buttons[1].Flags |= 0x0001;
-    research_list_buttons[0].Flags |= 0x0001;
-    unkn12_WEAPONS_MODS_button.Flags |= 0x0001;
+    research_submit_button.Flags |= GBxFlg_Unkn0001;
+    research_list_buttons[1].Flags |= GBxFlg_Unkn0001;
+    research_list_buttons[0].Flags |= GBxFlg_Unkn0001;
+    unkn12_WEAPONS_MODS_button.Flags |= GBxFlg_Unkn0001;
 }
 
 void clear_research_screen(void)

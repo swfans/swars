@@ -73,7 +73,7 @@ void draw_vert_slider_main_body(struct ScreenBox *box, short *target_ptr)
     {
         x2c = *target_ptr;
         show_audio_volume_box_func_02(box->X + 9, box->Y + 11, x2c, 17, 174);
-        lbDisplay.DrawFlags = 0x0004;
+        lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
         show_audio_volume_box_func_02(box->X + 9 + x2c, box->Y + 11, wtext1 - x2c, 17, 174);
         show_audio_volume_box_func_02(box->X + 20 + wtext1, box->Y, x1b, 28, 174);
         show_audio_volume_box_func_02(box->X + box->Width + 6 - wtext2, box->Y, wtext2, 17, 174);
@@ -84,7 +84,7 @@ void draw_vert_slider_main_body(struct ScreenBox *box, short *target_ptr)
         show_audio_volume_box_func_02(box->X + 9, box->Y + 11, wtext1, 17, 174);
         show_audio_volume_box_func_02(box->X + 20 + wtext1, box->Y, x1b, 28, 174);
         show_audio_volume_box_func_02(box->X + box->Width + 6 - wtext2, box->Y, x2c, 17, 174);
-        lbDisplay.DrawFlags = 0x0004;
+        lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
         show_audio_volume_box_func_02(box->X + box->Width + 6 + x2c - wtext2, box->Y, wtext2 - x2c, 17, 174);
     }
     else
@@ -92,7 +92,7 @@ void draw_vert_slider_main_body(struct ScreenBox *box, short *target_ptr)
         x2c = (*target_ptr) - wtext1;
         show_audio_volume_box_func_02(box->X + 9, box->Y + 11, wtext1, 17, 174);
         show_audio_volume_box_func_02(box->X + 20 + wtext1, box->Y, x2c, 28, 174);
-        lbDisplay.DrawFlags = 0x0004;
+        lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
         show_audio_volume_box_func_02(box->X + 20 + x2c + wtext1, box->Y, x1b - x2c, 28, 174);
         show_audio_volume_box_func_02(box->X + box->Width + 6 - wtext2, box->Y, wtext2, 17, 174);
     }

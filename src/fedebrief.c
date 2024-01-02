@@ -744,8 +744,8 @@ void init_debrief_screen_boxes(void)
 
 void reset_debrief_screen_boxes_flags(void)
 {
-    debrief_people_box.Flags = 0x0001;
-    debrief_mission_box.Flags = 0x0001;
+    debrief_people_box.Flags = GBxFlg_Unkn0001;
+    debrief_mission_box.Flags = GBxFlg_Unkn0001;
 }
 
 /******************************************************************************/

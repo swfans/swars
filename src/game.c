@@ -2012,7 +2012,7 @@ TbResult load_mad_pc(ushort mapno)
     TbResult ret;
 
     LbMouseChangeSprite(NULL);
-    ingame.Flags |= 0x010000;
+    ingame.Flags |= GamF_Unkn00010000;
     init_free_explode_faces();
     if (mapno != 0) {
         load_map_bnb(mapno);
@@ -4331,7 +4331,7 @@ void draw_falling_rain(int frm)
     x = (rnd + (engn_xc >> 4) + (dword_176D58 >> 7)) % scanln;
     rnd = LbRandomPosShort();
     y = m * ((rnd + (shift_y >> 10)) % limit_y);
-    lbDisplay.DrawFlags = 0x0004;
+    lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
     o = &lbDisplay.WScreen[scanln * y + x];
     w = m;
     h = m;
@@ -6773,7 +6773,7 @@ ubyte load_game_slot(ubyte click)
     clear_someflags_storage_screen_boxes();
     if (save_slot == 0)
     {
-        ingame.Flags |= 0x10;
+        ingame.Flags |= GamF_Unkn0010;
         sysmnu_button_disable(1,2);
     }
     unkn_city_no = -1;
@@ -9260,7 +9260,7 @@ TbBool check_panel_input(short panel)
                 p_locplayer->PanelState[mouser] = p_panel->ID + 13;
                 if (!IsSamplePlaying(0, 21, 0))
                     play_sample_using_heap(0, 21, 127, 64, 100, -1, 1u);
-                ingame.Flags |= 0x100000;
+                ingame.Flags |= GamF_Unkn00100000;
                 return 1;
             }
             break;
@@ -10166,7 +10166,7 @@ void draw_purple_screen(void)
             break;
         case PuDT_SPRITE:
             lbDisplay.DrawColour = pditem->U.Box.Colour;
-            if ((lbDisplay.DrawFlags & 0x0040) != 0)
+            if ((lbDisplay.DrawFlags & Lb_TEXT_ONE_COLOR) != 0)
                 LbSpriteDrawOneColour(pditem->U.Sprite.X, pditem->U.Sprite.Y,
                   pditem->U.Sprite.Sprite, lbDisplay.DrawColour);
             else

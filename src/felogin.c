@@ -176,14 +176,14 @@ ubyte show_login_name(struct ScreenBox *box)
 
 void show_login_screen(void)
 {
-    if ((game_projector_speed && (login_name_box.Flags & 0x01)) ||
+    if ((game_projector_speed && (login_name_box.Flags & GBxFlg_Unkn0001)) ||
       (lbKeyOn[KC_SPACE] && !edit_flag))
     {
         lbKeyOn[KC_SPACE] = 0;
-        login_campaigns_box.Flags |= 0x0002;
-        login_name_box.Flags |= 0x0002;
-        login_abort_button.Flags |= 0x0002;
-        login_continue_button.Flags |= 0x0002;
+        login_campaigns_box.Flags |= GBxFlg_Unkn0002;
+        login_name_box.Flags |= GBxFlg_Unkn0002;
+        login_abort_button.Flags |= GBxFlg_Unkn0002;
+        login_continue_button.Flags |= GBxFlg_Unkn0002;
     }
     //login_name_box.DrawFn(&login_name_box); -- incompatible calling convention
     asm volatile ("call *%1\n"
@@ -231,14 +231,14 @@ void init_login_screen_boxes(void)
 
 void reset_login_screen_boxes_flags(void)
 {
-    login_name_box.Flags = 0x0001;
-    login_campaigns_box.Flags = 0x0001;
+    login_name_box.Flags = GBxFlg_Unkn0001;
+    login_campaigns_box.Flags = GBxFlg_Unkn0001;
 }
 
 void set_flag01_login_screen_boxes(void)
 {
-    login_continue_button.Flags |= 0x0001;
-    login_abort_button.Flags |= 0x0001;
+    login_continue_button.Flags |= GBxFlg_Unkn0001;
+    login_abort_button.Flags |= GBxFlg_Unkn0001;
 }
 
 /******************************************************************************/

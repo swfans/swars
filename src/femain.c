@@ -168,12 +168,12 @@ void init_alert_screen_boxes(void)
 
 void reset_alert_screen_boxes_flags(void)
 {
-    alert_box.Flags = 1;
+    alert_box.Flags = GBxFlg_Unkn0001;
 }
 
 void set_flag01_alert_screen_boxes(void)
 {
-    alert_OK_button.Flags |= 0x0001;
+    alert_OK_button.Flags |= GBxFlg_Unkn0001;
 }
 
 ubyte show_title_box(struct ScreenTextBox *box)
@@ -266,17 +266,17 @@ void set_heading_box_text(const char *text)
 
 void reset_heading_screen_boxes_flags(void)
 {
-    heading_box.Flags = 0x0001;
+    heading_box.Flags = GBxFlg_Unkn0001;
 }
 
 TbBool is_heading_flag01(void)
 {
-    return (heading_box.Flags & 0x0001) != 0;
+    return (heading_box.Flags & GBxFlg_Unkn0001) != 0;
 }
 
 void set_flag02_heading_screen_boxes(void)
 {
-    heading_box.Flags |= 0x0002;
+    heading_box.Flags |= GBxFlg_Unkn0002;
 }
 
 int draw_heading_box(void)
@@ -292,16 +292,16 @@ void reset_system_menu_boxes_flags(void)
 {
     int i;
 
-    unkn13_SYSTEM_button.Flags = 0x0001;
+    unkn13_SYSTEM_button.Flags = GBxFlg_Unkn0001;
 
     for (i = 0; i < SYSMNU_BUTTONS_COUNT; i++) {
-        sysmnu_buttons[i].Flags = 0x0011;
+        sysmnu_buttons[i].Flags = GBxFlg_Unkn0010|GBxFlg_Unkn0001;
     }
 }
 
 void clear_someflags_system_menu_screen_boxes(void)
 {
-    unkn13_SYSTEM_button.Flags &= ~(0x8000|0x2000|0x0004);
+    unkn13_SYSTEM_button.Flags &= ~(GBxFlg_Unkn8000|GBxFlg_Unkn2000|GBxFlg_Unkn0004);
 }
 
 void show_mission_loading_screen(void)
@@ -316,13 +316,13 @@ void show_mission_loading_screen(void)
     {
         memcpy(lbDisplay.WScreen, back_buffer, lbDisplay.GraphicsScreenWidth * lbDisplay.GraphicsScreenHeight);
         text_buf_pos = lbDisplay.GraphicsScreenWidth * lbDisplay.GraphicsScreenHeight;
-        if ((0 != game_projector_speed && (loading_INITIATING_box.Flags & 0x0001))
+        if ((0 != game_projector_speed && (loading_INITIATING_box.Flags & GBxFlg_Unkn0001))
           || (0 != lbKeyOn[KC_SPACE] && 0 == edit_flag))
-            loading_INITIATING_box.Flags |= 0x0002;
+            loading_INITIATING_box.Flags |= GBxFlg_Unkn0002;
         //loading_INITIATING_box.DrawFn(&loading_INITIATING_box); -- incompatible calling convention
         asm volatile ("call *%1\n"
             : : "a" (&loading_INITIATING_box), "g" (loading_INITIATING_box.DrawFn));
-        stop = loading_INITIATING_box.Flags & 0x1000;
+        stop = loading_INITIATING_box.Flags & GBxFlg_Unkn1000;
         draw_purple_screen();
         swap_wscreen();
 
@@ -333,7 +333,7 @@ void show_mission_loading_screen(void)
     }
     while (!stop);
 
-    loading_INITIATING_box.Flags = 0x0001;
+    loading_INITIATING_box.Flags = GBxFlg_Unkn0001;
     wait_for_sound_sample_finish(118);
 }
 

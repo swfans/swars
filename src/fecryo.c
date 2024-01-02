@@ -225,7 +225,7 @@ void init_next_blokey_flic(void)
         flic_unkn03(3);
         new_current_drawing_mod = cmod;
         mod_draw_states[cmod] |= 0x02;
-        cryo_blokey_box.Flags &= ~0x0100;
+        cryo_blokey_box.Flags &= ~GBxFlg_Unkn0100;
         play_sample_using_heap(0, 132, 127, 64, 100, 0, 3);
         byte_1DDC40 = 0;
         break;
@@ -254,7 +254,7 @@ void init_next_blokey_flic(void)
         mod_draw_states[cmod] |= 0x01;
         mod_draw_states[cmod] &= ~0x08;
         old_flic_mods[cmod] = flic_mods[cmod];
-        cryo_blokey_box.Flags &= ~0x0100;
+        cryo_blokey_box.Flags &= ~GBxFlg_Unkn0100;
         byte_1DDC40 = 0;
         break;
     case 3:
@@ -793,9 +793,9 @@ ubyte show_cryo_cybmod_list_box(struct ScreenTextBox *box)
 
         if (selected_mod == -1)
         {
-            equip_cost_box.Flags = 9;
-            equip_offer_buy_button.Flags |= 0x0001;
-            cryo_offer_cancel_button.Flags |= 0x0001;
+            equip_cost_box.Flags = (GBxFlg_Unkn0008|GBxFlg_Unkn0001);
+            equip_offer_buy_button.Flags |= GBxFlg_Unkn0001;
+            cryo_offer_cancel_button.Flags |= GBxFlg_Unkn0001;
         }
     }
     return 0;
@@ -806,16 +806,16 @@ void set_flag02_cryo_screen_boxes(void)
 {
     short i;
 
-    cryo_agent_list_box.Flags |= 0x0002;
-    cryo_blokey_box.Flags |= 0x0002;
-    equip_offer_buy_button.Flags |= 0x0002;
-    equip_name_box.Flags |= 0x0002;
-    cryo_cybmod_list_box.Flags |= 0x0002;
-    equip_cost_box.Flags |= 0x0002;
-    cryo_offer_cancel_button.Flags |= 0x0002;
-    equip_all_agents_button.Flags |= 0x0002;
+    cryo_agent_list_box.Flags |= GBxFlg_Unkn0002;
+    cryo_blokey_box.Flags |= GBxFlg_Unkn0002;
+    equip_offer_buy_button.Flags |= GBxFlg_Unkn0002;
+    equip_name_box.Flags |= GBxFlg_Unkn0002;
+    cryo_cybmod_list_box.Flags |= GBxFlg_Unkn0002;
+    equip_cost_box.Flags |= GBxFlg_Unkn0002;
+    cryo_offer_cancel_button.Flags |= GBxFlg_Unkn0002;
+    equip_all_agents_button.Flags |= GBxFlg_Unkn0002;
     for (i = 0; i < 5; i++) {
-        unk11_menu[i].Flags = 0x02;
+        unk11_menu[i].Flags = GBxFlg_Unkn0002;
     }
 }
 
@@ -967,7 +967,7 @@ void show_cryo_chamber_screen(void)
                 cryo_cybmod_list_box.Lines++;
             }
         }
-        cryo_cybmod_list_box.Flags |= 0x0080;
+        cryo_cybmod_list_box.Flags |= GBxFlg_Unkn0080;
         cryo_cybmod_list_box.BGColour = 0;
         refresh_equip_list = 0;
     }
@@ -1069,7 +1069,7 @@ void init_cryo_screen_boxes(void)
     cryo_agent_list_box.BGColour = 25;
     cryo_agent_list_box.DrawTextFn = ac_show_cryo_agent_list;
     cryo_agent_list_box.ScrollWindowOffset += 27;
-    cryo_agent_list_box.Flags |= 0x0300;
+    cryo_agent_list_box.Flags |= (GBxFlg_Unkn0100|GBxFlg_Unkn0200);
     cryo_agent_list_box.ScrollWindowHeight -= 27;
 
     init_screen_box(&cryo_blokey_box, 212u, 122u, 203u, 303, 6);
@@ -1078,7 +1078,7 @@ void init_cryo_screen_boxes(void)
     init_screen_text_box(&cryo_cybmod_list_box, 425u, 153u, 208u, 272,
       6, small_med_font, 1);
     cryo_cybmod_list_box.DrawTextFn = ac_show_cryo_cybmod_list_box;
-    cryo_cybmod_list_box.Flags |= 0x0300;
+    cryo_cybmod_list_box.Flags |= (GBxFlg_Unkn0100|GBxFlg_Unkn0200);
     cryo_cybmod_list_box.ScrollWindowHeight = 117;
 
     init_screen_button(&cryo_offer_cancel_button, 628u, 404u,
@@ -1110,14 +1110,14 @@ void switch_shared_equip_screen_buttons_to_cybmod(void)
 
 void set_flag01_cryo_screen_boxes(void)
 {
-    cryo_offer_cancel_button.Flags |= 0x0001;
+    cryo_offer_cancel_button.Flags |= GBxFlg_Unkn0001;
 }
 
 void reset_cryo_screen_boxes_flags(void)
 {
-    cryo_cybmod_list_box.Flags = 0x0001 | 0x0100 | 0x0200;
-    cryo_agent_list_box.Flags = 0x0001 | 0x0100 | 0x0200;
-    cryo_blokey_box.Flags = 0x0001;
+    cryo_cybmod_list_box.Flags = GBxFlg_Unkn0001 | GBxFlg_Unkn0100 | GBxFlg_Unkn0200;
+    cryo_agent_list_box.Flags = GBxFlg_Unkn0001 | GBxFlg_Unkn0100 | GBxFlg_Unkn0200;
+    cryo_blokey_box.Flags = GBxFlg_Unkn0001;
 }
 
 /******************************************************************************/
