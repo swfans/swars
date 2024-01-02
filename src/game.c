@@ -2442,7 +2442,7 @@ void load_level_pc(short level, short missi, ubyte reload)
 
     next_level = level;
     gameturn = 0;
-    LbMouseChangeSprite(0);
+    LbMouseChangeSprite(NULL);
     if (0) { // No need to conserve memory to such extent - mem_game[] was changed
         // Optimization for memory conservation - reserve no space for game_commands,
         // and instead re-use some of triangulation area during map load.
@@ -5843,6 +5843,7 @@ void init_game(ubyte reload)
 {
     ushort missi, next_mapno;
     short next_level;
+    TbBool reload_map, reload_level;
 
     debug_trace_setup(1);
     missi = ingame.CurrentMission;
@@ -5854,15 +5855,19 @@ void init_game(ubyte reload)
         next_level = mission_list[missi].LevelNo;
     }
 
+    // Whether we use the same map and the same level as currently loaded
+    reload_map = (current_map == next_mapno) && reload;
+    reload_level = (current_level == next_level) && reload;
+
     LOGSYNC("Init %s mission %hu on map %hu level %hd", in_network_game ? "MP" : "SP",
       missi, next_mapno, next_level);
 
-    if ((current_map != next_mapno) || !reload)
+    if (!reload_map)
         change_current_map(next_mapno);
     debug_trace_setup(0);
 
     if (next_level != 0)
-        load_level_pc(-next_level, missi, reload);
+        load_level_pc(-next_level, missi, reload_level);
     else
         LOGWARN("Requested level %hd; load skipped", next_level);
     // The file name is formatted in original code, but doesn't seem to be used
