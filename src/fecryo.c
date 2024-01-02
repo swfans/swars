@@ -494,10 +494,10 @@ ubyte show_cryo_blokey(struct ScreenBox *box)
     short cx, cy;
     short hline;
 
-    if ((box->Flags & 0x8000) == 0)
+    if ((box->Flags & GBxFlg_Unkn8000) == 0)
     {
         draw_flic_purple_list(purple_mods_data_to_screen);
-        box->Flags |= 0x8000;
+        box->Flags |= GBxFlg_Unkn8000;
         update_flic_mods(old_flic_mods);
         update_flic_mods(flic_mods);
         reset_mod_draw_states_flag08();
@@ -505,7 +505,7 @@ ubyte show_cryo_blokey(struct ScreenBox *box)
     }
 
     if (word_15511E != selected_agent)
-        box->Flags &= ~0x0100;
+        box->Flags &= ~GBxFlg_Unkn0100;
     word_15511E = selected_agent;
     lbFontPtr = small_med_font;
     my_set_text_window(0, 0, lbDisplay.GraphicsScreenWidth,
@@ -549,7 +549,7 @@ ubyte show_cryo_blokey(struct ScreenBox *box)
             text_buf_pos += strlen(locstr) + 1;
             if (cdm == 3)
             {
-                lbDisplay.DrawFlags = 0x0010;
+                lbDisplay.DrawFlags = Lb_SPRITE_OUTLINE;
                 draw_box_purple_list(cx, cy + hline + 3, 40, 40, lbDisplay.DrawColour);
                 draw_sprite_purple_list(cx + 1, cy + hline + 4, &sprites_Icons0_0[163 + cybmod_lv]);
                 lbDisplay.DrawFlags = 0;
@@ -627,9 +627,9 @@ ubyte show_cryo_cybmod_list_box(struct ScreenTextBox *box)
     struct ScreenBoxBase resil_box = {box->X + 8, box->Y + 177, 192, 17};
     struct ScreenBoxBase addit_box = {box->X + 8, box->Y + 200, 192, 19};
 
-    if ((box->Flags & 0x8000) == 0)
+    if ((box->Flags & GBxFlg_Unkn8000) == 0)
     {
-        lbDisplay.DrawFlags = 0x0004;
+        lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
         draw_box_purple_list(text_window_x1, text_window_y1,
           text_window_x2 - text_window_x1 + 1, text_window_y2 - text_window_y1 + 1, 56);
         draw_box_purple_list(box->X + 4, box->Y + 149, box->Width - 8, 48, 56);
@@ -640,7 +640,7 @@ ubyte show_cryo_cybmod_list_box(struct ScreenTextBox *box)
         draw_text_property_bk(&addit_box, gui_strings[434]);
 
         lbDisplay.DrawFlags = 0;
-        box->Flags |= 0x8000;
+        box->Flags |= GBxFlg_Unkn8000;
         copy_box_purple_list(box->X + 4, box->Y + 4 + box->ScrollWindowOffset,
           box->Width - 20, box->ScrollWindowHeight + 23);
 
@@ -692,7 +692,7 @@ ubyte show_cryo_cybmod_list_box(struct ScreenTextBox *box)
                             box->field_38 = 0;
                             box->Text = &weapon_text[cybmod_text_index[selected_mod]];
                             box->Lines = 0;
-                            box->Flags |= 0x80;
+                            box->Flags |= GBxFlg_Unkn0080;
                             lbFontPtr = small_font;
                             box->BGColour = byte_197160 + font_height('A');
                             lbFontPtr = box->Font;
@@ -703,7 +703,7 @@ ubyte show_cryo_cybmod_list_box(struct ScreenTextBox *box)
                         }
                   }
                   if (selected_mod == mtype - 1) {
-                      lbDisplay.DrawFlags = 0x0040;
+                      lbDisplay.DrawFlags = Lb_TEXT_ONE_COLOR;
                       lbDisplay.DrawColour = 87;
                   } else {
                       lbDisplay.DrawFlags = 0;
@@ -713,9 +713,9 @@ ubyte show_cryo_cybmod_list_box(struct ScreenTextBox *box)
                   modlv = cybmod_version(mtype);
                   mdstr_id = 70 + modstrings[modgrp];
                   draw_text_purple_list2(3, cy + 1, gui_strings[mdstr_id], 0);
-                  lbDisplay.DrawFlags &= ~0x8080;
+                  lbDisplay.DrawFlags &= ~(0x8000|Lb_TEXT_HALIGN_RIGHT);
 
-                  lbDisplay.DrawFlags |= 0x0080;
+                  lbDisplay.DrawFlags |= Lb_TEXT_HALIGN_RIGHT;
                   if (cybmod_group_type(mtype) != MODGRP_EPIDERM)
                       lvstr_id = 76;
                   else
@@ -770,7 +770,7 @@ ubyte show_cryo_cybmod_list_box(struct ScreenTextBox *box)
                     box->Text = &weapon_text[cybmod_text_index[selected_mod]];
                     box->field_38 = 0;
                     box->Lines = 0;
-                    box->Flags |= 0x80;
+                    box->Flags |= GBxFlg_Unkn0080;
                     lbFontPtr = small_font;
                     box->BGColour = byte_197160 + font_height('A');
                     lbFontPtr = box->Font;
@@ -930,7 +930,7 @@ void show_cryo_chamber_screen(void)
     asm volatile ("call ASM_show_cryo_chamber_screen\n"
         :  :  : "eax" );
 #else
-    if ((unk11_menu[0].Flags & 0x01) != 0)
+    if ((unk11_menu[0].Flags & GBxFlg_Unkn0001) != 0)
     {
         byte_1C4978 = 0;
         byte_1C4979 = 0;

@@ -478,7 +478,7 @@ ubyte show_world_landmap_box(struct ScreenBox *box)
             word_1C48AE[i] = arr[k - 1];
         }
         byte_1C4888 = 1;
-        box->Flags &= ~0x0080;
+        box->Flags &= ~GBxFlg_Unkn0080;
     }
 
     if (lbKeyOn[KC_C])
@@ -513,7 +513,7 @@ ubyte show_world_landmap_box(struct ScreenBox *box)
         }
     }
 
-    if (box->Flags & 0x0080)
+    if (box->Flags & GBxFlg_Unkn0080)
     {
         for (i = 0; i < 6; i++)
         {
@@ -528,7 +528,7 @@ ubyte show_world_landmap_box(struct ScreenBox *box)
             word_1C48AE[i] = arr[k - 1];
         }
         byte_1C4888 = 0;
-        box->Flags &= ~0x0080;
+        box->Flags &= ~GBxFlg_Unkn0080;
     }
 
     switch (byte_1C4888)

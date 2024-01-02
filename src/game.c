@@ -9164,7 +9164,7 @@ TbBool check_panel_input(short panel)
                 p_locplayer->PanelState[mouser] = p_panel->ID + 9;
                 if (!IsSamplePlaying(0, 21, 0))
                     play_sample_using_heap(0, 21, 127, 64, 100, -1, 1u);
-                ingame.Flags |= 0x100000;
+                ingame.Flags |= GamF_Unkn00100000;
                 return 1;
             }
             break;
@@ -9204,21 +9204,21 @@ TbBool check_panel_input(short panel)
             if (mouse_over_infrared_slant_box(panel))
             {
                 // Toggle infrared view
-                if ((ingame.Flags & 0x8000) == 0)
+                if ((ingame.Flags & GamF_Unkn8000) == 0)
                 {
                     dcthing = p_locplayer->DirectControl[mouser];
                     if (things[dcthing].U.UPerson.Energy > 100)
                     {
                         char locstr[52];
                         sprintf(locstr, "qdata/pal%d.dat", 3);
-                        ingame.Flags |= 0x8000;
+                        ingame.Flags |= GamF_Unkn8000;
                         play_sample_using_heap(0, 35, 127, 64, 100, 0, 1);
                         LbFileLoadAt(locstr, display_palette);
                     }
                 }
                 else
                 {
-                    ingame.Flags &= ~0x8000;
+                    ingame.Flags &= ~GamF_Unkn8000;
                     change_brightness(0);
                 }
             }
@@ -10137,7 +10137,7 @@ void draw_purple_screen(void)
             {
                 w = my_string_width(pditem->U.Text.Text);
                 if ((w >= pditem->U.Text.Width)
-                  || ((lbDisplay.DrawFlags & 0x0100)) != 0)
+                  || ((lbDisplay.DrawFlags & Lb_TEXT_HALIGN_CENTER)) != 0)
                 {
                     x = pditem->U.Text.WindowX;
                     shift_w = pditem->U.Text.Width >> 1;

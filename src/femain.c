@@ -62,14 +62,14 @@ ubyte main_do_map_editor(ubyte click)
 
 void show_main_screen(void)
 {
-    if ((game_projector_speed && (main_quit_button.Flags & 0x01)) ||
+    if ((game_projector_speed && (main_quit_button.Flags & GBxFlg_Unkn0001)) ||
       (lbKeyOn[KC_SPACE] && !edit_flag))
     {
         lbKeyOn[KC_SPACE] = 0;
-        main_quit_button.Flags |= 0x0002;
-        main_load_button.Flags |= 0x0002;
-        main_login_button.Flags |= 0x0002;
-        main_map_editor_button.Flags |= 0x0002;
+        main_quit_button.Flags |= GBxFlg_Unkn0002;
+        main_load_button.Flags |= GBxFlg_Unkn0002;
+        main_login_button.Flags |= GBxFlg_Unkn0002;
+        main_map_editor_button.Flags |= GBxFlg_Unkn0002;
     }
     //main_quit_button.DrawFn(&main_quit_button); -- incompatible calling convention
     asm volatile ("call *%1\n"
@@ -118,10 +118,10 @@ void init_main_screen_boxes(void)
 
 void set_flag01_main_screen_boxes(void)
 {
-    main_quit_button.Flags |= 0x0001;
-    main_login_button.Flags |= 0x0001;
-    main_load_button.Flags |= 0x0001;
-    main_map_editor_button.Flags |= 0x0001;
+    main_quit_button.Flags |= GBxFlg_Unkn0001;
+    main_login_button.Flags |= GBxFlg_Unkn0001;
+    main_load_button.Flags |= GBxFlg_Unkn0001;
+    main_map_editor_button.Flags |= GBxFlg_Unkn0001;
 }
 
 ubyte alert_OK(ubyte click)
@@ -223,7 +223,7 @@ void init_system_menu_boxes(void)
         sysmnu_buttons[i].Width = unkn13_SYSTEM_button.Width;
         sysmnu_buttons[i].Height = 21;
         sysmnu_buttons[i].CallBackFn = ac_do_sysmnu_button;
-        sysmnu_buttons[i].Flags |= 0x10;
+        sysmnu_buttons[i].Flags |= GBxFlg_Unkn0010;
         sysmnu_buttons[i].Border = 3;
         val++;
         y += 30;

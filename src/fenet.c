@@ -198,7 +198,7 @@ void show_net_benefits_sub2(short x0, short y0, TbPixel *colours)
         p_sprite = &sprites_Icons0_0[spridx];
         if (i < login_control__TechLevel)
         {
-            lbDisplay.DrawFlags = 0x0040;
+            lbDisplay.DrawFlags = Lb_TEXT_ONE_COLOR;
             lbDisplay.DrawColour = colours[i];
             draw_sprite_purple_list(dx, dy, p_sprite);
             lbDisplay.DrawFlags = 0;
@@ -235,7 +235,7 @@ void show_net_benefits_sub3(struct ScreenBox *box)
 {
     struct ScreenBoxBase box1 = {box->X + 5, box->Y + 16, 9, 14};
 
-    lbDisplay.DrawFlags = 0x8004;
+    lbDisplay.DrawFlags = (0x8000|Lb_SPRITE_TRANSPAR4);
     if (mouse_move_over_box(&box1))
     {
         if (lbDisplay.LeftButton)
@@ -252,7 +252,7 @@ void show_net_benefits_sub3(struct ScreenBox *box)
                 }
             }
         }
-        lbDisplay.DrawFlags &= ~0x0004;
+        lbDisplay.DrawFlags &= ~Lb_SPRITE_TRANSPAR4;
     }
     draw_sprite_purple_list(box1.X, box1.Y, &sprites_Icons0_0[108]);
 }
@@ -261,7 +261,7 @@ void show_net_benefits_sub4(struct ScreenBox *box)
 {
     struct ScreenBoxBase box2 = {box->X + 242, box->Y + 5, 9, 14};
 
-    lbDisplay.DrawFlags = 0x8004;
+    lbDisplay.DrawFlags = (0x8000|Lb_SPRITE_TRANSPAR4);
     if (mouse_move_over_box(&box2))
     {
         if (lbDisplay.LeftButton)
@@ -278,7 +278,7 @@ void show_net_benefits_sub4(struct ScreenBox *box)
                 }
             }
         }
-        lbDisplay.DrawFlags &= ~0x0004;
+        lbDisplay.DrawFlags &= ~Lb_SPRITE_TRANSPAR4;
     }
     draw_sprite_purple_list(box2.X - 7, box2.Y, &sprites_Icons0_0[109]);
 }
@@ -308,7 +308,7 @@ void show_net_benefits_sub5(short x0, short y0, TbPixel *colours)
         p_sprite = &sprites_Icons0_0[spridx];
         if (login_control__Money >= dword_155750[i])
         {
-            lbDisplay.DrawFlags = 0x0040;
+            lbDisplay.DrawFlags = Lb_TEXT_ONE_COLOR;
             lbDisplay.DrawColour = colours[i];
             draw_sprite_purple_list(dx, dy, p_sprite);
             lbDisplay.DrawFlags = 0;
@@ -348,7 +348,7 @@ void show_net_benefits_sub6(struct ScreenBox *box)
 {
     struct ScreenBoxBase box1 = {box->X + 5, box->Y + 47, 9, 14};
 
-    lbDisplay.DrawFlags = 0x8004;
+    lbDisplay.DrawFlags = (0x8000|Lb_SPRITE_TRANSPAR4);
     if (mouse_move_over_box(&box1))
     {
         if (lbDisplay.LeftButton)
@@ -363,9 +363,9 @@ void show_net_benefits_sub6(struct ScreenBox *box)
                 }
             }
         }
-        lbDisplay.DrawFlags &= ~0x0004;
+        lbDisplay.DrawFlags &= ~Lb_SPRITE_TRANSPAR4;
     }
-    lbDisplay.DrawFlags |= 0x0040;
+    lbDisplay.DrawFlags |= Lb_TEXT_ONE_COLOR;
     lbDisplay.DrawColour = 87;
     draw_sprite_purple_list(box1.X, box1.Y, &sprites_Icons0_0[108]);
 }
@@ -374,7 +374,7 @@ void show_net_benefits_sub7(struct ScreenBox *box)
 {
     struct ScreenBoxBase box2 = {box->X + 242, box->Y + 36, 9, 14};
 
-    lbDisplay.DrawFlags = 0x8004;
+    lbDisplay.DrawFlags = (0x8000|Lb_SPRITE_TRANSPAR4);
     if (mouse_move_over_box(&box2))
     {
         if (lbDisplay.LeftButton)
@@ -389,9 +389,9 @@ void show_net_benefits_sub7(struct ScreenBox *box)
                 }
             }
         }
-        lbDisplay.DrawFlags &= ~0x0004;
+        lbDisplay.DrawFlags &= ~Lb_SPRITE_TRANSPAR4;
     }
-    lbDisplay.DrawFlags |= 0x0040;
+    lbDisplay.DrawFlags |= Lb_TEXT_ONE_COLOR;
     lbDisplay.DrawColour = 87;
     draw_sprite_purple_list(box2.X - 7, box2.Y, &sprites_Icons0_0[109]);
 }
@@ -406,18 +406,18 @@ ubyte show_net_benefits_box(struct ScreenBox *box)
     return ret;
 #else
     my_set_text_window(box->X + 4, box->Y + 4, box->Width - 8, box->Height - 8);
-    if ((box->Flags & 0x1000) == 0)
+    if ((box->Flags & GBxFlg_Unkn1000) == 0)
     {
         lbFontPtr = med2_font;
         draw_text_purple_list2(30, 1, gui_strings[401], 0);
         draw_text_purple_list2(27, 32, gui_strings[402], 0);
-        lbDisplay.DrawFlags = 0x40;
+        lbDisplay.DrawFlags = Lb_TEXT_ONE_COLOR;
         show_net_benefits_sub1(box->X + 8, box->Y + 16, byte_155174);
         show_net_benefits_sub1(box->X + 8, box->Y + 47, byte_155180);
         lbDisplay.DrawFlags = 0;
         copy_box_purple_list(box->X - 3, box->Y - 3,
             box->Width + 6, box->Height + 6);
-        box->Flags |= 0x1000;
+        box->Flags |= GBxFlg_Unkn1000;
     }
 
     show_net_benefits_sub2(box->X + 8, box->Y + 16, byte_155175);

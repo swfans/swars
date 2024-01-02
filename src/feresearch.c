@@ -111,7 +111,7 @@ ubyte show_research_graph(struct ScreenBox *box)
     x = box->X + (box->Width - w) * 65 / 100; // for original res 7 + 57
     y = box->Y + (box->Height - h) * 31 / 100; // for original res 103 + 25
 
-    if ((box->Flags & 0x8000) == 0)
+    if ((box->Flags & GBxFlg_Unkn8000) == 0)
     {
         int twidth;
 
@@ -132,7 +132,7 @@ ubyte show_research_graph(struct ScreenBox *box)
         text = gui_strings[452];
         draw_unkn20_subfunc_01(10, 31, text, 2);
 
-        box->Flags |= 0x8000;
+        box->Flags |= GBxFlg_Unkn8000;
         copy_box_purple_list(box->X, box->Y, box->Width, box->Height);
     }
 

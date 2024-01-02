@@ -154,7 +154,7 @@ TbBool input_vert_slider_left_arrow(struct ScreenBox *box, short *target_ptr)
         if (lbDisplay.MLeftButton || joy.Buttons[0])
         {
             lbDisplay.LeftButton = 0;
-            box->Flags |= 0x0800;
+            box->Flags |= GBxFlg_Unkn0800;
             if ((lbShift & 0x01) != 0)
                 (*target_ptr)--;
             else
@@ -188,7 +188,7 @@ TbBool input_vert_slider_right_arrow(struct ScreenBox *box, short *target_ptr)
         if (lbDisplay.MLeftButton || joy.Buttons[0])
         {
             lbDisplay.LeftButton = 0;
-            box->Flags |= 0x0800;
+            box->Flags |= GBxFlg_Unkn0800;
             if ((lbShift & 0x01) != 0)
                 (*target_ptr)++;
             else
@@ -216,9 +216,9 @@ ubyte show_audio_volume_box(struct ScreenBox *box)
     TbBool change;
 
     change = false;
-    if (box->Flags & 0x0080)
+    if (box->Flags & GBxFlg_Unkn0080)
     {
-        box->Flags &= ~0x0080;
+        box->Flags &= ~GBxFlg_Unkn0080;
         word_1C4866[0] = -5;
         word_1C4866[1] = -5;
         word_1C4866[2] = -5;
@@ -346,7 +346,7 @@ void init_options_audio_screen_boxes(void)
     {
         options_audio_buttons[i].Radio = &ingame.CDTrack;
         options_audio_buttons[i].RadioValue = val++;
-        options_audio_buttons[i].Flags |= 0x0100;
+        options_audio_buttons[i].Flags |= GBxFlg_Unkn0100;
     }
 
     val = 1;
@@ -354,7 +354,7 @@ void init_options_audio_screen_boxes(void)
     {
         options_audio_buttons[i].Radio = &ingame.DangerTrack;
         options_audio_buttons[i].RadioValue = val++;
-        options_audio_buttons[i].Flags |= 0x0100;
+        options_audio_buttons[i].Flags |= GBxFlg_Unkn0100;
     }
 
     val = 0;
@@ -362,7 +362,7 @@ void init_options_audio_screen_boxes(void)
     {
         options_audio_buttons[i].Radio = &ingame.UseMultiMedia;
         options_audio_buttons[i].RadioValue = val++;
-        options_audio_buttons[i].Flags |= 0x0100;
+        options_audio_buttons[i].Flags |= GBxFlg_Unkn0100;
     }
     audio_volume_boxes[0].SpecialDrawFn = ac_show_audio_volume_box;
     audio_volume_boxes[1].SpecialDrawFn = ac_show_audio_volume_box;
@@ -448,7 +448,7 @@ void init_options_visual_screen_boxes(void)
     {
         options_gfx_buttons[i].Radio = &game_projector_speed;
         options_gfx_buttons[i].RadioValue = val;
-        options_gfx_buttons[i].Flags |= 0x0100;
+        options_gfx_buttons[i].Flags |= GBxFlg_Unkn0100;
         val++;
     }
 
@@ -457,7 +457,7 @@ void init_options_visual_screen_boxes(void)
     {
         options_gfx_buttons[i].Radio = &game_high_resolution;
         options_gfx_buttons[i].RadioValue = val;
-        options_gfx_buttons[i].Flags |= 0x0100;
+        options_gfx_buttons[i].Flags |= GBxFlg_Unkn0100;
         val++;
     }
 
@@ -466,7 +466,7 @@ void init_options_visual_screen_boxes(void)
     {
         options_gfx_buttons[i].Radio = &ingame.DetailLevel;
         options_gfx_buttons[i].RadioValue = val;
-        options_gfx_buttons[i].Flags |= 0x0100;
+        options_gfx_buttons[i].Flags |= GBxFlg_Unkn0100;
         val++;
     }
 
@@ -475,7 +475,7 @@ void init_options_visual_screen_boxes(void)
     {
         options_gfx_buttons[i].Radio = &game_perspective;
         options_gfx_buttons[i].RadioValue = val;
-        options_gfx_buttons[i].Flags |= 0x0100;
+        options_gfx_buttons[i].Flags |= GBxFlg_Unkn0100;
         val += 5;
     }
 
@@ -484,7 +484,7 @@ void init_options_visual_screen_boxes(void)
     {
         options_gfx_buttons[i].Radio = &unkn_gfx_option_2;
         options_gfx_buttons[i].RadioValue = val;
-        options_gfx_buttons[i].Flags |= 0x0100;
+        options_gfx_buttons[i].Flags |= GBxFlg_Unkn0100;
         ingame.Flags |= GamF_Unkn0002;
         val++;
     }
@@ -494,7 +494,7 @@ void init_options_visual_screen_boxes(void)
     {
         options_gfx_buttons[i].Radio = &unkn_option_3;
         options_gfx_buttons[i].RadioValue = val;
-        options_gfx_buttons[i].Flags |= 0x0100;
+        options_gfx_buttons[i].Flags |= GBxFlg_Unkn0100;
         ingame.Flags |= GamF_Unkn0001;
         val++;
     }
@@ -504,7 +504,7 @@ void init_options_visual_screen_boxes(void)
     {
         options_gfx_buttons[i].Radio = &unkn_option_4;
         options_gfx_buttons[i].RadioValue = val;
-        options_gfx_buttons[i].Flags |= 0x0100;
+        options_gfx_buttons[i].Flags |= GBxFlg_Unkn0100;
         ingame.Flags &= ~GamF_Unkn0400;
         val++;
     }
@@ -533,16 +533,16 @@ void reset_options_screen_boxes_flags(void)
     int i;
 
     for (i = 0; i < 4; i++) {
-        audio_volume_boxes[i].Flags = 0x0001;
+        audio_volume_boxes[i].Flags = GBxFlg_Unkn0001;
     }
     for (i = 0; i < 7; i++) {
-        options_audio_buttons[i].Flags = 0x0101;
+        options_audio_buttons[i].Flags = GBxFlg_Unkn0100|GBxFlg_Unkn0001;
     }
     for (i = 0; i < 14; i++) {
-      options_gfx_buttons[i].Flags = 0x0101;
+      options_gfx_buttons[i].Flags = GBxFlg_Unkn0100|GBxFlg_Unkn0001;
     }
     for (; i < 16; i++) {
-      options_gfx_buttons[i].Flags = 0x0001;
+      options_gfx_buttons[i].Flags = GBxFlg_Unkn0001;
     }
 }
 

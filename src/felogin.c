@@ -124,9 +124,9 @@ ubyte show_campaigns_list(struct ScreenBox *box)
         text = gui_strings[p_campgn->TextId];
         nlines = my_count_lines(text);
         if (background_type == campgn)
-            lbDisplay.DrawFlags = 0x140;
+            lbDisplay.DrawFlags = Lb_TEXT_HALIGN_CENTER|Lb_TEXT_ONE_COLOR;
         else
-            lbDisplay.DrawFlags = 0x100;
+            lbDisplay.DrawFlags = Lb_TEXT_HALIGN_CENTER;
         hbeg = cy - (4 * nlines - 4 + nlines * line_height) / 2;
         lbDisplay.DrawFlags |= 0x8000;
         text = gui_strings[642 + campgn];

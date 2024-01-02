@@ -402,7 +402,7 @@ void show_equipment_screen(void)
     asm volatile ("call ASM_show_equipment_screen\n"
         :  :  : "eax" );
 #else
-    if ((unk11_menu[0].Flags & 0x01) != 0)
+    if ((unk11_menu[0].Flags & GBxFlg_Unkn0001) != 0)
     {
         byte_1C4975 = 0;
         byte_1C4976 = 0;
@@ -667,7 +667,7 @@ ubyte display_weapon_info(struct ScreenTextBox *box)
     struct ScreenBoxBase range_box = {box->X + 8, box->Y + 202, 192, 17};
     struct ScreenBoxBase energ_box = {box->X + 8, box->Y + 227, 192, 17};
 
-    if ((box->Flags & 0x8000) == 0)
+    if ((box->Flags & GBxFlg_Unkn8000) == 0)
     {
         lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
         draw_box_purple_list(box->X + 4, box->Y + 158,
@@ -681,14 +681,14 @@ ubyte display_weapon_info(struct ScreenTextBox *box)
         draw_discrete_rects_bar_bk(&energ_box, gui_strings[429], byte_155174);
 
         lbDisplay.DrawFlags = 0;
-        box->Flags |= 0x8000;
+        box->Flags |= GBxFlg_Unkn8000;
         copy_box_purple_list(box->X + 4, box->Y + 146, box->Width - 8, box->Height - 143);
     }
     my_set_text_window(box->X + 4, box->Y + 4, box->Width - 8, box->Height - 8);
 
     if (selected_weapon == -1)
         return 0;
-    lbDisplay.DrawFlags = 0x0100;
+    lbDisplay.DrawFlags = Lb_TEXT_HALIGN_CENTER;
     lbFontPtr = small_med_font;
 
     // Weapon category
@@ -831,7 +831,7 @@ void init_equip_screen_boxes(void)
       gui_strings[534], 6, med2_font, 1, 0);
     equip_all_agents_button.Width = 165;
     equip_all_agents_button.RadioValue = 4;
-    equip_all_agents_button.Flags |= 0x0100;
+    equip_all_agents_button.Flags |= GBxFlg_Unkn0100;
     equip_all_agents_button.Radio = &selected_agent;
 
     start_x = (scr_w - weapon_slots.Width - equip_list_box.Width - equip_name_box.Width - 32) / 2;
@@ -882,7 +882,7 @@ void init_equip_screen_shapes(void)
         }
         unk11_menu[i].field_24 = 6;
         unk11_menu[i].field_25 = 0;
-        unk11_menu[i].Flags = 0x01;
+        unk11_menu[i].Flags = GBxFlg_Unkn0001;
         unk11_menu[i].Colour = 174;
         unk11_menu[i].BGColour = 8;
         x += 110;
@@ -906,7 +906,7 @@ void init_equip_screen_shapes(void)
         }
         unk11_menu[i].field_24 = 6;
         unk11_menu[i].field_25 = 0;
-        unk11_menu[i].Flags = 0x01;
+        unk11_menu[i].Flags = GBxFlg_Unkn0001;
         unk11_menu[i].Colour = 247;
         unk11_menu[i].BGColour = 4;
     }
