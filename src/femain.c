@@ -29,8 +29,10 @@
 #include "sound.h"
 #include "swlog.h"
 /******************************************************************************/
+#define SYSMNU_BUTTONS_COUNT 6
+
 extern struct ScreenTextBox heading_box;
-extern struct ScreenButton sysmnu_buttons[6];
+extern struct ScreenButton sysmnu_buttons[SYSMNU_BUTTONS_COUNT];
 extern char options_title_text[];
 
 extern struct ScreenButton main_quit_button;
@@ -193,39 +195,42 @@ ubyte do_sysmnu_button(ubyte click)
 void init_system_menu_boxes(void)
 {
     short scr_w, start_x;
-    int i, h, val;
+    int i, val;
+    short x, y;
 
     scr_w = lbDisplay.GraphicsWindowWidth;
 
-    init_screen_text_box(&heading_box, 7u, 25, 626, 38, 6, big_font, 1);
+    x = 7;
+    y = 25;
+    init_screen_text_box(&heading_box, x, y, 640 - 2*7, 38, 6, big_font, 1);
     heading_box.DrawTextFn = ac_show_title_box;
     heading_box.Text = options_title_text;
 
     start_x = (scr_w - heading_box.Width) / 2;
     heading_box.X = start_x;
 
-    init_screen_text_box(&unkn13_SYSTEM_button, 7u, 25u, 197u, 38, 6,
+    init_screen_text_box(&unkn13_SYSTEM_button, x, y, 197u, 38, 6,
       big_font, 1);
     unkn13_SYSTEM_button.Text = gui_strings[366];
     unkn13_SYSTEM_button.DrawTextFn = ac_show_title_box;
 
     val = 0;
-    h = 72;
-    for (i = 0; i < 6; i++)
+    y += unkn13_SYSTEM_button.Height + 9;
+    for (i = 0; i < SYSMNU_BUTTONS_COUNT; i++)
     {
-        init_screen_button(&sysmnu_buttons[i], 7, h,
+        init_screen_button(&sysmnu_buttons[i], x, y,
           gui_strings[378 + val], 6, med2_font, 1, 0);
-        sysmnu_buttons[i].Width = 197;
+        sysmnu_buttons[i].Width = unkn13_SYSTEM_button.Width;
         sysmnu_buttons[i].Height = 21;
         sysmnu_buttons[i].CallBackFn = ac_do_sysmnu_button;
         sysmnu_buttons[i].Flags |= 0x10;
         sysmnu_buttons[i].Border = 3;
         val++;
-        h += 30;
+        y += 30;
     }
 
     unkn13_SYSTEM_button.X = start_x;
-    for (i = 0; i < 6; i++)
+    for (i = 0; i < SYSMNU_BUTTONS_COUNT; i++)
     {
         sysmnu_buttons[i].X = start_x;
     }
@@ -234,7 +239,14 @@ void init_system_menu_boxes(void)
 void sysmnu_button_enable(int btnno, int count)
 {
     int i;
-    for (i = btnno+count; i < 6; i++) {
+    short y;
+
+    y = sysmnu_buttons[btnno].Y;
+    for (i = btnno; i < btnno+count; i++) {
+        sysmnu_buttons[i].Y = y;
+        y += 30;
+    }
+    for (i = btnno+count; i < SYSMNU_BUTTONS_COUNT; i++) {
         sysmnu_buttons[i].Y += 30 * count;
     }
 }
@@ -242,7 +254,7 @@ void sysmnu_button_enable(int btnno, int count)
 void sysmnu_button_disable(int btnno, int count)
 {
     int i;
-    for (i = btnno+count; i < 6; i++) {
+    for (i = btnno+count; i < SYSMNU_BUTTONS_COUNT; i++) {
         sysmnu_buttons[i].Y -= 30 * count;
     }
 }
@@ -282,7 +294,7 @@ void reset_system_menu_boxes_flags(void)
 
     unkn13_SYSTEM_button.Flags = 0x0001;
 
-    for (i = 0; i < 6; i++) {
+    for (i = 0; i < SYSMNU_BUTTONS_COUNT; i++) {
         sysmnu_buttons[i].Flags = 0x0011;
     }
 }

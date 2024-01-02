@@ -25,6 +25,7 @@
 #include "guitext.h"
 #include "campaign.h"
 #include "display.h"
+#include "femain.h"
 #include "feoptions.h"
 #include "game.h"
 #include "sound.h"

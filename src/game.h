@@ -969,8 +969,6 @@ void reload_background(void);
 void my_preprocess_text(char *text);
 ushort my_count_lines(const char *text);
 void read_user_settings(void);
-void sysmnu_button_enable(int btnno, int count);
-void sysmnu_button_disable(int btnno, int count);
 
 TbBool player_try_spend_money(long cost);
 TbBool is_unkn_current_player(void);
