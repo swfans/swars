@@ -295,7 +295,7 @@ void reset_system_menu_boxes_flags(void)
     unkn13_SYSTEM_button.Flags = GBxFlg_Unkn0001;
 
     for (i = 0; i < SYSMNU_BUTTONS_COUNT; i++) {
-        sysmnu_buttons[i].Flags = GBxFlg_Unkn0010|GBxFlg_Unkn0001;
+        sysmnu_buttons[i].Flags = GBxFlg_Unkn0010 | GBxFlg_Unkn0001;
     }
 }
 

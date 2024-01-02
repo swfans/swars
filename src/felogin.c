@@ -67,10 +67,10 @@ ubyte do_login_2(ubyte click)
         return 1;
     }
 
-    if ((ingame.Flags & GamF_Unkn0010) != 0)
+    if ((ingame.Flags & GamF_MortalGame) != 0)
     {
         sysmnu_button_enable(1,2);
-        ingame.Flags &= ~GamF_Unkn0010;
+        ingame.Flags &= ~GamF_MortalGame;
     }
 
     campaign_new_game_prepare();

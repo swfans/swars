@@ -6771,10 +6771,8 @@ ubyte load_game_slot(ubyte click)
     clear_someflags_system_menu_screen_boxes();
     clear_someflags_controls_screen_boxes();
     clear_someflags_storage_screen_boxes();
-    if (save_slot == 0)
-    {
-        ingame.Flags |= GamF_Unkn0010;
-        sysmnu_button_disable(1,2);
+    if (save_slot == 0) {
+        ingame.Flags |= GamF_MortalGame;
     }
     unkn_city_no = -1;
     selected_agent = 0;
@@ -6785,6 +6783,9 @@ ubyte load_game_slot(ubyte click)
     if (restore_savegame) {
         restore_savegame = 0;
         sysmnu_button_enable(0, 5);
+    }
+    if ((ingame.Flags & GamF_MortalGame) != 0) {
+        sysmnu_button_disable(1,2);
     }
     return 1;
 }
@@ -7658,7 +7659,7 @@ ubyte do_storage_NEW_MORTAL(ubyte click)
         strcpy(login_name, "ANON");
     read_user_settings();
 
-    ingame.Flags |= GamF_Unkn0010;
+    ingame.Flags |= GamF_MortalGame;
 
     campaign_new_game_prepare();
 
@@ -7672,7 +7673,7 @@ ubyte do_storage_NEW_MORTAL(ubyte click)
         sysmnu_button_enable(0, 5);
     }
 
-    if (true) {
+    if ((ingame.Flags & GamF_MortalGame) != 0) {
         sysmnu_button_disable(1,2);
     }
 
@@ -8515,7 +8516,7 @@ ubyte do_user_interface(void)
 
     do_music_user_input();
     // Restart level
-    if (!in_network_game && !(ingame.Flags & GamF_Unkn0010))
+    if (!in_network_game && (ingame.Flags & GamF_MortalGame) == 0)
     {
         if (lbKeyOn[KC_R])
         {
@@ -10277,7 +10278,7 @@ void show_menu_screen_st2(void)
       if (ingame.GameOver)
       {
             screentype = SCRT_MAINMENU;
-            if (ingame.Flags & GamF_Unkn0010) {
+            if ((ingame.Flags & GamF_MortalGame) != 0) {
                 char fname[52];
                 get_saved_game_fname(fname, 0);
                 LbFileDelete(fname);
@@ -10287,8 +10288,9 @@ void show_menu_screen_st2(void)
       else
       {
             forward_research_progress(mission_status[open_brief].CityDays);
-            if (ingame.Flags & GamF_Unkn0010)
+            if ((ingame.Flags & GamF_MortalGame) != 0) {
                 save_game_write(0, save_active_desc);
+            }
             screentype = SCRT_9;
             set_heading_box_text(gui_strings[374]);
             redraw_screen_flag = 1;
