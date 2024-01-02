@@ -365,18 +365,18 @@ void draw_world_cities_names(struct ScreenBox *box)
             short w, dim;
 
             draw_sprite_purple_list(cities[city].X - 1, cities[city].Y - 1, &unk3_sprites[12]);
-            if ((cities[city].Flags & 0x20) != 0)
+            if ((cities[city].Flags & CitF_Unkn20) != 0)
                 draw_sprite_purple_list(cities[city].X - 4, cities[city].Y - 14, &sprites_Icons0_0[169]);
             w = 4 - (gameturn & 3);
             dim = 2 * w + 1;
-            if ((cities[city].Flags & 0x01) != 0)
+            if ((cities[city].Flags & CitF_Unkn01) != 0)
             {
                 lbDisplay.DrawFlags |= (0x8000|Lb_SPRITE_OUTLINE);
                 draw_box_purple_list(cities[city].X - w, cities[city].Y - w, dim, dim, 174);
                 lbDisplay.DrawFlags &= ~(0x8000|Lb_SPRITE_OUTLINE);
                 draw_hotspot_purple_list(cities[city].X, cities[city].Y);
             }
-            else if ((cities[city].Flags & 0x10) != 0)
+            else if ((cities[city].Flags & CitF_Unkn10) != 0)
             {
                 lbDisplay.DrawFlags |= (0x8000|Lb_SPRITE_OUTLINE);
                 if (gameturn & 8)
@@ -388,23 +388,23 @@ void draw_world_cities_names(struct ScreenBox *box)
 
         px = ms_x - cities[city].X - box->X - 1;
         py = ms_y - cities[city].Y - box->Y - 1;
-        if ((cities[city].Flags & 0x11) || (byte_15511C == 2)
+        if ((cities[city].Flags & (CitF_Unkn10|CitF_Unkn01)) || (byte_15511C == 2)
            || (city == unkn_city_no) || ((px >= 0) && (py >= 0) && (px <= 3) && (py <= 3)))
         {
             if ((px > 3) || (py > 3))
             {
-                cities[city].Flags &= ~0x08;
+                cities[city].Flags &= ~CitF_Unkn08;
             }
-            else if ((cities[city].Flags & 0x08) == 0)
+            else if ((cities[city].Flags & CitF_Unkn08) == 0)
             {
-                cities[city].Flags |= 0x08;
+                cities[city].Flags |= CitF_Unkn08;
                 play_sample_using_heap(0, 128, 127, 64, 100, 0, 1);
             }
 
             lbDisplay.DrawColour = 50;
-            if ((cities[city].Flags & 0x01) != 0)
+            if ((cities[city].Flags & CitF_Unkn01) != 0)
                 lbDisplay.DrawColour = 174;
-            else if ((cities[city].Flags & 0x10) != 0)
+            else if ((cities[city].Flags & CitF_Unkn10) != 0)
                 lbDisplay.DrawColour = 87;
 
             lbDisplay.DrawFlags = Lb_TEXT_ONE_COLOR;
@@ -424,7 +424,7 @@ void draw_world_cities_names(struct ScreenBox *box)
         }
         else
         {
-            cities[city].Flags &= ~0x08;
+            cities[city].Flags &= ~CitF_Unkn08;
         }
     }
 }
@@ -488,7 +488,7 @@ ubyte show_world_landmap_box(struct ScreenBox *box)
         {
             for (i = 0; i < num_cities; i++)
             {
-                if (cities[i].Flags & 0x11) {
+                if (cities[i].Flags & (CitF_Unkn10|CitF_Unkn01)) {
                     unkn_city_no = i;
                     word_1C48CC = 0;
                 }
@@ -501,7 +501,7 @@ ubyte show_world_landmap_box(struct ScreenBox *box)
                 i = 0;
             while (i != unkn_city_no)
             {
-                if (cities[i].Flags & 0x11) {
+                if (cities[i].Flags & (CitF_Unkn10|CitF_Unkn01)) {
                     unkn_city_no = i;
                     word_1C48CC = 0;
                     break;

@@ -187,7 +187,7 @@ void count_selectable_cities(void)
     mail_num_active_cities = 0;
     for (city_id = 0; city_id < num_cities; city_id++)
     {
-        if (cities[city_id].Flags & 0x01) {
+        if (cities[city_id].Flags & CitF_Unkn01) {
             last_city_id = city_id;
             mail_num_active_cities++;
         }
@@ -208,7 +208,7 @@ void show_citymap_city_selection(struct ScreenBox *box)
     dy = text_h + 4;
     for (city_id = 0; city_id < num_cities; city_id++)
     {
-        if ((cities[city_id].Flags & 0x01) == 0)
+        if ((cities[city_id].Flags & CitF_Unkn01) == 0)
             continue;
 
         dy += text_h + 4;
@@ -229,7 +229,7 @@ ubyte input_citymap_city_selection(struct ScreenBox *box)
     dy = text_h + 4;
     for (city_id = 0; city_id < num_cities; city_id++)
     {
-        if ((cities[city_id].Flags & 0x01) == 0)
+        if ((cities[city_id].Flags & CitF_Unkn01) == 0)
             continue;
 
         dy += text_h + 4;
