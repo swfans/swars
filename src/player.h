@@ -29,14 +29,17 @@ extern "C" {
 /******************************************************************************/
 #pragma pack(1)
 
+#define CRYO_PODS_MAX_COUNT 32
+
 struct Thing;
 
+//TODO would make more sense to have a struct for each agent, and then a merging struct
 struct AgentInfo {
-    ulong Weapons[32];
-    union Mod Mods[32];
-    long Sex;
-    char RandomName[32];
-    struct WeaponsFourPack FourPacks[32];
+    ulong Weapons[CRYO_PODS_MAX_COUNT];
+    union Mod Mods[CRYO_PODS_MAX_COUNT];
+    ulong Sex;
+    char RandomName[CRYO_PODS_MAX_COUNT];
+    struct WeaponsFourPack FourPacks[CRYO_PODS_MAX_COUNT];
     ubyte NumAgents;
 };
 

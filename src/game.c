@@ -6482,7 +6482,7 @@ ubyte load_game(int slot, char *desc)
         gblen += offsetof(struct AgentInfo, NumAgents);
         memcpy(&cryo_agents.NumAgents, &save_game_buffer[gblen], sizeof(cryo_agents.NumAgents));
         gblen += sizeof(cryo_agents.NumAgents);
-        for (cryo_no = 0; cryo_no < 32; cryo_no++)
+        for (cryo_no = 0; cryo_no < CRYO_PODS_MAX_COUNT; cryo_no++)
         {
             // Remove bad mod flags
             cybmod_fix_all(&cryo_agents.Mods[cryo_no]);
@@ -6498,7 +6498,7 @@ ubyte load_game(int slot, char *desc)
         gblen += offsetof(struct AgentInfo, FourPacks);
         memcpy(&cryo_agents.NumAgents, &save_game_buffer[gblen], 1);
         gblen += 1;
-        for (cryo_no = 0; cryo_no < 32; cryo_no++)
+        for (cryo_no = 0; cryo_no < CRYO_PODS_MAX_COUNT; cryo_no++)
         {
             // Remove bad mod flags
             cybmod_fix_all(&cryo_agents.Mods[cryo_no]);
@@ -9604,6 +9604,52 @@ void agents_copy_fourpacks_netplayer_to_cryo(struct NetworkPlayer *p_netplyr)
     }
 }
 
+void agents_copy_fourpacks_cryo_to_netplayer(struct NetworkPlayer *p_netplyr)
+{
+    short plagent, fp;
+
+    for (plagent = 0; plagent < 4; plagent++)
+    {
+        for (fp = 0; fp < WFRPK_COUNT; fp++) {
+            p_netplyr->U.FourPacks.FourPacks[plagent][fp] =
+              cryo_agents.FourPacks[plagent].Amount[fp];
+        }
+    }
+}
+
+void agents_copy_wepmod_cryo_to_netplayer(struct NetworkPlayer *p_netplyr)
+{
+    short plagent;
+
+    for (plagent = 0; plagent < 4; plagent++)
+    {
+        p_netplyr->U.WepMod.Weapons[plagent] = cryo_agents.Weapons[plagent];
+        p_netplyr->U.WepMod.Mods[plagent] = cryo_agents.Mods[plagent];
+    }
+}
+
+void agents_copy_wepmod_netplayer_to_player(int plyr, struct NetworkPlayer *p_netplyr)
+{
+    short plagent;
+
+    for (plagent = 0; plagent < 4; plagent++)
+    {
+        players[plyr].Weapons[plagent] = p_netplyr->U.WepMod.Weapons[plagent];
+        players[plyr].Mods[plagent] = p_netplyr->U.WepMod.Mods[plagent];
+    }
+}
+
+void agents_copy_wepmod_netplayer_to_cryo(struct NetworkPlayer *p_netplyr)
+{
+    short plagent;
+
+    for (plagent = 0; plagent < 4; plagent++)
+    {
+        cryo_agents.Weapons[plagent] = p_netplyr->U.WepMod.Weapons[plagent];
+        cryo_agents.Mods[plagent] = p_netplyr->U.WepMod.Mods[plagent];
+    }
+}
+
 void net_unkn_func_33_sub1(int plyr, int netplyr)
 {
     struct NetworkPlayer *p_netplyr;
@@ -9777,21 +9823,11 @@ void net_unkn_func_33_sub1(int plyr, int netplyr)
         {
             for (i = 0; i < 8; i++)
             {
-                int k;
                 if (unkn2_names[i][0] == '\0')
                     continue;
-                for (k = 0; k < 4; k++) {
-                    players[i].Weapons[k] = p_netplyr->U.WepMod.Weapons[k];
-                    players[i].Mods[k] = p_netplyr->U.WepMod.Mods[k];
-                }
+                agents_copy_wepmod_netplayer_to_player(i, p_netplyr);
             }
-            {
-                int k;
-                for (k = 0; k < 4; k++) {
-                    cryo_agents.Weapons[k] = p_netplyr->U.WepMod.Weapons[k];
-                    cryo_agents.Mods[k] = p_netplyr->U.WepMod.Mods[k];
-                }
-            }
+            agents_copy_wepmod_netplayer_to_cryo(p_netplyr);
             if (net_host_player_no != netplyr)
             {
                 update_flic_mods(flic_mods);
@@ -9862,21 +9898,10 @@ void net_unkn_func_33(void)
     switch (p_netplyr->Type)
     {
     case 14:
-        for (i = 0; i < 4; i++)
-        {
-            p_netplyr->U.WepMod.Weapons[i] = cryo_agents.Weapons[i];
-            p_netplyr->U.WepMod.Mods[i] = cryo_agents.Mods[i];
-        }
+        agents_copy_wepmod_cryo_to_netplayer(p_netplyr);
         break;
     case 15:
-        for (i = 0; i < 4; i++)
-        {
-            int k;
-            for (k = 0; k < 5; k++) {
-                p_netplyr->U.FourPacks.FourPacks[i][k] =
-                  cryo_agents.FourPacks[i].Amount[k];
-            }
-        }
+        agents_copy_fourpacks_cryo_to_netplayer(p_netplyr);
         break;
     case 10:
         break;
