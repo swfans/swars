@@ -791,4 +791,14 @@ void unpersuade_my_peeps(struct Thing *p_owntng)
     word_1531DA = count;
 #endif
 }
+
+short check_for_other_people(int x, int y, int z, struct Thing *p_person)
+{
+    short ret;
+    asm volatile (
+      "call ASM_check_for_other_people\n"
+        : "=r" (ret) : "a" (x), "d" (y), "b" (z), "c" (p_person));
+    return ret;
+}
+
 /******************************************************************************/
