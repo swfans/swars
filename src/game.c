@@ -3127,7 +3127,7 @@ TbBool draw_panel_pickable_thing_below_agent(struct Thing *p_agent)
             if (weptype)
                 draw_new_panel_sprite_std(548, 364, weapon_defs[weptype].Sprite & 0xFF);
             else
-                draw_new_panel_sprite_std(540, 360, 70);
+                draw_new_panel_sprite_std(548, 364, 70);
             draw_new_panel_sprite_std(540, 360, 12);
             drawn = true;
         } else {
