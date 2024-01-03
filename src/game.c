@@ -2224,13 +2224,14 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
             new_thing = get_new_thing();
             p_thing = &things[new_thing];
             memcpy(&loc_thing, p_thing, sizeof(struct Thing));
-            if (fmtver <= 12) {
+            if (fmtver >= 13) {
+                assert(sizeof(struct Thing) == 168);
+                LbFileRead(lev_fh, p_thing, sizeof(struct Thing));
+            } else {
                 struct ThingOldV9 s_oldthing;
                 assert(sizeof(s_oldthing) == 216);
                 LbFileRead(lev_fh, &s_oldthing, sizeof(s_oldthing));
                 refresh_old_thing_format(p_thing, &s_oldthing, fmtver);
-            } else {
-                LbFileRead(lev_fh, p_thing, sizeof(struct Thing));
             }
             LOGNO("Thing(%hd,%hd) group %hd at (%d,%d,%d) type=%d,%d",
               p_thing->ThingOffset, p_thing->U.UPerson.UniqueID,
@@ -2404,7 +2405,7 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
         }
     }
 
-    if (fmtver > 5)
+    if (fmtver >= 6)
     {
         LbFileRead(lev_fh, &word_1810E4, 2);
         if (word_1810E4 < 1000)
@@ -2413,11 +2414,12 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
             word_1810E4 = 4000;
     }
 
-    if (fmtver <= 6) {
-        next_used_lvl_objective = 1;
-    } else {
+    if (fmtver >= 7) {
         LbFileRead(lev_fh, &next_used_lvl_objective, sizeof(ushort));
-        LbFileRead(lev_fh, game_used_lvl_objectives, 32 * next_used_lvl_objective);
+        assert(sizeof(struct Objective) == 32);
+        LbFileRead(lev_fh, game_used_lvl_objectives, sizeof(struct Objective) * next_used_lvl_objective);
+    } else {
+        next_used_lvl_objective = 1;
     }
 
     if (fmtver >= 9) {
@@ -6370,7 +6372,7 @@ ulong save_crypto_transform3(ubyte a1)
 
 TbBool save_game_decrypt_and_verify(ulong fmtver, int slot, ubyte *save_buf, ulong save_buf_len, ulong decrypt_verify)
 {
-    if (fmtver > 8)
+    if (fmtver >= 9)
     {
         // Decrypt the file
         ubyte *gbpos;
@@ -6473,23 +6475,7 @@ ubyte load_game(int slot, char *desc)
     memcpy(&ingame.Credits, &save_game_buffer[0], sizeof(ingame.Credits));
 
     gblen = 4;
-    if (fmtver <= 4)
-    {
-        ushort cryo_no;
-        memcpy(&cryo_agents, &save_game_buffer[gblen], offsetof(struct AgentInfo, FourPacks));
-        gblen += offsetof(struct AgentInfo, FourPacks);
-        memcpy(&cryo_agents.NumAgents, &save_game_buffer[gblen], 1);
-        gblen += 1;
-        for (cryo_no = 0; cryo_no < 32; cryo_no++)
-        {
-            // Remove bad mod flags
-            cybmod_fix_all(&cryo_agents.Mods[cryo_no]);
-            // Check weapons count, reset bad amounts of consumable weapons
-            sanitize_weapon_quantities(&cryo_agents.Weapons[cryo_no],
-              &cryo_agents.FourPacks[cryo_no]);
-        }
-    }
-    else
+    if (fmtver >= 5)
     {
         ushort cryo_no;
         memcpy(&cryo_agents, &save_game_buffer[gblen], offsetof(struct AgentInfo, NumAgents));
@@ -6505,8 +6491,30 @@ ubyte load_game(int slot, char *desc)
               &cryo_agents.FourPacks[cryo_no]);
         }
     }
+    else
+    {
+        ushort cryo_no;
+        memcpy(&cryo_agents, &save_game_buffer[gblen], offsetof(struct AgentInfo, FourPacks));
+        gblen += offsetof(struct AgentInfo, FourPacks);
+        memcpy(&cryo_agents.NumAgents, &save_game_buffer[gblen], 1);
+        gblen += 1;
+        for (cryo_no = 0; cryo_no < 32; cryo_no++)
+        {
+            // Remove bad mod flags
+            cybmod_fix_all(&cryo_agents.Mods[cryo_no]);
+            // Check weapons count, reset bad amounts of consumable weapons
+            sanitize_weapon_quantities(&cryo_agents.Weapons[cryo_no],
+              &cryo_agents.FourPacks[cryo_no]);
+        }
+    }
 
-    if (fmtver <= 2)
+    if (fmtver >= 3)
+    {
+        assert(sizeof(struct ResearchInfo) == 1372);
+        memcpy(&research, &save_game_buffer[gblen], sizeof(struct ResearchInfo));
+        gblen += sizeof(struct ResearchInfo);
+    }
+    else
     {
         int i, k;
         // Old version has one byte progress
@@ -6531,14 +6539,42 @@ ubyte load_game(int slot, char *desc)
         memcpy(research.WeaponDaysDone, &save_game_buffer[gblen], i);
         gblen += 732; // and not 92? we don't have old saves, so cannot verify.
     }
-    else
-    {
-        assert(sizeof(struct ResearchInfo) == 1372);
-        memcpy(&research, &save_game_buffer[gblen], sizeof(struct ResearchInfo));
-        gblen += sizeof(struct ResearchInfo);
-    }
 
-    if (fmtver <= 3)
+    if (fmtver >= 7)
+    {
+        PlayerInfo *p_locplayer;
+        int i;
+        assert(sizeof(PlayerInfo) == 426);
+        p_locplayer = &players[local_player_no];
+        memcpy(p_locplayer, &save_game_buffer[gblen], sizeof(PlayerInfo));
+        gblen += sizeof(PlayerInfo);
+        // Remove bad mod flags
+        for (i = 0; i < 4; i++)
+        {
+            cybmod_fix_all(&p_locplayer->Mods[i]);
+        }
+    }
+    else if (fmtver >= 4)
+    {
+        PlayerInfo *p_locplayer;
+        int i;
+        p_locplayer = &players[local_player_no];
+
+        i = sizeof(PlayerInfo) - offsetof(PlayerInfo, WepDelays);
+        assert(i == 282);
+        memcpy(p_locplayer, &save_game_buffer[gblen], i);
+        gblen += i;
+        // The old struct matches until WepDelays
+        i = 48;
+        memcpy(p_locplayer->WepDelays, &save_game_buffer[gblen], i);
+        gblen += i;
+        // Remove bad mod flags
+        for (i = 0; i < 4; i++)
+        {
+            cybmod_fix_all(&p_locplayer->Mods[i]);
+        }
+    }
+    else
     {
         PlayerInfo *p_locplayer;
         int agent, i;
@@ -6580,40 +6616,6 @@ ubyte load_game(int slot, char *desc)
             }
         }
     }
-    else if (fmtver <= 6)
-    {
-        PlayerInfo *p_locplayer;
-        int i;
-        p_locplayer = &players[local_player_no];
-
-        i = sizeof(PlayerInfo) - offsetof(PlayerInfo, WepDelays);
-        assert(i == 282);
-        memcpy(p_locplayer, &save_game_buffer[gblen], i);
-        gblen += i;
-        // The old struct matches until WepDelays
-        i = 48;
-        memcpy(p_locplayer->WepDelays, &save_game_buffer[gblen], i);
-        gblen += i;
-        // Remove bad mod flags
-        for (i = 0; i < 4; i++)
-        {
-            cybmod_fix_all(&p_locplayer->Mods[i]);
-        }
-    }
-    else
-    {
-        PlayerInfo *p_locplayer;
-        int i;
-        assert(sizeof(PlayerInfo) == 426);
-        p_locplayer = &players[local_player_no];
-        memcpy(p_locplayer, &save_game_buffer[gblen], sizeof(PlayerInfo));
-        gblen += sizeof(PlayerInfo);
-        // Remove bad mod flags
-        for (i = 0; i < 4; i++)
-        {
-            cybmod_fix_all(&p_locplayer->Mods[i]);
-        }
-    }
     players_sync_from_cryo();
 
     memcpy(&global_date, &save_game_buffer[gblen], sizeof(struct SynTime));
@@ -6634,11 +6636,15 @@ ubyte load_game(int slot, char *desc)
 
     load_missions(background_type);
 
-    if (fmtver <= 9)
+    if (fmtver >= 12)
     {
-        // Mission status block did not existed in this version
+        int i;
+        i = sizeof(struct MissionStatus);
+        assert(i == 40);
+        memcpy(&mission_status[open_brief], &save_game_buffer[gblen], i);
+        gblen += i;
     }
-    else if (fmtver <= 11)
+    else if (fmtver >= 10)
     {
         int i;
         i = sizeof(struct MissionStatus) - offsetof(struct MissionStatus, Expenditure);
@@ -6653,11 +6659,7 @@ ubyte load_game(int slot, char *desc)
     }
     else
     {
-        int i;
-        i = sizeof(struct MissionStatus);
-        assert(i == 40);
-        memcpy(&mission_status[open_brief], &save_game_buffer[gblen], i);
-        gblen += i;
+        // Mission status block did not existed in this version
     }
 
     memcpy(email_store, &save_game_buffer[gblen], 5 * next_email);
@@ -6687,13 +6689,13 @@ ubyte load_game(int slot, char *desc)
         gblen += 32;
     }
 
-    if (fmtver <= 11)
+    if (fmtver >= 12)
     {
-        next_mission = save_game_buffer[gblen];
+        memcpy(&next_mission, &save_game_buffer[gblen], sizeof(next_mission));
         gblen += 2;
     } else
     {
-        memcpy(&next_mission, &save_game_buffer[gblen], sizeof(next_mission));
+        next_mission = save_game_buffer[gblen];
         gblen += 2;
     }
 
@@ -6716,20 +6718,20 @@ ubyte load_game(int slot, char *desc)
         }
     }
 
-    if (fmtver <= 5)
-    {
-        if (login_name[0] == '\0')
-          strcpy(login_name, "ANON");
-    }
-    else
+    if (fmtver >= 6)
     {
         int i;
         i = 16;
         memcpy(login_name, &save_game_buffer[gblen], i);
         gblen += i;
     }
+    else
+    {
+        if (login_name[0] == '\0')
+          strcpy(login_name, "ANON");
+    }
 
-    if (fmtver > 10)
+    if (fmtver >= 11)
     {
         int i;
         for (i = 0; i < num_cities; i++)
@@ -6741,15 +6743,6 @@ ubyte load_game(int slot, char *desc)
         ingame.fld_unk7DE = save_game_buffer[gblen];
         gblen++;
     }
-
-#if 0
-    // TODO MISSI Special fix for specific mission; why is it there?
-    if (mission_list[28].SpecialTrigger[1]) {
-        mission_list[28].SpecialTrigger[0] = 0;
-        mission_list[28].SpecialTrigger[1] = 0;
-        mission_list[28].SpecialTrigger[2] = 7;
-    }
-#endif
 
     read_user_settings();
     login_control__Money = ingame.Credits;
