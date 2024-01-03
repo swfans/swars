@@ -6368,30 +6368,8 @@ ulong save_crypto_transform3(ubyte a1)
     return ret;
 }
 
-ubyte load_game(int slot, char *desc)
+TbBool save_game_decrypt_and_verify(ulong fmtver, int slot, ubyte *save_buf, ulong save_buf_len, ulong decrypt_verify)
 {
-#if 0
-    ubyte ret;
-    asm volatile ("call ASM_load_game\n"
-        : "=r" (ret) : "a" (slot), "d" (desc));
-    return ret;
-#else
-    char str[52];
-    ulong gblen, fmtver, decrypt_verify;
-    TbFileHandle fh;
-
-    get_saved_game_fname(str, slot);
-
-    fh = LbFileOpen(str, Lb_FILE_MODE_READ_ONLY);
-    if (fh == INVALID_FILE)
-        return 1;
-    LbFileRead(fh, desc, 25);
-    LbFileRead(fh, &gblen, 4);
-    LbFileRead(fh, &fmtver, 4);
-    LbFileRead(fh, save_game_buffer, gblen);
-    LbFileRead(fh, &decrypt_verify, 4);
-    LbFileClose(fh);
-
     if (fmtver > 8)
     {
         // Decrypt the file
@@ -6399,7 +6377,7 @@ ubyte load_game(int slot, char *desc)
         ubyte *gbend;
         save_crypto_make_hashtable(slot);
         gbpos = save_game_buffer;
-        gbend = &save_game_buffer[4 * (gblen >> 2)];
+        gbend = &save_game_buffer[4 * (save_buf_len >> 2)];
         while (gbpos < gbend)
         {
             ulong key, keysel;
@@ -6446,10 +6424,10 @@ ubyte load_game(int slot, char *desc)
         ulong clen, hash;
         ulong i;
 
-        if (gblen & 3)
-            clen = gblen + 4;
+        if (save_buf_len & 3)
+            clen = save_buf_len + 4;
         else
-            clen = gblen;
+            clen = save_buf_len;
         clen >>= 2;
         cpos = (ulong *)save_game_buffer;
 
@@ -6459,8 +6437,38 @@ ubyte load_game(int slot, char *desc)
             hash ^= *cpos;
         }
         if (hash != decrypt_verify)
-            return 2;
+            return false;
     }
+    return true;
+}
+
+ubyte load_game(int slot, char *desc)
+{
+#if 0
+    ubyte ret;
+    asm volatile ("call ASM_load_game\n"
+        : "=r" (ret) : "a" (slot), "d" (desc));
+    return ret;
+#else
+    char str[52];
+    ulong gblen, fmtver, decrypt_verify;
+    TbFileHandle fh;
+    TbBool ok;
+
+    get_saved_game_fname(str, slot);
+
+    fh = LbFileOpen(str, Lb_FILE_MODE_READ_ONLY);
+    if (fh == INVALID_FILE)
+        return 1;
+    LbFileRead(fh, desc, 25);
+    LbFileRead(fh, &gblen, 4);
+    LbFileRead(fh, &fmtver, 4);
+    LbFileRead(fh, save_game_buffer, gblen);
+    LbFileRead(fh, &decrypt_verify, 4);
+    LbFileClose(fh);
+
+    ok = save_game_decrypt_and_verify(fmtver, slot, save_game_buffer, gblen, decrypt_verify);
+    if (!ok) return 2;
 
     memcpy(&ingame.Credits, &save_game_buffer[0], sizeof(ingame.Credits));
 
