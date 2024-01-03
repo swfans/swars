@@ -3519,6 +3519,19 @@ TbBool draw_agent_weapons_selection(PlayerInfo *p_locplayer, struct Thing *p_age
     return ret;
 }
 
+short direct_control_thing_for_player(short plyr)
+{
+    PlayerInfo *p_player;
+    short dcthing;
+
+    p_player = &players[plyr];
+    if (p_player->DoubleMode)
+        dcthing = p_player->DirectControl[byte_153198-1];
+    else
+        dcthing = p_player->DirectControl[0];
+    return dcthing;
+}
+
 TbBool func_1caf8(void)
 {
 #if 0
@@ -3536,7 +3549,7 @@ TbBool func_1caf8(void)
     int panstate;
 
     p_locplayer = &players[local_player_no];
-    dcthing = p_locplayer->DoubleMode ? p_locplayer->DirectControl[byte_153198-1] : p_locplayer->DirectControl[0];
+    dcthing = direct_control_thing_for_player(local_player_no);
     p_agent = &things[dcthing];
 
     p_locplayer->PanelItem[mouser] = 0;
@@ -4050,7 +4063,7 @@ void draw_new_panel()
         struct Thing *p_agent;
 
         x = 0;
-        dcthing = p_locplayer->DoubleMode ? p_locplayer->DirectControl[byte_153198-1] : p_locplayer->DirectControl[0];
+        dcthing = direct_control_thing_for_player(local_player_no);
         p_agent = &things[dcthing];
         if ((p_agent->Flag & TngF_Unkn0002) == 0 && (p_agent->Flag2 & 0x800) == 0)
         {
@@ -4115,7 +4128,7 @@ void draw_new_panel()
         struct Thing *p_agent;
         int lv, lvmax, col, w;
 
-        dcthing = p_locplayer->DoubleMode ? p_locplayer->DirectControl[byte_153198-1] : p_locplayer->DirectControl[0];
+        dcthing = direct_control_thing_for_player(local_player_no);
         p_agent = &things[dcthing];
         if ((p_agent->U.UPerson.Energy < 50) && (gameturn & 1))
             col = 2;
@@ -7888,17 +7901,13 @@ void do_scroll_map(void)
     }
     else
     {
-        ulong dcthing;
+        short dcthing;
+        dcthing = direct_control_thing_for_player(local_player_no);
         if (p_locplayer->DoubleMode)
         {
-            if (byte_153198)
-                dcthing = p_locplayer->DirectControl[byte_153198-1];
-            else
-                dcthing = p_locplayer->DirectControl[0];
             track_player(dcthing);
             return;
         }
-        dcthing = p_locplayer->DirectControl[0];
         if (dcthing)
         {
             md = p_locplayer->UserInput[0].ControlMode & 0x1FFF;
