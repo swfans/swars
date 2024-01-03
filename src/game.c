@@ -3106,6 +3106,24 @@ sbyte find_nth_weapon_held(ushort index, ubyte n)
     return ret;
 }
 
+void update_dropped_item_under_agent_exists(struct Thing *p_agent)
+{
+    struct SimpleThing *p_pickup;
+    short thing;
+
+    if (p_agent->Flag & TngF_Unkn08000000)
+    {
+        thing = p_agent->U.UPerson.Vehicle; // Seem to be weapon standing over rather than vehicle
+        if (thing != 0)
+            p_pickup = &sthings[thing];
+        else
+            p_pickup = NULL;
+        if ((p_pickup == NULL) || (p_pickup->Type != SmTT_DROPPED_ITEM)) {
+            p_agent->Flag &= ~TngF_Unkn08000000;
+        }
+    }
+}
+
 TbBool draw_panel_pickable_thing_below_agent(struct Thing *p_agent)
 {
     struct SimpleThing *p_pickup;
@@ -3130,9 +3148,6 @@ TbBool draw_panel_pickable_thing_below_agent(struct Thing *p_agent)
                 draw_new_panel_sprite_std(548, 364, 70);
             draw_new_panel_sprite_std(540, 360, 12);
             drawn = true;
-        } else {
-            // FIXME a strange place for fixing state of an agent; should be moved to game world update
-            p_agent->Flag &= ~TngF_Unkn08000000;
         }
     }
     return drawn;
@@ -3525,6 +3540,8 @@ TbBool func_1caf8(void)
     p_agent = &things[dcthing];
 
     p_locplayer->PanelItem[mouser] = 0;
+    // FIXME a strange place for fixing state of an agent; should be moved to game world update
+    update_dropped_item_under_agent_exists(p_agent);
     ret = draw_panel_pickable_thing_below_agent(p_agent);
     if (!ret)
         draw_panel_pickable_thing_player_targeted(p_locplayer);
