@@ -19,11 +19,26 @@
 #include "bigmap.h"
 
 #include <stdlib.h>
+#include "bfmemut.h"
 #include "swlog.h"
 /******************************************************************************/
 struct MapOffset spiral_step[SPIRAL_STEPS_COUNT];
 ushort dist_tiles_to_spiral_step[MAP_TILE_WIDTH];
 ushort spiral_dist_tiles_limit = 0;
+
+void clear_mapwho_on_whole_map(void)
+{
+    short tile_x, tile_y;
+    for (tile_x = 0; tile_x < MAP_TILE_WIDTH; tile_x++)
+    {
+        for (tile_y = 0; tile_y < MAP_TILE_HEIGHT; tile_y++)
+        {
+            ulong cellno;
+            cellno = tile_y * MAP_TILE_WIDTH + tile_x;
+            game_my_big_map[cellno].Child = 0;
+        }
+    }
+}
 
 short get_mapwho_thing_index(short tile_x, short tile_y)
 {
@@ -37,6 +52,25 @@ short get_mapwho_thing_index(short tile_x, short tile_y)
     mapel = &game_my_big_map[MAP_TILE_WIDTH * tile_y + tile_x];
 
     return mapel->Child;
+}
+
+/** Maps fields from old MyMapElement struct to the current one.
+ */
+void refresh_old_my_big_map_format(struct MyMapElement *p_mapel, struct MyMapElementOldV7 *p_oldmapel, ulong fmtver)
+{
+    //TODO make sane matching for old fields
+    LbMemoryCopy(p_mapel, p_oldmapel, 18);
+
+    if (fmtver <= 9)
+    {
+        if (p_mapel->Texture & 0x8000) {
+            short k;
+            k = p_mapel->Texture;
+            k = -k;
+            k = (k & 0xFF) | ((k - (128 << 8)) & 0xFF00);
+            p_mapel->Texture = k;
+        }
+    }
 }
 
 void init_search_spiral_steps(void)

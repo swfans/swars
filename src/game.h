@@ -365,6 +365,26 @@ struct SingleObjectFace3 { // sizeof=32
     ubyte field_1F;
 };
 
+struct SingleObjectFace3OldV7 { // sizeof=48
+    short PointNo[3];
+    ushort Texture;
+    ubyte GFlags;
+    ubyte Flags;
+    ushort Object;
+    ubyte field_C;
+    ubyte field_D;
+    short Shade0;
+    short Shade1;
+    short Shade2;
+    ushort Light0;
+    ushort Light1;
+    ushort Light2;
+    ushort FaceNormal;
+    ubyte field_1C[3];
+    ubyte field_1F;
+    ubyte field_20[16];
+};
+
 struct SingleObjectFace4 { // sizeof=40
     short PointNo[4];
     ushort Texture;
@@ -383,6 +403,27 @@ struct SingleObjectFace4 { // sizeof=40
     ushort FaceNormal;
     ubyte field_22[5];
     ubyte field_27;
+};
+
+struct SingleObjectFace4OldV7 { // sizeof=60
+    short PointNo[4];
+    ushort Texture;
+    ubyte GFlags;
+    ubyte Flags;
+    ushort Object;
+    ubyte field_E[2];
+    short Shade0;
+    short Shade1;
+    short Shade2;
+    short Shade3;
+    short Light0;
+    short Light1;
+    short Light2;
+    short Light3;
+    ushort FaceNormal;
+    ubyte field_22[5];
+    ubyte field_27;
+    ubyte field_28[20];
 };
 
 struct QuickLight { // sizeof=6
@@ -419,6 +460,10 @@ struct FullLightV12 { // sizeof=20
     short lgtfld_12;
 };
 
+struct LightCommand { // sizeof=36
+    ubyte lcfld_0[36];
+};
+
 struct Normal { // sizeof=16
     int NX;
     int NY;
@@ -435,7 +480,7 @@ struct AnimTmap { // sizeof=54
     ubyte field_35;
 };
 
-struct BezierPt {
+struct BezierPt { // sizeof=28
     ubyte field_0[26];
     ushort field_2A;
 };

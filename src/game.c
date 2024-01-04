@@ -1569,11 +1569,48 @@ void unkn_lights_processing(void)
         :  :  : "eax" );
 }
 
+/** Maps fields from old FullLight struct to the current one.
+ */
+void refresh_old_full_light_format(struct FullLight *p_fulight, struct FullLightV12 *p_oldfulight, ulong fmtver)
+{
+    LbMemorySet(p_fulight, 0, sizeof(struct FullLight));
+
+    p_fulight->Intensity = p_oldfulight->Intensity;
+    p_fulight->TrueIntensity = p_oldfulight->TrueIntensity;
+    p_fulight->Command = p_oldfulight->Command;
+    p_fulight->NextFull = p_oldfulight->NextFull;
+    p_fulight->X = p_oldfulight->X;
+    p_fulight->Y = p_oldfulight->Y;
+    p_fulight->Z = p_oldfulight->Z;
+    p_fulight->lgtfld_E = p_oldfulight->lgtfld_E;
+    p_fulight->lgtfld_10 = p_oldfulight->lgtfld_10;
+    p_fulight->lgtfld_12 = p_oldfulight->lgtfld_12;
+
+    if (fmtver <= 11) {
+        p_fulight->TrueIntensity = p_fulight->Intensity;
+    }
+}
+
+/** Maps fields from old SingleObjectFace3 struct to the current one.
+ */
+void refresh_old_object_face_format(struct SingleObjectFace3 *p_objface, struct SingleObjectFace3OldV7 *p_oldobjface, ulong fmtver)
+{
+    //TODO make sane matching for old fields
+    LbMemoryCopy(p_objface, p_oldobjface, 32);
+}
+
+/** Maps fields from old SingleObjectFace4 struct to the current one.
+ */
+void refresh_old_object_face4_format(struct SingleObjectFace4 *p_objface4, struct SingleObjectFace4OldV7 *p_oldobjface4, ulong fmtver)
+{
+    //TODO make sane matching for old fields
+    LbMemoryCopy(p_objface4, p_oldobjface4, 40);
+}
+
 void load_map_dat_pc_handle(TbFileHandle fh)
 {
     ulong fmtver;
     ushort num_sthings, num_things;
-    short x, y;
     short i;
 
     LbFileRead(fh, &fmtver, sizeof(fmtver));
@@ -1584,81 +1621,83 @@ void load_map_dat_pc_handle(TbFileHandle fh)
     }
     else
     {
-        ubyte locbuf[24];
+        struct MyMapElementOldV7 old_my_map_el;
+        assert(sizeof(old_my_map_el) == 24);
         for (i = 0; i < 128 * 128; i++) {
-            LbFileRead(fh, locbuf, sizeof(locbuf));
-            LbMemoryCopy(&game_my_big_map[i], locbuf, 18);
+            LbFileRead(fh, &old_my_map_el, sizeof(old_my_map_el));
+            refresh_old_my_big_map_format(&game_my_big_map[i], &old_my_map_el, fmtver);
         }
     }
-    LbFileRead(fh, &next_floor_texture, sizeof(next_floor_texture));
-    LbFileRead(fh, game_textures, sizeof(struct SingleFloorTexture) * next_floor_texture);
-    LbFileRead(fh, &next_face_texture, sizeof(next_face_texture));
-    LbFileRead(fh, game_face_textures, sizeof(struct SingleTexture) * next_face_texture);
-    LbFileRead(fh, &next_object_point, sizeof(next_object_point));
-    LbFileRead(fh, game_object_points, sizeof(struct SinglePoint) * next_object_point);
-    LbFileRead(fh, &next_object_face, sizeof(next_object_face));
+    {
+        LbFileRead(fh, &next_floor_texture, sizeof(next_floor_texture));
+        LbFileRead(fh, game_textures, sizeof(struct SingleFloorTexture) * next_floor_texture);
+    }
+    {
+        LbFileRead(fh, &next_face_texture, sizeof(next_face_texture));
+        LbFileRead(fh, game_face_textures, sizeof(struct SingleTexture) * next_face_texture);
+    }
+    {
+        LbFileRead(fh, &next_object_point, sizeof(next_object_point));
+        LbFileRead(fh, game_object_points, sizeof(struct SinglePoint) * next_object_point);
+    }
     if (fmtver >= 19)
     {
+        LbFileRead(fh, &next_object_face, sizeof(next_object_face));
         assert(sizeof(struct SingleObjectFace3) == 32);
         LbFileRead(fh, game_object_faces, sizeof(struct SingleObjectFace3) * next_object_face);
     }
     else
     {
-        ubyte locbuf[48];
+        struct SingleObjectFace3OldV7 old_object_face;
+        LbFileRead(fh, &next_object_face, sizeof(next_object_face));
+        assert(sizeof(old_object_face) == 48);
         for (i = 0; i < next_object_face; i++) {
-            LbFileRead(fh, locbuf, sizeof(locbuf));
-            LbMemoryCopy(&game_object_faces[i], locbuf, 32);
+            LbFileRead(fh, &old_object_face, sizeof(old_object_face));
+            refresh_old_object_face_format(&game_object_faces[i], &old_object_face, fmtver);
         }
     }
-    LbFileRead(fh, &next_object, sizeof(next_object));
-    LbFileRead(fh, game_objects, sizeof(struct SingleObject) * next_object);
-    LbFileRead(fh, &next_quick_light, sizeof(next_quick_light));
-    LbFileRead(fh, game_quick_lights, sizeof(struct QuickLight) * next_quick_light);
-    LbFileRead(fh, &next_full_light, sizeof(next_full_light));
+    {
+        LbFileRead(fh, &next_object, sizeof(next_object));
+        LbFileRead(fh, game_objects, sizeof(struct SingleObject) * next_object);
+    }
+    {
+        LbFileRead(fh, &next_quick_light, sizeof(next_quick_light));
+        LbFileRead(fh, game_quick_lights, sizeof(struct QuickLight) * next_quick_light);
+    }
     if (fmtver >= 14)
     {
+        LbFileRead(fh, &next_full_light, sizeof(next_full_light));
+        assert(sizeof(struct FullLight) == 32);
         LbFileRead(fh, game_full_lights, sizeof(struct FullLight) * next_full_light);
     }
     else
     {
         struct FullLightV12 old_full_light;
-        for (i = 0; i < next_full_light; i++)
-        {
-            LbFileRead(fh, &old_full_light, sizeof(struct FullLightV12));
-            LbMemorySet(&game_full_lights[i], 0, sizeof(struct FullLight));
-            game_full_lights[i].Intensity = old_full_light.Intensity;
-            game_full_lights[i].TrueIntensity = old_full_light.TrueIntensity;
-            game_full_lights[i].Command = old_full_light.Command;
-            game_full_lights[i].NextFull = old_full_light.NextFull;
-            game_full_lights[i].X = old_full_light.X;
-            game_full_lights[i].Y = old_full_light.Y;
-            game_full_lights[i].Z = old_full_light.Z;
-            game_full_lights[i].lgtfld_E = old_full_light.lgtfld_E;
-            game_full_lights[i].lgtfld_10 = old_full_light.lgtfld_10;
-            game_full_lights[i].lgtfld_12 = old_full_light.lgtfld_12;
+        LbFileRead(fh, &next_full_light, sizeof(next_full_light));
+        assert(sizeof(old_full_light) == 40);
+        for (i = 0; i < next_full_light; i++) {
+            LbFileRead(fh, &old_full_light, sizeof(old_full_light));
+            refresh_old_full_light_format(&game_full_lights[i], &old_full_light, fmtver);
         }
     }
-    if (fmtver <= 11)
     {
-        for (i = 1; i < next_full_light; i++) {
-            game_full_lights[i].TrueIntensity = game_full_lights[i].Intensity;
-        }
+        LbFileRead(fh, &next_normal, sizeof(next_normal));
+        LbFileRead(fh, game_normals, sizeof(struct Normal) * next_normal);
     }
-    LbFileRead(fh, &next_normal, sizeof(next_normal));
-    LbFileRead(fh, game_normals, sizeof(struct Normal) * next_normal);
     if (fmtver >= 19)
     {
-        assert(sizeof(struct SingleObjectFace4) == 40);
         LbFileRead(fh, &next_object_face4, sizeof(next_object_face4));
+        assert(sizeof(struct SingleObjectFace4) == 40);
         LbFileRead(fh, game_object_faces4, sizeof(struct SingleObjectFace4) * next_object_face4);
     }
     else if (fmtver >= 7)
     {
-        ubyte locbuf[60];
+        struct SingleObjectFace4OldV7 old_object_face4;
         LbFileRead(fh, &next_object_face4, sizeof(next_object_face4));
+        assert(sizeof(old_object_face4) == 60);
         for (i = 0; i < next_object_face4; i++) {
-            LbFileRead(fh, locbuf, sizeof(locbuf));
-            LbMemoryCopy(&game_object_faces4[i], locbuf, 40);
+            LbFileRead(fh, &old_object_face4, sizeof(old_object_face4));
+            refresh_old_object_face4_format(&game_object_faces4[i], &old_object_face4, fmtver);
         }
     }
     else
@@ -1668,25 +1707,7 @@ void load_map_dat_pc_handle(TbFileHandle fh)
     LOGSYNC("stats: object_faces=%hu objects=%hu quick_lights=%hu full_lights=%hu normals=%hu object_faces4=%hu",
       next_object_face, next_object, next_quick_light, next_full_light, next_normal, next_object_face4);
 
-    for (x = 0; x < 128; x++)
-    {
-      for (y = 0; y < 128; y++)
-      {
-        struct MyMapElement *mapel;
-
-        mapel = &game_my_big_map[y * 128 + x];
-        mapel->Child = 0; // TODO is this correct?? is this field_E ?? Sounds correct to clear before things creation.
-        //mapel->field_E = 0; // TODO how this 16-bit field from 26-byte struct maps to 18-byte struct?
-        if (fmtver <= 9 && mapel->Texture & 0x8000)
-        {
-            short k;
-            k = mapel->Texture;
-            k = -k;
-            k = (k & 0xFF) | ((k - (128 << 8)) & 0xFF00);
-            mapel->Texture = k;
-        }
-      }
-    }
+    clear_mapwho_on_whole_map();
 
     if (fmtver >= 5)
     {
@@ -1721,6 +1742,7 @@ void load_map_dat_pc_handle(TbFileHandle fh)
     if (fmtver >= 6)
     {
         LbFileRead(fh, &next_anim_tmap, sizeof(next_anim_tmap));
+        assert(sizeof(struct AnimTmap) == 54);
         LbFileRead(fh, game_anim_tmaps, sizeof(struct AnimTmap) * next_anim_tmap);
     }
     else
@@ -1807,7 +1829,8 @@ void load_map_dat_pc_handle(TbFileHandle fh)
     if (fmtver >= 12)
     {
         LbFileRead(fh, &next_light_command, sizeof(next_light_command));
-        LbFileRead(fh, game_light_commands, 36 * next_light_command);
+        assert(sizeof(struct LightCommand) == 36);
+        LbFileRead(fh, game_light_commands, sizeof(struct LightCommand) * next_light_command);
     }
     else
     {
@@ -1816,6 +1839,7 @@ void load_map_dat_pc_handle(TbFileHandle fh)
     if (fmtver >= 13)
     {
         LbFileRead(fh, &next_bezier_pt, sizeof(next_bezier_pt));
+        assert(sizeof(struct BezierPt) == 28);
         LbFileRead(fh, bezier_pts, sizeof(struct BezierPt) * next_bezier_pt);
     }
     else
@@ -1873,6 +1897,7 @@ void load_mad_pc_buffer(ubyte *mad_ptr, long rdsize)
         p_numb = quick_load_pc[i].Numb;
         mem_game[i].N = quick_load_pc[i].Extra + *p_numb;
     }
+
     memcpy(&selected_triangulation_no, mad_ptr, sizeof(selected_triangulation_no));
     mad_ptr += sizeof(selected_triangulation_no);
     memcpy(&tri_module_init, mad_ptr, sizeof(tri_module_init));
@@ -1896,16 +1921,7 @@ void load_mad_pc_buffer(ubyte *mad_ptr, long rdsize)
     triangulation[3].Points = (struct TrPoint *)mad_ptr;
     mad_ptr += sizeof(struct TrPoint) * triangulation[3].max_Points;
 
-    short tile_x, tile_y;
-    for (tile_x = 0; tile_x < MAP_TILE_WIDTH; tile_x++)
-    {
-        for (tile_y = 0; tile_y < MAP_TILE_HEIGHT; tile_y++)
-        {
-            ulong cellno;
-            cellno = tile_y * MAP_TILE_WIDTH + tile_x;
-            game_my_big_map[cellno].Child = 0;
-        }
-    }
+    clear_mapwho_on_whole_map();
 
     ushort num_sthings;
     struct SimpleThing *p_clsthing;
