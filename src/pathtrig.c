@@ -19,6 +19,7 @@
 #include "pathtrig.h"
 
 #include <stdlib.h>
+#include <string.h>
 #include "swlog.h"
 /******************************************************************************/
 extern int fringe_y[256];
@@ -39,10 +40,83 @@ void fringe_init(ubyte *p_map, int x1, int y1, int x2, int y2)
     }
 }
 
-int fringe_get_rectangle(int *p_x1, int *p_x2, int *p_y1, int *p_y2, ubyte *p_solid)
+int fringe_scan(int *p_x1, int *p_y1, int *p_x2, int *p_y2)
 {
-    //TODO implement
-    return 0;
+    int x1, y1, x2;
+    int x, cx;
+
+    x = fringe_x1;
+    y1 = fringe_y2;
+    while (x < fringe_x2)
+    {
+        cx = x + 1;
+        if (y1 <= fringe_y[x]) {
+            x++;
+            continue;
+        }
+        y1 = fringe_y[x];
+        x1 = x++;
+        while (cx < fringe_x2)
+        {
+            if (y1 != fringe_y[cx])
+                break;
+            cx++;
+            x++;
+        }
+        x2 = x - x1;
+    }
+
+    if (y1 == fringe_y2)
+        return 0;
+
+    *p_x1 = x1;
+    *p_y1 = y1;
+    *p_x2 = x2;
+    *p_y2 = fringe_y2 - y1;
+    return 1;
+}
+
+int fringe_get_rectangle(int *p_x1, int *p_y1, int *p_x2, int *p_y2, ubyte *p_solid)
+{
+    int frx1, fry1, frx2, fry2;
+    int dx, dy;
+    ubyte solid;
+    ubyte *m_start;
+    ubyte *m;
+    int k;
+
+    k = fringe_scan(&frx1, &fry1, &frx2, &fry2);
+    if (!k)
+        return 0;
+
+    m_start = &fringe_map[256 * fry1 + frx1];
+    solid = *m_start;
+
+    m = m_start + 1;
+    for (dx = 1; dx < frx2; dx++)
+    {
+        if (solid != *m)
+            break;
+        m++;
+    }
+
+    m = m_start + 256;
+    for (dy = 1; dy < fry2; dy++)
+    {
+        if (memcmp(m, m_start, dx) != 0)
+            break;
+        m += 256;
+    }
+
+    for (k = frx1; k < frx1 + dx; k++)
+      fringe_y[k] = fry1 + dy;
+
+    *p_solid = solid;
+    *p_x1 = frx1;
+    *p_y1 = fry1;
+    *p_x2 = frx1 + dx;
+    *p_y2 = fry1 + dy;
+    return 1;
 }
 
 void path_init8_unkn3(struct Path *path, int ax8, int ay8, int bx8, int by8, int a6)
@@ -95,7 +169,7 @@ void make_edge(int x1, int y1, int x2, int y2)
     //TODO implement
 }
 
-int edge_find(int x1, int y1, int v2, int y2, int *ntri1, int *ntri2)
+int edge_find(int x1, int y1, int x2, int y2, int *ntri1, int *ntri2)
 {
     //TODO implement
    return 0;
@@ -222,7 +296,7 @@ void tri_set_rectangle(int x1, int y1, int x2, int y2, ubyte solid)
     fill_rectangle(sx1, sy1, sx2, sy2, solid);
 }
 
-void triangulation_initxy(int x1, int x2, int y1, int y2)
+void triangulation_initxy(int x1, int y1, int x2, int y2)
 {
     //TODO implement
 }
@@ -247,7 +321,7 @@ void triangulation_init_edges(void)
     make_edge(-3840, 37120, -3840, -3840);
 }
 
-void triangulate_area(ubyte *p_map, int x1, int x2, int y1, int y2)
+void triangulate_area(ubyte *p_map, int x1, int y1, int x2, int y2)
 {
     ubyte solid;
 
@@ -256,14 +330,14 @@ void triangulate_area(ubyte *p_map, int x1, int x2, int y1, int y2)
         triangulation[0].tri_initialised = 1;
         triangulation_init();
     }
-    tri_set_rectangle(x1 << 7, x2 << 7, y1 << 7, y2 << 7, 0);
-    fringe_init(p_map, x1, x2, y1, y2);
+    tri_set_rectangle(x1 << 7, y1 << 7, x2 << 7, y2 << 7, 0);
+    fringe_init(p_map, x1, y1, x2, y2);
 
-    while (fringe_get_rectangle(&x1, &x2, &y1, &y2, &solid))
+    while (fringe_get_rectangle(&x1, &y1, &x2, &y2, &solid))
     {
         if (solid == 0)
             continue;
-        tri_set_rectangle(x1 << 7, x2 << 7, y1 << 7, y2 << 7, solid);
+        tri_set_rectangle(x1 << 7, y1 << 7, x2 << 7, y2 << 7, solid);
     }
 }
 
