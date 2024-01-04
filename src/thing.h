@@ -125,6 +125,8 @@ enum ThingFlags {
     TngF_Unkn40000000 = 0x40000000,
 };
 
+struct M33;
+
 /** State of Thing of type Object/Building.
  */
 struct TngUObject
@@ -871,6 +873,12 @@ short get_new_sthing(void);
 void remove_sthing(short tngno);
 
 short add_static(int x, int y, int z, ushort frame, int timer);
+
+void new_thing_type10_clone(struct SimpleThing *p_clsthing);
+short new_thing_smoke_gen_clone(struct SimpleThing *p_clsthing);
+short new_thing_static_clone(struct SimpleThing *p_clsthing);
+short new_thing_building_clone(struct Thing *p_clthing,
+  struct M33 *p_clmat, short shut_h);
 
 short get_thing_same_type_head(short ttype, short subtype);
 

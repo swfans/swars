@@ -55,13 +55,13 @@ struct MyMapElementOldV7 { // sizeof=24
   ushort Texture;
   ushort Alt;
   ushort field_4;
-  ushort field_6;
-  short Child;
   ushort ColHead;
-  ubyte field_C;
-  ubyte Flags2;
+  ushort field_8;
+  ubyte Flags;
+  ubyte Dummy1;
   ubyte Zip;
-  ubyte field_F;
+  ubyte Flags2;
+  short Child;
   ushort field_10;
   ubyte field_12[6];
 };

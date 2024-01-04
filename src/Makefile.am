@@ -100,6 +100,16 @@ swars_SOURCES = \
 	dos.h \
 	drawtext.c \
 	drawtext.h \
+	enginlights.c \
+	enginlights.h \
+	enginpriobjs.c \
+	enginpriobjs.h \
+	enginpritxtr.c \
+	enginpritxtr.h \
+	enginsngobjs.c \
+	enginsngobjs.h \
+	enginsngtxtr.c \
+	enginsngtxtr.h \
 	engintrns.c \
 	engintrns.h \
 	febrief.c \
@@ -143,6 +153,8 @@ swars_SOURCES = \
 	keyboard.h \
 	lvobjctv.c \
 	lvobjctv.h \
+	lvfiles.c \
+	lvfiles.h \
 	main.c \
 	matrix.c \
 	matrix.h \
@@ -150,6 +162,8 @@ swars_SOURCES = \
 	mouse.h \
 	network.c \
 	network.h \
+	pathtrig.c \
+	pathtrig.h \
 	packet.c \
 	packet.h \
 	people.c \
@@ -181,6 +195,8 @@ swars_SOURCES = \
 	util.h \
 	vehicle.c \
 	vehicle.h \
+	vehtraffic.c \
+	vehtraffic.h \
 	wadfile.c \
 	wadfile.h \
 	weapon.c \

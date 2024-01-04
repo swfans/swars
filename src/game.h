@@ -154,36 +154,6 @@ enum PurpleDrawType {
 
 struct Thing;
 
-typedef struct {
-  char field_0[15];
-  char field_F;
-} PrimFaceTexture;
-
-typedef struct {
-  char field_0[17];
-  char field_11;
-} Prim4Texture;
-
-typedef struct {
-  char field_0[35];
-  char field_23;
-} PrimObject;
-
-typedef struct {
-  char field_0[39];
-  char field_27;
-} PrimObjectFace4;
-
-typedef struct {
-  char field_0[31];
-  char field_1F;
-} PrimObjectFace;
-
-typedef struct {
-  char field_0[9];
-  char field_9;
-} PrimObjectPoint;
-
 struct ScreenPoint {
 	short X;
 	short Y;
@@ -290,207 +260,9 @@ struct SynTime {
     ubyte Year;
 };
 
-struct SingleObject { // sizeof=36
-  ushort StartFace;
-  ushort NumbFaces;
-  ushort NextObject;
-  ushort StartFace4;
-  ushort NumbFaces4;
-  ushort ZScale;
-  short OffsetX;
-  short OffsetY;
-  short OffsetZ;
-  short ObjectNo;
-  short MapX;
-  short MapZ;
-  ushort StartPoint;
-  ushort EndPoint;
-  ubyte field_1C[7];
-  ubyte field_23;
-};
-
-struct SingleFloorTexture { // sizeof=18
-    ubyte TMapX1;
-    ubyte TMapY1;
-    ubyte TMapX2;
-    ubyte TMapY2;
-    ubyte TMapX3;
-    ubyte TMapY3;
-    ubyte TMapX4;
-    ubyte TMapY4;
-    ubyte Page;
-    ubyte field_9[3];
-    ubyte field_C[5];
-    ubyte field_11;
-};
-
-struct SingleTexture { // sizeof=16
-    ubyte TMapX1;
-    ubyte TMapY1;
-    ubyte TMapX2;
-    ubyte TMapY2;
-    ubyte TMapX3;
-    ubyte TMapY3;
-    ubyte Page;
-    ubyte padding1;
-    short pal;
-    ubyte field_A[6];
-};
-
-struct SinglePoint { // sizeof=10
-    ushort PointOffset;
-    short X;
-    short Y;
-    short Z;
-    ubyte Pad1;
-    ubyte Flags;
-};
-
-struct SingleObjectFace3 { // sizeof=32
-    short PointNo[3];
-    ushort Texture;
-    ubyte GFlags;
-    ubyte Flags;
-    ushort Object;
-    ubyte field_C;
-    ubyte field_D;
-    short Shade0;
-    short Shade1;
-    short Shade2;
-    ushort Light0;
-    ushort Light1;
-    ushort Light2;
-    ushort FaceNormal;
-    ubyte field_1C[3];
-    ubyte field_1F;
-};
-
-struct SingleObjectFace3OldV7 { // sizeof=48
-    short PointNo[3];
-    ushort Texture;
-    ubyte GFlags;
-    ubyte Flags;
-    ushort Object;
-    ubyte field_C;
-    ubyte field_D;
-    short Shade0;
-    short Shade1;
-    short Shade2;
-    ushort Light0;
-    ushort Light1;
-    ushort Light2;
-    ushort FaceNormal;
-    ubyte field_1C[3];
-    ubyte field_1F;
-    ubyte field_20[16];
-};
-
-struct SingleObjectFace4 { // sizeof=40
-    short PointNo[4];
-    ushort Texture;
-    ubyte GFlags;
-    ubyte Flags;
-    ushort Object;
-    ubyte field_E[2];
-    short Shade0;
-    short Shade1;
-    short Shade2;
-    short Shade3;
-    short Light0;
-    short Light1;
-    short Light2;
-    short Light3;
-    ushort FaceNormal;
-    ubyte field_22[5];
-    ubyte field_27;
-};
-
-struct SingleObjectFace4OldV7 { // sizeof=60
-    short PointNo[4];
-    ushort Texture;
-    ubyte GFlags;
-    ubyte Flags;
-    ushort Object;
-    ubyte field_E[2];
-    short Shade0;
-    short Shade1;
-    short Shade2;
-    short Shade3;
-    short Light0;
-    short Light1;
-    short Light2;
-    short Light3;
-    ushort FaceNormal;
-    ubyte field_22[5];
-    ubyte field_27;
-    ubyte field_28[20];
-};
-
-struct QuickLight { // sizeof=6
-    ushort Ratio;
-    ushort Light;
-    ushort NextQuick;
-};
-
-struct FullLight { // sizeof=32
-    short Intensity;
-    short TrueIntensity;
-    short Command;
-    short NextFull;
-    short X;
-    short Y;
-    short Z;
-    short lgtfld_E;
-    short lgtfld_10;
-    short lgtfld_12;
-    ubyte lgtfld_14[10];
-    ushort Flags;
-};
-
-struct FullLightV12 { // sizeof=20
-    short Intensity;
-    short TrueIntensity;
-    short Command;
-    short NextFull;
-    short X;
-    short Y;
-    short Z;
-    short lgtfld_E;
-    short lgtfld_10;
-    short lgtfld_12;
-};
-
-struct LightCommand { // sizeof=36
-    ubyte lcfld_0[36];
-};
-
-struct Normal { // sizeof=16
-    int NX;
-    int NY;
-    int NZ;
-    int LightRatio;
-};
-
-struct AnimTmap { // sizeof=54
-    ushort Texture;
-    ushort TMap[10];
-    ubyte Delay[10];
-    ushort Flags;
-    ubyte field_22[19];
-    ubyte field_35;
-};
-
 struct BezierPt { // sizeof=28
     ubyte field_0[26];
     ushort field_2A;
-};
-
-struct TrafficNode { // sizeof=36
-    ubyte field_0[18];
-    ubyte field_12;
-    ubyte field_13;
-    ubyte field_14[15];
-    ubyte field_23;
 };
 
 struct MissionStatus { // sizeof=40
@@ -643,44 +415,6 @@ struct SortSprite {
     short Scale;
 };
 
-struct QuickLoad {
-    ushort *Numb;
-    void **Ptr;
-    ushort Size;
-    ushort Extra;
-};
-
-struct TrTriangle {
-    ushort point[3];
-    short tri[3];
-    short jump;
-    ubyte solid;
-    ubyte enter;
-};
-
-struct TrPoint {
-    int x;
-    int y;
-};
-
-struct Triangulation {
-    int tri_allocated;
-    int tri_initialised;
-    int last_tri;
-    int ix_Triangles;
-    int count_Triangles;
-    int free_Triangles;
-    int triangle_top;
-    int max_Triangles;
-    struct TrTriangle *Triangles;
-    int ix_Points;
-    int count_Points;
-    int free_Points;
-    int point_top;
-    int max_Points;
-    struct TrPoint *Points;
-};
-
 #pragma pack()
 
 extern char session_name[20];
@@ -726,7 +460,6 @@ extern void *engine_mem_alloc_ptr;
 
 extern long navi2_unkn_counter;
 extern long navi2_unkn_counter_max;
-extern struct Triangulation triangulation[10];
 
 extern ulong smack_malloc_used_tot;
 extern ubyte anim_slots[];
@@ -737,34 +470,9 @@ extern ubyte *fade_data;
 extern void *dword_1810D1;
 extern ulong dword_1810D5;
 
-extern struct SingleFloorTexture *game_textures;
-extern struct SingleTexture *game_face_textures;
-extern struct SinglePoint *game_object_points;
-extern ushort next_anim_tmap;
-extern ushort next_normal;
-extern ushort next_quick_light;
-extern ushort next_full_light;
 extern ushort word_1531E0;
-extern ushort next_face_texture;
-extern ushort next_floor_texture;
-extern ushort next_object_point;
-extern ushort next_object_face;
-extern ushort next_object_face4;
-extern ushort next_object;
-extern ushort next_traffic_node;
-extern ushort next_light_command;
-extern struct SingleObjectFace3 *game_object_faces;
-extern struct SingleObject *game_objects;
-extern struct QuickLight *game_quick_lights;
-extern struct FullLight *game_full_lights;
-extern struct Normal *game_normals;
-extern ushort next_local_mat;
 extern ushort next_special_face;
 extern ushort next_special_face4;
-extern struct SingleObjectFace4 *game_object_faces4;
-extern struct AnimTmap *game_anim_tmaps;
-extern struct TrafficNode *game_traffic_nodes;
-extern struct LightCommand *game_light_commands;
 extern struct ColVectList *game_col_vects_list;
 extern struct ColVect *game_col_vects;
 extern struct WalkHeader *game_walk_headers;
@@ -780,6 +488,7 @@ extern struct DrawItem *game_draw_list;
 extern struct SortSprite *game_sort_sprites;
 extern struct SortLine *game_sort_lines;
 extern struct UnknBezEdit *bezier_pts;
+extern ushort next_bezier_pt;
 extern ubyte *spare_map_buffer;
 extern struct Objective *game_used_lvl_objectives;
 extern ushort next_used_lvl_objective;
@@ -790,21 +499,6 @@ extern struct TbSprite *pop1_sprites;
 
 extern struct TbSprite *unk2_sprites;
 extern struct TbSprite *unk2_sprites_end;
-
-extern PrimObjectPoint *prim_object_points;
-extern PrimObjectFace *prim_object_faces;
-extern PrimObjectFace4 *prim_object_faces4;
-extern PrimObject *prim_objects;
-extern Prim4Texture *prim4_textures;
-extern PrimFaceTexture *prim_face_textures;
-
-extern ushort prim_object_points_count;
-extern ushort prim_object_faces_count;
-extern ushort prim_object_faces4_count;
-extern ushort prim_objects_count;
-extern ushort prim4_textures_count;
-extern ushort prim_face_textures_count;
-extern ushort prim_unknprop01;
 
 extern ubyte byte_1C4A7C;
 extern ubyte byte_1C4A9F;
@@ -853,6 +547,9 @@ extern long outro_unkn03;
 extern long people_groups_count;
 extern long data_1ddb68;
 extern ubyte byte_1DDC40;
+
+extern void *dword_177750;
+extern void *unkn_mech_arr7;
 
 extern char *people_credits_desc[];
 extern char *people_credits_groups[];
@@ -1022,7 +719,12 @@ void campaign_new_game_prepare(void);
 void process_sound_heap(void);
 void update_danger_music(ubyte a1);
 ushort my_draw_text(short x, short y, const char *text, ushort startline);
+
+void unkn_buildings_processing(void);
+void unkn_lights_processing(void);
 void bang_set_detail(int a1);
+void init_free_explode_faces(void);
+int sub_73C64(char *a1, ubyte a2);
 
 #ifdef __cplusplus
 };

@@ -39,6 +39,11 @@
 #include "bflib_joyst.h"
 #include "matrix.h"
 #include "drawtext.h"
+#include "enginlights.h"
+#include "enginpriobjs.h"
+#include "enginpritxtr.h"
+#include "enginsngobjs.h"
+#include "enginsngtxtr.h"
 #include "engintrns.h"
 #include "game_data.h"
 #include "guiboxes.h"
@@ -59,8 +64,10 @@
 #include "building.h"
 #include "campaign.h"
 #include "cybmod.h"
+#include "pathtrig.h"
 #include "pepgroup.h"
 #include "lvobjctv.h"
+#include "lvfiles.h"
 #include "bigmap.h"
 #include "display.h"
 #include "dos.h"
@@ -121,7 +128,6 @@ struct PacketFileHead {
 
 struct Element;
 struct Frame;
-struct Path;
 
 #pragma pack()
 
@@ -200,8 +206,6 @@ extern ubyte byte_18110E[40];
 
 extern long dword_176CC4;
 extern ushort unkn3de_len;
-extern void *dword_177750;
-extern void *unkn_mech_arr7;
 
 extern long dword_19F4F8;
 
@@ -231,9 +235,6 @@ extern long nav_stats__ThisTurn;
 extern long gamep_unknval_14;
 extern long gamep_unknval_15;
 extern long gamep_unknval_16;
-
-extern long selected_triangulation_no; // = -1;
-extern long tri_module_init;
 
 extern ubyte player_unkn0C9[8];
 extern char player_unknCC9[8][128];
@@ -265,8 +266,6 @@ const char *miss_end_sta_names[] = {
   "imm. next after success",
   "",
 };
-
-extern struct QuickLoad quick_load_pc[19];
 
 struct TbLoadFiles unk02_load_files[] =
 {
@@ -494,34 +493,6 @@ void read_textwalk(void)
         LbFileRead(handle, textwalk_data, 640);
         LbFileClose(handle);
     }
-}
-
-void read_primveh_obj(const char *fname, int a2)
-{
-    long firstval;
-    TbFileHandle fh;
-
-    fh = LbFileOpen(fname, Lb_FILE_MODE_READ_ONLY);
-    if ( fh == INVALID_FILE )
-        return;
-    LbFileRead(fh, &firstval, sizeof(long));
-    if ( firstval != 1 )
-    {
-      LbFileRead(fh, &prim_object_points_count, sizeof(ushort));
-      LbFileRead(fh, &prim_object_faces_count, sizeof(ushort));
-      LbFileRead(fh, &prim_object_faces4_count, sizeof(ushort));
-      LbFileRead(fh, &prim_objects_count, sizeof(ushort));
-      LbFileRead(fh, &prim4_textures_count, sizeof(ushort));
-      LbFileRead(fh, &prim_face_textures_count, sizeof(ushort));
-      LbFileRead(fh, &prim_unknprop01, sizeof(ushort));
-      LbFileRead(fh, prim_object_points, sizeof(PrimObjectPoint) * prim_object_points_count);
-      LbFileRead(fh, prim_object_faces, sizeof(PrimObjectFace) * prim_object_faces_count);
-      LbFileRead(fh, prim_object_faces4, sizeof(PrimObjectFace4) * prim_object_faces4_count);
-      LbFileRead(fh, prim_objects, sizeof(PrimObject) * prim_objects_count);
-      LbFileRead(fh, prim4_textures, sizeof(Prim4Texture) * prim4_textures_count);
-      LbFileRead(fh, prim_face_textures, sizeof(PrimFaceTexture) * prim_face_textures_count);
-    }
-    LbFileClose(fh);
 }
 
 void load_prim_quad(void)
@@ -1381,174 +1352,6 @@ void level_misc_update(void)
         :  :  : "eax" );
 }
 
-void load_map_bnb(int a1)
-{
-    asm volatile ("call ASM_load_map_bnb\n"
-        : : "a" (a1));
-}
-
-void path_init8_unkn3(struct Path *path, int ax8, int ay8, int bx8, int by8, int a6)
-{
-    asm volatile (
-      "push %5\n"
-      "push %4\n"
-      "call ASM_path_init8_unkn3\n"
-        : : "a" (path), "d" (ax8), "b" (ay8), "c" (bx8), "g" (by8), "g" (a6));
-}
-
-int triangle_findSE8(int x, int y)
-{
-    int ret;
-    asm volatile ("call ASM_triangle_findSE8\n"
-        : "=r" (ret) : "a" (x), "d" (y));
-    return ret;
-}
-
-void triangulation_select(int tgnNo)
-{
-    asm volatile ("call ASM_triangulation_select\n"
-        : : "a" (tgnNo));
-}
-
-void new_thing_type10_clone(struct SimpleThing *p_clsthing)
-{
-    asm volatile ("call ASM_new_thing_type10_clone\n"
-        : : "a" (p_clsthing));
-}
-
-short new_thing_smoke_gen_clone(struct SimpleThing *p_clsthing)
-{
-    struct SimpleThing *p_sthing;
-    short thing;
-
-    thing = add_static(p_clsthing->X >> 8, p_clsthing->Y, p_clsthing->Z >> 8,
-      0, p_clsthing->Timer1);
-    p_sthing = &sthings[thing];
-    p_sthing->Type = SmTT_SMOKE_GENERATOR;
-    p_sthing->U.UEffect.VX = p_clsthing->U.UEffect.VX;
-    p_sthing->U.UEffect.VY = p_clsthing->U.UEffect.VY;
-    p_sthing->U.UEffect.VZ = p_clsthing->U.UEffect.VZ;
-    p_sthing->StartTimer1 = p_clsthing->StartTimer1;
-    p_sthing->U.UEffect.OX = p_clsthing->U.UEffect.OX;
-    p_sthing->U.UEffect.OY = p_clsthing->U.UEffect.OY;
-    p_sthing->U.UEffect.OZ = p_clsthing->U.UEffect.OZ;
-    return thing;
-}
-
-short new_thing_static_clone(struct SimpleThing *p_clsthing)
-{
-    struct SimpleThing *p_sthing;
-    short thing;
-    ushort frame;
-
-    thing = add_static(p_clsthing->X >> 8, p_clsthing->Y, p_clsthing->Z >> 8,
-      p_clsthing->StartFrame + 1, p_clsthing->Timer1);
-    p_sthing = &sthings[thing];
-    p_sthing->U.UEffect.VZ = p_clsthing->U.UEffect.VZ;
-    frame = p_sthing->StartFrame;
-    if (frame != 999 && frame != 1002 && frame != 1004 && frame != 1008 &&
-      frame != 1032 && frame != 1037 && frame != 1038 && frame != 1050) {
-        p_sthing->SubType = 2;
-    } else {
-        p_sthing->SubType = 1;
-        p_sthing->Radius = 128;
-    }
-    return thing;
-}
-
-short new_thing_building_clone(struct Thing *p_clthing, struct M33 *p_clmat, short shut_h)
-{
-    struct Thing *p_thing;
-    struct SingleObject *p_sobj;
-    int i;
-
-    p_thing = create_building_thing(p_clthing->X >> 8, p_clthing->Y, p_clthing->Z >> 8,
-            p_clthing->U.UObject.Object, p_clthing->U.UObject.NumbObjects, p_clthing->ThingOffset);
-
-    p_thing->U.UObject.Token = p_clthing->U.UObject.Token;
-    p_thing->U.UObject.TokenDir = p_clthing->U.UObject.TokenDir;
-    p_thing->U.UObject.NextThing = p_clthing->U.UObject.NextThing;
-    p_thing->U.UObject.PrevThing = p_clthing->U.UObject.PrevThing;
-    p_thing->U.UObject.OffX = p_clthing->U.UObject.OffX;
-    p_thing->U.UObject.OffZ = p_clthing->U.UObject.OffZ;
-    p_thing->ThingOffset = p_clthing->ThingOffset;
-    p_thing->Flag = p_clthing->Flag;
-    p_thing->VX = p_clthing->VX;
-    p_thing->VY = p_clthing->VY;
-    p_thing->VZ = p_clthing->VZ;
-    p_thing->SubType = p_clthing->SubType;
-
-    // Copy 8 bytes _after_ UObject.DrawTurn (is anything really there?)
-    for (i = 1; i < 3; i++) {
-        *(&p_thing->U.UObject.DrawTurn + i) = *(&p_clthing->U.UObject.DrawTurn + i);
-    }
-    p_sobj = &game_objects[p_clthing->U.UObject.Object];
-    p_thing->U.UObject.MinY[0] = p_sobj->OffsetY - 500;
-    p_thing->U.UObject.MaxY[0] = p_sobj->OffsetY;
-    
-    // Copy 20 bytes from UObject.Turn (why in a loop instead of assigning separate fields? is there an array?)
-    for (i = 0; i < 10; i++) {
-        *(&p_thing->U.UObject.Turn + i) = *(&p_clthing->U.UObject.Turn + i);
-    }
-
-    ubyte styp;
-    styp = p_thing->SubType;
-    if (styp == SubTT_BLD_SHUTLDR)
-    {
-        if (((p_thing->Flag & 0x0001) == 0)
-          && (p_thing->U.UObject.PrevThing == 0 || p_thing->U.UObject.NextThing == 0))
-        {
-            p_thing->VX = p_thing->X >> 16;
-            p_thing->VZ = p_thing->Z >> 16;
-            p_thing->Flag |= 0x01;
-        }
-        if (shut_h < 15)
-            p_thing->Y >>= 3;
-    }
-    else if (styp == SubTT_BLD_MGUN)
-    {
-        p_thing->U.UMGun.MatrixIndex = next_local_mat;
-        next_local_mat++;
-        if (p_clmat != NULL)
-            memcpy(&local_mats[p_thing->U.UMGun.MatrixIndex], p_clmat, sizeof(struct M33));
-        else
-            matrix_identity_fill(&local_mats[p_thing->U.UMGun.MatrixIndex]);
-        p_thing->U.UMGun.AngleX = 1024;
-        p_thing->U.UMGun.AngleY = 0;
-        p_thing->Radius = 256;
-        p_thing->U.UMGun.RecoilTimer = 0;
-        p_thing->U.UMGun.MaxHealth = 6000;
-        p_thing->U.UMGun.RecoilTimer = 0;
-        p_thing->Health = p_thing->U.UMGun.MaxHealth;
-    }
-    else if (styp >= SubTT_BLD_36 && styp <= SubTT_BLD_37)
-    {
-        p_thing->U.UObject.MatrixIndex = next_local_mat;
-        next_local_mat++;
-        if (p_clmat != NULL)
-            memcpy(&local_mats[p_thing->U.UObject.MatrixIndex], p_clmat, sizeof(struct M33));
-        else
-            matrix_identity_fill(&local_mats[p_thing->U.UObject.MatrixIndex]);
-        p_thing->Flag |= 0x1000;
-    }
-    p_thing->SubState = p_clthing->SubState;
-    p_thing->Timer1 = p_clthing->Timer1;
-
-    // Should be have a separate UGate struct?
-    if (styp >= SubTT_BLD_GATE && styp <= SubTT_BLD_26
-      && p_thing->U.UObject.MinY[0] == *(ushort *)&p_thing->U.UObject.Group )
-    {
-        p_thing->U.UObject.MinY[0] = -500;
-        p_thing->U.UObject.MaxY[0] = 0;
-    }
-    p_thing->State = p_clthing->State;
-    if (p_thing->State == 9)
-        p_thing->State = 0;
-    p_thing->Frame = p_clthing->Frame;
-
-    return p_thing->ThingOffset;
-}
-
 int sub_73C64(char *a1, ubyte a2)
 {
     char ret;
@@ -1567,478 +1370,6 @@ void unkn_lights_processing(void)
 {
     asm volatile ("call ASM_unkn_lights_processing\n"
         :  :  : "eax" );
-}
-
-/** Maps fields from old FullLight struct to the current one.
- */
-void refresh_old_full_light_format(struct FullLight *p_fulight, struct FullLightV12 *p_oldfulight, ulong fmtver)
-{
-    LbMemorySet(p_fulight, 0, sizeof(struct FullLight));
-
-    p_fulight->Intensity = p_oldfulight->Intensity;
-    p_fulight->TrueIntensity = p_oldfulight->TrueIntensity;
-    p_fulight->Command = p_oldfulight->Command;
-    p_fulight->NextFull = p_oldfulight->NextFull;
-    p_fulight->X = p_oldfulight->X;
-    p_fulight->Y = p_oldfulight->Y;
-    p_fulight->Z = p_oldfulight->Z;
-    p_fulight->lgtfld_E = p_oldfulight->lgtfld_E;
-    p_fulight->lgtfld_10 = p_oldfulight->lgtfld_10;
-    p_fulight->lgtfld_12 = p_oldfulight->lgtfld_12;
-
-    if (fmtver <= 11) {
-        p_fulight->TrueIntensity = p_fulight->Intensity;
-    }
-}
-
-/** Maps fields from old SingleObjectFace3 struct to the current one.
- */
-void refresh_old_object_face_format(struct SingleObjectFace3 *p_objface, struct SingleObjectFace3OldV7 *p_oldobjface, ulong fmtver)
-{
-    //TODO make sane matching for old fields
-    LbMemoryCopy(p_objface, p_oldobjface, 32);
-}
-
-/** Maps fields from old SingleObjectFace4 struct to the current one.
- */
-void refresh_old_object_face4_format(struct SingleObjectFace4 *p_objface4, struct SingleObjectFace4OldV7 *p_oldobjface4, ulong fmtver)
-{
-    //TODO make sane matching for old fields
-    LbMemoryCopy(p_objface4, p_oldobjface4, 40);
-}
-
-void load_map_dat_pc_handle(TbFileHandle fh)
-{
-    ulong fmtver;
-    ushort num_sthings, num_things;
-    short i;
-
-    LbFileRead(fh, &fmtver, sizeof(fmtver));
-    if (fmtver >= 19)
-    {
-        assert(sizeof(struct MyMapElement) == 18);
-        LbFileRead(fh, game_my_big_map, sizeof(struct MyMapElement) * 128 * 128);
-    }
-    else
-    {
-        struct MyMapElementOldV7 old_my_map_el;
-        assert(sizeof(old_my_map_el) == 24);
-        for (i = 0; i < 128 * 128; i++) {
-            LbFileRead(fh, &old_my_map_el, sizeof(old_my_map_el));
-            refresh_old_my_big_map_format(&game_my_big_map[i], &old_my_map_el, fmtver);
-        }
-    }
-    {
-        LbFileRead(fh, &next_floor_texture, sizeof(next_floor_texture));
-        LbFileRead(fh, game_textures, sizeof(struct SingleFloorTexture) * next_floor_texture);
-    }
-    {
-        LbFileRead(fh, &next_face_texture, sizeof(next_face_texture));
-        LbFileRead(fh, game_face_textures, sizeof(struct SingleTexture) * next_face_texture);
-    }
-    {
-        LbFileRead(fh, &next_object_point, sizeof(next_object_point));
-        LbFileRead(fh, game_object_points, sizeof(struct SinglePoint) * next_object_point);
-    }
-    if (fmtver >= 19)
-    {
-        LbFileRead(fh, &next_object_face, sizeof(next_object_face));
-        assert(sizeof(struct SingleObjectFace3) == 32);
-        LbFileRead(fh, game_object_faces, sizeof(struct SingleObjectFace3) * next_object_face);
-    }
-    else
-    {
-        struct SingleObjectFace3OldV7 old_object_face;
-        LbFileRead(fh, &next_object_face, sizeof(next_object_face));
-        assert(sizeof(old_object_face) == 48);
-        for (i = 0; i < next_object_face; i++) {
-            LbFileRead(fh, &old_object_face, sizeof(old_object_face));
-            refresh_old_object_face_format(&game_object_faces[i], &old_object_face, fmtver);
-        }
-    }
-    {
-        LbFileRead(fh, &next_object, sizeof(next_object));
-        LbFileRead(fh, game_objects, sizeof(struct SingleObject) * next_object);
-    }
-    {
-        LbFileRead(fh, &next_quick_light, sizeof(next_quick_light));
-        LbFileRead(fh, game_quick_lights, sizeof(struct QuickLight) * next_quick_light);
-    }
-    if (fmtver >= 14)
-    {
-        LbFileRead(fh, &next_full_light, sizeof(next_full_light));
-        assert(sizeof(struct FullLight) == 32);
-        LbFileRead(fh, game_full_lights, sizeof(struct FullLight) * next_full_light);
-    }
-    else
-    {
-        struct FullLightV12 old_full_light;
-        LbFileRead(fh, &next_full_light, sizeof(next_full_light));
-        assert(sizeof(old_full_light) == 40);
-        for (i = 0; i < next_full_light; i++) {
-            LbFileRead(fh, &old_full_light, sizeof(old_full_light));
-            refresh_old_full_light_format(&game_full_lights[i], &old_full_light, fmtver);
-        }
-    }
-    {
-        LbFileRead(fh, &next_normal, sizeof(next_normal));
-        LbFileRead(fh, game_normals, sizeof(struct Normal) * next_normal);
-    }
-    if (fmtver >= 19)
-    {
-        LbFileRead(fh, &next_object_face4, sizeof(next_object_face4));
-        assert(sizeof(struct SingleObjectFace4) == 40);
-        LbFileRead(fh, game_object_faces4, sizeof(struct SingleObjectFace4) * next_object_face4);
-    }
-    else if (fmtver >= 7)
-    {
-        struct SingleObjectFace4OldV7 old_object_face4;
-        LbFileRead(fh, &next_object_face4, sizeof(next_object_face4));
-        assert(sizeof(old_object_face4) == 60);
-        for (i = 0; i < next_object_face4; i++) {
-            LbFileRead(fh, &old_object_face4, sizeof(old_object_face4));
-            refresh_old_object_face4_format(&game_object_faces4[i], &old_object_face4, fmtver);
-        }
-    }
-    else
-    {
-        next_object_face4 = 1;
-    }
-    LOGSYNC("stats: object_faces=%hu objects=%hu quick_lights=%hu full_lights=%hu normals=%hu object_faces4=%hu",
-      next_object_face, next_object, next_quick_light, next_full_light, next_normal, next_object_face4);
-
-    clear_mapwho_on_whole_map();
-
-    if (fmtver >= 5)
-    {
-        struct SimpleThing loc_sthing;
-
-        LbFileRead(fh, &num_sthings, sizeof(num_sthings));
-        assert(sizeof(struct SimpleThing) == 60);
-        for (i = num_sthings - 1; i != -1; i--)
-        {
-          LbFileRead(fh, &loc_sthing, sizeof(struct SimpleThing));
-          switch (loc_sthing.Type)
-          {
-          case TT_UNKN10:
-              new_thing_type10_clone(&loc_sthing);
-              break;
-          case SmTT_SMOKE_GENERATOR:
-              new_thing_smoke_gen_clone(&loc_sthing);
-              break;
-          case SmTT_STATIC:
-              new_thing_static_clone(&loc_sthing);
-              break;
-          default:
-                break;
-          }
-        }
-    }
-    else
-    {
-        num_sthings = 0;
-    }
-
-    if (fmtver >= 6)
-    {
-        LbFileRead(fh, &next_anim_tmap, sizeof(next_anim_tmap));
-        assert(sizeof(struct AnimTmap) == 54);
-        LbFileRead(fh, game_anim_tmaps, sizeof(struct AnimTmap) * next_anim_tmap);
-    }
-    else
-    {
-        next_anim_tmap = 1;
-        game_anim_tmaps[1].Texture = 0;
-    }
-
-    if (fmtver >= 19)
-    {
-        ushort num_things;
-        struct Thing loc_thing;
-        struct M33 loc_mat;
-        short shut_h;
-
-        shut_h = 100;
-        LbFileRead(fh, &num_things, sizeof(num_things));
-        assert(sizeof(struct Thing) == 168);
-        for (i = num_things - 1; i > -1; i--)
-        {
-            LbFileRead(fh, &loc_thing, sizeof(struct Thing));
-            if (loc_thing.U.UObject.Object <= 0) {
-                LOGWARN("object <=0 %d  c0 %hd x %hd z %hd",
-                  (int)loc_thing.U.UObject.Object, i,
-                  loc_thing.X, loc_thing.Z);
-                continue;
-            }
-            switch (loc_thing.SubType)
-            {
-            case SubTT_BLD_36:
-            case SubTT_BLD_37:
-                LbFileRead(fh, &loc_mat, sizeof(struct M33));
-                new_thing_building_clone(&loc_thing, &loc_mat, shut_h);
-                break;
-            default:
-                new_thing_building_clone(&loc_thing, NULL, shut_h);
-                break;
-            }
-        }
-    }
-    else if (fmtver >= 8)
-    {
-        struct Thing loc_thing;
-        struct ThingOldV9 old_thing;
-
-        LbFileRead(fh, &num_things, sizeof(num_things));
-        assert(sizeof(old_thing) == 216);
-        for (i = num_things - 1; i > -1; i--)
-        {
-            struct SingleObject *p_sobj;
-
-            LbFileRead(fh, &old_thing, sizeof(old_thing));
-            //TODO map fmtver is unlikely to match level fmtver
-            refresh_old_thing_format(&loc_thing, &old_thing, fmtver);
-            if (loc_thing.U.UObject.Object <= 0) {
-                LOGWARN("object <=0 %d  c0 %hd x %hd z %hd",
-                  (int)loc_thing.U.UObject.Object, i,
-                  loc_thing.X, loc_thing.Z);
-                continue;
-            }
-            p_sobj = &game_objects[loc_thing.U.UObject.Object];
-            if (p_sobj->OffsetY == 32000) {
-                continue;
-            }
-            new_thing_building_clone(&loc_thing, NULL, 100);
-        }
-    }
-    else
-    {
-        num_things = 0;
-    }
-
-    if (fmtver >= 6)
-    {
-        LbFileRead(fh, &next_traffic_node, sizeof(next_traffic_node));
-        assert(sizeof(struct TrafficNode) == 36);
-        LbFileRead(fh, game_traffic_nodes, sizeof(struct TrafficNode) * next_traffic_node);
-    }
-    else
-    {
-        next_traffic_node = 1;
-    }
-
-    if (fmtver >= 12)
-    {
-        LbFileRead(fh, &next_light_command, sizeof(next_light_command));
-        assert(sizeof(struct LightCommand) == 36);
-        LbFileRead(fh, game_light_commands, sizeof(struct LightCommand) * next_light_command);
-    }
-    else
-    {
-       next_light_command = 1;
-    }
-    if (fmtver >= 13)
-    {
-        LbFileRead(fh, &next_bezier_pt, sizeof(next_bezier_pt));
-        assert(sizeof(struct BezierPt) == 28);
-        LbFileRead(fh, bezier_pts, sizeof(struct BezierPt) * next_bezier_pt);
-    }
-    else
-    {
-        next_bezier_pt = 1;
-    }
-    LOGSYNC("stats: sthings=%hu things=%hu traffic_nodes=%hu light_commands=%hu bezier_pts=%hu",
-      num_sthings, num_things, next_traffic_node, next_light_command, next_bezier_pt);
-}
-
-void load_mad_pc_buffer(ubyte *mad_ptr, long rdsize)
-{
-    short shut_h;
-    ulong fmtver;
-    short i;
-
-    shut_h = 100;
-    fmtver = *(ulong *)mad_ptr;
-    mad_ptr += 4;
-
-    if (fmtver != 1) {
-        LOGWARN("Unexpected MAD version %lu", fmtver);
-    }
-
-    // Set amounts of quick_load array items
-    for (i = 0; quick_load_pc[i].Size != 0; i++)
-    {
-        ushort *p_numb;
-        p_numb = quick_load_pc[i].Numb;
-        if (p_numb != NULL) {
-            *p_numb = *(ushort *)mad_ptr;
-            mad_ptr += 2;
-        }
-    }
-    // Set data pointers within the quick_load items
-    for (i = 0; quick_load_pc[i].Size != 0; i++)
-    {
-        int entsize, nentries;
-        ushort *p_numb;
-        *quick_load_pc[i].Ptr = mad_ptr;
-        p_numb = quick_load_pc[i].Numb;
-        if (p_numb != NULL) {
-            entsize = quick_load_pc[i].Size;
-            nentries = quick_load_pc[i].Extra + *p_numb;
-        } else {
-            nentries = quick_load_pc[i].Size;
-            entsize = quick_load_pc[i].Extra;
-        }
-        mad_ptr += nentries * entsize + 2;
-    }
-    // Update mem_game[] to the new amounts
-    for (i = 1; i < 17; i++)
-    {
-        ushort *p_numb;
-        p_numb = quick_load_pc[i].Numb;
-        mem_game[i].N = quick_load_pc[i].Extra + *p_numb;
-    }
-
-    memcpy(&selected_triangulation_no, mad_ptr, sizeof(selected_triangulation_no));
-    mad_ptr += sizeof(selected_triangulation_no);
-    memcpy(&tri_module_init, mad_ptr, sizeof(tri_module_init));
-    mad_ptr += sizeof(tri_module_init);
-    memcpy(triangulation, mad_ptr, sizeof(struct Triangulation) * 4);
-    mad_ptr += sizeof(struct Triangulation) * 4;
-    triangulation[0].Triangles = (struct TrTriangle *)mad_ptr;
-    mad_ptr += sizeof(struct TrTriangle) * triangulation[0].max_Triangles;
-    triangulation[1].Triangles = (struct TrTriangle *)mad_ptr;
-    mad_ptr += sizeof(struct TrTriangle) * triangulation[1].max_Triangles;
-    triangulation[2].Triangles = (struct TrTriangle *)mad_ptr;
-    mad_ptr += sizeof(struct TrTriangle) * triangulation[2].max_Triangles;
-    triangulation[3].Triangles = (struct TrTriangle *)mad_ptr;
-    mad_ptr += sizeof(struct TrTriangle) * triangulation[3].max_Triangles;
-    triangulation[0].Points = (struct TrPoint *)mad_ptr;
-    mad_ptr += sizeof(struct TrPoint) * triangulation[0].max_Points;
-    triangulation[1].Points = (struct TrPoint *)mad_ptr;
-    mad_ptr += sizeof(struct TrPoint) * triangulation[1].max_Points;
-    triangulation[2].Points = (struct TrPoint *)mad_ptr;
-    mad_ptr += sizeof(struct TrPoint) * triangulation[2].max_Points;
-    triangulation[3].Points = (struct TrPoint *)mad_ptr;
-    mad_ptr += sizeof(struct TrPoint) * triangulation[3].max_Points;
-
-    clear_mapwho_on_whole_map();
-
-    ushort num_sthings;
-    struct SimpleThing *p_clsthing;
-
-    dword_177750 = mad_ptr;
-    num_sthings = *(ushort *)mad_ptr;
-    mad_ptr += 2;
-    for (i = num_sthings - 1; i > -1; i--)
-    {
-        p_clsthing = (struct SimpleThing *)mad_ptr;
-        mad_ptr += sizeof(struct SimpleThing);
-        switch (p_clsthing->Type)
-        {
-        case TT_UNKN10:
-            new_thing_type10_clone(p_clsthing);
-            break;
-        case SmTT_SMOKE_GENERATOR:
-            new_thing_smoke_gen_clone(p_clsthing);
-            break;
-        case SmTT_STATIC:
-            new_thing_static_clone(p_clsthing);
-            break;
-        default:
-              break;
-        }
-    }
-
-    ushort num_things;
-    struct Thing *p_clthing;
-
-    num_things = *(ushort *)mad_ptr;
-    mad_ptr += 2;
-    for (i = num_things - 1; i > -1; i--)
-    {
-        p_clthing = (struct Thing *)mad_ptr;
-        mad_ptr += sizeof(struct Thing);
-        if (p_clthing->U.UObject.Object <= 0)
-            continue;
-        switch (p_clthing->SubType)
-        {
-        case SubTT_BLD_36:
-        case SubTT_BLD_37:
-            new_thing_building_clone(p_clthing, (struct M33 *)mad_ptr, shut_h);
-            mad_ptr += sizeof(struct M33);
-            break;
-        default:
-            new_thing_building_clone(p_clthing, NULL, shut_h);
-            break;
-        }
-    }
-
-    if (mad_ptr - (ubyte *)dword_177750 >= 100000)
-        unkn_mech_arr7 = mad_ptr;
-    else
-        unkn_mech_arr7 = dword_177750 + 100000;
-}
-
-TbResult load_map_dat(ushort mapno)
-{
-    char dat_fname[52];
-    TbFileHandle fh;
-
-    next_local_mat = 1;
-
-    sprintf(dat_fname, "%s/map%03d.dat", "maps", mapno);
-    fh = LbFileOpen(dat_fname, Lb_FILE_MODE_READ_ONLY);
-    if (fh == INVALID_FILE) {
-        return Lb_FAIL;
-    }
-    load_map_dat_pc_handle(fh);
-    LbFileClose(fh);
-
-    return Lb_SUCCESS;
-}
-
-TbResult load_map_mad(ushort mapno)
-{
-    char mad_fname[52];
-    long fsize;
-
-    next_local_mat = 1;
-
-    sprintf(mad_fname, "%s/map%03d.mad", "maps", mapno);
-    fsize = LbFileLoadAt(mad_fname, scratch_malloc_mem);
-    if (fsize == Lb_FAIL)
-        return Lb_FAIL;
-
-    load_mad_pc_buffer(scratch_malloc_mem, fsize);
-
-    unkn_buildings_processing();
-    unkn_lights_processing();
-    triangulation_select(1);
-
-    return Lb_SUCCESS;
-}
-
-TbResult load_mad_pc(ushort mapno)
-{
-#if 0
-    asm volatile ("call ASM_load_mad_pc\n"
-        : : "a" (mapno));
-    return Lb_SUCCESS;
-#else
-    TbResult ret;
-
-    LbMouseChangeSprite(NULL);
-    ingame.Flags |= GamF_Unkn00010000;
-    init_free_explode_faces();
-    if (mapno != 0) {
-        load_map_bnb(mapno);
-        ret = load_map_mad(mapno);
-    } else {
-        ret = Lb_OK;
-    }
-    sub_73C64("", 1);
-    return ret;
-#endif
 }
 
 void unkn_object_shift_03(ushort objectno)
@@ -2563,6 +1894,7 @@ TbBool is_unkn_current_player(void)
 
 void change_current_map(ushort mapno)
 {
+    LbMouseChangeSprite(NULL);
     current_map = mapno;
     init_things();
     load_mad_pc(mapno);
