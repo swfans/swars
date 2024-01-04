@@ -62,12 +62,10 @@ InstallDir "$PROGRAMFILES\Syndicate Wars\"
 !endif
 
 
-;!define PRODUCT_VERSION "0.3.3.1473"
 !define MUI_ICON "swars.ico"
 !define MUI_WELCOMEFINISHPAGE_BITMAP "${BUILDENV_UTIL_DIR}\win.bmp"
 !define MUI_WELCOMEPAGE_TITLE "Welcome To The Syndicate Wars Port Setup"
-!define MUI_WELCOMEPAGE_TEXT "This fan port requires the original Syndicate Wars game files. Installation is supported from the following versions of Syndicate Wars:$\r$\n$\r$\n * GOG Download version$\r$\n * Original European/USA DOS release CD$\r$\n * German DOS release CD$\r$\n * Japanese Windows release CD$\r$\n$\r$\nNote: While the Japanese version is supported, only English and French languages from this release are supported, Japanese text is not yet supported.$\r$\n$\r$\n$\r$\n$\r$\nBuild ${PRODUCT_VERSION}"
-
+!define MUI_WELCOMEPAGE_TEXT "This fan port requires the original Syndicate Wars game files. Installation is supported from the following versions of Syndicate Wars:$\r$\n$\r$\n * GOG Download version$\r$\n * Original European/USA DOS release CD$\r$\n * German DOS release CD$\r$\n * Korean DOS release CD$\r$\n * Japanese Windows release CD$\r$\n$\r$\nNote: While the Japanese version is supported, only English and French languages from this release are supported, Japanese text is not yet supported.$\r$\n$\r$\n$\r$\nBuild ${PRODUCT_VERSION}"
 
 
 ; --------------------
@@ -133,6 +131,7 @@ Section "Syndicate Wars Game" Section_0
   File /r "${BUILDENV_PKG_DIR}\language\"
   WriteUninstaller $INSTDIR\Uninstall.exe
   StrCmp $selected_menu_shortcut 1 0 inst_game_menu_end
+  SetOutPath $INSTDIR
   CreateDirectory "$SMPROGRAMS\Vexillium"
   CreateShortCut "$SMPROGRAMS\Vexillium\Syndicate Wars.lnk" "$INSTDIR\swars.exe" "" "$INSTDIR\swars.exe" "" SW_SHOWNORMAL
   CreateShortCut "$SMPROGRAMS\Vexillium\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" "" SW_SHOWNORMAL
@@ -450,6 +449,7 @@ Function CopyGameFilesFromCD
     CopyFiles /SILENT $gog_path\SWARS\data\* $INSTDIR\data
     CreateDirectory $INSTDIR\qdata
     CopyFiles /SILENT $gog_path\SWARS\qdata\* $INSTDIR\qdata
+	Delete $INSTDIR\qdata\INTRO.SMK
     CreateDirectory $INSTDIR\intro
     CopyFiles /SILENT $gog_path\SWARS\qdata\INTRO.SMK $INSTDIR\intro
     CreateDirectory $INSTDIR\sound
@@ -473,7 +473,7 @@ Function CopyGameFilesFromCD
     nsExec::ExecToLog "Gogisoripper.exe $\"$gog_path\SWARS\game.gog$\" $\"$INSTDIR\music\track_1.wav$\" 456262128 556118288"
     nsExec::ExecToLog "Gogisoripper.exe $\"$gog_path\SWARS\game.gog$\" $\"$INSTDIR\music\track_2.wav$\" 556118288 661238576"
     nsExec::ExecToLog "Gogisoripper.exe $\"$gog_path\SWARS\game.gog$\" $\"$INSTDIR\music\track_3.wav$\" 661238576 768718320"
-    DetailPrint "Coverting .wav files to .ogg"
+    DetailPrint "Converting .wav files to .ogg"
     ExecWait "$PLUGINSDIR\oggenc.exe -b 192 --output=$\"$INSTDIR\music\track_1.ogg$\" $\"$INSTDIR\music\track_1.wav$\""
     ExecWait "$PLUGINSDIR\oggenc.exe -b 192 --output=$\"$INSTDIR\music\track_2.ogg$\" $\"$INSTDIR\music\track_2.wav$\""
     ExecWait "$PLUGINSDIR\oggenc.exe -b 192 --output=$\"$INSTDIR\music\track_3.ogg$\" $\"$INSTDIR\music\track_3.wav$\""
@@ -486,7 +486,9 @@ Function CopyGameFilesFromCD
 
 copy_files_fail:
   SetErrors
-  Return
+  DetailPrint "Error copying files, check this is the correct source disc/path for the game"
+  DetailPrint "Aborting Install"
+  Abort
 
 FunctionEnd
 
