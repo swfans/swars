@@ -66,7 +66,12 @@ extern struct Triangulation triangulation[10];
 extern long selected_triangulation_no; // = -1;
 extern long tri_module_init;
 
+void triangulation_clear(void);
 void triangulation_select(int tgnNo);
+
+void triangulate_map(ubyte *p_map);
+void triangulate_area(ubyte *p_map, int x1, int x2, int y1, int y2);
+
 /******************************************************************************/
 #ifdef __cplusplus
 }

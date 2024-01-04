@@ -18,8 +18,32 @@
 /******************************************************************************/
 #include "pathtrig.h"
 
+#include <stdlib.h>
 #include "swlog.h"
 /******************************************************************************/
+extern int fringe_y[256];
+extern int fringe_x1, fringe_y1, fringe_x2, fringe_y2;
+extern ubyte *fringe_map;
+
+void fringe_init(ubyte *p_map, int x1, int y1, int x2, int y2)
+{
+    int x;
+
+    fringe_map = p_map;
+    fringe_x1 = x1;
+    fringe_y1 = y1;
+    fringe_x2 = x2;
+    fringe_y2 = y2;
+    for (x = x1; x < x2; x++) {
+        fringe_y[x] = y1;
+    }
+}
+
+int fringe_get_rectangle(int *p_x1, int *p_x2, int *p_y1, int *p_y2, ubyte *p_solid)
+{
+    //TODO implement
+    return 0;
+}
 
 void path_init8_unkn3(struct Path *path, int ax8, int ay8, int bx8, int by8, int a6)
 {
@@ -42,6 +66,216 @@ void triangulation_select(int tgnNo)
 {
     asm volatile ("call ASM_triangulation_select\n"
         : : "a" (tgnNo));
+}
+
+long triangle_area1(int tri)
+{
+    struct TrTriangle *p_tri;
+    struct TrPoint *p_point1;
+    struct TrPoint *p_point2;
+    struct TrPoint *p_point3;
+    long long area;
+
+    p_tri = &triangulation[0].Triangles[tri];
+    p_point1 = &triangulation[0].Points[p_tri->point[0]];
+    p_point2 = &triangulation[0].Points[p_tri->point[1]];
+    p_point3 = &triangulation[0].Points[p_tri->point[2]];
+    area = (p_point3->y - p_point1->y) * (p_point2->x - p_point1->x)
+       - (p_point3->x - p_point1->x) * (p_point2->y - p_point1->y);
+    return llabs(area);
+}
+
+void insert_point(int x, int y)
+{
+    //TODO implement
+}
+
+void make_edge(int x1, int y1, int x2, int y2)
+{
+    //TODO implement
+}
+
+int edge_find(int x1, int y1, int v2, int y2, int *ntri1, int *ntri2)
+{
+    //TODO implement
+   return 0;
+}
+
+TbBool tri_point_within_rect_coords(struct TrPoint *p_point, int x1, int y1, int x2, int y2)
+{
+    if (p_point->x >= x1 && p_point->x <= x2)
+    {
+        if (p_point->y >= y1 && p_point->y <= y2)
+            return true;
+    }
+    return false;
+}
+
+TbBool tri_contained_within_rect_coords(struct TrTriangle *p_tri, int x1, int y1, int x2, int y2)
+{
+    struct TrPoint *p_point;
+
+    p_point = &triangulation[0].Points[p_tri->point[0]];
+    if (!tri_point_within_rect_coords(p_point, x1, y1, x2, y2))
+        return false;
+
+    p_point = &triangulation[0].Points[p_tri->point[1]];
+    if (!tri_point_within_rect_coords(p_point, x1, y1, x2, y2))
+        return false;
+
+    p_point = &triangulation[0].Points[p_tri->point[2]];
+    if (!tri_point_within_rect_coords(p_point, x1, y1, x2, y2))
+        return false;
+
+    return true;
+}
+
+void brute_fill_rectangle(int x1, int y1, int x2, int y2, ubyte solid)
+{
+    int tri;
+
+    for (tri = 0; tri < triangulation[0].ix_Triangles; tri++)
+    {
+        struct TrTriangle *p_tri;
+
+        p_tri = &triangulation[0].Triangles[tri];
+        if (p_tri->solid == 255)
+            continue;
+
+        if (!tri_contained_within_rect_coords(p_tri, x1, y1, x2, y2))
+            continue;
+
+        p_tri->solid = solid;
+    }
+}
+
+void fill_rectangle(int x1, int y1, int x2, int y2, ubyte solid)
+{
+    int tri1, tri2, tri3, tri4, tri5;
+    int area_r, area_t;
+
+    area_r = (y2 - y1) * 2 * (x2 - x1);
+    area_t = 0;
+
+    edge_find(x1, y1, x1, y2, &tri1, &tri5);
+    {
+        triangulation[0].Triangles[tri1].solid = solid;
+        area_t += triangle_area1(tri1);
+    }
+    if (area_t == area_r)
+        return;
+
+    edge_find(x2, y2, x2, y1, &tri2, &tri5);
+    if (tri2 != tri1)
+    {
+        triangulation[0].Triangles[tri2].solid = solid;
+        area_t += triangle_area1(tri2);
+    }
+    if (area_t == area_r)
+        return;
+
+    edge_find(x2, y1, x1, y1, &tri3, &tri5);
+    if (tri3 != tri1 && tri3 != tri2)
+    {
+        triangulation[0].Triangles[tri3].solid = solid;
+        area_t += triangle_area1(tri3);
+    }
+    if (area_t == area_r)
+        return;
+
+    edge_find(x1, y2, x2, y2, &tri4, &tri5);
+    if (tri4 != tri1 && tri4 != tri2 && tri4 != tri3)
+    {
+        triangulation[0].Triangles[tri4].solid = solid;
+        area_t += triangle_area1(tri4);
+    }
+    if (area_t == area_r)
+        return;
+
+    brute_fill_rectangle(x1, y1, x2, y2, solid);
+}
+
+void tri_set_rectangle(int x1, int y1, int x2, int y2, ubyte solid)
+{
+    int sx1, sy1, sx2, sy2;
+
+    sx1 = x1;
+    sy1 = y1;
+    sx2 = x2;
+    sy2 = y2;
+    if (x1 > x2) {
+        sx1 = x2;
+        sx2 = x1;
+    }
+    if (y1 > y2) {
+        sy1 = y2;
+        sy2 = y1;
+    }
+    insert_point(sx1, sy1);
+    insert_point(sx2, sy1);
+    make_edge(sx1, sy1, sx2, sy1);
+    insert_point(sx2, sy2);
+    make_edge(sx2, sy1, sx2, sy2);
+    insert_point(sx1, sy2);
+    make_edge(sx2, sy2, sx1, sy2);
+    make_edge(sx1, sy2, sx1, sy1);
+    fill_rectangle(sx1, sy1, sx2, sy2, solid);
+}
+
+void triangulation_initxy(int x1, int x2, int y1, int y2)
+{
+    //TODO implement
+}
+
+void triangulation_init(void)
+{
+    triangulation[0].triangle_top = triangulation[0].max_Triangles;
+    triangulation[0].point_top = triangulation[0].max_Points;
+    triangulation_initxy(-4096, -4096, 37376, 37376);
+    triangulation[0].last_tri = -1;
+}
+
+void triangulation_init_edges(void)
+{
+    insert_point(-3840, -3840);
+    insert_point(37120, -3840);
+    insert_point(-3840, 37120);
+    insert_point(37120, 37120);
+    make_edge(-3840, -3840, 37120, -3840);
+    make_edge(37120, -3840, 37120, 37120);
+    make_edge(37120, 37120, -3840, 37120);
+    make_edge(-3840, 37120, -3840, -3840);
+}
+
+void triangulate_area(ubyte *p_map, int x1, int x2, int y1, int y2)
+{
+    ubyte solid;
+
+    if (!triangulation[0].tri_initialised)
+    {
+        triangulation[0].tri_initialised = 1;
+        triangulation_init();
+    }
+    tri_set_rectangle(x1 << 7, x2 << 7, y1 << 7, y2 << 7, 0);
+    fringe_init(p_map, x1, x2, y1, y2);
+
+    while (fringe_get_rectangle(&x1, &x2, &y1, &y2, &solid))
+    {
+        if (solid == 0)
+            continue;
+        tri_set_rectangle(x1 << 7, x2 << 7, y1 << 7, y2 << 7, solid);
+    }
+}
+
+void triangulate_map(ubyte *p_map)
+{
+    triangulate_area(p_map, 0, 0, 256, 256);
+}
+
+void triangulation_clear(void)
+{
+    triangulation_init();
+    triangulation_init_edges();
 }
 
 /******************************************************************************/
