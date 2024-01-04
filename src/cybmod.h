@@ -67,7 +67,8 @@ struct ModDef {
 	ushort Resilience;
 	ushort Funding;
 	ushort Flags;
-    char field_8[10];
+    char field_8[9];
+    uchar AdditProp;
     short Sprite;
 	ushort Cost;
 	uchar PercentPerDay;
@@ -106,6 +107,7 @@ ubyte cybmod_brain_level(union Mod *p_umod);
 void set_cybmod_brain_level(union Mod *p_umod, ubyte nmod);
 ubyte cybmod_skin_level(union Mod *p_umod);
 void set_cybmod_skin_level(union Mod *p_umod, ubyte nmod);
+ubyte cybmod_level(union Mod *p_umod, ubyte mgroup);
 
 ushort cybmodflags_prev_mod(ulong modflags, ushort last_mtype);
 ushort cybmod_group_type(ushort mtype);

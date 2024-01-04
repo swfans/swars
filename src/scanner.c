@@ -18,6 +18,7 @@
 /******************************************************************************/
 #include "scanner.h"
 
+#include "bfutility.h"
 #include "campaign.h"
 #include "thing.h"
 #include "player.h"
@@ -58,6 +59,45 @@ void SCANNER_init_arcpoint(int x1, int z1, int x2, int z2, int c)
         : : "a" (x1), "d" (z1), "b" (x2), "c" (z2), "g" (c));
 }
 
+void SCANNER_unkn_func_196(void)
+{
+    asm volatile ("call ASM_SCANNER_unkn_func_196\n"
+        :  :  : "eax" );
+}
+
+void SCANNER_data_to_screen(void)
+{
+    SCANNER_unkn_func_196();
+}
+
+void SCANNER_set_screen_box(short x, short y, short width, short height, short cutout)
+{
+    short i;
+    short hlimit;
+
+    hlimit = sizeof(ingame.Scanner.Width)/sizeof(ingame.Scanner.Width[0]);
+    if (height >= hlimit)
+        height = hlimit - 1;
+
+    ingame.Scanner.X1 = x;
+    ingame.Scanner.Y1 = y;
+    ingame.Scanner.X2 = ingame.Scanner.X1 + width;
+    ingame.Scanner.Y2 = ingame.Scanner.Y1 + height;
+
+    if (cutout != 0)
+    {
+        for (i = 0; i + ingame.Scanner.Y1 <= ingame.Scanner.Y2; i++) {
+            ingame.Scanner.Width[i] = min(width - cutout + i, width);
+        }
+    }
+    else
+    {
+        for (i = 0; i + ingame.Scanner.Y1 <= ingame.Scanner.Y2; i++) {
+            ingame.Scanner.Width[i] = width;
+        }
+    }
+}
+
 void SCANNER_update_arcpoint(ushort arc_no, short fromX, short fromZ, short toX, short toZ)
 {
     if (arc_no >= SCANNER_ARC_COUNT)
@@ -77,6 +117,23 @@ void SCANNER_init_blippoint(ushort blip_no, int x, int z, int colour)
     ingame.Scanner.BigBlip[blip_no].Speed = 4;
     ingame.Scanner.BigBlip[blip_no].Colour = colour;
     ingame.Scanner.BigBlip[blip_no].Period = 32;
+}
+
+void SCANNER_find_position(int x, int y, int *U, int *V)
+{
+    asm volatile (
+      "call ASM_SCANNER_find_position\n"
+        : : "a" (x), "d" (y), "b" (U), "c" (V));
+}
+
+TbBool mouse_move_over_scanner(void)
+{
+    short dx, dy;
+    dx = lbDisplay.MMouseX - ingame.Scanner.X1;
+    dy = lbDisplay.MMouseY - ingame.Scanner.Y1;
+
+    return (dy >= 0) && (ingame.Scanner.Y1 + dy <= ingame.Scanner.Y2)
+        && (dx >= 0) && (dx <= SCANNER_width[dy]);
 }
 
 ushort do_group_scanner(struct Objective *p_objectv, ushort next_signal)
@@ -205,7 +262,7 @@ ushort do_group_near_thing_scanner(struct Objective *p_objectv, ushort next_sign
         {
             struct Thing *p_thing;
             p_thing = &things[ingame.TrackThing];
-            if (((ingame.TrackThing == 0) || p_thing->Flag & TngF_PlayerAgent) && (ingame.Flags & 0x2000))
+            if (((ingame.TrackThing == 0) || p_thing->Flag & TngF_PlayerAgent) && (ingame.Flags & GamF_Unkn2000))
                 SCANNER_init_arcpoint(Z2, X2, Z1, X1, 1);
         }
         SCANNER_keep_arcs = 1;
@@ -345,7 +402,7 @@ ushort do_thing_arrive_area_scanner(struct Objective *p_objectv, ushort next_sig
     {
         struct Thing *p_thing;
         p_thing = &things[ingame.TrackThing];
-        if (((ingame.TrackThing == 0) || p_thing->Flag & TngF_PlayerAgent) && (ingame.Flags & 0x2000))
+        if (((ingame.TrackThing == 0) || p_thing->Flag & TngF_PlayerAgent) && (ingame.Flags & GamF_Unkn2000))
             SCANNER_init_arcpoint(Z, X, p_objectv->Z << 8, p_objectv->X << 8, 1);
     }
     SCANNER_keep_arcs = 1;
@@ -403,7 +460,7 @@ ushort do_thing_near_thing_scanner(struct Objective *p_objectv, ushort next_sign
     {
         struct Thing *p_thing;
         p_thing = &things[ingame.TrackThing];
-        if (((ingame.TrackThing == 0) || p_thing->Flag & TngF_PlayerAgent) && (ingame.Flags & 0x2000))
+        if (((ingame.TrackThing == 0) || p_thing->Flag & TngF_PlayerAgent) && (ingame.Flags & GamF_Unkn2000))
             SCANNER_init_arcpoint(Z2, X2, Z1, X1, 1);
     }
     SCANNER_keep_arcs = 1;
@@ -459,7 +516,7 @@ void add_signal_to_scanner(struct Objective *p_objectv, ubyte flag)
         turn_last = gameturn;
         ingame.Scanner.GroupCount = 0;
     }
-    if ((p_objectv == NULL) || ((p_objectv->Flags & 0x01) != 0))
+    if ((p_objectv == NULL) || ((p_objectv->Flags & GObjF_HIDDEN) != 0))
         return;
 
     if (signal_count >= SCANNER_BIG_BLIP_COUNT) {

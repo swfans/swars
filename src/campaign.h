@@ -29,6 +29,7 @@ extern "C" {
 
 #define CAMPAIGNS_MAX_COUNT 6
 #define MISSIONS_MAX_COUNT 120
+#define MISSION_STATES_COUNT 50
 
 enum CampaignFlags {
     CmpgF_IsSinglePlayer = 0x0001,
@@ -173,6 +174,7 @@ ushort selectable_campaigns_count(void);
 ushort find_mission_state_slot(ushort missi);
 ushort find_empty_mission_state_slot(void);
 void remove_mission_state_slot(ushort mslot);
+ushort replace_mission_state_slot(ushort old_missi, ushort new_missi);
 void init_mission_states(void);
 
 ushort find_mission_with_map_and_level(ushort mapno, ushort level);

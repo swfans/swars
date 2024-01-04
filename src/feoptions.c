@@ -24,6 +24,7 @@
 #include "bfaudio.h"
 #include "bfscd.h"
 #include "bflib_joyst.h"
+#include "femain.h"
 #include "guiboxes.h"
 #include "guitext.h"
 #include "display.h"
@@ -37,11 +38,12 @@ extern struct ScreenButton options_audio_buttons[7];
 
 extern struct ScreenButton options_gfx_buttons[16];
 
-extern char options_title_text[];
-
 extern short word_1C4866[3];
 
 extern struct TbSprite *sprites_Icons0_0;
+
+// Shared with other screens
+extern struct ScreenBox controls_keylist_box;
 
 ubyte ac_change_panel_permutation(ubyte click);
 ubyte ac_change_trenchcoat_preference(ubyte click);
@@ -71,7 +73,7 @@ void draw_vert_slider_main_body(struct ScreenBox *box, short *target_ptr)
     {
         x2c = *target_ptr;
         show_audio_volume_box_func_02(box->X + 9, box->Y + 11, x2c, 17, 174);
-        lbDisplay.DrawFlags = 0x0004;
+        lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
         show_audio_volume_box_func_02(box->X + 9 + x2c, box->Y + 11, wtext1 - x2c, 17, 174);
         show_audio_volume_box_func_02(box->X + 20 + wtext1, box->Y, x1b, 28, 174);
         show_audio_volume_box_func_02(box->X + box->Width + 6 - wtext2, box->Y, wtext2, 17, 174);
@@ -82,7 +84,7 @@ void draw_vert_slider_main_body(struct ScreenBox *box, short *target_ptr)
         show_audio_volume_box_func_02(box->X + 9, box->Y + 11, wtext1, 17, 174);
         show_audio_volume_box_func_02(box->X + 20 + wtext1, box->Y, x1b, 28, 174);
         show_audio_volume_box_func_02(box->X + box->Width + 6 - wtext2, box->Y, x2c, 17, 174);
-        lbDisplay.DrawFlags = 0x0004;
+        lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
         show_audio_volume_box_func_02(box->X + box->Width + 6 + x2c - wtext2, box->Y, wtext2 - x2c, 17, 174);
     }
     else
@@ -90,7 +92,7 @@ void draw_vert_slider_main_body(struct ScreenBox *box, short *target_ptr)
         x2c = (*target_ptr) - wtext1;
         show_audio_volume_box_func_02(box->X + 9, box->Y + 11, wtext1, 17, 174);
         show_audio_volume_box_func_02(box->X + 20 + wtext1, box->Y, x2c, 28, 174);
-        lbDisplay.DrawFlags = 0x0004;
+        lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
         show_audio_volume_box_func_02(box->X + 20 + x2c + wtext1, box->Y, x1b - x2c, 28, 174);
         show_audio_volume_box_func_02(box->X + box->Width + 6 - wtext2, box->Y, wtext2, 17, 174);
     }
@@ -152,7 +154,7 @@ TbBool input_vert_slider_left_arrow(struct ScreenBox *box, short *target_ptr)
         if (lbDisplay.MLeftButton || joy.Buttons[0])
         {
             lbDisplay.LeftButton = 0;
-            box->Flags |= 0x0800;
+            box->Flags |= GBxFlg_IsRPushed;
             if ((lbShift & 0x01) != 0)
                 (*target_ptr)--;
             else
@@ -186,7 +188,7 @@ TbBool input_vert_slider_right_arrow(struct ScreenBox *box, short *target_ptr)
         if (lbDisplay.MLeftButton || joy.Buttons[0])
         {
             lbDisplay.LeftButton = 0;
-            box->Flags |= 0x0800;
+            box->Flags |= GBxFlg_IsRPushed;
             if ((lbShift & 0x01) != 0)
                 (*target_ptr)++;
             else
@@ -214,9 +216,9 @@ ubyte show_audio_volume_box(struct ScreenBox *box)
     TbBool change;
 
     change = false;
-    if (box->Flags & 0x0080)
+    if (box->Flags & GBxFlg_Unkn0080)
     {
-        box->Flags &= ~0x0080;
+        box->Flags &= ~GBxFlg_Unkn0080;
         word_1C4866[0] = -5;
         word_1C4866[1] = -5;
         word_1C4866[2] = -5;
@@ -308,10 +310,13 @@ ubyte show_audio_tracks_box(struct ScreenBox *box)
     return ret;
 }
 
-void init_options_screen_boxes(void)
+void init_options_audio_screen_boxes(void)
 {
     int i, h;
     int val;
+    short scr_w, start_x;
+
+    scr_w = lbDisplay.GraphicsWindowWidth;
 
     h = 72;
     for (i = 0; i < 3; i++)
@@ -341,7 +346,7 @@ void init_options_screen_boxes(void)
     {
         options_audio_buttons[i].Radio = &ingame.CDTrack;
         options_audio_buttons[i].RadioValue = val++;
-        options_audio_buttons[i].Flags |= 0x0100;
+        options_audio_buttons[i].Flags |= GBxFlg_RadioBtn;
     }
 
     val = 1;
@@ -349,7 +354,7 @@ void init_options_screen_boxes(void)
     {
         options_audio_buttons[i].Radio = &ingame.DangerTrack;
         options_audio_buttons[i].RadioValue = val++;
-        options_audio_buttons[i].Flags |= 0x0100;
+        options_audio_buttons[i].Flags |= GBxFlg_RadioBtn;
     }
 
     val = 0;
@@ -357,12 +362,44 @@ void init_options_screen_boxes(void)
     {
         options_audio_buttons[i].Radio = &ingame.UseMultiMedia;
         options_audio_buttons[i].RadioValue = val++;
-        options_audio_buttons[i].Flags |= 0x0100;
+        options_audio_buttons[i].Flags |= GBxFlg_RadioBtn;
     }
     audio_volume_boxes[0].SpecialDrawFn = ac_show_audio_volume_box;
     audio_volume_boxes[1].SpecialDrawFn = ac_show_audio_volume_box;
     audio_volume_boxes[2].SpecialDrawFn = ac_show_audio_volume_box;
     audio_tracks_box.SpecialDrawFn = ac_show_audio_tracks_box;
+
+    start_x = (scr_w - unkn13_SYSTEM_button.Width - 16 - audio_volume_boxes[0].Width - 7) / 2;
+
+    for (i = 0; i < 3; i++)
+    {
+        audio_volume_boxes[i].X = start_x + 7 + unkn13_SYSTEM_button.Width + 9;
+    }
+    audio_tracks_box.X = start_x + 7 + unkn13_SYSTEM_button.Width + 9;
+
+    for (i = 0; i < 3; i++)
+    {
+        options_audio_buttons[0+i].X = audio_tracks_box.X +
+          audio_tracks_box.Width - 45 - 65 * (3-i);
+    }
+
+    for (i = 0; i < 2; i++)
+    {
+        options_audio_buttons[3+i].X = audio_tracks_box.X +
+          audio_tracks_box.Width - 45 - 65 * (2-i);
+    }
+
+    for (i = 0; i < 2; i++)
+    {
+        options_audio_buttons[5+i].X = audio_tracks_box.X +
+          audio_tracks_box.Width - 45 - 65 * (2-i);
+    }
+}
+
+void init_options_visual_screen_boxes(void)
+{
+    int i;
+    int val;
 
     init_screen_button(&options_gfx_buttons[0], 456u, 94u,
       gui_strings[465], 6, med2_font, 1, 0);
@@ -411,7 +448,7 @@ void init_options_screen_boxes(void)
     {
         options_gfx_buttons[i].Radio = &game_projector_speed;
         options_gfx_buttons[i].RadioValue = val;
-        options_gfx_buttons[i].Flags |= 0x0100;
+        options_gfx_buttons[i].Flags |= GBxFlg_RadioBtn;
         val++;
     }
 
@@ -420,7 +457,7 @@ void init_options_screen_boxes(void)
     {
         options_gfx_buttons[i].Radio = &game_high_resolution;
         options_gfx_buttons[i].RadioValue = val;
-        options_gfx_buttons[i].Flags |= 0x0100;
+        options_gfx_buttons[i].Flags |= GBxFlg_RadioBtn;
         val++;
     }
 
@@ -429,7 +466,7 @@ void init_options_screen_boxes(void)
     {
         options_gfx_buttons[i].Radio = &ingame.DetailLevel;
         options_gfx_buttons[i].RadioValue = val;
-        options_gfx_buttons[i].Flags |= 0x0100;
+        options_gfx_buttons[i].Flags |= GBxFlg_RadioBtn;
         val++;
     }
 
@@ -438,7 +475,7 @@ void init_options_screen_boxes(void)
     {
         options_gfx_buttons[i].Radio = &game_perspective;
         options_gfx_buttons[i].RadioValue = val;
-        options_gfx_buttons[i].Flags |= 0x0100;
+        options_gfx_buttons[i].Flags |= GBxFlg_RadioBtn;
         val += 5;
     }
 
@@ -447,7 +484,7 @@ void init_options_screen_boxes(void)
     {
         options_gfx_buttons[i].Radio = &unkn_gfx_option_2;
         options_gfx_buttons[i].RadioValue = val;
-        options_gfx_buttons[i].Flags |= 0x0100;
+        options_gfx_buttons[i].Flags |= GBxFlg_RadioBtn;
         ingame.Flags |= GamF_Unkn0002;
         val++;
     }
@@ -457,7 +494,7 @@ void init_options_screen_boxes(void)
     {
         options_gfx_buttons[i].Radio = &unkn_option_3;
         options_gfx_buttons[i].RadioValue = val;
-        options_gfx_buttons[i].Flags |= 0x0100;
+        options_gfx_buttons[i].Flags |= GBxFlg_RadioBtn;
         ingame.Flags |= GamF_Unkn0001;
         val++;
     }
@@ -467,9 +504,27 @@ void init_options_screen_boxes(void)
     {
         options_gfx_buttons[i].Radio = &unkn_option_4;
         options_gfx_buttons[i].RadioValue = val;
-        options_gfx_buttons[i].Flags |= 0x0100;
+        options_gfx_buttons[i].Flags |= GBxFlg_RadioBtn;
         ingame.Flags &= ~GamF_Unkn0400;
         val++;
+    }
+
+    // Reposition the components to current resolution
+
+    for (i = 0; i < 14; i+=2)
+    {
+        options_gfx_buttons[i+0].X = controls_keylist_box.X +
+          controls_keylist_box.Width - 177;
+        options_gfx_buttons[i+1].X = controls_keylist_box.X +
+          controls_keylist_box.Width - 89;
+    }
+
+    for (i = 14; i < 16; i++)
+    {
+        val = (controls_keylist_box.Width -
+          options_gfx_buttons[i].Width) / 2;
+        options_gfx_buttons[i].X = controls_keylist_box.X +
+          val + 9;
     }
 }
 
@@ -478,16 +533,16 @@ void reset_options_screen_boxes_flags(void)
     int i;
 
     for (i = 0; i < 4; i++) {
-        audio_volume_boxes[i].Flags = 0x0001;
+        audio_volume_boxes[i].Flags = GBxFlg_Unkn0001;
     }
     for (i = 0; i < 7; i++) {
-        options_audio_buttons[i].Flags = 0x0101;
+        options_audio_buttons[i].Flags = GBxFlg_RadioBtn | GBxFlg_Unkn0001;
     }
     for (i = 0; i < 14; i++) {
-      options_gfx_buttons[i].Flags = 0x0101;
+      options_gfx_buttons[i].Flags = GBxFlg_RadioBtn | GBxFlg_Unkn0001;
     }
     for (; i < 16; i++) {
-      options_gfx_buttons[i].Flags = 0x0001;
+      options_gfx_buttons[i].Flags = GBxFlg_Unkn0001;
     }
 }
 

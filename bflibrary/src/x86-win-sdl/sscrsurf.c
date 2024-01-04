@@ -21,14 +21,18 @@
 #include "bfscrsurf.h"
 
 #include "bfplanar.h"
+#include "bfscreen.h"
 #include "privbflog.h"
 
 /******************************************************************************/
-#define to_SDLSurf(h) ((SDL_Surface  *)h)
+#define to_SDLSurf(h) ((SDL_Surface *)h)
 
 OSSurfaceHandle lbScreenSurface;
 OSSurfaceHandle lbDrawSurface;
 
+extern SDL_Color lbPaletteColors[256];
+
+TbResult LbIScreenDrawSurfaceCheck(void);
 /******************************************************************************/
 void LbScreenSurfaceInit(struct SSurface *surf)
 {
@@ -81,6 +85,8 @@ TbResult LbScreenSurfaceBlit(struct SSurface *surf, ulong x, ulong y,
     // Convert TbRect to SDL rectangles
     SDL_Rect srcRect;
     SDL_Rect destRect;
+
+    LbIScreenDrawSurfaceCheck();
 
     if (lbDrawSurface == NULL) {
         LOGERR("DrawSurface pixel format must be known to blit other surfaces.");

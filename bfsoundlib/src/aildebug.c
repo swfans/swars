@@ -33,6 +33,7 @@
 #include "ailss.h"
 #include "mssdig.h"
 #include "mssxmidi.h"
+#include "mssxdig.h"
 /******************************************************************************/
 static long long tmcount_start = 0;
 
@@ -925,6 +926,23 @@ AILEVENTCB AIL_register_event_callback(MDI_DRIVER *mdidrv, AILEVENTCB callback)
     return result;
 }
 
+AILTIMBRECB AIL_register_timbre_callback(MDI_DRIVER *mdidrv, AILTIMBRECB callback)
+{
+    AILTIMBRECB result;
+
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s(0x%p, 0x%p)\n", __func__, mdidrv, callback);
+
+    result = AIL2OAL_API_register_timbre_callback(mdidrv, callback);
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Result = 0x%p\n", result);
+    AIL_indent--;
+
+    return result;
+}
+
 void AIL_set_sequence_user_data(SNDSEQUENCE *seq, uint32_t index, intptr_t value)
 {
     AIL_indent++;
@@ -1418,6 +1436,39 @@ void AIL_uninstall_MDI_driver(MDI_DRIVER *mdidrv)
         fprintf(AIL_debugfile, "%s(0x%p)\n", __func__, mdidrv);
 
     AIL2OAL_API_uninstall_MDI_driver(mdidrv);
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Finished\n");
+    AIL_indent--;
+}
+
+WAVE_SYNTH *AIL_create_wave_synthesizer(DIG_DRIVER *digdrv,
+  MDI_DRIVER *mdidrv, void const *wave_lib, int32_t polyphony)
+{
+    WAVE_SYNTH *ws;
+
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s(0x%p,0x%p,0x%p,%d)\n", __func__,
+          digdrv, mdidrv, wave_lib, polyphony);
+
+    ws = AIL2OAL_API_create_wave_synthesizer(
+      digdrv, mdidrv, wave_lib, polyphony);
+
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "Result = 0x%p\n", ws);
+    AIL_indent--;
+
+    return ws;
+}
+
+void AIL_destroy_wave_synthesizer(WAVE_SYNTH *ws)
+{
+    AIL_indent++;
+    if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
+        fprintf(AIL_debugfile, "%s(0x%p)\n", __func__, ws);
+
+    AIL2OAL_API_destroy_wave_synthesizer(ws);
 
     if (AIL_debug && (AIL_indent == 1 || AIL_sys_debug))
         fprintf(AIL_debugfile, "Finished\n");

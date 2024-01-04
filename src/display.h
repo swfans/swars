@@ -12,6 +12,8 @@ extern TbScreenMode screen_mode_menu;
 extern TbScreenMode screen_mode_fmvid_lo;
 extern TbScreenMode screen_mode_fmvid_hi;
 
+extern ubyte game_high_resolution;
+
 extern ubyte *back_buffer;
 extern struct TbSprite *unk3_sprites;
 extern TbPixel fade_unaffected_colours[];
@@ -36,11 +38,14 @@ extern struct TbSprite *med2_font_end;
 extern struct TbSprite *big_font;
 extern struct TbSprite *big_font_end;
 
-void display_set_full_screen (bool full_screen);
-void display_set_lowres_stretch (bool stretch);
-void display_lock (void);
-void display_unlock (void);
+void display_set_full_screen(bool full_screen);
+void display_set_lowres_stretch(bool stretch);
+void display_lock(void);
+void display_unlock(void);
+
 void setup_screen_mode(TbScreenMode mode);
+void setup_simple_screen_mode(TbScreenMode mode);
+
 const char * SWResourceMapping(short index);
 void swap_wscreen(void);
 void screen_buffer_fill_black(void);

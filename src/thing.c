@@ -20,12 +20,31 @@
 
 #include "bfutility.h"
 #include "bfmemut.h"
+#include "enginsngobjs.h"
+#include "enginsngtxtr.h"
 #include "building.h"
+#include "matrix.h"
 #include "vehicle.h"
 #include "bigmap.h"
 #include "game.h"
 #include "swlog.h"
 /******************************************************************************/
+
+/** Radiuses of Things of type STATIC.
+ */
+short static_radii[] = {
+  40, 50, 80, 15,  0, 40,  0,  0,  0, 40,
+   0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+   0,  0,  0,  0,  0,  0, 70, 70, 70, 70,
+ 130, 40, 80, 40, 40, 40, 50,100, 40, 40,
+   0,  0,  0,  0,  0,  0,  0,  0, 40, 70,
+  40, 40, 80,100,  0,  0,  0,  0,  0,  0,
+   0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+   0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+   0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+   0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+};
+
 void init_things(void)
 {
     asm volatile ("call ASM_init_things\n"
@@ -84,6 +103,16 @@ void remove_sthing(short tngno)
 {
     asm volatile ("call ASM_remove_sthing\n"
         : : "a" (tngno));
+}
+
+short add_static(int x, int y, int z, ushort frame, int timer)
+{
+    short ret;
+    asm volatile (
+      "push %5\n"
+      "call ASM_add_static\n"
+        : "=r" (ret) : "a" (x), "d" (y), "b" (z), "c" (frame), "g" (timer));
+    return ret;
 }
 
 TbBool thing_is_within_circle(short thing, short X, short Z, ushort R)
@@ -571,6 +600,145 @@ short search_for_station(short x, short z)
     asm volatile ("call ASM_search_for_station\n"
         : "=r" (ret) : "a" (x), "d" (z));
     return ret;
+}
+
+void new_thing_type10_clone(struct SimpleThing *p_clsthing)
+{
+    asm volatile ("call ASM_new_thing_type10_clone\n"
+        : : "a" (p_clsthing));
+}
+
+short new_thing_smoke_gen_clone(struct SimpleThing *p_clsthing)
+{
+    struct SimpleThing *p_sthing;
+    short thing;
+
+    thing = add_static(p_clsthing->X >> 8, p_clsthing->Y, p_clsthing->Z >> 8,
+      0, p_clsthing->Timer1);
+    p_sthing = &sthings[thing];
+    p_sthing->Type = SmTT_SMOKE_GENERATOR;
+    p_sthing->U.UEffect.VX = p_clsthing->U.UEffect.VX;
+    p_sthing->U.UEffect.VY = p_clsthing->U.UEffect.VY;
+    p_sthing->U.UEffect.VZ = p_clsthing->U.UEffect.VZ;
+    p_sthing->StartTimer1 = p_clsthing->StartTimer1;
+    p_sthing->U.UEffect.OX = p_clsthing->U.UEffect.OX;
+    p_sthing->U.UEffect.OY = p_clsthing->U.UEffect.OY;
+    p_sthing->U.UEffect.OZ = p_clsthing->U.UEffect.OZ;
+    return thing;
+}
+
+short new_thing_static_clone(struct SimpleThing *p_clsthing)
+{
+    struct SimpleThing *p_sthing;
+    short thing;
+    ushort frame;
+
+    thing = add_static(p_clsthing->X >> 8, p_clsthing->Y, p_clsthing->Z >> 8,
+      p_clsthing->StartFrame + 1, p_clsthing->Timer1);
+    p_sthing = &sthings[thing];
+    p_sthing->U.UEffect.VZ = p_clsthing->U.UEffect.VZ;
+    frame = p_sthing->StartFrame;
+    if (frame != 999 && frame != 1002 && frame != 1004 && frame != 1008 &&
+      frame != 1032 && frame != 1037 && frame != 1038 && frame != 1050) {
+        p_sthing->SubType = 2;
+    } else {
+        p_sthing->SubType = 1;
+        p_sthing->Radius = 128;
+    }
+    return thing;
+}
+
+short new_thing_building_clone(struct Thing *p_clthing, struct M33 *p_clmat, short shut_h)
+{
+    struct Thing *p_thing;
+    struct SingleObject *p_sobj;
+    int i;
+
+    p_thing = create_building_thing(p_clthing->X >> 8, p_clthing->Y, p_clthing->Z >> 8,
+            p_clthing->U.UObject.Object, p_clthing->U.UObject.NumbObjects, p_clthing->ThingOffset);
+
+    p_thing->U.UObject.Token = p_clthing->U.UObject.Token;
+    p_thing->U.UObject.TokenDir = p_clthing->U.UObject.TokenDir;
+    p_thing->U.UObject.NextThing = p_clthing->U.UObject.NextThing;
+    p_thing->U.UObject.PrevThing = p_clthing->U.UObject.PrevThing;
+    p_thing->U.UObject.OffX = p_clthing->U.UObject.OffX;
+    p_thing->U.UObject.OffZ = p_clthing->U.UObject.OffZ;
+    p_thing->ThingOffset = p_clthing->ThingOffset;
+    p_thing->Flag = p_clthing->Flag;
+    p_thing->VX = p_clthing->VX;
+    p_thing->VY = p_clthing->VY;
+    p_thing->VZ = p_clthing->VZ;
+    p_thing->SubType = p_clthing->SubType;
+
+    // Copy 8 bytes _after_ UObject.DrawTurn (is anything really there?)
+    for (i = 1; i < 3; i++) {
+        *(&p_thing->U.UObject.DrawTurn + i) = *(&p_clthing->U.UObject.DrawTurn + i);
+    }
+    p_sobj = &game_objects[p_clthing->U.UObject.Object];
+    p_thing->U.UObject.MinY[0] = p_sobj->OffsetY - 500;
+    p_thing->U.UObject.MaxY[0] = p_sobj->OffsetY;
+    
+    // Copy 20 bytes from UObject.Turn (why in a loop instead of assigning separate fields? is there an array?)
+    for (i = 0; i < 10; i++) {
+        *(&p_thing->U.UObject.Turn + i) = *(&p_clthing->U.UObject.Turn + i);
+    }
+
+    ubyte styp;
+    styp = p_thing->SubType;
+    if (styp == SubTT_BLD_SHUTLDR)
+    {
+        if (((p_thing->Flag & 0x0001) == 0)
+          && (p_thing->U.UObject.PrevThing == 0 || p_thing->U.UObject.NextThing == 0))
+        {
+            p_thing->VX = p_thing->X >> 16;
+            p_thing->VZ = p_thing->Z >> 16;
+            p_thing->Flag |= 0x01;
+        }
+        if (shut_h < 15)
+            p_thing->Y >>= 3;
+    }
+    else if (styp == SubTT_BLD_MGUN)
+    {
+        p_thing->U.UMGun.MatrixIndex = next_local_mat;
+        next_local_mat++;
+        if (p_clmat != NULL)
+            memcpy(&local_mats[p_thing->U.UMGun.MatrixIndex], p_clmat, sizeof(struct M33));
+        else
+            matrix_identity_fill(&local_mats[p_thing->U.UMGun.MatrixIndex]);
+        p_thing->U.UMGun.AngleX = 1024;
+        p_thing->U.UMGun.AngleY = 0;
+        p_thing->Radius = 256;
+        p_thing->U.UMGun.RecoilTimer = 0;
+        p_thing->U.UMGun.MaxHealth = 6000;
+        p_thing->U.UMGun.RecoilTimer = 0;
+        p_thing->Health = p_thing->U.UMGun.MaxHealth;
+    }
+    else if (styp >= SubTT_BLD_36 && styp <= SubTT_BLD_37)
+    {
+        p_thing->U.UObject.MatrixIndex = next_local_mat;
+        next_local_mat++;
+        if (p_clmat != NULL)
+            memcpy(&local_mats[p_thing->U.UObject.MatrixIndex], p_clmat, sizeof(struct M33));
+        else
+            matrix_identity_fill(&local_mats[p_thing->U.UObject.MatrixIndex]);
+        p_thing->Flag |= 0x1000;
+    }
+    p_thing->SubState = p_clthing->SubState;
+    p_thing->Timer1 = p_clthing->Timer1;
+
+    // Should be have a separate UGate struct?
+    if (styp >= SubTT_BLD_GATE && styp <= SubTT_BLD_26
+      && p_thing->U.UObject.MinY[0] == *(ushort *)&p_thing->U.UObject.Group )
+    {
+        p_thing->U.UObject.MinY[0] = -500;
+        p_thing->U.UObject.MaxY[0] = 0;
+    }
+    p_thing->State = p_clthing->State;
+    if (p_thing->State == 9)
+        p_thing->State = 0;
+    p_thing->Frame = p_clthing->Frame;
+
+    return p_thing->ThingOffset;
 }
 
 /** Maps fields from old Thing struct to the current one.

@@ -21,12 +21,13 @@
 #define POLY_H_
 
 #include "bftypes.h"
+#include "bfscreen.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#define POLY_SCANS_COUNT 576
+#define POLY_SCANS_COUNT (MAX_SUPPORTED_SCREEN_HEIGHT * 6 / 5)
 
 #pragma pack(1)
 

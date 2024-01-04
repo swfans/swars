@@ -25,6 +25,7 @@
 #include "guitext.h"
 #include "campaign.h"
 #include "display.h"
+#include "femain.h"
 #include "feoptions.h"
 #include "game.h"
 #include "sound.h"
@@ -66,10 +67,10 @@ ubyte do_login_2(ubyte click)
         return 1;
     }
 
-    if ((ingame.Flags & GamF_Unkn0010) != 0)
+    if ((ingame.Flags & GamF_MortalGame) != 0)
     {
         sysmnu_button_enable(1,2);
-        ingame.Flags &= ~GamF_Unkn0010;
+        ingame.Flags &= ~GamF_MortalGame;
     }
 
     campaign_new_game_prepare();
@@ -123,9 +124,9 @@ ubyte show_campaigns_list(struct ScreenBox *box)
         text = gui_strings[p_campgn->TextId];
         nlines = my_count_lines(text);
         if (background_type == campgn)
-            lbDisplay.DrawFlags = 0x140;
+            lbDisplay.DrawFlags = Lb_TEXT_HALIGN_CENTER|Lb_TEXT_ONE_COLOR;
         else
-            lbDisplay.DrawFlags = 0x100;
+            lbDisplay.DrawFlags = Lb_TEXT_HALIGN_CENTER;
         hbeg = cy - (4 * nlines - 4 + nlines * line_height) / 2;
         lbDisplay.DrawFlags |= 0x8000;
         text = gui_strings[642 + campgn];
@@ -148,8 +149,8 @@ ubyte show_campaigns_list(struct ScreenBox *box)
         {
             short msy, msx;
             short y1, y2;
-            msy = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MouseY : lbDisplay.MouseY;
-            msx = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MouseX : lbDisplay.MouseX;
+            msy = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MouseY : lbDisplay.MouseY;
+            msx = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MouseX : lbDisplay.MouseX;
 
             y1 = text_window_y1 + hbeg;
             y2 = text_window_y1 + hend;
@@ -175,14 +176,14 @@ ubyte show_login_name(struct ScreenBox *box)
 
 void show_login_screen(void)
 {
-    if ((game_projector_speed && (login_name_box.Flags & 0x01)) ||
+    if ((game_projector_speed && (login_name_box.Flags & GBxFlg_Unkn0001)) ||
       (lbKeyOn[KC_SPACE] && !edit_flag))
     {
         lbKeyOn[KC_SPACE] = 0;
-        login_campaigns_box.Flags |= 0x0002;
-        login_name_box.Flags |= 0x0002;
-        login_abort_button.Flags |= 0x0002;
-        login_continue_button.Flags |= 0x0002;
+        login_campaigns_box.Flags |= GBxFlg_Unkn0002;
+        login_name_box.Flags |= GBxFlg_Unkn0002;
+        login_abort_button.Flags |= GBxFlg_Unkn0002;
+        login_continue_button.Flags |= GBxFlg_Unkn0002;
     }
     //login_name_box.DrawFn(&login_name_box); -- incompatible calling convention
     asm volatile ("call *%1\n"
@@ -200,37 +201,44 @@ void show_login_screen(void)
 
 void init_login_screen_boxes(void)
 {
+    short scr_w;
+
+    scr_w = lbDisplay.GraphicsWindowWidth;
+
     init_screen_box(&login_campaigns_box, 219u, 159u, 200u, 100, 6);
     init_screen_box(&login_name_box, 150u, 128u, 337u, 22, 6);
     init_screen_button(&login_continue_button, 260u, 300u,
       gui_strings[455], 6, med2_font, 1, 0);
     init_screen_button(&login_abort_button, 260u, 329u,
       gui_strings[388], 6, med2_font, 1, 0);
-    login_continue_button.X = 319 - (login_continue_button.Width >> 1);
-    login_abort_button.X = 319 - (login_abort_button.Width >> 1);
     login_abort_button.Border = 3;
     login_continue_button.Border = 3;
+
+    lbFontPtr = med2_font;
+    login_name_box.Width = my_string_width(gui_strings[454]) + 254;
+    login_campaigns_box.X = (scr_w - login_campaigns_box.Width) / 2 - 1;
+    login_name_box.X = (scr_w - login_name_box.Width) / 2 - 1;
+    login_continue_button.X = (scr_w - login_continue_button.Width) / 2 - 1;
+    login_abort_button.X = (scr_w - login_abort_button.Width) / 2  - 1;
+
     login_continue_button.AccelKey = 28;
     login_abort_button.AccelKey = 1;
     login_continue_button.CallBackFn = ac_do_login_2;
     login_abort_button.CallBackFn = ac_do_abort_2;
     login_campaigns_box.SpecialDrawFn = ac_show_campaigns_list;
     login_name_box.SpecialDrawFn = ac_show_login_name;
-    lbFontPtr = med2_font;
-    login_name_box.Width = my_string_width(gui_strings[454]) + 254;
-    login_name_box.X = 319 - (login_name_box.Width >> 1);
 }
 
 void reset_login_screen_boxes_flags(void)
 {
-    login_name_box.Flags = 0x0001;
-    login_campaigns_box.Flags = 0x0001;
+    login_name_box.Flags = GBxFlg_Unkn0001;
+    login_campaigns_box.Flags = GBxFlg_Unkn0001;
 }
 
 void set_flag01_login_screen_boxes(void)
 {
-    login_continue_button.Flags |= 0x0001;
-    login_abort_button.Flags |= 0x0001;
+    login_continue_button.Flags |= GBxFlg_Unkn0001;
+    login_abort_button.Flags |= GBxFlg_Unkn0001;
 }
 
 /******************************************************************************/

@@ -27,6 +27,17 @@ extern "C" {
 /******************************************************************************/
 #pragma pack(1)
 
+enum CityFlags {
+    CitF_Unkn01     = 0x01,
+    CitF_Unkn02     = 0x02,
+    CitF_Unkn04     = 0x04,
+    CitF_Unkn08     = 0x08,
+    CitF_Unkn10     = 0x10,
+    CitF_Unkn20     = 0x20,
+    CitF_Unkn40     = 0x40,
+    CitF_Unkn80     = 0x80,
+};
+
 struct City { // sizeof=40
     /** Coordinate of the city on mission brief map. */
     short X;
@@ -56,7 +67,7 @@ struct City { // sizeof=40
 /******************************************************************************/
 extern ubyte num_cities;
 extern struct City cities[];
-extern sbyte city_id;
+extern sbyte selected_city_id;
 
 void save_cities_conf_file(void);
 void read_cities_conf_file(void);
@@ -65,6 +76,8 @@ void load_city_data(ubyte type);
 
 void activate_cities(ubyte brief);
 void recount_city_credit_reward(ubyte city);
+
+sbyte find_closest_city(ushort x, ushort y);
 /******************************************************************************/
 #ifdef __cplusplus
 }

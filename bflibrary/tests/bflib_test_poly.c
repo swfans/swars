@@ -41,9 +41,13 @@
 
 /******************************************************************************/
 
-void test_trig_draw_random_triangles(const ubyte *pal)
+/** Test drawing random triangles using the trig() function.
+ */
+void test_trig_draw_random_triangles(const ubyte *pal, short res_h)
 {
-    int i;
+    int i, scale;
+
+    scale = 16 * res_h / 480;
 
     for (i = 0; i < 27*40; i++)
     {
@@ -129,6 +133,13 @@ void test_trig_draw_random_triangles(const ubyte *pal)
                 point_a.Y = 480 - (point_a.Y & 0x3f);
         }
 
+        point_a.X = (scale * point_a.X) >> 4;
+        point_a.Y = (scale * point_a.Y) >> 4;
+        point_b.X = (scale * point_b.X) >> 4;
+        point_b.Y = (scale * point_b.Y) >> 4;
+        point_c.X = (scale * point_c.X) >> 4;
+        point_c.Y = (scale * point_c.Y) >> 4;
+
         if ((point_c.Y - point_b.Y) * (point_b.X - point_a.X) -
             (point_b.Y - point_a.Y) * (point_c.X - point_b.X) > 0)
             trig(&point_a, &point_b, &point_c);
@@ -144,6 +155,8 @@ TbBool test_trig(void)
     ubyte pal[PALETTE_8b_SIZE];
     ubyte ref_pal[PALETTE_8b_SIZE];
     TbPixel unaffected_colours[] = {0,};
+    TbScreenModeInfo *mdinfo;
+    TbScreenMode mode = Lb_SCREEN_MODE_640_480_8;
     ubyte *texmap;
     TbPixel *ref_buffer;
     ulong picno;
@@ -159,12 +172,14 @@ TbBool test_trig(void)
     }
     LbMemorySetup();
 
+    mdinfo = LbScreenGetModeInfo(mode);
+
     // Prepare a palette, and colour tables for it
     make_general_palette(pal);
     LbFileSaveAt("tst_gp.pal", &pal, sizeof(pal));
     LbColourTablesGenerate(pal, unaffected_colours, "tst_gptbl.dat");
 
-    if (MockScreenSetupAnyMode(Lb_SCREEN_MODE_640_480_8, 640, 480, pal) != Lb_SUCCESS) {
+    if (MockScreenSetupAnyMode(mode, mdinfo->Width, mdinfo->Height, pal) != Lb_SUCCESS) {
         LOGERR("bullfrog Library initialization failed");
         return false;
     }
@@ -182,7 +197,7 @@ TbBool test_trig(void)
     raw_to_wscreen(320+8, 32, 256, 256, texmap);
 #endif
 
-    ref_buffer = malloc(640 * 480 * (lbEngineBPP+7) / 8);
+    ref_buffer = malloc(mdinfo->Width * mdinfo->Height * (lbEngineBPP+7) / 8);
     if (ref_buffer == NULL) {
         LOGERR("reference screen buffer alloc failed");
         return false;
@@ -197,11 +212,11 @@ TbBool test_trig(void)
 
         LbScreenClear(0);
         lbSeed = seeds[picno];
-        test_trig_draw_random_triangles(pal);
+        test_trig_draw_random_triangles(pal, mdinfo->Height);
 
         sprintf(loc_fname, "referenc/tst_trig%lu_rf.png", picno);
         LbPngLoad(loc_fname, ref_buffer, &ref_width, &ref_height, ref_pal);
-        if ((ref_width != 640) || (ref_height != 480)) {
+        if ((ref_width != mdinfo->Width) || (ref_height != mdinfo->Height)) {
             LOGERR("%s: unexpected reference image size", loc_fname);
             return false;
         }
@@ -212,14 +227,14 @@ TbBool test_trig(void)
         // compare image with reference
         maxpos = 0;
         maxdiff = LbImageBuffersMaxDifference(lbDisplay.WScreen, pal, ref_buffer,
-          ref_pal, 640 * 480, &maxpos);
+          ref_pal, mdinfo->Width * mdinfo->Height, &maxpos);
        if (maxdiff > 12) {
             LOGERR("%s: high pixel difference to reference (%ld) at (%lu,%lu)",
-              loc_fname, maxdiff, maxpos%640, maxpos/640);
+              loc_fname, maxdiff, maxpos % mdinfo->Width, maxpos / mdinfo->Width);
             return false;
         }
         LOGSYNC("%s: acceptable pixel difference to reference (%ld) at (%lu,%lu)",
-            loc_fname, maxdiff, maxpos%640, maxpos/640);
+            loc_fname, maxdiff, maxpos % mdinfo->Width, maxpos / mdinfo->Width);
     }
 
     LbMemoryFree(texmap);

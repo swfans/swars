@@ -18,6 +18,7 @@
 /******************************************************************************/
 #include "game_data.h"
 
+#include <assert.h>
 #include "globals.h"
 #include "bflib_basics.h"
 #include "bffile.h"
@@ -26,11 +27,17 @@
 #include "bfstrut.h"
 #include "campaign.h"
 #include "command.h"
+#include "enginlights.h"
+#include "enginpriobjs.h"
+#include "enginpritxtr.h"
+#include "enginsngobjs.h"
+#include "enginsngtxtr.h"
 #include "lvobjctv.h"
 #include "bigmap.h"
 #include "game.h"
 #include "swlog.h"
 #include "unix.h"
+#include "vehtraffic.h"
 #include "windows.h"
 #include "dos.h"
 
@@ -78,7 +85,7 @@ MemSystem mem_game[] = {
   { "sort_sprites",		(void **)&game_sort_sprites,	16u, 4001, 0, 0, 0 },
   { "sort_lines",		(void **)&game_sort_lines,		11u, 4001, 0, 0, 0 },
   { "commands",			(void **)&game_commands,		32u, 3100, 0, 0, 0 },
-  { "bez edit",			(void **)&bez_edit,				28u, 2000, 0, 0, 0 },
+  { "bez edit",			(void **)&bezier_pts,			28u, 2000, 0, 0, 0 },
   { "spare map buffer",	(void **)&spare_map_buffer,		1u, 101, 0, 0, 1 },
   { "used_lvl_objectives", (void **)&game_used_lvl_objectives,32u, 20, 0, 0, 0 },
   { "level_miscs",		(void *)&game_level_miscs,		22u, 200, 0, 0, 0 },
@@ -322,6 +329,20 @@ void adjust_memory_use(void)
     }
 }
 
+uint memory_table_entries(MemSystem *mem_table)
+{
+    MemSystem *ment;
+    uint i;
+
+    i = 0;
+    ment = mem_table;
+    while (ment->BufferPtr != NULL) {
+        ment++;
+        i++;
+    }
+    return i;
+}
+
 void init_memory(MemSystem *mem_table)
 {
 #if 0
@@ -335,14 +356,8 @@ void init_memory(MemSystem *mem_table)
     int i;
     ulong k;
 
-    i = 0;
     totlen = 8192;
-    ment = mem_table;
-    while (ment->BufferPtr != NULL) {
-        ment++;
-        i++;
-    }
-    mem_table_len = i;
+    mem_table_len = memory_table_entries(mem_table);
 
     p = scratch_malloc_mem;
     for (i = mem_table_len - 1; i >= 0; i--)
@@ -363,6 +378,7 @@ void init_memory(MemSystem *mem_table)
                 k = ment->N * ment->ESize;
                 k = (k + 4) & ~0x3;
                 totlen += k;
+                assert(totlen <= engine_mem_alloc_size);
             }
             else
             {

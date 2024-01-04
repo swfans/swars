@@ -32,6 +32,11 @@ enum ConfigCmd {
     ConfCmd_Levels,
     ConfCmd_Sound,
     ConfCmd_DOS,
+    ConfCmd_ResGameHi,
+    ConfCmd_ResGameLo,
+    ConfCmd_ResMenu,
+    ConfCmd_ResFMVVidHi,
+    ConfCmd_ResFMVidLo,
 };
 
 const struct TbNamedEnum conf_file_cmnds[] = {
@@ -45,6 +50,11 @@ const struct TbNamedEnum conf_file_cmnds[] = {
   {"Levels",	ConfCmd_Levels},
   {"Sound",		ConfCmd_Sound},
   {"DOS",		ConfCmd_DOS},
+  {"ResGameHi",	ConfCmd_ResGameHi},
+  {"ResGameLo",	ConfCmd_ResGameLo},
+  {"ResMenu",	ConfCmd_ResMenu},
+  {"ResFMVVidHi",ConfCmd_ResFMVVidHi},
+  {"ResFMVidLo",ConfCmd_ResFMVidLo},
   {NULL,		0},
 };
 
@@ -70,15 +80,17 @@ print_help (const char *argv0)
 "                -D        Direct keyboard mode; queries kb rather than use\n"
 "                          events/interrupts\n"
 "                -E <num>  Joystick config\n"
-"                -F        Re-compute colour fade tables\n"
+"                -F        Re-compute and re-save `tables.dat` colour tables\n"
+"                          file, using `fade.dat` as input\n"
 "                -g        Enter normal gameplay mode; to be used when playing\n"
 "                          the normal campaigns\n"
 "                -H        Initially enter high resolution mode\n"
 "  --help        -h        Display the help message\n"
-"                -I <num>  Connect through IPX\n"
+"                -I <num>  Multiplayer connect through IPX using given IPX\n"
+"                          network address\n"
 "                -m <n>,<n> Load campaign with given index, from which load\n"
 "                          mission with given index in single map mode\n"
-"                -N        ?\n"
+"                -N        Sets a flag which is never used. Debug feature?\n"
 "                -p <num>  Play replay packets from file of given index;\n"
 "                          use '-m' to specify mission on which to play\n"
 "                -q        Skip intro movie\n"
@@ -89,10 +101,11 @@ print_help (const char *argv0)
 "                          also break stuff; non-damaging fixes are applied\n"
 "                          even without this option\n"
 "  --no-stretch  -S        Do not stretch 320x200 graphics to high res display\n"
-"                -s <str>  Set session name string\n"
-"                -T        color tables mode (no effect?)\n"
-"  --self-tests  -t        execute build self tests\n"
-"                -u <str>  Set user name string\n"
+"                -s <str>  Set multiplayer session name string\n"
+"                -T        Re-compute and re-save `tables.dat` colour tables\n"
+"                          file, using palette file as input\n"
+"  --self-tests  -t        Execute build self tests\n"
+"                -u <str>  Set user name (login / network name) string\n"
 "  --windowed    -W        Run in windowed mode\n"
 "                -w        Lower memory use; decreases size of static arrays\n",
   argv0);
@@ -153,7 +166,7 @@ static TbBool process_options(int *argc, char ***argv)
 
         case 'E':
             tmpint = atoi(optarg);
-            if ( joy_grip_unknsub_08(tmpint) != -1 )
+            if ( JoySetInterrupt(tmpint) != -1 )
               unkn01_maskarr[17] = 17;
             break;
 
@@ -195,7 +208,7 @@ static TbBool process_options(int *argc, char ***argv)
             ingame.GameMode = GamM_Unkn2;
             ingame.Flags |= GamF_Unkn0008;
             ingame.CurrentMission = tmpint;
-            ingame.Cheats |= 0x04;
+            ingame.UserFlags |= UsrF_Cheats;
             LOGDBG("Campaign %d mission index %d", (int)background_type, (int)ingame.CurrentMission);
             break;
 
@@ -273,9 +286,10 @@ static void fixup_options(void)
 void read_conf_file(void)
 {
     TbFileHandle conf_fh;
-    unsigned int i;
+    int i;
     int cmd_num;
     char locbuf[1024];
+    char locstr[40];
     struct TbIniParser parser;
     char *conf_fname = "config.ini";
     int conf_len;
@@ -386,6 +400,41 @@ void read_conf_file(void)
             }
             //game_dirs[DirPlace_?].use_cd = (i != 2);// option ignored
             break;
+        case ConfCmd_ResGameHi:
+        case ConfCmd_ResGameLo:
+        case ConfCmd_ResMenu:
+        case ConfCmd_ResFMVVidHi:
+        case ConfCmd_ResFMVidLo:
+            i = LbIniValueGetStrWhole(&parser, locstr, sizeof(locstr));
+            if (i <= 0) {
+                CONFWRNLOG("Couldn't read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                break;
+            }
+            i = LbRegisterVideoModeString(locstr);
+            if (i == Lb_SCREEN_MODE_INVALID) {
+                CONFWRNLOG("Couldn't register \"%s\" mode \"%s\".", COMMAND_TEXT(cmd_num), locstr);
+                break;
+            }
+            CONFDBGLOG("Resolution %s set to '%s' mode %d", COMMAND_TEXT(cmd_num), locstr, i);
+            switch (cmd_num)
+            {
+            case ConfCmd_ResGameHi:
+                screen_mode_game_hi = i;
+                break;
+            case ConfCmd_ResGameLo:
+                screen_mode_game_lo = i;
+                break;
+            case ConfCmd_ResMenu:
+                screen_mode_menu = i;
+                break;
+            case ConfCmd_ResFMVVidHi:
+                screen_mode_fmvid_hi = i;
+                break;
+            case ConfCmd_ResFMVidLo:
+                screen_mode_fmvid_lo = i;
+                break;
+            }
+            break;
         case 0: // comment
             break;
         case -1: // end of buffer
@@ -414,7 +463,7 @@ main (int argc, char **argv)
     if (LbErrorLogSetup(NULL, NULL, Lb_ERROR_LOG_NEW) != Lb_SUCCESS)
             printf("Execution log setup failed\n");
     /* Gravis Grip joystick driver initialization */
-    /* joy_grip_init(); */
+    joy_driver_init();
 
     if (!process_options(&argc, &argv))
         return 1;
@@ -431,10 +480,11 @@ main (int argc, char **argv)
     if (!game_initialise())
         return 1;
 
+    read_conf_file();
+
     display_set_full_screen(cmdln_fullscreen);
     display_set_lowres_stretch(cmdln_lores_stretch);
 
-    read_conf_file();
     read_strings_file();
     game_setup();
 
@@ -444,7 +494,7 @@ main (int argc, char **argv)
     if ( in_network_game ) {
         LbNetworkReset();
     }
-    joy_grip_shutdown();
+    joy_driver_shutdown();
     LbErrorLogReset();
     LbMemoryReset();
     game_quit();

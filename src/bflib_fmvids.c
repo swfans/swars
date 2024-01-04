@@ -53,7 +53,7 @@ TbResult play_smk(const char *fname, ulong smkflags, ushort plyflags)
         plyflags &= ~SMK_UnknFlag100;
         ret = play_smk_via_buffer(fname, smkflags, plyflags, smack_draw_callback);
     } else {
-        if (lbDisplay.ScreenMode != Lb_SCREEN_MODE_320_200_8)
+        if (lbDisplay.GraphicsScreenHeight >= 400)
           plyflags &= ~SMK_UnknFlag100;
         ret = play_smk_direct(fname, smkflags, plyflags, lbDisplay.ScreenMode);
     }

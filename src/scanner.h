@@ -79,6 +79,7 @@ struct Scanner
 #pragma pack()
 /******************************************************************************/
 extern long *SCANNER_width;
+extern ubyte SCANNER_data[256][256];
 
 extern short waft_table2[32];
 extern short waft_table[32];
@@ -86,9 +87,22 @@ extern short waft_table[32];
 void SCANNER_init(void);
 void SCANNER_fill_in(void);
 void SCANNER_set_colour(ubyte col);
+void SCANNER_find_position(int x, int y, int *U, int *V);
+void SCANNER_data_to_screen(void);
+
+/** Set screen location box coordinates of the scanner view.
+ *
+ * @param x Screen buffer location X coordinate.
+ * @param y Screen buffer location Y coordinate.
+ * @param width Screen rectangle width.
+ * @param height Screen rectangle height.
+ * @param cutout Depth of bottom right cutout of the screen rectangle.
+ */
+void SCANNER_set_screen_box(short x, short y, short width, short height, short cutout);
 
 void add_blippoint_to_scanner(int x, int z, ubyte colour);
 
+TbBool mouse_move_over_scanner(void);
 void clear_all_scanner_signals(void);
 void add_signal_to_scanner(struct Objective *p_objectv, ubyte flag);
 /******************************************************************************/

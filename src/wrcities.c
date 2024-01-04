@@ -454,7 +454,7 @@ void update_city_to_mission(ushort city, ushort missi, TbBool decorate, ushort f
     cities[city].Level = mission_list[missi].LevelNo;
     cities[city].Flags |= flags;
     if (decorate && is_mission_active_in_city(missi, city))
-        cities[city].Flags |= 0x20;
+        cities[city].Flags |= CitF_Unkn20;
 }
 
 void deactivate_cities(void)
@@ -463,7 +463,7 @@ void deactivate_cities(void)
 
     for (city = 0; city < num_cities; city++)
     {
-        cities[city].Flags &= ~(0x20|0x10|0x01);
+        cities[city].Flags &= ~(CitF_Unkn20|CitF_Unkn10|CitF_Unkn01);
     }
 }
 
@@ -545,6 +545,15 @@ void activate_cities(ubyte brief)
             update_cities_decor_to_brief(brief - 1, 0x01);
         }
     }
+}
+
+sbyte find_closest_city(ushort x, ushort y)
+{
+    sbyte ret;
+    asm volatile (
+      "call ASM_find_closest_city\n"
+        : "=r" (ret) : "a" (x), "d" (y));
+    return ret;
 }
 
 /******************************************************************************/

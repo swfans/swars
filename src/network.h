@@ -224,25 +224,31 @@ struct TbIPXPlayerData3 {
     struct TbIPXPlayerData3Sub Sub1[2]; // offset=45
 };
 
-struct TbIPXPlayerData {
+struct TbIPXPlayerData { // sizeof=226
     union {
         struct TbIPXPlayerData1 Data1;
         struct TbIPXPlayerData2 Data2;
         struct TbIPXPlayerData3 Data3;
     };
     ubyte num_players;
-    ubyte field_10E; // offset=270
-    ubyte field_10F[268];
-    ubyte field_21B;
+    ubyte field_10E; // offset=225 (within TbIPXPlayer offset=270)
 };
 
-struct TbIPXPlayer {
+struct TbIPXPlayer { // sizeof=271
     struct TbIPXPlayerHeader Header; // offset=0
     struct TbIPXPlayerData Data; // offset=45
 };
 
+// This was either untyped buffer which is casted on types,
+// or an union; not sure
+struct TbIPXPlayerEx { // sizeof=540
+    struct TbIPXPlayer P; // offset=0
+    ubyte field_10F[268]; // offset=272
+    ubyte field_21B;
+};
+
 struct TbIPXHandler {
-  short field_0;
+  short InterruptNo;
   short field_2;
   short PlayerDataSize;
   short field_6;
@@ -261,7 +267,7 @@ struct TbIPXHandler {
   char field_34[16];
   short field_44;
   ubyte field_46[30];
-  struct TbIPXPlayer PlayerData[30];
+  struct TbIPXPlayerEx PlayerData[30];
 };
 
 struct IPXDatagramBackup {

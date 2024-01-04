@@ -25,23 +25,23 @@
 #include "swlog.h"
 /******************************************************************************/
 struct ModDef mod_defs[] = {
-    {0, 0,   0, 0, {0},  0,    0,  0, 0},
-    {3, 2,  30, 0, {0}, 16,  300, 10, 0},
-    {5, 5, 120, 0, {0}, 17, 1200, 10, 0},
-    {8, 8, 300, 0, {0}, 19, 3000, 10, 0},
-    {2, 2,  25, 0, {0}, 20,  250, 10, 0},
-    {4, 3, 100, 0, {0}, 24, 1000, 10, 0},
-    {7, 6, 250, 0, {0}, 21, 2500, 10, 0},
-    {3, 3,  50, 0, {0}, 15,  500, 10, 0},
-    {5, 6, 200, 0, {0}, 23, 2000, 10, 0},
-    {8, 8, 500, 0, {0}, 29, 5000, 10, 0},
-    {1, 2,  45, 0, {0}, 33,  450, 10, 0},
-    {2, 3, 180, 0, {0}, 30, 1800, 10, 0},
-    {4, 6, 450, 0, {0}, 27, 4500, 10, 0},
-    {1, 5, 200, 0, {0}, 25, 2000, 10, 0},
-    {1, 4, 350, 0, {0}, 25, 3500, 10, 0},
-    {1, 7, 600, 0, {0}, 28, 6000, 10, 0},
-    {1, 2, 950, 0, {0}, 35, 9500, 10, 0},
+    {0, 0,   0, 0, {0}, 0,  0,    0,  0, 0},
+    {3, 2,  30, 0, {0}, 0, 16,  300, 10, 0},
+    {5, 5, 120, 0, {0}, 0, 17, 1200, 10, 0},
+    {8, 8, 300, 0, {0}, 0, 19, 3000, 10, 0},
+    {2, 2,  25, 0, {0}, 0, 20,  250, 10, 0},
+    {4, 3, 100, 0, {0}, 0, 24, 1000, 10, 0},
+    {7, 6, 250, 0, {0}, 0, 21, 2500, 10, 0},
+    {3, 3,  50, 0, {0}, 0, 15,  500, 10, 0},
+    {5, 6, 200, 0, {0}, 0, 23, 2000, 10, 0},
+    {8, 8, 500, 0, {0}, 0, 29, 5000, 10, 0},
+    {1, 2,  45, 0, {0}, 0, 33,  450, 10, 0},
+    {2, 3, 180, 0, {0}, 0, 30, 1800, 10, 0},
+    {4, 6, 450, 0, {0}, 0, 27, 4500, 10, 0},
+    {1, 5, 200, 0, {0}, 1, 25, 2000, 10, 0},
+    {1, 4, 350, 0, {0}, 2, 25, 3500, 10, 0},
+    {1, 7, 600, 0, {0}, 3, 28, 6000, 10, 0},
+    {1, 2, 950, 0, {0}, 4, 35, 9500, 10, 0},
 };
 
 struct ModDefAdd mod_defs_a[33] = {0};
@@ -52,6 +52,7 @@ enum CybModsConfigCmd {
     CCMod_Name,
     CCMod_PowerOutput,
     CCMod_Resilience,
+    CCMod_AdditProp,
     CCMod_Sprite,
     CCMod_Cost,
     CCMod_Funding,
@@ -67,6 +68,7 @@ const struct TbNamedEnum cybmods_conf_mod_cmds[] = {
   {"Name",			CCMod_Name},
   {"PowerOutput",	CCMod_PowerOutput},
   {"Resilience",	CCMod_Resilience},
+  {"AdditProp",		CCMod_AdditProp},
   {"Sprite",		CCMod_Sprite},
   {"Cost",			CCMod_Cost},
   {"ResearchFunding",		CCMod_Funding},
@@ -194,6 +196,15 @@ void read_cybmods_conf_file(void)
                 }
                 mdef->Resilience = k;
                 CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)mdef->Resilience);
+                break;
+            case CCMod_AdditProp:
+                i = LbIniValueGetLongInt(&parser, &k);
+                if (i <= 0) {
+                    CONFWRNLOG("Could not read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                    break;
+                }
+                mdef->AdditProp = k;
+                CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)mdef->AdditProp);
                 break;
             case CCMod_Sprite:
                 i = LbIniValueGetLongInt(&parser, &k);
@@ -360,6 +371,34 @@ TbBool cybmod_fix_all(union Mod *p_umod)
         fixed = true;
     }
     return fixed;
+}
+
+ubyte cybmod_level(union Mod *p_umod, ubyte mgroup)
+{
+    ubyte lv;
+
+    switch (mgroup)
+    {
+    case MODGRP_LEGS:
+        lv = cybmod_legs_level(p_umod);
+        break;
+    case MODGRP_ARMS:
+        lv = cybmod_arms_level(p_umod);
+        break;
+    case MODGRP_CHEST:
+        lv = cybmod_chest_level(p_umod);
+        break;
+    case MODGRP_BRAIN:
+        lv = cybmod_brain_level(p_umod);
+        break;
+    case MODGRP_EPIDERM:
+        lv = cybmod_skin_level(p_umod);
+        break;
+    default:
+        lv = 0;
+        break;
+    }
+    return lv;
 }
 
 void add_mod_to_flags(union Mod *p_umod, ushort mtype)

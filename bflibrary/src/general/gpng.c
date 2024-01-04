@@ -113,15 +113,18 @@ TbResult LbPngRead(FILE *img_fh, ubyte *out_buffer,
     (void) number_of_passes; // do not warn because unused
     png_read_update_info(png, info);
 
-    action = "read image data";
-    if (setjmp(png_jmpbuf(png)))
-        goto err;
-
     // libPNG gives us access to individual rows of the image
+    action = "alloc rows";
     rows = (png_byte**)LbMemoryAlloc(sizeof(png_byte*) * h);
+    if (rows == NULL)
+        goto err;
     // we need to provide pointers to the start of each row
     for (i = 0; i < h; i++)
         rows[i] = (png_byte *) out_buffer + i * w;
+
+    action = "read image data";
+    if (setjmp(png_jmpbuf(png)))
+        goto err;
 
     png_read_image(png, rows);
 

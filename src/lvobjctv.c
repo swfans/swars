@@ -18,6 +18,7 @@
 /******************************************************************************/
 #include "lvobjctv.h"
 
+#include <assert.h>
 #include <string.h>
 #include <stdlib.h>
 #include "bffile.h"
@@ -55,7 +56,7 @@ enum ObjectiveDefFlags {
     /** Any Thing reference in Thing and UniqueID fields */
     ObDF_ReqThing = 0x0020,
     /** Count/Amount in Thing field */
-    ObDF_ReqCount = 0x0020,
+    ObDF_ReqCount = 0x0040,
     /* === What to place in Coord/Radius === */
     /** Coordinates in X/Y/Z fields (or only X/Z, if the Y is reused) */
     ObDF_ReqCoord = 0x0100,
@@ -232,6 +233,7 @@ const struct TbNamedEnum missions_conf_netscan_objctv_params[] = {
 
 #define PARAM_TOKEN_MAX 16
 #define COMMAND_TOKEN_MAX 32
+#define OBJECTIVE_TEXT_MAX 300
 
 struct NetscanObjective mission_netscan_objectives[MISSION_NETSCAN_OBV_COUNT];
 ushort next_mission_netscan_objective;
@@ -242,7 +244,8 @@ extern short draw_objectv_x;
 extern short draw_objectv_y;
 extern const char *scroll_text;
 extern ubyte byte_1C844F;
-extern char *objective_text[170];
+
+char *objective_text[OBJECTIVE_TEXT_MAX];
 
 int add_used_objective(long mapno, long levelno)
 {
@@ -602,12 +605,14 @@ void draw_objective(ushort objectv, ubyte flag)
 
     if (!byte_1C844F)
     {
-        if ((p_objectv->Flags & 0x01) != 0)
+        if ((p_objectv->Flags & GObjF_HIDDEN) != 0)
             scroll_text = "-";
-        else if (p_objectv->ObjText != 0)
+        else if (p_objectv->ObjText != 0) {
+            assert(p_objectv->ObjText < OBJECTIVE_TEXT_MAX);
             scroll_text = objective_text[p_objectv->ObjText];
-        else
+        } else {
             scroll_text = p_odef->DefText;
+        }
         ++dword_1C8464;
     }
     else
@@ -1259,10 +1264,10 @@ short test_objective(ushort objectv, ushort show_obj)
     if (show_obj == 2)
     {
         p_objectv = &game_used_lvl_objectives[objectv];
-        if (((ingame.Cheats & 0x04) != 0) &&
-          (p_objectv->Status != 2) && lbKeyOn[KC_BACKSLASH])
+        if (((ingame.UserFlags & UsrF_Cheats) != 0) &&
+          (p_objectv->Status != 2) && lbKeyOn[KC_SLASH] && (lbShift & KMod_ALT))
         {
-            lbKeyOn[KC_BACKSLASH] = 0;
+            lbKeyOn[KC_SLASH] = 0;
             p_objectv->Status = 2;
         }
         if (p_objectv->Status == 2)
@@ -1273,19 +1278,19 @@ short test_objective(ushort objectv, ushort show_obj)
     else
     {
         p_objectv = &game_used_objectives[objectv];
-        if (((ingame.Cheats & 0x04) != 0) &&
-          (p_objectv->Status != 2) && lbKeyOn[KC_BACKSLASH])
+        if (((ingame.UserFlags & UsrF_Cheats) != 0) &&
+          (p_objectv->Status != 2) && lbKeyOn[KC_SLASH] && (lbShift & KMod_ALT))
         {
-            lbKeyOn[KC_BACKSLASH] = 0;
+            lbKeyOn[KC_SLASH] = 0;
             p_objectv->Status = 2;
         }
         if (p_objectv->Status == 2)
             return 1;
-        if (((p_objectv->Flags & 0x01) == 0) && word_1C8446 && (show_obj != 0))
+        if (((p_objectv->Flags & GObjF_HIDDEN) == 0) && word_1C8446 && (show_obj != 0))
             draw_objective(objectv, 0);
         if (show_obj != 0)
             add_signal_to_scanner(p_objectv, 0);
-        if ((p_objectv->Flags & 0x02) != 0)
+        if ((p_objectv->Flags & GObjF_CANT_MET) != 0)
             return 1;
         if (p_objectv->Status == 1)
             return -1;
@@ -2120,7 +2125,10 @@ int read_objectives_text(void *data)
             objective_text[n++] = p;
         }
     }
-    while (n < 170)
+
+    assert(n <= OBJECTIVE_TEXT_MAX);
+
+    while (n < OBJECTIVE_TEXT_MAX)
     {
         objective_text[n++] = NULL;
     }

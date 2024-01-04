@@ -367,6 +367,11 @@ TbBool person_carries_weapon(struct Thing *p_person, ubyte weapon)
     return weapons_has_weapon(p_person->U.UPerson.WeaponsCarried, weapon);
 }
 
+TbBool person_carries_any_medikit(struct Thing *p_person)
+{
+    return person_carries_weapon(p_person, WEP_MEDI2) || person_carries_weapon(p_person, WEP_MEDI1);
+}
+
 void person_give_best_mods(struct Thing *p_person)
 {
     set_person_mod_legs_level(p_person, 3);
@@ -786,4 +791,14 @@ void unpersuade_my_peeps(struct Thing *p_owntng)
     word_1531DA = count;
 #endif
 }
+
+short check_for_other_people(int x, int y, int z, struct Thing *p_person)
+{
+    short ret;
+    asm volatile (
+      "call ASM_check_for_other_people\n"
+        : "=r" (ret) : "a" (x), "d" (y), "b" (z), "c" (p_person));
+    return ret;
+}
+
 /******************************************************************************/

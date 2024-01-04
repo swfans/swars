@@ -30,12 +30,17 @@
 #include "bfsound.h"
 #include "bfsvaribl.h"
 #include "bffile.h"
+#include "bfendian.h"
+#include "rnc_1fm.h"
 /******************************************************************************/
+
 extern TbBool SoundInstalled;
 extern TbBool DisableLoadSounds;
 
 extern TbBool SoundAble;
 extern ushort SoundType;
+
+extern ushort NumberOfSamples;
 
 extern TbBool sample_queue_handle_initiated;
 extern TbBool sample_queue_handle_stopped;
@@ -44,6 +49,12 @@ extern SNDSAMPLE *sample_queue_handle;
 extern char full_sound_data_path[224];
 extern ubyte CurrentSoundBank; // = -1;
 
+extern void *SfxData;
+extern void *Sfx;
+extern void *EndSfxs;
+
+extern long largest_dat_size;
+extern long largest_tab_size;
 /******************************************************************************/
 
 void StopSampleQueueList(void)
@@ -61,22 +72,81 @@ void StopSampleQueueList(void)
         AIL_set_sample_user_data(sample_queue_handle, i, 0);
 }
 
+void format_sounds(void)
+{
+    short n;
+    struct BfSfxInfo *sfiend;
+    ubyte *dt;
+    struct BfSfxInfo *sfi;
+
+    n = NumberOfSamples;
+    sfiend = (struct BfSfxInfo *)EndSfxs;
+    sfi = (struct BfSfxInfo *)Sfx;
+    dt = SfxData;
+    if ((Sfx != NULL) && (dt != NULL))
+    {
+        n = 0;
+        for (sfi++; sfi < sfiend; sfi++)
+        {
+            ulong offs;
+            offs = (ulong)sfi->DataBeg;
+            sfi->DataBeg = &dt[offs];
+            n++;
+        }
+    }
+    SfxData = dt;
+    EndSfxs = sfiend;
+    NumberOfSamples = n;
+}
+
 ubyte load_sound_bank(TbFileHandle fh, ubyte bank_tpno)
 {
-    ubyte ret;
-    asm volatile ("call ASM_load_sound_bank\n"
-        : "=r" (ret) : "a" (fh),  "d" (bank_tpno));
-    return ret;
+    struct BfSoundBankHead head[9];
+
+    LbFileRead(fh, head, 9 * sizeof(struct BfSoundBankHead));
+    if (head[bank_tpno].DatPos == -1)
+        return 0;
+    SoundAble = false;
+    if (SfxData == NULL || Sfx == NULL)
+        return 0;
+    memset(SfxData, 0, largest_dat_size);
+    memset(Sfx, 0, largest_tab_size);
+    EndSfxs = Sfx + head[bank_tpno].TabSize;
+
+    LbFileSeek(fh, head[bank_tpno].DatPos, 0);
+    LbFileRead(fh, SfxData, 8);
+    if (blong(SfxData+0) == RNC_SIGNATURE)
+    {
+        long fsize = blong(SfxData+4);
+        LbFileRead(fh, SfxData + 8, fsize - 8);
+        UnpackM1(SfxData, fsize);
+    }
+    else
+    {
+        LbFileRead(fh, SfxData + 8, head[bank_tpno].DatSize - 8);
+    }
+
+    LbFileSeek(fh, head[bank_tpno].TabPos, 0);
+    LbFileRead(fh, Sfx, 8);
+    if (blong(Sfx+0) == RNC_SIGNATURE)
+    {
+        long fsize = blong(Sfx+4);
+        LbFileRead(fh, Sfx + 8, fsize - 8);
+        UnpackM1(Sfx, fsize);
+    }
+    else
+    {
+        LbFileRead(fh, Sfx + 8, head[bank_tpno].TabSize - 8);
+    }
+
+    format_sounds();
+
+    SoundAble = 1;
+    return 1;
 }
 
 int LoadSounds(ubyte bank_no)
 {
-#if 0
-    int ret;
-    asm volatile ("call ASM_LoadSounds\n"
-        : "=r" (ret) : "a" (bank_no));
-    return ret;
-#else
     TbFileHandle fh;
     long len, banks_offs;
     ushort tpno;
@@ -141,7 +211,6 @@ int LoadSounds(ubyte bank_no)
     sprintf(SoundProgressMessage, "BF45 - load sound bank - passed\n");
     SoundProgressLog(SoundProgressMessage);
     return 0;
-#endif
 }
 
 /******************************************************************************/

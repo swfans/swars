@@ -53,10 +53,65 @@ ubyte sub_71694(int a1, int a2, char *text, int a4, ubyte a5, ubyte a6)
     return ret;
 }
 
+TbBool input_kicked_left_arrow(struct ScreenBox *box, short *target)
+{
+    if (mouse_move_over_slant_box(box))
+    {
+        if (lbDisplay.MLeftButton)
+        {
+            lbDisplay.LeftButton = 0;
+            (*target)--;
+            if ((*target) < 0)
+                (*target) = 0;
+            return true;
+        }
+    }
+    return false;
+}
+
+TbBool input_kicked_right_arrow(struct ScreenBox *box, short *target)
+{
+    if (mouse_move_over_slant_box(box))
+    {
+        if (lbDisplay.MLeftButton)
+        {
+            lbDisplay.LeftButton = 0;
+            (*target)++;
+            if ((*target) > 322)
+                (*target) = 322;
+            return true;
+        }
+    }
+    return false;
+}
+
+TbBool input_slant_box(struct ScreenBox *box, short *target)
+{
+    int ms_x, ms_y;
+
+    if (lbDisplay.MLeftButton)
+    {
+        ms_x = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
+        ms_y = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
+        if ((ms_y >= box->Y + 2) && (ms_y <= box->Y + box->Height - 4))
+        {
+            int dx, dy;
+            dx = ms_x - box->X - 2;
+            dy = ms_y - box->Y - 2;
+            if (dx + dy >= 0 && dx + dy <= box->Width - 4 - 2)
+            {
+                (*target) = 322 * (dx + dy) / (box->Width - 4 - 2);
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 void draw_box_cutedge(struct ScreenBox *box, TbPixel colr1)
 {
     short cut, stp;
-    if (lbDisplay.ScreenMode == 1) {
+    if (lbDisplay.GraphicsScreenHeight < 400) {
         stp = 1;
         cut = 25;
     } else {
@@ -84,6 +139,82 @@ void draw_box_cutedge(struct ScreenBox *box, TbPixel colr1)
     LbDrawLine(box->X + stp, box->Y + box->Height - cut, box->X + cut, box->Height + cut + stp, colr1);
 }
 
+void draw_parallelogram_45degi(short x, short y, short w, short h, TbPixel colr2)
+{
+    short cx, i;
+
+    cx = x;
+    for (i = 0; i < h; i += 2)
+    {
+        if (lbDisplay.GraphicsScreenHeight < 400)
+            LbDrawLine((cx) >> 1, (y+i) >> 1, (cx+w) >> 1, (y+i) >> 1, colr2);
+        else
+            LbDrawLine((cx), (y+i), (cx+w), (y+i), colr2);
+        cx -= 2;
+    }
+}
+
+void draw_slant_box(struct ScreenBox *box, TbPixel colr2)
+{
+    draw_parallelogram_45degi(box->X, box->Y, box->Width, box->Height, colr2);
+    if (lbDisplay.GraphicsScreenHeight >= 400)
+        draw_parallelogram_45degi(box->X - 1, box->Y + 1, box->Width, box->Height, colr2);
+}
+
+void draw_kicked_left_arrow(struct ScreenBox *box, TbPixel colr2)
+{
+    short stp;
+
+    if (lbDisplay.GraphicsScreenHeight < 400)
+        stp = 1;
+    else
+        stp = 2;
+
+    if (mouse_move_over_slant_box(box))
+    {
+        if (lbDisplay.GraphicsScreenHeight < 400)
+            LbSpriteDrawOneColour(box->X >> 1, (box->Y >> 1) - stp, &pop1_sprites[100],
+              colour_lookup[1]);
+        else
+            LbSpriteDrawOneColour(box->X, box->Y - stp, &pop1_sprites[100],
+              colour_lookup[1]);
+    }
+    else
+    {
+        if (lbDisplay.GraphicsScreenHeight < 400)
+            LbSpriteDraw(box->X >> 1, (box->Y >> 1) - stp, &pop1_sprites[100]);
+        else
+            LbSpriteDraw(box->X, box->Y - stp, &pop1_sprites[100]);
+    }
+}
+
+void draw_kicked_right_arrow(struct ScreenBox *box, TbPixel colr2)
+{
+    short stp;
+
+    if (lbDisplay.GraphicsScreenHeight < 400)
+        stp = 1;
+    else
+        stp = 2;
+
+    if (mouse_move_over_slant_box(box))
+    {
+        if (lbDisplay.GraphicsScreenHeight < 400)
+            LbSpriteDrawOneColour((box->X >> 1) - stp, (box->Y >> 1) - stp,
+              &pop1_sprites[101], colour_lookup[1]);
+        else
+            LbSpriteDrawOneColour(box->X - stp, box->Y - stp,
+              &pop1_sprites[101], colour_lookup[1]);
+    }
+    else
+    {
+        if (lbDisplay.GraphicsScreenHeight < 400)
+            LbSpriteDraw((box->X >> 1) - stp, (box->Y >> 1) - stp, &pop1_sprites[101]);
+        else
+            LbSpriteDraw(box->X - stp, box->Y - stp, &pop1_sprites[101]);
+    }
+}
+
 TbBool pause_screen_handle(void)
 {
 #if 0
@@ -94,13 +225,13 @@ TbBool pause_screen_handle(void)
 #endif
     int w;
     const char *s;
-    int x1, x2, y1;
-    int ms_x, ms_y, i;
-    TbBool is_unkn1;
+    TbBool resume_game;
     TbPixel colr1, colr2;
     struct ScreenBox main_box;
+    short *target;
+    short *affected;
 
-    if (lbDisplay.ScreenMode == 1) {
+    if (lbDisplay.GraphicsScreenHeight < 400) {
         main_box.X = 43;
         main_box.Width = 233;
         main_box.Y = 27;
@@ -117,13 +248,17 @@ TbBool pause_screen_handle(void)
     else
         colr1 = 40;
     snd_unkn1_volume_all_samples();
-    person_func_unknown_310(2u);
+    update_danger_music(2);
+
+    // Wait for the pause key to be released
     lbKeyOn[kbkeys[GKey_PAUSE]] = 0;
     while ((jskeys[GKey_PAUSE] != 0) &&
       (jskeys[GKey_PAUSE] != joy.Buttons[0]))
     {
+        game_update();
         joy_func_065(&joy);
     }
+
     do_change_mouse(8);
 
     draw_box_cutedge(&main_box, colr1);
@@ -137,10 +272,10 @@ TbBool pause_screen_handle(void)
       lbDisplay.PhysicalScreenHeight);
     if ((ingame.PanelPermutation == 2) || (ingame.PanelPermutation == -3))
     {
-        lbDisplay.DrawFlags |= 0x0040;
+        lbDisplay.DrawFlags |= Lb_TEXT_ONE_COLOR;
         lbDisplay.DrawColour = colr2;
     }
-    if (lbDisplay.ScreenMode == 1)
+    if (lbDisplay.GraphicsScreenHeight < 400)
     {
         s = mission_name;
         w = my_string_width(s);
@@ -171,11 +306,11 @@ TbBool pause_screen_handle(void)
         my_draw_text(322 - (w >> 1), 196, s, 0);
     }
     if (ingame.PanelPermutation == 2 || ingame.PanelPermutation == -3)
-        lbDisplay.DrawFlags &= ~0x0040;
+        lbDisplay.DrawFlags &= ~Lb_TEXT_ONE_COLOR;
 
     if (language_3str[0] == 'e')
     {
-        if (lbDisplay.ScreenMode == 1)
+        if (lbDisplay.GraphicsScreenHeight < 400)
         {
             LbSpriteDraw(89, 31, &pop1_sprites[102]);
             LbSpriteDraw(83, 120, &pop1_sprites[103]);
@@ -190,7 +325,7 @@ TbBool pause_screen_handle(void)
     }
     else
     {
-        if (lbDisplay.ScreenMode == 1)
+        if (lbDisplay.GraphicsScreenHeight < 400)
         {
             s = gui_strings[606];
             w = my_string_width(s);
@@ -213,523 +348,155 @@ TbBool pause_screen_handle(void)
     if (!ingame.fld_unk7DA)
         SetMusicVolume(100, 0x7F);
 
-    is_unkn1 = 0;
-    while (!lbKeyOn[kbkeys[GKey_PAUSE]]
-        && (!jskeys[GKey_PAUSE] || jskeys[GKey_PAUSE] != joy.Buttons[0])
-        && !is_unkn1)
+    resume_game = false;
+    while (!resume_game)
     {
         game_update();
         joy_func_065(&joy);
         PlayCDTrack(ingame.CDTrack);
+        affected = NULL;
 
-        x2 = 442;
-        y1 = 122;
-        x1 = 204;
-        while (y1 < 140)
         {
-            if (lbDisplay.ScreenMode == 1)
-                LbDrawLine(x1 >> 1, y1 >> 1, x2 >> 1, y1 >> 1, colr2);
-            else
-                LbDrawLine(x1, y1, x2, y1, colr2);
-            y1 += 2;
-            x2 -= 2;
-            x1 -= 2;
+        target = &startscr_samplevol;
+        struct ScreenBox box1;
+        box1.X = 204;
+        box1.Y = 122;
+        box1.Width = 238;
+        box1.Height = 18;
+
+        struct ScreenBox box2;
+        box2.X = 176;
+        box2.Y = 122;
+        box2.Width = 8;
+        box2.Height = 18;
+
+        struct ScreenBox box3;
+        box3.X = 432;
+        box3.Y = 122;
+        box3.Width = 8;
+        box3.Height = 18;
+
+        // Draw the main slider box
+        draw_slant_box(&box1, colr2);
+        // Draw the side arrows
+        draw_kicked_left_arrow(&box2, colr2);
+        draw_kicked_right_arrow(&box3, colr2);
+
+        if (input_kicked_left_arrow(&box2, target))
+            affected = target;
+        if (input_kicked_right_arrow(&box3, target))
+            affected = target;
+        if (input_slant_box(&box1, target))
+            affected = target;
+
+        if (*target) // Draw slider box filling
+        {
+            struct ScreenBox box4;
+            box4.X = box1.X + 2;
+            box4.Y = box1.Y + 2;
+            box4.Width = (box1.Width - 6) * (*target) / 322;
+            box4.Height = box1.Height - 4;
+            draw_slant_box(&box4, colour_lookup[1]);
         }
-
-        x2 = 442;
-        y1 = 166;
-        x1 = 204;
-        while (y1 < 184)
-        {
-            if (lbDisplay.ScreenMode == 1)
-                LbDrawLine(x1 >> 1, y1 >> 1, x2 >> 1, y1 >> 1, colr2);
-            else
-                LbDrawLine(x1, y1, x2, y1, colr2);
-            y1 += 2;
-            x2 -= 2;
-            x1 -= 2;
-        }
-
-        x2 = 442;
-        y1 = 210;
-        x1 = 204;
-        while (y1 < 228)
-        {
-            if (lbDisplay.ScreenMode == 1)
-                LbDrawLine(x1 >> 1, y1 >> 1, x2 >> 1, y1 >> 1, colr2);
-            else
-                LbDrawLine(x1, y1, x2, y1, colr2);
-            y1 += 2;
-            x2 -= 2;
-            x1 -= 2;
-        }
-
-        if (lbDisplay.ScreenMode != 1)
-        {
-            y1 = 123;
-            x2 = 441;
-            x1 = 203;
-            while (y1 < 141)
-            {
-                if (lbDisplay.ScreenMode == 1)
-                    LbDrawLine(x1 >> 1, y1 >> 1, x2 >> 1, y1 >> 1, colr2);
-                else
-                    LbDrawLine(x1, y1, x2, y1, colr2);
-                y1 += 2;
-                x2 -= 2;
-                x1 -= 2;
-            }
-
-            x2 = 441;
-            y1 = 167;
-            x1 = 203;
-            while (y1 < 185)
-            {
-                if (lbDisplay.ScreenMode == 1)
-                    LbDrawLine(x1 >> 1, y1 >> 1, x2 >> 1, y1 >> 1, colr2);
-                else
-                    LbDrawLine(x1, y1, x2, y1, colr2);
-                y1 += 2;
-                x2 -= 2;
-                x1 -= 2;
-            }
-
-            y1 = 211;
-            x2 = 441;
-            x1 = 203;
-            while (y1 < 229)
-            {
-                if (lbDisplay.ScreenMode == 1)
-                    LbDrawLine(x1 >> 1, y1 >> 1, x2 >> 1, y1 >> 1, colr2);
-                else
-                    LbDrawLine(x1, y1, x2, y1, colr2);
-                y1 += 2;
-                x2 -= 2;
-                x1 -= 2;
-            }
         }
 
-        if (lbDisplay.ScreenMode == 1)
-            ms_x = 2 * lbDisplay.MMouseX;
-        else
-            ms_x = lbDisplay.MMouseX;
-        if (lbDisplay.ScreenMode == 1)
-            ms_y = 2 * lbDisplay.MMouseY;
-        else
-            ms_y = lbDisplay.MMouseY;
-        if ((ms_x >> 1 >= 88) && (ms_x >> 1 <= 92) && (ms_y >> 1 >= 62) && (ms_y >> 1 <= 70))
         {
-            if (lbDisplay.ScreenMode == 1)
-            {
-                LbSpriteDrawOneColour(88, 60, &pop1_sprites[100],
-                  colour_lookup[1]);
-            }
-            else
-            {
-                LbSpriteDrawOneColour(176, 120, &pop1_sprites[100],
-                  colour_lookup[1]);
-            }
-            if (lbDisplay.MLeftButton)
-            {
-                lbDisplay.LeftButton = 0;
-                --startscr_samplevol;
-                if (startscr_samplevol < 0)
-                    startscr_samplevol = 0;
-                SetSoundMasterVolume(127 * startscr_samplevol / 322);
-                if (!IsSamplePlaying(0, 80, 0))
-                    play_sample_using_heap(0, 80, 127, 64, 100, 0, 1u);
-            }
+        target = &startscr_midivol;
+        struct ScreenBox box1;
+        box1.X = 204;
+        box1.Y = 166;
+        box1.Width = 238;
+        box1.Height = 18;
+
+        struct ScreenBox box2;
+        box2.X = 176;
+        box2.Y = 166;
+        box2.Width = 8;
+        box2.Height = 18;
+
+        struct ScreenBox box3;
+        box3.X = 432;
+        box3.Y = 166;
+        box3.Width = 8;
+        box3.Height = 18;
+
+        draw_slant_box(&box1, colr2);
+        draw_kicked_left_arrow(&box2, colr2);
+        draw_kicked_right_arrow(&box3, colr2);
+
+        if (input_kicked_left_arrow(&box2, target))
+            affected = target;
+        if (input_kicked_right_arrow(&box3, target))
+            affected = target;
+        if (input_slant_box(&box1, target))
+            affected = target;
+
+        if (*target)
+        {
+            struct ScreenBox box4;
+            box4.X = box1.X + 2;
+            box4.Y = box1.Y + 2;
+            box4.Width = (box1.Width - 6) * (*target) / 322;
+            box4.Height = box1.Height - 4;
+            draw_slant_box(&box4, colour_lookup[1]);
         }
-        else
-        {
-            if (lbDisplay.ScreenMode == 1)
-            {
-                LbSpriteDraw(88, 60, &pop1_sprites[100]);
-            }
-            else
-            {
-                LbSpriteDraw(176, 120, &pop1_sprites[100]);
-            }
         }
 
-        if (lbDisplay.ScreenMode == 1)
-            ms_x = 2 * lbDisplay.MMouseX;
-        else
-            ms_x = lbDisplay.MMouseX;
-        if (lbDisplay.ScreenMode == 1)
-            ms_y = 2 * lbDisplay.MMouseY;
-        else
-            ms_y = lbDisplay.MMouseY;
-        if ((ms_x >> 1 >= 88) && (ms_x >> 1 <= 92) && (ms_y >> 1 >= 84) && (ms_y >> 1 <= 92))
         {
-            if (lbDisplay.ScreenMode == 1)
-            {
-                LbSpriteDrawOneColour(88, 82,
-                  &pop1_sprites[100], colour_lookup[1]);
-            }
-            else
-            {
-                LbSpriteDrawOneColour(176, 164,
-                  &pop1_sprites[100], colour_lookup[1]);
-            }
-            if (lbDisplay.MLeftButton)
-            {
-                lbDisplay.LeftButton = 0;
-                --startscr_midivol;
-                if (startscr_midivol < 0)
-                    startscr_midivol = 0;
-                SetMusicMasterVolume(127 * startscr_midivol / 322);
-            }
+        target = &startscr_cdvolume;
+        struct ScreenBox box1;
+        box1.X = 204;
+        box1.Y = 210;
+        box1.Width = 238;
+        box1.Height = 18;
+
+        struct ScreenBox box2;
+        box2.X = 176;
+        box2.Y = 210;
+        box2.Width = 8;
+        box2.Height = 18;
+
+        struct ScreenBox box3;
+        box3.X = 432;
+        box3.Y = 210;
+        box3.Width = 8;
+        box3.Height = 18;
+
+        draw_slant_box(&box1, colr2);
+        draw_kicked_left_arrow(&box2, colr2);
+        draw_kicked_right_arrow(&box3, colr2);
+
+        if (input_kicked_left_arrow(&box2, target))
+            affected = target;
+        if (input_kicked_right_arrow(&box3, target))
+            affected = target;
+        if (input_slant_box(&box1, target))
+            affected = target;
+
+        if (*target)
+        {
+            struct ScreenBox box4;
+            box4.X = box1.X + 2;
+            box4.Y = box1.Y + 2;
+            box4.Width = (box1.Width - 6) * (*target) / 322;
+            box4.Height = box1.Height - 4;
+            draw_slant_box(&box4, colour_lookup[1]);
         }
-        else
-        {
-            if (lbDisplay.ScreenMode == 1)
-            {
-                LbSpriteDraw(88, 82, &pop1_sprites[100]);
-            }
-            else
-            {
-                LbSpriteDraw(176, 164, &pop1_sprites[100]);
-            }
         }
 
-        if (lbDisplay.ScreenMode == 1)
-            ms_x = 2 * lbDisplay.MMouseX;
-        else
-            ms_x = lbDisplay.MMouseX;
-        if (lbDisplay.ScreenMode == 1)
-            ms_y = 2 * lbDisplay.MMouseY;
-        else
-            ms_y = lbDisplay.MMouseY;
-        if ((ms_x >> 1 >= 88) && (ms_x >> 1 <= 92) && (ms_y >> 1 >= 106) && (ms_y >> 1 <= 114))
+        if (affected == &startscr_samplevol)
         {
-            if (lbDisplay.ScreenMode == 1)
-            {
-                LbSpriteDrawOneColour(88, 104,
-                  &pop1_sprites[100], colour_lookup[1]);
-            }
-            else
-            {
-                LbSpriteDrawOneColour(176, 208,
-                  &pop1_sprites[100], colour_lookup[1]);
-            }
-            if (lbDisplay.MLeftButton)
-            {
-                lbDisplay.LeftButton = 0;
-                --startscr_cdvolume;
-                if (startscr_cdvolume < 0)
-                    startscr_cdvolume = 0;
-                SetCDVolume(70 * (127 * startscr_cdvolume / 322) / 100);
-            }
+            SetSoundMasterVolume(127 * (*affected) / 322);
+            if (!IsSamplePlaying(0, 80, 0))
+                play_sample_using_heap(0, 80, 127, 64, 100, 0, 1u);
         }
-        else
+        else if (affected == &startscr_midivol)
         {
-            if (lbDisplay.ScreenMode == 1)
-            {
-                LbSpriteDraw(88, 104, &pop1_sprites[100]);
-            }
-            else
-            {
-                LbSpriteDraw(176, 208, &pop1_sprites[100]);
-            }
+            SetMusicMasterVolume(127 * (*affected) / 322);
         }
-
-        if (lbDisplay.ScreenMode == 1)
-            ms_x = 2 * lbDisplay.MMouseX;
-        else
-            ms_x = lbDisplay.MMouseX;
-        if (lbDisplay.ScreenMode == 1)
-            ms_y = 2 * lbDisplay.MMouseY;
-        else
-            ms_y = lbDisplay.MMouseY;
-        if ((ms_x >> 1 >= 222) && (ms_x >> 1 <= 226) && (ms_y >> 1 >= 60) && (ms_y >> 1 <= 68))
+        else if (affected == &startscr_cdvolume)
         {
-            if (lbDisplay.ScreenMode == 1)
-            {
-                LbSpriteDrawOneColour(215, 60,
-                  &pop1_sprites[101], colour_lookup[1]);
-            }
-            else
-            {
-                LbSpriteDrawOneColour(430, 120,
-                  &pop1_sprites[101], colour_lookup[1]);
-            }
-            if (lbDisplay.MLeftButton)
-            {
-                lbDisplay.LeftButton = 0;
-                ++startscr_samplevol;
-                if (startscr_samplevol > 322)
-                    startscr_samplevol = 322;
-                SetSoundMasterVolume(127 * startscr_samplevol / 322);
-                if (!IsSamplePlaying(0, 80, 0))
-                    play_sample_using_heap(0, 80, 127, 64, 100, 0, 1u);
-            }
-        }
-        else
-        {
-            if (lbDisplay.ScreenMode == 1)
-            {
-                LbSpriteDraw(215, 60, &pop1_sprites[101]);
-            }
-            else
-            {
-                LbSpriteDraw(430, 120, &pop1_sprites[101]);
-            }
-        }
-
-        if (lbDisplay.ScreenMode == 1)
-            ms_x = 2 * lbDisplay.MMouseX;
-        else
-            ms_x = lbDisplay.MMouseX;
-        if (lbDisplay.ScreenMode == 1)
-            ms_y = 2 * lbDisplay.MMouseY;
-        else
-            ms_y = lbDisplay.MMouseY;
-        if ((ms_x >> 1 >= 222) && (ms_x >> 1 <= 226) && (ms_y >> 1 >= 82) && (ms_y >> 1 <= 90))
-        {
-            if (lbDisplay.ScreenMode == 1)
-            {
-                LbSpriteDrawOneColour(215, 82,
-                  &pop1_sprites[101], colour_lookup[1]);
-            }
-            else
-            {
-                LbSpriteDrawOneColour(430, 164,
-                  &pop1_sprites[101], colour_lookup[1]);
-            }
-            if (lbDisplay.MLeftButton)
-            {
-                lbDisplay.LeftButton = 0;
-                ++startscr_midivol;
-                if (startscr_midivol > 322)
-                    startscr_midivol = 322;
-                SetMusicMasterVolume(127 * startscr_midivol / 322);
-            }
-        }
-        else
-        {
-            if (lbDisplay.ScreenMode == 1)
-            {
-                LbSpriteDraw(215, 82, &pop1_sprites[101]);
-            }
-            else
-            {
-                LbSpriteDraw(430, 164, &pop1_sprites[101]);
-            }
-        }
-
-        if (lbDisplay.ScreenMode == 1)
-            ms_x = 2 * lbDisplay.MMouseX;
-        else
-            ms_x = lbDisplay.MMouseX;
-        if (lbDisplay.ScreenMode == 1)
-            ms_y = 2 * lbDisplay.MMouseY;
-        else
-            ms_y = lbDisplay.MMouseY;
-        if ((ms_x >> 1 >= 222) && (ms_x >> 1 <= 226) && (ms_y >> 1 >= 104) && (ms_y >> 1 <= 112))
-        {
-            if (lbDisplay.ScreenMode == 1)
-            {
-                LbSpriteDrawOneColour(215, 104, &pop1_sprites[101],
-                  colour_lookup[1]);
-            }
-            else
-            {
-                LbSpriteDrawOneColour(430, 208, &pop1_sprites[101],
-                  colour_lookup[1]);
-            }
-            if (lbDisplay.MLeftButton)
-            {
-                lbDisplay.LeftButton = 0;
-                ++startscr_cdvolume;
-                if (startscr_cdvolume > 322)
-                    startscr_cdvolume = 322;
-                SetCDVolume(70 * (127 * startscr_cdvolume / 322) / 100);
-            }
-        }
-        else
-        {
-            if (lbDisplay.ScreenMode == 1)
-            {
-                LbSpriteDraw(215, 104, &pop1_sprites[101]);
-            }
-            else
-            {
-                LbSpriteDraw(430, 208, &pop1_sprites[101]);
-            }
-        }
-
-        if (lbDisplay.MLeftButton)
-        {
-            ms_x = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
-            ms_y = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
-            if ((ms_y >> 1 >= 62) && (ms_y >> 1 <= 68))
-            {
-                int ms_delta;
-                ms_delta = (ms_y >> 1) + (ms_x >> 1) - 62;
-                if (ms_delta >= 103 && ms_delta <= 219)
-                {
-                    startscr_samplevol = 322 * (ms_delta - 103) / 116;
-                    SetSoundMasterVolume(127 * startscr_samplevol / 322);
-                    if (!IsSamplePlaying(0, 80, 0))
-                        play_sample_using_heap(0, 80, 127, 64, 100, 0, 1u);
-                }
-            }
-        }
-
-        if (lbDisplay.MLeftButton)
-        {
-            ms_x = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
-            ms_y = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
-            if ((ms_y >> 1 >= 84) && (ms_y >> 1 <= 90))
-            {
-                int ms_delta;
-                ms_delta = (ms_y >> 1) + (ms_x >> 1) - 84;
-                if (ms_delta >= 103 && ms_delta <= 219)
-                {
-                    startscr_midivol = 322 * (ms_delta - 103) / 116;
-                    SetMusicMasterVolume(127 * startscr_midivol / 322);
-                }
-            }
-        }
-
-        if (lbDisplay.MLeftButton)
-        {
-            ms_x = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
-            ms_y = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
-            if ((ms_y >> 1 >= 106) && (ms_y >> 1 <= 112))
-            {
-                int ms_delta;
-                ms_delta = (ms_y >> 1) + (ms_x >> 1) - 106;
-                if (ms_delta >= 103 && ms_delta <= 219)
-                {
-                    startscr_cdvolume = 322 * (ms_delta - 103) / 116;
-                    SetCDVolume(70 * (127 * startscr_cdvolume / 322) / 100);
-                }
-            }
-        }
-
-        if (startscr_samplevol)
-        {
-            int val7;
-            x1 = 206;
-            y1 = 124;
-            for (i = 0; i < 7; i++)
-            {
-                val7 = 103 - i;
-                if (lbDisplay.ScreenMode == 1)
-                    LbDrawLine(x1 >> 1, y1 >> 1,
-                        (2 * (116 * startscr_samplevol / 322 + val7))
-                            >> 1, y1 >> 1, colour_lookup[1]);
-                else
-                    LbDrawLine(x1, y1,
-                        2 * (116 * startscr_samplevol / 322 + val7),
-                        y1, colour_lookup[1]);
-                x1 -= 2;
-                y1 += 2;
-            }
-            if (lbDisplay.ScreenMode != 1)
-            {
-                x1 = 205;
-                y1 = 125;
-                for (i = 0; i < 7; i++)
-                {
-                    val7 = 103 - i;
-                    if (lbDisplay.ScreenMode == 1)
-                        LbDrawLine(x1 >> 1, y1 >> 1,
-                            (2 * (116 * startscr_samplevol / 322 + val7)
-                                - 1) >> 1, y1 >> 1, colour_lookup[1]);
-                    else
-                        LbDrawLine(x1, y1,
-                            2 * (val7 + 116 * startscr_samplevol / 322)
-                                - 1, y1, colour_lookup[1]);
-                    x1 -= 2;
-                    y1 += 2;
-                }
-            }
-        }
-
-        if (startscr_midivol)
-        {
-            int val7;
-            x1 = 206;
-            y1 = 168;
-            for (i = 0; i < 7; i++)
-            {
-                val7 = 103 - i;
-                if (lbDisplay.ScreenMode == 1)
-                    LbDrawLine(x1 >> 1, y1 >> 1,
-                        (2 * (116 * startscr_midivol / 322 + val7))
-                            >> 1, y1 >> 1, colour_lookup[1]);
-                else
-                    LbDrawLine(x1, y1,
-                        2 * (116 * startscr_midivol / 322 + val7),
-                        y1, colour_lookup[1]);
-                x1 -= 2;
-                y1 += 2;
-            }
-            if (lbDisplay.ScreenMode != 1)
-            {
-                x1 = 205;
-                y1 = 169;
-                for (i = 0; i < 7; i++)
-                {
-                    val7 = 103 - i;
-                    if (lbDisplay.ScreenMode == 1)
-                        LbDrawLine(x1 >> 1, y1 >> 1,
-                            (2
-                                * (116 * startscr_midivol / 322
-                                    + val7) - 1) >> 1, y1 >> 1,
-                            colour_lookup[1]);
-                    else
-                        LbDrawLine(x1, y1,
-                            2
-                                * (116 * startscr_midivol / 322
-                                    + val7) - 1, y1, colour_lookup[1]);
-                    x1 -= 2;
-                    y1 += 2;
-                }
-            }
-        }
-
-        if (startscr_cdvolume)
-        {
-            int val7;
-            x1 = 206;
-            y1 = 212;
-            for (i = 0; i < 7; i++)
-            {
-                val7 = 103 - i;
-                if (lbDisplay.ScreenMode == 1)
-                    LbDrawLine(x1 >> 1, y1 >> 1,
-                        (2 * (116 * startscr_cdvolume / 322 + val7))
-                            >> 1, y1 >> 1, colour_lookup[1]);
-                else
-                    LbDrawLine(x1, y1,
-                        2 * (116 * startscr_cdvolume / 322 + val7),
-                        y1, colour_lookup[1]);
-                x1 -= 2;
-                y1 += 2;
-            }
-            if (lbDisplay.ScreenMode != 1)
-            {
-                x1 = 205;
-                y1 = 213;
-                for (i = 0; i < 7; i++)
-                {
-                    val7 = 103 - i;
-                    if (lbDisplay.ScreenMode == 1)
-                        LbDrawLine(x1 >> 1, y1 >> 1,
-                            (2 * (val7 + 116 * startscr_cdvolume / 322)
-                                - 1) >> 1, y1 >> 1, colour_lookup[1]);
-                    else
-                        LbDrawLine(x1, y1,
-                            2 * (val7 + 116 * startscr_cdvolume / 322)
-                                - 1, y1, colour_lookup[1]);
-                    x1 -= 2;
-                    y1 += 2;
-                }
-            }
+            SetCDVolume(70 * (127 * (*affected) / 322) / 100);
         }
 
         if (sub_71694(180, 120, gui_strings[477], colr1, colr2, ingame.DetailLevel == 1))
@@ -742,8 +509,9 @@ TbBool pause_screen_handle(void)
             ingame.DetailLevel = 0;
             bang_set_detail(1);
         }
+
         if (sub_71694(140, 134, gui_strings[455], colr1, colr2, 0))
-            is_unkn1 = 1;
+            resume_game = true;
         if (sub_71694(197, 134, gui_strings[445], colr1, colr2, 0))
         {
             swap_wscreen();
@@ -755,6 +523,10 @@ TbBool pause_screen_handle(void)
         lbDisplay.DrawFlags = 0;
         process_sound_heap();
         swap_wscreen();
+
+        if (lbKeyOn[kbkeys[GKey_PAUSE]]
+          || (jskeys[GKey_PAUSE] && jskeys[GKey_PAUSE] == joy.Buttons[0]))
+            resume_game = true;
     }
 
     while ((lbKeyOn[kbkeys[GKey_PAUSE]])

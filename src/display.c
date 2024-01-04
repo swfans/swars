@@ -13,6 +13,7 @@
 #include "poly.h"
 #include "util.h"
 #include "bflib_basics.h"
+#include "swlog.h"
 
 TbScreenMode screen_mode_game_hi = Lb_SCREEN_MODE_640_480_8;
 TbScreenMode screen_mode_game_lo = Lb_SCREEN_MODE_320_200_8;
@@ -119,30 +120,55 @@ display_unlock (void)
   LbScreenUnlock();
 }
 
-void setup_screen_mode(TbScreenMode mode)
+void setup_simple_screen_mode(TbScreenMode mode)
 {
-    TbBool was_locked;
     TbScreenModeInfo *mdinfo;
+    short ratio;
 
     printf("%s %d\n", __func__, (int)mode);
     mdinfo = LbScreenGetModeInfo(mode);
     if (mdinfo->Width == 0) {
+        LOGERR("Simple video mode %d is invalid", (int)mode);
+        return;
+    }
+    LbScreenSetup(mode, mdinfo->Width, mdinfo->Height, display_palette);
+
+    if (lbDisplay.GraphicsScreenHeight < 400)
+        ratio = 2;
+    else
+        ratio = 1;
+    LbMouseSetup(NULL, ratio, ratio);
+}
+
+void setup_screen_mode(TbScreenMode mode)
+{
+    TbBool was_locked;
+    TbScreenModeInfo *mdinfo;
+    short ratio;
+
+    printf("%s %d\n", __func__, (int)mode);
+    mdinfo = LbScreenGetModeInfo(mode);
+    if (mdinfo->Width == 0) {
+        LOGERR("Game video mode %d is invalid", (int)mode);
         mode = 1;
         mdinfo = LbScreenGetModeInfo(mode);
     }
-    data_1aa330 = mdinfo->Width;
-    data_1aa332 = mdinfo->Height;
     was_locked = LbScreenIsLocked();
     if (was_locked)
         LbScreenUnlock();
-    if (LbScreenSetupAnyMode(mode, data_1aa330, data_1aa332, display_palette) != 1)
+    if (LbScreenSetup(mode, mdinfo->Width, mdinfo->Height, display_palette) != 1)
         exit(1);
     if (was_locked) {
         while (LbScreenLock() != Lb_SUCCESS)
             ;
     }
 
-    LbMouseSetup(&pointer_sprites[1], 2, 2);
+    if (lbDisplay.GraphicsScreenHeight < 400)
+        ratio = 2;
+    else
+        ratio = 1;
+    LbMouseSetup(&pointer_sprites[1], ratio, ratio);
+
     setup_vecs(lbDisplay.WScreen, vec_tmap, lbDisplay.PhysicalScreenWidth,
         lbDisplay.PhysicalScreenWidth, lbDisplay.PhysicalScreenHeight);
 }

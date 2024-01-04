@@ -102,6 +102,8 @@ enum SubTypeBuilding {
 #pragma pack()
 /******************************************************************************/
 
+struct Thing *create_building_thing(int x, int y, int z, ushort a4, ushort a5, ushort a6);
+
 /******************************************************************************/
 #ifdef __cplusplus
 }

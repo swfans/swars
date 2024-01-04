@@ -20,6 +20,8 @@
 #ifndef BFLIB_JOYST_H
 #define BFLIB_JOYST_H
 
+#include "bftypes.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -73,12 +75,27 @@ struct DevInput {
         unsigned char Init[16];
 };
 
+struct TbInputHandler {
+    short InterruptNo;
+    short field_2;
+    ubyte field_4[128];
+    struct DevInput Input;
+};
+
+struct UnkVFXStruct1 {
+    short field_0;
+    short field_2;
+    short field_4;
+};
+
 #pragma pack()
 /******************************************************************************/
 extern struct DevInput joy;
 
-int joy_grip_unknsub_08(int val);
+int JoySetInterrupt(short val);
 int joy_func_065(struct DevInput *dinp);
+int joy_driver_init(void);
+int joy_driver_shutdown(void);
 
 /******************************************************************************/
 #ifdef __cplusplus

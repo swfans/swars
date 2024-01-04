@@ -19,6 +19,7 @@
 #include "player.h"
 
 #include "game.h"
+#include "guitext.h"
 #include "people.h"
 #include "thing.h"
 #include "weapon.h"
@@ -95,6 +96,96 @@ void players_sync_from_cryo(void)
 
     p_locplayer = &players[local_player_no];
     player_update_agents_from_cryo(p_locplayer);
+}
+
+TbBool player_agent_has_weapon(ushort plagent, ubyte weapon)
+{
+    PlayerInfo *p_locplayer;
+
+    p_locplayer = &players[local_player_no];
+    return weapons_has_weapon(p_locplayer->Weapons[plagent], weapon);
+}
+
+TbBool free_slot(ushort plagent, ubyte weapon)
+{
+    TbBool ret;
+    asm volatile ("call ASM_free_slot\n"
+        : "=r" (ret) : "a" (plagent & 0xff), "d" (weapon));
+    return ret;
+}
+
+TbBool player_cryo_add_weapon_one(ushort cryo_no, ubyte weapon)
+{
+    TbBool added;
+
+    added = weapons_add_one(&cryo_agents.Weapons[cryo_no], &cryo_agents.FourPacks[cryo_no], weapon);
+    if (!added)
+        return false;
+
+    if (cryo_no < 4) {
+        PlayerInfo *p_locplayer;
+        p_locplayer = &players[local_player_no];
+#if 0
+        // TODO re-ebable when player->FourPacks is unified and in the same format as cryo_agents.FourPacks
+        weapons_add_one(&p_locplayer->Weapons[cryo_no], &p_player->FourPacks[cryo_no], weapon);
+#else
+        // Copying all weapons will work as well
+        player_update_from_cryo_agent(cryo_no, p_locplayer, cryo_no);
+#endif
+    }
+    return added;
+}
+
+TbBool player_cryo_remove_weapon_one(ushort cryo_no, ubyte weapon)
+{
+    TbBool rmved;
+
+    rmved = weapons_remove_one(&cryo_agents.Weapons[cryo_no], &cryo_agents.FourPacks[cryo_no], weapon);
+    if (!rmved)
+        return false;
+
+    if (cryo_no < 4) {
+        PlayerInfo *p_locplayer;
+        p_locplayer = &players[local_player_no];
+#if 0
+        // TODO re-ebable when player->FourPacks is unified and in the same format as cryo_agents.FourPacks
+        weapons_remove_one(&p_locplayer->Weapons[cryo_no], &p_player->FourPacks[cryo_no], weapon);
+#else
+        // Copying all weapons will work as well
+        player_update_from_cryo_agent(cryo_no, p_locplayer, cryo_no);
+#endif
+    }
+    return rmved;
+}
+
+TbBool player_cryo_transfer_weapon_between_agents(ushort from_cryo_no,
+  ushort to_cryo_no, ubyte weapon)
+{
+    TbBool added;
+
+    added = player_cryo_add_weapon_one(to_cryo_no, weapon);
+    if (!added)
+        return false;
+    player_cryo_remove_weapon_one(from_cryo_no, weapon);
+    return added;
+}
+
+const char *get_cryo_agent_name(ushort cryo_no)
+{
+    ushort rndname;
+    rndname = cryo_agents.RandomName[cryo_no];
+    if (background_type == 1)
+    {
+        if (cryo_agents.Sex & (1 << selected_agent))
+            return gui_strings[227 + rndname];
+        else
+            return gui_strings[177 + rndname];
+    }
+    else
+    {
+        return gui_strings[77 + rndname];
+    }
+
 }
 
 void remove_agent(ubyte cryo_no)

@@ -213,8 +213,6 @@ void XMI_sysex_message(MDI_DRIVER *mdidrv, uint8_t const *message,
     XMI_flush_buffer(mdidrv);
 }
 
-/** Write control log value.
- */
 void XMI_write_log(MDI_CTRL_LOG *log, int32_t status, int32_t data_1, int32_t data_2)
 {
     int32_t st;
@@ -1474,7 +1472,6 @@ void AIL2OAL_API_sequence_position(SNDSEQUENCE *seq, int32_t *beat, int32_t *mea
     seq->driver->disable--;
 }
 
-
 int32_t AIL2OAL_API_install_MDI_INI(MDI_DRIVER **mdidrv)
 {
     AIL_INI ini;
@@ -2055,6 +2052,18 @@ AILEVENTCB AIL2OAL_API_register_event_callback(MDI_DRIVER *mdidrv, AILEVENTCB ca
     old = mdidrv->event_trap;
     mdidrv->event_trap = callback;
 
+    return old;
+}
+
+AILTIMBRECB AIL2OAL_API_register_timbre_callback(MDI_DRIVER *mdidrv, AILTIMBRECB callback)
+{
+    AILTIMBRECB old;
+
+    if (mdidrv == NULL)
+        return NULL;
+
+    old = mdidrv->timbre_trap;
+    mdidrv->timbre_trap = callback;
     return old;
 }
 

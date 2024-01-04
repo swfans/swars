@@ -78,7 +78,7 @@ libbullfrog_a_CPPFLAGS = \
 
 include_HEADERS = $(wildcard include/*.h) $(wildcard include/*.hpp)
 
-check_PROGRAMS = bflib_test_poly bflib_test_math
+check_PROGRAMS = bflib_test_math bflib_test_memory bflib_test_poly
 
 bflib_test_math_SOURCES = \
   tests/bflib_test_math.c
@@ -90,6 +90,19 @@ bflib_test_math_CPPFLAGS = \
 nodist_EXTRA_bflib_test_math_SOURCES = dummy.cxx
 
 bflib_test_math_LDADD = \
+  -L$(builddir) -lbullfrog
+
+bflib_test_memory_SOURCES = \
+  tests/mock_windows.c \
+  tests/bflib_test_memory.c
+
+bflib_test_memory_CPPFLAGS = \
+  -I$(top_srcdir)/include -I$(builddir)/include
+
+# Pretending to contain c++ source so that Automake select c++ linker
+nodist_EXTRA_bflib_test_memory_SOURCES = dummy.cxx
+
+bflib_test_memory_LDADD = \
   -L$(builddir) -lbullfrog
 
 bflib_test_poly_SOURCES = \

@@ -21,4 +21,15 @@
 #include "bfmemory.h"
 /******************************************************************************/
 
+struct Thing *create_building_thing(int x, int y, int z, ushort a4, ushort a5, ushort a6)
+{
+    struct Thing *ret;
+    asm volatile (
+      "push %6\n"
+      "push %5\n"
+      "call ASM_create_building_thing\n"
+        : "=r" (ret) : "a" (x), "d" (y), "b" (z), "c" (a4), "g" (a5), "g" (a6));
+    return ret;
+}
+
 /******************************************************************************/

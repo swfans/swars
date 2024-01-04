@@ -183,6 +183,35 @@ enum PersonCommandType
   PCmd_TYPES_COUNT,
 };
 
+enum PersonCommandFlags
+{
+  PCmdF_NONE = 0x0000,
+  PCmdF_Unkn0001 = 0x0001,
+  PCmdF_Unkn0002 = 0x0002,
+  PCmdF_Unkn0004 = 0x0004,
+  PCmdF_Unkn0008 = 0x0008,
+  PCmdF_Unkn0010 = 0x0010,
+  PCmdF_Unkn0020 = 0x0020,
+  PCmdF_Unkn0040 = 0x0040,
+  PCmdF_Unkn0080 = 0x0080,
+  PCmdF_Unkn0100 = 0x0100,
+  PCmdF_Unkn0200 = 0x0200,
+  PCmdF_Unkn0400 = 0x0400,
+  PCmdF_Unkn0800 = 0x0800,
+  PCmdF_Unkn1000 = 0x1000,
+  PCmdF_Unkn2000 = 0x2000,
+  PCmdF_Unkn4000 = 0x4000,
+  PCmdF_Unkn8000 = 0x8000,
+  PCmdF_Unkn010000 = 0x00010000,
+  PCmdF_Unkn020000 = 0x00020000,
+  PCmdF_Unkn040000 = 0x00040000,
+  PCmdF_Unkn080000 = 0x00080000,
+  PCmdF_Unkn100000 = 0x00100000,
+  PCmdF_Unkn200000 = 0x00200000,
+  PCmdF_Unkn400000 = 0x00400000,
+  PCmdF_Unkn800000 = 0x00800000,
+};
+
 struct Command
 {
   short Next;

@@ -33,6 +33,8 @@ extern "C" {
 
 void LbDrawTriangle(short x1, short y1, short x2, short y2, short x3, short y3, ubyte col);
 
+void LbDrawSlantBox(short X, short Y, ushort a3, ushort a4);
+
 /******************************************************************************/
 #ifdef __cplusplus
 }

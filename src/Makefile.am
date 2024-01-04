@@ -26,6 +26,8 @@ swars_SOURCES = \
 	../bfsoundlib/src/ail.c \
 	../bfsoundlib/include/ailss.h \
 	../bfsoundlib/src/ailss.c \
+	../bfsoundlib/src/ailvoc.c \
+	../bfsoundlib/src/ailwav.c \
 	../bfsoundlib/include/aila.h \
 	../bfsoundlib/src/aila.c \
 	../bfsoundlib/include/aildebug.h \
@@ -36,6 +38,8 @@ swars_SOURCES = \
 	../bfsoundlib/src/msssys.c \
 	../bfsoundlib/include/mssxmidi.h \
 	../bfsoundlib/src/mssxmidi.c \
+	../bfsoundlib/include/mssxdig.h \
+	../bfsoundlib/src/mssxdig.c \
 	../bfsoundlib/include/bfaudio.h \
 	../bfsoundlib/src/bfaudio.c \
 	../bfsoundlib/include/bfsvaribl.h \
@@ -96,6 +100,16 @@ swars_SOURCES = \
 	dos.h \
 	drawtext.c \
 	drawtext.h \
+	enginlights.c \
+	enginlights.h \
+	enginpriobjs.c \
+	enginpriobjs.h \
+	enginpritxtr.c \
+	enginpritxtr.h \
+	enginsngobjs.c \
+	enginsngobjs.h \
+	enginsngtxtr.c \
+	enginsngtxtr.h \
 	engintrns.c \
 	engintrns.h \
 	febrief.c \
@@ -112,6 +126,8 @@ swars_SOURCES = \
 	feoptions.h \
 	felogin.c \
 	felogin.h \
+	femain.c \
+	femain.h \
 	fenet.c \
 	fenet.h \
 	fepause.c \
@@ -137,6 +153,8 @@ swars_SOURCES = \
 	keyboard.h \
 	lvobjctv.c \
 	lvobjctv.h \
+	lvfiles.c \
+	lvfiles.h \
 	main.c \
 	matrix.c \
 	matrix.h \
@@ -144,6 +162,8 @@ swars_SOURCES = \
 	mouse.h \
 	network.c \
 	network.h \
+	pathtrig.c \
+	pathtrig.h \
 	packet.c \
 	packet.h \
 	people.c \
@@ -175,6 +195,8 @@ swars_SOURCES = \
 	util.h \
 	vehicle.c \
 	vehicle.h \
+	vehtraffic.c \
+	vehtraffic.h \
 	wadfile.c \
 	wadfile.h \
 	weapon.c \

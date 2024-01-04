@@ -17,19 +17,15 @@
  *     (at your option) any later version.
  */
 /******************************************************************************/
+#include <stdlib.h>
 #include "bfmemory.h"
 #include "mock_bfwindows.h"
 #include "bftstlog.h"
 
-#include <SDL.h>
-
-#if defined WIN32 && defined main
-// Anti SDL
-# undef main
-#endif
-
 /******************************************************************************/
 
+/** Test memory module setup and allocation.
+ */
 TbBool test_memory(void)
 {
     void *p;

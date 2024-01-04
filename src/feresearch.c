@@ -20,6 +20,7 @@
 
 #include "bftext.h"
 #include "bfsprite.h"
+#include "femain.h"
 #include "guiboxes.h"
 #include "guigraph.h"
 #include "guitext.h"
@@ -34,7 +35,7 @@ extern struct ScreenTextBox research_unkn21_box;
 extern struct ScreenButton research_submit_button;
 extern struct ScreenButton unkn12_WEAPONS_MODS_button;
 extern struct ScreenTextBox research_progress_button;
-extern struct ScreenBox research_unkn20_box;
+extern struct ScreenBox research_graph_box;
 extern struct ScreenButton research_list_buttons[2];
 
 extern ubyte research_on_weapons;// = true;
@@ -110,12 +111,12 @@ ubyte show_research_graph(struct ScreenBox *box)
     x = box->X + (box->Width - w) * 65 / 100; // for original res 7 + 57
     y = box->Y + (box->Height - h) * 31 / 100; // for original res 103 + 25
 
-    if ((box->Flags & 0x8000) == 0)
+    if ((box->Flags & GBxFlg_BkgndDrawn) == 0)
     {
         int twidth;
 
         lbFontPtr = small_med_font;
-        my_set_text_window(0, 0, 640, 480);
+        my_set_text_window(0, 0, lbDisplay.GraphicsScreenWidth, lbDisplay.GraphicsScreenHeight);
 
         draw_chartxy_axis_y_values(x, y, h, 0, 100, 10);
 
@@ -131,7 +132,7 @@ ubyte show_research_graph(struct ScreenBox *box)
         text = gui_strings[452];
         draw_unkn20_subfunc_01(10, 31, text, 2);
 
-        box->Flags |= 0x8000;
+        box->Flags |= GBxFlg_BkgndDrawn;
         copy_box_purple_list(box->X, box->Y, box->Width, box->Height);
     }
 
@@ -147,7 +148,7 @@ ubyte show_research_graph(struct ScreenBox *box)
         n_y_vals = done_days + 1;
     }
     lbFontPtr = small_med_font;
-    my_set_text_window(0, 0, 640, 480);
+    my_set_text_window(0, 0, lbDisplay.GraphicsScreenWidth, lbDisplay.GraphicsScreenHeight);
     draw_chartxy_axis_x_values(x, y + h, w, graph_days+1, graph_days+11, 10);
 
     LbScreenSetGraphicsWindow(x - 1, y, w + 3, h + 2);
@@ -178,7 +179,7 @@ ubyte show_research_graph(struct ScreenBox *box)
         }
     }
 
-    LbScreenSetGraphicsWindow(0, 0, 640, 480);
+    LbScreenSetGraphicsWindow(0, 0, lbDisplay.GraphicsScreenWidth, lbDisplay.GraphicsScreenHeight);
     draw_chartxy_axis_x_main(x, y + h, w);
     draw_chartxy_axis_y_main(x, y, h);
     return 0;
@@ -188,8 +189,11 @@ void init_research_screen_boxes(void)
 {
     int i, val;
     const char *s;
+    short scr_w, start_x;
 
-    init_screen_box(&research_unkn20_box, 7u, 103u, 409u, 322, 6);
+    scr_w = lbDisplay.GraphicsWindowWidth;
+
+    init_screen_box(&research_graph_box, 7u, 103u, 409u, 322, 6);
     init_screen_text_box(&research_progress_button, 7u, 72u, 409u, 23,
       6, med_font, 1);
     init_screen_text_box(&research_unkn21_box, 425u, 72u, 208u, 353,
@@ -198,22 +202,18 @@ void init_research_screen_boxes(void)
       gui_strings[418], 6, med2_font, 1, 0);
 
     init_screen_button(&unkn12_WEAPONS_MODS_button, 616u, 302u,
-        gui_strings[450], 6, med2_font, 1, 128);
+        gui_strings[450], 6, med2_font, 1, 0x80);
     init_screen_button(&research_list_buttons[0], 425u, 404u,
      gui_strings[478], 6, med2_font, 1, 0);
     init_screen_button(&research_list_buttons[1], 425u, 404u,
       gui_strings[479], 6, med2_font, 1, 0);
-    research_list_buttons[0].X = ((104 - research_list_buttons[0].Width) >> 1)
-        + 425;
-    research_list_buttons[1].X = ((104 - research_list_buttons[1].Width) >> 1)
-        + 529;
 
     val = 0;
     for (i = 0; i < 2; i++)
     {
         research_list_buttons[i].Radio = &ingame.fld_unk7DE;
         research_list_buttons[i].RadioValue = val;
-        research_list_buttons[i].Flags |= 0x0100;
+        research_list_buttons[i].Flags |= GBxFlg_RadioBtn;
         val++;
     }
 
@@ -229,10 +229,10 @@ void init_research_screen_boxes(void)
     research_progress_button.DrawTextFn = ac_show_title_box;
     research_submit_button.Text = gui_strings[417];
     research_progress_button.Text = gui_strings[449];
-    research_unkn21_box.Flags |= 0x0300;
+    research_unkn21_box.Flags |= GBxFlg_RadioBtn|GBxFlg_IsMouseOver;
 
     lbFontPtr = med2_font;
-    research_unkn20_box.SpecialDrawFn = ac_show_research_graph;
+    research_graph_box.SpecialDrawFn = ac_show_research_graph;
 
     if (my_string_width(gui_strings[418]) <= my_string_width(gui_strings[417]))
         s = gui_strings[417];
@@ -245,21 +245,37 @@ void init_research_screen_boxes(void)
     else
         s = gui_strings[451];
     unkn12_WEAPONS_MODS_button.Width = my_string_width(s) + 4;
+
+    start_x = (scr_w - research_graph_box.Width - research_unkn21_box.Width - 23) / 2;
+
+    research_graph_box.X = start_x + 7;
+    research_progress_button.X = start_x + 7;
+    research_unkn21_box.X = research_graph_box.X + research_graph_box.Width + 9;
+    research_submit_button.X = research_unkn21_box.X + 5;
+    unkn12_WEAPONS_MODS_button.X = research_unkn21_box.X + research_unkn21_box.Width -
+      17 - unkn12_WEAPONS_MODS_button.Width;
+
+    // Middle of first half od the panel
+    research_list_buttons[0].X = research_unkn21_box.X +
+      (research_unkn21_box.Width / 2 - research_list_buttons[0].Width) / 2;
+    // Middle of 2nd half od the panel
+    research_list_buttons[1].X = research_unkn21_box.X + research_unkn21_box.Width -
+      research_unkn21_box.Width / 2 + (research_unkn21_box.Width / 2 - research_list_buttons[1].Width) / 2;
 }
 
 void reset_research_screen_boxes_flags(void)
 {
-    research_unkn21_box.Flags = 0x0001 | 0x0100 | 0x0200;
-    research_unkn20_box.Flags = 0x0001;
-    research_progress_button.Flags = 0x0001;
+    research_unkn21_box.Flags = GBxFlg_Unkn0001 | GBxFlg_RadioBtn | GBxFlg_IsMouseOver;
+    research_graph_box.Flags = GBxFlg_Unkn0001;
+    research_progress_button.Flags = GBxFlg_Unkn0001;
 }
 
 void set_flag01_research_screen_boxes(void)
 {
-    research_submit_button.Flags |= 0x0001;
-    research_list_buttons[1].Flags |= 0x0001;
-    research_list_buttons[0].Flags |= 0x0001;
-    unkn12_WEAPONS_MODS_button.Flags |= 0x0001;
+    research_submit_button.Flags |= GBxFlg_Unkn0001;
+    research_list_buttons[1].Flags |= GBxFlg_Unkn0001;
+    research_list_buttons[0].Flags |= GBxFlg_Unkn0001;
+    unkn12_WEAPONS_MODS_button.Flags |= GBxFlg_Unkn0001;
 }
 
 void clear_research_screen(void)

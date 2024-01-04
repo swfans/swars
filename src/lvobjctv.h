@@ -67,6 +67,14 @@ enum GameObjectiveTypes {
     GAME_OBJ_TYPES_COUNT,
 };
 
+enum GameObjectiveFlags {
+    GObjF_NONE = 0x00,
+    /** The objective is hidden - its text and radar track is not shown */
+    GObjF_HIDDEN = 0x01,
+    /** The objective cannot be met - it is shown, but fulfilling its criteria does nothing */
+    GObjF_CANT_MET = 0x02,
+};
+
 struct Objective { // sizeof=32
     ushort Next;
     ubyte Map;

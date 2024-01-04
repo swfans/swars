@@ -21,6 +21,7 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <string.h>
 #include <limits.h>
 #include <assert.h>
 
@@ -600,36 +601,6 @@ int32_t AIL2OAL_API_sample_buffer_ready(SNDSAMPLE *s)
     s->last_buffer = s->current_buffer;
 
     return (s->current_buffer ^ 1);
-}
-
-/** Process .VOC file block.
- *
- * Called by .VOC initialization code and as end-of-sample callback
- * function (interrupt-based).
- *
- * If play_flag clear, search for first block after desired marker (if
- * any) and return without playing it.
- */
-void AIL_process_VOC_block(SNDSAMPLE *s, int32_t play_flag)
-{
-    asm volatile (
-      "push %1\n"
-      "push %0\n"
-      "call ASM_AIL_process_VOC_block\n"
-      "add $0x8, %%esp\n"
-        :  : "g" (s), "g" (play_flag) : "eax" );
-}
-
-/** Create sample instance by parsing .WAV file.
- */
-void AIL_process_WAV_image(const AILSOUNDINFO *info, SNDSAMPLE *s)
-{
-    asm volatile (
-      "push %1\n"
-      "push %0\n"
-      "call ASM_AIL_process_WAV_image\n"
-      "add $0x8, %%esp\n"
-        :  : "g" (info), "g" (s) : "eax" );
 }
 
 int32_t AIL2OAL_API_set_sample_file(SNDSAMPLE *s, const void *file_image, int32_t block)

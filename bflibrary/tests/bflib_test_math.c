@@ -34,6 +34,8 @@ TbResult MockZeroBaseInitialise(void)
     return Lb_SUCCESS;
 }
 
+/** Test square root computation by LbSqrL().
+ */
 TbBool test_sqrtl(void)
 {
     ulong m;

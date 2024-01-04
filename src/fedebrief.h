@@ -27,12 +27,23 @@ extern "C" {
 /******************************************************************************/
 #pragma pack(1)
 
+struct DebriefReport {
+    short RefNo;
+    short BriefNo;
+    short Status;
+    ulong Income;
+    ulong Expenditure;
+    ulong WeaponsResearched;
+    ulong ModsResearched;
+    ubyte ScientistsLost;
+    ubyte SciLostReason;
+};
 
 #pragma pack()
 /******************************************************************************/
 
 void init_debrief_screen_boxes(void);
-void set_flag01_debrief_screen_boxes(void);
+void reset_debrief_screen_boxes_flags(void);
 
 /******************************************************************************/
 #ifdef __cplusplus

@@ -28,16 +28,23 @@
 
 #pragma pack(1)
 
-#if 0
-ushort kbkeys[] = {
+ushort kbkeys[GKey_KEYS_COUNT] = {
     KC_UNASSIGNED, KC_LCONTROL, KC_LALT, KC_DELETE,
     KC_PGDOWN, KC_TAB, KC_RCONTROL, KC_OEM_102,
     KC_UP, KC_DOWN, KC_LEFT, KC_RIGHT,
     KC_HOME, KC_END, KC_D, KC_Z,
     KC_INSERT, KC_PGUP, KC_P, KC_K,
-    KC_1, KC_2, KC_3, KC_4
+    KC_1, KC_2, KC_3, KC_4,
 };
-#endif
+
+ushort jskeys[GKey_KEYS_COUNT] = {
+    0, 1, 2, 0x10,
+    0x20, 4, 8, 0,
+    0, 0, 0, 0,
+    0, 0, 0x0F, 0,
+    0, 0, 0, 0,
+    0, 0, 0, 0,
+};
 
 ulong buffered_keys[KEYBOARD_BUFFER_SIZE];
 ulong buffered_keys_read_index;

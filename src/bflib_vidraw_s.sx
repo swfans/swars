@@ -39,7 +39,7 @@
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (LbDrawBox_)
+GLOBAL_FUNC (ASM_LbDrawBox)
 /*----------------------------------------------------------------*/
 		push   %ebp
 		mov    %esp,%ebp
@@ -68,7 +68,7 @@ GLOBAL_FUNC (LbDrawBox_)
 		mov    -0xc(%ebp),%edx
 		push   %eax
 		mov    -0x10(%ebp),%eax
-		call   LbDrawHVLine_
+		call   ac_LbDrawHVLine
 		xor    %eax,%eax
 		mov    0x8(%ebp),%al
 		mov    -0xc(%ebp),%ecx
@@ -82,7 +82,7 @@ GLOBAL_FUNC (LbDrawBox_)
 		add    -0x4(%ebp),%edx
 		dec    %edx
 		mov    -0x10(%ebp),%eax
-		call   LbDrawHVLine_
+		call   ac_LbDrawHVLine
 		cmpl   $0x2,-0x4(%ebp)
 		jbe    jump_e7508
 		xor    %eax,%eax
@@ -95,7 +95,7 @@ GLOBAL_FUNC (LbDrawBox_)
 		mov    -0xc(%ebp),%edx
 		inc    %edx
 		mov    -0x10(%ebp),%eax
-		call   LbDrawHVLine_
+		call   ac_LbDrawHVLine
 		xor    %eax,%eax
 		mov    0x8(%ebp),%al
 		mov    -0xc(%ebp),%ecx
@@ -110,7 +110,7 @@ GLOBAL_FUNC (LbDrawBox_)
 		mov    -0x10(%ebp),%eax
 		add    -0x8(%ebp),%eax
 		dec    %eax
-		call   LbDrawHVLine_
+		call   ac_LbDrawHVLine
 		jmp    jump_e7508
 	jump_e74f1:
 		xor    %eax,%eax
@@ -130,7 +130,7 @@ GLOBAL_FUNC (LbDrawBox_)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (LbDrawLine_)
+GLOBAL_FUNC (ASM_LbDrawLine)
 /*----------------------------------------------------------------*/
 		push   %esi
 		push   %edi
@@ -831,7 +831,7 @@ draw_b_line:	/* 0x0E79D8 */
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (LbDrawHVLine_)	/* 0xf0834 */
+GLOBAL_FUNC (ASM_LbDrawHVLine)	/* 0xf0834 */
 /*----------------------------------------------------------------*/
 		push   %ebp
 		mov    %esp,%ebp
@@ -1201,7 +1201,7 @@ GLOBAL_FUNC (ASM_LbDrawTriangle)
 		mov    -0xc(%ebp),%edx
 		push   %eax
 		mov    -0x10(%ebp),%eax
-		call   LbDrawLine_
+		call   ac_LbDrawLine
 		xor    %eax,%eax
 		mov    0x10(%ebp),%al
 		mov    0xc(%ebp),%ecx
@@ -1209,7 +1209,7 @@ GLOBAL_FUNC (ASM_LbDrawTriangle)
 		mov    -0x4(%ebp),%edx
 		push   %eax
 		mov    -0x8(%ebp),%eax
-		call   LbDrawLine_
+		call   ac_LbDrawLine
 		xor    %eax,%eax
 		mov    0x10(%ebp),%al
 		mov    -0xc(%ebp),%ecx
@@ -1217,7 +1217,7 @@ GLOBAL_FUNC (ASM_LbDrawTriangle)
 		mov    0xc(%ebp),%edx
 		push   %eax
 		mov    0x8(%ebp),%eax
-		call   LbDrawLine_
+		call   ac_LbDrawLine
 		jmp    jump_ef4e1
 	jump_ef4c2:
 		xor    %eax,%eax

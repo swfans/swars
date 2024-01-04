@@ -91,12 +91,6 @@ void init_music_bank_songs(void)
 
 ubyte load_music_bank(TbFileHandle fh, ubyte bankId)
 {
-#if 0
-    ubyte ret;
-    asm volatile ("call ASM_load_music_bank\n"
-        : "=r" (ret) : "a" (fh),  "d" (bankId));
-    return ret;
-#endif
     ubyte *m;
     ubyte *dt;
     struct MusicBankHead mbhead[4];
@@ -155,12 +149,6 @@ ubyte load_music_bank(TbFileHandle fh, ubyte bankId)
 
 int LoadMusic(ushort bankNo)
 {
-#if 0
-    int ret;
-    asm volatile ("call ASM_LoadMusic\n"
-        : "=r" (ret) : "a" (a1));
-    return ret;
-#endif
     TbFileHandle fh;
     long fsize;
     ulong nbanks_offs;

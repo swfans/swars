@@ -21,6 +21,7 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <string.h>
 #include <assert.h>
 
 #include "bfmusic.h"
@@ -70,12 +71,6 @@ TbBool fm_instrument_file_exists(const char *fname)
 
 sbyte AllocateMusicBankMemory(void)
 {
-#if 0
-    TbBool ret;
-    asm volatile ("call ASM_AllocateMusicBankMemory\n"
-        : "=r" (ret) : );
-    return ret;
-#endif
     ulong musLen, musDataLen;
 
     {

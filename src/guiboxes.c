@@ -34,26 +34,124 @@ TbBool in_box_coords(short x, short y, short box_x1, short box_y1, short box_x2,
         && y > box_y1 && y < box_y2;
 }
 
+TbBool over_box_coords(short x, short y, short box_x1, short box_y1, short box_x2, short box_y2)
+{
+    return x >= box_x1 && x <= box_x2
+        && y >= box_y1 && y <= box_y2;
+}
+
+TbBool mouse_move_over_box_coords(short box_x1, short box_y1, short box_x2, short box_y2)
+{
+    short ms_x, ms_y;
+
+    ms_x = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
+    ms_y = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
+    return over_box_coords(ms_x, ms_y, box_x1, box_y1, box_x2, box_y2);
+}
+
+TbBool mouse_down_over_box_coords(short box_x1, short box_y1, short box_x2, short box_y2)
+{
+    short ms_x, ms_y;
+
+    ms_x = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MouseX : lbDisplay.MouseX;
+    ms_y = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MouseY : lbDisplay.MouseY;
+    return over_box_coords(ms_x, ms_y, box_x1, box_y1, box_x2, box_y2);
+}
+
+// TODO switch order of arguments and to above function, remove when this is no longer used
+TbBool mouse_move_over_rect(short box_x1, short box_x2, short box_y1, short box_y2)
+{
+    short ms_x, ms_y;
+
+    ms_x = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
+    ms_y = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
+    return over_box_coords(ms_x, ms_y, box_x1, box_y1, box_x2, box_y2);
+}
+
+TbBool mouse_move_over_rect_adv(short x1, short y1, short width, short height, TbBool a5)
+{
+    short ms_x, ms_y;
+    short dx, dy;
+
+    ms_x = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
+    ms_y = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
+
+    if (a5)
+    {
+        if ((ms_y >= y1) && (ms_y < y1 + height))
+        {
+            dx = ms_x - x1;
+            dy = ms_y - y1;
+            if ((dx >= dy) && (dx - dy < width))
+                return 1;
+        }
+    }
+    else
+    {
+        if ((ms_y >= y1) && (ms_y < y1 + height))
+        {
+            dx = ms_x - x1;
+            dy = ms_y - y1;
+            if ((dx >= -dy) && (dx + dy < width))
+                return 1;
+        }
+    }
+    return 0;
+}
+
 TbBool is_over_box_base(short x, short y, struct ScreenBoxBase *box)
 {
     return (x >= box->X) && (x <= box->X + box->Width)
         && (y >= box->Y) && (y <= box->Y + box->Height);
 }
 
+TbBool is_over_slant_box_base(short x, short y, struct ScreenBoxBase *box)
+{
+    if ((x >= box->X) && (x <= box->X + box->Width + box->Height)
+        && (y >= box->Y) && (y <= box->Y + box->Height))
+    {
+        short dx, dy, hh, hw;
+        hh = box->Height >> 1;
+        hw = box->Height + box->Width;
+        dx = x - box->X;
+        dy = y - box->Y;
+        return (dy + dx >= hh) && (dy + dx <= hw);
+    }
+    return false;
+}
+
 TbBool mouse_move_over_box_base(struct ScreenBoxBase *box)
 {
     short ms_x, ms_y;
 
-    ms_x = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
-    ms_y = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
+    ms_x = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
+    ms_y = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
     return is_over_box_base(ms_x, ms_y, box);
+}
+
+TbBool mouse_down_over_box_base(struct ScreenBoxBase *box)
+{
+    short ms_x, ms_y;
+
+    ms_x = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MouseX : lbDisplay.MouseX;
+    ms_y = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MouseY : lbDisplay.MouseY;
+    return is_over_box_base(ms_x, ms_y, box);
+}
+
+TbBool mouse_move_over_slant_box_base(struct ScreenBoxBase *box)
+{
+    short ms_x, ms_y;
+
+    ms_x = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
+    ms_y = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
+    return is_over_slant_box_base(ms_x, ms_y, box);
 }
 
 short mouse_move_x_coord_over_box_base(struct ScreenBoxBase *box)
 {
     short ms_x;
 
-    ms_x = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
+    ms_x = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
     return ms_x - box->X;
 }
 
@@ -61,7 +159,7 @@ short mouse_move_y_coord_over_box_base(struct ScreenBoxBase *box)
 {
     short ms_y;
 
-    ms_y = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
+    ms_y = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
     return ms_y - box->Y;
 }
 

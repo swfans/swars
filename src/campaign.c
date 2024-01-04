@@ -200,41 +200,51 @@ ushort selectable_campaigns_count(void)
 
 ushort find_mission_state_slot(ushort missi)
 {
-    ushort i;
+    ushort mslot;
 
     if (missi < 1)
         return 0;
-    for (i = 1; i < 50; i++) {
-        if (mission_open[i] == missi)
+    for (mslot = 1; mslot < MISSION_STATES_COUNT; mslot++) {
+        if (mission_open[mslot] == missi)
             break;
     }
-    if (i >= 50)
-        i = 0;
-    return i;
+    if (mslot >= MISSION_STATES_COUNT)
+        mslot = 0;
+    return mslot;
 }
 
 ushort find_empty_mission_state_slot(void)
 {
-    ushort i;
+    ushort mslot;
 
-    for (i = 1; i < 50; i++) {
-        if (mission_open[i] == 0)
+    for (mslot = 1; mslot < MISSION_STATES_COUNT; mslot++) {
+        if (mission_open[mslot] == 0)
             break;
     }
-    if (i >= 50)
-        i = 0;
-    return i;
+    if (mslot >= MISSION_STATES_COUNT)
+        mslot = 0;
+    return mslot;
 }
 
 void remove_mission_state_slot(ushort mslot)
 {
     ushort i;
 
-    for (i = mslot; i < 50-1; i++)
+    for (i = mslot; i < MISSION_STATES_COUNT-1; i++)
     {
         mission_open[i] = mission_open[i + 1];
         mission_state[i] = mission_state[i + 1];
     }
+}
+
+ushort replace_mission_state_slot(ushort old_missi, ushort new_missi)
+{
+    ushort mslot;
+
+    mslot = find_mission_state_slot(old_missi);
+    mission_open[mslot] = new_missi;
+    mission_state[mslot] = 0;
+    return mslot;
 }
 
 ushort find_mission_with_map_and_level(ushort mapno, ushort level)

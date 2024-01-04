@@ -26,13 +26,13 @@
 extern "C" {
 #endif
 
-/** Draw clipped box on graphics window with given coords and colour.
+/** Draw clipped box on graphics window at given point, with dimensions and colour.
  *
  * Graphics window needs to be set and locked. Coordinates are clipped if they
  * exceed the current graphics window.
  * This function honors DrawFlags.
  */
-TbResult LbDrawBox(long X1, long Y1, long X2, long Y2, TbPixel colour);
+TbResult LbDrawBox(long X, long Y, long Width, long Height, TbPixel colour);
 
 /** Draw clipped box on graphics window with given coords and colour.
  *

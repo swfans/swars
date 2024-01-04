@@ -117,7 +117,7 @@ void draw_chartxy_axis_y_grid(int x, int y, int width, int height, int tot_value
     {
         ulong spr_id;
 
-        lbDisplay.DrawFlags = 0x0004;
+        lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
         draw_line_purple_list(x + 1, cy, x + width, cy, height + 7);
         lbDisplay.DrawFlags = 0;
         if (i != tot_values/2 && i != 0)
@@ -158,7 +158,7 @@ void draw_chartxy_axis_x_grid(int x, int y, int width, int height, int tot_value
         ulong spr_id;
 
         cx += width / tot_values;
-        lbDisplay.DrawFlags = 0x0004;
+        lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
         draw_line_purple_list(cx, y, cx, y + height - 1, height + 7);
         lbDisplay.DrawFlags = 0;
         if (i != tot_values / 2 - 1 && i != tot_values - 1)
@@ -222,7 +222,7 @@ void draw_chartxy_curve(int x, int y, int width, int height, ushort *y_vals, int
         mcy = next_mcy;
     }
     // Draw trend curve
-    lbDisplay.DrawFlags = 0x0004;
+    lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
     remain_day = 11 - cday;
     {
         progress = y_trend_delta;

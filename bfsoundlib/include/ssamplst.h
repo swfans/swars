@@ -27,6 +27,27 @@
 extern "C" {
 #endif
 /******************************************************************************/
+#pragma pack(1)
+
+struct BfSoundBankHead {
+  long TabPos;
+  long DatPos;
+  long TabSize;
+  long DatSize;
+};
+
+struct BfSfxInfo { // sizeof=32
+  char FileName[12];
+  long sffld_12;
+  short sffld_16;
+  ubyte *DataBeg;
+  long sffld_22;
+  ubyte *DataEnd;
+  short sffld_30;
+};
+
+#pragma pack()
+/******************************************************************************/
 
 void StopSampleQueueList(void);
 

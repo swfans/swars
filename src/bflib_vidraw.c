@@ -31,4 +31,11 @@ void LbDrawTriangle(short x1, short y1, short x2, short y2, short x3, short y3, 
         :  : "a" (x1), "d" (y1), "b" (x2), "c" (y2), "g" (x3), "g" (y3), "g" (col));
 }
 
+void LbDrawSlantBox(short X, short Y, ushort a3, ushort a4)
+{
+    asm volatile (
+      "call ASM_LbDrawSlantBox\n"
+        :  : "a" (X), "d" (Y), "b" (a3), "c" (a4));
+}
+
 /******************************************************************************/

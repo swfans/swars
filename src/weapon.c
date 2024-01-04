@@ -581,7 +581,7 @@ TbBool weapons_add_one(ulong *p_weapons, struct WeaponsFourPack *p_fourpacks, us
 
     fp = weapon_fourpack_index(wtype);
     if (fp < WFRPK_COUNT) {
-        if ((!is_first) && (p_fourpacks->Amount[fp] >= 3))
+        if ((!is_first) && (p_fourpacks->Amount[fp] > 3))
             return false;
 
         if (is_first)

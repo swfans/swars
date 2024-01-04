@@ -29,14 +29,17 @@ extern "C" {
 /******************************************************************************/
 #pragma pack(1)
 
+#define CRYO_PODS_MAX_COUNT 32
+
 struct Thing;
 
+//TODO would make more sense to have a struct for each agent, and then a merging struct
 struct AgentInfo {
-    ulong Weapons[32];
-    union Mod Mods[32];
-    long Sex;
-    char RandomName[32];
-    struct WeaponsFourPack FourPacks[32];
+    ulong Weapons[CRYO_PODS_MAX_COUNT];
+    union Mod Mods[CRYO_PODS_MAX_COUNT];
+    ulong Sex;
+    char RandomName[CRYO_PODS_MAX_COUNT];
+    struct WeaponsFourPack FourPacks[CRYO_PODS_MAX_COUNT];
     ubyte NumAgents;
 };
 
@@ -86,12 +89,14 @@ typedef struct {
   int field_EE;
   int field_F2;
   int field_F6;
-  char field_FA[4];
-  int field_FE;
+    ushort PanelTimer;
+    short PanelX;
+    short PanelY;
+    short Target;
   short field_102;
-  short TargetType;
-  ubyte FourPacks[5][4];
-  ubyte WepDelays[4][32];
+    short TargetType;
+    ubyte FourPacks[5][4];
+    ubyte WepDelays[4][32];
   ushort field_19A[4];
   ushort field_1A2[4];
 } PlayerInfo;
@@ -108,6 +113,14 @@ void place_single_player(void);
 void player_update_agents_from_cryo(PlayerInfo *p_player);
 void cryo_update_agents_from_player(PlayerInfo *p_player);
 void players_sync_from_cryo(void);
+
+TbBool player_agent_has_weapon(ushort plagent, ubyte weapon);
+TbBool free_slot(ushort plagent, ubyte weapon);
+TbBool player_cryo_add_weapon_one(ushort cryo_no, ubyte weapon);
+TbBool player_cryo_remove_weapon_one(ushort cryo_no, ubyte weapon);
+TbBool player_cryo_transfer_weapon_between_agents(ushort from_cryo_no,
+  ushort to_cryo_no, ubyte weapon);
+const char *get_cryo_agent_name(ushort cryo_no);
 void remove_agent(ubyte cryo_no);
 void add_agent(ulong weapons, ushort mods);
 

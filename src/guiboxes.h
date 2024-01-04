@@ -27,6 +27,45 @@ extern "C" {
 /******************************************************************************/
 #pragma pack(1)
 
+enum GUIBoxState {
+  /** The box is disabled and does react to input. Should draw
+   *  as mostly transparent, greyed out or darkened.
+   */
+  GBxSta_DISABLED = 0,
+  /** The box is in normal, non-highlited state.
+   */
+  GBxSta_NORMAL,
+  /** Highlight level 1 - toggled on, but without mouse over.
+   */
+  GBxSta_HLIGHT1,
+  /** Highlight level 2 - mouse is over the box.
+   */
+  GBxSta_HLIGHT2,
+  /** The box is pushed - either by holding a key or mouse button.
+   */
+  GBxSta_PUSHED,
+};
+
+enum GUIBoxFlags {
+  GBxFlg_NONE = 0x0000,
+  GBxFlg_Unkn0001 = 0x0001,
+  GBxFlg_Unkn0002 = 0x0002,
+  GBxFlg_Unkn0004 = 0x0004,
+  GBxFlg_Unkn0008 = 0x0008,
+  GBxFlg_Unkn0010 = 0x0010,
+  GBxFlg_Unkn0020 = 0x0020,
+  GBxFlg_Unkn0040 = 0x0040,
+  GBxFlg_Unkn0080 = 0x0080,
+  GBxFlg_RadioBtn = 0x0100,
+  GBxFlg_IsMouseOver = 0x0200,
+  GBxFlg_IsPushed = 0x0400,
+  GBxFlg_IsRPushed = 0x0800,
+  GBxFlg_Unkn1000 = 0x1000,
+  GBxFlg_TextRight = 0x2000,	/**< Align the text within the box to the right */
+  GBxFlg_TextCenter = 0x4000,	/**< Center the text within the box */
+  GBxFlg_BkgndDrawn = 0x8000,	/**< Whether static background of the box has been already drawn. */
+};
+
 /** Base to which every Screen Box/Button/Text can be casted.
  */
 struct ScreenBoxBase {
@@ -139,26 +178,70 @@ struct ScreenTextBox {
   ubyte field_43;
 };
 
+struct ScreenShape { // sizeof=42
+    /** Positions of points making the shape, X coord. */
+    ushort PtX[9];
+    /** Positions of points making the shape, Y coord. */
+    ushort PtY[9];
+    ubyte field_24;
+    ubyte field_25;
+    ushort Flags;
+    ubyte Colour;
+    ubyte BGColour;
+};
+
 #pragma pack()
 /******************************************************************************/
 
-/** Returns if given position is over given box with size (excl. borders).
+/** Returns if given position is inside given box with size (excl. borders).
  */
 TbBool in_box(short x, short y, short box_x, short box_y, short box_w, short box_h);
 
-/** Returns if given position is over given box with coords (excl. borders).
+/** Returns if given position is inside given box with coords (excl. borders).
  */
 TbBool in_box_coords(short x, short y, short box_x1, short box_y1, short box_x2, short box_y2);
+
+/** Returns if given position is over given box with coords (incl. borders).
+ */
+TbBool over_box_coords(short x, short y, short box_x1, short box_y1, short box_x2, short box_y2);
+
+/** Returns if current mouse move position is over given box with coords (incl. borders).
+ */
+TbBool mouse_move_over_box_coords(short box_x1, short box_y1, short box_x2, short box_y2);
+
+/** Returns if mouse position when button was pressed down is over given box with coords (incl. borders).
+ */
+TbBool mouse_down_over_box_coords(short box_x1, short box_y1, short box_x2, short box_y2);
+
+// TODO switch order of arguments and to above function, remove when this is no longer used
+TbBool mouse_move_over_rect(short box_x1, short box_x2, short box_y1, short box_y2);
+
+TbBool mouse_move_over_rect_adv(short x1, short y1, short width, short height, TbBool a5);
 
 /** Returns if given position is over given box (incl. borders).
  */
 #define is_over_box(x, y, box) is_over_box_base(x, y, (struct ScreenBoxBase *)box)
 TbBool is_over_box_base(short x, short y, struct ScreenBoxBase *box);
 
+/** Returns if given position is over given slant (leaning right) box (incl. borders).
+ */
+#define is_over_slant_box(x, y, box) is_over_slant_box_base(x, y, (struct ScreenBoxBase *)box)
+TbBool is_over_slant_box_base(short x, short y, struct ScreenBoxBase *box);
+
 /** Returns if current mouse move position is over given box (incl. borders).
  */
 #define mouse_move_over_box(box) mouse_move_over_box_base((struct ScreenBoxBase *)box)
 TbBool mouse_move_over_box_base(struct ScreenBoxBase *box);
+
+/** Returns if mouse position when button was pressed down is over given box (incl. borders).
+ */
+#define mouse_down_over_box(box) mouse_move_over_box_base((struct ScreenBoxBase *)box)
+TbBool mouse_down_over_box_base(struct ScreenBoxBase *box);
+
+/** Returns if current mouse move position is over given slant (leaning right) box (incl. borders).
+ */
+#define mouse_move_over_slant_box(box) mouse_move_over_slant_box_base((struct ScreenBoxBase *)box)
+TbBool mouse_move_over_slant_box_base(struct ScreenBoxBase *box);
 
 /** Returns X coord of current mouse move position relative to given box.
  */

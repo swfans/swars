@@ -54,7 +54,7 @@ extern OSSurfaceHandle lbScreenSurface;
  *  Sometimes may be same as screen surface. */
 extern OSSurfaceHandle lbDrawSurface;
 
-/** Initialize screen sufrace truct before first use.
+/** Initialize screen sufrace struct before first use.
  */
 void LbScreenSurfaceInit(struct SSurface *surf);
 
@@ -72,10 +72,19 @@ TbResult LbScreenSurfaceCreate(struct SSurface *surf, ulong w, ulong h);
 
 TbResult LbScreenSurfaceRelease(struct SSurface *surf);
 
-/** Blits given surface on rectangular area of the working screen.
+/** Blits given surface on rectangular area of the working screen, or from it.
  *
+ *  Copies pixels 1:1, without any scaling.
  *  Performs validation and clipping before copying image data.
  *  The blit function should not be called on a locked surface.
+ *
+ * @param surf Surface to blit from (or to blit onto, depending on flags).
+ * @param x Screen X coordintate to start blitting to (or from, see flags).
+ * @param y Screen Y coordintate to start blitting to (or from, see flags).
+ * @param rect Coordinates of rectangular area within the given surface.
+ * @param blflags Flags selecting type and direction of blitting.
+ *
+ * @return Gives Lb_SUCCESS if blitting was performed correctly.
  */
 TbResult LbScreenSurfaceBlit(struct SSurface *surf, ulong x, ulong y,
     struct TbRect *rect, ulong blflags);
