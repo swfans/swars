@@ -21,7 +21,6 @@
 #define ARIADNE_TRPOINTS_H
 
 #include "bftypes.h"
-#include <limits.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -29,11 +28,6 @@ extern "C" {
 
 /******************************************************************************/
 #pragma pack(1)
-
-/** Value stored in point Y coord to mark it as unused.
- * Needs to fit TrCoord type.
- */
-#define POINT_UNALLOCATED_MARK INT_MIN
 
 /** Type for storing triangulated coordinate.
  */
@@ -56,6 +50,11 @@ struct TrPoint {
 TbBool point_set(TrPointId pt, TrCoord pt_x, TrCoord pt_y);
 TrPointId point_new(void);
 void point_dispose(TrPointId pt);
+TrPointId point_set_new_or_reuse(TrCoord pt_x, TrCoord pt_y);
+
+TbBool point_equals(TrPointId pt, TrCoord pt_x, TrCoord pt_y);
+TbBool point_within_rect_coords(TrPointId pt, TrCoord x1,
+  TrCoord y1, TrCoord x2, TrCoord y2);
 /******************************************************************************/
 #ifdef __cplusplus
 }

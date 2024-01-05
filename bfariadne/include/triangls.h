@@ -46,6 +46,8 @@ struct TrTriangle {
 
 #pragma pack()
 /******************************************************************************/
+TrTriangId tri_new(void);
+void tri_dispose(TrTriangId tri);
 
 /******************************************************************************/
 #ifdef __cplusplus

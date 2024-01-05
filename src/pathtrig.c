@@ -74,16 +74,6 @@ void triangulation_select(int trglno)
         : : "a" (trglno));
 }
 
-TbBool point_equals(int pt, int pt_x, int pt_y)
-{
-    struct TrPoint *p_point;
-
-    if (pt < 0)
-        return false;
-    p_point = &triangulation[0].Points[pt];
-    return ((p_point->x == pt_x) && (p_point->y == pt_y));
-}
-
 long triangle_area1(int tri)
 {
     struct TrTriangle *p_tri;
@@ -182,26 +172,6 @@ int link_find(int tri_cur, int tri_nxt)
     return -1;
 }
 
-int point_set_new_or_reuse(int pt_x, int pt_y)
-{
-    int pt;
-
-    // Cannot reuse points as they don't have reference count
-    // This means freeing the point once would damage the second use
-#if 0
-    pt = allocated_point_search(pt_x, pt_y);
-    if (pt >= 0) {
-        return pt;
-    }
-#endif
-    pt = point_new();
-    if (pt < 0) {
-        return -1;
-    }
-    point_set(pt, pt_x, pt_y);
-    return pt;
-}
-
 int tri_split3(int tri, int pt_x, int pt_y)
 {
     //TODO implement
@@ -273,30 +243,15 @@ TbBool insert_point(int pt_x, int pt_y)
     return tri_split3(tri, pt_x, pt_y) >= 0;
 }
 
-TbBool tri_point_within_rect_coords(struct TrPoint *p_point, int x1, int y1, int x2, int y2)
+TbBool triangle_contained_within_rect_coords(struct TrTriangle *p_tri, int x1, int y1, int x2, int y2)
 {
-    if (p_point->x >= x1 && p_point->x <= x2)
-    {
-        if (p_point->y >= y1 && p_point->y <= y2)
-            return true;
-    }
-    return false;
-}
-
-TbBool tri_contained_within_rect_coords(struct TrTriangle *p_tri, int x1, int y1, int x2, int y2)
-{
-    struct TrPoint *p_point;
-
-    p_point = &triangulation[0].Points[p_tri->point[0]];
-    if (!tri_point_within_rect_coords(p_point, x1, y1, x2, y2))
+    if (!point_within_rect_coords(p_tri->point[0], x1, y1, x2, y2))
         return false;
 
-    p_point = &triangulation[0].Points[p_tri->point[1]];
-    if (!tri_point_within_rect_coords(p_point, x1, y1, x2, y2))
+    if (!point_within_rect_coords(p_tri->point[1], x1, y1, x2, y2))
         return false;
 
-    p_point = &triangulation[0].Points[p_tri->point[2]];
-    if (!tri_point_within_rect_coords(p_point, x1, y1, x2, y2))
+    if (!point_within_rect_coords(p_tri->point[2], x1, y1, x2, y2))
         return false;
 
     return true;
@@ -314,7 +269,7 @@ void brute_fill_rectangle(int x1, int y1, int x2, int y2, ubyte solid)
         if (p_tri->solid == 255)
             continue;
 
-        if (!tri_contained_within_rect_coords(p_tri, x1, y1, x2, y2))
+        if (!triangle_contained_within_rect_coords(p_tri, x1, y1, x2, y2))
             continue;
 
         p_tri->solid = solid;

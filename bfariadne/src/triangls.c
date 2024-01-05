@@ -19,7 +19,58 @@
 /******************************************************************************/
 #include "triangls.h"
 
+#include <limits.h>
+#include "trstate.h"
+#include "trlog.h"
 /******************************************************************************/
+
+/** Value stored in point Y coord to mark it as unused.
+ * Needs to fit TrCoord type.
+ */
+#define TRIANGLE_UNALLOCATED_MARK UCHAR_MAX
+
+
+TrTriangId tri_new(void)
+{
+    struct TrTriangle *p_tri;
+    TrTriangId tri;
+
+    if (triangulation[0].free_Triangles == -1)
+    {
+        tri = triangulation[0].ix_Triangles;
+        if (tri < 0) {
+            LOGERR("ix_Triangles depeled, got %d", (int)tri);
+            return -1;
+        }
+        p_tri = &triangulation[0].Triangles[tri];
+        triangulation[0].ix_Triangles++;
+    } else
+    {
+        tri = triangulation[0].free_Triangles;
+        if (tri < 0) {
+            LOGERR("free_Triangles depeled, got %d", (int)tri);
+            return -1;
+        }
+        p_tri = &triangulation[0].Triangles[tri];
+        triangulation[0].free_Triangles = p_tri->tri[0];
+    }
+    p_tri->solid = 0;
+    triangulation[0].count_Triangles++;
+    return tri;
+}
+
+void tri_dispose(TrTriangId tri)
+{
+    struct TrTriangle *p_tri;
+    TrTriangId tri_pvfree;
+
+    tri_pvfree = triangulation[0].free_Triangles;
+    triangulation[0].free_Triangles = tri;
+    p_tri = &triangulation[0].Triangles[tri];
+    p_tri->tri[0] = tri_pvfree;
+    p_tri->solid = TRIANGLE_UNALLOCATED_MARK;
+    triangulation[0].count_Triangles--;
+}
 
 
 /******************************************************************************/
