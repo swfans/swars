@@ -22,6 +22,7 @@
 #include <string.h>
 #include <limits.h>
 #include "triangls.h"
+#include "tringops.h"
 #include "trpoints.h"
 #include "trstate.h"
 #include "trfringe.h"
@@ -131,43 +132,6 @@ int tri_split3(int tri, int pt_x, int pt_y)
 {
     //TODO implement
     return 0;
-}
-
-int tri_split2(int tri, int cor, int pt_x, int pt_y, int pt)
-{
-    //TODO implement
-    return 0;
-}
-
-int edge_split(int tri, int cor, int pt_x, int pt_y)
-{
-    struct TrTriangle *p_tri;
-    struct TrTriangle *p_tri_sec;
-    int pt;
-    int tri_sec, cor_sec;
-    int tri_sp1, tri_sp2;
-
-    // Create and fill new point
-    pt = point_set_new_or_reuse(pt_x, pt_y);
-    if (pt < 0) {
-        return -1;
-    }
-    p_tri = &triangulation[0].Triangles[tri];
-    // Find second tri and cor which links it back to the first
-    tri_sec = p_tri->tri[cor];
-    cor_sec = link_find(tri_sec, tri);
-    if (cor_sec < 0) {
-        LOGERR("no two-way link between triangles %d and %d", tri, tri_sec);
-        point_dispose(pt);
-        return -1;
-    }
-    // Do the splitting
-    tri_sp1 = tri_split2(tri, cor, pt_x, pt_y, pt);
-    tri_sp2 = tri_split2(tri_sec, cor_sec, pt_x, pt_y, pt);
-    p_tri_sec = &triangulation[0].Triangles[tri_sec];
-    p_tri_sec->tri[cor_sec] = tri_sp1;
-    p_tri->tri[cor] = tri_sp2;
-    return pt;
 }
 
 TbBool insert_point(int pt_x, int pt_y)

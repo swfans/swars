@@ -87,6 +87,8 @@ swars_SOURCES = \
 	../bfariadne/src/trfringe.c \
 	../bfariadne/include/triangls.h \
 	../bfariadne/src/triangls.c \
+	../bfariadne/include/tringops.h \
+	../bfariadne/src/tringops.c \
 	../bfariadne/include/trpath.h \
 	../bfariadne/include/trpoints.h \
 	../bfariadne/src/trpoints.c \
