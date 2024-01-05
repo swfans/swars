@@ -21,13 +21,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>
+#include "triangls.h"
+#include "trpoints.h"
+#include "trstate.h"
 #include "swlog.h"
 /******************************************************************************/
-
-/** Value stored in point Y coord to mark it as unused.
- * Needs to fit TrCoord type.
- */
-#define POINT_UNALLOCATED_MARK INT_MIN
 
 extern int fringe_y[256];
 extern int fringe_x1, fringe_y1, fringe_x2, fringe_y2;

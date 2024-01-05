@@ -21,6 +21,10 @@
 #include <assert.h>
 #include <string.h>
 #include "bffile.h"
+#include "triangls.h"
+#include "trpoints.h"
+#include "trstate.h"
+#include "pathtrig.h"
 #include "bigmap.h"
 #include "enginlights.h"
 #include "enginsngobjs.h"
@@ -29,7 +33,6 @@
 #include "game.h"
 #include "game_data.h"
 #include "matrix.h"
-#include "pathtrig.h"
 #include "building.h"
 #include "thing.h"
 #include "vehtraffic.h"
