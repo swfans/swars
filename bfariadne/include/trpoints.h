@@ -46,10 +46,16 @@ struct TrPoint {
 
 #pragma pack()
 /******************************************************************************/
-
 TbBool point_set(TrPointId pt, TrCoord pt_x, TrCoord pt_y);
+
+/** Reserve a new point from free points pool, and return its Id.
+ */
 TrPointId point_new(void);
+
+/** Free a point, returning it to the from free points pool.
+ */
 void point_dispose(TrPointId pt);
+
 TrPointId point_set_new_or_reuse(TrCoord pt_x, TrCoord pt_y);
 
 TbBool point_equals(TrPointId pt, TrCoord pt_x, TrCoord pt_y);

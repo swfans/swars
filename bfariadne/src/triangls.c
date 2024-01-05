@@ -72,5 +72,48 @@ void tri_dispose(TrTriangId tri)
     triangulation[0].count_Triangles--;
 }
 
+TrTipId link_find(TrTriangId tri, TrTriangId tri_nx)
+{
+    struct TrTriangle *p_tri;
+    TrTipId cor;
+
+    p_tri = &triangulation[0].Triangles[tri];
+    if (tri < 0) {
+        return -1;
+    }
+    for (cor = 0; cor < 3; cor++)
+    {
+        if (p_tri->tri[cor] == tri_nx) {
+            return cor;
+        }
+    }
+    return -1;
+}
+
+TbBool triangle_tip_equals(TrTriangId tri, TrTipId cor, TrCoord pt_x, TrCoord pt_y)
+{
+    TrPointId pt;
+    if (tri < 0)
+        return false;
+    if ((cor < 0) || (cor >= 3))
+        return false;
+    pt = triangulation[0].Triangles[tri].point[cor];
+    return point_equals(pt, pt_x, pt_y);
+}
+
+TbBool triangle_has_point_coord(TrTriangId tri, TrCoord pt_x, TrCoord pt_y)
+{
+    if (triangle_tip_equals(tri, 0, pt_x, pt_y))
+        return true;
+
+    if (triangle_tip_equals(tri, 1, pt_x, pt_y))
+        return true;
+
+    if (triangle_tip_equals(tri, 2, pt_x, pt_y))
+        return true;
+
+    return false;
+}
+
 
 /******************************************************************************/

@@ -116,31 +116,6 @@ sbyte triangle_divide_areas_differ(int tri, int cor1, int cor2, int pt_x, int pt
       pt_x - p_point2->x, p_point2->y - p_point1->y);
 }
 
-TbBool triangle_tip_equals(int tri, int cor, int pt_x, int pt_y)
-{
-    int pt;
-    if (tri < 0)
-        return false;
-    if ((cor < 0) || (cor >= 3))
-        return false;
-    pt = triangulation[0].Triangles[tri].point[cor];
-    return point_equals(pt, pt_x, pt_y);
-}
-
-TbBool triangle_has_point_coord(int tri, int pt_x, int pt_y)
-{
-    if (triangle_tip_equals(tri, 0, pt_x, pt_y))
-        return true;
-
-    if (triangle_tip_equals(tri, 1, pt_x, pt_y))
-        return true;
-
-    if (triangle_tip_equals(tri, 2, pt_x, pt_y))
-        return true;
-
-    return false;
-}
-
 void make_edge(int x1, int y1, int x2, int y2)
 {
     //TODO implement
@@ -150,26 +125,6 @@ int edge_find(int x1, int y1, int x2, int y2, int *ntri1, int *ntri2)
 {
     //TODO implement
    return 0;
-}
-
-/** Find edge index within given triangle which links it to next triangle.
- */
-int link_find(int tri_cur, int tri_nxt)
-{
-    struct TrTriangle *p_tri;
-    int cor;
-
-    p_tri = &triangulation[0].Triangles[tri_cur];
-    if (tri_cur < 0) {
-        return -1;
-    }
-    for (cor = 0; cor < 3; cor++)
-    {
-        if (p_tri->tri[cor] == tri_nxt) {
-            return cor;
-        }
-    }
-    return -1;
 }
 
 int tri_split3(int tri, int pt_x, int pt_y)
