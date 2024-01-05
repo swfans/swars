@@ -23,6 +23,9 @@
 #include "swlog.h"
 /******************************************************************************/
 
+/** Value stored in point Y coord to mark it as unused.
+ * Needs to fit TrCoord type.
+ */
 #define POINT_UNALLOCATED_MARK INT_MIN
 
 extern int fringe_y[256];
@@ -198,7 +201,7 @@ long triangle_area1(int tri)
  *
  * @param tri Triangle index.
  * @param cor1 First tip/corner of the edge to be divided.
- * @param ncorB Second tip/corner of the edge to be divided.
+ * @param cor2 Second tip/corner of the edge to be divided.
  * @param pt_x Coord X of the dividing point.
  * @param pt_y Coord Y of the dividing point.
  * @return Zero if areas do not differ; -1 or 1 otherwise.

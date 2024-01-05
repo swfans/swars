@@ -83,6 +83,14 @@ swars_SOURCES = \
 	../bfsoundlib/include/oggvorbis.h \
 	../bfsoundlib/src/oggvorbis.c \
 	../bfsoundlib/src/ailssa.sx \
+	../bfariadne/include/trfringe.h \
+	../bfariadne/src/trfringe.c \
+	../bfariadne/include/triangls.h \
+	../bfariadne/src/triangls.c \
+	../bfariadne/include/trpath.h \
+	../bfariadne/include/trpoints.h \
+	../bfariadne/src/trpoints.c \
+	../bfariadne/include/trstate.h \
 	config.h \
 	bigmap.c \
 	bigmap.h \
@@ -208,7 +216,8 @@ swars_SOURCES = \
 
 swars_CPPFLAGS = \
   -I"$(top_srcdir)/bflibrary/include" \
-  -I"$(top_srcdir)/bfsoundlib/include"
+  -I"$(top_srcdir)/bfsoundlib/include" \
+  -I"$(top_srcdir)/bfariadne/include"
 
 swars_WRAPPERS = wrappers_dos.o wrappers_game.o wrappers_libc.o wrappers_util.o
 
