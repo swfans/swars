@@ -77,10 +77,10 @@ TrTipId link_find(TrTriangId tri, TrTriangId tri_nx)
     struct TrTriangle *p_tri;
     TrTipId cor;
 
-    p_tri = &triangulation[0].Triangles[tri];
     if (tri < 0) {
         return -1;
     }
+    p_tri = &triangulation[0].Triangles[tri];
     for (cor = 0; cor < 3; cor++)
     {
         if (p_tri->tri[cor] == tri_nx) {
@@ -93,10 +93,13 @@ TrTipId link_find(TrTriangId tri, TrTriangId tri_nx)
 TbBool triangle_tip_equals(TrTriangId tri, TrTipId cor, TrCoord pt_x, TrCoord pt_y)
 {
     TrPointId pt;
-    if (tri < 0)
+
+    if (tri < 0) {
         return false;
-    if ((cor < 0) || (cor >= 3))
+    }
+    if ((cor < 0) || (cor >= 3)) {
         return false;
+    }
     pt = triangulation[0].Triangles[tri].point[cor];
     return point_equals(pt, pt_x, pt_y);
 }
@@ -113,6 +116,24 @@ TbBool triangle_has_point_coord(TrTriangId tri, TrCoord pt_x, TrCoord pt_y)
         return true;
 
     return false;
+}
+
+TbBool triangle_contained_within_rect_coords(TrTriangId tri,
+  TrCoord x1, TrCoord y1, TrCoord x2, TrCoord y2)
+{
+    struct TrTriangle *p_tri;
+
+    p_tri = &triangulation[0].Triangles[tri];
+    if (!point_within_rect_coords(p_tri->point[0], x1, y1, x2, y2))
+        return false;
+
+    if (!point_within_rect_coords(p_tri->point[1], x1, y1, x2, y2))
+        return false;
+
+    if (!point_within_rect_coords(p_tri->point[2], x1, y1, x2, y2))
+        return false;
+
+    return true;
 }
 
 

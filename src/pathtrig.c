@@ -198,20 +198,6 @@ TbBool insert_point(int pt_x, int pt_y)
     return tri_split3(tri, pt_x, pt_y) >= 0;
 }
 
-TbBool triangle_contained_within_rect_coords(struct TrTriangle *p_tri, int x1, int y1, int x2, int y2)
-{
-    if (!point_within_rect_coords(p_tri->point[0], x1, y1, x2, y2))
-        return false;
-
-    if (!point_within_rect_coords(p_tri->point[1], x1, y1, x2, y2))
-        return false;
-
-    if (!point_within_rect_coords(p_tri->point[2], x1, y1, x2, y2))
-        return false;
-
-    return true;
-}
-
 void brute_fill_rectangle(int x1, int y1, int x2, int y2, ubyte solid)
 {
     int tri;
@@ -224,7 +210,7 @@ void brute_fill_rectangle(int x1, int y1, int x2, int y2, ubyte solid)
         if (p_tri->solid == 255)
             continue;
 
-        if (!triangle_contained_within_rect_coords(p_tri, x1, y1, x2, y2))
+        if (!triangle_contained_within_rect_coords(tri, x1, y1, x2, y2))
             continue;
 
         p_tri->solid = solid;

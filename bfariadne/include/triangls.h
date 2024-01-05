@@ -71,6 +71,11 @@ TbBool triangle_tip_equals(TrTriangId tri, TrTipId cor, TrCoord pt_x, TrCoord pt
  */
 TbBool triangle_has_point_coord(TrTriangId tri, TrCoord pt_x, TrCoord pt_y);
 
+/** Returns if all points of the triangle are within given coord limits.
+ */
+TbBool triangle_contained_within_rect_coords(TrTriangId tri,
+  TrCoord x1, TrCoord y1, TrCoord x2, TrCoord y2);
+
 /******************************************************************************/
 #ifdef __cplusplus
 }
