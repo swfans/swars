@@ -334,8 +334,10 @@ void load_mad_pc_buffer(ubyte *mad_ptr, long rdsize)
     mad_ptr += sizeof(selected_triangulation_no);
     memcpy(&tri_module_init, mad_ptr, sizeof(tri_module_init));
     mad_ptr += sizeof(tri_module_init);
+    assert(sizeof(struct Triangulation) == 60);
     memcpy(triangulation, mad_ptr, sizeof(struct Triangulation) * 4);
     mad_ptr += sizeof(struct Triangulation) * 4;
+    assert(sizeof(struct TrTriangle) == 16);
     triangulation[0].Triangles = (struct TrTriangle *)mad_ptr;
     mad_ptr += sizeof(struct TrTriangle) * triangulation[0].max_Triangles;
     triangulation[1].Triangles = (struct TrTriangle *)mad_ptr;
@@ -344,6 +346,7 @@ void load_mad_pc_buffer(ubyte *mad_ptr, long rdsize)
     mad_ptr += sizeof(struct TrTriangle) * triangulation[2].max_Triangles;
     triangulation[3].Triangles = (struct TrTriangle *)mad_ptr;
     mad_ptr += sizeof(struct TrTriangle) * triangulation[3].max_Triangles;
+    assert(sizeof(struct TrPoint) == 8);
     triangulation[0].Points = (struct TrPoint *)mad_ptr;
     mad_ptr += sizeof(struct TrPoint) * triangulation[0].max_Points;
     triangulation[1].Points = (struct TrPoint *)mad_ptr;
