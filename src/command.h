@@ -225,9 +225,10 @@ struct Command
   short Arg2;
   short Time;
   short MyThing;
+  short field_16;
   short Parent;
   ulong Flags;
-  ulong field_1A;
+  short field_1C;
   short field_1E;
 };
 

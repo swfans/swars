@@ -320,9 +320,9 @@ void snprint_command(char *buf, ulong buflen, ushort cmd)
         nparams++;
     }
 
-    if ((p_cmd->field_1A != 0) || (p_cmd->field_1E != 0)) {
+    if ((p_cmd->field_1C != 0) || (p_cmd->field_1E != 0)) {
         if (nparams) { sprintf(s, ", "); s += strlen(s); }
-        sprintf(s, "Padding(%ld,%hd)", p_cmd->field_1A, p_cmd->field_1E);
+        sprintf(s, "Padding(%hd,%hd)", p_cmd->field_1C, p_cmd->field_1E);
         s += strlen(s);
         nparams++;
     }
@@ -610,7 +610,7 @@ ubyte fix_thing_command_indexes(ushort cmd)
     }
 
     if (((p_cdef->Flags & CmDF_ReqCoord2) != 0) && (((p_cdef->Flags & CmDF_ReqRange2) == 0) ||
-        (((p_cdef->Flags & CmDF_ReqRange2) != 0) && ((p_cmd->Flags & PCmdF_Unkn100000) != 0))))
+        (((p_cdef->Flags & CmDF_ReqRange2) != 0) && ((p_cmd->Flags & PCmdF_Unkn0010) != 0))))
     {
         if ((p_cmd->Arg2 < MAP_BORDER_MARGIN) || (p_cmd->Arg2 > 32767 - MAP_BORDER_MARGIN)) {
             LOGERR("Cmd%hu = %s target coord X/Arg2 of (%d,%d) out of range",
@@ -638,7 +638,7 @@ ubyte fix_thing_command_indexes(ushort cmd)
         }
     } else
     if (((p_cdef->Flags & CmDF_ReqRange2) != 0) && (((p_cdef->Flags & CmDF_ReqCoord2) == 0) ||
-        (((p_cdef->Flags & CmDF_ReqCoord2) != 0) && ((p_cmd->Flags & PCmdF_Unkn100000) == 0))))
+        (((p_cdef->Flags & CmDF_ReqCoord2) != 0) && ((p_cmd->Flags & PCmdF_Unkn0010) == 0))))
     {
         if ((p_cmd->Arg2 < 1) || (p_cmd->Arg2 > 32767 - MAP_BORDER_MARGIN)) {
             LOGERR("Cmd%hu = %s target Range/Arg2 of %d out of range",
@@ -680,13 +680,13 @@ void check_and_fix_commands(void)
         if (p_cmd->Next > next_command)
             p_cmd->Next = 0;
 
-        if ((p_cmd->Flags & PCmdF_Unkn020000) != 0)
+        if ((p_cmd->Flags & PCmdF_Unkn0002) != 0)
         {
             struct Command *p_nxcmd;
 
             p_nxcmd = &game_commands[p_cmd->Next];
             if (!is_command_any_until(p_nxcmd)) {
-                p_cmd->Flags &= ~PCmdF_Unkn020000;
+                p_cmd->Flags &= ~PCmdF_Unkn0002;
             }
         }
     }
