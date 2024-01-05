@@ -29,6 +29,8 @@ extern "C" {
 /******************************************************************************/
 #pragma pack(1)
 
+#define TRIANGULATIONS_COUNT 10
+
 struct TrTriangle;
 struct TrPoint;
 
@@ -54,6 +56,17 @@ struct Triangulation {
 
 #pragma pack()
 /******************************************************************************/
+/** Whether the triangulation states were initialized.
+ */
+extern int triangulation_initied; // = 0;
+
+/** Triangulation states, active one and extras available for activation.
+ */
+extern struct Triangulation triangulation[TRIANGULATIONS_COUNT];
+
+/** Index of selected triangulation state.
+ */
+extern int selected_triangulation_no; // = -1;
 
 /******************************************************************************/
 #ifdef __cplusplus

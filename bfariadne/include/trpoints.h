@@ -53,6 +53,9 @@ struct TrPoint {
 #pragma pack()
 /******************************************************************************/
 
+TbBool point_set(TrPointId pt, TrCoord pt_x, TrCoord pt_y);
+TrPointId point_new(void);
+void point_dispose(TrPointId pt);
 /******************************************************************************/
 #ifdef __cplusplus
 }

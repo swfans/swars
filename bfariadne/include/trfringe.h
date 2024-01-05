@@ -28,15 +28,10 @@ extern "C" {
 #endif
 
 /******************************************************************************/
-#pragma pack(1)
 
-
-#pragma pack()
-/******************************************************************************/
-extern TrCoord fringe_y[256];
-extern TrCoord fringe_x1, fringe_y1, fringe_x2, fringe_y2;
-extern ubyte *fringe_map;
-
+void fringe_init(ubyte *p_map, TrCoord x1, TrCoord y1, TrCoord x2, TrCoord y2);
+int fringe_get_rectangle(TrCoord *p_x1, TrCoord *p_y1,
+  TrCoord *p_x2, TrCoord *p_y2, ubyte *p_solid);
 
 /******************************************************************************/
 #ifdef __cplusplus

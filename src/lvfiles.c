@@ -335,8 +335,8 @@ void load_mad_pc_buffer(ubyte *mad_ptr, long rdsize)
 
     memcpy(&selected_triangulation_no, mad_ptr, sizeof(selected_triangulation_no));
     mad_ptr += sizeof(selected_triangulation_no);
-    memcpy(&tri_module_init, mad_ptr, sizeof(tri_module_init));
-    mad_ptr += sizeof(tri_module_init);
+    memcpy(&triangulation_initied, mad_ptr, sizeof(triangulation_initied));
+    mad_ptr += sizeof(triangulation_initied);
     assert(sizeof(struct Triangulation) == 60);
     memcpy(triangulation, mad_ptr, sizeof(struct Triangulation) * 4);
     mad_ptr += sizeof(struct Triangulation) * 4;

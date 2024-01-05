@@ -24,12 +24,9 @@
 #include "triangls.h"
 #include "trpoints.h"
 #include "trstate.h"
+#include "trfringe.h"
 #include "swlog.h"
 /******************************************************************************/
-
-extern int fringe_y[256];
-extern int fringe_x1, fringe_y1, fringe_x2, fringe_y2;
-extern ubyte *fringe_map;
 
 /** Multiplies first pair of arguments, and second pair, returning which result is smaller.
  * @return Gives -1 if first pair multiplies to smaller value, 1 if it's the second; if equal, gives 0.
@@ -44,98 +41,6 @@ sbyte path_compare_multiplications(long mul1a, long mul1b, long mul2a, long mul2
     if (mul1 < mul2)
         return -1;
     return 0;
-}
-
-void fringe_init(ubyte *p_map, int x1, int y1, int x2, int y2)
-{
-    int x;
-
-    fringe_map = p_map;
-    fringe_x1 = x1;
-    fringe_y1 = y1;
-    fringe_x2 = x2;
-    fringe_y2 = y2;
-    for (x = x1; x < x2; x++) {
-        fringe_y[x] = y1;
-    }
-}
-
-int fringe_scan(int *p_x1, int *p_y1, int *p_x2, int *p_y2)
-{
-    int x1, y1, x2;
-    int x, cx;
-
-    x = fringe_x1;
-    y1 = fringe_y2;
-    while (x < fringe_x2)
-    {
-        cx = x + 1;
-        if (y1 <= fringe_y[x]) {
-            x++;
-            continue;
-        }
-        y1 = fringe_y[x];
-        x1 = x++;
-        while (cx < fringe_x2)
-        {
-            if (y1 != fringe_y[cx])
-                break;
-            cx++;
-            x++;
-        }
-        x2 = x - x1;
-    }
-
-    if (y1 == fringe_y2)
-        return 0;
-
-    *p_x1 = x1;
-    *p_y1 = y1;
-    *p_x2 = x2;
-    *p_y2 = fringe_y2 - y1;
-    return 1;
-}
-
-int fringe_get_rectangle(int *p_x1, int *p_y1, int *p_x2, int *p_y2, ubyte *p_solid)
-{
-    int frx1, fry1, frx2, fry2;
-    int dx, dy;
-    ubyte solid;
-    ubyte *m_start;
-    ubyte *m;
-    int k;
-
-    if (!fringe_scan(&frx1, &fry1, &frx2, &fry2))
-        return 0;
-
-    m_start = &fringe_map[256 * fry1 + frx1];
-    solid = *m_start;
-
-    m = m_start + 1;
-    for (dx = 1; dx < frx2; dx++)
-    {
-        if (solid != *m)
-            break;
-        m++;
-    }
-
-    m = m_start + 256;
-    for (dy = 1; dy < fry2; dy++)
-    {
-        if (memcmp(m, m_start, dx) != 0)
-            break;
-        m += 256;
-    }
-
-    for (k = frx1; k < frx1 + dx; k++)
-      fringe_y[k] = fry1 + dy;
-
-    *p_solid = solid;
-    *p_x1 = frx1;
-    *p_y1 = fry1;
-    *p_x2 = frx1 + dx;
-    *p_y2 = fry1 + dy;
-    return 1;
 }
 
 void path_init8_unkn3(struct Path *path, int ax8, int ay8, int bx8, int by8, int a6)
@@ -163,10 +68,10 @@ int triangle_findSE8(int x, int y)
     return ret;
 }
 
-void triangulation_select(int tgnNo)
+void triangulation_select(int trglno)
 {
     asm volatile ("call ASM_triangulation_select\n"
-        : : "a" (tgnNo));
+        : : "a" (trglno));
 }
 
 TbBool point_equals(int pt, int pt_x, int pt_y)
@@ -255,56 +160,6 @@ int edge_find(int x1, int y1, int x2, int y2, int *ntri1, int *ntri2)
 {
     //TODO implement
    return 0;
-}
-
-TbBool point_set(int pt, int pt_x, int pt_y)
-{
-    struct TrPoint *p_point;
-
-    if (pt < 0)
-        return false;
-    p_point = &triangulation[0].Points[pt];
-
-    p_point->x = pt_x;
-    p_point->y = pt_y;
-    return true;
-}
-
-int point_new(void)
-{
-    struct TrPoint *p_point;
-    int pt;
-
-    if (triangulation[0].free_Points == -1)
-    {
-        pt = triangulation[0].ix_Points++;
-        p_point = &triangulation[0].Points[pt];
-    }
-    else
-    {
-        pt = triangulation[0].free_Points;
-        p_point = &triangulation[0].Points[pt];
-        triangulation[0].free_Points = p_point->x;
-    }
-    // Clear the value which marked the point as unused
-    p_point->y = 0;
-    triangulation[0].count_Points++;
-    return pt;
-}
-
-void point_dispose(int pt)
-{
-    struct TrPoint *p_point;
-    int last_pt;
-
-    last_pt = triangulation[0].free_Points;
-    p_point = &triangulation[0].Points[pt];
-    // Reuse y coord to mark the point as unused
-    p_point->y = POINT_UNALLOCATED_MARK;
-    triangulation[0].free_Points = pt;
-    // Reuse x coord to link unused points into a chain
-    p_point->x = last_pt;
-    triangulation[0].count_Points--;
 }
 
 /** Find edge index within given triangle which links it to next triangle.
