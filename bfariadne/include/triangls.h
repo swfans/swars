@@ -76,6 +76,22 @@ TbBool triangle_has_point_coord(TrTriangId tri, TrCoord pt_x, TrCoord pt_y);
 TbBool triangle_contained_within_rect_coords(TrTriangId tri,
   TrCoord x1, TrCoord y1, TrCoord x2, TrCoord y2);
 
+/** Computes surface area of the given triangle.
+ */
+long triangle_area1(TrTriangId tri);
+
+/** Returns if given coords can divide triangle into same areas.
+ *
+ * @param tri Triangle index.
+ * @param cor1 First tip/corner of the edge to be divided.
+ * @param cor2 Second tip/corner of the edge to be divided.
+ * @param pt_x Coord X of the dividing point.
+ * @param pt_y Coord Y of the dividing point.
+ * @return Zero if areas do not differ; -1 or 1 otherwise.
+ */
+sbyte triangle_divide_areas_differ(TrTriangId tri,
+  TrTipId cor1, TrTipId cor2, TrCoord pt_x, TrCoord pt_y);
+
 /******************************************************************************/
 #ifdef __cplusplus
 }

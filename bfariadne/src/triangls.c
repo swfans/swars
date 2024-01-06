@@ -20,6 +20,7 @@
 #include "triangls.h"
 
 #include <limits.h>
+#include <stdlib.h>
 #include "trstate.h"
 #include "trlog.h"
 /******************************************************************************/
@@ -134,6 +135,55 @@ TbBool triangle_contained_within_rect_coords(TrTriangId tri,
         return false;
 
     return true;
+}
+
+/** Multiplies first pair of arguments, and second pair, returning which result is smaller.
+ * @return Gives -1 if first pair multiplies to smaller value, 1 if it's the second; if equal, gives 0.
+ */
+static sbyte path_compare_multiplications(long mul1a, long mul1b, long mul2a, long mul2b)
+{
+    long long mul1,mul2;
+    mul1 = (long long)mul1a * (long long)mul1b;
+    mul2 = (long long)mul2a * (long long)mul2b;
+    if (mul1 > mul2)
+        return 1;
+    if (mul1 < mul2)
+        return -1;
+    return 0;
+}
+
+long triangle_area1(TrTriangId tri)
+{
+    struct TrTriangle *p_tri;
+    struct TrPoint *p_point1;
+    struct TrPoint *p_point2;
+    struct TrPoint *p_point3;
+    long long area;
+
+    p_tri = &triangulation[0].Triangles[tri];
+    p_point1 = &triangulation[0].Points[p_tri->point[0]];
+    p_point2 = &triangulation[0].Points[p_tri->point[1]];
+    p_point3 = &triangulation[0].Points[p_tri->point[2]];
+    area = (p_point3->y - p_point1->y) * (p_point2->x - p_point1->x)
+       - (p_point3->x - p_point1->x) * (p_point2->y - p_point1->y);
+    return llabs(area);
+}
+
+sbyte triangle_divide_areas_differ(TrTriangId tri,
+  TrTipId cor1, TrTipId cor2, TrCoord pt_x, TrCoord pt_y)
+{
+    struct TrTriangle *p_tri;
+    struct TrPoint *p_point1;
+    struct TrPoint *p_point2;
+
+    p_tri = &triangulation[0].Triangles[tri];
+
+    p_point1 = &triangulation[0].Points[p_tri->point[cor1]];
+    p_point2 = &triangulation[0].Points[p_tri->point[cor2]];
+
+    return path_compare_multiplications(
+      pt_y - p_point2->y, p_point2->x - p_point1->x,
+      pt_x - p_point2->x, p_point2->y - p_point1->y);
 }
 
 
