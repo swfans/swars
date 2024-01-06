@@ -70,6 +70,35 @@ int edge_find(int x1, int y1, int x2, int y2, int *ntri1, int *ntri2)
    return 0;
 }
 
+/**
+ * Finds point with given coords in list of triangles.
+ * @param pt_x
+ * @param pt_y
+ * @param rtri Output pointer for triangle index.
+ * @param rcor Output corner/tip index within the triangle.
+ * @return Gives true if a point was found and output pointers set.
+ */
+TbBool point_find(TrCoord pt_x, TrCoord pt_y, TrTriangId *rtri, TrTipId *rcor)
+{
+    TrTriangId tri;
+    TrTipId cor;
+
+    tri = triangle_find8(pt_x << 8, pt_y << 8);
+    if (tri < 0)
+        return false;
+
+    for (cor = 0; cor < 3; cor++)
+    {
+        if (triangle_tip_equals(tri, cor, pt_x, pt_y))
+        {
+            *rtri = tri;
+            *rcor = cor;
+            return true;
+        }
+    }
+    return false;
+}
+
 TbBool insert_point(int pt_x, int pt_y)
 {
     int tri;
