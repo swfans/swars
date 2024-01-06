@@ -221,11 +221,11 @@ struct Command
   short Z;
   ubyte Type;
   ubyte SubType;
+  short field_16;
   short Arg1;
   short Arg2;
   short Time;
   short MyThing;
-  short field_16;
   short Parent;
   ulong Flags;
   short field_1C;
