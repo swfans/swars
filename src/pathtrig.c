@@ -53,6 +53,14 @@ int triangle_findSE8(int x, int y)
     return ret;
 }
 
+int pointed_at8(int a1, int a2, int *a3, int *a4)
+{
+    int ret;
+    asm volatile ("call ASM_pointed_at8\n"
+        : "=r" (ret) : "a" (a1), "d" (a2), "b" (a3), "c" (a4));
+    return ret;
+}
+
 void triangulation_select(int trglno)
 {
     asm volatile ("call ASM_triangulation_select\n"
