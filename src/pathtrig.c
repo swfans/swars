@@ -128,12 +128,6 @@ int edge_find(int x1, int y1, int x2, int y2, int *ntri1, int *ntri2)
    return 0;
 }
 
-int tri_split3(int tri, int pt_x, int pt_y)
-{
-    //TODO implement
-    return 0;
-}
-
 TbBool insert_point(int pt_x, int pt_y)
 {
     int tri;

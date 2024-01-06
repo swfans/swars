@@ -19,16 +19,175 @@
 /******************************************************************************/
 #include "tringops.h"
 
+#include <string.h>
 #include "triangls.h"
 #include "trstate.h"
 #include "trlog.h"
 /******************************************************************************/
+const short MOD3[] = {0, 1, 2, 0, 1, 2};
 
 static TrTriangId tri_split2(TrTriangId tri, TrTipId cor,
   TrCoord pt_x, TrCoord pt_y, TrPointId pt)
 {
-    //TODO implement
-    return 0;
+    struct TrTriangle *p_tri1;
+    struct TrTriangle *p_tri2;
+    TrTriangId tri2, tri3;
+    TrTipId cor2, cor3;
+
+    tri2 = tri_new();
+    if (tri2 < 0) {
+        return -1;
+    }
+    p_tri1 = &triangulation[0].Triangles[tri];
+    p_tri2 = &triangulation[0].Triangles[tri2];
+    memcpy(p_tri2, p_tri1, sizeof(struct TrTriangle));
+
+    p_tri2->point[cor] = pt;
+
+    cor2 = MOD3[cor + 1];
+    p_tri1->point[cor2] = pt;
+    p_tri1->tri[cor2] = tri2;
+    p_tri1->enter |= 1 << cor2;
+    p_tri1->enter &= ~(1 << (cor2 + 3));
+
+    cor3 = MOD3[cor + 2];
+    p_tri2->tri[cor3] = tri;
+    p_tri2->enter |= 1 << cor3;
+    p_tri2->enter &= ~(1 << (cor3 + 3));
+
+    tri3 = p_tri2->tri[cor2];
+    if (tri3 != -1)
+    {
+        TrTipId cor4;
+        cor4 = link_find(tri3, tri);
+        if (cor4 >= 0) {
+            struct TrTriangle *p_tri3;
+            p_tri3 = &triangulation[0].Triangles[tri3];
+            p_tri3->tri[cor4] = tri2;
+        } else {
+            LOGERR("no two-way link between triangles %d and %d", tri3, tri);
+        }
+    }
+#if ARIADNE_REGIONS
+    int regid;
+    regid = get_triangle_region_id(tri);
+    if (regid > 0) {
+        region_unset(tri, regid);
+    }
+    p_tri2->field_E = 0;
+    edgelen_set(tri);
+    edgelen_set(tri2);
+#endif
+    return tri2;
+}
+
+TrPointId tri_split3(TrTriangId btri, TrCoord pt_x, TrCoord pt_y)
+{
+    TrTriangId tri1, tri2;
+    struct TrTriangle *p_tri1;
+    struct TrTriangle *p_tri2;
+    struct TrTriangle *p_btri;
+
+    tri1 = tri_new();
+    if (tri1 < 0) {
+        return -1;
+    }
+    tri2 = tri_new();
+    if (tri2 < 0) {
+        tri_dispose(tri1);
+        return -1;
+    }
+    p_tri1 = &triangulation[0].Triangles[tri1];
+    p_tri2 = &triangulation[0].Triangles[tri2];
+    p_btri = &triangulation[0].Triangles[btri];
+    memcpy(p_tri1, p_btri, sizeof(struct TrTriangle));
+    memcpy(p_tri2, p_btri, sizeof(struct TrTriangle));
+
+    TrPointId pt;
+    pt = point_set_new_or_reuse(pt_x, pt_y);
+    if (pt < 0) {
+        tri_dispose(tri1);
+        tri_dispose(tri2);
+        return -1;
+    }
+
+    p_btri->point[2] = pt;
+    p_tri1->point[0] = pt;
+    p_tri2->point[1] = pt;
+
+    ubyte prev_btri_enter;
+    prev_btri_enter = p_btri->enter;
+
+    p_btri->enter |= 6;
+    p_btri->tri[1] = tri1;
+    p_btri->tri[2] = tri2;
+    // TODO In DK, condition is always met, `jump` is intact and `enter` mask is 0x0F - verify
+    if ((prev_btri_enter & 0x18) != 0x18)
+    {
+        p_btri->jump = -1;
+        p_btri->enter &= 0x07;
+    }
+
+    p_tri1->enter |= 5;
+    p_tri1->tri[0] = btri;
+    p_tri1->tri[2] = tri2;
+    // TODO In DK, condition is always met, `jump` is intact and `enter` mask is 0x17 - verify
+    if ((prev_btri_enter & 0x28) != 0x28)
+    {
+        p_tri1->jump = -1;
+        p_tri1->enter &= 0x07;
+    }
+
+    p_tri2->enter |= 3;
+    p_tri2->tri[0] = btri;
+    p_tri2->tri[1] = tri1;
+    // TODO In DK, condition is always met, `jump` is intact and `enter` mask is 0x27 - verify
+    if ((prev_btri_enter & 0x48) != 0x48)
+    {
+        p_tri2->jump = -1;
+        p_tri2->enter &= 0x07;
+    }
+
+    TrTriangId ttri;
+    ttri = p_tri1->tri[1];
+    if (ttri != -1)
+    {
+        TrTipId lcor;
+        lcor = link_find(ttri, btri);
+        if (lcor >= 0) {
+            struct TrTriangle *p_ttri;
+            p_ttri = &triangulation[0].Triangles[ttri];
+            p_ttri->tri[lcor] = tri1;
+        } else {
+            LOGERR("no two-way link between triangles %d and %d", ttri, btri);
+        }
+    }
+    ttri = p_tri2->tri[2];
+    if (ttri != -1)
+    {
+        TrTipId lcor;
+        lcor = link_find(ttri, btri);
+        if (lcor >= 0) {
+            struct TrTriangle *p_ttri;
+            p_ttri = &triangulation[0].Triangles[ttri];
+            p_ttri->tri[lcor] = tri2;
+        } else {
+            LOGERR("no two-way link between triangles %d and %d", ttri, btri);
+        }
+    }
+#if ARIADNE_REGIONS
+    int regid;
+    regid = get_triangle_region_id(btri);
+    if (regid > 0) {
+        region_unset(btri, regid);
+    }
+    p_tri1->field_E = 0;
+    p_tri2->field_E = 0;
+    edgelen_set(btri);
+    edgelen_set(tri1);
+    edgelen_set(tri2);
+#endif
+    return pt;
 }
 
 TrPointId edge_split(TrTriangId tri, TrTipId cor, TrCoord pt_x, TrCoord pt_y)
