@@ -92,6 +92,10 @@ long triangle_area1(TrTriangId tri);
 sbyte triangle_divide_areas_differ(TrTriangId tri,
   TrTipId cor1, TrTipId cor2, TrCoord pt_x, TrCoord pt_y);
 
+/** Compares particular differences in coords of given points.
+ */
+sbyte compare_point_cross_distances(TrPointId pt1, TrPointId pt2, TrPointId pt3);
+
 /******************************************************************************/
 #ifdef __cplusplus
 }

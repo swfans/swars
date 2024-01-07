@@ -222,4 +222,115 @@ TrPointId edge_split(TrTriangId tri, TrTipId cor, TrCoord pt_x, TrCoord pt_y)
     return pt;
 }
 
+int edge_rotateAC(TrTriangId tri1, int cor1)
+{
+    struct TrTriangle *p_tri1;
+    p_tri1 = &triangulation[0].Triangles[tri1];
+
+    TrTipId cor_t1t2 = cor1;
+
+    TrTriangId tri2 = p_tri1->tri[cor_t1t2];
+    if (tri2 == -1) {
+        return false;
+    }
+    TrTipId cor_t2t1 = link_find(tri2, tri1);
+    if (cor_t2t1 == -1) {
+        LOGERR("no two-way link between triangles %d and %d", tri2, tri1);
+    }
+
+    TrTipId cor_t1t3 = MOD3[cor_t1t2 + 1];
+    TrTipId cor_t2t4 = MOD3[cor_t2t1 + 1];
+
+    struct TrTriangle *p_tri2;
+    p_tri2 = &triangulation[0].Triangles[tri2];
+
+    TrTriangId tri3 = p_tri1->tri[cor_t1t3];
+    TrTriangId tri4 = p_tri2->tri[cor_t2t4];
+
+#if 0
+    { // Not in SW, but it is in DK; `enter` is `field_D` in DK
+        ushort tri1_fld = p_tri1->enter;
+        ushort tri2_fld = p_tri2->enter;
+        if ( ((1 << (cor_t1t2 + 3)) & tri1_fld) || ((1 << (cor_t2t1 + 3)) & tri2_fld) ) {
+            return false;
+        }
+        p_tri1->enter &= ~(1 << (cor_t1t3 + 3));
+        p_tri1->enter &= ~(1 << (cor_t1t2 + 3));
+        p_tri1->enter |= ((((1 << (cor_t2t4 + 3)) & tri2_fld) != 0) << (cor_t1t2 + 3));
+
+        p_tri2->enter &= ~(1 << (cor_t2t4 + 3));
+        p_tri2->enter &= ~(1 << (cor_t2t1 + 3));
+        p_tri2->enter |= ((((1 << (cor_t1t3 + 3)) & tri1_fld) != 0) << (cor_t2t1 + 3));
+    }
+#endif
+
+    TrTipId cor_t1t5 = MOD3[cor_t1t2 + 2];
+    TrTipId cor_t2t6 = MOD3[cor_t2t1 + 2];
+
+    TrPointId pt1 = p_tri1->point[cor_t1t2];
+    TrPointId pt2 = p_tri1->point[cor_t1t5];
+    TrPointId pt3 = p_tri2->point[cor_t2t6];
+    TrPointId pt4 = p_tri2->point[cor_t2t1];
+
+    if (compare_point_cross_distances(pt1, pt2, pt3) <= 0) {
+        return false;
+    }
+
+    if (compare_point_cross_distances(pt4, pt2, pt3) >= 0) {
+        return false;
+    }
+
+    p_tri1->point[cor_t1t3] = pt3;
+    p_tri2->point[cor_t2t4] = pt2;
+
+    p_tri1->tri[cor_t1t2] = tri4;
+    p_tri1->tri[cor_t1t3] = tri2;
+
+    p_tri2->tri[cor_t2t1] = tri3;
+    p_tri2->tri[cor_t2t4] = tri1;
+    if (tri3 != -1)
+    {
+        TrTipId tmcor = link_find(tri3, tri1);
+        if (tmcor >= 0) {
+            struct TrTriangle *p_tri3;
+            p_tri3 = &triangulation[0].Triangles[tri3];
+            p_tri3->tri[tmcor] = tri2;
+        } else {
+            LOGERR("no two-way link between triangles %d and %d", tri3, tri1);
+        }
+    }
+    if (tri4 != -1)
+    {
+        TrTipId tmcor = link_find(tri4, tri2);
+        if (tmcor >= 0) {
+            struct TrTriangle *p_tri4;
+            p_tri4 = &triangulation[0].Triangles[tri4];
+            p_tri4->tri[tmcor] = tri1;
+        } else {
+            LOGERR("no two-way link between triangles %d and %d", tri4, tri2);
+        }
+    }
+
+    ubyte enter_t1t2 = ((1 << cor_t1t2) & p_tri1->enter) != 0;
+    ubyte enter_t1t3 = ((1 << cor_t1t3) & p_tri1->enter) != 0;
+    ubyte enter_t2t1 = ((1 << cor_t2t1) & p_tri2->enter) != 0;
+    ubyte enter_t2t4 = ((1 << cor_t2t4) & p_tri2->enter) != 0;
+
+    p_tri1->enter &= ~(1 << cor_t1t2);
+    p_tri1->enter |= (enter_t2t4 << cor_t1t2);
+    p_tri1->enter &= ~(1 << cor_t1t3);
+    p_tri1->enter |= (enter_t1t2 << cor_t1t3);
+
+    p_tri2->enter &= ~(1 << cor_t2t1);
+    p_tri2->enter |= (enter_t1t3 << cor_t2t1);
+    p_tri2->enter &= ~(1 << cor_t2t4);
+    p_tri2->enter |= (enter_t2t1 << cor_t2t4);
+
+#if ARIADNE_REGIONS
+    edgelen_set(tri1);
+    edgelen_set(tri2);
+#endif
+    return true;
+}
+
 /******************************************************************************/

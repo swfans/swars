@@ -186,5 +186,22 @@ sbyte triangle_divide_areas_differ(TrTriangId tri,
       pt_x - p_point2->x, p_point2->y - p_point1->y);
 }
 
+sbyte compare_point_cross_distances(TrPointId pt1, TrPointId pt2, TrPointId pt3)
+{
+    struct TrPoint *p_point1;
+    struct TrPoint *p_point2;
+    struct TrPoint *p_point3;
+
+    p_point1 = &triangulation[0].Points[pt1];
+    p_point2 = &triangulation[0].Points[pt2];
+    p_point3 = &triangulation[0].Points[pt3];
+
+    TrCoord delta_ax = p_point3->x - p_point2->x;
+    TrCoord delta_ay = p_point3->y - p_point2->y;
+    TrCoord delta_bx = p_point1->x - p_point3->x;
+    TrCoord delta_by = p_point1->y - p_point3->y;
+
+    return path_compare_multiplications(delta_bx, delta_ay, delta_ax, delta_by);
+}
 
 /******************************************************************************/
