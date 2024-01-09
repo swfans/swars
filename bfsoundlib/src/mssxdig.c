@@ -34,9 +34,31 @@
 /******************************************************************************/
 
 // TODO calls below are disabled - non-remade functions
-#define XDIG_set_pitch(ws, voice) while(0)
-#define XDIG_set_volume(ws, voice) while(0)
 #define WVL_search(lib, bank, dt) 0
+
+/** Calculate volume and panpot values for sample based on channel volume,
+ * expression, and note velocity.
+ */
+static void XDIG_set_volume(WAVE_SYNTH *ws, int32_t voice)
+{
+    int chn, vol;
+
+    chn = ws->chan[0];
+    vol = ((ws->controls.vol[chn] * ws->controls.exp[chn]) / 127);
+    vol = (vol * ws->vel[voice]) / 127;
+
+    AIL_set_sample_volume(ws->s[voice], vol);
+    AIL_set_sample_pan(ws->s[voice], ws->controls.pan[chn]);
+}
+
+/** Calculate playback rate for sample based on note number and channel
+ * pitch wheel / bender range values, as well as sample rate and root
+ * note number.
+ */
+static void XDIG_set_pitch(WAVE_SYNTH *ws, int32_t voice)
+{
+    // TODO - function not remade
+}
 
 /** MIDI event interpreter callback function.
  * Used to create wave synthesiser.
