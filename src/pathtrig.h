@@ -34,6 +34,7 @@ struct Path;
 /******************************************************************************/
 
 void triangulation_clear(void);
+void triangulation_allocate(int tgnNo, int maxTrigs);
 void triangulation_select(int trglno);
 
 void triangulate_map(ubyte *p_map);

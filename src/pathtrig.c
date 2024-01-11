@@ -261,6 +261,19 @@ void triangulation_init_edges(void)
     make_edge(-3840, 37120, -3840, -3840);
 }
 
+void triangulation_initialize(void)
+{
+    asm volatile ("call ASM_triangulation_initialize\n"
+        :  :  : "eax" );
+}
+
+void triangulation_allocate(int tgnNo, int maxTrigs)
+{
+    asm volatile (
+      "call ASM_triangulation_allocate\n"
+        : : "a" (tgnNo), "d" (maxTrigs));
+}
+
 void triangulate_area(ubyte *p_map, int x1, int y1, int x2, int y2)
 {
 #if 1
