@@ -69,13 +69,20 @@ void triangulation_select(int trglno)
 
 void make_edge(int x1, int y1, int x2, int y2)
 {
-    //TODO implement
+    asm volatile (
+      "call ASM_make_edge\n"
+        : : "a" (x1), "d" (y1), "b" (x2), "c" (y2));
 }
 
 int edge_find(int x1, int y1, int x2, int y2, int *ntri1, int *ntri2)
 {
-    //TODO implement
-   return 0;
+    int ret;
+    asm volatile (
+      "push %6\n"
+      "push %5\n"
+      "call ASM_edge_find\n"
+        : "=r" (ret) : "a" (x1), "d" (y1), "b" (x2), "c" (y2), "g" (ntri1), "g" (ntri2));
+    return ret;
 }
 
 /**
