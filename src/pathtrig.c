@@ -229,7 +229,9 @@ void tri_set_rectangle(int x1, int y1, int x2, int y2, ubyte solid)
 
 void triangulation_initxy(int x1, int y1, int x2, int y2)
 {
-    //TODO implement
+    asm volatile (
+      "call ASM_triangulation_initxy\n"
+        : : "a" (x1), "d" (y1), "b" (x2), "c" (y2));
 }
 
 void triangulation_init(void)
@@ -254,6 +256,12 @@ void triangulation_init_edges(void)
 
 void triangulate_area(ubyte *p_map, int x1, int y1, int x2, int y2)
 {
+#if 1
+    asm volatile (
+      "push %4\n"
+      "call ASM_triangulate_area\n"
+        : : "a" (p_map), "d" (x1), "b" (y1), "c" (x2), "g" (y2));
+#else
     ubyte solid;
 
     if (!triangulation[0].tri_initialised)
@@ -270,11 +278,18 @@ void triangulate_area(ubyte *p_map, int x1, int y1, int x2, int y2)
             continue;
         tri_set_rectangle(x1 << 7, y1 << 7, x2 << 7, y2 << 7, solid);
     }
+#endif
 }
 
 void triangulate_map(ubyte *p_map)
 {
+#if 1
+    asm volatile (
+      "call ASM_triangulate_map\n"
+        : : "a" (p_map));
+#else
     triangulate_area(p_map, 0, 0, 256, 256);
+#endif
 }
 
 void triangulation_clear(void)
