@@ -161,6 +161,10 @@ void set_person_animmode_walk(struct Thing *p_person);
 
 void load_peep_type_stats(void);
 
+/** Get a string up to 14 chars containing person type name.
+ */
+const char *person_type_name(ushort ptype);
+
 TbBool person_carries_weapon(struct Thing *p_person, ubyte weapon);
 TbBool person_carries_any_medikit(struct Thing *p_person);
 

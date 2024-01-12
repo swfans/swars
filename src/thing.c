@@ -121,6 +121,8 @@ const char *thing_type_name(ubyte tngtype, ubyte subtype)
 {
     if (tngtype >= sizeof(thing_type_names)/sizeof(thing_type_names[1]))
         return "OUTRANGED";
+    if (tngtype == TT_PERSON)
+        return person_type_name(subtype);
     // TODO support some sub-types
     return thing_type_names[tngtype];
 }

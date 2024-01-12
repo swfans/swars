@@ -312,6 +312,16 @@ void load_peep_type_stats(void)
 #endif
 }
 
+const char *person_type_name(ushort ptype)
+{
+    struct PeepStatAdd *p_pestata;
+
+    p_pestata = &peep_type_stats_a[ptype];
+    if (strlen(p_pestata->Name) == 0)
+        return "OUTRNG_PERSON";
+    return p_pestata->Name;
+}
+
 ubyte person_mod_chest_level(struct Thing *p_person)
 {
     return cybmod_chest_level(&p_person->U.UPerson.UMod);
