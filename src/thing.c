@@ -156,6 +156,12 @@ void snprint_thing(char *buf, ulong buflen, struct Thing *p_thing)
         s += strlen(s);
         nparams++;
     }
+    if (p_thing->Type == TT_PERSON) {
+        if (nparams) { sprintf(s, ", "); s += strlen(s); }
+        snprint_person_state(s, buflen - (s-buf), p_thing);
+        s += strlen(s);
+        nparams++;
+    }
     // TODO support more properties
 
     snprintf(s, buflen - (s-buf), " )");
