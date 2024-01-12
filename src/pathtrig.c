@@ -95,6 +95,13 @@ int edge_find(int x1, int y1, int x2, int y2, int *ntri1, int *ntri2)
  */
 TbBool point_find(TrCoord pt_x, TrCoord pt_y, TrTriangId *rtri, TrTipId *rcor)
 {
+#if 1
+    int ret;
+    asm volatile (
+      "call ASM_point_find\n"
+        : "=r" (ret) : "a" (pt_x), "d" (pt_y), "b" (rtri), "c" (rcor));
+    return ret;
+#else
     TrTriangId tri;
     TrTipId cor;
 
@@ -112,10 +119,17 @@ TbBool point_find(TrCoord pt_x, TrCoord pt_y, TrTriangId *rtri, TrTipId *rcor)
         }
     }
     return false;
+#endif
 }
 
 TbBool insert_point(int pt_x, int pt_y)
 {
+#if 1
+    asm volatile (
+      "call ASM_insert_point\n"
+        : : "a" (pt_x), "d" (pt_y));
+    return true;
+#else
     int tri;
 
     tri = triangle_find8(pt_x << 8, pt_y << 8);
@@ -140,10 +154,17 @@ TbBool insert_point(int pt_x, int pt_y)
         return edge_split(tri, 2, pt_x, pt_y) >= 0;
     }
     return tri_split3(tri, pt_x, pt_y) >= 0;
+#endif
 }
 
 void brute_fill_rectangle(int x1, int y1, int x2, int y2, ubyte solid)
 {
+#if 1
+    asm volatile (
+      "push %4\n"
+      "call ASM_brute_fill_rectangle\n"
+        : : "a" (x1), "d" (y1), "b" (x2), "c" (y2), "g" (solid));
+#else
     int tri;
 
     for (tri = 0; tri < triangulation[0].ix_Triangles; tri++)
@@ -159,10 +180,17 @@ void brute_fill_rectangle(int x1, int y1, int x2, int y2, ubyte solid)
 
         p_tri->solid = solid;
     }
+#endif
 }
 
 void fill_rectangle(int x1, int y1, int x2, int y2, ubyte solid)
 {
+#if 1
+    asm volatile (
+      "push %4\n"
+      "call ASM_fill_rectangle\n"
+        : : "a" (x1), "d" (y1), "b" (x2), "c" (y2), "g" (solid));
+#else
     int tri1, tri2, tri3, tri4, tri5;
     int area_r, area_t;
 
@@ -205,10 +233,17 @@ void fill_rectangle(int x1, int y1, int x2, int y2, ubyte solid)
         return;
 
     brute_fill_rectangle(x1, y1, x2, y2, solid);
+#endif
 }
 
 void tri_set_rectangle(int x1, int y1, int x2, int y2, ubyte solid)
 {
+#if 1
+    asm volatile (
+      "push %4\n"
+      "call ASM_tri_set_rectangle\n"
+        : : "a" (x1), "d" (y1), "b" (x2), "c" (y2), "g" (solid));
+#else
     int sx1, sy1, sx2, sy2;
 
     sx1 = x1;
@@ -232,6 +267,7 @@ void tri_set_rectangle(int x1, int y1, int x2, int y2, ubyte solid)
     make_edge(sx2, sy2, sx1, sy2);
     make_edge(sx1, sy2, sx1, sy1);
     fill_rectangle(sx1, sy1, sx2, sy2, solid);
+#endif
 }
 
 void triangulation_initxy(int x1, int y1, int x2, int y2)
@@ -251,6 +287,10 @@ void triangulation_init(void)
 
 void triangulation_init_edges(void)
 {
+#if 1
+    asm volatile ("call ASM_triangulation_init_edges\n"
+        :  :  : "eax" );
+#else
     insert_point(-3840, -3840);
     insert_point(37120, -3840);
     insert_point(-3840, 37120);
@@ -259,6 +299,7 @@ void triangulation_init_edges(void)
     make_edge(37120, -3840, 37120, 37120);
     make_edge(37120, 37120, -3840, 37120);
     make_edge(-3840, 37120, -3840, -3840);
+#endif
 }
 
 void triangulation_initialize(void)
