@@ -152,21 +152,26 @@ void load_map_dat_pc_handle(TbFileHandle fh)
         assert(sizeof(struct SimpleThing) == 60);
         for (i = num_sthings - 1; i != -1; i--)
         {
-          LbFileRead(fh, &loc_sthing, sizeof(struct SimpleThing));
-          switch (loc_sthing.Type)
-          {
-          case TT_UNKN10:
-              new_thing_type10_clone(&loc_sthing);
-              break;
-          case SmTT_SMOKE_GENERATOR:
-              new_thing_smoke_gen_clone(&loc_sthing);
-              break;
-          case SmTT_STATIC:
-              new_thing_static_clone(&loc_sthing);
-              break;
-          default:
+            LbFileRead(fh, &loc_sthing, sizeof(struct SimpleThing));
+            switch (loc_sthing.Type)
+            {
+            case TT_UNKN10:
+                new_thing_type10_clone(&loc_sthing);
                 break;
-          }
+            case SmTT_SMOKE_GENERATOR:
+                new_thing_smoke_gen_clone(&loc_sthing);
+                break;
+            case SmTT_STATIC:
+                new_thing_static_clone(&loc_sthing);
+                break;
+            default:
+                {
+                  char locbuf[256];
+                  snprint_sthing(locbuf, sizeof(locbuf), &loc_sthing);
+                  LOGWARN("Discarded: %s", locbuf);
+                }
+                break;
+            }
         }
     }
     else
@@ -200,9 +205,10 @@ void load_map_dat_pc_handle(TbFileHandle fh)
         {
             LbFileRead(fh, &loc_thing, sizeof(struct Thing));
             if (loc_thing.U.UObject.Object <= 0) {
-                LOGWARN("object <=0 %d  c0 %hd x %hd z %hd",
-                  (int)loc_thing.U.UObject.Object, i,
-                  loc_thing.X, loc_thing.Z);
+                char locbuf[256];
+                snprint_thing(locbuf, sizeof(locbuf), &loc_thing);
+                LOGWARN("Bad object %d in %s",
+                  (int)loc_thing.U.UObject.Object, locbuf);
                 continue;
             }
             switch (loc_thing.SubType)
@@ -233,9 +239,10 @@ void load_map_dat_pc_handle(TbFileHandle fh)
             //TODO map fmtver is unlikely to match level fmtver
             refresh_old_thing_format(&loc_thing, &old_thing, fmtver);
             if (loc_thing.U.UObject.Object <= 0) {
-                LOGWARN("object <=0 %d  c0 %hd x %hd z %hd",
-                  (int)loc_thing.U.UObject.Object, i,
-                  loc_thing.X, loc_thing.Z);
+                char locbuf[256];
+                snprint_thing(locbuf, sizeof(locbuf), &loc_thing);
+                LOGWARN("Bad object %d in %s",
+                  (int)loc_thing.U.UObject.Object, locbuf);
                 continue;
             }
             p_sobj = &game_objects[loc_thing.U.UObject.Object];
@@ -383,7 +390,12 @@ void load_mad_pc_buffer(ubyte *mad_ptr, long rdsize)
             new_thing_static_clone(p_clsthing);
             break;
         default:
-              break;
+            {
+                char locbuf[256];
+                snprint_sthing(locbuf, sizeof(locbuf), p_clsthing);
+                LOGWARN("Discarded: %s", locbuf);
+            }
+            break;
         }
     }
 

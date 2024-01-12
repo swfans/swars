@@ -860,6 +860,18 @@ void init_things(void);
 void refresh_old_thing_format(struct Thing *p_thing, struct ThingOldV9 *p_oldthing, ulong fmtver);
 void process_things(void);
 
+/** Get a string up to 14 chars containing thing/sthing type name.
+ */
+const char *thing_type_name(ubyte tngtype, ubyte subtype);
+
+/** Fill buffer with function-like declaration of thing properties.
+ */
+void snprint_thing(char *buf, ulong buflen, struct Thing *p_thing);
+
+/** Fill buffer with function-like declaration of simple thing properties.
+ */
+void snprint_sthing(char *buf, ulong buflen, struct SimpleThing *p_sthing);
+
 /** Delete the thing from `mapwho` chain.
  */
 TbResult delete_node(struct Thing *p_thing);

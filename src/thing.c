@@ -45,6 +45,66 @@ short static_radii[] = {
    0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
 };
 
+const char *thing_type_names[] = {
+  "NONE",
+  "UNKN1",
+  "VEHICLE",
+  "PERSON",
+  "UNKN4",
+  "STATIC",
+  "ROCKET",
+  "UNKN7",
+  "UNKN8",
+  "BUILDING",
+  "UNKN10",
+  "LASER11",
+  "LASER_GUIDED",
+  "UNKN13",
+  "UNKN14",
+  "MINE",
+  "GRENADE",
+  "SPARK",
+  "UNKN18",
+  "LASER_ELEC",
+  "INTELLIG_DOOR",
+  "SCALE_EFFECT",
+  "NUCLEAR_BOMB",
+  "UNKN23",
+  "SMOKE_GENERTR",
+  "DROPPED_ITEM",
+  "CARRIED_ITEM",
+  "ELECTR_STRAND",
+  "RAZOR_WIRE",
+  "LASER29",
+  "TIME_POD",
+  "AIR_STRIKE",
+  "CANISTER",
+  "UNKN33",
+  "UNKN34",
+  "UNKN35",
+  "STASIS_POD",
+  "SOUL",
+  "LASER38",
+  "UNKN39",
+  "UNKN40",
+  "UNKN41",
+  "UNKN42",
+  "UNKN43",
+  "UNKN44",
+  "UNKN45",
+  "UNKN46",
+  "UNKN47",
+  "UNKN48",
+  "UNKN49",
+  "BANG",
+  "UNKN51",
+  "FIRE",
+  "SFX",
+  "TEMP_LIGHT",
+  "UNKN55",
+  "UNKN56",
+};
+
 void init_things(void)
 {
     asm volatile ("call ASM_init_things\n"
@@ -55,6 +115,76 @@ void process_things(void)
 {
     asm volatile ("call ASM_process_things\n"
         :  :  : "eax" );
+}
+
+const char *thing_type_name(ubyte tngtype, ubyte subtype)
+{
+    if (tngtype >= sizeof(thing_type_names)/sizeof(thing_type_names[1]))
+        return "OUTRANGED";
+    // TODO support some sub-types
+    return thing_type_names[tngtype];
+}
+
+void snprint_thing(char *buf, ulong buflen, struct Thing *p_thing)
+{
+    char *s;
+    ubyte nparams;
+
+    s = buf;
+
+    sprintf(s, "T%02d = %s( ", (int)p_thing->ThingOffset, thing_type_name(p_thing->Type, p_thing->SubType));
+    s += strlen(s);
+    nparams = 0;
+
+    {
+        if (nparams) { sprintf(s, ", "); s += strlen(s); }
+        sprintf(s, "Coord(%d,%d,%d)", (int)p_thing->X >> 8, (int)p_thing->Y >> 8, (int)p_thing->Z >> 8);
+        s += strlen(s);
+        nparams++;
+    }
+    if (p_thing->Health != 0) {
+        if (nparams) { sprintf(s, ", "); s += strlen(s); }
+        sprintf(s, "Health(%hd)", p_thing->Health);
+        s += strlen(s);
+        nparams++;
+    }
+    if (p_thing->Flag != 0) {
+        if (nparams) { sprintf(s, ", "); s += strlen(s); }
+        sprintf(s, "Flag(0x%lx)", p_thing->Flag);
+        s += strlen(s);
+        nparams++;
+    }
+    // TODO support more properties
+
+    snprintf(s, buflen - (s-buf), " )");
+}
+
+void snprint_sthing(char *buf, ulong buflen, struct SimpleThing *p_sthing)
+{
+    char *s;
+    ubyte nparams;
+
+    s = buf;
+
+    sprintf(s, "T%02d = %s( ", (int)p_sthing->ThingOffset, thing_type_name(p_sthing->Type, p_sthing->SubType));
+    s += strlen(s);
+    nparams = 0;
+
+    {
+        if (nparams) { sprintf(s, ", "); s += strlen(s); }
+        sprintf(s, "Coord(%d,%d,%d)", (int)p_sthing->X >> 8, (int)p_sthing->Y >> 8, (int)p_sthing->Z >> 8);
+        s += strlen(s);
+        nparams++;
+    }
+    if (p_sthing->Flag != 0) {
+        if (nparams) { sprintf(s, ", "); s += strlen(s); }
+        sprintf(s, "Flag(0x%lx)", p_sthing->Flag);
+        s += strlen(s);
+        nparams++;
+    }
+    // TODO support more properties
+
+    snprintf(s, buflen - (s-buf), " )");
 }
 
 TbResult delete_node(struct Thing *p_thing)
