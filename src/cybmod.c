@@ -85,7 +85,7 @@ void read_cybmods_conf_file(void)
     int cmd_num;
     char *conf_buf;
     struct TbIniParser parser;
-    char *conf_fname = "conf" FS_SEP_STR "cybmods.ini";
+    char *conf_fname = "conf" FS_SEP_STR "cybmods_default.ini";
     int conf_len;
     int mods_count, mtype;
 
