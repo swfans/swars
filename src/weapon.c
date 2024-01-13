@@ -116,7 +116,7 @@ void read_weapons_conf_file(void)
     int cmd_num;
     char *conf_buf;
     struct TbIniParser parser;
-    char *conf_fname = "conf" FS_SEP_STR "weapons.ini";
+    char *conf_fname = "conf" FS_SEP_STR "weapons_default.ini";
     int conf_len;
     int weapons_count, wtype;
 
