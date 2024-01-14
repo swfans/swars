@@ -740,9 +740,9 @@ short search_for_station(short x, short z)
     return ret;
 }
 
-void new_thing_type10_clone(struct SimpleThing *p_clsthing)
+void new_thing_traffic_clone(struct SimpleThing *p_clsthing)
 {
-    asm volatile ("call ASM_new_thing_type10_clone\n"
+    asm volatile ("call ASM_new_thing_traffic_clone\n"
         : : "a" (p_clsthing));
 }
 

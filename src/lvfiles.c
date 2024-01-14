@@ -155,8 +155,8 @@ void load_map_dat_pc_handle(TbFileHandle fh)
             LbFileRead(fh, &loc_sthing, sizeof(struct SimpleThing));
             switch (loc_sthing.Type)
             {
-            case TT_UNKN10:
-                new_thing_type10_clone(&loc_sthing);
+            case SmTT_TRAFFIC:
+                new_thing_traffic_clone(&loc_sthing);
                 break;
             case SmTT_SMOKE_GENERATOR:
                 new_thing_smoke_gen_clone(&loc_sthing);
@@ -380,8 +380,8 @@ void load_mad_pc_buffer(ubyte *mad_ptr, long rdsize)
         mad_ptr += sizeof(struct SimpleThing);
         switch (p_clsthing->Type)
         {
-        case TT_UNKN10:
-            new_thing_type10_clone(p_clsthing);
+        case SmTT_TRAFFIC:
+            new_thing_traffic_clone(p_clsthing);
             break;
         case SmTT_SMOKE_GENERATOR:
             new_thing_smoke_gen_clone(p_clsthing);

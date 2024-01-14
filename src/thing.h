@@ -42,7 +42,7 @@ enum ThingType {
     TT_UNKN7 = 0x7,
     TT_UNKN8 = 0x8,
     TT_BUILDING = 0x9,
-    TT_UNKN10 = 0xA,
+    SmTT_TRAFFIC = 0xA,
     TT_LASER11 = 0xB,
     TT_LASER_GUIDED = 0xC,
     TT_UNKN13 = 0xD,
@@ -886,7 +886,7 @@ void remove_sthing(short tngno);
 
 short add_static(int x, int y, int z, ushort frame, int timer);
 
-void new_thing_type10_clone(struct SimpleThing *p_clsthing);
+void new_thing_traffic_clone(struct SimpleThing *p_clsthing);
 short new_thing_smoke_gen_clone(struct SimpleThing *p_clsthing);
 short new_thing_static_clone(struct SimpleThing *p_clsthing);
 short new_thing_building_clone(struct Thing *p_clthing,
