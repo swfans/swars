@@ -383,4 +383,11 @@ void triangulation_clear(void)
     triangulation_init_edges();
 }
 
+void thin_wall_around_object(ushort obj, int a2)
+{
+    asm volatile (
+      "call ASM_thin_wall_around_object\n"
+        : : "a" (obj), "d" (a2));
+}
+
 /******************************************************************************/
