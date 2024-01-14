@@ -1360,9 +1360,9 @@ int sub_73C64(char *a1, ubyte a2)
     return ret;
 }
 
-void unkn_buildings_processing(void)
+void update_map_thing_and_traffic_refs(void)
 {
-    asm volatile ("call ASM_unkn_buildings_processing\n"
+    asm volatile ("call ASM_update_map_thing_and_traffic_refs\n"
         :  :  : "eax" );
 }
 

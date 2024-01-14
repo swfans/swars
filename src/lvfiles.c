@@ -461,7 +461,7 @@ TbResult load_map_mad(ushort mapno)
 
     load_mad_pc_buffer(scratch_malloc_mem, fsize);
 
-    unkn_buildings_processing();
+    update_map_thing_and_traffic_refs();
     unkn_lights_processing();
     triangulation_select(1);
 

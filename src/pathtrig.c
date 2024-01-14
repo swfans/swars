@@ -157,6 +157,30 @@ TbBool insert_point(int pt_x, int pt_y)
 #endif
 }
 
+void thin_wall(int x1, int y1, int x2, int y2, ubyte en1, ubyte en2)
+{
+#if 1
+    asm volatile (
+      "push %5\n"
+      "push %4\n"
+      "call ASM_thin_wall\n"
+        : : "a" (x1), "d" (y1), "b" (x2), "c" (y2), "g" (en1), "g" (en2));
+#else
+    thin_wall_x1 = x1;
+    thin_wall_y1 = y1;
+    thin_wall_x2 = x2;
+    thin_wall_y2 = y2;
+    insert_point(x1, y1);
+    insert_point(x2, y2);
+    if (x1 != x2 || y1 != y2)
+    {
+        ixE = 0;
+        make_clip_list(x1, y1, x2, y2);
+        make_clipped_edges(en1, en2);
+    }
+#endif
+}
+
 void brute_fill_rectangle(int x1, int y1, int x2, int y2, ubyte solid)
 {
 #if 1

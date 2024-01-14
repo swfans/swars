@@ -720,7 +720,7 @@ void process_sound_heap(void);
 void update_danger_music(ubyte a1);
 ushort my_draw_text(short x, short y, const char *text, ushort startline);
 
-void unkn_buildings_processing(void);
+void update_map_thing_and_traffic_refs(void);
 void unkn_lights_processing(void);
 void bang_set_detail(int a1);
 void init_free_explode_faces(void);
