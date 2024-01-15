@@ -1257,17 +1257,15 @@ void global_3d_store(int action)
 
 void unkn_f_pressed_func(void)
 {
-    struct Command *gcmds;
     short thing;
     short i;
 
-    gcmds = game_commands;
     thing = same_type_head[1];
     for (i = 0; thing != 0; i++)
     {
         struct Thing *p_thing;
         ushort cmd;
-        ushort prev_cmd;
+        struct Command *p_cmd_prev;
 
         if (i >= max(STHINGS_LIMIT,THINGS_LIMIT)) {
             LOGERR("Infinite loop in same type things list");
@@ -1275,21 +1273,23 @@ void unkn_f_pressed_func(void)
         }
         p_thing = &things[thing];
         cmd = p_thing->U.UPerson.ComHead;
-        prev_cmd = 0;
+        p_cmd_prev = NULL;
         while (cmd != 0)
         {
-            if (!is_command_any_until(&gcmds[cmd]))
+            struct Command *p_cmd;
+
+            p_cmd = &game_commands[cmd];
+            if (!is_command_any_until(p_cmd))
             {
-                if (prev_cmd)
-                    gcmds[prev_cmd].Flags |= 0x20000;
-                gcmds[cmd].Flags |= 0x40000;
+                if (p_cmd_prev != NULL)
+                    p_cmd_prev->Flags |= PCmdF_Unkn0002;
+                p_cmd->Flags |= PCmdF_Unkn0004;
             }
-            prev_cmd = cmd;
-            cmd = gcmds[cmd].Next;
+            p_cmd_prev = p_cmd;
+            cmd = p_cmd->Next;
         }
         thing = p_thing->LinkSame;
     }
-    game_commands = gcmds;
 }
 
 void fix_level_indexes(short missi, ulong fmtver, ubyte reload)
@@ -1360,9 +1360,9 @@ int sub_73C64(char *a1, ubyte a2)
     return ret;
 }
 
-void unkn_buildings_processing(void)
+void update_map_thing_and_traffic_refs(void)
 {
-    asm volatile ("call ASM_unkn_buildings_processing\n"
+    asm volatile ("call ASM_update_map_thing_and_traffic_refs\n"
         :  :  : "eax" );
 }
 
@@ -1853,7 +1853,7 @@ void load_level_pc(short level, short missi, ubyte reload)
         if (fmtver <= 10)
         {
             for (i = 1; i < next_command; i++)
-                game_commands[i].Time = 1;
+                game_commands[i].Arg2 = 1;
             for (i = 1; i < next_used_lvl_objective; i++)
                 game_used_lvl_objectives[i].Arg2 = 1;
         }

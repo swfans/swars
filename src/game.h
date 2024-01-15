@@ -260,6 +260,12 @@ struct SynTime {
     ubyte Year;
 };
 
+struct ColVectList { // sizeof=6
+  ushort Vect;
+  ushort NextColList;
+  short Object;
+};
+
 struct BezierPt { // sizeof=28
     ubyte field_0[26];
     ushort field_2A;
@@ -474,14 +480,15 @@ extern ushort word_1531E0;
 extern ushort next_special_face;
 extern ushort next_special_face4;
 extern struct ColVectList *game_col_vects_list;
+extern ushort next_vects_list;
 extern struct ColVect *game_col_vects;
+extern ushort next_col_vect;
 extern struct WalkHeader *game_walk_headers;
 extern short *game_walk_items;
 extern struct ColColumn *game_col_columns;
 extern struct SingleObjectFace3 *game_special_object_faces;
 extern struct SingleObjectFace4 *game_special_object_faces4;
 extern struct FloorTile *game_floor_tiles;
-extern ushort next_col_vect;
 extern ubyte *game_user_heap;
 extern struct SpecialPoint *game_screen_point_pool;
 extern struct DrawItem *game_draw_list;
@@ -720,7 +727,7 @@ void process_sound_heap(void);
 void update_danger_music(ubyte a1);
 ushort my_draw_text(short x, short y, const char *text, ushort startline);
 
-void unkn_buildings_processing(void);
+void update_map_thing_and_traffic_refs(void);
 void unkn_lights_processing(void);
 void bang_set_detail(int a1);
 void init_free_explode_faces(void);

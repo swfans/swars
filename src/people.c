@@ -49,6 +49,71 @@ struct PeepStat peep_type_stats[] = {
     {   0,    0,    0,    0,   0, 0,   0, 0, 0, 0},
 };
 
+/** Configuration options for each person state.
+ */
+struct PeepStateConfig person_states[] = {
+  {"NONE_STATE",},
+  {"GOTO_POINT",},
+  {"BOMB_BUILDING",},
+  {"WANDER",},
+  {"EXPLODE_EFFECT",},
+  {"WAIT",},
+  {"AGENT_DEFENSIVE",},
+  {"PICKUP_ITEM",},
+  {"DROP_ITEM",},
+  {"SHOOT_PERS_WT_BG",},
+  {"SHOOT_BGUN_AT",},
+  {"DIE",},
+  {"DIEING",},
+  {"DEAD",},
+  {"INIT_SAVE_VICTIM",},
+  {"SAVE_VICTIM",},
+  {"GOTO_PERSON",},
+  {"WAIT_P_DEAD",},
+  {"WAIT_ALL_G_DEAD",},
+  {"WAIT_MEM_G_DEAD",},
+  {"WAIT_P_NEAR",},
+  {"WAIT_MEM_G_NEAR",},
+  {"WAIT_P_ARRIVES",},
+  {"WAIT_MEM_G_ARRIV",},
+  {"WAIT_TIME",},
+  {"DEFINE_ROUTE",},
+  {"STATE_UNUSED_1A",},
+  {"KILL_PERSON",},
+  {"BLOCK_PERSON",},
+  {"SCARE_PERSON",},
+  {"USE_ITEM",},
+  {"STATIONARY_SHOT",},
+  {"RECOIL_HIT",},
+  {"VEHICLE_PARKED",},
+  {"VEHICLE_DRIVEN",},
+  {"GOTO_POINT_REL",},
+  {"PERSON_BURNING",},
+  {"IN_VEHICLE",},
+  {"DRIVING_VEHICLE",},
+  {"V_GOTO_POINT_FLY",},
+  {"PERSUADE_PERSON",},
+  {"FOLLOW_PERSON",},
+  {"SUPPORT_PERSON",},
+  {"PROTECT_PERSON",},
+  {"GET_ITEM",},
+  {"USE_VEHICLE",},
+  {"USE_VEH_TO_POINT",},
+  {"WAIT_VEHICLE",},
+  {"GOTO_VEHICLE",},
+  {"CATCH_TRAIN",},
+  {"WAIT_TRAIN",},
+  {"DESTROY_BUILDING",},
+  {"WANDER_DRIVE",},
+  {"GO_PLANT_MINE",},
+  {"WAIT_TO_EXIT_VEH",},
+  {"CATCH_FERRY",},
+  {"EXIT_FERRY",},
+  {"AVOID_GROUP",},
+  {"STATE_UNUSED_3A",},
+  {"BEING_PERSUADED",},
+};
+
 struct PeepStatAdd peep_type_stats_a[SubTT_PERS_COUNT] = {0};
 struct TbNamedEnum peep_names[SubTT_PERS_COUNT] = {0};
 
@@ -311,6 +376,49 @@ void load_peep_type_stats(void)
     read_people_conf_file();
 #endif
 }
+
+const char *person_type_name(ushort ptype)
+{
+    struct PeepStatAdd *p_pestata;
+
+    p_pestata = &peep_type_stats_a[ptype];
+    if (strlen(p_pestata->Name) == 0)
+        return "OUTRNG_PERSON";
+    return p_pestata->Name;
+}
+
+void snprint_person_state(char *buf, ulong buflen, struct Thing *p_thing)
+{
+    char *s;
+    ubyte nparams;
+    struct PeepStateConfig *pstatcfg;
+
+    pstatcfg = &person_states[p_thing->State];
+    s = buf;
+
+    sprintf(s, "%s( ", pstatcfg->Name);
+    s += strlen(s);
+    nparams = 0;
+
+    if (p_thing->State == PerSt_PROTECT_PERSON)
+    {
+        if (nparams) { sprintf(s, ", "); s += strlen(s); }
+        sprintf(s, "Person(%d)", (int)p_thing->GotoThingIndex);
+        s += strlen(s);
+        nparams++;
+    }
+    if (p_thing->State == PerSt_GOTO_POINT)
+    {
+        if (nparams) { sprintf(s, ", "); s += strlen(s); }
+        sprintf(s, "Coord(%d,%d,%d)", (int)p_thing->U.UPerson.GotoX, 0, (int)p_thing->U.UPerson.GotoX);
+        s += strlen(s);
+        nparams++;
+    }
+    // TODO support more properties
+
+    snprintf(s, buflen - (s-buf), " )");
+}
+
 
 ubyte person_mod_chest_level(struct Thing *p_person)
 {

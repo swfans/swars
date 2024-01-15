@@ -20,6 +20,7 @@
 #define PATHTRIG_H
 
 #include "bftypes.h"
+#include "trstate.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -27,50 +28,20 @@ extern "C" {
 /******************************************************************************/
 #pragma pack(1)
 
-struct TrTriangle {
-    ushort point[3];
-    short tri[3];
-    short jump;
-    ubyte solid;
-    ubyte enter;
-};
-
-struct TrPoint {
-    int x;
-    int y;
-};
-
-struct Triangulation {
-    int tri_allocated;
-    int tri_initialised;
-    int last_tri;
-    int ix_Triangles;
-    int count_Triangles;
-    int free_Triangles;
-    int triangle_top;
-    int max_Triangles;
-    struct TrTriangle *Triangles;
-    int ix_Points;
-    int count_Points;
-    int free_Points;
-    int point_top;
-    int max_Points;
-    struct TrPoint *Points;
-};
-
 struct Path;
 
 #pragma pack()
 /******************************************************************************/
-extern struct Triangulation triangulation[10];
-extern long selected_triangulation_no; // = -1;
-extern long tri_module_init;
 
 void triangulation_clear(void);
-void triangulation_select(int tgnNo);
+void triangulation_allocate(int tgnNo, int maxTrigs);
+void triangulation_select(int trglno);
 
 void triangulate_map(ubyte *p_map);
 void triangulate_area(ubyte *p_map, int x1, int x2, int y1, int y2);
+
+void thin_wall_around_object(ushort obj, int a2);
+void generate_map_triangulation(void);
 
 /******************************************************************************/
 #ifdef __cplusplus

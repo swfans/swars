@@ -83,7 +83,7 @@ extern ushort spiral_dist_tiles_limit;
 void clear_mapwho_on_whole_map(void);
 void refresh_old_my_big_map_format(struct MyMapElement *p_mapel,
  struct MyMapElementOldV7 *p_oldmapel, ulong fmtver);
-short get_mapwho_thing_index(short tile_x, short tile_y);
+short get_mapwho_thing_index(short tile_x, short tile_z);
 void init_search_spiral(void);
 /******************************************************************************/
 #ifdef __cplusplus

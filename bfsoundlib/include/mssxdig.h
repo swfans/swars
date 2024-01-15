@@ -53,15 +53,15 @@ struct WAVE_SYNTH {
     WAVE_ENTRY *library;               /**< Pointer to wave library */
     AILEVENTCB  prev_event_fn;         /**< Previous MIDI event trap function */
     AILTIMBRECB prev_timb_fn;          /**< Previous timbre request trap function */
-    MDI_CTRL_LOG controls;             /**< MIDI controller states */
-    WAVE_ENTRY *wave[AIL_NUM_CHANS];   /**< Pointer to WAVE_ENTRY for each channel */
-    SNDSAMPLE *s[MAX_W_VOICES];        /**< List of HSAMPLE voices */
+    MDI_CTRL_LOG controls;             /**< offs=0x014 MIDI controller states */
+    WAVE_ENTRY *wave[AIL_NUM_CHANS];   /**< offs=0x494 Pointer to WAVE_ENTRY for each channel */
+    SNDSAMPLE *s[MAX_W_VOICES];        /**< offs=0x4D4 List of SNDSAMPLE voices */
     int32_t n_voices;                  /**< Actual # of voices allocated to synth */
     int32_t chan[MAX_W_VOICES];        /**< MIDI channel for each voice, or -1 */
     int32_t note[MAX_W_VOICES];        /**< MIDI note number for voice */
     int32_t root[MAX_W_VOICES];        /**< MIDI root note for voice */
     int32_t rate[MAX_W_VOICES];        /**< Playback rate for voice */
-    int32_t vel[MAX_W_VOICES];         /**< MIDI note velocity for voice */
+    int32_t vel[MAX_W_VOICES];         /**< offs=0x618 MIDI note velocity for voice */
     uint32_t time[MAX_W_VOICES];       /**< Timestamp for voice */
     uint32_t event;                    /**< Event counter for LRU timestamps */
 };

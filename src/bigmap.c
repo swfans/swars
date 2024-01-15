@@ -28,28 +28,28 @@ ushort spiral_dist_tiles_limit = 0;
 
 void clear_mapwho_on_whole_map(void)
 {
-    short tile_x, tile_y;
+    short tile_x, tile_z;
     for (tile_x = 0; tile_x < MAP_TILE_WIDTH; tile_x++)
     {
-        for (tile_y = 0; tile_y < MAP_TILE_HEIGHT; tile_y++)
+        for (tile_z = 0; tile_z < MAP_TILE_HEIGHT; tile_z++)
         {
             ulong cellno;
-            cellno = tile_y * MAP_TILE_WIDTH + tile_x;
+            cellno = tile_z * MAP_TILE_WIDTH + tile_x;
             game_my_big_map[cellno].Child = 0;
         }
     }
 }
 
-short get_mapwho_thing_index(short tile_x, short tile_y)
+short get_mapwho_thing_index(short tile_x, short tile_z)
 {
     struct MyMapElement *mapel;
 
     if ((tile_x < 0) || (tile_x >= MAP_TILE_WIDTH))
         return 0;
-    if ((tile_y < 0) || (tile_y >= MAP_TILE_HEIGHT))
+    if ((tile_z < 0) || (tile_z >= MAP_TILE_HEIGHT))
         return 0;
 
-    mapel = &game_my_big_map[MAP_TILE_WIDTH * tile_y + tile_x];
+    mapel = &game_my_big_map[MAP_TILE_WIDTH * tile_z + tile_x];
 
     return mapel->Child;
 }

@@ -137,6 +137,14 @@ struct PeepStatAdd
     char Name[12];
 };
 
+/** Stores configuration for a state of a person.
+ */
+struct PeepStateConfig
+{
+    char Name[17];
+};
+
+
 struct MyPath {
     ubyte Flag;
     short X[4];
@@ -160,6 +168,14 @@ void remove_path(struct Thing *p_thing);
 void set_person_animmode_walk(struct Thing *p_person);
 
 void load_peep_type_stats(void);
+
+/** Get a string up to 14 chars containing person type name.
+ */
+const char *person_type_name(ushort ptype);
+
+/** Print person state in function-like style to a buffer.
+ */
+void snprint_person_state(char *buf, ulong buflen, struct Thing *p_thing);
 
 TbBool person_carries_weapon(struct Thing *p_person, ubyte weapon);
 TbBool person_carries_any_medikit(struct Thing *p_person);

@@ -42,7 +42,7 @@ enum ThingType {
     TT_UNKN7 = 0x7,
     TT_UNKN8 = 0x8,
     TT_BUILDING = 0x9,
-    TT_UNKN10 = 0xA,
+    SmTT_TRAFFIC = 0xA,
     TT_LASER11 = 0xB,
     TT_LASER_GUIDED = 0xC,
     TT_UNKN13 = 0xD,
@@ -860,6 +860,18 @@ void init_things(void);
 void refresh_old_thing_format(struct Thing *p_thing, struct ThingOldV9 *p_oldthing, ulong fmtver);
 void process_things(void);
 
+/** Get a string up to 14 chars containing thing/sthing type name.
+ */
+const char *thing_type_name(ubyte tngtype, ubyte subtype);
+
+/** Fill buffer with function-like declaration of thing properties.
+ */
+void snprint_thing(char *buf, ulong buflen, struct Thing *p_thing);
+
+/** Fill buffer with function-like declaration of simple thing properties.
+ */
+void snprint_sthing(char *buf, ulong buflen, struct SimpleThing *p_sthing);
+
 /** Delete the thing from `mapwho` chain.
  */
 TbResult delete_node(struct Thing *p_thing);
@@ -874,7 +886,7 @@ void remove_sthing(short tngno);
 
 short add_static(int x, int y, int z, ushort frame, int timer);
 
-void new_thing_type10_clone(struct SimpleThing *p_clsthing);
+void new_thing_traffic_clone(struct SimpleThing *p_clsthing);
 short new_thing_smoke_gen_clone(struct SimpleThing *p_clsthing);
 short new_thing_static_clone(struct SimpleThing *p_clsthing);
 short new_thing_building_clone(struct Thing *p_clthing,

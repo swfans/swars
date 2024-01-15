@@ -56,21 +56,21 @@ enum CommandDefFlags {
     /* === Parameters beyond OtherThing. === */
     /** Map coordinates are required, to be used directly during command execution. */
     CmDF_ReqCoord = 0x0400,
-    /** Second set of map coordinates are required, replacing Arg2,Time,MyThing. */
+    /** Second set of map coordinates are required, replacing Arg1,Arg2,Time. */
     CmDF_ReqCoord2 = 0x0800,
-    /** Range is required in Arg2. */
-    CmDF_ReqRange2 = 0x4000,
-    /** Any value is required in Arg2. */
-    CmDF_ReqArgs2 = 0x8000,
+    /** Range is required in Arg1. */
+    CmDF_ReqRange1 = 0x4000,
+    /** Any value is required in Arg1. */
+    CmDF_ReqArg1 = 0x8000,
     CmDF_ReqSubType = 0x00010000,
     /** Any Thing index is required in MyThing. */
     CmDF_ReqMyThing = 0x00020000,
-    /** Amount of targets is required in Time field. If used with CmDF_ReqCoord2, then
-     * there are only planar XZ coordinates, and the middle field us used for the Count.
+    /** Amount of targets is required in Arg2 field. If used with CmDF_ReqCoord2, then
+     * there are only planar XZ coordinates, and the middle field is used for the Count.
      */
     CmDF_ReqCountT = 0x00100000,
-    /** Game turns amount required in MyThing. */
-    CmDF_ReqMyTime = 0x00200000,
+    /** Game turns amount required in Time. */
+    CmDF_ReqTime = 0x00200000,
     CmDF_ReqParent = 0x00400000,
 };
 
@@ -84,8 +84,8 @@ struct CommandDef command_defs[] = {
     /* Means end of command chain. */
     {"TNG_CMD_NONE",				NULL,				CmDF_None },
     {"TNG_CMD_STAY",				NULL,				CmDF_None },
-    {"TNG_CMD_GO_TO_POINT",			NULL,				CmDF_ReqCoord|CmDF_ReqRange2 },
-    {"TNG_CMD_GO_TO_PERSON",		NULL,				CmDF_ReqPersonThing|CmDF_ReqRange2 },
+    {"TNG_CMD_GO_TO_POINT",			NULL,				CmDF_ReqCoord|CmDF_ReqRange1 },
+    {"TNG_CMD_GO_TO_PERSON",		NULL,				CmDF_ReqPersonThing|CmDF_ReqRange1 },
     {"TNG_CMD_KILL_PERSON",			NULL,				CmDF_ReqPersonThing },
     {"TNG_CMD_KILL_MEM_GROUP",		NULL,				CmDF_ReqGroup|CmDF_ReqCountT },
     {"TNG_CMD_KILL_ALL_GROUP",		NULL,				CmDF_ReqGroup },
@@ -114,10 +114,10 @@ struct CommandDef command_defs[] = {
     {"TNG_CMD_CATCH_FERRY",			NULL,				CmDF_ReqOtherThing },
     {"TNG_CMD_EXIT_FERRY",			NULL,				CmDF_ReqOtherThing },
     {"TNG_CMD_PING_EXIST",			NULL,				CmDF_None },
-    {"TNG_CMD_GOTOPOINT_FACE",		NULL,				CmDF_ReqOtherIndex|CmDF_ReqCoord|CmDF_ReqRange2 }, // OtherIndex = face
+    {"TNG_CMD_GOTOPOINT_FACE",		NULL,				CmDF_ReqOtherIndex|CmDF_ReqCoord|CmDF_ReqRange1 }, // OtherIndex = face
     {"TNG_CMD_SELF_DESTRUCT",		NULL,				CmDF_None },
     {"TNG_CMD_PROTECT_MEM_G",		NULL,				CmDF_ReqGroup },
-    {"TNG_CMD_RUN_TO_POINT",		NULL,				CmDF_ReqCoord|CmDF_ReqRange2 },
+    {"TNG_CMD_RUN_TO_POINT",		NULL,				CmDF_ReqCoord|CmDF_ReqRange1 },
     {"TNG_CMD_KILL_EVERYONE",		NULL,				CmDF_ReqCoord|CmDF_ReqCoord2 },
     {"TNG_CMD_GUARD_OFF",			NULL,				CmDF_None },
     {"TNG_CMD_EXECUTE_COMS",		NULL,				CmDF_None },
@@ -137,12 +137,12 @@ struct CommandDef command_defs[] = {
     {"TNG_CMD_WAIT_P_V_DEAD",		NULL,				CmDF_ReqPVIThing },
     {"TNG_CMD_WAIT_MEM_G_DEAD",		NULL,				CmDF_ReqGroup|CmDF_ReqCountT },
     {"TNG_CMD_WAIT_ALL_G_DEAD",		NULL,				CmDF_ReqGroup },
-    {"TNG_CMD_WAIT_P_V_I_NEAR",		NULL,				CmDF_ReqPVIThing|CmDF_ReqRange2 },
-    {"TNG_CMD_WAIT_MEM_G_NEAR",		NULL,				CmDF_ReqGroup|CmDF_ReqCountT|CmDF_ReqRange2 },
-    {"TNG_CMD_WAIT_ALL_G_NEAR",		NULL,				CmDF_ReqGroup|CmDF_ReqRange2 },
-    {"TNG_CMD_WAIT_P_V_I_ARRIVE",	NULL,				CmDF_ReqPVIThing|CmDF_ReqCoord|CmDF_ReqCoord2|CmDF_ReqRange2 }, // Coord2 or Range2 depending on Flags
-    {"TNG_CMD_WAIT_MEM_G_ARRIVE",	NULL,				CmDF_ReqGroup|CmDF_ReqCoord|CmDF_ReqCoord2|CmDF_ReqRange2|CmDF_ReqCountT }, // Coord2 or Range2 depending on Flags
-    {"TNG_CMD_WAIT_ALL_G_ARRIVE",	NULL,				CmDF_ReqGroup|CmDF_ReqCoord|CmDF_ReqCoord2|CmDF_ReqRange2 }, // Coord2 or Range2 depending on Flags
+    {"TNG_CMD_WAIT_P_V_I_NEAR",		NULL,				CmDF_ReqPVIThing|CmDF_ReqRange1 },
+    {"TNG_CMD_WAIT_MEM_G_NEAR",		NULL,				CmDF_ReqGroup|CmDF_ReqCountT|CmDF_ReqRange1 },
+    {"TNG_CMD_WAIT_ALL_G_NEAR",		NULL,				CmDF_ReqGroup|CmDF_ReqRange1 },
+    {"TNG_CMD_WAIT_P_V_I_ARRIVE",	NULL,				CmDF_ReqPVIThing|CmDF_ReqCoord|CmDF_ReqCoord2|CmDF_ReqRange1 }, // Coord2 or Range1 depending on Flags
+    {"TNG_CMD_WAIT_MEM_G_ARRIVE",	NULL,				CmDF_ReqGroup|CmDF_ReqCoord|CmDF_ReqCoord2|CmDF_ReqRange1|CmDF_ReqCountT }, // Coord2 or Range1 depending on Flags
+    {"TNG_CMD_WAIT_ALL_G_ARRIVE",	NULL,				CmDF_ReqGroup|CmDF_ReqCoord|CmDF_ReqCoord2|CmDF_ReqRange1 }, // Coord2 or Range1 depending on Flags
     {"TNG_CMD_WAIT_P_PERSUADE",		NULL,				CmDF_ReqPersonThing },
     {"TNG_CMD_WAIT_MEM_G_PERSUADE",	NULL,				CmDF_ReqGroup|CmDF_ReqCountT },
     {"TNG_CMD_WAIT_ALL_G_PERSUADE",	NULL,				CmDF_ReqGroup },
@@ -150,7 +150,7 @@ struct CommandDef command_defs[] = {
     {"TNG_CMD_WAIT_MISSION_FAIL",	NULL,				CmDF_ReqOtherIndex }, // OtherIndex = player?
     {"TNG_CMD_WAIT_MISSION_START",	NULL,				CmDF_ReqOtherIndex }, // OtherIndex = player?
     {"TNG_CMD_WAIT_OBJT_DESTROY",	NULL,				CmDF_ReqBuildingCoord },
-    {"TNG_CMD_WAIT_TIME",			NULL,				CmDF_ReqMyTime|CmDF_ReqArgs2 }, // Args2 counts, MyTime is end val
+    {"TNG_CMD_WAIT_TIME",			NULL,				CmDF_ReqTime|CmDF_ReqArg1 }, // Arg1 counts, Time is end val
     {"TNG_CMD_UNKN44",				NULL,				CmDF_None },
     {"TNG_CMD_UNKN45",				NULL,				CmDF_None },
     {"TNG_CMD_UNKN46",				NULL,				CmDF_None },
@@ -158,12 +158,12 @@ struct CommandDef command_defs[] = {
     {"TNG_CMD_WAND_P_V_DEAD",		NULL,				CmDF_ReqPVIThing },
     {"TNG_CMD_WAND_MEM_G_DEAD",		NULL,				CmDF_ReqGroup|CmDF_ReqCountT },
     {"TNG_CMD_WAND_ALL_G_DEAD",		NULL,				CmDF_ReqGroup },
-    {"TNG_CMD_WAND_P_V_I_NEAR",		NULL,				CmDF_ReqPVIThing|CmDF_ReqRange2 },
-    {"TNG_CMD_WAND_MEM_G_NEAR",		NULL,				CmDF_ReqGroup|CmDF_ReqCountT|CmDF_ReqRange2 },
-    {"TNG_CMD_WAND_ALL_G_NEAR",		NULL,				CmDF_ReqGroup|CmDF_ReqRange2 },
-    {"TNG_CMD_WAND_P_V_I_ARRIVE",	NULL,				CmDF_ReqPVIThing|CmDF_ReqCoord|CmDF_ReqCoord2|CmDF_ReqRange2 }, // Coord2 or Range2 depending on Flags
-    {"TNG_CMD_WAND_MEM_G_ARRIVE",	NULL,				CmDF_ReqGroup|CmDF_ReqCoord|CmDF_ReqCoord2|CmDF_ReqRange2|CmDF_ReqCountT }, // Coord2 or Range2 depending on Flags
-    {"TNG_CMD_WAND_ALL_G_ARRIVE",	NULL,				CmDF_ReqGroup|CmDF_ReqCoord|CmDF_ReqCoord2|CmDF_ReqRange2 }, // Coord2 or Range2 depending on Flags
+    {"TNG_CMD_WAND_P_V_I_NEAR",		NULL,				CmDF_ReqPVIThing|CmDF_ReqRange1 },
+    {"TNG_CMD_WAND_MEM_G_NEAR",		NULL,				CmDF_ReqGroup|CmDF_ReqCountT|CmDF_ReqRange1 },
+    {"TNG_CMD_WAND_ALL_G_NEAR",		NULL,				CmDF_ReqGroup|CmDF_ReqRange1 },
+    {"TNG_CMD_WAND_P_V_I_ARRIVE",	NULL,				CmDF_ReqPVIThing|CmDF_ReqCoord|CmDF_ReqCoord2|CmDF_ReqRange1 }, // Coord2 or Range1 depending on Flags
+    {"TNG_CMD_WAND_MEM_G_ARRIVE",	NULL,				CmDF_ReqGroup|CmDF_ReqCoord|CmDF_ReqCoord2|CmDF_ReqRange1|CmDF_ReqCountT }, // Coord2 or Range1 depending on Flags
+    {"TNG_CMD_WAND_ALL_G_ARRIVE",	NULL,				CmDF_ReqGroup|CmDF_ReqCoord|CmDF_ReqCoord2|CmDF_ReqRange1 }, // Coord2 or Range1 depending on Flags
     {"TNG_CMD_WAND_P_PERSUADE",		NULL,				CmDF_ReqPersonThing },
     {"TNG_CMD_WAND_MEM_G_PERSUADE",	NULL,				CmDF_ReqGroup|CmDF_ReqCountT },
     {"TNG_CMD_WAND_ALL_G_PERSUADE",	NULL,				CmDF_ReqGroup },
@@ -171,7 +171,7 @@ struct CommandDef command_defs[] = {
     {"TNG_CMD_WAND_MISSION_FAIL",	NULL,				CmDF_ReqOtherIndex }, // OtherIndex = player?
     {"TNG_CMD_WAND_MISSION_START",	NULL,				CmDF_ReqOtherIndex }, // OtherIndex = player?
     {"TNG_CMD_WAND_OBJT_DESTROY",	NULL,				CmDF_ReqBuildingCoord },
-    {"TNG_CMD_WAND_TIME",			NULL,				CmDF_ReqMyTime|CmDF_ReqArgs2 }, // Args2 counts, MyTime is end val
+    {"TNG_CMD_WAND_TIME",			NULL,				CmDF_ReqTime|CmDF_ReqArg1 }, // Arg1 counts, Time is end val
     {"TNG_CMD_UNKN58",				NULL,				CmDF_None },
     {"TNG_CMD_UNKN59",				NULL,				CmDF_None },
     {"TNG_CMD_UNKN5A",				NULL,				CmDF_None },
@@ -189,7 +189,7 @@ struct CommandDef command_defs[] = {
     {"TNG_CMD_UNKN66",				NULL,				CmDF_None },
     {"TNG_CMD_UNKN67",				NULL,				CmDF_None },
     {"TNG_CMD_ADD_STATIC",			NULL,				CmDF_ReqCoord },
-    {"TNG_CMD_WAIT_TIME2",			NULL,				CmDF_ReqMyTime },
+    {"TNG_CMD_WAIT_TIME2",			NULL,				CmDF_ReqTime },
     {"TNG_CMD_UNKN6A",				NULL,				CmDF_None },
     {"TNG_CMD_UNKN6B",				NULL,				CmDF_None },
     {"TNG_CMD_UNKN6C",				NULL,				CmDF_None },
@@ -199,12 +199,12 @@ struct CommandDef command_defs[] = {
     {"TNG_CMD_UNTIL_P_V_DEAD",		NULL,				CmDF_ReqPVIThing },
     {"TNG_CMD_UNTIL_MEM_G_DEAD",	NULL,				CmDF_ReqGroup|CmDF_ReqCountT },
     {"TNG_CMD_UNTIL_ALL_G_DEAD",	NULL,				CmDF_ReqGroup },
-    {"TNG_CMD_UNTIL_P_V_I_NEAR",	NULL,				CmDF_ReqPVIThing|CmDF_ReqRange2 },
-    {"TNG_CMD_UNTIL_MEM_G_NEAR",	NULL,				CmDF_ReqGroup|CmDF_ReqCountT|CmDF_ReqRange2 },
-    {"TNG_CMD_UNTIL_ALL_G_NEAR",	NULL,				CmDF_ReqGroup|CmDF_ReqRange2 },
-    {"TNG_CMD_UNTIL_P_V_I_ARRIVE",	NULL,				CmDF_ReqPVIThing|CmDF_ReqCoord|CmDF_ReqCoord2|CmDF_ReqRange2 }, // Coord2 or Range2 depending on Flags
-    {"TNG_CMD_UNTIL_MEM_G_ARRIVE",	NULL,				CmDF_ReqGroup|CmDF_ReqCoord|CmDF_ReqCoord2|CmDF_ReqRange2|CmDF_ReqCountT }, // Coord2 or Range2 depending on Flags
-    {"TNG_CMD_UNTIL_ALL_G_ARRIVE",	NULL,				CmDF_ReqGroup|CmDF_ReqCoord|CmDF_ReqCoord2|CmDF_ReqRange2 }, // Coord2 or Range2 depending on Flags
+    {"TNG_CMD_UNTIL_P_V_I_NEAR",	NULL,				CmDF_ReqPVIThing|CmDF_ReqRange1 },
+    {"TNG_CMD_UNTIL_MEM_G_NEAR",	NULL,				CmDF_ReqGroup|CmDF_ReqCountT|CmDF_ReqRange1 },
+    {"TNG_CMD_UNTIL_ALL_G_NEAR",	NULL,				CmDF_ReqGroup|CmDF_ReqRange1 },
+    {"TNG_CMD_UNTIL_P_V_I_ARRIVE",	NULL,				CmDF_ReqPVIThing|CmDF_ReqCoord|CmDF_ReqCoord2|CmDF_ReqRange1 }, // Coord2 or Range1 depending on Flags
+    {"TNG_CMD_UNTIL_MEM_G_ARRIVE",	NULL,				CmDF_ReqGroup|CmDF_ReqCoord|CmDF_ReqCoord2|CmDF_ReqRange1|CmDF_ReqCountT }, // Coord2 or Range1 depending on Flags
+    {"TNG_CMD_UNTIL_ALL_G_ARRIVE",	NULL,				CmDF_ReqGroup|CmDF_ReqCoord|CmDF_ReqCoord2|CmDF_ReqRange1 }, // Coord2 or Range1 depending on Flags
     {"TNG_CMD_UNTIL_P_PERSUADE",	NULL,				CmDF_ReqPersonThing },
     {"TNG_CMD_UNTIL_MEM_G_PERSUADE",NULL,				CmDF_ReqGroup|CmDF_ReqCountT },
     {"TNG_CMD_UNTIL_ALL_G_PERSUADE",NULL,				CmDF_ReqGroup },
@@ -212,12 +212,12 @@ struct CommandDef command_defs[] = {
     {"TNG_CMD_UNTIL_MISSION_FAIL",	NULL,				CmDF_ReqOtherIndex }, // OtherIndex = player?
     {"TNG_CMD_UNTIL_MISSION_START",	NULL,				CmDF_ReqOtherIndex }, // OtherIndex = player?
     {"TNG_CMD_UNTIL_OBJT_DESTROY",	NULL,				CmDF_ReqBuildingCoord },
-    {"TNG_CMD_UNTIL_TIME",			NULL,				CmDF_ReqMyTime|CmDF_ReqArgs2 },
+    {"TNG_CMD_UNTIL_TIME",			NULL,				CmDF_ReqTime|CmDF_ReqArg1 },
     /* Commands added later in development */
     {"TNG_CMD_WAIT_OBJV",			NULL,				CmDF_ReqOtherIndex }, // OtherIndex = lvl objective
     {"TNG_CMD_WAND_OBJV",			NULL,				CmDF_ReqOtherIndex }, // OtherIndex = lvl objective
     {"TNG_CMD_UNTIL_OBJV",			NULL,				CmDF_ReqOtherIndex }, // OtherIndex = lvl objective
-    {"TNG_CMD_WITHIN_AREA",			NULL,				CmDF_ReqCoord|CmDF_ReqCoord2|CmDF_ReqRange2 }, // Coord2 or Range2 depending on Flags
+    {"TNG_CMD_WITHIN_AREA",			NULL,				CmDF_ReqCoord|CmDF_ReqCoord2|CmDF_ReqRange1 }, // Coord2 or Range1 depending on Flags
     {"TNG_CMD_WITHIN_OFF",			NULL,				CmDF_None },
     {"TNG_CMD_LOCK_BUILDN",			NULL,				CmDF_ReqBuildingCoord },
     {"TNG_CMD_UNLOCK_BUILDN",		NULL,				CmDF_ReqBuildingCoord },
@@ -231,7 +231,7 @@ struct CommandDef command_defs[] = {
     {"TNG_CMD_PLAY_SAMPLE",			NULL,				CmDF_ReqOtherIndex }, // OtherIndex = sample
     {"TNG_CMD_IGNORE_ENEMIES",		NULL,				CmDF_None },
     {"TNG_CMD_FULL_STAMINA",		NULL,				CmDF_None },
-    {"TNG_CMD_UNKN91",				NULL,				CmDF_ReqOtherIndex|CmDF_ReqArgs2 },
+    {"TNG_CMD_UNKN91",				NULL,				CmDF_ReqOtherIndex|CmDF_ReqArg1 },
     {NULL,							NULL,				CmDF_None },
 };
 
@@ -282,7 +282,7 @@ void snprint_command(char *buf, ulong buflen, ushort cmd)
         nparams++;
     }
 
-    if (((p_cdef->Flags & CmDF_ReqArgs2) != 0) ||
+    if (((p_cdef->Flags & CmDF_ReqArg1) != 0) ||
       (p_cmd->Arg1 != 0) || (p_cmd->Arg2 != 0)) {
         if (nparams) { sprintf(s, ", "); s += strlen(s); }
         sprintf(s, "Args(%hd,%hd)", p_cmd->Arg1, p_cmd->Arg2);
@@ -320,9 +320,9 @@ void snprint_command(char *buf, ulong buflen, ushort cmd)
         nparams++;
     }
 
-    if ((p_cmd->field_1A != 0) || (p_cmd->field_1E != 0)) {
+    if ((p_cmd->field_1C != 0) || (p_cmd->field_1E != 0)) {
         if (nparams) { sprintf(s, ", "); s += strlen(s); }
-        sprintf(s, "Padding(%ld,%hd)", p_cmd->field_1A, p_cmd->field_1E);
+        sprintf(s, "Padding(%hd,%hd)", p_cmd->field_1C, p_cmd->field_1E);
         s += strlen(s);
         nparams++;
     }
@@ -609,46 +609,46 @@ ubyte fix_thing_command_indexes(ushort cmd)
         }
     }
 
-    if (((p_cdef->Flags & CmDF_ReqCoord2) != 0) && (((p_cdef->Flags & CmDF_ReqRange2) == 0) ||
-        (((p_cdef->Flags & CmDF_ReqRange2) != 0) && ((p_cmd->Flags & PCmdF_Unkn100000) != 0))))
+    if (((p_cdef->Flags & CmDF_ReqCoord2) != 0) && (((p_cdef->Flags & CmDF_ReqRange1) == 0) ||
+        (((p_cdef->Flags & CmDF_ReqRange1) != 0) && ((p_cmd->Flags & PCmdF_Unkn0010) != 0))))
     {
-        if ((p_cmd->Arg2 < MAP_BORDER_MARGIN) || (p_cmd->Arg2 > 32767 - MAP_BORDER_MARGIN)) {
-            LOGERR("Cmd%hu = %s target coord X/Arg2 of (%d,%d) out of range",
-              cmd, p_cdef->CmdName, (int)p_cmd->Arg2, (int)p_cmd->MyThing);
-            if ((p_cmd->Arg2 < MAP_BORDER_MARGIN) && (p_cmd->Arg2 >= -16384)) {
-                p_cmd->Arg2 = MAP_BORDER_MARGIN;
+        if ((p_cmd->Arg1 < MAP_BORDER_MARGIN) || (p_cmd->Arg1 > 32767 - MAP_BORDER_MARGIN)) {
+            LOGERR("Cmd%hu = %s target coord X/Arg1 of (%d,%d) out of range",
+              cmd, p_cdef->CmdName, (int)p_cmd->Arg1, (int)p_cmd->Time);
+            if ((p_cmd->Arg1 < MAP_BORDER_MARGIN) && (p_cmd->Arg1 >= -16384)) {
+                p_cmd->Arg1 = MAP_BORDER_MARGIN;
                 if (ret) ret = 2;
             }
-            if ((p_cmd->Arg2 > 32767 - MAP_BORDER_MARGIN) || (p_cmd->Arg2 < -16384)) {
-                p_cmd->Arg2 = 32767 - MAP_BORDER_MARGIN;
+            if ((p_cmd->Arg1 > 32767 - MAP_BORDER_MARGIN) || (p_cmd->Arg1 < -16384)) {
+                p_cmd->Arg1 = 32767 - MAP_BORDER_MARGIN;
                 if (ret) ret = 2;
             }
         }
-        if ((p_cmd->MyThing < MAP_BORDER_MARGIN) || (p_cmd->MyThing > 32767 - MAP_BORDER_MARGIN)) {
-            LOGERR("Cmd%hu = %s target coord Z/MyThing of (%d,%d) out of range",
-              cmd, p_cdef->CmdName, (int)p_cmd->Arg2, (int)p_cmd->MyThing);
-            if ((p_cmd->MyThing < MAP_BORDER_MARGIN) && (p_cmd->MyThing >= -16384)) {
-                p_cmd->MyThing = MAP_BORDER_MARGIN;
+        if ((p_cmd->Time < MAP_BORDER_MARGIN) || (p_cmd->Time > 32767 - MAP_BORDER_MARGIN)) {
+            LOGERR("Cmd%hu = %s target coord Z/Time of (%d,%d) out of range",
+              cmd, p_cdef->CmdName, (int)p_cmd->Arg1, (int)p_cmd->Time);
+            if ((p_cmd->Time < MAP_BORDER_MARGIN) && (p_cmd->Time >= -16384)) {
+                p_cmd->Time = MAP_BORDER_MARGIN;
                 if (ret) ret = 2;
             }
-            if ((p_cmd->MyThing > 32767 - MAP_BORDER_MARGIN) || (p_cmd->MyThing < -16384)) {
-                p_cmd->MyThing = 32767 - MAP_BORDER_MARGIN;
+            if ((p_cmd->Time > 32767 - MAP_BORDER_MARGIN) || (p_cmd->Time < -16384)) {
+                p_cmd->Time = 32767 - MAP_BORDER_MARGIN;
                 if (ret) ret = 2;
             }
         }
     } else
-    if (((p_cdef->Flags & CmDF_ReqRange2) != 0) && (((p_cdef->Flags & CmDF_ReqCoord2) == 0) ||
-        (((p_cdef->Flags & CmDF_ReqCoord2) != 0) && ((p_cmd->Flags & PCmdF_Unkn100000) == 0))))
+    if (((p_cdef->Flags & CmDF_ReqRange1) != 0) && (((p_cdef->Flags & CmDF_ReqCoord2) == 0) ||
+        (((p_cdef->Flags & CmDF_ReqCoord2) != 0) && ((p_cmd->Flags & PCmdF_Unkn0010) == 0))))
     {
-        if ((p_cmd->Arg2 < 1) || (p_cmd->Arg2 > 32767 - MAP_BORDER_MARGIN)) {
-            LOGERR("Cmd%hu = %s target Range/Arg2 of %d out of range",
-              cmd, p_cdef->CmdName, (int)p_cmd->Arg2);
-            if ((p_cmd->Arg2 < 1) && (p_cmd->Arg2 >= -16384)) {
-                p_cmd->Arg2 = 1;
+        if ((p_cmd->Arg1 < 1) || (p_cmd->Arg1 > 32767 - MAP_BORDER_MARGIN)) {
+            LOGERR("Cmd%hu = %s target Range/Arg1 of %d out of range",
+              cmd, p_cdef->CmdName, (int)p_cmd->Arg1);
+            if ((p_cmd->Arg1 < 1) && (p_cmd->Arg1 >= -16384)) {
+                p_cmd->Arg1 = 1;
                 if (ret) ret = 2;
             }
-            if ((p_cmd->Arg2 > 32767 - MAP_BORDER_MARGIN) || (p_cmd->Arg2 < -16384)) {
-                p_cmd->Arg2 = 32767 - MAP_BORDER_MARGIN;
+            if ((p_cmd->Arg1 > 32767 - MAP_BORDER_MARGIN) || (p_cmd->Arg1 < -16384)) {
+                p_cmd->Arg1 = 32767 - MAP_BORDER_MARGIN;
                 if (ret) ret = 2;
             }
         }
@@ -680,13 +680,13 @@ void check_and_fix_commands(void)
         if (p_cmd->Next > next_command)
             p_cmd->Next = 0;
 
-        if ((p_cmd->Flags & PCmdF_Unkn020000) != 0)
+        if ((p_cmd->Flags & PCmdF_Unkn0002) != 0)
         {
             struct Command *p_nxcmd;
 
             p_nxcmd = &game_commands[p_cmd->Next];
             if (!is_command_any_until(p_nxcmd)) {
-                p_cmd->Flags &= ~PCmdF_Unkn020000;
+                p_cmd->Flags &= ~PCmdF_Unkn0002;
             }
         }
     }
