@@ -161,4 +161,12 @@ void init_search_spiral(void)
     LOGSYNC("Created for distance up to %hu tiles", spiral_dist_tiles_limit);
 }
 
+int alt_at_point(short x, short z)
+{
+    int ret;
+    asm volatile ("call ASM_alt_at_point\n"
+        : "=r" (ret) : "a" (x), "d" (z));
+    return ret;
+}
+
 /******************************************************************************/
