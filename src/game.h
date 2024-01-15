@@ -260,6 +260,16 @@ struct SynTime {
     ubyte Year;
 };
 
+struct ColVect { // sizeof=14
+  short X1;
+  short Y1;
+  short Z1;
+  short X2;
+  short Y2;
+  short Z2;
+  short Face;
+};
+
 struct ColVectList { // sizeof=6
   ushort Vect;
   ushort NextColList;

@@ -20,6 +20,7 @@
 
 #include <string.h>
 #include <limits.h>
+#include "bfmath.h"
 #include "bigmap.h"
 #include "enginsngobjs.h"
 #include "game.h"
@@ -428,9 +429,83 @@ void update_mapel_qbits(void)
     //TODO implement
 }
 
+void add_next_col_vect_to_vects_list(short x, short z, short face, ubyte flags)
+{
+    short tile_x, tile_z;
+    ushort next_vl;
+    struct MyMapElement *mapel;
+
+    tile_x = x >> 8;
+    tile_z = z >> 8;
+    if (tile_x < 0 || tile_x > 128) {
+        return;
+    }
+    if (tile_z < 0 || tile_z > 128) {
+        return;
+    }
+
+    mapel = &game_my_big_map[MAP_TILE_WIDTH * tile_z + tile_x];
+
+    if (next_col_vect != game_col_vects_list[mapel->ColHead].Vect)
+    {
+        next_vl = next_vects_list;
+        game_col_vects_list[next_vl].Vect = next_col_vect;
+        game_col_vects_list[next_vl].NextColList = mapel->ColHead;
+        mapel->ColHead = next_vl;
+        next_vl++;
+        if (flags & 0x01)
+        {
+            if (face != 0)
+                mapel->Texture |= 0x8000;
+        }
+        next_vects_list = next_vl;
+    }
+}
+
 void add_obj_face_to_col_vect(short x1, short y1, short z1, short x2, short y2, short z2, short face, ushort flags)
 {
-    //TODO implement
+    int i, limit;
+
+    limit = get_memory_ptr_allocated_count((void **)&game_col_vects);
+    if (next_col_vect >= limit) {
+        return;
+    }
+    limit = get_memory_ptr_allocated_count((void **)&game_col_vects_list);
+    if (next_vects_list >= limit) {
+        return;
+    }
+
+    thin_wall(x1 >> 7, z1 >> 7, x2 >> 7, z2 >> 7, 1, 1);
+    i = next_col_vect;
+    game_col_vects[i].X1 = x1;
+    game_col_vects[i].Y1 = y1;
+    game_col_vects[i].Z1 = z1;
+    game_col_vects[i].X2 = x2;
+    game_col_vects[i].Y2 = y2;
+    game_col_vects[i].Z2 = z2;
+    game_col_vects[i].Face = face;
+
+    int delta_x, delta_z, dist;
+    int x, z, step_x, step_z;
+
+    delta_x = x2 - x1;
+    delta_z = z2 - z1;
+    dist = LbSqrL(delta_x * delta_x + delta_z * delta_z);
+    if (dist <= 0) {
+        add_next_col_vect_to_vects_list(x1, z1, face, flags);
+        return;
+    }
+    x = x1 << 10;
+    z = z1 << 10;
+    step_x = (delta_x << 10) / dist;
+    step_z = (delta_z << 10) / dist;
+    for (; dist >= 0; dist--)
+    {
+          add_next_col_vect_to_vects_list(x >> 10, z >> 10, face, flags);
+          x += step_x;
+          z += step_z;
+    }
+    next_col_vect++;
 }
 
 void add_object_face3_to_col_vect(short x, short y, short z, ushort obj, short face, ushort a2)
