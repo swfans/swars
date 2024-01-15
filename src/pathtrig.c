@@ -20,6 +20,9 @@
 
 #include <string.h>
 #include <limits.h>
+#include "bigmap.h"
+#include "game.h"
+#include "thing.h"
 #include "triangls.h"
 #include "tringops.h"
 #include "trpoints.h"
@@ -388,6 +391,84 @@ void thin_wall_around_object(ushort obj, int a2)
     asm volatile (
       "call ASM_thin_wall_around_object\n"
         : : "a" (obj), "d" (a2));
+}
+
+void init_collision_vects(void)
+{
+    ushort tile_x, tile_z;
+    int i;
+
+    for (i = 0; i < 30000; i++) {
+        game_col_vects_list[i].Vect = 0;
+    }
+    next_col_vect = 1;
+    next_vects_list = 1;
+    for (tile_x = 0; tile_x < MAP_TILE_WIDTH; tile_x++)
+    {
+        for (tile_z = 0; tile_z < MAP_TILE_HEIGHT; tile_z++)
+        {
+            struct MyMapElement *mapel;
+
+            mapel = &game_my_big_map[MAP_TILE_WIDTH * tile_z + tile_x];
+            mapel->ColHead = 0;
+        }
+    }
+}
+
+void generate_walk_items(void)
+{
+    //TODO implement
+}
+
+void update_mapel_qbits(void)
+{
+    //TODO implement
+}
+
+void add_all_object_faces_to_col_vect(ushort obj, int a2)
+{
+    //TODO implement
+}
+
+void generate_collision_vects(void)
+{
+    ushort tile_x, tile_z;
+
+    for (tile_x = 0; tile_x < MAP_TILE_WIDTH; tile_x++)
+    {
+        for (tile_z = 0; tile_z < MAP_TILE_HEIGHT; tile_z++)
+        {
+            short thing;
+            thing = get_mapwho_thing_index(tile_x, tile_z);
+            while (thing != 0)
+            {
+                if (thing <= 0) {
+                    struct SimpleThing *p_sthing;
+                    p_sthing = &sthings[thing];
+                    thing = p_sthing->Next;
+                } else {
+                    struct Thing *p_thing;
+                    p_thing = &things[thing];
+                    if (p_thing->Type == TT_BUILDING)
+                        add_all_object_faces_to_col_vect(p_thing->U.UObject.Object, 0);
+                    thing = p_thing->Next;
+                }
+            }
+        }
+    }
+}
+
+void generate_map_triangulation(void)
+{
+    triangulation_init();
+    thin_wall(0, 0, 255, 0, 1, 1);
+    thin_wall(255, 0, 255, 255, 1, 1);
+    thin_wall(255, 255, 0, 255, 1, 1);
+    thin_wall(0, 255, 0, 0, 1, 1);
+    init_collision_vects();
+    generate_walk_items();
+    update_mapel_qbits();
+    generate_collision_vects();
 }
 
 /******************************************************************************/
