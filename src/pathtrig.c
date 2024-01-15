@@ -22,6 +22,7 @@
 #include <limits.h>
 #include "bigmap.h"
 #include "game.h"
+#include "game_data.h"
 #include "thing.h"
 #include "triangls.h"
 #include "tringops.h"
@@ -396,9 +397,10 @@ void thin_wall_around_object(ushort obj, int a2)
 void init_collision_vects(void)
 {
     ushort tile_x, tile_z;
-    int i;
+    int i, limit;
 
-    for (i = 0; i < 30000; i++) {
+    limit = get_memory_ptr_allocated_count((void **)&game_col_vects_list);
+    for (i = 0; i < limit; i++) {
         game_col_vects_list[i].Vect = 0;
     }
     next_col_vect = 1;
@@ -461,6 +463,7 @@ void generate_collision_vects(void)
 void generate_map_triangulation(void)
 {
     triangulation_init();
+    // TODO should this be replaced by triangulation_init_edges()?
     thin_wall(0, 0, 255, 0, 1, 1);
     thin_wall(255, 0, 255, 255, 1, 1);
     thin_wall(255, 255, 0, 255, 1, 1);
