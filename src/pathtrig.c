@@ -33,6 +33,9 @@
 #include "trfringe.h"
 #include "swlog.h"
 /******************************************************************************/
+extern long ixE;
+extern long thin_wall_x1, thin_wall_y1;
+extern long thin_wall_x2, thin_wall_y2;
 
 void path_init8_unkn3(struct Path *path, int ax8, int ay8, int bx8, int by8, int a6)
 {
@@ -130,7 +133,7 @@ TbBool point_find(TrCoord pt_x, TrCoord pt_y, TrTriangId *rtri, TrTipId *rcor)
 
 TbBool insert_point(int pt_x, int pt_y)
 {
-#if 1
+#if 0
     asm volatile (
       "call ASM_insert_point\n"
         : : "a" (pt_x), "d" (pt_y));
@@ -163,9 +166,23 @@ TbBool insert_point(int pt_x, int pt_y)
 #endif
 }
 
+void make_clip_list(int x1, int y1, int x2, int y2)
+{
+    asm volatile (
+      "call ASM_make_clip_list\n"
+        : : "a" (x1), "d" (y1), "b" (x2), "c" (y2));
+}
+
+void make_clipped_edges(int en1, int en2)
+{
+    asm volatile (
+      "call ASM_make_clipped_edges\n"
+        : : "a" (en1), "d" (en2));
+}
+
 void thin_wall(int x1, int y1, int x2, int y2, ubyte en1, ubyte en2)
 {
-#if 1
+#if 0
     asm volatile (
       "push %5\n"
       "push %4\n"
@@ -176,8 +193,14 @@ void thin_wall(int x1, int y1, int x2, int y2, ubyte en1, ubyte en2)
     thin_wall_y1 = y1;
     thin_wall_x2 = x2;
     thin_wall_y2 = y2;
-    insert_point(x1, y1);
-    insert_point(x2, y2);
+    if (!insert_point(x1, y1)) {
+        LOGERR("point1 (%d,%d) insertion failed", x1, y1);
+        return;
+    }
+    if (!insert_point(x2, y2)) {
+        LOGERR("point2 (%d,%d) insertion failed", x2, y2);
+        return;
+    }
     if (x1 != x2 || y1 != y2)
     {
         ixE = 0;
@@ -374,7 +397,7 @@ void triangulate_area(ubyte *p_map, int x1, int y1, int x2, int y2)
 
 void triangulate_map(ubyte *p_map)
 {
-#if 1
+#if 0
     asm volatile (
       "call ASM_triangulate_map\n"
         : : "a" (p_map));
