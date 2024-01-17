@@ -442,10 +442,61 @@ void init_collision_vects(void)
     }
 }
 
+int face_to_object_position(short face, short *x, short *y, short *z)
+{
+    if (face < 0)
+    {
+        struct SingleObjectFace4 *p_face;
+        struct SingleObject *p_obj;
+
+        p_face = &game_object_faces4[-face];
+        p_obj = &game_objects[p_face->Object];
+        *x = p_obj->MapX;
+        *y = p_obj->OffsetY;
+        *z = p_obj->MapZ;
+        return 4;
+    }
+    else if (face > 0)
+    {
+        struct SingleObjectFace3 *p_face;
+        struct SingleObject *p_obj;
+
+        p_face = &game_object_faces[face];
+        p_obj = &game_objects[p_face->Object];
+        *x = p_obj->MapX;
+        *y = p_obj->OffsetY;
+        *z = p_obj->MapZ;
+        return 3;
+    }
+    return 0;
+}
+
 int add_walk_items_for_face_object(short face, short obj)
 {
+#if 0
+    short fcobj_x, fcobj_y, fcobj_z;
+    short gvobj_x, gvobj_y, gvobj_z;
+    short num_points;
+    short face;
+    short startface3, endface3;
+    short startface4, endface4;
+
+    num_points = face_to_object_position(face, &fcobj_x, &fcobj_y, &fcobj_z)
+    {
+        struct SingleObject *p_obj;
+
+        p_obj = &game_objects[obj];
+        gvobj_x = p_obj->MapX;
+        gvobj_y = p_obj->OffsetY;
+        gvobj_z = p_obj->MapZ;
+        startface3 = p_obj->StartFace;
+        endface3 = startface3 + p_obj->NumbFaces;
+        startface4 = p_obj->StartFace4;
+        endface4 = startface4 + p_obj->NumbFaces4;
+    }
+#endif
     //TODO implement
-    return 0;
+  return 0;
 }
 
 void add_walk_items_for_face_things_near(short x, short y, short z, short radius, short face)
@@ -489,47 +540,49 @@ void add_walk_items_for_face_things_near(short x, short y, short z, short radius
     }
 }
 
-void add_walk_items_for_face(short face)
+/** Reserves WalkHeader and assigns it to given face.
+ *
+ * The WalkHeader is initialized to have 0 items starting at given item index.
+ */
+TbBool prepare_face_for_having_walk_items(short face, ushort walk_item)
 {
-    int obj_x, obj_offsy, obj_z;
+    struct WalkHeader *p_walk_head;
+    ushort new_wh;
 
     if (face > 0)
     {
         struct SingleObjectFace3 *p_face;
-        struct WalkHeader *p_walk_head;
-        struct SingleObject *p_obj;
 
-        p_face = &game_object_faces[face];
-        p_face->WalkHeader = next_walk_header;
+        new_wh = next_walk_header;
         next_walk_header++;
-        p_walk_head = &game_walk_headers[p_face->WalkHeader];
-        p_walk_head->Count = 0;
-        p_walk_head->StartItem = next_walk_item;
-        p_obj = &game_objects[p_face->Object];
-        obj_x = p_obj->MapX;
-        obj_offsy = p_obj->OffsetY;
-        obj_z = p_obj->MapZ;
+        p_face = &game_object_faces[face];
+        p_face->WalkHeader = new_wh;
     }
     else if (face < 0)
     {
         struct SingleObjectFace4 *p_face;
-        struct WalkHeader *p_walk_head;
-        struct SingleObject *p_obj;
 
-        p_face = &game_object_faces4[-face];
-        p_walk_head = &game_walk_headers[p_face->WalkHeader];
-
-        p_face->WalkHeader = next_walk_header;
+        new_wh = next_walk_header;
         next_walk_header++;
-        p_walk_head->Count = 0;
-        p_walk_head->StartItem = next_walk_item;
-        p_obj = &game_objects[p_face->Object];
-        obj_x = p_obj->MapX;
-        obj_offsy = p_obj->OffsetY;
-        obj_z = p_obj->MapZ;
+        p_face = &game_object_faces4[-face];
+        p_face->WalkHeader = new_wh;
+    } else
+    {
+        return false;
     }
+    p_walk_head = &game_walk_headers[new_wh];
+    p_walk_head->Count = 0;
+    p_walk_head->StartItem = walk_item;
+    return true;
+}
 
-    add_walk_items_for_face_things_near(obj_x, obj_offsy, obj_z, 7 << 8, face);
+void add_walk_items_for_face(short face)
+{
+    short obj_x, obj_y, obj_z;
+
+    prepare_face_for_having_walk_items(face, next_walk_item);
+    face_to_object_position(face, &obj_x, &obj_y, &obj_z);
+    add_walk_items_for_face_things_near(obj_x, obj_y, obj_z, 7 << 8, face);
 }
 
 void generate_walk_items(void)
@@ -737,24 +790,28 @@ void add_object_face4_to_col_vect(short x, short y, short z, ushort obj, short f
 
 void add_all_object_faces_to_col_vect(ushort obj, ushort a2)
 {
-    struct SingleObject *p_obj;
-    int face, startface, nfaces;
-    int x, z, offsy;
+    short face;
+    short startface3, endface3;
+    short startface4, endface4;
+    short x, z, offsy;
 
-    p_obj = &game_objects[obj];
-    x = p_obj->MapX;
-    z = p_obj->MapZ;
-    offsy = p_obj->OffsetY;
-    nfaces = p_obj->NumbFaces;
-    startface = p_obj->StartFace;
-    for (face = startface; face < startface + nfaces; face++)
+    {
+        struct SingleObject *p_obj;
+
+        p_obj = &game_objects[obj];
+        x = p_obj->MapX;
+        z = p_obj->MapZ;
+        offsy = p_obj->OffsetY;
+        startface3 = p_obj->StartFace;
+        endface3 = startface3 + p_obj->NumbFaces;
+        startface4 = p_obj->StartFace4;
+        endface4 = startface4 + p_obj->NumbFaces4;
+    }
+    for (face = startface3; face < endface3; face++)
     {
         add_object_face3_to_col_vect(x, offsy, z, obj, face, a2);
     }
-
-    nfaces = p_obj->NumbFaces4;
-    startface = p_obj->StartFace4;
-    for (face = startface; face < startface + nfaces; face++)
+    for (face = startface4; face < endface4; face++)
     {
         add_object_face4_to_col_vect(x, offsy, z, obj, face, a2);
     }
