@@ -32,9 +32,8 @@ struct SingleObjectFace3 { // sizeof=32
     ushort Texture;
     ubyte GFlags;
     ubyte Flags;
-    ushort Object;
-    ubyte field_C;
-    ubyte field_D;
+    ushort field_A;
+    ushort Object; /**< offs=0x0C Index of the SingleObject associated to this face. */
     short Shade0;
     short Shade1;
     short Shade2;
@@ -42,7 +41,8 @@ struct SingleObjectFace3 { // sizeof=32
     ushort Light1;
     ushort Light2;
     ushort FaceNormal;
-    ubyte field_1C[3];
+    ushort WalkHeader;
+    ubyte field_1E;
     ubyte field_1F;
 };
 
@@ -71,8 +71,8 @@ struct SingleObjectFace4 { // sizeof=40
     ushort Texture;
     ubyte GFlags;
     ubyte Flags;
-    ushort Object;
-    ubyte field_E[2];
+    ubyte field_C[2];
+    ushort Object; /**< offs=0x0E Index of the SingleObject associated to this face. */
     short Shade0;
     short Shade1;
     short Shade2;
@@ -82,7 +82,8 @@ struct SingleObjectFace4 { // sizeof=40
     short Light2;
     short Light3;
     ushort FaceNormal;
-    ubyte field_22[5];
+    ushort WalkHeader;
+    ubyte field_24[3];
     ubyte field_27;
 };
 

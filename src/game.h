@@ -276,6 +276,11 @@ struct ColVectList { // sizeof=6
   short Object;
 };
 
+struct WalkHeader { // sizeof=4
+    ushort Count;
+    ushort StartItem;
+};
+
 struct BezierPt { // sizeof=28
     ubyte field_0[26];
     ushort field_2A;
@@ -494,7 +499,9 @@ extern ushort next_vects_list;
 extern struct ColVect *game_col_vects;
 extern ushort next_col_vect;
 extern struct WalkHeader *game_walk_headers;
+extern ushort next_walk_header;
 extern short *game_walk_items;
+extern ushort next_walk_item;
 extern struct ColColumn *game_col_columns;
 extern struct SingleObjectFace3 *game_special_object_faces;
 extern struct SingleObjectFace4 *game_special_object_faces4;
