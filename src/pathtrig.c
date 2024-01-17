@@ -442,9 +442,112 @@ void init_collision_vects(void)
     }
 }
 
-void generate_walk_items(void)
+int add_walk_items_for_face_object(short face, short obj)
 {
     //TODO implement
+    return 0;
+}
+
+void add_walk_items_for_face_things_near(short x, short y, short z, short radius, short face)
+{
+    short shift_x, shift_y;
+    short range;
+
+    range = ((radius + 127) >> 8);
+
+    for (shift_x = -range; shift_x <= range; shift_x++)
+    {
+        for (shift_y = -range; shift_y <= range; shift_y++)
+        {
+            int tile_x, tile_z;
+            struct MyMapElement *mapel;
+            short thing;
+
+            tile_x = (x >> 8) + shift_x;
+            tile_z = (z >> 8) + shift_y;
+            if (tile_x <= 0 || tile_x >= 128)
+                continue;
+            if (tile_z <= 0 || tile_z >= 128)
+                continue;
+            mapel = &game_my_big_map[MAP_TILE_WIDTH * tile_z + tile_x];
+            thing = mapel->Child;
+            while (thing != 0)
+            {
+                if (thing <= 0) {
+                    struct SimpleThing *p_sthing;
+                    p_sthing = &sthings[thing];
+                    thing = p_sthing->Next;
+                } else {
+                    struct Thing *p_thing;
+                    p_thing = &things[thing];
+                    if (p_thing->Type == TT_BUILDING)
+                        add_walk_items_for_face_object(face, p_thing->U.UObject.Object);
+                    thing = p_thing->Next;
+                }
+            }
+        }
+    }
+}
+
+void add_walk_items_for_face(short face)
+{
+    int obj_x, obj_offsy, obj_z;
+
+    if (face > 0)
+    {
+        struct SingleObjectFace3 *p_face;
+        struct WalkHeader *p_walk_head;
+        struct SingleObject *p_obj;
+
+        p_face = &game_object_faces[face];
+        p_face->WalkHeader = next_walk_header;
+        next_walk_header++;
+        p_walk_head = &game_walk_headers[p_face->WalkHeader];
+        p_walk_head->Count = 0;
+        p_walk_head->StartItem = next_walk_item;
+        p_obj = &game_objects[p_face->Object];
+        obj_x = p_obj->MapX;
+        obj_offsy = p_obj->OffsetY;
+        obj_z = p_obj->MapZ;
+    }
+    else if (face < 0)
+    {
+        struct SingleObjectFace4 *p_face;
+        struct WalkHeader *p_walk_head;
+        struct SingleObject *p_obj;
+
+        p_face = &game_object_faces4[-face];
+        p_walk_head = &game_walk_headers[p_face->WalkHeader];
+
+        p_face->WalkHeader = next_walk_header;
+        next_walk_header++;
+        p_walk_head->Count = 0;
+        p_walk_head->StartItem = next_walk_item;
+        p_obj = &game_objects[p_face->Object];
+        obj_x = p_obj->MapX;
+        obj_offsy = p_obj->OffsetY;
+        obj_z = p_obj->MapZ;
+    }
+
+    add_walk_items_for_face_things_near(obj_x, obj_offsy, obj_z, 7 << 8, face);
+}
+
+void generate_walk_items(void)
+{
+    short face;
+
+    next_walk_header = 1;
+    next_walk_item = 1;
+    for (face = 1; face < next_object_face; face++)
+    {
+        if ((game_object_faces[face].GFlags & 0x04) != 0)
+            add_walk_items_for_face(face);
+    }
+    for (face = 1; face < next_object_face4; face++)
+    {
+        if ((game_object_faces4[face].GFlags & 0x04) != 0)
+            add_walk_items_for_face(-face);
+    }
 }
 
 void update_mapel_qbits(void)
