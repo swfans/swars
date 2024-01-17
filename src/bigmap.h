@@ -85,6 +85,7 @@ void refresh_old_my_big_map_format(struct MyMapElement *p_mapel,
  struct MyMapElementOldV7 *p_oldmapel, ulong fmtver);
 short get_mapwho_thing_index(short tile_x, short tile_z);
 void init_search_spiral(void);
+int alt_at_point(short x, short z);
 /******************************************************************************/
 #ifdef __cplusplus
 }

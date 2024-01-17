@@ -1907,14 +1907,6 @@ void change_brightness(ushort val)
         : : "a" (val));
 }
 
-int alt_at_point(ushort x, ushort z)
-{
-    int ret;
-    asm volatile ("call ASM_alt_at_point\n"
-        : "=r" (ret) : "a" (x), "d" (z));
-    return ret;
-}
-
 void traffic_unkn_func_01(void)
 {
     asm volatile ("call ASM_traffic_unkn_func_01\n"

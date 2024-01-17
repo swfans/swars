@@ -20,7 +20,9 @@
 
 #include <string.h>
 #include <limits.h>
+#include "bfmath.h"
 #include "bigmap.h"
+#include "enginsngobjs.h"
 #include "game.h"
 #include "game_data.h"
 #include "thing.h"
@@ -31,6 +33,9 @@
 #include "trfringe.h"
 #include "swlog.h"
 /******************************************************************************/
+extern long ixE;
+extern long thin_wall_x1, thin_wall_y1;
+extern long thin_wall_x2, thin_wall_y2;
 
 void path_init8_unkn3(struct Path *path, int ax8, int ay8, int bx8, int by8, int a6)
 {
@@ -128,7 +133,7 @@ TbBool point_find(TrCoord pt_x, TrCoord pt_y, TrTriangId *rtri, TrTipId *rcor)
 
 TbBool insert_point(int pt_x, int pt_y)
 {
-#if 1
+#if 0
     asm volatile (
       "call ASM_insert_point\n"
         : : "a" (pt_x), "d" (pt_y));
@@ -161,9 +166,23 @@ TbBool insert_point(int pt_x, int pt_y)
 #endif
 }
 
+void make_clip_list(int x1, int y1, int x2, int y2)
+{
+    asm volatile (
+      "call ASM_make_clip_list\n"
+        : : "a" (x1), "d" (y1), "b" (x2), "c" (y2));
+}
+
+void make_clipped_edges(int en1, int en2)
+{
+    asm volatile (
+      "call ASM_make_clipped_edges\n"
+        : : "a" (en1), "d" (en2));
+}
+
 void thin_wall(int x1, int y1, int x2, int y2, ubyte en1, ubyte en2)
 {
-#if 1
+#if 0
     asm volatile (
       "push %5\n"
       "push %4\n"
@@ -174,8 +193,14 @@ void thin_wall(int x1, int y1, int x2, int y2, ubyte en1, ubyte en2)
     thin_wall_y1 = y1;
     thin_wall_x2 = x2;
     thin_wall_y2 = y2;
-    insert_point(x1, y1);
-    insert_point(x2, y2);
+    if (!insert_point(x1, y1)) {
+        LOGERR("point1 (%d,%d) insertion failed", x1, y1);
+        return;
+    }
+    if (!insert_point(x2, y2)) {
+        LOGERR("point2 (%d,%d) insertion failed", x2, y2);
+        return;
+    }
     if (x1 != x2 || y1 != y2)
     {
         ixE = 0;
@@ -372,7 +397,7 @@ void triangulate_area(ubyte *p_map, int x1, int y1, int x2, int y2)
 
 void triangulate_map(ubyte *p_map)
 {
-#if 1
+#if 0
     asm volatile (
       "call ASM_triangulate_map\n"
         : : "a" (p_map));
@@ -417,9 +442,112 @@ void init_collision_vects(void)
     }
 }
 
-void generate_walk_items(void)
+int add_walk_items_for_face_object(short face, short obj)
 {
     //TODO implement
+    return 0;
+}
+
+void add_walk_items_for_face_things_near(short x, short y, short z, short radius, short face)
+{
+    short shift_x, shift_y;
+    short range;
+
+    range = ((radius + 127) >> 8);
+
+    for (shift_x = -range; shift_x <= range; shift_x++)
+    {
+        for (shift_y = -range; shift_y <= range; shift_y++)
+        {
+            int tile_x, tile_z;
+            struct MyMapElement *mapel;
+            short thing;
+
+            tile_x = (x >> 8) + shift_x;
+            tile_z = (z >> 8) + shift_y;
+            if (tile_x <= 0 || tile_x >= 128)
+                continue;
+            if (tile_z <= 0 || tile_z >= 128)
+                continue;
+            mapel = &game_my_big_map[MAP_TILE_WIDTH * tile_z + tile_x];
+            thing = mapel->Child;
+            while (thing != 0)
+            {
+                if (thing <= 0) {
+                    struct SimpleThing *p_sthing;
+                    p_sthing = &sthings[thing];
+                    thing = p_sthing->Next;
+                } else {
+                    struct Thing *p_thing;
+                    p_thing = &things[thing];
+                    if (p_thing->Type == TT_BUILDING)
+                        add_walk_items_for_face_object(face, p_thing->U.UObject.Object);
+                    thing = p_thing->Next;
+                }
+            }
+        }
+    }
+}
+
+void add_walk_items_for_face(short face)
+{
+    int obj_x, obj_offsy, obj_z;
+
+    if (face > 0)
+    {
+        struct SingleObjectFace3 *p_face;
+        struct WalkHeader *p_walk_head;
+        struct SingleObject *p_obj;
+
+        p_face = &game_object_faces[face];
+        p_face->WalkHeader = next_walk_header;
+        next_walk_header++;
+        p_walk_head = &game_walk_headers[p_face->WalkHeader];
+        p_walk_head->Count = 0;
+        p_walk_head->StartItem = next_walk_item;
+        p_obj = &game_objects[p_face->Object];
+        obj_x = p_obj->MapX;
+        obj_offsy = p_obj->OffsetY;
+        obj_z = p_obj->MapZ;
+    }
+    else if (face < 0)
+    {
+        struct SingleObjectFace4 *p_face;
+        struct WalkHeader *p_walk_head;
+        struct SingleObject *p_obj;
+
+        p_face = &game_object_faces4[-face];
+        p_walk_head = &game_walk_headers[p_face->WalkHeader];
+
+        p_face->WalkHeader = next_walk_header;
+        next_walk_header++;
+        p_walk_head->Count = 0;
+        p_walk_head->StartItem = next_walk_item;
+        p_obj = &game_objects[p_face->Object];
+        obj_x = p_obj->MapX;
+        obj_offsy = p_obj->OffsetY;
+        obj_z = p_obj->MapZ;
+    }
+
+    add_walk_items_for_face_things_near(obj_x, obj_offsy, obj_z, 7 << 8, face);
+}
+
+void generate_walk_items(void)
+{
+    short face;
+
+    next_walk_header = 1;
+    next_walk_item = 1;
+    for (face = 1; face < next_object_face; face++)
+    {
+        if ((game_object_faces[face].GFlags & 0x04) != 0)
+            add_walk_items_for_face(face);
+    }
+    for (face = 1; face < next_object_face4; face++)
+    {
+        if ((game_object_faces4[face].GFlags & 0x04) != 0)
+            add_walk_items_for_face(-face);
+    }
 }
 
 void update_mapel_qbits(void)
@@ -427,9 +555,209 @@ void update_mapel_qbits(void)
     //TODO implement
 }
 
-void add_all_object_faces_to_col_vect(ushort obj, int a2)
+void add_next_col_vect_to_vects_list(short x, short z, short face, ubyte flags)
 {
-    //TODO implement
+    short tile_x, tile_z;
+    ushort next_vl;
+    struct MyMapElement *mapel;
+
+    tile_x = x >> 8;
+    tile_z = z >> 8;
+    if (tile_x < 0 || tile_x > 128) {
+        return;
+    }
+    if (tile_z < 0 || tile_z > 128) {
+        return;
+    }
+
+    mapel = &game_my_big_map[MAP_TILE_WIDTH * tile_z + tile_x];
+
+    if (next_col_vect != game_col_vects_list[mapel->ColHead].Vect)
+    {
+        next_vl = next_vects_list;
+        game_col_vects_list[next_vl].Vect = next_col_vect;
+        game_col_vects_list[next_vl].NextColList = mapel->ColHead;
+        mapel->ColHead = next_vl;
+        next_vl++;
+        if (flags & 0x01)
+        {
+            if (face != 0)
+                mapel->Texture |= 0x8000;
+        }
+        next_vects_list = next_vl;
+    }
+}
+
+void add_obj_face_to_col_vect(short x1, short y1, short z1, short x2, short y2, short z2, short face, ushort flags)
+{
+    int i, limit;
+
+    limit = get_memory_ptr_allocated_count((void **)&game_col_vects);
+    if (next_col_vect >= limit) {
+        return;
+    }
+    limit = get_memory_ptr_allocated_count((void **)&game_col_vects_list);
+    if (next_vects_list >= limit) {
+        return;
+    }
+
+    thin_wall(x1 >> 7, z1 >> 7, x2 >> 7, z2 >> 7, 1, 1);
+    i = next_col_vect;
+    game_col_vects[i].X1 = x1;
+    game_col_vects[i].Y1 = y1;
+    game_col_vects[i].Z1 = z1;
+    game_col_vects[i].X2 = x2;
+    game_col_vects[i].Y2 = y2;
+    game_col_vects[i].Z2 = z2;
+    game_col_vects[i].Face = face;
+
+    int delta_x, delta_z, dist;
+    int x, z, step_x, step_z;
+
+    delta_x = x2 - x1;
+    delta_z = z2 - z1;
+    dist = LbSqrL(delta_x * delta_x + delta_z * delta_z);
+    if (dist <= 0) {
+        add_next_col_vect_to_vects_list(x1, z1, face, flags);
+        return;
+    }
+    x = x1 << 10;
+    z = z1 << 10;
+    step_x = (delta_x << 10) / dist;
+    step_z = (delta_z << 10) / dist;
+    for (; dist >= 0; dist--)
+    {
+          add_next_col_vect_to_vects_list(x >> 10, z >> 10, face, flags);
+          x += step_x;
+          z += step_z;
+    }
+    next_col_vect++;
+}
+
+void add_object_face3_to_col_vect(short x, short y, short z, ushort obj, short face, ushort a2)
+{
+    int alt_cor[4];
+    int x_cor[4];
+    int y_cor[4];
+    int z_cor[4];
+    struct SingleObjectFace3 *p_face;
+    int cor;
+
+    p_face = &game_object_faces[face];
+    for (cor = 0; cor < 3; cor++) {
+        struct SinglePoint *p_pt;
+        p_pt = &game_object_points[p_face->PointNo[cor]];
+        y_cor[cor] = (y + p_pt->Y) >> 3;
+    }
+    for (cor = 0; cor < 3; cor++) {
+        struct SinglePoint *p_pt;
+        p_pt = &game_object_points[p_face->PointNo[cor]];
+        x_cor[cor] = (x + p_pt->X);
+    }
+    for (cor = 0; cor < 3; cor++) {
+        struct SinglePoint *p_pt;
+        p_pt = &game_object_points[p_face->PointNo[cor]];
+        z_cor[cor] = (z + p_pt->Z);
+    }
+    for (cor = 0; cor < 3; cor++) {
+        int alt;
+        alt = alt_at_point(x_cor[cor], z_cor[cor]);
+        alt_cor[cor] = alt >> 8;
+    }
+
+    if (alt_cor[0] - 10 < y_cor[0] && alt_cor[0] + 10 > y_cor[0]
+      && alt_cor[1] - 10 < y_cor[1] && alt_cor[1] + 10 > y_cor[1]) {
+        add_obj_face_to_col_vect(x_cor[0], y_cor[0], z_cor[0],
+          x_cor[1], y_cor[1], z_cor[1], (short)face, a2);
+    }
+    if (alt_cor[0] - 10 < y_cor[0] && alt_cor[0] + 10 > y_cor[0]
+      && alt_cor[2] - 10 < y_cor[2] && alt_cor[2] + 10 > y_cor[2]) {
+        add_obj_face_to_col_vect(x_cor[0], y_cor[0], z_cor[0],
+          x_cor[2], y_cor[2], z_cor[2], (short)face, a2);
+    }
+    if (alt_cor[1] - 10 < y_cor[1] && alt_cor[1] + 10 > y_cor[1]
+      && alt_cor[2] - 10 < y_cor[2] && alt_cor[2] + 10 > y_cor[2]) {
+        add_obj_face_to_col_vect(x_cor[1], y_cor[1], z_cor[1],
+          x_cor[2], y_cor[2], z_cor[2], face, a2);
+    }
+}
+
+void add_object_face4_to_col_vect(short x, short y, short z, ushort obj, short face, ushort a2)
+{
+    int alt_cor[4];
+    int x_cor[4];
+    int y_cor[4];
+    int z_cor[4];
+    struct SingleObjectFace4 *p_face4;
+    int cor;
+
+    p_face4 = &game_object_faces4[face];
+    for (cor = 0; cor < 4; cor++) {
+        struct SinglePoint *p_pt;
+        p_pt = &game_object_points[p_face4->PointNo[cor]];
+        y_cor[cor] = y + p_pt->Y;
+    }
+    for (cor = 0; cor < 4; cor++) {
+        struct SinglePoint *p_pt;
+        p_pt = &game_object_points[p_face4->PointNo[cor]];
+        x_cor[cor] = x + p_pt->X;
+   }
+    for (cor = 0; cor < 4; cor++) {
+        struct SinglePoint *p_pt;
+        p_pt = &game_object_points[p_face4->PointNo[cor]];
+        z_cor[cor] = z + p_pt->Z;
+    }
+    for (cor = 0; cor < 4; cor++) {
+        int alt;
+        alt = alt_at_point(x_cor[cor], z_cor[cor]);
+        alt_cor[cor] = alt >> 8;
+    }
+
+    if (-(alt_cor[0] + 10) < y_cor[0] && alt_cor[0] + 10 > y_cor[0]
+      && -(alt_cor[1] + 10) < y_cor[1] && alt_cor[1] + 10 > y_cor[1]) {
+        add_obj_face_to_col_vect(x_cor[0], y_cor[0], z_cor[0],
+          x_cor[1], y_cor[1], z_cor[1], -face, a2);
+    }
+    if (-(alt_cor[1] + 10) < y_cor[1] && alt_cor[1] + 10 > y_cor[1]
+      && -(alt_cor[3] + 10) < y_cor[3] && alt_cor[3] + 10 > y_cor[3]) {
+        add_obj_face_to_col_vect(x_cor[1], y_cor[1], z_cor[1],
+          x_cor[3], y_cor[3], z_cor[3], -face, a2);
+    }
+    if (-(alt_cor[3] + 10) < y_cor[3] && alt_cor[3] + 10 > y_cor[3]
+    && -(alt_cor[2] + 10) < y_cor[2] && alt_cor[2] + 10 > y_cor[2]) {
+        add_obj_face_to_col_vect(x_cor[3], y_cor[3], z_cor[3],
+          x_cor[2], y_cor[2], z_cor[2], -face, a2);
+    }
+    if (-(alt_cor[2] + 10) < y_cor[2] && alt_cor[2] + 10 > y_cor[2]
+      && -(alt_cor[0] + 10) < y_cor[0] && alt_cor[0] + 10 > y_cor[0]) {
+        add_obj_face_to_col_vect(x_cor[2], y_cor[2], z_cor[2],
+          x_cor[0], y_cor[0], z_cor[0], -face, a2);
+    }
+}
+
+void add_all_object_faces_to_col_vect(ushort obj, ushort a2)
+{
+    struct SingleObject *p_obj;
+    int face, startface, nfaces;
+    int x, z, offsy;
+
+    p_obj = &game_objects[obj];
+    x = p_obj->MapX;
+    z = p_obj->MapZ;
+    offsy = p_obj->OffsetY;
+    nfaces = p_obj->NumbFaces;
+    startface = p_obj->StartFace;
+    for (face = startface; face < startface + nfaces; face++)
+    {
+        add_object_face3_to_col_vect(x, offsy, z, obj, face, a2);
+    }
+
+    nfaces = p_obj->NumbFaces4;
+    startface = p_obj->StartFace4;
+    for (face = startface; face < startface + nfaces; face++)
+    {
+        add_object_face4_to_col_vect(x, offsy, z, obj, face, a2);
+    }
 }
 
 void generate_collision_vects(void)
