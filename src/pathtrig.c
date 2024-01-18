@@ -1001,7 +1001,8 @@ void add_obj_face_to_col_vect(short x1, short y1, short z1, short x2, short y2, 
         return;
     }
 
-    thin_wall(x1 >> 7, z1 >> 7, x2 >> 7, z2 >> 7, 1, 1);
+    //TODO why generating thin walls here? we have a separate higher level call for that
+    //thin_wall(x1 >> 7, z1 >> 7, x2 >> 7, z2 >> 7, 1, 1);
     i = next_col_vect;
     game_col_vects[i].X1 = x1;
     game_col_vects[i].Y1 = y1;
@@ -1194,6 +1195,36 @@ void generate_collision_vects(void)
     }
 }
 
+void generate_thin_walls(void)
+{
+    ushort tile_x, tile_z;
+
+    for (tile_x = 0; tile_x < MAP_TILE_WIDTH; tile_x++)
+    {
+        for (tile_z = 0; tile_z < MAP_TILE_HEIGHT; tile_z++)
+        {
+            short thing;
+            int i;
+
+            thing = get_mapwho_thing_index(tile_x, tile_z);
+            for (i = 0; thing != 0 && i < MAX_THINGS_ON_TILE; i++)
+            {
+                if (thing <= 0) {
+                    struct SimpleThing *p_sthing;
+                    p_sthing = &sthings[thing];
+                    thing = p_sthing->Next;
+                } else {
+                    struct Thing *p_thing;
+                    p_thing = &things[thing];
+                    if (p_thing->Type == TT_BUILDING)
+                        thin_wall_around_object(p_thing->U.UObject.Object, 0);
+                    thing = p_thing->Next;
+                }
+            }
+        }
+    }
+}
+
 void generate_map_triangulation(void)
 {
     triangulation_init();
@@ -1206,6 +1237,7 @@ void generate_map_triangulation(void)
     generate_walk_items();
     update_mapel_collision_columns();
     generate_collision_vects();
+    generate_thin_walls();
 }
 
 /******************************************************************************/
