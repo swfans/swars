@@ -793,7 +793,7 @@ void set_mapel_col_columns(struct MyMapElement *p_mapel, short setbit, ushort qb
     p_ccol->QBits[qb] |= 1 << setbit;
 }
 
-void update_mapel_qbits_around_face(short face, ushort flags)
+void update_mapel_collision_columns_around_face(short face, ushort flags)
 {
     struct SinglePoint *p_pt0;
     struct SinglePoint *p_pt1;
@@ -889,7 +889,7 @@ void update_mapel_qbits_around_face(short face, ushort flags)
     }
 }
 
-void update_mapel_qbits_around_object(ushort obj, ushort flags)
+void update_mapel_collision_columns_around_object(ushort obj, ushort flags)
 {
     short startface3, endface3;
     short startface4, endface4;
@@ -905,14 +905,14 @@ void update_mapel_qbits_around_object(ushort obj, ushort flags)
         endface4 = startface4 + p_obj->NumbFaces4;
     }
     for (face = startface3; face < endface3; face++) {
-        update_mapel_qbits_around_face(face, flags);
+        update_mapel_collision_columns_around_face(face, flags);
     }
     for (face = startface4; face < endface4; face++) {
-        update_mapel_qbits_around_face(-face, flags);
+        update_mapel_collision_columns_around_face(-face, flags);
     }
 }
 
-void update_mapel_qbits(void)
+void update_mapel_collision_columns(void)
 {
     ushort tile_x, tile_z;
 
@@ -947,7 +947,7 @@ void update_mapel_qbits(void)
                     struct Thing *p_thing;
                     p_thing = &things[thing];
                     if (p_thing->Type == TT_BUILDING)
-                        update_mapel_qbits_around_object(p_thing->U.UObject.Object, 0);
+                        update_mapel_collision_columns_around_object(p_thing->U.UObject.Object, 0);
                     thing = p_thing->Next;
                 }
             }
@@ -1204,7 +1204,7 @@ void generate_map_triangulation(void)
     thin_wall(0, 255, 0, 0, 1, 1);
     init_collision_vects();
     generate_walk_items();
-    update_mapel_qbits();
+    update_mapel_collision_columns();
     generate_collision_vects();
 }
 
