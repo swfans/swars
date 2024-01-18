@@ -18,6 +18,7 @@
 /******************************************************************************/
 #include "pathtrig.h"
 
+#include <assert.h>
 #include <string.h>
 #include <limits.h>
 #include "bfmath.h"
@@ -442,6 +443,10 @@ void init_collision_vects(void)
     }
 }
 
+/** Adds given walk face to a list of walk items of another rectangular face.
+ *
+ * Can only be called continously for one face, until another face gats it walk head created.
+ */
 void add_face4_walk_item(short face, short walk_face)
 {
     struct SingleObjectFace4 *p_face;
@@ -450,12 +455,18 @@ void add_face4_walk_item(short face, short walk_face)
 
     p_face = &game_object_faces4[face];
     p_walk_head = &game_walk_headers[p_face->WalkHeader];
+    assert(p_walk_head->StartItem + p_walk_head->Count == next_walk_item);
     new_wi = next_walk_item;
     next_walk_item++;
+
     p_walk_head->Count++;
     game_walk_items[new_wi] = walk_face;
 }
 
+/** Adds given walk face to a list of walk items of another triangular face.
+ *
+ * Can only be called continously for one face, until another face gats it walk head created.
+ */
 TbBool face_has_walk_item(short face, short walk_face)
 {
     struct SingleObjectFace3 *p_face;
@@ -486,8 +497,10 @@ void add_face_walk_item(short face, short walk_face)
 
     p_face = &game_object_faces[face];
     p_walk_head = &game_walk_headers[p_face->WalkHeader];
+    assert(p_walk_head->StartItem + p_walk_head->Count == next_walk_item);
     new_wi = next_walk_item;
     next_walk_item++;
+
     p_walk_head->Count++;
     game_walk_items[new_wi] = walk_face;
 }
