@@ -33,6 +33,10 @@ extern "C" {
  */
 typedef int TrCoord;
 
+/** Type for storing fine-grained coord (coord shifted left 8 bits).
+ */
+typedef int TrFineCoord;
+
 /** Type for storing point index.
  */
 typedef short TrPointId;

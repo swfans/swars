@@ -72,7 +72,7 @@ TbBool triangle_contains8(int tri, int x, int y)
     return ret;
 }
 
-int pointed_at8(int pt_x, int pt_y, int *r_tri, int *r_cor)
+int pointed_at8(TrFineCoord pt_x, TrFineCoord pt_y, int *r_tri, int *r_cor)
 {
 #if 1
     int ret;
@@ -85,10 +85,8 @@ int pointed_at8(int pt_x, int pt_y, int *r_tri, int *r_cor)
 
     TrTipId cor;
     TrTriangId tri;
-    int ptBx;
-    int ptBy;
-    int ptAx;
-    int ptAy;
+    TrFineCoord ptAx, ptAy;
+    TrFineCoord ptBx, ptBy;
 
     tri = *r_tri;
     cor = *r_cor;
@@ -147,7 +145,7 @@ int pointed_at8(int pt_x, int pt_y, int *r_tri, int *r_cor)
 #endif
 }
 
-int triangle_find8(int pt_x, int pt_y)
+int triangle_find8(TrFineCoord pt_x, TrFineCoord pt_y)
 {
 #if 1
     int ret;
@@ -178,9 +176,9 @@ int triangle_find8(int pt_x, int pt_y)
     while (tri >= 0)
     {
         struct TrTriangle *p_tri;
-        int pt0_x, pt0_y;
-        int pt1_x, pt1_y;
-        int pt2_x, pt2_y;
+        TrFineCoord pt0_x, pt0_y;
+        TrFineCoord pt1_x, pt1_y;
+        TrFineCoord pt2_x, pt2_y;
         TbBool eqA, eqB, eqC;
 
         remain--;
@@ -209,11 +207,11 @@ int triangle_find8(int pt_x, int pt_y)
             break;
 
         if (eqA && !eqB && !eqC && p_tri->tri[0] >= 0) {
-            tri = triangulation[0].Triangles[tri].tri[0];
+            tri = p_tri->tri[0];
         } else if (eqB && !eqC && !eqA && p_tri->tri[1] >= 0) {
-            tri = triangulation[0].Triangles[tri].tri[1];
+            tri = p_tri->tri[1];
         } else if (eqC && !eqA && !eqB && p_tri->tri[2] >= 0) {
-            tri = triangulation[0].Triangles[tri].tri[2];
+            tri = p_tri->tri[2];
         } else if (eqA && eqB) {
             int cor, rcor;
             cor = 1;
@@ -317,7 +315,7 @@ TbBool insert_point(int pt_x, int pt_y)
         : : "a" (pt_x), "d" (pt_y));
     return true;
 #else
-    int tri;
+    TrTriangId tri;
 
     tri = triangle_find8(pt_x << 8, pt_y << 8);
     if (tri == -1) {
@@ -1482,7 +1480,7 @@ void generate_thin_walls(void)
 
 void generate_map_triangulation(void)
 {
-#if 0
+#if 0 // This is done earlier, in triangulation_clear()
     triangulation_init();
     // TODO should this be replaced by triangulation_init_edges()?
     thin_wall(0, 0, 255, 0, 1, 1);
