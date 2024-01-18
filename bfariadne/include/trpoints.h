@@ -60,6 +60,10 @@ TrPointId point_new(void);
  */
 void point_dispose(TrPointId pt);
 
+/** Clear all properties of the point.
+ */
+void point_clear(TrPointId pt);
+
 TrPointId point_set_new_or_reuse(TrCoord pt_x, TrCoord pt_y);
 
 TbBool point_equals(TrPointId pt, TrCoord pt_x, TrCoord pt_y);

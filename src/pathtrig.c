@@ -273,24 +273,26 @@ int edge_find(int x1, int y1, int x2, int y2, int *ntri1, int *ntri2)
  * Finds point with given coords in list of triangles.
  * @param pt_x
  * @param pt_y
- * @param rtri Output pointer for triangle index.
- * @param rcor Output corner/tip index within the triangle.
+ * @param r_tri Output pointer for triangle index.
+ * @param r_cor Output corner/tip index within the triangle.
  * @return Gives true if a point was found and output pointers set.
  */
-TbBool point_find(TrCoord pt_x, TrCoord pt_y, TrTriangId *rtri, TrTipId *rcor)
+TbBool point_find(TrCoord pt_x, TrCoord pt_y, int *r_tri, int *r_cor)
+// TODO change types to TrTriangId *r_tri, TrTipId *r_cor
 {
 #if 1
     int ret;
     asm volatile (
       "call ASM_point_find\n"
-        : "=r" (ret) : "a" (pt_x), "d" (pt_y), "b" (rtri), "c" (rcor));
+        : "=r" (ret) : "a" (pt_x), "d" (pt_y), "b" (r_tri), "c" (r_cor));
     return ret;
 #else
     TrTriangId tri;
     TrTipId cor;
 
     tri = triangle_find8(pt_x << 8, pt_y << 8);
-    if (tri < 0) {
+    if (tri == -1) {
+        LOGERR("triangle not found at (%d,%d)", (int)pt_x, (int)pt_y);
         return false;
     }
 
@@ -298,8 +300,8 @@ TbBool point_find(TrCoord pt_x, TrCoord pt_y, TrTriangId *rtri, TrTipId *rcor)
     {
         if (triangle_tip_equals(tri, cor, pt_x, pt_y))
         {
-            *rtri = tri;
-            *rcor = cor;
+            *r_tri = tri;
+            *r_cor = cor;
             return true;
         }
     }
@@ -307,7 +309,7 @@ TbBool point_find(TrCoord pt_x, TrCoord pt_y, TrTriangId *rtri, TrTipId *rcor)
 #endif
 }
 
-TbBool insert_point(int pt_x, int pt_y)
+TbBool insert_point(TrCoord pt_x, TrCoord pt_y)
 {
 #if 0
     asm volatile (
@@ -515,26 +517,13 @@ void triangulation_initxy(int x1, int y1, int x2, int y2)
 
     for (tri = 0; tri < triangulation[0].max_Triangles; tri++)
     {
-        short cor;
-
-        p_tri = &triangulation[0].Triangles[tri];
-
-        p_tri->solid = 255;
-        for (cor = 0; cor < 3; cor++) {
-            p_tri->point[cor] = 0;
-        }
-        for (cor = 0; cor < 3; cor++) {
-            p_tri->tri[cor] = -1;
-        }
-        p_tri->jump = -1;
-        p_tri->enter = 0;
+        tri_clear(tri);
     }
     triangulation[0].free_Triangles = -1;
 
     for (pt = 0; pt < triangulation[0].max_Points; pt++)
     {
-        p_point = &triangulation[0].Points[pt];
-        p_point->y = 0x80000000;
+        point_clear(pt);
     }
     triangulation[0].free_Points = -1;
 

@@ -60,6 +60,24 @@ TrTriangId tri_new(void)
     return tri;
 }
 
+void tri_clear(TrTriangId tri)
+{
+    struct TrTriangle *p_tri;
+    TrTipId cor;
+
+    p_tri = &triangulation[0].Triangles[tri];
+
+    p_tri->solid = TRIANGLE_UNALLOCATED_MARK;
+    for (cor = 0; cor < 3; cor++) {
+        p_tri->point[cor] = 0;
+    }
+    for (cor = 0; cor < 3; cor++) {
+        p_tri->tri[cor] = -1;
+    }
+    p_tri->jump = -1;
+    p_tri->enter = 0;
+}
+
 void tri_dispose(TrTriangId tri)
 {
     struct TrTriangle *p_tri;

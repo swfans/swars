@@ -59,6 +59,13 @@ TrTriangId tri_new(void);
  */
 void tri_dispose(TrTriangId tri);
 
+/** Clear all properties of the triangle.
+ *
+ * Prepared for initialization of all triangles, and clearing reserved triangles.
+ * Clearing a disposed triangle with this call would break free trangles chain.
+ */
+void tri_clear(TrTriangId tri);
+
 /** Returns if given triangle is allocated (is not free and is not invalid).
  */
 TbBool tri_is_allocated(TrTriangId tri);
