@@ -41,7 +41,7 @@ struct MyMapElement { // sizeof=18
   ushort Texture;
   ushort field_2;
   ushort field_4;
-  ushort field_6;
+  ushort Alt;
   short Child; /**< offs=0x08 Index of a first Thing in a chain of things located on this element. */
   ushort ColHead; /**< offs=0x0A Index of ColVectList for this tile. */
   ubyte field_C;
