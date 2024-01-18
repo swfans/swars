@@ -59,6 +59,10 @@ TrTriangId tri_new(void);
  */
 void tri_dispose(TrTriangId tri);
 
+/** Returns if given triangle is allocated (is not free and is not invalid).
+ */
+TbBool tri_is_allocated(TrTriangId tri);
+
 /** Find edge index within given triangle which links it to next triangle.
  */
 TrTipId link_find(TrTriangId tri, TrTriangId tri_nx);

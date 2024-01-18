@@ -73,6 +73,16 @@ void tri_dispose(TrTriangId tri)
     triangulation[0].count_Triangles--;
 }
 
+TbBool tri_is_allocated(TrTriangId tri)
+{
+    struct TrTriangle *p_tri;
+
+    if (tri < 0)
+        return false;
+    p_tri = &triangulation[0].Triangles[tri];
+    return (p_tri->solid != TRIANGLE_UNALLOCATED_MARK);
+}
+
 TrTipId link_find(TrTriangId tri, TrTriangId tri_nx)
 {
     struct TrTriangle *p_tri;

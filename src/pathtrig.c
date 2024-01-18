@@ -40,6 +40,8 @@ extern long thin_wall_x2, thin_wall_y2;
 
 #define MAX_THINGS_ON_TILE 200
 
+extern const short MOD3[] ;
+
 void path_init8_unkn3(struct Path *path, int ax8, int ay8, int bx8, int by8, int a6)
 {
     asm volatile (
@@ -47,6 +49,19 @@ void path_init8_unkn3(struct Path *path, int ax8, int ay8, int bx8, int by8, int
       "push %4\n"
       "call ASM_path_init8_unkn3\n"
         : : "a" (path), "d" (ax8), "b" (ay8), "c" (bx8), "g" (by8), "g" (a6));
+}
+
+//TODO temp copy of static func
+static sbyte path_compare_multiplications(long mul1a, long mul1b, long mul2a, long mul2b)
+{
+    long long mul1,mul2;
+    mul1 = (long long)mul1a * (long long)mul1b;
+    mul2 = (long long)mul2a * (long long)mul2b;
+    if (mul1 > mul2)
+        return 1;
+    if (mul1 < mul2)
+        return -1;
+    return 0;
 }
 
 TbBool triangle_contains8(int tri, int x, int y)
@@ -57,12 +72,171 @@ TbBool triangle_contains8(int tri, int x, int y)
     return ret;
 }
 
+int pointed_at8(int pt_x, int pt_y, int *r_tri, int *r_cor)
+{
+#if 1
+    int ret;
+    asm volatile ("call ASM_pointed_at8\n"
+        : "=r" (ret) : "a" (pt_x), "d" (pt_y), "b" (r_tri), "c" (r_cor));
+    return ret;
+#else
+    struct TrTriangle *p_tri;
+    struct TrPoint *p_pt;
+
+    TrTipId cor;
+    TrTriangId tri;
+    int ptBx;
+    int ptBy;
+    int ptAx;
+    int ptAy;
+
+    tri = *r_tri;
+    cor = *r_cor;
+
+    if (!tri_is_allocated(tri)) {
+        return -1;
+    }
+    p_tri = &triangulation[0].Triangles[tri];
+
+    p_pt = &triangulation[0].Points[p_tri->point[cor]];
+    ptAx = (p_pt->x << 8) - pt_x;
+    ptAy = (p_pt->y << 8) - pt_y;
+    p_pt = &triangulation[0].Points[p_tri->point[MOD3[cor+2]]];
+    ptBx = (p_pt->x << 8) - pt_x;
+    ptBy = (p_pt->y << 8) - pt_y;
+    TbBool pt_rel;
+    pt_rel = path_compare_multiplications(ptBy, ptAx, ptBx, ptAy) > 0;
+    TbBool prev_rel;
+    long k;
+    k = 0;
+    while ( 1 )
+    {
+        prev_rel = pt_rel;
+        p_tri = &triangulation[0].Triangles[tri];
+        p_pt = &triangulation[0].Points[p_tri->point[MOD3[cor+1]]];
+        ptBy = (p_pt->y << 8) - pt_y;
+        ptBx = (p_pt->x << 8) - pt_x;
+        pt_rel = path_compare_multiplications(ptBy, ptAx, ptBx, ptAy) > 0;
+
+        if ( prev_rel && !pt_rel )
+        {
+            *r_tri = tri;
+            *r_cor = cor;
+            return MOD3[cor+1];
+        }
+        TrTriangId lnk_tri;
+        TrTipId lnk_cor;
+        lnk_tri = p_tri->tri[cor];
+        if (lnk_tri < 0) {
+            break;
+        }
+        lnk_cor = link_find(lnk_tri, tri);
+        if (lnk_cor < 0) {
+            LOGERR("no tri link from %d to %d", (int)lnk_tri, (int)tri);
+            break;
+        }
+        cor = MOD3[lnk_cor+1];
+        tri = lnk_tri;
+        k++;
+        if (k >= triangulation[0].max_Triangles) {
+            LOGERR("Infinite loop detected");
+            break;
+        }
+    }
+    return -1;
+#endif
+}
+
 int triangle_find8(int pt_x, int pt_y)
 {
+#if 1
     int ret;
     asm volatile ("call ASM_triangle_find8\n"
         : "=r" (ret) : "a" (pt_x), "d" (pt_y));
     return ret;
+#else
+    int tri; //TODO switch type to TrTriangId
+    int remain;
+
+    tri = triangulation[0].last_tri;
+
+    if (!tri_is_allocated(tri))
+    {
+        for (tri = 0; tri < triangulation[0].ix_Triangles; tri++)
+        {
+            if (tri_is_allocated(tri) && triangle_contains8(tri, pt_x, pt_y))
+                break;
+        }
+        if (tri >= triangulation[0].ix_Triangles) {
+            tri = -1;
+        }
+        triangulation[0].last_tri = tri;
+        return tri;
+    }
+
+    remain = 2000;
+    while (tri >= 0)
+    {
+        struct TrTriangle *p_tri;
+        int pt0_x, pt0_y;
+        int pt1_x, pt1_y;
+        int pt2_x, pt2_y;
+        TbBool eqA, eqB, eqC;
+
+        remain--;
+        if (remain <= 0) {
+            tri = -1;
+            LOGERR("Cannot find (%d,%d)", pt_x, pt_y);
+            break;
+        }
+        p_tri = &triangulation[0].Triangles[tri];
+        {
+            struct TrPoint *p_pt;
+            p_pt = &triangulation[0].Points[p_tri->point[0]];
+            pt0_x = p_pt->x << 8;
+            pt0_y = p_pt->y << 8;
+            p_pt = &triangulation[0].Points[p_tri->point[1]];
+            pt1_x = p_pt->x << 8;
+            pt1_y = p_pt->y << 8;
+            p_pt = &triangulation[0].Points[p_tri->point[2]];
+            pt2_x = p_pt->x << 8;
+            pt2_y = p_pt->y << 8;
+        }
+        eqA = path_compare_multiplications(pt1_x - pt0_x, pt_y - pt1_y, pt_x - pt1_x, pt1_y - pt0_y) > 0;
+        eqB = path_compare_multiplications(pt2_x - pt1_x, pt_y - pt2_y, pt_x - pt2_x, pt2_y - pt1_y) > 0;
+        eqC = path_compare_multiplications(pt0_x - pt2_x, pt_y - pt0_y, pt_x - pt0_x, pt0_y - pt2_y) > 0;
+        if (!eqA && !eqB && !eqC)
+            break;
+
+        if (eqA && !eqB && !eqC && p_tri->tri[0] >= 0) {
+            tri = triangulation[0].Triangles[tri].tri[0];
+        } else if (eqB && !eqC && !eqA && p_tri->tri[1] >= 0) {
+            tri = triangulation[0].Triangles[tri].tri[1];
+        } else if (eqC && !eqA && !eqB && p_tri->tri[2] >= 0) {
+            tri = triangulation[0].Triangles[tri].tri[2];
+        } else if (eqA && eqB) {
+            int cor, rcor;
+            cor = 1;
+            rcor = pointed_at8(pt_x, pt_y, &tri, &cor);
+            if (rcor < 0) tri = -1;
+        } else if (eqB && eqC) {
+            int cor, rcor;
+            cor = 2;
+            rcor = pointed_at8(pt_x, pt_y, &tri, &cor);
+            if (rcor < 0) tri = -1;
+        } else if (eqC && eqA) {
+            int cor, rcor;
+            cor = 0;
+            rcor = pointed_at8(pt_x, pt_y, &tri, &cor);
+            if (rcor < 0) tri = -1;
+        }
+    }
+    if (tri >= 0 && !triangle_contains8(tri, pt_x, pt_y)) {
+        tri = -1;
+    }
+    triangulation[0].last_tri = tri;
+    return tri;
+#endif
 }
 
 int triangle_findSE8(int x, int y)
@@ -70,14 +244,6 @@ int triangle_findSE8(int x, int y)
     int ret;
     asm volatile ("call ASM_triangle_findSE8\n"
         : "=r" (ret) : "a" (x), "d" (y));
-    return ret;
-}
-
-int pointed_at8(int a1, int a2, int *a3, int *a4)
-{
-    int ret;
-    asm volatile ("call ASM_pointed_at8\n"
-        : "=r" (ret) : "a" (a1), "d" (a2), "b" (a3), "c" (a4));
     return ret;
 }
 
@@ -155,12 +321,13 @@ TbBool insert_point(int pt_x, int pt_y)
 
     tri = triangle_find8(pt_x << 8, pt_y << 8);
     if (tri == -1) {
-        LOGERR("triangle not found");
+        LOGERR("triangle not found at (%d,%d)", (int)pt_x, (int)pt_y);
         return false;
     }
 
-    if (triangle_has_point_coord(tri, pt_x, pt_y))
+    if (triangle_has_point_coord(tri, pt_x, pt_y)) {
         return true;
+    }
 
     if (triangle_divide_areas_differ(tri, 0, 1, pt_x, pt_y) == 0)
     {
@@ -236,13 +403,13 @@ void brute_fill_rectangle(int x1, int y1, int x2, int y2, ubyte solid)
     {
         struct TrTriangle *p_tri;
 
-        p_tri = &triangulation[0].Triangles[tri];
-        if (p_tri->solid == 255)
+        if (!tri_is_allocated(tri))
             continue;
 
         if (!triangle_contained_within_rect_coords(tri, x1, y1, x2, y2))
             continue;
 
+        p_tri = &triangulation[0].Triangles[tri];
         p_tri->solid = solid;
     }
 #endif
@@ -355,6 +522,9 @@ void triangulation_initxy(int x1, int y1, int x2, int y2)
         p_tri = &triangulation[0].Triangles[tri];
 
         p_tri->solid = 255;
+        for (cor = 0; cor < 3; cor++) {
+            p_tri->point[cor] = 0;
+        }
         for (cor = 0; cor < 3; cor++) {
             p_tri->tri[cor] = -1;
         }
@@ -1113,9 +1283,9 @@ void add_obj_face_to_col_vect(short x1, short y1, short z1, short x2, short y2, 
     step_z = (delta_z << 10) / dist;
     for (; dist >= 0; dist--)
     {
-          add_next_col_vect_to_vects_list(x >> 10, z >> 10, face, flags);
-          x += step_x;
-          z += step_z;
+        add_next_col_vect_to_vects_list(x >> 10, z >> 10, face, flags);
+        x += step_x;
+        z += step_z;
     }
     next_col_vect++;
 }
