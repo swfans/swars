@@ -49,6 +49,14 @@ void path_init8_unkn3(struct Path *path, int ax8, int ay8, int bx8, int by8, int
         : : "a" (path), "d" (ax8), "b" (ay8), "c" (bx8), "g" (by8), "g" (a6));
 }
 
+TbBool triangle_contains8(int tri, int x, int y)
+{
+    TbBool ret;
+    asm volatile ("call ASM_triangle_contains8\n"
+        : "=r" (ret) : "a" (tri), "d" (x), "b" (y));
+    return ret;
+}
+
 int triangle_find8(int pt_x, int pt_y)
 {
     int ret;
@@ -118,8 +126,9 @@ TbBool point_find(TrCoord pt_x, TrCoord pt_y, TrTriangId *rtri, TrTipId *rcor)
     TrTipId cor;
 
     tri = triangle_find8(pt_x << 8, pt_y << 8);
-    if (tri < 0)
+    if (tri < 0) {
         return false;
+    }
 
     for (cor = 0; cor < 3; cor++)
     {
@@ -328,16 +337,86 @@ void tri_set_rectangle(int x1, int y1, int x2, int y2, ubyte solid)
 
 void triangulation_initxy(int x1, int y1, int x2, int y2)
 {
+#if 0
     asm volatile (
       "call ASM_triangulation_initxy\n"
         : : "a" (x1), "d" (y1), "b" (x2), "c" (y2));
+#else
+    int tri, pt;
+    struct TrTriangle *p_tri;
+    struct TrPoint *p_point;
+
+    triangulation[0].tri_initialised = 1;
+
+    for (tri = 0; tri < triangulation[0].max_Triangles; tri++)
+    {
+        short cor;
+
+        p_tri = &triangulation[0].Triangles[tri];
+
+        p_tri->solid = 255;
+        for (cor = 0; cor < 3; cor++) {
+            p_tri->tri[cor] = -1;
+        }
+        p_tri->jump = -1;
+        p_tri->enter = 0;
+    }
+    triangulation[0].free_Triangles = -1;
+
+    for (pt = 0; pt < triangulation[0].max_Points; pt++)
+    {
+        p_point = &triangulation[0].Points[pt];
+        p_point->y = 0x80000000;
+    }
+    triangulation[0].free_Points = -1;
+
+    p_point = &triangulation[0].Points[0];
+    p_point->x = x1;
+    p_point->y = y1;
+    p_point = &triangulation[0].Points[1];
+    p_point->x = x2;
+    p_point->y = y1;
+    p_point = &triangulation[0].Points[2];
+    p_point->x = x2;
+    p_point->y = y2;
+    p_point = &triangulation[0].Points[3];
+    p_point->x = x1;
+    p_point->y = y2;
+    triangulation[0].ix_Points = 4;
+    triangulation[0].count_Points = 4;
+
+    p_tri = &triangulation[0].Triangles[0];
+    p_tri->point[0] = 3;
+    p_tri->point[1] = 1;
+    p_tri->point[2] = 0;
+    p_tri->tri[0] = 1;
+    p_tri->tri[1] = -1;
+    p_tri->tri[2] = -1;
+    p_tri->solid = 0;
+    p_tri->enter = 7;
+    p_tri = &triangulation[0].Triangles[1];
+    p_tri->point[0] = 1;
+    p_tri->point[1] = 3;
+    p_tri->point[2] = 2;
+    p_tri->tri[0] = 0;
+    p_tri->tri[1] = -1;
+    p_tri->tri[2] = -1;
+    p_tri->solid = 0;
+    p_tri->enter = 7;
+    triangulation[0].ix_Triangles = 2;
+    triangulation[0].count_Triangles = 2;
+#endif
 }
 
 void triangulation_init(void)
 {
+    int dim_lo, dim_hi;
+    dim_lo = -4096;
+    dim_hi = 32768+4096+512;
+
     triangulation[0].triangle_top = triangulation[0].max_Triangles;
     triangulation[0].point_top = triangulation[0].max_Points;
-    triangulation_initxy(-4096, -4096, 37376, 37376);
+    triangulation_initxy(dim_lo, dim_lo, dim_hi, dim_hi);
     triangulation[0].last_tri = -1;
 }
 
@@ -347,17 +426,23 @@ void triangulation_init_edges(void)
     asm volatile ("call ASM_triangulation_init_edges\n"
         :  :  : "eax" );
 #else
-    insert_point(-3840, -3840);
-    insert_point(37120, -3840);
-    insert_point(-3840, 37120);
-    insert_point(37120, 37120);
-    make_edge(-3840, -3840, 37120, -3840);
-    make_edge(37120, -3840, 37120, 37120);
-    make_edge(37120, 37120, -3840, 37120);
-    make_edge(-3840, 37120, -3840, -3840);
+    int dim_lo, dim_hi;
+    dim_lo = -4096+256;
+    dim_hi = 32768+4096+256;
+
+    insert_point(dim_lo, dim_lo);
+    insert_point(dim_hi, dim_lo);
+    insert_point(dim_lo, dim_hi);
+    insert_point(dim_hi, dim_hi);
+    make_edge(dim_lo, dim_lo, dim_hi, dim_lo);
+    make_edge(dim_hi, dim_lo, dim_hi, dim_hi);
+    make_edge(dim_hi, dim_hi, dim_lo, dim_hi);
+    make_edge(dim_lo, dim_hi, dim_lo, dim_lo);
 #endif
 }
 
+/** Part of triangulation allocation.
+ */
 void triangulation_initialize(void)
 {
     asm volatile ("call ASM_triangulation_initialize\n"
@@ -1227,12 +1312,14 @@ void generate_thin_walls(void)
 
 void generate_map_triangulation(void)
 {
+#if 0
     triangulation_init();
     // TODO should this be replaced by triangulation_init_edges()?
     thin_wall(0, 0, 255, 0, 1, 1);
     thin_wall(255, 0, 255, 255, 1, 1);
     thin_wall(255, 255, 0, 255, 1, 1);
     thin_wall(0, 255, 0, 0, 1, 1);
+#endif
     init_collision_vects();
     generate_walk_items();
     update_mapel_collision_columns();

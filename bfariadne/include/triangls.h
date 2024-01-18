@@ -41,11 +41,11 @@ typedef short TrTipId;
 /** Triangulation triangle struct.
  */
 struct TrTriangle {
-    TrPointId point[3];
-    TrTriangId tri[3];
-    short jump;
-    ubyte solid;
-    ubyte enter;
+    TrPointId point[3]; /**< offs=0x00 Indexes to TrPoint structs. */
+    TrTriangId tri[3]; /**< offs=0x06 (6 bytes) Indexes to sibling ThTriangle structs. */
+    short jump; /**< offs=0x0C */
+    ubyte solid; /**< offs=0x0E */
+    ubyte enter; /**< offs=0x0F */
 };
 
 #pragma pack()
