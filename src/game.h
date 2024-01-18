@@ -276,6 +276,10 @@ struct ColVectList { // sizeof=6
   short Object;
 };
 
+struct ColColumn { // sizeof=16
+    uint QBits[4];
+};
+
 struct WalkHeader { // sizeof=4
     ushort Count;
     ushort StartItem;

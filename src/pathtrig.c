@@ -764,9 +764,129 @@ void generate_walk_items(void)
     }
 }
 
+void set_mapel_col_columns(struct MyMapElement *p_mapel, short setbit, ushort qb)
+{
+    struct ColColumn *p_ccol;
+    ushort ccol;
+
+    ccol = p_mapel->ColumnHead;
+    if (ccol == 0)
+    {
+        int limit;
+
+        limit = get_memory_ptr_allocated_count((void **)&game_col_columns);
+        if (next_col_column >= limit) {
+            LOGERR("out of col_columns");
+            return;
+        }
+        ccol = next_col_column;
+        next_col_column++;
+
+        p_mapel->ColumnHead = ccol;
+        p_ccol = &game_col_columns[ccol];
+        p_ccol->QBits[0] = 0;
+        p_ccol->QBits[1] = 0;
+        p_ccol->QBits[2] = 0;
+        p_ccol->QBits[3] = 0;
+    }
+    p_ccol = &game_col_columns[ccol];
+    p_ccol->QBits[qb] |= 1 << setbit;
+}
+
 void update_mapel_qbits_around_face(short face, ushort flags)
 {
-    //TODO implement
+    struct SinglePoint *p_pt0;
+    struct SinglePoint *p_pt1;
+    struct SinglePoint *p_pt2;
+    short obj_x, obj_y, obj_z;
+    int dist_B, dist_A;
+    int incr_B, incr_A;
+    int sh_A, sh_B;
+    int delta0_x, delta0_y, delta0_z;
+    int delta1_x, delta1_y, delta1_z;
+    int delta2_x, delta2_y, delta2_z;
+
+    if (face <= 0)
+    {
+        struct SingleObjectFace4 *p_face;
+
+        p_face = &game_object_faces4[-face];
+        obj_x = game_objects[p_face->Object].MapX;
+        obj_y = game_objects[p_face->Object].OffsetY;
+        obj_z = game_objects[p_face->Object].MapZ;
+        p_pt0 = &game_object_points[p_face->PointNo[0]];
+        p_pt1 = &game_object_points[p_face->PointNo[1]];
+        p_pt2 = &game_object_points[p_face->PointNo[2]];
+    }
+    else
+    {
+        struct SingleObjectFace3 *p_face;
+
+        p_face = &game_object_faces[face];
+        obj_x = game_objects[p_face->Object].MapX;
+        obj_y = game_objects[p_face->Object].OffsetY;
+        obj_z = game_objects[p_face->Object].MapZ;
+        p_pt0 = &game_object_points[p_face->PointNo[0]];
+        p_pt1 = &game_object_points[p_face->PointNo[1]];
+        p_pt2 = &game_object_points[p_face->PointNo[2]];
+    }
+    delta0_x = p_pt0->X + obj_x;
+    delta0_y = p_pt0->Y + obj_y;
+    delta0_z = p_pt0->Z + obj_z;
+    delta1_x = p_pt1->X - p_pt0->X;
+    delta1_y = p_pt1->Y - p_pt0->Y;
+    delta1_z = p_pt1->Z - p_pt0->Z;
+    delta2_x = p_pt2->X - p_pt0->X;
+    delta2_y = p_pt2->Y - p_pt0->Y;
+    delta2_z = p_pt2->Z - p_pt0->Z;
+    dist_A = LbSqrL(delta1_y * delta1_y + delta1_x * delta1_x + delta1_z * delta1_z) >> 7;
+    if (dist_A < 2)
+        dist_A = 2;
+    incr_A = 256 / dist_A;
+    dist_B = LbSqrL(delta2_x * delta2_x + delta2_y * delta2_y + delta2_z * delta2_z) >> 7;
+    if (dist_B < 2)
+        dist_B = 2;
+    incr_B = 256 / dist_B;
+    if ((incr_A <= 0) || (incr_B <= 0)) {
+        LOGERR("bad increment");
+        return;
+    }
+
+    for (sh_A = 0; sh_A < 256; sh_A += incr_A)
+    {
+        for ( sh_B = 0; sh_B < 256; sh_B += incr_B)
+        {
+            struct MyMapElement *mapel;
+            int ccx, ccy, ccz;
+            ushort qb;
+
+            ccx = (delta2_x * sh_B >> 8) + (delta1_x * sh_A >> 8) + delta0_x;
+            ccy = (delta2_y * sh_B >> 8) + (delta1_y * sh_A >> 8) + delta0_y;
+            ccz = (delta2_z * sh_B >> 8) + (delta1_z * sh_A >> 8) + delta0_z;
+            if ((ccx >> 8) < 0 || (ccx >> 8) >= MAP_TILE_WIDTH)
+                continue;
+            if ((ccz >> 8) < 0 || (ccz >> 8) >= MAP_TILE_HEIGHT)
+                continue;
+
+            mapel = &game_my_big_map[(ccx >> 8) + (ccz >> 8) * MAP_TILE_WIDTH];
+            if ((mapel->Alt - 20 <= ccy) && flags) {
+                mapel->Texture |= 0x8000;
+            }
+
+            if (ccx <= 127) {
+                if (ccz <= 127)
+                    qb = 0;
+                else
+                    qb = 3;
+            } else {
+                if (ccz <= 127)
+                    qb = 1;
+                else
+                    qb = 2;
+            }
+            set_mapel_col_columns(mapel, (ccy - mapel->Alt) >> 8, qb);
+        }
+    }
 }
 
 void update_mapel_qbits_around_object(ushort obj, ushort flags)
