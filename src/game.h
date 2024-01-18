@@ -503,6 +503,7 @@ extern ushort next_walk_header;
 extern short *game_walk_items;
 extern ushort next_walk_item;
 extern struct ColColumn *game_col_columns;
+extern ushort next_col_column;
 extern struct SingleObjectFace3 *game_special_object_faces;
 extern struct SingleObjectFace4 *game_special_object_faces4;
 extern struct FloorTile *game_floor_tiles;
