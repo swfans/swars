@@ -764,9 +764,32 @@ void generate_walk_items(void)
     }
 }
 
-void update_mapel_qbits_around_object(ushort obj, ushort flags)
+void update_mapel_qbits_around_face(short face, ushort flags)
 {
     //TODO implement
+}
+
+void update_mapel_qbits_around_object(ushort obj, ushort flags)
+{
+    short startface3, endface3;
+    short startface4, endface4;
+    short face;
+
+    {
+        struct SingleObject *p_obj;
+
+        p_obj = &game_objects[obj];
+        startface3 = p_obj->StartFace;
+        endface3 = startface3 + p_obj->NumbFaces;
+        startface4 = p_obj->StartFace4;
+        endface4 = startface4 + p_obj->NumbFaces4;
+    }
+    for (face = startface3; face < endface3; face++) {
+        update_mapel_qbits_around_face(face, flags);
+    }
+    for (face = startface4; face < endface4; face++) {
+        update_mapel_qbits_around_face(-face, flags);
+    }
 }
 
 void update_mapel_qbits(void)
