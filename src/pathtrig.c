@@ -38,6 +38,8 @@ extern long ixE;
 extern long thin_wall_x1, thin_wall_y1;
 extern long thin_wall_x2, thin_wall_y2;
 
+#define MAX_THINGS_ON_TILE 200
+
 void path_init8_unkn3(struct Path *path, int ax8, int ay8, int bx8, int by8, int a6)
 {
     asm volatile (
@@ -671,16 +673,17 @@ void add_walk_items_for_face_things_near(short x, short y, short z, short radius
             int tile_x, tile_z;
             struct MyMapElement *mapel;
             short thing;
+            int i;
 
             tile_x = (x >> 8) + shift_x;
             tile_z = (z >> 8) + shift_y;
-            if (tile_x <= 0 || tile_x >= 128)
+            if (tile_x < 0 || tile_x >= MAP_TILE_WIDTH)
                 continue;
-            if (tile_z <= 0 || tile_z >= 128)
+            if (tile_z < 0 || tile_z >= MAP_TILE_HEIGHT)
                 continue;
             mapel = &game_my_big_map[MAP_TILE_WIDTH * tile_z + tile_x];
             thing = mapel->Child;
-            while (thing != 0)
+            for (i = 0; thing != 0 && i < MAX_THINGS_ON_TILE; i++)
             {
                 if (thing <= 0) {
                     struct SimpleThing *p_sthing;
@@ -761,9 +764,52 @@ void generate_walk_items(void)
     }
 }
 
-void update_mapel_qbits(void)
+void update_mapel_qbits_around_object(ushort obj, ushort flags)
 {
     //TODO implement
+}
+
+void update_mapel_qbits(void)
+{
+    ushort tile_x, tile_z;
+
+    next_col_column = 1;
+    for (tile_x = 0; tile_x < MAP_TILE_WIDTH; tile_x++)
+    {
+        for (tile_z = 0; tile_z < MAP_TILE_HEIGHT; tile_z++)
+        {
+            struct MyMapElement *mapel;
+
+            mapel = &game_my_big_map[MAP_TILE_WIDTH * tile_z + tile_x];
+            mapel->ColumnHead = 0;
+        }
+    }
+    for (tile_x = 0; tile_x < MAP_TILE_WIDTH; tile_x++)
+    {
+        for (tile_z = 0; tile_z < MAP_TILE_HEIGHT; tile_z++)
+        {
+            struct MyMapElement *mapel;
+            short thing;
+            int i;
+
+            mapel = &game_my_big_map[MAP_TILE_WIDTH * tile_z + tile_x];
+            thing = mapel->Child;
+            for (i = 0; thing != 0 && i < MAX_THINGS_ON_TILE; i++)
+            {
+                if (thing <= 0) {
+                    struct SimpleThing *p_sthing;
+                    p_sthing = &sthings[thing];
+                    thing = p_sthing->Next;
+                } else {
+                    struct Thing *p_thing;
+                    p_thing = &things[thing];
+                    if (p_thing->Type == TT_BUILDING)
+                        update_mapel_qbits_around_object(p_thing->U.UObject.Object, 0);
+                    thing = p_thing->Next;
+                }
+            }
+        }
+    }
 }
 
 void add_next_col_vect_to_vects_list(short x, short z, short face, ubyte flags)
@@ -774,10 +820,10 @@ void add_next_col_vect_to_vects_list(short x, short z, short face, ubyte flags)
 
     tile_x = x >> 8;
     tile_z = z >> 8;
-    if (tile_x < 0 || tile_x > 128) {
+    if (tile_x < 0 || tile_x >= MAP_TILE_WIDTH) {
         return;
     }
-    if (tile_z < 0 || tile_z > 128) {
+    if (tile_z < 0 || tile_z >= MAP_TILE_HEIGHT) {
         return;
     }
 
@@ -984,8 +1030,10 @@ void generate_collision_vects(void)
         for (tile_z = 0; tile_z < MAP_TILE_HEIGHT; tile_z++)
         {
             short thing;
+            int i;
+
             thing = get_mapwho_thing_index(tile_x, tile_z);
-            while (thing != 0)
+            for (i = 0; thing != 0 && i < MAX_THINGS_ON_TILE; i++)
             {
                 if (thing <= 0) {
                     struct SimpleThing *p_sthing;
