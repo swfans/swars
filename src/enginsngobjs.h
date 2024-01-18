@@ -59,12 +59,12 @@ struct SingleObjectFace3OldV7 { // sizeof=48
     ushort Light0;
     ushort Light1;
     ushort Light2;
-    ushort FaceNormal;
+    ushort FaceNormalDoubt;
     ubyte field_1C[3];
     ubyte field_1F;
     ubyte field_20[6];
-    ushort FaceNormal2;
-    ushort WalkHeader; /**< offs=0x34 Index of the WalkHeader created for this face. */
+    ushort FaceNormal; /**< offs=0x26 Index of the Normal vector created for this face. */
+    ushort WalkHeader; /**< offs=0x28 Index of the WalkHeader created for this face. */
     ubyte field_2A[6];
 };
 
@@ -104,11 +104,11 @@ struct SingleObjectFace4OldV7 { // sizeof=60
     short Light1;
     short Light2;
     short Light3;
-    ushort FaceNormal;
+    ushort FaceNormalDoubt;
     ubyte field_22[5];
     ubyte field_27;
     ubyte field_28[10];
-    ushort FaceNormal2;
+    ushort FaceNormal; /**< offs=0x32 Index of the Normal vector created for this face. */
     ushort WalkHeader; /**< offs=0x34 Index of the WalkHeader created for this face. */
     ubyte field_36[4];
     ushort field_3A;
