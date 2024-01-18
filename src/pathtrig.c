@@ -442,6 +442,56 @@ void init_collision_vects(void)
     }
 }
 
+void add_face4_walk_item(short face, short walk_face)
+{
+    struct SingleObjectFace4 *p_face;
+    struct WalkHeader *p_walk_head;
+    ushort new_wi;
+
+    p_face = &game_object_faces4[face];
+    p_walk_head = &game_walk_headers[p_face->WalkHeader];
+    new_wi = next_walk_item;
+    next_walk_item++;
+    p_walk_head->Count++;
+    game_walk_items[new_wi] = walk_face;
+}
+
+TbBool face_has_walk_item(short face, short walk_face)
+{
+    struct SingleObjectFace3 *p_face;
+    struct WalkHeader *p_walk_head;
+    ushort wi;
+
+    p_face = &game_object_faces[face];
+    p_walk_head = &game_walk_headers[p_face->WalkHeader];
+
+    for (wi = p_walk_head->StartItem;
+      wi < p_walk_head->StartItem + p_walk_head->Count; wi++)
+    {
+        if (game_walk_items[wi] == walk_face)
+            return true;
+    }
+    return false;
+}
+
+void add_face_walk_item(short face, short walk_face)
+{
+    struct SingleObjectFace3 *p_face;
+    struct WalkHeader *p_walk_head;
+    ushort new_wi;
+
+    if (face_has_walk_item(face, walk_face)) {
+        return;
+    }
+
+    p_face = &game_object_faces[face];
+    p_walk_head = &game_walk_headers[p_face->WalkHeader];
+    new_wi = next_walk_item;
+    next_walk_item++;
+    p_walk_head->Count++;
+    game_walk_items[new_wi] = walk_face;
+}
+
 int face_to_object_position(short face, short *x, short *y, short *z)
 {
     if (face < 0)
@@ -473,15 +523,16 @@ int face_to_object_position(short face, short *x, short *y, short *z)
 
 int add_walk_items_for_face_object(short face, short obj)
 {
-#if 0
     short fcobj_x, fcobj_y, fcobj_z;
     short gvobj_x, gvobj_y, gvobj_z;
+    short gvpt_x, gvpt_y, gvpt_z;
     short num_points;
-    short face;
+    short cface;
     short startface3, endface3;
     short startface4, endface4;
+    short cor;
 
-    num_points = face_to_object_position(face, &fcobj_x, &fcobj_y, &fcobj_z)
+    num_points = face_to_object_position(face, &fcobj_x, &fcobj_y, &fcobj_z);
     {
         struct SingleObject *p_obj;
 
@@ -494,9 +545,103 @@ int add_walk_items_for_face_object(short face, short obj)
         startface4 = p_obj->StartFace4;
         endface4 = startface4 + p_obj->NumbFaces4;
     }
-#endif
-    //TODO implement
-  return 0;
+
+    for (cor = 0; cor < num_points; cor++)
+    {
+        if (face < 0)
+        {
+            struct SingleObjectFace4 *p_face;
+            struct SinglePoint *p_pt;
+
+            p_face = &game_object_faces4[-face];
+            p_pt = &game_object_points[p_face->PointNo[cor]];
+            gvpt_x = gvobj_x + p_pt->X;
+            gvpt_y = gvobj_y + p_pt->Y;
+            gvpt_z = gvobj_z + p_pt->Z;
+        }
+        else if (face > 0)
+        {
+            struct SingleObjectFace3 *p_face;
+            struct SinglePoint *p_pt;
+
+            p_face = &game_object_faces[face];
+            p_pt = &game_object_points[p_face->PointNo[cor]];
+            gvpt_x = gvobj_x + p_pt->X;
+            gvpt_y = gvobj_y + p_pt->Y;
+            gvpt_z = gvobj_z + p_pt->Z;
+        }
+
+        for (cface = startface3; cface < endface3; cface++)
+        {
+            struct SingleObjectFace3 *p_face;
+            short ccor;
+            p_face = &game_object_faces[cface];
+            if ((p_face->GFlags & 0x04) == 0) {
+                continue;
+            }
+            if ((cface == face) || (cface == -face)) {
+                continue;
+            }
+            if (game_normals[p_face->FaceNormal].NY == 0) {
+                continue;
+            }
+            for (ccor = 0; ccor < 3; ccor++)
+            {
+                struct SinglePoint *p_pt;
+                int delta_x, delta_y, delta_z;
+
+                p_pt = &game_object_points[p_face->PointNo[ccor]];
+                delta_x = (p_pt->X + gvobj_x) - gvpt_x;
+                delta_y = (p_pt->Y + gvobj_y) - gvpt_y;
+                delta_z = (p_pt->Z + gvobj_z) - gvpt_z;
+
+                if (delta_z * delta_z + delta_y * delta_y + delta_x * delta_x < 1900)
+                {
+                    if (face <= 0)
+                        add_face4_walk_item(-face, cface);
+                    else
+                        add_face_walk_item(face, cface);
+                    break;
+                }
+            }
+        }
+
+        for (cface = startface4; cface < endface4; cface++)
+        {
+            struct SingleObjectFace4 *p_face;
+            short ccor;
+            p_face = &game_object_faces4[cface];
+            if ((p_face->GFlags & 0x04) == 0) {
+                continue;
+            }
+            if ((cface == face) || (cface == -face)) {
+                continue;
+            }
+            if (game_normals[p_face->FaceNormal].NY == 0) {
+                continue;
+            }
+            for (ccor = 0; ccor < 4; ccor++)
+            {
+                struct SinglePoint *p_pt;
+                int delta_x, delta_y, delta_z;
+
+                p_pt = &game_object_points[p_face->PointNo[ccor]];
+                delta_x = (p_pt->X + gvobj_x) - gvpt_x;
+                delta_y = (p_pt->Y + gvobj_y) - gvpt_y;
+                delta_z = (p_pt->Z + gvobj_z) - gvpt_z;
+
+                if (delta_z * delta_z + delta_y * delta_y + delta_x * delta_x < 1900)
+                {
+                    if (face <= 0)
+                        add_face4_walk_item(-face, -cface);
+                    else
+                        add_face_walk_item(face, -cface);
+                    break;
+                }
+            }
+        }
+    }
+    return 0;
 }
 
 void add_walk_items_for_face_things_near(short x, short y, short z, short radius, short face)
