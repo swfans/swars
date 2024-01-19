@@ -162,8 +162,13 @@ extern ushort next_object_point;
 extern ushort next_normal;
 extern ushort next_object;
 
+/** Maps fields from old SingleObjectFace3 struct to the current one.
+ */
 void refresh_old_object_face_format(struct SingleObjectFace3 *p_objface,
   struct SingleObjectFace3OldV7 *p_oldobjface, ulong fmtver);
+
+/** Maps fields from old SingleObjectFace4 struct to the current one.
+ */
 void refresh_old_object_face4_format(struct SingleObjectFace4 *p_objface4,
   struct SingleObjectFace4OldV7 *p_oldobjface4, ulong fmtver);
 /******************************************************************************/

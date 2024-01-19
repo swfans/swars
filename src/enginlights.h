@@ -74,6 +74,8 @@ extern ushort next_quick_light;
 extern ushort next_full_light;
 extern ushort next_light_command;
 
+/** Maps fields from old FullLight struct to the current one.
+ */
 void refresh_old_full_light_format(struct FullLight *p_fulight,
   struct FullLightOldV12 *p_oldfulight, ulong fmtver);
 /******************************************************************************/

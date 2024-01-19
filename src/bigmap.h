@@ -38,7 +38,7 @@ extern "C" {
 #define SPIRAL_STEPS_COUNT   1700
 
 struct MyMapElement { // sizeof=18
-  ushort Texture; /**< offs=0x00 Texture reference and texture flags. */
+  ushort Texture; /**< offs=0x00 Index of SingleFloorTexture for this tile, and texture flags. */
   ushort Shade;
   ushort field_4;
   ushort Alt; /**< offs=0x06 Ground element altitude. */
@@ -52,7 +52,7 @@ struct MyMapElement { // sizeof=18
 };
 
 struct MyMapElementOldV7 { // sizeof=24
-  ushort Texture; /**< offs=0x00 Texture reference and texture flags. */
+  ushort Texture; /**< offs=0x00 Index of SingleFloorTexture for this tile, and texture flags. */
   ushort field_2;
   ushort field_4;
   ushort field_6;
