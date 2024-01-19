@@ -124,6 +124,28 @@ void refresh_old_floor_texture_format(struct SingleFloorTexture *p_fltextr,
         if (floor_texture_is_from_index(p_fltextr, 23)) {
             floor_texture_switch_to_index(p_fltextr, 21);
             floor_texture_rotate(p_fltextr, 3);
+        } else
+        if (floor_texture_is_from_index(p_fltextr, 44)) {
+            floor_texture_switch_to_index(p_fltextr, 42);
+            floor_texture_rotate(p_fltextr, 3);
+        } else
+        if (floor_texture_is_from_index(p_fltextr, 45)) {
+            floor_texture_switch_to_index(p_fltextr, 43);
+            floor_texture_rotate(p_fltextr, 2);
+        } else
+        if (floor_texture_is_from_index(p_fltextr, 46)) {
+            floor_texture_rotate(p_fltextr, 2);
+        } else
+        if (floor_texture_is_from_index(p_fltextr, 57)) {
+            // No such texture - selecting closest match
+            floor_texture_switch_to_index(p_fltextr, 63);
+        } else
+        if (floor_texture_is_from_index(p_fltextr, 60)) {
+            floor_texture_switch_to_index(p_fltextr, 58);
+            floor_texture_rotate(p_fltextr, 3);
+        } else
+        if (floor_texture_is_from_index(p_fltextr, 62)) {
+            floor_texture_switch_to_index(p_fltextr, 61);
         }
     }
 }
