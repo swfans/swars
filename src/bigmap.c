@@ -72,9 +72,12 @@ void refresh_old_my_big_map_format(struct MyMapElement *p_mapel, struct MyMapEle
             short k;
             k = p_mapel->Texture;
             k = -k;
-            k = (k & 0xFF) | ((k - (128 << 8)) & 0xFF00);
+            k = (k & 0xFF) | ((k - (0x80 << 8)) & 0xFF00);
             p_mapel->Texture = k;
         }
+    } else if (fmtver <= 14)
+    {
+        //TODO some textures need fixing here, ie. road-walkway transition
     }
 }
 
