@@ -74,24 +74,57 @@ void floor_texture_rotate(struct SingleFloorTexture *p_fltextr, int rot)
     }
 }
 
+/** Switches floor texture to given index, without losing rotation.
+ */
+void floor_texture_switch_to_index(struct SingleFloorTexture *p_fltextr, int index)
+{
+    short beg_x, beg_y;
+
+    beg_x = (index % 8) * 32;
+    beg_y = (index / 8) * 32;
+
+    p_fltextr->TMapX1 = beg_x + (p_fltextr->TMapX1 % 32);
+    p_fltextr->TMapX2 = beg_x + (p_fltextr->TMapX2 % 32);
+    p_fltextr->TMapX3 = beg_x + (p_fltextr->TMapX3 % 32);
+    p_fltextr->TMapX4 = beg_x + (p_fltextr->TMapX4 % 32);
+
+    p_fltextr->TMapX1 = beg_y + (p_fltextr->TMapX1 % 32);
+    p_fltextr->TMapX2 = beg_y + (p_fltextr->TMapX2 % 32);
+    p_fltextr->TMapX3 = beg_y + (p_fltextr->TMapX3 % 32);
+    p_fltextr->TMapX4 = beg_y + (p_fltextr->TMapX4 % 32);
+}
+
 void refresh_old_floor_texture_format(struct SingleFloorTexture *p_fltextr,
   struct SingleFloorTexture *p_oldfltextr, ulong fmtver)
 {
     LbMemoryCopy(p_fltextr, p_oldfltextr, sizeof(struct SingleFloorTexture));
 
-    if (floor_texture_is_from_index(p_fltextr, 19)) {
-        p_fltextr->TMapX1 -= 32;
-        p_fltextr->TMapX2 -= 32;
-        p_fltextr->TMapX3 -= 32;
-        p_fltextr->TMapX4 -= 32;
-        floor_texture_rotate(p_fltextr, 3);
-    }
-    if (floor_texture_is_from_index(p_fltextr, 3)) {
-        p_fltextr->TMapX1 -= 32;
-        p_fltextr->TMapX2 -= 32;
-        p_fltextr->TMapX3 -= 32;
-        p_fltextr->TMapX4 -= 32;
-        floor_texture_rotate(p_fltextr, 3);
+    if (p_fltextr->Page == 0)
+    {
+        if (floor_texture_is_from_index(p_fltextr, 3)) {
+            floor_texture_switch_to_index(p_fltextr, 2);
+            floor_texture_rotate(p_fltextr, 3);
+        } else
+        if (floor_texture_is_from_index(p_fltextr, 6)) {
+            floor_texture_switch_to_index(p_fltextr, 4);
+            floor_texture_rotate(p_fltextr, 3);
+        } else
+        if (floor_texture_is_from_index(p_fltextr, 7)) {
+            floor_texture_switch_to_index(p_fltextr, 5);
+            floor_texture_rotate(p_fltextr, 3);
+        } else
+        if (floor_texture_is_from_index(p_fltextr, 19)) {
+            floor_texture_switch_to_index(p_fltextr, 18);
+            floor_texture_rotate(p_fltextr, 3);
+        } else
+        if (floor_texture_is_from_index(p_fltextr, 22)) {
+            floor_texture_switch_to_index(p_fltextr, 20);
+            floor_texture_rotate(p_fltextr, 3);
+        } else
+        if (floor_texture_is_from_index(p_fltextr, 23)) {
+            floor_texture_switch_to_index(p_fltextr, 21);
+            floor_texture_rotate(p_fltextr, 3);
+        }
     }
 }
 
