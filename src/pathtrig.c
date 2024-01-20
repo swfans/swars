@@ -1006,6 +1006,53 @@ void generate_walk_items(void)
     }
 }
 
+static void print_walk_items_for_face(short face)
+{
+    struct WalkHeader *p_walk_head;
+    ushort wh, wi;
+
+    if (face > 0)
+    {
+        struct SingleObjectFace3 *p_face;
+
+        p_face = &game_object_faces[face];
+        wh = p_face->WalkHeader;
+    }
+    else if (face < 0)
+    {
+        struct SingleObjectFace4 *p_face;
+
+        p_face = &game_object_faces4[-face];
+        wh = p_face->WalkHeader;
+    } else
+    {
+        return;
+    }
+    p_walk_head = &game_walk_headers[wh];
+    for (wi = p_walk_head->StartItem;
+      wi < p_walk_head->StartItem + p_walk_head->Count; wi++) {
+        LOGSYNC("face %d walkface %d", (int)face, (int)game_walk_items[wi]);
+    }
+}
+
+/** Print walk items into log file, for debug.
+ */
+void print_walk_items(void)
+{
+    short face;
+
+    for (face = 1; face < next_object_face; face++)
+    {
+        if ((game_object_faces[face].GFlags & 0x04) != 0)
+            print_walk_items_for_face(face);
+    }
+    for (face = 1; face < next_object_face4; face++)
+    {
+        if ((game_object_faces4[face].GFlags & 0x04) != 0)
+            print_walk_items_for_face(-face);
+    }
+}
+
 void set_mapel_col_columns(struct MyMapElement *p_mapel, short setbit, ushort qb)
 {
     struct ColColumn *p_ccol;
