@@ -687,38 +687,32 @@ void init_collision_vects(void)
     }
 }
 
-/** Adds given walk face to a list of walk items of another rectangular face.
- *
- * Can only be called continously for one face, until another face gats it walk head created.
- */
-void add_face4_walk_item(short face, short walk_face)
-{
-    struct SingleObjectFace4 *p_face;
-    struct WalkHeader *p_walk_head;
-    ushort new_wi;
-
-    p_face = &game_object_faces4[face];
-    p_walk_head = &game_walk_headers[p_face->WalkHeader];
-    assert(p_walk_head->StartItem + p_walk_head->Count == next_walk_item);
-    new_wi = next_walk_item;
-    next_walk_item++;
-
-    p_walk_head->Count++;
-    game_walk_items[new_wi] = walk_face;
-}
-
-/** Adds given walk face to a list of walk items of another triangular face.
+/** Adds given walk face to a list of walk items of another face.
  *
  * Can only be called continously for one face, until another face gats it walk head created.
  */
 TbBool face_has_walk_item(short face, short walk_face)
 {
-    struct SingleObjectFace3 *p_face;
     struct WalkHeader *p_walk_head;
-    ushort wi;
+    ushort wh, wi;
 
-    p_face = &game_object_faces[face];
-    p_walk_head = &game_walk_headers[p_face->WalkHeader];
+    if (face < 0)
+    {
+        struct SingleObjectFace4 *p_face;
+        p_face = &game_object_faces4[-face];
+        wh = p_face->WalkHeader;
+    }
+    else if (face > 0)
+    {
+        struct SingleObjectFace3 *p_face;
+        p_face = &game_object_faces[face];
+        wh = p_face->WalkHeader;
+    } else
+    {
+        return false;
+    }
+
+    p_walk_head = &game_walk_headers[wh];
 
     for (wi = p_walk_head->StartItem;
       wi < p_walk_head->StartItem + p_walk_head->Count; wi++)
@@ -729,24 +723,43 @@ TbBool face_has_walk_item(short face, short walk_face)
     return false;
 }
 
+/** Adds given walk face to a list of walk items of another face.
+ *
+ * Can only be called continously for one face, until another face gets its walk head created.
+ */
 void add_face_walk_item(short face, short walk_face)
 {
-    struct SingleObjectFace3 *p_face;
     struct WalkHeader *p_walk_head;
-    ushort new_wi;
+    ushort wh, wi;
 
     if (face_has_walk_item(face, walk_face)) {
         return;
     }
 
-    p_face = &game_object_faces[face];
-    p_walk_head = &game_walk_headers[p_face->WalkHeader];
+    if (face < 0)
+    {
+        struct SingleObjectFace4 *p_face;
+        p_face = &game_object_faces4[-face];
+        wh = p_face->WalkHeader;
+    }
+    else if (face > 0)
+    {
+        struct SingleObjectFace3 *p_face;
+        p_face = &game_object_faces[face];
+        wh = p_face->WalkHeader;
+    } else
+    {
+        LOGERR("no walk head assigned to face %d", (int)face);
+        return;
+    }
+
+    p_walk_head = &game_walk_headers[wh];
     assert(p_walk_head->StartItem + p_walk_head->Count == next_walk_item);
-    new_wi = next_walk_item;
+    wi = next_walk_item;
     next_walk_item++;
 
     p_walk_head->Count++;
-    game_walk_items[new_wi] = walk_face;
+    game_walk_items[wi] = walk_face;
 }
 
 int face_to_object_position(short face, short *x, short *y, short *z)
@@ -836,7 +849,7 @@ int add_walk_items_for_face_object(short face, short obj)
             if ((p_face->GFlags & 0x04) == 0) {
                 continue;
             }
-            if ((cface == face) || (cface == -face)) {
+            if (cface == face) {
                 continue;
             }
             if (game_normals[p_face->FaceNormal].NY == 0) {
@@ -854,10 +867,7 @@ int add_walk_items_for_face_object(short face, short obj)
 
                 if (delta_z * delta_z + delta_y * delta_y + delta_x * delta_x < 1900)
                 {
-                    if (face <= 0)
-                        add_face4_walk_item(-face, cface);
-                    else
-                        add_face_walk_item(face, cface);
+                    add_face_walk_item(face, cface);
                     break;
                 }
             }
@@ -871,7 +881,7 @@ int add_walk_items_for_face_object(short face, short obj)
             if ((p_face->GFlags & 0x04) == 0) {
                 continue;
             }
-            if ((cface == face) || (cface == -face)) {
+            if (-cface == face) {
                 continue;
             }
             if (game_normals[p_face->FaceNormal].NY == 0) {
@@ -889,10 +899,7 @@ int add_walk_items_for_face_object(short face, short obj)
 
                 if (delta_z * delta_z + delta_y * delta_y + delta_x * delta_x < 1900)
                 {
-                    if (face <= 0)
-                        add_face4_walk_item(-face, -cface);
-                    else
-                        add_face_walk_item(face, -cface);
+                    add_face_walk_item(face, -cface);
                     break;
                 }
             }
