@@ -657,11 +657,11 @@ void triangulation_clear(void)
     triangulation_init_edges();
 }
 
-void thin_wall_around_object(ushort obj, int a2)
+void thin_wall_around_object(ushort obj, ubyte colt)
 {
     asm volatile (
       "call ASM_thin_wall_around_object\n"
-        : : "a" (obj), "d" (a2));
+        : : "a" (obj), "d" (colt));
 }
 
 void init_collision_vects(void)
@@ -795,7 +795,6 @@ int add_walk_items_for_face_object(short face, short obj)
 {
     short fcobj_x, fcobj_y, fcobj_z;
     short gvobj_x, gvobj_y, gvobj_z;
-    short gvpt_x, gvpt_y, gvpt_z;
     short num_points;
     short cface;
     short startface3, endface3;
@@ -818,6 +817,8 @@ int add_walk_items_for_face_object(short face, short obj)
 
     for (cor = 0; cor < num_points; cor++)
     {
+        short fcpt_x, fcpt_y, fcpt_z;
+
         if (face < 0)
         {
             struct SingleObjectFace4 *p_face;
@@ -825,9 +826,9 @@ int add_walk_items_for_face_object(short face, short obj)
 
             p_face = &game_object_faces4[-face];
             p_pt = &game_object_points[p_face->PointNo[cor]];
-            gvpt_x = gvobj_x + p_pt->X;
-            gvpt_y = gvobj_y + p_pt->Y;
-            gvpt_z = gvobj_z + p_pt->Z;
+            fcpt_x = fcobj_x + p_pt->X;
+            fcpt_y = fcobj_y + p_pt->Y;
+            fcpt_z = fcobj_z + p_pt->Z;
         }
         else if (face > 0)
         {
@@ -836,9 +837,9 @@ int add_walk_items_for_face_object(short face, short obj)
 
             p_face = &game_object_faces[face];
             p_pt = &game_object_points[p_face->PointNo[cor]];
-            gvpt_x = gvobj_x + p_pt->X;
-            gvpt_y = gvobj_y + p_pt->Y;
-            gvpt_z = gvobj_z + p_pt->Z;
+            fcpt_x = fcobj_x + p_pt->X;
+            fcpt_y = fcobj_y + p_pt->Y;
+            fcpt_z = fcobj_z + p_pt->Z;
         }
 
         for (cface = startface3; cface < endface3; cface++)
@@ -861,9 +862,9 @@ int add_walk_items_for_face_object(short face, short obj)
                 int delta_x, delta_y, delta_z;
 
                 p_pt = &game_object_points[p_face->PointNo[ccor]];
-                delta_x = (p_pt->X + gvobj_x) - gvpt_x;
-                delta_y = (p_pt->Y + gvobj_y) - gvpt_y;
-                delta_z = (p_pt->Z + gvobj_z) - gvpt_z;
+                delta_x = (gvobj_x + p_pt->X) - fcpt_x;
+                delta_y = (gvobj_y + p_pt->Y) - fcpt_y;
+                delta_z = (gvobj_z + p_pt->Z) - fcpt_z;
 
                 if (delta_z * delta_z + delta_y * delta_y + delta_x * delta_x < 1900)
                 {
@@ -877,11 +878,12 @@ int add_walk_items_for_face_object(short face, short obj)
         {
             struct SingleObjectFace4 *p_face;
             short ccor;
-            p_face = &game_object_faces4[cface];
-            if ((p_face->GFlags & 0x04) == 0) {
+
+            if (-cface == face) {
                 continue;
             }
-            if (-cface == face) {
+            p_face = &game_object_faces4[cface];
+            if ((p_face->GFlags & 0x04) == 0) {
                 continue;
             }
             if (game_normals[p_face->FaceNormal].NY == 0) {
@@ -893,9 +895,9 @@ int add_walk_items_for_face_object(short face, short obj)
                 int delta_x, delta_y, delta_z;
 
                 p_pt = &game_object_points[p_face->PointNo[ccor]];
-                delta_x = (p_pt->X + gvobj_x) - gvpt_x;
-                delta_y = (p_pt->Y + gvobj_y) - gvpt_y;
-                delta_z = (p_pt->Z + gvobj_z) - gvpt_z;
+                delta_x = (gvobj_x + p_pt->X) - fcpt_x;
+                delta_y = (gvobj_y + p_pt->Y) - fcpt_y;
+                delta_z = (gvobj_z + p_pt->Z) - fcpt_z;
 
                 if (delta_z * delta_z + delta_y * delta_y + delta_x * delta_x < 1900)
                 {
@@ -908,30 +910,42 @@ int add_walk_items_for_face_object(short face, short obj)
     return 0;
 }
 
+void add_walk_items_for_face_thing_objects(short face, struct Thing *p_thing)
+{
+    ushort beg_obj, end_obj;
+    ushort obj;
+
+    beg_obj = p_thing->U.UObject.Object;
+    end_obj = beg_obj + p_thing->U.UObject.NumbObjects;
+    for (obj = beg_obj; obj < end_obj; obj++) {
+        add_walk_items_for_face_object(face, obj);
+    }
+}
+
 void add_walk_items_for_face_things_near(short x, short y, short z, short radius, short face)
 {
-    short shift_x, shift_y;
+    short shift_x, shift_z;
     short range;
 
     range = ((radius + 127) >> 8);
 
     for (shift_x = -range; shift_x <= range; shift_x++)
     {
-        for (shift_y = -range; shift_y <= range; shift_y++)
+        for (shift_z = -range; shift_z <= range; shift_z++)
         {
             int tile_x, tile_z;
-            struct MyMapElement *mapel;
+            struct MyMapElement *p_mapel;
             short thing;
             int i;
 
             tile_x = (x >> 8) + shift_x;
-            tile_z = (z >> 8) + shift_y;
+            tile_z = (z >> 8) + shift_z;
             if (tile_x < 0 || tile_x >= MAP_TILE_WIDTH)
                 continue;
             if (tile_z < 0 || tile_z >= MAP_TILE_HEIGHT)
                 continue;
-            mapel = &game_my_big_map[MAP_TILE_WIDTH * tile_z + tile_x];
-            thing = mapel->Child;
+            p_mapel = &game_my_big_map[MAP_TILE_WIDTH * tile_z + tile_x];
+            thing = p_mapel->Child;
             for (i = 0; thing != 0 && i < MAX_THINGS_ON_TILE; i++)
             {
                 if (thing <= 0) {
@@ -942,7 +956,7 @@ void add_walk_items_for_face_things_near(short x, short y, short z, short radius
                     struct Thing *p_thing;
                     p_thing = &things[thing];
                     if (p_thing->Type == TT_BUILDING)
-                        add_walk_items_for_face_object(face, p_thing->U.UObject.Object);
+                        add_walk_items_for_face_thing_objects(face, p_thing);
                     thing = p_thing->Next;
                 }
             }
@@ -1437,7 +1451,7 @@ void add_all_object_faces_to_col_vect(ushort obj, ushort a2)
     short face;
     short startface3, endface3;
     short startface4, endface4;
-    short x, z, offsy;
+    short x, y, z;
 
     {
         struct SingleObject *p_obj;
@@ -1445,7 +1459,7 @@ void add_all_object_faces_to_col_vect(ushort obj, ushort a2)
         p_obj = &game_objects[obj];
         x = p_obj->MapX;
         z = p_obj->MapZ;
-        offsy = p_obj->OffsetY;
+        y = p_obj->OffsetY;
         startface3 = p_obj->StartFace;
         endface3 = startface3 + p_obj->NumbFaces;
         startface4 = p_obj->StartFace4;
@@ -1453,11 +1467,11 @@ void add_all_object_faces_to_col_vect(ushort obj, ushort a2)
     }
     for (face = startface3; face < endface3; face++)
     {
-        add_object_face3_to_col_vect(x, offsy, z, obj, face, a2);
+        add_object_face3_to_col_vect(x, y, z, obj, face, a2);
     }
     for (face = startface4; face < endface4; face++)
     {
-        add_object_face4_to_col_vect(x, offsy, z, obj, face, a2);
+        add_object_face4_to_col_vect(x, y, z, obj, face, a2);
     }
 }
 
@@ -1491,6 +1505,18 @@ void generate_collision_vects(void)
     }
 }
 
+void thin_wall_around_thing_objects(struct Thing *p_thing, ubyte colt)
+{
+    ushort beg_obj, end_obj;
+    ushort obj;
+
+    beg_obj = p_thing->U.UObject.Object;
+    end_obj = beg_obj + p_thing->U.UObject.NumbObjects;
+    for (obj = beg_obj; obj < end_obj; obj++) {
+        thin_wall_around_object(obj, colt);
+    }
+}
+
 void generate_thin_walls(void)
 {
     ushort tile_x, tile_z;
@@ -1513,7 +1539,7 @@ void generate_thin_walls(void)
                     struct Thing *p_thing;
                     p_thing = &things[thing];
                     if (p_thing->Type == TT_BUILDING)
-                        thin_wall_around_object(p_thing->U.UObject.Object, 0);
+                        thin_wall_around_thing_objects(p_thing, 0);
                     thing = p_thing->Next;
                 }
             }

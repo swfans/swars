@@ -40,7 +40,7 @@ void triangulation_select(int trglno);
 void triangulate_map(ubyte *p_map);
 void triangulate_area(ubyte *p_map, int x1, int x2, int y1, int y2);
 
-void thin_wall_around_object(ushort obj, int a2);
+void thin_wall_around_object(ushort obj, ubyte colt);
 void generate_map_triangulation(void);
 
 /******************************************************************************/
