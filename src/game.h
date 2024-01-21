@@ -502,8 +502,22 @@ extern struct ColVectList *game_col_vects_list;
 extern ushort next_vects_list;
 extern struct ColVect *game_col_vects;
 extern ushort next_col_vect;
+
+/** Header linking a face to a list of walk items.
+ *
+ * Some SingleObjectFace* instances have a WalkHeader assigned.
+ * If they do, that defines a range of walk items containing
+ * neighbor faces, to which it is possible to walk.
+ *
+ */
 extern struct WalkHeader *game_walk_headers;
 extern ushort next_walk_header;
+
+/** List of faces which can be walked to from a specific face.
+ *
+ * Each entry is a face index which has at least corner very close
+ * to a corner of current face, allowing walking between the faces.
+ */
 extern short *game_walk_items;
 extern ushort next_walk_item;
 extern struct ColColumn *game_col_columns;
