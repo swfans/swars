@@ -679,10 +679,10 @@ void init_collision_vects(void)
     {
         for (tile_z = 0; tile_z < MAP_TILE_HEIGHT; tile_z++)
         {
-            struct MyMapElement *mapel;
+            struct MyMapElement *p_mapel;
 
-            mapel = &game_my_big_map[MAP_TILE_WIDTH * tile_z + tile_x];
-            mapel->ColHead = 0;
+            p_mapel = &game_my_big_map[MAP_TILE_WIDTH * tile_z + tile_x];
+            p_mapel->ColHead = 0;
         }
     }
 }
@@ -1079,6 +1079,8 @@ void set_mapel_col_columns(struct MyMapElement *p_mapel, short setbit, ushort qb
     struct ColColumn *p_ccol;
     ushort ccol;
 
+    if (setbit < 0)
+        return;
     ccol = p_mapel->ColumnHead;
     if (ccol == 0)
     {
@@ -1103,56 +1105,49 @@ void set_mapel_col_columns(struct MyMapElement *p_mapel, short setbit, ushort qb
     p_ccol->QBits[qb] |= 1 << setbit;
 }
 
-void update_mapel_collision_columns_around_face(short face, ushort flags)
+ubyte map_coord_to_collision_qbit_index(short x, short z)
 {
-    struct SinglePoint *p_pt0;
-    struct SinglePoint *p_pt1;
-    struct SinglePoint *p_pt2;
-    short obj_x, obj_y, obj_z;
+    ubyte qb;
+
+    if ((x & 0xFF) <= 127) {
+        if ((z & 0xFF) <= 127)
+            qb = 0;
+        else
+            qb = 3;
+    } else {
+        if ((z & 0xFF) <= 127)
+            qb = 1;
+        else
+            qb = 2;
+    }
+    return qb;
+}
+
+void update_mapel_collision_columns_around_triangle(short fcobj_x, short fcobj_y, short fcobj_z,
+  struct SinglePoint *p_pt0, struct SinglePoint *p_pt1, struct SinglePoint *p_pt2, ushort flags)
+{
     int dist_B, dist_A;
     int incr_B, incr_A;
     int sh_A, sh_B;
-    int delta0_x, delta0_y, delta0_z;
+    int basept_x, basept_y, basept_z;
     int delta1_x, delta1_y, delta1_z;
     int delta2_x, delta2_y, delta2_z;
 
-    if (face <= 0)
-    {
-        struct SingleObjectFace4 *p_face;
-
-        p_face = &game_object_faces4[-face];
-        obj_x = game_objects[p_face->Object].MapX;
-        obj_y = game_objects[p_face->Object].OffsetY;
-        obj_z = game_objects[p_face->Object].MapZ;
-        p_pt0 = &game_object_points[p_face->PointNo[0]];
-        p_pt1 = &game_object_points[p_face->PointNo[1]];
-        p_pt2 = &game_object_points[p_face->PointNo[2]];
-    }
-    else
-    {
-        struct SingleObjectFace3 *p_face;
-
-        p_face = &game_object_faces[face];
-        obj_x = game_objects[p_face->Object].MapX;
-        obj_y = game_objects[p_face->Object].OffsetY;
-        obj_z = game_objects[p_face->Object].MapZ;
-        p_pt0 = &game_object_points[p_face->PointNo[0]];
-        p_pt1 = &game_object_points[p_face->PointNo[1]];
-        p_pt2 = &game_object_points[p_face->PointNo[2]];
-    }
-    delta0_x = p_pt0->X + obj_x;
-    delta0_y = p_pt0->Y + obj_y;
-    delta0_z = p_pt0->Z + obj_z;
+    basept_x = fcobj_x + p_pt0->X;
+    basept_y = fcobj_y + p_pt0->Y;
+    basept_z = fcobj_z + p_pt0->Z;
     delta1_x = p_pt1->X - p_pt0->X;
     delta1_y = p_pt1->Y - p_pt0->Y;
     delta1_z = p_pt1->Z - p_pt0->Z;
     delta2_x = p_pt2->X - p_pt0->X;
     delta2_y = p_pt2->Y - p_pt0->Y;
     delta2_z = p_pt2->Z - p_pt0->Z;
-    dist_A = LbSqrL(delta1_y * delta1_y + delta1_x * delta1_x + delta1_z * delta1_z) >> 7;
+    // Distance between pt0 and pt1, in half-tiles
+    dist_A = LbSqrL(delta1_x * delta1_x + delta1_y * delta1_y + delta1_z * delta1_z) >> 7;
     if (dist_A < 2)
         dist_A = 2;
     incr_A = 256 / dist_A;
+    // Distance between pt0 and pt2, in half-tiles
     dist_B = LbSqrL(delta2_x * delta2_x + delta2_y * delta2_y + delta2_z * delta2_z) >> 7;
     if (dist_B < 2)
         dist_B = 2;
@@ -1164,38 +1159,62 @@ void update_mapel_collision_columns_around_face(short face, ushort flags)
 
     for (sh_A = 0; sh_A < 256; sh_A += incr_A)
     {
-        for ( sh_B = 0; sh_B < 256; sh_B += incr_B)
+        for (sh_B = 0; sh_B < 256; sh_B += incr_B)
         {
-            struct MyMapElement *mapel;
+            struct MyMapElement *p_mapel;
             int ccx, ccy, ccz;
             ushort qb;
 
-            ccx = (delta2_x * sh_B >> 8) + (delta1_x * sh_A >> 8) + delta0_x;
-            ccy = (delta2_y * sh_B >> 8) + (delta1_y * sh_A >> 8) + delta0_y;
-            ccz = (delta2_z * sh_B >> 8) + (delta1_z * sh_A >> 8) + delta0_z;
+            ccx = basept_x + (delta2_x * sh_B >> 8) + (delta1_x * sh_A >> 8);
+            ccy = basept_y + (delta2_y * sh_B >> 8) + (delta1_y * sh_A >> 8);
+            ccz = basept_z + (delta2_z * sh_B >> 8) + (delta1_z * sh_A >> 8);
             if ((ccx >> 8) < 0 || (ccx >> 8) >= MAP_TILE_WIDTH)
                 continue;
             if ((ccz >> 8) < 0 || (ccz >> 8) >= MAP_TILE_HEIGHT)
                 continue;
 
-            mapel = &game_my_big_map[(ccx >> 8) + (ccz >> 8) * MAP_TILE_WIDTH];
-            if ((mapel->Alt - 20 <= ccy) && flags) {
-                mapel->Texture |= 0x8000;
+            p_mapel = &game_my_big_map[(ccx >> 8) + (ccz >> 8) * MAP_TILE_WIDTH];
+            if ((p_mapel->Alt - 20 <= ccy) && flags) {
+                p_mapel->Texture |= 0x8000;
             }
-
-            if (ccx <= 127) {
-                if (ccz <= 127)
-                    qb = 0;
-                else
-                    qb = 3;
-            } else {
-                if (ccz <= 127)
-                    qb = 1;
-                else
-                    qb = 2;
-            }
-            set_mapel_col_columns(mapel, (ccy - mapel->Alt) >> 8, qb);
+            qb = map_coord_to_collision_qbit_index(ccx, ccz);
+            set_mapel_col_columns(p_mapel, (ccy - p_mapel->Alt) >> 8, qb);
         }
+    }
+}
+
+void update_mapel_collision_columns_around_face(short face, ushort flags)
+{
+    struct SinglePoint *p_pt0;
+    struct SinglePoint *p_pt1;
+    struct SinglePoint *p_pt2;
+    short fcobj_x, fcobj_y, fcobj_z;
+    short num_points;
+
+    num_points = face_to_object_position(face, &fcobj_x, &fcobj_y, &fcobj_z);
+
+    {
+        if (face <= 0)
+        {
+            struct SingleObjectFace4 *p_face;
+
+            p_face = &game_object_faces4[-face];
+            p_pt0 = &game_object_points[p_face->PointNo[0]];
+            p_pt1 = &game_object_points[p_face->PointNo[1]];
+            p_pt2 = &game_object_points[p_face->PointNo[2]];
+        }
+        else
+        {
+            struct SingleObjectFace3 *p_face;
+
+            p_face = &game_object_faces[face];
+            p_pt0 = &game_object_points[p_face->PointNo[0]];
+            p_pt1 = &game_object_points[p_face->PointNo[1]];
+            p_pt2 = &game_object_points[p_face->PointNo[2]];
+        }
+
+        update_mapel_collision_columns_around_triangle(fcobj_x, fcobj_y, fcobj_z,
+          p_pt0, p_pt1, p_pt2, flags);
     }
 }
 
@@ -1222,7 +1241,19 @@ void update_mapel_collision_columns_around_object(ushort obj, ushort flags)
     }
 }
 
-void update_mapel_collision_columns(void)
+void update_mapel_collision_columns_around_thing_objects(struct Thing *p_thing, ushort flags)
+{
+    ushort beg_obj, end_obj;
+    ushort obj;
+
+    beg_obj = p_thing->U.UObject.Object;
+    end_obj = beg_obj + p_thing->U.UObject.NumbObjects;
+    for (obj = beg_obj; obj < end_obj; obj++) {
+        update_mapel_collision_columns_around_object(obj, flags);
+    }
+}
+
+void clear_mapel_collision_columns(void)
 {
     ushort tile_x, tile_z;
 
@@ -1231,22 +1262,30 @@ void update_mapel_collision_columns(void)
     {
         for (tile_z = 0; tile_z < MAP_TILE_HEIGHT; tile_z++)
         {
-            struct MyMapElement *mapel;
+            struct MyMapElement *p_mapel;
 
-            mapel = &game_my_big_map[MAP_TILE_WIDTH * tile_z + tile_x];
-            mapel->ColumnHead = 0;
+            p_mapel = &game_my_big_map[MAP_TILE_WIDTH * tile_z + tile_x];
+            p_mapel->ColumnHead = 0;
         }
     }
+}
+
+void update_mapel_collision_columns(void)
+{
+    ushort tile_x, tile_z;
+
+    clear_mapel_collision_columns();
+
     for (tile_x = 0; tile_x < MAP_TILE_WIDTH; tile_x++)
     {
         for (tile_z = 0; tile_z < MAP_TILE_HEIGHT; tile_z++)
         {
-            struct MyMapElement *mapel;
+            struct MyMapElement *p_mapel;
             short thing;
             int i;
 
-            mapel = &game_my_big_map[MAP_TILE_WIDTH * tile_z + tile_x];
-            thing = mapel->Child;
+            p_mapel = &game_my_big_map[MAP_TILE_WIDTH * tile_z + tile_x];
+            thing = p_mapel->Child;
             for (i = 0; thing != 0 && i < MAX_THINGS_ON_TILE; i++)
             {
                 if (thing <= 0) {
@@ -1257,10 +1296,32 @@ void update_mapel_collision_columns(void)
                     struct Thing *p_thing;
                     p_thing = &things[thing];
                     if (p_thing->Type == TT_BUILDING)
-                        update_mapel_collision_columns_around_object(p_thing->U.UObject.Object, 0);
+                        update_mapel_collision_columns_around_thing_objects(p_thing, 0);
                     thing = p_thing->Next;
                 }
             }
+        }
+    }
+}
+
+void print_mapel_collision_columns(void)
+{
+    ushort tile_x, tile_z;
+
+    for (tile_x = 0; tile_x < MAP_TILE_WIDTH; tile_x++)
+    {
+        for (tile_z = 0; tile_z < MAP_TILE_HEIGHT; tile_z++)
+        {
+            struct MyMapElement *p_mapel;
+            struct ColColumn *p_ccol;
+
+            p_mapel = &game_my_big_map[MAP_TILE_WIDTH * tile_z + tile_x];
+            if (p_mapel->ColumnHead == 0) continue;
+            p_ccol = &game_col_columns[p_mapel->ColumnHead];
+
+            LOGSYNC("%02d,%02d qbits %04x %04x %04x %04x", (int)tile_x, (int)tile_z,
+              (int)p_ccol->QBits[0], (int)p_ccol->QBits[1],
+              (int)p_ccol->QBits[2], (int)p_ccol->QBits[3]);
         }
     }
 }
@@ -1269,7 +1330,7 @@ void add_next_col_vect_to_vects_list(short x, short z, short face, ubyte flags)
 {
     short tile_x, tile_z;
     ushort next_vl;
-    struct MyMapElement *mapel;
+    struct MyMapElement *p_mapel;
 
     tile_x = x >> 8;
     tile_z = z >> 8;
@@ -1280,19 +1341,19 @@ void add_next_col_vect_to_vects_list(short x, short z, short face, ubyte flags)
         return;
     }
 
-    mapel = &game_my_big_map[MAP_TILE_WIDTH * tile_z + tile_x];
+    p_mapel = &game_my_big_map[MAP_TILE_WIDTH * tile_z + tile_x];
 
-    if (next_col_vect != game_col_vects_list[mapel->ColHead].Vect)
+    if (next_col_vect != game_col_vects_list[p_mapel->ColHead].Vect)
     {
         next_vl = next_vects_list;
         game_col_vects_list[next_vl].Vect = next_col_vect;
-        game_col_vects_list[next_vl].NextColList = mapel->ColHead;
-        mapel->ColHead = next_vl;
+        game_col_vects_list[next_vl].NextColList = p_mapel->ColHead;
+        p_mapel->ColHead = next_vl;
         next_vl++;
         if (flags & 0x01)
         {
             if (face != 0)
-                mapel->Texture |= 0x8000;
+                p_mapel->Texture |= 0x8000;
         }
         next_vects_list = next_vl;
     }
