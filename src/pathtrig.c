@@ -1006,7 +1006,7 @@ void add_walk_items_for_face(short face)
 
     prepare_face_for_having_walk_items(face, next_walk_item);
     face_to_object_position(face, &obj_x, &obj_y, &obj_z);
-    add_walk_items_for_face_things_near(obj_x, obj_y, obj_z, 7 << 8, face);
+    add_walk_items_for_face_things_near(obj_x, obj_y, obj_z, 31 << 8, face);
 }
 
 void generate_walk_items(void)
