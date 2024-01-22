@@ -1201,17 +1201,20 @@ void update_mapel_collision_columns_around_triangle(short fcobj_x, short fcobj_y
         {
             struct MyMapElement *p_mapel;
             int ccx, ccy, ccz;
+            short tile_x, tile_z;
             ushort qb;
 
             ccx = basept_x + (delta2_x * sh_B + delta1_x * sh_A) / FACE_SWEEP_STEPS;
             ccy = basept_y + (delta2_y * sh_B + delta1_y * sh_A) / FACE_SWEEP_STEPS;
             ccz = basept_z + (delta2_z * sh_B + delta1_z * sh_A) / FACE_SWEEP_STEPS;
-            if ((ccx >> 8) < 0 || (ccx >> 8) >= MAP_TILE_WIDTH)
+            tile_x = ccx >> 8;
+            tile_z = ccz >> 8;
+            if (tile_x < 1 || tile_x >= MAP_TILE_WIDTH)
                 continue;
-            if ((ccz >> 8) < 0 || (ccz >> 8) >= MAP_TILE_HEIGHT)
+            if (tile_z < 1 || tile_z >= MAP_TILE_HEIGHT)
                 continue;
 
-            p_mapel = &game_my_big_map[(ccx >> 8) + (ccz >> 8) * MAP_TILE_WIDTH];
+            p_mapel = &game_my_big_map[tile_x + tile_z * MAP_TILE_WIDTH];
             if ((p_mapel->Alt - 20 <= ccy) && flags) {
                 p_mapel->Texture |= 0x8000;
             }
