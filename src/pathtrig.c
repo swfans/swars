@@ -1123,6 +1123,8 @@ ubyte map_coord_to_collision_qbit_index(short x, short z)
     return qb;
 }
 
+#define FACE_SWEEP_STEPS 256
+
 void update_mapel_collision_columns_around_triangle(short fcobj_x, short fcobj_y, short fcobj_z,
   struct SinglePoint *p_pt0, struct SinglePoint *p_pt1, struct SinglePoint *p_pt2, ushort flags)
 {
@@ -1146,28 +1148,28 @@ void update_mapel_collision_columns_around_triangle(short fcobj_x, short fcobj_y
     dist_A = LbSqrL(delta1_x * delta1_x + delta1_y * delta1_y + delta1_z * delta1_z) >> 7;
     if (dist_A < 2)
         dist_A = 2;
-    incr_A = 256 / dist_A;
+    incr_A = FACE_SWEEP_STEPS / dist_A;
     // Distance between pt0 and pt2, in half-tiles
     dist_B = LbSqrL(delta2_x * delta2_x + delta2_y * delta2_y + delta2_z * delta2_z) >> 7;
     if (dist_B < 2)
         dist_B = 2;
-    incr_B = 256 / dist_B;
+    incr_B = FACE_SWEEP_STEPS / dist_B;
     if ((incr_A <= 0) || (incr_B <= 0)) {
         LOGERR("bad increment");
         return;
     }
 
-    for (sh_A = 0; sh_A < 256; sh_A += incr_A)
+    for (sh_A = 0; sh_A <= FACE_SWEEP_STEPS; sh_A += incr_A)
     {
-        for (sh_B = 0; sh_B < 256; sh_B += incr_B)
+        for (sh_B = 0; sh_B <= FACE_SWEEP_STEPS; sh_B += incr_B)
         {
             struct MyMapElement *p_mapel;
             int ccx, ccy, ccz;
             ushort qb;
 
-            ccx = basept_x + (delta2_x * sh_B >> 8) + (delta1_x * sh_A >> 8);
-            ccy = basept_y + (delta2_y * sh_B >> 8) + (delta1_y * sh_A >> 8);
-            ccz = basept_z + (delta2_z * sh_B >> 8) + (delta1_z * sh_A >> 8);
+            ccx = basept_x + (delta2_x * sh_B + delta1_x * sh_A) / FACE_SWEEP_STEPS;
+            ccy = basept_y + (delta2_y * sh_B + delta1_y * sh_A) / FACE_SWEEP_STEPS;
+            ccz = basept_z + (delta2_z * sh_B + delta1_z * sh_A) / FACE_SWEEP_STEPS;
             if ((ccx >> 8) < 0 || (ccx >> 8) >= MAP_TILE_WIDTH)
                 continue;
             if ((ccz >> 8) < 0 || (ccz >> 8) >= MAP_TILE_HEIGHT)
