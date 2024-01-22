@@ -523,7 +523,7 @@ GLOBAL_FUNC (ASM_LbDrawLine)
 		mov    -0x22(%ebp),%edx
 		push   %eax
 		mov    -0x26(%ebp),%eax
-		call   draw_b_line
+		call   ac_draw_b_line
 		mov    0x7a(%ebp),%al
 	jump_e79cd:
 		lea    0x7e(%ebp),%esp
@@ -534,7 +534,7 @@ GLOBAL_FUNC (ASM_LbDrawLine)
 
 
 /*----------------------------------------------------------------*/
-draw_b_line:	/* 0x0E79D8 */
+GLOBAL_FUNC (ASM_draw_b_line)	/* 0x0E79D8 */
 /*----------------------------------------------------------------*/
 		push   %edi
 		push   %ebp

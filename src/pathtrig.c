@@ -42,6 +42,14 @@ extern long thin_wall_x2, thin_wall_y2;
 
 extern const short MOD3[] ;
 
+int unkn_path_func_001(struct Thing *p_thing, ubyte a2)
+{
+    int ret;
+    asm volatile ("call ASM_unkn_path_func_001\n"
+        : "=r" (ret) : "a" (p_thing), "d" (a2));
+    return ret;
+}
+
 void path_init8_unkn3(struct Path *path, int ax8, int ay8, int bx8, int by8, int a6)
 {
     asm volatile (
