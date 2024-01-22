@@ -1125,6 +1125,42 @@ ubyte map_coord_to_collision_qbit_index(short x, short z)
 
 #define FACE_SWEEP_STEPS 256
 
+/** Function to find the divisor of N closest to the target
+ */
+int divisor_of_a_number_not_greater_than_given_target(int N, int target)
+{
+    int closest = -1;
+    int diff = INT_MAX;
+
+    // Iterate till square root of N
+    for (int i = 1; i <= LbSqrL(N); i++)
+    {
+        if (N % i == 0)
+        {
+            // Check if divisors are equal
+            if (N / i == i) {
+                // Check if i is the closest
+                if (abs(target - i) < diff) {
+                    diff = abs(target - i);
+                    closest = i;
+                }
+            } else {
+                // Check if i is the closest
+                if (abs(target - i) < diff) {
+                    diff = abs(target - i);
+                    closest = i;
+                }
+                // Check if n / i is the closest
+                if (abs(target - N / i) < diff) {
+                    diff = abs(target - N / i);
+                    closest = N / i;
+                }
+            }
+        }
+    }
+    return closest;
+}
+
 void update_mapel_collision_columns_around_triangle(short fcobj_x, short fcobj_y, short fcobj_z,
   struct SinglePoint *p_pt0, struct SinglePoint *p_pt1, struct SinglePoint *p_pt2, ushort flags)
 {
@@ -1148,12 +1184,12 @@ void update_mapel_collision_columns_around_triangle(short fcobj_x, short fcobj_y
     dist_A = LbSqrL(delta1_x * delta1_x + delta1_y * delta1_y + delta1_z * delta1_z) >> 7;
     if (dist_A < 2)
         dist_A = 2;
-    incr_A = FACE_SWEEP_STEPS / dist_A;
+    incr_A = divisor_of_a_number_not_greater_than_given_target(FACE_SWEEP_STEPS, FACE_SWEEP_STEPS / dist_A);
     // Distance between pt0 and pt2, in half-tiles
     dist_B = LbSqrL(delta2_x * delta2_x + delta2_y * delta2_y + delta2_z * delta2_z) >> 7;
     if (dist_B < 2)
         dist_B = 2;
-    incr_B = FACE_SWEEP_STEPS / dist_B;
+    incr_B = divisor_of_a_number_not_greater_than_given_target(FACE_SWEEP_STEPS, FACE_SWEEP_STEPS / dist_B);
     if ((incr_A <= 0) || (incr_B <= 0)) {
         LOGERR("bad increment");
         return;
