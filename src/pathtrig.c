@@ -1219,7 +1219,7 @@ void update_mapel_collision_columns_around_triangle(short fcobj_x, short fcobj_y
                 p_mapel->Texture |= 0x8000;
             }
             qb = map_coord_to_collision_qbit_index(ccx, ccz);
-            set_mapel_col_columns(p_mapel, (ccy - p_mapel->Alt) >> 8, qb);
+            set_mapel_col_columns(p_mapel, (ccy - p_mapel->Alt) >> 7, qb);
         }
     }
 }
