@@ -1190,9 +1190,12 @@ void update_mapel_collision_columns_around_face(short face, ushort flags)
     struct SinglePoint *p_pt2;
     short fcobj_x, fcobj_y, fcobj_z;
     short num_points;
+    short tri;
 
     num_points = face_to_object_position(face, &fcobj_x, &fcobj_y, &fcobj_z);
 
+    // Do it once for triangular, twice for quad surface
+    for (tri = 0; tri < num_points - 2; tri++)
     {
         if (face <= 0)
         {
@@ -1200,8 +1203,8 @@ void update_mapel_collision_columns_around_face(short face, ushort flags)
 
             p_face = &game_object_faces4[-face];
             p_pt0 = &game_object_points[p_face->PointNo[0]];
-            p_pt1 = &game_object_points[p_face->PointNo[1]];
-            p_pt2 = &game_object_points[p_face->PointNo[2]];
+            p_pt1 = &game_object_points[p_face->PointNo[tri+1]];
+            p_pt2 = &game_object_points[p_face->PointNo[tri+2]];
         }
         else
         {
