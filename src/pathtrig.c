@@ -1190,13 +1190,13 @@ void update_mapel_collision_columns_around_triangle(short fcobj_x, short fcobj_y
     delta2_z = p_pt2->Z - p_pt0->Z;
     // Distance between pt0 and pt1, in half-tiles
     dist_A = LbSqrL(delta1_x * delta1_x + delta1_y * delta1_y + delta1_z * delta1_z) >> 7;
-    if (dist_A < 2)
-        dist_A = 2;
+    if (dist_A < 1)
+        dist_A = 1;
     incr_A = divisor_of_a_number_not_greater_than_given_target(FACE_SWEEP_STEPS, FACE_SWEEP_STEPS / dist_A);
     // Distance between pt0 and pt2, in half-tiles
     dist_B = LbSqrL(delta2_x * delta2_x + delta2_y * delta2_y + delta2_z * delta2_z) >> 7;
-    if (dist_B < 2)
-        dist_B = 2;
+    if (dist_B < 1)
+        dist_B = 1;
     incr_B = divisor_of_a_number_not_greater_than_given_target(FACE_SWEEP_STEPS, FACE_SWEEP_STEPS / dist_B);
     if ((incr_A <= 0) || (incr_B <= 0)) {
         LOGERR("bad increment");
