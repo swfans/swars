@@ -195,6 +195,12 @@ void snprint_sthing(char *buf, ulong buflen, struct SimpleThing *p_sthing)
     snprintf(s, buflen - (s-buf), " )");
 }
 
+void unused_func_022(void)
+{
+    asm volatile ("call ASM_unused_func_022\n"
+        :  :  : "eax" );
+}
+
 TbResult delete_node(struct Thing *p_thing)
 {
     TbResult ret;
