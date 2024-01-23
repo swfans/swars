@@ -922,6 +922,7 @@ short search_things_for_index(short index);
 short find_nearest_object2(short mx, short mz, ushort sub_type);
 short search_object_for_qface(ushort object, ubyte gflag, ubyte flag, ushort after);
 short search_for_station(short x, short z);
+short search_for_vehicle(short X, short Z);
 short search_things_for_uniqueid(short index, ubyte flag);
 
 /******************************************************************************/

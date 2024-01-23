@@ -519,7 +519,7 @@ static short find_thing_type_on_same_type_list(short ttype, short subtype,
             thing = p_thing->LinkSame;
         }
         // If searching for all subtypes, make sure we really catch them all; switch to
-        // second linked list if forst one did not gave results
+        // second linked list if first one did not gave results
         if ((thing == 0) && (subtype == -1) && (ttype == TT_VEHICLE)) {
             subtype = SubTT_VEH_SHIP;
             thing = get_thing_same_type_head(ttype, subtype);
@@ -606,6 +606,11 @@ short find_thing_type_within_circle_with_filter(short X, short Z, ushort R,
     return thing;
 }
 
+TbBool bfilter_match_all(short thing, ThingFilterParams *params)
+{
+    return true;
+}
+
 TbBool bfilter_item_is_weapon(short thing, ThingFilterParams *params)
 {
     struct SimpleThing *p_sthing;
@@ -675,6 +680,20 @@ short find_person_carrying_weapon(short weapon)
 
     params.Arg1 = weapon;
     thing = find_thing_type_on_same_type_list(TT_PERSON, -1, bfilter_person_carries_weapon, &params);
+
+    return thing;
+}
+
+short search_for_vehicle(short X, short Z)
+{
+    short thing;
+    ThingFilterParams params;
+
+    // Try finding very close to target coords
+    thing = find_thing_type_within_circle_with_filter(X, Z, 48, TT_VEHICLE, 0, bfilter_match_all, &params);
+    // If very clos search failed, retry with bigger radius
+    if (thing == 0)
+        thing = find_thing_type_within_circle_with_filter(X, Z, 1024, TT_VEHICLE, 0, bfilter_match_all, &params);
 
     return thing;
 }
