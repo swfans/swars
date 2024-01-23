@@ -1391,8 +1391,9 @@ void func_6031c(short tx, short tz, short a3, short ty)
 }
 
 /** Transfer some people of given subtype from one group to the other.
+ * Skips `stay_limit` of people, then transfers the next `tran_limit`.
  */
-int thing_group_transfer_people(short pv_group, short nx_group, short subtype, int limit)
+int thing_group_transfer_people(short pv_group, short nx_group, short subtype, int stay_limit, int tran_limit)
 {
     short thing;
     struct Thing *p_thing;
@@ -1409,6 +1410,11 @@ int thing_group_transfer_people(short pv_group, short nx_group, short subtype, i
         if ((subtype != -1) && (p_thing->SubType != subtype))
             continue;
 
+        if (stay_limit > 0) {
+            stay_limit--;
+            continue;
+        }
+
         if (p_thing->U.UObject.Group == pv_group) {
             p_thing->U.UObject.Group = nx_group;
             count++;
@@ -1417,7 +1423,7 @@ int thing_group_transfer_people(short pv_group, short nx_group, short subtype, i
             p_thing->U.UObject.EffectiveGroup = nx_group;
         }
 
-        if (count >= limit)
+        if (count >= tran_limit)
             break;
     }
     return count;
@@ -1509,11 +1515,11 @@ void level_perform_deep_fix(void)
                 lp_group = find_unused_group_id(true);
             if (lp_group >= 0) {
                 thing_group_copy(pv_group, nx_group, 0x01|0x02|0x04);
-                n = thing_group_transfer_people(nx_group, lp_group, SubTT_PERS_AGENT, 4);
+                n = thing_group_transfer_people(nx_group, lp_group, SubTT_PERS_AGENT, 0, 4);
                 if (n <= 0)
-                    n = thing_group_transfer_people(nx_group, lp_group, SubTT_PERS_ZEALOT, 4);
+                    n = thing_group_transfer_people(nx_group, lp_group, SubTT_PERS_ZEALOT, 0, 4);
                 if (n <= 0)
-                    n = thing_group_transfer_people(nx_group, lp_group, -1, 4);
+                    n = thing_group_transfer_people(nx_group, lp_group, -1, 0, 4);
                 if (n > 0) {
                     LOGWARN("Local player group %d has no team; switching to new group %d based on %d",
                       (int)pv_group, (int)lp_group, (int)nx_group);
@@ -1528,6 +1534,10 @@ void level_perform_deep_fix(void)
         }
     }
 
+#if 0
+    // While the group 0 sometimes looks suspicious, it generally works correctly
+    // We should transfer other things away from that group, instead. So, this got disabled.
+    // Also, switching the group would require fixing its index in all objectives and commands.
     if (level_def.PlayableGroups[0] == 0) {
         short pv_group, nx_group;
 
@@ -1537,9 +1547,10 @@ void level_perform_deep_fix(void)
           (int)pv_group, (int)nx_group);
         if (nx_group > 0) {
             thing_group_copy(pv_group, nx_group, 0x01|0x02);
-            thing_group_transfer_people(pv_group, nx_group, -1, 4);
+            thing_group_transfer_people(pv_group, nx_group, -1, 0, 4);
         }
     }
+#endif
 }
 
 ulong load_level_pc_handle(TbFileHandle lev_fh)
@@ -1869,10 +1880,6 @@ void load_level_pc(short level, short missi, ubyte reload)
 
         if (level_deep_fix) {
             level_perform_deep_fix();
-        } else {
-            if (level_def.PlayableGroups[0] == 0) {
-                LOGWARN("Local player group equal 0 will cause issues; fix the level");
-            }
         }
         fix_level_indexes(missi, fmtver, reload, level_deep_fix);
     } else
