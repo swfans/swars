@@ -767,129 +767,266 @@ static void prop_text_qaz(ubyte *o, ubyte chtype, ushort colr)
     {
     case 0:
         break;
-    case 0b00000001:
-        o[4] = colr;
+    case 0b10000000:
+        o[0] = colr;
         break;
-    case 0b00000010:
-        o[3] = colr;
+    case 0b01000000:
+        o[1] = colr;
         break;
-    case 0b00000011:
-        *((ushort *)&o[3]) = colr;
+    case 0b11000000:
+        *((ushort *)&o[0]) = colr;
         break;
-    case 0b00000100:
+    case 0b00100000:
         o[2] = colr;
         break;
-    case 0b00000101:
+    case 0b10100000:
+        o[0] = colr;
         o[2] = colr;
-        o[4] = colr;
         break;
-    case 0b00000110:
+    case 0b01100000:
         *((ushort *)&o[1]) = colr;
         break;
-    case 0b00000111:
+    case 0b11100000:
+        *((ushort *)&o[0]) = colr;
         o[2] = colr;
-        *((ushort *)&o[3]) = colr;
-        break;
-    case 0b00001000:
-        o[1] = colr;
-        break;
-    case 0b00001001:
-        o[1] = colr;
-        o[4] = colr;
-        break;
-    case 0b00001010:
-        o[1] = colr;
-        o[3] = colr;
-        break;
-    case 0b00001011:
-        o[1] = colr;
-        *((ushort *)&o[3]) = colr;
-        break;
-    case 0b00001100:
-        *((ushort *)&o[1]) = colr;
-        break;
-    case 0b00001101:
-        o[4] = colr;
-        *((ushort *)&o[1]) = colr;
-        break;
-    case 0b00001110:
-        o[1] = colr;
-        *((ushort *)&o[2]) = colr;
-        break;
-    case 0b00001111:
-        *((ushort *)&o[1]) = colr;
-        *((ushort *)&o[3]) = colr;
         break;
     case 0b00010000:
-        o[0] = colr;
+        o[3] = colr;
         break;
-    case 0b00010001:
-        o[0] = colr;
-        o[4] = colr;
-        break;
-    case 0b00010010:
+    case 0b10010000:
         o[0] = colr;
         o[3] = colr;
         break;
-    case 0b00010011:
-        o[0] = colr;
-        *((ushort *)&o[3]) = colr;
+    case 0b01010000:
+        o[1] = colr;
+        o[3] = colr;
         break;
-    case 0b00010100:
+    case 0b11010000:
+        *((ushort *)&o[0]) = colr;
+        o[3] = colr;
+        break;
+    case 0b00110000:
+        *((ushort *)&o[2]) = colr;
+        break;
+    case 0b10110000:
         o[0] = colr;
+        *((ushort *)&o[2]) = colr;
+        break;
+    case 0b01110000:
+        o[1] = colr;
+        *((ushort *)&o[2]) = colr;
+        break;
+    case 0b11110000:
+        *((ushort *)&o[0]) = colr;
+        *((ushort *)&o[2]) = colr;
+        break;
+    case 0b00001000:
+        o[4] = colr;
+        break;
+    case 0b10001000:
+        o[0] = colr;
+        o[4] = colr;
+        break;
+    case 0b01001000:
+        o[1] = colr;
+        o[4] = colr;
+        break;
+    case 0b11001000:
+        *((ushort *)&o[0]) = colr;
+        o[4] = colr;
+        break;
+    case 0b00101000:
         o[2] = colr;
+        o[4] = colr;
         break;
-    case 0b00010101:
+    case 0b10101000:
         o[0] = colr;
         o[2] = colr;
         o[4] = colr;
         break;
-    case 0b00010110:
-        o[0] = colr;
-        *((ushort *)&o[2]) = colr;
+    case 0b01101000:
+        *((ushort *)&o[1]) = colr;
+        o[4] = colr;
         break;
-    case 0b00010111:
-        o[0] = colr;
-        *((ushort *)&o[2]) = colr;
+    case 0b11101000:
+        *((ushort *)&o[0]) = colr;
+        o[2] = colr;
         o[4] = colr;
         break;
     case 0b00011000:
-        *((ushort *)&o[0]) = colr;
+        *((ushort *)&o[3]) = colr;
         break;
-    case 0b00011001:
-        *((ushort *)&o[0]) = colr;
-        o[4] = colr;
+    case 0b10011000:
+        o[0] = colr;
+        *((ushort *)&o[3]) = colr;
         break;
-    case 0b00011010:
-        *((ushort *)&o[0]) = colr;
-        o[3] = colr;
+    case 0b01011000:
+        o[1] = colr;
+        *((ushort *)&o[3]) = colr;
         break;
-    case 0b00011011:
+    case 0b11011000:
         *((ushort *)&o[0]) = colr;
         *((ushort *)&o[3]) = colr;
         break;
+    case 0b00111000:
+        *((ushort *)&o[2]) = colr;
+        o[4] = colr;
+        break;
+    case 0b10111000:
+        o[0] = colr;
+        *((ushort *)&o[2]) = colr;
+        o[4] = colr;
+        break;
+    case 0b01111000:
+        *((ushort *)&o[1]) = colr;
+        *((ushort *)&o[3]) = colr;
+        break;
+    case 0b11111000:
+        *((ushort *)&o[0]) = colr;
+        *((ushort *)&o[2]) = colr;
+        o[4] = colr;
+        break;
+    case 0b00000100:
+        o[5] = colr;
+        break;
+    case 0b10000100:
+        o[0] = colr;
+        o[5] = colr;
+        break;
+    case 0b01000100:
+        o[1] = colr;
+        o[5] = colr;
+        break;
+    case 0b11000100:
+        *((ushort *)&o[0]) = colr;
+        o[5] = colr;
+        break;
+    case 0b00100100:
+        o[2] = colr;
+        o[5] = colr;
+        break;
+    case 0b10100100:
+        o[0] = colr;
+        o[2] = colr;
+        o[5] = colr;
+        break;
+    case 0b01100100:
+        *((ushort *)&o[1]) = colr;
+        o[5] = colr;
+        break;
+    case 0b11100100:
+        *((ushort *)&o[0]) = colr;
+        o[2] = colr;
+        o[5] = colr;
+        break;
+    case 0b00010100:
+        o[3] = colr;
+        o[5] = colr;
+        break;
+    case 0b10010100:
+        o[0] = colr;
+        o[3] = colr;
+        o[5] = colr;
+        break;
+    case 0b01010100:
+        o[1] = colr;
+        o[3] = colr;
+        o[5] = colr;
+        break;
+    case 0b11010100:
+        *((ushort *)&o[0]) = colr;
+        o[3] = colr;
+        o[5] = colr;
+        break;
+    case 0b00110100:
+        *((ushort *)&o[2]) = colr;
+        o[5] = colr;
+        break;
+    case 0b10110100:
+        o[0] = colr;
+        *((ushort *)&o[2]) = colr;
+        o[5] = colr;
+        break;
+    case 0b01110100:
+        o[1] = colr;
+        *((ushort *)&o[2]) = colr;
+        o[5] = colr;
+        break;
+    case 0b11110100:
+        *((ushort *)&o[0]) = colr;
+        *((ushort *)&o[2]) = colr;
+        o[5] = colr;
+        break;
+    case 0b00001100:
+        *((ushort *)&o[4]) = colr;
+        break;
+    case 0b10001100:
+        o[0] = colr;
+        *((ushort *)&o[4]) = colr;
+        break;
+    case 0b01001100:
+        o[1] = colr;
+        *((ushort *)&o[4]) = colr;
+        break;
+    case 0b11001100:
+        *((ushort *)&o[0]) = colr;
+        *((ushort *)&o[4]) = colr;
+        break;
+    case 0b00101100:
+        o[2] = colr;
+        *((ushort *)&o[4]) = colr;
+        break;
+    case 0b10101100:
+        o[0] = colr;
+        o[2] = colr;
+        *((ushort *)&o[4]) = colr;
+        break;
+    case 0b01101100:
+        *((ushort *)&o[1]) = colr;
+        *((ushort *)&o[4]) = colr;
+        break;
+    case 0b11101100:
+        *((ushort *)&o[0]) = colr;
+        o[2] = colr;
+        *((ushort *)&o[4]) = colr;
+        break;
     case 0b00011100:
-        *((ushort *)&o[0]) = colr;
-        o[2] = colr;
+        o[3] = colr;
+        *((ushort *)&o[4]) = colr;
         break;
-    case 0b00011101:
-        *((ushort *)&o[0]) = colr;
-        o[2] = colr;
-        o[4] = colr;
+    case 0b10011100:
+        o[0] = colr;
+        o[3] = colr;
+        *((ushort *)&o[4]) = colr;
         break;
-    case 0b00011110:
+    case 0b01011100:
+        o[1] = colr;
+        o[3] = colr;
+        *((ushort *)&o[4]) = colr;
+        break;
+    case 0b11011100:
+        *((ushort *)&o[0]) = colr;
+        o[3] = colr;
+        *((ushort *)&o[4]) = colr;
+        break;
+    case 0b00111100:
+        *((ushort *)&o[2]) = colr;
+        *((ushort *)&o[4]) = colr;
+        break;
+    case 0b10111100:
+        o[0] = colr;
+        *((ushort *)&o[2]) = colr;
+        *((ushort *)&o[4]) = colr;
+        break;
+    case 0b01111100:
+        o[1] = colr;
+        *((ushort *)&o[2]) = colr;
+        *((ushort *)&o[4]) = colr;
+        break;
+    case 0b11111100:
         *((ushort *)&o[0]) = colr;
         *((ushort *)&o[2]) = colr;
-        break;
-    case 0b00011111:
-        *((ushort *)&o[0]) = colr;
-        *((ushort *)&o[2]) = colr;
-        o[4] = colr;
-        break;
-    case 0b00100000:
-        *((ushort *)&o[0]) = colr;
-        *((ushort *)&o[2]) = colr;
-        o[4] = colr;
+        *((ushort *)&o[4]) = colr;
         break;
     }
 }
