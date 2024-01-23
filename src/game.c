@@ -1292,7 +1292,7 @@ void unkn_f_pressed_func(void)
     }
 }
 
-void fix_level_indexes(short missi, ulong fmtver, ubyte reload)
+void fix_level_indexes(short missi, ulong fmtver, ubyte reload, TbBool deep)
 {
 #if 0
     asm volatile ("call ASM_fix_level_indexes\n"
@@ -1301,7 +1301,7 @@ void fix_level_indexes(short missi, ulong fmtver, ubyte reload)
     ushort objectv;
     short thing;
 
-    fix_thing_commands_indexes();
+    fix_thing_commands_indexes(deep);
 
     for (objectv = 1; objectv < next_used_lvl_objective; objectv++)
     {
@@ -1874,7 +1874,7 @@ void load_level_pc(short level, short missi, ubyte reload)
                 LOGWARN("Local player group equal 0 will cause issues; fix the level");
             }
         }
-        fix_level_indexes(missi, fmtver, reload);
+        fix_level_indexes(missi, fmtver, reload, level_deep_fix);
     } else
     {
         LOGERR("Could not open mission file, load skipped");

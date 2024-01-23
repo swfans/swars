@@ -360,9 +360,11 @@ TbBool is_command_any_until(struct Command *p_cmd)
 
 /** Fixes parameters within a command.
  *
+ * @param cmd Index of the Command instance to fix.
+ * @param deep Perform deep/aggresive fixing.
  * @return Gives 2 if a parameter was updated, 1 if no update was neccessary, 0 if update failed.
  */
-ubyte fix_thing_command_indexes(ushort cmd)
+ubyte fix_thing_command_indexes(ushort cmd, TbBool deep)
 {
     struct Command *p_cmd;
     struct CommandDef *p_cdef;
@@ -462,17 +464,49 @@ ubyte fix_thing_command_indexes(ushort cmd)
     }
     else if ((p_cdef->Flags & CmDF_ReqVehicleCoord) != 0)
     {
-        thing = 0; // TODO no function to search for vehicle based on coords
+        thing = 0;
+        if (thing == 0 && deep) {
+            // vehicle coords in original maps are often outdated, like vehicles were moved after adding
+            // the command; to avoid linking wrong vehicles, use this only for deep fixing
+            thing = search_for_vehicle(p_cmd->X, p_cmd->Z);
+            if (thing == 0) {
+                LOGSYNC("Cmd%hu = %s target vehicle not found based on Coord(%hd,%hd); using vehicle index",
+                  cmd, p_cdef->CmdName, p_cmd->X, p_cmd->Z);
+            }
+        }
         if (thing == 0) {
-            LOGNO("Cmd%hu = %s target vehicle not found based on Coord(%hd,%hd); using vehicle index",
-              cmd, p_cdef->CmdName, p_cmd->X, p_cmd->Z);
             thing = search_things_for_index(p_cmd->OtherThing);
+            if (thing < 0) {
+                struct SimpleThing *p_sthing = &sthings[thing];
+                if (p_sthing->Type == SmTT_STATIC) {
+                    LOGWARN("Cmd%hu = %s target vehicle %hd is a static; jumping to parent",
+                      cmd, p_cdef->CmdName, thing);
+                    thing = p_sthing->Parent;
+                }
+            }
             if (thing <= 0) {
                 thing = 0;
             } else {
                 struct Thing *p_thing = &things[thing];
                 if (p_thing->Type != TT_VEHICLE)
                     thing = 0;
+            }
+        }
+        if (thing == 0 && deep) {
+            // Mechas consist of two things, and vehicle index often point to a wrong one; so try previous
+            // vehicke index if the exact one fails. Only while deep fixing, as it greatly affect gameplay
+            // when mechas rather than being empty have enemy drivers.
+            thing = search_things_for_index(p_cmd->OtherThing - 1);
+            if (thing <= 0) {
+                thing = 0;
+            } else {
+                struct Thing *p_thing = &things[thing];
+                if (p_thing->Type != TT_VEHICLE)
+                    thing = 0;
+            }
+            if (thing != 0) {
+                LOGWARN("Cmd%hu = %s target vehicle found using vehicle index previous to %hd",
+                  cmd, p_cdef->CmdName, p_cmd->OtherThing);
             }
         }
         if (thing != 0) {
@@ -487,7 +521,8 @@ ubyte fix_thing_command_indexes(ushort cmd)
     }
     else if ((p_cdef->Flags & CmDF_ReqThingCoord) != 0)
     {
-        thing = 0; // TODO no function to search for thing based on coords
+        // using this is not expected; use more specific search cases, which allow for type checking
+        thing = 0; // no function to search for any thing type based on coords
         if (thing == 0) {
             LOGNO("Cmd%hu = %s target thing not found based on Coord(%hd,%hd); using thing index",
               cmd, p_cdef->CmdName, p_cmd->X, p_cmd->Z);
@@ -564,10 +599,15 @@ ubyte fix_thing_command_indexes(ushort cmd)
     }
     else if ((p_cdef->Flags & CmDF_ReqOtherThing) != 0)
     {
-        thing = 0; // TODO no function to search for thing based on coords
+        // If this flag is set directly, the thing can't be searched for using coordinates
+        // This is used when coordinates have different function for the command.
+        // This flag also indicated we do not really know what type of thing is expected;
+        // when we understand all thing types used in commands, this case is expected to
+        // become unused
+        thing = 0;
         if (thing == 0) {
-            LOGNO("Cmd%hu = %s target thing not found based on Coord(%hd,%hd); using thing index",
-              cmd, p_cdef->CmdName, p_cmd->X, p_cmd->Z);
+            LOGNO("Cmd%hu = %s target thing can only be found using thing index",
+              cmd, p_cdef->CmdName);
             thing = search_things_for_index(p_cmd->OtherThing);
         }
         if (thing != 0) {
@@ -657,13 +697,13 @@ ubyte fix_thing_command_indexes(ushort cmd)
     return ret;
 }
 
-void fix_thing_commands_indexes(void)
+void fix_thing_commands_indexes(TbBool deep)
 {
     ushort cmd;
 
     for (cmd = 1; cmd < next_command; cmd++)
     {
-        fix_thing_command_indexes(cmd);
+        fix_thing_command_indexes(cmd, deep);
     }
 }
 

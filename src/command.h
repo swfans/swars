@@ -243,8 +243,9 @@ TbBool is_command_any_until(struct Command *p_cmd);
 
 /** For Commands which rely on searching Things on map, find the Things
  * and set indexes.
+ * @param deep Perform deep/aggresive fixing, beyond what the original game did.
  */
-void fix_thing_commands_indexes(void);
+void fix_thing_commands_indexes(TbBool deep);
 
 /** Verify and update commands array.
  */
