@@ -195,9 +195,9 @@ void snprint_sthing(char *buf, ulong buflen, struct SimpleThing *p_sthing)
     snprintf(s, buflen - (s-buf), " )");
 }
 
-void unused_func_022(void)
+void things_debug_hud(void)
 {
-    asm volatile ("call ASM_unused_func_022\n"
+    asm volatile ("call ASM_things_debug_hud\n"
         :  :  : "eax" );
 }
 

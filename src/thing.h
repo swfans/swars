@@ -872,7 +872,7 @@ void snprint_thing(char *buf, ulong buflen, struct Thing *p_thing);
  */
 void snprint_sthing(char *buf, ulong buflen, struct SimpleThing *p_sthing);
 
-void unused_func_022(void);
+void things_debug_hud(void);
 
 /** Delete the thing from `mapwho` chain.
  */

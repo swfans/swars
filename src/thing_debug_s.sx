@@ -586,9 +586,6 @@ unused_func_203:	/* 0xb8c0c */
 		pop    %esi
 		ret
 
-/* The debug function which uses this switch was not disassembled.
- * That's a shame. We should re-introduce it.
- */
 format_debug_msg_switch_b8d10:
 		.long   format_debug_msg_case_b9064
 		.long   format_debug_msg_case_b91e9
@@ -4147,7 +4144,9 @@ unused_func_205:	/* 0xba6e4 */
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC(ASM_unused_func_022)	/* 0xbac50 */
+/* Shows parameters of mobile things on screen, for debug.
+ */
+GLOBAL_FUNC(ASM_things_debug_hud)	/* 0xbac50 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -5507,7 +5506,6 @@ aEmptyItm6:	/* 0x15E802 */
 		.short  0x0
 
 /* Person state text.
- * Used by function at 0xBAC50, which was not disassembled.
  */
 person_st_text:	/* 0x154AAC */
 		.long   aSt_null
