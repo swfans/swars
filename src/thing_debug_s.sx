@@ -469,7 +469,7 @@ unused_func_202:	/* 0xb8acc */
 		push   $aThDIdD
 		lea    0xc(%esp),%eax
 		push   %eax
-		call   _sprintf
+		call   ac_sprintf
 		mov    EXPORT_SYMBOL(things),%eax
 		jmp    jump_b8be7
 	jump_b8b76:
@@ -507,7 +507,7 @@ unused_func_202:	/* 0xb8acc */
 		push   $aThDIdD_0
 		lea    0xc(%esp),%eax
 		push   %eax
-		call   _sprintf
+		call   ac_sprintf
 		mov    EXPORT_SYMBOL(sthings),%eax
 	jump_b8be7:
 		add    %ecx,%eax
@@ -761,7 +761,7 @@ person_command_to_text:	/* 0xb8f48 */
 		push   %eax
 		push   $aD_53
 		push   %esi
-		call   _sprintf
+		call   ac_sprintf
 		add    $0xc,%esp
 		mov    %esi,%edi
 		sub    %ecx,%ecx
@@ -779,7 +779,7 @@ person_command_to_text:	/* 0xb8f48 */
 		push   %eax
 		push   $ascU
 		push   %esi
-		call   _sprintf
+		call   ac_sprintf
 		add    $0xc,%esp
 		mov    %esi,%edi
 		sub    %ecx,%ecx
@@ -797,7 +797,7 @@ person_command_to_text:	/* 0xb8f48 */
 		push   %eax
 		push   $ascIu
 		push   %esi
-		call   _sprintf
+		call   ac_sprintf
 		add    $0xc,%esp
 		mov    %esi,%edi
 		sub    %ecx,%ecx
@@ -812,7 +812,7 @@ person_command_to_text:	/* 0xb8f48 */
 		je     jump_b9015
 		push   $data_15dd4f
 		push   %esi
-		call   _sprintf
+		call   ac_sprintf
 		add    $0x8,%esp
 		mov    %esi,%edi
 		sub    %ecx,%ecx
@@ -4271,7 +4271,7 @@ GLOBAL_FUNC(ASM_unused_func_022)	/* 0xbac50 */
 		push   %eax
 		xor    %ecx,%ecx
 		lea    0x28(%esp),%ebx
-		call   _sprintf
+		call   ac_sprintf
 		add    $0x28,%esp
 		mov    EXPORT_SYMBOL(colour_lookup)+0x01,%cl
 		mov    %edx,%eax
@@ -4309,7 +4309,7 @@ GLOBAL_FUNC(ASM_unused_func_022)	/* 0xbac50 */
 		push   %eax
 		xor    %ecx,%ecx
 		lea    0x2c(%esp),%ebx
-		call   _sprintf
+		call   ac_sprintf
 		add    $0x2c,%esp
 		mov    $0x1e,%eax
 		mov    EXPORT_SYMBOL(colour_lookup)+0x01,%cl
@@ -4349,7 +4349,7 @@ GLOBAL_FUNC(ASM_unused_func_022)	/* 0xbac50 */
 		push   $aF208xF3XCwDWcX
 		lea    0x24(%esp),%eax
 		push   %eax
-		call   _sprintf
+		call   ac_sprintf
 		add    $0x28,%esp
 		mov    %esp,%ebx
 		mov    $0x3c,%edx
@@ -4372,7 +4372,7 @@ GLOBAL_FUNC(ASM_unused_func_022)	/* 0xbac50 */
 		push   %eax
 		lea    0x14(%esp),%ebx
 		mov    $0x4b,%edx
-		call   _sprintf
+		call   ac_sprintf
 		add    $0x14,%esp
 		mov    $0x1e,%eax
 		mov    EXPORT_SYMBOL(colour_lookup)+0x01,%cl
@@ -4487,7 +4487,7 @@ GLOBAL_FUNC(ASM_unused_func_022)	/* 0xbac50 */
 		push   %eax
 		lea    0x14(%esp),%ebx
 		xor    %ecx,%ecx
-		call   _sprintf
+		call   ac_sprintf
 		add    $0x14,%esp
 		mov    $0x168,%eax
 		mov    EXPORT_SYMBOL(colour_lookup)+3,%cl
@@ -4512,7 +4512,7 @@ GLOBAL_FUNC(ASM_unused_func_022)	/* 0xbac50 */
 		push   %eax
 		mov    $0x5a,%edx
 		xor    %ecx,%ecx
-		call   _sprintf
+		call   ac_sprintf
 		add    $0xc,%esp
 		mov    $0x168,%eax
 		mov    EXPORT_SYMBOL(colour_lookup)+7,%cl
@@ -4549,7 +4549,7 @@ GLOBAL_FUNC(ASM_unused_func_022)	/* 0xbac50 */
 		push   %eax
 		mov    $0x69,%edx
 		xor    %ecx,%ecx
-		call   _sprintf
+		call   ac_sprintf
 		add    $0x1c,%esp
 		mov    $0x1e,%eax
 		mov    EXPORT_SYMBOL(colour_lookup)+0x01,%cl
@@ -4576,7 +4576,7 @@ GLOBAL_FUNC(ASM_unused_func_022)	/* 0xbac50 */
 		push   %eax
 		xor    %ecx,%ecx
 		lea    0x1c(%esp),%ebx
-		call   _sprintf
+		call   ac_sprintf
 		add    $0x1c,%esp
 		mov    $0x1e,%eax
 		mov    EXPORT_SYMBOL(colour_lookup)+0x01,%cl
@@ -4609,7 +4609,7 @@ GLOBAL_FUNC(ASM_unused_func_022)	/* 0xbac50 */
 		lea    0x14(%esp),%ebx
 		push   %ebx
 		xor    %ecx,%ecx
-		call   _sprintf
+		call   ac_sprintf
 		add    $0x18,%esp
 		mov    %esp,%ebx
 		mov    0x62(%esp),%esi
