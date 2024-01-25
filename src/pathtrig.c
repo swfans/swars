@@ -1463,7 +1463,7 @@ void add_obj_face_to_col_vect(short x1, short y1, short z1, short x2, short y2, 
 
 #define TOLERANCE 10
 
-void add_object_face3_to_col_vect(short obj_x, short obj_y, short obj_z, ushort obj, short face, ushort a2)
+void add_object_face3_to_col_vect(short obj_x, short obj_y, short obj_z, short thing, short face, ushort a2)
 {
     int alt_cor[4];
     int x_cor[4];
@@ -1472,10 +1472,13 @@ void add_object_face3_to_col_vect(short obj_x, short obj_y, short obj_z, ushort 
     struct SingleObjectFace3 *p_face;
     int cor;
 
-    int thing = obj; // TODO incorrect
     p_face = &game_object_faces[face];
-    if (obj != p_face->Object)
-        LOGERR("face %hd refers to object %hu instead of %hu", face, p_face->Object, obj);
+    {
+        struct Thing *p_thing;
+        p_thing = &things[thing];
+        if (p_thing->U.UObject.Object != p_face->Object)
+            LOGERR("face %hd refers to object %hu instead of %hu", face, p_face->Object, p_thing->U.UObject.Object);
+    }
     for (cor = 0; cor < 3; cor++) {
         struct SinglePoint *p_pt;
         p_pt = &game_object_points[p_face->PointNo[cor]];
@@ -1506,7 +1509,7 @@ void add_object_face3_to_col_vect(short obj_x, short obj_y, short obj_z, ushort 
     }
 }
 
-void add_object_face4_to_col_vect(short obj_x, short obj_y, short obj_z, ushort obj, short face, ushort a2)
+void add_object_face4_to_col_vect(short obj_x, short obj_y, short obj_z, short thing, short face, ushort a2)
 {
     int alt_cor[4];
     int x_cor[4];
@@ -1515,10 +1518,13 @@ void add_object_face4_to_col_vect(short obj_x, short obj_y, short obj_z, ushort 
     struct SingleObjectFace4 *p_face4;
     int cor;
 
-    int thing = obj; // TODO incorrect
     p_face4 = &game_object_faces4[face];
-    if (obj != p_face4->Object)
-        LOGERR("face %hd refers to object %hu instead of %hu", -face, p_face4->Object, obj);
+    {
+        struct Thing *p_thing;
+        p_thing = &things[thing];
+        if (p_thing->U.UObject.Object != p_face4->Object)
+            LOGERR("face %hd refers to object %hu instead of %hu", -face, p_face4->Object, p_thing->U.UObject.Object);
+    }
     for (cor = 0; cor < 4; cor++) {
         struct SinglePoint *p_pt;
         p_pt = &game_object_points[p_face4->PointNo[cor]];
@@ -1556,7 +1562,7 @@ void add_object_face4_to_col_vect(short obj_x, short obj_y, short obj_z, ushort 
 
 #undef TOLERANCE
 
-void add_all_object_faces_to_col_vect(ushort obj, ushort a2)
+void add_all_object_faces_to_col_vect(short thing, ushort obj, ushort a2)
 {
     short face;
     short startface3, endface3;
@@ -1577,11 +1583,11 @@ void add_all_object_faces_to_col_vect(ushort obj, ushort a2)
     }
     for (face = startface3; face < endface3; face++)
     {
-        add_object_face3_to_col_vect(obj_x, obj_y, obj_z, obj, face, a2);
+        add_object_face3_to_col_vect(obj_x, obj_y, obj_z, thing, face, a2);
     }
     for (face = startface4; face < endface4; face++)
     {
-        add_object_face4_to_col_vect(obj_x, obj_y, obj_z, obj, face, a2);
+        add_object_face4_to_col_vect(obj_x, obj_y, obj_z, thing, face, a2);
     }
 }
 
@@ -1607,7 +1613,7 @@ void generate_collision_vects(void)
                     struct Thing *p_thing;
                     p_thing = &things[thing];
                     if (p_thing->Type == TT_BUILDING)
-                        add_all_object_faces_to_col_vect(p_thing->U.UObject.Object, 0);
+                        add_all_object_faces_to_col_vect(thing, p_thing->U.UObject.Object, 0);
                     thing = p_thing->Next;
                 }
             }
