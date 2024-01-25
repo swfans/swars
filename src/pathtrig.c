@@ -1378,11 +1378,11 @@ void print_mapel_collision_columns(void)
     }
 }
 
-void add_next_col_vect_to_vects_list(short x, short z, short face, ubyte flags)
+void add_next_col_vect_to_vects_list(short x, short z, short thing, short face, ushort vect, ubyte flags)
 {
     short tile_x, tile_z;
-    ushort next_vl;
     struct MyMapElement *p_mapel;
+    struct ColVectList *p_cvlist;
 
     tile_x = x >> 8;
     tile_z = z >> 8;
@@ -1394,26 +1394,31 @@ void add_next_col_vect_to_vects_list(short x, short z, short face, ubyte flags)
     }
 
     p_mapel = &game_my_big_map[MAP_TILE_WIDTH * tile_z + tile_x];
+    p_cvlist = &game_col_vects_list[p_mapel->ColHead];
 
-    if (next_col_vect != game_col_vects_list[p_mapel->ColHead].Vect)
+    if (vect != p_cvlist->Vect)
     {
+        ushort next_vl;
+
         next_vl = next_vects_list;
-        game_col_vects_list[next_vl].Vect = next_col_vect;
-        game_col_vects_list[next_vl].NextColList = p_mapel->ColHead;
+        next_vects_list++;
+        p_cvlist = &game_col_vects_list[next_vl];
+        p_cvlist->Vect = vect;
+        p_cvlist->NextColList = p_mapel->ColHead;
+        p_cvlist->Object = thing;
         p_mapel->ColHead = next_vl;
-        next_vl++;
         if (flags & 0x01)
         {
             if (face != 0)
                 p_mapel->Texture |= 0x8000;
         }
-        next_vects_list = next_vl;
     }
 }
 
-void add_obj_face_to_col_vect(short x1, short y1, short z1, short x2, short y2, short z2, short face, ushort flags)
+void add_obj_face_to_col_vect(short x1, short y1, short z1, short x2, short y2, short z2, short thing, short face, ushort flags)
 {
-    int i, limit;
+    int vect, limit;
+    struct ColVect *p_colvect;
 
     limit = get_memory_ptr_allocated_count((void **)&game_col_vects);
     if (next_col_vect >= limit) {
@@ -1426,14 +1431,17 @@ void add_obj_face_to_col_vect(short x1, short y1, short z1, short x2, short y2, 
 
     //TODO why generating thin walls here? we have a separate higher level call for that
     //thin_wall(x1 >> 7, z1 >> 7, x2 >> 7, z2 >> 7, 1, 1);
-    i = next_col_vect;
-    game_col_vects[i].X1 = x1;
-    game_col_vects[i].Y1 = y1;
-    game_col_vects[i].Z1 = z1;
-    game_col_vects[i].X2 = x2;
-    game_col_vects[i].Y2 = y2;
-    game_col_vects[i].Z2 = z2;
-    game_col_vects[i].Face = face;
+    vect = next_col_vect;
+    next_col_vect++;
+    p_colvect = &game_col_vects[vect];
+
+    p_colvect->X1 = x1;
+    p_colvect->Y1 = y1;
+    p_colvect->Z1 = z1;
+    p_colvect->X2 = x2;
+    p_colvect->Y2 = y2;
+    p_colvect->Z2 = z2;
+    p_colvect->Face = face;
 
     int delta_x, delta_z, dist;
     int x, z, step_x, step_z;
@@ -1441,24 +1449,21 @@ void add_obj_face_to_col_vect(short x1, short y1, short z1, short x2, short y2, 
     delta_x = x2 - x1;
     delta_z = z2 - z1;
     dist = LbSqrL(delta_x * delta_x + delta_z * delta_z);
-    if (dist <= 0) {
-        add_next_col_vect_to_vects_list(x1, z1, face, flags);
-        return;
-    }
     x = x1 << 10;
     z = z1 << 10;
     step_x = (delta_x << 10) / dist;
     step_z = (delta_z << 10) / dist;
     for (; dist >= 0; dist--)
     {
-        add_next_col_vect_to_vects_list(x >> 10, z >> 10, face, flags);
+        add_next_col_vect_to_vects_list(x >> 10, z >> 10, thing, face, vect, flags);
         x += step_x;
         z += step_z;
     }
-    next_col_vect++;
 }
 
-void add_object_face3_to_col_vect(short x, short y, short z, ushort obj, short face, ushort a2)
+#define TOLERANCE 10
+
+void add_object_face3_to_col_vect(short obj_x, short obj_y, short obj_z, ushort obj, short face, ushort a2)
 {
     int alt_cor[4];
     int x_cor[4];
@@ -1467,21 +1472,16 @@ void add_object_face3_to_col_vect(short x, short y, short z, ushort obj, short f
     struct SingleObjectFace3 *p_face;
     int cor;
 
+    int thing = obj; // TODO incorrect
     p_face = &game_object_faces[face];
+    if (obj != p_face->Object)
+        LOGERR("face %hd refers to object %hu instead of %hu", face, p_face->Object, obj);
     for (cor = 0; cor < 3; cor++) {
         struct SinglePoint *p_pt;
         p_pt = &game_object_points[p_face->PointNo[cor]];
-        y_cor[cor] = (y + p_pt->Y) >> 3;
-    }
-    for (cor = 0; cor < 3; cor++) {
-        struct SinglePoint *p_pt;
-        p_pt = &game_object_points[p_face->PointNo[cor]];
-        x_cor[cor] = (x + p_pt->X);
-    }
-    for (cor = 0; cor < 3; cor++) {
-        struct SinglePoint *p_pt;
-        p_pt = &game_object_points[p_face->PointNo[cor]];
-        z_cor[cor] = (z + p_pt->Z);
+        x_cor[cor] = obj_x + p_pt->X;
+        y_cor[cor] = (obj_y + p_pt->Y) >> 3;
+        z_cor[cor] = obj_z + p_pt->Z;
     }
     for (cor = 0; cor < 3; cor++) {
         int alt;
@@ -1489,24 +1489,24 @@ void add_object_face3_to_col_vect(short x, short y, short z, ushort obj, short f
         alt_cor[cor] = alt >> 8;
     }
 
-    if (alt_cor[0] - 10 < y_cor[0] && alt_cor[0] + 10 > y_cor[0]
-      && alt_cor[1] - 10 < y_cor[1] && alt_cor[1] + 10 > y_cor[1]) {
+    if (alt_cor[0] - TOLERANCE < y_cor[0] && alt_cor[0] + TOLERANCE > y_cor[0]
+      && alt_cor[1] - TOLERANCE < y_cor[1] && alt_cor[1] + TOLERANCE > y_cor[1]) {
         add_obj_face_to_col_vect(x_cor[0], y_cor[0], z_cor[0],
-          x_cor[1], y_cor[1], z_cor[1], (short)face, a2);
+          x_cor[1], y_cor[1], z_cor[1], thing, face, a2);
     }
-    if (alt_cor[0] - 10 < y_cor[0] && alt_cor[0] + 10 > y_cor[0]
-      && alt_cor[2] - 10 < y_cor[2] && alt_cor[2] + 10 > y_cor[2]) {
+    if (alt_cor[0] - TOLERANCE < y_cor[0] && alt_cor[0] + TOLERANCE > y_cor[0]
+      && alt_cor[2] - TOLERANCE < y_cor[2] && alt_cor[2] + TOLERANCE > y_cor[2]) {
         add_obj_face_to_col_vect(x_cor[0], y_cor[0], z_cor[0],
-          x_cor[2], y_cor[2], z_cor[2], (short)face, a2);
+          x_cor[2], y_cor[2], z_cor[2], thing, face, a2);
     }
-    if (alt_cor[1] - 10 < y_cor[1] && alt_cor[1] + 10 > y_cor[1]
-      && alt_cor[2] - 10 < y_cor[2] && alt_cor[2] + 10 > y_cor[2]) {
+    if (alt_cor[1] - TOLERANCE < y_cor[1] && alt_cor[1] + TOLERANCE > y_cor[1]
+      && alt_cor[2] - TOLERANCE < y_cor[2] && alt_cor[2] + TOLERANCE > y_cor[2]) {
         add_obj_face_to_col_vect(x_cor[1], y_cor[1], z_cor[1],
-          x_cor[2], y_cor[2], z_cor[2], face, a2);
+          x_cor[2], y_cor[2], z_cor[2], thing, face, a2);
     }
 }
 
-void add_object_face4_to_col_vect(short x, short y, short z, ushort obj, short face, ushort a2)
+void add_object_face4_to_col_vect(short obj_x, short obj_y, short obj_z, ushort obj, short face, ushort a2)
 {
     int alt_cor[4];
     int x_cor[4];
@@ -1515,21 +1515,16 @@ void add_object_face4_to_col_vect(short x, short y, short z, ushort obj, short f
     struct SingleObjectFace4 *p_face4;
     int cor;
 
+    int thing = obj; // TODO incorrect
     p_face4 = &game_object_faces4[face];
+    if (obj != p_face4->Object)
+        LOGERR("face %hd refers to object %hu instead of %hu", -face, p_face4->Object, obj);
     for (cor = 0; cor < 4; cor++) {
         struct SinglePoint *p_pt;
         p_pt = &game_object_points[p_face4->PointNo[cor]];
-        y_cor[cor] = y + p_pt->Y;
-    }
-    for (cor = 0; cor < 4; cor++) {
-        struct SinglePoint *p_pt;
-        p_pt = &game_object_points[p_face4->PointNo[cor]];
-        x_cor[cor] = x + p_pt->X;
-   }
-    for (cor = 0; cor < 4; cor++) {
-        struct SinglePoint *p_pt;
-        p_pt = &game_object_points[p_face4->PointNo[cor]];
-        z_cor[cor] = z + p_pt->Z;
+        x_cor[cor] = obj_x + p_pt->X;
+        y_cor[cor] = obj_y + p_pt->Y;
+        z_cor[cor] = obj_z + p_pt->Z;
     }
     for (cor = 0; cor < 4; cor++) {
         int alt;
@@ -1537,42 +1532,44 @@ void add_object_face4_to_col_vect(short x, short y, short z, ushort obj, short f
         alt_cor[cor] = alt >> 8;
     }
 
-    if (-(alt_cor[0] + 10) < y_cor[0] && alt_cor[0] + 10 > y_cor[0]
-      && -(alt_cor[1] + 10) < y_cor[1] && alt_cor[1] + 10 > y_cor[1]) {
+    if (-(alt_cor[0] + TOLERANCE) < y_cor[0] && alt_cor[0] + TOLERANCE > y_cor[0]
+      && -(alt_cor[1] + TOLERANCE) < y_cor[1] && alt_cor[1] + TOLERANCE > y_cor[1]) {
         add_obj_face_to_col_vect(x_cor[0], y_cor[0], z_cor[0],
-          x_cor[1], y_cor[1], z_cor[1], -face, a2);
+          x_cor[1], y_cor[1], z_cor[1], thing, -face, a2);
     }
-    if (-(alt_cor[1] + 10) < y_cor[1] && alt_cor[1] + 10 > y_cor[1]
-      && -(alt_cor[3] + 10) < y_cor[3] && alt_cor[3] + 10 > y_cor[3]) {
+    if (-(alt_cor[1] + TOLERANCE) < y_cor[1] && alt_cor[1] + TOLERANCE > y_cor[1]
+      && -(alt_cor[3] + TOLERANCE) < y_cor[3] && alt_cor[3] + TOLERANCE > y_cor[3]) {
         add_obj_face_to_col_vect(x_cor[1], y_cor[1], z_cor[1],
-          x_cor[3], y_cor[3], z_cor[3], -face, a2);
+          x_cor[3], y_cor[3], z_cor[3], thing, -face, a2);
     }
-    if (-(alt_cor[3] + 10) < y_cor[3] && alt_cor[3] + 10 > y_cor[3]
-    && -(alt_cor[2] + 10) < y_cor[2] && alt_cor[2] + 10 > y_cor[2]) {
+    if (-(alt_cor[3] + TOLERANCE) < y_cor[3] && alt_cor[3] + TOLERANCE > y_cor[3]
+    && -(alt_cor[2] + TOLERANCE) < y_cor[2] && alt_cor[2] + TOLERANCE > y_cor[2]) {
         add_obj_face_to_col_vect(x_cor[3], y_cor[3], z_cor[3],
-          x_cor[2], y_cor[2], z_cor[2], -face, a2);
+          x_cor[2], y_cor[2], z_cor[2], thing, -face, a2);
     }
-    if (-(alt_cor[2] + 10) < y_cor[2] && alt_cor[2] + 10 > y_cor[2]
-      && -(alt_cor[0] + 10) < y_cor[0] && alt_cor[0] + 10 > y_cor[0]) {
+    if (-(alt_cor[2] + TOLERANCE) < y_cor[2] && alt_cor[2] + TOLERANCE > y_cor[2]
+      && -(alt_cor[0] + TOLERANCE) < y_cor[0] && alt_cor[0] + TOLERANCE > y_cor[0]) {
         add_obj_face_to_col_vect(x_cor[2], y_cor[2], z_cor[2],
-          x_cor[0], y_cor[0], z_cor[0], -face, a2);
+          x_cor[0], y_cor[0], z_cor[0], thing, -face, a2);
     }
 }
+
+#undef TOLERANCE
 
 void add_all_object_faces_to_col_vect(ushort obj, ushort a2)
 {
     short face;
     short startface3, endface3;
     short startface4, endface4;
-    short x, y, z;
+    short obj_x, obj_y, obj_z;
 
     {
         struct SingleObject *p_obj;
 
         p_obj = &game_objects[obj];
-        x = p_obj->MapX;
-        z = p_obj->MapZ;
-        y = p_obj->OffsetY;
+        obj_x = p_obj->MapX;
+        obj_z = p_obj->MapZ;
+        obj_y = p_obj->OffsetY;
         startface3 = p_obj->StartFace;
         endface3 = startface3 + p_obj->NumbFaces;
         startface4 = p_obj->StartFace4;
@@ -1580,11 +1577,11 @@ void add_all_object_faces_to_col_vect(ushort obj, ushort a2)
     }
     for (face = startface3; face < endface3; face++)
     {
-        add_object_face3_to_col_vect(x, y, z, obj, face, a2);
+        add_object_face3_to_col_vect(obj_x, obj_y, obj_z, obj, face, a2);
     }
     for (face = startface4; face < endface4; face++)
     {
-        add_object_face4_to_col_vect(x, y, z, obj, face, a2);
+        add_object_face4_to_col_vect(obj_x, obj_y, obj_z, obj, face, a2);
     }
 }
 
@@ -1613,6 +1610,39 @@ void generate_collision_vects(void)
                         add_all_object_faces_to_col_vect(p_thing->U.UObject.Object, 0);
                     thing = p_thing->Next;
                 }
+            }
+        }
+    }
+}
+
+void print_collision_vects(void)
+{
+    ushort tile_x, tile_z;
+
+    for (tile_x = 0; tile_x < MAP_TILE_WIDTH; tile_x++)
+    {
+        for (tile_z = 0; tile_z < MAP_TILE_HEIGHT; tile_z++)
+        {
+            struct MyMapElement *p_mapel;
+            int cv;
+
+            p_mapel = &game_my_big_map[MAP_TILE_WIDTH * tile_z + tile_x];
+            cv = p_mapel->ColHead;
+            while (cv != 0)
+            {
+                struct ColVectList *p_cvlist;
+                struct ColVect *p_colvect;
+
+                p_cvlist = &game_col_vects_list[cv];
+                p_colvect = &game_col_vects[p_cvlist->Vect];
+
+
+                LOGSYNC("%02d,%02d ColVectList Obj %d Vect %d Face %hd P1=%hd,%hd,%hd P2=%hd,%hd,%hd",
+                  (int)tile_x, (int)tile_z, (int)p_cvlist->Object,
+                  (int)p_cvlist->Vect, p_colvect->Face,
+                  p_colvect->X1, p_colvect->Y1, p_colvect->Z1,
+                  p_colvect->X2, p_colvect->Y2, p_colvect->Z2);
+                cv = p_cvlist->NextColList;
             }
         }
     }

@@ -271,9 +271,9 @@ struct ColVect { // sizeof=14
 };
 
 struct ColVectList { // sizeof=6
-  ushort Vect;
-  ushort NextColList;
-  short Object;
+  ushort Vect; /**< Index of the ColVect with geometry vector. */
+  ushort NextColList; /**< Index of the next ColVectList entry in a chain list. */
+  short Object; /**< Index of a Thing containing the object whose geometry has that vector. */
 };
 
 struct ColColumn { // sizeof=16
