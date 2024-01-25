@@ -1473,12 +1473,6 @@ void add_object_face3_to_col_vect(short obj_x, short obj_y, short obj_z, short t
     int cor;
 
     p_face = &game_object_faces[face];
-    {
-        struct Thing *p_thing;
-        p_thing = &things[thing];
-        if (p_thing->U.UObject.Object != p_face->Object)
-            LOGERR("face %hd refers to object %hu instead of %hu", face, p_face->Object, p_thing->U.UObject.Object);
-    }
     for (cor = 0; cor < 3; cor++) {
         struct SinglePoint *p_pt;
         p_pt = &game_object_points[p_face->PointNo[cor]];
@@ -1519,12 +1513,6 @@ void add_object_face4_to_col_vect(short obj_x, short obj_y, short obj_z, short t
     int cor;
 
     p_face4 = &game_object_faces4[face];
-    {
-        struct Thing *p_thing;
-        p_thing = &things[thing];
-        if (p_thing->U.UObject.Object != p_face4->Object)
-            LOGERR("face %hd refers to object %hu instead of %hu", -face, p_face4->Object, p_thing->U.UObject.Object);
-    }
     for (cor = 0; cor < 4; cor++) {
         struct SinglePoint *p_pt;
         p_pt = &game_object_points[p_face4->PointNo[cor]];
@@ -1591,6 +1579,18 @@ void add_all_object_faces_to_col_vect(short thing, ushort obj, ushort a2)
     }
 }
 
+void add_all_thing_objects_faces_to_col_vect(struct Thing *p_thing, ushort flags)
+{
+    ushort beg_obj, end_obj;
+    ushort obj;
+
+    beg_obj = p_thing->U.UObject.Object;
+    end_obj = beg_obj + p_thing->U.UObject.NumbObjects;
+    for (obj = beg_obj; obj < end_obj; obj++) {
+        add_all_object_faces_to_col_vect(p_thing->ThingOffset, obj, flags);
+    }
+}
+
 void generate_collision_vects(void)
 {
     ushort tile_x, tile_z;
@@ -1613,7 +1613,7 @@ void generate_collision_vects(void)
                     struct Thing *p_thing;
                     p_thing = &things[thing];
                     if (p_thing->Type == TT_BUILDING)
-                        add_all_object_faces_to_col_vect(thing, p_thing->U.UObject.Object, 0);
+                        add_all_thing_objects_faces_to_col_vect(p_thing, 0);
                     thing = p_thing->Next;
                 }
             }
@@ -1694,6 +1694,10 @@ void generate_thin_walls(void)
             }
         }
     }
+}
+
+void print_triangulation(void)
+{
 }
 
 void generate_map_triangulation(void)

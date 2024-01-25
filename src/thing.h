@@ -367,7 +367,7 @@ struct Thing { // sizeof=168
     short LinkSame;
     short LinkSameGroup;
     short Radius;
-    ushort ThingOffset;
+    short ThingOffset;
     long X;
     long Y;
     long Z;

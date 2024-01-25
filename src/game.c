@@ -7987,7 +7987,7 @@ ubyte do_user_interface(void)
                       ingame.TrackZ = p_agent->Z >> 8;
                       dcthing = p_locplayer->DirectControl[mouser];
                       build_packet(p_pckt, PAct_17, dcthing, p_agent->ThingOffset, 0, 0);
-                      if (p_agent->ThingOffset == p_locplayer->DirectControl[mouser])
+                      if (p_agent->ThingOffset == (short)p_locplayer->DirectControl[mouser])
                       {
                           engn_xc = p_agent->X >> 8;
                           engn_zc = p_agent->Z >> 8;
