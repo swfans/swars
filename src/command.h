@@ -225,8 +225,8 @@ struct Command
   short Arg1;
   short Arg2;
   short Time;
-  short MyThing;
-  short Parent;
+  short MyThing; /**< Index of the Thing which has this Command assigned. Unused - could be repurposed. */
+  short Parent; /**< Index of the previous Command in a chain. Unused - could be repurposed. */
   ulong Flags;
   short field_1C;
   short field_1E;

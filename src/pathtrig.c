@@ -1698,6 +1698,29 @@ void generate_thin_walls(void)
 
 void print_triangulation(void)
 {
+    int tri;
+
+    for (tri = 0; tri < triangulation[0].max_Triangles; tri++)
+    {
+        struct TrTriangle *p_tri;
+        struct TrPoint *p_pt0;
+        struct TrPoint *p_pt1;
+        struct TrPoint *p_pt2;
+
+        if (!tri_is_allocated(tri))
+            continue;
+        p_tri = &triangulation[0].Triangles[tri];
+        p_pt0 = &triangulation[0].Points[p_tri->point[0]];
+        p_pt1 = &triangulation[0].Points[p_tri->point[1]];
+        p_pt2 = &triangulation[0].Points[p_tri->point[2]];
+
+        LOGSYNC("Tri pt0(%d,%d) pt1(%d,%d) pt2(%d,%d) jump=%d, solid=%d, enter=%d",
+          (int)p_pt0->x, (int)p_pt0->y,
+          (int)p_pt1->x, (int)p_pt1->y,
+          (int)p_pt2->x, (int)p_pt2->y,
+          //(int)p_tri->tri[0], (int)p_tri->tri[1], (int)p_tri->tri[2],
+          (int)p_tri->jump, (int)p_tri->solid, (int)p_tri->enter);
+    }
 }
 
 void generate_map_triangulation(void)
