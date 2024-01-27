@@ -413,7 +413,7 @@ short collide_coords(short *p_X, short *p_Y, short *p_Z)
     return ret;
 }
 
-void thin_wall_at_line_rm(int X1, int Y1, int Z1, int X2, int Y2, int Z2, int a7, ushort a8)
+void thin_wall_at_line_rm(int X1, int Y1, int Z1, int X2, int Y2, int Z2, short face, ushort colt)
 {
     short cX1, cY1, cZ1;
     short cX2, cY2, cZ2;
@@ -438,12 +438,136 @@ void thin_wall_at_line_rm(int X1, int Y1, int Z1, int X2, int Y2, int Z2, int a7
     cY2 = Y2;
     cX2 = Z2;
 
-    if (a8 != 2)
+    if (colt != 2)
     {
         collide_coords(&cX1, &cY1, &cZ1);
         collide_coords(&cX2, &cY2, &cZ2);
     }
     thin_wall(cX1, cZ1, cX2, cZ2, 1, 1);
+}
+
+#define TOLERANCE 150
+
+void thin_wall_around_face3(short obj_x, short obj_y, short obj_z, short face, ushort colt)
+{
+    struct SingleObjectFace3 *p_face;
+    int alt_cor[4];
+    int x_cor[4];
+    int y_cor[4];
+    int z_cor[4];
+    short cor;
+
+    p_face = &game_object_faces[face];
+
+    for (cor = 0; cor < 3; cor++) {
+        struct SinglePoint *p_pt;
+        p_pt = &game_object_points[p_face->PointNo[cor]];
+        x_cor[cor] = obj_x + p_pt->X;
+        y_cor[cor] = obj_y + p_pt->Y;
+        z_cor[cor] = obj_z + p_pt->Z;
+    }
+    for (cor = 0; cor < 3; cor++) {
+        int alt;
+        alt = alt_at_point(x_cor[cor], z_cor[cor]);
+        alt_cor[cor] = alt >> 5;
+    }
+    if (alt_cor[0] - TOLERANCE < y_cor[0] && alt_cor[0] + TOLERANCE > y_cor[0]
+      && alt_cor[1] - TOLERANCE < y_cor[1] && alt_cor[1] + TOLERANCE > y_cor[1]) {
+        thin_wall_at_line_rm(x_cor[0], y_cor[0], z_cor[0],
+          x_cor[1], y_cor[1], z_cor[1], face, colt);
+    }
+    if (alt_cor[0] - TOLERANCE < y_cor[0] && alt_cor[0] + TOLERANCE > y_cor[0]
+      && alt_cor[2] - TOLERANCE < y_cor[2] && alt_cor[2] + TOLERANCE > y_cor[2]) {
+        thin_wall_at_line_rm(x_cor[0], y_cor[0], z_cor[0],
+          x_cor[2], y_cor[2], z_cor[2], face, colt);
+    }
+    if (alt_cor[1] - TOLERANCE < y_cor[1] && alt_cor[1] + TOLERANCE > y_cor[1]
+      && alt_cor[2] - TOLERANCE < y_cor[2] && alt_cor[2] + TOLERANCE > y_cor[2]) {
+        thin_wall_at_line_rm(x_cor[1], y_cor[1], z_cor[1],
+          x_cor[2], y_cor[2], z_cor[2], face, colt);
+    }
+}
+
+void thin_wall_around_face4(short obj_x, short obj_y, short obj_z, short face, ushort colt)
+{
+    struct SingleObjectFace4 *p_face;
+    int alt_cor[4];
+    int x_cor[4];
+    int y_cor[4];
+    int z_cor[4];
+    short cor;
+
+    p_face = &game_object_faces4[face];
+
+    for (cor = 0; cor < 4; cor++) {
+        struct SinglePoint *p_pt;
+        p_pt = &game_object_points[p_face->PointNo[cor]];
+        x_cor[cor] = obj_x + p_pt->X;
+        y_cor[cor] = obj_y + p_pt->Y;
+        z_cor[cor] = obj_z + p_pt->Z;
+    }
+    for (cor = 0; cor < 4; cor++) {
+        int alt;
+        alt = alt_at_point(x_cor[cor], z_cor[cor]);
+        alt_cor[cor] = alt >> 5;
+    }
+    if (alt_cor[0] - TOLERANCE < y_cor[0] && alt_cor[0] + TOLERANCE > y_cor[0]
+      && alt_cor[1] - TOLERANCE < y_cor[1] && alt_cor[1] + TOLERANCE > y_cor[1]) {
+        thin_wall_at_line_rm(x_cor[0], y_cor[0], z_cor[0],
+          x_cor[1], y_cor[1], z_cor[1], -face, colt);
+    }
+    if (alt_cor[1] - TOLERANCE < y_cor[1] && alt_cor[1] + TOLERANCE > y_cor[1]
+      && alt_cor[3] - TOLERANCE < y_cor[3] && alt_cor[3] + TOLERANCE > y_cor[3]) {
+        thin_wall_at_line_rm(x_cor[1], y_cor[1], z_cor[1],
+          x_cor[3], y_cor[3], z_cor[3], -face, colt);
+    }
+    if (alt_cor[3] - TOLERANCE < y_cor[3] && alt_cor[3] + TOLERANCE > y_cor[3]
+      && alt_cor[2] - TOLERANCE < y_cor[2] && alt_cor[2] + TOLERANCE > y_cor[2]) {
+        thin_wall_at_line_rm(x_cor[3], y_cor[3], z_cor[3],
+          x_cor[2], y_cor[2], z_cor[2], -face, colt);
+    }
+    if (alt_cor[2] - TOLERANCE < y_cor[2] && alt_cor[2] + TOLERANCE > y_cor[2]
+      && alt_cor[0] - TOLERANCE < y_cor[0] && alt_cor[0] + TOLERANCE > y_cor[0]) {
+        thin_wall_at_line_rm(x_cor[2], y_cor[2], z_cor[2],
+          x_cor[0], y_cor[0], z_cor[0], -face, colt);
+    }
+}
+
+#undef TOLERANCE
+
+void thin_wall_around_object_rm(ushort obj, ushort colt)
+{
+#if 0
+    asm volatile (
+      "call ASM_thin_wall_around_object_rm\n"
+        : : "a" (obj), "d" (colt));
+#else
+    short obj_x, obj_y, obj_z;
+    short startface3, endface3;
+    short startface4, endface4;
+    short face;
+
+    {
+        struct SingleObject *p_obj;
+
+        p_obj = &game_objects[obj];
+        obj_x = p_obj->MapX;
+        obj_y = p_obj->OffsetY;
+        obj_z = p_obj->MapZ;
+        startface3 = p_obj->StartFace;
+        endface3 = startface3 + p_obj->NumbFaces;
+        startface4 = p_obj->StartFace4;
+        endface4 = startface4 + p_obj->NumbFaces4;
+    }
+    for (face = startface3; face < endface3; face++)
+    {
+        thin_wall_around_face3(obj_x, obj_y, obj_z, face, colt);
+    }
+    for (face = startface4; face < endface4; face++)
+    {
+        thin_wall_around_face4(obj_x, obj_y, obj_z, face, colt);
+    }
+#endif
 }
 
 void brute_fill_rectangle(int x1, int y1, int x2, int y2, ubyte solid)
@@ -712,13 +836,6 @@ void triangulation_clear(void)
 {
     triangulation_init();
     triangulation_init_edges();
-}
-
-void thin_wall_around_object_rm(ushort obj, ubyte colt)
-{
-    asm volatile (
-      "call ASM_thin_wall_around_object_rm\n"
-        : : "a" (obj), "d" (colt));
 }
 
 void init_collision_vects(void)
@@ -1558,13 +1675,13 @@ void add_object_face4_to_col_vect(short obj_x, short obj_y, short obj_z, short t
     int x_cor[4];
     int y_cor[4];
     int z_cor[4];
-    struct SingleObjectFace4 *p_face4;
+    struct SingleObjectFace4 *p_face;
     int cor;
 
-    p_face4 = &game_object_faces4[face];
+    p_face = &game_object_faces4[face];
     for (cor = 0; cor < 4; cor++) {
         struct SinglePoint *p_pt;
-        p_pt = &game_object_points[p_face4->PointNo[cor]];
+        p_pt = &game_object_points[p_face->PointNo[cor]];
         x_cor[cor] = obj_x + p_pt->X;
         y_cor[cor] = obj_y + p_pt->Y;
         z_cor[cor] = obj_z + p_pt->Z;
