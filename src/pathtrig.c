@@ -40,6 +40,11 @@ extern long thin_wall_x2, thin_wall_y2;
 
 #define MAX_THINGS_ON_TILE 200
 
+enum ThinWallType {
+    THIN_BLOCK = 0,
+    THIN_PASS = 1,
+};
+
 extern const short MOD3[] ;
 
 int unkn_path_func_001(struct Thing *p_thing, ubyte a2)
@@ -413,7 +418,7 @@ short collide_coords(short *p_X, short *p_Y, short *p_Z)
     return ret;
 }
 
-void thin_wall_at_line_rm(int X1, int Y1, int Z1, int X2, int Y2, int Z2, short face, ushort colt)
+void thin_wall_at_line(int X1, int Y1, int Z1, int X2, int Y2, int Z2, short face, ushort colt, ubyte pass)
 {
     short cX1, cY1, cZ1;
     short cX2, cY2, cZ2;
@@ -443,12 +448,19 @@ void thin_wall_at_line_rm(int X1, int Y1, int Z1, int X2, int Y2, int Z2, short 
         collide_coords(&cX1, &cY1, &cZ1);
         collide_coords(&cX2, &cY2, &cZ2);
     }
-    thin_wall(cX1, cZ1, cX2, cZ2, 1, 1);
+    thin_wall(cX1, cZ1, cX2, cZ2, pass, pass);
+}
+
+/* Needed only for ASM - remove pending.
+*/
+void thin_wall_at_line_rm(int X1, int Y1, int Z1, int X2, int Y2, int Z2, short face, ushort colt)
+{
+    thin_wall_at_line(X1, Y1, Z1, X2, Y2, Z2, face, colt, THIN_PASS);
 }
 
 #define TOLERANCE 150
 
-void thin_wall_around_face3(short obj_x, short obj_y, short obj_z, short face, ushort colt)
+void thin_wall_around_face3(short obj_x, short obj_y, short obj_z, short face, ushort colt, ubyte pass)
 {
     struct SingleObjectFace3 *p_face;
     int alt_cor[4];
@@ -473,22 +485,22 @@ void thin_wall_around_face3(short obj_x, short obj_y, short obj_z, short face, u
     }
     if (alt_cor[0] - TOLERANCE < y_cor[0] && alt_cor[0] + TOLERANCE > y_cor[0]
       && alt_cor[1] - TOLERANCE < y_cor[1] && alt_cor[1] + TOLERANCE > y_cor[1]) {
-        thin_wall_at_line_rm(x_cor[0], y_cor[0], z_cor[0],
-          x_cor[1], y_cor[1], z_cor[1], face, colt);
+        thin_wall_at_line(x_cor[0], y_cor[0], z_cor[0],
+          x_cor[1], y_cor[1], z_cor[1], face, colt, pass);
     }
     if (alt_cor[0] - TOLERANCE < y_cor[0] && alt_cor[0] + TOLERANCE > y_cor[0]
       && alt_cor[2] - TOLERANCE < y_cor[2] && alt_cor[2] + TOLERANCE > y_cor[2]) {
-        thin_wall_at_line_rm(x_cor[0], y_cor[0], z_cor[0],
-          x_cor[2], y_cor[2], z_cor[2], face, colt);
+        thin_wall_at_line(x_cor[0], y_cor[0], z_cor[0],
+          x_cor[2], y_cor[2], z_cor[2], face, colt, pass);
     }
     if (alt_cor[1] - TOLERANCE < y_cor[1] && alt_cor[1] + TOLERANCE > y_cor[1]
       && alt_cor[2] - TOLERANCE < y_cor[2] && alt_cor[2] + TOLERANCE > y_cor[2]) {
-        thin_wall_at_line_rm(x_cor[1], y_cor[1], z_cor[1],
-          x_cor[2], y_cor[2], z_cor[2], face, colt);
+        thin_wall_at_line(x_cor[1], y_cor[1], z_cor[1],
+          x_cor[2], y_cor[2], z_cor[2], face, colt, pass);
     }
 }
 
-void thin_wall_around_face4(short obj_x, short obj_y, short obj_z, short face, ushort colt)
+void thin_wall_around_face4(short obj_x, short obj_y, short obj_z, short face, ushort colt, ubyte pass)
 {
     struct SingleObjectFace4 *p_face;
     int alt_cor[4];
@@ -513,27 +525,56 @@ void thin_wall_around_face4(short obj_x, short obj_y, short obj_z, short face, u
     }
     if (alt_cor[0] - TOLERANCE < y_cor[0] && alt_cor[0] + TOLERANCE > y_cor[0]
       && alt_cor[1] - TOLERANCE < y_cor[1] && alt_cor[1] + TOLERANCE > y_cor[1]) {
-        thin_wall_at_line_rm(x_cor[0], y_cor[0], z_cor[0],
-          x_cor[1], y_cor[1], z_cor[1], -face, colt);
+        thin_wall_at_line(x_cor[0], y_cor[0], z_cor[0],
+          x_cor[1], y_cor[1], z_cor[1], -face, colt, pass);
     }
     if (alt_cor[1] - TOLERANCE < y_cor[1] && alt_cor[1] + TOLERANCE > y_cor[1]
       && alt_cor[3] - TOLERANCE < y_cor[3] && alt_cor[3] + TOLERANCE > y_cor[3]) {
-        thin_wall_at_line_rm(x_cor[1], y_cor[1], z_cor[1],
-          x_cor[3], y_cor[3], z_cor[3], -face, colt);
+        thin_wall_at_line(x_cor[1], y_cor[1], z_cor[1],
+          x_cor[3], y_cor[3], z_cor[3], -face, colt, pass);
     }
     if (alt_cor[3] - TOLERANCE < y_cor[3] && alt_cor[3] + TOLERANCE > y_cor[3]
       && alt_cor[2] - TOLERANCE < y_cor[2] && alt_cor[2] + TOLERANCE > y_cor[2]) {
-        thin_wall_at_line_rm(x_cor[3], y_cor[3], z_cor[3],
-          x_cor[2], y_cor[2], z_cor[2], -face, colt);
+        thin_wall_at_line(x_cor[3], y_cor[3], z_cor[3],
+          x_cor[2], y_cor[2], z_cor[2], -face, colt, pass);
     }
     if (alt_cor[2] - TOLERANCE < y_cor[2] && alt_cor[2] + TOLERANCE > y_cor[2]
       && alt_cor[0] - TOLERANCE < y_cor[0] && alt_cor[0] + TOLERANCE > y_cor[0]) {
-        thin_wall_at_line_rm(x_cor[2], y_cor[2], z_cor[2],
-          x_cor[0], y_cor[0], z_cor[0], -face, colt);
+        thin_wall_at_line(x_cor[2], y_cor[2], z_cor[2],
+          x_cor[0], y_cor[0], z_cor[0], -face, colt, pass);
     }
 }
 
 #undef TOLERANCE
+
+void thin_wall_around_object(ushort obj, ushort colt)
+{
+    short obj_x, obj_y, obj_z;
+    short startface3, endface3;
+    short startface4, endface4;
+    short face;
+
+    {
+        struct SingleObject *p_obj;
+
+        p_obj = &game_objects[obj];
+        obj_x = p_obj->MapX;
+        obj_y = p_obj->OffsetY;
+        obj_z = p_obj->MapZ;
+        startface3 = p_obj->StartFace;
+        endface3 = startface3 + p_obj->NumbFaces;
+        startface4 = p_obj->StartFace4;
+        endface4 = startface4 + p_obj->NumbFaces4;
+    }
+    for (face = startface3; face < endface3; face++)
+    {
+        thin_wall_around_face3(obj_x, obj_y, obj_z, face, colt, THIN_BLOCK);
+    }
+    for (face = startface4; face < endface4; face++)
+    {
+        thin_wall_around_face4(obj_x, obj_y, obj_z, face, colt, THIN_BLOCK);
+    }
+}
 
 void thin_wall_around_object_rm(ushort obj, ushort colt)
 {
@@ -561,11 +602,11 @@ void thin_wall_around_object_rm(ushort obj, ushort colt)
     }
     for (face = startface3; face < endface3; face++)
     {
-        thin_wall_around_face3(obj_x, obj_y, obj_z, face, colt);
+        thin_wall_around_face3(obj_x, obj_y, obj_z, face, colt, THIN_PASS);
     }
     for (face = startface4; face < endface4; face++)
     {
-        thin_wall_around_face4(obj_x, obj_y, obj_z, face, colt);
+        thin_wall_around_face4(obj_x, obj_y, obj_z, face, colt, THIN_PASS);
     }
 #endif
 }
@@ -612,7 +653,9 @@ void fill_rectangle(int x1, int y1, int x2, int y2, ubyte solid)
 
     edge_find(x1, y1, x1, y2, &tri1, &tri5);
     {
-        triangulation[0].Triangles[tri1].solid = solid;
+        struct TrTriangle *p_tri;
+        p_tri = &triangulation[0].Triangles[tri1];
+        p_tri->solid = solid;
         area_t += triangle_area1(tri1);
     }
     if (area_t == area_r)
@@ -621,7 +664,9 @@ void fill_rectangle(int x1, int y1, int x2, int y2, ubyte solid)
     edge_find(x2, y2, x2, y1, &tri2, &tri5);
     if (tri2 != tri1)
     {
-        triangulation[0].Triangles[tri2].solid = solid;
+        struct TrTriangle *p_tri;
+        p_tri = &triangulation[0].Triangles[tri2];
+        p_tri->solid = solid;
         area_t += triangle_area1(tri2);
     }
     if (area_t == area_r)
@@ -630,7 +675,9 @@ void fill_rectangle(int x1, int y1, int x2, int y2, ubyte solid)
     edge_find(x2, y1, x1, y1, &tri3, &tri5);
     if (tri3 != tri1 && tri3 != tri2)
     {
-        triangulation[0].Triangles[tri3].solid = solid;
+        struct TrTriangle *p_tri;
+        p_tri = &triangulation[0].Triangles[tri3];
+        p_tri->solid = solid;
         area_t += triangle_area1(tri3);
     }
     if (area_t == area_r)
@@ -639,7 +686,9 @@ void fill_rectangle(int x1, int y1, int x2, int y2, ubyte solid)
     edge_find(x1, y2, x2, y2, &tri4, &tri5);
     if (tri4 != tri1 && tri4 != tri2 && tri4 != tri3)
     {
-        triangulation[0].Triangles[tri4].solid = solid;
+        struct TrTriangle *p_tri;
+        p_tri = &triangulation[0].Triangles[tri4];
+        p_tri->solid = solid;
         area_t += triangle_area1(tri4);
     }
     if (area_t == area_r)
@@ -681,6 +730,11 @@ void tri_set_rectangle(int x1, int y1, int x2, int y2, ubyte solid)
     make_edge(sx1, sy2, sx1, sy1);
     fill_rectangle(sx1, sy1, sx2, sy2, solid);
 #endif
+}
+
+void triangulate_set_rectangle(int x1, int y1, int x2, int y2, ubyte solid)
+{
+    tri_set_rectangle(x1, y1, x2, y2, solid);
 }
 
 void triangulation_initxy(int x1, int y1, int x2, int y2)
@@ -1828,7 +1882,7 @@ void thin_wall_around_thing_objects(struct Thing *p_thing, ubyte colt)
     beg_obj = p_thing->U.UObject.Object;
     end_obj = beg_obj + p_thing->U.UObject.NumbObjects;
     for (obj = beg_obj; obj < end_obj; obj++) {
-        thin_wall_around_object_rm(obj, colt);
+        thin_wall_around_object(obj, colt);
     }
 }
 
