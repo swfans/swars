@@ -413,7 +413,7 @@ short collide_coords(short *p_X, short *p_Y, short *p_Z)
     return ret;
 }
 
-void thin_wall_at_line(int X1, int Y1, int Z1, int X2, int Y2, int Z2, int a7, ushort a8)
+void thin_wall_at_line_rm(int X1, int Y1, int Z1, int X2, int Y2, int Z2, int a7, ushort a8)
 {
     short cX1, cY1, cZ1;
     short cX2, cY2, cZ2;
@@ -421,13 +421,13 @@ void thin_wall_at_line(int X1, int Y1, int Z1, int X2, int Y2, int Z2, int a7, u
     if (!unused_func_115(X1, Z1, X2, Z2))
         return;
 
-    if (X1 < 0 || X1 > 32767)
+    if (X1 < 0 || X1 > 32768)
         return;
-    if (X2 < 0 || X2 > 32767)
+    if (X2 < 0 || X2 > 32768)
         return;
-    if (Z1 < 0 || Z1 > 32767)
+    if (Z1 < 0 || Z1 > 32768)
         return;
-    if (Z2 < 0 || Z2 > 32767)
+    if (Z2 < 0 || Z2 > 32768)
         return;
 
     cX1 = X1;
@@ -714,10 +714,10 @@ void triangulation_clear(void)
     triangulation_init_edges();
 }
 
-void thin_wall_around_object(ushort obj, ubyte colt)
+void thin_wall_around_object_rm(ushort obj, ubyte colt)
 {
     asm volatile (
-      "call ASM_thin_wall_around_object\n"
+      "call ASM_thin_wall_around_object_rm\n"
         : : "a" (obj), "d" (colt));
 }
 
@@ -1711,7 +1711,7 @@ void thin_wall_around_thing_objects(struct Thing *p_thing, ubyte colt)
     beg_obj = p_thing->U.UObject.Object;
     end_obj = beg_obj + p_thing->U.UObject.NumbObjects;
     for (obj = beg_obj; obj < end_obj; obj++) {
-        thin_wall_around_object(obj, colt);
+        thin_wall_around_object_rm(obj, colt);
     }
 }
 
