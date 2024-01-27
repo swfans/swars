@@ -397,6 +397,55 @@ void thin_wall(int x1, int y1, int x2, int y2, ubyte en1, ubyte en2)
 #endif
 }
 
+int unused_func_115(int X1, int Z1, int X2, int Z2)
+{
+    int ret;
+    asm volatile ("call ASM_unused_func_115\n"
+        : "=r" (ret) : "a" (X1), "d" (Z1), "b" (X2), "c" (Z2));
+    return ret;
+}
+
+short collide_coords(short *p_X, short *p_Y, short *p_Z)
+{
+    short ret;
+    asm volatile ("call ASM_collide_coords\n"
+        : "=r" (ret) : "a" (p_X), "d" (p_Y), "b" (p_Z));
+    return ret;
+}
+
+void thin_wall_at_line(int X1, int Y1, int Z1, int X2, int Y2, int Z2, int a7, ushort a8)
+{
+    short cX1, cY1, cZ1;
+    short cX2, cY2, cZ2;
+
+    if (!unused_func_115(X1, Z1, X2, Z2))
+        return;
+
+    if (X1 < 0 || X1 > 32767)
+        return;
+    if (X2 < 0 || X2 > 32767)
+        return;
+    if (Z1 < 0 || Z1 > 32767)
+        return;
+    if (Z2 < 0 || Z2 > 32767)
+        return;
+
+    cX1 = X1;
+    cY1 = Y1;
+    cX1 = Z1;
+
+    cX2 = X2;
+    cY2 = Y2;
+    cX2 = Z2;
+
+    if (a8 != 2)
+    {
+        collide_coords(&cX1, &cY1, &cZ1);
+        collide_coords(&cX2, &cY2, &cZ2);
+    }
+    thin_wall(cX1, cZ1, cX2, cZ2, 1, 1);
+}
+
 void brute_fill_rectangle(int x1, int y1, int x2, int y2, ubyte solid)
 {
 #if 1
