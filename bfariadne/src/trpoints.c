@@ -92,6 +92,16 @@ void point_dispose(TrPointId pt)
     triangulation[0].count_Points--;
 }
 
+TbBool point_is_allocated(TrPointId pt)
+{
+    struct TrPoint *p_point;
+
+    if (pt < 0)
+        return false;
+    p_point = &triangulation[0].Points[pt];
+    return (p_point->y != POINT_UNALLOCATED_MARK);
+}
+
 TrPointId point_set_new_or_reuse(TrCoord pt_x, TrCoord pt_y)
 {
     TrPointId pt;

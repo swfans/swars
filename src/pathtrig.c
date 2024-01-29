@@ -1916,7 +1916,7 @@ void generate_thin_walls(void)
     }
 }
 
-void print_triangulation(void)
+void print_triangulation_trigs(void)
 {
     int tri;
 
@@ -1941,6 +1941,29 @@ void print_triangulation(void)
           //(int)p_tri->tri[0], (int)p_tri->tri[1], (int)p_tri->tri[2],
           (int)p_tri->jump, (int)p_tri->solid, (int)p_tri->enter);
     }
+}
+
+void print_triangulation_points(void)
+{
+    int pt;
+
+    for (pt = 0; pt < triangulation[0].max_Points; pt++)
+    {
+        struct TrPoint *p_pt;
+
+        if (!point_is_allocated(pt))
+            continue;
+        p_pt = &triangulation[0].Points[pt];
+
+        LOGSYNC("Pt(%d,%d)",
+          (int)p_pt->x, (int)p_pt->y);
+    }
+}
+
+void print_triangulation(void)
+{
+    print_triangulation_points();
+    print_triangulation_trigs();
 }
 
 void generate_map_triangulation(void)

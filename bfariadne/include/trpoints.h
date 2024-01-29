@@ -60,6 +60,10 @@ TrPointId point_new(void);
  */
 void point_dispose(TrPointId pt);
 
+/** Returns if given point is allocated (is not free and is not invalid).
+ */
+TbBool point_is_allocated(TrPointId pt);
+
 /** Clear all properties of the point.
  */
 void point_clear(TrPointId pt);
