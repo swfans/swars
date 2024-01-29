@@ -437,11 +437,11 @@ void thin_wall_at_line(int X1, int Y1, int Z1, int X2, int Y2, int Z2, short fac
 
     cX1 = X1;
     cY1 = Y1;
-    cX1 = Z1;
+    cZ1 = Z1;
 
     cX2 = X2;
     cY2 = Y2;
-    cX2 = Z2;
+    cZ2 = Z2;
 
     if (colt != 2)
     {
