@@ -67,7 +67,7 @@ MemSystem mem_game[] = {
   { "col_vects",		(void **)&game_col_vects,		14u, 13000, 0, 0, 0 },
   { "walk_headers",		(void **)&game_walk_headers,	4u, 3000, 0, 0, 0 },
   { "walk_items",		(void **)&game_walk_items,		2u, 18000, 0, 0, 0 },
-  { "col_columns",		(void **)&game_col_columns,		16u, 6000, 0, 0, 0 },
+  { "col_columns",		(void **)&game_col_columns,		16u, 8000, 0, 0, 0 },
   { "prim4_textures",	(void **)&prim4_textures,		18u, 1200, 0, 0, 0 },
   { "prim_face_textures", (void **)&prim_face_textures,	16u, 500, 0, 0, 0 },
   { "prim_object_points", (void **)&prim_object_points,	10u, 2000, 0, 0, 0 },

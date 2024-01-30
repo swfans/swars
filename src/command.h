@@ -225,8 +225,8 @@ struct Command
   short Arg1;
   short Arg2;
   short Time;
-  short MyThing;
-  short Parent;
+  short MyThing; /**< Index of the Thing which has this Command assigned. Unused - could be repurposed. */
+  short Parent; /**< Index of the previous Command in a chain. Unused - could be repurposed. */
   ulong Flags;
   short field_1C;
   short field_1E;
@@ -243,8 +243,9 @@ TbBool is_command_any_until(struct Command *p_cmd);
 
 /** For Commands which rely on searching Things on map, find the Things
  * and set indexes.
+ * @param deep Perform deep/aggresive fixing, beyond what the original game did.
  */
-void fix_thing_commands_indexes(void);
+void fix_thing_commands_indexes(TbBool deep);
 
 /** Verify and update commands array.
  */

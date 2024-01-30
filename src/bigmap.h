@@ -38,32 +38,33 @@ extern "C" {
 #define SPIRAL_STEPS_COUNT   1700
 
 struct MyMapElement { // sizeof=18
-  ushort Texture;
-  ushort Alt;
+  ushort Texture; /**< offs=0x00 Index of SingleFloorTexture for this tile, and texture flags. */
+  ushort Shade;
   ushort field_4;
-  ushort field_6;
-  short Child;
-  ushort ColHead;
+  ushort Alt; /**< offs=0x06 Ground element altitude. */
+  short Child; /**< offs=0x08 Index of a first Thing in a chain of things located on this element. */
+  ushort ColHead; /**< offs=0x0A Index of ColVectList for this tile. */
   ubyte field_C;
-  ubyte Flags2;
+  ubyte field_D;
   ubyte Zip;
-  ubyte field_F;
-  ushort field_10;
+  ubyte Flags2;
+  ushort ColumnHead; /**< offs=0x10 Index of ColColumn for this tile, storing collision properties. */
 };
 
 struct MyMapElementOldV7 { // sizeof=24
-  ushort Texture;
-  ushort Alt;
+  ushort Texture; /**< offs=0x00 Index of SingleFloorTexture for this tile, and texture flags. */
+  ushort field_2;
   ushort field_4;
-  ushort ColHead;
+  ushort field_6;
   ushort field_8;
-  ubyte Flags;
-  ubyte Dummy1;
+  ushort Alt; /**< offs=0x0A Ground element altitude. */
   ubyte Zip;
   ubyte Flags2;
-  short Child;
-  ushort field_10;
-  ubyte field_12[6];
+  short Child; /**< offs=0x0E Index of a first Thing in a chain of things located on this element. */
+  ushort ColHead; /**< offs=0x10 Index of ColVectList for this tile. */
+  ushort field_12;
+  ubyte field_14[2];
+  ushort ColumnHead; /**< offs=0x16 Index of ColColumn for this tile, storing collision properties. */
 };
 
 struct MapOffset {

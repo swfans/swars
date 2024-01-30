@@ -271,9 +271,13 @@ struct ColVect { // sizeof=14
 };
 
 struct ColVectList { // sizeof=6
-  ushort Vect;
-  ushort NextColList;
-  short Object;
+  ushort Vect; /**< Index of the ColVect with geometry vector. */
+  ushort NextColList; /**< Index of the next ColVectList entry in a chain list. */
+  short Object; /**< Index of a Thing containing the object whose geometry has that vector. */
+};
+
+struct ColColumn { // sizeof=16
+    uint QBits[4];
 };
 
 struct WalkHeader { // sizeof=4
@@ -498,11 +502,26 @@ extern struct ColVectList *game_col_vects_list;
 extern ushort next_vects_list;
 extern struct ColVect *game_col_vects;
 extern ushort next_col_vect;
+
+/** Header linking a face to a list of walk items.
+ *
+ * Some SingleObjectFace* instances have a WalkHeader assigned.
+ * If they do, that defines a range of walk items containing
+ * neighbor faces, to which it is possible to walk.
+ *
+ */
 extern struct WalkHeader *game_walk_headers;
 extern ushort next_walk_header;
+
+/** List of faces which can be walked to from a specific face.
+ *
+ * Each entry is a face index which has at least corner very close
+ * to a corner of current face, allowing walking between the faces.
+ */
 extern short *game_walk_items;
 extern ushort next_walk_item;
 extern struct ColColumn *game_col_columns;
+extern ushort next_col_column;
 extern struct SingleObjectFace3 *game_special_object_faces;
 extern struct SingleObjectFace4 *game_special_object_faces4;
 extern struct FloorTile *game_floor_tiles;

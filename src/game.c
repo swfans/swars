@@ -1292,7 +1292,7 @@ void unkn_f_pressed_func(void)
     }
 }
 
-void fix_level_indexes(short missi, ulong fmtver, ubyte reload)
+void fix_level_indexes(short missi, ulong fmtver, ubyte reload, TbBool deep)
 {
 #if 0
     asm volatile ("call ASM_fix_level_indexes\n"
@@ -1301,7 +1301,7 @@ void fix_level_indexes(short missi, ulong fmtver, ubyte reload)
     ushort objectv;
     short thing;
 
-    fix_thing_commands_indexes();
+    fix_thing_commands_indexes(deep);
 
     for (objectv = 1; objectv < next_used_lvl_objective; objectv++)
     {
@@ -1391,8 +1391,9 @@ void func_6031c(short tx, short tz, short a3, short ty)
 }
 
 /** Transfer some people of given subtype from one group to the other.
+ * Skips `stay_limit` of people, then transfers the next `tran_limit`.
  */
-int thing_group_transfer_people(short pv_group, short nx_group, short subtype, int limit)
+int thing_group_transfer_people(short pv_group, short nx_group, short subtype, int stay_limit, int tran_limit)
 {
     short thing;
     struct Thing *p_thing;
@@ -1409,6 +1410,11 @@ int thing_group_transfer_people(short pv_group, short nx_group, short subtype, i
         if ((subtype != -1) && (p_thing->SubType != subtype))
             continue;
 
+        if (stay_limit > 0) {
+            stay_limit--;
+            continue;
+        }
+
         if (p_thing->U.UObject.Group == pv_group) {
             p_thing->U.UObject.Group = nx_group;
             count++;
@@ -1417,7 +1423,7 @@ int thing_group_transfer_people(short pv_group, short nx_group, short subtype, i
             p_thing->U.UObject.EffectiveGroup = nx_group;
         }
 
-        if (count >= limit)
+        if (count >= tran_limit)
             break;
     }
     return count;
@@ -1509,11 +1515,11 @@ void level_perform_deep_fix(void)
                 lp_group = find_unused_group_id(true);
             if (lp_group >= 0) {
                 thing_group_copy(pv_group, nx_group, 0x01|0x02|0x04);
-                n = thing_group_transfer_people(nx_group, lp_group, SubTT_PERS_AGENT, 4);
+                n = thing_group_transfer_people(nx_group, lp_group, SubTT_PERS_AGENT, 0, 4);
                 if (n <= 0)
-                    n = thing_group_transfer_people(nx_group, lp_group, SubTT_PERS_ZEALOT, 4);
+                    n = thing_group_transfer_people(nx_group, lp_group, SubTT_PERS_ZEALOT, 0, 4);
                 if (n <= 0)
-                    n = thing_group_transfer_people(nx_group, lp_group, -1, 4);
+                    n = thing_group_transfer_people(nx_group, lp_group, -1, 0, 4);
                 if (n > 0) {
                     LOGWARN("Local player group %d has no team; switching to new group %d based on %d",
                       (int)pv_group, (int)lp_group, (int)nx_group);
@@ -1528,6 +1534,10 @@ void level_perform_deep_fix(void)
         }
     }
 
+#if 0
+    // While the group 0 sometimes looks suspicious, it generally works correctly
+    // We should transfer other things away from that group, instead. So, this got disabled.
+    // Also, switching the group would require fixing its index in all objectives and commands.
     if (level_def.PlayableGroups[0] == 0) {
         short pv_group, nx_group;
 
@@ -1537,9 +1547,10 @@ void level_perform_deep_fix(void)
           (int)pv_group, (int)nx_group);
         if (nx_group > 0) {
             thing_group_copy(pv_group, nx_group, 0x01|0x02);
-            thing_group_transfer_people(pv_group, nx_group, -1, 4);
+            thing_group_transfer_people(pv_group, nx_group, -1, 0, 4);
         }
     }
+#endif
 }
 
 ulong load_level_pc_handle(TbFileHandle lev_fh)
@@ -1869,12 +1880,8 @@ void load_level_pc(short level, short missi, ubyte reload)
 
         if (level_deep_fix) {
             level_perform_deep_fix();
-        } else {
-            if (level_def.PlayableGroups[0] == 0) {
-                LOGWARN("Local player group equal 0 will cause issues; fix the level");
-            }
         }
-        fix_level_indexes(missi, fmtver, reload);
+        fix_level_indexes(missi, fmtver, reload, level_deep_fix);
     } else
     {
         LOGERR("Could not open mission file, load skipped");
@@ -2062,6 +2069,42 @@ void draw_hud(int thing)
 {
     asm volatile ("call ASM_draw_hud\n"
         : : "a" (thing));
+}
+
+void func_6fe80(int a1, int a2, int a3, int a4, int a5, int a6, ubyte a7)
+{
+    asm volatile (
+      "push %6\n"
+      "push %5\n"
+      "push %4\n"
+      "call ASM_func_6fe80\n"
+        : : "a" (a1), "d" (a2), "b" (a3), "c" (a4), "g" (a5), "g" (a6), "g" (a7));
+}
+
+void func_6fd1c(int a1, int a2, int a3, int a4, int a5, int a6, ubyte a7)
+{
+    asm volatile (
+      "push %6\n"
+      "push %5\n"
+      "push %4\n"
+      "call ASM_func_6fd1c\n"
+        : : "a" (a1), "d" (a2), "b" (a3), "c" (a4), "g" (a5), "g" (a6), "g" (a7));
+}
+
+void func_705bc(int a1, int a2, int a3, int a4, int a5, ubyte a6)
+{
+    asm volatile (
+      "push %5\n"
+      "push %4\n"
+      "call ASM_func_705bc\n"
+        : : "a" (a1), "d" (a2), "b" (a3), "c" (a4), "g" (a5), "g" (a6));
+}
+
+void draw_text_transformed_at_ground(int a1, int a2, const char *text)
+{
+    asm volatile (
+      "call ASM_draw_text_transformed_at_ground\n"
+        : : "a" (a1), "d" (a2), "b" (text));
 }
 
 void SCANNER_unkn_func_200(struct TbSprite *spr, int x, int y, ubyte col)
@@ -7944,7 +7987,7 @@ ubyte do_user_interface(void)
                       ingame.TrackZ = p_agent->Z >> 8;
                       dcthing = p_locplayer->DirectControl[mouser];
                       build_packet(p_pckt, PAct_17, dcthing, p_agent->ThingOffset, 0, 0);
-                      if (p_agent->ThingOffset == p_locplayer->DirectControl[mouser])
+                      if (p_agent->ThingOffset == (short)p_locplayer->DirectControl[mouser])
                       {
                           engn_xc = p_agent->X >> 8;
                           engn_zc = p_agent->Z >> 8;

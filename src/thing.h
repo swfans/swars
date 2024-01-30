@@ -367,7 +367,7 @@ struct Thing { // sizeof=168
     short LinkSame;
     short LinkSameGroup;
     short Radius;
-    ushort ThingOffset;
+    short ThingOffset;
     long X;
     long Y;
     long Z;
@@ -872,6 +872,8 @@ void snprint_thing(char *buf, ulong buflen, struct Thing *p_thing);
  */
 void snprint_sthing(char *buf, ulong buflen, struct SimpleThing *p_sthing);
 
+void things_debug_hud(void);
+
 /** Delete the thing from `mapwho` chain.
  */
 TbResult delete_node(struct Thing *p_thing);
@@ -920,6 +922,7 @@ short search_things_for_index(short index);
 short find_nearest_object2(short mx, short mz, ushort sub_type);
 short search_object_for_qface(ushort object, ubyte gflag, ubyte flag, ushort after);
 short search_for_station(short x, short z);
+short search_for_vehicle(short X, short Z);
 short search_things_for_uniqueid(short index, ubyte flag);
 
 /******************************************************************************/

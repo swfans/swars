@@ -63,6 +63,16 @@ void load_map_dat_pc_handle(TbFileHandle fh)
             refresh_old_my_big_map_format(&game_my_big_map[i], &old_my_map_el, fmtver);
         }
     }
+    if (fmtver <= 14)
+    {
+        struct SingleFloorTexture old_floor_texture; // Same fields, only the textures need matching
+        LbFileRead(fh, &next_floor_texture, sizeof(next_floor_texture));
+        for (i = 0; i < next_floor_texture; i++) {
+            LbFileRead(fh, &old_floor_texture, sizeof(old_floor_texture));
+            refresh_old_floor_texture_format(&game_textures[i], &old_floor_texture, fmtver);
+        }
+    }
+    else
     {
         LbFileRead(fh, &next_floor_texture, sizeof(next_floor_texture));
         LbFileRead(fh, game_textures, sizeof(struct SingleFloorTexture) * next_floor_texture);

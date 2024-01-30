@@ -24,7 +24,8 @@
 #include "trstate.h"
 #include "trlog.h"
 /******************************************************************************/
-const short MOD3[] = {0, 1, 2, 0, 1, 2};
+// do not change type - used in ASM
+const int MOD3[] = {0, 1, 2, 0, 1, 2};
 
 static TrTriangId tri_split2(TrTriangId tri, TrTipId cor,
   TrCoord pt_x, TrCoord pt_y, TrPointId pt)

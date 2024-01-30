@@ -66,6 +66,15 @@ TrPointId point_new(void)
     return pt;
 }
 
+void point_clear(TrPointId pt)
+{
+    struct TrPoint *p_point;
+
+    p_point = &triangulation[0].Points[pt];
+    p_point->x = 0;
+    p_point->y = POINT_UNALLOCATED_MARK;
+}
+
 void point_dispose(TrPointId pt)
 {
     struct TrPoint *p_point;
@@ -81,6 +90,16 @@ void point_dispose(TrPointId pt)
     assert(sizeof(TrCoord) >= sizeof(TrPointId));
     p_point->x = last_pt;
     triangulation[0].count_Points--;
+}
+
+TbBool point_is_allocated(TrPointId pt)
+{
+    struct TrPoint *p_point;
+
+    if (pt < 0)
+        return false;
+    p_point = &triangulation[0].Points[pt];
+    return (p_point->y != POINT_UNALLOCATED_MARK);
 }
 
 TrPointId point_set_new_or_reuse(TrCoord pt_x, TrCoord pt_y)

@@ -61,13 +61,18 @@ void refresh_old_my_big_map_format(struct MyMapElement *p_mapel, struct MyMapEle
     //TODO make sane matching for old fields
     LbMemoryCopy(p_mapel, p_oldmapel, 18);
 
+    p_mapel->Alt = p_oldmapel->Alt;
+    p_mapel->Child = p_oldmapel->Child;
+    p_mapel->ColHead = p_oldmapel->ColHead;
+    p_mapel->ColumnHead = p_oldmapel->ColumnHead;
+
     if (fmtver <= 9)
     {
         if (p_mapel->Texture & 0x8000) {
             short k;
             k = p_mapel->Texture;
             k = -k;
-            k = (k & 0xFF) | ((k - (128 << 8)) & 0xFF00);
+            k = (k & 0xFF) | ((k - (0x80 << 8)) & 0xFF00);
             p_mapel->Texture = k;
         }
     }

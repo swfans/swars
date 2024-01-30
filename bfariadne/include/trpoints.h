@@ -33,6 +33,10 @@ extern "C" {
  */
 typedef int TrCoord;
 
+/** Type for storing fine-grained coord (coord shifted left 8 bits).
+ */
+typedef int TrFineCoord;
+
 /** Type for storing point index.
  */
 typedef short TrPointId;
@@ -55,6 +59,14 @@ TrPointId point_new(void);
 /** Free a point, returning it to the from free points pool.
  */
 void point_dispose(TrPointId pt);
+
+/** Returns if given point is allocated (is not free and is not invalid).
+ */
+TbBool point_is_allocated(TrPointId pt);
+
+/** Clear all properties of the point.
+ */
+void point_clear(TrPointId pt);
 
 TrPointId point_set_new_or_reuse(TrCoord pt_x, TrCoord pt_y);
 

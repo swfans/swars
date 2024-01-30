@@ -59,12 +59,12 @@ struct SingleObjectFace3OldV7 { // sizeof=48
     ushort Light0;
     ushort Light1;
     ushort Light2;
-    ushort FaceNormal;
+    ushort FaceNormalDoubt;
     ubyte field_1C[3];
     ubyte field_1F;
     ubyte field_20[6];
-    ushort FaceNormal2;
-    ushort WalkHeader; /**< offs=0x34 Index of the WalkHeader created for this face. */
+    ushort FaceNormal; /**< offs=0x26 Index of the Normal vector created for this face. */
+    ushort WalkHeader; /**< offs=0x28 Index of the WalkHeader created for this face. */
     ubyte field_2A[6];
 };
 
@@ -104,11 +104,11 @@ struct SingleObjectFace4OldV7 { // sizeof=60
     short Light1;
     short Light2;
     short Light3;
-    ushort FaceNormal;
+    ushort FaceNormalDoubt;
     ubyte field_22[5];
     ubyte field_27;
     ubyte field_28[10];
-    ushort FaceNormal2;
+    ushort FaceNormal; /**< offs=0x32 Index of the Normal vector created for this face. */
     ushort WalkHeader; /**< offs=0x34 Index of the WalkHeader created for this face. */
     ubyte field_36[4];
     ushort field_3A;
@@ -162,8 +162,13 @@ extern ushort next_object_point;
 extern ushort next_normal;
 extern ushort next_object;
 
+/** Maps fields from old SingleObjectFace3 struct to the current one.
+ */
 void refresh_old_object_face_format(struct SingleObjectFace3 *p_objface,
   struct SingleObjectFace3OldV7 *p_oldobjface, ulong fmtver);
+
+/** Maps fields from old SingleObjectFace4 struct to the current one.
+ */
 void refresh_old_object_face4_format(struct SingleObjectFace4 *p_objface4,
   struct SingleObjectFace4OldV7 *p_oldobjface4, ulong fmtver);
 /******************************************************************************/

@@ -60,6 +60,24 @@ TrTriangId tri_new(void)
     return tri;
 }
 
+void tri_clear(TrTriangId tri)
+{
+    struct TrTriangle *p_tri;
+    TrTipId cor;
+
+    p_tri = &triangulation[0].Triangles[tri];
+
+    p_tri->solid = TRIANGLE_UNALLOCATED_MARK;
+    for (cor = 0; cor < 3; cor++) {
+        p_tri->point[cor] = 0;
+    }
+    for (cor = 0; cor < 3; cor++) {
+        p_tri->tri[cor] = -1;
+    }
+    p_tri->jump = -1;
+    p_tri->enter = 0;
+}
+
 void tri_dispose(TrTriangId tri)
 {
     struct TrTriangle *p_tri;
@@ -71,6 +89,16 @@ void tri_dispose(TrTriangId tri)
     p_tri->tri[0] = tri_pvfree;
     p_tri->solid = TRIANGLE_UNALLOCATED_MARK;
     triangulation[0].count_Triangles--;
+}
+
+TbBool tri_is_allocated(TrTriangId tri)
+{
+    struct TrTriangle *p_tri;
+
+    if (tri < 0)
+        return false;
+    p_tri = &triangulation[0].Triangles[tri];
+    return (p_tri->solid != TRIANGLE_UNALLOCATED_MARK);
 }
 
 TrTipId link_find(TrTriangId tri, TrTriangId tri_nx)
@@ -135,6 +163,20 @@ TbBool triangle_contained_within_rect_coords(TrTriangId tri,
         return false;
 
     return true;
+}
+
+/** Return if given triangle is at border of triangulated area - has one of its siblings not set.
+ */
+static TbBool triangleptr_is_border(struct TrTriangle *p_tri)
+{
+    TrTipId cor;
+
+    for (cor = 0; cor < 3; cor++)
+    {
+        if (p_tri->tri[cor] == -1)
+              return true;
+    }
+    return false;
 }
 
 /** Multiplies first pair of arguments, and second pair, returning which result is smaller.
@@ -202,6 +244,97 @@ sbyte compare_point_cross_distances(TrPointId pt1, TrPointId pt2, TrPointId pt3)
     TrCoord delta_by = p_point1->y - p_point3->y;
 
     return path_compare_multiplications(delta_bx, delta_ay, delta_ax, delta_by);
+}
+
+void make_triangle_solid(TrTriangId tri)
+{
+    struct TrTriangle *p_tri;
+
+    if (selected_triangulation_no != 1)
+        return;
+    if (tri >= triangulation[0].max_Triangles || tri < triangulation[0].triangle_top)
+        return;
+    p_tri = &triangulation[0].Triangles[tri];
+    p_tri->solid |= (0x04 | 0x02);
+}
+
+void triangulation_clear_enter_into_solid_gnd(ubyte seltr, TrTriangId tri)
+{
+    struct TrTriangle *p_tri;
+    TbBool is_border;
+    TrTipId cor;
+
+    p_tri = &triangulation[seltr].Triangles[tri];
+    is_border = triangleptr_is_border(p_tri);
+
+    if ((p_tri->solid & 6) || is_border)
+    {
+        p_tri->enter &= ~0x07;
+        for (cor = 0; cor < 3; cor++)
+        {
+            struct TrTriangle *p_ctri;
+            TrTipId ccor;
+
+            if (p_tri->tri[cor] == -1)
+                continue;
+
+            p_ctri = &triangulation[seltr].Triangles[p_tri->tri[cor]];
+
+            for (ccor = 0; ccor < 3; ccor++)
+            {
+                if (p_ctri->tri[ccor] == tri) {
+                    p_ctri->enter &= ~(1 << ccor);
+                    break;
+                }
+            }
+        }
+    }
+    for (cor = 0; cor < 3; cor++)
+    {
+        if (p_tri->tri[cor] == -1)
+            p_tri->enter &= ~(1 << cor);
+    }
+}
+
+void triangulation_clear_enter_into_solid_air(ubyte seltr, TrTriangId tri)
+{
+    struct TrTriangle *p_tri;
+    TbBool is_border;
+    TrTipId cor;
+
+    p_tri = &triangulation[seltr].Triangles[tri];
+    is_border = triangleptr_is_border(p_tri);
+
+    if (is_border)
+    {
+        p_tri->solid |= 0x09;
+    }
+}
+
+/** Fix triangulation entries so that entering into solid places is disallowed.
+ */
+void triangulation_clear_enter_into_solid(void)
+{
+    ubyte seltr;
+    TrTriangId tri;
+
+    seltr = 1;
+    if (triangulation[seltr].tri_initialised)
+    {
+        for (tri = 0; tri < triangulation[seltr].ix_Triangles; tri++)
+        {
+            triangulation_clear_enter_into_solid_gnd(seltr, tri);
+        }
+    }
+
+    seltr = 2;
+    if (triangulation[seltr].tri_initialised)
+    {
+        for (tri = 0; tri < triangulation[seltr].ix_Triangles; tri++)
+        {
+            triangulation_clear_enter_into_solid_air(seltr, tri);
+        }
+    }
 }
 
 /******************************************************************************/
