@@ -108,6 +108,9 @@ sbyte triangle_divide_areas_differ(TrTriangId tri,
 sbyte compare_point_cross_distances(TrPointId pt1, TrPointId pt2, TrPointId pt3);
 
 void make_triangle_solid(TrTriangId tri);
+
+/** Fix triangulation entries so that entering into solid places is disallowed.
+ */
 void triangulation_clear_enter_into_solid(void);
 
 /******************************************************************************/
