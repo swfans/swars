@@ -2607,7 +2607,7 @@ int count_weapons_in_flags(int *p_ncarr_below, int *p_ncarr_above, ulong weapons
     return ncarried;
 }
 
-TbBool draw_weapons_list_single(PlayerInfo *p_locplayer, ushort comcur, ulong weapons_carried, short current_weapon)
+TbBool draw_weapons_list_single(PlayerInfo *p_locplayer, ushort plagent, ulong weapons_carried, short current_weapon)
 {
     ushort nshown;
     int weptype;
@@ -2647,7 +2647,7 @@ TbBool draw_weapons_list_single(PlayerInfo *p_locplayer, ushort comcur, ulong we
             }
             lbDisplay.DrawFlags = 0;
 
-            if (!p_locplayer->WepDelays[comcur][weptype + 1] || (gameturn & 1))
+            if (!p_locplayer->WepDelays[plagent][weptype + 1] || (gameturn & 1))
             {
                 if (nshown == 6)
                     draw_new_panel_sprite_std(22, cy, 13);
@@ -2655,7 +2655,7 @@ TbBool draw_weapons_list_single(PlayerInfo *p_locplayer, ushort comcur, ulong we
                     draw_new_panel_sprite_std(22, cy, 12);
             }
 
-            if (!p_locplayer->WepDelays[comcur][weptype + 1] || (gameturn & 1))
+            if (!p_locplayer->WepDelays[plagent][weptype + 1] || (gameturn & 1))
                 draw_new_panel_sprite_std(30, cy + 4, weapon_defs[weptype+1].Sprite & 0xFF);
             if (weptype+1 == current_weapon)
             {
@@ -2676,7 +2676,7 @@ TbBool draw_weapons_list_single(PlayerInfo *p_locplayer, ushort comcur, ulong we
                     draw_new_panel_sprite_std(22, cy, 90);
                 }
             }
-            draw_fourpack_items(22, cy, comcur, weptype + 1);
+            draw_fourpack_items(22, cy, plagent, weptype + 1);
             cy += 28;
             ++nchecked;
             ++nshown;
@@ -2802,7 +2802,7 @@ TbBool draw_agent_weapons_selection(PlayerInfo *p_locplayer, struct Thing *p_age
     int dcx, dcy;
     int nunk1;
     ulong wepflags;
-    ushort comcur;
+    ushort plagent;
     ushort nshown;
     int nchecked;
     TbBool wep_highlight;
@@ -2810,7 +2810,7 @@ TbBool draw_agent_weapons_selection(PlayerInfo *p_locplayer, struct Thing *p_age
 
     ret = false;
     nunk1 = 0;
-    comcur = p_agent->U.UPerson.ComCur & 3;
+    plagent = p_agent->U.UPerson.ComCur & 3;
     wepflags = p_agent->U.UPerson.WeaponsCarried;
     cy = 44;
     cx = 158 * nagent + 42;
@@ -2825,7 +2825,7 @@ TbBool draw_agent_weapons_selection(PlayerInfo *p_locplayer, struct Thing *p_age
         if ((wepflags & 1) == 0)
             continue;
 
-        if (nunk1 > nshown || cur_weapons[comcur] == weptype + 1)
+        if (nunk1 > nshown || cur_weapons[plagent] == weptype + 1)
         {
             ++nshown;
             if (nchecked == 12)
@@ -2833,7 +2833,7 @@ TbBool draw_agent_weapons_selection(PlayerInfo *p_locplayer, struct Thing *p_age
             continue;
         }
         lbDisplay.DrawFlags = 0;
-        if (!p_locplayer->WepDelays[comcur][weptype + 1] || (gameturn & 1))
+        if (!p_locplayer->WepDelays[plagent][weptype + 1] || (gameturn & 1))
         {
             if (!nchecked)
                 draw_new_panel_sprite_std(cx, cy, 13);
@@ -2841,7 +2841,7 @@ TbBool draw_agent_weapons_selection(PlayerInfo *p_locplayer, struct Thing *p_age
                 draw_new_panel_sprite_std(cx, cy, 94);
         }
 
-        if (!p_locplayer->WepDelays[comcur][weptype + 1] || (gameturn & 1))
+        if (!p_locplayer->WepDelays[plagent][weptype + 1] || (gameturn & 1))
         {
             if (!nchecked)
                 draw_new_panel_sprite_std(cx + 24, cy + 12, weapon_defs[weptype + 1].Sprite & 0xFF);
@@ -2887,9 +2887,9 @@ TbBool draw_agent_weapons_selection(PlayerInfo *p_locplayer, struct Thing *p_age
         }
 
         if (nchecked)
-            draw_fourpack_items(cx, cy + 4, comcur, weptype + 1);
+            draw_fourpack_items(cx, cy + 4, plagent, weptype + 1);
         else
-            draw_fourpack_items(cx + 16, cy + 8, comcur, weptype + 1);
+            draw_fourpack_items(cx + 16, cy + 8, plagent, weptype + 1);
         if (nchecked) {
             cy += 28;
         } else {
@@ -2946,9 +2946,9 @@ TbBool func_1caf8(void)
 
     if (ingame.PanelPermutation >= 0)
     {
-        ushort comcur;
-        comcur = p_agent->U.UPerson.ComCur & 3;
-        ret = draw_weapons_list_single(p_locplayer, comcur,
+        ushort plagent;
+        plagent = p_agent->U.UPerson.ComCur & 3;
+        ret = draw_weapons_list_single(p_locplayer, plagent,
             p_agent->U.UPerson.WeaponsCarried, p_agent->U.UPerson.CurrentWeapon);
     }
     else
@@ -3443,7 +3443,7 @@ void draw_new_panel()
 
     if (gameturn & 4)
     {
-        int x, cc;
+        int x;
         short dcthing;
         struct Thing *p_agent;
 
@@ -3452,10 +3452,12 @@ void draw_new_panel()
         p_agent = &things[dcthing];
         if ((p_agent->Flag & TngF_Unkn0002) == 0 && (p_agent->Flag2 & 0x800) == 0)
         {
-            cc = p_agent->U.UPerson.ComCur & 3;
+            ushort plagent;
+
+            plagent = p_agent->U.UPerson.ComCur & 3;
             if (lbDisplay.GraphicsScreenHeight < 400)
             {
-                switch (cc)
+                switch (plagent)
                 {
                 case 0:
                   x = 4;
@@ -3473,7 +3475,7 @@ void draw_new_panel()
             }
             else
             {
-                switch (cc)
+                switch (plagent)
                 {
                 case 0:
                   x = 4;
@@ -3489,7 +3491,7 @@ void draw_new_panel()
                   break;
                 }
             }
-            draw_new_panel_sprite_std(x, 2, 6 + cc);
+            draw_new_panel_sprite_std(x, 2, 6 + plagent);
         }
     }
     lbDisplay.DrawFlags = 0;
@@ -5010,13 +5012,13 @@ ushort make_group_into_players(ushort group, ushort plyr, ushort max_agent, shor
     return ret;
 #endif
     ulong n, nframe;
-    ushort nagents, high_tier;
+    ushort plagent, high_tier;
     PlayerInfo *p_player;
     struct Thing *p_person;
 
     p_player = &players[plyr];
     p_person = NULL;
-    nagents = 0;
+    plagent = 0;
     high_tier = 0;
     for (n = things_used_head; n != 0; n = p_person->LinkChild)
     {
@@ -5024,24 +5026,24 @@ ushort make_group_into_players(ushort group, ushort plyr, ushort max_agent, shor
         if ((p_person->U.UPerson.Group != group) || (p_person->Type != TT_PERSON))
             continue;
 
-        if (nagents > p_player->DoubleMode)
+        if (plagent > p_player->DoubleMode)
         {
             if (in_network_game && p_player->DoubleMode) {
                 p_person->State = PerSt_DEAD;
                 p_person->Flag |= TngF_Unkn02000000 | TngF_Unkn0002;
             }
-            p_player->DirectControl[nagents] = 0;
+            p_player->DirectControl[plagent] = 0;
         }
         else
         {
-            p_player->DirectControl[nagents] = p_person->ThingOffset;
+            p_player->DirectControl[plagent] = p_person->ThingOffset;
             p_person->Flag |= TngF_Unkn1000;
-            if ((plyr == local_player_no) && (nagents == 0)) {
+            if ((plyr == local_player_no) && (plagent == 0)) {
                 ingame.TrackX = p_person->X >> 8;
                 ingame.TrackZ = p_person->Z >> 8;
             }
         }
-        players[plyr].MyAgent[nagents] = p_person;
+        players[plyr].MyAgent[plagent] = p_person;
         p_person->Flag |= TngF_PlayerAgent;
 #if 0 // This no longer makes sense - campaign is given with mission number
         if (!cmdln_param_bcg)
@@ -5081,7 +5083,7 @@ ushort make_group_into_players(ushort group, ushort plyr, ushort max_agent, shor
             (game_commands[p_person->U.UPerson.ComHead].Type == PCmd_EXECUTE_COMS))
         {
             p_person->Flag2 |= 0x0800;
-            p_person->U.UPerson.ComCur = 4 * plyr + nagents;
+            p_person->U.UPerson.ComCur = (plyr << 2) + plagent;
             if (ingame.GameMode == GamM_Unkn3)
                 do_weapon_quantities_proper1(p_person);
             else
@@ -5092,15 +5094,15 @@ ushort make_group_into_players(ushort group, ushort plyr, ushort max_agent, shor
         }
         else
         {
-            p_person->U.UPerson.ComCur = 4 * plyr + nagents;
+            p_person->U.UPerson.ComCur = (plyr << 2) + plagent;
             p_person->U.UPerson.ComHead = 0;
             if (ingame.GameMode == GamM_Unkn3)
                 do_weapon_quantities_proper1(p_person);
             else
                 do_weapon_quantities1(p_person);
         }
-        netgame_agent_pos_x[plyr][nagents] = p_person->X >> 8;
-        netgame_agent_pos_y[plyr][nagents] = p_person->Z >> 8;
+        netgame_agent_pos_x[plyr][plagent] = p_person->X >> 8;
+        netgame_agent_pos_y[plyr][plagent] = p_person->Z >> 8;
         p_person->State = PerSt_NONE;
         { // Why are we tripling the health?
             uint health;
@@ -5145,10 +5147,11 @@ ushort make_group_into_players(ushort group, ushort plyr, ushort max_agent, shor
         if ((p_person->SubType == SubTT_PERS_AGENT) || (p_person->SubType == SubTT_PERS_ZEALOT))
             high_tier++;
 
-        if (++nagents == max_agent)
+        if (++plagent == max_agent)
             break;
     }
-    return nagents;
+    // At this point, plagent is a count of filled agents
+    return plagent;
 }
 
 int place_default_player(ushort player_id, TbBool replace)

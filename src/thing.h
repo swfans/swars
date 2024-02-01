@@ -300,6 +300,9 @@ struct TngUPerson
    */
   ubyte EffectiveGroup;
   ushort ComHead;
+  /** Index of the currently active entry in the Commands array.
+   * Unless it's a player-controlled agent, then this is the player index and MyAgent index.
+   */
   ushort ComCur;
   char SpecialTimer;
   ubyte Angle;
