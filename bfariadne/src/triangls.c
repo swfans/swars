@@ -311,8 +311,6 @@ void triangulation_clear_enter_into_solid_air(ubyte seltr, TrTriangId tri)
     }
 }
 
-/** Fix triangulation entries so that entering into solid places is disallowed.
- */
 void triangulation_clear_enter_into_solid(void)
 {
     ubyte seltr;
