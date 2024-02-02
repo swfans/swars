@@ -108,7 +108,7 @@ msgstr ""
 #: mission.brief.mail16.par4.c4 mission.brief.mail17.par6.c4 mission.brief.mail18.par6.c4
 #: mission.brief.mail19.par7.c4 mission.brief.mail20.par6.c4 mission.brief.mail21.par6.c4
 #: mission.brief.mail22.par7.c4 mission.brief.mail23.par5.c4 mission.brief.mail24.par5.c4
-#: mission.brief.mail25.par5.c4 mission.brief.mail31.par7.c4
+#: mission.brief.mail25.par5.c4 mission.brief.mail31.par7.c4 mission.brief.mail32.par4.c4
 msgctxt "mission brief email sender"
 msgid "Virgil"
 msgstr ""
@@ -134,7 +134,7 @@ msgstr ""
 #: mission.brief.mail17.par8.c1 mission.brief.mail18.par8.c1 mission.brief.mail19.par9.c1
 #: mission.brief.mail20.par8.c1 mission.brief.mail21.par10.c1
 #: mission.brief.mail22.par9.c1 mission.brief.mail23.par7.c1 mission.brief.mail24.par7.c1
-#: mission.brief.mail25.par8.c1 mission.brief.mail31.par10.c1
+#: mission.brief.mail25.par8.c1 mission.brief.mail31.par10.c1 mission.brief.mail32.par6.c1
 msgctxt "mission brief book quote"
 msgid "- The Book of Cataclysm."
 msgstr ""
@@ -1959,6 +1959,48 @@ msgstr ""
 #: mission.brief.mail31.map3.level10:6
 msgctxt "mission brief tactical information"
 msgid "Local police have recently escorted armoured cars to the city vault"
+msgstr ""
+
+#: mission.title:110
+msgctxt "mission title"
+msgid "Unrest"
+msgstr ""
+
+#: mission.brief.mail32.par1.h
+msgctxt "mission brief email header"
+msgid "Apostle of the New Epoch."
+msgstr ""
+
+#: mission.brief.mail32.par2.c2
+msgctxt "mission brief email orders"
+msgid "There is a task you must perform for us. The Unguided are foolish enough to think they can use our belief against us. Our sources have told us that a contingent of punks have taken civilians hostage. Your team will be sent in against them."
+msgstr ""
+
+#: mission.brief.mail32.par3.c5
+msgctxt "mission brief email paragraph"
+msgid ""
+"We have the element of surprise. The Unguided expect us to rescue the hostages. All you must do is destroy the Unguided causing this irritation. Do not worry about the public held to ransom. They are not Churchmembers and mean nothing. Just stop the Unguided in whichever way you choose. Make sure it is permanent."
+msgstr ""
+
+#: mission.brief.mail32.par5.c1
+msgctxt "mission brief book quote"
+msgid ""
+"When tact is required, use brute force. When force is required, use greater force. When the greatest force is required, use your head. Surprise is everything."
+msgstr ""
+
+#: mission.brief.mail32.map10.level2:1
+msgctxt "mission brief tactical information"
+msgid "Landing Ground: Phoenix Temple"
+msgstr ""
+
+#: mission.brief.mail32.map10.level2:2
+msgctxt "mission brief tactical information"
+msgid "Unguided hostage takers"
+msgstr ""
+
+#: mission.brief.mail32.map10.level2:3
+msgctxt "mission brief tactical information"
+msgid "Sanctuary: Phoenix Temple"
 msgstr ""
 
 #: message.win:1
