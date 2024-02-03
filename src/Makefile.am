@@ -173,6 +173,7 @@ swars_SOURCES = \
 	network.c \
 	network.h \
 	pathtrig.c \
+	pathtrig_debug.c \
 	pathtrig.h \
 	packet.c \
 	packet.h \

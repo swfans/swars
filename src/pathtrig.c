@@ -1255,53 +1255,6 @@ void generate_walk_items(void)
     }
 }
 
-static void print_walk_items_for_face(short face)
-{
-    struct WalkHeader *p_walk_head;
-    ushort wh, wi;
-
-    if (face > 0)
-    {
-        struct SingleObjectFace3 *p_face;
-
-        p_face = &game_object_faces[face];
-        wh = p_face->WalkHeader;
-    }
-    else if (face < 0)
-    {
-        struct SingleObjectFace4 *p_face;
-
-        p_face = &game_object_faces4[-face];
-        wh = p_face->WalkHeader;
-    } else
-    {
-        return;
-    }
-    p_walk_head = &game_walk_headers[wh];
-    for (wi = p_walk_head->StartItem;
-      wi < p_walk_head->StartItem + p_walk_head->Count; wi++) {
-        LOGSYNC("face %d walkface %d", (int)face, (int)game_walk_items[wi]);
-    }
-}
-
-/** Print walk items into log file, for debug.
- */
-void print_walk_items(void)
-{
-    short face;
-
-    for (face = 1; face < next_object_face; face++)
-    {
-        if ((game_object_faces[face].GFlags & 0x04) != 0)
-            print_walk_items_for_face(face);
-    }
-    for (face = 1; face < next_object_face4; face++)
-    {
-        if ((game_object_faces4[face].GFlags & 0x04) != 0)
-            print_walk_items_for_face(-face);
-    }
-}
-
 void set_mapel_col_columns(struct MyMapElement *p_mapel, short setbit, ushort qb)
 {
     struct ColColumn *p_ccol;
@@ -1576,28 +1529,6 @@ void update_mapel_collision_columns(void)
     }
 }
 
-void print_mapel_collision_columns(void)
-{
-    ushort tile_x, tile_z;
-
-    for (tile_x = 0; tile_x < MAP_TILE_WIDTH; tile_x++)
-    {
-        for (tile_z = 0; tile_z < MAP_TILE_HEIGHT; tile_z++)
-        {
-            struct MyMapElement *p_mapel;
-            struct ColColumn *p_ccol;
-
-            p_mapel = &game_my_big_map[MAP_TILE_WIDTH * tile_z + tile_x];
-            if (p_mapel->ColumnHead == 0) continue;
-            p_ccol = &game_col_columns[p_mapel->ColumnHead];
-
-            LOGSYNC("%02d,%02d qbits %04x %04x %04x %04x", (int)tile_x, (int)tile_z,
-              (int)p_ccol->QBits[0], (int)p_ccol->QBits[1],
-              (int)p_ccol->QBits[2], (int)p_ccol->QBits[3]);
-        }
-    }
-}
-
 void add_next_col_vect_to_vects_list(short x, short z, short thing, short face, ushort vect, ubyte flags)
 {
     short tile_x, tile_z;
@@ -1841,39 +1772,6 @@ void generate_collision_vects(void)
     }
 }
 
-void print_collision_vects(void)
-{
-    ushort tile_x, tile_z;
-
-    for (tile_x = 0; tile_x < MAP_TILE_WIDTH; tile_x++)
-    {
-        for (tile_z = 0; tile_z < MAP_TILE_HEIGHT; tile_z++)
-        {
-            struct MyMapElement *p_mapel;
-            int cv;
-
-            p_mapel = &game_my_big_map[MAP_TILE_WIDTH * tile_z + tile_x];
-            cv = p_mapel->ColHead;
-            while (cv != 0)
-            {
-                struct ColVectList *p_cvlist;
-                struct ColVect *p_colvect;
-
-                p_cvlist = &game_col_vects_list[cv];
-                p_colvect = &game_col_vects[p_cvlist->Vect];
-
-
-                LOGSYNC("%02d,%02d ColVectList Obj %d Vect %d Face %hd P1=%hd,%hd,%hd P2=%hd,%hd,%hd",
-                  (int)tile_x, (int)tile_z, (int)p_cvlist->Object,
-                  (int)p_cvlist->Vect, p_colvect->Face,
-                  p_colvect->X1, p_colvect->Y1, p_colvect->Z1,
-                  p_colvect->X2, p_colvect->Y2, p_colvect->Z2);
-                cv = p_cvlist->NextColList;
-            }
-        }
-    }
-}
-
 void thin_wall_around_thing_objects(struct Thing *p_thing, ubyte colt)
 {
     ushort beg_obj, end_obj;
@@ -1914,56 +1812,6 @@ void generate_thin_walls(void)
             }
         }
     }
-}
-
-void print_triangulation_trigs(void)
-{
-    int tri;
-
-    for (tri = 0; tri < triangulation[0].max_Triangles; tri++)
-    {
-        struct TrTriangle *p_tri;
-        struct TrPoint *p_pt0;
-        struct TrPoint *p_pt1;
-        struct TrPoint *p_pt2;
-
-        if (!tri_is_allocated(tri))
-            continue;
-        p_tri = &triangulation[0].Triangles[tri];
-        p_pt0 = &triangulation[0].Points[p_tri->point[0]];
-        p_pt1 = &triangulation[0].Points[p_tri->point[1]];
-        p_pt2 = &triangulation[0].Points[p_tri->point[2]];
-
-        LOGSYNC("Tri pt0(%d,%d) pt1(%d,%d) pt2(%d,%d) jump=%d, solid=%d, enter=%d",
-          (int)p_pt0->x, (int)p_pt0->y,
-          (int)p_pt1->x, (int)p_pt1->y,
-          (int)p_pt2->x, (int)p_pt2->y,
-          //(int)p_tri->tri[0], (int)p_tri->tri[1], (int)p_tri->tri[2],
-          (int)p_tri->jump, (int)p_tri->solid, (int)p_tri->enter);
-    }
-}
-
-void print_triangulation_points(void)
-{
-    int pt;
-
-    for (pt = 0; pt < triangulation[0].max_Points; pt++)
-    {
-        struct TrPoint *p_pt;
-
-        if (!point_is_allocated(pt))
-            continue;
-        p_pt = &triangulation[0].Points[pt];
-
-        LOGSYNC("Pt(%d,%d)",
-          (int)p_pt->x, (int)p_pt->y);
-    }
-}
-
-void print_triangulation(void)
-{
-    print_triangulation_points();
-    print_triangulation_trigs();
 }
 
 void generate_map_triangulation(void)
