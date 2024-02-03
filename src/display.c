@@ -173,9 +173,36 @@ void setup_screen_mode(TbScreenMode mode)
         lbDisplay.PhysicalScreenWidth, lbDisplay.PhysicalScreenHeight);
 }
 
-void screen_buffer_fill_black(void)
+void screen_save_backup_buffer(struct ScreenBufBkp *bkp)
 {
-    memset(lbDisplay.WScreen, 0, lbDisplay.PhysicalScreenHeight * lbDisplay.PhysicalScreenWidth);
+    LbScreenStoreGraphicsWindow(&bkp->GWindow);
+    bkp->WScreen = lbDisplay.WScreen;
+    bkp->PhysicalScreenWidth = lbDisplay.GraphicsScreenWidth;
+    bkp->PhysicalScreenHeight = lbDisplay.PhysicalScreenHeight;
+    bkp->GraphicsScreenWidth = lbDisplay.GraphicsScreenWidth;
+    bkp->GraphicsScreenHeight = lbDisplay.GraphicsScreenHeight;
+}
+
+void screen_switch_to_custom_buffer(struct ScreenBufBkp *bkp,
+  TbPixel *buf, short width, short height)
+{
+    screen_save_backup_buffer(bkp);
+    lbDisplay.WScreen = buf;
+    lbDisplay.GraphicsScreenWidth = width;
+    lbDisplay.PhysicalScreenHeight = height;
+    lbDisplay.GraphicsScreenWidth = width;
+    lbDisplay.GraphicsScreenHeight = height;
+    LbScreenSetGraphicsWindow(0, 0, width, height);
+}
+
+void screen_load_backup_buffer(struct ScreenBufBkp *bkp)
+{
+    lbDisplay.WScreen = bkp->WScreen;
+    lbDisplay.GraphicsScreenWidth = bkp->PhysicalScreenWidth;
+    lbDisplay.PhysicalScreenHeight = bkp->PhysicalScreenHeight;
+    lbDisplay.GraphicsScreenWidth = bkp->GraphicsScreenWidth;
+    lbDisplay.GraphicsScreenHeight = bkp->GraphicsScreenHeight;
+    LbScreenLoadGraphicsWindow(&bkp->GWindow);
 }
 
 void show_black_screen(void)
@@ -187,7 +214,7 @@ void show_black_screen(void)
         while (LbScreenLock() != Lb_SUCCESS)
             ;
     }
-    screen_buffer_fill_black();
+    LbScreenClear(0);
     if (!was_locked)
         LbScreenUnlock();
     swap_wscreen();

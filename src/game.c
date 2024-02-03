@@ -920,7 +920,7 @@ void play_smacker(ushort vid_type)
             y = (lbDisplay.GraphicsScreenHeight - raw_h) / 2 - 1;
 
             p_campgn = &campaigns[background_type];
-            screen_buffer_fill_black();
+            LbScreenClear(0);
             cover_screen_rect_with_raw_file(x, y, raw_w, raw_h, p_campgn->OutroBkFn);
 
             sprintf(fname, "qdata/pal%d.dat", 0);
@@ -4148,7 +4148,7 @@ void init_outro(void)
     lbKeyOn[KC_RETURN] = 0;
 
     LbPaletteFade(0, 0xC8u, 1);
-    screen_buffer_fill_black();
+    LbScreenClear(0);
     swap_wscreen();
     StopAllSamples();
     reset_heaps();
@@ -4171,7 +4171,7 @@ void init_outro(void)
         process_sound_heap();
         func_2e440();
         swap_wscreen();
-        screen_buffer_fill_black();
+        LbScreenClear(0);
     }
 
     while (1)
@@ -4205,7 +4205,7 @@ void init_outro(void)
             }
           }
           swap_wscreen();
-          screen_buffer_fill_black();
+          LbScreenClear(0);
     }
     StopAllSamples();
     reset_heaps();
@@ -4313,7 +4313,7 @@ void show_simple_load_screen(void)
     char *text = gui_strings[376];
     int w,h;
 
-    screen_buffer_fill_black();
+    LbScreenClear(0);
     lbFontPtr = small_font;
     w = LbTextStringWidth(text);
     h = LbTextStringHeight(text);
@@ -5317,7 +5317,7 @@ void prep_single_mission(void)
     load_objectives_text();
     init_game(0);
     load_multicolor_sprites();
-    screen_buffer_fill_black();
+    LbScreenClear(0);
     generate_shadows_for_multicolor_sprites();
     adjust_mission_engine_to_video_mode();
 }
@@ -5436,7 +5436,7 @@ void game_setup(void)
     init_engine();
     if ( !cmdln_param_bcg )
     {
-        screen_buffer_fill_black();
+        LbScreenClear(0);
         swap_wscreen();
         LbPaletteSet(display_palette);
     }
@@ -7146,17 +7146,19 @@ void reload_background(void)
     asm volatile ("call ASM_reload_background\n"
         :  :  : "eax" );
 #else
+    struct ScreenBufBkp bkp;
+
     proj_origin.X = lbDisplay.GraphicsScreenWidth / 2 - 1;
     proj_origin.Y = ((480 * 143) >> 8) + 1;
     if (screentype == 6 || screentype == 10 || restore_savegame)
     {
-        ubyte *scr_bkp;
+        screen_switch_to_custom_buffer(&bkp, back_buffer,
+          lbDisplay.GraphicsScreenWidth, lbDisplay.GraphicsScreenHeight);
 
-        scr_bkp = lbDisplay.WScreen;
-        lbDisplay.WScreen = back_buffer;
         cover_screen_rect_with_sprite(0, 0, lbDisplay.GraphicsScreenWidth,
-         lbDisplay.GraphicsScreenHeight, &sprites_Icons0_0[168]);
-        lbDisplay.WScreen = scr_bkp;
+          lbDisplay.GraphicsScreenHeight, &sprites_Icons0_0[168]);
+
+        screen_load_backup_buffer(&bkp);
     }
     else
     {
@@ -7179,20 +7181,22 @@ void reload_background(void)
         }
         else
         {
-            ubyte *scr_bkp;
             short raw_w, raw_h;
             short x, y;
+
             raw_w = 640;
             raw_h = 480;
             x = (lbDisplay.GraphicsScreenWidth - raw_w) / 2;
             y = 0;
 
-            scr_bkp = lbDisplay.WScreen;
-            lbDisplay.WScreen = back_buffer;
-            screen_buffer_fill_black();
+            screen_switch_to_custom_buffer(&bkp, back_buffer,
+              lbDisplay.GraphicsScreenWidth, lbDisplay.GraphicsScreenHeight);
+
+            LbScreenClear(0);
             // TODO menu scaling, maybe?
             cover_screen_rect_with_raw_file(x, y, raw_w, raw_h, str);
-            lbDisplay.WScreen = scr_bkp;
+
+            screen_load_backup_buffer(&bkp);
         }
     }
 
@@ -9943,7 +9947,7 @@ void show_load_and_prep_mission(void)
     if ( start_into_mission )
     {
         load_multicolor_sprites();
-        screen_buffer_fill_black();
+        LbScreenClear(0);
         generate_shadows_for_multicolor_sprites();
         adjust_mission_engine_to_video_mode();
 
@@ -9988,7 +9992,7 @@ void show_menu_screen(void)
     {
         game_high_resolution = 0;
         LbMouseReset();
-        screen_buffer_fill_black();
+        LbScreenClear(0);
         setup_screen_mode(screen_mode_menu);
         reload_background();
         my_set_text_window(0, 0, lbDisplay.GraphicsScreenWidth, lbDisplay.GraphicsScreenHeight);
