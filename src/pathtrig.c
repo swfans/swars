@@ -1829,6 +1829,15 @@ void generate_map_triangulation(void)
     update_mapel_collision_columns();
     generate_collision_vects();
     generate_thin_walls();
+    switch (selected_triangulation_no)
+    {
+    case 1:
+        triangulation_clear_enter_into_solid_gnd();
+        break;
+    case 2:
+        triangulation_clear_enter_into_solid_air();
+        break;
+    }
 }
 
 /******************************************************************************/

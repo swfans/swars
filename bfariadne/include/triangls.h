@@ -110,8 +110,16 @@ sbyte compare_point_cross_distances(TrPointId pt1, TrPointId pt2, TrPointId pt3)
 void make_triangle_solid(TrTriangId tri);
 
 /** Fix triangulation entries so that entering into solid places is disallowed.
+ *
+ * Variant for fixing on the ground (walking/riding) triangulation.
  */
-void triangulation_clear_enter_into_solid(void);
+void triangulation_clear_enter_into_solid_gnd(void);
+
+/** Fix triangulation entries so that entering into solid places is disallowed.
+ *
+ * Variant for fixing in the air (flying) triangulation.
+ */
+void triangulation_clear_enter_into_solid_air(void);
 
 /******************************************************************************/
 #ifdef __cplusplus

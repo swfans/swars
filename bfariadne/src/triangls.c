@@ -258,13 +258,13 @@ void make_triangle_solid(TrTriangId tri)
     p_tri->solid |= (0x04 | 0x02);
 }
 
-void triangulation_clear_enter_into_solid_gnd(ubyte seltr, TrTriangId tri)
+static void triangle_clear_enter_into_solid_gnd(TrTriangId tri)
 {
     struct TrTriangle *p_tri;
     TbBool is_border;
     TrTipId cor;
 
-    p_tri = &triangulation[seltr].Triangles[tri];
+    p_tri = &triangulation[0].Triangles[tri];
     is_border = triangleptr_is_border(p_tri);
 
     if ((p_tri->solid & (0x04 | 0x02)) || is_border)
@@ -278,7 +278,7 @@ void triangulation_clear_enter_into_solid_gnd(ubyte seltr, TrTriangId tri)
             if (p_tri->tri[cor] == -1)
                 continue;
 
-            p_ctri = &triangulation[seltr].Triangles[p_tri->tri[cor]];
+            p_ctri = &triangulation[0].Triangles[p_tri->tri[cor]];
 
             for (ccor = 0; ccor < 3; ccor++)
             {
@@ -296,13 +296,12 @@ void triangulation_clear_enter_into_solid_gnd(ubyte seltr, TrTriangId tri)
     }
 }
 
-void triangulation_clear_enter_into_solid_air(ubyte seltr, TrTriangId tri)
+static void triangle_clear_enter_into_solid_air(TrTriangId tri)
 {
     struct TrTriangle *p_tri;
     TbBool is_border;
-    TrTipId cor;
 
-    p_tri = &triangulation[seltr].Triangles[tri];
+    p_tri = &triangulation[0].Triangles[tri];
     is_border = triangleptr_is_border(p_tri);
 
     if (is_border)
@@ -311,28 +310,35 @@ void triangulation_clear_enter_into_solid_air(ubyte seltr, TrTriangId tri)
     }
 }
 
-void triangulation_clear_enter_into_solid(void)
+void triangulation_clear_enter_into_solid_gnd(void)
 {
-    ubyte seltr;
     TrTriangId tri;
 
-    seltr = 1;
-    if (triangulation[seltr].tri_initialised)
+    if (!triangulation[0].tri_initialised)
     {
-        for (tri = 0; tri < triangulation[seltr].ix_Triangles; tri++)
-        {
-            triangulation_clear_enter_into_solid_gnd(seltr, tri);
-        }
+        LOGERR("triangulation %d not initialized", (int)selected_triangulation_no);
+        return;
     }
 
-    seltr = 2;
-    if (triangulation[seltr].tri_initialised)
+    for (tri = 0; tri < triangulation[0].ix_Triangles; tri++)
     {
-        for (tri = 0; tri < triangulation[seltr].ix_Triangles; tri++)
-        {
-            triangulation_clear_enter_into_solid_air(seltr, tri);
-        }
+        triangle_clear_enter_into_solid_gnd(tri);
     }
 }
 
+void triangulation_clear_enter_into_solid_air(void)
+{
+    TrTriangId tri;
+
+    if (!triangulation[0].tri_initialised)
+    {
+        LOGERR("triangulation %d not initialized", (int)selected_triangulation_no);
+        return;
+    }
+
+    for (tri = 0; tri < triangulation[0].ix_Triangles; tri++)
+    {
+        triangle_clear_enter_into_solid_air(tri);
+    }
+}
 /******************************************************************************/
