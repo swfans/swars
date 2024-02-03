@@ -260,6 +260,7 @@ void draw_triangulation_debug(int beg_x, int beg_y, int cor_shl)
         p_pt2 = &triangulation[0].Points[p_tri->point[2]];
         col = p_tri->solid;
         col = (col & 0x3F) | (col >> 2);
+        if (col > 2) col--;
 
         x0 = (p_pt0->x >> cor_shl) + beg_x;
         y0 = (p_pt0->y >> cor_shl) + beg_y;
@@ -269,6 +270,7 @@ void draw_triangulation_debug(int beg_x, int beg_y, int cor_shl)
         y2 = (p_pt2->y >> cor_shl) + beg_y;
         { // Make the trig a little smaller on one side
             ushort iflg;
+            iflg = 0;
             if ((x0 <= x1) && (x0 <= x2))
                 iflg |= 0x01;
             if ((x1 <= x0) && (x1 <= x2))
@@ -289,7 +291,8 @@ void draw_triangulation_debug(int beg_x, int beg_y, int cor_shl)
             if (iflg & 0x20) y1++;
             if (iflg & 0x40) y2++;
         }
-        LbDrawTriangle(x0, y0, x1, y1, x2, y2, col);
+        lbDisplay.DrawFlags = 0;
+        //LbDrawTriangle(x0, y0, x2, y2, x1, y1, col); // this function is buggy for some coords
 
         col = (p_tri->enter & 0x01) ? 192 : 15;
         LbDrawLine(x0, y0, x1, y1, col);
@@ -317,13 +320,13 @@ void save_triangulation_png(const char *fname)
     ubyte *pal;
     ubyte *img;
 
-    pal = LbMemoryAlloc(256*3);
-    img = LbMemoryAlloc(img_dim*img_dim);
+    pal = malloc(256*3);
+    img = malloc(img_dim*img_dim);
     draw_triangulation_palette(pal);
     draw_triangulation_debug_image(img, margin, margin, img_dim, img_dim, cor_shl);
     LbPngSave(fname, img, img_dim, img_dim, pal, true);
-    LbMemoryFree(pal);
-    LbMemoryFree(img);
+    free(pal);
+    free(img);
 }
 
 /******************************************************************************/

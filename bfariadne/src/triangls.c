@@ -267,7 +267,7 @@ void triangulation_clear_enter_into_solid_gnd(ubyte seltr, TrTriangId tri)
     p_tri = &triangulation[seltr].Triangles[tri];
     is_border = triangleptr_is_border(p_tri);
 
-    if ((p_tri->solid & 6) || is_border)
+    if ((p_tri->solid & (0x04 | 0x02)) || is_border)
     {
         p_tri->enter &= ~0x07;
         for (cor = 0; cor < 3; cor++)
