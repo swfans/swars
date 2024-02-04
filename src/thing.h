@@ -355,10 +355,11 @@ struct TngUPerson
  * Everything in game besides ground terrain, are Things.
  */
 struct Thing { // sizeof=168
-    /** Previous object in the `mapwho` linked list.
+    /** Previous thing in the `mapwho` linked list?
+     * May be more complicated - see this field is SimpleThing.
      */
     short Parent;
-    /** Next object in the `mapwho` linked list.
+    /** Next thing in the `mapwho` linked list.
      */
     short Next;
     short LinkParent;
@@ -446,6 +447,10 @@ struct STngUFire {
 
 struct SimpleThing
 {
+    /** Index of some kind of entity which generated the thing.
+     * Speciifics depend on thing type; often it's another thing index,
+     * but not always; ie. for doors, the Parent is rectangular face index.
+     */
     short Parent;
     short Next;
     short LinkParent;

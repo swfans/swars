@@ -458,6 +458,27 @@ void thin_wall_at_line_rm(int X1, int Y1, int Z1, int X2, int Y2, int Z2, short 
     thin_wall_at_line(X1, Y1, Z1, X2, Y2, Z2, face, colt, THIN_PASS);
 }
 
+static ubyte face_is_blocking(ushort obj, short face, ushort colt)
+{
+    if (face < 0)
+    {
+        struct SingleObjectFace4 *p_face;
+        p_face = &game_object_faces4[-face];
+        if (p_face->GFlags & 0x10)
+            return THIN_PASS;
+        return THIN_BLOCK;
+    }
+    else if (face > 0)
+    {
+        struct SingleObjectFace3 *p_face;
+        p_face = &game_object_faces[face];
+        if (p_face->GFlags & 0x10)
+            return THIN_PASS;
+        return THIN_BLOCK;
+    }
+    return THIN_PASS;
+}
+
 #define TOLERANCE 150
 
 void thin_wall_around_face3(short obj_x, short obj_y, short obj_z, short face, ushort colt, ubyte pass)
@@ -568,11 +589,15 @@ void thin_wall_around_object(ushort obj, ushort colt)
     }
     for (face = startface3; face < endface3; face++)
     {
-        thin_wall_around_face3(obj_x, obj_y, obj_z, face, colt, THIN_BLOCK);
+        ubyte pass;
+        pass = face_is_blocking(obj, face, colt);
+        thin_wall_around_face3(obj_x, obj_y, obj_z, face, colt, pass);
     }
     for (face = startface4; face < endface4; face++)
     {
-        thin_wall_around_face4(obj_x, obj_y, obj_z, face, colt, THIN_BLOCK);
+        ubyte pass;
+        pass = face_is_blocking(obj, -face, colt);
+        thin_wall_around_face4(obj_x, obj_y, obj_z, face, colt, pass);
     }
 }
 
