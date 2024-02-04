@@ -38,6 +38,10 @@ extern long ixE;
 extern long thin_wall_x1, thin_wall_y1;
 extern long thin_wall_x2, thin_wall_y2;
 
+/** Map of the ground surface for triangluation purposes, 2x2 per tile.
+ */
+ubyte *ground_map = NULL;
+
 #define MAX_THINGS_ON_TILE 200
 
 enum ThinWallType {
@@ -924,7 +928,10 @@ void init_collision_vects(void)
 
     limit = get_memory_ptr_allocated_count((void **)&game_col_vects_list);
     for (i = 0; i < limit; i++) {
-        game_col_vects_list[i].Vect = 0;
+        struct ColVectList *p_cvlist;
+
+        p_cvlist = &game_col_vects_list[i];
+        p_cvlist->Vect = 0;
     }
     next_col_vect = 1;
     next_vects_list = 1;
@@ -1839,6 +1846,34 @@ void generate_thin_walls(void)
     }
 }
 
+void generate_ground_map(void)
+{
+    ushort tile_x, tile_z;
+
+    if (ground_map == NULL) {
+        ground_map = LbMemoryAlloc(2*MAP_TILE_WIDTH * 2*MAP_TILE_HEIGHT * 2);
+    }
+    for (tile_x = 0; tile_x < MAP_TILE_WIDTH; tile_x++)
+    {
+        for (tile_z = 0; tile_z < MAP_TILE_HEIGHT; tile_z++)
+        {
+            struct MyMapElement *p_mapel;
+            ubyte *p_map;
+            int n;
+
+            p_mapel = &game_my_big_map[MAP_TILE_WIDTH * tile_z + tile_x];
+            p_map = &ground_map[2*MAP_TILE_WIDTH * 2*tile_z + 2*tile_x];
+            n = (p_mapel->Alt >> 7) + 1;
+            p_map[0] = (1U << n) - 1U;
+            p_map[1] = (1U << n) - 1U;
+            p_map += 2*MAP_TILE_WIDTH;
+            p_map[0] = (1U << n) - 1U;
+            p_map[1] = (1U << n) - 1U;
+        }
+    }
+    triangulate_map(ground_map);
+}
+
 void generate_map_triangulation(void)
 {
 #if 0 // This is done earlier, in triangulation_clear()
@@ -1853,6 +1888,7 @@ void generate_map_triangulation(void)
     generate_walk_items();
     update_mapel_collision_columns();
     generate_collision_vects();
+    generate_ground_map();
     generate_thin_walls();
     switch (selected_triangulation_no)
     {

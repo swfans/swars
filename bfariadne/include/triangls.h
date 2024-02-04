@@ -42,10 +42,10 @@ typedef short TrTipId;
  */
 struct TrTriangle {
     TrPointId point[3]; /**< offs=0x00 Indexes to TrPoint structs. */
-    TrTriangId tri[3]; /**< offs=0x06 (6 bytes) Indexes to sibling ThTriangle structs. */
+    TrTriangId tri[3]; /**< offs=0x06 Indexes to sibling TrTriangle structs. */
     short jump; /**< offs=0x0C */
-    ubyte solid; /**< offs=0x0E */
-    ubyte enter; /**< offs=0x0F */
+    ubyte solid; /**< offs=0x0E Flags whether tiles above this triangle are solid. */
+    ubyte enter; /**< offs=0x0F Flags whether sibling triangles can be moved to from this triangle. */
 };
 
 #pragma pack()
