@@ -1846,29 +1846,71 @@ void generate_thin_walls(void)
     }
 }
 
+int fringe_at_tile(short tile_x, short tile_z)
+{
+    struct MyMapElement *p_mapel;
+    int alt0, alt1, alt2, alt3;
+    int fringe;
+
+    if (tile_x <= 0 || tile_x >= MAP_TILE_WIDTH-1)
+        return 4;
+    if (tile_z <= 0 || tile_z >= MAP_TILE_HEIGHT-1)
+        return 4;
+
+    p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (tile_z) + (tile_x)];
+    alt0 = p_mapel->Alt;
+    p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (tile_z) + (tile_x+1)];
+    alt1 = p_mapel->Alt;
+    p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (tile_z+1) + (tile_x)];
+    alt2 = p_mapel->Alt;
+    p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (tile_z+1) + (tile_x+1)];
+    alt3 = p_mapel->Alt;
+
+    {
+        int dt1, dt2, dt3;
+        dt1 = abs(alt1 - alt0);
+        dt2 = abs(alt2 - alt0);
+        dt3 = abs(alt3 - alt0);
+        if (dt1 < dt2)
+            dt1 = dt2;
+        if (dt1 < dt3)
+            dt1 = dt3;
+        fringe = dt1;
+    }
+    // There is no need to keep specific fringe values - it creates more
+    // triangles without a clear benefit. Let's simplify that to either
+    // having a passable area or too steep area
+    return (fringe >= 15) ? 4 : 0;
+/*
+            if (n >= 0) {
+                p_map[0] = (1U << n) - 1U;
+            } else {
+                p_map[0] = 0;
+            }
+*/
+}
+
 void generate_ground_map(void)
 {
     ushort tile_x, tile_z;
 
     if (ground_map == NULL) {
-        ground_map = LbMemoryAlloc(2*MAP_TILE_WIDTH * 2*MAP_TILE_HEIGHT * 2);
+        ground_map = LbMemoryAlloc(MAP_TILE_WIDTH * MAP_TILE_HEIGHT);
     }
     for (tile_x = 0; tile_x < MAP_TILE_WIDTH; tile_x++)
     {
         for (tile_z = 0; tile_z < MAP_TILE_HEIGHT; tile_z++)
         {
-            struct MyMapElement *p_mapel;
             ubyte *p_map;
             int n;
 
-            p_mapel = &game_my_big_map[MAP_TILE_WIDTH * tile_z + tile_x];
             p_map = &ground_map[2*MAP_TILE_WIDTH * 2*tile_z + 2*tile_x];
-            n = (p_mapel->Alt >> 7) + 1;
-            p_map[0] = (1U << n) - 1U;
-            p_map[1] = (1U << n) - 1U;
+            n = fringe_at_tile(tile_x, tile_z);
+            p_map[0] = n;
+            p_map[1] = n;
             p_map += 2*MAP_TILE_WIDTH;
-            p_map[0] = (1U << n) - 1U;
-            p_map[1] = (1U << n) - 1U;
+            p_map[0] = n;
+            p_map[1] = n;
         }
     }
     triangulate_map(ground_map);
