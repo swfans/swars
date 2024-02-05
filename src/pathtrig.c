@@ -22,6 +22,7 @@
 #include <string.h>
 #include <limits.h>
 #include "bfmath.h"
+#include "bfmemory.h"
 #include "bigmap.h"
 #include "enginsngobjs.h"
 #include "game.h"
@@ -1848,8 +1849,8 @@ void generate_thin_walls(void)
 
 int fringe_at_tile(short tile_x, short tile_z)
 {
-    struct MyMapElement *p_mapel;
-    int alt0, alt1, alt2, alt3;
+    int alt_min, alt_max;
+    int dtx, dtz;
     int fringe;
 
     if (tile_x <= 0 || tile_x >= MAP_TILE_WIDTH-1)
@@ -1857,37 +1858,26 @@ int fringe_at_tile(short tile_x, short tile_z)
     if (tile_z <= 0 || tile_z >= MAP_TILE_HEIGHT-1)
         return 4;
 
-    p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (tile_z) + (tile_x)];
-    alt0 = p_mapel->Alt;
-    p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (tile_z) + (tile_x+1)];
-    alt1 = p_mapel->Alt;
-    p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (tile_z+1) + (tile_x)];
-    alt2 = p_mapel->Alt;
-    p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (tile_z+1) + (tile_x+1)];
-    alt3 = p_mapel->Alt;
-
+    alt_min = INT_MAX;
+    alt_max = INT_MIN;
+    for (dtz = 0; dtz <= 1; dtz++)
     {
-        int dt1, dt2, dt3;
-        dt1 = abs(alt1 - alt0);
-        dt2 = abs(alt2 - alt0);
-        dt3 = abs(alt3 - alt0);
-        if (dt1 < dt2)
-            dt1 = dt2;
-        if (dt1 < dt3)
-            dt1 = dt3;
-        fringe = dt1;
+        for (dtx = 0; dtx <= 1; dtx++)
+        {
+            struct MyMapElement *p_mapel;
+            p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (tile_z + dtz) + (tile_x + dtx)];
+            if (alt_min > p_mapel->Alt)
+                alt_min = p_mapel->Alt;
+            if (alt_max < p_mapel->Alt)
+                alt_max = p_mapel->Alt;
+        }
     }
+
+    fringe = abs(alt_max - alt_min);
     // There is no need to keep specific fringe values - it creates more
     // triangles without a clear benefit. Let's simplify that to either
     // having a passable area or too steep area
-    return (fringe >= 15) ? 4 : 0;
-/*
-            if (n >= 0) {
-                p_map[0] = (1U << n) - 1U;
-            } else {
-                p_map[0] = 0;
-            }
-*/
+    return (fringe >= 13) ? 4 : 0;
 }
 
 void generate_ground_map(void)
