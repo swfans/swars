@@ -33,25 +33,25 @@ void clear_mapwho_on_whole_map(void)
     {
         for (tile_z = 0; tile_z < MAP_TILE_HEIGHT; tile_z++)
         {
-            ulong cellno;
-            cellno = tile_z * MAP_TILE_WIDTH + tile_x;
-            game_my_big_map[cellno].Child = 0;
+            struct MyMapElement *p_mapel;
+            p_mapel = &game_my_big_map[MAP_TILE_WIDTH * tile_z + tile_x];
+            p_mapel->Child = 0;
         }
     }
 }
 
 short get_mapwho_thing_index(short tile_x, short tile_z)
 {
-    struct MyMapElement *mapel;
+    struct MyMapElement *p_mapel;
 
     if ((tile_x < 0) || (tile_x >= MAP_TILE_WIDTH))
         return 0;
     if ((tile_z < 0) || (tile_z >= MAP_TILE_HEIGHT))
         return 0;
 
-    mapel = &game_my_big_map[MAP_TILE_WIDTH * tile_z + tile_x];
+    p_mapel = &game_my_big_map[MAP_TILE_WIDTH * tile_z + tile_x];
 
-    return mapel->Child;
+    return p_mapel->Child;
 }
 
 /** Maps fields from old MyMapElement struct to the current one.
@@ -168,10 +168,62 @@ void init_search_spiral(void)
 
 int alt_at_point(short x, short z)
 {
+#if 1
     int ret;
     asm volatile ("call ASM_alt_at_point\n"
         : "=r" (ret) : "a" (x), "d" (z));
     return ret;
+#else
+    struct MyMapElement *p_mapel;
+    short tile_x, tile_z;
+    int alt0, alt1, alt2, alt3;
+
+    tile_x = x >> 8;
+    tile_z = z >> 8;
+
+    if ((tile_x < 0) || (tile_x >= MAP_TILE_WIDTH))
+        return 0;
+    if ((tile_z < 0) || (tile_z >= MAP_TILE_HEIGHT))
+        return 0;
+
+    p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (tile_z) + (tile_x)];
+    alt0 = p_mapel->Alt;
+
+    if (tile_x == MAP_TILE_WIDTH - 1) {
+        p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (tile_z) + (tile_x)];
+    } else {
+        p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (tile_z) + (tile_x+1)];
+    }
+    alt1 = p_mapel->Alt;
+
+    if (tile_z == MAP_TILE_HEIGHT - 1) {
+        p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (tile_z) + (tile_x)];
+    } else {
+        p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (tile_z+1) + (tile_x)];
+    }
+    alt2 = p_mapel->Alt;
+
+    if (tile_z == MAP_TILE_HEIGHT - 1) {
+        alt3 = alt1;
+    } else {
+        p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (tile_z+1) + (tile_x+1)];
+        alt3 = p_mapel->Alt;
+    }
+
+    if (alt1 != alt0 || alt0 != alt2 || alt2 != alt3)
+    {
+        short sub_x, sub_z;
+
+        sub_x = x & 0xff;
+        sub_z = z & 0xff;
+        if (sub_x + sub_z >= 256) {
+            alt0 = alt3 + ((alt2 - alt3) * (256 - sub_x) >> 8) + ((alt1 - alt3) * (256 - sub_z) >> 8);
+        } else {
+            alt0 = alt0 + ((alt1 - alt0) * sub_x >> 8) + ((alt2 - alt0) * sub_z >> 8);
+        }
+    }
+    return alt0 << 8;
+#endif
 }
 
 /******************************************************************************/

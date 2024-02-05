@@ -41,7 +41,7 @@ struct MyMapElement { // sizeof=18
   ushort Texture; /**< offs=0x00 Index of SingleFloorTexture for this tile, and texture flags. */
   ushort Shade;
   ushort field_4;
-  ushort Alt; /**< offs=0x06 Ground element altitude. */
+  short Alt; /**< offs=0x06 Ground element altitude (at the beginning of the tile). */
   short Child; /**< offs=0x08 Index of a first Thing in a chain of things located on this element. */
   ushort ColHead; /**< offs=0x0A Index of ColVectList for this tile. */
   ubyte field_C;
@@ -57,7 +57,7 @@ struct MyMapElementOldV7 { // sizeof=24
   ushort field_4;
   ushort field_6;
   ushort field_8;
-  ushort Alt; /**< offs=0x0A Ground element altitude. */
+  short Alt; /**< offs=0x0A Ground element altitude. */
   ubyte Zip;
   ubyte Flags2;
   short Child; /**< offs=0x0E Index of a first Thing in a chain of things located on this element. */
