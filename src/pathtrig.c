@@ -98,6 +98,7 @@ int pointed_at8(TrFineCoord pt_x, TrFineCoord pt_y, int *r_tri, int *r_cor)
         : "=r" (ret) : "a" (pt_x), "d" (pt_y), "b" (r_tri), "c" (r_cor));
     return ret;
 #else
+    //TODO this does not work exactly like original
     struct TrTriangle *p_tri;
     struct TrPoint *p_pt;
 
@@ -165,7 +166,7 @@ int pointed_at8(TrFineCoord pt_x, TrFineCoord pt_y, int *r_tri, int *r_cor)
 
 int triangle_find8(TrFineCoord pt_x, TrFineCoord pt_y)
 {
-#if 1
+#if 0
     int ret;
     asm volatile ("call ASM_triangle_find8\n"
         : "=r" (ret) : "a" (pt_x), "d" (pt_y));
@@ -298,7 +299,7 @@ int edge_find(int x1, int y1, int x2, int y2, int *ntri1, int *ntri2)
 TbBool point_find(TrCoord pt_x, TrCoord pt_y, int *r_tri, int *r_cor)
 // TODO change types to TrTriangId *r_tri, TrTipId *r_cor
 {
-#if 1
+#if 0
     int ret;
     asm volatile (
       "call ASM_point_find\n"
@@ -643,7 +644,7 @@ void thin_wall_around_object_rm(ushort obj, ushort colt)
 
 void brute_fill_rectangle(int x1, int y1, int x2, int y2, ubyte solid)
 {
-#if 1
+#if 0
     asm volatile (
       "push %4\n"
       "call ASM_brute_fill_rectangle\n"
@@ -669,7 +670,7 @@ void brute_fill_rectangle(int x1, int y1, int x2, int y2, ubyte solid)
 
 void fill_rectangle(int x1, int y1, int x2, int y2, ubyte solid)
 {
-#if 1
+#if 0
     asm volatile (
       "push %4\n"
       "call ASM_fill_rectangle\n"
@@ -730,7 +731,7 @@ void fill_rectangle(int x1, int y1, int x2, int y2, ubyte solid)
 
 void tri_set_rectangle(int x1, int y1, int x2, int y2, ubyte solid)
 {
-#if 1
+#if 0
     asm volatile (
       "push %4\n"
       "call ASM_tri_set_rectangle\n"
@@ -844,7 +845,7 @@ void triangulation_init(void)
 
 void triangulation_init_edges(void)
 {
-#if 1
+#if 0
     asm volatile ("call ASM_triangulation_init_edges\n"
         :  :  : "eax" );
 #else
@@ -880,7 +881,7 @@ void triangulation_allocate(int tgnNo, int maxTrigs)
 
 void triangulate_area(ubyte *p_map, int x1, int y1, int x2, int y2)
 {
-#if 1
+#if 0
     asm volatile (
       "push %4\n"
       "call ASM_triangulate_area\n"
