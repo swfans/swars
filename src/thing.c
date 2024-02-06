@@ -365,6 +365,12 @@ static short find_thing_type_on_spiral_near_tile(short X, short Z, ushort R, lon
     return 0;
 }
 
+void build_same_type_headers(void)
+{
+    asm volatile ("call ASM_build_same_type_headers\n"
+        :  :  : "eax" );
+}
+
 short get_thing_same_type_head(short ttype, short subtype)
 {
     short thing;

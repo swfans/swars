@@ -13,6 +13,7 @@
 #include "guitext.h"
 #include "game.h"
 #include "game_data.h"
+#include "lvfiles.h"
 #include "network.h"
 #include "util.h"
 
@@ -66,7 +67,6 @@ const struct TbNamedEnum conf_file_disk_inst_lev[] = {
 
 TbBool cmdln_fullscreen = true;
 TbBool cmdln_lores_stretch = true;
-extern TbBool level_deep_fix;
 
 static void
 print_help (const char *argv0)

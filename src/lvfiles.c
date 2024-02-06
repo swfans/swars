@@ -21,26 +21,554 @@
 #include <assert.h>
 #include <string.h>
 #include "bffile.h"
+#include "bfmath.h"
 #include "triangls.h"
 #include "trpoints.h"
 #include "trstate.h"
 #include "pathtrig.h"
 #include "bigmap.h"
+#include "campaign.h"
+#include "command.h"
 #include "enginlights.h"
+#include "enginpriobjs.h"
 #include "enginsngobjs.h"
 #include "enginsngtxtr.h"
 #include "enginsngobjs.h"
 #include "game.h"
 #include "game_data.h"
+#include "lvobjctv.h"
 #include "matrix.h"
 #include "building.h"
+#include "pepgroup.h"
 #include "thing.h"
+#include "vehicle.h"
 #include "vehtraffic.h"
 #include "swlog.h"
 /******************************************************************************/
 
+TbBool level_deep_fix = false;
+
 extern struct QuickLoad quick_load_pc[19];
 
+
+void debug_level(const char *text, int player)
+{
+    short thing;
+
+    thing = things_used_head;
+    while (thing != 0)
+    {
+        struct Thing *p_thing;
+
+        p_thing = &things[thing];
+        // TODO place debug/verification code
+        thing = p_thing->LinkChild;
+    }
+}
+
+ulong load_level_pc_handle(TbFileHandle lev_fh)
+{
+    ulong fmtver;
+    TbBool mech_initialized;
+    long limit;
+    int i, k, n;
+
+    mech_initialized = 0;
+    fmtver = 0;
+    LbFileRead(lev_fh, &fmtver, 4);
+
+    if (fmtver >= 1)
+    {
+        ushort count;
+        short new_thing;
+        struct Thing loc_thing;
+        struct Thing *p_thing;
+
+        count = 0;
+        LbFileRead(lev_fh, &count, 2);
+
+        LOGSYNC("Level fmtver=%lu n_things=%hd", fmtver, count);
+        for (i = 0; i < count; i++)
+        {
+            short angle;
+
+            new_thing = get_new_thing();
+            p_thing = &things[new_thing];
+            memcpy(&loc_thing, p_thing, sizeof(struct Thing));
+            if (fmtver >= 13) {
+                assert(sizeof(struct Thing) == 168);
+                LbFileRead(lev_fh, p_thing, sizeof(struct Thing));
+            } else {
+                struct ThingOldV9 s_oldthing;
+                assert(sizeof(s_oldthing) == 216);
+                LbFileRead(lev_fh, &s_oldthing, sizeof(s_oldthing));
+                refresh_old_thing_format(p_thing, &s_oldthing, fmtver);
+            }
+            LOGNO("Thing(%hd,%hd) group %hd at (%d,%d,%d) type=%d,%d",
+              p_thing->ThingOffset, p_thing->U.UPerson.UniqueID,
+              p_thing->U.UPerson.Group,
+              p_thing->X >> 8, p_thing->Y >> 8, p_thing->Z >> 8,
+              (int)p_thing->Type, (int)p_thing->SubType);
+
+            if ((p_thing->Z >> 8) < 256)
+                p_thing->Z += (256 << 8);
+            if ((p_thing->X >> 16) >= 128)
+                p_thing->X = (64 << 16);
+            p_thing->PTarget = 0;
+            p_thing->LinkParent = loc_thing.LinkParent;
+            p_thing->LinkChild = loc_thing.LinkChild;
+            // We have limited amount of group definitions
+            if (p_thing->U.UObject.Group >= PEOPLE_GROUPS_COUNT)
+                p_thing->U.UObject.Group = 0;
+            // All relevant thing types must have the values below at same position
+            p_thing->U.UObject.EffectiveGroup = p_thing->U.UObject.Group;
+
+            if (new_thing == 0)
+                continue;
+
+            add_node_thing(new_thing);
+
+            if (p_thing->Type == TT_PERSON)
+            {
+                ushort person_anim;
+
+                if (fmtver < 15)
+                    // Causes invisible NPCs when non-zero
+                    p_thing->Flag2 = 0;
+                p_thing->U.UPerson.Flag3 = 0;
+                p_thing->Flag2 &= 0x21000000;
+                if ((p_thing->Flag & TngF_Unkn02000000) != 0)
+                {
+                    p_thing->ThingOffset = p_thing - things;
+                    remove_thing(new_thing);
+                    delete_node(p_thing);
+                    continue;
+                }
+                person_anim = people_frames[p_thing->SubType][p_thing->U.UPerson.AnimMode];
+                p_thing->StartFrame = person_anim - 1;
+                p_thing->Frame = nstart_ani[person_anim + p_thing->U.UPerson.Angle];
+                init_person_thing(p_thing);
+                p_thing->Flag |= TngF_Unkn0004;
+                if (fmtver < 12)
+                    sanitize_cybmods_fmtver11_flags(&p_thing->U.UPerson.UMod);
+            }
+
+            if (p_thing->Type == SmTT_DROPPED_ITEM)
+            {
+                p_thing->Frame = nstart_ani[p_thing->StartFrame + 1];
+            }
+
+            if (p_thing->Type == TT_VEHICLE)
+            {
+                if (fmtver < 17)
+                    p_thing->U.UVehicle.Armour = 4;
+                p_thing->U.UVehicle.PassengerHead = 0;
+                p_thing->Flag2 &= 0x1000000;
+                if (fmtver <= 8)
+                    p_thing->Y >>= 3;
+
+                k = next_local_mat++;
+                LbFileRead(lev_fh, &local_mats[k], 36);
+
+                p_thing->U.UVehicle.MatrixIndex = next_local_mat - 1;
+                byte_1C83D1 = 0;
+
+                n = next_normal;
+                func_6031c(p_thing->X >> 8, p_thing->Z >> 8, -prim_unknprop01 - p_thing->StartFrame, p_thing->Y >> 8);
+                k = next_normal;
+                unkn_object_shift_03(next_object - 1);
+                unkn_object_shift_02(n, k, next_object - 1);
+
+                k = p_thing - things;
+                p_thing->U.UVehicle.Object = next_object - 1;
+                game_objects[next_object - 1].ZScale = k;
+                VNAV_unkn_func_207(p_thing);
+                k = p_thing->U.UVehicle.MatrixIndex;
+                angle = LbArcTanAngle(local_mats[k].R[0][2], local_mats[k].R[2][2]);
+                p_thing->U.UVehicle.AngleY = (angle + LbFPMath_PI) & LbFPMath_AngleMask;
+
+                veh_add(p_thing, p_thing->StartFrame);
+                k = p_thing->U.UVehicle.MatrixIndex;
+                angle = LbArcTanAngle(local_mats[k].R[0][2], local_mats[k].R[2][2]);
+                p_thing->U.UVehicle.AngleY = (angle + LbFPMath_PI) & LbFPMath_AngleMask;
+                if (p_thing->SubType == SubTT_VEH_MECH)
+                {
+                    if (!mech_initialized)
+                    {
+                        init_mech();
+                        mech_unkn_func_02();
+                        mech_initialized = 1;
+                    }
+                    mech_unkn_func_09(new_thing);
+                }
+                debug_level(" placed vehicle", 1);
+            }
+        }
+    }
+    LbFileRead(lev_fh, &next_command, sizeof(ushort));
+    limit = get_memory_ptr_allocated_count((void **)&game_commands);
+    if ((limit >= 0) && (next_command > limit)) {
+        LOGERR("Restricting \"%s\", wanted %d, limit %ld", "game_commands", (int)next_command, limit);
+        next_command = limit;
+    }
+    assert(sizeof(struct Command) == 32);
+    LbFileRead(lev_fh, game_commands, sizeof(struct Command) * next_command);
+
+    LbFileRead(lev_fh, &level_def, 44);
+    for (i = 0; i < 8; i++)
+    {
+        if (level_def.PlayableGroups[i] >= PEOPLE_GROUPS_COUNT)
+            level_def.PlayableGroups[i] = 0;
+    }
+
+    LbFileRead(lev_fh, engine_mem_alloc_ptr + engine_mem_alloc_size - 1320 - 33, 1320);
+    LbFileRead(lev_fh, war_flags, 32 * sizeof(struct WarFlag));
+    LbFileRead(lev_fh, &word_1531E0, sizeof(ushort));
+    LOGSYNC("Level fmtver=%lu n_command=%hu word_1531E0=%hu", fmtver, next_command, word_1531E0);
+    for (k = 0; k < PEOPLE_GROUPS_COUNT; k++)
+    {
+        for (i = 0; i < 8; i++)
+        {
+            if (war_flags[k].Guardians[i] >= 32)
+                war_flags[k].Guardians[i] = 0;
+        }
+    }
+    LbFileRead(lev_fh, engine_mem_alloc_ptr + engine_mem_alloc_size - 32000, 15 * word_1531E0);
+    LbFileRead(lev_fh, &unkn3de_len, sizeof(ushort));
+    LbFileRead(lev_fh, engine_mem_alloc_ptr + engine_mem_alloc_size - 32000, unkn3de_len);
+
+    if (fmtver >= 4)
+    {
+        ulong count;
+        short thing;
+
+        count = 0;
+        LbFileRead(lev_fh, &count, 2);
+        for (i = count; i > 0; i--)
+        {
+            struct SimpleThing loc_thing;
+            struct SimpleThing *p_thing;
+
+            thing = get_new_sthing();
+            p_thing = &sthings[thing];
+            memcpy(&loc_thing, p_thing, 60);
+            LbFileRead(lev_fh, p_thing, 60);
+            if (p_thing->Type == SmTT_CARRIED_ITEM)
+            {
+                p_thing->LinkParent = loc_thing.LinkParent;
+                p_thing->LinkChild = loc_thing.LinkChild;
+                remove_sthing(thing);
+            }
+            else
+            {
+              if (p_thing->Type == SmTT_DROPPED_ITEM) {
+                  p_thing->Frame = nstart_ani[p_thing->StartFrame + 1];
+              }
+              p_thing->LinkParent = loc_thing.LinkParent;
+              p_thing->LinkChild = loc_thing.LinkChild;
+              if (thing != 0)
+                  add_node_sthing(thing);
+            }
+            LOGNO("Thing(%hd,%hd) at (%d,%d,%d) type=%d,%d",
+              p_thing->ThingOffset, p_thing->UniqueID,
+              p_thing->X >> 8, p_thing->Y >> 8, p_thing->Z >> 8,
+              (int)p_thing->Type, (int)p_thing->SubType);
+        }
+    }
+
+    if (fmtver >= 6)
+    {
+        LbFileRead(lev_fh, &word_1810E4, 2);
+        if (word_1810E4 < 1000)
+            word_1810E4 = 1000;
+        if (word_1810E4 > 9000)
+            word_1810E4 = 4000;
+    }
+
+    if (fmtver >= 7) {
+        LbFileRead(lev_fh, &next_used_lvl_objective, sizeof(ushort));
+        assert(sizeof(struct Objective) == 32);
+        LbFileRead(lev_fh, game_used_lvl_objectives, sizeof(struct Objective) * next_used_lvl_objective);
+    } else {
+        next_used_lvl_objective = 1;
+    }
+
+    if (fmtver >= 9) {
+        LbFileRead(lev_fh, byte_1810E6, 40);
+        LbFileRead(lev_fh, byte_18110E, 40);
+    }
+
+    if (fmtver >= 10)
+        LbFileRead(lev_fh, game_level_miscs, 4400);
+
+    if (fmtver >= 16)
+        LbFileRead(lev_fh, &dword_176D58, 4);
+
+    return fmtver;
+}
+
+short find_group_which_looks_like_human_player(TbBool strict)
+{
+    short group;
+    short partial_group;
+    short n_partial;
+
+    n_partial = 0;
+    for (group = 0; group < PEOPLE_GROUPS_COUNT; group++)
+    {
+        int n_all, n_agents, n_zealots, n_punks;
+
+        n_all = count_people_in_group(group, -1);
+        if (n_all < 1)
+            continue;
+
+        if (strict && (n_all > 4))
+            continue;
+
+        n_agents = count_people_in_group(group, SubTT_PERS_AGENT);
+        if (n_agents == 4)
+            return group;
+        n_zealots = count_people_in_group(group, SubTT_PERS_ZEALOT);
+        if (n_zealots == 4)
+            return group;
+        n_punks = count_people_in_group(group, SubTT_PERS_PUNK_F) +
+          count_people_in_group(group, SubTT_PERS_PUNK_M);
+        if (n_punks == 4)
+            return group;
+
+        if ((n_agents > 0) && (!strict || (n_agents <= 4)))
+        {
+            if (n_partial < n_agents) {
+                partial_group = group;
+                n_partial = n_agents;
+            }
+        }
+        if ((n_zealots > 0) && (!strict || (n_zealots <= 4)))
+        {
+            if (n_partial < n_zealots) {
+                partial_group = group;
+                n_partial = n_zealots;
+            }
+        }
+        if ((n_punks > 0) && (!strict || (n_punks <= 4)))
+        {
+            if (n_partial < n_punks) {
+                partial_group = group;
+                n_partial = n_punks;
+            }
+        }
+    }
+
+    if (n_partial > 0)
+        return partial_group;
+    return -1;
+}
+
+void level_perform_deep_fix(void)
+{
+    {
+        short pv_group, nx_group;
+        TbBool need_fix;
+        int i;
+
+        pv_group = level_def.PlayableGroups[0];
+        i = count_people_in_group(pv_group, -1);
+        need_fix = (i < 1) || (i > 4);
+        if (need_fix) {
+            nx_group = find_group_which_looks_like_human_player(true);
+            if (nx_group >= 0) {
+                LOGWARN("Local player group %d has no team; switching to better group %d",
+                  (int)pv_group, (int)nx_group);
+                level_def.PlayableGroups[0] = nx_group;
+                need_fix = false;
+            }
+        }
+        if (need_fix) {
+            short lp_group;
+            int n;
+
+            nx_group = find_group_which_looks_like_human_player(false);
+            lp_group = -1;
+            if (nx_group >= 0)
+                lp_group = find_unused_group_id(true);
+            if (lp_group >= 0) {
+                thing_group_copy(pv_group, nx_group, 0x01|0x02|0x04);
+                n = thing_group_transfer_people(nx_group, lp_group, SubTT_PERS_AGENT, 0, 4);
+                if (n <= 0)
+                    n = thing_group_transfer_people(nx_group, lp_group, SubTT_PERS_ZEALOT, 0, 4);
+                if (n <= 0)
+                    n = thing_group_transfer_people(nx_group, lp_group, -1, 0, 4);
+                if (n > 0) {
+                    LOGWARN("Local player group %d has no team; switching to new group %d based on %d",
+                      (int)pv_group, (int)lp_group, (int)nx_group);
+                    level_def.PlayableGroups[0] = lp_group;
+                    need_fix = false;
+                }
+            }
+        }
+        if (need_fix) {
+            LOGWARN("Local player group %d has no team; fix attempts failed",
+              (int)pv_group);
+        }
+    }
+
+#if 0
+    // While the group 0 sometimes looks suspicious, it generally works correctly
+    // We should transfer other things away from that group, instead. So, this got disabled.
+    // Also, switching the group would require fixing its index in all objectives and commands.
+    if (level_def.PlayableGroups[0] == 0) {
+        short pv_group, nx_group;
+
+        pv_group = level_def.PlayableGroups[0];
+        nx_group = find_unused_group_id(true);
+        LOGWARN("Local player group is %d; switching to %d",
+          (int)pv_group, (int)nx_group);
+        if (nx_group > 0) {
+            thing_group_copy(pv_group, nx_group, 0x01|0x02);
+            thing_group_transfer_people(pv_group, nx_group, -1, 0, 4);
+        }
+    }
+#endif
+}
+
+void fix_level_indexes(short missi, ulong fmtver, ubyte reload, TbBool deep)
+{
+#if 0
+    asm volatile ("call ASM_fix_level_indexes\n"
+        :  :  : "eax" );
+#endif
+    ushort objectv;
+    short thing;
+
+    fix_thing_commands_indexes(deep);
+
+    for (objectv = 1; objectv < next_used_lvl_objective; objectv++)
+    {
+        struct Objective *p_objectv;
+
+        p_objectv = &game_used_lvl_objectives[objectv];
+        p_objectv->Level = (current_level - 1) % 15 + 1;
+        p_objectv->Map = current_map;
+        fix_single_objective(p_objectv, objectv, "UL");
+    }
+
+    for (objectv = 1; objectv < next_objective; objectv++)
+    {
+        struct Objective *p_objectv;
+
+        p_objectv = &game_objectives[objectv];
+        fix_single_objective(p_objectv, objectv, "S");
+    }
+
+    // Used objectives are not part of the level file, but part of
+    // the mission file. If restarting level, leave these intact,
+    // as fixups were already applied on first load.
+    if (!reload)
+    {
+        fix_mission_used_objectives(missi);
+    }
+
+    for (thing = 1; thing < THINGS_LIMIT; thing++)
+    {
+        things[thing].ThingOffset = thing;
+    }
+
+    for (thing = 1; thing < STHINGS_LIMIT; thing++)
+    {
+        sthings[-thing].ThingOffset = -thing;
+    }
+}
+
+void level_misc_update(void)
+{
+    asm volatile ("call ASM_level_misc_update\n"
+        :  :  : "eax" );
+}
+
+void load_level_pc(short level, short missi, ubyte reload)
+{
+    short next_level, prev_level;
+    TbFileHandle lev_fh;
+    char lev_fname[52];
+
+    next_level = level;
+    gameturn = 0;
+
+    prev_level = current_level;
+    if (next_level < 0)
+    {
+        next_level = -next_level;
+        word_1C8446 = 1;
+        if (next_level <= 15)
+            sprintf(lev_fname, "%s/c%03dl%03d.dat", game_dirs[DirPlace_Levels].directory,
+                current_map, next_level);
+        else
+            sprintf(lev_fname, "%s/c%03dl%03d.d%d", game_dirs[DirPlace_Levels].directory,
+               current_map, (next_level - 1) % 15 + 1, (next_level - 1) / 15);
+        if (next_level > 0)
+            current_level = next_level;
+    }
+    if (next_level <= 0) {
+        LOGERR("Next level index is not positive, load skipped");
+        return;
+    }
+    LOGSYNC("Next level %hd prev level %hd mission %hd reload 0x%x",
+      next_level, prev_level, missi, (uint)reload);
+
+    /* XXX: This fixes the inter-mission memory corruption bug
+     * mefisto: No idea what "the" bug is, to be tested and described properly (or re-enabled)
+     */
+#if 0
+    if ((ingame.Flags & GamF_Unkn0008) == 0)
+    {
+        if (prev_level)
+            global_3d_store(1);
+        global_3d_store(0);
+    }
+#else
+    (void)prev_level; // avoid unused var warning
+#endif
+    debug_level(" load level restart coms", 1);
+
+    lev_fh = LbFileOpen(lev_fname, Lb_FILE_MODE_READ_ONLY);
+    if (lev_fh != INVALID_FILE)
+    {
+        ulong fmtver;
+        int i;
+
+        word_1C8446 = 1;
+        word_176E38 = 0;
+
+        fmtver = load_level_pc_handle(lev_fh);
+
+        LbFileClose(lev_fh);
+
+        if (fmtver <= 10)
+        {
+            for (i = 1; i < next_command; i++)
+                game_commands[i].Arg2 = 1;
+            for (i = 1; i < next_used_lvl_objective; i++)
+                game_used_lvl_objectives[i].Arg2 = 1;
+        }
+
+        check_and_fix_commands();
+
+        build_same_type_headers();
+
+        check_and_fix_thing_commands();
+
+        if (fmtver >= 10)
+            level_misc_update();
+
+        if (level_deep_fix) {
+            level_perform_deep_fix();
+        }
+        fix_level_indexes(missi, fmtver, reload, level_deep_fix);
+    } else
+    {
+        LOGERR("Could not open mission file, load skipped");
+    }
+}
 
 void load_map_dat_pc_handle(TbFileHandle fh)
 {

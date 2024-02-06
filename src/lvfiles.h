@@ -36,8 +36,12 @@ struct QuickLoad {
 
 #pragma pack()
 /******************************************************************************/
+extern TbBool level_deep_fix;
+
 
 TbResult load_mad_pc(ushort mapno);
+
+void load_level_pc(short level, short missi, ubyte reload);
 
 /******************************************************************************/
 #ifdef __cplusplus

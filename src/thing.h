@@ -902,6 +902,7 @@ short new_thing_static_clone(struct SimpleThing *p_clsthing);
 short new_thing_building_clone(struct Thing *p_clthing,
   struct M33 *p_clmat, short shut_h);
 
+void build_same_type_headers(void);
 short get_thing_same_type_head(short ttype, short subtype);
 
 TbBool thing_is_within_circle(short thing, short X, short Z, ushort R);

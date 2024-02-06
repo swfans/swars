@@ -495,6 +495,10 @@ extern ubyte *fade_data;
 extern void *dword_1810D1;
 extern ulong dword_1810D5;
 
+extern ushort word_1810E4;
+extern ubyte byte_1810E6[40];
+extern ubyte byte_18110E[40];
+
 extern ushort word_1531E0;
 extern ushort next_special_face;
 extern ushort next_special_face4;
@@ -562,10 +566,12 @@ extern TbPixel colour_brown2;
 extern ubyte *memload;
 #define memload_len 16384
 
+extern ubyte byte_1C83D1;
 extern ubyte net_host_player_no;
 extern ubyte byte_1C6D4A;
 extern ubyte byte_1C6DDC[5];
 extern ushort word_1C8446;
+extern ushort unkn3de_len;
 extern ubyte data_19ec6f;
 extern ulong save_mortal_salt;
 
@@ -661,6 +667,8 @@ extern ushort *nstart_ani;
 extern ushort *nstart_ani_end;
 extern struct Frame *frame;
 extern struct Frame *frame_end;
+
+extern long dword_176D58;
 
 extern long dword_17710C;
 extern long dword_177110;
