@@ -457,6 +457,25 @@ TbResult load_map_dat(ushort mapno)
     return Lb_SUCCESS;
 }
 
+void prepare_map_dat_to_play(void)
+{
+    update_map_thing_and_traffic_refs();
+    unkn_lights_processing();
+
+    triangulation_initied = 0;
+    selected_triangulation_no = -1;
+    triangulation_allocate(1,9000);
+    triangulation_allocate(2,9000);
+
+    triangulation_select(2);
+    triangulation_clear();
+    generate_map_triangulation();
+
+    triangulation_select(1);
+    triangulation_clear();
+    generate_map_triangulation();
+}
+
 TbResult load_map_mad(ushort mapno)
 {
     char mad_fname[52];
@@ -505,6 +524,5 @@ TbResult load_mad_pc(ushort mapno)
     return ret;
 #endif
 }
-
 
 /******************************************************************************/

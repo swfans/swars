@@ -1634,6 +1634,9 @@ void add_obj_face_to_col_vect(short x1, short y1, short z1, short x2, short y2, 
     delta_x = x2 - x1;
     delta_z = z2 - z1;
     dist = LbSqrL(delta_x * delta_x + delta_z * delta_z);
+    if (dist < 1)
+        dist = 1;
+
     x = x1 << 10;
     z = z1 << 10;
     step_x = (delta_x << 10) / dist;
