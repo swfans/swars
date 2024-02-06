@@ -19,6 +19,7 @@
 #include "bigmap.h"
 
 #include <stdlib.h>
+#include <limits.h>
 #include "bfmemut.h"
 #include "swlog.h"
 /******************************************************************************/
