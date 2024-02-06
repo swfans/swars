@@ -226,4 +226,31 @@ int alt_at_point(short x, short z)
 #endif
 }
 
+int alt_change_at_tile(short tile_x, short tile_z)
+{
+    int alt_min, alt_max;
+    int dtx, dtz;
+
+    if (tile_x <= 0 || tile_x >= MAP_TILE_WIDTH-1)
+        return 63;
+    if (tile_z <= 0 || tile_z >= MAP_TILE_HEIGHT-1)
+        return 63;
+
+    alt_min = INT_MAX;
+    alt_max = INT_MIN;
+    for (dtz = 0; dtz <= 1; dtz++)
+    {
+        for (dtx = 0; dtx <= 1; dtx++)
+        {
+            struct MyMapElement *p_mapel;
+            p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (tile_z + dtz) + (tile_x + dtx)];
+            if (alt_min > p_mapel->Alt)
+                alt_min = p_mapel->Alt;
+            if (alt_max < p_mapel->Alt)
+                alt_max = p_mapel->Alt;
+        }
+    }
+    return abs(alt_max - alt_min);
+}
+
 /******************************************************************************/

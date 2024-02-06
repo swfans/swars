@@ -87,6 +87,10 @@ void refresh_old_my_big_map_format(struct MyMapElement *p_mapel,
 short get_mapwho_thing_index(short tile_x, short tile_z);
 void init_search_spiral(void);
 int alt_at_point(short x, short z);
+
+/** Returns maximal change of altitude between corners of given tile.
+ */
+int alt_change_at_tile(short tile_x, short tile_z);
 /******************************************************************************/
 #ifdef __cplusplus
 }

@@ -1853,60 +1853,43 @@ void generate_thin_walls(void)
 
 int fringe_at_tile(short tile_x, short tile_z)
 {
-    int alt_min, alt_max;
-    int dtx, dtz;
-    int fringe;
+    int alt_dt;
 
-    if (tile_x <= 0 || tile_x >= MAP_TILE_WIDTH-1)
-        return 4;
-    if (tile_z <= 0 || tile_z >= MAP_TILE_HEIGHT-1)
-        return 4;
-
-    alt_min = INT_MAX;
-    alt_max = INT_MIN;
-    for (dtz = 0; dtz <= 1; dtz++)
-    {
-        for (dtx = 0; dtx <= 1; dtx++)
-        {
-            struct MyMapElement *p_mapel;
-            p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (tile_z + dtz) + (tile_x + dtx)];
-            if (alt_min > p_mapel->Alt)
-                alt_min = p_mapel->Alt;
-            if (alt_max < p_mapel->Alt)
-                alt_max = p_mapel->Alt;
-        }
-    }
-
-    fringe = abs(alt_max - alt_min);
-    // There is no need to keep specific fringe values - it creates more
-    // triangles without a clear benefit. Let's simplify that to either
-    // having a passable area or too steep area
-    return (fringe >= 13) ? 4 : 0;
+    alt_dt = alt_change_at_tile(tile_x, tile_z);
+    // There is no need to keep specific fringe values at altitudes - it
+    // creates more triangles without a clear benefit. Let's simplify that
+    // to either having a passable area or too steep area
+    return (alt_dt > 12) ? 4 : 0;
 }
 
-void generate_ground_map(void)
+void fill_ground_map(ubyte *p_map)
 {
     ushort tile_x, tile_z;
 
-    if (ground_map == NULL) {
-        ground_map = LbMemoryAlloc(MAP_TILE_WIDTH * MAP_TILE_HEIGHT);
-    }
     for (tile_x = 0; tile_x < MAP_TILE_WIDTH; tile_x++)
     {
         for (tile_z = 0; tile_z < MAP_TILE_HEIGHT; tile_z++)
         {
-            ubyte *p_map;
+            ubyte *p_solid;
             int n;
 
-            p_map = &ground_map[2*MAP_TILE_WIDTH * 2*tile_z + 2*tile_x];
+            p_solid = &p_map[2*MAP_TILE_WIDTH * 2*tile_z + 2*tile_x];
             n = fringe_at_tile(tile_x, tile_z);
-            p_map[0] = n;
-            p_map[1] = n;
-            p_map += 2*MAP_TILE_WIDTH;
-            p_map[0] = n;
-            p_map[1] = n;
+            p_solid[0] = n;
+            p_solid[1] = n;
+            p_solid += 2*MAP_TILE_WIDTH;
+            p_solid[0] = n;
+            p_solid[1] = n;
         }
     }
+}
+
+void generate_ground_map(void)
+{
+    if (ground_map == NULL) {
+        ground_map = LbMemoryAlloc(MAP_TILE_WIDTH * MAP_TILE_HEIGHT);
+    }
+    fill_ground_map(ground_map);
     triangulate_map(ground_map);
 }
 
