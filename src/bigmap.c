@@ -254,6 +254,23 @@ int alt_change_at_tile(short tile_x, short tile_z)
     return abs(alt_max - alt_min);
 }
 
+/** Checks if a tile should not be allowed to walk on due to terrain.
+ *
+ * To do such check during gameplay, MapElement flags should be used - this one
+ * is only to update these flags, if neccessary.
+ */
+static TbBool compute_map_tile_is_blocking_walk(short tile_x, short tile_z)
+{
+    int alt_dt;
+
+    alt_dt = alt_change_at_tile(tile_x, tile_z);
+    // TODO maybe allow to walk on a single tile with alt_dt=12, but disallow if more than 2 around?
+    if (alt_dt > 12)
+       return true;
+
+   return false;
+}
+
 void update_map_flags(void)
 {
     ushort tile_x, tile_z;
@@ -263,13 +280,11 @@ void update_map_flags(void)
         for (tile_z = 0; tile_z < MAP_TILE_HEIGHT; tile_z++)
         {
             struct MyMapElement *p_mapel;
-            int alt_dt;
 
-            alt_dt = alt_change_at_tile(tile_x, tile_z);
-            // set having a walkable tile or too steep tile
             p_mapel = &game_my_big_map[MAP_TILE_WIDTH * tile_z + tile_x];
+            // set having a walkable tile or too steep tile
             p_mapel->Flags2 &= ~0x04;
-            if (alt_dt > 12)
+            if (compute_map_tile_is_blocking_walk(tile_x, tile_z))
                 p_mapel->Flags2 |= 0x04;
         }
     }
