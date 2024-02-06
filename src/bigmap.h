@@ -91,6 +91,10 @@ int alt_at_point(short x, short z);
 /** Returns maximal change of altitude between corners of given tile.
  */
 int alt_change_at_tile(short tile_x, short tile_z);
+
+/** Sets some of the map elements flags based on other properties.
+ */
+void update_map_flags(void);
 /******************************************************************************/
 #ifdef __cplusplus
 }

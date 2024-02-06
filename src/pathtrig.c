@@ -1853,13 +1853,16 @@ void generate_thin_walls(void)
 
 int fringe_at_tile(short tile_x, short tile_z)
 {
-    int alt_dt;
+    struct MyMapElement *p_mapel;
 
-    alt_dt = alt_change_at_tile(tile_x, tile_z);
-    // There is no need to keep specific fringe values at altitudes - it
-    // creates more triangles without a clear benefit. Let's simplify that
-    // to either having a passable area or too steep area
-    return (alt_dt > 12) ? 4 : 0;
+    if ((tile_x < 0) || (tile_x >= MAP_TILE_WIDTH))
+        return 0;
+    if ((tile_z < 0) || (tile_z >= MAP_TILE_HEIGHT))
+        return 0;
+
+    p_mapel = &game_my_big_map[MAP_TILE_WIDTH * tile_z + tile_x];
+
+    return (p_mapel->Flags2 & 0x04);
 }
 
 void fill_ground_map(ubyte *p_map)

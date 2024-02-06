@@ -461,6 +461,7 @@ void prepare_map_dat_to_play(void)
 {
     update_map_thing_and_traffic_refs();
     unkn_lights_processing();
+    update_map_flags();
 
     triangulation_initied = 0;
     selected_triangulation_no = -1;

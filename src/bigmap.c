@@ -253,4 +253,25 @@ int alt_change_at_tile(short tile_x, short tile_z)
     return abs(alt_max - alt_min);
 }
 
+void update_map_flags(void)
+{
+    ushort tile_x, tile_z;
+
+    for (tile_x = 0; tile_x < MAP_TILE_WIDTH; tile_x++)
+    {
+        for (tile_z = 0; tile_z < MAP_TILE_HEIGHT; tile_z++)
+        {
+            struct MyMapElement *p_mapel;
+            int alt_dt;
+
+            alt_dt = alt_change_at_tile(tile_x, tile_z);
+            // set having a walkable tile or too steep tile
+            p_mapel = &game_my_big_map[MAP_TILE_WIDTH * tile_z + tile_x];
+            p_mapel->Flags2 &= ~0x04;
+            if (alt_dt > 12)
+                p_mapel->Flags2 |= 0x04;
+        }
+    }
+}
+
 /******************************************************************************/
