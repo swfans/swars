@@ -85,41 +85,6 @@ enum TbFileAttribFlags { // type=int8_t
 typedef enum TbFileSeekMode TbFileSeekMode;
 
 #define INVALID_FILE (TbFileHandle)-1
-
-typedef ulong TbFileHandle;
-
-#if defined(_finddata_t) // GCC Windows API
-typedef struct _finddata_t TbFILE_FIND;
-#elif defined(DOSFINDTYPE) // Watcom C API
-typedef DOSFINDTYPE TbFILE_FIND;
-#else // POSIX emulation of the findfirst/findnext API
-#define LB_FILE_FIND_SIMULATED
-struct _finddata_t {
-    struct stat st;
-    char name[FILENAME_MAX];
-};
-typedef struct _finddata_t TbFILE_FIND;
-#endif
-
-#pragma pack(1)
-
-struct TbFileFind {
-    char Filename[144];
-    char AlternateFilename[14];
-    unsigned long Attributes;
-    unsigned long Length;
-    TbDate CreationDate;
-    TbTime CreationTime;
-    TbDate LastWriteDate;
-    TbTime LastWriteTime;
-    unsigned long ReservedHandle;
-    TbFILE_FIND Reserved;
-};
-
-typedef struct TbFileFind TbFileFind;
-
-#pragma pack()
-
 #if LB_FILENAME_TRANSFORM
 
 typedef void (*FileNameTransform)(char *out_fname, const char *inp_fname);

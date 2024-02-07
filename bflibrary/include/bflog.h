@@ -44,33 +44,6 @@ enum TbLogFlags {
     LbLog_LoopedFile   = 0x0100,
 };
 
-#define LOG_PREFIX_LEN 32
-
-#pragma pack(1)
-
-struct TbLog {
-    char Filename[FILENAME_MAX];
-    char Prefix[LOG_PREFIX_LEN];
-    ulong Flags;
-    TbBool Initialised;
-    TbBool Created;
-    TbBool Suspended;
-    ulong Position;
-};
-
-#if 0 // original bullfrog structure
-struct TbLog { // sizeof=194
-    char Filename[144]; // offset=0
-    char Prefix[32]; // offset=145
-    ulong Flags; // offset=178
-    DwBool Initialised; // offset=182
-    DwBool Created; // offset=186
-    DwBool Suspended; // offset=190
-};
-#endif
-
-#pragma pack()
-
 /**
  * Log message at error severity level.
  */
