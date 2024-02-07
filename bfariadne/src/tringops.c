@@ -27,9 +27,33 @@
 // do not change type - used in ASM
 const int MOD3[] = {0, 1, 2, 0, 1, 2};
 
-static TrTriangId tri_split2(TrTriangId tri, TrTipId cor,
+/** Splits a triangle into 2 triangles, switching given tip of given triangle.
+ *
+ * Given triangle is divided by replacing given tip with given point. In the
+ * free space created, a new triangle is placed.
+ * If given point deviates from the original border of the triangle,
+ * the resulting 2 triangles may have their surface larger or smaller than
+ * the original. The new tip point is provided both by index and by its coords.
+ * Sibling triangle which shares the border with this one should be divided
+ * by a separate call of this function.
+ *
+ * @param tri Index of the triangle to be divided.
+ * @param cor Index of the tip within first triangle which will switch to the new point.
+ * @param pt_x New tip point X coordinate.
+ * @param pt_y New tip point Y coordinate.
+ * @return Index of the new triangle, which shares border with the one given in `tri`.
+ */
+TrTriangId tri_split2(TrTriangId tri, TrTipId cor,
   TrCoord pt_x, TrCoord pt_y, TrPointId pt)
 {
+#if 0
+    int ret;
+    asm volatile (
+      "push %5\n"
+      "call ASM_tri_split2\n"
+        : "=r" (ret) : "a" (tri), "d" (cor), "b" (pt_x), "c" (pt_y), "g" (pt));
+    return ret;
+#endif
     struct TrTriangle *p_tri1;
     struct TrTriangle *p_tri2;
     TrTriangId tri2, tri3;
@@ -43,8 +67,6 @@ static TrTriangId tri_split2(TrTriangId tri, TrTipId cor,
     p_tri2 = &triangulation[0].Triangles[tri2];
     memcpy(p_tri2, p_tri1, sizeof(struct TrTriangle));
 
-    p_tri2->point[cor] = pt;
-
     cor2 = MOD3[cor + 1];
     p_tri1->point[cor2] = pt;
     p_tri1->tri[cor2] = tri2;
@@ -52,6 +74,7 @@ static TrTriangId tri_split2(TrTriangId tri, TrTipId cor,
     p_tri1->enter &= ~(1 << (cor2 + 3));
 
     cor3 = MOD3[cor + 2];
+    p_tri2->point[cor] = pt;
     p_tri2->tri[cor3] = tri;
     p_tri2->enter |= 1 << cor3;
     p_tri2->enter &= ~(1 << (cor3 + 3));
@@ -82,8 +105,16 @@ static TrTriangId tri_split2(TrTriangId tri, TrTipId cor,
     return tri2;
 }
 
+/** Splits a triangle into 3 triangles, making a new tip at given point.
+ */
 TrPointId tri_split3(TrTriangId btri, TrCoord pt_x, TrCoord pt_y)
 {
+#if 0
+    int ret;
+    asm volatile ("call ASM_tri_split3\n"
+        : "=r" (ret) : "a" (btri), "d" (pt_x), "b" (pt_y));
+    return ret;
+#endif
     TrTriangId tri1, tri2;
     struct TrTriangle *p_tri1;
     struct TrTriangle *p_tri2;
@@ -191,8 +222,22 @@ TrPointId tri_split3(TrTriangId btri, TrCoord pt_x, TrCoord pt_y)
     return pt;
 }
 
+/** Splits a triangle into 2 triangles, making the division at given point and given border.
+ *
+ * @param tri Index of the triangle to be divided.
+ * @param cor Index of the border to de divided; it is an index in Triangle.tri[] array.
+ * @param pt_x New tip point X coordinate.
+ * @param pt_y New tip point Y coordinate.
+ * @return Index of the new triangle, which shares border with the one given in `tri`.
+ */
 TrPointId edge_split(TrTriangId tri, TrTipId cor, TrCoord pt_x, TrCoord pt_y)
 {
+#if 0
+    int ret;
+    asm volatile ("call ASM_edge_split\n"
+        : "=r" (ret) : "a" (tri), "d" (cor), "b" (pt_x), "c" (pt_y));
+    return ret;
+#endif
     struct TrTriangle *p_tri;
     struct TrTriangle *p_tri_sec;
     TrPointId pt;
