@@ -356,6 +356,28 @@ TbBool is_command_any_until(struct Command *p_cmd)
     return true;
 }
 
+ushort get_new_command(void)
+{
+    struct Command *p_cmd;
+    ushort cmd;
+
+    for (cmd = 1; cmd < next_command; cmd++)
+    {
+        p_cmd = &game_commands[cmd];
+        if (game_commands[cmd].Type == PCmd_NONE)
+        {
+            p_cmd->Type = PCmd_STAY;
+            p_cmd->Next = 0;
+            return cmd;
+        }
+    }
+    p_cmd = &game_commands[cmd];
+    next_command++;
+    p_cmd->Type = PCmd_STAY;
+    p_cmd->Next = 0;
+    return cmd;
+}
+
 #define MAP_BORDER_MARGIN 32
 
 /** Fixes parameters within a command.
