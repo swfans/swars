@@ -149,6 +149,8 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
                 p_thing->Frame = nstart_ani[person_anim + p_thing->U.UPerson.Angle];
                 init_person_thing(p_thing);
                 p_thing->Flag |= TngF_Unkn0004;
+                if (fmtver < 6)
+                    p_thing->Flag |= TngF_Unkn04000000;
                 if (fmtver < 12)
                     sanitize_cybmods_fmtver11_flags(&p_thing->U.UPerson.UMod);
             }
@@ -364,6 +366,56 @@ short find_group_which_looks_like_human_player(TbBool strict)
     return -1;
 }
 
+ushort person_add_command(short person, ubyte cmdtype)
+{
+    struct Thing *p_person;
+    struct Command *p_cmd;
+    ushort cmd;
+
+    if (person <= 0)
+        return 0;
+
+    p_person = &things[person];
+
+    cmd = get_new_command();
+    p_cmd = &game_commands[cmd];
+
+    p_cmd->Next = p_person->U.UPerson.ComHead;
+    p_person->U.UPerson.ComHead = cmd;
+    p_cmd->Type = cmdtype;
+
+    return cmd;
+}
+
+void add_commands_from_person_states(void)
+{
+    struct Thing *p_thing;
+    short thing;
+
+    for (thing = things_used_head; thing > 0; thing = p_thing->LinkChild)
+    {
+        p_thing = &things[thing];
+        // Per thing code start
+        if (p_thing->Type == TT_PERSON && p_thing->U.UPerson.ComHead == 0)
+        {
+            ushort cmd;
+            struct Command *p_cmd;
+
+            switch (p_thing->Type)
+            {
+            case PerSt_WANDER:
+                cmd = person_add_command(thing, PCmd_WAND_TIME);
+                p_cmd = &game_commands[cmd];
+                p_cmd->Time = 9999;
+                break;
+            default:
+                break;
+            }
+        }
+        // Per thing code end
+    }
+}
+
 void level_perform_deep_fix(void)
 {
     {
@@ -542,6 +594,9 @@ void load_level_pc(short level, short missi, ubyte reload)
         fmtver = load_level_pc_handle(lev_fh);
 
         LbFileClose(lev_fh);
+
+        if (fmtver < 5)
+            add_commands_from_person_states();
 
         if (fmtver <= 10)
         {
