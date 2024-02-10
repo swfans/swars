@@ -270,7 +270,7 @@ TrPointId edge_split(TrTriangId tri, TrTipId cor, TrCoord pt_x, TrCoord pt_y)
 
 int edge_rotateAC(TrTriangId tri1, TrTipId cor1)
 {
-#if 1
+#if 0
     int ret;
     asm volatile ("call ASM_edge_rotateAC\n"
         : "=r" (ret) : "a" (tri1), "d" (cor1));
