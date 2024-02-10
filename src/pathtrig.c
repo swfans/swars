@@ -264,12 +264,6 @@ int triangle_findSE8(int x, int y)
     return ret;
 }
 
-void triangulation_select(int trglno)
-{
-    asm volatile ("call ASM_triangulation_select\n"
-        : : "a" (trglno));
-}
-
 void make_edge(int x1, int y1, int x2, int y2)
 {
     asm volatile (

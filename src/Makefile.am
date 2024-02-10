@@ -92,7 +92,10 @@ swars_SOURCES = \
 	../bfariadne/include/trpath.h \
 	../bfariadne/include/trpoints.h \
 	../bfariadne/src/trpoints.c \
+	../bfariadne/src/trstate.c \
 	../bfariadne/include/trstate.h \
+	../bfariadne/src/delaunay.c \
+	../bfariadne/include/delaunay.h \
 	config.h \
 	bigmap.c \
 	bigmap.h \
