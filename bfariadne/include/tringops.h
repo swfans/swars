@@ -31,6 +31,7 @@ extern "C" {
 /******************************************************************************/
 
 TrPointId edge_split(TrTriangId tri, TrTipId cor, TrCoord pt_x, TrCoord pt_y);
+int edge_rotateAC(TrTriangId tri, TrTipId cor);
 
 //TODO make it static, when possible
 TrPointId tri_split3(TrTriangId btri, TrCoord pt_x, TrCoord pt_y);

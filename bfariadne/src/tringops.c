@@ -268,8 +268,14 @@ TrPointId edge_split(TrTriangId tri, TrTipId cor, TrCoord pt_x, TrCoord pt_y)
     return pt;
 }
 
-int edge_rotateAC(TrTriangId tri1, int cor1)
+int edge_rotateAC(TrTriangId tri1, TrTipId cor1)
 {
+#if 1
+    int ret;
+    asm volatile ("call ASM_edge_rotateAC\n"
+        : "=r" (ret) : "a" (tri1), "d" (cor1));
+    return ret;
+#endif
     struct TrTriangle *p_tri1;
     p_tri1 = &triangulation[0].Triangles[tri1];
 
