@@ -230,6 +230,12 @@ sbyte triangle_divide_areas_differ(TrTriangId tri,
 
 sbyte compare_point_cross_distances(TrPointId pt1, TrPointId pt2, TrPointId pt3)
 {
+#if 0
+    sbyte ret;
+    asm volatile ("call ASM_compare_point_cross_distances\n"
+        : "=r" (ret) : "a" (pt1), "d" (pt2), "b" (pt3));
+    return ret;
+#else
     struct TrPoint *p_point1;
     struct TrPoint *p_point2;
     struct TrPoint *p_point3;
@@ -244,6 +250,7 @@ sbyte compare_point_cross_distances(TrPointId pt1, TrPointId pt2, TrPointId pt3)
     TrCoord delta_by = p_point1->y - p_point3->y;
 
     return path_compare_multiplications(delta_bx, delta_ay, delta_ax, delta_by);
+#endif
 }
 
 void make_triangle_solid(TrTriangId tri)

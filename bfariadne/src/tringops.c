@@ -324,11 +324,11 @@ int edge_rotateAC(TrTriangId tri1, TrTipId cor1)
     TrPointId pt3 = p_tri2->point[cor_t2t6];
     TrPointId pt4 = p_tri2->point[cor_t2t1];
 
-    if (compare_point_cross_distances(pt1, pt2, pt3) <= 0) {
+    if (compare_point_cross_distances(pt2, pt1, pt3) <= 0) {
         return false;
     }
 
-    if (compare_point_cross_distances(pt4, pt2, pt3) >= 0) {
+    if (compare_point_cross_distances(pt2, pt4, pt3) >= 0) {
         return false;
     }
 
