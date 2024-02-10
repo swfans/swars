@@ -33,17 +33,15 @@ extern ubyte routeTags[8000];
 
 int optimise_heuristic(int tri, int cor)
 {
-#if 0 // TODO not defined in ASM
     int ret;
     asm volatile ("call ASM_optimise_heuristic\n"
         : "=r" (ret) : "a" (tri), "d" (cor));
     return ret;
-#endif
 }
 
 void delaunay_step(void)
 {
-#if 0
+#if 1
     asm volatile ("call ASM_delaunay_step\n"
         :  :  : "eax" );
 #else

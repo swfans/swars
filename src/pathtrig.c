@@ -33,6 +33,7 @@
 #include "trpoints.h"
 #include "trstate.h"
 #include "trfringe.h"
+#include "delaunay.h"
 #include "swlog.h"
 /******************************************************************************/
 extern long ixE;
@@ -1915,6 +1916,7 @@ void generate_map_triangulation(void)
         triangulation_clear_enter_into_solid_air();
         break;
     }
+    delaunay_step();
 }
 
 /******************************************************************************/

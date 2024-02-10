@@ -33,6 +33,16 @@ extern "C" {
 #pragma pack()
 /******************************************************************************/
 
+/** Optimize the triangulation data using Delaunay mesh generation.
+ *
+ * The map triangulation data is prepared by adding points and dividing
+ * nearby triangles. This leads to some triangles being unnecesarily
+ * long, and makes some paths go through much more triangles than the
+ * optimal mesh would require. This function re-geerates the mesh to
+ * optimal state, using Delaunay algoithm.
+ */
+void delaunay_step(void);
+
 /******************************************************************************/
 #ifdef __cplusplus
 }
