@@ -41,7 +41,7 @@ int optimise_heuristic(int tri, int cor)
 
 void delaunay_step(void)
 {
-#if 1
+#if 0
     asm volatile ("call ASM_delaunay_step\n"
         :  :  : "eax" );
 #else
