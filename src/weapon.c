@@ -762,9 +762,15 @@ void do_weapon_quantities_proper1(struct Thing *p_person)
     }
 }
 
+void init_laser(struct Thing *p_person, ushort timer)
+{
+    asm volatile ("call ASM_init_laser\n"
+        : : "a" (p_person), "d" (timer));
+}
+
 void init_laser_6shot(struct Thing *p_person, ushort timer)
 {
-#if 1
+#if 0
     asm volatile ("call ASM_init_laser_6shot\n"
         : : "a" (p_person), "d" (timer));
 #else
@@ -788,7 +794,7 @@ void init_laser_6shot(struct Thing *p_person, ushort timer)
         p_thing = &things[thing];
         if ((p_thing->Flag & 0x02) == 0)
         {
-            TbCoord dist_x, dist_z;
+            int dist_x, dist_z;
             dist_x = abs((p_thing->X - p_person->X) >> 8);
             dist_z = abs((p_thing->Z - p_person->Z) >> 8);
             // Simplification to avoid multiplication and square root to get proper distance
