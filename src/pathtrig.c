@@ -323,42 +323,6 @@ TbBool point_find(TrCoord pt_x, TrCoord pt_y, int *r_tri, int *r_cor)
 #endif
 }
 
-TbBool insert_point(TrCoord pt_x, TrCoord pt_y)
-{
-#if 0
-    asm volatile (
-      "call ASM_insert_point\n"
-        : : "a" (pt_x), "d" (pt_y));
-    return true;
-#else
-    TrTriangId tri;
-
-    tri = triangle_find8(pt_x << 8, pt_y << 8);
-    if (tri == -1) {
-        LOGERR("triangle not found at (%d,%d)", (int)pt_x, (int)pt_y);
-        return false;
-    }
-
-    if (triangle_has_point_coord(tri, pt_x, pt_y)) {
-        return true;
-    }
-
-    if (triangle_divide_areas_differ(tri, 0, 1, pt_x, pt_y) == 0)
-    {
-        return edge_split(tri, 0, pt_x, pt_y) >= 0;
-    }
-    if (triangle_divide_areas_differ(tri, 1, 2, pt_x, pt_y) == 0)
-    {
-        return edge_split(tri, 1, pt_x, pt_y) >= 0;
-    }
-    if (triangle_divide_areas_differ(tri, 2, 0, pt_x, pt_y) == 0)
-    {
-        return edge_split(tri, 2, pt_x, pt_y) >= 0;
-    }
-    return tri_split3(tri, pt_x, pt_y) >= 0;
-#endif
-}
-
 void make_clip_list(int x1, int y1, int x2, int y2)
 {
     asm volatile (

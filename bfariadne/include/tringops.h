@@ -30,11 +30,30 @@ extern "C" {
 
 /******************************************************************************/
 
+/** Splits a triangle into 2 triangles, making the division at given point and given border.
+ *
+ * To make a proper corner at the new point, the sibling triangle is divided as well.
+ *
+ * @param tri Index of the triangle to be divided.
+ * @param cor Index of the border to de divided; it is an index in Triangle.tri[] array.
+ * @param pt_x New tip point X coordinate.
+ * @param pt_y New tip point Y coordinate.
+ * @return Index of the new triangle, which shares border with the one given in `tri`.
+ */
 TrPointId edge_split(TrTriangId tri, TrTipId cor, TrCoord pt_x, TrCoord pt_y);
 int edge_rotateAC(TrTriangId tri, TrTipId cor);
 
-//TODO make it static, when possible
-TrPointId tri_split3(TrTriangId btri, TrCoord pt_x, TrCoord pt_y);
+/** Insert a new point to the triangulation data, dividing the triangles below it.
+ *
+ * High level point adding function. Performs all operations neccessary to
+ * insert the point, and divide the triangles so that the new point is their tip.
+ *
+ * @param pt_x New point X coordinate.
+ * @param pt_y New point Y coordinate.
+ * @return Gives true if the insertion succeeded, false otherwise.
+ */
+TbBool insert_point(TrCoord pt_x, TrCoord pt_y);
+
 /******************************************************************************/
 #ifdef __cplusplus
 }

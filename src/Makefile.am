@@ -92,6 +92,8 @@ swars_SOURCES = \
 	../bfariadne/include/trpath.h \
 	../bfariadne/include/trpoints.h \
 	../bfariadne/src/trpoints.c \
+	../bfariadne/src/trfind8.c \
+	../bfariadne/include/trfind8.h \
 	../bfariadne/src/trstate.c \
 	../bfariadne/include/trstate.h \
 	../bfariadne/src/delaunay.c \

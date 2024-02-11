@@ -21,6 +21,7 @@
 
 #include <string.h>
 #include "triangls.h"
+#include "trfind8.h"
 #include "trstate.h"
 #include "trlog.h"
 /******************************************************************************/
@@ -106,6 +107,11 @@ TrTriangId tri_split2(TrTriangId tri, TrTipId cor,
 }
 
 /** Splits a triangle into 3 triangles, making a new tip at given point.
+ *
+ * @param btri Triangle index to be split.
+ * @param pt_x New tip X coordinate.
+ * @param pt_y New tip Y coordinate.
+ * @return Gives point index at new tip coordinates.
  */
 TrPointId tri_split3(TrTriangId btri, TrCoord pt_x, TrCoord pt_y)
 {
@@ -222,14 +228,6 @@ TrPointId tri_split3(TrTriangId btri, TrCoord pt_x, TrCoord pt_y)
     return pt;
 }
 
-/** Splits a triangle into 2 triangles, making the division at given point and given border.
- *
- * @param tri Index of the triangle to be divided.
- * @param cor Index of the border to de divided; it is an index in Triangle.tri[] array.
- * @param pt_x New tip point X coordinate.
- * @param pt_y New tip point Y coordinate.
- * @return Index of the new triangle, which shares border with the one given in `tri`.
- */
 TrPointId edge_split(TrTriangId tri, TrTipId cor, TrCoord pt_x, TrCoord pt_y)
 {
 #if 0
@@ -383,6 +381,41 @@ int edge_rotateAC(TrTriangId tri1, TrTipId cor1)
     edgelen_set(tri2);
 #endif
     return true;
+}
+
+TbBool insert_point(TrCoord pt_x, TrCoord pt_y)
+{
+#if 0
+    asm volatile (
+      "call ASM_insert_point\n"
+        : : "a" (pt_x), "d" (pt_y));
+    return true;
+#endif
+    TrTriangId tri;
+
+    tri = triangle_find8(pt_x << 8, pt_y << 8);
+    if (tri == -1) {
+        LOGERR("triangle not found at (%d,%d)", (int)pt_x, (int)pt_y);
+        return false;
+    }
+
+    if (triangle_has_point_coord(tri, pt_x, pt_y)) {
+        return true;
+    }
+
+    if (triangle_divide_areas_differ(tri, 0, 1, pt_x, pt_y) == 0)
+    {
+        return edge_split(tri, 0, pt_x, pt_y) >= 0;
+    }
+    if (triangle_divide_areas_differ(tri, 1, 2, pt_x, pt_y) == 0)
+    {
+        return edge_split(tri, 1, pt_x, pt_y) >= 0;
+    }
+    if (triangle_divide_areas_differ(tri, 2, 0, pt_x, pt_y) == 0)
+    {
+        return edge_split(tri, 2, pt_x, pt_y) >= 0;
+    }
+    return tri_split3(tri, pt_x, pt_y) >= 0;
 }
 
 /******************************************************************************/
