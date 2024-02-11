@@ -37,7 +37,8 @@ enum TrTriangleEnterFlags {
     TrEnter_tri1 = 0x02,
     /** Triangle in `tri[2]` can be moved to from this triangle. */
     TrEnter_tri2 = 0x04,
-    TrEnter_unkn8 = 0x08,
+    /** There is another walkable triangle in `jump` property. */
+    TrEnter_has_jump = 0x08,
     /** Triangle in `jump` can be moved to from this triangle, towards the `tri[0]` direction. */
     TrEnter_jump0 = 0x10,
     /** Triangle in `jump` can be moved to from this triangle, towards the `tri[1]` direction. */
@@ -124,6 +125,10 @@ sbyte triangle_divide_areas_differ(TrTriangId tri,
 sbyte compare_point_cross_distances(TrPointId pt1, TrPointId pt2, TrPointId pt3);
 
 void make_triangle_solid(TrTriangId tri);
+
+/** Link given triangles by their `jump` property.
+ */
+void triangles_link_by_jump(TrTriangId tri1, TrTriangId tri2);
 
 /** Fix triangulation entries so that entering into solid places is disallowed.
  *

@@ -30,6 +30,7 @@
  */
 #define TRIANGLE_UNALLOCATED_MARK UCHAR_MAX
 
+extern const int MOD3[];
 
 TrTriangId tri_new(void)
 {
@@ -263,6 +264,68 @@ void make_triangle_solid(TrTriangId tri)
         return;
     p_tri = &triangulation[0].Triangles[tri];
     p_tri->solid |= (0x04 | 0x02);
+}
+
+void triangles_find_shared_edge_using_points(TrTriangId tri1, TrTriangId tri2,
+  TrTipId *p_cor1, TrTipId *p_cor2)
+{
+    struct TrTriangle *p_tri1;
+    struct TrTriangle *p_tri2;
+    TrTipId cor1, cor1a, cor1b;
+    TrTipId cor2, cor2a, cor2b;
+
+    p_tri1 = &triangulation[0].Triangles[tri1];
+    p_tri2 = &triangulation[0].Triangles[tri2];
+
+    for (cor1 = 0; cor1 < 3; cor1++)
+    {
+        cor1a = cor1;
+        cor1b = MOD3[cor1 + 1];
+
+        for (cor2 = 0; cor2 < 3; cor2++)
+        {
+            cor2a = cor2;
+            cor2b = MOD3[cor2 + 1];
+
+            if ((points_equal(p_tri1->point[cor1a], p_tri2->point[cor2a])
+             && points_equal(p_tri1->point[cor1b], p_tri2->point[cor2b]))
+             || (points_equal(p_tri1->point[cor1b], p_tri2->point[cor2a])
+             && points_equal(p_tri1->point[cor1a], p_tri2->point[cor2b])))
+            {
+              *p_cor1 = cor1;
+              *p_cor2 = cor2;
+              return;
+            }
+        }
+    }
+}
+
+void triangles_link_by_jump(TrTriangId tri1, TrTriangId tri2)
+{
+    struct TrTriangle *p_tri1;
+    struct TrTriangle *p_tri2;
+
+    TrTipId cor1, cor2;
+
+    cor1 = 3;
+    cor2 = 3;
+    triangles_find_shared_edge_using_points(tri1, tri2, &cor1, &cor2);
+
+    if ((cor1 >= 3) || (cor2 >= 3)) {
+        LOGERR("Triangles do not have a shared edge.");
+        return;
+    }
+
+    p_tri1 = &triangulation[0].Triangles[tri1];
+    p_tri2 = &triangulation[0].Triangles[tri2];
+
+    p_tri1->jump = tri2;
+    p_tri1->enter |= TrEnter_has_jump;
+    p_tri1->enter |= 1 << (cor1 + 4);
+
+    p_tri2->jump = tri1;
+    p_tri2->enter |= TrEnter_has_jump;
+    p_tri2->enter |= 1 << (cor2 + 4);
 }
 
 static void triangle_clear_enter_into_solid_gnd(TrTriangId tri)
