@@ -150,7 +150,7 @@ void print_triangulation_trigs(void)
         p_pt1 = &triangulation[0].Points[p_tri->point[1]];
         p_pt2 = &triangulation[0].Points[p_tri->point[2]];
 
-        LOGSYNC("Tri pt0(%d,%d) pt1(%d,%d) pt2(%d,%d) jump=%d, solid=%d, enter=%d",
+        LOGSYNC("Tri pt0(%d,%d) pt1(%d,%d) pt2(%d,%d) jump=%d, solid=%d, enter=0x%x",
           (int)p_pt0->x, (int)p_pt0->y,
           (int)p_pt1->x, (int)p_pt1->y,
           (int)p_pt2->x, (int)p_pt2->y,

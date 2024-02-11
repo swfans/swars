@@ -30,6 +30,22 @@ extern "C" {
 /******************************************************************************/
 #pragma pack(1)
 
+enum TrTriangleEnterFlags {
+    /** Triangle in `tri[0]` can be moved to from this triangle. */
+    TrEnter_tri0 = 0x01,
+    /** Triangle in `tri[1]` can be moved to from this triangle. */
+    TrEnter_tri1 = 0x02,
+    /** Triangle in `tri[2]` can be moved to from this triangle. */
+    TrEnter_tri2 = 0x04,
+    TrEnter_unkn8 = 0x08,
+    /** Triangle in `jump` can be moved to from this triangle, towards the `tri[0]` direction. */
+    TrEnter_jump0 = 0x10,
+    /** Triangle in `jump` can be moved to from this triangle, towards the `tri[1]` direction. */
+    TrEnter_jump1 = 0x20,
+    /** Triangle in `jump` can be moved to from this triangle, towards the `tri[2]` direction. */
+    TrEnter_jump2 = 0x40,
+};
+
 /** Type for storing triangle index.
  */
 typedef short TrTriangId;
@@ -43,7 +59,7 @@ typedef short TrTipId;
 struct TrTriangle {
     TrPointId point[3]; /**< offs=0x00 Indexes to TrPoint structs. */
     TrTriangId tri[3]; /**< offs=0x06 Indexes to sibling TrTriangle structs. */
-    short jump; /**< offs=0x0C */
+    TrTriangId jump; /**< offs=0x0C Indexes to sibling TrTriangle for vertical movement (up/down). */
     ubyte solid; /**< offs=0x0E Flags whether tiles above this triangle are solid. */
     ubyte enter; /**< offs=0x0F Flags whether sibling triangles can be moved to from this triangle. */
 };
