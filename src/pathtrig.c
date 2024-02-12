@@ -1559,22 +1559,18 @@ void add_next_col_vect_to_vects_list(short x, short z, short thing, short face, 
     }
 }
 
-void add_obj_face_to_col_vect(short x1, short y1, short z1, short x2, short y2, short z2, short thing, short face, ushort flags)
+int new_col_vect(short x1, short y1, short z1, short x2, short y2, short z2, short face)
 {
-    int vect, limit;
     struct ColVect *p_colvect;
+    int vect;
+    int limit;
 
     limit = get_memory_ptr_allocated_count((void **)&game_col_vects);
     if (next_col_vect >= limit) {
-        return;
-    }
-    limit = get_memory_ptr_allocated_count((void **)&game_col_vects_list);
-    if (next_vects_list >= limit) {
-        return;
+        LOGERR("Reached limit of col_vect items");
+        return 0;
     }
 
-    //TODO why generating thin walls here? we have a separate higher level call for that
-    //thin_wall(x1 >> 7, z1 >> 7, x2 >> 7, z2 >> 7, 1, 1);
     vect = next_col_vect;
     next_col_vect++;
     p_colvect = &game_col_vects[vect];
@@ -1586,6 +1582,24 @@ void add_obj_face_to_col_vect(short x1, short y1, short z1, short x2, short y2, 
     p_colvect->Y2 = y2;
     p_colvect->Z2 = z2;
     p_colvect->Face = face;
+
+    return vect;
+}
+
+void add_obj_face_to_col_vect(short x1, short y1, short z1, short x2, short y2, short z2, short thing, short face, ushort flags)
+{
+    int vect, limit;
+
+    limit = get_memory_ptr_allocated_count((void **)&game_col_vects_list);
+    if (next_vects_list >= limit) {
+        return;
+    }
+
+    //TODO why generating thin walls here? we have a separate higher level call for that
+    //thin_wall(x1 >> 7, z1 >> 7, x2 >> 7, z2 >> 7, 1, 1);
+    vect = new_col_vect(x1, y1, z1, x2, y2, z2, face);
+    if (vect <= 0)
+        return;
 
     int delta_x, delta_z, dist;
     int x, z, step_x, step_z;
@@ -1610,6 +1624,8 @@ void add_obj_face_to_col_vect(short x1, short y1, short z1, short x2, short y2, 
 
 #define TOLERANCE 10
 
+/** Adds a face to col_vect lists in nearby MapElements, if the face has two sibling points close to the ground.
+ */
 void add_object_face3_to_col_vect(short obj_x, short obj_y, short obj_z, short thing, short face, ushort a2)
 {
     int alt_cor[4];
@@ -1619,6 +1635,7 @@ void add_object_face3_to_col_vect(short obj_x, short obj_y, short obj_z, short t
     struct SingleObjectFace3 *p_face;
     int cor;
 
+    // Fill arrays with face coordinates
     p_face = &game_object_faces[face];
     for (cor = 0; cor < 3; cor++) {
         struct SinglePoint *p_pt;
@@ -1627,12 +1644,13 @@ void add_object_face3_to_col_vect(short obj_x, short obj_y, short obj_z, short t
         y_cor[cor] = (obj_y + p_pt->Y) >> 3;
         z_cor[cor] = obj_z + p_pt->Z;
     }
+    // Fill array with altitudes
     for (cor = 0; cor < 3; cor++) {
         int alt;
         alt = alt_at_point(x_cor[cor], z_cor[cor]);
         alt_cor[cor] = alt >> 8;
     }
-
+    // Add only if coords from two sibling points are very close to ground
     if (alt_cor[0] - TOLERANCE < y_cor[0] && alt_cor[0] + TOLERANCE > y_cor[0]
       && alt_cor[1] - TOLERANCE < y_cor[1] && alt_cor[1] + TOLERANCE > y_cor[1]) {
         add_obj_face_to_col_vect(x_cor[0], y_cor[0], z_cor[0],
@@ -1650,6 +1668,8 @@ void add_object_face3_to_col_vect(short obj_x, short obj_y, short obj_z, short t
     }
 }
 
+/** Adds a face to col_vect lists in nearby MapElements, if the face has two sibling points close to the ground.
+ */
 void add_object_face4_to_col_vect(short obj_x, short obj_y, short obj_z, short thing, short face, ushort a2)
 {
     int alt_cor[4];
@@ -1659,6 +1679,7 @@ void add_object_face4_to_col_vect(short obj_x, short obj_y, short obj_z, short t
     struct SingleObjectFace4 *p_face;
     int cor;
 
+    // Fill arrays with face coordinates
     p_face = &game_object_faces4[face];
     for (cor = 0; cor < 4; cor++) {
         struct SinglePoint *p_pt;
@@ -1667,12 +1688,14 @@ void add_object_face4_to_col_vect(short obj_x, short obj_y, short obj_z, short t
         y_cor[cor] = obj_y + p_pt->Y;
         z_cor[cor] = obj_z + p_pt->Z;
     }
+    // Fill array with altitudes
     for (cor = 0; cor < 4; cor++) {
         int alt;
         alt = alt_at_point(x_cor[cor], z_cor[cor]);
         alt_cor[cor] = alt >> 8;
     }
-
+    // Add only if coords from two sibling points are very close to ground
+    //TODO negating the whole left side is suspicious; fix or figure out why
     if (-(alt_cor[0] + TOLERANCE) < y_cor[0] && alt_cor[0] + TOLERANCE > y_cor[0]
       && -(alt_cor[1] + TOLERANCE) < y_cor[1] && alt_cor[1] + TOLERANCE > y_cor[1]) {
         add_obj_face_to_col_vect(x_cor[0], y_cor[0], z_cor[0],
