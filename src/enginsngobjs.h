@@ -32,7 +32,7 @@ struct SingleObjectFace3 { // sizeof=32
     ushort Texture;
     ubyte GFlags;
     ubyte Flags;
-    ushort field_A;
+    ushort ExCol;
     ushort Object; /**< offs=0x0C Index of the SingleObject associated to this face. */
     short Shade0; /**< offs=0x0E Index of the Normal containing LightRatio for point 0. */
     short Shade1; /**< offs=0x10 Index of the Normal containing LightRatio for point 1. */
@@ -42,8 +42,7 @@ struct SingleObjectFace3 { // sizeof=32
     ushort Light2; /**< offs=0x18 Index of the first QuickLight in a chain of lights affectin point 2. */
     ushort FaceNormal;
     ushort WalkHeader; /**< offs=0x1C Index of the WalkHeader created for this face. */
-    ubyte field_1E;
-    ubyte field_1F;
+    ushort UnknTringl;
 };
 
 struct SingleObjectFace3OldV7 { // sizeof=48
@@ -51,23 +50,25 @@ struct SingleObjectFace3OldV7 { // sizeof=48
     ushort Texture;
     ubyte GFlags;
     ubyte Flags;
-    ushort field_A;
+    ushort ExCol;
     ushort Object; /**< offs=0x0C Index of the SingleObject associated to this face. */
     short Shade0;
-    ushort field_10;
-    ushort field_12;
+    ushort UnkOFField_10;
+    ushort UnkOFField_12;
     short Shade1;
-    ushort field_16;
-    ushort field_18;
+    ushort UnkOFField_16;
+    ushort UnkOFField_18;
     short Shade2;
-    ubyte field_1C[3];
-    ubyte field_1F;
+    ushort UnkOFField_1C;
+    ushort UnkOFField_1E;
     ushort Light0; /**< offs=0x20 Index of the first QuickLight in a chain of lights affectin point 0. */
     ushort Light1;
     ushort Light2;
     ushort FaceNormal; /**< offs=0x26 Index of the Normal vector created for this face. */
     ushort WalkHeader; /**< offs=0x28 Index of the WalkHeader created for this face. */
-    ubyte field_2A[6];
+    ushort UnkOFField_2A;
+    ushort UnkOFField_2C;
+    ushort UnkOFField_2E;
 };
 
 struct SingleObjectFace4 { // sizeof=40
@@ -75,7 +76,7 @@ struct SingleObjectFace4 { // sizeof=40
     ushort Texture;
     ubyte GFlags;
     ubyte Flags;
-    ushort field_C;
+    ushort ExCol;
     ushort Object; /**< offs=0x0E Index of the SingleObject associated to this face. */
     short Shade0; /**< offs=0x10 Index of the Normal containing LightRatio for point 0. */
     short Shade1; /**< offs=0x12 Index of the Normal containing LightRatio for point 1. */
@@ -87,8 +88,8 @@ struct SingleObjectFace4 { // sizeof=40
     short Light3; /**< offs=0x1E Index of the first QuickLight in a chain of lights affectin point 3. */
     ushort FaceNormal;
     ushort WalkHeader; /**< offs=0x22 Index of the WalkHeader created for this face. */
-    ubyte field_24[3];
-    ubyte field_27;
+    ushort UnknTringl1;
+    ushort UnknTringl2;
 };
 
 struct SingleObjectFace4OldV7 { // sizeof=60
@@ -96,29 +97,31 @@ struct SingleObjectFace4OldV7 { // sizeof=60
     ushort Texture;
     ubyte GFlags;
     ubyte Flags;
-    ushort field_C;
-    ubyte field_E[2];
+    ubyte GFlags2;
+    ubyte Flags2;
+    ushort ExCol;
     ushort Object; /**< offs=0x10 Index of the SingleObject associated to this face. */
     short Shade0;
-    short field_14;
-    short field_16;
+    short UnkOFField_14;
+    short UnkOFField_16;
     short Shade1;
-    short field_1A;
-    short field_1C;
+    short UnkOFField_1A;
+    short UnkOFField_1C;
     short Shade2;
-    short field_20;
-    short field_22;
+    short UnkOFField_20;
+    short UnkOFField_22;
     short Shade3;
-    short field_26;
-    short field_28;
+    short UnkOFField_26;
+    short UnkOFField_28;
     short Light0;
     short Light1;
     short Light2;
     short Light3;
     ushort FaceNormal; /**< offs=0x32 Index of the Normal vector created for this face. */
     ushort WalkHeader; /**< offs=0x34 Index of the WalkHeader created for this face. */
-    ubyte field_36[4];
-    ushort field_3A;
+    ushort UnkOFField_36;
+    ushort UnkOFField_38;
+    ushort UnkOFField_3A;
 };
 
 struct SinglePoint { // sizeof=10
