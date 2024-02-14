@@ -53,7 +53,7 @@ struct MyMapElement { // sizeof=18
 
 struct MyMapElementOldV7 { // sizeof=24
   ushort Texture; /**< offs=0x00 Index of SingleFloorTexture for this tile, and texture flags. */
-  ushort field_2;
+  ushort Shade;
   ushort field_4;
   ushort field_6;
   ushort field_8;

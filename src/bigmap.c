@@ -62,6 +62,8 @@ void refresh_old_my_big_map_format(struct MyMapElement *p_mapel, struct MyMapEle
     //TODO make sane matching for old fields
     LbMemoryCopy(p_mapel, p_oldmapel, 18);
 
+    p_mapel->Texture = p_oldmapel->Texture;
+    p_mapel->Shade = p_oldmapel->Shade;
     p_mapel->Alt = p_oldmapel->Alt;
     p_mapel->Child = p_oldmapel->Child;
     p_mapel->ColHead = p_oldmapel->ColHead;

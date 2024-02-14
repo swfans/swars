@@ -33,7 +33,16 @@ void refresh_old_object_face_format(struct SingleObjectFace3 *p_objface,
     for (i = 0; i < 3; i++)
         p_objface->PointNo[i] = p_oldobjface->PointNo[i];
     p_objface->Texture = p_oldobjface->Texture;
+    p_objface->GFlags = p_oldobjface->GFlags;
+    p_objface->Flags = p_oldobjface->Flags;
+    p_objface->field_A = p_oldobjface->field_A;
     p_objface->Object = p_oldobjface->Object;
+    p_objface->Shade0 = p_oldobjface->Shade0;
+    p_objface->Shade1 = p_oldobjface->Shade1;
+    p_objface->Shade2 = p_oldobjface->Shade2;
+    p_objface->Light0 = p_oldobjface->Light0;
+    p_objface->Light1 = p_oldobjface->Light1;
+    p_objface->Light2 = p_oldobjface->Light2;
     p_objface->FaceNormal = p_oldobjface->FaceNormal;
     p_objface->WalkHeader = p_oldobjface->WalkHeader;
 }
@@ -52,6 +61,22 @@ void refresh_old_object_face4_format(struct SingleObjectFace4 *p_objface4,
     p_objface4->Object = p_oldobjface4->Object;
     p_objface4->FaceNormal = p_oldobjface4->FaceNormal;
     p_objface4->WalkHeader = p_oldobjface4->WalkHeader;
+
+    p_objface4->Texture = p_oldobjface4->Texture;
+    p_objface4->GFlags = p_oldobjface4->GFlags;
+    p_objface4->Flags = p_oldobjface4->Flags;
+    p_objface4->Object = p_oldobjface4->Object;
+    p_objface4->Shade0 = p_oldobjface4->Shade0;
+    p_objface4->Shade1 = p_oldobjface4->Shade1;
+    p_objface4->Shade2 = p_oldobjface4->Shade2;
+    p_objface4->Shade3 = p_oldobjface4->Shade3;
+    p_objface4->Light0 = p_oldobjface4->Light0;
+    p_objface4->Light1 = p_oldobjface4->Light1;
+    p_objface4->Light2 = p_oldobjface4->Light2;
+    p_objface4->Light3 = p_oldobjface4->Light3;
+    p_objface4->FaceNormal = p_oldobjface4->FaceNormal;
+    p_objface4->WalkHeader = p_oldobjface4->WalkHeader;
+
 }
 
 void unkn_object_shift_03(ushort objectno)
