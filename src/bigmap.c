@@ -68,6 +68,7 @@ void refresh_old_my_big_map_format(struct MyMapElement *p_mapel, struct MyMapEle
     p_mapel->Child = p_oldmapel->Child;
     p_mapel->ColHead = p_oldmapel->ColHead;
     p_mapel->ColumnHead = p_oldmapel->ColumnHead;
+    p_mapel->mefield_C = p_oldmapel->mefield_12;
 
     if (fmtver <= 9)
     {
