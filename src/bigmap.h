@@ -45,7 +45,7 @@ struct MyMapElement { // sizeof=18
   short Alt; /**< offs=0x06 Ground element altitude (at the beginning of the tile). */
   short Child; /**< offs=0x08 Index of a first Thing in a chain of things located on this element. */
   ushort ColHead; /**< offs=0x0A Index of ColVectList for this tile. */
-  ushort mefield_C; /**< offs=0x0C Background illumination. */
+  ushort Ambient; /**< offs=0x0C Background illumination. */
   ubyte Zip;
   ubyte Flags2;
   ushort ColumnHead; /**< offs=0x10 Index of ColColumn for this tile, storing collision properties. */
@@ -54,7 +54,8 @@ struct MyMapElement { // sizeof=18
 struct MyMapElementOldV7 { // sizeof=24
   ushort Texture; /**< offs=0x00 Index of SingleFloorTexture for this tile, and texture flags. */
   ushort Shade;
-  ushort mefield_4;
+  ubyte ShadeR;
+  ubyte Flags;
   ushort mefield_6;
   ushort mefield_8;
   short Alt; /**< offs=0x0A Ground element altitude. */
@@ -62,7 +63,7 @@ struct MyMapElementOldV7 { // sizeof=24
   ubyte Flags2;
   short Child; /**< offs=0x0E Index of a first Thing in a chain of things located on this element. */
   ushort ColHead; /**< offs=0x10 Index of ColVectList for this tile. */
-  ushort mefield_12;
+  ushort Ambient;
   ushort mefield_14;
   ushort ColumnHead; /**< offs=0x16 Index of ColColumn for this tile, storing collision properties. */
 };

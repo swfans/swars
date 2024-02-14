@@ -59,16 +59,19 @@ short get_mapwho_thing_index(short tile_x, short tile_z)
  */
 void refresh_old_my_big_map_format(struct MyMapElement *p_mapel, struct MyMapElementOldV7 *p_oldmapel, ulong fmtver)
 {
-    //TODO make sane matching for old fields
-    LbMemoryCopy(p_mapel, p_oldmapel, 18);
+    LbMemorySet(p_mapel, 0, sizeof(struct MyMapElement));
 
     p_mapel->Texture = p_oldmapel->Texture;
     p_mapel->Shade = p_oldmapel->Shade;
+    p_mapel->ShadeR = p_oldmapel->ShadeR;
+    p_mapel->Flags = p_oldmapel->Flags;
     p_mapel->Alt = p_oldmapel->Alt;
+    p_mapel->Zip = p_oldmapel->Zip;
+    p_mapel->Flags2 = p_oldmapel->Flags2;
     p_mapel->Child = p_oldmapel->Child;
     p_mapel->ColHead = p_oldmapel->ColHead;
     p_mapel->ColumnHead = p_oldmapel->ColumnHead;
-    p_mapel->mefield_C = p_oldmapel->mefield_12;
+    p_mapel->Ambient = p_oldmapel->Ambient;
 
     if (fmtver <= 9)
     {
