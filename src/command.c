@@ -93,7 +93,7 @@ struct CommandDef command_defs[] = {
     {"TNG_CMD_PROTECT_PERSON",		NULL,				CmDF_ReqPersonThing },
     {"TNG_CMD_HIDE",				NULL,				CmDF_None },
     {"TNG_CMD_GET_ITEM",			NULL,				CmDF_ReqPVIThing },
-    {"TNG_CMD_USE_WEAPON",			NULL,				CmDF_ReqOtherIndex|CmDF_ReqCoord }, // OtherIndex = weapon
+    {"TNG_CMD_USE_WEAPON",			NULL,				CmDF_ReqOtherIndex|CmDF_ReqCoord }, // OtherIndex = weapon type
     {"TNG_CMD_DROP_SPEC_ITEM",		NULL,				CmDF_ReqPVIThing },
     {"TNG_CMD_AVOID_PERSON",		NULL,				CmDF_ReqPersonThing },
     {"TNG_CMD_WAND_AVOID_GROUP",	NULL,				CmDF_ReqGroup },
@@ -104,7 +104,7 @@ struct CommandDef command_defs[] = {
     {"TNG_CMD_CATCH_TRAIN",			NULL,				CmDF_ReqStationCoord },
     {"TNG_CMD_OPEN_DOME",			NULL,				CmDF_ReqDomeCoord },
     {"TNG_CMD_CLOSE_DOME",			NULL,				CmDF_ReqDomeCoord },
-    {"TNG_CMD_DROP_WEAPON",			NULL,				CmDF_ReqOtherIndex }, // OtherIndex = weapon
+    {"TNG_CMD_DROP_WEAPON",			NULL,				CmDF_ReqOtherIndex }, // OtherIndex = weapon type
     {"TNG_CMD_CATCH_FERRY",			NULL,				CmDF_ReqOtherThing },
     {"TNG_CMD_EXIT_FERRY",			NULL,				CmDF_ReqOtherThing },
     {"TNG_CMD_PING_EXIST",			NULL,				CmDF_None },
@@ -215,7 +215,7 @@ struct CommandDef command_defs[] = {
     {"TNG_CMD_WITHIN_OFF",			NULL,				CmDF_None },
     {"TNG_CMD_LOCK_BUILDN",			NULL,				CmDF_ReqBuildingCoord },
     {"TNG_CMD_UNLOCK_BUILDN",		NULL,				CmDF_ReqBuildingCoord },
-    {"TNG_CMD_SELECT_WEAPON",		NULL,				CmDF_ReqOtherIndex }, // OtherIndex = weapon
+    {"TNG_CMD_SELECT_WEAPON",		NULL,				CmDF_ReqOtherIndex }, // OtherIndex = weapon type
     {"TNG_CMD_HARD_AS_AGENT",		NULL,				CmDF_None },
     {"TNG_CMD_UNTIL_G_NOT_SEEN",	NULL,				CmDF_ReqGroup },
     {"TNG_CMD_START_DANGER_MUSIC",	NULL,				CmDF_None },
