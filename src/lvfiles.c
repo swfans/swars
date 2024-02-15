@@ -636,11 +636,11 @@ void fix_map_outranged_properties(void)
             ushort texture;
 
             p_mapel = &game_my_big_map[tile_y * MAP_TILE_WIDTH + tile_x];
-            texture = p_mapel->Texture & 0x03FF;
+            texture = p_mapel->Texture & 0x3FFF;
             if (texture >= next_floor_texture) {
                 LOGERR("Outranged texture %d used in mapel at %d,%d",
                   (int)texture, (int)tile_x, (int)tile_y);
-                p_mapel->Texture &= 0xFC00;
+                p_mapel->Texture &= 0xC000;
                 p_mapel->Texture |= texture % next_floor_texture;
             }
         }
@@ -650,10 +650,10 @@ void fix_map_outranged_properties(void)
         ushort texture;
 
         p_face = &game_object_faces[i];
-        texture = p_face->Texture & 0x03FF;
+        texture = p_face->Texture & 0x3FFF;
         if (texture >= next_face_texture) {
             LOGERR("Outranged texture %d used in face3 %d", (int)texture, (int)i);
-            p_face->Texture &= 0xFC00;
+            p_face->Texture &= 0xC000;
             p_face->Texture |= texture % next_face_texture;
         }
     }
@@ -662,10 +662,10 @@ void fix_map_outranged_properties(void)
         ushort texture;
 
         p_face = &game_object_faces4[i];
-        texture = p_face->Texture & 0x03FF;
+        texture = p_face->Texture & 0x3FFF;
         if (texture >= next_floor_texture) {
             LOGERR("Outranged texture %d used in face4 %d", (int)texture, (int)i);
-            p_face->Texture &= 0xFC00;
+            p_face->Texture &= 0xC000;
             p_face->Texture |= texture % next_floor_texture;
         }
     }
