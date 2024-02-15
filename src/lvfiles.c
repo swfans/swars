@@ -625,6 +625,52 @@ void load_level_pc(short level, short missi, ubyte reload)
     }
 }
 
+void fix_map_outranged_properties(void)
+{
+    ushort tile_x, tile_y;
+    int i;
+
+    for (tile_y = 0; tile_y < MAP_TILE_HEIGHT; tile_y++) {
+        for (tile_x = 0; tile_x < MAP_TILE_WIDTH; tile_x++) {
+            struct MyMapElement *p_mapel;
+            ushort texture;
+
+            p_mapel = &game_my_big_map[tile_y * MAP_TILE_WIDTH + tile_x];
+            texture = p_mapel->Texture & 0x03FF;
+            if (texture >= next_floor_texture) {
+                LOGERR("Outranged texture %d used in mapel at %d,%d",
+                  (int)texture, (int)tile_x, (int)tile_y);
+                p_mapel->Texture &= 0xFC00;
+                p_mapel->Texture |= texture % next_floor_texture;
+            }
+        }
+    }
+    for (i = 0; i < next_object_face; i++) {
+        struct SingleObjectFace3 *p_face;
+        ushort texture;
+
+        p_face = &game_object_faces[i];
+        texture = p_face->Texture & 0x03FF;
+        if (texture >= next_face_texture) {
+            LOGERR("Outranged texture %d used in face3 %d", (int)texture, (int)i);
+            p_face->Texture &= 0xFC00;
+            p_face->Texture |= texture % next_face_texture;
+        }
+    }
+    for (i = 0; i < next_object_face4; i++) {
+        struct SingleObjectFace4 *p_face;
+        ushort texture;
+
+        p_face = &game_object_faces4[i];
+        texture = p_face->Texture & 0x03FF;
+        if (texture >= next_floor_texture) {
+            LOGERR("Outranged texture %d used in face4 %d", (int)texture, (int)i);
+            p_face->Texture &= 0xFC00;
+            p_face->Texture |= texture % next_floor_texture;
+        }
+    }
+}
+
 void load_map_dat_pc_handle(TbFileHandle fh)
 {
     ulong fmtver;
@@ -660,6 +706,17 @@ void load_map_dat_pc_handle(TbFileHandle fh)
         LbFileRead(fh, &next_floor_texture, sizeof(next_floor_texture));
         LbFileRead(fh, game_textures, sizeof(struct SingleFloorTexture) * next_floor_texture);
     }
+
+    if (fmtver <= 14)
+    {
+        struct SingleTexture old_face_texture; // Same fields, only the textures need matching
+        LbFileRead(fh, &next_face_texture, sizeof(next_face_texture));
+        for (i = 0; i < next_face_texture; i++) {
+            LbFileRead(fh, &old_face_texture, sizeof(old_face_texture));
+            refresh_old_face_texture_format(&game_face_textures[i], &old_face_texture, fmtver);
+        }
+    }
+    else
     {
         LbFileRead(fh, &next_face_texture, sizeof(next_face_texture));
         LbFileRead(fh, game_face_textures, sizeof(struct SingleTexture) * next_face_texture);
@@ -1036,6 +1093,8 @@ TbResult load_map_dat(ushort mapno)
     }
     load_map_dat_pc_handle(fh);
     LbFileClose(fh);
+
+    fix_map_outranged_properties();
 
     return Lb_SUCCESS;
 }
