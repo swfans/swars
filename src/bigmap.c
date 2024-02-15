@@ -292,11 +292,11 @@ static TbBool compute_map_tile_is_blocking_walk(short tile_x, short tile_z)
     alt_dt = alt_change_at_tile(tile_x, tile_z);
 
     // If steepness is higher than 133% of the set limit, then it is plainly blocking
-    if (alt_dt > 12 * 4 / 3)
+    if (alt_dt > MAX_WALKABLE_STEEPNESS * 4 / 3)
         return true;
 
     // If steepness is lower than the set limit, then it is plainly non-blocking
-    if (alt_dt <= 12)
+    if (alt_dt <= MAX_WALKABLE_STEEPNESS)
         return false;
 
     // For remaining range, do more complex check: block only if more than 3
@@ -311,7 +311,7 @@ static TbBool compute_map_tile_is_blocking_walk(short tile_x, short tile_z)
     if ((tile_z <= 0) || (tile_z >= MAP_TILE_HEIGHT))
         return true;
 
-    if (count_tiles_around_steeper_than(tile_x, tile_z, 12) > 3)
+    if (count_tiles_around_steeper_than(tile_x, tile_z, MAX_WALKABLE_STEEPNESS) > 3)
         return true;
 
    return false;

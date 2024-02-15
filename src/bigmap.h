@@ -37,6 +37,8 @@ extern "C" {
  */
 #define SPIRAL_STEPS_COUNT   1700
 
+#define MAX_WALKABLE_STEEPNESS 12
+
 struct MyMapElement { // sizeof=18
   ushort Texture; /**< offs=0x00 Index of SingleFloorTexture for this tile, and texture flags. */
   ushort Shade;
