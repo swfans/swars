@@ -202,6 +202,7 @@ swars_SOURCES = \
 	swlog.h \
 	thing.c \
 	thing.h \
+	thing_debug.c \
 	thing_debug_s.sx \
 	timer.c \
 	timer.h \

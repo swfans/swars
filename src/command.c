@@ -74,12 +74,6 @@ enum CommandDefFlags {
     CmDF_ReqParent = 0x00400000,
 };
 
-struct CommandDef {
-    const char *CmdName;
-    void *vefify;
-    ulong Flags;
-};
-
 struct CommandDef command_defs[] = {
     /* Means end of command chain. */
     {"TNG_CMD_NONE",				NULL,				CmDF_None },

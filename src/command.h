@@ -212,6 +212,12 @@ enum PersonCommandFlags
   PCmdF_Unkn800000 = 0x00800000,
 };
 
+struct CommandDef {
+    const char *CmdName;
+    void *vefify;
+    ulong Flags;
+};
+
 struct Command
 {
   short Next;
@@ -235,6 +241,7 @@ struct Command
 
 #pragma pack()
 /******************************************************************************/
+extern struct CommandDef command_defs[];
 extern struct Command *game_commands;
 extern ushort next_command;
 
