@@ -669,6 +669,28 @@ void fix_map_outranged_properties(void)
             p_face->Texture |= texture % next_floor_texture;
         }
     }
+    for (i = 0; i < next_floor_texture; i++) {
+        struct SingleFloorTexture *p_fltextr;
+        ushort page;
+
+        p_fltextr = &game_textures[i];
+        page = p_fltextr->Page;
+        if (page >= sizeof(vec_tmap)/sizeof(vec_tmap[0]) || vec_tmap[page] == NULL) {
+            LOGERR("Outranged texture atlas page %d used in floor texture %d", (int)page, (int)i);
+            p_fltextr->Page = 0;
+        }
+    }
+    for (i = 0; i < next_face_texture; i++) {
+        struct SingleTexture *p_fctextr;
+        ushort page;
+
+        p_fctextr = &game_face_textures[i];
+        page = p_fctextr->Page;
+        if (page >= sizeof(vec_tmap)/sizeof(vec_tmap[0]) || vec_tmap[page] == NULL) {
+            LOGERR("Outranged texture atlas page %d used in face texture %d", (int)page, (int)i);
+            p_fctextr->Page = 0;
+        }
+    }
 }
 
 void load_map_dat_pc_handle(TbFileHandle fh)

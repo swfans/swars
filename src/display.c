@@ -23,7 +23,7 @@ TbScreenMode screen_mode_fmvid_hi = Lb_SCREEN_MODE_640_480_8;
 
 extern ushort data_1aa330;
 extern ushort data_1aa332;
-extern ubyte *vec_tmap;
+extern ubyte *vec_tmap[18];
 extern unsigned char *display_palette;
 
 TbPixel fade_unaffected_colours[] = {
@@ -169,7 +169,7 @@ void setup_screen_mode(TbScreenMode mode)
         ratio = 1;
     LbMouseSetup(&pointer_sprites[1], ratio, ratio);
 
-    setup_vecs(lbDisplay.WScreen, vec_tmap, lbDisplay.PhysicalScreenWidth,
+    setup_vecs(lbDisplay.WScreen, vec_tmap[0], lbDisplay.PhysicalScreenWidth,
         lbDisplay.PhysicalScreenWidth, lbDisplay.PhysicalScreenHeight);
 }
 

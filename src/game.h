@@ -556,7 +556,7 @@ extern GameTurn prev_gameturn;
 extern ulong turns_delta;
 extern ushort fifties_per_gameturn;
 extern ushort gamep_scene_effect;
-extern ubyte *vec_tmap;
+extern ubyte *vec_tmap[18];
 extern ubyte linear_vec_pal[256];
 extern ulong nsta_size;
 extern TbPixel colour_grey1;

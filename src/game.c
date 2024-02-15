@@ -4919,7 +4919,7 @@ void game_process_sub09(void)
             ushort pos;
             ubyte *ptr;
             pos = LbRandomAnyShort() + (gameturn >> 2);
-            ptr = &vec_tmap[pos];
+            ptr = vec_tmap[0] + pos;
             *ptr = pixmap.fade_table[40*PALETTE_8b_COLORS + *ptr];
         }
         break;
