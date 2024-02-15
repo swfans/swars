@@ -260,6 +260,26 @@ int alt_change_at_tile(short tile_x, short tile_z)
     return abs(alt_max - alt_min);
 }
 
+static ushort count_tiles_around_steeper_than(short tile_x, short tile_z, short steepness)
+{
+    int dtx, dtz;
+    ushort matches;
+
+    matches = 0;
+    for (dtz = -1; dtz <= 1; dtz++)
+    {
+        for (dtx = -1; dtx <= 1; dtx++)
+        {
+            int alt_dt;
+
+            alt_dt = alt_change_at_tile(tile_x + dtx, tile_z + dtz);
+            if (alt_dt > steepness)
+                matches++;
+        }
+    }
+    return matches;
+}
+
 /** Checks if a tile should not be allowed to walk on due to terrain.
  *
  * To do such check during gameplay, MapElement flags should be used - this one
@@ -270,9 +290,29 @@ static TbBool compute_map_tile_is_blocking_walk(short tile_x, short tile_z)
     int alt_dt;
 
     alt_dt = alt_change_at_tile(tile_x, tile_z);
-    // TODO maybe allow to walk on a single tile with alt_dt=12, but disallow if more than 2 around?
-    if (alt_dt > 12)
-       return true;
+
+    // If steepness is higher than 133% of the set limit, then it is plainly blocking
+    if (alt_dt > 12 * 4 / 3)
+        return true;
+
+    // If steepness is lower than the set limit, then it is plainly non-blocking
+    if (alt_dt <= 12)
+        return false;
+
+    // For remaining range, do more complex check: block only if more than 3
+    // tiles in the vicinity are also meeting the blocking critaria.
+    // This avoids having single blocking tiles or rows of tiles which look
+    // walkable but are not; it makes sense that a single tile can be
+    // traversed at higher steepness that a larger steep area
+
+    if ((tile_x <= 0) || (tile_x >= MAP_TILE_WIDTH))
+        return true;
+
+    if ((tile_z <= 0) || (tile_z >= MAP_TILE_HEIGHT))
+        return true;
+
+    if (count_tiles_around_steeper_than(tile_x, tile_z, 12) > 3)
+        return true;
 
    return false;
 }
