@@ -1695,24 +1695,23 @@ void add_object_face4_to_col_vect(short obj_x, short obj_y, short obj_z, short t
         alt_cor[cor] = alt >> 8;
     }
     // Add only if coords from two sibling points are very close to ground
-    //TODO negating the whole left side is suspicious; fix or figure out why
-    if (-(alt_cor[0] + TOLERANCE) < y_cor[0] && alt_cor[0] + TOLERANCE > y_cor[0]
-      && -(alt_cor[1] + TOLERANCE) < y_cor[1] && alt_cor[1] + TOLERANCE > y_cor[1]) {
+    if (alt_cor[0] - TOLERANCE < y_cor[0] && alt_cor[0] + TOLERANCE > y_cor[0]
+      && alt_cor[1] - TOLERANCE < y_cor[1] && alt_cor[1] + TOLERANCE > y_cor[1]) {
         add_obj_face_to_col_vect(x_cor[0], y_cor[0], z_cor[0],
           x_cor[1], y_cor[1], z_cor[1], thing, -face, a2);
     }
-    if (-(alt_cor[1] + TOLERANCE) < y_cor[1] && alt_cor[1] + TOLERANCE > y_cor[1]
-      && -(alt_cor[3] + TOLERANCE) < y_cor[3] && alt_cor[3] + TOLERANCE > y_cor[3]) {
+    if (alt_cor[1] - TOLERANCE < y_cor[1] && alt_cor[1] + TOLERANCE > y_cor[1]
+      && alt_cor[3] - TOLERANCE < y_cor[3] && alt_cor[3] + TOLERANCE > y_cor[3]) {
         add_obj_face_to_col_vect(x_cor[1], y_cor[1], z_cor[1],
           x_cor[3], y_cor[3], z_cor[3], thing, -face, a2);
     }
-    if (-(alt_cor[3] + TOLERANCE) < y_cor[3] && alt_cor[3] + TOLERANCE > y_cor[3]
-    && -(alt_cor[2] + TOLERANCE) < y_cor[2] && alt_cor[2] + TOLERANCE > y_cor[2]) {
+    if (alt_cor[3] - TOLERANCE < y_cor[3] && alt_cor[3] + TOLERANCE > y_cor[3]
+    && alt_cor[2] - TOLERANCE < y_cor[2] && alt_cor[2] + TOLERANCE > y_cor[2]) {
         add_obj_face_to_col_vect(x_cor[3], y_cor[3], z_cor[3],
           x_cor[2], y_cor[2], z_cor[2], thing, -face, a2);
     }
-    if (-(alt_cor[2] + TOLERANCE) < y_cor[2] && alt_cor[2] + TOLERANCE > y_cor[2]
-      && -(alt_cor[0] + TOLERANCE) < y_cor[0] && alt_cor[0] + TOLERANCE > y_cor[0]) {
+    if (alt_cor[2] - TOLERANCE < y_cor[2] && alt_cor[2] + TOLERANCE > y_cor[2]
+      && alt_cor[0] - TOLERANCE < y_cor[0] && alt_cor[0] + TOLERANCE > y_cor[0]) {
         add_obj_face_to_col_vect(x_cor[2], y_cor[2], z_cor[2],
           x_cor[0], y_cor[0], z_cor[0], thing, -face, a2);
     }
@@ -1833,6 +1832,10 @@ void generate_thin_walls(void)
     }
 }
 
+void generate_thin_paths(void)
+{
+}
+
 int fringe_at_tile(short tile_x, short tile_z)
 {
     struct MyMapElement *p_mapel;
@@ -1904,6 +1907,7 @@ void generate_map_triangulation(void)
         break;
     }
     delaunay_step();
+    generate_thin_paths();
 }
 
 /******************************************************************************/
