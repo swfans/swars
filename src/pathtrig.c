@@ -1651,18 +1651,18 @@ void add_object_face3_to_col_vect(short obj_x, short obj_y, short obj_z, short t
         alt_cor[cor] = alt >> 8;
     }
     // Add only if coords from two sibling points are very close to ground
-    if (alt_cor[0] - TOLERANCE < y_cor[0] && alt_cor[0] + TOLERANCE > y_cor[0]
-      && alt_cor[1] - TOLERANCE < y_cor[1] && alt_cor[1] + TOLERANCE > y_cor[1]) {
+    if (y_cor[0] > alt_cor[0] - TOLERANCE && y_cor[0] < alt_cor[0] + TOLERANCE
+      && y_cor[1] > alt_cor[1] - TOLERANCE && y_cor[1] < alt_cor[1] + TOLERANCE) {
         add_obj_face_to_col_vect(x_cor[0], y_cor[0], z_cor[0],
           x_cor[1], y_cor[1], z_cor[1], thing, face, a2);
     }
-    if (alt_cor[0] - TOLERANCE < y_cor[0] && alt_cor[0] + TOLERANCE > y_cor[0]
-      && alt_cor[2] - TOLERANCE < y_cor[2] && alt_cor[2] + TOLERANCE > y_cor[2]) {
+    if (y_cor[0] > alt_cor[0] - TOLERANCE && y_cor[0] < alt_cor[0] + TOLERANCE
+      && y_cor[2] > alt_cor[2] - TOLERANCE && y_cor[2] < alt_cor[2] + TOLERANCE) {
         add_obj_face_to_col_vect(x_cor[0], y_cor[0], z_cor[0],
           x_cor[2], y_cor[2], z_cor[2], thing, face, a2);
     }
-    if (alt_cor[1] - TOLERANCE < y_cor[1] && alt_cor[1] + TOLERANCE > y_cor[1]
-      && alt_cor[2] - TOLERANCE < y_cor[2] && alt_cor[2] + TOLERANCE > y_cor[2]) {
+    if (y_cor[1] > alt_cor[1] - TOLERANCE && y_cor[1] < alt_cor[1] + TOLERANCE
+      && y_cor[2] > alt_cor[2] - TOLERANCE && y_cor[2] < alt_cor[2] + TOLERANCE) {
         add_obj_face_to_col_vect(x_cor[1], y_cor[1], z_cor[1],
           x_cor[2], y_cor[2], z_cor[2], thing, face, a2);
     }
@@ -1695,23 +1695,23 @@ void add_object_face4_to_col_vect(short obj_x, short obj_y, short obj_z, short t
         alt_cor[cor] = alt >> 8;
     }
     // Add only if coords from two sibling points are very close to ground
-    if (alt_cor[0] - TOLERANCE < y_cor[0] && alt_cor[0] + TOLERANCE > y_cor[0]
-      && alt_cor[1] - TOLERANCE < y_cor[1] && alt_cor[1] + TOLERANCE > y_cor[1]) {
+    if (y_cor[0] > alt_cor[0] - TOLERANCE && y_cor[0] < alt_cor[0] + TOLERANCE
+      && y_cor[1] > alt_cor[1] - TOLERANCE && y_cor[1] < alt_cor[1] + TOLERANCE) {
         add_obj_face_to_col_vect(x_cor[0], y_cor[0], z_cor[0],
           x_cor[1], y_cor[1], z_cor[1], thing, -face, a2);
     }
-    if (alt_cor[1] - TOLERANCE < y_cor[1] && alt_cor[1] + TOLERANCE > y_cor[1]
-      && alt_cor[3] - TOLERANCE < y_cor[3] && alt_cor[3] + TOLERANCE > y_cor[3]) {
+    if (y_cor[1] > alt_cor[1] - TOLERANCE && y_cor[1] < alt_cor[1] + TOLERANCE
+      && y_cor[3] > alt_cor[3] - TOLERANCE && y_cor[3] < alt_cor[3] + TOLERANCE) {
         add_obj_face_to_col_vect(x_cor[1], y_cor[1], z_cor[1],
           x_cor[3], y_cor[3], z_cor[3], thing, -face, a2);
     }
-    if (alt_cor[3] - TOLERANCE < y_cor[3] && alt_cor[3] + TOLERANCE > y_cor[3]
-    && alt_cor[2] - TOLERANCE < y_cor[2] && alt_cor[2] + TOLERANCE > y_cor[2]) {
+    if (y_cor[3] > alt_cor[3] - TOLERANCE && y_cor[3] < alt_cor[3] + TOLERANCE
+    && y_cor[2] > alt_cor[2] - TOLERANCE && y_cor[2] < alt_cor[2] + TOLERANCE) {
         add_obj_face_to_col_vect(x_cor[3], y_cor[3], z_cor[3],
           x_cor[2], y_cor[2], z_cor[2], thing, -face, a2);
     }
-    if (alt_cor[2] - TOLERANCE < y_cor[2] && alt_cor[2] + TOLERANCE > y_cor[2]
-      && alt_cor[0] - TOLERANCE < y_cor[0] && alt_cor[0] + TOLERANCE > y_cor[0]) {
+    if (y_cor[2] > alt_cor[2] - TOLERANCE && y_cor[2] < alt_cor[2] + TOLERANCE
+      && y_cor[0] > alt_cor[0] - TOLERANCE && y_cor[0] < alt_cor[0] + TOLERANCE) {
         add_obj_face_to_col_vect(x_cor[2], y_cor[2], z_cor[2],
           x_cor[0], y_cor[0], z_cor[0], thing, -face, a2);
     }
