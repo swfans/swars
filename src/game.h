@@ -490,7 +490,7 @@ extern ulong smack_malloc_used_tot;
 extern ubyte anim_slots[];
 extern struct Animation animations[2];
 
-extern ubyte *fade_data;
+extern ubyte *scratch_buf1;
 
 extern void *dword_1810D1;
 extern ulong dword_1810D5;

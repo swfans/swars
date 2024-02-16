@@ -4793,18 +4793,17 @@ void create_tables_file_from_fade(void)
     int i, k;
     unsigned char *curbuf;
     // Note that the input file is not normally available with the game
-    len = LbFileLoadAt("data/fade.dat", fade_data);
+    len = LbFileLoadAt("data/fade.dat", scratch_buf1);
     if (len == Lb_FAIL) {
         LOGERR("Cannot find input file for tables update");
         return;
     }
-    curbuf = fade_data;
+    curbuf = scratch_buf1;
     for (i = 0; i < 256; i++) {
         for (k = 0; k < 64; k++) {
           pixmap.fade_table[256 * k + i] = *(curbuf + (256+64) * k + i);
         }
     }
-    fade_data = curbuf;
     LbFileSaveAt("data/tables.dat", &pixmap, sizeof(pixmap));
 }
 
@@ -9874,6 +9873,7 @@ void game_process(void)
           (ingame.DisplayMode == DpM_UNKN_1) ||
           (ingame.DisplayMode == DpM_UNKN_3B))
           process_things();
+      things_debug_hud();
       if (ingame.DisplayMode != DpM_UNKN_37)
           process_packets();
       joy_input();

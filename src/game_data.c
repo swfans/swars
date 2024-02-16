@@ -393,7 +393,7 @@ void init_memory(MemSystem *mem_table)
     }
     scratch_malloc_mem = p;
     memset(game_sort_sprites, 0, 0x20u);
-    fade_data = *ment[23].BufferPtr;
+    scratch_buf1 = *ment[23].BufferPtr; // prim_objects
 }
 
 /******************************************************************************/
