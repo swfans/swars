@@ -166,6 +166,14 @@ TbBool person_command_to_text(char *out, ushort cmd, ubyte a3)
       result = 1;
       break;
     case PCmd_WAIT_ALL_G_DEAD:
+    case PCmd_WAIT_ALL_G_ARRIVE:
+    case PCmd_WAIT_ALL_G_PERSUADE:
+    case PCmd_WAND_ALL_G_DEAD:
+    case PCmd_WAND_ALL_G_ARRIVE:
+    case PCmd_WAND_ALL_G_PERSUADE:
+    case PCmd_UNTIL_ALL_G_DEAD:
+    case PCmd_UNTIL_ALL_G_ARRIVE:
+    case PCmd_UNTIL_ALL_G_PERSUADE:
       sprintf(o, "%s %d", cmd_name, p_cmd->OtherThing);
       result = 1;
       break;
@@ -192,10 +200,6 @@ TbBool person_command_to_text(char *out, ushort cmd, ubyte a3)
       sprintf(o, "WAIT %d MEM G %d ARRIVE", p_cmd->Arg2, p_cmd->OtherThing);
       result = 1;
       break;
-    case PCmd_WAIT_ALL_G_ARRIVE:
-      sprintf(o, "%s %d", cmd_name, p_cmd->OtherThing);
-      result = 1;
-      break;
     case PCmd_WAIT_P_PERSUADE:
       p_thing = &things[p_cmd->OtherThing];
       sprintf(o, "%s %d", cmd_name, p_thing->U.UPerson.UniqueID);
@@ -203,10 +207,6 @@ TbBool person_command_to_text(char *out, ushort cmd, ubyte a3)
       break;
     case PCmd_WAIT_MEM_G_PERSUADE:
       sprintf(o, "WAIT %d MEM G %d PERSUADED", p_cmd->Arg2, p_cmd->OtherThing);
-      result = 1;
-      break;
-    case PCmd_WAIT_ALL_G_PERSUADE:
-      sprintf(o, "%s %d", cmd_name, p_cmd->OtherThing);
       result = 1;
       break;
     case PCmd_WAIT_MISSION_FAIL:
@@ -239,10 +239,6 @@ TbBool person_command_to_text(char *out, ushort cmd, ubyte a3)
       sprintf(o, "WAND %d MEM G %d DEAD", p_cmd->Arg2, p_cmd->OtherThing);
       result = 1;
       break;
-    case PCmd_WAND_ALL_G_DEAD:
-      sprintf(o, "%s %d", cmd_name, p_cmd->OtherThing);
-      result = 1;
-      break;
     case PCmd_WAND_P_V_I_NEAR:
       p_thing = &things[p_cmd->OtherThing];
       sprintf(o, "WAND P/V/I %d NEAR", p_thing->U.UPerson.UniqueID);
@@ -263,12 +259,7 @@ TbBool person_command_to_text(char *out, ushort cmd, ubyte a3)
       result = 1;
       break;
     case PCmd_WAND_MEM_G_ARRIVE:
-    case PCmd_WAND_ALL_G_PERSUADE:
       sprintf(o, "WAND %d MEM G %d ARRIVE", p_cmd->Arg2, p_cmd->OtherThing);
-      result = 1;
-      break;
-    case PCmd_WAND_ALL_G_ARRIVE:
-      sprintf(o, "%s %d", cmd_name, p_cmd->OtherThing);
       result = 1;
       break;
     case PCmd_WAND_P_PERSUADE:
@@ -302,10 +293,6 @@ TbBool person_command_to_text(char *out, ushort cmd, ubyte a3)
       sprintf(o, "UNTIL %d MEM G %d DEAD", p_cmd->Arg2, p_cmd->OtherThing);
       result = 1;
       break;
-    case PCmd_UNTIL_ALL_G_DEAD:
-      sprintf(o, "%s %d", cmd_name, p_cmd->OtherThing);
-      result = 1;
-      break;
     case PCmd_UNTIL_P_V_I_NEAR:
       p_thing = &things[p_cmd->OtherThing];
       sprintf(o, "UNTIL P/V/I %d NEAR", p_thing->U.UPerson.UniqueID);
@@ -329,10 +316,6 @@ TbBool person_command_to_text(char *out, ushort cmd, ubyte a3)
       sprintf(o, "UNTIL %d MEM G %d ARRIVE", p_cmd->Arg2, p_cmd->OtherThing);
       result = 1;
       break;
-    case PCmd_UNTIL_ALL_G_ARRIVE:
-      sprintf(o, "%s %d", cmd_name, p_cmd->OtherThing);
-      result = 1;
-      break;
     case PCmd_UNTIL_P_PERSUADE:
       p_thing = &things[p_cmd->OtherThing];
       sprintf(o, "%s %d", cmd_name, p_thing->U.UPerson.UniqueID);
@@ -340,10 +323,6 @@ TbBool person_command_to_text(char *out, ushort cmd, ubyte a3)
       break;
     case PCmd_UNTIL_MEM_G_PERSUADE:
       sprintf(o, "UNTIL %d MEM G %d PERSUADED", p_cmd->Arg2, p_cmd->OtherThing);
-      result = 1;
-      break;
-    case PCmd_UNTIL_ALL_G_PERSUADE:
-      sprintf(o, "%s %d", cmd_name, p_cmd->OtherThing);
       result = 1;
       break;
     case PCmd_UNTIL_OBJT_DESTROY:
