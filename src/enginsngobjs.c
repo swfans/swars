@@ -46,6 +46,8 @@ void refresh_old_object_face_format(struct SingleObjectFace3 *p_objface,
     p_objface->WalkHeader = p_oldobjface->WalkHeader;
     // Unsure
     p_objface->UnknTringl = p_oldobjface->UnkOFField_2A;
+    // Remove the effect of faces using scratch_buf1 (screen in pre-alpha) as texture
+    p_objface->GFlags &= ~0x02;
 }
 
 void refresh_old_object_face4_format(struct SingleObjectFace4 *p_objface4,
