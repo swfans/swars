@@ -270,6 +270,11 @@ struct ColVect { // sizeof=14
   short Face;
 };
 
+/** Collision vectors list.
+ *
+ * Contains a list of references to boundary vectors used for stepping
+ * between ground faces and object faces (buildings).
+ */
 struct ColVectList { // sizeof=6
   ushort Vect; /**< Index of the ColVect with geometry vector. */
   ushort NextColList; /**< Index of the next ColVectList entry in a chain list. */
