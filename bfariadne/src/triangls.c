@@ -229,6 +229,16 @@ sbyte triangle_divide_areas_differ(TrTriangId tri,
       pt_x - p_point2->x, p_point2->y - p_point1->y);
 }
 
+/** Calculates cross product of the 3 points, and returns its sign, inverted.
+ *
+ * @param pt1 Index of the first point.
+ * @param pt2 Index of the second point.
+ * @param pt3 Index of the reference point.
+ *
+ * @return Gives 0 if triangle zero sized (points are co-linear),
+ *   1 if pt1 is on the right side of pt3-pt2 line,
+ *  -1 if pt1 is on the left side of pt3-pt2 line.
+ */
 sbyte compare_point_cross_distances(TrPointId pt1, TrPointId pt2, TrPointId pt3)
 {
 #if 0
@@ -245,12 +255,12 @@ sbyte compare_point_cross_distances(TrPointId pt1, TrPointId pt2, TrPointId pt3)
     p_point2 = &triangulation[0].Points[pt2];
     p_point3 = &triangulation[0].Points[pt3];
 
-    TrCoord delta_ax = p_point3->x - p_point2->x;
-    TrCoord delta_ay = p_point3->y - p_point2->y;
-    TrCoord delta_bx = p_point1->x - p_point3->x;
-    TrCoord delta_by = p_point1->y - p_point3->y;
+    TrCoord delta_23x = p_point2->x - p_point3->x;
+    TrCoord delta_23y = p_point2->y - p_point3->y;
+    TrCoord delta_13x = p_point1->x - p_point3->x;
+    TrCoord delta_13y = p_point1->y - p_point3->y;
 
-    return path_compare_multiplications(delta_bx, delta_ay, delta_ax, delta_by);
+    return -path_compare_multiplications(delta_13x, delta_23y, delta_23x, delta_13y);
 #endif
 }
 
