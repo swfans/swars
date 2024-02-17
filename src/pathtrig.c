@@ -283,6 +283,19 @@ int edge_find(int x1, int y1, int x2, int y2, int *ntri1, int *ntri2)
     return ret;
 }
 
+TbBool two4_line_intersection(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4)
+{
+    TbBool ret;
+    asm volatile (
+      "push %8\n"
+      "push %7\n"
+      "push %6\n"
+      "push %5\n"
+      "call ASM_two4_line_intersection\n"
+        : "=r" (ret) : "a" (x1), "d" (y1), "b" (x2), "c" (y2), "g" (x3), "g" (y3), "g" (x4), "g" (y4));
+    return ret;
+}
+
 /**
  * Finds point with given coords in list of triangles.
  * @param pt_x
@@ -1548,8 +1561,8 @@ void add_next_col_vect_to_vects_list(short x, short z, short thing, short face, 
         next_vects_list++;
         p_cvlist = &game_col_vects_list[next_vl];
         p_cvlist->Vect = vect;
-        p_cvlist->NextColList = p_mapel->ColHead;
         p_cvlist->Object = thing;
+        p_cvlist->NextColList = p_mapel->ColHead;
         p_mapel->ColHead = next_vl;
         if (flags & 0x01)
         {
@@ -1706,7 +1719,7 @@ void add_object_face4_to_col_vect(short obj_x, short obj_y, short obj_z, short t
           x_cor[3], y_cor[3], z_cor[3], thing, -face, a2);
     }
     if (y_cor[3] > alt_cor[3] - TOLERANCE && y_cor[3] < alt_cor[3] + TOLERANCE
-    && y_cor[2] > alt_cor[2] - TOLERANCE && y_cor[2] < alt_cor[2] + TOLERANCE) {
+      && y_cor[2] > alt_cor[2] - TOLERANCE && y_cor[2] < alt_cor[2] + TOLERANCE) {
         add_obj_face_to_col_vect(x_cor[3], y_cor[3], z_cor[3],
           x_cor[2], y_cor[2], z_cor[2], thing, -face, a2);
     }
@@ -1830,6 +1843,24 @@ void generate_thin_walls(void)
             }
         }
     }
+}
+
+/** Returns whether line segments between given points are cronssing.
+ */
+TbBool line_segments_are_crossing(TrPointId ptA1, TrPointId ptA2, TrPointId ptB1, TrPointId ptB2)
+{
+    struct TrPoint *p_ptA1;
+    struct TrPoint *p_ptA2;
+    struct TrPoint *p_ptB1;
+    struct TrPoint *p_ptB2;
+
+    p_ptA1 = &triangulation[0].Points[ptA1];
+    p_ptA2 = &triangulation[0].Points[ptA2];
+    p_ptB1 = &triangulation[0].Points[ptB1];
+    p_ptB2 = &triangulation[0].Points[ptB2];
+
+    return two4_line_intersection(p_ptA1->x, p_ptA1->y, p_ptA2->x, p_ptA2->y,
+      p_ptB1->x, p_ptB1->y, p_ptB2->x, p_ptB2->y);
 }
 
 void generate_thin_paths(void)
