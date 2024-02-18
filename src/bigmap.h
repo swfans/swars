@@ -37,11 +37,11 @@ extern "C" {
  */
 #define SPIRAL_STEPS_COUNT   1700
 
-#define MAX_WALKABLE_STEEPNESS (16 * LbFPMath_PI / 1024)
+#define MAX_WALKABLE_STEEPNESS (21 * LbFPMath_PI / 180)
 
 /* Linear distance equal to tan(MAX_WALKABLE_STEEPNESS) * 256
  */
-#define MAX_WALKABLE_STEEPNESS_PER_256 12
+#define MAX_WALKABLE_STEEPNESS_PER_256 98
 
 struct MyMapElement { // sizeof=18
   ushort Texture; /**< offs=0x00 Index of SingleFloorTexture for this tile, and texture flags. */

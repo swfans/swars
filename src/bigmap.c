@@ -278,7 +278,7 @@ static ushort count_tiles_around_steeper_than(short tile_x, short tile_z, short 
         {
             int alt_dt, gnd_dt;
 
-            alt_dt = alt_change_at_tile(tile_x + dtx, tile_z + dtz, &gnd_dt);
+            alt_dt = 8 * alt_change_at_tile(tile_x + dtx, tile_z + dtz, &gnd_dt);
             if (alt_dt > steepness)
                 matches++;
         }
@@ -295,7 +295,7 @@ static TbBool compute_map_tile_is_blocking_walk(short tile_x, short tile_z)
 {
     int alt_dt, gnd_dt;
 
-    alt_dt = alt_change_at_tile(tile_x, tile_z, &gnd_dt);
+    alt_dt = 8 * alt_change_at_tile(tile_x, tile_z, &gnd_dt);
 
     // We will compare linear steepness, as simplification of computing angle
     //int angle = LbArcTanAngle(alt_dt,-gnd_dt);
