@@ -1845,22 +1845,45 @@ void generate_thin_walls(void)
     }
 }
 
-/** Returns whether line segments between given points are cronssing.
+/** Divides triangles adding line segment where entrances to thin paths ought to be.
  */
-TbBool line_segments_are_crossing(TrPointId ptA1, TrPointId ptA2, TrPointId ptB1, TrPointId ptB2)
+void thin_paths_entrance_on_vectlist(ushort vl_head)
 {
-    struct TrPoint *p_ptA1;
-    struct TrPoint *p_ptA2;
-    struct TrPoint *p_ptB1;
-    struct TrPoint *p_ptB2;
+    struct ColVectList *p_cvlist;
+    ushort vl;
 
-    p_ptA1 = &triangulation[0].Points[ptA1];
-    p_ptA2 = &triangulation[0].Points[ptA2];
-    p_ptB1 = &triangulation[0].Points[ptB1];
-    p_ptB2 = &triangulation[0].Points[ptB2];
+    for (vl = vl_head; vl != 0; vl = p_cvlist->NextColList)
+    {
+        struct ColVect *p_colvect;
+        int sx1, sx2, sy1, sy2;
 
-    return two4_line_intersection(p_ptA1->x, p_ptA1->y, p_ptA2->x, p_ptA2->y,
-      p_ptB1->x, p_ptB1->y, p_ptB2->x, p_ptB2->y);
+        p_cvlist = &game_col_vects_list[vl];
+        p_colvect = &game_col_vects[p_cvlist->Vect];
+
+        sx1 = p_colvect->X1;
+        sy1 = p_colvect->Z1;
+        sx2 = p_colvect->X2;
+        sy2 = p_colvect->Z2;
+
+        insert_point(sx1, sy1);
+        insert_point(sx2, sy2);
+    }
+}
+
+void generate_thin_paths_entrance(void)
+{
+    ushort tile_x, tile_z;
+
+    for (tile_x = 0; tile_x < MAP_TILE_WIDTH; tile_x++)
+    {
+        for (tile_z = 0; tile_z < MAP_TILE_HEIGHT; tile_z++)
+        {
+            struct MyMapElement *p_mapel;
+
+            p_mapel = &game_my_big_map[MAP_TILE_WIDTH * tile_z + tile_x];
+            thin_paths_entrance_on_vectlist(p_mapel->ColHead);
+        }
+    }
 }
 
 void generate_thin_paths(void)
@@ -1928,6 +1951,9 @@ void generate_map_triangulation(void)
     generate_collision_vects();
     generate_ground_map();
     generate_thin_walls();
+    // Add points where jumps to thin_paths will be. These should be
+    // added here to allow best results from Delaunay optimization
+    generate_thin_paths_entrance();
     switch (selected_triangulation_no)
     {
     case 1:
