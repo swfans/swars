@@ -233,7 +233,7 @@ int alt_at_point(short x, short z)
 #endif
 }
 
-int alt_change_at_tile(short tile_x, short tile_z)
+int alt_change_at_tile(short tile_x, short tile_z, int *change_xz)
 {
     int alt_min, alt_max;
     int dtx, dtz;
@@ -257,6 +257,12 @@ int alt_change_at_tile(short tile_x, short tile_z)
                 alt_max = p_mapel->Alt;
         }
     }
+    // A bit of simplification here - if min and max are diagonal, the distance
+    // is larger by sqrt(2). But it matters little in this case, plus min-max
+    // selection would have to directly compute steepness to take the diagonal
+    // into account properly
+    if (change_xz != NULL)
+        *change_xz = 256;
     return abs(alt_max - alt_min);
 }
 
@@ -270,9 +276,9 @@ static ushort count_tiles_around_steeper_than(short tile_x, short tile_z, short 
     {
         for (dtx = -1; dtx <= 1; dtx++)
         {
-            int alt_dt;
+            int alt_dt, gnd_dt;
 
-            alt_dt = alt_change_at_tile(tile_x + dtx, tile_z + dtz);
+            alt_dt = alt_change_at_tile(tile_x + dtx, tile_z + dtz, &gnd_dt);
             if (alt_dt > steepness)
                 matches++;
         }
@@ -287,16 +293,19 @@ static ushort count_tiles_around_steeper_than(short tile_x, short tile_z, short 
  */
 static TbBool compute_map_tile_is_blocking_walk(short tile_x, short tile_z)
 {
-    int alt_dt;
+    int alt_dt, gnd_dt;
 
-    alt_dt = alt_change_at_tile(tile_x, tile_z);
+    alt_dt = alt_change_at_tile(tile_x, tile_z, &gnd_dt);
+
+    // We will compare linear steepness, as simplification of computing angle
+    //int angle = LbArcTanAngle(alt_dt,-gnd_dt);
 
     // If steepness is higher than 133% of the set limit, then it is plainly blocking
-    if (alt_dt > MAX_WALKABLE_STEEPNESS * 4 / 3)
+    if (alt_dt > MAX_WALKABLE_STEEPNESS_PER_256 * 4 / 3)
         return true;
 
     // If steepness is lower than the set limit, then it is plainly non-blocking
-    if (alt_dt <= MAX_WALKABLE_STEEPNESS)
+    if (alt_dt <= MAX_WALKABLE_STEEPNESS_PER_256)
         return false;
 
     // For remaining range, do more complex check: block only if more than 3
@@ -311,7 +320,7 @@ static TbBool compute_map_tile_is_blocking_walk(short tile_x, short tile_z)
     if ((tile_z <= 0) || (tile_z >= MAP_TILE_HEIGHT))
         return true;
 
-    if (count_tiles_around_steeper_than(tile_x, tile_z, MAX_WALKABLE_STEEPNESS) > 3)
+    if (count_tiles_around_steeper_than(tile_x, tile_z, MAX_WALKABLE_STEEPNESS_PER_256) > 3)
         return true;
 
    return false;
