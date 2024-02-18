@@ -1654,7 +1654,7 @@ void add_object_face3_to_col_vect(short obj_x, short obj_y, short obj_z, short t
         struct SinglePoint *p_pt;
         p_pt = &game_object_points[p_face->PointNo[cor]];
         x_cor[cor] = obj_x + p_pt->X;
-        y_cor[cor] = (obj_y + p_pt->Y) >> 3;
+        y_cor[cor] = (obj_y + p_pt->Y) >> 3; // TODO why divide by 8?
         z_cor[cor] = obj_z + p_pt->Z;
     }
     // Fill array with altitudes
@@ -1698,7 +1698,7 @@ void add_object_face4_to_col_vect(short obj_x, short obj_y, short obj_z, short t
         struct SinglePoint *p_pt;
         p_pt = &game_object_points[p_face->PointNo[cor]];
         x_cor[cor] = obj_x + p_pt->X;
-        y_cor[cor] = obj_y + p_pt->Y;
+        y_cor[cor] = obj_y + p_pt->Y; // TODO why not divide by 8?
         z_cor[cor] = obj_z + p_pt->Z;
     }
     // Fill array with altitudes
@@ -1886,8 +1886,204 @@ void generate_thin_paths_entrance(void)
     }
 }
 
+/** Finds points within a face with the most sharp slope.
+ *
+ * @param face The face which corner points will be checked.
+ * @param change_xz Set to distance in XZ plane between the same points as for altitude.
+ * @return Returns altitude (Y coord) change which offers sharpest slope.
+ */
+int alt_change_at_face(short face, int *change_xz)
+{
+    uint best_dy, best_dxz;
+
+    best_dy = 0;
+    best_dxz = INT_MAX;
+
+    if (face < 0)
+    {
+        struct SingleObjectFace4 *p_face;
+        short cor1, cor2;
+
+        p_face = &game_object_faces4[-face];
+
+        for (cor1 = 0; cor1 < 4; cor1++)
+        {
+            struct SinglePoint *p_snpoint1;
+
+            p_snpoint1 = &game_object_points[p_face->PointNo[cor1]];
+
+            for (cor2 = cor1; cor2 < 4; cor2++)
+            {
+                struct SinglePoint *p_snpoint2;
+                int dtx, dtz;
+                uint dy, dxz;
+
+                if (cor2 == cor1)
+                    continue;
+
+                p_snpoint2 = &game_object_points[p_face->PointNo[cor2]];
+                dtx = p_snpoint1->X - p_snpoint2->X;
+                dtz = p_snpoint1->Z - p_snpoint2->Z;
+                dy = abs(p_snpoint1->Y - p_snpoint2->Y);
+                dxz = LbSqrL(dtx * dtx + dtz * dtz);
+                // Multiply dy to make the expected range of values larger
+                if (dy * 256 / (dxz+1) > best_dy * 256 / (best_dxz+1)) {
+                    best_dy = dy;
+                    best_dxz = dxz;
+                } else if ((dy >= best_dy) && (dxz < best_dxz)) {
+                    // Even if no angle change expected, we may still want to optimize values
+                    best_dy = dy;
+                    best_dxz = dxz;
+                }
+            }
+        }
+    }
+    else if (face > 0)
+    {
+        struct SingleObjectFace3 *p_face;
+        short cor1, cor2;
+
+        p_face = &game_object_faces[face];
+
+        for (cor1 = 0; cor1 < 3; cor1++)
+        {
+            struct SinglePoint *p_snpoint1;
+
+            p_snpoint1 = &game_object_points[p_face->PointNo[cor1]];
+
+            for (cor2 = cor1; cor2 < 3; cor2++)
+            {
+                struct SinglePoint *p_snpoint2;
+                int dtx, dtz;
+                uint dy, dxz;
+
+                if (cor2 == cor1)
+                    continue;
+
+                p_snpoint2 = &game_object_points[p_face->PointNo[cor2]];
+                dtx = p_snpoint1->X - p_snpoint2->X;
+                dtz = p_snpoint1->Z - p_snpoint2->Z;
+                dy = abs(p_snpoint1->Y - p_snpoint2->Y);
+                dxz = LbSqrL(dtx * dtx + dtz * dtz);
+
+                if (dy * 256 / (dxz+1) > best_dy * 256 / (best_dxz+1)) {
+                    best_dy = dy;
+                    best_dxz = dxz;
+                } else if ((dy >= best_dy) && (dxz < best_dxz)) {
+                    best_dy = dy;
+                    best_dxz = dxz;
+                }
+            }
+        }
+    }
+
+    if (change_xz != NULL)
+        *change_xz = best_dxz;
+    return best_dy;
+}
+
+TbBool compute_face_is_blocking_walk(short face)
+{
+    int alt_dt, gnd_dt;
+    int angle;
+
+    alt_dt = alt_change_at_face(face, &gnd_dt);
+
+    angle = LbArcTanAngle(alt_dt,-gnd_dt);
+
+    // If steepness is higher than the set limit, then it is blocking
+    if (angle > MAX_WALKABLE_STEEPNESS)
+        return true;
+
+   return false;
+}
+
+void thin_paths_on_vectlist(ushort vl_head,
+  TrTriangId *faces3_added, TrTriangId *faces4_added)
+{
+    struct ColVectList *p_cvlist;
+    ushort vl;
+
+    for (vl = vl_head; vl != 0; vl = p_cvlist->NextColList)
+    {
+        struct ColVect *p_colvect;
+        int sx1, sx2, sy1, sy2;
+
+        p_cvlist = &game_col_vects_list[vl];
+        p_colvect = &game_col_vects[p_cvlist->Vect];
+
+        int face = p_colvect->Face;
+
+        if (compute_face_is_blocking_walk(face))
+            continue;
+
+        sx1 = p_colvect->X1;
+        sy1 = p_colvect->Z1;
+        sx2 = p_colvect->X2;
+        sy2 = p_colvect->Z2;
+
+        make_edge(sx1, sy1, sx2, sy2);
+
+        //TODO finish implementation
+    }
+}
+
+void thin_path_on_thing_objects(struct Thing *p_thing,
+  TrTriangId *faces3_added, TrTriangId *faces4_added)
+{
+}
+
 void generate_thin_paths(void)
 {
+    ushort tile_x, tile_z;
+    // Array for mapping each SingleObjectFace3 into corresponding TrTriangle
+    TrTriangId *faces3_added;
+    // Array for mapping each SingleObjectFace4 into two TrTriangles
+    TrTriangId *faces4_added;
+
+    faces3_added = LbMemoryAlloc(next_object_face * sizeof(TrTriangId));
+    faces4_added = LbMemoryAlloc(next_object_face4 * sizeof(TrTriangId) * 2);
+
+    // Add faces which directly touch the ground
+    for (tile_x = 0; tile_x < MAP_TILE_WIDTH; tile_x++)
+    {
+        for (tile_z = 0; tile_z < MAP_TILE_HEIGHT; tile_z++)
+        {
+            struct MyMapElement *p_mapel;
+
+            p_mapel = &game_my_big_map[MAP_TILE_WIDTH * tile_z + tile_x];
+            thin_paths_on_vectlist(p_mapel->ColHead, faces3_added, faces4_added);
+        }
+    }
+
+    // Add the rest of faces for each object
+    for (tile_x = 0; tile_x < MAP_TILE_WIDTH; tile_x++)
+    {
+        for (tile_z = 0; tile_z < MAP_TILE_HEIGHT; tile_z++)
+        {
+            short thing;
+            int i;
+
+            thing = get_mapwho_thing_index(tile_x, tile_z);
+            for (i = 0; thing != 0 && i < MAX_THINGS_ON_TILE; i++)
+            {
+                if (thing <= 0) {
+                    struct SimpleThing *p_sthing;
+                    p_sthing = &sthings[thing];
+                    thing = p_sthing->Next;
+                } else {
+                    struct Thing *p_thing;
+                    p_thing = &things[thing];
+                    if (p_thing->Type == TT_BUILDING)
+                        thin_path_on_thing_objects(p_thing, faces3_added, faces4_added);
+                    thing = p_thing->Next;
+                }
+            }
+        }
+    }
+
+    LbMemoryFree(faces3_added);
+    LbMemoryFree(faces4_added);
 }
 
 int fringe_at_tile(short tile_x, short tile_z)
