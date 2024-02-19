@@ -18,7 +18,11 @@
 /******************************************************************************/
 #include "enginsngobjs.h"
 
+#include <limits.h>
+#include <stdlib.h>
 #include "bfmemut.h"
+#include "bfmath.h"
+#include "bigmap.h"
 #include "swlog.h"
 /******************************************************************************/
 
@@ -77,6 +81,141 @@ void refresh_old_object_face4_format(struct SingleObjectFace4 *p_objface4,
     // Unsure
     p_objface4->UnknTringl1 = p_oldobjface4->UnkOFField_36;
     p_objface4->UnknTringl2 = p_oldobjface4->UnkOFField_38;
+}
+
+/** Finds points within a face with the most sharp slope.
+ *
+ * @param face The face which corner points will be checked.
+ * @param change_xz Set to distance in XZ plane between the same points as for altitude.
+ * @return Returns altitude (Y coord) change which offers sharpest slope.
+ */
+int alt_change_at_face(short face, int *change_xz)
+{
+    uint best_dy, best_dxz;
+
+    best_dy = 0;
+    best_dxz = INT_MAX;
+
+    if (face < 0)
+    {
+        struct SingleObjectFace4 *p_face;
+        short cor1, cor2;
+
+        p_face = &game_object_faces4[-face];
+
+        for (cor1 = 0; cor1 < 4; cor1++)
+        {
+            struct SinglePoint *p_snpoint1;
+
+            p_snpoint1 = &game_object_points[p_face->PointNo[cor1]];
+
+            for (cor2 = cor1 + 1; cor2 < 4; cor2++)
+            {
+                struct SinglePoint *p_snpoint2;
+                int dtx, dtz;
+                uint dy, dxz;
+
+                p_snpoint2 = &game_object_points[p_face->PointNo[cor2]];
+                dtx = p_snpoint1->X - p_snpoint2->X;
+                dtz = p_snpoint1->Z - p_snpoint2->Z;
+                dy = abs(p_snpoint1->Y - p_snpoint2->Y);
+                dxz = LbSqrL(dtx * dtx + dtz * dtz);
+                // Multiply dy to make the expected range of values larger
+                if (dy * 256 / (dxz+1) > best_dy * 256 / (best_dxz+1)) {
+                    best_dy = dy;
+                    best_dxz = dxz;
+                } else if ((dy >= best_dy) && (dxz < best_dxz)) {
+                    // Even if no angle change expected, we may still want to optimize values
+                    best_dy = dy;
+                    best_dxz = dxz;
+                }
+            }
+        }
+    }
+    else if (face > 0)
+    {
+        struct SingleObjectFace3 *p_face;
+        short cor1, cor2;
+
+        p_face = &game_object_faces[face];
+
+        for (cor1 = 0; cor1 < 3; cor1++)
+        {
+            struct SinglePoint *p_snpoint1;
+
+            p_snpoint1 = &game_object_points[p_face->PointNo[cor1]];
+
+            for (cor2 = cor1 + 1; cor2 < 3; cor2++)
+            {
+                struct SinglePoint *p_snpoint2;
+                int dtx, dtz;
+                uint dy, dxz;
+
+                p_snpoint2 = &game_object_points[p_face->PointNo[cor2]];
+                dtx = p_snpoint1->X - p_snpoint2->X;
+                dtz = p_snpoint1->Z - p_snpoint2->Z;
+                dy = abs(p_snpoint1->Y - p_snpoint2->Y);
+                dxz = LbSqrL(dtx * dtx + dtz * dtz);
+
+                if (dy * 256 / (dxz+1) > best_dy * 256 / (best_dxz+1)) {
+                    best_dy = dy;
+                    best_dxz = dxz;
+                } else if ((dy >= best_dy) && (dxz < best_dxz)) {
+                    best_dy = dy;
+                    best_dxz = dxz;
+                }
+            }
+        }
+    }
+
+    if (change_xz != NULL)
+        *change_xz = best_dxz;
+    return best_dy;
+}
+
+/** Checks if a face should not be allowed to walk on due to sharp slope.
+ *
+ * To do such check during gameplay, SingleObjectFace flags should be
+ * used - this one is only to update these flags, if neccessary.
+ */
+TbBool compute_face_is_blocking_walk(short face)
+{
+    int alt_dt, gnd_dt;
+    int angle;
+
+    alt_dt = alt_change_at_face(face, &gnd_dt);
+
+    angle = LbArcTanAngle(alt_dt,-gnd_dt);
+
+    // If steepness is higher than the set limit, then it is blocking
+    if (angle > MAX_WALKABLE_STEEPNESS)
+        return true;
+
+   return false;
+}
+
+void update_object_faces_flags(void)
+{
+    short face;
+
+    for (face = 1; face < next_object_face; face++)
+    {
+        struct SingleObjectFace3 *p_face;
+
+        p_face = &game_object_faces[face];
+        p_face->GFlags |= 0x04;
+        if (compute_face_is_blocking_walk(face))
+            p_face->GFlags &= ~0x04;
+    }
+    for (face = 1; face < next_object_face4; face++)
+    {
+        struct SingleObjectFace4 *p_face;
+
+        p_face = &game_object_faces4[face];
+        p_face->GFlags |= 0x04;
+        if (compute_face_is_blocking_walk(-face))
+            p_face->GFlags &= ~0x04;
+    }
 }
 
 void unkn_object_shift_03(ushort objectno)

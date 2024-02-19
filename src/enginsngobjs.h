@@ -182,6 +182,10 @@ void refresh_old_object_face_format(struct SingleObjectFace3 *p_objface,
 void refresh_old_object_face4_format(struct SingleObjectFace4 *p_objface4,
   struct SingleObjectFace4OldV7 *p_oldobjface4, ulong fmtver);
 
+/** Sets some of the object faces flags based on other properties.
+ */
+void update_object_faces_flags(void);
+
 void unkn_object_shift_03(ushort objectno);
 void unkn_object_shift_02(int norm1, int norm2, ushort objectno);
 /******************************************************************************/
