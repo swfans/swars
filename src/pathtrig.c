@@ -51,7 +51,7 @@ enum ThinWallType {
     THIN_PASS = 1,
 };
 
-extern const short MOD3[] ;
+extern const int MOD3[];
 
 int unkn_path_func_001(struct Thing *p_thing, ubyte a2)
 {
@@ -272,14 +272,14 @@ void make_edge(int x1, int y1, int x2, int y2)
         : : "a" (x1), "d" (y1), "b" (x2), "c" (y2));
 }
 
-int edge_find(int x1, int y1, int x2, int y2, int *ntri1, int *ntri2)
+int edge_find(int x1, int y1, int x2, int y2, int *ntri1, int *ncor1)
 {
     int ret;
     asm volatile (
       "push %6\n"
       "push %5\n"
       "call ASM_edge_find\n"
-        : "=r" (ret) : "a" (x1), "d" (y1), "b" (x2), "c" (y2), "g" (ntri1), "g" (ntri2));
+        : "=r" (ret) : "a" (x1), "d" (y1), "b" (x2), "c" (y2), "g" (ntri1), "g" (ncor1));
     return ret;
 }
 
@@ -648,13 +648,13 @@ void fill_rectangle(int x1, int y1, int x2, int y2, ubyte solid)
       "call ASM_fill_rectangle\n"
         : : "a" (x1), "d" (y1), "b" (x2), "c" (y2), "g" (solid));
 #else
-    int tri1, tri2, tri3, tri4, tri5;
+    int tri1, tri2, tri3, tri4, ucor;
     int area_r, area_t;
 
     area_r = (y2 - y1) * 2 * (x2 - x1);
     area_t = 0;
 
-    edge_find(x1, y1, x1, y2, &tri1, &tri5);
+    edge_find(x1, y1, x1, y2, &tri1, &ucor);
     {
         struct TrTriangle *p_tri;
         p_tri = &triangulation[0].Triangles[tri1];
@@ -664,7 +664,7 @@ void fill_rectangle(int x1, int y1, int x2, int y2, ubyte solid)
     if (area_t == area_r)
         return;
 
-    edge_find(x2, y2, x2, y1, &tri2, &tri5);
+    edge_find(x2, y2, x2, y1, &tri2, &ucor);
     if (tri2 != tri1)
     {
         struct TrTriangle *p_tri;
@@ -675,7 +675,7 @@ void fill_rectangle(int x1, int y1, int x2, int y2, ubyte solid)
     if (area_t == area_r)
         return;
 
-    edge_find(x2, y1, x1, y1, &tri3, &tri5);
+    edge_find(x2, y1, x1, y1, &tri3, &ucor);
     if (tri3 != tri1 && tri3 != tri2)
     {
         struct TrTriangle *p_tri;
@@ -686,7 +686,7 @@ void fill_rectangle(int x1, int y1, int x2, int y2, ubyte solid)
     if (area_t == area_r)
         return;
 
-    edge_find(x1, y2, x2, y2, &tri4, &tri5);
+    edge_find(x1, y2, x2, y2, &tri4, &ucor);
     if (tri4 != tri1 && tri4 != tri2 && tri4 != tri3)
     {
         struct TrTriangle *p_tri;
@@ -1912,14 +1912,11 @@ int alt_change_at_face(short face, int *change_xz)
 
             p_snpoint1 = &game_object_points[p_face->PointNo[cor1]];
 
-            for (cor2 = cor1; cor2 < 4; cor2++)
+            for (cor2 = cor1 + 1; cor2 < 4; cor2++)
             {
                 struct SinglePoint *p_snpoint2;
                 int dtx, dtz;
                 uint dy, dxz;
-
-                if (cor2 == cor1)
-                    continue;
 
                 p_snpoint2 = &game_object_points[p_face->PointNo[cor2]];
                 dtx = p_snpoint1->X - p_snpoint2->X;
@@ -1951,14 +1948,11 @@ int alt_change_at_face(short face, int *change_xz)
 
             p_snpoint1 = &game_object_points[p_face->PointNo[cor1]];
 
-            for (cor2 = cor1; cor2 < 3; cor2++)
+            for (cor2 = cor1 + 1; cor2 < 3; cor2++)
             {
                 struct SinglePoint *p_snpoint2;
                 int dtx, dtz;
                 uint dy, dxz;
-
-                if (cor2 == cor1)
-                    continue;
 
                 p_snpoint2 = &game_object_points[p_face->PointNo[cor2]];
                 dtx = p_snpoint1->X - p_snpoint2->X;
@@ -2031,6 +2025,17 @@ void thin_paths_on_vectlist(ushort vl_head,
 void thin_path_on_thing_objects(struct Thing *p_thing,
   TrTriangId *faces3_added, TrTriangId *faces4_added)
 {
+    ushort vl;
+    for (vl = 0; vl < next_vects_list; vl++)
+    {
+        struct ColVectList *p_cvlist;
+
+        p_cvlist = &game_col_vects_list[vl];
+        if (p_cvlist->Object == p_thing->ThingOffset)
+        {
+            //TODO finish implementation
+        }
+    }
 }
 
 void generate_thin_paths(void)
