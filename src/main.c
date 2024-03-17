@@ -470,9 +470,9 @@ main (int argc, char **argv)
 
     printf("Syndicate Wars Port "VERSION"\n"
         "The original by Bullfrog\n"
-        "Ported by Unavowed <unavowed@vexillium.org> "
-        "and Gynvael Coldwind <gynvael@vexillium.org>\n"
-        "Web site: http://swars.vexillium.org/\n");
+        "Ported by Unavowed and Gynvael Coldwind.\n"
+        "Expanded by other fans, signed in commits.\n"
+        "Web site: https://github.com/swfans/swars/\n");
 
     fixup_options();
     adjust_memory_use();
