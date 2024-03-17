@@ -15,6 +15,7 @@
 #include "game_data.h"
 #include "lvfiles.h"
 #include "network.h"
+#include "thing.h"
 #include "util.h"
 
 #if defined WIN32 && defined main
@@ -79,6 +80,7 @@ print_help (const char *argv0)
 "                -C        Test scenario 100?\n"
 "                -D        Direct keyboard mode; queries kb rather than use\n"
 "                          events/interrupts\n"
+"                -d <str>  Activate debug functions; t - things debug HUD\n"
 "                -E <num>  Joystick config\n"
 "                -F        Re-compute and re-save `tables.dat` colour tables\n"
 "                          file, using `fade.dat` as input\n"
@@ -142,7 +144,7 @@ static TbBool process_options(int *argc, char ***argv)
     argv0 = (*argv)[0];
     index = 0;
 
-    while ((val = getopt_long (*argc, *argv, "ABCDE:FgHhI:Lm:Np:qrSs:Ttu:Ww", options, &index)) >= 0)
+    while ((val = getopt_long (*argc, *argv, "ABCDd:E:FgHhI:Lm:Np:qrSs:Ttu:Ww", options, &index)) >= 0)
     {
         LOGDBG("Command line option: '%c'", val);
         switch (val)
@@ -162,6 +164,21 @@ static TbBool process_options(int *argc, char ***argv)
 
         case 'D':
             keyboard_mode_direct = 1;
+            break;
+
+        case 'd':
+            for (tmpint = 0; optarg[tmpint] != '\0'; tmpint++)
+            {
+                switch (optarg[tmpint])
+                {
+                case 't':
+                    debug_hud_things = true;
+                    break;
+                default:
+                    LOGERR("Invalid value after '-d' parameter. Unexpected char '%c'.", optarg[tmpint]);
+                    return false;
+                }
+            }
             break;
 
         case 'E':

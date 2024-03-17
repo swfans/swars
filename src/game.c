@@ -9873,6 +9873,8 @@ void game_process(void)
           (ingame.DisplayMode == DpM_UNKN_1) ||
           (ingame.DisplayMode == DpM_UNKN_3B))
           process_things();
+      if (debug_hud_things)
+          things_debug_hud();
       if (ingame.DisplayMode != DpM_UNKN_37)
           process_packets();
       joy_input();

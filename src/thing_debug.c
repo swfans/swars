@@ -23,6 +23,7 @@
 #include "weapon.h"
 #include "swlog.h"
 /******************************************************************************/
+TbBool debug_hud_things = false;
 
 TbBool person_command_to_text(char *out, ushort cmd, ubyte a3)
 {

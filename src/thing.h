@@ -864,6 +864,8 @@ extern short static_radii[];
 extern struct SimpleThing *sthings;
 extern short sthings_used_head;
 
+extern TbBool debug_hud_things;
+
 void init_things(void);
 void refresh_old_thing_format(struct Thing *p_thing, struct ThingOldV9 *p_oldthing, ulong fmtver);
 void process_things(void);
