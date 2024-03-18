@@ -127,6 +127,8 @@ swars_SOURCES = \
 	enginsngtxtr.h \
 	engintrns.c \
 	engintrns.h \
+	enginzoom.c \
+	enginzoom.h \
 	febrief.c \
 	febrief.h \
 	fedebrief.c \
