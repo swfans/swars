@@ -107,24 +107,26 @@ short bound_render_area(short rarea)
 short get_render_area_for_zoom(short zoom)
 {
     short rarea;
-    int w, h;
+    int w, h, dt;
     // Original value was 30 for zoom=127 and screen proportion 4:3.
-    // Conclusions from tests by Moburma:
-    // 4:3 - For every decrease of ten units of zoom, render area must be
-    // increased by four units to make up for the now visible render edge.
-    // 16:9 - had to increase 2 more render area units per 10 zoom.
-    rarea = 81 - zoom * 2 / 5;
-    // The 2 more for 16:9 (let's use 2 for over 16:10)
+    // The algorithm below was found experimentally, by lowering
+    // camera angle on London map and finding value at which view
+    // corner is black when ground bevel edge is near that corner.
+    dt = 14;
+    // Increase delta by 1 for 16:9 (round to over 16:10)
     w = lbDisplay.GraphicsScreenWidth;
     h = lbDisplay.GraphicsScreenHeight;
     if (h > w) {
         h = lbDisplay.GraphicsScreenWidth;
         w = lbDisplay.GraphicsScreenHeight;
     }
-    rarea += (w - h * 4 / 3) * 10 / (h * (16/8));
+    dt += (w - h * 4 / 3) * 10 / (h * (16/4));
+    // Compute the area
+    rarea = ((106*14/4) - zoom) * 4 / dt;
     // In low resolution, use even lower render area
     if (h < 400)
         rarea  = rarea * 4 / 5;
+    LOGSYNC("Render area %hd dt %d zoom %hd", rarea, dt, zoom);
     return bound_render_area(rarea);
 }
 
