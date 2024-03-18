@@ -705,8 +705,6 @@ extern ubyte selected_agent;
 
 extern ushort mouse_map_x;
 extern ushort mouse_map_z;
-extern ushort render_area_a;
-extern ushort render_area_b;
 extern void *scratch_malloc_mem;
 
 extern struct ScreenPoint *hotspot_buffer;

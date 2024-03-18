@@ -22,6 +22,9 @@
 #include "weapon.h"
 #include "swlog.h"
 /******************************************************************************/
+#define RENDER_AREA_MIN 2
+#define RENDER_AREA_MAX 63
+
 short user_zoom_min = 127;
 short user_zoom_max = 260;
 
@@ -92,11 +95,37 @@ short get_overall_scale_max(void)
     return get_scaled_zoom(user_zoom_max);
 }
 
+short bound_render_area(short rarea)
+{
+    if (rarea < RENDER_AREA_MIN)
+        rarea = RENDER_AREA_MIN;
+    if (rarea > RENDER_AREA_MAX)
+        rarea = RENDER_AREA_MAX;
+    return rarea;
+}
+
 short get_render_area_for_zoom(short zoom)
 {
-    if (lbDisplay.GraphicsScreenHeight < 400)
-        return 24;
-    return 30; // for zoom=127 and screen proportion 4:3
+    short rarea;
+    int w, h;
+    // Original value was 30 for zoom=127 and screen proportion 4:3.
+    // Conclusions from tests by Moburma:
+    // 4:3 - For every decrease of ten units of zoom, render area must be
+    // increased by four units to make up for the now visible render edge.
+    // 16:9 - had to increase 2 more render area units per 10 zoom.
+    rarea = 81 - zoom * 2 / 5;
+    // The 2 more for 16:9 (let's use 2 for over 16:10)
+    w = lbDisplay.GraphicsScreenWidth;
+    h = lbDisplay.GraphicsScreenHeight;
+    if (h > w) {
+        h = lbDisplay.GraphicsScreenWidth;
+        w = lbDisplay.GraphicsScreenHeight;
+    }
+    rarea += (w - h * 4 / 3) * 10 / (h * (16/8));
+    // In low resolution, use even lower render area
+    if (h < 400)
+        rarea  = rarea * 4 / 5;
+    return bound_render_area(rarea);
 }
 
 /******************************************************************************/

@@ -35,6 +35,9 @@ extern short user_zoom_min;
 /** Maxumum user zoom (largest magnification). */
 extern short user_zoom_max;
 
+extern ushort render_area_a;
+extern ushort render_area_b;
+
 void zoom_update(short zoom_min, short zoom_max);
 
 ushort get_scaled_zoom(ushort zoom);
@@ -44,6 +47,7 @@ short get_overall_scale_min(void);
 short get_overall_scale_max(void);
 
 short get_render_area_for_zoom(short zoom);
+short bound_render_area(short rarea);
 
 /******************************************************************************/
 #ifdef __cplusplus

@@ -7237,22 +7237,8 @@ ubyte do_user_interface(void)
             n = -2;
         else
             n = 2;
-        render_area_a += n;
-
-        if ( lbShift & KMod_SHIFT )
-            n = -2;
-        else
-            n = 2;
-        render_area_b += n;
-
-        if (render_area_a < 2)
-            render_area_a = 2;
-        if (render_area_b < 2)
-            render_area_b = 2;
-        if (render_area_a > 28)
-            render_area_a = 28;
-        if (render_area_b > 28)
-            render_area_b = 28;
+        render_area_a = bound_render_area(render_area_a + n);
+        render_area_b = bound_render_area(render_area_b + n);
     }
 
     // Entering pause screen
