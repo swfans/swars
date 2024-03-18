@@ -86,6 +86,7 @@
 #include "thing.h"
 #include "packet.h"
 #include "player.h"
+#include "rules.h"
 #include "vehicle.h"
 #include "wadfile.h"
 #include "weapon.h"
@@ -4749,6 +4750,7 @@ void game_setup(void)
     engine_mem_alloc_ptr = LbMemoryAlloc(engine_mem_alloc_size);
     load_texturemaps();
     LbDataLoadAll(unk02_load_files);
+    read_rules_file();
     read_weapons_conf_file();
     read_cybmods_conf_file();
     bang_init();

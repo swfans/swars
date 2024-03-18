@@ -192,6 +192,8 @@ swars_SOURCES = \
 	player.h \
 	research.c \
 	research.h \
+	rules.c \
+	rules.h \
 	scanner.c \
 	scanner.h \
 	scandraw.c \

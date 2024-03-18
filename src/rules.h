@@ -1,10 +1,10 @@
 /******************************************************************************/
 // Syndicate Wars Port, source port of the classic strategy game from Bullfrog.
 /******************************************************************************/
-/** @file enginzoom.h
- *     Header file for enginzoom.c.
+/** @file rules.h
+ *     Header file for rules.c.
  * @par Purpose:
- *     Zoom level handling for the 3D engine.
+ *     Ingame rules loading from file.
  * @par Comment:
  *     Just a header file - #defines, typedefs, function prototypes etc.
  * @author   Tomasz Lis
@@ -16,11 +16,10 @@
  *     (at your option) any later version.
  */
 /******************************************************************************/
-#ifndef ENGINZOOM_H
-#define ENGINZOOM_H
+#ifndef RULES_H
+#define RULES_H
 
 #include "bftypes.h"
-#include "poly.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -28,22 +27,10 @@ extern "C" {
 /******************************************************************************/
 #pragma pack(1)
 
+
 #pragma pack()
 /******************************************************************************/
-/** Minimum user zoom (when most area is visible). */
-extern short user_zoom_min;
-/** Maxumum user zoom (largest magnification). */
-extern short user_zoom_max;
-
-void zoom_update(short zoom_min, short zoom_max);
-
-ushort get_scaled_zoom(ushort zoom);
-int get_weapon_zoom_min(ushort wtype);
-
-short get_overall_scale_min(void);
-short get_overall_scale_max(void);
-
-short get_render_area_for_zoom(short zoom);
+TbBool read_rules_file(void);
 
 /******************************************************************************/
 #ifdef __cplusplus
