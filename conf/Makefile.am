@@ -3,6 +3,7 @@ conf_DATA = \
 	cities.ini \
 	cybmods.ini \
 	people.ini \
+	rules.ini \
 	weapons.ini \
 	miss000.ini \
 	miss001.ini \
