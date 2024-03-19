@@ -14,6 +14,7 @@
 #include "game.h"
 #include "game_data.h"
 #include "lvfiles.h"
+#include "lvobjctv.h"
 #include "network.h"
 #include "thing.h"
 #include "util.h"
@@ -81,6 +82,7 @@ print_help (const char *argv0)
 "                -D        Direct keyboard mode; queries kb rather than use\n"
 "                          events/interrupts\n"
 "                -d <str>  Activate debug functions; t - things debug HUD\n"
+"                          o - objectives debug HUD\n"
 "                -E <num>  Joystick config\n"
 "                -F        Re-compute and re-save `tables.dat` colour tables\n"
 "                          file, using `fade.dat` as input\n"
@@ -173,6 +175,9 @@ static TbBool process_options(int *argc, char ***argv)
                 {
                 case 't':
                     debug_hud_things = true;
+                    break;
+                case 'o':
+                    byte_1C844F = 1;
                     break;
                 default:
                     LOGERR("Invalid value after '-d' parameter. Unexpected char '%c'.", optarg[tmpint]);
