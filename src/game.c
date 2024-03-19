@@ -105,6 +105,14 @@
  */
 #define EXPECTED_LANG_TXT_SIZE 8000
 
+/** Amount of buckets for draw list elements.
+ */
+#define BUCKETS_COUNT 10000
+
+/** Max amount of draw list elements within a bucket.
+ */
+#define BUCKET_ITEMS_MAX 2000
+
 #pragma pack(1)
 
 struct GamePanel
@@ -205,7 +213,7 @@ extern long dword_176CC4;
 
 extern long dword_19F4F8;
 
-extern ushort buckets[10000];
+extern ushort buckets[BUCKETS_COUNT];
 extern struct SortSprite *p_current_sort_sprite;
 extern struct SortLine *p_current_sort_line;
 extern struct DrawItem *p_current_draw_item;
@@ -3220,10 +3228,10 @@ void draw_screen(void)
     short n;
     ushort i;
 
-    p_bucket = &buckets[9999];
+    p_bucket = &buckets[BUCKETS_COUNT-1];
     if (dword_19F4F8)
     {
-        for (n = 9999; n >= 0; n--)
+        for (n = BUCKETS_COUNT-1; n >= 0; n--)
         {
             iidx = *p_bucket;
             *p_bucket = 0;
@@ -3279,7 +3287,7 @@ void draw_screen(void)
     }
     else
     {
-        for (n = 9999; n >= 0; n--)
+        for (n = BUCKETS_COUNT-1; n >= 0; n--)
         {
             iidx = *p_bucket;
             *p_bucket = 0;
@@ -3293,7 +3301,7 @@ void draw_screen(void)
             for (i = 0; iidx != 0; iidx = itm->Child)
             {
               i++;
-              if (i > 2000)
+              if (i > BUCKET_ITEMS_MAX)
                   break;
               itm = &game_draw_list[iidx];
               switch (itm->Type)
