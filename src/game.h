@@ -602,6 +602,8 @@ extern long people_groups_count;
 extern long data_1ddb68;
 extern ubyte byte_1DDC40;
 
+extern ushort need_draw_unk3;
+
 extern void *dword_177750;
 extern void *unkn_mech_arr7;
 

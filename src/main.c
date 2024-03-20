@@ -81,8 +81,8 @@ print_help (const char *argv0)
 "                -C        Test scenario 100?\n"
 "                -D        Direct keyboard mode; queries kb rather than use\n"
 "                          events/interrupts\n"
-"                -d <str>  Activate debug functions; t - things debug HUD\n"
-"                          o - objectives debug HUD\n"
+"                -d <str>  Activate debug functions; t - things debug HUD,\n"
+"                          o - objectives debug HUD, c - collision debug HUD\n"
 "                -E <num>  Joystick config\n"
 "                -F        Re-compute and re-save `tables.dat` colour tables\n"
 "                          file, using `fade.dat` as input\n"
@@ -178,6 +178,9 @@ static TbBool process_options(int *argc, char ***argv)
                     break;
                 case 'o':
                     byte_1C844F = 1;
+                    break;
+                case 'c':
+                    need_draw_unk3 = 1;
                     break;
                 default:
                     LOGERR("Invalid value after '-d' parameter. Unexpected char '%c'.", optarg[tmpint]);
