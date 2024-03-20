@@ -180,7 +180,7 @@ static TbBool process_options(int *argc, char ***argv)
                     byte_1C844F = 1;
                     break;
                 case 'c':
-                    need_draw_unk3 = 1;
+                    debug_hud_collision = 1;
                     break;
                 default:
                     LOGERR("Invalid value after '-d' parameter. Unexpected char '%c'.", optarg[tmpint]);
