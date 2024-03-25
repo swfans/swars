@@ -21,6 +21,7 @@
 #include "bffile.h"
 #include "bfini.h"
 #include "enginzoom.h"
+#include "research.h"
 #include "swlog.h"
 /******************************************************************************/
 
@@ -32,6 +33,15 @@ enum RulesEngineConfigCmd {
 const struct TbNamedEnum rules_conf_engine_cmnds[] = {
   {"ZoomMin",		REnginCmd_ZoomMin},
   {"ZoomMax",		REnginCmd_ZoomMax},
+  {NULL,			0},
+};
+
+enum RulesResearchConfigCmd {
+    RResrchCmd_DailyScientistDeathChance = 1,
+};
+
+const struct TbNamedEnum rules_conf_research_cmnds[] = {
+  {"DailyScientistDeathChancePermil",	RResrchCmd_DailyScientistDeathChance},
   {NULL,			0},
 };
 
@@ -118,6 +128,47 @@ TbBool read_rules_file(void)
         LbIniSkipToNextLine(&parser);
     }
 #undef COMMAND_TEXT
+
+    // Parse the [research] section of loaded file
+    done = false;
+    if (LbIniFindSection(&parser, "research") != Lb_SUCCESS) {
+        CONFWRNLOG("Could not find \"[%s]\" section.", "research");
+        done = true;
+    }
+#define COMMAND_TEXT(cmd_num) LbNamedEnumGetName(rules_conf_research_cmnds,cmd_num)
+    while (!done)
+    {
+        int cmd_num;
+
+        // Finding command number in this line
+        i = 0;
+        cmd_num = LbIniRecognizeKey(&parser, rules_conf_research_cmnds);
+        // Now store the config item in correct place
+        switch (cmd_num)
+        {
+        case RResrchCmd_DailyScientistDeathChance:
+            i = LbIniValueGetLongInt(&parser, &k);
+            if (i <= 0) {
+                CONFWRNLOG("Could not read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                break;
+            }
+            daily_scientist_death_chance_permil = k;
+            CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)daily_scientist_death_chance_permil);
+            break;
+        case 0: // comment
+            break;
+        case -1: // end of buffer
+        case -3: // end of section
+            done = true;
+            break;
+        default:
+            CONFWRNLOG("Unrecognized command.");
+            break;
+        }
+        LbIniSkipToNextLine(&parser);
+    }
+#undef COMMAND_TEXT
+
     zoom_update(zoom_min, zoom_max);
     LbIniParseEnd(&parser);
     LbMemoryFree(conf_buf);
