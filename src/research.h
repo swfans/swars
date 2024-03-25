@@ -54,6 +54,7 @@ struct ResearchInfo
 extern struct ResearchInfo research;
 extern char scientist_lost_reason[60];
 extern short daily_scientist_death_chance_permil;
+extern short scientists_per_group;
 
 void load_scientist_lost_reason(ushort reason_no);
 

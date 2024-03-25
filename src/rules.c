@@ -38,10 +38,12 @@ const struct TbNamedEnum rules_conf_engine_cmnds[] = {
 
 enum RulesResearchConfigCmd {
     RResrchCmd_DailyScientistDeathChance = 1,
+    RResrchCmd_ScientistsPerGroup,
 };
 
 const struct TbNamedEnum rules_conf_research_cmnds[] = {
   {"DailyScientistDeathChancePermil",	RResrchCmd_DailyScientistDeathChance},
+  {"ScientistsPerGroup",			RResrchCmd_ScientistsPerGroup},
   {NULL,			0},
 };
 
@@ -154,6 +156,15 @@ TbBool read_rules_file(void)
             }
             daily_scientist_death_chance_permil = k;
             CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)daily_scientist_death_chance_permil);
+            break;
+        case RResrchCmd_ScientistsPerGroup:
+            i = LbIniValueGetLongInt(&parser, &k);
+            if (i <= 0) {
+                CONFWRNLOG("Could not read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                break;
+            }
+            scientists_per_group = k;
+            CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)scientists_per_group);
             break;
         case 0: // comment
             break;

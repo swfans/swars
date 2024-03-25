@@ -28,6 +28,7 @@
 #include "swlog.h"
 /******************************************************************************/
 short daily_scientist_death_chance_permil = 20;
+short scientists_per_group = 4;
 
 void load_scientist_lost_reason(ushort reason_no)
 {
@@ -288,7 +289,7 @@ int research_unkn_func_004(ushort percent_per_day, int expect_funding, int real_
     // Adjust points to number of scientists
     points_total = percent_per_day << 8;
     n_remain = research.Scientists;
-    delta = 4;
+    delta = scientists_per_group;
     ppd = points_total;
     if (n_remain > delta)
     {
