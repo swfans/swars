@@ -4,7 +4,7 @@ AC_PREREQ([2.69])
 
 m4_define([ver_major], [0])
 m4_define([ver_minor], [3])
-m4_define([ver_release], [6])
+m4_define([ver_release], [7])
 # Set build number to commit count only if ".git" folder is present
 m4_define([ver_build], m4_if(m4_esyscmd_s([ls -1 -d ".git" 2>&1]),.git,[m4_esyscmd_s([git rev-list --count HEAD])],[0]))
 
