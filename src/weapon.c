@@ -216,6 +216,10 @@ void read_weapons_conf_file(void)
                     CONFWRNLOG("Could not read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
                     break;
                 }
+                if ((k < 0) || (k > WEAPON_RANGE_BLOCKS_LIMIT)) {
+                    CONFWRNLOG("Outranged value of \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                    k = WEAPON_RANGE_BLOCKS_LIMIT;
+                }
                 wdef->RangeBlocks = k;
                 CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)wdef->RangeBlocks);
                 break;

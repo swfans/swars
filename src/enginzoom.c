@@ -28,7 +28,7 @@
 short user_zoom_min = 127;
 short user_zoom_max = 260;
 
-ushort zoom_levels[] = {
+ushort zoom_levels[WEAPON_RANGE_BLOCKS_LIMIT+1] = {
     256, 256, 256, 256, 256, 256, 240, 230,
     220, 210, 200, 190, 180, 170, 170, 170,
     170, 170, 170, 170, 170, 165, 160, 155,
@@ -43,18 +43,35 @@ void zoom_update(short zoom_min, short zoom_max)
     dt = (zoom_max - zoom_min);
     zoom_arr_min = zoom_min + ((dt * 16) >> 8);
     zoom_arr_max = zoom_max - ((dt * 8) >> 8);
-    for (i = 0; i < 28; i++)
+    for (i = 0; i < WEAPON_RANGE_BLOCKS_LIMIT+1; i++)
     {
         int n, val;
-        // The curve is steeper in 2nd half than in first half
-        if (i > 14)
-            n = 15;
-        else
-            n = 8;
-        val = zoom_arr_min + ((dt * n * i) >> 8);
+        // The curve has 3 steepness levels: from right, first 9, then 2, then 21
+        val = zoom_arr_min;
+        if (i > 0) {
+            if (i < 7)
+                n = 9 * (i - 0);
+            else
+                n = 9 * (7 - 0);
+            val += ((dt * n) >> 8);
+        }
+
+        if (i > 7) {
+            if (i < 15)
+                n = 2 * (i - 7);
+            else
+                n = 2 * (15 - 7);
+            val += ((dt * n) >> 8);
+        }
+
+        if (i > 15) {
+            n = 21 * (i - 15);
+            val += ((dt * n) >> 8);
+        }
+
         if (val > zoom_arr_max)
             val = zoom_arr_max;
-        zoom_levels[27-i] = val;
+        zoom_levels[WEAPON_RANGE_BLOCKS_LIMIT-i] = val;
     }
     user_zoom_min = zoom_min;
     user_zoom_max = zoom_max;
