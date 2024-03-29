@@ -22,8 +22,14 @@
 #include "weapon.h"
 #include "swlog.h"
 /******************************************************************************/
+
+/** Smallest size of render area. Must be even to avoid shifted terrain.
+ */
 #define RENDER_AREA_MIN 2
-#define RENDER_AREA_MAX 63
+
+/** Largest size of render area. Must be even to avoid shifted terrain.
+ */
+#define RENDER_AREA_MAX 88
 
 short user_zoom_min = 127;
 short user_zoom_max = 260;
@@ -118,6 +124,8 @@ short bound_render_area(short rarea)
         rarea = RENDER_AREA_MIN;
     if (rarea > RENDER_AREA_MAX)
         rarea = RENDER_AREA_MAX;
+    // Odd size of the area would produce shifted terrain
+    if (rarea & 1) rarea++;
     return rarea;
 }
 
