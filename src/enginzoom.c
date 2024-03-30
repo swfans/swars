@@ -41,6 +41,11 @@ ushort zoom_levels[WEAPON_RANGE_BLOCKS_LIMIT+1] = {
     150, 145, 140, 135,
 };
 
+#define RANGE1 7
+#define RANGE2 15
+#define FACTOR1 2
+#define FACTOR2 8
+#define FACTOR3 21
 void zoom_update(short zoom_min, short zoom_max)
 {
     int i, dt;
@@ -52,26 +57,26 @@ void zoom_update(short zoom_min, short zoom_max)
     for (i = 0; i < WEAPON_RANGE_BLOCKS_LIMIT+1; i++)
     {
         int n, val;
-        // The curve has 3 steepness levels: from right, first 9, then 2, then 21
+        // The curve has 3 steepness levels, set (from right) in FACTOR defines
         val = zoom_arr_min;
         if (i > 0) {
-            if (i < 7)
-                n = 9 * (i - 0);
+            if (i < RANGE1)
+                n = FACTOR1 * (i - 0);
             else
-                n = 9 * (7 - 0);
+                n = FACTOR1 * (RANGE1 - 0);
             val += ((dt * n) >> 8);
         }
 
-        if (i > 7) {
-            if (i < 15)
-                n = 2 * (i - 7);
+        if (i > RANGE1) {
+            if (i < RANGE2)
+                n = FACTOR2 * (i - RANGE1);
             else
-                n = 2 * (15 - 7);
+                n = FACTOR2 * (RANGE2 - RANGE1);
             val += ((dt * n) >> 8);
         }
 
-        if (i > 15) {
-            n = 21 * (i - 15);
+        if (i > RANGE2) {
+            n = FACTOR3 * (i - RANGE2);
             val += ((dt * n) >> 8);
         }
 
@@ -82,6 +87,11 @@ void zoom_update(short zoom_min, short zoom_max)
     user_zoom_min = zoom_min;
     user_zoom_max = zoom_max;
 }
+#undef RANGE1
+#undef RANGE2
+#undef FACTOR1
+#undef FACTOR2
+#undef FACTOR3
 
 ushort get_scaled_zoom(ushort zoom)
 {
