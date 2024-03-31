@@ -1366,24 +1366,15 @@ void process_tank_turret(struct Thing *p_tank)
 #endif
 }
 
-void process_view_inputs(int thing)
+/** Step overall scale towards given zoom value.
+ *
+ * Overal scale changes gradually towards given value; shis
+ * function does a one step update of the overall_scale.
+ */
+void process_overall_scale(int zoom)
 {
-#if 0
-    asm volatile ("call ASM_process_view_inputs\n"
-        : : "a" (thing));
-#else
-    struct Thing *p_person;
-    int zoom;
     int zdelta, sdelta;
     short scmin, scmax, scale;
-
-    p_person = &things[thing];
-    zoom = get_weapon_zoom_min(p_person->U.UPerson.CurrentWeapon);
-    // User zoom is not scaled to resolution
-    if (zoom >= ingame.UserZoom)
-        ingame.UserZoom = zoom;
-    else
-        zoom = ingame.UserZoom;
 
     zoom = get_scaled_zoom(zoom);
 
@@ -1404,6 +1395,26 @@ void process_view_inputs(int thing)
     else if (scale > scmax)
         scale = scmax;
     overall_scale = scale;
+}
+
+void process_view_inputs(int thing)
+{
+#if 0
+    asm volatile ("call ASM_process_view_inputs\n"
+        : : "a" (thing));
+#else
+    struct Thing *p_person;
+    int zoom;
+
+    p_person = &things[thing];
+    zoom = get_weapon_zoom_min(p_person->U.UPerson.CurrentWeapon);
+    // User zoom is not scaled to resolution
+    if (zoom >= ingame.UserZoom)
+        ingame.UserZoom = zoom;
+    else
+        zoom = ingame.UserZoom;
+
+    process_overall_scale(zoom);
 #endif
 }
 
