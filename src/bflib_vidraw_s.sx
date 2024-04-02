@@ -1231,7 +1231,7 @@ GLOBAL_FUNC (ASM_LbDrawTriangle)
 		mov    -0xc(%ebp),%edx
 		push   %eax
 		mov    -0x10(%ebp),%eax
-		call   LbDrawTriangleFilled_
+		call   ac_LbDrawTriangleFilled
 	jump_ef4e1:
 		mov    %ebp,%esp
 		pop    %ebp
@@ -1239,7 +1239,7 @@ GLOBAL_FUNC (ASM_LbDrawTriangle)
 
 
 /*----------------------------------------------------------------*/
-LbDrawTriangleFilled_:
+GLOBAL_FUNC (ASM_LbDrawTriangleFilled)
 /*----------------------------------------------------------------*/
 		push   %ebp
 		mov    %esp,%ebp

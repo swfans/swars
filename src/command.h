@@ -212,6 +212,12 @@ enum PersonCommandFlags
   PCmdF_Unkn800000 = 0x00800000,
 };
 
+struct CommandDef {
+    const char *CmdName;
+    void *vefify;
+    ulong Flags;
+};
+
 struct Command
 {
   short Next;
@@ -235,11 +241,16 @@ struct Command
 
 #pragma pack()
 /******************************************************************************/
+extern struct CommandDef command_defs[];
 extern struct Command *game_commands;
 extern ushort next_command;
 
 void snprint_command(char *buf, ulong buflen, ushort cmd);
 TbBool is_command_any_until(struct Command *p_cmd);
+
+/** Reserve a new command instance and return its index.
+ */
+ushort get_new_command(void);
 
 /** For Commands which rely on searching Things on map, find the Things
  * and set indexes.

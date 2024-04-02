@@ -140,4 +140,40 @@ void thing_group_copy(short pv_group, short nx_group, ubyte allow_kill)
     }
 }
 
+int thing_group_transfer_people(short pv_group, short nx_group, short subtype, int stay_limit, int tran_limit)
+{
+    short thing;
+    struct Thing *p_thing;
+    int count;
+
+    count = 0;
+    for (thing = things_used_head; thing != 0; thing = p_thing->LinkChild)
+    {
+        p_thing = &things[thing];
+
+        if (p_thing->Type != TT_PERSON)
+            continue;
+
+        if ((subtype != -1) && (p_thing->SubType != subtype))
+            continue;
+
+        if (stay_limit > 0) {
+            stay_limit--;
+            continue;
+        }
+
+        if (p_thing->U.UPerson.Group == pv_group) {
+            p_thing->U.UPerson.Group = nx_group;
+            count++;
+        }
+        if (p_thing->U.UPerson.EffectiveGroup == pv_group) {
+            p_thing->U.UPerson.EffectiveGroup = nx_group;
+        }
+
+        if (count >= tran_limit)
+            break;
+    }
+    return count;
+}
+
 /******************************************************************************/

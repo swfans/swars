@@ -22,6 +22,7 @@
 #include <string.h>
 #include <limits.h>
 #include "bfmath.h"
+#include "bfmemory.h"
 #include "bigmap.h"
 #include "enginsngobjs.h"
 #include "game.h"
@@ -32,11 +33,16 @@
 #include "trpoints.h"
 #include "trstate.h"
 #include "trfringe.h"
+#include "delaunay.h"
 #include "swlog.h"
 /******************************************************************************/
 extern long ixE;
 extern long thin_wall_x1, thin_wall_y1;
 extern long thin_wall_x2, thin_wall_y2;
+
+/** Map of the ground surface for triangluation purposes, 2x2 per tile.
+ */
+ubyte *ground_map = NULL;
 
 #define MAX_THINGS_ON_TILE 200
 
@@ -45,7 +51,7 @@ enum ThinWallType {
     THIN_PASS = 1,
 };
 
-extern const short MOD3[] ;
+extern const int MOD3[];
 
 int unkn_path_func_001(struct Thing *p_thing, ubyte a2)
 {
@@ -93,6 +99,7 @@ int pointed_at8(TrFineCoord pt_x, TrFineCoord pt_y, int *r_tri, int *r_cor)
         : "=r" (ret) : "a" (pt_x), "d" (pt_y), "b" (r_tri), "c" (r_cor));
     return ret;
 #else
+    //TODO this does not work exactly like original
     struct TrTriangle *p_tri;
     struct TrPoint *p_pt;
 
@@ -160,7 +167,7 @@ int pointed_at8(TrFineCoord pt_x, TrFineCoord pt_y, int *r_tri, int *r_cor)
 
 int triangle_find8(TrFineCoord pt_x, TrFineCoord pt_y)
 {
-#if 1
+#if 0
     int ret;
     asm volatile ("call ASM_triangle_find8\n"
         : "=r" (ret) : "a" (pt_x), "d" (pt_y));
@@ -258,12 +265,6 @@ int triangle_findSE8(int x, int y)
     return ret;
 }
 
-void triangulation_select(int trglno)
-{
-    asm volatile ("call ASM_triangulation_select\n"
-        : : "a" (trglno));
-}
-
 void make_edge(int x1, int y1, int x2, int y2)
 {
     asm volatile (
@@ -271,14 +272,27 @@ void make_edge(int x1, int y1, int x2, int y2)
         : : "a" (x1), "d" (y1), "b" (x2), "c" (y2));
 }
 
-int edge_find(int x1, int y1, int x2, int y2, int *ntri1, int *ntri2)
+int edge_find(int x1, int y1, int x2, int y2, int *ntri1, int *ncor1)
 {
     int ret;
     asm volatile (
       "push %6\n"
       "push %5\n"
       "call ASM_edge_find\n"
-        : "=r" (ret) : "a" (x1), "d" (y1), "b" (x2), "c" (y2), "g" (ntri1), "g" (ntri2));
+        : "=r" (ret) : "a" (x1), "d" (y1), "b" (x2), "c" (y2), "g" (ntri1), "g" (ncor1));
+    return ret;
+}
+
+TbBool two4_line_intersection(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4)
+{
+    TbBool ret;
+    asm volatile (
+      "push %8\n"
+      "push %7\n"
+      "push %6\n"
+      "push %5\n"
+      "call ASM_two4_line_intersection\n"
+        : "=r" (ret) : "a" (x1), "d" (y1), "b" (x2), "c" (y2), "g" (x3), "g" (y3), "g" (x4), "g" (y4));
     return ret;
 }
 
@@ -293,7 +307,7 @@ int edge_find(int x1, int y1, int x2, int y2, int *ntri1, int *ntri2)
 TbBool point_find(TrCoord pt_x, TrCoord pt_y, int *r_tri, int *r_cor)
 // TODO change types to TrTriangId *r_tri, TrTipId *r_cor
 {
-#if 1
+#if 0
     int ret;
     asm volatile (
       "call ASM_point_find\n"
@@ -319,42 +333,6 @@ TbBool point_find(TrCoord pt_x, TrCoord pt_y, int *r_tri, int *r_cor)
         }
     }
     return false;
-#endif
-}
-
-TbBool insert_point(TrCoord pt_x, TrCoord pt_y)
-{
-#if 0
-    asm volatile (
-      "call ASM_insert_point\n"
-        : : "a" (pt_x), "d" (pt_y));
-    return true;
-#else
-    TrTriangId tri;
-
-    tri = triangle_find8(pt_x << 8, pt_y << 8);
-    if (tri == -1) {
-        LOGERR("triangle not found at (%d,%d)", (int)pt_x, (int)pt_y);
-        return false;
-    }
-
-    if (triangle_has_point_coord(tri, pt_x, pt_y)) {
-        return true;
-    }
-
-    if (triangle_divide_areas_differ(tri, 0, 1, pt_x, pt_y) == 0)
-    {
-        return edge_split(tri, 0, pt_x, pt_y) >= 0;
-    }
-    if (triangle_divide_areas_differ(tri, 1, 2, pt_x, pt_y) == 0)
-    {
-        return edge_split(tri, 1, pt_x, pt_y) >= 0;
-    }
-    if (triangle_divide_areas_differ(tri, 2, 0, pt_x, pt_y) == 0)
-    {
-        return edge_split(tri, 2, pt_x, pt_y) >= 0;
-    }
-    return tri_split3(tri, pt_x, pt_y) >= 0;
 #endif
 }
 
@@ -456,6 +434,27 @@ void thin_wall_at_line(int X1, int Y1, int Z1, int X2, int Y2, int Z2, short fac
 void thin_wall_at_line_rm(int X1, int Y1, int Z1, int X2, int Y2, int Z2, short face, ushort colt)
 {
     thin_wall_at_line(X1, Y1, Z1, X2, Y2, Z2, face, colt, THIN_PASS);
+}
+
+static ubyte face_is_blocking(ushort obj, short face, ushort colt)
+{
+    if (face < 0)
+    {
+        struct SingleObjectFace4 *p_face;
+        p_face = &game_object_faces4[-face];
+        if (p_face->GFlags & 0x10)
+            return THIN_PASS;
+        return THIN_BLOCK;
+    }
+    else if (face > 0)
+    {
+        struct SingleObjectFace3 *p_face;
+        p_face = &game_object_faces[face];
+        if (p_face->GFlags & 0x10)
+            return THIN_PASS;
+        return THIN_BLOCK;
+    }
+    return THIN_PASS;
 }
 
 #define TOLERANCE 150
@@ -568,11 +567,15 @@ void thin_wall_around_object(ushort obj, ushort colt)
     }
     for (face = startface3; face < endface3; face++)
     {
-        thin_wall_around_face3(obj_x, obj_y, obj_z, face, colt, THIN_BLOCK);
+        ubyte pass;
+        pass = face_is_blocking(obj, face, colt);
+        thin_wall_around_face3(obj_x, obj_y, obj_z, face, colt, pass);
     }
     for (face = startface4; face < endface4; face++)
     {
-        thin_wall_around_face4(obj_x, obj_y, obj_z, face, colt, THIN_BLOCK);
+        ubyte pass;
+        pass = face_is_blocking(obj, -face, colt);
+        thin_wall_around_face4(obj_x, obj_y, obj_z, face, colt, pass);
     }
 }
 
@@ -613,7 +616,7 @@ void thin_wall_around_object_rm(ushort obj, ushort colt)
 
 void brute_fill_rectangle(int x1, int y1, int x2, int y2, ubyte solid)
 {
-#if 1
+#if 0
     asm volatile (
       "push %4\n"
       "call ASM_brute_fill_rectangle\n"
@@ -639,19 +642,19 @@ void brute_fill_rectangle(int x1, int y1, int x2, int y2, ubyte solid)
 
 void fill_rectangle(int x1, int y1, int x2, int y2, ubyte solid)
 {
-#if 1
+#if 0
     asm volatile (
       "push %4\n"
       "call ASM_fill_rectangle\n"
         : : "a" (x1), "d" (y1), "b" (x2), "c" (y2), "g" (solid));
 #else
-    int tri1, tri2, tri3, tri4, tri5;
+    int tri1, tri2, tri3, tri4, ucor;
     int area_r, area_t;
 
     area_r = (y2 - y1) * 2 * (x2 - x1);
     area_t = 0;
 
-    edge_find(x1, y1, x1, y2, &tri1, &tri5);
+    edge_find(x1, y1, x1, y2, &tri1, &ucor);
     {
         struct TrTriangle *p_tri;
         p_tri = &triangulation[0].Triangles[tri1];
@@ -661,7 +664,7 @@ void fill_rectangle(int x1, int y1, int x2, int y2, ubyte solid)
     if (area_t == area_r)
         return;
 
-    edge_find(x2, y2, x2, y1, &tri2, &tri5);
+    edge_find(x2, y2, x2, y1, &tri2, &ucor);
     if (tri2 != tri1)
     {
         struct TrTriangle *p_tri;
@@ -672,7 +675,7 @@ void fill_rectangle(int x1, int y1, int x2, int y2, ubyte solid)
     if (area_t == area_r)
         return;
 
-    edge_find(x2, y1, x1, y1, &tri3, &tri5);
+    edge_find(x2, y1, x1, y1, &tri3, &ucor);
     if (tri3 != tri1 && tri3 != tri2)
     {
         struct TrTriangle *p_tri;
@@ -683,7 +686,7 @@ void fill_rectangle(int x1, int y1, int x2, int y2, ubyte solid)
     if (area_t == area_r)
         return;
 
-    edge_find(x1, y2, x2, y2, &tri4, &tri5);
+    edge_find(x1, y2, x2, y2, &tri4, &ucor);
     if (tri4 != tri1 && tri4 != tri2 && tri4 != tri3)
     {
         struct TrTriangle *p_tri;
@@ -700,7 +703,7 @@ void fill_rectangle(int x1, int y1, int x2, int y2, ubyte solid)
 
 void tri_set_rectangle(int x1, int y1, int x2, int y2, ubyte solid)
 {
-#if 1
+#if 0
     asm volatile (
       "push %4\n"
       "call ASM_tri_set_rectangle\n"
@@ -814,7 +817,7 @@ void triangulation_init(void)
 
 void triangulation_init_edges(void)
 {
-#if 1
+#if 0
     asm volatile ("call ASM_triangulation_init_edges\n"
         :  :  : "eax" );
 #else
@@ -850,7 +853,7 @@ void triangulation_allocate(int tgnNo, int maxTrigs)
 
 void triangulate_area(ubyte *p_map, int x1, int y1, int x2, int y2)
 {
-#if 1
+#if 0
     asm volatile (
       "push %4\n"
       "call ASM_triangulate_area\n"
@@ -899,7 +902,10 @@ void init_collision_vects(void)
 
     limit = get_memory_ptr_allocated_count((void **)&game_col_vects_list);
     for (i = 0; i < limit; i++) {
-        game_col_vects_list[i].Vect = 0;
+        struct ColVectList *p_cvlist;
+
+        p_cvlist = &game_col_vects_list[i];
+        p_cvlist->Vect = 0;
     }
     next_col_vect = 1;
     next_vects_list = 1;
@@ -1255,53 +1261,6 @@ void generate_walk_items(void)
     }
 }
 
-static void print_walk_items_for_face(short face)
-{
-    struct WalkHeader *p_walk_head;
-    ushort wh, wi;
-
-    if (face > 0)
-    {
-        struct SingleObjectFace3 *p_face;
-
-        p_face = &game_object_faces[face];
-        wh = p_face->WalkHeader;
-    }
-    else if (face < 0)
-    {
-        struct SingleObjectFace4 *p_face;
-
-        p_face = &game_object_faces4[-face];
-        wh = p_face->WalkHeader;
-    } else
-    {
-        return;
-    }
-    p_walk_head = &game_walk_headers[wh];
-    for (wi = p_walk_head->StartItem;
-      wi < p_walk_head->StartItem + p_walk_head->Count; wi++) {
-        LOGSYNC("face %d walkface %d", (int)face, (int)game_walk_items[wi]);
-    }
-}
-
-/** Print walk items into log file, for debug.
- */
-void print_walk_items(void)
-{
-    short face;
-
-    for (face = 1; face < next_object_face; face++)
-    {
-        if ((game_object_faces[face].GFlags & 0x04) != 0)
-            print_walk_items_for_face(face);
-    }
-    for (face = 1; face < next_object_face4; face++)
-    {
-        if ((game_object_faces4[face].GFlags & 0x04) != 0)
-            print_walk_items_for_face(-face);
-    }
-}
-
 void set_mapel_col_columns(struct MyMapElement *p_mapel, short setbit, ushort qb)
 {
     struct ColColumn *p_ccol;
@@ -1576,28 +1535,6 @@ void update_mapel_collision_columns(void)
     }
 }
 
-void print_mapel_collision_columns(void)
-{
-    ushort tile_x, tile_z;
-
-    for (tile_x = 0; tile_x < MAP_TILE_WIDTH; tile_x++)
-    {
-        for (tile_z = 0; tile_z < MAP_TILE_HEIGHT; tile_z++)
-        {
-            struct MyMapElement *p_mapel;
-            struct ColColumn *p_ccol;
-
-            p_mapel = &game_my_big_map[MAP_TILE_WIDTH * tile_z + tile_x];
-            if (p_mapel->ColumnHead == 0) continue;
-            p_ccol = &game_col_columns[p_mapel->ColumnHead];
-
-            LOGSYNC("%02d,%02d qbits %04x %04x %04x %04x", (int)tile_x, (int)tile_z,
-              (int)p_ccol->QBits[0], (int)p_ccol->QBits[1],
-              (int)p_ccol->QBits[2], (int)p_ccol->QBits[3]);
-        }
-    }
-}
-
 void add_next_col_vect_to_vects_list(short x, short z, short thing, short face, ushort vect, ubyte flags)
 {
     short tile_x, tile_z;
@@ -1624,8 +1561,8 @@ void add_next_col_vect_to_vects_list(short x, short z, short thing, short face, 
         next_vects_list++;
         p_cvlist = &game_col_vects_list[next_vl];
         p_cvlist->Vect = vect;
-        p_cvlist->NextColList = p_mapel->ColHead;
         p_cvlist->Object = thing;
+        p_cvlist->NextColList = p_mapel->ColHead;
         p_mapel->ColHead = next_vl;
         if (flags & 0x01)
         {
@@ -1635,22 +1572,18 @@ void add_next_col_vect_to_vects_list(short x, short z, short thing, short face, 
     }
 }
 
-void add_obj_face_to_col_vect(short x1, short y1, short z1, short x2, short y2, short z2, short thing, short face, ushort flags)
+int new_col_vect(short x1, short y1, short z1, short x2, short y2, short z2, short face)
 {
-    int vect, limit;
     struct ColVect *p_colvect;
+    int vect;
+    int limit;
 
     limit = get_memory_ptr_allocated_count((void **)&game_col_vects);
     if (next_col_vect >= limit) {
-        return;
-    }
-    limit = get_memory_ptr_allocated_count((void **)&game_col_vects_list);
-    if (next_vects_list >= limit) {
-        return;
+        LOGERR("Reached limit of col_vect items");
+        return 0;
     }
 
-    //TODO why generating thin walls here? we have a separate higher level call for that
-    //thin_wall(x1 >> 7, z1 >> 7, x2 >> 7, z2 >> 7, 1, 1);
     vect = next_col_vect;
     next_col_vect++;
     p_colvect = &game_col_vects[vect];
@@ -1663,12 +1596,33 @@ void add_obj_face_to_col_vect(short x1, short y1, short z1, short x2, short y2, 
     p_colvect->Z2 = z2;
     p_colvect->Face = face;
 
+    return vect;
+}
+
+void add_obj_face_to_col_vect(short x1, short y1, short z1, short x2, short y2, short z2, short thing, short face, ushort flags)
+{
+    int vect, limit;
+
+    limit = get_memory_ptr_allocated_count((void **)&game_col_vects_list);
+    if (next_vects_list >= limit) {
+        return;
+    }
+
+    //TODO why generating thin walls here? we have a separate higher level call for that
+    //thin_wall(x1 >> 7, z1 >> 7, x2 >> 7, z2 >> 7, 1, 1);
+    vect = new_col_vect(x1, y1, z1, x2, y2, z2, face);
+    if (vect <= 0)
+        return;
+
     int delta_x, delta_z, dist;
     int x, z, step_x, step_z;
 
     delta_x = x2 - x1;
     delta_z = z2 - z1;
     dist = LbSqrL(delta_x * delta_x + delta_z * delta_z);
+    if (dist < 1)
+        dist = 1;
+
     x = x1 << 10;
     z = z1 << 10;
     step_x = (delta_x << 10) / dist;
@@ -1683,6 +1637,8 @@ void add_obj_face_to_col_vect(short x1, short y1, short z1, short x2, short y2, 
 
 #define TOLERANCE 10
 
+/** Adds a face to col_vect lists in nearby MapElements, if the face has two sibling points close to the ground.
+ */
 void add_object_face3_to_col_vect(short obj_x, short obj_y, short obj_z, short thing, short face, ushort a2)
 {
     int alt_cor[4];
@@ -1692,37 +1648,41 @@ void add_object_face3_to_col_vect(short obj_x, short obj_y, short obj_z, short t
     struct SingleObjectFace3 *p_face;
     int cor;
 
+    // Fill arrays with face coordinates
     p_face = &game_object_faces[face];
     for (cor = 0; cor < 3; cor++) {
         struct SinglePoint *p_pt;
         p_pt = &game_object_points[p_face->PointNo[cor]];
         x_cor[cor] = obj_x + p_pt->X;
-        y_cor[cor] = (obj_y + p_pt->Y) >> 3;
+        y_cor[cor] = (obj_y + p_pt->Y) >> 3; // TODO why divide by 8?
         z_cor[cor] = obj_z + p_pt->Z;
     }
+    // Fill array with altitudes
     for (cor = 0; cor < 3; cor++) {
         int alt;
         alt = alt_at_point(x_cor[cor], z_cor[cor]);
         alt_cor[cor] = alt >> 8;
     }
-
-    if (alt_cor[0] - TOLERANCE < y_cor[0] && alt_cor[0] + TOLERANCE > y_cor[0]
-      && alt_cor[1] - TOLERANCE < y_cor[1] && alt_cor[1] + TOLERANCE > y_cor[1]) {
+    // Add only if coords from two sibling points are very close to ground
+    if (y_cor[0] > alt_cor[0] - TOLERANCE && y_cor[0] < alt_cor[0] + TOLERANCE
+      && y_cor[1] > alt_cor[1] - TOLERANCE && y_cor[1] < alt_cor[1] + TOLERANCE) {
         add_obj_face_to_col_vect(x_cor[0], y_cor[0], z_cor[0],
           x_cor[1], y_cor[1], z_cor[1], thing, face, a2);
     }
-    if (alt_cor[0] - TOLERANCE < y_cor[0] && alt_cor[0] + TOLERANCE > y_cor[0]
-      && alt_cor[2] - TOLERANCE < y_cor[2] && alt_cor[2] + TOLERANCE > y_cor[2]) {
+    if (y_cor[0] > alt_cor[0] - TOLERANCE && y_cor[0] < alt_cor[0] + TOLERANCE
+      && y_cor[2] > alt_cor[2] - TOLERANCE && y_cor[2] < alt_cor[2] + TOLERANCE) {
         add_obj_face_to_col_vect(x_cor[0], y_cor[0], z_cor[0],
           x_cor[2], y_cor[2], z_cor[2], thing, face, a2);
     }
-    if (alt_cor[1] - TOLERANCE < y_cor[1] && alt_cor[1] + TOLERANCE > y_cor[1]
-      && alt_cor[2] - TOLERANCE < y_cor[2] && alt_cor[2] + TOLERANCE > y_cor[2]) {
+    if (y_cor[1] > alt_cor[1] - TOLERANCE && y_cor[1] < alt_cor[1] + TOLERANCE
+      && y_cor[2] > alt_cor[2] - TOLERANCE && y_cor[2] < alt_cor[2] + TOLERANCE) {
         add_obj_face_to_col_vect(x_cor[1], y_cor[1], z_cor[1],
           x_cor[2], y_cor[2], z_cor[2], thing, face, a2);
     }
 }
 
+/** Adds a face to col_vect lists in nearby MapElements, if the face has two sibling points close to the ground.
+ */
 void add_object_face4_to_col_vect(short obj_x, short obj_y, short obj_z, short thing, short face, ushort a2)
 {
     int alt_cor[4];
@@ -1732,37 +1692,39 @@ void add_object_face4_to_col_vect(short obj_x, short obj_y, short obj_z, short t
     struct SingleObjectFace4 *p_face;
     int cor;
 
+    // Fill arrays with face coordinates
     p_face = &game_object_faces4[face];
     for (cor = 0; cor < 4; cor++) {
         struct SinglePoint *p_pt;
         p_pt = &game_object_points[p_face->PointNo[cor]];
         x_cor[cor] = obj_x + p_pt->X;
-        y_cor[cor] = obj_y + p_pt->Y;
+        y_cor[cor] = obj_y + p_pt->Y; // TODO why not divide by 8?
         z_cor[cor] = obj_z + p_pt->Z;
     }
+    // Fill array with altitudes
     for (cor = 0; cor < 4; cor++) {
         int alt;
         alt = alt_at_point(x_cor[cor], z_cor[cor]);
         alt_cor[cor] = alt >> 8;
     }
-
-    if (-(alt_cor[0] + TOLERANCE) < y_cor[0] && alt_cor[0] + TOLERANCE > y_cor[0]
-      && -(alt_cor[1] + TOLERANCE) < y_cor[1] && alt_cor[1] + TOLERANCE > y_cor[1]) {
+    // Add only if coords from two sibling points are very close to ground
+    if (y_cor[0] > alt_cor[0] - TOLERANCE && y_cor[0] < alt_cor[0] + TOLERANCE
+      && y_cor[1] > alt_cor[1] - TOLERANCE && y_cor[1] < alt_cor[1] + TOLERANCE) {
         add_obj_face_to_col_vect(x_cor[0], y_cor[0], z_cor[0],
           x_cor[1], y_cor[1], z_cor[1], thing, -face, a2);
     }
-    if (-(alt_cor[1] + TOLERANCE) < y_cor[1] && alt_cor[1] + TOLERANCE > y_cor[1]
-      && -(alt_cor[3] + TOLERANCE) < y_cor[3] && alt_cor[3] + TOLERANCE > y_cor[3]) {
+    if (y_cor[1] > alt_cor[1] - TOLERANCE && y_cor[1] < alt_cor[1] + TOLERANCE
+      && y_cor[3] > alt_cor[3] - TOLERANCE && y_cor[3] < alt_cor[3] + TOLERANCE) {
         add_obj_face_to_col_vect(x_cor[1], y_cor[1], z_cor[1],
           x_cor[3], y_cor[3], z_cor[3], thing, -face, a2);
     }
-    if (-(alt_cor[3] + TOLERANCE) < y_cor[3] && alt_cor[3] + TOLERANCE > y_cor[3]
-    && -(alt_cor[2] + TOLERANCE) < y_cor[2] && alt_cor[2] + TOLERANCE > y_cor[2]) {
+    if (y_cor[3] > alt_cor[3] - TOLERANCE && y_cor[3] < alt_cor[3] + TOLERANCE
+      && y_cor[2] > alt_cor[2] - TOLERANCE && y_cor[2] < alt_cor[2] + TOLERANCE) {
         add_obj_face_to_col_vect(x_cor[3], y_cor[3], z_cor[3],
           x_cor[2], y_cor[2], z_cor[2], thing, -face, a2);
     }
-    if (-(alt_cor[2] + TOLERANCE) < y_cor[2] && alt_cor[2] + TOLERANCE > y_cor[2]
-      && -(alt_cor[0] + TOLERANCE) < y_cor[0] && alt_cor[0] + TOLERANCE > y_cor[0]) {
+    if (y_cor[2] > alt_cor[2] - TOLERANCE && y_cor[2] < alt_cor[2] + TOLERANCE
+      && y_cor[0] > alt_cor[0] - TOLERANCE && y_cor[0] < alt_cor[0] + TOLERANCE) {
         add_obj_face_to_col_vect(x_cor[2], y_cor[2], z_cor[2],
           x_cor[0], y_cor[0], z_cor[0], thing, -face, a2);
     }
@@ -1841,39 +1803,6 @@ void generate_collision_vects(void)
     }
 }
 
-void print_collision_vects(void)
-{
-    ushort tile_x, tile_z;
-
-    for (tile_x = 0; tile_x < MAP_TILE_WIDTH; tile_x++)
-    {
-        for (tile_z = 0; tile_z < MAP_TILE_HEIGHT; tile_z++)
-        {
-            struct MyMapElement *p_mapel;
-            int cv;
-
-            p_mapel = &game_my_big_map[MAP_TILE_WIDTH * tile_z + tile_x];
-            cv = p_mapel->ColHead;
-            while (cv != 0)
-            {
-                struct ColVectList *p_cvlist;
-                struct ColVect *p_colvect;
-
-                p_cvlist = &game_col_vects_list[cv];
-                p_colvect = &game_col_vects[p_cvlist->Vect];
-
-
-                LOGSYNC("%02d,%02d ColVectList Obj %d Vect %d Face %hd P1=%hd,%hd,%hd P2=%hd,%hd,%hd",
-                  (int)tile_x, (int)tile_z, (int)p_cvlist->Object,
-                  (int)p_cvlist->Vect, p_colvect->Face,
-                  p_colvect->X1, p_colvect->Y1, p_colvect->Z1,
-                  p_colvect->X2, p_colvect->Y2, p_colvect->Z2);
-                cv = p_cvlist->NextColList;
-            }
-        }
-    }
-}
-
 void thin_wall_around_thing_objects(struct Thing *p_thing, ubyte colt)
 {
     ushort beg_obj, end_obj;
@@ -1916,54 +1845,210 @@ void generate_thin_walls(void)
     }
 }
 
-void print_triangulation_trigs(void)
+/** Divides triangles adding line segment where entrances to thin paths ought to be.
+ */
+void thin_paths_entrance_on_vectlist(ushort vl_head)
 {
-    int tri;
+    struct ColVectList *p_cvlist;
+    ushort vl;
 
-    for (tri = 0; tri < triangulation[0].max_Triangles; tri++)
+    for (vl = vl_head; vl != 0; vl = p_cvlist->NextColList)
     {
-        struct TrTriangle *p_tri;
-        struct TrPoint *p_pt0;
-        struct TrPoint *p_pt1;
-        struct TrPoint *p_pt2;
+        struct ColVect *p_colvect;
+        int sx1, sx2, sy1, sy2;
 
-        if (!tri_is_allocated(tri))
-            continue;
-        p_tri = &triangulation[0].Triangles[tri];
-        p_pt0 = &triangulation[0].Points[p_tri->point[0]];
-        p_pt1 = &triangulation[0].Points[p_tri->point[1]];
-        p_pt2 = &triangulation[0].Points[p_tri->point[2]];
+        p_cvlist = &game_col_vects_list[vl];
+        p_colvect = &game_col_vects[p_cvlist->Vect];
 
-        LOGSYNC("Tri pt0(%d,%d) pt1(%d,%d) pt2(%d,%d) jump=%d, solid=%d, enter=%d",
-          (int)p_pt0->x, (int)p_pt0->y,
-          (int)p_pt1->x, (int)p_pt1->y,
-          (int)p_pt2->x, (int)p_pt2->y,
-          //(int)p_tri->tri[0], (int)p_tri->tri[1], (int)p_tri->tri[2],
-          (int)p_tri->jump, (int)p_tri->solid, (int)p_tri->enter);
+        sx1 = p_colvect->X1;
+        sy1 = p_colvect->Z1;
+        sx2 = p_colvect->X2;
+        sy2 = p_colvect->Z2;
+
+        insert_point(sx1, sy1);
+        insert_point(sx2, sy2);
     }
 }
 
-void print_triangulation_points(void)
+void generate_thin_paths_entrance(void)
 {
-    int pt;
+    ushort tile_x, tile_z;
 
-    for (pt = 0; pt < triangulation[0].max_Points; pt++)
+    for (tile_x = 0; tile_x < MAP_TILE_WIDTH; tile_x++)
     {
-        struct TrPoint *p_pt;
+        for (tile_z = 0; tile_z < MAP_TILE_HEIGHT; tile_z++)
+        {
+            struct MyMapElement *p_mapel;
 
-        if (!point_is_allocated(pt))
-            continue;
-        p_pt = &triangulation[0].Points[pt];
-
-        LOGSYNC("Pt(%d,%d)",
-          (int)p_pt->x, (int)p_pt->y);
+            p_mapel = &game_my_big_map[MAP_TILE_WIDTH * tile_z + tile_x];
+            thin_paths_entrance_on_vectlist(p_mapel->ColHead);
+        }
     }
 }
 
-void print_triangulation(void)
+TbBool face_is_blocking_walk(short face)
 {
-    print_triangulation_points();
-    print_triangulation_trigs();
+    if (face < 0)
+    {
+        struct SingleObjectFace4 *p_face;
+        p_face = &game_object_faces4[-face];
+        return ((p_face->GFlags & 0x04) == 0);
+    }
+    else if (face > 0)
+    {
+        struct SingleObjectFace3 *p_face;
+        p_face = &game_object_faces[face];
+        return ((p_face->GFlags & 0x04) == 0);
+    }
+
+   return false;
+}
+
+void thin_paths_on_vectlist(ushort vl_head,
+  TrTriangId *faces3_added, TrTriangId *faces4_added)
+{
+    struct ColVectList *p_cvlist;
+    ushort vl;
+
+    for (vl = vl_head; vl != 0; vl = p_cvlist->NextColList)
+    {
+        struct ColVect *p_colvect;
+        int sx1, sx2, sy1, sy2;
+
+        p_cvlist = &game_col_vects_list[vl];
+        p_colvect = &game_col_vects[p_cvlist->Vect];
+
+        int face = p_colvect->Face;
+
+        if (face_is_blocking_walk(face))
+            continue;
+
+        sx1 = p_colvect->X1;
+        sy1 = p_colvect->Z1;
+        sx2 = p_colvect->X2;
+        sy2 = p_colvect->Z2;
+
+        make_edge(sx1, sy1, sx2, sy2);
+
+        // The lower edge is done, now we need to make the
+        // remaining point and edges
+
+        //TODO finish implementation
+    }
+}
+
+void thin_path_on_thing_objects(struct Thing *p_thing,
+  TrTriangId *faces3_added, TrTriangId *faces4_added)
+{
+    ushort vl;
+    for (vl = 0; vl < next_vects_list; vl++)
+    {
+        struct ColVectList *p_cvlist;
+
+        p_cvlist = &game_col_vects_list[vl];
+        if (p_cvlist->Object == p_thing->ThingOffset)
+        {
+            //TODO finish implementation
+        }
+    }
+}
+
+void generate_thin_paths(void)
+{
+    ushort tile_x, tile_z;
+    // Array for mapping each SingleObjectFace3 into corresponding TrTriangle
+    TrTriangId *faces3_added;
+    // Array for mapping each SingleObjectFace4 into two TrTriangles
+    TrTriangId *faces4_added;
+
+    faces3_added = LbMemoryAlloc(next_object_face * sizeof(TrTriangId));
+    faces4_added = LbMemoryAlloc(next_object_face4 * sizeof(TrTriangId) * 2);
+
+    // Add faces which directly touch the ground
+    for (tile_x = 0; tile_x < MAP_TILE_WIDTH; tile_x++)
+    {
+        for (tile_z = 0; tile_z < MAP_TILE_HEIGHT; tile_z++)
+        {
+            struct MyMapElement *p_mapel;
+
+            p_mapel = &game_my_big_map[MAP_TILE_WIDTH * tile_z + tile_x];
+            thin_paths_on_vectlist(p_mapel->ColHead, faces3_added, faces4_added);
+        }
+    }
+
+    // Add the rest of faces for each object
+    for (tile_x = 0; tile_x < MAP_TILE_WIDTH; tile_x++)
+    {
+        for (tile_z = 0; tile_z < MAP_TILE_HEIGHT; tile_z++)
+        {
+            short thing;
+            int i;
+
+            thing = get_mapwho_thing_index(tile_x, tile_z);
+            for (i = 0; thing != 0 && i < MAX_THINGS_ON_TILE; i++)
+            {
+                if (thing <= 0) {
+                    struct SimpleThing *p_sthing;
+                    p_sthing = &sthings[thing];
+                    thing = p_sthing->Next;
+                } else {
+                    struct Thing *p_thing;
+                    p_thing = &things[thing];
+                    if (p_thing->Type == TT_BUILDING)
+                        thin_path_on_thing_objects(p_thing, faces3_added, faces4_added);
+                    thing = p_thing->Next;
+                }
+            }
+        }
+    }
+
+    LbMemoryFree(faces3_added);
+    LbMemoryFree(faces4_added);
+}
+
+int fringe_at_tile(short tile_x, short tile_z)
+{
+    struct MyMapElement *p_mapel;
+
+    if ((tile_x < 0) || (tile_x >= MAP_TILE_WIDTH))
+        return 0;
+    if ((tile_z < 0) || (tile_z >= MAP_TILE_HEIGHT))
+        return 0;
+
+    p_mapel = &game_my_big_map[MAP_TILE_WIDTH * tile_z + tile_x];
+
+    return (p_mapel->Flags2 & 0x04);
+}
+
+void fill_ground_map(ubyte *p_map)
+{
+    ushort tile_x, tile_z;
+
+    for (tile_x = 0; tile_x < MAP_TILE_WIDTH; tile_x++)
+    {
+        for (tile_z = 0; tile_z < MAP_TILE_HEIGHT; tile_z++)
+        {
+            ubyte *p_solid;
+            int n;
+
+            p_solid = &p_map[2*MAP_TILE_WIDTH * 2*tile_z + 2*tile_x];
+            n = fringe_at_tile(tile_x, tile_z);
+            p_solid[0] = n;
+            p_solid[1] = n;
+            p_solid += 2*MAP_TILE_WIDTH;
+            p_solid[0] = n;
+            p_solid[1] = n;
+        }
+    }
+}
+
+void generate_ground_map(void)
+{
+    if (ground_map == NULL) {
+        ground_map = LbMemoryAlloc(MAP_TILE_WIDTH * MAP_TILE_HEIGHT);
+    }
+    fill_ground_map(ground_map);
+    triangulate_map(ground_map);
 }
 
 void generate_map_triangulation(void)
@@ -1980,7 +2065,22 @@ void generate_map_triangulation(void)
     generate_walk_items();
     update_mapel_collision_columns();
     generate_collision_vects();
+    generate_ground_map();
     generate_thin_walls();
+    // Add points where jumps to thin_paths will be. These should be
+    // added here to allow best results from Delaunay optimization
+    generate_thin_paths_entrance();
+    switch (selected_triangulation_no)
+    {
+    case 1:
+        triangulation_clear_enter_into_solid_gnd();
+        break;
+    case 2:
+        triangulation_clear_enter_into_solid_air();
+        break;
+    }
+    delaunay_step();
+    generate_thin_paths();
 }
 
 /******************************************************************************/

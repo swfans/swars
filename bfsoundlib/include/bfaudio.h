@@ -31,8 +31,11 @@ extern "C" {
 typedef struct AudioInitOptions AudioInitOptions;
 
 struct AudioInitOptions {
+  /** Custom path to where INI files are. If NULL, "$PWD/sound" is used. */
   const char *IniPath;
+  /** Custom path to where sound and MIDI driver files are. If NULL, "$PWD/sound" is used. */
   const char *SoundDriverPath;
+  /** Custom path to where sound bank files are. If NULL, "$PWD/sound" is used. */
   const char *SoundDataPath;
   ushort SoundType;
   ushort AbleFlags;

@@ -355,10 +355,11 @@ struct TngUPerson
  * Everything in game besides ground terrain, are Things.
  */
 struct Thing { // sizeof=168
-    /** Previous object in the `mapwho` linked list.
+    /** Previous thing in the `mapwho` linked list?
+     * May be more complicated - see this field is SimpleThing.
      */
     short Parent;
-    /** Next object in the `mapwho` linked list.
+    /** Next thing in the `mapwho` linked list.
      */
     short Next;
     short LinkParent;
@@ -446,6 +447,10 @@ struct STngUFire {
 
 struct SimpleThing
 {
+    /** Index of some kind of entity which generated the thing.
+     * Speciifics depend on thing type; often it's another thing index,
+     * but not always; ie. for doors, the Parent is rectangular face index.
+     */
     short Parent;
     short Next;
     short LinkParent;
@@ -859,6 +864,8 @@ extern short static_radii[];
 extern struct SimpleThing *sthings;
 extern short sthings_used_head;
 
+extern TbBool debug_hud_things;
+
 void init_things(void);
 void refresh_old_thing_format(struct Thing *p_thing, struct ThingOldV9 *p_oldthing, ulong fmtver);
 void process_things(void);
@@ -897,6 +904,7 @@ short new_thing_static_clone(struct SimpleThing *p_clsthing);
 short new_thing_building_clone(struct Thing *p_clthing,
   struct M33 *p_clmat, short shut_h);
 
+void build_same_type_headers(void);
 short get_thing_same_type_head(short ttype, short subtype);
 
 TbBool thing_is_within_circle(short thing, short X, short Z, ushort R);

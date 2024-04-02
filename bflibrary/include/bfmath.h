@@ -47,7 +47,7 @@ long LbSqrL(ulong x);
  * @param y
  * @return
  */
-long LbArcTanAngle(long x,long n);
+long LbArcTanAngle(long x,long y);
 
 extern long lbSinTable[];
 

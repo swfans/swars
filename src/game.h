@@ -270,6 +270,11 @@ struct ColVect { // sizeof=14
   short Face;
 };
 
+/** Collision vectors list.
+ *
+ * Contains a list of references to boundary vectors used for stepping
+ * between ground faces and object faces (buildings).
+ */
 struct ColVectList { // sizeof=6
   ushort Vect; /**< Index of the ColVect with geometry vector. */
   ushort NextColList; /**< Index of the next ColVectList entry in a chain list. */
@@ -490,10 +495,14 @@ extern ulong smack_malloc_used_tot;
 extern ubyte anim_slots[];
 extern struct Animation animations[2];
 
-extern ubyte *fade_data;
+extern ubyte *scratch_buf1;
 
 extern void *dword_1810D1;
 extern ulong dword_1810D5;
+
+extern ushort word_1810E4;
+extern ubyte byte_1810E6[40];
+extern ubyte byte_18110E[40];
 
 extern ushort word_1531E0;
 extern ushort next_special_face;
@@ -552,7 +561,7 @@ extern GameTurn prev_gameturn;
 extern ulong turns_delta;
 extern ushort fifties_per_gameturn;
 extern ushort gamep_scene_effect;
-extern ubyte *vec_tmap;
+extern ubyte *vec_tmap[18];
 extern ubyte linear_vec_pal[256];
 extern ulong nsta_size;
 extern TbPixel colour_grey1;
@@ -562,10 +571,12 @@ extern TbPixel colour_brown2;
 extern ubyte *memload;
 #define memload_len 16384
 
+extern ubyte byte_1C83D1;
 extern ubyte net_host_player_no;
 extern ubyte byte_1C6D4A;
 extern ubyte byte_1C6DDC[5];
 extern ushort word_1C8446;
+extern ushort unkn3de_len;
 extern ubyte data_19ec6f;
 extern ulong save_mortal_salt;
 
@@ -590,6 +601,8 @@ extern long outro_unkn03;
 extern long people_groups_count;
 extern long data_1ddb68;
 extern ubyte byte_1DDC40;
+
+extern ubyte debug_hud_collision;
 
 extern void *dword_177750;
 extern void *unkn_mech_arr7;
@@ -662,6 +675,8 @@ extern ushort *nstart_ani_end;
 extern struct Frame *frame;
 extern struct Frame *frame_end;
 
+extern long dword_176D58;
+
 extern long dword_17710C;
 extern long dword_177110;
 extern ubyte mouser;
@@ -692,8 +707,6 @@ extern ubyte selected_agent;
 
 extern ushort mouse_map_x;
 extern ushort mouse_map_z;
-extern ushort render_area_a;
-extern ushort render_area_b;
 extern void *scratch_malloc_mem;
 
 extern struct ScreenPoint *hotspot_buffer;

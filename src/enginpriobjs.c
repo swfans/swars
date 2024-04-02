@@ -51,4 +51,10 @@ void read_primveh_obj(const char *fname, int a2)
     LbFileClose(fh);
 }
 
+void func_6031c(short tx, short tz, short a3, short ty)
+{
+    asm volatile ("call ASM_func_6031c\n"
+        : : "a" (tx), "d" (tz), "b" (a3), "c" (ty));
+}
+
 /******************************************************************************/

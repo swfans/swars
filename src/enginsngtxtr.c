@@ -22,9 +22,9 @@
 #include "swlog.h"
 /******************************************************************************/
 
-/** Checks whether rexture with specified index is in use within given SingleFloorTexture.
+/** Checks whether texture with specified index is the only in use within given SingleFloorTexture.
  */
-TbBool floor_texture_is_from_index(struct SingleFloorTexture *p_fltextr, int index)
+TbBool floor_texture_is_only_using_index(struct SingleFloorTexture *p_fltextr, int index)
 {
     short beg_x, end_x;
     short beg_y, end_y;
@@ -46,6 +46,44 @@ TbBool floor_texture_is_from_index(struct SingleFloorTexture *p_fltextr, int ind
         return false;
 
     if (p_fltextr->TMapY3 < beg_y || p_fltextr->TMapY3 > end_y)
+        return false;
+
+    return true;
+}
+
+/** Checks whether specified index is the lowest texture in use within given SingleFloorTexture.
+ *
+ * Note that this function does not care if the SingleFloorTexture spans multiple
+ * textures or only a single one.
+ */
+TbBool floor_texture_starts_within_index(struct SingleFloorTexture *p_fltextr, int index)
+{
+    short beg_x, end_x;
+    short beg_y, end_y;
+
+    beg_x = (index % 8) * 32;
+    end_x = beg_x + 31;
+    beg_y = (index / 8) * 32;
+    end_y = beg_y + 31;
+
+    // Fail if any lower texture is in use
+
+    if (p_fltextr->TMapY1 < beg_y || p_fltextr->TMapY2 < beg_y
+      || p_fltextr->TMapY3 < beg_y || p_fltextr->TMapY4 < beg_y)
+        return false;
+
+    if (p_fltextr->TMapX1 < beg_x || p_fltextr->TMapX2 < beg_x
+      || p_fltextr->TMapX3 < beg_x || p_fltextr->TMapX4 < beg_x)
+        return false;
+
+    // Fail if only higher textures are in use
+
+    if (p_fltextr->TMapX1 > end_x && p_fltextr->TMapX2 > end_x
+      && p_fltextr->TMapX3 > end_x && p_fltextr->TMapX4 > end_x)
+        return false;
+
+    if (p_fltextr->TMapY1 > end_y && p_fltextr->TMapY2 > end_y
+      && p_fltextr->TMapY3 > end_y && p_fltextr->TMapY4 > end_y)
         return false;
 
     return true;
@@ -79,19 +117,38 @@ void floor_texture_rotate(struct SingleFloorTexture *p_fltextr, int rot)
 void floor_texture_switch_to_index(struct SingleFloorTexture *p_fltextr, int index)
 {
     short beg_x, beg_y;
+    short prev_beg_x, prev_beg_y;
 
     beg_x = (index % 8) * 32;
     beg_y = (index / 8) * 32;
 
-    p_fltextr->TMapX1 = beg_x + (p_fltextr->TMapX1 % 32);
-    p_fltextr->TMapX2 = beg_x + (p_fltextr->TMapX2 % 32);
-    p_fltextr->TMapX3 = beg_x + (p_fltextr->TMapX3 % 32);
-    p_fltextr->TMapX4 = beg_x + (p_fltextr->TMapX4 % 32);
+    prev_beg_x = p_fltextr->TMapX1;
+    if (p_fltextr->TMapX2 < prev_beg_x)
+        prev_beg_x = p_fltextr->TMapX2;
+    if (p_fltextr->TMapX3 < prev_beg_x)
+        prev_beg_x = p_fltextr->TMapX3;
+    if (p_fltextr->TMapX4 < prev_beg_x)
+        prev_beg_x = p_fltextr->TMapX4;
+    prev_beg_x -= (prev_beg_x % 32);
 
-    p_fltextr->TMapX1 = beg_y + (p_fltextr->TMapX1 % 32);
-    p_fltextr->TMapX2 = beg_y + (p_fltextr->TMapX2 % 32);
-    p_fltextr->TMapX3 = beg_y + (p_fltextr->TMapX3 % 32);
-    p_fltextr->TMapX4 = beg_y + (p_fltextr->TMapX4 % 32);
+    prev_beg_y = p_fltextr->TMapY1;
+    if (p_fltextr->TMapY2 < prev_beg_y)
+        prev_beg_y = p_fltextr->TMapY2;
+    if (p_fltextr->TMapY3 < prev_beg_y)
+        prev_beg_y = p_fltextr->TMapY3;
+    if (p_fltextr->TMapY4 < prev_beg_y)
+        prev_beg_y = p_fltextr->TMapY4;
+    prev_beg_y -= (prev_beg_y % 32);
+
+    p_fltextr->TMapX1 = beg_x + (p_fltextr->TMapX1 - prev_beg_x);
+    p_fltextr->TMapX2 = beg_x + (p_fltextr->TMapX2 - prev_beg_x);
+    p_fltextr->TMapX3 = beg_x + (p_fltextr->TMapX3 - prev_beg_x);
+    p_fltextr->TMapX4 = beg_x + (p_fltextr->TMapX4 - prev_beg_x);
+
+    p_fltextr->TMapY1 = beg_y + (p_fltextr->TMapY1 - prev_beg_y);
+    p_fltextr->TMapY2 = beg_y + (p_fltextr->TMapY2 - prev_beg_y);
+    p_fltextr->TMapY3 = beg_y + (p_fltextr->TMapY3 - prev_beg_y);
+    p_fltextr->TMapY4 = beg_y + (p_fltextr->TMapY4 - prev_beg_y);
 }
 
 void refresh_old_floor_texture_format(struct SingleFloorTexture *p_fltextr,
@@ -101,51 +158,208 @@ void refresh_old_floor_texture_format(struct SingleFloorTexture *p_fltextr,
 
     if (p_fltextr->Page == 0)
     {
-        if (floor_texture_is_from_index(p_fltextr, 3)) {
+        if (floor_texture_is_only_using_index(p_fltextr, 3)) {
             floor_texture_switch_to_index(p_fltextr, 2);
             floor_texture_rotate(p_fltextr, 3);
         } else
-        if (floor_texture_is_from_index(p_fltextr, 6)) {
+        if (floor_texture_is_only_using_index(p_fltextr, 6)) {
             floor_texture_switch_to_index(p_fltextr, 4);
             floor_texture_rotate(p_fltextr, 3);
         } else
-        if (floor_texture_is_from_index(p_fltextr, 7)) {
+        if (floor_texture_is_only_using_index(p_fltextr, 7)) {
             floor_texture_switch_to_index(p_fltextr, 5);
             floor_texture_rotate(p_fltextr, 3);
         } else
-        if (floor_texture_is_from_index(p_fltextr, 19)) {
+        if (floor_texture_is_only_using_index(p_fltextr, 19)) {
             floor_texture_switch_to_index(p_fltextr, 18);
             floor_texture_rotate(p_fltextr, 3);
         } else
-        if (floor_texture_is_from_index(p_fltextr, 22)) {
+        if (floor_texture_is_only_using_index(p_fltextr, 22)) {
             floor_texture_switch_to_index(p_fltextr, 20);
             floor_texture_rotate(p_fltextr, 3);
         } else
-        if (floor_texture_is_from_index(p_fltextr, 23)) {
+        if (floor_texture_is_only_using_index(p_fltextr, 23)) {
             floor_texture_switch_to_index(p_fltextr, 21);
             floor_texture_rotate(p_fltextr, 3);
         } else
-        if (floor_texture_is_from_index(p_fltextr, 44)) {
+        if (floor_texture_is_only_using_index(p_fltextr, 44)) {
             floor_texture_switch_to_index(p_fltextr, 42);
             floor_texture_rotate(p_fltextr, 3);
         } else
-        if (floor_texture_is_from_index(p_fltextr, 45)) {
+        if (floor_texture_is_only_using_index(p_fltextr, 45)) {
             floor_texture_switch_to_index(p_fltextr, 43);
             floor_texture_rotate(p_fltextr, 2);
         } else
-        if (floor_texture_is_from_index(p_fltextr, 46)) {
+        if (floor_texture_is_only_using_index(p_fltextr, 46)) {
             floor_texture_rotate(p_fltextr, 2);
         } else
-        if (floor_texture_is_from_index(p_fltextr, 57)) {
+        if (floor_texture_is_only_using_index(p_fltextr, 57)) {
             // No such texture - selecting closest match
             floor_texture_switch_to_index(p_fltextr, 63);
         } else
-        if (floor_texture_is_from_index(p_fltextr, 60)) {
+        if (floor_texture_is_only_using_index(p_fltextr, 60)) {
             floor_texture_switch_to_index(p_fltextr, 58);
             floor_texture_rotate(p_fltextr, 3);
         } else
-        if (floor_texture_is_from_index(p_fltextr, 62)) {
+        if (floor_texture_is_only_using_index(p_fltextr, 62)) {
             floor_texture_switch_to_index(p_fltextr, 61);
+        }
+    } else
+    if (p_fltextr->Page == 5)
+    {
+        if (floor_texture_starts_within_index(p_fltextr, 0)) {
+            p_fltextr->Page = 4;
+            floor_texture_switch_to_index(p_fltextr, 42);
+        } else
+        if (floor_texture_starts_within_index(p_fltextr, 1)) {
+            p_fltextr->Page = 4;
+            floor_texture_switch_to_index(p_fltextr, 43);
+        } else
+        if (floor_texture_starts_within_index(p_fltextr, 2)) {
+            p_fltextr->Page = 4;
+            floor_texture_switch_to_index(p_fltextr, 44);
+        } else
+        if (floor_texture_starts_within_index(p_fltextr, 8)) {
+            p_fltextr->Page = 4;
+            floor_texture_switch_to_index(p_fltextr, 50);
+        } else
+        if (floor_texture_starts_within_index(p_fltextr, 9)) {
+            p_fltextr->Page = 4;
+            floor_texture_switch_to_index(p_fltextr, 51);
+        } else
+        if (floor_texture_starts_within_index(p_fltextr, 10)) {
+            p_fltextr->Page = 4;
+            floor_texture_switch_to_index(p_fltextr, 52);
+        }
+    }
+}
+
+/** Checks whether texture with specified index is the only in use within given SingleTexture.
+ */
+TbBool face_texture_is_only_using_index(struct SingleTexture *p_fctextr, int index)
+{
+    short beg_x, end_x;
+    short beg_y, end_y;
+
+    beg_x = (index % 8) * 32;
+    end_x = beg_x + 31;
+    beg_y = (index / 8) * 32;
+    end_y = beg_y + 31;
+
+    // Comparing 2 points is enough to conclude that only the exact texture is in use
+
+    if (p_fctextr->TMapX1 < beg_x || p_fctextr->TMapX1 > end_x)
+        return false;
+
+    if (p_fctextr->TMapY1 < beg_y || p_fctextr->TMapY1 > end_y)
+        return false;
+
+    if (p_fctextr->TMapX3 < beg_x || p_fctextr->TMapX3 > end_x)
+        return false;
+
+    if (p_fctextr->TMapY3 < beg_y || p_fctextr->TMapY3 > end_y)
+        return false;
+
+    return true;
+}
+
+/** Checks whether specified index is the lowest texture in use within given SingleTexture.
+ *
+ * Note that this function does not care if the SingleTexture spans multiple
+ * textures or only a single one.
+ */
+TbBool face_texture_starts_within_index(struct SingleTexture *p_fctextr, int index)
+{
+    short beg_x, end_x;
+    short beg_y, end_y;
+
+    beg_x = (index % 8) * 32;
+    end_x = beg_x + 31;
+    beg_y = (index / 8) * 32;
+    end_y = beg_y + 31;
+
+    // Fail if any lower texture is in use
+
+    if (p_fctextr->TMapY1 < beg_y || p_fctextr->TMapY2 < beg_y || p_fctextr->TMapY3 < beg_y)
+        return false;
+
+    if (p_fctextr->TMapX1 < beg_x || p_fctextr->TMapX2 < beg_x || p_fctextr->TMapX3 < beg_x)
+        return false;
+
+    // Fail if only higher textures are in use
+
+    if (p_fctextr->TMapX1 > end_x && p_fctextr->TMapX2 > end_x && p_fctextr->TMapX3 > end_x)
+        return false;
+
+    if (p_fctextr->TMapY1 > end_y && p_fctextr->TMapY2 > end_y && p_fctextr->TMapY3 > end_y)
+        return false;
+
+    return true;
+}
+
+/** Switches face3 texture to given index, without losing rotation.
+ */
+void face_texture_switch_to_index(struct SingleTexture *p_fctextr, int index)
+{
+    short beg_x, beg_y;
+    short prev_beg_x, prev_beg_y;
+
+    beg_x = (index % 8) * 32;
+    beg_y = (index / 8) * 32;
+
+    prev_beg_x = p_fctextr->TMapX1;
+    if (p_fctextr->TMapX2 < prev_beg_x)
+        prev_beg_x = p_fctextr->TMapX2;
+    if (p_fctextr->TMapX3 < prev_beg_x)
+        prev_beg_x = p_fctextr->TMapX3;
+    prev_beg_x -= (prev_beg_x % 32);
+
+    prev_beg_y = p_fctextr->TMapY1;
+    if (p_fctextr->TMapY2 < prev_beg_y)
+        prev_beg_y = p_fctextr->TMapY2;
+    if (p_fctextr->TMapY3 < prev_beg_y)
+        prev_beg_y = p_fctextr->TMapY3;
+    prev_beg_y -= (prev_beg_y % 32);
+
+    p_fctextr->TMapX1 = beg_x + (p_fctextr->TMapX1 - prev_beg_x);
+    p_fctextr->TMapX2 = beg_x + (p_fctextr->TMapX2 - prev_beg_x);
+    p_fctextr->TMapX3 = beg_x + (p_fctextr->TMapX3 - prev_beg_x);
+
+    p_fctextr->TMapY1 = beg_y + (p_fctextr->TMapY1 - prev_beg_y);
+    p_fctextr->TMapY2 = beg_y + (p_fctextr->TMapY2 - prev_beg_y);
+    p_fctextr->TMapY3 = beg_y + (p_fctextr->TMapY3 - prev_beg_y);
+}
+
+void refresh_old_face_texture_format(struct SingleTexture *p_fctextr,
+  struct SingleTexture *p_oldfctextr, ulong fmtver)
+{
+    LbMemoryCopy(p_fctextr, p_oldfctextr, sizeof(struct SingleTexture));
+
+    if (p_fctextr->Page == 5)
+    {
+        if (face_texture_starts_within_index(p_fctextr, 0)) {
+            p_fctextr->Page = 4;
+            face_texture_switch_to_index(p_fctextr, 42);
+        } else
+        if (face_texture_starts_within_index(p_fctextr, 1)) {
+            p_fctextr->Page = 4;
+            face_texture_switch_to_index(p_fctextr, 43);
+        } else
+        if (face_texture_starts_within_index(p_fctextr, 2)) {
+            p_fctextr->Page = 4;
+            face_texture_switch_to_index(p_fctextr, 44);
+        } else
+        if (face_texture_starts_within_index(p_fctextr, 8)) {
+            p_fctextr->Page = 4;
+            face_texture_switch_to_index(p_fctextr, 50);
+        } else
+        if (face_texture_starts_within_index(p_fctextr, 9)) {
+            p_fctextr->Page = 4;
+            face_texture_switch_to_index(p_fctextr, 51);
+        } else
+        if (face_texture_starts_within_index(p_fctextr, 10)) {
+            p_fctextr->Page = 4;
+            face_texture_switch_to_index(p_fctextr, 52);
         }
     }
 }

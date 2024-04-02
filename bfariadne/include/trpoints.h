@@ -71,6 +71,8 @@ void point_clear(TrPointId pt);
 TrPointId point_set_new_or_reuse(TrCoord pt_x, TrCoord pt_y);
 
 TbBool point_equals(TrPointId pt, TrCoord pt_x, TrCoord pt_y);
+TbBool points_equal(TrPointId pt1, TrPointId pt2);
+
 TbBool point_within_rect_coords(TrPointId pt, TrCoord x1,
   TrCoord y1, TrCoord x2, TrCoord y2);
 /******************************************************************************/

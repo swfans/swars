@@ -216,6 +216,10 @@ void read_weapons_conf_file(void)
                     CONFWRNLOG("Could not read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
                     break;
                 }
+                if ((k < 0) || (k > WEAPON_RANGE_BLOCKS_LIMIT)) {
+                    CONFWRNLOG("Outranged value of \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                    k = WEAPON_RANGE_BLOCKS_LIMIT;
+                }
                 wdef->RangeBlocks = k;
                 CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)wdef->RangeBlocks);
                 break;
@@ -760,6 +764,58 @@ void do_weapon_quantities_proper1(struct Thing *p_person)
     {
         do_weapon_quantities_cryo_to_player(p_person);
     }
+}
+
+void init_laser(struct Thing *p_person, ushort timer)
+{
+    asm volatile ("call ASM_init_laser\n"
+        : : "a" (p_person), "d" (timer));
+}
+
+void init_laser_6shot(struct Thing *p_person, ushort timer)
+{
+#if 0
+    asm volatile ("call ASM_init_laser_6shot\n"
+        : : "a" (p_person), "d" (timer));
+#else
+    struct Thing *p_target;
+    struct Thing *p_thing;
+    short thing;
+    ushort group, n_targets;
+
+    p_target = p_person->PTarget;
+    if (p_target == NULL)
+        return;
+
+    group = p_target->U.UPerson.EffectiveGroup & 0x1F;
+    init_laser(p_person, timer);
+
+    n_targets = 0;
+    for (thing = same_type_head[256 + group]; thing != 0; thing = p_thing->LinkSameGroup)
+    {
+        if (n_targets >= 5)
+            break;
+        p_thing = &things[thing];
+        if ((p_thing->Flag & 0x02) == 0)
+        {
+            int dist_x, dist_z;
+            dist_x = abs((p_thing->X - p_person->X) >> 8);
+            dist_z = abs((p_thing->Z - p_person->Z) >> 8);
+            // Simplification to avoid multiplication and square root to get proper distance
+            if (dist_x <= dist_z)
+                dist_x >>= 1;
+            else
+                dist_z >>= 1;
+            if (dist_x + dist_z + 128 < weapon_defs[WEP_LASER].RangeBlocks << 8)
+            {
+                n_targets++;
+                p_person->PTarget = p_thing;
+                init_laser(p_person, timer);
+            }
+        }
+    }
+    p_person->PTarget = p_target;
+#endif
 }
 
 /******************************************************************************/

@@ -539,6 +539,7 @@ Delete '$INSTDIR\conf\miss002.ini'
 Delete '$INSTDIR\conf\miss003.ini'
 Delete '$INSTDIR\conf\miss099.ini'
 Delete '$INSTDIR\conf\people.ini'
+Delete '$INSTDIR\conf\rules.ini'
 Delete '$INSTDIR\conf\weapons.ini'
 
 
