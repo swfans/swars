@@ -29,7 +29,29 @@ extern "C" {
 
 /******************************************************************************/
 
+/** Initialize the fringe map.
+ *
+ * Fringe map can be used to prepare triangulation data for a map divided into
+ * tiles. For each map tile, the fringe map can be sub-divided, and therefore
+ * provide a better resolution.
+ *
+ * After fringe map was used to generate triangulation data, the triangulation
+ * can be further modified by adding features not aligned to the bounds of
+ * tiles.
+ *
+ * @param p_map Solid blocks map for the subdivided tiles.
+ * @param x1 Starting point subdivided tile index, X dimension.
+ * @param y1 Starting point subdivided tile index, Y dimension.
+ * @param x2 Final point subdivided tile index, X dimension.
+ * @param y2 Final point subdivided tile index, Y dimension.
+ */
 void fringe_init(ubyte *p_map, TrCoord x1, TrCoord y1, TrCoord x2, TrCoord y2);
+
+/** Retrieve size and solidity for a next rectangle based on fringe map.
+ *
+ * After fringe map has been initialized, rectangles aggregating tiles
+ * with the same solid mask can be acquired by calling this function.
+ */
 int fringe_get_rectangle(TrCoord *p_x1, TrCoord *p_y1,
   TrCoord *p_x2, TrCoord *p_y2, ubyte *p_solid);
 

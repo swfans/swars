@@ -19,6 +19,7 @@
 #include "bigmap.h"
 
 #include <stdlib.h>
+#include <limits.h>
 #include "bfmemut.h"
 #include "swlog.h"
 /******************************************************************************/
@@ -33,38 +34,44 @@ void clear_mapwho_on_whole_map(void)
     {
         for (tile_z = 0; tile_z < MAP_TILE_HEIGHT; tile_z++)
         {
-            ulong cellno;
-            cellno = tile_z * MAP_TILE_WIDTH + tile_x;
-            game_my_big_map[cellno].Child = 0;
+            struct MyMapElement *p_mapel;
+            p_mapel = &game_my_big_map[MAP_TILE_WIDTH * tile_z + tile_x];
+            p_mapel->Child = 0;
         }
     }
 }
 
 short get_mapwho_thing_index(short tile_x, short tile_z)
 {
-    struct MyMapElement *mapel;
+    struct MyMapElement *p_mapel;
 
     if ((tile_x < 0) || (tile_x >= MAP_TILE_WIDTH))
         return 0;
     if ((tile_z < 0) || (tile_z >= MAP_TILE_HEIGHT))
         return 0;
 
-    mapel = &game_my_big_map[MAP_TILE_WIDTH * tile_z + tile_x];
+    p_mapel = &game_my_big_map[MAP_TILE_WIDTH * tile_z + tile_x];
 
-    return mapel->Child;
+    return p_mapel->Child;
 }
 
 /** Maps fields from old MyMapElement struct to the current one.
  */
 void refresh_old_my_big_map_format(struct MyMapElement *p_mapel, struct MyMapElementOldV7 *p_oldmapel, ulong fmtver)
 {
-    //TODO make sane matching for old fields
-    LbMemoryCopy(p_mapel, p_oldmapel, 18);
+    LbMemorySet(p_mapel, 0, sizeof(struct MyMapElement));
 
+    p_mapel->Texture = p_oldmapel->Texture;
+    p_mapel->Shade = p_oldmapel->Shade;
+    p_mapel->ShadeR = p_oldmapel->ShadeR;
+    p_mapel->Flags = p_oldmapel->Flags;
     p_mapel->Alt = p_oldmapel->Alt;
+    p_mapel->Zip = p_oldmapel->Zip;
+    p_mapel->Flags2 = p_oldmapel->Flags2;
     p_mapel->Child = p_oldmapel->Child;
     p_mapel->ColHead = p_oldmapel->ColHead;
     p_mapel->ColumnHead = p_oldmapel->ColumnHead;
+    p_mapel->Ambient = p_oldmapel->Ambient;
 
     if (fmtver <= 9)
     {
@@ -168,10 +175,174 @@ void init_search_spiral(void)
 
 int alt_at_point(short x, short z)
 {
+#if 1
     int ret;
     asm volatile ("call ASM_alt_at_point\n"
         : "=r" (ret) : "a" (x), "d" (z));
     return ret;
+#else
+    struct MyMapElement *p_mapel;
+    short tile_x, tile_z;
+    int alt0, alt1, alt2, alt3;
+
+    tile_x = x >> 8;
+    tile_z = z >> 8;
+
+    if ((tile_x < 0) || (tile_x >= MAP_TILE_WIDTH))
+        return 0;
+    if ((tile_z < 0) || (tile_z >= MAP_TILE_HEIGHT))
+        return 0;
+
+    p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (tile_z) + (tile_x)];
+    alt0 = p_mapel->Alt;
+
+    if (tile_x == MAP_TILE_WIDTH - 1) {
+        p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (tile_z) + (tile_x)];
+    } else {
+        p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (tile_z) + (tile_x+1)];
+    }
+    alt1 = p_mapel->Alt;
+
+    if (tile_z == MAP_TILE_HEIGHT - 1) {
+        p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (tile_z) + (tile_x)];
+    } else {
+        p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (tile_z+1) + (tile_x)];
+    }
+    alt2 = p_mapel->Alt;
+
+    if (tile_z == MAP_TILE_HEIGHT - 1) {
+        alt3 = alt1;
+    } else {
+        p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (tile_z+1) + (tile_x+1)];
+        alt3 = p_mapel->Alt;
+    }
+
+    if (alt1 != alt0 || alt0 != alt2 || alt2 != alt3)
+    {
+        short sub_x, sub_z;
+
+        sub_x = x & 0xff;
+        sub_z = z & 0xff;
+        if (sub_x + sub_z >= 256) {
+            alt0 = alt3 + ((alt2 - alt3) * (256 - sub_x) >> 8) + ((alt1 - alt3) * (256 - sub_z) >> 8);
+        } else {
+            alt0 = alt0 + ((alt1 - alt0) * sub_x >> 8) + ((alt2 - alt0) * sub_z >> 8);
+        }
+    }
+    return alt0 << 8;
+#endif
+}
+
+int alt_change_at_tile(short tile_x, short tile_z, int *change_xz)
+{
+    int alt_min, alt_max;
+    int dtx, dtz;
+
+    if (tile_x <= 0 || tile_x >= MAP_TILE_WIDTH-1)
+        return 63;
+    if (tile_z <= 0 || tile_z >= MAP_TILE_HEIGHT-1)
+        return 63;
+
+    alt_min = INT_MAX;
+    alt_max = INT_MIN;
+    for (dtz = 0; dtz <= 1; dtz++)
+    {
+        for (dtx = 0; dtx <= 1; dtx++)
+        {
+            struct MyMapElement *p_mapel;
+            p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (tile_z + dtz) + (tile_x + dtx)];
+            if (alt_min > p_mapel->Alt)
+                alt_min = p_mapel->Alt;
+            if (alt_max < p_mapel->Alt)
+                alt_max = p_mapel->Alt;
+        }
+    }
+    // A bit of simplification here - if min and max are diagonal, the distance
+    // is larger by sqrt(2). But it matters little in this case, plus min-max
+    // selection would have to directly compute steepness to take the diagonal
+    // into account properly
+    if (change_xz != NULL)
+        *change_xz = 256;
+    return abs(alt_max - alt_min);
+}
+
+static ushort count_tiles_around_steeper_than(short tile_x, short tile_z, short steepness)
+{
+    int dtx, dtz;
+    ushort matches;
+
+    matches = 0;
+    for (dtz = -1; dtz <= 1; dtz++)
+    {
+        for (dtx = -1; dtx <= 1; dtx++)
+        {
+            int alt_dt, gnd_dt;
+
+            alt_dt = 8 * alt_change_at_tile(tile_x + dtx, tile_z + dtz, &gnd_dt);
+            if (alt_dt > steepness)
+                matches++;
+        }
+    }
+    return matches;
+}
+
+/** Checks if a tile should not be allowed to walk on due to terrain.
+ *
+ * To do such check during gameplay, MapElement flags should be used - this one
+ * is only to update these flags, if neccessary.
+ */
+static TbBool compute_map_tile_is_blocking_walk(short tile_x, short tile_z)
+{
+    int alt_dt, gnd_dt;
+
+    alt_dt = 8 * alt_change_at_tile(tile_x, tile_z, &gnd_dt);
+
+    // We will compare linear steepness, as simplification of computing angle
+    //int angle = LbArcTanAngle(alt_dt,-gnd_dt);
+
+    // If steepness is higher than 133% of the set limit, then it is plainly blocking
+    if (alt_dt > MAX_WALKABLE_STEEPNESS_PER_256 * 4 / 3)
+        return true;
+
+    // If steepness is lower than the set limit, then it is plainly non-blocking
+    if (alt_dt <= MAX_WALKABLE_STEEPNESS_PER_256)
+        return false;
+
+    // For remaining range, do more complex check: block only if more than 3
+    // tiles in the vicinity are also meeting the blocking critaria.
+    // This avoids having single blocking tiles or rows of tiles which look
+    // walkable but are not; it makes sense that a single tile can be
+    // traversed at higher steepness that a larger steep area
+
+    if ((tile_x <= 0) || (tile_x >= MAP_TILE_WIDTH))
+        return true;
+
+    if ((tile_z <= 0) || (tile_z >= MAP_TILE_HEIGHT))
+        return true;
+
+    if (count_tiles_around_steeper_than(tile_x, tile_z, MAX_WALKABLE_STEEPNESS_PER_256) > 3)
+        return true;
+
+   return false;
+}
+
+void update_map_flags(void)
+{
+    ushort tile_x, tile_z;
+
+    for (tile_x = 0; tile_x < MAP_TILE_WIDTH; tile_x++)
+    {
+        for (tile_z = 0; tile_z < MAP_TILE_HEIGHT; tile_z++)
+        {
+            struct MyMapElement *p_mapel;
+
+            p_mapel = &game_my_big_map[MAP_TILE_WIDTH * tile_z + tile_x];
+            // set having a walkable tile or too steep tile
+            p_mapel->Flags2 &= ~0x04;
+            if (compute_map_tile_is_blocking_walk(tile_x, tile_z))
+                p_mapel->Flags2 |= 0x04;
+        }
+    }
 }
 
 /******************************************************************************/

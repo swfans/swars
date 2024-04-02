@@ -30,6 +30,10 @@ extern "C" {
 
 #define WEAPONS_CARRIED_MAX_COUNT 6
 
+/** Range of the weapon chan never exceed this limit.
+ */
+#define WEAPON_RANGE_BLOCKS_LIMIT 27
+
 enum WeaponType
 {
   WEP_NULL = 0x0,

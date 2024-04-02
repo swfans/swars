@@ -132,6 +132,20 @@ TbBool point_equals(TrPointId pt, TrCoord pt_x, TrCoord pt_y)
     return ((p_point->x == pt_x) && (p_point->y == pt_y));
 }
 
+TbBool points_equal(TrPointId pt1, TrPointId pt2)
+{
+    struct TrPoint *p_point1;
+    struct TrPoint *p_point2;
+
+    if ((pt1 < 0) || (pt2 < 0))
+        return false;
+    if (pt1 == pt2)
+        return true;
+    p_point1 = &triangulation[0].Points[pt1];
+    p_point2 = &triangulation[0].Points[pt2];
+    return ((p_point1->x == p_point2->x) && (p_point1->y == p_point2->y));
+}
+
 TbBool point_within_rect_coords(TrPointId pt, TrCoord x1, TrCoord y1, TrCoord x2, TrCoord y2)
 {
     struct TrPoint *p_point;

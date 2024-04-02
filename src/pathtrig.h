@@ -35,13 +35,30 @@ struct Path;
 
 void triangulation_clear(void);
 void triangulation_allocate(int tgnNo, int maxTrigs);
-void triangulation_select(int trglno);
 
 void triangulate_map(ubyte *p_map);
 void triangulate_area(ubyte *p_map, int x1, int x2, int y1, int y2);
 
+void generate_ground_map(void);
+
 void thin_wall_around_object_rm(ushort obj, ushort colt);
 void generate_map_triangulation(void);
+
+/** Print triangulation arrays into log file, for debug.
+ */
+void print_triangulation(void);
+
+/** Print walk items into log file, for debug.
+ */
+void print_walk_items(void);
+
+/** Print collision columns into log file, for debug.
+ */
+void print_mapel_collision_columns(void);
+
+/** Print collision vectors into log file, for debug.
+ */
+void print_collision_vects(void);
 
 /******************************************************************************/
 #ifdef __cplusplus

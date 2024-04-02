@@ -27,6 +27,8 @@
 #include "wadfile.h"
 #include "swlog.h"
 /******************************************************************************/
+short daily_scientist_death_chance_permil = 20;
+short scientists_per_group = 4;
 
 void load_scientist_lost_reason(ushort reason_no)
 {
@@ -287,7 +289,7 @@ int research_unkn_func_004(ushort percent_per_day, int expect_funding, int real_
     // Adjust points to number of scientists
     points_total = percent_per_day << 8;
     n_remain = research.Scientists;
-    delta = 4;
+    delta = scientists_per_group;
     ppd = points_total;
     if (n_remain > delta)
     {
@@ -412,8 +414,8 @@ int research_daily_progress_for_type(ubyte rstype)
     {
         ingame.Credits -= real_funding;
         ingame.Expenditure += real_funding;
-        //TODO CONFIG make research accident chance a config option
-        if (LbRandomAnyShort() % 100 < 2)
+        // Each day there is a chance of a scientist dying
+        if (LbRandomAnyShort() % 1000 < daily_scientist_death_chance_permil)
         {
             scientists_died++;
             if (LbRandomAnyShort() & 1)

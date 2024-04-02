@@ -79,6 +79,12 @@ ushort count_people_in_group(ushort group, short subtype);
  */
 void thing_group_copy(short pv_group, short nx_group, ubyte allow_kill);
 
+/** Transfer some people of given subtype from one group to the other.
+ * Skips `stay_limit` of people, then transfers the next `tran_limit`.
+ */
+int thing_group_transfer_people(short pv_group, short nx_group, short subtype,
+  int stay_limit, int tran_limit);
+
 /******************************************************************************/
 #ifdef __cplusplus
 }

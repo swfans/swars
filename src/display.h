@@ -5,6 +5,16 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include "bfscreen.h"
+#include "bfanywnd.h"
+
+struct ScreenBufBkp {
+    ubyte *WScreen;
+    long PhysicalScreenWidth;
+    long PhysicalScreenHeight;
+    long GraphicsScreenWidth;
+    long GraphicsScreenHeight;
+    struct TbAnyWindow GWindow;
+};
 
 extern TbScreenMode screen_mode_game_hi;
 extern TbScreenMode screen_mode_game_lo;
@@ -46,9 +56,13 @@ void display_unlock(void);
 void setup_screen_mode(TbScreenMode mode);
 void setup_simple_screen_mode(TbScreenMode mode);
 
+void screen_save_backup_buffer(struct ScreenBufBkp *bkp);
+void screen_switch_to_custom_buffer(struct ScreenBufBkp *bkp,
+  TbPixel *buf, short width, short height);
+void screen_load_backup_buffer(struct ScreenBufBkp *bkp);
+
 const char * SWResourceMapping(short index);
 void swap_wscreen(void);
-void screen_buffer_fill_black(void);
 void show_black_screen(void);
 void my_set_text_window(ushort x1, ushort y1, ushort w, ushort h);
 ulong my_string_width(const char *text);

@@ -41,60 +41,60 @@ void fringe_init(ubyte *p_map, TrCoord x1, TrCoord y1, TrCoord x2, TrCoord y2)
     }
 }
 
-int fringe_scan(TrCoord *p_x1, TrCoord *p_y1, TrCoord *p_x2, TrCoord *p_y2)
+int fringe_scan(TrCoord *p_x, TrCoord *p_y, TrCoord *p_width, TrCoord *p_height)
 {
     TrCoord x1, y1, x2;
-    TrCoord x, cx;
+    TrCoord x;
 
-    x = fringe_x1;
+    x1 = fringe_x1;
+    x2 = fringe_x2;
     y1 = fringe_y2;
+    x = fringe_x1;
     while (x < fringe_x2)
     {
-        cx = x + 1;
         if (y1 <= fringe_y[x]) {
             x++;
             continue;
         }
         y1 = fringe_y[x];
         x1 = x++;
-        while (cx < fringe_x2)
+        while (x < fringe_x2)
         {
-            if (y1 != fringe_y[cx])
+            if (y1 != fringe_y[x])
                 break;
-            cx++;
             x++;
         }
-        x2 = x - x1;
+        x2 = x;
     }
 
     if (y1 == fringe_y2)
         return 0;
 
-    *p_x1 = x1;
-    *p_y1 = y1;
-    *p_x2 = x2;
-    *p_y2 = fringe_y2 - y1;
+    *p_x = x1;
+    *p_y = y1;
+    *p_width = x2 - x1;
+    *p_height = fringe_y2 - y1;
     return 1;
 }
 
 int fringe_get_rectangle(TrCoord *p_x1, TrCoord *p_y1,
   TrCoord *p_x2, TrCoord *p_y2, ubyte *p_solid)
 {
-    TrCoord frx1, fry1, frx2, fry2;
+    TrCoord frx, fry, frw, frh;
     int dx, dy;
     ubyte solid;
     ubyte *m_start;
     ubyte *m;
     int k;
 
-    if (!fringe_scan(&frx1, &fry1, &frx2, &fry2))
+    if (!fringe_scan(&frx, &fry, &frw, &frh))
         return 0;
 
-    m_start = &fringe_map[256 * fry1 + frx1];
+    m_start = &fringe_map[256 * fry + frx];
     solid = *m_start;
 
     m = m_start + 1;
-    for (dx = 1; dx < frx2; dx++)
+    for (dx = 1; dx < frw; dx++)
     {
         if (solid != *m)
             break;
@@ -102,21 +102,21 @@ int fringe_get_rectangle(TrCoord *p_x1, TrCoord *p_y1,
     }
 
     m = m_start + 256;
-    for (dy = 1; dy < fry2; dy++)
+    for (dy = 1; dy < frh; dy++)
     {
         if (memcmp(m, m_start, dx) != 0)
             break;
         m += 256;
     }
 
-    for (k = frx1; k < frx1 + dx; k++)
-      fringe_y[k] = fry1 + dy;
+    for (k = frx; k < frx + dx; k++)
+      fringe_y[k] = fry + dy;
 
     *p_solid = solid;
-    *p_x1 = frx1;
-    *p_y1 = fry1;
-    *p_x2 = frx1 + dx;
-    *p_y2 = fry1 + dy;
+    *p_x1 = frx;
+    *p_y1 = fry;
+    *p_x2 = frx + dx;
+    *p_y2 = fry + dy;
     return 1;
 }
 

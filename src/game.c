@@ -45,6 +45,7 @@
 #include "enginsngobjs.h"
 #include "enginsngtxtr.h"
 #include "engintrns.h"
+#include "enginzoom.h"
 #include "game_data.h"
 #include "guiboxes.h"
 #include "guitext.h"
@@ -85,6 +86,7 @@
 #include "thing.h"
 #include "packet.h"
 #include "player.h"
+#include "rules.h"
 #include "vehicle.h"
 #include "wadfile.h"
 #include "weapon.h"
@@ -102,6 +104,14 @@
 /** Expected sizes for translation strings TXT files.
  */
 #define EXPECTED_LANG_TXT_SIZE 8000
+
+/** Amount of buckets for draw list elements.
+ */
+#define BUCKETS_COUNT 10000
+
+/** Max amount of draw list elements within a bucket.
+ */
+#define BUCKET_ITEMS_MAX 2000
 
 #pragma pack(1)
 
@@ -186,7 +196,6 @@ extern long save_slot_base;
 extern short word_1C6E08;
 extern short word_1C6E0A;
 
-extern ubyte byte_1C83D1;
 extern ubyte byte_1CAB64[];
 extern ubyte byte_1DB088[];
 extern long dword_1DC36C;
@@ -200,16 +209,11 @@ extern struct GamePanel *game_panel;
 extern struct GamePanel game_panel_lo[];
 extern struct GamePanel unknstrct7_arr2[];
 
-extern ushort word_1810E4;
-extern ubyte byte_1810E6[40];
-extern ubyte byte_18110E[40];
-
 extern long dword_176CC4;
-extern ushort unkn3de_len;
 
 extern long dword_19F4F8;
 
-extern ushort buckets[10000];
+extern ushort buckets[BUCKETS_COUNT];
 extern struct SortSprite *p_current_sort_sprite;
 extern struct SortLine *p_current_sort_line;
 extern struct DrawItem *p_current_draw_item;
@@ -244,7 +248,6 @@ extern long scanner_unkn3CC;
 extern ushort netgame_agent_pos_x[8][4];
 extern ushort netgame_agent_pos_y[8][4];
 
-extern long dword_176D58;
 extern ubyte byte_153198;
 
 extern ubyte unkn_changing_color_1;
@@ -288,8 +291,6 @@ struct TbLoadFiles unk02_load_files[] =
   { "",					(void **)NULL, 				(void **)NULL,			0, 0, 0 }
 };
 
-TbBool level_deep_fix = false;
-
 extern TbFileHandle packet_rec_fh;
 ushort packet_rec_no = 0;
 
@@ -304,44 +305,7 @@ ubyte scanner_width_pct = 20;
 /** Height of the scanner map area, in percentage of screen. */
 ubyte scanner_height_pct = 25;
 
-/** Minimum user zoom (when most area is visible). */
-short user_zoom_min = 127;
-/** Maxumum user zoom (largest magnification). */
-short user_zoom_max = 260;
-
-ushort zoom_levels[] = {
-    256, 256, 256, 256, 256, 256, 240, 230,
-    220, 210, 200, 190, 180, 170, 170, 170,
-    170, 170, 170, 170, 170, 165, 160, 155,
-    150, 145, 140, 135,
-};
-
 void ac_purple_unkn1_data_to_screen(void);
-
-void zoom_update(short zoom_min, short zoom_max)
-{
-    int i, dt;
-    int zoom_arr_min, zoom_arr_max;
-
-    dt = (zoom_max - zoom_min);
-    zoom_arr_min = zoom_min + ((dt * 16) >> 8);
-    zoom_arr_max = zoom_max - ((dt * 8) >> 8);
-    for (i = 0; i < 28; i++)
-    {
-        int n, val;
-        // The curve is steeper in 2nd half than in first half
-        if (i > 14)
-            n = 15;
-        else
-            n = 8;
-        val = zoom_arr_min + ((dt * n * i) >> 8);
-        if (val > zoom_arr_max)
-            val = zoom_arr_max;
-        zoom_levels[27-i] = val;
-    }
-    user_zoom_min = zoom_min;
-    user_zoom_max = zoom_max;
-}
 
 void PacketRecord_Close(void)
 {
@@ -556,21 +520,6 @@ void merged_noop_unkn1(int a1)
 {
 }
 
-void debug_level(const char *text, int player)
-{
-    short thing;
-
-    thing = things_used_head;
-    while (thing != 0)
-    {
-        struct Thing *p_thing;
-
-        p_thing = &things[thing];
-        // TODO place debug/verification code
-        thing = p_thing->LinkChild;
-    }
-}
-
 void player_debug(const char *text)
 {
     // TODO place debug/verification code
@@ -587,35 +536,6 @@ void colour_tables_ghost_fixup(void)
     for (i = 0; i < PALETTE_8b_COLORS; i++)
         opal[i] = ipal[i];
 }
-
-ushort get_scaled_zoom(ushort zoom)
-{
-    short h;
-
-    h = min(lbDisplay.GraphicsScreenWidth, lbDisplay.GraphicsScreenHeight);
-    if (h < 400)
-        return zoom;
-    else
-        return  h * zoom / 240;
-}
-
-short get_overall_scale_min(void)
-{
-    return get_scaled_zoom(user_zoom_min);
-}
-
-short get_overall_scale_max(void)
-{
-    return get_scaled_zoom(user_zoom_max);
-}
-
-short get_render_area_for_zoom(short zoom)
-{
-    if (lbDisplay.GraphicsScreenHeight < 400)
-        return 24;
-    return 30; // for zoom=127 and screen proportion 4:3
-}
-
 
 void game_setup_stuff(void)
 {
@@ -920,7 +840,7 @@ void play_smacker(ushort vid_type)
             y = (lbDisplay.GraphicsScreenHeight - raw_h) / 2 - 1;
 
             p_campgn = &campaigns[background_type];
-            screen_buffer_fill_black();
+            LbScreenClear(0);
             cover_screen_rect_with_raw_file(x, y, raw_w, raw_h, p_campgn->OutroBkFn);
 
             sprintf(fname, "qdata/pal%d.dat", 0);
@@ -1292,64 +1212,23 @@ void unkn_f_pressed_func(void)
     }
 }
 
-void fix_level_indexes(short missi, ulong fmtver, ubyte reload, TbBool deep)
+void load_level_wrap(short level, short missi, ubyte reload)
 {
-#if 0
-    asm volatile ("call ASM_fix_level_indexes\n"
-        :  :  : "eax" );
-#endif
-    ushort objectv;
-    short thing;
-
-    fix_thing_commands_indexes(deep);
-
-    for (objectv = 1; objectv < next_used_lvl_objective; objectv++)
-    {
-        struct Objective *p_objectv;
-
-        p_objectv = &game_used_lvl_objectives[objectv];
-        p_objectv->Level = (current_level - 1) % 15 + 1;
-        p_objectv->Map = current_map;
-        fix_single_objective(p_objectv, objectv, "UL");
+    LbMouseChangeSprite(NULL);
+    if (0) { // No need to conserve memory to such extent - mem_game[] was changed
+        // Optimization for memory conservation - reserve no space for game_commands,
+        // and instead re-use some of triangulation area during map load.
+        void **p = mem_game[34].BufferPtr;
+        *p = dword_177750;
+        mem_game[34].N = 3100;
     }
+    read_primveh_obj(primvehobj_fname, 1);
 
-    for (objectv = 1; objectv < next_objective; objectv++)
-    {
-        struct Objective *p_objectv;
+    load_level_pc(level, missi, reload);
 
-        p_objectv = &game_objectives[objectv];
-        fix_single_objective(p_objectv, objectv, "S");
-    }
-
-    // Used objectives are not part of the level file, but part of
-    // the mission file. If restarting level, leave these intact,
-    // as fixups were already applied on first load.
-    if (!reload)
-    {
-        fix_mission_used_objectives(missi);
-    }
-
-    for (thing = 1; thing < THINGS_LIMIT; thing++)
-    {
-        things[thing].ThingOffset = thing;
-    }
-
-    for (thing = 1; thing < STHINGS_LIMIT; thing++)
-    {
-        sthings[-thing].ThingOffset = -thing;
-    }
-}
-
-void build_same_type_headers(void)
-{
-    asm volatile ("call ASM_build_same_type_headers\n"
-        :  :  : "eax" );
-}
-
-void level_misc_update(void)
-{
-    asm volatile ("call ASM_level_misc_update\n"
-        :  :  : "eax" );
+    // No idea what exactly pressing F during level load does
+    if (lbKeyOn[KC_F])
+        unkn_f_pressed_func();
 }
 
 int sub_73C64(char *a1, ubyte a2)
@@ -1370,525 +1249,6 @@ void unkn_lights_processing(void)
 {
     asm volatile ("call ASM_unkn_lights_processing\n"
         :  :  : "eax" );
-}
-
-void unkn_object_shift_03(ushort objectno)
-{
-    asm volatile ("call ASM_unkn_object_shift_03\n"
-        : : "a" (objectno));
-}
-
-void unkn_object_shift_02(int norm1, int norm2, ushort objectno)
-{
-    asm volatile ("call ASM_unkn_object_shift_02\n"
-        : : "a" (norm1), "d" (norm2), "b" (objectno));
-}
-
-void func_6031c(short tx, short tz, short a3, short ty)
-{
-    asm volatile ("call ASM_func_6031c\n"
-        : : "a" (tx), "d" (tz), "b" (a3), "c" (ty));
-}
-
-/** Transfer some people of given subtype from one group to the other.
- * Skips `stay_limit` of people, then transfers the next `tran_limit`.
- */
-int thing_group_transfer_people(short pv_group, short nx_group, short subtype, int stay_limit, int tran_limit)
-{
-    short thing;
-    struct Thing *p_thing;
-    int count;
-
-    count = 0;
-    for (thing = things_used_head; thing != 0; thing = p_thing->LinkChild)
-    {
-        p_thing = &things[thing];
-
-        if (p_thing->Type != TT_PERSON)
-            continue;
-
-        if ((subtype != -1) && (p_thing->SubType != subtype))
-            continue;
-
-        if (stay_limit > 0) {
-            stay_limit--;
-            continue;
-        }
-
-        if (p_thing->U.UObject.Group == pv_group) {
-            p_thing->U.UObject.Group = nx_group;
-            count++;
-        }
-        if (p_thing->U.UObject.EffectiveGroup == pv_group) {
-            p_thing->U.UObject.EffectiveGroup = nx_group;
-        }
-
-        if (count >= tran_limit)
-            break;
-    }
-    return count;
-}
-
-short find_group_which_looks_like_human_player(TbBool strict)
-{
-    short group;
-    short partial_group;
-    short n_partial;
-
-    n_partial = 0;
-    for (group = 0; group < PEOPLE_GROUPS_COUNT; group++)
-    {
-        int n_all, n_agents, n_zealots, n_punks;
-
-        n_all = count_people_in_group(group, -1);
-        if (n_all < 1)
-            continue;
-
-        if (strict && (n_all > 4))
-            continue;
-
-        n_agents = count_people_in_group(group, SubTT_PERS_AGENT);
-        if (n_agents == 4)
-            return group;
-        n_zealots = count_people_in_group(group, SubTT_PERS_ZEALOT);
-        if (n_zealots == 4)
-            return group;
-        n_punks = count_people_in_group(group, SubTT_PERS_PUNK_F) +
-          count_people_in_group(group, SubTT_PERS_PUNK_M);
-        if (n_punks == 4)
-            return group;
-
-        if ((n_agents > 0) && (!strict || (n_agents <= 4)))
-        {
-            if (n_partial < n_agents) {
-                partial_group = group;
-                n_partial = n_agents;
-            }
-        }
-        if ((n_zealots > 0) && (!strict || (n_zealots <= 4)))
-        {
-            if (n_partial < n_zealots) {
-                partial_group = group;
-                n_partial = n_zealots;
-            }
-        }
-        if ((n_punks > 0) && (!strict || (n_punks <= 4)))
-        {
-            if (n_partial < n_punks) {
-                partial_group = group;
-                n_partial = n_punks;
-            }
-        }
-    }
-
-    if (n_partial > 0)
-        return partial_group;
-    return -1;
-}
-
-void level_perform_deep_fix(void)
-{
-    {
-        short pv_group, nx_group;
-        TbBool need_fix;
-        int i;
-
-        pv_group = level_def.PlayableGroups[0];
-        i = count_people_in_group(pv_group, -1);
-        need_fix = (i < 1) || (i > 4);
-        if (need_fix) {
-            nx_group = find_group_which_looks_like_human_player(true);
-            if (nx_group >= 0) {
-                LOGWARN("Local player group %d has no team; switching to better group %d",
-                  (int)pv_group, (int)nx_group);
-                level_def.PlayableGroups[0] = nx_group;
-                need_fix = false;
-            }
-        }
-        if (need_fix) {
-            short lp_group;
-            int n;
-
-            nx_group = find_group_which_looks_like_human_player(false);
-            lp_group = -1;
-            if (nx_group >= 0)
-                lp_group = find_unused_group_id(true);
-            if (lp_group >= 0) {
-                thing_group_copy(pv_group, nx_group, 0x01|0x02|0x04);
-                n = thing_group_transfer_people(nx_group, lp_group, SubTT_PERS_AGENT, 0, 4);
-                if (n <= 0)
-                    n = thing_group_transfer_people(nx_group, lp_group, SubTT_PERS_ZEALOT, 0, 4);
-                if (n <= 0)
-                    n = thing_group_transfer_people(nx_group, lp_group, -1, 0, 4);
-                if (n > 0) {
-                    LOGWARN("Local player group %d has no team; switching to new group %d based on %d",
-                      (int)pv_group, (int)lp_group, (int)nx_group);
-                    level_def.PlayableGroups[0] = lp_group;
-                    need_fix = false;
-                }
-            }
-        }
-        if (need_fix) {
-            LOGWARN("Local player group %d has no team; fix attempts failed",
-              (int)pv_group);
-        }
-    }
-
-#if 0
-    // While the group 0 sometimes looks suspicious, it generally works correctly
-    // We should transfer other things away from that group, instead. So, this got disabled.
-    // Also, switching the group would require fixing its index in all objectives and commands.
-    if (level_def.PlayableGroups[0] == 0) {
-        short pv_group, nx_group;
-
-        pv_group = level_def.PlayableGroups[0];
-        nx_group = find_unused_group_id(true);
-        LOGWARN("Local player group is %d; switching to %d",
-          (int)pv_group, (int)nx_group);
-        if (nx_group > 0) {
-            thing_group_copy(pv_group, nx_group, 0x01|0x02);
-            thing_group_transfer_people(pv_group, nx_group, -1, 0, 4);
-        }
-    }
-#endif
-}
-
-ulong load_level_pc_handle(TbFileHandle lev_fh)
-{
-    ulong fmtver;
-    TbBool mech_initialized;
-    long limit;
-    int i, k, n;
-
-    mech_initialized = 0;
-    fmtver = 0;
-    LbFileRead(lev_fh, &fmtver, 4);
-
-    if (fmtver >= 1)
-    {
-        ushort count;
-        short new_thing;
-        struct Thing loc_thing;
-        struct Thing *p_thing;
-
-        count = 0;
-        LbFileRead(lev_fh, &count, 2);
-
-        LOGSYNC("Level fmtver=%lu n_things=%hd", fmtver, count);
-        for (i = 0; i < count; i++)
-        {
-            short angle;
-
-            new_thing = get_new_thing();
-            p_thing = &things[new_thing];
-            memcpy(&loc_thing, p_thing, sizeof(struct Thing));
-            if (fmtver >= 13) {
-                assert(sizeof(struct Thing) == 168);
-                LbFileRead(lev_fh, p_thing, sizeof(struct Thing));
-            } else {
-                struct ThingOldV9 s_oldthing;
-                assert(sizeof(s_oldthing) == 216);
-                LbFileRead(lev_fh, &s_oldthing, sizeof(s_oldthing));
-                refresh_old_thing_format(p_thing, &s_oldthing, fmtver);
-            }
-            LOGNO("Thing(%hd,%hd) group %hd at (%d,%d,%d) type=%d,%d",
-              p_thing->ThingOffset, p_thing->U.UPerson.UniqueID,
-              p_thing->U.UPerson.Group,
-              p_thing->X >> 8, p_thing->Y >> 8, p_thing->Z >> 8,
-              (int)p_thing->Type, (int)p_thing->SubType);
-
-            if ((p_thing->Z >> 8) < 256)
-                p_thing->Z += (256 << 8);
-            if ((p_thing->X >> 16) >= 128)
-                p_thing->X = (64 << 16);
-            p_thing->PTarget = 0;
-            p_thing->LinkParent = loc_thing.LinkParent;
-            p_thing->LinkChild = loc_thing.LinkChild;
-            // We have limited amount of group definitions
-            if (p_thing->U.UObject.Group >= PEOPLE_GROUPS_COUNT)
-                p_thing->U.UObject.Group = 0;
-            // All relevant thing types must have the values below at same position
-            p_thing->U.UObject.EffectiveGroup = p_thing->U.UObject.Group;
-
-            if (new_thing == 0)
-                continue;
-
-            add_node_thing(new_thing);
-
-            if (p_thing->Type == TT_PERSON)
-            {
-                ushort person_anim;
-
-                if (fmtver < 15)
-                    // Causes invisible NPCs when non-zero
-                    p_thing->Flag2 = 0;
-                p_thing->U.UPerson.Flag3 = 0;
-                p_thing->Flag2 &= 0x21000000;
-                if ((p_thing->Flag & TngF_Unkn02000000) != 0)
-                {
-                    p_thing->ThingOffset = p_thing - things;
-                    remove_thing(new_thing);
-                    delete_node(p_thing);
-                    continue;
-                }
-                person_anim = people_frames[p_thing->SubType][p_thing->U.UPerson.AnimMode];
-                p_thing->StartFrame = person_anim - 1;
-                p_thing->Frame = nstart_ani[person_anim + p_thing->U.UPerson.Angle];
-                init_person_thing(p_thing);
-                p_thing->Flag |= TngF_Unkn0004;
-                if (fmtver < 12)
-                    sanitize_cybmods_fmtver11_flags(&p_thing->U.UPerson.UMod);
-            }
-
-            if (p_thing->Type == SmTT_DROPPED_ITEM)
-            {
-                p_thing->Frame = nstart_ani[p_thing->StartFrame + 1];
-            }
-
-            if (p_thing->Type == TT_VEHICLE)
-            {
-                if (fmtver < 17)
-                    p_thing->U.UVehicle.Armour = 4;
-                p_thing->U.UVehicle.PassengerHead = 0;
-                p_thing->Flag2 &= 0x1000000;
-                if (fmtver <= 8)
-                    p_thing->Y >>= 3;
-
-                k = next_local_mat++;
-                LbFileRead(lev_fh, &local_mats[k], 36);
-
-                p_thing->U.UVehicle.MatrixIndex = next_local_mat - 1;
-                byte_1C83D1 = 0;
-
-                n = next_normal;
-                func_6031c(p_thing->X >> 8, p_thing->Z >> 8, -prim_unknprop01 - p_thing->StartFrame, p_thing->Y >> 8);
-                k = next_normal;
-                unkn_object_shift_03(next_object - 1);
-                unkn_object_shift_02(n, k, next_object - 1);
-
-                k = p_thing - things;
-                p_thing->U.UVehicle.Object = next_object - 1;
-                game_objects[next_object - 1].ZScale = k;
-                VNAV_unkn_func_207(p_thing);
-                k = p_thing->U.UVehicle.MatrixIndex;
-                angle = LbArcTanAngle(local_mats[k].R[0][2], local_mats[k].R[2][2]);
-                p_thing->U.UVehicle.AngleY = (angle + LbFPMath_PI) & LbFPMath_AngleMask;
-
-                veh_add(p_thing, p_thing->StartFrame);
-                k = p_thing->U.UVehicle.MatrixIndex;
-                angle = LbArcTanAngle(local_mats[k].R[0][2], local_mats[k].R[2][2]);
-                p_thing->U.UVehicle.AngleY = (angle + LbFPMath_PI) & LbFPMath_AngleMask;
-                if (p_thing->SubType == SubTT_VEH_MECH)
-                {
-                    if (!mech_initialized)
-                    {
-                        init_mech();
-                        mech_unkn_func_02();
-                        mech_initialized = 1;
-                    }
-                    mech_unkn_func_09(new_thing);
-                }
-                debug_level(" placed vehicle", 1);
-            }
-        }
-    }
-    LbFileRead(lev_fh, &next_command, sizeof(ushort));
-    limit = get_memory_ptr_allocated_count((void **)&game_commands);
-    if ((limit >= 0) && (next_command > limit)) {
-        LOGERR("Restricting \"%s\", wanted %d, limit %ld", "game_commands", (int)next_command, limit);
-        next_command = limit;
-    }
-    assert(sizeof(struct Command) == 32);
-    LbFileRead(lev_fh, game_commands, sizeof(struct Command) * next_command);
-
-    LbFileRead(lev_fh, &level_def, 44);
-    for (i = 0; i < 8; i++)
-    {
-        if (level_def.PlayableGroups[i] >= PEOPLE_GROUPS_COUNT)
-            level_def.PlayableGroups[i] = 0;
-    }
-
-    LbFileRead(lev_fh, engine_mem_alloc_ptr + engine_mem_alloc_size - 1320 - 33, 1320);
-    LbFileRead(lev_fh, war_flags, 32 * sizeof(struct WarFlag));
-    LbFileRead(lev_fh, &word_1531E0, sizeof(ushort));
-    LOGSYNC("Level fmtver=%lu n_command=%hu word_1531E0=%hu", fmtver, next_command, word_1531E0);
-    for (k = 0; k < PEOPLE_GROUPS_COUNT; k++)
-    {
-        for (i = 0; i < 8; i++)
-        {
-            if (war_flags[k].Guardians[i] >= 32)
-                war_flags[k].Guardians[i] = 0;
-        }
-    }
-    LbFileRead(lev_fh, engine_mem_alloc_ptr + engine_mem_alloc_size - 32000, 15 * word_1531E0);
-    LbFileRead(lev_fh, &unkn3de_len, sizeof(ushort));
-    LbFileRead(lev_fh, engine_mem_alloc_ptr + engine_mem_alloc_size - 32000, unkn3de_len);
-
-    if (fmtver >= 4)
-    {
-        ulong count;
-        short thing;
-
-        count = 0;
-        LbFileRead(lev_fh, &count, 2);
-        for (i = count; i > 0; i--)
-        {
-            struct SimpleThing loc_thing;
-            struct SimpleThing *p_thing;
-
-            thing = get_new_sthing();
-            p_thing = &sthings[thing];
-            memcpy(&loc_thing, p_thing, 60);
-            LbFileRead(lev_fh, p_thing, 60);
-            if (p_thing->Type == SmTT_CARRIED_ITEM)
-            {
-                p_thing->LinkParent = loc_thing.LinkParent;
-                p_thing->LinkChild = loc_thing.LinkChild;
-                remove_sthing(thing);
-            }
-            else
-            {
-              if (p_thing->Type == SmTT_DROPPED_ITEM) {
-                  p_thing->Frame = nstart_ani[p_thing->StartFrame + 1];
-              }
-              p_thing->LinkParent = loc_thing.LinkParent;
-              p_thing->LinkChild = loc_thing.LinkChild;
-              if (thing != 0)
-                  add_node_sthing(thing);
-            }
-            LOGNO("Thing(%hd,%hd) at (%d,%d,%d) type=%d,%d",
-              p_thing->ThingOffset, p_thing->UniqueID,
-              p_thing->X >> 8, p_thing->Y >> 8, p_thing->Z >> 8,
-              (int)p_thing->Type, (int)p_thing->SubType);
-        }
-    }
-
-    if (fmtver >= 6)
-    {
-        LbFileRead(lev_fh, &word_1810E4, 2);
-        if (word_1810E4 < 1000)
-            word_1810E4 = 1000;
-        if (word_1810E4 > 9000)
-            word_1810E4 = 4000;
-    }
-
-    if (fmtver >= 7) {
-        LbFileRead(lev_fh, &next_used_lvl_objective, sizeof(ushort));
-        assert(sizeof(struct Objective) == 32);
-        LbFileRead(lev_fh, game_used_lvl_objectives, sizeof(struct Objective) * next_used_lvl_objective);
-    } else {
-        next_used_lvl_objective = 1;
-    }
-
-    if (fmtver >= 9) {
-        LbFileRead(lev_fh, byte_1810E6, 40);
-        LbFileRead(lev_fh, byte_18110E, 40);
-    }
-
-    if (fmtver >= 10)
-        LbFileRead(lev_fh, game_level_miscs, 4400);
-
-    if (fmtver >= 16)
-        LbFileRead(lev_fh, &dword_176D58, 4);
-
-    return fmtver;
-}
-
-void load_level_pc(short level, short missi, ubyte reload)
-{
-    short next_level, prev_level;
-    TbFileHandle lev_fh;
-    char lev_fname[52];
-
-    next_level = level;
-    gameturn = 0;
-    LbMouseChangeSprite(NULL);
-    if (0) { // No need to conserve memory to such extent - mem_game[] was changed
-        // Optimization for memory conservation - reserve no space for game_commands,
-        // and instead re-use some of triangulation area during map load.
-        void **p = mem_game[34].BufferPtr;
-        *p = dword_177750;
-        mem_game[34].N = 3100;
-    }
-    read_primveh_obj(primvehobj_fname, 1);
-
-    prev_level = current_level;
-    if (next_level < 0)
-    {
-        next_level = -next_level;
-        word_1C8446 = 1;
-        if (next_level <= 15)
-            sprintf(lev_fname, "%s/c%03dl%03d.dat", game_dirs[DirPlace_Levels].directory,
-                current_map, next_level);
-        else
-            sprintf(lev_fname, "%s/c%03dl%03d.d%d", game_dirs[DirPlace_Levels].directory,
-               current_map, (next_level - 1) % 15 + 1, (next_level - 1) / 15);
-        if (next_level > 0)
-            current_level = next_level;
-    }
-    if (next_level <= 0) {
-        LOGERR("Next level index is not positive, load skipped");
-        return;
-    }
-    LOGSYNC("Next level %hd prev level %hd mission %hd reload 0x%x",
-      next_level, prev_level, missi, (uint)reload);
-
-    /* XXX: This fixes the inter-mission memory corruption bug
-     * mefisto: No idea what "the" bug is, to be tested and described properly (or re-enabled)
-     */
-#if 0
-    if ((ingame.Flags & GamF_Unkn0008) == 0)
-    {
-        if (prev_level)
-            global_3d_store(1);
-        global_3d_store(0);
-    }
-#else
-    (void)prev_level; // avoid unused var warning
-#endif
-    debug_level(" load level restart coms", 1);
-
-    lev_fh = LbFileOpen(lev_fname, Lb_FILE_MODE_READ_ONLY);
-    if (lev_fh != INVALID_FILE)
-    {
-        ulong fmtver;
-        int i;
-
-        word_1C8446 = 1;
-        word_176E38 = 0;
-
-        fmtver = load_level_pc_handle(lev_fh);
-
-        LbFileClose(lev_fh);
-
-        if (fmtver <= 10)
-        {
-            for (i = 1; i < next_command; i++)
-                game_commands[i].Arg2 = 1;
-            for (i = 1; i < next_used_lvl_objective; i++)
-                game_used_lvl_objectives[i].Arg2 = 1;
-        }
-
-        check_and_fix_commands();
-
-        build_same_type_headers();
-
-        check_and_fix_thing_commands();
-
-        if (fmtver >= 10)
-            level_misc_update();
-
-        if (level_deep_fix) {
-            level_perform_deep_fix();
-        }
-        fix_level_indexes(missi, fmtver, reload, level_deep_fix);
-    } else
-    {
-        LOGERR("Could not open mission file, load skipped");
-    }
-    // No idea what exactly pressing F during level load does
-    if (lbKeyOn[KC_F])
-        unkn_f_pressed_func();
 }
 
 TbBool is_unkn_current_player(void)
@@ -2006,30 +1366,15 @@ void process_tank_turret(struct Thing *p_tank)
 #endif
 }
 
-void process_view_inputs(int thing)
+/** Step overall scale towards given zoom value.
+ *
+ * Overal scale changes gradually towards given value; shis
+ * function does a one step update of the overall_scale.
+ */
+void process_overall_scale(int zoom)
 {
-#if 0
-    asm volatile ("call ASM_process_view_inputs\n"
-        : : "a" (thing));
-#else
-    struct Thing *p_person;
-    struct WeaponDef *wdef;
-    int zoom;
     int zdelta, sdelta;
     short scmin, scmax, scale;
-
-    p_person = &things[thing];
-    wdef = &weapon_defs[p_person->U.UPerson.CurrentWeapon];
-    zoom = zoom_levels[wdef->RangeBlocks];
-    if (zoom > user_zoom_max)
-        zoom = user_zoom_max;
-    if (zoom < user_zoom_min)
-        zoom = user_zoom_min;
-    // User zoom is not scaled to resolution
-    if (zoom >= ingame.UserZoom)
-        ingame.UserZoom = zoom;
-    else
-        zoom = ingame.UserZoom;
 
     zoom = get_scaled_zoom(zoom);
 
@@ -2050,6 +1395,26 @@ void process_view_inputs(int thing)
     else if (scale > scmax)
         scale = scmax;
     overall_scale = scale;
+}
+
+void process_view_inputs(int thing)
+{
+#if 0
+    asm volatile ("call ASM_process_view_inputs\n"
+        : : "a" (thing));
+#else
+    struct Thing *p_person;
+    int zoom;
+
+    p_person = &things[thing];
+    zoom = get_weapon_zoom_min(p_person->U.UPerson.CurrentWeapon);
+    // User zoom is not scaled to resolution
+    if (zoom >= ingame.UserZoom)
+        ingame.UserZoom = zoom;
+    else
+        zoom = ingame.UserZoom;
+
+    process_overall_scale(zoom);
 #endif
 }
 
@@ -3874,10 +3239,10 @@ void draw_screen(void)
     short n;
     ushort i;
 
-    p_bucket = &buckets[9999];
+    p_bucket = &buckets[BUCKETS_COUNT-1];
     if (dword_19F4F8)
     {
-        for (n = 9999; n >= 0; n--)
+        for (n = BUCKETS_COUNT-1; n >= 0; n--)
         {
             iidx = *p_bucket;
             *p_bucket = 0;
@@ -3933,7 +3298,7 @@ void draw_screen(void)
     }
     else
     {
-        for (n = 9999; n >= 0; n--)
+        for (n = BUCKETS_COUNT-1; n >= 0; n--)
         {
             iidx = *p_bucket;
             *p_bucket = 0;
@@ -3947,7 +3312,7 @@ void draw_screen(void)
             for (i = 0; iidx != 0; iidx = itm->Child)
             {
               i++;
-              if (i > 2000)
+              if (i > BUCKET_ITEMS_MAX)
                   break;
               itm = &game_draw_list[iidx];
               switch (itm->Type)
@@ -4148,7 +3513,7 @@ void init_outro(void)
     lbKeyOn[KC_RETURN] = 0;
 
     LbPaletteFade(0, 0xC8u, 1);
-    screen_buffer_fill_black();
+    LbScreenClear(0);
     swap_wscreen();
     StopAllSamples();
     reset_heaps();
@@ -4171,7 +3536,7 @@ void init_outro(void)
         process_sound_heap();
         func_2e440();
         swap_wscreen();
-        screen_buffer_fill_black();
+        LbScreenClear(0);
     }
 
     while (1)
@@ -4205,7 +3570,7 @@ void init_outro(void)
             }
           }
           swap_wscreen();
-          screen_buffer_fill_black();
+          LbScreenClear(0);
     }
     StopAllSamples();
     reset_heaps();
@@ -4313,7 +3678,7 @@ void show_simple_load_screen(void)
     char *text = gui_strings[376];
     int w,h;
 
-    screen_buffer_fill_black();
+    LbScreenClear(0);
     lbFontPtr = small_font;
     w = LbTextStringWidth(text);
     h = LbTextStringHeight(text);
@@ -5285,7 +4650,7 @@ void init_game(ubyte reload)
     debug_trace_setup(0);
 
     if (next_level != 0)
-        load_level_pc(-next_level, missi, reload_level);
+        load_level_wrap(-next_level, missi, reload_level);
     else
         LOGWARN("Requested level %hd; load skipped", next_level);
     // The file name is formatted in original code, but doesn't seem to be used
@@ -5317,7 +4682,7 @@ void prep_single_mission(void)
     load_objectives_text();
     init_game(0);
     load_multicolor_sprites();
-    screen_buffer_fill_black();
+    LbScreenClear(0);
     generate_shadows_for_multicolor_sprites();
     adjust_mission_engine_to_video_mode();
 }
@@ -5377,18 +4742,17 @@ void create_tables_file_from_fade(void)
     int i, k;
     unsigned char *curbuf;
     // Note that the input file is not normally available with the game
-    len = LbFileLoadAt("data/fade.dat", fade_data);
+    len = LbFileLoadAt("data/fade.dat", scratch_buf1);
     if (len == Lb_FAIL) {
         LOGERR("Cannot find input file for tables update");
         return;
     }
-    curbuf = fade_data;
+    curbuf = scratch_buf1;
     for (i = 0; i < 256; i++) {
         for (k = 0; k < 64; k++) {
           pixmap.fade_table[256 * k + i] = *(curbuf + (256+64) * k + i);
         }
     }
-    fade_data = curbuf;
     LbFileSaveAt("data/tables.dat", &pixmap, sizeof(pixmap));
 }
 
@@ -5405,6 +4769,7 @@ void game_setup(void)
     engine_mem_alloc_ptr = LbMemoryAlloc(engine_mem_alloc_size);
     load_texturemaps();
     LbDataLoadAll(unk02_load_files);
+    read_rules_file();
     read_weapons_conf_file();
     read_cybmods_conf_file();
     bang_init();
@@ -5436,7 +4801,7 @@ void game_setup(void)
     init_engine();
     if ( !cmdln_param_bcg )
     {
-        screen_buffer_fill_black();
+        LbScreenClear(0);
         swap_wscreen();
         LbPaletteSet(display_palette);
     }
@@ -5503,7 +4868,7 @@ void game_process_sub09(void)
             ushort pos;
             ubyte *ptr;
             pos = LbRandomAnyShort() + (gameturn >> 2);
-            ptr = &vec_tmap[pos];
+            ptr = vec_tmap[0] + pos;
             *ptr = pixmap.fade_table[40*PALETTE_8b_COLORS + *ptr];
         }
         break;
@@ -7146,17 +6511,19 @@ void reload_background(void)
     asm volatile ("call ASM_reload_background\n"
         :  :  : "eax" );
 #else
+    struct ScreenBufBkp bkp;
+
     proj_origin.X = lbDisplay.GraphicsScreenWidth / 2 - 1;
     proj_origin.Y = ((480 * 143) >> 8) + 1;
     if (screentype == 6 || screentype == 10 || restore_savegame)
     {
-        ubyte *scr_bkp;
+        screen_switch_to_custom_buffer(&bkp, back_buffer,
+          lbDisplay.GraphicsScreenWidth, lbDisplay.GraphicsScreenHeight);
 
-        scr_bkp = lbDisplay.WScreen;
-        lbDisplay.WScreen = back_buffer;
         cover_screen_rect_with_sprite(0, 0, lbDisplay.GraphicsScreenWidth,
-         lbDisplay.GraphicsScreenHeight, &sprites_Icons0_0[168]);
-        lbDisplay.WScreen = scr_bkp;
+          lbDisplay.GraphicsScreenHeight, &sprites_Icons0_0[168]);
+
+        screen_load_backup_buffer(&bkp);
     }
     else
     {
@@ -7179,20 +6546,22 @@ void reload_background(void)
         }
         else
         {
-            ubyte *scr_bkp;
             short raw_w, raw_h;
             short x, y;
+
             raw_w = 640;
             raw_h = 480;
             x = (lbDisplay.GraphicsScreenWidth - raw_w) / 2;
             y = 0;
 
-            scr_bkp = lbDisplay.WScreen;
-            lbDisplay.WScreen = back_buffer;
-            screen_buffer_fill_black();
+            screen_switch_to_custom_buffer(&bkp, back_buffer,
+              lbDisplay.GraphicsScreenWidth, lbDisplay.GraphicsScreenHeight);
+
+            LbScreenClear(0);
             // TODO menu scaling, maybe?
             cover_screen_rect_with_raw_file(x, y, raw_w, raw_h, str);
-            lbDisplay.WScreen = scr_bkp;
+
+            screen_load_backup_buffer(&bkp);
         }
     }
 
@@ -7887,22 +7256,8 @@ ubyte do_user_interface(void)
             n = -2;
         else
             n = 2;
-        render_area_a += n;
-
-        if ( lbShift & KMod_SHIFT )
-            n = -2;
-        else
-            n = 2;
-        render_area_b += n;
-
-        if (render_area_a < 2)
-            render_area_a = 2;
-        if (render_area_b < 2)
-            render_area_b = 2;
-        if (render_area_a > 28)
-            render_area_a = 28;
-        if (render_area_b > 28)
-            render_area_b = 28;
+        render_area_a = bound_render_area(render_area_a + n);
+        render_area_b = bound_render_area(render_area_b + n);
     }
 
     // Entering pause screen
@@ -9943,7 +9298,7 @@ void show_load_and_prep_mission(void)
     if ( start_into_mission )
     {
         load_multicolor_sprites();
-        screen_buffer_fill_black();
+        LbScreenClear(0);
         generate_shadows_for_multicolor_sprites();
         adjust_mission_engine_to_video_mode();
 
@@ -9988,7 +9343,7 @@ void show_menu_screen(void)
     {
         game_high_resolution = 0;
         LbMouseReset();
-        screen_buffer_fill_black();
+        LbScreenClear(0);
         setup_screen_mode(screen_mode_menu);
         reload_background();
         my_set_text_window(0, 0, lbDisplay.GraphicsScreenWidth, lbDisplay.GraphicsScreenHeight);
@@ -10454,6 +9809,8 @@ void game_process(void)
           (ingame.DisplayMode == DpM_UNKN_1) ||
           (ingame.DisplayMode == DpM_UNKN_3B))
           process_things();
+      if (debug_hud_things)
+          things_debug_hud();
       if (ingame.DisplayMode != DpM_UNKN_37)
           process_packets();
       joy_input();

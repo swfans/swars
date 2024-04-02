@@ -13,7 +13,10 @@
 #include "guitext.h"
 #include "game.h"
 #include "game_data.h"
+#include "lvfiles.h"
+#include "lvobjctv.h"
 #include "network.h"
+#include "thing.h"
 #include "util.h"
 
 #if defined WIN32 && defined main
@@ -66,7 +69,6 @@ const struct TbNamedEnum conf_file_disk_inst_lev[] = {
 
 TbBool cmdln_fullscreen = true;
 TbBool cmdln_lores_stretch = true;
-extern TbBool level_deep_fix;
 
 static void
 print_help (const char *argv0)
@@ -79,6 +81,8 @@ print_help (const char *argv0)
 "                -C        Test scenario 100?\n"
 "                -D        Direct keyboard mode; queries kb rather than use\n"
 "                          events/interrupts\n"
+"                -d <str>  Activate debug functions; t - things debug HUD,\n"
+"                          o - objectives debug HUD, c - collision debug HUD\n"
 "                -E <num>  Joystick config\n"
 "                -F        Re-compute and re-save `tables.dat` colour tables\n"
 "                          file, using `fade.dat` as input\n"
@@ -142,7 +146,7 @@ static TbBool process_options(int *argc, char ***argv)
     argv0 = (*argv)[0];
     index = 0;
 
-    while ((val = getopt_long (*argc, *argv, "ABCDE:FgHhI:Lm:Np:qrSs:Ttu:Ww", options, &index)) >= 0)
+    while ((val = getopt_long (*argc, *argv, "ABCDd:E:FgHhI:Lm:Np:qrSs:Ttu:Ww", options, &index)) >= 0)
     {
         LOGDBG("Command line option: '%c'", val);
         switch (val)
@@ -162,6 +166,27 @@ static TbBool process_options(int *argc, char ***argv)
 
         case 'D':
             keyboard_mode_direct = 1;
+            break;
+
+        case 'd':
+            for (tmpint = 0; optarg[tmpint] != '\0'; tmpint++)
+            {
+                switch (optarg[tmpint])
+                {
+                case 't':
+                    debug_hud_things = true;
+                    break;
+                case 'o':
+                    byte_1C844F = 1;
+                    break;
+                case 'c':
+                    debug_hud_collision = 1;
+                    break;
+                default:
+                    LOGERR("Invalid value after '-d' parameter. Unexpected char '%c'.", optarg[tmpint]);
+                    return false;
+                }
+            }
             break;
 
         case 'E':
@@ -470,9 +495,9 @@ main (int argc, char **argv)
 
     printf("Syndicate Wars Port "VERSION"\n"
         "The original by Bullfrog\n"
-        "Ported by Unavowed <unavowed@vexillium.org> "
-        "and Gynvael Coldwind <gynvael@vexillium.org>\n"
-        "Web site: http://swars.vexillium.org/\n");
+        "Ported by Unavowed and Gynvael Coldwind.\n"
+        "Expanded by other fans, signed in commits.\n"
+        "Web site: https://github.com/swfans/swars/\n");
 
     fixup_options();
     adjust_memory_use();

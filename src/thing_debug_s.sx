@@ -732,7 +732,7 @@ format_debug_msg_switch_b8d10:
 
 
 /*----------------------------------------------------------------*/
-person_command_to_text:	/* 0xb8f48 */
+ASM_person_command_to_text:	/* 0xb8f48 */
 /*----------------------------------------------------------------*/
 		push   %ecx
 		push   %esi
@@ -3825,7 +3825,7 @@ unused_func_205:	/* 0xba6e4 */
 		xor    %edx,%edx
 		sub    %eax,%esi
 		xor    %eax,%eax
-		call   person_command_to_text
+		call   ac_person_command_to_text
 		test   %di,%di
 		je     jump_baba9
 		mov    0x4c(%esp),%eax
@@ -4047,7 +4047,7 @@ unused_func_205:	/* 0xba6e4 */
 		mov    %esp,%eax
 		movswl %di,%edx
 		xor    %ebx,%ebx
-		call   person_command_to_text
+		call   ac_person_command_to_text
 		test   %al,%al
 		je     jump_bab67
 		mov    0x4a(%esp),%eax

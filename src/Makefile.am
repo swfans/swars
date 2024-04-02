@@ -92,7 +92,12 @@ swars_SOURCES = \
 	../bfariadne/include/trpath.h \
 	../bfariadne/include/trpoints.h \
 	../bfariadne/src/trpoints.c \
+	../bfariadne/src/trfind8.c \
+	../bfariadne/include/trfind8.h \
+	../bfariadne/src/trstate.c \
 	../bfariadne/include/trstate.h \
+	../bfariadne/src/delaunay.c \
+	../bfariadne/include/delaunay.h \
 	config.h \
 	bigmap.c \
 	bigmap.h \
@@ -122,6 +127,8 @@ swars_SOURCES = \
 	enginsngtxtr.h \
 	engintrns.c \
 	engintrns.h \
+	enginzoom.c \
+	enginzoom.h \
 	febrief.c \
 	febrief.h \
 	fedebrief.c \
@@ -173,6 +180,7 @@ swars_SOURCES = \
 	network.c \
 	network.h \
 	pathtrig.c \
+	pathtrig_debug.c \
 	pathtrig.h \
 	packet.c \
 	packet.h \
@@ -184,6 +192,8 @@ swars_SOURCES = \
 	player.h \
 	research.c \
 	research.h \
+	rules.c \
+	rules.h \
 	scanner.c \
 	scanner.h \
 	scandraw.c \
@@ -196,6 +206,7 @@ swars_SOURCES = \
 	swlog.h \
 	thing.c \
 	thing.h \
+	thing_debug.c \
 	thing_debug_s.sx \
 	timer.c \
 	timer.h \

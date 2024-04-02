@@ -37,15 +37,21 @@ extern "C" {
  */
 #define SPIRAL_STEPS_COUNT   1700
 
+#define MAX_WALKABLE_STEEPNESS (21 * LbFPMath_PI / 180)
+
+/* Linear distance equal to tan(MAX_WALKABLE_STEEPNESS) * 256
+ */
+#define MAX_WALKABLE_STEEPNESS_PER_256 98
+
 struct MyMapElement { // sizeof=18
   ushort Texture; /**< offs=0x00 Index of SingleFloorTexture for this tile, and texture flags. */
   ushort Shade;
-  ushort field_4;
-  ushort Alt; /**< offs=0x06 Ground element altitude. */
+  ubyte ShadeR;
+  ubyte Flags;
+  short Alt; /**< offs=0x06 Ground element altitude (at the beginning of the tile). */
   short Child; /**< offs=0x08 Index of a first Thing in a chain of things located on this element. */
   ushort ColHead; /**< offs=0x0A Index of ColVectList for this tile. */
-  ubyte field_C;
-  ubyte field_D;
+  ushort Ambient; /**< offs=0x0C Background illumination. */
   ubyte Zip;
   ubyte Flags2;
   ushort ColumnHead; /**< offs=0x10 Index of ColColumn for this tile, storing collision properties. */
@@ -53,17 +59,18 @@ struct MyMapElement { // sizeof=18
 
 struct MyMapElementOldV7 { // sizeof=24
   ushort Texture; /**< offs=0x00 Index of SingleFloorTexture for this tile, and texture flags. */
-  ushort field_2;
-  ushort field_4;
-  ushort field_6;
-  ushort field_8;
-  ushort Alt; /**< offs=0x0A Ground element altitude. */
+  ushort Shade;
+  ubyte ShadeR;
+  ubyte Flags;
+  ushort mefield_6;
+  ushort mefield_8;
+  short Alt; /**< offs=0x0A Ground element altitude. */
   ubyte Zip;
   ubyte Flags2;
   short Child; /**< offs=0x0E Index of a first Thing in a chain of things located on this element. */
   ushort ColHead; /**< offs=0x10 Index of ColVectList for this tile. */
-  ushort field_12;
-  ubyte field_14[2];
+  ushort Ambient;
+  ushort mefield_14;
   ushort ColumnHead; /**< offs=0x16 Index of ColColumn for this tile, storing collision properties. */
 };
 
@@ -87,6 +94,14 @@ void refresh_old_my_big_map_format(struct MyMapElement *p_mapel,
 short get_mapwho_thing_index(short tile_x, short tile_z);
 void init_search_spiral(void);
 int alt_at_point(short x, short z);
+
+/** Returns maximal change of altitude between corners of given tile.
+ */
+int alt_change_at_tile(short tile_x, short tile_z, int *change_xz);
+
+/** Sets some of the map elements flags based on other properties.
+ */
+void update_map_flags(void);
 /******************************************************************************/
 #ifdef __cplusplus
 }

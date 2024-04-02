@@ -68,6 +68,8 @@ extern struct Triangulation triangulation[TRIANGULATIONS_COUNT];
  */
 extern int selected_triangulation_no; // = -1;
 
+void triangulation_select(int trglno);
+
 /******************************************************************************/
 #ifdef __cplusplus
 }
