@@ -30,6 +30,22 @@ extern "C" {
 #define MAP_TILE_WIDTH 128
 #define MAP_TILE_HEIGHT 128
 
+/* Convert precise map coordinate to normal map coordinate.
+ */
+#define PRCCOORD_TO_MAPCOORD(pcor) ((pcor) >> 8)
+
+/* Convert normal map coordinate to precise map coordinate.
+ */
+#define MAPCOORD_TO_PRCCOORD(mcor, ppos) (((mcor) << 8) + (ppos))
+
+/* Convert normal map coordinate to tile no.
+ */
+#define MAPCOORD_TO_TILE(mcor) ((mcor) >> 8)
+
+/* Convert tile(block) no to normal map coordinate.
+ */
+#define TILE_TO_MAPCOORD(tile, mpos) (((tile) << 8) + (mpos))
+
 /** Length of the spiral, which speeds up searching for things in vicinity
  * of given map coords. It does not make sense to search this way if the
  * amount of tiles searched exceeds half of things limit; so this should

@@ -1161,7 +1161,7 @@ void add_walk_items_for_face_things_near(short x, short y, short z, short radius
     short shift_x, shift_z;
     short range;
 
-    range = ((radius + 127) >> 8);
+    range = MAPCOORD_TO_TILE(radius + 127);
 
     for (shift_x = -range; shift_x <= range; shift_x++)
     {
@@ -1172,8 +1172,8 @@ void add_walk_items_for_face_things_near(short x, short y, short z, short radius
             short thing;
             int i;
 
-            tile_x = (x >> 8) + shift_x;
-            tile_z = (z >> 8) + shift_z;
+            tile_x = MAPCOORD_TO_TILE(x) + shift_x;
+            tile_z = MAPCOORD_TO_TILE(z) + shift_z;
             if (tile_x < 0 || tile_x >= MAP_TILE_WIDTH)
                 continue;
             if (tile_z < 0 || tile_z >= MAP_TILE_HEIGHT)
@@ -1394,8 +1394,8 @@ void update_mapel_collision_columns_around_triangle(short fcobj_x, short fcobj_y
             ccx = basept_x + (delta2_x * sh_B + delta1_x * sh_A) / FACE_SWEEP_STEPS;
             ccy = basept_y + (delta2_y * sh_B + delta1_y * sh_A) / FACE_SWEEP_STEPS;
             ccz = basept_z + (delta2_z * sh_B + delta1_z * sh_A) / FACE_SWEEP_STEPS;
-            tile_x = ccx >> 8;
-            tile_z = ccz >> 8;
+            tile_x = MAPCOORD_TO_TILE(ccx);
+            tile_z = MAPCOORD_TO_TILE(ccz);
             if (tile_x < 1 || tile_x >= MAP_TILE_WIDTH)
                 continue;
             if (tile_z < 1 || tile_z >= MAP_TILE_HEIGHT)
@@ -1541,8 +1541,8 @@ void add_next_col_vect_to_vects_list(short x, short z, short thing, short face, 
     struct MyMapElement *p_mapel;
     struct ColVectList *p_cvlist;
 
-    tile_x = x >> 8;
-    tile_z = z >> 8;
+    tile_x = MAPCOORD_TO_TILE(x);
+    tile_z = MAPCOORD_TO_TILE(z);
     if (tile_x < 0 || tile_x >= MAP_TILE_WIDTH) {
         return;
     }

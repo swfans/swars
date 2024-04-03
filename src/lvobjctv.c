@@ -559,6 +559,9 @@ void draw_objective_dirctly_on_engine_scene(ushort objectv)
 }
 
 /** Prepares objective text. Can also draw objective data and additional info directly on 3D scene.
+ *
+ * @param objectv Index of the target objective.
+ * @param flag Resets objective drawind if 1, otherwise draws the objective.
  */
 void draw_objective(ushort objectv, ubyte flag)
 {
@@ -661,6 +664,10 @@ TbBool thing_is_destroyed(short thing)
 TbBool vehicle_is_destroyed(short thing)
 {
     struct Thing *p_thing;
+
+    if (thing == 0)
+        return false;
+
     p_thing = &things[thing];
     return thing_is_destroyed(thing) || (p_thing->Type != TT_VEHICLE);
 }
@@ -680,6 +687,11 @@ TbBool person_is_dead(short thing)
     return (p_thing->State == PerSt_DEAD);
 }
 
+/** Returns whether given thing has arrived at given objective position.
+ *
+ * @param thing Thing index (of any type) to to check.
+ * @param p_objectv Pointer to the objective which XYZ coords and radius will be checked.
+ */
 TbBool thing_arrived_at_objectv(short thing, struct Objective *p_objectv)
 {
     if (thing == 0)
@@ -691,9 +703,9 @@ TbBool thing_arrived_at_objectv(short thing, struct Objective *p_objectv)
 
 /** Returns whether given item (which may be weapon) has arrived at given objective position.
  *
- * @param thing Thing index for the item.
+ * @param thing Thing index for the item to check.
  * @param weapon Weapon type, in case it was picked up and therfore is no longer at expected Thing index.
- * @param p_objectv
+ * @param p_objectv Pointer to the objective which XYZ coords and radius will be checked.
  */
 TbBool item_arrived_at_objectv(short thing, ushort weapon, struct Objective *p_objectv)
 {

@@ -19,6 +19,7 @@
 #include "scanner.h"
 
 #include "bfutility.h"
+#include "bigmap.h"
 #include "campaign.h"
 #include "thing.h"
 #include "player.h"
@@ -381,7 +382,7 @@ ushort do_thing_arrive_area_scanner(struct Objective *p_objectv, ushort next_sig
         colr = colour_lookup[2];
 
     n = next_signal;
-    SCANNER_init_blippoint(n, p_objectv->X << 8, p_objectv->Z << 8, colr);
+    SCANNER_init_blippoint(n, MAPCOORD_TO_PRCCOORD(p_objectv->X,0), MAPCOORD_TO_PRCCOORD(p_objectv->Z,0), colr);
     n++;
     if (thing <= 0) {
         struct SimpleThing *p_sthing;
@@ -396,14 +397,18 @@ ushort do_thing_arrive_area_scanner(struct Objective *p_objectv, ushort next_sig
     }
     if (dword_1DB1A0)
     {
-        SCANNER_update_arcpoint(0, Z, X, p_objectv->Z << 8, p_objectv->X << 8);
+        SCANNER_update_arcpoint(0, Z, X,
+          MAPCOORD_TO_PRCCOORD(p_objectv->Z,0),
+          MAPCOORD_TO_PRCCOORD(p_objectv->X,0));
     }
     else
     {
         struct Thing *p_thing;
         p_thing = &things[ingame.TrackThing];
         if (((ingame.TrackThing == 0) || p_thing->Flag & TngF_PlayerAgent) && (ingame.Flags & GamF_Unkn2000))
-            SCANNER_init_arcpoint(Z, X, p_objectv->Z << 8, p_objectv->X << 8, 1);
+            SCANNER_init_arcpoint(Z, X,
+              MAPCOORD_TO_PRCCOORD(p_objectv->Z,0),
+              MAPCOORD_TO_PRCCOORD(p_objectv->X,0), 1);
     }
     SCANNER_keep_arcs = 1;
     return n;
@@ -480,7 +485,8 @@ ushort do_group_arrive_area_scanner(struct Objective *p_objectv, ushort next_sig
         colr = colour_lookup[2];
 
     n = next_signal;
-    SCANNER_init_blippoint(n, p_objectv->X << 8, p_objectv->Z << 8, colr);
+    SCANNER_init_blippoint(n, MAPCOORD_TO_PRCCOORD(p_objectv->X,0),
+      MAPCOORD_TO_PRCCOORD(p_objectv->Z,0), colr);
     n++;
     return n;
 }

@@ -1312,11 +1312,11 @@ void process_tank_turret(struct Thing *p_tank)
             p_tank->OldTarget = 20000;
             return;
         }
-        target_x = p_target->X >> 8;
-        target_y = p_target->Z >> 8;
+        target_x = PRCCOORD_TO_MAPCOORD(p_target->X);
+        target_y = PRCCOORD_TO_MAPCOORD(p_target->Z);
     }
     angle = p_turret->U.UMGun.AngleY
-        - angle_between_points(target_x, target_y, p_tank->X >> 8, p_tank->Z >> 8);
+        - angle_between_points(target_x, target_y, PRCCOORD_TO_MAPCOORD(p_tank->X), PRCCOORD_TO_MAPCOORD(p_tank->Z));
     if (angle < -LbFPMath_PI)
         angle += 2*LbFPMath_PI;
     else if (angle > LbFPMath_PI)
@@ -3740,8 +3740,8 @@ void teleport_current_agent(PlayerInfo *p_locplayer)
     short dcthing;
     dcthing = p_locplayer->DirectControl[mouser];
     delete_node(&things[dcthing]);
-    things[dcthing].X = mouse_map_x << 8;
-    things[dcthing].Z = mouse_map_z << 8;
+    things[dcthing].X = MAPCOORD_TO_PRCCOORD(mouse_map_x,0);
+    things[dcthing].Z = MAPCOORD_TO_PRCCOORD(mouse_map_z,0);
     things[dcthing].Y = alt_at_point(mouse_map_x, mouse_map_z);
     add_node_thing(dcthing);
 }
@@ -4296,8 +4296,8 @@ void init_player(void)
         place_single_player();
         p_agent = p_locplayer->MyAgent[0];
         if (p_agent != NULL) {
-            ingame.TrackX = p_agent->X >> 8;
-            ingame.TrackZ = p_agent->Z >> 8;
+            ingame.TrackX = PRCCOORD_TO_MAPCOORD(p_agent->X);
+            ingame.TrackZ = PRCCOORD_TO_MAPCOORD(p_agent->Z);
         } else {
             ingame.TrackX = 128;
             ingame.TrackZ = 128;
@@ -4404,8 +4404,8 @@ ushort make_group_into_players(ushort group, ushort plyr, ushort max_agent, shor
             p_player->DirectControl[plagent] = p_person->ThingOffset;
             p_person->Flag |= TngF_Unkn1000;
             if ((plyr == local_player_no) && (plagent == 0)) {
-                ingame.TrackX = p_person->X >> 8;
-                ingame.TrackZ = p_person->Z >> 8;
+                ingame.TrackX = PRCCOORD_TO_MAPCOORD(p_person->X);
+                ingame.TrackZ = PRCCOORD_TO_MAPCOORD(p_person->Z);
             }
         }
         players[plyr].MyAgent[plagent] = p_person;
@@ -4466,8 +4466,8 @@ ushort make_group_into_players(ushort group, ushort plyr, ushort max_agent, shor
             else
                 do_weapon_quantities1(p_person);
         }
-        netgame_agent_pos_x[plyr][plagent] = p_person->X >> 8;
-        netgame_agent_pos_y[plyr][plagent] = p_person->Z >> 8;
+        netgame_agent_pos_x[plyr][plagent] = PRCCOORD_TO_MAPCOORD(p_person->X);
+        netgame_agent_pos_y[plyr][plagent] = PRCCOORD_TO_MAPCOORD(p_person->Z);
         p_person->State = PerSt_NONE;
         { // Why are we tripling the health?
             uint health;
@@ -7340,15 +7340,15 @@ ubyte do_user_interface(void)
                       p_agent = p_locplayer->MyAgent[n];
                       p_pckt = &packets[local_player_no];
 
-                      ingame.TrackX = p_agent->X >> 8;
-                      engn_yc = p_agent->Y >> 8;
-                      ingame.TrackZ = p_agent->Z >> 8;
+                      ingame.TrackX = PRCCOORD_TO_MAPCOORD(p_agent->X);
+                      engn_yc = PRCCOORD_TO_MAPCOORD(p_agent->Y);
+                      ingame.TrackZ = PRCCOORD_TO_MAPCOORD(p_agent->Z);
                       dcthing = p_locplayer->DirectControl[mouser];
                       build_packet(p_pckt, PAct_17, dcthing, p_agent->ThingOffset, 0, 0);
                       if (p_agent->ThingOffset == (short)p_locplayer->DirectControl[mouser])
                       {
-                          engn_xc = p_agent->X >> 8;
-                          engn_zc = p_agent->Z >> 8;
+                          engn_xc = PRCCOORD_TO_MAPCOORD(p_agent->X);
+                          engn_zc = PRCCOORD_TO_MAPCOORD(p_agent->Z);
                       }
                     }
                     last_sel_agent_turn[n] = gameturn;
@@ -7557,7 +7557,8 @@ TbBool check_scanner_input(void)
     int map_x, map_y, map_z;
 
     SCANNER_find_position(lbDisplay.MouseX, lbDisplay.MouseY, &map_z, &map_x);
-    if (map_x >> 8 >= 0 && map_x >> 8 < 128 && map_z >> 8 >= 0 && map_z >> 8 < 128)
+    if (MAPCOORD_TO_TILE(map_x) >= 0 && MAPCOORD_TO_TILE(map_x) < 128
+      && MAPCOORD_TO_TILE(map_z) >= 0 && MAPCOORD_TO_TILE(map_z) < 128)
     {
         PlayerInfo *p_locplayer;
 
@@ -8081,14 +8082,14 @@ TbBool check_panel_input(short panel)
                     dcthing = p_locplayer->DirectControl[mouser];
                     if ((things[dcthing].Flag & 0x0400) == 0)
                     {
-                        ingame.TrackX = p_agent->X >> 8;
-                        engn_yc = p_agent->Y >> 8;
-                        ingame.TrackZ = p_agent->Z >> 8;
+                        ingame.TrackX = PRCCOORD_TO_MAPCOORD(p_agent->X);
+                        engn_yc = PRCCOORD_TO_MAPCOORD(p_agent->Y);
+                        ingame.TrackZ = PRCCOORD_TO_MAPCOORD(p_agent->Z);
                         build_packet(p_pckt, PAct_17, dcthing, p_agent->ThingOffset, 0, 0);
                         if (p_agent->ThingOffset == dcthing)
                         {
-                            engn_xc = p_agent->X >> 8;
-                            engn_zc = p_agent->Z >> 8;
+                            engn_xc = PRCCOORD_TO_MAPCOORD(p_agent->X);
+                            engn_zc = PRCCOORD_TO_MAPCOORD(p_agent->Z);
                         }
                         return 1;
                     }

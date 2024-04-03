@@ -140,7 +140,8 @@ void snprint_thing(char *buf, ulong buflen, struct Thing *p_thing)
 
     {
         if (nparams) { sprintf(s, ", "); s += strlen(s); }
-        sprintf(s, "Coord(%d,%d,%d)", (int)p_thing->X >> 8, (int)p_thing->Y >> 8, (int)p_thing->Z >> 8);
+        sprintf(s, "Coord(%d,%d,%d)", (int)PRCCOORD_TO_MAPCOORD(p_thing->X),
+          (int)PRCCOORD_TO_MAPCOORD(p_thing->Y), (int)PRCCOORD_TO_MAPCOORD(p_thing->Z));
         s += strlen(s);
         nparams++;
     }
@@ -180,7 +181,8 @@ void snprint_sthing(char *buf, ulong buflen, struct SimpleThing *p_sthing)
 
     {
         if (nparams) { sprintf(s, ", "); s += strlen(s); }
-        sprintf(s, "Coord(%d,%d,%d)", (int)p_sthing->X >> 8, (int)p_sthing->Y >> 8, (int)p_sthing->Z >> 8);
+        sprintf(s, "Coord(%d,%d,%d)", (int)PRCCOORD_TO_MAPCOORD(p_sthing->X),
+          (int)PRCCOORD_TO_MAPCOORD(p_sthing->Y), (int)PRCCOORD_TO_MAPCOORD(p_sthing->Z));
         s += strlen(s);
         nparams++;
     }
@@ -266,13 +268,13 @@ TbBool thing_is_within_circle(short thing, short X, short Z, ushort R)
     if (thing <= 0) {
         struct SimpleThing *p_sthing;
         p_sthing = &sthings[thing];
-        dtX = (p_sthing->X >> 8) - X;
-        dtZ = (p_sthing->Z >> 8) - Z;
+        dtX = PRCCOORD_TO_MAPCOORD(p_sthing->X) - X;
+        dtZ = PRCCOORD_TO_MAPCOORD(p_sthing->Z) - Z;
     } else {
         struct Thing *p_thing;
         p_thing = &things[thing];
-        dtX = (p_thing->X >> 8) - X;
-        dtZ = (p_thing->Z >> 8) - Z;
+        dtX = PRCCOORD_TO_MAPCOORD(p_thing->X) - X;
+        dtZ = PRCCOORD_TO_MAPCOORD(p_thing->Z) - Z;
     }
     r2 = R * R;
     return ((dtZ * dtZ + dtX * dtX) < r2);
@@ -346,8 +348,8 @@ static short find_thing_type_on_spiral_near_tile(short X, short Z, ushort R, lon
     short tile_x, tile_z;
     int around;
 
-    tile_x = X >> 8;
-    tile_z = Z >> 8;
+    tile_x = MAPCOORD_TO_TILE(X);
+    tile_z = MAPCOORD_TO_TILE(Z);
     for (around = 0; around < spiral_len; around++)
     {
         struct MapOffset *sstep;
@@ -593,7 +595,7 @@ short find_thing_type_within_circle_with_filter(short X, short Z, ushort R,
     ushort tile_dist;
     short thing;
 
-    tile_dist = (R + 256) >> 8;
+    tile_dist = MAPCOORD_TO_TILE(R + 256);
     if (tile_dist <= spiral_dist_tiles_limit)
     {
         thing = find_thing_type_on_spiral_near_tile(X, Z, R,
@@ -782,8 +784,8 @@ short new_thing_smoke_gen_clone(struct SimpleThing *p_clsthing)
     struct SimpleThing *p_sthing;
     short thing;
 
-    thing = add_static(p_clsthing->X >> 8, p_clsthing->Y, p_clsthing->Z >> 8,
-      0, p_clsthing->Timer1);
+    thing = add_static(PRCCOORD_TO_MAPCOORD(p_clsthing->X), p_clsthing->Y,
+      PRCCOORD_TO_MAPCOORD(p_clsthing->Z), 0, p_clsthing->Timer1);
     p_sthing = &sthings[thing];
     p_sthing->Type = SmTT_SMOKE_GENERATOR;
     p_sthing->U.UEffect.VX = p_clsthing->U.UEffect.VX;
@@ -802,8 +804,8 @@ short new_thing_static_clone(struct SimpleThing *p_clsthing)
     short thing;
     ushort frame;
 
-    thing = add_static(p_clsthing->X >> 8, p_clsthing->Y, p_clsthing->Z >> 8,
-      p_clsthing->StartFrame + 1, p_clsthing->Timer1);
+    thing = add_static(PRCCOORD_TO_MAPCOORD(p_clsthing->X), p_clsthing->Y,
+      PRCCOORD_TO_MAPCOORD(p_clsthing->Z), p_clsthing->StartFrame + 1, p_clsthing->Timer1);
     p_sthing = &sthings[thing];
     p_sthing->U.UEffect.VZ = p_clsthing->U.UEffect.VZ;
     frame = p_sthing->StartFrame;
@@ -823,8 +825,9 @@ short new_thing_building_clone(struct Thing *p_clthing, struct M33 *p_clmat, sho
     struct SingleObject *p_sobj;
     int i;
 
-    p_thing = create_building_thing(p_clthing->X >> 8, p_clthing->Y, p_clthing->Z >> 8,
-            p_clthing->U.UObject.Object, p_clthing->U.UObject.NumbObjects, p_clthing->ThingOffset);
+    p_thing = create_building_thing(PRCCOORD_TO_MAPCOORD(p_clthing->X), p_clthing->Y,
+      PRCCOORD_TO_MAPCOORD(p_clthing->Z), p_clthing->U.UObject.Object,
+      p_clthing->U.UObject.NumbObjects, p_clthing->ThingOffset);
 
     p_thing->U.UObject.Token = p_clthing->U.UObject.Token;
     p_thing->U.UObject.TokenDir = p_clthing->U.UObject.TokenDir;
