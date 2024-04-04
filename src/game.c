@@ -3422,6 +3422,13 @@ void draw_screen(void)
     p_current_draw_item = &game_draw_list[1];
 }
 
+void apply_super_quick_light(short lx, short lz, ushort b, ubyte *mapwho_lights)
+{
+    asm volatile (
+      "call ASM_apply_super_quick_light\n"
+        : : "a" (lx), "d" (lz), "b" (b), "c" (mapwho_lights));
+}
+
 void process_engine_unk3(void)
 {
     asm volatile ("call ASM_process_engine_unk3\n"
