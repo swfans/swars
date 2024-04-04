@@ -3439,22 +3439,26 @@ void apply_super_quick_light(short lx, short lz, ushort b, ubyte *mapwho_lights)
     short ratile_x_beg, ratile_z_beg;
     short ratile_x, ratile_z;
 
-    tile_x_beg = MAPCOORD_TO_TILE(lx) - 2;
-    tile_z_beg = MAPCOORD_TO_TILE(lz) - 2;
-    if (tile_x_beg <= -SUPER_QUICK_RADIUS || tile_x_beg >= MAP_TILE_WIDTH)
-        return;
+    tile_z_beg = MAPCOORD_TO_TILE(lz) - SUPER_QUICK_RADIUS/2;
+    tile_x_beg = MAPCOORD_TO_TILE(lx) - SUPER_QUICK_RADIUS/2;
     if (tile_z_beg <= -SUPER_QUICK_RADIUS || tile_z_beg >= MAP_TILE_HEIGHT)
         return;
-
-    mapcor_x = TILE_TO_MAPCOORD(render_area_a,0) / 2;
-    mapcor_z = TILE_TO_MAPCOORD(render_area_b,0) / 2;
-    if ((lx <= engn_xc - mapcor_x) || (lx >= engn_xc + mapcor_x))
+    if (tile_x_beg <= -SUPER_QUICK_RADIUS || tile_x_beg >= MAP_TILE_WIDTH)
         return;
+
+    mapcor_z = TILE_TO_MAPCOORD(render_area_b,0) / 2;
+    mapcor_x = TILE_TO_MAPCOORD(render_area_a,0) / 2;
     if ((lz <= engn_zc - mapcor_z) || (lz >= engn_zc + mapcor_z))
         return;
+    if ((lx <= engn_xc - mapcor_x) || (lx >= engn_xc + mapcor_x))
+        return;
 
-    ratile_z_beg = (render_area_b >> 1) + tile_z_beg - (engn_zc >> 8);
-    ratile_x_beg = (render_area_a >> 1) + tile_x_beg - (engn_xc >> 8);
+    ratile_z_beg = (render_area_b >> 1) - MAPCOORD_TO_TILE(engn_zc);
+    if (ratile_z_beg > 0) // required to avoid shifting light to terrain near map border
+        ratile_z_beg = 0;
+    ratile_z_beg += tile_z_beg;
+    ratile_x_beg = (render_area_a >> 1) - MAPCOORD_TO_TILE(engn_xc);
+    ratile_x_beg += tile_x_beg;
     tile_x_end = tile_x_beg + SUPER_QUICK_RADIUS;
     tile_z_end = tile_z_beg + SUPER_QUICK_RADIUS;
 
@@ -3468,7 +3472,6 @@ void apply_super_quick_light(short lx, short lz, ushort b, ubyte *mapwho_lights)
             short intensity;
 
             mapcor_x = TILE_TO_MAPCOORD(tile_x,0);
-            p_sqlight = &super_quick_light[ratile_x + render_area_a * ratile_z];
 
             if (ratile_x < 0 || ratile_x >= render_area_a)
                 continue;
@@ -3478,6 +3481,8 @@ void apply_super_quick_light(short lx, short lz, ushort b, ubyte *mapwho_lights)
                 continue;
             if (tile_z < 0 || tile_z >= MAP_TILE_HEIGHT)
                 continue;
+
+            p_sqlight = &super_quick_light[ratile_x + render_area_a * ratile_z];
 
             dist = (mapcor_x - lx) * (mapcor_x - lx)
                 + (mapcor_z - lz) * (mapcor_z - lz);
