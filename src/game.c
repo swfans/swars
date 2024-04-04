@@ -608,7 +608,7 @@ void update_danger_music(ubyte a1)
             for (i = 0; i < playable_agents; i++)
             {
                 p_agent = players[local_player_no].MyAgent[i];
-                if (((p_agent->Flag & 0x02) == 0) &&
+                if (((p_agent->Flag & TngF_Unkn0002) == 0) &&
                   (p_agent->Health < p_agent->U.UPerson.MaxHealth / 2)) {
                     dword_1DDECC = -100;
                     hurt_agents++;
@@ -7989,7 +7989,7 @@ TbBool check_panel_input(short panel)
         case 1:
             // Select controlled agent
             p_agent = p_locplayer->MyAgent[p_panel->ID];
-            if ((p_agent == NULL) || ((p_agent->Flag & 0x02) != 0) || ((p_agent->Flag2 & 0x10) != 0))
+            if ((p_agent == NULL) || ((p_agent->Flag & TngF_Unkn0002) != 0) || ((p_agent->Flag2 & 0x10) != 0))
                 return 0;
             if (p_locplayer->DoubleMode) {
                 byte_153198 = p_panel->ID + 1;
@@ -8152,7 +8152,7 @@ TbBool check_panel_input(short panel)
             if (!p_locplayer->DoubleMode)
             {
                 p_agent = p_locplayer->MyAgent[p_panel->ID];
-                if ((p_agent != NULL) && ((p_agent->Flag & 0x02) == 0))
+                if ((p_agent != NULL) && ((p_agent->Flag & TngF_Unkn0002) == 0))
                 {
                     ushort dcthing;
 

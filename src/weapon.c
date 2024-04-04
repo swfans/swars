@@ -797,7 +797,7 @@ void init_laser_6shot(struct Thing *p_person, ushort timer)
         if (n_targets >= 5)
             break;
         p_thing = &things[thing];
-        if ((p_thing->Flag & 0x02) == 0)
+        if ((p_thing->Flag & TngF_Unkn0002) == 0)
         {
             int dist_x, dist_z;
             dist_x = abs(PRCCOORD_TO_MAPCOORD(p_thing->X - p_person->X));

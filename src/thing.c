@@ -859,7 +859,7 @@ short new_thing_building_clone(struct Thing *p_clthing, struct M33 *p_clmat, sho
     styp = p_thing->SubType;
     if (styp == SubTT_BLD_SHUTLDR)
     {
-        if (((p_thing->Flag & 0x0001) == 0)
+        if (((p_thing->Flag & TngF_Unkn0001) == 0)
           && (p_thing->U.UObject.PrevThing == 0 || p_thing->U.UObject.NextThing == 0))
         {
             p_thing->VX = p_thing->X >> 16;

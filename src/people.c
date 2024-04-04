@@ -793,7 +793,7 @@ void set_person_persuaded(struct Thing *p_person, struct Thing *p_attacker, usho
     asm volatile ("call ASM_set_person_persuaded\n"
         : : "a" (p_person), "d" (p_attacker), "b" (energy));
 #endif
-    if ((p_person->Flag & 0x2000) != 0)
+    if ((p_person->Flag & TngF_PlayerAgent) != 0)
         return;
 
     if (p_person->State == PerSt_DEAD)
@@ -844,7 +844,7 @@ void set_person_persuaded(struct Thing *p_person, struct Thing *p_attacker, usho
         group = p_person->U.UPerson.Group & 0x1F;
         group_actions[group].Persuaded++;
     }
-    if (!in_network_game && (p_attacker->Flag & 0x2000) && (p_attacker->U.UPerson.EffectiveGroup == ingame.MyGroup))
+    if (!in_network_game && (p_attacker->Flag & TngF_PlayerAgent) && (p_attacker->U.UPerson.EffectiveGroup == ingame.MyGroup))
     {
         short plagent;
 
