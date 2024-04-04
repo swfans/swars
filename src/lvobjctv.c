@@ -110,7 +110,8 @@ struct ObjectiveDef objectv_defs[] = {
     {"GAME_OBJ_PERSUADE_ALL_G", "PERSUADE ALL GANG", ObDF_ReqGroup|ObDF_IsAcquire },
     /* Require specified amount of game turns to pass. */
     {"GAME_OBJ_TIME",		"TIMER",			ObDF_ReqCount },
-    /* Require specified carried item to change owner to a person belonging to local player. */
+    /* Require specified carried item to change owner to a person belonging to local player.
+     * If the item is a weapon, it should be unique for the level. */
     {"GAME_OBJ_GET_ITEM",	"COLLECT ITEM",		ObDF_ReqItem|ObDF_IsAlly },
     /* Unreachable. Require specified item to be used? */
     {"GAME_OBJ_USE_ITEM",	"USE ITEM",			ObDF_ReqItem|ObDF_IsAlly },
@@ -141,7 +142,8 @@ struct ObjectiveDef objectv_defs[] = {
     {"GAME_OBJ_V_ARRIVES",	"DRIVE TO LOCATION",ObDF_ReqVehicle|ObDF_ReqCoord|ObDF_ReqRadius },
     /* Require given thing to have DESTROYED flag set. */
     {"GAME_OBJ_DESTROY_V", "DESTROY VEHICLE",   ObDF_ReqVehicle },
-    /* Require the target person to be within given radius around given coordinates. */
+    /* Require the target item to be within given radius around given coordinates, either dropped or carried.
+     * If the item is a weapon, it should be unique for the level. */
     {"GAME_OBJ_ITEM_ARRIVES", "BRING TO LOCATION",	ObDF_ReqItem|ObDF_ReqCoord|ObDF_ReqRadius },
     {NULL,					NULL,				ObDF_None },
 };
@@ -557,6 +559,9 @@ void draw_objective_dirctly_on_engine_scene(ushort objectv)
 }
 
 /** Prepares objective text. Can also draw objective data and additional info directly on 3D scene.
+ *
+ * @param objectv Index of the target objective.
+ * @param flag Resets objective drawind if 1, otherwise draws the objective.
  */
 void draw_objective(ushort objectv, ubyte flag)
 {
@@ -638,6 +643,8 @@ void draw_objective(ushort objectv, ubyte flag)
 #endif
 }
 
+/** Crude version of thing_arrived_at_objectv(), deprecated.
+ */
 TbBool thing_arrived_at_obj(short thing, struct Objective *p_objectv)
 {
 #if 0
@@ -656,6 +663,17 @@ TbBool thing_is_destroyed(short thing)
     return ((p_thing->Flag & TngF_Unkn0002) != 0);
 }
 
+TbBool vehicle_is_destroyed(short thing)
+{
+    struct Thing *p_thing;
+
+    if (thing == 0)
+        return false;
+
+    p_thing = &things[thing];
+    return thing_is_destroyed(thing) || (p_thing->Type != TT_VEHICLE);
+}
+
 TbBool person_is_dead(short thing)
 {
     struct Thing *p_thing;
@@ -671,6 +689,11 @@ TbBool person_is_dead(short thing)
     return (p_thing->State == PerSt_DEAD);
 }
 
+/** Returns whether given thing has arrived at given objective position.
+ *
+ * @param thing Thing index (of any type) to to check.
+ * @param p_objectv Pointer to the objective which XYZ coords and radius will be checked.
+ */
 TbBool thing_arrived_at_objectv(short thing, struct Objective *p_objectv)
 {
     if (thing == 0)
@@ -680,6 +703,12 @@ TbBool thing_arrived_at_objectv(short thing, struct Objective *p_objectv)
     return thing_is_within_circle(thing, p_objectv->X, p_objectv->Z, p_objectv->Radius << 6);
 }
 
+/** Returns whether given item (which may be weapon) has arrived at given objective position.
+ *
+ * @param thing Thing index for the item to check.
+ * @param weapon Weapon type, in case it was picked up and therfore is no longer at expected Thing index.
+ * @param p_objectv Pointer to the objective which XYZ coords and radius will be checked.
+ */
 TbBool item_arrived_at_objectv(short thing, ushort weapon, struct Objective *p_objectv)
 {
     struct SimpleThing *p_sthing;
@@ -691,7 +720,11 @@ TbBool item_arrived_at_objectv(short thing, ushort weapon, struct Objective *p_o
 
     if ((p_sthing->Type == SmTT_DROPPED_ITEM) || (p_sthing->Type == SmTT_CARRIED_ITEM))
     {
-        if (!thing_is_destroyed(thing))
+        // Make sure the dropped thing exists, and was not reused for a different dropped item
+        if (!thing_is_destroyed(thing) && (p_sthing->U.UWeapon.WeaponType == weapon))
+            // Note that having two identical items in game (ie. two same weapons) could lead to
+            // the 2nd one accidentally dropping into thing slot from the first, and locking out
+            // this objective; make sure there is only one such item on a level to avoid that
             return thing_is_within_circle(thing, p_objectv->X, p_objectv->Z, p_objectv->Radius << 6);
     }
     // If the target is no longer a correct thing, then it is now either carried weapon or
@@ -1452,6 +1485,10 @@ short test_objective(ushort objectv, ushort show_obj)
     case GAME_OBJ_ALL_G_USE_V:
         group = p_objectv->Arg2;
         thing = p_objectv->Thing;
+        if (vehicle_is_destroyed(thing)) {
+            p_objectv->Status = 1;
+            return 0;
+        }
         if (group_all_survivors_in_vehicle(group, thing)) {
             p_objectv->Status = 2;
             return 1;
@@ -1461,6 +1498,10 @@ short test_objective(ushort objectv, ushort show_obj)
         group = p_objectv->Arg2;
         thing = p_objectv->Thing;
         amount = p_objectv->Y;
+        if (vehicle_is_destroyed(thing)) {
+            p_objectv->Status = 1;
+            return 0;
+        }
         if (group_members_in_vehicle(group, thing, amount)) {
             p_objectv->Status = 2;
             return 1;
@@ -1468,6 +1509,10 @@ short test_objective(ushort objectv, ushort show_obj)
         break;
     case GAME_OBJ_V_ARRIVES:
         thing = p_objectv->Thing;
+        if (vehicle_is_destroyed(thing)) {
+            p_objectv->Status = 1;
+            return 0;
+        }
         if (thing_arrived_at_objectv(thing, p_objectv)) {
             p_objectv->Status = 2;
             return 1;
@@ -1475,10 +1520,11 @@ short test_objective(ushort objectv, ushort show_obj)
         break;
     case GAME_OBJ_DESTROY_V:
         thing = p_objectv->Thing;
-        if (thing_is_destroyed(thing)) {
+        if (vehicle_is_destroyed(thing)) {
             p_objectv->Status = 2;
             return 1;
         }
+        // TODO why would we set it to 0 here? And why unconditionally?
         p_objectv->Status = 0;
         break;
     case GAME_OBJ_ITEM_ARRIVES:

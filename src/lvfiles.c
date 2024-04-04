@@ -107,7 +107,9 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
             LOGNO("Thing(%hd,%hd) group %hd at (%d,%d,%d) type=%d,%d",
               p_thing->ThingOffset, p_thing->U.UPerson.UniqueID,
               p_thing->U.UPerson.Group,
-              p_thing->X >> 8, p_thing->Y >> 8, p_thing->Z >> 8,
+              PRCCOORD_TO_MAPCOORD(p_thing->X),
+              PRCCOORD_TO_MAPCOORD(p_thing->Y),
+              PRCCOORD_TO_MAPCOORD(p_thing->Z),
               (int)p_thing->Type, (int)p_thing->SubType);
 
             if ((p_thing->Z >> 8) < 256)
@@ -176,7 +178,8 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
                 byte_1C83D1 = 0;
 
                 n = next_normal;
-                func_6031c(p_thing->X >> 8, p_thing->Z >> 8, -prim_unknprop01 - p_thing->StartFrame, p_thing->Y >> 8);
+                func_6031c(PRCCOORD_TO_MAPCOORD(p_thing->X), PRCCOORD_TO_MAPCOORD(p_thing->Z),
+                  -prim_unknprop01 - p_thing->StartFrame, PRCCOORD_TO_MAPCOORD(p_thing->Y));
                 k = next_normal;
                 unkn_object_shift_03(next_object - 1);
                 unkn_object_shift_02(n, k, next_object - 1);
@@ -273,7 +276,9 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
             }
             LOGNO("Thing(%hd,%hd) at (%d,%d,%d) type=%d,%d",
               p_thing->ThingOffset, p_thing->UniqueID,
-              p_thing->X >> 8, p_thing->Y >> 8, p_thing->Z >> 8,
+              PRCCOORD_TO_MAPCOORD(p_thing->X),
+              PRCCOORD_TO_MAPCOORD(p_thing->Y),
+              PRCCOORD_TO_MAPCOORD(p_thing->Z),
               (int)p_thing->Type, (int)p_thing->SubType);
         }
     }

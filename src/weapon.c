@@ -22,6 +22,7 @@
 #include "bfendian.h"
 #include "bffile.h"
 #include "bfini.h"
+#include "bigmap.h"
 #include "network.h"
 #include "thing.h"
 #include "player.h"
@@ -799,14 +800,14 @@ void init_laser_6shot(struct Thing *p_person, ushort timer)
         if ((p_thing->Flag & 0x02) == 0)
         {
             int dist_x, dist_z;
-            dist_x = abs((p_thing->X - p_person->X) >> 8);
-            dist_z = abs((p_thing->Z - p_person->Z) >> 8);
+            dist_x = abs(PRCCOORD_TO_MAPCOORD(p_thing->X - p_person->X));
+            dist_z = abs(PRCCOORD_TO_MAPCOORD(p_thing->Z - p_person->Z));
             // Simplification to avoid multiplication and square root to get proper distance
             if (dist_x <= dist_z)
                 dist_x >>= 1;
             else
                 dist_z >>= 1;
-            if (dist_x + dist_z + 128 < weapon_defs[WEP_LASER].RangeBlocks << 8)
+            if (dist_x + dist_z + 128 < TILE_TO_MAPCOORD(weapon_defs[WEP_LASER].RangeBlocks,0))
             {
                 n_targets++;
                 p_person->PTarget = p_thing;

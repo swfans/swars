@@ -96,7 +96,7 @@ void init_search_spiral_steps(void)
     sstep = &spiral_step[0];
     sstep->h = y;
     sstep->v = x;
-    sstep->both = (short)y + ((short)x << 8);
+    sstep->both = (short)y + ((short)x * MAP_TILE_WIDTH);
     y = -1;
     x = -1;
     for (i=1; i < SPIRAL_STEPS_COUNT; i++)
@@ -185,8 +185,8 @@ int alt_at_point(short x, short z)
     short tile_x, tile_z;
     int alt0, alt1, alt2, alt3;
 
-    tile_x = x >> 8;
-    tile_z = z >> 8;
+    tile_x = MAPCOORD_TO_TILE(x);
+    tile_z = MAPCOORD_TO_TILE(z);
 
     if ((tile_x < 0) || (tile_x >= MAP_TILE_WIDTH))
         return 0;
