@@ -643,6 +643,8 @@ void draw_objective(ushort objectv, ubyte flag)
 #endif
 }
 
+/** Crude version of thing_arrived_at_objectv(), deprecated.
+ */
 TbBool thing_arrived_at_obj(short thing, struct Objective *p_objectv)
 {
 #if 0
