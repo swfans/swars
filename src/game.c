@@ -257,6 +257,8 @@ extern ulong unkn_changing_color_counter1;
 extern short brightness;
 extern long game_speed;
 
+extern short super_quick_light[(RENDER_AREA_MAX+1)*(RENDER_AREA_MAX+1)];
+
 //TODO this is not an extern only because I was unable to locate it in asm
 ushort next_bezier_pt = 1;
 
@@ -3422,11 +3424,74 @@ void draw_screen(void)
     p_current_draw_item = &game_draw_list[1];
 }
 
+#define SUPER_QUICK_RADIUS 5
 void apply_super_quick_light(short lx, short lz, ushort b, ubyte *mapwho_lights)
 {
+#if 0
     asm volatile (
       "call ASM_apply_super_quick_light\n"
         : : "a" (lx), "d" (lz), "b" (b), "c" (mapwho_lights));
+#else
+    short tile_x_beg, tile_x_end;
+    short tile_z_beg, tile_z_end;
+    short tile_x, tile_z;
+    int mapcor_x, mapcor_z;
+    short ratile_x_beg, ratile_z_beg;
+    short ratile_x, ratile_z;
+
+    tile_x_beg = MAPCOORD_TO_TILE(lx) - 2;
+    tile_z_beg = MAPCOORD_TO_TILE(lz) - 2;
+    if (tile_x_beg <= -SUPER_QUICK_RADIUS || tile_x_beg >= MAP_TILE_WIDTH)
+        return;
+    if (tile_z_beg <= -SUPER_QUICK_RADIUS || tile_z_beg >= MAP_TILE_HEIGHT)
+        return;
+
+    mapcor_x = TILE_TO_MAPCOORD(render_area_a,0) / 2;
+    mapcor_z = TILE_TO_MAPCOORD(render_area_b,0) / 2;
+    if ((lx <= engn_xc - mapcor_x) || (lx >= engn_xc + mapcor_x))
+        return;
+    if ((lz <= engn_zc - mapcor_z) || (lz >= engn_zc + mapcor_z))
+        return;
+
+    ratile_z_beg = (render_area_b >> 1) + tile_z_beg - (engn_zc >> 8);
+    ratile_x_beg = (render_area_a >> 1) + tile_x_beg - (engn_xc >> 8);
+    tile_x_end = tile_x_beg + SUPER_QUICK_RADIUS;
+    tile_z_end = tile_z_beg + SUPER_QUICK_RADIUS;
+
+    for (tile_z = tile_z_beg, ratile_z = ratile_z_beg; tile_z < tile_z_end; tile_z++, ratile_z++)
+    {
+        mapcor_z = TILE_TO_MAPCOORD(tile_z,0);
+        for (tile_x = tile_x_beg, ratile_x = ratile_x_beg; tile_x < tile_x_end; tile_x++, ratile_x++)
+        {
+            short *p_sqlight;
+            int f, dist;
+            short intensity;
+
+            mapcor_x = TILE_TO_MAPCOORD(tile_x,0);
+            p_sqlight = &super_quick_light[ratile_x + render_area_a * ratile_z];
+
+            if (ratile_x < 0 || ratile_x >= render_area_a)
+                continue;
+            if (ratile_z < 0 || ratile_z >= render_area_b)
+                continue;
+            if (tile_x < 0 || tile_x >= MAP_TILE_WIDTH)
+                continue;
+            if (tile_z < 0 || tile_z >= MAP_TILE_HEIGHT)
+                continue;
+
+            dist = (mapcor_x - lx) * (mapcor_x - lx)
+                + (mapcor_z - lz) * (mapcor_z - lz);
+            if (dist > 0)
+              f = 1088608 / dist;
+            else
+              f = 32;
+            intensity = b * f >> 5;
+            if (intensity > 32)
+                intensity = 32;
+            *p_sqlight += intensity;
+        }
+    }
+#endif
 }
 
 void process_engine_unk3(void)

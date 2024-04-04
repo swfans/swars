@@ -26,6 +26,15 @@
 extern "C" {
 #endif
 /******************************************************************************/
+
+/** Smallest size of render area. Must be even to avoid shifted terrain.
+ */
+#define RENDER_AREA_MIN 2
+
+/** Largest size of render area. Must be even to avoid shifted terrain.
+ */
+#define RENDER_AREA_MAX 88
+
 #pragma pack(1)
 
 #pragma pack()
