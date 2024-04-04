@@ -396,7 +396,8 @@ void draw_objective_group_whole_on_engine_scene(ushort group)
     ubyte colk;
 
     colk = dword_1C8460 & 7;
-    for (thing = same_type_head[256 + group]; thing != 0; thing = p_thing->LinkSameGroup)
+    thing = same_type_head[256 + group];
+    for (; thing > 0; thing = p_thing->LinkSameGroup)
     {
         p_thing = &things[thing];
         draw_objective_point(draw_objectv_x - 10, draw_objectv_y, thing, 0, colour_lookup[colk]);
@@ -410,7 +411,8 @@ void draw_objective_group_non_flag2_on_engine_scene(ushort group)
     ubyte colk;
 
     colk = dword_1C8460 & 7;
-    for (thing = same_type_head[256 + group]; thing != 0; thing = p_thing->LinkSameGroup)
+    thing = same_type_head[256 + group];
+    for (; thing > 0; thing = p_thing->LinkSameGroup)
     {
         p_thing = &things[thing];
         if ((p_thing->Flag & TngF_Unkn0002) == 0) {
@@ -426,7 +428,8 @@ void draw_objective_group_non_pers_on_engine_scene(ushort group)
     ubyte colk;
 
     colk = dword_1C8460 & 7;
-    for (thing = same_type_head[256 + group]; thing != 0; thing = p_thing->LinkSameGroup)
+    thing = same_type_head[256 + group];
+    for (; thing > 0; thing = p_thing->LinkSameGroup)
     {
         p_thing = &things[thing];
         if ((p_thing->Flag & TngF_Persuaded) == 0) {
@@ -445,7 +448,8 @@ void draw_objective_group_not_own_by_plyr_on_engine_scene(ushort group, ushort p
     colk = dword_1C8460 & 7;
     plyagent = players[plyr].DirectControl[0];
     plygroup = things[plyagent].U.UPerson.Group;
-    for (thing = same_type_head[256 + group]; thing != 0; thing = p_thing->LinkSameGroup)
+    thing = same_type_head[256 + group];
+    for (; thing > 0; thing = p_thing->LinkSameGroup)
     {
         p_thing = &things[thing];
         if (((p_thing->Flag & TngF_Persuaded) == 0) || things[p_thing->Owner].U.UPerson.Group != plygroup) {
@@ -462,7 +466,8 @@ void draw_objective_group_not_own_by_pers_on_engine_scene(ushort group, short ow
     ubyte colk;
 
     colk = dword_1C8460 & 7;
-    for (thing = same_type_head[256 + group]; thing != 0; thing = p_thing->LinkSameGroup)
+    thing = same_type_head[256 + group];
+    for (; thing > 0; thing = p_thing->LinkSameGroup)
     {
         p_thing = &things[thing];
         if (((p_thing->Flag & TngF_Persuaded) == 0) && (p_thing->Owner != owntng)) {
@@ -658,16 +663,24 @@ TbBool thing_arrived_at_obj(short thing, struct Objective *p_objectv)
 
 TbBool thing_is_destroyed(short thing)
 {
-    struct Thing *p_thing;
-    p_thing = &things[thing];
-    return ((p_thing->Flag & TngF_Unkn0002) != 0);
+    if (thing == 0) {
+        return true;
+    } else if (thing > 0) {
+        struct Thing *p_thing;
+        p_thing = &things[thing];
+        return ((p_thing->Flag & TngF_Unkn0002) != 0);
+    } else {
+        struct SimpleThing *p_sthing;
+        p_sthing = &sthings[thing];
+        return ((p_sthing->Flag & TngF_Unkn0002) != 0);
+    }
 }
 
 TbBool vehicle_is_destroyed(short thing)
 {
     struct Thing *p_thing;
 
-    if (thing == 0)
+    if (thing <= 0)
         return false;
 
     p_thing = &things[thing];
@@ -802,12 +815,12 @@ TbBool all_group_persuaded(ushort group)
     thing = same_type_head[256 + group];
     for (; thing > 0; thing = p_thing->LinkSameGroup)
     {
-            p_thing = &things[thing];
-            if (!person_is_persuaded(thing) || ((things[p_thing->Owner].Flag & 0x2000) == 0))
-            {
-                if (!person_is_dead(thing) && !thing_is_destroyed(thing))
-                    return false;
-            }
+        p_thing = &things[thing];
+        if (!person_is_persuaded(thing) || ((things[p_thing->Owner].Flag & 0x2000) == 0))
+        {
+            if (!person_is_dead(thing) && !thing_is_destroyed(thing))
+                return false;
+        }
     }
     return true;
 }
