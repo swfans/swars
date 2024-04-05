@@ -41,19 +41,19 @@ TbBool person_command_to_text(char *out, ushort cmd, ubyte a3)
 
     p_cmd = &game_commands[cmd];
 
-    if (p_cmd->Flags & 0x01) {
+    if (p_cmd->Flags & PCmdF_Unkn0001) {
         sprintf(o, "%d ", cmd);
         o += strlen(o);
     }
-    if (p_cmd->Flags & 0x02) {
+    if (p_cmd->Flags & PCmdF_RepeatedUntil) {
         sprintf(o, "U ");
         o += strlen(o);
     }
-    if ( p_cmd->Flags & 0x04) {
+    if ( p_cmd->Flags & PCmdF_IsUntil) {
         sprintf(o, "IU ");
         o += strlen(o);
     }
-    if ( p_cmd->Flags & 0x08) {
+    if ( p_cmd->Flags & PCmdF_Unkn0008) {
         sprintf(o, "!!!");
         o += strlen(o);
     }

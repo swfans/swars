@@ -187,8 +187,10 @@ enum PersonCommandFlags
 {
   PCmdF_NONE = 0x0000,
   PCmdF_Unkn0001 = 0x0001,
-  PCmdF_Unkn0002 = 0x0002,
-  PCmdF_Unkn0004 = 0x0004,
+   /** The command is repeated due to "UNTIL" command which comes next. */
+  PCmdF_RepeatedUntil = 0x0002,
+   /** The command is kind of a "UNTIL" command which repeats something before. */
+  PCmdF_IsUntil = 0x0004,
   PCmdF_Unkn0008 = 0x0008,
   PCmdF_Unkn0010 = 0x0010,
   PCmdF_Unkn0020 = 0x0020,
