@@ -1204,7 +1204,7 @@ void unkn_f_pressed_func(void)
             if (!is_command_any_until(p_cmd))
             {
                 if (p_cmd_prev != NULL)
-                    p_cmd_prev->Flags |= PCmdF_RepeatedUntil;
+                    p_cmd_prev->Flags |= PCmdF_RunUntil;
                 p_cmd->Flags |= PCmdF_IsUntil;
             }
             p_cmd_prev = p_cmd;

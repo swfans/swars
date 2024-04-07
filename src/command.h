@@ -187,9 +187,14 @@ enum PersonCommandFlags
 {
   PCmdF_NONE = 0x0000,
   PCmdF_Unkn0001 = 0x0001,
-   /** The command is repeated due to "UNTIL" command which comes next. */
-  PCmdF_RepeatedUntil = 0x0002,
-   /** The command is kind of a "UNTIL" command which repeats something before. */
+   /** The command is executed only while condition is met in "UNTIL" command which comes next.
+    * Note that the command is not repeated - if it returns it's finished, the until block ends.
+    */
+  PCmdF_RunUntil = 0x0002,
+   /** The command is kind of a "UNTIL" command which allows to terminate previous command.
+    * The previous command is executed until the additional condition is met. When the condition
+    * resolves to false, previous command stops being executed even if it did not finished.
+    */
   PCmdF_IsUntil = 0x0004,
   PCmdF_Unkn0008 = 0x0008,
   PCmdF_Unkn0010 = 0x0010,

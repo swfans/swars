@@ -45,7 +45,7 @@ TbBool person_command_to_text(char *out, ushort cmd, ubyte a3)
         sprintf(o, "%d ", cmd);
         o += strlen(o);
     }
-    if (p_cmd->Flags & PCmdF_RepeatedUntil) {
+    if (p_cmd->Flags & PCmdF_RunUntil) {
         sprintf(o, "U ");
         o += strlen(o);
     }

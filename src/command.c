@@ -736,13 +736,13 @@ void check_and_fix_commands(void)
         if (p_cmd->Next > next_command)
             p_cmd->Next = 0;
 
-        if ((p_cmd->Flags & PCmdF_RepeatedUntil) != 0)
+        if ((p_cmd->Flags & PCmdF_RunUntil) != 0)
         {
             struct Command *p_nxcmd;
 
             p_nxcmd = &game_commands[p_cmd->Next];
             if (!is_command_any_until(p_nxcmd)) {
-                p_cmd->Flags &= ~PCmdF_RepeatedUntil;
+                p_cmd->Flags &= ~PCmdF_RunUntil;
             }
         }
     }
