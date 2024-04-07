@@ -1177,6 +1177,13 @@ void global_3d_store(int action)
     }
 }
 
+void fill_netgame_agent_pos(int player, int group, int num_agents)
+{
+    asm volatile (
+      "call ASM_fill_netgame_agent_pos\n"
+        : : "a" (player), "d" (group), "b" (num_agents));
+}
+
 void unkn_f_pressed_func(void)
 {
     short thing;
