@@ -698,7 +698,7 @@ ubyte display_weapon_info(struct ScreenTextBox *box)
 
     // Weapon category
     if (is_research_weapon_completed(selected_weapon + 1) || (login_control__State != 6))
-        stridx = 59 + (weapon_defs[selected_weapon + 1].Sprite >> 8);
+        stridx = 59 + weapon_defs[selected_weapon + 1].Category;
     else
         stridx = 65;
     draw_text_property_lv(&categ_box, gui_strings[stridx]);

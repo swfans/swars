@@ -32,39 +32,39 @@
 /******************************************************************************/
 
 struct WeaponDef weapon_defs[] = {
-    { 0,    0,  0,  0,   0,  0, 0, 0, WEPDFLG_None,            0,     0,     0,  0},
-    { 5,   50,  4,  5,   8, 10, 1, 1, WEPDFLG_CanPurchease,  272,    40,    40, 10},
-    { 8,  100,  3,  8,  20, 10, 1, 1, WEPDFLG_CanPurchease,  273,   120,   120, 10},
-    { 9,  200,  5,  8,   2, 10, 2, 2, WEPDFLG_CanPurchease|0x01|0x02, 1811,   370,   370, 10},
-    { 9,  200,  5,  8,   2, 10, 2, 2, WEPDFLG_CanPurchease|0x01|0x02, 1812,   420,   420, 10},
-    {12,  800, 30,  8, 300, 10, 1, 1, WEPDFLG_CanPurchease,  280,   750,   750, 10},
-    { 6,  800, 40,  8, 600, 10, 1, 1, WEPDFLG_CanPurchease,  789,  1000,  1000, 10},
-    { 1,    0, 10,  8,   2, 10, 1, 1, WEPDFLG_CanPurchease, 2319,   150,   150, 10},
-    { 4,   80,  1, 16,   6,  5, 0, 0, WEPDFLG_CanPurchease,  535,   160,   160, 10},
-    { 0, 9999,  3, 16,   4,  5, 0, 0, WEPDFLG_CanPurchease, 1821,   200,   200, 10},
-    { 6,  800, 40,  8, 600, 10, 0, 0, WEPDFLG_CanPurchease,  545,   100,   100, 10},
-    { 6,  800, 40,  8, 600, 10, 0, 0, WEPDFLG_CanPurchease,  542,    80,    80, 10},
-    { 4,  300,  5, 16,   4,  5, 0, 0, WEPDFLG_CanPurchease, 1817,   620,   620, 10},
-    { 4, 9999, 40, 16, 200,  5, 0, 0, WEPDFLG_CanPurchease,  283,   480,   480, 10},
-    { 4, 9999,  5, 16,   4,  5, 0, 0, WEPDFLG_None,          537,   400,   400, 10},
-    {16, 1300, 80,  8, 200, 10, 1, 1, WEPDFLG_CanPurchease,  284,   300,   300, 10},
-    { 4, 9999,  5, 16,   4,  5, 0, 0, WEPDFLG_CanPurchease,  803,  1050,  1050, 10},
-    {10,  550,  2, 16,   4,  5, 0, 0, WEPDFLG_CanPurchease, 2586,  2000,  2000, 10},
-    {10,   50,  1,  8,   4,  5, 0, 0, WEPDFLG_CanPurchease,  274,   100,   100, 10},
-    { 4, 9999,  1, 16,   4,  5, 0, 0, WEPDFLG_None,         1560,   850,   850, 10},
-    {11, 1500, 10, 16,   4,  5, 0, 0, WEPDFLG_CanPurchease, 1574, 65535, 65535, 10},
-    { 2,    0, 10,  8,   2, 10, 1, 1, WEPDFLG_CanPurchease, 2345,   450,   450, 10},
-    { 8, 9999, 20, 16, 200,  5, 0, 0, WEPDFLG_CanPurchease, 1575,  1100,  1100, 10},
-    { 0, 9999,  1, 16,   4,  5, 0, 0, WEPDFLG_None,         2574,    80,    80, 10},
-    { 4, 9999,  1, 16, 200,  5, 0, 0, WEPDFLG_CanPurchease, 1573,  1200,  1200, 10},
-    { 8,   25, 80, 16, 600,  5, 0, 0, WEPDFLG_CanPurchease, 1576,  1300,  1300, 10},
-    { 2,  500, 50, 16, 600,  5, 0, 0, WEPDFLG_CanPurchease, 1572,   650,   650, 10},
-    { 1, 9999,  1, 16,  60,  5, 0, 0, WEPDFLG_CanPurchease, 1302,    30,    30, 10},
-    { 1, 9999,  1, 16,  60,  5, 0, 0, WEPDFLG_CanPurchease, 1311,   130,   130, 10},
-    {10,   50,  1,  8,   4,  5, 0, 0, WEPDFLG_CanPurchease,  288,   950,   950, 10},
-    { 4, 9999,  1, 16,   4,  5, 0, 0, WEPDFLG_CanPurchease, 1314,  1000,  1000, 10},
-    { 0,    0,  0, 16,   4,  5, 0, 0, WEPDFLG_None,         1352,  3000,    10,  8},
-    { 0,    0,  0, 16,   4,  5, 0, 0, WEPDFLG_None,         1352,  3000,    10,  8},
+    { 0,    0,  0,  0,   0,  0, 0, 0, WEPDFLG_None,          0, 0,     0,     0,  0},
+    { 5,   50,  4,  5,   8, 10, 1, 1, WEPDFLG_CanPurchease, 16, 1,    40,    40, 10},
+    { 8,  100,  3,  8,  20, 10, 1, 1, WEPDFLG_CanPurchease, 17, 1,   120,   120, 10},
+    { 9,  200,  5,  8,   2, 10, 2, 2, WEPDFLG_CanPurchease|0x01|0x02, 19, 7,   370,   370, 10},
+    { 9,  200,  5,  8,   2, 10, 2, 2, WEPDFLG_CanPurchease|0x01|0x02, 20, 7,   420,   420, 10},
+    {12,  800, 30,  8, 300, 10, 1, 1, WEPDFLG_CanPurchease,  24, 1,   750,   750, 10},
+    { 6,  800, 40,  8, 600, 10, 1, 1, WEPDFLG_CanPurchease,  21, 3,  1000,  1000, 10},
+    { 1,    0, 10,  8,   2, 10, 1, 1, WEPDFLG_CanPurchease,  15, 9,   150,   150, 10},
+    { 4,   80,  1, 16,   6,  5, 0, 0, WEPDFLG_CanPurchease,  23, 2,   160,   160, 10},
+    { 0, 9999,  3, 16,   4,  5, 0, 0, WEPDFLG_CanPurchease,  29, 7,   200,   200, 10},
+    { 6,  800, 40,  8, 600, 10, 0, 0, WEPDFLG_CanPurchease,  33, 2,   100,   100, 10},
+    { 6,  800, 40,  8, 600, 10, 0, 0, WEPDFLG_CanPurchease,  30, 2,    80,    80, 10},
+    { 4,  300,  5, 16,   4,  5, 0, 0, WEPDFLG_CanPurchease,  25, 7,   620,   620, 10},
+    { 4, 9999, 40, 16, 200,  5, 0, 0, WEPDFLG_CanPurchease,  27, 1,   480,   480, 10},
+    { 4, 9999,  5, 16,   4,  5, 0, 0, WEPDFLG_None,          25, 2,   400,   400, 10},
+    {16, 1300, 80,  8, 200, 10, 1, 1, WEPDFLG_CanPurchease,  28, 1,   300,   300, 10},
+    { 4, 9999,  5, 16,   4,  5, 0, 0, WEPDFLG_CanPurchease,  35, 3,  1050,  1050, 10},
+    {10,  550,  2, 16,   4,  5, 0, 0, WEPDFLG_CanPurchease,  26,10,  2000,  2000, 10},
+    {10,   50,  1,  8,   4,  5, 0, 0, WEPDFLG_CanPurchease,  18, 1,   100,   100, 10},
+    { 4, 9999,  1, 16,   4,  5, 0, 0, WEPDFLG_None,          24, 6,   850,   850, 10},
+    {11, 1500, 10, 16,   4,  5, 0, 0, WEPDFLG_CanPurchease,  38, 6, 65535, 65535, 10},
+    { 2,    0, 10,  8,   2, 10, 1, 1, WEPDFLG_CanPurchease,  41, 9,   450,   450, 10},
+    { 8, 9999, 20, 16, 200,  5, 0, 0, WEPDFLG_CanPurchease,  39, 6,  1100,  1100, 10},
+    { 0, 9999,  1, 16,   4,  5, 0, 0, WEPDFLG_None,          14,10,    80,    80, 10},
+    { 4, 9999,  1, 16, 200,  5, 0, 0, WEPDFLG_CanPurchease,  37, 6,  1200,  1200, 10},
+    { 8,   25, 80, 16, 600,  5, 0, 0, WEPDFLG_CanPurchease,  40, 6,  1300,  1300, 10},
+    { 2,  500, 50, 16, 600,  5, 0, 0, WEPDFLG_CanPurchease,  36, 6,   650,   650, 10},
+    { 1, 9999,  1, 16,  60,  5, 0, 0, WEPDFLG_CanPurchease,  22, 5,    30,    30, 10},
+    { 1, 9999,  1, 16,  60,  5, 0, 0, WEPDFLG_CanPurchease,  31, 5,   130,   130, 10},
+    {10,   50,  1,  8,   4,  5, 0, 0, WEPDFLG_CanPurchease,  32, 1,   950,   950, 10},
+    { 4, 9999,  1, 16,   4,  5, 0, 0, WEPDFLG_CanPurchease,  34, 5,  1000,  1000, 10},
+    { 0,    0,  0, 16,   4,  5, 0, 0, WEPDFLG_None,          72, 5,  3000,    10,  8},
+    { 0,    0,  0, 16,   4,  5, 0, 0, WEPDFLG_None,          72, 5,  3000,    10,  8},
 };
 
 struct WeaponDefAdd weapon_defs_a[33] = {0};
@@ -224,8 +224,8 @@ void read_weapons_conf_file(void)
                     CONFWRNLOG("Outranged value of \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
                     k = WEP_CATEGORIES_COUNT;
                 }
-                wdef->Sprite = (wdef->Sprite & 0xFF) | (k << 8);
-                CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)(wdef->Sprite >> 8));
+                wdef->Category = k;
+                CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)(wdef->Category));
                 break;
             case CCWep_RangeBlocks:
                 i = LbIniValueGetLongInt(&parser, &k);
@@ -309,8 +309,8 @@ void read_weapons_conf_file(void)
                     CONFWRNLOG("Could not read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
                     break;
                 }
-                wdef->Sprite = (wdef->Sprite & 0xFF00) | k;
-                CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)(wdef->Sprite & 0xFF));
+                wdef->Sprite = k;
+                CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)(wdef->Sprite));
                 break;
             case CCWep_Cost:
                 i = LbIniValueGetLongInt(&parser, &k);
@@ -527,9 +527,9 @@ ushort weapon_sprite_index(ushort wtype, TbBool enabled)
 
     wdef = &weapon_defs[wtype];
     if (enabled)
-        sprid = (wdef->Sprite & 0xFF) + 27;
+        sprid = 27 + wdef->Sprite;
     else
-        sprid = wdef->Sprite & 0xFF;
+        sprid = 0 + wdef->Sprite;
     return sprid;
 }
 

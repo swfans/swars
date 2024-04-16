@@ -104,7 +104,8 @@ struct WeaponDef {
   ushort TargetType;
   ushort TargetMode;
   ushort Flags;
-  ushort Sprite;
+  ubyte Sprite; // TODO would be better to store sprite index in 16-bit var
+  ubyte Category;
   ushort Cost;
   ushort Funding;
   ubyte PercentPerDay;
