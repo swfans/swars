@@ -1902,7 +1902,7 @@ TbBool draw_panel_pickable_thing_below_agent(struct Thing *p_agent)
             lbDisplay.DrawFlags = 0;
             weptype = p_pickup->U.UWeapon.WeaponType;
             if (weptype)
-                draw_new_panel_sprite_std(548, 364, weapon_defs[weptype].Sprite & 0xFF);
+                draw_new_panel_sprite_std(548, 364, weapon_sprite_index(weptype, false));
             else
                 draw_new_panel_sprite_std(548, 364, 70);
             draw_new_panel_sprite_std(540, 360, 12);
@@ -1930,7 +1930,7 @@ TbBool draw_panel_pickable_thing_player_targeted(PlayerInfo *p_locplayer)
             p_pickup = &sthings[thing];
             weptype = p_pickup->U.UWeapon.WeaponType;
             if (weptype)
-                draw_new_panel_sprite_std(548, 364, weapon_defs[weptype].Sprite & 0xFF);
+                draw_new_panel_sprite_std(548, 364, weapon_sprite_index(weptype, false));
             else
                 draw_new_panel_sprite_std(548, 364, 70);
             draw_new_panel_sprite_std(540, 360, 12);
@@ -2006,7 +2006,7 @@ TbBool draw_weapons_list_single(PlayerInfo *p_locplayer, ushort plagent, ulong w
     wepflags = weapons_carried;
     cy = 36;
     nchecked = 0;
-    for (weptype = 0; weptype < WEP_TYPES_COUNT; weptype++, wepflags >>= 1)
+    for (weptype = 1; weptype < WEP_TYPES_COUNT; weptype++, wepflags >>= 1)
     {
         if (wepflags == 0)
             break;
@@ -2021,7 +2021,7 @@ TbBool draw_weapons_list_single(PlayerInfo *p_locplayer, ushort plagent, ulong w
             }
             lbDisplay.DrawFlags = 0;
 
-            if (!p_locplayer->WepDelays[plagent][weptype + 1] || (gameturn & 1))
+            if (!p_locplayer->WepDelays[plagent][weptype] || (gameturn & 1))
             {
                 if (nshown == 6)
                     draw_new_panel_sprite_std(22, cy, 13);
@@ -2029,12 +2029,12 @@ TbBool draw_weapons_list_single(PlayerInfo *p_locplayer, ushort plagent, ulong w
                     draw_new_panel_sprite_std(22, cy, 12);
             }
 
-            if (!p_locplayer->WepDelays[plagent][weptype + 1] || (gameturn & 1))
-                draw_new_panel_sprite_std(30, cy + 4, weapon_defs[weptype+1].Sprite & 0xFF);
-            if (weptype+1 == current_weapon)
+            if (!p_locplayer->WepDelays[plagent][weptype] || (gameturn & 1))
+                draw_new_panel_sprite_std(30, cy + 4, weapon_sprite_index(weptype, false));
+            if (weptype == current_weapon)
             {
                 lbDisplay.DrawFlags = 0;
-                draw_new_panel_sprite_std(30, cy + 4, (weapon_defs[weptype+1].Sprite & 0xFF) + 27);
+                draw_new_panel_sprite_std(30, cy + 4, weapon_sprite_index(weptype, true));
             }
             if (!lbDisplay.MRightButton)
             {
@@ -2046,11 +2046,11 @@ TbBool draw_weapons_list_single(PlayerInfo *p_locplayer, ushort plagent, ulong w
                 {
                     lbDisplay.DrawFlags = 0;
                     ret = true;
-                    p_locplayer->PanelItem[mouser] = weptype + 1;
+                    p_locplayer->PanelItem[mouser] = weptype;
                     draw_new_panel_sprite_std(22, cy, 90);
                 }
             }
-            draw_fourpack_items(22, cy, plagent, weptype + 1);
+            draw_fourpack_items(22, cy, plagent, weptype);
             cy += 28;
             ++nchecked;
             ++nshown;
@@ -2132,7 +2132,7 @@ short draw_current_weapon_button(PlayerInfo *p_locplayer, short nagent)
                         SCANNER_unkn_func_202(spr, cx, cy,
                             ingame.Scanner.Contrast, ingame.Scanner.Brightness);
                 }
-                draw_new_panel_sprite_dark(cx, cy, (weapon_defs[curwep].Sprite & 0xFF) + 27);
+                draw_new_panel_sprite_dark(cx, cy, weapon_sprite_index(curwep, true));
             }
             else
             {
@@ -2147,7 +2147,7 @@ short draw_current_weapon_button(PlayerInfo *p_locplayer, short nagent)
                         SCANNER_unkn_func_202(spr, cx, cy,
                             ingame.Scanner.Contrast, ingame.Scanner.Brightness);
                 }
-                draw_new_panel_sprite_std(cx, cy, (weapon_defs[curwep].Sprite & 0xFF) + 27);
+                draw_new_panel_sprite_std(cx, cy, weapon_sprite_index(curwep, true));
             }
             draw_fourpack_items(cx - 8, cy - 4, nagent, curwep);
         }
@@ -2160,9 +2160,9 @@ short draw_current_weapon_button(PlayerInfo *p_locplayer, short nagent)
             struct Thing *p_agent;
             p_agent = p_locplayer->MyAgent[nagent];
             if (p_agent->State == PerSt_PROTECT_PERSON)
-                draw_new_panel_sprite_dark(cx, cy, weapon_defs[curwep].Sprite & 0xFF);
+                draw_new_panel_sprite_dark(cx, cy, weapon_sprite_index(curwep, false));
             else
-                draw_new_panel_sprite_std(cx, cy, weapon_defs[curwep].Sprite & 0xFF);
+                draw_new_panel_sprite_std(cx, cy, weapon_sprite_index(curwep, false));
             draw_fourpack_items(cx - 8, cy - 4, nagent, curwep);
         }
     }
@@ -2218,9 +2218,9 @@ TbBool draw_agent_weapons_selection(PlayerInfo *p_locplayer, struct Thing *p_age
         if (!p_locplayer->WepDelays[plagent][weptype + 1] || (gameturn & 1))
         {
             if (!nchecked)
-                draw_new_panel_sprite_std(cx + 24, cy + 12, weapon_defs[weptype + 1].Sprite & 0xFF);
+                draw_new_panel_sprite_std(cx + 24, cy + 12, weapon_sprite_index(weptype+1, false));
             else
-                draw_new_panel_sprite_std(cx + 8, cy + 8, weapon_defs[weptype + 1].Sprite & 0xFF);
+                draw_new_panel_sprite_std(cx + 8, cy + 8, weapon_sprite_index(weptype+1, false));
         }
         dcx = 0;
         dcy = 0;

@@ -535,12 +535,12 @@ void show_equipment_screen(void)
     if (mo_weapon != -1)
     {
         short ms_x, ms_y;
-        struct WeaponDef *wdef;
+        struct TbSprite *spr;
 
-        wdef = &weapon_defs[mo_weapon + 1];
         ms_x = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
         ms_y = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
-        draw_sprite_purple_list(ms_x, ms_y, &unk2_sprites[(wdef->Sprite & 0xFF) + 27]);
+        spr = &unk2_sprites[weapon_sprite_index(mo_weapon + 1, true)];
+        draw_sprite_purple_list(ms_x, ms_y, spr);
     }
 #endif
 }
@@ -813,36 +813,35 @@ ubyte show_weapon_list(struct ScreenTextBox *box)
 
     for (weapon = box->field_38; (weapon < WEP_TYPES_COUNT) && (h0 + sheight < box->ScrollWindowHeight + 23); weapon++)
     {
-        int msx, msy;
+        short msy, msx;
+        short y1, y2;
         const char *text;
 
         if (!weapon_available_for_purchase(weapon+1))
             continue;
 
-        if (lbDisplay.ScreenMode == 1)
-          msx = 2 * lbDisplay.MouseX;
-        else
-          msx = lbDisplay.MouseX;
-        if ((msx >= text_window_x1) && (msx <= text_window_x2))
+        msy = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MouseY : lbDisplay.MouseY;
+        msx = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MouseX : lbDisplay.MouseX;
+
+        y1 = text_window_y1 + h0 - 1;
+        y2 = text_window_y1 + h0 + sheight + 1;
+        if (over_box_coords(msx, msy, text_window_x1, y1, text_window_x2, y2))
         {
-            msy = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MouseY : lbDisplay.MouseY;
-            if ((msy >= text_window_y1 + h0 - 1) && (msy <= h0 + text_window_y1 + sheight + 1))
+            if (lbDisplay.LeftButton)
             {
-              if (lbDisplay.LeftButton)
-              {
                 lbDisplay.LeftButton = 0;
                 selected_weapon = weapon;
                 if ( byte_1C4AA0 )
                 {
                   equip_display_box.Flags |= 0x0080;
                   equip_display_box.Lines = 0;
-                  if ( research.WeaponsCompleted & (1 << weapon) || login_control__State != 6 )
-                    equip_display_box.Text = (const char *)&weapon_text[weapon_text_index[selected_weapon]];
+                  if (is_research_weapon_completed(weapon+1) || login_control__State != 6)
+                    equip_display_box.Text = &weapon_text[weapon_text_index[selected_weapon]];
                   else
                     equip_display_box.Text = gui_strings[536];
                   equip_display_box.TextFadePos = -5;
                 }
-                if ( (1 << weapon) & research.WeaponsCompleted || login_control__State != 6 )
+                if (is_research_weapon_completed(weapon+1) || login_control__State != 6)
                 {
                   struct Campaign *p_campgn;
                   ushort strid;
@@ -861,7 +860,6 @@ ubyte show_weapon_list(struct ScreenTextBox *box)
                 equip_offer_buy_button.CallBackFn = do_equip_offer_buy;
                 sprintf(equip_cost_text, "%d", 100 * weapon_defs[selected_weapon + 1].Cost);
                 init_weapon_anim(selected_weapon);
-              }
             }
         }
 
@@ -872,8 +870,9 @@ ubyte show_weapon_list(struct ScreenTextBox *box)
             lbDisplay.DrawFlags = 0;
             lbDisplay.DrawColour = 247;
         }
-        // TODO make menu sprite a separate property in WeaponDefAdd
-        spr = &unk2_sprites[(weapon_defs[weapon + 1].Sprite & 0xff) + 27];
+        struct TbSprite *spr;
+
+        spr = &unk2_sprites[weapon_sprite_index(weapon + 1, true)];
         lbDisplay.DrawFlags |= 0x8000;
         draw_sprite_purple_list(text_window_x1 + 2, h0 + text_window_y1, spr);
         lbDisplay.DrawFlags &= ~0x8000;

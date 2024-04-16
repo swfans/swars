@@ -132,6 +132,7 @@ void init_weapon_text(void);
 TbBool weapons_has_weapon(ulong weapons, ushort wtype);
 ushort weapons_prev_weapon(ulong weapons, ushort last_wtype);
 const char *weapon_codename(ushort wtype);
+ushort weapon_sprite_index(ushort wtype, TbBool enabled);
 
 ushort weapon_fourpack_index(ushort weapon);
 void weapons_remove_weapon(ulong *p_weapons,

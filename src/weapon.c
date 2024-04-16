@@ -517,6 +517,22 @@ void init_weapon_text(void)
 #endif
 }
 
+ushort weapon_sprite_index(ushort wtype, TbBool enabled)
+{
+    ushort sprid;
+    struct WeaponDef *wdef;
+
+    if (wtype >= WEP_TYPES_COUNT)
+        return 0;
+
+    wdef = &weapon_defs[wtype];
+    if (enabled)
+        sprid = (wdef->Sprite & 0xFF) + 27;
+    else
+        sprid = wdef->Sprite & 0xFF;
+    return sprid;
+}
+
 ushort weapon_fourpack_index(ushort wtype)
 {
     switch (wtype)
