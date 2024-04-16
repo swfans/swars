@@ -526,10 +526,16 @@ ushort weapon_sprite_index(ushort wtype, TbBool enabled)
         return 0;
 
     wdef = &weapon_defs[wtype];
-    if (enabled)
-        sprid = 27 + wdef->Sprite;
-    else
+    // Block of normal weapon sprites is 15..41, lighter are 42..68.
+    // Sprites added after that have normal image and ligher image adjacent.
+    if (enabled) {
+        if (wdef->Sprite < 42)
+            sprid = 27 + wdef->Sprite;
+        else
+            sprid = wdef->Sprite + 1;
+    } else {
         sprid = 0 + wdef->Sprite;
+    }
     return sprid;
 }
 
