@@ -773,10 +773,118 @@ ubyte show_weapon_name(struct ScreenTextBox *box)
 
 ubyte show_weapon_list(struct ScreenTextBox *box)
 {
+#if 0
     ubyte ret;
     asm volatile ("call ASM_show_weapon_list\n"
         : "=r" (ret) : "a" (box));
     return ret;
+#else
+    int h0;
+    int sheight;
+    short weapon;
+    struct TbSprite *spr;
+
+    if ((box->Flags & 0x8000) == 0)
+    {
+        short w1, w2;
+
+        lbDisplay.DrawFlags = 0x0004;
+        draw_box_purple_list(text_window_x1, text_window_y1,
+          text_window_x2 - text_window_x1 + 1,
+          text_window_y2 - text_window_y1 + 1, 56);
+        lbDisplay.DrawFlags = 0;
+        my_set_text_window(box->X + 4, box->Y + 4,
+          box->Width - 8, box->Height - 8);
+        lbFontPtr = med_font;
+
+        w1 = box->Width;
+        w2 = my_string_width(gui_strings[425]);
+        draw_text_purple_list2((((w1 - w2) >> 1) - 3), 2, gui_strings[425], 0);
+        box->Flags |= 0x8000;
+        copy_box_purple_list(box->X + 4, box->Y - 3,
+          box->Width - 20, box->Height + 6);
+    }
+    my_set_text_window(box->X + 4, box->ScrollWindowOffset + box->Y + 4,
+      box->Width - 20, box->ScrollWindowHeight + 23);
+    lbFontPtr = small_med_font;
+    h0 = 3;
+    spr = &unk2_sprites[15 + 0];
+    sheight = spr->SHeight;
+
+    for (weapon = box->field_38; (weapon < 32) && (h0 + sheight < box->ScrollWindowHeight + 23); weapon++)
+    {
+        int msx, msy;
+        const char *text;
+
+        if (!weapon_available_for_purchase(weapon+1))
+            continue;
+
+        if (lbDisplay.ScreenMode == 1)
+          msx = 2 * lbDisplay.MouseX;
+        else
+          msx = lbDisplay.MouseX;
+        if ((msx >= text_window_x1) && (msx <= text_window_x2))
+        {
+            msy = lbDisplay.ScreenMode == 1 ? 2 * lbDisplay.MouseY : lbDisplay.MouseY;
+            if ((msy >= text_window_y1 + h0 - 1) && (msy <= h0 + text_window_y1 + sheight + 1))
+            {
+              if (lbDisplay.LeftButton)
+              {
+                lbDisplay.LeftButton = 0;
+                selected_weapon = weapon;
+                if ( byte_1C4AA0 )
+                {
+                  equip_display_box.Flags |= 0x0080;
+                  equip_display_box.Lines = 0;
+                  if ( research.WeaponsCompleted & (1 << weapon) || login_control__State != 6 )
+                    equip_display_box.Text = (const char *)&weapon_text[weapon_text_index[selected_weapon]];
+                  else
+                    equip_display_box.Text = gui_strings[536];
+                  equip_display_box.TextFadePos = -5;
+                }
+                if ( (1 << weapon) & research.WeaponsCompleted || login_control__State != 6 )
+                {
+                  if ( background_type == 1 )
+                    text = gui_strings[weapon + 30];
+                  else
+                    text = gui_strings[weapon];
+                }
+                else
+                {
+                  text = gui_strings[65];
+                }
+                equip_name_box.Text = text;
+                equip_offer_buy_button.Text = gui_strings[436];
+                equip_name_box.TextFadePos = -5;
+                equip_offer_buy_button.CallBackFn = do_equip_offer_buy;
+                sprintf(equip_cost_text, "%d", 100 * weapon_defs[selected_weapon + 1].Cost);
+                init_weapon_anim(selected_weapon);
+              }
+            }
+        }
+
+        if (weapon == selected_weapon) {
+            lbDisplay.DrawFlags = 0x0040;
+            lbDisplay.DrawColour = 87;
+        } else {
+            lbDisplay.DrawFlags = 0;
+            lbDisplay.DrawColour = 247;
+        }
+        lbDisplay.DrawFlags |= 0x8000;
+        draw_sprite_purple_list(text_window_x1 + 2, h0 + text_window_y1,
+          &unk2_sprites[(weapon_defs[weapon + 1].Sprite & 0xff) + 27]);
+        lbDisplay.DrawFlags &= ~0x8000;
+        if (background_type == 1) {
+            text = gui_strings[weapon + 30];
+        } else {
+            text = gui_strings[weapon];
+        }
+        spr = &unk2_sprites[15 + weapon];
+        draw_text_purple_list2(spr->SWidth + 4, h0 + 1, text, 0);
+        h0 += sheight + 3;
+    }
+    return 0;
+#endif
 }
 
 ubyte show_weapon_slots(struct ScreenBox *box)
