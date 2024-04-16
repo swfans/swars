@@ -379,7 +379,7 @@ int research_daily_progress_for_type(ubyte rstype)
         else
         {
             research_current_weapon_complete();
-            if (ingame.fld_unk7DE)
+            if (ingame.AutoResearch)
                 research_wep_next_type();
         }
         break;
@@ -401,7 +401,7 @@ int research_daily_progress_for_type(ubyte rstype)
         else
         {
             research_current_cymod_complete();
-            if (ingame.fld_unk7DE)
+            if (ingame.AutoResearch)
                 research_cymod_next_type();
         }
         break;

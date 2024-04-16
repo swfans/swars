@@ -83,6 +83,16 @@ enum WeaponFourPackIndex
 
 struct Thing;
 
+enum WeaponDefFlags
+{
+    WEPDFLG_None = 0, /**< No flags set. */
+    WEPDFLG_UNKN0001 = 0x0001, /**< set for LASER/ELLASER. */
+    WEPDFLG_UNKN0002 = 0x0002, /**< set for LASER/ELLASER. */
+    WEPDFLG_UNKN0004 = 0x0004,
+    WEPDFLG_UNKN0008 = 0x0008,
+    WEPDFLG_CanPurchease = 0x0010, /**< Whether the weapon can be bought by player (when researched). */
+};
+
 struct WeaponDef {
   ushort RangeBlocks;
   ushort HitDamage;

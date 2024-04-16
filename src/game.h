@@ -346,7 +346,7 @@ struct InGame {
     ubyte CDTrack;
     ubyte DangerTrack;
     ubyte UseMultiMedia;
-    ubyte fld_unk7DE;
+    ubyte AutoResearch;
     ubyte GameOver;
     struct Scanner Scanner;
     long Credits;

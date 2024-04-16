@@ -211,7 +211,7 @@ void init_research_screen_boxes(void)
     val = 0;
     for (i = 0; i < 2; i++)
     {
-        research_list_buttons[i].Radio = &ingame.fld_unk7DE;
+        research_list_buttons[i].Radio = &ingame.AutoResearch;
         research_list_buttons[i].RadioValue = val;
         research_list_buttons[i].Flags |= GBxFlg_RadioBtn;
         val++;

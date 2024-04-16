@@ -5575,7 +5575,7 @@ ubyte load_game(int slot, char *desc)
             gblen++;
             recount_city_credit_reward(i);
         }
-        ingame.fld_unk7DE = save_game_buffer[gblen];
+        ingame.AutoResearch = save_game_buffer[gblen];
         gblen++;
     }
 

@@ -153,9 +153,14 @@ void set_flag02_equipment_screen_boxes(void)
 
 TbBool weapon_available_for_purchase(short weapon)
 {
-    return ((weapon != WEP_NULL) && (weapon != WEP_ENERGYSHLD) && (weapon != WEP_NAPALMMINE)
-            && (weapon != WEP_SONICBLAST) && ((weapon != WEP_PERSUADER2) || (background_type != 1))
-            && (research.WeaponsCompleted & (1 << (weapon-1))))
+    struct WeaponDef *wdef;
+
+    if (weapon < 0 || weapon >= WEP_TYPES_COUNT)
+        return false;
+
+    wdef = &weapon_defs[weapon];
+
+    return ((wdef->Flags & WEPDFLG_CanPurchease) && (research.WeaponsCompleted & (1 << (weapon-1))))
             || (login_control__State == 5 && login_control__TechLevel >= weapon_tech_level[weapon]);
 }
 
