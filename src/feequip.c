@@ -811,7 +811,7 @@ ubyte show_weapon_list(struct ScreenTextBox *box)
     spr = &unk2_sprites[15 + 0];
     sheight = spr->SHeight;
 
-    for (weapon = box->field_38; (weapon < 32) && (h0 + sheight < box->ScrollWindowHeight + 23); weapon++)
+    for (weapon = box->field_38; (weapon < WEP_TYPES_COUNT) && (h0 + sheight < box->ScrollWindowHeight + 23); weapon++)
     {
         int msx, msy;
         const char *text;
@@ -844,10 +844,12 @@ ubyte show_weapon_list(struct ScreenTextBox *box)
                 }
                 if ( (1 << weapon) & research.WeaponsCompleted || login_control__State != 6 )
                 {
-                  if ( background_type == 1 )
-                    text = gui_strings[weapon + 30];
-                  else
-                    text = gui_strings[weapon];
+                  struct Campaign *p_campgn;
+                  ushort strid;
+
+                  p_campgn = &campaigns[background_type];
+                  strid = p_campgn->WeaponsTextIdShift + weapon;
+                  text = gui_strings[strid];
                 }
                 else
                 {
@@ -870,14 +872,18 @@ ubyte show_weapon_list(struct ScreenTextBox *box)
             lbDisplay.DrawFlags = 0;
             lbDisplay.DrawColour = 247;
         }
+        // TODO make menu sprite a separate property in WeaponDefAdd
+        spr = &unk2_sprites[(weapon_defs[weapon + 1].Sprite & 0xff) + 27];
         lbDisplay.DrawFlags |= 0x8000;
-        draw_sprite_purple_list(text_window_x1 + 2, h0 + text_window_y1,
-          &unk2_sprites[(weapon_defs[weapon + 1].Sprite & 0xff) + 27]);
+        draw_sprite_purple_list(text_window_x1 + 2, h0 + text_window_y1, spr);
         lbDisplay.DrawFlags &= ~0x8000;
-        if (background_type == 1) {
-            text = gui_strings[weapon + 30];
-        } else {
-            text = gui_strings[weapon];
+        {
+            struct Campaign *p_campgn;
+            ushort strid;
+
+            p_campgn = &campaigns[background_type];
+            strid = p_campgn->WeaponsTextIdShift + weapon;
+            text = gui_strings[strid];
         }
         spr = &unk2_sprites[15 + weapon];
         draw_text_purple_list2(spr->SWidth + 4, h0 + 1, text, 0);
