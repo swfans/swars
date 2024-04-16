@@ -29,6 +29,7 @@ extern "C" {
 #pragma pack(1)
 
 #define WEAPONS_CARRIED_MAX_COUNT 6
+#define WEP_CATEGORIES_COUNT 11
 
 /** Range of the weapon chan never exceed this limit.
  */

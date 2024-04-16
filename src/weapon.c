@@ -73,6 +73,7 @@ struct TbNamedEnum weapon_names[33] = {0};
 enum WeaponsConfigCmd {
     CCWep_WeaponsCount = 1,
     CCWep_Name,
+    CCWep_Category,
     CCWep_RangeBlocks,
     CCWep_HitDamage,
     CCWep_ReFireDelay,
@@ -94,6 +95,7 @@ const struct TbNamedEnum weapons_conf_common_cmds[] = {
 
 const struct TbNamedEnum weapons_conf_weapon_cmds[] = {
   {"Name",			CCWep_Name},
+  {"Category",	    CCWep_Category},
   {"RangeBlocks",	CCWep_RangeBlocks},
   {"HitDamage",		CCWep_HitDamage},
   {"ReFireDelay",	CCWep_ReFireDelay},
@@ -212,6 +214,19 @@ void read_weapons_conf_file(void)
                 }
                 CONFDBGLOG("%s \"%s\"", COMMAND_TEXT(cmd_num), (int)wdefa->Name);
                 break;
+            case CCWep_Category:
+                i = LbIniValueGetLongInt(&parser, &k);
+                if (i <= 0) {
+                    CONFWRNLOG("Could not read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                    break;
+                }
+                if ((k < 0) || (k > WEP_CATEGORIES_COUNT)) {
+                    CONFWRNLOG("Outranged value of \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                    k = WEP_CATEGORIES_COUNT;
+                }
+                wdef->Sprite = (wdef->Sprite & 0xFF) | (k << 8);
+                CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)(wdef->Sprite >> 8));
+                break;
             case CCWep_RangeBlocks:
                 i = LbIniValueGetLongInt(&parser, &k);
                 if (i <= 0) {
@@ -294,8 +309,8 @@ void read_weapons_conf_file(void)
                     CONFWRNLOG("Could not read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
                     break;
                 }
-                wdef->Sprite = k;
-                CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)wdef->Sprite);
+                wdef->Sprite = (wdef->Sprite & 0xFF00) | k;
+                CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)(wdef->Sprite & 0xFF));
                 break;
             case CCWep_Cost:
                 i = LbIniValueGetLongInt(&parser, &k);
