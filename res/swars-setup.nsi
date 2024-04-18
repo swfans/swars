@@ -46,10 +46,12 @@ Var inst_src_root_dir
 InstallDir "$PROGRAMFILES\Syndicate Wars\"
 
 ; Search for built files where `make install` puts them during automatic builds
-!if /FileExists "..\pkg\mingw64\opt\swars\swars.exe"
-  !define BUILDENV_PKG_DIR "..\pkg\mingw64\opt\swars"
-!else if /FileExists "..\pkg\mingw32\opt\swars\swars.exe"
-  !define BUILDENV_PKG_DIR "..\pkg\mingw32\opt\swars"
+!if /FileExists "..\pkg\swars\swars.exe"
+  !define BUILDENV_PKG_DIR "..\pkg\mingw64\swars"
+!else if /FileExists "..\pkg\mingw64\swars\swars.exe"
+  !define BUILDENV_PKG_DIR "..\pkg\mingw64\swars"
+!else if /FileExists "..\pkg\mingw32\swars\swars.exe"
+  !define BUILDENV_PKG_DIR "..\pkg\mingw32\swars"
 !else
   !define BUILDENV_PKG_DIR ".\swars"
 !endif
