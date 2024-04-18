@@ -28,7 +28,7 @@ langalleng_POFILES_P = \
 	alltext_punks_eng.pot \
 	alltext_comm_eng.pot
 
-langallengdir = $(prefix)/opt/$(PACKAGE)/language/eng
+langallengdir = $(prefix)/$(PACKAGE)/language/eng
 langalleng_DATA = $(langalleng_WADFILES_S) $(langalleng_WADFILES_Z) $(langalleng_WADFILES_P)
 
 $(langalleng_WADFILES_S): $(langalleng_POFILES_S)
@@ -67,7 +67,7 @@ langallfre_POFILES_P = \
 	alltext_punks_fre.po \
 	alltext_comm_fre.po
 
-langallfredir = $(prefix)/opt/$(PACKAGE)/language/fre
+langallfredir = $(prefix)/$(PACKAGE)/language/fre
 langallfre_DATA = $(langallfre_WADFILES_S) $(langallfre_WADFILES_Z) $(langallfre_WADFILES_P)
 
 $(langallfre_WADFILES_S): $(langallfre_POFILES_S)
@@ -106,7 +106,7 @@ langallger_POFILES_P = \
 	alltext_punks_ger.po \
 	alltext_comm_ger.po
 
-langallgerdir = $(prefix)/opt/$(PACKAGE)/language/ger
+langallgerdir = $(prefix)/$(PACKAGE)/language/ger
 langallger_DATA = $(langallger_WADFILES_S) $(langallger_WADFILES_Z) $(langallger_WADFILES_P)
 
 $(langallger_WADFILES_S): $(langallger_POFILES_S)
@@ -145,7 +145,7 @@ langallita_POFILES_P = \
 	alltext_punks_ita.po \
 	alltext_comm_ita.po
 
-langallitadir = $(prefix)/opt/$(PACKAGE)/language/ita
+langallitadir = $(prefix)/$(PACKAGE)/language/ita
 langallita_DATA = $(langallita_WADFILES_S) $(langallita_WADFILES_Z) $(langallita_WADFILES_P)
 
 $(langallita_WADFILES_S): $(langallita_POFILES_S)
@@ -184,7 +184,7 @@ langallspa_POFILES_P = \
 	alltext_punks_spa.po \
 	alltext_comm_spa.po
 
-langallspadir = $(prefix)/opt/$(PACKAGE)/language/spa
+langallspadir = $(prefix)/$(PACKAGE)/language/spa
 langallspa_DATA = $(langallspa_WADFILES_S) $(langallspa_WADFILES_Z) $(langallspa_WADFILES_P)
 
 $(langallspa_WADFILES_S): $(langallspa_POFILES_S)
@@ -223,7 +223,7 @@ langallswe_POFILES_P = \
 	alltext_punks_swe.po \
 	alltext_comm_swe.po
 
-langallswedir = $(prefix)/opt/$(PACKAGE)/language/swe
+langallswedir = $(prefix)/$(PACKAGE)/language/swe
 langallswe_DATA = $(langallswe_WADFILES_S) $(langallswe_WADFILES_Z) $(langallswe_WADFILES_P)
 
 $(langallswe_WADFILES_S): $(langallswe_POFILES_S)
