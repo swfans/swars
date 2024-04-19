@@ -190,6 +190,9 @@ swars_SOURCES = \
 	pepgroup.h \
 	player.c \
 	player.h \
+	radica1.sx \
+	radica2.sx \
+	radica3.sx \
 	research.c \
 	research.h \
 	rules.c \

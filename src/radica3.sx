@@ -1,0 +1,4819 @@
+
+#ifdef NEED_UNDERSCORE
+# define TRANSFORM_SYMBOLS
+# define EXPORT_SYMBOL(sym) _ ## sym
+#else
+# define EXPORT_SYMBOL(sym) sym
+#endif
+
+#ifndef TRANSFORM_SYMBOLS
+
+# define GLOBAL(sym) \
+  .global sym; \
+  sym ##:
+
+# define GLOBAL_FUNC(sym) \
+  GLOBAL (sym)
+
+#else
+
+# define GLOBAL(sym) \
+  .global EXPORT_SYMBOL (sym); \
+  EXPORT_SYMBOL (sym) ##: \
+  sym ##:
+
+# define GLOBAL_FUNC(sym) \
+  .global sym; \
+  GLOBAL (sym)
+
+#endif
+
+.text
+
+.global EXPORT_SYMBOL(data_1596a8)
+
+.global EXPORT_SYMBOL(data_1ed33c)
+.global EXPORT_SYMBOL(data_1ed340)
+.global EXPORT_SYMBOL(data_1edb94)
+.global EXPORT_SYMBOL(data_1ea7cc)
+.global EXPORT_SYMBOL(data_1ed3ac)
+.global EXPORT_SYMBOL(data_1ed198)
+.global EXPORT_SYMBOL(data_1ea494)
+.global EXPORT_SYMBOL(data_1ed35c)
+.global EXPORT_SYMBOL(data_1ed1a0)
+.global EXPORT_SYMBOL(data_1ed1a8)
+.global EXPORT_SYMBOL(data_1ed1a4)
+.global EXPORT_SYMBOL(data_1ed360)
+.global EXPORT_SYMBOL(data_1596b0)
+.global EXPORT_SYMBOL(data_1ed348)
+
+.global EXPORT_SYMBOL(__cbyte)
+
+/*----------------------------------------------------------------*/
+GLOBAL_FUNC(ASM_func_118a40)
+/*----------------------------------------------------------------*/
+		push   %ecx
+		push   %edx
+		mov    $0x14,%ecx
+		xor    %edx,%edx
+		xor    %eax,%eax
+		mov    %edx,EXPORT_SYMBOL(data_1ed190)
+		mov    %edx,EXPORT_SYMBOL(data_1ed188)
+		mov    %ecx,EXPORT_SYMBOL(data_1ed19c)
+		pop    %edx
+		pop    %ecx
+		ret
+
+vtable_118a60:
+		.long   func_118bd2
+		.long   func_118bd2
+		.long   func_118bf8
+		.long   func_118c16
+		.long   func_118bf8
+		.long   func_118bd2
+		.long   func_118c16
+		.long   func_118b8e
+
+
+/*----------------------------------------------------------------*/
+GLOBAL_FUNC(ASM_net_int_unkn1_handler)	/* 0x118A80 */
+/*----------------------------------------------------------------*/
+		pusha
+		push   %ds
+		push   %es
+		push   %fs
+		push   %gs
+		mov    %esp,%ebp
+		cld
+		call   ____GETDS
+		mov    EXPORT_SYMBOL(data_1edba8),%ebx
+		mov    EXPORT_SYMBOL(data_1edbac),%ecx
+		mov    EXPORT_SYMBOL(data_1596ac),%edx
+		test   %edx,%edx
+		jne    jump_118e56
+		mov    $0x1,%esi
+		mov    %esi,EXPORT_SYMBOL(data_1596ac)
+		cli
+		cmpl   $0x0,EXPORT_SYMBOL(data_1ed344)
+		jne    jump_118e4a
+		cmp    EXPORT_SYMBOL(data_1ed19c),%esi
+		jle    jump_118ad9
+		mov    $0x83,%eax
+		call   func_11b220
+		jmp    jump_118e4a
+	jump_118ad9:
+		mov    %edx,data_15ab7c
+	jump_118adf:
+		movl   $EXPORT_SYMBOL(data_1edb94),data_15abbd
+		call   func_119e23
+		mov    %eax,EXPORT_SYMBOL(data_1edb88)
+		test   %eax,%eax
+		jne    jump_118b39
+		cmpl   $0x0,EXPORT_SYMBOL(data_1edb98)
+		je     jump_118b18
+		cmpl   $0x0,data_15ab7c
+		jne    jump_118b18
+		mov    $0x40,%eax
+		call   func_11b220
+		jmp    jump_118e4a
+	jump_118b18:
+		imul   $0x10b,EXPORT_SYMBOL(data_1ed188),%eax
+		add    $EXPORT_SYMBOL(data_1ebcac),%eax
+		add    $0xc,%eax
+		mov    %eax,data_15abbd
+		call   func_11a46e
+		mov    %eax,EXPORT_SYMBOL(data_1edb88)
+	jump_118b39:
+		mov    EXPORT_SYMBOL(data_1edbac),%ecx
+		mov    EXPORT_SYMBOL(data_1edb88),%esi
+		mov    EXPORT_SYMBOL(data_1edba8),%ebx
+		test   %esi,%esi
+		je     jump_118c27
+		mov    %esi,EXPORT_SYMBOL(data_1ebca8)
+		mov    %esi,%edi
+		imul   $0xc,%esi,%eax
+		mov    EXPORT_SYMBOL(data_1ea490)(%eax),%esi
+		inc    %esi
+		mov    EXPORT_SYMBOL(data_1ed364),%edx
+		mov    %esi,EXPORT_SYMBOL(data_1ea490)(%eax)
+		mov    %edi,%eax
+		inc    %edx
+		sub    $0x10,%eax
+		mov    %edx,EXPORT_SYMBOL(data_1ed364)
+		cmp    $0x7,%eax
+		ja     jump_118bc3
+		jmp    *%cs:vtable_118a60(,%eax,4)
+/*----------------------------------------------------------------*/
+func_118b8e:
+		mov    EXPORT_SYMBOL(data_1edb94),%edi
+		imul   $0x42,%edi,%eax
+		cmpb   $0x0,EXPORT_SYMBOL(data_1ed1b4)(%eax)
+		je     jump_118ba9
+		xor    %edx,%edx
+		mov    %edx,EXPORT_SYMBOL(data_1ebc90)(,%edi,4)
+	jump_118ba9:
+		mov    data_15ab7c,%esi
+		mov    %ebx,EXPORT_SYMBOL(data_1edba8)
+		mov    %ecx,EXPORT_SYMBOL(data_1edbac)
+		test   %esi,%esi
+		je     jump_118e4a
+	jump_118bc3:
+		movl   $0x1,data_15ab7c
+		jmp    jump_118adf
+/*----------------------------------------------------------------*/
+func_118bd2:
+		mov    EXPORT_SYMBOL(data_1ed18c),%eax
+		mov    %ebx,EXPORT_SYMBOL(data_1edba8)
+		inc    %eax
+		mov    %ecx,EXPORT_SYMBOL(data_1edbac)
+		mov    %eax,EXPORT_SYMBOL(data_1ed18c)
+		movl   $0x1,data_15ab7c
+		jmp    jump_118adf
+/*----------------------------------------------------------------*/
+func_118bf8:
+		mov    EXPORT_SYMBOL(data_1ed18c),%edi
+		mov    %ebx,EXPORT_SYMBOL(data_1edba8)
+		inc    %edi
+		mov    %ecx,EXPORT_SYMBOL(data_1edbac)
+		mov    %edi,EXPORT_SYMBOL(data_1ed18c)
+		jmp    jump_118e4a
+/*----------------------------------------------------------------*/
+func_118c16:
+		mov    %ebx,EXPORT_SYMBOL(data_1edba8)
+		mov    %ecx,EXPORT_SYMBOL(data_1edbac)
+		jmp    jump_118e4a
+	jump_118c27:
+		mov    EXPORT_SYMBOL(data_1edb94),%edx
+		mov    %edx,%eax
+		shl    $0x5,%eax
+		add    %edx,%eax
+		mov    $EXPORT_SYMBOL(data_1ed1b0),%edx
+		add    %eax,%eax
+		add    %eax,%edx
+		mov    EXPORT_SYMBOL(data_1edb94),%eax
+		mov    %esi,EXPORT_SYMBOL(data_1ebc90)(,%eax,4)
+		imul   $0x10b,EXPORT_SYMBOL(data_1ed188),%eax
+		incl   EXPORT_SYMBOL(data_1ed358)
+		mov    EXPORT_SYMBOL(data_1edb9c),%edi
+		mov    %edx,EXPORT_SYMBOL(data_1edb90)
+		test   %edi,%edi
+		je     jump_118dfa
+		mov    $EXPORT_SYMBOL(data_1ebcac),%edx
+		add    %eax,%edx
+		add    $0xc,%edx
+		mov    %edx,EXPORT_SYMBOL(data_1edb8c)
+		mov    (%edx),%dl
+		cmp    $0x2,%dl
+		jb     jump_118c94
+		jbe    jump_118dc5
+		cmp    $0x3,%dl
+		je     jump_118c9d
+		jmp    jump_118e4a
+	jump_118c94:
+		cmp    $0x1,%dl
+		jne    jump_118e4a
+	jump_118c9d:
+		xor    %eax,%eax
+		mov    EXPORT_SYMBOL(data_1edb90),%edx
+		mov    %eax,data_15ab80
+		cmpb   $0x0,0x4(%edx)
+		jne    jump_118ceb
+		imul   $0x10b,EXPORT_SYMBOL(data_1ed188),%eax
+		mov    $0x1,%ebx
+		mov    %ebx,data_15ab80
+		mov    %ebx,EXPORT_SYMBOL(data_1596c0)
+		mov    %ebx,EXPORT_SYMBOL(data_1ebcac)(%eax)
+		xor    %ebx,%ebx
+		mov    %ebx,EXPORT_SYMBOL(data_1ebcb0)(%eax)
+		mov    EXPORT_SYMBOL(data_1edb94),%ebx
+		mov    %ebx,EXPORT_SYMBOL(data_1ebcb4)(%eax)
+		movl   $0x0,(%edx)
+	jump_118ceb:
+		mov    EXPORT_SYMBOL(data_1edb90),%eax
+		mov    (%eax),%esi
+		xor    %ebx,%ebx
+		inc    %esi
+		xor    %ecx,%ecx
+		mov    %esi,(%eax)
+	jump_118cf9:
+		mov    EXPORT_SYMBOL(data_1edb8c),%eax
+		mov    EXPORT_SYMBOL(data_1edb90),%esi
+		mov    %ecx,%edx
+		inc    %ebx
+		add    %edx,%esi
+		mov    (%ebx,%eax,1),%dl
+		inc    %ecx
+		mov    %dl,0x4(%esi)
+		test   %dl,%dl
+		jne    jump_118cf9
+		xor    %ecx,%ecx
+	jump_118d16:
+		mov    EXPORT_SYMBOL(data_1edb8c),%edx
+		mov    EXPORT_SYMBOL(data_1edb90),%esi
+		mov    %ecx,%eax
+		inc    %ebx
+		add    %eax,%esi
+		mov    (%edx,%ebx,1),%al
+		inc    %ecx
+		mov    %al,0x15(%esi)
+		test   %al,%al
+		jne    jump_118d16
+		xor    %ecx,%ecx
+	jump_118d34:
+		mov    EXPORT_SYMBOL(data_1edb8c),%edx
+		mov    EXPORT_SYMBOL(data_1edb90),%esi
+		mov    %ecx,%eax
+		inc    %ebx
+		add    %eax,%esi
+		mov    (%edx,%ebx,1),%al
+		inc    %ecx
+		mov    %al,0x1e(%esi)
+		test   %al,%al
+		jne    jump_118d34
+		xor    %ecx,%ecx
+	jump_118d52:
+		mov    EXPORT_SYMBOL(data_1edb8c),%eax
+		mov    EXPORT_SYMBOL(data_1edb90),%esi
+		mov    %ecx,%edx
+		inc    %ebx
+		add    %edx,%esi
+		mov    (%ebx,%eax,1),%dl
+		inc    %ecx
+		mov    %dl,0x27(%esi)
+		test   %dl,%dl
+		jne    jump_118d52
+		xor    %ecx,%ecx
+	jump_118d6f:
+		mov    EXPORT_SYMBOL(data_1edb8c),%edx
+		mov    EXPORT_SYMBOL(data_1edb90),%esi
+		mov    %ecx,%eax
+		inc    %ebx
+		add    %eax,%esi
+		mov    (%edx,%ebx,1),%al
+		inc    %ecx
+		mov    %al,0x30(%esi)
+		test   %al,%al
+		jne    jump_118d6f
+		xor    %ecx,%ecx
+	jump_118d8d:
+		mov    EXPORT_SYMBOL(data_1edb8c),%edx
+		mov    EXPORT_SYMBOL(data_1edb90),%esi
+		mov    %ecx,%eax
+		inc    %ebx
+		add    %eax,%esi
+		mov    (%edx,%ebx,1),%al
+		inc    %ecx
+		mov    %al,0x39(%esi)
+		test   %al,%al
+		jne    jump_118d8d
+		mov    data_15ab80,%esi
+		mov    %ebx,EXPORT_SYMBOL(data_1edba8)
+		mov    %ecx,EXPORT_SYMBOL(data_1edbac)
+		test   %esi,%esi
+		je     jump_118e4a
+		jmp    jump_118e2b
+	jump_118dc5:
+		mov    EXPORT_SYMBOL(data_1edb90),%edx
+		cmpb   $0x0,0x4(%edx)
+		je     jump_118e4a
+		movl   $0x0,(%edx)
+		mov    $0x2,%esi
+		movb   $0x0,0x4(%edx)
+		xor    %edi,%edi
+		mov    %esi,EXPORT_SYMBOL(data_1ebcac)(%eax)
+		mov    EXPORT_SYMBOL(data_1edb94),%edx
+		mov    %edi,EXPORT_SYMBOL(data_1ebcb0)(%eax)
+		jmp    jump_118e25
+	jump_118dfa:
+		cmpb   $0x0,0x4(%edx)
+		je     jump_118e4a
+		cmpl   $0x0,EXPORT_SYMBOL(data_1596b8)
+		je     jump_118e4a
+		incl   (%edx)
+		xor    %edx,%edx
+		mov    %edx,EXPORT_SYMBOL(data_1ebcac)(%eax)
+		mov    EXPORT_SYMBOL(data_1edba4),%edx
+		mov    %edx,EXPORT_SYMBOL(data_1ebcb0)(%eax)
+		mov    EXPORT_SYMBOL(data_1edb94),%edx
+	jump_118e25:
+		mov    %edx,EXPORT_SYMBOL(data_1ebcb4)(%eax)
+	jump_118e2b:
+		mov    EXPORT_SYMBOL(data_1ed188),%edx
+		inc    %edx
+		mov    $0x14,%esi
+		mov    %edx,%eax
+		sar    $0x1f,%edx
+		idiv   %esi
+		decl   EXPORT_SYMBOL(data_1ed19c)
+		mov    %edx,EXPORT_SYMBOL(data_1ed188)
+	jump_118e4a:
+		sti
+		mov    $0x20,%al
+		out    %al,$0x20
+		xor    %eax,%eax
+		mov    %eax,EXPORT_SYMBOL(data_1596ac)
+	jump_118e56:
+		mov    EXPORT_SYMBOL(data_1edba8),%ebx
+		pop    %gs
+		pop    %fs
+		pop    %es
+		pop    %ds
+		popa
+		iret
+
+
+/*----------------------------------------------------------------*/
+func_118e64:
+/*----------------------------------------------------------------*/
+		mov    $0x400,%eax
+		mov    0x0(%ebp,%eax,1),%dx
+		mov    %dx,EXPORT_SYMBOL(data_15aba2)
+		ret
+
+
+/*----------------------------------------------------------------*/
+func_118e76:
+/*----------------------------------------------------------------*/
+		pusha
+		push   %ds
+		push   %es
+		mov    EXPORT_SYMBOL(data_15aba2),%dx
+		mov    data_15abb4,%cl
+		mov    data_15abad,%ch
+		mov    data_15aba9,%ebp
+		mov    data_15abbd,%esi
+		and    $0xcf,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_118ea2:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_118ea2
+		pop    %edi
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		and    $0xf8,%al
+		mov    %al,%bl
+		bt     $0x7,%bx
+		jb     jump_118ed0
+		and    $0xef,%cl
+		or     $0x20,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_118ec5:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_118ec5
+		pop    %edi
+		jmp    jump_118fb0
+	jump_118ed0:
+		and    $0xef,%cl
+		or     $0x20,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_118edd:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_118edd
+		pop    %edi
+		mov    EXPORT_SYMBOL(data_15aba4),%bh
+		xor    $0xf,%bh
+		mov    %bh,%ah
+		and    $0xf0,%cl
+		or     %bh,%cl
+		mov    %ebp,%edi
+	jump_118ef5:
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		bt     $0x6,%ax
+		jb     jump_118fb0
+		and    $0xb8,%al
+		cmp    $0xb8,%al
+		je     jump_118f1a
+		movl   $0x30,EXPORT_SYMBOL(data_15abb6)
+		jmp    jump_118fd2
+	jump_118f1a:
+		dec    %edi
+		jne    jump_118ef5
+		and    $0xbf,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_118f27:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_118f27
+		pop    %edi
+		mov    %ebp,%edi
+		shl    $0x2,%edi
+	jump_118f32:
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		and    $0xf8,%al
+		mov    %al,%bl
+		bt     $0x6,%bx
+		jb     jump_118fc8
+		mov    %bl,%al
+		rcl    %al
+		rcl    %bh
+		shl    $0x3,%bh
+		shr    $0x4,%al
+		and    $0x7,%al
+		or     %al,%bh
+		mov    %bh,%al
+		and    $0xf,%al
+		cmp    %ah,%al
+		je     jump_118f65
+		jb     jump_118fc8
+		dec    %edi
+		jne    jump_118f32
+		jmp    jump_118fbc
+	jump_118f65:
+		push   %edi
+		movzbl %ch,%edi
+	jump_118f69:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_118f69
+		pop    %edi
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		and    $0xf8,%al
+		mov    %al,%bl
+		bt     $0x6,%bx
+		je     jump_118fc8
+		mov    %bl,%al
+		rcl    %al
+		rcl    %bh
+		shl    $0x3,%bh
+		shr    $0x4,%al
+		and    $0x7,%al
+		or     %al,%bh
+		mov    %bh,%al
+		and    $0xf,%al
+		cmp    %ah,%al
+		jne    jump_118f32
+		movl   $0x0,EXPORT_SYMBOL(data_15abb6)
+	jump_118fa1:
+		mov    %cl,data_15abb4
+		pop    %es
+		pop    %ds
+		popa
+		mov    EXPORT_SYMBOL(data_15abb6),%eax
+		ret
+	jump_118fb0:
+		movl   $0x32,EXPORT_SYMBOL(data_15abb6)
+		jmp    jump_118fd2
+	jump_118fbc:
+		movl   $0x5,EXPORT_SYMBOL(data_15abb6)
+		jmp    jump_118fd2
+	jump_118fc8:
+		movl   $0x31,EXPORT_SYMBOL(data_15abb6)
+	jump_118fd2:
+		mov    EXPORT_SYMBOL(data_15aba2),%dx
+		or     $0x20,%cl
+		and    $0xbf,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_118fe6:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_118fe6
+		pop    %edi
+		or     $0xf,%cl
+		and    $0xef,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		jmp    jump_118fa1
+
+
+/*----------------------------------------------------------------*/
+GLOBAL_FUNC(ASM_func_118ff7)
+/*----------------------------------------------------------------*/
+		pusha
+		push   %ds
+		push   %es
+		mov    $0x8,%ebp
+		call   ASM_func_11f4b8
+		mov    %eax,EXPORT_SYMBOL(data_15abaf)
+	jump_119009:
+		call   func_118e64
+		call   ASM_func_11f3f3
+		cli
+		mov    %eax,data_15aba9
+		mov    EXPORT_SYMBOL(data_15aba2),%dx
+		inc    %dx
+		inc    %dx
+		in     (%dx),%al
+		mov    %al,data_15abb5
+		and    $0x1f,%al
+		or     $0x4,%al
+		mov    %al,EXPORT_SYMBOL(data_15abb3)
+		dec    %dx
+		dec    %dx
+		mov    $0x9f,%al
+		out    %al,(%dx)
+		mov    EXPORT_SYMBOL(data_15abaf),%edi
+	jump_119040:
+		dec    %edi
+		jne    jump_119040
+		inc    %dx
+		in     (%dx),%al
+		and    $0xb8,%al
+		cmp    $0x80,%al
+		je     jump_1190c8
+		inc    %dx
+		orb    $0x1,EXPORT_SYMBOL(data_15abb3)
+		mov    EXPORT_SYMBOL(data_15abb3),%al
+		out    %al,(%dx)
+		mov    EXPORT_SYMBOL(data_15abaf),%edi
+	jump_119061:
+		dec    %edi
+		jne    jump_119061
+		dec    %dx
+		in     (%dx),%al
+		and    $0xb8,%al
+		cmp    $0x80,%al
+		jne    jump_1190a3
+		dec    %dx
+		mov    $0x8f,%al
+		out    %al,(%dx)
+		mov    EXPORT_SYMBOL(data_15abaf),%edi
+	jump_119078:
+		dec    %edi
+		jne    jump_119078
+		inc    %dx
+		in     (%dx),%al
+		bt     $0x3,%ax
+		jae    jump_1190a3
+		dec    %dx
+		mov    $0x9f,%al
+		out    %al,(%dx)
+		mov    EXPORT_SYMBOL(data_15abaf),%edi
+	jump_119090:
+		dec    %edi
+		jne    jump_119090
+		mov    $0x98,%al
+		out    %al,(%dx)
+		mov    EXPORT_SYMBOL(data_15abaf),%edi
+	jump_11909c:
+		dec    %edi
+		jne    jump_11909c
+		inc    %dx
+		jmp    jump_1190fb
+	jump_1190a3:
+		mov    EXPORT_SYMBOL(data_15aba2),%dx
+		mov    $0xbf,%al
+		out    %al,(%dx)
+		inc    %dx
+		inc    %dx
+		mov    data_15abb5,%al
+		out    %al,(%dx)
+		cmp    $0xc,%ebp
+		je     jump_119349
+		add    $0x2,%ebp
+		jmp    jump_119009
+	jump_1190c8:
+		mov    EXPORT_SYMBOL(data_15aba2),%dx
+		mov    $0x9e,%al
+		out    %al,(%dx)
+		mov    $0x9c,%al
+		out    %al,(%dx)
+		mov    $0x98,%al
+		out    %al,(%dx)
+		mov    EXPORT_SYMBOL(data_15aba2),%dx
+		inc    %dx
+		inc    %dx
+		orb    $0x1,EXPORT_SYMBOL(data_15abb3)
+		mov    EXPORT_SYMBOL(data_15abb3),%al
+		out    %al,(%dx)
+		mov    EXPORT_SYMBOL(data_15abaf),%edi
+	jump_1190f6:
+		dec    %edi
+		jne    jump_1190f6
+		dec    %dx
+	jump_1190fb:
+		in     (%dx),%al
+		and    $0xb8,%al
+		cmp    $0x80,%al
+		jne    jump_1190a3
+		dec    %dx
+		mov    $0x99,%al
+		out    %al,(%dx)
+		mov    EXPORT_SYMBOL(data_15abaf),%edi
+	jump_11910d:
+		dec    %edi
+		jne    jump_11910d
+		inc    %dx
+		in     (%dx),%al
+		and    $0xb8,%al
+		cmp    $0x80,%al
+		jne    jump_1190a3
+		dec    %dx
+		mov    $0x91,%al
+		out    %al,(%dx)
+		mov    EXPORT_SYMBOL(data_15abaf),%edi
+	jump_119124:
+		dec    %edi
+		jne    jump_119124
+		inc    %dx
+		in     (%dx),%al
+		and    $0xb8,%al
+		cmp    $0x88,%al
+		jne    jump_1190a3
+		dec    %dx
+		mov    $0x92,%al
+		out    %al,(%dx)
+		mov    EXPORT_SYMBOL(data_15abaf),%edi
+	jump_11913f:
+		dec    %edi
+		jne    jump_11913f
+		inc    %dx
+		in     (%dx),%al
+		and    $0xb8,%al
+		cmp    $0x90,%al
+		jne    jump_119355
+		dec    %dx
+		mov    $0x94,%al
+		out    %al,(%dx)
+		mov    EXPORT_SYMBOL(data_15abaf),%edi
+	jump_11915a:
+		dec    %edi
+		jne    jump_11915a
+		inc    %dx
+		in     (%dx),%al
+		and    $0xb8,%al
+		cmp    $0xa0,%al
+		jne    jump_119355
+		dec    %dx
+		mov    $0x95,%al
+		out    %al,(%dx)
+		mov    EXPORT_SYMBOL(data_15abaf),%edi
+	jump_119175:
+		dec    %edi
+		jne    jump_119175
+		inc    %dx
+		in     (%dx),%al
+		and    $0xb8,%al
+		cmp    $0x0,%al
+		jne    jump_119355
+		dec    %dx
+		mov    $0x94,%al
+		out    %al,(%dx)
+		mov    $0x96,%al
+		out    %al,(%dx)
+		mov    EXPORT_SYMBOL(data_15abaf),%edi
+	jump_119193:
+		dec    %edi
+		jne    jump_119193
+		inc    %dx
+		in     (%dx),%al
+		and    $0x38,%al
+		shr    $0x3,%al
+		mov    %al,EXPORT_SYMBOL(data_15aba4)
+		dec    %dx
+		mov    $0x97,%al
+		out    %al,(%dx)
+		mov    EXPORT_SYMBOL(data_15abaf),%edi
+	jump_1191ae:
+		dec    %edi
+		jne    jump_1191ae
+		inc    %dx
+		in     (%dx),%al
+		and    $0xb8,%al
+		cmp    $0xb8,%al
+		jne    jump_119355
+		dec    %dx
+		mov    $0x9f,%al
+		out    %al,(%dx)
+		mov    EXPORT_SYMBOL(data_15abaf),%edi
+	jump_1191c9:
+		dec    %edi
+		jne    jump_1191c9
+		mov    $0xbf,%al
+		out    %al,(%dx)
+		mov    EXPORT_SYMBOL(data_15abaf),%edi
+	jump_1191d5:
+		dec    %edi
+		jne    jump_1191d5
+		mov    data_15aba9,%edi
+		shl    $0x8,%edi
+		mov    EXPORT_SYMBOL(data_15aba2),%dx
+		inc    %dx
+	jump_1191ea:
+		in     (%dx),%al
+		bt     $0x6,%ax
+		jae    jump_1191fa
+		dec    %edi
+		jne    jump_1191ea
+		jmp    jump_119355
+	jump_1191fa:
+		mov    $0xbf,%al
+		mov    %al,data_15abb4
+		mov    EXPORT_SYMBOL(data_15aba2),%dx
+		out    %al,(%dx)
+		mov    $0x4,%al
+		shl    $0x2,%al
+		mov    %al,data_15abad
+		mov    %ebp,%edi
+		shl    $0x11,%edi
+	jump_119218:
+		dec    %edi
+		je     jump_119375
+		call   func_118e76
+		mov    data_15abb4,%cl
+		cmp    $0x0,%eax
+		je     jump_11924e
+		or     $0x30,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_119239:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_119239
+		pop    %edi
+		cmp    $0x30,%eax
+		je     jump_119218
+		cmp    $0x32,%eax
+		je     jump_119218
+		jmp    jump_119375
+	jump_11924e:
+		rorl   $0x4,EXPORT_SYMBOL(data_15abaf)
+		mov    EXPORT_SYMBOL(data_15abaf),%ch
+		roll   $0x4,EXPORT_SYMBOL(data_15abaf)
+		cmp    $0x0,%ch
+		jne    jump_11926f
+		mov    $0x1,%ch
+		mov    %ch,data_15abad
+	jump_11926f:
+		movb   $0x8,data_15abbc
+	jump_119276:
+		mov    $0x0,%bh
+		and    $0xf0,%cl
+		or     %bh,%cl
+		and    $0xbf,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		mov    EXPORT_SYMBOL(data_15abaf),%edi
+		shl    %edi
+	jump_11928b:
+		dec    %edi
+		jne    jump_11928b
+		mov    data_15abbc,%bh
+		and    $0xf0,%cl
+		or     %bh,%cl
+		and    $0xbf,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_1192a3:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_1192a3
+		pop    %edi
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		and    $0xf8,%al
+		mov    %al,%bl
+		mov    %bl,%al
+		rcl    %al
+		rcl    %bh
+		shl    $0x3,%bh
+		shr    $0x4,%al
+		and    $0x7,%al
+		or     %al,%bh
+		mov    %bh,%al
+		and    $0xf,%al
+		cmp    data_15abbc,%al
+		jne    jump_1192d8
+		shrb   data_15abbc
+		jb     jump_1192e2
+		jmp    jump_119276
+	jump_1192d8:
+		inc    %ch
+		je     jump_119375
+		jmp    jump_119276
+	jump_1192e2:
+		mov    %ch,data_15abad
+		call   ASM_func_11f561
+		cmpl   $0x0,EXPORT_SYMBOL(data_15abb6)
+		jne    jump_11935f
+		mov    $0x5f302e31,%eax
+		mov    %eax,EXPORT_SYMBOL(data_15ab99)
+		mov    $0x73422f41,%eax
+		mov    %eax,data_15ab9d
+		movb   $0x0,data_15aba1
+		mov    EXPORT_SYMBOL(data_15aba2),%dx
+		or     $0x20,%cl
+		and    $0xbf,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_119325:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_119325
+		pop    %edi
+		or     $0xf,%cl
+		and    $0xef,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		mov    %cl,data_15abb4
+	jump_11933a:
+		mov    %cl,data_15abb4
+		pop    %es
+		pop    %ds
+		popa
+		mov    EXPORT_SYMBOL(data_15abb6),%eax
+		ret
+	jump_119349:
+		movl   $0x1,EXPORT_SYMBOL(data_15abb6)
+		jmp    jump_11933a
+	jump_119355:
+		movl   $0x2,EXPORT_SYMBOL(data_15abb6)
+	jump_11935f:
+		mov    EXPORT_SYMBOL(data_15aba2),%dx
+		mov    $0xbf,%al
+		out    %al,(%dx)
+		inc    %dx
+		inc    %dx
+		mov    data_15abb5,%al
+		out    %al,(%dx)
+		jmp    jump_11933a
+	jump_119375:
+		movl   $0x5,EXPORT_SYMBOL(data_15abb6)
+		jmp    jump_11935f
+
+
+/*----------------------------------------------------------------*/
+func_119381:
+/*----------------------------------------------------------------*/
+		pusha
+		push   %ds
+		push   %es
+		mov    EXPORT_SYMBOL(data_15aba2),%dx
+		mov    data_15abb4,%cl
+		mov    data_15abad,%ch
+		mov    data_15aba9,%ebp
+		mov    data_15abbd,%esi
+		inc    %dx
+		inc    %dx
+		mov    EXPORT_SYMBOL(data_15abb3),%al
+		and    $0xef,%al
+		out    %al,(%dx)
+		mov    %al,EXPORT_SYMBOL(data_15abb3)
+		dec    %dx
+		dec    %dx
+		mov    EXPORT_SYMBOL(data_15abaf),%edi
+	jump_1193be:
+		dec    %edi
+		jne    jump_1193be
+		push   %dx
+		mov    $0x20,%dx
+		mov    $0x67,%al
+		out    %al,(%dx)
+		pop    %dx
+		or     $0x30,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_1193d6:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_1193d6
+		pop    %edi
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		and    $0xf8,%al
+		mov    %al,%bl
+		mov    %bl,%al
+		rcl    %al
+		rcl    %bh
+		shl    $0x3,%bh
+		shr    $0x4,%al
+		and    $0x7,%al
+		or     %al,%bh
+		mov    %bh,%al
+		not    %al
+		and    $0xf,%al
+		cmp    EXPORT_SYMBOL(data_15aba4),%al
+		jne    jump_11978f
+		or     $0x40,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		mov    data_15abad,%ch
+		bt     $0xf,%cx
+		jb     jump_119426
+		bt     $0xe,%cx
+		jb     jump_119426
+		shl    $0x2,%ch
+		jmp    jump_119428
+	jump_119426:
+		mov    $0xff,%ch
+	jump_119428:
+		push   %edi
+		movzbl %ch,%edi
+	jump_11942c:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_11942c
+		pop    %edi
+		mov    0x4(%esi),%eax
+		mov    %al,%bh
+		shl    %bh
+		mov    0x8(%esi),%eax
+		or     %al,%bh
+		shl    $0x2,%bh
+		mov    0xc(%esi),%eax
+		mov    %eax,data_15abc1
+		or     %al,%bh
+		mov    %bh,data_15abc9
+		movzbw %bh,%dx
+		add    EXPORT_SYMBOL(data_15aba4),%dl
+		mov    0x10(%esi),%eax
+		and    $0xff,%eax
+		mov    %eax,data_15abc5
+		add    %ax,%dx
+		mov    %dx,data_15abba
+		mov    EXPORT_SYMBOL(data_15aba2),%dx
+		mov    %ebp,%edi
+		shl    $0x11,%edi
+		inc    %edi
+	jump_11947f:
+		dec    %edi
+		je     jump_119765
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		and    $0xf8,%al
+		mov    %al,%bl
+		mov    %bl,%al
+		rcl    %al
+		rcl    %bh
+		shl    $0x3,%bh
+		shr    $0x4,%al
+		and    $0x7,%al
+		or     %al,%bh
+		mov    %bh,%al
+		not    %al
+		and    $0xf,%al
+		cmp    EXPORT_SYMBOL(data_15aba4),%al
+		jne    jump_11978f
+		bt     $0x6,%bx
+		jb     jump_11947f
+		mov    EXPORT_SYMBOL(data_15abaf),%edi
+		shl    %edi
+	jump_1194c0:
+		dec    %edi
+		jne    jump_1194c0
+		mov    data_15abc9,%bh
+		or     $0x30,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_1194d3:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_1194d3
+		pop    %edi
+		and    $0xbf,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		and    $0xf0,%cl
+		and    $0xf,%bh
+		or     %bh,%cl
+		push   %edi
+		movzbl %ch,%edi
+	jump_1194eb:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_1194eb
+		pop    %edi
+		and    $0xbf,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		mov    %ebp,%edi
+		inc    %edi
+		mov    %bh,%ah
+	jump_1194fc:
+		dec    %edi
+		je     jump_11978f
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		and    $0xf8,%al
+		mov    %al,%bl
+		mov    %bl,%al
+		rcl    %al
+		rcl    %bh
+		shl    $0x3,%bh
+		shr    $0x4,%al
+		and    $0x7,%al
+		or     %al,%bh
+		mov    %bh,%al
+		and    $0xf,%al
+		cmp    %al,%ah
+		jne    jump_1194fc
+		push   %edi
+		movzbl %ch,%edi
+	jump_119528:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_119528
+		pop    %edi
+		or     $0x40,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_119538:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_119538
+		pop    %edi
+		push   %edi
+		movzbl %ch,%edi
+	jump_119542:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_119542
+		pop    %edi
+		mov    %ebp,%edi
+		shl    $0x3,%edi
+		inc    %edi
+	jump_11954e:
+		dec    %edi
+		je     jump_11955f
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		bt     $0x6,%ax
+		jae    jump_1195a8
+		jmp    jump_11954e
+	jump_11955f:
+		mov    EXPORT_SYMBOL(data_15aba2),%dx
+		mov    EXPORT_SYMBOL(data_15aba4),%bh
+		xor    $0xf,%bh
+		and    $0xf0,%cl
+		or     %bh,%cl
+		and    $0xef,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_11957e:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_11957e
+		pop    %edi
+		and    $0xbf,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		mov    %ebp,%edi
+		shl    $0x4,%edi
+		inc    %edi
+	jump_119590:
+		dec    %edi
+		je     jump_1197f3
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		bt     $0x6,%ax
+		jb     jump_119590
+		jmp    jump_11984b
+	jump_1195a8:
+		nop
+		mov    0x10(%esi),%eax
+		shr    $0x4,%al
+		mov    %al,%bh
+		and    $0xbf,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		and    $0xf0,%cl
+		and    $0xf,%bh
+		or     %bh,%cl
+		push   %edi
+		movzbl %ch,%edi
+	jump_1195c3:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_1195c3
+		pop    %edi
+		and    $0xbf,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		mov    %ebp,%edi
+		inc    %edi
+		mov    %bh,%ah
+	jump_1195d4:
+		dec    %edi
+		je     jump_11978f
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		and    $0xf8,%al
+		mov    %al,%bl
+		mov    %bl,%al
+		rcl    %al
+		rcl    %bh
+		shl    $0x3,%bh
+		shr    $0x4,%al
+		and    $0x7,%al
+		or     %al,%bh
+		mov    %bh,%al
+		and    $0xf,%al
+		cmp    %al,%ah
+		jne    jump_1195d4
+		push   %edi
+		movzbl %ch,%edi
+	jump_119600:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_119600
+		pop    %edi
+		or     $0x40,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_119610:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_119610
+		pop    %edi
+		push   %edi
+		movzbl %ch,%edi
+	jump_11961a:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_11961a
+		pop    %edi
+		mov    %ebp,%edi
+		shl    $0x3,%edi
+		inc    %edi
+	jump_119626:
+		dec    %edi
+		je     jump_119637
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		bt     $0x6,%ax
+		jae    jump_119680
+		jmp    jump_119626
+	jump_119637:
+		mov    EXPORT_SYMBOL(data_15aba2),%dx
+		mov    EXPORT_SYMBOL(data_15aba4),%bh
+		xor    $0xf,%bh
+		and    $0xf0,%cl
+		or     %bh,%cl
+		and    $0xef,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_119656:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_119656
+		pop    %edi
+		and    $0xbf,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		mov    %ebp,%edi
+		shl    $0x4,%edi
+		inc    %edi
+	jump_119668:
+		dec    %edi
+		je     jump_1197f3
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		bt     $0x6,%ax
+		jb     jump_119668
+		jmp    jump_11984b
+	jump_119680:
+		nop
+		mov    0x10(%esi),%eax
+		mov    %al,%bh
+		and    $0xbf,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		and    $0xf0,%cl
+		and    $0xf,%bh
+		or     %bh,%cl
+		push   %edi
+		movzbl %ch,%edi
+	jump_119698:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_119698
+		pop    %edi
+		and    $0xbf,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		mov    %ebp,%edi
+		inc    %edi
+		mov    %bh,%ah
+	jump_1196a9:
+		dec    %edi
+		je     jump_11978f
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		and    $0xf8,%al
+		mov    %al,%bl
+		mov    %bl,%al
+		rcl    %al
+		rcl    %bh
+		shl    $0x3,%bh
+		shr    $0x4,%al
+		and    $0x7,%al
+		or     %al,%bh
+		mov    %bh,%al
+		and    $0xf,%al
+		cmp    %al,%ah
+		jne    jump_1196a9
+		push   %edi
+		movzbl %ch,%edi
+	jump_1196d5:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_1196d5
+		pop    %edi
+		or     $0x40,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_1196e5:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_1196e5
+		pop    %edi
+		push   %edi
+		movzbl %ch,%edi
+	jump_1196ef:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_1196ef
+		pop    %edi
+		mov    %ebp,%edi
+		shl    $0x3,%edi
+		inc    %edi
+	jump_1196fb:
+		dec    %edi
+		je     jump_11970c
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		bt     $0x6,%ax
+		jae    jump_119755
+		jmp    jump_1196fb
+	jump_11970c:
+		mov    EXPORT_SYMBOL(data_15aba2),%dx
+		mov    EXPORT_SYMBOL(data_15aba4),%bh
+		xor    $0xf,%bh
+		and    $0xf0,%cl
+		or     %bh,%cl
+		and    $0xef,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_11972b:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_11972b
+		pop    %edi
+		and    $0xbf,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		mov    %ebp,%edi
+		shl    $0x4,%edi
+		inc    %edi
+	jump_11973d:
+		dec    %edi
+		je     jump_1197f3
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		bt     $0x6,%ax
+		jb     jump_11973d
+		jmp    jump_11984b
+	jump_119755:
+		nop
+		movl   $0x0,EXPORT_SYMBOL(data_15abb6)
+		jmp    jump_119857
+	jump_119765:
+		movl   $0x20,EXPORT_SYMBOL(data_15abb6)
+		and    $0xbf,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		mov    %cl,%al
+		or     $0x10,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_11977e:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_11977e
+		pop    %edi
+		and    $0xef,%al
+		out    %al,(%dx)
+		mov    %al,%cl
+		nop
+		jmp    jump_119857
+	jump_11978f:
+		movl   $0x22,EXPORT_SYMBOL(data_15abb6)
+		mov    EXPORT_SYMBOL(data_15abaf),%edi
+		shl    $0x5,%edi
+	jump_1197a2:
+		dec    %edi
+		jne    jump_1197a2
+		mov    EXPORT_SYMBOL(data_15aba2),%dx
+		or     $0x20,%cl
+		and    $0xbf,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_1197b9:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_1197b9
+		pop    %edi
+		or     $0xf,%cl
+		and    $0xef,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		inc    %dx
+		inc    %dx
+		mov    EXPORT_SYMBOL(data_15abb3),%al
+		or     $0x10,%al
+		out    %al,(%dx)
+		mov    %al,EXPORT_SYMBOL(data_15abb3)
+		dec    %dx
+		dec    %dx
+		mov    EXPORT_SYMBOL(data_15abaf),%edi
+	jump_1197e3:
+		dec    %edi
+		jne    jump_1197e3
+		push   %dx
+		mov    $0x20,%dx
+		mov    $0x67,%al
+		out    %al,(%dx)
+		pop    %dx
+		jmp    jump_119857
+	jump_1197f3:
+		movl   $0x23,EXPORT_SYMBOL(data_15abb6)
+		mov    EXPORT_SYMBOL(data_15aba2),%dx
+		or     $0x20,%cl
+		and    $0xbf,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_119811:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_119811
+		pop    %edi
+		or     $0xf,%cl
+		and    $0xef,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		inc    %dx
+		inc    %dx
+		mov    EXPORT_SYMBOL(data_15abb3),%al
+		or     $0x10,%al
+		out    %al,(%dx)
+		mov    %al,EXPORT_SYMBOL(data_15abb3)
+		dec    %dx
+		dec    %dx
+		mov    EXPORT_SYMBOL(data_15abaf),%edi
+	jump_11983b:
+		dec    %edi
+		jne    jump_11983b
+		push   %dx
+		mov    $0x20,%dx
+		mov    $0x67,%al
+		out    %al,(%dx)
+		pop    %dx
+		jmp    jump_119857
+	jump_11984b:
+		movl   $0x21,EXPORT_SYMBOL(data_15abb6)
+		jmp    jump_119857
+	jump_119857:
+		mov    %cl,data_15abb4
+		pop    %es
+		pop    %ds
+		popa
+		mov    EXPORT_SYMBOL(data_15abb6),%eax
+		ret
+
+
+/*----------------------------------------------------------------*/
+func_119866:
+/*----------------------------------------------------------------*/
+		pusha
+		push   %ds
+		push   %es
+		mov    EXPORT_SYMBOL(data_15aba2),%dx
+		mov    data_15abb4,%cl
+		mov    data_15abad,%ch
+		mov    data_15aba9,%ebp
+		mov    data_15abbd,%esi
+		call   func_11a444
+		or     $0x30,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_119897:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_119897
+		pop    %edi
+		rol    $0x10,%edx
+		mov    data_15abba,%dx
+		rol    $0x10,%edx
+		ror    $0x10,%ecx
+		mov    data_15abc5,%cx
+		cmp    $0x0,%cx
+		ror    $0x10,%ecx
+		je     jump_119a99
+	jump_1198c1:
+		rol    $0x10,%ebx
+		mov    (%esi),%bh
+		inc    %esi
+		movzbw %bh,%ax
+		ror    $0x10,%edx
+		add    %ax,%dx
+		ror    $0x10,%edx
+		ror    $0x4,%bh
+		mov    %bh,%al
+		rol    $0x10,%ebx
+		mov    %al,%bh
+		and    $0xbf,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		and    $0xf0,%cl
+		and    $0xf,%bh
+		or     %bh,%cl
+		push   %edi
+		movzbl %ch,%edi
+	jump_1198f0:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_1198f0
+		pop    %edi
+		and    $0xbf,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		mov    %ebp,%edi
+		inc    %edi
+		mov    %bh,%ah
+	jump_119901:
+		dec    %edi
+		je     jump_119dc2
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		and    $0xf8,%al
+		mov    %al,%bl
+		mov    %bl,%al
+		rcl    %al
+		rcl    %bh
+		shl    $0x3,%bh
+		shr    $0x4,%al
+		and    $0x7,%al
+		or     %al,%bh
+		mov    %bh,%al
+		and    $0xf,%al
+		cmp    %al,%ah
+		jne    jump_119901
+		push   %edi
+		movzbl %ch,%edi
+	jump_11992d:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_11992d
+		pop    %edi
+		or     $0x40,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_11993d:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_11993d
+		pop    %edi
+		push   %edi
+		movzbl %ch,%edi
+	jump_119947:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_119947
+		pop    %edi
+		mov    %ebp,%edi
+		shl    $0x3,%edi
+		inc    %edi
+	jump_119953:
+		dec    %edi
+		je     jump_119964
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		bt     $0x6,%ax
+		jae    jump_1199ad
+		jmp    jump_119953
+	jump_119964:
+		mov    EXPORT_SYMBOL(data_15aba2),%dx
+		mov    EXPORT_SYMBOL(data_15aba4),%bh
+		xor    $0xf,%bh
+		and    $0xf0,%cl
+		or     %bh,%cl
+		and    $0xef,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_119983:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_119983
+		pop    %edi
+		and    $0xbf,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		mov    %ebp,%edi
+		shl    $0x4,%edi
+		inc    %edi
+	jump_119995:
+		dec    %edi
+		je     jump_119df1
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		bt     $0x6,%ax
+		jb     jump_119995
+		jmp    jump_119db6
+	jump_1199ad:
+		nop
+		rol    $0x10,%ebx
+		ror    $0x4,%bh
+		mov    %bh,%al
+		rol    $0x10,%ebx
+		mov    %al,%bh
+		and    $0xbf,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		and    $0xf0,%cl
+		and    $0xf,%bh
+		or     %bh,%cl
+		push   %edi
+		movzbl %ch,%edi
+	jump_1199cd:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_1199cd
+		pop    %edi
+		and    $0xbf,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		mov    %ebp,%edi
+		inc    %edi
+		mov    %bh,%ah
+	jump_1199de:
+		dec    %edi
+		je     jump_119dc2
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		and    $0xf8,%al
+		mov    %al,%bl
+		mov    %bl,%al
+		rcl    %al
+		rcl    %bh
+		shl    $0x3,%bh
+		shr    $0x4,%al
+		and    $0x7,%al
+		or     %al,%bh
+		mov    %bh,%al
+		and    $0xf,%al
+		cmp    %al,%ah
+		jne    jump_1199de
+		push   %edi
+		movzbl %ch,%edi
+	jump_119a0a:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_119a0a
+		pop    %edi
+		or     $0x40,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_119a1a:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_119a1a
+		pop    %edi
+		push   %edi
+		movzbl %ch,%edi
+	jump_119a24:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_119a24
+		pop    %edi
+		mov    %ebp,%edi
+		shl    $0x3,%edi
+		inc    %edi
+	jump_119a30:
+		dec    %edi
+		je     jump_119a41
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		bt     $0x6,%ax
+		jae    jump_119a8a
+		jmp    jump_119a30
+	jump_119a41:
+		mov    EXPORT_SYMBOL(data_15aba2),%dx
+		mov    EXPORT_SYMBOL(data_15aba4),%bh
+		xor    $0xf,%bh
+		and    $0xf0,%cl
+		or     %bh,%cl
+		and    $0xef,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_119a60:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_119a60
+		pop    %edi
+		and    $0xbf,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		mov    %ebp,%edi
+		shl    $0x4,%edi
+		inc    %edi
+	jump_119a72:
+		dec    %edi
+		je     jump_119df1
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		bt     $0x6,%ax
+		jb     jump_119a72
+		jmp    jump_119db6
+	jump_119a8a:
+		nop
+		ror    $0x10,%ecx
+		dec    %cx
+		ror    $0x10,%ecx
+		jne    jump_1198c1
+	jump_119a99:
+		ror    $0x10,%edx
+		rol    $0x8,%dx
+		mov    %dl,%bh
+		ror    $0x10,%edx
+		and    $0xbf,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		and    $0xf0,%cl
+		and    $0xf,%bh
+		or     %bh,%cl
+		push   %edi
+		movzbl %ch,%edi
+	jump_119ab7:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_119ab7
+		pop    %edi
+		and    $0xbf,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		mov    %ebp,%edi
+		inc    %edi
+		mov    %bh,%ah
+	jump_119ac8:
+		dec    %edi
+		je     jump_119dc2
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		and    $0xf8,%al
+		mov    %al,%bl
+		mov    %bl,%al
+		rcl    %al
+		rcl    %bh
+		shl    $0x3,%bh
+		shr    $0x4,%al
+		and    $0x7,%al
+		or     %al,%bh
+		mov    %bh,%al
+		and    $0xf,%al
+		cmp    %al,%ah
+		jne    jump_119ac8
+		push   %edi
+		movzbl %ch,%edi
+	jump_119af4:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_119af4
+		pop    %edi
+		or     $0x40,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_119b04:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_119b04
+		pop    %edi
+		push   %edi
+		movzbl %ch,%edi
+	jump_119b0e:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_119b0e
+		pop    %edi
+		mov    %ebp,%edi
+		shl    $0x3,%edi
+		inc    %edi
+	jump_119b1a:
+		dec    %edi
+		je     jump_119b2b
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		bt     $0x6,%ax
+		jae    jump_119b74
+		jmp    jump_119b1a
+	jump_119b2b:
+		mov    EXPORT_SYMBOL(data_15aba2),%dx
+		mov    EXPORT_SYMBOL(data_15aba4),%bh
+		xor    $0xf,%bh
+		and    $0xf0,%cl
+		or     %bh,%cl
+		and    $0xef,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_119b4a:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_119b4a
+		pop    %edi
+		and    $0xbf,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		mov    %ebp,%edi
+		shl    $0x4,%edi
+		inc    %edi
+	jump_119b5c:
+		dec    %edi
+		je     jump_119df1
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		bt     $0x6,%ax
+		jb     jump_119b5c
+		jmp    jump_119db6
+	jump_119b74:
+		nop
+		ror    $0x10,%edx
+		rol    $0x4,%dx
+		mov    %dl,%bh
+		ror    $0x10,%edx
+		and    $0xbf,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		and    $0xf0,%cl
+		and    $0xf,%bh
+		or     %bh,%cl
+		push   %edi
+		movzbl %ch,%edi
+	jump_119b93:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_119b93
+		pop    %edi
+		and    $0xbf,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		mov    %ebp,%edi
+		inc    %edi
+		mov    %bh,%ah
+	jump_119ba4:
+		dec    %edi
+		je     jump_119dc2
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		and    $0xf8,%al
+		mov    %al,%bl
+		mov    %bl,%al
+		rcl    %al
+		rcl    %bh
+		shl    $0x3,%bh
+		shr    $0x4,%al
+		and    $0x7,%al
+		or     %al,%bh
+		mov    %bh,%al
+		and    $0xf,%al
+		cmp    %al,%ah
+		jne    jump_119ba4
+		push   %edi
+		movzbl %ch,%edi
+	jump_119bd0:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_119bd0
+		pop    %edi
+		or     $0x40,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_119be0:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_119be0
+		pop    %edi
+		push   %edi
+		movzbl %ch,%edi
+	jump_119bea:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_119bea
+		pop    %edi
+		mov    %ebp,%edi
+		shl    $0x3,%edi
+		inc    %edi
+	jump_119bf6:
+		dec    %edi
+		je     jump_119c07
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		bt     $0x6,%ax
+		jae    jump_119c50
+		jmp    jump_119bf6
+	jump_119c07:
+		mov    EXPORT_SYMBOL(data_15aba2),%dx
+		mov    EXPORT_SYMBOL(data_15aba4),%bh
+		xor    $0xf,%bh
+		and    $0xf0,%cl
+		or     %bh,%cl
+		and    $0xef,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_119c26:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_119c26
+		pop    %edi
+		and    $0xbf,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		mov    %ebp,%edi
+		shl    $0x4,%edi
+		inc    %edi
+	jump_119c38:
+		dec    %edi
+		je     jump_119df1
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		bt     $0x6,%ax
+		jb     jump_119c38
+		jmp    jump_119db6
+	jump_119c50:
+		nop
+		rol    $0x10,%edx
+		rol    $0x4,%dx
+		mov    %dl,%bh
+		ror    $0x10,%edx
+		and    $0xbf,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		and    $0xf0,%cl
+		and    $0xf,%bh
+		or     %bh,%cl
+		push   %edi
+		movzbl %ch,%edi
+	jump_119c6f:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_119c6f
+		pop    %edi
+		and    $0xbf,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		mov    %ebp,%edi
+		inc    %edi
+		mov    %bh,%ah
+	jump_119c80:
+		dec    %edi
+		je     jump_119dc2
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		and    $0xf8,%al
+		mov    %al,%bl
+		mov    %bl,%al
+		rcl    %al
+		rcl    %bh
+		shl    $0x3,%bh
+		shr    $0x4,%al
+		and    $0x7,%al
+		or     %al,%bh
+		mov    %bh,%al
+		and    $0xf,%al
+		cmp    %al,%ah
+		jne    jump_119c80
+		push   %edi
+		movzbl %ch,%edi
+	jump_119cac:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_119cac
+		pop    %edi
+		or     $0x40,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_119cbc:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_119cbc
+		pop    %edi
+		push   %edi
+		movzbl %ch,%edi
+	jump_119cc6:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_119cc6
+		pop    %edi
+		mov    %ebp,%edi
+		shl    $0x3,%edi
+		inc    %edi
+	jump_119cd2:
+		dec    %edi
+		je     jump_119ce3
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		bt     $0x6,%ax
+		jae    jump_119d2c
+		jmp    jump_119cd2
+	jump_119ce3:
+		mov    EXPORT_SYMBOL(data_15aba2),%dx
+		mov    EXPORT_SYMBOL(data_15aba4),%bh
+		xor    $0xf,%bh
+		and    $0xf0,%cl
+		or     %bh,%cl
+		and    $0xef,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_119d02:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_119d02
+		pop    %edi
+		and    $0xbf,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		mov    %ebp,%edi
+		shl    $0x4,%edi
+		inc    %edi
+	jump_119d14:
+		dec    %edi
+		je     jump_119df1
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		bt     $0x6,%ax
+		jb     jump_119d14
+		jmp    jump_119db6
+	jump_119d2c:
+		nop
+		mov    EXPORT_SYMBOL(data_15abaf),%edi
+	jump_119d33:
+		dec    %edi
+		jne    jump_119d33
+		push   %edi
+		movzbl %ch,%edi
+	jump_119d3a:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_119d3a
+		pop    %edi
+		push   %edi
+		movzbl %ch,%edi
+	jump_119d44:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_119d44
+		pop    %edi
+		movl   $0x0,EXPORT_SYMBOL(data_15abb6)
+		movb   $0x0,data_15abae
+		mov    EXPORT_SYMBOL(data_15aba2),%dx
+		or     $0x20,%cl
+		and    $0xbf,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_119d6f:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_119d6f
+		pop    %edi
+		or     $0xf,%cl
+		and    $0xef,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+	jump_119d7e:
+		mov    %cl,data_15abb4
+		inc    %dx
+		inc    %dx
+		mov    EXPORT_SYMBOL(data_15abb3),%al
+		or     $0x10,%al
+		out    %al,(%dx)
+		mov    %al,EXPORT_SYMBOL(data_15abb3)
+		dec    %dx
+		dec    %dx
+		mov    EXPORT_SYMBOL(data_15abaf),%edi
+	jump_119d9f:
+		dec    %edi
+		jne    jump_119d9f
+		push   %dx
+		mov    $0x20,%dx
+		mov    $0x67,%al
+		out    %al,(%dx)
+		pop    %dx
+		pop    %es
+		pop    %ds
+		popa
+		mov    EXPORT_SYMBOL(data_15abb6),%eax
+		ret
+	jump_119db6:
+		movl   $0x21,EXPORT_SYMBOL(data_15abb6)
+		jmp    jump_119d7e
+	jump_119dc2:
+		mov    EXPORT_SYMBOL(data_15aba2),%dx
+		or     $0x20,%cl
+		and    $0xbf,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_119dd6:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_119dd6
+		pop    %edi
+		or     $0xf,%cl
+		and    $0xef,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		movl   $0x22,EXPORT_SYMBOL(data_15abb6)
+		jmp    jump_119d7e
+	jump_119df1:
+		mov    EXPORT_SYMBOL(data_15aba2),%dx
+		or     $0x20,%cl
+		and    $0xbf,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_119e05:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_119e05
+		pop    %edi
+		or     $0xf,%cl
+		and    $0xef,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		movl   $0x23,EXPORT_SYMBOL(data_15abb6)
+		jmp    jump_119d7e
+
+
+/*----------------------------------------------------------------*/
+func_119e23:
+/*----------------------------------------------------------------*/
+		pusha
+		push   %ds
+		push   %es
+		mov    EXPORT_SYMBOL(data_15aba2),%dx
+		mov    data_15abb4,%cl
+		mov    data_15abad,%ch
+		mov    data_15aba9,%ebp
+		mov    data_15abbd,%esi
+		mov    data_15abad,%ch
+		bt     $0xf,%cx
+		jb     jump_119e5e
+		bt     $0xe,%cx
+		jb     jump_119e5e
+		shl    $0x2,%ch
+		jmp    jump_119e60
+	jump_119e5e:
+		mov    $0xff,%ch
+	jump_119e60:
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		and    $0xf8,%al
+		mov    %al,%bl
+		mov    %bl,%al
+		rcl    %al
+		rcl    %bh
+		shl    $0x3,%bh
+		shr    $0x4,%al
+		and    $0x7,%al
+		or     %al,%bh
+		and    $0xf,%bh
+		cmp    $0xf,%bh
+		jne    jump_119e86
+		jmp    jump_11a347
+	jump_119e86:
+		and    $0xcf,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_119e90:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_119e90
+		pop    %edi
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		bt     $0x4,%ax
+		jae    jump_119ee1
+		or     $0x10,%cl
+		and    $0xdf,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_119eaf:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_119eaf
+		pop    %edi
+		or     $0x3,%al
+		and    $0xf3,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_119ebe:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_119ebe
+		pop    %edi
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_119ecb:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_119ecb
+		pop    %edi
+		and    $0xcf,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_119edb:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_119edb
+		pop    %edi
+	jump_119ee1:
+		nop
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		bt     $0x7,%ax
+		jae    jump_119f08
+		jmp    jump_119ef0
+	jump_119ef0:
+		and    $0xef,%cl
+		or     $0x20,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_119efd:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_119efd
+		pop    %edi
+		jmp    jump_11a368
+	jump_119f08:
+		inc    %dx
+		inc    %dx
+		mov    EXPORT_SYMBOL(data_15abb3),%al
+		and    $0xef,%al
+		out    %al,(%dx)
+		mov    %al,EXPORT_SYMBOL(data_15abb3)
+		dec    %dx
+		dec    %dx
+		mov    EXPORT_SYMBOL(data_15abaf),%edi
+	jump_119f23:
+		dec    %edi
+		jne    jump_119f23
+		push   %dx
+		mov    $0x20,%dx
+		mov    $0x67,%al
+		out    %al,(%dx)
+		pop    %dx
+		and    $0xef,%cl
+		or     $0x20,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_119f3e:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_119f3e
+		pop    %edi
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		and    $0xf8,%al
+		mov    %al,%bl
+		mov    %bl,%al
+		rcl    %al
+		rcl    %bh
+		shl    $0x3,%bh
+		shr    $0x4,%al
+		and    $0x7,%al
+		or     %al,%bh
+		mov    %cl,%al
+		or     $0x10,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_119f66:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_119f66
+		pop    %edi
+		and    $0xef,%al
+		out    %al,(%dx)
+		mov    %al,%cl
+		nop
+		mov    %ebp,%edi
+		shl    $0x11,%edi
+		and    $0xcf,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_119f81:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_119f81
+		pop    %edi
+	jump_119f87:
+		dec    %edi
+		je     jump_11a40d
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		and    $0xf8,%al
+		mov    %al,%bl
+		bt     $0x6,%bx
+		jae    jump_119fbd
+		bt     $0x7,%bx
+		jae    jump_119f87
+	jump_119fa5:
+		and    $0xef,%cl
+		or     $0x20,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_119fb2:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_119fb2
+		pop    %edi
+		jmp    jump_11a37d
+	jump_119fbd:
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		and    $0xf8,%al
+		mov    %al,%bl
+		bt     $0x7,%bx
+		jb     jump_119fa5
+		mov    $0x0,%eax
+		mov    %bh,%al
+		not    %al
+		and    $0xf,%al
+		mov    %ax,data_15abba
+		mov    %eax,(%esi)
+		and    $0xef,%cl
+		or     $0x20,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_119fed:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_119fed
+		pop    %edi
+		mov    %ebp,%edi
+		shl    $0x5,%edi
+		inc    %edi
+	jump_119ff9:
+		dec    %edi
+		je     jump_11a389
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		mov    %al,%bl
+		bt     $0x5,%ax
+		bt     $0x6,%ax
+		jae    jump_119ff9
+		mov    %cl,%al
+		or     $0x10,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_11a01c:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_11a01c
+		pop    %edi
+		and    $0xef,%al
+		out    %al,(%dx)
+		mov    %al,%cl
+		nop
+		mov    %bl,%al
+		rcl    %al
+		rcl    %bh
+		shl    $0x3,%bh
+		shr    $0x4,%al
+		and    $0x7,%al
+		or     %al,%bh
+		mov    %ebp,%edi
+		shl    $0x5,%edi
+		shr    %edi
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		inc    %edi
+	jump_11a045:
+		dec    %edi
+		je     jump_11a05a
+		bt     $0x6,%ax
+		jae    jump_11a0d8
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		jmp    jump_11a045
+	jump_11a05a:
+		and    $0xcf,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_11a064:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_11a064
+		pop    %edi
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		bt     $0x4,%ax
+		jb     jump_11a0ad
+		bt     $0x5,%ax
+		jae    jump_11a0c5
+		and    $0xef,%cl
+		or     $0x20,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_11a08a:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_11a08a
+		pop    %edi
+		mov    %ebp,%edi
+		shl    $0x5,%edi
+		shr    %edi
+		inc    %edi
+	jump_11a098:
+		dec    %edi
+		je     jump_11a398
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		bt     $0x6,%ax
+		jae    jump_11a0d8
+		jmp    jump_11a098
+	jump_11a0ad:
+		and    $0xef,%cl
+		or     $0x20,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_11a0ba:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_11a0ba
+		pop    %edi
+		jmp    jump_11a3a4
+	jump_11a0c5:
+		and    $0xef,%cl
+		or     $0x20,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_11a0d2:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_11a0d2
+		pop    %edi
+	jump_11a0d8:
+		nop
+		mov    $0x0,%eax
+		bt     $0xb,%bx
+		rcl    %eax
+		mov    %eax,0x4(%esi)
+		mov    $0x0,%eax
+		bt     $0xa,%bx
+		rcl    %eax
+		mov    %eax,0x8(%esi)
+		mov    $0x0,%eax
+		bt     $0x9,%bx
+		rcl    %eax
+		bt     $0x8,%bx
+		rcl    %eax
+		mov    %eax,0xc(%esi)
+		mov    %eax,data_15abc1
+		movzbw %bh,%ax
+		and    $0xf,%al
+		add    %ax,data_15abba
+		mov    %ebp,%edi
+		shl    $0x5,%edi
+		inc    %edi
+	jump_11a125:
+		dec    %edi
+		je     jump_11a389
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		mov    %al,%bl
+		bt     $0x5,%ax
+		bt     $0x6,%ax
+		jae    jump_11a125
+		mov    %cl,%al
+		or     $0x10,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_11a148:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_11a148
+		pop    %edi
+		and    $0xef,%al
+		out    %al,(%dx)
+		mov    %al,%cl
+		nop
+		mov    %bl,%al
+		rcl    %al
+		rcl    %bh
+		shl    $0x3,%bh
+		shr    $0x4,%al
+		and    $0x7,%al
+		or     %al,%bh
+		mov    %ebp,%edi
+		shl    $0x5,%edi
+		shr    %edi
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		inc    %edi
+	jump_11a171:
+		dec    %edi
+		je     jump_11a186
+		bt     $0x6,%ax
+		jae    jump_11a204
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		jmp    jump_11a171
+	jump_11a186:
+		and    $0xcf,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_11a190:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_11a190
+		pop    %edi
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		bt     $0x4,%ax
+		jb     jump_11a1d9
+		bt     $0x5,%ax
+		jae    jump_11a1f1
+		and    $0xef,%cl
+		or     $0x20,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_11a1b6:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_11a1b6
+		pop    %edi
+		mov    %ebp,%edi
+		shl    $0x5,%edi
+		shr    %edi
+		inc    %edi
+	jump_11a1c4:
+		dec    %edi
+		je     jump_11a398
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		bt     $0x6,%ax
+		jae    jump_11a204
+		jmp    jump_11a1c4
+	jump_11a1d9:
+		and    $0xef,%cl
+		or     $0x20,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_11a1e6:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_11a1e6
+		pop    %edi
+		jmp    jump_11a3a4
+	jump_11a1f1:
+		and    $0xef,%cl
+		or     $0x20,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_11a1fe:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_11a1fe
+		pop    %edi
+	jump_11a204:
+		nop
+		mov    %ebp,%edi
+		shl    $0x5,%edi
+		inc    %edi
+	jump_11a20b:
+		dec    %edi
+		je     jump_11a389
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		mov    %al,%bl
+		bt     $0x5,%ax
+		bt     $0x6,%ax
+		jae    jump_11a20b
+		mov    %cl,%al
+		or     $0x10,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_11a22e:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_11a22e
+		pop    %edi
+		and    $0xef,%al
+		out    %al,(%dx)
+		mov    %al,%cl
+		nop
+		mov    %bl,%al
+		rcl    %al
+		rcl    %bh
+		shl    $0x3,%bh
+		shr    $0x4,%al
+		and    $0x7,%al
+		or     %al,%bh
+		mov    %ebp,%edi
+		shl    $0x5,%edi
+		shr    %edi
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		inc    %edi
+	jump_11a257:
+		dec    %edi
+		je     jump_11a26c
+		bt     $0x6,%ax
+		jae    jump_11a2ea
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		jmp    jump_11a257
+	jump_11a26c:
+		and    $0xcf,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_11a276:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_11a276
+		pop    %edi
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		bt     $0x4,%ax
+		jb     jump_11a2bf
+		bt     $0x5,%ax
+		jae    jump_11a2d7
+		and    $0xef,%cl
+		or     $0x20,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_11a29c:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_11a29c
+		pop    %edi
+		mov    %ebp,%edi
+		shl    $0x5,%edi
+		shr    %edi
+		inc    %edi
+	jump_11a2aa:
+		dec    %edi
+		je     jump_11a398
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		bt     $0x6,%ax
+		jae    jump_11a2ea
+		jmp    jump_11a2aa
+	jump_11a2bf:
+		and    $0xef,%cl
+		or     $0x20,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_11a2cc:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_11a2cc
+		pop    %edi
+		jmp    jump_11a3a4
+	jump_11a2d7:
+		and    $0xef,%cl
+		or     $0x20,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_11a2e4:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_11a2e4
+		pop    %edi
+	jump_11a2ea:
+		nop
+		mov    $0x0,%eax
+		movzbw %bh,%ax
+		add    %ax,data_15abba
+		mov    %eax,0x10(%esi)
+		mov    %eax,data_15abc5
+		movl   $0x0,EXPORT_SYMBOL(data_15abb6)
+		jmp    jump_11a338
+	jump_11a30f:
+		inc    %dx
+		inc    %dx
+		mov    EXPORT_SYMBOL(data_15abb3),%al
+		or     $0x10,%al
+		out    %al,(%dx)
+		mov    %al,EXPORT_SYMBOL(data_15abb3)
+		dec    %dx
+		dec    %dx
+		mov    EXPORT_SYMBOL(data_15abaf),%edi
+	jump_11a32a:
+		dec    %edi
+		jne    jump_11a32a
+		push   %dx
+		mov    $0x20,%dx
+		mov    $0x67,%al
+		out    %al,(%dx)
+		pop    %dx
+	jump_11a338:
+		mov    %cl,data_15abb4
+		pop    %es
+		pop    %ds
+		popa
+		mov    EXPORT_SYMBOL(data_15abb6),%eax
+		ret
+	jump_11a347:
+		mov    %cl,%al
+		or     $0x10,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_11a350:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_11a350
+		pop    %edi
+		and    $0xef,%al
+		out    %al,(%dx)
+		mov    %al,%cl
+		nop
+		movl   $0x16,EXPORT_SYMBOL(data_15abb6)
+		jmp    jump_11a30f
+	jump_11a368:
+		mov    %cl,%al
+		or     $0x10,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_11a371:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_11a371
+		pop    %edi
+		and    $0xef,%al
+		out    %al,(%dx)
+		mov    %al,%cl
+		nop
+	jump_11a37d:
+		movl   $0x17,EXPORT_SYMBOL(data_15abb6)
+		jmp    jump_11a30f
+	jump_11a389:
+		movl   $0x12,EXPORT_SYMBOL(data_15abb6)
+		jmp    jump_11a30f
+	jump_11a398:
+		movl   $0x11,EXPORT_SYMBOL(data_15abb6)
+		jmp    jump_11a3ba
+	jump_11a3a4:
+		movl   $0x15,EXPORT_SYMBOL(data_15abb6)
+		mov    EXPORT_SYMBOL(data_15abaf),%edi
+		shl    $0x3,%edi
+	jump_11a3b7:
+		dec    %edi
+		jne    jump_11a3b7
+	jump_11a3ba:
+		and    $0xcf,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_11a3c4:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_11a3c4
+		pop    %edi
+		mov    %ebp,%edi
+		shl    $0x3,%edi
+	jump_11a3cf:
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		bt     $0x7,%ax
+		jb     jump_11a3e0
+		dec    %edi
+		je     jump_11a40d
+		jmp    jump_11a3cf
+	jump_11a3e0:
+		and    $0xef,%cl
+		or     $0x20,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_11a3ed:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_11a3ed
+		pop    %edi
+		mov    %cl,%al
+		or     $0x10,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_11a3fc:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_11a3fc
+		pop    %edi
+		and    $0xef,%al
+		out    %al,(%dx)
+		mov    %al,%cl
+		nop
+		jmp    jump_11a30f
+	jump_11a40d:
+		movl   $0x13,EXPORT_SYMBOL(data_15abb6)
+		and    $0xef,%cl
+		or     $0x20,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_11a424:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_11a424
+		pop    %edi
+		mov    %cl,%al
+		or     $0x10,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_11a433:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_11a433
+		pop    %edi
+		and    $0xef,%al
+		out    %al,(%dx)
+		mov    %al,%cl
+		nop
+		jmp    jump_11a30f
+
+
+/*----------------------------------------------------------------*/
+func_11a444:
+/*----------------------------------------------------------------*/
+		mov    data_15abad,%ch
+		mov    data_15abc1,%eax
+		cmp    $0x0,%al
+		je     jump_11a46d
+		bt     $0xf,%cx
+		jb     jump_11a46b
+		shl    %ch
+		cmp    $0x1,%al
+		je     jump_11a46d
+		bt     $0xf,%cx
+		jb     jump_11a46b
+		shl    %ch
+		jmp    jump_11a46d
+	jump_11a46b:
+		mov    $0xff,%ch
+	jump_11a46d:
+		ret
+
+
+/*----------------------------------------------------------------*/
+func_11a46e:
+/*----------------------------------------------------------------*/
+		pusha
+		push   %ds
+		push   %es
+		mov    EXPORT_SYMBOL(data_15aba2),%dx
+		mov    data_15abb4,%cl
+		mov    data_15abad,%ch
+		mov    data_15aba9,%ebp
+		mov    data_15abbd,%esi
+		ror    $0x10,%edx
+		mov    data_15abba,%dx
+		ror    $0x10,%edx
+		call   func_11a444
+		ror    $0x10,%ecx
+		mov    data_15abc5,%cx
+		cmp    $0x0,%cx
+		ror    $0x10,%ecx
+		je     jump_11a6a3
+	jump_11a4b9:
+		mov    %ebp,%edi
+		shl    $0x5,%edi
+		inc    %edi
+	jump_11a4bf:
+		dec    %edi
+		je     jump_11a9a8
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		mov    %al,%bl
+		bt     $0x5,%ax
+		bt     $0x6,%ax
+		jae    jump_11a4bf
+		mov    %cl,%al
+		or     $0x10,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_11a4e2:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_11a4e2
+		pop    %edi
+		and    $0xef,%al
+		out    %al,(%dx)
+		mov    %al,%cl
+		nop
+		mov    %bl,%al
+		rcl    %al
+		rcl    %bh
+		shl    $0x3,%bh
+		shr    $0x4,%al
+		and    $0x7,%al
+		or     %al,%bh
+		mov    %ebp,%edi
+		shl    $0x5,%edi
+		shr    %edi
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		inc    %edi
+	jump_11a50b:
+		dec    %edi
+		je     jump_11a520
+		bt     $0x6,%ax
+		jae    jump_11a59e
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		jmp    jump_11a50b
+	jump_11a520:
+		and    $0xcf,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_11a52a:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_11a52a
+		pop    %edi
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		bt     $0x4,%ax
+		jb     jump_11a573
+		bt     $0x5,%ax
+		jae    jump_11a58b
+		and    $0xef,%cl
+		or     $0x20,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_11a550:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_11a550
+		pop    %edi
+		mov    %ebp,%edi
+		shl    $0x5,%edi
+		shr    %edi
+		inc    %edi
+	jump_11a55e:
+		dec    %edi
+		je     jump_11a9ee
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		bt     $0x6,%ax
+		jae    jump_11a59e
+		jmp    jump_11a55e
+	jump_11a573:
+		and    $0xef,%cl
+		or     $0x20,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_11a580:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_11a580
+		pop    %edi
+		jmp    jump_11a9fa
+	jump_11a58b:
+		and    $0xef,%cl
+		or     $0x20,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_11a598:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_11a598
+		pop    %edi
+	jump_11a59e:
+		nop
+		mov    %ebp,%edi
+		shl    $0x5,%edi
+		inc    %edi
+	jump_11a5a5:
+		dec    %edi
+		je     jump_11a9a8
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		mov    %al,%bl
+		bt     $0x5,%ax
+		bt     $0x6,%ax
+		jae    jump_11a5a5
+		mov    %cl,%al
+		or     $0x10,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_11a5c8:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_11a5c8
+		pop    %edi
+		and    $0xef,%al
+		out    %al,(%dx)
+		mov    %al,%cl
+		nop
+		mov    %bl,%al
+		rcl    %al
+		rcl    %bh
+		shl    $0x3,%bh
+		shr    $0x4,%al
+		and    $0x7,%al
+		or     %al,%bh
+		mov    %ebp,%edi
+		shl    $0x5,%edi
+		shr    %edi
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		inc    %edi
+	jump_11a5f1:
+		dec    %edi
+		je     jump_11a606
+		bt     $0x6,%ax
+		jae    jump_11a684
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		jmp    jump_11a5f1
+	jump_11a606:
+		and    $0xcf,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_11a610:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_11a610
+		pop    %edi
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		bt     $0x4,%ax
+		jb     jump_11a659
+		bt     $0x5,%ax
+		jae    jump_11a671
+		and    $0xef,%cl
+		or     $0x20,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_11a636:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_11a636
+		pop    %edi
+		mov    %ebp,%edi
+		shl    $0x5,%edi
+		shr    %edi
+		inc    %edi
+	jump_11a644:
+		dec    %edi
+		je     jump_11a9ee
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		bt     $0x6,%ax
+		jae    jump_11a684
+		jmp    jump_11a644
+	jump_11a659:
+		and    $0xef,%cl
+		or     $0x20,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_11a666:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_11a666
+		pop    %edi
+		jmp    jump_11a9fa
+	jump_11a671:
+		and    $0xef,%cl
+		or     $0x20,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_11a67e:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_11a67e
+		pop    %edi
+	jump_11a684:
+		nop
+		mov    %bh,(%esi)
+		inc    %esi
+		ror    $0x10,%edx
+		movzbw %bh,%ax
+		add    %ax,%dx
+		ror    $0x10,%edx
+		ror    $0x10,%ecx
+		dec    %cx
+		ror    $0x10,%ecx
+		jne    jump_11a4b9
+	jump_11a6a3:
+		mov    %ebp,%edi
+		shl    $0x5,%edi
+		inc    %edi
+	jump_11a6a9:
+		dec    %edi
+		je     jump_11a9a8
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		mov    %al,%bl
+		bt     $0x5,%ax
+		bt     $0x6,%ax
+		jae    jump_11a6a9
+		mov    %cl,%al
+		or     $0x10,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_11a6cc:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_11a6cc
+		pop    %edi
+		and    $0xef,%al
+		out    %al,(%dx)
+		mov    %al,%cl
+		nop
+		mov    %bl,%al
+		rcl    %al
+		rcl    %bh
+		shl    $0x3,%bh
+		shr    $0x4,%al
+		and    $0x7,%al
+		or     %al,%bh
+		mov    %ebp,%edi
+		shl    $0x5,%edi
+		shr    %edi
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		inc    %edi
+	jump_11a6f5:
+		dec    %edi
+		je     jump_11a70a
+		bt     $0x6,%ax
+		jae    jump_11a788
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		jmp    jump_11a6f5
+	jump_11a70a:
+		and    $0xcf,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_11a714:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_11a714
+		pop    %edi
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		bt     $0x4,%ax
+		jb     jump_11a75d
+		bt     $0x5,%ax
+		jae    jump_11a775
+		and    $0xef,%cl
+		or     $0x20,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_11a73a:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_11a73a
+		pop    %edi
+		mov    %ebp,%edi
+		shl    $0x5,%edi
+		shr    %edi
+		inc    %edi
+	jump_11a748:
+		dec    %edi
+		je     jump_11a9ee
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		bt     $0x6,%ax
+		jae    jump_11a788
+		jmp    jump_11a748
+	jump_11a75d:
+		and    $0xef,%cl
+		or     $0x20,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_11a76a:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_11a76a
+		pop    %edi
+		jmp    jump_11a9fa
+	jump_11a775:
+		and    $0xef,%cl
+		or     $0x20,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_11a782:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_11a782
+		pop    %edi
+	jump_11a788:
+		nop
+		mov    %ebp,%edi
+		shl    $0x5,%edi
+		inc    %edi
+	jump_11a78f:
+		dec    %edi
+		je     jump_11a9a8
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		mov    %al,%bl
+		bt     $0x5,%ax
+		bt     $0x6,%ax
+		jae    jump_11a78f
+		mov    %cl,%al
+		or     $0x10,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_11a7b2:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_11a7b2
+		pop    %edi
+		and    $0xef,%al
+		out    %al,(%dx)
+		mov    %al,%cl
+		nop
+		mov    %bl,%al
+		rcl    %al
+		rcl    %bh
+		shl    $0x3,%bh
+		shr    $0x4,%al
+		and    $0x7,%al
+		or     %al,%bh
+		mov    %ebp,%edi
+		shl    $0x5,%edi
+		shr    %edi
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		inc    %edi
+	jump_11a7db:
+		dec    %edi
+		je     jump_11a7f0
+		bt     $0x6,%ax
+		jae    jump_11a86e
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		jmp    jump_11a7db
+	jump_11a7f0:
+		and    $0xcf,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_11a7fa:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_11a7fa
+		pop    %edi
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		bt     $0x4,%ax
+		jb     jump_11a843
+		bt     $0x5,%ax
+		jae    jump_11a85b
+		and    $0xef,%cl
+		or     $0x20,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_11a820:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_11a820
+		pop    %edi
+		mov    %ebp,%edi
+		shl    $0x5,%edi
+		shr    %edi
+		inc    %edi
+	jump_11a82e:
+		dec    %edi
+		je     jump_11a9ee
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		bt     $0x6,%ax
+		jae    jump_11a86e
+		jmp    jump_11a82e
+	jump_11a843:
+		and    $0xef,%cl
+		or     $0x20,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_11a850:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_11a850
+		pop    %edi
+		jmp    jump_11a9fa
+	jump_11a85b:
+		and    $0xef,%cl
+		or     $0x20,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_11a868:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_11a868
+		pop    %edi
+	jump_11a86e:
+		nop
+		shr    $0x4,%bx
+		and    $0xf0,%bl
+		mov    %bx,data_15abba
+		mov    %ebp,%edi
+		shl    $0x5,%edi
+		inc    %edi
+	jump_11a883:
+		dec    %edi
+		je     jump_11aa06
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		mov    %al,%bl
+		bt     $0x5,%ax
+		bt     $0x6,%ax
+		jae    jump_11a883
+		mov    %bl,%al
+		rcl    %al
+		rcl    %bh
+		shl    $0x3,%bh
+		shr    $0x4,%al
+		and    $0x7,%al
+		or     %al,%bh
+		and    $0xf,%bh
+		movzbw %bh,%ax
+		add    data_15abba,%ax
+		and    $0xfff,%ax
+		ror    $0x10,%edx
+		and    $0xfff,%dx
+		cmp    %ax,%dx
+		ror    $0x10,%edx
+		jne    jump_11a99c
+		mov    %cl,%al
+		or     $0x10,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_11a8dc:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_11a8dc
+		pop    %edi
+		and    $0xef,%al
+		out    %al,(%dx)
+		mov    %al,%cl
+		nop
+		and    $0xcf,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_11a8f2:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_11a8f2
+		pop    %edi
+		mov    %ebp,%edi
+		shl    $0x11,%edi
+	jump_11a8fd:
+		dec    %edi
+		je     jump_11a9b7
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		and    $0xf8,%al
+		mov    %al,%bl
+		bt     $0x6,%bx
+		jb     jump_11a8fd
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		and    $0xf8,%al
+		mov    %al,%bl
+		bt     $0x7,%bx
+		jae    jump_11a946
+		movl   $0x11,EXPORT_SYMBOL(data_15abb6)
+		and    $0xef,%cl
+		or     $0x20,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_11a93b:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_11a93b
+		pop    %edi
+		jmp    jump_11aa87
+	jump_11a946:
+		mov    %ebp,%edi
+		shl    $0x5,%edi
+	jump_11a94b:
+		dec    %edi
+		je     jump_11a9b7
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		and    $0xf8,%al
+		mov    %al,%bl
+		bt     $0x7,%bx
+		jae    jump_11a94b
+		and    $0xef,%cl
+		or     $0x20,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_11a96b:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_11a96b
+		pop    %edi
+		mov    %cl,%al
+		or     $0x10,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_11a97a:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_11a97a
+		pop    %edi
+		and    $0xef,%al
+		out    %al,(%dx)
+		mov    %al,%cl
+		nop
+		movl   $0x0,EXPORT_SYMBOL(data_15abb6)
+		movb   $0x0,data_15abae
+		jmp    jump_11aa87
+	jump_11a99c:
+		movl   $0x10,EXPORT_SYMBOL(data_15abb6)
+		jmp    jump_11aa27
+	jump_11a9a8:
+		movl   $0x12,EXPORT_SYMBOL(data_15abb6)
+		jmp    jump_11aa87
+	jump_11a9b7:
+		and    $0xef,%cl
+		or     $0x20,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_11a9c4:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_11a9c4
+		pop    %edi
+		mov    %cl,%al
+		or     $0x10,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_11a9d3:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_11a9d3
+		pop    %edi
+		and    $0xef,%al
+		out    %al,(%dx)
+		mov    %al,%cl
+		nop
+		movl   $0x13,EXPORT_SYMBOL(data_15abb6)
+		jmp    jump_11aa87
+	jump_11a9ee:
+		movl   $0x11,EXPORT_SYMBOL(data_15abb6)
+		jmp    jump_11aa33
+	jump_11a9fa:
+		movl   $0x15,EXPORT_SYMBOL(data_15abb6)
+		jmp    jump_11aa27
+	jump_11aa06:
+		movl   $0x14,EXPORT_SYMBOL(data_15abb6)
+		mov    %cl,%al
+		or     $0x10,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_11aa19:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_11aa19
+		pop    %edi
+		and    $0xef,%al
+		out    %al,(%dx)
+		mov    %al,%cl
+		nop
+		jmp    jump_11aa87
+	jump_11aa27:
+		mov    EXPORT_SYMBOL(data_15abaf),%edi
+		shl    $0x3,%edi
+	jump_11aa30:
+		dec    %edi
+		jne    jump_11aa30
+	jump_11aa33:
+		and    $0xcf,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_11aa3d:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_11aa3d
+		pop    %edi
+		mov    %ebp,%edi
+		shl    $0x4,%edi
+	jump_11aa48:
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		bt     $0x7,%ax
+		jb     jump_11aa5d
+		dec    %edi
+		je     jump_11a9b7
+		jmp    jump_11aa48
+	jump_11aa5d:
+		and    $0xef,%cl
+		or     $0x20,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_11aa6a:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_11aa6a
+		pop    %edi
+		mov    %cl,%al
+		or     $0x10,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_11aa79:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_11aa79
+		pop    %edi
+		and    $0xef,%al
+		out    %al,(%dx)
+		mov    %al,%cl
+		nop
+		jmp    jump_11aa87
+	jump_11aa87:
+		inc    %dx
+		inc    %dx
+		mov    EXPORT_SYMBOL(data_15abb3),%al
+		or     $0x10,%al
+		out    %al,(%dx)
+		mov    %al,EXPORT_SYMBOL(data_15abb3)
+		dec    %dx
+		dec    %dx
+		mov    EXPORT_SYMBOL(data_15abaf),%edi
+	jump_11aaa2:
+		dec    %edi
+		jne    jump_11aaa2
+		push   %dx
+		mov    $0x20,%dx
+		mov    $0x67,%al
+		out    %al,(%dx)
+		pop    %dx
+		mov    %cl,data_15abb4
+		pop    %es
+		pop    %ds
+		popa
+		mov    EXPORT_SYMBOL(data_15abb6),%eax
+		ret
+
+
+/*----------------------------------------------------------------*/
+func_11aabf:
+/*----------------------------------------------------------------*/
+		pusha
+		push   %ds
+		push   %es
+		mov    EXPORT_SYMBOL(data_15aba2),%dx
+		mov    data_15abb4,%cl
+		mov    data_15abad,%ch
+		mov    data_15aba9,%ebp
+		mov    data_15abbd,%esi
+		mov    EXPORT_SYMBOL(data_15aba2),%dx
+		or     $0x20,%cl
+		and    $0xbf,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_11aaf5:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_11aaf5
+		pop    %edi
+		or     $0xf,%cl
+		and    $0xef,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		inc    %dx
+		inc    %dx
+		mov    EXPORT_SYMBOL(data_15abb3),%al
+		or     $0x10,%al
+		out    %al,(%dx)
+		mov    %al,EXPORT_SYMBOL(data_15abb3)
+		dec    %dx
+		dec    %dx
+		mov    EXPORT_SYMBOL(data_15abaf),%edi
+	jump_11ab1f:
+		dec    %edi
+		jne    jump_11ab1f
+		push   %dx
+		mov    $0x20,%dx
+		mov    $0x67,%al
+		out    %al,(%dx)
+		pop    %dx
+		mov    %cl,data_15abb4
+		pop    %es
+		pop    %ds
+		popa
+		mov    $0x0,%eax
+		ret
+
+
+/*----------------------------------------------------------------*/
+func_11ab3c:
+/*----------------------------------------------------------------*/
+		pusha
+		push   %ds
+		push   %es
+		mov    EXPORT_SYMBOL(data_15aba2),%dx
+		mov    data_15abb4,%cl
+		mov    data_15abad,%ch
+		mov    data_15aba9,%ebp
+		mov    data_15abbd,%esi
+		mov    EXPORT_SYMBOL(data_15aba2),%dx
+		or     $0x20,%cl
+		and    $0xbf,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_11ab72:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_11ab72
+		pop    %edi
+		or     $0xf,%cl
+		and    $0xef,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		or     $0x30,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_11ab8b:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_11ab8b
+		pop    %edi
+		inc    %dx
+		inc    %dx
+		mov    EXPORT_SYMBOL(data_15abb3),%al
+		and    $0xef,%al
+		out    %al,(%dx)
+		mov    %al,EXPORT_SYMBOL(data_15abb3)
+		dec    %dx
+		dec    %dx
+		mov    EXPORT_SYMBOL(data_15abaf),%edi
+	jump_11abac:
+		dec    %edi
+		jne    jump_11abac
+		push   %dx
+		mov    $0x20,%dx
+		mov    $0x67,%al
+		out    %al,(%dx)
+		pop    %dx
+		mov    %cl,data_15abb4
+		pop    %es
+		pop    %ds
+		popa
+		mov    $0x0,%eax
+		ret
+
+
+/*----------------------------------------------------------------*/
+func_11acc5:
+/*----------------------------------------------------------------*/
+		mov    $0x1,%eax
+		ret
+
+
+/*----------------------------------------------------------------*/
+func_11accb:
+/*----------------------------------------------------------------*/
+		pusha
+		push   %ds
+		push   %es
+		mov    EXPORT_SYMBOL(data_15aba2),%dx
+		mov    data_15abb4,%cl
+		mov    data_15abad,%ch
+		mov    data_15aba9,%ebp
+		mov    data_15abbd,%esi
+		movl   $0x0,EXPORT_SYMBOL(data_15abb6)
+		mov    %cl,%al
+		and    $0x30,%al
+		cmp    $0x30,%al
+		je     jump_11ad8c
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		and    $0xf8,%al
+		mov    %al,%bl
+		bt     $0x6,%bx
+		jae    jump_11ad8c
+		and    $0xcf,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_11ad1d:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_11ad1d
+		pop    %edi
+		inc    %dx
+		in     (%dx),%al
+		dec    %dx
+		and    $0xf8,%al
+		mov    %al,%bl
+		and    $0xef,%cl
+		or     $0x20,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_11ad39:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_11ad39
+		pop    %edi
+		bt     $0x5,%bx
+		jb     jump_11ad95
+		cmpb   $0x0,data_15abae
+		jne    jump_11ad58
+		movb   $0x1,data_15abae
+		jmp    jump_11ad9c
+	jump_11ad58:
+		and    $0x7f,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		and    $0xf0,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_11ad68:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_11ad68
+		pop    %edi
+		or     $0x30,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_11ad78:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_11ad78
+		pop    %edi
+		mov    EXPORT_SYMBOL(data_15abaf),%edi
+		shl    $0x7,%edi
+	jump_11ad87:
+		dec    %edi
+		jne    jump_11ad87
+		jmp    jump_11ad95
+	jump_11ad8c:
+		movb   $0x0,data_15abae
+		jmp    jump_11ada5
+	jump_11ad95:
+		movb   $0x0,data_15abae
+	jump_11ad9c:
+		mov    data_15abb4,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+	jump_11ada5:
+		or     $0x80,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		mov    %cl,data_15abb4
+		pop    %es
+		pop    %ds
+		popa
+		mov    EXPORT_SYMBOL(data_15abb6),%eax
+		ret
+
+
+/*----------------------------------------------------------------*/
+GLOBAL_FUNC(ASM_func_11adba)	/* 0x11adba */
+/*----------------------------------------------------------------*/
+		pusha
+		push   %ds
+		push   %es
+		mov    EXPORT_SYMBOL(data_15aba2),%dx
+		mov    data_15abb4,%cl
+		mov    data_15abad,%ch
+		mov    data_15aba9,%ebp
+		mov    data_15abbd,%esi
+		mov    EXPORT_SYMBOL(data_15aba2),%dx
+		or     $0x20,%cl
+		and    $0xbf,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_11adf0:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_11adf0
+		pop    %edi
+		or     $0xf,%cl
+		and    $0xef,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		or     $0x30,%cl
+		mov    %cl,%al
+		out    %al,(%dx)
+		push   %edi
+		movzbl %ch,%edi
+	jump_11ae09:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_11ae09
+		pop    %edi
+		mov    data_15abb5,%al
+		and    $0xfe,%al
+		or     $0x4,%al
+		inc    %dx
+		inc    %dx
+		out    %al,(%dx)
+		mov    %al,EXPORT_SYMBOL(data_15abb3)
+		push   %edi
+		movzbl %ch,%edi
+	jump_11ae26:
+		inc    %edi
+		dec    %edi
+		dec    %edi
+		jne    jump_11ae26
+		pop    %edi
+		dec    %dx
+		dec    %dx
+		inc    %dx
+		inc    %dx
+		mov    EXPORT_SYMBOL(data_15abb3),%al
+		and    $0xef,%al
+		out    %al,(%dx)
+		mov    %al,EXPORT_SYMBOL(data_15abb3)
+		dec    %dx
+		dec    %dx
+		mov    EXPORT_SYMBOL(data_15abaf),%edi
+	jump_11ae4b:
+		dec    %edi
+		jne    jump_11ae4b
+		push   %dx
+		mov    $0x20,%dx
+		mov    $0x67,%al
+		out    %al,(%dx)
+		pop    %dx
+		mov    $0xff,%al
+		out    %al,(%dx)
+		mov    %cl,data_15abb4
+		pop    %es
+		pop    %ds
+		popa
+		mov    $0x0,%eax
+		ret
+
+
+/*----------------------------------------------------------------*/
+GLOBAL_FUNC(ASM_net_int_unkn2_handler)	/* 0x11AE70 */
+/*----------------------------------------------------------------*/
+		pusha
+		push   %ds
+		push   %es
+		push   %fs
+		push   %gs
+		mov    %esp,%ebp
+		cld
+		call   ____GETDS
+		mov    EXPORT_SYMBOL(data_1596bc),%edx
+		test   %edx,%edx
+		jne    jump_11aeb1
+		mov    $0x1,%ebx
+		cli
+		mov    %ebx,EXPORT_SYMBOL(data_1596bc)
+		call   func_11aef0
+		mov    EXPORT_SYMBOL(data_1ed34c),%eax
+		mov    %edx,EXPORT_SYMBOL(data_1596bc)
+		mov    EXPORT_SYMBOL(data_1ed350),%dx
+		call   ASM__chain_intr_
+	jump_11aeb1:
+		pop    %gs
+		pop    %fs
+		pop    %es
+		pop    %ds
+		popa
+		iret
+
+
+/*----------------------------------------------------------------*/
+func_11aebc:
+/*----------------------------------------------------------------*/
+		push   %ebx
+		push   %ecx
+		push   %esi
+		cmpl   $0x0,EXPORT_SYMBOL(data_1596bc)
+		jne    jump_11aeec
+		cli
+		mov    $0x1,%ebx
+		mov    EXPORT_SYMBOL(data_1596b8),%ecx
+		mov    %ebx,EXPORT_SYMBOL(data_1596bc)
+		test   %ecx,%ecx
+		je     jump_11aee3
+		call   func_11aef0
+	jump_11aee3:
+		xor    %esi,%esi
+		sti
+		mov    %esi,EXPORT_SYMBOL(data_1596bc)
+	jump_11aeec:
+		pop    %esi
+		pop    %ecx
+		pop    %ebx
+		ret
+
+
+/*----------------------------------------------------------------*/
+func_11aef0:
+/*----------------------------------------------------------------*/
+		push   %ebx
+		push   %ecx
+		push   %edx
+		push   %esi
+		push   %edi
+		push   %ebp
+		mov    data_1edbc0,%esi
+		mov    EXPORT_SYMBOL(data_1ed188),%edi
+		cmpl   $0x0,EXPORT_SYMBOL(data_1ed344)
+		jne    jump_11b211
+		call   func_11accb
+		test   %eax,%eax
+		je     jump_11af1e
+		incl   EXPORT_SYMBOL(data_1ea7cc)
+	jump_11af1e:
+		mov    EXPORT_SYMBOL(data_1ed33c),%ecx
+		mov    EXPORT_SYMBOL(data_1ed188),%edi
+		inc    %ecx
+		mov    data_1edbc0,%esi
+		mov    %ecx,EXPORT_SYMBOL(data_1ed33c)
+		cmp    $0xa,%ecx
+		jge    jump_11af49
+		mov    EXPORT_SYMBOL(data_1596c0),%eax
+		test   %eax,%eax
+		je     jump_11afeb
+	jump_11af49:
+		mov    EXPORT_SYMBOL(data_1ed33c),%ebp
+		mov    %esi,data_1edbc0
+		mov    %edi,EXPORT_SYMBOL(data_1ed188)
+		cmp    $0x14,%ebp
+		jge    jump_11af79
+		cmpl   $0x3e8,EXPORT_SYMBOL(data_1ed358)
+		jl     jump_11af79
+		cmpl   $0x0,EXPORT_SYMBOL(data_1596c0)
+		je     jump_11b211
+	jump_11af79:
+		push   $0x1
+		mov    $0x1,%ecx
+		mov    $0x2,%ebx
+		mov    $EXPORT_SYMBOL(data_1ed3ac),%eax
+		mov    EXPORT_SYMBOL(data_1ed198),%edx
+		call   ASM_func_11b270
+		mov    %eax,data_1edbbc
+		test   %eax,%eax
+		je     jump_11afc4
+		cmpl   $0x28,EXPORT_SYMBOL(data_1ed33c)
+		jl     jump_11afc4
+		call   func_11acc5
+		mov    %eax,data_1edbbc
+		test   %eax,%eax
+		je     jump_11afc4
+		movl   $0x61,EXPORT_SYMBOL(data_1ebca8)
+		jmp    jump_11b0bc
+	jump_11afc4:
+		mov    data_1edbbc,%ecx
+		test   %ecx,%ecx
+		jne    jump_11b211
+		mov    %ecx,EXPORT_SYMBOL(data_1ed33c)
+		mov    %ecx,EXPORT_SYMBOL(data_1596c0)
+		mov    data_1edbc0,%esi
+		pop    %ebp
+		pop    %edi
+		pop    %esi
+		pop    %edx
+		pop    %ecx
+		pop    %ebx
+		ret
+	jump_11afeb:
+		mov    EXPORT_SYMBOL(data_1596a8),%edx
+		inc    %edx
+		mov    %edx,EXPORT_SYMBOL(data_1596a8)
+		cmp    $0x4,%edx
+		jl     jump_11b211
+		mov    $0xc0,%ebx
+		mov    %eax,EXPORT_SYMBOL(data_1596a8)
+		mov    %eax,data_1edbb4
+	jump_11b010:
+		cmpl   $0x0,EXPORT_SYMBOL(data_1ea494)(%ebx)
+		je     jump_11b04b
+		mov    EXPORT_SYMBOL(data_1ea490)(%ebx),%esi
+		shl    $0x3,%esi
+		mov    EXPORT_SYMBOL(data_1ea494)(%ebx),%ebp
+		mov    %esi,%edx
+		mov    %esi,%eax
+		sar    $0x1f,%edx
+		idiv   %ebp
+		mov    data_1edbb4,%edx
+		mov    %esi,EXPORT_SYMBOL(data_1ea490)(%ebx)
+		add    %eax,%edx
+		mov    %eax,EXPORT_SYMBOL(data_1ea490)(%ebx)
+		mov    %edx,data_1edbb4
+	jump_11b04b:
+		add    $0xc,%ebx
+		cmp    $0x480,%ebx
+		jne    jump_11b010
+		mov    $0x60,%esi
+		xor    %ebx,%ebx
+		mov    data_1edbb4,%ecx
+		mov    %ebx,data_1edbb0
+		test   %ecx,%ecx
+		je     jump_11b08c
+		mov    EXPORT_SYMBOL(data_1ed35c),%ebp
+		lea    (%ecx,%ebp,1),%eax
+		mov    EXPORT_SYMBOL(data_1ed358),%ebx
+		mov    %ecx,%edx
+		add    %eax,%ebx
+		mov    %ecx,%eax
+		sar    $0x1f,%edx
+		idiv   %ebx
+		mov    %eax,data_1edbb0
+	jump_11b08c:
+		mov    data_1edbb0,%eax
+		cmp    EXPORT_SYMBOL(data_1ed1a0),%eax
+		jle    jump_11b0e5
+		mov    EXPORT_SYMBOL(data_1ed1a8),%ebp
+		mov    EXPORT_SYMBOL(data_1ed1a4),%edx
+		mov    %esi,data_1edbc0
+		inc    %ebp
+		mov    %edi,EXPORT_SYMBOL(data_1ed188)
+		mov    %ebp,EXPORT_SYMBOL(data_1ed1a8)
+		cmp    %edx,%ebp
+		jle    jump_11b0fe
+	jump_11b0bc:
+		mov    $0x1,%ebx
+		mov    EXPORT_SYMBOL(data_1ebca8),%edx
+		call   func_11ab3c
+		mov    %edx,EXPORT_SYMBOL(data_1ed340)
+		mov    %ebx,EXPORT_SYMBOL(data_1ed344)
+		mov    data_1edbc0,%esi
+		pop    %ebp
+		pop    %edi
+		pop    %esi
+		pop    %edx
+		pop    %ecx
+		pop    %ebx
+		ret
+	jump_11b0e5:
+		mov    EXPORT_SYMBOL(data_1ed1a8),%ebx
+		mov    %edi,EXPORT_SYMBOL(data_1ed188)
+		test   %ebx,%ebx
+		jle    jump_11b0fe
+		lea    -0x1(%ebx),%ecx
+		mov    %ecx,EXPORT_SYMBOL(data_1ed1a8)
+	jump_11b0fe:
+		mov    EXPORT_SYMBOL(data_1ed18c),%eax
+		mov    %eax,%edx
+		sar    $0x1f,%edx
+		sub    %edx,%eax
+		sar    %eax
+		mov    %eax,EXPORT_SYMBOL(data_1ed18c)
+		mov    EXPORT_SYMBOL(data_1ed358),%eax
+		mov    %eax,%edx
+		sar    $0x1f,%edx
+		sub    %edx,%eax
+		sar    %eax
+		mov    %eax,EXPORT_SYMBOL(data_1ed358)
+		mov    EXPORT_SYMBOL(data_1ed35c),%eax
+		mov    %eax,%edx
+		sar    $0x1f,%edx
+		sub    %edx,%eax
+		sar    %eax
+		mov    %eax,EXPORT_SYMBOL(data_1ed35c)
+		mov    EXPORT_SYMBOL(data_1ed360),%eax
+		mov    %eax,%edx
+		sar    $0x1f,%edx
+		sub    %edx,%eax
+		sar    %eax
+		mov    %eax,EXPORT_SYMBOL(data_1ed360)
+		mov    EXPORT_SYMBOL(data_1ed364),%eax
+		mov    %eax,%edx
+		sar    $0x1f,%edx
+		sub    %edx,%eax
+		sar    %eax
+		mov    $0x1,%esi
+		mov    $0x42,%ebx
+		mov    $0x4,%ecx
+		mov    %esi,data_1edbc0
+		mov    %eax,EXPORT_SYMBOL(data_1ed364)
+	jump_11b172:
+		mov    EXPORT_SYMBOL(data_1ed188),%edi
+		mov    EXPORT_SYMBOL(data_1ed1b4)(%ebx),%ah
+		mov    data_1edbc0,%esi
+		test   %ah,%ah
+		je     jump_11b1f5
+		mov    EXPORT_SYMBOL(data_1ed1b0)(%ebx),%eax
+		mov    %eax,%edx
+		sar    $0x1f,%edx
+		sub    %edx,%eax
+		sar    %eax
+		mov    EXPORT_SYMBOL(data_1ebc90)(%ecx),%ebp
+		inc    %ebp
+		mov    %ebp,EXPORT_SYMBOL(data_1ebc90)(%ecx)
+		mov    %eax,EXPORT_SYMBOL(data_1ed1b0)(%ebx)
+		cmp    $0x2c,%ebp
+		jl     jump_11b1f5
+		xor    %edx,%edx
+		mov    %edx,EXPORT_SYMBOL(data_1ed1b0)(%ebx)
+		xor    %dl,%dl
+		mov    %dl,EXPORT_SYMBOL(data_1ed1b4)(%ebx)
+		imul   $0x10b,%edi,%edx
+		mov    $0x2,%ebp
+		xor    %eax,%eax
+		mov    %ebp,EXPORT_SYMBOL(data_1ebcac)(%edx)
+		mov    %eax,EXPORT_SYMBOL(data_1ebcb0)(%edx)
+		mov    %esi,EXPORT_SYMBOL(data_1ebcb4)(%edx)
+		lea    0x1(%edi),%edx
+		mov    $0x14,%edi
+		mov    %edx,%eax
+		sar    $0x1f,%edx
+		idiv   %edi
+		mov    %edx,%edi
+		decl   EXPORT_SYMBOL(data_1ed19c)
+	jump_11b1f5:
+		add    $0x42,%ebx
+		add    $0x4,%ecx
+		inc    %esi
+		mov    %edi,EXPORT_SYMBOL(data_1ed188)
+		mov    %esi,data_1edbc0
+		cmp    $0x5,%esi
+		jle    jump_11b172
+	jump_11b211:
+		mov    data_1edbc0,%esi
+		pop    %ebp
+		pop    %edi
+		pop    %esi
+		pop    %edx
+		pop    %ecx
+		pop    %ebx
+		ret
+
+
+/*----------------------------------------------------------------*/
+func_11b220:
+/*----------------------------------------------------------------*/
+		push   %edx
+		mov    %eax,%edx
+		call   func_11ab3c
+		mov    %edx,EXPORT_SYMBOL(data_1ed340)
+		movl   $0x1,EXPORT_SYMBOL(data_1ed344)
+		pop    %edx
+		ret
+
+
+/*----------------------------------------------------------------*/
+GLOBAL_FUNC(ASM_getch_data_waiting)	/* 0x11B23A */
+/*----------------------------------------------------------------*/
+		cmpl   $0x0,EXPORT_SYMBOL(__cbyte)
+		je     jump_11b249
+		mov    $0x1,%eax
+		ret
+	jump_11b249:
+		mov    $0xb,%ah
+		int    $0x21
+		movsbl %al,%eax
+		ret
+
+
+/*----------------------------------------------------------------*/
+GLOBAL_FUNC(ASM_getch_)	/* 0x11B251 */
+/*----------------------------------------------------------------*/
+		push   %edx
+		xor    %edx,%edx
+		mov    EXPORT_SYMBOL(__cbyte),%eax
+		mov    %edx,EXPORT_SYMBOL(__cbyte)
+		test   %eax,%eax
+		jne    jump_11b26c
+		mov    $0x8,%ah
+		int    $0x21
+		and    $0xff,%eax
+	jump_11b26c:
+		pop    %edx
+		ret
+
+
+/*----------------------------------------------------------------*/
+GLOBAL_FUNC(ASM_func_11b270)	/* 0x11b270 */
+/*----------------------------------------------------------------*/
+		push   %esi
+		push   %edi
+		push   %ebp
+		sub    $0x4,%esp
+		mov    %eax,%esi
+		mov    %edx,(%esp)
+		mov    %ecx,%ebp
+		mov    0x14(%esp),%edx
+		mov    EXPORT_SYMBOL(data_1596b0),%ecx
+		test   %ecx,%ecx
+		jne    jump_11b4ac
+		movl   $0x1,EXPORT_SYMBOL(data_1596b0)
+		mov    %ecx,data_1edbdc
+	jump_11b29f:
+		call   func_118e76
+		mov    %eax,data_1edbc4
+		test   %eax,%eax
+		je     jump_11b33e
+		mov    %eax,EXPORT_SYMBOL(data_1ebca8)
+		imul   $0xc,%eax,%ecx
+		incl   EXPORT_SYMBOL(data_1ea490)(%ecx)
+		incl   EXPORT_SYMBOL(data_1ed360)
+		cmp    $0x30,%eax
+		jb     jump_11b2d3
+		jbe    jump_11b2e4
+		cmp    $0x32,%eax
+		jbe    jump_11b2de
+		jmp    jump_11b2e4
+	jump_11b2d3:
+		cmp    $0x5,%eax
+		je     jump_11b4a4
+		jmp    jump_11b2e4
+	jump_11b2de:
+		incl   EXPORT_SYMBOL(data_1ed18c)
+	jump_11b2e4:
+		test   %edx,%edx
+		je     jump_11b300
+		xor    %ecx,%ecx
+		mov    EXPORT_SYMBOL(data_15aba4),%cl
+		mov    EXPORT_SYMBOL(data_15abaf),%eax
+		xor    %edi,%edi
+	jump_11b2f7:
+		add    %eax,%edi
+		loopne jump_11b2f7
+	jump_11b2fb:
+		dec    %edi
+		jne    jump_11b2fb
+		jmp    jump_11b318
+	jump_11b300:
+		xor    %ecx,%ecx
+		sti
+		mov    EXPORT_SYMBOL(data_15aba4),%cl
+		mov    EXPORT_SYMBOL(data_15abaf),%eax
+		xor    %edi,%edi
+	jump_11b310:
+		add    %eax,%edi
+		loopne jump_11b310
+	jump_11b314:
+		dec    %edi
+		jne    jump_11b314
+		cli
+	jump_11b318:
+		mov    data_1edbdc,%eax
+		inc    %eax
+		mov    %eax,data_1edbdc
+		cmp    $0x3,%eax
+		jg     jump_11b4a4
+		cmpl   $0x0,EXPORT_SYMBOL(data_1ed340)
+		jne    jump_11b4a4
+		jmp    jump_11b29f
+	jump_11b33e:
+		mov    %eax,data_1edbc8
+		mov    %eax,data_1edbcc
+		mov    %ebp,data_1edbd0
+		mov    (%esp),%eax
+		mov    EXPORT_SYMBOL(data_1ed348),%ebp
+		mov    %eax,data_1edbd8
+		cmp    %ebp,%ebx
+		jge    jump_11b362
+		mov    %ebp,%ebx
+	jump_11b362:
+		xor    %eax,%eax
+		mov    %eax,data_1edbdc
+		mov    $0x15,%ebp
+	jump_11b36e:
+		mov    EXPORT_SYMBOL(data_1ed18c),%eax
+		cmp    $0x64,%eax
+		jle    jump_11b384
+		movl   $0x2,data_1edbd4
+		jmp    jump_11b3a0
+	jump_11b384:
+		cmp    $0x32,%eax
+		jle    jump_11b39a
+		cmp    $0x2,%ebx
+		jge    jump_11b39a
+		movl   $0x1,data_1edbd4
+		jmp    jump_11b3a0
+	jump_11b39a:
+		mov    %ebx,data_1edbd4
+	jump_11b3a0:
+		movl   $data_1edbc8,data_15abbd
+		call   func_119381
+		mov    %eax,data_1edbc4
+		test   %eax,%eax
+		jne    jump_11b3c8
+		mov    %esi,data_15abbd
+		call   func_119866
+		mov    %eax,data_1edbc4
+	jump_11b3c8:
+		mov    data_1edbc4,%edi
+		test   %edi,%edi
+		je     jump_11b489
+		mov    %edi,EXPORT_SYMBOL(data_1ebca8)
+		mov    %edi,%ecx
+		imul   $0xc,%edi,%eax
+		incl   EXPORT_SYMBOL(data_1ea490)(%eax)
+		incl   EXPORT_SYMBOL(data_1ed360)
+		mov    %ecx,%eax
+		cmp    $0x22,%eax
+		jb     jump_11b401
+		jbe    jump_11b40e
+		cmp    $0x23,%eax
+		je     jump_11b4a4
+		jmp    jump_11b419
+	jump_11b401:
+		cmp    $0x20,%eax
+		jb     jump_11b419
+		incl   EXPORT_SYMBOL(data_1ed18c)
+		jmp    jump_11b419
+	jump_11b40e:
+		incl   EXPORT_SYMBOL(data_1ed18c)
+		jmp    jump_11b4a4
+	jump_11b419:
+		cmpl   $0x21,data_1edbc4
+		je     jump_11b44a
+		test   %edx,%edx
+		jne    jump_11b43a
+		mov    %ebp,%ecx
+		sti
+		mov    EXPORT_SYMBOL(data_15abaf),%eax
+		xor    %edi,%edi
+	jump_11b430:
+		add    %eax,%edi
+		loopne jump_11b430
+	jump_11b434:
+		dec    %edi
+		jne    jump_11b434
+		cli
+		jmp    jump_11b44a
+	jump_11b43a:
+		mov    %ebp,%ecx
+		mov    EXPORT_SYMBOL(data_15abaf),%eax
+		xor    %edi,%edi
+	jump_11b443:
+		add    %eax,%edi
+		loopne jump_11b443
+	jump_11b447:
+		dec    %edi
+		jne    jump_11b447
+	jump_11b44a:
+		mov    data_1edbdc,%eax
+		inc    %eax
+		mov    %eax,data_1edbdc
+		cmp    $0x3,%eax
+		jg     jump_11b463
+		cmpl   $0x0,EXPORT_SYMBOL(data_1ed340)
+		je     jump_11b47a
+	jump_11b463:
+		mov    data_1edbc4,%edx
+		cmp    $0x20,%edx
+		je     jump_11b473
+		cmp    $0x21,%edx
+		jne    jump_11b4a4
+	jump_11b473:
+		call   func_11aabf
+		jmp    jump_11b4a4
+	jump_11b47a:
+		movl   $0x1,data_1edbcc
+		jmp    jump_11b36e
+	jump_11b489:
+		mov    EXPORT_SYMBOL(data_1ed35c),%eax
+		inc    %eax
+		mov    %edi,EXPORT_SYMBOL(data_1ed33c)
+		mov    %eax,EXPORT_SYMBOL(data_1ed35c)
+		mov    %edi,EXPORT_SYMBOL(data_1596b0)
+		xor    %eax,%eax
+		jmp    jump_11b4b1
+	jump_11b4a4:
+		xor    %ecx,%ecx
+		mov    %ecx,EXPORT_SYMBOL(data_1596b0)
+	jump_11b4ac:
+		mov    $0x60,%eax
+	jump_11b4b1:
+		add    $0x4,%esp
+		pop    %ebp
+		pop    %edi
+		pop    %esi
+		ret    $0x4
+
+
+/*----------------------------------------------------------------*/
+.section .rodata
+
+
+
+/*----------------------------------------------------------------*/
+.data
+
+data_15ab7c:
+		.long	0x0
+data_15ab80:
+		.long	0x0
+		.ascii  "(c) 1996 Diadem Inc. "
+GLOBAL (data_15ab99)
+		.long	0x0
+data_15ab9d:
+		.long	0x0
+data_15aba1:
+		.byte	0x0
+GLOBAL (data_15aba2)
+		.short  0x0
+GLOBAL (data_15aba4)
+		.byte	0x0
+GLOBAL (data_15aba5)
+		.long	0x0
+data_15aba9:
+		.ascii  "\x0a\x00\x00\x00"
+data_15abad:
+		.byte	0xa
+data_15abae:
+		.byte	0x0
+GLOBAL (data_15abaf)	/* 0x15abaf */
+		.ascii  "\x0a\x00\x00\x00"
+GLOBAL (data_15abb3)
+		.byte	0x0
+data_15abb4:
+		.byte	0x0
+data_15abb5:
+		.byte	0x0
+GLOBAL (data_15abb6)	/* 0x15abb6 */
+		.ascii  "\xff\x00\x00\x00"
+data_15abba:
+		.short  0x0
+data_15abbc:
+		.byte	0x0
+data_15abbd:
+		.long	0x0
+data_15abc1:
+		.long	0x0
+data_15abc5:
+		.long	0x0
+data_15abc9:
+		.fill   0x7
+
+
+GLOBAL (data_1edb88)	/* 0x1edb88 */
+		.long	0x0
+GLOBAL (data_1edb8c)
+		.long	0x0
+GLOBAL (data_1edb90)
+		.long	0x0
+GLOBAL (data_1edb94)	/* 0x1edb94 */
+		.long	0x0
+GLOBAL (data_1edb98)
+		.long	0x0
+GLOBAL (data_1edb9c)
+		.fill   0x8
+GLOBAL (data_1edba4)
+		.long	0x0
+GLOBAL (data_1edba8)	/* 0x1edba8 */
+		.long	0x0
+GLOBAL (data_1edbac)	/* 0x1edbac */
+		.long	0x0
+data_1edbb0:
+		.long	0x0
+data_1edbb4:
+		.fill   0x8
+data_1edbbc:
+		.long	0x0
+data_1edbc0:
+		.long	0x0
+data_1edbc4:
+		.long	0x0
+data_1edbc8:
+		.long	0x0
+data_1edbcc:
+		.long	0x0
+data_1edbd0:
+		.long	0x0
+data_1edbd4:
+		.long	0x0
+data_1edbd8:
+		.long	0x0
+data_1edbdc:
+		.long	0x0
+data_1edbe0:
+		.fill   0x400
+data_1edfe0:
+		.fill   0x2000
+
