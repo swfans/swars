@@ -1450,11 +1450,6 @@ void draw_text_transformed_at_ground(int a1, int a2, const char *text)
 
 void SCANNER_unkn_func_200(struct TbSprite *spr, int x, int y, ubyte col)
 {
-#if 0
-    asm volatile (
-      "call ASM_SCANNER_unkn_func_200\n"
-        : : "a" (spr), "d" (x), "b" (y), "c" (col));
-#else
     int xwind_beg;
     int xwind_end;
     int xwind_start;
@@ -1557,17 +1552,11 @@ void SCANNER_unkn_func_200(struct TbSprite *spr, int x, int y, ubyte col)
             oline += 2 * opitch;
         }
     }
-#endif
 }
 
 
 void SCANNER_unkn_func_201(struct TbSprite *spr, int x, int y, ubyte *fade)
 {
-#if 0
-    asm volatile (
-      "call ASM_SCANNER_unkn_func_201\n"
-        : : "a" (spr), "d" (x), "b" (y), "c" (fade));
-#endif
     ubyte *oline;
     ubyte *dt;
     int ich;
@@ -1612,12 +1601,6 @@ void SCANNER_unkn_func_201(struct TbSprite *spr, int x, int y, ubyte *fade)
 
 void SCANNER_unkn_func_202(struct TbSprite *spr, int x, int y, int ctr, int bri)
 {
-#if 0
-    asm volatile (
-      "push %4\n"
-      "call ASM_SCANNER_unkn_func_202\n"
-        : : "a" (spr), "d" (x), "b" (y), "c" (ctr), "g" (bri));
-#endif
     ubyte *oline;
     ubyte *dt;
     int ich;
@@ -1772,11 +1755,6 @@ void draw_new_panel_sprite_dark(int px, int py, ulong spr_id)
  */
 void draw_fourpack_amount(short x, ushort y, ushort amount)
 {
-#if 0
-    asm volatile (
-      "call ASM_draw_fourpack_amount\n"
-        : : "a" (x), "d" (y), "b" (amount));
-#else
     // We're expecting to draw 4 items; 8 are supported mostly to signal an issue
     static short dtx[] = {0+10, 0+10, 72-10, 72-10, 0+16, 0+16, 72-16, 72-16,};
     static short dty[] = {0+4, 22-4, 0+4, 22-4, 0+4, 22-4, 0+4, 22-4,};
@@ -1795,7 +1773,6 @@ void draw_fourpack_amount(short x, ushort y, ushort amount)
       else
           LbDrawBox(x + dtx[i], y + dty[i], 4, 4, col);
     }
-#endif
 }
 
 /**
@@ -1808,11 +1785,6 @@ void draw_fourpack_amount(short x, ushort y, ushort amount)
  */
 void draw_fourpack_items(int a1, ushort y, short plagent, short wtype)
 {
-#if 0
-    asm volatile (
-      "call ASM_draw_fourpack_items\n"
-        : : "a" (a1), "d" (y), "b" (plagent), "c" (wtype));
-#else
     ushort fp;
 
     fp = weapon_fourpack_index(wtype);
@@ -1821,7 +1793,6 @@ void draw_fourpack_items(int a1, ushort y, short plagent, short wtype)
         p_locplayer = &players[local_player_no];
         draw_fourpack_amount(a1, y, p_locplayer->FourPacks[fp][plagent]);
     }
-#endif
 }
 
 sbyte find_nth_weapon_held(ushort index, ubyte n)
