@@ -2661,268 +2661,10 @@ func_e7590:
 
 .section .rodata
 
-weapon_names:
-		.long   aWepNull
-		.long   aWepUzi
-		.long   aWepMinigun
-		.long   aWepLaser
-		.long   aWepElLaser
-		.long   aWepRap
-		.long   aWepNuclGren
-		.long   aWepPersuadrtrn
-		.long   aWepFlamer
-		.long   aWepH2HTaser
-		.long   aWepCrazyGas
-		.long   aWepKOGas
-		.long   aWepEleMine
-		.long   aWepExplMine
-		.long   aWepNapalmMine
-		.long   aWepLongRange
-		.long   aWepAirStrike
-		.long   aWepBeam
-		.long   aWepRazorWire
-		.long   aWepSonicBlast
-		.long   aWepQDevastator
-		.long   aWepPersuader2
-		.long   aWepStasisFld
-		.long   aWepEnergyShld
-		.long   aWepSoulGun
-		.long   aWepTimeGun
-		.long   aWepCerebusIff
-		.long   aWepMedi1
-		.long   aWepMedi2
-		.long   aWepExplWire
-		.long   aWepCloneShld
-		.long	0x0
-		.long   aEmptyItm0
-		.long   aEmptyItm1
-		.long   aEmptyItm2
-		.long   aEmptyItm3
-		.long   aEmptyItm4
-		.long   aEmptyItm5
-		.long   aEmptyItm6
-
-
 aThDIdD:	/* 0x15DD2C */
 		.string "TH %d ID %d"
 aThDIdD_0:	/* 0x15DD38 */
 		.string "TH %d ID %d"
-aD_53:	/* 0x15DD44 */
-		.string "%d "
-ascU:	/* 0x15DD48 */
-		.string "U "
-ascIu:	/* 0x15DD4B */
-		.string "IU "
-data_15dd4f:
-		.string "!!!"
-aIgnoreEnemies:	/* 0x15DD53 */
-		.string "IGNORE ENEMIES"
-aLoopComD:	/* 0x15DD62 */
-		.string "LOOP COM %d"
-aGoToPointXDYDZ:	/* 0x15DD6E */
-		.string "GO TO POINT X%d Y%d Z%d"
-aPlaySampleD:	/* 0x15DD86 */
-		.string "PLAY SAMPLE %d"
-aRunToPointXDZD:	/* 0x15DD95 */
-		.string "RUN TO POINT X%d Z%d"
-aGotopointFaceD:	/* 0x15DDAA */
-		.string "GOTOPOINT FACE %d X%d Z%d"
-aKillEveryone:	/* 0x15DDC4 */
-		.string "KILL EVERYONE"
-aWithinAreaXDYD:	/* 0x15DDD2 */
-		.string "WITHIN AREA X%d Y%d Z%d"
-aWithinOff:	/* 0x15DDEA */
-		.string "WITHIN OFF"
-aExecuteComsPly:	/* 0x15DDF5 */
-		.string "Execute Coms (plyr)"
-aGuardOff:	/* 0x15DE09 */
-		.string "GUARD OFF"
-aHardAsAgent:	/* 0x15DE13 */
-		.string "HARD AS AGENT"
-aPingExist:	/* 0x15DE21 */
-		.string "PING EXIST"
-aStartDangerMus:	/* 0x15DE2C */
-		.string "start danger music"
-aSelf_destruct:	/* 0x15DE3F */
-		.string "SELF_DESTRUCT"
-aGoToPersonD:	/* 0x15DE4D */
-		.string "GO TO PERSON %d"
-aCameraTrackD:	/* 0x15DE5D */
-		.string "CAMERA TRACK %d"
-aKillPersonD:	/* 0x15DE6D */
-		.string "KILL PERSON %d"
-aKillDMemGroupD:	/* 0x15DE7C */
-		.string "KILL %d MEM GROUP %d"
-aUntruceGroupD:	/* 0x15DE91 */
-		.string "UNTRUCE GROUP %d"
-aKillAllGroupD:	/* 0x15DEA2 */
-		.string "KILL ALL GROUP %d"
-aFollowPersonD:	/* 0x15DEB4 */
-		.string "FOLLOW PERSON %d"
-aProtectMemGD:	/* 0x15DEC5 */
-		.string "PROTECT MEM G %d"
-aSupportPersonD:	/* 0x15DED6 */
-		.string "SUPPORT PERSON %d"
-aProtectPersonD:	/* 0x15DEE8 */
-		.string "PROTECT PERSON %d idx %d"
-aBlockPersonD:	/* 0x15DF01 */
-		.string "BLOCK PERSON %d"
-aScarePersonD:	/* 0x15DF11 */
-		.string "SCARE PERSON %d"
-aPersuadePerson:	/* 0x15DF21 */
-		.string "PERSUADE PERSON %d"
-aPersuadeAllGD:	/* 0x15DF34 */
-		.string "PERSUADE All G %d"
-aPersuadeDMemGD:	/* 0x15DF46 */
-		.string "PERSUADE %d Mem G %d"
-aAvoidPersonD:	/* 0x15DF5B */
-		.string "AVOID PERSON %d"
-aWandAvoidGroup:	/* 0x15DF6B */
-		.string "WAND AVOID GROUP %d"
-aHide:	/* 0x15DF7F */
-		.string "HIDE"
-aDestroyBuildin:	/* 0x15DF84 */
-		.string "DESTROY BUILDING %d"
-aCatchTrainD:	/* 0x15DF98 */
-		.string "CATCH TRAIN %d"
-aCatchFerryD:	/* 0x15DFA7 */
-		.string "CATCH FERRY %d"
-aExitFerryD:	/* 0x15DFB6 */
-		.string "EXIT FERRY %d"
-aOpenDomeD:	/* 0x15DFC4 */
-		.string "OPEN DOME %d"
-aCloseDomeD:	/* 0x15DFD1 */
-		.string "CLOSE DOME %d"
-aLockBuildD:	/* 0x15DFDF */
-		.string "LOCK BUILD %d"
-aUnlockBuildD:	/* 0x15DFED */
-		.string "UNLOCK BUILD %d"
-aGetItemD:	/* 0x15DFFD */
-		.string "GET ITEM %d"
-aSelectWeaponS:	/* 0x15E009 */
-		.string "SELECT WEAPON %s "
-aUseWeaponS:	/* 0x15E01B */
-		.string "USE WEAPON %s"
-aDropSpecItemD:	/* 0x15E029 */
-		.string "DROP SPEC ITEM %d"
-aDropWeaponS:	/* 0x15E03B */
-		.string "DROP WEAPON %s"
-aUseVehicleD:	/* 0x15E04A */
-		.string "USE VEHICLE %d"
-aExitVehicle:	/* 0x15E059 */
-		.string "EXIT VEHICLE"
-aWaitPVDeadD:	/* 0x15E066 */
-		.string "WAIT P/V DEAD %d"
-aWaitPVINearD:	/* 0x15E077 */
-		.string "WAIT P/V/I NEAR %d"
-aPingPVD:	/* 0x15E08A */
-		.string "PING P/V %d"
-aWaitPVIArrives:	/* 0x15E096 */
-		.string "WAIT P/V/I ARRIVES %d X%d Y%d Z%d"
-aWaitPPersuaded:	/* 0x15E0B8 */
-		.string "WAIT P PERSUADED %d"
-aWaitDMemGDeadD:	/* 0x15E0CC */
-		.string "WAIT %d MEM G DEAD %d"
-aWaitDMemGDNear:	/* 0x15E0E2 */
-		.string "WAIT %d MEM G %d NEAR "
-aWaitDMemGArriv:	/* 0x15E0F9 */
-		.string "WAIT %d MEM G ARRIVE %d"
-aWaitDMemGPersu:	/* 0x15E111 */
-		.string "WAIT %d MEM G PERSUADED %d"
-aWaitAllGDeadD:	/* 0x15E12C */
-		.string "WAIT ALL G DEAD %d"
-aWaitAllGDNear:	/* 0x15E13F */
-		.string "WAIT ALL G %d NEAR "
-aWaitAllGArrive:	/* 0x15E153 */
-		.string "WAIT ALL G ARRIVE %d"
-aWaitAllGPersua:	/* 0x15E168 */
-		.string "WAIT ALL G PERSUADED %d"
-aWaitMissionSta:	/* 0x15E180 */
-		.string "WAIT MISSION START %d"
-aWaitMissionSuc:	/* 0x15E196 */
-		.string "WAIT MISSION SUCC %d"
-aWaitMissionFai:	/* 0x15E1AB */
-		.string "WAIT MISSION FAIL %d"
-aWaitObjectDest:	/* 0x15E1C0 */
-		.string "WAIT OBJECT DESTROYED %d X%d Y%d Z%d"
-aWaitTimeD:	/* 0x15E1E5 */
-		.string "WAIT TIME %d"
-aWaitObj:	/* 0x15E1F2 */
-		.string "WAIT OBJ:-"
-aWandPVDeadD:	/* 0x15E1FD */
-		.string "WAND P/V DEAD %d"
-aWandPVINearD:	/* 0x15E20E */
-		.string "WAND P/V/I NEAR %d"
-aWandPVIArrives:	/* 0x15E221 */
-		.string "WAND P/V/I ARRIVES %d X%d Y%d Z%d"
-aWandPPersuaded:	/* 0x15E243 */
-		.string "WAND P PERSUADED %d"
-aWandDMemGDDead:	/* 0x15E257 */
-		.string "WAND %d MEM G %d DEAD "
-aWandDMemGDNear:	/* 0x15E26E */
-		.string "WAND %d MEM G %d NEAR "
-aWandDMemGArriv:	/* 0x15E285 */
-		.string "WAND %d MEM G ARRIVE %d"
-aWandDMemGPersu:	/* 0x15E29D */
-		.string "WAND %d MEM G PERSUADED %d"
-aWandAllGDeadD:	/* 0x15E2B8 */
-		.string "WAND ALL G DEAD %d"
-aWandAllGDNear:	/* 0x15E2CB */
-		.string "WAND ALL G %d NEAR "
-aWandAllGArrive:	/* 0x15E2DF */
-		.string "WAND ALL G ARRIVE %d"
-aWandAllGPersua:	/* 0x15E2F4 */
-		.string "WAND ALL G PERSUADED %d"
-aWandObj:	/* 0x15E30C */
-		.string "WAND OBJ:-"
-aWandMissionSta:	/* 0x15E317 */
-		.string "WAND MISSION START %d"
-aWandMissionSuc:	/* 0x15E32D */
-		.string "WAND MISSION SUCC %d"
-aWandMissionFai:	/* 0x15E342 */
-		.string "WAND MISSION FAIL %d"
-aWandObjectDest:	/* 0x15E357 */
-		.string "WAND OBJECT DESTROYED %d X%d Y%d Z%d"
-aWandTimeD:	/* 0x15E37C */
-		.string "WAND TIME %d"
-aUntilGDNotSeen:	/* 0x15E389 */
-		.string "UNTIL G %d NOT SEEN"
-aUntilPVDeadD:	/* 0x15E39D */
-		.string "UNTIL P/V DEAD %d"
-aUntilPVINearD:	/* 0x15E3AF */
-		.string "UNTIL P/V/I NEAR %d"
-aUntilPVIArrive:	/* 0x15E3C3 */
-		.string "UNTIL P/V/I ARRIVES %d X%d Y%d Z%d"
-aUntilPPersuade:	/* 0x15E3E6 */
-		.string "UNTIL P PERSUADED %d"
-aUntilDMemGDead:	/* 0x15E3FB */
-		.string "UNTIL %d MEM G DEAD %d"
-aUntilDMemGDNea:	/* 0x15E412 */
-		.string "UNTIL %d MEM G %d NEAR "
-aUntilDMemGArri:	/* 0x15E42A */
-		.string "UNTIL %d MEM G ARRIVE %d"
-aUntilDMemGPers:	/* 0x15E443 */
-		.string "UNTIL %d MEM G PERSUADED %d"
-aUntilAllGDeadD:	/* 0x15E45F */
-		.string "UNTIL ALL G DEAD %d"
-aUntilAllGDNear:	/* 0x15E473 */
-		.string "UNTIL ALL G %d NEAR "
-aUntilAllGArriv:	/* 0x15E488 */
-		.string "UNTIL ALL G ARRIVE %d"
-aUntilAllGPersu:	/* 0x15E49E */
-		.string "UNTIL ALL G PERSUADED %d"
-aUntilObj:	/* 0x15E4B7 */
-		.string "UNTIL OBJ:-"
-aUntilMissionSt:	/* 0x15E4C3 */
-		.string "UNTIL MISSION START %d"
-aUntilMissionSu:	/* 0x15E4DA */
-		.string "UNTIL MISSION SUCC %d"
-aUntilMissionFa:	/* 0x15E4F0 */
-		.string "UNTIL MISSION FAIL %d"
-aUntilObjectDes:	/* 0x15E506 */
-		.string "UNTIL OBJECT DESTROYED %d X%d Y%d Z%d"
-aUntilTimeD:	/* 0x15E52C */
-		.string "UNTIL TIME %d"
 
 aStateDSMoodDGD:	/* 0x15E53A */
 		.string "State %d %s Mood %d G %d comcur %x EG %d th %d am %d"
@@ -2933,21 +2675,21 @@ aF208xF3XCwDWcX:	/* 0x15E5A1 */
 aTarg2DPtargXGo:	/* 0x15E5D4 */
 		.string "TARG2 %d PTARG %x gotoTI %d"
 ascDa:	/* 0x15E5F0 */
-		.ascii  "\x44\x61\x00"
+		.string "Da"
 ascRe:	/* 0x15E5F3 */
-		.ascii  "\x52\x65\x00"
+		.string "Re"
 ascSi:	/* 0x15E5F6 */
-		.ascii  "\x53\x69\x00"
+		.string "Si"
 ascDe:	/* 0x15E5F9 */
-		.ascii  "\x44\x65\x00"
+		.string "De"
 ascCh:	/* 0x15E5FC */
-		.ascii  "\x43\x68\x00"
+		.string "Ch"
 ascCi:	/* 0x15E5FF */
-		.ascii  "\x43\x49\x00"
+		.string "CI"
 ascSap:	/* 0x15E602 */
-		.ascii  "\x53\x41\x50\x00"
+		.string "SAP"
 ascSta:	/* 0x15E606 */
-		.ascii  "\x53\x74\x61\x00"
+		.string "Sta"
 ascTrig:	/* 0x15E60A */
 		.string "TRIG"
 aPersonLastdist:	/* 0x15E60F */
@@ -2962,83 +2704,6 @@ aT1DT2DCtDRtDBc:	/* 0x15E65C */
 		.string "T1 %d T2 %d ct %d RT %d BC %d"
 aNDFDXDZD:	/* 0x15E67A */
 		.string " n %d  f %d  x %d z %d"
-
-aWepNull:	/* 0x15E691 */
-		.byte	0x0
-aWepUzi:	/* 0x15E692 */
-		.string " Uzi"
-aWepMinigun:	/* 0x15E697 */
-		.string " Minigun"
-aWepLaser:	/* 0x15E6A0 */
-		.string " Laser"
-aWepElLaser:	/* 0x15E6A7 */
-		.string " Electric Laser"
-aWepRap:	/* 0x15E6B7 */
-		.string " RAP"
-aWepNuclGren:	/* 0x15E6BC */
-		.string " Nuclear Grenade"
-aWepPersuadrtrn:	/* 0x15E6CD */
-		.string " Persuadertron"
-aWepFlamer:	/* 0x15E6DC */
-		.string " Flamer"
-aWepH2HTaser:	/* 0x15E6E4 */
-		.string " Hand2Hand Taser"
-aWepCrazyGas:	/* 0x15E6F5 */
-		.string " Crazy Gas"
-aWepKOGas:	/* 0x15E700 */
-		.string " Knockout Gas"
-aWepEleMine:	/* 0x15E70E */
-		.string " Electric Mine"
-aWepExplMine:	/* 0x15E71D */
-		.string " Explosive Mine"
-aWepNapalmMine:	/* 0x15E72D */
-		.string " ***Napalm Mine"
-aWepLongRange:	/* 0x15E73D */
-		.string " Long Range"
-aWepAirStrike:	/* 0x15E749 */
-		.string " Air Strike"
-aWepBeam:	/* 0x15E755 */
-		.string " Beam"
-aWepRazorWire:	/* 0x15E75B */
-		.string " Razor Wire"
-aWepSonicBlast:	/* 0x15E767 */
-		.string " Sonic Blast"
-aWepQDevastator:	/* 0x15E774 */
-		.string " Q DEVASTATOR"
-aWepPersuader2:	/* 0x15E782 */
-		.string " PERSUADERTRON2"
-aWepStasisFld:	/* 0x15E792 */
-		.string " Stasis Field"
-aWepEnergyShld:	/* 0x15E7A0 */
-		.string " Energy Shield"
-aWepSoulGun:	/* 0x15E7AF */
-		.string " Soul Gun"
-aWepTimeGun:	/* 0x15E7B9 */
-		.string " Time Gun"
-aWepCerebusIff:	/* 0x15E7C3 */
-		.string " Cerebus IFF"
-aWepMedi1:	/* 0x15E7D0 */
-		.string " medi 1"
-aWepMedi2:	/* 0x15E7D8 */
-		.string " medi 2"
-aWepExplWire:	/* 0x15E7E0 */
-		.string " EXPLODE Wire"
-aWepCloneShld:	/* 0x15E7EE */
-		.string " Clone Shield"
-aEmptyItm0:	/* 0x15E7FC */
-		.byte	0x0
-aEmptyItm1:	/* 0x15E7FD */
-		.byte	0x0
-aEmptyItm2:	/* 0x15E7FE */
-		.byte	0x0
-aEmptyItm3:	/* 0x15E7FF */
-		.byte	0x0
-aEmptyItm4:	/* 0x15E800 */
-		.byte	0x0
-aEmptyItm5:	/* 0x15E801 */
-		.byte	0x0
-aEmptyItm6:	/* 0x15E802 */
-		.short  0x0
 
 /* Person state text.
  */
