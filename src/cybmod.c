@@ -465,10 +465,6 @@ TbBool add_mod_to_flags_no_replace(union Mod *p_umod, ushort mtype)
  */
 void sanitize_cybmods_fmtver11_flags(union Mod *p_umod)
 {
-#if 0
-    asm volatile ("call ASM_sanitize_cybmods_flags\n"
-        : : "a" (&p_umod->Mods));
-#endif
     ushort modflg, f;
 
     modflg = p_umod->Mods;

@@ -1647,11 +1647,6 @@ TbResult load_netscan_text_data(ushort mapno, ushort level)
 
 TbResult load_mission_name_text(ubyte missi)
 {
-#if 0
-    asm volatile ("call ASM_load_mission_name_text\n"
-        : : "a" (missi));
-    return Lb_SUCCESS;
-#endif
     int totlen;
     ushort len;
     int cmissi;

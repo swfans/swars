@@ -613,13 +613,6 @@ int joy_func_065_sub5(struct DevInput *dinp, short ipos)
 
 int joy_func_065(struct DevInput *dinp)
 {
-#if 0
-    int ret;
-    asm volatile (
-      "call ASM_joy_func_065\n"
-        : "=r" (ret) : "a" (dinp));
-    return ret;
-#else
     short i, ipos;
     ubyte v115;
     int ret;
@@ -718,7 +711,6 @@ int joy_func_065(struct DevInput *dinp)
         }
     }
     return 1;
-#endif
 }
 
 /** Gravis Grip joystick driver initialization.
@@ -844,13 +836,6 @@ int joy_spaceball_shutdown(void)
  */
 int joy_driver_init(void)
 {
-#if 0
-    int ret;
-    asm volatile (
-      "call ASM_joy_driver_init\n"
-        : "=r" (ret) :);
-    return ret;
-#else
     int ret;
     if (!joy_grip_initialized)
     {
@@ -865,7 +850,6 @@ int joy_driver_init(void)
             joy_spbal_initialized = 1;
     }
     return 1;
-#endif
 }
 
 /** Joystick drivers shutdown.

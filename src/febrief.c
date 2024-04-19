@@ -112,12 +112,6 @@ void brief_citymap_readd_scanner_signals(short nsobv)
 
 ubyte brief_do_netscan_enhance(ubyte click)
 {
-#if 0
-    ubyte ret;
-    asm volatile ("call ASM_brief_do_netscan_enhance\n"
-        : "=r" (ret) : "a" (click));
-    return ret;
-#endif
     short nsobv;
     struct NetscanObjective *p_nsobv;
 
@@ -330,12 +324,6 @@ ubyte input_citymap_scanner(struct ScreenBox *box)
 
 ubyte show_citymap_box(struct ScreenBox *box)
 {
-#if 0
-    ubyte ret;
-    asm volatile ("call ASM_show_citymap_box\n"
-        : "=r" (ret) : "a" (box));
-    return ret;
-#else
     ubyte anim_no;
 
     if (selected_city_id == -1)
@@ -413,7 +401,6 @@ ubyte show_citymap_box(struct ScreenBox *box)
         }
     }
     return 0;
-#endif
 }
 
 ubyte load_mail_text(const char *filename)
