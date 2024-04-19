@@ -3726,11 +3726,6 @@ void beefup_all_agents(PlayerInfo *p_locplayer)
 
 void game_graphics_inputs(void)
 {
-#if 0
-    asm volatile ("call ASM_game_graphics_inputs\n"
-        : : );
-    return;
-#else
     PlayerInfo *p_locplayer;
 
     p_locplayer = &players[local_player_no];
@@ -3769,15 +3764,10 @@ void game_graphics_inputs(void)
         lbKeyOn[KC_F8] = 0;
         screen_mode_switch_to_next();
     }
-#endif
 }
 
 void init_syndwars(void)
 {
-#if 0
-    asm volatile ("call ASM_init_syndwars\n"
-        :  :  : "eax" );
-#endif
     //char locstr[100];
     AudioInitOptions audOpts;
 
@@ -4002,10 +3992,6 @@ void apply_user_settings(void)
 
 void read_user_settings(void)
 {
-#if 0
-    asm volatile ("call ASM_read_user_settings\n"
-        :  :  : "eax" );
-#else
     char fname[52];
     TbFileHandle fh;
     TbBool read_mortal_salt_backup;
@@ -4087,17 +4073,10 @@ void read_user_settings(void)
         i = joy_func_067(&joy, byte_1C4A9F);
     if (i != 1)
         byte_1C4A9F = 0;
-#endif
 }
 
 ubyte save_user_settings(void)
 {
-#if 0
-    TbBool ret;
-    asm volatile ("call ASM_save_user_settings\n"
-        : "=r" (ret) : );
-    return ret;
-#endif
     char fname[52];
     TbFileHandle fh;
     int i;
@@ -4927,12 +4906,8 @@ void draw_triangle_purple_list(int x1, int y1, int x2, int y2, int x3, int y3, T
         : : "a" (x1), "d" (y1), "b" (x2), "c" (y2), "g" (x3), "g" (y3), "g" (colour));
 }
 
-void ASM_show_game_engine(void);
 void show_game_engine(void)
 {
-#if 0
-    ASM_show_game_engine();
-#endif
     int zoom;
     short dcthing;
 
@@ -4952,16 +4927,16 @@ void show_game_engine(void)
     setup_engine_nullsub4();
 }
 
-void ASM_gproc3_unknsub2(void);
 void gproc3_unknsub2(void)
 {
-    ASM_gproc3_unknsub2();
+    asm volatile ("call ASM_gproc3_unknsub2\n"
+        :  :  : "eax" );
 }
 
-void ASM_BAT_play(void);
 void BAT_play(void)
 {
-    ASM_BAT_play();
+    asm volatile ("call ASM_BAT_play\n"
+        :  :  : "eax" );
 }
 
 TbResult init_read_all_sprite_files(void)
@@ -4971,16 +4946,6 @@ TbResult init_read_all_sprite_files(void)
         : "=r" (ret) : );
     return ret;
 }
-
-#if 0
-TbPixel LbPaletteFindColour(ubyte *pal, ubyte rval, ubyte gval, ubyte bval)
-{
-    TbResult ret;
-    asm volatile ("call ASM_LbPaletteFindColour\n"
-        : "=r" (ret) : "a" (pal), "d" (rval), "b" (gval), "c" (bval));
-    return ret;
-}
-#endif
 
 ubyte change_panel_permutation(ubyte click)
 {
@@ -5120,12 +5085,6 @@ TbBool save_game_decrypt_and_verify(ulong fmtver, int slot, ubyte *save_buf, ulo
 
 ubyte load_game(int slot, char *desc)
 {
-#if 0
-    ubyte ret;
-    asm volatile ("call ASM_load_game\n"
-        : "=r" (ret) : "a" (slot), "d" (desc));
-    return ret;
-#else
     char str[52];
     ulong gblen, fmtver, decrypt_verify;
     TbFileHandle fh;
@@ -5423,17 +5382,10 @@ ubyte load_game(int slot, char *desc)
     ingame.CashAtStart = ingame.Credits;
     ingame.Expenditure = 0;
     return 0;
-#endif
 }
 
 ubyte load_game_slot(ubyte click)
 {
-#if 0
-    ubyte ret;
-    asm volatile ("call ASM_load_game_slot\n"
-        : "=r" (ret) : "a" (click));
-    return ret;
-#endif
     char *ldname;
     int ldslot;
     int ret;
