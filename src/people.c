@@ -352,10 +352,6 @@ void read_people_conf_file(void)
 
 void load_peep_type_stats_bin(void)
 {
-#if 0
-    asm volatile ("call ASM_load_peep_type_stats\n"
-        :  :  : "eax" );
-#endif
     char locstr[52];
     TbFileHandle fp;
 
@@ -629,20 +625,12 @@ ushort calc_person_radius_type(struct Thing *p_person, ushort stype)
 
 void set_person_stats_type(struct Thing *p_person, ushort stype)
 {
-#if 0
-    asm volatile ("call ASM_set_person_stats_type\n"
-        : : "a" (p_person), "d" (type));
-#endif
     set_person_health_energy_shield_stamina_type(p_person, stype);
     p_person->Speed = calc_person_speed(p_person);
 }
 
 void init_person_thing(struct Thing *p_person)
 {
-#if 0
-    asm volatile ("call ASM_init_person_thing\n"
-        : : "a" (p_person));
-#endif
     set_person_health_energy_shield_stamina_type(p_person, p_person->SubType);
 
     p_person->Radius = calc_person_radius_type(p_person, p_person->SubType);
@@ -697,10 +685,6 @@ void path_free_linked_list(ushort first_path)
 
 void remove_path(struct Thing *p_thing)
 {
-#if 0
-    asm volatile ("call ASM_remove_path\n"
-        : : "a" (p_thing));
-#else
     ushort path;
 
     p_thing->Flag2 &= ~0x0040;
@@ -714,7 +698,6 @@ void remove_path(struct Thing *p_thing)
         p_thing->PathOffset = 0;
         p_thing->Flag &= ~0x00020000;
     }
-#endif
 }
 
 void set_person_animmode_walk(struct Thing *p_person)
@@ -789,10 +772,6 @@ void persuaded_person_remove_from_stats(struct Thing *p_person, ushort brief)
 
 void set_person_persuaded(struct Thing *p_person, struct Thing *p_attacker, ushort energy)
 {
-#if 0
-    asm volatile ("call ASM_set_person_persuaded\n"
-        : : "a" (p_person), "d" (p_attacker), "b" (energy));
-#endif
     if ((p_person->Flag & TngF_PlayerAgent) != 0)
         return;
 
@@ -865,10 +844,6 @@ void set_person_persuaded(struct Thing *p_person, struct Thing *p_attacker, usho
 
 void unpersuade_my_peeps(struct Thing *p_owntng)
 {
-#if 0
-    asm volatile ("call ASM_unpersuade_my_peeps\n"
-        : : "a" (p_owntng));
-#else
     short person;
     struct Thing *p_person;
     ushort count;
@@ -897,7 +872,6 @@ void unpersuade_my_peeps(struct Thing *p_owntng)
     }
     p_owntng->U.UPerson.PersuadePower = 0;
     word_1531DA = count;
-#endif
 }
 
 short check_for_other_people(int x, int y, int z, struct Thing *p_person)
