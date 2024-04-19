@@ -217,12 +217,6 @@ void draw_kicked_right_arrow(struct ScreenBox *box, TbPixel colr2)
 
 TbBool pause_screen_handle(void)
 {
-#if 0
-    TbBool ret;
-    asm volatile ("call ASM_pause_screen_handle\n"
-        : "=r" (ret) : );
-    return ret;
-#endif
     int w;
     const char *s;
     TbBool resume_game;

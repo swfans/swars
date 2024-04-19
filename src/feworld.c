@@ -454,12 +454,6 @@ void input_world_cities(struct ScreenBox *box)
 
 ubyte show_world_landmap_box(struct ScreenBox *box)
 {
-#if 0
-    ubyte ret;
-    asm volatile ("call ASM_show_world_landmap_box\n"
-        : "=r" (ret) : "a" (box));
-    return ret;
-#else
     short i;
     TbBool next_state;
 
@@ -625,7 +619,6 @@ ubyte show_world_landmap_box(struct ScreenBox *box)
     input_world_cities(box);
 
     return 4;
-#endif
 }
 
 void show_worldmap_screen(void)

@@ -318,10 +318,6 @@ void PacketRecord_Close(void)
 
 void PacketRecord_OpenWrite(void)
 {
-#if 0
-    asm volatile ("call ASM_PacketRecord_OpenWrite\n"
-        :  :  : "eax" );
-#endif
     char fname[DISKPATH_SIZE];
     struct Mission *p_missi;
     struct PacketFileHead head;
@@ -541,10 +537,6 @@ void colour_tables_ghost_fixup(void)
 
 void game_setup_stuff(void)
 {
-#if 0
-    asm volatile ("call ASM_game_setup_stuff\n"
-        :  :  : "eax" );
-#else
     TbFileHandle fh;
     ushort i;
 
@@ -561,7 +553,6 @@ void game_setup_stuff(void)
     colour_brown2 = LbPaletteFindColour(display_palette, 42, 37, 30);
     colour_grey2 = LbPaletteFindColour(display_palette, 32, 32, 32);
     colour_grey1 = LbPaletteFindColour(display_palette, 16, 16, 16);
-#endif
 }
 
 void smack_malloc_free_all(void)
@@ -577,10 +568,6 @@ void flic_unkn03(ubyte a1)
 
 void update_danger_music(ubyte a1)
 {
-#if 0
-    asm volatile ("call ASM_update_danger_music\n"
-        :  : "a" (a1));
-#else
     short hurt_agents;
     struct Thing *p_agent;
 
@@ -636,7 +623,6 @@ void update_danger_music(ubyte a1)
         }
     }
     ingame.fld_unkC8B = 0;
-#endif
 }
 
 void cover_screen_rect_with_sprite(short x, short y, ushort w, ushort h, struct TbSprite *spr)
