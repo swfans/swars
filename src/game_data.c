@@ -461,10 +461,6 @@ uint memory_table_entries(MemSystem *mem_table)
 
 void init_memory(MemSystem *mem_table)
 {
-#if 0
-    asm volatile ("call ASM_init_memory\n"
-        :  : "a" (mem_table));
-#endif
     MemSystem *ment;
     int mem_table_len;
     ulong totlen;

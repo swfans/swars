@@ -490,10 +490,6 @@ void level_perform_deep_fix(void)
 
 void fix_level_indexes(short missi, ulong fmtver, ubyte reload, TbBool deep)
 {
-#if 0
-    asm volatile ("call ASM_fix_level_indexes\n"
-        :  :  : "eax" );
-#endif
     ushort objectv;
     short thing;
 
@@ -1175,11 +1171,6 @@ void load_map_bnb(int a1)
 
 TbResult load_mad_pc(ushort mapno)
 {
-#if 0
-    asm volatile ("call ASM_load_mad_pc\n"
-        : : "a" (mapno));
-    return Lb_SUCCESS;
-#else
     TbResult ret;
 
     ingame.Flags |= GamF_Unkn00010000;
@@ -1192,7 +1183,6 @@ TbResult load_mad_pc(ushort mapno)
     }
     sub_73C64("", 1);
     return ret;
-#endif
 }
 
 /******************************************************************************/
