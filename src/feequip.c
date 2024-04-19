@@ -403,10 +403,6 @@ void draw_discrete_rects_bar_lv(struct ScreenBoxBase *box, int lv, int lv_max, T
 
 void show_equipment_screen(void)
 {
-#if 0
-    asm volatile ("call ASM_show_equipment_screen\n"
-        :  :  : "eax" );
-#else
     if ((unk11_menu[0].Flags & GBxFlg_Unkn0001) != 0)
     {
         byte_1C4975 = 0;
@@ -542,15 +538,10 @@ void show_equipment_screen(void)
         spr = &unk2_sprites[weapon_sprite_index(mo_weapon + 1, true)];
         draw_sprite_purple_list(ms_x, ms_y, spr);
     }
-#endif
 }
 
 void init_weapon_anim(ubyte weapon)
 {
-#if 0
-    asm volatile ("call ASM_init_weapon_anim\n"
-        : : "a" (weapon));
-#else
     struct Campaign *p_campgn;
     const char *campgn_mark;
     const char *flic_dir;
@@ -575,15 +566,10 @@ void init_weapon_anim(ubyte weapon)
         sprintf(animations[k].Filename, "%s/wep-%02d%s.fli", flic_dir, (int)weapon, campgn_mark);
     }
     flic_unkn03(2);
-#endif
 }
 
 void weapon_flic_data_to_screen(void)
 {
-#if 0
-    asm volatile ("call ASM_weapon_flic_data_to_screen\n"
-        :  :  : "eax" );
-#else
     short w, h;
 
     w = equip_display_box.Width - 8;
@@ -592,7 +578,6 @@ void weapon_flic_data_to_screen(void)
     LbScreenCopy(unkn_buffer_05, lbDisplay.GraphicsWindowPtr, lbDisplay.GraphicsWindowHeight);
     LbScreenSetGraphicsWindow(0, 0, lbDisplay.GraphicsScreenWidth,
         lbDisplay.GraphicsScreenHeight);
-#endif
 }
 
 void switch_shared_equip_screen_buttons_to_equip(void)
@@ -660,12 +645,6 @@ ubyte equip_offer_can_buy_or_sell(ubyte weapon)
 
 ubyte display_weapon_info(struct ScreenTextBox *box)
 {
-#if 0
-    ubyte ret;
-    asm volatile ("call ASM_display_weapon_info\n"
-        : "=r" (ret) : "a" (box));
-    return ret;
-#else
     short stridx;
     struct ScreenBoxBase categ_box = {box->X + 8, box->Y + 148, 192, 17};
     struct ScreenBoxBase power_box = {box->X + 8, box->Y + 177, 192, 17};
@@ -760,7 +739,6 @@ ubyte display_weapon_info(struct ScreenTextBox *box)
     }
 
     return 0;
-#endif
 }
 
 ubyte show_weapon_name(struct ScreenTextBox *box)
