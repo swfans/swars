@@ -777,10 +777,6 @@ static void clear_smacker_skip_keys(void)
 
 void play_smacker(ushort vid_type)
 {
-#if 0
-    asm volatile ("call ASM_play_smacker\n"
-        : : "a" ((int)vid_type));
-#else
     char fname[FILENAME_MAX];
     TbScreenMode scr_md_fmvid;
     TbBool prepare_draw_on_last_frame;
@@ -841,7 +837,6 @@ void play_smacker(ushort vid_type)
     }
     game_hacky_update();
     clear_smacker_skip_keys();
-#endif
 }
 
 void play_smacker_then_back_to_engine(ushort vid_type)
@@ -1059,10 +1054,6 @@ int load_people_text(ubyte *buf)
 
 void load_outro_sprites(void)
 {
-#if 0
-    asm volatile ("call ASM_load_outro_sprites\n"
-        :  :  : "eax" );
-#endif
     ubyte *data_buf;
     ubyte *outtxt_ptr;
     ubyte *peptxt_ptr;
@@ -1277,10 +1268,6 @@ void traffic_unkn_func_01(void)
 
 void process_tank_turret(struct Thing *p_tank)
 {
-#if 0
-    asm volatile ("call ASM_process_tank_turret\n"
-        : : "a" (p_tank));
-#else
     struct Thing *p_turret;
     int target_x, target_y;
     int turret;
@@ -1358,7 +1345,6 @@ void process_tank_turret(struct Thing *p_tank)
     p_turret->U.UMGun.AngleY -= dt_angle;
     p_tank->OldTarget = abs(angle);
     p_turret->U.UMGun.AngleY = (p_turret->U.UMGun.AngleY + 2*LbFPMath_PI) & LbFPMath_AngleMask;
-#endif
 }
 
 /** Step overall scale towards given zoom value.
@@ -1394,10 +1380,6 @@ void process_overall_scale(int zoom)
 
 void process_view_inputs(int thing)
 {
-#if 0
-    asm volatile ("call ASM_process_view_inputs\n"
-        : : "a" (thing));
-#else
     struct Thing *p_person;
     int zoom;
 
@@ -1410,7 +1392,6 @@ void process_view_inputs(int thing)
         zoom = ingame.UserZoom;
 
     process_overall_scale(zoom);
-#endif
 }
 
 void process_engine_unk1(void)
