@@ -1488,7 +1488,7 @@ AWEDefMemMap_:
 		cmpw   $0x0,awe_data_seg
 		jne    jump_110042
 		mov    $0x4,%eax
-		call   AllocDOSmem_
+		call   ASM_AllocDOSmem
 		mov    %dx,awe_data_seg
 		mov    %eax,awe_data
 		test   %eax,%eax
@@ -1547,7 +1547,7 @@ AWEGetSFInfo_:
 		cmpw   $0x0,awe_data_seg
 		jne    jump_1100ef
 		mov    $0x4,%eax
-		call   AllocDOSmem_
+		call   ASM_AllocDOSmem
 		mov    %dx,awe_data_seg
 		mov    %eax,awe_data
 		test   %eax,%eax
@@ -1615,7 +1615,7 @@ AWEStreamSample_:
 		cmpw   $0x0,awe_data_seg
 		jne    jump_1101c2
 		mov    $0x4,%eax
-		call   AllocDOSmem_
+		call   ASM_AllocDOSmem
 		mov    %dx,awe_data_seg
 		mov    %eax,awe_data
 		test   %eax,%eax
@@ -1674,7 +1674,7 @@ AWELoadPreset_:
 		cmpw   $0x0,awe_data_seg
 		jne    jump_110272
 		mov    $0x4,%eax
-		call   AllocDOSmem_
+		call   ASM_AllocDOSmem
 		mov    %dx,awe_data_seg
 		mov    %eax,awe_data
 		test   %eax,%eax
