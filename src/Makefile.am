@@ -177,6 +177,7 @@ swars_SOURCES = \
 	matrix.h \
 	mouse.c \
 	mouse.h \
+	netipx1.sx \
 	network.c \
 	network.h \
 	pathtrig.c \
