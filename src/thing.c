@@ -708,12 +708,6 @@ short search_for_vehicle(short X, short Z)
 
 short search_things_for_index(short index)
 {
-#if 0
-    short ret;
-    asm volatile ("call ASM_search_things_for_index\n"
-        : "=r" (ret) : "a" (index));
-    return ret;
-#endif
     short thing;
     if (index <= 0)
     {

@@ -387,10 +387,6 @@ const char *weapon_codename(ushort wtype)
 
 void init_weapon_text(void)
 {
-#if 0
-    asm volatile ("call ASM_init_weapon_text\n"
-        :  :  : "eax" );
-#else
     char locstr[512];
     int weptxt_pos;
     int totlen;
@@ -514,7 +510,6 @@ void init_weapon_text(void)
             if (s) s += 2;
         }
     }
-#endif
 }
 
 ushort weapon_sprite_index(ushort wtype, TbBool enabled)
@@ -805,10 +800,6 @@ void init_laser(struct Thing *p_person, ushort timer)
 
 void init_laser_6shot(struct Thing *p_person, ushort timer)
 {
-#if 0
-    asm volatile ("call ASM_init_laser_6shot\n"
-        : : "a" (p_person), "d" (timer));
-#else
     struct Thing *p_target;
     struct Thing *p_thing;
     short thing;
@@ -846,7 +837,6 @@ void init_laser_6shot(struct Thing *p_person, ushort timer)
         }
     }
     p_person->PTarget = p_target;
-#endif
 }
 
 /******************************************************************************/

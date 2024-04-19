@@ -57,10 +57,6 @@ const struct TbNamedEnum cities_conf_city_cmds[] = {
 
 void load_city_txt(void)
 {
-#if 0
-    asm volatile ("call ASM_load_city_txt\n"
-        :  :  : "eax" );
-#endif
     char *s;
     int totlen;
     int i, k, city;
