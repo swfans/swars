@@ -6141,10 +6141,6 @@ ubyte check_delete_open_mission(ushort mslot, sbyte state)
 
 void mission_over(void)
 {
-#if 0
-    asm volatile ("call ASM_mission_over\n"
-        :  :  : "eax" );
-#else
     ubyte misend;
 
     ingame.DisplayMode = DpM_UNKN_37;
@@ -6225,7 +6221,6 @@ void mission_over(void)
       (int)last_missi, (int)lstate, (int)ingame.GameOver);
     if (ingame.GameOver)
         play_smacker(MPly_GameOver);
-#endif
 }
 
 TbBool player_try_spend_money(long cost)
@@ -6280,12 +6275,6 @@ void campaign_new_game_prepare(void)
 
 ubyte do_storage_NEW_MORTAL(ubyte click)
 {
-#if 0
-    ubyte ret;
-    asm volatile ("call ASM_do_storage_NEW_MORTAL\n"
-        : "=r" (ret) : "a" (click));
-    return ret;
-#else
     if (login_control__State != 6)
         return 0;
 
@@ -6315,7 +6304,6 @@ ubyte do_storage_NEW_MORTAL(ubyte click)
       play_sample_using_heap(0, 119 + (LbRandomAnyShort() % 3), 127, 64, 100, 0, 3u);
 
     return 1;
-#endif
 }
 
 ubyte show_netgame_unkn1(struct ScreenBox *box)
@@ -6359,10 +6347,6 @@ void init_screen_boxes(void)
 
 void reload_background(void)
 {
-#if 0
-    asm volatile ("call ASM_reload_background\n"
-        :  :  : "eax" );
-#else
     struct ScreenBufBkp bkp;
 
     proj_origin.X = lbDisplay.GraphicsScreenWidth / 2 - 1;
@@ -6425,7 +6409,6 @@ void reload_background(void)
     {
         init_weapon_anim(selected_mod + 32);
     }
-#endif
 }
 
 void players_init_control_mode(void)
@@ -6477,10 +6460,6 @@ ushort my_draw_text(short x, short y, const char *text, ushort startline)
 
 void do_scroll_map(void)
 {
-#if 0
-    asm volatile ("call ASM_do_scroll_map\n"
-        :  :  : "eax" );
-#else
     PlayerInfo *p_locplayer;
     long engn_xc_orig, engn_zc_orig;
     ushort md;
@@ -6644,7 +6623,6 @@ void do_scroll_map(void)
         engn_xc += dword_17710C;
         engn_zc += dword_177110;
     }
-#endif
 }
 
 ubyte weapon_select_input(void)
@@ -7544,12 +7522,6 @@ TbBool check_scanner_input(void)
 
 short process_panel_state(void)
 {
-#if 0
-    short ret;
-    asm volatile ("call ASM_process_panel_state\n"
-        : "=r" (ret) : );
-    return ret;
-#else
     PlayerInfo *p_locplayer;
     TbBool can_control;
     short dcthing;
@@ -7738,7 +7710,6 @@ short process_panel_state(void)
         }
     }
     return 0;
-#endif
 }
 
 TbBool check_panel_input(short panel)
@@ -7957,12 +7928,6 @@ TbBool check_panel_input(short panel)
 
 TbBool check_panel_button(void)
 {
-#if 0
-    ubyte ret;
-    asm volatile ("call ASM_check_panel_button\n"
-        : "=r" (ret) : );
-    return ret;
-#else
     short panel, tot_panels;
 
     if (lbDisplay.LeftButton && lbDisplay.RightButton)
@@ -7997,7 +7962,6 @@ TbBool check_panel_button(void)
         }
     }
     return 0;
-#endif
 }
 
 void show_type11_screen(void)
@@ -8476,10 +8440,6 @@ void net_unkn_func_33_sub1(int plyr, int netplyr)
 
 void net_unkn_func_33(void)
 {
-#if 0
-    asm volatile ("call ASM_net_unkn_func_33\n"
-        :  :  : "eax" );
-#else
     struct NetworkPlayer *p_netplyr;
     int player;
     int i;
@@ -8563,7 +8523,6 @@ void net_unkn_func_33(void)
     {
         network_players[i].Type = 17;
     }
-#endif
 }
 
 void forward_research_progress(int num_days)
