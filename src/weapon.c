@@ -775,10 +775,6 @@ void do_weapon_quantities_max_to_player(struct Thing *p_person)
 
 void do_weapon_quantities1(struct Thing *p_person)
 {
-#if 0
-    asm volatile ("call ASM_do_weapon_quantities1\n"
-        : : "a" (p_person));
-#endif
     if (in_network_game)
     {
         // No action
@@ -791,10 +787,6 @@ void do_weapon_quantities1(struct Thing *p_person)
 
 void do_weapon_quantities_proper1(struct Thing *p_person)
 {
-#if 0
-    asm volatile ("call ASM_do_weapon_quantities_proper1\n"
-        : : "a" (p_person));
-#endif
     if (in_network_game)
     {
         do_weapon_quantities_player_to_net(p_person);

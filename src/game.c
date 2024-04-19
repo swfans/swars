@@ -4353,10 +4353,6 @@ void simulated_level(void)
  */
 void init_player(void)
 {
-#if 0
-    asm volatile ("call ASM_init_player\n"
-        :  :  : "eax" );
-#endif
     PlayerInfo *p_locplayer;
     int i;
 
@@ -4454,12 +4450,6 @@ struct Thing *new_sim_person(int x, int y, int z, ubyte subtype)
 
 ushort make_group_into_players(ushort group, ushort plyr, ushort max_agent, short new_type)
 {
-#if 0
-    ushort ret;
-    asm volatile ("call ASM_make_group_into_players\n"
-        : "=r" (ret) : "a" (group), "d" (plyr), "b" (max_agent), "c" (new_type));
-    return ret;
-#endif
     ulong n, nframe;
     ushort plagent, high_tier;
     PlayerInfo *p_player;
@@ -4613,10 +4603,6 @@ int place_default_player(ushort player_id, TbBool replace)
 
 void place_single_player(void)
 {
-#if 0
-    asm volatile ("call ASM_place_single_player\n"
-        :  :  : "eax" );
-#endif
     PlayerInfo *p_locplayer;
     ulong n;
     ushort nagents, pl_agents, pl_group;
