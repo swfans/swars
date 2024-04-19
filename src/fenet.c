@@ -399,12 +399,6 @@ void show_net_benefits_sub7(struct ScreenBox *box)
 
 ubyte show_net_benefits_box(struct ScreenBox *box)
 {
-#if 0
-    ubyte ret;
-    asm volatile ("call ASM_show_net_benefits_box\n"
-        : "=r" (ret) : "a" (box));
-    return ret;
-#else
     my_set_text_window(box->X + 4, box->Y + 4, box->Width - 8, box->Height - 8);
     if ((box->Flags & GBxFlg_Unkn1000) == 0)
     {
@@ -441,35 +435,24 @@ ubyte show_net_benefits_box(struct ScreenBox *box)
             : : "a" (&net_SET_button), "g" (net_SET_button.DrawFn));
     }
     return 0;
-#endif
 }
 
 void purple_unkn3_data_to_screen(void)
 {
-#if 0
-    asm volatile ("call ASM_purple_unkn3_data_to_screen\n"
-        :  :  : "eax" );
-#else
     LbScreenSetGraphicsWindow(net_unkn21.X + 4, net_unkn21.Y + 4,
       255, 96);
     LbScreenCopy(data_1c6de8, lbDisplay.GraphicsWindowPtr, lbDisplay.GraphicsWindowHeight);
     LbScreenSetGraphicsWindow(0, 0, lbDisplay.GraphicsScreenWidth,
         lbDisplay.GraphicsScreenHeight);
-#endif
 }
 
 void purple_unkn4_data_to_screen(void)
 {
-#if 0
-    asm volatile ("call ASM_purple_unkn4_data_to_screen\n"
-        :  :  : "eax" );
-#else
     LbScreenSetGraphicsWindow(net_unkn21.X + 4, net_unkn21.Y + 4,
       255, 96);
     LbScreenCopy(data_1c6de4, lbDisplay.GraphicsWindowPtr, lbDisplay.GraphicsWindowHeight);
     LbScreenSetGraphicsWindow(0, 0, lbDisplay.GraphicsScreenWidth,
         lbDisplay.GraphicsScreenHeight);
-#endif
 }
 
 ubyte show_net_unkn21(struct ScreenBox *box)
