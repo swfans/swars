@@ -751,12 +751,6 @@ ubyte show_weapon_name(struct ScreenTextBox *box)
 
 ubyte show_weapon_list(struct ScreenTextBox *box)
 {
-#if 0
-    ubyte ret;
-    asm volatile ("call ASM_show_weapon_list\n"
-        : "=r" (ret) : "a" (box));
-    return ret;
-#else
     int h0;
     int sheight;
     short weapon;
@@ -867,7 +861,6 @@ ubyte show_weapon_list(struct ScreenTextBox *box)
         h0 += sheight + 3;
     }
     return 0;
-#endif
 }
 
 ubyte show_weapon_slots(struct ScreenBox *box)
@@ -945,10 +938,6 @@ void init_equip_screen_boxes(void)
 
 void init_equip_screen_shapes(void)
 {
-#if 0
-    asm volatile ("call ASM_init_equip_screen_shapes\n"
-        :  :  : "eax" );
-#else
     ushort i, k;
     short x, y;
     short scr_w, start_x;
@@ -1006,7 +995,6 @@ void init_equip_screen_shapes(void)
         unk11_menu[i].Colour = 247;
         unk11_menu[i].BGColour = 4;
     }
-#endif
 }
 
 void reset_equip_screen_boxes_flags(void)
