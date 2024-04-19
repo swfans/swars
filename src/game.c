@@ -2583,10 +2583,6 @@ void draw_energy_bar(int x1, int y1, int len_mul, int len_div)
 
 void draw_new_panel()
 {
-#if 0
-    asm volatile ("call ASM_draw_new_panel\n"
-        :  :  : "eax" );
-#else
     int i;
     PlayerInfo *p_locplayer;
 
@@ -2860,7 +2856,6 @@ void draw_new_panel()
             x += 89;
         draw_new_panel_sprite_std(4, x, 91);
     }
-#endif
 }
 
 void draw_object_face1a(ushort a1)
@@ -2969,11 +2964,6 @@ static void draw_droplet(TbPixel *o, short scanln, short w, short h, TbPixel *co
 
 void draw_falling_rain(int frm)
 {
-#if 0
-    asm volatile (
-      "call ASM_draw_falling_rain\n"
-        : : "a" (frm));
-#endif
     ulong icol;
     short limit_y;
     ushort rnd, m;
@@ -3117,10 +3107,6 @@ void draw_screen_number(ushort a1)
 
 void draw_screen(void)
 {
-#if 0
-    asm volatile ("call ASM_draw_screen\n"
-        :  :  : "eax" );
-#endif
     ushort *p_bucket;
     ushort iidx;
     struct DrawItem *itm;
@@ -3313,11 +3299,6 @@ void draw_screen(void)
 #define SUPER_QUICK_RADIUS 5
 void apply_super_quick_light(short lx, short lz, ushort b, ubyte *mapwho_lights)
 {
-#if 0
-    asm volatile (
-      "call ASM_apply_super_quick_light\n"
-        : : "a" (lx), "d" (lz), "b" (b), "c" (mapwho_lights));
-#else
     short tile_x_beg, tile_x_end;
     short tile_z_beg, tile_z_end;
     short tile_x, tile_z;
@@ -3382,7 +3363,6 @@ void apply_super_quick_light(short lx, short lz, ushort b, ubyte *mapwho_lights)
             *p_sqlight += intensity;
         }
     }
-#endif
 }
 
 void process_engine_unk3(void)
@@ -3415,11 +3395,6 @@ void func_cc0d4(char **str)
 
 void init_outro(void)
 {
-#if 0
-    asm volatile ("call ASM_init_outro\n"
-        : : );
-    return;
-#else
     TbClockMSec last_loop_time;
     const char *text1;
     const char *text2;
@@ -3538,7 +3513,6 @@ void init_outro(void)
     StopAllSamples();
     reset_heaps();
     setup_heaps(2);
-#endif
 }
 
 void load_pop_sprites_lo(void)
