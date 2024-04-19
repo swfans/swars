@@ -587,12 +587,6 @@ TbBool cybmod_available_for_purchase(short mtype)
 
 ubyte show_cryo_cybmod_list_box(struct ScreenTextBox *box)
 {
-#if 0
-    ubyte ret;
-    asm volatile ("call ASM_show_cryo_cybmod_list_box\n"
-        : "=r" (ret) : "a" (box));
-    return ret;
-#else
     ubyte modstrings[5];
 
     memcpy(modstrings, byte_1551F4, 5);
@@ -772,7 +766,6 @@ ubyte show_cryo_cybmod_list_box(struct ScreenTextBox *box)
         }
     }
     return 0;
-#endif
 }
 
 void set_flag02_cryo_screen_boxes(void)
@@ -899,10 +892,6 @@ ubyte input_cryo_all_agents_button(struct ScreenButton *button)
 
 void show_cryo_chamber_screen(void)
 {
-#if 0
-    asm volatile ("call ASM_show_cryo_chamber_screen\n"
-        :  :  : "eax" );
-#else
     if ((unk11_menu[0].Flags & GBxFlg_Unkn0001) != 0)
     {
         byte_1C4978 = 0;
@@ -1028,7 +1017,6 @@ void show_cryo_chamber_screen(void)
             }
         }
     }
-#endif
 }
 
 void init_cryo_screen_boxes(void)
