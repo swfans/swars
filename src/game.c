@@ -5489,10 +5489,6 @@ void my_preprocess_text(char *text)
  */
 void srm_reset_research(void)
 {
-#if 0
-    asm volatile ("call ASM_srm_reset_research\n"
-        :  :  : "eax" );
-#else
     struct Campaign *p_campgn;
     int i;
 
@@ -5513,15 +5509,10 @@ void srm_reset_research(void)
     research.CurrentMod = -1;
     research.Scientists = 0;
     research.NumBases = 0;
-#endif
 }
 
 void research_unkn_func_006(ushort missi)
 {
-#if 0
-    asm volatile ("call ASM_research_unkn_func_006\n"
-        : : "a" (missi));
-#endif
     struct Mission *p_missi;
     int i;
 
@@ -5701,10 +5692,6 @@ ulong mission_over_calculate_player_cash_gain_from_items(void)
 
 void update_player_cash(void)
 {
-#if 0
-    asm volatile ("call ASM_update_player_cash\n"
-        :  :  : "eax" );
-#endif
     ulong credits;
 
     credits = mission_over_calculate_player_cash_gain_from_items();
@@ -5719,11 +5706,6 @@ void init_agents(void)
 
 void do_start_triggers(short missi)
 {
-#if 0
-    asm volatile (
-      "call ASM_do_start_triggers\n"
-        : : "a" (missi));
-#endif
     short nxmissi, sptrig;
     short mslot;
 
@@ -5749,11 +5731,6 @@ void do_start_triggers(short missi)
 
 void queue_up_new_mail(ubyte emtype, short missi)
 {
-#if 0
-    asm volatile (
-      "call ASM_queue_up_new_mail\n"
-        : : "a" (emtype), "d" (missi));
-#endif
     int i;
 
     LOGSYNC("New email type %d after mission %d, source %d", (int)emtype,
