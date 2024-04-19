@@ -501,10 +501,6 @@ void clear_cities_decor(ushort flags)
 
 void activate_cities(ubyte brief)
 {
-#if 0
-    asm volatile ("call ASM_activate_cities\n"
-        : : "a" (brief));
-#endif
     ushort missi, spmissi;
     ubyte bri;
 

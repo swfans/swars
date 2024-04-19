@@ -122,10 +122,6 @@ ubyte do_cryo_offer_cancel(ubyte click)
 
 void init_next_blokey_flic(void)
 {
-#if 0
-    asm volatile ("call ASM_init_next_blokey_flic\n"
-        :  :  : "eax" );
-#else
     struct Campaign *p_campgn;
     const char *campgn_mark;
     const char *flic_dir;
@@ -261,15 +257,10 @@ void init_next_blokey_flic(void)
         // No further action
         break;
     }
-#endif
 }
 
 void purple_mods_data_to_screen(void)
 {
-#if 0
-    asm volatile ("call ASM_purple_mods_data_to_screen\n"
-        :  :  : "eax" );
-#else
     struct Campaign *p_campgn;
     const char *campgn_mark;
     const char *flic_dir;
@@ -298,15 +289,10 @@ void purple_mods_data_to_screen(void)
     y = cryo_blokey_box.Y + 1;
     copy_buffer_to_double_bufs(buf, PURPLE_MOD_AREA_WIDTH, PURPLE_MOD_AREA_HEIGHT,
         o, x, y, lbDisplay.GraphicsScreenWidth, lbDisplay.GraphicsScreenHeight);
-#endif
 }
 
 void blokey_flic_data_to_screen(void)
 {
-#if 0
-    asm volatile ("call ASM_blokey_flic_data_to_screen\n"
-        :  :  : "eax" );
-#else
     ubyte cdm;
     ubyte *iline;
     ubyte *oline;
@@ -334,15 +320,10 @@ void blokey_flic_data_to_screen(void)
         oline += lbDisplay.GraphicsScreenWidth;
         iline += equip_blokey_width[cdm];
     }
-#endif
 }
 
 void blokey_static_flic_data_to_screen(void)
 {
-#if 0
-    asm volatile ("call ASM_blokey_static_flic_data_to_screen\n"
-        :  :  : "eax" );
-#else
     struct Campaign *p_campgn;
     const char *campgn_mark;
     const char *flic_dir;
@@ -399,7 +380,6 @@ void blokey_static_flic_data_to_screen(void)
 
         mod_draw_states[cdm] = 0x04;
     }
-#endif
 }
 
 void update_cybmod_cost_text(void)
@@ -485,12 +465,6 @@ void set_mod_draw_states_flag08(void)
 
 ubyte show_cryo_blokey(struct ScreenBox *box)
 {
-#if 0
-    ubyte ret;
-    asm volatile ("call ASM_show_cryo_blokey\n"
-        : "=r" (ret) : "a" (box));
-    return ret;
-#else
     short cx, cy;
     short hline;
 
@@ -562,7 +536,6 @@ ubyte show_cryo_blokey(struct ScreenBox *box)
         }
     }
     return 0;
-#endif
 }
 
 ubyte show_cryo_agent_list(struct ScreenTextBox *box)
