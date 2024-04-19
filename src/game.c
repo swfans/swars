@@ -8691,10 +8691,6 @@ void draw_purple_screen_hotspots(ushort hsnext)
 
 void draw_purple_screen(void)
 {
-#if 0
-    asm volatile ("call ASM_draw_purple_screen\n"
-        :  :  : "eax" );
-#else
     struct PurpleDrawItem *pditem;
     struct PolyPoint point_a;
     struct PolyPoint point_c;
@@ -8828,7 +8824,6 @@ void draw_purple_screen(void)
     purple_draw_index = 0;
 
     draw_purple_screen_hotspots(hsnext);
-#endif
 }
 
 void clear_mission_status(ulong id)
@@ -9000,10 +8995,6 @@ void update_open_brief(void)
 
 void copy_from_screen_ani(ubyte *buf)
 {
-#if 0
-    asm volatile ("call ASM_copy_from_screen_ani\n"
-        : : "a" (buf));
-#else
     int y;
     ubyte *o;
     const ubyte *inp;
@@ -9016,7 +9007,6 @@ void copy_from_screen_ani(ubyte *buf)
         o += 256;
         inp += lbDisplay.GraphicsScreenWidth;
     }
-#endif
 }
 
 void show_load_and_prep_mission(void)
@@ -9478,11 +9468,6 @@ void show_menu_screen(void)
 
 void draw_game(void)
 {
-#if 0
-    asm volatile ("call ASM_draw_game\n"
-        :  :  : "eax" );
-    return;
-#endif
     switch (ingame.DisplayMode)
     {
     case DpM_UNKN_1:
@@ -9542,10 +9527,6 @@ void joy_input(void)
 
 void update_unkn_changing_colors(void)
 {
-#if 0
-    asm volatile ("call ASM_update_unkn_changing_colors\n"
-        :  :  : "eax" );
-#else
     ubyte col1, col2;
 
     unkn_changing_color_counter1++;
@@ -9560,7 +9541,6 @@ void update_unkn_changing_colors(void)
     else
         col2 = colour_lookup[1];
     unkn_changing_color_2 = col2;
-#endif
 }
 
 /** Orbital station explosion code.
@@ -9671,14 +9651,12 @@ game_transform_path_full(const char *file_name, char *buffer, size_t size)
     snprintf (buffer, size, "%s" FS_SEP_STR "%s", GetDirectoryHdd(), file_name);
 }
 
-void
-game_transform_path(const char *file_name, char *result)
+void game_transform_path(const char *file_name, char *result)
 {
     game_transform_path_full (file_name, result, FILENAME_MAX);
 }
 
-static void
-game_update_full(bool wait)
+static void game_update_full(bool wait)
 {
     static TbClockMSec last_loop_time = 0;
 
@@ -9708,8 +9686,7 @@ int game_hacky_update(void)
     return 1;
 }
 
-void
-game_update(void)
+void game_update(void)
 {
     game_update_full(true);
 }
@@ -9721,10 +9698,6 @@ void engine_reset(void)
 
 void host_reset(void)
 {
-#if 0
-    asm volatile ("call ASM_host_reset\n"
-        :  :  : "eax" );
-#else
     StopCD();
     setup_heaps(1);
     FreeAudio();
@@ -9735,11 +9708,9 @@ void host_reset(void)
     LbKeyboardClose();
     LbScreenReset();
     LbNetworkReset();
-#endif
 }
 
-void
-game_reset(void)
+void game_reset(void)
 {
     host_reset();
     free_texturemaps();
