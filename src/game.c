@@ -2231,12 +2231,6 @@ short direct_control_thing_for_player(short plyr)
 
 TbBool func_1caf8(void)
 {
-#if 0
-    TbBool ret;
-    asm volatile ("call ASM_func_1caf8\n"
-        : "=r" (ret) : );
-    return ret;
-#else
     TbBool ret;
     PlayerInfo *p_locplayer;
     struct Thing *p_agent;
@@ -2290,15 +2284,10 @@ TbBool func_1caf8(void)
 
     lbDisplay.DrawFlags = 0;
     return ret;
-#endif
 }
 
 void draw_agent_grouping_bars(void)
 {
-#if 0
-    asm volatile ("call ASM_draw_agent_grouping_bars\n"
-        :  :  : "eax" );
-#else
     struct Thing *p_thing;
     short dcthing;
     short i, n;
@@ -2334,7 +2323,6 @@ void draw_agent_grouping_bars(void)
                 LbSpriteDraw_1(4, 89 + 2 * (107 - 6 * n), &pop1_sprites[69]);
         }
     }
-#endif
 }
 
 void func_702c0(int a1, int a2, int a3, int a4, int a5, ubyte a6)
@@ -2348,11 +2336,6 @@ void func_702c0(int a1, int a2, int a3, int a4, int a5, ubyte a6)
 
 void draw_shield_level(short x, short y, ushort w, ushort h)
 {
-#if 0
-    asm volatile (
-      "call ASM_draw_shield_level\n"
-        : : "a" (x), "d" (y), "b" (w), "c" (h));
-#else
     ubyte m;
     long waftx, wafty;
     ushort tmx, tmy;
@@ -2398,20 +2381,10 @@ void draw_shield_level(short x, short y, ushort w, ushort h)
     if (vec_mode == 2)
         vec_mode = 27;
     draw_trigpoly(&point4.pp, &point2.pp, &point3.pp);
-#endif
 }
 
 void draw_health_level(short x, short y, ushort w, ushort h, short lv, ushort lvmax, ubyte col, ubyte a8)
 {
-#if 0
-    asm volatile (
-      "push %7\n"
-      "push %6\n"
-      "push %5\n"
-      "push %4\n"
-      "call ASM_draw_health_level\n"
-        : : "a" (x), "d" (y), "b" (w), "c" (h), "g" (lv), "g" (lvmax), "g" (col), "g" (a8));
-#else
     short cw, ch;
 
     if ((lv <= 0) || (lvmax == 0))
@@ -2453,20 +2426,10 @@ void draw_health_level(short x, short y, ushort w, ushort h, short lv, ushort lv
             ++cy;
         }
     }
-#endif
 }
 
 void func_1eae4(int x, short y, int w, ushort h, short lv, ushort lvmax, ubyte col, int a8)
 {
-#if 0
-    asm volatile (
-      "push %7\n"
-      "push %6\n"
-      "push %5\n"
-      "push %4\n"
-      "call ASM_func_1eae4\n"
-        : : "a" (x), "d" (y), "b" (w), "c" (h), "g" (lv), "g" (lvmax), "g" (col), "g" (a8));
-#else
     short cw, ch;
 
     if ((lv <= 0) || (lvmax == 0))
@@ -2511,17 +2474,10 @@ void func_1eae4(int x, short y, int w, ushort h, short lv, ushort lvmax, ubyte c
             ++cy;
         }
     }
-#endif
 }
 
 void draw_mood_level(short x, short y, ushort w, int h, short value)
 {
-#if 0
-    asm volatile (
-      "push %4\n"
-      "call ASM_draw_mood_level\n"
-        : : "a" (x), "d" (y), "b" (w), "c" (h), "g" (value));
-#else
     short cent_x;
     short cur_x, cur_y;
     TbPixel col;
@@ -2562,18 +2518,10 @@ void draw_mood_level(short x, short y, ushort w, int h, short value)
             cur_y++;
         }
     }
-#endif
 }
 
 void draw_mood_limits(short x, short y, short w, short h, short value, short maxval)
 {
-#if 0
-    asm volatile (
-      "push %5\n"
-      "push %4\n"
-      "call ASM_draw_mood_limits\n"
-        : : "a" (x), "d" (y), "b" (w), "c" (h), "g" (value), "g" (maxval));
-#else
     short scaled_val;
     short curr_x;
     TbPixel col;
@@ -2595,16 +2543,10 @@ void draw_mood_limits(short x, short y, short w, short h, short value, short max
         LbDrawLine(curr_x >> 1, 2 * y >> 1, (curr_x - 4) >> 1, 2 * (y + h) >> 1, col);
     else
         LbDrawLine(curr_x, 2 * y, curr_x - 4, 2 * (y + h), col);
-#endif
 }
 
 void draw_energy_bar(int x1, int y1, int len_mul, int len_div)
 {
-#if 0
-    asm volatile (
-      "call ASM_draw_energy_bar\n"
-        : : "a" (x1), "d" (y1), "b" (len_mul), "c" (len_div));
-#else
     short scaled_val;
     short w, h;
     TbPixel col;
@@ -2637,7 +2579,6 @@ void draw_energy_bar(int x1, int y1, int len_mul, int len_div)
         h = y1 - scaled_val;
         LbDrawLine(x1 + 3, y1, w, h, col);
     }
-#endif
 }
 
 void draw_new_panel()
