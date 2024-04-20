@@ -1,0 +1,1142 @@
+
+#ifdef NEED_UNDERSCORE
+# define TRANSFORM_SYMBOLS
+# define EXPORT_SYMBOL(sym) _ ## sym
+#else
+# define EXPORT_SYMBOL(sym) sym
+#endif
+
+#ifndef TRANSFORM_SYMBOLS
+
+# define GLOBAL(sym) \
+  .global sym; \
+  sym ##:
+
+# define GLOBAL_FUNC(sym) \
+  GLOBAL (sym)
+
+#else
+
+# define GLOBAL(sym) \
+  .global EXPORT_SYMBOL (sym); \
+  EXPORT_SYMBOL (sym) ##: \
+  sym ##:
+
+# define GLOBAL_FUNC(sym) \
+  .global sym; \
+  GLOBAL (sym)
+
+#endif
+
+.text
+
+.global EXPORT_SYMBOL(data_1e85e3)
+.global EXPORT_SYMBOL(g_count)
+
+/*----------------------------------------------------------------*/
+GLOBAL_FUNC(ASM_LbCommInit)	/* 0x0F93BE */
+/*----------------------------------------------------------------*/
+		push   %ebx
+		push   %ecx
+		push   %edx
+		push   %esi
+		push   %edi
+		enter  $0x18,$0x0
+		mov    %al,-0x4(%ebp)
+		movzbl -0x4(%ebp),%eax
+		cmp    $0x3,%eax
+		jle    jump_f93df
+		movl   $0x0,-0x8(%ebp)
+		jmp    jump_f9596
+	jump_f93df:
+		movzbl -0x4(%ebp),%eax
+		imul   $0x1c,%eax,%eax
+		testb  $0x1,com_dev0__Field4(%eax)
+		je     jump_f9401
+		movzbl -0x4(%ebp),%eax
+		imul   $0x1c,%eax,%eax
+		mov    com_dev0__Field0(%eax),%eax
+		mov    %eax,-0xc(%ebp)
+		jmp    jump_f9411
+	jump_f9401:
+		lea    -0x10(%ebp),%edx
+		mov    $0x10cd,%eax
+		call   ASM_Net_AllocDosMem
+		mov    %eax,-0xc(%ebp)
+	jump_f9411:
+		cmpl   $0x0,-0xc(%ebp)
+		jne    jump_f9423
+		movl   $0x0,-0x8(%ebp)
+		jmp    jump_f9596
+	jump_f9423:
+		mov    %cs,%eax
+		mov    $ser_start_,%edx
+		mov    $ser_end_,%eax
+		sub    %edx,%eax
+		mov    %eax,-0x14(%ebp)
+		mov    -0x14(%ebp),%ebx
+		mov    $ser_start_,%edx
+		mov    -0xc(%ebp),%eax
+		call   ac_memcpy
+		mov    -0xc(%ebp),%eax
+		mov    %eax,-0x18(%ebp)
+		mov    -0x18(%ebp),%eax
+		addl   $0x2,-0x18(%ebp)
+		movzbl -0x4(%ebp),%eax
+		imul   $0x1c,%eax,%eax
+		mov    com_dev0__Field1(%eax),%ax
+		mov    -0x18(%ebp),%edx
+		mov    %ax,(%edx)
+		mov    -0x4(%ebp),%al
+		mov    -0xc(%ebp),%edx
+		mov    %al,0x10a8(%edx)
+		mov    -0xc(%ebp),%eax
+		movzbl 0x10a8(%eax),%eax
+		imul   $0x1c,%eax,%eax
+		mov    com_dev0__Field1(%eax),%ax
+		mov    -0xc(%ebp),%edx
+		mov    %ax,0x1096(%edx)
+		mov    -0xc(%ebp),%eax
+		movzbl 0x10a8(%eax),%eax
+		imul   $0x1c,%eax,%eax
+		mov    com_dev0__Field2(%eax),%ax
+		mov    -0xc(%ebp),%edx
+		mov    %ax,0x1098(%edx)
+		mov    -0xc(%ebp),%eax
+		movzbl 0x10a8(%eax),%eax
+		imul   $0x1c,%eax,%eax
+		mov    com_dev0__Field3(%eax),%dx
+		mov    -0xc(%ebp),%eax
+		mov    %dx,0x109a(%eax)
+		mov    -0xc(%ebp),%eax
+		movw   $0x0,0x10a0(%eax)
+		mov    -0xc(%ebp),%eax
+		movw   $0x0,0x10a2(%eax)
+		mov    -0xc(%ebp),%eax
+		movw   $0x0,0x109c(%eax)
+		mov    -0xc(%ebp),%eax
+		movw   $0x0,0x109e(%eax)
+		mov    -0xc(%ebp),%eax
+		movb   $0x1,0x10ab(%eax)
+		mov    -0xc(%ebp),%edx
+		movzbl 0x10a8(%edx),%edx
+		imul   $0x1c,%edx,%edx
+		mov    -0xc(%ebp),%eax
+		mov    %eax,com_dev0__Field0(%edx)
+		mov    -0xc(%ebp),%eax
+		movzbl 0x10a8(%eax),%eax
+		imul   $0x1c,%eax,%eax
+		movw   $0x1,com_dev0__Field4(%eax)
+		mov    -0xc(%ebp),%eax
+		call   backup_serial_int_vectors
+		mov    -0xc(%ebp),%eax
+		call   setup_serial_int_vectors
+		mov    -0xc(%ebp),%eax
+		call   init_com_port
+		mov    -0xc(%ebp),%eax
+		movl   $0x2580,0x10a4(%eax)
+		mov    -0xc(%ebp),%eax
+		movb   $0x2,0x10ac(%eax)
+		mov    -0xc(%ebp),%eax
+		mov    %eax,EXPORT_SYMBOL(data_1e85e3)
+		mov    $EXPORT_SYMBOL(byte_1E81E0),%eax
+		call   ASM_net_unkn_post_init_1
+		mov    $ac_net_unkn_callback1,%edx
+		mov    $EXPORT_SYMBOL(byte_1E81E0),%eax
+		call   ASM_net_unkn_post_init_2
+		mov    $ASM_net_unkn_callback2,%edx
+		mov    $EXPORT_SYMBOL(byte_1E81E0),%eax
+		call   ASM_net_unkn_post_init_3
+		mov    -0xc(%ebp),%eax
+		mov    %eax,-0x8(%ebp)
+	jump_f9596:
+		mov    -0x8(%ebp),%eax
+		leave
+		pop    %edi
+		pop    %esi
+		pop    %edx
+		pop    %ecx
+		pop    %ebx
+		ret
+
+
+/*----------------------------------------------------------------*/
+LbCommSetBaud_:	/* 0x0F95A0 */
+/*----------------------------------------------------------------*/
+		push   %ebx
+		push   %ecx
+		push   %esi
+		push   %edi
+		enter  $0x10,$0x0
+		mov    %eax,-0x8(%ebp)
+		mov    %edx,-0x4(%ebp)
+		movzwl -0x4(%ebp),%eax
+		cmp    $0x3,%eax
+		jle    jump_f95c0
+		movl   $0xffffffff,-0xc(%ebp)
+		jmp    jump_f95fc
+	jump_f95c0:
+		movzwl -0x4(%ebp),%eax
+		imul   $0x1c,%eax,%eax
+		mov    com_dev0__Field0(%eax),%eax
+		mov    %eax,-0x10(%ebp)
+		cmpl   $0x0,-0x10(%ebp)
+		jne    jump_f95df
+		movl   $0xffffffff,-0xc(%ebp)
+		jmp    jump_f95fc
+	jump_f95df:
+		mov    -0x8(%ebp),%edx
+		mov    -0x10(%ebp),%eax
+		call   SetBps
+		mov    %eax,%edx
+		mov    -0x10(%ebp),%eax
+		mov    %edx,0x10a4(%eax)
+		movl   $0x1,-0xc(%ebp)
+	jump_f95fc:
+		mov    -0xc(%ebp),%eax
+		leave
+		pop    %edi
+		pop    %esi
+		pop    %ecx
+		pop    %ebx
+		ret
+
+
+/*----------------------------------------------------------------*/
+backup_serial_int_vectors:	/* 0x0F9763 */
+/*----------------------------------------------------------------*/
+		push   %ebx
+		push   %ecx
+		push   %edx
+		push   %esi
+		push   %edi
+		enter  $0x20,$0x0
+		mov    %eax,-0x4(%ebp)
+		mov    $0x1c,%ebx
+		xor    %edx,%edx
+		lea    -0x20(%ebp),%eax
+		call   ac_memset
+		movl   $0x200,-0x20(%ebp)
+		mov    -0x4(%ebp),%eax
+		mov    0x1098(%eax),%al
+		mov    %al,-0x1c(%ebp)
+		lea    -0x20(%ebp),%ebx
+		lea    -0x20(%ebp),%edx
+		mov    $0x31,%eax
+		call   ac_dos_int386
+		mov    -0x4(%ebp),%eax
+		movzbl 0x10a8(%eax),%edx
+		imul   $0x1c,%edx,%edx
+		mov    -0x18(%ebp),%eax
+		mov    %ax,com_dev0__Field7(%edx)
+		mov    -0x4(%ebp),%eax
+		movzbl 0x10a8(%eax),%edx
+		imul   $0x1c,%edx,%edx
+		mov    -0x14(%ebp),%eax
+		mov    %ax,com_dev0__Field8(%edx)
+		mov    $0x1c,%ebx
+		xor    %edx,%edx
+		lea    -0x20(%ebp),%eax
+		call   ac_memset
+		movl   $0x204,-0x20(%ebp)
+		mov    -0x4(%ebp),%eax
+		mov    0x1098(%eax),%al
+		mov    %al,-0x1c(%ebp)
+		lea    -0x20(%ebp),%ebx
+		lea    -0x20(%ebp),%edx
+		mov    $0x31,%eax
+		call   ac_dos_int386
+		mov    -0x4(%ebp),%eax
+		movzbl 0x10a8(%eax),%edx
+		imul   $0x1c,%edx,%edx
+		mov    -0x18(%ebp),%eax
+		mov    %ax,com_dev0__Field6(%edx)
+		mov    -0x4(%ebp),%eax
+		movzbl 0x10a8(%eax),%edx
+		imul   $0x1c,%edx,%edx
+		mov    -0x14(%ebp),%eax
+		mov    %eax,com_dev0__Field5(%edx)
+		leave
+		pop    %edi
+		pop    %esi
+		pop    %edx
+		pop    %ecx
+		pop    %ebx
+		ret
+
+
+/*----------------------------------------------------------------*/
+setup_serial_int_vectors:	/* 0x0F9835 */
+/*----------------------------------------------------------------*/
+		push   %ebx
+		push   %ecx
+		push   %edx
+		push   %esi
+		push   %edi
+		enter  $0x38,$0x0
+		mov    %eax,-0x4(%ebp)
+		mov    -0x4(%ebp),%eax
+		mov    0x10a8(%eax),%al
+		mov    %al,-0x8(%ebp)
+		jmp    jump_f98bc
+
+
+/*----------------------------------------------------------------*/
+func_f984f:
+/*----------------------------------------------------------------*/
+		mov    %cs,-0x14(%ebp)
+		movl   $com_handler0,-0x18(%ebp)
+		mov    %cs,%eax
+		mov    $com_handler0,%edx
+		mov    %edx,-0x10(%ebp)
+		jmp    jump_f98d6
+
+
+/*----------------------------------------------------------------*/
+func_f9868:
+/*----------------------------------------------------------------*/
+		mov    %cs,-0x14(%ebp)
+		movl   $com_handler1,-0x18(%ebp)
+		mov    %cs,%eax
+		mov    $com_handler1,%edx
+		mov    %edx,-0x10(%ebp)
+		jmp    jump_f98d6
+
+
+/*----------------------------------------------------------------*/
+func_f987e:
+/*----------------------------------------------------------------*/
+		mov    %cs,-0x14(%ebp)
+		movl   $com_handler2,-0x18(%ebp)
+		mov    %cs,%eax
+		mov    $com_handler2,%edx
+		mov    %edx,-0x10(%ebp)
+		jmp    jump_f98d6
+
+
+/*----------------------------------------------------------------*/
+func_f9894:
+/*----------------------------------------------------------------*/
+		mov    %cs,-0x14(%ebp)
+		movl   $com_handler3,-0x18(%ebp)
+		mov    %cs,%eax
+		mov    $com_handler3,%edx
+		mov    %edx,-0x10(%ebp)
+		jmp    jump_f98d6
+	jump_f98aa:
+		jmp    jump_f98d6
+
+vtable_f98ac:
+		.long   func_f984f
+		.long   func_f9868
+		.long   func_f987e
+		.long   func_f9894
+	jump_f98bc:
+		mov    -0x8(%ebp),%al
+		mov    %al,-0x1c(%ebp)
+		cmpb   $0x3,-0x1c(%ebp)
+		ja     jump_f98aa
+		movzbl -0x1c(%ebp),%eax
+		shl    $0x2,%eax
+		jmp    *%cs:vtable_f98ac(%eax)
+	jump_f98d6:
+		mov    $0x1c,%ebx
+		xor    %edx,%edx
+		lea    -0x38(%ebp),%eax
+		call   ac_memset
+		movl   $0x205,-0x38(%ebp)
+		mov    -0x4(%ebp),%eax
+		movzwl 0x1098(%eax),%eax
+		mov    %eax,-0x34(%ebp)
+		mov    -0x14(%ebp),%eax
+		mov    -0x18(%ebp),%ebx
+		mov    %eax,%edx
+		mov    %ebx,%eax
+		movzwl %dx,%eax
+		mov    %eax,-0x30(%ebp)
+		mov    -0x18(%ebp),%eax
+		mov    %eax,-0x2c(%ebp)
+		lea    -0x38(%ebp),%ebx
+		lea    -0x38(%ebp),%edx
+		mov    $0x31,%eax
+		call   ac_dos_int386
+		mov    $0x1c,%ebx
+		xor    %edx,%edx
+		lea    -0x38(%ebp),%eax
+		call   ac_memset
+		movl   $0x201,-0x38(%ebp)
+		mov    -0x4(%ebp),%eax
+		movzwl 0x1098(%eax),%eax
+		mov    %eax,-0x34(%ebp)
+		mov    -0x4(%ebp),%eax
+		shr    $0x4,%eax
+		and    $0xffff,%eax
+		mov    %eax,-0x30(%ebp)
+		mov    -0x4(%ebp),%eax
+		and    $0xf,%eax
+		mov    %eax,-0x2c(%ebp)
+		mov    -0x4(%ebp),%eax
+		shr    $0x4,%eax
+		and    $0xffff,%eax
+		shl    $0x4,%eax
+		mov    -0x4(%ebp),%edx
+		sub    %eax,%edx
+		mov    %edx,-0x2c(%ebp)
+		lea    -0x38(%ebp),%ebx
+		lea    -0x38(%ebp),%edx
+		mov    $0x31,%eax
+		call   ac_dos_int386
+		mov    $lock_code_start,%eax
+		mov    $lock_code_end,%edx
+		sub    %eax,%edx
+		mov    %edx,-0xc(%ebp)
+		mov    $0x1c,%ebx
+		xor    %edx,%edx
+		lea    -0x38(%ebp),%eax
+		call   ac_memset
+		movl   $0x600,-0x38(%ebp)
+		mov    $lock_code_start,%eax
+		shr    $0x10,%eax
+		mov    %eax,-0x34(%ebp)
+		mov    $lock_code_start,%eax
+		and    $0xffff,%eax
+		mov    %eax,-0x30(%ebp)
+		movl   $0x0,-0x28(%ebp)
+		mov    -0xc(%ebp),%eax
+		mov    %eax,-0x24(%ebp)
+		lea    -0x38(%ebp),%ebx
+		lea    -0x38(%ebp),%edx
+		mov    $0x31,%eax
+		call   ac_dos_int386
+		leave
+		pop    %edi
+		pop    %esi
+		pop    %edx
+		pop    %ecx
+		pop    %ebx
+		ret
+
+
+/*----------------------------------------------------------------*/
+init_com_port:	/* 0x0F99E0 */
+/*----------------------------------------------------------------*/
+		push   %ebx
+		push   %ecx
+		push   %edx
+		push   %esi
+		push   %edi
+		enter  $0x4,$0x0
+		mov    %eax,-0x4(%ebp)
+		mov    -0x4(%ebp),%eax
+		movzwl 0x109a(%eax),%ecx
+		mov    $0x1,%edx
+		shl    %cl,%edx
+		mov    $0x21,%eax
+		call   inp_
+		or     %eax,%edx
+		mov    $0x21,%eax
+		call   outp_
+		xor    %edx,%edx
+		mov    -0x4(%ebp),%eax
+		movzwl 0x1096(%eax),%eax
+		add    $0x4,%eax
+		call   outp_
+		xor    %edx,%edx
+		mov    -0x4(%ebp),%eax
+		movzwl 0x1096(%eax),%eax
+		inc    %eax
+		call   outp_
+		xor    %edx,%edx
+		mov    -0x4(%ebp),%eax
+		movzwl 0x1096(%eax),%eax
+		inc    %eax
+		inc    %eax
+		call   outp_
+		mov    $0x1,%edx
+		mov    -0x4(%ebp),%eax
+		movzwl 0x1096(%eax),%eax
+		inc    %eax
+		call   outp_
+		mov    $0xb,%edx
+		mov    -0x4(%ebp),%eax
+		movzwl 0x1096(%eax),%eax
+		add    $0x4,%eax
+		call   outp_
+		mov    -0x4(%ebp),%ecx
+		movzwl 0x109a(%ecx),%ecx
+		mov    $0x1,%edx
+		shl    %cl,%edx
+		not    %edx
+		mov    $0x21,%eax
+		call   inp_
+		and    %eax,%edx
+		mov    $0x21,%eax
+		call   outp_
+		mov    -0x4(%ebp),%eax
+		movzwl 0x1096(%eax),%eax
+		inc    %eax
+		inc    %eax
+		call   inp_
+		mov    -0x4(%ebp),%eax
+		movzwl 0x1096(%eax),%eax
+		call   inp_
+		mov    -0x4(%ebp),%eax
+		movzwl 0x1096(%eax),%eax
+		add    $0x5,%eax
+		call   inp_
+		mov    -0x4(%ebp),%eax
+		movzwl 0x1096(%eax),%eax
+		add    $0x6,%eax
+		call   inp_
+		call   sti_
+		mov    $0x1,%edx
+		mov    -0x4(%ebp),%eax
+		call   SetRts
+		mov    $0x1,%edx
+		mov    -0x4(%ebp),%eax
+		call   SetDtr
+		mov    $0x2580,%edx
+		mov    -0x4(%ebp),%eax
+		call   SetBps
+		leave
+		pop    %edi
+		pop    %esi
+		pop    %edx
+		pop    %ecx
+		pop    %ebx
+		ret
+
+
+/*----------------------------------------------------------------*/
+GLOBAL_FUNC(ASM_LbCommExchange)	/* 0x0F9B18 */
+/*----------------------------------------------------------------*/
+		push   %ecx
+		push   %esi
+		push   %edi
+		enter  $0x1c,$0x0
+		mov    %eax,-0x4(%ebp)
+		mov    %edx,-0xc(%ebp)
+		mov    %ebx,-0x8(%ebp)
+		mov    -0x8(%ebp),%eax
+		mov    %eax,-0x10(%ebp)
+		mov    -0xc(%ebp),%eax
+		mov    %eax,-0x14(%ebp)
+		movzwl -0x4(%ebp),%eax
+		imul   $0x1c,%eax,%eax
+		mov    com_dev0__Field0(%eax),%eax
+		mov    %eax,-0x18(%ebp)
+		cmpl   $0x0,-0x18(%ebp)
+		jne    jump_f9b56
+		movl   $0xffffffff,-0x1c(%ebp)
+		jmp    jump_f9c40
+	jump_f9b56:
+		mov    EXPORT_SYMBOL(data_1e2f54),%edx
+		mov    $EXPORT_SYMBOL(byte_1E81E0),%eax
+		call   ASM_net_unkn_sub_332
+		mov    -0x18(%ebp),%eax
+		movzbl 0x10ac(%eax),%eax
+		cmp    $0x1,%eax
+		jle    jump_f9c39
+		mov    -0x18(%ebp),%eax
+		cmpb   $0x0,0x10a9(%eax)
+		je     jump_f9be3
+		call   ASM_run_exchange_func
+		cmp    $0xfffffff9,%eax
+		jne    jump_f9b9b
+		movl   $0xfffffff9,-0x1c(%ebp)
+		jmp    jump_f9c40
+	jump_f9b9b:
+		mov    -0x8(%ebp),%ebx
+		mov    -0x14(%ebp),%edx
+		mov    $EXPORT_SYMBOL(byte_1E81E0),%eax
+		call   ASM_unkn_exchange_start
+		lea    -0x10(%ebp),%ebx
+		mov    -0x14(%ebp),%edx
+		add    -0x8(%ebp),%edx
+		mov    $EXPORT_SYMBOL(byte_1E81E0),%eax
+		call   ASM_unkn_exchange
+		test   %eax,%eax
+		jne    jump_f9bce
+		movl   $0xfffffff9,-0x1c(%ebp)
+		jmp    jump_f9c40
+	jump_f9bce:
+		call   ASM_run_exchange_func
+		cmp    $0xfffffff9,%eax
+		jne    jump_f9be1
+		movl   $0xfffffff9,-0x1c(%ebp)
+		jmp    jump_f9c40
+	jump_f9be1:
+		jmp    jump_f9c39
+	jump_f9be3:
+		call   ASM_run_exchange_func
+		cmp    $0xfffffff9,%eax
+		jne    jump_f9bf6
+		movl   $0xfffffff9,-0x1c(%ebp)
+		jmp    jump_f9c40
+	jump_f9bf6:
+		mov    -0x8(%ebp),%ebx
+		mov    -0x14(%ebp),%edx
+		add    -0x8(%ebp),%edx
+		mov    $EXPORT_SYMBOL(byte_1E81E0),%eax
+		call   ASM_unkn_exchange_start
+		lea    -0x10(%ebp),%ebx
+		mov    -0x14(%ebp),%edx
+		mov    $EXPORT_SYMBOL(byte_1E81E0),%eax
+		call   ASM_unkn_exchange
+		test   %eax,%eax
+		jne    jump_f9c26
+		movl   $0xfffffff9,-0x1c(%ebp)
+		jmp    jump_f9c40
+	jump_f9c26:
+		call   ASM_run_exchange_func
+		cmp    $0xfffffff9,%eax
+		jne    jump_f9c39
+		movl   $0xfffffff9,-0x1c(%ebp)
+		jmp    jump_f9c40
+	jump_f9c39:
+		movl   $0x1,-0x1c(%ebp)
+	jump_f9c40:
+		mov    -0x1c(%ebp),%eax
+		leave
+		pop    %edi
+		pop    %esi
+		pop    %ecx
+		ret
+
+
+/*----------------------------------------------------------------*/
+lock_code_start:	/* 0x0F9D31 */
+/*----------------------------------------------------------------*/
+		push   %ebx
+		push   %ecx
+		push   %edx
+		push   %esi
+		push   %edi
+		push   %ebp
+		mov    %esp,%ebp
+		sub    $0x0,%esp
+		pop    %ebp
+		pop    %edi
+		pop    %esi
+		pop    %edx
+		pop    %ecx
+		pop    %ebx
+		ret
+
+
+/*----------------------------------------------------------------*/
+com_handler0:	/* 0x0F9D46 */
+/*----------------------------------------------------------------*/
+		pusha
+		push   %ds
+		push   %es
+		push   %fs
+		push   %gs
+		mov    %esp,%ebp
+		sub    $0x0,%esp
+		cld
+		call   ____GETDS
+		mov    com_dev0__Field0,%eax
+		call   handle_com
+		mov    $0x20,%edx
+		mov    $0x20,%eax
+		call   outp_
+		pop    %gs
+		pop    %fs
+		pop    %es
+		pop    %ds
+		popa
+		iret
+
+
+/*----------------------------------------------------------------*/
+com_handler1:	/* 0x0F9D7C */
+/*----------------------------------------------------------------*/
+		pusha
+		push   %ds
+		push   %es
+		push   %fs
+		push   %gs
+		mov    %esp,%ebp
+		sub    $0x0,%esp
+		cld
+		call   ____GETDS
+		mov    com_dev1__Field0,%eax
+		call   handle_com
+		mov    $0x20,%edx
+		mov    $0x20,%eax
+		call   outp_
+		pop    %gs
+		pop    %fs
+		pop    %es
+		pop    %ds
+		popa
+		iret
+
+
+/*----------------------------------------------------------------*/
+com_handler2:	/* 0x0F9DB2 */
+/*----------------------------------------------------------------*/
+		pusha
+		push   %ds
+		push   %es
+		push   %fs
+		push   %gs
+		mov    %esp,%ebp
+		sub    $0x0,%esp
+		cld
+		call   ____GETDS
+		mov    com_dev2__Field0,%eax
+		call   handle_com
+		mov    $0x20,%edx
+		mov    $0x20,%eax
+		call   outp_
+		pop    %gs
+		pop    %fs
+		pop    %es
+		pop    %ds
+		popa
+		iret
+
+
+/*----------------------------------------------------------------*/
+com_handler3:	/* 0x0F9DE8 */
+/*----------------------------------------------------------------*/
+		pusha
+		push   %ds
+		push   %es
+		push   %fs
+		push   %gs
+		mov    %esp,%ebp
+		sub    $0x0,%esp
+		cld
+		call   ____GETDS
+		mov    com_dev3__Field0,%eax
+		call   handle_com
+		mov    $0x20,%edx
+		mov    $0x20,%eax
+		call   outp_
+		pop    %gs
+		pop    %fs
+		pop    %es
+		pop    %ds
+		popa
+		iret
+
+
+/*----------------------------------------------------------------*/
+handle_com:	/* 0x0F9E1E */
+/*----------------------------------------------------------------*/
+		push   %ebx
+		push   %ecx
+		push   %edx
+		push   %esi
+		push   %edi
+		enter  $0x10,$0x0
+		mov    %eax,-0x4(%ebp)
+		incl   EXPORT_SYMBOL(g_count)
+		mov    -0x4(%ebp),%eax
+		movzwl 0x1096(%eax),%eax
+		inc    %eax
+		inc    %eax
+		call   inp_
+		and    $0x7,%eax
+		mov    %eax,-0x8(%ebp)
+		testl  $0x4,-0x8(%ebp)
+		je     jump_f9e9e
+		mov    -0x4(%ebp),%eax
+		movzwl 0x1096(%eax),%eax
+		add    $0x5,%eax
+		call   inp_
+		mov    %eax,-0xc(%ebp)
+		testl  $0x1,-0xc(%ebp)
+		je     jump_f9e9e
+		mov    -0x4(%ebp),%eax
+		movzwl 0x1096(%eax),%eax
+		call   inp_
+		mov    %eax,-0x10(%ebp)
+		mov    -0x4(%ebp),%eax
+		movzwl 0x109e(%eax),%edx
+		add    -0x4(%ebp),%edx
+		mov    -0x10(%ebp),%al
+		mov    %al,0x896(%edx)
+		mov    -0x4(%ebp),%eax
+		call   ASM_handle_com_sub1
+	jump_f9e9e:
+		testl  $0x6,-0x8(%ebp)
+		je     jump_f9eb9
+		mov    -0x4(%ebp),%eax
+		movzwl 0x1096(%eax),%eax
+		add    $0x5,%eax
+		call   inp_
+	jump_f9eb9:
+		mov    $0x20,%edx
+		mov    $0x20,%eax
+		call   outp_
+		leave
+		pop    %edi
+		pop    %esi
+		pop    %edx
+		pop    %ecx
+		pop    %ebx
+		ret
+
+
+/*----------------------------------------------------------------*/
+lock_code_end:	/* 0x0F9ECF */
+/*----------------------------------------------------------------*/
+		push   %ebx
+		push   %ecx
+		push   %edx
+		push   %esi
+		push   %edi
+		push   %ebp
+		mov    %esp,%ebp
+		sub    $0x0,%esp
+		pop    %ebp
+		pop    %edi
+		pop    %esi
+		pop    %edx
+		pop    %ecx
+		pop    %ebx
+		ret
+
+
+/*----------------------------------------------------------------*/
+SetBps:	/* 0x0F9EE4 */
+/*----------------------------------------------------------------*/
+		push   %ebx
+		push   %ecx
+		push   %esi
+		push   %edi
+		enter  $0x14,$0x0
+		mov    %eax,-0x8(%ebp)
+		mov    %edx,-0x4(%ebp)
+		cmpl   $0x12c,-0x4(%ebp)
+		jge    jump_f9f04
+		movl   $0x12c,-0x4(%ebp)
+		jmp    jump_f9f14
+	jump_f9f04:
+		cmpl   $0x1c200,-0x4(%ebp)
+		jle    jump_f9f14
+		movl   $0x1c200,-0x4(%ebp)
+	jump_f9f14:
+		mov    $0x1c200,%eax
+		cltd
+		idivl  -0x4(%ebp)
+		mov    %eax,-0x10(%ebp)
+		mov    $0x1c200,%eax
+		cltd
+		idivl  -0x10(%ebp)
+		mov    %eax,-0xc(%ebp)
+		call   cli_
+		mov    $0x83,%edx
+		mov    -0x8(%ebp),%eax
+		movzwl 0x1096(%eax),%eax
+		add    $0x3,%eax
+		call   outp_
+		mov    -0x10(%ebp),%edx
+		sar    $0x8,%edx
+		mov    -0x8(%ebp),%eax
+		movzwl 0x1096(%eax),%eax
+		inc    %eax
+		call   outp_
+		mov    -0x10(%ebp),%edx
+		and    $0xff,%edx
+		mov    -0x8(%ebp),%eax
+		movzwl 0x1096(%eax),%eax
+		call   outp_
+		mov    $0x3,%edx
+		mov    -0x8(%ebp),%eax
+		movzwl 0x1096(%eax),%eax
+		add    $0x3,%eax
+		call   outp_
+		call   sti_
+		mov    -0xc(%ebp),%eax
+		mov    %eax,-0x14(%ebp)
+		mov    -0x14(%ebp),%eax
+		leave
+		pop    %edi
+		pop    %esi
+		pop    %ecx
+		pop    %ebx
+		ret
+
+
+/*----------------------------------------------------------------*/
+SetDtr:	/* 0x0F9FA1 */
+/*----------------------------------------------------------------*/
+		push   %ebx
+		push   %ecx
+		push   %esi
+		push   %edi
+		enter  $0x8,$0x0
+		mov    %eax,-0x8(%ebp)
+		mov    %dl,-0x4(%ebp)
+		cmpb   $0x0,-0x4(%ebp)
+		je     jump_f9fdf
+		mov    -0x8(%ebp),%eax
+		movzwl 0x1096(%eax),%eax
+		add    $0x4,%eax
+		call   inp_
+		or     $0x1,%al
+		mov    %eax,%edx
+		mov    -0x8(%ebp),%eax
+		movzwl 0x1096(%eax),%eax
+		add    $0x4,%eax
+		call   outp_
+		jmp    jump_fa007
+	jump_f9fdf:
+		mov    -0x8(%ebp),%eax
+		movzwl 0x1096(%eax),%eax
+		add    $0x4,%eax
+		call   inp_
+		and    $0xfe,%al
+		mov    %eax,%edx
+		mov    -0x8(%ebp),%eax
+		movzwl 0x1096(%eax),%eax
+		add    $0x4,%eax
+		call   outp_
+	jump_fa007:
+		leave
+		pop    %edi
+		pop    %esi
+		pop    %ecx
+		pop    %ebx
+		ret
+
+
+/*----------------------------------------------------------------*/
+SetRts:	/* 0x0FA00D */
+/*----------------------------------------------------------------*/
+		push   %ebx
+		push   %ecx
+		push   %esi
+		push   %edi
+		enter  $0x8,$0x0
+		mov    %eax,-0x8(%ebp)
+		mov    %dl,-0x4(%ebp)
+		cmpb   $0x0,-0x4(%ebp)
+		je     jump_fa04b
+		mov    -0x8(%ebp),%eax
+		movzwl 0x1096(%eax),%eax
+		add    $0x4,%eax
+		call   inp_
+		or     $0x2,%al
+		mov    %eax,%edx
+		mov    -0x8(%ebp),%eax
+		movzwl 0x1096(%eax),%eax
+		add    $0x4,%eax
+		call   outp_
+		jmp    jump_fa073
+	jump_fa04b:
+		mov    -0x8(%ebp),%eax
+		movzwl 0x1096(%eax),%eax
+		add    $0x4,%eax
+		call   inp_
+		and    $0xfd,%al
+		mov    %eax,%edx
+		mov    -0x8(%ebp),%eax
+		movzwl 0x1096(%eax),%eax
+		add    $0x4,%eax
+		call   outp_
+	jump_fa073:
+		leave
+		pop    %edi
+		pop    %esi
+		pop    %ecx
+		pop    %ebx
+		ret
+
+
+/*----------------------------------------------------------------*/
+outp_:	/* 0x10DEDC */
+/*----------------------------------------------------------------*/
+		push   %ebx
+		mov    %eax,%ebx
+		mov    %dl,%al
+		mov    %ebx,%edx
+		out    %al,(%dx)
+		pop    %ebx
+		ret
+
+
+/*----------------------------------------------------------------*/
+inp_:	/* 0x10DEE6 */
+/*----------------------------------------------------------------*/
+		push   %edx
+		mov    %eax,%edx
+		sub    %eax,%eax
+		in     (%dx),%al
+		pop    %edx
+		ret
+
+
+/*----------------------------------------------------------------*/
+sti_:	/* 0x10DEEE */
+/*----------------------------------------------------------------*/
+		sti
+		ret
+
+
+/*----------------------------------------------------------------*/
+cli_:	/* 0x10DEF0 */
+/*----------------------------------------------------------------*/
+		cli
+		ret
+
+
+/*----------------------------------------------------------------*/
+ser_start_:
+/*----------------------------------------------------------------*/
+		jmp    jump_140004
+	jump_140004:
+		push   %ebx
+		push   %ecx
+		push   %es
+		push   %ds
+		push   %esi
+		push   %edi
+		push   %eax
+		push   %edx
+		mov    %cs,%ebx
+		mov    %ebx,%ds
+		mov    %cs:(%esi),%edx /* What is that? Originally here was a load of variabie with serial port io addr. */
+		add    (%eax),%al
+		add    $0x2,%edx
+		in     (%dx),%al
+		mov    %al,%cl
+		and    $0x7,%al
+		and    $0x4,%al
+		cmp    $0x0,%al
+		je     jump_14005b
+		mov    %cs:(%esi),%edx
+		add    (%eax),%al
+		add    $0x5,%edx
+		in     (%dx),%al
+		and    $0x1,%al
+		cmp    $0x0,%al
+		je     jump_14005b
+		mov    %cs:(%esi),%edx
+		add    (%eax),%al
+		in     (%dx),%al
+		mov    $0x32e0896,%ebx
+		push   %ds
+		sahf
+		adc    %ch,(%esi)
+		mov    %al,(%edi)
+		addl   $0xffffff9e,%cs:(%esi)
+		adc    %al,(%ecx)
+		mov    %cs:(%esi),%ebx
+		sahf
+		adc    %al,0x7c0800fb(%ecx)
+		pop    %es
+		movl   $0x109e,%cs:(%esi)
+	jump_14005b:
+		and    $0x8,%cl
+		cmp    $0x0,%cl
+		je     jump_14006c
+		mov    %cs:(%esi),%edx
+		add    (%eax),%al
+		add    $0x5,%edx
+		in     (%dx),%al
+	jump_14006c:
+		xor    %eax,%eax
+		mov    $0xc28a0020,%edx
+		out    %al,(%dx)
+		pop    %edx
+		pop    %eax
+		pop    %edi
+		pop    %esi
+		pop    %ds
+		pop    %es
+		pop    %ecx
+		pop    %ebx
+		iret
+ser_end_:
+
+/*----------------------------------------------------------------*/
+.section .rodata
+
+
+/*----------------------------------------------------------------*/
+.data
+
+/* ComHandlerInfo com_dev[4]
+ */
+GLOBAL (com_dev)	/* 0x158DE4 */
+com_dev0__Field0:
+		.long	0x0
+com_dev0__Field1:
+		.short  0x3f8
+com_dev0__Field2:
+		.short  0x0c
+com_dev0__Field3:
+		.short  0x04
+com_dev0__Field4:
+		.fill   0x8
+com_dev0__Field5:
+		.long	0x0
+com_dev0__Field6:
+		.short  0x0
+com_dev0__Field7:
+		.short  0x0
+com_dev0__Field8:
+		.short  0x0
+com_dev1__Field0:
+		.long	0x0
+		.short  0x2f8
+		.short  0x0b
+		.short  0x03
+		.fill   0x8
+		.long	0x0
+		.short  0x0
+		.short  0x0
+		.short  0x0
+com_dev2__Field0:
+		.long	0x0
+		.short  0x3e8
+		.short  0x0c
+		.short  0x04
+		.fill   0x8
+		.long	0x0
+		.short  0x0
+		.short  0x0
+		.short  0x0
+com_dev3__Field0:
+		.long	0x0
+		.short  0x2e8
+		.short  0x0b
+		.short  0x03
+		.fill   0x8
+		.long	0x0
+		.short  0x0
+		.short  0x0
+		.short  0x0
+
+/* ComResult com_results[]
+ */
+com_results:
+		.string "OK"
+		.fill   0x25
+		.long	0x1
+		.string "CONNECT"
+		.fill   0x20
+		.long	0x2
+		.string "RING"
+		.fill   0x23
+		.long	0x3
+		.string "BUSY"
+		.fill   0x23
+		.long	0x4
+		.string "ERROR"
+		.fill   0x22
+		.long	0x5
+		.string "NO CARRIER"
+		.fill   0x1d
+		.long	0x6
+		.string "NO DIALTONE"
+		.fill   0x1c
+		.long	0x7
+		.fill   0x28
+		.long	0x0

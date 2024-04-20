@@ -180,6 +180,7 @@ swars_SOURCES = \
 	mouse.c \
 	mouse.h \
 	netipx1.sx \
+	netser1.sx \
 	network.c \
 	network.h \
 	pathtrig.c \

@@ -78,6 +78,8 @@ extern ubyte player_loggon;
 extern struct ComHandlerInfo com_dev[4];
 extern struct IPXDatagramBackup datagram_backup[8];
 
+extern struct TbSerialDev *data_1e85e3;
+
 const struct ModemResponse modem_response[] = {
     {"OK", 1},
     {"CONNECT", 2},
@@ -957,12 +959,30 @@ void write_char(struct TbSerialDev *serdev, ubyte c)
 void write_string(struct TbSerialDev *serdev, const char *str)
 {
 #if defined(DOS)||defined(GO32)
-    unsigned int i;
-    char c;
+    uint i;
+    ubyte c;
 
-    for (i = 0; i < strlen(locstr); i++)
+    for (i = 0; i < strlen(str); i++)
     {
-        c = locstr[i];
+        c = str[i];
+        write_char(serdev, c);
+    }
+#else
+    // On Windows, WriteFile() should be used
+    // On Linux, write the device file with standard file ops
+    assert(!"not implemented");
+#endif
+}
+
+void write_buffer(struct TbSerialDev *serdev, const ubyte *buf, uint buflen)
+{
+#if defined(DOS)||defined(GO32)
+    uint i;
+    ubyte c;
+
+    for (i = 0; i < buflen; i++)
+    {
+        c = buf[i];
         write_char(serdev, c);
     }
 #else
@@ -1011,6 +1031,12 @@ void send_string(struct TbSerialDev *serdev, const char *str)
     strcat(locstr, "\r");
     write_string(serdev, locstr);
     strcpy(ModemRequestString, locstr);
+}
+
+uint net_unkn_callback1(ubyte *data, uint datalen)
+{
+    write_buffer(data_1e85e3, data, datalen);
+    return datalen;
 }
 
 void inbuf_pos_inc(struct TbSerialDev *serdev)
