@@ -8097,66 +8097,42 @@ long time_difference(struct SynTime *tm1, struct SynTime *tm2)
     return 60 * (tm1->Hour - (long)tm2->Hour) + tm1->Minute - (long)tm2->Minute;
 }
 
-void show_date_time(void)
+/** Progresses weapon research by one day.
+ * @return Returns if something notable happened in regard to the research, like scientist lost or research completed.
+ */
+TbBool research_weapon_daily_progress(void)
 {
-#if 0
-    asm volatile ("call ASM_show_date_time\n"
-        :  :  : "eax" );
-    return;
-#endif
-    char *text;
-    uint n;
-    const char *subtext;
-    uint usedlen;
-    char locstr[50];
+    short prev, lost;
+
+    prev = research.CurrentWeapon;
+    lost = research_daily_progress_for_type(0);
+    scientists_lost += lost;
+    if (research.CurrentWeapon != prev)
+        new_weapons_researched |= 1 << prev;
+
+    return (lost != 0) || (research.CurrentWeapon != prev);
+}
+
+/** Progresses cybernetic mod research by one day.
+ * @return Returns if something notable happened in regard to the research, like scientist lost or research completed.
+ */
+TbBool research_cybmod_daily_progress(void)
+{
+    short prev, lost;
+
+    prev = research.CurrentMod;
+    lost = research_daily_progress_for_type(1);
+    scientists_lost += lost;
+    if (research.CurrentMod != prev)
+        new_mods_researched |= 1 << prev;
+
+    return (lost != 0) || (research.CurrentWeapon != prev);
+}
+
+void global_date_tick(void)
+{
     struct TbTime curr_time;
-    short x;
-
-    lbDisplay.DrawFlags = 0x0004;
-    draw_box_purple_list(4, 4, 59, 15, 56);
-    draw_box_purple_list(67, 4, 81, 15, 56);
-    draw_box_purple_list(515, 4, 121, 15, 56);
-    lbDisplay.DrawFlags = 0x0010;
-    draw_box_purple_list(5, 5, 57, 13, 247);
-    draw_box_purple_list(68, 5, 79, 13, 247);
-    draw_box_purple_list(516, 5, 119, 13, 247);
-    lbDisplay.DrawFlags = 0;
-
-    if (login_control__State == 5)
-    {
-        lbDisplay.DrawFlags = 0x0004;
-        draw_box_purple_list(152, 4, 200, 15, 56);
-        draw_box_purple_list(356, 4, 156, 15, 56);
-        lbDisplay.DrawFlags = 0x0010;
-        draw_box_purple_list(153, 5, 198, 13, 247);
-        draw_box_purple_list(357, 5, 154, 13, 247);
-        lbDisplay.DrawFlags = 0;
-
-        lbFontPtr = small_med_font;
-        my_set_text_window(153, 5, 198, 13);
-
-        if (login_control__City == -1) {
-            subtext = "";
-        } else {
-            unkn_city_no = login_control__City;
-            n = cities[unkn_city_no].TextIndex[0];
-            subtext = (char *)&memload[n];
-        }
-        sprintf(locstr, "%s: %s", gui_strings[446], subtext);
-        text = (char *)back_buffer + text_buf_pos;
-        strcpy(text, locstr);
-        draw_text_purple_list2(3, 3, text, 0);
-
-        lbFontPtr = small_med_font;
-        text_buf_pos += strlen(locstr) + 1;
-        my_set_text_window(357, 5, 154, 13);
-
-        sprintf(locstr, "%s: %d", gui_strings[447], login_control__TechLevel);
-        text = (char *)back_buffer + text_buf_pos;
-        strcpy(text, locstr);
-        draw_text_purple_list2(3, 3, text, 0);
-        text_buf_pos += strlen(locstr) + 1;
-    }
+    TbBool notable;
 
     LbTime(&curr_time);
     global_date.Minute = curr_time.Minute;
@@ -8185,15 +8161,101 @@ void show_date_time(void)
         }
     }
 
+    notable = false;
+
+    if (time_difference(&global_date, &research_curr_mod_date))
+    {
+        if (byte_1C497C) {
+            byte_1C497C = 0;
+        }
+    }
+    else
+    {
+        if (!byte_1C497C) {
+            notable |= research_cybmod_daily_progress();
+            byte_1C497C = 1;
+        }
+    }
+    if (time_difference(&global_date, &research_curr_wep_date))
+    {
+        if (byte_1C497B) {
+            byte_1C497B = 0;
+        }
+    }
+    else
+    {
+        if (!byte_1C497B) {
+            notable |= research_weapon_daily_progress();
+            byte_1C497B = 1;
+        }
+    }
+
+    if (notable) {
+        //TODO something notable happened in regard to research
+        // display message? show report?
+    }
+}
+
+void global_date_inputs(void)
+{
+    if ((ingame.UserFlags & UsrF_Cheats) != 0)
+    {
+        if (lbKeyOn[KC_PERIOD]) {
+            lbKeyOn[KC_PERIOD] = 0;
+            ingame.Credits += 10000;
+        }
+    }
+}
+
+static void global_date_box_draw(void)
+{
+    char *text;
+    char locstr[50];
+
+    lbDisplay.DrawFlags = 0x0004;
+    draw_box_purple_list(67, 4, 81, 15, 56);
+    lbDisplay.DrawFlags = 0x0010;
+    draw_box_purple_list(68, 5, 79, 13, 247);
+    lbDisplay.DrawFlags = 0;
+
+    // Draw current date
+    sprintf(locstr, "%02d:%02d:%02d", (int)global_date.Day,
+      (int)global_date.Month, (int)global_date.Year);
+
+    lbFontPtr = small_med_font;
+    my_set_text_window(68, 5, 79, 13);
+    text = (char *)back_buffer + text_buf_pos;
+    strcpy(text, locstr);
+    draw_text_purple_list2(3, 3, text, 0);
+
+    lbFontPtr = small_font;
+    text_buf_pos += strlen(locstr) + 1;
+    draw_text_purple_list2(66, 5, misc_text[3], 0);
+
+}
+
+static void global_time_box_draw(void)
+{
+    char *text;
+    const char *subtext;
+    char locstr[50];
+
+    lbDisplay.DrawFlags = 0x0004;
+    draw_box_purple_list(4, 4, 59, 15, 56);
+    lbDisplay.DrawFlags = 0x0010;
+    draw_box_purple_list(5, 5, 57, 13, 247);
+    lbDisplay.DrawFlags = 0;
+
+    // Draw current time
     if (global_date.Hour == 0)
         sprintf(locstr, "%02d:%02d", 12, (int)global_date.Minute);
     else if (global_date.Hour > 12)
         sprintf(locstr, "%02d:%02d", (int)global_date.Hour - 12, (int)global_date.Minute);
     else
         sprintf(locstr, "%02d:%02d", (int)global_date.Hour, (int)global_date.Minute);
+
     lbFontPtr = small_med_font;
     my_set_text_window(5, 5, 57, 13);
-
     text = (char *)back_buffer + text_buf_pos;
     strcpy(text, locstr);
     draw_text_purple_list2(3, 3, text, 0);
@@ -8208,22 +8270,23 @@ void show_date_time(void)
     lbFontPtr = small_font;
     text = (char *)back_buffer + text_buf_pos;
     strcpy(text, locstr);
+    text_buf_pos += strlen(locstr) + 1;
     draw_text_purple_list2(43, 5, text, 0);
-    lbFontPtr = small_med_font;
-    text_buf_pos += strlen(locstr) + 1;
+}
 
-    // Draw current date
-    sprintf(locstr, "%02d:%02d:%02d", (int)global_date.Day,
-      (int)global_date.Month, (int)global_date.Year);
-    my_set_text_window(68, 5, 79, 13);
+static void global_credits_box_draw(void)
+{
+    char *text;
+    uint n;
+    uint usedlen;
+    char locstr[50];
+    short x;
 
-    text = (char *)back_buffer + text_buf_pos;
-    strcpy(text, locstr);
-    draw_text_purple_list2(3, 3, text, 0);
-
-    lbFontPtr = small_font;
-    text_buf_pos += strlen(locstr) + 1;
-    draw_text_purple_list2(66, 5, misc_text[3], 0);
+    lbDisplay.DrawFlags = 0x0004;
+    draw_box_purple_list(515, 4, 121, 15, 56);
+    lbDisplay.DrawFlags = 0x0010;
+    draw_box_purple_list(516, 5, 119, 13, 247);
+    lbDisplay.DrawFlags = 0;
 
     // Draw credits amount
     lbFontPtr = small_med_font;
@@ -8253,43 +8316,83 @@ void show_date_time(void)
     lbFontPtr = small_font;
     text_buf_pos += strlen(locstr) + 1;
     draw_text_purple_list2(111, 5, misc_text[1], 0);
+}
 
-    if (time_difference(&global_date, &research_curr_mod_date))
-    {
-        if (byte_1C497C) {
-            byte_1C497C = 0;
-        }
+static void global_citydrop_box_draw(void)
+{
+    char *text;
+    uint n;
+    const char *subtext;
+    char locstr[50];
+
+    lbDisplay.DrawFlags = 0x0004;
+    draw_box_purple_list(152, 4, 200, 15, 56);
+    lbDisplay.DrawFlags = 0x0010;
+    draw_box_purple_list(153, 5, 198, 13, 247);
+    lbDisplay.DrawFlags = 0;
+
+    lbFontPtr = small_med_font;
+    my_set_text_window(153, 5, 198, 13);
+
+    if (login_control__City == -1) {
+        subtext = "";
+    } else {
+        unkn_city_no = login_control__City;
+        n = cities[unkn_city_no].TextIndex[0];
+        subtext = (char *)&memload[n];
     }
-    else
+    sprintf(locstr, "%s: %s", gui_strings[446], subtext);
+    text = (char *)back_buffer + text_buf_pos;
+    strcpy(text, locstr);
+    text_buf_pos += strlen(locstr) + 1;
+    draw_text_purple_list2(3, 3, text, 0);
+}
+
+static void global_techlevel_box_draw(void)
+{
+    char *text;
+    char locstr[50];
+
+    lbDisplay.DrawFlags = 0x0004;
+    draw_box_purple_list(356, 4, 156, 15, 56);
+    lbDisplay.DrawFlags = 0x0010;
+    draw_box_purple_list(357, 5, 154, 13, 247);
+    lbDisplay.DrawFlags = 0;
+
+    lbFontPtr = small_med_font;
+    my_set_text_window(357, 5, 154, 13);
+
+    sprintf(locstr, "%s: %d", gui_strings[447], login_control__TechLevel);
+    text = (char *)back_buffer + text_buf_pos;
+    strcpy(text, locstr);
+    text_buf_pos += strlen(locstr) + 1;
+    draw_text_purple_list2(3, 3, text, 0);
+}
+
+void show_date_time(void)
+{
+#if 0
+    asm volatile ("call ASM_show_date_time\n"
+        :  :  : "eax" );
+    return;
+#endif
+    global_date_box_draw();
+    global_time_box_draw();
+
+    if (login_control__State == 5)
     {
-        if (!byte_1C497C) {
-            research_daily_progress_for_type(1);
-            byte_1C497C = 1;
-        }
-    }
-    if (time_difference(&global_date, &research_curr_wep_date))
-    {
-        if (byte_1C497B) {
-            byte_1C497B = 0;
-        }
-    }
-    else
-    {
-        if (!byte_1C497B) {
-            research_daily_progress_for_type(0);
-            byte_1C497B = 1;
-        }
+        global_citydrop_box_draw();
+        global_techlevel_box_draw();
     }
 
-    if ((ingame.UserFlags & UsrF_Cheats) != 0)
-    {
-        if (lbKeyOn[KC_PERIOD]) {
-            lbKeyOn[KC_PERIOD] = 0;
-            ingame.Credits += 10000;
-        }
-    }
-    /* XXX: FIXME: tmp, put this some place better later */
+    global_credits_box_draw();
+
+    /* TODO tmp, put this some place better later */
     game_update();
+
+    global_date_tick();
+    global_date_inputs();
+
 }
 
 void purple_unkn1_data_to_screen(void)
@@ -8731,22 +8834,17 @@ void net_unkn_func_33(void)
 
 void forward_research_progress(int num_days)
 {
+    int i;
+
+    // TODO clear the data after filling research report, not here - there may be items accumulated
+    // by time progress while waiting in menu; also clear on game load and new game
     new_mods_researched = 0;
     new_weapons_researched = 0;
-    int i;
+    scientists_lost = 0;
     for (i = 0; i < num_days; i++)
     {
-        int prev;
-
-        prev = research.CurrentWeapon;
-        scientists_lost = research_daily_progress_for_type(0);
-        if (research.CurrentWeapon != prev)
-            new_weapons_researched |= 1 << prev;
-
-        prev = research.CurrentMod;
-        scientists_lost += research_daily_progress_for_type(1);
-        if (research.CurrentMod != prev)
-            new_mods_researched |= 1 << prev;
+        research_weapon_daily_progress();
+        research_cybmod_daily_progress();
     }
     research_unkn_func_002();
 }
