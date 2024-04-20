@@ -396,7 +396,8 @@ void draw_objective_group_whole_on_engine_scene(ushort group)
     ubyte colk;
 
     colk = dword_1C8460 & 7;
-    for (thing = same_type_head[256 + group]; thing != 0; thing = p_thing->LinkSameGroup)
+    thing = same_type_head[256 + group];
+    for (; thing > 0; thing = p_thing->LinkSameGroup)
     {
         p_thing = &things[thing];
         draw_objective_point(draw_objectv_x - 10, draw_objectv_y, thing, 0, colour_lookup[colk]);
@@ -410,7 +411,8 @@ void draw_objective_group_non_flag2_on_engine_scene(ushort group)
     ubyte colk;
 
     colk = dword_1C8460 & 7;
-    for (thing = same_type_head[256 + group]; thing != 0; thing = p_thing->LinkSameGroup)
+    thing = same_type_head[256 + group];
+    for (; thing > 0; thing = p_thing->LinkSameGroup)
     {
         p_thing = &things[thing];
         if ((p_thing->Flag & TngF_Unkn0002) == 0) {
@@ -426,7 +428,8 @@ void draw_objective_group_non_pers_on_engine_scene(ushort group)
     ubyte colk;
 
     colk = dword_1C8460 & 7;
-    for (thing = same_type_head[256 + group]; thing != 0; thing = p_thing->LinkSameGroup)
+    thing = same_type_head[256 + group];
+    for (; thing > 0; thing = p_thing->LinkSameGroup)
     {
         p_thing = &things[thing];
         if ((p_thing->Flag & TngF_Persuaded) == 0) {
@@ -445,7 +448,8 @@ void draw_objective_group_not_own_by_plyr_on_engine_scene(ushort group, ushort p
     colk = dword_1C8460 & 7;
     plyagent = players[plyr].DirectControl[0];
     plygroup = things[plyagent].U.UPerson.Group;
-    for (thing = same_type_head[256 + group]; thing != 0; thing = p_thing->LinkSameGroup)
+    thing = same_type_head[256 + group];
+    for (; thing > 0; thing = p_thing->LinkSameGroup)
     {
         p_thing = &things[thing];
         if (((p_thing->Flag & TngF_Persuaded) == 0) || things[p_thing->Owner].U.UPerson.Group != plygroup) {
@@ -462,7 +466,8 @@ void draw_objective_group_not_own_by_pers_on_engine_scene(ushort group, short ow
     ubyte colk;
 
     colk = dword_1C8460 & 7;
-    for (thing = same_type_head[256 + group]; thing != 0; thing = p_thing->LinkSameGroup)
+    thing = same_type_head[256 + group];
+    for (; thing > 0; thing = p_thing->LinkSameGroup)
     {
         p_thing = &things[thing];
         if (((p_thing->Flag & TngF_Persuaded) == 0) && (p_thing->Owner != owntng)) {
@@ -565,29 +570,6 @@ void draw_objective_dirctly_on_engine_scene(ushort objectv)
  */
 void draw_objective(ushort objectv, ubyte flag)
 {
-#if 0
-    struct Objective *p_objectv;
-    ushort bkpType;
-    // workaround due to scanner not understanding new objectives
-    p_objectv = &game_used_objectives[objectv];
-    bkpType = p_objectv->Type;
-    switch (bkpType)
-    {
-    case GAME_OBJ_MEM_G_USE_V:
-        p_objectv->Type = GAME_OBJ_ALL_G_USE_V;
-        break;
-    case GAME_OBJ_V_ARRIVES:
-    case GAME_OBJ_ITEM_ARRIVES:
-        p_objectv->Type = GAME_OBJ_P_ARRIVES;
-        break;
-    case GAME_OBJ_DESTROY_V:
-        p_objectv->Type = GAME_OBJ_P_DEAD;
-        break;
-    }
-    asm volatile ("call ASM_draw_objective\n"
-        : : "a" (objectv), "d" (flag));
-    p_objectv->Type = bkpType;
-#else
     struct Objective *p_objectv;
     struct ObjectiveDef *p_odef;
     ubyte colk;
@@ -640,34 +622,35 @@ void draw_objective(ushort objectv, ubyte flag)
     }
     draw_objectv_y += 8;
     dword_1C8460++;
-#endif
 }
 
 /** Crude version of thing_arrived_at_objectv(), deprecated.
  */
 TbBool thing_arrived_at_obj(short thing, struct Objective *p_objectv)
 {
-#if 0
-    ubyte ret;
-    asm volatile ("call ASM_thing_arrived_at_obj\n"
-        : "=r" (ret) : "a" (thing), "d" (p_objectv));
-    return ret;
-#endif
     return thing_is_within_circle(thing, p_objectv->X, p_objectv->Z, p_objectv->Radius << 6);
 }
 
 TbBool thing_is_destroyed(short thing)
 {
-    struct Thing *p_thing;
-    p_thing = &things[thing];
-    return ((p_thing->Flag & TngF_Unkn0002) != 0);
+    if (thing == 0) {
+        return true;
+    } else if (thing > 0) {
+        struct Thing *p_thing;
+        p_thing = &things[thing];
+        return ((p_thing->Flag & TngF_Unkn0002) != 0);
+    } else {
+        struct SimpleThing *p_sthing;
+        p_sthing = &sthings[thing];
+        return ((p_sthing->Flag & TngF_Unkn0002) != 0);
+    }
 }
 
 TbBool vehicle_is_destroyed(short thing)
 {
     struct Thing *p_thing;
 
-    if (thing == 0)
+    if (thing <= 0)
         return false;
 
     p_thing = &things[thing];
@@ -802,12 +785,12 @@ TbBool all_group_persuaded(ushort group)
     thing = same_type_head[256 + group];
     for (; thing > 0; thing = p_thing->LinkSameGroup)
     {
-            p_thing = &things[thing];
-            if (!person_is_persuaded(thing) || ((things[p_thing->Owner].Flag & 0x2000) == 0))
-            {
-                if (!person_is_dead(thing) && !thing_is_destroyed(thing))
-                    return false;
-            }
+        p_thing = &things[thing];
+        if (!person_is_persuaded(thing) || ((things[p_thing->Owner].Flag & 0x2000) == 0))
+        {
+            if (!person_is_dead(thing) && !thing_is_destroyed(thing))
+                return false;
+        }
     }
     return true;
 }
@@ -1030,12 +1013,6 @@ TbBool group_members_arrived_at_objectv(ushort group, struct Objective *p_object
 
 ubyte fix_single_objective(struct Objective *p_objectv, ushort objectv, const char *srctext)
 {
-#if 0
-    ubyte ret;
-    asm volatile ("call ASM_fix_single_objective\n"
-        : "=r" (ret) : "a" (p_objectv));
-    return ret;
-#else
     struct ObjectiveDef *p_odef;
     short thing;
     ubyte ret;
@@ -1279,17 +1256,10 @@ ubyte fix_single_objective(struct Objective *p_objectv, ushort objectv, const ch
     }
 
     return ret;
-#endif
 }
 
 short test_objective(ushort objectv, ushort show_obj)
 {
-#if 0
-    short ret;
-    asm volatile ("call ASM_test_objective\n"
-        : "=r" (ret) : "a" (objectv), "d" (show_obj));
-    return ret;
-#else
     struct Objective *p_objectv;
     short thing, thing2, group, amount;
 
@@ -1536,7 +1506,6 @@ short test_objective(ushort objectv, ushort show_obj)
         break;
     }
     return 0;
-#endif
 }
 
 void snprint_objective(char *buf, ulong buflen, struct Objective *p_objectv, ushort objectv)
@@ -2123,9 +2092,6 @@ int load_netscan_objectives_bin(struct NetscanObjective *nsobv_arr, ubyte mapno,
 
 void load_netscan_objectives(ubyte mapno, ubyte level)
 {
-#if 0
-    netscan_objectives_count = load_netscan_objectives_bin(netscan_objectives, mapno, level);
-#else
     struct Mission *p_missi;
     ushort missi;
     int remain;
@@ -2139,7 +2105,6 @@ void load_netscan_objectives(ubyte mapno, ubyte level)
     if (remain > 0)
         LbMemorySet(&netscan_objectives[netscan_objectives_count], '\0',
           sizeof(struct NetscanObjective) * remain);
-#endif
 }
 
 int read_objectives_text(void *data)
@@ -2194,4 +2159,11 @@ TbResult load_objectives_text(void)
     }
     return Lb_SUCCESS;
 }
+
+void person_init_command(struct Thing *p_person, ushort from)
+{
+    asm volatile ("call ASM_person_init_command\n"
+        : : "a" (p_person), "d" (from));
+}
+
 /******************************************************************************/

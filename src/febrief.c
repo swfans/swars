@@ -112,12 +112,6 @@ void brief_citymap_readd_scanner_signals(short nsobv)
 
 ubyte brief_do_netscan_enhance(ubyte click)
 {
-#if 0
-    ubyte ret;
-    asm volatile ("call ASM_brief_do_netscan_enhance\n"
-        : "=r" (ret) : "a" (click));
-    return ret;
-#endif
     short nsobv;
     struct NetscanObjective *p_nsobv;
 
@@ -330,12 +324,6 @@ ubyte input_citymap_scanner(struct ScreenBox *box)
 
 ubyte show_citymap_box(struct ScreenBox *box)
 {
-#if 0
-    ubyte ret;
-    asm volatile ("call ASM_show_citymap_box\n"
-        : "=r" (ret) : "a" (box));
-    return ret;
-#else
     ubyte anim_no;
 
     if (selected_city_id == -1)
@@ -413,17 +401,10 @@ ubyte show_citymap_box(struct ScreenBox *box)
         }
     }
     return 0;
-#endif
 }
 
 ubyte load_mail_text(const char *filename)
 {
-#if 0
-    ubyte ret;
-    asm volatile ("call ASM_load_mail_text\n"
-        : "=r" (ret) : "a" (filename));
-    return ret;
-#endif
     int totlen;
     char *p;
 
@@ -472,10 +453,6 @@ void brief_load_mission_info(void)
 
 void load_netscan_data(ubyte city_id, ubyte level)
 {
-#if 0
-    asm volatile ("call ASM_load_netscan_data\n"
-        : : "a" (city_id), "d" (a2));
-#else
     int i;
 
     my_set_text_window(brief_netscan_box.X + 4, brief_netscan_box.ScrollWindowOffset + brief_netscan_box.Y + 4,
@@ -501,7 +478,6 @@ void load_netscan_data(ubyte city_id, ubyte level)
     }
     recount_city_credit_reward(city_id);
     update_netscan_cost_button(city_id);
-#endif
 }
 
 void init_brief_screen_scanner(void)

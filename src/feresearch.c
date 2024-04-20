@@ -88,12 +88,6 @@ void draw_unkn20_subfunc_01(int x, int y, char *text, ubyte a4)
 
 ubyte show_research_graph(struct ScreenBox *box)
 {
-#if 0
-    ubyte ret;
-    asm volatile ("call ASM_show_research_graph\n"
-        : "=r" (ret) : "a" (box));
-    return ret;
-#endif
     char *text;
     ushort *y_vals;
     ushort y_trend_delta;
@@ -211,7 +205,7 @@ void init_research_screen_boxes(void)
     val = 0;
     for (i = 0; i < 2; i++)
     {
-        research_list_buttons[i].Radio = &ingame.fld_unk7DE;
+        research_list_buttons[i].Radio = &ingame.AutoResearch;
         research_list_buttons[i].RadioValue = val;
         research_list_buttons[i].Flags |= GBxFlg_RadioBtn;
         val++;

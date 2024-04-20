@@ -57,10 +57,6 @@ const struct TbNamedEnum cities_conf_city_cmds[] = {
 
 void load_city_txt(void)
 {
-#if 0
-    asm volatile ("call ASM_load_city_txt\n"
-        :  :  : "eax" );
-#endif
     char *s;
     int totlen;
     int i, k, city;
@@ -501,10 +497,6 @@ void clear_cities_decor(ushort flags)
 
 void activate_cities(ubyte brief)
 {
-#if 0
-    asm volatile ("call ASM_activate_cities\n"
-        : : "a" (brief));
-#endif
     ushort missi, spmissi;
     ubyte bri;
 

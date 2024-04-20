@@ -30,40 +30,41 @@
 #include "wadfile.h"
 #include "swlog.h"
 /******************************************************************************/
+
 struct WeaponDef weapon_defs[] = {
-    { 0,    0,  0,  0,   0,  0, 0, 0, 0,    0,     0,     0,  0},
-    { 5,   50,  4,  5,   8, 10, 1, 1, 0,  272,    40,    40, 10},
-    { 8,  100,  3,  8,  20, 10, 1, 1, 0,  273,   120,   120, 10},
-    { 9,  200,  5,  8,   2, 10, 2, 2, 3, 1811,   370,   370, 10},
-    { 9,  200,  5,  8,   2, 10, 2, 2, 3, 1812,   420,   420, 10},
-    {12,  800, 30,  8, 300, 10, 1, 1, 0,  280,   750,   750, 10},
-    { 6,  800, 40,  8, 600, 10, 1, 1, 0,  789,  1000,  1000, 10},
-    { 1,    0, 10,  8,   2, 10, 1, 1, 0, 2319,   150,   150, 10},
-    { 4,   80,  1, 16,   6,  5, 0, 0, 0,  535,   160,   160, 10},
-    { 0, 9999,  3, 16,   4,  5, 0, 0, 0, 1821,   200,   200, 10},
-    { 6,  800, 40,  8, 600, 10, 0, 0, 0,  545,   100,   100, 10},
-    { 6,  800, 40,  8, 600, 10, 0, 0, 0,  542,    80,    80, 10},
-    { 4,  300,  5, 16,   4,  5, 0, 0, 0, 1817,   620,   620, 10},
-    { 4, 9999, 40, 16, 200,  5, 0, 0, 0,  283,   480,   480, 10},
-    { 4, 9999,  5, 16,   4,  5, 0, 0, 0,  537,   400,   400, 10},
-    {16, 1300, 80,  8, 200, 10, 1, 1, 0,  284,   300,   300, 10},
-    { 4, 9999,  5, 16,   4,  5, 0, 0, 0,  803,  1050,  1050, 10},
-    {10,  550,  2, 16,   4,  5, 0, 0, 0, 2586,  2000,  2000, 10},
-    {10,   50,  1,  8,   4,  5, 0, 0, 0,  274,   100,   100, 10},
-    { 4, 9999,  1, 16,   4,  5, 0, 0, 0, 1560,   850,   850, 10},
-    {11, 1500, 10, 16,   4,  5, 0, 0, 0, 1574, 65535, 65535, 10},
-    { 2,    0, 10,  8,   2, 10, 1, 1, 0, 2345,   450,   450, 10},
-    { 8, 9999, 20, 16, 200,  5, 0, 0, 0, 1575,  1100,  1100, 10},
-    { 0, 9999,  1, 16,   4,  5, 0, 0, 0, 2574,    80,    80, 10},
-    { 4, 9999,  1, 16, 200,  5, 0, 0, 0, 1573,  1200,  1200, 10},
-    { 8,   25, 80, 16, 600,  5, 0, 0, 0, 1576,  1300,  1300, 10},
-    { 2,  500, 50, 16, 600,  5, 0, 0, 0, 1572,   650,   650, 10},
-    { 1, 9999,  1, 16,  60,  5, 0, 0, 0, 1302,    30,    30, 10},
-    { 1, 9999,  1, 16,  60,  5, 0, 0, 0, 1311,   130,   130, 10},
-    {10,   50,  1,  8,   4,  5, 0, 0, 0,  288,   950,   950, 10},
-    { 4, 9999,  1, 16,   4,  5, 0, 0, 0, 1314,  1000,  1000, 10},
-    { 0,    0,  0, 16,   4,  5, 0, 0, 0, 1352,  3000,    10,  8},
-    { 0,    0,  0, 16,   4,  5, 0, 0, 0, 1352,  3000,    10,  8},
+    { 0,    0,  0,  0,   0,  0, 0, 0, WEPDFLG_None,          0, 0,     0,     0,  0},
+    { 5,   50,  4,  5,   8, 10, 1, 1, WEPDFLG_CanPurchease, 16, 1,    40,    40, 10},
+    { 8,  100,  3,  8,  20, 10, 1, 1, WEPDFLG_CanPurchease, 17, 1,   120,   120, 10},
+    { 9,  200,  5,  8,   2, 10, 2, 2, WEPDFLG_CanPurchease|0x01|0x02, 19, 7,   370,   370, 10},
+    { 9,  200,  5,  8,   2, 10, 2, 2, WEPDFLG_CanPurchease|0x01|0x02, 20, 7,   420,   420, 10},
+    {12,  800, 30,  8, 300, 10, 1, 1, WEPDFLG_CanPurchease,  24, 1,   750,   750, 10},
+    { 6,  800, 40,  8, 600, 10, 1, 1, WEPDFLG_CanPurchease,  21, 3,  1000,  1000, 10},
+    { 1,    0, 10,  8,   2, 10, 1, 1, WEPDFLG_CanPurchease,  15, 9,   150,   150, 10},
+    { 4,   80,  1, 16,   6,  5, 0, 0, WEPDFLG_CanPurchease,  23, 2,   160,   160, 10},
+    { 0, 9999,  3, 16,   4,  5, 0, 0, WEPDFLG_CanPurchease,  29, 7,   200,   200, 10},
+    { 6,  800, 40,  8, 600, 10, 0, 0, WEPDFLG_CanPurchease,  33, 2,   100,   100, 10},
+    { 6,  800, 40,  8, 600, 10, 0, 0, WEPDFLG_CanPurchease,  30, 2,    80,    80, 10},
+    { 4,  300,  5, 16,   4,  5, 0, 0, WEPDFLG_CanPurchease,  25, 7,   620,   620, 10},
+    { 4, 9999, 40, 16, 200,  5, 0, 0, WEPDFLG_CanPurchease,  27, 1,   480,   480, 10},
+    { 4, 9999,  5, 16,   4,  5, 0, 0, WEPDFLG_None,          25, 2,   400,   400, 10},
+    {16, 1300, 80,  8, 200, 10, 1, 1, WEPDFLG_CanPurchease,  28, 1,   300,   300, 10},
+    { 4, 9999,  5, 16,   4,  5, 0, 0, WEPDFLG_CanPurchease,  35, 3,  1050,  1050, 10},
+    {10,  550,  2, 16,   4,  5, 0, 0, WEPDFLG_CanPurchease,  26,10,  2000,  2000, 10},
+    {10,   50,  1,  8,   4,  5, 0, 0, WEPDFLG_CanPurchease,  18, 1,   100,   100, 10},
+    { 4, 9999,  1, 16,   4,  5, 0, 0, WEPDFLG_None,          24, 6,   850,   850, 10},
+    {11, 1500, 10, 16,   4,  5, 0, 0, WEPDFLG_CanPurchease,  38, 6, 65535, 65535, 10},
+    { 2,    0, 10,  8,   2, 10, 1, 1, WEPDFLG_CanPurchease,  41, 9,   450,   450, 10},
+    { 8, 9999, 20, 16, 200,  5, 0, 0, WEPDFLG_CanPurchease,  39, 6,  1100,  1100, 10},
+    { 0, 9999,  1, 16,   4,  5, 0, 0, WEPDFLG_None,          14,10,    80,    80, 10},
+    { 4, 9999,  1, 16, 200,  5, 0, 0, WEPDFLG_CanPurchease,  37, 6,  1200,  1200, 10},
+    { 8,   25, 80, 16, 600,  5, 0, 0, WEPDFLG_CanPurchease,  40, 6,  1300,  1300, 10},
+    { 2,  500, 50, 16, 600,  5, 0, 0, WEPDFLG_CanPurchease,  36, 6,   650,   650, 10},
+    { 1, 9999,  1, 16,  60,  5, 0, 0, WEPDFLG_CanPurchease,  22, 5,    30,    30, 10},
+    { 1, 9999,  1, 16,  60,  5, 0, 0, WEPDFLG_CanPurchease,  31, 5,   130,   130, 10},
+    {10,   50,  1,  8,   4,  5, 0, 0, WEPDFLG_CanPurchease,  32, 1,   950,   950, 10},
+    { 4, 9999,  1, 16,   4,  5, 0, 0, WEPDFLG_CanPurchease,  34, 5,  1000,  1000, 10},
+    { 0,    0,  0, 16,   4,  5, 0, 0, WEPDFLG_None,          72, 5,  3000,    10,  8},
+    { 0,    0,  0, 16,   4,  5, 0, 0, WEPDFLG_None,          72, 5,  3000,    10,  8},
 };
 
 struct WeaponDefAdd weapon_defs_a[33] = {0};
@@ -72,6 +73,7 @@ struct TbNamedEnum weapon_names[33] = {0};
 enum WeaponsConfigCmd {
     CCWep_WeaponsCount = 1,
     CCWep_Name,
+    CCWep_Category,
     CCWep_RangeBlocks,
     CCWep_HitDamage,
     CCWep_ReFireDelay,
@@ -93,6 +95,7 @@ const struct TbNamedEnum weapons_conf_common_cmds[] = {
 
 const struct TbNamedEnum weapons_conf_weapon_cmds[] = {
   {"Name",			CCWep_Name},
+  {"Category",	    CCWep_Category},
   {"RangeBlocks",	CCWep_RangeBlocks},
   {"HitDamage",		CCWep_HitDamage},
   {"ReFireDelay",	CCWep_ReFireDelay},
@@ -211,6 +214,19 @@ void read_weapons_conf_file(void)
                 }
                 CONFDBGLOG("%s \"%s\"", COMMAND_TEXT(cmd_num), (int)wdefa->Name);
                 break;
+            case CCWep_Category:
+                i = LbIniValueGetLongInt(&parser, &k);
+                if (i <= 0) {
+                    CONFWRNLOG("Could not read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                    break;
+                }
+                if ((k < 0) || (k > WEP_CATEGORIES_COUNT)) {
+                    CONFWRNLOG("Outranged value of \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                    k = WEP_CATEGORIES_COUNT;
+                }
+                wdef->Category = k;
+                CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)(wdef->Category));
+                break;
             case CCWep_RangeBlocks:
                 i = LbIniValueGetLongInt(&parser, &k);
                 if (i <= 0) {
@@ -294,7 +310,7 @@ void read_weapons_conf_file(void)
                     break;
                 }
                 wdef->Sprite = k;
-                CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)wdef->Sprite);
+                CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)(wdef->Sprite));
                 break;
             case CCWep_Cost:
                 i = LbIniValueGetLongInt(&parser, &k);
@@ -371,10 +387,6 @@ const char *weapon_codename(ushort wtype)
 
 void init_weapon_text(void)
 {
-#if 0
-    asm volatile ("call ASM_init_weapon_text\n"
-        :  :  : "eax" );
-#else
     char locstr[512];
     int weptxt_pos;
     int totlen;
@@ -498,7 +510,28 @@ void init_weapon_text(void)
             if (s) s += 2;
         }
     }
-#endif
+}
+
+ushort weapon_sprite_index(ushort wtype, TbBool enabled)
+{
+    ushort sprid;
+    struct WeaponDef *wdef;
+
+    if (wtype >= WEP_TYPES_COUNT)
+        return 0;
+
+    wdef = &weapon_defs[wtype];
+    // Block of normal weapon sprites is 15..41, lighter are 42..68.
+    // Sprites added after that have normal image and ligher image adjacent.
+    if (enabled) {
+        if (wdef->Sprite < 42)
+            sprid = 27 + wdef->Sprite;
+        else
+            sprid = wdef->Sprite + 1;
+    } else {
+        sprid = 0 + wdef->Sprite;
+    }
+    return sprid;
 }
 
 ushort weapon_fourpack_index(ushort wtype)
@@ -737,10 +770,6 @@ void do_weapon_quantities_max_to_player(struct Thing *p_person)
 
 void do_weapon_quantities1(struct Thing *p_person)
 {
-#if 0
-    asm volatile ("call ASM_do_weapon_quantities1\n"
-        : : "a" (p_person));
-#endif
     if (in_network_game)
     {
         // No action
@@ -753,10 +782,6 @@ void do_weapon_quantities1(struct Thing *p_person)
 
 void do_weapon_quantities_proper1(struct Thing *p_person)
 {
-#if 0
-    asm volatile ("call ASM_do_weapon_quantities_proper1\n"
-        : : "a" (p_person));
-#endif
     if (in_network_game)
     {
         do_weapon_quantities_player_to_net(p_person);
@@ -775,10 +800,6 @@ void init_laser(struct Thing *p_person, ushort timer)
 
 void init_laser_6shot(struct Thing *p_person, ushort timer)
 {
-#if 0
-    asm volatile ("call ASM_init_laser_6shot\n"
-        : : "a" (p_person), "d" (timer));
-#else
     struct Thing *p_target;
     struct Thing *p_thing;
     short thing;
@@ -797,7 +818,7 @@ void init_laser_6shot(struct Thing *p_person, ushort timer)
         if (n_targets >= 5)
             break;
         p_thing = &things[thing];
-        if ((p_thing->Flag & 0x02) == 0)
+        if ((p_thing->Flag & TngF_Unkn0002) == 0)
         {
             int dist_x, dist_z;
             dist_x = abs(PRCCOORD_TO_MAPCOORD(p_thing->X - p_person->X));
@@ -816,7 +837,6 @@ void init_laser_6shot(struct Thing *p_person, ushort timer)
         }
     }
     p_person->PTarget = p_target;
-#endif
 }
 
 /******************************************************************************/

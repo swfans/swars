@@ -38,12 +38,6 @@ TbFileHandle open_file_from_wad(const char *filename, const char *wadfile)
 
 int load_file_wad(const char *filename, const char *wadfile, void *outbuf)
 {
-#if 0
-    int ret;
-    asm volatile ("call ASM_load_file_wad\n"
-        : "=r" (ret) : "a" (filename), "d" (wadfile), "b" (outbuf));
-    return ret;
-#endif
     char locfname[64];
     char locstr[64];
     struct WADIndexEntry fentry;

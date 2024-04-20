@@ -29,6 +29,7 @@ extern "C" {
 #pragma pack(1)
 
 #define WEAPONS_CARRIED_MAX_COUNT 6
+#define WEP_CATEGORIES_COUNT 11
 
 /** Range of the weapon chan never exceed this limit.
  */
@@ -83,6 +84,16 @@ enum WeaponFourPackIndex
 
 struct Thing;
 
+enum WeaponDefFlags
+{
+    WEPDFLG_None = 0, /**< No flags set. */
+    WEPDFLG_UNKN0001 = 0x0001, /**< set for LASER/ELLASER. */
+    WEPDFLG_UNKN0002 = 0x0002, /**< set for LASER/ELLASER. */
+    WEPDFLG_UNKN0004 = 0x0004,
+    WEPDFLG_UNKN0008 = 0x0008,
+    WEPDFLG_CanPurchease = 0x0010, /**< Whether the weapon can be bought by player (when researched). */
+};
+
 struct WeaponDef {
   ushort RangeBlocks;
   ushort HitDamage;
@@ -93,7 +104,8 @@ struct WeaponDef {
   ushort TargetType;
   ushort TargetMode;
   ushort Flags;
-  ushort Sprite;
+  ubyte Sprite; // TODO would be better to store sprite index in 16-bit var
+  ubyte Category;
   ushort Cost;
   ushort Funding;
   ubyte PercentPerDay;
@@ -121,6 +133,7 @@ void init_weapon_text(void);
 TbBool weapons_has_weapon(ulong weapons, ushort wtype);
 ushort weapons_prev_weapon(ulong weapons, ushort last_wtype);
 const char *weapon_codename(ushort wtype);
+ushort weapon_sprite_index(ushort wtype, TbBool enabled);
 
 ushort weapon_fourpack_index(ushort weapon);
 void weapons_remove_weapon(ulong *p_weapons,

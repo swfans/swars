@@ -1,0 +1,1744 @@
+
+#ifdef NEED_UNDERSCORE
+# define TRANSFORM_SYMBOLS
+# define EXPORT_SYMBOL(sym) _ ## sym
+#else
+# define EXPORT_SYMBOL(sym) sym
+#endif
+
+#ifndef TRANSFORM_SYMBOLS
+
+# define GLOBAL(sym) \
+  .global sym; \
+  sym ##:
+
+# define GLOBAL_FUNC(sym) \
+  GLOBAL (sym)
+
+#else
+
+# define GLOBAL(sym) \
+  .global EXPORT_SYMBOL (sym); \
+  EXPORT_SYMBOL (sym) ##: \
+  sym ##:
+
+# define GLOBAL_FUNC(sym) \
+  .global sym; \
+  GLOBAL (sym)
+
+#endif
+
+.text
+
+.global EXPORT_SYMBOL(_doserrno);
+.global EXPORT_SYMBOL(data_15ab99);
+.global EXPORT_SYMBOL(data_15aba4);
+.global EXPORT_SYMBOL(data_15aba5);
+
+/*----------------------------------------------------------------*/
+GLOBAL_FUNC(ASM_net_unkn_func_350)	/* 0x10B8A0 */
+/*----------------------------------------------------------------*/
+		push   %ebx
+		push   %ecx
+		push   %esi
+		push   %edi
+		push   %ebp
+		sub    $0x4,%esp
+		mov    EXPORT_SYMBOL(data_1ed198),%ebp
+		mov    %eax,(%esp)
+		test   %edx,%edx
+		je     jump_10b8c9
+		cmp    $0x1,%edx
+		je     jump_10b8c9
+		cmp    $0x2,%edx
+		je     jump_10b8c9
+		mov    $0x91,%eax
+		jmp    jump_10c063
+	jump_10b8c9:
+		mov    (%esp),%ebx
+		test   %ebx,%ebx
+		jl     jump_10b8d5
+		cmp    $0x5,%ebx
+		jle    jump_10b8ef
+	jump_10b8d5:
+		mov    $0x94,%eax
+		mov    %ebp,EXPORT_SYMBOL(data_1ed198)
+		mov    EXPORT_SYMBOL(data_1ed198),%ebp
+		add    $0x4,%esp
+		pop    %ebp
+		pop    %edi
+		pop    %esi
+		pop    %ecx
+		pop    %ebx
+		ret
+	jump_10b8ef:
+		xor    %esi,%esi
+		xor    %edi,%edi
+		xor    %eax,%eax
+		mov    %esi,EXPORT_SYMBOL(data_1596bc)
+		mov    %esi,data_1ed194
+		mov    %esi,EXPORT_SYMBOL(data_1596ac)
+		xor    %ebx,%ebx
+		mov    %esi,EXPORT_SYMBOL(data_1596b0)
+		mov    %esi,EXPORT_SYMBOL(data_1ed344)
+		mov    %esi,EXPORT_SYMBOL(data_1ed340)
+		mov    %esi,EXPORT_SYMBOL(data_1ebca8)
+		mov    %edx,EXPORT_SYMBOL(data_1ed348)
+		mov    %esi,EXPORT_SYMBOL(data_1ed18c)
+		mov    %esi,EXPORT_SYMBOL(data_1596a8)
+		mov    %esi,EXPORT_SYMBOL(data_1ed33c)
+		mov    %esi,EXPORT_SYMBOL(data_1ed1a8)
+		mov    %edi,EXPORT_SYMBOL(data_1596b8)
+		mov    $0x64,%esi
+		xor    %edx,%edx
+		mov    %esi,EXPORT_SYMBOL(data_1ed1a0)
+		mov    %esi,EXPORT_SYMBOL(data_1ed1a4)
+	jump_10b958:
+		add    $0x42,%edx
+		add    $0x4,%eax
+		mov    %bl,data_1ed172(%edx)
+		mov    %ebx,data_1ebc8c(%eax)
+		cmp    $0x18,%eax
+		jne    jump_10b958
+		mov    $0xc0,%eax
+		xor    %edx,%edx
+	jump_10b976:
+		add    $0xc,%eax
+		mov    %edx,EXPORT_SYMBOL(_doserrno)(%eax)
+		mov    %edx,data_1ea488(%eax)
+		cmp    $0x480,%eax
+		jne    jump_10b976
+		mov    $0x9,%edx
+		mov    $0x3e8,%edi
+		mov    $0x24,%eax
+		mov    %edx,data_1ea554
+		mov    %edx,data_1ea5a8
+		mov    %edx,data_1ea560
+		mov    %edx,data_1ea56c
+		mov    %edx,data_1ea578
+		mov    %edx,data_1ea584
+		mov    %edx,data_1ea590
+		mov    %edx,data_1ea59c
+		mov    %edx,data_1ea614
+		mov    %edx,data_1ea620
+		mov    %edx,data_1ea62c
+		mov    %edx,data_1ea638
+		mov    %edx,data_1ea6d4
+		mov    %edx,data_1ea6e0
+		mov    %edx,data_1ea6ec
+		mov    %edx,data_1ea794
+		mov    %edi,data_1ea558
+		mov    $0x3,%edx
+		mov    %edi,data_1ea5ac
+		mov    %edx,data_1ea564
+		mov    %edx,data_1ea570
+		mov    %edx,data_1ea57c
+		mov    %edx,data_1ea588
+		mov    %edx,data_1ea594
+		mov    %edx,data_1ea5a0
+		mov    %edx,data_1ea618
+		mov    %edx,data_1ea624
+		mov    %edx,data_1ea630
+		mov    %edx,data_1ea63c
+		mov    %edx,data_1ea6d8
+		mov    %edx,data_1ea6e4
+		mov    %edx,data_1ea6f0
+		mov    %edx,data_1ea798
+		mov    $0x4,%ecx
+		mov    %ebp,EXPORT_SYMBOL(data_1ed198)
+	jump_10ba6b:
+		mov    $aUndefinedError,%esi
+		lea    data_1eaa94(%eax),%edi
+		mov    %ecx,data_1eaa90(%eax)
+		add    $0x24,%eax
+		movsl  %ds:(%esi),%es:(%edi)
+		movsl  %ds:(%esi),%es:(%edi)
+		movsl  %ds:(%esi),%es:(%edi)
+		movsl  %ds:(%esi),%es:(%edi)
+		cmp    $0x1200,%eax
+		jne    jump_10ba6b
+		mov    $0x3,%esi
+		mov    $0x1,%ebx
+		mov    $data_1eaab8,%edi
+		mov    %ecx,data_1eaad8
+		mov    %ecx,data_1eaafc
+		mov    %ecx,data_1eab20
+		mov    %ecx,data_1eb390
+		mov    %ecx,data_1eb858
+		mov    $0x7,%ecx
+		mov    %esi,data_1eaab4
+		mov    %esi,data_1eab44
+		mov    %esi,data_1eb834
+		mov    %esi,data_1eacd0
+		mov    %esi,data_1eacf4
+		mov    %esi,data_1ead18
+		mov    %esi,data_1ead3c
+		mov    %esi,data_1ead60
+		mov    %esi,data_1ead84
+		mov    %esi,data_1eada8
+		mov    %esi,data_1eadcc
+		mov    %esi,data_1eaf10
+		mov    %esi,data_1eaf34
+		mov    %esi,data_1eaf58
+		mov    %esi,data_1eaf7c
+		mov    %esi,data_1eb150
+		mov    %esi,data_1eb174
+		mov    %esi,data_1eb198
+		mov    $aRadicaNotPrope,%esi
+		mov    %ebx,data_1eb810
+		rep movsl %ds:(%esi),%es:(%edi)
+		movsw  %ds:(%esi),%es:(%edi)
+		mov    $0x6,%ecx
+		mov    $data_1eaadc,%edi
+		mov    $aBadParallelPor,%esi
+		rep movsl %ds:(%esi),%es:(%edi)
+		movsw  %ds:(%esi),%es:(%edi)
+		movsb  %ds:(%esi),%es:(%edi)
+		mov    $0x6,%ecx
+		mov    $data_1eab00,%edi
+		mov    $aMissingParalle,%esi
+		rep movsl %ds:(%esi),%es:(%edi)
+		movsw  %ds:(%esi),%es:(%edi)
+		mov    $0x7,%ecx
+		mov    $data_1eab24,%edi
+		mov    $aParallelPortIr,%esi
+		rep movsl %ds:(%esi),%es:(%edi)
+		mov    $data_1eab48,%edi
+		mov    $aOtherComputerS,%esi
+		movsl  %ds:(%esi),%es:(%edi)
+		movsl  %ds:(%esi),%es:(%edi)
+		movsl  %ds:(%esi),%es:(%edi)
+		movsl  %ds:(%esi),%es:(%edi)
+		movsl  %ds:(%esi),%es:(%edi)
+		movsw  %ds:(%esi),%es:(%edi)
+		movsb  %ds:(%esi),%es:(%edi)
+		mov    $data_1eb838,%edi
+		mov    $aHeartbeatError,%esi
+		movsl  %ds:(%esi),%es:(%edi)
+		movsl  %ds:(%esi),%es:(%edi)
+		movsl  %ds:(%esi),%es:(%edi)
+		movsl  %ds:(%esi),%es:(%edi)
+		mov    $0x6,%ecx
+		mov    $data_1eacd4,%edi
+		mov    $aCableTooLongOr,%esi
+		rep movsl %ds:(%esi),%es:(%edi)
+		movsw  %ds:(%esi),%es:(%edi)
+		movsb  %ds:(%esi),%es:(%edi)
+		mov    $0x6,%ecx
+		mov    $data_1eacf8,%edi
+		mov    $aOtherComputerI,%esi
+		rep movsl %ds:(%esi),%es:(%edi)
+		movsw  %ds:(%esi),%es:(%edi)
+		mov    $0x7,%ecx
+		mov    $data_1ead1c,%edi
+		mov    $aCollisionOnOth,%esi
+		rep movsl %ds:(%esi),%es:(%edi)
+		mov    $0x6,%ecx
+		mov    $data_1ead40,%edi
+		mov    $aOtherTransmitt,%esi
+		rep movsl %ds:(%esi),%es:(%edi)
+		movsb  %ds:(%esi),%es:(%edi)
+		mov    $data_1ead64,%edi
+		mov    $aLostAPacket,%esi
+		movsl  %ds:(%esi),%es:(%edi)
+		movsl  %ds:(%esi),%es:(%edi)
+		movsl  %ds:(%esi),%es:(%edi)
+		movsw  %ds:(%esi),%es:(%edi)
+		mov    $data_1ead88,%edi
+		mov    $aTooFastTransmi,%esi
+		movsl  %ds:(%esi),%es:(%edi)
+		movsl  %ds:(%esi),%es:(%edi)
+		movsl  %ds:(%esi),%es:(%edi)
+		movsl  %ds:(%esi),%es:(%edi)
+		movsl  %ds:(%esi),%es:(%edi)
+		movsw  %ds:(%esi),%es:(%edi)
+		movsb  %ds:(%esi),%es:(%edi)
+		mov    $data_1eadac,%edi
+		mov    $aFalseAlarm,%esi
+		movsl  %ds:(%esi),%es:(%edi)
+		movsl  %ds:(%esi),%es:(%edi)
+		movsl  %ds:(%esi),%es:(%edi)
+		mov    $data_1eadd0,%edi
+		mov    $aTransmitterCan,%esi
+		movsl  %ds:(%esi),%es:(%edi)
+		movsl  %ds:(%esi),%es:(%edi)
+		movsl  %ds:(%esi),%es:(%edi)
+		movsl  %ds:(%esi),%es:(%edi)
+		movsl  %ds:(%esi),%es:(%edi)
+		movsw  %ds:(%esi),%es:(%edi)
+		mov    $0x7,%ecx
+		mov    $data_1eaf14,%edi
+		mov    $aOtherComputerN,%esi
+		rep movsl %ds:(%esi),%es:(%edi)
+		movsw  %ds:(%esi),%es:(%edi)
+		mov    $0x7,%ecx
+		mov    $data_1eaf38,%edi
+		mov    $aOtherComputerH,%esi
+		rep movsl %ds:(%esi),%es:(%edi)
+		movsb  %ds:(%esi),%es:(%edi)
+		mov    $0x6,%ecx
+		mov    $data_1eaf5c,%edi
+		mov    $aCollisionOnThi,%esi
+		rep movsl %ds:(%esi),%es:(%edi)
+		movsw  %ds:(%esi),%es:(%edi)
+		movsb  %ds:(%esi),%es:(%edi)
+		mov    $data_1eaf80,%edi
+		mov    $aOtherReceiverH,%esi
+		movsl  %ds:(%esi),%es:(%edi)
+		movsl  %ds:(%esi),%es:(%edi)
+		movsl  %ds:(%esi),%es:(%edi)
+		movsl  %ds:(%esi),%es:(%edi)
+		movsl  %ds:(%esi),%es:(%edi)
+		movsw  %ds:(%esi),%es:(%edi)
+		mov    $data_1eb154,%edi
+		mov    $aNetworkOverloa,%esi
+		movsl  %ds:(%esi),%es:(%edi)
+		movsl  %ds:(%esi),%es:(%edi)
+		movsl  %ds:(%esi),%es:(%edi)
+		movsl  %ds:(%esi),%es:(%edi)
+		movsw  %ds:(%esi),%es:(%edi)
+		movsb  %ds:(%esi),%es:(%edi)
+		mov    $data_1eb178,%edi
+		mov    $aCannotGetTheNe,%esi
+		movsl  %ds:(%esi),%es:(%edi)
+		movsl  %ds:(%esi),%es:(%edi)
+		movsl  %ds:(%esi),%es:(%edi)
+		movsl  %ds:(%esi),%es:(%edi)
+		movsl  %ds:(%esi),%es:(%edi)
+		movsw  %ds:(%esi),%es:(%edi)
+		movsb  %ds:(%esi),%es:(%edi)
+		mov    $0x6,%ecx
+		mov    $data_1eb19c,%edi
+		mov    $aTransmitWhileR,%esi
+		rep movsl %ds:(%esi),%es:(%edi)
+		movsb  %ds:(%esi),%es:(%edi)
+		mov    $0x6,%ecx
+		mov    $data_1eb394,%edi
+		mov    $aUnexpectedRetr,%esi
+		rep movsl %ds:(%esi),%es:(%edi)
+		movsw  %ds:(%esi),%es:(%edi)
+		mov    $data_1eb814,%edi
+		mov    $aNetworkBusy,%esi
+		movsl  %ds:(%esi),%es:(%edi)
+		movsl  %ds:(%esi),%es:(%edi)
+		movsl  %ds:(%esi),%es:(%edi)
+		movsb  %ds:(%esi),%es:(%edi)
+		mov    $data_1eb85c,%edi
+		mov    $aUserAborted,%esi
+		movsl  %ds:(%esi),%es:(%edi)
+		movsl  %ds:(%esi),%es:(%edi)
+		movsl  %ds:(%esi),%es:(%edi)
+		movsb  %ds:(%esi),%es:(%edi)
+		call   ASM_func_118a40
+		cli
+		call   ASM_func_118ff7
+		mov    %eax,%esi
+		test   %eax,%eax
+		je     jump_10bce9
+		sti
+		mov    %esi,%eax
+		mov    EXPORT_SYMBOL(data_1ed198),%ebp
+		add    $0x4,%esp
+		pop    %ebp
+		pop    %edi
+		pop    %esi
+		pop    %ecx
+		pop    %ebx
+		ret
+	jump_10bce9:
+		mov    EXPORT_SYMBOL(data_15aba5),%eax
+		mov    %esi,EXPORT_SYMBOL(data_1ed358)
+		xor    %edi,%edi
+		xor    %dl,%dl
+		xor    %bl,%bl
+		mov    $aRev0_08f,%esi
+		add    $0x8,%eax
+		mov    %edi,EXPORT_SYMBOL(data_1ed35c)
+		mov    %edi,EXPORT_SYMBOL(data_1ed360)
+		mov    %edi,EXPORT_SYMBOL(data_1ed364)
+		mov    %dl,data_1ed381
+		mov    %bl,data_1ed393
+		mov    %eax,data_1ed1ac
+		xor    %eax,%eax
+		mov    $data_1ed394,%edi
+		mov    EXPORT_SYMBOL(data_15aba4),%al
+		xor    %dh,%dh
+		mov    %eax,data_1ed354
+		xor    %ah,%ah
+		mov    %dh,data_1ed38a
+		mov    %ah,data_1ed378
+		movsl  %ds:(%esi),%es:(%edi)
+		movsl  %ds:(%esi),%es:(%edi)
+		movsb  %ds:(%esi),%es:(%edi)
+		mov    $0x1,%ebp
+		mov    $EXPORT_SYMBOL(data_15ab99),%esi
+		mov    $data_1ed39d,%edi
+		mov    $0x1,%bh
+		push   %edi
+	jump_10bd5b:
+		mov    (%esi),%al
+		mov    %al,(%edi)
+		cmp    $0x0,%al
+		je     jump_10bd73
+		mov    0x1(%esi),%al
+		add    $0x2,%esi
+		mov    %al,0x1(%edi)
+		add    $0x2,%edi
+		cmp    $0x0,%al
+		jne    jump_10bd5b
+	jump_10bd73:
+		pop    %edi
+		mov    %bh,EXPORT_SYMBOL(data_1ed3ac)
+		xor    %eax,%eax
+	jump_10bd7c:
+		inc    %ebp
+		mov    data_1ed368(%eax),%bl
+		mov    %bl,data_1ed3ab(%ebp)
+		cmp    $0x10,%eax
+		jge    jump_10bd9b
+		mov    %eax,%edx
+		mov    data_1ed368(%edx),%cl
+		inc    %eax
+		test   %cl,%cl
+		jne    jump_10bd7c
+	jump_10bd9b:
+		xor    %eax,%eax
+	jump_10bd9d:
+		inc    %ebp
+		mov    data_1ed379(%eax),%bl
+		mov    %bl,data_1ed3ab(%ebp)
+		cmp    $0x8,%eax
+		jge    jump_10bdbc
+		mov    %eax,%edx
+		mov    data_1ed379(%edx),%ch
+		inc    %eax
+		test   %ch,%ch
+		jne    jump_10bd9d
+	jump_10bdbc:
+		xor    %eax,%eax
+	jump_10bdbe:
+		inc    %ebp
+		mov    data_1ed382(%eax),%bl
+		mov    %bl,data_1ed3ab(%ebp)
+		cmp    $0x8,%eax
+		jge    jump_10bddd
+		mov    %eax,%edx
+		mov    data_1ed382(%edx),%bl
+		inc    %eax
+		test   %bl,%bl
+		jne    jump_10bdbe
+	jump_10bddd:
+		xor    %eax,%eax
+	jump_10bddf:
+		inc    %ebp
+		mov    data_1ed38b(%eax),%bl
+		mov    %bl,data_1ed3ab(%ebp)
+		cmp    $0x8,%eax
+		jge    jump_10bdfe
+		mov    %eax,%edx
+		mov    data_1ed38b(%edx),%bh
+		inc    %eax
+		test   %bh,%bh
+		jne    jump_10bddf
+	jump_10bdfe:
+		xor    %eax,%eax
+	jump_10be00:
+		inc    %ebp
+		mov    data_1ed394(%eax),%bl
+		mov    %bl,data_1ed3ab(%ebp)
+		cmp    $0x8,%eax
+		jge    jump_10be1f
+		mov    %eax,%edx
+		mov    data_1ed394(%edx),%cl
+		inc    %eax
+		test   %cl,%cl
+		jne    jump_10be00
+	jump_10be1f:
+		xor    %eax,%eax
+	jump_10be21:
+		inc    %ebp
+		mov    data_1ed39d(%eax),%bl
+		mov    %bl,data_1ed3ab(%ebp)
+		cmp    $0x8,%eax
+		jge    jump_10be40
+		mov    %eax,%edx
+		mov    data_1ed39d(%edx),%ch
+		inc    %eax
+		test   %ch,%ch
+		jne    jump_10be21
+	jump_10be40:
+		mov    data_1596b4,%edx
+		mov    %ebp,EXPORT_SYMBOL(data_1ed198)
+		cmp    $0x1,%edx
+		je     jump_10be82
+		mov    $0x1c,%eax
+		mov    $ASM_net_int_unkn2_handler,%ebx
+		call   ac_dos_getvect
+		mov    %cs,%ecx
+		mov    %eax,EXPORT_SYMBOL(data_1ed34c)
+		mov    $0x1c,%eax
+		mov    %dx,EXPORT_SYMBOL(data_1ed350)
+		call   ac_dos_setvect
+		movl   $0x2,data_1596b4
+	jump_10be82:
+		mov    data_1ed1ac,%eax
+		mov    $ASM_net_int_unkn1_handler,%ebx
+		call   ac_dos_getvect
+		mov    %cs,%ecx
+		mov    %eax,data_1ed3a6
+		mov    data_1ed1ac,%eax
+		mov    %dx,data_1ed3aa
+		call   ac_dos_setvect
+		sti
+		mov    $0x1,%eax
+		mov    EXPORT_SYMBOL(data_1ed198),%ebp
+		xor    %esi,%esi
+		cmp    %eax,%ebp
+		jle    jump_10becc
+	jump_10bebb:
+		inc    %eax
+		mov    data_1ed3ab(%eax),%dl
+		mov    %dl,data_1ed4aa(%eax)
+		cmp    %ebp,%eax
+		jl     jump_10bebb
+	jump_10becc:
+		movb   $0x3,data_1ed4ab
+		mov    %ebp,EXPORT_SYMBOL(data_1ed198)
+		xor    %edi,%edi
+	jump_10bedb:
+		call   ASM_getch_data_waiting
+		test   %eax,%eax
+		je     jump_10befd
+		call   ASM_getch_
+		cmp    $0x1b,%eax
+		je     jump_10bef6
+		cmp    EXPORT_SYMBOL(data_1ed340),%edi
+		je     jump_10befd
+	jump_10bef6:
+		mov    $0x1,%esi
+		jmp    jump_10bf2e
+	jump_10befd:
+		cli
+		mov    $0x1,%ecx
+		mov    $0x2,%ebx
+		push   %edi
+		mov    $data_1ed4ab,%eax
+		mov    EXPORT_SYMBOL(data_1ed198),%edx
+		call   ASM_func_11b270
+		mov    %eax,%edx
+		sti
+		mov    EXPORT_SYMBOL(data_1ed198),%ebp
+		test   %edx,%edx
+		je     jump_10bf2e
+		cmp    EXPORT_SYMBOL(data_1ed340),%edi
+		je     jump_10bedb
+	jump_10bf2e:
+		mov    EXPORT_SYMBOL(data_1ed340),%edx
+		mov    EXPORT_SYMBOL(data_1ed198),%ebp
+		test   %edx,%edx
+		je     jump_10bf89
+		cmpl   $0x2,data_1596b4
+		jne    jump_10bf5e
+		mov    $0x1c,%eax
+		mov    EXPORT_SYMBOL(data_1ed350),%cx
+		mov    EXPORT_SYMBOL(data_1ed34c),%ebx
+		call   ac_dos_setvect
+	jump_10bf5e:
+		mov    data_1ed3aa,%cx
+		mov    data_1ed3a6,%ebx
+		mov    data_1ed1ac,%eax
+		call   ac_dos_setvect
+		mov    EXPORT_SYMBOL(data_1ed340),%eax
+		mov    EXPORT_SYMBOL(data_1ed198),%ebp
+		add    $0x4,%esp
+		pop    %ebp
+		pop    %edi
+		pop    %esi
+		pop    %ecx
+		pop    %ebx
+		ret
+	jump_10bf89:
+		test   %esi,%esi
+		jne    jump_10c001
+		cmpl   $0x0,(%esp)
+		jne    jump_10bfaa
+		mov    $0x35b60,%ecx
+		mov    EXPORT_SYMBOL(data_15abaf),%eax
+		xor    %edi,%edi
+	jump_10bfa3:
+		add    %eax,%edi
+		loopne jump_10bfa3
+	jump_10bfa7:
+		dec    %edi
+		jne    jump_10bfa7
+	jump_10bfaa:
+		cmpl   $0x0,(%esp)
+		jle    jump_10c001
+		mov    (%esp),%edi
+	jump_10bfb3:
+		call   ASM_getch_data_waiting
+		test   %eax,%eax
+		je     jump_10bfd6
+		call   ASM_getch_
+		cmp    $0x1b,%eax
+		je     jump_10bfcf
+		cmpl   $0x0,EXPORT_SYMBOL(data_1ed340)
+		je     jump_10bfd6
+	jump_10bfcf:
+		mov    $0x1,%esi
+		jmp    jump_10c001
+	jump_10bfd6:
+		mov    $0x42,%eax
+		mov    EXPORT_SYMBOL(data_1ed198),%ebp
+		xor    %edx,%edx
+	jump_10bfe3:
+		cmpb   $0x0,EXPORT_SYMBOL(data_1ed1b4)(%eax)
+		je     jump_10bfed
+		inc    %edx
+	jump_10bfed:
+		add    $0x42,%eax
+		cmp    $0x18c,%eax
+		jne    jump_10bfe3
+		mov    %ebp,EXPORT_SYMBOL(data_1ed198)
+		cmp    %edi,%edx
+		jl     jump_10bfb3
+	jump_10c001:
+		mov    EXPORT_SYMBOL(data_1ed198),%ebp
+		test   %esi,%esi
+		je     jump_10c056
+		cmpl   $0x2,data_1596b4
+		jne    jump_10c02b
+		mov    $0x1c,%eax
+		mov    EXPORT_SYMBOL(data_1ed350),%cx
+		mov    EXPORT_SYMBOL(data_1ed34c),%ebx
+		call   ac_dos_setvect
+	jump_10c02b:
+		mov    data_1ed3aa,%cx
+		mov    data_1ed3a6,%ebx
+		mov    data_1ed1ac,%eax
+		call   ac_dos_setvect
+		mov    $0x62,%eax
+		mov    EXPORT_SYMBOL(data_1ed198),%ebp
+		add    $0x4,%esp
+		pop    %ebp
+		pop    %edi
+		pop    %esi
+		pop    %ecx
+		pop    %ebx
+		ret
+	jump_10c056:
+		mov    $0x1,%edx
+		xor    %eax,%eax
+		mov    %edx,EXPORT_SYMBOL(data_1596b8)
+	jump_10c063:
+		mov    EXPORT_SYMBOL(data_1ed198),%ebp
+		add    $0x4,%esp
+		pop    %ebp
+		pop    %edi
+		pop    %esi
+		pop    %ecx
+		pop    %ebx
+		ret
+
+
+/*----------------------------------------------------------------*/
+GLOBAL_FUNC(ASM_net_unkn_func_351)	/* 0x10C074 */
+/*----------------------------------------------------------------*/
+		push   %ecx
+		cmpl   $0x0,EXPORT_SYMBOL(data_1ed344)
+		je     jump_10c085
+		mov    EXPORT_SYMBOL(data_1ed340),%eax
+		pop    %ecx
+		ret
+	jump_10c085:
+		cmpl   $0x0,EXPORT_SYMBOL(data_1596b8)
+		jne    jump_10c095
+		mov    $0x97,%eax
+		pop    %ecx
+		ret
+	jump_10c095:
+		mov    EXPORT_SYMBOL(data_1ed19c),%ecx
+		cmp    $0x14,%ecx
+		jne    jump_10c0a7
+		mov    $0x80,%eax
+		pop    %ecx
+		ret
+	jump_10c0a7:
+		cmp    $0x5,%ecx
+		jge    jump_10c0b3
+		mov    $0x82,%eax
+		pop    %ecx
+		ret
+	jump_10c0b3:
+		mov    $0x81,%eax
+		pop    %ecx
+		ret
+
+
+/*----------------------------------------------------------------*/
+GLOBAL_FUNC(ASM_net_unkn_func_352)	/* 0x10C0BC */
+/*----------------------------------------------------------------*/
+		push   %ebx
+		push   %ecx
+		push   %edx
+		cmpl   $0x0,EXPORT_SYMBOL(data_1596b8)
+		jne    jump_10c0d1
+		mov    $0x97,%eax
+		pop    %edx
+		pop    %ecx
+		pop    %ebx
+		ret
+	jump_10c0d1:
+		mov    $0x2,%dl
+		mov    $0x1,%ecx
+		xor    %ah,%ah
+		mov    $0x2,%ebx
+		mov    %ah,data_1ed4ab
+		cli
+		push   $0x0
+		mov    $data_1ed4ab,%eax
+		mov    %dl,data_1ed4ab
+		mov    %ecx,%edx
+		call   ASM_func_11b270
+		mov    %eax,%edx
+		call   ASM_func_11adba
+		cmpl   $0x2,data_1596b4
+		jne    jump_10c121
+		mov    $0x1c,%eax
+		mov    EXPORT_SYMBOL(data_1ed350),%cx
+		mov    EXPORT_SYMBOL(data_1ed34c),%ebx
+		call   ac_dos_setvect
+	jump_10c121:
+		mov    data_1ed3aa,%cx
+		mov    data_1ed3a6,%ebx
+		mov    data_1ed1ac,%eax
+		call   ac_dos_setvect
+		xor    %ecx,%ecx
+		mov    %ecx,EXPORT_SYMBOL(data_1596b8)
+		sti
+		test   %edx,%edx
+		je     jump_10c14b
+		mov    %edx,%eax
+		pop    %edx
+		pop    %ecx
+		pop    %ebx
+		ret
+	jump_10c14b:
+		xor    %eax,%eax
+		pop    %edx
+		pop    %ecx
+		pop    %ebx
+		ret
+
+vtable_10c154:
+		.long   func_10c19f
+		.long   func_10c2e5
+		.long   func_10c301
+		.long   func_10c31d
+		.long   func_10c339
+		.long   func_10c355
+		.long   func_10c379
+
+
+/*----------------------------------------------------------------*/
+GLOBAL_FUNC(ASM_net_unkn_func_353)	/* 0x10C170 */
+/*----------------------------------------------------------------*/
+		push   %ebx
+		push   %ecx
+		push   %esi
+		mov    EXPORT_SYMBOL(data_1ed198),%ecx
+		mov    %eax,%esi
+		cmpl   $0x0,EXPORT_SYMBOL(data_1ed344)
+		je     jump_10c18e
+		mov    EXPORT_SYMBOL(data_1ed340),%eax
+		jmp    jump_10c2db
+	jump_10c18e:
+		cmp    $0x6,%eax
+		ja     jump_10c3a7
+		jmp    *%cs:vtable_10c154(,%esi,4)
+
+
+/*----------------------------------------------------------------*/
+func_10c19f:
+/*----------------------------------------------------------------*/
+		test   %edx,%edx
+		je     jump_10c1bc
+		cmp    $0x1,%edx
+		je     jump_10c1bc
+		cmp    $0x2,%edx
+		je     jump_10c1bc
+		mov    $0x91,%eax
+		mov    %ecx,EXPORT_SYMBOL(data_1ed198)
+		pop    %esi
+		pop    %ecx
+		pop    %ebx
+		ret
+	jump_10c1bc:
+		mov    %edx,EXPORT_SYMBOL(data_1ed348)
+		mov    %ecx,EXPORT_SYMBOL(data_1ed198)
+	jump_10c1c8:
+		cmp    $0x2,%esi
+		je     jump_10c1e0
+		cmp    $0x3,%esi
+		je     jump_10c1e0
+		cmp    $0x4,%esi
+		je     jump_10c1e0
+		cmp    $0x1,%esi
+		jne    jump_10c2d3
+	jump_10c1e0:
+		cli
+		mov    $0x1,%ecx
+		xor    %eax,%eax
+	jump_10c1e8:
+		inc    %ecx
+		mov    data_1ed368(%eax),%dl
+		mov    %dl,data_1ed3ab(%ecx)
+		cmp    $0x10,%eax
+		jge    jump_10c207
+		mov    %eax,%edx
+		mov    data_1ed368(%edx),%bh
+		inc    %eax
+		test   %bh,%bh
+		jne    jump_10c1e8
+	jump_10c207:
+		xor    %eax,%eax
+	jump_10c209:
+		inc    %ecx
+		mov    data_1ed379(%eax),%dl
+		mov    %dl,data_1ed3ab(%ecx)
+		cmp    $0x8,%eax
+		jge    jump_10c228
+		mov    %eax,%edx
+		mov    data_1ed379(%edx),%bl
+		inc    %eax
+		test   %bl,%bl
+		jne    jump_10c209
+	jump_10c228:
+		xor    %eax,%eax
+	jump_10c22a:
+		inc    %ecx
+		mov    data_1ed382(%eax),%dl
+		mov    %dl,data_1ed3ab(%ecx)
+		cmp    $0x8,%eax
+		jge    jump_10c249
+		mov    %eax,%edx
+		mov    data_1ed382(%edx),%bh
+		inc    %eax
+		test   %bh,%bh
+		jne    jump_10c22a
+	jump_10c249:
+		xor    %eax,%eax
+	jump_10c24b:
+		inc    %ecx
+		mov    data_1ed38b(%eax),%dl
+		mov    %dl,data_1ed3ab(%ecx)
+		cmp    $0x8,%eax
+		jge    jump_10c26a
+		mov    %eax,%edx
+		mov    data_1ed38b(%edx),%bl
+		inc    %eax
+		test   %bl,%bl
+		jne    jump_10c24b
+	jump_10c26a:
+		xor    %eax,%eax
+	jump_10c26c:
+		inc    %ecx
+		mov    data_1ed394(%eax),%dl
+		mov    %dl,data_1ed3ab(%ecx)
+		cmp    $0x8,%eax
+		jge    jump_10c28b
+		mov    %eax,%edx
+		mov    data_1ed394(%edx),%bh
+		inc    %eax
+		test   %bh,%bh
+		jne    jump_10c26c
+	jump_10c28b:
+		xor    %eax,%eax
+	jump_10c28d:
+		inc    %ecx
+		mov    data_1ed39d(%eax),%dl
+		mov    %dl,data_1ed3ab(%ecx)
+		cmp    $0x8,%eax
+		jge    jump_10c2ac
+		mov    %eax,%edx
+		mov    data_1ed39d(%edx),%bl
+		inc    %eax
+		test   %bl,%bl
+		jne    jump_10c28d
+	jump_10c2ac:
+		mov    $0x1,%eax
+		mov    %ecx,EXPORT_SYMBOL(data_1ed198)
+		cmp    %eax,%ecx
+		jle    jump_10c2d2
+		mov    EXPORT_SYMBOL(data_1ed198),%ecx
+	jump_10c2c1:
+		inc    %eax
+		mov    data_1ed3ab(%eax),%dl
+		mov    %dl,data_1ed4aa(%eax)
+		cmp    %ecx,%eax
+		jl     jump_10c2c1
+	jump_10c2d2:
+		sti
+	jump_10c2d3:
+		mov    EXPORT_SYMBOL(data_1ed198),%ecx
+		xor    %eax,%eax
+	jump_10c2db:
+		mov    %ecx,EXPORT_SYMBOL(data_1ed198)
+		pop    %esi
+		pop    %ecx
+		pop    %ebx
+		ret
+
+
+/*----------------------------------------------------------------*/
+func_10c2e5:
+/*----------------------------------------------------------------*/
+		mov    $0x8,%ebx
+		mov    $data_1ed38b,%eax
+		call   ac_strncpy
+		xor    %bl,%bl
+		mov    %bl,data_1ed393
+		jmp    jump_10c1c8
+
+
+/*----------------------------------------------------------------*/
+func_10c301:
+/*----------------------------------------------------------------*/
+		mov    $0x10,%ebx
+		mov    $data_1ed368,%eax
+		call   ac_strncpy
+		xor    %dh,%dh
+		mov    %dh,data_1ed378
+		jmp    jump_10c1c8
+
+
+/*----------------------------------------------------------------*/
+func_10c31d:
+/*----------------------------------------------------------------*/
+		mov    $0x8,%ebx
+		mov    $data_1ed379,%eax
+		call   ac_strncpy
+		xor    %dl,%dl
+		mov    %dl,data_1ed381
+		jmp    jump_10c1c8
+
+
+/*----------------------------------------------------------------*/
+func_10c339:
+/*----------------------------------------------------------------*/
+		mov    $0x8,%ebx
+		mov    $data_1ed382,%eax
+		call   ac_strncpy
+		xor    %ah,%ah
+		mov    %ah,data_1ed38a
+		jmp    jump_10c1c8
+
+
+/*----------------------------------------------------------------*/
+func_10c355:
+/*----------------------------------------------------------------*/
+		cmp    $0x1,%edx
+		jl     jump_10c35f
+		cmp    $0x64,%edx
+		jle    jump_10c36e
+	jump_10c35f:
+		mov    $0x92,%eax
+		mov    %ecx,EXPORT_SYMBOL(data_1ed198)
+		pop    %esi
+		pop    %ecx
+		pop    %ebx
+		ret
+	jump_10c36e:
+		mov    %edx,EXPORT_SYMBOL(data_1ed1a0)
+		jmp    jump_10c1c8
+
+
+/*----------------------------------------------------------------*/
+func_10c379:
+/*----------------------------------------------------------------*/
+		mov    $0xc8,%ebx
+		mov    %edx,%eax
+		sar    $0x1f,%edx
+		idiv   %ebx
+		test   %eax,%eax
+		jl     jump_10c38e
+		cmp    $0x64,%eax
+		jle    jump_10c39d
+	jump_10c38e:
+		mov    $0x93,%eax
+		mov    %ecx,EXPORT_SYMBOL(data_1ed198)
+		pop    %esi
+		pop    %ecx
+		pop    %ebx
+		ret
+	jump_10c39d:
+		mov    %eax,EXPORT_SYMBOL(data_1ed1a4)
+		jmp    jump_10c1c8
+	jump_10c3a7:
+		mov    $0x95,%eax
+		mov    EXPORT_SYMBOL(data_1ed198),%ecx
+		mov    %ecx,EXPORT_SYMBOL(data_1ed198)
+		pop    %esi
+		pop    %ecx
+		pop    %ebx
+		ret
+
+
+/*----------------------------------------------------------------*/
+GLOBAL_FUNC(ASM_net_unkn_func_354)	/* 0x10C3BC */
+/*----------------------------------------------------------------*/
+		cmpl   $0x0,EXPORT_SYMBOL(data_1596b8)
+		jne    jump_10c3c8
+		xor    %eax,%eax
+		ret
+	jump_10c3c8:
+		mov    data_1ed354,%eax
+		ret
+
+
+/*----------------------------------------------------------------*/
+GLOBAL_FUNC(ASM_send_exchange_info)	/* 0x10C41C */
+/*----------------------------------------------------------------*/
+		push   %ecx
+		push   %esi
+		push   %edi
+		mov    %eax,%esi
+		cmpl   $0x0,EXPORT_SYMBOL(data_1596b8)
+		jne    jump_10c433
+		mov    $0x97,%eax
+		pop    %edi
+		pop    %esi
+		pop    %ecx
+		ret
+	jump_10c433:
+		test   %ebx,%ebx
+		je     jump_10c44a
+		cmp    $0x1,%ebx
+		je     jump_10c44a
+		cmp    $0x2,%ebx
+		je     jump_10c44a
+		mov    $0x91,%eax
+		pop    %edi
+		pop    %esi
+		pop    %ecx
+		ret
+	jump_10c44a:
+		cmp    $0xff,%edx
+		jle    jump_10c45b
+		mov    $0x90,%eax
+		pop    %edi
+		pop    %esi
+		pop    %ecx
+		ret
+	jump_10c45b:
+		mov    EXPORT_SYMBOL(data_1ed344),%edi
+		test   %edi,%edi
+		je     jump_10c46e
+		mov    EXPORT_SYMBOL(data_1ed340),%eax
+		pop    %edi
+		pop    %esi
+		pop    %ecx
+		ret
+	jump_10c46e:
+		cli
+		push   %edi
+		mov    %esi,%eax
+		xor    %ecx,%ecx
+		call   ASM_func_11b270
+		mov    %eax,%edx
+		sti
+		mov    %edx,%eax
+		pop    %edi
+		pop    %esi
+		pop    %ecx
+		ret
+
+
+/*----------------------------------------------------------------*/
+GLOBAL_FUNC(ASM_net_unkn_func_356)	/* 0x10C484 */
+/*----------------------------------------------------------------*/
+		push   %ebx
+		push   %edx
+		cmpl   $0x0,EXPORT_SYMBOL(data_1596b8)
+		jne    jump_10c497
+		mov    $0x97,%eax
+		pop    %edx
+		pop    %ebx
+		ret
+	jump_10c497:
+		cmpl   $0x0,EXPORT_SYMBOL(data_1ed344)
+		je     jump_10c4a8
+		mov    EXPORT_SYMBOL(data_1ed340),%eax
+		pop    %edx
+		pop    %ebx
+		ret
+	jump_10c4a8:
+		cmpl   $0x14,EXPORT_SYMBOL(data_1ed19c)
+		jne    jump_10c4b9
+		mov    $0x80,%eax
+		pop    %edx
+		pop    %ebx
+		ret
+	jump_10c4b9:
+		imul   $0x10b,EXPORT_SYMBOL(data_1ed190),%edx
+		mov    EXPORT_SYMBOL(data_1ebcb0)(%edx),%ebx
+		add    $0xc,%ebx
+		add    $EXPORT_SYMBOL(data_1ebcac),%edx
+		call   ac_memmove
+		mov    EXPORT_SYMBOL(data_1ed190),%edx
+		inc    %edx
+		mov    $0x14,%ebx
+		mov    %edx,%eax
+		sar    $0x1f,%edx
+		idiv   %ebx
+		incl   EXPORT_SYMBOL(data_1ed19c)
+		mov    %edx,EXPORT_SYMBOL(data_1ed190)
+		xor    %eax,%eax
+		pop    %edx
+		pop    %ebx
+		ret
+
+
+/*----------------------------------------------------------------*/
+net_unkn_init_2:	/* 0x10C678 */
+/*----------------------------------------------------------------*/
+		push   %ebx
+		push   %ecx
+		push   %edx
+		push   %esi
+		push   %edi
+		enter  $0x8,$0x0
+		mov    %eax,-0x4(%ebp)
+		mov    -0x4(%ebp),%eax
+		call   ASM_net_unkn_post_init_1
+		mov    -0x4(%ebp),%eax
+		mov    %eax,-0x8(%ebp)
+		mov    -0x8(%ebp),%eax
+		leave
+		pop    %edi
+		pop    %esi
+		pop    %edx
+		pop    %ecx
+		pop    %ebx
+		ret
+
+
+/*----------------------------------------------------------------*/
+GLOBAL_FUNC(ASM_net_unkn_post_init_1)	/* 0x10C69C */
+/*----------------------------------------------------------------*/
+		push   %ebx
+		push   %ecx
+		push   %edx
+		push   %esi
+		push   %edi
+		enter  $0x18,$0x0
+		mov    %eax,-0x4(%ebp)
+		mov    -0x4(%ebp),%eax
+		movb   $0x0,(%eax)
+		mov    -0x4(%ebp),%eax
+		movb   $0x0,0x1(%eax)
+		mov    -0x4(%ebp),%eax
+		movl   $0x0,0x19b(%eax)
+		mov    -0x4(%ebp),%eax
+		movl   $0x0,0x19f(%eax)
+		mov    -0x4(%ebp),%eax
+		movl   $0x0,0x1a3(%eax)
+		mov    -0x4(%ebp),%eax
+		movl   $0x0,0x2(%eax)
+		mov    -0x4(%ebp),%eax
+		movl   $0x0,0x6(%eax)
+		mov    -0x4(%ebp),%eax
+		movl   $0x0,0x110(%eax)
+		mov    -0x4(%ebp),%eax
+		movl   $0x0,0x197(%eax)
+		mov    -0x4(%ebp),%eax
+		movl   $0x0,0x89(%eax)
+		mov    -0x4(%ebp),%eax
+		movl   $0x0,0x1a7(%eax)
+		mov    -0x4(%ebp),%eax
+		movl   $0x0,0x1ab(%eax)
+		mov    -0x4(%ebp),%eax
+		movl   $0x0,0x2b7(%eax)
+		mov    -0x4(%ebp),%eax
+		movl   $0x0,0x2af(%eax)
+		mov    -0x4(%ebp),%eax
+		movl   $0x0,0x2b3(%eax)
+		movl   $0x0,-0x18(%ebp)
+		jmp    jump_10c767
+	jump_10c761:
+		mov    -0x18(%ebp),%eax
+		incl   -0x18(%ebp)
+	jump_10c767:
+		cmpl   $0x100,-0x18(%ebp)
+		jge    jump_10c887
+		movl   $0x0,-0x14(%ebp)
+		movl   $0x0,-0x10(%ebp)
+		movl   $0x0,-0xc(%ebp)
+		movl   $0x0,-0x8(%ebp)
+		testl  $0x1,-0x18(%ebp)
+		je     jump_10c79f
+		mov    -0x8(%ebp),%eax
+		incl   -0x8(%ebp)
+	jump_10c79f:
+		testl  $0x2,-0x18(%ebp)
+		je     jump_10c7b4
+		mov    -0xc(%ebp),%eax
+		incl   -0xc(%ebp)
+		mov    -0x8(%ebp),%eax
+		incl   -0x8(%ebp)
+	jump_10c7b4:
+		testl  $0x4,-0x18(%ebp)
+		je     jump_10c7c9
+		mov    -0x10(%ebp),%eax
+		incl   -0x10(%ebp)
+		mov    -0x8(%ebp),%eax
+		incl   -0x8(%ebp)
+	jump_10c7c9:
+		testl  $0x8,-0x18(%ebp)
+		je     jump_10c7e4
+		mov    -0x10(%ebp),%eax
+		incl   -0x10(%ebp)
+		mov    -0xc(%ebp),%eax
+		incl   -0xc(%ebp)
+		mov    -0x8(%ebp),%eax
+		incl   -0x8(%ebp)
+	jump_10c7e4:
+		testl  $0x10,-0x18(%ebp)
+		je     jump_10c7f9
+		mov    -0x14(%ebp),%eax
+		incl   -0x14(%ebp)
+		mov    -0x8(%ebp),%eax
+		incl   -0x8(%ebp)
+	jump_10c7f9:
+		testl  $0x20,-0x18(%ebp)
+		je     jump_10c814
+		mov    -0x14(%ebp),%eax
+		incl   -0x14(%ebp)
+		mov    -0xc(%ebp),%eax
+		incl   -0xc(%ebp)
+		mov    -0x8(%ebp),%eax
+		incl   -0x8(%ebp)
+	jump_10c814:
+		testl  $0x40,-0x18(%ebp)
+		je     jump_10c82f
+		mov    -0x14(%ebp),%eax
+		incl   -0x14(%ebp)
+		mov    -0x10(%ebp),%eax
+		incl   -0x10(%ebp)
+		mov    -0x8(%ebp),%eax
+		incl   -0x8(%ebp)
+	jump_10c82f:
+		testl  $0x80,-0x18(%ebp)
+		je     jump_10c850
+		mov    -0x14(%ebp),%eax
+		incl   -0x14(%ebp)
+		mov    -0x10(%ebp),%eax
+		incl   -0x10(%ebp)
+		mov    -0xc(%ebp),%eax
+		incl   -0xc(%ebp)
+		mov    -0x8(%ebp),%eax
+		incl   -0x8(%ebp)
+	jump_10c850:
+		mov    -0x8(%ebp),%al
+		and    $0x1,%al
+		shl    $0x3,%al
+		mov    %al,%ah
+		mov    -0xc(%ebp),%al
+		and    $0x1,%al
+		shl    $0x2,%al
+		or     %al,%ah
+		mov    -0x10(%ebp),%al
+		and    $0x1,%al
+		add    %al,%al
+		or     %al,%ah
+		mov    -0x14(%ebp),%al
+		and    $0x1,%al
+		or     %al,%ah
+		mov    %ah,%dl
+		mov    -0x4(%ebp),%eax
+		add    -0x18(%ebp),%eax
+		mov    %dl,0x2bb(%eax)
+		jmp    jump_10c761
+	jump_10c887:
+		mov    -0x4(%ebp),%eax
+		movb   $0x0,0x3bb(%eax)
+		mov    -0x4(%ebp),%eax
+		movb   $0x11,0x3bc(%eax)
+		mov    -0x4(%ebp),%eax
+		movb   $0x19,0x3bd(%eax)
+		mov    -0x4(%ebp),%eax
+		movb   $0x8,0x3be(%eax)
+		mov    -0x4(%ebp),%eax
+		movb   $0x15,0x3bf(%eax)
+		mov    -0x4(%ebp),%eax
+		movb   $0x4,0x3c0(%eax)
+		mov    -0x4(%ebp),%eax
+		movb   $0xc,0x3c1(%eax)
+		mov    -0x4(%ebp),%eax
+		movb   $0x1d,0x3c2(%eax)
+		movl   $0x0,-0x18(%ebp)
+		jmp    jump_10c8e6
+	jump_10c8e0:
+		mov    -0x18(%ebp),%eax
+		incl   -0x18(%ebp)
+	jump_10c8e6:
+		cmpl   $0x20,-0x18(%ebp)
+		jge    jump_10c92e
+		mov    -0x18(%ebp),%al
+		and    $0x2,%al
+		shl    $0x6,%al
+		mov    %al,%ah
+		mov    -0x18(%ebp),%al
+		and    $0x10,%al
+		shl    $0x2,%al
+		or     %al,%ah
+		mov    -0x18(%ebp),%al
+		and    $0x8,%al
+		shl    $0x2,%al
+		or     %al,%ah
+		mov    -0x18(%ebp),%al
+		and    $0x4,%al
+		shl    $0x2,%al
+		or     %al,%ah
+		mov    -0x18(%ebp),%al
+		and    $0x1,%al
+		shl    $0x3,%al
+		or     %al,%ah
+		mov    %ah,%dl
+		mov    -0x4(%ebp),%eax
+		add    -0x18(%ebp),%eax
+		mov    %dl,0x3c3(%eax)
+		jmp    jump_10c8e0
+	jump_10c92e:
+		movl   $0x0,-0x18(%ebp)
+		jmp    jump_10c93d
+	jump_10c937:
+		mov    -0x18(%ebp),%eax
+		incl   -0x18(%ebp)
+	jump_10c93d:
+		cmpl   $0x20,-0x18(%ebp)
+		jge    jump_10c982
+		mov    -0x18(%ebp),%edx
+		and    $0x10,%edx
+		sar    $0x3,%edx
+		mov    -0x18(%ebp),%eax
+		and    $0x8,%eax
+		add    %eax,%eax
+		or     %eax,%edx
+		mov    -0x18(%ebp),%eax
+		and    $0x4,%eax
+		add    %eax,%eax
+		or     %eax,%edx
+		mov    -0x18(%ebp),%eax
+		and    $0x2,%eax
+		add    %eax,%eax
+		or     %eax,%edx
+		mov    -0x18(%ebp),%eax
+		and    $0x1,%eax
+		or     %edx,%eax
+		mov    %al,%dl
+		mov    -0x4(%ebp),%eax
+		add    -0x18(%ebp),%eax
+		mov    %dl,0x3e3(%eax)
+		jmp    jump_10c937
+	jump_10c982:
+		leave
+		pop    %edi
+		pop    %esi
+		pop    %edx
+		pop    %ecx
+		pop    %ebx
+		ret
+
+
+/*----------------------------------------------------------------*/
+func_10c989:
+/*----------------------------------------------------------------*/
+		push   %ebx
+		push   %ecx
+		push   %esi
+		push   %edi
+		enter  $0xc,$0x0
+		mov    %eax,-0x8(%ebp)
+		mov    %edx,-0x4(%ebp)
+		mov    -0x8(%ebp),%eax
+		mov    %eax,-0xc(%ebp)
+		mov    -0xc(%ebp),%eax
+		leave
+		pop    %edi
+		pop    %esi
+		pop    %ecx
+		pop    %ebx
+		ret
+
+
+/*----------------------------------------------------------------*/
+.section .rodata
+
+aUndefinedError:	/* 0x16135C */
+		.string "Undefined error"
+aRadicaNotPrope:	/* 0x16136C */
+		.string "Radica not properly connected"
+		.short  0x0
+aBadParallelPor:	/* 0x16138C */
+		.string "Bad parallel port or cable"
+		.byte	0x0
+aMissingParalle:	/* 0x1613A8 */
+		.string "Missing parallel port IRQ"
+		.short  0x0
+aParallelPortIr:	/* 0x1613C4 */
+		.string "Parallel port IRQ corrupted"
+aOtherComputerS:	/* 0x1613E0 */
+		.string "Other computer stopped"
+		.byte	0x0
+aHeartbeatError:	/* 0x1613F8 */
+		.string "Heartbeat error"
+aCableTooLongOr:	/* 0x161408 */
+		.string "Cable too long or bad port"
+		.byte	0x0
+aOtherComputerI:	/* 0x161424 */
+		.string "Other computer in trouble"
+		.short  0x0
+aCollisionOnOth:	/* 0x161440 */
+		.string "Collision on other computer"
+aOtherTransmitt:	/* 0x16145C */
+		.string "Other transmitter hungup"
+		.ascii  "\x00\x00\x00"
+aLostAPacket:	/* 0x161478 */
+		.string "Lost a packet"
+		.short  0x0
+aTooFastTransmi:	/* 0x161488 */
+		.string "Too fast transmissions"
+		.byte	0x0
+aFalseAlarm:	/* 0x1614A0 */
+		.string "False alarm"
+aTransmitterCan:	/* 0x1614AC */
+		.string "Transmitter cancelled"
+		.short  0x0
+aOtherComputerN:	/* 0x1614C4 */
+		.string "Other computer not responding"
+		.short  0x0
+aOtherComputerH:	/* 0x1614E4 */
+		.string "Other computer has bad cable"
+		.ascii  "\x00\x00\x00"
+aCollisionOnThi:	/* 0x161504 */
+		.string "Collision on this computer"
+		.byte	0x0
+aOtherReceiverH:	/* 0x161520 */
+		.string "Other receiver hungup"
+		.short  0x0
+aNetworkOverloa:	/* 0x161538 */
+		.string "Network overloaded"
+		.byte	0x0
+aCannotGetTheNe:	/* 0x16154C */
+		.string "Cannot get the network"
+		.byte	0x0
+aTransmitWhileR:	/* 0x161564 */
+		.string "Transmit while receiving"
+		.ascii  "\x00\x00\x00"
+aUnexpectedRetr:	/* 0x161580 */
+		.string "Unexpected retransmission"
+		.short  0x0
+aNetworkBusy:	/* 0x16159C */
+		.string "Network busy"
+		.ascii  "\x00\x00\x00"
+aUserAborted:	/* 0x1615AC */
+		.string "User aborted"
+		.ascii  "\x00\x00\x00"
+aRev0_08f:	/* 0x1615BC */
+		.string "REV0.08f"
+		.ascii  "\x00\x00\x00"
+aUndefinedConst:	/* 0x1615C8 */
+		.string "undefined constructor or destructor called!"
+aUndefinedMembe:	/* 0x1615F4 */
+		.string "undefined member function called through debug information!"
+
+
+/*----------------------------------------------------------------*/
+.data
+
+GLOBAL (data_1596a8)
+		.long	0x0
+GLOBAL (data_1596ac)	/* 0x1596ac */
+		.long	0x0
+GLOBAL (data_1596b0)	/* 0x1596b0 */
+		.long	0x0
+data_1596b4:
+		.long	0x0
+GLOBAL (data_1596b8)
+		.long	0x0
+GLOBAL (data_1596bc)
+		.long	0x0
+GLOBAL (data_1596c0)
+		.long	0x0
+GLOBAL (data_1596c4)
+		.ascii  "\x0a\x0d\x00\x00"
+
+
+
+data_1ea488:
+		.fill   0x8
+GLOBAL (data_1ea490)	/* 0x1ea490 */
+		.long	0x0
+GLOBAL (data_1ea494)
+		.fill   0xc0
+data_1ea554:
+		.long	0x0
+data_1ea558:
+		.fill   0x8
+data_1ea560:
+		.long	0x0
+data_1ea564:
+		.fill   0x8
+data_1ea56c:
+		.long	0x0
+data_1ea570:
+		.fill   0x8
+data_1ea578:
+		.long	0x0
+data_1ea57c:
+		.fill   0x8
+data_1ea584:
+		.long	0x0
+data_1ea588:
+		.fill   0x8
+data_1ea590:
+		.long	0x0
+data_1ea594:
+		.fill   0x8
+data_1ea59c:
+		.long	0x0
+data_1ea5a0:
+		.fill   0x8
+data_1ea5a8:
+		.long	0x0
+data_1ea5ac:
+		.fill   0x68
+data_1ea614:
+		.long	0x0
+data_1ea618:
+		.fill   0x8
+data_1ea620:
+		.long	0x0
+data_1ea624:
+		.fill   0x8
+data_1ea62c:
+		.long	0x0
+data_1ea630:
+		.fill   0x8
+data_1ea638:
+		.long	0x0
+data_1ea63c:
+		.fill   0x98
+data_1ea6d4:
+		.long	0x0
+data_1ea6d8:
+		.fill   0x8
+data_1ea6e0:
+		.long	0x0
+data_1ea6e4:
+		.fill   0x8
+data_1ea6ec:
+		.long	0x0
+data_1ea6f0:
+		.fill   0xa4
+data_1ea794:
+		.long	0x0
+data_1ea798:
+		.fill   0x34
+GLOBAL (data_1ea7cc)
+		.fill   0x2c4
+data_1eaa90:
+		.long	0x0
+data_1eaa94:
+		.fill   0x20
+data_1eaab4:
+		.long	0x0
+data_1eaab8:
+		.fill   0x20
+data_1eaad8:
+		.long	0x0
+data_1eaadc:
+		.fill   0x20
+data_1eaafc:
+		.long	0x0
+data_1eab00:
+		.fill   0x20
+data_1eab20:
+		.long	0x0
+data_1eab24:
+		.fill   0x20
+data_1eab44:
+		.long	0x0
+data_1eab48:
+		.fill   0x188
+data_1eacd0:
+		.long	0x0
+data_1eacd4:
+		.fill   0x20
+data_1eacf4:
+		.long	0x0
+data_1eacf8:
+		.fill   0x20
+data_1ead18:
+		.long	0x0
+data_1ead1c:
+		.fill   0x20
+data_1ead3c:
+		.long	0x0
+data_1ead40:
+		.fill   0x20
+data_1ead60:
+		.long	0x0
+data_1ead64:
+		.fill   0x20
+data_1ead84:
+		.long	0x0
+data_1ead88:
+		.fill   0x20
+data_1eada8:
+		.long	0x0
+data_1eadac:
+		.fill   0x20
+data_1eadcc:
+		.long	0x0
+data_1eadd0:
+		.fill   0x140
+data_1eaf10:
+		.long	0x0
+data_1eaf14:
+		.fill   0x20
+data_1eaf34:
+		.long	0x0
+data_1eaf38:
+		.fill   0x20
+data_1eaf58:
+		.long	0x0
+data_1eaf5c:
+		.fill   0x20
+data_1eaf7c:
+		.long	0x0
+data_1eaf80:
+		.fill   0x1d0
+data_1eb150:
+		.long	0x0
+data_1eb154:
+		.fill   0x20
+data_1eb174:
+		.long	0x0
+data_1eb178:
+		.fill   0x20
+data_1eb198:
+		.long	0x0
+data_1eb19c:
+		.fill   0x1f4
+data_1eb390:
+		.long	0x0
+data_1eb394:
+		.fill   0x47c
+data_1eb810:
+		.long	0x0
+data_1eb814:
+		.fill   0x20
+data_1eb834:
+		.long	0x0
+data_1eb838:
+		.fill   0x20
+data_1eb858:
+		.long	0x0
+data_1eb85c:
+		.fill   0x430
+data_1ebc8c:
+		.long	0x0
+GLOBAL (data_1ebc90)	/* 0x1ebc90 */
+		.fill   0x18
+GLOBAL (data_1ebca8)
+		.long	0x0
+GLOBAL (data_1ebcac)	/* 0x1ebcac */
+		.long	0x0
+GLOBAL (data_1ebcb0)
+		.long	0x0
+GLOBAL (data_1ebcb4)
+		.fill   0x14ba
+data_1ed16e:
+		.long	0x0
+data_1ed172:
+		.fill   0x16
+GLOBAL (data_1ed188)	/* 0x1ed188 */
+		.long	0x0
+GLOBAL (data_1ed18c)
+		.long	0x0
+GLOBAL (data_1ed190)	/* 0x1ed190 */
+		.long	0x0
+data_1ed194:
+		.long	0x0
+GLOBAL (data_1ed198)
+		.long	0x0
+GLOBAL (data_1ed19c)	/* 0x1ed19c */
+		.long	0x0
+GLOBAL (data_1ed1a0)
+		.long	0x0
+GLOBAL (data_1ed1a4)
+		.long	0x0
+GLOBAL (data_1ed1a8)
+		.long	0x0
+data_1ed1ac:
+		.long	0x0
+GLOBAL (data_1ed1b0)
+		.long	0x0
+GLOBAL (data_1ed1b4)	/* 0x1ed1b4 */
+		.fill   0x188
+GLOBAL (data_1ed33c)
+		.long	0x0
+GLOBAL (data_1ed340)
+		.long	0x0
+GLOBAL (data_1ed344)	/* 0x1ed344 */
+		.long	0x0
+GLOBAL (data_1ed348)	/* 0x1ed348 */
+		.long	0x0
+GLOBAL (data_1ed34c)
+		.long	0x0
+GLOBAL (data_1ed350)
+		.long	0x0
+data_1ed354:
+		.long	0x0
+GLOBAL (data_1ed358)
+		.long	0x0
+GLOBAL (data_1ed35c)
+		.long	0x0
+GLOBAL (data_1ed360)
+		.long	0x0
+GLOBAL (data_1ed364)	/* 0x1ed364 */
+		.long	0x0
+data_1ed368:
+		.fill   0x10
+data_1ed378:
+		.byte	0x0
+data_1ed379:
+		.fill   0x8
+data_1ed381:
+		.byte	0x0
+data_1ed382:
+		.fill   0x8
+data_1ed38a:
+		.byte	0x0
+data_1ed38b:
+		.fill   0x8
+data_1ed393:
+		.byte	0x0
+data_1ed394:
+		.fill   0x9
+data_1ed39d:
+		.fill   0x9
+data_1ed3a6:
+		.long	0x0
+data_1ed3aa:
+		.byte	0x0
+data_1ed3ab:
+		.byte	0x0
+GLOBAL (data_1ed3ac)	/* 0x1ed3ac */
+		.fill   0xfe
+data_1ed4aa:
+		.byte	0x0
+data_1ed4ab:
+		.fill   0x101

@@ -351,12 +351,6 @@ void debrief_report_fill(struct DebriefReport *p_rep)
 
 ubyte show_mission_stats(struct ScreenBox *box)
 {
-#if 0
-    ubyte ret;
-    asm volatile ("call ASM_show_mission_stats\n"
-        : "=r" (ret) : "a" (box));
-    return ret;
-#endif
     struct DebriefReport *p_rep;
     ubyte research_ln, scilost_ln;
 
@@ -708,12 +702,6 @@ void draw_mission_mp_players_vals_column(struct ScreenBox *box,
 
 ubyte show_mission_people_stats(struct ScreenBox *box)
 {
-#if 0
-    ubyte ret;
-    asm volatile ("call ASM_show_mission_people_stats\n"
-        : "=r" (ret) : "a" (box));
-    return ret;
-#endif
     struct DebriefReport *p_rep;
 
     p_rep = &curr_report;

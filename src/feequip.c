@@ -153,9 +153,14 @@ void set_flag02_equipment_screen_boxes(void)
 
 TbBool weapon_available_for_purchase(short weapon)
 {
-    return ((weapon != WEP_NULL) && (weapon != WEP_ENERGYSHLD) && (weapon != WEP_NAPALMMINE)
-            && (weapon != WEP_SONICBLAST) && ((weapon != WEP_PERSUADER2) || (background_type != 1))
-            && (research.WeaponsCompleted & (1 << (weapon-1))))
+    struct WeaponDef *wdef;
+
+    if (weapon < 0 || weapon >= WEP_TYPES_COUNT)
+        return false;
+
+    wdef = &weapon_defs[weapon];
+
+    return ((wdef->Flags & WEPDFLG_CanPurchease) && (research.WeaponsCompleted & (1 << (weapon-1))))
             || (login_control__State == 5 && login_control__TechLevel >= weapon_tech_level[weapon]);
 }
 
@@ -398,10 +403,6 @@ void draw_discrete_rects_bar_lv(struct ScreenBoxBase *box, int lv, int lv_max, T
 
 void show_equipment_screen(void)
 {
-#if 0
-    asm volatile ("call ASM_show_equipment_screen\n"
-        :  :  : "eax" );
-#else
     if ((unk11_menu[0].Flags & GBxFlg_Unkn0001) != 0)
     {
         byte_1C4975 = 0;
@@ -530,22 +531,17 @@ void show_equipment_screen(void)
     if (mo_weapon != -1)
     {
         short ms_x, ms_y;
-        struct WeaponDef *wdef;
+        struct TbSprite *spr;
 
-        wdef = &weapon_defs[mo_weapon + 1];
         ms_x = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
         ms_y = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
-        draw_sprite_purple_list(ms_x, ms_y, &unk2_sprites[(wdef->Sprite & 0xFF) + 27]);
+        spr = &unk2_sprites[weapon_sprite_index(mo_weapon + 1, true)];
+        draw_sprite_purple_list(ms_x, ms_y, spr);
     }
-#endif
 }
 
 void init_weapon_anim(ubyte weapon)
 {
-#if 0
-    asm volatile ("call ASM_init_weapon_anim\n"
-        : : "a" (weapon));
-#else
     struct Campaign *p_campgn;
     const char *campgn_mark;
     const char *flic_dir;
@@ -570,15 +566,10 @@ void init_weapon_anim(ubyte weapon)
         sprintf(animations[k].Filename, "%s/wep-%02d%s.fli", flic_dir, (int)weapon, campgn_mark);
     }
     flic_unkn03(2);
-#endif
 }
 
 void weapon_flic_data_to_screen(void)
 {
-#if 0
-    asm volatile ("call ASM_weapon_flic_data_to_screen\n"
-        :  :  : "eax" );
-#else
     short w, h;
 
     w = equip_display_box.Width - 8;
@@ -587,7 +578,6 @@ void weapon_flic_data_to_screen(void)
     LbScreenCopy(unkn_buffer_05, lbDisplay.GraphicsWindowPtr, lbDisplay.GraphicsWindowHeight);
     LbScreenSetGraphicsWindow(0, 0, lbDisplay.GraphicsScreenWidth,
         lbDisplay.GraphicsScreenHeight);
-#endif
 }
 
 void switch_shared_equip_screen_buttons_to_equip(void)
@@ -655,12 +645,6 @@ ubyte equip_offer_can_buy_or_sell(ubyte weapon)
 
 ubyte display_weapon_info(struct ScreenTextBox *box)
 {
-#if 0
-    ubyte ret;
-    asm volatile ("call ASM_display_weapon_info\n"
-        : "=r" (ret) : "a" (box));
-    return ret;
-#else
     short stridx;
     struct ScreenBoxBase categ_box = {box->X + 8, box->Y + 148, 192, 17};
     struct ScreenBoxBase power_box = {box->X + 8, box->Y + 177, 192, 17};
@@ -693,7 +677,7 @@ ubyte display_weapon_info(struct ScreenTextBox *box)
 
     // Weapon category
     if (is_research_weapon_completed(selected_weapon + 1) || (login_control__State != 6))
-        stridx = 59 + (weapon_defs[selected_weapon + 1].Sprite >> 8);
+        stridx = 59 + weapon_defs[selected_weapon + 1].Category;
     else
         stridx = 65;
     draw_text_property_lv(&categ_box, gui_strings[stridx]);
@@ -755,7 +739,6 @@ ubyte display_weapon_info(struct ScreenTextBox *box)
     }
 
     return 0;
-#endif
 }
 
 ubyte show_weapon_name(struct ScreenTextBox *box)
@@ -768,10 +751,116 @@ ubyte show_weapon_name(struct ScreenTextBox *box)
 
 ubyte show_weapon_list(struct ScreenTextBox *box)
 {
-    ubyte ret;
-    asm volatile ("call ASM_show_weapon_list\n"
-        : "=r" (ret) : "a" (box));
-    return ret;
+    int h0;
+    int sheight;
+    short weapon;
+    struct TbSprite *spr;
+
+    if ((box->Flags & 0x8000) == 0)
+    {
+        short w1, w2;
+
+        lbDisplay.DrawFlags = 0x0004;
+        draw_box_purple_list(text_window_x1, text_window_y1,
+          text_window_x2 - text_window_x1 + 1,
+          text_window_y2 - text_window_y1 + 1, 56);
+        lbDisplay.DrawFlags = 0;
+        my_set_text_window(box->X + 4, box->Y + 4,
+          box->Width - 8, box->Height - 8);
+        lbFontPtr = med_font;
+
+        w1 = box->Width;
+        w2 = my_string_width(gui_strings[425]);
+        draw_text_purple_list2((((w1 - w2) >> 1) - 3), 2, gui_strings[425], 0);
+        box->Flags |= 0x8000;
+        copy_box_purple_list(box->X + 4, box->Y - 3,
+          box->Width - 20, box->Height + 6);
+    }
+    my_set_text_window(box->X + 4, box->ScrollWindowOffset + box->Y + 4,
+      box->Width - 20, box->ScrollWindowHeight + 23);
+    lbFontPtr = small_med_font;
+    h0 = 3;
+    spr = &unk2_sprites[15 + 0];
+    sheight = spr->SHeight;
+
+    for (weapon = box->field_38; (weapon < WEP_TYPES_COUNT) && (h0 + sheight < box->ScrollWindowHeight + 23); weapon++)
+    {
+        short msy, msx;
+        short y1, y2;
+        const char *text;
+
+        if (!weapon_available_for_purchase(weapon+1))
+            continue;
+
+        msy = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MouseY : lbDisplay.MouseY;
+        msx = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MouseX : lbDisplay.MouseX;
+
+        y1 = text_window_y1 + h0 - 1;
+        y2 = text_window_y1 + h0 + sheight + 1;
+        if (over_box_coords(msx, msy, text_window_x1, y1, text_window_x2, y2))
+        {
+            if (lbDisplay.LeftButton)
+            {
+                lbDisplay.LeftButton = 0;
+                selected_weapon = weapon;
+                if ( byte_1C4AA0 )
+                {
+                  equip_display_box.Flags |= 0x0080;
+                  equip_display_box.Lines = 0;
+                  if (is_research_weapon_completed(weapon+1) || login_control__State != 6)
+                    equip_display_box.Text = &weapon_text[weapon_text_index[selected_weapon]];
+                  else
+                    equip_display_box.Text = gui_strings[536];
+                  equip_display_box.TextFadePos = -5;
+                }
+                if (is_research_weapon_completed(weapon+1) || login_control__State != 6)
+                {
+                  struct Campaign *p_campgn;
+                  ushort strid;
+
+                  p_campgn = &campaigns[background_type];
+                  strid = p_campgn->WeaponsTextIdShift + weapon;
+                  text = gui_strings[strid];
+                }
+                else
+                {
+                  text = gui_strings[65];
+                }
+                equip_name_box.Text = text;
+                equip_offer_buy_button.Text = gui_strings[436];
+                equip_name_box.TextFadePos = -5;
+                equip_offer_buy_button.CallBackFn = do_equip_offer_buy;
+                sprintf(equip_cost_text, "%d", 100 * weapon_defs[selected_weapon + 1].Cost);
+                init_weapon_anim(selected_weapon);
+            }
+        }
+
+        if (weapon == selected_weapon) {
+            lbDisplay.DrawFlags = 0x0040;
+            lbDisplay.DrawColour = 87;
+        } else {
+            lbDisplay.DrawFlags = 0;
+            lbDisplay.DrawColour = 247;
+        }
+        struct TbSprite *spr;
+
+        spr = &unk2_sprites[weapon_sprite_index(weapon + 1, true)];
+        lbDisplay.DrawFlags |= 0x8000;
+        draw_sprite_purple_list(text_window_x1 + 2, h0 + text_window_y1, spr);
+        lbDisplay.DrawFlags &= ~0x8000;
+        {
+            struct Campaign *p_campgn;
+            ushort strid;
+
+            p_campgn = &campaigns[background_type];
+            strid = p_campgn->WeaponsTextIdShift + weapon;
+            text = gui_strings[strid];
+        }
+        spr = &unk2_sprites[15 + weapon];
+        draw_text_purple_list2(spr->SWidth + 4, h0 + 1, text, 0);
+        h0 += sheight + 3;
+    }
+    return 0;
 }
 
 ubyte show_weapon_slots(struct ScreenBox *box)
@@ -849,10 +938,6 @@ void init_equip_screen_boxes(void)
 
 void init_equip_screen_shapes(void)
 {
-#if 0
-    asm volatile ("call ASM_init_equip_screen_shapes\n"
-        :  :  : "eax" );
-#else
     ushort i, k;
     short x, y;
     short scr_w, start_x;
@@ -910,7 +995,6 @@ void init_equip_screen_shapes(void)
         unk11_menu[i].Colour = 247;
         unk11_menu[i].BGColour = 4;
     }
-#endif
 }
 
 void reset_equip_screen_boxes_flags(void)

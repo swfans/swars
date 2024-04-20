@@ -6719,33 +6719,6 @@ GLOBAL_FUNC (ASM_set_smack_free)
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (ASM_play_smk)
-/*----------------------------------------------------------------*/
-		push   %ecx
-		xor    %cl,%cl
-		mov    %cl,EXPORT_SYMBOL(lbDisplay)+106 # lbDisplay.MLeftButton
-		mov    smack_draw_callback,%ecx
-		test   %ecx,%ecx
-		jne    jump_eb198
-		test   $0x84,%bl
-		je     jump_eb1a2
-	jump_eb198:
-		and    $0xfe,%bh
-		call   ac_play_smk_via_buffer
-		pop    %ecx
-		ret
-	jump_eb1a2:
-		mov    EXPORT_SYMBOL(lbDisplay)+100,%cx # lbDisplay.ScreenMode
-		cmp    $0x1,%ecx
-		je     jump_eb1b1
-		and    $0xfe,%bh
-	jump_eb1b1:
-		call   ac_play_smk_direct
-		pop    %ecx
-		ret
-
-
-/*----------------------------------------------------------------*/
 /* long play_smk_direct(char *, long , long)
  */
 GLOBAL_FUNC (ASM_play_smk_direct)

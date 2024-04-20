@@ -42,10 +42,7 @@ TbResult play_smk_via_buffer(const char *fname, ulong smkflags, ushort plyflags,
 TbResult play_smk(const char *fname, ulong smkflags, ushort plyflags)
 {
     TbResult ret;
-#if 0
-    asm volatile ("call ASM_play_smk\n"
-        : "=r" (ret) : "a" (fname), "d" (smkflags), "b" (plyflags));
-#else
+
     lbDisplay.MLeftButton = 0;
     if ( (smack_draw_callback != NULL) || ((plyflags & SMK_PixelDoubleWidth) != 0)
         /*|| ((plyflags & SMK_InterlaceLine) != 0)*/ || ((plyflags & SMK_PixelDoubleLine) != 0)
@@ -57,7 +54,6 @@ TbResult play_smk(const char *fname, ulong smkflags, ushort plyflags)
           plyflags &= ~SMK_UnknFlag100;
         ret = play_smk_direct(fname, smkflags, plyflags, lbDisplay.ScreenMode);
     }
-#endif
     return ret;
 }
 

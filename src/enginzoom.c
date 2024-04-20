@@ -23,14 +23,6 @@
 #include "swlog.h"
 /******************************************************************************/
 
-/** Smallest size of render area. Must be even to avoid shifted terrain.
- */
-#define RENDER_AREA_MIN 2
-
-/** Largest size of render area. Must be even to avoid shifted terrain.
- */
-#define RENDER_AREA_MAX 88
-
 short user_zoom_min = 127;
 short user_zoom_max = 260;
 

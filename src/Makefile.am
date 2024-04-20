@@ -1,5 +1,5 @@
 bin_PROGRAMS = swars
-bindir = $(prefix)/opt/$(PACKAGE)
+bindir = $(prefix)/$(PACKAGE)
 
 MKW = $(PYTHON) $(top_srcdir)/util/mkwrappers
 
@@ -166,6 +166,8 @@ swars_SOURCES = \
 	game_data.h \
 	game.h \
 	globals.h \
+	joy_modul1.sx \
+	joy_modul2.sx \
 	keyboard.c \
 	keyboard.h \
 	lvobjctv.c \
@@ -177,6 +179,8 @@ swars_SOURCES = \
 	matrix.h \
 	mouse.c \
 	mouse.h \
+	netipx1.sx \
+	netser1.sx \
 	network.c \
 	network.h \
 	pathtrig.c \
@@ -190,6 +194,9 @@ swars_SOURCES = \
 	pepgroup.h \
 	player.c \
 	player.h \
+	radica1.sx \
+	radica2.sx \
+	radica3.sx \
 	research.c \
 	research.h \
 	rules.c \
@@ -266,7 +273,7 @@ endif
 # Include dynamic libraries in the package
 if TARGET_WINDOWS
 install-exec-hook:
-	mkdir -p "$(DESTDIR)${prefix}/opt/$(PACKAGE)"
+	mkdir -p "$(DESTDIR)${prefix}/$(PACKAGE)"
 	## Find main executable dependencies
 	$(eval lib_SHARED_INSTALL := $(shell objdump -p swars$(EXEEXT) | \
 		sed -n 's/\s*\(DLL Name:\|NEEDED\)\s*\(.*\)$$/\2/p' | \
@@ -278,7 +285,7 @@ install-exec-hook:
 		xargs -I {} find $(shell dirname $(shell which ${CXX})) -name '{}'))
 	## Remove duplicates
 	$(eval lib_SHARED_INSTALL := $(sort $(lib_SHARED_INSTALL)))
-	cp $(lib_SHARED_INSTALL) $(DESTDIR)${prefix}/opt/$(PACKAGE)
+	cp $(lib_SHARED_INSTALL) $(DESTDIR)${prefix}/$(PACKAGE)
 endif
 
 CLEANFILES = wrappers_*.sx

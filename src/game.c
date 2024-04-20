@@ -250,12 +250,19 @@ extern ushort netgame_agent_pos_y[8][4];
 
 extern ubyte byte_153198;
 
+extern ubyte byte_1C497B;
+extern ubyte byte_1C497C;
+extern ubyte byte_1C497D;
+extern ubyte month_days[12];
+
 extern ubyte unkn_changing_color_1;
 extern ubyte unkn_changing_color_2;
 extern ulong unkn_changing_color_counter1;
 
 extern short brightness;
 extern long game_speed;
+
+extern short super_quick_light[(RENDER_AREA_MAX+1)*(RENDER_AREA_MAX+1)];
 
 //TODO this is not an extern only because I was unable to locate it in asm
 ushort next_bezier_pt = 1;
@@ -316,10 +323,6 @@ void PacketRecord_Close(void)
 
 void PacketRecord_OpenWrite(void)
 {
-#if 0
-    asm volatile ("call ASM_PacketRecord_OpenWrite\n"
-        :  :  : "eax" );
-#endif
     char fname[DISKPATH_SIZE];
     struct Mission *p_missi;
     struct PacketFileHead head;
@@ -539,10 +542,6 @@ void colour_tables_ghost_fixup(void)
 
 void game_setup_stuff(void)
 {
-#if 0
-    asm volatile ("call ASM_game_setup_stuff\n"
-        :  :  : "eax" );
-#else
     TbFileHandle fh;
     ushort i;
 
@@ -559,7 +558,6 @@ void game_setup_stuff(void)
     colour_brown2 = LbPaletteFindColour(display_palette, 42, 37, 30);
     colour_grey2 = LbPaletteFindColour(display_palette, 32, 32, 32);
     colour_grey1 = LbPaletteFindColour(display_palette, 16, 16, 16);
-#endif
 }
 
 void smack_malloc_free_all(void)
@@ -575,10 +573,6 @@ void flic_unkn03(ubyte a1)
 
 void update_danger_music(ubyte a1)
 {
-#if 0
-    asm volatile ("call ASM_update_danger_music\n"
-        :  : "a" (a1));
-#else
     short hurt_agents;
     struct Thing *p_agent;
 
@@ -606,7 +600,7 @@ void update_danger_music(ubyte a1)
             for (i = 0; i < playable_agents; i++)
             {
                 p_agent = players[local_player_no].MyAgent[i];
-                if (((p_agent->Flag & 0x02) == 0) &&
+                if (((p_agent->Flag & TngF_Unkn0002) == 0) &&
                   (p_agent->Health < p_agent->U.UPerson.MaxHealth / 2)) {
                     dword_1DDECC = -100;
                     hurt_agents++;
@@ -634,7 +628,6 @@ void update_danger_music(ubyte a1)
         }
     }
     ingame.fld_unkC8B = 0;
-#endif
 }
 
 void cover_screen_rect_with_sprite(short x, short y, ushort w, ushort h, struct TbSprite *spr)
@@ -789,10 +782,6 @@ static void clear_smacker_skip_keys(void)
 
 void play_smacker(ushort vid_type)
 {
-#if 0
-    asm volatile ("call ASM_play_smacker\n"
-        : : "a" ((int)vid_type));
-#else
     char fname[FILENAME_MAX];
     TbScreenMode scr_md_fmvid;
     TbBool prepare_draw_on_last_frame;
@@ -853,7 +842,6 @@ void play_smacker(ushort vid_type)
     }
     game_hacky_update();
     clear_smacker_skip_keys();
-#endif
 }
 
 void play_smacker_then_back_to_engine(ushort vid_type)
@@ -1071,10 +1059,6 @@ int load_people_text(ubyte *buf)
 
 void load_outro_sprites(void)
 {
-#if 0
-    asm volatile ("call ASM_load_outro_sprites\n"
-        :  :  : "eax" );
-#endif
     ubyte *data_buf;
     ubyte *outtxt_ptr;
     ubyte *peptxt_ptr;
@@ -1175,6 +1159,13 @@ void global_3d_store(int action)
     }
 }
 
+void fill_netgame_agent_pos(int player, int group, int num_agents)
+{
+    asm volatile (
+      "call ASM_fill_netgame_agent_pos\n"
+        : : "a" (player), "d" (group), "b" (num_agents));
+}
+
 void unkn_f_pressed_func(void)
 {
     short thing;
@@ -1202,8 +1193,8 @@ void unkn_f_pressed_func(void)
             if (!is_command_any_until(p_cmd))
             {
                 if (p_cmd_prev != NULL)
-                    p_cmd_prev->Flags |= PCmdF_Unkn0002;
-                p_cmd->Flags |= PCmdF_Unkn0004;
+                    p_cmd_prev->Flags |= PCmdF_RunUntil;
+                p_cmd->Flags |= PCmdF_IsUntil;
             }
             p_cmd_prev = p_cmd;
             cmd = p_cmd->Next;
@@ -1282,10 +1273,6 @@ void traffic_unkn_func_01(void)
 
 void process_tank_turret(struct Thing *p_tank)
 {
-#if 0
-    asm volatile ("call ASM_process_tank_turret\n"
-        : : "a" (p_tank));
-#else
     struct Thing *p_turret;
     int target_x, target_y;
     int turret;
@@ -1363,7 +1350,6 @@ void process_tank_turret(struct Thing *p_tank)
     p_turret->U.UMGun.AngleY -= dt_angle;
     p_tank->OldTarget = abs(angle);
     p_turret->U.UMGun.AngleY = (p_turret->U.UMGun.AngleY + 2*LbFPMath_PI) & LbFPMath_AngleMask;
-#endif
 }
 
 /** Step overall scale towards given zoom value.
@@ -1399,10 +1385,6 @@ void process_overall_scale(int zoom)
 
 void process_view_inputs(int thing)
 {
-#if 0
-    asm volatile ("call ASM_process_view_inputs\n"
-        : : "a" (thing));
-#else
     struct Thing *p_person;
     int zoom;
 
@@ -1415,7 +1397,6 @@ void process_view_inputs(int thing)
         zoom = ingame.UserZoom;
 
     process_overall_scale(zoom);
-#endif
 }
 
 void process_engine_unk1(void)
@@ -1474,11 +1455,6 @@ void draw_text_transformed_at_ground(int a1, int a2, const char *text)
 
 void SCANNER_unkn_func_200(struct TbSprite *spr, int x, int y, ubyte col)
 {
-#if 0
-    asm volatile (
-      "call ASM_SCANNER_unkn_func_200\n"
-        : : "a" (spr), "d" (x), "b" (y), "c" (col));
-#else
     int xwind_beg;
     int xwind_end;
     int xwind_start;
@@ -1581,17 +1557,11 @@ void SCANNER_unkn_func_200(struct TbSprite *spr, int x, int y, ubyte col)
             oline += 2 * opitch;
         }
     }
-#endif
 }
 
 
 void SCANNER_unkn_func_201(struct TbSprite *spr, int x, int y, ubyte *fade)
 {
-#if 0
-    asm volatile (
-      "call ASM_SCANNER_unkn_func_201\n"
-        : : "a" (spr), "d" (x), "b" (y), "c" (fade));
-#endif
     ubyte *oline;
     ubyte *dt;
     int ich;
@@ -1636,12 +1606,6 @@ void SCANNER_unkn_func_201(struct TbSprite *spr, int x, int y, ubyte *fade)
 
 void SCANNER_unkn_func_202(struct TbSprite *spr, int x, int y, int ctr, int bri)
 {
-#if 0
-    asm volatile (
-      "push %4\n"
-      "call ASM_SCANNER_unkn_func_202\n"
-        : : "a" (spr), "d" (x), "b" (y), "c" (ctr), "g" (bri));
-#endif
     ubyte *oline;
     ubyte *dt;
     int ich;
@@ -1796,11 +1760,6 @@ void draw_new_panel_sprite_dark(int px, int py, ulong spr_id)
  */
 void draw_fourpack_amount(short x, ushort y, ushort amount)
 {
-#if 0
-    asm volatile (
-      "call ASM_draw_fourpack_amount\n"
-        : : "a" (x), "d" (y), "b" (amount));
-#else
     // We're expecting to draw 4 items; 8 are supported mostly to signal an issue
     static short dtx[] = {0+10, 0+10, 72-10, 72-10, 0+16, 0+16, 72-16, 72-16,};
     static short dty[] = {0+4, 22-4, 0+4, 22-4, 0+4, 22-4, 0+4, 22-4,};
@@ -1819,7 +1778,6 @@ void draw_fourpack_amount(short x, ushort y, ushort amount)
       else
           LbDrawBox(x + dtx[i], y + dty[i], 4, 4, col);
     }
-#endif
 }
 
 /**
@@ -1832,11 +1790,6 @@ void draw_fourpack_amount(short x, ushort y, ushort amount)
  */
 void draw_fourpack_items(int a1, ushort y, short plagent, short wtype)
 {
-#if 0
-    asm volatile (
-      "call ASM_draw_fourpack_items\n"
-        : : "a" (a1), "d" (y), "b" (plagent), "c" (wtype));
-#else
     ushort fp;
 
     fp = weapon_fourpack_index(wtype);
@@ -1845,7 +1798,6 @@ void draw_fourpack_items(int a1, ushort y, short plagent, short wtype)
         p_locplayer = &players[local_player_no];
         draw_fourpack_amount(a1, y, p_locplayer->FourPacks[fp][plagent]);
     }
-#endif
 }
 
 sbyte find_nth_weapon_held(ushort index, ubyte n)
@@ -1893,7 +1845,7 @@ TbBool draw_panel_pickable_thing_below_agent(struct Thing *p_agent)
             lbDisplay.DrawFlags = 0;
             weptype = p_pickup->U.UWeapon.WeaponType;
             if (weptype)
-                draw_new_panel_sprite_std(548, 364, weapon_defs[weptype].Sprite & 0xFF);
+                draw_new_panel_sprite_std(548, 364, weapon_sprite_index(weptype, false));
             else
                 draw_new_panel_sprite_std(548, 364, 70);
             draw_new_panel_sprite_std(540, 360, 12);
@@ -1921,7 +1873,7 @@ TbBool draw_panel_pickable_thing_player_targeted(PlayerInfo *p_locplayer)
             p_pickup = &sthings[thing];
             weptype = p_pickup->U.UWeapon.WeaponType;
             if (weptype)
-                draw_new_panel_sprite_std(548, 364, weapon_defs[weptype].Sprite & 0xFF);
+                draw_new_panel_sprite_std(548, 364, weapon_sprite_index(weptype, false));
             else
                 draw_new_panel_sprite_std(548, 364, 70);
             draw_new_panel_sprite_std(540, 360, 12);
@@ -1997,7 +1949,7 @@ TbBool draw_weapons_list_single(PlayerInfo *p_locplayer, ushort plagent, ulong w
     wepflags = weapons_carried;
     cy = 36;
     nchecked = 0;
-    for (weptype = 0; weptype < WEP_TYPES_COUNT; weptype++, wepflags >>= 1)
+    for (weptype = 1; weptype < WEP_TYPES_COUNT; weptype++, wepflags >>= 1)
     {
         if (wepflags == 0)
             break;
@@ -2012,7 +1964,7 @@ TbBool draw_weapons_list_single(PlayerInfo *p_locplayer, ushort plagent, ulong w
             }
             lbDisplay.DrawFlags = 0;
 
-            if (!p_locplayer->WepDelays[plagent][weptype + 1] || (gameturn & 1))
+            if (!p_locplayer->WepDelays[plagent][weptype] || (gameturn & 1))
             {
                 if (nshown == 6)
                     draw_new_panel_sprite_std(22, cy, 13);
@@ -2020,12 +1972,12 @@ TbBool draw_weapons_list_single(PlayerInfo *p_locplayer, ushort plagent, ulong w
                     draw_new_panel_sprite_std(22, cy, 12);
             }
 
-            if (!p_locplayer->WepDelays[plagent][weptype + 1] || (gameturn & 1))
-                draw_new_panel_sprite_std(30, cy + 4, weapon_defs[weptype+1].Sprite & 0xFF);
-            if (weptype+1 == current_weapon)
+            if (!p_locplayer->WepDelays[plagent][weptype] || (gameturn & 1))
+                draw_new_panel_sprite_std(30, cy + 4, weapon_sprite_index(weptype, false));
+            if (weptype == current_weapon)
             {
                 lbDisplay.DrawFlags = 0;
-                draw_new_panel_sprite_std(30, cy + 4, (weapon_defs[weptype+1].Sprite & 0xFF) + 27);
+                draw_new_panel_sprite_std(30, cy + 4, weapon_sprite_index(weptype, true));
             }
             if (!lbDisplay.MRightButton)
             {
@@ -2037,11 +1989,11 @@ TbBool draw_weapons_list_single(PlayerInfo *p_locplayer, ushort plagent, ulong w
                 {
                     lbDisplay.DrawFlags = 0;
                     ret = true;
-                    p_locplayer->PanelItem[mouser] = weptype + 1;
+                    p_locplayer->PanelItem[mouser] = weptype;
                     draw_new_panel_sprite_std(22, cy, 90);
                 }
             }
-            draw_fourpack_items(22, cy, plagent, weptype + 1);
+            draw_fourpack_items(22, cy, plagent, weptype);
             cy += 28;
             ++nchecked;
             ++nshown;
@@ -2123,7 +2075,7 @@ short draw_current_weapon_button(PlayerInfo *p_locplayer, short nagent)
                         SCANNER_unkn_func_202(spr, cx, cy,
                             ingame.Scanner.Contrast, ingame.Scanner.Brightness);
                 }
-                draw_new_panel_sprite_dark(cx, cy, (weapon_defs[curwep].Sprite & 0xFF) + 27);
+                draw_new_panel_sprite_dark(cx, cy, weapon_sprite_index(curwep, true));
             }
             else
             {
@@ -2138,7 +2090,7 @@ short draw_current_weapon_button(PlayerInfo *p_locplayer, short nagent)
                         SCANNER_unkn_func_202(spr, cx, cy,
                             ingame.Scanner.Contrast, ingame.Scanner.Brightness);
                 }
-                draw_new_panel_sprite_std(cx, cy, (weapon_defs[curwep].Sprite & 0xFF) + 27);
+                draw_new_panel_sprite_std(cx, cy, weapon_sprite_index(curwep, true));
             }
             draw_fourpack_items(cx - 8, cy - 4, nagent, curwep);
         }
@@ -2151,9 +2103,9 @@ short draw_current_weapon_button(PlayerInfo *p_locplayer, short nagent)
             struct Thing *p_agent;
             p_agent = p_locplayer->MyAgent[nagent];
             if (p_agent->State == PerSt_PROTECT_PERSON)
-                draw_new_panel_sprite_dark(cx, cy, weapon_defs[curwep].Sprite & 0xFF);
+                draw_new_panel_sprite_dark(cx, cy, weapon_sprite_index(curwep, false));
             else
-                draw_new_panel_sprite_std(cx, cy, weapon_defs[curwep].Sprite & 0xFF);
+                draw_new_panel_sprite_std(cx, cy, weapon_sprite_index(curwep, false));
             draw_fourpack_items(cx - 8, cy - 4, nagent, curwep);
         }
     }
@@ -2209,9 +2161,9 @@ TbBool draw_agent_weapons_selection(PlayerInfo *p_locplayer, struct Thing *p_age
         if (!p_locplayer->WepDelays[plagent][weptype + 1] || (gameturn & 1))
         {
             if (!nchecked)
-                draw_new_panel_sprite_std(cx + 24, cy + 12, weapon_defs[weptype + 1].Sprite & 0xFF);
+                draw_new_panel_sprite_std(cx + 24, cy + 12, weapon_sprite_index(weptype+1, false));
             else
-                draw_new_panel_sprite_std(cx + 8, cy + 8, weapon_defs[weptype + 1].Sprite & 0xFF);
+                draw_new_panel_sprite_std(cx + 8, cy + 8, weapon_sprite_index(weptype+1, false));
         }
         dcx = 0;
         dcy = 0;
@@ -2284,12 +2236,6 @@ short direct_control_thing_for_player(short plyr)
 
 TbBool func_1caf8(void)
 {
-#if 0
-    TbBool ret;
-    asm volatile ("call ASM_func_1caf8\n"
-        : "=r" (ret) : );
-    return ret;
-#else
     TbBool ret;
     PlayerInfo *p_locplayer;
     struct Thing *p_agent;
@@ -2343,15 +2289,10 @@ TbBool func_1caf8(void)
 
     lbDisplay.DrawFlags = 0;
     return ret;
-#endif
 }
 
 void draw_agent_grouping_bars(void)
 {
-#if 0
-    asm volatile ("call ASM_draw_agent_grouping_bars\n"
-        :  :  : "eax" );
-#else
     struct Thing *p_thing;
     short dcthing;
     short i, n;
@@ -2387,7 +2328,6 @@ void draw_agent_grouping_bars(void)
                 LbSpriteDraw_1(4, 89 + 2 * (107 - 6 * n), &pop1_sprites[69]);
         }
     }
-#endif
 }
 
 void func_702c0(int a1, int a2, int a3, int a4, int a5, ubyte a6)
@@ -2401,11 +2341,6 @@ void func_702c0(int a1, int a2, int a3, int a4, int a5, ubyte a6)
 
 void draw_shield_level(short x, short y, ushort w, ushort h)
 {
-#if 0
-    asm volatile (
-      "call ASM_draw_shield_level\n"
-        : : "a" (x), "d" (y), "b" (w), "c" (h));
-#else
     ubyte m;
     long waftx, wafty;
     ushort tmx, tmy;
@@ -2451,20 +2386,10 @@ void draw_shield_level(short x, short y, ushort w, ushort h)
     if (vec_mode == 2)
         vec_mode = 27;
     draw_trigpoly(&point4.pp, &point2.pp, &point3.pp);
-#endif
 }
 
 void draw_health_level(short x, short y, ushort w, ushort h, short lv, ushort lvmax, ubyte col, ubyte a8)
 {
-#if 0
-    asm volatile (
-      "push %7\n"
-      "push %6\n"
-      "push %5\n"
-      "push %4\n"
-      "call ASM_draw_health_level\n"
-        : : "a" (x), "d" (y), "b" (w), "c" (h), "g" (lv), "g" (lvmax), "g" (col), "g" (a8));
-#else
     short cw, ch;
 
     if ((lv <= 0) || (lvmax == 0))
@@ -2506,20 +2431,10 @@ void draw_health_level(short x, short y, ushort w, ushort h, short lv, ushort lv
             ++cy;
         }
     }
-#endif
 }
 
 void func_1eae4(int x, short y, int w, ushort h, short lv, ushort lvmax, ubyte col, int a8)
 {
-#if 0
-    asm volatile (
-      "push %7\n"
-      "push %6\n"
-      "push %5\n"
-      "push %4\n"
-      "call ASM_func_1eae4\n"
-        : : "a" (x), "d" (y), "b" (w), "c" (h), "g" (lv), "g" (lvmax), "g" (col), "g" (a8));
-#else
     short cw, ch;
 
     if ((lv <= 0) || (lvmax == 0))
@@ -2564,17 +2479,10 @@ void func_1eae4(int x, short y, int w, ushort h, short lv, ushort lvmax, ubyte c
             ++cy;
         }
     }
-#endif
 }
 
 void draw_mood_level(short x, short y, ushort w, int h, short value)
 {
-#if 0
-    asm volatile (
-      "push %4\n"
-      "call ASM_draw_mood_level\n"
-        : : "a" (x), "d" (y), "b" (w), "c" (h), "g" (value));
-#else
     short cent_x;
     short cur_x, cur_y;
     TbPixel col;
@@ -2615,18 +2523,10 @@ void draw_mood_level(short x, short y, ushort w, int h, short value)
             cur_y++;
         }
     }
-#endif
 }
 
 void draw_mood_limits(short x, short y, short w, short h, short value, short maxval)
 {
-#if 0
-    asm volatile (
-      "push %5\n"
-      "push %4\n"
-      "call ASM_draw_mood_limits\n"
-        : : "a" (x), "d" (y), "b" (w), "c" (h), "g" (value), "g" (maxval));
-#else
     short scaled_val;
     short curr_x;
     TbPixel col;
@@ -2648,16 +2548,10 @@ void draw_mood_limits(short x, short y, short w, short h, short value, short max
         LbDrawLine(curr_x >> 1, 2 * y >> 1, (curr_x - 4) >> 1, 2 * (y + h) >> 1, col);
     else
         LbDrawLine(curr_x, 2 * y, curr_x - 4, 2 * (y + h), col);
-#endif
 }
 
 void draw_energy_bar(int x1, int y1, int len_mul, int len_div)
 {
-#if 0
-    asm volatile (
-      "call ASM_draw_energy_bar\n"
-        : : "a" (x1), "d" (y1), "b" (len_mul), "c" (len_div));
-#else
     short scaled_val;
     short w, h;
     TbPixel col;
@@ -2690,15 +2584,10 @@ void draw_energy_bar(int x1, int y1, int len_mul, int len_div)
         h = y1 - scaled_val;
         LbDrawLine(x1 + 3, y1, w, h, col);
     }
-#endif
 }
 
 void draw_new_panel()
 {
-#if 0
-    asm volatile ("call ASM_draw_new_panel\n"
-        :  :  : "eax" );
-#else
     int i;
     PlayerInfo *p_locplayer;
 
@@ -2972,7 +2861,6 @@ void draw_new_panel()
             x += 89;
         draw_new_panel_sprite_std(4, x, 91);
     }
-#endif
 }
 
 void draw_object_face1a(ushort a1)
@@ -3081,11 +2969,6 @@ static void draw_droplet(TbPixel *o, short scanln, short w, short h, TbPixel *co
 
 void draw_falling_rain(int frm)
 {
-#if 0
-    asm volatile (
-      "call ASM_draw_falling_rain\n"
-        : : "a" (frm));
-#endif
     ulong icol;
     short limit_y;
     ushort rnd, m;
@@ -3229,10 +3112,6 @@ void draw_screen_number(ushort a1)
 
 void draw_screen(void)
 {
-#if 0
-    asm volatile ("call ASM_draw_screen\n"
-        :  :  : "eax" );
-#endif
     ushort *p_bucket;
     ushort iidx;
     struct DrawItem *itm;
@@ -3422,6 +3301,75 @@ void draw_screen(void)
     p_current_draw_item = &game_draw_list[1];
 }
 
+#define SUPER_QUICK_RADIUS 5
+void apply_super_quick_light(short lx, short lz, ushort b, ubyte *mapwho_lights)
+{
+    short tile_x_beg, tile_x_end;
+    short tile_z_beg, tile_z_end;
+    short tile_x, tile_z;
+    int mapcor_x, mapcor_z;
+    short ratile_x_beg, ratile_z_beg;
+    short ratile_x, ratile_z;
+
+    tile_z_beg = MAPCOORD_TO_TILE(lz) - SUPER_QUICK_RADIUS/2;
+    tile_x_beg = MAPCOORD_TO_TILE(lx) - SUPER_QUICK_RADIUS/2;
+    if (tile_z_beg <= -SUPER_QUICK_RADIUS || tile_z_beg >= MAP_TILE_HEIGHT)
+        return;
+    if (tile_x_beg <= -SUPER_QUICK_RADIUS || tile_x_beg >= MAP_TILE_WIDTH)
+        return;
+
+    mapcor_z = TILE_TO_MAPCOORD(render_area_b,0) / 2;
+    mapcor_x = TILE_TO_MAPCOORD(render_area_a,0) / 2;
+    if ((lz <= engn_zc - mapcor_z) || (lz >= engn_zc + mapcor_z))
+        return;
+    if ((lx <= engn_xc - mapcor_x) || (lx >= engn_xc + mapcor_x))
+        return;
+
+    ratile_z_beg = (render_area_b >> 1) - MAPCOORD_TO_TILE(engn_zc);
+    if (ratile_z_beg > 0) // required to avoid shifting light to terrain near map border
+        ratile_z_beg = 0;
+    ratile_z_beg += tile_z_beg;
+    ratile_x_beg = (render_area_a >> 1) - MAPCOORD_TO_TILE(engn_xc);
+    ratile_x_beg += tile_x_beg;
+    tile_x_end = tile_x_beg + SUPER_QUICK_RADIUS;
+    tile_z_end = tile_z_beg + SUPER_QUICK_RADIUS;
+
+    for (tile_z = tile_z_beg, ratile_z = ratile_z_beg; tile_z < tile_z_end; tile_z++, ratile_z++)
+    {
+        mapcor_z = TILE_TO_MAPCOORD(tile_z,0);
+        for (tile_x = tile_x_beg, ratile_x = ratile_x_beg; tile_x < tile_x_end; tile_x++, ratile_x++)
+        {
+            short *p_sqlight;
+            int f, dist;
+            short intensity;
+
+            mapcor_x = TILE_TO_MAPCOORD(tile_x,0);
+
+            if (ratile_x < 0 || ratile_x >= render_area_a)
+                continue;
+            if (ratile_z < 0 || ratile_z >= render_area_b)
+                continue;
+            if (tile_x < 0 || tile_x >= MAP_TILE_WIDTH)
+                continue;
+            if (tile_z < 0 || tile_z >= MAP_TILE_HEIGHT)
+                continue;
+
+            p_sqlight = &super_quick_light[ratile_x + render_area_a * ratile_z];
+
+            dist = (mapcor_x - lx) * (mapcor_x - lx)
+                + (mapcor_z - lz) * (mapcor_z - lz);
+            if (dist > 0)
+              f = 1088608 / dist;
+            else
+              f = 32;
+            intensity = b * f >> 5;
+            if (intensity > 32)
+                intensity = 32;
+            *p_sqlight += intensity;
+        }
+    }
+}
+
 void process_engine_unk3(void)
 {
     asm volatile ("call ASM_process_engine_unk3\n"
@@ -3452,11 +3400,6 @@ void func_cc0d4(char **str)
 
 void init_outro(void)
 {
-#if 0
-    asm volatile ("call ASM_init_outro\n"
-        : : );
-    return;
-#else
     TbClockMSec last_loop_time;
     const char *text1;
     const char *text2;
@@ -3575,7 +3518,6 @@ void init_outro(void)
     StopAllSamples();
     reset_heaps();
     setup_heaps(2);
-#endif
 }
 
 void load_pop_sprites_lo(void)
@@ -3789,11 +3731,6 @@ void beefup_all_agents(PlayerInfo *p_locplayer)
 
 void game_graphics_inputs(void)
 {
-#if 0
-    asm volatile ("call ASM_game_graphics_inputs\n"
-        : : );
-    return;
-#else
     PlayerInfo *p_locplayer;
 
     p_locplayer = &players[local_player_no];
@@ -3832,15 +3769,10 @@ void game_graphics_inputs(void)
         lbKeyOn[KC_F8] = 0;
         screen_mode_switch_to_next();
     }
-#endif
 }
 
 void init_syndwars(void)
 {
-#if 0
-    asm volatile ("call ASM_init_syndwars\n"
-        :  :  : "eax" );
-#endif
     //char locstr[100];
     AudioInitOptions audOpts;
 
@@ -4065,10 +3997,6 @@ void apply_user_settings(void)
 
 void read_user_settings(void)
 {
-#if 0
-    asm volatile ("call ASM_read_user_settings\n"
-        :  :  : "eax" );
-#else
     char fname[52];
     TbFileHandle fh;
     TbBool read_mortal_salt_backup;
@@ -4150,17 +4078,10 @@ void read_user_settings(void)
         i = joy_func_067(&joy, byte_1C4A9F);
     if (i != 1)
         byte_1C4A9F = 0;
-#endif
 }
 
 ubyte save_user_settings(void)
 {
-#if 0
-    TbBool ret;
-    asm volatile ("call ASM_save_user_settings\n"
-        : "=r" (ret) : );
-    return ret;
-#endif
     char fname[52];
     TbFileHandle fh;
     int i;
@@ -4269,10 +4190,6 @@ void simulated_level(void)
  */
 void init_player(void)
 {
-#if 0
-    asm volatile ("call ASM_init_player\n"
-        :  :  : "eax" );
-#endif
     PlayerInfo *p_locplayer;
     int i;
 
@@ -4370,12 +4287,6 @@ struct Thing *new_sim_person(int x, int y, int z, ubyte subtype)
 
 ushort make_group_into_players(ushort group, ushort plyr, ushort max_agent, short new_type)
 {
-#if 0
-    ushort ret;
-    asm volatile ("call ASM_make_group_into_players\n"
-        : "=r" (ret) : "a" (group), "d" (plyr), "b" (max_agent), "c" (new_type));
-    return ret;
-#endif
     ulong n, nframe;
     ushort plagent, high_tier;
     PlayerInfo *p_player;
@@ -4529,10 +4440,6 @@ int place_default_player(ushort player_id, TbBool replace)
 
 void place_single_player(void)
 {
-#if 0
-    asm volatile ("call ASM_place_single_player\n"
-        :  :  : "eax" );
-#endif
     PlayerInfo *p_locplayer;
     ulong n;
     ushort nagents, pl_agents, pl_group;
@@ -5004,12 +4911,8 @@ void draw_triangle_purple_list(int x1, int y1, int x2, int y2, int x3, int y3, T
         : : "a" (x1), "d" (y1), "b" (x2), "c" (y2), "g" (x3), "g" (y3), "g" (colour));
 }
 
-void ASM_show_game_engine(void);
 void show_game_engine(void)
 {
-#if 0
-    ASM_show_game_engine();
-#endif
     int zoom;
     short dcthing;
 
@@ -5029,16 +4932,16 @@ void show_game_engine(void)
     setup_engine_nullsub4();
 }
 
-void ASM_gproc3_unknsub2(void);
 void gproc3_unknsub2(void)
 {
-    ASM_gproc3_unknsub2();
+    asm volatile ("call ASM_gproc3_unknsub2\n"
+        :  :  : "eax" );
 }
 
-void ASM_BAT_play(void);
 void BAT_play(void)
 {
-    ASM_BAT_play();
+    asm volatile ("call ASM_BAT_play\n"
+        :  :  : "eax" );
 }
 
 TbResult init_read_all_sprite_files(void)
@@ -5048,16 +4951,6 @@ TbResult init_read_all_sprite_files(void)
         : "=r" (ret) : );
     return ret;
 }
-
-#if 0
-TbPixel LbPaletteFindColour(ubyte *pal, ubyte rval, ubyte gval, ubyte bval)
-{
-    TbResult ret;
-    asm volatile ("call ASM_LbPaletteFindColour\n"
-        : "=r" (ret) : "a" (pal), "d" (rval), "b" (gval), "c" (bval));
-    return ret;
-}
-#endif
 
 ubyte change_panel_permutation(ubyte click)
 {
@@ -5197,12 +5090,6 @@ TbBool save_game_decrypt_and_verify(ulong fmtver, int slot, ubyte *save_buf, ulo
 
 ubyte load_game(int slot, char *desc)
 {
-#if 0
-    ubyte ret;
-    asm volatile ("call ASM_load_game\n"
-        : "=r" (ret) : "a" (slot), "d" (desc));
-    return ret;
-#else
     char str[52];
     ulong gblen, fmtver, decrypt_verify;
     TbFileHandle fh;
@@ -5491,7 +5378,7 @@ ubyte load_game(int slot, char *desc)
             gblen++;
             recount_city_credit_reward(i);
         }
-        ingame.fld_unk7DE = save_game_buffer[gblen];
+        ingame.AutoResearch = save_game_buffer[gblen];
         gblen++;
     }
 
@@ -5500,17 +5387,10 @@ ubyte load_game(int slot, char *desc)
     ingame.CashAtStart = ingame.Credits;
     ingame.Expenditure = 0;
     return 0;
-#endif
 }
 
 ubyte load_game_slot(ubyte click)
 {
-#if 0
-    ubyte ret;
-    asm volatile ("call ASM_load_game_slot\n"
-        : "=r" (ret) : "a" (click));
-    return ret;
-#endif
     char *ldname;
     int ldslot;
     int ret;
@@ -5614,10 +5494,6 @@ void my_preprocess_text(char *text)
  */
 void srm_reset_research(void)
 {
-#if 0
-    asm volatile ("call ASM_srm_reset_research\n"
-        :  :  : "eax" );
-#else
     struct Campaign *p_campgn;
     int i;
 
@@ -5638,15 +5514,10 @@ void srm_reset_research(void)
     research.CurrentMod = -1;
     research.Scientists = 0;
     research.NumBases = 0;
-#endif
 }
 
 void research_unkn_func_006(ushort missi)
 {
-#if 0
-    asm volatile ("call ASM_research_unkn_func_006\n"
-        : : "a" (missi));
-#endif
     struct Mission *p_missi;
     int i;
 
@@ -5826,10 +5697,6 @@ ulong mission_over_calculate_player_cash_gain_from_items(void)
 
 void update_player_cash(void)
 {
-#if 0
-    asm volatile ("call ASM_update_player_cash\n"
-        :  :  : "eax" );
-#endif
     ulong credits;
 
     credits = mission_over_calculate_player_cash_gain_from_items();
@@ -5844,11 +5711,6 @@ void init_agents(void)
 
 void do_start_triggers(short missi)
 {
-#if 0
-    asm volatile (
-      "call ASM_do_start_triggers\n"
-        : : "a" (missi));
-#endif
     short nxmissi, sptrig;
     short mslot;
 
@@ -5874,11 +5736,6 @@ void do_start_triggers(short missi)
 
 void queue_up_new_mail(ubyte emtype, short missi)
 {
-#if 0
-    asm volatile (
-      "call ASM_queue_up_new_mail\n"
-        : : "a" (emtype), "d" (missi));
-#endif
     int i;
 
     LOGSYNC("New email type %d after mission %d, source %d", (int)emtype,
@@ -6289,10 +6146,6 @@ ubyte check_delete_open_mission(ushort mslot, sbyte state)
 
 void mission_over(void)
 {
-#if 0
-    asm volatile ("call ASM_mission_over\n"
-        :  :  : "eax" );
-#else
     ubyte misend;
 
     ingame.DisplayMode = DpM_UNKN_37;
@@ -6373,7 +6226,6 @@ void mission_over(void)
       (int)last_missi, (int)lstate, (int)ingame.GameOver);
     if (ingame.GameOver)
         play_smacker(MPly_GameOver);
-#endif
 }
 
 TbBool player_try_spend_money(long cost)
@@ -6428,12 +6280,6 @@ void campaign_new_game_prepare(void)
 
 ubyte do_storage_NEW_MORTAL(ubyte click)
 {
-#if 0
-    ubyte ret;
-    asm volatile ("call ASM_do_storage_NEW_MORTAL\n"
-        : "=r" (ret) : "a" (click));
-    return ret;
-#else
     if (login_control__State != 6)
         return 0;
 
@@ -6463,7 +6309,6 @@ ubyte do_storage_NEW_MORTAL(ubyte click)
       play_sample_using_heap(0, 119 + (LbRandomAnyShort() % 3), 127, 64, 100, 0, 3u);
 
     return 1;
-#endif
 }
 
 ubyte show_netgame_unkn1(struct ScreenBox *box)
@@ -6507,10 +6352,6 @@ void init_screen_boxes(void)
 
 void reload_background(void)
 {
-#if 0
-    asm volatile ("call ASM_reload_background\n"
-        :  :  : "eax" );
-#else
     struct ScreenBufBkp bkp;
 
     proj_origin.X = lbDisplay.GraphicsScreenWidth / 2 - 1;
@@ -6573,7 +6414,6 @@ void reload_background(void)
     {
         init_weapon_anim(selected_mod + 32);
     }
-#endif
 }
 
 void players_init_control_mode(void)
@@ -6625,10 +6465,6 @@ ushort my_draw_text(short x, short y, const char *text, ushort startline)
 
 void do_scroll_map(void)
 {
-#if 0
-    asm volatile ("call ASM_do_scroll_map\n"
-        :  :  : "eax" );
-#else
     PlayerInfo *p_locplayer;
     long engn_xc_orig, engn_zc_orig;
     ushort md;
@@ -6792,7 +6628,6 @@ void do_scroll_map(void)
         engn_xc += dword_17710C;
         engn_zc += dword_177110;
     }
-#endif
 }
 
 ubyte weapon_select_input(void)
@@ -7692,12 +7527,6 @@ TbBool check_scanner_input(void)
 
 short process_panel_state(void)
 {
-#if 0
-    short ret;
-    asm volatile ("call ASM_process_panel_state\n"
-        : "=r" (ret) : );
-    return ret;
-#else
     PlayerInfo *p_locplayer;
     TbBool can_control;
     short dcthing;
@@ -7886,7 +7715,6 @@ short process_panel_state(void)
         }
     }
     return 0;
-#endif
 }
 
 TbBool check_panel_input(short panel)
@@ -7912,7 +7740,7 @@ TbBool check_panel_input(short panel)
         case 1:
             // Select controlled agent
             p_agent = p_locplayer->MyAgent[p_panel->ID];
-            if ((p_agent == NULL) || ((p_agent->Flag & 0x02) != 0) || ((p_agent->Flag2 & 0x10) != 0))
+            if ((p_agent == NULL) || ((p_agent->Flag & TngF_Unkn0002) != 0) || ((p_agent->Flag2 & 0x10) != 0))
                 return 0;
             if (p_locplayer->DoubleMode) {
                 byte_153198 = p_panel->ID + 1;
@@ -8075,7 +7903,7 @@ TbBool check_panel_input(short panel)
             if (!p_locplayer->DoubleMode)
             {
                 p_agent = p_locplayer->MyAgent[p_panel->ID];
-                if ((p_agent != NULL) && ((p_agent->Flag & 0x02) == 0))
+                if ((p_agent != NULL) && ((p_agent->Flag & TngF_Unkn0002) == 0))
                 {
                     ushort dcthing;
 
@@ -8105,12 +7933,6 @@ TbBool check_panel_input(short panel)
 
 TbBool check_panel_button(void)
 {
-#if 0
-    ubyte ret;
-    asm volatile ("call ASM_check_panel_button\n"
-        : "=r" (ret) : );
-    return ret;
-#else
     short panel, tot_panels;
 
     if (lbDisplay.LeftButton && lbDisplay.RightButton)
@@ -8145,12 +7967,11 @@ TbBool check_panel_button(void)
         }
     }
     return 0;
-#endif
 }
 
-void show_type11_screen(void)
+void show_debrief_screen(void)
 {
-    asm volatile ("call ASM_show_type11_screen\n"
+    asm volatile ("call ASM_show_debrief_screen\n"
         :  :  : "eax" );
 }
 
@@ -8266,10 +8087,209 @@ void update_mission_time(char a1)
         : : "a" (a1));
 }
 
+long time_difference(struct SynTime *tm1, struct SynTime *tm2)
+{
+#if 0
+    asm volatile ("call ASM_time_difference\n"
+        : : "a" (tm1), "d" (tm2));
+    return;
+#endif
+    return 60 * (tm1->Hour - (long)tm2->Hour) + tm1->Minute - (long)tm2->Minute;
+}
+
 void show_date_time(void)
 {
+#if 0
     asm volatile ("call ASM_show_date_time\n"
         :  :  : "eax" );
+    return;
+#endif
+    char *text;
+    uint n;
+    const char *subtext;
+    uint usedlen;
+    char locstr[50];
+    struct TbTime curr_time;
+    short x;
+
+    lbDisplay.DrawFlags = 0x0004;
+    draw_box_purple_list(4, 4, 59, 15, 56);
+    draw_box_purple_list(67, 4, 81, 15, 56);
+    draw_box_purple_list(515, 4, 121, 15, 56);
+    lbDisplay.DrawFlags = 0x0010;
+    draw_box_purple_list(5, 5, 57, 13, 247);
+    draw_box_purple_list(68, 5, 79, 13, 247);
+    draw_box_purple_list(516, 5, 119, 13, 247);
+    lbDisplay.DrawFlags = 0;
+
+    if (login_control__State == 5)
+    {
+        lbDisplay.DrawFlags = 0x0004;
+        draw_box_purple_list(152, 4, 200, 15, 56);
+        draw_box_purple_list(356, 4, 156, 15, 56);
+        lbDisplay.DrawFlags = 0x0010;
+        draw_box_purple_list(153, 5, 198, 13, 247);
+        draw_box_purple_list(357, 5, 154, 13, 247);
+        lbDisplay.DrawFlags = 0;
+
+        lbFontPtr = small_med_font;
+        my_set_text_window(153, 5, 198, 13);
+
+        if (login_control__City == -1) {
+            subtext = "";
+        } else {
+            unkn_city_no = login_control__City;
+            n = cities[unkn_city_no].TextIndex[0];
+            subtext = (char *)&memload[n];
+        }
+        sprintf(locstr, "%s: %s", gui_strings[446], subtext);
+        text = (char *)back_buffer + text_buf_pos;
+        strcpy(text, locstr);
+        draw_text_purple_list2(3, 3, text, 0);
+
+        lbFontPtr = small_med_font;
+        text_buf_pos += strlen(locstr) + 1;
+        my_set_text_window(357, 5, 154, 13);
+
+        sprintf(locstr, "%s: %d", gui_strings[447], login_control__TechLevel);
+        text = (char *)back_buffer + text_buf_pos;
+        strcpy(text, locstr);
+        draw_text_purple_list2(3, 3, text, 0);
+        text_buf_pos += strlen(locstr) + 1;
+    }
+
+    LbTime(&curr_time);
+    global_date.Minute = curr_time.Minute;
+    global_date.Hour = curr_time.Hour;
+    if (curr_time.Minute || curr_time.Hour)
+    {
+        if (byte_1C497D) {
+            byte_1C497D = 0;
+        }
+    }
+    else
+    {
+        if (!byte_1C497D) {
+            byte_1C497D = 1;
+            global_date.Day++;
+            if (global_date.Day > month_days[global_date.Month-1])
+            {
+                global_date.Month++;
+                global_date.Day = 1;
+                if (global_date.Month > 12) {
+                    global_date.Year++;
+                    global_date.Month = 1;
+                    global_date.Year %= 100;
+                }
+            }
+        }
+    }
+
+    if (global_date.Hour == 0)
+        sprintf(locstr, "%02d:%02d", 12, (int)global_date.Minute);
+    else if (global_date.Hour > 12)
+        sprintf(locstr, "%02d:%02d", (int)global_date.Hour - 12, (int)global_date.Minute);
+    else
+        sprintf(locstr, "%02d:%02d", (int)global_date.Hour, (int)global_date.Minute);
+    lbFontPtr = small_med_font;
+    my_set_text_window(5, 5, 57, 13);
+
+    text = (char *)back_buffer + text_buf_pos;
+    strcpy(text, locstr);
+    draw_text_purple_list2(3, 3, text, 0);
+    text_buf_pos += strlen(locstr) + 1;
+
+    if (global_date.Hour >= 12)
+          subtext = "PM";
+    else
+          subtext = "AM";
+    sprintf(locstr, "%s", subtext);
+
+    lbFontPtr = small_font;
+    text = (char *)back_buffer + text_buf_pos;
+    strcpy(text, locstr);
+    draw_text_purple_list2(43, 5, text, 0);
+    lbFontPtr = small_med_font;
+    text_buf_pos += strlen(locstr) + 1;
+
+    // Draw current date
+    sprintf(locstr, "%02d:%02d:%02d", (int)global_date.Day,
+      (int)global_date.Month, (int)global_date.Year);
+    my_set_text_window(68, 5, 79, 13);
+
+    text = (char *)back_buffer + text_buf_pos;
+    strcpy(text, locstr);
+    draw_text_purple_list2(3, 3, text, 0);
+
+    lbFontPtr = small_font;
+    text_buf_pos += strlen(locstr) + 1;
+    draw_text_purple_list2(66, 5, misc_text[3], 0);
+
+    // Draw credits amount
+    lbFontPtr = small_med_font;
+    my_set_text_window(516, 5, 119, 13);
+    x = 3;
+
+    sprintf(locstr, "%ld", ingame.Credits);
+
+    // Leading zeros are half transparent
+    usedlen = strlen(locstr) + 1;
+    text = (char *)back_buffer + text_buf_pos;
+    for (n = 0; n < 12 - (usedlen - 1); n++) {
+        text[n] = '0';
+    }
+    text[n] = '\0';
+    text_buf_pos += n + 1;
+
+    lbDisplay.DrawFlags = 0x0004;
+    draw_text_purple_list2(x, 3, text, 0);
+    lbDisplay.DrawFlags = 0;
+    x += LbTextStringWidth(text);
+
+    // Now the actual credits amount
+    text = (char *)back_buffer + text_buf_pos;
+    strcpy(text, locstr);
+    draw_text_purple_list2(x, 3, text, 0);
+    lbFontPtr = small_font;
+    text_buf_pos += strlen(locstr) + 1;
+    draw_text_purple_list2(111, 5, misc_text[1], 0);
+
+    if (time_difference(&global_date, &research_curr_mod_date))
+    {
+        if (byte_1C497C) {
+            byte_1C497C = 0;
+        }
+    }
+    else
+    {
+        if (!byte_1C497C) {
+            research_daily_progress_for_type(1);
+            byte_1C497C = 1;
+        }
+    }
+    if (time_difference(&global_date, &research_curr_wep_date))
+    {
+        if (byte_1C497B) {
+            byte_1C497B = 0;
+        }
+    }
+    else
+    {
+        if (!byte_1C497B) {
+            research_daily_progress_for_type(0);
+            byte_1C497B = 1;
+        }
+    }
+
+    if ((ingame.UserFlags & UsrF_Cheats) != 0)
+    {
+        if (lbKeyOn[KC_PERIOD]) {
+            lbKeyOn[KC_PERIOD] = 0;
+            ingame.Credits += 10000;
+        }
+    }
+    /* XXX: FIXME: tmp, put this some place better later */
+    game_update();
 }
 
 void purple_unkn1_data_to_screen(void)
@@ -8624,10 +8644,6 @@ void net_unkn_func_33_sub1(int plyr, int netplyr)
 
 void net_unkn_func_33(void)
 {
-#if 0
-    asm volatile ("call ASM_net_unkn_func_33\n"
-        :  :  : "eax" );
-#else
     struct NetworkPlayer *p_netplyr;
     int player;
     int i;
@@ -8711,7 +8727,6 @@ void net_unkn_func_33(void)
     {
         network_players[i].Type = 17;
     }
-#endif
 }
 
 void forward_research_progress(int num_days)
@@ -8880,10 +8895,6 @@ void draw_purple_screen_hotspots(ushort hsnext)
 
 void draw_purple_screen(void)
 {
-#if 0
-    asm volatile ("call ASM_draw_purple_screen\n"
-        :  :  : "eax" );
-#else
     struct PurpleDrawItem *pditem;
     struct PolyPoint point_a;
     struct PolyPoint point_c;
@@ -9017,7 +9028,6 @@ void draw_purple_screen(void)
     purple_draw_index = 0;
 
     draw_purple_screen_hotspots(hsnext);
-#endif
 }
 
 void clear_mission_status(ulong id)
@@ -9189,10 +9199,6 @@ void update_open_brief(void)
 
 void copy_from_screen_ani(ubyte *buf)
 {
-#if 0
-    asm volatile ("call ASM_copy_from_screen_ani\n"
-        : : "a" (buf));
-#else
     int y;
     ubyte *o;
     const ubyte *inp;
@@ -9205,7 +9211,6 @@ void copy_from_screen_ani(ubyte *buf)
         o += 256;
         inp += lbDisplay.GraphicsScreenWidth;
     }
-#endif
 }
 
 void show_load_and_prep_mission(void)
@@ -9428,13 +9433,13 @@ void show_menu_screen(void)
         show_research_screen();
         break;
     case SCRT_9:
-        show_type11_screen();
+        show_debrief_screen();
         break;
     case SCRT_LOGIN:
         show_login_screen();
         break;
     case SCRT_B:
-        show_type11_screen();
+        show_debrief_screen();
         break;
     case SCRT_ALERTBOX:
         show_alert_box();
@@ -9667,11 +9672,6 @@ void show_menu_screen(void)
 
 void draw_game(void)
 {
-#if 0
-    asm volatile ("call ASM_draw_game\n"
-        :  :  : "eax" );
-    return;
-#endif
     switch (ingame.DisplayMode)
     {
     case DpM_UNKN_1:
@@ -9731,10 +9731,6 @@ void joy_input(void)
 
 void update_unkn_changing_colors(void)
 {
-#if 0
-    asm volatile ("call ASM_update_unkn_changing_colors\n"
-        :  :  : "eax" );
-#else
     ubyte col1, col2;
 
     unkn_changing_color_counter1++;
@@ -9749,7 +9745,6 @@ void update_unkn_changing_colors(void)
     else
         col2 = colour_lookup[1];
     unkn_changing_color_2 = col2;
-#endif
 }
 
 /** Orbital station explosion code.
@@ -9860,14 +9855,12 @@ game_transform_path_full(const char *file_name, char *buffer, size_t size)
     snprintf (buffer, size, "%s" FS_SEP_STR "%s", GetDirectoryHdd(), file_name);
 }
 
-void
-game_transform_path(const char *file_name, char *result)
+void game_transform_path(const char *file_name, char *result)
 {
     game_transform_path_full (file_name, result, FILENAME_MAX);
 }
 
-static void
-game_update_full(bool wait)
+static void game_update_full(bool wait)
 {
     static TbClockMSec last_loop_time = 0;
 
@@ -9897,8 +9890,7 @@ int game_hacky_update(void)
     return 1;
 }
 
-void
-game_update(void)
+void game_update(void)
 {
     game_update_full(true);
 }
@@ -9910,10 +9902,6 @@ void engine_reset(void)
 
 void host_reset(void)
 {
-#if 0
-    asm volatile ("call ASM_host_reset\n"
-        :  :  : "eax" );
-#else
     StopCD();
     setup_heaps(1);
     FreeAudio();
@@ -9924,11 +9912,9 @@ void host_reset(void)
     LbKeyboardClose();
     LbScreenReset();
     LbNetworkReset();
-#endif
 }
 
-void
-game_reset(void)
+void game_reset(void)
 {
     host_reset();
     free_texturemaps();

@@ -78,6 +78,8 @@ extern ubyte player_loggon;
 extern struct ComHandlerInfo com_dev[4];
 extern struct IPXDatagramBackup datagram_backup[8];
 
+extern struct TbSerialDev *data_1e85e3;
+
 const struct ModemResponse modem_response[] = {
     {"OK", 1},
     {"CONNECT", 2},
@@ -249,12 +251,6 @@ void ipx_log_on_new_players(void)
 
 void ipx_update(void)
 {
-#if 0
-    TbResult ret;
-    asm volatile ("call ASM_ipx_update\n"
-        : "=r" (ret) : );
-    return ret;
-#else
     static TbClockMSec start_time = 0;
     TbClockMSec curr_time;
 
@@ -289,17 +285,10 @@ void ipx_update(void)
             ipx_add_new_player(&loggon_header);
         }
     }
-#endif
 }
 
 void ipx_service_init(ushort a1)
 {
-#if 0
-    TbResult ret;
-    asm volatile ("call ASM_ipx_service_init\n"
-        : "=r" (ret) : "a" (a1) );
-    return ret;
-#endif
     struct TbIPXHandler *ipxhndl;
 
     LOGDBG("Starting");
@@ -313,12 +302,6 @@ void ipx_service_init(ushort a1)
 
 TbResult ipx_create_session(char *a1, const char *a2)
 {
-#if 0
-    TbResult ret;
-    asm volatile ("call ASM_ipx_create_session\n"
-        : "=r" (ret) : "a" (a1), "d" (a2) );
-    return ret;
-#endif
     struct TbIPXHandler *ipxhndl;
     struct TbIPXPlayer *p_plyrdt;
     ulong tm_start, tm_curr;
@@ -408,12 +391,6 @@ TbResult ipx_create_session(char *a1, const char *a2)
 
 int ipx_session_list(struct IPXSessionList *sesslist, int listlen)
 {
-#if 0
-    TbResult ret;
-    asm volatile ("call ASM_ipx_session_list\n"
-        : "=r" (ret) : "a" (ipxsess), "d" (listlen) );
-    return ret;
-#endif
     int ret;
     int i, k;
     ushort n;
@@ -472,12 +449,6 @@ int ipx_session_list(struct IPXSessionList *sesslist, int listlen)
 
 int ipx_join_session(struct IPXSessionList *p_ipxsess, char *a2)
 {
-#if 0
-    TbResult ret;
-    asm volatile ("call ASM_ipx_join_session\n"
-        : "=r" (ret) : "a" (p_ipxsess), "d" (a2) );
-    return ret;
-#endif
     struct TbIPXPlayerHeader ipxhead;
     ulong tm_start, tm_curr;
     TbResult ret;
@@ -626,10 +597,6 @@ int ipx_exchange_packets(void *a1, int a2)
 
 void ipx_shutdown(ushort a1)
 {
-#if 0
-    asm volatile ("call ASM_ipx_shutdown\n"
-        : : "a" (a1));
-#endif
     struct TbIPXHandler *p_ipxhndl;
     int i;
 
@@ -652,10 +619,6 @@ void ipx_shutdown(ushort a1)
 void ipx_shutdown_listeners(void)
 {
     LOGDBG("Starting");
-#if 0
-    asm volatile ("call ASM_ipx_shutdown_listeners\n"
-        : : );
-#endif
     if (!ipx_is_initialized()) {
         LOGERR("Called before IPX initialization");
         return;
@@ -996,12 +959,30 @@ void write_char(struct TbSerialDev *serdev, ubyte c)
 void write_string(struct TbSerialDev *serdev, const char *str)
 {
 #if defined(DOS)||defined(GO32)
-    unsigned int i;
-    char c;
+    uint i;
+    ubyte c;
 
-    for (i = 0; i < strlen(locstr); i++)
+    for (i = 0; i < strlen(str); i++)
     {
-        c = locstr[i];
+        c = str[i];
+        write_char(serdev, c);
+    }
+#else
+    // On Windows, WriteFile() should be used
+    // On Linux, write the device file with standard file ops
+    assert(!"not implemented");
+#endif
+}
+
+void write_buffer(struct TbSerialDev *serdev, const ubyte *buf, uint buflen)
+{
+#if defined(DOS)||defined(GO32)
+    uint i;
+    ubyte c;
+
+    for (i = 0; i < buflen; i++)
+    {
+        c = buf[i];
         write_char(serdev, c);
     }
 #else
@@ -1052,6 +1033,12 @@ void send_string(struct TbSerialDev *serdev, const char *str)
     strcpy(ModemRequestString, locstr);
 }
 
+uint net_unkn_callback1(ubyte *data, uint datalen)
+{
+    write_buffer(data_1e85e3, data, datalen);
+    return datalen;
+}
+
 void inbuf_pos_inc(struct TbSerialDev *serdev)
 {
     int pos;
@@ -1072,12 +1059,6 @@ int read_char(struct TbSerialDev *serdev)
 
 int get_modem_response(struct TbSerialDev *serdev)
 {
-#if 0
-    int ret;
-    asm volatile ("call ASM_get_modem_response\n"
-        : "=r" (ret) : "a" (serdev) );
-    return ret;
-#else
     const struct ModemResponse *resp;
     char locstr[80];
     TbClockMSec start_time;
@@ -1143,7 +1124,6 @@ int get_modem_response(struct TbSerialDev *serdev)
         }
     }
     return ret;
-#endif
 }
 
 struct TbSerialDev *LbCommInit(int idx)
@@ -1187,14 +1167,6 @@ int LbCommStopExchange(ubyte a1)
 
 int LbCommDeInit(struct TbSerialDev *serhead)
 {
-#if 0
-    int ret;
-    LOGDBG("Starting");
-    asm volatile ("call ASM_LbCommDeInit\n"
-        : "=r" (ret) : "a" (serhead) );
-    return ret;
-#endif
-
 #if defined(DOS)||defined(GO32)
     struct TbSerialDev *serdev;
     struct ComHandlerInfo *cdev;
@@ -1364,12 +1336,6 @@ TbResult LbModemRingType(ushort dev_id, ubyte rtyp)
 
 TbResult LbNetworkServiceStart(struct NetworkServiceInfo *nsvc)
 {
-#if 0
-    TbResult ret;
-    asm volatile ("call ASM_LbNetworkServiceStart\n"
-        : "=r" (ret) : "a" (nsvc) );
-    return ret;
-#endif
     TbResult ret;
     ulong k;
 
@@ -1447,12 +1413,6 @@ TbResult LbNetworkUpdate(void)
 
 int LbNetworkSessionList(struct TbNetworkSessionList *nslist, int listlen)
 {
-#if 0
-    int ret;
-    asm volatile ("call ASM_LbNetworkSessionList\n"
-        : "=r" (ret) : "a" (nslist), "d" (listlen) );
-    return ret;
-#endif
     int ret;
 
     ret = 0;
@@ -2094,12 +2054,6 @@ TbResult LbCommSessionJoin(struct TbSerialDev *serhead, char *sess_name, const c
 
 TbResult LbNetworkSessionCreate(struct TbNetworkSession *session, char *a2)
 {
-#if 0
-    TbResult ret;
-    asm volatile ("call ASM_LbNetworkSessionCreate\n"
-        : "=r" (ret) : "a" (session), "d" (a2) );
-    return ret;
-#endif
     struct TbSerialDev *serhead;
     TbResult ret;
 
@@ -2143,13 +2097,6 @@ void read_a_line(FILE *fp, char *buf)
 
 TbResult LbNetworkSessionJoin(struct TbNetworkSession *session, char *a2)
 {
-#if 0
-    TbResult ret;
-    LOGDBG("Starting");
-    asm volatile ("call ASM_LbNetworkSessionJoin\n"
-        : "=r" (ret) : "a" (session), "d" (a2) );
-    return ret;
-#endif
     struct TbSerialDev *serhead;
     struct IPXSessionList ipxsess;
     TbResult ret;

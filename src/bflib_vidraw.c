@@ -35,14 +35,6 @@ void LbDrawTriangleFilled(short x1, short y1, short x2, short y2, short x3, shor
 
 void LbDrawTriangle(short x1, short y1, short x2, short y2, short x3, short y3, TbPixel colour)
 {
-#if 0
-    asm volatile (
-      "push %6\n"
-      "push %5\n"
-      "push %4\n"
-      "call ASM_LbDrawTriangle\n"
-        :  : "a" (x1), "d" (y1), "b" (x2), "c" (y2), "g" (x3), "g" (y3), "g" (colour));
-#else
     if (lbDisplay.DrawFlags & Lb_SPRITE_OUTLINE)
     {
         LbDrawLine(x1, y1, x2, y2, colour);
@@ -53,7 +45,6 @@ void LbDrawTriangle(short x1, short y1, short x2, short y2, short x3, short y3, 
     {
         LbDrawTriangleFilled(x1, y1, x2, y2, x3, y3, colour);
     }
-#endif
 }
 
 void LbDrawSlantBox(short X, short Y, ushort a3, ushort a4)

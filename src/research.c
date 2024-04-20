@@ -276,12 +276,6 @@ int research_cymod_next_type(void)
 
 int research_unkn_func_004(ushort percent_per_day, int expect_funding, int real_funding)
 {
-#if 0
-    int ret;
-    asm volatile ("call ASM_research_unkn_func_004\n"
-        : "=r" (ret) : "a" (percent_per_day), "d" (expect_funding), "b" (real_funding));
-    return ret;
-#else
     int n_remain, overhead;
     int points_total, ppd, delta;
     int points_by_group;
@@ -341,17 +335,10 @@ int research_unkn_func_004(ushort percent_per_day, int expect_funding, int real_
         points_total = n_remain * (long long)ppd / delta;
     }
     return points_total;
-#endif
 }
 
 int research_daily_progress_for_type(ubyte rstype)
 {
-#if 0
-    int ret;
-    asm volatile ("call ASM_research_daily_progress_for_type\n"
-        : "=r" (ret) : "a" (rstype));
-    return ret;
-#endif
     int real_funding;
     short progress;
     struct ModDef *mdef;
@@ -379,7 +366,7 @@ int research_daily_progress_for_type(ubyte rstype)
         else
         {
             research_current_weapon_complete();
-            if (ingame.fld_unk7DE)
+            if (ingame.AutoResearch)
                 research_wep_next_type();
         }
         break;
@@ -401,7 +388,7 @@ int research_daily_progress_for_type(ubyte rstype)
         else
         {
             research_current_cymod_complete();
-            if (ingame.fld_unk7DE)
+            if (ingame.AutoResearch)
                 research_cymod_next_type();
         }
         break;

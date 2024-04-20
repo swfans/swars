@@ -1,0 +1,1630 @@
+
+#ifdef NEED_UNDERSCORE
+# define TRANSFORM_SYMBOLS
+# define EXPORT_SYMBOL(sym) _ ## sym
+#else
+# define EXPORT_SYMBOL(sym) sym
+#endif
+
+#ifndef TRANSFORM_SYMBOLS
+
+# define GLOBAL(sym) \
+  .global sym; \
+  sym ##:
+
+# define GLOBAL_FUNC(sym) \
+  GLOBAL (sym)
+
+#else
+
+# define GLOBAL(sym) \
+  .global EXPORT_SYMBOL (sym); \
+  EXPORT_SYMBOL (sym) ##: \
+  sym ##:
+
+# define GLOBAL_FUNC(sym) \
+  .global sym; \
+  GLOBAL (sym)
+
+#endif
+
+
+.text
+
+/*----------------------------------------------------------------*/
+GLOBAL_FUNC(ASM_radica_service_init)	/* 0x0F7D40 */
+/*----------------------------------------------------------------*/
+		push   %ebx
+		push   %ecx
+		push   %edx
+		sub    $0x50,%esp
+		mov    %eax,%ecx
+		mov    $0x7d,%ebx
+		mov    $data_1e7aa8,%eax
+		xor    %edx,%edx
+		call   ac_memset
+		movb   $0x42,data_1e7ab4
+		mov    0x4(%ecx),%ax
+		mov    %ax,data_1e7ab6
+		xor    %eax,%eax
+		mov    data_1e7ab6,%ax
+		push   %eax
+		push   $ascBuxxX
+		lea    0x8(%esp),%eax
+		mov    $0x55,%dl
+		push   %eax
+		mov    %dl,data_1e7ab5
+		call   ac_sprintf
+		add    $0xc,%esp
+		mov    $asc1_0,%edx
+		mov    $0x1,%eax
+		call   ASM_net_unkn_func_353
+		mov    %esp,%edx
+		mov    $0x3,%eax
+		call   ASM_net_unkn_func_353
+		mov    $aStation,%edx
+		mov    $0x2,%eax
+		call   ASM_net_unkn_func_353
+		mov    $aNone,%edx
+		mov    $0x4,%eax
+		call   ASM_net_unkn_func_353
+		xor    %edx,%edx
+		xor    %eax,%eax
+		call   ASM_net_unkn_func_350
+		test   %eax,%eax
+		jne    jump_f7dfc
+		call   ASM_net_unkn_func_354
+		mov    %al,data_1e7abd
+		and    $0xff,%eax
+		push   %eax
+		lea    0x4(%esp),%eax
+		push   %eax
+		push   $aSStationNoD
+		call   ac_printf
+		mov    $0x1,%eax
+		add    $0xc,%esp
+		jmp    jump_f7e0f
+	jump_f7dfc:
+		push   %eax
+		push   $aRadicaReturned
+		call   ac_printf
+		mov    $0xffffffff,%eax
+		add    $0x8,%esp
+	jump_f7e0f:
+		add    $0x50,%esp
+		pop    %edx
+		pop    %ecx
+		pop    %ebx
+		ret
+
+
+/*----------------------------------------------------------------*/
+GLOBAL_FUNC(ASM_radica_shutdown)	/* 0x0F7E18 */
+/*----------------------------------------------------------------*/
+		push   $aQuittingRadica
+		call   ac_printf
+		add    $0x4,%esp
+		jmp    ac_net_unkn_func_352
+
+
+/*----------------------------------------------------------------*/
+GLOBAL_FUNC(ASM_radica_create_session)	/* 0x0F7E2C */
+/*----------------------------------------------------------------*/
+		push   %ebx
+		push   %ecx
+		push   %esi
+		push   %edi
+		push   %ebp
+		sub    $0x80,%esp
+		mov    %eax,%ebp
+		mov    %edx,%esi
+		mov    data_1e7abc,%dl
+		mov    $0xffffffff,%eax
+		test   %dl,%dl
+		jne    jump_f7f41
+		call   ac_dos_clock
+		mov    %eax,%ecx
+		lea    0x6(%ebp),%ebx
+	jump_f7e58:
+		call   ASM_net_unkn_func_351
+		cmp    $0x80,%eax
+		je     jump_f7eb4
+		mov    %esp,%eax
+		call   ASM_net_unkn_func_356
+		test   %eax,%eax
+		jne    jump_f7eb4
+		cmpl   $0x0,(%esp)
+		jne    jump_f7eb4
+		cmpb   $0x42,0xc(%esp)
+		jne    jump_f7eb4
+		cmpb   $0x55,0xd(%esp)
+		jne    jump_f7eb4
+		mov    0xe(%esp),%eax
+		cmp    data_1e7ab6,%ax
+		jne    jump_f7eb4
+		xor    %eax,%eax
+		mov    0x13(%esp),%al
+		cmp    $0x1,%eax
+		jne    jump_f7eb4
+		lea    0x16(%esp),%eax
+		mov    %ebx,%edx
+		call   ac_stricmp
+		test   %eax,%eax
+		jne    jump_f7eb4
+		mov    $0xffffffff,%eax
+		jmp    jump_f7f41
+	jump_f7eb4:
+		call   ac_dos_clock
+		sub    %ecx,%eax
+		cmp    $0x1f4,%eax
+		jbe    jump_f7e58
+		mov    $0x1,%dl
+		xor    %ah,%ah
+		mov    $data_1e7acb,%edi
+		mov    %ah,data_1e7ac8
+		mov    %dl,data_1e7abc
+		mov    0x10(%ebp),%al
+		mov    %dl,data_1e7ac9
+		mov    %al,data_1e7aca
+		mov    data_1e7abd,%al
+		mov    %dl,ipx_update_2__end_time
+		mov    %al,data_1e7aba
+		mov    %al,data_1e7adb
+		mov    %ah,data_1e7adc
+		push   %edi
+	jump_f7f01:
+		mov    (%esi),%al
+		mov    %al,(%edi)
+		cmp    $0x0,%al
+		je     jump_f7f19
+		mov    0x1(%esi),%al
+		add    $0x2,%esi
+		mov    %al,0x1(%edi)
+		add    $0x2,%edi
+		cmp    $0x0,%al
+		jne    jump_f7f01
+	jump_f7f19:
+		pop    %edi
+		mov    $str1,%edi
+		lea    0x6(%ebp),%esi
+		push   %edi
+	jump_f7f23:
+		mov    (%esi),%al
+		mov    %al,(%edi)
+		cmp    $0x0,%al
+		je     jump_f7f3b
+		mov    0x1(%esi),%al
+		add    $0x2,%esi
+		mov    %al,0x1(%edi)
+		add    $0x2,%edi
+		cmp    $0x0,%al
+		jne    jump_f7f23
+	jump_f7f3b:
+		pop    %edi
+		mov    $0x1,%eax
+	jump_f7f41:
+		add    $0x80,%esp
+		pop    %ebp
+		pop    %edi
+		pop    %esi
+		pop    %ecx
+		pop    %ebx
+		ret
+
+
+/*----------------------------------------------------------------*/
+GLOBAL_FUNC(ASM_radica_join_session)	/* 0x0F7F50 */
+/*----------------------------------------------------------------*/
+		push   %ebx
+		push   %ecx
+		push   %esi
+		push   %edi
+		push   %ebp
+		sub    $0x48,%esp
+		mov    %eax,%ecx
+		mov    %edx,%ebp
+		mov    $0xffffffff,%edx
+		mov    %esp,%eax
+		xor    %ebx,%ebx
+		mov    %edx,0x38(%esp)
+		mov    %ebx,0x44(%esp)
+		mov    $0x31,%ebx
+		xor    %edx,%edx
+		mov    %esp,%edi
+		call   ac_memset
+		mov    $0x42,%ah
+		mov    $0x55,%dl
+		mov    %ah,0xc(%esp)
+		mov    %dl,0xd(%esp)
+		add    $0x16,%edi
+		mov    0x2(%ecx),%ax
+		mov    $0x2,%dh
+		mov    %ax,0xe(%esp)
+		mov    %dh,0x13(%esp)
+		mov    %dh,0x1f(%esp)
+		lea    0x6(%ecx),%edx
+		mov    data_1e7abd,%al
+		mov    %edx,%esi
+		mov    %al,0x15(%esp)
+		push   %edi
+	jump_f7fac:
+		mov    (%esi),%al
+		mov    %al,(%edi)
+		cmp    $0x0,%al
+		je     jump_f7fc4
+		mov    0x1(%esi),%al
+		add    $0x2,%esi
+		mov    %al,0x1(%edi)
+		add    $0x2,%edi
+		cmp    $0x0,%al
+		jne    jump_f7fac
+	jump_f7fc4:
+		pop    %edi
+		mov    $str1,%edi
+		mov    %edx,%esi
+		push   %edi
+	jump_f7fcd:
+		mov    (%esi),%al
+		mov    %al,(%edi)
+		cmp    $0x0,%al
+		je     jump_f7fe5
+		mov    0x1(%esi),%al
+		add    $0x2,%esi
+		mov    %al,0x1(%edi)
+		add    $0x2,%edi
+		cmp    $0x0,%al
+		jne    jump_f7fcd
+	jump_f7fe5:
+		pop    %edi
+		lea    0x21(%esp),%edi
+		mov    %ebp,%esi
+		push   %edi
+	jump_f7fed:
+		mov    (%esi),%al
+		mov    %al,(%edi)
+		cmp    $0x0,%al
+		je     jump_f8005
+		mov    0x1(%esi),%al
+		add    $0x2,%esi
+		mov    %al,0x1(%edi)
+		add    $0x2,%edi
+		cmp    $0x0,%al
+		jne    jump_f7fed
+	jump_f8005:
+		pop    %edi
+		mov    %esp,%eax
+		xor    %ebx,%ebx
+		add    $0xc,%eax
+		mov    $0x25,%edx
+		mov    %eax,0x34(%esp)
+		call   ac_dos_clock
+		mov    %eax,0x40(%esp)
+		mov    %eax,0x3c(%esp)
+		mov    0x34(%esp),%eax
+		call   ASM_send_exchange_info
+		test   %eax,%eax
+		je     jump_f803e
+		push   %eax
+		push   $aSendingMyJoinP
+		call   ac_printf
+		add    $0x8,%esp
+	jump_f803e:
+		mov    $EXPORT_SYMBOL(RADICAHandler),%ebp
+		add    $0x16,%ebp
+	jump_f8046:
+		cmpl   $0x0,0x44(%esp)
+		jne    jump_f81c8
+		call   ac_dos_clock
+		mov    0x40(%esp),%esi
+		mov    %eax,%edx
+		sub    %esi,%edx
+		mov    %eax,%ecx
+		cmp    $0x32,%edx
+		jbe    jump_f808b
+		mov    $0x25,%edx
+		mov    %eax,0x40(%esp)
+		xor    %ebx,%ebx
+		mov    0x34(%esp),%eax
+		call   ASM_send_exchange_info
+		test   %eax,%eax
+		je     jump_f808b
+		push   %eax
+		push   $aSendingMyJoi_0
+		call   ac_printf
+		add    $0x8,%esp
+	jump_f808b:
+		mov    0x3c(%esp),%edi
+		mov    %ecx,%eax
+		sub    %edi,%eax
+		cmp    $0x12c,%eax
+		ja     jump_f81c8
+		mov    $data_1e7acb,%edi
+	jump_f80a3:
+		call   ASM_net_unkn_func_351
+		cmp    $0x80,%eax
+		je     jump_f8046
+		mov    $0x21,%ebx
+		mov    $EXPORT_SYMBOL(RADICAHandler),%eax
+		xor    %edx,%edx
+		call   ac_memset
+		mov    $EXPORT_SYMBOL(RADICAHandler),%eax
+		call   ASM_net_unkn_func_356
+		test   %eax,%eax
+		jne    jump_f80a3
+		mov    EXPORT_SYMBOL(RADICAHandler),%edx
+		mov    $0xffffffff,%ebx
+		test   %edx,%edx
+		jne    jump_f811c
+		cmpl   $0x15,data_1e7da0
+		jb     jump_f811c
+		cmpb   $0x42,data_1e7da8
+		jne    jump_f811c
+		cmpb   $0x55,data_1e7da9
+		jne    jump_f811c
+		mov    data_1e7daa,%ax
+		cmp    data_1e7ab6,%ax
+		jne    jump_f811c
+		mov    $str1,%eax
+		mov    %ebp,%edx
+		call   ac_stricmp
+		test   %eax,%eax
+		jne    jump_f811c
+		mov    $0x1,%ebx
+	jump_f811c:
+		cmp    $0x1,%ebx
+		jne    jump_f80a3
+		xor    %eax,%eax
+		mov    data_1e7daf,%al
+		cmp    %ebx,%eax
+		je     jump_f813f
+		jmp    jump_f80a3
+	jump_f8131:
+		inc    %eax
+		add    $0x12,%edx
+		cmp    $0x5,%eax
+		jl     jump_f814e
+		jmp    jump_f80a3
+	jump_f813f:
+		mov    $EXPORT_SYMBOL(RADICAHandler),%ecx
+		xor    %ebx,%eax
+		mov    data_1e7abd,%bh
+		mov    %ecx,%edx
+	jump_f814e:
+		cmp    0x33(%edx),%bh
+		jne    jump_f8131
+		mov    0x12(%ecx),%ah
+		mov    %ah,data_1e7aba
+		mov    0x14(%ecx),%ah
+		lea    0x23(%ecx),%esi
+		mov    %ah,data_1e7abc
+		mov    $0x2,%ah
+		mov    0x10(%ecx),%dx
+		mov    %ah,ipx_update_2__end_time
+		mov    %al,data_1e7ac8
+		mov    0x21(%ecx),%al
+		mov    %dx,data_1e7ab8
+		mov    %al,data_1e7ac9
+		mov    0x22(%ecx),%al
+		mov    $0x5a,%ecx
+		mov    %al,data_1e7aca
+		push   %edi
+		mov    %ecx,%eax
+		shr    $0x2,%ecx
+		repnz movsl %ds:(%esi),%es:(%edi)
+		mov    %al,%cl
+		and    $0x3,%cl
+		repnz movsb %ds:(%esi),%es:(%edi)
+		pop    %edi
+		xor    %eax,%eax
+		mov    data_1e7ac8,%al
+		push   %eax
+		mov    $0x1,%esi
+		push   $aYippeyImInTheG
+		mov    %esi,0x4c(%esp)
+		call   ac_printf
+		add    $0x8,%esp
+		jmp    jump_f80a3
+	jump_f81c8:
+		cmpl   $0x0,0x44(%esp)
+		je     jump_f81d7
+		movl   $0x1,0x38(%esp)
+	jump_f81d7:
+		mov    0x38(%esp),%eax
+		add    $0x48,%esp
+		pop    %ebp
+		pop    %edi
+		pop    %esi
+		pop    %ecx
+		pop    %ebx
+		ret
+
+
+/*----------------------------------------------------------------*/
+GLOBAL_FUNC(ASM_radica_session_list)	/* 0x0F81E4 */
+/*----------------------------------------------------------------*/
+		push   %ebx
+		push   %ecx
+		push   %esi
+		push   %edi
+		push   %ebp
+		sub    $0x24,%esp
+		mov    %eax,0x8(%esp)
+		mov    %edx,0x1c(%esp)
+		mov    0x1c(%esp),%ecx
+		imul   $0xda,%ecx,%ebx
+		xor    %edx,%edx
+		mov    %edx,0xc(%esp)
+		xor    %edx,%edx
+		mov    %dx,0x20(%esp)
+		xor    %edx,%edx
+		call   ac_memset
+		mov    $0x271,%ebx
+		mov    $data_1e7b28,%eax
+		xor    %edx,%edx
+		xor    %ebp,%ebp
+		call   ac_memset
+		test   %ecx,%ecx
+		ja     jump_f823b
+		jmp    jump_f8342
+	jump_f822e:
+		mov    0x1c(%esp),%edi
+		inc    %ebp
+		cmp    %edi,%ebp
+		jae    jump_f8342
+	jump_f823b:
+		call   ASM_net_unkn_func_351
+		cmp    $0x80,%eax
+		je     jump_f822e
+		mov    $data_1e7eac,%eax
+		call   ASM_net_unkn_func_356
+		test   %eax,%eax
+		jne    jump_f822e
+		cmpl   $0x0,data_1e7eac
+		jne    jump_f822e
+		cmpb   $0x42,data_1e7eb8
+		jne    jump_f822e
+		cmpb   $0x55,data_1e7eb9
+		jne    jump_f822e
+		mov    data_1e7eba,%ax
+		cmp    data_1e7ab6,%ax
+		jne    jump_f822e
+		xor    %eax,%eax
+		mov    data_1e7ebf,%al
+		cmp    $0x1,%eax
+		jne    jump_f822e
+		cmpw   $0x0,0x20(%esp)
+		je     jump_f82e9
+		mov    $data_1e7b28,%ebx
+		xor    %ecx,%ecx
+		add    $0x16,%ebx
+		jmp    jump_f82a3
+	jump_f829f:
+		add    $0x7d,%ebx
+		inc    %ecx
+	jump_f82a3:
+		mov    0x1e(%esp),%eax
+		sar    $0x10,%eax
+		cmp    %eax,%ecx
+		jge    jump_f82eb
+		imul   $0x7d,%ecx,%eax
+		mov    $data_1e7b28,%edi
+		mov    %ebx,%edx
+		add    %eax,%edi
+		mov    $data_1e7ec2,%eax
+		call   ac_stricmp
+		test   %eax,%eax
+		jne    jump_f829f
+		mov    $0x7d,%ecx
+		mov    $data_1e7eac,%esi
+		push   %edi
+		mov    %ecx,%eax
+		shr    $0x2,%ecx
+		repnz movsl %ds:(%esi),%es:(%edi)
+		mov    %al,%cl
+		and    $0x3,%cl
+		repnz movsb %ds:(%esi),%es:(%edi)
+		pop    %edi
+		mov    $0xffffffff,%ecx
+		jmp    jump_f82eb
+	jump_f82e9:
+		xor    %ecx,%ecx
+	jump_f82eb:
+		cmp    $0xffffffff,%ecx
+		je     jump_f822e
+		mov    0x1e(%esp),%eax
+		sar    $0x10,%eax
+		imul   $0x7d,%eax,%eax
+		mov    $data_1e7b28,%edi
+		mov    $0x7d,%ecx
+		mov    $data_1e7eac,%esi
+		add    %eax,%edi
+		push   %edi
+		mov    %ecx,%eax
+		shr    $0x2,%ecx
+		repnz movsl %ds:(%esi),%es:(%edi)
+		mov    %al,%cl
+		and    $0x3,%cl
+		repnz movsb %ds:(%esi),%es:(%edi)
+		pop    %edi
+		incw   0x20(%esp)
+		mov    0x1e(%esp),%eax
+		sar    $0x10,%eax
+		mov    %eax,0xc(%esp)
+		mov    0x1e(%esp),%eax
+		mov    0x1c(%esp),%edx
+		sar    $0x10,%eax
+		cmp    %edx,%eax
+		jbe    jump_f822e
+	jump_f8342:
+		mov    0x8(%esp),%eax
+		add    $0x6e,%eax
+		mov    %eax,0x10(%esp)
+		mov    0x8(%esp),%eax
+		add    $0x28,%eax
+		mov    %eax,0x18(%esp)
+		mov    0x8(%esp),%eax
+		add    $0x6,%eax
+		mov    %eax,0x14(%esp)
+		mov    $data_1e7b28,%eax
+		xor    %ebx,%ebx
+		add    $0x16,%eax
+		mov    %ebx,0x4(%esp)
+		mov    %eax,(%esp)
+		jmp    jump_f83b2
+	jump_f8376:
+		mov    0x10(%esp),%edx
+		mov    0x18(%esp),%ebx
+		mov    0x14(%esp),%ecx
+		mov    (%esp),%esi
+		mov    0x4(%esp),%edi
+		add    $0xda,%edx
+		add    $0xda,%ebx
+		add    $0xda,%ecx
+		add    $0x7d,%esi
+		inc    %edi
+		mov    %edx,0x10(%esp)
+		mov    %ebx,0x18(%esp)
+		mov    %ecx,0x14(%esp)
+		mov    %esi,(%esp)
+		mov    %edi,0x4(%esp)
+	jump_f83b2:
+		mov    0x1e(%esp),%eax
+		mov    0x4(%esp),%ecx
+		sar    $0x10,%eax
+		cmp    %ecx,%eax
+		jle    jump_f8490
+		cmp    0x1c(%esp),%ecx
+		ja     jump_f8490
+		mov    %ecx,%ebp
+		imul   $0x7d,%ecx,%edx
+		imul   $0xda,%ebp,%ebx
+		mov    0x8(%esp),%eax
+		mov    (%esp),%esi
+		mov    0x14(%esp),%edi
+		add    %eax,%ebx
+		push   %edi
+	jump_f83e8:
+		mov    (%esi),%al
+		mov    %al,(%edi)
+		cmp    $0x0,%al
+		je     jump_f8400
+		mov    0x1(%esi),%al
+		add    $0x2,%esi
+		mov    %al,0x1(%edi)
+		add    $0x2,%edi
+		cmp    $0x0,%al
+		jne    jump_f83e8
+	jump_f8400:
+		pop    %edi
+		xor    %eax,%eax
+		mov    data_1e7b48(%edx),%al
+		mov    %ax,0xe(%ebx)
+		xor    %eax,%eax
+		mov    data_1e7b4a(%edx),%al
+		mov    %ax,0x10(%ebx)
+		xor    %eax,%eax
+		mov    data_1e7b36(%edx),%ax
+		mov    $data_1e7b28,%ecx
+		mov    %eax,0x2(%ebx)
+		xor    %eax,%eax
+		add    %edx,%ecx
+		mov    data_1e7b49(%edx),%al
+		lea    0x23(%ecx),%edx
+		mov    0x10(%esp),%ebp
+		mov    0x18(%esp),%ecx
+		mov    %ax,0xd8(%ebx)
+		add    $0x6,%ecx
+		jmp    jump_f845c
+	jump_f844b:
+		add    $0x16,%ecx
+		add    $0x16,%ebx
+		add    $0x12,%edx
+		cmp    %ebp,%ebx
+		je     jump_f8376
+	jump_f845c:
+		cmpb   $0x0,0x10(%edx)
+		je     jump_f844b
+		movw   $0x1,0x28(%ebx)
+		xor    %eax,%eax
+		mov    %edx,%esi
+		mov    0x11(%edx),%al
+		mov    %ecx,%edi
+		mov    %eax,0x2a(%ebx)
+		push   %edi
+	jump_f8475:
+		mov    (%esi),%al
+		mov    %al,(%edi)
+		cmp    $0x0,%al
+		je     jump_f848d
+		mov    0x1(%esi),%al
+		add    $0x2,%esi
+		mov    %al,0x1(%edi)
+		add    $0x2,%edi
+		cmp    $0x0,%al
+		jne    jump_f8475
+	jump_f848d:
+		pop    %edi
+		jmp    jump_f844b
+	jump_f8490:
+		mov    0xc(%esp),%eax
+		add    $0x24,%esp
+		pop    %ebp
+		pop    %edi
+		pop    %esi
+		pop    %ecx
+		pop    %ebx
+		ret
+
+
+/*----------------------------------------------------------------*/
+GLOBAL_FUNC(ASM_radica_exchange_packets)	/* 0x0F8768 */
+/*----------------------------------------------------------------*/
+		push   %ebx
+		push   %ecx
+		push   %esi
+		push   %edi
+		push   %ebp
+		sub    $0x208,%esp
+		mov    %eax,0x200(%esp)
+		mov    %edx,0x1e4(%esp)
+		xor    %eax,%eax
+		mov    $0xffffffff,%edx
+		mov    data_1e7ac9,%al
+		mov    %edx,0x1f4(%esp)
+		cmp    $0x1,%eax
+		jle    jump_f8cb4
+		mov    $0x5,%ebx
+		lea    0x1d8(%esp),%eax
+		xor    %edx,%edx
+		call   ac_memset
+		call   ac_dos_clock
+		mov    %eax,0x1e8(%esp)
+		xor    %eax,%eax
+		mov    0x1e4(%esp),%ecx
+		mov    data_1e7ac8,%al
+		imul   %ecx,%eax
+		lea    0x21(%esp),%edi
+		mov    0x200(%esp),%edx
+		mov    $0xe9,%ebx
+		add    %eax,%edx
+		mov    %esp,%eax
+		mov    %edx,0x204(%esp)
+		xor    %edx,%edx
+		mov    0x204(%esp),%esi
+		call   ac_memset
+		push   %edi
+		mov    %ecx,%eax
+		shr    $0x2,%ecx
+		repnz movsl %ds:(%esi),%es:(%edi)
+		mov    %al,%cl
+		and    $0x3,%cl
+		repnz movsb %ds:(%esi),%es:(%edi)
+		pop    %edi
+		mov    $0x4,%ebx
+		mov    0x1e4(%esp),%edx
+		mov    %esp,%eax
+		call   radica_unkn_func_13
+		mov    %esp,%eax
+		mov    0x1e4(%esp),%edx
+		xor    %ebx,%ebx
+		add    $0xc,%eax
+		add    $0x15,%edx
+		mov    $0x1,%ebp
+		call   ASM_send_exchange_info
+		test   %eax,%eax
+		je     jump_f8846
+		push   %eax
+		push   $aSendingExchang
+		call   ac_printf
+		add    $0x8,%esp
+	jump_f8846:
+		mov    $data_1e7aa8,%eax
+		add    $0xc,%eax
+		mov    %eax,0x1f0(%esp)
+		mov    $EXPORT_SYMBOL(RADICAHandler),%eax
+		add    $0x16,%eax
+		mov    %eax,0x1ec(%esp)
+		lea    0xec(%esp),%eax
+		add    $0xc,%eax
+		mov    %eax,0x1e0(%esp)
+		mov    0x1e4(%esp),%eax
+		add    $0x15,%eax
+		mov    %eax,0x1f8(%esp)
+	jump_f8886:
+		xor    %eax,%eax
+		mov    data_1e7ac9,%al
+		cmp    %eax,%ebp
+		jge    jump_f8afc
+		call   ac_dos_clock
+		mov    0x1e8(%esp),%esi
+		mov    %eax,0x1fc(%esp)
+		sub    %esi,%eax
+		cmp    $0x19,%eax
+		jbe    jump_f8945
+		mov    $0xe9,%ebx
+		lea    0xec(%esp),%eax
+		mov    0x1e4(%esp),%ecx
+		mov    0x204(%esp),%esi
+		xor    %edx,%edx
+		lea    0x10d(%esp),%edi
+		call   ac_memset
+		push   %edi
+		mov    %ecx,%eax
+		shr    $0x2,%ecx
+		repnz movsl %ds:(%esi),%es:(%edi)
+		mov    %al,%cl
+		and    $0x3,%cl
+		repnz movsb %ds:(%esi),%es:(%edi)
+		pop    %edi
+		mov    $0x4,%ebx
+		mov    0x1e4(%esp),%edx
+		lea    0xec(%esp),%eax
+		call   radica_unkn_func_13
+		mov    0x1f8(%esp),%edx
+		mov    0x1e0(%esp),%eax
+		xor    %ebx,%ebx
+		call   ASM_send_exchange_info
+		test   %eax,%eax
+		je     jump_f892a
+		push   %eax
+		push   $aSendingExchang
+		call   ac_printf
+		add    $0x8,%esp
+	jump_f892a:
+		push   $aResendingPacke
+		call   ac_printf
+		add    $0x4,%esp
+		mov    0x1fc(%esp),%eax
+		mov    %eax,0x1e8(%esp)
+	jump_f8945:
+		lea    0x1d8(%esp),%ebx
+		mov    0x1e4(%esp),%edx
+		mov    0x200(%esp),%eax
+		call   radica_unkn_func_15
+		cmp    $0xffffffff,%eax
+		je     jump_f8985
+		mov    $0x1,%ebp
+		xor    %eax,%eax
+		jmp    jump_f8973
+	jump_f896d:
+		inc    %eax
+		cmp    $0x5,%eax
+		jge    jump_f8985
+	jump_f8973:
+		xor    %ebx,%ebx
+		mov    0x1d8(%esp,%eax,1),%bl
+		cmp    $0x1,%ebx
+		jne    jump_f896d
+		add    %ebx,%ebp
+		jmp    jump_f896d
+	jump_f8985:
+		cmpl   $0x0,ipx_update_2__start_time
+		jne    jump_f8998
+		call   ac_dos_clock
+		mov    %eax,ipx_update_2__start_time
+	jump_f8998:
+		xor    %eax,%eax
+		mov    ipx_update_2__end_time,%al
+		cmp    $0x1,%eax
+		jne    jump_f8886
+		xor    %eax,%eax
+		mov    data_1e7ac9,%al
+		cmp    $0x2,%eax
+		jge    jump_f8aa4
+		mov    $EXPORT_SYMBOL(RADICAHandler),%edi
+		xor    %ecx,%ecx
+	jump_f89bf:
+		mov    $0x21,%ebx
+		mov    %ecx,%edx
+		mov    %edi,%eax
+		call   ac_memset
+		call   ASM_net_unkn_func_351
+		cmp    $0x80,%eax
+		je     jump_f8a97
+		mov    %edi,%eax
+		call   ASM_net_unkn_func_356
+		test   %eax,%eax
+		jne    jump_f8a84
+		push   $aRead
+		mov    $0xffffffff,%ebx
+		call   ac_printf
+		mov    EXPORT_SYMBOL(RADICAHandler),%esi
+		add    $0x4,%esp
+		cmp    %esi,%ecx
+		jne    jump_f8a4c
+		cmpl   $0x15,data_1e7da0
+		jb     jump_f8a4c
+		cmpb   $0x42,data_1e7da8
+		jne    jump_f8a4c
+		cmpb   $0x55,data_1e7da9
+		jne    jump_f8a4c
+		mov    data_1e7daa,%ax
+		cmp    data_1e7ab6,%ax
+		jne    jump_f8a4c
+		mov    0x1ec(%esp),%edx
+		mov    $str1,%eax
+		call   ac_stricmp
+		test   %eax,%eax
+		jne    jump_f8a4c
+		mov    $0x1,%ebx
+	jump_f8a4c:
+		cmp    $0x1,%ebx
+		je     jump_f8a5c
+		jmp    jump_f8a72
+	jump_f8a53:
+		mov    %edi,%eax
+		call   radica_unkn_func_16
+		jmp    jump_f8a72
+	jump_f8a5c:
+		push   $aCheck
+		call   ac_printf
+		mov    data_1e7daf,%al
+		add    $0x4,%esp
+		cmp    $0x2,%al
+		je     jump_f8a53
+	jump_f8a72:
+		push   $aCheckDone
+		call   ac_printf
+		add    $0x4,%esp
+		jmp    jump_f89bf
+	jump_f8a84:
+		push   %eax
+		push   $aBadReadX
+		call   ac_printf
+		add    $0x8,%esp
+		jmp    jump_f89bf
+	jump_f8a97:
+		push   $aDoneRead
+		call   ac_printf
+		add    $0x4,%esp
+	jump_f8aa4:
+		call   ac_dos_clock
+		mov    ipx_update_2__start_time,%edx
+		mov    %eax,%ebx
+		sub    %edx,%ebx
+		mov    %eax,data_1e7aa4
+		cmp    $0x64,%ebx
+		jbe    jump_f8886
+		mov    $0x7d,%edx
+		mov    %eax,ipx_update_2__start_time
+		mov    $0x1,%ah
+		xor    %ebx,%ebx
+		mov    %ah,data_1e7abb
+		mov    0x1f0(%esp),%eax
+		call   ASM_send_exchange_info
+		test   %eax,%eax
+		je     jump_f8886
+		push   %eax
+		push   $aSendingHostInf
+		call   ac_printf
+		add    $0x8,%esp
+		jmp    jump_f8886
+	jump_f8afc:
+		mov    0x1e4(%esp),%ecx
+		mov    0x204(%esp),%esi
+		mov    $data_1e7f2c,%edi
+		push   %edi
+		mov    %ecx,%eax
+		shr    $0x2,%ecx
+		repnz movsl %ds:(%esi),%es:(%edi)
+		mov    %al,%cl
+		and    $0x3,%cl
+		repnz movsb %ds:(%esi),%es:(%edi)
+		pop    %edi
+		mov    data_1e7ab8,%bx
+		xor    %eax,%eax
+		mov    ipx_update_2__start_time,%ecx
+		mov    data_1e7ab8,%ax
+		inc    %ebx
+		mov    %eax,data_1e8120
+		mov    0x1e4(%esp),%eax
+		mov    %bx,data_1e7ab8
+		mov    %eax,data_1e8124
+		test   %ecx,%ecx
+		jne    jump_f8b5b
+		call   ac_dos_clock
+		mov    %eax,ipx_update_2__start_time
+	jump_f8b5b:
+		xor    %eax,%eax
+		mov    ipx_update_2__end_time,%al
+		cmp    $0x1,%eax
+		jne    jump_f8e22
+		xor    %eax,%eax
+		mov    data_1e7ac9,%al
+		cmp    $0x2,%eax
+		jge    jump_f8c69
+		mov    $EXPORT_SYMBOL(RADICAHandler),%edi
+		add    $0x16,%edi
+		mov    $EXPORT_SYMBOL(RADICAHandler),%ecx
+		xor    %ebp,%ebp
+	jump_f8b8a:
+		mov    $0x21,%ebx
+		mov    %ebp,%edx
+		mov    %ecx,%eax
+		call   ac_memset
+		call   ASM_net_unkn_func_351
+		cmp    $0x80,%eax
+		je     jump_f8c5c
+		mov    %ecx,%eax
+		call   ASM_net_unkn_func_356
+		test   %eax,%eax
+		jne    jump_f8c49
+		push   $aRead
+		mov    $0xffffffff,%ebx
+		call   ac_printf
+		mov    EXPORT_SYMBOL(RADICAHandler),%eax
+		add    $0x4,%esp
+		cmp    %eax,%ebp
+		jne    jump_f8c11
+		cmpl   $0x15,data_1e7da0
+		jb     jump_f8c11
+		cmpb   $0x42,data_1e7da8
+		jne    jump_f8c11
+		cmpb   $0x55,data_1e7da9
+		jne    jump_f8c11
+		mov    data_1e7daa,%ax
+		cmp    data_1e7ab6,%ax
+		jne    jump_f8c11
+		mov    $str1,%eax
+		mov    %edi,%edx
+		call   ac_stricmp
+		test   %eax,%eax
+		jne    jump_f8c11
+		mov    $0x1,%ebx
+	jump_f8c11:
+		cmp    $0x1,%ebx
+		je     jump_f8c21
+		jmp    jump_f8c37
+	jump_f8c18:
+		mov    %ecx,%eax
+		call   radica_unkn_func_16
+		jmp    jump_f8c37
+	jump_f8c21:
+		push   $aCheck
+		call   ac_printf
+		mov    data_1e7daf,%al
+		add    $0x4,%esp
+		cmp    $0x2,%al
+		je     jump_f8c18
+	jump_f8c37:
+		push   $aCheckDone
+		call   ac_printf
+		add    $0x4,%esp
+		jmp    jump_f8b8a
+	jump_f8c49:
+		push   %eax
+		push   $aBadReadX
+		call   ac_printf
+		add    $0x8,%esp
+		jmp    jump_f8b8a
+	jump_f8c5c:
+		push   $aDoneRead
+		call   ac_printf
+		add    $0x4,%esp
+	jump_f8c69:
+		call   ac_dos_clock
+		mov    ipx_update_2__start_time,%ebx
+		mov    %eax,%edx
+		sub    %ebx,%edx
+		mov    %eax,data_1e7aa4
+		cmp    $0x64,%edx
+		jbe    jump_f8e22
+		mov    $0x1,%dl
+		mov    %eax,ipx_update_2__start_time
+		xor    %ebx,%ebx
+		mov    $data_1e7aa8,%eax
+		mov    %dl,data_1e7abb
+		mov    $0x7d,%edx
+		add    $0xc,%eax
+		call   ASM_send_exchange_info
+		test   %eax,%eax
+		je     jump_f8e22
+		jmp    jump_f8e14
+	jump_f8cb4:
+		cmpl   $0x0,ipx_update_2__start_time
+		jne    jump_f8cc7
+		call   ac_dos_clock
+		mov    %eax,ipx_update_2__start_time
+	jump_f8cc7:
+		xor    %eax,%eax
+		mov    ipx_update_2__end_time,%al
+		cmp    $0x1,%eax
+		jne    jump_f8e22
+		xor    %eax,%eax
+		mov    data_1e7ac9,%al
+		cmp    $0x2,%eax
+		jge    jump_f8dd6
+		mov    $EXPORT_SYMBOL(RADICAHandler),%edi
+		add    $0x16,%edi
+		mov    $EXPORT_SYMBOL(RADICAHandler),%ecx
+		xor    %ebp,%ebp
+	jump_f8cf6:
+		mov    $0x21,%ebx
+		mov    %ebp,%edx
+		mov    %ecx,%eax
+		call   ac_memset
+		call   ASM_net_unkn_func_351
+		cmp    $0x80,%eax
+		je     jump_f8dc9
+		mov    %ecx,%eax
+		call   ASM_net_unkn_func_356
+		test   %eax,%eax
+		jne    jump_f8db6
+		push   $aRead
+		mov    $0xffffffff,%ebx
+		call   ac_printf
+		mov    EXPORT_SYMBOL(RADICAHandler),%esi
+		add    $0x4,%esp
+		cmp    %esi,%ebp
+		jne    jump_f8d7e
+		cmpl   $0x15,data_1e7da0
+		jb     jump_f8d7e
+		cmpb   $0x42,data_1e7da8
+		jne    jump_f8d7e
+		cmpb   $0x55,data_1e7da9
+		jne    jump_f8d7e
+		mov    data_1e7daa,%ax
+		cmp    data_1e7ab6,%ax
+		jne    jump_f8d7e
+		mov    $str1,%eax
+		mov    %edi,%edx
+		call   ac_stricmp
+		test   %eax,%eax
+		jne    jump_f8d7e
+		mov    $0x1,%ebx
+	jump_f8d7e:
+		cmp    $0x1,%ebx
+		je     jump_f8d8e
+		jmp    jump_f8da4
+	jump_f8d85:
+		mov    %ecx,%eax
+		call   radica_unkn_func_16
+		jmp    jump_f8da4
+	jump_f8d8e:
+		push   $aCheck
+		call   ac_printf
+		mov    data_1e7daf,%al
+		add    $0x4,%esp
+		cmp    $0x2,%al
+		je     jump_f8d85
+	jump_f8da4:
+		push   $aCheckDone
+		call   ac_printf
+		add    $0x4,%esp
+		jmp    jump_f8cf6
+	jump_f8db6:
+		push   %eax
+		push   $aBadReadX
+		call   ac_printf
+		add    $0x8,%esp
+		jmp    jump_f8cf6
+	jump_f8dc9:
+		push   $aDoneRead
+		call   ac_printf
+		add    $0x4,%esp
+	jump_f8dd6:
+		call   ac_dos_clock
+		mov    ipx_update_2__start_time,%ebx
+		mov    %eax,%edx
+		sub    %ebx,%edx
+		mov    %eax,data_1e7aa4
+		cmp    $0x64,%edx
+		jbe    jump_f8e22
+		mov    $0x1,%dh
+		mov    %eax,ipx_update_2__start_time
+		xor    %ebx,%ebx
+		mov    $data_1e7aa8,%eax
+		mov    %dh,data_1e7abb
+		mov    $0x7d,%edx
+		add    $0xc,%eax
+		call   ASM_send_exchange_info
+		test   %eax,%eax
+		je     jump_f8e22
+	jump_f8e14:
+		push   %eax
+		push   $aSendingHostInf
+		call   ac_printf
+		add    $0x8,%esp
+	jump_f8e22:
+		mov    0x1f4(%esp),%eax
+		add    $0x208,%esp
+		pop    %ebp
+		pop    %edi
+		pop    %esi
+		pop    %ecx
+		pop    %ebx
+		ret
+
+
+/*----------------------------------------------------------------*/
+radica_unkn_func_16:	/* 0x0F8E38 */
+/*----------------------------------------------------------------*/
+		push   %ebx
+		push   %edx
+		push   %esi
+		push   %edi
+		mov    %eax,%ebx
+		mov    %eax,%esi
+		xor    %eax,%eax
+		mov    data_1e7abc,%al
+		cmp    $0x1,%eax
+		jne    jump_f8f6a
+		mov    data_1e7ac9,%al
+		cmp    data_1e7aca,%al
+		jae    jump_f8f6a
+		lea    0x16(%ebx),%edi
+		mov    $str1,%eax
+		mov    %edi,%edx
+		call   ac_stricmp
+		test   %eax,%eax
+		jne    jump_f8f6a
+		push   $data_15f711
+		call   ac_printf
+		xor    %eax,%eax
+		add    $0x4,%esp
+		mov    data_1e7ac9,%al
+		push   %eax
+		xor    %eax,%eax
+		mov    data_1e7aca,%al
+		push   %eax
+		push   $aMaxPlayersDNoP
+		call   ac_printf
+		add    $0xc,%esp
+		lea    0x21(%ebx),%eax
+		push   %eax
+		push   $aPlayerSWishesT
+		call   ac_printf
+		xor    %eax,%eax
+		add    $0x8,%esp
+		mov    0x15(%ebx),%al
+		push   %eax
+		push   $aStationNoD
+		call   ac_printf
+		add    $0x8,%esp
+		push   %edi
+		push   $aSessionNameS
+		mov    $data_1e7acb,%edi
+		call   ac_printf
+		add    $0x8,%esp
+		cmp    $data_1e7b25,%edi
+		jb     jump_f8eee
+		jmp    jump_f8efc
+	jump_f8ee3:
+		add    $0x12,%edi
+		cmp    $data_1e7b25,%edi
+		jae    jump_f8efc
+	jump_f8eee:
+		mov    0x10(%edi),%al
+		cmp    0x15(%ebx),%al
+		je     jump_f8f6a
+		jmp    jump_f8ee3
+	jump_f8efc:
+		mov    $data_1e7acb,%edi
+		xor    %edx,%edx
+		cmp    $data_1e7b25,%edi
+		jb     jump_f8f1c
+		pop    %edi
+		pop    %esi
+		pop    %edx
+		pop    %ebx
+		ret
+	jump_f8f10:
+		add    $0x12,%edi
+		inc    %edx
+		cmp    $data_1e7b25,%edi
+		jae    jump_f8f6a
+	jump_f8f1c:
+		xor    %eax,%eax
+		mov    0x10(%edi),%al
+		test   %eax,%eax
+		jne    jump_f8f10
+		mov    0x15(%ebx),%al
+		mov    %al,0x10(%edi)
+		add    $0x21,%esi
+		mov    %dl,0x11(%edi)
+		push   %edi
+	jump_f8f32:
+		mov    (%esi),%al
+		mov    %al,(%edi)
+		cmp    $0x0,%al
+		je     jump_f8f4a
+		mov    0x1(%esi),%al
+		add    $0x2,%esi
+		mov    %al,0x1(%edi)
+		add    $0x2,%edi
+		cmp    $0x0,%al
+		jne    jump_f8f32
+	jump_f8f4a:
+		pop    %edi
+		movswl %dx,%eax
+		push   %eax
+		push   $aPlayerNoD
+		call   ac_printf
+		mov    data_1e7ac9,%dh
+		inc    %dh
+		add    $0x8,%esp
+		mov    %dh,data_1e7ac9
+	jump_f8f6a:
+		pop    %edi
+		pop    %esi
+		pop    %edx
+		pop    %ebx
+		ret
+
+
+/*----------------------------------------------------------------*/
+radica_unkn_func_15:	/* 0x0F8FE0 */
+/*----------------------------------------------------------------*/
+		push   %ecx
+		push   %esi
+		push   %edi
+		push   %ebp
+		sub    $0x10c,%esp
+		mov    %eax,0x108(%esp)
+		mov    %edx,0xec(%esp)
+		mov    %ebx,0x100(%esp)
+		call   ac_dos_clock
+		mov    %eax,0x104(%esp)
+		mov    %esp,%eax
+		add    $0xc,%eax
+		mov    %eax,0xfc(%esp)
+		mov    $data_1e7dc0,%eax
+		mov    $0xffffffff,%edx
+		add    $0x16,%eax
+		mov    %edx,0xf4(%esp)
+		mov    %eax,0xf8(%esp)
+	jump_f9032:
+		call   ASM_net_unkn_func_351
+		cmp    $0x80,%eax
+		je     jump_f91fd
+		mov    0x104(%esp),%ebx
+		call   ac_dos_clock
+		sub    %ebx,%eax
+		cmp    $0x258,%eax
+		jbe    jump_f9069
+		push   $aTimeout
+		call   ac_printf
+		add    $0x4,%esp
+		jmp    jump_f91fd
+	jump_f9069:
+		mov    $0xe9,%ebx
+		mov    $data_1e7dc0,%eax
+		xor    %edx,%edx
+		call   ac_memset
+		mov    $data_1e7dc0,%eax
+		call   ASM_net_unkn_func_356
+		test   %eax,%eax
+		jne    jump_f9032
+		mov    data_1e7dc0,%esi
+		mov    $0xffffffff,%ecx
+		test   %esi,%esi
+		jne    jump_f90db
+		cmpl   $0x15,data_1e7dc4
+		jb     jump_f90db
+		cmpb   $0x42,data_1e7dcc
+		jne    jump_f90db
+		cmpb   $0x55,data_1e7dcd
+		jne    jump_f90db
+		mov    data_1e7dce,%ax
+		cmp    data_1e7ab6,%ax
+		jne    jump_f90db
+		mov    0xf8(%esp),%edx
+		mov    $str1,%eax
+		call   ac_stricmp
+		test   %eax,%eax
+		jne    jump_f90db
+		mov    $0x1,%ecx
+	jump_f90db:
+		cmp    $0x1,%ecx
+		je     jump_f91dd
+		jmp    jump_f9032
+	jump_f90e9:
+		mov    data_1e7dd0,%ax
+		mov    data_1e7ab8,%bx
+		cmp    %bx,%ax
+		jne    jump_f9153
+		xor    %eax,%eax
+		mov    data_1e7de0,%al
+		mov    0xec(%esp),%ebp
+		mov    %eax,%edi
+		imul   %ebp,%edi
+		mov    $data_1e7de1,%esi
+		xor    %ecx,%ecx
+		mov    %eax,0xf4(%esp)
+		mov    0x108(%esp),%eax
+		mov    data_1e7dde,%cl
+		add    %eax,%edi
+		mov    0xf4(%esp),%edx
+		push   %edi
+		mov    %ecx,%eax
+		shr    $0x2,%ecx
+		repnz movsl %ds:(%esi),%es:(%edi)
+		mov    %al,%cl
+		and    $0x3,%cl
+		repnz movsb %ds:(%esi),%es:(%edi)
+		pop    %edi
+		mov    0x100(%esp),%eax
+		add    %edx,%eax
+		movb   $0x1,(%eax)
+		jmp    jump_f9032
+	jump_f9153:
+		mov    $data_1e7f2c,%esi
+		lea    0x21(%esp),%edi
+		xor    %eax,%eax
+		mov    data_1e8124,%ebp
+		mov    %bx,%ax
+		xor    %edx,%edx
+		mov    %eax,0xf0(%esp)
+		mov    data_1e8120,%ax
+		mov    $0xe9,%ebx
+		mov    %ax,data_1e7ab8
+		mov    %esp,%eax
+		mov    %ebp,%ecx
+		call   ac_memset
+		push   %edi
+		mov    %ecx,%eax
+		shr    $0x2,%ecx
+		repnz movsl %ds:(%esi),%es:(%edi)
+		mov    %al,%cl
+		and    $0x3,%cl
+		repnz movsb %ds:(%esi),%es:(%edi)
+		pop    %edi
+		mov    $0x4,%ebx
+		mov    %esp,%eax
+		mov    %ebp,%edx
+		call   radica_unkn_func_13
+		mov    0xfc(%esp),%eax
+		lea    0x15(%ebp),%edx
+		xor    %ebx,%ebx
+		call   ASM_send_exchange_info
+		test   %eax,%eax
+		je     jump_f91cb
+		push   %eax
+		push   $aSendingExchang
+		call   ac_printf
+		add    $0x8,%esp
+	jump_f91cb:
+		mov    0xf0(%esp),%eax
+		mov    %ax,data_1e7ab8
+		jmp    jump_f9032
+	jump_f91dd:
+		mov    data_1e7dd3,%al
+		cmp    $0x1,%al
+		jb     jump_f9032
+		jbe    jump_f9032
+		cmp    $0x4,%al
+		je     jump_f90e9
+		jmp    jump_f9032
+	jump_f91fd:
+		mov    0xf4(%esp),%eax
+		add    $0x10c,%esp
+		pop    %ebp
+		pop    %edi
+		pop    %esi
+		pop    %ecx
+		ret
+
+
+/*----------------------------------------------------------------*/
+radica_unkn_func_13:	/* 0x0F9210 */
+/*----------------------------------------------------------------*/
+		push   %esi
+		push   %edi
+		movb   $0x42,0xc(%eax)
+		movb   $0x55,0xd(%eax)
+		mov    data_1e7ab6,%di
+		mov    %di,0xe(%eax)
+		mov    data_1e7ab8,%di
+		mov    %di,0x10(%eax)
+		mov    data_1e7aba,%dh
+		mov    %dh,0x12(%eax)
+		mov    %bl,0x13(%eax)
+		mov    data_1e7abc,%dh
+		mov    %dh,0x14(%eax)
+		mov    data_1e7abd,%dh
+		mov    %dh,0x15(%eax)
+		mov    %dl,0x1e(%eax)
+		mov    ipx_update_2__end_time,%dl
+		mov    %dl,0x1f(%eax)
+		mov    $str1,%esi
+		mov    data_1e7ac8,%dl
+		lea    0x16(%eax),%edi
+		mov    %dl,0x20(%eax)
+		push   %edi
+	jump_f926c:
+		mov    (%esi),%al
+		mov    %al,(%edi)
+		cmp    $0x0,%al
+		je     jump_f9284
+		mov    0x1(%esi),%al
+		add    $0x2,%esi
+		mov    %al,0x1(%edi)
+		add    $0x2,%edi
+		cmp    $0x0,%al
+		jne    jump_f926c
+	jump_f9284:
+		pop    %edi
+		pop    %edi
+		pop    %esi
+		ret
+
+
+/*----------------------------------------------------------------*/
+.section .rodata
+
+ascBuxxX:	/* 0x15F5A4 */
+		.string "BUxx%x"
+asc1_0:	/* 0x15F5AB */
+		.string "1.0"
+aStation:	/* 0x15F5AF */
+		.string "STATION"
+aNone:	/* 0x15F5B7 */
+		.string "NONE"
+aSStationNoD:	/* 0x15F5BC */
+		.string "%s STATION NO %d\n"
+aRadicaReturned:	/* 0x15F5CE */
+		.string "RADICA RETURNED STATUS %x\n"
+aQuittingRadica:	/* 0x15F5E9 */
+		.string "QUITTING RADICA\n"
+aSendingMyJoinP:	/* 0x15F5FA */
+		.string "SENDING MY JOIN PKT  RETURNED ERROR CODE %x\n"
+aSendingMyJoi_0:	/* 0x15F627 */
+		.string "SENDING MY JOIN PKT  RETURNED ERROR CODE %x\n"
+aYippeyImInTheG:	/* 0x15F654 */
+		.string "YIPPEY! IM IN THE GAME PLY NO %d\n"
+aRead:	/* 0x15F676 */
+		.string "READ\n"
+aCheck:	/* 0x15F67C */
+		.string "CHECK\n"
+aCheckDone:	/* 0x15F683 */
+		.string "CHECK DONE\n"
+aBadReadX:	/* 0x15F68F */
+		.string "BAD READ %x\n"
+aDoneRead:	/* 0x15F69C */
+		.string "DONE READ\n"
+aSendingHostInf:	/* 0x15F6A7 */
+		.string "SENDING HOST INFO RETURNED ERROR CODE %x\n"
+aSendingExchang:	/* 0x15F6D1 */
+		.string "SENDING EXCHANGE INFO RETURNED ERROR CODE %x\n"
+aResendingPacke:	/* 0x15F6FF */
+		.string "RESENDING PACKET\n"
+data_15f711:
+		.string "\n************************\n"
+aMaxPlayersDNoP:	/* 0x15F72C */
+		.string "MAX PLAYERS %d NO PLAYERS %d\n"
+aPlayerSWishesT:	/* 0x15F74A */
+		.string "PLAYER %s WISHES TO JOIN\n"
+aStationNoD:	/* 0x15F764 */
+		.string "STATION NO %d\n"
+aSessionNameS:	/* 0x15F773 */
+		.string "SESSION NAME %s\n"
+aPlayerNoD:	/* 0x15F784 */
+		.string "PLAYER NO = %d\n"
+aTimeout:	/* 0x15F794 */
+		.string "TIMEOUT\n"
+		.align	4
+
+/*----------------------------------------------------------------*/
+.data
+
+ipx_update_2__start_time:	/* 0x1E7AA0 */
+		.long	0x0
+data_1e7aa4:
+		.long	0x0
+data_1e7aa8:
+		.fill   0xc
+data_1e7ab4:
+		.byte	0x0
+data_1e7ab5:
+		.byte	0x0
+data_1e7ab6:
+		.short  0x0
+data_1e7ab8:
+		.short  0x0
+data_1e7aba:
+		.byte	0x0
+data_1e7abb:
+		.byte	0x0
+data_1e7abc:
+		.byte	0x0
+data_1e7abd:
+		.byte	0x0
+str1:	/* 0x1E7ABE */
+		.fill   0x9
+ipx_update_2__end_time:	/* 0x1E7AC7 */
+		.byte	0x0
+data_1e7ac8:
+		.byte	0x0
+data_1e7ac9:
+		.byte	0x0
+data_1e7aca:
+		.byte	0x0
+data_1e7acb:
+		.fill   0x10
+data_1e7adb:
+		.byte	0x0
+data_1e7adc:
+		.fill   0x49
+data_1e7b25:
+		.ascii  "\x00\x00\x00"
+data_1e7b28:
+		.fill   0xe
+data_1e7b36:
+		.fill   0x12
+data_1e7b48:
+		.byte	0x0
+data_1e7b49:
+		.byte	0x0
+data_1e7b4a:
+		.fill   0x252
+GLOBAL (RADICAHandler)	/* 0x1E7D9C */
+		.long	0x0
+data_1e7da0:
+		.fill   0x8
+data_1e7da8:
+		.byte	0x0
+data_1e7da9:
+		.byte	0x0
+data_1e7daa:
+		.fill   0x5
+data_1e7daf:
+		.fill   0x11
+data_1e7dc0:
+		.long	0x0
+data_1e7dc4:
+		.fill   0x8
+data_1e7dcc:
+		.byte	0x0
+data_1e7dcd:
+		.byte	0x0
+data_1e7dce:
+		.short  0x0
+data_1e7dd0:
+		.ascii  "\x00\x00\x00"
+data_1e7dd3:
+		.fill   0xb
+data_1e7dde:
+		.short  0x0
+data_1e7de0:
+		.byte	0x0
+data_1e7de1:
+		.fill   0xcb
+data_1e7eac:
+		.fill   0xc
+data_1e7eb8:
+		.byte	0x0
+data_1e7eb9:
+		.byte	0x0
+data_1e7eba:
+		.fill   0x5
+data_1e7ebf:
+		.ascii  "\x00\x00\x00"
+data_1e7ec2:
+		.fill   0x6a
+data_1e7f2c:
+		.fill   0x1f4
+data_1e8120:
+		.long	0x0
+data_1e8124:
+		.long	0x0
+

@@ -96,12 +96,6 @@ struct HeapMgrHeader *heapmgr_init(struct HeapMgrHeader *head, int a2, int a3)
 
 int setup_heap_manager(struct SampleTable *smptable, size_t smptb_len, const char *fname, ushort sndtype)
 {
-#if 0
-    int ret;
-    asm volatile ("call ASM_setup_heap_manager\n"
-        : "=r" (ret) : "a" (smptable), "d" (smptb_len), "b" (fname), "c" (sndtype));
-    return ret;
-#endif
     TbFileHandle fh;
     ubyte tpno;
     long totlen;
@@ -180,12 +174,6 @@ void reset_heaps(void)
 
 void setup_heaps(int a1)
 {
-#if 0
-    size_t ret;
-    asm volatile ("call ASM_setup_heaps\n"
-        : "=r" (ret) : "a" (a1));
-    return ret;
-#endif
     long sz;
     unsigned int n;
 

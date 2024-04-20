@@ -1,0 +1,1600 @@
+
+#ifdef NEED_UNDERSCORE
+# define TRANSFORM_SYMBOLS
+# define EXPORT_SYMBOL(sym) _ ## sym
+#else
+# define EXPORT_SYMBOL(sym) sym
+#endif
+
+#ifndef TRANSFORM_SYMBOLS
+
+# define GLOBAL(sym) \
+  .global sym; \
+  sym ##:
+
+# define GLOBAL_FUNC(sym) \
+  GLOBAL (sym)
+
+#else
+
+# define GLOBAL(sym) \
+  .global EXPORT_SYMBOL (sym); \
+  EXPORT_SYMBOL (sym) ##: \
+  sym ##:
+
+# define GLOBAL_FUNC(sym) \
+  .global sym; \
+  GLOBAL (sym)
+
+#endif
+
+.text
+
+.global EXPORT_SYMBOL(IPXHandler)
+.global EXPORT_SYMBOL(data_1e2f4c)
+.global EXPORT_SYMBOL(data_1e2f50)
+.global EXPORT_SYMBOL(NetTimeoutTicks)
+
+/*----------------------------------------------------------------*/
+ASM_ipx_log_on_new_players:	/* 0x0F5650 */
+/*----------------------------------------------------------------*/
+		push   %ebx
+		push   %ecx
+		push   %edx
+		push   %esi
+		sub    $0x5c,%esp
+		mov    EXPORT_SYMBOL(IPXHandler),%eax
+		mov    $0x32,%ebx
+		xor    %edx,%edx
+		movw   $0x1,0x2(%eax)
+		mov    %esp,%eax
+		call   ac_memset
+		mov    $0x1c,%ebx
+		mov    EXPORT_SYMBOL(IPXHandler),%ecx
+		lea    0x34(%esp),%eax
+		xor    %edx,%edx
+		mov    (%ecx),%cx
+		call   ac_memset
+		mov    $0x300,%edx
+		xor    %eax,%eax
+		lea    0x34(%esp),%ebx
+		mov    %cx,%ax
+		mov    %edx,0x34(%esp)
+		mov    %eax,0x38(%esp)
+		lea    0x50(%esp),%eax
+		lea    0x50(%esp),%ecx
+		call   _segread
+		mov    %esp,%eax
+		lea    0x34(%esp),%edx
+		mov    %eax,0x48(%esp)
+		mov    $0x31,%eax
+		mov    $0x1,%esi
+		call   ac_dos_int386x
+		jmp    jump_f56c8
+	jump_f56c7:
+		inc    %esi
+	jump_f56c8:
+		movswl %si,%eax
+		cmp    $0x1e,%eax
+		jge    jump_f5720
+		mov    EXPORT_SYMBOL(IPXHandler),%ecx
+		lea    (%ecx,%eax,1),%edx
+		cmpb   $0x0,0x46(%edx)
+		je     jump_f56c7
+		imul   $0x21c,%eax,%eax
+		mov    $0x2,%ebx
+		add    $0x64,%ecx
+		movb   $0x0,0x46(%edx)
+		add    %eax,%ecx
+		mov    $ascBu_1,%edx
+		mov    %ecx,%eax
+		call   ac_strnicmp
+		test   %eax,%eax
+		jne    jump_f56c7
+		mov    0x2a(%ecx),%al
+		cmp    $0x2,%eax
+		jne    jump_f56c7
+		xor    %eax,%eax
+		mov    data_1e6419,%al
+		cmp    $0x8,%eax
+		jge    jump_f56c7
+		mov    %ecx,%eax
+		call   ac_ipx_add_new_player
+		jmp    jump_f56c7
+	jump_f5720:
+		add    $0x5c,%esp
+		pop    %esi
+		pop    %edx
+		pop    %ecx
+		pop    %ebx
+		ret
+
+
+/*----------------------------------------------------------------*/
+GLOBAL_FUNC(ASM_ipx_add_new_player)	/* 0x0F5728 */
+/*----------------------------------------------------------------*/
+		push   %ebx
+		push   %ecx
+		push   %edx
+		push   %esi
+		push   %edi
+		push   %ebp
+		sub    $0x4,%esp
+		mov    %eax,(%esp)
+		xor    %ah,%ah
+		mov    EXPORT_SYMBOL(data_1e641a),%dl
+		mov    %ah,EXPORT_SYMBOL(player_loggon)
+		cmp    data_1e6419,%dl
+		jbe    jump_f5826
+		mov    $EXPORT_SYMBOL(IPXPlayer)+0x2D,%eax
+		cmp    $data_1e6419,%eax
+		jb     jump_f5765
+		jmp    jump_f5793
+	jump_f575c:
+		add    $0x1c,%edx
+		cmp    %ebp,%edx
+		jb     jump_f5776
+		jmp    jump_f5793
+	jump_f5765:
+		mov    (%esp),%ebx
+		mov    $data_1e6419,%ebp
+		lea    0x4(%eax),%edx
+		add    $0x1c,%ebx
+		add    $0x4,%ebp
+	jump_f5776:
+		mov    $0x6,%ecx
+		mov    %ebx,%edi
+		mov    %edx,%esi
+		xor    %eax,%eax
+		repz cmpsb %es:(%edi),%ds:(%esi)
+		je     jump_f578a
+		sbb    %eax,%eax
+		sbb    $0xffffffff,%eax
+	jump_f578a:
+		test   %eax,%eax
+		jne    jump_f575c
+		jmp    jump_f5826
+	jump_f5793:
+		mov    $EXPORT_SYMBOL(IPXPlayer)+0x2D,%edx
+		cmp    $data_1e6419,%edx
+		jb     jump_f57b5
+		add    $0x4,%esp
+		pop    %ebp
+		pop    %edi
+		pop    %esi
+		pop    %edx
+		pop    %ecx
+		pop    %ebx
+		ret
+	jump_f57aa:
+		add    $0x1c,%edx
+		cmp    $data_1e6419,%edx
+		jae    jump_f5826
+	jump_f57b5:
+		cmpw   $0x0,0x1a(%edx)
+		jne    jump_f57aa
+		mov    (%esp),%esi
+		mov    $0x4,%ecx
+		mov    %edx,%edi
+		add    $0x22,%esi
+		movw   $0x1,0x1a(%edx)
+		push   %edi
+		mov    %ecx,%eax
+		shr    $0x2,%ecx
+		repnz movsl %ds:(%esi),%es:(%edi)
+		mov    %al,%cl
+		and    $0x3,%cl
+		repnz movsb %ds:(%esi),%es:(%edi)
+		pop    %edi
+		mov    (%esp),%esi
+		mov    $0x6,%ecx
+		lea    0x4(%edx),%edi
+		add    $0x1c,%esi
+		push   %edi
+		mov    %ecx,%eax
+		shr    $0x2,%ecx
+		repnz movsl %ds:(%esi),%es:(%edi)
+		mov    %al,%cl
+		and    $0x3,%cl
+		repnz movsb %ds:(%esi),%es:(%edi)
+		pop    %edi
+		mov    (%esp),%esi
+		lea    0xa(%edx),%edi
+		add    $0xc,%esi
+		push   %edi
+	jump_f5807:
+		mov    (%esi),%al
+		mov    %al,(%edi)
+		cmp    $0x0,%al
+		je     jump_f581f
+		mov    0x1(%esi),%al
+		add    $0x2,%esi
+		mov    %al,0x1(%edi)
+		add    $0x2,%edi
+		cmp    $0x0,%al
+		jne    jump_f5807
+	jump_f581f:
+		pop    %edi
+		incb   data_1e6419
+	jump_f5826:
+		add    $0x4,%esp
+		pop    %ebp
+		pop    %edi
+		pop    %esi
+		pop    %edx
+		pop    %ecx
+		pop    %ebx
+		ret
+
+
+/*----------------------------------------------------------------*/
+GLOBAL_FUNC(ASM_ipx_exchange_packets)	/* 0x0F5B4C */
+/*----------------------------------------------------------------*/
+		push   %ebx
+		push   %ecx
+		push   %esi
+		push   %edi
+		push   %ebp
+		sub    $0x8c,%esp
+		mov    %eax,0x70(%esp)
+		mov    %edx,0x80(%esp)
+		mov    $0x1,%edx
+		mov    $0x8,%ebx
+		xor    %ah,%ah
+		mov    %edx,0x74(%esp)
+		mov    %ah,0x88(%esp)
+		lea    0x64(%esp),%eax
+		xor    %edx,%edx
+		call   ac_memset
+		mov    $0x8,%ebx
+		lea    0x64(%esp),%eax
+		xor    %edx,%edx
+		xor    %esi,%esi
+		call   ac_memset
+		mov    EXPORT_SYMBOL(IPXHandler),%ebx
+		xor    %edi,%edi
+		test   %ebx,%ebx
+		je     jump_f5e14
+		mov    0xa(%ebx),%dl
+		mov    %ebx,%eax
+		test   %dl,%dl
+		je     jump_f5e14
+		xor    %edx,%edx
+		mov    data_1e6419,%dl
+		cmp    $0x1,%edx
+		jle    jump_f5e14
+		mov    EXPORT_SYMBOL(IPXPlayer)+0x2B,%dl
+		cmp    0xd(%ebx),%dl
+		jne    jump_f5c63
+		mov    EXPORT_SYMBOL(IPXPlayer)+0x26,%esi
+		mov    0x80(%esp),%edx
+		inc    %esi
+		mov    0x70(%esp),%eax
+		mov    %esi,EXPORT_SYMBOL(IPXPlayer)+0x26
+		call   ipx_get_players_packets_
+		cmp    $0xffffffff,%eax
+		jne    jump_f5bf9
+		mov    %eax,0x74(%esp)
+	jump_f5bf9:
+		mov    0x80(%esp),%ebp
+		mov    $0x3,%ebx
+		mov    $0x2d,%ecx
+		mov    data_1e6419,%al
+		mov    $EXPORT_SYMBOL(IPXPlayer),%esi
+		mov    %al,EXPORT_SYMBOL(IPXPlayer)+0x2C
+		shl    $0x3,%ebp
+		mov    0x70(%esp),%eax
+		mov    %ebp,%edx
+		mov    $EXPORT_SYMBOL(last_pkt),%edi
+		call   ipx_send_packet_to_all_
+		push   %edi
+		mov    %ecx,%eax
+		shr    $0x2,%ecx
+		repnz movsl %ds:(%esi),%es:(%edi)
+		mov    %al,%cl
+		and    $0x3,%cl
+		repnz movsb %ds:(%esi),%es:(%edi)
+		pop    %edi
+		mov    0x70(%esp),%esi
+		add    $0x2d,%edi
+		mov    %ebp,%ecx
+		add    $0x2d,%ebp
+		push   %edi
+		mov    %ecx,%eax
+		shr    $0x2,%ecx
+		repnz movsl %ds:(%esi),%es:(%edi)
+		mov    %al,%cl
+		and    $0x3,%cl
+		repnz movsb %ds:(%esi),%es:(%edi)
+		pop    %edi
+		mov    %ebp,EXPORT_SYMBOL(last_pkt_size)
+		jmp    jump_f5e14
+	jump_f5c63:
+		call   ac_dos_clock
+		mov    %eax,0x6c(%esp)
+		mov    %eax,0x84(%esp)
+		mov    EXPORT_SYMBOL(IPXHandler),%eax
+		mov    0xc(%eax),%al
+		mov    0x80(%esp),%ecx
+		and    $0xff,%eax
+		imul   %ecx,%eax
+		mov    0x70(%esp),%edx
+		add    %eax,%edx
+		lea    0x64(%esp),%eax
+		call   ASM_net_unkn_func_12
+		mov    EXPORT_SYMBOL(IPXHandler),%eax
+		mov    %edx,0x7c(%esp)
+		mov    0xd(%eax),%al
+		mov    $0x3,%ecx
+		mov    0x80(%esp),%ebx
+		and    $0xff,%eax
+		call   ipx_send_and_get_packet_
+		mov    0x80(%esp),%eax
+		shl    $0x3,%eax
+		mov    %eax,0x78(%esp)
+	jump_f5cc9:
+		call   ac_dos_clock
+		mov    %eax,%ebp
+		mov    %eax,%edx
+		sub    0x6c(%esp),%edx
+		mov    EXPORT_SYMBOL(NetTimeoutTicks),%eax
+		add    $0x320,%eax
+		cmp    %eax,%edx
+		jbe    jump_f5cee
+		mov    $0xfffffff8,%eax
+		jmp    jump_f5e1d
+	jump_f5cee:
+		mov    0x78(%esp),%edx
+		mov    0x70(%esp),%eax
+		call   ipx_get_host_packet_
+		test   %eax,%eax
+		je     jump_f5d4d
+		lea    0x5c(%esp),%eax
+		mov    $0x1,%bl
+		call   ASM_net_unkn_func_12
+		mov    %bl,0x88(%esp)
+		xor    %eax,%eax
+		xor    %bl,%bl
+		jmp    jump_f5d18
+	jump_f5d17:
+		inc    %eax
+	jump_f5d18:
+		movswl %ax,%edx
+		cmp    $0x8,%edx
+		jge    jump_f5d33
+		cmp    0x64(%esp,%edx,1),%bl
+		je     jump_f5d27
+		inc    %esi
+	jump_f5d27:
+		movswl %ax,%edx
+		cmp    0x5c(%esp,%edx,1),%bl
+		je     jump_f5d17
+		inc    %edi
+		jmp    jump_f5d17
+	jump_f5d33:
+		cmp    %si,%di
+		jge    jump_f5df1
+		mov    $0xffffffff,%eax
+		add    $0x8c,%esp
+		pop    %ebp
+		pop    %edi
+		pop    %esi
+		pop    %ecx
+		pop    %ebx
+		ret
+	jump_f5d4d:
+		mov    0x84(%esp),%edx
+		mov    %ebp,%eax
+		sub    %edx,%eax
+		cmp    $0x64,%eax
+		jbe    jump_f5d88
+		mov    EXPORT_SYMBOL(IPXHandler),%eax
+		mov    0xd(%eax),%al
+		mov    $0x3,%ecx
+		mov    0x80(%esp),%ebx
+		mov    0x7c(%esp),%edx
+		and    $0xff,%eax
+		call   ipx_send_packet_to_player_
+		mov    %ebp,0x84(%esp)
+		jmp    jump_f5df1
+	jump_f5d88:
+		mov    EXPORT_SYMBOL(IPXHandler),%eax
+		mov    $0x32,%ebx
+		xor    %edx,%edx
+		movw   $0x1,0x2(%eax)
+		mov    %esp,%eax
+		call   ac_memset
+		mov    $0x1c,%ebx
+		mov    EXPORT_SYMBOL(IPXHandler),%ecx
+		lea    0x34(%esp),%eax
+		xor    %edx,%edx
+		mov    (%ecx),%cx
+		call   ac_memset
+		mov    $0x300,%ebx
+		xor    %eax,%eax
+		lea    0x34(%esp),%edx
+		mov    %cx,%ax
+		mov    %ebx,0x34(%esp)
+		mov    %eax,0x38(%esp)
+		lea    0x50(%esp),%eax
+		lea    0x50(%esp),%ecx
+		call   _segread
+		mov    %esp,%eax
+		lea    0x34(%esp),%ebx
+		mov    %eax,0x48(%esp)
+		mov    $0x31,%eax
+		call   ac_dos_int386x
+	jump_f5df1:
+		cmpl   $0x0,EXPORT_SYMBOL(data_1e2f54)
+		je     jump_f5e00
+		call   *EXPORT_SYMBOL(data_1e2f54)
+	jump_f5e00:
+		cmpb   $0x0,0x88(%esp)
+		je     jump_f5cc9
+		incl   EXPORT_SYMBOL(IPXPlayer)+0x26
+	jump_f5e14:
+		call   ac_ipx_update
+		mov    0x74(%esp),%eax
+	jump_f5e1d:
+		add    $0x8c,%esp
+		pop    %ebp
+		pop    %edi
+		pop    %esi
+		pop    %ecx
+		pop    %ebx
+		ret
+
+
+/*----------------------------------------------------------------*/
+ipx_get_players_packets_:	/* 0x0F5E2C */
+/*----------------------------------------------------------------*/
+		push   %ebx
+		push   %ecx
+		push   %esi
+		push   %edi
+		push   %ebp
+		sub    $0xdc,%esp
+		mov    %eax,0xc8(%esp)
+		mov    %edx,%ebp
+		mov    $0x1,%edx
+		mov    $0x8,%ebx
+		lea    0xb8(%esp),%eax
+		mov    %dx,0xd4(%esp)
+		xor    %edx,%edx
+		call   ac_memset
+		call   ac_dos_clock
+		mov    %eax,0xc4(%esp)
+		mov    %eax,0xcc(%esp)
+	jump_f5e73:
+		call   ac_dos_clock
+		mov    0xc4(%esp),%edx
+		mov    EXPORT_SYMBOL(NetTimeoutTicks),%ebx
+		mov    %eax,0xc0(%esp)
+		sub    %edx,%eax
+		cmp    %ebx,%eax
+		jbe    jump_f5fa8
+		mov    $EXPORT_SYMBOL(IPXPlayer)+0x2D,%ecx
+		xor    %edx,%edx
+		jmp    jump_f5ea3
+	jump_f5e9f:
+		inc    %edx
+		add    $0x1c,%ecx
+	jump_f5ea3:
+		movswl %dx,%eax
+		cmp    $0x8,%eax
+		jge    jump_f5ecf
+		xor    %ebx,%ebx
+		mov    EXPORT_SYMBOL(IPXPlayer)+0x2B,%bl
+		cmp    %ebx,%eax
+		je     jump_f5e9f
+		cmpw   $0x0,0x1a(%ecx)
+		je     jump_f5e9f
+		cmpb   $0x0,0xb8(%esp,%eax,1)
+		jne    jump_f5e9f
+		call   ac_ipx_stop_network
+		jmp    jump_f5e9f
+	jump_f5ecf:
+		call   ac_dos_clock
+		mov    %eax,0xd0(%esp)
+	jump_f5edb:
+		call   ac_dos_clock
+		mov    $0x1,%bh
+		mov    $0x10f,%ecx
+		mov    $EXPORT_SYMBOL(IPXPlayer),%esi
+		mov    EXPORT_SYMBOL(IPXHandler),%edi
+		mov    %eax,%ebp
+		add    $0x64,%edi
+		mov    %bh,EXPORT_SYMBOL(IPXPlayer)+0x2A
+		push   %edi
+		mov    %ecx,%eax
+		shr    $0x2,%ecx
+		repnz movsl %ds:(%esi),%es:(%edi)
+		mov    %al,%cl
+		and    $0x3,%cl
+		repnz movsb %ds:(%esi),%es:(%edi)
+		pop    %edi
+		mov    EXPORT_SYMBOL(IPXHandler),%eax
+		xor    %edx,%edx
+		mov    $0x32,%ebx
+		movw   $0x10f,0x4(%eax)
+		mov    $0x300,%esi
+		movw   $0x3,0x2(%eax)
+		mov    %esp,%eax
+		mov    0xd0(%esp),%edi
+		call   ac_memset
+		mov    $0x1c,%ebx
+		mov    EXPORT_SYMBOL(IPXHandler),%ecx
+		lea    0x68(%esp),%eax
+		xor    %edx,%edx
+		mov    (%ecx),%cx
+		call   ac_memset
+		xor    %eax,%eax
+		lea    0x68(%esp),%ebx
+		mov    %cx,%ax
+		lea    0x68(%esp),%edx
+		mov    %eax,0x6c(%esp)
+		lea    0xac(%esp),%eax
+		mov    %esi,0x68(%esp)
+		call   _segread
+		mov    %esp,%eax
+		lea    0xac(%esp),%ecx
+		mov    %eax,0x7c(%esp)
+		mov    $0x31,%eax
+		sub    %edi,%ebp
+		call   ac_dos_int386x
+		cmp    $0xc8,%ebp
+		jbe    jump_f5edb
+		mov    $0xffffffff,%eax
+		add    $0xdc,%esp
+		pop    %ebp
+		pop    %edi
+		pop    %esi
+		pop    %ecx
+		pop    %ebx
+		ret
+	jump_f5fa8:
+		mov    EXPORT_SYMBOL(IPXHandler),%eax
+		mov    $0x32,%ebx
+		xor    %edx,%edx
+		movw   $0x1,0x2(%eax)
+		lea    0x34(%esp),%eax
+		mov    $0x300,%esi
+		call   ac_memset
+		mov    $0x1c,%ebx
+		mov    EXPORT_SYMBOL(IPXHandler),%ecx
+		lea    0x84(%esp),%eax
+		xor    %edx,%edx
+		mov    (%ecx),%cx
+		call   ac_memset
+		xor    %eax,%eax
+		lea    0x84(%esp),%ebx
+		mov    %cx,%ax
+		lea    0x84(%esp),%edx
+		mov    %eax,0x88(%esp)
+		lea    0xa0(%esp),%eax
+		mov    %esi,0x84(%esp)
+		call   _segread
+		lea    0x34(%esp),%eax
+		lea    0xa0(%esp),%ecx
+		mov    %eax,0x98(%esp)
+		mov    $0x31,%eax
+		call   ac_dos_int386x
+		movw   $0x1,0xd8(%esp)
+		jmp    jump_f618c
+	jump_f603c:
+		xor    %eax,%eax
+		test   %eax,%eax
+		jne    jump_f6169
+		jmp    jump_f6184
+	jump_f604b:
+		mov    EXPORT_SYMBOL(IPXPlayer)+0x26,%edx
+		mov    0x26(%esi),%eax
+		cmp    %edx,%eax
+		jne    jump_f60b0
+		xor    %edx,%eax
+		mov    0x2b(%esi),%al
+		cmpb   $0x0,0xb8(%esp,%eax,1)
+		jne    jump_f6184
+		mov    0xd4(%esp),%edi
+		mov    $0x1,%cl
+		inc    %edi
+		mov    %cl,0xb8(%esp,%eax,1)
+		mov    %di,0xd4(%esp)
+		movzbl 0x2b(%esi),%edi
+		imul   %ebp,%edi
+		lea    0x2d(%esi),%eax
+		mov    0xc8(%esp),%ecx
+		mov    %eax,%esi
+		add    %ecx,%edi
+		mov    %ebp,%ecx
+		push   %edi
+		mov    %ecx,%eax
+		shr    $0x2,%ecx
+		repnz movsl %ds:(%esi),%es:(%edi)
+		mov    %al,%cl
+		and    $0x3,%cl
+		repnz movsb %ds:(%esi),%es:(%edi)
+		pop    %edi
+		jmp    jump_f6184
+	jump_f60b0:
+		mov    0xc0(%esp),%eax
+		sub    0xcc(%esp),%eax
+		cmp    $0x64,%eax
+		jbe    jump_f6184
+		mov    0xc0(%esp),%eax
+		mov    %eax,0xcc(%esp)
+		xor    %eax,%eax
+		mov    0x2b(%esi),%al
+		call   ipx_send_last_packet_
+		jmp    jump_f6184
+	jump_f60e4:
+		cmpb   $0x0,EXPORT_SYMBOL(player_loggon)
+		jne    jump_f6184
+		mov    $0x1,%al
+		mov    $0x2d,%ecx
+		mov    $EXPORT_SYMBOL(loggon_header),%edi
+		mov    %al,EXPORT_SYMBOL(player_loggon)
+		push   %edi
+		mov    %ecx,%eax
+		shr    $0x2,%ecx
+		repnz movsl %ds:(%esi),%es:(%edi)
+		mov    %al,%cl
+		and    $0x3,%cl
+		repnz movsb %ds:(%esi),%es:(%edi)
+		pop    %edi
+		jmp    jump_f6184
+	jump_f6117:
+		xor    %eax,%eax
+		mov    0x2b(%esi),%al
+		mov    %eax,%ecx
+		cmp    $0x8,%eax
+		jge    jump_f6184
+		imul   $0x226,%eax,%eax
+		cmpw   $0x0,data_1e6978(%eax)
+		je     jump_f6184
+		mov    EXPORT_SYMBOL(IPXPlayer)+0x26,%esi
+		mov    EXPORT_SYMBOL(datagram_backup)(%eax),%edx
+		mov    data_1e6974(%eax),%ebx
+		add    $EXPORT_SYMBOL(datagram_backup),%eax
+		mov    %edx,EXPORT_SYMBOL(IPXPlayer)+0x26
+		lea    0xa(%eax),%edx
+		xor    %eax,%eax
+		mov    %cl,%al
+		mov    $0x4,%ecx
+		call   ipx_send_packet_to_player_
+		mov    %esi,EXPORT_SYMBOL(IPXPlayer)+0x26
+		jmp    jump_f6184
+	jump_f6169:
+		mov    0x2a(%esi),%al
+		cmp    $0x3,%al
+		jb     jump_f617c
+		jbe    jump_f604b
+		cmp    $0x5,%al
+		je     jump_f6117
+		jmp    jump_f6184
+	jump_f617c:
+		cmp    $0x2,%al
+		je     jump_f60e4
+	jump_f6184:
+		incw   0xd8(%esp)
+	jump_f618c:
+		mov    0xd6(%esp),%eax
+		sar    $0x10,%eax
+		cmp    $0x1e,%eax
+		jge    jump_f620b
+		mov    EXPORT_SYMBOL(IPXHandler),%edx
+		lea    (%edx,%eax,1),%esi
+		cmpb   $0x0,0x46(%esi)
+		je     jump_f6184
+		imul   $0x21c,%eax,%eax
+		add    $0x64,%edx
+		movb   $0x0,0x46(%esi)
+		lea    (%edx,%eax,1),%esi
+		mov    $0x2,%ebx
+		mov    $ascBu_2,%edx
+		mov    %esi,%eax
+		call   ac_strnicmp
+		test   %eax,%eax
+		jne    jump_f603c
+		mov    $EXPORT_SYMBOL(IPXPlayer)+0x04,%edx
+		lea    0x4(%esi),%eax
+		call   ac_stricmp
+		test   %eax,%eax
+		jne    jump_f603c
+		mov    EXPORT_SYMBOL(IPXPlayer)+0x02,%cx
+		cmp    0x2(%esi),%cx
+		jne    jump_f603c
+		mov    $0x1,%eax
+		test   %eax,%eax
+		jne    jump_f6169
+		jmp    jump_f6184
+	jump_f620b:
+		call   ac_ipx_update
+		cmpl   $0x0,EXPORT_SYMBOL(data_1e2f54)
+		je     jump_f621f
+		call   *EXPORT_SYMBOL(data_1e2f54)
+	jump_f621f:
+		xor    %eax,%eax
+		mov    0xd2(%esp),%edx
+		mov    data_1e6419,%al
+		sar    $0x10,%edx
+		cmp    %eax,%edx
+		jl     jump_f5e73
+		mov    $0x1,%eax
+		add    $0xdc,%esp
+		pop    %ebp
+		pop    %edi
+		pop    %esi
+		pop    %ecx
+		pop    %ebx
+		ret
+
+
+/*----------------------------------------------------------------*/
+ipx_send_packet_to_all_:	/* 0x0F624C */
+/*----------------------------------------------------------------*/
+		push   %ecx
+		push   %esi
+		push   %edi
+		push   %ebp
+		sub    $0x68,%esp
+		mov    %eax,%ebp
+		mov    %edx,0x5c(%esp)
+		cmpb   $0x0,data_1e6419
+		je     jump_f63da
+		mov    EXPORT_SYMBOL(IPXHandler),%edx
+		mov    $0x2d,%ecx
+		add    $0x64,%edx
+		mov    $EXPORT_SYMBOL(IPXPlayer),%esi
+		mov    %edx,%edi
+		mov    %bl,EXPORT_SYMBOL(IPXPlayer)+0x2A
+		push   %edi
+		mov    %ecx,%eax
+		shr    $0x2,%ecx
+		repnz movsl %ds:(%esi),%es:(%edi)
+		mov    %al,%cl
+		and    $0x3,%cl
+		repnz movsb %ds:(%esi),%es:(%edi)
+		pop    %edi
+		mov    0x5c(%esp),%ecx
+		lea    0x2d(%edx),%edi
+		mov    %ebp,%esi
+		mov    $EXPORT_SYMBOL(IPXPlayer)+0x2D,%ebx
+		push   %edi
+		mov    %ecx,%eax
+		shr    $0x2,%ecx
+		repnz movsl %ds:(%esi),%es:(%edi)
+		mov    %al,%cl
+		and    $0x3,%cl
+		repnz movsb %ds:(%esi),%es:(%edi)
+		pop    %edi
+		mov    0x5c(%esp),%eax
+		mov    EXPORT_SYMBOL(IPXHandler),%edx
+		xor    %ecx,%ecx
+		add    $0x280,%edx
+		add    $0x2d,%eax
+		mov    %cx,0x64(%esp)
+		mov    %ax,-0x27c(%edx)
+		cmp    $data_1e6419,%ebx
+		jae    jump_f635b
+		lea    0x4(%ebx),%eax
+		lea    0x4(%edx),%ebp
+		mov    %eax,0x60(%esp)
+	jump_f62e8:
+		xor    %eax,%eax
+		mov    0x62(%esp),%ecx
+		mov    EXPORT_SYMBOL(IPXPlayer)+0x2B,%al
+		sar    $0x10,%ecx
+		cmp    %eax,%ecx
+		je     jump_f633b
+		cmpw   $0x0,0x1a(%ebx)
+		je     jump_f633b
+		mov    $0x4,%ecx
+		mov    %ebx,%esi
+		mov    %edx,%edi
+		push   %edi
+		mov    %ecx,%eax
+		shr    $0x2,%ecx
+		repnz movsl %ds:(%esi),%es:(%edi)
+		mov    %al,%cl
+		and    $0x3,%cl
+		repnz movsb %ds:(%esi),%es:(%edi)
+		pop    %edi
+		mov    $0x6,%ecx
+		mov    0x60(%esp),%esi
+		mov    %ebp,%edi
+		push   %edi
+		mov    %ecx,%eax
+		shr    $0x2,%ecx
+		repnz movsl %ds:(%esi),%es:(%edi)
+		mov    %al,%cl
+		and    $0x3,%cl
+		repnz movsb %ds:(%esi),%es:(%edi)
+		pop    %edi
+		add    $0xe,%edx
+		add    $0xe,%ebp
+	jump_f633b:
+		mov    0x60(%esp),%ecx
+		mov    0x64(%esp),%esi
+		add    $0x1c,%ebx
+		add    $0x1c,%ecx
+		inc    %esi
+		mov    %ecx,0x60(%esp)
+		mov    %si,0x64(%esp)
+		cmp    $data_1e6419,%ebx
+		jb     jump_f62e8
+	jump_f635b:
+		mov    EXPORT_SYMBOL(IPXHandler),%eax
+		mov    data_1e6419,%dl
+		movw   $0x5,0x2(%eax)
+		mov    $0x32,%ebx
+		mov    %dl,0xb(%eax)
+		mov    %esp,%eax
+		xor    %edx,%edx
+		mov    $0x300,%esi
+		call   ac_memset
+		mov    $0x1c,%ebx
+		mov    EXPORT_SYMBOL(IPXHandler),%ecx
+		lea    0x34(%esp),%eax
+		xor    %edx,%edx
+		mov    (%ecx),%cx
+		call   ac_memset
+		xor    %eax,%eax
+		lea    0x34(%esp),%ebx
+		mov    %cx,%ax
+		lea    0x34(%esp),%edx
+		mov    %eax,0x38(%esp)
+		lea    0x50(%esp),%eax
+		mov    %esi,0x34(%esp)
+		call   _segread
+		mov    %esp,%eax
+		lea    0x50(%esp),%ecx
+		mov    %eax,0x48(%esp)
+		mov    $0x31,%eax
+		call   ac_dos_int386x
+		mov    $0x1,%eax
+		add    $0x68,%esp
+		pop    %ebp
+		pop    %edi
+		pop    %esi
+		pop    %ecx
+		ret
+	jump_f63da:
+		xor    %eax,%eax
+		add    $0x68,%esp
+		pop    %ebp
+		pop    %edi
+		pop    %esi
+		pop    %ecx
+		ret
+
+
+/*----------------------------------------------------------------*/
+ipx_send_last_packet_:	/* 0x0F65EC */
+/*----------------------------------------------------------------*/
+		push   %ebx
+		push   %ecx
+		push   %edx
+		push   %esi
+		push   %edi
+		sub    $0x5c,%esp
+		cmpl   $0x0,EXPORT_SYMBOL(last_pkt_size)
+		je     jump_f6704
+		cmp    $0x8,%eax
+		jge    jump_f6704
+		mov    %eax,%edx
+		shl    $0x3,%eax
+		sub    %edx,%eax
+		lea    0x0(,%eax,4),%edx
+		cmpw   $0x0,data_1e6353(%edx)
+		je     jump_f6704
+		mov    $EXPORT_SYMBOL(last_pkt),%esi
+		mov    EXPORT_SYMBOL(IPXHandler),%edi
+		mov    EXPORT_SYMBOL(last_pkt_size),%ecx
+		add    $0x64,%edi
+		add    $EXPORT_SYMBOL(IPXPlayer)+0x2D,%edx
+		push   %edi
+		mov    %ecx,%eax
+		shr    $0x2,%ecx
+		repnz movsl %ds:(%esi),%es:(%edi)
+		mov    %al,%cl
+		and    $0x3,%cl
+		repnz movsb %ds:(%esi),%es:(%edi)
+		pop    %edi
+		mov    $0x6,%ecx
+		mov    EXPORT_SYMBOL(IPXHandler),%eax
+		mov    EXPORT_SYMBOL(last_pkt_size),%bx
+		lea    0x4(%edx),%esi
+		lea    0x12(%eax),%edi
+		mov    %bx,0x4(%eax)
+		push   %edi
+		mov    %ecx,%eax
+		shr    $0x2,%ecx
+		repnz movsl %ds:(%esi),%es:(%edi)
+		mov    %al,%cl
+		and    $0x3,%cl
+		repnz movsb %ds:(%esi),%es:(%edi)
+		pop    %edi
+		mov    $0x4,%ecx
+		mov    EXPORT_SYMBOL(IPXHandler),%edi
+		mov    %edx,%esi
+		add    $0xe,%edi
+		push   %edi
+		mov    %ecx,%eax
+		shr    $0x2,%ecx
+		repnz movsl %ds:(%esi),%es:(%edi)
+		mov    %al,%cl
+		and    $0x3,%cl
+		repnz movsb %ds:(%esi),%es:(%edi)
+		pop    %edi
+		mov    EXPORT_SYMBOL(IPXHandler),%eax
+		mov    $0x32,%ebx
+		xor    %edx,%edx
+		movw   $0x2,0x2(%eax)
+		mov    %esp,%eax
+		call   ac_memset
+		mov    $0x1c,%ebx
+		mov    EXPORT_SYMBOL(IPXHandler),%ecx
+		lea    0x34(%esp),%eax
+		xor    %edx,%edx
+		mov    (%ecx),%cx
+		call   ac_memset
+		mov    $0x300,%ebx
+		xor    %eax,%eax
+		lea    0x34(%esp),%edx
+		mov    %cx,%ax
+		mov    %ebx,0x34(%esp)
+		mov    %eax,0x38(%esp)
+		lea    0x50(%esp),%eax
+		lea    0x50(%esp),%ecx
+		call   _segread
+		mov    %esp,%eax
+		lea    0x34(%esp),%ebx
+		mov    %eax,0x48(%esp)
+		mov    $0x31,%eax
+		call   ac_dos_int386x
+	jump_f6704:
+		add    $0x5c,%esp
+		pop    %edi
+		pop    %esi
+		pop    %edx
+		pop    %ecx
+		pop    %ebx
+		ret
+
+
+/*----------------------------------------------------------------*/
+ipx_send_packet_to_player_:	/* 0x0F6710 */
+/*----------------------------------------------------------------*/
+		push   %esi
+		push   %edi
+		push   %ebp
+		sub    $0x64,%esp
+		mov    %al,0x60(%esp)
+		mov    %edx,%ebp
+		xor    %eax,%eax
+		mov    $0xffffffff,%edx
+		mov    0x60(%esp),%al
+		mov    %edx,0x5c(%esp)
+		cmp    $0x8,%eax
+		jge    jump_f6864
+		mov    %eax,%edx
+		shl    $0x3,%eax
+		sub    %edx,%eax
+		cmpw   $0x0,data_1e6353(,%eax,4)
+		je     jump_f6864
+		mov    $EXPORT_SYMBOL(IPXPlayer),%esi
+		mov    EXPORT_SYMBOL(IPXHandler),%edx
+		mov    %cl,EXPORT_SYMBOL(IPXPlayer)+0x2A
+		add    $0x64,%edx
+		mov    $0x2d,%ecx
+		mov    %edx,%edi
+		push   %edi
+		mov    %ecx,%eax
+		shr    $0x2,%ecx
+		repnz movsl %ds:(%esi),%es:(%edi)
+		mov    %al,%cl
+		and    $0x3,%cl
+		repnz movsb %ds:(%esi),%es:(%edi)
+		pop    %edi
+		add    $0x2d,%edx
+		test   %ebx,%ebx
+		je     jump_f6796
+		test   %ebp,%ebp
+		je     jump_f6796
+		mov    %ebx,%ecx
+		mov    %ebp,%esi
+		mov    %edx,%edi
+		push   %edi
+		mov    %ecx,%eax
+		shr    $0x2,%ecx
+		repnz movsl %ds:(%esi),%es:(%edi)
+		mov    %al,%cl
+		and    $0x3,%cl
+		repnz movsb %ds:(%esi),%es:(%edi)
+		pop    %edi
+	jump_f6796:
+		mov    %ebx,%eax
+		xor    %edx,%edx
+		mov    EXPORT_SYMBOL(IPXHandler),%ebx
+		add    $0x2d,%eax
+		mov    0x60(%esp),%dl
+		mov    %ax,0x4(%ebx)
+		lea    0x0(,%edx,8),%eax
+		sub    %edx,%eax
+		mov    $EXPORT_SYMBOL(IPXPlayer)+0x2D,%edx
+		shl    $0x2,%eax
+		mov    $0x6,%ecx
+		add    %eax,%edx
+		lea    0x12(%ebx),%edi
+		lea    0x4(%edx),%esi
+		push   %edi
+		mov    %ecx,%eax
+		shr    $0x2,%ecx
+		repnz movsl %ds:(%esi),%es:(%edi)
+		mov    %al,%cl
+		and    $0x3,%cl
+		repnz movsb %ds:(%esi),%es:(%edi)
+		pop    %edi
+		mov    $0x4,%ecx
+		mov    EXPORT_SYMBOL(IPXHandler),%edi
+		mov    %edx,%esi
+		add    $0xe,%edi
+		push   %edi
+		mov    %ecx,%eax
+		shr    $0x2,%ecx
+		repnz movsl %ds:(%esi),%es:(%edi)
+		mov    %al,%cl
+		and    $0x3,%cl
+		repnz movsb %ds:(%esi),%es:(%edi)
+		pop    %edi
+		mov    EXPORT_SYMBOL(IPXHandler),%eax
+		mov    $0x32,%ebx
+		xor    %edx,%edx
+		movw   $0x2,0x2(%eax)
+		mov    %esp,%eax
+		call   ac_memset
+		mov    $0x1c,%ebx
+		mov    EXPORT_SYMBOL(IPXHandler),%ecx
+		lea    0x34(%esp),%eax
+		xor    %edx,%edx
+		mov    (%ecx),%cx
+		call   ac_memset
+		mov    $0x300,%ebx
+		xor    %eax,%eax
+		lea    0x34(%esp),%edx
+		mov    %cx,%ax
+		mov    %ebx,0x34(%esp)
+		mov    %eax,0x38(%esp)
+		lea    0x50(%esp),%eax
+		lea    0x50(%esp),%ecx
+		call   _segread
+		mov    %esp,%eax
+		lea    0x34(%esp),%ebx
+		mov    %eax,0x48(%esp)
+		mov    $0x31,%eax
+		call   ac_dos_int386x
+	jump_f6864:
+		mov    0x5c(%esp),%eax
+		add    $0x64,%esp
+		pop    %ebp
+		pop    %edi
+		pop    %esi
+		ret
+
+
+/*----------------------------------------------------------------*/
+ipx_send_and_get_packet_:	/* 0x0F6870 */
+/*----------------------------------------------------------------*/
+		push   %esi
+		push   %edi
+		push   %ebp
+		sub    $0x64,%esp
+		mov    %al,0x60(%esp)
+		mov    %edx,%ebp
+		xor    %eax,%eax
+		mov    $0xffffffff,%edx
+		mov    0x60(%esp),%al
+		mov    %edx,0x5c(%esp)
+		cmp    $0x8,%eax
+		jge    jump_f69c4
+		mov    %eax,%edx
+		shl    $0x3,%eax
+		sub    %edx,%eax
+		cmpw   $0x0,data_1e6353(,%eax,4)
+		je     jump_f69c4
+		mov    $EXPORT_SYMBOL(IPXPlayer),%esi
+		mov    EXPORT_SYMBOL(IPXHandler),%edx
+		mov    %cl,EXPORT_SYMBOL(IPXPlayer)+0x2A
+		add    $0x64,%edx
+		mov    $0x2d,%ecx
+		mov    %edx,%edi
+		push   %edi
+		mov    %ecx,%eax
+		shr    $0x2,%ecx
+		repnz movsl %ds:(%esi),%es:(%edi)
+		mov    %al,%cl
+		and    $0x3,%cl
+		repnz movsb %ds:(%esi),%es:(%edi)
+		pop    %edi
+		add    $0x2d,%edx
+		test   %ebx,%ebx
+		je     jump_f68f6
+		test   %ebp,%ebp
+		je     jump_f68f6
+		mov    %ebx,%ecx
+		mov    %ebp,%esi
+		mov    %edx,%edi
+		push   %edi
+		mov    %ecx,%eax
+		shr    $0x2,%ecx
+		repnz movsl %ds:(%esi),%es:(%edi)
+		mov    %al,%cl
+		and    $0x3,%cl
+		repnz movsb %ds:(%esi),%es:(%edi)
+		pop    %edi
+	jump_f68f6:
+		mov    %ebx,%eax
+		xor    %edx,%edx
+		mov    EXPORT_SYMBOL(IPXHandler),%ebx
+		add    $0x2d,%eax
+		mov    0x60(%esp),%dl
+		mov    %ax,0x4(%ebx)
+		lea    0x0(,%edx,8),%eax
+		sub    %edx,%eax
+		mov    $EXPORT_SYMBOL(IPXPlayer)+0x2D,%edx
+		shl    $0x2,%eax
+		mov    $0x6,%ecx
+		add    %eax,%edx
+		lea    0x12(%ebx),%edi
+		lea    0x4(%edx),%esi
+		push   %edi
+		mov    %ecx,%eax
+		shr    $0x2,%ecx
+		repnz movsl %ds:(%esi),%es:(%edi)
+		mov    %al,%cl
+		and    $0x3,%cl
+		repnz movsb %ds:(%esi),%es:(%edi)
+		pop    %edi
+		mov    $0x4,%ecx
+		mov    EXPORT_SYMBOL(IPXHandler),%edi
+		mov    %edx,%esi
+		add    $0xe,%edi
+		push   %edi
+		mov    %ecx,%eax
+		shr    $0x2,%ecx
+		repnz movsl %ds:(%esi),%es:(%edi)
+		mov    %al,%cl
+		and    $0x3,%cl
+		repnz movsb %ds:(%esi),%es:(%edi)
+		pop    %edi
+		mov    EXPORT_SYMBOL(IPXHandler),%eax
+		mov    $0x32,%ebx
+		xor    %edx,%edx
+		movw   $0x4,0x2(%eax)
+		mov    %esp,%eax
+		call   ac_memset
+		mov    $0x1c,%ebx
+		mov    EXPORT_SYMBOL(IPXHandler),%ecx
+		lea    0x34(%esp),%eax
+		xor    %edx,%edx
+		mov    (%ecx),%cx
+		call   ac_memset
+		mov    $0x300,%ebx
+		xor    %eax,%eax
+		lea    0x34(%esp),%edx
+		mov    %cx,%ax
+		mov    %ebx,0x34(%esp)
+		mov    %eax,0x38(%esp)
+		lea    0x50(%esp),%eax
+		lea    0x50(%esp),%ecx
+		call   _segread
+		mov    %esp,%eax
+		lea    0x34(%esp),%ebx
+		mov    %eax,0x48(%esp)
+		mov    $0x31,%eax
+		call   ac_dos_int386x
+	jump_f69c4:
+		mov    0x5c(%esp),%eax
+		add    $0x64,%esp
+		pop    %ebp
+		pop    %edi
+		pop    %esi
+		ret
+
+
+/*----------------------------------------------------------------*/
+ipx_get_host_packet_:	/* 0x0F69D0 */
+/*----------------------------------------------------------------*/
+		push   %ebx
+		push   %ecx
+		push   %esi
+		push   %edi
+		push   %ebp
+		sub    $0x10,%esp
+		mov    %eax,0x4(%esp)
+		mov    %edx,(%esp)
+		xor    %edx,%edx
+		mov    %edx,0x8(%esp)
+		movw   $0x1,0xc(%esp)
+		jmp    jump_f6b01
+	jump_f69f1:
+		xor    %eax,%eax
+		test   %eax,%eax
+		jne    jump_f6ade
+		jmp    jump_f6afc
+	jump_f6a00:
+		mov    EXPORT_SYMBOL(IPXHandler),%eax
+		mov    0x2b(%ebp),%dl
+		cmp    0xd(%eax),%dl
+		jne    jump_f6afc
+		mov    EXPORT_SYMBOL(IPXPlayer)+0x26,%ebx
+		cmp    0x26(%ebp),%ebx
+		jne    jump_f6afc
+		mov    $0x1,%ecx
+		mov    0x4(%esp),%edi
+		mov    %ecx,0x8(%esp)
+		mov    (%esp),%ecx
+		push   %edi
+		mov    %ecx,%eax
+		shr    $0x2,%ecx
+		repnz movsl %ds:(%esi),%es:(%edi)
+		mov    %al,%cl
+		and    $0x3,%cl
+		repnz movsb %ds:(%esi),%es:(%edi)
+		pop    %edi
+		mov    0x2c(%ebp),%al
+		mov    %al,EXPORT_SYMBOL(IPXPlayer)+0x2C
+		mov    %al,data_1e6419
+		jmp    jump_f6afc
+	jump_f6a52:
+		mov    $0xe0,%ecx
+		mov    $EXPORT_SYMBOL(IPXPlayer)+0x2D,%edi
+		push   %edi
+		mov    %ecx,%eax
+		shr    $0x2,%ecx
+		repnz movsl %ds:(%esi),%es:(%edi)
+		mov    %al,%cl
+		and    $0x3,%cl
+		repnz movsb %ds:(%esi),%es:(%edi)
+		pop    %edi
+		mov    0x10d(%ebp),%al
+		mov    %al,EXPORT_SYMBOL(IPXPlayer)+0x2C
+		mov    %al,data_1e6419
+		mov    0x10e(%ebp),%al
+		mov    %al,EXPORT_SYMBOL(data_1e641a)
+		jmp    jump_f6afc
+	jump_f6a8c:
+		movzbl 0x2b(%ebp),%ebp
+		mov    %ebp,%ecx
+		cmp    $0x8,%ebp
+		jge    jump_f6afc
+		imul   $0x226,%ebp,%ebp
+		cmpw   $0x0,data_1e6978(%ebp)
+		je     jump_f6afc
+		mov    $EXPORT_SYMBOL(datagram_backup),%edx
+		mov    EXPORT_SYMBOL(IPXPlayer)+0x26,%esi
+		mov    EXPORT_SYMBOL(datagram_backup)(%ebp),%eax
+		mov    data_1e6974(%ebp),%ebx
+		mov    %eax,EXPORT_SYMBOL(IPXPlayer)+0x26
+		add    %ebp,%edx
+		xor    %eax,%eax
+		add    $0xa,%edx
+		mov    %cl,%al
+		mov    $0x4,%ecx
+		call   ipx_send_packet_to_player_
+		mov    %esi,EXPORT_SYMBOL(IPXPlayer)+0x26
+		jmp    jump_f6afc
+	jump_f6ade:
+		mov    0x2a(%ebp),%al
+		lea    0x2d(%ebp),%esi
+		cmp    $0x3,%al
+		jb     jump_f6af4
+		jbe    jump_f6a00
+		cmp    $0x5,%al
+		je     jump_f6a8c
+		jmp    jump_f6afc
+	jump_f6af4:
+		cmp    $0x1,%al
+		je     jump_f6a52
+	jump_f6afc:
+		incw   0xc(%esp)
+	jump_f6b01:
+		mov    0xa(%esp),%esi
+		sar    $0x10,%esi
+		cmp    $0x1e,%esi
+		jge    jump_f6b79
+		mov    EXPORT_SYMBOL(IPXHandler),%eax
+		lea    (%eax,%esi,1),%ebp
+		cmpb   $0x0,0x46(%ebp)
+		je     jump_f6afc
+		imul   $0x21c,%esi,%esi
+		mov    $0x2,%ebx
+		add    $0x64,%eax
+		movb   $0x0,0x46(%ebp)
+		lea    (%eax,%esi,1),%ebp
+		mov    $ascBu_2,%edx
+		mov    %ebp,%eax
+		call   ac_strnicmp
+		test   %eax,%eax
+		jne    jump_f69f1
+		mov    $EXPORT_SYMBOL(IPXPlayer)+0x04,%edx
+		lea    0x4(%ebp),%eax
+		call   ac_stricmp
+		test   %eax,%eax
+		jne    jump_f69f1
+		mov    EXPORT_SYMBOL(IPXPlayer)+0x02,%bx
+		cmp    0x2(%ebp),%bx
+		jne    jump_f69f1
+		mov    $0x1,%eax
+		test   %eax,%eax
+		jne    jump_f6ade
+		jmp    jump_f6afc
+	jump_f6b79:
+		mov    0x8(%esp),%eax
+		add    $0x10,%esp
+		pop    %ebp
+		pop    %edi
+		pop    %esi
+		pop    %ecx
+		pop    %ebx
+		ret
+
+
+/*----------------------------------------------------------------*/
+GLOBAL_FUNC(ASM_ipx_get_player_name)	/* 0x0F6BB8 */
+/*----------------------------------------------------------------*/
+		push   %ebx
+		push   %esi
+		push   %edi
+		mov    %eax,%edi
+		mov    $0xffffffff,%esi
+		cmp    $0x8,%edx
+		jge    jump_f6c14
+		mov    EXPORT_SYMBOL(IPXHandler),%ebx
+		test   %ebx,%ebx
+		je     jump_f6c14
+		cmpb   $0x0,0xa(%ebx)
+		je     jump_f6c14
+		lea    0x0(,%edx,8),%eax
+		sub    %edx,%eax
+		shl    $0x2,%eax
+		cmpw   $0x0,data_1e6353(%eax)
+		je     jump_f6c14
+		add    $EXPORT_SYMBOL(IPXPlayer)+0x2D,%eax
+		lea    0xa(%eax),%esi
+		push   %edi
+	jump_f6bf6:
+		mov    (%esi),%al
+		mov    %al,(%edi)
+		cmp    $0x0,%al
+		je     jump_f6c0e
+		mov    0x1(%esi),%al
+		add    $0x2,%esi
+		mov    %al,0x1(%edi)
+		add    $0x2,%edi
+		cmp    $0x0,%al
+		jne    jump_f6bf6
+	jump_f6c0e:
+		pop    %edi
+		mov    $0x1,%esi
+	jump_f6c14:
+		mov    %esi,%eax
+		pop    %edi
+		pop    %esi
+		pop    %ebx
+		ret
+
+
+/*----------------------------------------------------------------*/
+GLOBAL_FUNC(ASM_ipx_stop_network)	/* 0x0F6CA4 */
+/*----------------------------------------------------------------*/
+		push   %ebx
+		push   %ecx
+		push   %edx
+		push   %esi
+		push   %edi
+		push   %ebp
+		mov    %eax,%ecx
+		xor    %ebx,%ebx
+		mov    EXPORT_SYMBOL(IPXPlayer)+0x2B,%bl
+		cmp    %eax,%ebx
+		jne    jump_f6d74
+		mov    EXPORT_SYMBOL(IPXHandler),%eax
+		mov    0xd(%eax),%al
+		and    $0xff,%eax
+		cmp    %ecx,%eax
+		jne    jump_f6d13
+		xor    %ecx,%eax
+		mov    data_1e6419,%al
+		cmp    $0x1,%eax
+		jle    jump_f6d13
+		call   ac_dos_clock
+		mov    %eax,%ecx
+	jump_f6ce0:
+		call   ac_dos_clock
+		mov    %eax,%ebx
+		xor    %edx,%edx
+		jmp    jump_f6cf1
+	jump_f6ceb:
+		call   ipx_send_last_packet_
+		inc    %edx
+	jump_f6cf1:
+		movswl %dx,%eax
+		cmp    $0x8,%eax
+		jl     jump_f6ceb
+		cmpl   $0x0,EXPORT_SYMBOL(data_1e2f6c)
+		je     jump_f6d08
+		call   *EXPORT_SYMBOL(data_1e2f6c)
+	jump_f6d08:
+		mov    %ebx,%eax
+		sub    %ecx,%eax
+		cmp    $0x1f4,%eax
+		jb     jump_f6ce0
+	jump_f6d13:
+		mov    EXPORT_SYMBOL(IPXHandler),%eax
+		xor    %bl,%bl
+		xor    %edi,%edi
+		xor    %cl,%cl
+		movb   $0x0,0xa(%eax)
+		xor    %edx,%edx
+		mov    %bl,EXPORT_SYMBOL(IPXPlayer)+0x2A
+		mov    %edi,EXPORT_SYMBOL(IPXPlayer)+0x26
+		xor    %al,%al
+		mov    %cl,EXPORT_SYMBOL(IPXPlayer)+0x2C
+		mov    %al,EXPORT_SYMBOL(data_1e641a)
+		xor    %bh,%bh
+		xor    %ch,%ch
+		mov    $EXPORT_SYMBOL(IPXPlayer)+0x2D,%eax
+		mov    %bh,EXPORT_SYMBOL(IPXPlayer)+0x2B
+		mov    $0xe0,%ebx
+		mov    %ch,data_1e6419
+		call   ac_memset
+		mov    $0x8,%ebx
+		mov    $EXPORT_SYMBOL(IPXPlayer)+0x04,%eax
+		xor    %edx,%edx
+		call   ac_memset
+		pop    %ebp
+		pop    %edi
+		pop    %esi
+		pop    %edx
+		pop    %ecx
+		pop    %ebx
+		ret
+	jump_f6d74:
+		xor    %edx,%edx
+		mov    %edx,EXPORT_SYMBOL(ipx_got_player_send_packet_count)(,%eax,4)
+		mov    %eax,%edx
+		xor    %esi,%esi
+		shl    $0x5,%edx
+		shl    $0x5,%ebx
+		mov    %esi,EXPORT_SYMBOL(ipx_send_packet_count)(%edx,%ecx,4)
+		mov    data_1e6419,%ah
+		mov    %esi,EXPORT_SYMBOL(ipx_send_packet_count)(%ebx,%ecx,4)
+		test   %ah,%ah
+		je     jump_f6e2f
+		mov    data_1e6419,%dl
+		mov    %ecx,%ebx
+		dec    %dl
+		lea    0x0(,%ebx,8),%eax
+		mov    %dl,data_1e6419
+		sub    %ebx,%eax
+		mov    $0x1c,%ebx
+		shl    $0x2,%eax
+		xor    %edx,%edx
+		add    $EXPORT_SYMBOL(IPXPlayer)+0x2D,%eax
+		call   ac_memset
+		mov    EXPORT_SYMBOL(IPXHandler),%eax
+		mov    0xd(%eax),%al
+		and    $0xff,%eax
+		cmp    %eax,%ecx
+		jne    jump_f6e2f
+		xor    %edx,%edx
+		jmp    jump_f6de6
+	jump_f6de5:
+		inc    %edx
+	jump_f6de6:
+		movswl %dx,%eax
+		cmp    $0x8,%eax
+		jge    jump_f6e03
+		imul   $0x1c,%eax,%eax
+		cmpw   $0x0,data_1e6353(%eax)
+		je     jump_f6de5
+		mov    EXPORT_SYMBOL(IPXHandler),%eax
+		mov    %dl,0xd(%eax)
+	jump_f6e03:
+		mov    EXPORT_SYMBOL(IPXHandler),%eax
+		mov    EXPORT_SYMBOL(IPXPlayer)+0x2B,%dh
+		xor    %ebp,%ebp
+		mov    0xd(%eax),%al
+		mov    %ebp,EXPORT_SYMBOL(last_pkt_size)
+		cmp    %dh,%al
+		jne    jump_f6e2f
+		mov    EXPORT_SYMBOL(IPXPlayer)+0x26,%eax
+		test   %eax,%eax
+		je     jump_f6e2f
+		lea    -0x1(%eax),%edx
+		mov    %edx,EXPORT_SYMBOL(IPXPlayer)+0x26
+	jump_f6e2f:
+		cmpl   $0x0,EXPORT_SYMBOL(data_1e2f6c)
+		je     jump_f6e3e
+		call   *EXPORT_SYMBOL(data_1e2f6c)
+	jump_f6e3e:
+		pop    %ebp
+		pop    %edi
+		pop    %esi
+		pop    %edx
+		pop    %ecx
+		pop    %ebx
+		ret
+
+
+/*----------------------------------------------------------------*/
+.section .rodata
+
+ascBu:	/* 0x15F598 */
+		.string "BU"
+ascBu_0:	/* 0x15F59B */
+		.string "BU"
+ascBu_1:	/* 0x15F59E */
+		.string "BU"
+ascBu_2:	/* 0x15F5A1 */
+		.string "BU"
+
+ascRt:	/* 0x15F7A0 */
+		.string "rt"
+ascT:	/* 0x15F7A3 */
+		.string "T"
+ascP:	/* 0x15F7A5 */
+		.string "P"
+data_15f7a7:
+		.string "+++"
+ascC_1:	/* 0x15F7AB */
+		.string "%c"
+
+/*----------------------------------------------------------------*/
+.data
+
+ipx_update__start_time:	/* 0x1E6300 */
+		.long	0x0
+ipx_update__end_time:	/* 0x1E6304 */
+		.long	0x0
+GLOBAL (IPXHandler)	/* 0x1E6308 */
+		.long	0x0
+GLOBAL (IPXPlayer)	/* 0x1E630C */
+		.byte	0x0
+		.byte	0x0
+		.short  0x0
+		.fill   0x8
+		.fill   0x1a
+		.long	0x0
+		.byte	0x0
+		.byte	0x0
+		.byte	0x0
+IPXPlayer__Data:	/* 0x1e6339 IPXPlayer+0x2D */
+		.fill   0x1a
+data_1e6353:
+		.fill   0xc6
+data_1e6419:
+		.byte	0x0
+GLOBAL (data_1e641a)
+		.short  0x0
+
+GLOBAL (loggon_header)	/* 0x1E641C */
+		.fill   0x2d
+GLOBAL (player_loggon)	/* 0x1E6449 */
+		.ascii  "\x00\x00\x00"
+GLOBAL (last_pkt_size)	/* 0x1E644C */
+		.long	0x0
+GLOBAL (last_pkt)	/* 0x1E6450 */
+		.fill   0x400
+GLOBAL (ipx_send_packet_count)	/* 0x1E6850 */
+		.fill   0x100
+GLOBAL (ipx_got_player_send_packet_count)	/* 0x1E6950 */
+		.fill   0x20
+GLOBAL (datagram_backup)	/* 0x1E6970 */
+		.long	0x0
+data_1e6974:
+		.long	0x0
+data_1e6978:
+		.fill   0x1128

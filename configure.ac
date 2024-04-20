@@ -35,6 +35,9 @@ AC_DEFINE([VER_BUILD], [ver_build], [Build number])
 # fix the problem.
 ifdef([__unix__], define([__unix__], [[__unix__]]))
 
+# Default install dir
+#AC_PREFIX_DEFAULT(/usr/local)
+
 # Set the proper prefix
 AS_IF([test "$prefix" = "NONE"], [
   prefix="$ac_default_prefix"

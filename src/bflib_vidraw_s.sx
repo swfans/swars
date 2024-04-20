@@ -1183,62 +1183,6 @@ LbDrawBoxClip_:	/* 0x0FADD0 */
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (ASM_LbDrawTriangle)
-/*----------------------------------------------------------------*/
-		push   %ebp
-		mov    %esp,%ebp
-		sub    $0x10,%esp
-		mov    %eax,-0x10(%ebp)
-		mov    %edx,-0xc(%ebp)
-		mov    %ebx,-0x8(%ebp)
-		mov    %ecx,-0x4(%ebp)
-		testb  $0x10,EXPORT_SYMBOL(lbDisplay)+96 # lbDisplay__DrawFlags
-		je     jump_ef4c2
-		xor    %eax,%eax
-		mov    0x10(%ebp),%al
-		mov    -0x4(%ebp),%ecx
-		mov    -0x8(%ebp),%ebx
-		mov    -0xc(%ebp),%edx
-		push   %eax
-		mov    -0x10(%ebp),%eax
-		call   ac_LbDrawLine
-		xor    %eax,%eax
-		mov    0x10(%ebp),%al
-		mov    0xc(%ebp),%ecx
-		mov    0x8(%ebp),%ebx
-		mov    -0x4(%ebp),%edx
-		push   %eax
-		mov    -0x8(%ebp),%eax
-		call   ac_LbDrawLine
-		xor    %eax,%eax
-		mov    0x10(%ebp),%al
-		mov    -0xc(%ebp),%ecx
-		mov    -0x10(%ebp),%ebx
-		mov    0xc(%ebp),%edx
-		push   %eax
-		mov    0x8(%ebp),%eax
-		call   ac_LbDrawLine
-		jmp    jump_ef4e1
-	jump_ef4c2:
-		xor    %eax,%eax
-		mov    0x10(%ebp),%al
-		push   %eax
-		mov    0xc(%ebp),%eax
-		push   %eax
-		mov    0x8(%ebp),%eax
-		mov    -0x4(%ebp),%ecx
-		mov    -0x8(%ebp),%ebx
-		mov    -0xc(%ebp),%edx
-		push   %eax
-		mov    -0x10(%ebp),%eax
-		call   ac_LbDrawTriangleFilled
-	jump_ef4e1:
-		mov    %ebp,%esp
-		pop    %ebp
-		ret    $0xc
-
-
-/*----------------------------------------------------------------*/
 GLOBAL_FUNC (ASM_LbDrawTriangleFilled)
 /*----------------------------------------------------------------*/
 		push   %ebp

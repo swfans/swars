@@ -139,12 +139,6 @@ TbBool mouse_move_over_scanner(void)
 
 ushort do_group_scanner(struct Objective *p_objectv, ushort next_signal)
 {
-#if 0
-    ushort ret;
-    asm volatile ("call ASM_do_group_scanner\n"
-        : "=r" (ret) : "a" (p_objectv), "d" (next_signal));
-    return ret;
-#else
     ushort n;
     ubyte colr;
     short dcthing;
@@ -195,7 +189,6 @@ ushort do_group_scanner(struct Objective *p_objectv, ushort next_signal)
         }
     }
     return n;
-#endif
 }
 
 ushort do_group_near_thing_scanner(struct Objective *p_objectv, ushort next_signal)
@@ -511,10 +504,6 @@ void add_blippoint_to_scanner(int x, int z, ubyte colour)
 
 void add_signal_to_scanner(struct Objective *p_objectv, ubyte flag)
 {
-#if 0
-    asm volatile ("call ASM_add_signal_to_scanner\n"
-        :  : "a" (p_objectv), "d" (flag));
-#endif
     if (flag)
         clear_all_scanner_signals();
     if (gameturn != turn_last)

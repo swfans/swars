@@ -203,12 +203,6 @@ TbBool input_vert_slider_right_arrow(struct ScreenBox *box, short *target_ptr)
 
 ubyte show_audio_volume_box(struct ScreenBox *box)
 {
-#if 0
-    ubyte ret;
-    asm volatile ("call ASM_show_audio_volume_box\n"
-        : "=r" (ret) : "a" (box));
-    return ret;
-#endif
     short *target_ptr;
     char *s;
     ushort w;

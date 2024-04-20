@@ -44,12 +44,6 @@ ubyte ac_show_login_name(struct ScreenBox *box);
 
 ubyte do_login_2(ubyte click)
 {
-#if 0
-    ubyte ret;
-    asm volatile ("call ASM_do_login_2\n"
-        : "=r" (ret) : "a" (click));
-    return ret;
-#else
     if (strlen(login_name) == 0)
         return 0;
     strtocapwords(login_name);
@@ -79,7 +73,6 @@ ubyte do_login_2(ubyte click)
         play_sample_using_heap(0, 119 + (LbRandomAnyShort() % 3), 127, 64, 100, 0, 3u);
 
     return 1;
-#endif
 }
 
 ubyte do_abort_2(ubyte click)
@@ -92,12 +85,6 @@ ubyte do_abort_2(ubyte click)
 
 ubyte show_campaigns_list(struct ScreenBox *box)
 {
-#if 0
-    ubyte ret;
-    asm volatile ("call ASM_show_campaigns_list\n"
-        : "=r" (ret) : "a" (box));
-    return ret;
-#else
     int campgn, ncampgns;
     struct Campaign *p_campgn;
     const char *text;
@@ -163,7 +150,6 @@ ubyte show_campaigns_list(struct ScreenBox *box)
         cy += campgn_height;
     }
     return 0;
-#endif
 }
 
 ubyte show_login_name(struct ScreenBox *box)
