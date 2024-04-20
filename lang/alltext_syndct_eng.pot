@@ -1509,6 +1509,11 @@ msgctxt "mission brief tactical information"
 msgid "Dropsite: Honolulu water purification plant"
 msgstr ""
 
+#: mission.brief.mail16.map40.level1:2
+msgctxt "mission brief tactical information"
+msgid "Rendezvous point"
+msgstr ""
+
 #: mission.title:9
 msgctxt "mission title"
 msgid "The Special Agent"
