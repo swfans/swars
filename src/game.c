@@ -255,6 +255,8 @@ extern ubyte byte_1C497C;
 extern ubyte byte_1C497D;
 extern ubyte month_days[12];
 
+struct ScreenBoxBase global_top_bar_box = {4, 4, 632, 15};
+
 extern ubyte unkn_changing_color_1;
 extern ubyte unkn_changing_color_2;
 extern ulong unkn_changing_color_counter1;
@@ -6327,11 +6329,22 @@ ubyte show_settings_controls_list(struct ScreenBox *box)
     return ret;
 }
 
+void init_global_boxes(void)
+{
+    short scr_w, start_x;
+
+    scr_w = lbDisplay.GraphicsWindowWidth;
+    start_x = (scr_w - global_top_bar_box.Width) / 2;
+    global_top_bar_box.X = start_x;
+    global_top_bar_box.Y = 4;
+}
+
 ubyte ac_show_netgame_unkn1(struct ScreenBox *box);
 ubyte ac_show_settings_controls_list(struct ScreenBox *box);
 
 void init_screen_boxes(void)
 {
+    init_global_boxes();
     init_alert_screen_boxes();
     init_main_screen_boxes();
     init_system_menu_boxes();
@@ -8211,11 +8224,15 @@ static void global_date_box_draw(void)
 {
     char *text;
     char locstr[50];
+    short cx, cy;
+
+    cx = global_top_bar_box.X + 63;
+    cy = global_top_bar_box.Y;
 
     lbDisplay.DrawFlags = 0x0004;
-    draw_box_purple_list(67, 4, 81, 15, 56);
+    draw_box_purple_list(cx + 0, cy + 0, 81, global_top_bar_box.Height, 56);
     lbDisplay.DrawFlags = 0x0010;
-    draw_box_purple_list(68, 5, 79, 13, 247);
+    draw_box_purple_list(cx + 1, cy + 1, 79, global_top_bar_box.Height - 2, 247);
     lbDisplay.DrawFlags = 0;
 
     // Draw current date
@@ -8223,7 +8240,7 @@ static void global_date_box_draw(void)
       (int)global_date.Month, (int)global_date.Year);
 
     lbFontPtr = small_med_font;
-    my_set_text_window(68, 5, 79, 13);
+    my_set_text_window(cx + 1, cy + 1, 79, global_top_bar_box.Height - 2);
     text = (char *)back_buffer + text_buf_pos;
     strcpy(text, locstr);
     draw_text_purple_list2(3, 3, text, 0);
@@ -8239,11 +8256,15 @@ static void global_time_box_draw(void)
     char *text;
     const char *subtext;
     char locstr[50];
+    short cx, cy;
+
+    cx = global_top_bar_box.X + 4;
+    cy = global_top_bar_box.Y;
 
     lbDisplay.DrawFlags = 0x0004;
-    draw_box_purple_list(4, 4, 59, 15, 56);
+    draw_box_purple_list(cx + 0, cy + 0, 59, global_top_bar_box.Height, 56);
     lbDisplay.DrawFlags = 0x0010;
-    draw_box_purple_list(5, 5, 57, 13, 247);
+    draw_box_purple_list(cx + 1, cy + 1, 57, global_top_bar_box.Height - 2, 247);
     lbDisplay.DrawFlags = 0;
 
     // Draw current time
@@ -8255,7 +8276,7 @@ static void global_time_box_draw(void)
         sprintf(locstr, "%02d:%02d", (int)global_date.Hour, (int)global_date.Minute);
 
     lbFontPtr = small_med_font;
-    my_set_text_window(5, 5, 57, 13);
+    my_set_text_window(cx + 1, cy + 1, 57, global_top_bar_box.Height - 2);
     text = (char *)back_buffer + text_buf_pos;
     strcpy(text, locstr);
     draw_text_purple_list2(3, 3, text, 0);
@@ -8280,18 +8301,22 @@ static void global_credits_box_draw(void)
     uint n;
     uint usedlen;
     char locstr[50];
-    short x;
+    short tx;
+    short cx, cy;
+
+    cx = global_top_bar_box.X + 511;
+    cy = global_top_bar_box.Y;
 
     lbDisplay.DrawFlags = 0x0004;
-    draw_box_purple_list(515, 4, 121, 15, 56);
+    draw_box_purple_list(cx + 0, cy + 0, 121, global_top_bar_box.Height, 56);
     lbDisplay.DrawFlags = 0x0010;
-    draw_box_purple_list(516, 5, 119, 13, 247);
+    draw_box_purple_list(cx + 1, cy + 1, 119, global_top_bar_box.Height - 2, 247);
     lbDisplay.DrawFlags = 0;
 
     // Draw credits amount
     lbFontPtr = small_med_font;
-    my_set_text_window(516, 5, 119, 13);
-    x = 3;
+    my_set_text_window(cx + 1, cy + 1, 119, global_top_bar_box.Height - 2);
+    tx = 3;
 
     sprintf(locstr, "%ld", ingame.Credits);
 
@@ -8305,14 +8330,14 @@ static void global_credits_box_draw(void)
     text_buf_pos += n + 1;
 
     lbDisplay.DrawFlags = 0x0004;
-    draw_text_purple_list2(x, 3, text, 0);
+    draw_text_purple_list2(tx, 3, text, 0);
     lbDisplay.DrawFlags = 0;
-    x += LbTextStringWidth(text);
+    tx += LbTextStringWidth(text);
 
     // Now the actual credits amount
     text = (char *)back_buffer + text_buf_pos;
     strcpy(text, locstr);
-    draw_text_purple_list2(x, 3, text, 0);
+    draw_text_purple_list2(tx, 3, text, 0);
     lbFontPtr = small_font;
     text_buf_pos += strlen(locstr) + 1;
     draw_text_purple_list2(111, 5, misc_text[1], 0);
@@ -8324,15 +8349,19 @@ static void global_citydrop_box_draw(void)
     uint n;
     const char *subtext;
     char locstr[50];
+    short cx, cy;
+
+    cx = global_top_bar_box.X + 148;
+    cy = global_top_bar_box.Y;
 
     lbDisplay.DrawFlags = 0x0004;
-    draw_box_purple_list(152, 4, 200, 15, 56);
+    draw_box_purple_list(cx + 0, cy + 0, 200, global_top_bar_box.Height, 56);
     lbDisplay.DrawFlags = 0x0010;
-    draw_box_purple_list(153, 5, 198, 13, 247);
+    draw_box_purple_list(cx + 1, cy + 1, 198, global_top_bar_box.Height - 2, 247);
     lbDisplay.DrawFlags = 0;
 
     lbFontPtr = small_med_font;
-    my_set_text_window(153, 5, 198, 13);
+    my_set_text_window(cx + 1, cy + 1, 198, global_top_bar_box.Height - 2);
 
     if (login_control__City == -1) {
         subtext = "";
@@ -8352,15 +8381,19 @@ static void global_techlevel_box_draw(void)
 {
     char *text;
     char locstr[50];
+    short cx, cy;
+
+    cx = global_top_bar_box.X + 352;
+    cy = global_top_bar_box.Y;
 
     lbDisplay.DrawFlags = 0x0004;
-    draw_box_purple_list(356, 4, 156, 15, 56);
+    draw_box_purple_list(cx + 0, cy + 0, 156, global_top_bar_box.Height, 56);
     lbDisplay.DrawFlags = 0x0010;
-    draw_box_purple_list(357, 5, 154, 13, 247);
+    draw_box_purple_list(cx + 1, cy + 1, 154, global_top_bar_box.Height - 2, 247);
     lbDisplay.DrawFlags = 0;
 
     lbFontPtr = small_med_font;
-    my_set_text_window(357, 5, 154, 13);
+    my_set_text_window(cx + 1, cy + 1, 154, global_top_bar_box.Height - 2);
 
     sprintf(locstr, "%s: %d", gui_strings[447], login_control__TechLevel);
     text = (char *)back_buffer + text_buf_pos;
