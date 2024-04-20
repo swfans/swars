@@ -250,6 +250,11 @@ extern ushort netgame_agent_pos_y[8][4];
 
 extern ubyte byte_153198;
 
+extern ubyte byte_1C497B;
+extern ubyte byte_1C497C;
+extern ubyte byte_1C497D;
+extern ubyte month_days[12];
+
 extern ubyte unkn_changing_color_1;
 extern ubyte unkn_changing_color_2;
 extern ulong unkn_changing_color_counter1;
@@ -8082,10 +8087,209 @@ void update_mission_time(char a1)
         : : "a" (a1));
 }
 
+long time_difference(struct SynTime *tm1, struct SynTime *tm2)
+{
+#if 0
+    asm volatile ("call ASM_time_difference\n"
+        : : "a" (tm1), "d" (tm2));
+    return;
+#endif
+    return 60 * (tm1->Hour - (long)tm2->Hour) + tm1->Minute - (long)tm2->Minute;
+}
+
 void show_date_time(void)
 {
+#if 0
     asm volatile ("call ASM_show_date_time\n"
         :  :  : "eax" );
+    return;
+#endif
+    char *text;
+    uint n;
+    const char *subtext;
+    uint usedlen;
+    char locstr[50];
+    struct TbTime curr_time;
+    short x;
+
+    lbDisplay.DrawFlags = 0x0004;
+    draw_box_purple_list(4, 4, 59, 15, 56);
+    draw_box_purple_list(67, 4, 81, 15, 56);
+    draw_box_purple_list(515, 4, 121, 15, 56);
+    lbDisplay.DrawFlags = 0x0010;
+    draw_box_purple_list(5, 5, 57, 13, 247);
+    draw_box_purple_list(68, 5, 79, 13, 247);
+    draw_box_purple_list(516, 5, 119, 13, 247);
+    lbDisplay.DrawFlags = 0;
+
+    if (login_control__State == 5)
+    {
+        lbDisplay.DrawFlags = 0x0004;
+        draw_box_purple_list(152, 4, 200, 15, 56);
+        draw_box_purple_list(356, 4, 156, 15, 56);
+        lbDisplay.DrawFlags = 0x0010;
+        draw_box_purple_list(153, 5, 198, 13, 247);
+        draw_box_purple_list(357, 5, 154, 13, 247);
+        lbDisplay.DrawFlags = 0;
+
+        lbFontPtr = small_med_font;
+        my_set_text_window(153, 5, 198, 13);
+
+        if (login_control__City == -1) {
+            subtext = "";
+        } else {
+            unkn_city_no = login_control__City;
+            n = cities[unkn_city_no].TextIndex[0];
+            subtext = (char *)&memload[n];
+        }
+        sprintf(locstr, "%s: %s", gui_strings[446], subtext);
+        text = (char *)back_buffer + text_buf_pos;
+        strcpy(text, locstr);
+        draw_text_purple_list2(3, 3, text, 0);
+
+        lbFontPtr = small_med_font;
+        text_buf_pos += strlen(locstr) + 1;
+        my_set_text_window(357, 5, 154, 13);
+
+        sprintf(locstr, "%s: %d", gui_strings[447], login_control__TechLevel);
+        text = (char *)back_buffer + text_buf_pos;
+        strcpy(text, locstr);
+        draw_text_purple_list2(3, 3, text, 0);
+        text_buf_pos += strlen(locstr) + 1;
+    }
+
+    LbTime(&curr_time);
+    global_date.Minute = curr_time.Minute;
+    global_date.Hour = curr_time.Hour;
+    if (curr_time.Minute || curr_time.Hour)
+    {
+        if (byte_1C497D) {
+            byte_1C497D = 0;
+        }
+    }
+    else
+    {
+        if (!byte_1C497D) {
+            byte_1C497D = 1;
+            global_date.Day++;
+            if (global_date.Day > month_days[global_date.Month-1])
+            {
+                global_date.Month++;
+                global_date.Day = 1;
+                if (global_date.Month > 12) {
+                    global_date.Year++;
+                    global_date.Month = 1;
+                    global_date.Year %= 100;
+                }
+            }
+        }
+    }
+
+    if (global_date.Hour == 0)
+        sprintf(locstr, "%02d:%02d", 12, (int)global_date.Minute);
+    else if (global_date.Hour > 12)
+        sprintf(locstr, "%02d:%02d", (int)global_date.Hour - 12, (int)global_date.Minute);
+    else
+        sprintf(locstr, "%02d:%02d", (int)global_date.Hour, (int)global_date.Minute);
+    lbFontPtr = small_med_font;
+    my_set_text_window(5, 5, 57, 13);
+
+    text = (char *)back_buffer + text_buf_pos;
+    strcpy(text, locstr);
+    draw_text_purple_list2(3, 3, text, 0);
+    text_buf_pos += strlen(locstr) + 1;
+
+    if (global_date.Hour >= 12)
+          subtext = "PM";
+    else
+          subtext = "AM";
+    sprintf(locstr, "%s", subtext);
+
+    lbFontPtr = small_font;
+    text = (char *)back_buffer + text_buf_pos;
+    strcpy(text, locstr);
+    draw_text_purple_list2(43, 5, text, 0);
+    lbFontPtr = small_med_font;
+    text_buf_pos += strlen(locstr) + 1;
+
+    // Draw current date
+    sprintf(locstr, "%02d:%02d:%02d", (int)global_date.Day,
+      (int)global_date.Month, (int)global_date.Year);
+    my_set_text_window(68, 5, 79, 13);
+
+    text = (char *)back_buffer + text_buf_pos;
+    strcpy(text, locstr);
+    draw_text_purple_list2(3, 3, text, 0);
+
+    lbFontPtr = small_font;
+    text_buf_pos += strlen(locstr) + 1;
+    draw_text_purple_list2(66, 5, misc_text[3], 0);
+
+    // Draw credits amount
+    lbFontPtr = small_med_font;
+    my_set_text_window(516, 5, 119, 13);
+    x = 3;
+
+    sprintf(locstr, "%ld", ingame.Credits);
+
+    // Leading zeros are half transparent
+    usedlen = strlen(locstr) + 1;
+    text = (char *)back_buffer + text_buf_pos;
+    for (n = 0; n < 12 - (usedlen - 1); n++) {
+        text[n] = '0';
+    }
+    text[n] = '\0';
+    text_buf_pos += n + 1;
+
+    lbDisplay.DrawFlags = 0x0004;
+    draw_text_purple_list2(x, 3, text, 0);
+    lbDisplay.DrawFlags = 0;
+    x += LbTextStringWidth(text);
+
+    // Now the actual credits amount
+    text = (char *)back_buffer + text_buf_pos;
+    strcpy(text, locstr);
+    draw_text_purple_list2(x, 3, text, 0);
+    lbFontPtr = small_font;
+    text_buf_pos += strlen(locstr) + 1;
+    draw_text_purple_list2(111, 5, misc_text[1], 0);
+
+    if (time_difference(&global_date, &research_curr_mod_date))
+    {
+        if (byte_1C497C) {
+            byte_1C497C = 0;
+        }
+    }
+    else
+    {
+        if (!byte_1C497C) {
+            research_daily_progress_for_type(1);
+            byte_1C497C = 1;
+        }
+    }
+    if (time_difference(&global_date, &research_curr_wep_date))
+    {
+        if (byte_1C497B) {
+            byte_1C497B = 0;
+        }
+    }
+    else
+    {
+        if (!byte_1C497B) {
+            research_daily_progress_for_type(0);
+            byte_1C497B = 1;
+        }
+    }
+
+    if ((ingame.UserFlags & UsrF_Cheats) != 0)
+    {
+        if (lbKeyOn[KC_PERIOD]) {
+            lbKeyOn[KC_PERIOD] = 0;
+            ingame.Credits += 10000;
+        }
+    }
+    /* XXX: FIXME: tmp, put this some place better later */
+    game_update();
 }
 
 void purple_unkn1_data_to_screen(void)
