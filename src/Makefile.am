@@ -166,6 +166,8 @@ swars_SOURCES = \
 	game_data.h \
 	game.h \
 	globals.h \
+	joy_modul1.sx \
+	joy_modul2.sx \
 	keyboard.c \
 	keyboard.h \
 	lvobjctv.c \

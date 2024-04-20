@@ -1,0 +1,1030 @@
+
+#ifdef NEED_UNDERSCORE
+# define TRANSFORM_SYMBOLS
+# define EXPORT_SYMBOL(sym) _ ## sym
+#else
+# define EXPORT_SYMBOL(sym) sym
+#endif
+
+#ifndef TRANSFORM_SYMBOLS
+
+# define GLOBAL(sym) \
+  .global sym; \
+  sym ##:
+
+# define GLOBAL_FUNC(sym) \
+  GLOBAL (sym)
+
+#else
+
+# define GLOBAL(sym) \
+  .global EXPORT_SYMBOL (sym); \
+  EXPORT_SYMBOL (sym) ##: \
+  sym ##:
+
+# define GLOBAL_FUNC(sym) \
+  .global sym; \
+  GLOBAL (sym)
+
+#endif
+
+.text
+
+.global EXPORT_SYMBOL(qqqq)
+
+
+/*----------------------------------------------------------------*/
+GLOBAL_FUNC(ASM_joy_func_081)	/* 0x0F3948 */
+/*----------------------------------------------------------------*/
+		push   %ebp
+		mov    %esp,%ebp
+		add    $0xfffffff0,%esp
+		push   %ebx
+		push   %ecx
+		push   %edx
+		push   %edi
+		push   %esi
+		mov    %eax,-0xc(%ebp)
+		mov    %dx,-0xe(%ebp)
+		movb   $0xff,-0x1(%ebp)
+		movb   $0x0,-0x2(%ebp)
+		movb   $0xf,-0x6(%ebp)
+		cmpw   $0x1,-0xe(%ebp)
+		jne    jump_f397b
+		movb   $0x30,-0x3(%ebp)
+		movb   $0x10,-0x4(%ebp)
+		movb   $0x20,-0x5(%ebp)
+		jmp    jump_f3987
+	jump_f397b:
+		movb   $0xc0,-0x3(%ebp)
+		movb   $0x40,-0x4(%ebp)
+		movb   $0x80,-0x5(%ebp)
+	jump_f3987:
+		cli
+		push   %si
+	jump_f398a:
+		mov    -0x6(%ebp),%bl
+		dec    %bl
+		jne    jump_f3996
+		jmp    jump_f3a5d
+	jump_f3996:
+		mov    %bl,-0x6(%ebp)
+		mov    $0x201,%dx
+		in     (%dx),%al
+		and    -0x3(%ebp),%al
+		mov    %al,%ah
+		mov    $0xfff,%si
+	jump_f39a7:
+		dec    %si
+		jne    jump_f39b0
+		jmp    jump_f3a5d
+	jump_f39b0:
+		xor    %cx,%cx
+		mov    $0xfff,%si
+	jump_f39b7:
+		dec    %si
+		jne    jump_f39c0
+		jmp    jump_f3a5d
+	jump_f39c0:
+		in     (%dx),%al
+		and    -0x3(%ebp),%al
+		xor    %ah,%al
+		je     jump_f39b7
+		xor    %al,%ah
+		and    -0x4(%ebp),%al
+		je     jump_f39a7
+		inc    %cx
+		cmp    $0x6,%cx
+		jl     jump_f39b7
+		mov    $0xfff,%si
+	jump_f39db:
+		dec    %si
+		je     jump_f3a5d
+		in     (%dx),%al
+		and    -0x3(%ebp),%al
+		xor    %ah,%al
+		je     jump_f39db
+		xor    %al,%ah
+		and    -0x5(%ebp),%al
+		je     jump_f39db
+		mov    $0xfff,%si
+	jump_f39f2:
+		dec    %si
+		je     jump_f3a5d
+		in     (%dx),%al
+		and    -0x3(%ebp),%al
+		xor    %ah,%al
+		je     jump_f39f2
+		xor    %al,%ah
+		and    -0x4(%ebp),%al
+		je     jump_f398a
+		movb   $0x1,-0x1(%ebp)
+		mov    $0xfff,%si
+		mov    $0x4,%cl
+		jmp    jump_f3a30
+	jump_f3a11:
+		mov    $0xfff,%si
+	jump_f3a15:
+		dec    %si
+		je     jump_f3a5d
+		in     (%dx),%al
+		and    -0x3(%ebp),%al
+		xor    %ah,%al
+		je     jump_f3a15
+		xor    %al,%ah
+		and    -0x5(%ebp),%al
+		jne    jump_f3a2a
+		jmp    jump_f3a59
+	jump_f3a2a:
+		mov    $0x5,%cl
+		mov    $0xfff,%si
+	jump_f3a30:
+		dec    %si
+		je     jump_f3a5d
+		in     (%dx),%al
+		and    -0x3(%ebp),%al
+		xor    %ah,%al
+		je     jump_f3a30
+		xor    %al,%ah
+		and    -0x5(%ebp),%al
+		add    $0xe0,%al
+		rcl    %bx
+		dec    %cl
+		jne    jump_f3a30
+		mov    -0x2(%ebp),%ch
+		inc    %ch
+		mov    %ch,-0x2(%ebp)
+		cmp    $0x3,%ch
+		jne    jump_f3a11
+		jmp    jump_f3a5d
+	jump_f3a59:
+		movb   $0x9,-0x1(%ebp)
+	jump_f3a5d:
+		pop    %si
+		sti
+		movsbl -0x1(%ebp),%eax
+		pop    %esi
+		pop    %edi
+		pop    %edx
+		pop    %ecx
+		pop    %ebx
+		leave
+		ret
+
+
+/*----------------------------------------------------------------*/
+vfx1_unkn_func_13:	/* 0x0F3A6B */
+/*----------------------------------------------------------------*/
+		push   %ebp
+		mov    %esp,%ebp
+		add    $0xfffffff4,%esp
+		push   %ebx
+		push   %ecx
+		push   %edx
+		push   %edi
+		push   %esi
+		mov    %ax,-0xa(%ebp)
+		movw   $0xff,-0x2(%ebp)
+		movb   $0x0,-0x3(%ebp)
+		movb   $0x1,-0x8(%ebp)
+		movb   $0xf,-0x7(%ebp)
+		cmpw   $0x1,-0xa(%ebp)
+		jne    jump_f3aa1
+		movb   $0x30,-0x4(%ebp)
+		movb   $0x10,-0x5(%ebp)
+		movb   $0x20,-0x6(%ebp)
+		jmp    jump_f3aad
+	jump_f3aa1:
+		movb   $0xc0,-0x4(%ebp)
+		movb   $0x40,-0x5(%ebp)
+		movb   $0x80,-0x6(%ebp)
+	jump_f3aad:
+		cli
+		push   %si
+	jump_f3ab0:
+		mov    -0x7(%ebp),%bl
+		dec    %bl
+		jne    jump_f3abc
+		jmp    jump_f3b98
+	jump_f3abc:
+		mov    %bl,-0x7(%ebp)
+		mov    $0x201,%dx
+		in     (%dx),%al
+		and    -0x4(%ebp),%al
+		mov    %al,%ah
+		mov    $0xfff,%si
+	jump_f3acd:
+		dec    %si
+		jne    jump_f3ad6
+		jmp    jump_f3b98
+	jump_f3ad6:
+		xor    %cx,%cx
+		mov    $0xfff,%si
+	jump_f3add:
+		dec    %si
+		jne    jump_f3ae6
+		jmp    jump_f3b98
+	jump_f3ae6:
+		in     (%dx),%al
+		and    -0x4(%ebp),%al
+		xor    %ah,%al
+		je     jump_f3add
+		xor    %al,%ah
+		and    -0x5(%ebp),%al
+		je     jump_f3acd
+		inc    %cx
+		cmp    $0x6,%cx
+		jl     jump_f3add
+		mov    $0xfff,%si
+	jump_f3b01:
+		dec    %si
+		je     jump_f3b98
+		in     (%dx),%al
+		and    -0x4(%ebp),%al
+		xor    %ah,%al
+		je     jump_f3b01
+		xor    %al,%ah
+		and    -0x6(%ebp),%al
+		je     jump_f3b01
+		mov    $0xfff,%si
+	jump_f3b1c:
+		dec    %si
+		je     jump_f3b98
+		in     (%dx),%al
+		and    -0x4(%ebp),%al
+		xor    %ah,%al
+		je     jump_f3b1c
+		xor    %al,%ah
+		and    -0x5(%ebp),%al
+		je     jump_f3ab0
+		xor    %bx,%bx
+		mov    $0xfff,%si
+		mov    $0x4,%cl
+		jmp    jump_f3b5c
+	jump_f3b3a:
+		mov    $0xfff,%si
+	jump_f3b3e:
+		dec    %si
+		je     jump_f3b98
+		in     (%dx),%al
+		and    -0x4(%ebp),%al
+		xor    %ah,%al
+		je     jump_f3b3e
+		xor    %al,%ah
+		and    -0x6(%ebp),%al
+		jne    jump_f3b56
+		jmp    jump_f3ab0
+	jump_f3b56:
+		mov    $0x5,%cl
+		mov    $0xfff,%si
+	jump_f3b5c:
+		dec    %si
+		je     jump_f3b98
+		in     (%dx),%al
+		and    -0x4(%ebp),%al
+		xor    %ah,%al
+		je     jump_f3b5c
+		xor    %al,%ah
+		and    -0x6(%ebp),%al
+		add    $0xe0,%al
+		rcl    %bx
+		dec    %cl
+		jne    jump_f3b5c
+		mov    -0x3(%ebp),%ch
+		inc    %ch
+		mov    %ch,-0x3(%ebp)
+		cmp    $0x3,%ch
+		jne    jump_f3b3a
+		and    $0x7fff,%bx
+		shl    %bx
+		movb   $0x0,-0x8(%ebp)
+		xor    %eax,%eax
+		mov    %bx,-0x2(%ebp)
+		mov    %bx,%ax
+	jump_f3b98:
+		pop    %si
+		sti
+		pop    %esi
+		pop    %edi
+		pop    %edx
+		pop    %ecx
+		pop    %ebx
+		leave
+		ret
+
+vtable_f3eec:
+		.long   func_f43f1
+		.long   func_f4400
+		.long   func_f440e
+		.long   func_f4510
+		.long   func_f4510
+		.long   func_f4510
+		.long   func_f4441
+		.long   func_f44a5
+
+
+/*----------------------------------------------------------------*/
+GLOBAL_FUNC(ASM_vfx1_init)	/* 0x0F3F0C */
+/*----------------------------------------------------------------*/
+		push   %ebx
+		push   %ecx
+		push   %edx
+		push   %esi
+		push   %edi
+		push   %ebp
+		sub    $0x118,%esp
+		mov    $0x6,%ebx
+		mov    $EXPORT_SYMBOL(word_1E6078),%eax
+		xor    %edx,%edx
+		call   ac_memset
+		mov    $0x7,%ebx
+		mov    $data_1e6080,%eax
+		xor    %edx,%edx
+		call   ac_memset
+		lea    0x104(%esp),%eax
+		xor    %edx,%edx
+		mov    $0x10,%ebx
+		mov    %dx,data_1e605c
+		mov    %dx,vfx1_selector
+		call   _segread
+		mov    $0x100,%edx
+		mov    $0x31,%eax
+		mov    %ebx,0xac(%esp)
+		lea    0xa8(%esp),%ebx
+		mov    %edx,0xa8(%esp)
+		lea    0xa8(%esp),%edx
+		call   ac_dos_int386
+		mov    0xc0(%esp),%esi
+		xor    %ecx,%ecx
+		test   %esi,%esi
+		jne    jump_f3fba
+		mov    0xa8(%esp),%eax
+		mov    0xa6(%esp),%ecx
+		mov    %ax,data_1e605c
+		sar    $0x10,%ecx
+		mov    0xb4(%esp),%eax
+		shl    $0x4,%ecx
+		mov    %ax,vfx1_selector
+	jump_f3fba:
+		mov    %ecx,vfx1_pdosmem
+		test   %ecx,%ecx
+		jne    jump_f3fcb
+		xor    %eax,%eax
+		jmp    jump_f4589
+	jump_f3fcb:
+		mov    $aVipport,%eax
+		call   ac_getenv
+		test   %eax,%eax
+		jne    jump_f4037
+		mov    $0x300,%edi
+		mov    vfx1_pdosmem,%ebp
+		mov    %edi,vip_air_port
+		test   %ebp,%ebp
+		je     jump_f4017
+		mov    $0x101,%edx
+		mov    %esp,%ebx
+		mov    vfx1_selector,%ax
+		mov    %edx,(%esp)
+		cwtl
+		mov    %esp,%edx
+		mov    %eax,0xc(%esp)
+		mov    $0x31,%eax
+		call   ac_dos_int386
+		xor    %ebx,%ebx
+		mov    %ebx,vfx1_pdosmem
+	jump_f4017:
+		xor    %eax,%eax
+		add    $0x118,%esp
+		pop    %ebp
+		pop    %edi
+		pop    %esi
+		pop    %edx
+		pop    %ecx
+		pop    %ebx
+		ret
+	jump_f4026:
+		inc    %esi
+		add    $0x100,%edi
+		cmp    $0x70,%esi
+		jle    jump_f405d
+		jmp    jump_f4135
+	jump_f4037:
+		mov    $0x10,%ebx
+		lea    0x110(%esp),%edx
+		mov    $0x60,%esi
+		call   ac_strtol
+		mov    %eax,vip_air_port
+		inc    %eax
+		mov    $0x6000,%edi
+		mov    %eax,vip_csr_port
+	jump_f405d:
+		mov    $0x32,%ebx
+		mov    %esi,%eax
+		mov    %edi,%ebp
+		xor    %edx,%edx
+		or     $0x7f,%ah
+		xor    %ecx,%ecx
+		mov    %eax,0x114(%esp)
+		mov    $data_1e6028,%eax
+		or     $0x7f,%ebp
+		call   ac_memset
+		mov    $0xc,%ebx
+		lea    0xe0(%esp),%eax
+		mov    %ebp,data_1e6044
+		mov    %ecx,data_1e6038
+		mov    %ecx,data_1e6040
+		xor    %edx,%edx
+		mov    %ecx,data_1e603c
+		call   ac_memset
+		mov    $0x1c,%ebx
+		lea    0xc4(%esp),%eax
+		xor    %edx,%edx
+		mov    $0x33,%ecx
+		call   ac_memset
+		mov    $0x300,%ebx
+		mov    $data_1e6028,%edx
+		mov    %ecx,0xc8(%esp)
+		xor    %eax,%eax
+		lea    0xe0(%esp),%ecx
+		mov    %ebx,0xc4(%esp)
+		mov    %eax,0xcc(%esp)
+		mov    %edx,0xd8(%esp)
+		mov    $data_1e6028,%eax
+		mov    %ds,%edx
+		lea    0xc4(%esp),%ebx
+		mov    $0x31,%eax
+		mov    %dx,0xe0(%esp)
+		lea    0xc4(%esp),%edx
+		call   ac_dos_int386x
+		mov    0x114(%esp),%ebx
+		cmp    data_1e6044,%ebx
+		jne    jump_f4026
+		and    $0xff00,%ebp
+		jmp    jump_f4137
+	jump_f4135:
+		xor    %ebp,%ebp
+	jump_f4137:
+		mov    %ebp,data_1e60d8
+		jne    jump_f4183
+		cmpl   $0x0,vfx1_pdosmem
+		je     jump_f4174
+		mov    $0x101,%edi
+		mov    vfx1_selector,%ax
+		lea    0x1c(%esp),%ebx
+		cwtl
+		lea    0x1c(%esp),%edx
+		mov    %eax,0x28(%esp)
+		mov    $0x31,%eax
+		mov    %edi,0x1c(%esp)
+		call   ac_dos_int386
+		mov    %ebp,vfx1_pdosmem
+	jump_f4174:
+		xor    %eax,%eax
+		add    $0x118,%esp
+		pop    %ebp
+		pop    %edi
+		pop    %esi
+		pop    %edx
+		pop    %ecx
+		pop    %ebx
+		ret
+	jump_f4183:
+		mov    $0x32,%ebx
+		mov    $data_1e6028,%eax
+		xor    %edx,%edx
+		call   ac_memset
+		or     $0x3,%ebp
+		xor    %ecx,%ecx
+		mov    $0xc,%ebx
+		mov    data_1e605c,%ax
+		mov    %ebp,data_1e6044
+		mov    %ecx,data_1e6040
+		xor    %edx,%edx
+		mov    %ax,data_1e604a
+		lea    0xf8(%esp),%eax
+		mov    %ecx,data_1e603c
+		call   ac_memset
+		mov    $0x1c,%ebx
+		lea    0x8c(%esp),%eax
+		xor    %edx,%edx
+		mov    $0x300,%ebp
+		call   ac_memset
+		mov    $0x33,%eax
+		mov    $data_1e6028,%ebx
+		mov    %ebp,0x8c(%esp)
+		mov    %ecx,0x94(%esp)
+		mov    %ds,%edx
+		lea    0xf8(%esp),%ecx
+		mov    %eax,0x90(%esp)
+		mov    %ebx,%eax
+		mov    %ebx,0xa0(%esp)
+		lea    0x8c(%esp),%ebx
+		mov    $0x31,%eax
+		mov    %dx,0xf8(%esp)
+		lea    0x8c(%esp),%edx
+		mov    $vfx1_pckt_count,%edi
+		call   ac_dos_int386x
+		mov    vfx1_pdosmem,%edx
+		mov    data_1e6040,%ecx
+		xor    %eax,%eax
+		test   %ecx,%ecx
+		jle    jump_f4261
+		mov    $data_1e60f8,%esi
+	jump_f424f:
+		inc    %esi
+		mov    (%edx),%bl
+		mov    %bl,-0x1(%esi)
+		inc    %eax
+		mov    data_1e6040,%ebx
+		inc    %edx
+		cmp    %ebx,%eax
+		jl     jump_f424f
+	jump_f4261:
+		mov    data_1e6040,%eax
+		mov    %eax,(%edi)
+		mov    data_1e6044,%eax
+		test   %eax,%eax
+		je     jump_f42b7
+		cmpl   $0x0,vfx1_pdosmem
+		je     jump_f42a8
+		mov    $0x101,%ebx
+		lea    0x54(%esp),%edx
+		mov    vfx1_selector,%ax
+		mov    %ebx,0x54(%esp)
+		cwtl
+		lea    0x54(%esp),%ebx
+		mov    %eax,0x60(%esp)
+		mov    $0x31,%eax
+		xor    %ecx,%ecx
+		call   ac_dos_int386
+		mov    %ecx,vfx1_pdosmem
+	jump_f42a8:
+		xor    %eax,%eax
+		add    $0x118,%esp
+		pop    %ebp
+		pop    %edi
+		pop    %esi
+		pop    %edx
+		pop    %ecx
+		pop    %ebx
+		ret
+	jump_f42b7:
+		mov    $data_1e61fc,%ecx
+		mov    %eax,data_1e60e0
+		mov    %eax,vfx1_htd_index
+		mov    %eax,vfx1_curr_pckt_idx
+		mov    vfx1_pckt_count,%eax
+		mov    %ecx,data_1e61f8
+		test   %eax,%eax
+		jg     jump_f4532
+	jump_f42de:
+		mov    $data_1e60f8,%eax
+		mov    data_1e60d8,%ecx
+		mov    vfx1_pdosmem,%esi
+		lea    0x100(%eax),%ebx
+	jump_f42f5:
+		inc    %esi
+		mov    (%eax),%dl
+		inc    %eax
+		mov    %dl,-0x1(%esi)
+		cmp    %ebx,%eax
+		jne    jump_f42f5
+		mov    $0x32,%ebx
+		mov    $data_1e6028,%eax
+		xor    %edx,%edx
+		mov    $0x300,%edi
+		call   ac_memset
+		or     $0x4,%cl
+		mov    $0xc,%ebx
+		mov    data_1e605c,%ax
+		mov    %ecx,data_1e6044
+		xor    %edx,%edx
+		mov    %ax,data_1e604a
+		xor    %ecx,%ecx
+		lea    0xec(%esp),%eax
+		mov    %ecx,data_1e6040
+		mov    %ecx,data_1e603c
+		call   ac_memset
+		mov    $0x1c,%ebx
+		lea    0x38(%esp),%eax
+		xor    %edx,%edx
+		mov    $0x33,%ebp
+		call   ac_memset
+		mov    $data_1e6028,%edx
+		mov    $data_1e6028,%eax
+		lea    0x38(%esp),%ebx
+		mov    %edi,0x38(%esp)
+		mov    %ebp,0x3c(%esp)
+		mov    %ecx,0x40(%esp)
+		mov    %edx,0x4c(%esp)
+		mov    %ds,%edx
+		lea    0xec(%esp),%ecx
+		mov    $0x31,%eax
+		mov    %dx,0xec(%esp)
+		lea    0x38(%esp),%edx
+		call   ac_dos_int386x
+		mov    data_1e6044,%eax
+		test   %eax,%eax
+		je     jump_f4564
+		cmpl   $0x0,vfx1_pdosmem
+		je     jump_f43e2
+		mov    $0x101,%edi
+		lea    0x70(%esp),%ebx
+		mov    vfx1_selector,%ax
+		lea    0x70(%esp),%edx
+		cwtl
+		xor    %ebp,%ebp
+		mov    %eax,0x7c(%esp)
+		mov    $0x31,%eax
+		mov    %edi,0x70(%esp)
+		call   ac_dos_int386
+		mov    %ebp,vfx1_pdosmem
+	jump_f43e2:
+		xor    %eax,%eax
+		add    $0x118,%esp
+		pop    %ebp
+		pop    %edi
+		pop    %esi
+		pop    %edx
+		pop    %ecx
+		pop    %ebx
+		ret
+
+
+/*----------------------------------------------------------------*/
+func_f43f1:
+/*----------------------------------------------------------------*/
+		mov    vfx1_pckt_count,%eax
+		mov    %eax,vfx1_curr_pckt_idx
+		jmp    func_f4510
+
+
+/*----------------------------------------------------------------*/
+func_f4400:
+/*----------------------------------------------------------------*/
+		lea    (%eax,%ebp,1),%edx
+		mov    %edx,vfx1_system_cfg
+		jmp    func_f4510
+
+
+/*----------------------------------------------------------------*/
+func_f440e:
+/*----------------------------------------------------------------*/
+		lea    (%eax,%ebp,1),%edx
+		mov    %edx,vfx1_vendor_cfg
+		lea    0x22(%edx),%eax
+		mov    $aVfx1Cyberpuck,%edx
+		call   ac_strcmp
+		test   %eax,%eax
+		jne    jump_f4434
+		movb   $0x1,vfx1_cyberpuck
+		jmp    func_f4510
+	jump_f4434:
+		xor    %bh,%bh
+		mov    %bh,vfx1_cyberpuck
+		jmp    func_f4510
+
+
+/*----------------------------------------------------------------*/
+func_f4441:
+/*----------------------------------------------------------------*/
+		cmpl   $0x6,vfx1_htd_index
+		jge    func_f4510
+		mov    vfx1_htd_index,%esi
+		imul   $0x6,%esi,%edx
+		mov    data_1e61f8,%edi
+		mov    vfx1_cyberpuck,%cl
+		mov    %ds,data_1e608c(%edx)
+		inc    %esi
+		mov    %edi,data_1e6088(%edx)
+		mov    %esi,vfx1_htd_index
+		add    $0x6,%edi
+		lea    (%eax,%ebp,1),%edx
+		mov    %edi,data_1e61f8
+		mov    %edx,data_1e6070
+		test   %cl,%cl
+		je     func_f4510
+		orb    $0x80,0xe(%edx)
+		mov    %edx,%eax
+		mov    0x16(%edx),%dl
+		or     $0x80,%dl
+		mov    %dl,0x16(%eax)
+		orb    $0x80,0x1e(%eax)
+		jmp    func_f4510
+
+
+/*----------------------------------------------------------------*/
+func_f44a5:
+/*----------------------------------------------------------------*/
+		mov    data_1e60e0,%esi
+		cmp    $0x6,%esi
+		jge    func_f4510
+		mov    %esi,%ecx
+		imul   $0x6,%esi,%esi
+		inc    %ecx
+		mov    data_1e61f8,%edx
+		mov    %ecx,data_1e60e0
+		mov    %edx,data_1e60ac(%esi)
+		add    $0x7,%edx
+		mov    %ds,data_1e60b0(%esi)
+		mov    %edx,data_1e61f8
+		lea    (%eax,%ebp,1),%edx
+		mov    vfx1_cyberpuck,%ah
+		mov    %edx,data_1e6074
+		test   %ah,%ah
+		je     func_f4510
+		mov    %edx,%eax
+		mov    0xe(%edx),%dl
+		mov    0x1e(%eax),%bl
+		or     $0x80,%dl
+		or     $0x80,%bl
+		mov    %dl,0xe(%eax)
+		mov    %bl,0x1e(%eax)
+		mov    0x16(%eax),%dh
+		mov    0x21(%eax),%bh
+		or     $0x80,%dh
+		or     $0x80,%bh
+		mov    %dh,0x16(%eax)
+		mov    %bh,0x21(%eax)
+
+
+/*----------------------------------------------------------------*/
+func_f4510:
+/*----------------------------------------------------------------*/
+		mov    data_1e60f0,%eax
+		mov    vfx1_curr_pckt_idx,%edx
+		add    %eax,%edx
+		mov    vfx1_pckt_count,%ebx
+		mov    %edx,vfx1_curr_pckt_idx
+		cmp    %ebx,%edx
+		jl     jump_f4537
+		jmp    jump_f42de
+	jump_f4532:
+		mov    $data_1e60f8,%ebp
+	jump_f4537:
+		mov    vfx1_curr_pckt_idx,%eax
+		mov    vendor_cfg(%eax),%edx
+		sar    $0x18,%edx
+		mov    %edx,data_1e60f0
+		mov    data_1e60f9(%eax),%dl
+		cmp    $0x7,%dl
+		ja     func_f4510
+		and    $0xff,%edx
+		jmp    *%cs:vtable_f3eec(,%edx,4)
+	jump_f4564:
+		cmpl   $0x0,vfx1_htd_index
+		je     jump_f4574
+		movb   $0x1,data_1e62fc
+	jump_f4574:
+		cmpl   $0x0,data_1e60e0
+		je     jump_f4584
+		movb   $0x1,data_1e62fd
+	jump_f4584:
+		mov    $0x1,%eax
+	jump_f4589:
+		add    $0x118,%esp
+		pop    %ebp
+		pop    %edi
+		pop    %esi
+		pop    %edx
+		pop    %ecx
+		pop    %ebx
+		ret
+
+
+/*----------------------------------------------------------------*/
+GLOBAL_FUNC(ASM_vfx1_unkn_func_03)	/* 0x0F45D8 */
+/*----------------------------------------------------------------*/
+		push   %ebx
+		push   %ecx
+		push   %edx
+		push   %esi
+		push   %edi
+		push   %ebp
+		sub    $0x28,%esp
+		mov    $0x32,%ebx
+		mov    $data_1e6028,%eax
+		mov    $0x33,%edi
+		xor    %edx,%edx
+		mov    data_1e60d8,%ecx
+		call   ac_memset
+		xor    %ebp,%ebp
+		mov    $0xc,%ebx
+		mov    data_1e605c,%ax
+		or     $0x5,%cl
+		xor    %edx,%edx
+		mov    %ecx,data_1e6044
+		mov    %edx,data_1e6040
+		mov    %ax,data_1e604a
+		lea    0x1c(%esp),%eax
+		mov    %edx,data_1e603c
+		call   ac_memset
+		mov    $0x1c,%ebx
+		mov    %esp,%eax
+		xor    %edx,%edx
+		mov    $0x300,%ecx
+		call   ac_memset
+		mov    $data_1e6028,%eax
+		mov    %esp,%ebx
+		mov    %ecx,(%esp)
+		mov    %edi,0x4(%esp)
+		mov    %ebp,0x8(%esp)
+		mov    %ds,%edx
+		lea    0x1c(%esp),%ecx
+		mov    %eax,0x14(%esp)
+		mov    $0x31,%eax
+		mov    %dx,0x1c(%esp)
+		mov    %esp,%edx
+		mov    $vfx1_pckt_count,%esi
+		call   ac_dos_int386x
+		mov    vfx1_pdosmem,%edx
+		mov    data_1e6040,%ecx
+		xor    %ebx,%ebx
+		test   %ecx,%ecx
+		jle    jump_f469e
+		mov    $data_1e61fc,%eax
+	jump_f468c:
+		inc    %eax
+		mov    (%edx),%cl
+		mov    %cl,-0x1(%eax)
+		inc    %ebx
+		mov    data_1e6040,%edi
+		inc    %edx
+		cmp    %edi,%ebx
+		jl     jump_f468c
+	jump_f469e:
+		mov    data_1e6040,%eax
+		mov    %eax,(%esi)
+		mov    data_1e6044,%eax
+		test   %eax,%eax
+		je     jump_f46b2
+		xor    %eax,%eax
+		jmp    jump_f4725
+	jump_f46b2:
+		cmpb   $0x0,data_1e62fc
+		je     jump_f46e4
+		lgs    data_1e6088,%eax
+		mov    %gs:(%eax),%dx
+		mov    %dx,EXPORT_SYMBOL(word_1E6078)
+		mov    %gs:0x2(%eax),%dx
+		mov    %gs:0x4(%eax),%ax
+		mov    %dx,EXPORT_SYMBOL(word_1E607A)
+		mov    %ax,EXPORT_SYMBOL(word_1E607C)
+	jump_f46e4:
+		cmpb   $0x0,data_1e62fd
+		je     jump_f4720
+		lgs    data_1e60ac,%eax
+		mov    %gs:(%eax),%dx
+		mov    %dx,data_1e6080
+		mov    %gs:0x2(%eax),%dx
+		mov    %dx,data_1e6082
+		mov    %gs:0x4(%eax),%dx
+		mov    %gs:0x6(%eax),%al
+		mov    %dx,data_1e6084
+		mov    %al,data_1e6086
+	jump_f4720:
+		mov    $0x1,%eax
+	jump_f4725:
+		add    $0x28,%esp
+		pop    %ebp
+		pop    %edi
+		pop    %esi
+		pop    %edx
+		pop    %ecx
+		pop    %ebx
+		ret
+
+
+/*----------------------------------------------------------------*/
+GLOBAL_FUNC(ASM_vfx1_unkn_func_12)	/* 0x0F4980 */
+/*----------------------------------------------------------------*/
+		push   %ebx
+		push   %ecx
+		mov    %eax,%ebx
+		mov    %edx,%eax
+		cwtl
+		call   vfx1_unkn_func_13
+		movswl %ax,%ecx
+		xor    %edx,%edx
+		cmp    $0xffffffff,%ecx
+		jne    jump_f499d
+		mov    %ecx,%edx
+		mov    %edx,%eax
+		pop    %ecx
+		pop    %ebx
+		ret
+	jump_f499d:
+		sar    %ax
+		mov    %eax,%ecx
+		xor    %ah,%ch
+		cwtl
+		mov    %cx,0x4(%ebx)
+		mov    %eax,%ecx
+		sar    $0x8,%eax
+		sar    $0xa,%ecx
+		and    $0x3,%eax
+		mov    %cx,(%ebx)
+		mov    %ax,0x2(%ebx)
+		mov    %edx,%eax
+		pop    %ecx
+		pop    %ebx
+		ret
+
+
+
+/*----------------------------------------------------------------*/
+.section .rodata
+
+aVipport:	/* 0x15F580 */
+		.string "VIPPORT"
+aVfx1Cyberpuck:	/* 0x15F588 */
+		.string "VFX1 CyberPuck"
+
+
+/*----------------------------------------------------------------*/
+.data
+
+data_1e6028:
+		.fill   0x10
+data_1e6038:
+		.long	0x0
+data_1e603c:
+		.long	0x0
+data_1e6040:
+		.long	0x0
+data_1e6044:
+		.fill   0x6
+data_1e604a:
+		.fill   0x10
+vfx1_selector:	/* 0x1E605A */
+		.short  0x0
+data_1e605c:
+		.long	0x0
+vfx1_pdosmem:	/* 0x1E6060 */
+		.long	0x0
+vfx1_system_cfg:	/* 0x1E6064 */
+		.long	0x0
+vfx1_vendor_cfg:	/* 0x1E6068 */
+		.fill   0x8
+data_1e6070:
+		.long	0x0
+data_1e6074:
+		.short  0x0
+GLOBAL (data_1e6076)	/* 0x1e6076 */
+		.short  0x0
+GLOBAL (word_1E6078)	/* 0x1E6078 */
+		.short  0x0
+GLOBAL (word_1E607A)	/* 0x1E607A */
+		.short  0x0
+GLOBAL (word_1E607C)	/* 0x1E607C */
+		.short  0x0
+		.short  0x0
+data_1e6080:
+		.short  0x0
+data_1e6082:
+		.short  0x0
+data_1e6084:
+		.short  0x0
+data_1e6086:
+		.short  0x0
+data_1e6088:
+		.long	0x0
+data_1e608c:
+		.fill   0x20
+data_1e60ac:
+		.long	0x0
+data_1e60b0:
+		.fill   0x20
+vip_air_port:	/* 0x1E60D0 */
+		.long	0x0
+vip_csr_port:	/* 0x1E60D4 */
+		.long	0x0
+data_1e60d8:
+		.long	0x0
+vfx1_htd_index:	/* 0x1E60DC */
+		.long	0x0
+data_1e60e0:
+		.long	0x0
+vfx1_pckt_count:	/* 0x1E60E4 */
+		.long	0x0
+vfx1_curr_pckt_idx:	/* 0x1E60E8 */
+		.fill   0x8
+data_1e60f0:
+		.long	0x0
+vfx1_cyberpuck:	/* 0x1E60F4 */
+		.byte	0x0
+vendor_cfg:	/* 0x1E60F5 */
+		.ascii  "\x00\x00\x00"
+data_1e60f8:
+		.byte	0x0
+data_1e60f9:
+		.fill   0xff
+data_1e61f8:
+		.long	0x0
+data_1e61fc:
+		.fill   0x100
+data_1e62fc:
+		.byte	0x0
+data_1e62fd:
+		.ascii  "\x00\x00\x00"
+
