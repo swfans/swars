@@ -7964,9 +7964,9 @@ TbBool check_panel_button(void)
     return 0;
 }
 
-void show_type11_screen(void)
+void show_debrief_screen(void)
 {
-    asm volatile ("call ASM_show_type11_screen\n"
+    asm volatile ("call ASM_show_debrief_screen\n"
         :  :  : "eax" );
 }
 
@@ -9229,13 +9229,13 @@ void show_menu_screen(void)
         show_research_screen();
         break;
     case SCRT_9:
-        show_type11_screen();
+        show_debrief_screen();
         break;
     case SCRT_LOGIN:
         show_login_screen();
         break;
     case SCRT_B:
-        show_type11_screen();
+        show_debrief_screen();
         break;
     case SCRT_ALERTBOX:
         show_alert_box();
