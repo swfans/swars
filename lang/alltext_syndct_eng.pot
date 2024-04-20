@@ -602,7 +602,7 @@ msgctxt "mission brief tactical information"
 msgid "Target vehicle"
 msgstr ""
 
-#: mission.brief.mail5.map9.level1:6
+#: mission.brief.mail5.map9.level1:6 mission.brief.mail16.map40.level1:2
 msgctxt "mission brief tactical information"
 msgid "Rendezvous point"
 msgstr ""
@@ -1507,11 +1507,6 @@ msgstr ""
 #: mission.brief.mail16.map40.level1:1
 msgctxt "mission brief tactical information"
 msgid "Dropsite: Honolulu water purification plant"
-msgstr ""
-
-#: mission.brief.mail16.map40.level1:2
-msgctxt "mission brief tactical information"
-msgid "Rendezvous point"
 msgstr ""
 
 #: mission.title:9
