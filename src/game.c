@@ -8096,8 +8096,24 @@ void init_net_players(void)
 
 void research_unkn_func_003(void)
 {
+#if 0
     asm volatile ("call ASM_research_unkn_func_003\n"
         :  :  : "eax" );
+    return;
+#endif
+    struct WeaponDef *wdef;
+    short weapon;
+
+    weapon = research.CurrentWeapon + 1;
+    if (weapon < 0 || weapon >= WEP_TYPES_COUNT)
+        return;
+
+    wdef = &weapon_defs[weapon];
+    //TODO CONFIG the increas should be configurable
+    //TODO this modifies configuration which is not saved.
+    // instead we should count the dropped weapons in
+    // a separate variable within structs which are saved/loaded
+    wdef->PercentPerDay += wdef->PercentPerDay / 8;
 }
 
 ushort activate_queued_mail(void)
