@@ -8479,10 +8479,69 @@ void research_unkn_func_002(void)
         :  :  : "eax" );
 }
 
-void unkn_research_func_006(void)
+void draw_app_icon_hilight(short x, short y, ubyte iconid, ubyte aframe)
+{
+    struct TbSprite *spr;
+
+    lbDisplay.DrawFlags |= 0x8000;
+    spr = &sprites_Icons0_0[aframe + byte_155124[iconid] + byte_15512C[iconid]];
+    draw_sprite_purple_list(x, y, spr);
+    lbDisplay.DrawFlags = 0;
+    spr = &sprites_Icons0_0[aframe + byte_155124[iconid]];
+    draw_sprite_purple_list(x, y, spr);
+    lbDisplay.DrawFlags = 0;
+}
+
+void draw_app_icon_normal(short x, short y, ubyte iconid, ubyte aframe)
+{
+    struct TbSprite *spr;
+
+    lbDisplay.DrawFlags |= 0x8000;
+    spr = &sprites_Icons0_0[aframe + byte_155124[iconid] + byte_15512C[iconid]];
+    draw_sprite_purple_list(x, y, spr);
+    lbDisplay.DrawFlags = 0;
+}
+
+void draw_email_icon(short x, short y, ubyte aframe)
+{
+    struct TbSprite *spr;
+
+    lbDisplay.DrawFlags |= 0x8000;
+    switch (aframe)
+    {
+    case 1:
+        spr = &sprites_Icons0_0[79];
+        draw_sprite_purple_list(x, y, spr);
+        break;
+    case 2:
+        play_sample_using_heap(0, 112, 127, 64, 100, 0, 1);
+        // fall through
+    case 3:
+    case 4:
+    case 5:
+        spr = &sprites_Icons0_0[77 + aframe];
+        draw_sprite_purple_list(x, y, spr);
+        lbDisplay.DrawFlags = 0;
+        spr = &sprites_Icons0_0[96 + aframe];
+        draw_sprite_purple_list(x, y, spr);
+        break;
+    case 6:
+        spr = &sprites_Icons0_0[82];
+        draw_sprite_purple_list(x, y, spr);
+        lbDisplay.DrawFlags = 0;
+        break;
+    default:
+        break;
+    }
+    lbDisplay.DrawFlags = 0;
+}
+
+/** Show a collection of icons at bottom of the screen.
+ */
+void show_apps_selection_bar(void)
 {
 #if 0
-    asm volatile ("call ASM_unkn_research_func_006\n"
+    asm volatile ("call ASM_show_apps_selection_bar\n"
         :  :  : "eax" );
     return;
 #endif
@@ -8513,6 +8572,7 @@ void unkn_research_func_006(void)
         }
         else
         {
+            // Completely hide PAN icon
             visible = (iconid != 1);
             reserve_space = (iconid != 1);
         }
@@ -8563,14 +8623,7 @@ void unkn_research_func_006(void)
                     }
                     word_1C498A = 0;
                 }
-                lbDisplay.DrawFlags |= 0x8000;
-                spr = &sprites_Icons0_0[byte_155124[iconid]
-                    + byte_1C4984[iconid] + byte_15512C[iconid]];
-                draw_sprite_purple_list(cx, 432, spr);
-                lbDisplay.DrawFlags = 0;
-                spr = &sprites_Icons0_0[byte_1C4984[iconid]
-                    + byte_155124[iconid]];
-                draw_sprite_purple_list(cx, 432, spr);
+                draw_app_icon_hilight(cx, 432, iconid, byte_1C4984[iconid]);
                 byte_1C4984[iconid]++;
                 if (byte_1C4984[iconid] == byte_15512C[iconid])
                     byte_1C4984[iconid] = 0;
@@ -8578,11 +8631,8 @@ void unkn_research_func_006(void)
             else
             {
                 byte_1C497E &= ~(1 << iconid);
-                lbDisplay.DrawFlags = 0x8000 | 0x0004;
-                spr = &sprites_Icons0_0[byte_1C4984[iconid]
-                    + byte_155124[iconid] + byte_15512C[iconid]];
-                draw_sprite_purple_list(cx, 432, spr);
-                lbDisplay.DrawFlags = 0;
+                lbDisplay.DrawFlags = 0x0004;
+                draw_app_icon_normal(cx, 432, iconid, byte_1C4984[iconid]);
                 if (byte_1C4984[iconid])
                 {
                     byte_1C4984[iconid]++;
@@ -8666,34 +8716,7 @@ void unkn_research_func_006(void)
                     }
                 }
             }
-            lbDisplay.DrawFlags |= 0x8000;
-            switch (byte_1C498C)
-            {
-            case 1:
-                spr = &sprites_Icons0_0[79];
-                draw_sprite_purple_list(cx, 432, spr);
-                break;
-            case 2:
-                play_sample_using_heap(0, 112, 127, 64, 100, 0, 1);
-                // fall through
-            case 3:
-            case 4:
-            case 5:
-                spr = &sprites_Icons0_0[byte_1C498C + 77];
-                draw_sprite_purple_list(cx, 432, spr);
-                lbDisplay.DrawFlags = 0;
-                spr = &sprites_Icons0_0[byte_1C498C + 96];
-                draw_sprite_purple_list(cx, 432, spr);
-                break;
-            case 6:
-                spr = &sprites_Icons0_0[82];
-                draw_sprite_purple_list(cx, 432, spr);
-                lbDisplay.DrawFlags = 0;
-                break;
-            default:
-                break;
-            }
-            lbDisplay.DrawFlags = 0;
+            draw_email_icon(cx, 432, byte_1C498C);
             if (gameturn & 1)
             {
                 if (++byte_1C498C > 5)
@@ -8703,34 +8726,8 @@ void unkn_research_func_006(void)
         else
         {
             byte_1C4980 = 0;
-            lbDisplay.DrawFlags = 0x8000 | 0x0004;
-            switch (byte_1C498C)
-            {
-            case 1:
-                spr = &sprites_Icons0_0[79];
-                draw_sprite_purple_list(cx, 432, spr);
-                break;
-            case 2:
-                play_sample_using_heap(0, 112, 127, 64, 100, 0, 1);
-                // fall through
-            case 3:
-            case 4:
-            case 5:
-                spr = &sprites_Icons0_0[byte_1C498C + 77];
-                draw_sprite_purple_list(cx, 432, spr);
-                lbDisplay.DrawFlags = 0;
-                spr = &sprites_Icons0_0[byte_1C498C + 96];
-                draw_sprite_purple_list(cx, 432, spr);
-                break;
-            case 6:
-                spr = &sprites_Icons0_0[82];
-                draw_sprite_purple_list(cx, 432, spr);
-                lbDisplay.DrawFlags = 0;
-                break;
-            default:
-                break;
-            }
-            lbDisplay.DrawFlags = 0;
+            lbDisplay.DrawFlags = 0x0004;
+            draw_email_icon(cx, 432, byte_1C498C);
             if (gameturn & 1)
             {
                 if (++byte_1C498C > 6)
@@ -9910,7 +9907,7 @@ void show_menu_screen(void)
     data_1c4990 = lbDisplay.RightButton;
     show_date_time();
     if ((screentype != SCRT_MAINMENU) && (screentype != SCRT_LOGIN) && !restore_savegame)
-          unkn_research_func_006();
+          show_apps_selection_bar();
     if ((screentype == SCRT_9 || screentype == SCRT_B) && change_screen == 7)
     {
         screentype = SCRT_MISSION;
