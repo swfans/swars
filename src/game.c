@@ -257,6 +257,18 @@ extern ubyte month_days[12];
 
 struct ScreenBoxBase global_top_bar_box = {4, 4, 632, 15};
 
+extern ubyte byte_155124[];
+extern ubyte byte_15512C[];
+extern ubyte byte_1C497E;
+extern ubyte byte_1C497F;
+extern ubyte byte_1C4980;
+extern ubyte byte_1C4984[];
+extern short word_1C498A;
+extern ubyte byte_1C498C;
+extern short word_1C6F3E;
+extern short word_1C6F40;
+extern ubyte mo_from_agent;
+
 extern ubyte unkn_changing_color_1;
 extern ubyte unkn_changing_color_2;
 extern ulong unkn_changing_color_counter1;
@@ -8082,6 +8094,20 @@ void init_net_players(void)
     }
 }
 
+void research_unkn_func_003(void)
+{
+    asm volatile ("call ASM_research_unkn_func_003\n"
+        :  :  : "eax" );
+}
+
+ushort activate_queued_mail(void)
+{
+    ushort ret;
+    asm volatile ("call ASM_activate_queued_mail\n"
+        : "=r" (ret) : );
+    return ret;
+}
+
 void delete_mail(ushort mailnum, ubyte type)
 {
     asm volatile ("call ASM_delete_mail\n"
@@ -8443,6 +8469,7 @@ void unkn_research_func_006(void)
 {
     asm volatile ("call ASM_unkn_research_func_006\n"
         :  :  : "eax" );
+    return;
 }
 
 void net_unkn_func_29(short a1, short a2, ubyte a3, sbyte a4, ubyte a5)
